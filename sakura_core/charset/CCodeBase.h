@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,7 +23,18 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_
+#define SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_
 #pragma once
+
+#include <cstddef>
+#include <map>
+#include <string>
+#include <string_view>
+
+#include "mem/CNativeW.h"
+#include "charset/charset.h"
+#include "CEol.h"
 
 //定数
 enum EConvertResult{
@@ -31,10 +43,13 @@ enum EConvertResult{
 	RESULT_FAILURE,  //!< 何らかの原因により失敗した。
 };
 
-class CMemory;
-class CNativeW;
 struct CommonSetting_Statusbar;
-enum EEolType : char;
+
+//! 変換元バイナリシーケンスを表す型。
+using BinarySequenceView = std::basic_string_view<std::byte>;
+
+//! 復元後バイナリシーケンスを表す型。
+using BinarySequence = std::basic_string<std::byte>;
 
 /*!
 	文字コード基底クラス。
@@ -44,8 +59,42 @@ enum EEolType : char;
 */
 class CCodeBase{
 public:
-	virtual ~CCodeBase(){}
-//	virtual bool IsCode(const CMemory* pMem){return false;}  //!< 特定コードであればtrue
+	virtual ~CCodeBase() noexcept = default;
+
+	/*!
+		特定コードをUnicodeにエンコードする
+
+		@param [in] cSrc 変換対象のバイナリシーケンス
+		@param [out,opt] pResult 変換結果を受け取る変数
+		@returns サクラエディタ仕様のUnicode文字列
+	 */
+	virtual CNativeW CodeToUnicode( BinarySequenceView cSrc, bool* pResult = nullptr )
+	{
+		CMemory cmemSrc( cSrc.data(), cSrc.size() );
+		CNativeW cDest;
+		auto result = CodeToUnicode( cmemSrc, &cDest );
+		if( pResult ){
+			*pResult = result == RESULT_COMPLETE;
+		}
+		return cDest;
+	}
+
+	/*!
+		Unicodeを特定コードにデコードする
+
+		@param [in] cSrc 変換対象のUnicodeシーケンス
+		@param [out,opt] pResult 変換結果を受け取る変数
+		@returns バイナリシーケンス
+	 */
+	virtual BinarySequence UnicodeToCode( const CNativeW& cSrc, bool* pResult = nullptr )
+	{
+		CMemory cDest;
+		auto result = UnicodeToCode( cSrc, &cDest );
+		if( pResult ){
+			*pResult = result == RESULT_COMPLETE;
+		}
+		return BinarySequence( static_cast<std::byte*>(cDest.GetRawPtr()), cDest.GetRawLength() );
+	}
 
 	//文字コード変換
 	virtual EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst)=0;	//!< 特定コード → UNICODE    変換
@@ -57,9 +106,13 @@ public:
 	}
 
 	//ファイル形式
-	virtual void GetBom(CMemory* pcmemBom);											//!< BOMデータ取得
-	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType){ S_GetEol(pcmemEol,eEolType); }	//!< 改行データ取得
+	[[nodiscard]] virtual BinarySequence GetBomDefinition();
+	void GetBom( CMemory* pcmemBom );
+	[[nodiscard]] virtual std::map<EEolType, BinarySequence> GetEolDefinitions();
+	void GetEol( CMemory* pcmemEol, EEolType eEolType );
 
+	// 文字コードの16進表示
+	virtual std::wstring CodeToHex(const CNativeW& cSrc, const CommonSetting_Statusbar& sStatusbar, bool bUseFallback = true);
 	// 文字コード表示用		2008/6/9 Uchi
 	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
@@ -69,9 +122,6 @@ public:
 
 	// MIME Header デコーダ
 	static bool MIMEHeaderDecode(const char* pSrc, const int nSrcLen, CMemory* pcMem, const ECodeType eCodetype);
-
-	// CShiftJisより移動 2010/6/13 Uchi
-	static void S_GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得
 };
 
 /*!
@@ -95,3 +145,4 @@ inline int CCodeBase::TextToBin( const unsigned short cSrc )
 {
 	return static_cast<int>((cSrc - 0xdc00) & 0x00ff);
 }
+#endif /* SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_ */

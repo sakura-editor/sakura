@@ -11,6 +11,7 @@
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -20,6 +21,9 @@
 #include "func/CKeyBind.h"
 #include "env/CShareData.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
+#include "mem/CNativeW.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 //! KEYDATAとほぼ同じ
 struct KEYDATAINIT {
@@ -457,7 +461,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 	if( bKeyStr ){
 		CNativeW    cMemAccessKey;
 		// 2010.07.11 Moca メニューラベルの「\t」の付加条件変更
-		// [ファイル/フォルダ/ウィンドウ一覧以外]から[アクセスキーがあるときのみ]に付加するように変更
+		// [ファイル/フォルダー/ウィンドウ一覧以外]から[アクセスキーがあるときのみ]に付加するように変更
 		/* 機能に対応するキー名の取得 */
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
 			// バッファが足りないときは入れない
@@ -596,14 +600,14 @@ EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDe
 //2001.12.06 hor Alt+A を「SORT_ASC」に割当
 //Jan. 13, 2001 JEPRO	Ctrl+B に「ブラウズ」を追加
 //Jan. 16, 2001 JEPRO	SHift+Ctrl+C に「.hと同名の.c(なければ.cpp)を開く」を追加
-//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダー(ソース)を開く」に変更
 //Jan. 16, 2001 JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加
 //2001.12.06 hor Alt+D を「SORT_DESC」に割当
 //Oct. 7, 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加
 //Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」, Shift+Ctrl+E に「行削除(折り返し単位)」を追加
 //Oct. 07, 2000 JEPRO	Ctrl+Alt+H に「上下に並べて表示」を追加
 //Jan. 16, 2001 JEPRO	Ctrl+H を「カーソル前を削除」→「カーソル行をウィンドウ中央へ」に変更し	Shift+Ctrl+H に「.cまたは.cppと同名の.hを開く」を追加
-//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダー(ソース)を開く」に変更
 //Jan. 21, 2001	JEPRO	Ctrl+I に「行の二重化」を追加
 //Jan. 16, 2001	JEPRO	Ctrl+K に「行末まで切り取り(改行単位)」, Shift+Ctrl+E に「行末まで削除(改行単位)」を追加
 //Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「小文字」, Shift+Ctrl+Alt+L に「大文字」を追加

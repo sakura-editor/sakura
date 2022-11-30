@@ -9,6 +9,7 @@
 */
 /*
 	Copyright (C) 2001, MIK
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,6 +17,8 @@
 
 //@@@ 2001.11.17 add start MIK
 
+#ifndef SAKURA_CREGEXKEYWORD_84205099_71D3_4F2B_A6E5_821DA1C8D201_H_
+#define SAKURA_CREGEXKEYWORD_84205099_71D3_4F2B_A6E5_821DA1C8D201_H_
 #pragma once
 
 #include "_main/global.h"
@@ -40,6 +43,8 @@ typedef struct RegexInfo_t {
 	int    nHead;		//先頭のみチェックするか？
 	int    nFlag;           //色指定のチェックが入っているか？ YES=RK_EMPTY, NO=RK_NOMATCH
 } REGEX_INFO;
+
+class CStringRef;
 
 //!	正規表現キーワードクラス
 /*!
@@ -82,3 +87,4 @@ private:
 };
 
 //@@@ 2001.11.17 add end MIK
+#endif /* SAKURA_CREGEXKEYWORD_84205099_71D3_4F2B_A6E5_821DA1C8D201_H_ */

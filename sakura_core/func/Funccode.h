@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, MIK, maru
 	Copyright (C) 2006, aroka, かろと, fon, ryoji
 	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,6 +36,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_FUNCCODE_071442E9_78EF_47B8_ABB5_CBB12C3EC84B_H_
+#define SAKURA_FUNCCODE_071442E9_78EF_47B8_ABB5_CBB12C3EC84B_H_
 #pragma once
 
 //Oct. 17, 2000 jepro  F_FILECLOSE:「ファイルを閉じる」というキャプションを変更
@@ -182,3 +185,4 @@ struct DLLSHAREDATA;
 //2007.10.30 kobake 機能チェックをCEditWndからここへ移動
 bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能が利用可能か調べる */
 bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能がチェック状態か調べる */
+#endif /* SAKURA_FUNCCODE_071442E9_78EF_47B8_ABB5_CBB12C3EC84B_H_ */

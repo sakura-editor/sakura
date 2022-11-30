@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "CCodeChecker.h"
 #include "charset/CCodePage.h"
@@ -10,6 +33,9 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "window/CEditWnd.h"
 #include "util/string_ex.h"
+#include "CSelectLang.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     セーブ時チェック                        //
@@ -19,7 +45,7 @@
 static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 {
 	bool bMix = false;
-	if( cEolType == EOL_NONE ){	//改行コード変換なし
+	if( cEolType.IsNone() ){	//改行コード変換なし
 		CEol cEolCheck;	//比較対象EOL
 		const CDocLine* pcDocLine = pcDocLineMgr.GetDocLineTop();
 		if( pcDocLine ){
@@ -27,7 +53,7 @@ static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 		}
 		while( pcDocLine ){
 			CEol cEol = pcDocLine->GetEol();
-			if( cEol != cEolCheck && cEol != EOL_NONE ){
+			if( cEol != cEolCheck && cEol.IsValid() ){
 				bMix = true;
 				break;
 			}
@@ -135,7 +161,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		);
 	}
 
-	//ユーザ問い合わせ
+	//ユーザー問い合わせ
 	if (bTmpResult) {
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::getInstance()->GetHwnd(),
@@ -159,7 +185,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		point, cmemChar
 	);
 
-	//ユーザ問い合わせ
+	//ユーザー問い合わせ
 	if(nTmpResult==RESULT_LOSESOME){
 		WCHAR szCpName[100];
 		WCHAR  szLineNum[60];  // 123桁
@@ -192,7 +218,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		case IDCANCEL:
 			{
 				CLogicPoint pt(point.x < 0 ? CLogicInt(0) : point.x, point.y);
-				pcDoc->m_pcEditWnd->GetActiveView().GetCommander().Command_MOVECURSOR(pt, 0);
+				GetEditWnd().GetActiveView().GetCommander().Command_MOVECURSOR(pt, 0);
 			}
 			return CALLBACK_INTERRUPT; //中断
 		}

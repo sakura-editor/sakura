@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCONVERT_TOHANKAKU_B22F6D13_783E_4D93_B078_8A42BE57FC7B_H_
+#define SAKURA_CCONVERT_TOHANKAKU_B22F6D13_783E_4D93_B078_8A42BE57FC7B_H_
 #pragma once
 
 #include "CConvert.h"
@@ -37,3 +40,4 @@ enum EToHankakuMode{
 	TO_HIRAGANA	= 0x02, //!< ひらがなに影響アリ
 	TO_EISU		= 0x04, //!< 英数字に影響アリ
 };
+#endif /* SAKURA_CCONVERT_TOHANKAKU_B22F6D13_783E_4D93_B078_8A42BE57FC7B_H_ */

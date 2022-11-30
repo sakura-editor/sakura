@@ -2,6 +2,7 @@
 /*
 	Copyright (C) 2008, kobake, ryoji
 	Copyright (C) 2012, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -43,6 +44,9 @@
 #include "util/module.h" //GetAppVersionInfo
 #include "util/shell.h"
 #include "util/window.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 typedef std::wstring wstring;
 
@@ -81,8 +85,8 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
 	@li N  開いているファイルの名前(簡易表示)
 	@li n  無題の通し番号
-	@li E  開いているファイルのあるフォルダの名前(簡易表示)
-	@li e  開いているファイルのあるフォルダの名前
+	@li E  開いているファイルのあるフォルダーの名前(簡易表示)
+	@li e  開いているファイルのあるフォルダーの名前
 	@li B  タイプ別設定の名前
 	@li b  開いているファイルの拡張子
 	@li Q  印刷ページ設定の名前
@@ -237,7 +241,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			++p;
 			break;
-		case L'E':	// 開いているファイルのあるフォルダの名前(簡易表示)	2012/12/2 Uchi
+		case L'E':	// 開いているファイルのあるフォルダーの名前(簡易表示)	2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
@@ -269,7 +273,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			++p;
 			break;
-		case L'e':	// 開いているファイルのあるフォルダの名前		2012/12/2 Uchi
+		case L'e':	// 開いているファイルのあるフォルダーの名前		2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
@@ -467,20 +471,16 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'S':	//	Sep. 15, 2005 FILE
 			//	サクラエディタのフルパス
 			{
-				SFilePath	szPath;
-
-				::GetModuleFileName( NULL, szPath, _countof2(szPath) );
-				q = wcs_pushW( q, q_max - q, szPath );
+				auto exePath = GetExeFileName();
+				q = wcs_pushW( q, q_max - q, exePath.c_str() );
 				++p;
 			}
 			break;
 		case 'I':	//	May. 19, 2007 ryoji
 			//	iniファイルのフルパス
 			{
-				WCHAR	szPath[_MAX_PATH + 1];
-				const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
-				CFileNameManager::getInstance()->GetIniFileName( szPath, pszProfileName );
-				q = wcs_pushW( q, q_max - q, szPath );
+				auto privateIniPath = GetIniFileName();
+				q = wcs_pushW( q, q_max - q, privateIniPath.c_str() );
 				++p;
 			}
 			break;
@@ -706,16 +706,16 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	return q;
 }
 
-/*!	@brief 初期フォルダ取得
+/*!	@brief 初期フォルダー取得
 
 	@param bControlProcess [in] trueのときはOPENDIALOGDIR_CUR->OPENDIALOGDIR_MRUに変更
-	@return 初期フォルダ
+	@return 初期フォルダー
 */
 std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
 	CEditDoc* pcDoc = CEditDoc::GetInstance(0); //######
 	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		return pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str();
+		return pcDoc->m_cDocFile.GetFilePathClass().GetDirPath();
 	}
 
 	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;

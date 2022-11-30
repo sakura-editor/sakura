@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,13 +23,13 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_EDITINFO_27D29614_33E6_4D60_B4B1_05115049CD16_H_
+#define SAKURA_EDITINFO_27D29614_33E6_4D60_B4B1_05115049CD16_H_
 #pragma once
 
 #include "basis/SakuraBasis.h"
 #include "config/maxdata.h"
-#include "charset/charcode.h"
-#include "mem/CNativeW.h"
-#include "types/CType.h"
+#include "charset/charset.h"
 
 /*!
  * ファイル情報
@@ -76,3 +77,4 @@ struct EditInfo {
 	// コンストラクタ
 	EditInfo() noexcept;
 };
+#endif /* SAKURA_EDITINFO_27D29614_33E6_4D60_B4B1_05115049CD16_H_ */

@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 
 // LMP: Start -----------------------------------------------------
 // LMP: Start -----------------------------------------------------
@@ -428,6 +451,8 @@
 #define STR_MENU_KEYWORDINFO			34340
 #define STR_MENU_OPENKEYWORDDIC			34341
 #define STR_STATUS_ROW_COL				34342
+#define STR_STATUS_FONTZOOM_0			35043
+#define STR_STATUS_FONTZOOM_1			35044
 #define STR_INS_MODE_INS				34343
 #define STR_INS_MODE_OVR				34344
 #define STR_GREP_SEARCH_CONDITION		34345
@@ -1290,6 +1315,8 @@
 #define STR_KEYHELP_RMENU_NONE			35029
 #define STR_KEYHELP_RMENU_TOP			35030
 #define STR_KEYHELP_RMENU_BOTTOM		35031
+#define STR_DLGGREP_THISDOC				35045
+#define STR_DLGGREP_THISDOC_ERROR		35046
 #define STR_ERR_FILEPATH_TOO_LONG		35034
 #define STR_GREP_EXCLUDE_FILE			35035
 #define STR_GREP_EXCLUDE_FOLDER			35036
@@ -1298,5 +1325,6 @@
 #define STR_FILEDIALOG_EOL				35039
 #define STR_FILEDIALOG_MRU				35040
 #define STR_FILEDIALOG_OPENFOLDER		35041
+#define STR_GSTR_APPNAME				35047
 
-// Now using max number 35042 by STR_IMPEXP_REGEX4
+// Now using max number 35047 by STR_GSTR_APPNAME

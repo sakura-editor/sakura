@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDLGPLUGINOPTION_AF75E03E_99DB_4AEF_93AF_BFF669310DE6_H_
+#define SAKURA_CDLGPLUGINOPTION_AF75E03E_99DB_4AEF_93AF_BFF669310DE6_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -95,3 +98,4 @@ private:
 	int				m_Line;			// 現在編集中のオプション行番号
 	std::wstring	m_sReadMeName;	// ReadMe ファイル名
 };
+#endif /* SAKURA_CDLGPLUGINOPTION_AF75E03E_99DB_4AEF_93AF_BFF669310DE6_H_ */

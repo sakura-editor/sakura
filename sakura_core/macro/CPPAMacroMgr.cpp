@@ -7,16 +7,19 @@
 /*
 	Copyright (C) 2002, YAZAKI, genta
 	Copyright (C) 2004, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "CPPAMacroMgr.h"
-#include "mem/CMemory.h"
+#include "mem/CNativeW.h"
 #include "CMacroFactory.h"
 #include <string.h>
 #include "io/CTextStream.h"
+#include "util/tchar_convert.h"
+
 using namespace std;
 
 CPPA CPPAMacroMgr::m_cPPA;

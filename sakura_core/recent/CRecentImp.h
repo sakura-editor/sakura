@@ -1,9 +1,8 @@
 ﻿/*! @file */
 // 各CRecent実装クラスのベースクラス
-
-// エディタ系ファイルからincludeするときは CRecent.h をinclude
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,19 +24,25 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
+#define SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
 #pragma once
 
 #include "recent/CRecent.h"
 
 template < class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE* >
 class CRecentImp : public CRecent{
-private:
-	typedef CRecentImp<DATA_TYPE,RECEIVE_TYPE>	Me;
+	using Me = CRecentImp<DATA_TYPE, RECEIVE_TYPE>;
+
 	typedef DATA_TYPE							DataType;
 	typedef RECEIVE_TYPE						ReceiveType;
 
 public:
 	CRecentImp(){ Terminate(); }
+	CRecentImp(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CRecentImp(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CRecentImp(){ Terminate(); }
 
 protected:
@@ -116,16 +121,4 @@ protected:
 	size_t		m_nTextMaxLength;		//!< 最大テキスト長(終端含む)
 };
 
-#include "CRecentFile.h"
-#include "CRecentFolder.h"
-#include "CRecentExceptMru.h"
-#include "CRecentSearch.h"
-#include "CRecentReplace.h"
-#include "CRecentGrepFile.h"
-#include "CRecentGrepFolder.h"
-#include "CRecentExcludeFile.h"
-#include "CRecentExcludeFolder.h"
-#include "CRecentCmd.h"
-#include "CRecentCurDir.h"
-#include "CRecentEditNode.h"
-#include "CRecentTagjumpKeyword.h"
+#endif /* SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_ */

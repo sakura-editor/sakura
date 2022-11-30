@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,9 +28,8 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Eol.h"
 #include "types/CTypeSupport.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
+#include "apiwrap/StdApi.h"
 
 //折り返し描画
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
@@ -44,7 +44,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 
 //改行記号描画
 //2007.08.30 kobake 追加
-void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans);
+void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans, HPEN hPen);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        CFigure_Eol                            //
@@ -113,7 +113,16 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 		pInfo->m_gr.PushMyFont(sFont);
 
 		DispPos sPos(*pInfo->m_pDispPos);	// 現在位置を覚えておく
-		_DispEOL(pInfo->m_gr, pInfo->m_pDispPos, cEol, pcView, bTrans);
+
+		if (crText != m_clrPen || m_hPen == NULL) {
+			if (m_hPen != NULL) {
+				::DeleteObject(m_hPen);
+			}
+			m_hPen = CreatePen(PS_SOLID, 1, crText);
+			m_clrPen = crText;
+		}
+
+		_DispEOL(pInfo->m_gr, pInfo->m_pDispPos, cEol, pcView, bTrans, m_hPen);
 		DrawImp_StylePop(pInfo);
 		DrawImp_DrawUnderline(pInfo, sPos);
 
@@ -155,7 +164,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 		EColorIndexType eBgcolorOverwrite = COLORIDX_WRAP;
 		bool bTrans = pcView->IsBkBitmap();
 		if( cWrapType.IsDisp() ){
-			CEditView& cActiveView = pcView->m_pcEditWnd->GetActiveView();
+			CEditView& cActiveView = GetEditWnd().GetActiveView();
 			if( cBgLineType.IsDisp() && pcView->GetCaret().GetCaretLayoutPos().GetY2() == nLineNum ){
 				if( bBgcolor ){
 					eBgcolorOverwrite = COLORIDX_CARETLINEBG;
@@ -252,11 +261,11 @@ void _DrawEOL(
 	const CMyRect&	rcEol,
 	CEol			cEol,
 	bool			bBold,
-	COLORREF		pColor
+	HPEN			hPen
 );
 
 //2007.08.30 kobake 追加
-void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans)
+void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans, HPEN hPen)
 {
 	const CLayoutXInt nCol = CTypeSupport(pcView,COLORIDX_EOL).IsDisp()
 		? pcView->GetTextMetrics().GetLayoutXDefault(CKetaXInt(1)) + CLayoutXInt(4) // ONのときは1幅+4px
@@ -293,7 +302,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 			// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
 			// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
 			// 2013.06.21 novice 文字色、太字をCGraphicsから取得
-			_DrawEOL(gr, rcEol, cEol, gr.GetCurrentMyFontBold(), gr.GetCurrentTextForeColor());
+			_DrawEOL(gr, rcEol, cEol, gr.GetCurrentMyFontBold(), hPen);
 
 			// リージョン破棄
 			gr.PopClipping();
@@ -322,14 +331,14 @@ void _DrawEOL(
 	const CMyRect&	rcEol,		//!< 描画領域
 	CEol			cEol,		//!< 行末コード種別
 	bool			bBold,		//!< TRUE: 太字
-	COLORREF		pColor		//!< 色
+	HPEN			hPen		//!< ペン
 )
 {
 	int sx, sy;	//	矢印の先頭
-	gr.SetPen( pColor );
+	HPEN hPenOld = (HPEN)SelectObject(gr, hPen);
 
 	switch( cEol.GetType() ){
-	case EOL_CRLF:	//	下左矢印
+	case EEolType::cr_and_lf:	//	下左矢印
 		{
 			sx = rcEol.left;						//X左端
 			sy = rcEol.top + ( rcEol.Height() / 2);	//Y中心
@@ -366,7 +375,7 @@ void _DrawEOL(
 			}
 		}
 		break;
-	case EOL_CR:	//	左向き矢印	// 2007.08.17 ryoji EOL_LF -> EOL_CR
+	case EEolType::carriage_return:	//	左向き矢印	// 2007.08.17 ryoji EEolType::line_feed -> EEolType::carriage_return
 		{
 			sx = rcEol.left;
 			sy = rcEol.top + ( rcEol.Height() / 2 );
@@ -399,7 +408,7 @@ void _DrawEOL(
 			}
 		}
 		break;
-	case EOL_LF:	//	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
+	case EEolType::line_feed:	//	下向き矢印	// 2007.08.17 ryoji EEolType::carriage_return -> EEolType::line_feed
 	// 2013.04.22 Moca NEL,LS,PS対応。暫定でLFと同じにする
 		{
 			sx = rcEol.left + ( rcEol.Width() / 2 );
@@ -433,9 +442,9 @@ void _DrawEOL(
 			}
 		}
 		break;
-	case EOL_NEL:
-	case EOL_LS:
-	case EOL_PS:
+	case EEolType::next_line:
+	case EEolType::line_separator:
+	case EEolType::paragraph_separator:
 		{
 			// 左下矢印(折れ曲がりなし)
 			sx = rcEol.left;			//X左端
@@ -471,4 +480,6 @@ void _DrawEOL(
 		}
 		break;
 	}
+
+	SelectObject(gr, hPenOld);
 }

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
+#define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
 #include <ObjIdl.h> // LPDATAOBJECT
@@ -88,8 +91,14 @@ private:
 //コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
 //2008.03.01 kobake 作成
 class CCurrentDirectoryBackupPoint{
+	using Me = CCurrentDirectoryBackupPoint;
+
 public:
 	CCurrentDirectoryBackupPoint();
+	CCurrentDirectoryBackupPoint(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CCurrentDirectoryBackupPoint(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CCurrentDirectoryBackupPoint();
 private:
 	WCHAR m_szCurDir[_MAX_PATH];
@@ -108,3 +117,4 @@ BOOL IsPowerShellAvailable(void);
 	@return	手続きが成功したら true 失敗したら false
 */
 BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup);
+#endif /* SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_ */

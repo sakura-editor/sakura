@@ -8,6 +8,7 @@
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, Stonee, Misaka
 	Copyright (C) 2002, ai
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -20,6 +21,7 @@
 #include "convert/CDecode_Base64Decode.h"
 #include "convert/CDecode_UuDecode.h"
 #include "io/CBinaryStream.h"
+#include "CSelectLang.h"
 
 /* 小文字 */
 void CViewCommander::Command_TOLOWER( void )

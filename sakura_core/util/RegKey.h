@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,10 +23,14 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_REGKEY_6B5694D7_BDD3_4835_8B34_356D3FC110C7_H_
+#define SAKURA_REGKEY_6B5694D7_BDD3_4835_8B34_356D3FC110C7_H_
 #pragma once
 
 class CRegKey
 {
+	using Me = CRegKey;
+
 protected:
 	HKEY _root;
 	HKEY _key;
@@ -35,6 +40,11 @@ public:
 		_root = NULL;
 		_key = NULL;
 	}
+
+	CRegKey(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CRegKey(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 	virtual ~CRegKey()
 	{
@@ -187,3 +197,4 @@ public:
 		return RegDeleteKey(root, path);
 	}
 };
+#endif /* SAKURA_REGKEY_6B5694D7_BDD3_4835_8B34_356D3FC110C7_H_ */

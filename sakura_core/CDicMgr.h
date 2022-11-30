@@ -6,16 +6,21 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDICMGR_70378DC4_733D_4F64_8D2A_E23C548E19EB_H_
+#define SAKURA_CDICMGR_70378DC4_733D_4F64_8D2A_E23C548E19EB_H_
 #pragma once
 
 #include <Windows.h>
 #include "util/container.h"
 #include "_main/global.h"
+
+class CNativeW;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -27,7 +32,6 @@ public:
 	||  Constructors
 	*/
 	CDicMgr();
-	~CDicMgr();
 
 	/*
 	||  Attributes & Operations
@@ -46,3 +50,4 @@ protected:
 	||  実装ヘルパ関数
 	*/
 };
+#endif /* SAKURA_CDICMGR_70378DC4_733D_4F64_8D2A_E23C548E19EB_H_ */

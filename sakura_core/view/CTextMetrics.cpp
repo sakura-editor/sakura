@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -23,34 +24,16 @@
 		   distribution.
 */
 #include "StdAfx.h"
+#include <algorithm>
 #include <vector>
 #include "CTextMetrics.h"
 #include "charset/codechecker.h"
-
-using namespace std;
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               コンストラクタ・デストラクタ                  //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-CTextMetrics::CTextMetrics()
-{
-	//$ 適当な仮値で初期化。実際には使う側でSet～を呼ぶので、これらの仮値が参照されることは無い。
-	SetHankakuWidth(10);
-	SetHankakuHeight(18);
-	SetHankakuDx(12);
-	SetHankakuDy(24);
-}
-
-CTextMetrics::~CTextMetrics()
-{
-}
+#include "mem/CNativeW.h"
 
 void CTextMetrics::CopyTextMetricsStatus(CTextMetrics* pDst) const
 {
-	pDst->SetHankakuWidth			(GetHankakuWidth());		/* 半角文字の幅 */
-	pDst->SetHankakuHeight			(GetHankakuHeight());		/* 文字の高さ */
-	pDst->m_aFontHeightMargin = m_aFontHeightMargin;
+	pDst->m_nCharWidth = m_nCharWidth;		/* 半角文字の幅 */
+	pDst->m_nCharHeight = m_nCharHeight;	/* 文字の高さ */
 }
 
 /*
@@ -61,86 +44,26 @@ void CTextMetrics::CopyTextMetricsStatus(CTextMetrics* pDst) const
 */
 void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 {
-	int size = 1; //暫定
-	HFONT hFontArray[1] = { hFont };
+	// CCharWidthCache::m_han_size と一致していなければならない
+	//
+	// KB145994
+	// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
+	// ただしこのコードはカーニングの影響を受ける
+	auto hFontOld = (HFONT)::SelectObject( hdc, hFont );
+	SIZE  sz;
+	GetTextExtentPoint32(hdc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
+	::SelectObject( hdc, hFontOld );
 
-	this->SetHankakuHeight(1);
-	this->SetHankakuWidth(1);
-	int tmAscent[1];
-	int tmAscentMaxHeight;
-	m_aFontHeightMargin.resize(size);
-	for( int i = 0; i < size; i++ ){
-		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFontArray[i] );
- 		SIZE  sz;
-		// LocalCache::m_han_size と一致していなければならない
-		{
-			// KB145994
-			// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
-			// ただしこのコードはカーニングの影響を受ける
-			GetTextExtentPoint32(hdc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
-			sz.cx = (sz.cx / 26 + 1) / 2;
-		}
-		TEXTMETRIC tm;
-		GetTextMetrics(hdc, &tm);
-		if( GetHankakuHeight() < sz.cy ){
-			SetHankakuHeight(sz.cy);
-			tmAscentMaxHeight = tm.tmAscent;
-		}
-		if( i == 0 && GetHankakuWidth() < sz.cx ){
-			SetHankakuWidth(sz.cx);
-		}
-		tmAscent[i] = tm.tmAscent;
-		::SelectObject( hdc, hFontOld );
-	}
-	int minMargin = 0;
-	for(int i = 0; i < size; i++){
-		if( tmAscentMaxHeight - tmAscent[i] < minMargin ){
-			minMargin = tmAscentMaxHeight - tmAscent[i];
-		}
-	}
-	if( minMargin < 0 ){
-		minMargin *= -1;
-		SetHankakuHeight( GetHankakuHeight() + minMargin );
-	}
-	int nOrgHeight = GetHankakuHeight();
+	m_nCharWidth = (sz.cx / 26 + 1) / 2;
 	if( nLineSpace < 0 ){
 		// マイナスの場合は文字の高さも引く
-		SetHankakuHeight( std::max(1, GetHankakuHeight() + nLineSpace) );
+		m_nCharHeight = std::max(1, static_cast<int>(sz.cy) + nLineSpace);
+	} else {
+		m_nCharHeight = sz.cy;
 	}
-	for( int i = 0; i < size; i++ ){
-		m_aFontHeightMargin[i] = tmAscentMaxHeight - tmAscent[i] + minMargin;
-	}
-	
-	// Dx/Dyも設定
-	SetHankakuDx( GetHankakuWidth() + nColmSpace );
-	SetHankakuDy( std::max(1, nOrgHeight + nLineSpace) );
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           設定                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-void CTextMetrics::SetHankakuWidth(int nHankakuWidth)
-{
-	m_nCharWidth=nHankakuWidth;
-}
-
-//! 半角文字の縦幅を設定。単位はピクセル。
-void CTextMetrics::SetHankakuHeight(int nHankakuHeight)
-{
-	m_nCharHeight=nHankakuHeight;
-}
-
-//!文字間隔基準設定。nDxBasisは半角文字の基準ピクセル幅。SetHankakuDx
-void CTextMetrics::SetHankakuDx(int nDxBasis)
-{
-	m_nDxBasis=nDxBasis;
-	for(int i=0;i<_countof(m_anHankakuDx);i++)m_anHankakuDx[i]=GetHankakuDx();
-	for(int i=0;i<_countof(m_anZenkakuDx);i++)m_anZenkakuDx[i]=GetZenkakuDx();
-}
-void CTextMetrics::SetHankakuDy(int nDyBasis)
-{
-	m_nDyBasis=nDyBasis;
+	m_nDxBasis = m_nCharWidth + nColmSpace;
+	std::fill(m_anHankakuDx.begin(), m_anHankakuDx.end(), m_nDxBasis);
+	m_nDyBasis = std::max(1, static_cast<int>(sz.cy) + nLineSpace);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -149,80 +72,53 @@ void CTextMetrics::SetHankakuDy(int nDyBasis)
 
 //! 指定した文字列により文字間隔配列を生成する。
 const int* CTextMetrics::GenerateDxArray(
-	std::vector<int>* vResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
+	std::vector<int>* pvResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
 	const wchar_t* pText,           //!< [in]  文字列
 	int nLength,                    //!< [in]  文字列長
 	int	nHankakuDx,					//!< [in]  半角文字の文字間隔
 	int	nTabSpace,					//   [in]  TAB幅(CLayoutXInt)
 	int	nIndent,					//   [in]  インデント(TAB対応用)(CLayoutXInt)
-	int nCharSpacing				//!< [in]  文字隙間
+	int nCharSpacing,				//!< [in]  文字隙間
+	CCharWidthCache& cache
 )
 {
-	vResultArray->resize(nLength);
-	if(!pText || nLength<=0)return NULL;
+	if(!pText || nLength<=0)return nullptr;
+	std::vector<int>& vResultArray = *pvResultArray;
+	vResultArray.clear();
 
-	int* p=&(*vResultArray)[0];
-	int	 nLayoutCnt = nIndent;
-	const wchar_t* x=pText;
-	for (int i=0; i<nLength; i++, p++, x++) {
-		// サロゲートチェック
-		if (*x == WCODE::TAB) {
+	for (int i = 0; i < nLength; ++i) {
+		if (pText[i] == WCODE::TAB) {
 			// TAB対応	2013/5/7 Uchi
-			if (i > 0 && *(x-1) == WCODE::TAB) {
-				*p = nTabSpace;
-				nLayoutCnt += *p;
+			if (i > 0 && pText[i - 1] == WCODE::TAB) {
+				vResultArray.push_back(nTabSpace);
+				nIndent += nTabSpace;
+				continue;
 			}
-			else {
-				*p = (nTabSpace + nHankakuDx - 1) - ((nLayoutCnt + nHankakuDx - 1) % nTabSpace);
-				nLayoutCnt += *p;
-			}
-		}else
-		if(IsUTF16High(*x)){
-			if(i+1 < nLength && IsUTF16Low(x[1])){
-				int n = 0;
-				if(nCharSpacing){
-					n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
-				}
-				*p = WCODE::CalcPxWidthByFont2(x) + n;
-				p++;
-				x++;
-				i++;
-				*p = 0;
-			}else{
-				int n = 0;
-				if(nCharSpacing){
-					n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
-				}
-				*p = WCODE::CalcPxWidthByFont(*x) + n;
-				nLayoutCnt += *p;
-			}
-		}else{
-			int n = 0;
-			if(nCharSpacing){
-				n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
-			}
-			*p = WCODE::CalcPxWidthByFont(*x) + n;
-			nLayoutCnt += *p;
+			vResultArray.push_back((nTabSpace + nHankakuDx - 1) - ((nIndent + nHankakuDx - 1) % nTabSpace));
+			nIndent += vResultArray.back();
+			continue;
 		}
-	}
 
-	if(vResultArray->size())
-		return &(*vResultArray)[0];
-	else
-		return NULL;
+		const int spacing = CNativeW::GetKetaOfChar(pText, nLength, i, cache) * nCharSpacing;
+		if(IsUTF16High(pText[i]) && i + 1 < nLength && IsUTF16Low(pText[i + 1])) {
+			vResultArray.push_back(cache.CalcPxWidthByFont2(pText + i) + spacing);
+			vResultArray.push_back(0);
+			i++;
+			continue;
+		}
+		vResultArray.push_back(cache.CalcPxWidthByFont(pText[i]) + spacing);
+		nIndent += vResultArray.back();
+	}
+	return vResultArray.data();
 }
 
 //!文字列のピクセル幅を返す。
 int CTextMetrics::CalcTextWidth(
-	const wchar_t* pText, //!< 文字列
+	const wchar_t*, //!< 文字列
 	int nLength,          //!< 文字列長
 	const int* pnDx       //!< 文字間隔の入った配列
 )
 {
-	//ANSI時代の動作 ※pnDxにはすべて同じ値が入っていた
-	//return pnDx[0] * nLength;
-
-	//UNICODE時代の動作
 	int w=0;
 	for(int i=0;i<nLength;i++){
 		w+=pnDx[i];
@@ -235,11 +131,11 @@ int CTextMetrics::CalcTextWidth2(
 	const wchar_t* pText, //!< 文字列
 	int nLength,          //!< 文字列長
 	int nHankakuDx,       //!< 半角文字の文字間隔
-	int nCharSpacing      //!< 文字の隙間
+	int nCharSpacing,     //!< 文字の隙間
+	std::vector<int>& vDxArray, //!< [out] 文字間隔配列
+	CCharWidthCache& cache
 )
 {
-	//文字間隔配列を生成
-	vector<int> vDxArray;
 	const int* pDxArray = CTextMetrics::GenerateDxArray(
 		&vDxArray,
 		pText,
@@ -247,7 +143,8 @@ int CTextMetrics::CalcTextWidth2(
 		nHankakuDx,
 		8,
 		0,
-		nCharSpacing
+		nCharSpacing,
+		cache
 	);
 
 	//ピクセル幅を計算
@@ -256,8 +153,10 @@ int CTextMetrics::CalcTextWidth2(
 
 int CTextMetrics::CalcTextWidth3(
 	const wchar_t* pText, //!< 文字列
-	int nLength          //!< 文字列長
+	int nLength,          //!< 文字列長
+	CCharWidthCache& cache
 ) const
 {
-	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetCharSpacing());
+	static std::vector<int> dxArray;
+	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetHankakuDx() - GetHankakuWidth(), dxArray, cache);
 }

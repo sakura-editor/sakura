@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_COUTLINEIFOBJ_F8D635A3_FB5F_4619_95B8_BE6A557A518C_H_
+#define SAKURA_COUTLINEIFOBJ_F8D635A3_FB5F_4619_95B8_BE6A557A518C_H_
 #pragma once
 
 #include "macro/CWSHIfObj.h"
@@ -167,3 +170,4 @@ MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] =
 	//	終端
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
+#endif /* SAKURA_COUTLINEIFOBJ_F8D635A3_FB5F_4619_95B8_BE6A557A518C_H_ */

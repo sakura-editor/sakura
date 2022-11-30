@@ -15,6 +15,7 @@
 	Copyright (C) 2003, Moca, ryoji, genta, かろと
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, ryoji, かろと
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -26,7 +27,7 @@
 #include <io.h>
 #include <list>
 #include "CDocLineMgr.h"
-#include "CDocLine.h"// 2002/2/10 aroka ヘッダ整理
+#include "CDocLine.h"// 2002/2/10 aroka ヘッダー整理
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
@@ -161,7 +162,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	  || m_nLines - nLine < nPrevToLineNumDiff
 	){
 		if( m_pCodePrevRefer == NULL ){
-			MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL" );
+			MY_RUNNINGTIMER( cRunningTimer, L"CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL" );
 		}
 
 		if( nLine < (m_nLines / 2) ){

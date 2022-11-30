@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief MRUリストと呼ばれるリストを管理する。フォルダ版。
+	@brief MRUリストと呼ばれるリストを管理する。フォルダー版。
 
 	@author YAZAKI
 	@date 2001/12/23  新規作成
@@ -9,6 +9,7 @@
 	Copyright (C) 2000, jepro
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2003, MIK
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -31,6 +32,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMRUFOLDER_32D69CDD_037F_4DE1_961E_B730F56F4189_H_
+#define SAKURA_CMRUFOLDER_32D69CDD_037F_4DE1_961E_B730F56F4189_H_
 #pragma once
 
 #include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
@@ -40,9 +43,15 @@ class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRUFolder {
+	using Me = CMRUFolder;
+
 public:
 	//	コンストラクタ
 	CMRUFolder();
+	CMRUFolder(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CMRUFolder(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CMRUFolder();
 
 	//	メニューを取得する
@@ -50,7 +59,7 @@ public:
 	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
 	BOOL DestroyMenu( HMENU hMenu ) const;
 	
-	//	フォルダ名の一覧を教えて
+	//	フォルダー名の一覧を教えて
 	std::vector<LPCWSTR> GetPathList() const;
 
 	//	アクセス関数
@@ -67,3 +76,4 @@ protected:
 private:
 	CRecentFolder	m_cRecentFolder;	//履歴	//@@@ 2003.04.08 MIK
 };
+#endif /* SAKURA_CMRUFOLDER_32D69CDD_037F_4DE1_961E_B730F56F4189_H_ */

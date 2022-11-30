@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_
+#define SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -34,15 +37,15 @@ class CGrepEnumFolders;
 
 struct SGrepOption{
 	bool		bGrepReplace;			//!< Grep置換
-	bool		bGrepSubFolder;			//!< サブフォルダからも検索する
+	bool		bGrepSubFolder;			//!< サブフォルダーからも検索する
 	bool		bGrepStdout;			//!< 標準出力モード
-	bool		bGrepHeader;			//!< ヘッダ・フッダ表示
+	bool		bGrepHeader;			//!< ヘッダー・フッター表示
 	ECodeType	nGrepCharSet;			//!< 文字コードセット選択
 	int			nGrepOutputLineType;	//!< 0:ヒット部分を出力, 1: ヒット行を出力, 2: 否ヒット行を出力
 	int			nGrepOutputStyle;		//!< 出力形式 1: Normal, 2: WZ風(ファイル単位) 3: 結果のみ
 	bool		bGrepOutputFileOnly;	//!< ファイル毎最初のみ検索
-	bool		bGrepOutputBaseFolder;	//!< ベースフォルダ表示
-	bool		bGrepSeparateFolder;	//!< フォルダ毎に表示
+	bool		bGrepOutputBaseFolder;	//!< ベースフォルダー表示
+	bool		bGrepSeparateFolder;	//!< フォルダー毎に表示
 	bool		bGrepPaste;				//!< Grep置換：クリップボードから貼り付ける
 	bool		bGrepBackup;			//!< Grep置換：バックアップ
 
@@ -93,8 +96,8 @@ public:
 		int						nGrepOutputLineType,
 		int						nGrepOutputStyle,
 		bool					bGrepOutputFileOnly,	//!< [in] ファイル毎最初のみ出力
-		bool					bGrepOutputBaseFolder,	//!< [in] ベースフォルダ表示
-		bool					bGrepSeparateFolder,	//!< [in] フォルダ毎に表示
+		bool					bGrepOutputBaseFolder,	//!< [in] ベースフォルダー表示
+		bool					bGrepSeparateFolder,	//!< [in] フォルダー毎に表示
 		bool					bGrepPaste,
 		bool					bGrepBackup
 	);
@@ -126,6 +129,7 @@ private:
 	int DoGrepFile(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,
+		HWND					hWndTarget,
 		const wchar_t*			pszKey,
 		const WCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,
@@ -192,3 +196,4 @@ public: //$$ 仮
 	bool	m_bGrepMode;		//!< Grepモードか
 	bool	m_bGrepRunning;		//!< Grep処理中
 };
+#endif /* SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_ */

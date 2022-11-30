@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,13 +31,15 @@
 #include "charset/CCodeMediator.h"
 #include "io/CFileLoad.h"
 #include "util/window.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*!
 	ファイルを読み込んで格納する（分割読み込みテスト版）
 	@version	2.0
 	@note	Windows用にコーディングしてある
 	@retval	TRUE	正常読み込み
-	@retval	FALSE	エラー(またはユーザによるキャンセル?)
+	@retval	FALSE	エラー(またはユーザーによるキャンセル?)
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
 	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
@@ -130,7 +133,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		// ファイルをクローズする
 		cfl.FileClose();
 	}
-	catch(CAppExitException){
+	catch(const CAppExitException&){
 		//WM_QUITが発生した
 		return RESULT_FAILURE;
 	}
@@ -168,7 +171,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			 );
 		}
 	}
-	catch( CError_FileRead ){
+	catch( const CError_FileRead& ){
 		eRet = RESULT_FAILURE;
 		ErrorMessage(
 			CEditWnd::getInstance()->GetHwnd(),

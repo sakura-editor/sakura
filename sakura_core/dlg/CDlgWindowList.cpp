@@ -13,6 +13,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2015, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,8 +24,16 @@
 #include "Funccode_enum.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdApi.h"
+#include "debug/Debug2.h"
+#include "util/string_ex.h"
+#include "env/CAppNodeManager.h"
+#include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+
+struct EditInfo;
 
 const DWORD p_helpids[] = {
 	IDC_LIST_WINDOW,			HIDC_WINLIST_LIST_WINDOW,
@@ -143,7 +152,7 @@ void CDlgWindowList::SetData()
 			::SendMessageAny(pEditNode[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0);
 			const EditInfo* pEditInfo = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-			WCHAR szName[_MAX_PATH];
+			WCHAR szName[512];
 			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szName, _countof(szName), pEditInfo, pEditNode[i].m_nId, i, calc.GetDC());
 
 			LV_ITEM lvi;
@@ -227,11 +236,20 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	return CDialog::OnInitDialog(hwndDlg, wParam, lParam);
 }
 
+BOOL CDlgWindowList::OnDestroy( void )
+{
+	CDialog::OnDestroy();
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
+	rect.left = m_xPos;
+	rect.top = m_yPos;
+	rect.right = rect.left + m_nWidth;
+	rect.bottom = rect.top + m_nHeight;
+	return TRUE;
+}
+
 BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 {
 	CDialog::OnSize(wParam, lParam);
-
-	::GetWindowRect(GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog);
 
 	RECT  rc;
 	POINT ptNew;
@@ -244,13 +262,6 @@ BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 	}
 	::InvalidateRect(GetHwnd(), NULL, TRUE);
 	return TRUE;
-}
-
-BOOL CDlgWindowList::OnMove(WPARAM wParam, LPARAM lParam)
-{
-	::GetWindowRect(GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog);
-	
-	return CDialog::OnMove(wParam, lParam);
 }
 
 BOOL CDlgWindowList::OnMinMaxInfo(LPARAM lParam)

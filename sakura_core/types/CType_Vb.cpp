@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,7 +33,7 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* Visual Basic */
-//JUl. 10, 2001 JEPRO VB   ユーザに贈る
+//JUl. 10, 2001 JEPRO VB   ユーザーに贈る
 //Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加 // Feb. 19, 2006 genta .vb追加
 void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 {

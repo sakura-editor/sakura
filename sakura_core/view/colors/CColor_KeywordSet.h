@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOLOR_KEYWORDSET_AAB04E86_EB95_447C_B07B_AB44395B2F7F_H_
+#define SAKURA_CCOLOR_KEYWORDSET_AAB04E86_EB95_447C_B07B_AB44395B2F7F_H_
 #pragma once
 
 #include "view/colors/CColorStrategy.h"
@@ -38,3 +41,4 @@ private:
 	int m_nKeywordIndex;
 	int m_nCOMMENTEND;
 };
+#endif /* SAKURA_CCOLOR_KEYWORDSET_AAB04E86_EB95_447C_B07B_AB44395B2F7F_H_ */

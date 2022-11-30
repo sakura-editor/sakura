@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCESU8_25BC6708_E05F_44A8_936C_8C2FE260AA72_H_
+#define SAKURA_CCESU8_25BC6708_E05F_44A8_936C_8C2FE260AA72_H_
 #pragma once
 
 #include "CCodeBase.h"
@@ -37,9 +40,8 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return CUtf8::UnicodeToCESU8(cSrc, pDst);
 	}
-	void GetBom(CMemory* pcmemBom) override;																			//!< BOMデータ取得
-// GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar){			//!< UNICODE → Hex 変換
 		return CUtf8()._UnicodeToHex( cSrc, iSLen, pDst, psStatusbar, true );
 	}
 };
+#endif /* SAKURA_CCESU8_25BC6708_E05F_44A8_936C_8C2FE260AA72_H_ */

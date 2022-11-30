@@ -9,6 +9,7 @@
 	Copyright (C) 2011, syat
 	Copyright (C) 2012, syat, Uchi
 	Copyright (C) 2013, Moca, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -38,6 +39,9 @@
 #include "recent/CRecentEditNode.h"
 #include "util/window.h"
 #include "_main/CMutex.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -173,11 +177,11 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 		}
 
 		/* ウィンドウ連番 */
-
-		if( 0 == ::GetWindowLongPtr( hWnd, sizeof(LONG_PTR) ) )
+		constexpr auto MY_GWLP_SEQUENCE = sizeof(LONG_PTR) * 0; // 1個目の拡張領域。
+		if( 0 == ::GetWindowLongPtr( hWnd, MY_GWLP_SEQUENCE ) )
 		{
 			pShare->m_sNodes.m_nSequences++;
-			::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)pShare->m_sNodes.m_nSequences );
+			::SetWindowLongPtr( hWnd, MY_GWLP_SEQUENCE, (LONG_PTR)pShare->m_sNodes.m_nSequences );
 
 			//連番を更新する。
 			sMyEditNode.m_nIndex = pShare->m_sNodes.m_nSequences;

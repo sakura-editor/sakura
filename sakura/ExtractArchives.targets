@@ -1,0 +1,92 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="ExtractArchives">
+    <BregOnigArchive>$(SolutionDir)installer\externals\bregonig\bron420.zip</BregOnigArchive>
+    <BregOnigInternalPath Condition="'$(Platform)' == 'x64'"  >x64/bregonig.dll</BregOnigInternalPath>
+    <BregOnigInternalPath Condition="'$(Platform)' == 'Win32'">bregonig.dll</BregOnigInternalPath>
+    <BregOnigOutPath>$(OutDir)bregonig.dll</BregOnigOutPath>
+    <CtagsArchive Condition="'$(Platform)' == 'x64'"  >$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip</CtagsArchive>
+    <CtagsArchive Condition="'$(Platform)' == 'Win32'">$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip</CtagsArchive>
+    <CtagsInternalPath>ctags.exe</CtagsInternalPath>
+    <CtagsOutPath>$(OutDir)ctags.exe</CtagsOutPath>
+  </PropertyGroup>
+  <UsingTask TaskName="ExtractArchive" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ArchivePath ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <Output ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <InternalPath Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Diagnostics" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+Process p;
+string args;
+
+ProcessStartInfo psInfo = new ProcessStartInfo();
+psInfo.CreateNoWindow = true;
+psInfo.UseShellExecute = false;
+psInfo.RedirectStandardOutput = true;
+
+string outputTimestamp = null;
+string sourceTimestamp = null;
+
+if (File.Exists(Output.ToString())) {
+  args = "((Get-ItemPropertyValue -Path '" + Output.ToString() + "' -name LastWriteTime).ToString('u'))";
+  psInfo.FileName = "powershell";
+  psInfo.Arguments = "-NoLogo -ExecutionPolicy RemoteSigned -Command " + args;
+
+  Log.LogMessage(MessageImportance.Low, args);
+  p = Process.Start(psInfo);
+  
+  outputTimestamp = p.StandardOutput.ReadToEnd();
+  p.Dispose();
+  p = null;
+
+  if (!string.IsNullOrEmpty(outputTimestamp)) {
+    args = "(((7z l '" + ArchivePath.ToString() + "' " + InternalPath + " | Select-String " + InternalPath + ").ToString().SubString(0, 19) | Get-Date).ToString('u'))";
+    psInfo.Arguments = "-NoLogo -ExecutionPolicy RemoteSigned -Command " + args;
+
+    Log.LogMessage(MessageImportance.Low, args);
+    p = Process.Start(psInfo);
+
+    sourceTimestamp = p.StandardOutput.ReadToEnd();
+    p.Dispose();
+    p = null;
+  }
+}
+
+if (string.IsNullOrEmpty(outputTimestamp) ||
+    string.IsNullOrEmpty(sourceTimestamp) ||
+    outputTimestamp != sourceTimestamp)
+{
+  args = "7z e \"" + ArchivePath.ToString() + "\" -o\"" + Path.GetDirectoryName(Output.ToString()) + "\" -y " + InternalPath;
+  psInfo.FileName = "cmd";
+  psInfo.Arguments = "/c " + args;
+
+  Log.LogMessage(MessageImportance.Normal, args);
+  p = Process.Start(psInfo);
+
+  Log.LogMessage(MessageImportance.Low, p.StandardOutput.ReadToEnd());
+}
+]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="ExtractBregOnig" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus">
+    <ExtractArchive
+      ArchivePath="$(BregOnigArchive)"
+      InternalPath="$(BregOnigInternalPath)"
+      Output="$(BregOnigOutPath)" />
+  </Target>
+  <Target Name="ExtractCtags" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus">
+    <ExtractArchive
+      ArchivePath="$(CtagsArchive)"
+      InternalPath="$(CtagsInternalPath)"
+      Output="$(CtagsOutPath)" />
+  </Target>
+  <Target Name="AppendCleanTargetsForExtractedFiles" BeforeTargets="CoreClean">
+    <ItemGroup>
+      <Clean Include="$(BregOnigOutPath)" />
+      <Clean Include="$(CtagsOutPath)" />
+    </ItemGroup>
+  </Target>
+</Project>

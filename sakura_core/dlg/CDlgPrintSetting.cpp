@@ -12,6 +12,7 @@
 	Copyright (C) 2002, MIK, aroka, YAZAKI
 	Copyright (C) 2003, かろと
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -40,8 +41,12 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "util/string_ex.h"
 #include "sakura_rc.h"	// 2002/2/10 aroka
 #include "sakura.hh"
+#include "String_define.h"
 
 // 印刷設定 CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12500
@@ -144,7 +149,7 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 {
 	_SetHwnd( hwndDlg );
 
-	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_SETTINGNAME ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_HAN ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_ZEN ), TRUE );
@@ -155,13 +160,6 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	//	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
 	//UpdatePrintableLineAndColumn();
 
-	// ダイアログのフォントの取得
-	m_hFontDlg = (HFONT)::SendMessage( GetHwnd(), WM_GETFONT, 0, 0 );	// ダイアログのフォント
-	LOGFONT	lf;
-	::GetObject(m_hFontDlg, sizeof(LOGFONT), &lf);
-	m_nFontHeight = lf.lfHeight;		// フォントサイズ
-
-	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
@@ -172,11 +170,11 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 	// フォントの破棄
 	HFONT	hFontOld;
 	hFontOld = (HFONT)::SendMessage(GetItemHwnd( IDC_STATIC_FONT_HEAD ), WM_GETFONT, 0, 0 );
-	if (m_hFontDlg != hFontOld) {
+	if (GetDialogFont() != hFontOld) {
 		::DeleteObject( hFontOld );
 	}
 	hFontOld = (HFONT)::SendMessage(GetItemHwnd( IDC_STATIC_FONT_FOOT ), WM_GETFONT, 0, 0 );
-	if (m_hFontDlg != hFontOld) {
+	if (GetDialogFont() != hFontOld) {
 		::DeleteObject( hFontOld );
 	}
 
@@ -186,7 +184,6 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 
 BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
 {
-	CDlgInput1		cDlgInput1;
 	NM_UPDOWN*		pMNUD;
 	int				idCtrl;
 	BOOL			bSpinDown;
@@ -636,11 +633,11 @@ int CDlgPrintSetting::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
-	// ヘッダフォント
+	// ヘッダーフォント
 	if (!IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_USE_FONT_HEAD )) {
 		memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader, 0, sizeof(LOGFONT) );
 	}
-	// フッタフォント
+	// フッターフォント
 	if (!IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_USE_FONT_FOOT )) {
 		memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter, 0, sizeof(LOGFONT) );
 	}
@@ -736,11 +733,11 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100文字で制限しないと。。。
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100文字で制限しないと。。。
 
-	// ヘッダフォント
+	// ヘッダーフォント
 	SetFontName( IDC_STATIC_FONT_HEAD, IDC_CHECK_USE_FONT_HEAD,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nHeaderPointSize );
-	// フッタフォント
+	// フッターフォント
 	SetFontName( IDC_STATIC_FONT_FOOT, IDC_CHECK_USE_FONT_FOOT,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nFooterPointSize );
@@ -901,19 +898,22 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 	CheckDlgButtonBool( GetHwnd(), idUse, bUseFont);
 	::EnableWindow( GetItemHwnd( idUse ), bUseFont );
 	if (bUseFont) {
-		LOGFONT	lft;
-		lft = lf;
-		lft.lfHeight = m_nFontHeight;		// フォントサイズをダイアログに合せる
+		// サイズだけはダイアログフォントに合わせ
+		// それ以外は引数lfで指定された設定を採用
+		LOGFONT	lfCreate = lf;
+		LOGFONT	lfDialogFont = {};
+		::GetObject( GetDialogFont(), sizeof(LOGFONT), &lfDialogFont );
+		lfCreate.lfHeight = lfDialogFont.lfHeight;
 
 		HFONT	hFontOld = (HFONT)::SendMessage(GetItemHwnd( idTxt ), WM_GETFONT, 0, 0 );
 
 		// 論理フォントを作成
-		HFONT	hFont = ::CreateFontIndirect( &lft );
+		HFONT	hFont = ::CreateFontIndirect( &lfCreate );
 		if (hFont) {
 			// フォントの設定
 			::SendMessage( GetItemHwnd( idTxt ), WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
 		}
-		if (m_hFontDlg != hFontOld) {
+		if (GetDialogFont() != hFontOld) {
 			// 古いフォントの破棄
 			::DeleteObject( hFontOld );
 		}

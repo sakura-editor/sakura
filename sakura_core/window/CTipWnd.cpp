@@ -10,6 +10,7 @@
 	Copyright (C) 2002, GAE
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2006, ryoji, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,6 +24,14 @@
 
 // ダミー文字列
 static constexpr WCHAR szDummy[] = { L" " };
+
+/* Tipの内容データを設定するためにエスケープ解除を行う */
+const WCHAR* UnEscapeInfoText( CNativeW& cInfo )
+{
+	cInfo.Replace( L"\\n", L"\n" );
+	cInfo.Replace( L"\\x5C", L"\\" );
+	return cInfo.GetStringPtr();
+}
 
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
@@ -86,26 +95,11 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	return;
 }
 
-/*!	CreateWindowの後
-
-	CWnd::AfterCreateWindowでウィンドウを表示するようになっているのを
-	動かなくするための空関数
-
-	@date 2006.01.09 genta 新規作成
-*/
-void CTipWnd::AfterCreateWindow( void )
-{
-}
-
 /* Tipを表示 */
-void CTipWnd::Show( int nX, int nY, const WCHAR* szText, RECT* pRect )
+void CTipWnd::Show( int nX, int nY, RECT* pRect )
 {
 	HDC		hdc;
 	RECT	rc;
-
-	if( NULL != szText ){
-		m_cInfo.SetString( szText );
-	}
 
 	hdc = ::GetDC( GetHwnd() );
 
@@ -166,7 +160,7 @@ void CTipWnd::ComputeWindowSize(
 		const bool isEndOfText = ( pszText[i] == '\0' );
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( isEndOfText
-			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
+			|| pszText[i] == '\n' ) {
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列がブランクでない場合
@@ -175,7 +169,7 @@ void CTipWnd::ComputeWindowSize(
 				rc.SetXYWH( 0, 0, cxScreen, 0 );
 
 				// テキスト描画に必要な矩形を計測する
-				::DrawText( hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
+				::DrawText( hdc, &pszText[nLineBgn], static_cast<int>(i - nLineBgn), &rc,
 					DT_CALCRECT | DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
 
@@ -185,7 +179,7 @@ void CTipWnd::ComputeWindowSize(
 				}
 			}else{
 				// ダミー文字列を計測して必要な高さを取得する
-				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT );
+				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT | DT_EXTERNALLEADING );
 			}
 
 			// 計測した高さを加算する
@@ -197,7 +191,7 @@ void CTipWnd::ComputeWindowSize(
 			}
 
 			// 次の行の開始位置を設定する
-			nLineBgn = i + 2; // "\\n" の文字数
+			nLineBgn = i + 1; // "\n" の文字数
 			i = nLineBgn;
 		}else{
 			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
@@ -247,17 +241,17 @@ void CTipWnd::DrawTipText(
 		const bool isEndOfText = ( pszText[i] == '\0' );
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( isEndOfText
-			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
+			|| pszText[i] == '\n' ) {
 			int nHeight;
 			// 計測対象の文字列がブランクでない場合
 			if ( 0 < i - nLineBgn ) {
 				// 指定されたテキストを描画する
-				nHeight = ::DrawText( hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
+				nHeight = ::DrawText( hdc, &pszText[nLineBgn], static_cast<int>(i - nLineBgn), &rc,
 					DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
 			}else{
 				// ダミー文字列の高さを取得する
-				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_CALCRECT );
+				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_EXTERNALLEADING );
 			}
 
 			// 描画領域の上端を1行分ずらす
@@ -269,7 +263,7 @@ void CTipWnd::DrawTipText(
 			}
 
 			// 次の行の開始位置を設定する
-			nLineBgn = i + 2; // "\\n" の文字数
+			nLineBgn = i + 1; // "\n" の文字数
 			i = nLineBgn;
 		}else{
 			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める

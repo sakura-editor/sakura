@@ -6,12 +6,15 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "dlg/CDlgCancel.h"
+
+#include "apiwrap/StdApi.h"
 
 CDlgCancel::CDlgCancel()
 {

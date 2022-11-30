@@ -1,42 +1,36 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "debug/Debug2.h"
 
-//2007.08.30 kobake 追加
-
-#ifdef _DEBUG
-//!デバッグメッセージ出力
-void debug_output(const char* str, ...)
-{
-	char buf[_MAX_PATH+150];
-	va_list mark;
-	va_start(mark,str);
-	// FILE名, LINE 式 分必要
-	tchar_vsnprintf_s(buf,_countof(buf),str,mark);
-	va_end(mark);
-
-	//デバッガに出力
-	OutputDebugStringA(buf);
-}
-
-//!強制終了
 void debug_exit()
 {
-	MessageBox(NULL,L"assertとかに引っ掛かったぽいです",GSTR_APPNAME,MB_OK);
-	exit(1);
-}
-
-void debug_exit2(const char* file, int line, const char* exp)
-{
-	char szBuffer[1024];
-	wsprintfA(szBuffer, "assert\n%s(%d):\n%s", file, line, exp);
-	MessageBoxA(NULL, szBuffer , "sakura", MB_OK);
-	exit(1);
+	::exit( 1 );
 }
 
 void warning_point()
 {
-	int n;
-	n=0; //※←ここにブレークポイントを設けておくと、任意ワーニングでブレークできる
+	::DebugBreak();
 }
-#endif	// _DEBUG

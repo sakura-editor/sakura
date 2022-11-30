@@ -5,7 +5,7 @@
 */
 
 /*
-	Copyright (C)
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,6 +33,7 @@
 #include "charset/charcode.h"
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
+#include "mem/CNativeW.h"
 
 /* Base64デコード */
 bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )

@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,6 +34,7 @@
 #include "CDlgKeywordSelect.h"
 #include "env/DLLSHAREDATA.h"
 #include "CKeyWordSetMgr.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

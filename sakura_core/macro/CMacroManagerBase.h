@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2002, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_
+#define SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_
 #pragma once
 
 #include <Windows.h>
@@ -97,3 +100,4 @@ public:
 	// Constructor
 	CMacroManagerBase();
 };
+#endif /* SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_ */

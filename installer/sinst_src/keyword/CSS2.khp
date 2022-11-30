@@ -100,7 +100,7 @@ position /// 対象が生成するボックスの位置の計算方法を指定\
 quotes /// 引用符のレンダリング方法を指定\n 引用符を挿入するかどうかは'content'で指定\n quotes: [<string> <string>]+ | none | inherit
 richness /// 話し声の豊かさを指定\n richness: <number>(0～100) | inherit
 right /// 'position'の値がstatic以外の場合に指定可能\n ボックスの包含ブロックに対するオフセット値を指定\n right: <length> | percentage | auto | inherit
-speak-header /// 表のヘッダの音声読み上げ方法を指定\n speak-header: once | always | inherit
+speak-header /// 表のヘッダーの音声読み上げ方法を指定\n speak-header: once | always | inherit
 speak-numeral /// 数字の読み方を指定\n speak-numeral: digits | continuous | inherit
 speak-punctuation /// 区切り文字の読み方を指定\n speak-punctuation: code | none | inherit
 speak /// テキストを音声出力するか、するならばどのような方式かを指定\n speak: normal | none | spell-out | inherit

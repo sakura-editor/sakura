@@ -14,6 +14,7 @@
 	Copyright (C) 2007, genta, ryoji
 	Copyright (C) 2010, Uchi
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -36,6 +37,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CPROPCOMMON_82053028_AB71_4E4C_AE50_0E46E173828C_H_
+#define SAKURA_CPROPCOMMON_82053028_AB71_4E4C_AE50_0E46E173828C_H_
 #pragma once
 
 #include "func/CFuncLookup.h"
@@ -541,3 +544,4 @@ private:
 	bool Check_MainMenu(HWND hwndTree, std::wstring& sErrMsg);						// メニューの検査
 	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, std::wstring& sErrMsg);	// メニューの検査
 };
+#endif /* SAKURA_CPROPCOMMON_82053028_AB71_4E4C_AE50_0E46E173828C_H_ */

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTFILE_11698DF0_9914_4163_8A68_8E611163D2E9_H_
+#define SAKURA_CRECENTFILE_11698DF0_9914_4163_8A68_8E611163D2E9_H_
 #pragma once
 
 #include "CRecentImp.h"
@@ -44,3 +47,4 @@ public:
 	//固有インターフェース
 	int FindItemByPath(const WCHAR* pszPath) const;
 };
+#endif /* SAKURA_CRECENTFILE_11698DF0_9914_4163_8A68_8E611163D2E9_H_ */

@@ -8,6 +8,7 @@
 */
 /*
 	Copyright (C) 2002, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,7 +33,10 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgFileUpdateQuery.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam )
 {

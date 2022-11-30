@@ -15,15 +15,6 @@ jobs:
   strategy:
     maxParallel: 4
     matrix:
-      Win32_Debug:
-        BuildPlatform: 'Win32'
-        Configuration: 'Debug'
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
-      Win64_Debug:
-        BuildPlatform: 'x64'
-        Configuration: 'Debug'
       Win64_Release:
         BuildPlatform: 'x64'
         Configuration: 'Release'
@@ -45,6 +36,12 @@ jobs:
   steps:
   - script: choco install "msbuild-sonarqube-runner" -y
     displayName: install msbuild-sonarqube-runner
+
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '11'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
 
   # Build solution with SonarQube
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)

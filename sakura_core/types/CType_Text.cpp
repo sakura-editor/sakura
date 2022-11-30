@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,6 +33,8 @@
 #include "outline/CFuncInfo.h"
 #include "outline/CFuncInfoArr.h"
 #include "view/colors/EColorIndexType.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /* テキスト */
 //Sep. 20, 2000 JEPRO テキストの規定値を80→120に変更(不具合一覧.txtがある程度読みやすい桁数)
@@ -61,7 +64,7 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 
 	//※小さな親切として、C:\～～ や \\～～ などのファイルパスをクリッカブルにする設定を「テキスト」に既定で仕込む
 	//※""で挟まれる設定は挟まれない設定よりも上に無ければならない
-	//※""で挟まれる設定を複製してちょっと修正すれば、<>や[]に挟まれたものにも対応できる（ユーザに任せる）
+	//※""で挟まれる設定を複製してちょっと修正すれば、<>や[]に挟まれたものにも対応できる（ユーザーに任せる）
 
 	//正規表現キーワード
 	int keywordPos = 0;
@@ -96,7 +99,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	const wchar_t*	pszStarts = GetDllShareData().m_Common.m_sFormat.m_szMidashiKigou;
 	int				nStartsLen = wcslen( pszStarts );
 
-	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
+	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダーは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）
 	*/
 	const int nMaxStack = 32;	//	ネストの最深

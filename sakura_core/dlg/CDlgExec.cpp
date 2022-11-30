@@ -11,6 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, maru
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,8 +25,11 @@
 #include "util/window.h"
 #include "_main/CAppMode.h"
 #include "doc/CEditDoc.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12100
@@ -81,13 +85,8 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	}
 
 	BOOL bRet = CDialog::OnInitDialog(hwnd, wParam, lParam);
-
-	m_comboDel = SComboBoxItemDeleter();
-	m_comboDel.pRecent = &m_cRecentCmd;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_m_szCommand), &m_comboDel);
-	m_comboDelCur = SComboBoxItemDeleter();
-	m_comboDelCur.pRecent = &m_cRecentCur;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_CUR_DIR), &m_comboDelCur);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_m_szCommand), &m_cRecentCmd);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_CUR_DIR), &m_cRecentCur);
 	return bRet;
 }
 
@@ -104,7 +103,7 @@ void CDlgExec::SetData( void )
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
-	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_m_szCommand ), TRUE );
 
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
@@ -134,29 +133,34 @@ void CDlgExec::SetData( void )
 	/*****************************
 	*         データ設定         *
 	*****************************/
-	wcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
 	hwndCombo = GetItemHwnd( IDC_COMBO_m_szCommand );
 	Combo_ResetContent( hwndCombo );
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
-	int nSize = m_pShareData->m_sHistory.m_aCommands.size();
-	for( i = 0; i < nSize; ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
+	const int nCommandsCount = m_pShareData->m_sHistory.m_aCommands.size();
+	if( 0 < nCommandsCount ){
+		wcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
+		for( i = 0; i < nCommandsCount; ++i ){
+			Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
+		}
+		Combo_SetCurSel( hwndCombo, 0 );
 	}
-	Combo_SetCurSel( hwndCombo, 0 );
 
-	wcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
 	hwndCombo = GetItemHwnd( IDC_COMBO_CUR_DIR );
 	Combo_ResetContent( hwndCombo );
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
-	for( i = 0; i < m_pShareData->m_sHistory.m_aCurDirs.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
+	const int nCurDirsCount = m_pShareData->m_sHistory.m_aCurDirs.size();
+	if( 0 < nCurDirsCount ){
+		wcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
+		for( i = 0; i < nCurDirsCount; ++i ){
+			Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
+		}
+		Combo_SetCurSel( hwndCombo, 0 );
 	}
-	Combo_SetCurSel( hwndCombo, 0 );
 	
 	int nOpt;
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x88;
-	for( i = 0; _countof(codeTable1); i++ ){
+	for( i = 0; i < _countof(codeTable1); i++ ){
 		if( codeTable1[i] == nOpt ){
 			Combo_SetCurSel( hwndCombo, i );
 			break;
@@ -164,7 +168,7 @@ void CDlgExec::SetData( void )
 	}
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x110;
-	for( i = 0; _countof(codeTable2); i++ ){
+	for( i = 0; i < _countof(codeTable2); i++ ){
 		if( codeTable2[i] == nOpt ){
 			Combo_SetCurSel( hwndCombo, i );
 			break;
@@ -258,7 +262,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 
 	case IDC_BUTTON_REFERENCE2:
 		{
-			if( SelectDir( GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0] ) ){
+			if( SelectDir( GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0], m_szCurDir.GetBufferCount() ) ){
 				::DlgItem_SetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0] );
 			}
 		}

@@ -5,7 +5,7 @@
 */
 
 /*
-	Copyright (C)
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,10 +27,15 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CONVERT_UTIL2_9F00219B_A2FC_4096_BB26_197A667DFD25_H_
+#define SAKURA_CONVERT_UTIL2_9F00219B_A2FC_4096_BB26_197A667DFD25_H_
 #pragma once
 
+#include "charset/charcode.h"
 #include "parse/CWordParse.h"
 #include "mem/CMemory.h"
+#include "util/string_ex.h"
+#include "charset/charset.h"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
@@ -722,3 +727,4 @@ finish_first_detect:;
 
 	return nskipped_len;
 }
+#endif /* SAKURA_CONVERT_UTIL2_9F00219B_A2FC_4096_BB26_197A667DFD25_H_ */

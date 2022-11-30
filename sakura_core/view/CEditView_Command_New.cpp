@@ -14,6 +14,7 @@
 	Copyright (C) 2006, genta, Moca, fon
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -25,7 +26,7 @@
 #include "charset/charcode.h"
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダー整理
 #include "doc/CDocReader.h"
 #include "doc/layout/CLayout.h"
 #include "doc/logic/CDocLine.h"
@@ -73,7 +74,7 @@ void CEditView::InsertData_CEditView(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::InsertData_CEditView" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::InsertData_CEditView" );
 #endif
 
 	//2007.10.18 kobake COpe処理をここにまとめる
@@ -115,11 +116,11 @@ void CEditView::InsertData_CEditView(
 			 || m_pTypeData->m_bKinsokuKuto );	//@@@ 2002.04.19 MIK
 
 	CLayoutInt	nLineAllColLen;
-	CLogicInt	nIdxFrom = CLogicInt(0);
 	CLayoutInt	nColumnFrom = ptInsertPos.GetX2();
 	CNativeW	cMem(L"");
 	COpeLineData insData;
 	if( pLine ){
+		CLogicInt	nIdxFrom = CLogicInt(0);
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
 		// ※挿入位置は行途中でも句読点入力＋ワードラップで前の文字列から続けて前行に回り込む場合もある
@@ -137,7 +138,7 @@ void CEditView::InsertData_CEditView(
 			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
 			// 終端直前から挿入位置まで空白を埋める為の処理
 			// 行終端が何らかの改行コードか?
-			if( EOL_NONE != pcLayout->GetLayoutEol() ){
+			if( pcLayout->GetLayoutEol().IsValid() ){
 				nIdxFrom = nLineLen - CLogicInt(1);
 				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen + 1)/ nSpWidth + nDataLen );
 				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen + 1; i += nSpWidth ){
@@ -166,7 +167,7 @@ void CEditView::InsertData_CEditView(
 	else{
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
-		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){	// 折り返しレイアウト行か？（前行の終端で調査）
+		if( pcLayoutWk && pcLayoutWk->GetLayoutEol().IsNone() && bKinsoku ){	// 折り返しレイアウト行か？（前行の終端で調査）
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 		if( 0 < ptInsertPos.GetX2() ){
@@ -243,7 +244,7 @@ void CEditView::InsertData_CEditView(
 
 	// 再描画
 	// 行番号表示に必要な幅を設定
-	if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
+	if( GetEditWnd().DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
 		// キャレットの表示・更新
 		GetCaret().ShowEditCaret();
 	}
@@ -312,14 +313,14 @@ void CEditView::InsertData_CEditView(
 			this->ReleaseDC( hdc );
 			// 2014.07.16 他のビュー(ミニマップ)の再描画を抑制する
 			if( 0 == nInsLineNum ){
-				for(int i = 0; i < m_pcEditWnd->GetAllViewCount(); i++ ){
-					CEditView* pcView = &m_pcEditWnd->GetView(i);
+				for(int i = 0; i < GetEditWnd().GetAllViewCount(); i++ ){
+					CEditView* pcView = &GetEditWnd().GetView(i);
 					if( pcView == this ){
 						continue;
 					}
 					pcView->RedrawLines(nLayoutTop, nLayoutBottom);
 				}
-				m_pcEditWnd->GetMiniMap().RedrawLines(nLayoutTop, nLayoutBottom);
+				GetEditWnd().GetMiniMap().RedrawLines(nLayoutTop, nLayoutBottom);
 				if( !m_bDoing_UndoRedo && pcOpe ){
 					GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
 				}
@@ -358,7 +359,7 @@ void CEditView::DeleteData2(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(1)" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(1)" );
 #endif
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
@@ -441,7 +442,7 @@ void CEditView::DeleteData(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(2)" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(2)" );
 #endif
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
@@ -540,7 +541,7 @@ void CEditView::DeleteData(
 			SetDrawSwitch(true);	// 2002.01.25 hor
 
 			/* 行番号表示に必要な幅を設定 */
-			if ( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( true ) ){
+			if ( GetEditWnd().DetectWidthOfLineNumberAreaAllPane( true ) ){
 				/* キャレットの表示・更新 */
 				GetCaret().ShowEditCaret();
 			}
@@ -646,7 +647,7 @@ void CEditView::DeleteData(
 				goto end_of_func;
 			}
 			/* 改行で終わっているか */
-			if( ( EOL_NONE != pcLayout->GetLayoutEol() ) ){
+			if( pcLayout->GetLayoutEol().IsValid() ){
 				goto end_of_func;
 			}
 			/*ファイルの最後に移動 */
@@ -820,7 +821,8 @@ bool CEditView::ReplaceData_CEditView3(
 		DLRArg.pInsData = pInsData;
 		DLRArg.nDelSeq = nDelSeq;
 		// DLRArg.ptNewPos;
-		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData( &DLRArg );
+		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData(
+			&DLRArg, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 	}else{
 		LRArg.sDelRange    = sDelRange;		//!< 削除範囲レイアウト
 		LRArg.pcmemDeleted = pcMemDeleted;	//!< [out] 削除されたデータ
@@ -838,7 +840,7 @@ bool CEditView::ReplaceData_CEditView3(
 	}
 
 	/* 行番号表示に必要な幅を設定 */
-	if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
+	if( GetEditWnd().DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
 		/* キャレットの表示・更新 */
 		GetCaret().ShowEditCaret();
 	}
@@ -888,14 +890,14 @@ bool CEditView::ReplaceData_CEditView3(
 
 				CLayoutYInt nLayoutTop = LRArg.nModLineFrom;
 				CLayoutYInt nLayoutBottom = LRArg.nModLineTo + 1 + nAddLine;
-				for(int i = 0; i < m_pcEditWnd->GetAllViewCount(); i++ ){
-					CEditView* pcView = &m_pcEditWnd->GetView(i);
+				for(int i = 0; i < GetEditWnd().GetAllViewCount(); i++ ){
+					CEditView* pcView = &GetEditWnd().GetView(i);
 					if( pcView == this ){
 						continue;
 					}
 					pcView->RedrawLines(nLayoutTop, nLayoutBottom);
 				}
-				m_pcEditWnd->GetMiniMap().RedrawLines(nLayoutTop, nLayoutBottom);
+				GetEditWnd().GetMiniMap().RedrawLines(nLayoutTop, nLayoutBottom);
 				if( !m_bDoing_UndoRedo && pcOpeBlk ){
 					GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
 				}

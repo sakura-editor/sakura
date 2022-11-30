@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2002, genta
 	Copyright (C) 2004, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,8 +36,7 @@
 
 static const WCHAR NULSTR[] = L"";
 
-CMacroFactory::CMacroFactory()
-{}
+CMacroFactory::CMacroFactory() = default;
 
 /*!
 	与えられた拡張子をmapのkeyに変換する

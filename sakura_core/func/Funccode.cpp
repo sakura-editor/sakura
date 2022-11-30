@@ -15,6 +15,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, nasukoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -59,6 +60,7 @@
 #include "CMarkMgr.h"	// CAutoMarkMgr
 #include "util/os.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //using namespace nsFuncCode;
 
@@ -111,8 +113,8 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_PRINT				,	//印刷
 	F_PRINT_PREVIEW		,	//印刷プレビュー
 	F_PRINT_PAGESETUP	,	//印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	F_OPEN_HfromtoC		,	//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-//	F_OPEN_HHPP			,	//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+	F_OPEN_HfromtoC		,	//同名のC/C++ヘッダー(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	F_OPEN_HHPP			,	//同名のC/C++ヘッダーファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
 //	F_OPEN_CCPP			,	//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
 	F_ACTIVATE_SQLPLUS			,	/* Oracle SQL*Plusをアクティブ表示 */	//Sept. 20, 2000 「コンパイル」JEPRO アクティブ表示を上に移動した
 	F_PLSQL_COMPILE_ON_SQLPLUS	,	/* Oracle SQL*Plusで実行 */	//Sept. 20, 2000 jepro 説明の「コンパイル」を「実行」に統一
@@ -279,7 +281,7 @@ const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_COPY_COLOR_HTML_LINENUMBER,	//選択範囲内行番号色付きHTMLコピー
 	F_COPYFNAME					,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
-	F_COPYDIRPATH				,	//このファイルのフォルダ名をクリップボードにコピー
+	F_COPYDIRPATH				,	//このファイルのフォルダー名をクリップボードにコピー
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
@@ -291,7 +293,7 @@ const EFunctionCode pnFuncList_Insert[] = {
 	F_INS_TIME				,	// 時刻挿入
 	F_CTRL_CODE_DIALOG		,	// コントロールコードの入力
 	F_INS_FILE_USED_RECENTLY,	// 最近使ったファイル挿入
-	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダ挿入
+	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダー挿入
 };
 const int nFincList_Insert_Num = _countof( pnFuncList_Insert );
 
@@ -602,8 +604,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_PRINT:				return HLP000162;			//印刷				//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
 	case F_PRINT_PREVIEW:		return HLP000120;			//印刷プレビュー
 	case F_PRINT_PAGESETUP:		return HLP000122;			//印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	case F_OPEN_HfromtoC:		return HLP000192;			//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-//	case F_OPEN_HHPP:			return HLP000024;			//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+	case F_OPEN_HfromtoC:		return HLP000192;			//同名のC/C++ヘッダー(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	case F_OPEN_HHPP:			return HLP000024;			//同名のC/C++ヘッダーファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
 //	case F_OPEN_CCPP:			return HLP000026;			//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
 	case F_ACTIVATE_SQLPLUS:	return HLP000132;			/* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	return HLP000027;	/* Oracle SQL*Plusで実行 */
@@ -749,7 +751,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_COPY_COLOR_HTML:			return HLP000342;	//選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER:	return HLP000343;	//選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
-	case F_COPYDIRPATH:		return HLP000380;			//このファイルのフォルダ名をクリップボードにコピー
+	case F_COPYDIRPATH:		return HLP000380;			//このファイルのフォルダー名をクリップボードにコピー
 	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
 	case F_COPYFNAME:		return HLP000303;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 //	case IDM_TEST_CREATEKEYBINDLIST:	return 57;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 jepro「リスト」を「一覧」に変更
@@ -968,7 +970,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + MAX_MRU ){
 			return HLP000029;	//最近使ったファイル
 		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + MAX_OPENFOLDER ){
-			return HLP000023;	//最近使ったフォルダ
+			return HLP000023;	//最近使ったフォルダー
 		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
 			return HLP000097;	//ウィンドウリスト
 		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + MAX_CUSTMACRO ){
@@ -1043,7 +1045,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 
 	// 02/06/26 ai Start
 	case F_JUMP_SRCHSTARTPOS:	// 検索開始位置へ戻る
-		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_ptSrchStartPos_PHY.BothNatural() ){
+		if( GetEditWnd().GetActiveView().m_ptSrchStartPos_PHY.BothNatural() ){
 			return true;
 		}else{
 			return false;
@@ -1140,7 +1142,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_COPY_COLOR_HTML:				//選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER:	//選択範囲内行番号色付きHTMLコピー
 		//テキストが選択されていればtrue
-		return pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected();
+		return GetEditWnd().GetActiveView().GetSelectionInfo().IsTextSelected();
 
 	case F_TOLOWER:					/* 小文字 */
 	case F_TOUPPER:					/* 大文字 */
@@ -1168,20 +1170,20 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_BASE64DECODE:			/* Base64デコードして保存 */
 	case F_UUDECODE:				//uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 		// テキストが選択されていればtrue
-		return pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected();
+		return GetEditWnd().GetActiveView().GetSelectionInfo().IsTextSelected();
 
 	case F_CUT_LINE:	//行切り取り(折り返し単位)
 	case F_DELETE_LINE:	//行削除(折り返し単位)
 		// テキストが選択されていなければtrue
-		return !pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected();
+		return !GetEditWnd().GetActiveView().GetSelectionInfo().IsTextSelected();
 
 	case F_UNDO:		return pcEditDoc->m_cDocEditor.IsEnableUndo();	/* Undo(元に戻す)可能な状態か？ */
 	case F_REDO:		return pcEditDoc->m_cDocEditor.IsEnableRedo();	/* Redo(やり直し)可能な状態か？ */
 
-	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-//	case F_OPEN_HHPP:					//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダー(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	case F_OPEN_HHPP:					//同名のC/C++ヘッダーファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
 //	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
-		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() && pcEditDoc->m_pcEditWnd->GetActiveView().GetCommander().Command_OPEN_HfromtoC(TRUE);
+		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() && GetEditWnd().GetActiveView().GetCommander().Command_OPEN_HfromtoC(TRUE);
 	case F_COPYPATH:
 	case F_COPYDIRPATH:
 	case F_COPYTAG:
@@ -1219,12 +1221,12 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		return IsPowerShellAvailable();
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
-		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )
+		if( GetEditWnd().GetActiveView().m_cHistory->CheckPrev() )
 			return true;
 		else
 			return false;
 	case F_JUMPHIST_NEXT:	//	移動履歴: 次へ
-		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckNext() )
+		if( GetEditWnd().GetActiveView().m_cHistory->CheckNext() )
 			return true;
 		else
 			return false;
@@ -1311,9 +1313,9 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	// Mar. 6, 2002 genta
 	case F_VIEWMODE:			return CAppMode::getInstance()->IsViewMode(); //ビューモード
 	//	From Here 2003.06.23 Moca
-	case F_CHGMOD_EOL_CRLF:		return EOL_CRLF == pcEditDoc->m_cDocEditor.GetNewLineCode();
-	case F_CHGMOD_EOL_LF:		return EOL_LF == pcEditDoc->m_cDocEditor.GetNewLineCode();
-	case F_CHGMOD_EOL_CR:		return EOL_CR == pcEditDoc->m_cDocEditor.GetNewLineCode();
+	case F_CHGMOD_EOL_CRLF:		return EEolType::cr_and_lf == pcEditDoc->m_cDocEditor.GetNewLineCode();
+	case F_CHGMOD_EOL_LF:		return EEolType::line_feed == pcEditDoc->m_cDocEditor.GetNewLineCode();
+	case F_CHGMOD_EOL_CR:		return EEolType::carriage_return == pcEditDoc->m_cDocEditor.GetNewLineCode();
 	//	To Here 2003.06.23 Moca
 	//	2003.07.21 genta
 	case F_CHGMOD_INS:			return pcEditDoc->m_cDocEditor.IsInsMode();	//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
@@ -1327,10 +1329,10 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	case F_ISEARCH_REGEXP_PREV:
 	case F_ISEARCH_MIGEMO_NEXT:
 	case F_ISEARCH_MIGEMO_PREV:
-		return pcEditDoc->m_pcEditWnd->GetActiveView().IsISearchEnabled( nId );
+		return GetEditWnd().GetActiveView().IsISearchEnabled( nId );
 	case F_OUTLINE_TOGGLE: // 20060201 aroka アウトラインウィンドウ
 		// ToDo:ブックマークリストが出ているときもへこんでしまう。
-		return pcEditDoc->m_pcEditWnd->m_cDlgFuncList.GetHwnd() != NULL;
+		return GetEditWnd().m_cDlgFuncList.GetHwnd() != NULL;
 	}
 	//End 2004.07.14 Kazika
 

@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 20010, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,9 +28,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CLATIN1_5A6263F4_6468_4F9A_BFAE_69DC9477C1B5_H_
+#define SAKURA_CLATIN1_5A6263F4_6468_4F9A_BFAE_69DC9477C1B5_H_
 #pragma once
 
 #include "CCodeBase.h"
+#include "charset/codechecker.h"
 
 class CLatin1 : public CCodeBase{
 
@@ -98,3 +102,4 @@ inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char
 
 	return nret;
 }
+#endif /* SAKURA_CLATIN1_5A6263F4_6468_4F9A_BFAE_69DC9477C1B5_H_ */

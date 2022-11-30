@@ -4,7 +4,7 @@
 	@author
 */
 /*
-	Copyright (C)
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -26,7 +26,13 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDECODE_2E6ED248_B211_48AB_BD69_032199189323_H_
+#define SAKURA_CDECODE_2E6ED248_B211_48AB_BD69_032199189323_H_
 #pragma once
+
+#include "CSelectLang.h"
+#include "String_define.h"
+#include "mem/CNativeW.h"
 
 class CDecode {
 public:
@@ -47,3 +53,4 @@ public:
 	//実装
 	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
 };
+#endif /* SAKURA_CDECODE_2E6ED248_B211_48AB_BD69_032199189323_H_ */

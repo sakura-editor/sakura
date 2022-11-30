@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_
+#define SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_
 #pragma once
 
 #include <algorithm>
@@ -42,7 +45,7 @@ typedef int PlugId;
 #define PII_L10NDIR					L"local"
 #define PII_L10NFILEBASE			L"plugin_"
 #define PII_L10NFILEEXT				L".def"
-//オプションファイル拡張子（オプションファイル＝個別フォルダ名＋拡張子）
+//オプションファイル拡張子（オプションファイル＝個別フォルダー名＋拡張子）
 #define PII_OPTFILEEXT				L".ini"
 
 //プラグイン定義ファイル・キー文字列
@@ -182,37 +185,35 @@ public:
 	//コンストラクタ
 public:
 	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, wstring sSelects, wstring sDefaultVal, int index) 
+		: m_sLabel(sLabel), m_sSection(sSection), m_sKey(sKey)
 	{
 		m_parent	= parent;
-		m_sLabel	= sLabel;
-		m_sSection	= sSection;
-		m_sKey		= sKey;
 		// 小文字変換
 		std::transform( sType.begin (), sType.end (), sType.begin (), my_towlower2 );
-		m_sType		= sType;
-		m_sSelects	= sSelects;
-		m_sDefaultVal = sDefaultVal;
+		m_sType		= std::move(sType);
+		m_sSelects	= std::move(sSelects);
+		m_sDefaultVal = std::move(sDefaultVal);
 		m_index		= index;
 	}
 
 	//デストラクタ
 public:
-	~CPluginOption() {}
+	~CPluginOption() = default;
 
 	//操作
 public:
-	wstring	GetLabel( void )	{ return m_sLabel; }
-	void	GetKey( wstring* sectin, wstring* key )	{ 
+	wstring	GetLabel( void ) const  { return m_sLabel; }
+	void	GetKey( wstring* sectin, wstring* key ) const { 
 		*sectin = m_sSection; 
 		*key = m_sKey;
 	}
-	wstring	GetType( void )		{ return m_sType; }
-	int 	GetIndex( void )	{ return m_index; }
-	std::vector<wstring>	GetSelects()
+	wstring	GetType( void ) const	{ return m_sType; }
+	int 	GetIndex( void ) const	{ return m_index; }
+	std::vector<wstring>	GetSelects() const
 	{
 		return (wstring_split(m_sSelects, L'|'));
 	}
-	wstring	GetDefaultVal(){ return m_sDefaultVal; }
+	wstring	GetDefaultVal() const { return m_sDefaultVal; }
 
 protected:
 	CPlugin*	m_parent;
@@ -229,6 +230,8 @@ protected:
 
 class CPlugin
 {
+	using Me = CPlugin;
+
 	//型定義
 protected:
 	typedef std::wstring wstring;
@@ -241,6 +244,10 @@ public:
 	//コンストラクタ
 public:
 	CPlugin( const wstring& sBaseDir );
+	CPlugin(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CPlugin(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 	//デストラクタ
 public:
@@ -268,10 +275,10 @@ protected:
 
 	//属性
 public:
-	wstring GetFilePath( const wstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
+	wstring GetFilePath( const wstring& sFileName ) const;				//プラグインフォルダー基準の相対パスをフルパスに変換
 	wstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
 	wstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
-	wstring GetFolderName() const;	//プラグインのフォルダ名を取得
+	wstring GetFolderName() const;	//プラグインのフォルダー名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数
@@ -300,3 +307,4 @@ public:
 	virtual bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) =0;		//プラグイン定義ファイルを読み込む
 	virtual bool ReadPluginOption( CDataProfile *cProfile ) =0;		//オプションファイルを読み込む
 };
+#endif /* SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_ */

@@ -14,6 +14,7 @@
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2012, Moca, syat, novice, uchi
 	Copyright (C) 2013, Moca, Uchi, aroka, novice, syat, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -46,13 +47,16 @@
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "uiparts/CGraphics.h"
-#include "recent/CRecentEditNode.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 #include <windowsx.h>
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 // 2009.10.01 ryoji 高DPI対応スケーリング
@@ -196,7 +200,7 @@ LRESULT CTabWnd::OnTabLButtonDown( WPARAM wParam, LPARAM lParam )
 		TabCtrl_GetItemRect(m_hwndTab, nSrcTab, &rcItem);
 		GetTabCloseBtnRect(&rcItem, &rcClose, nSrcTab == TabCtrl_GetCurSel(m_hwndTab));
 		if( ::PtInRect(&rcClose, hitinfo.pt) ){
-			// 閉じるボタン上ならキャプチャー開始
+			// 閉じるボタン上ならキャプチャ開始
 			m_nTabCloseCapture = nSrcTab;
 			::SetCapture( m_hwndTab );
 			return 0L;
@@ -234,7 +238,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		if( ::PtInRect(&rcClose, hitinfo.pt) ){
 			ExecTabCommand( F_WINCLOSE, MAKEPOINTS(lParam) );
 		}
-		// キャプチャー解除
+		// キャプチャ解除
 		BreakDrag();
 		return 0L;
 	}
@@ -1106,7 +1110,7 @@ LRESULT CTabWnd::OnCaptureChanged( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /*!	WM_LBUTTONDOWN処理
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.11.30 ryoji タブ一覧ボタンクリック関数を廃止して処理取り込み
-	                       閉じるボタン上ならキャプチャー開始
+	                       閉じるボタン上ならキャプチャ開始
 */
 LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1129,11 +1133,11 @@ LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	else
 	{
-		// 閉じるボタン上ならキャプチャー開始
+		// 閉じるボタン上ならキャプチャ開始
 		GetCloseBtnRect( &rc, &rcBtn );
 		if( ::PtInRect( &rcBtn, pt ) )
 		{
-			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャー元は閉じるボタン
+			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャ元は閉じるボタン
 			::SetCapture( GetHwnd() );
 		}
 	}
@@ -1154,9 +1158,9 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	pt.y = HIWORD(lParam);
 	::GetClientRect( GetHwnd(), &rc );
 
-	if( ::GetCapture() == GetHwnd() )	// 自ウィンドウがマウスキャプチャーしている?
+	if( ::GetCapture() == GetHwnd() )	// 自ウィンドウがマウスキャプチャしている?
 	{
-		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャー元は閉じるボタン?
+		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャ元は閉じるボタン?
 		{
 			// 閉じるボタン上ならタブを閉じる
 			GetCloseBtnRect( &rc, &rcBtn );
@@ -1182,7 +1186,7 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 		}
 
-		// キャプチャー解除
+		// キャプチャ解除
 		m_eCaptureSrc = CAPT_NONE;
 		::ReleaseCapture();
 	}
@@ -1523,14 +1527,12 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				}
 				else
 				{
-					::LoadString( GetAppInstance(), F_GROUPCLOSE, szText, _countof(szText) );
-					szText[_countof(szText) - 1] = L'\0';
+					wcsncpy_s(szText, LS(F_GROUPCLOSE), _TRUNCATE);
 				}
 			}
 			else
 			{
-				::LoadString( GetAppInstance(), F_EXITALLEDITORS, szText, _countof(szText) );
-				szText[_countof(szText) - 1] = L'\0';
+					wcsncpy_s(szText, LS(F_EXITALLEDITORS), _TRUNCATE);
 			}
 		}
 	}
@@ -1601,47 +1603,9 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	// 上側に境界線を描画する
 	::DrawEdge(gr, &rc, EDGE_ETCHED, BF_TOP);
 
-	// Windowsクラシックスタイルの場合はアクティブタブの上部にトップバンドを描画する	// 2006.03.27 ryoji
-	if( !m_bVisualStyle )
-	{
-		int nCurSel = TabCtrl_GetCurSel( m_hwndTab );
-		if( nCurSel >= 0 )
-		{
-			POINT pt;
-			RECT rcCurSel;
-
-			TabCtrl_GetItemRect( m_hwndTab, nCurSel, &rcCurSel );
-			pt.x = rcCurSel.left;
-			pt.y = 0;
-			::ClientToScreen( m_hwndTab, &pt );
-			::ScreenToClient( GetHwnd(), &pt );
-			rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left) - 1;
-			rcCurSel.left = pt.x + 1;
-			rcCurSel.top = rc.top + TAB_MARGIN_TOP - 2;
-			rcCurSel.bottom = rc.top + TAB_MARGIN_TOP;
-
-			if( rcCurSel.left < rc.left + TAB_MARGIN_LEFT )
-				rcCurSel.left = rc.left + TAB_MARGIN_LEFT;	// 左端限界値
-
-			HWND hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
-			if( hwndUpDown && ::IsWindowVisible( hwndUpDown ) )
-			{
-				POINT ptREnd;
-				RECT rcUpDown;
-
-				::GetWindowRect( hwndUpDown, &rcUpDown );
-				ptREnd.x = rcUpDown.left;
-				ptREnd.y = 0;
-				::ScreenToClient( GetHwnd(), &ptREnd );
-				if( rcCurSel.right > ptREnd.x )
-					rcCurSel.right = ptREnd.x;	// 右端限界値
-			}
-
-			if( rcCurSel.left < rcCurSel.right )
-			{
-				::MyFillRect( gr, rcCurSel, RGB( 255, 128, 0 ) );
-			}
-		}
+	// トップバンドを描画する
+	if( auto nCurSel = TabCtrl_GetCurSel( m_hwndTab ); 0 <= nCurSel ){
+		DrawTopBand( gr, rc, nCurSel );
 	}
 
 	// サイズボックスを描画する
@@ -1816,7 +1780,6 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( -1 != nIndex )
 		{
 			TCITEM	tcitem;
-			CRecentEditNode	cRecentEditNode;
 			WCHAR	szName[1024];
 			//	Jun. 19, 2004 genta
 			EditNode	*p;
@@ -2422,7 +2385,7 @@ HIMAGELIST CTabWnd::InitImageList( void )
 	{
 		// システムイメージリストを取得する
 		// 注：複製後に差し替えて利用するアイコンには事前にアクセスしておかないとイメージが入らない
-		//     ここでは「フォルダを閉じたアイコン」、「フォルダを開いたアイコン」を差し替え用として利用
+		//     ここでは「フォルダーを閉じたアイコン」、「フォルダーを開いたアイコン」を差し替え用として利用
 		//     WinNT4.0 では SHGetFileInfo() の第一引数に同名を指定すると同じインデックスを返してくることがある？
 		// 2016.08.06 ".0" の場合に Win10で同じインデックスが返ってくるので、"C:\\"に変更
 
@@ -2734,6 +2697,45 @@ void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool sele
 	gr.SetPen( ::GetSysColor(nIndex) );
 	gr.SetBrushColor( ::GetSysColor(nIndex) );
 	DrawCloseFigure( gr, rcBtn );
+}
+
+/*!	指定したタブの上部にその位置を示す帯を描画
+	@param[in]	gr			描画管理
+	@param[in]	rcClient	タブウィンドウのクライアント領域
+	@param[in]	nTabIndex	対象タブのインデックス
+*/
+void CTabWnd::DrawTopBand( const CGraphics& gr, const RECT& rcClient, int nTabIndex ) const
+{
+	RECT rcTab = {};
+	TabCtrl_GetItemRect( m_hwndTab, nTabIndex, &rcTab );
+	POINT pt = { rcTab.left, 0 };
+	::ClientToScreen( m_hwndTab, &pt );
+	::ScreenToClient( GetHwnd(), &pt );
+	RECT rcTopBand = {};
+	rcTopBand.left = pt.x;
+	rcTopBand.right = pt.x + (rcTab.right - rcTab.left);
+	rcTopBand.top = rcClient.top + 1;	// DrawEdgeで描画した境界線(1px)をよける
+	rcTopBand.bottom = rcClient.top + TAB_MARGIN_TOP;
+
+	// 左右の範囲制限
+	// - 左側はそのまま
+	// - 右側は[<][>]ボタンが表示中ならその左端まで
+	if( auto hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );
+		::IsWindowVisible( hwndUpDown ) ){
+		RECT rcUpDown = {};
+		::GetWindowRect( hwndUpDown, &rcUpDown );
+		POINT ptREnd = { rcUpDown.left, 0 };
+		::ScreenToClient( GetHwnd(), &ptREnd );
+		if( rcTopBand.right > ptREnd.x ){
+			rcTopBand.right = ptREnd.x;	// 右端限界値
+		}
+	}
+
+	if( rcTopBand.left < rcTopBand.right ){
+		COLORREF color = RGB( 255, 128, 0 );
+		::GetSystemAccentColor( &color );
+		::MyFillRect( gr, rcTopBand, color );
+	}
 }
 
 /*! 一覧ボタンの矩形取得処理
@@ -3266,7 +3268,7 @@ void CTabWnd::SizeBox_ONOFF( bool bSizeBox )
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
-			L"SCROLLBAR",				/* scroll bar control class		*/
+			WC_SCROLLBAR,				/* scroll bar control class		*/
 			NULL,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/

@@ -10,16 +10,20 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor
 	Copyright (C) 2002, MIK
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_
+#define SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_
 #pragma once
 
 #include "util/design_template.h"
 #include "CEol.h"
 #include "mem/CMemory.h"
+#include "mem/CNativeW.h"
 
 #include "docplus/CBookmarkManager.h"
 #include "docplus/CDiffManager.h"
@@ -58,8 +62,17 @@ public:
 #endif
 	const wchar_t*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###仮の名前、仮の対処
 	{
-		if(this){
+		if(this){ // TODO: Remove "this" check
 			*pnLen = GetLengthWithEOL(); return GetPtr();
+		}
+		else{
+			*pnLen = 0; return NULL;
+		}
+	}
+	static const wchar_t* GetDocLineStrWithEOL_Safe(const CDocLine* docline, CLogicInt* pnLen) //###仮の名前、仮の対処
+	{
+		if(docline){
+			return docline->GetDocLineStrWithEOL(pnLen);
 		}
 		else{
 			*pnLen = 0; return NULL;
@@ -67,24 +80,33 @@ public:
 	}
 	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
-		if(this){
+		if(this){ // TODO: Remove "this" check
 			return CStringRef(GetPtr(),GetLengthWithEOL());
 		}
 		else{
 			return CStringRef(NULL,0);
 		}
 	}
+	static CStringRef GetStringRefWithEOL_Safe(const CDocLine* docline) //###仮の名前、仮の対処
+	{
+		if(docline){
+			return docline->GetStringRefWithEOL();
+		}
+		else{
+			return CStringRef(NULL, 0);
+		}
+	}
 	const CEol& GetEol() const{ return m_cEol; }
 	void SetEol(const CEol& cEol, COpeBlk* pcOpeBlk);
-	void SetEol(); // 現在のバッファから設定
+	void SetEol(bool bEnableExtEol); // 現在のバッファから設定
 
 	const CNativeW& _GetDocLineDataWithEOL() const { return m_cLine; } //###仮
 	CNativeW& _GetDocLineData() { return m_cLine; }
 
 	//データ設定
-	void SetDocLineString(const wchar_t* pData, int nLength);
-	void SetDocLineString(const CNativeW& cData);
-	void SetDocLineStringMove(CNativeW* pcData);
+	void SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol);
+	void SetDocLineString(const CNativeW& cData, bool bEnableExtEol);
+	void SetDocLineStringMove(CNativeW* pcData, bool bEnableExtEol);
 
 	//チェーン属性
 	CDocLine* GetPrevLine(){ return m_pPrev; }
@@ -93,7 +115,7 @@ public:
 	const CDocLine* GetNextLine() const { return m_pNext; }
 	void _SetPrevLine(CDocLine* pcDocLine){ m_pPrev = pcDocLine; }
 	void _SetNextLine(CDocLine* pcDocLine){ m_pNext = pcDocLine; }
-	
+
 private: //####
 	CDocLine*	m_pPrev;	//!< 一つ前の要素
 	CDocLine*	m_pNext;	//!< 一つ後の要素
@@ -115,3 +137,4 @@ private:
 };
 
 #pragma pack(pop)
+#endif /* SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_ */

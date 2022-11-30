@@ -7,10 +7,13 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka, YAZAKI
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CSPLITTERWND_8F27B39C_B96B_4964_ACD8_E157A146F892_H_
+#define SAKURA_CSPLITTERWND_8F27B39C_B96B_4964_ACD8_E157A146F892_H_
 #pragma once
 
 #include "CWnd.h"
@@ -43,7 +46,7 @@ private: // 2002/2/3 aroka
 	||  Attributes & Operations
 	*/
 	DLLSHAREDATA*	m_pShareData;
-	void*			m_pcEditWnd;
+
 	int				m_nAllSplitRows;		/* 分割行数 */
 	int				m_nAllSplitCols;		/* 分割桁数 */
 	int				m_nVSplitPos;			/* 垂直分割位置 */
@@ -56,7 +59,7 @@ private: // 2002/2/3 aroka
 	int				m_nDragPosY;			/* ドラッグ位置Ｙ */
 	int				m_nActivePane;			/* アクティブなペイン */
 public: // 2002/2/3 aroka
-	HWND Create(HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd);	/* 初期化 */
+	HWND Create( HWND hwndParent );	/* 初期化 */
 	void SetChildWndArr(HWND* hwndEditViewArr);	/* 子ウィンドウの設定 */
 	void DoSplit(int nHorizontal, int nVertical);	/* ウィンドウの分割 */
 	void SetActivePane(int nIndex);	/* アクティブペインの設定 */
@@ -89,3 +92,4 @@ protected:
 	int HitTestSplitter(int xPos, int yPos);	/* 分割バーへのヒットテスト */
 	void DrawSplitter(int xPos, int yPos, int bEraseOld);	/* 分割トラッカーの表示 */
 };
+#endif /* SAKURA_CSPLITTERWND_8F27B39C_B96B_4964_ACD8_E157A146F892_H_ */

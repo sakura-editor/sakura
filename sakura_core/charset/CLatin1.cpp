@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 20010, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -31,7 +32,6 @@
 #include "CLatin1.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
-#include "CEol.h"
 //#include "env/CShareData.h"
 #include "env/CommonSetting.h"
 

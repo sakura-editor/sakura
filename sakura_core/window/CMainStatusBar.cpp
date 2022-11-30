@@ -1,8 +1,32 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "CMainStatusBar.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
+#include "apiwrap/CommonControl.h"
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -18,11 +42,16 @@ void CMainStatusBar::CreateStatusBar()
 	if( m_hwndStatusBar )return;
 
 	/* ステータスバー */
-	m_hwndStatusBar = ::CreateStatusWindow(
-		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
-		L"",
+	m_hwndStatusBar = ::CreateWindowEx(
+		WS_EX_RIGHT | WS_EX_COMPOSITED,
+		STATUSCLASSNAME,
+		nullptr,
+		WS_CHILD/* | WS_VISIBLE*/ | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
+		0, 0, 0, 0, // X, Y, nWidth, nHeight
 		m_pOwner->GetHwnd(),
-		IDW_STATUSBAR
+		(HMENU)IDW_STATUSBAR,
+		CEditApp::getInstance()->GetAppInstance(),
+		nullptr
 	);
 
 	/* プログレスバー */
@@ -107,20 +136,21 @@ void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 	@param pszText [in] 表示テキスト
 	@param textLen [in] 表示テキストの文字数
 */
-void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
+bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
 	if( !m_hwndStatusBar ){
 		assert(m_hwndStatusBar != NULL);
-		return;
+		return false;
 	}
-	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
+	// StatusBar_SetText 関数を呼びだすかどうかを判定する
 	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
-	[&]() -> bool {
+	bool bDraw = true;
+	do {
 		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
 		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
 		// 判定が難しいので諦める
 		if( nOption == SBT_OWNERDRAW ){
-			return true;
+			break;
 		}
 		// オーナードローではない場合で NULLの場合は空文字に置き換える
 		// NULL を渡しても問題が無いのかどうか公式ドキュメントに記載されていない
@@ -133,13 +163,13 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
 		// 表示オペレーション値が変化する場合は SB_SETTEXT メッセージを発行
 		if( HIWORD(res) != nOption ){
-			return true;
+			break;
 		}
 		size_t prevTextLen = LOWORD(res);
 		WCHAR prev[1024];
 		// 設定済みの文字列長が長過ぎて取得できない場合は、SB_SETTEXT メッセージを発行
 		if( prevTextLen >= _countof(prev) ){
-			return true;
+			break;
 		}
 		// 設定する文字列長パラメータが SIZE_MAX（引数のデフォルト値）な場合は文字列長を取得
 		if( textLen == SIZE_MAX ){
@@ -147,15 +177,37 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		}
 		// 設定済みの文字列長と設定する文字列長が異なる場合は、SB_SETTEXT メッセージを発行
 		if( prevTextLen != textLen ){
-			return true;
+			break;
 		}
 		if( prevTextLen > 0 ){
 			::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
 			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
-			return (wcscmp(prev, pszText) != 0);
+			bDraw = wcscmp(prev, pszText) != 0;
 		}
-		else{
-			return true;
+		else {
+			// 設定する文字列長が0の場合は設定する文字列長が0より大きい場合のみ設定する（既に空文字なら空文字を設定する必要は無い為）
+			bDraw = textLen > 0;
 		}
-	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
+	}while (false);
+	if (bDraw) {
+		StatusBar_SetText(m_hwndStatusBar, nIndex | nOption, pszText);
+	}
+	return bDraw;
+}
+
+//! プログレスバーの表示/非表示を切り替える
+void CMainStatusBar::ShowProgressBar(bool bShow) const {
+	if (m_hwndStatusBar && m_hwndProgressBar) {
+		// プログレスバーを表示するステータスバー上の領域を取得
+		RECT rcProgressArea = {};
+		ApiWrap::StatusBar_GetRect(m_hwndStatusBar, 0, &rcProgressArea);
+		if (bShow) {
+			::ShowWindow(m_hwndProgressBar, SW_SHOW);
+		} else {
+			::ShowWindow(m_hwndProgressBar, SW_HIDE);
+		}
+		// プログレスバー表示領域を再描画
+		::InvalidateRect(m_hwndStatusBar, &rcProgressArea, TRUE);
+		::UpdateWindow(m_hwndStatusBar);
+	}
 }

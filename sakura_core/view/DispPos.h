@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_DISPPOS_137BC8BB_8876_4183_9777_BE5A451434E1_H_
+#define SAKURA_DISPPOS_137BC8BB_8876_4183_9777_BE5A451434E1_H_
 #pragma once
 
 #include "doc/CEditDoc.h"
@@ -113,3 +116,4 @@ private:
 	//キャッシュ############
 	const CLayout*		m_pcLayoutRef;
 };
+#endif /* SAKURA_DISPPOS_137BC8BB_8876_4183_9777_BE5A451434E1_H_ */

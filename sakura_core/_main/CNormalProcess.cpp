@@ -14,6 +14,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, Uchi
 	Copyright (C) 2009, syat, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -34,6 +35,10 @@
 #include "plugin/CJackManager.h"
 #include "CAppMode.h"
 #include "env/CDocTypeManager.h"
+#include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
+#include "env/CShareData.h"
+#include "config/system_constants.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
@@ -68,7 +73,7 @@ CNormalProcess::~CNormalProcess()
 */
 bool CNormalProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
+	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::Init" );
 
 	/* プロセス初期化の目印 */
 	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
@@ -132,15 +137,15 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	// プラグイン読み込み
-	MY_TRACETIME( cRunningTimer, "Before Init Jack" );
+	MY_TRACETIME( cRunningTimer, L"Before Init Jack" );
 	/* ジャック初期化 */
 	CJackManager::getInstance();
-	MY_TRACETIME( cRunningTimer, "After Init Jack" );
+	MY_TRACETIME( cRunningTimer, L"After Init Jack" );
 
-	MY_TRACETIME( cRunningTimer, "Before Load Plugins" );
+	MY_TRACETIME( cRunningTimer, L"Before Load Plugins" );
 	/* プラグイン読み込み */
 	CPluginManager::getInstance()->LoadAllPlugin();
-	MY_TRACETIME( cRunningTimer, "After Load Plugins" );
+	MY_TRACETIME( cRunningTimer, L"After Load Plugins" );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	// グループIDを取得
@@ -163,7 +168,7 @@ bool CNormalProcess::InitializeProcess()
 	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
 	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
 
-	MY_TRACETIME( cRunningTimer, "CheckFile" );
+	MY_TRACETIME( cRunningTimer, L"CheckFile" );
 
 	// -1: SetDocumentTypeWhenCreate での強制指定なし
 	const CTypeConfig nType = (fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt(fi.m_szDocType));
@@ -240,7 +245,7 @@ bool CNormalProcess::InitializeProcess()
 			CNativeW cmemGrepFolder = gi.cmGrepFolder;
 			if( gi.cmGrepFolder.GetStringLength() < MAX_GREP_PATH ){
 				CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
-				// 2013.05.21 指定なしの場合はカレントフォルダにする
+				// 2013.05.21 指定なしの場合はカレントフォルダーにする
 				if( cmemGrepFolder.GetStringLength() == 0 ){
 					WCHAR szCurDir[_MAX_PATH];
 					::GetCurrentDirectory( _countof(szCurDir), szCurDir );
@@ -267,7 +272,7 @@ bool CNormalProcess::InitializeProcess()
 			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
 			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
 			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
+			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダー */
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
@@ -473,7 +478,7 @@ void CNormalProcess::OnExitProcess()
 */
 HANDLE CNormalProcess::_GetInitializeMutex() const
 {
-	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::_GetInitializeMutex" );
+	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::_GetInitializeMutex" );
 	HANDLE hMutex;
 	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;

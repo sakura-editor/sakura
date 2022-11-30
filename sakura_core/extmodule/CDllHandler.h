@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, YAZAKI, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLLHANDLER_B27A5A93_E49F_4618_8958_6883D63BBABB_H_
+#define SAKURA_CDLLHANDLER_B27A5A93_E49F_4618_8958_6883D63BBABB_H_
 #pragma once
 
 #include <Windows.h>
@@ -84,6 +87,9 @@ enum EDllResult{
 	@date 2008.05.10 kobake 整理。派生クラスは、～Impをオーバーロードすれば良いという方式です。
 */
 class CDllImp{
+
+	using Me = CDllImp;
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                            型                               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -104,6 +110,10 @@ public:
 public:
 	//コンストラクタ・デストラクタ
 	CDllImp();
+	CDllImp(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDllImp(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CDllImp();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -121,7 +131,7 @@ public:
 	//! 終了処理とDLLアンロード
 	bool DeinitDll(
 		bool force = false	//!< [in] 終了処理に失敗してもDLLを解放するかどうか
-	);
+	) noexcept;
 
 	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
@@ -203,3 +213,4 @@ private:
 	HINSTANCE		m_hInstance;
 	std::wstring	m_strLoadedDllName;
 };
+#endif /* SAKURA_CDLLHANDLER_B27A5A93_E49F_4618_8958_6883D63BBABB_H_ */

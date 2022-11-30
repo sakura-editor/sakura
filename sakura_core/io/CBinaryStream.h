@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CBINARYSTREAM_856F71C1_27E0_4075_BA32_245D18E142BA_H_
+#define SAKURA_CBINARYSTREAM_856F71C1_27E0_4075_BA32_245D18E142BA_H_
 #pragma once
 
 #include "CStream.h"
@@ -42,3 +45,4 @@ class CBinaryOutputStream final : public COutputStream{
 public:
 	CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
 };
+#endif /* SAKURA_CBINARYSTREAM_856F71C1_27E0_4075_BA32_245D18E142BA_H_ */

@@ -12,6 +12,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2012, Moca, syat
 	Copyright (C) 2013, Uchi, aroka, novice, syat, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,10 +35,13 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_
+#define SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_
 #pragma once
 
 #include "CWnd.h"
 #include "util/design_template.h"
+#include "env/CommonSetting.h"
 
 class CGraphics;
 struct EditNode;
@@ -95,7 +99,6 @@ protected:
 	void GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPWSTR pszName, int nLen );	/* タブ名取得処理 */	// 2007.06.28 ryoji 新規作成
 
 	/* 仮想関数 */
-	void AfterCreateWindow( void ) override{}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない
 
 	/* 仮想関数 メッセージ処理 */
 	LRESULT OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;		/*!< WM_SIZE処理 */
@@ -143,6 +146,7 @@ protected:
 	void DrawCloseFigure( CGraphics& gr, const RECT &btnRect );			/*!< 閉じるマーク描画処理 */
 	void DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< 閉じるボタン描画処理 */		// 2006.10.21 ryoji
 	void DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected, bool bHover );	/*!< タブを閉じるボタン描画処理 */		// 2012.04.14 syat
+	void DrawTopBand( const CGraphics& gr, const RECT& rcClient, int nTabIndex ) const;
 	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
 	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 閉じるボタンの矩形取得処理 */	// 2006.10.21 ryoji
 	void GetTabCloseBtnRect( const LPRECT lprcClient, LPRECT lprc, bool selected );	/*!< タブを閉じるボタンの矩形取得処理 */	// 2012.04.14 syat
@@ -188,7 +192,7 @@ private:
 	BOOL		m_bHovering;
 	BOOL		m_bListBtnHilighted;
 	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
-	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
+	CaptureSrc	m_eCaptureSrc;			//!< キャプチャ元
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
 	LOGFONT		m_lf;					//!< 表示フォントの特性情報
@@ -204,3 +208,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
+#endif /* SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_ */

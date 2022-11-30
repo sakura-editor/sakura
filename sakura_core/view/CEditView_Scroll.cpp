@@ -18,6 +18,7 @@
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2010, Moca
 	Copyright (C) 2012, ryoji, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -29,6 +30,7 @@
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
 #include <limits.h>
+#include "config/app_constants.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -40,7 +42,7 @@ BOOL CEditView::CreateScrollBar()
 	/* スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles */
-		L"SCROLLBAR",					/* scroll bar control class */
+		WC_SCROLLBAR,						/* scroll bar control class */
 		NULL,								/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_VERT,	/* scroll bar styles */
 		0,									/* horizontal position */
@@ -67,7 +69,7 @@ BOOL CEditView::CreateScrollBar()
 	if( GetDllShareData().m_Common.m_sWindow.m_bScrollBarHorz && !m_bMiniMap ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
-			L"SCROLLBAR",					/* scroll bar control class */
+			WC_SCROLLBAR,						/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_VISIBLE | WS_CHILD | SBS_HORZ,	/* scroll bar styles */
 			0,									/* horizontal position */
@@ -415,7 +417,6 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos, BOOL bRedrawScrollBar )
 		if( GetDrawSwitch() ){
 			RECT rcClip2 = {0,0,0,0};
 			ScrollDraw(nScrollRowNum, CLayoutInt(0), rcScrol, rcClip, rcClip2);
-			::UpdateWindow( GetHwnd() );
 		}
 	}
 
@@ -495,7 +496,6 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos, BOOL bRedrawScrollBar )
 		if( GetDrawSwitch() ){
 			RECT rcClip = {0,0,0,0};
 			ScrollDraw(CLayoutInt(0), nScrollColNum, rcScrol, rcClip, rcClip2);
-			::UpdateWindow( GetHwnd() );
 		}
 	}
 	//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
@@ -600,12 +600,13 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 	if( nScrollColNum != 0 ){
 		InvalidateRect( &rcClip2, FALSE );
 	}
+	UpdateWindow();
 }
 
 void CEditView::MiniMapRedraw(bool bUpdateAll)
 {
-	if( this == &m_pcEditWnd->GetActiveView() && m_pcEditWnd->GetMiniMap().GetHwnd() ){
-		CEditView& miniMap = m_pcEditWnd->GetMiniMap();
+	if( this == &GetEditWnd().GetActiveView() && GetEditWnd().GetMiniMap().GetHwnd() ){
+		CEditView& miniMap = GetEditWnd().GetMiniMap();
 		CLayoutYInt nViewTop = miniMap.m_nPageViewTop;
 		CLayoutYInt nViewBottom = miniMap.m_nPageViewBottom;
 		CLayoutYInt nDiff = nViewTop - GetTextArea().GetViewTopLine();
@@ -686,10 +687,10 @@ void CEditView::MiniMapRedraw(bool bUpdateAll)
 void CEditView::SyncScrollV( CLayoutInt line )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 
-		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01)
+		&& GetEditWnd().IsEnablePane(m_nMyIndex^0x01)
 		&& 0 <= m_nMyIndex
 	){
-		CEditView&	editView = m_pcEditWnd->GetView(m_nMyIndex^0x01);
+		CEditView&	editView = GetEditWnd().GetView(m_nMyIndex^0x01);
 #if 0
 		//	差分を保ったままスクロールする場合
 		editView.ScrollByV( line );
@@ -714,10 +715,10 @@ void CEditView::SyncScrollV( CLayoutInt line )
 void CEditView::SyncScrollH( CLayoutInt col )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
-		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x02)
+		&& GetEditWnd().IsEnablePane(m_nMyIndex^0x02)
 		&& 0 <= m_nMyIndex
 	){
-		CEditView&	cEditView = m_pcEditWnd->GetView(m_nMyIndex^0x02);
+		CEditView&	cEditView = GetEditWnd().GetView(m_nMyIndex^0x02);
 		HDC			hdc = ::GetDC( cEditView.GetHwnd() );
 		
 #if 0

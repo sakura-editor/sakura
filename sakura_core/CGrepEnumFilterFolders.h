@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 2008, wakura
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGREPENUMFILTERFOLDERS_4EF27C6D_F01D_495F_94A0_E78CC756B09E_H_
+#define SAKURA_CGREPENUMFILTERFOLDERS_4EF27C6D_F01D_495F_94A0_E78CC756B09E_H_
 #pragma once
 
 #include "CGrepEnumFolders.h"
@@ -59,3 +62,4 @@ public:
 		return CGrepEnumFolders::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFolderKeys, option, &except );
 	}
 };
+#endif /* SAKURA_CGREPENUMFILTERFOLDERS_4EF27C6D_F01D_495F_94A0_E78CC756B09E_H_ */

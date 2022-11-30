@@ -11,6 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -21,8 +22,12 @@
 #include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
 #include "util/shell.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 #define STR_SHIFT_PLUS        L"Shift+"  //@@@ 2001.11.08 add MIK
 #define STR_CTRL_PLUS         L"Ctrl+"  //@@@ 2001.11.08 add MIK
@@ -194,7 +199,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				/* Keybind:キー割り当て設定をエクスポートする */
 				Export( hwndDlg );
 				return TRUE;
-			case IDC_BUTTON_ASSIGN:	/* 割付 */
+			case IDC_BUTTON_ASSIGN:	/* 割当 */
 				nIndex = List_GetCurSel( hwndKeyList );
 				nIndex2 = Combo_GetCurSel( hwndCombo );
 				nIndex3 = List_GetCurSel( hwndFuncList );
@@ -266,7 +271,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				}
 				nFuncCode = m_Common.m_sKeyBind.m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
 				// Oct. 2, 2001 genta
-				// 2007.11.02 ryoji F_DISABLEなら未割付
+				// 2007.11.02 ryoji F_DISABLEなら未割当
 				if( nFuncCode == F_DISABLE ){
 					wcsncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1 );
 					pszLabel[_countof(pszLabel) - 1] = L'\0';
@@ -460,6 +465,7 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 		i |= _ALT;
 		wcscat( szKeyState, L"Alt+" );
 	}
+	::SendMessage( hwndKeyList, WM_SETREDRAW, FALSE, 0 );
 	/* キー一覧に文字列をセット（リストボックス）*/
 	List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
@@ -470,6 +476,7 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	List_SetCurSel( hwndKeyList, nIndex );
 	List_SetTopIndex( hwndKeyList, nIndexTop );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
+	::SendMessage( hwndKeyList, WM_SETREDRAW, TRUE, 0 );
 }
 
 /* Keybind:キー割り当て設定をインポートする */

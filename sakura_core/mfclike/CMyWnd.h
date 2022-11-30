@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_
+#define SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_
 #pragma once
 
 /*
@@ -36,7 +39,7 @@ public:
 
 	void SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 	HWND GetHwnd() const{ return m_hWnd; }
-	HWND GetSafeHwnd() const{ return this?m_hWnd:NULL; }
+	static HWND GetSafeHwnd(const CMyWnd* wnd) { return wnd ? wnd->m_hWnd : NULL; }
 	void InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE){ ::InvalidateRect(m_hWnd, lpRect, bErase); }
 	int ScrollWindowEx(int dx, int dy, const RECT* prcScroll, const RECT* prcClip, HRGN hrgnUpdate, RECT* prcUpdate, UINT uFlags)
 	{
@@ -78,3 +81,4 @@ public:
 private:
 	HWND m_hWnd;
 };
+#endif /* SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_ */

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CPROPERTYMANAGER_E2156683_CAC9_4255_82A2_749A0D1D383A_H_
+#define SAKURA_CPROPERTYMANAGER_E2156683_CAC9_4255_82A2_749A0D1D383A_H_
 #pragma once
 
 #include "prop/CPropCommon.h"
@@ -48,3 +51,4 @@ private:
 	int				m_nPropComPageNum;
 	int				m_nPropTypePageNum;
 };
+#endif /* SAKURA_CPROPERTYMANAGER_E2156683_CAC9_4255_82A2_749A0D1D383A_H_ */

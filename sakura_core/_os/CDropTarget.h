@@ -8,11 +8,14 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDROPTARGET_365C215D_E844_49BD_8E96_549970AE0A50_H_
+#define SAKURA_CDROPTARGET_365C215D_E844_49BD_8E96_549970AE0A50_H_
 #pragma once
 
 #include <Unknwn.h>
@@ -21,18 +24,24 @@
 class CDropTarget;
 class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
-class CEditView;// 2002/2/3 aroka ヘッダ軽量化
+class CEditView;// 2002/2/3 aroka ヘッダー軽量化
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
 class COleLibrary
 {
+	using Me = COleLibrary;
+
 	friend class CYbInterfaceBase;
 private:
 //	DWORD m_dwCount;	// 2009.01.08 ryoji m_dwCount削除
 	COleLibrary();
 public:
+	COleLibrary(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	COleLibrary(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~COleLibrary();
 private:
 	void Initialize();
@@ -41,10 +50,15 @@ private:
 
 class CYbInterfaceBase
 {
-private:
+	using Me = CYbInterfaceBase;
+
 	static COleLibrary m_olelib;
 protected:
 	CYbInterfaceBase();
+	CYbInterfaceBase(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CYbInterfaceBase(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CYbInterfaceBase();
 	static HRESULT QueryInterfaceImpl( IUnknown*, REFIID, REFIID, void** );
 };
@@ -66,12 +80,18 @@ public:
 
 class CDropTarget : public CYbInterfaceImpl<IDropTarget>
 {
+	using Me = CDropTarget;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CDropTarget( CEditWnd* );	// 2008.06.20 ryoji
 	CDropTarget( CEditView* );
+	CDropTarget(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDropTarget(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CDropTarget();
 	/*
 	||  Attributes & Operations
@@ -166,3 +186,4 @@ public:
 	STDMETHOD( Reset )(void);
 	STDMETHOD( Clone )(IEnumFORMATETC** ppenum);
 };
+#endif /* SAKURA_CDROPTARGET_365C215D_E844_49BD_8E96_549970AE0A50_H_ */

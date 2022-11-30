@@ -1,8 +1,131 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "StdControl.h"
+#include "StdApi.h"
+
+#include <windowsx.h>
 
 namespace ApiWrap{
+
+	/*!
+		@brief Window テキストを取得する
+		@param[in]  hWnd	ウィンドウハンドル
+		@param[out] strText	ウィンドウテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool Wnd_GetText( HWND hWnd, std::wstring& strText )
+	{
+		// バッファをクリアしておく
+		strText.clear();
+
+		// GetWindowTextLength() はウィンドウテキスト取得に必要なバッファサイズを返す。
+		// 条件によっては必要なサイズより大きな値を返すことがある模様
+		// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengthw
+		const int cchRequired = ::GetWindowTextLength( hWnd );
+		if( cchRequired < 0 ){
+			// ドキュメントには失敗した場合、あるいはテキストが空の場合には 0 を返すとある。
+			// 0 の場合はエラーかどうか判断できないのでテキストの取得処理を続行する。
+			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
+			return false;
+		}else if( cchRequired == 0 ){
+			// GetWindowTextLength はエラーの場合、またはテキストが空の場合は 0 を返す
+			if( GetLastError() != 0 ){
+				return false;
+			}
+			return true;
+		}
+
+		// ウィンドウテキストを取得するのに必要なバッファを確保する
+		strText.resize( cchRequired + 1 );
+
+		// GetWindowText() はコピーした文字数を返す。
+		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
+		const int actualCopied = ::GetWindowText( hWnd, strText.data(), (int)strText.capacity() );
+		if( actualCopied < 0 ){
+			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
+			return false;
+		}
+		else if( actualCopied == 0 ){
+			// GetWindowText はエラーの場合、またはテキストが空の場合は 0 を返す
+			if( GetLastError() != 0 ){
+				return false;
+			}
+		}
+		else if( (int)strText.capacity() <= actualCopied ){
+			// GetWindowText() の仕様上はありえないはず
+			return false;
+		}
+
+		// データサイズを反映する
+		strText.assign( strText.data(), actualCopied );
+
+		return true;
+	}
+
+	/*!
+		@brief リストアイテムのテキストを取得する
+		@param[in]  hList		リストコントロールのウインドウハンドル
+		@param[in]  nIndex		リストアイテムのインデックス
+		@param[out] strText		アイテムテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool List_GetText( HWND hList, int nIndex, std::wstring& strText )
+	{
+		// バッファをクリアしておく
+		strText.clear();
+
+		const int cchRequired = ListBox_GetTextLen( hList, nIndex );
+		if( cchRequired < 0 ){
+			// LB_ERR(-1)とその他のエラーは区別しない
+			return false;
+		}else if( cchRequired == 0 ){
+			return true;
+		}
+
+		// アイテムテキストを設定するのに必要なバッファを確保する
+		strText.resize(cchRequired + 1);
+
+		// ListBox_GetText() はコピーした文字数を返す。
+		const int actualCopied = ListBox_GetText( hList, nIndex, strText.data() );
+		if( actualCopied < 0 ){
+			// LB_ERR(-1)とその他のエラーは区別しない
+			return false;
+		}
+		else if( (int)strText.capacity() <= actualCopied ){
+			// ListBox_GetText() の仕様上はありえないはず
+			return false;
+		}
+
+		// データサイズを反映する
+		strText.assign( strText.data(), actualCopied );
+
+		return true;
+	}
 
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText)
 	{
@@ -12,6 +135,28 @@ namespace ApiWrap{
 		if( cchText <= (size_t) nCount )
 			return LB_ERRSPACE;
 		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, LPARAM(pszText) );
+	}
+
+	/*!
+		@brief ダイアログアイテムのテキストを取得する
+		@param[in]  hDlg		ウィンドウハンドル
+		@param[in]  nIDDlgItem	ダイアログアイテムのID
+		@param[out] strText		アイテムテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText )
+	{
+		// バッファをクリアしておく
+		strText.clear();
+
+		// アイテムのハンドルを取得する
+		HWND hWnd = ::GetDlgItem( hDlg, nIDDlgItem );
+		if( hWnd == NULL ){
+			return false;
+		}
+
+		return Wnd_GetText( hWnd, strText );
 	}
 
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount)

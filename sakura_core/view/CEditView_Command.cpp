@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -31,12 +32,17 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CTagJumpManager.h"
+#include "env/CSakuraEnvironment.h"
 #include "util/file.h"
 #include "util/module.h"
 #include "util/window.h"
 #include "_main/CControlTray.h"
 #include "charset/charcode.h"
-#include "recent/CRecent.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/CommonControl.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "recent/CRecentCmd.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。
@@ -55,7 +61,7 @@ bool CEditView::TagJumpSub(
 	bool*			pbJumpToSelf	//!< [out] オプションNULL可。自分にジャンプしたか
 )
 {
-	HWND	hwndOwner;
+	HWND	hwndOwner = NULL;
 	POINT	poCaret;
 	// 2004/06/21 novice タグジャンプ機能追加
 	TagJump	tagJump;
@@ -71,18 +77,27 @@ bool CEditView::TagJumpSub(
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	WCHAR	szJumpToFile[1024];
-	if( bRelFromIni && _IS_REL_PATH( pszFileName ) ){
-		GetInidirOrExedir( szJumpToFile, pszFileName );
-	}
-	else {
-		wcscpy( szJumpToFile, pszFileName );
-	}
+	HWND hwndTarget = nullptr;
+	constexpr auto& szTargetPrefix = L":HWND:[";
+	constexpr auto cchTargetPrefix = _countof(szTargetPrefix) - 1;
+	if( 0 == wcsncmp(pszFileName, szTargetPrefix, cchTargetPrefix) ){
+		if( 0 >= ::swscanf_s(pszFileName + cchTargetPrefix, L"%x", (size_t*)&hwndTarget) || !IsSakuraMainWindow(hwndTarget) ){
+			return false;
+		}
+	}else{
+		if( bRelFromIni && _IS_REL_PATH( pszFileName ) ){
+			GetInidirOrExedir( szJumpToFile, pszFileName );
+		}
+		else {
+			wcscpy( szJumpToFile, pszFileName );
+		}
 
-	/* ロングファイル名を取得する */
-	WCHAR	szWork[1024];
-	if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
-	{
-		wcscpy( szJumpToFile, szWork );
+		/* ロングファイル名を取得する */
+		WCHAR	szWork[1024];
+		if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
+		{
+			wcscpy( szJumpToFile, szWork );
+		}
 	}
 
 // 2004/06/21 novice タグジャンプ機能追加
@@ -103,8 +118,11 @@ bool CEditView::TagJumpSub(
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
-	if( CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
+	if( hwndTarget || CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
 	{
+		if( hwndTarget ){
+			hwndOwner = hwndTarget;
+		}
 		// 2004.05.13 Moca マイナス値は無効
 		if( 0 < ptJumpTo.y ){
 			/* カーソルを移動させる */
@@ -167,7 +185,7 @@ bool CEditView::TagJumpSub(
 
 /*! 指定拡張子のファイルに対応するファイルを開く補助関数
 
-	@date 2003.06.28 Moca ヘッダ・ソースファイルオープン機能のコードを統合
+	@date 2003.06.28 Moca ヘッダー・ソースファイルオープン機能のコードを統合
 	@date 2008.04.09 ryoji 処理対象(file_ext)と開く対象(open_ext)の扱いが逆になっていたのを修正
 */
 BOOL CEditView::OPEN_ExtFromtoExt(
@@ -392,7 +410,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 		if( bRedrawIfChanged ){
 			Redraw();
 		}
-		m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
+		GetEditWnd().m_cToolbar.AcceptSharedSearchKey();
 		return TRUE;
 	}
 	if( ! m_bCurSrchKeyMark ){
@@ -431,12 +449,12 @@ void CEditView::CopyCurLine(
 	cmemBuf.SetString( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
 	if( pcLayout->GetLayoutEol().GetLen() != 0 ){
 		cmemBuf.AppendString(
-			( neweol == EOL_UNKNOWN ) ?
+			( neweol == EEolType::none ) ?
 				pcLayout->GetLayoutEol().GetValue2() : CEol(neweol).GetValue2()
 		);
 	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
 		cmemBuf.AppendString(
-			( neweol == EOL_UNKNOWN ) ?
+			( neweol == EEolType::none ) ?
 				WCODE::CRLF : CEol(neweol).GetValue2()
 		);
 	}
@@ -465,7 +483,7 @@ void CEditView::DrawBracketCursorLine(bool bDraw)
 
 HWND CEditView::StartProgress()
 {
-	HWND hwndProgress = m_pcEditWnd->m_cStatusBar.GetProgressHwnd();
+	HWND hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
 	if( NULL != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_SHOW );
 		Progress_SetRange( hwndProgress, 0, 101 );

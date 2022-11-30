@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2010, Uchi
 	Copyright (C) 2014, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -40,8 +41,12 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {	//13300
 	IDC_CHECK_LOADINI,      HIDC_CHECK_FILETREE_LOADINI,
@@ -775,11 +780,11 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			std::wstring strTitle = LS(STR_DLGREPLC_STR);
 			WCHAR szPathFrom[_MAX_PATH];
 			szPathFrom[0] = L'\0';
-			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathFrom), szPathFrom) ){
+			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathFrom) - 1, szPathFrom) ){
 				WCHAR szPathTo[_MAX_PATH];
 				szPathTo[0] = L'\0';
 				strMsg = LS(STR_FILETREE_REPLACE_PATH_TO);
-				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathTo), szPathTo) ){
+				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathTo) - 1, szPathTo) ){
 					int nItemsCount = (int)m_fileTreeSetting.m_aItems.size();
 					for( int i = 0; i < nItemsCount; i++ ){
 						SFileTreeItem& item =  m_fileTreeSetting.m_aItems[i];

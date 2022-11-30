@@ -1,5 +1,28 @@
 ﻿/*! @file */
 /*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+/*
 	タイプ別設定 - ウィンドウ
 
 	2008.04.12 kobake CPropTypes.cppから分離
@@ -17,8 +40,11 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 using namespace std;
 
@@ -79,12 +105,12 @@ static const wchar_t* aszEolStr[] = {
 	L"PS",
 };
 static const EEolType aeEolType[] = {
-	EOL_CRLF,
-	EOL_LF,
-	EOL_CR,
-	EOL_NEL,
-	EOL_LS,
-	EOL_PS,
+	EEolType::cr_and_lf,
+	EEolType::line_feed,
+	EEolType::carriage_return,
+	EEolType::next_line,
+	EEolType::line_separator,
+	EEolType::paragraph_separator,
 };
 
 // IMEのオープン状態復帰用

@@ -119,9 +119,6 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cpp Source Files\charset\icu4c">
-      <UniqueIdentifier>{e4629f85-3be8-4dda-80db-1be310929433}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -272,9 +269,6 @@
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\charset\charcode.h">
-      <Filter>Cpp Source Files\charset</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CharPointer.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\charset\charset.h">
@@ -503,9 +497,6 @@
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\util\tchar_convert.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\util\tchar_printf.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\util\tchar_template.h">
@@ -1091,11 +1082,38 @@
     <ClInclude Include="..\sakura_core\extmodule\CIcu4cI18n.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\icu4c\CharsetDetector.h">
-      <Filter>Cpp Source Files\charset\icu4c</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\GrepInfo.h">
       <Filter>Cpp Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\util\zoom.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\basis\TComImpl.hpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\basis\CErrorInfo.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeFromSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeToSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\recent\SShare_History.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\CUchardet.h">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\charset\CharsetDetector.h">
+      <Filter>Cpp Source Files\charset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\view\CMiniMapView.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1155,6 +1173,9 @@
     </None>
     <None Include="..\resource\MainMenu.ini">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\sakura_core\sakura_rc.rc2">
+      <Filter>Other Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1467,9 +1488,6 @@
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\util\tchar_convert.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\util\tchar_printf.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\util\tchar_template.cpp">
@@ -2267,14 +2285,35 @@
     <ClCompile Include="..\sakura_core\extmodule\CIcu4cI18n.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\icu4c\CharsetDetector.cpp">
-      <Filter>Cpp Source Files\charset\icu4c</Filter>
-    </ClCompile>
     <ClCompile Include="..\sakura_core\EditInfo.cpp">
       <Filter>Cpp Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\GrepInfo.cpp">
       <Filter>Cpp Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\util\zoom.cpp">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeFromSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeToSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\CUchardet.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\charset\CharsetDetector.cpp">
+      <Filter>Cpp Source Files\charset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\view\CMiniMapView.cpp">
+      <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

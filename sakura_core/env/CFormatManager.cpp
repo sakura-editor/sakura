@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,6 +31,7 @@
 #include "DLLSHAREDATA.h"
 
 #include "CFormatManager.h"
+#include "CSelectLang.h"
 
 /*! 日付をフォーマット
 	systime：時刻データ

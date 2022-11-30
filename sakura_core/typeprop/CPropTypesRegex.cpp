@@ -9,6 +9,7 @@
 	Copyright (C) 2002, MIK
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,8 +25,11 @@
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "util/shell.h"
 #include "view/colors/EColorIndexType.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 using namespace std;
 
@@ -97,8 +101,6 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 
-	// ANSIビルドではCP932だと2倍程度必要
-	const int nKeyWordSize = MAX_REGEX_KEYWORDLEN;
 	WCHAR	szColorIndex[256];
 
 	switch( uMsg ){
@@ -136,7 +138,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			}
 			else
 			{
-				//使用するになってるんだけどDisableにする。もうユーザは変更できない。
+				//使用するになってるんだけどDisableにする。もうユーザーは変更できない。
 				EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 			}
 		}
@@ -182,10 +184,10 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			case IDC_BUTTON_REGEX_INS:	/* 挿入 */
 			{
 				//挿入するキー情報を取得する。
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-				szKeyWord[0] = L'\0';
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
-				if( szKeyWord[0] == L'\0' ) return FALSE;
+				std::wstring strKeyWord;
+				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
+					return FALSE;
+				}
 				//同じキーがないか調べる。
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
@@ -200,7 +202,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					//選択中でなければ最後にする。
 					nIndex = nIndex2;
 				}
-				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], -1) ){
+				if( !CheckKeywordList( hwndDlg, strKeyWord.c_str(), -1 ) ){
 					return FALSE;
 				}
 				
@@ -209,7 +211,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キー情報を挿入する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = strKeyWord.data();
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -227,20 +229,20 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_ADD:	/* 追加 */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
 				//最後のキー番号を取得する。
 				nIndex = ListView_GetItemCount( hwndList );
 				//追加するキー情報を取得する。
-				szKeyWord[0] = L'\0';
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
-				if( szKeyWord[0] == L'\0' ) return FALSE;
+				std::wstring strKeyWord;
+				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
+					return FALSE;
+				}
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
 					ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_NOREG));
 					return FALSE;
 				}
-				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], -1) ){
+				if( !CheckKeywordList( hwndDlg, strKeyWord.c_str(), -1 ) ){
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
@@ -248,7 +250,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = strKeyWord.data();
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -266,7 +268,6 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_UPD:	/* 更新 */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
 				//選択中のキーを探す。
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
@@ -275,10 +276,11 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				//更新するキー情報を取得する。
-				szKeyWord[0] = L'\0';
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
-				if( szKeyWord[0] == L'\0' ) return FALSE;
-				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], nIndex) ){
+				std::wstring strKeyWord;
+				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
+					return FALSE;
+				}
+				if( !CheckKeywordList( hwndDlg, strKeyWord.c_str(), nIndex ) ){
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
@@ -286,7 +288,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを更新する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = strKeyWord.data();
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -317,19 +319,18 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_TOP:	/* 先頭 */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-				szKeyWord[0] = L'\0';
+				WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN]{ 0 };
 				//選択中のキーを探す。
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				if( 0 == nIndex ) return TRUE;	//すでに先頭にある。
 				nIndex2 = 0;
-				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = szKeyWord;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -347,17 +348,16 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_LAST:	/* 最終 */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-				szKeyWord[0] = L'\0';
+				WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN]{ 0 };
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 - 1 == nIndex ) return TRUE;	//すでに最終にある。
-				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = szKeyWord;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -376,20 +376,19 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_UP:	/* 上へ */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-				szKeyWord[0] = L'\0';
+				WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN]{ 0 };
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				if( 0 == nIndex ) return TRUE;	//すでに先頭にある。
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex - 1;
-				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = szKeyWord;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -407,19 +406,18 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_DOWN:	/* 下へ */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-				szKeyWord[0] = L'\0';
+				WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN]{ 0 };
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 - 1 == nIndex ) return TRUE;	//すでに最終にある。
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex + 2;
-				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = szKeyWord;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -494,11 +492,10 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				}
 				if( nPrevIndex != nIndex )	//@@@ 2003.03.26 MIK
 				{	//更新時にListViewのSubItemを正しく取得できないので、その対策
-					auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-					szKeyWord[0] = L'\0';
-					ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
+					WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN]{ 0 };
+					ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
 					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
-					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0] );	/* 正規表現 */
+					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 					{
@@ -616,8 +613,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i, j;
-	const int szKeyWordSize = _countof(m_Types.m_RegexKeywordList) * 2 + 1;
-	auto szKeyWord = std::make_unique<WCHAR[]>(szKeyWordSize);
+	WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN * 2]{ 0 };
 	WCHAR	szColorIndex[256];
 
 	//使用する・使用しない
@@ -638,10 +634,10 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 		{
 			szKeyWord[0]    = L'\0';
 			szColorIndex[0] = L'\0';
-			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], szKeyWordSize );
+			ListView_GetItemText(hwndList, i, 0, szKeyWord, _countof(szKeyWord) );
 			ListView_GetItemText(hwndList, i, 1, szColorIndex, _countof(szColorIndex));
 			if( pKeyword < pKeywordLast - 1 ){
-				wcsncpy_s( pKeyword, pKeywordLast - pKeyword, &szKeyWord[0], _TRUNCATE );
+				wcsncpy_s( pKeyword, pKeywordLast - pKeyword, szKeyWord, _TRUNCATE );
 			}
 			//色指定文字列を番号に変換する
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
@@ -704,23 +700,22 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 		if( nRet != IDYES ) return false;
 	}
 	// 重複確認・文字列長制限チェック
-	const int nKeyWordSize = MAX_REGEX_KEYWORDLEN;
 	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	int  nIndex  = ListView_GetItemCount(hwndList);
-	auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
+	WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN]{ 0 };
 	int nKeywordLen = 0;
 	for(int i = 0; i < nIndex; i++){
 		if( i != nUpdateItem ){
 			szKeyWord[0] = L'\0';
-			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], nKeyWordSize);
-			if( wcscmp(szNewKeyWord, &szKeyWord[0]) == 0 ) 
+			ListView_GetItemText(hwndList, i, 0, szKeyWord, _countof(szKeyWord));
+			if( wcscmp(szNewKeyWord, szKeyWord) == 0 ) 
 			{
 				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_ALREADY));
 				return false;
 			}
 			// 長さには\0も含む
-			nKeywordLen += wcsnlen(&szKeyWord[0], nKeyWordSize) + 1;
-			if( _countof(m_Types.m_RegexKeywordList) - 1 < nKeywordLen ){
+			nKeywordLen += wcsnlen(szKeyWord, _countof(szKeyWord)) + 1;
+			if( _countof(m_Types.m_RegexKeywordList) - 1 < _countof(szKeyWord) ){
 				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_FULL) );
 				return false;
 			}

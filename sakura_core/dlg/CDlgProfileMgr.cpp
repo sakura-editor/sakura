@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2013, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,8 +35,12 @@
 #include "util/file.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "func/Funccode.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_LIST_PROFILE,				HIDC_LIST_PROFILE,				//プロファイル一覧
@@ -51,6 +56,36 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
+//! コマンドラインだけでプロファイルが確定するか調べる
+bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
+{
+	SProfileSettings settings;
+	bool bSettingLoaded = ReadProfSettings( settings );
+
+	bool bDialog;
+	if( pcCommandLine->IsProfileMgr() ){		// コマンドラインでプロファイルマネージャの表示が指定されている
+		bDialog = true;
+	}else if( pcCommandLine->IsSetProfile() ){	// コマンドラインでプロファイル名が指定されている
+		bDialog = false;
+	}else if( !bSettingLoaded ){				// プロファイル設定がなかった
+		bDialog = false;
+	}else if( 0 < settings.m_nDefaultIndex && settings.m_nDefaultIndex <= static_cast<int>(settings.m_vProfList.size()) ){
+		// プロファイル設定のデフォルトインデックス値から該当のプロファイル名が指定されたものとして動作する
+		pcCommandLine->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
+		bDialog = false;
+	}else{
+		// プロファイル設定のデフォルトインデックス値が不正なのでプロファイルマネージャを表示して設定更新を促す
+		bDialog = true;
+	}
+	if( bDialog ){
+		if( bSettingLoaded ){
+			// 設定が読めた場合のみ、日本語以外の設定言語を適用する
+			CSelectLang::ChangeLang( settings.m_szDllLanguage );
+		}
+	}
+	return !bDialog;
+}
+
 CDlgProfileMgr::CDlgProfileMgr()
 : CDialog(false, false)
 {
@@ -63,36 +98,38 @@ int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROFILEMGR, lParam );
 }
 
-static std::wstring GetProfileMgrFileName(LPCWSTR profName = NULL)
+/*!
+	@brief プロファイルマネージャ設定ファイルパスを取得する
+ */
+std::filesystem::path GetProfileMgrFileName()
 {
-	static WCHAR szPath[_MAX_PATH];
-	static WCHAR szPath2[_MAX_PATH];
-	static WCHAR* pszPath;
-	static bool bSet = false;
-	if( bSet == false ){
-		pszPath = szPath;
-		CFileNameManager::GetIniFileNameDirect( szPath, szPath2, L"" );
-		if( szPath[0] == L'\0' ){
-			pszPath = szPath2;
-		}
-		bSet = true;
+	auto privateIniPath = GetIniFileName();
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		auto filename = privateIniPath.filename();
+		privateIniPath = privateIniPath.parent_path().parent_path().append(filename.c_str());
 	}
-	
-	WCHAR	szDir[_MAX_PATH];
-	SplitPath_FolderAndFile( pszPath, szDir, NULL );
+	return privateIniPath.replace_extension().concat(L"_prof.ini");
+}
 
-	WCHAR szIniFile[_MAX_PATH];
-	if( profName == NULL ){
-		WCHAR szExePath[_MAX_PATH];
-		WCHAR szFname[_MAX_FNAME];
-		::GetModuleFileName( NULL, szExePath, _countof(szExePath) );
-		_wsplitpath( szExePath, NULL, NULL, szFname, NULL );
-		auto_snprintf_s( szIniFile, _MAX_PATH - 1, L"%s\\%s_prof%s", szDir, szFname, L".ini" );
-	}else{
-		auto_snprintf_s( szIniFile, _MAX_PATH - 1, L"%s\\%s", szDir, profName );
+/*!
+	指定したプロファイルの設定保存先ディレクトリを取得する
+ */
+std::filesystem::path GetProfileDirectory(const std::wstring& name)
+{
+	auto privateIniDir = GetIniFileName().parent_path();
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		privateIniDir = privateIniDir.parent_path();
 	}
+	return privateIniDir.append(name).append(L"a.txt").remove_filename();
+}
 
-	return szIniFile;
+/*!
+	既存コード互換用関数
+	指定したプロファイルの設定保存先ディレクトリを返す。
+ */
+[[nodiscard]] std::wstring GetProfileMgrFileName(const std::wstring_view& name)
+{
+	return GetProfileDirectory(name.data());
 }
 
 /*! ダイアログデータの設定 */
@@ -166,7 +203,7 @@ int CDlgProfileMgr::GetData(bool bStart)
 	MyList_GetText( hwndList, nCurIndex, szText );
 	m_strProfileName = szText;
 	if( m_strProfileName == L"(default)" ){
-		m_strProfileName = L"";
+		m_strProfileName.clear();
 	}
 	bool bDefaultSelect = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PROF_DEFSTART );
 	SProfileSettings settings;
@@ -310,7 +347,7 @@ void CDlgProfileMgr::CreateProf()
 	std::wstring strTitle = LS(STR_DLGPROFILE_NEW_PROF_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_NEW_PROF_MSG);
 	szText[0] = L'\0';
-	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
+	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 		return;
 	}
 	if( szText[0] == L'\0' ){
@@ -369,7 +406,7 @@ void CDlgProfileMgr::RenameProf()
 	std::wstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
 	int max_size = _MAX_PATH;
-	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
+	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 		return;
 	}
 	if( szText[0] == L'\0' ){
@@ -480,7 +517,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	if( settings.m_nDefaultIndex < -1 ){
 		settings.m_nDefaultIndex = -1;
 	}
-	cProf.IOProfileData( pSection, L"szDllLanguage", StringBufferW(settings.m_szDllLanguage, _countof(settings.m_szDllLanguage)) );
+	cProf.IOProfileData(pSection, L"szDllLanguage", StringBufferW(settings.m_szDllLanguage));
 	cProf.IOProfileData( pSection, L"bDefaultSelect", settings.m_bDefaultSelect );
 
 	if( bWrite ){

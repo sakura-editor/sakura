@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CIOBRIDGE_5C6D9CA0_13F8_415A_A948_6A6EF323BE02_H_
+#define SAKURA_CIOBRIDGE_5C6D9CA0_13F8_415A_A948_6A6EF323BE02_H_
 #pragma once
 
 #include "mem/CMemory.h"
@@ -34,7 +37,7 @@ public:
 		const CMemory&	cSrc,			//!< [in]  変換元メモリ
 		CNativeW*		pDst,			//!< [out] 変換先メモリ(UNICODE)
 		CCodeBase*		pCodeBase,		//!< [in]  変換元メモリの文字コードクラス
-		int				nFlag			//!< [in]  bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+		int				nFlag			//!< [in]  bit 0: MIME Encodeされたヘッダーをdecodeするかどうか
 	);
 
 	//! ファイルのエンコードへ変更
@@ -44,3 +47,4 @@ public:
 		CCodeBase*			pCodeBase	//!< [in]  変換先メモリの文字コードクラス
 	);
 };
+#endif /* SAKURA_CIOBRIDGE_5C6D9CA0_13F8_415A_A948_6A6EF323BE02_H_ */

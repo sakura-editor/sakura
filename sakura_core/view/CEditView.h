@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -38,11 +39,16 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_
+#define SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_
 #pragma once
 
 #include <Windows.h>
 #include <ObjIdl.h>  // LPDATAOBJECT
-#include <ShellAPI.h>  // HDROP
+#include <shellapi.h>  // HDROP
+
+#include <thread>
+
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
 #include "CTextArea.h"
@@ -68,13 +74,13 @@
 
 class CViewFont;
 class CRuler;
-class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
+class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
 class CRegexKeyword;///
-class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
-class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
-class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
+class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
+class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
+class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
 struct CColor3Setting;
@@ -90,19 +96,6 @@ class CColor_Found;
 #ifndef IDM_JUMPDICT
 #define IDM_JUMPDICT 2001	// 2006.04.10 fon
 #endif
-
-#if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
-typedef struct tagRECONVERTSTRING {
-    DWORD dwSize;
-    DWORD dwVersion;
-    DWORD dwStrLen;
-    DWORD dwStrOffset;
-    DWORD dwCompStrLen;
-    DWORD dwCompStrOffset;
-    DWORD dwTargetStrLen;
-    DWORD dwTargetStrOffset;
-} RECONVERTSTRING, *PRECONVERTSTRING;
-#endif // RECONVERTSTRING
 
 ///	マウスからコマンドが実行された場合の上位ビット
 ///	@date 2006.05.19 genta
@@ -130,6 +123,8 @@ class CEditView
 , public CMyWnd
 , public CDocListenerEx
 {
+	std::thread m_threadUrlOpen;
+
 public:
 	const CEditDoc* GetDocument() const
 	{
@@ -162,7 +157,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	/* Constructors */
-	CEditView(CEditWnd* pcEditWnd);
+	CEditView( void );
 	~CEditView();
 	void Close();
 	/* 初期化系メンバ関数 */
@@ -238,8 +233,7 @@ public:
 protected:
 	//! ロジック行を1行描画
 	bool DrawLogicLine(
-		HDC				hdc,			//!< [in]     作画対象
-		DispPos*		pDispPos,		//!< [in,out] 描画する箇所、描画元ソース
+		SColorStrategyInfo* pInfo,		//!< [in,out] 作画情報
 		CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 	);
 
@@ -333,7 +327,7 @@ public:
 	// 2002/01/19 novice public属性に変更
 	bool GetSelectedDataSimple( CNativeW& cmemBuf );// 選択範囲のデータを取得
 	bool GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen );
-	bool GetSelectedData( CNativeW* cmemBuf, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( CNativeW* cmemBuf, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none);/* 選択範囲のデータを取得 */
 	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
@@ -626,7 +620,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//参照
-	CEditWnd*		m_pcEditWnd;	//!< ウィンドウ
 	CEditDoc*		m_pcEditDoc;	//!< ドキュメント
 	const STypeConfig*	m_pTypeData;
 
@@ -700,8 +693,8 @@ public:
 	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
 	int				m_nWheelDelta;	//!< ホイール変化量
 	EFunctionCode	m_eWheelScroll; //!< スクロールの種類
-	int				m_nMousePouse;	// マウス停止時間
-	CMyPoint		m_cMousePousePos;	// マウスの停止位置
+	int				m_nMousePause;	// マウス停止時間
+	CMyPoint		m_cMousePausePos;	// マウスの停止位置
 	bool			m_bHideMouse;
 
 	int				m_nAutoScrollMode;			//!< オートスクロールモード
@@ -777,3 +770,4 @@ public:
 	virtual bool IsEnableRunningDlg(){ return true; }
 	virtual bool IsActiveDebugWindow(){ return true; }
 };
+#endif /* SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_ */

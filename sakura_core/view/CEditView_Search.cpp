@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 #include "window/CEditWnd.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 const int STRNCMP_MAX = 100;	/* MAXキーワード長：_strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
 
@@ -133,9 +136,8 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				m_pTypeData->m_KeyHelpArr[i].m_szPath,
 				&nLine
 			);
-			if(nSearchResult){
-				/* 該当するキーがある */
-				LPWSTR pszWork = pcmemRefText->GetStringPtr();
+			/* 該当するキーがある */
+			if( nSearchResult ){
 				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
 				if(m_pTypeData->m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
 					/* バッファに前のデータが詰まっていたらseparator挿入 */
@@ -155,8 +157,11 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
 						m_cTipWnd.m_cInfo.AppendString( L" >>\n" );
-					}/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendString( pszWork );
+					}
+
+					/* 調査した「意味」を挿入 */
+					m_cTipWnd.m_cInfo.AppendString( UnEscapeInfoText( *pcmemRefText ) );
+
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
@@ -178,7 +183,8 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					}
 					
 					/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendString( pszWork );
+					m_cTipWnd.m_cInfo.AppendString( UnEscapeInfoText( *pcmemRefText ) );
+
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
@@ -461,7 +467,7 @@ int CEditView::IsSearchString(
 	else if( m_sCurSearchOption.bWordOnly ) { // 単語検索
 		/* 指定位置の単語の範囲を調べる */
 		CLogicInt posWordHead, posWordEnd;
-		if( ! CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, &posWordHead, &posWordEnd, NULL, NULL ) ) {
+		if( ! CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &posWordHead, &posWordEnd, NULL, NULL ) ) {
 			return 0; // 指定位置に単語が見つからなかった。
  		}
 		if( nPos != posWordHead ) {
@@ -478,7 +484,7 @@ int CEditView::IsSearchString(
 		const wchar_t* const searchKeyEnd = m_strCurSearchKey.data() + m_strCurSearchKey.size();
 		for( const wchar_t* p = m_strCurSearchKey.data(); p < searchKeyEnd; ) {
 			CLogicInt begin, end; // 検索語に含まれる単語?の位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
-			if( CWordParse::WhereCurrentWord_2( p, CLogicInt(searchKeyEnd - p), CLogicInt(0), &begin, &end, NULL, NULL )
+			if( CWordParse::WhereCurrentWord_2( p, CLogicInt(searchKeyEnd - p), CLogicInt(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, NULL, NULL )
 				&& begin == 0 && begin < end
 			) {
 				if( ! WCODE::IsWordDelimiter( *p ) ) {

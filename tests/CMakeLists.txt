@@ -10,7 +10,7 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 17)    # C++17...
 set(CMAKE_CXX_STANDARD_REQUIRED ON) #...is required...
 
-# switch DLL or static libary by specifying by command line
+# switch DLL or static library by specifying by command line
 set (LIB_TYPE STATIC)
 if (BUILD_SHARED_LIBS)
   # User wants to build Dynamic Libraries, so change the LIB_TYPE variable to CMake keyword 'SHARED'
@@ -33,7 +33,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # create solution folder
 if(BUILD_GTEST)
 	set_target_properties(gtest       PROPERTIES FOLDER GoogleTest)
-	set_target_properties(gtest_main  PROPERTIES FOLDER GoogleTest)
+	set_target_properties(gmock       PROPERTIES FOLDER GoogleTest)
 endif()
 set_target_properties(tests1      PROPERTIES FOLDER Tests)
 

@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGSAMECOLOR_181C0F46_A420_4A62_A543_FE2B88C20FBE_H_
+#define SAKURA_CDLGSAMECOLOR_181C0F46_A420_4A62_A543_FE2B88C20FBE_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -65,3 +68,4 @@ protected:
 	STypeConfig* m_pTypes;	//!< タイプ別設定データ
 	COLORREF m_cr;		//!< 指定色
 };
+#endif /* SAKURA_CDLGSAMECOLOR_181C0F46_A420_4A62_A543_FE2B88C20FBE_H_ */

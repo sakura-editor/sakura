@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI, aroka
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -137,7 +138,7 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 	}else{
 		// キーが存在する場合、値を書き換える
 		if( overwrite ){
-			m_AppendTextArr[ info ] = s;
+			m_AppendTextArr[ info ] = std::move(s);
 		}
 	}
 }

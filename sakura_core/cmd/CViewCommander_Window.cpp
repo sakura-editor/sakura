@@ -15,6 +15,7 @@
 	Copyright (C) 2008, syat
 	Copyright (C) 2009, syat
 	Copyright (C) 2010, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -28,6 +29,7 @@
 #include "util/os.h"
 #include "env/CSakuraEnvironment.h"
 #include "env/CShareData.h"
+#include "config/system_constants.h"
 
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 void CViewCommander::Command_SPLIT_V( void )
@@ -296,6 +298,11 @@ void CViewCommander::Command_TILE_V( void )
 			//	To Here Jul. 28, 2002 genta
 			count++;
 		}
+		if( count == 0 ){
+			delete[] phwndArr;
+			delete[] pEditNodeArr;
+			return;
+		}
 		int height = (rcDesktop.bottom - rcDesktop.top ) / count;
 		for(i = 0; i < count; ++i ){
 			//	Jul. 21, 2002 genta
@@ -349,6 +356,11 @@ void CViewCommander::Command_TILE_H( void )
 			}
 			//	To Here Jul. 28, 2002 genta
 			count++;
+		}
+		if (count == 0) {
+			delete[] phwndArr;
+			delete[] pEditNodeArr;
+			return;
 		}
 		int width = (rcDesktop.right - rcDesktop.left ) / count;
 		for(i = 0; i < count; ++i ){

@@ -7,16 +7,20 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, asa-o
 	Copyright (C) 2003, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_
+#define SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_
 #pragma once
 
 #include <Windows.h>
 #include "dlg/CDialog.h"
 #include "util/container.h"
+#include "mem/CNativeW.h"
 
 /*! @brief キーワード補完
 
@@ -85,3 +89,4 @@ protected:
 	*/
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
+#endif /* SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_ */

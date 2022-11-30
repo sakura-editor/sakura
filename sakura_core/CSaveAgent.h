@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSAVEAGENT_9EDD4D3A_82B2_4651_82E5_AE471A54812B_H_
+#define SAKURA_CSAVEAGENT_9EDD4D3A_82B2_4651_82E5_AE471A54812B_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -37,3 +40,4 @@ public:
 private:
 	SSaveInfo	m_sSaveInfoForRollback;
 };
+#endif /* SAKURA_CSAVEAGENT_9EDD4D3A_82B2_4651_82E5_AE471A54812B_H_ */

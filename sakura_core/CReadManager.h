@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_
+#define SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_
 #pragma once
 
 #include "doc/CDocListener.h" // CProgressSubject
@@ -40,3 +43,4 @@ public:
 		SFileInfo*			pFileInfo
 	);
 };
+#endif /* SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_ */

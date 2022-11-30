@@ -12,6 +12,7 @@
 	Copyright (C) 2005, genta
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2010, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -24,6 +25,8 @@
 #include "view/colors/CColor_Found.h"
 #include "uiparts/CWaitCursor.h"
 #include "util/os.h"
+#include "apiwrap/CommonControl.h"
+#include "_os/CClipboard.h"
 
 /** 切り取り(選択範囲をクリップボードにコピーして削除)
 
@@ -1118,7 +1121,7 @@ void CViewCommander::Command_COPYPATH( void )
 	}
 }
 
-/* 現在編集中のファイルのフォルダ名をクリップボードにコピー */
+/* 現在編集中のファイルのフォルダー名をクリップボードにコピー */
 void CViewCommander::Command_COPYDIRPATH( void )
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
@@ -1135,7 +1138,7 @@ void CViewCommander::Command_COPYDIRPATH( void )
 		strFolder.erase(itrClear);
 	}
 	
-	/* クリップボードにフォルダ名をコピー */
+	/* クリップボードにフォルダー名をコピー */
 	m_pCommanderView->MySetClipboardData( strFolder.c_str(), strFolder.size(), false );
 }
 
@@ -1144,16 +1147,14 @@ void CViewCommander::Command_COPYDIRPATH( void )
 void CViewCommander::Command_COPYTAG( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		wchar_t	buf[ MAX_PATH + 20 ];
-
 		CLogicPoint ptColLine;
 
 		//	論理行番号を得る
 		GetDocument()->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptColLine );
 
 		/* クリップボードにデータを設定 */
-		auto_sprintf( buf, L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
-		m_pCommanderView->MySetClipboardData( buf, wcslen( buf ), false );
+		std::wstring buffer = strprintf(L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
+		m_pCommanderView->MySetClipboardData(buffer.c_str(), buffer.length(), false);
 	}
 	else{
 		ErrorBeep();

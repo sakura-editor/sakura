@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 #include "plugin/CWSHPlugin.h"
 #include "plugin/CPluginIfObj.h"
 #include "macro/CWSHManager.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 // デストラクタ
 CWSHPlugin::~CWSHPlugin(void)
@@ -74,7 +77,7 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 	CWSHMacroManager* pWsh = NULL;
 
 	if( !m_bUseCache || wshPlug.m_Wsh == NULL ){
-		CFilePath path( plug.m_cPlugin.GetFilePath( plug.m_sHandler.c_str() ).c_str() );
+		CFilePath path( plug.m_cPlugin.GetFilePath( plug.m_sHandler ).c_str() );
 
 		pWsh = (CWSHMacroManager*)CWSHMacroManager::Creator( path.GetExt( true ) );
 		if( pWsh == NULL ){ return false; }

@@ -1,7 +1,6 @@
-﻿/*! @file */
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by sakura_rc.rc
+﻿//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ で生成されたインクルード ファイル。
+// sakura_rc.rc で使用
 //
 #define ID_RC_TYPE_INI                  100
 #define IDR_MENU1                       102
@@ -20,12 +19,10 @@
 #define IDD_PRINTPREVIEWBAR             121
 #define IDD_PRINTSETTING                122
 #define IDD_EXITING                     123
-//#define IDD_DEBUG                       124
 #define IDD_EXEC                        125
 #define IDD_EXECRUNNING                 126
 #define IDD_HOKAN                       127
 #define IDD_PRINTING                    128
-//#define IDD_PRINTPAGE                   129
 #define IDD_FILEOPEN                    130
 #define IDD_FILEUPDATEQUERY             131
 #define IDD_FAVORITE                    132
@@ -43,28 +40,24 @@
 #define IDB_SCROLL_VERTICAL             202
 #define IDB_SCROLL_HORIZONTAL           203
 #define IDI_ICON_STD                    210
-//#define IDI_ICON_DEBUG                  211
 #define IDI_ICON_GREP                   212
 #define IDI_PRINTER                     215
 #define IDC_CURSOR_COPYARROW            220
-//#define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
 #define IDC_CURSOR_RVARROW              223
 #define IDC_CURSOR_ISEARCH_F            224
 #define IDC_CURSOR_ISEARCH_B            225
-//#define IDC_CURSOR_TAB_LEFT             226
-//#define IDC_CURSOR_TAB_RIGHT            227
 #define IDC_CURSOR_TAB_SEPARATE         228
 #define IDC_CURSOR_TAB_JOIN             229
-#define IDC_CURSOR_AUTOSCROLL_CENTER   230
-#define IDC_CURSOR_AUTOSCROLL_VERTICAL 231
+#define IDC_CURSOR_AUTOSCROLL_CENTER    230
+#define IDC_CURSOR_AUTOSCROLL_VERTICAL  231
 #define IDC_CURSOR_AUTOSCROLL_HORIZONTAL 232
-#define IDC_CURSOR_AUTOSCROLL_UP       233
-#define IDC_CURSOR_AUTOSCROLL_DOWN     234
-#define IDC_CURSOR_AUTOSCROLL_LEFT     235
-#define IDC_CURSOR_AUTOSCROLL_RIGHT    236
-#define IDC_CURSOR_AUTOSCROLL_UP_LEFT  237
-#define IDC_CURSOR_AUTOSCROLL_UP_RIGHT 238
+#define IDC_CURSOR_AUTOSCROLL_UP        233
+#define IDC_CURSOR_AUTOSCROLL_DOWN      234
+#define IDC_CURSOR_AUTOSCROLL_LEFT      235
+#define IDC_CURSOR_AUTOSCROLL_RIGHT     236
+#define IDC_CURSOR_AUTOSCROLL_UP_LEFT   237
+#define IDC_CURSOR_AUTOSCROLL_UP_RIGHT  238
 #define IDC_CURSOR_AUTOSCROLL_DOWN_LEFT 239
 #define IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT 240
 #define IDC_BUTTON_PRINTERSELECT        1000
@@ -160,7 +153,6 @@
 #define IDC_BUTTON_HELP                 1091
 #define IDC_BUTTON_OPENMDLL             1092
 #define IDC_BUTTON_OPENMDICT            1093
-//#define IDC_EDIT_TO                     1094
 #define IDC_EDIT_BLOCKCOMMENT_TO        1095
 #define IDC_EDIT_BLOCKCOMMENT_TO2       1096
 #define IDC_EDIT_TYPEEXTS               1097
@@ -308,7 +300,6 @@
 #define IDC_EDIT_HEAD2                  1239
 #define IDC_EDIT_HEAD3                  1240
 #define IDC_BUTTON_CURRENTFOLDER        1241
-//#define IDC_EDIT_DEBUG                  1242
 #define IDC_EDIT_FOOT2                  1243
 #define IDC_CHECK_USETRAYICON           1244
 #define IDC_EDIT_FOOT3                  1245
@@ -358,14 +349,12 @@
 #define IDC_RADIO_TFORM_1               1289
 #define IDC_EDIT_TFORM_EX               1290
 #define IDC_EDIT_DFORM                  1291
-//#define IDC_RADIO_ALL                   1292
 #define IDC_RADIO_PORTRAIT              1293
 #define IDC_RADIO_BACKUP_DATETYPE1      1294
 #define IDC_RADIO_REPLACE               1295
 #define IDC_RADIO_DIFF_FILE1            1296
 #define IDC_RADIO_DIFF_FILE2            1297
 #define IDC_RADIO_OUTLINEDEFAULT        1298
-//#define IDC_RADIO_FROMTO                1299
 #define IDC_RADIO_LANDSCAPE             1300
 #define IDC_RADIO_BACKUP_DATETYPE2      1301
 #define IDC_RADIO_INSERT                1302
@@ -386,8 +375,6 @@
 #define IDC_EDIT_SY                     1317
 #define IDC_STATIC_JOBNAME              1318
 #define IDC_STATIC_PROGRESS             1319
-//#define IDC_EDIT_FROM                   1320
-//#define IDC_STATIC_ALL                  1321
 #define IDC_CHECK_bMenuIcon             1322
 #define IDC_LABEL_BACKUP_3              1323
 #define IDC_LABEL_BACKUP_4              1324
@@ -408,8 +395,6 @@
 #define IDC_LABEL_LINETERMCHAR          1339
 #define IDC_LABEL_DFORM                 1340
 #define IDC_LABEL_TFORM                 1341
-//#define IDC_LABEL_FROM                  1342
-//#define IDC_LABEL_TO                    1343
 #define IDC_LABEL_PLSQL1                1344
 #define IDC_LABEL_PLSQL2                1345
 #define IDC_LABEL_PLSQL3                1346
@@ -627,7 +612,6 @@
 #define IDC_CHECK_PRIOR_CESU8           1558
 #define IDC_CHECK_DISP_SELCOUNT_BY_BYTE 1559
 #define IDC_EDIT_KINSOKUKUTO            1560
-//#define IDC_CHECK_ACCELTBL_EACHWIN      1561
 #define IDC_CHECK_MacroOnOpened         1562
 #define IDC_CHECK_MacroOnTypeChanged    1563
 #define IDC_CHECK_MacroOnSave           1564
@@ -679,9 +663,6 @@
 #define IDC_CHECK_BACKIMG_REP_Y         1608
 #define IDC_EDIT_BACKIMG_OFFSET_X       1609
 #define IDC_EDIT_BACKIMG_OFFSET_Y       1610
-#define IDC_TRACKBAR_BACKIMG_TRANSPARENCY 1734
-#define IDC_EDIT_BACKIMG_TRANSPARENCY   1735
-#define IDC_UPDOWN_BACKIMG_TRANSPARENCY   1736
 #define IDC_CHECK_CONVERTEOLPASTE       1611
 #define IDC_CHECK_OpenNewWin            1612
 #define IDC_BUTTON_TABFONT              1613
@@ -805,9 +786,12 @@
 #define IDC_STATIC_URL_GITHUB_CAPTION   1731
 #define IDC_STATIC_URL_GITHUB_COMMIT    1732
 #define IDC_STATIC_URL_GITHUB_PR        1733
+#define IDC_TRACKBAR_BACKIMG_TRANSPARENCY 1734
 #define IDC_COMBO_EXCLUDE_FOLDER        1734
+#define IDC_EDIT_BACKIMG_TRANSPARENCY   1735
 #define IDC_COMBO_EXCLUDE_FILE          1735
-#define IDC_CHECK_VISTA_STYLE_FILEDIALOG	1737
+#define IDC_UPDOWN_BACKIMG_TRANSPARENCY 1736
+#define IDC_CHECK_VISTA_STYLE_FILEDIALOG 1737
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -848,9 +832,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        230
-#define _APS_NEXT_COMMAND_VALUE         4057
+#define _APS_NEXT_RESOURCE_VALUE        5224
+#define _APS_NEXT_COMMAND_VALUE         101
 #define _APS_NEXT_CONTROL_VALUE         1738
-#define _APS_NEXT_SYMED_VALUE           104
+#define _APS_NEXT_SYMED_VALUE           10000
 #endif
 #endif

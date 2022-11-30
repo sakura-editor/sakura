@@ -8,6 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI, Moca
 	Copyright (C) 2005, D.S.Koba
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -15,6 +16,8 @@
 #include "StdAfx.h"
 #include "CBlockComment.h"
 #include "mem/CMemory.h"
+#include "mem/CNativeW.h"
+#include "util/string_ex.h"
 
 CBlockComment::CBlockComment()
 {

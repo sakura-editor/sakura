@@ -17,6 +17,7 @@
 	Copyright (C) 2005, かろと, aroka
 	Copyright (C) 2006, かろと
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -39,9 +40,12 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_
+#define SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_
 #pragma once
 
 #include "CBregexpDll2.h"
+#include "basis/SakuraBasis.h"
 
 /*!
 	@brief Perl互換正規表現 BREGEXP.DLL をサポートするクラス
@@ -225,3 +229,4 @@ private:
 bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
 bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1, bool bKakomi = false );// 2002/2/1 hor追加
 bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
+#endif /* SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_ */

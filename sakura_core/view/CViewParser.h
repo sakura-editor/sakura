@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,9 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVIEWPARSER_440F895C_409D_4ACF_906E_1DD7A0C0C2C0_H_
+#define SAKURA_CVIEWPARSER_440F895C_409D_4ACF_906E_1DD7A0C0C2C0_H_
 #pragma once
 
 class CEditView;
+class CNativeW;
 
 //!品詞解析クラス
 class CViewParser{
@@ -42,3 +46,4 @@ public:
 private:
 	const CEditView* m_pEditView;
 };
+#endif /* SAKURA_CVIEWPARSER_440F895C_409D_4ACF_906E_1DD7A0C0C2C0_H_ */

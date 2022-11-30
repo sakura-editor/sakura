@@ -1,5 +1,6 @@
-﻿/*
-	Copyright (C) 2018-2020 Sakura Editor Organization
+﻿/*! @file
+
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -21,10 +22,13 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTEXCLUDEFILE_74BD9C61_4E41_4D1D_A8CE_8C78B4DDDEBA_H_
+#define SAKURA_CRECENTEXCLUDEFILE_74BD9C61_4E41_4D1D_A8CE_8C78B4DDDEBA_H_
 #pragma once
 
 #include "CRecentImp.h"
 #include "util/StaticType.h"
+#include "config/maxdata.h"
 
 typedef StaticString<WCHAR, MAX_EXCLUDE_PATH> CExcludeFileString;
 
@@ -43,3 +47,4 @@ public:
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
 	size_t			GetTextMaxLength() const;
 };
+#endif /* SAKURA_CRECENTEXCLUDEFILE_74BD9C61_4E41_4D1D_A8CE_8C78B4DDDEBA_H_ */

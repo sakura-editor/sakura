@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,6 +36,7 @@
 #include "types/CTypeSupport.h"
 #include "charset/charcode.h"
 #include "doc/layout/CLayout.h"
+#include "apiwrap/StdApi.h"
 
 const CTextArea* CTextDrawer::GetTextArea() const
 {
@@ -496,9 +498,8 @@ void CTextDrawer::DispLineNumber(
 
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */
 			if( 2 == pTypes->m_nLineTermType ){
-				//	Sep. 22, 2002 genta
-				szLineNum[ nLineCols ] = pTypes->m_cLineTermChar;
-				szLineNum[ ++nLineCols ] = '\0';
+				const wchar_t szSeparator[] = { pTypes->m_cLineTermChar, 0 };
+				::wcscat_s(szLineNum, szSeparator);
 			}
 		}
 

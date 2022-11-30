@@ -15,6 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -25,9 +26,9 @@
 #include <algorithm>
 #include "charset/CShiftJis.h"
 #include "doc/CEditDoc.h"
-#include "env/DLLSHAREDATA.h"
-#include "_main/CAppMode.h"
 #include "window/CEditWnd.h"
+#include "util/tchar_convert.h"
+#include "mem/CNativeA.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           IME                               //
@@ -100,7 +101,7 @@ void CEditView::SetIMECompFormFont( void )
 	//
 	HIMC	hIMC = ::ImmGetContext( GetHwnd() );
 	if ( hIMC ){
-		::ImmSetCompositionFont( hIMC, const_cast<LOGFONT *>(&(m_pcEditWnd->GetLogfont())) );
+		::ImmSetCompositionFont( hIMC, const_cast<LOGFONT *>(&(GetEditWnd().GetLogfont())) );
 	}
 	::ImmReleaseContext( GetHwnd() , hIMC );
 }

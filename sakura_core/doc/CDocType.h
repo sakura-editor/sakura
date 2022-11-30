@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_
+#define SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_
 #pragma once
 
 #include "types/CType.h" // CTypeConfig
@@ -67,3 +70,4 @@ private:
 	STypeConfig				m_typeConfig;
 	bool					m_nSettingTypeLocked;		//!< 文書種別の一時設定状態
 };
+#endif /* SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_ */

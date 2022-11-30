@@ -15,6 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -32,7 +33,10 @@
 #include "charset/CShiftJis.h"
 #include "util/window.h"
 #include "util/tchar_template.h"
+#include "apiwrap/StdControl.h"
+#include "mem/CNativeA.h"
 #include "sakura_rc.h" // IDD_EXECRUNNING
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //
@@ -566,7 +570,9 @@ user_cancel:
 		if( bCancelEnd && bOutputExtInfo ){
 			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//最後にテキストを追加
-			oa.OutputW( LS(STR_EDITVIEW_EXECCMD_STOP) );
+			// L"\r\n中断しました。\r\n"
+			std::wstring msg( LS(STR_EDITVIEW_EXECCMD_STOP) );
+			oa.OutputW( msg.c_str(), (int)msg.length() );
 		}
 		
 		{

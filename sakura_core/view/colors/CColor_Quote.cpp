@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Quote.h"
@@ -127,7 +150,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 						}else{
 							m_tag.assign(L")\"", 2);
 						}
-						m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), m_tag.size(), i + 1, cStr, false );
+						m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<int>(m_tag.size()), i + 1, cStr, false );
 						m_nColorTypeIndex = 1;
 						return true;
 					}
@@ -207,7 +230,7 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos, cStr, m_nEscapeType );
 			break;
 		case 1:
-			m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), m_tag.size(), nPos, cStr, false );
+			m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<int>(m_tag.size()), nPos, cStr, false );
 			break;
 		case 2:
 			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos, cStr, STRING_LITERAL_PLSQL );

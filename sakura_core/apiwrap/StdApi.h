@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,12 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_
+#define SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_
 #pragma once
 
-//ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
+//ランタイム情報ライブラリにアクセスするWindowsヘッダーを参照する
 #include <ImageHlp.h>
-
-#include "mem/CNativeW.h"
 
 //デバッグ用。
 //VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
@@ -103,3 +104,4 @@ namespace ApiWrap
 	#define PostMessageCmd PostMessage
 }
 using namespace ApiWrap;
+#endif /* SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_ */

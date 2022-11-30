@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,8 +35,8 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* TeX */
-//Oct. 31, 2000 JEPRO TeX  ユーザに贈る
-//Oct. 31, 2000 JEPRO TeX ユーザに贈る	//Mar. 10, 2001 JEPRO 追加
+//Oct. 31, 2000 JEPRO TeX  ユーザーに贈る
+//Oct. 31, 2000 JEPRO TeX ユーザーに贈る	//Mar. 10, 2001 JEPRO 追加
 void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
@@ -148,7 +149,7 @@ public:
 			treeDepth の増加幅を１に抑えた結果としてトピックアイテムが
 			本来の位置(tagDepth)より浅い位置に置かれていることがある。その補正。
 		*/
-			if (0 == serials[i]) {
+			if (i < _countof(serials) && 0 == serials[i]) {
 				treeDepth += 1;
 			}
 		}
@@ -159,7 +160,7 @@ public:
 
 		// 2. トピック番号を更新する。
 		serials[depth] += 1; // インクリメント
-		for (int i = depth + 1; i <= tagDepth; ++i) {
+		for (int i = depth + 1; i <= tagDepth && i < _countof(serials); ++i) {
 			serials[i] = 0; // リセット
 		}
 
@@ -177,7 +178,7 @@ public:
 			while (i <= tagDepth && serials[i] == 0) {
 				i += 1; // "0." プリフィックスを表示しないようにスキップする。
 			}
-			for (; i <= tagDepth; ++i) {
+			for (; i <= tagDepth && i < _countof(serials); ++i) {
 				// "1.", "2.", "3.",..., "10.",..., "100.",...,"999.", "000.", "001.",...
 				pTopicEnd += auto_sprintf(pTopicEnd, serials[i]/1000 ? L"%03d." : L"%d.", serials[i]%1000);
 			}

@@ -10,6 +10,7 @@
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2004, D.S.Koba
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -36,8 +37,11 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids[] = {	//13400
 	IDC_CHECK_SHORTPATH,	HIDC_CHECK_FNAME_SHORTPATH,
@@ -229,14 +233,14 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					break;
 
 				case IDC_BUTTON_FNAME_UPD:	// 更新
+					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo, _MAX_PATH );
 					if( -1 != nIndex ){
-						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
 						if( -1 != SetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo, false ) ){
 							return TRUE;
 						}
 					}else{
-						// 未選択でリストにひとつも項目がない場合は追加しておく
+						// 項目を選択していない理由が「リストに項目がない」であれば、更新ボタンで項目を追加できるようにする
 						if( 0 == ListView_GetItemCount( hListView ) ){
 							if( -1 != SetListViewItem_FILENAME( hListView, 0, szFrom, szTo, true ) ){
 								return TRUE;

@@ -18,6 +18,7 @@
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Moca, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -29,6 +30,7 @@
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
+#include "_main/CControlProcess.h"
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"
 #include "_main/CMutex.h"
@@ -41,7 +43,10 @@
 #include "util/window.h"
 #include "util/os.h"
 #include "CDataProfile.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 struct ARRHEAD {
 	int		nLength;
@@ -105,7 +110,7 @@ CMutex& CShareData::GetMutexShareWork(){
 */
 bool CShareData::InitShareData()
 {
-	MY_RUNNINGTIMER(cRunningTimer,"CShareData::InitShareData" );
+	MY_RUNNINGTIMER(cRunningTimer,L"CShareData::InitShareData" );
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
@@ -146,12 +151,6 @@ bool CShareData::InitShareData()
 		CreateTypeSettings();
 		SetDllShareData( m_pShareData );
 
-		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
-		WCHAR	szIniFolder[_MAX_PATH];
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = false;
-		GetInidir( szIniFolder );
-		AddLastChar( szIniFolder, _MAX_PATH, L'\\' );
-
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
 
@@ -175,6 +174,18 @@ bool CShareData::InitShareData()
 		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
 		}
+
+		// マルチユーザー用のiniファイルパス(exe基準の初期化よりも先に行う必要がある)
+		auto privateIniPath = GetIniFileName();
+		m_pShareData->m_szPrivateIniFile = privateIniPath.c_str();
+
+		// exe基準のiniファイルパス
+		auto iniPath = GetExeFileName().replace_extension(L".ini");
+		m_pShareData->m_szIniFile = iniPath.c_str();
+
+		// 設定ファイルフォルダー
+		WCHAR	szIniFolder[_MAX_PATH];
+		GetInidir(szIniFolder);
 
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 		CMRUFile cMRU;
@@ -224,7 +235,7 @@ bool CShareData::InitShareData()
 			CommonSetting_General& sGeneral = m_pShareData->m_Common.m_sGeneral;
 
 			sGeneral.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
-			sGeneral.m_nOPENFOLDERArrNum_MAX = 15;	/* フォルダの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
+			sGeneral.m_nOPENFOLDERArrNum_MAX = 15;	/* フォルダーの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 
 			sGeneral.m_nCaretType = 0;					/* カーソルのタイプ 0=win 1=dos */
 			sGeneral.m_bIsINSMode = true;				/* 挿入／上書きモード */
@@ -261,7 +272,7 @@ bool CShareData::InitShareData()
 			sWindow.m_bDispMiniMap = false;			// ミニマップを表示する
 			sWindow.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
 			sWindow.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
-			sWindow.m_nMiniMapFontSize = -1;
+			sWindow.m_nMiniMapFontSize = -2;
 			sWindow.m_nMiniMapQuality = NONANTIALIASED_QUALITY;
 			sWindow.m_nMiniMapWidth = 150;
 
@@ -368,7 +379,7 @@ bool CShareData::InitShareData()
 			//ファイルの保存
 			sFile.m_bEnableUnmodifiedOverwrite = false;	// 無変更でも上書きするか
 
-			// 「名前を付けて保存」でファイルの種類が[ユーザ指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+			// 「名前を付けて保存」でファイルの種類が[ユーザー指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
 			sFile.m_bNoFilterSaveNew = true;		// 新規から保存時は全ファイル表示
 			sFile.m_bNoFilterSaveFile = true;		// 新規以外から保存時は全ファイル表示
 
@@ -390,8 +401,8 @@ bool CShareData::InitShareData()
 
 			sBackup.m_bBackUp = false;										/* バックアップの作成 */
 			sBackup.m_bBackUpDialog = true;									/* バックアップの作成前に確認 */
-			sBackup.m_bBackUpFolder = false;								/* 指定フォルダにバックアップを作成する */
-			sBackup.m_szBackUpFolder[0] = L'\0';							/* バックアップを作成するフォルダ */
+			sBackup.m_bBackUpFolder = false;								/* 指定フォルダーにバックアップを作成する */
+			sBackup.m_szBackUpFolder[0] = L'\0';							/* バックアップを作成するフォルダー */
 			sBackup.m_nBackUpType = 2;										/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 			sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
 			sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;					/* バックアップファイル名：連番の数と先頭文字 */
@@ -400,8 +411,8 @@ bool CShareData::InitShareData()
 			sBackup.m_nBackUpType_Opt5 = 0;									/* バックアップファイル名：Option5 */
 			sBackup.m_nBackUpType_Opt6 = 0;									/* バックアップファイル名：Option6 */
 			sBackup.m_bBackUpDustBox = false;								/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-			sBackup.m_bBackUpPathAdvanced = false;							/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-			sBackup.m_szBackUpPathAdvanced[0] = L'\0';					/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+			sBackup.m_bBackUpPathAdvanced = false;							/* 20051107 aroka バックアップ先フォルダーを詳細設定する */
+			sBackup.m_szBackUpPathAdvanced[0] = L'\0';					/* 20051107 aroka バックアップを作成するフォルダーの詳細設定 */
 		}
 
 		// [書式]タブ
@@ -432,7 +443,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bSelectedArea = FALSE;			// 選択範囲内置換
 			sSearch.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
 
-			sSearch.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */
+			sSearch.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダーも検索 */
 			sSearch.m_nGrepOutputLineType = 1;			// Grep: 行を出力/該当部分/否マッチ行 を出力
 			sSearch.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
 			sSearch.m_bGrepOutputFileOnly = false;
@@ -440,7 +451,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGrepSeparateFolder = false;
 			sSearch.m_bGrepBackup = true;
 
-			sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
+			sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダーの初期値をカレントフォルダーにする */
 			sSearch.m_nGrepCharSet = CODE_AUTODETECT;	/* Grep: 文字コードセット */
 			sSearch.m_bGrepRealTimeView = FALSE;		/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
 			sSearch.m_bCaretTextForSearch = TRUE;		/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
@@ -572,7 +583,7 @@ bool CShareData::InitShareData()
 			}
 			//	To Here Sep. 14, 2001 genta
 
-			wcscpy( sMacro.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
+			wcscpy( sMacro.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダー */
 
 			sMacro.m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 			sMacro.m_nMacroOnTypeChanged = -1;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
@@ -701,7 +712,7 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_sHistory.m_aExceptMRU.clear();
 
-			wcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
+			wcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダー */
 
 			m_pShareData->m_sHistory.m_aCommands.clear();
 			m_pShareData->m_sHistory.m_aCurDirs.clear();
@@ -907,7 +918,7 @@ BOOL CShareData::IsPathOpened( const WCHAR* pszPath, HWND* phwndOwner )
 
 	@note	CEditDoc::FileLoadに先立って実行されることもあるが、
 			CEditDoc::FileLoadからも実行される必要があることに注意。
-			(フォルダ指定の場合やCEditDoc::FileLoadが直接実行される場合もあるため)
+			(フォルダー指定の場合やCEditDoc::FileLoadが直接実行される場合もあるため)
 
 	@retval	TRUE すでに開いていた
 	@retval	FALSE 開いていなかった
@@ -959,37 +970,6 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const WCHAR* pszPath, HWND* phwndOwn
 	else {
 		return FALSE;
 	}
-}
-
-/*!
-	アウトプットウインドウに出力(書式付)
-
-	アウトプットウインドウが無ければオープンする
-	@param lpFmt [in] 書式指定文字列(wchar_t版)
-	@date 2010.02.22 Moca auto_vsprintfから tchar_vsnprintf_s に変更.長すぎるときは切り詰められる
-*/
-void CShareData::TraceOut( LPCWSTR lpFmt, ... )
-{
-	if( false == OpenDebugWindow( m_hwndTraceOutSource, false ) ){
-		return;
-	}
-	
-	LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
-	va_list argList;
-	va_start( argList, lpFmt );
-	int ret = tchar_vsnprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
-		m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>(), lpFmt, argList );
-	va_end( argList );
-	if( -1 == ret ){
-		// 切り詰められた
-		ret = wcslen( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>() );
-	}else if( ret < 0 ){
-		// 保護コード:受け側はwParam→size_tで符号なしのため
-		ret = 0;
-	}
-	DWORD_PTR dwMsgResult;
-	::SendMessageTimeout( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, ret, 0,
-		SMTO_NORMAL, 10000, &dwMsgResult );
 }
 
 /*!
@@ -1085,15 +1065,20 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 	return ret;
 }
 
-/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
-BOOL CShareData::IsPrivateSettings( void ){
-	return m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate;
+/*!
+	設定フォルダーがEXEフォルダーと別かどうかを返す
+
+	iniファイルの保存先がユーザー別設定フォルダーかどうか 2007.05.25 ryoji
+*/
+[[nodiscard]]  bool CShareData::IsPrivateSettings( void ) const noexcept
+{
+	return m_pShareData != nullptr && 0 != ::wcscmp(m_pShareData->m_szPrivateIniFile, m_pShareData->m_szIniFile);
 }
 
 /*
 	CShareData::CheckMRUandOPENFOLDERList
 	MRUとOPENFOLDERリストの存在チェックなど
-	存在しないファイルやフォルダはMRUやOPENFOLDERリストから削除する
+	存在しないファイルやフォルダーはMRUやOPENFOLDERリストから削除する
 
 	@note 現在は使われていないようだ。
 	@par History
@@ -1139,21 +1124,21 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 	int nLen = wcslen( ptr ); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
-		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == L'\0' ){	//	フォルダ指定なし
+		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == L'\0' ){	//	フォルダー指定なし
 		if( pszPath == NULL || nBufLen <= nLen ){
 			return -nLen;
 		}
 		wcscpy( pszPath, pszFile );
 		return nLen;
 	}
-	else {	//	フォルダ指定あり
+	else {	//	フォルダー指定あり
 		//	相対パス→絶対パス
 		int nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, _countof2(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), L'\\' );
 		int nAllLen;
 		WCHAR *pszDir;
 		WCHAR szDir[_MAX_PATH + _countof2( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER )];
 
-		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
+		 // 2003.06.24 Moca フォルダーも相対パスなら実行ファイルからのパス
 		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER ) ){
 			GetInidirOrExedir( szDir, m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER );

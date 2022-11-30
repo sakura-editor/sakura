@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 2006, D. S. Koba, genta
 	Copyright (C) 2007
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -140,7 +141,7 @@ const char* TABLE_JISESCDATA[] = {
 
 	@return 確認した文字の長さ
 */
-int CheckSjisChar( const char* pS, const int nLen, ECharSet *peCharset )
+int CheckSjisChar( const char* pS, const size_t nLen, ECharSet *peCharset )
 {
 	unsigned char uc;
 
@@ -198,7 +199,7 @@ int CheckSjisChar( const char* pS, const int nLen, ECharSet *peCharset )
 
 	@date 2006.09.23 EUCJP 半角カタカナ判別が間違っていたのを修正．genta
 */
-int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
+int CheckEucjpChar( const char* pS, const size_t nLen, ECharSet *peCharset )
 {
 	unsigned char uc;
 
@@ -259,7 +260,7 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 		戻り値がゼロより大きい場合に限り，*pnEscType が更新される．\n
 		pnEscType は NULL でも良い．\n
 */
-int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
+int DetectJisEscseq( const char* pS, const size_t nLen, EMyJisEscseq* peEscType )
 {
 	const char *pr, *pr_end;
 	int expected_esc_len;
@@ -276,7 +277,7 @@ int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 	pr = const_cast<char*>( pS );
 	pr_end = pS + nLen;
 
-	if( pr[0] == ACODE::ESC ){
+	if( pr[0] == '\x1b' ){
 		expected_esc_len++;
 		pr++;
 		if( pr + 1 < pr_end ){

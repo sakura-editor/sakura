@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2003, MIK
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGTAGSMAKE_65A013DF_4315_4254_8C64_4E7489E8E5FC_H_
+#define SAKURA_CDLGTAGSMAKE_65A013DF_4315_4254_8C64_4E7489E8E5FC_H_
 #pragma once
 
 class CDlgTagsMake;
@@ -49,7 +52,7 @@ public:
 	*/
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, const WCHAR* pszPath );	/* モーダルダイアログの表示 */
 
-	WCHAR	m_szPath[_MAX_PATH+1];	/* フォルダ */
+	WCHAR	m_szPath[_MAX_PATH+1];	/* フォルダー */
 	WCHAR	m_szTagsCmdLine[_MAX_PATH];	/* コマンドラインオプション(個別) */
 	int		m_nTagsOpt;				/* CTAGSオプション(チェック) */
 
@@ -66,3 +69,4 @@ protected:
 private:
 	void SelectFolder( HWND hwndDlg );
 };
+#endif /* SAKURA_CDLGTAGSMAKE_65A013DF_4315_4254_8C64_4E7489E8E5FC_H_ */

@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2002, Moca, genta
 	Copyright (C) 2003, Moca, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFILELOAD_B9B7A22E_8C14_4913_8B92_3B5ABA6FC0DB_H_
+#define SAKURA_CFILELOAD_B9B7A22E_8C14_4913_8B92_3B5ABA6FC0DB_H_
 #pragma once
 
 #include <Windows.h>
@@ -164,3 +167,4 @@ inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
 		throw CError_FileRead();
 	return fp;
 }
+#endif /* SAKURA_CFILELOAD_B9B7A22E_8C14_4913_8B92_3B5ABA6FC0DB_H_ */

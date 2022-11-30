@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -36,6 +37,9 @@
 #include "uiparts/CVisualProgress.h"
 #include "util/file.h"
 #include "io/CFileLoad.h"
+#include "apiwrap/StdApi.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
@@ -44,13 +48,13 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	// リロード要求の場合は、継続。
 	if(pLoadInfo->bRequestReload)goto next;
 
-	//フォルダが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
+	//フォルダーが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
 	if( IsDirectory(pLoadInfo->cFilePath) ){
 		std::vector<std::wstring> files;
 		SLoadInfo sLoadInfo(L"", CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),
-			pLoadInfo->cFilePath,	//指定されたフォルダ
+			pLoadInfo->cFilePath,	//指定されたフォルダー
 			&sLoadInfo,
 			files
 		);
@@ -165,7 +169,7 @@ next:
 			return CALLBACK_INTERRUPT;
 		}
 
-		// ファイルサイズがユーザ設定の閾値以上の場合は警告ダイアログを出す
+		// ファイルサイズがユーザー設定の閾値以上の場合は警告ダイアログを出す
 		if (GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile) {
 			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
@@ -203,18 +207,18 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 
 	// 文書種別確定
 	pcDoc->m_cDocType.SetDocumentType( sLoadInfo.nType, true );
-	pcDoc->m_pcEditWnd->m_pcViewFontMiniMap->UpdateFont(&pcDoc->m_pcEditWnd->GetLogfont());
-	InitCharWidthCache( pcDoc->m_pcEditWnd->m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
-	SelectCharWidthCache( CWM_FONT_EDIT, pcDoc->m_pcEditWnd->GetLogfontCacheMode() );
-	InitCharWidthCache( pcDoc->m_pcEditWnd->GetLogfont() );
-	pcDoc->m_pcEditWnd->m_pcViewFont->UpdateFont(&pcDoc->m_pcEditWnd->GetLogfont());
+	GetEditWnd().m_pcViewFontMiniMap->UpdateFont(&GetEditWnd().GetLogfont());
+	InitCharWidthCache( GetEditWnd().m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
+	SelectCharWidthCache( CWM_FONT_EDIT, GetEditWnd().GetLogfontCacheMode() );
+	InitCharWidthCache( GetEditWnd().GetLogfont() );
+	GetEditWnd().m_pcViewFont->UpdateFont(&GetEditWnd().GetLogfont());
 
 	// 起動と同時に読む場合は予めアウトライン解析画面を配置しておく
 	// （ファイル読み込み開始とともにビューが表示されるので、あとで配置すると画面のちらつきが大きいの）
-	if( !pcDoc->m_pcEditWnd->m_cDlgFuncList.m_bEditWndReady ){
-		pcDoc->m_pcEditWnd->m_cDlgFuncList.Refresh();
-		HWND hEditWnd = pcDoc->m_pcEditWnd->GetHwnd();
-		if( !::IsIconic( hEditWnd ) && pcDoc->m_pcEditWnd->m_cDlgFuncList.GetHwnd() ){
+	if( !GetEditWnd().m_cDlgFuncList.m_bEditWndReady ){
+		GetEditWnd().m_cDlgFuncList.Refresh();
+		HWND hEditWnd = GetEditWnd().GetHwnd();
+		if( !::IsIconic( hEditWnd ) && GetEditWnd().m_cDlgFuncList.GetHwnd() ){
 			RECT rc;
 			::GetClientRect( hEditWnd, &rc );
 			::SendMessageAny( hEditWnd, WM_SIZE, ::IsZoomed( hEditWnd )? SIZE_MAXIMIZED: SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
@@ -254,8 +258,8 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
 
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
-	pcDoc->m_cLayoutMgr.SetLayoutInfo( true, true, ref, ref.m_nTabSpace, ref.m_nTsvMode, nMaxLineKetas, CLayoutXInt(-1), &pcDoc->m_pcEditWnd->GetLogfont() );
-	pcDoc->m_pcEditWnd->ClearViewCaretPosInfo();
+	pcDoc->m_cLayoutMgr.SetLayoutInfo( true, true, ref, ref.m_nTabSpace, ref.m_nTsvMode, nMaxLineKetas, CLayoutXInt(-1), &GetEditWnd().GetLogfont() );
+	GetEditWnd().ClearViewCaretPosInfo();
 	if (pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode != TSV_MODE_NONE) {
 		pcDoc->m_cLayoutMgr.m_tsvInfo.CalcTabLength(pcDoc->m_cLayoutMgr.m_pcDocLineMgr);
 	}
@@ -270,7 +274,7 @@ void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	/* 親ウィンドウのタイトルを更新 */
-	pcDoc->m_pcEditWnd->UpdateCaption();
+	GetEditWnd().UpdateCaption();
 
 	// -- -- ※ InitAllViewでやってたこと -- -- //	// 2009.08.28 nasukoji	CEditView::OnAfterLoad()からここに移動
 	pcDoc->m_nCommandExecNum=0;

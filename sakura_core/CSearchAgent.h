@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,13 +23,18 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_
+#define SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_
 #pragma once
 
 #include "_main/global.h"
+#include "util/design_template.h"
+#include "basis/SakuraBasis.h"
 
 class CDocLineMgr;
 struct DocLineReplaceArg;
 class CBregexp;
+class CNativeW;
 
 // #define SEARCH_STRING_KMP
 #define SEARCH_STRING_SUNDAY_QUICK
@@ -125,7 +131,8 @@ public:
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	int SearchWord( CLogicPoint ptSerachBegin, ESearchDirection eDirection, CLogicRange* pMatchRange, const CSearchStringPattern& pattern ); /* 単語検索 */
 
-	void ReplaceData( DocLineReplaceArg* pArg );
+	void ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol );
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
+#endif /* SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_ */

@@ -15,7 +15,7 @@ def checkExtension(fileName):
 	base, ext = os.path.splitext(fileName)
 	return (ext in extensions)
 
-# 引数で指定したフォルダ以下のすべての対象ファイルを yield で返す
+# 引数で指定したフォルダー以下のすべての対象ファイルを yield で返す
 def checkAll(topDir):
 	for rootdir, dirs, files in os.walk(topDir):
 		for fileName in files:

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_ECOLORINDEXTYPE_A3927D3F_B421_443A_9F59_6BF51074FF24_H_
+#define SAKURA_ECOLORINDEXTYPE_A3927D3F_B421_443A_9F59_6BF51074FF24_H_
 #pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -58,7 +61,7 @@ enum EColorIndexType {
 	COLORIDX_WRAP,			//!< 折り返し記号
 	COLORIDX_VERTLINE,		//!< 指定桁縦線	// 2005.11.08 Moca
 	COLORIDX_EOF,			//!< EOF記号
-	COLORIDX_DIGIT,			//!< 半角数値	 //@@@ 2001.02.17 by MIK //色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
+	COLORIDX_DIGIT,			//!< 半角数値	 //@@@ 2001.02.17 by MIK //色設定Ver.3からユーザーファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
 	COLORIDX_BRACKET_PAIR,	//!< 対括弧	  // 02/09/18 ai Add
 	COLORIDX_SELECT,		//!< 選択範囲
 	COLORIDX_SEARCH,		//!< 検索文字列
@@ -112,3 +115,4 @@ enum EColorIndexType {
 	COLORIDX_DEFAULT		= COLORIDX_TEXT,							//!< デフォルト
 	COLORIDX_SEARCHTAIL		= COLORIDX_SEARCH5,
 };
+#endif /* SAKURA_ECOLORINDEXTYPE_A3927D3F_B421_443A_9F59_6BF51074FF24_H_ */

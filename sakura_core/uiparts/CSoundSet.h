@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSOUNDSET_2EB52973_40E4_438F_A670_6FFA850251E6_H_
+#define SAKURA_CSOUNDSET_2EB52973_40E4_438F_A670_6FFA850251E6_H_
 #pragma once
 
 class CSoundSet{
@@ -33,3 +36,4 @@ public:
 private:
 	int	m_nMuteCount;
 };
+#endif /* SAKURA_CSOUNDSET_2EB52973_40E4_438F_A670_6FFA850251E6_H_ */

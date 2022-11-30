@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,6 +33,8 @@
 #include "charset/CCodePage.h"
 #include "charset/CCodeMediator.h"
 #include "util/file.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //
@@ -157,7 +160,7 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		pcDoc->m_cLayoutMgr.LogicToLayout(eiOld.m_ptCursor, &ptCaretPos);
 
 		//ビュー取得
-		CEditView& cView = pcDoc->m_pcEditWnd->GetActiveView();
+		CEditView& cView = GetEditWnd().GetActiveView();
 
 		if( ptCaretPos.GetY2() >= pcDoc->m_cLayoutMgr.GetLineCount() ){
 			//ファイルの最後に移動

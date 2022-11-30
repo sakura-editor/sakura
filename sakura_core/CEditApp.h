@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CEDITAPP_421797BC_DD8E_4209_AAF7_6BDC4D1CAAE9_H_
+#define SAKURA_CEDITAPP_421797BC_DD8E_4209_AAF7_6BDC4D1CAAE9_H_
 #pragma once
 
 //2007.10.23 kobake 作成
@@ -29,6 +32,8 @@
 #include "util/design_template.h"
 #include "uiparts/CSoundSet.h"
 #include "uiparts/CImageListMgr.h"
+#include "types/CType.h"
+
 class CEditDoc;
 class CEditWnd;
 class CLoadAgent;
@@ -93,3 +98,4 @@ class CAppExitException : public std::exception{
 public:
 	const char* what() const throw(){ return "CAppExitException"; }
 };
+#endif /* SAKURA_CEDITAPP_421797BC_DD8E_4209_AAF7_6BDC4D1CAAE9_H_ */

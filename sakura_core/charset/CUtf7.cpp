@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 // 2008.11.10 変換ロジックを書き直す
 
 #include "StdAfx.h"
@@ -6,7 +29,6 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "convert/convert_util2.h"
-#include "CEol.h"
 
 /*!
 	UTF-7 Set D 部分の読み込み。
@@ -87,7 +109,7 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 			if( berror_tmp ){
 				berror = true;
 			}
-			if( nblocklen < 1 && *(pr_next-1) == '-' ){
+			if( nblocklen < 1 && pr < pr_next && *(pr_next - 1) == '-' ){
 				// +- → + 変換
 				*pw = L'+';
 				++pw;
@@ -250,29 +272,4 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 	delete [] pDst;
 
 	return RESULT_COMPLETE;
-}
-
-//! BOMデータ取得
-void CUtf7::GetBom(CMemory* pcmemBom)
-{
-	static const BYTE UTF7_BOM[]= {'+','/','v','8','-'};
-	pcmemBom->SetRawData(UTF7_BOM, sizeof(UTF7_BOM));
-}
-
-void CUtf7::GetEol(CMemory* pcmemEol, EEolType eEolType)
-{
-	static const struct{
-		const char* szData;
-		int nLen;
-	}
-	aEolTable[EOL_TYPE_NUM] = {
-		{ "",			0 },	// EOL_NONE
-		{ "\x0d\x0a",	2 },	// EOL_CRLF
-		{ "\x0a",		1 },	// EOL_LF
-		{ "\x0d",		1 },	// EOL_CR
-		{ "+AIU-",		5 },	// EOL_NEL
-		{ "+ICg-",		5 },	// EOL_LS
-		{ "+ICk-",		5 },	// EOL_PS
-	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
 }

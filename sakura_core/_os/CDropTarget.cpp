@@ -8,6 +8,7 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -19,6 +20,8 @@
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "_main/global.h"
 #include "CClipboard.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 COleLibrary CYbInterfaceBase::m_olelib;
 

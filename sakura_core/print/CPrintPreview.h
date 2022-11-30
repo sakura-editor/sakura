@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, かろと
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,12 +30,15 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CPRINTPREVIEW_71FC07B8_7648_4179_81A7_0FE3299DBA0A_H_
+#define SAKURA_CPRINTPREVIEW_71FC07B8_7648_4179_81A7_0FE3299DBA0A_H_
 #pragma once
 
 #include <Windows.h> // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
 #include "CPrint.h" // 2002/2/10 aroka
+#include "types/CType.h"
 
 class CColorStrategy;
 class CColorStrategyPool;
@@ -42,6 +46,7 @@ class CDlgCancel;
 class CEditWnd;
 class CLayout;
 class CLayoutMgr;
+class CStringRef;
 
 class CPrintPreview {
 /* メンバ関数宣言 */
@@ -51,7 +56,7 @@ public:
 	*/
 	CPrintPreview( class CEditWnd* pParentWnd );
 	~CPrintPreview();
-	
+
 	/*
 	||	イベント
 	*/
@@ -80,15 +85,19 @@ public:
 	*/
 	//	スクロールバー
 	void InitPreviewScrollBar( void );
-	
+
 	//	PrintPreviewバー（画面上部のコントロール）
 	void CreatePrintPreviewControls( void );
 	void DestroyPrintPreviewControls( void );
 
 	void SetFocusToPrintPreviewBar( void );
-	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar;	}
-	HWND GetPrintPreviewBarHANDLE_Safe() const{ if(!this)return NULL; else return m_hwndPrintPreviewBar; } //!< thisがNULLでも実行できる版。2007.10.29 kobake
-	
+	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar; }
+	static HWND GetPrintPreviewBarHANDLE_Safe(const CPrintPreview *preview) {
+		if (preview)
+			return preview->m_hwndPrintPreviewBar;
+		return NULL;
+	}
+
 	//	PrintPreviewバーのメッセージ処理。
 	//	まずPrintPreviewBar_DlgProcにメッセージが届き、DispatchEvent_PPBに転送する仕組み
 	static INT_PTR CALLBACK PrintPreviewBar_DlgProc(
@@ -179,7 +188,7 @@ public:
 	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
 
 	/*
-	||	ヘッダ・フッタ
+	||	ヘッダー・フッター
 	*/
 	void SetHeader(char* pszWork[]);	//	&fなどを登録
 	void SetFooter(char* pszWork[]);	//	&p/&Pなどを登録
@@ -259,11 +268,12 @@ public:
 protected:
 	STypeConfig m_typePrint;
 
-	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
-	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
+	// プレビューから出ても現在のプリンター情報を記憶しておけるようにstaticにする 2003.05.02 かろと
+	static CPrint	m_cPrint;					//!< 現在のプリンター情報
 
 	bool			m_bLockSetting;				// 設定のロック
 	bool			m_bDemandUpdateSetting;		// 設定の更新要求
 
 	DISALLOW_COPY_AND_ASSIGN(CPrintPreview);
 };
+#endif /* SAKURA_CPRINTPREVIEW_71FC07B8_7648_4179_81A7_0FE3299DBA0A_H_ */

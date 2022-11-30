@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,7 +28,6 @@
 */
 
 #include "StdAfx.h"
-#include <ShlObj.h> //CSIDL_PROFILE等
 
 #include "DLLSHAREDATA.h"
 #include "CFileNameManager.h"
@@ -38,7 +38,8 @@
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/window.h"
-#include "_main/CCommandLine.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //
@@ -116,54 +117,31 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 	return nCount;
 }
 
-/*!	ファイル・フォルダ名を置換して、簡易表示名を取得する
+/*!	ファイル・フォルダー名を置換して、簡易表示名を取得する
 	@date 2002.11.27 Moca 新規作成
 	@note 大小文字を区別しない。nDestLenに達したときは後ろを切り捨てられる
 */
-LPCWSTR CFileNameManager::GetFilePathFormat( LPCWSTR pszSrc, LPWSTR pszDest, int nDestLen, LPCWSTR pszFrom, LPCWSTR pszTo )
+LPCWSTR CFileNameManager::GetFilePathFormat( std::wstring_view strSrc, LPWSTR pszDest, size_t nDestLen, std::wstring_view strFrom, std::wstring_view strTo )
 {
-	int i, j;
-	int nSrcLen;
-	int nFromLen, nToLen;
-	int nCopy;
-
-	nSrcLen  = wcslen( pszSrc );
-	nFromLen = wcslen( pszFrom );
-	nToLen   = wcslen( pszTo );
-
-	nDestLen--;
-
-	for( i = 0, j = 0; i < nSrcLen && j < nDestLen; i++ ){
-#if defined(_MBCS)
-		if( 0 == _strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
-#else
-		if( 0 == _wcsnicmp( &pszSrc[i], pszFrom, nFromLen ) )
-#endif
-		{
-			nCopy = t_min( nToLen, nDestLen - j );
-			memcpy( &pszDest[j], pszTo, nCopy * sizeof( WCHAR ) );
-			j += nCopy;
-			i += nFromLen - 1;
-		}else{
-#if defined(_MBCS)
-// SJIS 専用処理
-			if( _IS_SJIS_1( (unsigned char)pszSrc[i] ) && i + 1 < nSrcLen && _IS_SJIS_2( (unsigned char)pszSrc[i + 1] ) ){
-				if( j + 1 < nDestLen ){
-					pszDest[j] = pszSrc[i];
-					j++;
-					i++;
-				}else{
-					// SJISの先行バイトだけコピーされるのを防ぐ
-					break;// goto end_of_func;
-				}
+	auto it = strSrc.cbegin();
+	wchar_t* pDest = pszDest;
+	const wchar_t* pEnd = pszDest + nDestLen;
+	while( it < strSrc.cend() && pDest + 1 < pEnd ){
+		if( strFrom.length() <= static_cast<size_t>(strSrc.cend() - it) && 0 == ::_wcsnicmp( &*it, strFrom.data(), strFrom.length() ) ){
+			if( strTo.length() < static_cast<size_t>(pEnd - pDest) ){
+				::wcsncpy_s( pDest, pEnd - pDest, strTo.data(), strTo.length() );
+			}else{
+				::wcsncpy_s( pDest, pEnd - pDest, strTo.data(), _TRUNCATE );
+				return pszDest;
 			}
-#endif
-			pszDest[j] = pszSrc[i];
-			j++;
+			pDest += ::wcsnlen( pDest, pEnd - pDest );
+			it += strFrom.length();
+		}else{
+			::wcsncpy_s( pDest, pEnd - pDest, &*it, 1 );
+			++pDest;
+			++it;
 		}
 	}
-// end_of_func:;
-	pszDest[j] = '\0';
 	return pszDest;
 }
 
@@ -235,13 +213,13 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			ps++;
 			// %SAKURA%
 			if( 0 == wmemicmp( L"SAKURA%", ps, 7 ) ){
-				// exeのあるフォルダ
+				// exeのあるフォルダー
 				GetExedir( szPath );
 				nMetaLen = 6;
 			}
 			// %SAKURADATA%	// 2007.06.06 ryoji
 			else if( 0 == wmemicmp( L"SAKURADATA%", ps, 11 ) ){
-				// iniのあるフォルダ
+				// iniのあるフォルダー
 				GetInidir( szPath );
 				nMetaLen = 10;
 			}
@@ -320,7 +298,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				}
 			}
 
-			// 最後のフォルダ区切り記号を削除する
+			// 最後のフォルダー区切り記号を削除する
 			// [A:\]などのルートであっても削除
 			for(nPathLen = 0; pStr2[nPathLen] != L'\0'; nPathLen++ ){
 #ifdef _MBCS
@@ -475,129 +453,9 @@ bool CFileNameManager::GetMenuFullLabel(
 		pszCharset = szCodePageName;
 	}
 	
-	int ret = auto_snprintf_s( pszOutput, nBuffSize, L"%s%s%s %s%s",
+	int ret = auto_snprintf_s( pszOutput, nBuffSize, L"%s%s%s%s%s",
 		szAccKey, (bFavorite ? L"★ " : L""), pszName,
-		(bModified ? L"*":L" "), pszCharset
+		(bModified ? L" *":L""), pszCharset
 	);
 	return 0 < ret;
-}
-
-/**
-	構成設定ファイルからiniファイル名を取得する
-
-	sakura.exe.iniからsakura.iniの格納フォルダを取得し、フルパス名を返す
-
-	@param[out] pszPrivateIniFile マルチユーザ用のiniファイルパス
-	@param[out] pszIniFile EXE基準のiniファイルパス
-
-	@author ryoji
-	@date 2007.09.04 ryoji 新規作成
-	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
-*/
-void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR pszIniFile, LPCWSTR pszProfName )
-{
-	WCHAR szPath[_MAX_PATH];
-	WCHAR szDrive[_MAX_DRIVE];
-	WCHAR szDir[_MAX_DIR];
-	WCHAR szFname[_MAX_FNAME];
-	WCHAR szExt[_MAX_EXT];
-
-	::GetModuleFileName(
-		NULL,
-		szPath, _countof(szPath)
-	);
-	_wsplitpath( szPath, szDrive, szDir, szFname, szExt );
-
-	if( pszProfName[0] == '\0' ){
-		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, L"%s%s%s%s", szDrive, szDir, szFname, L".ini" );
-	}else{
-		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, L"%s%s%s\\%s%s", szDrive, szDir, pszProfName, szFname, L".ini" );
-	}
-
-	// マルチユーザ用のiniファイルパス
-	//		exeと同じフォルダに置かれたマルチユーザ構成設定ファイル（sakura.exe.ini）の内容
-	//		に従ってマルチユーザ用のiniファイルパスを決める
-	pszPrivateIniFile[0] = L'\0';
-	{
-		auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s%s%s%s", szDrive, szDir, szFname, L".exe.ini" );
-		int nEnable = ::GetPrivateProfileInt(L"Settings", L"MultiUser", 0, szPath );
-		if( nEnable ){
-			int nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, szPath );
-			switch( nFolder ){
-			case 1:
-				nFolder = CSIDL_PROFILE;			// ユーザのルートフォルダ
-				break;
-			case 2:
-				nFolder = CSIDL_PERSONAL;			// ユーザのドキュメントフォルダ
-				break;
-			case 3:
-				nFolder = CSIDL_DESKTOPDIRECTORY;	// ユーザのデスクトップフォルダ
-				break;
-			default:
-				nFolder = CSIDL_APPDATA;			// ユーザのアプリケーションデータフォルダ
-				break;
-			}
-			::GetPrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", szDir, _MAX_DIR, szPath );
-			if( szDir[0] == L'\0' )
-				::lstrcpy( szDir, L"sakura" );
-			if( GetSpecialFolderPath( nFolder, szPath ) ){
-				if( pszProfName[0] == '\0' ){
-					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, L"%s\\%s\\%s%s", szPath, szDir, szFname, L".ini" );
-				}else{
-					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, L"%s\\%s\\%s\\%s%s", szPath, szDir, pszProfName, szFname, L".ini" );
-				}
-			}
-		}
-	}
-}
-
-/**
-	iniファイル名の取得
-
-	共有データからsakura.iniの格納フォルダを取得し、フルパス名を返す
-	（共有データ未設定のときは共有データ設定を行う）
-
-	@param[out] pszIniFileName iniファイル名（フルパス）
-	@param[in] bRead true: 読み込み / false: 書き込み
-
-	@author ryoji
-	@date 2007.05.19 ryoji 新規作成
-*/
-void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead/*=FALSE*/ )
-{
-	if( !m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit ){
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = true;			// 初期化済フラグ
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
-
-		GetIniFileNameDirect( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, pszProfName );
-		if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != L'\0' ){
-			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = true;
-			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = true;
-			if( CCommandLine::getInstance()->IsNoWindow() && CCommandLine::getInstance()->IsWriteQuit() )
-				m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;
-
-			// マルチユーザ用のiniフォルダを作成しておく
-			if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate ){
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
-		}else{
-			if( pszProfName[0] != L'\0' ){
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
-		}
-	}
-
-	bool bPrivate = bRead? m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate: m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate;
-	::lstrcpy( pszIniFileName, bPrivate? m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile: m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile );
 }

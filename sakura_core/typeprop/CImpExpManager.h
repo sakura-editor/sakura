@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
+#define SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
 #pragma once
 
 #include "CDataProfile.h"
@@ -62,7 +65,7 @@ protected:
 	// Import Folderの設定
 	inline void SetImportFolder( const WCHAR* szPath ) 
 	{
-		/* ファイルのフルパスをフォルダとファイル名に分割 */
+		/* ファイルのフルパスをフォルダーとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
 		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );
@@ -323,3 +326,4 @@ public:
 private:
 	std::vector<SFileTreeItem>&		m_aFileTreeItems;
 };
+#endif /* SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_ */

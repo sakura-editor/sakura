@@ -5,6 +5,7 @@
 */
 /*
 	Copyright (C) 2010-2012 Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -26,6 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCODEPAGE_2FB24C14_37A2_4D64_BF97_973E456462CE_H_
+#define SAKURA_CCODEPAGE_2FB24C14_37A2_4D64_BF97_973E456462CE_H_
 #pragma once
 
 #include "CCodeBase.h"
@@ -56,8 +59,6 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return CPToUnicode(cSrc, pDst, m_nCodePageEx); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    → 特定コード 変換
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;	//!< 改行データ取得
-	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
 	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 public:
@@ -94,3 +95,4 @@ protected:
 	static int S_UnicodeToUTF32LE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
 	static int S_UnicodeToUTF32BE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
 };
+#endif /* SAKURA_CCODEPAGE_2FB24C14_37A2_4D64_BF97_973E456462CE_H_ */

@@ -2,6 +2,7 @@
 //2007.10.18 kobake 作成
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -23,6 +24,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_
+#define SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_
 #pragma once
 
 #define SAFE_DELETE(p) { delete p; p=0; }
@@ -31,7 +34,7 @@
 	2007.10.18 kobake
 	テンプレート式 min とか max とか。
 
-	どっかの標準ヘッダに、同じようなものがあった気がするけど、
+	どっかの標準ヘッダーに、同じようなものがあった気がするけど、
 	NOMINMAX を定義するにしても、なんだか min とか max とかいう名前だと、
 	テンプレートを呼んでるんだかマクロを呼んでるんだか訳分かんないので、
 	明示的に「t_～」という名前を持つ関数を用意。
@@ -80,3 +83,4 @@ T t_unit(T t)
 
 //ビルド種に関係なく、ANSI。
 #define ATEXT(A) A
+#endif /* SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_ */

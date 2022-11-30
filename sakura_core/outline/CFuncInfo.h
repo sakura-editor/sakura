@@ -8,16 +8,20 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CFUNCINFO_9A6DFB84_EFEE_4E20_8E60_9F6F4D83B93C_H_
+#define SAKURA_CFUNCINFO_9A6DFB84_EFEE_4E20_8E60_9F6F4D83B93C_H_
 #pragma once
 
 class CFuncInfo;
 
 #include "mem/CMemory.h"
+#include "mem/CNativeW.h"
 
 // CDlgFuncList::SetTree()用 m_Info
 #define FUNCINFO_INFOMASK	0xFFFF
@@ -50,3 +54,4 @@ class CFuncInfo {
 		int			m_nInfo;		/*!< 付加情報 */
 		int			m_nDepth;		/*!< 深さ */
 };
+#endif /* SAKURA_CFUNCINFO_9A6DFB84_EFEE_4E20_8E60_9F6F4D83B93C_H_ */

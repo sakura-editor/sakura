@@ -42,6 +42,25 @@ mkdir %INSTALLER_WORK%\license\bregonig
 mkdir %INSTALLER_WORK%\keyword
 mkdir %INSTALLER_WORK%\license\ctags\
 
+set BREGONIG_DLL=bregonig.dll
+set BRON_ZIP=installer\externals\bregonig\bron420.zip
+7z e %BRON_ZIP% -o%INSTALLER_RESOURCES_BRON% -y *.txt
+if "%platform%" == "x64" (
+	7z e %BRON_ZIP% -o%platform%\%configuration% -y x64/%BREGONIG_DLL%
+) else (
+	7z e %BRON_ZIP% -o%platform%\%configuration% -y %BREGONIG_DLL%
+)
+
+set CTAGS_EXE=ctags.exe
+if "%PLATFORM%" == "x64" (
+	set CTAGS_PREFIX=x64
+) else if "%PLATFORM%" == "Win32" (
+	set CTAGS_PREFIX=x86
+)
+set CTAGS_ZIP=installer\externals\universal-ctags\ctags-2020-01-12_feffe43a-%CTAGS_PREFIX%.zip
+7z x %CTAGS_ZIP% -o%INSTALLER_RESOURCES_CTAGS% -y license
+7z e %CTAGS_ZIP% -o%platform%\%configuration% -y %CTAGS_EXE%
+
 copy /Y .\LICENSE                                           %INSTALLER_WORK%\license\ > NUL
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x    %INSTALLER_WORK%\ > NUL
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v    %INSTALLER_WORK%\ > NUL

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,10 +34,11 @@
 #include "CEol.h"
 #include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
+#include "_os/CClipboard.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
-, m_cNewLineCode( EOL_CRLF )		//	New Line Type
+, m_cNewLineCode( EEolType::cr_and_lf )		//	New Line Type
 , m_pcOpeBlk( NULL )
 , m_bInsMode( true )	// Oct. 2, 2005 genta
 , m_bIsDocModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
@@ -55,18 +57,22 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 */
 void CDocEditor::SetModified( bool flag, bool redraw)
 {
+	if( redraw ){
+		GetEditWnd().m_cDlgFuncList.NotifyDocModification();
+	}
+
 	if( m_bIsDocModified == flag )	//	変更がなければ何もしない
 		return;
 
 	m_bIsDocModified = flag;
 	if( redraw )
-		m_pcDocRef->m_pcEditWnd->UpdateCaption();
+		GetEditWnd().UpdateCaption();
 }
 
 void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
 	//ビューのテキスト選択解除
-	GetListeningDoc()->m_pcEditWnd->Views_DisableSelectArea(true);
+	GetEditWnd().Views_DisableSelectArea(true);
 }
 
 void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
@@ -81,13 +87,11 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 			SetNewLineCode( type.m_encoding.m_eDefaultEoltype );	// 2011.01.24 ryoji デフォルトEOL
 		}
 		else{
-			SetNewLineCode( EOL_CRLF );
+			SetNewLineCode( EEolType::cr_and_lf );
 		}
-		CDocLine*	pFirstlineinfo = pcDoc->m_cDocLineMgr.GetLine( CLogicInt(0) );
-		if( pFirstlineinfo != NULL ){
-			EEolType t = pFirstlineinfo->GetEol();
-			if( t != EOL_NONE && t != EOL_UNKNOWN ){
-				SetNewLineCode( t );
+		if( const CDocLine* pFirstline = pcDoc->m_cDocLineMgr.GetLine( CLogicInt(0) ); pFirstline != nullptr ){
+			if( const auto cEol = pFirstline->GetEol(); cEol.IsValid() ){
+				SetNewLineCode( cEol.GetType() );
 			}
 		}
 	}
@@ -126,7 +130,7 @@ void CDocEditor::SetImeMode( int mode )
 {
 	DWORD	conv, sent;
 	HIMC	hIme;
-	HWND	hwnd = m_pcDocRef->m_pcEditWnd->GetActiveView().GetHwnd();
+	HWND	hwnd = GetEditWnd().GetActiveView().GetHwnd();
 
 	hIme = ImmGetContext( hwnd ); //######大丈夫？ // 2013.06.04 EditWndからViewに変更
 
@@ -163,6 +167,11 @@ void CDocEditor::SetImeMode( int mode )
 }
 //	To Here Nov. 20, 2000 genta
 
+bool CDocEditor::IsEnablePaste() const
+{
+	return CClipboard::HasValidData();
+}
+
 /*!
 	末尾に行を追加
 
@@ -179,5 +188,5 @@ void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
 	CDocLine* pDocLine = m_pcDocLineMgr->AddNewLine();
 
 	//インスタンス設定
-	pDocLine->SetDocLineString(pData, nDataLen);
+	pDocLine->SetDocLineString(pData, nDataLen, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 }

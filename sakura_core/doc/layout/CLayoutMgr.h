@@ -14,11 +14,14 @@
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, Moca, genta, D.S.Koba
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
+#define SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
 #pragma once
 
 #include <Windows.h>// 2002/2/10 aroka
@@ -35,6 +38,8 @@
 #include "COpe.h"
 #include "util/container.h"
 #include "util/design_template.h"
+#include "charset/charcode.h"
+#include "env/DLLSHAREDATA.h"
 
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
@@ -255,7 +260,8 @@ public:
 		int				nTsvMode,
 		CKetaXInt		nMaxLineKetas,
 		CLayoutXInt		nCharLayoutXPerKeta,
-		const LOGFONT*	pLogfont
+		const LOGFONT*	pLogfont,
+		CCharWidthCache& cache = GetCharWidthCache()
 	);
 
 	/* 文字列置換 */
@@ -270,7 +276,8 @@ public:
 		if( m_nSpacing ){
 			nSpace = CLayoutXInt(CNativeW::GetKetaOfChar(pData, nDataLen, i)) * m_nSpacing;
 		}
-		return CNativeW::GetColmOfChar( pData, nDataLen, i ) + nSpace;
+		return CNativeW::GetColmOfChar( pData, nDataLen, i,
+			GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) + nSpace;
 	}
 	CLayoutXInt GetLayoutXOfChar( const CStringRef& str, int i ) const {
 		return GetLayoutXOfChar(str.GetPtr(), str.GetLength(), i);
@@ -332,7 +339,7 @@ protected:
 	//DoLayout用
 	bool _DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine);
 	void _DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine);
-	void _DoKutoBurasage(SLayoutWork* pWork);
+	void _DoKutoBurasage(SLayoutWork* pWork) const;
 	void _DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
 	void _DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
 	bool _DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine);
@@ -343,22 +350,9 @@ protected:
 	void _OnLine2(SLayoutWork* pWork);
 
 private:
-	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }
-	bool _ExistKinsokuHead(wchar_t wc) const{ return m_pszKinsokuHead_1.exist(wc); }
-	bool IsKinsokuHead( wchar_t wc );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
-	bool IsKinsokuTail( wchar_t wc );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
-	bool IsKinsokuKuto( wchar_t wc );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
-	//	2005-08-20 D.S.Koba 禁則関連処理の関数化
-	/*! 句読点ぶら下げの処理位置か
-		@date 2005-08-20 D.S.Koba
-		@date Sep. 3, 2005 genta 最適化
-	*/
-	bool IsKinsokuPosKuto(CLayoutInt nRest, CLayoutInt nCharChars ) const {
-		return nRest < nCharChars;
-	}
-	bool IsKinsokuPosHead(CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2);	//!< 行頭禁則の処理位置か
-	bool IsKinsokuPosTail(CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2);	//!< 行末禁則の処理位置か
-private:
+	bool IsKinsokuHead( wchar_t wc ) const;	// 行頭禁則文字をチェックする
+	bool IsKinsokuTail( wchar_t wc ) const;	// 行末禁則文字をチェックする
+	bool IsKinsokuKuto( wchar_t wc ) const;	// 句読点文字をチェックする
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
 	CLayoutInt getIndentOffset_Tx2x( CLayout* pLayoutPrev );
@@ -423,3 +417,4 @@ protected:
 
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
+#endif /* SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_ */

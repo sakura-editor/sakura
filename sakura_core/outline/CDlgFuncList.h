@@ -13,11 +13,14 @@
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, aroka
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_
+#define SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_
 #pragma once
 
 #include <Windows.h>
@@ -99,6 +102,8 @@ public:
 	void SetWindowText( const WCHAR* szTitle );		//ダイアログタイトルの設定
 	EFunctionCode GetFuncCodeRedraw(int outlineType);
 	void LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDirPath );
+	void NotifyCaretMovement( CLayoutInt nCurLine, CLayoutInt nCurCol );
+	void NotifyDocModification();
 
 protected:
 	bool m_bInChangeLayout;
@@ -132,11 +137,15 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnJump( bool bCheckAutoClose = true, bool bFileJump = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
-	void SetTreeJava(HWND hwndDlg, BOOL bAddClass);	/* ツリーコントロールの初期化：Javaメソッドツリー */
-	void SetTree(bool tagjump = false, bool nolabel = false);		/* ツリーコントロールの初期化：汎用品 */
+	void SetTreeJava(HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass);	/* ツリーコントロールの初期化：Javaメソッドツリー */
+	void SetTree(HTREEITEM hInsertAfter, bool tagjump = false, bool nolabel = false);		/* ツリーコントロールの初期化：汎用品 */
 	void SetTreeFile();				// ツリーコントロールの初期化：ファイルツリー
 	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 	void SetDocLineFuncList();
+	void SetItemSelection( int nSelectItemIndex, bool bAllowExpand );
+	void SetItemSelectionForTreeView( HWND hwndTree, int nSelectItemIndex, bool bAllowExpand );
+	void SetItemSelectionForListView( HWND hwndList, int nSelectItemIndex );
+	bool GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pnIndexOut );
 
 	void SetTreeFileSub(HTREEITEM hParent, const WCHAR* pszFile);
 	// 2002/11/1 frozen
@@ -220,4 +229,7 @@ private:
 	POINT				m_ptDefaultSize;
 	POINT				m_ptDefaultSizeClient;
 	RECT				m_rcItems[12];
+
+	bool		m_bFuncInfoArrIsUpToDate;
 };
+#endif /* SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_ */

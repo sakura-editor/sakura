@@ -19,6 +19,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -32,6 +33,7 @@
 #include "debug/CRunningTimer.h"
 #include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
+#include "dlg/CDlgFavorite.h"
 #include "dlg/CDlgWindowList.h"
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
@@ -49,7 +51,11 @@
 #include "recent/CMRUFolder.h"
 #include "_main/CCommandLine.h"
 #include "CGrepEnumKeys.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 #define ID_HOTKEY_TRAYMENU	0x1234
 
@@ -63,6 +69,8 @@ static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
 void CControlTray::DoGrep()
 {
+	m_cDlgGrep.m_bEnableThisText = false;
+
 	//Stonee, 2001/06/30
 	//前回のダイアログがあれば前面に (suggested by genta)
 	if ( ::IsWindow(m_cDlgGrep.GetHwnd()) ){
@@ -79,13 +87,13 @@ void CControlTray::DoGrep()
 		wcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
+		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
 		wcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
+		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダー */
 	}
 
 	/* Grepダイアログの表示 */
@@ -130,7 +138,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 
 	//GOPTオプション
 	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダからも検索する
+	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
 	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
 	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
 	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
@@ -218,7 +226,7 @@ CControlTray::~CControlTray()
 /* 作成 */
 HWND CControlTray::Create( HINSTANCE hInstance )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CControlTray::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CControlTray::Create" );
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
@@ -803,11 +811,11 @@ LRESULT CControlTray::DispatchEvent(
 							// アイコンの登録
 							const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 							m_cMenuDrawer.m_pcIcons->ResetExtend();
-							for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
+							for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ) {
 								int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 								const CPlug* plug = *it;
 								if( !plug->m_sIcon.empty() ){
-									iBitmap = m_cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon.c_str() ).c_str() );
+									iBitmap = m_cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon ).c_str() );
 								}
 								m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 							}
@@ -892,6 +900,13 @@ LRESULT CControlTray::DispatchEvent(
 				case F_GREP_DIALOG:
 					/* Grep */
 					DoGrep();  //Stonee, 2001/03/21  Grepを別関数に
+					break;
+				case F_FAVORITE:
+					if (CDlgFavorite cDlgFavorite;
+						cDlgFavorite.GetHwnd() == nullptr)
+					{
+						cDlgFavorite.DoModal(m_hInstance, GetTrayHwnd(), (LPARAM)NULL);
+					}
 					break;
 				case F_FILESAVEALL:	// Jan. 24, 2005 genta 全て上書き保存
 					CAppNodeGroupHandle(0).PostMessageToAllEditors(
@@ -1151,6 +1166,10 @@ bool CControlTray::OpenNewEditor(
 	struct CResponsefileDeleter{
 		LPCWSTR fileName;
 		CResponsefileDeleter(): fileName(NULL){}
+		CResponsefileDeleter(const CResponsefileDeleter&) = delete;
+		CResponsefileDeleter operator = (const CResponsefileDeleter&) = delete;
+		CResponsefileDeleter(CResponsefileDeleter&&) noexcept = delete;
+		CResponsefileDeleter operator = (CResponsefileDeleter&&) noexcept = delete;
 		~CResponsefileDeleter(){
 			if( fileName && fileName[0] ){
 				::DeleteFile( fileName );
@@ -1525,7 +1544,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	int nEnable = (cMRU.MenuLength() > 0 ? 0 : MF_GRAYED);
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | nEnable, (UINT_PTR)hMenuPopUp , LS( F_FILE_RCNTFILE_SUBMENU ), L"F" );
 
-	/* 最近使ったフォルダのメニューを作成 */
+	/* 最近使ったフォルダーのメニューを作成 */
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_cMenuDrawer );

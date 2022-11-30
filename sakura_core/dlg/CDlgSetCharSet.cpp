@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,6 +17,7 @@
 #include "util/shell.h"
 #include "env/DLLSHAREDATA.h"
 #include "charset/CCodePage.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -52,7 +54,7 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_hwndCharSet = GetItemHwnd( IDC_COMBO_CHARSET );	// 文字コードセットコンボボックス
 	m_hwndCheckBOM = GetItemHwnd( IDC_CHECK_BOM );		// BOMチェックボックス
 
-	// コンボボックスのユーザー インターフェイスを拡張インターフェースにする
+	// コンボボックスのユーザー インターフェースを拡張インターフェースにする
 	Combo_SetExtendedUI( m_hwndCharSet, TRUE );
 
 	// 文字コードセット選択コンボボックス初期化
@@ -100,7 +102,7 @@ void CDlgSetCharSet::SetBOM( void )
 {
 	int 		nIdx;
 	LRESULT		lRes;
-	WPARAM		fCheck;
+	int			fCheck;
 
 	nIdx = Combo_GetCurSel( m_hwndCharSet );
 	lRes = Combo_GetItemData( m_hwndCharSet, nIdx );
@@ -126,7 +128,7 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	int 		nIdx;
 	LRESULT		lRes;
-	WPARAM		fCheck;
+	int			fCheck;
 
 	switch (wID) {
 	//	文字コードの変更をBOMチェックボックスに反映

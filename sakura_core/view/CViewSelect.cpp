@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include <limits.h>
 #include "CViewSelect.h"
@@ -364,7 +387,7 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 				// 2006.10.01 Moca End
 				// 2011.12.26 EOFのぶら下がり行は反転し、EOFのみの行は反転しない
 				const CLayout* pBottom = pView->m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
-				if( pBottom && pBottom->GetLayoutEol() == EOL_NONE ){
+				if( pBottom && pBottom->GetLayoutEol().IsNone() ){
 					ptLast.x = 0;
 					ptLast.y++;
 				}
@@ -632,18 +655,18 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	const CEditView* pView=GetEditView();
 
 	//	出力されないなら計算を省略
-	if( ! pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2IsEffective() )
+	if( ! GetEditWnd().m_cStatusBar.SendStatusMessage2IsEffective() )
 		return;
 
 	CLayoutInt nLineCount = pView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( ! IsTextSelected() || m_sSelect.GetFrom().y >= nLineCount ){ // 先頭行が実在しない
 		const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
 		if( IsBoxSelecting() ){
-			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( L"box selecting" );
+			GetEditWnd().m_cStatusBar.SendStatusMessage2( L"box selecting" );
 		}else if( m_bSelectingLock ){
-			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( L"selecting" );
+			GetEditWnd().m_cStatusBar.SendStatusMessage2( L"selecting" );
 		}else{
-			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( L"" );
+			GetEditWnd().m_cStatusBar.SendStatusMessage2( L"" );
 		}
 		return;
 	}
@@ -678,9 +701,9 @@ void CViewSelect::PrintSelectionInfoMsg() const
 
 		// 共通設定・選択文字数を文字単位ではなくバイト単位で表示する
 		BOOL bCountByByteCommon = GetDllShareData().m_Common.m_sStatusbar.m_bDispSelCountByByte;
-		BOOL bCountByByte = ( pView->m_pcEditWnd->m_nSelectCountMode == SELECT_COUNT_TOGGLE ?
+		BOOL bCountByByte = ( GetEditWnd().m_nSelectCountMode == SELECT_COUNT_TOGGLE ?
 								bCountByByteCommon :
-								pView->m_pcEditWnd->m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
+								GetEditWnd().m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
 
 		//	1行目
 		pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(m_sSelect.GetFrom().GetY2());
@@ -822,5 +845,5 @@ void CViewSelect::PrintSelectionInfoMsg() const
 #endif
 	}
 	const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
-	pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );
+	GetEditWnd().m_cStatusBar.SendStatusMessage2( msg );
 }

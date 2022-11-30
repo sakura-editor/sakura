@@ -12,6 +12,7 @@
 	Copyright (C) 2004, D.S.Koba, MIK, genta
 	Copyright (C) 2006, D.S.Koba, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,10 +36,33 @@
 */
 #include "StdAfx.h"
 #include "CProfile.h"
+
+#include <algorithm>
+#include <map>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resource読み込みに使用
 #include "CEol.h"
 #include "util/file.h"
+#include "apiwrap/StdApi.h"
+
+void EnsureDirectoryExist( const std::wstring& strProfileName )
+{
+	const size_t cchLastYen = strProfileName.find_last_of( L'\\' );
+	if( cchLastYen != std::wstring::npos && cchLastYen < strProfileName.length() && cchLastYen + 1 < _MAX_PATH ){
+		// フォルダーのパスを取得する
+		WCHAR szProfileFolder[_MAX_PATH]{ 0 };
+		::wcsncpy_s( szProfileFolder, strProfileName.data(), cchLastYen + 1 );
+
+		// フォルダーが存在しなければ作成する
+		if( !IsDirectory( szProfileFolder ) ){
+			MakeSureDirectoryPathExistsW( szProfileFolder );
+		}
+	}
+}
 
 using namespace std;
 
@@ -48,7 +72,7 @@ using namespace std;
 */
 void CProfile::Init( void )
 {
-	m_strProfileName = L"";
+	m_strProfileName.clear();
 	m_ProfileData.clear();
 	m_bRead = true;
 	return;
@@ -76,17 +100,17 @@ void CProfile::ReadOneline(
 	// セクション取得
 	//	Jan. 29, 2004 genta compare使用
 	if( line.compare( 0, 1, LTEXT("[") ) == 0 
-			&& line.find( LTEXT("=") ) == line.npos
-			&& line.find( LTEXT("]") ) == ( line.size() - 1 ) ) {
+			&& line.find( LTEXT('=') ) == line.npos
+			&& line.find( LTEXT(']') ) == ( line.size() - 1 ) ) {
 		Section Buffer;
 		Buffer.strSectionName = line.substr( 1, line.size() - 1 - 1 );
 		m_ProfileData.push_back( Buffer );
 	}
 	// エントリ取得
 	else if( !m_ProfileData.empty() ) {	//最初のセクション以前の行のエントリは無視
-		wstring::size_type idx = line.find( LTEXT("=") );
+		wstring::size_type idx = line.find( LTEXT('=') );
 		if( line.npos != idx ) {
-			m_ProfileData.back().mapEntries.insert( PAIR_STR_STR( line.substr(0,idx), line.substr(idx+1) ) );
+			m_ProfileData.back().mapEntries.emplace( line.substr(0,idx), line.substr(idx+1) );
 		}
 	}
 }
@@ -217,17 +241,19 @@ bool CProfile::WriteProfile(
 {
 	if( pszProfileName!=NULL ) {
 		m_strProfileName = pszProfileName;
+
+		EnsureDirectoryExist( m_strProfileName );
 	}
     
 	std::vector< wstring > vecLine;
 	if( NULL != pszComment ) {
-		vecLine.push_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
+		vecLine.emplace_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
-	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
+	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {
 		//セクション名を書き込む
 		vecLine.push_back( LTEXT("[") + iter->strSectionName + LTEXT("]") );
-		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
+		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.cend(); mapiter++ ) {
 			//エントリを書き込む
 			vecLine.push_back( mapiter->first + LTEXT("=") + mapiter->second );
 		}
@@ -296,10 +322,6 @@ bool CProfile::_WriteFile(
 	return true;
 }
 
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                            Imp                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 /*! エントリ値をProfileから読み込む
 	
 	@retval true 成功
@@ -307,19 +329,19 @@ bool CProfile::_WriteFile(
 
 	@date 2003-10-22 D.S.Koba 作成
 */
-bool CProfile::GetProfileDataImp(
-	const wstring&	strSectionName,	//!< [in] セクション名
-	const wstring&	strEntryKey,	//!< [in] エントリ名
-	wstring&		strEntryValue	//!< [out] エントリ値
-)
+bool CProfile::GetProfileData(
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
+	std::wstring&		strEntryValue	//!< [out] エントリ値
+) const
 {
-	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
-		if( iter->strSectionName == strSectionName ) {
-			auto mapiter = iter->mapEntries.find( strEntryKey );
-			if( iter->mapEntries.end() != mapiter ) {
-				strEntryValue = mapiter->second;
-				return true;
-			}
+	// セクション名が一致するセクションを探す
+	if (const auto iter = std::find_if(m_ProfileData.cbegin(), m_ProfileData.cend(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter != m_ProfileData.cend()) {
+		// キーが一致するエントリを探す
+		if (const auto mapiter = iter->mapEntries.find(entryKey.data()); iter->mapEntries.cend() != mapiter) {
+			// エントリの値をコピーする
+			strEntryValue = mapiter->second;
+			return true;
 		}
 	}
 	return false;
@@ -327,42 +349,24 @@ bool CProfile::GetProfileDataImp(
 
 /*! エントリをProfileへ書き込む
 	
-	@retval true  成功
-	@retval false 失敗(処理を入れていないのでfalseは返らない)
-
 	@date 2003-10-21 D.S.Koba 作成
 */
-bool CProfile::SetProfileDataImp(
-	const wstring&	strSectionName,	//!< [in] セクション名
-	const wstring&	strEntryKey,	//!< [in] エントリ名
-	const wstring&	strEntryValue	//!< [in] エントリ値
+void CProfile::SetProfileData(
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
+	std::wstring_view	entryValue		//!< [in] エントリ値
 )
 {
-	auto iter = m_ProfileData.begin();
-	for(; iter != m_ProfileData.end(); iter++ ) {
-		if( iter->strSectionName == strSectionName ) {
-			//既存のセクションの場合
-			auto mapiter = iter->mapEntries.find( strEntryKey );
-			if( iter->mapEntries.end() != mapiter ) {
-				//既存のエントリの場合は値を上書き
-				mapiter->second = strEntryValue;
-				break;
-			}
-			else {
-				//既存のエントリが見つからない場合は追加
-				iter->mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
-				break;
-			}
-		}
+	// セクション名が一致するセクションがない場合、空のセクションを追加する
+	if (const auto iter = std::find_if(m_ProfileData.cbegin(), m_ProfileData.cend(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter == m_ProfileData.cend()) {
+		m_ProfileData.emplace_back(Section{ sectionName.data() });
 	}
-	//既存のセクションではない場合，セクション及びエントリを追加
-	if( iter == m_ProfileData.end() ) {
-		Section Buffer;
-		Buffer.strSectionName = strSectionName;
-		Buffer.mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
-		m_ProfileData.push_back( Buffer );
+	// セクション名が一致するセクションを探す
+	if (auto iter = std::find_if(m_ProfileData.begin(), m_ProfileData.end(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter != m_ProfileData.end()) {
+		// エントリに指定された値を書き込む
+		auto& sectionEntries = iter->mapEntries;
+		sectionEntries[entryKey.data()] = entryValue;
 	}
-	return true;
 }
 
 void CProfile::DUMP( void )
@@ -370,9 +374,9 @@ void CProfile::DUMP( void )
 #ifdef _DEBUG
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
 	MYTRACE( L"\n\nCProfile::DUMP()======================" );
-	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
+	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {
 		MYTRACE( L"\n■strSectionName=%ls", iter->strSectionName.c_str() );
-		for(auto mapiter = iter->mapEntries.begin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
+		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.cend(); mapiter++ ) {
 			MYTRACE( L"\"%ls\" = \"%ls\"\n", mapiter->first.c_str(), mapiter->second.c_str() );
 		}
 	}

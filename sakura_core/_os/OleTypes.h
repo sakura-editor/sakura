@@ -6,10 +6,14 @@
 */
 /*
 	Copyright (C) 2003, 鬼, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 
 */
+#ifndef SAKURA_OLETYPES_035185FF_696C_4427_A550_9EA1EDF22BD4_H_
+#define SAKURA_OLETYPES_035185FF_696C_4427_A550_9EA1EDF22BD4_H_
 #pragma once
 
 #include <Windows.h>
@@ -118,3 +122,4 @@ inline SysString* Wrap(BSTR *Value)
 {
 	return reinterpret_cast<SysString*>(Value);
 }
+#endif /* SAKURA_OLETYPES_035185FF_696C_4427_A550_9EA1EDF22BD4_H_ */

@@ -12,6 +12,7 @@
 	Copyright (C) 2001, jepro
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,6 +35,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CKEYWORDSETMGR_2DE7B72E_8DAF_433A_B91F_A807FAD06FB8_H_
+#define SAKURA_CKEYWORDSETMGR_2DE7B72E_8DAF_433A_B91F_A807FAD06FB8_H_
 #pragma once
 
 #include <Windows.h>
@@ -71,8 +74,7 @@ public:
 	||  Constructors
 	*/
 	CKeyWordSetMgr();
-	~CKeyWordSetMgr();
-	
+
 	///	@name キーワードセット操作
 	bool AddKeyWordSet(							//!< セットの追加
 		const wchar_t*	pszSetName,				//!< [in] セット名
@@ -122,10 +124,6 @@ public:
 	// To Here 2004.07.29 Moca
 
 	/*
-	|| 演算子
-	*/
-	const CKeyWordSetMgr& operator=( CKeyWordSetMgr& );
-	/*
 	||  Attributes & Operations
 	*/
 	/*!
@@ -161,3 +159,4 @@ protected:
 	bool KeyWordReAlloc(int nIdx, int nSize);
 	void KeywordMaxLen(int nIdx);
 };
+#endif /* SAKURA_CKEYWORDSETMGR_2DE7B72E_8DAF_433A_B91F_A807FAD06FB8_H_ */

@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -31,7 +32,6 @@
 #include "CEol.h"
 #include "charset/CCodePage.h"
 #include "doc/CDocListener.h"
-#include "recent/CRecent.h"
 #include "util/window.h"
 #include "util/shell.h"
 #include "util/file.h"
@@ -39,8 +39,11 @@
 #include "util/module.h"
 #include "util/design_template.h"
 #include "basis/CMyString.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
@@ -48,7 +51,7 @@ static const DWORD p_helpids[] = {	//13100
 //	IDC_BUTTON_HELP,		HIDC_OPENDLG_BUTTON_HELP,		//ヘルプボタン
 	IDC_COMBO_CODE,			HIDC_OPENDLG_COMBO_CODE,		//文字コードセット
 	IDC_COMBO_MRU,			HIDC_OPENDLG_COMBO_MRU,			//最近のファイル
-	IDC_COMBO_OPENFOLDER,	HIDC_OPENDLG_COMBO_OPENFOLDER,	//最近のフォルダ
+	IDC_COMBO_OPENFOLDER,	HIDC_OPENDLG_COMBO_OPENFOLDER,	//最近のフォルダー
 	IDC_COMBO_EOL,			HIDC_OPENDLG_COMBO_EOL,			//改行コード
 	IDC_CHECK_BOM,			HIDC_OPENDLG_CHECK_BOM,			//BOM	// 2006.08.06 ryoji
 	IDC_CHECK_CP,			HIDC_OPENDLG_CHECK_CP,			//CP
@@ -92,7 +95,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	DLLSHAREDATA*	m_pShareData;
 
-	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -117,11 +120,6 @@ public:
 	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
 
 	bool			m_bInitCodePage;
-
-	SComboBoxItemDeleter	m_combDelFile;
-	CRecentFile				m_cRecentFile;
-	SComboBoxItemDeleter	m_combDelFolder;
-	CRecentFolder			m_cRecentFolder;
 
 	OPENFILENAME*	m_pOf;
 	OPENFILENAME	m_ofn;		/* 2005.10.29 ryoji OPENFILENAME「ファイルを開く」ダイアログ用構造体 */
@@ -216,14 +214,14 @@ UINT_PTR CALLBACK OFNHookProc(
 	int						nIdx;
 	int						nIdxSel;
 	int						nWidth;
-	WPARAM					fCheck;	//	Jul. 26, 2003 ryoji BOM状態用
+	int						fCheck;	//	Jul. 26, 2003 ryoji BOM状態用
 
 	//	From Here	Feb. 9, 2001 genta
 	static const int		nEolValueArr[] = {
-		EOL_NONE,
-		EOL_CRLF,
-		EOL_LF,
-		EOL_CR,
+		static_cast<int>(EEolType::none),
+		static_cast<int>(EEolType::cr_and_lf),
+		static_cast<int>(EEolType::line_feed),
+		static_cast<int>(EEolType::carriage_return),
 	};
 	//	文字列はResource内に入れる
 	static const WCHAR*	const	pEolNameArr[] = {
@@ -251,7 +249,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			hwndFrame = ::GetParent( hdlg );
 			::GetWindowRect( hwndFrame, &pData->m_pcDlgOpenFile->m_pShareData->m_Common.m_sOthers.m_rcOpenDialog );
 
-			// 2005.10.29 ryoji 最近のファイル／フォルダ コンボの右端を子ダイアログの右端に合わせる
+			// 2005.10.29 ryoji 最近のファイル／フォルダー コンボの右端を子ダイアログの右端に合わせる
 			::GetWindowRect( pData->m_hwndComboMRU, &rc );
 			po.x = rc.left;
 			po.y = rc.top;
@@ -262,6 +260,8 @@ UINT_PTR CALLBACK OFNHookProc(
 		}
 	case WM_INITDIALOG:
 		{
+			UpdateDialogFont( hdlg );
+
 			// Save off the long pointer to the OPENFILENAME structure.
 			// Modified by KEITA for WIN64 2003.9.6
 			OPENFILENAME* pOfn = (OPENFILENAME*)lParam;
@@ -282,7 +282,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			// 2005.11.02 ryoji 初期レイアウト設定
 			CDlgOpenFile_CommonFileDialog::InitLayout( pData->m_hwndOpenDlg, hdlg, pData->m_hwndComboCODES );
 
-			/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+			/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 			Combo_SetExtendedUI( pData->m_hwndComboCODES, TRUE );
 			Combo_SetExtendedUI( pData->m_hwndComboMRU, TRUE );
 			Combo_SetExtendedUI( pData->m_hwndComboOPENFOLDER, TRUE );
@@ -302,7 +302,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						nIdx = Combo_AddString( pData->m_hwndComboEOL, pEolNameArr[i] );
 					}
 					Combo_SetItemData( pData->m_hwndComboEOL, nIdx, nEolValueArr[i] );
-					if( nEolValueArr[i] == pData->m_cEol ){
+					if( nEolValueArr[i] == static_cast<int>(pData->m_cEol.GetType()) ){
 						nIdxSel = nIdx;
 					}
 				}
@@ -370,13 +370,6 @@ UINT_PTR CALLBACK OFNHookProc(
 
 			/* ビューモードの初期値セット */
 			::CheckDlgButton( pData->m_hwndOpenDlg, chx1, pData->m_bViewMode );
-
-			pData->m_combDelFile = SComboBoxItemDeleter();
-			pData->m_combDelFile.pRecent = &pData->m_cRecentFile;
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboMRU, &pData->m_combDelFile);
-			pData->m_combDelFolder = SComboBoxItemDeleter();
-			pData->m_combDelFolder.pRecent = &pData->m_cRecentFolder;
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboOPENFOLDER, &pData->m_combDelFolder);
 		}
 		break;
 
@@ -424,7 +417,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						else{
 							switch( pData->m_pOf->nFilterIndex ){	// 選択されているファイルの種類
 							case 1:		// ユーザー定義
-								pszCur = pData->m_pcDlgOpenFile->m_szDefaultWildCard;
+								pszCur = pData->m_pcDlgOpenFile->m_strDefaultWildCard.data();
 								while( *pszCur != L'.' && *pszCur != L'\0' )	// '.'まで読み飛ばす
 									pszCur = ::CharNext(pszCur);
 								i = 0;
@@ -592,7 +585,7 @@ UINT_PTR CALLBACK OFNHookProc(
 
 				case IDC_COMBO_OPENFOLDER:
 					if ( Combo_GetCount( pData->m_hwndComboOPENFOLDER ) == 0) {
-						/* 最近開いたフォルダ コンボボックス初期値設定 */
+						/* 最近開いたフォルダー コンボボックス初期値設定 */
 						//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
 						int nSize = (int)pData->m_pcDlgOpenFile->m_vOPENFOLDER.size();
 						for( i = 0; i < nSize; i++ ){
@@ -673,8 +666,6 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
-
 	return;
 }
 
@@ -693,10 +684,10 @@ void CDlgOpenFile_CommonFileDialog::Create(
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
-		wcscpy( m_szDefaultWildCard, pszUserWildCard );
+		m_strDefaultWildCard = pszUserWildCard;
 	}
 
-	/* 「開く」での初期フォルダ */
+	/* 「開く」での初期フォルダー */
 	if( pszDefaultPath && pszDefaultPath[0] != L'\0' ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
@@ -728,7 +719,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 
 	switch( eAddFilter ){
 	case EFITER_TEXT:
@@ -746,12 +737,12 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != wcscmp(m_szDefaultWildCard, L"*.*") ){
+	if (m_strDefaultWildCard != L"*.*") {
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	}
 
 	/* 構造体の初期化 */
-	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	auto pData = std::make_unique<CDlgOpenFileData>();
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji
 	pData->m_pcDlgOpenFile = this;
 	pData->m_ofn.lCustData = (LPARAM)(pData.get());
@@ -760,7 +751,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 	pData->m_ofn.hInstance = CSelectLang::getLangRsrcInstance();
 	pData->m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	// From Here Jun. 23, 2002 genta
-	// 「開く」での初期フォルダチェック強化
+	// 「開く」での初期フォルダーチェック強化
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	{
 		WCHAR szDrive[_MAX_DRIVE];
@@ -821,7 +812,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	
@@ -836,7 +827,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 	}
 
 	/* 構造体の初期化 */
-	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	auto pData = std::make_unique<CDlgOpenFileData>();
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji
 	pData->m_pcDlgOpenFile = this;
 	pData->m_ofn.lCustData = (LPARAM)(pData.get());
@@ -874,7 +865,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	bool bOptions
 )
 {
-	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	auto pData = std::make_unique<CDlgOpenFileData>();
 	pData->m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
 	bool bMultiSelect = pFileNames != NULL;
@@ -980,12 +971,12 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 	bool bSimpleMode
 )
 {
-	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	auto pData = std::make_unique<CDlgOpenFileData>();
 	pData->m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 
@@ -1080,7 +1071,7 @@ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 	const WCHAR*	pszError;
 	DWORD dwError = ::CommDlgExtendedError();
 	if( dwError == 0 ){
-		//	ユーザキャンセルによる
+		//	ユーザーキャンセルによる
 		return;
 	}
 	
@@ -1180,7 +1171,7 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 		hwndCtrl = ::GetWindow( hwndCtrl, GW_HWNDNEXT );
 	}
 
-	// 標準コントロールのプレースフォルダ（stc32）と子ダイアログの幅をオープンダイアログの幅にあわせる
+	// 標準コントロールのプレースフォルダー（stc32）と子ダイアログの幅をオープンダイアログの幅にあわせる
 	//     WM_INITDIALOG を抜けるとさらにオープンダイアログ側で現在の位置関係からレイアウト調整が行われる
 	//     ここで以下の処理をやっておかないとコントロールが意図しない場所に動いてしまうことがある
 	//     （例えば、BOM のチェックボックスが画面外に飛んでしまうなど）
@@ -1189,7 +1180,7 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 	::GetClientRect( hwndOpenDlg, &rc );
 	nWidth = rc.right - rc.left;
 
-	// 標準コントロールプレースフォルダの幅を変更する
+	// 標準コントロールプレースフォルダーの幅を変更する
 	hwndCtrl = ::GetDlgItem( hwndDlg, stc32 );
 	::GetWindowRect( hwndCtrl, &rc );
 	::SetWindowPos( hwndCtrl, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );

@@ -324,7 +324,7 @@ es_area /// es_area p1,p2,p3,p4  [hspdx.dll]\np1=有効エリアの左上X座標
 es_boxf /// es_boxf p1,p2,p3,p4  [hspdx.dll]\np1=塗りつぶし左上X座標\np2=塗りつぶし左上Y座標\np3=塗りつぶし右下X座標\np4=塗りつぶし右下Y座標\n(p1,p2)-(p3,p4)の矩形範囲を現在選択されている色で塗りつぶします。
 es_buffer /// es_buffer p1,p2  [hspdx.dll]\np1=オフスクリーンバッファID(0～63)\np2=属性スイッチ(0～2)\np3=透明色(パレットモード時:-1～255、ハイカラー以上:0～$ffffff)\n  属性スイッチ=0 : オフスクリーンバッファをVRAMに取る、\n  失敗した場合は、メインメモリに取る\n  属性スイッチ=1 : オフスクリーンバッファをメインメモリに取る\n  属性スイッチ=2 : オフスクリーンバッファをVRAMに取る\n現在gsel命令で選択されているHSPのバッファ内容を、DirectXのオフ\nスクリーンバッファにすべて転送します。
 es_bye /// es_bye  [hspdx.dll]\nHSPDX.DLLシステムの切り離しをします。
-es_caps /// es_caps p1,p2,p3,p4  [hspdx.dll]\np1=情報が代入される変数名(数値型)\np2=情報ID\np3=情報ビット(1～32)\np4=対象となるレイヤー( 0=HAL / 1=HEL )\nDirectXのドライバが、どのような機能を持っているかを調べて、結果をp1で\n指定する変数に代入します。
+es_caps /// es_caps p1,p2,p3,p4  [hspdx.dll]\np1=情報が代入される変数名(数値型)\np2=情報ID\np3=情報ビット(1～32)\np4=対象となるレイヤー( 0=HAL / 1=HEL )\nDirectXのドライバーが、どのような機能を持っているかを調べて、結果をp1で\n指定する変数に代入します。
 es_check /// es_check p1,p2,p3  [hspdx.dll]\np1=結果が代入される変数名\np2=チェックの対象となるスプライトNo.(0～511)\np3=検索対象となるtype値\nスプライト同士の衝突判定を行ないます。
 es_chr /// es_chr p1,p2  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=キャラクタNo.(0～1023)\np1で指定したスプライトのキャラクタNo.を変更します。
 es_clear /// es_clear p1,p2  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=削除される個数\np1で指定したスプライトNo.以降のスプライトが削除され未登録になり\nます。p2で削除されるスプライトの数を指定することができます。
@@ -399,7 +399,7 @@ fxtget /// fxtget p1,"file"  [hspext.dll]\np1=変数名 : 情報が格納され�
 fxtset /// fxtset p1,"file"  [hspext.dll]\np1=変数名 : 設定する情報が格納されている数値型の配列変数名\n"file"　　: ファイル名指定\n"file"で指定したファイルのタイムスタンプ情報を、\np1で指定した変数のものに変更します。
 lzcopy /// lzcopy "name"  [hspext.dll]\n"name" :圧縮ファイル名\nMicrosoftのcompress.exe形式の圧縮ファイルを解凍しながらコピーを\n行ないます。
 lzdist /// lzdist "path"  [hspext.dll]\n"path" :lzcopy命令の解凍コピー先ディレクトリ\nlzcopy命令の解凍コピー先ディレクトリを指定します。
-selfolder /// selfolder p1,"message"  [hspext.dll]\np1=変数名 : 選択されたパス名が格納される文字列型の変数名\n"message" : ダイアログに表示される文字列\nWindowsのシステムで使用されている、フォルダ選択ダイアログを表示して、\nフォルダ名を取得します。
+selfolder /// selfolder p1,"message"  [hspext.dll]\np1=変数名 : 選択されたパス名が格納される文字列型の変数名\n"message" : ダイアログに表示される文字列\nWindowsのシステムで使用されている、フォルダー選択ダイアログを表示して、\nフォルダー名を取得します。
 
 ★ 拡張画面制御命令[hspext]
 gfcopy /// gfcopy p1  [hspext.dll]\np1=0～100(0) : 半透明コピーレート(%)\np1で指定したレートで画面イメージをコピーします。

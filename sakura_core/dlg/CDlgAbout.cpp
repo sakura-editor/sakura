@@ -13,21 +13,28 @@
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include <ShellAPI.h>
+#include <shellapi.h>
 #include "dlg/CDlgAbout.h"
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
+#include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "version.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12900
@@ -157,55 +164,37 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
 	
-	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
-
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
 	//	Feb. 7, 2002 genta コンパイラ情報追加
 	//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
-	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
+	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダー,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ   Ver. 2.0.0.0
-	//(GitHash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
+	//サクラエディタ開発版(64bitデバッグ) Ver. 2.4.1.1234 GHA (xxxxxxxx)
+	//(GitURL https://github.com/sakura/sakura-editor.git)
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeW cmemMsg;
-	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME)); // e.g. "サクラエディタ", "Sakura Editor"
-	cmemMsg.AppendString(L"   ");
 
-	// バージョン情報・コンフィグ情報 //
-#ifdef GIT_COMMIT_HASH
-#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
-#endif
+	// 1行目
+	// バージョン情報
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
-	// 1行目
 	cmemMsg.AppendStringF(
-		L"v%d.%d.%d.%d",
+		L"%s Ver. %d.%d.%d.%d " LTEXT(BUILD_ENV_NAME) LTEXT(VERSION_HASH) L"\r\n",
+		LS(STR_GSTR_APPNAME),
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
-	cmemMsg.AppendString( L" " _T(VER_PLATFORM) );
-	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
-#ifdef DEV_VERSION
-	cmemMsg.AppendString( _T(DEV_VERSION_STR_WITH_SPACE) );
-#endif
-#ifdef ALPHA_VERSION
-	cmemMsg.AppendString( L" " _T(ALPHA_VERSION_STR));
-#endif
-#ifdef GIT_TAG_NAME
-	cmemMsg.AppendStringF(L" (tag %s)", _T(GIT_TAG_NAME));
-#endif
-	cmemMsg.AppendString( L"\r\n" );
 
 	// 2行目
-#ifdef VER_GITHASH
-	cmemMsg.AppendString( _T(VER_GITHASH) L"\r\n");
+#ifdef GIT_COMMIT_HASH
+	cmemMsg.AppendString( L"(GitHash " _T(GIT_COMMIT_HASH) L")\r\n" );
 #endif
 
 	// 3行目
@@ -217,13 +206,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( L"\r\n" );
 
 	// コンパイル情報
-	cmemMsg.AppendString( L"      Compile Info: " );
 	cmemMsg.AppendStringF(
-		_T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
+		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
 		COMPILER_VER, WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
 
 	// 更新日情報
+	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
 	cmemMsg.AppendStringF(
@@ -252,7 +241,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// 2011.06.01 nasukoji	各国語メッセージリソース対応
 	LPCWSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
 	WCHAR szMsg[2048];
-	if( wcslen(pszDesc) > 0 ){
+	if( pszDesc[0] != '\0' ) {
 		wcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
 		szMsg[_countof(szMsg) - 1] = 0;
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
@@ -268,6 +257,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		StCtl_SetIcon( hIconWnd, hIcon );
 	}
 	//	To Here Dec. 2, 2002 genta
+
+	/* 基底クラスメンバ */
+	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
@@ -286,9 +278,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetItemHwnd(IDC_STATIC_URL_ORG ) );
-
-	/* 基底クラスメンバ */
-	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 
 	/* デフォルトでは一番最初のタブオーダーの要素になるので明示的に OK ボタンにフォーカスを合わせる */
 	::SetFocus(GetItemHwnd(IDOK));
@@ -324,28 +313,28 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 //	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{
-			WCHAR buf[512];
-			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
-			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+			std::wstring url;
+			ApiWrap::DlgItem_GetText(GetHwnd(), wID, url);
+			OpenWithBrowser(GetHwnd(), url);
 			return TRUE;
 		}
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
+			OpenWithBrowser(GetHwnd(), _T(CI_BUILD_URL));
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
+			OpenWithBrowser(GetHwnd(), _T(GIT_REMOTE_ORIGIN_URL));
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_COMMIT_URL), NULL, NULL, SW_SHOWNORMAL);
+		OpenWithBrowser(GetHwnd(), _T(GITHUB_COMMIT_URL));
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_PR_HEAD_URL), NULL, NULL, SW_SHOWNORMAL);
+		OpenWithBrowser(GetHwnd(), _T(GITHUB_PR_HEAD_URL));
 #endif
 		return TRUE;
 	}
@@ -390,14 +379,14 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
 	// 設定されているテキストを取得する
-	const ULONG cchText = ::GetWindowTextLength( hWnd );
-	auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
-	WCHAR* pchText = textBuf.get();
-	::GetWindowText( hWnd, pchText, cchText + 1 );
+	std::wstring strText;
+	if( ApiWrap::Wnd_GetText( hWnd, strText ) ){
+		// サイズを調整する
+		auto retSetText = OnSetText( strText.data(), strText.length() );
+		return retSetText ? TRUE : FALSE;
+	}
 
-	// サイズを調整する
-	auto retSetText = OnSetText( pchText, cchText );
-	return retSetText ? TRUE : FALSE;
+	return FALSE;
 }
 
 LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -538,7 +527,7 @@ bool CUrlWnd::OnSetText( _In_opt_z_ LPCWSTR pchText, _In_opt_ size_t cchText ) c
 	// DrawText関数を使ってサイズを計測する
 	// ※この処理は実際には描かない
 	CMyRect rcText;
-	int retDrawText = ::DrawText( hDC, pchText, cchText, &rcText, DT_CALCRECT );
+	int retDrawText = ::DrawText( hDC, pchText, static_cast<int>(cchText), &rcText, DT_CALCRECT );
 
 	// DCの後始末
 	::SelectObject( hDC, hObj );
