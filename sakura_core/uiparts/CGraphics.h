@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGRAPHICS_B5576115_8D9B_4000_953C_7561307A462C_H_
+#define SAKURA_CGRAPHICS_B5576115_8D9B_4000_953C_7561307A462C_H_
 #pragma once
 
 /*
@@ -31,6 +34,7 @@
 #include <Windows.h>
 #include <cassert>
 #include <vector>
+#include "doc/CDocTypeSetting.h"
 
 /*!
  * @brief API関数FillRectの高速版(ブラシ用)
@@ -327,3 +331,4 @@ private:
 	HBRUSH				m_hbrCurrent;
 	bool				m_bDynamicBrush;	//m_hbrCurrentを動的に作成した場合はtrue
 };
+#endif /* SAKURA_CGRAPHICS_B5576115_8D9B_4000_953C_7561307A462C_H_ */

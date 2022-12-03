@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief Dialog Box基底クラスヘッダファイル
+	@brief Dialog Box基底クラスヘッダーファイル
 
 	@author Norio Nakatani
 */
@@ -11,11 +11,14 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
+#define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
 class CDialog;
@@ -49,16 +52,6 @@ struct SAnchorList
 	EAnchorStyle anchor;
 };
 
-struct SComboBoxItemDeleter
-{
-	CRecent*	pRecent;
-	HWND		hwndCombo;
-	WNDPROC		pComboBoxWndProc;
-	WNDPROC		pEditWndProc;
-	WNDPROC		pListBoxWndProc;
-	SComboBoxItemDeleter(): pRecent(NULL), hwndCombo(NULL), pComboBoxWndProc(NULL), pEditWndProc(NULL), pListBoxWndProc(NULL){}
-};
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -69,13 +62,19 @@ struct SComboBoxItemDeleter
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CDialog
-{
+class CDialog{
+
+	using Me = CDialog;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CDialog( bool bSizable = false, bool bCheckShareData = true );
+	CDialog(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDialog(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CDialog();
 	/*
 	||  Attributes & Operations
@@ -123,7 +122,12 @@ public:
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
-	static void SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data );
+
+	//! @brief コンボボックスに履歴削除・単語削除の機能を追加する
+	//!
+	//! @param hwndCtl コンボボックスのハンドル。CBS_DROPDOWNLISTスタイルのコンボボックスには対応していません。
+	//! @param pRecent 紐づけるCRecentへのポインタ。nullptrは指定できません。
+	static void SetComboBoxDeleter( HWND hwndCtl, CRecent* pRecent );
 public:
 
 	static bool DirectoryUp(WCHAR* szDir);
@@ -138,22 +142,23 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 private:
 	HWND			m_hWnd;			/* このダイアログのハンドル */
+	HFONT			m_hFontDialog;	// ダイアログに設定されているフォント(破棄禁止)
 public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
 	BOOL			m_bModal;		/* モーダル ダイアログか */
 	bool			m_bSizable;		// 可変ダイアログかどうか
 	int				m_nShowCmd;		//	最大化/最小化
-	int				m_nWidth;
-	int				m_nHeight;
-	int				m_xPos;
-	int				m_yPos;
 //	void*			m_pcEditView;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 	HINSTANCE		m_hLangRsrcInstance;		// メッセージリソースDLLのインスタンスハンドル	// 2011.04.10 nasukoji
 
 protected:
+	int				m_nWidth;
+	int				m_nHeight;
+	int				m_xPos;
+	int				m_yPos;
 	void CreateSizeBox( void );
 	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
@@ -161,4 +166,7 @@ protected:
 
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
 	HFONT SetMainFont( HWND hTarget );
+	// このダイアログに設定されているフォントを取得
+	HFONT GetDialogFont() { return m_hFontDialog; }
 };
+#endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */

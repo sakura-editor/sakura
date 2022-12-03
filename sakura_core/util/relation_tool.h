@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_RELATION_TOOL_4B723E5C_5042_4F93_8899_EE2077DB8CFE_H_
+#define SAKURA_RELATION_TOOL_4B723E5C_5042_4F93_8899_EE2077DB8CFE_H_
 #pragma once
 
 #include <vector>
@@ -33,9 +36,15 @@ class CListener;
 
 //! 複数のCListenerからウォッチされる
 class CSubject{
+	using Me = CSubject;
+
 public:
 	//コンストラクタ・デストラクタ
 	CSubject();
+	CSubject(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CSubject(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CSubject();
 
 	//公開インターフェース
@@ -53,8 +62,14 @@ private:
 
 //! 1つのCSubjectをウォッチする
 class CListener{
+	using Me = CListener;
+
 public:
 	CListener();
+	CListener(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CListener(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CListener();
 
 	//公開インターフェース
@@ -84,3 +99,4 @@ public:
 		return static_cast<SUBJECT*>(CListener::GetListeningSubject());
 	}
 };
+#endif /* SAKURA_RELATION_TOOL_4B723E5C_5042_4F93_8899_EE2077DB8CFE_H_ */

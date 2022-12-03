@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_APP_CONSTANTS_30AEF8B3_BD9C_404E_B5CE_CDFE9E8FE451_H_
+#define SAKURA_APP_CONSTANTS_30AEF8B3_BD9C_404E_B5CE_CDFE9E8FE451_H_
 #pragma once
 
 #include "build_config.h"
@@ -30,13 +33,10 @@
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-extern const WCHAR g_szGStrAppName[];
-extern const CHAR  g_szGStrAppNameA[];
-extern const WCHAR g_szGStrAppNameW[];
+LPCWSTR GetAppName( void );
 
-#define GSTR_APPNAME    g_szGStrAppName		//!< アプリ名の文字列 (TCHAR版)
-#define GSTR_APPNAME_A  g_szGStrAppNameA	//!< アプリ名の文字列 (CHAR版)
-#define GSTR_APPNAME_W  g_szGStrAppNameW	//!< アプリ名の文字列 (UNICODE版)
+#define GSTR_APPNAME_W  GetAppName()		//!< アプリ名の文字列
+#define GSTR_APPNAME    GSTR_APPNAME_W
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキストエリア                         //
@@ -55,3 +55,4 @@ const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
 // 2014.08.02 定数定義追加 katze
 const int LINENUMWIDTH_MIN = 2;
 const int LINENUMWIDTH_MAX = 11;
+#endif /* SAKURA_APP_CONSTANTS_30AEF8B3_BD9C_404E_B5CE_CDFE9E8FE451_H_ */

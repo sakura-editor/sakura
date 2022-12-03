@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -26,8 +27,19 @@
 #include "StdAfx.h"
 #include "CRecentImp.h"
 
-#include "env/CAppNodeManager.h" // EditNode
-#include "EditInfo.h" // EditInfo
+#include "CRecentCmd.h"
+#include "CRecentCurDir.h"
+#include "CRecentEditNode.h"
+#include "CRecentExceptMru.h"
+#include "CRecentExcludeFile.h"
+#include "CRecentExcludeFolder.h"
+#include "CRecentFile.h"
+#include "CRecentFolder.h"
+#include "CRecentGrepFile.h"
+#include "CRecentGrepFolder.h"
+#include "CRecentReplace.h"
+#include "CRecentSearch.h"
+#include "CRecentTagjumpKeyword.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

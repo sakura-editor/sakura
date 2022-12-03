@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,10 +26,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_
+#define SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_
 #pragma once
-
-// 要先行定義
-// #include "DLLSHAREDATA.h"
 
 //共有メモリ内構造体
 struct SShare_SearchKeywords{
@@ -40,6 +40,9 @@ struct SShare_SearchKeywords{
 	StaticVector< StaticString<WCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFILE,   const WCHAR*>	m_aExcludeFiles;
 	StaticVector< StaticString<WCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFOLDER, const WCHAR*>	m_aExcludeFolders;
 };
+
+struct DLLSHAREDATA;
+DLLSHAREDATA& GetDllShareData();
 
 //! 検索キーワード管理
 class CSearchKeywordManager{
@@ -58,3 +61,4 @@ public:
 private:
 	DLLSHAREDATA* m_pShareData;
 };
+#endif /* SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_ */

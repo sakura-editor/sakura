@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2020 Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@
 #include <Windows.h>
 #include "parse/CWordParse.h"
 
-// テスト対象関数のヘッダファイル
+// テスト対象関数のヘッダーファイル
 //#include "util/string_ex.h" //依存関係が多いのでテスト対象の関数定義のみ抜き出し
 BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLength);
 

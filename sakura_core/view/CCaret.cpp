@@ -10,6 +10,7 @@
 	Copyright (C) 2011, Moca, syat
 	Copyright (C) 2012, ryoji, Moca
 	Copyright (C) 2013, Moca, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -48,6 +49,9 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "window/CEditWnd.h"
+#include "CSelectLang.h"
+#include "apiwrap/CommonControl.h"
+#include "String_define.h"
 
 using namespace std;
 
@@ -290,13 +294,46 @@ CLayoutInt CCaret::MoveCursor(
 	}
 	//	To Here 2007.07.28 じゅうじ
 	if( bScroll ){
+		if( abs( (Int)nScrollRowNum ) < 7 &&
+			( m_pEditView->GetSelectionInfo().IsMouseSelecting() || m_pEditView->m_bDragMode )){
+			struct ScrollRowRecord{
+				Int nScrollRowNum;
+				DWORD dwTime;
+			};
+			static std::array<ScrollRowRecord, 512> s_records{};
+			static size_t s_recordPos = 0;
+			DWORD dwNow = GetTickCount();
+			Int nScrollRowsPerTiming = 0;
+			DWORD dwPerTiming = 80;
+			if( nScrollRowNum > 0 && m_pEditView->m_bDragMode ){
+				dwPerTiming = 30;
+			}
+
+			std::for_each(s_records.begin(), s_records.end(),
+				[ dwNow, dwPerTiming, &nScrollRowsPerTiming ]( ScrollRowRecord rec ){
+					if( ( dwNow - rec.dwTime ) <= dwPerTiming ){
+						nScrollRowsPerTiming += rec.nScrollRowNum;
+					}
+			});
+			if( abs( nScrollRowsPerTiming ) >= 1 ){
+				nScrollRowNum = 0;
+			}
+			auto& rec = s_records[s_recordPos];
+			rec.dwTime = dwNow;
+			rec.nScrollRowNum = nScrollRowNum;
+			++s_recordPos;
+			if( s_recordPos >=  s_records.size() ){
+				s_recordPos = 0;
+			}
+		}
 		/* スクロール */
 		if( t_abs( nScrollColNum ) >= m_pEditView->GetTextArea().m_nViewColNum ||
 			t_abs( nScrollRowNum ) >= m_pEditView->GetTextArea().m_nViewRowNum ){
 			m_pEditView->GetTextArea().OffsetViewTopLine(-nScrollRowNum);
 			if( m_pEditView->GetDrawSwitch() ){
 				m_pEditView->InvalidateRect( NULL );
-				if( m_pEditView->m_pcEditWnd->GetMiniMap().GetHwnd() ){
+				m_pEditView->UpdateWindow();
+				if( GetEditWnd().GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(true);
 				}
 			}
@@ -331,7 +368,7 @@ CLayoutInt CCaret::MoveCursor(
 
 			if( m_pEditView->GetDrawSwitch() ){
 				m_pEditView->ScrollDraw(nScrollRowNum, nScrollColNum, rcScroll, rcClip, rcClip2);
-				if( m_pEditView->m_pcEditWnd->GetMiniMap().GetHwnd() ){
+				if( GetEditWnd().GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(false);
 				}
 			}
@@ -375,6 +412,10 @@ CLayoutInt CCaret::MoveCursor(
 	m_pEditView->SetBracketPairPos( true );
 	m_pEditView->DrawBracketPair( true );
 // 02/09/18 対括弧の強調表示 ai End		03/02/18 ai mod E
+
+	// アウトライン表示の選択位置を更新
+	CLayoutPoint poCaret = GetCaretLayoutPos();
+	GetEditWnd().m_cDlgFuncList.NotifyCaretMovement( poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
 
 	return nScrollRowNum;
 }
@@ -430,7 +471,7 @@ BOOL CCaret::GetAdjustCursorPos(
 		if( 0 < nLayoutLineCount ){
 			ptPosXY2.y = nLayoutLineCount - 1;
 			const CLayout* pcLayout = m_pEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptPosXY2.GetY2() );
-			if( pcLayout->GetLayoutEol() == EOL_NONE ){
+			if( pcLayout->GetLayoutEol().IsNone() ){
 				ptPosXY2.x = m_pEditView->LineIndexToColumn( pcLayout, (CLogicInt)pcLayout->GetLengthWithEOL() );
 				// [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
 				// 復活するなら ptPosXY2.x に折り返し行インデントを適用するのがよい
@@ -656,7 +697,7 @@ void CCaret::ShowCaretPosInfo()
 	}
 
 	// ステータスバーハンドルを取得
-	HWND hwndStatusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar.GetStatusHwnd();
+	HWND hwndStatusBar = GetEditWnd().m_cStatusBar.GetStatusHwnd();
 
 	// カーソル位置の文字列を取得
 	const CLayout*	pcLayout;
@@ -817,35 +858,55 @@ void CCaret::ShowCaretPosInfo()
 			szLeft,
 			szRight
 		);
-		m_pEditDoc->m_pcEditWnd->PrintMenubarMessage( szText );
+		GetEditWnd().PrintMenubarMessage( szText );
 	}
 	// ステータスバーに状態を書き出す
 	else{
-		WCHAR	szText_1[64];
-		auto_sprintf( szText_1, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
+		WCHAR szRowCol[64];
+		auto_sprintf( szRowCol, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
-		WCHAR	szText_6[16];
+		WCHAR szInsMode[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			wcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "挿入"
+			wcscpy( szInsMode, LS( STR_INS_MODE_INS ) );	// "挿入"
 		}else{
-			wcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
+			wcscpy( szInsMode, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
 
-		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
+		WCHAR szFontSize[16];
+		if( const double nZoomPercentage = GetEditWnd().GetFontZoom() * 100.0; nZoomPercentage < 5.0 ){
+			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
+		}else{
+			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
+		}
 
+		auto& statusBar = GetEditWnd().m_cStatusBar;
+		// SB_SETTEXT メッセージでステータスバーに文字列を設定する度に再描画が行われるのを防ぐ為に
+		// 設定時にパートのRECTを取得し最後にまとめて再描画を行う
+		HWND hWnd = statusBar.GetStatusHwnd();
+		RECT updatedRect = { 0 };
+		auto setStatusText = [&](int nIndex, int nOption, const WCHAR* pszText) {
+			bool ret = statusBar.SetStatusText(nIndex, nOption, pszText);
+			if (ret) {
+				RECT partRect;
+				StatusBar_GetRect(hWnd, nIndex, &partRect);
+				::UnionRect(&updatedRect, &updatedRect, &partRect);
+			}
+		};
+		::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
 		if( m_bClearStatus ){
-			statusBar.SetStatusText( 0, SBT_NOBORDERS, L"" );
+			setStatusText( 0, SBT_NOBORDERS, L"" );
 		}
-		statusBar.SetStatusText( 1, 0,             szText_1 );
-		//	May 12, 2000 genta
-		//	改行コードの表示を追加．後ろの番号を1つずつずらす
-		//	From Here
-		statusBar.SetStatusText( 2, 0,             szEolMode );
-		//	To Here
-		statusBar.SetStatusText( 3, 0,             szCaretChar );
-		statusBar.SetStatusText( 4, 0,             pszCodeName );
-		statusBar.SetStatusText( 5, SBT_OWNERDRAW, L"" );
-		statusBar.SetStatusText( 6, 0,             szText_6 );
+		int nIndex = 1;
+		setStatusText( nIndex++, 0,             szRowCol );
+		setStatusText( nIndex++, 0,             szEolMode );
+		setStatusText( nIndex++, 0,             szCaretChar );
+		setStatusText( nIndex++, 0,             pszCodeName );
+		setStatusText( nIndex++, SBT_OWNERDRAW, L"" );
+		setStatusText( nIndex++, 0,             szInsMode );
+		setStatusText( nIndex++, 0,             szFontSize );
+		::SendMessage(hWnd, WM_SETREDRAW, TRUE, 0);
+		InvalidateRect(hWnd, &updatedRect, TRUE);
+		UpdateWindow(hWnd);
 	}
 }
 
@@ -869,7 +930,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 
 	// 現在のキャレットY座標 + nMoveLinesが正しいレイアウト行の範囲内に収まるように nMoveLinesを調整する。
 	if( nMoveLines > 0 ) { // 下移動。
-		const bool existsEOFOnlyLine = pLayoutMgr->GetBottomLayout() && pLayoutMgr->GetBottomLayout()->GetLayoutEol() != EOL_NONE
+		const bool existsEOFOnlyLine = pLayoutMgr->GetBottomLayout() && pLayoutMgr->GetBottomLayout()->GetLayoutEol().IsValid()
 			|| pLayoutMgr->GetLineCount() == 0;
 		const CLayoutInt maxLayoutLine = pLayoutMgr->GetLineCount() + (existsEOFOnlyLine ? 1 : 0 ) - 1;
 		// 移動先が EOFのみの行を含めたレイアウト行数未満になるように移動量を規正する。
@@ -936,6 +997,11 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 		bVertLineDoNotOFF = false;
 	}
 	GetAdjustCursorPos( &ptTo );
+
+	if (ptTo == ptCaret) {
+		return CLayoutInt(0);
+	}
+
 	if( bSelect ) {
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptTo );
@@ -1085,7 +1151,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 	if( ptNewXY.y >= m_pEditDoc->m_cLayoutMgr.GetLineCount()
 	 && (m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting()) ){
 		const CLayout* layoutEnd = m_pEditDoc->m_cLayoutMgr.GetBottomLayout();
-		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol() != EOL_NONE) || NULL == layoutEnd;
+		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol().IsValid()) || NULL == layoutEnd;
 	 	// 2012.01.09 ぴったり[EOF]位置にある場合は位置を維持(1つ上の行にしない)
 	 	if( bEofOnly && ptNewXY.y == m_pEditDoc->m_cLayoutMgr.GetLineCount() && ptNewXY.x == 0 ){
 	 	}else{

@@ -11,6 +11,7 @@
 	Copyright (C) 2002, aroka, MIK, YAZAKI
 	Copyright (C) 2004, genta
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -20,12 +21,15 @@
 #include "doc/CEditDoc.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "outline/CFuncInfo.h"
-#include "outline/CFuncInfoArr.h"// 2002/2/10 aroka ヘッダ整理
+#include "outline/CFuncInfoArr.h"// 2002/2/10 aroka ヘッダー整理
 #include "util/shell.h"
 #include "util/os.h"
 #include "window/CEditWnd.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 // ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12800
@@ -173,8 +177,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 		}
 //To Here Feb. 20, 2001
 		{	//@@@ 2002.2.2 YAZAKI 指定行へジャンプを、ダイアログを表示するコマンドと、実際にジャンプするコマンドに分離。
-			CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
-			pCEditDoc->m_pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_JUMP, true, 0, 0, 0, 0);	//	ジャンプコマンド発行
+			GetEditWnd().GetActiveView().GetCommander().HandleCommand(F_JUMP, true, 0, 0, 0, 0);	//	ジャンプコマンド発行
 		}
 		return TRUE;
 	case IDCANCEL:
@@ -249,9 +252,6 @@ void CDlgJump::SetData( void )
 	nIndex = 0;
 	nPLSQLBlockNum = 0;
 	for( i = 0; i < cFuncInfoArr.GetNum(); ++i ){
-		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ||
-			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),

@@ -10,6 +10,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -20,6 +21,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+
+#include "util/string_ex.h"
 
 #if defined(_DEBUG) || defined(USE_RELPRINT)
 
@@ -54,10 +57,10 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 
 		::DebugBreak();
 
-		int count = _vscwprintf( lpFmt, argList );
-		auto pLargeBuf = std::make_unique<WCHAR[]>( count + 1 );
-		if( vswprintf( &pLargeBuf[0], count + 1, lpFmt, argList ) > 0 )
-			::OutputDebugStringW( &pLargeBuf[0] );
+		std::wstring strTooLongMessage;
+		vstrprintf( strTooLongMessage, lpFmt, argList );
+
+		::OutputDebugStringW( strTooLongMessage.c_str() );
 	}
 
 	va_end(argList);

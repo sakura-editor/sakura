@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2013, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,10 +28,15 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_
+#define SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_
 #pragma once
 
 #include "dlg/CDialog.h"
+#include "_main/CCommandLine.h"
+#include <filesystem>
 #include <string>
+#include <string_view>
 #include <vector>
 
 struct SProfileSettings
@@ -44,6 +50,9 @@ struct SProfileSettings
 class CDlgProfileMgr final : public CDialog
 {
 public:
+	//! コマンドラインだけでプロファイルが確定するか調べる
+	static bool TrySelectProfile( CCommandLine* pcCommandLine ) noexcept;
+
 	/*
 	||  Constructors
 	*/
@@ -76,3 +85,10 @@ public:
 	static bool ReadProfSettings(SProfileSettings& settings);
 	static bool WriteProfSettings(SProfileSettings& settings);
 };
+
+std::filesystem::path GetProfileMgrFileName();
+std::filesystem::path GetProfileDirectory(const std::wstring& name);
+
+[[nodiscard]] std::wstring GetProfileMgrFileName(const std::wstring_view& name);
+
+#endif /* SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_ */

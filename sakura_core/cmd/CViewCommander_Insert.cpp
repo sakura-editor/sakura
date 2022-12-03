@@ -6,6 +6,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -79,7 +80,7 @@ void CViewCommander::Command_INS_FILE_USED_RECENTLY( void )
 	Command_INSTEXT( true, s.c_str(), (CLogicInt)s.size(), TRUE );
 }
 
-// 最近使ったフォルダ挿入
+// 最近使ったフォルダー挿入
 void CViewCommander::Command_INS_FOLDER_USED_RECENTLY( void )
 {
 	std::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();

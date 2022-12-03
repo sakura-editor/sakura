@@ -12,6 +12,7 @@
 	Copyright (C) 2010, Uchi
 	Copyright (C) 2012, novice
 	Copyright (C) 2013, Moca, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -38,6 +39,8 @@
 #include "CCodePage.h"
 #include <vector>
 #include <map>
+#include "CSelectLang.h"
+#include "String_define.h"
 
 struct SCodeSet {
 	ECodeType		m_eCodeSet;

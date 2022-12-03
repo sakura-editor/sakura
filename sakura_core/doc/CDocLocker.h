@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCLOCKER_6B8C1CF4_B0FD_4631_ADB4_E53776A2FAAE_H_
+#define SAKURA_CDOCLOCKER_6B8C1CF4_B0FD_4631_ADB4_E53776A2FAAE_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -49,3 +52,4 @@ public:
 private:
 	bool m_bIsDocWritable;
 };
+#endif /* SAKURA_CDOCLOCKER_6B8C1CF4_B0FD_4631_ADB4_E53776A2FAAE_H_ */

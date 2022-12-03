@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -80,7 +81,7 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		}
 
 		//行コメント削除
-		p = wcsstr( pTmpLine, L";" );
+		p = wcschr( pTmpLine, L';' );
 		if( p ) *p = L'\0';
 
 		length = wcslen( pTmpLine );
@@ -92,9 +93,9 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 			token[ j ] = my_strtok<WCHAR>( pTmpLine, length, &offset, L" \t\r\n" );
 			if( token[ j ] == NULL ) break;
 			//トークンに含まれるべき文字でないか？
-			if( wcsstr( token[ j ], L"\"") != NULL
-			 || wcsstr( token[ j ], L"\\") != NULL
-			 || wcsstr( token[ j ], L"'" ) != NULL ){
+			if( wcschr( token[ j ], L'\"') != NULL
+			 || wcschr( token[ j ], L'\\') != NULL
+			 || wcschr( token[ j ], L'\'' ) != NULL ){
 				token[ j ] = NULL;
 				break;
 			}

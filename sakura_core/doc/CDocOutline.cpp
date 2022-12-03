@@ -11,6 +11,7 @@
 	Copyright (C) 2002, frozen
 	Copyright (C) 2003, zenryaku
 	Copyright (C) 2005, genta, D.S.Koba, じゅうじ
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -28,6 +29,9 @@
 #include "charset/charcode.h"
 #include "io/CTextStream.h"
 #include "extmodule/CBregexp.h"
+#include "CSelectLang.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 /*! ルールファイルの1行を管理する構造体
 
@@ -70,7 +74,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 	int nCount = 0;
 	bRegex = false;
 	bool bRegexReplace = false;
-	title = L"";
+	title.clear();
 	int regexOption = CBregexp::optCaseSensitive;
 
 	// 通常モード
@@ -222,10 +226,10 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		return;
 	}
 	if( 0 < title.size() ){
-		sTitleOverride = title.c_str();
+		sTitleOverride = title;
 	}
 
-	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
+	/*	ネストの深さは、32レベルまで、ひとつのヘッダーは、最長256文字まで区別
 		（256文字まで同じだったら同じものとして扱います）
 	*/
 	const int	nMaxStack = 32;	//	ネストの最深

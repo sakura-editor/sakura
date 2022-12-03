@@ -11,6 +11,7 @@
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2004, genta, Moca, novice
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -24,6 +25,8 @@
 #include "plugin/CComplementIfObj.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 
 WNDPROC			gm_wpHokanListProc;
@@ -174,7 +177,7 @@ int CHokanMgr::Search(
 		}
 
 		for( auto it = plugs.begin(); it != plugs.end(); ++it ){
-			//インタフェースオブジェクト準備
+			//インターフェースオブジェクト準備
 			CWSHIfObj::List params;
 			std::wstring curWord = pszCurWord;
 			CComplementIfObj* objComp = new CComplementIfObj( curWord , this, nOption );
@@ -472,17 +475,21 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 		IDC_LIST_WORDS
 	};
 	int		nControls = _countof( Controls );
-	int		nWidth;
-	int		nHeight;
 	int		i;
 	RECT	rc;
 	HWND	hwndCtrl;
 	POINT	po;
 	RECT	rcDlg;
 
+	::GetWindowRect(GetHwnd(), &rcDlg);
+	m_xPos = rcDlg.left;
+	m_yPos = rcDlg.top;
+	m_nWidth = rcDlg.right - rcDlg.left;
+	m_nHeight = rcDlg.bottom - rcDlg.top;
+
 	::GetClientRect( GetHwnd(), &rcDlg );
-	nWidth = rcDlg.right - rcDlg.left;  // width of client area
-	nHeight = rcDlg.bottom - rcDlg.top; // height of client area
+	int nClientWidth = rcDlg.right - rcDlg.left;  // width of client area
+	int nClientHeight = rcDlg.bottom - rcDlg.top; // height of client area
 
 //	2001/06/18 Start by asa-o: サイズ変更後の位置を保存
 	m_poWin.x = rcDlg.left - 4;
@@ -509,8 +516,8 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 				NULL,
 				rc.left,
 				rc.top,
-				nWidth - rc.left * 2,
-				nHeight - rc.top * 2/* - 20*/,
+				nClientWidth - rc.left * 2,
+				nClientHeight - rc.top * 2/* - 20*/,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
 		}
@@ -539,26 +546,23 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	if( VK_TAB		== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    補完決定キーが有効/無効 */
 	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
 
-	HWND hwndList;
-	int nItem;
-	CEditView* pcEditView;
-	hwndList = GetItemHwnd( IDC_LIST_WORDS );
-	nItem = List_GetCurSel( hwndList );
+	HWND hList = GetItemHwnd( IDC_LIST_WORDS );
+	const int nItem = List_GetCurSel( hList );
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}
-	int nLabelLen = List_GetTextLen( hwndList, nItem );
-	auto pszLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndList, nItem, &pszLabel[0], nLabelLen + 1 );
+
+	std::wstring strLabel;
+	if( !ApiWrap::List_GetText( hList, nItem, strLabel ) ){
+		return FALSE;
+	}
 
  	/* テキストを貼り付け */
-	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
+	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
-	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&pszLabel[0], wcslen(&pszLabel[0]), TRUE, 0 );
+	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)strLabel.data(), strLabel.length(), TRUE, 0 );
 
-	// Until here
-//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(pszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
 
 	return TRUE;
@@ -658,9 +662,8 @@ void CHokanMgr::ShowTip()
 	nItem = List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;
 
-	int nLabelLen = List_GetTextLen( hwndCtrl, nItem );
-	auto szLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndCtrl, nItem, &szLabel[0], nLabelLen + 1 );	// 選択中の単語を取得
+	std::wstring strLabel;
+	if( !ApiWrap::List_GetText( hwndCtrl, nItem, strLabel ) ) return;
 
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 
@@ -681,7 +684,7 @@ void CHokanMgr::ShowTip()
 	if( point.y > m_poWin.y && point.y < m_poWin.y + m_nHeight )
 	{
 		::SetRect( &rcHokanWin , m_poWin.x, m_poWin.y, m_poWin.x + m_nWidth, m_poWin.y + m_nHeight );
-		if( !pcEditView -> ShowKeywordHelp( point, &szLabel[0], &rcHokanWin ) )
+		if( !pcEditView -> ShowKeywordHelp( point, strLabel.data(), &rcHokanWin ) )
 			pcEditView -> m_dwTipTimer = ::GetTickCount();	// 表示するべきキーワードヘルプが無い
 	}
 }

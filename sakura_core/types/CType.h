@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CTYPE_B057F55F_C082_47DB_9CB4_E8B1BBA5BF77_H_
+#define SAKURA_CTYPE_B057F55F_C082_47DB_9CB4_E8B1BBA5BF77_H_
 #pragma once
 
 #include "CEol.h"
@@ -31,6 +34,7 @@
 #include "doc/CBlockComment.h"
 #include "charset/charset.h"  // ECodeType
 #include "CRegexKeyword.h"	// RegexKeywordInfo
+#include "charset/charcode.h"
 
 //! タブ表示方法
 enum ETabArrow {
@@ -359,3 +363,4 @@ inline bool C_IsSpace( wchar_t c, bool bExtEol )
 //! C/C++のファイル名による判定
 EOutlineType GetCLangOutlineType( const wchar_t* pszFileName );
 
+#endif /* SAKURA_CTYPE_B057F55F_C082_47DB_9CB4_E8B1BBA5BF77_H_ */

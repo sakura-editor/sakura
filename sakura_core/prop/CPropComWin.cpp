@@ -12,6 +12,7 @@
 	Copyright (C) 2004, Moca
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -22,9 +23,11 @@
 #include "dlg/CDlgWinSize.h"	//	2004.05.13 Moca
 #include "util/shell.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "_main/CProcess.h"
+#include "CSelectLang.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//11200

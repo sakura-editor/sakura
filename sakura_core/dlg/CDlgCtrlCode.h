@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2002, MIK
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGCTRLCODE_84B2AD70_76BB_4CE3_9B09_4D1AF49BF5EE_H_
+#define SAKURA_CDLGCTRLCODE_84B2AD70_76BB_4CE3_9B09_4D1AF49BF5EE_H_
 #pragma once
 
 class CDlgCtrlCode;
@@ -70,3 +73,4 @@ private:
 	*/
 	wchar_t		m_nCode;	// コード
 };
+#endif /* SAKURA_CDLGCTRLCODE_84B2AD70_76BB_4CE3_9B09_4D1AF49BF5EE_H_ */

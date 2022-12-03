@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_
+#define SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_
 #pragma once
 
 /*!
@@ -109,11 +112,17 @@ inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 // 最大の幅を報告します
 class CTextWidthCalc
 {
+	using Me = CTextWidthCalc;
+
 public:
 	CTextWidthCalc(HWND hParentDlg, int nID);
 	CTextWidthCalc(HWND hwndThis);
 	CTextWidthCalc(HFONT font);
 	CTextWidthCalc(HDC hdc);
+	CTextWidthCalc(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CTextWidthCalc(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CTextWidthCalc();
 	void Reset(){ nCx = 0; nExt = 0; }
 	void SetCx(int cx = 0){ nCx = cx; }
@@ -131,7 +140,7 @@ public:
 	enum StaticMagicNambers{
 		//! スクロールバーとアイテムの間の隙間
 		WIDTH_MARGIN_SCROLLBER = 8,
-		//! リストビューヘッダ マージン
+		//! リストビューヘッダー マージン
 		WIDTH_LV_HEADER = 17,
 		//! リストビューのマージン
 		WIDTH_LV_ITEM_NORMAL  = 14,
@@ -151,21 +160,31 @@ private:
 
 class CFontAutoDeleter
 {
-public:
-	CFontAutoDeleter();
-	~CFontAutoDeleter();
-	void SetFont( HFONT hfontOld, HFONT hfont, HWND hwnd );
-	void ReleaseOnDestroy();
-	// void Release();
-
 private:
-	HFONT m_hFontOld;
-	HFONT m_hFont;
-	HWND  m_hwnd;
+	HFONT m_hFont = nullptr;
+
+	using Me = CFontAutoDeleter;
+
+	void	Clear() noexcept;
+
+public:
+	CFontAutoDeleter() = default;
+	CFontAutoDeleter(const Me& other);
+	Me& operator = (const Me& other);
+	CFontAutoDeleter(Me&& other) noexcept;
+	Me& operator = (Me&& other) noexcept;
+	virtual ~CFontAutoDeleter() noexcept;
+
+	void	SetFont( const HFONT& hFontOld, const HFONT& hFont, const HWND& hWnd );
+	void	ReleaseOnDestroy();
+
+	[[nodiscard]] HFONT	GetFont() const { return m_hFont; }
 };
 
 class CDCFont
 {
+	using Me = CDCFont;
+
 public:
 	CDCFont(LOGFONT& font, HWND hwnd = NULL){
 		m_hwnd = hwnd;
@@ -173,6 +192,10 @@ public:
 		m_hFont = ::CreateFontIndirect(&font);
 		m_hFontOld = (HFONT)::SelectObject(m_hDC, m_hFont);
 	}
+	CDCFont(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDCFont(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CDCFont(){
 		if( m_hDC ){
 			::SelectObject(m_hDC, m_hFontOld);
@@ -189,3 +212,9 @@ private:
 	HFONT m_hFontOld;
 	HFONT m_hFont;
 };
+
+HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
+
+bool GetSystemAccentColor( COLORREF* pColorOut );
+
+#endif /* SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_ */

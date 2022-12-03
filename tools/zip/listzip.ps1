@@ -1,16 +1,12 @@
 Param($Arg1)
 
-try
-{
-    Add-Type -AssemblyName "System.IO.Compression.FileSystem"
-    
-    $sourcezip = [System.IO.Compression.Zipfile]::OpenRead($Arg1)
-    foreach($file in $sourcezip.Entries){
-        Write-Host $file.LastWriteTime $file.Length $file.FullName
-    }
-    $sourcezip.Dispose()
+Add-Type -AssemblyName "System.IO.Compression.FileSystem"
 
-}
-catch
+if (Test-Path $Arg1)
 {
+    if (-Not(Split-Path -IsAbsolute $Arg1))
+    {
+        $arg1 = Convert-Path $Arg1
+    }
+    [System.IO.Compression.Zipfile]::OpenRead($Arg1).entries | ft -a LastWriteTime,Length,FullName
 }

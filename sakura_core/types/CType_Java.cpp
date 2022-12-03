@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,6 +31,8 @@
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
 #include "view/Colors/EColorIndexType.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /* Java */
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)

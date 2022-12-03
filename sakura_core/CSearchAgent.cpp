@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 
 #include <vector>
@@ -13,6 +36,8 @@
 #include "sakura_rc.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
+#include "apiwrap/CommonControl.h"
+#include "env/DLLSHAREDATA.h"
 
 //#define MEASURE_SEARCH_TIME
 #ifdef MEASURE_SEARCH_TIME
@@ -296,7 +321,7 @@ void CSearchAgent::CreateWordList(
 {
 	for( CLogicInt pos = CLogicInt(0); pos < nPatternLen; ) {
 		CLogicInt begin, end; // 検索語に含まれる単語?の posを基準とした相対位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
-		if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), &begin, &end, NULL, NULL )
+		if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, NULL, NULL )
 			&& begin == 0 && begin < end
 		) {
 			if( ! WCODE::IsWordDelimiter( pszPattern[pos] ) ) {
@@ -324,7 +349,7 @@ const wchar_t* CSearchAgent::SearchStringWord(
 	CLogicInt nNextWordFrom = CLogicInt(nIdxPos);
 	CLogicInt nNextWordFrom2;
 	CLogicInt nNextWordTo2;
-	while( CWordParse::WhereCurrentWord_2( pLine, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom2, &nNextWordTo2, NULL, NULL ) ){
+	while( CWordParse::WhereCurrentWord_2( pLine, CLogicInt(nLineLen), nNextWordFrom, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &nNextWordFrom2, &nNextWordTo2, NULL, NULL ) ){
 		size_t nSize = searchWords.size();
 		for( size_t iSW = 0; iSW < nSize; ++iSW ) {
 			if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
@@ -368,7 +393,7 @@ bool CSearchAgent::WhereCurrentWord(
 	const wchar_t*	pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
 
 	/* 現在位置の単語の範囲を調べる */
-	return CWordParse::WhereCurrentWord_2( pLine, nLineLen, nIdx, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
+	return CWordParse::WhereCurrentWord_2( pLine, nLineLen, nIdx, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
 }
 
 // 現在位置の左右の単語の先頭位置を調べる
@@ -406,48 +431,9 @@ bool CSearchAgent::PrevOrNextWord(
 	}
 	/* 前の単語か？後ろの単語か？ */
 	if( bLEFT ){
-		/* 現在位置の文字の種類を調べる */
-		ECharKind	nCharKind = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdx );
-		if( nIdx == 0 ){
-			return false;
-		}
-
-		/* 文字種類が変わるまで前方へサーチ */
-		/* 空白とタブは無視する */
-		int		nCount = 0;
-		CLogicInt	nIdxNext = nIdx;
-		CLogicInt	nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
-		while( nCharChars > 0 ){
-			CLogicInt		nIdxNextPrev = nIdxNext;
-			nIdxNext -= nCharChars;
-			ECharKind nCharKindNext = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdxNext );
-
-			ECharKind nCharKindMerge = CWordParse::WhatKindOfTwoChars( nCharKindNext, nCharKind );
-			if( nCharKindMerge == CK_NULL ){
-				/* サーチ開始位置の文字が空白またはタブの場合 */
-				if( nCharKind == CK_TAB	|| nCharKind == CK_SPACE ){
-					if ( bStopsBothEnds && nCount ){
-						nIdxNext = nIdxNextPrev;
-						break;
-					}
-					nCharKindMerge = nCharKindNext;
-				}else{
-					if( nCount == 0){
-						nCharKindMerge = nCharKindNext;
-					}else{
-						nIdxNext = nIdxNextPrev;
-						break;
-					}
-				}
-			}
-			nCharKind = nCharKindMerge;
-			nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
-			++nCount;
-		}
-		*pnColumnNew = nIdxNext;
-	}else{
-		CWordParse::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
+		return CWordParse::SearchPrevWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
 	}
+	CWordParse::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
 	return true;
 }
 
@@ -761,7 +747,7 @@ end_of_func:;
   Fromを含む位置からToの直前を含むデータを削除する
   Fromの位置へテキストを挿入する
 */
-void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
+void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::ReplaceData()" );
 
@@ -797,6 +783,10 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		CDlgCancel*& m_pDlg;
 	public:
 		CDLgCandelCloser(CDlgCancel*& pDlg): m_pDlg(pDlg){}
+		CDLgCandelCloser(const CDLgCandelCloser&) = delete;
+		CDLgCandelCloser& operator = (const CDLgCandelCloser&) = delete;
+		CDLgCandelCloser(CDLgCandelCloser&&) noexcept = delete;
+		CDLgCandelCloser& operator = (CDLgCandelCloser&&) noexcept = delete;
 		~CDLgCandelCloser(){
 			if( NULL != m_pDlg ){
 				// 進捗ダイアログを表示しない場合と同じ動きになるようにダイアログは遅延破棄する
@@ -810,7 +800,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 	CDLgCandelCloser closer(pCDlgCancel);
 	const CLogicInt nDelLines = pArg->sDelRange.GetTo().y - pArg->sDelRange.GetFrom().y;
 	const CLogicInt nEditLines = std::max<CLogicInt>(CLogicInt(1), nDelLines + CLogicInt(pArg->pInsData ? pArg->pInsData->size(): 0));
-	if( !CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning ){
+	if( const CGrepAgent *pcGrepAgent = CEditApp::getInstance()->m_pcGrepAgent;
+	    pcGrepAgent && !pcGrepAgent->m_bGrepRunning ){
 		if( 3000 < nEditLines ){
 			/* 進捗ダイアログの表示 */
 			pCDlgCancel = new CDlgCancel;
@@ -836,7 +827,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		const CNativeW& cmemLine = pArg->pInsData->back().cmemLine;
 		int nLen = cmemLine.GetStringLength();
 		const wchar_t* pInsLine = cmemLine.GetStringPtr();
-		if( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+		if( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], bEnableExtEol) ){
 			// 行挿入
 			bLastEOLReplace = true; // 仮。後で修正
 		}else{
@@ -887,7 +878,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			goto prev_line;
 		}
 		/* 改行も削除するんかぃのぉ・・・？ */
-		if( EOL_NONE != pCDocLine->GetEol() &&
+		if( pCDocLine->GetEol().IsValid() &&
 			nWorkPos + nWorkLen > nLineLen - pCDocLine->GetEol().GetLen() // 2002/2/10 aroka CMemory変更
 		){
 			/* 削除する長さに改行も含める */
@@ -956,14 +947,14 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 					ref._SetStringLength(nWorkPos);
 					ref.AppendString(pInsData, nInsLen);
 					ref.AppendNativeData(pCDocLineNext->_GetDocLineDataWithEOL());
-					pCDocLine->SetEol();
+					pCDocLine->SetEol(bEnableExtEol);
 				}else{
 					CNativeW tmp;
 					tmp.AllocStringBuffer(nNewLen);
 					tmp.AppendString(pLine, nWorkPos);
 					tmp.AppendString(pInsData, nInsLen);
 					tmp.AppendNativeData(pCDocLineNext->_GetDocLineDataWithEOL());
-					pCDocLine->SetDocLineStringMove(&tmp);
+					pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 				}
 				if( bChangeOneLine ){
 					pArg->nInsSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
@@ -989,7 +980,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 				/* 行内データ削除 */
 				CNativeW tmp;
 				tmp.SetString(pLine, nWorkPos);
-				pCDocLine->SetDocLineStringMove(&tmp);
+				pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 				CModifyVisitor().SetLineModified(pCDocLine, pArg->nDelSeq);	/* 変更フラグ */
 			}
 		}
@@ -1026,7 +1017,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 					tmp.AppendString(pLine, nWorkPos);
 					tmp.AppendString(pInsData, nInsLen);
 					tmp.AppendString(&pLine[nWorkPos + nWorkLen], nAfterLen);
-					pCDocLine->SetDocLineStringMove(&tmp);
+					pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 				}
 			}
 			if( bChangeOneLine ){
@@ -1093,7 +1084,7 @@ prev_line:;
 		CNativeW& cmemLine = pArg->pInsData->back().cmemLine;
 		int nLen = cmemLine.GetStringLength();
 		const wchar_t* pInsLine = cmemLine.GetStringPtr();
-		if( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+		if( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], bEnableExtEol) ){
 			if( 0 == pArg->sDelRange.GetFrom().x ){
 				// 挿入データの最後が改行で行頭に挿入するとき、現在行を維持する
 				bInsertLineMode = true;
@@ -1135,7 +1126,7 @@ prev_line:;
 #ifdef _DEBUG
 		int nLen = cmemLine.GetStringLength();
 		const wchar_t* pInsLine = cmemLine.GetStringPtr();
-		assert( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) );
+		assert( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], bEnableExtEol) );
 #endif
 		{
 			if( NULL == pCDocLine ){
@@ -1147,10 +1138,10 @@ prev_line:;
 					tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
 					tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
 					tmp.AppendNativeData(cmemLine);
-					pCDocLineNew->SetDocLineStringMove(&tmp);
+					pCDocLineNew->SetDocLineStringMove(&tmp, bEnableExtEol);
 				}
 				else{
-					pCDocLineNew->SetDocLineStringMove(&cmemLine);
+					pCDocLineNew->SetDocLineStringMove(&cmemLine, bEnableExtEol);
 				}
 				CModifyVisitor().SetLineModified(pCDocLineNew, (*pArg->pInsData)[nCount].nSeq);
 			}
@@ -1166,21 +1157,21 @@ prev_line:;
 						cmemCurLine.swap(tmp);
 						tmp._SetStringLength(cPrevLine.GetLength());
 						tmp.AppendNativeData(cmemLine);
-						pCDocLine->SetDocLineStringMove(&tmp);
+						pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 						cNextLine = CStringRef(cmemCurLine.GetStringPtr(), cmemCurLine.GetStringLength());
 					}else{
 						CNativeW tmp;
 						tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
 						tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
 						tmp.AppendNativeData(cmemLine);
-						pCDocLine->SetDocLineStringMove(&tmp);
+						pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 					}
 					CModifyVisitor().SetLineModified(pCDocLine, (*pArg->pInsData)[nCount].nSeq);
 					pCDocLine = pCDocLine->GetNextLine();
 				}
 				else{
 					CDocLine* pCDocLineNew = m_pcDocLineMgr->InsertNewLine(pCDocLine);	//pCDocLineの前に挿入
-					pCDocLineNew->SetDocLineStringMove(&cmemLine);
+					pCDocLineNew->SetDocLineStringMove(&cmemLine, bEnableExtEol);
 					CModifyVisitor().SetLineModified(pCDocLineNew, (*pArg->pInsData)[nCount].nSeq);
 				}
 			}
@@ -1213,7 +1204,7 @@ prev_line:;
 		tmp.AppendString(cNextLine.GetPtr(), cNextLine.GetLength());
 		if( NULL == pCDocLine ){
 			CDocLine* pCDocLineNew = m_pcDocLineMgr->AddNewLine();	//末尾に追加
-			pCDocLineNew->SetDocLineStringMove(&tmp);
+			pCDocLineNew->SetDocLineStringMove(&tmp, bEnableExtEol);
 			pCDocLineNew->m_sMark = markNext;
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLineNew, nSeq);
@@ -1227,7 +1218,7 @@ prev_line:;
 				pCDocLine = m_pcDocLineMgr->InsertNewLine(pCDocLine);	//pCDocLineの前に挿入
 				pCDocLine->m_sMark = markNext;
 			}
-			pCDocLine->SetDocLineStringMove(&tmp);
+			pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLine, nSeq);
 			}

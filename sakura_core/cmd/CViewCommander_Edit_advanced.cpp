@@ -18,6 +18,7 @@
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2011, ryoji
 	Copyright (C) 2012, Moca, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -29,6 +30,9 @@
 
 #include "uiparts/CWaitCursor.h"
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
+#include "apiwrap/CommonControl.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -70,6 +74,10 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 	} IsIndentChar;
 	struct SSoftTabData {
 		SSoftTabData( CLayoutXInt nTab, int width ) : m_szTab(NULL), m_nTab((Int)nTab), m_nXWidth(width - 1), m_nSpWidth(width) {}
+		SSoftTabData(const SSoftTabData&) = delete;
+		SSoftTabData& operator = (const SSoftTabData&) = delete;
+		SSoftTabData(SSoftTabData&&) noexcept = delete;
+		SSoftTabData& operator = (SSoftTabData&&) noexcept = delete;
 		~SSoftTabData() { delete []m_szTab; }
 		operator const wchar_t* ()
 		{
@@ -214,7 +222,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				}
 				const bool emptyLine = ! pcLayout || 0 == pcLayout->GetLengthWithoutEOL();
 				const bool selectionIsOutOfLine = reachEndOfLayout && (
-					(pcLayout && pcLayout->GetLayoutEol() != EOL_NONE) ? xLayoutFrom == xLayoutTo : xLayoutTo < rcSel.GetFrom().x
+					(pcLayout && pcLayout->GetLayoutEol().IsValid()) ? xLayoutFrom == xLayoutTo : xLayoutTo < rcSel.GetFrom().x
 				);
 
 				// 入力文字の挿入位置
@@ -674,7 +682,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		if ( sSelectOld.GetTo().x > 0 ) {
 			// 2006.03.31 Moca nSelectLineToOldは、物理行なのでLayout系からDocLine系に修正
 			const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( sSelectOld.GetTo().GetY2() );
-			if( NULL != pcDocLine && EOL_NONE != pcDocLine->GetEol() ){
+			if( NULL != pcDocLine && pcDocLine->GetEol().IsValid() ){
 				sSelectOld.GetToPointer()->y++;
 			}
 		}
@@ -843,14 +851,14 @@ void CViewCommander::Command_MERGE(void)
 	if ( sSelectOld.GetTo().x > 0 ) {
 #if 0
 		const CLayout* pcLayout=GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().GetY2()); //2007.10.09 kobake 単位混在バグ修正
-		if( NULL != pcLayout && EOL_NONE != pcLayout->GetLayoutEol() ){
+		if( NULL != pcLayout && pcLayout->GetLayoutEol().IsValid() ){
 			sSelectOld.GetToPointer()->y++;
 			//sSelectOld.GetTo().y++;
 		}
 #else
 		// 2010.08.22 Moca ソートと仕様を合わせる
 		const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( sSelectOld.GetTo().GetY2() );
-		if( NULL != pcDocLine && EOL_NONE != pcDocLine->GetEol() ){
+		if( NULL != pcDocLine && pcDocLine->GetEol().IsValid() ){
 			sSelectOld.GetToPointer()->y++;
 		}
 #endif

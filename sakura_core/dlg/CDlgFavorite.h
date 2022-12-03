@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2003, MIK
 	Copyright (C) 2010, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,10 +30,20 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_
+#define SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_
 #pragma once
 
 #include "dlg/CDialog.h"
-#include "recent/CRecent.h"
+#include "recent/CRecentFile.h"
+#include "recent/CRecentFolder.h"
+#include "recent/CRecentExceptMru.h"
+#include "recent/CRecentSearch.h"
+#include "recent/CRecentReplace.h"
+#include "recent/CRecentGrepFile.h"
+#include "recent/CRecentGrepFolder.h"
+#include "recent/CRecentCmd.h"
+#include "recent/CRecentCurDir.h"
 
 //!「履歴とお気に入りの管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]
@@ -55,13 +66,13 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL	OnDestroy( void ) override;
 	BOOL	OnBnClicked(int wID) override;
 	BOOL	OnNotify(NMHDR* pNMHDR) override;
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam ) override;
 	LPVOID	GetHelpIdTable( void ) override;
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 標準以外のメッセージを捕捉する
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam ) override;
-	BOOL	OnMove( WPARAM wParam, LPARAM lParam ) override;
 	BOOL	OnMinMaxInfo( LPARAM lParam );
 
 	void	SetData( void ) override;	/* ダイアログデータの設定 */
@@ -103,7 +114,7 @@ private:
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
-		bool		m_bFilePath;		//ファイル/フォルダか？
+		bool		m_bFilePath;		//ファイル/フォルダーか？
 		bool		m_bEditable;		//編集可能
 		bool		m_bAddExcept;		//除外へ追加
 		int			m_nViewCount;		//カレントの表示数
@@ -137,3 +148,4 @@ private:
 
 	static void  ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse);
 };
+#endif /* SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_ */

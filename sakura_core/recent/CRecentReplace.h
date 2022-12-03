@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTREPLACE_F287196B_19A2_4CEA_9225_9E9C681774F7_H_
+#define SAKURA_CRECENTREPLACE_F287196B_19A2_4CEA_9225_9E9C681774F7_H_
 #pragma once
 
 #include "CRecentImp.h"
@@ -44,3 +47,4 @@ public:
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
 	size_t			GetTextMaxLength() const;
 };
+#endif /* SAKURA_CRECENTREPLACE_F287196B_19A2_4CEA_9225_9E9C681774F7_H_ */

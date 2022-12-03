@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief WSHインタフェースオブジェクト基本クラス
+	@brief WSHインターフェースオブジェクト基本クラス
 
 	@date 2009.10.29 syat CWSH.hから切り出し
 
@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_
+#define SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_
 #pragma once
 
 #include <string>
@@ -56,7 +59,7 @@ public:
 	virtual ULONG STDMETHODCALLTYPE Release() { -- m_RefCount; int R = m_RefCount; if(m_RefCount == 0) delete this; return R; }
 public:
 	ImplementsIUnknown(): m_RefCount(0) {}
-	virtual ~ImplementsIUnknown(){}
+	virtual ~ImplementsIUnknown() = default;
 };
 
 //WSH一般
@@ -64,7 +67,7 @@ public:
 class CIfObj;
 typedef HRESULT (CIfObj::*CIfObjMethod)(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 
-//CIfObjが必要とするWSHClientのインタフェース
+//CIfObjが必要とするWSHClientのインターフェース
 class IWSHClient
 {
 public:
@@ -93,7 +96,7 @@ public:
 	virtual ~CIfObj();
 
 	// フィールド・アクセサ
-	const std::wstring::value_type* Name() const { return this->m_sName.c_str(); } // インタフェースオブジェクト名
+	const std::wstring::value_type* Name() const { return this->m_sName.c_str(); } // インターフェースオブジェクト名
 	bool IsGlobal() const { return this->m_isGlobal; } //オブジェクト名の省略可否
 	IWSHClient* Owner() const { return this->m_Owner; } // オーナーIWSHClient
 	std::wstring m_sName;
@@ -137,3 +140,4 @@ private:
 	CMethodInfoList m_Methods;			//メソッド情報リスト
 	ITypeInfo* m_TypeInfo;
 };
+#endif /* SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_ */

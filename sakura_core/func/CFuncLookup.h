@@ -10,6 +10,7 @@
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, aroka
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,6 +33,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CFUNCLOOKUP_9470508D_849D_463F_B507_7843D4D85B4A_H_
+#define SAKURA_CFUNCLOOKUP_9470508D_849D_463F_B507_7843D4D85B4A_H_
 #pragma once
 
 #include <Windows.h>
@@ -92,3 +95,4 @@ private:
 };
 
 /* [EOF] */
+#endif /* SAKURA_CFUNCLOOKUP_9470508D_849D_463F_B507_7843D4D85B4A_H_ */

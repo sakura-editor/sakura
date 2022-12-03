@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CAPPMODE_797AE845_5323_4D8A_A263_C534249DBB1C_H_
+#define SAKURA_CAPPMODE_797AE845_5323_4D8A_A263_C534249DBB1C_H_
 #pragma once
 
 #include "util/design_template.h"
@@ -56,3 +59,4 @@ private:
 public:
 	wchar_t			m_szGrepKey[1024];			//!< Grepモードの場合、その検索キー
 };
+#endif /* SAKURA_CAPPMODE_797AE845_5323_4D8A_A263_C534249DBB1C_H_ */

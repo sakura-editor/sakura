@@ -1,8 +1,33 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_ZenSpace.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
+#include "util/window.h"
 
 void Draw_ZenSpace( CGraphics& gr, const CMyRect& rc );
 
@@ -68,7 +93,7 @@ void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			CMyRect rcZenSp;
 			// 注：ベースライン無視
 			rcZenSp.SetPos(pDispPos->GetDrawPos().x, pDispPos->GetDrawPos().y);
-			rcZenSp.SetSize(dx[0]- pcView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace,
+			rcZenSp.SetSize(dx[0]- DpiScaleX(pcView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace),
 				pcView->GetTextMetrics().GetHankakuHeight());
 
 			// 描画

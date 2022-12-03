@@ -9,14 +9,21 @@
 	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2004, Moca
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CProcess.h"
+#include "_main/CProcess.h"
+
 #include "util/module.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "config/app_constants.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*!
 	@brief プロセス基底クラス
@@ -34,7 +41,20 @@ CProcess::CProcess(
 , m_pfnMiniDumpWriteDump(NULL)
 #endif
 {
-	m_pcShareData = CShareData::getInstance();
+	// アプリ名をリソースから読み込む
+	m_strAppName = LS(STR_GSTR_APPNAME);
+}
+
+/*!
+	@brief iniファイルパスを取得する
+ */
+std::filesystem::path CProcess::GetIniFileName() const
+{
+	if (m_cShareData.IsPrivateSettings()) {
+		const DLLSHAREDATA *pShareData = &GetDllShareData();
+		return pShareData->m_szPrivateIniFile.c_str();
+	}
+	return GetExeFileName().replace_extension(L".ini");
 }
 
 /*!
@@ -109,7 +129,7 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 
 	static WCHAR szFile[MAX_PATH];
 	// 出力先はiniと同じ（InitializeProcess()後に確定）
-	// Vista以降では C:\Users\(ユーザ名)\AppData\Local\CrashDumps に出力
+	// Vista以降では C:\Users\(ユーザー名)\AppData\Local\CrashDumps に出力
 	GetInidirOrExedir( szFile, _APP_NAME_(_T) L".dmp" );
 
 	HANDLE hFile = ::CreateFile(
@@ -148,5 +168,13 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 */
 void CProcess::RefreshString()
 {
-	m_pcShareData->RefreshString();
+	m_cShareData.RefreshString();
+}
+
+/*!
+	言語選択後にアプリ名を更新します。
+ */
+void CProcess::UpdateAppName( std::wstring_view appName )
+{
+	m_strAppName = appName;
 }

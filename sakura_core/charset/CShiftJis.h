@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,9 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSHIFTJIS_2D69DAF0_0B19_4527_BDB8_D1C848651C31_H_
+#define SAKURA_CSHIFTJIS_2D69DAF0_0B19_4527_BDB8_D1C848651C31_H_
 #pragma once
 
 #include "CCodeBase.h"
+#include "charset/codechecker.h"
 #include "charset/codeutil.h"
 
 struct CommonSetting_Statusbar;
@@ -137,3 +141,4 @@ inline int CShiftJis::_UniToSjis_char( const unsigned short* pSrc, unsigned char
 
 	return nret;
 }
+#endif /* SAKURA_CSHIFTJIS_2D69DAF0_0B19_4527_BDB8_D1C848651C31_H_ */

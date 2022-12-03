@@ -9,6 +9,7 @@
 	Copyright (C) 2002, MIK
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -20,6 +21,9 @@
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 
 // 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
 static const DWORD p_helpids[] = {	//13000
@@ -44,6 +48,7 @@ INT_PTR CALLBACK CDlgInput1Proc(
 	case WM_INITDIALOG:
 		pCDlgInput1 = ( CDlgInput1* )lParam;
 		if( NULL != pCDlgInput1 ){
+			UpdateDialogFont( hwndDlg );
 			return pCDlgInput1->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
 		}else{
 			return FALSE;
@@ -57,16 +62,6 @@ INT_PTR CALLBACK CDlgInput1Proc(
 			return FALSE;
 		}
 	}
-}
-
-CDlgInput1::CDlgInput1()
-{
-	return;
-}
-
-CDlgInput1::~CDlgInput1()
-{
-	return;
 }
 
 /* モードレスダイアログの表示 */

@@ -14,6 +14,7 @@
 	Copyright (C) 2007, genta, ryoji
 	Copyright (C) 2012, Moca
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -41,8 +42,11 @@
 #include "CPropertyManager.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids[] = {
 	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//タブウインドウ表示	//@@@ 2003.05.31 MIK
@@ -191,6 +195,8 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 /* ダイアログデータの設定 */
 void CPropTab::SetData( HWND hwndDlg )
 {
+	::SendMessage(hwndDlg, WM_SETREDRAW, (WPARAM)FALSE, 0);
+
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_sTabBar.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_sTabBar.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
@@ -233,6 +239,8 @@ void CPropTab::SetData( HWND hwndDlg )
 	m_hTabFont = SetFontLabel( hwndDlg, IDC_STATIC_TABFONT, m_Common.m_sTabBar.m_lf, m_Common.m_sTabBar.m_nPointSize);
 
 	EnableTabPropInput(hwndDlg);
+
+	::SendMessage(hwndDlg, WM_SETREDRAW, (WPARAM)TRUE, 0);
 }
 
 /* ダイアログデータの取得 */

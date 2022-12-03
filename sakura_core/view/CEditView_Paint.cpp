@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -70,6 +71,7 @@ void CEditView_Paint::Call_OnPaint(
 
 	//領域を作成 -> rc
 	std::vector<CMyRect> rcs;
+	rcs.reserve(3);
 	if(nPaintFlag & PAINT_LINENUMBER)rcs.push_back(rcLineNumber);
 	if(nPaintFlag & PAINT_RULER)rcs.push_back(rcRuler);
 	if(nPaintFlag & PAINT_BODY)rcs.push_back(rcBody);
@@ -96,7 +98,7 @@ void CEditView::RedrawAll()
 	if( NULL == GetHwnd() ){
 		return;
 	}
-	
+
 	if( GetDrawSwitch() ){
 		// ウィンドウ全体を再描画
 		PAINTSTRUCT	ps;
@@ -113,7 +115,7 @@ void CEditView::RedrawAll()
 	GetCaret().ShowCaretPosInfo();
 
 	// 親ウィンドウのタイトルを更新
-	m_pcEditWnd->UpdateCaption();
+	GetEditWnd().UpdateCaption();
 
 	//	Jul. 9, 2005 genta	選択範囲の情報をステータスバーへ表示
 	GetSelectionInfo().PrintSelectionInfoMsg();
@@ -270,7 +272,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 		}
 	}
 	rcImagePos.SetSize(doc.m_nBackImgWidth, doc.m_nBackImgHeight);
-	
+
 	RECT rc = rcPaint;
 	// rc.left = t_max((int)rc.left, area.GetAreaLeft());
 	rc.top  = t_max((int)rc.top,  area.GetRulerHeight()); // ルーラーを除外
@@ -563,7 +565,7 @@ COLORREF CEditView::GetBackColorByColorInfo2(const ColorInfo& info, const ColorI
 
 void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 {
-	if (m_pcEditWnd->m_pPrintPreview) {
+	if (GetEditWnd().m_pPrintPreview) {
 		return;
 	}
 	bool bChangeFont = m_bMiniMap;
@@ -572,11 +574,11 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	}
 	OnPaint2( _hdc, pPs, bDrawFromComptibleBmp );
 	if( bChangeFont ){
-		SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
+		SelectCharWidthCache( CWM_FONT_EDIT, GetEditWnd().GetLogfontCacheMode() );
 	}
 }
 
-/*! 通常の描画処理 new 
+/*! 通常の描画処理 new
 	@param pPs  pPs.rcPaint は正しい必要がある
 	@param bDrawFromComptibleBmp  TRUE 画面バッファからhdcに作画する(コピーするだけ)。
 			TRUEの場合、pPs.rcPaint領域外は作画されないが、FALSEの場合は作画される事がある。
@@ -604,7 +606,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		bDrawFromComptibleBmp
 		);
 #endif
-	
+
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	// 互換BMPからの転送のみによる作画
 	if( bDrawFromComptibleBmp
@@ -620,7 +622,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			pPs->rcPaint.top,
 			SRCCOPY
 		);
-		if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
+		if ( GetEditWnd().GetActivePane() == m_nMyIndex ){
 			/* アクティブペインは、アンダーライン描画 */
 			GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 		}
@@ -682,7 +684,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		DrawBracketPair( false );
 	}
 
-	CEditView& cActiveView = m_pcEditWnd->GetActiveView();
+	CEditView& cActiveView = GetEditWnd().GetActiveView();
 	m_nPageViewTop = cActiveView.GetTextArea().GetViewTopLine();
 	m_nPageViewBottom = cActiveView.GetTextArea().GetBottomLine();
 
@@ -761,6 +763,16 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	//                      全部の行を描画                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+	/* アクティブペインは、アンダーライン描画 */
+	const bool bDrawUnderLine = GetEditWnd().GetActivePane() == m_nMyIndex;
+	// カーソル行アンダーライン描画を行描画ループ内で行うかどうか
+	const bool bDrawUnderLineWithoutDelay =
+		bDrawUnderLine
+		&& !bUseMemoryDC  // メモリDCを利用しない場合はアンダーライン描画を行描画の直後に行う事でちらつきを抑える
+		&& !m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp  // カーソル行より下にあるカーソル位置縦線が消えてしまうので、非表示設定でのみ行う
+		&& m_pTypeData->m_nLineSpace > 0  // 行間を0以下にすると、カーソル行アンダーラインの位置が一つ下の行に含まれるようになるため、レンダリングの対象行が変わるので、行間が0より大きい場合のみ行う
+		;
+
 	//必要な行を描画する	// 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
 	if(pPs->rcPaint.right <= GetTextArea().GetAreaLeft()){
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
@@ -779,15 +791,21 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			sPos.ForwardLayoutLineRef(1);	//レイアウト行＋＋
 		}
 	}else{
+		auto caretY = GetCaret().GetCaretLayoutPos().GetY2();
+		SColorStrategyInfo sInfo(gr);
+		sInfo.m_pDispPos = &sPos;
+		sInfo.m_pcView = this;
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
 		{
 			//描画X位置リセット
 			sPos.ResetDrawCol();
 
+			//DrawLogicLineを呼ぶと値が変わるので呼ぶ前に取得
+			auto nCurrLine = sPos.GetLayoutLineRef();
+			
 			//1行描画
 			bool bDispResult = DrawLogicLine(
-				gr,
-				&sPos,
+				&sInfo,
 				nLayoutLineTo
 			);
 
@@ -808,6 +826,9 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 					SelectObject(hdcBgImg, hOldBmp);
 					DeleteObject(hdcBgImg);
 				}
+			}
+			if (bDrawUnderLineWithoutDelay && nCurrLine == caretY) {
+				GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
 			}
 		}
 	}
@@ -845,7 +866,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
-	if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
+	if ( bDrawUnderLine && !bDrawUnderLineWithoutDelay ){
 		/* アクティブペインは、アンダーライン描画 */
 		GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 	}
@@ -871,18 +892,12 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	@date 2007.08.31 kobake 引数 bDispBkBitmap を削除
 */
 bool CEditView::DrawLogicLine(
-	HDC				_hdc,			//!< [in]     作画対象
-	DispPos*		_pDispPos,		//!< [in,out] 描画する箇所、描画元ソース
+	SColorStrategyInfo* pInfo,		//!< [in,out] 作画情報
 	CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
 	bool bDispEOF = false;
-	SColorStrategyInfo _sInfo;
-	SColorStrategyInfo* pInfo = &_sInfo;
-	pInfo->m_gr.Init(_hdc);
-	pInfo->m_pDispPos = _pDispPos;
-	pInfo->m_pcView = this;
 
 	//CColorStrategyPool初期化
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
@@ -940,12 +955,12 @@ bool CEditView::DrawLogicLine(
 		bDispEOF = DrawLayoutLine(pInfo);
 
 		//行を進める
-		CLogicInt nOldLogicLineNo = pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo();
+		CLogicInt nOldLogicLineNo = CLayout::GetLogicLineNo_Safe(pInfo->m_pDispPos->GetLayoutRef());
 		pInfo->m_pDispPos->ForwardDrawLine(1);		//描画Y座標＋＋
 		pInfo->m_pDispPos->ForwardLayoutLineRef(1);	//レイアウト行＋＋
 
 		// ロジック行を描画し終わったら抜ける
-		if(pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo()!=nOldLogicLineNo){
+		if(CLayout::GetLogicLineNo_Safe(pInfo->m_pDispPos->GetLayoutRef()) != nOldLogicLineNo){
 			break;
 		}
 
@@ -979,7 +994,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	//文字列参照
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
-	CStringRef cLineStr = pcDocLine->GetStringRefWithEOL();
+	CStringRef cLineStr = CDocLine::GetStringRefWithEOL_Safe(pcDocLine);
 
 	// 描画範囲外の場合は色切替だけで抜ける
 	if(pInfo->m_pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
@@ -1011,7 +1026,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	CTypeSupport	cCaretLineBg(this, COLORIDX_CARETLINEBG);
 	CTypeSupport	cEvenLineBg(this, COLORIDX_EVENLINEBG);
 	CTypeSupport	cPageViewBg(this, COLORIDX_PAGEVIEW);
-	CEditView& cActiveView = m_pcEditWnd->GetActiveView();
+	CEditView& cActiveView = GetEditWnd().GetActiveView();
 	CTypeSupport&	cBackType = (cCaretLineBg.IsDisp() &&
 		GetCaret().GetCaretLayoutPos().GetY() == pInfo->m_pDispPos->GetLayoutLineRef() && !m_bMiniMap
 			? cCaretLineBg
@@ -1071,26 +1086,69 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	}
 	//行終端または折り返しに達するまでループ
 	if(pcLayout){
+		int nPosBgn = pInfo->m_nPosInLogic; // Logic
+		int nPosLength = 0;
+		CLayoutInt nDrawX = pInfo->m_pDispPos->GetDrawCol(); // Layout
+		const int nDrawBlockLen = 1000; // ExtTextOutの長さ制限にかからない適当な値
 		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 		CFigureManager* pcFigureManager = CFigureManager::getInstance();
+		FigureRenderType prevRenderType = CFigure_Text::RenderType_None;
 		while(pInfo->m_nPosInLogic < nPosTo){
+			int nPosInLogic = pInfo->GetPosInLogic(); // FowardChars/DrawImpで更新される
+			nPosLength = nPosInLogic - nPosBgn;
+			//1文字情報取得
+			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[nPosInLogic],
+				cLineStr.GetLength() - nPosInLogic);
+			FigureRenderType nextRenderType = CFigure_Text::RenderType_None;
+			bool is_text = (typeid(cFigure) == typeid(CFigure_Text));
+			if (is_text) {
+				nextRenderType = CFigure_Text::GetRenderType(pInfo);
+			}
+			if (CFigure_Text::IsRenderType_Block(prevRenderType) &&
+				(prevRenderType != nextRenderType || (nDrawBlockLen < nPosLength))) {
+				if (0 < nPosLength) {
+					CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
+					nPosBgn = nPosInLogic;
+					nPosLength = 0;
+				}
+			}
+			prevRenderType = nextRenderType;
+
 			//色切替
 			if( pInfo->CheckChangeColor(cLineStr) ){
+				if (0 < nPosLength) {
+					CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
+					nPosBgn = nPosInLogic;
+					nPosLength = 0;
+				}
 				CColor3Setting cColor;
 				pInfo->DoChangeColor(&cColor);
 				SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 
-			//1文字情報取得 $$高速化可能
-			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()],
-				cLineStr.GetLength() - pInfo->GetPosInLogic());
-
-			//1文字描画
-			cFigure.DrawImp(pInfo);
-			if( bSkipRight && GetTextArea().GetAreaRight() < pInfo->m_pDispPos->GetDrawPos().x ){
+			if (is_text && CFigure_Text::IsRenderType_Block(nextRenderType)){
+				nDrawX += CFigure_Text::FowardChars(pInfo);
+				nPosInLogic = pInfo->GetPosInLogic();
+				nPosLength = nPosInLogic - nPosBgn;
+			}else{
+				//1文字描画
+				cFigure.DrawImp(pInfo);
+				nPosBgn = nPosInLogic = pInfo->GetPosInLogic();
+				nPosLength = 0;
+				nDrawX = pInfo->m_pDispPos->GetDrawCol();
+			}
+			if( bSkipRight && GetTextArea().GetRightCol() < nDrawX ){
+				if (0 < nPosLength) {
+					CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
+					nPosBgn = nPosInLogic;
+				}
 				pInfo->m_nPosInLogic = nPosTo;
+				nPosLength = nPosTo - nPosBgn;
 				break;
 			}
+		}
+		if (0 < nPosLength) {
+			CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
 		}
 	}
 
@@ -1195,16 +1253,16 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 /* テキスト反転
 
-	@param hdc      
-	@param nLineNum 
-	@param x        
-	@param y        
-	@param nX       
+	@param hdc
+	@param nLineNum
+	@param x
+	@param y
+	@param nX
 
 	@note
 	CCEditView::DrawLogicLine() での作画(WM_PAINT)時に、1レイアウト行をまとめて反転処理するための関数。
 	範囲選択の随時更新は、CEditView::DrawSelectArea() が選択・反転解除を行う。
-	
+
 */
 void CEditView::DispTextSelected(
 	HDC				hdc,		//!< 作画対象ビットマップを含むデバイス
@@ -1261,7 +1319,7 @@ void CEditView::DispTextSelected(
 				sSelect.GetFrom().x >= GetTextArea().GetViewLeftCol())
 			{
 				HWND hWnd = ::GetForegroundWindow();
-				if( hWnd && (hWnd == m_pcEditWnd->m_cDlgFind.GetHwnd() || hWnd == m_pcEditWnd->m_cDlgReplace.GetHwnd()) ){
+				if( hWnd && (hWnd == GetEditWnd().m_cDlgFind.GetHwnd() || hWnd == GetEditWnd().m_cDlgReplace.GetHwnd()) ){
 					rcClip.right = rcClip.left + 2;
 					bOMatch = true;
 				}
@@ -1274,12 +1332,12 @@ void CEditView::DispTextSelected(
 			if( rcClip.right > GetTextArea().GetAreaRight() ){
 				rcClip.right = GetTextArea().GetAreaRight();
 			}
-			
+
 			// 選択色表示なら反転しない
 			if( !bOMatch && CTypeSupport(this, COLORIDX_SELECT).IsDisp() ){
 				return;
 			}
-			
+
 			HBRUSH hBrush    = ::CreateSolidBrush( SELECTEDAREA_RGB );
 
 			int    nROP_Old  = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
@@ -1303,7 +1361,7 @@ void CEditView::DispTextSelected(
 /*!
 	画面の互換ビットマップを作成または更新する。
 		必要の無いときは何もしない。
-	
+
 	@param cx ウィンドウの高さ
 	@param cy ウィンドウの幅
 	@return true: ビットマップを利用可能 / false: ビットマップの作成・更新に失敗
@@ -1373,7 +1431,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 
 	@note 分割ビューが非表示になった場合と
 		親ウィンドウが非表示・最小化された場合に削除される。
-	@date 2007.09.09 Moca 新規作成 
+	@date 2007.09.09 Moca 新規作成
 */
 void CEditView::DeleteCompatibleBitmap()
 {

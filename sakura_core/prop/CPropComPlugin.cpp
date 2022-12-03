@@ -5,6 +5,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,7 +29,7 @@
 */
 
 #include "StdAfx.h"
-#include <ShellAPI.h>
+#include <shellapi.h>
 #include "prop/CPropCommon.h"
 #include "CEditApp.h"
 #include "plugin/CJackManager.h"
@@ -38,8 +39,12 @@
 #include "dlg/CDlgPluginOption.h"	// 2010/3/22 Uchi
 #include "io/CTextStream.h"
 #include "io/CZipFile.h"
+#include "CSelectLang.h"
+#include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer);
 
@@ -49,7 +54,7 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//プラグインリスト
 	IDC_PLUGIN_INST_ZIP,	HIDC_PLUGIN_INST_ZIP,		//Zipプラグインを追加	// 2011/11/2 Uchi
 	IDC_PLUGIN_SearchNew,	HIDC_PLUGIN_SearchNew,		//新規プラグインを追加
-	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//フォルダを開く
+	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//フォルダーを開く
 	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//プラグインを削除
 	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//プラグイン設定	// 2010/3/22 Uchi
 	IDC_PLUGIN_README,		HIDC_PLUGIN_README,			//ReadMe表示		// 2011/11/2 Uchi
@@ -190,7 +195,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						}
 						SetData_LIST( hwndDlg );	//リストの再構築
 					}
-					// フォルダを記憶
+					// フォルダーを記憶
 					WCHAR	szFolder[_MAX_PATH + 1];
 					WCHAR	szFname[_MAX_PATH + 1];
 					SplitPath_FolderAndFile(szPath, szFolder, szFname);
@@ -218,9 +223,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
-						// 2010.08.21 プラグイン名(フォルダ名)の同一性の確認
+						// 2010.08.21 プラグイン名(フォルダー名)の同一性の確認
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
-						wstring sDirName = plugin->GetFolderName().c_str();
+						wstring sDirName = plugin->GetFolderName();
 						if( plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
 							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, this, sel );
@@ -230,7 +235,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					}
 				}
 				break;
-			case IDC_PLUGIN_OpenFolder:			// フォルダを開く
+			case IDC_PLUGIN_OpenFolder:			// フォルダーを開く
 				{
 					std::wstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + L".";
 					if( ! IsDirectory(sBaseDir.c_str()) ){
@@ -238,14 +243,14 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							break;
 						}
 					}
-					::ShellExecute( NULL, L"open", sBaseDir.c_str(), NULL, NULL, SW_SHOW );
+					OpenWithExplorer( hwndDlg, sBaseDir );
 				}
 				break;
 			case IDC_PLUGIN_README:		// ReadMe表示	// 2011/11/2 Uchi
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					std::wstring sName = m_Common.m_sPlugin.m_PluginTable[sel].m_szName;	// 個別フォルダ名
+					std::wstring sName = m_Common.m_sPlugin.m_PluginTable[sel].m_szName;	// 個別フォルダー名
 					std::wstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
@@ -263,7 +268,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if (sel >= 0){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if (plugin != NULL){
-							::ShellExecute(NULL, L"Open", plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW);
+							OpenWithBrowser( hwndDlg, plugin->m_sUrl );
 						}
 					}
 				}
@@ -398,7 +403,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		}
 		ListView_SetItem( hListView, &sItem );
 
-		//フォルダ
+		//フォルダー
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
@@ -526,7 +531,7 @@ std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
 		fl = new CFile(sReadMeName.c_str());
 	}
 	if (!fl->IsFileExist()) {
-		// exeフォルダ配下
+		// exeフォルダー配下
 		sReadMeName = CPluginManager::getInstance()->GetExePluginDir()
 			+ sName + L"\\ReadMe.txt";
 		delete fl;
@@ -540,7 +545,7 @@ std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
 	}
 
 	if (!fl->IsFileExist()) {
-		sReadMeName = L"";
+		sReadMeName.clear();
 	}
 	delete fl;
 	return sReadMeName;
@@ -608,11 +613,11 @@ static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 		// ツールバーアイコンの更新
 		const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 		cMenuDrawer.m_pcIcons->ResetExtend();
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
+		for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ) {
 			int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 			const CPlug* plug = *it;
 			if( !plug->m_sIcon.empty() ){
-				iBitmap = cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon.c_str() ).c_str() );
+				iBitmap = cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon ).c_str() );
 			}
 			cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 		}

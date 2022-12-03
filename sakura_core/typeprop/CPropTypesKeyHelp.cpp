@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2006, fon, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,12 +35,15 @@
 #include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "dlg/CDlgOpenFile.h"
-#include "charset/CharPointer.h"
 #include "io/CTextStream.h"
+#include "util/file.h"
 #include "util/shell.h"
 #include "util/module.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 using namespace std;
 
@@ -65,7 +69,7 @@ static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 };
 
 static WCHAR* strcnv(WCHAR *str);
-static WCHAR* GetFileName(const WCHAR *fullpath);
+#define GetFileName(path) const_cast<WCHAR*>(GetFileTitlePointer(path))
 
 static int nKeyHelpRMenuType[] = {
 	STR_KEYHELP_RMENU_NONE,
@@ -667,24 +671,4 @@ static WCHAR* strcnv(WCHAR *str)
 		*p=L'.';
 	}
 	return str;
-}
-
-/*! フルパスからファイル名を返す
-
-	@date 2006.04.10 fon 新規作成
-	@date 2006.09.14 genta ディレクトリがない場合に最初の1文字が切れないように
-*/
-static WCHAR* GetFileName(const WCHAR* fullpath)
-{
-	const WCHAR* pszName = fullpath;
-	CharPointerT p = fullpath;
-	while( *p != L'\0'  ){
-		if( *p == L'\\' ){
-			pszName = p + 1;
-			p++;
-		}else{
-			p++;
-		}
-	}
-	return const_cast<WCHAR*>(pszName);
 }

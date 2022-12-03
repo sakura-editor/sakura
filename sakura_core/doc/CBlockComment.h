@@ -7,11 +7,14 @@
 /*
 	Copyright (C) 2002, Yazaki
 	Copyright (C) 2005, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CBLOCKCOMMENT_95985D15_B554_4761_9C32_30FE0E1724EC_H_
+#define SAKURA_CBLOCKCOMMENT_95985D15_B554_4761_9C32_30FE0E1724EC_H_
 #pragma once
 
 //	sakura
@@ -31,6 +34,8 @@ enum ECommentType{
 */
 #define BLOCKCOMMENT_NUM	2
 #define BLOCKCOMMENT_BUFFERSIZE	16
+
+class CStringRef;
 
 //	2005.11.10 Moca アクセス関数追加
 class CBlockComment{
@@ -57,3 +62,4 @@ private:
 	int		m_nBlockFromLen;
 	int		m_nBlockToLen;
 };
+#endif /* SAKURA_CBLOCKCOMMENT_95985D15_B554_4761_9C32_30FE0E1724EC_H_ */

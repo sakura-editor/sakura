@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -36,12 +37,17 @@
 #include "util/window.h"
 #include "util/string_ex2.h"
 #include "util/module.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 // BOOL変数の表示
 #define	BOOL_DISP_TRUE	L"\u2611"
 #define	BOOL_DISP_FALSE	L"\u2610"
+
+using namespace std::string_literals;
 
 // 編集領域を表示、非表示にする
 static inline void CtrlShow(HWND hwndDlg, int id, BOOL bShow)
@@ -115,13 +121,13 @@ void CDlgPluginOption::SetData( void )
 	ListView_DeleteAllItems( hwndList );	// リストを空にする
 	m_Line = -1;							// 行非選択
 
-	std::unique_ptr<CDataProfile> cProfile( new CDataProfile );
+	auto cProfile = std::make_unique<CDataProfile>();
 	cProfile->SetReadingMode();
 	cProfile->ReadProfile( m_cPlugin->GetOptionPath().c_str() );
 
 	CPluginOption* cOpt;
 	CPluginOption::ArrayIter it;
-	for( i=0, it = m_cPlugin->m_options.begin(); it != m_cPlugin->m_options.end(); i++, it++ ){
+	for( i=0, it = m_cPlugin->m_options.cbegin(); it != m_cPlugin->m_options.cend(); i++, it++ ){
 		cOpt = *it;
 
 		auto_snprintf_s( buf, _countof(buf), L"%ls", cOpt->GetLabel().c_str());
@@ -135,17 +141,16 @@ void CDlgPluginOption::SetData( void )
 		wstring sSection;
 		wstring sKey;
 		wstring sValue;
-		wstring sType;
 
 		cOpt->GetKey(&sSection, &sKey);
 		if( sSection.empty() || sKey.empty() ) {
-			sValue = L"";
+			sValue.clear();
 		}
 		else {
 			if( !cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue ) ){
 				// Optionが見つからなかったらDefault値を設定
 				sValue = cOpt->GetDefaultVal();
-				if( sValue != wstring(L"") ){
+				if( sValue.length() ){
 					bLoadDefault = true;
 					cProfile->SetWritingMode();
 					cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
@@ -155,7 +160,7 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			wcscpy( buf, sValue == wstring( L"0") || sValue == wstring( L"") ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
+			wcscpy_s( buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化
@@ -169,7 +174,7 @@ void CDlgPluginOption::SetData( void )
 			selects = cOpt->GetSelects();
 
 			buf[0] = L'\0';
-			for (auto it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sValue == sTrg) {
 					auto_snprintf_s( buf, _countof(buf), L"%ls", sView.c_str());
@@ -219,7 +224,7 @@ int CDlgPluginOption::GetData( void )
 	// リスト
 	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
-	std::unique_ptr<CDataProfile> cProfile( new CDataProfile );
+	auto cProfile = std::make_unique<CDataProfile>();
 	cProfile->SetReadingMode();
 	cProfile->ReadProfile( m_cPlugin->GetOptionPath().c_str() );
 	cProfile->SetWritingMode();
@@ -227,7 +232,7 @@ int CDlgPluginOption::GetData( void )
 	CPluginOption* cOpt;
 	WCHAR	buf[MAX_LENGTH_VALUE+1];
 	CPluginOption::ArrayIter it;
-	for( i=0, it = m_cPlugin->m_options.begin(); it != m_cPlugin->m_options.end(); i++, it++ ){
+	for( i=0, it = m_cPlugin->m_options.cbegin(); it != m_cPlugin->m_options.cend(); i++, it++ ){
 		cOpt = *it;
 
 		memset_raw( &lvi, 0, sizeof( lvi ));
@@ -254,7 +259,7 @@ int CDlgPluginOption::GetData( void )
 			selects = cOpt->GetSelects();
 			wstring sWbuf = buf;
 
-			for (auto it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sView == sWbuf) {
 					auto_sprintf( buf, L"%ls", sTrg.c_str());
@@ -595,7 +600,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			wstring	sWbuf = buf;
 			nSelIdx = -1;		// 選択
 			i = 0;
-			for (auto it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sValue);
 				nItemIdx = Combo_AddString( hwndCombo, sView.c_str() );
 				if (sView == sWbuf) {
@@ -706,7 +711,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 {
 	WCHAR	szDir[_MAX_PATH+1];
 
-	/* 検索フォルダ */
+	/* 検索フォルダー */
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
 
 	if (_IS_REL_PATH( szDir )) {

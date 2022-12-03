@@ -11,6 +11,7 @@
 	Copyright (C) 2001, aroka
 	Copyright (C) 2002, YAZAKI, aroka, genta
 	Copyright (C) 2004, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -26,6 +27,9 @@
 #include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include "io/CTextStream.h"
+#include "CSelectLang.h"
+#include "mem/CNativeW.h"
+#include "String_define.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {

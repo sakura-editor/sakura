@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 // 2008.11.10  変換ロジックを書き直す
 
 #include "StdAfx.h"
@@ -7,10 +30,7 @@
 #include "charset/charcode.h"
 #include "charset/codeutil.h"
 #include "charset/codechecker.h"
-
-// 非依存推奨
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
+#include "env/CommonSetting.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       各種判定定数                          //
@@ -50,7 +70,7 @@ const char* CJis::TABLE_JISESCDATA[] = {
 #endif
 
 /*!
-	JIS の一ブロック（エスケープシーケンスとエスケープシーケンスの間の区間）を変換 
+	JIS の一ブロック（エスケープシーケンスとエスケープシーケンスの間の区間）を変換
 
 	eMyJisesc は、MYJISESC_HANKATA か MYJISESC_ZENKAKU。
 */
@@ -108,7 +128,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 		for( ; pr < pSrc+nSrcLen-1; pr += 2 ){
 			if( IsJisZen(reinterpret_cast<const char*>(pr)) ){
 				// JIS -> SJIS
-				ctemp = _mbcjistojms( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
+				ctemp = _mbcjistojms_j( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
 				if( ctemp != 0 ){
 				// 変換に成功。
 					// SJIS → Unicode
@@ -305,7 +325,7 @@ int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, EChar
 		// JIS -> SJIS
 		ctemp_ = SjisFilter_basis( static_cast<unsigned int>(pSrc[0] << 8) | pSrc[1] );
 		ctemp_ = SjisFilter_ibm2nec( ctemp_ );
-		ctemp = _mbcjmstojis( ctemp_ );
+		ctemp = _mbcjmstojis_j( ctemp_ );
 		if( ctemp != 0 ){
 			// 変換に成功。
 			pDst[0] = static_cast<char>( (ctemp & 0x0000ff00) >> 8 );
@@ -475,8 +495,8 @@ EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* p
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
 	int				i;
-	WCHAR*			pd; 
-	unsigned char*	ps; 
+	WCHAR*			pd;
+	unsigned char*	ps;
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInJis) {

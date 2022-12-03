@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2005, MIK, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGKEYWORDSELECT_3430FB9A_96EE_492E_A8FD_FEB4CDB553AA_H_
+#define SAKURA_CDLGKEYWORDSELECT_3430FB9A_96EE_492E_A8FD_FEB4CDB553AA_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -62,3 +65,4 @@ protected:
 	int m_nSet[ KEYWORD_SELECT_NUM ];
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;
 };
+#endif /* SAKURA_CDLGKEYWORDSELECT_3430FB9A_96EE_492E_A8FD_FEB4CDB553AA_H_ */

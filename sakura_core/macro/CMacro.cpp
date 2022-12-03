@@ -16,6 +16,7 @@
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2011, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -45,7 +46,7 @@
 #include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h" //2002/2/10 aroka
 #include "macro/CSMacroMgr.h" //2002/2/10 aroka
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダー整理
 #include "_os/OleTypes.h" //2003-02-21 鬼
 #include "io/CTextStream.h"
 #include "window/CEditWnd.h"
@@ -57,6 +58,10 @@
 #include "util/ole_convert.h"
 #include "util/os.h"
 #include "uiparts/CWaitCursor.h"
+#include "CSelectLang.h"
+#include "config/app_constants.h"
+#include "String_define.h"
+#include "_os/CClipboard.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {
@@ -174,10 +179,10 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 
 	case F_JUMP:	//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 		{
-			AddIntParam( pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum );
+			AddIntParam( GetEditWnd().m_cDlgJump.m_nLineNum );
 			LPARAM lFlag = 0x00;
 			lFlag |= GetDllShareData().m_bLineNumIsCRLF_ForJump		? 0x01 : 0x00;
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
+			lFlag |= GetEditWnd().m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -202,7 +207,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	case F_REPLACE_ALL:
 		{
 			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pcEditWnd->m_cDlgReplace.m_strText2.c_str() );	//	lParamを追加。
+			AddStringParam( GetEditWnd().m_cDlgReplace.m_strText2.c_str() );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_sCurSearchOption.bWordOnly		? 0x01 : 0x00;
@@ -211,9 +216,9 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
+			lFlag |= GetEditWnd().m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	置換する時は選べない
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
+			lFlag |= GetEditWnd().m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll				? 0x0400: 0x00;	// 2007.01.16 ryoji
 			AddIntParam( lFlag );
 		}
@@ -224,13 +229,13 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			CDlgGrep* pcDlgGrep;
 			CDlgGrepReplace* pcDlgGrepRep;
 			if( F_GREP == m_nFuncID ){
-				pcDlgGrep = &pcEditView->m_pcEditWnd->m_cDlgGrep;
+				pcDlgGrep = &GetEditWnd().m_cDlgGrep;
 				pcDlgGrepRep = NULL;
 				AddStringParam( pcDlgGrep->m_strText.c_str() );
 			}else{
-				pcDlgGrep = pcDlgGrepRep = &pcEditView->m_pcEditWnd->m_cDlgGrepReplace;
+				pcDlgGrep = pcDlgGrepRep = &GetEditWnd().m_cDlgGrepReplace;
 				AddStringParam( pcDlgGrep->m_strText.c_str() );
-				AddStringParam( pcEditView->m_pcEditWnd->m_cDlgGrepReplace.m_strText2.c_str() );
+				AddStringParam( GetEditWnd().m_cDlgGrepReplace.m_strText2.c_str() );
 			}
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFiles[0] );	//	lParamを追加。
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFolders[0] );	//	lParamを追加。
@@ -270,15 +275,14 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 		{
 			// EOLタイプ値をマクロ引数値に変換する	// 2009.08.18 ryoji
 			int nFlag;
-			switch( (int)lParam ){
-			case EOL_CRLF:	nFlag = 1; break;
-//			case EOL_LFCR:	nFlag = 2; break;
-			case EOL_LF:	nFlag = 3; break;
-			case EOL_CR:	nFlag = 4; break;
-			case EOL_NEL:	nFlag = 5; break;
-			case EOL_LS:	nFlag = 6; break;
-			case EOL_PS:	nFlag = 7; break;
-			default:		nFlag = 0; break;
+			switch( static_cast<EEolType>(lParam) ){
+			case EEolType::cr_and_lf:			nFlag = 1; break;
+			case EEolType::line_feed:			nFlag = 3; break;
+			case EEolType::carriage_return:		nFlag = 4; break;
+			case EEolType::next_line:			nFlag = 5; break;
+			case EEolType::line_separator:		nFlag = 6; break;
+			case EEolType::paragraph_separator:	nFlag = 7; break;
+			default:							nFlag = 0; break;
 			}
 			AddIntParam( nFlag );
 		}
@@ -636,19 +640,18 @@ bool CMacro::HandleCommand(
 		}
 		{
 			// マクロ引数値をEOLタイプ値に変換する	// 2009.08.18 ryoji
-			int nEol;
+			EEolType nEol;
 			switch( Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ){
-			case 1:		nEol = EOL_CRLF; break;
-//			case 2:		nEol = EOL_LFCR; break;
-			case 3:		nEol = EOL_LF; break;
-			case 4:		nEol = EOL_CR; break;
-			case 5:		nEol = EOL_NEL; break;
-			case 6:		nEol = EOL_LS; break;
-			case 7:		nEol = EOL_PS; break;
-			default:	nEol = EOL_NONE; break;
+			case 1:		nEol = EEolType::cr_and_lf; break;
+			case 3:		nEol = EEolType::line_feed; break;
+			case 4:		nEol = EEolType::carriage_return; break;
+			case 5:		nEol = EEolType::next_line; break;
+			case 6:		nEol = EEolType::line_separator; break;
+			case 7:		nEol = EEolType::paragraph_separator; break;
+			default:	nEol = EEolType::none; break;
 			}
-			if( nEol != EOL_NONE ){
-				pcEditView->GetCommander().HandleCommand( Index, true, nEol, 0, 0, 0 );
+			if( !CEol::IsNone( nEol ) ){
+				pcEditView->GetCommander().HandleCommand( Index, true, static_cast<LPARAM>(nEol), 0, 0, 0 );
 			}
 		}
 		break;
@@ -713,10 +716,10 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ジャンプ先
+			GetEditWnd().m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ジャンプ先
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 1; // デフォルト1
 			GetDllShareData().m_bLineNumIsCRLF_ForJump = ((lFlag & 0x01)!=0);
-			pcEditView->m_pcEditWnd->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
+			GetEditWnd().m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	標準
 		}
 		break;
@@ -797,7 +800,7 @@ bool CMacro::HandleCommand(
 			if( bBackupFlag ){
 				GetDllShareData().m_Common.m_sSearch = backupFlags;
 				pcEditView->m_sCurSearchOption = backupLocalFlags;
-				pcEditView->m_strCurSearchKey = backupStr;
+				pcEditView->m_strCurSearchKey = std::move(backupStr);
 				pcEditView->m_bCurSearchUpdate = true;
 				pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 				pcEditView->ChangeCurRegexp( backupKeyMark );
@@ -931,7 +934,7 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			CDlgReplace& cDlgReplace = pcEditView->m_pcEditWnd->m_cDlgReplace;
+			CDlgReplace& cDlgReplace = GetEditWnd().m_cDlgReplace;
 			LPARAM lFlag = Argument[2] != NULL ? _wtoi(Argument[2]) : 0;
 			SSearchOption sSearchOption;
 			sSearchOption.bWordOnly			= (0 != (lFlag & 0x01));
@@ -1001,9 +1004,9 @@ bool CMacro::HandleCommand(
 			if( bBackupFlag ){
 				GetDllShareData().m_Common.m_sSearch = backupFlags;
 				pcEditView->m_sCurSearchOption = backupLocalFlags;
-				pcEditView->m_strCurSearchKey = backupStr;
+				pcEditView->m_strCurSearchKey = std::move(backupStr);
 				pcEditView->m_bCurSearchUpdate = true;
-				cDlgReplace.m_strText2 = backupStrRep;
+				cDlgReplace.m_strText2 = std::move(backupStrRep);
 				pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 				pcEditView->ChangeCurRegexp( backupKeyMark );
 				pcEditView->m_bCurSrchKeyMark = backupKeyMark;
@@ -1018,10 +1021,10 @@ bool CMacro::HandleCommand(
 	case F_GREP:
 		//	Argument[0]	検索文字列
 		//	Argument[1]	検索対象にするファイル名
-		//	Argument[2]	検索対象にするフォルダ名
+		//	Argument[2]	検索対象にするフォルダー名
 		//	Argument[3]:
 		//		次の数値の和。
-		//		0x01	サブフォルダからも検索する
+		//		0x01	サブフォルダーからも検索する
 		//		0x02	この編集中のテキストから検索する（未実装）
 		//		0x04	英大文字と英小文字を区別する
 		//		0x08	正規表現
@@ -1041,8 +1044,8 @@ bool CMacro::HandleCommand(
 		//		0x0100 ～ 0xff00	文字コードセット番号 * 0x100
 		//		0x010000	単語単位で探す
 		//		0x020000	ファイル毎最初のみ検索
-		//		0x040000	ベースフォルダ表示
-		//		0x080000	フォルダ毎に表示
+		//		0x040000	ベースフォルダー表示
+		//		0x080000	フォルダー毎に表示
 		{
 			if( Argument[0] == NULL ){
 				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
@@ -1083,7 +1086,7 @@ bool CMacro::HandleCommand(
 				cmWork4.SetString( Argument[1] );	cmWork4.Replace( L"\"", L"\"\"" );	//	置換後
 			}
 			CNativeW cmWork2;	cmWork2.SetString( Argument[ArgIndex+1] );	cmWork2.Replace( L"\"", L"\"\"" );	//	ファイル名
-			CNativeW cmWork3;	cmWork3.SetString( Argument[ArgIndex+2] );	cmWork3.Replace( L"\"", L"\"\"" );	//	フォルダ名
+			CNativeW cmWork3;	cmWork3.SetString( Argument[ArgIndex+2] );	cmWork3.Replace( L"\"", L"\"\"" );	//	フォルダー名
 
 			LPARAM lFlag = wtoi_def(Argument[ArgIndex+3], 5);
 
@@ -1124,7 +1127,7 @@ bool CMacro::HandleCommand(
 
 			//GOPTオプション
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダからも検索する */
+			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダーからも検索する */
 			if( lFlag & 0x04 )wcscat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
 			if( lFlag & 0x08 )wcscat( pOpt, L"R" );	/* 正規表現 */
 			if(          0x20 == (lFlag & 0x400020) )wcscat( pOpt, L"P" );	// 行を出力する
@@ -1203,11 +1206,11 @@ bool CMacro::HandleCommand(
 			}
 			EEolType eEol;
 			switch (nSaveLineCode){
-			case 0:		eEol = EOL_NONE;	break;
-			case 1:		eEol = EOL_CRLF;	break;
-			case 2:		eEol = EOL_LF;		break;
-			case 3:		eEol = EOL_CR;		break;
-			default:	eEol = EOL_NONE;	break;
+			case 0:		eEol = EEolType::none;	break;
+			case 1:		eEol = EEolType::cr_and_lf;	break;
+			case 2:		eEol = EEolType::line_feed;		break;
+			case 3:		eEol = EEolType::carriage_return;		break;
+			default:	eEol = EEolType::none;	break;
 			}
 			
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)nCharCode, (LPARAM)eEol, 0);
@@ -1326,13 +1329,13 @@ bool CMacro::HandleCommand(
 			if( (val1 & 0x03) == 0 ){
 				pcEditView->SendStatusMessage( val0.c_str() );
 			}else if( (val1 & 0x03) == 1 ){
-				if( NULL != pcEditView->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ){
+				if( NULL != GetEditWnd().m_cStatusBar.GetStatusHwnd() ){
 					pcEditView->SendStatusMessage( val0.c_str() );
 				}else{
 					InfoMessage( pcEditView->GetHwnd(), L"%s", val0.c_str() );
 				}
 			}else if( (val1 & 0x03) == 2 ){
-				pcEditView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( val0.c_str() );
+				GetEditWnd().m_cStatusBar.SendStatusMessage2( val0.c_str() );
 			}
 		}
 		break;
@@ -1577,7 +1580,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			// 2013.04.30 Moca 条件追加。不要な場合はChangeLayoutParamを呼ばない
 			if( 0 < varCopy.Data.iVal && nTab != varCopy.Data.iVal ){
 				View->GetDocument()->m_bTabSpaceCurTemp = true;
-				View->m_pcEditWnd->ChangeLayoutParam(
+				GetEditWnd().ChangeLayoutParam(
 					false, 
 					CKetaXInt(varCopy.Data.iVal),
 					View->m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
@@ -1589,7 +1592,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					// 最大幅の再算出時に各行のレイアウト長の計算も行う
 					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
 				}
-				View->m_pcEditWnd->RedrawAllViews( NULL );		// TAB幅が変わったので再描画が必要
+				GetEditWnd().RedrawAllViews( NULL );		// TAB幅が変わったので再描画が必要
 			}
 		}
 		return true;
@@ -1646,26 +1649,15 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_GETLINECODE:
 		//	2005.08.04 maru マクロ追加
 		{
-			int n = 0;
-			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode() ){
-			case EOL_CRLF:
-				n = 0;
-				break;
-			case EOL_CR:
-				n = 1;
-				break;
-			case EOL_LF:
-				n = 2;
-				break;
-			case EOL_NEL:
-				n = 3;
-				break;
-			case EOL_LS:
-				n = 4;
-				break;
-			case EOL_PS:
-				n = 5;
-				break;
+			int n;
+			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetType() ){
+			case EEolType::cr_and_lf:			n = 0; break;
+			case EEolType::carriage_return:		n = 1; break;
+			case EEolType::line_feed:			n = 2; break;
+			case EEolType::next_line:			n = 3; break;
+			case EEolType::line_separator:		n = 4; break;
+			case EEolType::paragraph_separator:	n = 5; break;
+			default:							n = 0; break;
 			}
 			Wrap( &Result )->Receive( n );
 		}
@@ -1692,7 +1684,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				return true;
 			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
 			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
-			View->m_pcEditWnd->ChangeLayoutParam(
+			GetEditWnd().ChangeLayoutParam(
 				false, 
 				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
 				View->m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
@@ -1883,6 +1875,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				sFilter = Source;	// フィルタ文字列
 				delete[] Source;
 			}
+			// sDefaultの先はSFilePath型
+			if (MAX_PATH <= sDefault.length()) {
+				return false;
+			}
 
 			CDlgOpenFile cDlgOpenFile;
 			cDlgOpenFile.Create(
@@ -1908,7 +1904,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_FOLDERDIALOG:
-		//	2011.03.18 syat フォルダダイアログの表示
+		//	2011.03.18 syat フォルダーダイアログの表示
 		{
 			WCHAR *Source;
 			int SourceLength;
@@ -1927,6 +1923,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefault = Source;	// 既定のファイル名
 				delete[] Source;
+			}
+			// sDefaultは[MAX_PATH]
+			if (MAX_PATH <= sDefault.length()) {
+				return false;
 			}
 
 			WCHAR szPath[ _MAX_PATH ];
@@ -2131,7 +2131,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			if( 1 <= ArgSize ){
 				if( !VariantToI4(varCopy, Arguments[0]) ) return false;
-				int ret = (View->m_pcEditWnd->SetDrawSwitchOfAllViews(varCopy.Data.iVal != 0) ? 1: 0);
+				int ret = (GetEditWnd().SetDrawSwitchOfAllViews(varCopy.Data.iVal != 0) ? 1: 0);
 				Wrap( &Result )->Receive( ret );
 				return true;
 			}
@@ -2145,7 +2145,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 	case F_ISSHOWNSTATUS:
 		{
-			int ret = (NULL != View->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ? 1: 0);
+			int ret = (NULL != GetEditWnd().m_cStatusBar.GetStatusHwnd() ? 1: 0);
 			Wrap( &Result )->Receive( ret );
 			return true;
 		}
@@ -2193,7 +2193,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					varCopy2.Data.lVal = 1;
 				}
 				CDocLine tmpDocLine;
-				tmpDocLine.SetDocLineString(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
+				tmpDocLine.SetDocLineString(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				const int tmpLenWithEol1 = tmpDocLine.GetLengthWithoutEOL() + (0 < tmpDocLine.GetEol().GetLen() ? 1: 0);
 				const CLayoutXInt offset(varCopy2.Data.lVal - 1);
 				const CLayout tmpLayout(
@@ -2451,6 +2451,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				return true;
 			}
 			return false;
+		}
+	case F_GETVIEWTOP:
+		{
+			int nLine = (Int)View->GetTextArea().GetViewTopLine();
+			Wrap( &Result )->Receive( nLine + 1 );
+			return true;
 		}
 	default:
 		return false;

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CUNICODE_58DBF44E_DCA1_43C3_B825_EAF692A045DC_H_
+#define SAKURA_CUNICODE_58DBF44E_DCA1_43C3_B825_EAF692A045DC_H_
 #pragma once
 
 // IsUtf16SurrogHi()、IsUtf16SurrogLow() 関数をcharset/codechecker.h に移動
@@ -36,8 +39,6 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return UnicodeToUnicode_out(cSrc, pDst);
 	}
-	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;	//!< 改行データ取得
 
 public:
 	//実装
@@ -46,3 +47,4 @@ public:
 	inline static EConvertResult UnicodeToUnicode_in(const CMemory& cSrc, CNativeW* pDst){ return _UnicodeToUnicode_in(cSrc, pDst, false); }
 	inline static EConvertResult UnicodeToUnicode_out(const CNativeW& cSrc, CMemory* pDst){ return _UnicodeToUnicode_out(cSrc, pDst, false); }
 };
+#endif /* SAKURA_CUNICODE_58DBF44E_DCA1_43C3_B825_EAF692A045DC_H_ */

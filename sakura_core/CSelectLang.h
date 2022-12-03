@@ -6,11 +6,14 @@
 */
 /*
 	Copyright (C) 2011, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
+#define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
 #include <windows.h>
@@ -20,6 +23,9 @@
 
 class CSelectLang
 {
+
+	using Me = CSelectLang;
+
 public:
 	// メッセージリソース用構造体
 	struct SSelLangInfo {
@@ -41,7 +47,11 @@ public:
 	/*
 	||  Constructors
 	*/
-	CSelectLang(){}
+	CSelectLang() noexcept = default;
+	CSelectLang(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CSelectLang(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CSelectLang();
 
 	/*
@@ -120,9 +130,9 @@ public:
 	/*
 	||  Constructors
 	*/
-	CLoadString(){}
+	CLoadString() = default;
 	CLoadString( UINT uid ){ LoadString( uid ); }		// 文字列読み込み付きコンストラクタ
-	/*virtual*/ ~CLoadString(){}
+	/*virtual*/ ~CLoadString() = default;
 
 	/*
 	||  Attributes & Operations
@@ -143,3 +153,4 @@ private:
 
 // 文字列ロード簡易化マクロ
 #define LS( id ) ( CLoadString::LoadStringSt( id ) )
+#endif /* SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_ */

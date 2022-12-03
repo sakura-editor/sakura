@@ -10,6 +10,7 @@
 	Copyright (C) 2003, Moca
 	Copyright (C) 2006, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,17 +19,16 @@
 #include "StdAfx.h"
 #include <stdio.h>
 #include "CDicMgr.h"
-#include "mem/CMemory.h" // 2002/2/10 aroka ヘッダ整理
+#include "mem/CMemory.h" // 2002/2/10 aroka ヘッダー整理
+#include "mem/CNativeW.h"
 #include "debug/CRunningTimer.h"
 #include "io/CTextStream.h"
+#include "util/string_ex.h"
+#include "config/system_constants.h"
+
 using namespace std;
 
 CDicMgr::CDicMgr()
-{
-	return;
-}
-
-CDicMgr::~CDicMgr()
 {
 	return;
 }
@@ -49,10 +49,11 @@ BOOL CDicMgr::Search(
 )
 {
 #ifdef _DEBUG
-	CRunningTimer cRunningTimer( "CDicMgr::Search" );
+	CRunningTimer cRunningTimer( L"CDicMgr::Search" );
 #endif
 	long	i;
-	const wchar_t*	pszDelimit = L" /// ";
+	constexpr auto& pszDelimit = L" /// ";
+	constexpr auto cchDelimit = _countof(pszDelimit) - 1;
 	wchar_t*	pszWork;
 	int		nRes;
 	wchar_t*	pszToken;
@@ -81,7 +82,7 @@ BOOL CDicMgr::Search(
 		pszWork = wcsstr( szLine, pszDelimit );
 		if( NULL != pszWork && szLine[0] != L';' ){
 			*pszWork = L'\0';
-			pszWork += wcslen( pszDelimit );
+			pszWork += cchDelimit;
 
 			/* 最初のトークンを取得します。 */
 			wchar_t *context = NULL;

@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2003, かろと
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,16 +30,19 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_
+#define SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_
 #pragma once
 
 #include <WinSpool.h>
 #include <CommDlg.h> // PRINTDLG
+#include "basis/primitive.h"
 
 struct	MYDEVMODE {
-	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */
-	WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];	// プリンタドライバ名
-	WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];	// プリンタデバイス名
-	WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];	// プリンタポート名
+	BOOL	m_bPrinterNotFound;	/* プリンターがなかったフラグ */
+	WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];	// プリンタードライバー名
+	WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];	// プリンターデバイス名
+	WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];	// プリンターポート名
 	DWORD	dmFields;
 	short	dmOrientation;
 	short	dmPaperSize;
@@ -105,17 +109,17 @@ struct PRINTSETTING {
 	bool			m_bPrintKinsokuKuto;				//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
 	bool			m_bPrintLineNumber;					/*!< 行番号を印刷する */
 
-	MYDEVMODE		m_mdmDevMode;						/*!< プリンタ設定 DEVMODE用 */
-	BOOL			m_bHeaderUse[3];					/* ヘッダが使われているか？	*/
-	EDIT_CHAR		m_szHeaderForm[3][HEADER_MAX];		/* 0:左寄せヘッダ。1:中央寄せヘッダ。2:右寄せヘッダ。*/
-	BOOL			m_bFooterUse[3];					/* フッタが使われているか？	*/
-	EDIT_CHAR		m_szFooterForm[3][FOOTER_MAX];		/* 0:左寄せフッタ。1:中央寄せフッタ。2:右寄せフッタ。*/
+	MYDEVMODE		m_mdmDevMode;						/*!< プリンター設定 DEVMODE用 */
+	BOOL			m_bHeaderUse[3];					/* ヘッダーが使われているか？	*/
+	EDIT_CHAR		m_szHeaderForm[3][HEADER_MAX];		/* 0:左寄せヘッダー。1:中央寄せヘッダー。2:右寄せヘッダー。*/
+	BOOL			m_bFooterUse[3];					/* フッターが使われているか？	*/
+	EDIT_CHAR		m_szFooterForm[3][FOOTER_MAX];		/* 0:左寄せフッター。1:中央寄せフッター。2:右寄せフッター。*/
 
-	// ヘッダ/フッタのフォント(lfFaceNameが設定されていなければ半角/全角フォントを使用)
-	LOGFONT			m_lfHeader;							// ヘッダフォント用LOGFONT構造体
-	int 			m_nHeaderPointSize;					// ヘッダフォントポイントサイズ
-	LOGFONT			m_lfFooter;							// フッタフォント用LOGFONT構造体
-	int 			m_nFooterPointSize;					// フッタフォントポイントサイズ
+	// ヘッダー/フッターのフォント(lfFaceNameが設定されていなければ半角/全角フォントを使用)
+	LOGFONT			m_lfHeader;							// ヘッダーフォント用LOGFONT構造体
+	int 			m_nHeaderPointSize;					// ヘッダーフォントポイントサイズ
+	LOGFONT			m_lfFooter;							// フッターフォント用LOGFONT構造体
+	int 			m_nFooterPointSize;					// フッターフォントポイントサイズ
 };
 
 /*-----------------------------------------------------------------------
@@ -128,6 +132,8 @@ struct PRINTSETTING {
 */
 class CPrint
 {
+	using Me = CPrint;
+
 public:
 	static const PAPER_INFO m_paperInfoArr[];	//!< 用紙情報一覧
 	static const int m_nPaperInfoArrNum; //!< 用紙情報一覧の要素数
@@ -148,7 +154,7 @@ public:
 	static int CalculatePrintableColumns( PRINTSETTING*, int width, int nLineNumberColumns );
 	static int CalculatePrintableLines( PRINTSETTING*, int height );
 
-	/* ヘッダ・フッタの高さ計算 */
+	/* ヘッダー・フッターの高さ計算 */
 	static int CalcHeaderHeight( PRINTSETTING* );
 	static int CalcFooterHeight( PRINTSETTING* );
 public:
@@ -156,13 +162,17 @@ public:
 	||  Constructors
 	*/
 	CPrint();
+	CPrint(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CPrint(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CPrint();
 
 	/*
 	||  Attributes & Operations
 	*/
-	BOOL GetDefaultPrinter( MYDEVMODE *pMYDEVMODE );		/* デフォルトのプリンタ情報を取得 */
-	BOOL PrintDlg( PRINTDLG *pd, MYDEVMODE *pMYDEVMODE );				/* プリンタ情報を取得 */
+	BOOL GetDefaultPrinter( MYDEVMODE *pMYDEVMODE );		/* デフォルトのプリンター情報を取得 */
+	BOOL PrintDlg( PRINTDLG *pd, MYDEVMODE *pMYDEVMODE );				/* プリンター情報を取得 */
 	/* 印刷/プレビューに必要な情報を取得 */
 	BOOL GetPrintMetrics(
 		MYDEVMODE*	pMYDEVMODE,
@@ -198,6 +208,7 @@ private:
 	/*
 	||  メンバ変数
 	*/
-	HGLOBAL	m_hDevMode;							//!< 現在プリンタのDEVMODEへのメモリハンドル
-	HGLOBAL	m_hDevNames;						//!< 現在プリンタのDEVNAMESへのメモリハンドル
+	HGLOBAL	m_hDevMode;							//!< 現在プリンターのDEVMODEへのメモリハンドル
+	HGLOBAL	m_hDevNames;						//!< 現在プリンターのDEVNAMESへのメモリハンドル
 };
+#endif /* SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_ */

@@ -1,10 +1,32 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Tab.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
 
 //2007.08.28 kobake 追加
 void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView );
@@ -39,39 +61,41 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	DispPos& sPos=*pDispPos;
 
 	//必要なインターフェース
+	const CLayoutMgr& pcLayoutMgr = pcView->GetDocument()->m_cLayoutMgr;
 	const CTextMetrics* pMetrics=&pcView->GetTextMetrics();
 	const CTextArea* pArea=&pcView->GetTextArea();
 
 	int nLineHeight = pMetrics->GetHankakuDy();
-	int nCharWidth = pMetrics->GetCharPxWidth();	// Layout→Px
 
 	CTypeSupport cTabType(pcView,COLORIDX_TAB);
 
 	// これから描画するタブ幅
-	CLayoutXInt tabDispWidthLayout = pcView->m_pcEditDoc->m_cLayoutMgr.GetActualTsvSpace( sPos.GetDrawCol(), WCODE::TAB );
-	int tabDispWidth = (Int)tabDispWidthLayout;
+	CLayoutXInt nTabLayoutWidth = pcLayoutMgr.GetActualTsvSpace(sPos.GetDrawCol(), WCODE::TAB);
+	size_t nTabDispWidth = static_cast<Int>(nTabLayoutWidth) / pcLayoutMgr.GetWidthPerKeta();
 	if( pcView->m_bMiniMap ){
 		CLayoutMgr mgrTemp;
-		mgrTemp.SetTabSpaceInfo(pcView->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
-			CLayoutXInt(pcView->GetTextMetrics().GetHankakuWidth()) );
-		tabDispWidthLayout = mgrTemp.GetActualTabSpace(sPos.GetDrawCol());
-		tabDispWidth = (Int)tabDispWidthLayout;
+		mgrTemp.SetTabSpaceInfo(pcLayoutMgr.GetTabSpaceKetas(), static_cast<CLayoutXInt>(pMetrics->GetHankakuWidth()));
+		nTabLayoutWidth = mgrTemp.GetActualTabSpace(sPos.GetDrawCol());
+		nTabDispWidth = static_cast<Int>(nTabLayoutWidth) / mgrTemp.GetWidthPerKeta();
 	}
 
 	// タブ記号領域
 	RECT rcClip2;
 	rcClip2.left = sPos.GetDrawPos().x;
-	rcClip2.right = rcClip2.left + nCharWidth * tabDispWidth;
+	rcClip2.right = rcClip2.left + static_cast<Int>(nTabLayoutWidth);
 	if( rcClip2.left < pArea->GetAreaLeft() ){
 		rcClip2.left = pArea->GetAreaLeft();
 	}
 	rcClip2.top = sPos.GetDrawPos().y;
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
-	int nLen = wcslen( m_pTypeData->m_szTabViewString );
 
 	if( pArea->IsRectIntersected(rcClip2) ){
 		if( cTabType.IsDisp() && TABARROW_STRING == m_pTypeData->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
-			int fontNo = WCODE::GetFontNo(m_pTypeData->m_szTabViewString[0]);
+			std::wstring szForeViewString = m_pTypeData->m_szTabViewString;
+			if (szForeViewString.length() < nTabDispWidth) {
+				szForeViewString.append(nTabDispWidth - szForeViewString.length(), L' ');
+			}
+			int fontNo = WCODE::GetFontNo(szForeViewString[0]);
 			if( fontNo ){
 				SFONT sFont;
 				sFont.m_sFontAttr = gr.GetCurrentMyFontAttr();
@@ -86,9 +110,8 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 				sPos.GetDrawPos().y + nHeightMargin,
 				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
-				m_pTypeData->m_szTabViewString,
-				// tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
-				nLen,
+				szForeViewString.c_str(),
+				static_cast<UINT>(szForeViewString.length()),
 				pMetrics->GetDxArray_AllHankaku()	// FIXME:半角固定？
 			);
 			if( fontNo ){
@@ -96,14 +119,15 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 			}
 		}else{
 			//背景
+			std::wstring szBackViewString(nTabDispWidth, L' ');
 			::ExtTextOut(
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,
 				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
-				L"        ",
-				8,
+				szBackViewString.c_str(),
+				static_cast<UINT>(szBackViewString.length()),
 				pMetrics->GetDxArray_AllHankaku()
 			);
 
@@ -132,7 +156,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 						gr,
 						nPosLeft,
 						sPos.GetDrawPos().y,
-						nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Area一杯に 2013/4/11 Uchi
+						static_cast<Int>(nTabLayoutWidth) - (nPosLeft - sPos.GetDrawPos().x),	// Tab Area一杯に 2013/4/11 Uchi
 						pMetrics->GetHankakuHeight(),
 						gr.GetCurrentMyFontBold() || m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_sFontAttr.m_bBoldFont,
 						gr.GetCurrentTextForeColor()
@@ -143,7 +167,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	}
 
 	//Xを進める
-	sPos.ForwardDrawCol(tabDispWidthLayout);
+	sPos.ForwardDrawCol(nTabLayoutWidth);
 }
 
 /*

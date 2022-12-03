@@ -13,6 +13,7 @@
 	Copyright (C) 2007, genta, kobake
 	Copyright (C) 2009, genta
 	Copyright (C) 2011, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -25,6 +26,7 @@
 #include "outline/CFuncInfoArr.h"
 #include "plugin/CJackManager.h"
 #include "plugin/COutlineIfObj.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
 /*!	アウトライン解析
@@ -138,7 +140,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 
 			if( plugs.size() > 0 ){
 				assert_warning( 1 == plugs.size() );
-				//インタフェースオブジェクト準備
+				//インターフェースオブジェクト準備
 				CWSHIfObj::List params;
 				COutlineIfObj* objOutline = new COutlineIfObj( cFuncInfoArr );
 				objOutline->AddRef();

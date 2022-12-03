@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -32,6 +33,8 @@
 #include "util/os.h"
 #include "util/module.h"
 #include "CFileExt.h"
+#include "env/DLLSHAREDATA.h"
+#include "String_define.h"
 
 struct CDlgOpenFile_CommonItemDialog final
 	:
@@ -76,7 +79,7 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	DLLSHAREDATA*	m_pShareData;
 
-	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -415,7 +418,6 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }
@@ -434,10 +436,10 @@ void CDlgOpenFile_CommonItemDialog::Create(
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
-		wcscpy( m_szDefaultWildCard, pszUserWildCard );
+		m_strDefaultWildCard = pszUserWildCard;
 	}
 
-	/* 「開く」での初期フォルダ */
+	/* 「開く」での初期フォルダー */
 	if( pszDefaultPath && pszDefaultPath[0] != L'\0' ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
@@ -460,11 +462,12 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 {
 	//	2003.05.12 MIK
 	std::vector<COMDLG_FILTERSPEC> specs;
+	specs.reserve(7);
 	std::vector<std::wstring> strs;
 	strs.reserve(8);
 
 	strs.push_back(LS(STR_DLGOPNFL_EXTNAME1));
-	specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), m_szDefaultWildCard});
+	specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), m_strDefaultWildCard.c_str()});
 
 	switch( eAddFilter ){
 	case EFITER_TEXT:
@@ -483,7 +486,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != wcscmp(m_szDefaultWildCard, L"*.*") ){
+	if (m_strDefaultWildCard != L"*.*") {
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME3));
 		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.*"});
 	}
@@ -564,10 +567,10 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 	if (m_customizeSetting.bUseEol) {
 		hr = StartVisualGroup(CtrlId::LABEL_EOL, LS(STR_FILEDIALOG_EOL)); RETURN_IF_FAILED
 		hr = AddComboBox(CtrlId::COMBO_EOL); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_NONE, LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CRLF, L"CR+LF"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_LF, L"LF (UNIX)"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CR, L"CR (Mac)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::none), LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::cr_and_lf), L"CR+LF"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::line_feed), L"LF (UNIX)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::carriage_return), L"CR (Mac)"); RETURN_IF_FAILED
 		hr = SetSelectedControlItem(CtrlId::COMBO_EOL, 0); RETURN_IF_FAILED
 		hr = EndVisualGroup(); RETURN_IF_FAILED
 	}
@@ -699,15 +702,16 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	specs[1].pszName = strs[1].c_str();
 	specs[1].pszSpec = L"*.txt";
 	CDocTypeManager docTypeMgr;
-	WCHAR szWork[_countof(STypeConfigMini::m_szTypeExts) * 3];
+	std::wstring worksString;
 	for( int i = 0; i < nTypesCount; i++ ){
 		const STypeConfigMini* type = NULL;
 		if( !docTypeMgr.GetTypeConfigMini( CTypeConfig(i), &type ) ){
 			continue;
 		}
 		specs[2 + i].pszName = type->m_szTypeName;
-		if (CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, NULL, szWork)) {
-			strs[2 + i] = szWork;
+		worksString = CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, nullptr);
+		if (!worksString.empty()) {
+			strs[2 + i] = worksString;
 			specs[2 + i].pszSpec = strs[2 + i].c_str();
 		}
 		else {
@@ -746,7 +750,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	strs[1] = LS(STR_DLGOPNFL_EXTNAME2);
 	strs[2] = LS(STR_DLGOPNFL_EXTNAME3);
 	specs[0].pszName = strs[0].c_str();
-	specs[0].pszSpec = m_szDefaultWildCard;
+	specs[0].pszSpec = m_strDefaultWildCard.c_str();
 	specs[1].pszName = strs[1].c_str();
 	specs[1].pszSpec = L"*.txt";
 	specs[2].pszName = strs[2].c_str();
@@ -926,7 +930,7 @@ int CDlgOpenFile_CommonItemDialog::AddComboCodePages( int nSelCode )
 		nSel = nSelCode;
 	}
 	CCodePage::CodePageList& cpList = CCodePage::GetCodePageList();
-	for( auto it = cpList.begin(); it != cpList.end(); ++it ){
+	for( auto it = cpList.cbegin(); it != cpList.cend(); ++it ){
 		hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)it->first, it->second.c_str());
 		if( nSelCode == it->first ){
 			SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)it->first);

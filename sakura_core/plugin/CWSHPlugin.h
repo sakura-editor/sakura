@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_
+#define SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_
 #pragma once
 
 #include "plugin/CPlugin.h"
@@ -36,12 +39,18 @@
 class CWSHPlug final :
 	public CPlug
 {
+	using Me = CWSHPlug;
+
 public:
 	CWSHPlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel ) :
 		CPlug( plugin, id, sJack, sHandler, sLabel )
 	{
 		m_Wsh = NULL;
 	}
+	CWSHPlug(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CWSHPlug(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CWSHPlug() {
 		if( m_Wsh ){
 			delete m_Wsh;
@@ -54,11 +63,17 @@ public:
 class CWSHPlugin final :
 	public CPlugin
 {
+	using Me = CWSHPlugin;
+
 	//コンストラクタ
 public:
 	CWSHPlugin( const wstring& sBaseDir ) : CPlugin( sBaseDir ) {
 		m_bUseCache = false;
 	}
+	CWSHPlugin(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CWSHPlugin(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 	//デストラクタ
 public:
@@ -84,3 +99,4 @@ public:
 private:
 	bool m_bUseCache;
 };
+#endif /* SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_ */

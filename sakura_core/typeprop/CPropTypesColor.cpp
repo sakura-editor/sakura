@@ -15,6 +15,7 @@
 	Copyright (C) 2007, ryoji, genta
 	Copyright (C) 2008, nasukoji
 	Copyright (C) 2009, ryoji, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -34,6 +35,10 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "prop/CPropCommon.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 using namespace std;
 

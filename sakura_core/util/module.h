@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_MODULE_865764F5_F6C8_4B99_B2DB_A29F375539FE_H_
+#define SAKURA_MODULE_865764F5_F6C8_4B99_B2DB_A29F375539FE_H_
 #pragma once
 
 void GetAppVersionInfo( HINSTANCE hInstance, int nVersionResourceID,
@@ -35,3 +38,4 @@ void ChangeCurrentDirectoryToExeDir();
 
 //! カレントディレクトリ移動機能付LoadLibrary
 HMODULE LoadLibraryExedir( LPCWSTR pszDll);
+#endif /* SAKURA_MODULE_865764F5_F6C8_4B99_B2DB_A29F375539FE_H_ */

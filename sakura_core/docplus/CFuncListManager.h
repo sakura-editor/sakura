@@ -2,6 +2,7 @@
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2014, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -23,7 +24,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFUNCLISTMANAGER_C2C5861D_3B93_4B1F_B241_E3314414A2C1_H_
+#define SAKURA_CFUNCLISTMANAGER_C2C5861D_3B93_4B1F_B241_E3314414A2C1_H_
 #pragma once
+
+#include "basis/SakuraBasis.h"
+#include "_main/global.h"
 
 class CDocLine;
 class CDocLineMgr;
@@ -55,3 +61,4 @@ public:
 	//一括操作
 	void ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag);	// 関数リストマークをすべてリセット
 };
+#endif /* SAKURA_CFUNCLISTMANAGER_C2C5861D_3B93_4B1F_B241_E3314414A2C1_H_ */

@@ -20,12 +20,9 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
 
   strategy:
-    maxParallel: 2
     matrix:
-      python_2.7:
-        versionSpec: '2.7'
-      python_3.7:
-        versionSpec: '3.7'
+      python3:
+        versionSpec: '3.x'
 
   steps:
     # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops

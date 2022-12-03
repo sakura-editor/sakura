@@ -10,6 +10,7 @@
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, Moca
 	Copyright (C) 2009, ryoji, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -31,6 +32,9 @@
 #include "basis/SakuraBasis.h"
 #include "CSearchAgent.h"
 #include "debug/CRunningTimer.h"
+#include "charset/charcode.h"
+#include "config/app_constants.h"
+#include "util/window.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
@@ -116,10 +120,11 @@ void CLayoutMgr::SetLayoutInfo(
 	int					nTsvMode,
 	CKetaXInt			nMaxLineKetas,
 	CLayoutXInt			nCharLayoutXPerKeta,
-	const LOGFONT*		pLogfont
+	const LOGFONT*		pLogfont,
+	CCharWidthCache&	cache
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::SetLayoutInfo" );
 
 	assert_warning( (!bDoLayout && m_nMaxLineKetas == nMaxLineKetas) || bDoLayout );
 	assert_warning( (!bDoLayout && m_nTabSpace == refType.m_nTabSpace) || bDoLayout );
@@ -133,7 +138,7 @@ void CLayoutMgr::SetLayoutInfo(
 	if (nTsvModeOld != nTsvMode && nTsvMode != TSV_MODE_NONE) {
 		m_tsvInfo.CalcTabLength(this->m_pcDocLineMgr);
 	}
-	m_nSpacing = refType.m_nColumnSpace;
+	m_nSpacing = DpiScaleX(refType.m_nColumnSpace);
 	if( nCharLayoutXPerKeta == -1 )
 	{
 		// Viewが持ってるフォント情報は古い、しょうがないので自分で作る
@@ -141,14 +146,14 @@ void CLayoutMgr::SetLayoutInfo(
 		HDC hdc = ::GetDC(hwnd);
 		CViewFont viewFont(pLogfont);
 		CTextMetrics temp;
-		temp.Update(hdc, viewFont.GetFontHan(), refType.m_nLineSpace, refType.m_nColumnSpace);
-		m_nCharLayoutXPerKeta = temp.GetHankakuWidth() + m_pTypeConfig->m_nColumnSpace;
+		temp.Update(hdc, viewFont.GetFontHan(), DpiScaleY(refType.m_nLineSpace), DpiScaleX(refType.m_nColumnSpace));
+		m_nCharLayoutXPerKeta = temp.GetHankakuWidth() + DpiScaleX(m_pTypeConfig->m_nColumnSpace);
 		::ReleaseDC(hwnd, hdc);
 	}else{
 		m_nCharLayoutXPerKeta = nCharLayoutXPerKeta;
 	}
 	// 最大文字幅の計算
-	m_tsvInfo.m_nMaxCharLayoutX = WCODE::CalcPxWidthByFont(L'W');
+	m_tsvInfo.m_nMaxCharLayoutX = cache.CalcPxWidthByFont(L'W');
 	if (m_tsvInfo.m_nMaxCharLayoutX < m_nCharLayoutXPerKeta) {
 		m_tsvInfo.m_nMaxCharLayoutX = m_nCharLayoutXPerKeta;
 	}
@@ -394,15 +399,15 @@ CLayout* CLayoutMgr::CreateLayout(
 		colorInfo
 	);
 
-	if( EOL_NONE == pCDocLine->GetEol() ){
-		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
+	if( pCDocLine->GetEol().IsNone() ){
+		pLayout->m_cEol.SetType( EEolType::none );/* 改行コードの種類 */
 	}else{
 		if( pLayout->GetLogicOffset() + pLayout->GetLengthWithEOL() >
 			pCDocLine->GetLengthWithEOL() - pCDocLine->GetEol().GetLen()
 		){
 			pLayout->m_cEol = pCDocLine->GetEol();/* 改行コードの種類 */
 		}else{
-			pLayout->m_cEol = EOL_NONE;/* 改行コードの種類 */
+			pLayout->m_cEol = EEolType::none;/* 改行コードの種類 */
 		}
 	}
 
@@ -459,7 +464,7 @@ bool CLayoutMgr::IsEndOfLine(
 		return false;
 	}
 
-	if( EOL_NONE == pLayout->GetLayoutEol().GetType() )
+	if( pLayout->GetLayoutEol().IsNone() )
 	{	/* この行に改行はない */
 		/* この行の最後か？ */
 		if( ptLinePos.x == (Int)pLayout->GetLengthWithEOL() ) return true; //$$ 単位混在
@@ -498,7 +503,7 @@ void CLayoutMgr::GetEndLayoutPos(
 	}
 
 	CLayout *btm = m_pLayoutBot;
-	if( btm->m_cEol != EOL_NONE ){
+	if( btm->m_cEol.IsValid() ){
 		//	末尾に改行がある
 		ptLayoutEnd->Set(CLayoutInt(0), GetLineCount());
 	}
@@ -612,7 +617,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 /* 論理行が挿入された場合は０より大きい行数 */
 void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, CLogicInt nShiftLines )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::ShiftLogicalLineNum" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::ShiftLogicalLineNum" );
 
 	CLayout* pLayout;
 	if( 0 == nShiftLines ){
@@ -869,8 +874,6 @@ void CLayoutMgr::LogicToLayout(
 				else{
 					nCharKetas = GetLayoutXOfChar( pData, nDataLen, i );
 				}
-//				if( nCharKetas == 0 )				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//					nCharKetas = CLayoutInt(1);
 
 				//レイアウト加算
 				nCaretPosX += nCharKetas;
@@ -1003,8 +1006,6 @@ checkloop:;
 		else{
 			nCharKetas = GetLayoutXOfChar( pData, nDataLen, i );
 		}
-//		if( nCharKetas == 0 )				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//			nCharKetas = CLayoutInt(1);
 
 		//レイアウト加算
 		if( nX + nCharKetas > ptLayout.GetX2() && !bEOF ){
@@ -1028,7 +1029,7 @@ void CLayoutMgr::LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLo
 {
 	CLogicPointEx ptEx;
 	LayoutToLogicEx( ptLayout, &ptEx );
-	*pptLogic = ptEx;
+	*pptLogic = static_cast<CLogicPoint&>(ptEx);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

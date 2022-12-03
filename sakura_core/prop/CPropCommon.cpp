@@ -15,6 +15,7 @@
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2010, Uchi
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -45,7 +46,9 @@
 #include "CEditApp.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {
@@ -80,6 +83,7 @@ INT_PTR CPropCommon::DlgProc(
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
 		if( NULL != pCPropCommon ){
+			UpdateDialogFont( hwndDlg );
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
 			return FALSE;
@@ -107,6 +111,7 @@ INT_PTR CPropCommon::DlgProc2(
 	case WM_INITDIALOG:
 		pCPropCommon = ( CPropCommon* )(lParam);
 		if( NULL != pCPropCommon ){
+			UpdateDialogFont( hwndDlg );
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
 		}else{
 			return FALSE;
@@ -157,9 +162,7 @@ CPropCommon::CPropCommon()
 	return;
 }
 
-CPropCommon::~CPropCommon()
-{
-}
+CPropCommon::~CPropCommon() = default;
 
 /* 初期化 */
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。

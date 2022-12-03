@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "doc/CEditDoc.h" /// 2003/07/20 genta
 #include "doc/layout/CLayoutMgr.h"
@@ -26,12 +49,12 @@ static bool _GetKeywordLength(
 	CLogicInt nWordLen = CLogicInt(0);
 	CLayoutInt nWordKetas = CLayoutInt(0);
 	while(nPos<cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr.At(nPos))){
+		CLogicXInt nCharSize = CNativeW::GetSizeOfChar( cLineStr, nPos );
 		CLayoutInt k = cLayoutMgr.GetLayoutXOfChar(cLineStr, nPos);
-		if(0 == k)k = CLayoutInt(1);
 
-		nWordLen+=1;
+		nWordLen += nCharSize;
 		nWordKetas+=k;
-		nPos++;
+		nPos += nCharSize;
 	}
 	//結果
 	if(nWordLen>0){
@@ -43,6 +66,44 @@ static bool _GetKeywordLength(
 	else{
 		return false;
 	}
+}
+
+/*!
+	@brief 行頭禁則の処理位置であるか調べる
+
+	@param[in] nRest 現在行に挿入可能な文字の総幅
+	@param[in] nCharKetas 現在の位置にある文字の幅
+	@param[in] nCharKetas2 次の位置にある文字の幅
+	@return 処理が必要な位置ならばtrue
+*/
+[[nodiscard]] static bool _IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+{
+	return nRest < nCharKetas + nCharKetas2;
+}
+
+/*!
+	@brief 行末禁則の処理位置であるか調べる
+
+	@param[in] nRest 現在行に挿入可能な文字の総幅
+	@param[in] nCharKetas 現在の位置にある文字の幅
+	@param[in] nCharKetas2 次の位置にある文字の幅
+	@return 処理が必要な位置ならばtrue
+*/
+[[nodiscard]] static bool _IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+{
+	return nRest < nCharKetas + nCharKetas2;
+}
+
+/*!
+	@brief 句読点ぶら下げの処理位置であるか調べる
+
+	@param[in] nRest 現在行に挿入可能な文字の総幅
+	@param[in] nCharChars 現在の位置にある文字の幅
+	@return 処理が必要な位置ならばtrue
+*/
+[[nodiscard]] static bool _IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars )
+{
+	return nRest < nCharChars;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -116,17 +177,18 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	}
 }
 
-void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
+void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork) const
 {
-	if( (GetMaxLineLayout() - pWork->nPosX < 2) && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
+	// 現在位置が行末付近で禁則処理の実行中でないこと
+	if( GetMaxLineLayout() - pWork->nPosX < 2 * GetWidthPerKeta() && pWork->eKinsokuType == KINSOKU_TYPE_NONE )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 
-		if( IsKinsokuPosKuto(GetMaxLineLayout() - pWork->nPosX, nCharKetas) && IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )
+		if( _IsKinsokuPosKuto( GetMaxLineLayout() - pWork->nPosX, nCharKetas ) && IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
-			pWork->nWordLen = 1;
+			pWork->nWordLen = CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
 		}
 	}
@@ -134,22 +196,24 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 
 void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
+	// 現在位置が行末付近かつ行頭ではなく、禁則処理の実行中でないこと
 	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (GetMaxLineLayout() - pWork->nPosX < 4)
+	 && ( GetMaxLineLayout() - pWork->nPosX < 4 * GetWidthPerKeta() )
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+		CLogicXInt nCharSize = CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas1 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 
-		if( IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 )
-		 && IsKinsokuHead( pWork->cLineStr.At(pWork->nPos+1) )
-		 && ! IsKinsokuHead( pWork->cLineStr.At(pWork->nPos) )	//1文字前が行頭禁則でない
-		 && ! IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )	//句読点でない
+		if( _IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 )
+		 && IsKinsokuHead( pWork->cLineStr.At( pWork->nPos + nCharSize ) )
+		 && !IsKinsokuHead( pWork->cLineStr.At( pWork->nPos ) )		// 1字前が行頭禁則の対象でないこと
+		 && !IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )	// 1字前が句読点ぶら下げの対象でないこと
 		{
 			pWork->nWordBgn = pWork->nPos;
-			pWork->nWordLen = 2;
+			pWork->nWordLen = nCharSize + CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
 
 			(this->*pfOnLine)(pWork);
@@ -159,19 +223,22 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
+	// 現在位置が行末付近かつ行頭ではなく、禁則処理の実行中でないこと
 	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (GetMaxLineKetas() - pWork->nPosX < 4)
+	 && ( GetMaxLineLayout() - pWork->nPosX < 4 * GetWidthPerKeta() )
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
-	{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+	{
+		CLogicXInt nCharSize = CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas1 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 
-		if( IsKinsokuPosTail(GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3) && IsKinsokuTail(pWork->cLineStr.At(pWork->nPos)) ){
+		if( _IsKinsokuPosTail( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 ) && IsKinsokuTail( pWork->cLineStr.At( pWork->nPos ) ) )
+		{
 			pWork->nWordBgn = pWork->nPos;
-			pWork->nWordLen = 1;
+			pWork->nWordLen = nCharSize;
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
-			
+
 			(this->*pfOnLine)(pWork);
 		}
 	}
@@ -187,7 +254,7 @@ bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		return true;
 	}
 	pWork->nPosX += nCharKetas;
-	pWork->nPos += CLogicInt(1);
+	pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
 	return false;
 }
 
@@ -249,9 +316,6 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 			}
 			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
 			CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-//			if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//				nCharKetas = CLayoutInt(1);
-//			}
 
 			if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
 				if( pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
@@ -263,7 +327,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 					}
 				}
 			}
-			pWork->nPos += 1;
+			pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
 			pWork->nPosX += nCharKetas;
 		}
 	}
@@ -277,8 +341,8 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 {
 	AddLineBottom( pWork->_CreateLayout(this) );
 	pWork->pLayout = m_pLayoutBot;
-	pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
-	pWork->exInfoPrev.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
+	pWork->colorPrev = CColorStrategy::GetStrategyColorSafe(pWork->pcColorStrategy);
+	pWork->exInfoPrev.SetColorInfo(CColorStrategy::GetStrategyColorInfoSafe(pWork->pcColorStrategy));
 	pWork->nBgn = pWork->nPos;
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	pWork->nPosX = pWork->nIndent = (this->*m_getIndentOffset)( pWork->pLayout );
@@ -293,7 +357,7 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 */
 void CLayoutMgr::_DoLayout(bool bBlockingHook)
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::_DoLayout" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::_DoLayout" );
 
 	/*	表示上のX位置
 		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
@@ -311,7 +375,7 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 
 	_Empty();
 	Init();
-	
+
 	//	Nov. 16, 2002 genta
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
 	//	TABが折り返し幅以上の時はTAB=4としてしまう
@@ -346,14 +410,14 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		if( pWork->nPos - pWork->nBgn > 0 ){
 // 2002/03/13 novice
 			AddLineBottom( pWork->_CreateLayout(this) );
-			pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
-			pWork->exInfoPrev.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
+			pWork->colorPrev = CColorStrategy::GetStrategyColorSafe(pWork->pcColorStrategy);
+			pWork->exInfoPrev.SetColorInfo(CColorStrategy::GetStrategyColorInfoSafe(pWork->pcColorStrategy));
 		}
 
 		// 次の行へ
 		pWork->nCurLine++;
 		pWork->pcDocLine = pWork->pcDocLine->GetNextLine();
-		
+
 		// 処理中のユーザー操作を可能にする
 		if( nListenerCount !=0 && 0 < nAllLineNum) {
 			DWORD currTime = GetTickCount();
@@ -371,8 +435,8 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	}
 
 	// 2011.12.31 Botの色分け情報は最後に設定
-	m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
-	m_cLayoutExInfoBot.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
+	m_nLineTypeBot = CColorStrategy::GetStrategyColorSafe(pWork->pcColorStrategy);
+	m_cLayoutExInfoBot.SetColorInfo(CColorStrategy::GetStrategyColorInfoSafe(pWork->pcColorStrategy));
 
 	m_nPrevReferLine = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
@@ -402,8 +466,8 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 	else {
 		pWork->pLayout = InsertLineNext( pWork->pLayout, pWork->_CreateLayout(this) );
 	}
-	pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
-	pWork->exInfoPrev.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
+	pWork->colorPrev = CColorStrategy::GetStrategyColorSafe(pWork->pcColorStrategy);
+	pWork->exInfoPrev.SetColorInfo(CColorStrategy::GetStrategyColorInfoSafe(pWork->pcColorStrategy));
 
 	pWork->nBgn = pWork->nPos;
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
@@ -417,7 +481,7 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 
 /*!
 	指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする
-	
+
 	@date 2002.10.07 YAZAKI rename from "DoLayout3_New"
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
 		pWork->nPosXがインデントを含む幅を保持するように変更．m_nMaxLineKetasは
@@ -519,8 +583,8 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 
 	// 2004.03.28 Moca EOFだけの論理行の直前の行の色分けが確認・更新された
 	if( pWork->nCurLine == m_pcDocLineMgr->GetLineCount() ){
-		m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
-		m_cLayoutExInfoBot.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
+		m_nLineTypeBot = CColorStrategy::GetStrategyColorSafe(pWork->pcColorStrategy);
+		m_cLayoutExInfoBot.SetColorInfo(CColorStrategy::GetStrategyColorInfoSafe(pWork->pcColorStrategy));
 	}
 
 	// 2009.08.28 nasukoji	テキストが編集されたら最大幅を算出する

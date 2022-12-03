@@ -15,9 +15,6 @@ pushd %BINARY_DIR%
 for /r %%i in (tests*.exe) do (
 	set TEST_LAUNCHED=1
 
-	@echo %%i --gtest_list_tests
-	%%i --gtest_list_tests || set ERROR_RESULT=1
-
 	call :RunTest %%i %%i-googletest-%platform%-%configuration%.xml || set ERROR_RESULT=1
 )
 popd

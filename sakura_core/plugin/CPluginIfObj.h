@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CPLUGINIFOBJ_F083BB50_2D36_44C9_8F2B_6F2D3BA7AAF9_H_
+#define SAKURA_CPLUGINIFOBJ_F083BB50_2D36_44C9_8F2B_6F2D3BA7AAF9_H_
 #pragma once
 
 #include "macro/CWSHIfObj.h"
@@ -42,7 +45,7 @@ class CPluginIfObj : public CWSHIfObj {
 		F_PL_SETOPTION,							//オプションファイルに値を書く
 		F_PL_ADDCOMMAND,						//コマンドを追加する
 		F_PL_FUNCTION_FIRST = F_FUNCTION_FIRST,	//↓関数は以下に追加する
-		F_PL_GETPLUGINDIR,						//プラグインフォルダパスを取得する
+		F_PL_GETPLUGINDIR,						//プラグインフォルダーパスを取得する
 		F_PL_GETDEF,							//設定ファイルから値を読む
 		F_PL_GETOPTION,							//オプションファイルから値を読む
 		F_PL_GETCOMMANDNO,						//実行中プラグの番号を取得する
@@ -85,7 +88,7 @@ public:
 
 		switch(LOWORD(ID))
 		{
-		case F_PL_GETPLUGINDIR:			//プラグインフォルダパスを取得する
+		case F_PL_GETPLUGINDIR:			//プラグインフォルダーパスを取得する
 			{
 				SysString S(m_cPlugin.m_sBaseDir.c_str(), m_cPlugin.m_sBaseDir.size());
 				Wrap(&Result)->Receive(S);
@@ -111,7 +114,7 @@ public:
 					&& LOWORD(ID) == F_PL_GETOPTION ) {
 					// 設定されていなければデフォルトを取得 
 					CPluginOption::ArrayIter it;
-					for (it = m_cPlugin.m_options.begin(); it != m_cPlugin.m_options.end(); it++) {
+					for (it = m_cPlugin.m_options.cbegin(); it != m_cPlugin.m_options.cend(); it++) {
 						wstring sSectionTmp;
 						wstring sKeyTmp;
 						(*it)->GetKey(&sSectionTmp, &sKeyTmp);
@@ -141,7 +144,7 @@ public:
 					Wrap(&Result)->Receive(S);
 					return true;
 				}else if( 0 == num ){
-					std::wstring str = m_cPlugin.m_sLangName.c_str();
+					std::wstring str = m_cPlugin.m_sLangName;
 					SysString S(str.c_str(), str.size());
 					Wrap(&Result)->Receive(S);
 					return true;
@@ -172,7 +175,7 @@ public:
 		case F_PL_ADDCOMMAND:			//コマンドを追加する
 			{
 				int id = m_cPlugin.AddCommand( Arguments[0], Arguments[1], Arguments[2], true );
-				View->m_pcEditWnd->RegisterPluginCommand( id );
+				GetEditWnd().RegisterPluginCommand( id );
 			}
 			break;
 		}
@@ -202,7 +205,7 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoCommandArr[] =
 MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] = 
 {
 	//ID									関数名							引数										戻り値の型	m_pszData
-	{EFunctionCode(F_PL_GETPLUGINDIR),		LTEXT("GetPluginDir"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //プラグインフォルダパスを取得する
+	{EFunctionCode(F_PL_GETPLUGINDIR),		LTEXT("GetPluginDir"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //プラグインフォルダーパスを取得する
 	{EFunctionCode(F_PL_GETDEF),			LTEXT("GetDef"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //設定ファイルから値を読む
 	{EFunctionCode(F_PL_GETOPTION),			LTEXT("GetOption"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //オプションファイルから値を読む
 	{EFunctionCode(F_PL_GETCOMMANDNO),		LTEXT("GetCommandNo"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //オプションファイルから値を読む
@@ -210,3 +213,4 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] =
 	//	終端
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
+#endif /* SAKURA_CPLUGINIFOBJ_F083BB50_2D36_44C9_8F2B_6F2D3BA7AAF9_H_ */

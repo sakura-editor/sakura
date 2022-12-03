@@ -11,6 +11,7 @@
 	Copyright (C) 2004, Moca, genta
 	Copyright (C) 2005, D.S.Koba, Moca
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,16 +24,16 @@
 #include "charset/charcode.h"
 #include "mem/CMemoryIterator.h"
 #include "util/window.h"
+#include "config/app_constants.h"
 
 /*!
 	行頭禁則文字に該当するかを調べる．
 
-	@param[in] pLine 調べる文字へのポインタ
-	@param[in] length 当該箇所の文字サイズ
+	@param[in] wc 調べる文字
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
+bool CLayoutMgr::IsKinsokuHead( wchar_t wc ) const
 {
 	return m_pszKinsokuHead_1.exist(wc);
 }
@@ -40,12 +41,11 @@ bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
 /*!
 	行末禁則文字に該当するかを調べる．
 
-	@param[in] pLine 調べる文字へのポインタ
-	@param[in] length 当該箇所の文字サイズ
+	@param[in] wc 調べる文字
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
+bool CLayoutMgr::IsKinsokuTail( wchar_t wc ) const
 {
 	return m_pszKinsokuTail_1.exist(wc);
 }
@@ -53,93 +53,13 @@ bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
 /*!
 	禁則対象句読点に該当するかを調べる．
 
-	@param [in] pLine  調べる文字へのポインタ
-	@param [in] length 当該箇所の文字サイズ
+	@param[in] wc 調べる文字
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuKuto( wchar_t wc )
+bool CLayoutMgr::IsKinsokuKuto( wchar_t wc ) const
 {
 	return m_pszKinsokuKuto_1.exist(wc);
-}
-
-/*!
-	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
-*/
-bool CLayoutMgr::IsKinsokuPosHead(
-	CLayoutInt nRest,		//!< [in] 行の残り文字数
-	CLayoutInt nCharKetas,	//!< [in] 現在位置の文字サイズ
-	CLayoutInt nCharKetas2	//!< [in] 現在位置の次の文字サイズ
-)
-{
-	switch( (Int)nRest )
-	{
-	//    321012  ↓マジックナンバー
-	// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
-	// 2  "Z）" : 12 "）"の2バイト目で折り返しのとき
-	// 2  "る）": 22 "）"で折り返しのとき
-	// 2  "る)" : 21 ")"で折り返しのとき
-	// 1   "Z）": 12 "）"で折り返しのとき
-	// 1   "Z)" : 11 ")"で折り返しのとき
-	//↑何文字前か？
-	// ※ただし、"るZ"部分が禁則なら処理しない。
-	case 3:	// 3文字前
-		if( nCharKetas == 2 && nCharKetas2 == 2 ){
-			return true;
-		}
-		break;
-	case 2:	// 2文字前
-		if( nCharKetas == 2 ){
-			return true;
-		}
-		else if( nCharKetas == 1 && nCharKetas2 == 2 ){
-			return true;
-		}
-		break;
-	case 1:	// 1文字前
-		if( nCharKetas == 1 ){
-			return true;
-		}
-		break;
-	}
-	return false;
-}
-
-/*!
-	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
-*/
-bool CLayoutMgr::IsKinsokuPosTail(
-	CLayoutInt nRest,		//!< [in] 行の残り文字数
-	CLayoutInt nCharKetas,	//!< [in] 現在位置の文字サイズ
-	CLayoutInt nCharKetas2	//!< [in] 現在位置の次の文字サイズ
-)
-{
-	switch( (Int)nRest )
-	{
-	case 3:	// 3文字前
-		if( nCharKetas == 2 && nCharKetas2 == 2){
-			// "（あ": "あ"の2バイト目で折り返しのとき
-			return true;
-		}
-		break;
-	case 2:	// 2文字前
-		if( nCharKetas == 2 ){
-			// "（あ": "あ"で折り返しのとき
-			return true;
-		}
-		else if( nCharKetas == 1 && nCharKetas2 == 2){
-			// "(あ": "あ"の2バイト目で折り返しのとき
-			return true;
-		}
-		break;
-	case 1:	// 1文字前
-		if( nCharKetas == 1 ){
-			// "(あ": "あ"で折り返しのとき
-			return true;
-		}
-		break;
-	}
-	return false;
 }
 
 /*!

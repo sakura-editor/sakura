@@ -10,6 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2006, D. S. Koba, genta
 	Copyright (C) 2007
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -31,10 +32,13 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_
+#define SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_
 #pragma once
 
 #include "_main/global.h"
 #include "convert/convert_util2.h"
+#include "basis/primitive.h"
 
 /*!
 	認識する文字コード種別
@@ -405,9 +409,9 @@ inline int GuessEucjpCharsz( const char uc_ ){
 	文字長検査
 */
 /* --- ローカル文字コードチェック */
-int CheckSjisChar( const char*, const int, ECharSet* );
-int CheckEucjpChar( const char*, const int, ECharSet* );
-int DetectJisEscseq( const char*, const int, EMyJisEscseq* ); // JIS エスケープシーケンス検出器
+int CheckSjisChar( const char*, const size_t, ECharSet* );
+int CheckEucjpChar( const char*, const size_t, ECharSet* );
+int DetectJisEscseq( const char*, const size_t, EMyJisEscseq* ); // JIS エスケープシーケンス検出器
 int _CheckJisAnyPart( const char*, const int, const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount, const int nType );
 enum EJisChecker{
 	JISCHECK_ASCII7,
@@ -445,3 +449,4 @@ int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = NULL );
+#endif /* SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_ */

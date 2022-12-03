@@ -7,6 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK, aroka
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -66,7 +67,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	DLRArg.pInsData = pArg->pInsData;			// 挿入するデータ
 	DLRArg.nDelSeq = pArg->nDelSeq;
 	CSearchAgent(m_pcDocLineMgr).ReplaceData(
-		&DLRArg
+		&DLRArg, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol
 	);
 	pArg->nInsSeq = DLRArg.nInsSeq;
 

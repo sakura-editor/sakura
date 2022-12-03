@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2004, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGWINSIZE_864AE2FE_C5EB_4CF8_9812_197F16568FFE_H_
+#define SAKURA_CDLGWINSIZE_864AE2FE_C5EB_4CF8_9812_197F16568FFE_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -64,3 +67,4 @@ private:
 	int				m_nWinSizeType;	//!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
 	RECT			m_rc;
 };
+#endif /* SAKURA_CDLGWINSIZE_864AE2FE_C5EB_4CF8_9812_197F16568FFE_H_ */

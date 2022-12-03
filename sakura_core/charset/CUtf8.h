@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CUTF8_0BA7EBF5_EAEF_4EA0_BC3A_8337CDD524DF_H_
+#define SAKURA_CUTF8_0BA7EBF5_EAEF_4EA0_BC3A_8337CDD524DF_H_
 #pragma once
 
 #include "CCodeBase.h"
@@ -39,8 +42,6 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return UnicodeToUTF8(cSrc, pDst);
 	}
-	void GetBom(CMemory* pcmemBom) override;																			//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;
 	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE → Hex 変換
 	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, WCHAR* pd, const CommonSetting_Statusbar* psStatusbar) override{ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
 
@@ -156,3 +157,4 @@ inline int CUtf8::_UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen
 
 	return nret;
 }
+#endif /* SAKURA_CUTF8_0BA7EBF5_EAEF_4EA0_BC3A_8337CDD524DF_H_ */

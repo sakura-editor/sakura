@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief コマンドラインパーサ ヘッダファイル
+	@brief コマンドラインパーサ ヘッダーファイル
 
 	@author aroka
 	@date	2002/01/08 作成
@@ -11,11 +11,14 @@
 	Copyright (C) 2002, genta
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_
+#define SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_
 #pragma once
 
 #include <vector>
@@ -34,9 +37,8 @@
 /*!
  * @brief コマンドラインパーサ クラス
  */
-class CCommandLine : public TSingleton<CCommandLine> {
-	friend class TSingleton<CCommandLine>;
-protected:
+class CCommandLine : public TInstanceHolder<CCommandLine> {
+public:
 	CCommandLine() noexcept;
 
 private:
@@ -58,7 +60,6 @@ private:
 // member accessor method
 public:
 	bool IsNoWindow() const noexcept { return m_bNoWindow; }
-	bool IsWriteQuit() const noexcept { return m_bWriteQuit; }	// 2007.05.19 ryoji sakuext用に追加
 	bool IsGrepMode() const noexcept { return m_bGrepMode; }
 	bool IsGrepDlg() const noexcept { return m_bGrepDlg; }
 	bool IsDebugMode() const noexcept { return m_bDebugMode; }
@@ -82,7 +83,7 @@ public:
 	tagSIZE GetWindowSize() const noexcept { return { m_fi.m_nWindowSizeX, m_fi.m_nWindowSizeY }; }
 	tagPOINT GetWindowOrigin() const noexcept { return { m_fi.m_nWindowOriginX, m_fi.m_nWindowOriginY }; }
 	LPCWSTR GetOpenFile() const noexcept { return m_fi.m_szPath; }
-	int GetFileNum(void) const noexcept { return m_vFiles.size(); }
+	int GetFileNum(void) const noexcept { return static_cast<int>(m_vFiles.size()); }
 	const WCHAR* GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void ClearFile(void) noexcept { m_vFiles.clear(); }
 	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
@@ -96,7 +97,6 @@ private:
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		
 	bool		m_bNoWindow;		//! [out] TRUE: 編集Windowを開かない
-	bool		m_bWriteQuit;		//! [out] TRUE: 設定を保存して終了	// 2007.05.19 ryoji sakuext用に追加
 	bool		m_bProfileMgr;
 	bool		m_bSetProfile;
 	EditInfo	m_fi;				//!
@@ -108,3 +108,4 @@ private:
 	CNativeW	m_cmProfile;		//! プロファイル名
 	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
 };
+#endif /* SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_ */

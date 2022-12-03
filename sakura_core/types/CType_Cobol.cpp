@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -109,8 +110,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			int nLen = (int)wcslen( szLabel ) - nKeyWordLen;
 			for( i = 0; i <= nLen ; ++i ){
 				if( 0 == wmemicmp( &szLabel[i], pszKeyWord, nKeyWordLen ) ){
-					szLabel[i + nKeyWordLen] = L'\0';
-					wcscpy( szDivision, szLabel );
+					::wcsncpy_s( szDivision, szLabel, i + nKeyWordLen - 1);
 					bDivision = TRUE;
 					break;
 				}

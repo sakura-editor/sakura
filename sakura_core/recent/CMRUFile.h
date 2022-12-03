@@ -10,6 +10,7 @@
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2003, MIK
 	Copyright (C) 2004, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,6 +33,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
+#define SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
 #pragma once
 
 #include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
@@ -43,9 +46,15 @@ class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRUFile {
+	using Me = CMRUFile;
+
 public:
 	//	コンストラクタ
 	CMRUFile();
+	CMRUFile(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CMRUFile(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CMRUFile();
 
 	//	メニューを取得する
@@ -71,3 +80,4 @@ protected:
 private:
 	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
 };
+#endif /* SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_ */

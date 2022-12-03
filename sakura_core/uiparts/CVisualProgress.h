@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVISUALPROGRESS_A9390FAB_E0F3_4EA2_8A6C_1ACB3143DD3F_H_
+#define SAKURA_CVISUALPROGRESS_A9390FAB_E0F3_4EA2_8A6C_1ACB3143DD3F_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -56,3 +59,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CVisualProgress);
 };
+#endif /* SAKURA_CVISUALPROGRESS_A9390FAB_E0F3_4EA2_8A6C_1ACB3143DD3F_H_ */

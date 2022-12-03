@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CTEXTDRAWER_1AC4291D_DBBD_4A04_8974_26BC505B5318_H_
+#define SAKURA_CTEXTDRAWER_1AC4291D_DBBD_4A04_8974_26BC505B5318_H_
 #pragma once
 
 class CTextMetrics;
@@ -69,3 +72,4 @@ public:
 private:
 	const CEditView* m_pEditView;
 };
+#endif /* SAKURA_CTEXTDRAWER_1AC4291D_DBBD_4A04_8974_26BC505B5318_H_ */

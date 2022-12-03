@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,29 +26,18 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFILENAMEMANAGER_2B89B426_470E_40D6_B62E_5321E383ECD6_H_
+#define SAKURA_CFILENAMEMANAGER_2B89B426_470E_40D6_B62E_5321E383ECD6_H_
 #pragma once
 
-// 要先行定義
-// #include "DLLSHAREDATA.h"
+#include <string_view>
 
 #include "util/design_template.h"
 #include "config/maxdata.h"
 
+struct DLLSHAREDATA;
 struct EditInfo;
-
-//! iniフォルダ設定	// 2007.05.31 ryoji
-struct IniFolder {
-	bool m_bInit;							// 初期化済フラグ
-	bool m_bReadPrivate;					// マルチユーザ用iniからの読み出しフラグ
-	bool m_bWritePrivate;					// マルチユーザ用iniへの書き込みフラグ
-	WCHAR m_szIniFile[_MAX_PATH];			// EXE基準のiniファイルパス
-	WCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
-};	/* iniフォルダ設定 */
-
-//共有メモリ内構造体
-struct SShare_FileNameManagement{
-	IniFolder			m_IniFolder;	/**** iniフォルダ設定 ****/
-};
+DLLSHAREDATA& GetDllShareData();
 
 //!ファイル名管理
 class CFileNameManager : public TSingleton<CFileNameManager>{
@@ -62,7 +52,7 @@ public:
 	//ファイル名関連
 	LPWSTR GetTransformFileNameFast( LPCWSTR, LPWSTR, int nDestLen, HDC hDC, bool bFitMode = true, int cchMaxWidth = 0 );	// 2002.11.24 Moca Add
 	int TransformFileName_MakeCache( void );
-	static LPCWSTR GetFilePathFormat( LPCWSTR, LPWSTR, int, LPCWSTR, LPCWSTR );
+	static LPCWSTR GetFilePathFormat( std::wstring_view strSrc, LPWSTR pszDest, size_t nDestLen, std::wstring_view strFrom, std::wstring_view strTo );
 	static bool ExpandMetaToFolder( LPCWSTR, LPWSTR, int );
 
 	//メニュー類のファイル名作成
@@ -87,9 +77,6 @@ public:
 	
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
-	static void GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR pszIniFile, LPCWSTR pszProfName );	/* 構成設定ファイルからiniファイル名を取得する */	// 2007.09.04 ryoji
-	void GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead = FALSE );	/* iniファイル名の取得 */	// 2007.05.19 ryoji
-
 private:
 	DLLSHAREDATA* m_pShareData;
 
@@ -98,3 +85,4 @@ private:
 	WCHAR	m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 	int		m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 };
+#endif /* SAKURA_CFILENAMEMANAGER_2B89B426_470E_40D6_B62E_5321E383ECD6_H_ */

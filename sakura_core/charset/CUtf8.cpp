@@ -1,37 +1,34 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 // 2008.11.10 変換ロジックを書き直す
 
 #include "StdAfx.h"
 #include "CUtf8.h"
 #include "charset/codechecker.h"
-
-// 非依存推奨
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
-
-//! BOMデータ取得
-void CUtf8::GetBom(CMemory* pcmemBom)
-{
-	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
-	pcmemBom->SetRawData(UTF8_BOM, sizeof(UTF8_BOM));
-}
-
-void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
-	static const struct{
-		const char* szData;
-		int nLen;
-	}
-	aEolTable[EOL_TYPE_NUM] = {
-		"",			0,	// EOL_NONE
-		"\x0d\x0a",	2,	// EOL_CRLF
-		"\x0a",		1,	// EOL_LF
-		"\x0d",		1,	// EOL_CR
-		"\xc2\x85",			2,	// EOL_NEL
-		"\xe2\x80\xa8",		3,	// EOL_LS
-		"\xe2\x80\xa9",		3,	// EOL_PS
-	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
-}
+#include "CEol.h"
+#include "env/CommonSetting.h"
 
 /*!
 	UTF-8 → Unicode 実装

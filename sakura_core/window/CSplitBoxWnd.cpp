@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -15,6 +16,8 @@
 #include "StdAfx.h"
 #include "window/CSplitBoxWnd.h"
 #include "uiparts/CGraphics.h"
+#include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
 : CWnd(L"::CSplitBoxWnd")

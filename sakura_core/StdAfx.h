@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 // stdafx.h : 標準のシステム インクルード ファイル、
 //				または参照回数が多く、かつあまり変更されない
 //				プロジェクト専用のインクルード ファイルを記述します。
@@ -47,109 +70,55 @@
 #define _wcstok wcstok
 #endif
 
-//グローバル
-#include "_main/global.h"
-
-//ビルドオプション的なヘッダ
-#include "config/build_config.h"
-#include "config/maxdata.h"
-
-//定数(プリコンパイル日付に依存)
-#include "config/system_constants.h"	//システム定数
-#include "config/app_constants.h"		//アプリケーション定数
-
-//高頻度API等
-// #include <CommDlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
-#include <CommCtrl.h> // コモンコントロール
-#include <stdlib.h>  // _MAX_PATH
+#include <io.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <wchar.h>
 
-#ifndef SAKURA_PCH_MODE_MIN
-// 2010.04.19 重そうなので追加
-#include <HtmlHelp.h>
-#include <ObjIdl.h>
-#include <ShlObj.h>
-#include <ShellAPI.h>
-#include <string.h>
-#include <stdio.h>
-#include <io.h>
-#include <time.h>
-#include <string>
-#include <vector>
-#include <map>
 #include <algorithm>
+#include <array>
+#include <exception>
+#include <functional>
+#include <initializer_list>
+#include <list>
+#include <map>
+#include <unordered_map>
 #include <memory>
-#endif // ifndef SAKURA_PCH_MODE_MIN
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
-//デバッグ
-#include "debug/Debug1.h"
-#include "debug/Debug2.h"
-#include "debug/Debug3.h"
+#include <Windows.h>
+#include <windowsx.h>
+#include <CommCtrl.h>
+#include <HtmlHelp.h>
+#include <ImageHlp.h>
+#include <imm.h>
+#include <ObjIdl.h>
+#include <shellapi.h>
+#include <ShlObj.h>
+#include <wrl.h>
 
-//シンプルでよく使うもの
-#include "basis/primitive.h"
-#include "util/std_macro.h"
+// Windows SDKのマクロ定数「NULL」を訂正する。
+// マクロ定数「NULL」は、省略可能なポインタ型パラメータに「省略」を指定するために使う。
+// オリジナルでは「#define NULL 0」と定義されている。
+// C++ではC++11からnullptrキーワードが導入されており、
+// ポインタ型に0を渡すのは「不適切」になっている。
+// 従来通りマクロ定数「NULL」を書けるようにするため、独自に上書き定義してしまう。
+#ifdef __cplusplus
+# pragma warning( push )
+# pragma warning( disable : 4005 )
+# define NULL nullptr
+# pragma warning( pop )
+#endif // end of #ifdef __cplusplus
 
-//MFC互換
-#include "basis/CMyString.h"
-#include "basis/CMyRect.h"
-#include "basis/CMyPoint.h"
-#include "basis/CMySize.h"
-
-//サクラエディタ固有型
-#include "basis/SakuraBasis.h"
-
-//よく使うヘッダ
-#include "mem/CNativeW.h"
-#include "mem/CNativeA.h"
-
-#include "util/string_ex.h"
-#include "util/MessageBoxF.h"
-#include "CSelectLang.h"
-#include "String_define.h"
-
-//その他
-#define malloc_char (char*)malloc
-#define GlobalLockChar  (char*)::GlobalLock
-#define GlobalLockUChar (unsigned char*)::GlobalLock
-#define GlobalLockWChar (wchar_t*)::GlobalLock
-#define GlobalLockBYTE  (BYTE*)::GlobalLock
-
-//APIラップ
-#include "apiwrap/StdControl.h"
-#include "apiwrap/CommonControl.h"
-#include "apiwrap/StdApi.h"
-
-//TCHARユーティリティ
-#include "util/tchar_convert.h"
-#include "charset/charcode.h"
-#include "charset/codechecker.h"
-
-// 2010.04.19 Moca includeの大規模整理
-#ifndef SAKURA_PCH_MODE_MIN
-#define SAKURA_PCH_MODE_DLLSHARE 1
-#endif
-
-#if defined(SAKURA_PCH_MODE_MAX) || defined(SAKURA_PCH_MODE_DLLSHARE)
+// プロジェクト内のファイルだがプリコンパイル対象とする。
+// プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"
-#endif
-
-#ifdef SAKURA_PCH_MODE_MAX
-#include "env/CShareData.h"
-#include "_main/CNormalProcess.h"
-#include "_main/CAppMode.h"
-#include "window/CEditWnd.h"
-#include "CEditApp.h"
-#include "doc/CDocReader.h"
-#include "docplus/CModifyManager.h"
-#include "docplus/CDiffManager.h"
-#include "docplus/CBookmarkManager.h"
-#include "CReadManager.h"
-#include "CWriteManager.h"
-#include "CSearchAgent.h"
-//###########超仮
-#include "uiparts/CGraphics.h"
-#endif // SAKURA_PCH_MODE_MAX
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。

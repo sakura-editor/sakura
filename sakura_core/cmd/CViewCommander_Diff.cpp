@@ -13,6 +13,7 @@
 	Copyright (C) 2007, kobake
 	Copyright (C) 2008, kobake
 	Copyright (C) 2008, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -30,6 +31,9 @@
 #include "util/window.h"
 #include "util/os.h"
 #include "_main/CMutex.h"
+#include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 /*!
 	@return true:正常終了 / false:エラー終了
@@ -108,7 +112,6 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 void CViewCommander::Command_COMPARE( void )
 {
 	HWND		hwndCompareWnd = NULL;
-	WCHAR		szPath[_MAX_PATH + 1];
 	CDlgCompare	cDlgCompare;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
@@ -119,7 +122,6 @@ void CViewCommander::Command_COMPARE( void )
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
-		szPath,
 		&hwndCompareWnd
 	);
 	if( !bDlgCompareResult ){

@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2001, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -124,7 +125,7 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 	}
 }
 
-bool CDllImp::DeinitDll(bool force)
+bool CDllImp::DeinitDll(bool force) noexcept
 {
 	if( m_hInstance == NULL || (!IsAvailable()) ){
 		//	DLLが読み込まれていなければ何もしない
@@ -137,7 +138,7 @@ bool CDllImp::DeinitDll(bool force)
 	//DLL解放
 	if( ret || force ){
 		//DLL名を解放
-		m_strLoadedDllName = L"";
+		m_strLoadedDllName.clear();
 
 		//DLL解放
 		::FreeLibrary( m_hInstance );

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,7 +23,26 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
+#define SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #pragma once
+
+#include "debug/Debug2.h"
+#include "config/maxdata.h"
+
+#include "env/CAppNodeManager.h"	//SShare_Nodes
+//2007.09.28 kobake Common構造体をCShareData.hから分離
+#include "env/CommonSetting.h"
+#include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
+#include "env/CTagJumpManager.h"		//SShare_TagJump
+#include "env/CFileNameManager.h"		//SShare_FileNameManagement
+
+#include "EditInfo.h"
+#include "types/CType.h" // STypeConfig
+#include "print/CPrint.h" //PRINTSETTING
+#include "recent/SShare_History.h"	//SShare_History
+#include "charset/charcode.h"
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         アクセサ                            //
@@ -63,20 +83,6 @@ inline void SetDllShareData(DLLSHAREDATA* pShareData)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // 2010.04.19 Moca CShareDataからDLLSHAREDATAメンバのincludeをDLLSHAREDATA.hに移動
-
-#include "config/maxdata.h"
-
-#include "env/CAppNodeManager.h"	//SShare_Nodes
-//2007.09.28 kobake Common構造体をCShareData.hから分離
-#include "env/CommonSetting.h"
-#include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
-#include "env/CTagJumpManager.h"		//SShare_TagJump
-#include "env/CFileNameManager.h"		//SShare_FileNameManagement
-
-#include "EditInfo.h"
-#include "types/CType.h" // STypeConfig
-#include "print/CPrint.h" //PRINTSETTING
-#include "recent/SShare_History.h"	//SShare_History
 
 //! 共有フラグ
 struct SShare_Flags{
@@ -142,6 +148,9 @@ struct DLLSHAREDATA{
 	SShare_Nodes				m_sNodes;
 	SShare_Handles				m_sHandles;
 
+	SFilePath					m_szIniFile;							//!< EXE基準のiniファイルパス
+	SFilePath					m_szPrivateIniFile;						//!< マルチユーザー用のiniファイルパス
+
 	SCharWidthCache				m_sCharWidth;							//!< 文字半角全角キャッシュ
 	DWORD						m_dwCustColors[16];						//!< フォントDialogカスタムパレット
 
@@ -161,7 +170,6 @@ struct DLLSHAREDATA{
 	//その他
 	SShare_SearchKeywords		m_sSearchKeywords;
 	SShare_TagJump				m_sTagJump;
-	SShare_FileNameManagement	m_sFileNameManagement;
 	SShare_History				m_sHistory;
 
 	//外部コマンド実行ダイアログのオプション
@@ -178,11 +186,18 @@ struct DLLSHAREDATA{
 };
 
 class CShareDataLockCounter{
+	using Me = CShareDataLockCounter;
+
 public:
 	CShareDataLockCounter();
+	CShareDataLockCounter(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CShareDataLockCounter(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CShareDataLockCounter();
 
 	static int GetLockCounter();
 	static void WaitLock( HWND hwndParent, CShareDataLockCounter** ppLock = NULL );
 private:
 };
+#endif /* SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_ */

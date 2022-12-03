@@ -10,6 +10,7 @@
 	Copyright (C) 2002, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, Uchi, Beta.Ito, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -26,8 +27,13 @@
 #include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include <memory>
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 using std::wstring;
 
@@ -511,7 +517,7 @@ bool CDlgTypeList::InitializeType( void )
 		return false;
 	}
 //	_DefaultConfig(&types);		//規定値をコピー
-	std::unique_ptr<STypeConfig> type(new STypeConfig());
+	auto type = std::make_unique<STypeConfig>();
 	if( 0 != iDocType ){
 		CDocTypeManager().GetTypeConfig(CTypeConfig(0), *type); 	// 基本をコピー
 
@@ -626,8 +632,8 @@ bool CDlgTypeList::UpType()
 		// 基本の場合には何もしない
 		return true;
 	}
-	std::unique_ptr<STypeConfig> type1(new STypeConfig());
-	std::unique_ptr<STypeConfig> type2(new STypeConfig());
+	auto type1 = std::make_unique<STypeConfig>();
+	auto type2 = std::make_unique<STypeConfig>();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), *type1);
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType - 1), *type2);
 	--(type1->m_nIdx);
@@ -648,8 +654,8 @@ bool CDlgTypeList::DownType()
 		// 基本、最後の場合には何もしない
 		return true;
 	}
-	std::unique_ptr<STypeConfig> type1(new STypeConfig());
-	std::unique_ptr<STypeConfig> type2(new STypeConfig());
+	auto type1 = std::make_unique<STypeConfig>();
+	auto type2 = std::make_unique<STypeConfig>();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), *type1);
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType + 1), *type2);
 	++(type1->m_nIdx);
@@ -860,7 +866,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	{
 		if( szProgID_HKLM[0] != L'\0' )
 		{
-			if( (errorCode = CopyRegistry(HKEY_LOCAL_MACHINE, (sBasePath + szProgID_HKLM).c_str(), HKEY_CURRENT_USER, sProgIDPath.c_str())) != 0 ){ return errorCode; }
+			if( (errorCode = CopyRegistry(HKEY_LOCAL_MACHINE, sBasePath + szProgID_HKLM, HKEY_CURRENT_USER, sProgIDPath)) != 0 ){ return errorCode; }
 		}
 	}
 
@@ -949,7 +955,6 @@ int UnregistExt(LPCWSTR sExt)
 	CharLower(szLowerExt);
 
 	wstring sDotExt = sBasePath + L"." + szLowerExt;
-	wstring sGenProgID = wstring() + szLowerExt + L"file";
 
 	CRegKey keyExt;
 	if((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE)) != 0)
@@ -968,7 +973,6 @@ int UnregistExt(LPCWSTR sExt)
 	wstring sProgIDPath = sBasePath + szProgID;
 	wstring sShellPath = sProgIDPath + L"\\shell";
 	wstring sShellActionPath = sShellPath + L"\\" + ACTION_NAME;
-	wstring sShellActionCommandPath = sShellActionPath + L"\\command";
 	wstring sBackupPath = sShellActionPath + ACTION_BACKUP_PATH;
 
 	CRegKey keyShellAction;
@@ -1041,7 +1045,6 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	CharLower(szLowerExt);
 
 	wstring sDotExt = sBasePath + L"." + szLowerExt;
-	wstring sGenProgID = wstring() + szLowerExt + L"file";
 
 	CRegKey keyExt;
 	if((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ)) != 0)

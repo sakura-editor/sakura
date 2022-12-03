@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSAKURAENVIRONMENT_4B226B3A_5208_4C29_9D2E_E42DA8EFD875_H_
+#define SAKURA_CSAKURAENVIRONMENT_4B226B3A_5208_4C29_9D2E_E42DA8EFD875_H_
 #pragma once
 
 #include <string>
@@ -43,3 +46,4 @@ private:
 //ウィンドウ管理
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 BOOL IsSakuraMainWindow( HWND hWnd );
+#endif /* SAKURA_CSAKURAENVIRONMENT_4B226B3A_5208_4C29_9D2E_E42DA8EFD875_H_ */

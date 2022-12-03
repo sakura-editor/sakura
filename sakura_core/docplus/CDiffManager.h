@@ -3,6 +3,7 @@
 //2008.02.23 kobake 大整理
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,10 +25,14 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDIFFMANAGER_65AC06D5_0F1A_4E27_94E5_53F786F76D9F_H_
+#define SAKURA_CDIFFMANAGER_65AC06D5_0F1A_4E27_94E5_53F786F76D9F_H_
 #pragma once
 
 #include "view/colors/EColorIndexType.h"
 #include "util/design_template.h" //TSingleton
+#include "basis/SakuraBasis.h"
+#include "_main/global.h"
 
 class CDocLine;
 class CDocLineMgr;
@@ -45,7 +50,7 @@ enum EDiffMark : char {
 //! DIFF挙動の管理
 class CDiffManager : public TSingleton<CDiffManager>{
 	friend class TSingleton<CDiffManager>;
-	CDiffManager(){}
+	CDiffManager() = default;
 
 public:
 	void SetDiffUse(bool b){ m_bIsDiffUse = b; }
@@ -95,3 +100,4 @@ public:
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
+#endif /* SAKURA_CDIFFMANAGER_65AC06D5_0F1A_4E27_94E5_53F786F76D9F_H_ */

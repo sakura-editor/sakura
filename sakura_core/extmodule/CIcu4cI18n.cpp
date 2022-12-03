@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2020 Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,10 +30,6 @@ CIcu4cI18n::CIcu4cI18n() noexcept
 	, _ucsdet_setText(nullptr)
 	, _ucsdet_detect(nullptr)
 	, _ucsdet_close(nullptr)
-{
-}
-
-CIcu4cI18n::~CIcu4cI18n() noexcept
 {
 }
 

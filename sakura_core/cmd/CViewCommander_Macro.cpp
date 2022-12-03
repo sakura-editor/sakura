@@ -13,6 +13,7 @@
 	Copyright (C) 2006, maru
 	Copyright (C) 2007, ryoji, genta
 	Copyright (C) 2008, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -31,6 +32,7 @@
 #include "util/module.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
+#include "String_define.h"
 
 /* キーマクロの記録開始／終了 */
 void CViewCommander::Command_RECKEYMACRO( void )
@@ -38,7 +40,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
-		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダに「RecKey.mac」という名で保存
+		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダーに「RecKey.mac」という名で保存
 		WCHAR szInitDir[MAX_PATH];
 		int nRet;
 		// 2003.06.23 Moca 記録用キーマクロのフルパスをCShareData経由で取得
@@ -96,7 +98,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
 		GetInidirOrExedir( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );
 	}else{
-		wcscpy( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );	/* マクロ用フォルダ */
+		wcscpy( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );	/* マクロ用フォルダー */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -108,7 +110,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;
 	}
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+	/* ファイルのフルパスを、フォルダーとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 //	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, NULL );
 //	wcscat( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, L"\\" );
@@ -141,7 +143,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	if( _IS_REL_PATH( pszFolder ) ){
 		GetInidirOrExedir( szInitDir, pszFolder );
 	}else{
-		wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダ */
+		wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダー */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -206,8 +208,8 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 {
 	CDlgOpenFile	cDlgOpenFile;
 	WCHAR			szPath[_MAX_PATH + 1];
-	WCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダ
-	const WCHAR*	pszFolder;					//マクロフォルダ
+	WCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダー
+	const WCHAR*	pszFolder;					//マクロフォルダー
 	HWND			hwndRecordingKeyMacro = NULL;
 
 	if ( !pszPath ) {
@@ -217,7 +219,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 		if( _IS_REL_PATH( pszFolder ) ){
 			GetInidirOrExedir( szInitDir, pszFolder );
 		}else{
-			wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダ */
+			wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダー */
 		}
 		/* ファイルオープンダイアログの初期化 */
 		cDlgOpenFile.Create(

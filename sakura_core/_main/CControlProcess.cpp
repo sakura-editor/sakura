@@ -9,6 +9,7 @@
 	Copyright (C) 2002, aroka CProcessより分離, YAZAKI
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -21,9 +22,87 @@
 #include "CCommandLine.h"
 #include "env/CShareData_IO.h"
 #include "debug/CRunningTimer.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
+#include "env/CShareData.h"
+#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
+#include "config/system_constants.h"
+#include "String_define.h"
 
 //-------------------------------------------------
+
+/*!
+	@brief iniファイルパスを取得する
+ */
+std::filesystem::path CControlProcess::GetIniFileName() const
+{
+	if (GetShareDataPtr()->IsPrivateSettings()) {
+		return CProcess::GetIniFileName();
+	}
+
+	// exe基準のiniファイルパスを得る
+	auto iniPath = GetExeFileName().replace_extension(L".ini");
+
+	// マルチユーザー用のiniファイルパス
+	//		exeと同じフォルダーに置かれたマルチユーザー構成設定ファイル（sakura.exe.ini）の内容
+	//		に従ってマルチユーザー用のiniファイルパスを決める
+	auto exeIniPath = GetExeFileName().concat(L".ini");
+	if (bool isMultiUserSeggings = ::GetPrivateProfileInt(L"Settings", L"MultiUser", 0, exeIniPath.c_str()); isMultiUserSeggings) {
+		return GetPrivateIniFileName(exeIniPath, iniPath.filename());
+	}
+
+	const auto filename = iniPath.filename();
+	iniPath.remove_filename();
+
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		iniPath.append(pCommandLine->GetProfileName());
+	}
+
+	return iniPath.append(filename.c_str());
+}
+
+/*!
+	@brief マルチユーザー用のiniファイルパスを取得する
+ */
+std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const
+{
+	const auto nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str());
+	KNOWNFOLDERID refFolderId;
+	switch (nFolder) {
+	case 1:
+	case 3:
+		refFolderId = FOLDERID_Profile;			// ユーザーのルートフォルダー
+		break;
+	case 2:
+		refFolderId = FOLDERID_Documents;		// ユーザーのドキュメントフォルダー
+		break;
+
+	default:
+		refFolderId = FOLDERID_RoamingAppData;	// ユーザーのアプリケーションデータフォルダー
+		break;
+	}
+
+	PWSTR pFolderPath = nullptr;
+	::SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT_PATH, NULL, &pFolderPath);
+	std::filesystem::path privateIniPath(pFolderPath);
+	::CoTaskMemFree(pFolderPath);
+
+	std::wstring subFolder(_MAX_DIR, L'\0');
+	::GetPrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", subFolder.data(), (DWORD)subFolder.capacity(), exeIniPath.c_str());
+	subFolder.assign(subFolder.data());
+	if (subFolder.empty())
+	{
+		subFolder = L"sakura";
+	}
+	if (nFolder == 3) {
+		privateIniPath.append("Desktop");
+	}
+	privateIniPath.append(subFolder);
+
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		privateIniPath.append(pCommandLine->GetProfileName());
+	}
+
+	return privateIniPath.append(filename.c_str());
+}
 
 /*!
 	@brief コントロールプロセスを初期化する
@@ -39,7 +118,7 @@
 */
 bool CControlProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
 	// アプリケーション実行検出用(インストーラで使用)
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
@@ -86,26 +165,21 @@ bool CControlProcess::InitializeProcess()
 	::SetCurrentDirectory( szDir );
 
 	/* 共有データのロード */
-	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
-	
-	if( !CShareData_IO::LoadShareData() || CCommandLine::getInstance()->IsWriteQuit() ){
+	if( !CShareData_IO::LoadShareData() ){
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
-		if( CCommandLine::getInstance()->IsWriteQuit() ){
-			return false;
-		}
 	}
 
 	/* 言語を選択する */
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 	RefreshString();
 
-	MY_TRACETIME( cRunningTimer, "Before new CControlTray" );
+	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
 	m_pcTray = new CControlTray;
 
-	MY_TRACETIME( cRunningTimer, "After new CControlTray" );
+	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
 
 	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
 	if( !hwnd ){

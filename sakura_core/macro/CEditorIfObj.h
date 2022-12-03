@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CEDITORIFOBJ_1C8AA37E_D9FB_4C26_AE83_22E62D9B7C3D_H_
+#define SAKURA_CEDITORIFOBJ_1C8AA37E_D9FB_4C26_AE83_22E62D9B7C3D_H_
 #pragma once
 
 #include "_os/OleTypes.h"
@@ -42,3 +45,4 @@ public:
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);	//関数を処理する
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize);	//コマンドを処理する
 };
+#endif /* SAKURA_CEDITORIFOBJ_1C8AA37E_D9FB_4C26_AE83_22E62D9B7C3D_H_ */

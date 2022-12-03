@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOLOR_COMMENT_C056FE79_A77B_4451_AA5E_1FA5517C0EC1_H_
+#define SAKURA_CCOLOR_COMMENT_C056FE79_A77B_4451_AA5E_1FA5517C0EC1_H_
 #pragma once
 
 #include "view/colors/CColorStrategy.h"
@@ -78,3 +81,4 @@ private:
 	const CBlockComment* m_pcBlockComment;
 	int m_nCOMMENTEND;
 };
+#endif /* SAKURA_CCOLOR_COMMENT_C056FE79_A77B_4451_AA5E_1FA5517C0EC1_H_ */

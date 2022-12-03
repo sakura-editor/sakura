@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief WSHインタフェースオブジェクト基本クラス
+	@brief WSHインターフェースオブジェクト基本クラス
 
 	@date 2009.10.29 syat CWSH.cppから切り出し
 
@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,6 +36,9 @@
 */
 #include "StdAfx.h"
 #include "macro/CIfObj.h"
+
+#include "debug/Debug1.h"
+#include "debug/Debug2.h"
 
 //トレースメッセージ有無
 #if defined( _DEBUG )
@@ -253,7 +257,7 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetNames(
 }
 
 /////////////////////////////////////////////
-//インタフェースオブジェクト
+//インターフェースオブジェクト
 
 //コンストラクタ
 CIfObj::CIfObj(const wchar_t* name, bool isGlobal)

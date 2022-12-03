@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,10 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_
+#define SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_
 #pragma once
 
-#include "recent/CRecent.h"
 #include "dlg/CDialog.h"
+#include "recent/CRecentSearch.h"
 
 class CEditWnd;
 class CImageListMgr;
@@ -74,7 +77,7 @@ private:
 	//フォント
 	HFONT		m_hFontSearchBox;	//!< 検索コンボボックスのフォント
 
-	SComboBoxItemDeleter	m_comboDel;
 	CRecentSearch			m_cRecentSearch;
 	CImageListMgr*			m_pcIcons;
 };
+#endif /* SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_ */

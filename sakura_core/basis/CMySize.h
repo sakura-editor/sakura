@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CMYSIZE_E407E800_A14E_408D_966A_E626DE7ECA01_H_
+#define SAKURA_CMYSIZE_E407E800_A14E_408D_966A_E626DE7ECA01_H_
 #pragma once
 
 #include <Windows.h> //SIZE
@@ -29,7 +32,7 @@
 class CMySize : public SIZE{
 public:
 	//コンストラクタ・デストラクタ
-	CMySize(){} //※初期化なし
+	CMySize() : CMySize(0, 0) {}
 	CMySize(int _cx,int _cy){ cx=_cx; cy=_cy; }
 	CMySize(const SIZE& rhs){ cx=rhs.cx; cy=rhs.cy; }
 
@@ -40,3 +43,4 @@ public:
 	bool operator == (const SIZE& rhs) const{ return cx==rhs.cx && cy==rhs.cy; }
 	bool operator != (const SIZE& rhs) const{ return !operator==(rhs); }
 };
+#endif /* SAKURA_CMYSIZE_E407E800_A14E_408D_966A_E626DE7ECA01_H_ */

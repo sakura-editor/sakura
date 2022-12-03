@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -63,10 +64,11 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	//マクロ
 	m_pcSMacroMgr = new CSMacroMgr();
 
+	//ドキュメントの作成
+	m_pcEditDoc->Create();
+
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
-
-	m_pcEditDoc->Create( m_pcEditWnd );
 	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
 
 	//MRU管理

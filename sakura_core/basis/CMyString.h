@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,11 +23,14 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_
+#define SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_
 #pragma once
 
 #include <string>
 #include "util/string_ex.h"
 #include "util/StaticType.h"
+#include "config/maxdata.h"
 
 #define m_delete2(p) { if(p){ delete[] p; p=0; } }
 
@@ -42,11 +46,11 @@ class CFilePath : public StaticString<WCHAR,_MAX_PATH>{
 private:
 	typedef StaticString<WCHAR,_MAX_PATH> Super;
 public:
-	CFilePath() : Super() { }
+	CFilePath() = default;
 	CFilePath(const WCHAR* rhs) : Super(rhs) { }
 
-	bool IsValidPath() const{ return At(0)!=L'\0'; }
-	std::wstring GetDirPath() const
+	[[nodiscard]] bool IsValidPath() const{ return At(0)!=L'\0'; }
+	[[nodiscard]] std::wstring GetDirPath() const
 	{
 		WCHAR	szDirPath[_MAX_PATH];
 		WCHAR	szDrive[_MAX_DRIVE];
@@ -56,22 +60,26 @@ public:
 		wcscat( szDirPath, szDir );
 		return szDirPath;
 	}
+
 	//拡張子を取得する
-	LPCWSTR GetExt( bool bWithoutDot = false ) const
+	[[nodiscard]] LPCWSTR GetExt( bool bWithoutDot = false ) const
 	{
-		const WCHAR* head = c_str();
-		const WCHAR* p = wcschr(head,L'\0') - 1;
-		while(p>=head){
-			if(*p==L'.')break;
-			if(*p==L'\\')break;
-			if(*p==L'/')break;
-			p--;
+		// 文字列の末尾アドレスを取得
+		const WCHAR* tail = c_str() + Length();
+
+		// 文字列末尾から逆方向に L'.' を検索
+		if (const auto *p = ::wcsrchr(c_str(), L'.')) {
+			// L'.'で始まる文字列がパス区切りを含まない場合のみ「拡張子あり」と看做す
+			if (const bool hasExt = !::wcspbrk(p, L"\\/"); hasExt && !bWithoutDot) {
+				return p;
+			}
+			else if (hasExt && p < tail) {
+				return p + 1;		//bWithoutDot==trueならドットなしを返す
+			}
 		}
-		if(p>=head && *p==L'.'){
-			return bWithoutDot ? p+1 : p;	//bWithoutDot==trueならドットなしを返す
-		}else{
-			return wcschr(head,L'\0');
-		}
+
+		// 文字列末尾のアドレスを返す
+		return tail;
 	}
 };
 
@@ -106,3 +114,4 @@ private:
 	WCHAR	m_szCmdLine[1024];
 	WCHAR*	m_pHead;
 };
+#endif /* SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_ */

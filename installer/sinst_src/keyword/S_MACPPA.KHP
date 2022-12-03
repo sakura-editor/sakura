@@ -101,8 +101,8 @@ S_FileReopenUTF7 /// void  S_FileReopenUTF7 ( ) ；\nUTF-7で開き直す
 S_Print /// void  S_Print ( ) ；\n印刷
 S_PrintPreview /// void  S_PrintPreview ( ) ；\n印刷プレビュー
 S_PrintPageSetup /// void  S_PrintPageSetup ( ) ；\n印刷ページ設定
-S_OpenHfromtoC /// void  S_OpenHfromtoC ( ) ；\n同名のC/C++ヘッダ(ソース)を開く
-S_OpenHHpp /// void  S_OpenHHpp ( ) ；\n同名のC/C++ヘッダファイルを開く
+S_OpenHfromtoC /// void  S_OpenHfromtoC ( ) ；\n同名のC/C++ヘッダー(ソース)を開く
+S_OpenHHpp /// void  S_OpenHHpp ( ) ；\n同名のC/C++ヘッダーファイルを開く
 S_OpenCCpp /// void  S_OpenCCpp ( ) ；\n同名のC/C++ソースファイルを開く
 S_ActivateSQLPLUS /// void  S_ActivateSQLPLUS ( ) ；\nOracle SQL*Plusをアクティブ表示
 S_ExecSQLPLUS /// void  S_ExecSQLPLUS ( ) ；\nOracle SQL*Plusで実行
@@ -249,7 +249,7 @@ S_Replace /// void  S_Replace ( S1 ， S2 ， i1 ) ；\n置換(実行)\n※ 置�
 S_ReplaceAll /// void  S_ReplaceAll ( S1 ， S2 ， i1 ) ；\nすべて置換(実行)\n※ 置換ダイアログで [すべて置換(&A)] ボタンを押した時の動作。\n・[置換(&R)] ボタンを押した時の動作 → S_Replace ( ) ；\n・[上検索(&U)] ボタンを押した時の動作 → S_SearchPrev ( ) ；\n・[下検索(&D)] ボタンを押した時の動作 → S_SearchNext ( ) ；\n・[該当行マーク(&B)] ボタンを押した時の動作 → S_BookmarkPattern ( ) ；\n\nS1：文字列：置換前の文字列。※空文字列 (’’) は受け付けない。\nS2：文字列：置換後の文字列。\n\ni1：整数数値：置換ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：単語単位で探す\n    bit1：英大文字と小文字を区別する\n    bit2：正規表現\n    bit3：見つからないときにメッセージを表示\n    bit4：置換ダイアログを自動的に閉じる\n    bit5：先頭（末尾）から再検索する\n    bit6：クリップボードから貼り付ける\n\n    bit7：0=ファイル全体 / 1=選択範囲\n    bit9,8：00=選択文字 / 01=選択始点挿入 / 10=選択終点追加\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
 S_SearchClearMark /// void  S_SearchClearMark ( ) ；\n検索マークのクリア
 S_SearchStartPos /// void  S_SearchStartPos ( ) ；\n検索開始位置へ戻る
-S_Grep /// void  S_Grep ( S1 ， S2 ， S3 ， i1 ) ；\nGrep\n\nS1：文字列：検索文字列\nS2：文字列：検索対象ファイル\nS3：文字列：検索対象フォルダ\n\ni1：整数数値：Grep ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：サブフォルダからも検索する\n    bit1：- No Use -\n    bit2：英大文字と小文字を区別する\n    bit3：正規表現\n    bit4：文字コードセット自動判別\n\n    bit5：0=該当行 / 1=該当部分\n    bit6：0=ノーマル / 1=ファイル毎\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_Grep /// void  S_Grep ( S1 ， S2 ， S3 ， i1 ) ；\nGrep\n\nS1：文字列：検索文字列\nS2：文字列：検索対象ファイル\nS3：文字列：検索対象フォルダー\n\ni1：整数数値：Grep ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：サブフォルダーからも検索する\n    bit1：- No Use -\n    bit2：英大文字と小文字を区別する\n    bit3：正規表現\n    bit4：文字コードセット自動判別\n\n    bit5：0=該当行 / 1=該当部分\n    bit6：0=ノーマル / 1=ファイル毎\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
 S_Jump /// void  S_Jump ( i1 ， i2 ) ；\n指定行ヘジャンプ\n\ni1：整数数値：ジャンプ先の行番号を10進数数値で指定する。\n\ni2：整数数値：指定行へジャンプ ダイアログの状態を10進数数値で指定する。\n{\n    bit0：0=折り返し単位の行番号 / 1=改行単位の行番号\n    bit1：PL/SQLコンパイルエラー行を処理する - 0=OFF / 1=ON\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
 S_Outline /// void  S_Outline ( ) ；\nアウトライン解析
 S_TagJump /// void  S_TagJump ( ) ；\nタグジャンプ機能

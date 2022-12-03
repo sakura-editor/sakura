@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2014, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGFILETREE_58915B5A_6480_4286_AB4F_28A7A6502AEC_H_
+#define SAKURA_CDLGFILETREE_58915B5A_6480_4286_AB4F_28A7A6502AEC_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -68,3 +71,4 @@ private:
 
 	int					m_bInMove;
 };
+#endif /* SAKURA_CDLGFILETREE_58915B5A_6480_4286_AB4F_28A7A6502AEC_H_ */

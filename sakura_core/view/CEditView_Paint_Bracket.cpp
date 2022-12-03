@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -121,12 +122,11 @@ void CEditView::DrawBracketPair( bool bDraw )
 	//   アクティブなペインではない )	場合は終了
 	if( bDraw
 	 &&( GetSelectionInfo().IsTextSelected() || GetSelectionInfo().m_bDrawSelectArea || !m_bDrawBracketPairFlag
-	 || ( m_pcEditWnd->GetActivePane() != m_nMyIndex ) ) ){
+	 || ( GetEditWnd().GetActivePane() != m_nMyIndex ) ) ){
 		return;
 	}
 
-	CGraphics gr;
-	gr.Init(::GetDC(GetHwnd()));
+	CGraphics gr(::GetDC(GetHwnd()));
 	bool bCaretChange = false;
 	gr.SetTextBackTransparent(true);
 
@@ -238,7 +238,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 					cTextType.RewindGraphicsState(gr);
 				}
 
-				if( ( m_pcEditWnd->GetActivePane() == m_nMyIndex )
+				if( ( GetEditWnd().GetActivePane() == m_nMyIndex )
 					&& ( ( ptColLine.y == GetCaret().GetCaretLayoutPos().GetY() ) || ( ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY() ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
 					GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 				}
@@ -321,7 +321,7 @@ bool CEditView::SearchBracket(
 	CLogicPoint ptPos;
 
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( ptLayout, &ptPos );
-	const wchar_t *cline = m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2())->GetDocLineStrWithEOL(&len);
+	const wchar_t *cline = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2()), &len);
 
 	//	Jun. 19, 2000 genta
 	if( cline == NULL )	//	最後の行に本文がない場合

@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2002, aroka
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,9 +30,12 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_
+#define SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_
 #pragma once
 
 #include <vector>
+#include "basis/SakuraBasis.h"
 
 /*!
 	行マークを管理するクラス。
@@ -134,3 +138,4 @@ public:
 	void Add(const CMark& m) override;	//!<	要素の追加
 	void Expire(void) override;	//!<	要素数の調整
 };
+#endif /* SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_ */

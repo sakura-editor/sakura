@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,7 +33,7 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* Perl */
-//Jul. 08, 2001 JEPRO Perl ユーザに贈る
+//Jul. 08, 2001 JEPRO Perl ユーザーに贈る
 //Jul. 08, 2001 JEPRO 追加
 void CType_Perl::InitTypeConfigImp(STypeConfig* pType)
 {

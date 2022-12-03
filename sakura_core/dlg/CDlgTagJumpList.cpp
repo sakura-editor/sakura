@@ -10,6 +10,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2010, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -41,6 +42,12 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/window.h"
+#include "util/tchar_convert.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "mem/CNativeA.h"
+#include "String_define.h"
+
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -522,14 +529,23 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		bRet = FALSE;	//for set focus
 	}
 
-	m_comboDel = SComboBoxItemDeleter();
-	m_comboDel.pRecent = &m_cRecentKeyword;
-	SetComboBoxDeleter(hwndKey, &m_comboDel);
+	SetComboBoxDeleter(hwndKey, &m_cRecentKeyword);
 
 	/* 基底クラスメンバ */
 	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 	
 	return bRet;
+}
+
+BOOL CDlgTagJumpList::OnDestroy( void )
+{
+	CDialog::OnDestroy();
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog;
+	rect.left = m_xPos;
+	rect.top = m_yPos;
+	rect.right = rect.left + m_nWidth;
+	rect.bottom = rect.top + m_nHeight;
+	return TRUE;
 }
 
 BOOL CDlgTagJumpList::OnBnClicked( int wID )
@@ -596,8 +612,6 @@ BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
 
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog );
-
 	RECT  rc;
 	POINT ptNew;
 	::GetWindowRect( GetHwnd(), &rc );
@@ -609,13 +623,6 @@ BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return TRUE;
-}
-
-BOOL CDlgTagJumpList::OnMove( WPARAM wParam, LPARAM lParam )
-{
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog );
-
-	return CDialog::OnMove( wParam, lParam );
 }
 
 BOOL CDlgTagJumpList::OnMinMaxInfo( LPARAM lParam )
@@ -880,7 +887,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 	if( m_pcList->GetCount() <= 0 ) return -1;	//選べません。
 	if( NULL == m_pszFileName ) return 0;
 
-	std::unique_ptr<TagPathInfo> mem_lpPathInfo( new TagPathInfo );
+	auto mem_lpPathInfo = std::make_unique<TagPathInfo>();
 	TagPathInfo* lpPathInfo= mem_lpPathInfo.get();
 	int nMatch1 = -1;
 	int nMatch2 = -1;
@@ -1129,7 +1136,7 @@ int CDlgTagJumpList::find_key_core(
 	}
 	
 	WCHAR	szTagFile[1024];		//タグファイル
-	WCHAR	szNextPath[1024];		//次検索フォルダ
+	WCHAR	szNextPath[1024];		//次検索フォルダー
 	szNextPath[0] = L'\0';
 	vector_ex<std::wstring> seachDirs;
 
@@ -1609,7 +1616,7 @@ int CDlgTagJumpList::CalcMaxUpDirectory( const WCHAR* p )
 {
 	int loop = CalcDirectoryDepth( p );
 	if( loop <  0 ) loop =  0;
-	if( loop > (_MAX_PATH/2) ) loop = (_MAX_PATH/2);	//\A\B\C...のようなとき1フォルダで2文字消費するので...
+	if( loop > (_MAX_PATH/2) ) loop = (_MAX_PATH/2);	//\A\B\C...のようなとき1フォルダーで2文字消費するので...
 	return loop;
 }
 
@@ -1668,7 +1675,7 @@ WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHA
 }
 
 /*
-	@param dir [in,out] フォルダのパス 
+	@param dir [in,out] フォルダーのパス 
 	in == C:\dir\subdir\
 	out == C:\dir\
 */

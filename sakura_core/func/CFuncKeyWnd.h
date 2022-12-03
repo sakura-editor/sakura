@@ -8,10 +8,13 @@
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2006, aroka
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CFUNCKEYWND_2EB0FD88_ABBB_4280_BEEA_46E8468E4550_H_
+#define SAKURA_CFUNCKEYWND_2EB0FD88_ABBB_4280_BEEA_46E8468E4550_H_
 #pragma once
 
 #include "window/CWnd.h"
@@ -61,7 +64,6 @@ protected:
 	int CalcButtonSize( void );	/* ボタンのサイズを計算 */
 
 	/* 仮想関数 */
-	void AfterCreateWindow( void ) override{}	// ウィンドウ作成後の処理	// 2007.03.13 ryoji 可視化しない
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	// WM_TIMERタイマーの処理
@@ -69,3 +71,4 @@ protected:
 	LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;// WM_SIZE処理
 	LRESULT OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;// WM_DESTROY処理
 };
+#endif /* SAKURA_CFUNCKEYWND_2EB0FD88_ABBB_4280_BEEA_46E8468E4550_H_ */

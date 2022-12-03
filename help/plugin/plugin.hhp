@@ -10,11 +10,11 @@ Display compile progress=No
 Error log file=Compile.Log
 Full-text search=Yes
 Index file=plugin.hhk
-Language=0x411 “ú–{Œê
-Title=ƒTƒNƒ‰ƒGƒfƒBƒ^ ƒvƒ‰ƒOƒCƒ“Žd—l
+Language=0x411 æ—¥æœ¬èªž
+Title=ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ä»•æ§˜
 
 [WINDOWS]
-XHP="ƒvƒ‰ƒOƒCƒ“Žd—l","plugin.hhc","plugin.hhk","Text/index.html","Text/index.html",,,,,0x61720,200,0x10384e,[50,50,850,550],0x0,0x0,,,,,0
+XHP="ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ä»•æ§˜","plugin.hhc","plugin.hhk","Text/index.html","Text/index.html",,,,,0x61720,200,0x10384e,[50,50,850,550],0x0,0x0,,,,,0
 $global_Web="Remote URL",,,,,,,,,,,0x383c,[125,144,721,602],,,,,,,0
 
 

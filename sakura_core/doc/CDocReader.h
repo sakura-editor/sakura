@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,7 +23,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCREADER_0183B68F_2942_40E1_B2A4_59FE0C20268F_H_
+#define SAKURA_CDOCREADER_0183B68F_2942_40E1_B2A4_59FE0C20268F_H_
 #pragma once
+
+#include "basis/SakuraBasis.h"
 
 class CDocLineMgr;
 
@@ -40,3 +45,4 @@ public:
 private:
 	const CDocLineMgr* m_pcDocLineMgr;
 };
+#endif /* SAKURA_CDOCREADER_0183B68F_2942_40E1_B2A4_59FE0C20268F_H_ */

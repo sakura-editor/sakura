@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 #include "CBackupAgent.h"
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*! セーブ前おまけ処理
 	@param pSaveInfo [in] 保存ファイル情報
@@ -255,8 +258,7 @@ int CBackupAgent::MakeBackUp(
 		//@@@ 2001.12.11 start MIK
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
 			WCHAR	szDustPath[_MAX_PATH+1];
-			wcscpy(szDustPath, szPath);
-			szDustPath[wcslen(szDustPath) + 1] = L'\0';
+			::wcscpy_s(szDustPath, szPath);
 			SHFILEOPSTRUCT	fos;
 			fos.hwnd   = CEditWnd::getInstance()->GetHwnd();
 			fos.wFunc  = FO_DELETE;
@@ -295,7 +297,7 @@ int CBackupAgent::MakeBackUp(
 
 	@date 2005.11.29 aroka
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
-	@date 2013.04.15 novice 指定フォルダのメタ文字列展開サポート
+	@date 2013.04.15 novice 指定フォルダーのメタ文字列展開サポート
 
 	@todo Advanced modeでの世代管理
 */
@@ -317,21 +319,21 @@ bool CBackupAgent::FormatBackUpPath(
 	_wsplitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( bup_setting.m_bBackUpFolder
-	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
+	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダーにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
 		WCHAR selDir[_MAX_PATH];
 		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
 			wcscpy( szNewPath, selDir );
 		}
-		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szNewPath );
 	}
 	else{
 		auto_sprintf( szNewPath, L"%s%s", szDrive, szDir );
 	}
 
-	/* 相対フォルダを挿入 */
+	/* 相対フォルダーを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
 		__time64_t 	ltime = 0;
 		struct	tm result = {0};
@@ -425,18 +427,12 @@ bool CBackupAgent::FormatBackUpPath(
 			//	ファイル名のRotationは確認ダイアログの後で行う．
 			{
 				//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
-				WCHAR* ptr;
 				if( bup_setting.GetBackupType() == 3 ){
-					ptr = szExt;
+					// 元の拡張子をクリアする
+					::wcscpy_s(szExt, L"");
 				}
-				else {
-					ptr = szExt + wcslen( szExt );
-				}
-				*ptr   = L'.';
-				*++ptr = bup_setting.GetBackupExtChar();
-				*++ptr = L'0';
-				*++ptr = L'0';
-				*++ptr = L'\0';
+				const WCHAR szBackupExt[] = { L'.', bup_setting.GetBackupExtChar(), L'0', L'0', 0 };
+				::wcscat_s(szExt, szBackupExt);
 			}
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s%s", szFname, szExt ) ){
 				return false;
@@ -445,37 +441,29 @@ bool CBackupAgent::FormatBackUpPath(
 		}
 
 	}else{ // 詳細設定使用する
-		WCHAR szFormat[1024];
-
+		SYSTEMTIME time = {};
 		switch( bup_setting.GetBackupTypeAdv() ){
 		case 4:	//	ファイルの日付，時刻
 			{
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
-				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
-					return false;
-				}
+				time = ctimeLastWrite.GetSYSTEMTIME();
 			}
 			break;
 		case 2:	//	現在の日付，時刻
 		default:
-			{
-				// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
-				SYSTEMTIME	SystemTime;
-				// 2016.07.28 UTC→ローカル時刻に変更
-				::GetLocalTime(&SystemTime);			// 現在時刻を取得
-
-				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
-					return false;
-				}
-			}
+			// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
+			// 2016.07.28 UTC→ローカル時刻に変更
+			::GetLocalTime( &time );			// 現在時刻を取得
 			break;
 		}
 
+		std::wstring formatString = GetDateTimeFormat( bup_setting.m_szBackUpPathAdvanced.c_str(), time );
+
 		{
 			// make keys
-			// $0-$9に対応するフォルダ名を切り出し
+			// $0-$9に対応するフォルダー名を切り出し
 			WCHAR keybuff[1024];
 			wcscpy( keybuff, szDir );
 			CutLastYenFromDirectoryPath( keybuff );
@@ -503,32 +491,30 @@ bool CBackupAgent::FormatBackUpPath(
 			{
 				// $0-$9を置換
 				//wcscpy( szNewPath, L"" );
-				WCHAR *q= szFormat;
-				WCHAR *q2 = szFormat;
+				WCHAR *q = formatString.data();
+				WCHAR *q2 = q;
 				while( *q ){
 					if( *q==L'$' ){
 						++q;
+						if( *q == L'\0' ){
+							break;
+						}
 						if( isdigit(*q) ){
 							q[-1] = L'\0';
-							wcscat( szNewPath, q2 );
-//							if( newPathCount <  auto_strlcat( szNewPath, q2, newPathCount ) ){
-//								return false;
-//							}
-							if( folders[*q-L'0'] != 0 ){
-								wcscat( szNewPath, folders[*q-L'0'] );
-//								if( newPathCount < auto_strlcat( szNewPath, folders[*q-L'0'], newPathCount ) ){
-//									return false;
-//								}
+							if (STRUNCATE == wcsncat_s(szNewPath, newPathCount, q2, _TRUNCATE)) {
+								return false;
+							}
+							if (folders[*q-L'0'] != nullptr && STRUNCATE == wcsncat_s(szNewPath, newPathCount, folders[*q - L'0'], _TRUNCATE)) {
+								return false;
 							}
 							q2 = q+1;
 						}
 					}
 					++q;
 				}
-				wcscat( szNewPath, q2 );
-//				if( newPathCount < auto_strlcat( szNewPath, q2, newPathCount ) ){
-//					return false;
-//				}
+				if (STRUNCATE == wcsncat_s(szNewPath, newPathCount, q2, _TRUNCATE)) {
+					return false;
+				}
 			}
 		}
 		{

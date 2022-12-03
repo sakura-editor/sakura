@@ -10,6 +10,7 @@
 	Copyright (C) 2002, aroka, YAZAKI
 	Copyright (C) 2003, MIK
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,6 +23,10 @@
 #include "outline/CDlgFuncList.h"
 #include "env/DLLSHAREDATA.h"
 #include "uiparts/CGraphics.h"
+#include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
@@ -29,7 +34,6 @@ constexpr auto SPLITTER_MARGIN = 2;
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(L"::CSplitterWnd")
-, m_pcEditWnd(NULL)
 , m_nAllSplitRows(1)					/* 分割行数 */
 , m_nAllSplitCols(1)					/* 分割桁数 */
 , m_nVSplitPos(0)					/* 垂直分割位置 */
@@ -56,17 +60,15 @@ CSplitterWnd::~CSplitterWnd()
 }
 
 /* 初期化 */
-HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd )
+HWND CSplitterWnd::Create( HWND hwndParent )
 {
 	LPCWSTR pszClassName = L"SplitterWndClass";
 
 	/* 初期化 */
-	m_pcEditWnd	= pCEditWnd;
-
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
 	atWork = RegisterWC(
-		hInstance,
+		G_AppInstance(),
 		NULL,// Handle to the class icon.
 		NULL,	//Handle to a small icon
 		NULL,// Handle to the class cursor.
@@ -242,7 +244,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	BOOL				bVUp;
 	BOOL				bHUp;
 	BOOL				bSizeBox;
-	CEditWnd*			pCEditWnd = (CEditWnd*)m_pcEditWnd;
+	CEditWnd*			pCEditWnd = &GetEditWnd();
 	bVUp = FALSE;
 	bHUp = FALSE;
 
@@ -296,7 +298,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 
 	int v;
 	for( v=0; v < m_nChildWndCount; v++ ){
-		pcViewArr[v] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[v], 0 );
+		pcViewArr[v] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[v], GWLP_USERDATA );
 	}
 	::GetClientRect( GetHwnd(), &rc );
 	if( nHorizontal < nLimit ){
@@ -800,14 +802,14 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 /* ウィンドウサイズの変更処理 */
 LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	CEditWnd*	pCEditWnd = (CEditWnd*)m_pcEditWnd;
+	CEditWnd*	pCEditWnd = &GetEditWnd();
 	CEditView*	pcViewArr[MAXCOUNTOFVIEW];
 	int					i;
 	RECT		rcClient;
 	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
 	BOOL		bSizeBox;
 	for( i = 0; i < m_nChildWndCount; ++i ){
-		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], 0 );
+		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], GWLP_USERDATA );
 	}
 
 	/*

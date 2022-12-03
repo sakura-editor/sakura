@@ -8,16 +8,20 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, aroka
 	Copyright (C) 2002, YAZAKI, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CPPAMACROMGR_C2A77DE3_E368_4D65_AC46_7E743718D84A_H_
+#define SAKURA_CPPAMACROMGR_C2A77DE3_E368_4D65_AC46_7E743718D84A_H_
 #pragma once
 
 #include <Windows.h>
 #include "CKeyMacroMgr.h"
 #include "CPPA.h"
+#include "mem/CNativeW.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -48,3 +52,4 @@ public:
 protected:
 	CNativeW m_cBuffer;
 };
+#endif /* SAKURA_CPPAMACROMGR_C2A77DE3_E368_4D65_AC46_7E743718D84A_H_ */

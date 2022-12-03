@@ -17,6 +17,7 @@
 	Copyright (C) 2005, かろと
 	Copyright (C) 2006, かろと
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -47,6 +48,8 @@
 #include "charset/charcode.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "apiwrap/StdControl.h"
+#include "String_define.h"
 
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
 const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
@@ -228,18 +231,18 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 {
 	using namespace WCODE;
 	static const wchar_t* szCRLF = CRLF;		//!< 復帰・改行
-	static const wchar_t szCR[] = {CR,0};				//!< 復帰
-	static const wchar_t szLF[] = {LF,0};				//!< 改行
+	static const wchar_t szCR[] = {CR,0};		//!< 復帰
+	static const wchar_t szLF[] = {LF,0};		//!< 改行
 	static const wchar_t BOT_SUBST[] = L"s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< 行末パターンの置換用パターン
 	int nLen;									//!< szPatternの長さ
 	BREGEXP_W*	sReg = NULL;					//!< コンパイル構造体
-	wchar_t szMsg[80] = L"";						//!< エラーメッセージ
-	wchar_t szAdd2[5] = L"";						//!< 行末あり置換の $数字 格納用
+	wchar_t szAdd2[5] = {};						//!< 行末あり置換の $数字 格納用
 	int nParens = 0;							//!< 検索パターン(szPattern)中の括弧の数(行末時に使用)
-	wchar_t *szNPattern;							//!< 検索パターン
+	wchar_t *szNPattern;						//!< 検索パターン
 
 	nLen = CheckPattern( szPattern );
 	if( (m_ePatType & PAT_BOTTOM) != 0 ) {
+		wchar_t szMsg[80] = {};				//!< エラーメッセージ
 		bool bJustDollar = false;			// 行末指定の$のみであるフラグ($の前に \r\nが指定されていない)
 		szNPattern = MakePatternSub(szPattern, NULL, NULL, nOption);
 		int matched = BMatch( szNPattern, szCRLF, szCRLF+wcslen(szCRLF), &sReg, szMsg );

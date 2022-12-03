@@ -3,15 +3,14 @@ image: Visual Studio 2017
 
 configuration:
   - Release
-  - Debug
 
 platform:
-  - BuildChm
   - Win32
   - x64
 
-# set clone depth
-clone_depth: 5
+# comment-out clone_depth to fetch entire repository.
+## set clone depth
+#clone_depth: 5
 
 # see "Skip commits" at https://www.appveyor.com/docs/how-to/filtering-commits/#commit-files-github-and-bitbucket-only
 skip_commits:
@@ -25,51 +24,29 @@ skip_commits:
 
 install:
 - cmd: |
-    pip install openpyxl --user
+    cinst locale-emulator -y
+    cup vswhere
+    py.exe -m pip install openpyxl --user
+    cup innosetup
+    C:\ProgramData\chocolatey\tools\shimgen.exe --output=C:\ProgramData\chocolatey\bin\ISCC.exe --path="C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:
-  - cmd: cup vswhere
   - cmd: build-all.bat %PLATFORM% %CONFIGURATION%
 
 # to run our custom scripts instead of automatic tests
 test_script:
   - cmd: tests\run-tests.bat %PLATFORM% %CONFIGURATION%
 
-matrix:
-  exclude:
-    - platform: BuildChm
-      configuration: Debug
-
 for:
--
-  matrix:
-    only:
-      - platform: BuildChm
-        configuration: Release
-
-  install:
-    - ps: Set-WinSystemLocale ja-JP
-    - ps: Start-Sleep -s 10
-    - ps: Restart-Computer
-    - ps: Start-Sleep -s 10
-
-  build_script:
-    - cmd: cup vswhere
-    - cmd: build-chm.bat
-    - cmd: help\make-artifacts.bat
-
-  test_script:
-    - cmd: echo This Platform has no tests.
-
-  artifacts:
-    - path: 'sakura-*-Chm.zip*'
-
+# run only for Release
 -
   matrix:
     only:
       - platform: Win32
+        configuration: Release
       - platform: x64
+        configuration: Release
 
   artifacts:
     - path: 'sakura-*$(platform)-$(configuration)*.zip*'

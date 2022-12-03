@@ -1,5 +1,6 @@
-﻿/*
-	Copyright (C) 2018-2020 Sakura Editor Organization
+﻿/*! @file
+
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -21,14 +22,17 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_
+#define SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_
 #pragma once
 
 #include "CRecentImp.h"
 #include "util/StaticType.h"
+#include "config/maxdata.h"
 
 typedef StaticString<WCHAR, MAX_EXCLUDE_PATH> CExcludeFolderString;
 
-//! Excludeフォルダの履歴を管理 (RECENT_FOR_Exclude_FOLDER)
+//! Excludeフォルダーの履歴を管理 (RECENT_FOR_Exclude_FOLDER)
 class CRecentExcludeFolder final : public CRecentImp<CExcludeFolderString, LPCWSTR>{
 public:
 	//生成
@@ -43,3 +47,4 @@ public:
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
 	size_t			GetTextMaxLength() const;
 };
+#endif /* SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_ */

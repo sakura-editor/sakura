@@ -7,6 +7,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -20,6 +21,8 @@
 #include "CGrepAgent.h"
 #include "plugin/CPlugin.h"
 #include "plugin/CJackManager.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*! GREPダイアログの表示
 
@@ -233,7 +236,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		//GOPTオプション
 		WCHAR	pOpt[64];
 		pOpt[0] = L'\0';
-		if( cDlgGrepRep.m_bSubFolder				)wcscat( pOpt, L"S" );	// サブフォルダからも検索する
+		if( cDlgGrepRep.m_bSubFolder				)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
 		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcscat( pOpt, L"W" );	// 単語単位で探す
 		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
 		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
@@ -247,7 +250,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
 		if( cDlgGrepRep.m_bPaste					)wcscat( pOpt, L"C" );	// クリップボードから貼り付け
 		if( cDlgGrepRep.m_bBackup					)wcscat( pOpt, L"O" );	// バックアップ作成
-		if( 0 < wcslen( pOpt ) ){
+		if( pOpt[0] ) {
 			cCmdLine.AppendString( L" -GOPT=" );
 			cCmdLine.AppendString( pOpt );
 		}

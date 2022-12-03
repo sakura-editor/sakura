@@ -16,6 +16,7 @@
 	Copyright (C) 2009, ryoji, genta
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2011, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -30,7 +31,12 @@
 #include "util/window.h"
 #include "util/string_ex2.h"
 #include <limits.h>
+#include "apiwrap/CommonControl.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 /*!
 検索(ボックス)コマンド実行.
@@ -79,6 +85,10 @@ void CViewCommander::Command_SEARCH_NEXT(
 	CLogicRange*	pcSelectLogic		//!< [out] 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
 )
 {
+	// 見つからないときのメッセージをリソースから指定できるようにローカルコピーしておく
+	const std::wstring copyOfNotFoundMessage(pszNotFoundMessage ? pszNotFoundMessage : L"");
+	pszNotFoundMessage = pszNotFoundMessage ? copyOfNotFoundMessage.data() : nullptr;
+
 	bool		bSelecting;
 	bool		bFlag1 = false;
 	bool		bSelectingLock_Old = false;
@@ -647,7 +657,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				cMemRepKey2 = cMemRepKey;
 				cMemRepKey2 += cMemMatchStr;
 			} else if (nReplaceTarget == 2) { // 選択終点へ挿入
-				cMemRepKey2 = cMemMatchStr;
+				cMemRepKey2 = std::move(cMemMatchStr);
 				cMemRepKey2 += cMemRepKey;
 			} else {
 				cMemRepKey2 = cMemRepKey;
@@ -956,10 +966,10 @@ void CViewCommander::Command_REPLACE_ALL()
 			cMemRepKey2 = cmemClip;
 			cMemRepKey2 += cMemMatchStr;
 		} else if (nReplaceTarget == 2) { // 選択終点へ挿入
-			cMemRepKey2 = cMemMatchStr;
+			cMemRepKey2 = std::move(cMemMatchStr);
 			cMemRepKey2 += cmemClip;
 		} else {
-			cMemRepKey2 = cmemClip;
+			cMemRepKey2 = std::move(cmemClip);
 		}
 		// 正規表現オプションの設定2006.04.01 かろと
 		int nFlag = (m_pCommanderView->m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
@@ -1084,8 +1094,8 @@ void CViewCommander::Command_REPLACE_ALL()
 					  out = left < right && (...) というのがまさに対応を迫られた痕跡ですよ。
 				*/
 				const CLayoutInt firstLeft =  ptNewFrom.x - raggedLeftDiff;
-				const CLogicInt  lastRight = (Int)ptNew.x - colDif;
 				if (ptNewFrom.y == ptNew.y) { // 一番よくあるケースではレイアウトの取得・計算が不要。
+					const CLogicInt lastRight = (Int)ptNew.x - colDif;
 					out = firstLeft < sRangeA.GetFrom().x || boxRight.x < lastRight;
 				} else {
 					for (CLayoutInt ll = ptNewFrom.y; ll <= ptNew.y; ++ll) { // ll = Layout Line
@@ -1190,7 +1200,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				cSelectLogic.SetTo(CLogicPoint(CLogicXInt(0), y + CLogicInt(1))); // 次行の行頭
 				if( GetDocument()->m_cDocLineMgr.GetLineCount() == y + CLogicInt(1) ){
 					const CDocLine* pLine = GetDocument()->m_cDocLineMgr.GetLine(y);
-					if( pLine->GetEol() == EOL_NONE ){
+					if( pLine->GetEol().IsNone() ){
 						// EOFは最終データ行にぶら下がりなので、選択終端は行末
 						cSelectLogic.SetTo(CLogicPoint(pLine->GetLengthWithEOL(), y)); // 対象行の行末
 					}

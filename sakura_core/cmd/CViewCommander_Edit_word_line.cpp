@@ -8,6 +8,7 @@
 	Copyright (C) 2003, かろと
 	Copyright (C) 2005, Moca
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -165,7 +166,7 @@ void CViewCommander::Command_LineCutToEnd( void )
 
 	CLayoutPoint ptPos;
 
-	if( EOL_NONE == pCLayout->GetDocLineRef()->GetEol() ){	/* 改行コードの種類 */
+	if( pCLayout->GetDocLineRef()->GetEol().IsNone() ){	/* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(
 				pCLayout->GetDocLineRef()->GetLengthWithEOL(),
@@ -245,7 +246,7 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 
 	CLayoutPoint ptPos;
 
-	if( EOL_NONE == pCLayout->GetDocLineRef()->GetEol() ){	/* 改行コードの種類 */
+	if( pCLayout->GetDocLineRef()->GetEol().IsNone() ){	/* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(
 				pCLayout->GetDocLineRef()->GetLengthWithEOL(),
@@ -299,7 +300,7 @@ void CViewCommander::Command_CUT_LINE( void )
 	// 2007.10.04 ryoji 処理簡素化
 	m_pCommanderView->CopyCurLine(
 		GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy,
-		EOL_UNKNOWN,
+		EEolType::none,
 		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste
 	);
 	Command_DELETE_LINE();
@@ -413,7 +414,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 	||	・最終行でない
 	||	→折り返しである
 	*/
-	bCRLF = ( EOL_NONE == pcLayout->GetLayoutEol() ) ? FALSE : TRUE;
+	bCRLF = ( pcLayout->GetLayoutEol().IsNone() ) ? FALSE : TRUE;
 
 	bAddCRLF = FALSE;
 	if( !bCRLF ){

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CEDITVIEW_PAINT_0202B897_3D47_48DD_9279_45594D80F726_H_
+#define SAKURA_CEDITVIEW_PAINT_0202B897_3D47_48DD_9279_45594D80F726_H_
 #pragma once
 
 class CEditView;
@@ -47,3 +50,4 @@ public:
 		bool bUseMemoryDC //!< メモリDCを使用する
 	);
 };
+#endif /* SAKURA_CEDITVIEW_PAINT_0202B897_3D47_48DD_9279_45594D80F726_H_ */

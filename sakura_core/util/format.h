@@ -2,6 +2,7 @@
 // 2007.10.20 kobake 書式関連
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -23,9 +24,15 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_FORMAT_A006AC9B_ADE2_499D_9CC6_00A649F32B4F_H_
+#define SAKURA_FORMAT_A006AC9B_ADE2_499D_9CC6_00A649F32B4F_H_
 #pragma once
 
+#include <string>
+#include <string_view>
+
 // 20051121 aroka
-bool GetDateTimeFormat( WCHAR* szResult, int size, const WCHAR* format, const SYSTEMTIME& systime );
+std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& systime );
 UINT32 ParseVersion( const WCHAR* ver );	//バージョン番号の解析
 int CompareVersion( const WCHAR* verA, const WCHAR* verB );	//バージョン番号の比較
+#endif /* SAKURA_FORMAT_A006AC9B_ADE2_499D_9CC6_00A649F32B4F_H_ */

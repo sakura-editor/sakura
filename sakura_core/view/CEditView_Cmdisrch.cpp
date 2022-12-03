@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2004, isearch
 	Copyright (C) 2005, genta, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -14,10 +15,13 @@
 #include "StdAfx.h"
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
+#include "charset/codechecker.h"
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h"
 #include "extmodule/CMigemo.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 /*!
 	コマンドコードの変換(ISearch時)及び
@@ -252,7 +256,7 @@ void CEditView::ISearchExit()
 	}
 	m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	GetDllShareData().m_Common.m_sSearch.m_sSearchOption = m_sCurSearchOption;
-	m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
+	GetEditWnd().m_cToolbar.AcceptSharedSearchKey();
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = SEARCH_NONE;
 

@@ -9,13 +9,13 @@
 	Copyright (C) 2000, genta
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "CWnd.h"
-#include "util/os.h" //WM_MOUSEWHEEL
+#include "window/CWnd.h"
 
 /* CWndウィンドウメッセージのコールバック関数 */
 LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -123,7 +123,7 @@ ATOM CWnd::RegisterWC(
 	wc.style = CS_DBLCLKS;
 	wc.lpfnWndProc   = CWndProc;
 	wc.cbClsExtra    = 0;
-	wc.cbWndExtra    = 32;
+	wc.cbWndExtra    = 0;
 	wc.hInstance     = m_hInstance;
 	wc.hIcon         = hIcon;
 	wc.hCursor       = hCursor;
@@ -150,9 +150,6 @@ HWND CWnd::Create(
 )
 {
 	m_hwndParent = hwndParent;
-
-	/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
-	PreviCreateWindow();
 
 	/* 初期ウィンドウサイズ */
 	/* ウィンドウの作成 */
@@ -183,8 +180,6 @@ HWND CWnd::Create(
 		return NULL;
 	}
 
-	/* ウィンドウ作成後の処理 */
-	AfterCreateWindow();
 	return m_hWnd;
 }
 
@@ -193,30 +188,19 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
 	#define CALLH(message, method) case message: return method( hwnd, msg, wp, lp )
 	switch( msg ){
-	CALLH( WM_CREATE			, OnCreate			);
-	CALLH( WM_CLOSE				, OnClose			);
 	CALLH( WM_DESTROY			, OnDestroy			);
 	CALLH( WM_SIZE				, OnSize			);
-	CALLH( WM_MOVE				, OnMove			);
 	CALLH( WM_COMMAND			, OnCommand			);
 	CALLH( WM_LBUTTONDOWN		, OnLButtonDown		);
 	CALLH( WM_LBUTTONUP			, OnLButtonUp		);
 	CALLH( WM_LBUTTONDBLCLK		, OnLButtonDblClk	);
 	CALLH( WM_RBUTTONDOWN		, OnRButtonDown		);
-	CALLH( WM_RBUTTONUP			, OnRButtonUp		);
-	CALLH( WM_RBUTTONDBLCLK		, OnRButtonDblClk	);
 	CALLH( WM_MBUTTONDOWN		, OnMButtonDown		);
-	CALLH( WM_MBUTTONUP			, OnMButtonUp		);
-	CALLH( WM_MBUTTONDBLCLK		, OnMButtonDblClk	);
 	CALLH( WM_MOUSEMOVE			, OnMouseMove		);
-	CALLH( WM_MOUSEWHEEL		, OnMouseWheel		);
-	CALLH( WM_MOUSEHWHEEL		, OnMouseHWheel		);
 	CALLH( WM_PAINT				, OnPaint			);
 	CALLH( WM_TIMER				, OnTimer			);
-	CALLH( WM_QUERYENDSESSION	, OnQueryEndSession	);
 
 	CALLH( WM_MEASUREITEM		, OnMeasureItem		);
-	CALLH( WM_MENUCHAR			, OnMenuChar		);
 	CALLH( WM_NOTIFY			, OnNotify			);	//@@@ 2003.05.31 MIK
 	CALLH( WM_DRAWITEM			, OnDrawItem		);	// 2006.02.01 ryoji
 	CALLH( WM_CAPTURECHANGED	, OnCaptureChanged	);	// 2006.11.30 ryoji

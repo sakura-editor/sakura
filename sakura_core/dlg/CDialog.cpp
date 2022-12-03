@@ -14,19 +14,26 @@
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <algorithm>
+#include <memory>
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "parse/CWordParse.h"
 #include "recent/CRecent.h"
 #include "util/os.h"
 #include "util/shell.h"
 #include "util/module.h"
+#include "util/window.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(
@@ -178,6 +185,8 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// Modified by KEITA for WIN64 2003.9.6
 	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
 
+	m_hFontDialog = UpdateDialogFont( hwndDlg );
+
 	/* ダイアログデータの設定 */
 	SetData();
 
@@ -221,31 +230,67 @@ void CDialog::SetDialogPosSize()
 
 			RECT rc;
 			RECT rcWork;
+			RECT rcMonitor;
 			rc.left = m_xPos;
 			rc.top = m_yPos;
 			rc.right = m_xPos + m_nWidth;
 			rc.bottom = m_yPos + m_nHeight;
-			GetMonitorWorkRect(&rc, &rcWork);
+
+			GetMonitorWorkRect(&rc, &rcWork, &rcMonitor);
+			
+			// １ドットの空きを入れる
 			rcWork.top += 1;
 			rcWork.bottom -= 1;
 			rcWork.left += 1;
 			rcWork.right -= 1;
+
+			// ワークスペース座標のオフセットを求める
+			// タスクバーが左や上にある場合にこの考慮が必要
+			LONG xOffset = rcWork.left - rcMonitor.left;
+			LONG yOffset = rcWork.top - rcMonitor.top;
+
+			// ワークスペース座標のオフセットを加算
+			rc.left += xOffset;
+			rc.right += xOffset;
+			rc.top += yOffset;
+			rc.bottom += yOffset;
+
+			// ワークスペース領域に収まるようにウィンドウ位置調整
+			LONG workHeight = rcWork.bottom - rcWork.top;
+			LONG workWidth = rcWork.right - rcWork.left;
 			if( rc.bottom > rcWork.bottom ){
-				rc.top -= (rc.bottom - rcWork.bottom);
-				rc.bottom = rcWork.bottom;
+				if( m_nHeight > workHeight ){
+					rc.top = rcWork.top;
+					rc.bottom = rc.top + m_nHeight;
+				}else {
+					rc.bottom = rcWork.bottom;
+					rc.top = rc.bottom - m_nHeight;
+				}
 			}
 			if( rc.right > rcWork.right ){
-				rc.left -= (rc.right - rcWork.right);
-				rc.right = rcWork.right;
+				if( m_nWidth > workWidth ){
+					rc.left = rc.left;
+					rc.right = rc.left + m_nHeight;
+				}else {
+					rc.right = rcWork.right;
+					rc.left = rc.right - m_nWidth;
+				}
 			}
 			if( rc.top < rcWork.top ){
-				rc.bottom += (rcWork.top - rc.top);
 				rc.top = rcWork.top;
+				rc.bottom = rc.top + m_nHeight;
 			}
 			if( rc.left < rcWork.left ){
-				rc.right += (rcWork.left - rc.left);
 				rc.left = rcWork.left;
+				rc.right = rc.left + m_nWidth;
 			}
+
+			// ワークスペース座標のオフセットを引いて元に戻す
+			rc.left -= xOffset;
+			rc.right -= xOffset;
+			rc.top -= yOffset;
+			rc.bottom -= yOffset;
+
 			m_xPos = rc.left;
 			m_yPos = rc.top;
 			m_nWidth = rc.right - rc.left;
@@ -309,12 +354,6 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	RECT	rc;
 	::GetWindowRect( m_hWnd, &rc );
 
-	/* ダイアログのサイズの記憶 */
-	m_xPos = rc.left;
-	m_yPos = rc.top;
-	m_nWidth = rc.right - rc.left;
-	m_nHeight = rc.bottom - rc.top;
-
 	/* サイズボックスの移動 */
 	if( NULL != m_hwndSizeBox ){
 		::GetClientRect( m_hWnd, &rc );
@@ -351,19 +390,6 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 
 BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 {
-	/* ダイアログの位置の記憶 */
-	if( !m_bInited ){
-		return TRUE;
-	}
-	RECT	rc;
-	::GetWindowRect( m_hWnd, &rc );
-
-	/* ダイアログのサイズの記憶 */
-	m_xPos = rc.left;
-	m_yPos = rc.top;
-	m_nWidth = rc.right - rc.left;
-	m_nHeight = rc.bottom - rc.top;
-	DEBUG_TRACE( L"CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 	return TRUE;
 }
 
@@ -372,7 +398,7 @@ void CDialog::CreateSizeBox( void )
 	/* サイズボックス */
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT,								/* no extended styles */
-		L"SCROLLBAR",									/* scroll bar control class */
+		WC_SCROLLBAR,										/* scroll bar control class */
 		NULL,												/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 		0,													/* horizontal position */
@@ -696,8 +722,6 @@ void CDialog::GetItemClientRect( int wID, RECT& rc )
 	rc.bottom = po.y;
 }
 
-static const WCHAR* TSTR_SUBCOMBOBOXDATA = L"SubComboBoxData";
-
 /*! コンボボックスのリストアイテムを関連付けられた履歴と共に削除する
  */
 static void DeleteRecentItem(
@@ -719,14 +743,14 @@ static void DeleteRecentItem(
 		Wnd_GetText( hwndCombo, cEditText );
 
 		// コンボボックスのキャレット位置を取得
-		int nSelStart = 0;
-		int nSelEnd = 0;
-		Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
+		DWORD dwSelStart = 0;
+		DWORD dwSelEnd = 0;
+		Combo_GetEditSel( hwndCombo, dwSelStart, dwSelEnd );
 
 		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
 		if ( cItemText != cEditText
-			|| 0 < nSelStart
-			|| nSelEnd < cEditText.GetStringLength()
+			|| 0 < dwSelStart
+			|| dwSelEnd < (DWORD)cEditText.GetStringLength()
 			)
 		{
 			// 履歴削除をスキップする
@@ -744,109 +768,70 @@ static void DeleteRecentItem(
 	}
 }
 
-LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+//! コンボボックスのエディットの単語削除処理を行う
+static int DeletePreviousWord(wchar_t* text, int length, int curPos)
 {
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
+	if (curPos == 0) {
+		// カーソル位置が既に先頭なので何もしない
+		return 0;
+	}
+	CLogicInt prevWordStartPos;
+	CWordParse::SearchPrevWordPosition(text, CLogicInt(length), CLogicInt(curPos), &prevWordStartPos,
+		GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord);
+	assert(prevWordStartPos < curPos);
+	// null文字ごと前方へ移動する
+	std::copy(text + curPos, text + length + 1, text + prevWordStartPos);
+	return prevWordStartPos;
+}
+
+LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+{
+	HWND hwndCombo = GetParent(hwnd);
 	switch( uMsg ){
 	case WM_KEYDOWN:
-	{
 		if( wParam == VK_DELETE ){
-			HWND hwndCombo = data->hwndCombo;
 			BOOL bShow = Combo_GetDroppedState(hwndCombo);
 			int nIndex = Combo_GetCurSel(hwndCombo);
 			if( bShow && 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
+				DeleteRecentItem(hwndCombo, nIndex, (CRecent*)dwRefData);
 			}
 		}
 		break;
-	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pEditWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pEditWndProc = NULL;
-		break;
-	}
-	default:
-		break;
-	}
-	return CallWindowProc(data->pEditWndProc, hwnd, uMsg, wParam, lParam);
-}
-
-LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
-	switch( uMsg ){
-	case WM_KEYDOWN:
-	{
-		if( wParam == VK_DELETE ){
-			HWND hwndCombo = data->hwndCombo;
-			int nIndex = Combo_GetCurSel(hwndCombo);
-			if( 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
-				return 0;
+	case WM_CHAR:
+		// ASCII 削除文字。Ctrl + Backspace が入力された。
+		if (wParam == 0x7f) {
+			DWORD selStart, selEnd;
+			Combo_GetEditSel(hwndCombo, selStart, selEnd);
+			if (selStart != selEnd) {
+				// テキストが選択されているため、通常の削除動作を行う。
+				// Edit に Backspace を流して処理してもらう。
+				wParam = VK_BACK;
+				break;
 			}
+
+			// 単語削除する
+			const int length = ::GetWindowTextLength(hwndCombo);
+			auto text = std::make_unique<wchar_t[]>(length + 1);
+			::GetWindowText(hwndCombo, text.get(), length + 1);
+
+			const int pos = DeletePreviousWord(text.get(), length, selStart);
+
+			::SetWindowText(hwndCombo, text.get());
+			Combo_SetEditSel(hwndCombo, pos, pos);
+			return 0;
 		}
 		break;
 	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pListBoxWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pListBoxWndProc = NULL;
-		break;
-	}
-	default:
-		break;
-	}
-	return CallWindowProc(data->pListBoxWndProc, hwnd, uMsg, wParam, lParam);
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
-LRESULT CALLBACK SubComboBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void CDialog::SetComboBoxDeleter(HWND hwndCtl, CRecent* pRecent)
 {
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
-	switch( uMsg ){
-	case WM_CTLCOLOREDIT:
-	{
-		if( NULL == data->pEditWndProc ){
-			HWND hwndCtl = (HWND)lParam;
-			data->pEditWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-			::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-			::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubEditProc);
-		}
-		break;
-	}
-	case WM_CTLCOLORLISTBOX:
-	{
-		if( NULL == data->pListBoxWndProc ){
-			HWND hwndCtl = (HWND)lParam;
-			data->pListBoxWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-			::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-			::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubListBoxProc);
-		}
-		break;
-	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pComboBoxWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pComboBoxWndProc = NULL;
-		break;
-	}
-
-	default:
-		break;
-	}
-	return CallWindowProc(data->pComboBoxWndProc, hwnd, uMsg, wParam, lParam);
-}
-
-void CDialog::SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data )
-{
-	if( NULL == data->pRecent ){
+	if (!pRecent || (::GetWindowLongPtr(hwndCtl, GWL_STYLE) & 0b11) == CBS_DROPDOWNLIST)
 		return;
-	}
-	data->hwndCombo = hwndCtl;
-	data->pComboBoxWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-	::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-	::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubComboBoxProc);
+	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
+	if (!::GetComboBoxInfo(hwndCtl, &info))
+		return;
+	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, (DWORD_PTR)pRecent);
 }

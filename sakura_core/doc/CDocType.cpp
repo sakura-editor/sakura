@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -107,10 +108,10 @@ void CDocType::SetDocumentIcon()
 	
 	HICON	hIconBig, hIconSmall;
 	if( this->GetDocumentAttribute().m_bUseDocumentIcon )
-		m_pcDocRef->m_pcEditWnd->GetRelatedIcon( m_pcDocRef->m_cDocFile.GetFilePath(), &hIconBig, &hIconSmall );
+		GetEditWnd().GetRelatedIcon( m_pcDocRef->m_cDocFile.GetFilePath(), &hIconBig, &hIconSmall );
 	else
-		m_pcDocRef->m_pcEditWnd->GetDefaultIcon( &hIconBig, &hIconSmall );
+		GetEditWnd().GetDefaultIcon( &hIconBig, &hIconSmall );
 
-	m_pcDocRef->m_pcEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
-	m_pcDocRef->m_pcEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
+	GetEditWnd().SetWindowIcon( hIconBig, ICON_BIG );
+	GetEditWnd().SetWindowIcon( hIconSmall, ICON_SMALL );
 }

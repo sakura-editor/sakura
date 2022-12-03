@@ -5,7 +5,8 @@
 /*
 	Copyright (C) 2009, syat
 	Copyright (C) 2011, Moca
-	
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
@@ -26,6 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOMPLEMENTIFOBJ_674B3C16_A1FD_4FE6_B3F5_054A5D1C71DB_H_
+#define SAKURA_CCOMPLEMENTIFOBJ_674B3C16_A1FD_4FE6_B3F5_054A5D1C71DB_H_
 #pragma once
 
 #include "macro/CWSHIfObj.h"
@@ -131,3 +134,4 @@ MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] =
 	//	終端
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
+#endif /* SAKURA_CCOMPLEMENTIFOBJ_674B3C16_A1FD_4FE6_B3F5_054A5D1C71DB_H_ */

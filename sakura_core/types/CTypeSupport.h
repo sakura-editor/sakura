@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CTYPESUPPORT_D3B23860_9050_4422_B610_1A9E6A053736_H_
+#define SAKURA_CTYPESUPPORT_D3B23860_9050_4422_B610_1A9E6A053736_H_
 #pragma once
 
 #include "uiparts/CGraphics.h"
@@ -35,7 +38,8 @@
 	今のところタイプ別設定の色情報取得の補助
 */
 class CTypeSupport{
-private:
+	using Me = CTypeSupport;
+
 	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //無効な色定数
 
 public:
@@ -49,6 +53,10 @@ public:
 
 		m_gr = NULL;
 	}
+	CTypeSupport(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CTypeSupport(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CTypeSupport()
 	{
 		if(m_gr){
@@ -145,3 +153,4 @@ private:
 
 	CGraphics* m_gr;        //設定を変更したHDC
 };
+#endif /* SAKURA_CTYPESUPPORT_D3B23860_9050_4422_B610_1A9E6A053736_H_ */

@@ -12,6 +12,7 @@
 	Copyright (C) 2005, D.S.Koba, genta, susu
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -29,11 +30,13 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "env/CSakuraEnvironment.h"
+#include "CSelectLang.h"
+#include "util/string_ex.h"
+#include "String_define.h"
 
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002 //!< ビューモード
 #define CMDLINEOPT_NOWIN		1003 //!< タスクトレイのみ起動
-#define CMDLINEOPT_WRITEQUIT	1004 //!< SakuExtとの連動専用
 #define CMDLINEOPT_GREPMODE		1100 //!< Grep実行モードで起動
 #define CMDLINEOPT_GREPDLG		1101 //!< サクラエディタが起動すると同時にGrepダイアログを表示
 #define CMDLINEOPT_DEBUGMODE	1999 //!< アウトプット用のウィンドウとして起動
@@ -51,7 +54,7 @@
 #define CMDLINEOPT_WY			10   //!< ウィンドウ左上のY座標
 #define CMDLINEOPT_GKEY			101  //!< Grepの検索文字列
 #define CMDLINEOPT_GFILE		102  //!< Grepの検索対象のファイル
-#define CMDLINEOPT_GFOLDER		103  //!< Grepの検索対象のフォルダ
+#define CMDLINEOPT_GFOLDER		103  //!< Grepの検索対象のフォルダー
 #define CMDLINEOPT_GOPT			104  //!< Grepの条件
 #define CMDLINEOPT_GCODE		105  //!< Grepでの文字コードを指定
 #define CMDLINEOPT_M			106  //!< 起動時に実行するマクロのファイル名を指定
@@ -96,7 +99,6 @@ int CCommandLine::CheckCommandLine(
 		{L"R",			1,	CMDLINEOPT_R, false},
 		{L"-",			1,	CMDLINEOPT_NOMOREOPT, false},
 		{L"NOWIN",		5,	CMDLINEOPT_NOWIN, false},
-		{L"WQ",			2,	CMDLINEOPT_WRITEQUIT, false},	// 2007.05.19 ryoji sakuext用に追加
 		{L"GREPMODE",	8,	CMDLINEOPT_GREPMODE, false},
 		{L"GREPDLG",		7,	CMDLINEOPT_GREPDLG, false},
 		{L"DEBUGMODE",	9,	CMDLINEOPT_DEBUGMODE, false},
@@ -184,7 +186,6 @@ CCommandLine::CCommandLine() noexcept
 	, m_bGrepDlg(false)
 	, m_bDebugMode(false)
 	, m_bNoWindow(false)
-	, m_bWriteQuit(false)
 	, m_bProfileMgr(false)
 	, m_bSetProfile(false)
 	, m_fi()
@@ -242,7 +243,7 @@ void CCommandLine::ParseKanjiCodeFromFileName(LPWSTR pszExeFileName, int cchExeF
 */
 void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CCommandLine::Parse" );
 
 	WCHAR	szPath[_MAX_PATH];
 	bool	bFind = false;				// ファイル名発見フラグ
@@ -302,14 +303,28 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				if( len > 0 ){
 					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
 					cmWork.Replace( L"\"\"", L"\"" );
-					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
+					if( STRUNCATE == ::wcsncpy_s( szPath, cmWork.GetStringPtr(), _TRUNCATE ) ){
+						std::wstring msg;
+						// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+						strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), cmWork.GetStringPtr() );
+						const WCHAR* msg_str = msg.c_str();
+						MessageBox( NULL, msg_str, L"FileNameError", MB_OK );
+						szPath[0] = L'\0';
+					}
 				}
 				else {
 					szPath[0] = L'\0';
 				}
 			}
 			else{
-				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
+				if( STRUNCATE == ::wcsncpy_s( szPath, pszToken, _TRUNCATE ) ){
+					std::wstring msg;
+					// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+					strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), pszToken );
+					const WCHAR* msg_str = msg.c_str();
+					MessageBox( NULL, msg_str, L"FileNameError", MB_OK );
+					szPath[0] = L'\0';
+				}
 			}
 
 			// Nov. 11, 2005 susu
@@ -318,21 +333,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			if (wcsncmp_literal(szPath, L"file:///")==0) {
 				wcscpy(szPath, &(szPath[8]));
 			}
-			int len = wcslen(szPath);
-			for (int i = 0; i < len ; ) {
-				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
-					WCHAR msg_str[_MAX_PATH + 1];
-					swprintf(
-						msg_str, _countof(msg_str),
-						LS(STR_CMDLINE_PARSECMD1),
-						szPath
-					);
-					MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
-					szPath[0] = L'\0';
-					break;
-				}
-				int nChars = t_max(1, int(CNativeW::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
-				i += nChars;
+
+			if ( IsInvalidFilenameChars( szPath ) ){
+				std::wstring msg;
+				// "%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
+				strprintf( msg, LS(STR_CMDLINE_PARSECMD1), szPath );
+				const WCHAR* msg_str = msg.c_str();
+				MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
+				szPath[0] = L'\0';
 			}
 
 			if (szPath[0] != L'\0') {
@@ -388,12 +396,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_fi.m_nWindowOriginY = AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_TYPE:	//	TYPE
-				//	Mar. 7, 2002 genta
-				//	ファイルタイプの強制指定
-				{
-					wcsncpy( m_fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
-					m_fi.m_szDocType[ nArgLen < MAX_DOCTYPE_LEN ? nArgLen : MAX_DOCTYPE_LEN ] = L'\0';
-				}
+				::wcsncpy_s( m_fi.m_szDocType, arg, _TRUNCATE );
 				break;
 			case CMDLINEOPT_CODE:	//	CODE
 				m_fi.m_nCharCode = (ECodeType)AtoiOptionInt( arg );
@@ -403,10 +406,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_NOWIN:	//	NOWIN
 				m_bNoWindow = true;
-				break;
-			case CMDLINEOPT_WRITEQUIT:	//	WRITEQUIT	// 2007.05.19 ryoji sakuext用に追加
-				m_bWriteQuit = true;
-				m_bNoWindow = true;	// 2007.09.05 ryoji -WQを指定されたら-NOWINも指定されたとして扱う
 				break;
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
@@ -419,22 +418,22 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_GKEY:	//	GKEY
 				//	前後の""を取り除く
-				m_gi.cmGrepKey.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepKey.SetString( arg, nArgLen );
 				m_gi.cmGrepKey.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GREPR:	//	GREPR
 				//	前後の""を取り除く
-				m_gi.cmGrepRep.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepRep.SetString( arg, nArgLen );
 				m_gi.cmGrepRep.Replace( L"\"\"", L"\"" );
 				m_gi.bGrepReplace = true;
 				break;
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
-				m_gi.cmGrepFile.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepFile.SetString( arg, nArgLen );
 				m_gi.cmGrepFile.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
-				m_gi.cmGrepFolder.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepFolder.SetString( arg, nArgLen );
 				m_gi.cmGrepFolder.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT
@@ -447,7 +446,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 					case 'H':
 						m_gi.bGrepHeader = false;	break;
 					case 'S':
-						// サブフォルダからも検索する
+						// サブフォルダーからも検索する
 						m_gi.bGrepSubFolder = true;	break;
 					case 'L':
 						// 英大文字と英小文字を区別する
@@ -507,14 +506,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat 追加
-				m_cmMacro.SetString( arg );
+				m_cmMacro.SetString( arg, nArgLen );
 				m_cmMacro.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
-				m_cmMacroType.SetString( arg );
+				m_cmMacroType.SetString( arg, nArgLen );
 				break;
 			case CMDLINEOPT_PROF:		// 2013.12.20 Moca 追加
-				m_cmProfile.SetString( arg );
+				m_cmProfile.SetString( arg, nArgLen );
 				m_bSetProfile = true;
 				break;
 			case CMDLINEOPT_PROFMGR:

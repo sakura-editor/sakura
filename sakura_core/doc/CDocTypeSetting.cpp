@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -31,6 +32,8 @@
 
 #include "StdAfx.h"
 #include "CDocTypeSetting.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 //! 色設定(保存用)
 struct ColorInfoIni {

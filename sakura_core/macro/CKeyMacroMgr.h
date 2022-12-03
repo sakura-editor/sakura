@@ -7,11 +7,14 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, aroka
 	Copyright (C) 2002, YAZAKI, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CKEYMACROMGR_998F55D6_230A_4D86_B17C_A9ED9BCAA39C_H_
+#define SAKURA_CKEYMACROMGR_998F55D6_230A_4D86_B17C_A9ED9BCAA39C_H_
 #pragma once
 
 #include <Windows.h>
@@ -31,11 +34,17 @@ class CMacro;
 */
 class CKeyMacroMgr : public CMacroManagerBase
 {
+	using Me = CKeyMacroMgr;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CKeyMacroMgr();
+	CKeyMacroMgr(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CKeyMacroMgr(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CKeyMacroMgr();
 
 	/*
@@ -61,3 +70,4 @@ protected:
 	CMacro*	m_pTop;	//	先頭と終端を保持
 	CMacro*	m_pBot;
 };
+#endif /* SAKURA_CKEYMACROMGR_998F55D6_230A_4D86_B17C_A9ED9BCAA39C_H_ */

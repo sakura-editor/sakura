@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 2008, wakura
 	Copyright (C) 2011, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_
+#define SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_
 #pragma once
 
 #include <list>
@@ -42,6 +45,9 @@
 typedef std::vector< LPCWSTR > VGrepEnumKeys;
 
 class CGrepEnumKeys {
+
+	using Me = CGrepEnumKeys;
+
 public:
 	VGrepEnumKeys m_vecSearchFileKeys;
 	VGrepEnumKeys m_vecSearchFolderKeys;
@@ -53,16 +59,18 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
 public:
-	CGrepEnumKeys(){
-	}
-
+	CGrepEnumKeys() noexcept = default;
+	CGrepEnumKeys(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CGrepEnumKeys(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CGrepEnumKeys(){
 		ClearItems();
 	}
 
 	// 除外ファイルの2つの解析済み配列から1つのリストを作る
-	auto GetExcludeFiles() const ->  std::list<decltype(m_vecExceptFileKeys)::value_type> {
-		std::list<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
+	auto GetExcludeFiles() const ->  std::vector<decltype(m_vecExceptFileKeys)::value_type> {
+		std::vector<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
 		const auto& fileKeys = m_vecExceptFileKeys;
 		excludeFiles.insert( excludeFiles.cend(), fileKeys.cbegin(), fileKeys.cend() );
 		const auto& absFileKeys = m_vecExceptAbsFileKeys;
@@ -70,9 +78,9 @@ public:
 		return excludeFiles;
 	}
 
-	// 除外フォルダの2つの解析済み配列から1つのリストを作る
-	auto GetExcludeFolders() const ->  std::list<decltype(m_vecExceptFolderKeys)::value_type> {
-		std::list<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
+	// 除外フォルダーの2つの解析済み配列から1つのリストを作る
+	auto GetExcludeFolders() const ->  std::vector<decltype(m_vecExceptFolderKeys)::value_type> {
+		std::vector<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
 		const auto& folderKeys = m_vecExceptFolderKeys;
 		excludeFolders.insert( excludeFolders.cend(), folderKeys.cbegin(), folderKeys.cend() );
 		const auto& absFolderKeys = m_vecExceptAbsFolderKeys;
@@ -81,7 +89,7 @@ public:
 	}
 
 	int SetFileKeys( LPCWSTR lpKeys ){
-		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダ探索用
+		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダー探索用
 		ClearItems();
 		
 		std::vector< wstring > patterns = SplitPattern(lpKeys);
@@ -150,8 +158,8 @@ public:
 	}
 
 	/*!
-		@brief 除外フォルダパターンを追加する
-		@param[in]	lpKeys	除外フォルダパターン
+		@brief 除外フォルダーパターンを追加する
+		@param[in]	lpKeys	除外フォルダーパターン
 	*/
 	int AddExceptFolder(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
@@ -234,7 +242,7 @@ private:
 
 	/*
 		@retval 0 正常終了
-		@retval 1 *\file.exe などのフォルダ部分でのワイルドカードはエラー
+		@retval 1 *\file.exe などのフォルダー部分でのワイルドカードはエラー
 	*/
 	int ValidateKey( LPCWSTR key ){
 		// 
@@ -277,3 +285,4 @@ private:
 		return 0;
 	}
 };
+#endif /* SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_ */

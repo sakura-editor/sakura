@@ -8,6 +8,7 @@
 */
 /*
 	Copyright (C) 2001, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,7 +31,11 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CHTMLHELP_7003298B_3900_42FD_9A02_1BCD4E9A8546_H_
+#define SAKURA_CHTMLHELP_7003298B_3900_42FD_9A02_1BCD4E9A8546_H_
 #pragma once
+
+#include <HtmlHelp.h>
 
 #include "CDllHandler.h"
 
@@ -65,3 +70,4 @@ protected:
 	virtual bool InitDllImp();
 	virtual LPCWSTR GetDllNameImp(int nIndex);
 };
+#endif /* SAKURA_CHTMLHELP_7003298B_3900_42FD_9A02_1BCD4E9A8546_H_ */

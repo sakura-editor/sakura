@@ -14,6 +14,7 @@
 	Copyright (C) 2007, kobake, ryoji
 	Copyright (C) 2011, Moca
 	Copyright (C) 2012, Moca
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -30,6 +31,11 @@
 #include "env/CHelpManager.h"
 #include "util/module.h"
 #include "util/shell.h"
+#include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。

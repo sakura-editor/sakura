@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,11 +25,21 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
-#include <ShlObj.h>
-#include <ShellAPI.h>
-#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 #include "util/shell.h"
+
+#include <cderr.h>			// CDERR_FINDRESFAILURE等
+#include <comdef.h>
+#include <comutil.h>
+#include <urlmon.h>
+#include <wrl.h>
+#include <HtmlHelp.h>
+#include <shellapi.h>
+#include <ShlObj.h>
+
+#include <regex>
+
+#include "debug/Debug1.h"
+#include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
@@ -37,70 +48,89 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
-int CALLBACK MYBrowseCallbackProc(
-	HWND hwnd,
-	UINT uMsg,
-	LPARAM lParam,
-	LPARAM lpData
-)
+#pragma comment(lib, "urlmon.lib")
+
+/* フォルダー選択ダイアログ */
+BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
 {
-	switch( uMsg ){
-	case BFFM_INITIALIZED:
-		::SendMessage( hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)lpData );
-		break;
-	case BFFM_SELCHANGED:
-		break;
+	if ( nullptr == strFolderName ) {
+		return FALSE;
 	}
-	return 0;
+
+	using namespace Microsoft::WRL;
+	ComPtr<IFileDialog> pDialog;
+	HRESULT hres;
+
+	// インスタンスを作成
+	hres = CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog) );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// デフォルト設定を取得
+	DWORD dwOptions = 0;
+	hres = pDialog->GetOptions( &dwOptions );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// オプションをフォルダーを選択可能に変更
+	hres = pDialog->SetOptions( dwOptions | FOS_PICKFOLDERS | FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// 初期フォルダーを設定
+	ComPtr<IShellItem> psiFolder;
+	hres = SHCreateItemFromParsingName( pszInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
+	if ( SUCCEEDED(hres) ) {
+		pDialog->SetFolder( psiFolder.Get() );
+	}
+
+	// タイトル文字列を設定
+	hres = pDialog->SetTitle( pszTitle );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// フォルダー選択ダイアログを表示
+	hres = pDialog->Show( hWnd );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// 選択結果を取得
+	ComPtr<IShellItem> psiResult;
+	hres = pDialog->GetResult( &psiResult );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	PWSTR pszResult;
+	hres = psiResult->GetDisplayName( SIGDN_FILESYSPATH, &pszResult );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	BOOL bRet = TRUE;
+	if ( 0 != wcsncpy_s( strFolderName, nMaxCount, pszResult, _TRUNCATE ) ) {
+		wcsncpy_s( strFolderName, nMaxCount, L"", _TRUNCATE );
+		bRet = FALSE;
+	}
+
+	CoTaskMemFree( pszResult );
+
+	return bRet;
 }
 
-/* フォルダ選択ダイアログ */
-BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName )
-{
-	BOOL	bRes;
-	WCHAR	szInitFolder[MAX_PATH];
-
-	wcscpy( szInitFolder, pszInitFolder );
-	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-	CutLastYenFromDirectoryPath( szInitFolder );
-
-	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
-	CCurrentDirectoryBackupPoint dirBack;
-	ChangeCurrentDirectoryToExeDir();
-
-	// SHBrowseForFolder()関数に渡す構造体
-	BROWSEINFO bi;
-	bi.hwndOwner = hWnd;
-	bi.pidlRoot = NULL;
-	bi.pszDisplayName = strFolderName;
-	bi.lpszTitle = pszTitle;
-	bi.ulFlags = BIF_RETURNONLYFSDIRS/* | BIF_EDITBOX*//* | BIF_STATUSTEXT*/;
-	bi.lpfn = MYBrowseCallbackProc;
-	bi.lParam = (LPARAM)szInitFolder;
-	bi.iImage = 0;
-	// アイテムＩＤリストを返す
-	// ITEMIDLISTはアイテムの一意を表す構造体
-	LPITEMIDLIST pList = ::SHBrowseForFolder(&bi);
-	if( NULL != pList ){
-		// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
-		bRes = ::SHGetPathFromIDList( pList, strFolderName );
-		// :SHBrowseForFolder()で取得したアイテムＩＤリストを削除
-		::CoTaskMemFree( pList );
-		if( bRes ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	}
-	return FALSE;
-}
-
-/*!	特殊フォルダのパスを取得する
+/*!	特殊フォルダーのパスを取得する
 	SHGetSpecialFolderPath API（shell32.dll version 4.71以上が必要）と同等の処理をする
 
 	@param [in] nFolder CSIDL (constant special item ID list)
-	@param [out] pszPath 特殊フォルダのパス
+	@param [out] pszPath 特殊フォルダーのパス
 
 	@author ryoji
 	@date 2007.05.19 新規
@@ -194,38 +224,11 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 
 			// 選択されたメニューの処理
 			switch( nId ){
-			case 100:	// 設定フォルダを開く
-				WCHAR szPath[_MAX_PATH];
-				GetInidir( szPath );
-
-				// フォルダの ITEMIDLIST を取得して ShellExecuteEx() で開く
-				// Note. MSDN の ShellExecute() の解説にある方法でフォルダを開こうとした場合、
-				//       フォルダと同じ場所に <フォルダ名>.exe があるとうまく動かない。
-				//       verbが"open"やNULLではexeのほうが実行され"explore"では失敗する
-				//       （フォルダ名の末尾に'\\'を付加してもWindows 2000では付加しないのと同じ動作になってしまう）
-				LPSHELLFOLDER pDesktopFolder;
-				if( SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder)) ){
-					LPMALLOC pMalloc;
-					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
-						LPITEMIDLIST pIDL;
-						WCHAR* pszDisplayName = szPath;
-						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL)) ){
-							SHELLEXECUTEINFO si;
-							::ZeroMemory( &si, sizeof(si) );
-							si.cbSize   = sizeof(si);
-							si.fMask    = SEE_MASK_IDLIST;
-							si.lpVerb   = L"open";
-							si.lpIDList = pIDL;
-							si.nShow    = SW_SHOWNORMAL;
-							::ShellExecuteEx( &si );	// フォルダを開く
-							pMalloc->Free( (void*)pIDL );
-						}
-						pMalloc->Release();
-					}
-					pDesktopFolder->Release();
-				}
+			case 100:	// 設定フォルダーを開く
+				OpenWithExplorer(hwnd, GetIniFileName());
 				break;
-			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダにする）
+
+			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダーにする）
 				int nMsgResult = MYMESSAGEBOX(
 					hwnd,
 					MB_OKCANCEL | MB_ICONINFORMATION,
@@ -257,13 +260,19 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 */
 static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 {
-	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
+	// プロパティシートの初期化時にシステムフォント設定、ボタン追加、プロパティシートのサブクラス化を行う
 	if( uMsg == PSCB_INITIALIZED ){
-		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
-		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
-		HWND hwndBtn = ::CreateWindowEx( 0, L"BUTTON", LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
-		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)::SendMessage( hwndDlg, WM_GETFONT, 0, 0 ), MAKELPARAM( FALSE, 0 ) );
-		::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		// システムフォント設定は言語設定に関係なく実施(force=TRUE)
+		HFONT hFont = UpdateDialogFont( hwndDlg, TRUE );
+
+		if( CShareData::getInstance()->IsPrivateSettings() ){
+			// 個人設定フォルダーを使用するときは「設定フォルダー」ボタンを追加する
+			s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
+			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
+			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
+			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
+			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		}
 	}
 	return 0;
 }
@@ -274,11 +283,9 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 */
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 {
-	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
-	if( CShareData::getInstance()->IsPrivateSettings() ){
-		lppsph->dwFlags |= PSH_USECALLBACK;
-		lppsph->pfnCallback = PropSheetProc;
-	}
+	lppsph->dwFlags |= PSH_USECALLBACK;
+	lppsph->pfnCallback = PropSheetProc;
+
 	return ::PropertySheet( lppsph );
 }
 
@@ -401,7 +408,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 		return FALSE;
 	}
 
-	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダーに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 
@@ -567,7 +574,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 		WCHAR buf[256];
 		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
-		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+		OpenWithBrowser( ::GetActiveWindow(), buf );
 	}
 
 	return TRUE;
@@ -620,4 +627,174 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	*piPointSize = cf.iPointSize;
 
 	return TRUE;
+}
+
+//! Windows エクスプローラーで開く
+bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path)
+{
+	if (path.empty()) {
+		return false;
+	}
+
+	std::filesystem::path explorerPath;
+	std::wstring_view verb = L"explore";
+	std::wstring_view file = path.c_str();
+	std::wstring params;
+	const wchar_t* lpParameters = nullptr;
+
+	// ファイル名（最後の'\'に続く部分）がドット('.')でない場合、
+	// Windowsエクスプローラーのコマンドを指定してファイルを選択させる。
+	// ※ドットは「フォルダー自身」を表す特殊なファイル名。
+	if (path.filename() != L".") {
+		std::wstring buf(_MAX_PATH, wchar_t());
+		size_t requiredSize;
+		_wgetenv_s(&requiredSize, buf.data(), buf.capacity(), L"windir");
+		verb = L"open";
+		explorerPath = buf.data();
+		explorerPath /= L"explorer.exe";
+		file = explorerPath.c_str();
+		params = strprintf(L"/select,\"%s\"", path.c_str());
+		lpParameters = params.c_str();
+	}
+
+	// If the function succeeds, it returns a value greater than 32. 
+	if (auto hInstance = ::ShellExecuteW(hWnd, verb.data(), file.data(), lpParameters, nullptr, SW_SHOWNORMAL);
+		hInstance <= (decltype(hInstance))32) {
+		return false;
+	}
+
+	return true;
+}
+
+/*!
+ * 指定したプロトコルに関連付けされたProgIDを取得する
+ */
+std::wstring GetProgIdForProtocol(std::wstring_view protocol)
+{
+	constexpr const auto& defaultProgId = L"MSEdgeHTM";
+
+	// HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice
+	if (const auto keyPath(strprintf(LR"(SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\%s\UserChoice)", protocol.data()));
+		CRegKey::ExistsKey(HKEY_CURRENT_USER, keyPath.data()))
+	{
+		CRegKey regKey;
+		if (const auto errorCode = regKey.Open(HKEY_CURRENT_USER, keyPath.data(), KEY_READ);
+			errorCode != 0)
+		{
+			return defaultProgId;
+		}
+
+		std::wstring buf(1024, wchar_t());
+		if (const auto errorCode = regKey.GetValue(L"ProgId", buf.data(), static_cast<uint32_t>(buf.capacity()), nullptr);
+			errorCode != 0)
+		{
+			return defaultProgId;
+		}
+
+		buf.resize(::wcsnlen(buf.data(), 1024));
+
+		return buf;
+	}
+
+	return defaultProgId;
+}
+
+/*!
+ * 指定したProgIDに関連付けされたコマンドラインを取得する
+ */
+std::wstring GetCommandAssociatedWithProgID(std::wstring_view progId)
+{
+	constexpr const auto& notAssociated = L"";
+
+	// HKEY_CLASSES_ROOT\MSEdgeHTM\shell\open\command
+	if (const auto keyPath(strprintf(LR"(%s\shell\open\command)", progId.data()));
+		CRegKey::ExistsKey(HKEY_CLASSES_ROOT, keyPath.data()))
+	{
+		CRegKey regKey;
+		if (const auto errorCode = regKey.Open(HKEY_CLASSES_ROOT, keyPath.data(), KEY_READ);
+			errorCode != 0)
+		{
+			return notAssociated;
+		}
+
+		std::wstring buf(1024, wchar_t());
+		if (const auto errorCode = regKey.GetValue(nullptr, buf.data(), static_cast<uint32_t>(buf.capacity()), nullptr);
+			errorCode != 0)
+		{
+			return notAssociated;
+		}
+
+		buf.resize(::wcsnlen(buf.data(), 1024));
+
+		return buf;
+	}
+
+	return notAssociated;
+}
+
+//! ブラウザで開く
+bool OpenWithBrowser(HWND hWnd, std::wstring_view url)
+{
+	if (url.empty()) {
+		return false;
+	}
+
+	using namespace Microsoft::WRL;
+	ComPtr<IUri> pUri;
+	DWORD dwFlags = Uri_CREATE_NO_CRACK_UNKNOWN_SCHEMES | Uri_CREATE_NO_IE_SETTINGS;
+	if (const auto hr = ::CreateUri(url.data(), dwFlags, 0, &pUri);
+		FAILED(hr)) {
+		_com_error ex(hr);
+		auto desc = ex.Description();
+		TRACE("%s", (const wchar_t*)desc);
+		return false;
+	}
+
+	_bstr_t bstrSchemeName;
+	if (const auto hr = pUri->GetSchemeName(&bstrSchemeName.GetBSTR());
+		FAILED(hr)) {
+		_com_error ex(hr);
+		auto desc = ex.Description();
+		TRACE("%s", (const wchar_t*)desc);
+		return false;
+	}
+
+	std::filesystem::path browserPath;
+	std::wstring_view verb = L"open";
+	std::wstring_view file = url.data();
+	std::wstring params;
+	const wchar_t* lpParameters = nullptr;
+
+	// fileプロトコル対策
+	if (bstrSchemeName == _bstr_t(L"file")) {
+		// 実行可能ファイルはダウンロードになるので失敗させる
+		if (const std::filesystem::path urlPath(url.data());
+			::_wcsicmp(urlPath.extension().c_str(), L".exe") == 0) {
+			return false;
+		}
+
+		// HTTPプロトコルに関連付けられたコマンドラインを取得し、パターンマッチでパラメータを組み立てる
+		// => "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --single-argument %1
+		std::wsmatch matched;
+		std::wregex re(LR"(^("[^"]+"|[^ ]+)\s+(.+))");
+		if (auto browserCommandline = GetCommandAssociatedWithProgID(GetProgIdForProtocol(L"http"));
+			std::regex_search(browserCommandline, matched, re)) {
+			// $1 ブラウザのパス
+			std::wstring buf = matched[1];
+			buf.erase(std::remove(buf.begin(), buf.end(), L'\"'), buf.cend());
+			browserPath = buf.data();
+			file = browserPath.c_str();
+			// $2 パラメータ
+			params = std::regex_replace(matched[2].str(), std::wregex(L"%1"), url.data());
+			lpParameters = params.c_str();
+		}
+	}
+
+	// If the function succeeds, it returns a value greater than 32. 
+	if (auto hInstance = ::ShellExecuteW(hWnd, verb.data(), file.data(), lpParameters, nullptr, SW_SHOWNORMAL);
+		hInstance <= (decltype(hInstance))32) {
+		return false;
+	}
+
+	return true;
 }

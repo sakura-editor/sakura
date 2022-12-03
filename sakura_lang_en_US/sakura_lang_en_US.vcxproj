@@ -24,22 +24,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(ProjectDir)..\vcx-props\vcxcompat.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
@@ -50,39 +35,25 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Label="Common Settings">
     <ResourceCompile>
       <AdditionalIncludeDirectories>..\sakura_core;$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Culture>0x0411</Culture>
-      <AdditionalOptions>/c 65001</AdditionalOptions>
+      <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -128,6 +99,44 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sakura_lang_rc.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sakura\sakura.vcxproj">
+      <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resource\auto_scroll_center.bmp" />
+    <Image Include="..\resource\auto_scroll_horizontal.bmp" />
+    <Image Include="..\resource\auto_scroll_vertical.bmp" />
+    <Image Include="..\resource\icon_grep.ico" />
+    <Image Include="..\resource\mytool.bmp" />
+    <Image Include="..\resource\printer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resource\auto_scroll_center.cur" />
+    <None Include="..\resource\auto_scroll_down.cur" />
+    <None Include="..\resource\auto_scroll_down_left.cur" />
+    <None Include="..\resource\auto_scroll_down_right.cur" />
+    <None Include="..\resource\auto_scroll_horizontal.cur" />
+    <None Include="..\resource\auto_scroll_left.cur" />
+    <None Include="..\resource\auto_scroll_right.cur" />
+    <None Include="..\resource\auto_scroll_up.cur" />
+    <None Include="..\resource\auto_scroll_up_left.cur" />
+    <None Include="..\resource\auto_scroll_up_right.cur" />
+    <None Include="..\resource\auto_scroll_vertical.cur" />
+    <None Include="..\resource\cursor_copy.cur" />
+    <None Include="..\resource\cursor_isb.cur" />
+    <None Include="..\resource\cursor_isf.cur" />
+    <None Include="..\resource\cursor_move.cur" />
+    <None Include="..\resource\cursor_rvarrow.cur" />
+    <None Include="..\resource\cursor_tab_join.cur" />
+    <None Include="..\resource\cursor_tab_separate.cur" />
+    <None Include="..\resource\MainMenu.ini" />
+    <None Include="sakura_lang_rc.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\sakura_core\sakura_rc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

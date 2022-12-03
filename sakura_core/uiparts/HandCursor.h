@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,9 +29,12 @@
 		   distribution.
 */
 
+#ifndef SAKURA_HANDCURSOR_096969CA_716E_4F14_9CE4_1C1CAED014EA_H_
+#define SAKURA_HANDCURSOR_096969CA_716E_4F14_9CE4_1C1CAED014EA_H_
 #pragma once
 
 inline void SetHandCursor ()
 {
 	SetCursor( LoadCursor( NULL, IDC_HAND ) );
 }
+#endif /* SAKURA_HANDCURSOR_096969CA_716E_4F14_9CE4_1C1CAED014EA_H_ */

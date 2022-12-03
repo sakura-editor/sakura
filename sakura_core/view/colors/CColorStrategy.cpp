@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -140,7 +141,7 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 	if( m_pcView->m_bMiniMap ){
 		CTypeSupport cPageViewBg(m_pcView, COLORIDX_PAGEVIEW);
 		if( cPageViewBg.IsDisp() ){
-			CEditView& cActiveView = m_pcView->m_pcEditWnd->GetActiveView();
+			CEditView& cActiveView = GetEditWnd().GetActiveView();
 			CLayoutInt curLine = m_pDispPos->GetLayoutLineRef();
 			if( m_colorIdxBackLine == COLORIDX_PAGEVIEW ){
 				if( cActiveView.GetTextArea().GetViewTopLine() <= curLine && curLine < cActiveView.GetTextArea().GetBottomLine() ){
@@ -171,13 +172,13 @@ void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 	}else if(m_pStrategyFound){
 		m_cIndex.eColorIndex = m_pStrategyFound->GetStrategyColor();
 	}else{
-		m_cIndex.eColorIndex = m_pStrategy->GetStrategyColorSafe();
+		m_cIndex.eColorIndex = CColorStrategy::GetStrategyColorSafe(m_pStrategy);
 	}
 
 	if(m_pStrategyFound){
 		m_cIndex.eColorIndex2 = m_pStrategyFound->GetStrategyColor();
 	}else{
-		m_cIndex.eColorIndex2 = m_pStrategy->GetStrategyColorSafe();
+		m_cIndex.eColorIndex2 = CColorStrategy::GetStrategyColorSafe(m_pStrategy);
 	}
 
 	m_cIndex.eColorIndexBg = m_colorIdxBackLine;

@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CUTF7_55498766_1C8A_416B_9F39_88D3D83B8B65_H_
+#define SAKURA_CUTF7_55498766_1C8A_416B_9F39_88D3D83B8B65_H_
 #pragma once
 
 #include "CCodeBase.h"
@@ -31,8 +34,6 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return UTF7ToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToUTF7(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;
 
 public:
 	//実装
@@ -51,3 +52,4 @@ protected:
 	static int _UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 	static int UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 };
+#endif /* SAKURA_CUTF7_55498766_1C8A_416B_9F39_88D3D83B8B65_H_ */

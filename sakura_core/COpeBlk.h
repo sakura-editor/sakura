@@ -6,11 +6,14 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_COPEBLK_2A5AF589_5860_4512_9E59_51CC2ECC37C1_H_
+#define SAKURA_COPEBLK_2A5AF589_5860_4512_9E59_51CC2ECC37C1_H_
 #pragma once
 
 class COpeBlk;
@@ -27,9 +30,16 @@ class COpeBlk;
 	COpe を複数束ねるためのもの。Undo, Redoはこのブロック単位で行われる。
 */
 class COpeBlk {
+
+	using Me = COpeBlk;
+
 public:
 	//コンストラクタ・デストラクタ
 	COpeBlk();
+	COpeBlk(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	COpeBlk(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~COpeBlk();
 
 	//インターフェース
@@ -57,3 +67,4 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////12
+#endif /* SAKURA_COPEBLK_2A5AF589_5860_4512_9E59_51CC2ECC37C1_H_ */

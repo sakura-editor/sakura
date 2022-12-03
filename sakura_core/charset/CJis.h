@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,9 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CJIS_BD9F2F30_4502_4183_BB00_768B9EDC9002_H_
+#define SAKURA_CJIS_BD9F2F30_4502_4183_BB00_768B9EDC9002_H_
 #pragma once
 
 #include "CCodeBase.h"
+#include "charset/codechecker.h"
 
 class CJis : public CCodeBase{
 public:
@@ -104,3 +108,4 @@ enum EJisESCSeqType {
 };
 
 #endif
+#endif /* SAKURA_CJIS_BD9F2F30_4502_4183_BB00_768B9EDC9002_H_ */

@@ -12,6 +12,7 @@
 	Copyright (C) 2002, genta, Moca
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, Moca, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -36,6 +37,7 @@
 #include "StdAfx.h"
 #include "CKeyWordSetMgr.h"
 #include <limits>
+#include "basis/CMyString.h"
 
 //! 1ブロック当たりのキーワード数
 static const int nKeyWordSetBlockSize = 50;
@@ -60,12 +62,6 @@ CKeyWordSetMgr::CKeyWordSetMgr( void )
 	return;
 }
 
-CKeyWordSetMgr::~CKeyWordSetMgr( void)
-{
-	m_nKeyWordSetNum = 0;
-	return;
-}
-
 /*!
 	@brief 全キーワードセットの削除と初期化
 
@@ -83,27 +79,6 @@ void CKeyWordSetMgr::ResetAllKeyWordSet( void )
 	for( i = 0; i < MAX_SETNUM; i++ ){
 		m_nKeyWordNumArr[i] = 0;
 	}
-}
-
-const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr )
-{
-//	int		nDataLen;
-//	char*	pData;
-//	int		i;
-	if( this == &cKeyWordSetMgr ){
-		return *this;
-	}
-	m_nCurrentKeyWordSetIdx = cKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
-	m_nKeyWordSetNum = cKeyWordSetMgr.m_nKeyWordSetNum;
-	//配列まるごとコピー
-	memcpy_raw( m_szSetNameArr   , cKeyWordSetMgr.m_szSetNameArr   , sizeof( m_szSetNameArr )    );
-	memcpy_raw( m_bKEYWORDCASEArr, cKeyWordSetMgr.m_bKEYWORDCASEArr, sizeof( m_bKEYWORDCASEArr ) );
-	memcpy_raw( m_nStartIdx      , cKeyWordSetMgr.m_nStartIdx      , sizeof( m_nStartIdx )       );// 2004.07.29 Moca
-	memcpy_raw( m_nKeyWordNumArr , cKeyWordSetMgr.m_nKeyWordNumArr , sizeof( m_nKeyWordNumArr )  );
-	memcpy_raw( m_szKeyWordArr   , cKeyWordSetMgr.m_szKeyWordArr   , sizeof( m_szKeyWordArr )    );
-	memcpy_raw( m_IsSorted       , cKeyWordSetMgr.m_IsSorted       , sizeof( m_IsSorted )        ); //MIK 2000.12.01 binary search
-	memcpy_raw( m_nKeyWordMaxLenArr, cKeyWordSetMgr.m_nKeyWordMaxLenArr, sizeof( m_nKeyWordMaxLenArr ) ); //2014.05.04 Moca
-	return *this;
 }
 
 /*! @brief キーワードセットの追加
@@ -312,7 +287,7 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 	if( 0 >= m_nKeyWordNumArr[nIdx]	){
 		return 3;	//	登録数が0なら上の条件で引っかかるのでここには来ない？
 	}
-	int nDelKeywordLen = wcslen( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2] );
+	size_t nDelKeywordLen = wcslen( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2] );
 	int  i;
 	int  endPos = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
 	for( i = m_nStartIdx[nIdx] + nIdx2; i < endPos; ++i ){
@@ -369,7 +344,7 @@ void CKeyWordSetMgr::KeywordMaxLen(int nIdx)
 	int nMaxLen = 0;
 	const int nEnd = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx];
 	for( i = m_nStartIdx[nIdx]; i < nEnd; i++ ){
-		len = wcslen( m_szKeyWordArr[i] );
+		len = static_cast<int>(wcslen( m_szKeyWordArr[i] ));
 		if( nMaxLen < len ){
 			nMaxLen = len;
 		}
@@ -480,7 +455,7 @@ int CKeyWordSetMgr::SetKeyWordArr(
 		const wchar_t* pTop = ptr;	// キーワードの先頭位置を保存
 		while( *ptr != L'\t' && *ptr != L'\0' )
 			++ptr;
-		int kwlen = ptr - pTop;
+		ptrdiff_t kwlen = ptr - pTop;
 		wmemcpy( m_szKeyWordArr[i], pTop, kwlen );
 		m_szKeyWordArr[i][kwlen] = L'\0';
 		++ptr;
@@ -531,7 +506,7 @@ int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 		bool bDelKey = false;	//!< trueなら削除対象
 		// 重複するキーワードか
 		const wchar_t* r = GetKeyWord( nIdx, i + 1 );
-		unsigned int nKeyWordLen = wcslen( p );
+		size_t nKeyWordLen = wcslen( p );
 		if( nKeyWordLen == wcslen( r ) ){
 			if( m_bKEYWORDCASEArr[nIdx] ){
 				if( 0 == wmemcmp( p, r, nKeyWordLen ) ){

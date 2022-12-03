@@ -13,6 +13,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -27,8 +28,11 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include <memory>
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10800
@@ -576,8 +580,7 @@ void CPropKeyword::Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
 	if( IDYES == ::MessageBox( hwndDlg, LS(STR_PROPCOMKEYWORD_DEL),
 			GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) ){	// 2009.03.26 ryoji MB_ICONSTOP->MB_ICONQUESTION
-		if( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CleanKeyWords( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
-		}
+		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CleanKeyWords( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 		SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	}
 }
@@ -615,6 +618,8 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	int		nNum;
 	HWND	hwndList;
 	LV_ITEM	lvi;
+
+	::SendMessage( hwndDlg, WM_SETREDRAW, FALSE, 0 );
 
 	ListView_DeleteAllItems( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ) );
 	if( 0 <= nIdx ){
@@ -654,9 +659,6 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	nNum = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( nIdx );
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD );
 
-	// 2005.01.25 Moca/genta リスト追加中は再描画を抑制してすばやく表示
-	::SendMessageAny( hwndList, WM_SETREDRAW, FALSE, 0 );
-
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
 		const WCHAR* pszKeyWord = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i );
@@ -670,11 +672,11 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	}
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
 
-	// 2005.01.25 Moca/genta リスト追加完了のため再描画許可
-	::SendMessageAny( hwndList, WM_SETREDRAW, TRUE, 0 );
-
 	//キーワード数を表示する。
 	DispKeywordCount( hwndDlg );
+
+	::SendMessage( hwndDlg, WM_SETREDRAW, TRUE, 0 );
+	InvalidateRect(hwndDlg, NULL, FALSE);
 
 	return;
 }

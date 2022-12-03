@@ -8,11 +8,14 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGABOUT_7F887984_7DEB_42C7_AB87_7CE7D9801700_H_
+#define SAKURA_CDLGABOUT_7F887984_7DEB_42C7_AB87_7CE7D9801700_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -27,7 +30,6 @@ class CUrlWnd
 {
 public:
 	CUrlWnd() { m_hWnd = NULL; m_hFont = NULL; m_bHilighted = FALSE; m_pOldProc = NULL; }
-	virtual ~CUrlWnd() { ; }
 	BOOL SetSubclassWindow( HWND hWnd );
 	HWND GetHwnd() const{ return m_hWnd; }
 protected:
@@ -62,3 +64,4 @@ private:
 	CUrlWnd m_UrlGitHubPRWnd;
 	CUrlWnd m_UrlOrgWnd;
 };
+#endif /* SAKURA_CDLGABOUT_7F887984_7DEB_42C7_AB87_7CE7D9801700_H_ */

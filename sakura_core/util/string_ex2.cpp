@@ -1,8 +1,32 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "string_ex2.h"
 #include "charset/charcode.h"
 #include "CEol.h"
+#include "mem/CNativeW.h"
 
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count)
 {
@@ -101,7 +125,7 @@ const char* GetNextLine(
 	nBgn = *pnBgn;
 
 	//	May 15, 2000 genta
-	pcEol->SetType( EOL_NONE );
+	pcEol->SetType( EEolType::none );
 	if( *pnBgn >= nDataLen ){
 		return NULL;
 	}
@@ -136,7 +160,7 @@ const wchar_t* GetNextLineW(
 	int		nBgn;
 	nBgn = *pnBgn;
 
-	pcEol->SetType( EOL_NONE );
+	pcEol->SetType( EEolType::none );
 	if( *pnBgn >= nDataLen ){
 		return NULL;
 	}
@@ -152,68 +176,6 @@ const wchar_t* GetNextLineW(
 	*pnLineLen = i - nBgn;
 	return &pData[nBgn];
 }
-#if 0 // 未使用
-/*
-	行端子の種類を調べるUnicodeBE版
-	@param pszData 調査対象文字列へのポインタ
-	@param nDataLen 調査対象文字列の長さ(wchar_tの長さ)
-	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
-*/
-static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
-{
-	/*! 行終端子のデータの配列(UnicodeBE版) 2000.05.30 Moca */
-	static const wchar_t* aEolTable[EOL_TYPE_NUM] = {
-		L"",									// EOL_NONE
-		(const wchar_t*)"\x00\x0d\x00\x0a\x00",	// EOL_CRLF
-		(const wchar_t*)"\x00\x0a\x00",			// EOL_LF
-		(const wchar_t*)"\x00\x0d\x00"			// EOL_CR
-	};
-
-	/* 改行コードの長さを調べる */
-
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		CEol cEol((EEolType)i);
-		if( cEol.GetLen()<=nDataLen && 0==wmemcmp(pszData,aEolTable[i],cEol.GetLen()) ){
-			return gm_pnEolTypeArr[i];
-		}
-	}
-	return EOL_NONE;
-}
-
-/*!
-	GetNextLineのwchar_t版(ビックエンディアン用)
-	GetNextLineより作成
-	static メンバ関数
-*/
-const wchar_t* GetNextLineWB(
-	const wchar_t*	pData,	//!< [in]	検索文字列
-	int			nDataLen,	//!< [in]	検索文字列の文字数
-	int*		pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
-	int*		pnBgn,		//!< [i/o]	検索文字列のオフセット位置
-	CEol*		pcEol		//!< [i/o]	EOL
-)
-{
-	int		i;
-	int		nBgn;
-	nBgn = *pnBgn;
-
-	pcEol->SetType( EOL_NONE );
-	if( *pnBgn >= nDataLen ){
-		return NULL;
-	}
-	for( i = *pnBgn; i < nDataLen; ++i ){
-		// 改行コードがあった
-		if( pData[i] == (wchar_t)0x0a00 || pData[i] == (wchar_t)0x0d00 ){
-			// 行終端子の種類を調べる
-			pcEol->SetType( GetEOLTypeUniBE( &pData[i], nDataLen - i ) );
-			break;
-		}
-	}
-	*pnBgn = i + pcEol->GetLen();
-	*pnLineLen = i - nBgn;
-	return &pData[nBgn];
-}
-#endif
 
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
 int LimitStringLengthW(

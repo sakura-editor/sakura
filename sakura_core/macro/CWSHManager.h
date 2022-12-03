@@ -13,12 +13,15 @@
 */
 /*
 	Copyright (C) 2002, 鬼, genta
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 
 */
 
+#ifndef SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_
+#define SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_
 #pragma once
 
 #include <Windows.h>
@@ -44,9 +47,9 @@ public:
 	static CMacroManagerBase* Creator(const WCHAR* FileExt);
 	static void declare();
 
-	void AddParam( CWSHIfObj* param );				//インタフェースオブジェクトを追加する
-	void AddParam( CWSHIfObj::List& params );		//インタフェースオブジェクト達を追加する
-	void ClearParam();								//インタフェースオブジェクトを削除する
+	void AddParam( CWSHIfObj* param );				//インターフェースオブジェクトを追加する
+	void AddParam( CWSHIfObj::List& params );		//インターフェースオブジェクト達を追加する
+	void ClearParam();								//インターフェースオブジェクトを削除する
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;
@@ -55,3 +58,4 @@ protected:
 	////	2007.07.20 genta : flags追加
 	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
+#endif /* SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_ */

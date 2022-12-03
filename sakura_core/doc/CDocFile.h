@@ -2,6 +2,7 @@
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -23,10 +24,14 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCFILE_E6C44A51_14C1_4D5E_BE03_70E617EF0E89_H_
+#define SAKURA_CDOCFILE_E6C44A51_14C1_4D5E_BE03_70E617EF0E89_H_
 #pragma once
 
 #include "io/CFile.h"
 #include "util/file.h"
+#include "charset/charset.h"
+
 class CEditDoc;
 
 //####本来はここにあるべきでは無い
@@ -77,3 +82,4 @@ public: //####
 	SFileInfo	m_sFileInfo;
 	CFilePath	m_szSaveFilePath;	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 };
+#endif /* SAKURA_CDOCFILE_E6C44A51_14C1_4D5E_BE03_70E617EF0E89_H_ */

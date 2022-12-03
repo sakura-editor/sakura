@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,7 @@
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "config/app_constants.h"
 
 void _DefaultConfig(STypeConfig* pType);
 
@@ -197,7 +199,7 @@ void _DefaultConfig(STypeConfig* pType)
 	// 文字コード設定
 	pType->m_encoding.m_bPriorCesu8 = false;
 	pType->m_encoding.m_eDefaultCodetype = CODE_UTF8;
-	pType->m_encoding.m_eDefaultEoltype = EOL_CRLF;
+	pType->m_encoding.m_eDefaultEoltype = EEolType::cr_and_lf;
 	pType->m_encoding.m_bDefaultBom = false;
 
 	//@@@2002.2.4 YAZAKI

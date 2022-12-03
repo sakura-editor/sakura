@@ -11,8 +11,8 @@
 <!-- 以下は Markdownの参照形式によるリンク の定義です。 -->
 <!-- 参照 https://hail2u.net/blog/coding/markdown-reference-style-links.html -->
 
-[Visual Studio Community 2017]: https://visualstudio.microsoft.com/vs/older-downloads/ "Visual Studio Community 2017"
-[Visual Studio Community 2019]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio Community 2019"
+[Visual Studio 2017]: https://visualstudio.microsoft.com/ja/vs/older-downloads/ "Visual Studio 2017"
+[Visual Studio 2019]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio 2019"
 [Markdown をローカルで確認する方法]: https://github.com/sakura-editor/sakura/wiki/markdown-%E3%82%92%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95
 [How to extract currently installed Visual Studio component IDs?]: https://stackoverflow.com/questions/52946333/how-to-extract-currently-installed-visual-studio-component-ids
 [Configure Visual Studio across your organization with .vsconfig]: https://devblogs.microsoft.com/setup/configure-visual-studio-across-your-organization-with-vsconfig/
@@ -23,34 +23,34 @@
 <!-- TOC -->
 
 - [Sakura Editor](#sakura-editor)
-    - [Hot topic](#hot-topic)
-    - [Web Site](#web-site)
-    - [開発参加ポリシー](#開発参加ポリシー)
-    - [Build Requirements](#build-requirements)
-        - [Visual Studio Install options required](#visual-studio-install-options-required)
-        - [Visual Studio Community 2019 対応に関して](#visual-studio-community-2019-対応に関して)
-        - [vsconfig に関して](#vsconfig-に関して)
-            - [Visaul Studio 2017/2019 共通](#visaul-studio-20172019-共通)
-            - [Visaul Studio 2019 のみ](#visaul-studio-2019-のみ)
-            - [参照](#参照)
-    - [How to build](#how-to-build)
-        - [詳細情報](#詳細情報)
-    - [PR(Pull Request) を簡単にローカルに取得する方法](#prpull-request-を簡単にローカルに取得する方法)
-    - [CI Buildおよびローカルビルドの環境変数](#CI-Buildおよびローカルビルドの環境変数)
-    - [CI Build (Azure Pipelines)](#ci-build-azure-pipelines)
-        - [ビルドの仕組み (Azure Pipelines)](#ビルドの仕組み-azure-pipelines)
-    - [CI Build (AppVeyor)](#ci-build-appveyor)
-        - [ビルドの仕組み (AppVeyor)](#ビルドの仕組み-appveyor)
-        - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
-        - [ビルド成果物のダウンロード(バイナリ、インストーラなど)](#ビルド成果物のダウンロードバイナリインストーラなど)
-            - [master の 最新](#master-の-最新)
-            - [master の 最新以外](#master-の-最新以外)
-    - [開発情報](#開発情報)
-        - [単体テスト](#単体テスト)
-        - [デバッグ方法](#デバッグ方法)
-    - [変更履歴](#変更履歴)
-    - [マクロのサンプル](#マクロのサンプル)
-    - [静的コード解析](#静的コード解析)
+  - [Hot topic](#hot-topic)
+  - [Web Site](#web-site)
+  - [開発参加ポリシー](#開発参加ポリシー)
+  - [Build Requirements](#build-requirements)
+    - [Visual Studio Install options required](#visual-studio-install-options-required)
+    - [Visual Studio 2019 対応に関して](#visual-studio-2019-対応に関して)
+    - [.vsconfig に関して](#vsconfig-に関して)
+      - [Visual Studio 2017/2019 共通](#visual-studio-20172019-共通)
+      - [Visual Studio 2019 のみ](#visual-studio-2019-のみ)
+      - [参照](#参照)
+  - [How to build](#how-to-build)
+    - [詳細情報](#詳細情報)
+  - [CI Buildおよびローカルビルドの環境変数](#ci-buildおよびローカルビルドの環境変数)
+  - [PR(Pull Request) を簡単にローカルに取得する方法](#prpull-request-を簡単にローカルに取得する方法)
+  - [CI Build (Azure Pipelines)](#ci-build-azure-pipelines)
+    - [ビルドの仕組み (Azure Pipelines)](#ビルドの仕組み-azure-pipelines)
+  - [CI Build (AppVeyor)](#ci-build-appveyor)
+    - [ビルドの仕組み (AppVeyor)](#ビルドの仕組み-appveyor)
+    - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
+    - [ビルド成果物のダウンロード(バイナリ、インストーラなど)](#ビルド成果物のダウンロードバイナリインストーラなど)
+      - [master の 最新](#master-の-最新)
+      - [master の 最新以外](#master-の-最新以外)
+  - [開発情報](#開発情報)
+    - [単体テスト](#単体テスト)
+    - [デバッグ方法](#デバッグ方法)
+  - [変更履歴](#変更履歴)
+  - [マクロのサンプル](#マクロのサンプル)
+  - [静的コード解析](#静的コード解析)
 
 <!-- /TOC -->
 
@@ -71,21 +71,14 @@ https://github.com/sakura-editor/sakura/wiki
 
 ## Build Requirements
 
-Sakura Editor をコンパイルするためにはいずれかが必要
--  [Visual Studio Community 2017][Visual Studio Community 2017]
--  [Visual Studio Community 2019][Visual Studio Community 2019]
+Sakura Editor をコンパイルするためには、 Community または Professional エディション以上の [Visual Studio 2017][Visual Studio 2017] または [Visual Studio 2019][Visual Studio 2019] が必要です。
 
-正式バイナリは [Visual Studio Community 2017][Visual Studio Community 2017] でビルドされます。
+正式バイナリは [Visual Studio Community 2017][Visual Studio 2017] でビルドされます。
 
 ### Visual Studio Install options required
-- Windows SDK
-- Windows XP Support for C++
-- Windows 8.1 SDK と UCRT SDK
-- C++ に関する Windows XP サポート
+- Windows 10 SDK
 
-More information: https://github.com/sakura-editor/sakura/issues/6
-
-### Visual Studio Community 2019 対応に関して
+### Visual Studio 2019 対応に関して
 
 Visual Studio 2017/2019 の両対応に関しては  [#866](https://github.com/sakura-editor/sakura/issues/866) で対処済みです。  
 [仕組みに関してはこちらを参照](vcx-props/project-PlatformToolset.md)
@@ -96,7 +89,7 @@ Sakura Editor のコンパイルに必要なコンポーネントを Visual Stud
 
 [#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
 
-#### Visaul Studio 2017/2019 共通
+#### Visual Studio 2017/2019 共通
 
 `vs_community__XXXXX.exe` でインストールする際に、--config オプションをつけてインストールする。
 あるいは構成変更することにより、必要なコンポーネントを自動的にインストールします。
@@ -105,10 +98,10 @@ Sakura Editor のコンパイルに必要なコンポーネントを Visual Stud
 vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 ```
 
-#### Visaul Studio 2019 のみ
+#### Visual Studio 2019 のみ
 
 `sakura.sln` と同じディレクトリに [.vsconfig](.vsconfig) が存在するので、
-Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
+Visual Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
 
 #### 参照
 
@@ -121,7 +114,7 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 ## How to build
 
 - [7Zip](https://sevenzip.osdn.jp/) のインストールして 7z.exe へのパスを通します。
-- Visual Studio Community 2017 で `sakura.sln` を開いてビルドします。
+- Visual Studio で `sakura.sln` を開いてビルドします。
 
 ### 詳細情報
 
@@ -129,7 +122,7 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 
 ## CI Buildおよびローカルビルドの環境変数
 
-[CI でのビルド](ci-build.md) を参照
+[こちら](ci/build-envvars.md) を参照してください。
 
 ## PR(Pull Request) を簡単にローカルに取得する方法
 
@@ -139,13 +132,14 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 
 ### ビルドの仕組み (Azure Pipelines)
 
-[azure-pipelines.md](azure-pipelines.md) でビルドの仕組みを説明しています。
+[azure-pipelines.md](ci/azure-pipelines/azure-pipelines.md) でビルドの仕組みを説明しています。
 
 ## CI Build (AppVeyor)
 
 ### ビルドの仕組み (AppVeyor)
 
-[appveyor.md](appveyor.md) でビルドの仕組みを説明しています。
+AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行っています。
+ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
 ### ビルド成果物を利用する上での注意事項
 
@@ -178,7 +172,7 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 ### 単体テスト
 
-[単体テスト](unittest.md) を参照
+[こちら](tests/unittest.md) を参照してください。
 
 ### デバッグ方法
 

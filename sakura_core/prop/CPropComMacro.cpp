@@ -11,6 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -40,8 +41,11 @@
 #include "util/string_ex2.h"
 #include "util/module.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //! Popup Help用ID
 //@@@ 2001.12.22 Start by MIK: Popup Help
@@ -174,7 +178,7 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 				break;
 			}
 			break;	/* CBN_DROPDOWN */
-		// From Here 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
+		// From Here 2003.06.23 Moca マクロフォルダーの最後の\がなければ付ける
 		case EN_SETFOCUS:
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
@@ -370,7 +374,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 	//	マクロディレクトリ
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH );
-	// 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
+	// 2003.06.23 Moca マクロフォルダーの最後の\がなければ付ける
 	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, L'\\' );
 	
 	//	マクロ停止ダイアログ表示待ち時間
@@ -569,7 +573,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 {
 	WCHAR szDir[_MAX_PATH];
 
-	/* 検索フォルダ */
+	/* 検索フォルダー */
 	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _countof(szDir) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
@@ -625,7 +629,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 		//	コンボボックスに設定
 		//	でも.と..は勘弁。
 		//if (wcscmp( wf.cFileName, L"." ) != 0 && wcscmp( wf.cFileName, L".." ) != 0){
-		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダを除外
+		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダーを除外
 			int result = Combo_AddString( hCombo, wf.cFileName );
 			if( result == CB_ERR || result == CB_ERRSPACE )
 				break;

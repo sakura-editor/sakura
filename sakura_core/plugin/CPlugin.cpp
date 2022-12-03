@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -107,7 +108,7 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileM
 				if( cProfileMlang ){
 					cProfileMlang->IOProfileData( PII_PLUG, sKeyLabel.c_str(), sLabel );
 				}
-				if (sLabel == L"") {
+				if (sLabel.empty()) {
 					sLabel = sHandler;		// Labelが無ければハンドラ名で代用
 				}
 
@@ -140,7 +141,7 @@ bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfi
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_COMMAND, bufKey, sLabel );
 			}
-			if (sLabel == L"") {
+			if (sLabel.empty()) {
 				sLabel = sHandler;		// Labelが無ければハンドラ名で代用
 			}
 			//アイコンの取得
@@ -171,9 +172,12 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 	wstring sDefaultVal;
 	WCHAR bufKey[64];
 
-	sSection = L"";
+	sSection.clear();
 	for( int nCount = 1; nCount < MAX_PLUG_OPTION; nCount++ ){	//添え字は１から始める
-		sKey = sLabel = sType = sDefaultVal= L"";
+		sKey.clear();
+		sLabel.clear();
+		sType.clear();
+		sDefaultVal.clear();
 		//Keyの取得
 		_swprintf( bufKey, L"O[%d].Key", nCount );
 		if( cProfile->IOProfileData( PII_OPTION, bufKey, sKey ) ){
@@ -218,7 +222,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 	return true;
 }
 
-//プラグインフォルダ基準の相対パスをフルパスに変換
+//プラグインフォルダー基準の相対パスをフルパスに変換
 std::wstring CPlugin::GetFilePath( const wstring& sFileName ) const
 {
 	return m_sBaseDir + L"\\" + sFileName;
@@ -261,7 +265,7 @@ std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
         splitVec.push_back( sTrg.substr( 0, idx ) );
         sTrg = sTrg.substr( ++idx );
     }
-	if (sTrg != L"") {
+	if (sTrg.length()) {
 		splitVec.push_back( sTrg );
 	}
 
@@ -274,7 +278,7 @@ bool CPlugin::ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfil
 {
 	WCHAR bufKey[64];
 	m_aStrings.clear();
-	m_aStrings.push_back( wstring(L"") ); // 0番目ダミー
+	m_aStrings.emplace_back( std::wstring() ); // 0番目ダミー
 	for( int nCount = 1; nCount < MAX_PLUG_STRING; nCount++ ){	//添え字は１から始める
 		wstring sVal = L"";
 		_swprintf( bufKey, L"S[%d]", nCount );

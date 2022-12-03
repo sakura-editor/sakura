@@ -13,6 +13,7 @@
 	Copyright (C) 2008, nasukoji
 	Copyright (C) 2012, ossan (ossan@ongs.net)
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -49,7 +50,12 @@
 #include "env/CSakuraEnvironment.h"
 // CColorStrategyは本来はCEditViewが必要だが、CEditWnd.hあたりでinclude済み
 #include "view/colors/CColorStrategy.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 using namespace std;
 
@@ -65,7 +71,7 @@ using namespace std;
 #define		COMPAT_BMP_BASE     1   /* COMPAT_BMP_SCALEピクセル幅を複写する画面ピクセル幅 */
 #define		COMPAT_BMP_SCALE    2   /* 互換BMPのCOMPAT_BMP_BASEに対する倍率(1以上の整数倍) */
 
-CPrint CPrintPreview::m_cPrint;		//!< 現在のプリンタ情報 2003.05.02 かろと
+CPrint CPrintPreview::m_cPrint;		//!< 現在のプリンター情報 2003.05.02 かろと
 
 /*! コンストラクタ
 	印刷プレビューを表示するために必要な情報を初期化、領域確保。
@@ -157,7 +163,7 @@ LRESULT CPrintPreview::OnPaint(
 		nToolBarHeight = rc.bottom - rc.top;
 	}
 
-	// プリンタ情報の表示 -> IDD_PRINTPREVIEWBAR右上のSTATICへ
+	// プリンター情報の表示 -> IDD_PRINTPREVIEWBAR右上のSTATICへ
 	WCHAR	szText[1024];
 	::DlgItem_SetText(
 		m_hwndPrintPreviewBar,
@@ -258,7 +264,7 @@ LRESULT CPrintPreview::OnPaint(
 
 	int nHeaderHeight = CPrint::CalcHeaderHeight( m_pPrintSetting );
 
-	// ヘッダ
+	// ヘッダー
 	if( nHeaderHeight ){
 		DrawHeaderFooter( hdc, cRect, true );
 	}
@@ -275,7 +281,7 @@ LRESULT CPrintPreview::OnPaint(
 		pStrategyStart
 	);
 
-	// フッタ
+	// フッター
 	if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
 		DrawHeaderFooter( hdc, cRect, false );
 	}
@@ -717,7 +723,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_bLockSetting = true;
 
 	// 2009.08.08 印刷で用紙サイズ、横指定が効かない問題対応 syat
-	/* DEVMODE構造体が設定されていなかったら既定のプリンタを設定 */
+	/* DEVMODE構造体が設定されていなかったら既定のプリンターを設定 */
 	if( m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName[0] == L'\0' ){
 		GetDefaultPrinterInfo();
 	}
@@ -742,7 +748,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	/* 印刷/プレビューに必要な情報を取得 */
 	WCHAR	szErrMsg[1024];
 	if( !m_cPrint.GetPrintMetrics(
-		&m_pPrintSetting->m_mdmDevMode,	/* プリンタ設定 DEVMODE用*/
+		&m_pPrintSetting->m_mdmDevMode,	/* プリンター設定 DEVMODE用*/
 		&m_nPreview_PaperAllWidth,		/* 用紙幅 */
 		&m_nPreview_PaperAllHeight,		/* 用紙高さ */
 		&m_nPreview_PaperWidth,			/* 用紙印刷有効幅 */
@@ -785,7 +791,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_pPrintSetting->m_nPrintPaperSize = m_pPrintSetting->m_mdmDevMode.dmPaperSize;
 	m_pPrintSetting->m_nPrintPaperOrientation = m_pPrintSetting->m_mdmDevMode.dmOrientation;	// 用紙方向の反映忘れを修正 2003/07/03 かろと
 
-	// プリンタ設定はここで変更されるがそれぞれのウィンドウで再設定するので更新メッセージは投げない
+	// プリンター設定はここで変更されるがそれぞれのウィンドウで再設定するので更新メッセージは投げない
 	*m_pPrintSettingOrg = *m_pPrintSetting;
 
 	m_nPreview_ViewMarginLeft = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
@@ -888,7 +894,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 		m_hwndPrintPreviewBar, 
 		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
-		INPUT_PAGE_NUM_LEN,
+		_countof(szPageNum) - 1,
 		szPageNum
 	);
 	if( FALSE != bDlgInputPageResult ){
@@ -1041,7 +1047,7 @@ void CPrintPreview::OnPrint( void )
 		return;
 	}
 
-	/* プリンタに渡すジョブ名を生成 */
+	/* プリンターに渡すジョブ名を生成 */
 	if( ! m_pParentWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
 		wcscpy( szJobName, LS(STR_NO_TITLE2) );
 	}else{
@@ -1051,7 +1057,7 @@ void CPrintPreview::OnPrint( void )
 		auto_snprintf_s( szJobName, _countof(szJobName), L"%s%s", szFileName, szExt );
 	}
 
-	/* 印刷範囲を指定できるプリンタダイアログを作成 */
+	/* 印刷範囲を指定できるプリンターダイアログを作成 */
 	//	2003.05.02 かろと
 	PRINTDLG pd;
 	memset_raw( &pd, 0, sizeof(pd) );
@@ -1111,7 +1117,7 @@ void CPrintPreview::OnPrint( void )
 	/* 印刷 ジョブ開始 */
 	if( !m_cPrint.PrintOpen(
 		szJobName,
-		&m_pPrintSetting->m_mdmDevMode,	/* プリンタ設定 DEVMODE用*/
+		&m_pPrintSetting->m_mdmDevMode,	/* プリンター設定 DEVMODE用*/
 		&hdc,
 		szErrMsg						/* エラーメッセージ格納場所 */
 	) ){
@@ -1130,7 +1136,7 @@ void CPrintPreview::OnPrint( void )
 	cRect.top    = nDirectY * (                              m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop + 5 );
 	cRect.bottom = nDirectY * ( m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + m_nPreview_PaperOffsetTop + 5) );
 
-	/* ヘッダ・フッタの$pを展開するために、m_nCurPageNumを保持 */
+	/* ヘッダー・フッターの$pを展開するために、m_nCurPageNumを保持 */
 	WORD	nCurPageNumOld = m_nCurPageNum;
 	CColorStrategy* pStrategy = DrawPageTextFirst( m_nCurPageNum );
 	for( i = 0; i < nNum; ++i ){
@@ -1160,7 +1166,7 @@ void CPrintPreview::OnPrint( void )
 
 		int nHeaderHeight = CPrint::CalcHeaderHeight( m_pPrintSetting );
 
-		// ヘッダ印刷
+		// ヘッダー印刷
 		if( nHeaderHeight ){
 			DrawHeaderFooter( hdc, cRect, true );
 		}
@@ -1187,7 +1193,7 @@ void CPrintPreview::OnPrint( void )
 			pStrategy
 		);
 
-		// フッタ印刷
+		// フッター印刷
 		if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
 			DrawHeaderFooter( hdc, cRect, false );
 		}
@@ -1229,7 +1235,7 @@ static void Tab2Space(wchar_t* pTrg)
 	}
 }
 
-/*! 印刷/印刷プレビュー ヘッダ･フッタの描画
+/*! 印刷/印刷プレビュー ヘッダー･フッターの描画
 */
 void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader )
 {
@@ -1347,7 +1353,8 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_CENTER] : m_pPrintSetting->m_szFooterForm[POS_CENTER],
 			szWork, nWorkLen);
 		nLen = wcslen( szWork );
-		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing); //テキスト幅
+		std::vector<int> vDxArray;
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing, vDxArray); //テキスト幅
 		Print_DrawLine(
 			hdc,
 			CMyPoint(
@@ -1366,7 +1373,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
 			szWork, nWorkLen);
 		nLen = wcslen( szWork );
-		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing); //テキスト幅
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing, vDxArray); //テキスト幅
 		Print_DrawLine(
 			hdc,
 			CMyPoint(
@@ -1950,7 +1957,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	/* 縦スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles			*/
-		L"SCROLLBAR",						/* scroll bar control class		*/
+		WC_SCROLLBAR,						/* scroll bar control class		*/
 		NULL,								/* text for window title bar	*/
 		WS_VISIBLE | WS_CHILD | SBS_VERT,	/* scroll bar styles			*/
 		0,									/* horizontal position			*/
@@ -1976,7 +1983,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	/* 横スクロールバーの作成 */
 	m_hwndHScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles			*/
-		L"SCROLLBAR",						/* scroll bar control class		*/
+		WC_SCROLLBAR,						/* scroll bar control class		*/
 		NULL,								/* text for window title bar	*/
 		WS_VISIBLE | WS_CHILD | SBS_HORZ,	/* scroll bar styles			*/
 		0,									/* horizontal position			*/
@@ -2001,7 +2008,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	/* サイズボックスの作成 */
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT/*0L*/, 							/* no extended styles			*/
-		L"SCROLLBAR",										/* scroll bar control class		*/
+		WC_SCROLLBAR,										/* scroll bar control class		*/
 		NULL,												/* text for window title bar	*/
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles			*/
 		0,													/* horizontal position			*/
@@ -2061,6 +2068,8 @@ INT_PTR CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
 	CPrintPreview* pCPrintPreview;
 	switch( uMsg ){
 	case WM_INITDIALOG:
+		UpdateDialogFont( hwndDlg );
+
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		// 2007.02.11 Moca WM_INITもDispatchEvent_PPBを呼ぶように

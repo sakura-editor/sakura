@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,10 +33,15 @@
 */
 
 #include "StdAfx.h"
-#include <stdarg.h>
-#include <tchar.h>
 #include "MessageBoxF.h"
+
+#include <iostream>
+
+#include "_main/CProcess.h"
 #include "window/CEditWnd.h"
+#include "CSelectLang.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
@@ -44,6 +50,15 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 {
 	// 選択中の言語IDを取得する
 	LANGID wLangId = CSelectLang::getDefaultLangId();
+
+	// 標準エラー出力が存在する場合
+	if(::GetStdHandle(STD_ERROR_HANDLE)){
+		// lpText を標準エラー出力に書き出す
+		std::clog << (lpText ? wcstou8s(lpText) : "") << std::endl;
+
+		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
+		return 0;
+	}
 
 	// lpText, lpCaption をローカルバッファにコピーして MessageBox API を呼び出す
 	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも
@@ -56,14 +71,24 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 	);
 }
 
-HWND GetMessageBoxOwner(HWND hwndOwner)
+/*!
+ * メッセージボックスのオーナーウインドウを取得します。
+ *
+ * @param [in,opt] hWndOwner オーナーウインドウ
+ * @returns メッセージボックスのオーナーウインドウ
+ * @retval 指定したオーナーウインドウが不正値で、プロセスのメインウインドウが作成済みの場合
+ * @retval hWndOwner 指定したオーナーウインドウが適正値で、メインウインドウが未作成の場合
+ */
+HWND GetMessageBoxOwner(HWND hWndOwner)
 {
-	if(hwndOwner==NULL && g_pcEditWnd){
-		return g_pcEditWnd->GetHwnd();
+	if( !hWndOwner || !::IsWindow(hWndOwner) )
+	{
+		if( const auto pcProcess = CProcess::getInstance() )
+		{
+			hWndOwner = pcProcess->GetMainWindow();
+		}
 	}
-	else{
-		return hwndOwner;
-	}
+	return hWndOwner;
 }
 
 /*!
@@ -80,12 +105,11 @@ int VMessageBoxF(
 	va_list&	v			//!< [in,out] 引数リスト
 )
 {
-	hwndOwner=GetMessageBoxOwner(hwndOwner);
-	//整形
-	static WCHAR szBuf[16000];
-	tchar_vsnprintf_s(szBuf,_countof(szBuf),lpText,v);
-	//API呼び出し
-	return ::MessageBox( hwndOwner, szBuf, lpCaption, uType);
+	const auto buf = vstrprintf(lpText,v);
+	if (!hwndOwner) {
+		hwndOwner = GetMessageBoxOwner(hwndOwner);
+	}
+	return ::MessageBox(hwndOwner, buf.data(), lpCaption, uType);
 }
 
 int MessageBoxF( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, ... )

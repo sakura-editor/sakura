@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_BUILD_CONFIG_DB7D8D47_EA6A_4ABF_A081_A31875D78808_H_
+#define SAKURA_BUILD_CONFIG_DB7D8D47_EA6A_4ABF_A081_A31875D78808_H_
 #pragma once
 
 //ビルド(コンパイル)設定
@@ -62,7 +65,7 @@ static const bool UNICODE_BOOL=true;
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
+//crtdbg.hによるメモリリークチェックを使うかどうか (デバッグ用)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 #define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
@@ -89,7 +92,7 @@ static const bool UNICODE_BOOL=true;
 		);
 #endif
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
+//crtdbg.hによるメモリリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	//Cランタイムの機能を使ってメモリリークを検出する
 	//  メモリリークチェックの結果出力を得るには
@@ -107,6 +110,4 @@ static const bool UNICODE_BOOL=true;
     #define DBG_NEW new
 #endif
 
-#if _WIN64
-#define ALPHA_VERSION
-#endif
+#endif /* SAKURA_BUILD_CONFIG_DB7D8D47_EA6A_4ABF_A081_A31875D78808_H_ */

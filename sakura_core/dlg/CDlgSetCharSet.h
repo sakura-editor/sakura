@@ -6,14 +6,19 @@
 */
 /*
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGSETCHARSET_82E8A81C_64D0_45DE_BECC_4721CCC93FEB_H_
+#define SAKURA_CDLGSETCHARSET_82E8A81C_64D0_45DE_BECC_4721CCC93FEB_H_
 #pragma once
 
 #include "dlg/CDialog.h"
+
+enum ECodeType;
 
 //! 文字コードセット設定ダイアログボックス
 class CDlgSetCharSet final : public CDialog
@@ -48,3 +53,4 @@ protected:
 
 	void	SetBOM( void );		// BOM の設定
 };
+#endif /* SAKURA_CDLGSETCHARSET_82E8A81C_64D0_45DE_BECC_4721CCC93FEB_H_ */

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ResourceCompile Include="sakura_lang_rc.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{fb40f358-c2bb-436a-b87f-5c9ca3697244}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resource\auto_scroll_center.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\resource\auto_scroll_horizontal.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\resource\auto_scroll_vertical.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\resource\icon_grep.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\resource\mytool.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\resource\printer.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resource\auto_scroll_center.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_down.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_down_left.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_down_right.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_horizontal.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_left.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_right.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_up.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_up_left.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_up_right.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\auto_scroll_vertical.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\cursor_copy.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\cursor_isb.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\cursor_isf.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\cursor_move.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\cursor_rvarrow.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\cursor_tab_join.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\cursor_tab_separate.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resource\MainMenu.ini">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

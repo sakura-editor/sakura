@@ -90,7 +90,7 @@ void
 while
 with
 
-// ビルトインクラス名、コンポーネントクラス名、インターフェイス名
+// ビルトインクラス名、コンポーネントクラス名、インターフェース名
 Accessibility
 Accordion
 Alert

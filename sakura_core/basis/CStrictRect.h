@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,7 +23,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSTRICTRECT_B41F0F96_8886_4ED1_B6FE_1B4EA70F58D8_H_
+#define SAKURA_CSTRICTRECT_B41F0F96_8886_4ED1_B6FE_1B4EA70F58D8_H_
 #pragma once
+
+#include "util/std_macro.h"
 
 template <class INT_TYPE, class POINT_TYPE> class CStrictRect{
 private:
@@ -64,3 +69,4 @@ public:
 		return *this;
 	}
 };
+#endif /* SAKURA_CSTRICTRECT_B41F0F96_8886_4ED1_B6FE_1B4EA70F58D8_H_ */
