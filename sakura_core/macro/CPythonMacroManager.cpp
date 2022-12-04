@@ -36,6 +36,7 @@
 #include "CMacro.h"
 #include "util/tchar_convert.h"
 #include "util/module.h"
+#include "window/CEditWnd.h"
 #include "view/CEditView.h"
 
 namespace {
@@ -769,7 +770,6 @@ std::vector<std::string> g_commandNames;
 std::vector<PyMethodDef> g_commandDescs;
 std::vector<std::string> g_functionNames;
 std::vector<PyMethodDef> g_functionDescs;
-CEditView* g_pEditView;
 
 PyObject* handleCommand(PyObject* self, PyObject* args)
 {
@@ -790,7 +790,7 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 		if (i < 4) {
 			varType = info->m_varArguments[i];
 		}else {
-			if (!info->m_pData || info->m_pData->m_nArgMaxSize >= i) {
+			if (!info->m_pData || info->m_pData->m_nArgMaxSize >= (int)i) {
 				varType = VT_EMPTY;
 			}else {
 				varType = info->m_pData->m_pVarArgEx[i - 4];
@@ -821,7 +821,9 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 		argLengths[i] = (int)strArguments[i].size();
 	}
 
-	bool ret = CMacro::HandleCommand(g_pEditView, (EFunctionCode)info->m_nFuncID, arguments, argLengths, (int)nArgs);
+	bool ret = CMacro::HandleCommand(
+		&GetEditWnd().GetActiveView(),
+		(EFunctionCode)info->m_nFuncID, arguments, argLengths, (int)nArgs);
 
 	PyObject* none = Py_BuildValue("");
 	Py_IncRef(none);
@@ -847,7 +849,7 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 		if (i < 4) {
 			varType = info->m_varArguments[i];
 		}else {
-			if (!info->m_pData || info->m_pData->m_nArgMaxSize >= i) {
+			if (!info->m_pData || info->m_pData->m_nArgMaxSize >= (int)i) {
 				varType = VT_EMPTY;
 			}else {
 				varType = info->m_pData->m_pVarArgEx[i - 4];
@@ -878,7 +880,9 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 	if (i == nArgs) {
 		VARIANT vtResult;
 		::VariantInit(&vtResult);
-		bool ret = CMacro::HandleFunction(g_pEditView, (EFunctionCode)info->m_nFuncID, vtArgs, (int)nArgs, vtResult);
+		bool ret = CMacro::HandleFunction(
+			&GetEditWnd().GetActiveView(),
+			(EFunctionCode)info->m_nFuncID, vtArgs, (int)nArgs, vtResult);
 		std::wstring str;
 		switch (vtResult.vt) {
 		case VT_I4:
@@ -995,8 +999,6 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 			Py_XDECREF(cap);
 		}
 	}
-
-	g_pEditView = EditView;
 
 	PyObject* pCode = Py_CompileString(m_strMacro.c_str(), m_strPath.c_str(), Py_file_input);
 	if (!pCode) {
