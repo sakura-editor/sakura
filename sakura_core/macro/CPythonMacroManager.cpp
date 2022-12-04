@@ -954,8 +954,24 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 {
 	static HMODULE s_hModule;
 	if (!s_hModule) {
-		s_hModule = LoadLibraryExedir(L"python3.dll");
+		const wchar_t* dllname = L"python3.dll";
+		s_hModule = LoadLibraryExedir(dllname);
 		if (!s_hModule) {
+			WCHAR* pMsg;
+			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+				FORMAT_MESSAGE_IGNORE_INSERTS |
+				FORMAT_MESSAGE_FROM_SYSTEM,
+				NULL,
+				::GetLastError(),
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				(LPWSTR)&pMsg,
+				0,
+				NULL
+			);
+			CNativeW str(pMsg);
+			::LocalFree((HLOCAL)pMsg);
+			str.Replace(L"%1", dllname);
+			ErrorMessage(NULL, L"%s", str.GetStringPtr());
 			return false;
 		}
 		for (size_t i = 0; i < _countof(symbols); ++i) {
