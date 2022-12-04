@@ -39,7 +39,7 @@
 #define _MAKE_VERSION(a, b, c, d)              a, b, c, d
 #define _MAKE_VERSION_STR(a, b, c, d, sep)     TO_STR(a) sep TO_STR(b) sep TO_STR(c) sep TO_STR(d)
 
-#define PRODUCT_VERSION _MAKE_VERSION(VER_A, VER_B, VER_C, 0)
+#define PRODUCT_VERSION _MAKE_VERSION(VER_A, VER_B, VER_C, VER_D)
 #define FILE_VERSION    _MAKE_VERSION(VER_A, VER_B, VER_C, VER_D)
 #define VERSION_STR     _MAKE_VERSION_STR(VER_A, VER_B, VER_C, VER_D, ".")
 
