@@ -2348,6 +2348,7 @@ BEGIN
     F_EXITALL               "Exit Sakura completely"
     F_OPEN_FOLDER_IN_EXPLORER "Open Containing Folder"
     F_OPEN_COMMAND_PROMPT   "Open Command Prompt"
+	F_OPEN_COMMAND_PROMPT_AS_ADMIN "Open Command Prompt As Admin"
     F_WCHAR                 "Character Input"
     F_IME_CHAR              "Hlf-Width Character Input"
 END
