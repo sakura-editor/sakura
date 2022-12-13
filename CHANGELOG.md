@@ -15,7 +15,6 @@
 
 ### 仕様変更
 
-- VMessageBoxFのバッファ長 [\#1416](https://github.com/sakura-editor/sakura/issues/1416)
 - 「指定行へジャンプ」ダイアログで入力できる桁数を増やす [\#1829](https://github.com/sakura-editor/sakura/pull/1829) ([beru](https://github.com/beru))
 - 表示スケールに合わせて拡大する処理を色々と追加 [\#1762](https://github.com/sakura-editor/sakura/pull/1762) ([beru](https://github.com/beru))
 - アクティブタブの上部にトップバンドを描画する [\#1684](https://github.com/sakura-editor/sakura/pull/1684) ([suconbu](https://github.com/suconbu))
@@ -36,15 +35,6 @@
 
 ### 機能追加
 
-- コメントとクォーテーション文字列の色分けをカラー印刷に反映させたい [\#1444](https://github.com/sakura-editor/sakura/issues/1444)
-- Grepダイアログ部品配置の改善提案 [\#1426](https://github.com/sakura-editor/sakura/issues/1426)
-- 5ch: SetViewTop\(\) に対応する Getメソッドが欲しい [\#1388](https://github.com/sakura-editor/sakura/issues/1388)
-- Common File Dialog の代わりに Common Item Dialog を使用する [\#652](https://github.com/sakura-editor/sakura/issues/652)
-- 「エクスプローラーで開く」、「コマンドプロンプトを開く」等のコマンドのアイコンを対応する [\#607](https://github.com/sakura-editor/sakura/issues/607)
-- 性能強化案２ 並行処理の導入を検討する [\#467](https://github.com/sakura-editor/sakura/issues/467)
-- 性能強化案１ データのパケット化を検討する [\#466](https://github.com/sakura-editor/sakura/issues/466)
-- 独自例外を定義して使うようにしたい [\#356](https://github.com/sakura-editor/sakura/issues/356)
-- grep/grep 置換で除外ファイル、除外フォルダを指定できるようにする [\#75](https://github.com/sakura-editor/sakura/issues/75)
 - uchardet.dll が存在したらそれを使って文字エンコーディングの検出が行われるように処理追加 [\#1726](https://github.com/sakura-editor/sakura/pull/1726) ([beru](https://github.com/beru))
 - Cプリプロセッサの判定を強化 [\#1644](https://github.com/sakura-editor/sakura/pull/1644) ([beru](https://github.com/beru))
 - デザインテンプレートを活用できるように改良する [\#1570](https://github.com/sakura-editor/sakura/pull/1570) ([berryzplus](https://github.com/berryzplus))
@@ -58,25 +48,6 @@
 
 ### バグ修正
 
-- 入力補完がEnterで確定できない、補完ウィンドウの幅が不正 [\#1749](https://github.com/sakura-editor/sakura/issues/1749)
-- 印刷ページ設定ダイアログのフォントが巨大化してしまう [\#1678](https://github.com/sakura-editor/sakura/issues/1678)
-- ファイル読み込み後にステータスバーの左端にプログレスバーの表示が残る [\#1651](https://github.com/sakura-editor/sakura/issues/1651)
-- 先頭行でPageUp・末尾行でPageDownした後のカーソル移動で下線が残る [\#1650](https://github.com/sakura-editor/sakura/issues/1650)
-- 特定のテキストが読み込まれない [\#1641](https://github.com/sakura-editor/sakura/issues/1641)
-- 文字コードを選択して開き直すの実行直後ステータスバーの文字コード名が更新されない [\#1637](https://github.com/sakura-editor/sakura/issues/1637)
-- 「SAKURA　EDITORでGrep」が機能しません。 [\#1626](https://github.com/sakura-editor/sakura/issues/1626)
-- カーソルが先頭行にある状態からさらに PageUp キーを押すと縦線が残る [\#1617](https://github.com/sakura-editor/sakura/issues/1617)
-- すべてのウィンドウが最小化された状態で「並べて表示」コマンドを実行するとクラッシュする [\#1510](https://github.com/sakura-editor/sakura/issues/1510)
--  \(sf1034\)プロポーショナル版で禁則処理がおかしい問題の修正 [\#1410](https://github.com/sakura-editor/sakura/issues/1410)
-- サクラエディタのコマンドライン引数でファイル名がMAXPATH超に長すぎるとうんともすんとも言わずに落ちて消える [\#1406](https://github.com/sakura-editor/sakura/issues/1406)
-- OSDN転載: 不具合：アウトライン解析のエンバグ [\#1404](https://github.com/sakura-editor/sakura/issues/1404)
--  OSDNより転載：プラグインコマンド用アイコン画像の表示色（カラーパレット） [\#1395](https://github.com/sakura-editor/sakura/issues/1395)
-- ツールバーに設定された「検索（ボックス）」の表示場所がおかしい [\#1343](https://github.com/sakura-editor/sakura/issues/1343)
-- 共通設定のウィンドウタブから他の設定タブに移動すると落ちる [\#1339](https://github.com/sakura-editor/sakura/issues/1339)
-- ツールバーの折り返しが機能しない [\#1313](https://github.com/sakura-editor/sakura/issues/1313)
-- EUC-JPのファイルが文字化けする [\#1103](https://github.com/sakura-editor/sakura/issues/1103)
-- ダイアログの表示位置が表示するたびにずれていく [\#397](https://github.com/sakura-editor/sakura/issues/397)
-- \[保留中\] windows7 の AeroSnapに対応させる [\#107](https://github.com/sakura-editor/sakura/issues/107)
 - 無題シーケンス番号の保存に失敗する不具合の暫定対策 [\#1850](https://github.com/sakura-editor/sakura/pull/1850) ([sanomari](https://github.com/sanomari))
 - トリプルクリック時に次の行の先頭にURLがあるとそれが選択されてしまう現象が起きないように対策 [\#1753](https://github.com/sakura-editor/sakura/pull/1753) ([beru](https://github.com/beru))
 - 補完候補一覧ダイアログの不具合修正 [\#1750](https://github.com/sakura-editor/sakura/pull/1750) ([ghost](https://github.com/ghost))
@@ -134,89 +105,7 @@
 - CSelectLangクラスの初期化が必ず行われるようにする [\#1341](https://github.com/sakura-editor/sakura/pull/1341) ([berryzplus](https://github.com/berryzplus))
 - ツールバーの折り返しが機能しなくなる不具合を引き起こした変更をrevert [\#1314](https://github.com/sakura-editor/sakura/pull/1314) ([beru](https://github.com/beru))
 
-**Closed issues:**
 
-- OneDriveをセットアップを完了させた端末で単体テストが失敗する [\#1863](https://github.com/sakura-editor/sakura/issues/1863)
-- タブの描画・ホイールでの選択順序の問題 [\#1845](https://github.com/sakura-editor/sakura/issues/1845)
-- 編集ウィンドウをバックグラウンドに移すと無題番号が消失する [\#1844](https://github.com/sakura-editor/sakura/issues/1844)
-- リソース編集を行っただけでビルド時に関係ない compiletests が動いてしまう [\#1828](https://github.com/sakura-editor/sakura/issues/1828)
-- 「指定行へジャンプ」ダイアログで6桁しか入力できない [\#1827](https://github.com/sakura-editor/sakura/issues/1827)
-- マクロ実行時のコピー＆貼り付けの失敗 [\#1823](https://github.com/sakura-editor/sakura/issues/1823)
-- アーカイブ展開を必要なときだけ実行させるようにしたい [\#1790](https://github.com/sakura-editor/sakura/issues/1790)
-- 本体プロジェクトのCTags解凍タスクの記述がおかしい気がする [\#1772](https://github.com/sakura-editor/sakura/issues/1772)
-- グローバル関数GetEditWnd\(\)の実装を再検討する [\#1746](https://github.com/sakura-editor/sakura/issues/1746)
-- トリプルクリック時に次の行の先頭にURLがあるとそれが選択されてしまう [\#1745](https://github.com/sakura-editor/sakura/issues/1745)
-- HeaderMakeがアンチウィルスアプリに有害と判定される [\#1740](https://github.com/sakura-editor/sakura/issues/1740)
-- ファイルを開いた直後に自動で保存される [\#1739](https://github.com/sakura-editor/sakura/issues/1739)
-- 置換後にタブに変換できない、正規表現使えないような [\#1723](https://github.com/sakura-editor/sakura/issues/1723)
-- 外部コマンド実行でキャンセルした時のメッセージが異なる [\#1720](https://github.com/sakura-editor/sakura/issues/1720)
-- キーボードフォーカスが当たっていないテキストボックスの文字列が選択状態になっていることがある [\#1717](https://github.com/sakura-editor/sakura/issues/1717)
-- クリッカブルURL機能から実行可能ファイルを直接実行できるのは仕様かどうか [\#1705](https://github.com/sakura-editor/sakura/issues/1705)
-- 文字列をすべて置換したときに表示されるメッセージがおかしい [\#1701](https://github.com/sakura-editor/sakura/issues/1701)
-- メインで使うCI環境をAppveyorからGitHub Actionsに変更したい [\#1687](https://github.com/sakura-editor/sakura/issues/1687)
-- Appveyorのビルドが遅い [\#1680](https://github.com/sakura-editor/sakura/issues/1680)
-- SonarCloudにBugだと言われているC++クラス定義に対策したい [\#1605](https://github.com/sakura-editor/sakura/issues/1605)
-- Windows10でタイムスタンプが意図せず更新される [\#1551](https://github.com/sakura-editor/sakura/issues/1551)
-- x64版のalpha表記が意味をなしていない気がするので外しませんか？ [\#1541](https://github.com/sakura-editor/sakura/issues/1541)
-- runEditorProcessがたまに失敗する [\#1535](https://github.com/sakura-editor/sakura/issues/1535)
-- 置換時の検索文字列が正しく設定できない [\#1525](https://github.com/sakura-editor/sakura/issues/1525)
-- Azure Pipelinesの除外パス指定が機能していないらしい [\#1501](https://github.com/sakura-editor/sakura/issues/1501)
-- SonarCloudをもっと便利に使えないかなぁという話 [\#1476](https://github.com/sakura-editor/sakura/issues/1476)
-- ApiWrap::Combo\_GetEditSel の assert 条件が逆ではないか？ [\#1460](https://github.com/sakura-editor/sakura/issues/1460)
-- Thank you very much for the free open source program! [\#1434](https://github.com/sakura-editor/sakura/issues/1434)
-- テストをビルドするときに毎回googletestがビルドされる。 [\#1433](https://github.com/sakura-editor/sakura/issues/1433)
-- デフォルトの文字コードが反映されない。SJISに設定してもUTF-8で読み込まれる。  [\#1418](https://github.com/sakura-editor/sakura/issues/1418)
-- テストバッチが壊れているのを修正したい [\#1380](https://github.com/sakura-editor/sakura/issues/1380)
-- コマンドラインオプション「-WQ\(INIファイルを出力して即終了\)」が使えない [\#1377](https://github.com/sakura-editor/sakura/issues/1377)
-- Visual Studio 2019 Version 16.7.1 でビルドエラーになる [\#1373](https://github.com/sakura-editor/sakura/issues/1373)
-- Installer の message で CustomMessages の枠組みを使わずに直接日本語を埋め込んでいる [\#1370](https://github.com/sakura-editor/sakura/issues/1370)
-- MSVCのターゲット `sakura/funccode.targets` がインクリメンタルビルドに対応できてない [\#1367](https://github.com/sakura-editor/sakura/issues/1367)
-- Funccode\_define.hの生成時に発生する競合を解決したい [\#1364](https://github.com/sakura-editor/sakura/issues/1364)
-- キーワードヘルプの説明文に"\n"を表示できるようにしたい。 [\#1359](https://github.com/sakura-editor/sakura/issues/1359)
-- OSDN転載: キーワードヘルプで複数行の説明テキストを入れると2行目以降が表示されない。 [\#1353](https://github.com/sakura-editor/sakura/issues/1353)
-- 単体テストで x64 Debug で CDlgProfileMgr.TrySelectProfile\_001 で assert になる [\#1334](https://github.com/sakura-editor/sakura/issues/1334)
-- HTMLヘルプの目次に「Windows 10 でのファイル拡張子関連付け」ページが追加されていない [\#1329](https://github.com/sakura-editor/sakura/issues/1329)
-- 2.4.1のヘルプ：「Windows 10 でのファイル拡張子関連付け」「Grep」「Grep置換」の画像がやたら大きくて見づらい。 [\#1325](https://github.com/sakura-editor/sakura/issues/1325)
-- 履歴とお気に入りの管理ダイアログのタブをCtrl+Tabで切り替えたい [\#1324](https://github.com/sakura-editor/sakura/issues/1324)
-- Grep置換ダイアログでホットキーが重複している [\#1323](https://github.com/sakura-editor/sakura/issues/1323)
-- 検索ダイアログ等でのCtrl+BackSpaceの動作変更要望 [\#1311](https://github.com/sakura-editor/sakura/issues/1311)
-- CLayoutIntの実装されていない演算子について調査する [\#1295](https://github.com/sakura-editor/sakura/issues/1295)
-- 2.4.0のインストーラー版：プログラムと機能でSAKURA Editorをクリックするとデバッグ版のアイコンが表示される [\#1288](https://github.com/sakura-editor/sakura/issues/1288)
-- メインメニュー「ファイル」の実装済み機能をマクロ化できないか検討する [\#1207](https://github.com/sakura-editor/sakura/issues/1207)
-- ブックマーク関連の機能IDが気になる、という話。 [\#1206](https://github.com/sakura-editor/sakura/issues/1206)
-- 64bit 版のサクラエディタのファイル名を「sakura64.exe」にして欲しい [\#1198](https://github.com/sakura-editor/sakura/issues/1198)
-- 設定項目がなかったらデフォルト設定を使うようにしたい [\#1188](https://github.com/sakura-editor/sakura/issues/1188)
-- 「このファイルのフォルダ名をコピー」の機能のアイコンを実装する [\#1166](https://github.com/sakura-editor/sakura/issues/1166)
-- C/C++の予約語と衝突する識別子を定義しているのを何とかしたい [\#1124](https://github.com/sakura-editor/sakura/issues/1124)
-- 前回の作業状態を復元する機能が欲しい [\#1122](https://github.com/sakura-editor/sakura/issues/1122)
-- 正規表現パターンの妥当性チェックに不備がある疑いを検証する [\#1112](https://github.com/sakura-editor/sakura/issues/1112)
-- find-tools.bat の `"%CMD\_GIT%"` を活用する [\#984](https://github.com/sakura-editor/sakura/issues/984)
-- Azure Pipelines のビルド完了を GitHub 上で通知したい [\#973](https://github.com/sakura-editor/sakura/issues/973)
-- テストバッチでGoogleTestのgit submoduleが二度呼ばれている件 [\#900](https://github.com/sakura-editor/sakura/issues/900)
-- リンカオプションのOSの最低バージョンを指定する [\#897](https://github.com/sakura-editor/sakura/issues/897)
-- googletest による単体テストで MingW のビルド構成で pacman の導入を検討する [\#799](https://github.com/sakura-editor/sakura/issues/799)
-- URL検出機構のせいで描画性能に悪影響が出ている件について掲示板で指摘がありました。 [\#795](https://github.com/sakura-editor/sakura/issues/795)
-- grep の除外指定の残件 [\#768](https://github.com/sakura-editor/sakura/issues/768)
-- 背景塗りつぶしにPatBltを使う [\#767](https://github.com/sakura-editor/sakura/issues/767)
-- ヘルプ項目「コマンドラインオプション」が現状と合ってない件をどうにかしたい [\#763](https://github.com/sakura-editor/sakura/issues/763)
-- バージョン情報とウィンドウタイトルでのバージョン表記の並びが一致してない [\#759](https://github.com/sakura-editor/sakura/issues/759)
-- トップディレクトリのファイルを整理する [\#740](https://github.com/sakura-editor/sakura/issues/740)
-- sakura/sakura\_core/Funccode\_x.hsrc での定義値の間違いを検出できる仕組みを検討する [\#736](https://github.com/sakura-editor/sakura/issues/736)
-- ファイルツリーからファイルツリー設定を開いた後に閉じてファイルツリーも閉じるとエディタじゃないウィンドウに切り替わる [\#708](https://github.com/sakura-editor/sakura/issues/708)
-- サクラエディタではアクセスキーに大文字/小文字の区別がありません。 [\#624](https://github.com/sakura-editor/sakura/issues/624)
-- 独自フォント作りませんか？\(改行記号などの特殊文字の描画方法に関する話\) [\#588](https://github.com/sakura-editor/sakura/issues/588)
-- 機能追加したときの既存 sakura.ini の扱いに関して [\#567](https://github.com/sakura-editor/sakura/issues/567)
-- Universal ctags の最新版を取り込む [\#515](https://github.com/sakura-editor/sakura/issues/515)
-- Grepのコマンドラインオプションを分かりやすくしたい [\#419](https://github.com/sakura-editor/sakura/issues/419)
-- ビルドの前提条件を整理して StdAfx.h に含めたい [\#365](https://github.com/sakura-editor/sakura/issues/365)
-- x64起動が遅い問題に対処する [\#243](https://github.com/sakura-editor/sakura/issues/243)
-- Pull Request を送るときの注意点をまとめる [\#242](https://github.com/sakura-editor/sakura/issues/242)
-- SAKURA\_LANG\_RESOURCE の定義の有無が異なる [\#149](https://github.com/sakura-editor/sakura/issues/149)
-- Source-Code annotation language \(SAL\) の記述が正しいか確認する [\#102](https://github.com/sakura-editor/sakura/issues/102)
-- \[x64対応\] \(未着手\) 0x7fffffff を超えるポインタのエミュレート [\#91](https://github.com/sakura-editor/sakura/issues/91)
-- Win32 Release に LargeAddressAware が入っている理由を調べる [\#85](https://github.com/sakura-editor/sakura/issues/85)
-- メモリ確保失敗時の挙動について調査する [\#53](https://github.com/sakura-editor/sakura/issues/53)
-- x64 のビルドに対応する [\#40](https://github.com/sakura-editor/sakura/issues/40)
 
 ### その他変更
 
@@ -376,9 +265,7 @@
 
 [Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.1-beta2...v2.4.1-beta3)
 
-**Closed issues:**
 
-- OSDNより転載： 「タイプ別設定」等ダイアログ内の「ヘルプ」ボタンが機能しない [\#1302](https://github.com/sakura-editor/sakura/issues/1302)
 
 ### その他変更
 
@@ -393,15 +280,9 @@
 
 ### 仕様変更
 
-- Grep機能のうち一部機能を削除しませんか？ [\#1248](https://github.com/sakura-editor/sakura/issues/1248)
 
 ### バグ修正
 
-- ツールバーのアイコン 2.4.0にアップデートしたら今まで使えてたのが使えなくなって全部空白になった [\#1243](https://github.com/sakura-editor/sakura/issues/1243)
-- \_wcsdupでdeleteしてる [\#1236](https://github.com/sakura-editor/sakura/issues/1236)
-- SJISエンコードのキーワードヘルプ辞書を設定するとき表示化け・Crashする [\#1234](https://github.com/sakura-editor/sakura/issues/1234)
-- 折り返しされた際、文字数カウントが合わない [\#1233](https://github.com/sakura-editor/sakura/issues/1233)
-- grep で 除外ファイル、除外フォルダが効かない [\#743](https://github.com/sakura-editor/sakura/issues/743)
 - CImpExpRegex::Import の実装を見直し [\#1273](https://github.com/sakura-editor/sakura/pull/1273) ([beru](https://github.com/beru))
 - ツールイメージのリサイズ機構にフォールバック機能を付ける [\#1261](https://github.com/sakura-editor/sakura/pull/1261) ([berryzplus](https://github.com/berryzplus))
 - 正規表現キーワードのインポートで許容サイズを超える文字列を無駄にコピーしているのを修正する [\#1244](https://github.com/sakura-editor/sakura/pull/1244) ([berryzplus](https://github.com/berryzplus))
@@ -410,14 +291,7 @@
 - SJISエンコードのキーワードヘルプ辞書を設定するとき表示化けする問題への対処 [\#1238](https://github.com/sakura-editor/sakura/pull/1238) ([beru](https://github.com/beru))
 - wstringをWCHAR\[N\]にコピーする処理でNUL終端が付かない不具合を修正 [\#1235](https://github.com/sakura-editor/sakura/pull/1235) ([berryzplus](https://github.com/berryzplus))
 
-**Closed issues:**
 
-- インストーラー版の32bit版と64bit版を両方インストールした場合、 プログラムと機能のウィンドウで32bit版と64bit版か区別が付かない [\#1292](https://github.com/sakura-editor/sakura/issues/1292)
-- Pull Request Template に入れた\(必須\)とか\(省略可\)を外したい [\#1287](https://github.com/sakura-editor/sakura/issues/1287)
-- Pull Requestテンプレートに\(必須\)ya [\#1286](https://github.com/sakura-editor/sakura/issues/1286)
-- 正式リリース版バイナリのレガシーOSとの互換性 [\#1253](https://github.com/sakura-editor/sakura/issues/1253)
-- 検索ダイアログボックスでプルダウンが表示時にDeleteキーで文字の消去が機能しない [\#1219](https://github.com/sakura-editor/sakura/issues/1219)
-- Visaul Studio 2017 と Visaul Studio 2019 を両方インストールしている環境で build-sln x64 Release でビルドすると "\_\_GSHandlerCheck\_EH4" は未解決です。のエラーになる [\#1164](https://github.com/sakura-editor/sakura/issues/1164)
 
 ### その他変更
 
@@ -459,10 +333,7 @@
 
 - キーワードを指定してタグジャンプができないバグを修正 [\#1208](https://github.com/sakura-editor/sakura/pull/1208) ([7-rate](https://github.com/7-rate))
 
-**Closed issues:**
 
-- \[要望\] 「ファイル\(F\)」→「開き直す\(W\)」のサブメニューに「読み取り専用で開き直す」を追加して欲しい [\#1189](https://github.com/sakura-editor/sakura/issues/1189)
-- Grep結果の対象リスト表示の気になる点 [\#1134](https://github.com/sakura-editor/sakura/issues/1134)
 
 ### その他変更
 
@@ -481,18 +352,10 @@
 
 ### バグ修正
 
-- build-chm.bat を二回実行すると ChmSourceConverter.exe 実行時に例外が発生する [\#1126](https://github.com/sakura-editor/sakura/issues/1126)
 - C++ファイルのアウトライン解析がトグルで閉じない不具合の修正 [\#1176](https://github.com/sakura-editor/sakura/pull/1176) ([berryzplus](https://github.com/berryzplus))
 - 検索条件の文字列をエスケープする処理を関数化する変更のうち、CNativeW::AppendStringF を使うように変更したのをやっぱ止める [\#1135](https://github.com/sakura-editor/sakura/pull/1135) ([beru](https://github.com/beru))
 
-**Closed issues:**
 
-- 64bit or 32bit を確認できるように「ヘルプ」→「バージョン」で表示するべき It is better to display 32bit or 64bit by clicking "help" and "version" information. [\#1178](https://github.com/sakura-editor/sakura/issues/1178)
-- 「アウトライン解析\(トグル\) 」でトグルしない場合がある [\#1175](https://github.com/sakura-editor/sakura/issues/1175)
-- Visual Studio 2019 でビルドが通らない [\#1140](https://github.com/sakura-editor/sakura/issues/1140)
-- tag に対するビルドで成果物名にタグ名が付与されていない [\#1125](https://github.com/sakura-editor/sakura/issues/1125)
-- 旧SFのオンラインヘルプのgithub.ioへのリダイレクト状況について [\#1024](https://github.com/sakura-editor/sakura/issues/1024)
-- HTML ヘルプ中のバージョン番号に関して考える [\#384](https://github.com/sakura-editor/sakura/issues/384)
 
 ### その他変更
 
@@ -522,10 +385,7 @@
 
 - 「ツールバーを表示」などに関する問題に対処する [\#1113](https://github.com/sakura-editor/sakura/pull/1113) ([berryzplus](https://github.com/berryzplus))
 
-**Closed issues:**
 
-- 「ツールバーを表示」などに関する問題 [\#1109](https://github.com/sakura-editor/sakura/issues/1109)
-- Python用の強調キーワードがデフォルトで欲しい [\#1106](https://github.com/sakura-editor/sakura/issues/1106)
 
 ### その他変更
 
@@ -540,9 +400,7 @@
 - CNativeW::SetString に NULL を指定した場合に wcslen に NULL を渡して落ちてしまう不具合を修正 [\#1087](https://github.com/sakura-editor/sakura/pull/1087) ([beru](https://github.com/beru))
 - MYDEVMODEの等価比較演算子の隠れバグを修正する [\#1079](https://github.com/sakura-editor/sakura/pull/1079) ([berryzplus](https://github.com/berryzplus))
 
-**Closed issues:**
 
-- ヘルプのPNGのファイルサイズが無駄に大きい [\#1083](https://github.com/sakura-editor/sakura/issues/1083)
 
 ### その他変更
 
@@ -565,15 +423,6 @@
 
 ### バグ修正
 
-- プログラム起動時に assert が発生する [\#1073](https://github.com/sakura-editor/sakura/issues/1073)
-- 行毎ではなく一括で線を描く変更によって引き起こされた表示の不具合 [\#1071](https://github.com/sakura-editor/sakura/issues/1071)
-- 文字コードの指定ダイアログでCPのチェックが効かない事が有る [\#1037](https://github.com/sakura-editor/sakura/issues/1037)
-- 正規表現キーワードのURLで0文字マッチすると無限ループ [\#1027](https://github.com/sakura-editor/sakura/issues/1027)
-- ファイルのシンボリックリンクを開くとファイルを更新していないのに「ファイルが更新されました」というメッセージボックスが表示される [\#1010](https://github.com/sakura-editor/sakura/issues/1010)
-- .txt のカーソル位置がアウトラインのツリー位置に反映されない [\#948](https://github.com/sakura-editor/sakura/issues/948)
-- Vistaスタイルのファイルダイアログ使用時に名前を付けて保存の文字コードセット, 改行コード, BOM指定が有効に動作しない [\#873](https://github.com/sakura-editor/sakura/issues/873)
-- Vistaスタイルのファイルダイアログ使用時に新規ファイルの保存が行えない [\#862](https://github.com/sakura-editor/sakura/issues/862)
-- Vistaスタイルのファイルダイアログのカスタマイズ部分が表示されない [\#844](https://github.com/sakura-editor/sakura/issues/844)
 - 確保済みメモリサイズの更新タイミングを訂正する [\#1061](https://github.com/sakura-editor/sakura/pull/1061) ([berryzplus](https://github.com/berryzplus))
 - 文字コードの指定ダイアログのCPチェックの仕様を修正する [\#1059](https://github.com/sakura-editor/sakura/pull/1059) ([berryzplus](https://github.com/berryzplus))
 - 正規表現キーワードの一致判定が0文字マッチをマッチとみなさないように変更する [\#1030](https://github.com/sakura-editor/sakura/pull/1030) ([berryzplus](https://github.com/berryzplus))
@@ -583,33 +432,7 @@
 - Vistaスタイルのファイルダイアログ使用時に新規ファイルの保存が行えない問題を修正 [\#867](https://github.com/sakura-editor/sakura/pull/867) ([beru](https://github.com/beru))
 - Vistaスタイルのファイルダイアログでカスタマイズ部分が表示されない場合がある問題の修正 [\#845](https://github.com/sakura-editor/sakura/pull/845) ([beru](https://github.com/beru))
 
-**Closed issues:**
 
-- DEBUGのUSE\_LEAK\_CHECK\_WITH\_CRTDBGを有効にしたい [\#1046](https://github.com/sakura-editor/sakura/issues/1046)
-- DEBUGのUSE\_LEAK\_CHECK\_WITH\_CRTDBGを有効にするとコンパイルエラー [\#1045](https://github.com/sakura-editor/sakura/issues/1045)
-- Windows SDKのヘッダで警告が出ている件に対応したい [\#1043](https://github.com/sakura-editor/sakura/issues/1043)
-- githash.h が無いためにローカルビルドが失敗します。 [\#1041](https://github.com/sakura-editor/sakura/issues/1041)
-- tests1 プロジェクトをリビルドしたりクリーンすると異なる構成のビルドに影響してしまう [\#1013](https://github.com/sakura-editor/sakura/issues/1013)
-- REST APIとの通信にリトライ機能を付けたい [\#977](https://github.com/sakura-editor/sakura/issues/977)
-- Appveyor から MinGW ビルドを外したい [\#974](https://github.com/sakura-editor/sakura/issues/974)
-- Appveyorのロケール設定を復活したい [\#954](https://github.com/sakura-editor/sakura/issues/954)
-- DISABLEDテストのサンプルを導入したい [\#942](https://github.com/sakura-editor/sakura/issues/942)
-- `sakura.hhp`  で `sakura\_core\sakura.hh` を参照するのをやめてコメントをカットした sakura.hh を使うようにする [\#929](https://github.com/sakura-editor/sakura/issues/929)
-- .gitignore の中身をソートする [\#926](https://github.com/sakura-editor/sakura/issues/926)
-- Azure Pipelines の "Build solution" の step で find-tools.bat にすごく時間がかかっている。 [\#907](https://github.com/sakura-editor/sakura/issues/907)
-- VS2017 と VS2019 のどちらをビルドに使うか判定見直し [\#889](https://github.com/sakura-editor/sakura/issues/889)
-- SonarQube で `/d:sonar.cfamily.threads` を指定して SonarQube を高速化する [\#880](https://github.com/sakura-editor/sakura/issues/880)
-- ドキュメントで azure pipelines を Azure Pipelines に統一する [\#863](https://github.com/sakura-editor/sakura/issues/863)
-- インストーラの内部の文章の句点を「，．」から「、。」に [\#841](https://github.com/sakura-editor/sakura/issues/841)
-- azure pipelines のドキュメントを更新する [\#834](https://github.com/sakura-editor/sakura/issues/834)
-- 和暦の出し方（覚書） [\#827](https://github.com/sakura-editor/sakura/issues/827)
-- 引数が 4つのバージョンの IsMailAddress の単体テストを追加する [\#811](https://github.com/sakura-editor/sakura/issues/811)
-- タグジャンプ高速化 [\#803](https://github.com/sakura-editor/sakura/issues/803)
-- vs2017ソリューションにテストを組み込みたい [\#793](https://github.com/sakura-editor/sakura/issues/793)
-- STR\_IMPEXP\_VER の書式フォーマット指定を見直す [\#712](https://github.com/sakura-editor/sakura/issues/712)
-- 単体テストコードで NOMINMAX を定義しているのを削除する [\#592](https://github.com/sakura-editor/sakura/issues/592)
-- デバッグ版の「バージョン情報」のURL部分の1文字目より前の左上にドットがある [\#568](https://github.com/sakura-editor/sakura/issues/568)
-- ソースコードのUnicode化 [\#112](https://github.com/sakura-editor/sakura/issues/112)
 
 ### その他変更
 
@@ -662,10 +485,6 @@
 
 ### 仕様変更
 
-- 「名前を付けて保存」のデフォルトの文字コードセットをUTF-8にするのはいかがでしょうか？ [\#600](https://github.com/sakura-editor/sakura/issues/600)
-- \[仕様変更提案\] ファイルの排他制御モードのデフォルトを 「排他制御しない」に変えませんか? [\#260](https://github.com/sakura-editor/sakura/issues/260)
-- \[仕様変更提案\] テキストの折り返し方法のデフォルトを 「折り返さない」に変更しませんか? [\#258](https://github.com/sakura-editor/sakura/issues/258)
-- 仕様変更要望：「常駐しない」をデフォルトにしたい。 [\#29](https://github.com/sakura-editor/sakura/issues/29)
 - UTF8 BOMなし を文字コードのデフォルトにする [\#604](https://github.com/sakura-editor/sakura/pull/604) ([m-tmatma](https://github.com/m-tmatma))
 - アウトライン解析の更新アイコンを変更する [\#558](https://github.com/sakura-editor/sakura/pull/558) ([berryzplus](https://github.com/berryzplus))
 - Universal ctags \(2018-09-16 の daily build\) を組み込む [\#454](https://github.com/sakura-editor/sakura/pull/454) ([m-tmatma](https://github.com/m-tmatma))
@@ -676,17 +495,6 @@
 
 ### 機能追加
 
-- 背景画像に対して透過効果を出来るようにして欲しいです [\#665](https://github.com/sakura-editor/sakura/issues/665)
-- ファイルの場所を管理者としてコマンドプロンプトを開く、に対応する [\#608](https://github.com/sakura-editor/sakura/issues/608)
-- `ファイルの場所をコマンドプロンプトで開く`、および、`ファイルの場所をPowerShellで開く` を検討する [\#556](https://github.com/sakura-editor/sakura/issues/556)
-- エディタの各ドキュメントのタブ部分の右クリックメニューでエクスプローラを開く機能を検討する [\#420](https://github.com/sakura-editor/sakura/issues/420)
-- エクスプローラの右クリックメニューに、『SAKURAでGrep』を追加する [\#410](https://github.com/sakura-editor/sakura/issues/410)
-- デフォルト値変更リクエスト「ファイル排他をしない」に変更 [\#379](https://github.com/sakura-editor/sakura/issues/379)
-- アセンブラ出力を有効にしませんか? [\#286](https://github.com/sakura-editor/sakura/issues/286)
-- \[x64対応\] \(着手\) 「複数プロセッサによるコンパイル」を x64 ブランチに適用 [\#108](https://github.com/sakura-editor/sakura/issues/108)
-- Python のアウトライン解析をデフォルトで使えるようにする [\#52](https://github.com/sakura-editor/sakura/issues/52)
-- sakura\_lang のプロジェクトを Visual Studio 2017 に更新する [\#20](https://github.com/sakura-editor/sakura/issues/20)
-- バージョン情報で git の commit hash を表示する [\#18](https://github.com/sakura-editor/sakura/issues/18)
 - Window テキストをCNativeT で取得/設定するユーティリティ関数を追加 [\#776](https://github.com/sakura-editor/sakura/pull/776) ([m-tmatma](https://github.com/m-tmatma))
 - 開いているファイルのフォルダのパスをクリップボードにコピーできるようにする [\#718](https://github.com/sakura-editor/sakura/pull/718) ([m-tmatma](https://github.com/m-tmatma))
 - Vistaスタイルのファイルダイアログを使えるようにする [\#716](https://github.com/sakura-editor/sakura/pull/716) ([beru](https://github.com/beru))
@@ -713,25 +521,6 @@
 
 ### バグ修正
 
-- MinGW の Debug で CNativeW.Clear のテストに失敗する [\#782](https://github.com/sakura-editor/sakura/issues/782)
-- googletest でテストに失敗しても ビルド結果が失敗にならない [\#781](https://github.com/sakura-editor/sakura/issues/781)
-- Alt+F1 \(ヘルプ\) するとサクラエディタが落ちる [\#643](https://github.com/sakura-editor/sakura/issues/643)
-- サクラエディタを新規インストールするとツールバーが空っぽの状態で表示される [\#616](https://github.com/sakura-editor/sakura/issues/616)
-- 通常のソリューションのコンパイル前に tests\build-and-test.bat でビルドするとコンパイルエラーになる [\#561](https://github.com/sakura-editor/sakura/issues/561)
-- マウスクリックによるキャレット移動が出来なくなる [\#547](https://github.com/sakura-editor/sakura/issues/547)
-- Texのファイルで落ちます。 [\#539](https://github.com/sakura-editor/sakura/issues/539)
-- 共通設定のツールバー画面のリスト表示の項目の高さが表示スケール 100% の場合に不十分 [\#519](https://github.com/sakura-editor/sakura/issues/519)
-- Ctrl+左ボタンダウンからの左ボタンドラッグによる単語選択がちょっとおかしい [\#509](https://github.com/sakura-editor/sakura/issues/509)
-- キーボードのリピート速度設定を取得後にミリ秒に変換せずにタイマーの実行間隔に設定している [\#506](https://github.com/sakura-editor/sakura/issues/506)
-- アウトライン解析ウィンドウのタイトルバーをマウスで動かすと表示されるドッキング位置の表示が高DPI環境でおかしい [\#406](https://github.com/sakura-editor/sakura/issues/406)
-- デバッグコードが再入可能ではない [\#299](https://github.com/sakura-editor/sakura/issues/299)
-- 設定ファイルが正しく保存されない [\#293](https://github.com/sakura-editor/sakura/issues/293)
-- Grep時に「GREP実行中」「処理の実行中」ダイアログが交互に出て操作不能になる [\#194](https://github.com/sakura-editor/sakura/issues/194)
-- sakura\_lang\_en\_US.dll のバージョンにGitHash が含まれない [\#157](https://github.com/sakura-editor/sakura/issues/157)
-- GIT\_COMMIT\_HASH が存在しない場合にバージョン番号が表示されなくなる箇所がある [\#148](https://github.com/sakura-editor/sakura/issues/148)
-- \[BUG\]タイプ別設定一覧で「基本」しかないときに次に取り込むものが「基本」じゃなくても「基本」って名前になる [\#134](https://github.com/sakura-editor/sakura/issues/134)
-- \[x64対応\] C4477 の警告を修正する [\#88](https://github.com/sakura-editor/sakura/issues/88)
-- HeaderMake\_vc2017.vcxprojとMakefileMake\_vc2017.vcxproj無いためビルドがエラーになる [\#5](https://github.com/sakura-editor/sakura/issues/5)
 - grep で 除外ファイル、除外フォルダが効かない のを修正 [\#758](https://github.com/sakura-editor/sakura/pull/758) ([m-tmatma](https://github.com/m-tmatma))
 - grep で 除外ファイル、除外フォルダが効かない問題を修正するため、除外パターンを指定するコマンドラインを復活する [\#750](https://github.com/sakura-editor/sakura/pull/750) ([m-tmatma](https://github.com/m-tmatma))
 - ウィンドウ一覧画面を開いた後にウィンドウサイズを大きくしてから閉じて開き直すとウィンドウサイズにコントロールが追従していない問題を修正 [\#726](https://github.com/sakura-editor/sakura/pull/726) ([beru](https://github.com/beru))
@@ -746,68 +535,7 @@
 - SVN Revision 利用箇所を削除し、代わりに GitHash を用いる [\#147](https://github.com/sakura-editor/sakura/pull/147) ([kobake](https://github.com/kobake))
 - タイプ別一覧ダイアログのインポート機能バグ修正 [\#137](https://github.com/sakura-editor/sakura/pull/137) ([berryzplus](https://github.com/berryzplus))
 
-**Closed issues:**
 
-- IsMailAddress に対する単体テストを復活する [\#798](https://github.com/sakura-editor/sakura/issues/798)
-- ツールバーの「Grepアイコン」と「アウトライン解析アイコン」の間に区切り線を入れるのはどうでしょうか？ [\#772](https://github.com/sakura-editor/sakura/issues/772)
-- WinMainのコメントが実態とズレてる件をどうにかしたい [\#762](https://github.com/sakura-editor/sakura/issues/762)
-- pip install を appveyor.yml の install セクションに集める [\#746](https://github.com/sakura-editor/sakura/issues/746)
-- Chocolatey doxygen package is broken [\#707](https://github.com/sakura-editor/sakura/issues/707)
-- インストーラで「SAKURA EditorでGrep」メニューの追加 にショートカットがない [\#703](https://github.com/sakura-editor/sakura/issues/703)
-- 「簡易リビルド」機能が非推奨になったことへの対応 [\#676](https://github.com/sakura-editor/sakura/issues/676)
-- 「ファイルのプロパティ」ダイアログのエディットコントロールにTabStopを付ける [\#667](https://github.com/sakura-editor/sakura/issues/667)
-- キーワードヘルプのフォントが Yu Gothic UI 72pt の時にポップアップ表示の文字が欠けて表示される [\#639](https://github.com/sakura-editor/sakura/issues/639)
-- HTML ヘルプ中に記載のあるビルドに必要なものが古い [\#598](https://github.com/sakura-editor/sakura/issues/598)
-- tmpファイルがいっぱいあるのですが・・・ [\#589](https://github.com/sakura-editor/sakura/issues/589)
-- `if %ERROR\_RESULT% neq 0` を `if errorlevel 1` にするか検討する [\#586](https://github.com/sakura-editor/sakura/issues/586)
-- 「バージョン情報」のURL部分にマウスカーソルを持っていったときの背景色が長い [\#563](https://github.com/sakura-editor/sakura/issues/563)
-- インストーラで拡張子の関連づけをするか検討する [\#562](https://github.com/sakura-editor/sakura/issues/562)
-- 開く\(ドロップダウンメニュー\)に「履歴の管理」を追加して欲しい [\#550](https://github.com/sakura-editor/sakura/issues/550)
-- アウトライン解析の「更新」のアイコンが「Windows」マークなのは直感的じゃないので変えて欲しい [\#543](https://github.com/sakura-editor/sakura/issues/543)
-- appveyorビルドがpythonのエラーで失敗してしまう [\#541](https://github.com/sakura-editor/sakura/issues/541)
-- doxygen コメントの @file に関して [\#532](https://github.com/sakura-editor/sakura/issues/532)
-- GitHubのプロジェクト説明文について [\#500](https://github.com/sakura-editor/sakura/issues/500)
-- ヘルプの説明を exuberant ctags → Universal ctags に変更する [\#458](https://github.com/sakura-editor/sakura/issues/458)
-- exuberant ctags を Universal ctags  に差し替えるか検討する [\#450](https://github.com/sakura-editor/sakura/issues/450)
-- exuberant ctags をインストーラに同梱したい [\#448](https://github.com/sakura-editor/sakura/issues/448)
-- バージョンダイアログの "Share Ver" に関して [\#447](https://github.com/sakura-editor/sakura/issues/447)
-- タイプ別設定のカラーで強調キーワードの共通設定を押すと表示されるダイアログ表示でボタンが切れている [\#439](https://github.com/sakura-editor/sakura/issues/439)
-- メールアドレスクリック時の動作 [\#437](https://github.com/sakura-editor/sakura/issues/437)
-- googletest から Catch2 への乗り換えを検討 [\#434](https://github.com/sakura-editor/sakura/issues/434)
-- 特定のファイルで描画が遅くなる。 [\#398](https://github.com/sakura-editor/sakura/issues/398)
-- installer\externals\bregonig\bron412.zip がビルド要件になっている件について [\#388](https://github.com/sakura-editor/sakura/issues/388)
-- new/deleteのオーバーロードに対するGCC警告に対応する [\#382](https://github.com/sakura-editor/sakura/issues/382)
-- HTML Help 中のリンクを GitHub のものに変える [\#380](https://github.com/sakura-editor/sakura/issues/380)
-- HTML Help Workshop \(Visual Studio 2017 のインストール\)に関して [\#357](https://github.com/sakura-editor/sakura/issues/357)
-- MinGW向けメイクファイルでサクラエディタをビルドできるようにする [\#349](https://github.com/sakura-editor/sakura/issues/349)
-- バッチファイルのコピーで /Y と /B をつける [\#338](https://github.com/sakura-editor/sakura/issues/338)
-- Markdown の整理 [\#334](https://github.com/sakura-editor/sakura/issues/334)
-- sakura-editor/sakura/installer/readme.txt を修正したいと思い立ったが・・・ [\#328](https://github.com/sakura-editor/sakura/issues/328)
-- Markdown で目次を作る [\#253](https://github.com/sakura-editor/sakura/issues/253)
-- appveyor でのビルドの構成に関してドキュメントを書く [\#244](https://github.com/sakura-editor/sakura/issues/244)
-- 英語表示したときの著作権表示について考える [\#233](https://github.com/sakura-editor/sakura/issues/233)
-- CGrepAgent::DoGrep のローカル変数初期化漏れ [\#225](https://github.com/sakura-editor/sakura/issues/225)
-- gitignore を更新する [\#215](https://github.com/sakura-editor/sakura/issues/215)
-- インストーラの UI を英語対応にできないか検討する [\#209](https://github.com/sakura-editor/sakura/issues/209)
-- 文字化け問題 [\#155](https://github.com/sakura-editor/sakura/issues/155)
-- インストーラ：プログラム一覧でのサクラエディタ表示の調整（バージョン番号記載等） [\#152](https://github.com/sakura-editor/sakura/issues/152)
-- sakura.iss に記載の URL を更新する [\#126](https://github.com/sakura-editor/sakura/issues/126)
-- 行単位のCut, Copy時のクリップボードのモード [\#119](https://github.com/sakura-editor/sakura/issues/119)
-- MS独自の拡張記法を許容するかどうか [\#115](https://github.com/sakura-editor/sakura/issues/115)
-- オフ会の提案 [\#110](https://github.com/sakura-editor/sakura/issues/110)
-- appveyor の clone パスを標準に戻す [\#98](https://github.com/sakura-editor/sakura/issues/98)
-- \[x64対応\] バージョン表示に 32bit / 64bit の表示を入れる [\#87](https://github.com/sakura-editor/sakura/issues/87)
-- sakura.exe と sakura\_lang\_en\_US.dll の生成フォルダをソリューションフォルダをもとに決める [\#76](https://github.com/sakura-editor/sakura/issues/76)
-- Organization, Team の管理者について [\#59](https://github.com/sakura-editor/sakura/issues/59)
-- HeaderMakeのメッセージ出力も英語化する？ [\#56](https://github.com/sakura-editor/sakura/issues/56)
-- MakefileMake  を \#18 の変更に対応させる [\#39](https://github.com/sakura-editor/sakura/issues/39)
-- Appveyor で強制リビルドする方法 [\#37](https://github.com/sakura-editor/sakura/issues/37)
-- pre-build, post-build の Power Shell 対応 [\#28](https://github.com/sakura-editor/sakura/issues/28)
-- 旧 web site へのリンクを新 Web site に切り替える [\#26](https://github.com/sakura-editor/sakura/issues/26)
-- ヘッダメイク。メイクファイルメイクのプロジェクトファイルの位置について [\#24](https://github.com/sakura-editor/sakura/issues/24)
-- Vsプロジェクトファイルの文字コードはsjis？ [\#23](https://github.com/sakura-editor/sakura/issues/23)
-- Funccode\_define.h および Funccode\_enum.h の生成処理が動作していない [\#21](https://github.com/sakura-editor/sakura/issues/21)
-- Appveyor で sakura editor の organization 用のアカウントを作成してほしい [\#15](https://github.com/sakura-editor/sakura/issues/15)
 
 ### その他変更
 
