@@ -4,12 +4,6 @@ if not defined CMD_HHC (
 	exit /b 1
 )
 
-if not defined CMD_PYTHON call %~dp0tools\find-tools.bat
-if not defined CMD_PYTHON (
-	@echo python was not found.
-	exit /b 1
-)
-
 set SRC_HELP=%~dp0help
 set TMP_HELP=%~dp0temphelp
 
@@ -19,9 +13,13 @@ set HH_INPUT=sakura_core\sakura.hh
 set HH_OUTPUT=help\sakura\sakura.hh
 
 if exist "%HH_OUTPUT%" del /F "%HH_OUTPUT%"
-%CMD_PYTHON% "%HH_SCRIPT%" "%HH_INPUT%" "%HH_OUTPUT%"  || (echo error && exit /b 1)
+if defined CMD_PYTHON (
+	%CMD_PYTHON% "%HH_SCRIPT%" "%HH_INPUT%" "%HH_OUTPUT%"  || (echo error && exit /b 1)
+) else (
+	powershell "(Get-Content %HH_INPUT% -Encoding UTF8) -replace '//.*' | Set-Content %HH_OUTPUT% -Encoding UTF8"
+)
 
-if exist "%TMP_HELP%" rmdir /s /q    "%TMP_HELP%"
+if exist "%TMP_HELP%" rmdir /s /q "%TMP_HELP%"
 xcopy /i /k /s "%SRC_HELP%" "%TMP_HELP%"
 
 set HHP_MACRO=%TMP_HELP%\macro\macro.HHP
