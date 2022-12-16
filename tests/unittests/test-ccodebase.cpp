@@ -350,6 +350,57 @@ TEST(CCodeBase, codeUtf8_OracleImplementation)
 /*!
  * @brief 文字コード変換のテスト
  */
+TEST(CCodeBase, codeUtf7)
+{
+	const auto eCodeType = CODE_UTF7;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 7bit ASCII範囲（UTF-7仕様）
+	constexpr const auto& mbsAscii = "+AAEAAgADAAQABQAGAAcACA-\t\n+AAsADA-\r+AA4ADwAQABEAEgATABQAFQAWABcAGAAZABoAGwAcAB0AHgAf- +ACEAIgAjACQAJQAm-'()+ACoAKw-,-./0123456789:+ADsAPAA9AD4-?+AEA-ABCDEFGHIJKLMNOPQRSTUVWXYZ+AFsAXABdAF4AXwBg-abcdefghijklmnopqrstuvwxyz+AHsAfAB9AH4Afw-";
+	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+
+	bool bComplete1_1 = false;
+	auto encoded1 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsAscii), _countof(mbsAscii)), &bComplete1_1);
+	EXPECT_STREQ(wcsAscii, encoded1.GetStringPtr());
+	EXPECT_TRUE(bComplete1_1);
+
+	bool bComplete1_2 = false;
+	auto decoded1 = pCodeBase->UnicodeToCode(encoded1, &bComplete1_2);
+	EXPECT_EQ(0, memcmp(mbsAscii, decoded1.data(), decoded1.size()));
+	EXPECT_TRUE(bComplete1_2);
+
+	// かな漢字の変換（UTF-7仕様）
+	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& mbsKanaKanji = "+/3b/hTBLMGowqzDKbyJbVw-";
+
+	bool bComplete2_1 = false;
+	auto encoded2 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsKanaKanji), _countof(mbsKanaKanji)), &bComplete2_1);
+	ASSERT_STREQ(wcsKanaKanji, encoded2.GetStringPtr());
+	ASSERT_TRUE(bComplete2_1);
+
+	bool bComplete2_2 = false;
+	auto decoded2 = pCodeBase->UnicodeToCode(encoded2, &bComplete2_2);
+	ASSERT_EQ(0, memcmp(mbsKanaKanji, decoded2.data(), decoded2.size()));
+	ASSERT_TRUE(bComplete2_2);
+
+	// UTF-7仕様
+	constexpr const auto& wcsPlusPlus = L"C++";
+	constexpr const auto& mbsPlusPlus = "C+-+-";
+
+	bool bComplete5_1 = false;
+	auto encoded5 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsPlusPlus), _countof(mbsPlusPlus)), &bComplete5_1);
+	ASSERT_STREQ(wcsPlusPlus, encoded5.GetStringPtr());
+	ASSERT_TRUE(bComplete5_1);
+
+	bool bComplete5_2 = false;
+	auto decoded5 = pCodeBase->UnicodeToCode(encoded5, &bComplete5_2);
+	ASSERT_EQ(0, memcmp(mbsPlusPlus, decoded5.data(), decoded5.size()));
+	ASSERT_TRUE(bComplete5_2);
+}
+
+/*!
+ * @brief 文字コード変換のテスト
+ */
 TEST(CCodeBase, codeUtf16Le)
 {
 	const auto eCodeType = CODE_UNICODE;

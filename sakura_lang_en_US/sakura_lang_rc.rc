@@ -2297,7 +2297,7 @@ BEGIN
     F_FILE_RCNTFILE_SUBMENU "Recently Used File"
     F_FILE_RCNTFLDR_SUBMENU "Recently Used Folder"
     F_EDIT_INS_SUBMENU      "Insert"
-    F_EDIT_COS_SUBMENU      "Cosmetik"
+    F_EDIT_COS_SUBMENU      "Cosmetic"
     F_EDIT_MOV_SUBMENU      "Cursor Movement"
     F_EDIT_SEL_SUBMENU      "Selection"
     F_EDIT_HLV_SUBMENU      "High Level Editing"
@@ -2348,6 +2348,7 @@ BEGIN
     F_EXITALL               "Exit Sakura completely"
     F_OPEN_FOLDER_IN_EXPLORER "Open Containing Folder"
     F_OPEN_COMMAND_PROMPT   "Open Command Prompt"
+	F_OPEN_COMMAND_PROMPT_AS_ADMIN "Open Command Prompt As Admin"
     F_WCHAR                 "Character Input"
     F_IME_CHAR              "Hlf-Width Character Input"
 END

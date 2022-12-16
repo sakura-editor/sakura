@@ -361,8 +361,7 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 */
 void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 {
-	const char *pr, *pr_end;
-	char *pr_next;
+	const char *pr, *pr_end, *pr_next;
 	int npoints, nlen_setb;
 	bool berror;
 
