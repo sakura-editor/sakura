@@ -950,6 +950,20 @@ void ShowError(CEditView* pView, LPCWSTR lpCaption)
 	PyErr_Restore(ptype, pvalue, ptraceback);
 }
 
+struct PyObjectPtr final {
+	PyObjectPtr(PyObject* op) : op(op) {}
+	~PyObjectPtr() {
+		Py_XDECREF(op);
+	}
+	PyObject* operator = (PyObject* op) {
+		this->op = op;
+	}
+	operator PyObject* () {
+		return op;
+	}
+	PyObject* op;
+};
+
 bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 {
 	static HMODULE s_hModule;
@@ -992,56 +1006,58 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 		return false;
 	}
 
-	//const char* version = Py_GetVersion();
-	//const char* compiler = Py_GetCompiler();
-	PyObject* module = PyImport_ImportModule("SakuraEditor");
-	if (!module) {
-		return false;
-	}
+	{
+		//const char* version = Py_GetVersion();
+		//const char* compiler = Py_GetCompiler();
+		PyObjectPtr module = PyImport_ImportModule("SakuraEditor");
+		if (!module) {
+			return false;
+		}
 
-	for (auto& desc : g_commandDescs) {
-		auto cap = PyCapsule_New(&desc, nullptr, nullptr);
-		auto fn = PyCFunction_New(&desc, cap);
-		if (0 < PyModule_AddObject(module, desc.ml_name, fn)) {
-			Py_XDECREF(fn);
-			Py_XDECREF(cap);
+		for (auto& desc : g_commandDescs) {
+			auto cap = PyCapsule_New(&desc, nullptr, nullptr);
+			auto fn = PyCFunction_New(&desc, cap);
+			if (0 < PyModule_AddObject(module, desc.ml_name, fn)) {
+				Py_XDECREF(fn);
+				Py_XDECREF(cap);
+			}
+		}
+		for (auto& desc : g_functionDescs) {
+			auto cap = PyCapsule_New(&desc, nullptr, nullptr);
+			auto fn = PyCFunction_New(&desc, cap);
+			if (0 < PyModule_AddObject(module, desc.ml_name, fn)) {
+				Py_XDECREF(fn);
+				Py_XDECREF(cap);
+			}
+		}
+
+		PyObjectPtr pCode = Py_CompileString(m_strMacro.c_str(), m_strPath.c_str(), Py_file_input);
+		if (!pCode) {
+			ShowError(EditView, m_wstrPath.c_str());
+			return false;
+		}
+
+		PyObjectPtr pMain = PyImport_AddModule("__main__");
+		if (!pMain) {
+			return false;
+		}
+
+		PyObject* pGlobals = PyModule_GetDict(pMain); // borrowed reference
+		if (!pGlobals) {
+			return false;
+		}
+
+		PyObjectPtr pLocals = PyDict_New();
+		if (!pLocals) {
+			return false;
+		}
+
+		PyObjectPtr pObj = PyEval_EvalCode(pCode, pGlobals, pLocals);
+		if (!pObj) {
+			ShowError(EditView, m_wstrPath.c_str());
+			return false;
 		}
 	}
-	for (auto& desc : g_functionDescs) {
-		auto cap = PyCapsule_New(&desc, nullptr, nullptr);
-		auto fn = PyCFunction_New(&desc, cap);
-		if (0 < PyModule_AddObject(module, desc.ml_name, fn)) {
-			Py_XDECREF(fn);
-			Py_XDECREF(cap);
-		}
-	}
-
-	PyObject* pCode = Py_CompileString(m_strMacro.c_str(), m_strPath.c_str(), Py_file_input);
-	if (!pCode) {
-		ShowError(EditView, m_wstrPath.c_str());
-		return false;
-	}
-	PyObject* pMain = PyImport_AddModule("__main__");
-	if (!pMain) {
-		return false;
-	}
-	PyObject* pGlobals = PyModule_GetDict(pMain);
-	if (!pGlobals) {
-		return false;
-	}
-	PyObject* pLocals = PyDict_New();
-	if (!pLocals) {
-		return false;
-	}
-	PyObject* pObj = PyEval_EvalCode(pCode, pGlobals, pLocals);
-	if (!pObj) {
-		ShowError(EditView, m_wstrPath.c_str());
-		return false;
-	}
-
-	Py_XDECREF(pMain);
-	Py_XDECREF(pCode);
-	Py_XDECREF(pObj);
 
 	if (Py_FinalizeEx() < 0) {
 		return false;
