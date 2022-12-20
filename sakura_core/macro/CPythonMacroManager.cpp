@@ -955,6 +955,10 @@ struct PyObjectPtr final {
 	~PyObjectPtr() {
 		Py_XDECREF(op);
 	}
+
+	PyObjectPtr(const PyObjectPtr&) = delete;
+	PyObjectPtr& operator = (const PyObjectPtr&) = delete;
+
 	PyObject* operator = (PyObject* op) {
 		this->op = op;
 	}
