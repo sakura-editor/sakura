@@ -1010,12 +1010,13 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 		return false;
 	}
 
-	{
+	bool bSuccess = false;
+	do {
 		//const char* version = Py_GetVersion();
 		//const char* compiler = Py_GetCompiler();
 		PyObjectPtr module = PyImport_ImportModule("SakuraEditor");
 		if (!module) {
-			return false;
+			break;
 		}
 
 		for (auto& desc : g_commandDescs) {
@@ -1038,36 +1039,36 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 		PyObjectPtr pCode = Py_CompileString(m_strMacro.c_str(), m_strPath.c_str(), Py_file_input);
 		if (!pCode) {
 			ShowError(EditView, m_wstrPath.c_str());
-			return false;
+			break;
 		}
 
 		PyObjectPtr pMain = PyImport_AddModule("__main__");
 		if (!pMain) {
-			return false;
+			break;
 		}
 
 		PyObject* pGlobals = PyModule_GetDict(pMain); // borrowed reference
 		if (!pGlobals) {
-			return false;
+			break;
 		}
 
 		PyObjectPtr pLocals = PyDict_New();
 		if (!pLocals) {
-			return false;
+			break;
 		}
 
 		PyObjectPtr pObj = PyEval_EvalCode(pCode, pGlobals, pLocals);
 		if (!pObj) {
 			ShowError(EditView, m_wstrPath.c_str());
-			return false;
+			break;
 		}
-	}
+		bSuccess = true;
+	} while (false);
 
 	if (Py_FinalizeEx() < 0) {
 		return false;
 	}
-
-	return true;
+	return bSuccess;
 }
 
 inline
