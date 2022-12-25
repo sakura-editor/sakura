@@ -47,7 +47,7 @@ DL {
 	LINE-HEIGHT: 1.4
 }
 DT {
-	PADDING: 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
+	PADDING: 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee;
 	FONT-WEIGHT: bold
 }
 DD {
@@ -66,7 +66,7 @@ P {
 	LINE-HEIGHT: 1.4
 }
 UL {
-	LINE-HEIGHT: 1.4
+	LINE-HEIGHT: 1.4;
 	LIST-STYLE-TYPE: square
 }
 OL {
@@ -76,7 +76,7 @@ EM {
 	COLOR: #909; BACKGROUND-COLOR: transparent
 }
 STRONG {
-	COLOR: #909; BACKGROUND-COLOR: transparent
+	COLOR: #909; BACKGROUND-COLOR: transparent;
 	BORDER-BOTTOM: 3px double
 }
 .s {
