@@ -77,7 +77,7 @@ EM {
 }
 STRONG {
 	COLOR: #909; BACKGROUND-COLOR: transparent
-	BORDER-RIGHT: 3px; BORDER-TOP: 3px; BORDER-LEFT: 3px; BORDER-BOTTOM: 3px double
+	BORDER-BOTTOM: 3px double
 }
 .s {
 	FONT-SIZE: smaller
