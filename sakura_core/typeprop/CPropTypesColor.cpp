@@ -184,7 +184,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( -1 == nIndex ){
 			break;
 		}
-		if( 18 <= xPos && xPos <= rcItem.right - 29 ){	// 2009.02.22 ryoji 有効範囲の制限追加
+		if( DpiScaleX(18) <= xPos && xPos <= rcItem.right - DpiScaleX(29) ){	// 2009.02.22 ryoji 有効範囲の制限追加
 			List_SetCurSel( hwnd, nIndex );
 			::SendMessageCmd( ::GetParent( hwnd ), WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwnd );
 			pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
@@ -202,7 +202,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( -1 == nIndex ){
 			break;
 		}
-		if( 18 <= xPos && xPos <= rcItem.right - 29 ){	// 2009.02.22 ryoji 有効範囲の制限追加
+		if( DpiScaleX(18) <= xPos && xPos <= rcItem.right - DpiScaleX(29) ){	// 2009.02.22 ryoji 有効範囲の制限追加
 			pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
 			/* 太字で表示 */
 			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BOLD) )	// 2006.12.18 ryoji フラグ利用で簡素化
@@ -219,7 +219,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		}
 		pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
 		/* 色分け/表示 する */
-		if( 2 <= xPos && xPos <= 16
+		if( DpiScaleX(2) <= xPos && xPos <= DpiScaleX(16)
 			&& ( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_FORCE_DISP) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			)
 		{
