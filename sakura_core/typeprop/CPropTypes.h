@@ -115,6 +115,10 @@ protected:
 
 	// フォント表示用データ
 	HFONT			m_hTypeFont;							//!< タイプ別フォント表示ハンドル
+	HFONT			m_hBoldFont = NULL;						//!< 色種別リストの太字フォント表示ハンドル
+
+	UINT m_uFocusBorderWidth = 1; // cache SPI_GETFOCUSBORDERWIDTH
+	UINT m_uFocusBorderHeight = 1; // cache SPI_GETFOCUSBORDERHEIGHT
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      各プロパティページ                     //
