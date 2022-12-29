@@ -324,7 +324,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 
 		{
 			LOGFONT	lf = {};
-			HFONT hFont = (HFONT)::SendMessageAny(hwndListColor, WM_GETFONT, 0, 0);
+			const auto hFont = (HFONT)::SendMessageAny(hwndListColor, WM_GETFONT, 0, 0);
 			::GetObject(hFont, sizeof(LOGFONT), &lf);
 			m_pViewFont = std::make_shared<CViewFont>(&lf);
 		}
