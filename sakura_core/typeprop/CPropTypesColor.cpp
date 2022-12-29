@@ -28,6 +28,7 @@
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
 #include "view/colors/EColorIndexType.h"
+#include "view/CViewFont.h"
 #include "uiparts/CGraphics.h"
 #include "util/shell.h"
 #include "util/window.h"
@@ -323,21 +324,14 @@ INT_PTR CPropTypesColor::DispatchEvent(
 
 		{
 			LOGFONT	lf = {};
-			HFONT hFont = (HFONT)::SendMessageAny(hwndDlg, WM_GETFONT, 0, 0);
+			HFONT hFont = (HFONT)::SendMessageAny(hwndListColor, WM_GETFONT, 0, 0);
 			::GetObject(hFont, sizeof(LOGFONT), &lf);
-			lf.lfWeight = FW_BOLD;
-			m_hBoldFont = ::CreateFontIndirect(&lf);
+			m_pViewFont = std::make_shared<CViewFont>(&lf);
 		}
 		SystemParametersInfo(SPI_GETFOCUSBORDERWIDTH, 0, &m_uFocusBorderWidth, 0);
 		SystemParametersInfo(SPI_GETFOCUSBORDERHEIGHT, 0, &m_uFocusBorderHeight, 0);
 
 		return TRUE;
-
-	case WM_DESTROY:
-		if (m_hBoldFont) {
-			DeleteObject(m_hBoldFont);
-		}
-		break;
 
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD( wParam );	/* 通知コード */
@@ -1140,25 +1134,12 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	gr.FillMyRect(rc1);
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
-	size_t slen = wcslen(pColorInfo->m_szName);
-	SIZE sz;
-	::GetTextExtentPoint32( gr, pColorInfo->m_szName, slen, &sz );
-	if( pColorInfo->m_sFontAttr.m_bBoldFont ){
-		gr.PushMyFont(m_hBoldFont);
-		SIZE szBold;
-		::GetTextExtentPoint32(gr, pColorInfo->m_szName, slen, &szBold);
-		::TextOut( gr, rc1.left, rc1.top + (rc1Height - szBold.cy + 1) / 2, pColorInfo->m_szName, slen);
-		gr.PopMyFont();
-	}else{
-		::TextOut( gr, rc1.left, rc1.top + (rc1Height - sz.cy + 1) / 2, pColorInfo->m_szName, slen );
-	}
-
-	if( pColorInfo->m_sFontAttr.m_bUnderLine ){	/* 下線か */
-		::MoveToEx( gr, rc1.left,		rc1.bottom - DpiScaleY(2), NULL );
-		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - DpiScaleY(2) );
-		::MoveToEx( gr, rc1.left,		rc1.bottom - DpiScaleY(1), NULL );
-		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - DpiScaleY(1) );
-	}
+	SFontAttr sFontAttr;
+	sFontAttr.m_bBoldFont = pColorInfo->m_sFontAttr.m_bBoldFont;
+	sFontAttr.m_bUnderLine = pColorInfo->m_sFontAttr.m_bUnderLine;
+	gr.PushMyFont(m_pViewFont->ChooseFontHandle(0, sFontAttr));
+	::DrawText(gr, pColorInfo->m_szName, -1, &rc1, DT_SINGLELINE | DT_VCENTER);
+	gr.PopMyFont();
 
 	/* アイテムにフォーカスがある */	// 2006.05.01 ryoji 描画条件の不正を修正
 	if( pDis->itemState & ODS_FOCUS ){
