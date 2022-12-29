@@ -1129,7 +1129,6 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	rc1.top += yOffset;
 	rc1.right -= 2 * (colorSampleWidth + xOffset) + DpiScaleX(2);
 	rc1.bottom -= yOffset;
-	int rc1Height = rc1.bottom - rc1.top;
 	/* 選択ハイライト矩形 */
 	gr.FillMyRect(rc1);
 	/* テキスト */
