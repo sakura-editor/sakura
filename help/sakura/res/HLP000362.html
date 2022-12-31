@@ -33,77 +33,77 @@
 </div>
 
 <div class="li200">
-	<strong>(置換前)</strong> …… 検索条件を指定します。ファイル名検索はできません。<br>
-	<strong>(置換後)</strong> …… 置換後文字列を指定します。<br>
-	<strong>(ファイル)</strong> … 検索対象となるファイル指定します。ワイルドカードが使えます。<br>
+	<span class="bold">(置換前)</span> …… 検索条件を指定します。ファイル名検索はできません。<br>
+	<span class="bold">(置換後)</span> …… 置換後文字列を指定します。<br>
+	<span class="bold">(ファイル)</span> … 検索対象となるファイル指定します。ワイルドカードが使えます。<br>
 	カンマ、スペース、セミコロン(, ;)のどれかで区切ると複数の条件を指定できます。<br>
 	ファイル名に(, ;)を含む場合は、ダブルクオーテーションで囲うことで、ひとつのファイル名として扱えます。<br>
 	ファイルパターンの先頭に!を付ける(例: !*.obj)と，そのパターンに当たるファイルをGrep対象から外します。<br>
 	ファイルパターンの先頭に#を付ける(例: #*.svn)と、そのパターンに当たるサブフォルダーをGrep対象から外します。<br>
 	  指定位置にかかわらず除外指定は検索指定より優先されます． <br>
 	何も指定しない場合は、「*.*」を指定したことになります。<br>
-	<strong>(フォルダー)</strong> … 検索対象ファイルのあるフォルダーを指定します。エクスプローラなどからのフォルダーのドロップも受け付けます。<br>
+	<span class="bold">(フォルダー)</span> … 検索対象ファイルのあるフォルダーを指定します。エクスプローラなどからのフォルダーのドロップも受け付けます。<br>
 	複数フォルダーを;で区切って指定することができます。;を含むフォルダーを指定する場合は""で囲ってください。<br>
 
-	<strong>(除外ファイル)</strong> … 検索対象から外すファイルパターンを指定します。<br>
+	<span class="bold">(除外ファイル)</span> … 検索対象から外すファイルパターンを指定します。<br>
 	<strong>(ファイル)</strong> で ファイルパターンの先頭に!を付ける ことにより除外ファイルを指定できるのを簡単に使えるようにするものです。<br>
 	ファイルパターンを;で区切って指定することができます。;を含むファイルパターンを指定する場合は""で囲ってください。(sakura:2.4.0.0以降)<br>
 
-	<strong>(除外フォルダー)</strong> … 検索対象から外すフォルダーパターンを指定します。<br>
+	<span class="bold">(除外フォルダー)</span> … 検索対象から外すフォルダーパターンを指定します。<br>
 	<strong>(ファイル)</strong> で ファイルパターンの先頭に#を付ける ことにより除外フォルダーを指定できるのを簡単に使えるようにするものです。<br>
 	フォルダーパターンを;で区切って指定することができます。;を含むフォルダーパターンを指定する場合は""で囲ってください。(sakura:2.4.0.0以降)<br>
 
-	□<strong>単語単位で探す</strong><br>
+	□<span class="bold">単語単位で探す</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;単語として識別するもののみ検索します。<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;スペースなどで区切ると複数単語検索が行えます。<br>
 
-	■<strong>サブフォルダーからも検索する</strong><br>
+	■<span class="bold">サブフォルダーからも検索する</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;指定フォルダーの下層フォルダーからも検索するかどうかを指定します。<br>
 
-	□<strong>英大文字と小文字を区別する</strong><br>
+	□<span class="bold">英大文字と小文字を区別する</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;半角英字の大文字と小文字を区別して検索するかどうかを指定します。<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;置換後文字列に$1、\r\n等を置くこともできます。<br>
 
-	□<strong>ファイル毎最初のみ検索</strong> … ファイル毎に1回だけ結果を出力します。<br>
+	□<span class="bold">ファイル毎最初のみ検索</span> … ファイル毎に1回だけ結果を出力します。<br>
 
-	□<strong>ベースフォルダー表示</strong> … ルートフォルダーの表示とそこからの相対パスで出力します。<br>
+	□<span class="bold">ベースフォルダー表示</span> … ルートフォルダーの表示とそこからの相対パスで出力します。<br>
 
-	□<strong>フォルダー毎に表示</strong> … サブフォルダー毎にパスをまとめて相対パスで出力します。<br>
+	□<span class="bold">フォルダー毎に表示</span> … サブフォルダー毎にパスをまとめて相対パスで出力します。<br>
 
-	□<strong>文字コードセット</strong><br>
+	□<span class="bold">文字コードセット</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;検索対象となるファイルの<a href="HLP000271.html">文字コードセット</a>を選択します。<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;<strong>自動選択</strong>、SJIS、JIS、EUC、Latin1(Windows-1252)、UTF-16、UTF-16BE、UTF-8、CESU-8、UTF-7、コードページから選択します。<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span class="bold">自動選択</span>、SJIS、JIS、EUC、Latin1(Windows-1252)、UTF-16、UTF-16BE、UTF-8、CESU-8、UTF-7、コードページから選択します。<br>
 
-	□<strong>フォルダーの初期値をカレントフォルダーにする</strong><br>
+	□<span class="bold">フォルダーの初期値をカレントフォルダーにする</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;現在開いているファイルがあるフォルダーを(フォルダー)の初期値にします。次回のダイアログ表示時に反映されます。<br>
 
-	□<strong>正規表現</strong> … 検索条件に、<a href="HLP000089.html">正規表現</a>を使うかどうかを指定します。<br>
+	□<span class="bold">正規表現</span> … 検索条件に、<a href="HLP000089.html">正規表現</a>を使うかどうかを指定します。<br>
 
-	□<strong>クリップボードから貼り付け</strong><br>
+	□<span class="bold">クリップボードから貼り付け</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;置換後文字列を指定する代わりにクリップボードから貼り付けます。<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;正規表現置換の場合、通常「行置換」なのがクリップボードからの場合は「置換の繰り返し」になります。<br>
 
-	■<strong>バックアップ作成</strong> … 置換前にバックアップファイル(.skrold)を作成します。<br>
+	■<span class="bold">バックアップ作成</span> … 置換前にバックアップファイル(.skrold)を作成します。<br>
 
-	<strong>&lt;結果出力&gt;</strong> … 検索条件に合致した箇所の出力方法を指定します。合致した箇所はその先頭の合致箇所の位置が示され、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索文字列」に指定した色でハイライト表示されます。<br>
+	<span class="bold">&lt;結果出力&gt;</span> … 検索条件に合致した箇所の出力方法を指定します。合致した箇所はその先頭の合致箇所の位置が示され、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索文字列」に指定した色でハイライト表示されます。<br>
 	<div class="li200">
-		◎<strong>該当行</strong>		… 合致した箇所のある行全体を表示します。<br>
-		○<strong>該当部分</strong>	… 合致した文字列だけを表示します。<br>
+		◎<span class="bold">該当行</span>		… 合致した箇所のある行全体を表示します。<br>
+		○<span class="bold">該当部分</span>	… 合致した文字列だけを表示します。<br>
 	</div>
 
 	<br>
 
-	<strong>&lt;結果出力形式&gt;</strong> … 検索条件の結果の出力形式を選べます。<br>
+	<span class="bold">&lt;結果出力形式&gt;</span> … 検索条件の結果の出力形式を選べます。<br>
 	<div class="li200">
-	◎<strong>ノーマル</strong>  	… 一つづつ列挙して出力します。<br>
-	○<strong>ファイル毎</strong>	… ファイル毎にまとめて出力します。いわゆるWZ風の形式です。<br>
-	○<strong>結果のみ</strong>	… 結果部分のみ出力します。<br>
+	◎<span class="bold">ノーマル</span>  	… 一つづつ列挙して出力します。<br>
+	○<span class="bold">ファイル毎</span>	… ファイル毎にまとめて出力します。いわゆるWZ風の形式です。<br>
+	○<span class="bold">結果のみ</span>	… 結果部分のみ出力します。<br>
 	</div>
 
-	<strong>[上]ボタン</strong><br>
+	<span class="bold">[上]ボタン</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;フォルダーを1階層上に設定します。<br>
 
-	<strong>[現フォルダー]ボタン</strong><br>
+	<span class="bold">[現フォルダー]ボタン</span><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルを元に「フォルダー」を設定します。<br>
 </div>
 
@@ -115,7 +115,7 @@
 <span color="blue">※正規表現は、<a href="HLP000006.html">正規表現ライブラリ</a>によって実現しています。<br>
 sakura:2.4.0.0以降では配布物の中に含まれますが、それ以前のバージョンでは別途入手する必要があります。</span><br>
 <br>
-■<a href="HLP000204.html"><strong>マクロ構文</strong></a><br>
+■<a href="HLP000204.html"><span class="bold">マクロ構文</span></a><br>
 ・構文: GrepReplace( str1 :String, str2 :String, str3 :String, str4 :String, int5 :Integer, int6 :Integer );<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;置換後文字列<br>

@@ -68,7 +68,7 @@
 <tr><td><code>{<span style="color: blue">n</span>,<span style="color: blue">m</span>}?</code></td> <td><code>{<span style="color: blue">n</span>,<span style="color: blue">m</span>}</code></td>  <td>直前のパターンが n 回以上、 m 回以下</td></tr>
 </table>
 <br>
-正規表現Aを<code><strong>[A-Z_]*PROC</strong></code> 、正規表現Bを<code><strong>[A-Z_]*?PROC</strong></code> とします。<br>
+正規表現Aを<code><span class="bold">[A-Z_]*PROC</span></code> 、正規表現Bを<code><span class="bold">[A-Z_]*?PROC</span></code> とします。<br>
 &nbsp;&nbsp;&nbsp;&nbsp; SAKURA_COLLBACKPROC_BREXP_PROC<br>
 という文字列中で、最初にマッチするのは以下のようになります。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Aの場合: SAKURA_COLLBACKPROC_BREXP_PROC<br>
@@ -98,10 +98,10 @@
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
-<tr><td><code>.</code></td><td>\nを除く任意の1文字 <strong>[^\n]</strong>と同じ<br><span style="color: green">(Unicode版)</span> 改行を除く任意の1文字。<strong>[^\r\n]</strong>と同じ
+<tr><td><code>.</code></td><td>\nを除く任意の1文字 <span class="bold">[^\n]</span>と同じ<br><span style="color: green">(Unicode版)</span> 改行を除く任意の1文字。<span class="bold">[^\r\n]</span>と同じ
 <a href="javascript:id=hhctrl.TextPopup('この処理は正規表現DLLではなくsakura側が入力された.を[^\\r\\n]に置き換えています。','ＭＳゴシック,11',9,9,-1,-1)">*1</a>
 </td></tr>
-<tr><td><code>\w</code></td><td>単語の構成文字 <strong>[0-9A-Za-z_]</strong>と同じ<br><span style="color: green">(鬼)</span> 2バイト文字も含む</td></tr>
+<tr><td><code>\w</code></td><td>単語の構成文字 <span class="bold">[0-9A-Za-z_]</span>と同じ<br><span style="color: green">(鬼)</span> 2バイト文字も含む</td></tr>
 <tr><td><code>\W</code></td><td>単語の構成文字以外</td></tr>
 <tr><td><code>\s</code></td><td>空白類文字 [ \t\v\x0a\x0d]と同じ<br><span style="color: green">(鬼)</span> <code>[:space:]</code>と同じ</td></tr>
 <tr><td><code>\S</code></td><td>空白類文字以外</td></tr>
@@ -132,7 +132,7 @@
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
-<tr><td><code>\<span style="color: blue">n</font></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<strong>\<span style="color: blue">n</span></strong>(<span style="color: blue">n</span>は1以上の整数)で参照します。</td></tr>
+<tr><td><code>\<span style="color: blue">n</font></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<span class="bold">\<span style="color: blue">n</span></span>(<span style="color: blue">n</span>は1以上の整数)で参照します。</td></tr>
 <tr><td><code>\k&lt;<span style="color: blue">name</font>&gt;<br>\k'<span style="color: blue">name</span>'</code></td><td><span style="color: green">(鬼)</span> 名前指定による後方参照</td></tr>
 <tr><td><code>
 	\k&lt;<span style="color: blue">name</span>+<span style="color: blue">n</span>&gt;<br>
@@ -169,7 +169,7 @@
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
-<tr><td><code>$<span style="color: blue">n</font></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<strong>$<span style="color: blue">n</span></strong>(<span style="color: blue">n</span>は1以上の整数)で参照します。<br>サクラエディタでは<strong>$<span style="color: blue">n</span></strong>の代わりに<strong>\<span style="color: blue">n</span></strong>も使用できます。</td></tr>
+<tr><td><code>$<span style="color: blue">n</font></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<span class="bold">$<span style="color: blue">n</span></span>(<span style="color: blue">n</span>は1以上の整数)で参照します。<br>サクラエディタでは<span class="bold">$<span style="color: blue">n</span></span>の代わりに<span class="bold">\<span style="color: blue">n</span></span>も使用できます。</td></tr>
 <tr><td><code>${<span style="color: blue">n</font>}</code></td><td><span style="color: green">(鬼)</span> （安全な）番号指定参照<br>後ろにそのまま続けて数字を書くことができます。</td></tr>
 <tr><td><code>$&amp;</code></td><td>マッチした文字列全体</td></tr>
 <tr><td><code>$+</code></td><td><span style="color: green">(鬼)</span> 最後にマッチした部分文字列</td></tr>
@@ -181,19 +181,19 @@
 
 <h4>bregonig.dllへの変更による違い</h4>
 <ul>
-	<li><strong>\w は2バイト文字も含む。</strong><br>
+	<li><span class="bold">\w は2バイト文字も含む。</span><br>
 		<small>\w は [A-Za-z0-9_] に加え、2バイト文字も含みます。これに応じて、\W, \b, \B の動作も変更になります。</small>
 	</li>
-	<li><strong>[ ] の中に [ を書くときは必ずエスケープが必要。</strong><br>
+	<li><span class="bold">[ ] の中に [ を書くときは必ずエスケープが必要。</span><br>
 		<small>文字集合の中で文字集合や積演算が使えるようになる代わりに、[ そのものを書くときは必ず \[ と書かなければならなくなりました。</small>
 	</li>
-	<li><strong>\c\ の動作が異なる。</strong><br>
+	<li><span class="bold">\c\ の動作が異なる。</span><br>
 		<small>Bregexp.dll では、\c\ は Ctrl+\ を意味していますが、bregonig.dll では、\c の次の \ はエスケープとして解釈されます。Ctrl+\ を指定するには \c\\とする必要があります。（Perl の仕様と異なるため、変更される可能性があります。）</small>
 	</li>
-	<li><strong>置換で \<span style="color: blue">ooo</span> の動作が少し異なる。</strong><br>
+	<li><span class="bold">置換で \<span style="color: blue">ooo</span> の動作が少し異なる。</span><br>
 		<small>Perl の動作に近づけてあります。</small>
 	</li>
-	<li><strong>Unicode版は i オプションの動作が異なる。</strong><br>
+	<li><span class="bold">Unicode版は i オプションの動作が異なる。</span><br>
 		<small>大文字小文字を区別しないの動作が ASCII 範囲外にも影響します。<br>
 		Unicode版サクラエディタの通常検索・置換も ASCII 範囲外の大文字小文字の考慮をしますが、2つが同じかどうかは未チェックです。</small>
 	</li>
@@ -201,11 +201,11 @@
 
 <h4>改行の検索</h4>
 サクラエディタで改行(CRLF)を検索する場合は、<br>
-<strong>\r\n</strong> で検索して下さい。<br>
+<span class="bold">\r\n</span> で検索して下さい。<br>
 改行(CR,LF,CRLFのすべて)を検索する場合は、<br>
-<strong>[\r\n]+</strong> のように指定してください。<br>
+<span class="bold">[\r\n]+</span> のように指定してください。<br>
 改行(CR,LF,CRLF)と、最終行の行末を検索する場合は、<br>
-<strong>$</strong> と指定してください。<br>
+<span class="bold">$</span> と指定してください。<br>
 
 <hr>
 
