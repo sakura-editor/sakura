@@ -22,6 +22,9 @@
     <Setting Name="HtmlReplacePattern" Type="System.String" Scope="User">
       <Value Profile="(Default)">(&lt;meta http-equiv="Content-type" content="text/html; charset=)&lt;InputEncoding&gt;(" */?&gt;)</Value>
     </Setting>
+    <Setting Name="CssReplacePattern" Type="System.String" Scope="User">
+      <Value Profile="(Default)">(@charset ")&lt;InputEncoding&gt;(";)</Value>
+    </Setting>
     <Setting Name="MaxDegreeOfParallelism" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1024</Value>
     </Setting>

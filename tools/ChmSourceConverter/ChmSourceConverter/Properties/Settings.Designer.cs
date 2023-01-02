@@ -89,6 +89,18 @@ namespace ChmSourceConverter.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(@charset \")<InputEncoding>(\";)")]
+        public string CssReplacePattern {
+            get {
+                return ((string)(this["CssReplacePattern"]));
+            }
+            set {
+                this["CssReplacePattern"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1024")]
         public int MaxDegreeOfParallelism {
             get {
