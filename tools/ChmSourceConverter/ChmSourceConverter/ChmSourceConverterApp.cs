@@ -65,7 +65,9 @@ namespace ChmSourceConverter
 
             TargetExtensions = Settings.TargetExtensions.Cast<string>().ToList();
             InputEncoding = Encoding.GetEncoding(Settings.InputEncoding);
-            HtmlCharsetPattern = new Regex(Settings.ReplacePattern, RegexOptions.IgnoreCase);
+
+            var htmlCharsetPattern = Settings.HtmlReplacePattern.Replace("<InputEncoding>", Settings.InputEncoding);
+            HtmlCharsetPattern = new Regex(htmlCharsetPattern, RegexOptions.IgnoreCase);
         }
 
         /// <summary>
@@ -131,7 +133,7 @@ namespace ChmSourceConverter
         /// <param name="writer"></param>
         private void ReadLinesIntoMemory(string filename, TextWriter writer)
         {
-            bool IsHtml = Path.GetExtension(filename) == TargetExtensions.FirstOrDefault();
+            bool IsHtml = Path.GetExtension(filename) == ".html";
 
             // 入力ファイルから行データを読み取る
             using (var contents = new FileContents(filename, InputEncoding))
