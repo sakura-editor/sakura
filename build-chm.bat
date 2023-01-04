@@ -12,42 +12,12 @@ set HH_INPUT=%~dp0sakura_core\sakura.hh
 set HH_OUTPUT=%~dp0help\sakura\sakura.hh
 
 if exist "%HH_OUTPUT%" del /F "%HH_OUTPUT%"
-powershell "(Get-Content -li %HH_INPUT% -Encoding UTF8) -replace '//.*' | Set-Content -li %HH_OUTPUT% -Encoding UTF8"
-
 if exist "%TMP_HELP%" rmdir /s /q "%TMP_HELP%"
-xcopy /i /k /s "%SRC_HELP%" "%TMP_HELP%"
 
-set HHP_MACRO=%TMP_HELP%\macro\macro.HHP
-set HHP_PLUGIN=%TMP_HELP%\plugin\plugin.hhp
-set HHP_SAKURA=%TMP_HELP%\sakura\sakura.hhp
+powershell.exe -ExecutionPolicy RemoteSigned -File %~dp0help\build-chm.ps1 ^
+-SRC_HELP "%SRC_HELP%" -TMP_HELP "%TMP_HELP%" -HH_INPUT "%HH_INPUT%" -HH_OUTPUT "%HH_OUTPUT%" -CMD_HHC "%CMD_HHC%"
 
-set CHM_MACRO=%TMP_HELP%\macro\macro.chm
-set CHM_PLUGIN=%TMP_HELP%\plugin\plugin.chm
-set CHM_SAKURA=%TMP_HELP%\sakura\sakura.chm
-
-powershell.exe -ExecutionPolicy RemoteSigned -File %~dp0help\ConvertEncoding.ps1 -TempHelp "%TMP_HELP%"
-
-call :BuildChm %HHP_MACRO%  %CHM_MACRO%   || (echo error && exit /b 1)
-call :BuildChm %HHP_PLUGIN% %CHM_PLUGIN%  || (echo error && exit /b 1)
-call :BuildChm %HHP_SAKURA% %CHM_SAKURA%  || (echo error && exit /b 1)
-
-copy /Y %TMP_HELP%\macro\*.chm   %SRC_HELP%\macro\   || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\plugin\*.chm  %SRC_HELP%\plugin\  || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\sakura\*.chm  %SRC_HELP%\sakura\  || (echo error && exit /b 1)
-
-copy /Y %TMP_HELP%\macro\*.Log   %SRC_HELP%\macro\   || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\plugin\*.Log  %SRC_HELP%\plugin\  || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\sakura\*.Log  %SRC_HELP%\sakura\  || (echo error && exit /b 1)
 
 rmdir /s /q %TMP_HELP%
 exit /b 0
 
-@rem ------------------------------------------------------------------------------
-@rem BuildChm
-@rem ------------------------------------------------------------------------------
-:BuildChm
-set PROJECT_HHP=%1
-set PROJECT_CHM=%2
-
-powershell.exe -ExecutionPolicy RemoteSigned -File %~dp0help\CompileChm.ps1 %PROJECT_HHP% %PROJECT_CHM%
-exit /b 0
