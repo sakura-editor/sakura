@@ -2,8 +2,7 @@
 Param(
 	[Parameter(Mandatory)]
     [string]$HtmlHelpProject,
-	[Parameter(Mandatory)]
-    [string]$Destination
+    $CMD_HHC
 )
 
 # ファイル存在チェック
@@ -70,54 +69,6 @@ function Is-Locked
 	}
 }
 
-# コンパイル済みHTMLのコピー処理
-# Azure Pipelinesがたまにコピー失敗する対策として作成
-function Copy-Chm
-{
-    [CmdletBinding()]
-	Param(
-        [Parameter(Mandatory)]
-		[string]$Path,
-		[Parameter(Mandatory)]
-		[string]$Destination
-	)
-
-	if ($Path | Is-Missing)
-	{
-		return $false
-	}
-
-	if ($Destination.EndsWith([System.IO.Path]::DirectorySeparatorChar))
-	{
-		if ($Destination | Is-Missing)
-		{
-			New-Item -Path $Destination -ItemType Directory
-		}
-
-		$Destination = [System.IO.Path]::Combine($Destination, [System.IO.Path]::GetFileName($Path))
-	}
-
-	if ($Path -like $Destination)
-	{
-		echo "Copy is not required."
-		return $true
-	}
-
-	try
-	{
-		echo "`$CompiledHelp is: $Path"
-		echo "`$Destination  is: $Destination"
-		Copy-Item -Path $Path -Destination $Destination
-	}
-	catch #[System.IO.IOException]
-	{
-		echo "Copy Chm error [$($PSItem.Exception)]: $($PSItem.ToString())"
-		return $false
-	}
-
-	return $true
-}
-
 $HtmlHelpProject = Convert-Path $HtmlHelpProject
 
 if (-not($HtmlHelpProject -imatch '\.hhp$'))
@@ -125,12 +76,12 @@ if (-not($HtmlHelpProject -imatch '\.hhp$'))
 	throw [System.ArgumentException]::new("Bad filename of `$HtmlHelpProject: $HtmlHelpProject")
 }
 
-if ([string]::IsNullOrEmpty($env:CMD_HHC) -or ($env:CMD_HHC | Is-Missing))
+if ([string]::IsNullOrEmpty($CMD_HHC) -or ($CMD_HHC | Is-Missing))
 {
-	$env:CMD_HHC = 'C:\Program Files (x86)\HTML Help Workshop\hhc.exe'
+	$CMD_HHC = 'C:\Program Files (x86)\HTML Help Workshop\hhc.exe'
 }
 
-$hhc = $env:CMD_HHC -replace '(.+)', '""$1""'
+$hhc = $CMD_HHC -replace '(.+)', '""$1""'
 $CompiledHelp = $HtmlHelpProject -ireplace '\.hhp$', '.chm'
 $CompileLog = "$([System.IO.Path]::GetDirectoryName($HtmlHelpProject))\Compile.Log"
 
@@ -144,11 +95,6 @@ if ($CompiledHelp | Is-Existing)
 	rm $CompiledHelp
 }
 
-if ($Destination | Is-Existing)
-{
-	rm $Destination
-}
-
 while ($true)
 {
 	try
@@ -156,7 +102,7 @@ while ($true)
 		if ([string]::IsNullOrEmpty($env:CMD_LEPROC))
 		{
 			#kick cmd.exe for a legacy command.
-			Start-Process $env:CMD_HHC $HtmlHelpProject
+			Start-Process $CMD_HHC $HtmlHelpProject
 		}
 		else
 		{
@@ -183,7 +129,7 @@ while ($true)
 			{
 				echo "`$CompileLog is still locked: $CompileLog"
 			}
-			elseif (Copy-Chm $CompiledHelp $Destination)
+			elseif ($CompiledHelp | Is-Existing)
 			{
 				return
 			}
