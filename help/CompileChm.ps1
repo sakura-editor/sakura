@@ -4,7 +4,8 @@ Param(
     [string]$HtmlHelpProject,
 	[Parameter(Mandatory)]
     [string]$Destination,
-    $CMD_HHC
+    $CMD_HHC,
+    $CMD_LEPROC
 )
 
 # ファイル存在チェック
@@ -153,15 +154,14 @@ while ($true)
 {
 	try
 	{
-		if ([string]::IsNullOrEmpty($env:CMD_LEPROC))
+		if ([string]::IsNullOrEmpty($CMD_LEPROC))
 		{
-			#kick cmd.exe for a legacy command.
-			Start-Process $env:CMD_HHC $HtmlHelpProject
+			cmd /c """$CMD_HHC"" ""$HtmlHelpProject"""
 		}
 		else
 		{
 			#kick LEProc.exe for a legacy command.
-			Start-Process $env:CMD_LEPROC "$env:COMSPEC /C `"$hhc $HtmlHelpProject`""
+			Start-Process $CMD_LEPROC "$env:COMSPEC /C `"$hhc $HtmlHelpProject`""
 		}
 
 		#wait for complete

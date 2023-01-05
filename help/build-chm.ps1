@@ -4,7 +4,7 @@ param($SRC_HELP, $TMP_HELP, $HH_INPUT, $HH_OUTPUT, $CMD_HHC)
 (Get-Content -LiteralPath $HH_INPUT -Encoding UTF8) -replace '//.*' |
  Set-Content -LiteralPath $HH_OUTPUT -Encoding UTF8
 
-Add-Type -TypeDefinition (Get-Content -LiteralPath "$SRC_HELP\ChmSourceConverterFallback.cs" -Raw) -Language CSharp
+Add-Type -TypeDefinition (Get-Content -LiteralPath "$SRC_HELP\EncoderEscapingFallback.cs" -Raw) -Language CSharp
 $sjis=[Text.Encoding]::GetEncoding("shift_jis",[EncoderEscapingFallback]::new("&#{0};"),[Text.DecoderFallback]::ExceptionFallback)
 $re=[Regex]::new('(?<=<META http-equiv="Content-Type" content="text/html; charset=|@charset ")UTF-8',"IgnoreCase")
 
