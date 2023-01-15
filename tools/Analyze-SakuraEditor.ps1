@@ -5,6 +5,11 @@ Param(
     [String]$HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
 )
 
+# SONAR_TOKEN未定義の場合、ファイルから取得を試みる
+if ([string]::IsNullOrEmpty($env:SONAR_TOKEN)) {
+    $env:SONAR_TOKEN = "$(Get-Content $HomePath\SONAR_TOKEN)"
+}
+
 # Check SONAR_TOKEN
 if ([string]::IsNullOrEmpty($env:SONAR_TOKEN)) {
     Throw "`$env:SONAR_TOKEN is not defined"

@@ -36,3 +36,4 @@ UpgradeLog.htm
 *coverage.xml
 *googletest.xml
 LastCoverageResults.log
+/SONAR_TOKEN
