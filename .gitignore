@@ -18,6 +18,8 @@
 Backup
 build-wrapper-win-x86*
 bw-output
+/.sonar
+/.scannerwork
 doxygen*.log
 html
 iss-*-*.log
@@ -31,3 +33,6 @@ sha256.txt
 tags
 testData_*.txt
 UpgradeLog.htm
+*coverage.xml
+*googletest.xml
+LastCoverageResults.log
