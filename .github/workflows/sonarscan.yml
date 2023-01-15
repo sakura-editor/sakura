@@ -33,7 +33,6 @@ jobs:
     env:
       BUILD_PLATFORM: x64
       BUILD_CONFIGURATION: Debug
-      SONAR_QUBE_VERSION: '4.7.0.2747'
 
     steps:
     - name: Checkout
@@ -48,6 +47,7 @@ jobs:
         {
           echo "BASE_SHA=$(git show -s --format=%H ${{ env.GITHUB_BASE_REF }})" >> $env:GITHUB_ENV
         }
+        echo "SCANNER_CLI_VERSION=$(Get-Content tools\SCANNER_CLI_VERSION)" >> $env:GITHUB_ENV
         New-Item -Path .sonar -ItemType Directory
 
     - name: Cache Sonar Analysis
@@ -57,9 +57,9 @@ jobs:
           .sonar\cache
           .sonar\analysis-cache
         key:
-          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ github.sha }}
+          sonar-cache-${{ env.SCANNER_CLI_VERSION }}-${{ github.sha }}
         restore-keys:
-          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ env.BASE_SHA }}
+          sonar-cache-${{ env.SCANNER_CLI_VERSION }}-${{ env.BASE_SHA }}
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
@@ -119,8 +119,8 @@ jobs:
     - name: Fetch SonarScanner
       working-directory: ${{ github.workspace }}\.sonar
       run: |
-        Invoke-WebRequest -OutFile sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_QUBE_VERSION }}.zip
-        7z rn sonar-scanner.zip sonar-scanner-${{ env.SONAR_QUBE_VERSION }} scanner
+        Invoke-WebRequest -OutFile sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SCANNER_CLI_VERSION }}.zip
+        7z rn sonar-scanner.zip sonar-scanner-${{ env.SCANNER_CLI_VERSION }} scanner
         7z x sonar-scanner.zip
 
     - name: Analyze with SonarScanner
