@@ -18,3 +18,5 @@ sakura_rc.h text eol=crlf
 *.targets text eol=crlf
 *.vcxproj text eol=crlf
 *.vsconfig text eol=crlf
+
+*.properties text working-tree-encoding=iso-8859-1 eol=lf
