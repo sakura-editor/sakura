@@ -21,8 +21,8 @@ Sakura-Editor Macro Reference
 <li><a href="./scriptcontrol.html">ScriptControl</a>からMsgBox関数を呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-<span style="color:blue">set</span> WSHShell = CreateObject(<span style="color:#800000">"WScript.Shell"</span>)
-WSHShell.Popup <span style="color:#800000">"message"</span>, 0, <span style="color:#800000">"title"</span>, 1
+<span class="blue">set</span> WSHShell = CreateObject(<span class="maroon">"WScript.Shell"</span>)
+WSHShell.Popup <span class="maroon">"message"</span>, 0, <span class="maroon">"title"</span>, 1
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>
@@ -33,8 +33,8 @@ WSHShell.Popup <span style="color:#800000">"message"</span>, 0, <span style="col
 <li><a href="./scriptcontrol.html">ScriptControl</a>を使用しVBSのMsgBox関数を呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-<span style="color:blue">var</span> WSHShell = <span style="color:blue">new</span> ActiveXObject(<span style="color:#800000">"WScript.Shell"</span>);
-WSHShell.Popup(<span style="color:#800000">"message"</span>, 0, <span style="color:#800000">"title"</span>, 1);
+<span class="blue">var</span> WSHShell = <span class="blue">new</span> ActiveXObject(<span class="maroon">"WScript.Shell"</span>);
+WSHShell.Popup(<span class="maroon">"message"</span>, 0, <span class="maroon">"title"</span>, 1);
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>
@@ -48,9 +48,9 @@ WSHShell.Popup(<span style="color:#800000">"message"</span>, 0, <span style="col
 <li><a href="./scriptcontrol.html">ScriptControl</a>を使用しVBSのMsgBox関数を呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-<span style="color:blue">use</span> Win32::OLE;
-$WshShell = Win32::OLE->CreateObject(<span style="color:#800000">"WScript.Shell"</span>);
-$WshShell->Popup(<span style="color:#800000">"message"</span>,undef,<span style="color:#800000">"title"</span>,1);
+<span class="blue">use</span> Win32::OLE;
+$WshShell = Win32::OLE->CreateObject(<span class="maroon">"WScript.Shell"</span>);
+$WshShell->Popup(<span class="maroon">"message"</span>,undef,<span class="maroon">"title"</span>,1);
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>
@@ -61,8 +61,8 @@ $WshShell->Popup(<span style="color:#800000">"message"</span>,undef,<span style=
 <li><a href="./scriptcontrol.html">ScriptControl</a>から呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-shell = WIN32OLE.<span style="color:blue">new</span>(<span style="color:#800000">"WScript.Shell"</span>)
-shell.Popup <span style="color:#800000">"message"</span>, 0, <span style="color:#800000">"title"</span>, 1
+shell = WIN32OLE.<span class="blue">new</span>(<span class="maroon">"WScript.Shell"</span>)
+shell.Popup <span class="maroon">"message"</span>, 0, <span class="maroon">"title"</span>, 1
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>

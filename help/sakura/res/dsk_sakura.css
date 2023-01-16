@@ -82,6 +82,27 @@ STRONG {
 SPAN.bold {
 	FONT-WEIGHT: bold
 }
+SPAN.blue {
+	COLOR: blue
+}
+SPAN.red {
+	COLOR: red
+}
+SPAN.green {
+	COLOR: green
+}
+SPAN.gray {
+	COLOR: gray
+}
+SPAN.white {
+	COLOR: white
+}
+SPAN.olive {
+	COLOR: olive
+}
+SMALL.olive {
+	COLOR: olive
+}
 .s {
 	FONT-SIZE: smaller
 }

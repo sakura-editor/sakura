@@ -12,36 +12,36 @@ Sakura-Editor Macro Reference
 <h2>S_IsPossibleUndoの使用例</h2>
 
 <pre>
-<span style="color:green;">//sample.js
+<span class="green">//sample.js
 //最大までUndoを実行</span>
-<span style="color:blue;">while</span> (<span style="color:blue;">IsPossibleUndo</span>) {
-    <span style="color:blue;">Undo</span>;
+<span class="blue">while</span> (<span class="blue">IsPossibleUndo</span>) {
+    <span class="blue">Undo</span>;
 }
 </pre>
 
 <pre>
-<span style="color:green;">//sample.ppa
+<span class="green">//sample.ppa
 //ファイルの編集状態を調べる</span>
-<span style="color:blue;">var</span>
+<span class="blue">var</span>
     sMes : String;
 
-<span style="color:blue;">begin</span>
-    <span style="color:blue;">if S_IsPossibleUndo</span> = <span style="color:red;">1</span> <span style="color:blue;">then</span>
-        sMes := <span style="color:#800000;">'ファイルを開いてから編集された'</span>
-    <span style="color:blue;">else</span>
-        sMes := <span style="color:#800000;">'ファイルを開いてから編集していない'</span>
+<span class="blue">begin</span>
+    <span class="blue">if S_IsPossibleUndo</span> = <span class="red">1</span> <span class="blue">then</span>
+        sMes := <span class="maroon">'ファイルを開いてから編集された'</span>
+    <span class="blue">else</span>
+        sMes := <span class="maroon">'ファイルを開いてから編集していない'</span>
     ;
     
     sMes := sMes + '／';
     
-    <span style="color:blue;">if S_ExpandParameter</span>(<span style="color:#800000;">'${U?Y$:N$}'</span>) = <span style="color:#800000;">'Y'</span> <span style="color:blue;">then</span>
-        sMes := sMes + <span style="color:#800000;">'ファイルを保存してから編集された'</span>
-    <span style="color:blue;">else</span>
-        sMes := sMes + <span style="color:#800000;">'ファイルを保存してから編集していない'</span>
+    <span class="blue">if S_ExpandParameter</span>(<span class="maroon">'${U?Y$:N$}'</span>) = <span class="maroon">'Y'</span> <span class="blue">then</span>
+        sMes := sMes + <span class="maroon">'ファイルを保存してから編集された'</span>
+    <span class="blue">else</span>
+        sMes := sMes + <span class="maroon">'ファイルを保存してから編集していない'</span>
     ;
 
-    <span style="color:blue;">MessageBox</span>(sMes, <span style="color:#800000;">'編集状態'</span>, <span style="color:red;">0</span>);
-<span style="color:blue;">end</span>;
+    <span class="blue">MessageBox</span>(sMes, <span class="maroon">'編集状態'</span>, <span class="red">0</span>);
+<span class="blue">end</span>;
 </pre>
 
 <hr>
