@@ -976,17 +976,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 				bool bAddLineNum = true;
 				const CLayout* pcLayoutNext = pcLayout->GetNextLayout();
 				if( pcLayoutNext ){
-					if( type.m_bLineNumIsCRLF ){
-						if( bLineNumLayout && pcLayoutNext->GetLogicOffset() != 0 ){
-							bAddLineNum = true;
-						}else{
-							bAddLineNum = true;
-						}
-					}else{
-						if( bLineNumLayout || pcLayoutNext->GetLogicOffset() == 0 ){
-							bAddLineNum = true;
-						}
-					}
+					bAddLineNum = type.m_bLineNumIsCRLF || bLineNumLayout || pcLayoutNext->GetLogicOffset() == 0;
 				}
 				if( bAddLineNum ){
 					if( sFontAttrLast2.m_bBoldFont ){

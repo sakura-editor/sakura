@@ -755,11 +755,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 		AddLastYenFromDirectoryPath( dirFileName );
 		const WCHAR	*p = fileName;
 		if( p[0] == L'\\' ){
-			if( p[1] == L'\\' ){
-				wcscpy( dirFileName, p );
-			}else{
-				wcscpy( dirFileName, p );
-			}
+			wcscpy( dirFileName, p );
 		}else if( _istalpha( p[0] ) && p[1] == L':' ){
 			wcscpy( dirFileName, p );
 		}else{
@@ -1638,12 +1634,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	//完全パス名を作成する。
 	const WCHAR	*p = fileName;
 	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
-		if( p[1] == L'\\' ){	//ネットワークパスか？
-			wcscpy( pszOutput, p );	//何も加工しない。
-		}else{
-			//ドライブ加工したほうがよい？
-			wcscpy( pszOutput, p );	//何も加工しない。
-		}
+		wcscpy( pszOutput, p );	//何も加工しない。
 	}else if( _istalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
 		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{

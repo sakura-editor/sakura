@@ -1145,12 +1145,7 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 	}
 	else {
 		//	いま見ているところは空行の1行目
-		if ( GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
-			nCaretPointer++;
-		}
-		else {
-			nCaretPointer++;
-		}
+		nCaretPointer++;
 	}
 
 	//	EOFまで来たり、目的の場所まできたので移動終了。

@@ -130,17 +130,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		if( CheckRegexpVersion( hwndDlg, IDC_LABEL_REGEX_VERSION, false ) == false )	//@@@ 2001.11.17 add MIK
 		{
 			::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEX_VERSION, LS(STR_PROPTYPEREGEX_NOUSE) );
-			//ライブラリがなくて、使用しないになっている場合は、無効にする。
-			if( ! IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
-			{
-				//Disableにする。
-				EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
-			}
-			else
-			{
-				//使用するになってるんだけどDisableにする。もうユーザーは変更できない。
-				EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
-			}
+			EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 		}
 		return TRUE;
 
