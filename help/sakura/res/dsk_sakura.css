@@ -4,13 +4,13 @@ BODY {
 	margin: 1em 5%; line-height: 1.4; font-family: "ＭＳ Ｐゴシック", sans-serif, "verdana", "arial", "helvetica"; color: #000; background-color: #fff;
 }
 A:link {
-	COLOR: #f03; BACKGROUND-COLOR: transparent
+	COLOR: #f03; BACKGROUND-COLOR: transparent;
 }
 A:visited {
-	COLOR: #903; BACKGROUND-COLOR: transparent
+	COLOR: #903; BACKGROUND-COLOR: transparent;
 }
 A:hover {
-	COLOR: #000; BACKGROUND-COLOR: #fcd
+	COLOR: #000; BACKGROUND-COLOR: #fcd;
 }
 A:link IMG {
 	border-color: #f03;
@@ -47,77 +47,77 @@ DL {
 	LINE-HEIGHT: 1.4
 }
 DT {
-	PADDING: 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
+	PADDING: 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee;
 	FONT-WEIGHT: bold
 }
 DD {
-	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0; PADDING-TOP: 0.2em
+	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0; PADDING-TOP: 0.2em;
 }
 TABLE {
-	BORDER-RIGHT: #666 2px solid; BORDER-TOP: 2px solid #666; BORDER-LEFT: #666 2px solid; BORDER-BOTTOM: #666 2px solid; BORDER-COLLAPSE: collapse
+	BORDER-RIGHT: #666 2px solid; BORDER-TOP: 2px solid #666; BORDER-LEFT: #666 2px solid; BORDER-BOTTOM: #666 2px solid; BORDER-COLLAPSE: collapse;
 }
 TH {
-	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid
+	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid;
 }
 TD {
-	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid
+	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid;
 }
 P {
-	LINE-HEIGHT: 1.4
+	LINE-HEIGHT: 1.4;
 }
 UL {
-	LINE-HEIGHT: 1.4
-	LIST-STYLE-TYPE: square
+	LINE-HEIGHT: 1.4;
+	LIST-STYLE-TYPE: square;
 }
 OL {
-	LINE-HEIGHT: 1.4
+	LINE-HEIGHT: 1.4;
 }
 EM {
-	COLOR: #909; BACKGROUND-COLOR: transparent
+	COLOR: #909; BACKGROUND-COLOR: transparent;
 }
 STRONG {
-	COLOR: #909; BACKGROUND-COLOR: transparent
-	BORDER-RIGHT: 3px; BORDER-TOP: 3px; BORDER-LEFT: 3px; BORDER-BOTTOM: 3px double
+	COLOR: #909; BACKGROUND-COLOR: transparent;
+	BORDER-RIGHT: 3px; BORDER-TOP: 3px; BORDER-LEFT: 3px; BORDER-BOTTOM: 3px double;
 }
 SPAN.bold {
-	FONT-WEIGHT: bold
+	FONT-WEIGHT: bold;
 }
 SPAN.blue {
-	COLOR: blue
+	COLOR: blue;
 }
 SPAN.red {
-	COLOR: red
+	COLOR: red;
 }
 SPAN.green {
-	COLOR: green
+	COLOR: green;
 }
 SPAN.gray {
-	COLOR: gray
+	COLOR: gray;
 }
 SPAN.white {
-	COLOR: white
+	COLOR: white;
 }
 SPAN.olive {
-	COLOR: olive
+	COLOR: olive;
 }
 SMALL.olive {
-	COLOR: olive
+	COLOR: olive;
 }
 .s {
-	FONT-SIZE: smaller
+	FONT-SIZE: smaller;
 }
 .title {
-	MARGIN-TOP: 0.5em; MARGIN-BOTTOM: 0.5em; PADDING-BOTTOM: 0.5em; PADDING-TOP: 0.5em; TEXT-ALIGN: center
+	MARGIN-TOP: 0.5em; MARGIN-BOTTOM: 0.5em; PADDING-BOTTOM: 0.5em; PADDING-TOP: 0.5em; TEXT-ALIGN: center;
 }
 .sub {
-	FONT-WEIGHT: bold; TEXT-ALIGN: center
+	FONT-WEIGHT: bold; TEXT-ALIGN: center;
 }
 .example {
 	margin: 0; padding: 0 1em; font-weight: bold; border-top-style: none; 
-	border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none
+	border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none;
 }
 .note {
-	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0; MARGIN: 0; BORDER-TOP-STYLE: none; PADDING-TOP: 0; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
+	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0; MARGIN: 0; BORDER-TOP-STYLE: none; PADDING-TOP: 0; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none;
 }
 .codesample {
 	color: #000; background-color: #f9f9f9;
