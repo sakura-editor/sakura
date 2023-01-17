@@ -40,7 +40,7 @@ ver 2.4.0.0 以降(正確には <a href="https://github.com/sakura-editor/sakura
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\sakura.exe\shell\open]
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\sakura.exe\shell\open\command]
-@="\"<span class="bold">C:\\Program Files (x86)\\sakura\\sakura.exe</span>\" \"%1\""
+@="\"<strong>C:\\Program Files (x86)\\sakura\\sakura.exe</strong>\" \"%1\""
 </div></pre>
 
 上記は 64bit PC に 32bit 版のサクラエディタをインストールする場合の例です。<br>
@@ -54,7 +54,7 @@ sakura.exe のパスは実態に合わせて調整してください。<br>
 
 <h3 id="Verb">Verb</h3>
 
-コマンドを <a href="https://msdn.microsoft.com/ja-jp/library/cc422072.aspx" target="_blank" rel="noopener">ShellExecute</a> を起動するときの <span class="bold">Verb</span> を登録します。<br>
+コマンドを <a href="https://msdn.microsoft.com/ja-jp/library/cc422072.aspx" target="_blank" rel="noopener">ShellExecute</a> を起動するときの <strong>Verb</strong> を登録します。<br>
 <br>
 以下の内容で reg ファイルを作成してダブルクリックして適用します。<br>
 
@@ -70,7 +70,7 @@ sakura.exe のパスは実態に合わせて調整してください。<br>
 @=""
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SakuraEditor.Document\shell\open\command]
-@="\"<span class="bold">C:\\Program Files (x86)\\sakura\\sakura.exe</span>\" \"%1\""
+@="\"<strong>C:\\Program Files (x86)\\sakura\\sakura.exe</strong>\" \"%1\""
 </code></pre>
 
 <h4>参考サイト</h4>
@@ -92,7 +92,7 @@ sakura.exe のパスは実態に合わせて調整してください。<br>
 
 <pre><div class="codesample">Windows Registry Editor Version 5.00
 
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\<span class="bold">.txt</span>\OpenWithProgids]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\<strong>.txt</strong>\OpenWithProgids]
 "SakuraEditor.Document"=""
 </code></pre>
 
