@@ -24,7 +24,7 @@
 <div class="li200">関連：<a href="HLP000006.html">正規表現ライブラリ</a>
 </div>
 <h4>基本要素</h4>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>\</code></td><td>
@@ -39,7 +39,7 @@
 
 <h4>文字集合(キャラクタクラス)</h4>
 <code>[<span class="blue">...</span>]</code> の中に以下のものが指定可能です。<br>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code><span class="blue">...</span></code></td><td><br><code>[ABC]</code>はAかBかCのどれかにマッチします。</td></tr>
@@ -55,7 +55,7 @@
 
 
 <h4>量指定子(数量子)</h4>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><small>最小一致<br>(無欲)</small></td><td><small>最大一致<br>(欲張り)</small></td><td> </td></tr>
@@ -74,7 +74,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;Bの場合: SAKURA_COLLBACKPROC<br>
 
 <h4>文字</h4>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>\t</code></td><td>水平タブコード（HT,TAB）</td></tr>
@@ -94,7 +94,7 @@
 <span class="green">(鬼)</span> はbregonig.dllのみ
 
 <h4>文字種</h4>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>.</code></td><td>\nを除く任意の1文字 <span class="bold">[^\n]</span>と同じ<br><span class="green">(Unicode版)</span> 改行を除く任意の1文字。<span class="bold">[^\r\n]</span>と同じ *1</td></tr>
@@ -111,7 +111,7 @@
 <span class="green">(Unicode版)</span> はUnicode版のサクラエディタ<br>
 <small>*1 この処理は正規表現DLLではなくsakura側が入力された.を[^\r\n]に置き換えています。</small><br>
 <h4>位置(錨)</h4>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>^</code></td><td>行頭<!-- ライブラリやバージョンで意味が違う --></td></tr>
@@ -126,7 +126,7 @@
 <span class="green">(鬼)</span> はbregonig.dllのみ
 
 <h4>後方参照と部分式呼び出し</h4>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>\<span class="blue">n</span></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<span class="bold">\<span class="blue">n</span></span>(<span class="blue">n</span>は1以上の整数)で参照します。</td></tr>
@@ -143,7 +143,7 @@
 <span class="green">(鬼)</span> はbregonig.dllのみ
 
 <h4>拡張式集合</h4>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>(?#<span class="blue">...</span>)</code></td><td>注釈</td></tr>
@@ -163,7 +163,7 @@
 
 <h4>置換で使える参照</h4>
 「置換後」に指定して使います。<br>
-<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<table border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <caption style="display: none">無題</caption>
 <tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>$<span class="blue">n</span></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<span class="bold">$<span class="blue">n</span></span>(<span class="blue">n</span>は1以上の整数)で参照します。<br>サクラエディタでは<span class="bold">$<span class="blue">n</span></span>の代わりに<span class="bold">\<span class="blue">n</span></span>も使用できます。</td></tr>
