@@ -23,6 +23,21 @@ dir -LiteralPath $env:SRC_HELP -Recurse -File |
 	}
 
 #compile
+$CP_ja=932
+$backup_ACP=(Get-ItemProperty HKLM:\System\CurrentControlSet\Control\Nls\CodePage).ACP
+"current ACP: $backup_ACP"
+
+if($backup_ACP -ne $CP_ja){
+	reg add HKLM\System\CurrentControlSet\Control\Nls\CodePage /f /v ACP /d $CP_ja
+	"current ACP: $((Get-ItemProperty HKLM:\System\CurrentControlSet\Control\Nls\CodePage).ACP)"
+}
+
 &"$env:SRC_HELP\CompileChm.ps1" "$env:TMP_HELP\macro\macro.HHP" "$env:SRC_HELP\macro\macro.chm"
 &"$env:SRC_HELP\CompileChm.ps1" "$env:TMP_HELP\plugin\plugin.HHP" "$env:SRC_HELP\plugin\plugin.chm"
 &"$env:SRC_HELP\CompileChm.ps1" "$env:TMP_HELP\sakura\sakura.HHP" "$env:SRC_HELP\sakura\sakura.chm"
+
+if($backup_ACP -ne $CP_ja){
+	reg add HKLM\System\CurrentControlSet\Control\Nls\CodePage /f /v ACP /d $backup_ACP
+	"current ACP: $((Get-ItemProperty HKLM:\System\CurrentControlSet\Control\Nls\CodePage).ACP)"
+}
+

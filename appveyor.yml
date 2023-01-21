@@ -24,8 +24,6 @@ skip_commits:
 
 install:
 - cmd: |
-    cinst autohotkey.portable -Version 1.1.36.02 -y
-    cinst locale-emulator -Version 2.5.0.11 -y
     cup vswhere
     py.exe -m pip install openpyxl --user
     cup innosetup

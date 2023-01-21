@@ -129,7 +129,6 @@ if ([string]::IsNullOrEmpty($env:CMD_HHC) -or ($env:CMD_HHC | Is-Missing))
 	$env:CMD_HHC = 'C:\Program Files (x86)\HTML Help Workshop\hhc.exe'
 }
 
-$hhc = $env:CMD_HHC -replace '(.+)', '""$1""'
 $CompiledHelp = $HtmlHelpProject -ireplace '\.hhp$', '.chm'
 $CompileLog = "$([System.IO.Path]::GetDirectoryName($HtmlHelpProject))\Compile.Log"
 
@@ -152,16 +151,7 @@ while ($true)
 {
 	try
 	{
-		if ([string]::IsNullOrEmpty($env:CMD_LEPROC))
-		{
-			#kick cmd.exe for a legacy command.
-			Start-Process $env:CMD_HHC $HtmlHelpProject
-		}
-		else
-		{
-			#kick LEProc.exe for a legacy command.
-			Start-Process $env:CMD_LEPROC "$env:COMSPEC /C `"$hhc $HtmlHelpProject`""
-		}
+		Start-Process "$env:CMD_HHC" """$HtmlHelpProject"""
 
 		#wait for complete
 		for ($count = 0; $count -lt 30; $count++)
@@ -184,6 +174,7 @@ while ($true)
 			}
 			elseif (Copy-Chm $CompiledHelp $Destination)
 			{
+				echo "Copy $CompiledHelp"
 				return
 			}
 			else

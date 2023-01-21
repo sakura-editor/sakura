@@ -21,7 +21,6 @@
 | Doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
 | Visual Studio Locator | CMD_VSWHERE | Microsoft Visual Studio\Installer | vswhere.exe |
 | MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
-| Locale Emulator    | CMD_LEPROC   | なし               | LEProc.exe   |
 | Python             | CMD_PYTHON   | なし               | py.exe (python.exe) |
 | CMake              | CMD_CMAKE    | CMake\bin          | cmake        |
 | Ninja              | CMD_NINJA    | なし               | ninja        |

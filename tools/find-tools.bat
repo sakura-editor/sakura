@@ -50,7 +50,6 @@ if not defined CMD_DOXYGEN  call :doxygen  2> nul
 if not defined CMD_MSBUILD  call :msbuild  2> nul
 if not defined CMD_CMAKE    call :cmake    2> nul
 if not defined CMD_NINJA    call :cmake    2> nul
-if not defined CMD_LEPROC   call :leproc   2> nul
 if not defined CMD_PYTHON   call :python   2> nul
 echo ^|- CMD_GIT=%CMD_GIT%
 echo ^|- CMD_7Z=%CMD_7Z%
@@ -62,7 +61,6 @@ echo ^|- CMD_VSWHERE=%CMD_VSWHERE%
 echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
 echo ^|- CMD_CMAKE=%CMD_CMAKE%
 echo ^|- CMD_NINJA=%CMD_NINJA%
-echo ^|- CMD_LEPROC=%CMD_LEPROC%
 echo ^|- CMD_PYTHON=%CMD_PYTHON%
 echo ^|- NUM_VSVERSION=%NUM_VSVERSION%
 echo ^|- CMAKE_G_PARAM=%CMAKE_G_PARAM%
@@ -77,7 +75,6 @@ endlocal ^
     && set "CMD_MSBUILD=%CMD_MSBUILD%"          ^
     && set "CMD_CMAKE=%CMD_CMAKE%"              ^
     && set "CMD_NINJA=%CMD_NINJA%"              ^
-    && set "CMD_LEPROC=%CMD_LEPROC%"            ^
     && set "CMD_PYTHON=%CMD_PYTHON%"            ^
     && set "NUM_VSVERSION=%NUM_VSVERSION%"      ^
     && set "CMAKE_G_PARAM=%CMAKE_G_PARAM%"      ^
@@ -97,7 +94,6 @@ exit /b
     set CMD_MSBUILD=
     set CMD_CMAKE=
     set CMD_NINJA=
-    set CMD_LEPROC=
     set CMD_PYTHON=
     set NUM_VSVERSION=
     set CMAKE_G_PARAM=
@@ -282,14 +278,6 @@ exit /b
 if exist "%CMD_NINJA%" goto :EOF
 for /f "usebackq delims=" %%a in (`where $PATH:ninja`) do ( 
     set "CMD_NINJA=%%a"
-    exit /b
-)
-exit /b
-
-:leproc
-set PATH2=%PATH%
-for /f "usebackq delims=" %%a in (`where $PATH2:LEProc.exe`) do (
-    set "CMD_LEPROC=%%a"
     exit /b
 )
 exit /b
