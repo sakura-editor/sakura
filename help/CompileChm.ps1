@@ -16,7 +16,7 @@ function Is-Existing
 		[string]$Path
 	)
 
-    return Test-Path -Path $Path
+    return Test-Path -LiteralPath $Path
 }
 
 # ファイル不存在チェック
@@ -91,7 +91,7 @@ function Copy-Chm
 	{
 		if ($Destination | Is-Missing)
 		{
-			New-Item -Path $Destination -ItemType Directory
+			New-Item -LiteralPath $Destination -ItemType Directory
 		}
 
 		$Destination = [System.IO.Path]::Combine($Destination, [System.IO.Path]::GetFileName($Path))
@@ -107,7 +107,7 @@ function Copy-Chm
 	{
 		echo "`$CompiledHelp is: $Path"
 		echo "`$Destination  is: $Destination"
-		Copy-Item -Path $Path -Destination $Destination
+		Copy-Item -LiteralPath $Path -Destination $Destination
 	}
 	catch #[System.IO.IOException]
 	{
@@ -118,8 +118,7 @@ function Copy-Chm
 	return $true
 }
 
-$HtmlHelpProject = Convert-Path $HtmlHelpProject
-
+$HtmlHelpProject = Convert-Path -LiteralPath $HtmlHelpProject
 if (-not($HtmlHelpProject -imatch '\.hhp$'))
 {
 	throw [System.ArgumentException]::new("Bad filename of `$HtmlHelpProject: $HtmlHelpProject")
@@ -136,17 +135,17 @@ $CompileLog = "$([System.IO.Path]::GetDirectoryName($HtmlHelpProject))\Compile.L
 
 if ($CompileLog | Is-Existing)
 {
-	rm $CompileLog
+	rm -LiteralPath $CompileLog
 }
 
 if ($CompiledHelp | Is-Existing)
 {
-	rm $CompiledHelp
+	rm -LiteralPath $CompiledHelp
 }
 
 if ($Destination | Is-Existing)
 {
-	rm $Destination
+	rm -LiteralPath $Destination
 }
 
 while ($true)
