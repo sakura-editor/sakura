@@ -61,7 +61,7 @@ namespace ChmSourceConverter
         }
 
         /// <inheritdoc />
-        public override int MaxCharCount => EncoderFallback.ExceptionFallback.MaxCharCount;
+        public override int MaxCharCount { get{ return EncoderFallback.ExceptionFallback.MaxCharCount; }}
 
         /// <inheritdoc />
         public override EncoderFallbackBuffer CreateFallbackBuffer()

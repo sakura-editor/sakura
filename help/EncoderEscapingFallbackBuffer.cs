@@ -25,6 +25,7 @@ using System;
 using System.Linq;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ChmSourceConverter
 {
@@ -38,7 +39,7 @@ namespace ChmSourceConverter
         private EncoderEscapingFallback FallbackRef;
 
         /// <inheritdoc />
-        public override int Remaining => Buffer.Count();
+        public override int Remaining { get{ return Buffer.Count(); }}
 
         /// <summary>
         /// Initializes a new instance of the EncoderEscapingFallbackBuffer class
