@@ -175,6 +175,7 @@ while ($true)
 			elseif (Copy-Chm $CompiledHelp $Destination)
 			{
 				echo "Copy $CompiledHelp"
+				gi $CompiledHelp
 				return
 			}
 			else
