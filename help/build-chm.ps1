@@ -4,14 +4,12 @@
 
 $cssrc=(Get-Content -LiteralPath "$env:SRC_HELP\EncoderEscapingFallbackBuffer.cs" -Raw),
 	((Get-Content -LiteralPath "$env:SRC_HELP\EncoderEscapingFallback.cs" -Raw) -replace "using System.*?\r?\n") -join ""
-$cssrc
-
 Add-Type -TypeDefinition $cssrc -Language CSharp
 $sjis=[Text.Encoding]::GetEncoding("shift_jis",[ChmSourceConverter.EncoderEscapingFallback]::new("&#{0};"),[Text.DecoderFallback]::ExceptionFallback)
 $re=[Regex]::new('(?<=<META http-equiv="Content-Type" content="text/html; charset=|@charset ")UTF-8',"IgnoreCase")
 
 #create a folder tree
-robocopy $env:SRC_HELP $env:TMP_HELP /e /xf *.html *.css *.js *.chm *.chw *.log /r:5 /w:10
+robocopy $env:SRC_HELP $env:TMP_HELP /e /xf *.html *.css *.js *.chm *.chw *.log /r:5 /w:10 > $null
 
 #convert
 dir -LiteralPath $env:SRC_HELP -Recurse -File |
@@ -32,7 +30,7 @@ $backup_ACP=(Get-ItemProperty HKLM:\System\CurrentControlSet\Control\Nls\CodePag
 if($backup_ACP -ne $CP_ja){
 	reg add HKLM\System\CurrentControlSet\Control\Nls\CodePage /f /v ACP /d $CP_ja
 	"current ACP: $((Get-ItemProperty HKLM:\System\CurrentControlSet\Control\Nls\CodePage).ACP)"
-	reg query HKLM\System\CurrentControlSet\Control\Nls\CodePage /v ACP
+	sleep 5
 }
 
 &"$env:SRC_HELP\CompileChm.ps1" "$env:TMP_HELP\macro\macro.HHP" "$env:SRC_HELP\macro\macro.chm"
