@@ -129,7 +129,6 @@ if ([string]::IsNullOrEmpty($env:CMD_HHC) -or ($env:CMD_HHC | Is-Missing))
 	$env:CMD_HHC = 'C:\Program Files (x86)\HTML Help Workshop\hhc.exe'
 }
 
-$hhc = $env:CMD_HHC -replace '(.+)', '""$1""'
 $CompiledHelp = $HtmlHelpProject -ireplace '\.hhp$', '.chm'
 $CompileLog = "$([System.IO.Path]::GetDirectoryName($HtmlHelpProject))\Compile.Log"
 
@@ -155,12 +154,12 @@ while ($true)
 		if ([string]::IsNullOrEmpty($env:CMD_LEPROC))
 		{
 			#kick cmd.exe for a legacy command.
-			Start-Process $env:CMD_HHC $HtmlHelpProject
+			Start-Process "$env:CMD_HHC" """$HtmlHelpProject"""
 		}
 		else
 		{
 			#kick LEProc.exe for a legacy command.
-			Start-Process $env:CMD_LEPROC "$env:COMSPEC /C `"$hhc $HtmlHelpProject`""
+			Start-Process $env:CMD_LEPROC """$env:CMD_HHC"" ""$HtmlHelpProject"""
 		}
 
 		#wait for complete
@@ -182,14 +181,19 @@ while ($true)
 			{
 				echo "`$CompileLog is still locked: $CompileLog"
 			}
-			elseif (Copy-Chm $CompiledHelp $Destination)
-			{
-				return
-			}
 			else
 			{
-				echo "Copy `$CompiledHelp has failed"
-				break
+				$bCopyChm=Copy-Chm $CompiledHelp $Destination
+				$bCopyChm -notmatch "True|False"
+				if($bCopyChm){
+					"`$CompiledHelp size: $((Get-Item -LiteralPath $CompiledHelp).Length)`n"
+					return
+				}
+				else
+				{
+					echo "Copy `$CompiledHelp has failed"
+					break
+				}
 			}
 
 			Start-Sleep -Second 1

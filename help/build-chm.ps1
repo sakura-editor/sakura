@@ -3,7 +3,7 @@
  Set-Content -LiteralPath $env:HH_OUTPUT -Encoding UTF8
 
 $cssrc=(Get-Content -LiteralPath "$env:SRC_HELP\EncoderEscapingFallbackBuffer.cs" -Raw),
-	((Get-Content -LiteralPath "$env:SRC_HELP\EncoderEscapingFallback.cs" -Raw) -replace "using System.+\r\n") -join ""
+	((Get-Content -LiteralPath "$env:SRC_HELP\EncoderEscapingFallback.cs" -Raw) -replace "using System.*?\r?\n") -join ""
 Add-Type -TypeDefinition $cssrc -Language CSharp
 $sjis=[Text.Encoding]::GetEncoding("shift_jis",[ChmSourceConverter.EncoderEscapingFallback]::new("&#{0};"),[Text.DecoderFallback]::ExceptionFallback)
 $re=[Regex]::new('(?<=<META http-equiv="Content-Type" content="text/html; charset=|@charset ")UTF-8',"IgnoreCase")
