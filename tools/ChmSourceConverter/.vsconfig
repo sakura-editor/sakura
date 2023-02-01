@@ -2,6 +2,6 @@
   "version": "1.0",
   "components": [
     "Microsoft.VisualStudio.Workload.ManagedDesktop",
-    "Microsoft.Net.Component.4.7.2.TargetingPack"
+    "Microsoft.Net.Component.4.8.TargetingPack"
   ]
 }

@@ -76,13 +76,26 @@ namespace ChmSourceConverter.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("(<meta http-equiv=\"Content-type\" content=\"text/html; charset=)UTF-8(\" */?>)")]
-        public string ReplacePattern {
+        [global::System.Configuration.DefaultSettingValueAttribute("(<meta http-equiv=\"Content-type\" content=\"text/html; charset=)<InputEncoding>(\" *" +
+            "/?>)")]
+        public string HtmlReplacePattern {
             get {
-                return ((string)(this["ReplacePattern"]));
+                return ((string)(this["HtmlReplacePattern"]));
             }
             set {
-                this["ReplacePattern"] = value;
+                this["HtmlReplacePattern"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(@charset \")<InputEncoding>(\";)")]
+        public string CssReplacePattern {
+            get {
+                return ((string)(this["CssReplacePattern"]));
+            }
+            set {
+                this["CssReplacePattern"] = value;
             }
         }
         

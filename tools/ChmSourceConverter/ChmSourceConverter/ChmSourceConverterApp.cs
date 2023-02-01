@@ -57,6 +57,11 @@ namespace ChmSourceConverter
         private readonly Regex HtmlCharsetPattern;
 
         /// <summary>
+        /// CSS中に現れる文字セット定義のパターン(正規表現)
+        /// </summary>
+        private readonly Regex CssCharsetPattern;
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public ChmSourceConverterApp(Properties.Settings settings)
@@ -65,7 +70,12 @@ namespace ChmSourceConverter
 
             TargetExtensions = Settings.TargetExtensions.Cast<string>().ToList();
             InputEncoding = Encoding.GetEncoding(Settings.InputEncoding);
-            HtmlCharsetPattern = new Regex(Settings.ReplacePattern, RegexOptions.IgnoreCase);
+
+            var htmlCharsetPattern = Settings.HtmlReplacePattern.Replace("<InputEncoding>", Settings.InputEncoding);
+            HtmlCharsetPattern = new Regex(htmlCharsetPattern, RegexOptions.IgnoreCase);
+
+            var cssCharsetPattern = Settings.CssReplacePattern.Replace("<InputEncoding>", Settings.InputEncoding);
+            CssCharsetPattern = new Regex(cssCharsetPattern, RegexOptions.IgnoreCase);
         }
 
         /// <summary>
@@ -131,7 +141,8 @@ namespace ChmSourceConverter
         /// <param name="writer"></param>
         private void ReadLinesIntoMemory(string filename, TextWriter writer)
         {
-            bool IsHtml = Path.GetExtension(filename) == TargetExtensions.FirstOrDefault();
+            bool IsHtml = Path.GetExtension(filename) == ".html";
+            bool IsCss = Path.GetExtension(filename) == ".css";
 
             // 入力ファイルから行データを読み取る
             using (var contents = new FileContents(filename, InputEncoding))
@@ -143,6 +154,12 @@ namespace ChmSourceConverter
                     {
                         IsHtml = false;
                         writer.WriteLine(HtmlCharsetPattern.Replace(line, $"$1{Settings.OutputEncoding}$2"));
+                        continue;
+                    }
+                    if (IsCss && CssCharsetPattern.IsMatch(line))
+                    {
+                        IsCss = false;
+                        writer.WriteLine(CssCharsetPattern.Replace(line, $"$1{Settings.OutputEncoding}$2"));
                         continue;
                     }
                     writer.WriteLine(line);
