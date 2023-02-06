@@ -18,3 +18,4 @@ sakura_rc.h text eol=crlf
 *.targets text eol=crlf
 *.vcxproj text eol=crlf
 *.vsconfig text eol=crlf
+*.yml text eol=crlf
