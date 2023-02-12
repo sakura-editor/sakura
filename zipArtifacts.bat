@@ -281,7 +281,7 @@ pushd %WORKDIR_DEV%  && call %ZIP_CMD%       %OUTFILE_DEV%  .  && popd
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
-copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\ > NUL
+copy /Y build\%platform%\%configuration%\sakura_core\*.asm %WORKDIR_ASM%\ > NUL
 pushd %WORKDIR_ASM%  && call %ZIP_CMD%       %OUTFILE_ASM%  .  && popd
 
 @echo end   zip asm
