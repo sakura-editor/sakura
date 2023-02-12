@@ -181,7 +181,7 @@ int CCharWidthCache::QueryPixelWidth(wchar_t c) const
 		GetTextExtentPoint32(SelectHDC(proxyChar),&proxyChar,1,&size);
 		return t_max<int>(nCx, size.cx);
 	}
-	if (m_lf.lfPitchAndFamily & 1)
+	if (m_lf.lfPitchAndFamily & FIXED_PITCH)
 		return (0x0080 <= c && c <= 0xFFFF) ? m_han_size.cx * 2 : m_han_size.cx;
 	GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
 	return t_max<int>(1,size.cx);
