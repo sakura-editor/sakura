@@ -49,11 +49,8 @@ namespace WCODE
 
 	bool CalcHankakuByFont(wchar_t);
 
-	//2007.08.30 kobake 追加
-	bool IsHankaku(wchar_t wc, CCharWidthCache& cache)
+	bool isSurelyHalfWidth(wchar_t wc)
 	{
-		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
-
 		//参考：http://www.swanq.co.jp/blog/archives/000783.html
 		if(
 			   wc<=0x007E //ACODEとか
@@ -65,6 +62,15 @@ namespace WCODE
 		//0x7F ～ 0xA0 も半角とみなす
 		//http://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF を見て、なんとなく
 		if(wc>=0x007F && wc<=0x00A0)return true;	// Control Code ISO/IEC 6429
+
+		return false;
+	}
+
+	//2007.08.30 kobake 追加
+	bool IsHankaku(wchar_t wc, CCharWidthCache& cache)
+	{
+		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
+		if (isSurelyHalfWidth(wc)) return true;
 
 		// 漢字はすべて同一幅とみなす	// 2013.04.07 aroka
 		if ( wc>=0x4E00 && wc<=0x9FBB		// Unified Ideographs, CJK
@@ -181,8 +187,9 @@ int CCharWidthCache::QueryPixelWidth(wchar_t c) const
 		GetTextExtentPoint32(SelectHDC(proxyChar),&proxyChar,1,&size);
 		return t_max<int>(nCx, size.cx);
 	}
-	if (m_lf.lfPitchAndFamily & FIXED_PITCH)
-		return ((0x0 <= c && c <= 0x7f) || (0xFF61 <= c && c <= 0xFFDC) || (0xFFE8 <= c && c <= 0xFFEE)) ? m_han_size.cx : m_han_size.cx * 2;
+	// 等幅フォントでも GetTextExtentPoint32 で取得したピクセル幅が半角と全角でぴったし2倍にならない事への対策
+	if ((m_lf.lfPitchAndFamily & FIXED_PITCH))
+		return WCODE::isSurelyHalfWidth(c) ? m_han_size.cx : 2*m_han_size.cx;
 	GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
 	return t_max<int>(1,size.cx);
 }
