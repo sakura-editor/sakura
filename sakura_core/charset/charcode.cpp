@@ -182,7 +182,7 @@ int CCharWidthCache::QueryPixelWidth(wchar_t c) const
 		return t_max<int>(nCx, size.cx);
 	}
 	if (m_lf.lfPitchAndFamily & FIXED_PITCH)
-		return (0x0080 <= c && c <= 0xFFFF) ? m_han_size.cx * 2 : m_han_size.cx;
+		return ((0x0 <= c && c <= 0x7f) || (0xFF61 <= c && c <= 0xFFDC) || (0xFFE8 <= c && c <= 0xFFEE)) ? m_han_size.cx : m_han_size.cx * 2;
 	GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
 	return t_max<int>(1,size.cx);
 }
