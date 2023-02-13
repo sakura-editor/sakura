@@ -49,8 +49,11 @@ namespace WCODE
 
 	bool CalcHankakuByFont(wchar_t);
 
-	bool isSurelyHalfWidth(wchar_t wc)
+	//2007.08.30 kobake 追加
+	bool IsHankaku(wchar_t wc, CCharWidthCache& cache)
 	{
+		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
+
 		//参考：http://www.swanq.co.jp/blog/archives/000783.html
 		if(
 			   wc<=0x007E //ACODEとか
@@ -62,15 +65,6 @@ namespace WCODE
 		//0x7F ～ 0xA0 も半角とみなす
 		//http://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF を見て、なんとなく
 		if(wc>=0x007F && wc<=0x00A0)return true;	// Control Code ISO/IEC 6429
-
-		return false;
-	}
-
-	//2007.08.30 kobake 追加
-	bool IsHankaku(wchar_t wc, CCharWidthCache& cache)
-	{
-		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
-		if (isSurelyHalfWidth(wc)) return true;
 
 		// 漢字はすべて同一幅とみなす	// 2013.04.07 aroka
 		if ( wc>=0x4E00 && wc<=0x9FBB		// Unified Ideographs, CJK
