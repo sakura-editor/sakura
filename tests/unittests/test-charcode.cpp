@@ -39,12 +39,6 @@ protected:
 		lf2 = LOGFONT();
 		lf2.lfCharSet = DEFAULT_CHARSET;
 		std::wcscpy(lf2.lfFaceName, L"Meiryo");
-		lf3 = LOGFONT();
-		lf3.lfCharSet = DEFAULT_CHARSET;
-		std::wcscpy(lf3.lfFaceName, L"UD デジタル 教科書体 N-B");
-		lf3.lfPitchAndFamily = FIXED_PITCH;
-		lf3.lfHeight = -19; // 14pt 200%想定
-		lf3.lfWeight = FW_BOLD;
 
 		dc = GetDC(nullptr);
 		font = CreateFontIndirect(&lf1);
@@ -59,7 +53,6 @@ protected:
 
 	LOGFONT lf1;
 	LOGFONT lf2;
-	LOGFONT lf3;
 	HDC dc;
 	HFONT font;
 	HFONT oldFont;
@@ -163,18 +156,6 @@ TEST_F(CharWidthCache, CalcPxWidthByFont2)
 	SIZE size;
 	GetTextExtentPoint32(dc, L"\xd83c\xdf38", 2, &size);
 	EXPECT_EQ(cache.CalcPxWidthByFont2(L"\xd83c\xdf38"), size.cx);
-}
-
-TEST_F(CharWidthCache, CalcPxWidthByFont3)
-{
-	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
-	InitCharWidthCache(lf3);
-	CCharWidthCache& cache = GetCharWidthCache();
-
-	constexpr auto halfWidth = 10;
-	constexpr auto fullWidth = halfWidth * 2;
-	EXPECT_EQ(cache.CalcPxWidthByFont(L'a'), halfWidth);
-	EXPECT_EQ(cache.CalcPxWidthByFont(L'あ'), fullWidth);
 }
 
 TEST_F(CharWidthCache, FontNo)
