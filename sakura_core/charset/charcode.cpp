@@ -182,6 +182,10 @@ int CCharWidthCache::QueryPixelWidth(wchar_t c) const
 		return t_max<int>(nCx, size.cx);
 	}
 	GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
+	// 等幅フォントでも GetTextExtentPoint32 で取得したピクセル幅が半角と全角でぴったし2倍の違いにならない事がある
+	// 対策として半角より少しでも幅が広い場合は半角幅の2倍に揃える
+	if ((m_lf.lfPitchAndFamily & FIXED_PITCH) && size.cx > m_han_size.cx)
+		size.cx = 2 * m_han_size.cx;
 	return t_max<int>(1,size.cx);
 }
 
