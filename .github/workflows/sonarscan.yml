@@ -56,7 +56,6 @@ jobs:
       with:
         path: |
           .sonar\cache
-          .sonar\analysis-cache
         key:
           sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ github.sha }}
         restore-keys:
@@ -143,10 +142,7 @@ jobs:
         -D"sonar.sourceEncoding=UTF-8" `
         -D"sonar.sources=." `
         -D"sonar.cfamily.build-wrapper-output=bw-output" `
-        -D"sonar.cfamily.cache.enabled=true" `
-        -D"sonar.cfamily.cache.path=.sonar\analysis-cache" `
         -D"sonar.cfamily.cppunit.reportPath=tests1-googletest.xml" `
-        -D"sonar.cfamily.threads=2" `
         -D"sonar.python.version=3" `
         -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tests\stubs\**\*.cpp,tools\**\*.js" `
         -D"sonar.coverageReportPaths=tests1-coverage.xml" `
