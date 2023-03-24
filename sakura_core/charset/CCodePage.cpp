@@ -617,7 +617,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 			}else if( pSrcByte[i] == 0x00 && pSrcByte[i+1] <= 0x10 ){
 				nDstUseCharLen = 2;
 				if( nDstUseLen + nDstUseCharLen <= nDstLen ){
-					UINT c = (pSrcByte[i+3] << 16) | (pSrcByte[i+2] << 8) | pSrcByte[i+1];
+					UINT c = (pSrcByte[i+1] << 16) | (pSrcByte[i+2] << 8) | pSrcByte[i+3];
 					UINT x = c - 0x10000;
 					pDst[nDstUseLen]   = static_cast<wchar_t>(0xd800 | (x >> 10));
 					pDst[nDstUseLen+1] = static_cast<wchar_t>(0xdc00 | (x & 0x3ff));
