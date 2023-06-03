@@ -41,6 +41,7 @@
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
 #include "util/file.h"
+#include "String_define.h"
 
 /*!
  * @brief exeファイルパスの取得
@@ -60,4 +61,53 @@ TEST(CSakuraEnvironment, ExpandParameter_IniFileName)
 	SFilePath szIniFile;
 	CSakuraEnvironment::ExpandParameter(L"$I", szIniFile, _countof2(szIniFile));
 	ASSERT_STREQ(GetIniFileName().c_str(), szIniFile.c_str());
+}
+
+TEST(CSakuraEnvironment, ExpandParameter_CaptionGrep)
+{
+	std::array<WCHAR, 4096> buf;
+	CSakuraEnvironment::ExpandParameter(L"$<caption_grep>", buf.data(), static_cast<int>(buf.size()));
+	ASSERT_STREQ(LS(STR_TAB_CAPTION_OUTPUT), buf.data());
+}
+
+TEST(CSakuraEnvironment, ExpandParameter_CaptionOutput)
+{
+	std::array<WCHAR, 4096> buf;
+	CSakuraEnvironment::ExpandParameter(L"$<caption_output>", buf.data(), static_cast<int>(buf.size()));
+	ASSERT_STREQ(LS(STR_TAB_CAPTION_GREP), buf.data());
+}
+
+TEST(CSakuraEnvironment, ExpandParameter_Output)
+{
+	std::array<WCHAR, 4096> buf;
+	CSakuraEnvironment::ExpandParameter(L"$<output>", buf.data(), static_cast<int>(buf.size()));
+	ASSERT_STREQ(LS(STR_CAPTION_ACTIVE_OUTPUT), buf.data());
+}
+
+TEST(CSakuraEnvironment, ExpandParameter_Updated)
+{
+	std::array<WCHAR, 4096> buf;
+	CSakuraEnvironment::ExpandParameter(L"$<updated>", buf.data(), static_cast<int>(buf.size()));
+	ASSERT_STREQ(LS(STR_CAPTION_ACTIVE_UPDATE), buf.data());
+}
+
+TEST(CSakuraEnvironment, ExpandParameter_ViewMode)
+{
+	std::array<WCHAR, 4096> buf;
+	CSakuraEnvironment::ExpandParameter(L"$<viewmode>", buf.data(), static_cast<int>(buf.size()));
+	ASSERT_STREQ(LS(STR_CAPTION_ACTIVE_VIEW), buf.data());
+}
+
+TEST(CSakuraEnvironment, ExpandParameter_Protected)
+{
+	std::array<WCHAR, 4096> buf;
+	CSakuraEnvironment::ExpandParameter(L"$<protected>", buf.data(), static_cast<int>(buf.size()));
+	ASSERT_STREQ(LS(STR_CAPTION_ACTIVE_OVERWRITE), buf.data());
+}
+
+TEST(CSakuraEnvironment, ExpandParameter_Recording)
+{
+	std::array<WCHAR, 4096> buf;
+	CSakuraEnvironment::ExpandParameter(L"$<recording>", buf.data(), static_cast<int>(buf.size()));
+	ASSERT_STREQ(LS(STR_CAPTION_ACTIVE_KEYMACRO), buf.data());
 }

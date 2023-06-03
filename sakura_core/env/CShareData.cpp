@@ -303,12 +303,10 @@ bool CShareData::InitShareData()
 
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-			wcscpy( sWindow.m_szWindowCaptionActive, 
-				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -"
-				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
-			wcscpy( sWindow.m_szWindowCaptionInactive, 
-				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -"
-				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
+			wcscpy_s( sWindow.m_szWindowCaptionActive, 
+				L"${w?$h$:$<output>$:${I?$f$n$:$N$n$}$}${U?$<updated>$} - $A $V ${R?$<viewmode>$:$<protected>$}${M? $<recording>$} $<profile>" );
+			wcscpy_s( sWindow.m_szWindowCaptionInactive, 
+				L"${w?$h$:$<output>$:$f$n$}${U?$<updated>$} - $A $V ${R?$<viewmode>$:$<protected>$}${M? $<recording>$} $<profile>" );
 		}
 
 		// [タブバー]タブ
@@ -317,9 +315,9 @@ bool CShareData::InitShareData()
 
 			sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 			sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
-			wcscpy(	//@@@ 2003.06.13 MIK
+			wcscpy_s(	//@@@ 2003.06.13 MIK
 				sTabBar.m_szTabWndCaption,
-				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
+				L"${w?$<caption_grep>$h$:$<caption_output>$:$f$n$}${U?$<updated>$}${R?$<viewmode>$:$<protected>$}${M?$<recording>$}"
 			);
 			sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 			sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji

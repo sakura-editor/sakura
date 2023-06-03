@@ -60,6 +60,13 @@ enum EExpParamName
 	EExpParamName_none = -1,
 	EExpParamName_begin = 0,
 	EExpParamName_profile = 0,
+	EExpParamName_caption_grep,
+	EExpParamName_caption_output,
+	EExpParamName_output,
+	EExpParamName_updated,
+	EExpParamName_viewmode,
+	EExpParamName_protected,
+	EExpParamName_recording,
 	EExpParamName_end
 };
 
@@ -69,8 +76,18 @@ struct SExpParamName
 	int m_nLen;
 };
 static SExpParamName SExpParamNameTable[] = {
-	{L"profile", 7},
+#pragma push_macro("PARAM_ENTRY")
+#define PARAM_ENTRY(name) { (name), _countof((name)) - 1 }
+	PARAM_ENTRY(L"profile"),
+	PARAM_ENTRY(L"caption_grep"),
+	PARAM_ENTRY(L"caption_output"),
+	PARAM_ENTRY(L"output"),
+	PARAM_ENTRY(L"updated"),
+	PARAM_ENTRY(L"viewmode"),
+	PARAM_ENTRY(L"protected"),
+	PARAM_ENTRY(L"recording"),
 	{NULL, 0}
+#pragma pop_macro("PARAM_ENTRY")
 };
 wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam );
 
@@ -697,6 +714,41 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 		{
 			LPCWSTR pszProf = CCommandLine::getInstance()->GetProfileName();
 			q = wcs_pushW( q, q_max - q, pszProf );
+		}
+		break;
+	case EExpParamName_caption_grep:
+		{
+			q = wcs_pushW(q, q_max - q, LS(STR_TAB_CAPTION_OUTPUT));
+		}
+		break;
+	case EExpParamName_caption_output:
+		{
+			q = wcs_pushW(q, q_max - q, LS(STR_TAB_CAPTION_GREP));
+		}
+		break;
+	case EExpParamName_output:
+		{
+			q = wcs_pushW(q, q_max - q, LS(STR_CAPTION_ACTIVE_OUTPUT));
+		}
+		break;
+	case EExpParamName_updated:
+		{
+			q = wcs_pushW(q, q_max - q, LS(STR_CAPTION_ACTIVE_UPDATE));
+		}
+		break;
+	case EExpParamName_viewmode:
+		{
+			q = wcs_pushW(q, q_max - q, LS(STR_CAPTION_ACTIVE_VIEW));
+		}
+		break;
+	case EExpParamName_protected:
+		{
+			q = wcs_pushW(q, q_max - q, LS(STR_CAPTION_ACTIVE_OVERWRITE));
+		}
+		break;
+	case EExpParamName_recording:
+		{
+			q = wcs_pushW(q, q_max - q, LS(STR_CAPTION_ACTIVE_KEYMACRO));
 		}
 		break;
 	default:
