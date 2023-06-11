@@ -40,7 +40,7 @@
       Inputs="%(FuncCodeRes.Identity);%(FuncCodeRes.AdditionalDependencies);$(MSBuildProjectFile)"
       Outputs="$(FuncCodeDefine)"
       DependsOnTargets="_WriteFuncCodeDefineRcTlogs;_SelectedFiles"
-      AfterTargets="SelectClCompile;GenerateGitHash"
+      AfterTargets="SelectClCompile"
       BeforeTargets="ResourceCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
   </Target>
@@ -74,7 +74,7 @@
       Inputs="%(FuncCodeRes.Identity);%(FuncCodeRes.AdditionalDependencies);$(MSBuildProjectFile)"
       Outputs="$(FuncCodeEnum)"
       DependsOnTargets="_WriteFuncCodeEnumClTlogs;_SelectedFiles"
-      AfterTargets="SelectClCompile;GenerateGitHash"
+      AfterTargets="SelectClCompile"
       BeforeTargets="ClCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeEnum) -mode=enum -enum=EFunctionCode" />
   </Target>

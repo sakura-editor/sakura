@@ -8,7 +8,7 @@
     <GitHash Include="$(GitHashBat)" />
     <GitHash Include="$(GitHead)" Condition="Exists('$(GitHead)')" />
   </ItemGroup>
-  <Target Name="GenerateGitHash"
+  <Target Name="GitHash"
       Inputs="@(GitHash);$(MSBuildThisFilePath)"
       Outputs="$(GeneratedGitHash)"
       BeforeTargets="ClCompile">
