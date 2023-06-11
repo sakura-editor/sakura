@@ -64,6 +64,10 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
+    - name: Make BuildDependencies
+      working-directory: ${{ github.workspace }}
+      run: .\tools\BuildDependencies.bat
+
     - name: Fetch Build-Wrapper
       working-directory: ${{ github.workspace }}\.sonar
       run: |
