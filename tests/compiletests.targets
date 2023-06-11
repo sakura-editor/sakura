@@ -1,7 +1,7 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="CompileTest">
     <CompileTestSourceDir>$(MSBuildThisFileDirectory)compiletests\</CompileTestSourceDir>
-    <CompileTestBuildDir>$(SolutionDir)build\$(Platform)\$(Configuration)\compiletests\</CompileTestBuildDir>
+    <CompileTestBuildDir>$([MSBuild]::NormalizePath('$(IntDir)', '..\compiletests\'))</CompileTestBuildDir>
   </PropertyGroup>
   <ItemGroup>
     <CompileTestTarget Include="..\sakura_core\basis\CLaxInteger.h" />
