@@ -1,4 +1,4 @@
-<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="FuncCode">
     <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
     <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
@@ -10,13 +10,12 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
-  <Target Name="_WriteFuncCodeDefineRcTlogs"
-      Condition="'@(FuncCodeRes)' != '' and '@(SelectedFiles)' == ''">
+  <Target Name="_WriteFuncCodeDefineRcTlogs">
     <ItemGroup>
-      <_FuncCodeDefineReadTlog Include="^$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeDefine)'));%(FuncCodeRes.FullPath)" 
-         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeDefine)' != ''"/>
-      <_FuncCodeDefineWriteTlog Include="^%(FuncCodeRes.FullPath);$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeDefine)'))" 
-         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeDefine)' != ''"/>
+      <_FuncCodeDefineReadTlog Include="^$(FuncCodeDefine);%(FuncCodeRes.FullPath)" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true'"/>
+      <_FuncCodeDefineWriteTlog Include="^%(FuncCodeRes.FullPath);$(FuncCodeDefine)" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true'"/>
     </ItemGroup>
     <WriteLinesToFile
       Condition="'@(_FuncCodeDefineReadTlog)' != ''"
@@ -31,26 +30,23 @@
       Overwrite="true"
       Encoding="Unicode"/>
     <ItemGroup>
-      <_FuncCodeDefineReadTlog Remove="@(_FuncCodeDefineReadTlog)" />
+      <_FuncCodeDefineReadTlog  Remove="@(_FuncCodeDefineReadTlog)" />
       <_FuncCodeDefineWriteTlog Remove="@(_FuncCodeDefineWriteTlog)" />
     </ItemGroup>
   </Target>
   <Target Name="FuncCodeDefine"
-      Condition="'@(FuncCodeRes)' != ''"
-      Inputs="%(FuncCodeRes.Identity);%(FuncCodeRes.AdditionalDependencies);$(MSBuildProjectFile)"
+      Inputs="@(FuncCodeRes);$(HeaderMake)"
       Outputs="$(FuncCodeDefine)"
-      DependsOnTargets="_WriteFuncCodeDefineRcTlogs;_SelectedFiles"
-      AfterTargets="SelectClCompile"
+      DependsOnTargets="_WriteFuncCodeDefineRcTlogs"
       BeforeTargets="ResourceCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
   </Target>
-  <Target Name="_WriteFuncCodeEnumClTlogs"
-      Condition="'@(FuncCodeRes)' != '' and '@(SelectedFiles)' == ''">
+  <Target Name="_WriteFuncCodeEnumClTlogs">
     <ItemGroup>
-      <_FuncCodeEnumReadTlog Include="^$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeEnum)'));%(FuncCodeRes.FullPath)" 
-         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeEnum)' != ''"/>
-      <_FuncCodeEnumWriteTlog Include="^%(FuncCodeRes.FullPath);$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeEnum)'))" 
-         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeEnum)' != ''"/>
+      <_FuncCodeEnumReadTlog Include="^$(FuncCodeEnum);%(FuncCodeRes.FullPath)" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true'"/>
+      <_FuncCodeEnumWriteTlog Include="^%(FuncCodeRes.FullPath);$(FuncCodeEnum)" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true'"/>
     </ItemGroup>
     <WriteLinesToFile
       Condition="'@(_FuncCodeEnumReadTlog)' != ''"
@@ -65,16 +61,14 @@
       Overwrite="true"
       Encoding="Unicode"/>
     <ItemGroup>
-      <_FuncCodeEnumReadTlog Remove="@(_FuncCodeEnumReadTlog)" />
+      <_FuncCodeEnumReadTlog  Remove="@(_FuncCodeEnumReadTlog)" />
       <_FuncCodeEnumWriteTlog Remove="@(_FuncCodeEnumWriteTlog)" />
     </ItemGroup>
   </Target>
   <Target Name="FuncCodeEnum"
-      Condition="'@(FuncCodeRes)' != ''"
-      Inputs="%(FuncCodeRes.Identity);%(FuncCodeRes.AdditionalDependencies);$(MSBuildProjectFile)"
+      Inputs="@(FuncCodeRes);$(HeaderMake)"
       Outputs="$(FuncCodeEnum)"
-      DependsOnTargets="_WriteFuncCodeEnumClTlogs;_SelectedFiles"
-      AfterTargets="SelectClCompile"
+      DependsOnTargets="_WriteFuncCodeEnumClTlogs"
       BeforeTargets="ClCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeEnum) -mode=enum -enum=EFunctionCode" />
   </Target>
