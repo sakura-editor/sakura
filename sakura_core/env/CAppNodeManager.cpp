@@ -361,7 +361,7 @@ int CAppNodeGroupHandle::GetEditorWindowsNum( bool bExcludeClosing/* = true */ )
 	j = 0;
 	for( i = 0; i < pShare->m_sNodes.m_nEditArrNum; ++i ){
 		if( IsSakuraMainWindow( pShare->m_sNodes.m_pEditArr[i].m_hWnd ) ){
-			if( m_nGroup != 0 && m_nGroup != CAppNodeManager::getInstance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup() )
+			if( m_nGroup != 0 && m_nGroup != static_cast<int>(CAppNodeManager::getInstance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup()) )
 				continue;
 			if( bExcludeClosing && pShare->m_sNodes.m_pEditArr[i].m_bClosing )
 				continue;
