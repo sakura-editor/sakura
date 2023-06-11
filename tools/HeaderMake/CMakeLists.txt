@@ -13,3 +13,9 @@ file(GLOB SOURCE_FILES *.cpp *.h)
 add_executable(${project_name} ${SOURCE_FILES})
 
 target_compile_definitions(${project_name} PUBLIC _CONSOLE UNICODE _UNICODE)
+
+install(
+    TARGETS HeaderMake
+    EXPORT HeaderMake-targets
+    RUNTIME DESTINATION bin
+)

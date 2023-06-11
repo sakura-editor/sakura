@@ -7,6 +7,7 @@ IF not EXIST vcpkg.exe (
 	CALL bootstrap-vcpkg.bat
 )
 
+: For tests1
 vcpkg install ^
     gtest:x64-windows-static ^
     gtest:x86-windows-static
@@ -20,6 +21,22 @@ if not defined CMD_NUGET call :nuget
 if defined CMD_NUGET (
     "%CMD_NUGET%" install tests1.dependencies -Source "%~dp0..\.nuget" -OutputDirectory "%~dp0..\packages"
 )
+
+: For sakura
+mkdir ports\header-make
+copy /Y ..\HeaderMake\portfile.cmake ports\header-make\
+copy /Y ..\HeaderMake\vcpkg.json     ports\header-make\
+
+vcpkg install ^
+    header-make:x64-windows ^
+    header-make:x86-windows
+
+vcpkg export ^
+    header-make:x64-windows ^
+    header-make:x86-windows ^
+	--nuget --nuget-id=sakura.dependencies --nuget-version=1.0.0 --output-dir="%~dp0..\.nuget"
+
+"%CMD_NUGET%" install sakura.dependencies -Source "%~dp0..\.nuget" -OutputDirectory "%~dp0..\packages"
 
 popd
 
