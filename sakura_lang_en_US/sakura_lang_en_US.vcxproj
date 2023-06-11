@@ -36,8 +36,8 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\build\$(Platform)\$(Configuration)\$(ProjectName)\'))</IntDir>
+    <OutDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\$(Platform)\$(Configuration)\'))</OutDir>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
