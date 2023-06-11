@@ -3,8 +3,8 @@
     <HeaderMakeSourceDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\HeaderMake\'))</HeaderMakeSourceDir>
     <HeaderMakeBuildDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\build\HeaderMake\'))</HeaderMakeBuildDir>
     <HeaderMake>$(HeaderMakeBuildDir)HeaderMake.exe</HeaderMake>
-    <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
-    <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
+    <FuncCodeDefine>$(IntDir)Funccode_define.h</FuncCodeDefine>
+    <FuncCodeEnum>$(IntDir)Funccode_enum.h</FuncCodeEnum>
   </PropertyGroup>
   <Target Name="MakeHeaderMakeBuildDir" Condition="!Exists('$(HeaderMakeBuildDir)')">
     <MakeDir Directories="$(HeaderMakeBuildDir)" />

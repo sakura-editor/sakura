@@ -2,7 +2,7 @@
   <PropertyGroup Label="GitHash">
     <GitHashBat>$(MSBuildThisFileDirectory)githash.bat</GitHashBat>
     <GitHead>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\.git\HEAD'))</GitHead>
-    <GeneratedGitHash>..\sakura_core\githash.h</GeneratedGitHash>
+    <GeneratedGitHash>$(IntDir)githash.h</GeneratedGitHash>
   </PropertyGroup>
   <ItemGroup>
     <GitHash Include="$(GitHashBat)" />

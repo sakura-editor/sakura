@@ -53,7 +53,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="sakura.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINNT=_WIN32_WINNT_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -69,6 +69,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <ResourceCompile>
+      <AdditionalIncludeDirectories>$(IntDir);..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0411</Culture>
     </ResourceCompile>
     <Manifest>
@@ -146,6 +147,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="$(IntDir)Funccode_define.h" />
+    <ClInclude Include="$(IntDir)Funccode_enum.h" />
+    <ClInclude Include="$(IntDir)githash.h" />
+  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
@@ -315,8 +321,6 @@
     <ClInclude Include="..\sakura_core\extmodule\CMigemo.h" />
     <ClInclude Include="..\sakura_core\extmodule\CUchardet.h" />
     <ClInclude Include="..\sakura_core\extmodule\CUxTheme.h" />
-    <ClInclude Include="..\sakura_core\Funccode_define.h" />
-    <ClInclude Include="..\sakura_core\Funccode_enum.h" />
     <ClInclude Include="..\sakura_core\func\CFuncKeyWnd.h" />
     <ClInclude Include="..\sakura_core\func\CFuncLookup.h" />
     <ClInclude Include="..\sakura_core\func\CKeyBind.h" />
@@ -390,7 +394,6 @@
     <ClInclude Include="..\sakura_core\sakura_rc.h" />
     <ClInclude Include="..\sakura_core\StdAfx.h" />
     <ClInclude Include="..\sakura_core\String_define.h" />
-    <ClInclude Include="..\sakura_core\githash.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgKeywordSelect.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgSameColor.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgTypeAscertain.h" />

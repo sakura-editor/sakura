@@ -119,14 +119,11 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Generated Headers">
+      <UniqueIdentifier>{855b22dd-2214-4706-9283-42d4d5c5c722}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\sakura_core\Funccode_define.h">
-      <Filter>Other Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\Funccode_enum.h">
-      <Filter>Other Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\sakura.hh">
       <Filter>Other Files</Filter>
     </ClInclude>
@@ -1066,7 +1063,6 @@
     <ClInclude Include="..\sakura_core\uiparts\HandCursor.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\githash.h" />
     <ClInclude Include="..\sakura_core\version.h">
       <Filter>Other Files</Filter>
     </ClInclude>
@@ -1114,6 +1110,15 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\view\CMiniMapView.h">
       <Filter>Cpp Source Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="$(IntDir)githash.h">
+      <Filter>Generated Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(IntDir)Funccode_enum.h">
+      <Filter>Generated Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(IntDir)Funccode_define.h">
+      <Filter>Generated Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
