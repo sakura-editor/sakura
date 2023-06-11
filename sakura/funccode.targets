@@ -1,15 +1,39 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="FuncCode">
-    <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
+    <HeaderMakeSourceDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\HeaderMake\'))</HeaderMakeSourceDir>
+    <HeaderMakeBuildDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\build\HeaderMake\'))</HeaderMakeBuildDir>
+    <HeaderMake>$(HeaderMakeBuildDir)HeaderMake.exe</HeaderMake>
     <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
     <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HeaderMake\HeaderMake.vcxproj">
-      <Project>{0f2918b0-23e3-42e8-a1a8-8739f726a23e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
+  <Target Name="MakeHeaderMakeBuildDir" Condition="!Exists('$(HeaderMakeBuildDir)')">
+    <MakeDir Directories="$(HeaderMakeBuildDir)" />
+  </Target>
+  <Target Name="HeaderMake"
+      Inputs="$(HeaderMakeSourceDir)CMakeLists.txt"
+      Outputs="$(HeaderMake)"
+      DependsOnTargets="MakeHeaderMakeBuildDir">
+    <PropertyGroup>
+      <VsVersion>$([System.Double]::Parse('$(VisualStudioVersion)'))</VsVersion>
+    </PropertyGroup>
+    <Exec Command="vswhere -find **\CMake\bin\cmake.exe -version [$(VsVersion),$([MSBuild]::Add($(VsVersion), 1))) > $(TLogLocation)cmake.path" Condition="!Exists('$(TLogLocation)cmake.path')" />
+    <Exec Command="vswhere -find **\CMake\Ninja\ninja.exe -version [$(VsVersion),$([MSBuild]::Add($(VsVersion), 1))) > $(TLogLocation)ninja.path" Condition="!Exists('$(TLogLocation)ninja.path')" />
+    <Exec Command="vswhere -find **\bin\Hostx64\$(PlatformTarget)\cl.exe -version [$(VsVersion),$([MSBuild]::Add($(VsVersion), 1))) > $(TLogLocation)cl.path" Condition="!Exists('$(TLogLocation)cl.path')"/>
+    <ReadLinesFromFile File="$(TLogLocation)cmake.path" Condition="'@(CmdCMake)' == ''">
+      <Output TaskParameter="Lines" ItemName="CmdCMake"/>
+    </ReadLinesFromFile>
+    <ReadLinesFromFile File="$(TLogLocation)ninja.path" Condition="'@(CmdNinja)' == ''">
+      <Output TaskParameter="Lines" ItemName="CmdNinja"/>
+    </ReadLinesFromFile>
+    <ReadLinesFromFile File="$(TLogLocation)cl.path" Condition="'@(CmdCl)' == ''">
+      <Output TaskParameter="Lines" ItemName="CmdCl"/>
+    </ReadLinesFromFile>
+    <Exec Command="&quot;@(CmdCMake)&quot; -G Ninja &quot;-DCMAKE_MAKE_PROGRAM=@(CmdNinja->Replace('\', '/'))&quot; &quot;-DCMAKE_C_COMPILER=@(CmdCl->Replace('\', '/'))&quot; &quot;-DCMAKE_CXX_COMPILER=@(CmdCl->Replace('\', '/'))&quot; $(HeaderMakeSourceDir)" ConsoleToMSBuild="true" WorkingDirectory="$(HeaderMakeBuildDir)" />
+    <Exec Command="&quot;@(CmdCMake)&quot; --build ." ConsoleToMSBuild="true" WorkingDirectory="$(HeaderMakeBuildDir)" />
+  </Target>
+  <Target Name="CleanHeaderMake" BeforeTargets="CoreClean">
+    <RemoveDir Directories="$(HeaderMakeBuildDir)" />
+  </Target>
   <Target Name="_WriteFuncCodeDefineRcTlogs">
     <ItemGroup>
       <_FuncCodeDefineReadTlog Include="^$(FuncCodeDefine);%(FuncCodeRes.FullPath)" 
@@ -37,7 +61,7 @@
   <Target Name="FuncCodeDefine"
       Inputs="@(FuncCodeRes);$(HeaderMake);$(MSBuildThisFilePath)"
       Outputs="$(FuncCodeDefine)"
-      DependsOnTargets="_WriteFuncCodeDefineRcTlogs"
+      DependsOnTargets="HeaderMake;_WriteFuncCodeDefineRcTlogs"
       BeforeTargets="ResourceCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
   </Target>
@@ -68,7 +92,7 @@
   <Target Name="FuncCodeEnum"
       Inputs="@(FuncCodeRes);$(HeaderMake);$(MSBuildThisFilePath)"
       Outputs="$(FuncCodeEnum)"
-      DependsOnTargets="_WriteFuncCodeEnumClTlogs"
+      DependsOnTargets="HeaderMake;_WriteFuncCodeEnumClTlogs"
       BeforeTargets="ClCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeEnum) -mode=enum -enum=EFunctionCode" />
   </Target>

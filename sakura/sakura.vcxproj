@@ -21,7 +21,6 @@
   <PropertyGroup Label="Globals">
     <ProjectName>sakura</ProjectName>
     <ProjectGuid>{AF03508C-515E-4A0E-87BE-67ED1E254BD0}</ProjectGuid>
-    <GenerateFuncCodeEnum>true</GenerateFuncCodeEnum>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(ProjectDir)..\vcx-props\vcxcompat.props" />
@@ -919,6 +918,9 @@
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
+      <Clean Include="$(TLogLocation)cmake.path" />
+      <Clean Include="$(TLogLocation)ninja.path" />
+      <Clean Include="$(TLogLocation)cl.path" />
       <Clean Include="$(OutDir)sakura.ini" />
     </ItemGroup>
   </Target>
