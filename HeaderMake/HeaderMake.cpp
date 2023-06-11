@@ -197,16 +197,6 @@ int main_impl(
 		return 2;
 	}
 
-	//ファイル更新時刻比較 (なんか、VSのカスタムビルドがうまくいかないので、ここで判定(汗) )
-	struct _stat in_stat;
-	struct _stat out_stat;
-	if(-1==_stat(in_file, &in_stat ))goto next;
-	if(-1==_stat(out_file,&out_stat))goto next;
-	//入力ファイルが新しければ処理を続行する
-	if(in_stat.st_mtime>out_stat.st_mtime)goto next;
-	else{ printf("OutputFile[%s] needs no change.\n", out_file); return 0; }
-
-next:
 	// プリプロセス済みストリームオープン
 	char in_file2[_MAX_PATH];
 	sprintf_s(in_file2,_countof(in_file2),PREPROCESSOR,in_file);
