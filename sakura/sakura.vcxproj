@@ -19,14 +19,16 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
     <ProjectName>sakura</ProjectName>
     <ProjectGuid>{AF03508C-515E-4A0E-87BE-67ED1E254BD0}</ProjectGuid>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <WindowsTargetPlatformVersion Condition="$(VisualStudioVersion) == 15.0">10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="$(VisualStudioVersion) &gt;= 16.0">10.0</WindowsTargetPlatformVersion>
     <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
     <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="$(ProjectDir)..\vcx-props\vcxcompat.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>

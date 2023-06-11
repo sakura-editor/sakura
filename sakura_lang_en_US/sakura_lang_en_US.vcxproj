@@ -18,12 +18,14 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7A6D0F29-E560-4985-835B-5F92A08EB242}</ProjectGuid>
     <ProjectName>sakura_lang_en_US</ProjectName>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <WindowsTargetPlatformVersion Condition="$(VisualStudioVersion) == 15.0">10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="$(VisualStudioVersion) &gt;= 16.0">10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="$(ProjectDir)..\vcx-props\vcxcompat.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
