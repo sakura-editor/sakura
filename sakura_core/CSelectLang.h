@@ -17,6 +17,7 @@
 #pragma once
 
 #include <windows.h>
+#include <string_view>
 #include <vector>
 
 #define MAX_SELLANG_NAME_STR	128		// メッセージリソースの言語名の最大文字列長（サイズは適当）
@@ -63,7 +64,7 @@ public:
 
 	static HINSTANCE InitializeLanguageEnvironment(void);		// 言語環境を初期化する
 	static HINSTANCE LoadLangRsrcLibrary( SSelLangInfo& lang );	// メッセージ用リソースDLLをロードする
-	static void ChangeLang( WCHAR* pszDllName );	// 言語を変更する
+	static void ChangeLang( std::wstring_view dllName );	// 言語を変更する
 
 protected:
 	/*

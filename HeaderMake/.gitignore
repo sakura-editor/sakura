@@ -1,7 +1,0 @@
-# /*.filters
-/*.user
-# /*.vcxproj
-/Win32
-
-# MinGW files
-/HeaderMake.exe

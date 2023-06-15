@@ -25,6 +25,11 @@ if not defined CMD_MSBUILD (
 	exit /b 1
 )
 
+if "%APPVEYOR%"=="True" (
+	git submodule update --init --remote --recommend-shallow tools/vcpkg
+)
+call "%~dp0tools\BuildDependencies.bat"
+
 set SLN_FILE=sakura.sln
 
 @rem https://www.appveyor.com/docs/environment-variables/

@@ -123,7 +123,7 @@ GENERATED_FILES= \
  Funccode_enum.h \
  githash.h \
 
-HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
+HEADERMAKETOOLDIR= $(SRCDIR)/../tools/HeaderMake
 HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
 
 all: $(exe) \
