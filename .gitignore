@@ -1,3 +1,7 @@
+.nuget
+.sonar
+.scannerwork
+
 *.aps
 *.bak
 *.iobj
@@ -31,3 +35,6 @@ sha256.txt
 tags
 testData_*.txt
 UpgradeLog.htm
+*coverage.xml
+*googletest.xml
+LastCoverageResults.log

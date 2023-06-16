@@ -7,22 +7,14 @@ on:
   push:
     paths-ignore:
       - '**/*.md'
-      - 'ci/**/*'
       - .gitignore
       - .editorconfig
-      - appveyor.yml
-      - azure-pipelines.yml
   pull_request_target:
     types: [opened, synchronize]
     paths-ignore:
       - '**/*.md'
-      - 'ci/**/*'
       - .gitignore
       - .editorconfig
-      - appveyor.yml
-      - azure-pipelines.yml
-  schedule:
-    - cron:  '45 7 * * FRI'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -33,14 +25,12 @@ jobs:
     env:
       BUILD_PLATFORM: x64
       BUILD_CONFIGURATION: Debug
-      SONAR_QUBE_VERSION: '4.7.0.2747'
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         ref: '${{ github.event.pull_request.head.sha }}'
-        fetch-depth: 0
 
     - name: Setup environment variables
       run: |
@@ -49,47 +39,21 @@ jobs:
         {
           echo "BASE_SHA=$(git show -s --format=%H ${{ env.GITHUB_BASE_REF }})" >> $env:GITHUB_ENV
         }
+        echo "NUM_VSVERSION=$($(vswhere -latest -property catalog_productDisplayVersion) -replace '^(\d+)\..+$', '$1')" >> $env:GITHUB_ENV
+        echo "SCANNER_CLI_VERSION=$(Get-Content tools\SCANNER_CLI_VERSION)" >> $env:GITHUB_ENV
         New-Item -Path .sonar -ItemType Directory
-
-    - name: Cache Sonar Analysis
-      uses: actions/cache@v2
-      with:
-        path: |
-          .sonar\cache
-        key:
-          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ github.sha }}
-        restore-keys:
-          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ env.BASE_SHA }}
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
-    - name: Make BuildDependencies
-      working-directory: ${{ github.workspace }}
-      run: .\tools\BuildDependencies.bat
-
-    - name: Fetch Build-Wrapper
-      working-directory: ${{ github.workspace }}\.sonar
-      run: |
-        Invoke-WebRequest -OutFile build-wrapper-win-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
-        7z rn build-wrapper-win-x86.zip build-wrapper-win-x86 build-wrapper
-        7z x build-wrapper-win-x86.zip
-
-    - name: Build with Build-Wrapper
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      if: env.SONAR_TOKEN
-      run: .sonar\build-wrapper\build-wrapper-win-x86-64.exe
-        --out-dir bw-output
-        MsBuild.exe
-        /p:Platform=${{ env.BUILD_PLATFORM }}
-        /p:Configuration=${{ env.BUILD_CONFIGURATION }}
-        /t:ReBuild
+    - name: Setup Python3
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r requirements.txt
 
     - name: Install OpenCppCoverage with XmlExporter
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      if: env.SONAR_TOKEN
       working-directory: ${{ runner.temp }}
       run: |
         choco install OpenCppCoverage -y
@@ -98,34 +62,34 @@ jobs:
         Move-Item -Path XmlExporter.dll -Destination "C:\Program Files\OpenCppCoverage\Plugins\Exporter\xml.dll"
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
-    - name: Run Tests
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      if: env.SONAR_TOKEN
-      run: |
-        $env:CMD_TESTS1 = $(Get-ChildItem -Recurse tests1.exe)[0].FullName
-        OpenCppCoverage.exe `
-        --export_type xml:tests1-coverage.xml `
-        --modules $env:CMD_TESTS1  `
-        --sources ${{ github.workspace }} `
-        --excluded_sources ${{ github.workspace }}\tests\googletest `
-        --working_dir .\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }} `
-        --cover_children `
-        -- `
-        $env:CMD_TESTS1 `
-        --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
-
     - name: Set up JDK 11
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v3
       with:
+        distribution: temurin
         java-version: 11
 
+    - name: Cache Sonar Analysis
+      uses: actions/cache@v3
+      with:
+        path: |
+          .sonar\cache
+        key:
+          sonar-cache-${{ env.SCANNER_CLI_VERSION }}-${{ github.sha }}
+        restore-keys:
+          sonar-cache-${{ env.SCANNER_CLI_VERSION }}-${{ env.BASE_SHA }}
+
+    - name: Make BuildDependencies
+      working-directory: ${{ github.workspace }}
+      run: .\tools\BuildDependencies.bat
+
+    - name: Build with Build-Wrapper
+      run: .\tools\Build-SakuraEditorWithBuildWrapper.ps1
+
+    - name: Run Tests
+      run: .\tools\Run-Tests.ps1
+
     - name: Fetch SonarScanner
-      working-directory: ${{ github.workspace }}\.sonar
-      run: |
-        Invoke-WebRequest -OutFile sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_QUBE_VERSION }}.zip
-        7z rn sonar-scanner.zip sonar-scanner-${{ env.SONAR_QUBE_VERSION }} scanner
-        7z x sonar-scanner.zip
+      run: .\tools\Fetch-SonarScanner.ps1
 
     - name: Analyze with SonarScanner
       env:
@@ -139,15 +103,10 @@ jobs:
           $env:GITHUB_SHA = $(git show -s --format=%H)
           $env:GITHUB_REF = 'refs/pull/${{ github.event.number }}/merge'
         }
-        .\.sonar\scanner\bin\sonar-scanner.bat `
-        -D"sonar.organization=${{ github.repository_owner }}" `
-        -D"sonar.projectKey=$('${{ github.repository }}' -replace '/', '_')" `
-        -D"sonar.host.url=https://sonarcloud.io" `
-        -D"sonar.sourceEncoding=UTF-8" `
-        -D"sonar.sources=." `
-        -D"sonar.cfamily.build-wrapper-output=bw-output" `
-        -D"sonar.cfamily.cppunit.reportPath=tests1-googletest.xml" `
-        -D"sonar.python.version=3" `
-        -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tests\stubs\**\*.cpp,tools\**\*.js" `
-        -D"sonar.coverageReportPaths=tests1-coverage.xml" `
-        -D"sonar.exclusions=.sonar\**\*,build\**\*,bw-output\**\*,tools\HeaderMake\*,tests\googletest\**\,**\test-*,tests\stubs\**\*,tests*-*.xml*"
+        $GitHubRepository   = "${{ github.repository }}"
+        $GitHubOrganization = $($GitHubRepository.Split('/')[0])
+        $GitHubProjectName  = $($GitHubRepository.Split('/')[1])
+        echo "sonar.organization=$GitHubOrganization" >> ${{ github.workspace }}\.sonar\scanner\conf\sonar-scanner.properties
+        echo "sonar.projectKey=$GitHubProjectName"    >> ${{ github.workspace }}\.sonar\scanner\conf\sonar-scanner.properties
+        echo "sonar.host.url=https://sonarcloud.io"   >> ${{ github.workspace }}\.sonar\scanner\conf\sonar-scanner.properties
+        .\.sonar\scanner\bin\sonar-scanner.bat
