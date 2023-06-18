@@ -205,6 +205,13 @@ LRESULT CALLBACK CEditWndProc(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	if (const auto lpCreateStruct = std::bit_cast<LPCREATESTRUCT>(lParam);
+		uMsg == WM_NCCREATE && lpCreateStruct && lpCreateStruct->lpCreateParams)
+	{
+		auto pcWnd = static_cast<CEditWnd*>(lpCreateStruct->lpCreateParams);
+		SetWindowLongPtrW(hwnd, GWLP_USERDATA, std::bit_cast<LONG_PTR>(pcWnd));
+	}
+
 	CEditWnd* pcWnd = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( pcWnd ){
 		return pcWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
@@ -413,7 +420,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 		NULL,				// handle to parent or owner window
 		NULL,				// handle to menu or child-window identifier
 		G_AppInstance(),		// handle to application instance
-		NULL				// pointer to window-creation data
+		this				// pointer to window-creation data
 	);
 	return hwndResult;
 }
@@ -646,7 +653,6 @@ HWND CEditWnd::Create(
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
 	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
 	if(!hWnd)return NULL;
-	m_hWnd = hWnd;
 
 	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
 	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
@@ -722,7 +728,7 @@ HWND CEditWnd::Create(
 	// -- -- -- -- その他調整など -- -- -- -- //
 
 	// 画面表示直前にDispatchEventを有効化する
-	::SetWindowLongPtr( GetHwnd(), GWLP_USERDATA, (LONG_PTR)this );
+	_Initialized = true;
 
 	// デスクトップからはみ出さないようにする
 	_AdjustInMonitor(sTabGroupInfo);
@@ -1144,6 +1150,10 @@ LRESULT CEditWnd::DispatchEvent(
 	CTypeConfig			cTypeNew;
 
 	switch( uMsg ){
+	case WM_NCCREATE:
+		m_hWnd = hwnd;
+		return TRUE;
+
 	case WM_PAINTICON:
 		return 0;
 	case WM_ICONERASEBKGND:
@@ -1310,6 +1320,9 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_WINDOWPOSCHANGED:
+		// 表示直前まではデフォルト処理を実行させる
+		if (!_Initialized) break;
+
 		// ポップアップウィンドウの表示切替指示をポストする	// 2007.10.22 ryoji
 		// ・WM_SHOWWINDOWはすべての表示切替で呼ばれるわけではないのでWM_WINDOWPOSCHANGEDで処理
 		//   （タブグループ解除などの設定変更時はWM_SHOWWINDOWは呼ばれない）
@@ -1328,6 +1341,9 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_SIZE:
+		// 表示直前まではデフォルト処理を実行させる
+		if (!_Initialized) break;
+
 //		MYTRACE( L"WM_SIZE\n" );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
@@ -1337,6 +1353,9 @@ LRESULT CEditWnd::DispatchEvent(
 
 	//From here 2003.05.31 MIK
 	case WM_MOVE:
+		// 表示直前まではデフォルト処理を実行させる
+		if (!_Initialized) break;
+
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
@@ -2089,8 +2108,10 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 // >> by aroka
 #endif
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 	}
+
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
 /*! 終了時の処理
