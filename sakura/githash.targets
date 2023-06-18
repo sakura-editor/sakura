@@ -13,4 +13,10 @@
     <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
     <Exec Command="..\sakura\githash.bat ..\sakura_core $(GeneratedGitHash)" />
   </Target>
+  <Target Name="CleanGitHash" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(GeneratedGitHash)" />
+    </ItemGroup>
+  </Target>
 </Project>
