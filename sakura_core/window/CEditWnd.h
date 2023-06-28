@@ -99,6 +99,14 @@ class CEditWnd
 : public TSingleton<CEditWnd>
 , public CDocListenerEx
 {
+	/*!
+	 * ウインドウの初期化が完了したかどうかを保持するフラグ
+	 *
+	 * 表示直前まではウインドウメッセージをすべて無視するようになっていた既存コードの挙動を再現する目的で導入。
+	 * 暫定フラグなので、いつか削除すること。
+	 */
+	bool _Initialized = false;
+
 	friend class TSingleton<CEditWnd>;
 	CEditWnd();
 	~CEditWnd();
