@@ -48,7 +48,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_cIcons.Create( m_hInst );	//	CreateImage List
 
 	//ドキュメントの作成
-	m_pcEditDoc = new CEditDoc(this);
+	m_pcEditDoc = new CEditDoc();
 
 	//IO管理
 	m_pcLoadAgent = new CLoadAgent();

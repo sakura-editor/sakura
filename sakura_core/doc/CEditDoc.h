@@ -80,8 +80,8 @@ class CEditDoc
 {
 public:
 	//コンストラクタ・デストラクタ
-	CEditDoc(CEditApp* pcApp);
-	~CEditDoc();
+	CEditDoc();
+	~CEditDoc() override;
 
 	//初期化
 	BOOL Create( void );
