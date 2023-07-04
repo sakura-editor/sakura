@@ -55,7 +55,7 @@
       <PreprocessorDefinitions>WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
@@ -118,7 +118,9 @@
     <ClCompile Include="test-csharedata.cpp" />
     <ClCompile Include="test-czipfile.cpp" />
     <ClCompile Include="test-extmodules.cpp" />
-    <ClCompile Include="test-printEFunctionCode.cpp" />
+    <ClCompile Include="test-printEFunctionCode.cpp">
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccodebase.cpp" />
     <ClCompile Include="test-ccommandline.cpp" />
@@ -149,13 +151,17 @@
     <ClCompile Include="test-messageboxf.cpp" />
     <ClCompile Include="test-mydevmode.cpp" />
     <ClCompile Include="test-parameterized.cpp" />
-    <ClCompile Include="test-printECodeType.cpp" />
+    <ClCompile Include="test-printECodeType.cpp">
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
     <ClCompile Include="test-sample-disabled.cpp" />
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-ssearchoption.cpp" />
     <ClCompile Include="test-statictype.cpp" />
     <ClCompile Include="test-StdControl.cpp" />
-    <ClCompile Include="test-string_ex.cpp" />
+    <ClCompile Include="test-string_ex.cpp">
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
     <ClCompile Include="test-window.cpp" />
     <ClCompile Include="test-zoom.cpp" />
     <ClCompile Include="test-winmain.cpp" />
@@ -173,7 +179,9 @@
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
-    <ClCompile Include="coverage.cpp" />
+    <ClCompile Include="coverage.cpp">
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\sakura\sakura.vcxproj">
