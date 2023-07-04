@@ -70,7 +70,7 @@ HINSTANCE CSelectLang::getLangRsrcInstance( void )
 */
 LPCWSTR CSelectLang::getDefaultLangString( void )
 {
-	return m_psLangInfo->szLangName;
+	return m_psLangInfo ? m_psLangInfo->szLangName : L"Japanese";
 }
 
 // 言語IDを返す
