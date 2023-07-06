@@ -433,8 +433,6 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_KEYDOWN:	return OnKeyDown( wParam, lParam );
 	case WM_KILLFOCUS:	return OnKillFocus( wParam, lParam );
 	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
-	case WM_VKEYTOITEM:	return OnVKeyToItem( wParam, lParam );
-	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
 	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
 	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
 	}

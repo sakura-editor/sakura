@@ -95,7 +95,6 @@ public:
 	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnTimer( WPARAM wParam ){return TRUE;}
 	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ){return TRUE;}
-	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
@@ -114,8 +113,6 @@ public:
 
 	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
 	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
-	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
-	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 	virtual BOOL OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual BOOL OnContextMenu(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
