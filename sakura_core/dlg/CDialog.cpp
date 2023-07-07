@@ -61,7 +61,7 @@ INT_PTR CALLBACK CDialog::DialogProc(
 	// GetWindowLongPtrでインスタンスを取り出し、処理させる
 	if (auto pcDlg = std::bit_cast<CDialog*>(::GetWindowLongPtrW(hDlg, DWLP_USER)))
 	{
-		const auto ret = pcDlg->DispatchEvent(hDlg, uMsg, wParam, lParam);
+		const auto ret = pcDlg->DispatchDlgEvent(hDlg, uMsg, wParam, lParam);
 		return ret;
 	}
 
@@ -190,6 +190,22 @@ void CDialog::CloseDialog( INT_PTR nModalRetVal )
 		m_hWnd = NULL;
 	}
 	return;
+}
+
+/*!
+ * ダイアログのメッセージ配送
+ *
+ * @param [in] hDlg 宛先ウインドウのハンドル
+ * @param [in] uMsg メッセージコード
+ * @param [in, opt] wParam 第1パラメーター
+ * @param [in, opt] lParam 第2パラメーター
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+INT_PTR CDialog::DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return DispatchEvent(hDlg, uMsg, wParam, lParam);
 }
 
 BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )

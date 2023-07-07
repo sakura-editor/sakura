@@ -58,6 +58,8 @@ public:
 
 	INT_PTR CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) const;
 
+	using CDialog::DispatchDlgEvent;
+
 protected:
 	BOOL OnInitDialog(HWND hWnd, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnTimer(WPARAM wParam) override;
@@ -211,6 +213,19 @@ BOOL CDialog1::OnTimer(WPARAM wParam)
 class mock_dialog_1 : public CDialog1
 {
 public:
+	MOCK_METHOD0_T(OnDestroy, BOOL());
+	MOCK_METHOD2_T(OnMove, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD2_T(OnCommand, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD1_T(OnNotify, BOOL(LPNMHDR));
+	MOCK_METHOD1_T(OnTimer, BOOL(WPARAM));
+	MOCK_METHOD2_T(OnKeyDown, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD2_T(OnKillFocus, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD2_T(OnActivate, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD2_T(OnPopupHelp, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD2_T(OnContextMenu, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD2_T(OnSize, BOOL(WPARAM, LPARAM));
+	MOCK_METHOD2_T(OnDrawItem, BOOL(WPARAM, LPARAM));
+
 	MOCK_CONST_METHOD5_T(CreateDialogIndirectParamW, HWND(HINSTANCE, LPCDLGTEMPLATEW, HWND, DLGPROC, LPARAM));
 	MOCK_CONST_METHOD5_T(CreateDialogParamW, HWND(HINSTANCE, LPCWSTR, HWND, DLGPROC, LPARAM));
 	MOCK_CONST_METHOD5_T(DialogBoxParamW, INT_PTR(HINSTANCE, LPCWSTR, HWND, DLGPROC, LPARAM));
@@ -317,4 +332,184 @@ TEST(CDialog, MockedDoModeless2)
 		.WillOnce(Return(true));
 
 	EXPECT_EQ(hDlg, mock.DoModeless(nullptr, hWndParent, lpTemplate, NULL, SW_SHOWDEFAULT));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnDestroy)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnDestroy())
+		.WillOnce(Return(true));
+
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_DESTROY, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnMove)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnMove(wParam, lParam))
+		.WillOnce(Return(true));
+
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_MOVE, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnCommand)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnCommand(wParam, lParam))
+		.WillOnce(Return(false));
+
+	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_COMMAND, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnNotify)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnNotify((NMHDR*)lParam))
+		.WillOnce(Return(false));
+
+	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_NOTIFY, 0, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnTimer)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnTimer(wParam))
+		.WillOnce(Return(true));
+
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_TIMER, wParam, 0));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnKeyDown)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnKeyDown(wParam, lParam))
+		.WillOnce(Return(true));
+
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_KEYDOWN, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnActivate)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnActivate(wParam, lParam))
+		.WillOnce(Return(false));
+
+	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_ACTIVATE, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnKillFocus)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnKillFocus(wParam, lParam))
+		.WillOnce(Return(false));
+
+	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_KILLFOCUS, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnPopupHelp)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnPopupHelp(wParam, lParam))
+		.WillOnce(Return(true));
+
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_HELP, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnContextMenu)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnContextMenu(wParam, lParam))
+		.WillOnce(Return(true));
+
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_CONTEXTMENU, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnSize)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnSize(wParam, lParam))
+		.WillOnce(Return(false));
+
+	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_SIZE, wParam, lParam));
+}
+
+TEST(CDialog, MockedDispachDlgEvent_OnDrawItem)
+{
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto wParam = (WPARAM)0x1111;
+	auto lParam = (LPARAM)0x2222;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, OnDrawItem(wParam, lParam))
+		.WillOnce(Return(true));
+
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_DRAWITEM, wParam, lParam));
 }
