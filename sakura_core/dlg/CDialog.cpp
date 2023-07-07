@@ -109,12 +109,12 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_lParam = lParam;
 	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
-	return ::DialogBoxParam(
+	return DialogBoxParamW(
 		m_hLangRsrcInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
 		MyDialogProc,
-		(LPARAM)this
+		std::bit_cast<LPARAM>(this)
 	);
 }
 
@@ -133,15 +133,15 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_lParam = lParam;
 	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
-	m_hWnd = ::CreateDialogParam(
+	m_hWnd = CreateDialogParamW(
 		m_hLangRsrcInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
 		MyDialogProc,
-		(LPARAM)this
+		std::bit_cast<LPARAM>(this)
 	);
 	if( NULL != m_hWnd ){
-		::ShowWindow( m_hWnd, nCmdShow );
+		ShowWindow( m_hWnd, nCmdShow );
 	}
 	return m_hWnd;
 }
@@ -153,15 +153,15 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_lParam = lParam;
-	m_hWnd = ::CreateDialogIndirectParam(
+	m_hWnd = CreateDialogIndirectParamW(
 		m_hInstance,
 		lpTemplate,
 		m_hwndParent,
 		MyDialogProc,
-		(LPARAM)this
+		std::bit_cast<LPARAM>(this)
 	);
 	if( NULL != m_hWnd ){
-		::ShowWindow( m_hWnd, nCmdShow );
+		ShowWindow( m_hWnd, nCmdShow );
 	}
 	return m_hWnd;
 }

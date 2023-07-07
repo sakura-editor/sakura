@@ -21,6 +21,9 @@
 #define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
+#include <Windows.h>
+#include <windowsx.h>
+
 class CDialog;
 
 struct DLLSHAREDATA;
@@ -165,5 +168,42 @@ protected:
 	HFONT SetMainFont( HWND hTarget );
 	// このダイアログに設定されているフォントを取得
 	HFONT GetDialogFont() { return m_hFontDialog; }
+
+	virtual HWND CreateDialogIndirectParamW(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCDLGTEMPLATEW lpTemplate,
+		_In_opt_ HWND hWndParent,
+		_In_opt_ DLGPROC lpDialogFunc,
+		_In_ LPARAM dwInitParam) const
+	{
+		return ::CreateDialogIndirectParamW(hInstance, lpTemplate, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual HWND CreateDialogParamW(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCWSTR       lpTemplateName,
+		_In_opt_ HWND      hWndParent,
+		_In_opt_ DLGPROC   lpDialogFunc,
+		_In_ LPARAM        dwInitParam) const
+	{
+		return ::CreateDialogParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual INT_PTR DialogBoxParamW(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCWSTR       lpTemplateName,
+		_In_opt_ HWND      hWndParent,
+		_In_opt_ DLGPROC   lpDialogFunc,
+		_In_ LPARAM        dwInitParam) const
+	{
+		return ::DialogBoxParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual bool ShowWindow(
+		_In_ HWND hWnd,
+		_In_ int nCmdShow) const
+	{
+		return ::ShowWindow(hWnd, nCmdShow);
+	}
 };
 #endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */

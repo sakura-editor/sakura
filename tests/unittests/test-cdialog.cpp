@@ -24,9 +24,6 @@
  */
 #include <gmock/gmock.h>
 
-#include <Windows.h>
-#include <windowsx.h>
-
 #include "dlg/CDialog.h"
 
 #include "CSelectLang.h"
@@ -35,7 +32,11 @@
 
 #include <functional>
 
- /*
+INT_PTR CALLBACK MyDialogProc(HWND, UINT, WPARAM, LPARAM);
+
+#define DialogProc MyDialogProc
+
+/*
  * ダイアログクラステンプレートをテストするためのクラス
  
  * 自動テストで実行できるように作成したもの。
@@ -193,6 +194,17 @@ BOOL CDialog1::OnTimer(WPARAM wParam)
 	return FALSE;
 }
 
+class mock_dialog_1 : public CDialog1
+{
+public:
+	MOCK_CONST_METHOD5_T(CreateDialogIndirectParamW, HWND(HINSTANCE, LPCDLGTEMPLATEW, HWND, DLGPROC, LPARAM));
+	MOCK_CONST_METHOD5_T(CreateDialogParamW, HWND(HINSTANCE, LPCWSTR, HWND, DLGPROC, LPARAM));
+	MOCK_CONST_METHOD5_T(DialogBoxParamW, INT_PTR(HINSTANCE, LPCWSTR, HWND, DLGPROC, LPARAM));
+	MOCK_CONST_METHOD2_T(ShowWindow, bool(HWND, int));
+};
+
+using ::testing::Return;
+
 /*!
  * モーダルダイアログ表示、正常系テスト
  */
@@ -200,6 +212,26 @@ TEST(CDialog, SimpleDoModal)
 {
 	CDialog1 dlg;
 	EXPECT_EQ(IDOK, dlg.DoModalCustom(nullptr));
+}
+
+/*!
+ * モーダルダイアログ表示、正常系テスト
+ *
+ * Windows APIの呼び出しパラメーターを確認する
+ */
+TEST(CDialog, MockedDoModal)
+{
+	// メッセージリソースDLLのインスタンスハンドル
+	auto hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+
+	// 親ウインドウのハンドル(ダミー)
+	const auto hWndParent = (HWND)0x1234;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, DialogBoxParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_DIALOG1), hWndParent, DialogProc, std::bit_cast<LPARAM>(&mock)))
+		.WillOnce(Return(IDCANCEL));
+
+	EXPECT_EQ(IDCANCEL, mock.DoModal(hWndParent));
 }
 
 /*!
@@ -213,9 +245,59 @@ TEST(CDialog, SimpleDoModeless1)
 
 /*!
  * モードレスダイアログ表示、正常系テスト
+ *
+ * Windows APIの呼び出しパラメーターを確認する
+ */
+TEST(CDialog, MockedDoModeless1)
+{
+	// メッセージリソースDLLのインスタンスハンドル
+	auto hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+
+	// 親ウインドウのハンドル(ダミー)
+	const auto hWndParent = (HWND)0x1234;
+
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, CreateDialogParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_DIALOG1), hWndParent, DialogProc, std::bit_cast<LPARAM>(&mock)))
+		.WillOnce(Return(hDlg));
+	EXPECT_CALL(mock, ShowWindow(hDlg, SW_SHOW))
+		.WillOnce(Return(true));
+
+	EXPECT_EQ(hDlg, mock.DoModeless1(hWndParent, SW_SHOW));
+}
+
+/*!
+ * モードレスダイアログ表示、正常系テスト
  */
 TEST(CDialog, SimpleDoModeless2)
 {
 	CDialog1 dlg(true);
 	EXPECT_NE(nullptr, dlg.DoModeless2(nullptr, [](DLGTEMPLATE& dlgTemplate) { dlgTemplate.style = WS_OVERLAPPEDWINDOW | DS_SETFONT; }, SW_SHOWDEFAULT));
+}
+
+/*!
+ * モードレスダイアログ表示、正常系テスト
+ *
+ * Windows APIの呼び出しパラメーターを確認する
+ */
+TEST(CDialog, MockedDoModeless2)
+{
+	// メモリ上に展開したダイアログテンプレートのダミー
+	auto lpTemplate = std::bit_cast<LPCDLGTEMPLATE>(static_cast<size_t>(0x87654321));
+
+	// 親ウインドウのハンドル(ダミー)
+	const auto hWndParent = (HWND)0x1234;
+
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	mock_dialog_1 mock;
+	EXPECT_CALL(mock, CreateDialogIndirectParamW(nullptr, lpTemplate, hWndParent, DialogProc, std::bit_cast<LPARAM>(&mock)))
+		.WillOnce(Return(hDlg));
+	EXPECT_CALL(mock, ShowWindow(hDlg, SW_SHOWDEFAULT))
+		.WillOnce(Return(true));
+
+	EXPECT_EQ(hDlg, mock.DoModeless(nullptr, hWndParent, lpTemplate, NULL, SW_SHOWDEFAULT));
 }
