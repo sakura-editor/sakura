@@ -35,32 +35,45 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 
-/* ダイアログプロシージャ */
-INT_PTR CALLBACK MyDialogProc(
-	HWND hwndDlg,	// handle to dialog box
+/*!
+ * DialogProc(ダイアログのメッセージ配送)
+ *
+ * @param [in] hDlg 宛先ウインドウのハンドル
+ * @param [in] uMsg メッセージコード
+ * @param [in, opt] wParam 第1パラメーター
+ * @param [in, opt] lParam 第2パラメーター
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+INT_PTR CALLBACK CDialog::DialogProc(
+	HWND hDlg,		// handle to dialog box
 	UINT uMsg,		// message
 	WPARAM wParam,	// first message parameter
 	LPARAM lParam 	// second message parameter
 )
 {
-	CDialog* pCDialog;
-	switch( uMsg ){
-	case WM_INITDIALOG:
-		pCDialog = ( CDialog* )lParam;
-		if( NULL != pCDialog ){
-			return pCDialog->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
-		}else{
-			return FALSE;
-		}
-	default:
-		// Modified by KEITA for WIN64 2003.9.6
-		pCDialog = ( CDialog* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCDialog ){
-			return pCDialog->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
-		}else{
-			return FALSE;
-		}
+	// GetWindowLongPtrの引数にNULLはマズい
+	if (!hDlg)
+	{
+		return FALSE;
 	}
+
+	// GetWindowLongPtrでインスタンスを取り出し、処理させる
+	if (auto pcDlg = std::bit_cast<CDialog*>(::GetWindowLongPtrW(hDlg, DWLP_USER)))
+	{
+		const auto ret = pcDlg->DispatchEvent(hDlg, uMsg, wParam, lParam);
+		return ret;
+	}
+
+	// 初期化メッセージだけ個別処理する
+	if (uMsg == WM_INITDIALOG && lParam)
+	{
+		auto pcDlg = std::bit_cast<CDialog*>(lParam);
+		const auto ret = pcDlg->OnInitDialog(hDlg, wParam, lParam);
+		return ret;
+	}
+
+	return FALSE;
 }
 
 /*!	コンストラクタ
@@ -113,7 +126,7 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 		m_hLangRsrcInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
-		MyDialogProc,
+		DialogProc,
 		std::bit_cast<LPARAM>(this)
 	);
 }
@@ -137,7 +150,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 		m_hLangRsrcInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
-		MyDialogProc,
+		DialogProc,
 		std::bit_cast<LPARAM>(this)
 	);
 	if( NULL != m_hWnd ){
@@ -157,7 +170,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 		m_hInstance,
 		lpTemplate,
 		m_hwndParent,
-		MyDialogProc,
+		DialogProc,
 		std::bit_cast<LPARAM>(this)
 	);
 	if( NULL != m_hWnd ){

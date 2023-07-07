@@ -32,10 +32,6 @@
 
 #include <functional>
 
-INT_PTR CALLBACK MyDialogProc(HWND, UINT, WPARAM, LPARAM);
-
-#define DialogProc MyDialogProc
-
 /*
  * ダイアログクラステンプレートをテストするためのクラス
  
@@ -48,6 +44,8 @@ private:
 	static constexpr auto DIALOG_ID          = IDD_INPUT1;
 	static constexpr auto TIMERID_FIRST_IDLE = 1;
 
+	DLGPROC _pfnDlgProc = nullptr;
+
 public:
 	explicit CDialog1(bool bSizable = false);
 	~CDialog1() override = default;
@@ -58,6 +56,9 @@ public:
 	template<typename TFunc>
 	HWND DoModeless2(HWND hWndParent, const TFunc& func, int nShowCmd);
 
+	INT_PTR CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) const;
+
+protected:
 	BOOL OnInitDialog(HWND hWnd, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnTimer(WPARAM wParam) override;
 };
@@ -134,6 +135,16 @@ HWND CDialog1::DoModeless2(HWND hWndParent, const TFunc& func, int nCmdShow)
 }
 
 /*!
+ * ダイアログプロシージャを呼び出します。
+ *
+ * ポインタ変数は起動時にするので、一度開いてから使います。
+ */
+INT_PTR CDialog1::CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) const
+{
+	return _pfnDlgProc ? _pfnDlgProc(hDlg, uMsg, wParam, lParam) : FALSE;
+}
+
+/*!
  * WM_INITDIALOG処理
  *
  * ダイアログ構築後、最初に受け取るメッセージを処理する。
@@ -148,6 +159,9 @@ BOOL CDialog1::OnInitDialog(HWND hDlg, WPARAM wParam, LPARAM lParam)
 {
 	// 派生元クラスに処理を委譲する
 	const auto ret = __super::OnInitDialog(hDlg, wParam, lParam);
+
+	// ダイアログプロシージャをメンバー変数に格納する
+	_pfnDlgProc = std::bit_cast<DLGPROC>(GetWindowLongPtrW(hDlg, DWLP_DLGPROC));
 
 	// サイズ変更可能な場合、サイズボックスを作っておく
 	if (m_bSizable)
@@ -203,6 +217,7 @@ public:
 	MOCK_CONST_METHOD2_T(ShowWindow, bool(HWND, int));
 };
 
+using ::testing::_;
 using ::testing::Return;
 
 /*!
@@ -228,10 +243,10 @@ TEST(CDialog, MockedDoModal)
 	const auto hWndParent = (HWND)0x1234;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, DialogBoxParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_DIALOG1), hWndParent, DialogProc, std::bit_cast<LPARAM>(&mock)))
+	EXPECT_CALL(mock, DialogBoxParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, std::bit_cast<LPARAM>(&mock)))
 		.WillOnce(Return(IDCANCEL));
 
-	EXPECT_EQ(IDCANCEL, mock.DoModal(hWndParent));
+	EXPECT_EQ(IDCANCEL, mock.DoModalCustom(hWndParent));
 }
 
 /*!
@@ -241,6 +256,8 @@ TEST(CDialog, SimpleDoModeless1)
 {
 	CDialog1 dlg;
 	EXPECT_NE(nullptr, dlg.DoModeless1(nullptr, SW_SHOW));
+
+	EXPECT_FALSE(dlg.CallDialogProc(nullptr, WM_NULL, 0, 0));
 }
 
 /*!
@@ -260,7 +277,7 @@ TEST(CDialog, MockedDoModeless1)
 	const auto hDlg = (HWND)0x4321;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, CreateDialogParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_DIALOG1), hWndParent, DialogProc, std::bit_cast<LPARAM>(&mock)))
+	EXPECT_CALL(mock, CreateDialogParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, std::bit_cast<LPARAM>(&mock)))
 		.WillOnce(Return(hDlg));
 	EXPECT_CALL(mock, ShowWindow(hDlg, SW_SHOW))
 		.WillOnce(Return(true));
@@ -294,7 +311,7 @@ TEST(CDialog, MockedDoModeless2)
 	const auto hDlg = (HWND)0x4321;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, CreateDialogIndirectParamW(nullptr, lpTemplate, hWndParent, DialogProc, std::bit_cast<LPARAM>(&mock)))
+	EXPECT_CALL(mock, CreateDialogIndirectParamW(nullptr, lpTemplate, hWndParent, _, std::bit_cast<LPARAM>(&mock)))
 		.WillOnce(Return(hDlg));
 	EXPECT_CALL(mock, ShowWindow(hDlg, SW_SHOWDEFAULT))
 		.WillOnce(Return(true));

@@ -88,6 +88,10 @@ public:
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
 	void CloseDialog(INT_PTR nModalRetVal);
 
+private:
+	static INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
