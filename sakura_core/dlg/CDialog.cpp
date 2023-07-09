@@ -469,11 +469,6 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
-BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
-{
-	return TRUE;
-}
-
 void CDialog::CreateSizeBox( void )
 {
 	/* サイズボックス */

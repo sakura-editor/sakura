@@ -105,7 +105,7 @@ public:
 	virtual BOOL OnNotify(NMHDR* pNMHDR){return FALSE;}
 	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
-	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
+	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnTimer( WPARAM wParam ){return TRUE;}
 	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ){return TRUE;}
