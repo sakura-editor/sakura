@@ -534,3 +534,9 @@ TEST(CDialog, MockedDispachDlgEvent_OnDrawItem)
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_DRAWITEM, wParam, lParam));
 }
+
+TEST(CDialog, GetHelpIdTable)
+{
+	mock_dialog_1 dlg;
+	EXPECT_TRUE(dlg.GetHelpIdTable());
+}

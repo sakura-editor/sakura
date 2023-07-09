@@ -753,9 +753,17 @@ const DWORD p_helpids[] = {
 
 LPVOID CDialog::GetHelpIdTable(void)
 {
-	return (LPVOID)p_helpids;
+	return (LPVOID)GetHelpIds();
 }
 //@@@ 2002.01.18 add end
+
+/*!
+ * ヘルプIDテーブルを取得する
+ */
+INT_PTR CDialog::GetHelpIds(void) const noexcept
+{
+	return (INT_PTR)p_helpids;
+}
 
 BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 {
