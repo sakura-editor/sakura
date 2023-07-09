@@ -61,7 +61,7 @@ public:
 	using CDialog::DispatchDlgEvent;
 
 protected:
-	BOOL OnInitDialog(HWND hWnd, WPARAM wParam, LPARAM lParam) override;
+	BOOL    OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) override;
 	BOOL OnTimer(WPARAM wParam) override;
 };
 
@@ -152,15 +152,15 @@ INT_PTR CDialog1::CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
  * ダイアログ構築後、最初に受け取るメッセージを処理する。
  *
  * @param [in] hDlg 宛先ウインドウのハンドル
- * @param [in] wParam フォーカスを受け取る子ウインドウのハンドル
+ * @param [in] hWndFocus フォーカスを受け取る子ウインドウのハンドル
  * @param [in] lParam ダイアログパラメーター
  * @retval TRUE フォーカスが設定されます。
  * @retval FALSE フォーカスは設定されません。
  */
-BOOL CDialog1::OnInitDialog(HWND hDlg, WPARAM wParam, LPARAM lParam)
+BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
 {
 	// 派生元クラスに処理を委譲する
-	const auto ret = __super::OnInitDialog(hDlg, wParam, lParam);
+	const auto ret = __super::OnDlgInitDialog(hDlg, hWndFocus, lParam);
 
 	// ダイアログプロシージャをメンバー変数に格納する
 	_pfnDlgProc = std::bit_cast<DLGPROC>(GetWindowLongPtrW(hDlg, DWLP_DLGPROC));
@@ -213,6 +213,7 @@ BOOL CDialog1::OnTimer(WPARAM wParam)
 class mock_dialog_1 : public CDialog1
 {
 public:
+	MOCK_METHOD3_T(OnInitDialog, BOOL(HWND, WPARAM, LPARAM));
 	MOCK_METHOD0_T(OnDestroy, BOOL());
 	MOCK_METHOD2_T(OnMove, BOOL(WPARAM, LPARAM));
 	MOCK_METHOD2_T(OnCommand, BOOL(WPARAM, LPARAM));
@@ -334,19 +335,22 @@ TEST(CDialog, MockedDoModeless2)
 	EXPECT_EQ(hDlg, mock.DoModeless(nullptr, hWndParent, lpTemplate, NULL, SW_SHOWDEFAULT));
 }
 
-TEST(CDialog, MockedDispachDlgEvent_OnDestroy)
+TEST(CDialog, MockedDispachDlgEvent_OnInitDialog)
 {
 	// 作成されたウインドウのハンドル(ダミー)
 	const auto hDlg = (HWND)0x4321;
 
-	auto wParam = (WPARAM)0x1111;
-	auto lParam = (LPARAM)0x2222;
+	const auto hWndFocus = (HWND)0x1234;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnDestroy())
+
+	auto wParam = (WPARAM)hWndFocus;
+	auto lParam = std::bit_cast<LPARAM>(&mock);
+
+	EXPECT_CALL(mock, OnInitDialog(hDlg, wParam, lParam))
 		.WillOnce(Return(true));
 
-	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_DESTROY, wParam, lParam));
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_INITDIALOG, wParam, lParam));
 }
 
 TEST(CDialog, MockedDispachDlgEvent_OnMove)

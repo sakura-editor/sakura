@@ -69,7 +69,7 @@ INT_PTR CALLBACK CDialog::DialogProc(
 	if (uMsg == WM_INITDIALOG && lParam)
 	{
 		auto pcDlg = std::bit_cast<CDialog*>(lParam);
-		const auto ret = pcDlg->OnInitDialog(hDlg, wParam, lParam);
+		const auto ret = HANDLE_WM_INITDIALOG(hDlg, wParam, lParam, pcDlg->OnDlgInitDialog);
 		return ret;
 	}
 
@@ -208,6 +208,30 @@ INT_PTR CDialog::DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lP
 	return DispatchEvent(hDlg, uMsg, wParam, lParam);
 }
 
+/*!
+ * WM_INITDIALOGハンドラ
+ *
+ * @param [in] hDlg 宛先ウインドウのハンドル
+ * @param [in] hWndFocus フォーカスを受け取る子ウインドウのハンドル
+ * @param [in] lParam ダイアログパラメーター
+ * @retval TRUE フォーカスを設定する
+ * @retval FALSE フォーカスを設定しない
+ */
+BOOL CDialog::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnInitDialog(hDlg, std::bit_cast<WPARAM>(hWndFocus), lParam);
+}
+
+/*!
+ * WM_INITDIALOGハンドラ(旧関数)
+ *
+ * @param [in] hwndDlg 宛先ウインドウのハンドル
+ * @param [in] wParam フォーカスを受け取る子ウインドウのハンドル
+ * @param [in] lParam ダイアログパラメーター
+ * @retval TRUE フォーカスを設定する
+ * @retval FALSE フォーカスを設定しない
+ */
 BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	m_hWnd = hwndDlg;

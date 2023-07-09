@@ -94,6 +94,8 @@ private:
 protected:
 	virtual INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+	virtual BOOL    OnDlgInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam);
+
 public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
