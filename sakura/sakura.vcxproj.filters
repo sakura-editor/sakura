@@ -122,6 +122,9 @@
     <Filter Include="Generated Headers">
       <UniqueIdentifier>{855b22dd-2214-4706-9283-42d4d5c5c722}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\apimodule">
+      <UniqueIdentifier>{1820d911-5cdc-4de8-b34c-4395e0223d13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\sakura.hh">
@@ -1119,6 +1122,12 @@
     </ClInclude>
     <ClInclude Include="$(IntDir)Funccode_define.h">
       <Filter>Generated Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\apiwrap.hpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apimodule\User32Dll.hpp">
+      <Filter>Cpp Source Files\apimodule</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2322,6 +2331,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\view\CMiniMapView.cpp">
       <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\apiwrap.cpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

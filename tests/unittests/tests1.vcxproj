@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
+    <ClCompile Include="test-apiwrap.cpp" />
     <ClCompile Include="test-cdialog.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
