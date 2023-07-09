@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2023, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -15,7 +15,9 @@
 #define SAKURA_CDLGINPUT1_43CB765B_D257_4DBC_85E9_D2587B7E9D8E_H_
 #pragma once
 
-#include "mem/CNativeW.h"
+#include "dlg/CDialog.h"
+
+#include "apiwrap/apiwrap.hpp"
 
 class CDlgInput1;
 
@@ -25,29 +27,41 @@ class CDlgInput1;
 /*!
 	@brief １行入力ダイアログボックス
 */
-class CDlgInput1
+class CDlgInput1 : public CDialog
 {
+private:
+	std::wstring _Title;				/* ダイアログタイトル */
+	std::wstring _Message;				/* メッセージ */
+	int			 _MaxTextLength = 0;	/* 入力サイズ上限 */
+	std::wstring _Text;					/* テキスト */
+
 public:
-	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const WCHAR* pszTitle,
-				  const WCHAR* pszMessage, int nMaxTextLen, WCHAR* pszText );	/* モードレスダイアログの表示 */
+	CDlgInput1();
+	~CDlgInput1() override = default;
+
+	INT_PTR DoModal(
+		HINSTANCE hInstApp,
+		HWND hwndParent,
+		std::wstring_view title,
+		std::wstring_view message,
+		int nMaxTextLen,
+		WCHAR* pszText );
 
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* ダイアログのメッセージ処理 */
-
-	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND		m_hWnd;			/* このダイアログのハンドル */
-
-	const WCHAR*	m_pszTitle;		/* ダイアログタイトル */
-	const WCHAR*	m_pszMessage;	/* メッセージ */
-	int			m_nMaxTextLen;	/* 入力サイズ上限 */
-//	char*		m_pszText;		/* テキスト */
-	CNativeW	m_cmemText;		/* テキスト */
 protected:
+	void    SetDlgData(HWND hWndDlg) const override;
+	INT_PTR GetDlgData(HWND hWndDlg) override;
+
+	BOOL    OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) override;
+	BOOL    OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify) override;
+
+	INT_PTR GetHelpIds(void) const noexcept override;
+
 	/*
 	||  実装ヘルパ関数
 	*/
 };
+
 #endif /* SAKURA_CDLGINPUT1_43CB765B_D257_4DBC_85E9_D2587B7E9D8E_H_ */

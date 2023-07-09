@@ -180,6 +180,12 @@
     <ClCompile Include="test-cdialog.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-apiwrap.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlginput1.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">

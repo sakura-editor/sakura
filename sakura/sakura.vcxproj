@@ -133,6 +133,8 @@
     <ClInclude Include="$(IntDir)githash.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\sakura_core\apimodule\User32Dll.hpp" />
+    <ClInclude Include="..\sakura_core\apiwrap\apiwrap.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
@@ -489,6 +491,7 @@
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\sakura_core\apiwrap\apiwrap.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />

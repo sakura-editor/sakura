@@ -21,6 +21,9 @@
 #define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
+#include <Windows.h>
+#include <windowsx.h>
+
 class CDialog;
 
 struct DLLSHAREDATA;
@@ -85,17 +88,38 @@ public:
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
 	void CloseDialog(INT_PTR nModalRetVal);
 
+private:
+	static INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+protected:
+	virtual void    SetDlgData(HWND hDlg) const;
+	virtual INT_PTR GetDlgData(HWND hDlg);
+
+	virtual INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	virtual BOOL    OnDlgInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam);
+	virtual BOOL    OnDlgDestroy(HWND hDlg);
+	virtual BOOL    OnDlgMove(HWND hDlg, int x, int y);
+	virtual BOOL    OnDlgActivate(HWND hDlg, UINT state, HWND hWndActDeact, BOOL fMinimized);
+	virtual BOOL    OnDlgKillFocus(HWND hDlg, HWND hWndNewFocus);
+	virtual BOOL    OnDlgNotify(HWND hDlg, int idFrom, LPNMHDR pNMHDR);
+	virtual BOOL    OnDlgKey(HWND hDlg, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+	virtual BOOL    OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify);
+	virtual BOOL    OnDlgTimer(HWND hDlg, UINT id);
+	virtual BOOL    OnDlgHelp(HWND hDlg, LPHELPINFO pHelpInfo);
+	virtual BOOL    OnDlgContextMenu(HWND hDlg, HWND hWndContext, UINT xPos, UINT yPos);
+
+public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
 	virtual BOOL OnNotify(NMHDR* pNMHDR){return FALSE;}
 	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
-	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
+	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnTimer( WPARAM wParam ){return TRUE;}
 	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ){return TRUE;}
-	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
@@ -114,11 +138,10 @@ public:
 
 	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
 	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
-	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
-	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 	virtual BOOL OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual BOOL OnContextMenu(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	virtual INT_PTR GetHelpIds(void) const noexcept;
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
@@ -160,7 +183,7 @@ protected:
 	int				m_xPos;
 	int				m_yPos;
 	void CreateSizeBox( void );
-	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }
 
@@ -168,5 +191,47 @@ protected:
 	HFONT SetMainFont( HWND hTarget );
 	// このダイアログに設定されているフォントを取得
 	HFONT GetDialogFont() { return m_hFontDialog; }
+
+	virtual HWND CreateDialogIndirectParamW(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCDLGTEMPLATEW lpTemplate,
+		_In_opt_ HWND hWndParent,
+		_In_opt_ DLGPROC lpDialogFunc,
+		_In_ LPARAM dwInitParam) const
+	{
+		return ::CreateDialogIndirectParamW(hInstance, lpTemplate, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual HWND CreateDialogParamW(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCWSTR       lpTemplateName,
+		_In_opt_ HWND      hWndParent,
+		_In_opt_ DLGPROC   lpDialogFunc,
+		_In_ LPARAM        dwInitParam) const
+	{
+		return ::CreateDialogParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual INT_PTR DialogBoxParamW(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCWSTR       lpTemplateName,
+		_In_opt_ HWND      hWndParent,
+		_In_opt_ DLGPROC   lpDialogFunc,
+		_In_ LPARAM        dwInitParam) const
+	{
+		return ::DialogBoxParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual LONG_PTR SetWindowLongPtrW(_In_ HWND hWnd, int nIndex, LONG_PTR dwNewLong) const
+	{
+		return ::SetWindowLongPtrW(hWnd, nIndex, dwNewLong);
+	}
+
+	virtual bool ShowWindow(
+		_In_ HWND hWnd,
+		_In_ int nCmdShow) const
+	{
+		return ::ShowWindow(hWnd, nCmdShow);
+	}
 };
 #endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */
