@@ -93,6 +93,7 @@ private:
 
 protected:
 	virtual void    SetDlgData(HWND hDlg) const;
+	virtual INT_PTR GetDlgData(HWND hDlg);
 
 	virtual INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

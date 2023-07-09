@@ -215,6 +215,22 @@ void CDialog::SetDlgData(HWND hDlg) const
 }
 
 /*!
+ * ダイアログからデータを取り込む
+ *
+ * @param [in] hDlg 宛先ウインドウのハンドル
+ * @retval >  0 取り込み正常
+ * @retval == 0 取り込みデータなし
+ * @retval <  0 取り込み異常
+ */
+INT_PTR CDialog::GetDlgData(HWND hDlg)
+{
+	UNREFERENCED_PARAMETER(hDlg);
+
+	// 既存コード互換のために旧関数を呼び出す。
+	return GetData();
+}
+
+/*!
  * ダイアログを閉じる
  *
  * @param [in] nModalRetVal DoModalの返却値

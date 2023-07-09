@@ -62,6 +62,7 @@ public:
 
 protected:
 	BOOL    OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) override;
+	BOOL    OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify) override;
 	BOOL    OnDlgTimer(HWND hDlg, UINT id) override;
 };
 
@@ -176,6 +177,23 @@ BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
 
 	// 派生元クラスが返した戻り値をそのまま返す
 	return ret;
+}
+
+/*!
+ * WM_COMMANDハンドラ。
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog1::OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify)
+{
+	if (const auto ret = GetDlgData(hDlg);
+		ret <= 0 || id == IDCANCEL)
+	{
+		return TRUE;
+	}
+
+	return __super::OnDlgCommand(hDlg, id, hWndCtl, codeNotify);
 }
 
 /*!
