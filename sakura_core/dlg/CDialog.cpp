@@ -62,6 +62,14 @@ INT_PTR CALLBACK CDialog::DialogProc(
 	if (auto pcDlg = std::bit_cast<CDialog*>(::GetWindowLongPtrW(hDlg, DWLP_USER)))
 	{
 		const auto ret = pcDlg->DispatchDlgEvent(hDlg, uMsg, wParam, lParam);
+
+		if (uMsg == WM_NCDESTROY)
+		{
+			pcDlg->SetWindowLongPtrW(hDlg, DWLP_USER, 0);
+
+			pcDlg->m_hWnd = nullptr;
+		}
+
 		return ret;
 	}
 
@@ -69,7 +77,20 @@ INT_PTR CALLBACK CDialog::DialogProc(
 	if (uMsg == WM_INITDIALOG && lParam)
 	{
 		auto pcDlg = std::bit_cast<CDialog*>(lParam);
+
+		pcDlg->m_hWnd = hDlg;
+
+		pcDlg->SetWindowLongPtrW(hDlg, DWLP_USER, lParam);
+
 		const auto ret = HANDLE_WM_INITDIALOG(hDlg, wParam, lParam, pcDlg->OnDlgInitDialog);
+
+		/* ダイアログデータの設定 */
+		pcDlg->SetDlgData(hDlg);
+
+		pcDlg->SetDialogPosSize();
+
+		pcDlg->m_bInited = TRUE;
+
 		return ret;
 	}
 
@@ -179,6 +200,25 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 	return m_hWnd;
 }
 
+/*!
+ * ダイアログにデータを反映する
+ *
+ * @param [in] hDlg 宛先ウインドウのハンドル
+ * @note 反映コードでメンバーを変更してはならない
+ */
+void CDialog::SetDlgData(HWND hDlg) const
+{
+	UNREFERENCED_PARAMETER(hDlg);
+
+	// 既存コード互換とするため、意図的にconst外しする
+	const_cast<Me&>(*this).SetData();
+}
+
+/*!
+ * ダイアログを閉じる
+ *
+ * @param [in] nModalRetVal DoModalの返却値
+ */
 void CDialog::CloseDialog( INT_PTR nModalRetVal )
 {
 	if( NULL != m_hWnd ){
@@ -187,7 +227,6 @@ void CDialog::CloseDialog( INT_PTR nModalRetVal )
 		}else{
 			::DestroyWindow( m_hWnd );
 		}
-		m_hWnd = NULL;
 	}
 	return;
 }
@@ -234,18 +273,8 @@ BOOL CDialog::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
  */
 BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
-	m_hWnd = hwndDlg;
-	// Modified by KEITA for WIN64 2003.9.6
-	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
-
 	m_hFontDialog = UpdateDialogFont( hwndDlg );
 
-	/* ダイアログデータの設定 */
-	SetData();
-
-	SetDialogPosSize();
-
-	m_bInited = TRUE;
 	return TRUE;
 }
 
@@ -382,7 +411,6 @@ BOOL CDialog::OnDestroy( void )
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
 	}
-	m_hWnd = NULL;
 	return TRUE;
 }
 
@@ -475,12 +503,8 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_DESTROY:	return OnDestroy();
 	case WM_COMMAND:	return OnCommand( wParam, lParam );
 	case WM_NOTIFY:		return OnNotify( (NMHDR*)lParam );
-	case WM_SIZE:
-		m_hWnd = hwndDlg;
-		return OnSize( wParam, lParam );
-	case WM_MOVE:
-		m_hWnd = hwndDlg;
-		return OnMove( wParam, lParam );
+	case WM_SIZE:       return OnSize( wParam, lParam );
+	case WM_MOVE:       return OnMove( wParam, lParam );
 	case WM_DRAWITEM:	return OnDrawItem( wParam, lParam );
 	case WM_TIMER:		return OnTimer( wParam );
 	case WM_KEYDOWN:	return OnKeyDown( wParam, lParam );

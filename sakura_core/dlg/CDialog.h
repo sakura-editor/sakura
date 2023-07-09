@@ -92,6 +92,8 @@ private:
 	static INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
+	virtual void    SetDlgData(HWND hDlg) const;
+
 	virtual INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	virtual BOOL    OnDlgInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam);
@@ -206,6 +208,11 @@ protected:
 		_In_ LPARAM        dwInitParam) const
 	{
 		return ::DialogBoxParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual LONG_PTR SetWindowLongPtrW(_In_ HWND hWnd, int nIndex, LONG_PTR dwNewLong) const
+	{
+		return ::SetWindowLongPtrW(hWnd, nIndex, dwNewLong);
 	}
 
 	virtual bool ShowWindow(
