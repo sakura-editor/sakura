@@ -248,6 +248,58 @@ INT_PTR CDialog::DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lP
 }
 
 /*!
+ * ダイアログのメッセージ配送(旧関数)
+ *
+ * @param [in] hDlg 宛先ウインドウのハンドル
+ * @param [in] uMsg メッセージコード
+ * @param [in, opt] wParam 第1パラメーター
+ * @param [in, opt] lParam 第2パラメーター
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+INT_PTR CDialog::DispatchEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	// WM_INITDIALOGの戻り値は他と意味が異なるので個別に処理する
+	if (uMsg == WM_INITDIALOG)
+	{
+		return HANDLE_WM_INITDIALOG(hDlg, wParam, lParam, OnDlgInitDialog);
+	}
+
+	switch (uMsg)
+	{
+// clang-format off
+	case WM_DESTROY:	 return OnDlgDestroy(hDlg);
+	case WM_MOVE:        return OnDlgMove(hDlg, LOWORD(lParam), HIWORD(lParam));
+	case WM_ACTIVATE:	 return OnDlgActivate(hDlg, LOWORD(wParam), std::bit_cast<HWND>(lParam), HIWORD(wParam));
+	case WM_KILLFOCUS:	 return OnDlgKillFocus(hDlg, std::bit_cast<HWND>(wParam));
+	case WM_NOTIFY:		 return OnDlgNotify(hDlg, static_cast<int>(wParam), std::bit_cast<LPNMHDR>(lParam));
+	case WM_KEYDOWN:	 return OnDlgKey(hDlg, static_cast<UINT>(wParam), TRUE, LOWORD(lParam), HIWORD(lParam));
+	case WM_COMMAND:	 return OnDlgCommand(hDlg, LOWORD(wParam), std::bit_cast<HWND>(lParam), HIWORD(wParam));
+	case WM_TIMER:		 return OnDlgTimer(hDlg, static_cast<UINT>(wParam));
+	case WM_HELP:		 return OnDlgHelp(hDlg, std::bit_cast<LPHELPINFO>(lParam));
+	case WM_CONTEXTMENU: return OnDlgContextMenu(hDlg, std::bit_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
+// clang-format on
+
+	default:
+		break;
+	}
+
+	// サイズ変更可能なダイアログのみ
+	if (uMsg == WM_SIZE)
+	{
+		return OnSize(wParam, lParam);
+	}
+
+	// オーナードローはCDlgSameColorのみ
+	if (uMsg == WM_DRAWITEM)
+	{
+		return OnDrawItem(wParam, lParam);
+	}
+
+	return FALSE;
+}
+
+/*!
  * WM_INITDIALOGハンドラ
  *
  * @param [in] hDlg 宛先ウインドウのハンドル
@@ -390,6 +442,18 @@ void CDialog::SetDialogPosSize()
 	}
 }
 
+/*!
+ * WM_DESTROYハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgDestroy(HWND hDlg)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnDestroy();
+}
+
 BOOL CDialog::OnDestroy( void )
 {
 	/* ウィンドウ位置・サイズを記憶 */
@@ -412,6 +476,66 @@ BOOL CDialog::OnDestroy( void )
 		m_hwndSizeBox = NULL;
 	}
 	return TRUE;
+}
+
+/*!
+ * WM_MOVEハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgMove(HWND hDlg, int x, int y)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnMove(0L, MAKELPARAM(x, y));
+}
+
+/*!
+ * WM_ACTIVATEハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgActivate(HWND hDlg, UINT state, HWND hWndActDeact, BOOL fMinimized)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnActivate(MAKEWPARAM(state, fMinimized), (LPARAM)hWndActDeact);
+}
+
+/*!
+ * WM_KILLFOCUSハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgKillFocus(HWND hDlg, HWND hWndNewFocus)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnKillFocus(std::bit_cast<WPARAM>(hWndNewFocus), 0L);
+}
+
+/*!
+ * WM_NOTIFYハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgNotify(HWND hDlg, int idFrom, LPNMHDR pNMHDR)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnNotify(pNMHDR);
+}
+
+/*!
+ * WM_KEYDOWNハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgKey(HWND hDlg, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnKeyDown(static_cast<WPARAM>(vk), MAKELPARAM(cRepeat, flags));
 }
 
 BOOL CDialog::OnBnClicked( int wID )
@@ -489,26 +613,16 @@ void CDialog::CreateSizeBox( void )
 	::ShowWindow( m_hwndSizeBox, SW_SHOW );
 }
 
-/* ダイアログのメッセージ処理 */
-INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+/*!
+ * WM_COMMANDハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify)
 {
-//	DEBUG_TRACE( L"CDialog::DispatchEvent() uMsg == %xh\n", uMsg );
-	switch( uMsg ){
-	case WM_INITDIALOG:	return OnInitDialog( hwndDlg, wParam, lParam );
-	case WM_DESTROY:	return OnDestroy();
-	case WM_COMMAND:	return OnCommand( wParam, lParam );
-	case WM_NOTIFY:		return OnNotify( (NMHDR*)lParam );
-	case WM_SIZE:       return OnSize( wParam, lParam );
-	case WM_MOVE:       return OnMove( wParam, lParam );
-	case WM_DRAWITEM:	return OnDrawItem( wParam, lParam );
-	case WM_TIMER:		return OnTimer( wParam );
-	case WM_KEYDOWN:	return OnKeyDown( wParam, lParam );
-	case WM_KILLFOCUS:	return OnKillFocus( wParam, lParam );
-	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
-	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
-	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
-	}
-	return FALSE;
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnCommand(MAKEWPARAM(id, codeNotify), std::bit_cast<LPARAM>(hWndCtl));
 }
 
 BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
@@ -566,12 +680,49 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
+/*!
+ * WM_TIMERハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgTimer(HWND hDlg, UINT id)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnTimer(static_cast<WPARAM>(id));
+}
+
+
+/*!
+ * WM_HELPハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgHelp(HWND hDlg, LPHELPINFO pHelpInfo)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnPopupHelp(0L, std::bit_cast<LPARAM>(pHelpInfo));
+}
+
 //@@@ 2002.01.18 add start
 BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
 {
 	HELPINFO *p = (HELPINFO *)lParam;
 	MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
+}
+
+/*!
+ * WM_CONTEXTMENUハンドラ
+ *
+ * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
+ * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
+ */
+BOOL CDialog::OnDlgContextMenu(HWND hDlg, HWND hWndContext, UINT xPos, UINT yPos)
+{
+	// 既存コード互換のために旧関数を呼び出す。
+	return OnContextMenu(std::bit_cast<WPARAM>(hWndContext), MAKELPARAM(xPos, yPos));
 }
 
 BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )

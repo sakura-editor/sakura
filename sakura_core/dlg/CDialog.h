@@ -97,6 +97,16 @@ protected:
 	virtual INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	virtual BOOL    OnDlgInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam);
+	virtual BOOL    OnDlgDestroy(HWND hDlg);
+	virtual BOOL    OnDlgMove(HWND hDlg, int x, int y);
+	virtual BOOL    OnDlgActivate(HWND hDlg, UINT state, HWND hWndActDeact, BOOL fMinimized);
+	virtual BOOL    OnDlgKillFocus(HWND hDlg, HWND hWndNewFocus);
+	virtual BOOL    OnDlgNotify(HWND hDlg, int idFrom, LPNMHDR pNMHDR);
+	virtual BOOL    OnDlgKey(HWND hDlg, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+	virtual BOOL    OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify);
+	virtual BOOL    OnDlgTimer(HWND hDlg, UINT id);
+	virtual BOOL    OnDlgHelp(HWND hDlg, LPHELPINFO pHelpInfo);
+	virtual BOOL    OnDlgContextMenu(HWND hDlg, HWND hWndContext, UINT xPos, UINT yPos);
 
 public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);

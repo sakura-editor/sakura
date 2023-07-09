@@ -62,7 +62,7 @@ public:
 
 protected:
 	BOOL    OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) override;
-	BOOL OnTimer(WPARAM wParam) override;
+	BOOL    OnDlgTimer(HWND hDlg, UINT id) override;
 };
 
 /*!
@@ -186,10 +186,9 @@ BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
  * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
  * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
  */
-BOOL CDialog1::OnTimer(WPARAM wParam)
+BOOL CDialog1::OnDlgTimer(HWND hDlg, UINT id)
 {
-	if (const auto id = static_cast<UINT>(wParam);
-		id == TIMERID_FIRST_IDLE)
+	if (id == TIMERID_FIRST_IDLE)
 	{
 		// プログラム的に「Enterキー押下」を発生させる
 		INPUT input = {};
@@ -207,7 +206,7 @@ BOOL CDialog1::OnTimer(WPARAM wParam)
 		return TRUE;
 	}
 
-	return FALSE;
+	return __super::OnDlgTimer(hDlg, id);
 }
 
 class mock_dialog_1 : public CDialog1
@@ -362,7 +361,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnMove)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnMove(wParam, lParam))
+	EXPECT_CALL(mock, OnMove(_, lParam))
 		.WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_MOVE, wParam, lParam));
@@ -410,7 +409,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnTimer)
 	EXPECT_CALL(mock, OnTimer(wParam))
 		.WillOnce(Return(true));
 
-	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_TIMER, wParam, 0));
+	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_TIMER, wParam, lParam));
 }
 
 TEST(CDialog, MockedDispachDlgEvent_OnKeyDown)
@@ -452,7 +451,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnKillFocus)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnKillFocus(wParam, lParam))
+	EXPECT_CALL(mock, OnKillFocus(wParam, _))
 		.WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_KILLFOCUS, wParam, lParam));
@@ -467,7 +466,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnPopupHelp)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnPopupHelp(wParam, lParam))
+	EXPECT_CALL(mock, OnPopupHelp(_, lParam))
 		.WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_HELP, wParam, lParam));
