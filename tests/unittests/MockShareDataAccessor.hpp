@@ -35,3 +35,22 @@ struct MockShareDataAccessor : public ShareDataAccessor
 
 	MOCK_CONST_METHOD0(GetShareData, DLLSHAREDATA*());
 };
+
+/*!
+ * ダミーの共有メモリを作成する
+ */
+inline auto MakeDummyShareData()
+{
+	// アクセサのモックを生成する
+	auto pShareDataAccessor = std::make_shared<MockShareDataAccessor>();
+
+	// ダミー共有メモリをnewする
+	auto pDllShareData = std::make_shared<DLLSHAREDATA>();
+
+	// ダミー共有メモリをモックに設定する
+	EXPECT_CALL(*pShareDataAccessor, GetShareData())
+		.WillRepeatedly(::testing::Return(pDllShareData.get()));
+
+	// ダミー共有メモリとアクセサをtupleとして返却する
+	return std::make_tuple(std::move(pDllShareData), std::move(pShareDataAccessor));
+}

@@ -75,12 +75,15 @@ class CEditApp;
 	@date 2007.12.13 kobake IsViewMode作成
 */
 class CEditDoc
-: public CDocSubject
+    : public ShareDataAccessorClient
+	, public CDocSubject
 , public TInstanceHolder<CEditDoc>
 {
+	using Me = CEditDoc;
+
 public:
 	//コンストラクタ・デストラクタ
-	CEditDoc();
+	explicit CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 	~CEditDoc() override;
 
 	//初期化

@@ -24,13 +24,13 @@
  */
 #include "doc/CEditDoc.h"
 
-#include <gmock/gmock.h>
+#include "MockShareDataAccessor.hpp"
 
 /*!
  * 編集ドキュメント、構築するだけ。
  */
-TEST(CEditDoc, DISABLED_Construct)
+TEST(CEditDoc, Construct)
 {
-	// CDocEditorのコンストラクタがGetDllShareData()を呼び出すため失敗する。
-	EXPECT_NO_THROW({ CEditDoc doc; });
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	EXPECT_NO_THROW({ CEditDoc doc(std::move(pShareDataAccessor)); });
 }

@@ -165,16 +165,21 @@ static const EFunctionCode EIsModificationForbidden[] = {
 	@date 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
-CEditDoc::CEditDoc()
-: m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	, m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+	, m_cDocEditor(GetShareDataAccessor())
+	, m_cDocType(GetShareDataAccessor())
+	, m_cAutoSaveAgent(GetShareDataAccessor())
 , m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::CEditDoc" );
+
+	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE, GetShareDataAccessor());
+	InitCharWidthCache(GetShareData()->m_Common.m_sView.m_lf);
 
 	// レイアウト管理情報の初期化
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
