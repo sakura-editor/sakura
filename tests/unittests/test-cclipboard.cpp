@@ -25,10 +25,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
 #include <array>
 #include <cstring>
 #include <functional>

@@ -147,6 +147,9 @@ bool CNormalProcess::InitializeProcess()
 	CPluginManager::getInstance()->LoadAllPlugin();
 	MY_TRACETIME( cRunningTimer, L"After Load Plugins" );
 
+	const auto pShareDataAccessor = std::make_shared<ShareDataAccessor>();
+	m_pcEditDoc = std::make_unique<CEditDoc>(pShareDataAccessor);
+
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	// グループIDを取得
 	int nGroupId = CCommandLine::getInstance()->GetGroupId();

@@ -33,9 +33,11 @@
 class CEditDoc;
 class CDocLineMgr;
 
-class CDocEditor : public CDocListenerEx{
+class CDocEditor : public ShareDataAccessorClient, public CDocListenerEx
+{
 public:
-	CDocEditor(CEditDoc* pcDoc);
+	explicit CDocEditor(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	~CDocEditor() override = default;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //

@@ -67,6 +67,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="tests1.define">
+    <ClCompile>
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -115,6 +120,7 @@
     <ClCompile Include="test-cdlginput1.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
+    <ClCompile Include="test-ceditdoc.cpp" />
     <ClCompile Include="test-cppa.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />
@@ -171,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="eval_outputs.hpp" />
+    <ClInclude Include="MockShareDataAccessor.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
   </ItemGroup>

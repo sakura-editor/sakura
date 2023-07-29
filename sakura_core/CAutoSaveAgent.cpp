@@ -34,6 +34,11 @@
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
 
+CAutoSaveAgent::CAutoSaveAgent(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+{
+}
+
 //	From Here Aug. 21, 2000 genta
 //
 //	自動保存を行うかどうかのチェック

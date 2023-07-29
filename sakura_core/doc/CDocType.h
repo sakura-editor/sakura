@@ -35,11 +35,13 @@
 #include "types/CType.h" // CTypeConfig
 #include "env/CDocTypeManager.h"
 
-class CDocType{
+class CDocType : public ShareDataAccessorClient
+{
 public:
 	//生成と破棄
-	CDocType(CEditDoc* pcDoc);
-	
+	explicit CDocType(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	virtual ~CDocType() = default;
+
 	//ロック機能	//	Nov. 29, 2000 genta 設定の一時変更時に拡張子による強制的な設定変更を無効にする
 	void LockDocumentType(){ m_nSettingTypeLocked = true; }
 	void UnlockDocumentType(){ m_nSettingTypeLocked = false; }
