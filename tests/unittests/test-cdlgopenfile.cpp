@@ -26,9 +26,6 @@
 #ifndef STRICT
 #define STRICT 1
 #endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
 #include <vector>
 #include <tchar.h>
 #include <Windows.h>

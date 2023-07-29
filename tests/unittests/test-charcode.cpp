@@ -22,7 +22,6 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#define NOMINMAX
 #include "charset/charcode.h"
 #include <gtest/gtest.h>
 #include <algorithm>
