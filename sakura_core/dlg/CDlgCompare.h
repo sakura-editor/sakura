@@ -22,13 +22,14 @@ class CDlgCompare;
 /*!
 	@brief ファイル比較ダイアログボックス
 */
-class CDlgCompare final : public CDialog
+class CDlgCompare final : public CSizeRestorableDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CDlgCompare();
+	explicit CDlgCompare(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CDlgCompare() override = default;
 
 	/*
 	||  Attributes & Operations

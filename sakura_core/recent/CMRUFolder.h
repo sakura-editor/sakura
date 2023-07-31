@@ -42,12 +42,13 @@
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFolder {
+class CMRUFolder : public ShareDataAccessorClient
+{
 	using Me = CMRUFolder;
 
 public:
 	//	コンストラクタ
-	CMRUFolder();
+	explicit CMRUFolder(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 	CMRUFolder(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CMRUFolder(Me&&) noexcept = delete;

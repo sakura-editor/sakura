@@ -22,12 +22,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
-
-#include <tchar.h>
-#include <Windows.h>
-
 #include "dlg/CDlgProfileMgr.h"
+
+#include "MockShareDataAccessor.hpp"
 
 #include <cstdlib>
 #include <filesystem>
@@ -46,6 +43,14 @@
 #include "_main/CControlProcess.h"
 #include "CDataProfile.h"
 #include "util/file.h"
+
+/*!
+ * プロファイルマネージャ、構築するだけ。
+ */
+TEST(CDlgProfileMgr, Construct)
+{
+	EXPECT_NO_THROW({ CDlgProfileMgr dlg; });
+}
 
 /*!
  * プロファイルマネージャ設定ファイルを使うテストのためのフィクスチャクラス

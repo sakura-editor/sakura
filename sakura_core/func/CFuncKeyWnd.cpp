@@ -52,8 +52,9 @@ LRESULT CALLBACK CFuncKeyWndProc(
 ***/
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CFuncKeyWnd::CFuncKeyWnd()
+CFuncKeyWnd::CFuncKeyWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 : CWnd(L"::CFuncKeyWnd")
+	, ShareDataAccessorClient(std::move(ShareDataAccessor_))
 {
 	int		i;
 	LOGFONT	lf;

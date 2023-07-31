@@ -20,9 +20,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <algorithm>
-#include <memory>
 #include "dlg/CDialog.h"
+
 #include "CEditApp.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -34,6 +33,10 @@
 #include "util/window.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
+
+#include <algorithm>
+#include <memory>
+#include <vector>
 
 /*!
  * DialogProc(ダイアログのメッセージ配送)
@@ -101,17 +104,15 @@ INT_PTR CALLBACK CDialog::DialogProc(
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-CDialog::CDialog(bool bSizable, bool bCheckShareData)
+CDialog::CDialog(WORD idDialog_, std::shared_ptr<User32Dll> User32Dll_)
+	: User32DllClient(std::move(User32Dll_))
+	, _idDialog(idDialog_)
 {
 //	MYTRACE( L"CDialog::CDialog()\n" );
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData(bCheckShareData);
-
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd  = NULL;			/* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
-	m_bSizable = bSizable;
 	m_lParam = (LPARAM)NULL;
 	m_nShowCmd = SW_SHOW;
 	m_xPos = -1;
@@ -137,15 +138,30 @@ CDialog::~CDialog()
 */
 INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam )
 {
+	// 既存コード互換のため暫定で残しておく代入
+	m_hInstance = hInstance;
+
+	_idDialog = static_cast<WORD>(nDlgTemplete);
+
+	return DoModal(hwndParent, lParam);
+}
+
+/*!
+ * モーダルダイアログを表示します。
+ */
+INT_PTR CDialog::DoModal(HWND hWndParent, LPARAM lParam)
+{
 	m_bInited = FALSE;
 	m_bModal = TRUE;
-	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_hwndParent = hWndParent;
 	m_lParam = lParam;
+
+	// 既存コード互換のため暫定で残しておく代入
 	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
-	return DialogBoxParamW(
+
+	return GetUser32Dll()->DialogBoxParamW(
 		m_hLangRsrcInstance,
-		MAKEINTRESOURCE( nDlgTemplete ),
+		MAKEINTRESOURCEW(_idDialog),
 		m_hwndParent,
 		DialogProc,
 		std::bit_cast<LPARAM>(this)
@@ -161,15 +177,30 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 */
 HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow )
 {
+	// 既存コード互換のため暫定で残しておく代入
+	m_hInstance = hInstance;
+
+	_idDialog = static_cast<WORD>(nDlgTemplete);
+
+	return Show(hwndParent, nCmdShow, lParam);
+}
+
+/*!
+ * ダイアログをウインドウとして表示します。
+ */
+HWND CDialog::Show(HWND hWndParent, int nCmdShow, LPARAM lParam)
+{
 	m_bInited = FALSE;
 	m_bModal = FALSE;
-	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_hwndParent = hWndParent;	/* オーナーウィンドウのハンドル */
 	m_lParam = lParam;
+
+	// 既存コード互換のため暫定で残しておく代入
 	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
-	m_hWnd = CreateDialogParamW(
+
+	m_hWnd = GetUser32Dll()->CreateDialogParamW(
 		m_hLangRsrcInstance,
-		MAKEINTRESOURCE( nDlgTemplete ),
+		MAKEINTRESOURCEW(_idDialog),
 		m_hwndParent,
 		DialogProc,
 		std::bit_cast<LPARAM>(this)
@@ -187,7 +218,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_lParam = lParam;
-	m_hWnd = CreateDialogIndirectParamW(
+	m_hWnd = GetUser32Dll()->CreateDialogIndirectParamW(
 		m_hInstance,
 		lpTemplate,
 		m_hwndParent,
@@ -275,12 +306,6 @@ INT_PTR CDialog::DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lP
  */
 INT_PTR CDialog::DispatchEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	// WM_INITDIALOGの戻り値は他と意味が異なるので個別に処理する
-	if (uMsg == WM_INITDIALOG)
-	{
-		return HANDLE_WM_INITDIALOG(hDlg, wParam, lParam, OnDlgInitDialog);
-	}
-
 	switch (uMsg)
 	{
 // clang-format off
@@ -310,6 +335,12 @@ INT_PTR CDialog::DispatchEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 	if (uMsg == WM_DRAWITEM)
 	{
 		return OnDrawItem(wParam, lParam);
+	}
+
+	// WM_INITDIALOGの戻り値は他と意味が異なるので個別に処理する
+	if (uMsg == WM_INITDIALOG)
+	{
+		return HANDLE_WM_INITDIALOG(hDlg, wParam, lParam, OnDlgInitDialog);
 	}
 
 	return FALSE;
@@ -867,7 +898,7 @@ bool CDialog::DirectoryUp( WCHAR* szDir )
 }
 
 // コントロールに画面のフォントを設定	2012/11/27 Uchi
-HFONT CDialog::SetMainFont( HWND hTarget )
+HFONT CSakuraDialog::SetMainFont( HWND hTarget )
 {
 	if (hTarget == NULL)	return NULL;
 

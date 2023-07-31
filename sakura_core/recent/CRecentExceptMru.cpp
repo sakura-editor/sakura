@@ -32,7 +32,8 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentExceptMRU::CRecentExceptMRU()
+CRecentExceptMRU::CRecentExceptMRU(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CRecentImp<CMetaPath, LPCWSTR>(std::move(ShareDataAccessor_))
 {
 	Create(
 		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr(),

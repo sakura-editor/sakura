@@ -48,7 +48,8 @@ const DWORD p_helpids[] = {	//12800
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-CDlgJump::CDlgJump()
+CDlgJump::CDlgJump(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSakuraDialog(IDD_JUMP, std::move(ShareDataAccessor_))
 {
 	m_nLineNum = 0;			/* 行番号 */
 	m_bPLSQL = FALSE;		/* PL/SQLソースの有効行か */

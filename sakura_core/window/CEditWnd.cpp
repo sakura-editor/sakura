@@ -220,15 +220,27 @@ LRESULT CALLBACK CEditWndProc(
 }
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditWnd::CEditWnd()
-: m_hWnd( NULL )
-, m_cToolbar(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+CEditWnd::CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	, m_hWnd( NULL )
+	, m_cToolbar(GetShareDataAccessor())
+	, m_cTabWnd(GetShareDataAccessor())
+	, m_cFuncKeyWnd(GetShareDataAccessor())
 , m_cStatusBar(this)		// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+	, m_cSplitterWnd(GetShareDataAccessor())
 , m_pcDragSourceView( NULL )
+	, m_cDlgFind(GetShareDataAccessor())
+	, m_cDlgReplace(GetShareDataAccessor())
+	, m_cDlgJump(GetShareDataAccessor())
+	, m_cDlgGrep(GetShareDataAccessor())
+	, m_cDlgGrepReplace(GetShareDataAccessor())
+	, m_cDlgFuncList(GetShareDataAccessor())
+	, m_cHokanMgr(GetShareDataAccessor())
 , m_nActivePaneIndex( 0 )
 , m_nEditViewCount( 1 )
 , m_nEditViewMaxCount( _countof(m_pcEditViewArr) )	// 今のところ最大値は固定
+	, m_cMenuDrawer(GetShareDataAccessor())
 , m_bIsActiveApp( false )
 , m_pszLastCaption( NULL )
 , m_pszMenubarMessage( new WCHAR[MENUBAR_MESSAGE_MAX_LEN] )
@@ -240,6 +252,10 @@ CEditWnd::CEditWnd()
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 {
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = GetShareData();
+
+	m_pcEditDoc = CEditDoc::getInstance();
 }
 
 CEditWnd::~CEditWnd()
@@ -607,18 +623,10 @@ HWND CEditWnd::Create(
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
-	m_pcEditDoc = pcEditDoc;
-
 	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
 		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
 		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
 
-	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
-		m_pcEditViewArr[i] = NULL;
-	}
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView();
 	m_pcEditView = m_pcEditViewArr[0];

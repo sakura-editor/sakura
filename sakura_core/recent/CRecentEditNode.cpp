@@ -31,7 +31,8 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentEditNode::CRecentEditNode()
+CRecentEditNode::CRecentEditNode(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CRecentImp<EditNode>(std::move(ShareDataAccessor_))
 {
 	Create(
 		GetShareData()->m_sNodes.m_pEditArr,

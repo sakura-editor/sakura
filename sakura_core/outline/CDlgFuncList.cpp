@@ -201,7 +201,8 @@ LPDLGTEMPLATE CDlgFuncList::m_pDlgTemplate = NULL;
 DWORD CDlgFuncList::m_dwDlgTmpSize = 0;
 HINSTANCE CDlgFuncList::m_lastRcInstance = 0;
 
-CDlgFuncList::CDlgFuncList() : CDialog(true)
+CDlgFuncList::CDlgFuncList(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSizeRestorableDialog(IDD_FUNCLIST, std::move(ShareDataAccessor_))
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert( _countof(anchorList) == _countof(m_rcItems) );

@@ -58,16 +58,13 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
 }
 
-CHokanMgr::CHokanMgr()
+CHokanMgr::CHokanMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSakuraDialog(IDD_HOKAN, std::move(ShareDataAccessor_))
 {
 	m_cmemCurWord.SetString(L"");
 
 	m_nCurKouhoIdx = -1;
 	m_bTimerFlag = TRUE;
-}
-
-CHokanMgr::~CHokanMgr()
-{
 }
 
 /* モードレスダイアログの表示 */

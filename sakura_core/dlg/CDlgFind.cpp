@@ -49,7 +49,9 @@ const DWORD p_helpids[] = {	//11800
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-CDlgFind::CDlgFind()
+CDlgFind::CDlgFind(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSakuraDialog(IDD_EXEC, std::move(ShareDataAccessor_))
+	, m_cRecentSearch(GetShareDataAccessor())
 {
 	m_sSearchOption.Reset();
 	return;

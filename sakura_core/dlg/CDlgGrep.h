@@ -17,8 +17,6 @@
 #define SAKURA_CDLGGREP_01A0D5CB_326B_4C56_A527_C811F84FD8D8_H_
 #pragma once
 
-class CDlgGrep;
-
 #include "dlg/CDialog.h"
 #include "util/window.h"
 #include "recent/CRecentSearch.h"
@@ -27,17 +25,23 @@ class CDlgGrep;
 #include "recent/CRecentExcludeFile.h"
 #include "recent/CRecentExcludeFolder.h"
 
+#include "sakura_rc.h"
+
+class CDlgGrep;
+
 #define DEFAULT_EXCLUDE_FILE_PATTERN    L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
 
 //! GREPダイアログボックス
-class CDlgGrep : public CDialog
+class CDlgGrep : public CSakuraDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CDlgGrep();
+	explicit CDlgGrep(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>(), WORD idDialog_ = IDD_GREP);
+	~CDlgGrep() override = default;
+
 	/*
 	||  Attributes & Operations
 	*/

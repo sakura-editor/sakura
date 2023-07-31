@@ -26,14 +26,14 @@
 
 	@date 2003.06.25 Moca ファイル内からの補完機能を追加
 */
-class CHokanMgr final : public CDialog
+class CHokanMgr final : public CSakuraDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CHokanMgr();
-	~CHokanMgr();
+	explicit CHokanMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	~CHokanMgr() override = default;
 
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);/* モードレスダイアログの表示 */
 	void Hide( void );

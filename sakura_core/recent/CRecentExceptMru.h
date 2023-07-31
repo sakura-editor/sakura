@@ -36,7 +36,8 @@ typedef StaticString<WCHAR, _MAX_PATH> CMetaPath;
 class CRecentExceptMRU final : public CRecentImp<CMetaPath, LPCWSTR>{
 public:
 	//生成
-	CRecentExceptMRU();
+	explicit CRecentExceptMRU(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CRecentExceptMRU() override = default;
 
 	//オーバーライド
 	int				CompareItem( const CMetaPath* p1, LPCWSTR p2 ) const override;

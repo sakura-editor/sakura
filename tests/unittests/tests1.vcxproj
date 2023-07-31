@@ -117,10 +117,28 @@
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-apiwrap.cpp" />
     <ClCompile Include="test-cdialog.cpp" />
+    <ClCompile Include="test-cdlgcompare.cpp" />
+    <ClCompile Include="test-cdlgdiff.cpp" />
+    <ClCompile Include="test-cdlgexec.cpp" />
+    <ClCompile Include="test-cdlgfavarite.cpp" />
+    <ClCompile Include="test-cdlgfind.cpp" />
+    <ClCompile Include="test-cdlgfunclist.cpp" />
+    <ClCompile Include="test-cdlggrep.cpp" />
     <ClCompile Include="test-cdlginput1.cpp" />
+    <ClCompile Include="test-cdlgjump.cpp" />
+    <ClCompile Include="test-cdlgkeywordselect.cpp" />
+    <ClCompile Include="test-cdlgpluginoption.cpp" />
+    <ClCompile Include="test-cdlgproperty.cpp" />
+    <ClCompile Include="test-cdlgreplace.cpp" />
+    <ClCompile Include="test-cdlgsamecolor.cpp" />
+    <ClCompile Include="test-cdlgtagjumplist.cpp" />
+    <ClCompile Include="test-cdlgtagsmake.cpp" />
+    <ClCompile Include="test-cdlgwindowlist.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
     <ClCompile Include="test-ceditdoc.cpp" />
+    <ClCompile Include="test-ceditwnd.cpp" />
+    <ClCompile Include="test-chokanmgr.cpp" />
     <ClCompile Include="test-cppa.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />
@@ -178,6 +196,7 @@
   <ItemGroup>
     <ClInclude Include="eval_outputs.hpp" />
     <ClInclude Include="MockShareDataAccessor.hpp" />
+    <ClInclude Include="MockUser32Dll.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
   </ItemGroup>

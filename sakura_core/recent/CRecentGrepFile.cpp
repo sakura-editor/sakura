@@ -31,7 +31,8 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentGrepFile::CRecentGrepFile()
+CRecentGrepFile::CRecentGrepFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CRecentImp<CGrepFileString, LPCWSTR>(std::move(ShareDataAccessor_))
 {
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aGrepFiles.dataPtr(),

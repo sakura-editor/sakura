@@ -84,8 +84,8 @@ static const SAnchorList anchorList[] = {
 	{IDC_FRAME_SEARCH_MSG,      ANCHOR_BOTTOM},
 };
 
-CDlgDiff::CDlgDiff()
-	: CDialog(true)
+CDlgDiff::CDlgDiff(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSizeRestorableDialog(IDD_DIFF, std::move(ShareDataAccessor_))
 	, m_nIndexSave( 0 )
 {
 	/* サイズ変更時に位置を制御するコントロール数 */

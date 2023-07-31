@@ -74,11 +74,8 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
-CDlgPluginOption::CDlgPluginOption()
-{
-}
-
-CDlgPluginOption::~CDlgPluginOption()
+CDlgPluginOption::CDlgPluginOption(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSakuraDialog(IDD_PLUGIN_OPTION, std::move(ShareDataAccessor_))
 {
 }
 

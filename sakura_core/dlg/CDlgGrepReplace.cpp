@@ -66,7 +66,9 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
-CDlgGrepReplace::CDlgGrepReplace()
+CDlgGrepReplace::CDlgGrepReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CDlgGrep(std::move(ShareDataAccessor_), IDD_GREP_REPLACE)
+	, m_cRecentReplace(GetShareDataAccessor())
 {
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size() ){
 		m_strText2 = m_pShareData->m_sSearchKeywords.m_aReplaceKeys[0];

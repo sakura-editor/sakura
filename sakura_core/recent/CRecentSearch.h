@@ -36,7 +36,8 @@ typedef StaticString<WCHAR, _MAX_PATH> CSearchString;
 class CRecentSearch final : public CRecentImp<CSearchString, LPCWSTR>{
 public:
 	//生成
-	CRecentSearch();
+	explicit CRecentSearch(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CRecentSearch() override = default;
 
 	//オーバーライド
 	int				CompareItem( const CSearchString* p1, LPCWSTR p2 ) const override;

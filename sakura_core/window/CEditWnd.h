@@ -44,8 +44,10 @@
 #define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
 
+#include "doc/CEditDoc.h"
+
 #include <shellapi.h>// HDROP
-#include "_main/global.h"
+
 #include "CMainToolBar.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
 #include "func/CFuncKeyWnd.h"
@@ -72,8 +74,6 @@ static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
 class CPlug;
-class CEditDoc;
-struct DLLSHAREDATA;
 
 //メインウィンドウ内コントロールID
 #define IDT_EDIT		455  // 20060128 aroka
@@ -96,7 +96,8 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-: public TSingleton<CEditWnd>
+	: public TSingleInstance<CEditWnd>
+	, public ShareDataAccessorClient
 , public CDocListenerEx
 {
 	/*!
@@ -107,11 +108,10 @@ class CEditWnd
 	 */
 	bool _Initialized = false;
 
-	friend class TSingleton<CEditWnd>;
-	CEditWnd();
-	~CEditWnd();
-
 public:
+	explicit CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	~CEditWnd() override;
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -370,8 +370,8 @@ public:
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
-	CViewFont*		m_pcViewFont;		//!< フォント
-	CViewFont*		m_pcViewFontMiniMap;		//!< フォント
+	CViewFont* m_pcViewFont        = nullptr;		//!< フォント
+	CViewFont* m_pcViewFontMiniMap = nullptr;		//!< フォント
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
@@ -386,7 +386,7 @@ public:
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
 	CEditDoc* 		m_pcEditDoc;
-	CEditView*		m_pcEditViewArr[4];	//!< ビュー
+	CEditView* m_pcEditViewArr[4] = {};	//!< ビュー
 	CEditView*		m_pcEditView;		//!< 有効なビュー
 	CMiniMapView	m_cMiniMapView;		//!< ミニマップ
 	int				m_nActivePaneIndex;	//!< 有効なビューのindex
@@ -422,7 +422,7 @@ private:
 	//D&Dフラグ
 	bool			m_bDragMode;
 	CMyPoint		m_ptDragPosOrg;
-	CDropTarget*	m_pcDropTarget;
+	CDropTarget* m_pcDropTarget = nullptr;
 
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji

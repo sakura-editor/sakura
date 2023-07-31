@@ -36,7 +36,8 @@ typedef StaticString<WCHAR, MAX_EXCLUDE_PATH> CExcludeFolderString;
 class CRecentExcludeFolder final : public CRecentImp<CExcludeFolderString, LPCWSTR>{
 public:
 	//生成
-	CRecentExcludeFolder();
+	explicit CRecentExcludeFolder(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CRecentExcludeFolder() override = default;
 
 	//オーバーライド
 	int				CompareItem( const CExcludeFolderString* p1, LPCWSTR p2 ) const override;

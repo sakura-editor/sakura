@@ -21,12 +21,16 @@
 #define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
-#include <Windows.h>
+#include "apimodule/User32Dll.hpp"
+
+#include "env/ShareDataAccessor.hpp"
+#include "env/DLLSHAREDATA.h"
+
 #include <windowsx.h>
 
-class CDialog;
+#include "sakura_rc.h"
 
-struct DLLSHAREDATA;
+class CDialog;
 class CRecent;
 
 enum EAnchorStyle
@@ -63,9 +67,10 @@ struct SAnchorList
 
 	ダイアログボックスを作るときにはここから継承させる．
 
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CDialog{
+class CDialog : public User32DllClient
+{
+	WORD _idDialog;
 
 	using Me = CDialog;
 
@@ -73,18 +78,21 @@ public:
 	/*
 	||  Constructors
 	*/
-	CDialog( bool bSizable = false, bool bCheckShareData = true );
+	explicit CDialog(WORD idDialog_ = 0, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
 	CDialog(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CDialog(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	virtual ~CDialog();
+	~CDialog() override;
+
 	/*
 	||  Attributes & Operations
 	*/
 	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 	INT_PTR DoModal(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam);	/* モーダルダイアログの表示 */
-	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
+	virtual INT_PTR DoModal(HWND hWndParent = NULL, LPARAM lParam = 0L);
+	HWND    DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
+	HWND    Show(HWND hWndParent = NULL, int nCmdShow = SW_SHOW, LPARAM lParam = 0L);
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
 	void CloseDialog(INT_PTR nModalRetVal);
 
@@ -173,7 +181,6 @@ public:
 	bool			m_bSizable;		// 可変ダイアログかどうか
 	int				m_nShowCmd;		//	最大化/最小化
 //	void*			m_pcEditView;
-	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 	HINSTANCE		m_hLangRsrcInstance;		// メッセージリソースDLLのインスタンスハンドル	// 2011.04.10 nasukoji
 
@@ -187,51 +194,61 @@ protected:
 
 	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }
 
-	// コントロールに画面のフォントを設定	2012/11/27 Uchi
-	HFONT SetMainFont( HWND hTarget );
 	// このダイアログに設定されているフォントを取得
 	HFONT GetDialogFont() { return m_hFontDialog; }
 
-	virtual HWND CreateDialogIndirectParamW(
-		_In_opt_ HINSTANCE hInstance,
-		_In_ LPCDLGTEMPLATEW lpTemplate,
-		_In_opt_ HWND hWndParent,
-		_In_opt_ DLGPROC lpDialogFunc,
-		_In_ LPARAM dwInitParam) const
-	{
-		return ::CreateDialogIndirectParamW(hInstance, lpTemplate, hWndParent, lpDialogFunc, dwInitParam);
-	}
-
-	virtual HWND CreateDialogParamW(
-		_In_opt_ HINSTANCE hInstance,
-		_In_ LPCWSTR       lpTemplateName,
-		_In_opt_ HWND      hWndParent,
-		_In_opt_ DLGPROC   lpDialogFunc,
-		_In_ LPARAM        dwInitParam) const
-	{
-		return ::CreateDialogParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
-	}
-
-	virtual INT_PTR DialogBoxParamW(
-		_In_opt_ HINSTANCE hInstance,
-		_In_ LPCWSTR       lpTemplateName,
-		_In_opt_ HWND      hWndParent,
-		_In_opt_ DLGPROC   lpDialogFunc,
-		_In_ LPARAM        dwInitParam) const
-	{
-		return ::DialogBoxParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
-	}
-
 	virtual LONG_PTR SetWindowLongPtrW(_In_ HWND hWnd, int nIndex, LONG_PTR dwNewLong) const
 	{
-		return ::SetWindowLongPtrW(hWnd, nIndex, dwNewLong);
+		return GetUser32Dll()->SetWindowLongPtrW(hWnd, nIndex, dwNewLong);
 	}
 
 	virtual bool ShowWindow(
 		_In_ HWND hWnd,
 		_In_ int nCmdShow) const
 	{
-		return ::ShowWindow(hWnd, nCmdShow);
+		return GetUser32Dll()->ShowWindow(hWnd, nCmdShow);
 	}
 };
+
+/*!
+ * 拡張版ダイアログの基底クラス
+ *
+ * 共有メモリにアクセスする機能を付加する。
+ * 
+ * @date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+ */
+class CSakuraDialog : public CDialog, public ShareDataAccessorClient
+{
+public:
+	DLLSHAREDATA* m_pShareData;
+
+	explicit CSakuraDialog(WORD idDialog_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>())
+		: CDialog(idDialog_, std::move(User32Dll_))
+		, ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	{
+		// 共有メモリのアドレスをメンバ変数に取得する
+		m_pShareData = &GetDllShareData();
+	}
+	~CSakuraDialog() override = default;
+
+protected:
+	// コントロールに画面のフォントを設定	2012/11/27 Uchi
+	HFONT SetMainFont(HWND hTarget);
+};
+
+/*!
+ * 可変ダイアログの基底クラス
+ *
+ * 表示位置とサイズを復元する機能を付加する。
+ */
+class CSizeRestorableDialog : public CSakuraDialog
+{
+public:
+	explicit CSizeRestorableDialog(WORD idDialog_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>())
+		: CSakuraDialog(idDialog_, std::move(ShareDataAccessor_), std::move(User32Dll_))
+	{
+	}
+	~CSizeRestorableDialog() override = default;
+};
+
 #endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */

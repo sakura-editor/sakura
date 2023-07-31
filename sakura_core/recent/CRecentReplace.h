@@ -36,7 +36,8 @@ typedef StaticString<WCHAR, _MAX_PATH> CReplaceString;
 class CRecentReplace final : public CRecentImp<CReplaceString, LPCWSTR>{
 public:
 	//生成
-	CRecentReplace();
+	explicit CRecentReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CRecentReplace() override = default;
 
 	//オーバーライド
 	int				CompareItem( const CReplaceString* p1, LPCWSTR p2 ) const override;
