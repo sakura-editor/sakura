@@ -29,7 +29,7 @@
 /*!
  * 置換ダイアログ、構築するだけ。
  */
-TEST(CDlgReplace, DISABLED_Construct)
+TEST(CDlgReplace, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgReplace dlg(std::move(pShareDataAccessor)); });

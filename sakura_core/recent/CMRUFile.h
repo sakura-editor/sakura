@@ -45,12 +45,13 @@ struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除する�
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFile {
+class CMRUFile : public CShareDataClient
+{
 	using Me = CMRUFile;
 
 public:
 	//	コンストラクタ
-	CMRUFile();
+	explicit CMRUFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 	CMRUFile(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CMRUFile(Me&&) noexcept = delete;

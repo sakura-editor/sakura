@@ -17,11 +17,10 @@
 #define SAKURA_CDLGGREPREPLACE_D97F4D2D_9963_40FB_91C1_5A6FF0407E99_H_
 #pragma once
 
-class CDlgGrep;
-
-#include "dlg/CDialog.h"
 #include "dlg/CDlgGrep.h"
 #include "recent/CRecentReplace.h"
+
+class CDlgGrep;
 
 //! GREP置換ダイアログボックス
 class CDlgGrepReplace final : public CDlgGrep
@@ -30,7 +29,9 @@ public:
 	/*
 	||  Constructors
 	*/
-	CDlgGrepReplace();
+	explicit CDlgGrepReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CDlgGrepReplace() override = default;
+
 	/*
 	||  Attributes & Operations
 	*/

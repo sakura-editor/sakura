@@ -51,6 +51,7 @@ const DWORD p_helpids[] = {	//11800
 
 CDlgFind::CDlgFind(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	: CSakuraDialog(IDD_EXEC, std::move(ShareDataAccessor_))
+	, m_cRecentSearch(GetShareDataAccessor())
 {
 	m_sSearchOption.Reset();
 	return;

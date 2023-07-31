@@ -34,7 +34,7 @@ struct EditNode;
 class CRecentEditNode final : public CRecentImp<EditNode>{
 public:
 	//生成
-	CRecentEditNode();
+	explicit CRecentEditNode(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 
 	//オーバーライド
 	int				CompareItem( const EditNode* p1, const EditNode* p2 ) const override;

@@ -53,6 +53,8 @@ const DWORD p_helpids[] = {	//12100
 
 CDlgExec::CDlgExec(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	: CSakuraDialog(IDD_EXEC, std::move(ShareDataAccessor_))
+	, m_cRecentCmd(GetShareDataAccessor())
+	, m_cRecentCur(GetShareDataAccessor())
 {
 	m_szCommand[0] = L'\0';	/* コマンドライン */
 	return;

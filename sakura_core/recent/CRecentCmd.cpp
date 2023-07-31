@@ -31,7 +31,8 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentCmd::CRecentCmd()
+CRecentCmd::CRecentCmd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CRecentImp<CCmdString, LPCWSTR>(std::move(ShareDataAccessor_))
 {
 	Create(
 		GetShareData()->m_sHistory.m_aCommands.dataPtr(),

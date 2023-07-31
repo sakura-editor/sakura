@@ -29,7 +29,7 @@
 /*!
  * GREPダイアログ、構築するだけ。
  */
-TEST(CDlgGrep, DISABLED_Construct)
+TEST(CDlgGrep, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgGrep dlg(std::move(pShareDataAccessor)); });

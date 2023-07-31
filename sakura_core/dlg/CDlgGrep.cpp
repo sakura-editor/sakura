@@ -75,6 +75,11 @@ static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
 
 CDlgGrep::CDlgGrep(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, WORD idDialog_)
 	: CSakuraDialog(idDialog_, std::move(ShareDataAccessor_))
+	, m_cRecentSearch(GetShareDataAccessor())
+	, m_cRecentGrepFile(GetShareDataAccessor())
+	, m_cRecentGrepFolder(GetShareDataAccessor())
+	, m_cRecentExcludeFile(GetShareDataAccessor())
+	, m_cRecentExcludeFolder(GetShareDataAccessor())
 {
 	m_bEnableThisText = true;
 	m_bSelectOnceThisText = false;

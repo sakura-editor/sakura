@@ -29,7 +29,7 @@
 /*!
  * ダイレクトタグジャンプ候補一覧ダイアログ、構築するだけ。
  */
-TEST(CDlgTagJumpList, DISABLED_Construct)
+TEST(CDlgTagJumpList, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgTagJumpList dlg(true, std::move(pShareDataAccessor)); });

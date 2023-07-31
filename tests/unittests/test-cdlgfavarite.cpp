@@ -29,7 +29,7 @@
 /*!
  * 履歴とお気に入りの管理ダイアログ、構築するだけ。
  */
-TEST(CDlgFavorite, DISABLED_Construct)
+TEST(CDlgFavorite, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgFavorite dlg(std::move(pShareDataAccessor)); });

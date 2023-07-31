@@ -26,6 +26,7 @@
 #include "dlg/CDialog.h"
 #include "doc/CEditDoc.h"
 
+#include <Windows.h>
 #include <CommCtrl.h>
 
 class CFuncInfo;

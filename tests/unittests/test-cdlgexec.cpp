@@ -29,7 +29,7 @@
 /*!
  * 外部コマンド実行ダイアログ、構築するだけ。
  */
-TEST(CDlgExec, DISABLED_Construct)
+TEST(CDlgExec, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgExec dlg(std::move(pShareDataAccessor)); });

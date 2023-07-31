@@ -27,7 +27,9 @@
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-CMRUFolder::CMRUFolder()
+CMRUFolder::CMRUFolder(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CShareDataClient(std::move(ShareDataAccessor_))
+	, m_cRecentFolder(GetShareDataAccessor())
 {
 	//	初期化。
 	m_pShareData = &GetDllShareData();

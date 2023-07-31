@@ -154,6 +154,7 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump, std::shared_ptr<ShareDataA
 	  m_psFindPrev( NULL ),
 	  m_psFind0Match( NULL ),
 	  m_strOldKeyword( L"" )
+	, m_cRecentKeyword(GetShareDataAccessor())
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert( _countof(anchorList) == _countof(m_rcItems) );

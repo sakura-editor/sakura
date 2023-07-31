@@ -29,7 +29,7 @@
 /*!
  * 検索ダイアログ、構築するだけ。
  */
-TEST(CDlgFind, DISABLED_Construct)
+TEST(CDlgFind, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgFind dlg(std::move(pShareDataAccessor)); });

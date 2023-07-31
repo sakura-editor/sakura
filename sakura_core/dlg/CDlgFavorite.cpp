@@ -107,6 +107,15 @@ struct CompareListViewLParam
 
 CDlgFavorite::CDlgFavorite(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	 : CSizeRestorableDialog(IDD_FAVORITE, std::move(ShareDataAccessor_))
+	, m_cRecentFile(GetShareDataAccessor())
+	, m_cRecentFolder(GetShareDataAccessor())
+	, m_cRecentExceptMRU(GetShareDataAccessor())
+	, m_cRecentSearch(GetShareDataAccessor())
+	, m_cRecentReplace(GetShareDataAccessor())
+	, m_cRecentGrepFile(GetShareDataAccessor())
+	, m_cRecentGrepFolder(GetShareDataAccessor())
+	, m_cRecentCmd(GetShareDataAccessor())
+	, m_cRecentCurDir(GetShareDataAccessor())
 {
 	int	i;
 
