@@ -811,8 +811,9 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 	return 0L;
 }
 
-CTabWnd::CTabWnd()
+CTabWnd::CTabWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 : CWnd(L"::CTabWnd")
+	, ShareDataAccessorClient(std::move(ShareDataAccessor_))
 , m_eTabPosition( TabPosition_None )
 , m_eDragState( DRAG_NONE )
 , m_bVisualStyle( FALSE )		// 2007.04.01 ryoji

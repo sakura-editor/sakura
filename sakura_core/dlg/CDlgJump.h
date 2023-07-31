@@ -29,7 +29,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgJump(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	explicit CDlgJump(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 	~CDlgJump() override = default;
 
 	/*

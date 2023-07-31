@@ -149,6 +149,7 @@ bool CNormalProcess::InitializeProcess()
 
 	const auto pShareDataAccessor = std::make_shared<ShareDataAccessor>();
 	m_pcEditDoc = std::make_unique<CEditDoc>(pShareDataAccessor);
+	m_pcEditWnd = std::make_unique<CEditWnd>(pShareDataAccessor);
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	// グループIDを取得

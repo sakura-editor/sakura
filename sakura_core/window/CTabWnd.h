@@ -43,19 +43,21 @@
 #include "util/design_template.h"
 #include "env/CommonSetting.h"
 
+#include <CommCtrl.h>
+
 class CGraphics;
 struct EditNode;
 struct DLLSHAREDATA;
 
 //! タブバーウィンドウ
-class CTabWnd final : public CWnd
+class CTabWnd final : public CWnd, public ShareDataAccessorClient
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CTabWnd();
-	virtual ~CTabWnd();
+	explicit CTabWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	~CTabWnd() override;
 
 	/*
 	|| メンバ関数

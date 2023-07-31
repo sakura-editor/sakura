@@ -200,6 +200,9 @@
     <ClCompile Include="test-ceditdoc.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-ceditwnd.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="test-cdlgcompare.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>

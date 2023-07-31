@@ -68,7 +68,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgFuncList(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	explicit CDlgFuncList(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 	~CDlgFuncList() override = default;
 
 	/*

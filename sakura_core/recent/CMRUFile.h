@@ -45,7 +45,7 @@ struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除する�
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFile : public CShareDataClient
+class CMRUFile : public ShareDataAccessorClient
 {
 	using Me = CMRUFile;
 

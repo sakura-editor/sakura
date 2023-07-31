@@ -33,14 +33,15 @@ struct DLLSHAREDATA;
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CSplitterWnd final : public CWnd
+class CSplitterWnd final : public CWnd, public ShareDataAccessorClient
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CSplitterWnd();
-	~CSplitterWnd();
+	explicit CSplitterWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	~CSplitterWnd() override;
+
 private: // 2002/2/3 aroka
 	/*
 	||  Attributes & Operations

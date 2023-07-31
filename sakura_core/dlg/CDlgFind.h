@@ -30,7 +30,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgFind(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	explicit CDlgFind(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 	~CDlgFind() override = default;
 
 	/*

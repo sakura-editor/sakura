@@ -25,14 +25,15 @@ class CEditDoc; // 2002/2/10 aroka
 
 //! ファンクションキーウィンドウ
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CFuncKeyWnd final : public CWnd
+class CFuncKeyWnd final : public CWnd, public ShareDataAccessorClient
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CFuncKeyWnd();
-	virtual ~CFuncKeyWnd();
+	explicit CFuncKeyWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	~CFuncKeyWnd() override;
+
 	/*
 	|| メンバ関数
 	*/

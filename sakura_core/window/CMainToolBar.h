@@ -30,12 +30,15 @@
 #include "dlg/CDialog.h"
 #include "recent/CRecentSearch.h"
 
+#include <CommCtrl.h>
+
 class CEditWnd;
 class CImageListMgr;
 
-class CMainToolBar{
+class CMainToolBar : public ShareDataAccessorClient
+{
 public:
-	CMainToolBar(CEditWnd* pOwner);
+	explicit CMainToolBar(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 
 	void Create( CImageListMgr* pcIcons );
 

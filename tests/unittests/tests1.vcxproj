@@ -137,6 +137,7 @@
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
     <ClCompile Include="test-ceditdoc.cpp" />
+    <ClCompile Include="test-ceditwnd.cpp" />
     <ClCompile Include="test-chokanmgr.cpp" />
     <ClCompile Include="test-cppa.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />

@@ -40,7 +40,7 @@
 
 #include "env/ShareDataAccessor.hpp"
 
-class CRecent : public CShareDataClient
+class CRecent : public ShareDataAccessorClient
 {
 public:
 	explicit CRecent(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);

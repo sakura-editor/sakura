@@ -20,6 +20,7 @@
 #define SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_
 #pragma once
 
+#include "env/ShareDataAccessor.hpp"
 #include "Funccode_enum.h"
 #include "mem/CNativeW.h"
 
@@ -45,7 +46,7 @@ struct DLLSHAREDATA;
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 20050809 aroka クラス外部からアクセスされないメンバはprivateにした。
 */
-class CMenuDrawer
+class CMenuDrawer : public ShareDataAccessorClient
 {
 	using Me = CMenuDrawer;
 
@@ -53,7 +54,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	CMenuDrawer();
+	explicit CMenuDrawer(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 	CMenuDrawer(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CMenuDrawer(Me&&) noexcept = delete;

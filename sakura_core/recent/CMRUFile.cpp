@@ -32,7 +32,7 @@
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 CMRUFile::CMRUFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CShareDataClient(std::move(ShareDataAccessor_))
+	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
 	, m_cRecentFile(GetShareDataAccessor())
 {
 	//	初期化。

@@ -37,7 +37,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	explicit CDlgReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 	~CDlgReplace() override = default;
 
 	/*

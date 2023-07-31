@@ -32,7 +32,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CHokanMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	explicit CHokanMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 	~CHokanMgr() override = default;
 
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);/* モードレスダイアログの表示 */
