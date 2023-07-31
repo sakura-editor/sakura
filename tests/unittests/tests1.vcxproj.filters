@@ -33,6 +33,9 @@
     <ClInclude Include="MockShareDataAccessor.hpp">
       <Filter>Mock Classes</Filter>
     </ClInclude>
+    <ClInclude Include="MockUser32Dll.hpp">
+      <Filter>Mock Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test-cmemory.cpp">
@@ -195,6 +198,58 @@
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="test-ceditdoc.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgcompare.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgdiff.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgexec.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgfavarite.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgfunclist.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlggrep.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgjump.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgkeywordselect.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgpluginoption.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgproperty.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgreplace.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgtagjumplist.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgtagsmake.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgwindowlist.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-chokanmgr.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="coverage.cpp" />
+    <ClCompile Include="test-cdlgsamecolor.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdlgfind.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
   </ItemGroup>

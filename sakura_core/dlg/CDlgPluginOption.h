@@ -54,14 +54,14 @@ static const wstring	OPTION_TYPE_INT  = wstring( L"int" );
 static const wstring	OPTION_TYPE_SEL  = wstring( L"sel" );
 static const wstring	OPTION_TYPE_DIR  = wstring( L"dir" );
 
-class CDlgPluginOption final : public CDialog
+class CDlgPluginOption final : public CSakuraDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CDlgPluginOption();
-	~CDlgPluginOption();
+	explicit CDlgPluginOption(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CDlgPluginOption() override = default;
 
 	/*
 	||  Attributes & Operations

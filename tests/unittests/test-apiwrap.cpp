@@ -22,34 +22,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
  */
-#include <gmock/gmock.h>
-
 #include "apiwrap/apiwrap.hpp"
 
-struct MockUser32Dll : public User32Dll
-{
-	MOCK_CONST_METHOD2(GetDlgItem, HWND(
-		_In_opt_ HWND hDlg,
-		_In_ int nIDDlgItem));
-
-	MOCK_CONST_METHOD3(GetWindowTextW, int(
-		_In_ HWND hWnd,
-		_Out_writes_(nMaxCount) LPWSTR lpString,
-		_In_ int nMaxCount));
-
-	MOCK_CONST_METHOD1(GetWindowTextLengthW, int(
-		_In_ HWND hWnd));
-
-	MOCK_CONST_METHOD4(SendMessageW, LRESULT(
-		_In_ HWND hWnd,
-		_In_ UINT Msg,
-		_Pre_maybenull_ _Post_valid_ WPARAM wParam,
-		_Pre_maybenull_ _Post_valid_ LPARAM lParam));
-
-	MOCK_CONST_METHOD2(SetWindowTextW, bool(
-		_In_ HWND hWnd,
-		_In_opt_ LPCWSTR lpString));
-};
+#include "MockUser32Dll.hpp"
 
 using ::testing::_;
 using ::testing::Gt;

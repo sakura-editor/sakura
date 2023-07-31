@@ -51,14 +51,14 @@ class CSortedTagJumpList;
 	ダイレクトタグジャンプで複数の候補がある場合及び
 	キーワード指定タグジャンプのためのダイアログボックス制御
 */
-class CDlgTagJumpList final : public CDialog
+class CDlgTagJumpList final : public CSizeRestorableDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CDlgTagJumpList(bool bDirectTagJump);
-	~CDlgTagJumpList();
+	explicit CDlgTagJumpList(bool bDirectTagJump, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CDlgTagJumpList() override;
 
 	/*
 	||  Attributes & Operations

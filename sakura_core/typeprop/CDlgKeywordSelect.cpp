@@ -67,15 +67,11 @@ static const int keyword_select_target_combo[ KEYWORD_SELECT_NUM ] = {
 	IDC_COMBO10
 };
 
-CDlgKeywordSelect::CDlgKeywordSelect()
+CDlgKeywordSelect::CDlgKeywordSelect(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSakuraDialog(IDD_DIALOG_KEYWORD_SELECT, std::move(ShareDataAccessor_))
 {
 	m_pCKeyWordSetMgr = &(m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr);
 
-	return;
-}
-
-CDlgKeywordSelect::~CDlgKeywordSelect()
-{
 	return;
 }
 

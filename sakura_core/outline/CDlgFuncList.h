@@ -23,9 +23,10 @@
 #define SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_
 #pragma once
 
-#include <Windows.h>
 #include "dlg/CDialog.h"
 #include "doc/CEditDoc.h"
+
+#include <CommCtrl.h>
 
 class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
@@ -60,13 +61,15 @@ public:
 };
 
 //!	アウトライン解析ダイアログボックス
-class CDlgFuncList final : public CDialog
+class CDlgFuncList final : public CSizeRestorableDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CDlgFuncList();
+	explicit CDlgFuncList(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CDlgFuncList() override = default;
+
 	/*
 	||  Attributes & Operations
 	*/

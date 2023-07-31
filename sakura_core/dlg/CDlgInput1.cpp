@@ -36,7 +36,7 @@ using namespace apiwrap;
  * コンストラクター
  */
 CDlgInput1::CDlgInput1()
-	: CDialog(false, false)
+	: CDialog(IDD_INPUT1)
 {
 }
 

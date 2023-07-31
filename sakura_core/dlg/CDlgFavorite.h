@@ -47,14 +47,14 @@
 
 //!「履歴とお気に入りの管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]
-class CDlgFavorite final : public CDialog
+class CDlgFavorite final : public CSizeRestorableDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CDlgFavorite();
-	~CDlgFavorite();
+	explicit CDlgFavorite(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CDlgFavorite() override;
 
 	/*
 	||  Attributes & Operations

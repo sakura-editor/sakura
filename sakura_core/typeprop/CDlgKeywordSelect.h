@@ -47,11 +47,12 @@ class CKeyWordSetMgr;
 //	2005.01.13 genta ShareDataの定義と連動させる
 const int KEYWORD_SELECT_NUM = MAX_KEYWORDSET_PER_TYPE;
 
-class CDlgKeywordSelect final : public CDialog
+class CDlgKeywordSelect final : public CSakuraDialog
 {
 public:
-	CDlgKeywordSelect();
-	~CDlgKeywordSelect();
+	explicit CDlgKeywordSelect(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CDlgKeywordSelect() override = default;
+
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSet );
 
 protected:

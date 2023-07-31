@@ -87,7 +87,7 @@ bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
 }
 
 CDlgProfileMgr::CDlgProfileMgr()
-: CDialog(false, false)
+	: CDialog(IDD_PROFILEMGR)
 {
 	return;
 }

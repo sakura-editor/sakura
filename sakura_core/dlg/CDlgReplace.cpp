@@ -59,7 +59,8 @@ const DWORD p_helpids[] = {	//11900
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-CDlgReplace::CDlgReplace()
+CDlgReplace::CDlgReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: CSakuraDialog(IDD_REPLACE, std::move(ShareDataAccessor_))
 {
 	m_sSearchOption.Reset();	// 検索オプション
 	m_bConsecutiveAll = FALSE;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji

@@ -105,8 +105,8 @@ struct CompareListViewLParam
 	DLLSHAREDATAが一致しない可能性もある。
 */
 
-CDlgFavorite::CDlgFavorite()
-	 : CDialog(true)
+CDlgFavorite::CDlgFavorite(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	 : CSizeRestorableDialog(IDD_FAVORITE, std::move(ShareDataAccessor_))
 {
 	int	i;
 
