@@ -43,6 +43,7 @@
 
 #include "func/CFuncLookup.h"
 #include "env/CommonSetting.h"
+#include "env/ShareDataAccessor.hpp"
 
 struct DLLSHAREDATA;
 class CImageListMgr;
@@ -85,13 +86,13 @@ enum PropComSheetOrder {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CPropCommon
+class CPropCommon : public ShareDataAccessorClient
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CPropCommon();
+	explicit CPropCommon(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 	~CPropCommon();
 	//	Sep. 29, 2001 genta マクロクラスを渡すように;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
@@ -505,6 +506,12 @@ protected:
 class CPropPlugin final : CPropCommon
 {
 public:
+	explicit CPropPlugin(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>())
+		: CPropCommon(std::move(ShareDataAccessor_))
+	{
+	}
+	~CPropPlugin() = default;
+
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );

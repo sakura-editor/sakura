@@ -128,7 +128,8 @@ INT_PTR CPropCommon::DlgProc2(
 }
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CPropCommon::CPropCommon()
+CPropCommon::CPropCommon(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
 {
 	{
 		assert( sizeof(CPropGeneral)   - sizeof(CPropCommon) == 0 );

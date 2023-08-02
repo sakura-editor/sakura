@@ -258,7 +258,7 @@ void CDlgDiff::SetData( void )
 		hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 
 		/* 現在開いている編集窓のリストをメニューにする */
-		nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE, FALSE, GetShareDataAccessor() );
 		if( nRowNum > 0 )
 		{
 			// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji

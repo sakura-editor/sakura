@@ -145,7 +145,7 @@ void CDlgWindowList::SetData()
 	HWND hwndList = GetItemHwnd(IDC_LIST_WINDOW);
 	ListView_DeleteAllItems(hwndList);
 	EditNode *pEditNode;
-	int nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNode, TRUE);
+	int nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNode, TRUE, FALSE, GetShareDataAccessor());
 	if (0 < nRowNum) {
 		CTextWidthCalc calc(hwndList);
 		for (int i = 0; i < nRowNum; i++) {

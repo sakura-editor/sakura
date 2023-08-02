@@ -38,7 +38,7 @@ TEST(CDlgWindowList, Construct)
 /*!
  * 表示テスト
  */
-TEST(CDlgWindowList, DISABLED_SimpleShowDialog)
+TEST(CDlgWindowList, SimpleShowDialog)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	CDlgWindowList dlg(std::move(pShareDataAccessor));

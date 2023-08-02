@@ -24,6 +24,10 @@
  */
 #include "outline/CDlgFuncList.h"
 
+#include "doc/CEditDoc.h"
+#include "window/CEditWnd.h"
+#include "outline/CFuncInfoArr.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -38,12 +42,20 @@ TEST(CDlgFuncList, Construct)
 /*!
  * 表示テスト
  */
-TEST(CDlgFuncList, DISABLED_SimpleShowDialog)
+TEST(CDlgFuncList, SimpleShowDialog)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc     doc(pShareDataAccessor);
+	CEditWnd     wnd(pShareDataAccessor);
+	CEditView    view;
 	CDlgFuncList dlg(std::move(pShareDataAccessor));
+
+	auto pcFuncInfoArr = std::make_shared<CFuncInfoArr>();
+	dlg.SetFuncInfoForTest(pcFuncInfoArr);
+
 	const auto hWndParent = static_cast<HWND>(nullptr);
-	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	const auto lParam     = std::bit_cast<LPARAM>(&view);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, lParam);
 	EXPECT_NE(nullptr, hDlg);
 	dlg.CloseDialog(0);
 }

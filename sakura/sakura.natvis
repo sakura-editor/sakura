@@ -9,4 +9,14 @@
       <Item Name="_Size">m_nDataBufSize / 2</Item>
     </Expand>
   </Type>
+  <Type Name="StaticString&lt;wchar_t,*&gt;">
+    <DisplayString Condition="m_szData[0] == 0">empty</DisplayString>
+    <DisplayString Condition="m_szData[0] != 0">{m_szData,su}</DisplayString>
+    <Expand>
+       <ArrayItems>
+        <Size>BUFFER_COUNT</Size>
+        <ValuePointer>m_szData</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
 </AutoVisualizer>

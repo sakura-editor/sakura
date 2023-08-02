@@ -29,6 +29,7 @@
 
 #include "basis/CMyString.h"
 #include "config/maxdata.h"
+#include "env/ShareDataAccessor.hpp"
 #include "util/design_template.h"
 
 class CAppNodeGroupHandle;
@@ -124,10 +125,10 @@ public:
 	HWND SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] );/* タブ分離に伴うウィンドウ処理 2007.07.07 genta */
 
 	//総合情報
-	int GetOpenedWindowArr(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );				/* 現在開いている編集ウィンドウの配列を返す */
+	int GetOpenedWindowArr(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor = std::make_shared<ShareDataAccessor>() );				/* 現在開いている編集ウィンドウの配列を返す */
 
 protected:
-	int _GetOpenedWindowArrCore(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
+	int _GetOpenedWindowArrCore(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor = std::make_shared<ShareDataAccessor>() );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
 
 public:
 	static bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* 同一グループかどうかを調べる */

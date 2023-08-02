@@ -24,6 +24,8 @@
  */
 #include "dlg/CDlgDiff.h"
 
+#include "window/CEditWnd.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -38,9 +40,11 @@ TEST(CDlgDiff, Construct)
 /*!
  * 表示テスト
  */
-TEST(CDlgDiff, DISABLED_SimpleShowDialog)
+TEST(CDlgDiff, SimpleShowDialog)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CEditWnd wnd(pShareDataAccessor);
 	CDlgDiff dlg(std::move(pShareDataAccessor));
 	const auto hWndParent = static_cast<HWND>(nullptr);
 	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);

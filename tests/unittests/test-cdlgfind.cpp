@@ -24,6 +24,9 @@
  */
 #include "dlg/CDlgFind.h"
 
+#include "doc/CEditDoc.h"
+#include "view/CEditView.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -38,12 +41,19 @@ TEST(CDlgFind, Construct)
 /*!
  * 表示テスト
  */
-TEST(CDlgFind, DISABLED_SimpleShowDialog)
+TEST(CDlgFind, SimpleShowDialog)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+
+	pDllShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp = true;
+
+	CEditDoc doc(pShareDataAccessor);
+	CEditView view;
 	CDlgFind dlg(std::move(pShareDataAccessor));
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
 	const auto hWndParent = static_cast<HWND>(nullptr);
-	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	const auto lParam     = std::bit_cast<LPARAM>(&view);
+	const auto hDlg       = dlg.DoModeless(hInstance, hWndParent, lParam);
 	EXPECT_NE(nullptr, hDlg);
 	dlg.CloseDialog(0);
 }

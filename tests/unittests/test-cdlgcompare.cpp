@@ -38,7 +38,7 @@ TEST(CDlgCompare, Construct)
 /*!
  * 表示テスト
  */
-TEST(CDlgCompare, DISABLED_SimpleShowDialog)
+TEST(CDlgCompare, SimpleShowDialog)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	CDlgCompare dlg(std::move(pShareDataAccessor));
