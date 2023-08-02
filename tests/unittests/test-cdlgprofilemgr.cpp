@@ -53,6 +53,19 @@ TEST(CDlgProfileMgr, Construct)
 }
 
 /*!
+ * 表示テスト
+ */
+TEST(CDlgProfileMgr, DISABLED_SimpleShowDialog)
+{
+	CDlgProfileMgr dlg;
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto lParam = std::bit_cast<LPARAM>(nullptr);
+	const auto hDlg = dlg.Show(hWndParent, SW_SHOW, lParam);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
+}
+
+/*!
  * プロファイルマネージャ設定ファイルを使うテストのためのフィクスチャクラス
  *
  * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので

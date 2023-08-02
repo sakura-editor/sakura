@@ -34,3 +34,16 @@ TEST(CHokanMgr, Construct)
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CHokanMgr dlg(std::move(pShareDataAccessor)); });
 }
+
+/*!
+ * 表示テスト
+ */
+TEST(CHokanMgr, DISABLED_SimpleShowDialog)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CHokanMgr dlg(std::move(pShareDataAccessor));
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
+}

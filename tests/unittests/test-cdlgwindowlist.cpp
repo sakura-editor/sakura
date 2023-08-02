@@ -34,3 +34,16 @@ TEST(CDlgWindowList, Construct)
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgWindowList dlg(std::move(pShareDataAccessor)); });
 }
+
+/*!
+ * 表示テスト
+ */
+TEST(CDlgWindowList, DISABLED_SimpleShowDialog)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CDlgWindowList dlg(std::move(pShareDataAccessor));
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
+}

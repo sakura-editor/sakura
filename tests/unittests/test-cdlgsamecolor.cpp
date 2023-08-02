@@ -33,3 +33,15 @@ TEST(CDlgSameColor, Construct)
 {
 	EXPECT_NO_THROW({ CDlgSameColor dlg; });
 }
+
+/*!
+ * 表示テスト
+ */
+TEST(CDlgSameColor, DISABLED_SimpleShowDialog)
+{
+	CDlgSameColor dlg;
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
+}
