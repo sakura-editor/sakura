@@ -24,6 +24,12 @@
  */
 #include "dlg/CDlgPluginOption.h"
 
+#include "doc/CEditDoc.h"
+#include "plugin/CWSHPlugin.h"
+
+#include <CommCtrl.h>
+#include "prop/CPropCommon.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -33,4 +39,24 @@ TEST(CDlgPluginOption, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgPluginOption dlg(std::move(pShareDataAccessor)); });
+}
+
+/*!
+ * 表示テスト
+ */
+TEST(CDlgPluginOption, SimpleShowDialog)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc         doc(pShareDataAccessor);
+
+	auto plugin = std::make_shared<CWSHPlugin>(L"");
+	auto propPlugin = std::make_shared<CPropPlugin>(pShareDataAccessor);
+
+	CDlgPluginOption dlg(std::move(pShareDataAccessor));
+	dlg.SetPluginForTest(plugin, propPlugin);
+
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	auto       hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
 }

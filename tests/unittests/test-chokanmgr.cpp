@@ -24,6 +24,9 @@
  */
 #include "CHokanMgr.h"
 
+#include "doc/CEditDoc.h"
+#include "view/CEditView.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -33,4 +36,20 @@ TEST(CHokanMgr, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CHokanMgr dlg(std::move(pShareDataAccessor)); });
+}
+
+/*!
+ * 表示テスト
+ */
+TEST(CHokanMgr, SimpleShowDialog)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CEditView view;
+	CHokanMgr dlg(std::move(pShareDataAccessor));
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto lParam     = std::bit_cast<LPARAM>(&view);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, lParam);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
 }

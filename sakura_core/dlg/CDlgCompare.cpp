@@ -142,7 +142,7 @@ void CDlgCompare::SetData( void )
 //	setlocale ( LC_ALL, "C" );
 
 	/* 現在開いている編集窓のリストをメニューにする */
-	nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE, FALSE, GetShareDataAccessor() );
 	if( nRowNum > 0 ){
 		// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
 		CTextWidthCalc calc(hwndList);

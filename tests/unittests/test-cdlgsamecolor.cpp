@@ -33,3 +33,19 @@ TEST(CDlgSameColor, Construct)
 {
 	EXPECT_NO_THROW({ CDlgSameColor dlg; });
 }
+
+/*!
+ * 表示テスト
+ */
+TEST(CDlgSameColor, SimpleShowDialog)
+{
+	const auto cr = RGB(255, 0, 0);
+	STypeConfig typeConfig = {};
+	CDlgSameColor dlg;
+	dlg.SetNanikaForTest(IDC_BUTTON_SAMETEXTCOLOR, &typeConfig, cr);
+
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
+}

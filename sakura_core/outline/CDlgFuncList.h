@@ -75,6 +75,19 @@ public:
 	||  Attributes & Operations
 	*/
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int, bool );/* モードレスダイアログの表示 */
+
+	//! テスト不能だったので追加。（アプリで使用しないこと！）
+	void SetFuncInfoForTest(
+		std::shared_ptr<CFuncInfoArr> pcFuncInfoArr)
+	{
+		m_pcFuncInfoArr  = pcFuncInfoArr.get();
+		m_nCurLine       = CLayoutInt(1);
+		m_nCurCol        = CLayoutInt(1);
+		m_nOutlineType   = 0;
+		m_nListType      = 0;
+		m_bLineNumIsCRLF = false;
+	}
+
 	void ChangeView(LPARAM pcEditView);	/* モードレス時：検索対象となるビューの変更 */
 	bool IsDocking() { return m_eDockSide > DOCKSIDE_FLOAT; }
 	EDockSide GetDockSide() { return m_eDockSide; }

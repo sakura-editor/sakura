@@ -24,6 +24,8 @@
  */
 #include "dlg/CDlgProperty.h"
 
+#include "doc/CEditDoc.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -33,4 +35,19 @@ TEST(CDlgProperty, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgProperty dlg(std::move(pShareDataAccessor)); });
+}
+
+/*!
+ * 表示テスト
+ */
+TEST(CDlgProperty, SimpleShowDialog)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc     doc(pShareDataAccessor);
+	CDlgProperty dlg(std::move(pShareDataAccessor));
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto lParam     = std::bit_cast<LPARAM>(&doc);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, lParam);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
 }

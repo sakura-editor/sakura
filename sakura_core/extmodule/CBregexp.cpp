@@ -589,11 +589,12 @@ const WCHAR* CBregexp::GetLastMessage() const
 bool InitRegexp(
 	HWND		hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
 	CBregexp&	rRegexp,		//!< [in] チェックに利用するCBregexpクラスへの参照
-	bool		bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+	bool		bShowMessage,	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+	std::shared_ptr<ShareDataAccessor> _ShareDataAccessor
 )
 {
 	//	From Here 2007.08.12 genta
-	DLLSHAREDATA* pShareData = &GetDllShareData();
+	const auto pShareData = _ShareDataAccessor->GetShareData();
 
 	LPCWSTR RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
 	//	To Here 2007.08.12 genta
@@ -629,12 +630,13 @@ bool InitRegexp(
 bool CheckRegexpVersion(
 	HWND	hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
 	int		nCmpId,			//!< [in] バージョン文字列を設定するコンポーネントID
-	bool	bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+	bool	bShowMessage,	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+	std::shared_ptr<ShareDataAccessor> _ShareDataAccessor
 )
 {
 	CBregexp cRegexp;
 
-	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage, std::move(_ShareDataAccessor) ) ){
 		if( hWnd != NULL ){
 			::DlgItem_SetText( hWnd, nCmpId, L" ");
 		}

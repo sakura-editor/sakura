@@ -24,6 +24,8 @@
  */
 #include "dlg/CDlgJump.h"
 
+#include "doc/CEditDoc.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -33,4 +35,19 @@ TEST(CDlgJump, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgJump dlg(std::move(pShareDataAccessor)); });
+}
+
+/*!
+ * 表示テスト
+ */
+TEST(CDlgJump, SimpleShowDialog)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CDlgJump dlg(std::move(pShareDataAccessor));
+	const auto hWndParent = (HWND) nullptr;
+	const auto lParam     = std::bit_cast<LPARAM>(&doc);
+	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, lParam);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
 }

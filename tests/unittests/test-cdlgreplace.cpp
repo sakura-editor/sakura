@@ -24,6 +24,9 @@
  */
 #include "dlg/CDlgReplace.h"
 
+#include "doc/CEditDoc.h"
+#include "view/CEditView.h"
+
 #include "MockShareDataAccessor.hpp"
 
 /*!
@@ -33,4 +36,25 @@ TEST(CDlgReplace, Construct)
 {
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CDlgReplace dlg(std::move(pShareDataAccessor)); });
+}
+
+/*!
+ * 表示テスト
+ */
+TEST(CDlgReplace, SimpleShowDialog)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+
+	pDllShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp = true;
+
+	CEditDoc    doc(pShareDataAccessor);
+	CEditView   view;
+	CDlgReplace dlg(std::move(pShareDataAccessor));
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto lParam     = std::bit_cast<LPARAM>(&view);
+	const auto bSelected  = FALSE;
+	const auto hDlg       = dlg.DoModeless(hInstance, hWndParent, lParam, bSelected);
+	EXPECT_NE(nullptr, hDlg);
+	dlg.CloseDialog(0);
 }

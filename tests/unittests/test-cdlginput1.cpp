@@ -121,7 +121,7 @@ TEST(CDlgInput1, SimpleDoModal)
 
 	CDlgInput1ForTest dlg;
 	HINSTANCE hInstance  = nullptr;
-	HWND      hWndParent = nullptr;
+	const auto hWndParent = static_cast<HWND>(nullptr);
 	EXPECT_EQ(IDOK, dlg.DoModal(hInstance, hWndParent, L"title", L"message", static_cast<int>(buffer.length()), buffer.data()));
 	EXPECT_STREQ(L"test", buffer.c_str());
 }
@@ -136,7 +136,7 @@ TEST(CDlgInput1, TrimTest)
 
 	CDlgInput1ForTest dlg;
 	HINSTANCE hInstance  = nullptr;
-	HWND      hWndParent = nullptr;
+	const auto hWndParent = static_cast<HWND>(nullptr);
 	EXPECT_EQ(IDOK, dlg.DoModal(hInstance, hWndParent, L"title", L"message", 2, buffer.data()));
 	EXPECT_STREQ(L"te", buffer.c_str());
 }
