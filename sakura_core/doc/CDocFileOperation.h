@@ -30,11 +30,13 @@
 #include "doc/CDocListener.h" // SLoadInfo
 #include "CEol.h"
 
-class CEditDoc;
-
-class CDocFileOperation{
+/*!
+ * 編集中ドキュメントのファイル操作クラス
+ */
+class CDocFileOperation : private CDocRefClient
+{
 public:
-	CDocFileOperation(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) { }
+	CDocFileOperation() = default;
 
 	//ロック
 	bool _ToDoLock() const;
@@ -77,8 +79,6 @@ public:
 	void FileCloseOpen(				//!< 閉じて開く	// 2006.12.30 ryoji
 		const SLoadInfo& sLoadInfo = SLoadInfo(L"", CODE_AUTODETECT, false)
 	);
-
-private:
-	CEditDoc* m_pcDocRef;
 };
+
 #endif /* SAKURA_CDOCFILEOPERATION_EE1C0546_8985_4FB1_941F_3BCC29BB3997_H_ */

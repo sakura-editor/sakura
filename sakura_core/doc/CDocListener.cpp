@@ -158,3 +158,12 @@ void CProgressSubject::NotifyProgress(int nPer)
 		GetListener(i)->OnProgress(nPer);
 	}
 }
+
+/*!
+ * コンストラクタ
+ */
+CDocRefClient::CDocRefClient()
+{
+	// ドキュメント参照を初期化する
+	m_pcDocRef = CEditDoc::getInstance();
+};
