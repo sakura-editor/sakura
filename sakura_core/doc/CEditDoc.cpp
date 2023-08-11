@@ -167,12 +167,9 @@ static const EFunctionCode EIsModificationForbidden[] = {
 */
 CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
-	, m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 	, m_cDocEditor(GetShareDataAccessor())
 	, m_cDocType(GetShareDataAccessor())
 	, m_cAutoSaveAgent(GetShareDataAccessor())
-, m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
 {

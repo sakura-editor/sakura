@@ -27,14 +27,20 @@
 #define SAKURA_CDOCOUTLINE_BDF55702_D938_432D_99F2_BF0F98A7C5FE_H_
 #pragma once
 
-class CEditDoc;
+#include "doc/CDocListener.h"
+
 class CFuncInfoArr;
 struct SOneRule;
 enum EOutlineType;
 
-class CDocOutline{
+/*!
+ * 編集中ドキュメントのアウトライン管理クラス
+ */
+class CDocOutline : private CDocRefClient
+{
 public:
-	CDocOutline(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) { }
+	CDocOutline() = default;
+
 	void	MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr,
 							EOutlineType& nOutlineType,
 						    const WCHAR* pszFileName,
@@ -56,7 +62,6 @@ public:
 	int		ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule,
 						  int nMaxCount, bool& bRegex, std::wstring& title );	//!< ルールファイル読込 2002.04.01 YAZAKI
 	void	MakeFuncList_BookMark( CFuncInfoArr* );								//!< ブックマークリスト作成 //2001.12.03 hor
-private:
-	CEditDoc* m_pcDocRef;
 };
+
 #endif /* SAKURA_CDOCOUTLINE_BDF55702_D938_432D_99F2_BF0F98A7C5FE_H_ */

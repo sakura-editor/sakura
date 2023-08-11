@@ -32,10 +32,14 @@
 #define SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_
 #pragma once
 
+#include "doc/CDocListener.h"
 #include "types/CType.h" // CTypeConfig
 #include "env/CDocTypeManager.h"
 
-class CDocType : public ShareDataAccessorClient
+/*!
+ * 編集中ドキュメントの設定管理クラス
+ */
+class CDocType : public ShareDataAccessorClient, private CDocRefClient
 {
 public:
 	//生成と破棄
@@ -67,9 +71,9 @@ public:
 	void SetDocumentIcon();	//アイコンの設定	//Sep. 10, 2002 genta
 
 private:
-	CEditDoc*				m_pcDocRef;
 	CTypeConfig				m_nSettingType;
 	STypeConfig				m_typeConfig;
 	bool					m_nSettingTypeLocked;		//!< 文書種別の一時設定状態
 };
+
 #endif /* SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_ */
