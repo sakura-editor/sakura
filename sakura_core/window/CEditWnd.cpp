@@ -616,7 +616,6 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
-	CEditDoc*		pcEditDoc,
 	CImageListMgr*	pcIcons,	//!< [in] Image List
 	int				nGroup		//!< [in] グループID
 )
