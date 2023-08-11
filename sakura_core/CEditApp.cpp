@@ -78,7 +78,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create(
 		m_pcEditWnd->GetHwnd(),
-		&GetIcons(),
+		&m_cIcons,
 		&m_pcEditWnd->GetMenuDrawer()
 	);
 }
