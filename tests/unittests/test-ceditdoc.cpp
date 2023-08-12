@@ -34,3 +34,15 @@ TEST(CEditDoc, Construct)
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	EXPECT_NO_THROW({ CEditDoc doc(std::move(pShareDataAccessor)); });
 }
+
+TEST(CEditDoc, GetEditDoc)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(std::move(pShareDataAccessor)); ;
+	EXPECT_THAT(&GetEditDoc(), ::testing::Eq(&doc));
+}
+
+TEST(CEditDoc, GetEditDoc_fail)
+{
+	EXPECT_ANY_THROW({ GetEditDoc(); });
+}

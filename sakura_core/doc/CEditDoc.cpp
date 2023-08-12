@@ -79,6 +79,7 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
+#include "basis/CErrorInfo.h"
 #include "sakura_rc.h"
 #include "config/app_constants.h"
 #include "String_define.h"
@@ -1027,4 +1028,20 @@ void CEditDoc::SetCurDirNotitle()
 	if( pszDir != NULL ){
 		::SetCurrentDirectory( pszDir );
 	}
+}
+
+/*!
+ * 編集中ドキュメントのインスタンスを取得します。
+ *
+ * 編集中ドキュメントの生存期間はエディタプロセスとほぼ同じなので、
+ * ほとんどの場合、このグローバル関数を使ってアクセスできます。
+ */
+CEditDoc& GetEditDoc(void)
+{
+	auto pcEditDoc = CEditDoc::getInstance();
+	if (!pcEditDoc)
+	{
+		::_com_raise_error(E_FAIL, MakeMsgError(L"Any CEditDoc has been instantiated."));
+	}
+	return *pcEditDoc;
 }
