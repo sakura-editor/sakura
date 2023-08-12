@@ -182,7 +182,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 /*!
  * 編集ウインドウのインスタンスを取得します。
  *
- * 編集ウインドウの生存期間ははエディタプロセスと同じなので、
+ * 編集ウインドウの生存期間はエディタプロセスとほぼ同じなので、
  * ほとんどの場合、このグローバル関数を使ってアクセスできます。
  */
 CEditWnd& GetEditWnd( void )

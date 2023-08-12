@@ -35,3 +35,16 @@ TEST(CEditWnd, Construct)
 	CEditDoc doc(pShareDataAccessor);
 	EXPECT_NO_THROW({ CEditWnd wnd(std::move(pShareDataAccessor)); });
 }
+
+TEST(CEditWnd, GetEditWnd)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CEditWnd wnd(std::move(pShareDataAccessor));
+	EXPECT_THAT(&GetEditWnd(), ::testing::Eq(&wnd));
+}
+
+TEST(CEditWnd, GetEditWnd_fail)
+{
+	EXPECT_ANY_THROW({ GetEditWnd(); });
+}
