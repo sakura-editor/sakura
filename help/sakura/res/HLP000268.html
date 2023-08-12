@@ -76,6 +76,7 @@
 <META NAME="MS-HKWD" CONTENT="GetViewColumns">
 <META NAME="MS-HKWD" CONTENT="CreateMenu">
 <META NAME="MS-HKWD" CONTENT="GetViewTop">
+<META NAME="MS-HKWD" CONTENT="ChangeInsertSpace">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -169,6 +170,7 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#GetViewColumns">GetViewColumns</a>() :Integer<br>
 ・<a href="#CreateMenu">CreateMenu</a>( int1 :Integer, str2 :String ) :Integer<br>
 ・<a href="#GetViewTop">GetViewTop</a>() :Integer<br>
+・<a href="#ChangeInsertSpace">ChangeInsertSpace</a>() :Integer<br>
 <br>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class="li200">
@@ -1108,5 +1110,22 @@ sakura:2.2.0.0以降<br>
 画面に表示されている一番上の行のレイアウト行番号(1開始)を取得します。<br>
 </div>
 sakura:2.4.2.0以降<br>
+<br>
+■ function <span id="ChangeInsertSpace">ChangeInsertSpace</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class="li200">
+<strong>引数</strong><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;0～1までの間の値が有効です。<br>
+<br>
+<strong>戻り値</strong><br>
+設定変更前のSPACEの挿入を返します。<br>
+<br>
+<strong>解説</strong><br>
+インデント時にSPACE(半角空白)の挿入を行うかそれともTAB文字を入れるかの設定を行います。。<br>
+0 を指定した場合、SPACEの挿入を行わない(TAB文字を使用する)設定にします。<br>
+1 を指定した場合、SPACEの挿入を行う設定にします。<br>
+設定の取得のみ行いたいときは -1 など無効な引数を指定してください。<br>
+変更はこのマクロを実行した画面にだけ適用され、設定には保存しません。<br>
+</div>
+sakura:2.4.3.0以降<br>
 <br>
 </BODY></HTML>
