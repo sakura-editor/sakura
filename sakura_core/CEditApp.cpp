@@ -69,7 +69,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
-	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
+	m_pcEditWnd->Create( &m_cIcons, nGroupId );
 
 	//MRU管理
 	m_pcMruListener = new CMruListener();
@@ -78,7 +78,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create(
 		m_pcEditWnd->GetHwnd(),
-		&GetIcons(),
+		&m_cIcons,
 		&m_pcEditWnd->GetMenuDrawer()
 	);
 }
