@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "DetectIndentationStyle.h"
 
 #include "doc/CEditDoc.h"
@@ -10,7 +10,7 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 	int nSpaceUsed = 0;
 	int nTabUsed = 0;
 	style.character = IndentationStyle::Character::Unknown;
-	// Šes‚Ìs“ª‚Ì•¶š‚ª”¼Šp‹ó”’‚©ƒ^ƒu•¶š‚©‚ğƒJƒEƒ“ƒg‚·‚é
+	// å„è¡Œã®è¡Œé ­ã®æ–‡å­—ãŒåŠè§’ç©ºç™½ã‹ã‚¿ãƒ–æ–‡å­—ã‹ã‚’ã‚«ã‚¦ãƒ³ãƒˆã™ã‚‹
 	for (size_t i=0; i<nMaxLinesToCheck; ++i) {
 		const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt(i));
 		if (pLine == nullptr) {
@@ -26,11 +26,11 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 		if (c == '\t') ++nTabUsed;
 		else if (c == ' ') ++nSpaceUsed;
 	}
-	// 4”{ˆÈãs”‚É·‚ª‚ ‚éê‡‚Í–¾Šm‚È·‚ª‚ ‚é‚Æ”»’f‚µ‚ÄAƒCƒ“ƒfƒ“ƒg‚Ég‚í‚ê‚Ä‚¢‚é•¶ší•Ê‚ğŒˆ’è‚·‚é
+	// 4å€ä»¥ä¸Šè¡Œæ•°ã«å·®ãŒã‚ã‚‹å ´åˆã¯æ˜ç¢ºãªå·®ãŒã‚ã‚‹ã¨åˆ¤æ–­ã—ã¦ã€ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã«ä½¿ã‚ã‚Œã¦ã„ã‚‹æ–‡å­—ç¨®åˆ¥ã‚’æ±ºå®šã™ã‚‹
 	if (nSpaceUsed > nTabUsed * 4) style.character = IndentationStyle::Character::Spaces;
 	else if (nTabUsed > nSpaceUsed * 4) style.character = IndentationStyle::Character::Tabs;
 
-	// ”¼Šp‹ó”’‚ÅƒCƒ“ƒfƒ“ƒg‚ªs‚í‚ê‚Ä‚¢‚é‚Æ”»’f‚µ‚½ê‡A‘O‚Ìs‚Æ‚ÌƒCƒ“ƒfƒ“ƒg·‚Ì•p“x‚ğ’²‚×‚ÄÅ•p’l‚ÌƒCƒ“ƒfƒ“ƒg·‚ğƒ^ƒu•‚Æ‚·‚é
+	// åŠè§’ç©ºç™½ã§ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆãŒè¡Œã‚ã‚Œã¦ã„ã‚‹ã¨åˆ¤æ–­ã—ãŸå ´åˆã€å‰ã®è¡Œã¨ã®ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå·®ã®é »åº¦ã‚’èª¿ã¹ã¦æœ€é »å€¤ã®ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå·®ã‚’ã‚¿ãƒ–å¹…ã¨ã™ã‚‹
 	if (style.character == IndentationStyle::Character::Spaces) {
 		// https://heathermoor.medium.com/detecting-code-indentation-eff3ed0fb56b
 		std::array<int, TABSPACE_MAX> indents{}; // # spaces indent -> # times seen
