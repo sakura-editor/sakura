@@ -83,8 +83,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 	if (type.m_bDetectIndentationStyleOnFileLoad) {
 		// インデントスタイル検出
-		// 現時点の実装ではレイアウトに影響しないのでここで実行する
-		// 現時点ではインデントに半角空白を使用しているかTAB文字を使用しているかを検出するのみ
+		// 現時点の実装ではレイアウトには影響しないのでここで実行する
 		IndentationStyle indentStyle{};
 		DetectIndentationStyle(pcDoc, indentStyle);
 		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
@@ -92,10 +91,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 			bInsSpace = true;
 			pcDoc->m_bTabSpaceCurTemp = true;
 			auto& layoutMgr = pcDoc->m_cLayoutMgr;
-			int maxLineLayout = layoutMgr.GetMaxLineLayout().GetValue();
-			int maxLineKetas = (int)layoutMgr.GetMaxLineKetas();
-			CLayoutXInt nCharLayoutXPerKeta(maxLineLayout / maxLineKetas);
-			layoutMgr.SetTabSpaceInfo(CKetaXInt(indentStyle.tabSpace), nCharLayoutXPerKeta);
+			layoutMgr.SetTabSpaceKetas(CKetaXInt(indentStyle.tabSpace));
 		}else if (indentStyle.character == IndentationStyle::Character::Tabs) {
 			bInsSpace = false;
 		}
