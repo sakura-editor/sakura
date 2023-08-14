@@ -4,13 +4,13 @@
 #include "doc/CEditDoc.h"
 #include "config/app_constants.h"
 
-void DetectIndentationStyle(CEditDoc* pcDoc, IndentationStyle& style)
+void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style)
 {
 	const auto& cDocLineMgr = pcDoc->m_cDocLineMgr;
 	int nSpaceUsed = 0;
 	int nTabUsed = 0;
 	style.character = IndentationStyle::Character::Unknown;
-	for (size_t i=0; i<256; ++i) {
+	for (size_t i=0; i<nMaxLinesToCheck; ++i) {
 		const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt(i));
 		if (pLine == nullptr) {
 			break;
@@ -32,7 +32,7 @@ void DetectIndentationStyle(CEditDoc* pcDoc, IndentationStyle& style)
 		// https://heathermoor.medium.com/detecting-code-indentation-eff3ed0fb56b
 		std::array<int, TABSPACE_MAX> indents{}; // # spaces indent -> # times seen
 		int last = 0; // # leading spaces in the last line we saw
-		for (size_t i=0; i<256; ++i) {
+		for (size_t i=0; i<nMaxLinesToCheck; ++i) {
 			const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt(i));
 			if (pLine == nullptr) {
 				break;

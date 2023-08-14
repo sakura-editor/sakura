@@ -85,7 +85,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		// インデントスタイル検出
 		// 現時点の実装ではレイアウトには影響しないのでここで実行する
 		IndentationStyle indentStyle{};
-		DetectIndentationStyle(pcDoc, indentStyle);
+		DetectIndentationStyle(pcDoc, 256, indentStyle);
 		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
 		if (indentStyle.character == IndentationStyle::Character::Spaces) {
 			bInsSpace = true;
