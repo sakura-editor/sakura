@@ -10,6 +10,7 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 	int nSpaceUsed = 0;
 	int nTabUsed = 0;
 	style.character = IndentationStyle::Character::Unknown;
+	// 各行の行頭の文字が半角空白かタブ文字かをカウントする
 	for (size_t i=0; i<nMaxLinesToCheck; ++i) {
 		const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt(i));
 		if (pLine == nullptr) {
@@ -25,9 +26,11 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 		if (c == '\t') ++nTabUsed;
 		else if (c == ' ') ++nSpaceUsed;
 	}
+	// 4倍以上行数に差がある場合は明確な差があると判断して、インデントに使われている文字種別を決定する
 	if (nSpaceUsed > nTabUsed * 4) style.character = IndentationStyle::Character::Spaces;
 	else if (nTabUsed > nSpaceUsed * 4) style.character = IndentationStyle::Character::Tabs;
 
+	// 半角空白でインデントが行われていると判断した場合、前の行とのインデント差の頻度を調べて最頻値のインデント差をタブ幅とする
 	if (style.character == IndentationStyle::Character::Spaces) {
 		// https://heathermoor.medium.com/detecting-code-indentation-eff3ed0fb56b
 		std::array<int, TABSPACE_MAX> indents{}; // # spaces indent -> # times seen
