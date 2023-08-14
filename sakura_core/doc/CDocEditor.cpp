@@ -35,6 +35,7 @@
 #include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
 #include "_os/CClipboard.h"
+#include "parse/DetectIndentationStyle.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
@@ -78,11 +79,31 @@ void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
+	const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
+
+	if (type.m_bDetectIndentationStyleOnFileLoad) {
+		// インデントスタイル検出
+		// 現時点の実装ではレイアウトに影響しないのでここで実行する
+		// 現時点ではインデントに半角空白を使用しているかTAB文字を使用しているかを検出するのみ
+		IndentationStyle indentStyle{};
+		DetectIndentationStyle(pcDoc, indentStyle);
+		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
+		if (indentStyle.character == IndentationStyle::Character::Spaces) {
+			bInsSpace = true;
+			pcDoc->m_bTabSpaceCurTemp = true;
+			auto& layoutMgr = pcDoc->m_cLayoutMgr;
+			int maxLineLayout = layoutMgr.GetMaxLineLayout().GetValue();
+			int maxLineKetas = (int)layoutMgr.GetMaxLineKetas();
+			CLayoutXInt nCharLayoutXPerKeta(maxLineLayout / maxLineKetas);
+			layoutMgr.SetTabSpaceInfo(CKetaXInt(indentStyle.tabSpace), nCharLayoutXPerKeta);
+		}else if (indentStyle.character == IndentationStyle::Character::Tabs) {
+			bInsSpace = false;
+		}
+	}
 
 	//	May 12, 2000 genta
 	//	編集用改行コードの設定
 	{
-		const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
 		if ( pcDoc->m_cDocFile.GetCodeSet() == type.m_encoding.m_eDefaultCodetype ){
 			SetNewLineCode( type.m_encoding.m_eDefaultEoltype );	// 2011.01.24 ryoji デフォルトEOL
 		}

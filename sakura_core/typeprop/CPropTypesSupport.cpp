@@ -206,6 +206,8 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPSTR,  m_Types.m_bIndentCppStringIgnore );
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPCMT,  m_Types.m_bIndentCppCommentIgnore );
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPUNDO, m_Types.m_bIndentCppUndoSep );
+
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD, m_Types.m_bDetectIndentationStyleOnFileLoad );
 }
 
 /* ダイアログデータの取得 */
@@ -243,6 +245,8 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	m_Types.m_bIndentCppStringIgnore =  IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPSTR );
 	m_Types.m_bIndentCppCommentIgnore = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPCMT );
 	m_Types.m_bIndentCppUndoSep = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPUNDO );
+
+	m_Types.m_bDetectIndentationStyleOnFileLoad = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD );
 	return TRUE;
 }
 
