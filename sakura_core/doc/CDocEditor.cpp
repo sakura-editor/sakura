@@ -87,7 +87,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		IndentationStyle indentStyle{};
 		DetectIndentationStyle(pcDoc, 256, indentStyle);
 		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
-		if (indentStyle.character == IndentationStyle::Character::Spaces) {
+		if (indentStyle.character == IndentationStyle::Character::Spaces && indentStyle.tabSpace > 0) {
 			bInsSpace = true;
 			pcDoc->m_bTabSpaceCurTemp = true;
 			auto& layoutMgr = pcDoc->m_cLayoutMgr;

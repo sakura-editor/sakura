@@ -11,5 +11,5 @@ struct IndentationStyle
 	int tabSpace = -1;
 };
 
-void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style);
+void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style);
 

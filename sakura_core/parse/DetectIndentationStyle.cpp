@@ -4,7 +4,7 @@
 #include "doc/CEditDoc.h"
 #include "config/app_constants.h"
 
-void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style)
+void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style)
 {
 	const auto& cDocLineMgr = pcDoc->m_cDocLineMgr;
 	int nSpaceUsed = 0;
@@ -12,7 +12,7 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 	style.character = IndentationStyle::Character::Unknown;
 	// 各行の行頭の文字が半角空白かタブ文字かをカウントする
 	for (size_t i=0; i<nMaxLinesToCheck; ++i) {
-		const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt(i));
+		const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt((int)i));
 		if (pLine == nullptr) {
 			break;
 		}
@@ -33,10 +33,10 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 	// 半角空白でインデントが行われていると判断した場合、前の行とのインデント差の頻度を調べて最頻値のインデント差をタブ幅とする
 	if (style.character == IndentationStyle::Character::Spaces) {
 		// https://heathermoor.medium.com/detecting-code-indentation-eff3ed0fb56b
-		std::array<int, TABSPACE_MAX> indents{}; // # spaces indent -> # times seen
+		std::array<int, TABSPACE_MAX+1> indents{}; // # spaces indent -> # times seen
 		int last = 0; // # leading spaces in the last line we saw
 		for (size_t i=0; i<nMaxLinesToCheck; ++i) {
-			const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt(i));
+			const CDocLine* pLine = cDocLineMgr.GetLine(CLogicInt((int)i));
 			if (pLine == nullptr) {
 				break;
 			}
@@ -50,7 +50,7 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 			while (*str++ == ' ')
 				++width;
 			int indent = abs(width - last);
-			if (indent > 1) {
+			if (indent > 1 && indent < indents.size()) {
 				++indents[indent];
 			}
 			last = width;
@@ -58,11 +58,11 @@ void DetectIndentationStyle(CEditDoc* pcDoc, size_t nMaxLinesToCheck, Indentatio
 		// find most frequent non-zero width difference
 		int max = 0;
 		int maxIdx = -1;
-		for (int i=0; i<indents.size(); ++i) {
+		for (size_t i=1; i<indents.size(); ++i) {
 			auto freq = indents[i];
 			if (freq > max) {
 				max = freq;
-				maxIdx = i;
+				maxIdx = (int)i;
 			}
 		}
 		if (maxIdx != -1) {
