@@ -521,6 +521,18 @@ int CEditDoc::GetFontSize(bool bTempSetting) const
 	return GetShareData()->m_Common.m_sView.m_nPointSize;
 }
 
+ECharWidthCacheMode CEditDoc::GetFontCacheMode() const
+{
+	if (m_blfCurTemp) {
+		return CWM_CACHE_LOCAL;
+	}
+	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
+	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
+		return CWM_CACHE_LOCAL;
+	}
+	return CWM_CACHE_SHARE;
+}
+
 /* 編集ファイル情報を格納 */
 void CEditDoc::GetEditInfo(
 	EditInfo* pfi	//!< [out]

@@ -4873,16 +4873,9 @@ int CEditWnd::GetFontPointSize(bool bTempSetting) const
 	return GetEditDoc().GetFontSize(bTempSetting);
 }
 
-ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
+ECharWidthCacheMode CEditWnd::GetLogfontCacheMode() const
 {
-	if( GetDocument()->m_blfCurTemp ){
-		return CWM_CACHE_LOCAL;
-	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
-	if( bUseTypeFont ){
-		return CWM_CACHE_LOCAL;
-	}
-	return CWM_CACHE_SHARE;
+	return GetEditDoc().GetFontCacheMode();
 }
 
 /*!

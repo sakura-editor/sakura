@@ -347,7 +347,7 @@ public:
 
 	const LOGFONT&	    GetLogfont(bool bTempSetting = true) const;
 	int			        GetFontPointSize(bool bTempSetting = true) const;
-	ECharWidthCacheMode GetLogfontCacheMode();
+	ECharWidthCacheMode GetLogfontCacheMode() const;
 	double GetFontZoom();
 
 	void ClearViewCaretPosInfo();
