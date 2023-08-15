@@ -69,3 +69,24 @@ TEST(CEditWnd, GetLogfont)
 	typeConfig.m_bUseTypeFont = false;
 	EXPECT_EQ(&pDllShareData->m_Common.m_sView.m_lf, &wnd.GetLogfont(false));
 }
+
+TEST(CEditWnd, GetFontPointSize)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CEditWnd wnd(std::move(pShareDataAccessor));
+
+	doc.m_blfCurTemp = true;
+	EXPECT_EQ(doc.m_nPointSizeCur, wnd.GetFontPointSize(true));
+
+	auto& typeConfig = doc.m_cDocType.GetDocumentAttributeWrite();
+
+	typeConfig.m_bUseTypeFont = true;
+	doc.m_blfCurTemp = false;
+	EXPECT_EQ(doc.m_cDocType.GetDocumentAttribute().m_nPointSize, wnd.GetFontPointSize(true));
+
+	EXPECT_EQ(doc.m_cDocType.GetDocumentAttribute().m_nPointSize, wnd.GetFontPointSize(false));
+
+	typeConfig.m_bUseTypeFont = false;
+	EXPECT_EQ(pDllShareData->m_Common.m_sView.m_nPointSize, wnd.GetFontPointSize(false));
+}

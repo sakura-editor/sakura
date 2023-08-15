@@ -509,6 +509,18 @@ const LOGFONT& CEditDoc::GetLogFont(bool bTempSetting) const
 	return GetShareData()->m_Common.m_sView.m_lf;
 }
 
+int CEditDoc::GetFontSize(bool bTempSetting) const
+{
+	if (bTempSetting && m_blfCurTemp) {
+		return m_nPointSizeCur;
+	}
+	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
+	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
+		return typeConfig.m_nPointSize;
+	}
+	return GetShareData()->m_Common.m_sView.m_nPointSize;
+}
+
 /* 編集ファイル情報を格納 */
 void CEditDoc::GetEditInfo(
 	EditInfo* pfi	//!< [out]

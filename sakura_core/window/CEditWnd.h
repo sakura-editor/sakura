@@ -346,7 +346,7 @@ public:
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
 
 	const LOGFONT&	    GetLogfont(bool bTempSetting = true) const;
-	int			GetFontPointSize(bool bTempSetting = true);
+	int			        GetFontPointSize(bool bTempSetting = true) const;
 	ECharWidthCacheMode GetLogfontCacheMode();
 	double GetFontZoom();
 

@@ -104,6 +104,7 @@ public:
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
 
 	const LOGFONT&      GetLogFont(bool bTempSetting = true) const;
+	int                 GetFontSize(bool bTempSetting = true) const;
 
 	//状態
 	void GetEditInfo( EditInfo* ) const;	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
