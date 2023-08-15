@@ -168,6 +168,7 @@ static const EFunctionCode EIsModificationForbidden[] = {
 */
 CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	, m_cLayoutMgr(GetShareDataAccessor())
 	, m_cDocEditor(GetShareDataAccessor())
 	, m_cDocType(GetShareDataAccessor())
 	, m_cAutoSaveAgent(GetShareDataAccessor())
@@ -216,6 +217,10 @@ CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 
 	// 排他制御オプションを初期化
 	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
+
+	m_cLayoutMgr.SetLayoutInfo(true, false, m_cDocType.GetDocumentAttribute(),
+		m_cLayoutMgr.GetTabSpaceKetas(), m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
+		m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogFont());
 
 #ifdef _DEBUG
 	{
@@ -492,6 +497,42 @@ void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 	pSaveInfo->cEol        = m_cDocEditor.m_cNewLineCode; //編集時改行コードを保存時改行コードとして設定
 }
 
+const LOGFONT& CEditDoc::GetLogFont(bool bTempSetting) const
+{
+	if (bTempSetting && m_blfCurTemp) {
+		return m_lfCur;
+	}
+	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
+	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
+		return typeConfig.m_lf;
+	}
+	return GetShareData()->m_Common.m_sView.m_lf;
+}
+
+int CEditDoc::GetFontSize(bool bTempSetting) const
+{
+	if (bTempSetting && m_blfCurTemp) {
+		return m_nPointSizeCur;
+	}
+	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
+	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
+		return typeConfig.m_nPointSize;
+	}
+	return GetShareData()->m_Common.m_sView.m_nPointSize;
+}
+
+ECharWidthCacheMode CEditDoc::GetFontCacheMode() const
+{
+	if (m_blfCurTemp) {
+		return CWM_CACHE_LOCAL;
+	}
+	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
+	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
+		return CWM_CACHE_LOCAL;
+	}
+	return CWM_CACHE_SHARE;
+}
+
 /* 編集ファイル情報を格納 */
 void CEditDoc::GetEditInfo(
 	EditInfo* pfi	//!< [out]
@@ -666,7 +707,7 @@ void CEditDoc::OnChangeSetting(
 	int			i;
 	HWND		hwndProgress = NULL;
 
-	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
+	const auto  pCEditWnd = &GetEditWnd();
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();

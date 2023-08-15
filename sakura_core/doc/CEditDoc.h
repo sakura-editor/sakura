@@ -103,6 +103,10 @@ public:
 	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< 編集可能かどうか
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
 
+	const LOGFONT&      GetLogFont(bool bTempSetting = true) const;
+	int                 GetFontSize(bool bTempSetting = true) const;
+	ECharWidthCacheMode GetFontCacheMode() const;
+
 	//状態
 	void GetEditInfo( EditInfo* ) const;	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
 	bool IsAcceptLoad() const;				//!< このウィンドウで(新しいウィンドウを開かずに)新しいファイルを開けるか

@@ -33,13 +33,12 @@
 */
 void CViewFont::CreateFonts( const LOGFONT *plf )
 {
-	LOGFONT	lf;
-	int miniSize = ::DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize);
-	int quality = GetDllShareData().m_Common.m_sWindow.m_nMiniMapQuality;
-	int outPrec = OUT_TT_ONLY_PRECIS;	// FixedSys等でMiniMapのフォントが小さくならない修正
+	const auto miniSize = ::DpiScaleX(GetShareData()->m_Common.m_sWindow.m_nMiniMapFontSize);
+	const auto quality = static_cast<BYTE>(GetShareData()->m_Common.m_sWindow.m_nMiniMapQuality);
+	const auto outPrec = OUT_TT_ONLY_PRECIS;	// FixedSys等でMiniMapのフォントが小さくならない修正
 
 	/* フォント作成 */
-	lf = *plf;
+	auto lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
 		lf.lfQuality = quality;

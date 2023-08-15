@@ -48,3 +48,64 @@ TEST(CEditWnd, GetEditWnd_fail)
 {
 	EXPECT_ANY_THROW({ GetEditWnd(); });
 }
+
+TEST(CEditWnd, GetLogfont)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CEditWnd wnd(std::move(pShareDataAccessor));
+
+	doc.m_blfCurTemp = true;
+	EXPECT_EQ(&doc.m_lfCur, &wnd.GetLogfont(true));
+
+	auto& typeConfig = doc.m_cDocType.GetDocumentAttributeWrite();
+
+	typeConfig.m_bUseTypeFont = true;
+	doc.m_blfCurTemp = false;
+	EXPECT_EQ(&doc.m_cDocType.GetDocumentAttribute().m_lf, &wnd.GetLogfont(true));
+
+	EXPECT_EQ(&doc.m_cDocType.GetDocumentAttribute().m_lf, &wnd.GetLogfont(false));
+
+	typeConfig.m_bUseTypeFont = false;
+	EXPECT_EQ(&pDllShareData->m_Common.m_sView.m_lf, &wnd.GetLogfont(false));
+}
+
+TEST(CEditWnd, GetFontPointSize)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CEditWnd wnd(std::move(pShareDataAccessor));
+
+	doc.m_blfCurTemp = true;
+	EXPECT_EQ(doc.m_nPointSizeCur, wnd.GetFontPointSize(true));
+
+	auto& typeConfig = doc.m_cDocType.GetDocumentAttributeWrite();
+
+	typeConfig.m_bUseTypeFont = true;
+	doc.m_blfCurTemp = false;
+	EXPECT_EQ(doc.m_cDocType.GetDocumentAttribute().m_nPointSize, wnd.GetFontPointSize(true));
+
+	EXPECT_EQ(doc.m_cDocType.GetDocumentAttribute().m_nPointSize, wnd.GetFontPointSize(false));
+
+	typeConfig.m_bUseTypeFont = false;
+	EXPECT_EQ(pDllShareData->m_Common.m_sView.m_nPointSize, wnd.GetFontPointSize(false));
+}
+
+TEST(CEditWnd, GetLogfontCacheMode)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	CEditDoc doc(pShareDataAccessor);
+	CEditWnd wnd(std::move(pShareDataAccessor));
+
+	doc.m_blfCurTemp = true;
+	EXPECT_EQ(CWM_CACHE_LOCAL, wnd.GetLogfontCacheMode());
+
+	auto& typeConfig = doc.m_cDocType.GetDocumentAttributeWrite();
+
+	doc.m_blfCurTemp = false;
+	typeConfig.m_bUseTypeFont = true;
+	EXPECT_EQ(CWM_CACHE_LOCAL, wnd.GetLogfontCacheMode());
+
+	typeConfig.m_bUseTypeFont = false;
+	EXPECT_EQ(CWM_CACHE_SHARE, wnd.GetLogfontCacheMode());
+}

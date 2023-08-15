@@ -24,6 +24,8 @@
 #define SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
 #pragma once
 
+#include "env/ShareDataAccessor.hpp"
+
 #include <Windows.h>// 2002/2/10 aroka
 #include <vector>
 #include <memory_resource>
@@ -93,14 +95,14 @@ public:
 	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
 */
 //2007.10.15 XYLogicalToLayoutを廃止。LogicToLayoutに統合。
-class CLayoutMgr : public CProgressSubject
+class CLayoutMgr : public CProgressSubject, private ShareDataAccessorClient
 {
 private:
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)( CLayout* );
 
 public:
 	//生成と破棄
-	CLayoutMgr();
+	explicit CLayoutMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 	~CLayoutMgr();
 	void Create( CEditDoc*, CDocLineMgr* );
 	void Init();

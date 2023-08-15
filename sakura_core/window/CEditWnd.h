@@ -100,6 +100,8 @@ class CEditWnd
 	, public ShareDataAccessorClient
 , public CDocListenerEx
 {
+	using CViewFontPtr = std::shared_ptr<CViewFont>;
+
 	/*!
 	 * ウインドウの初期化が完了したかどうかを保持するフラグ
 	 *
@@ -343,9 +345,9 @@ public:
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
 
-	const LOGFONT&	GetLogfont(bool bTempSetting = true);
-	int			GetFontPointSize(bool bTempSetting = true);
-	ECharWidthCacheMode GetLogfontCacheMode();
+	const LOGFONT&	    GetLogfont(bool bTempSetting = true) const;
+	int			        GetFontPointSize(bool bTempSetting = true) const;
+	ECharWidthCacheMode GetLogfontCacheMode() const;
 	double GetFontZoom();
 
 	void ClearViewCaretPosInfo();
@@ -369,8 +371,8 @@ public:
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
-	CViewFont* m_pcViewFont        = nullptr;		//!< フォント
-	CViewFont* m_pcViewFontMiniMap = nullptr;		//!< フォント
+	CViewFontPtr    m_pcViewFont;           //!< フォント
+	CViewFontPtr    m_pcViewFontMiniMap;    //!< フォント
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
