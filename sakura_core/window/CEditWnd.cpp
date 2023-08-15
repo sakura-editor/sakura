@@ -4874,16 +4874,9 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 	m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 }
 
-const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting)
+const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting) const
 {
-	if( bTempSetting && GetDocument()->m_blfCurTemp ){
-		return GetDocument()->m_lfCur;
-	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
-	if( bUseTypeFont ){
-		return GetDocument()->m_cDocType.GetDocumentAttribute().m_lf;
-	}
-	return m_pShareData->m_Common.m_sView.m_lf;
+	return GetEditDoc().GetLogFont(bTempSetting);
 }
 
 int CEditWnd::GetFontPointSize(bool bTempSetting)

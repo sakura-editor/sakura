@@ -492,6 +492,18 @@ void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 	pSaveInfo->cEol        = m_cDocEditor.m_cNewLineCode; //編集時改行コードを保存時改行コードとして設定
 }
 
+const LOGFONT& CEditDoc::GetLogFont(bool bTempSetting) const
+{
+	if (bTempSetting && m_blfCurTemp) {
+		return m_lfCur;
+	}
+	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
+	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
+		return typeConfig.m_lf;
+	}
+	return GetShareData()->m_Common.m_sView.m_lf;
+}
+
 /* 編集ファイル情報を格納 */
 void CEditDoc::GetEditInfo(
 	EditInfo* pfi	//!< [out]
