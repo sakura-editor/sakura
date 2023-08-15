@@ -29,13 +29,17 @@
 
 #include "doc/CDocTypeSetting.h" // ColorInfo !!
 
-class CViewFont{
+#include "env/ShareDataAccessor.hpp"
+
+class CViewFont : private ShareDataAccessorClient
+{
 	using Me = CViewFont;
 
 public:
-	CViewFont(const LOGFONT *plf, bool bMiniMap = false)
+	explicit CViewFont(const LOGFONT* plf, bool bMiniMap = false, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>())
+		: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+		, m_bMiniMap(bMiniMap)
 	{
-		m_bMiniMap = bMiniMap;
 		CreateFonts(plf);
 	}
 	CViewFont(const Me&) = delete;

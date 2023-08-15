@@ -269,12 +269,6 @@ CEditWnd::~CEditWnd()
 	}
 	m_pcEditView = NULL;
 
-	delete m_pcViewFont;
-	m_pcViewFont = NULL;
-
-	delete m_pcViewFontMiniMap;
-	m_pcViewFontMiniMap = NULL;
-
 	delete[] m_pszMenubarMessage;
 	delete[] m_pszLastCaption;
 
@@ -622,17 +616,12 @@ HWND CEditWnd::Create(
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
 
-	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
-		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
-		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
-
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView();
 	m_pcEditView = m_pcEditViewArr[0];
 
-	m_pcViewFont = new CViewFont(&GetLogfont());
-
-	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
+	m_pcViewFont        = std::make_shared<CViewFont>(&GetLogfont(), false, GetShareDataAccessor());
+	m_pcViewFontMiniMap = std::make_shared<CViewFont>(&GetLogfont(), true, GetShareDataAccessor());
 
 	wmemset( m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 

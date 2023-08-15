@@ -168,6 +168,7 @@ static const EFunctionCode EIsModificationForbidden[] = {
 */
 CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	, m_cLayoutMgr(GetShareDataAccessor())
 	, m_cDocEditor(GetShareDataAccessor())
 	, m_cDocType(GetShareDataAccessor())
 	, m_cAutoSaveAgent(GetShareDataAccessor())
@@ -216,6 +217,10 @@ CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 
 	// 排他制御オプションを初期化
 	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
+
+	m_cLayoutMgr.SetLayoutInfo(true, false, m_cDocType.GetDocumentAttribute(),
+		m_cLayoutMgr.GetTabSpaceKetas(), m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
+		m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogFont());
 
 #ifdef _DEBUG
 	{
@@ -678,7 +683,7 @@ void CEditDoc::OnChangeSetting(
 	int			i;
 	HWND		hwndProgress = NULL;
 
-	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
+	const auto  pCEditWnd = &GetEditWnd();
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
