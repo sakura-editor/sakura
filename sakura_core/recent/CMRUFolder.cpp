@@ -23,22 +23,13 @@
 #include "util/string_ex2.h"
 #include "util/window.h"
 
-/*!	コンストラクタ
-
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-*/
+/*!
+ * コンストラクタ
+ */
 CMRUFolder::CMRUFolder(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 	, m_cRecentFolder(GetShareDataAccessor())
 {
-	//	初期化。
-	m_pShareData = &GetDllShareData();
-}
-
-/*	デストラクタ	*/
-CMRUFolder::~CMRUFolder()
-{
-	m_cRecentFolder.Terminate();
 }
 
 /*!

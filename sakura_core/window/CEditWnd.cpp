@@ -219,9 +219,11 @@ LRESULT CALLBACK CEditWndProc(
 	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+/*!
+ * コンストラクタ
+ */
 CEditWnd::CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 	, m_hWnd( NULL )
 	, m_cToolbar(GetShareDataAccessor())
 	, m_cTabWnd(GetShareDataAccessor())
@@ -252,9 +254,6 @@ CEditWnd::CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = GetShareData();
-
 	m_pcEditDoc = CEditDoc::getInstance();
 }
 
