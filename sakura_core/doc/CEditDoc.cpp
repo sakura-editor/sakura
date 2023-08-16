@@ -216,7 +216,7 @@ CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	m_cDocEditor.m_cNewLineCode = ref.m_encoding.m_eDefaultEoltype;
 
 	// 排他制御オプションを初期化
-	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
+	m_cDocFile.SetShareMode( GetShareData()->m_Common.m_sFile.m_nFileShareMode );
 
 	m_cLayoutMgr.SetLayoutInfo(true, false, m_cDocType.GetDocumentAttribute(),
 		m_cLayoutMgr.GetTabSpaceKetas(), m_cLayoutMgr.m_tsvInfo.m_nTsvMode,

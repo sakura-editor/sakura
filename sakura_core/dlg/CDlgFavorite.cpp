@@ -401,7 +401,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CreateSizeBox();
 	CDialog::OnSize();
 
-	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
+	RECT rcDialog = GetShareData()->m_Common.m_sOthers.m_rcFavoriteDialog;
 	if( rcDialog.left != 0 ||
 		rcDialog.bottom != 0 ){
 		m_xPos = rcDialog.left;
@@ -498,7 +498,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgFavorite::OnDestroy( void )
 {
 	CDialog::OnDestroy();
-	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
+	RECT& rect = GetShareData()->m_Common.m_sOthers.m_rcFavoriteDialog;
 	rect.left = m_xPos;
 	rect.top = m_yPos;
 	rect.right = rect.left + m_nWidth;

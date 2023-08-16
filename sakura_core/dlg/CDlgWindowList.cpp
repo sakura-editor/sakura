@@ -205,7 +205,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 		GetItemClientRect(anchorList[i].id, m_rcItems[i]);
 	}
 
-	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
+	RECT rcDialog = GetShareData()->m_Common.m_sOthers.m_rcWindowListDialog;
 	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
 		m_xPos = rcDialog.left;
 		m_yPos = rcDialog.top;
@@ -239,7 +239,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 BOOL CDlgWindowList::OnDestroy( void )
 {
 	CDialog::OnDestroy();
-	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
+	RECT& rect = GetShareData()->m_Common.m_sOthers.m_rcWindowListDialog;
 	rect.left = m_xPos;
 	rect.top = m_yPos;
 	rect.right = rect.left + m_nWidth;

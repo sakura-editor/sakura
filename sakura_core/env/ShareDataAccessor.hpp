@@ -58,14 +58,6 @@ protected:
 	}
 
 	/*!
-	 * 共有メモリ構造体への参照を取得します。
-	 */
-	DLLSHAREDATA& GetDllShareData() const
-	{
-		return *GetShareData();
-	}
-
-	/*!
 	 * 共有メモリ構造体のアドレスを取得します。
 	 */
 	DLLSHAREDATA* GetShareData() const
