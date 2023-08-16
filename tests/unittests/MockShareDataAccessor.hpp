@@ -25,6 +25,7 @@
 #pragma once
 
 #include "env/ShareDataAccessor.hpp"
+#include "env/DLLSHAREDATA.h"
 
 #include <gmock/gmock.h>
 #include <tuple>

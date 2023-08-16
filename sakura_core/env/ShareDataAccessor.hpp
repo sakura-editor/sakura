@@ -40,9 +40,6 @@ struct ShareDataAccessor
 
 /*!
  * 共有メモリに依存するクラスの基底クラス
- *
- * コンストラクタ内でGetDllShareData()を呼び出してクラッシュするクラスを
- * テスト可能にするために用意した基底クラスです。
  */
 class ShareDataAccessorClient
 {
@@ -74,5 +71,26 @@ protected:
 	DLLSHAREDATA* GetShareData() const
 	{
 		return _ShareDataAccessor->GetShareData();
+	}
+};
+
+/*!
+ * 構築時に共有メモリをキャッシュするクラスの基底クラス
+ *
+ * コンストラクタ内で共有メモリにアクセスしてクラッシュするクラスを
+ * テスト可能にするために用意した基底クラスです。
+ *
+ * @date 2002/02/17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+ */
+class ShareDataAccessorClientWithCache : public ShareDataAccessorClient
+{
+public:
+	DLLSHAREDATA* m_pShareData;
+
+	explicit ShareDataAccessorClientWithCache(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+		: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	{
+		/* 共有データ構造体のアドレスを返す */
+		m_pShareData = GetShareData();
 	}
 };
