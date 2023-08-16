@@ -23,6 +23,8 @@
 #define SAKURA_CPROPTYPES_2A255D3D_78BC_4B7A_85F7_7BA7ABBF3DF2_H_
 #pragma once
 
+#include "env/ShareDataAccessor.hpp"
+
 #include "types/CType.h" // STypeConfig
 
 class CPropTypes;
@@ -68,15 +70,15 @@ enum PropTypeSheetOrder {
 -----------------------------------------------------------------------*/
 /*!
 	@brief タイプ別設定ダイアログボックス
-
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-*/
-class CPropTypes{
+ */
+class CPropTypes : public ShareDataAccessorClientWithCache
+{
 
 public:
 	//生成と破棄
-	CPropTypes();
-	~CPropTypes();
+	explicit CPropTypes(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	~CPropTypes() = default;
+
 	void Create(HINSTANCE hInstApp, HWND hwndParent);	//!< 初期化
 	INT_PTR DoPropertySheet(int nPageNum);		//!< プロパティシートの作成
 
@@ -99,7 +101,6 @@ protected:
 
 	//ダイアログデータ
 	PropTypeSheetOrder	m_nPageNum;
-	DLLSHAREDATA*		m_pShareData;
 	STypeConfig			m_Types;
 
 	// スクリーン用データ	2010/5/10 CPropTypes_P1_Screen.cppから移動

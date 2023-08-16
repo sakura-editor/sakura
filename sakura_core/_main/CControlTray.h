@@ -41,16 +41,14 @@ class CPropertyManager;
 /*!
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
-	
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-*/
-class CControlTray
+ */
+class CControlTray : private ShareDataAccessorClientWithCache
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CControlTray();
+	explicit CControlTray(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 	~CControlTray();
 
 	/*
@@ -121,7 +119,6 @@ private:
 	HWND			m_hWnd;
 	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
 
-	DLLSHAREDATA*	m_pShareData;
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
 	int				m_nCurSearchKeySequence;
 

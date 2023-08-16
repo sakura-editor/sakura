@@ -33,14 +33,21 @@
 #define SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
 #pragma once
 
+#include "env/ShareDataAccessor.hpp"
+
 #include "CDataProfile.h"
 #include "env/DLLSHAREDATA.h"
 
 using std::wstring;
 
-class CImpExpManager
+class CImpExpManager : public ShareDataAccessorClientWithCache
 {
 public:
+	explicit CImpExpManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>())
+		: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
+	{
+	}
+
 	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
 	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
 	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const wstring& sFileName, wstring& sErrMsg);
@@ -88,13 +95,12 @@ class CImpExpType : public CImpExpManager
 {
 public:
 	// Constructor
-	CImpExpType( int nIdx, STypeConfig& types, HWND hwndList )
-		: m_nIdx( nIdx )
+	explicit CImpExpType( int nIdx, STypeConfig& types, HWND hwndList, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>() )
+		: CImpExpManager(std::move(ShareDataAccessor_))
+		, m_nIdx( nIdx )
 		, m_Types( types )
 		, m_hwndList( hwndList )
 	{
-		/* 共有データ構造体のアドレスを返す */
-		m_pShareData = &GetDllShareData();
 	}
 
 public:
@@ -115,7 +121,6 @@ private:
 	HWND			m_hwndList;
 
 	// 内部使用
-	DLLSHAREDATA*	m_pShareData;
 	int				m_nColorType;
 	wstring 		m_sColorFile;
 	bool			m_bAddType;

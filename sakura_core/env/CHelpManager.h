@@ -30,23 +30,21 @@
 #define SAKURA_CHELPMANAGER_57445D73_99E9_4B85_A905_47685753D1DF_H_
 #pragma once
 
-struct DLLSHAREDATA;
-DLLSHAREDATA& GetDllShareData();
+#include "env/ShareDataAccessor.hpp"
+#include "env/DLLSHAREDATA.h"
 
 //!ヘルプ管理
-class CHelpManager{
+class CHelpManager : private ShareDataAccessorClientWithCache
+{
 public:
-	CHelpManager()
-	{
-		m_pShareData = &GetDllShareData();
-	}
+	explicit CHelpManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+
 	//ヘルプ関連	//@@@ 2002.2.3 YAZAKI
 	bool			ExtWinHelpIsSet( const STypeConfig* pType = NULL );		//	タイプがnTypeのときに、外部ヘルプが設定されているか。
 	const WCHAR*	GetExtWinHelp( const STypeConfig* pType = NULL );		//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
 	bool			ExtHTMLHelpIsSet( const STypeConfig* pType = NULL );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
 	const WCHAR*	GetExtHTMLHelp( const STypeConfig* pType = NULL );		//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
 	bool			HTMLHelpIsSingle( const STypeConfig* pType = NULL );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
-private:
-	DLLSHAREDATA* m_pShareData;
 };
+
 #endif /* SAKURA_CHELPMANAGER_57445D73_99E9_4B85_A905_47685753D1DF_H_ */

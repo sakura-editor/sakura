@@ -83,17 +83,16 @@ enum PropComSheetOrder {
 
 	1つのダイアログボックスに複数のプロパティページが入った構造に
 	なっており、Dialog procedureとEvent Dispatcherがページごとにある．
-
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-*/
-class CPropCommon : public ShareDataAccessorClient
+ */
+class CPropCommon : public ShareDataAccessorClientWithCache
 {
 public:
 	/*
 	||  Constructors
 	*/
 	explicit CPropCommon(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CPropCommon();
+	~CPropCommon() = default;
+
 	//	Sep. 29, 2001 genta マクロクラスを渡すように;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	void Create( HWND hwndParent, CImageListMgr* pcIcons, CMenuDrawer* pMenuDrawer );	/* 初期化 */
@@ -118,7 +117,6 @@ public:
 	HWND				m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND				m_hwndThis;		/* このダイアログのハンドル */
 	PropComSheetOrder	m_nPageNum;
-	DLLSHAREDATA*		m_pShareData;
 	int					m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List

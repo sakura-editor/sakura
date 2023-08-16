@@ -37,12 +37,12 @@
 #include "String_define.h"
 
 struct CDlgOpenFile_CommonItemDialog final
-	:
-	public IDlgOpenFile,
+	: private ShareDataAccessorClientWithCache
+	, public IDlgOpenFile,
 	private IFileDialogEvents,
 	private IFileDialogControlEvents
 {
-	CDlgOpenFile_CommonItemDialog();
+	explicit CDlgOpenFile_CommonItemDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 
 	void Create(
 		HINSTANCE					hInstance,
@@ -61,6 +61,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo,
 						 bool bSimpleMode ) override;
 
+	bool IsItemDialog() const override { return true; }
+
 	bool DoModalOpenDlgImpl0( bool bAllowMultiSelect,
 							  std::vector<std::wstring>* pFileNames,
 							  LPCWSTR fileName,
@@ -76,8 +78,6 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
-
-	DLLSHAREDATA*	m_pShareData;
 
 	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
@@ -399,13 +399,11 @@ enum CtrlId {
 	COMBO_OPENFOLDER,
 };
 
-CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
+CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
 
 	WCHAR	szFile[_MAX_PATH + 1];
 	WCHAR	szDrive[_MAX_DRIVE];
@@ -417,9 +415,6 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
-
-
-	return;
 }
 
 /* 初期化 */
@@ -940,8 +935,7 @@ int CDlgOpenFile_CommonItemDialog::AddComboCodePages( int nSelCode )
 	return nSel;
 }
 
-std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog()
+std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 {
-	std::shared_ptr<IDlgOpenFile> ret(new CDlgOpenFile_CommonItemDialog());
-	return ret;
+	return std::make_shared<CDlgOpenFile_CommonItemDialog>(std::move(ShareDataAccessor_));
 }

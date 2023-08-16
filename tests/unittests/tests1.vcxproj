@@ -138,8 +138,12 @@
     <ClCompile Include="test-cdoclinemgr.cpp" />
     <ClCompile Include="test-ceditdoc.cpp" />
     <ClCompile Include="test-ceditwnd.cpp" />
+    <ClCompile Include="test-cformatmanager.cpp" />
+    <ClCompile Include="test-chelpmanager.cpp" />
     <ClCompile Include="test-chokanmgr.cpp" />
+    <ClCompile Include="test-cimpexpmanager.cpp" />
     <ClCompile Include="test-cppa.cpp" />
+    <ClCompile Include="test-cproptypes.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />
     <ClCompile Include="test-csharedata.cpp" />
