@@ -1301,6 +1301,7 @@ bool CMacro::HandleCommand(
 	case F_CHGWRAPCOLUMN:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
 	case F_MACROSLEEP:
 	case F_SETDRAWSWITCH:	//  再描画スイッチを取得、設定する
+	case F_CHGINSSPACE:		// SPACEの挿入を取得、設定する
 		{
 			VARIANT vArg[1];			// HandleFunctionに渡す引数
 			VARIANT vResult;			// HandleFunctionから返る値
@@ -2456,6 +2457,16 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			int nLine = (Int)View->GetTextArea().GetViewTopLine();
 			Wrap( &Result )->Receive( nLine + 1 );
+			return true;
+		}
+	case F_CHGINSSPACE:
+		{
+			if( ArgSize != 1 ) return false;
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			auto& bInsSpace = View->m_pcEditDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
+			Wrap( &Result )->Receive( bInsSpace ? 1 : 0 );
+			if (varCopy.Data.iVal == 0) bInsSpace = false;
+			else if (varCopy.Data.iVal == 1) bInsSpace = true;
 			return true;
 		}
 	default:
