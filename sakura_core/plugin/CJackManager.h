@@ -74,9 +74,10 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : public TSingleton<CJackManager>{
+class CJackManager final : public TSingleton<CJackManager>, private ShareDataAccessorClientWithCache
+{
 	friend class TSingleton<CJackManager>;
-	CJackManager();
+	explicit CJackManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
 
 	typedef std::wstring wstring;
 
@@ -101,7 +102,7 @@ public:
 
 	//メンバ変数
 private:
-	DLLSHAREDATA* m_pShareData;
 	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
+
 #endif /* SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_ */

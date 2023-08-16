@@ -813,7 +813,7 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 
 CTabWnd::CTabWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 : CWnd(L"::CTabWnd")
-	, ShareDataAccessorClient(std::move(ShareDataAccessor_))
+	, ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 , m_eTabPosition( TabPosition_None )
 , m_eDragState( DRAG_NONE )
 , m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
@@ -828,21 +828,11 @@ CTabWnd::CTabWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 ,m_hwndSizeBox(NULL)
 ,m_bSizeBox(false)
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
 	m_hwndToolTip = NULL;
 	m_hIml = NULL;
-
-	return;
-}
-
-CTabWnd::~CTabWnd()
-{
-	return;
 }
 
 /* ウィンドウ オープン */

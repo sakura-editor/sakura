@@ -22,36 +22,18 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
  */
-#pragma once
+#include "typeprop/CImpExpManager.h"
 
-#include "env/ShareDataAccessor.hpp"
-#include "env/DLLSHAREDATA.h"
-
-#include <gmock/gmock.h>
-#include <tuple>
-
-struct MockShareDataAccessor : public ShareDataAccessor
-{
-	~MockShareDataAccessor() override = default;
-
-	MOCK_CONST_METHOD0(GetShareData, DLLSHAREDATA*());
-};
+#include "MockShareDataAccessor.hpp"
 
 /*!
- * ダミーの共有メモリを作成する
+ * 構築するだけ。
  */
-inline auto MakeDummyShareData()
+TEST(CImpExpType, Construct)
 {
-	// アクセサのモックを生成する
-	auto pShareDataAccessor = std::make_shared<MockShareDataAccessor>();
-
-	// ダミー共有メモリをnewする
-	auto pDllShareData = std::make_shared<DLLSHAREDATA>();
-
-	// ダミー共有メモリをモックに設定する
-	EXPECT_CALL(*pShareDataAccessor, GetShareData())
-		.WillRepeatedly(::testing::Return(pDllShareData.get()));
-
-	// ダミー共有メモリとアクセサをtupleとして返却する
-	return std::make_tuple(std::move(pDllShareData), std::move(pShareDataAccessor));
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	int         nIdx = 1;
+	STypeConfig types = {};
+	const auto  hwndList= (HWND)nullptr;
+	EXPECT_NO_THROW({ CImpExpType dlg(nIdx, types, hwndList, std::move(pShareDataAccessor)); });
 }

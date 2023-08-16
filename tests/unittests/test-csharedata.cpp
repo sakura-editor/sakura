@@ -22,19 +22,16 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
-
-#include <tchar.h>
-#include <Windows.h>
-#include <windowsx.h>
-#include <Shlwapi.h>
-
-#include <memory>
-
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 #include "_main/CCommandLine.h"
 #include "_main/CNormalProcess.h"
+
+#include "doc/CEditDoc.h"
+#include "view/CEditView.h"
+
+#include "MockShareDataAccessor.hpp"
 
 /*!
  * @brief CShareDataのテスト
@@ -61,4 +58,16 @@ TEST( CShareData, test )
 	CSelectLang::ChangeLang(L"sakura_lang_en_US.dll");
 	pShareData->ConvertLangValues(values, false);
 	pShareData->RefreshString();
+}
+
+TEST(CSearchKeywordManager, Construct)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	EXPECT_NO_THROW({ CSearchKeywordManager mgr(std::move(pShareDataAccessor)); });
+}
+
+TEST(CTagJumpManager, Construct)
+{
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	EXPECT_NO_THROW({ CTagJumpManager mgr(std::move(pShareDataAccessor)); });
 }

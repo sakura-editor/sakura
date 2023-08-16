@@ -37,15 +37,14 @@
 #define SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
 #pragma once
 
-#include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
-#include <vector>
 #include "recent/CRecentFile.h"
+
+#include <vector>
 
 struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 class CMenuDrawer;
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFile : public ShareDataAccessorClient
+class CMRUFile : private ShareDataAccessorClientWithCache
 {
 	using Me = CMRUFile;
 
@@ -56,7 +55,7 @@ public:
 	Me& operator = (const Me&) = delete;
 	CMRUFile(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CMRUFile();
+	~CMRUFile() = default;
 
 	//	メニューを取得する
 	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
@@ -74,11 +73,8 @@ public:
 	bool GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const;	//	ファイル名で指定したEditInfo（情報をまるごと）
 	void Add( EditInfo* pEditInfo );		//	*pEditInfoを追加する。
 
-protected:
-	//	共有メモリアクセス用。
-	struct DLLSHAREDATA*	m_pShareData;		//	共有メモリを参照するよ。
-
 private:
 	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
 };
+
 #endif /* SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_ */

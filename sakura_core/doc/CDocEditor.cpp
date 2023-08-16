@@ -47,7 +47,7 @@ CDocEditor::CDocEditor(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 , m_bIsDocModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 	//	Oct. 2, 2005 genta 挿入モード
-	this->SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
+	this->SetInsMode( GetShareData()->m_Common.m_sGeneral.m_bIsINSMode );
 }
 
 /*! 変更フラグの設定

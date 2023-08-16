@@ -96,9 +96,9 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-	: public TSingleInstance<CEditWnd>
-	, public ShareDataAccessorClient
+	: private ShareDataAccessorClientWithCache
 , public CDocListenerEx
+	, public TSingleInstance<CEditWnd>
 {
 	using CViewFontPtr = std::shared_ptr<CViewFont>;
 
@@ -393,9 +393,6 @@ private:
 	int				m_nActivePaneIndex;	//!< 有効なビューのindex
 	int				m_nEditViewCount;	//!< 有効なビューの数
 	const int		m_nEditViewMaxCount;//!< ビューの最大数=4
-
-	//共有データ
-	DLLSHAREDATA*	m_pShareData;
 
 	//ヘルパ
 	CMenuDrawer		m_cMenuDrawer;

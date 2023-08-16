@@ -18,8 +18,6 @@
 
 #include "CWnd.h"
 
-struct DLLSHAREDATA;
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -30,24 +28,20 @@ struct DLLSHAREDATA;
 	@brief 分割線ウィンドウクラス
 	
 	４分割ウィンドウの管理と分割線の描画を行う。
-	
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CSplitterWnd final : public CWnd, public ShareDataAccessorClient
+class CSplitterWnd final : public CWnd, private ShareDataAccessorClientWithCache
 {
 public:
 	/*
 	||  Constructors
 	*/
 	explicit CSplitterWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CSplitterWnd() override;
+	~CSplitterWnd() override = default;
 
 private: // 2002/2/3 aroka
 	/*
 	||  Attributes & Operations
 	*/
-	DLLSHAREDATA*	m_pShareData;
-
 	int				m_nAllSplitRows;		/* 分割行数 */
 	int				m_nAllSplitCols;		/* 分割桁数 */
 	int				m_nVSplitPos;			/* 垂直分割位置 */
@@ -93,4 +87,5 @@ protected:
 	int HitTestSplitter(int xPos, int yPos);	/* 分割バーへのヒットテスト */
 	void DrawSplitter(int xPos, int yPos, int bEraseOld);	/* 分割トラッカーの表示 */
 };
+
 #endif /* SAKURA_CSPLITTERWND_8F27B39C_B96B_4964_ACD8_E157A146F892_H_ */

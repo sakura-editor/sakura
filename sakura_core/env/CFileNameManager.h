@@ -30,21 +30,22 @@
 #define SAKURA_CFILENAMEMANAGER_2B89B426_470E_40D6_B62E_5321E383ECD6_H_
 #pragma once
 
+#include "env/ShareDataAccessor.hpp"
+
+#include "config/maxdata.h"
+#include "util/design_template.h"
+
 #include <string_view>
 
-#include "util/design_template.h"
-#include "config/maxdata.h"
-
-struct DLLSHAREDATA;
 struct EditInfo;
-DLLSHAREDATA& GetDllShareData();
 
 //!ファイル名管理
-class CFileNameManager : public TSingleton<CFileNameManager>{
+class CFileNameManager : public TSingleton<CFileNameManager>, private ShareDataAccessorClientWithCache
+{
 	friend class TSingleton<CFileNameManager>;
-	CFileNameManager()
+	explicit CFileNameManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>())
+		: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 	{
-		m_pShareData = &GetDllShareData();
 		m_nTransformFileNameCount = -1;
 	}
 
@@ -78,11 +79,10 @@ public:
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
 private:
-	DLLSHAREDATA* m_pShareData;
-
 	// ファイル名簡易表示用キャッシュ
 	int		m_nTransformFileNameCount; // 有効数
 	WCHAR	m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 	int		m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 };
+
 #endif /* SAKURA_CFILENAMEMANAGER_2B89B426_470E_40D6_B62E_5321E383ECD6_H_ */

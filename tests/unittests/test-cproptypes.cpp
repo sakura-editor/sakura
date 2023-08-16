@@ -22,36 +22,15 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
  */
-#pragma once
+#include "typeprop/CPropTypes.h"
 
-#include "env/ShareDataAccessor.hpp"
-#include "env/DLLSHAREDATA.h"
-
-#include <gmock/gmock.h>
-#include <tuple>
-
-struct MockShareDataAccessor : public ShareDataAccessor
-{
-	~MockShareDataAccessor() override = default;
-
-	MOCK_CONST_METHOD0(GetShareData, DLLSHAREDATA*());
-};
+#include "MockShareDataAccessor.hpp"
 
 /*!
- * ダミーの共有メモリを作成する
+ * タイプ別設定ダイアログ、構築するだけ。
  */
-inline auto MakeDummyShareData()
+TEST(CPropTypes, Construct)
 {
-	// アクセサのモックを生成する
-	auto pShareDataAccessor = std::make_shared<MockShareDataAccessor>();
-
-	// ダミー共有メモリをnewする
-	auto pDllShareData = std::make_shared<DLLSHAREDATA>();
-
-	// ダミー共有メモリをモックに設定する
-	EXPECT_CALL(*pShareDataAccessor, GetShareData())
-		.WillRepeatedly(::testing::Return(pDllShareData.get()));
-
-	// ダミー共有メモリとアクセサをtupleとして返却する
-	return std::make_tuple(std::move(pDllShareData), std::move(pShareDataAccessor));
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	EXPECT_NO_THROW({ CPropTypes dlg(std::move(pShareDataAccessor)); });
 }

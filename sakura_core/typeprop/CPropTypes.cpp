@@ -84,7 +84,8 @@ GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,	CPropTypesKeyHelp)
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CPropTypes::CPropTypes()
+CPropTypes::CPropTypes(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 {
 	{
 		assert( sizeof(CPropTypesScreen)  - sizeof(CPropTypes) == 0 );
@@ -94,9 +95,6 @@ CPropTypes::CPropTypes()
 		assert( sizeof(CPropTypesRegex)   - sizeof(CPropTypes) == 0 );
 		assert( sizeof(CPropTypesKeyHelp) - sizeof(CPropTypes) == 0 );
 	}
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
 
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
 	m_pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
@@ -108,8 +106,6 @@ CPropTypes::CPropTypes()
 
 	(static_cast<CPropTypesScreen*>(this))->CPropTypes_Screen();
 }
-
-CPropTypes::~CPropTypes() = default;
 
 /* 初期化 */
 void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )

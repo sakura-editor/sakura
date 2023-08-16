@@ -214,20 +214,14 @@ protected:
  * 拡張版ダイアログの基底クラス
  *
  * 共有メモリにアクセスする機能を付加する。
- * 
- * @date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
  */
-class CSakuraDialog : public CDialog, public ShareDataAccessorClient
+class CSakuraDialog : public CDialog, public ShareDataAccessorClientWithCache
 {
 public:
-	DLLSHAREDATA* m_pShareData;
-
 	explicit CSakuraDialog(WORD idDialog_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>())
 		: CDialog(idDialog_, std::move(User32Dll_))
-		, ShareDataAccessorClient(std::move(ShareDataAccessor_))
+		, ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 	{
-		// 共有メモリのアドレスをメンバ変数に取得する
-		m_pShareData = &GetDllShareData();
 	}
 	~CSakuraDialog() override = default;
 

@@ -22,10 +22,22 @@
 #include "dlg/CDlgOpenFile.h"
 #include "env/DLLSHAREDATA.h"
 
-extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog();
-extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog();
+extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
 
-CDlgOpenFile::CDlgOpenFile() = default;
+/*!
+ * コンストラクタ
+ */
+CDlgOpenFile::CDlgOpenFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+{
+	if (GetShareData()->m_Common.m_sEdit.m_bVistaStyleFileDialog) {
+		m_pImpl = New_CDlgOpenFile_CommonItemDialog(GetShareDataAccessor());
+	}
+	else {
+		m_pImpl = New_CDlgOpenFile_CommonFileDialog(GetShareDataAccessor());
+	}
+}
 
 void CDlgOpenFile::Create(
 	HINSTANCE					hInstance,
@@ -35,12 +47,6 @@ void CDlgOpenFile::Create(
 	const std::vector<LPCWSTR>& vMRU,
 	const std::vector<LPCWSTR>& vOPENFOLDER
 ) {
-	if( GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog ){
-		m_pImpl = New_CDlgOpenFile_CommonItemDialog();
-	}
-	else {
-		m_pImpl = New_CDlgOpenFile_CommonFileDialog();
-	}
 	m_pImpl->Create(hInstance, hwndParent, pszUserWildCard, pszDefaultPath, vMRU, vOPENFOLDER);
 }
 
@@ -69,6 +75,16 @@ inline bool CDlgOpenFile::DoModalSaveDlg(
 	bool bSimpleMode)
 {
 	return m_pImpl->DoModalSaveDlg(pSaveInfo, bSimpleMode);
+}
+
+/*!
+ * 実装がアイテムダイアログかどうかを返します。
+ *
+ * このメソッドはテスト用に作成したもので、機能としては不要です。
+ */
+bool CDlgOpenFile::IsItemDialog() const
+{
+	return m_pImpl->IsItemDialog();
 }
 
 /* static */

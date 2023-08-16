@@ -36,13 +36,11 @@
 #define SAKURA_CMRUFOLDER_32D69CDD_037F_4DE1_961E_B730F56F4189_H_
 #pragma once
 
-#include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include "recent/CRecentFolder.h"
 
 class CMenuDrawer;
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFolder : public ShareDataAccessorClient
+class CMRUFolder : private ShareDataAccessorClientWithCache
 {
 	using Me = CMRUFolder;
 
@@ -53,7 +51,7 @@ public:
 	Me& operator = (const Me&) = delete;
 	CMRUFolder(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CMRUFolder();
+	~CMRUFolder() = default;
 
 	//	メニューを取得する
 	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
@@ -70,11 +68,8 @@ public:
 	void Add( const WCHAR* pszFolder );	//	pszFolderを追加する。
 	const WCHAR* GetPath(int num) const;
 
-protected:
-	//	共有メモリアクセス用。
-	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
-
 private:
 	CRecentFolder	m_cRecentFolder;	//履歴	//@@@ 2003.04.08 MIK
 };
+
 #endif /* SAKURA_CMRUFOLDER_32D69CDD_037F_4DE1_961E_B730F56F4189_H_ */
