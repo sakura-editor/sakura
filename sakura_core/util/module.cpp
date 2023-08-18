@@ -26,8 +26,16 @@
 
 #include "StdAfx.h"
 #include "module.h"
+
+#include "config/system_constants.h"
 #include "util/os.h"
 #include "util/file.h"
+
+#include <unordered_map>
+#include <string_view>
+
+#include "sakura_rc.h"
+
 #include <Shlwapi.h>	// 2006.06.17 ryoji
 
 /*! 
@@ -163,6 +171,33 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSma
 	);
 	
 	return hIcon;
+}
+
+/*!
+ * アプリアイコンを取得します。
+ *
+ * GetAppIcon関数の使い勝手を改善するラッパー関数です。
+ */
+HICON LoadAppIcon(int iconId, bool isSmall)
+{
+	// アイコンIDと代替ファイル名の紐付けマップ
+	using myMap = std::unordered_map<int, std::wstring_view>;
+	const myMap iconFileNames = {
+		{ ICON_DEFAULT_APP,  FN_APP_ICON  },
+		{ ICON_DEFAULT_GREP, FN_GREP_ICON },
+	};
+
+	// 紐付けマップから代替ファイル名を取得
+	const auto found = iconFileNames.find(iconId);
+	if (found == iconFileNames.cend())
+	{
+		return nullptr;
+	}
+
+	// 実行ファイルのハンドルを取得
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+
+	return GetAppIcon(hInstance, iconId, found->second.data(), isSmall);
 }
 
 struct VS_VERSION_INFO_HEAD {

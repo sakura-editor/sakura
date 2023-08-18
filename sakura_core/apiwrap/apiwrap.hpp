@@ -60,3 +60,8 @@ inline HCURSOR LoadSysCursor(_In_ LPCWSTR lpCursorName)
 {
 	return ::LoadCursorW(NULL, lpCursorName);
 }
+
+inline HICON LoadSysIcon(_In_ LPCWSTR lpIconName)
+{
+	return ::LoadIconW(NULL, lpIconName);
+}

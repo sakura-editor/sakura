@@ -151,6 +151,7 @@
     <ClCompile Include="test-cwnd.cpp" />
     <ClCompile Include="test-czipfile.cpp" />
     <ClCompile Include="test-extmodules.cpp" />
+    <ClCompile Include="test-module.cpp" />
     <ClCompile Include="test-printEFunctionCode.cpp">
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
