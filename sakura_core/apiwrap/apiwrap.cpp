@@ -25,49 +25,9 @@
 #include "StdAfx.h"
 #include "apiwrap/apiwrap.hpp"
 
+#include "apiwrap/cstring.hpp"
+
 namespace apiwrap {
-
-struct cstring
-{
-	std::wstring_view _View;
-	std::wstring      _Buffer;
-
-	explicit cstring(_In_opt_ LPCWSTR pszValue)
-	{
-		if (pszValue && *pszValue)
-		{
-			_View = pszValue;
-		}
-	}
-
-	explicit cstring(std::wstring_view value)
-		: _View(value)
-	{
-		if (0 < _View.length() && *(_View.data() + _View.length()))
-		{
-			_Buffer = _View;
-			_View   = _Buffer;
-		}
-	}
-
-	virtual ~cstring() = default;
-
-	explicit virtual operator std::wstring_view() const noexcept
-	{
-		return _View;
-	}
-};
-
-LPCWSTR get_psz_or_null(const cstring& str) noexcept
-{
-	if (const auto text = static_cast<std::wstring_view>(str);
-		0 < text.length())
-	{
-		return text.data();
-	}
-
-	return nullptr;
-}
 
 bool SetWindowTextW(_In_ HWND hWnd, std::wstring_view text, std::shared_ptr<User32Dll> _User32Dll)
 {

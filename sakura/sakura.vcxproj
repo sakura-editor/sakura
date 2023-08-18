@@ -141,6 +141,7 @@
     <ClInclude Include="..\sakura_core\apimodule\User32Dll.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\apiwrap.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
+    <ClInclude Include="..\sakura_core\apiwrap\cstring.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
     <ClInclude Include="..\sakura_core\basis\TComImpl.hpp" />
@@ -498,6 +499,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sakura_core\apiwrap\apiwrap.cpp" />
+    <ClCompile Include="..\sakura_core\apiwrap\cstring.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />

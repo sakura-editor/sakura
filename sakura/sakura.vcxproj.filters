@@ -1132,6 +1132,9 @@
     <ClInclude Include="..\sakura_core\env\ShareDataAccessor.hpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\cstring.hpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2340,6 +2343,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\env\ShareDataAccessor.cpp">
       <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\cstring.cpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
