@@ -451,7 +451,9 @@
     <ClInclude Include="..\sakura_core\view\figures\CFigure_Tab.h" />
     <ClInclude Include="..\sakura_core\view\figures\CFigure_ZenSpace.h" />
     <ClInclude Include="..\sakura_core\window\CAutoScrollWnd.h" />
+    <ClInclude Include="..\sakura_core\window\CCustomWnd.hpp" />
     <ClInclude Include="..\sakura_core\window\CEditWnd.h" />
+    <ClInclude Include="..\sakura_core\window\CGenericWnd.hpp" />
     <ClInclude Include="..\sakura_core\window\CMainStatusBar.h" />
     <ClInclude Include="..\sakura_core\window\CMainToolBar.h" />
     <ClInclude Include="..\sakura_core\window\CSplitBoxWnd.h" />
@@ -864,7 +866,9 @@
     <ClCompile Include="..\sakura_core\view\figures\CFigure_Tab.cpp" />
     <ClCompile Include="..\sakura_core\view\figures\CFigure_ZenSpace.cpp" />
     <ClCompile Include="..\sakura_core\window\CAutoScrollWnd.cpp" />
+    <ClCompile Include="..\sakura_core\window\CCustomWnd.cpp" />
     <ClCompile Include="..\sakura_core\window\CEditWnd.cpp" />
+    <ClCompile Include="..\sakura_core\window\CGenericWnd.cpp" />
     <ClCompile Include="..\sakura_core\window\CMainStatusBar.cpp" />
     <ClCompile Include="..\sakura_core\window\CMainToolBar.cpp" />
     <ClCompile Include="..\sakura_core\window\CSplitBoxWnd.cpp" />

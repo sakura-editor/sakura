@@ -62,6 +62,32 @@ struct User32Dll
 		return ::CreateDialogParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
 	}
 
+	virtual HWND CreateWindowExW(
+		_In_ DWORD dwExStyle,
+		_In_opt_ LPCWSTR lpClassName,
+		_In_opt_ LPCWSTR lpWindowName,
+		_In_ DWORD dwStyle,
+		_In_ int X,
+		_In_ int Y,
+		_In_ int nWidth,
+		_In_ int nHeight,
+		_In_opt_ HWND hWndParent,
+		_In_opt_ HMENU hMenu,
+		_In_opt_ HINSTANCE hInstance,
+		_In_opt_ LPVOID lpParam) const
+	{
+		return ::CreateWindowExW(dwExStyle, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+	}
+
+	virtual LRESULT DefWindowProcW(
+		_In_ HWND hWnd,
+		_In_ UINT uMsg,
+		_In_ WPARAM wParam,
+		_In_ LPARAM lParam) const
+	{
+		return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+	}
+
 	virtual INT_PTR DialogBoxParamW(
 		_In_opt_ HINSTANCE hInstance,
 		_In_ LPCWSTR       lpTemplateName,
@@ -70,6 +96,14 @@ struct User32Dll
 		_In_ LPARAM        dwInitParam) const
 	{
 		return ::DialogBoxParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+	}
+
+	virtual BOOL GetClassInfoExW(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCWSTR lpszClass,
+		_Out_ LPWNDCLASSEXW lpwcx) const
+	{
+		return ::GetClassInfoExW(hInstance, lpszClass, lpwcx);
 	}
 
 	virtual HWND GetDlgItem(
@@ -91,6 +125,12 @@ struct User32Dll
 		_In_ HWND hWnd) const
 	{
 		return ::GetWindowTextLengthW(hWnd);
+	}
+
+	virtual ATOM RegisterClassExW(
+		_In_ CONST WNDCLASSEXW* lpwcex) const
+	{
+		return ::RegisterClassExW(lpwcex);
 	}
 
 	virtual LRESULT SendMessageW(

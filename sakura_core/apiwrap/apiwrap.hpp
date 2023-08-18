@@ -27,6 +27,7 @@
 #include "apimodule/User32Dll.hpp"
 
 #include <CommCtrl.h>
+#include <windowsx.h>
 
 #include <string>
 #include <string_view>
@@ -46,4 +47,16 @@ std::wstring GetDlgItemTextW(_In_ HWND hDlg, int nIDDlgItem, std::shared_ptr<Use
 void         SendEmLimitTextW(_In_ HWND hEdit, size_t cchLimit, std::shared_ptr<User32Dll> _User32Dll = std::make_shared<User32Dll>());
 void         SendEmLimitTextW(_In_ HWND hDlg, int nIDDlgItem, size_t cchLimit, std::shared_ptr<User32Dll> _User32Dll = std::make_shared<User32Dll>());
 
+bool         IsWndClassRegistered(std::wstring_view className, std::shared_ptr<User32Dll> _User32Dll = std::make_shared<User32Dll>());
+
 } //end of namespace apiwrap
+
+constexpr HBRUSH MakeHBrush(int sysColorIndex)
+{
+	return std::bit_cast<HBRUSH>(static_cast<size_t>(sysColorIndex + 1));
+}
+
+inline HCURSOR LoadSysCursor(_In_ LPCWSTR lpCursorName)
+{
+	return ::LoadCursorW(NULL, lpCursorName);
+}

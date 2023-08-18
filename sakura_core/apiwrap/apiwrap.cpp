@@ -118,4 +118,24 @@ void SendEmLimitTextW(_In_ HWND hDlg, int nIDDlgItem, size_t cchLimit, std::shar
 	}
 }
 
+/*!
+ * 指定した名前のウインドウクラスが登録済みかどうか調べます。
+ *
+ * @retval true  登録済み
+ * @retval false 未登録
+ */
+bool IsWndClassRegistered(std::wstring_view className, std::shared_ptr<User32Dll> _User32Dll)
+{
+	if (className.empty())
+	{
+		return false;
+	}
+
+	const auto buff1 = apiwrap::cstring(className);
+	className = static_cast<std::wstring_view>(buff1);
+
+	WNDCLASSEXW wc = { sizeof(WNDCLASSEXW), 0 };
+	return _User32Dll->GetClassInfoExW(NULL, className.data(), &wc);
+}
+
 } //end of namespace apiwrap

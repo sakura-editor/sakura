@@ -116,6 +116,7 @@
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-apiwrap.cpp" />
+    <ClCompile Include="test-ccustomwnd.cpp" />
     <ClCompile Include="test-cdialog.cpp" />
     <ClCompile Include="test-cdlgcompare.cpp" />
     <ClCompile Include="test-cdlgdiff.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />
     <ClCompile Include="test-csharedata.cpp" />
+    <ClCompile Include="test-cwnd.cpp" />
     <ClCompile Include="test-czipfile.cpp" />
     <ClCompile Include="test-extmodules.cpp" />
     <ClCompile Include="test-printEFunctionCode.cpp">

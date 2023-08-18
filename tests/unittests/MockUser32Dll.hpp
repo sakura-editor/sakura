@@ -28,6 +28,10 @@
 
 #include <gmock/gmock.h>
 
+#ifndef MOCK_CONST_METHOD12
+# define MOCK_CONST_METHOD12(m, ...) GMOCK_INTERNAL_MOCK_METHODN(const, , m, 12, __VA_ARGS__)
+#endif
+
 struct MockUser32Dll : public User32Dll
 {
 	MOCK_CONST_METHOD5_T(CreateDialogIndirectParamW, HWND(
@@ -44,12 +48,37 @@ struct MockUser32Dll : public User32Dll
 		_In_opt_ DLGPROC   lpDialogFunc,
 		_In_ LPARAM        dwInitParam));
 
+	MOCK_CONST_METHOD12(CreateWindowExW, HWND(
+		_In_ DWORD dwExStyle,
+		_In_opt_ LPCWSTR lpClassName,
+		_In_opt_ LPCWSTR lpWindowName,
+		_In_ DWORD dwStyle,
+		_In_ int X,
+		_In_ int Y,
+		_In_ int nWidth,
+		_In_ int nHeight,
+		_In_opt_ HWND hWndParent,
+		_In_opt_ HMENU hMenu,
+		_In_opt_ HINSTANCE hInstance,
+		_In_opt_ LPVOID lpParam));
+
+	MOCK_CONST_METHOD4(DefWindowProcW, LRESULT(
+		_In_ HWND hWnd,
+		_In_ UINT uMsg,
+		_In_ WPARAM wParam,
+		_In_ LPARAM lParam));
+
 	MOCK_CONST_METHOD5_T(DialogBoxParamW, INT_PTR(
 		_In_opt_ HINSTANCE hInstance,
 		_In_ LPCWSTR       lpTemplateName,
 		_In_opt_ HWND      hWndParent,
 		_In_opt_ DLGPROC   lpDialogFunc,
 		_In_ LPARAM        dwInitParam));
+
+	MOCK_CONST_METHOD3(GetClassInfoExW, BOOL(
+		_In_opt_ HINSTANCE hInstance,
+		_In_ LPCWSTR lpszClass,
+		_Out_ LPWNDCLASSEXW lpwcx));
 
 	MOCK_CONST_METHOD2(GetDlgItem, HWND(
 		_In_opt_ HWND hDlg,
@@ -62,6 +91,9 @@ struct MockUser32Dll : public User32Dll
 
 	MOCK_CONST_METHOD1(GetWindowTextLengthW, int(
 		_In_ HWND hWnd));
+
+	MOCK_CONST_METHOD1(RegisterClassExW, ATOM(
+		_In_ CONST WNDCLASSEXW* lpwcex));
 
 	MOCK_CONST_METHOD4(SendMessageW, LRESULT(
 		_In_ HWND hWnd,
