@@ -116,6 +116,7 @@
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-apiwrap.cpp" />
+    <ClCompile Include="test-ccontroltray.cpp" />
     <ClCompile Include="test-ccustomwnd.cpp" />
     <ClCompile Include="test-cdialog.cpp" />
     <ClCompile Include="test-cdlgcompare.cpp" />

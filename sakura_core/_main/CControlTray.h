@@ -27,7 +27,8 @@
 #define SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_
 #pragma once
 
-#include <Windows.h>
+#include "window/CCustomWnd.hpp"
+
 #include "uiparts/CMenuDrawer.h"
 #include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
@@ -42,7 +43,7 @@ class CPropertyManager;
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
  */
-class CControlTray : private ShareDataAccessorClientWithCache
+class CControlTray : public CCustomWnd, private ShareDataAccessorClientWithCache
 {
 private:
 	/*!
@@ -63,15 +64,15 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CControlTray(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CControlTray();
+	explicit CControlTray(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>(), std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
+	~CControlTray() override;
 
 	/*
 	|| メンバ関数
 	*/
 	HWND Create(HINSTANCE hInstance);	/* 作成 */
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;	/* メッセージ処理 */
 	void MessageLoop( void );	/* メッセージループ */
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
@@ -131,7 +132,6 @@ private:
 	CPropertyManager*	m_pcPropertyManager;
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
 	HINSTANCE		m_hInstance;
-	HWND			m_hWnd;
 	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
 
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
@@ -143,4 +143,5 @@ private:
 
 	WCHAR			m_szLanguageDll[MAX_PATH];
 };
+
 #endif /* SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_ */

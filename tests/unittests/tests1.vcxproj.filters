@@ -276,6 +276,9 @@
     <ClCompile Include="test-module.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-ccontroltray.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
