@@ -46,6 +46,8 @@
 
 #include "doc/CEditDoc.h"
 
+#include "window/CCustomWnd.hpp"
+
 #include <shellapi.h>// HDROP
 
 #include "CMainToolBar.h"
@@ -96,7 +98,8 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-	: private ShareDataAccessorClientWithCache
+	: public CCustomWnd
+	, private ShareDataAccessorClientWithCache
 , public CDocListenerEx
 	, public TSingleInstance<CEditWnd>
 {
@@ -147,7 +150,7 @@ public:
 
 	//管理
 	void MessageLoop( void );								/* メッセージループ */
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 
 	//各種イベント
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
@@ -275,7 +278,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
 	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
 	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
@@ -354,13 +356,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-private:
-	//自ウィンドウ
-	HWND			m_hWnd;
-
-	//親ウィンドウ
-	HWND			m_hwndParent;
-
 public:
 	//子ウィンドウ
 	CMainToolBar	m_cToolbar;			//!< ツールバー
