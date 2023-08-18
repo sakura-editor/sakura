@@ -383,8 +383,6 @@ LRESULT CControlTray::DispatchEvent(
 	EditNode*	pEditNodeArr;
 	static HWND	hwndHtmlHelp;
 
-	static WORD		wHotKeyMods;
-	static WORD		wHotKeyCode;
 	LPMEASUREITEMSTRUCT	lpmis;	/* 項目サイズ情報 */
 	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
 	int					nItemWidth;

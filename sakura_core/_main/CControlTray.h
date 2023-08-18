@@ -44,6 +44,21 @@ class CPropertyManager;
  */
 class CControlTray : private ShareDataAccessorClientWithCache
 {
+private:
+	/*!
+	 * タスクトレイ左クリックメニューのホットキー(修飾キー)
+	 *
+	 * DispatchEvent関数内にstatic定義されていた変数をスコープ変更。
+	 */
+	WORD wHotKeyMods = 0;
+
+	/*!
+	 * タスクトレイ左クリックメニューのホットキー(仮想キー)
+	 *
+	 * DispatchEvent関数内にstatic定義されていた変数をスコープ変更。
+	 */
+	WORD wHotKeyCode = 0;
+
 public:
 	/*
 	||  Constructors
