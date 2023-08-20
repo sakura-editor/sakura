@@ -1132,6 +1132,15 @@
     <ClInclude Include="..\sakura_core\env\ShareDataAccessor.hpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\cstring.hpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\window\CCustomWnd.hpp">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\window\CGenericWnd.hpp">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2340,6 +2349,15 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\env\ShareDataAccessor.cpp">
       <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\cstring.cpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\window\CCustomWnd.cpp">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\window\CGenericWnd.cpp">
+      <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

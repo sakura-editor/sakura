@@ -25,49 +25,9 @@
 #include "StdAfx.h"
 #include "apiwrap/apiwrap.hpp"
 
+#include "apiwrap/cstring.hpp"
+
 namespace apiwrap {
-
-struct cstring
-{
-	std::wstring_view _View;
-	std::wstring      _Buffer;
-
-	explicit cstring(_In_opt_ LPCWSTR pszValue)
-	{
-		if (pszValue && *pszValue)
-		{
-			_View = pszValue;
-		}
-	}
-
-	explicit cstring(std::wstring_view value)
-		: _View(value)
-	{
-		if (0 < _View.length() && *(_View.data() + _View.length()))
-		{
-			_Buffer = _View;
-			_View   = _Buffer;
-		}
-	}
-
-	virtual ~cstring() = default;
-
-	explicit virtual operator std::wstring_view() const noexcept
-	{
-		return _View;
-	}
-};
-
-LPCWSTR get_psz_or_null(const cstring& str) noexcept
-{
-	if (const auto text = static_cast<std::wstring_view>(str);
-		0 < text.length())
-	{
-		return text.data();
-	}
-
-	return nullptr;
-}
 
 bool SetWindowTextW(_In_ HWND hWnd, std::wstring_view text, std::shared_ptr<User32Dll> _User32Dll)
 {
@@ -156,6 +116,26 @@ void SendEmLimitTextW(_In_ HWND hDlg, int nIDDlgItem, size_t cchLimit, std::shar
 	{
 		SendEmLimitTextW(hWnd, cchLimit, std::move(_User32Dll));
 	}
+}
+
+/*!
+ * 指定した名前のウインドウクラスが登録済みかどうか調べます。
+ *
+ * @retval true  登録済み
+ * @retval false 未登録
+ */
+bool IsWndClassRegistered(std::wstring_view className, std::shared_ptr<User32Dll> _User32Dll)
+{
+	if (className.empty())
+	{
+		return false;
+	}
+
+	const auto buff1 = apiwrap::cstring(className);
+	className = static_cast<std::wstring_view>(buff1);
+
+	WNDCLASSEXW wc = { sizeof(WNDCLASSEXW), 0 };
+	return _User32Dll->GetClassInfoExW(NULL, className.data(), &wc);
 }
 
 } //end of namespace apiwrap

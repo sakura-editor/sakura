@@ -246,3 +246,8 @@ TEST(apiwrap, MockedSendEmLimitTextW_fail)
 
 	apiwrap::SendEmLimitTextW(hWnd, nIDDlgItem, cchLimit, std::move(pMock));
 }
+
+TEST(IsWndClassRegistered, bad_arg)
+{
+	EXPECT_FALSE(apiwrap::IsWndClassRegistered(L""));
+}

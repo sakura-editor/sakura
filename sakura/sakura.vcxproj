@@ -141,6 +141,7 @@
     <ClInclude Include="..\sakura_core\apimodule\User32Dll.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\apiwrap.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
+    <ClInclude Include="..\sakura_core\apiwrap\cstring.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
     <ClInclude Include="..\sakura_core\basis\TComImpl.hpp" />
@@ -450,7 +451,9 @@
     <ClInclude Include="..\sakura_core\view\figures\CFigure_Tab.h" />
     <ClInclude Include="..\sakura_core\view\figures\CFigure_ZenSpace.h" />
     <ClInclude Include="..\sakura_core\window\CAutoScrollWnd.h" />
+    <ClInclude Include="..\sakura_core\window\CCustomWnd.hpp" />
     <ClInclude Include="..\sakura_core\window\CEditWnd.h" />
+    <ClInclude Include="..\sakura_core\window\CGenericWnd.hpp" />
     <ClInclude Include="..\sakura_core\window\CMainStatusBar.h" />
     <ClInclude Include="..\sakura_core\window\CMainToolBar.h" />
     <ClInclude Include="..\sakura_core\window\CSplitBoxWnd.h" />
@@ -498,6 +501,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sakura_core\apiwrap\apiwrap.cpp" />
+    <ClCompile Include="..\sakura_core\apiwrap\cstring.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />
@@ -862,7 +866,9 @@
     <ClCompile Include="..\sakura_core\view\figures\CFigure_Tab.cpp" />
     <ClCompile Include="..\sakura_core\view\figures\CFigure_ZenSpace.cpp" />
     <ClCompile Include="..\sakura_core\window\CAutoScrollWnd.cpp" />
+    <ClCompile Include="..\sakura_core\window\CCustomWnd.cpp" />
     <ClCompile Include="..\sakura_core\window\CEditWnd.cpp" />
+    <ClCompile Include="..\sakura_core\window\CGenericWnd.cpp" />
     <ClCompile Include="..\sakura_core\window\CMainStatusBar.cpp" />
     <ClCompile Include="..\sakura_core\window\CMainToolBar.cpp" />
     <ClCompile Include="..\sakura_core\window\CSplitBoxWnd.cpp" />

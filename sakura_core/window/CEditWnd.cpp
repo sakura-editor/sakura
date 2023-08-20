@@ -195,36 +195,12 @@ CEditWnd& GetEditWnd( void )
 	return *pcEditWnd;
 }
 
-//	/* メッセージループ */
-//	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
-
-LRESULT CALLBACK CEditWndProc(
-	HWND	hwnd,	// handle of window
-	UINT	uMsg,	// message identifier
-	WPARAM	wParam,	// first message parameter
-	LPARAM	lParam 	// second message parameter
-)
-{
-	if (const auto lpCreateStruct = std::bit_cast<LPCREATESTRUCT>(lParam);
-		uMsg == WM_NCCREATE && lpCreateStruct && lpCreateStruct->lpCreateParams)
-	{
-		auto pcWnd = static_cast<CEditWnd*>(lpCreateStruct->lpCreateParams);
-		SetWindowLongPtrW(hwnd, GWLP_USERDATA, std::bit_cast<LONG_PTR>(pcWnd));
-	}
-
-	CEditWnd* pcWnd = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-	if( pcWnd ){
-		return pcWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
-	}
-	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
-}
-
 /*!
  * コンストラクタ
  */
 CEditWnd::CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
-	, m_hWnd( NULL )
+	: CCustomWnd(std::make_shared<User32Dll>())
+	, ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 	, m_cToolbar(GetShareDataAccessor())
 	, m_cTabWnd(GetShareDataAccessor())
 	, m_cFuncKeyWnd(GetShareDataAccessor())
@@ -386,28 +362,14 @@ void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGr
 HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
 	// -- -- -- -- ウィンドウクラス登録 -- -- -- -- //
-	WNDCLASSEX	wc;
-	//	Apr. 27, 2000 genta
-	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
-	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
-	wc.lpfnWndProc		= CEditWndProc;
-	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= sizeof(LONG_PTR) * 1;                                  //拡張領域を1個確保。
-	wc.hInstance		= G_AppInstance();
-	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
-
-	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
-	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
-	wc.lpszMenuName		= NULL;	// MAKEINTRESOURCE( IDR_MENU1 );	2010/5/16 Uchi
-	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
-
-	//	Dec. 6, 2002 genta
-	//	small icon指定のため RegisterClassExに変更
-	wc.cbSize			= sizeof( wc );
-	wc.hIconSm			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
-	ATOM	atom = RegisterClassEx( &wc );
-	if( 0 == atom ){
+	if (!RegisterWnd(GSTR_EDITWINDOWNAME,
+		static_cast<HCURSOR>(nullptr),
+		static_cast<HBRUSH>(nullptr),
+		CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW,
+		LoadAppIcon(ICON_DEFAULT_APP, false),
+		LoadAppIcon(ICON_DEFAULT_APP, true),
+		sizeof(LONG_PTR) * 1))
+	{
 		//	2004.05.13 Moca return NULLを有効にした
 		return NULL;
 	}
@@ -416,21 +378,12 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	CMyRect rc;
 	_GetWindowRectForInit(&rc, nGroup, sTabGroupInfo);
 
+	// 仕様差分を吸収させる
+	rc.right  -= rc.left; 
+	rc.bottom -= rc.top;
+
 	//作成
-	HWND hwndResult = ::CreateWindowEx(
-		0,				 	// extended window style
-		GSTR_EDITWINDOWNAME,		// pointer to registered class name
-		GSTR_EDITWINDOWNAME,		// pointer to window name
-		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,	// window style
-		rc.left,			// horizontal position of window
-		rc.top,				// vertical position of window
-		rc.Width(),			// window width
-		rc.Height(),		// window height
-		NULL,				// handle to parent or owner window
-		NULL,				// handle to menu or child-window identifier
-		G_AppInstance(),		// handle to application instance
-		this				// pointer to window-creation data
-	);
+	const auto hwndResult = CreateWnd(NULL, GSTR_EDITWINDOWNAME, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, 0L, 0L, &rc);
 	return hwndResult;
 }
 
@@ -2106,7 +2059,7 @@ LRESULT CEditWnd::DispatchEvent(
 		break;
 	}
 
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	return __super::DispatchEvent(hwnd, uMsg, wParam, lParam);
 }
 
 /*! 終了時の処理
