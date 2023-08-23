@@ -611,7 +611,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return hr; }
 	FILEOPENDIALOGOPTIONS options;
 	hr = pFileOpenDialog->GetOptions(&options); RETURN_IF_FAILED
-	options |= FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM | FOS_FILEMUSTEXIST | FOS_CREATEPROMPT;
+	options |= FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM | FOS_FILEMUSTEXIST;
 	if (bAllowMultiSelect) {
 		options |= FOS_ALLOWMULTISELECT;
 	}
