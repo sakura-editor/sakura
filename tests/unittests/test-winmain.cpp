@@ -192,18 +192,24 @@ void CControlProcess_Start(std::wstring_view profileName)
 
 /*!
  * @brief コントロールプロセスに終了指示を出して終了を待つ
- *
- * CControlProcess::Terminateとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存コードに該当する処理はありません。
  */
 void CControlProcess_Terminate(std::wstring_view profileName)
 {
-	// トレイウインドウを検索する
-	std::wstring strCEditAppName( GSTR_CEDITAPP );
-	if (profileName.length() > 0) {
-		strCEditAppName += profileName;
+	// 共有メモリオブジェクト
+	CShareData cShareData;
+
+	// エディタと同じ方法で共有メモリを初期化する
+	if( !cShareData.InitShareData( profileName ) )
+	{
+		// 共有メモリオブジェクトが取得できなければそのまま抜ける
+		return;
 	}
-	HWND hTrayWnd = ::FindWindow( strCEditAppName.data(), strCEditAppName.data() );
+
+	// プロセス内にマップされた共有メモリのアドレスを取得する
+	const auto pShareData = &::GetDllShareData();
+
+	// 共有メモリからトレイウインドウのハンドルを取得する
+	HWND hTrayWnd = pShareData->m_sHandles.m_hwndTray;
 	if( !hTrayWnd ){
 		// ウインドウがなければそのまま抜ける
 		return;
@@ -236,6 +242,8 @@ void CControlProcess_Terminate(std::wstring_view profileName)
 			throw std::runtime_error( "waitProcess is timeout." );
 		}
 	}
+
+	cShareData.RefreshString();
 }
 
 /*!
