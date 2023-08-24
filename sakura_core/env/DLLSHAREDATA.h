@@ -173,6 +173,8 @@ struct DLLSHAREDATA{
 	// -- -- テンポラリ -- -- //
 	//指定行へジャンプダイアログのオプション
 	bool						m_bLineNumIsCRLF_ForJump;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+
+	bool IsValid() const noexcept;
 };
 
 class CShareDataLockCounter{

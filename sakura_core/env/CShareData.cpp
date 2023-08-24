@@ -57,11 +57,10 @@ const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
-CShareData::CShareData()
+CShareData::CShareData(std::shared_ptr<Kernel32Dll> Kernel32Dll_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: Kernel32DllClient(std::move(Kernel32Dll_))
+	, ShareDataAccessorClient(std::move(ShareDataAccessor_))
 {
-	m_hFileMap   = NULL;
-	m_pShareData = NULL;
-	m_pvTypeSettings = NULL;
 }
 
 /*!
@@ -73,7 +72,7 @@ CShareData::~CShareData()
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
 		SetDllShareData( NULL );
-		::UnmapViewOfFile( m_pShareData );
+		UnmapViewOfFile( m_pShareData );
 		m_pShareData = NULL;
 	}
 	if( m_hFileMap ){
@@ -108,26 +107,28 @@ CMutex& CShareData::GetMutexShareWork(){
 
 	@date 2018/06/01 仕様変更 https://github.com/sakura-editor/sakura/issues/29
 */
-bool CShareData::InitShareData()
+bool CShareData::InitShareData(std::wstring_view profileName)
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"CShareData::InitShareData" );
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
-	/* ファイルマッピングオブジェクト */
+	std::wstring strShareDataName = GSTR_SHAREDATA;
+	if (profileName.length() > 0)
 	{
-		const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
-		std::wstring strShareDataName = GSTR_SHAREDATA;
-		strShareDataName += pszProfileName;
-		m_hFileMap = ::CreateFileMapping(
-			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
-			NULL,
-			PAGE_READWRITE | SEC_COMMIT,
-			0,
-			sizeof( DLLSHAREDATA ),
-			strShareDataName.c_str()
-		);
+		strShareDataName += profileName;
 	}
+
+	/* ファイルマッピングオブジェクト */
+	m_hFileMap = CreateFileMappingW(
+		INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
+		NULL,
+		PAGE_READWRITE | SEC_COMMIT,
+		0,
+		sizeof(DLLSHAREDATA),
+		strShareDataName
+	);
+
 	if( NULL == m_hFileMap ){
 		::MessageBox(
 			NULL,
@@ -138,18 +139,26 @@ bool CShareData::InitShareData()
 		return false;
 	}
 
-	if( GetLastError() != ERROR_ALREADY_EXISTS ){
-		/* オブジェクトが存在していなかった場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
-		);
-		CreateTypeSettings();
+	const auto shareDataCreated = (GetLastError() != ERROR_ALREADY_EXISTS);
+
+	/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
+	auto p = static_cast<DLLSHAREDATA*>(MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0));
+
+	// 共有メモリオブジェクトが無効値の場合
+	if (!p)
+	{
+		return false;
+	}
+
+	// オブジェクトが存在していなかった場合
+	if (shareDataCreated)
+	{
+		// 配置newで共有メモリオブジェクトを構築する
+		m_pShareData = new (p) DLLSHAREDATA;
+
 		SetDllShareData( m_pShareData );
+
+		CreateTypeSettings();
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -726,30 +735,22 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 		}
-	}else{
-		/* オブジェクトがすでに存在する場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
-		);
-		SetDllShareData( m_pShareData );
-
-		//	From Here Oct. 27, 2000 genta
-		//	2014.01.08 Moca サイズチェック追加
-		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
-			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
-			//	この共有データ領域は使えない．
-			//	ハンドルを解放する
-			SetDllShareData( NULL );
-			::UnmapViewOfFile( m_pShareData );
-			m_pShareData = NULL;
+	}
+	// オブジェクトがすでに存在する場合
+	else
+	{
+		// 共有メモリオブジェクトが不適切な場合
+		if (!p->IsValid())
+		{
+			// ハンドルを解放する
+			UnmapViewOfFile(p);
 			return false;
 		}
-		//	To Here Oct. 27, 2000 genta
+
+		// マップした共有メモリオブジェクトをそのまま使う
+		m_pShareData = p;
+
+		SetDllShareData( m_pShareData );
 	}
 	return true;
 }

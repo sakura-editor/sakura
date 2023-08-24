@@ -136,3 +136,9 @@ void CShareDataLockCounter::WaitLock( HWND hwndParent, CShareDataLockCounter** p
 		::EnableWindow(hwndParent, TRUE);
 	}
 }
+
+bool DLLSHAREDATA::IsValid() const noexcept
+{
+	return m_nSize == sizeof(DLLSHAREDATA)
+		&& m_vStructureVersion == N_SHAREDATA_VERSION;
+}

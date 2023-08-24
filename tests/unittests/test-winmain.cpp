@@ -123,12 +123,12 @@ protected:
 };
 
 /*!
- * @brief コントロールプロセスの初期化完了を待つ
+ * @brief コントロールプロセスを起動する
  *
- * CControlProcess::WaitForInitializedとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存CProcessFactory::WaitForInitializedControlProcess()と概ね等価です。
+ * CControlProcess::Startとして実装したいコードです。本体を変えたくないので一時定義しました。
+ * 既存CProcessFactory::StartControlProcess()と概ね等価です。
  */
-void CControlProcess_WaitForInitialized(std::wstring_view profileName)
+void CControlProcess_Start(std::wstring_view profileName)
 {
 	// 初期化完了イベントを作成する
 	std::wstring strInitEvent( GSTR_EVENT_SAKURA_CP_INITIALIZED );
@@ -143,21 +143,6 @@ void CControlProcess_WaitForInitialized(std::wstring_view profileName)
 	// イベントハンドラをスマートポインタに入れる
 	handleHolder eventHolder( hEvent );
 
-	// 初期化完了イベントを待つ
-	DWORD dwRet = ::WaitForSingleObject( hEvent, 30000 );
-	if( WAIT_TIMEOUT == dwRet ){
-		throw std::runtime_error( "waitEvent is timeout." );
-	}
-}
-
-/*!
- * @brief コントロールプロセスを起動する
- *
- * CControlProcess::Startとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存CProcessFactory::StartControlProcess()と概ね等価です。
- */
-void CControlProcess_Start(std::wstring_view profileName)
-{
 	// スタートアップ情報
 	STARTUPINFO si = { sizeof(STARTUPINFO), 0 };
 	si.lpTitle = (LPWSTR)L"sakura control process";
@@ -199,23 +184,32 @@ void CControlProcess_Start(std::wstring_view profileName)
 	::CloseHandle( pi.hProcess );
 
 	// コントロールプロセスの初期化完了を待つ
-	CControlProcess_WaitForInitialized(profileName);
+	DWORD dwRet = ::WaitForSingleObject( hEvent, 30000 );
+	if( WAIT_TIMEOUT == dwRet ){
+		throw std::runtime_error( "waitEvent is timeout." );
+	}
 }
 
 /*!
  * @brief コントロールプロセスに終了指示を出して終了を待つ
- *
- * CControlProcess::Terminateとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存コードに該当する処理はありません。
  */
 void CControlProcess_Terminate(std::wstring_view profileName)
 {
-	// トレイウインドウを検索する
-	std::wstring strCEditAppName( GSTR_CEDITAPP );
-	if (profileName.length() > 0) {
-		strCEditAppName += profileName;
+	// 共有メモリオブジェクト
+	CShareData cShareData;
+
+	// エディタと同じ方法で共有メモリを初期化する
+	if( !cShareData.InitShareData( profileName ) )
+	{
+		// 共有メモリオブジェクトが取得できなければそのまま抜ける
+		return;
 	}
-	HWND hTrayWnd = ::FindWindow( strCEditAppName.data(), strCEditAppName.data() );
+
+	// プロセス内にマップされた共有メモリのアドレスを取得する
+	const auto pShareData = &::GetDllShareData();
+
+	// 共有メモリからトレイウインドウのハンドルを取得する
+	HWND hTrayWnd = pShareData->m_sHandles.m_hwndTray;
 	if( !hTrayWnd ){
 		// ウインドウがなければそのまま抜ける
 		return;
@@ -248,6 +242,8 @@ void CControlProcess_Terminate(std::wstring_view profileName)
 			throw std::runtime_error( "waitProcess is timeout." );
 		}
 	}
+
+	cShareData.RefreshString();
 }
 
 /*!

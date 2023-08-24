@@ -1141,6 +1141,9 @@
     <ClInclude Include="..\sakura_core\window\CGenericWnd.hpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\apimodule\Kernel32Dll.hpp">
+      <Filter>Cpp Source Files\apimodule</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">

@@ -22,27 +22,40 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
  */
-#include "StdAfx.h"
-#include "env/ShareDataAccessor.hpp"
+#pragma once
 
-#include "env/DLLSHAREDATA.h"
+#include "apimodule/Kernel32Dll.hpp"
 
-/*!
- * 共有メモリのアドレスを取得します。
- */
-DLLSHAREDATA* ShareDataAccessor::GetShareData() const
+#include <gmock/gmock.h>
+
+struct MockKernel32Dll : public Kernel32Dll
 {
-	// 共有メモリのアドレスを取得します。
-	return &::GetDllShareData();
-}
+	MOCK_CONST_METHOD1(CloseHandle, BOOL(
+		_In_ _Post_ptr_invalid_ HANDLE hObject
+	));
 
-/*!
- * 共有メモリのアドレスを更新します。
- *
- * このメソッドはCShareData専用です。
- */
-void ShareDataAccessor::SetShareData(DLLSHAREDATA* pShareData) const
-{
-	// 共有メモリのアドレスを更新します。
-	::SetDllShareData(pShareData);
-}
+	MOCK_CONST_METHOD6(CreateFileMappingW, HANDLE(
+		_In_     HANDLE hFile,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+		_In_     DWORD flProtect,
+		_In_     DWORD dwMaximumSizeHigh,
+		_In_     DWORD dwMaximumSizeLow,
+		_In_opt_ LPCWSTR lpName
+	));
+
+	MOCK_CONST_METHOD0(GetLastError, DWORD(
+		VOID
+	));
+
+	MOCK_CONST_METHOD5(MapViewOfFile, LPVOID(
+		_In_ HANDLE hFileMappingObject,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwFileOffsetHigh,
+		_In_ DWORD dwFileOffsetLow,
+		_In_ SIZE_T dwNumberOfBytesToMap
+	));
+
+	MOCK_CONST_METHOD1(UnmapViewOfFile, BOOL(
+		_In_ LPCVOID lpBaseAddress
+	));
+};

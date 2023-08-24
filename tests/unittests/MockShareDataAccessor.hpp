@@ -35,6 +35,7 @@ struct MockShareDataAccessor : public ShareDataAccessor
 	~MockShareDataAccessor() override = default;
 
 	MOCK_CONST_METHOD0(GetShareData, DLLSHAREDATA*());
+	MOCK_CONST_METHOD1(SetShareData, void(DLLSHAREDATA*));
 };
 
 /*!
