@@ -736,7 +736,6 @@ bool CShareData::InitShareData()
 			0,
 			0
 		);
-		SetDllShareData( m_pShareData );
 
 		//	From Here Oct. 27, 2000 genta
 		//	2014.01.08 Moca サイズチェック追加
@@ -744,12 +743,13 @@ bool CShareData::InitShareData()
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
-			SetDllShareData( NULL );
 			::UnmapViewOfFile( m_pShareData );
 			m_pShareData = NULL;
 			return false;
 		}
 		//	To Here Oct. 27, 2000 genta
+
+		SetDllShareData( m_pShareData );
 	}
 	return true;
 }
