@@ -140,18 +140,31 @@ bool CShareData::InitShareData()
 
 	const auto shareDataCreated = (GetLastError() != ERROR_ALREADY_EXISTS);
 
-	if( shareDataCreated ){
-		/* オブジェクトが存在していなかった場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
-		);
-		CreateTypeSettings();
+	/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
+	auto p = static_cast<DLLSHAREDATA*>(MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0));
+
+	// 共有メモリオブジェクトが無効値の場合
+	if (!p)
+	{
+		return false;
+	}
+
+	// 共有メモリオブジェクトが不適切な場合
+	if (!p->IsValid()) {
+		// ハンドルを解放する
+		UnmapViewOfFile(p);
+		return false;
+	}
+
+	// オブジェクトが存在していなかった場合
+	if (shareDataCreated)
+	{
+		// 配置newで共有メモリオブジェクトを構築する
+		m_pShareData = new (p) DLLSHAREDATA;
+
 		SetDllShareData( m_pShareData );
+
+		CreateTypeSettings();
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -728,27 +741,12 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 		}
-	}else{
-		/* オブジェクトがすでに存在する場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
-		);
-
-		//	From Here Oct. 27, 2000 genta
-		//	2014.01.08 Moca サイズチェック追加
-		if( m_pShareData && !m_pShareData->IsValid() ){
-			//	この共有データ領域は使えない．
-			//	ハンドルを解放する
-			::UnmapViewOfFile( m_pShareData );
-			m_pShareData = NULL;
-			return false;
-		}
-		//	To Here Oct. 27, 2000 genta
+	}
+	// オブジェクトがすでに存在する場合
+	else
+	{
+		// マップした共有メモリオブジェクトをそのまま使う
+		m_pShareData = p;
 
 		SetDllShareData( m_pShareData );
 	}
