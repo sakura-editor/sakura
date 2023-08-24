@@ -739,8 +739,7 @@ bool CShareData::InitShareData()
 
 		//	From Here Oct. 27, 2000 genta
 		//	2014.01.08 Moca サイズチェック追加
-		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
-			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
+		if( m_pShareData && !m_pShareData->IsValid() ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
 			::UnmapViewOfFile( m_pShareData );
