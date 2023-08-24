@@ -203,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="eval_outputs.hpp" />
+    <ClInclude Include="MockKernel32Dll.hpp" />
     <ClInclude Include="MockShareDataAccessor.hpp" />
     <ClInclude Include="MockUser32Dll.hpp" />
     <ClInclude Include="TExtModule.hpp" />

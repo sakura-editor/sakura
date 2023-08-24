@@ -36,6 +36,7 @@ struct ShareDataAccessor
 	virtual ~ShareDataAccessor() = default;
 
 	virtual DLLSHAREDATA* GetShareData() const;
+	virtual void          SetShareData(DLLSHAREDATA* pShareData) const;
 };
 
 /*!

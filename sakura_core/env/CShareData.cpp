@@ -57,11 +57,10 @@ const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
-CShareData::CShareData()
+CShareData::CShareData(std::shared_ptr<Kernel32Dll> Kernel32Dll_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+	: Kernel32DllClient(std::move(Kernel32Dll_))
+	, ShareDataAccessorClient(std::move(ShareDataAccessor_))
 {
-	m_hFileMap   = NULL;
-	m_pShareData = NULL;
-	m_pvTypeSettings = NULL;
 }
 
 /*!
@@ -73,7 +72,7 @@ CShareData::~CShareData()
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
 		SetDllShareData( NULL );
-		::UnmapViewOfFile( m_pShareData );
+		UnmapViewOfFile( m_pShareData );
 		m_pShareData = NULL;
 	}
 	if( m_hFileMap ){
@@ -108,26 +107,28 @@ CMutex& CShareData::GetMutexShareWork(){
 
 	@date 2018/06/01 仕様変更 https://github.com/sakura-editor/sakura/issues/29
 */
-bool CShareData::InitShareData()
+bool CShareData::InitShareData(std::wstring_view profileName)
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"CShareData::InitShareData" );
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
-	/* ファイルマッピングオブジェクト */
+	std::wstring strShareDataName = GSTR_SHAREDATA;
+	if (profileName.length() > 0)
 	{
-		const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
-		std::wstring strShareDataName = GSTR_SHAREDATA;
-		strShareDataName += pszProfileName;
-		m_hFileMap = ::CreateFileMapping(
-			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
-			NULL,
-			PAGE_READWRITE | SEC_COMMIT,
-			0,
-			sizeof( DLLSHAREDATA ),
-			strShareDataName.c_str()
-		);
+		strShareDataName += profileName;
 	}
+
+	/* ファイルマッピングオブジェクト */
+	m_hFileMap = CreateFileMappingW(
+		INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
+		NULL,
+		PAGE_READWRITE | SEC_COMMIT,
+		0,
+		sizeof(DLLSHAREDATA),
+		strShareDataName
+	);
+
 	if( NULL == m_hFileMap ){
 		::MessageBox(
 			NULL,
@@ -146,13 +147,6 @@ bool CShareData::InitShareData()
 	// 共有メモリオブジェクトが無効値の場合
 	if (!p)
 	{
-		return false;
-	}
-
-	// 共有メモリオブジェクトが不適切な場合
-	if (!p->IsValid()) {
-		// ハンドルを解放する
-		UnmapViewOfFile(p);
 		return false;
 	}
 
@@ -745,6 +739,14 @@ bool CShareData::InitShareData()
 	// オブジェクトがすでに存在する場合
 	else
 	{
+		// 共有メモリオブジェクトが不適切な場合
+		if (!p->IsValid())
+		{
+			// ハンドルを解放する
+			UnmapViewOfFile(p);
+			return false;
+		}
+
 		// マップした共有メモリオブジェクトをそのまま使う
 		m_pShareData = p;
 
