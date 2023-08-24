@@ -138,7 +138,9 @@ bool CShareData::InitShareData()
 		return false;
 	}
 
-	if( GetLastError() != ERROR_ALREADY_EXISTS ){
+	const auto shareDataCreated = (GetLastError() != ERROR_ALREADY_EXISTS);
+
+	if( shareDataCreated ){
 		/* オブジェクトが存在していなかった場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
 		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
