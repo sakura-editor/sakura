@@ -39,6 +39,9 @@
     <ClInclude Include="MockKernel32Dll.hpp">
       <Filter>Mock Classes</Filter>
     </ClInclude>
+    <ClInclude Include="MockShell32Dll.hpp">
+      <Filter>Mock Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test-cmemory.cpp">

@@ -205,6 +205,7 @@
     <ClInclude Include="eval_outputs.hpp" />
     <ClInclude Include="MockKernel32Dll.hpp" />
     <ClInclude Include="MockShareDataAccessor.hpp" />
+    <ClInclude Include="MockShell32Dll.hpp" />
     <ClInclude Include="MockUser32Dll.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />

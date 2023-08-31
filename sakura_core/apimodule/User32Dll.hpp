@@ -42,6 +42,11 @@ struct User32Dll
 {
 	virtual ~User32Dll() = default;
 
+	virtual BOOL CloseClipboard() const
+	{
+		return ::CloseClipboard();
+	}
+
 	virtual HWND CreateDialogIndirectParamW(
 		_In_opt_ HINSTANCE hInstance,
 		_In_ LPCDLGTEMPLATEW lpTemplate,
@@ -98,12 +103,29 @@ struct User32Dll
 		return ::DialogBoxParamW(hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
 	}
 
+	virtual BOOL EmptyClipboard() const
+	{
+		return ::EmptyClipboard();
+	}
+
+	virtual UINT EnumClipboardFormats(
+		_In_ UINT format) const
+	{
+		return ::EnumClipboardFormats(format);
+	}
+
 	virtual BOOL GetClassInfoExW(
 		_In_opt_ HINSTANCE hInstance,
 		_In_ LPCWSTR lpszClass,
 		_Out_ LPWNDCLASSEXW lpwcx) const
 	{
 		return ::GetClassInfoExW(hInstance, lpszClass, lpwcx);
+	}
+
+	virtual HANDLE GetClipboardData(
+		_In_ UINT uFormat) const
+	{
+		return ::GetClipboardData(uFormat);
 	}
 
 	virtual HWND GetDlgItem(
@@ -133,6 +155,24 @@ struct User32Dll
 		return ::RegisterClassExW(lpwcex);
 	}
 
+	virtual BOOL IsClipboardFormatAvailable(
+		_In_ UINT format) const
+	{
+		return ::IsClipboardFormatAvailable(format);
+	}
+
+	virtual BOOL OpenClipboard(
+		_In_opt_ HWND hWndNewOwner) const
+	{
+		return ::OpenClipboard(hWndNewOwner);
+	}
+
+	virtual UINT RegisterClipboardFormatW(
+		_In_ LPCWSTR lpszFormat) const
+	{
+		return ::RegisterClipboardFormatW(lpszFormat);
+	}
+
 	virtual LRESULT SendMessageW(
 		_In_ HWND hWnd,
 		_In_ UINT Msg,
@@ -140,6 +180,13 @@ struct User32Dll
 		_Pre_maybenull_ _Post_valid_ LPARAM lParam) const
 	{
 		return ::SendMessageW(hWnd, Msg, wParam, lParam);
+	}
+
+	virtual HANDLE SetClipboardData(
+		_In_ UINT uFormat,
+		_In_opt_ HANDLE hMem) const
+	{
+		return ::SetClipboardData(uFormat, hMem);
 	}
 
 	virtual LONG_PTR SetWindowLongPtrW(_In_ HWND hWnd, int nIndex, LONG_PTR dwNewLong) const

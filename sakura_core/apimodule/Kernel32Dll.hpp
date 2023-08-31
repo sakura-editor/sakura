@@ -43,8 +43,7 @@ struct Kernel32Dll
 	virtual ~Kernel32Dll() = default;
 
 	virtual BOOL CloseHandle(
-		_In_ _Post_ptr_invalid_ HANDLE hObject
-	) const
+		_In_ _Post_ptr_invalid_ HANDLE hObject) const
 	{
 		return ::CloseHandle(hObject);
 	}
@@ -55,17 +54,46 @@ struct Kernel32Dll
 		_In_     DWORD flProtect,
 		_In_     DWORD dwMaximumSizeHigh,
 		_In_     DWORD dwMaximumSizeLow,
-		_In_opt_ LPCWSTR lpName
-	) const
+		_In_opt_ LPCWSTR lpName) const
 	{
 		return ::CreateFileMappingW(hFile, lpFileMappingAttributes, flProtect, dwMaximumSizeHigh, dwMaximumSizeLow, lpName);
 	}
 
 	virtual DWORD GetLastError(
-		VOID
-	) const
+		VOID) const
 	{
 		return ::GetLastError();
+	}
+
+	virtual HGLOBAL GlobalAlloc(
+		_In_ UINT uFlags,
+		_In_ SIZE_T dwBytes) const
+	{
+		return ::GlobalAlloc(uFlags, dwBytes);
+	}
+
+	virtual HGLOBAL GlobalFree(
+		_Frees_ptr_opt_ HGLOBAL hMem) const
+	{
+		return ::GlobalFree(hMem);
+	}
+
+	virtual LPVOID GlobalLock(
+		_In_ HGLOBAL hMem) const
+	{
+		return ::GlobalLock(hMem);
+	}
+
+	virtual SIZE_T GlobalSize(
+		_In_ HGLOBAL hMem) const
+	{
+		return ::GlobalSize(hMem);
+	}
+
+	virtual BOOL GlobalUnlock(
+		_In_ HGLOBAL hMem) const
+	{
+		return ::GlobalUnlock(hMem);
 	}
 
 	virtual LPVOID MapViewOfFile(
@@ -73,15 +101,19 @@ struct Kernel32Dll
 		_In_ DWORD dwDesiredAccess,
 		_In_ DWORD dwFileOffsetHigh,
 		_In_ DWORD dwFileOffsetLow,
-		_In_ SIZE_T dwNumberOfBytesToMap
-	) const
+		_In_ SIZE_T dwNumberOfBytesToMap) const
 	{
 		return ::MapViewOfFile(hFileMappingObject, dwDesiredAccess, dwFileOffsetHigh, dwFileOffsetLow, dwNumberOfBytesToMap);
 	}
 
+	virtual VOID Sleep(
+		_In_ DWORD dwMilliseconds) const
+	{
+		return ::Sleep(dwMilliseconds);
+	}
+
 	virtual BOOL UnmapViewOfFile(
-		_In_ LPCVOID lpBaseAddress
-	)const
+		_In_ LPCVOID lpBaseAddress)const
 	{
 		return ::UnmapViewOfFile(lpBaseAddress);
 	}
