@@ -36,6 +36,30 @@
 class CEol;
 
 /*!
+ * クリップボード所有型のスマートポインタを実現するためのdeleterクラス
+ */
+struct ClipboardCloser : private User32DllClient
+{
+	explicit ClipboardCloser(std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>()) noexcept
+		: User32DllClient(std::move(User32Dll_))
+	{
+	}
+
+	void operator()(HWND) const
+	{
+		CloseClipboard();
+	}
+
+	BOOL CloseClipboard() const
+	{
+		return GetUser32Dll()->CloseClipboard();
+	}
+};
+
+//! クリップボード所有型のスマートポインタ
+using ClipboardHolder = std::unique_ptr<std::remove_pointer_t<HWND>, ClipboardCloser>;
+
+/*!
  * サクラエディタ用クリップボードクラス
  *
  * 当初は、「後々はこの中で全てのクリップボードAPIを呼ばせた」かったらしい。
@@ -45,8 +69,7 @@ class CEol;
 class CClipboard : public apiwrap::CClipboardApi, private ShareDataAccessorClient
 {
 private:
-	HWND m_hwnd;
-	BOOL m_bOpenResult;
+	ClipboardHolder m_bOpenResult;
 
 	using Me = CClipboard;
 
@@ -80,9 +103,6 @@ public:
 	explicit CClipboard(HWND hWnd, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>(), std::shared_ptr<Kernel32Dll> Kernel32Dll_ = std::make_shared<Kernel32Dll>(), std::shared_ptr<Shell32Dll> Shell32Dll_ = std::make_shared<Shell32Dll>(), std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>()); //!< コンストラクタ内でクリップボードが開かれる
 	CClipboard(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
-	CClipboard(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CClipboard() override; //!< デストラクタ内でCloseが呼ばれる
 
 	static bool HasValidData(std::shared_ptr<User32Dll> _User32Dll = std::make_shared<User32Dll>());    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue
 	static CLIPFORMAT GetSakuraFormat(std::shared_ptr<User32Dll> _User32Dll = std::make_shared<User32Dll>()); //!< サクラエディタ独自のクリップボードデータ形式

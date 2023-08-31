@@ -104,11 +104,6 @@ public:
 	}
 
 protected:
-	BOOL CloseClipboard() const
-	{
-		return GetUser32Dll()->CloseClipboard();
-	}
-
 	BOOL EmptyClipboard() const
 	{
 		return GetUser32Dll()->EmptyClipboard();

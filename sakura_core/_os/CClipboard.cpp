@@ -40,14 +40,11 @@
 CClipboard::CClipboard(HWND hWnd, std::shared_ptr<User32Dll> User32Dll_, std::shared_ptr<Kernel32Dll> Kernel32Dll_, std::shared_ptr<Shell32Dll> Shell32Dll_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	: CClipboardApi(std::move(User32Dll_), std::move(Kernel32Dll_), std::move(Shell32Dll_))
 	, ShareDataAccessorClient(std::move(ShareDataAccessor_))
-	, m_hwnd(hWnd)
-	, m_bOpenResult(OpenClipboard(hWnd, MAX_RETRY_FOR_OPEN))
 {
-}
-
-CClipboard::~CClipboard()
-{
-	Close();
+	if (OpenClipboard(hWnd, MAX_RETRY_FOR_OPEN))
+	{
+		m_bOpenResult = ClipboardHolder(hWnd, ClipboardCloser(GetUser32Dll()));
+	}
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -66,9 +63,7 @@ void CClipboard::Close()
 {
 	if (m_bOpenResult)
 	{
-		CloseClipboard();
-
-		m_bOpenResult = FALSE;
+		m_bOpenResult.reset();
 	}
 }
 
