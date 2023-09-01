@@ -1144,6 +1144,15 @@
     <ClInclude Include="..\sakura_core\apimodule\Kernel32Dll.hpp">
       <Filter>Cpp Source Files\apimodule</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\apimodule\Shell32Dll.hpp">
+      <Filter>Cpp Source Files\apimodule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\CClipboardApi.hpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\HGlobal.hpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2361,6 +2370,12 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\window\CGenericWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\CClipboardApi.cpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\HGlobal.cpp">
+      <Filter>Cpp Source Files\apiwrap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

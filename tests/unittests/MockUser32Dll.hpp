@@ -34,6 +34,8 @@
 
 struct MockUser32Dll : public User32Dll
 {
+	MOCK_CONST_METHOD0(CloseClipboard, BOOL());
+
 	MOCK_CONST_METHOD5_T(CreateDialogIndirectParamW, HWND(
 		_In_opt_ HINSTANCE hInstance,
 		_In_ LPCDLGTEMPLATEW lpTemplate,
@@ -75,10 +77,18 @@ struct MockUser32Dll : public User32Dll
 		_In_opt_ DLGPROC   lpDialogFunc,
 		_In_ LPARAM        dwInitParam));
 
+	MOCK_CONST_METHOD0(EmptyClipboard, BOOL());
+
+	MOCK_CONST_METHOD1(EnumClipboardFormats, UINT(
+		_In_ UINT format));
+
 	MOCK_CONST_METHOD3(GetClassInfoExW, BOOL(
 		_In_opt_ HINSTANCE hInstance,
 		_In_ LPCWSTR lpszClass,
 		_Out_ LPWNDCLASSEXW lpwcx));
+
+	MOCK_CONST_METHOD1(GetClipboardData, HANDLE(
+		 _In_ UINT uFormat));
 
 	MOCK_CONST_METHOD2(GetDlgItem, HWND(
 		_In_opt_ HWND hDlg,
@@ -95,11 +105,24 @@ struct MockUser32Dll : public User32Dll
 	MOCK_CONST_METHOD1(RegisterClassExW, ATOM(
 		_In_ CONST WNDCLASSEXW* lpwcex));
 
+	MOCK_CONST_METHOD1(IsClipboardFormatAvailable, BOOL(
+		_In_ UINT format));
+
+	MOCK_CONST_METHOD1(OpenClipboard, BOOL(
+		_In_opt_ HWND hWndNewOwner));
+
+	MOCK_CONST_METHOD1(RegisterClipboardFormatW, UINT(
+		_In_ LPCWSTR lpszFormat));
+
 	MOCK_CONST_METHOD4(SendMessageW, LRESULT(
 		_In_ HWND hWnd,
 		_In_ UINT Msg,
 		_Pre_maybenull_ _Post_valid_ WPARAM wParam,
 		_Pre_maybenull_ _Post_valid_ LPARAM lParam));
+
+	MOCK_CONST_METHOD2(SetClipboardData, HANDLE(
+		_In_ UINT uFormat,
+		_In_opt_ HANDLE hMem));
 
 	MOCK_CONST_METHOD2(SetWindowTextW, bool(
 		_In_ HWND hWnd,

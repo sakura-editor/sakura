@@ -31,8 +31,7 @@
 struct MockKernel32Dll : public Kernel32Dll
 {
 	MOCK_CONST_METHOD1(CloseHandle, BOOL(
-		_In_ _Post_ptr_invalid_ HANDLE hObject
-	));
+		_In_ _Post_ptr_invalid_ HANDLE hObject));
 
 	MOCK_CONST_METHOD6(CreateFileMappingW, HANDLE(
 		_In_     HANDLE hFile,
@@ -40,22 +39,37 @@ struct MockKernel32Dll : public Kernel32Dll
 		_In_     DWORD flProtect,
 		_In_     DWORD dwMaximumSizeHigh,
 		_In_     DWORD dwMaximumSizeLow,
-		_In_opt_ LPCWSTR lpName
-	));
+		_In_opt_ LPCWSTR lpName));
 
 	MOCK_CONST_METHOD0(GetLastError, DWORD(
-		VOID
-	));
+		VOID));
+
+	MOCK_CONST_METHOD2(GlobalAlloc, HGLOBAL(
+		_In_ UINT uFlags,
+		_In_ SIZE_T dwBytes));
+
+	MOCK_CONST_METHOD1(GlobalFree, HGLOBAL(
+		_Frees_ptr_opt_ HGLOBAL hMem));
+
+	MOCK_CONST_METHOD1(GlobalLock, LPVOID(
+		_In_ HGLOBAL hMem));
+
+	MOCK_CONST_METHOD1(GlobalSize, SIZE_T(
+		_In_ HGLOBAL hMem));
+
+	MOCK_CONST_METHOD1(GlobalUnlock, BOOL(
+		_In_ HGLOBAL hMem));
 
 	MOCK_CONST_METHOD5(MapViewOfFile, LPVOID(
 		_In_ HANDLE hFileMappingObject,
 		_In_ DWORD dwDesiredAccess,
 		_In_ DWORD dwFileOffsetHigh,
 		_In_ DWORD dwFileOffsetLow,
-		_In_ SIZE_T dwNumberOfBytesToMap
-	));
+		_In_ SIZE_T dwNumberOfBytesToMap));
+
+	MOCK_CONST_METHOD1_T(Sleep, VOID(
+		_In_ DWORD dwMilliseconds));
 
 	MOCK_CONST_METHOD1(UnmapViewOfFile, BOOL(
-		_In_ LPCVOID lpBaseAddress
-	));
+		_In_ LPCVOID lpBaseAddress));
 };
