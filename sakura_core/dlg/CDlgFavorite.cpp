@@ -89,6 +89,9 @@ static int FormatFavoriteColumn( WCHAR*, int, int , bool );
 static int ListView_GetLParamInt( HWND, int );
 static int CALLBACK CompareListViewFunc( LPARAM, LPARAM, LPARAM );
 
+const int nFavoriteLimitOffset = 5;
+const int ignoreTab = 3;
+
 struct CompareListViewLParam
 {
 	int         nSortColumn;
@@ -156,7 +159,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_SEARCH );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_SEARCH;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -167,7 +170,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_REPLACE );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_REPLACE;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -178,7 +181,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FILE );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FILE;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -189,7 +192,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FOLDER );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FOLDER;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
@@ -200,7 +203,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_EXT_COMMAND );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CMD;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -211,7 +214,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_CURRENT_DIR );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CUR_DIR;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
@@ -625,8 +628,32 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 			switch(pNMHDR->code )
 			{
 			case NM_DBLCLK:
-				EditItem();
-				return TRUE;
+				{
+					LVHITTESTINFO lvht = { 0 };
+					::GetCursorPos( &lvht.pt);
+					::ScreenToClient( hwndList, &lvht.pt );
+					ListView_HitTest( hwndList, &lvht );
+					//IsGreaterThanMax
+					if( lvht.flags & LVHT_ONITEMSTATEICON && !( lvht.flags & LVHT_ONITEMLABEL ) && IsGreaterThanOrEqualMax( m_nCurrentTab )){
+						ListView_SetCheckState( hwndList, (int)lvht.iItem, true );
+					}
+					if( lvht.flags & LVHT_ONITEMLABEL ){
+						EditItem();
+					}
+				}
+				return true;
+			case NM_CLICK:
+				{
+					LVHITTESTINFO lvht = { 0 };
+					::GetCursorPos( &lvht.pt );
+					::ScreenToClient( hwndList, &lvht.pt );
+					ListView_HitTest( hwndList, &lvht );
+					//IsGreaterThanMax
+					if( lvht.flags & LVHT_ONITEMSTATEICON && !( lvht.flags & LVHT_ONITEMLABEL ) && IsGreaterThanOrEqualMax( m_nCurrentTab )){
+						ListView_SetCheckState( hwndList, (int)lvht.iItem, true );
+					}
+				}
+				return true;
 			case NM_RCLICK:
 				{
 					POINT po;
@@ -650,6 +677,20 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 				{
 				case VK_DELETE:
 					DeleteSelected();
+					return TRUE;
+				case VK_SPACE:
+					{
+						//IsGreaterThanMax
+						if( IsGreaterThanOrEqualMax( m_nCurrentTab )){
+							auto nCount = ListView_GetItemCount( hwndList );
+							for( int i = 0; i < nCount; i++ ){
+								if( ListView_GetItemState( hwndList, i, LVIS_FOCUSED )){
+									ListView_SetCheckState( hwndList, i, true );
+									break;
+								}
+							}
+						}
+					}
 					return TRUE;
 				case VK_APPS:
 					{
@@ -841,6 +882,30 @@ void CDlgFavorite::GetFavorite( int nIndex )
 			pRecent->SetFavorite( recIndex, bret ? true : false );
 		}
 	}
+}
+
+bool CDlgFavorite::IsGreaterThanOrEqualMax( int nTab )
+{
+	if( nTab < ignoreTab ){
+		return false;
+	}
+	const HWND hwndList = m_aListViewInfo[nTab].hListView;
+	const int nCount = ListView_GetItemCount(hwndList);
+	CRecent* const pRecent = m_aFavoriteInfo[nTab].m_pRecent;
+	const int nMax = pRecent->GetArrayCount() - nFavoriteLimitOffset;
+	if( nCount < nMax ){
+		return false;
+	}
+	int nFavoriteCount = 0;
+	for( int i = 0; i < nCount; i++ ){
+		if( ListView_GetCheckState( hwndList, i )){
+			nFavoriteCount++;
+			if( nFavoriteCount >= nMax ){
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /*

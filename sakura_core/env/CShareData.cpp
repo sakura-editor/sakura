@@ -694,6 +694,7 @@ bool CShareData::InitShareData()
 		}
 
 		{
+			SShare_SearchKeywords& sKeys = m_pShareData->m_sSearchKeywords;
 			m_pShareData->m_sSearchKeywords.m_aSearchKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aReplaceKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aGrepFiles.clear();
@@ -714,6 +715,7 @@ bool CShareData::InitShareData()
 
 			wcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダー */
 
+			SShare_History& sHis = m_pShareData->m_sHistory;
 			m_pShareData->m_sHistory.m_aCommands.clear();
 			m_pShareData->m_sHistory.m_aCurDirs.clear();
 

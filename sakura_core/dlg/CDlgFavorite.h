@@ -86,6 +86,7 @@ protected:
 	void	UpdateUIState();
 	
 	void    GetFavorite( int nIndex );
+	bool    IsGreaterThanOrEqualMax( int nTab );
 	int     DeleteSelected();
 	void	AddItem();
 	void	EditItem();

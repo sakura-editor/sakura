@@ -38,7 +38,7 @@ CRecentReplace::CRecentReplace()
 		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr(),
 		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef(),
-		NULL,
+		GetShareData()->m_sSearchKeywords.m_aReplaceKeysFav,
 		MAX_REPLACEKEY,
 		NULL
 	);
