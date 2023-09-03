@@ -263,8 +263,7 @@ TEST(CDialog, MockedDoModal)
 	const auto hWndParent = (HWND)0x1234;
 
 	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, DialogBoxParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, _))
-		.WillOnce(Return(IDCANCEL));
+	EXPECT_CALL(*pUser32Dll, DialogBoxParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, _)).WillOnce(Return(IDCANCEL));
 
 	mock_dialog_1 mock(std::move(pUser32Dll));
 	EXPECT_EQ(IDCANCEL, mock.DoModalCustom(hWndParent));
@@ -297,10 +296,8 @@ TEST(CSizeRestorableDialog, MockedDoModeless1)
 	const auto hDlg = (HWND)0x4321;
 
 	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, CreateDialogParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, _))
-		.WillOnce(Return(hDlg));
-	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOW))
-		.WillOnce(Return(true));
+	EXPECT_CALL(*pUser32Dll, CreateDialogParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, _)).WillOnce(Return(hDlg));
+	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOW)).WillOnce(Return(true));
 
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	mock_dialog_2 mock(std::move(pShareDataAccessor), std::move(pUser32Dll));
@@ -331,10 +328,8 @@ TEST(CSizeRestorableDialog, MockedDoModeless2)
 	const auto hDlg = (HWND)0x4321;
 
 	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, CreateDialogIndirectParamW(_, _, hWndParent, _, _))
-		.WillOnce(Return(hDlg));
-	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOWDEFAULT))
-		.WillOnce(Return(TRUE));
+	EXPECT_CALL(*pUser32Dll, CreateDialogIndirectParamW(_, _, hWndParent, _, _)).WillOnce(Return(hDlg));
+	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOWDEFAULT)).WillOnce(Return(TRUE));
 
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	mock_dialog_2 dlg(std::move(pShareDataAccessor), std::move(pUser32Dll));
@@ -353,8 +348,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnInitDialog)
 	auto wParam = (WPARAM)hWndFocus;
 	auto lParam = std::bit_cast<LPARAM>(&mock);
 
-	EXPECT_CALL(mock, OnInitDialog(hDlg, wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnInitDialog(hDlg, wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_INITDIALOG, wParam, lParam));
 }
@@ -368,8 +362,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnMove)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnMove(_, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnMove(_, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_MOVE, wParam, lParam));
 }
@@ -383,8 +376,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnCommand)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnCommand(wParam, lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnCommand(wParam, lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_COMMAND, wParam, lParam));
 }
@@ -398,8 +390,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnNotify)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnNotify((NMHDR*)lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnNotify((NMHDR*)lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_NOTIFY, 0, lParam));
 }
@@ -413,8 +404,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnTimer)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnTimer(wParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnTimer(wParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_TIMER, wParam, lParam));
 }
@@ -428,8 +418,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnKeyDown)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnKeyDown(wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnKeyDown(wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_KEYDOWN, wParam, lParam));
 }
@@ -443,8 +432,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnActivate)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnActivate(wParam, lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnActivate(wParam, lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_ACTIVATE, wParam, lParam));
 }
@@ -458,8 +446,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnKillFocus)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnKillFocus(wParam, _))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnKillFocus(wParam, _)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_KILLFOCUS, wParam, lParam));
 }
@@ -473,8 +460,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnPopupHelp)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnPopupHelp(_, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnPopupHelp(_, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_HELP, wParam, lParam));
 }
@@ -488,8 +474,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnContextMenu)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnContextMenu(wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnContextMenu(wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_CONTEXTMENU, wParam, lParam));
 }
@@ -504,8 +489,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnSize)
 
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	mock_dialog_2 mock(std::move(pShareDataAccessor));
-	EXPECT_CALL(mock, OnSize(wParam, lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnSize(wParam, lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_SIZE, wParam, lParam));
 }
@@ -519,8 +503,7 @@ TEST(CSizeRestorableDialog, MockedDispachDlgEvent_OnDrawItem)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnDrawItem(wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnDrawItem(wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_DRAWITEM, wParam, lParam));
 }
