@@ -31,83 +31,25 @@
 #include "tests1_rc.h"
 #include "sakura_rc.h"
 
+#include "TAutoCloseDialog.hpp"
 #include "CSelectLang.h"
-
-#include <functional>
 
 /*
  * ダイアログクラステンプレートをテストするためのクラス
  
  * 自動テストで実行できるように、初期表示後、勝手に閉じる仕様。
  */
-class CDlgInput1ForTest : public CDlgInput1
+class CDlgInput1ForTest : public TAutoCloseDialog<CDlgInput1, IDC_EDIT_INPUT1>
 {
-private:
-	static constexpr auto TIMERID_1 = 1;
-
 public:
+	explicit CDlgInput1ForTest(std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>()) noexcept
+		: TAutoCloseDialog(IDD_INPUT1, std::move(User32Dll_))
+	{
+	}
 	~CDlgInput1ForTest() override = default;
 
 	using CDlgInput1::GetHelpIdTable;
-
-	BOOL    OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) override;
-	BOOL    OnDlgTimer(HWND hDlg, UINT id) override;
-
-protected:
-	virtual UINT_PTR SetTimer(
-		_In_opt_ HWND hWnd,
-		_In_ UINT_PTR nIDEvent,
-		_In_ UINT uElapse,
-		_In_opt_ TIMERPROC lpTimerFunc) const
-	{
-		return ::SetTimer(hWnd, nIDEvent, uElapse, lpTimerFunc);
-	}
 };
-
-/*!
- * WM_INITDIALOG処理
- *
- * ダイアログ構築後、最初に受け取るメッセージを処理する。
- */
-BOOL CDlgInput1ForTest::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
-{
-	// 派生元クラスに処理を委譲する
-	const auto ret = __super::OnDlgInitDialog(hDlg, hWndFocus, lParam);
-
-	// タイマーを起動する
-	SetTimer(hDlg, TIMERID_1, 0, nullptr);
-
-	// 派生元クラスが返した戻り値をそのまま返す
-	return ret;
-}
-
-/*!
- * WM_TIMER処理
- *
- * タイマーイベントを処理する。
- */
-BOOL CDlgInput1ForTest::OnDlgTimer(HWND hDlg, UINT id)
-{
-	if (id == TIMERID_1)
-	{
-		// プログラム的に「Enterキー押下」のイベントを発生させる
-		INPUT input = {};
-
-		// WM_KEYDOWNを発生させる
-		input.type = INPUT_KEYBOARD;
-		input.ki.wVk = VK_RETURN;  // Enterキーの仮想キーコード
-		input.ki.dwFlags = 0;      // キーを押す
-		SendInput(1, &input, sizeof(INPUT));
-
-		// WM_KEYUPを発生させる
-		input.ki.dwFlags = KEYEVENTF_KEYUP;  // キーを離す
-		SendInput(1, &input, sizeof(INPUT));
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
 
 using ::testing::Return;
 

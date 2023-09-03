@@ -207,6 +207,7 @@
     <ClInclude Include="MockShareDataAccessor.hpp" />
     <ClInclude Include="MockShell32Dll.hpp" />
     <ClInclude Include="MockUser32Dll.hpp" />
+    <ClInclude Include="TAutoCloseDialog.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
   </ItemGroup>

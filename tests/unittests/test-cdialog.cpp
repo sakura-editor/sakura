@@ -30,6 +30,8 @@
 
 #include "MockUser32Dll.hpp"
 
+#include "TAutoCloseDialog.hpp"
+
 #include <functional>
 
  /*
@@ -38,16 +40,13 @@
  * 自動テストで実行できるように作成したもの。
  * 初期表示後、勝手に閉じる仕様。
  */
-class CDialog1 : public CDialog
+class CDialog1 : public TAutoCloseDialog<CDialog, IDC_EDIT_INPUT1>
 {
 private:
-	static constexpr auto DIALOG_ID          = IDD_INPUT1;
-	static constexpr auto TIMERID_FIRST_IDLE = 1;
-
 	DLGPROC _pfnDlgProc = nullptr;
 
 public:
-	CDialog1(std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
+	explicit CDialog1(std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
 	~CDialog1() override = default;
 
 	INT_PTR DoModalCustom(HWND hWndParent);
@@ -59,15 +58,13 @@ public:
 
 protected:
 	BOOL    OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) override;
-	BOOL    OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify) override;
-	BOOL    OnDlgTimer(HWND hDlg, UINT id) override;
 };
 
 /*!
  * コンストラクター
  */
 CDialog1::CDialog1(std::shared_ptr<User32Dll> User32Dll_)
-	: CDialog(DIALOG_ID, std::move(User32Dll_))
+	: TAutoCloseDialog(IDD_INPUT1, std::move(User32Dll_))
 {
 }
 
@@ -81,7 +78,7 @@ INT_PTR CDialog1::DoModalCustom(HWND hWndParent)
 {
 	const auto hInstance = (HINSTANCE)nullptr;
 	const auto lParam    = (LPARAM)NULL;
-	return __super::DoModal(hInstance, hWndParent, DIALOG_ID, lParam);
+	return __super::DoModal(hInstance, hWndParent, IDD_INPUT1, lParam);
 }
 
 /*!
@@ -94,7 +91,7 @@ HWND CDialog1::DoModeless1(HWND hWndParent, int nCmdShow)
 {
 	const auto hInstance = (HINSTANCE)nullptr;
 	const auto lParam    = (LPARAM)NULL;
-	return __super::DoModeless(hInstance, hWndParent, DIALOG_ID, lParam, nCmdShow);
+	return __super::DoModeless(hInstance, hWndParent, IDD_INPUT1, lParam, nCmdShow);
 }
 
 /*!
@@ -115,7 +112,7 @@ INT_PTR CDialog1::CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
  * @param [in] hDlg 宛先ウインドウのハンドル
  * @param [in] hWndFocus フォーカスを受け取る子ウインドウのハンドル
  * @param [in] lParam ダイアログパラメーター
- * @retval TRUE フォーカスが設定されます。
+ * @retval TRUE  フォーカスが設定されます。
  * @retval FALSE フォーカスは設定されません。
  */
 BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
@@ -126,59 +123,8 @@ BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
 	// ダイアログプロシージャをメンバー変数に格納する
 	_pfnDlgProc = std::bit_cast<DLGPROC>(GetWindowLongPtrW(hDlg, DWLP_DLGPROC));
 
-	// タイマーを起動する
-	::SetTimer(hDlg, TIMERID_FIRST_IDLE, 0, nullptr);
-
 	// 派生元クラスが返した戻り値をそのまま返す
 	return ret;
-}
-
-/*!
- * WM_COMMANDハンドラ。
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog1::OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify)
-{
-	if (const auto ret = GetDlgData(hDlg);
-		ret <= 0 || id == IDCANCEL)
-	{
-		return TRUE;
-	}
-
-	return __super::OnDlgCommand(hDlg, id, hWndCtl, codeNotify);
-}
-
-/*!
- * WM_TIMER処理
- *
- * タイマーイベントを処理する。
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog1::OnDlgTimer(HWND hDlg, UINT id)
-{
-	if (id == TIMERID_FIRST_IDLE)
-	{
-		// プログラム的に「Enterキー押下」を発生させる
-		INPUT input = {};
-
-		// WM_KEYDOWNを発生させる
-		input.type = INPUT_KEYBOARD;
-		input.ki.wVk = VK_RETURN;  // Enterキーの仮想キーコード
-		input.ki.dwFlags = 0;      // キーを押す
-		SendInput(1, &input, sizeof(INPUT));
-
-		// WM_KEYUPを発生させる
-		input.ki.dwFlags = KEYEVENTF_KEYUP;  // キーを離す
-		SendInput(1, &input, sizeof(INPUT));
-
-		return TRUE;
-	}
-
-	return __super::OnDlgTimer(hDlg, id);
 }
 
 class mock_dialog_1 : public CDialog1
@@ -243,7 +189,7 @@ HWND CDialog2::DoModeless1(HWND hWndParent, int nCmdShow)
 {
 	const auto hInstance = (HINSTANCE)nullptr;
 	const auto lParam    = (LPARAM)NULL;
-	return __super::DoModeless(hInstance, hWndParent, DIALOG_ID, lParam, nCmdShow);
+	return __super::DoModeless(hInstance, hWndParent, IDD_INPUT1, lParam, nCmdShow);
 }
 
 /*!
@@ -257,7 +203,7 @@ HWND CDialog2::DoModeless2(HWND hWndParent, const TFunc& func, int nCmdShow)
 {
 	HINSTANCE hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
 
-	const auto hResInfo = FindResourceW(hLangRsrcInstance, MAKEINTRESOURCE(DIALOG_ID), RT_DIALOG);
+	const auto hResInfo = FindResourceW(hLangRsrcInstance, MAKEINTRESOURCE(IDD_INPUT1), RT_DIALOG);
 	if (!hResInfo) return nullptr;
 
 	const auto hResData = LoadResource(hLangRsrcInstance, hResInfo);
