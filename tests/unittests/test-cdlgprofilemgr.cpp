@@ -59,8 +59,7 @@ TEST(CDlgProfileMgr, DISABLED_SimpleShowDialog)
 {
 	CDlgProfileMgr dlg;
 	const auto hWndParent = static_cast<HWND>(nullptr);
-	const auto lParam = std::bit_cast<LPARAM>(nullptr);
-	const auto hDlg = dlg.Show(hWndParent, SW_SHOW, lParam);
+	const auto hDlg       = dlg.DoModeless(nullptr, hWndParent, IDD_PROFILEMGR, static_cast<LPARAM>(0), SW_SHOW);
 	EXPECT_NE(nullptr, hDlg);
 	dlg.CloseDialog(0);
 }
