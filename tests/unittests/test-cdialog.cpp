@@ -24,8 +24,6 @@
  */
 #include "dlg/CDialog.h"
 
-#include "CSelectLang.h"
-
 #include "MockShareDataAccessor.hpp"
 
 #include "MockUser32Dll.hpp"
@@ -34,7 +32,9 @@
 
 #include <functional>
 
- /*
+extern HINSTANCE GetLanguageResourceLibrary();
+
+/*
  * ダイアログクラステンプレートをテストするためのクラス
  
  * 自動テストで実行できるように作成したもの。
@@ -201,7 +201,7 @@ HWND CDialog2::DoModeless1(HWND hWndParent, int nCmdShow)
 template<typename TFunc>
 HWND CDialog2::DoModeless2(HWND hWndParent, const TFunc& func, int nCmdShow)
 {
-	HINSTANCE hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	const auto hLangRsrcInstance = GetLanguageResourceLibrary();
 
 	const auto hResInfo = FindResourceW(hLangRsrcInstance, MAKEINTRESOURCE(IDD_INPUT1), RT_DIALOG);
 	if (!hResInfo) return nullptr;
@@ -257,7 +257,7 @@ TEST(CDialog, SimpleDoModal)
 TEST(CDialog, MockedDoModal)
 {
 	// メッセージリソースDLLのインスタンスハンドル
-	auto hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	const auto hLangRsrcInstance = GetLanguageResourceLibrary();
 
 	// 親ウインドウのハンドル(ダミー)
 	const auto hWndParent = (HWND)0x1234;
@@ -287,7 +287,7 @@ TEST(CSizeRestorableDialog, SimpleDoModeless1)
 TEST(CSizeRestorableDialog, MockedDoModeless1)
 {
 	// メッセージリソースDLLのインスタンスハンドル
-	auto hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	const auto hLangRsrcInstance = GetLanguageResourceLibrary();
 
 	// 親ウインドウのハンドル(ダミー)
 	const auto hWndParent = (HWND)0x1234;

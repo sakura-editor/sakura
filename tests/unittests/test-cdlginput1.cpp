@@ -32,7 +32,6 @@
 #include "sakura_rc.h"
 
 #include "TAutoCloseDialog.hpp"
-#include "CSelectLang.h"
 
 /*
  * ダイアログクラステンプレートをテストするためのクラス
