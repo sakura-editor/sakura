@@ -17,7 +17,6 @@
 #include "StdAfx.h"
 #include "dlg/CDlgInput1.h"
 
-#include "sakura_rc.h"
 #include "sakura.hh"
 
 // 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
@@ -35,8 +34,8 @@ using namespace apiwrap;
 /*!
  * コンストラクター
  */
-CDlgInput1::CDlgInput1()
-	: CDialog(IDD_INPUT1)
+CDlgInput1::CDlgInput1(WORD DialogId_, std::shared_ptr<User32Dll> User32Dll_) noexcept
+	: CDialog(DialogId_, std::move(User32Dll_))
 {
 }
 

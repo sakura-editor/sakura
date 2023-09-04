@@ -45,9 +45,10 @@ TEST(CDlgJump, SimpleShowDialog)
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	CEditDoc doc(pShareDataAccessor);
 	CDlgJump dlg(std::move(pShareDataAccessor));
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
 	const auto hWndParent = (HWND) nullptr;
 	const auto lParam     = std::bit_cast<LPARAM>(&doc);
-	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, lParam);
+	const auto hDlg       = dlg.DoModeless(hInstance, hWndParent, IDD_JUMP, lParam, SW_SHOW);
 	EXPECT_NE(nullptr, hDlg);
 	dlg.CloseDialog(0);
 }

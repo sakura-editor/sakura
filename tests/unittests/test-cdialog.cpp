@@ -24,34 +24,30 @@
  */
 #include "dlg/CDialog.h"
 
-#include "CSelectLang.h"
-
 #include "MockShareDataAccessor.hpp"
 
 #include "MockUser32Dll.hpp"
 
+#include "TAutoCloseDialog.hpp"
+
 #include <functional>
 
- /*
+extern HINSTANCE GetLanguageResourceLibrary();
+
+/*
  * ダイアログクラステンプレートをテストするためのクラス
  
  * 自動テストで実行できるように作成したもの。
  * 初期表示後、勝手に閉じる仕様。
  */
-class CDialog1 : public CDialog
+class CDialog1 : public TAutoCloseDialog<CDialog, IDC_EDIT_INPUT1>
 {
 private:
-	static constexpr auto DIALOG_ID          = IDD_INPUT1;
-	static constexpr auto TIMERID_FIRST_IDLE = 1;
-
 	DLGPROC _pfnDlgProc = nullptr;
 
 public:
-	CDialog1(std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
+	explicit CDialog1(std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
 	~CDialog1() override = default;
-
-	INT_PTR DoModalCustom(HWND hWndParent);
-	HWND DoModeless1(HWND hWndParent, int nShowCmd);
 
 	INT_PTR CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) const;
 
@@ -59,42 +55,14 @@ public:
 
 protected:
 	BOOL    OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam) override;
-	BOOL    OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify) override;
-	BOOL    OnDlgTimer(HWND hDlg, UINT id) override;
 };
 
 /*!
  * コンストラクター
  */
 CDialog1::CDialog1(std::shared_ptr<User32Dll> User32Dll_)
-	: CDialog(DIALOG_ID, std::move(User32Dll_))
+	: TAutoCloseDialog(IDD_INPUT1, std::move(User32Dll_))
 {
-}
-
-/*!
- * モーダルダイアログを表示する
- *
- * CDialog::DoModalは無駄なパラメーターを要求するので、
- * テストコードを簡潔に記述できるように作成したもの。
- */
-INT_PTR CDialog1::DoModalCustom(HWND hWndParent)
-{
-	const auto hInstance = (HINSTANCE)nullptr;
-	const auto lParam    = (LPARAM)NULL;
-	return __super::DoModal(hInstance, hWndParent, DIALOG_ID, lParam);
-}
-
-/*!
- * モードレスダイアログを表示する
- *
- * CDialog::DoModelessは無駄なパラメーターを要求するので、
- * テストコードを簡潔に記述できるように作成したもの。
- */
-HWND CDialog1::DoModeless1(HWND hWndParent, int nCmdShow)
-{
-	const auto hInstance = (HINSTANCE)nullptr;
-	const auto lParam    = (LPARAM)NULL;
-	return __super::DoModeless(hInstance, hWndParent, DIALOG_ID, lParam, nCmdShow);
 }
 
 /*!
@@ -115,7 +83,7 @@ INT_PTR CDialog1::CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
  * @param [in] hDlg 宛先ウインドウのハンドル
  * @param [in] hWndFocus フォーカスを受け取る子ウインドウのハンドル
  * @param [in] lParam ダイアログパラメーター
- * @retval TRUE フォーカスが設定されます。
+ * @retval TRUE  フォーカスが設定されます。
  * @retval FALSE フォーカスは設定されません。
  */
 BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
@@ -126,59 +94,8 @@ BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
 	// ダイアログプロシージャをメンバー変数に格納する
 	_pfnDlgProc = std::bit_cast<DLGPROC>(GetWindowLongPtrW(hDlg, DWLP_DLGPROC));
 
-	// タイマーを起動する
-	::SetTimer(hDlg, TIMERID_FIRST_IDLE, 0, nullptr);
-
 	// 派生元クラスが返した戻り値をそのまま返す
 	return ret;
-}
-
-/*!
- * WM_COMMANDハンドラ。
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog1::OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify)
-{
-	if (const auto ret = GetDlgData(hDlg);
-		ret <= 0 || id == IDCANCEL)
-	{
-		return TRUE;
-	}
-
-	return __super::OnDlgCommand(hDlg, id, hWndCtl, codeNotify);
-}
-
-/*!
- * WM_TIMER処理
- *
- * タイマーイベントを処理する。
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog1::OnDlgTimer(HWND hDlg, UINT id)
-{
-	if (id == TIMERID_FIRST_IDLE)
-	{
-		// プログラム的に「Enterキー押下」を発生させる
-		INPUT input = {};
-
-		// WM_KEYDOWNを発生させる
-		input.type = INPUT_KEYBOARD;
-		input.ki.wVk = VK_RETURN;  // Enterキーの仮想キーコード
-		input.ki.dwFlags = 0;      // キーを押す
-		SendInput(1, &input, sizeof(INPUT));
-
-		// WM_KEYUPを発生させる
-		input.ki.dwFlags = KEYEVENTF_KEYUP;  // キーを離す
-		SendInput(1, &input, sizeof(INPUT));
-
-		return TRUE;
-	}
-
-	return __super::OnDlgTimer(hDlg, id);
 }
 
 class mock_dialog_1 : public CDialog1
@@ -210,14 +127,11 @@ public:
  */
 class CDialog2 : public CSizeRestorableDialog
 {
-private:
+public:
 	static constexpr auto DIALOG_ID = IDD_INPUT1;
 
-public:
 	explicit CDialog2(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
 	~CDialog2() override = default;
-
-	HWND DoModeless1(HWND hWndParent, int nShowCmd);
 
 	template<typename TFunc>
 	HWND DoModeless2(HWND hWndParent, const TFunc& func, int nShowCmd);
@@ -236,28 +150,15 @@ CDialog2::CDialog2(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::s
 /*!
  * モードレスダイアログを表示する
  *
- * CDialog::DoModelessは無駄なパラメーターを要求するので、
- * テストコードを簡潔に記述できるように作成したもの。
- */
-HWND CDialog2::DoModeless1(HWND hWndParent, int nCmdShow)
-{
-	const auto hInstance = (HINSTANCE)nullptr;
-	const auto lParam    = (LPARAM)NULL;
-	return __super::DoModeless(hInstance, hWndParent, DIALOG_ID, lParam, nCmdShow);
-}
-
-/*!
- * モードレスダイアログを表示する
- *
  * テストコードを簡潔に記述できるように作成したもの。
  * 本体に統合したほうがよいコードだが、既存呼び出し元がテスト不可なので一旦作るだけ。
  */
 template<typename TFunc>
 HWND CDialog2::DoModeless2(HWND hWndParent, const TFunc& func, int nCmdShow)
 {
-	HINSTANCE hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	const auto hLangRsrcInstance = GetLanguageResourceLibrary();
 
-	const auto hResInfo = FindResourceW(hLangRsrcInstance, MAKEINTRESOURCE(DIALOG_ID), RT_DIALOG);
+	const auto hResInfo = FindResourceW(hLangRsrcInstance, MAKEINTRESOURCE(IDD_INPUT1), RT_DIALOG);
 	if (!hResInfo) return nullptr;
 
 	const auto hResData = LoadResource(hLangRsrcInstance, hResInfo);
@@ -298,8 +199,11 @@ using ::testing::Return;
  */
 TEST(CDialog, SimpleDoModal)
 {
-	CDialog1 dlg;
-	EXPECT_EQ(IDOK, dlg.DoModalCustom(nullptr));
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto lParam     = static_cast<LPARAM>(0);
+	CDialog1   dlg;
+	EXPECT_EQ(IDOK, dlg.DoModal(hInstance, hWndParent, IDD_INPUT1, lParam));
 	EXPECT_FALSE(dlg.CallDialogProc(nullptr, WM_NULL, 0, 0));
 }
 
@@ -311,17 +215,17 @@ TEST(CDialog, SimpleDoModal)
 TEST(CDialog, MockedDoModal)
 {
 	// メッセージリソースDLLのインスタンスハンドル
-	auto hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	const auto hLangRsrcInstance = GetLanguageResourceLibrary();
 
-	// 親ウインドウのハンドル(ダミー)
-	const auto hWndParent = (HWND)0x1234;
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
+	const auto hWndParent = std::bit_cast<HWND>(static_cast<size_t>(0x1234));
+	const auto lParam     = static_cast<LPARAM>(0);
 
 	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, DialogBoxParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, _))
-		.WillOnce(Return(IDCANCEL));
+	EXPECT_CALL(*pUser32Dll, DialogBoxParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, _)).WillOnce(Return(IDCANCEL));
 
 	mock_dialog_1 mock(std::move(pUser32Dll));
-	EXPECT_EQ(IDCANCEL, mock.DoModalCustom(hWndParent));
+	EXPECT_EQ(IDCANCEL, mock.DoModal(hInstance, hWndParent, IDD_INPUT1, lParam));
 }
 
 /*!
@@ -329,9 +233,12 @@ TEST(CDialog, MockedDoModal)
  */
 TEST(CSizeRestorableDialog, SimpleDoModeless1)
 {
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto lParam     = static_cast<LPARAM>(0);
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	CDialog2 dlg(std::move(pShareDataAccessor));
-	EXPECT_NE(nullptr, dlg.DoModeless1(nullptr, SW_SHOW));
+	EXPECT_NE(nullptr, dlg.DoModeless(hInstance, hWndParent, IDD_COMPARE, lParam, SW_SHOW));
 }
 
 /*!
@@ -342,23 +249,22 @@ TEST(CSizeRestorableDialog, SimpleDoModeless1)
 TEST(CSizeRestorableDialog, MockedDoModeless1)
 {
 	// メッセージリソースDLLのインスタンスハンドル
-	auto hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	const auto hLangRsrcInstance = GetLanguageResourceLibrary();
 
-	// 親ウインドウのハンドル(ダミー)
-	const auto hWndParent = (HWND)0x1234;
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
+	const auto hWndParent = std::bit_cast<HWND>(static_cast<size_t>(0x1234));
+	const auto lParam     = static_cast<LPARAM>(0);
 
 	// 作成されたウインドウのハンドル(ダミー)
 	const auto hDlg = (HWND)0x4321;
 
 	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, CreateDialogParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_INPUT1), hWndParent, _, _))
-		.WillOnce(Return(hDlg));
-	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOW))
-		.WillOnce(Return(true));
+	EXPECT_CALL(*pUser32Dll, CreateDialogParamW(hLangRsrcInstance, MAKEINTRESOURCEW(IDD_COMPARE), hWndParent, _, _)).WillOnce(Return(hDlg));
+	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOW)).WillOnce(Return(true));
 
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
-	mock_dialog_2 mock(std::move(pShareDataAccessor), std::move(pUser32Dll));
-	EXPECT_EQ(hDlg, mock.DoModeless1(hWndParent, SW_SHOW));
+	mock_dialog_2 dlg(std::move(pShareDataAccessor), std::move(pUser32Dll));
+	EXPECT_EQ(hDlg, dlg.DoModeless(hInstance, hWndParent, IDD_COMPARE, lParam, SW_SHOW));
 }
 
 /*!
@@ -385,10 +291,8 @@ TEST(CSizeRestorableDialog, MockedDoModeless2)
 	const auto hDlg = (HWND)0x4321;
 
 	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, CreateDialogIndirectParamW(_, _, hWndParent, _, _))
-		.WillOnce(Return(hDlg));
-	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOWDEFAULT))
-		.WillOnce(Return(TRUE));
+	EXPECT_CALL(*pUser32Dll, CreateDialogIndirectParamW(_, _, hWndParent, _, _)).WillOnce(Return(hDlg));
+	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOWDEFAULT)).WillOnce(Return(TRUE));
 
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	mock_dialog_2 dlg(std::move(pShareDataAccessor), std::move(pUser32Dll));
@@ -407,8 +311,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnInitDialog)
 	auto wParam = (WPARAM)hWndFocus;
 	auto lParam = std::bit_cast<LPARAM>(&mock);
 
-	EXPECT_CALL(mock, OnInitDialog(hDlg, wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnInitDialog(hDlg, wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_INITDIALOG, wParam, lParam));
 }
@@ -422,8 +325,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnMove)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnMove(_, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnMove(_, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_MOVE, wParam, lParam));
 }
@@ -437,8 +339,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnCommand)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnCommand(wParam, lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnCommand(wParam, lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_COMMAND, wParam, lParam));
 }
@@ -452,8 +353,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnNotify)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnNotify((NMHDR*)lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnNotify((NMHDR*)lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_NOTIFY, 0, lParam));
 }
@@ -467,8 +367,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnTimer)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnTimer(wParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnTimer(wParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_TIMER, wParam, lParam));
 }
@@ -482,8 +381,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnKeyDown)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnKeyDown(wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnKeyDown(wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_KEYDOWN, wParam, lParam));
 }
@@ -497,8 +395,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnActivate)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnActivate(wParam, lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnActivate(wParam, lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_ACTIVATE, wParam, lParam));
 }
@@ -512,8 +409,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnKillFocus)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnKillFocus(wParam, _))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnKillFocus(wParam, _)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_KILLFOCUS, wParam, lParam));
 }
@@ -527,8 +423,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnPopupHelp)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnPopupHelp(_, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnPopupHelp(_, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_HELP, wParam, lParam));
 }
@@ -542,8 +437,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnContextMenu)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnContextMenu(wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnContextMenu(wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_CONTEXTMENU, wParam, lParam));
 }
@@ -558,8 +452,7 @@ TEST(CDialog, MockedDispachDlgEvent_OnSize)
 
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	mock_dialog_2 mock(std::move(pShareDataAccessor));
-	EXPECT_CALL(mock, OnSize(wParam, lParam))
-		.WillOnce(Return(false));
+	EXPECT_CALL(mock, OnSize(wParam, lParam)).WillOnce(Return(false));
 
 	EXPECT_FALSE(mock.DispatchDlgEvent(hDlg, WM_SIZE, wParam, lParam));
 }
@@ -573,8 +466,7 @@ TEST(CSizeRestorableDialog, MockedDispachDlgEvent_OnDrawItem)
 	auto lParam = (LPARAM)0x2222;
 
 	mock_dialog_1 mock;
-	EXPECT_CALL(mock, OnDrawItem(wParam, lParam))
-		.WillOnce(Return(true));
+	EXPECT_CALL(mock, OnDrawItem(wParam, lParam)).WillOnce(Return(true));
 
 	EXPECT_TRUE(mock.DispatchDlgEvent(hDlg, WM_DRAWITEM, wParam, lParam));
 }

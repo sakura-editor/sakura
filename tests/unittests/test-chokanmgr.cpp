@@ -47,9 +47,10 @@ TEST(CHokanMgr, SimpleShowDialog)
 	CEditDoc doc(pShareDataAccessor);
 	CEditView view;
 	CHokanMgr dlg(std::move(pShareDataAccessor));
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
 	const auto hWndParent = static_cast<HWND>(nullptr);
 	const auto lParam     = std::bit_cast<LPARAM>(&view);
-	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, lParam);
+	const auto hDlg       = dlg.DoModeless(hInstance, hWndParent, lParam);
 	EXPECT_NE(nullptr, hDlg);
 	dlg.CloseDialog(0);
 }

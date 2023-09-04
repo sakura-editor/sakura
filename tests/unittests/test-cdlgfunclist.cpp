@@ -52,10 +52,12 @@ TEST(CDlgFuncList, SimpleShowDialog)
 
 	auto pcFuncInfoArr = std::make_shared<CFuncInfoArr>();
 	dlg.SetFuncInfoForTest(pcFuncInfoArr);
+	auto pDlg = static_cast<CDialog*>(&dlg);
 
+	const auto hInstance  = static_cast<HINSTANCE>(nullptr);
 	const auto hWndParent = static_cast<HWND>(nullptr);
 	const auto lParam     = std::bit_cast<LPARAM>(&view);
-	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, lParam);
+	const auto hDlg       = pDlg->DoModeless(hInstance, hWndParent, IDD_FUNCLIST, lParam, SW_SHOW);
 	EXPECT_NE(nullptr, hDlg);
 	dlg.CloseDialog(0);
 }

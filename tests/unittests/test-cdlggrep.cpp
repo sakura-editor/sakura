@@ -46,7 +46,7 @@ TEST(CDlgGrep, SimpleShowDialog)
 
 	CDlgGrep dlg(std::move(pShareDataAccessor));
 	const auto hWndParent = static_cast<HWND>(nullptr);
-	const auto hDlg       = dlg.Show(hWndParent, SW_SHOW, 0L);
+	const auto hDlg       = dlg.DoModeless(nullptr, hWndParent, IDD_GREP, static_cast<LPARAM>(0), SW_SHOW);
 	EXPECT_NE(nullptr, hDlg);
 	dlg.CloseDialog(0);
 }

@@ -138,26 +138,16 @@ CDialog::~CDialog()
 */
 INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam )
 {
-	// 既存コード互換のため暫定で残しておく代入
-	m_hInstance = hInstance;
-
 	_idDialog = static_cast<WORD>(nDlgTemplete);
 
-	return DoModal(hwndParent, lParam);
-}
-
-/*!
- * モーダルダイアログを表示します。
- */
-INT_PTR CDialog::DoModal(HWND hWndParent, LPARAM lParam)
-{
+	m_bModal  = TRUE;
 	m_bInited = FALSE;
-	m_bModal = TRUE;
-	m_hwndParent = hWndParent;
-	m_lParam = lParam;
 
 	// 既存コード互換のため暫定で残しておく代入
-	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
+	m_hInstance         = hInstance;
+	m_hwndParent        = hwndParent;
+	m_lParam            = lParam;
+	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
 
 	return GetUser32Dll()->DialogBoxParamW(
 		m_hLangRsrcInstance,
@@ -177,26 +167,17 @@ INT_PTR CDialog::DoModal(HWND hWndParent, LPARAM lParam)
 */
 HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow )
 {
-	// 既存コード互換のため暫定で残しておく代入
-	m_hInstance = hInstance;
-
 	_idDialog = static_cast<WORD>(nDlgTemplete);
 
-	return Show(hwndParent, nCmdShow, lParam);
-}
-
-/*!
- * ダイアログをウインドウとして表示します。
- */
-HWND CDialog::Show(HWND hWndParent, int nCmdShow, LPARAM lParam)
-{
-	m_bInited = FALSE;
-	m_bModal = FALSE;
-	m_hwndParent = hWndParent;	/* オーナーウィンドウのハンドル */
-	m_lParam = lParam;
+	m_bModal   = FALSE;
+	m_nShowCmd = nCmdShow;
+	m_bInited  = FALSE;
 
 	// 既存コード互換のため暫定で残しておく代入
-	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
+	m_hInstance         = hInstance;
+	m_hwndParent        = hwndParent;
+	m_lParam            = lParam;
+	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
 
 	m_hWnd = GetUser32Dll()->CreateDialogParamW(
 		m_hLangRsrcInstance,
@@ -213,11 +194,15 @@ HWND CDialog::Show(HWND hWndParent, int nCmdShow, LPARAM lParam)
 
 HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow )
 {
-	m_bInited = FALSE;
-	m_bModal = FALSE;
-	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
-	m_lParam = lParam;
+	m_bModal   = FALSE;
+	m_nShowCmd = nCmdShow;
+	m_bInited  = FALSE;
+
+	// 既存コード互換のため暫定で残しておく代入
+	m_hInstance         = hInstance;
+	m_hwndParent        = hwndParent;
+	m_lParam            = lParam;
+	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
 	m_hWnd = GetUser32Dll()->CreateDialogIndirectParamW(
 		m_hInstance,
 		lpTemplate,
