@@ -113,6 +113,7 @@ public:
 	//! タブ幅の取得
 	CLayoutInt GetTabSpace() const { return m_nTabSpace * m_nCharLayoutXPerKeta; }
 	CKetaXInt  GetTabSpaceKetas() const { return m_nTabSpace; }
+	void SetTabSpaceKetas(CKetaXInt nTabSpace) { m_nTabSpace = nTabSpace; }
 
 	void SetTabSpaceInfo( CKetaXInt nTabSpaceKeta, CLayoutXInt nCharLayoutXPerKeta ){
 		m_nTabSpace = nTabSpaceKeta;

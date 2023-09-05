@@ -35,6 +35,7 @@
 #include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
 #include "_os/CClipboard.h"
+#include "parse/DetectIndentationStyle.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
@@ -78,11 +79,35 @@ void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
+	const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
+
+	if (type.m_bDetectIndentationStyleOnFileLoad) {
+		// インデントスタイル検出
+		// 現時点の実装ではレイアウトには影響しないのでここで実行する
+		IndentationStyle indentStyle{};
+		DetectIndentationStyle(pcDoc, 256, indentStyle);
+		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
+		if (indentStyle.character == IndentationStyle::Character::Spaces) { // 半角空白でインデント
+			if (indentStyle.tabSpace > 0) { // インデント幅が検出できた場合のみ設定
+				// スペースの挿入設定を有効化
+				bInsSpace = true;
+				// タブ幅を一時的に設定
+				pcDoc->m_bTabSpaceCurTemp = true;
+				auto& layoutMgr = pcDoc->m_cLayoutMgr;
+				layoutMgr.SetTabSpaceKetas(CKetaXInt(indentStyle.tabSpace));
+			}
+		}else if (indentStyle.character == IndentationStyle::Character::Tabs) { // タブ文字でインデント
+			// スペースの挿入設定を無効化
+			bInsSpace = false;
+			// タブ幅は元のままで変更しない
+		}else {
+			// 検出出来なかったので何も設定しない
+		}
+	}
 
 	//	May 12, 2000 genta
 	//	編集用改行コードの設定
 	{
-		const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
 		if ( pcDoc->m_cDocFile.GetCodeSet() == type.m_encoding.m_eDefaultCodetype ){
 			SetNewLineCode( type.m_encoding.m_eDefaultEoltype );	// 2011.01.24 ryoji デフォルトEOL
 		}

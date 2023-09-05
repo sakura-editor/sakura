@@ -880,6 +880,7 @@ BEGIN
     CONTROL         "When Undo, separate from editing(&U)",IDC_CHECK_INDENTCPPUNDO,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,183,146,10
     GROUPBOX        "C/C++　Indent Settings",IDC_STATIC,3,159,295,40,WS_GROUP
+    CONTROL         "Detect an indentation style when a file is loaded(&T)",IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,205,240,10
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244

@@ -356,6 +356,7 @@
     <ClInclude Include="..\sakura_core\outline\CFuncInfo.h" />
     <ClInclude Include="..\sakura_core\outline\CFuncInfoArr.h" />
     <ClInclude Include="..\sakura_core\parse\CWordParse.h" />
+    <ClInclude Include="..\sakura_core\parse\DetectIndentationStyle.h" />
     <ClInclude Include="..\sakura_core\plugin\CComplementIfObj.h" />
     <ClInclude Include="..\sakura_core\plugin\CDllPlugin.h" />
     <ClInclude Include="..\sakura_core\plugin\CJackManager.h" />
@@ -722,6 +723,7 @@
     <ClCompile Include="..\sakura_core\outline\CFuncInfo.cpp" />
     <ClCompile Include="..\sakura_core\outline\CFuncInfoArr.cpp" />
     <ClCompile Include="..\sakura_core\parse\CWordParse.cpp" />
+    <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp" />
     <ClCompile Include="..\sakura_core\plugin\CDllPlugin.cpp" />
     <ClCompile Include="..\sakura_core\plugin\CJackManager.cpp" />
     <ClCompile Include="..\sakura_core\plugin\CPlugin.cpp" />

@@ -1115,6 +1115,9 @@
     <ClInclude Include="..\sakura_core\view\CMiniMapView.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\parse\DetectIndentationStyle.h">
+      <Filter>Cpp Source Files\parse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2314,6 +2317,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\view\CMiniMapView.cpp">
       <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp">
+      <Filter>Cpp Source Files\parse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
