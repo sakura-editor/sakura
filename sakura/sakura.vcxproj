@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\apimodule\Kernel32Dll.hpp" />
+    <ClInclude Include="..\sakura_core\apimodule\Ole32Dll.hpp" />
     <ClInclude Include="..\sakura_core\apimodule\Shell32Dll.hpp" />
     <ClInclude Include="..\sakura_core\apimodule\User32Dll.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\apiwrap.hpp" />
