@@ -22,10 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
+#include "MockOle32Dll.hpp"
 
-#include <tchar.h>
-#include <Windows.h>
 #include <Shlwapi.h>
 
 #include "io/CZipFile.h"
@@ -42,6 +40,10 @@
 
 using BinarySequence = std::basic_string<std::byte>;
 using BinarySequenceView = std::basic_string_view<std::byte>;
+
+using ::testing::_;
+using ::testing::Return;
+using ::testing::Return;
 
 /*!
 	リソースに埋め込まれたデータを取得する
@@ -159,9 +161,12 @@ std::filesystem::path GetTempFilePath(std::wstring_view prefix, std::wstring_vie
  */
 TEST(CZipFIle, IsNG)
 {
+	auto pOle32Dll = std::make_unique<MockOle32Dll>();
+	EXPECT_CALL(*pOle32Dll, CoCreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IShellDispatch), _)).WillOnce(Return(E_FAIL));
+
 	// IShellDispatchを使うためにOLEを初期化する必要がある
 	// このテストでは初期化を忘れた場合の挙動を確認する
-	CZipFile cZipFile;
+	CZipFile cZipFile(std::move(pOle32Dll));
 	ASSERT_FALSE(cZipFile.IsOk());
 
 	// この場合、他のメソッドを呼び出すと落ちる。

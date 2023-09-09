@@ -45,6 +45,9 @@
     <ClInclude Include="TAutoCloseDialog.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
+    <ClInclude Include="MockOle32Dll.hpp">
+      <Filter>Mock Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test-cmemory.cpp">

@@ -1153,6 +1153,9 @@
     <ClInclude Include="..\sakura_core\apiwrap\HGlobal.hpp">
       <Filter>Cpp Source Files\apiwrap</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\apimodule\Ole32Dll.hpp">
+      <Filter>Cpp Source Files\apimodule</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
