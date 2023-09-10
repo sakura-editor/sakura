@@ -133,9 +133,6 @@ public:
 	explicit CDialog2(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
 	~CDialog2() override = default;
 
-	template<typename TFunc>
-	HWND DoModeless2(HWND hWndParent, const TFunc& func, int nShowCmd);
-
 	using CDialog::DispatchDlgEvent;
 };
 
@@ -145,39 +142,6 @@ public:
 CDialog2::CDialog2(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_)
 	: CSizeRestorableDialog(DIALOG_ID, std::move(ShareDataAccessor_), std::move(User32Dll_))
 {
-}
-
-/*!
- * モードレスダイアログを表示する
- *
- * テストコードを簡潔に記述できるように作成したもの。
- * 本体に統合したほうがよいコードだが、既存呼び出し元がテスト不可なので一旦作るだけ。
- */
-template<typename TFunc>
-HWND CDialog2::DoModeless2(HWND hWndParent, const TFunc& func, int nCmdShow)
-{
-	const auto hLangRsrcInstance = GetLanguageResourceLibrary();
-
-	const auto hResInfo = FindResourceW(hLangRsrcInstance, MAKEINTRESOURCE(IDD_INPUT1), RT_DIALOG);
-	if (!hResInfo) return nullptr;
-
-	const auto hResData = LoadResource(hLangRsrcInstance, hResInfo);
-	if (!hResData) return nullptr;
-
-	const auto pDlgTemplate = std::bit_cast<LPDLGTEMPLATE>(LockResource(hResData));
-	if (!pDlgTemplate) return nullptr;
-
-	const auto dwDlgTemplateSize = SizeofResource(hLangRsrcInstance, hResInfo);
-
-	auto buffer = std::vector<uint8_t>(dwDlgTemplateSize);
-	auto lpDlgTemplate = std::bit_cast<LPDLGTEMPLATE>(buffer.data());
-
-	memcpy_s(lpDlgTemplate, dwDlgTemplateSize, pDlgTemplate, dwDlgTemplateSize);
-	func(*lpDlgTemplate);
-
-	const auto hInstance = (HINSTANCE)nullptr;
-	const auto lParam    = (LPARAM)NULL;
-	return __super::DoModeless(hInstance, hWndParent, lpDlgTemplate, lParam, nCmdShow);
 }
 
 class mock_dialog_2 : public CDialog2
@@ -192,6 +156,7 @@ public:
 };
 
 using ::testing::_;
+using ::testing::Invoke;
 using ::testing::Return;
 
 /*!
@@ -272,9 +237,40 @@ TEST(CSizeRestorableDialog, MockedDoModeless1)
  */
 TEST(CSizeRestorableDialog, SimpleDoModeless2)
 {
+	const auto hWndParent = static_cast<HWND>(nullptr);
+	const auto lParam     = static_cast<LPARAM>(0);
+
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	CDialog2 dlg(std::move(pShareDataAccessor));
-	EXPECT_NE(nullptr, dlg.DoModeless2(nullptr, [](DLGTEMPLATE& dlgTemplate) { dlgTemplate.style = WS_OVERLAPPEDWINDOW | DS_SETFONT; }, SW_SHOWDEFAULT));
+	const auto hDlg = dlg.DoModeless2(hWndParent, [](DLGTEMPLATE& dlgTemplate) { dlgTemplate.style = WS_OVERLAPPEDWINDOW | DS_SETFONT; }, lParam, SW_SHOWDEFAULT);
+	EXPECT_TRUE(hDlg);
+}
+
+/*!
+ * モードレスダイアログ表示、正常系テスト
+ *
+ * Windows APIの呼び出しパラメーターを確認する
+ */
+TEST(CSizeRestorableDialog, MockedDoModeless2_fail)
+{
+	// 親ウインドウのハンドル(ダミー)
+	const auto hWndParent = (HWND)0x1234;
+	const auto lParam     = static_cast<LPARAM>(0);
+
+	// 作成されたウインドウのハンドル(ダミー)
+	const auto hDlg = (HWND)0x4321;
+
+	auto pUser32Dll = std::make_shared<MockUser32Dll>();
+	EXPECT_CALL(*pUser32Dll, FindResourceW(_, _, _)).WillOnce(Return(nullptr));
+	EXPECT_CALL(*pUser32Dll, LoadResource(_, _)).Times(0);
+	EXPECT_CALL(*pUser32Dll, LockResource(_)).Times(0);
+	EXPECT_CALL(*pUser32Dll, SizeofResource(_, _)).Times(0);
+	EXPECT_CALL(*pUser32Dll, CreateDialogIndirectParamW(_, _, _, _, _)).Times(0);
+	EXPECT_CALL(*pUser32Dll, ShowWindow(_, _)).Times(0);
+
+	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
+	mock_dialog_2 dlg(std::move(pShareDataAccessor), std::move(pUser32Dll));
+	EXPECT_EQ(nullptr, dlg.DoModeless2(hWndParent, [](DLGTEMPLATE& dlgTemplate) { dlgTemplate.style = WS_OVERLAPPEDWINDOW | DS_SETFONT; }, lParam, SW_SHOWDEFAULT));
 }
 
 /*!
@@ -286,17 +282,22 @@ TEST(CSizeRestorableDialog, MockedDoModeless2)
 {
 	// 親ウインドウのハンドル(ダミー)
 	const auto hWndParent = (HWND)0x1234;
+	const auto lParam     = static_cast<LPARAM>(0);
 
 	// 作成されたウインドウのハンドル(ダミー)
 	const auto hDlg = (HWND)0x4321;
 
 	auto pUser32Dll = std::make_shared<MockUser32Dll>();
+	EXPECT_CALL(*pUser32Dll, FindResourceW(_, _, _)).WillOnce(Invoke(::FindResourceW));
+	EXPECT_CALL(*pUser32Dll, LoadResource(_, _)).WillOnce(Invoke(::LoadResource));
+	EXPECT_CALL(*pUser32Dll, LockResource(_)).WillOnce(Invoke(::LockResource));
+	EXPECT_CALL(*pUser32Dll, SizeofResource(_, _)).WillOnce(Invoke(::SizeofResource));
 	EXPECT_CALL(*pUser32Dll, CreateDialogIndirectParamW(_, _, hWndParent, _, _)).WillOnce(Return(hDlg));
 	EXPECT_CALL(*pUser32Dll, ShowWindow(hDlg, SW_SHOWDEFAULT)).WillOnce(Return(TRUE));
 
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	mock_dialog_2 dlg(std::move(pShareDataAccessor), std::move(pUser32Dll));
-	EXPECT_NE(nullptr, dlg.DoModeless2(hWndParent, [](DLGTEMPLATE& dlgTemplate) { dlgTemplate.style = WS_OVERLAPPEDWINDOW | DS_SETFONT; }, SW_SHOWDEFAULT));
+	EXPECT_EQ(hDlg, dlg.DoModeless2(hWndParent, [](DLGTEMPLATE& dlgTemplate) { dlgTemplate.style = WS_OVERLAPPEDWINDOW | DS_SETFONT; }, lParam, SW_SHOWDEFAULT));
 }
 
 TEST(CDialog, MockedDispachDlgEvent_OnInitDialog)

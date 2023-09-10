@@ -22,6 +22,7 @@
 #pragma once
 
 #include "apimodule/User32Dll.hpp"
+#include "apiwrap/apiwrap.hpp"
 
 #include "env/ShareDataAccessor.hpp"
 #include "env/DLLSHAREDATA.h"
@@ -59,6 +60,8 @@ struct SAnchorList
 	EAnchorStyle anchor;
 };
 
+extern HINSTANCE GetLanguageResourceLibrary();
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -91,7 +94,48 @@ public:
 	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 	INT_PTR DoModal(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam);	/* モーダルダイアログの表示 */
 	HWND    DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
-	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
+
+	/*!
+	 * モードレスダイアログを表示する
+	 */
+	template<typename TFunc>
+	HWND DoModeless2(HWND hWndParent, const TFunc& func, LPARAM lParam, int nCmdShow)
+	{
+		m_bModal   = FALSE;
+		m_nShowCmd = nCmdShow;
+		m_bInited  = FALSE;
+
+		// 既存コード互換のため暫定で残しておく代入
+		m_hInstance         = static_cast<HINSTANCE>(nullptr);
+		m_hwndParent        = hWndParent;
+		m_lParam            = lParam;
+		m_hLangRsrcInstance = GetLanguageResourceLibrary();
+
+		auto buffer = apiwrap::CopyResource<LPDLGTEMPLATE>(m_hLangRsrcInstance, MAKEINTRESOURCE(_idDialog), RT_DIALOG, GetUser32Dll());
+		if (buffer.empty())
+		{
+			return nullptr;
+		}
+
+		auto lpDlgTemplate = std::bit_cast<LPDLGTEMPLATE>(buffer.data());
+		func(*lpDlgTemplate);
+
+		const auto hWnd = GetUser32Dll()->CreateDialogIndirectParamW(
+			m_hLangRsrcInstance,
+			lpDlgTemplate,
+			hWndParent,
+			DialogProc,
+			std::bit_cast<LPARAM>(this)
+		);
+
+		if (hWnd)
+		{
+			GetUser32Dll()->ShowWindow(hWnd, nCmdShow);
+		}
+
+		return hWnd;
+	}
+
 	void CloseDialog(INT_PTR nModalRetVal);
 
 private:

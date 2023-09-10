@@ -382,24 +382,7 @@ HWND CDlgFuncList::DoModeless(
 	HWND hwndRet;
 	if( IsDocking() ){
 		// ドッキング用にダイアログテンプレートに手を加えてから表示する（WS_CHILD化）
-		HINSTANCE hInstance2 = CSelectLang::getLangRsrcInstance();
-		if( !m_pDlgTemplate || m_lastRcInstance != hInstance2 ){
-			HRSRC hResInfo = ::FindResource( hInstance2, MAKEINTRESOURCE(IDD_FUNCLIST), RT_DIALOG );
-			if( !hResInfo ) return NULL;
-			HGLOBAL hResData = ::LoadResource( hInstance2, hResInfo );
-			if( !hResData ) return NULL;
-			m_pDlgTemplate = (LPDLGTEMPLATE)::LockResource( hResData );
-			if( !m_pDlgTemplate ) return NULL;
-			m_dwDlgTmpSize = ::SizeofResource( hInstance2, hResInfo );
-			// 言語切り替えでリソースがアンロードされていないか確認するためインスタンスを記憶する
-			m_lastRcInstance = hInstance2;
-		}
-		LPDLGTEMPLATE pDlgTemplate = (LPDLGTEMPLATE)::GlobalAlloc( GMEM_FIXED, m_dwDlgTmpSize );
-		if( !pDlgTemplate ) return NULL;
-		::CopyMemory( pDlgTemplate, m_pDlgTemplate, m_dwDlgTmpSize );
-		pDlgTemplate->style = (WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | DS_SETFONT);
-		hwndRet = CDialog::DoModeless( hInstance, MyGetAncestor(hwndParent, GA_ROOT), pDlgTemplate, lParam, SW_HIDE );
-		::GlobalFree( pDlgTemplate );
+		hwndRet = CDialog::DoModeless2(MyGetAncestor(hwndParent, GA_ROOT), [](DLGTEMPLATE& dlgTemplate) { dlgTemplate.style = WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | DS_SETFONT; }, lParam, SW_HIDE);
 		GetEditWnd().EndLayoutBars( m_bEditWndReady );	// 画面の再レイアウト
 	}else{
 		hwndRet = CDialog::DoModeless( hInstance, MyGetAncestor(hwndParent, GA_ROOT), IDD_FUNCLIST, lParam, SW_SHOW );

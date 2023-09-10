@@ -69,14 +69,8 @@ BOOL CViewCommander::Command_FUNCLIST(
 		}
 	}
 
-	// ダイアログの参照
-	auto& cDlgFuncList = GetEditWindow()->m_cDlgFuncList;
-
 	if( NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
-		// 現在のドッキング状態を取得
-		const auto isDocking = cDlgFuncList.IsDocking();
-
-		switch( nAction ){
+		switch(nAction ){
 		case SHOW_NORMAL: // アクティブにする
 			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
 			GetEditWindow()->m_cDlgFuncList.SyncColor();
@@ -99,12 +93,6 @@ BOOL CViewCommander::Command_FUNCLIST(
 				return TRUE;
 			}
 			break;
-
-		case SHOW_DOCK_TOGGLE:
-			// ドッキングモードの切り替え(テスト専用の仮コード)
-			cDlgFuncList.SetDockSide(isDocking ? DOCKSIDE_LEFT : DOCKSIDE_FLOAT);
-			break;
-
 		default:
 			break;
 		}

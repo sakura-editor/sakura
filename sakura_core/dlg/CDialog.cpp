@@ -192,30 +192,6 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	return m_hWnd;
 }
 
-HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow )
-{
-	m_bModal   = FALSE;
-	m_nShowCmd = nCmdShow;
-	m_bInited  = FALSE;
-
-	// 既存コード互換のため暫定で残しておく代入
-	m_hInstance         = hInstance;
-	m_hwndParent        = hwndParent;
-	m_lParam            = lParam;
-	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
-	m_hWnd = GetUser32Dll()->CreateDialogIndirectParamW(
-		m_hInstance,
-		lpTemplate,
-		m_hwndParent,
-		DialogProc,
-		std::bit_cast<LPARAM>(this)
-	);
-	if( NULL != m_hWnd ){
-		ShowWindow( m_hWnd, nCmdShow );
-	}
-	return m_hWnd;
-}
-
 /*!
  * ダイアログにデータを反映する
  *

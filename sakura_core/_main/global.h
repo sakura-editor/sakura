@@ -39,17 +39,11 @@
 #define IDM_SELMRU			11000
 #define IDM_SELOPENFOLDER	12000
 
-/*! ダイアログ表示方法
- *
- * @date 2006/02/01 aroka アウトラインウィンドウ用に作成
- */
+/* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
 enum enumShowDlg {
-	SHOW_NORMAL = 0,
-	SHOW_RELOAD,
-	SHOW_TOGGLE,
-
-	//テスト用仮コード(そのうち消す)
-	SHOW_DOCK_TOGGLE,
+	SHOW_NORMAL			= 0,
+	SHOW_RELOAD			= 1,
+	SHOW_TOGGLE			= 2,
 };
 
 /* 選択領域描画用パラメータ */

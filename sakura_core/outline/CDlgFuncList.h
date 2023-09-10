@@ -92,8 +92,6 @@ public:
 	bool IsDocking() { return m_eDockSide > DOCKSIDE_FLOAT; }
 	EDockSide GetDockSide() { return m_eDockSide; }
 
-	void SetDockSide(int dockSide) { m_eDockSide = static_cast<EDockSide>(dockSide); }
-
 protected:
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
 

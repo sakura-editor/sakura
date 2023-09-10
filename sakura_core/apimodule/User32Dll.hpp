@@ -108,10 +108,25 @@ struct User32Dll
 		return ::EmptyClipboard();
 	}
 
+	virtual BOOL EndDialog(
+			_In_ HWND hDlg,
+			_In_ INT_PTR nResult) const
+	{
+		return ::EndDialog(hDlg, nResult);
+	}
+
 	virtual UINT EnumClipboardFormats(
 		_In_ UINT format) const
 	{
 		return ::EnumClipboardFormats(format);
+	}
+
+	virtual HRSRC FindResourceW(
+		_In_opt_ HMODULE hModule,
+		_In_ LPCWSTR lpName,
+		_In_ LPCWSTR lpType) const
+	{
+		return ::FindResourceW(hModule, lpName, lpType);
 	}
 
 	virtual BOOL GetClassInfoExW(
@@ -149,22 +164,35 @@ struct User32Dll
 		return ::GetWindowTextLengthW(hWnd);
 	}
 
-	virtual ATOM RegisterClassExW(
-		_In_ CONST WNDCLASSEXW* lpwcex) const
-	{
-		return ::RegisterClassExW(lpwcex);
-	}
-
 	virtual BOOL IsClipboardFormatAvailable(
 		_In_ UINT format) const
 	{
 		return ::IsClipboardFormatAvailable(format);
 	}
 
+	virtual HGLOBAL LoadResource(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo) const
+	{
+		return ::LoadResource(hModule, hResInfo);
+	}
+
+	virtual LPVOID LockResource(
+		_In_ HGLOBAL hResData) const
+	{
+		return ::LockResource(hResData);
+	}
+
 	virtual BOOL OpenClipboard(
 		_In_opt_ HWND hWndNewOwner) const
 	{
 		return ::OpenClipboard(hWndNewOwner);
+	}
+
+	virtual ATOM RegisterClassExW(
+		_In_ CONST WNDCLASSEXW* lpwcex) const
+	{
+		return ::RegisterClassExW(lpwcex);
 	}
 
 	virtual UINT RegisterClipboardFormatW(
@@ -206,6 +234,13 @@ struct User32Dll
 		_In_ int nCmdShow) const
 	{
 		return ::ShowWindow(hWnd, nCmdShow);
+	}
+
+	virtual DWORD SizeofResource(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo) const
+	{
+		return ::SizeofResource(hModule, hResInfo);
 	}
 };
 
