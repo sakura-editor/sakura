@@ -49,6 +49,30 @@ void         SendEmLimitTextW(_In_ HWND hDlg, int nIDDlgItem, size_t cchLimit, s
 
 bool         IsWndClassRegistered(std::wstring_view className, std::shared_ptr<User32Dll> _User32Dll = std::make_shared<User32Dll>());
 
+template<typename TResource>
+auto CopyResource(HINSTANCE hLangRsrcInstance, LPCWSTR lpName, LPCWSTR lpType, std::shared_ptr<User32Dll> _User32Dll)
+{
+	using BinarySequence = std::basic_string<std::byte>;
+
+	const auto hResInfo = _User32Dll->FindResourceW(hLangRsrcInstance, lpName, lpType);
+	if (!hResInfo) return BinarySequence();
+
+	const auto hResData = _User32Dll->LoadResource(hLangRsrcInstance, hResInfo);
+	if (!hResData) return BinarySequence();
+
+	const auto pDlgTemplate = std::bit_cast<TResource>(_User32Dll->LockResource(hResData));
+	if (!pDlgTemplate) return BinarySequence();
+
+	const auto dwDlgTemplateSize = _User32Dll->SizeofResource(hLangRsrcInstance, hResInfo);
+
+	auto buffer = std::basic_string<std::byte>(dwDlgTemplateSize, std::byte());
+	auto lpDlgTemplate = std::bit_cast<TResource>(buffer.data());
+
+	::memcpy_s(lpDlgTemplate, dwDlgTemplateSize, pDlgTemplate, dwDlgTemplateSize);
+
+	return buffer;
+}
+
 } //end of namespace apiwrap
 
 constexpr HBRUSH MakeHBrush(int sysColorIndex)

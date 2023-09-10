@@ -82,6 +82,11 @@ struct MockUser32Dll : public User32Dll
 	MOCK_CONST_METHOD1(EnumClipboardFormats, UINT(
 		_In_ UINT format));
 
+	MOCK_CONST_METHOD3(FindResourceW, HRSRC(
+		_In_opt_ HMODULE hModule,
+		_In_ LPCWSTR lpName,
+		_In_ LPCWSTR lpType));
+
 	MOCK_CONST_METHOD3(GetClassInfoExW, BOOL(
 		_In_opt_ HINSTANCE hInstance,
 		_In_ LPCWSTR lpszClass,
@@ -102,14 +107,21 @@ struct MockUser32Dll : public User32Dll
 	MOCK_CONST_METHOD1(GetWindowTextLengthW, int(
 		_In_ HWND hWnd));
 
-	MOCK_CONST_METHOD1(RegisterClassExW, ATOM(
-		_In_ CONST WNDCLASSEXW* lpwcex));
-
 	MOCK_CONST_METHOD1(IsClipboardFormatAvailable, BOOL(
 		_In_ UINT format));
 
+	MOCK_CONST_METHOD2(LoadResource, HGLOBAL(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo));
+
+	MOCK_CONST_METHOD1(LockResource, LPVOID(
+		_In_ HGLOBAL hResData));
+		
 	MOCK_CONST_METHOD1(OpenClipboard, BOOL(
 		_In_opt_ HWND hWndNewOwner));
+
+	MOCK_CONST_METHOD1(RegisterClassExW, ATOM(
+		_In_ CONST WNDCLASSEXW* lpwcex));
 
 	MOCK_CONST_METHOD1(RegisterClipboardFormatW, UINT(
 		_In_ LPCWSTR lpszFormat));
@@ -131,4 +143,8 @@ struct MockUser32Dll : public User32Dll
 	MOCK_CONST_METHOD2_T(ShowWindow, bool(
 		_In_ HWND hWnd,
 		_In_ int nCmdShow));
+
+	MOCK_CONST_METHOD2(SizeofResource, DWORD(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo));
 };

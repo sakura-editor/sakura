@@ -251,3 +251,45 @@ TEST(IsWndClassRegistered, bad_arg)
 {
 	EXPECT_FALSE(apiwrap::IsWndClassRegistered(L""));
 }
+
+TEST(CopyResource, FindResource_fail)
+{
+	const auto hLangRsrcInstance = std::bit_cast<HINSTANCE>(static_cast<size_t>(0x1234));
+
+	auto pUser32Dll = std::make_shared<MockUser32Dll>();
+	EXPECT_CALL(*pUser32Dll, FindResourceW(hLangRsrcInstance, _, _)).WillOnce(Return(nullptr));
+	EXPECT_CALL(*pUser32Dll, LoadResource(_, _)).Times(0);
+
+	auto buffer = apiwrap::CopyResource<LPDLGTEMPLATE>(hLangRsrcInstance, MAKEINTRESOURCE(1), RT_DIALOG, std::move(pUser32Dll));
+	EXPECT_EQ(0, buffer.size());
+}
+
+TEST(CopyResource, LoadResource_fail)
+{
+	const auto hLangRsrcInstance = std::bit_cast<HINSTANCE>(static_cast<size_t>(0x1234));
+	const auto hResInfo          = std::bit_cast<HRSRC>(static_cast<size_t>(0x5678));
+
+	auto pUser32Dll = std::make_shared<MockUser32Dll>();
+	EXPECT_CALL(*pUser32Dll, FindResourceW(hLangRsrcInstance, _, _)).WillOnce(Return(hResInfo));
+	EXPECT_CALL(*pUser32Dll, LoadResource(hLangRsrcInstance, hResInfo)).WillOnce(Return(nullptr));
+	EXPECT_CALL(*pUser32Dll, LockResource(_)).Times(0);
+
+	auto buffer = apiwrap::CopyResource<LPDLGTEMPLATE>(hLangRsrcInstance, MAKEINTRESOURCE(1), RT_DIALOG, std::move(pUser32Dll));
+	EXPECT_EQ(0, buffer.size());
+}
+
+TEST(CopyResource, LockResource_fail)
+{
+	const auto hLangRsrcInstance = std::bit_cast<HINSTANCE>(static_cast<size_t>(0x1234));
+	const auto hResInfo          = std::bit_cast<HRSRC>(static_cast<size_t>(0x5678));
+	const auto hResData          = std::bit_cast<HGLOBAL>(static_cast<size_t>(0x8765));
+
+	auto pUser32Dll = std::make_shared<MockUser32Dll>();
+	EXPECT_CALL(*pUser32Dll, FindResourceW(hLangRsrcInstance, _, _)).WillOnce(Return(hResInfo));
+	EXPECT_CALL(*pUser32Dll, LoadResource(hLangRsrcInstance, hResInfo)).WillOnce(Return(hResData));
+	EXPECT_CALL(*pUser32Dll, LockResource(hResData)).WillOnce(Return(nullptr));
+	EXPECT_CALL(*pUser32Dll, SizeofResource(_, _)).Times(0);
+
+	auto buffer = apiwrap::CopyResource<LPDLGTEMPLATE>(hLangRsrcInstance, MAKEINTRESOURCE(1), RT_DIALOG, std::move(pUser32Dll));
+	EXPECT_EQ(0, buffer.size());
+}
