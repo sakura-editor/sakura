@@ -42,14 +42,11 @@ extern HINSTANCE GetLanguageResourceLibrary();
  */
 class CDialog1 : public TAutoCloseDialog<CDialog, IDC_EDIT_INPUT1>
 {
-private:
 	DLGPROC _pfnDlgProc = nullptr;
 
 public:
 	explicit CDialog1(std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
 	~CDialog1() override = default;
-
-	INT_PTR CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) const;
 
 	using CDialog::DispatchDlgEvent;
 
@@ -63,16 +60,6 @@ protected:
 CDialog1::CDialog1(std::shared_ptr<User32Dll> User32Dll_)
 	: TAutoCloseDialog(IDD_INPUT1, std::move(User32Dll_))
 {
-}
-
-/*!
- * ダイアログプロシージャを呼び出します。
- *
- * ポインタ変数は起動時にするので、一度開いてから使います。
- */
-INT_PTR CDialog1::CallDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) const
-{
-	return _pfnDlgProc ? _pfnDlgProc(hDlg, uMsg, wParam, lParam) : FALSE;
 }
 
 /*!
@@ -91,8 +78,8 @@ BOOL CDialog1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
 	// 派生元クラスに処理を委譲する
 	const auto ret = __super::OnDlgInitDialog(hDlg, hWndFocus, lParam);
 
-	// ダイアログプロシージャをメンバー変数に格納する
-	_pfnDlgProc = std::bit_cast<DLGPROC>(GetWindowLongPtrW(hDlg, DWLP_DLGPROC));
+	// デフォルト実装は1を返す
+	assert(1 == GetDlgData(hDlg));
 
 	// 派生元クラスが返した戻り値をそのまま返す
 	return ret;
@@ -169,7 +156,6 @@ TEST(CDialog, SimpleDoModal)
 	const auto lParam     = static_cast<LPARAM>(0);
 	CDialog1   dlg;
 	EXPECT_EQ(IDOK, dlg.DoModal(hInstance, hWndParent, IDD_INPUT1, lParam));
-	EXPECT_FALSE(dlg.CallDialogProc(nullptr, WM_NULL, 0, 0));
 }
 
 /*!
@@ -203,7 +189,8 @@ TEST(CSizeRestorableDialog, SimpleDoModeless1)
 	const auto lParam     = static_cast<LPARAM>(0);
 	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
 	CDialog2 dlg(std::move(pShareDataAccessor));
-	EXPECT_NE(nullptr, dlg.DoModeless(hInstance, hWndParent, IDD_COMPARE, lParam, SW_SHOW));
+	const auto hDlg = dlg.DoModeless(hInstance, hWndParent, IDD_COMPARE, lParam, SW_SHOW);
+	EXPECT_TRUE(hDlg);
 }
 
 /*!

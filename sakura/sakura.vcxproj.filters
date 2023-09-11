@@ -1156,6 +1156,9 @@
     <ClInclude Include="..\sakura_core\apimodule\Ole32Dll.hpp">
       <Filter>Cpp Source Files\apimodule</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\dlg\CCustomDialog.hpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2379,6 +2382,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\apiwrap\HGlobal.cpp">
       <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\dlg\CCustomDialog.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
