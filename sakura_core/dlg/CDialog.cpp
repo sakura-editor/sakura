@@ -38,80 +38,16 @@
 #include <memory>
 #include <vector>
 
-/*!
- * DialogProc(ダイアログのメッセージ配送)
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @param [in] uMsg メッセージコード
- * @param [in, opt] wParam 第1パラメーター
- * @param [in, opt] lParam 第2パラメーター
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-INT_PTR CALLBACK CDialog::DialogProc(
-	HWND hDlg,		// handle to dialog box
-	UINT uMsg,		// message
-	WPARAM wParam,	// first message parameter
-	LPARAM lParam 	// second message parameter
-)
-{
-	// GetWindowLongPtrの引数にNULLはマズい
-	if (!hDlg)
-	{
-		return FALSE;
-	}
-
-	// GetWindowLongPtrでインスタンスを取り出し、処理させる
-	if (auto pcDlg = std::bit_cast<CDialog*>(::GetWindowLongPtrW(hDlg, DWLP_USER)))
-	{
-		const auto ret = pcDlg->DispatchDlgEvent(hDlg, uMsg, wParam, lParam);
-
-		if (uMsg == WM_NCDESTROY)
-		{
-			pcDlg->SetWindowLongPtrW(hDlg, DWLP_USER, 0);
-
-			pcDlg->m_hWnd = nullptr;
-		}
-
-		return ret;
-	}
-
-	// 初期化メッセージだけ個別処理する
-	if (uMsg == WM_INITDIALOG && lParam)
-	{
-		auto pcDlg = std::bit_cast<CDialog*>(lParam);
-
-		pcDlg->m_hWnd = hDlg;
-
-		pcDlg->SetWindowLongPtrW(hDlg, DWLP_USER, lParam);
-
-		const auto ret = HANDLE_WM_INITDIALOG(hDlg, wParam, lParam, pcDlg->OnDlgInitDialog);
-
-		/* ダイアログデータの設定 */
-		pcDlg->SetDlgData(hDlg);
-
-		pcDlg->SetDialogPosSize();
-
-		pcDlg->m_bInited = TRUE;
-
-		return ret;
-	}
-
-	return FALSE;
-}
-
 /*!	コンストラクタ
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 CDialog::CDialog(WORD idDialog_, std::shared_ptr<User32Dll> User32Dll_)
-	: User32DllClient(std::move(User32Dll_))
-	, _idDialog(idDialog_)
+	: CCustomDialog(idDialog_, std::move(User32Dll_))
 {
 //	MYTRACE( L"CDialog::CDialog()\n" );
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-	m_hWnd  = NULL;			/* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
 	m_lParam = (LPARAM)NULL;
 	m_nShowCmd = SW_SHOW;
@@ -147,15 +83,9 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	m_hInstance         = hInstance;
 	m_hwndParent        = hwndParent;
 	m_lParam            = lParam;
-	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	m_hLangRsrcInstance = GetLanguageResourceLibrary();
 
-	return GetUser32Dll()->DialogBoxParamW(
-		m_hLangRsrcInstance,
-		MAKEINTRESOURCEW(_idDialog),
-		m_hwndParent,
-		DialogProc,
-		std::bit_cast<LPARAM>(this)
-	);
+	return CCustomDialog::Box(GetLanguageResourceLibrary(), m_hwndParent);
 }
 
 //! モードレスダイアログの表示
@@ -177,19 +107,16 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	m_hInstance         = hInstance;
 	m_hwndParent        = hwndParent;
 	m_lParam            = lParam;
-	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();
+	m_hLangRsrcInstance = GetLanguageResourceLibrary();
 
-	m_hWnd = GetUser32Dll()->CreateDialogParamW(
-		m_hLangRsrcInstance,
-		MAKEINTRESOURCEW(_idDialog),
-		m_hwndParent,
-		DialogProc,
-		std::bit_cast<LPARAM>(this)
-	);
-	if( NULL != m_hWnd ){
-		ShowWindow( m_hWnd, nCmdShow );
+	const auto hWnd = CCustomDialog::Create(m_hLangRsrcInstance, m_hwndParent);
+
+	if (hWnd)
+	{
+		GetUser32Dll()->ShowWindow(hWnd, nCmdShow);
 	}
-	return m_hWnd;
+
+	return hWnd;
 }
 
 /*!
@@ -301,10 +228,16 @@ INT_PTR CDialog::DispatchEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 	// WM_INITDIALOGの戻り値は他と意味が異なるので個別に処理する
 	if (uMsg == WM_INITDIALOG)
 	{
-		return HANDLE_WM_INITDIALOG(hDlg, wParam, lParam, OnDlgInitDialog);
+		const auto ret = FORWARD_WM_INITDIALOG(hDlg, wParam, lParam, __super::DispatchDlgEvent);
+
+		SetDialogPosSize();
+
+		m_bInited = TRUE;
+
+		return ret;
 	}
 
-	return FALSE;
+	return __super::DispatchDlgEvent(hDlg, uMsg, wParam, lParam);
 }
 
 /*!

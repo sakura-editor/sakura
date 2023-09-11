@@ -245,6 +245,7 @@
     <ClInclude Include="..\sakura_core\debug\Debug1.h" />
     <ClInclude Include="..\sakura_core\debug\Debug2.h" />
     <ClInclude Include="..\sakura_core\debug\Debug3.h" />
+    <ClInclude Include="..\sakura_core\dlg\CCustomDialog.hpp" />
     <ClInclude Include="..\sakura_core\dlg\CDialog.h" />
     <ClInclude Include="..\sakura_core\dlg\CDlgAbout.h" />
     <ClInclude Include="..\sakura_core\dlg\CDlgCancel.h" />
@@ -615,6 +616,7 @@
     <ClCompile Include="..\sakura_core\debug\Debug1.cpp" />
     <ClCompile Include="..\sakura_core\debug\Debug2.cpp" />
     <ClCompile Include="..\sakura_core\debug\Debug3.cpp" />
+    <ClCompile Include="..\sakura_core\dlg\CCustomDialog.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDialog.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgAbout.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgCancel.cpp" />

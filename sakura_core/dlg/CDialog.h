@@ -21,13 +21,10 @@
 #define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
-#include "apimodule/User32Dll.hpp"
-#include "apiwrap/apiwrap.hpp"
+#include "dlg/CCustomDialog.hpp"
 
 #include "env/ShareDataAccessor.hpp"
 #include "env/DLLSHAREDATA.h"
-
-#include <windowsx.h>
 
 #include "sakura_rc.h"
 
@@ -71,10 +68,8 @@ extern HINSTANCE GetLanguageResourceLibrary();
 	ダイアログボックスを作るときにはここから継承させる．
 
 */
-class CDialog : public User32DllClient
+class CDialog : public CCustomDialog
 {
-	WORD _idDialog;
-
 	using Me = CDialog;
 
 public:
@@ -111,23 +106,7 @@ public:
 		m_lParam            = lParam;
 		m_hLangRsrcInstance = GetLanguageResourceLibrary();
 
-		auto buffer = apiwrap::CopyResource<LPDLGTEMPLATE>(m_hLangRsrcInstance, MAKEINTRESOURCE(_idDialog), RT_DIALOG, GetUser32Dll());
-		if (buffer.empty())
-		{
-			return nullptr;
-		}
-
-		auto lpDlgTemplate = std::bit_cast<LPDLGTEMPLATE>(buffer.data());
-		func(*lpDlgTemplate);
-
-		const auto hWnd = GetUser32Dll()->CreateDialogIndirectParamW(
-			m_hLangRsrcInstance,
-			lpDlgTemplate,
-			hWndParent,
-			DialogProc,
-			std::bit_cast<LPARAM>(this)
-		);
-
+		const auto hWnd = CreateIndirect(m_hLangRsrcInstance, func, hWndParent);
 		if (hWnd)
 		{
 			GetUser32Dll()->ShowWindow(hWnd, nCmdShow);
@@ -138,16 +117,14 @@ public:
 
 	void CloseDialog(INT_PTR nModalRetVal);
 
-private:
-	static INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
 protected:
-	virtual void    SetDlgData(HWND hDlg) const;
-	virtual INT_PTR GetDlgData(HWND hDlg);
+	void    SetDlgData(HWND hDlg) const override;
+	INT_PTR GetDlgData(HWND hDlg) override;
 
-	virtual INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
-	virtual BOOL    OnDlgInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam);
+	BOOL    OnDlgInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam) override;
+
 	virtual BOOL    OnDlgDestroy(HWND hDlg);
 	virtual BOOL    OnDlgMove(HWND hDlg, int x, int y);
 	virtual BOOL    OnDlgActivate(HWND hDlg, UINT state, HWND hWndActDeact, BOOL fMinimized);
@@ -205,8 +182,6 @@ public:
 
 	static bool DirectoryUp(WCHAR* szDir);
 
-public:
-	HWND GetHwnd() const{ return m_hWnd; }
 	//特殊インターフェース (使用は好ましくない)
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
@@ -214,7 +189,6 @@ public:
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 private:
-	HWND			m_hWnd;			/* このダイアログのハンドル */
 	HFONT			m_hFontDialog;	// ダイアログに設定されているフォント(破棄禁止)
 public:
 	HWND			m_hwndSizeBox;
@@ -238,18 +212,6 @@ protected:
 
 	// このダイアログに設定されているフォントを取得
 	HFONT GetDialogFont() { return m_hFontDialog; }
-
-	virtual LONG_PTR SetWindowLongPtrW(_In_ HWND hWnd, int nIndex, LONG_PTR dwNewLong) const
-	{
-		return GetUser32Dll()->SetWindowLongPtrW(hWnd, nIndex, dwNewLong);
-	}
-
-	virtual bool ShowWindow(
-		_In_ HWND hWnd,
-		_In_ int nCmdShow) const
-	{
-		return GetUser32Dll()->ShowWindow(hWnd, nCmdShow);
-	}
 };
 
 /*!
