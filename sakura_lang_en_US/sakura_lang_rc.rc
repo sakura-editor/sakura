@@ -3199,6 +3199,7 @@ BEGIN
     STR_DLGFNCLST_UNIFY     "現在の画面のドッキング配置情報をすべての共通設定・タイプ別設定にコピーして統一します。\n（現在開いている他画面の状態も統一します。）\n"
     STR_BREGONIG_ERROR      "Failed to load bregonig.dll."
     STR_BREGONIG_TITLE      "Regular Expression Error"
+    STR_REGEX_COMPILE_ERR_PREAMBLE "The given regular expression is incorrect.\nDetails: "
     STR_ERR_CWSH09          "Aborted execute macro."
     STR_ERR_DLGMACRO03_1    "Line Break Code is not defined."
     STR_ERR_DLGMACRO16      "Number is not defined."
