@@ -110,6 +110,7 @@
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
+    <ClCompile Include="test-codechecker.cpp" />
     <ClCompile Include="test-cppa.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />

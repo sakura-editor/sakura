@@ -140,11 +140,10 @@ ECharKind CWordParse::WhatKindOfChar(
 {
 	using namespace WCODE;
 
-	int nCharChars = CNativeW::GetSizeOfChar( pData, pDataLen, nIdx );
-	if( nCharChars == 0 ){
-		return CK_NULL;	// NULL
-	}
-	else if( nCharChars == 1 ){
+	ECharKind ret = CK_NULL;
+	if(const auto nCharChars = CNativeW::GetSizeOfChar(pData, pDataLen, nIdx);
+		nCharChars == 1)
+	{
 		wchar_t c=pData[nIdx];
 
 		//今までの半角
@@ -186,9 +185,14 @@ ECharKind CWordParse::WhatKindOfChar(
 		}
 		return CK_ETC;	// 半角のその他
 	}
-	else{
-		return CK_NULL;	// NULL
+	// IVS（正字 + 異体字セレクタ）
+	else if (nCharChars == 3 &&
+		IsVariationSelector(pData + nIdx + 1))
+	{
+		ret = CK_ZEN_ETC;				// 全角のその他(漢字など)
 	}
+
+	return ret;
 }
 
 //! 二つの文字を結合したものの種類を調べる
