@@ -359,6 +359,43 @@ inline bool IsUTF16Low( wchar_t c ){
 	return IsUtf16SurrogLow(c);
 }
 
+/*!
+ * 文字列がサロゲートペアで始まっているか判定する
+ */
+inline bool IsSurrogatePair(std::wstring_view text) {
+	return 2 <= text.length() && IsUTF16High(text[0]) && IsUTF16Low(text[1]);
+}
+
+/*!
+ * UTF16文字列の先頭1文字をUTF32コードポイントに変換する
+ *
+ * @return 文字列の先頭1文字のコードポイント
+ */
+inline
+_Success_(return != 0)
+char32_t ConvertToUtf32(std::wstring_view text) {
+	if (text.empty()) {
+		return 0;
+	}
+	if (IsSurrogatePair(text)) {
+		return 0x10000 + ((text[0] & 0x3ff) << 10) + (text[1] & 0x3ff);
+	}
+	if (const auto ch = text[0];
+		!(ch & 0xfc00))
+	{
+		return ch;
+	}
+	return 0;
+}
+
+/*!
+ * 文字列がIVSの異体字セレクタで始まっているか判定する
+ */
+inline bool IsVariationSelector(std::wstring_view text) {
+	const auto cp = ConvertToUtf32(text);
+	return 0xe0100 <= cp && cp <= 0xe01ef;
+}
+
 //! 上位バイトと下位バイトを交換 (主に UTF-16 LE/BE 向け)
 inline unsigned short _SwapHLByte( const unsigned short wc ){
 	unsigned short wc1 = static_cast<unsigned short>( (static_cast<unsigned int>(wc) << 8) & 0x0000ffff );

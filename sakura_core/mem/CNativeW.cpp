@@ -396,6 +396,12 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 		}
 	}
 
+	// IVSの異体字セレクタチェック
+	if (IsVariationSelector(pData + nIdx + 1)) {
+		// 正字 + 異体字セレクタで3個分
+		return CLogicInt(3);
+	}
+
 	return CLogicInt(1);
 }
 
