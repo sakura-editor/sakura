@@ -613,7 +613,7 @@ void CEditView::DeleteData(
 			nNxtPos = GetCaret().GetCaretLayoutPos().GetX() + CLayoutInt(pcLayout->GetLayoutEol().GetLen()>0?1+m_pcEditDoc->m_cLayoutMgr.GetCharSpacing():0);
 		}
 		else{
-			nNxtIdx = CLogicInt(CNativeW::GetCharNext( pLine, nLineLen, &pLine[nCurIdx] ) - pLine);
+			nNxtIdx = nCurIdx + CNativeW::GetSizeOfChar( pLine, nLineLen, nCurIdx);
 			// 指定された行のデータ内の位置に対応する桁の位置を調べる
 			nNxtPos = LineIndexToColumn( pcLayout, nNxtIdx );
 		}

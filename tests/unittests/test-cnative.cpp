@@ -792,6 +792,26 @@ TEST(CNativeW, GetSizeOfChar)
 	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"\xd83c\xdf38", 2), 1), 1);
 }
 
+TEST(CNativeW, GetSizeOfChar_Empty)
+{
+	const auto& s = L"";
+	EXPECT_EQ(0, CNativeW::GetSizeOfChar(s, _countof(s) - 1, 0));
+}
+
+TEST(CNativeW, GetSizeOfChar_SurrogatePair)
+{
+	// 絵文字　男性のシンボル
+	const auto& s = L"\U0001f6b9";
+	EXPECT_EQ(2, CNativeW::GetSizeOfChar(s, _countof(s) - 1, 0));
+}
+
+TEST(CNativeW, GetSizeOfChar_IVS)
+{
+	// 葛󠄀城市(先頭の文字が異体字)
+	const auto& s = L"葛󠄀城市";
+	EXPECT_EQ(3, CNativeW::GetSizeOfChar(s, _countof(s) - 1, 0));
+}
+
 /*!
  * @brief GetKetaOfCharの仕様
  * @remark 指定した文字の桁数を返す。
