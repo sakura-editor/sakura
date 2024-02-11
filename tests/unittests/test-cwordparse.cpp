@@ -140,6 +140,12 @@ TEST(WhatKindOfChar, SurrogatePairs)
 	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"\xd842\xdfb7", 2, 0));
 }
 
+TEST(WhatKindOfChar, IVS)
+{
+//	EXPECT_EQ(CK_ETC, CWordParse::WhatKindOfChar(L"葛󠄀", 3, 0));
+	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"葛󠄀", 3, 0));
+}
+
 TEST(WhatKindOfTwoChars, ReturnsSameKindIfTwoKindsAreIdentical)
 {
 	EXPECT_EQ(CK_HIRA, CWordParse::WhatKindOfTwoChars(CK_HIRA, CK_HIRA));

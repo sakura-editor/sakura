@@ -172,6 +172,9 @@
     <ClCompile Include="test-extmodules.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-codechecker.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">

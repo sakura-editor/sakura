@@ -813,6 +813,9 @@ TEST(CCodeBase, Utf8ToHex)
 
 	// カラー絵文字「男性のシンボル」（サロゲートペア）
 	EXPECT_STREQ(L"F09F9AB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+
+	// IVS(Ideographic Variation Sequence) 「葛󠄀」（葛󠄀城市の葛󠄀、下がヒ）
+	EXPECT_STREQ(L"E8919BF3A08480", pCodeBase->CodeToHex(L"葛󠄀", sStatusbar).c_str());
 }
 
 /*!
@@ -836,4 +839,24 @@ TEST(CCodeBase, Latin1ToHex)
 
 	// カラー絵文字「男性のシンボル」（サロゲートペア）
 	EXPECT_STREQ(L"D83DDEB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+}
+
+TEST(CCodeBase, UnicodeToHex)
+{
+	const auto eCodeType = CODE_UNICODE;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 特定コードのマルチバイトを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = false;
+	sStatusbar.m_bDispUniInJis = false;
+	sStatusbar.m_bDispUniInEuc = false;
+	sStatusbar.m_bDispUtf8Codepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+
+	sStatusbar.m_bDispSPCodepoint = true;
+	EXPECT_STREQ(L"845B, U+E0100", pCodeBase->CodeToHex(L"葛󠄀", sStatusbar).c_str());
+
+	sStatusbar.m_bDispSPCodepoint = false;
+	EXPECT_STREQ(L"845B, DB40DD00", pCodeBase->CodeToHex(L"葛󠄀", sStatusbar).c_str());
 }
