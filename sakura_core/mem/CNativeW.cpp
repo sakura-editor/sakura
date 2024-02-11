@@ -23,13 +23,15 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <stdexcept>
-#include "charset/codechecker.h"
 #include "mem/CNativeW.h"
 
+#include <stdexcept>
 #include <string_view>
 
+#include <icu.h>
+
 #include "CEol.h"
+#include "charset/codechecker.h"
 
 /*!
 	コンストラクタ
@@ -389,20 +391,21 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 		return CLogicInt(0);
 
 	// サロゲートチェック					2008/7/5 Uchi
-	if (IsUTF16High(pData[nIdx])) {
-		if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
-			// サロゲートペア 2個分
-			return CLogicInt(2);
-		}
+	int units;
+	if (!IsUTF16High(pData[nIdx])) {
+		units = 1;
+	} else if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
+		// サロゲートペア 2個分
+		units = 2;
+	} else {
+		// 不正なサロゲートペア
+		return CLogicInt(1);
 	}
 
-	// IVSの異体字セレクタチェック
-	if (IsVariationSelector(pData + nIdx + 1)) {
-		// 正字 + 異体字セレクタで3個分
-		return CLogicInt(3);
-	}
-
-	return CLogicInt(1);
+	// 後続の幅なし結合文字の数を足す
+	const auto trailing_text = std::wstring_view(pData + nIdx + units, nDataLen - nIdx - units);
+	const auto count = CountNonSpacingMarkCharactersByUTF16CodeUnits(trailing_text);
+	return CLogicInt(static_cast<int>(units + count));
 }
 
 //! 指定した位置の文字が半角何個分かを返す

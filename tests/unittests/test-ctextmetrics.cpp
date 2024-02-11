@@ -156,6 +156,7 @@ TEST(CTextMetrics, GenerateDxArray1)
 	FakeCache1 cache;
 	const int* p = CTextMetrics::GenerateDxArray(&v, L"ab", 2, 0, 0, 0, 0, cache);
 	EXPECT_EQ(p, v.data());
+	EXPECT_EQ(v.size(), 2);
 	EXPECT_EQ(v[0], 1);
 	EXPECT_EQ(v[1], 2);
 }
@@ -166,6 +167,7 @@ TEST(CTextMetrics, GenerateDxArray2)
 	std::vector<int> v;
 	FakeCache1 cache;
 	CTextMetrics::GenerateDxArray(&v, L"ab", 2, 0, 0, 0, 10, cache);
+	EXPECT_EQ(v.size(), 2);
 	EXPECT_EQ(v[0], 11);
 	EXPECT_EQ(v[1], 12);
 }
@@ -176,6 +178,7 @@ TEST(CTextMetrics, GenerateDxArray3)
 	std::vector<int> v;
 	FakeCache1 cache;
 	CTextMetrics::GenerateDxArray(&v, L"\xd83c\xdf38", 2, 0, 0, 0, 0, cache);
+	EXPECT_EQ(v.size(), 2);
 	EXPECT_EQ(v[0], 10000);
 }
 
@@ -185,6 +188,7 @@ TEST(CTextMetrics, GenerateDxArray4)
 	std::vector<int> v;
 	FakeCache1 cache;
 	CTextMetrics::GenerateDxArray(&v, L"\xd83c\xdf38", 2, 0, 0, 0, 10, cache);
+	EXPECT_EQ(v.size(), 2);
 	EXPECT_EQ(v[0], 10020);
 }
 
@@ -194,6 +198,7 @@ TEST(CTextMetrics, GenerateDxArray5)
 	std::vector<int> v;
 	FakeCache1 cache;
 	CTextMetrics::GenerateDxArray(&v, L"\xd83c,", 2, 0, 0, 0, 0, cache);
+	EXPECT_EQ(v.size(), 2);
 	EXPECT_EQ(v[0], 1);
 	EXPECT_EQ(v[1], 2);
 }
@@ -204,6 +209,7 @@ TEST(CTextMetrics, GenerateDxArray6)
 	std::vector<int> v;
 	FakeCache1 cache;
 	CTextMetrics::GenerateDxArray(&v, L"\xd83c,", 2, 0, 0, 0, 10, cache);
+	EXPECT_EQ(v.size(), 2);
 	EXPECT_EQ(v[0], 21);
 	EXPECT_EQ(v[1], 12);
 }
@@ -214,6 +220,7 @@ TEST(CTextMetrics, GenerateDxArray7)
 	std::vector<int> v;
 	FakeCache1 cache;
 	CTextMetrics::GenerateDxArray(&v, L"\t\t \t", 4, 10, 100, 1000, 0, cache);
+	EXPECT_EQ(v.size(), 4);
 	EXPECT_EQ(v[0], 100);
 	EXPECT_EQ(v[1], 100);
 	EXPECT_EQ(v[2], 1);
@@ -225,10 +232,36 @@ TEST(CTextMetrics, GenerateDxArray8)
 	// IVSのVariantSelectorが続く文字列は先頭1文字 + 幅0×2で生成する
 	std::vector<int> v;
 	FakeCache1 cache;
-	CTextMetrics::GenerateDxArray(&v, L"葛󠄀", 2, 0, 0, 0, 10, cache);
-	EXPECT_TRUE(v[0]);
-	EXPECT_FALSE(v[1]);
-	EXPECT_FALSE(v[2]);
+	CTextMetrics::GenerateDxArray(&v, L"葛󠄀", 3, 0, 0, 0, 10, cache);
+	EXPECT_EQ(v.size(), 3);
+	EXPECT_NE(v[0], 0);
+	EXPECT_EQ(v[1], 0);
+	EXPECT_EQ(v[2], 0);
+}
+
+TEST(CTextMetrics, GenerateDxArray9)
+{
+	// 結合文字のテスト。先頭1文字 + 後続1文字の例。
+	std::vector<int> v;
+	FakeCache1 cache;
+	CTextMetrics::GenerateDxArray(&v, L"ガ", 2, 0, 0, 100, 10, cache);
+	EXPECT_EQ(v.size(), 2);
+	EXPECT_NE(v[0], 0);
+	EXPECT_EQ(v[1], 0);
+}
+
+TEST(CTextMetrics, GenerateDxArray10)
+{
+	// 結合文字のテスト。先頭1文字 + 後続4文字。
+	std::vector<int> v;
+	FakeCache1 cache;
+	CTextMetrics::GenerateDxArray(&v, L"\x0061\x0337\x0305\x034d\x032a", 5, 0, 0, 100, 10, cache);
+	EXPECT_EQ(v.size(), 5);
+	EXPECT_NE(v[0], 0);
+	EXPECT_EQ(v[1], 0);
+	EXPECT_EQ(v[2], 0);
+	EXPECT_EQ(v[3], 0);
+	EXPECT_EQ(v[4], 0);
 }
 
 TEST(CTextMetrics, CalcTextWidth)

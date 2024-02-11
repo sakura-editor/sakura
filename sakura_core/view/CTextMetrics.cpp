@@ -24,9 +24,14 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <algorithm>
-#include <vector>
 #include "CTextMetrics.h"
+
+#include <algorithm>
+#include <iterator>
+#include <vector>
+
+#include <icu.h>
+
 #include "charset/codechecker.h"
 #include "mem/CNativeW.h"
 
@@ -86,16 +91,18 @@ const int* CTextMetrics::GenerateDxArray(
 	std::vector<int>& vResultArray = *pvResultArray;
 	vResultArray.clear();
 
-	for (int i = 0; i < nLength; ++i) {
+	int i = 0;
+	while (i < nLength) {
 		if (pText[i] == WCODE::TAB) {
 			// TAB対応	2013/5/7 Uchi
 			if (i > 0 && pText[i - 1] == WCODE::TAB) {
 				vResultArray.push_back(nTabSpace);
 				nIndent += nTabSpace;
-				continue;
+			} else {
+				vResultArray.push_back((nTabSpace + nHankakuDx - 1) - ((nIndent + nHankakuDx - 1) % nTabSpace));
+				nIndent += vResultArray.back();
 			}
-			vResultArray.push_back((nTabSpace + nHankakuDx - 1) - ((nIndent + nHankakuDx - 1) % nTabSpace));
-			nIndent += vResultArray.back();
+			++i;
 			continue;
 		}
 
@@ -103,17 +110,17 @@ const int* CTextMetrics::GenerateDxArray(
 		if(IsUTF16High(pText[i]) && i + 1 < nLength && IsUTF16Low(pText[i + 1])) {
 			vResultArray.push_back(cache.CalcPxWidthByFont2(pText + i) + spacing);
 			vResultArray.push_back(0);
-			i++;
-			continue;
-		}
-		vResultArray.push_back(cache.CalcPxWidthByFont(pText[i]) + spacing);
-		nIndent += vResultArray.back();
-
-		if (IsVariationSelector(pText + i + 1)) {
-			vResultArray.push_back(0);
-			vResultArray.push_back(0);
 			i += 2;
+		} else {
+			vResultArray.push_back(cache.CalcPxWidthByFont(pText[i]) + spacing);
+			nIndent += vResultArray.back();
+			++i;
 		}
+
+		const auto trailing_text = std::wstring_view(pText + i, nLength - i);
+		const auto count = CountNonSpacingMarkCharactersByUTF16CodeUnits(trailing_text);
+		std::fill_n(std::back_inserter(vResultArray), count, 0);
+		i += count;
 	}
 	return vResultArray.data();
 }

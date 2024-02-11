@@ -92,6 +92,8 @@
 #include <utility>
 #include <vector>
 
+#include <sdkddkver.h>
+#define NTDDI_VERSION NTDDI_WIN10_RS3
 #include <Windows.h>
 #include <windowsx.h>
 #include <CommCtrl.h>
