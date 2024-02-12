@@ -36,6 +36,9 @@
 #define SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_
 #pragma once
 
+#include <cstddef>
+#include <string_view>
+
 #include "_main/global.h"
 #include "convert/convert_util2.h"
 #include "basis/primitive.h"
@@ -366,6 +369,11 @@ inline bool IsSurrogatePair(std::wstring_view text) {
 	return 2 <= text.length() && IsUTF16High(text[0]) && IsUTF16Low(text[1]);
 }
 
+//! UTF-16 のサロゲートペアを Unicode コードポイントに変換する
+inline char32_t DecodeSurrogatePair(char16_t high, char16_t low) {
+	return 0x10000 + ((high & 0x3ff) << 10) + (low & 0x3ff);
+}
+
 /*!
  * UTF16文字列の先頭1文字をUTF32コードポイントに変換する
  *
@@ -378,7 +386,7 @@ char32_t ConvertToUtf32(std::wstring_view text) {
 		return 0;
 	}
 	if (IsSurrogatePair(text)) {
-		return 0x10000 + ((text[0] & 0x3ff) << 10) + (text[1] & 0x3ff);
+		return DecodeSurrogatePair(text[0], text[1]);
 	}
 	if (const auto ch = text[0];
 		!(ch & 0xfc00))
@@ -395,6 +403,9 @@ inline bool IsVariationSelector(std::wstring_view text) {
 	const auto cp = ConvertToUtf32(text);
 	return 0xe0100 <= cp && cp <= 0xe01ef;
 }
+
+//! 連続する幅なし結合文字の長さを UTF-16 コードユニット単位で数える。
+std::size_t CountNonSpacingMarkCharactersByUTF16CodeUnits(std::wstring_view text);
 
 //! 上位バイトと下位バイトを交換 (主に UTF-16 LE/BE 向け)
 inline unsigned short _SwapHLByte( const unsigned short wc ){

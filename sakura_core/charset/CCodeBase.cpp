@@ -25,10 +25,10 @@
 #include "StdAfx.h"
 #include "CCodeBase.h"
 
-#include "charset/CCodeFactory.h"
-#include "convert/convert_util2.h"
-#include "charset/codechecker.h"
 #include "CEol.h"
+#include "charset/CCodeFactory.h"
+#include "charset/codechecker.h"
+#include "convert/convert_util2.h"
 #include "env/CommonSetting.h"
 
 /*!
@@ -54,8 +54,12 @@ std::wstring CCodeBase::CodeToHex(const CNativeW& cSrc, const CommonSetting_Stat
 // 表示用16進表示	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
+	std::wstring_view trailingChars;
+
 	// IVS
 	if (iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
+		trailingChars = std::wstring_view(cSrc + 3, iSLen - 3);
+
 		if (psStatusbar->m_bDispSPCodepoint) {
 			auto_sprintf(pDst, L"%04X, U+%05X", cSrc[0], ConvertToUtf32(cSrc + 1));
 		}
@@ -65,6 +69,8 @@ EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCH
 	}
 	// サロゲートペア
 	else if (iSLen >= 2 && IsSurrogatePair(cSrc)) {
+		trailingChars = std::wstring_view(cSrc + 2, iSLen - 2);
+
 		if (psStatusbar->m_bDispSPCodepoint) {
 			auto_sprintf( pDst, L"U+%05X", 0x10000 + ((cSrc[0] & 0x3FF)<<10) + (cSrc[1] & 0x3FF));
 		}
@@ -73,7 +79,14 @@ EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCH
 		}
 	}
 	else {
+		trailingChars = std::wstring_view(cSrc + 1, iSLen - 1);
+
 		auto_sprintf( pDst, L"U+%04X", cSrc[0] );
+	}
+
+	if (CountNonSpacingMarkCharactersByUTF16CodeUnits(trailingChars)) {
+		// 結合文字がある場合は「...」を表示する
+		wcscat(pDst, L"...");
 	}
 
 	return RESULT_COMPLETE;

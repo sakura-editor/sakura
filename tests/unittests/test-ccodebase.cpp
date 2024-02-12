@@ -841,7 +841,7 @@ TEST(CCodeBase, Latin1ToHex)
 	EXPECT_STREQ(L"D83DDEB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
 }
 
-TEST(CCodeBase, UnicodeToHex)
+TEST(CCodeBase, UnicodeToHex1)
 {
 	const auto eCodeType = CODE_UNICODE;
 	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
@@ -859,4 +859,21 @@ TEST(CCodeBase, UnicodeToHex)
 
 	sStatusbar.m_bDispSPCodepoint = false;
 	EXPECT_STREQ(L"845B, DB40DD00", pCodeBase->CodeToHex(L"葛󠄀", sStatusbar).c_str());
+}
+
+TEST(CCodeBase, UnicodeToHex2)
+{
+	const auto eCodeType = CODE_UNICODE;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 特定コードのマルチバイトを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = false;
+	sStatusbar.m_bDispUniInJis = false;
+	sStatusbar.m_bDispUniInEuc = false;
+	sStatusbar.m_bDispUtf8Codepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+
+	EXPECT_STREQ(L"U+30AB...", pCodeBase->CodeToHex(L"ガ", sStatusbar).c_str());
 }

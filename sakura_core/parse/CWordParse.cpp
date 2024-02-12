@@ -24,6 +24,10 @@
 */
 #include "StdAfx.h"
 #include "CWordParse.h"
+
+#include <Windows.h>
+
+#include "basis/SakuraBasis.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "mem/CNativeW.h"

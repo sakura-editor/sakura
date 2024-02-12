@@ -34,11 +34,43 @@
 
 #include "StdAfx.h"
 #include "charset/codechecker.h"
-#include "mem/CMemory.h"
-#include "convert/convert_util2.h"
-#include "charset/codeutil.h"
-#include "charset/charcode.h"
+
 #include <algorithm>
+#include <cstddef>
+#include <string_view>
+
+#include <icu.h>
+
+#include "charset/charcode.h"
+#include "charset/codeutil.h"
+#include "convert/convert_util2.h"
+#include "mem/CMemory.h"
+
+std::size_t CountNonSpacingMarkCharactersByUTF16CodeUnits(std::wstring_view text) {
+	std::size_t i = 0;
+	while (i < text.size()) {
+		char32_t ch;
+		bool is_surrogate_pair;
+
+		if (char16_t high = text[i];
+			!IsUTF16High(high)) {
+			ch = high;
+			is_surrogate_pair = false;
+		} else if (i + 1 < text.size() && IsUTF16Low(text[i + 1])) {
+			char16_t low = text[i + 1];
+			ch = DecodeSurrogatePair(high, low);
+			is_surrogate_pair = true;
+		} else {
+			// 下位が欠落している不正なサロゲートペアに遭遇したので計算を打ち切る。
+			break;
+		}
+
+		if (u_charType(ch) != U_NON_SPACING_MARK)
+			break;
+		i += (is_surrogate_pair ? 2 : 1);
+	}
+	return i;
+}
 
 /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 
