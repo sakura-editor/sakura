@@ -11,6 +11,9 @@
 /cppcheck-*.xml
 /cppcheck-install.log
 /help/sakura/sakura.hh
+/help/**/*.chm
+/help/**/*.chw
+/help/**/Compile.Log
 /build
 /MinGW
 /Win32
