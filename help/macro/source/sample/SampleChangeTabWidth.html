@@ -12,27 +12,27 @@ Sakura-Editor Macro Reference
 <h2>S_ChangeTabWidthの使用例</h2>
 
 <pre>
-<span style="color:green;">&#39;tabsize2to4to8.vbs
+<span class="green">&#39;tabsize2to4to8.vbs
 &#39;2005/7/31 (日) 08:51:35 (全略)
 &#39; タブ幅を 2 -&gt; 4 -&gt; 8 と切り替えます</span>
 
-<span style="color:blue;">Select Case</span> <span style="color:blue;">Editor</span>.<span style="color:blue;">ChangeTabWidth</span>( CLng( <span style="color:red;">0</span> ) )
-<span style="color:blue;">Case</span> <span style="color:red;">2</span>:
-    <span style="color:blue;">Editor</span>.<span style="color:blue;">ChangeTabWidth</span>( CLng( <span style="color:red;">4</span> ) )
-<span style="color:blue;">Case</span> <span style="color:red;">4</span>:
-    <span style="color:blue;">Editor</span>.<span style="color:blue;">ChangeTabWidth</span>( CLng( <span style="color:red;">8</span> ) )
-<span style="color:blue;">Case Else</span>:
-    <span style="color:blue;">Editor</span>.<span style="color:blue;">ChangeTabWidth</span>( CLng( <span style="color:red;">2</span> ) )
-<span style="color:blue;">End Select</span>
+<span class="blue">Select Case</span> <span class="blue">Editor</span>.<span class="blue">ChangeTabWidth</span>( CLng( <span class="red">0</span> ) )
+<span class="blue">Case</span> <span class="red">2</span>:
+    <span class="blue">Editor</span>.<span class="blue">ChangeTabWidth</span>( CLng( <span class="red">4</span> ) )
+<span class="blue">Case</span> <span class="red">4</span>:
+    <span class="blue">Editor</span>.<span class="blue">ChangeTabWidth</span>( CLng( <span class="red">8</span> ) )
+<span class="blue">Case Else</span>:
+    <span class="blue">Editor</span>.<span class="blue">ChangeTabWidth</span>( CLng( <span class="red">2</span> ) )
+<span class="blue">End Select</span>
 </pre>
 
 <pre>
-<span style="color:green;">//tabsize4to8.ppa
+<span class="green">//tabsize4to8.ppa
 //タブ幅を 4 &lt;-&gt; 8 と切り替えます</span>
-<span style="color:blue;">if</span> <span style="color:blue;">S_ChangeTabWidth</span>(<span style="color:red;">0</span>) = <span style="color:red;">4</span> <span style="color:blue;">then</span>
-    <span style="color:blue;">S_ChangeTabWidth</span>(<span style="color:red;">8</span>)
-<span style="color:blue;">else</span>
-    <span style="color:blue;">S_ChangeTabWidth</span>(<span style="color:red;">4</span>)
+<span class="blue">if</span> <span class="blue">S_ChangeTabWidth</span>(<span class="red">0</span>) = <span class="red">4</span> <span class="blue">then</span>
+    <span class="blue">S_ChangeTabWidth</span>(<span class="red">8</span>)
+<span class="blue">else</span>
+    <span class="blue">S_ChangeTabWidth</span>(<span class="red">4</span>)
 ;
 </pre>
 <hr>

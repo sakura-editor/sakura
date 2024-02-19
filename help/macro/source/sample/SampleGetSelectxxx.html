@@ -12,32 +12,32 @@ Sakura-Editor Macro Reference
 <h2>S_GetSelectxxxの使用例</h2>
 
 <pre>
-<span style="color:green;">//sample.js
+<span class="green">//sample.js
 //カーソル位置の単語のバイト数</span>
-<span style="color:blue;">SelectWord</span>;
-<span style="color:blue;">var</span> iLen = <span style="color:blue;">GetSelectColmTo</span> - <span style="color:blue;">GetSelectColmFrom</span>;
+<span class="blue">SelectWord</span>;
+<span class="blue">var</span> iLen = <span class="blue">GetSelectColmTo</span> - <span class="blue">GetSelectColmFrom</span>;
 
-<span style="color:blue;">var</span> oWsh = <span style="color:blue;">new</span> ActiveXObject(<span style="color:#800000;">"WScript.Shell"</span>);
-oWsh.Popup(iLen + "byte", <span style="color:red;">0</span>, <span style="color:#800000;">""</span>, <span style="color:red;">0</span>);
+<span class="blue">var</span> oWsh = <span class="blue">new</span> ActiveXObject(<span class="maroon">"WScript.Shell"</span>);
+oWsh.Popup(iLen + "byte", <span class="red">0</span>, <span class="maroon">""</span>, <span class="red">0</span>);
 </pre>
 
 <pre>
-<span style="color:green;">//sample.ppa
+<span class="green">//sample.ppa
 //選択状態を調べる</span>
-<span style="color:blue;">if S_IsTextSelected</span> = <span style="color:red;">0</span> <span style="color:blue;">then</span>
-  <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'非選択状態です'</span>, <span style="color:#800000;">'title'</span>, <span style="color:red;">0</span>)
+<span class="blue">if S_IsTextSelected</span> = <span class="red">0</span> <span class="blue">then</span>
+  <span class="blue">MessageBox</span>(<span class="maroon">'非選択状態です'</span>, <span class="maroon">'title'</span>, <span class="red">0</span>)
 
-<span style="color:blue;">else if S_IsTextSelected</span> &gt; <span style="color:red;">1</span> <span style="color:blue;">then</span>
-  <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'矩形選択状態です'</span>, <span style="color:#800000;">'title'</span>, <span style="color:red;">0</span>)
+<span class="blue">else if S_IsTextSelected</span> &gt; <span class="red">1</span> <span class="blue">then</span>
+  <span class="blue">MessageBox</span>(<span class="maroon">'矩形選択状態です'</span>, <span class="maroon">'title'</span>, <span class="red">0</span>)
 
-<span style="color:blue;">else if</span> (<span style="color:blue;">S_GetSelectColmFrom</span> = <span style="color:red;">1</span>) and (<span style="color:blue;">S_GetSelectColmTo</span> = <span style="color:red;">1</span>) <span style="color:blue;">then</span>
-  <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'行選択状態です'</span>, <span style="color:#800000;">'title'</span>, <span style="color:red;">0</span>)
+<span class="blue">else if</span> (<span class="blue">S_GetSelectColmFrom</span> = <span class="red">1</span>) and (<span class="blue">S_GetSelectColmTo</span> = <span class="red">1</span>) <span class="blue">then</span>
+  <span class="blue">MessageBox</span>(<span class="maroon">'行選択状態です'</span>, <span class="maroon">'title'</span>, <span class="red">0</span>)
 
-<span style="color:blue;">else if S_GetSelectLineFrom</span> = <span style="color:blue;">S_GetSelectLineTo</span> <span style="color:blue;">then</span>
-  <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'１行以内の部分選択です'</span>, <span style="color:#800000;">'title'</span>, <span style="color:red;">0</span>)
+<span class="blue">else if S_GetSelectLineFrom</span> = <span class="blue">S_GetSelectLineTo</span> <span class="blue">then</span>
+  <span class="blue">MessageBox</span>(<span class="maroon">'１行以内の部分選択です'</span>, <span class="maroon">'title'</span>, <span class="red">0</span>)
 
-<span style="color:blue;">else</span>
-  <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'複数行にまたがった部分選択です'</span>, <span style="color:#800000;">'title'</span>, <span style="color:red;">0</span>)
+<span class="blue">else</span>
+  <span class="blue">MessageBox</span>(<span class="maroon">'複数行にまたがった部分選択です'</span>, <span class="maroon">'title'</span>, <span class="red">0</span>)
 ;
 </pre>
 

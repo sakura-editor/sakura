@@ -12,15 +12,15 @@ Sakura-Editor Macro Reference
 <h2>S_GetFilenameの使用例</h2>
 
 <pre>
-<span style="color:green;">//sample.js
+<span class="green">//sample.js
 //現在開いているファイル名</span>
-<span style="color:blue;">var</span> oWsh = <span style="color:blue;">new</span> ActiveXObject(<span style="color:#800000;">"WScript.Shell"</span>);
-oWsh.Popup(<span style="color:#800000;">'ファイル名は"'</span> + <span style="color:blue;">GetFilename</span> + <span style="color:#800000;">'"です'</span>, <span style="color:red;">0</span>, <span style="color:#800000;">"ファイル名"</span>, <span style="color:red;">0</span>);
+<span class="blue">var</span> oWsh = <span class="blue">new</span> ActiveXObject(<span class="maroon">"WScript.Shell"</span>);
+oWsh.Popup(<span class="maroon">'ファイル名は"'</span> + <span class="blue">GetFilename</span> + <span class="maroon">'"です'</span>, <span class="red">0</span>, <span class="maroon">"ファイル名"</span>, <span class="red">0</span>);
 </pre>
 
 <pre>
-<span style="color:green;">//sample.ppa</span>
-<span style="color:blue;">MessageBox</span>(<span style="color:blue;">S_GetFilename</span>, <span style="color:#800000;">'現在のファイル名'</span>, <span style="color:red;">0</span>);
+<span class="green">//sample.ppa</span>
+<span class="blue">MessageBox</span>(<span class="blue">S_GetFilename</span>, <span class="maroon">'現在のファイル名'</span>, <span class="red">0</span>);
 </pre>
 
 <hr>
