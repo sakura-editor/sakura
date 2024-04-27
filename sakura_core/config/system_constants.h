@@ -553,12 +553,15 @@
 	Version 178:
 	STypeConfig::m_bDetectIndentationStyleOnFileLoad 追加
 
+	Version 179:
+	STypeConfig::m_nVertLineIdxの要素数を変更した為、DLLSHAREDATA のメモリレイアウトが変更
+
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		178
+#define N_SHAREDATA_VERSION		179
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(L"SakuraShareData" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 

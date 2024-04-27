@@ -72,7 +72,7 @@ enum maxdata{
 	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値
 	MAX_TAGJUMP_KEYWORD			= 30,	//タグジャンプ用キーワード最大登録数2005.04.04 MIK
 	MAX_KEYWORDSET_PER_TYPE		= 10,	// 2004.01.23 genta (for MIK) タイプ別設定毎のキーワードセット数
-	MAX_VERTLINES = 10,	// 2005.11.08 Moca 指定桁縦線
+	MAX_VERTLINES = 200,	// 2005.11.08 Moca 指定桁縦線 // 2024.04.27 kurages 200に増やした
 
 	//	MRUリストに関係するmaxdata
 	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更。2007.10.23 kobake maxdataに移動。
