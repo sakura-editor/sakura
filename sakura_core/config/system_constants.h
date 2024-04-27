@@ -1,4 +1,4 @@
-﻿/*! @file
+/*! @file
 	@brief システム定数
 
 	@date 2002.01.08 aroka  コントロールプロセスと起動処理のためにミューテックス名を追加
@@ -78,17 +78,17 @@
 
 	Version 1～24:
 	いろいろ
-
+	
 	Version 25:
 	m_bStopsBothEndsWhenSearchWord追加
-
+	
 	Version 26:
 	MacroRecに、m_bReloadWhenExecuteを追加 2002/03/11 YAZAKI
 	EditInfoに、m_szDocType追加 Mar. 7, 2002 genta
-
+	
 	Version 27:
-	STypeConfigに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI
-
+	STypeConfigに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
+	
 	Version 28:
 	PRINTSETTINGに、m_bPrintKinsokuHead、m_bPrintKinsokuTailを追加 2002.04.09 MIK
 	STypeConfigに、m_bKinsokuHead、m_bKinsokuTail、m_szKinsokuHead、m_szKinsokuTailを追加 2002.04.09 MIK
@@ -114,7 +114,7 @@
 
 	Version 34:
 	STypeConfigにm_bUseDocumentIcon 追加． 2002.09.10 genta
-
+	
 	Version 35:
 	Commonにm_nLineNumRightSpace 追加．2002.09.18 genta
 
@@ -162,7 +162,7 @@
 
 	Version 49:
 	ファイル情報にIsDebug追加 (タブ表示用) 2003.10.13 MIK
-
+	
 	Version 50:
 	ウィンドウ位置固定・継承を追加 2004.05.13 Moca
 
@@ -183,16 +183,16 @@
 
 	Version 56:
 	インクリメンタルサーチ(Migemo path用) 2004/10/13 isearch
-
+	
 	Version 57:
 	強調キーワード指定拡大 2005/01/13 MIK
-
+	
 	Version 58:
 	強調キーワードセット可変長割り当て 2005/01/25 Moca
 
 	Version 59:
 	マクロ数を増やした 2005/01/30 genta
-
+	
 	Version 60:
 	キーワード指定タグジャンプ履歴保存 2005/04/03 MIK
 
@@ -348,10 +348,10 @@
 
 	Version 110:
 	改行コードを変換して貼り付ける 2011.11.22 salarm, Moca
-
+	
 	Version 111:
 	タブバーフォント指定 2011.12.04 Moca
-
+	
 	Version 112:
 	入力補完プラグイン 2011.06.24 Moca
 
@@ -643,7 +643,7 @@ const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読
 
 //wParam: X
 //lParam: Y
-#define MYWM_DOSPLIT        (WM_APP+1500)
+#define MYWM_DOSPLIT        (WM_APP+1500)	
 
 //wParam: なんかのインデックス
 //lParam: boolっぽい何か
