@@ -557,7 +557,7 @@ void CEditView::DeleteData(
 			
 			CLayoutPoint caretOld = CLayoutPoint(rcSel.left, rcSel.top);
 			m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
-			if( rcSel.left <= pcLayout->CalcLayoutWidth( m_pcEditDoc->m_cLayoutMgr ) ){
+			if( pcLayout != NULL && rcSel.left <= pcLayout->CalcLayoutWidth( m_pcEditDoc->m_cLayoutMgr ) ){
 				// EOLより左なら文字の単位にそろえる
 				CLogicInt nIdxCaret = LineColumnToIndex( pcLayout, rcSel.left );
 				caretOld.SetX( LineIndexToColumn( pcLayout, nIdxCaret ) );
