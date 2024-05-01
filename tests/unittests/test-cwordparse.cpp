@@ -143,7 +143,7 @@ TEST(WhatKindOfChar, SurrogatePairs)
 TEST(WhatKindOfChar, IVS)
 {
 //	EXPECT_EQ(CK_ETC, CWordParse::WhatKindOfChar(L"葛󠄀", 3, 0));
-	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"葛󠄀", 3, 0));
+	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"\U0000845B\U000E0100"/*葛󠄀*/, 3, 0));
 }
 
 TEST(WhatKindOfTwoChars, ReturnsSameKindIfTwoKindsAreIdentical)
