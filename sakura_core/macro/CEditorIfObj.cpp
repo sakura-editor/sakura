@@ -43,7 +43,7 @@ MacroFuncInfoArray CEditorIfObj::GetMacroFuncInfo() const
 }
 
 //関数を処理する
-bool CEditorIfObj::HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+bool CEditorIfObj::HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 {
 	return CMacro::HandleFunction( View, ID, Arguments, ArgSize, Result );
 }
