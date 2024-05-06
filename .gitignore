@@ -3,6 +3,7 @@
 *.iobj
 *.ipdb
 *.pyc
+*.vcxproj.user
 **/packages
 **/TestResults
 .sonarqube
