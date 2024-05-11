@@ -225,7 +225,7 @@ TEST(CTextMetrics, GenerateDxArray8)
 	// IVSのVariantSelectorが続く文字列は先頭1文字 + 幅0×2で生成する
 	std::vector<int> v;
 	FakeCache1 cache;
-	CTextMetrics::GenerateDxArray(&v, L"葛󠄀", 2, 0, 0, 0, 10, cache);
+	CTextMetrics::GenerateDxArray(&v, L"葛󠄀", 3, 0, 0, 0, 10, cache);
 	EXPECT_TRUE(v[0]);
 	EXPECT_FALSE(v[1]);
 	EXPECT_FALSE(v[2]);
