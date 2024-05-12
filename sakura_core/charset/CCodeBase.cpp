@@ -55,7 +55,7 @@ std::wstring CCodeBase::CodeToHex(const CNativeW& cSrc, const CommonSetting_Stat
 EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	// IVS
-	if (iSLen >= 3 && IsVariationSelector(cSrc + 1, iSLen - 1)) {
+	if (iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
 		if (psStatusbar->m_bDispSPCodepoint) {
 			auto_sprintf(pDst, L"%04X, U+%05X", cSrc[0], ConvertToUtf32(cSrc + 1));
 		}

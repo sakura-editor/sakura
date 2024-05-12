@@ -391,8 +391,8 @@ char32_t ConvertToUtf32(std::wstring_view text) {
 /*!
  * 文字列がIVSの異体字セレクタで始まっているか判定する
  */
-inline bool IsVariationSelector(const wchar_t* pStr, size_t nLen) {
-	return (2 <= nLen) && (pStr[0] == 0xDB40) && (0xDD00 <= pStr[1]) && (pStr[1] <= 0xDDEF);
+inline bool IsVariationSelector(std::wstring_view text) {
+	return (2 <= text.size()) && (text[0] == 0xDB40) && (0xDD00 <= text[1]) && (text[1] <= 0xDDEF);
 }
 
 //! 上位バイトと下位バイトを交換 (主に UTF-16 LE/BE 向け)

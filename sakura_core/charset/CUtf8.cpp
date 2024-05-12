@@ -227,7 +227,7 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR*
 	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1])) {
 		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 4);
 	}
-	else if (iSLen >= 3 && IsVariationSelector(cSrc + 1, iSLen - 1)) {
+	else if (iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
 		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, sizeof(wchar_t) * 3);
 	}
 	else {
