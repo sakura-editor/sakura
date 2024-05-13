@@ -45,3 +45,24 @@ TEST(ConvertToUtf32, BinaryOnSurrogate)
 	const auto& s = L"\xdcff";
 	EXPECT_EQ(0, ConvertToUtf32(s));
 }
+
+TEST(IsVariationSelector, VariationSelectorCheck)
+{
+	// 異体字セレクタ開始
+	const auto& vs1 = L"\U000E0100";
+	EXPECT_TRUE(IsVariationSelector(vs1));
+
+	// 異体字セレクタ終了
+	const auto& vs2 = L"\U000E01EF";
+	EXPECT_TRUE(IsVariationSelector(vs2));
+
+	// 非該当文字列
+	const auto& notvs1 = L"";
+	EXPECT_FALSE(IsVariationSelector(notvs1));
+	const auto& notvs2 = L"\xDB40";
+	EXPECT_FALSE(IsVariationSelector(notvs2));
+	const auto& notvs3 = L"\U000E00FF";
+	EXPECT_FALSE(IsVariationSelector(notvs3));
+	const auto& notvs4 = L"\U000E01F0";
+	EXPECT_FALSE(IsVariationSelector(notvs4));
+}

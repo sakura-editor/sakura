@@ -397,7 +397,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 	}
 
 	// IVSの異体字セレクタチェック
-	if (IsVariationSelector(pData + nIdx + 1)) {
+	if (IsVariationSelector(std::wstring_view(pData + nIdx + 1, nDataLen - (nIdx + 1)))) {
 		// 正字 + 異体字セレクタで3個分
 		return CLogicInt(3);
 	}
