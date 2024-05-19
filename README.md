@@ -13,6 +13,8 @@
 
 [Visual Studio 2017]: https://visualstudio.microsoft.com/ja/vs/older-downloads/ "Visual Studio 以前のバージョン"
 [Visual Studio 2022]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio 最新版"
+[ライセンスの OSI のページ]: https://opensource.org/license/zlib
+[Visual Studio Community ライセンス]: https://visualstudio.microsoft.com/ja/license-terms/vs2022-ga-community/
 [Markdown をローカルで確認する方法]: https://github.com/sakura-editor/sakura/wiki/markdown-%E3%82%92%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95
 [How to extract currently installed Visual Studio component IDs?]: https://stackoverflow.com/questions/52946333/how-to-extract-currently-installed-visual-studio-component-ids
 [Configure Visual Studio across your organization with .vsconfig]: https://devblogs.microsoft.com/setup/configure-visual-studio-across-your-organization-with-vsconfig/
@@ -73,6 +75,8 @@ https://github.com/sakura-editor/sakura/wiki
 
 Sakura Editor をコンパイルするためには、 
 [最新のVisual Studio][Visual Studio 2022] または [以前のバージョンのVisual Studio（Visual Studio 2017 以降。ただし Express 2017 for Windows Desktop は除く）][Visual Studio 2017]が必要です。
+
+Sakura Editor は、[Open Source Initiative (OSI) 認定ライセンスである zlib ライセンス][ライセンスの OSI のページ][に基づいている](LICENSE)ため、[通常 Community エディションの対象外であるエンタープライズ組織でも、特例で Community エディションを利用しての開発・テストができます。][Visual Studio Community ライセンス]もちろん、Professional・Enterprise エディションも利用できます。
 
 正式バイナリは [Visual Studio Community 2017][Visual Studio 2017] でビルドされます。
 
