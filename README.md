@@ -30,9 +30,9 @@
   - [開発参加ポリシー](#開発参加ポリシー)
   - [Build Requirements](#build-requirements)
     - [Visual Studio Install options required](#visual-studio-install-options-required)
-    - [Visual Studio 2019 対応に関して](#visual-studio-2019-対応に関して)
+    - [Visual Studio 2019 以降の対応に関して](#visual-studio-2019-以降の対応に関して)
     - [.vsconfig に関して](#vsconfig-に関して)
-      - [Visual Studio 2017/2019/2022 共通](#visual-studio-201720192022-共通)
+      - [Visual Studio 2017 以降共通](#visual-studio-2017-以降共通)
       - [Visual Studio 2019 以降のみ](#visual-studio-2019-以降のみ)
       - [参照](#参照)
   - [How to build](#how-to-build)
@@ -83,18 +83,24 @@ Sakura Editor は、[Open Source Initiative (OSI) 認定ライセンスである
 ### Visual Studio Install options required
 - Windows 10 SDK
 
-### Visual Studio 2019 対応に関して
+### Visual Studio 2019 以降の対応に関して
 
-Visual Studio 2017/2019 の両対応に関しては  [#866](https://github.com/sakura-editor/sakura/issues/866) で対処済みです。  
+| Visual Studioバージョン | 対応済みIssue/PR                                           |
+| ----------------------- | ---------------------------------------------------------- |
+| 2022                    | [#1872](https://github.com/sakura-editor/sakura/pull/1872)（[コミット][2022対応コミット]） |
+| 2017/2019同時           | [#866](https://github.com/sakura-editor/sakura/issues/866) |
+
+[2022対応コミット]: https://github.com/sakura-editor/sakura/pull/1872/commits/93cf3f3eacfed6a4d0a2c30d5445b53b2599db3c
+
 [仕組みに関してはこちらを参照](vcx-props/project-PlatformToolset.md)
 
 ### .vsconfig に関して
 
-Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017/2019/2022 にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
+Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017 以降にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
 
 [#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
 
-#### Visual Studio 2017/2019/2022 共通
+#### Visual Studio 2017 以降共通
 
 `vs_community__XXXXX.exe` でインストールする際に、--config オプションをつけてインストールする。
 あるいは構成変更することにより、必要なコンポーネントを自動的にインストールします。
