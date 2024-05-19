@@ -72,7 +72,7 @@ https://github.com/sakura-editor/sakura/wiki
 ## Build Requirements
 
 Sakura Editor をコンパイルするためには、 
-[最新のVisual Studio][Visual Studio 2022] または [以前のバージョンのVisual Studio(Visual Studio 2017 以降)][Visual Studio 2017] が必要です。
+[最新のVisual Studio][Visual Studio 2022] または [以前のバージョンのVisual Studio（Visual Studio 2017 以降。ただし Express 2017 for Windows Desktop は除く）][Visual Studio 2017]が必要です。
 
 正式バイナリは [Visual Studio Community 2017][Visual Studio 2017] でビルドされます。
 
