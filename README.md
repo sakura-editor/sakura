@@ -11,8 +11,8 @@
 <!-- 以下は Markdownの参照形式によるリンク の定義です。 -->
 <!-- 参照 https://hail2u.net/blog/coding/markdown-reference-style-links.html -->
 
-[Visual Studio 2017]: https://visualstudio.microsoft.com/ja/vs/older-downloads/ "Visual Studio 2017"
-[Visual Studio 2019]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio 2019"
+[Visual Studio 2017]: https://visualstudio.microsoft.com/ja/vs/older-downloads/ "Visual Studio 以前のバージョン"
+[Visual Studio 2022]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio 最新版"
 [Markdown をローカルで確認する方法]: https://github.com/sakura-editor/sakura/wiki/markdown-%E3%82%92%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95
 [How to extract currently installed Visual Studio component IDs?]: https://stackoverflow.com/questions/52946333/how-to-extract-currently-installed-visual-studio-component-ids
 [Configure Visual Studio across your organization with .vsconfig]: https://devblogs.microsoft.com/setup/configure-visual-studio-across-your-organization-with-vsconfig/
@@ -30,8 +30,8 @@
     - [Visual Studio Install options required](#visual-studio-install-options-required)
     - [Visual Studio 2019 対応に関して](#visual-studio-2019-対応に関して)
     - [.vsconfig に関して](#vsconfig-に関して)
-      - [Visual Studio 2017/2019 共通](#visual-studio-20172019-共通)
-      - [Visual Studio 2019 のみ](#visual-studio-2019-のみ)
+      - [Visual Studio 2017/2019/2022 共通](#visual-studio-201720192022-共通)
+      - [Visual Studio 2019 以降のみ](#visual-studio-2019-以降のみ)
       - [参照](#参照)
   - [How to build](#how-to-build)
     - [詳細情報](#詳細情報)
@@ -71,7 +71,8 @@ https://github.com/sakura-editor/sakura/wiki
 
 ## Build Requirements
 
-Sakura Editor をコンパイルするためには、 Community または Professional エディション以上の [Visual Studio 2017][Visual Studio 2017] または [Visual Studio 2019][Visual Studio 2019] が必要です。
+Sakura Editor をコンパイルするためには、 
+[最新のVisual Studio][Visual Studio 2022] または [以前のバージョンのVisual Studio(Visual Studio 2017 以降)][Visual Studio 2017] が必要です。
 
 正式バイナリは [Visual Studio Community 2017][Visual Studio 2017] でビルドされます。
 
@@ -85,11 +86,11 @@ Visual Studio 2017/2019 の両対応に関しては  [#866](https://github.com/s
 
 ### .vsconfig に関して
 
-Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017/2019 にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
+Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017/2019/2022 にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
 
 [#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
 
-#### Visual Studio 2017/2019 共通
+#### Visual Studio 2017/2019/2022 共通
 
 `vs_community__XXXXX.exe` でインストールする際に、--config オプションをつけてインストールする。
 あるいは構成変更することにより、必要なコンポーネントを自動的にインストールします。
@@ -98,10 +99,9 @@ Sakura Editor のコンパイルに必要なコンポーネントを Visual Stud
 vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 ```
 
-#### Visual Studio 2019 のみ
+#### Visual Studio 2019 以降のみ
 
-`sakura.sln` と同じディレクトリに [.vsconfig](.vsconfig) が存在するので、
-Visual Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
+最新のVisual Studio(Visual Studio 2019 以降)で `sakura.sln` を開くと、同じディレクトリにある [.vsconfig](.vsconfig) から必要なコンポーネントのリストが読み込まれます。インストールされていないコンポーネントがある場合、インストールボタンが表示されます。インストールをクリックすると不足しているコンポーネントが自動的にインストールされます。
 
 #### 参照
 
