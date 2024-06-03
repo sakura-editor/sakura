@@ -96,7 +96,7 @@ Sakura Editor は、[Open Source Initiative (OSI) 認定ライセンスである
 
 ### .vsconfig に関して
 
-Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017 以降にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
+Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
 
 [#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
 
