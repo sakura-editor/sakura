@@ -100,7 +100,7 @@ Sakura Editor のコンパイルに必要なコンポーネントを Visual Stud
 
 [#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
 
-#### Visual Studio 2017 以降共通
+#### 全対応バージョン共通
 
 `vs_community__XXXXX.exe` でインストールする際に、--config オプションをつけてインストールする。
 あるいは構成変更することにより、必要なコンポーネントを自動的にインストールします。
