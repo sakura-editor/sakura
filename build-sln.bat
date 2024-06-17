@@ -19,6 +19,19 @@ if "%configuration%" == "Release" (
 	call :showhelp %0
 	exit /b 1
 )
+
+: For AppVeyor(AppVeyor doesn't checkout submodules automatically.)
+pushd "%~dp0"
+
+if not exist tools\vcpkg\bootstrap-vcpkg.bat (
+    git submodule init
+    git submodule update
+)
+
+.\tools\BuildDependencies.bat
+
+popd
+
 if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
 if not defined CMD_MSBUILD (
 	echo msbuild.exe was not found.

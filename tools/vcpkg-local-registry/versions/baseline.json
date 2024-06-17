@@ -1,0 +1,12 @@
+{
+  "2024-06-11": {
+    "gtest": {
+      "baseline": "1.14.0",
+      "port-version": 0
+    },
+    "header-make": {
+      "baseline": "1.0.0",
+      "port-version": 0
+    }
+  }
+}

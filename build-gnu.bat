@@ -68,14 +68,6 @@ if errorlevel 1 (
 )
 popd
 
-@rem build "googletest".
-call %~dp0tests\googletest.build.cmd %~dp0build\%platform%\%configuration%\gtest_build\ %~dp0build\%platform%\%configuration%\googletest\
-if errorlevel 1 (
-	echo error 2 errorlevel %errorlevel%
-	popd
-	exit /b 1
-)
-
 @rem build "tests1".
 set TESTS1_MAKEFILE=%~dp0tests\unittests\Makefile
 set TESTS1_BUILD_DIR=%~dp0build\%platform%\%configuration%\tests1
