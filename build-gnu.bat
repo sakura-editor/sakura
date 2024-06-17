@@ -28,6 +28,9 @@ if "%configuration%" == "Release" (
 @rem path=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%path%
 path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
 path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
+path=%path%;%VCPKG_INSTALLATION_ROOT%
+
+vcpkg.exe integrate install
 
 :: find generic tools
 if not defined CMD_NINJA call %~dp0tools\find-tools.bat

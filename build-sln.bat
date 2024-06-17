@@ -20,17 +20,9 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
-: For AppVeyor(AppVeyor doesn't checkout submodules automatically.)
-pushd "%~dp0"
+set path=%path%;%VCPKG_INSTALLATION_ROOT%
 
-if not exist tools\vcpkg\bootstrap-vcpkg.bat (
-    git submodule init
-    git submodule update
-)
-
-.\tools\BuildDependencies.bat
-
-popd
+vcpkg.exe integrate install
 
 if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
 if not defined CMD_MSBUILD (
