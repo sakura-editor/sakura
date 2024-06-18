@@ -5,7 +5,6 @@ configuration:
   - Release
 
 platform:
-  - Win32
   - x64
 
 # comment-out clone_depth to fetch entire repository.
@@ -30,6 +29,8 @@ install:
     py.exe -m pip install openpyxl --user
     cup innosetup
     C:\ProgramData\chocolatey\tools\shimgen.exe --output=C:\ProgramData\chocolatey\bin\ISCC.exe --path="C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+    chcp 65001
+    vcpkg.exe integrate install
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:

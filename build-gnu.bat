@@ -30,8 +30,6 @@ path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
 path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
 path=%path%;%VCPKG_INSTALLATION_ROOT%
 
-vcpkg.exe integrate install
-
 :: find generic tools
 if not defined CMD_NINJA call %~dp0tools\find-tools.bat
 

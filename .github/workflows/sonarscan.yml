@@ -64,6 +64,9 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
+    - name: Install vcpkg
+      run: vcpkg.exe integrate install
+
     - name: Fetch Build-Wrapper
       working-directory: ${{ github.workspace }}\.sonar
       run: |
