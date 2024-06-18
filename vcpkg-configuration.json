@@ -8,7 +8,7 @@
     {
       "baseline": "2024-06-11",
       "kind": "filesystem",
-      "packages": ["gtest", "header-make"],
+      "packages": ["header-make"],
       "path": "tools/vcpkg-local-registry"
     },
     {
