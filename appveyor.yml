@@ -29,8 +29,12 @@ install:
     py.exe -m pip install openpyxl --user
     cup innosetup
     C:\ProgramData\chocolatey\tools\shimgen.exe --output=C:\ProgramData\chocolatey\bin\ISCC.exe --path="C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+    git submodule init
+    git submodule update
     chcp 65001
-    vcpkg.exe integrate install
+    .\tools\vcpkg\bootstrap-vcpkg.bat
+    .\tools\vcpkg\vcpkg.exe integrate install
+    set VCPKG_INSTALLATION_ROOT=%APPVEYOR_BUILD_FOLDER%\tools\vcpkg
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:
