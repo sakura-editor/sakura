@@ -16,7 +16,7 @@ function Is-Existing
 		[string]$Path
 	)
 
-    return Test-Path -Path $Path
+    return Test-Path -LiteralPath $Path
 }
 
 # ファイル不存在チェック
@@ -91,7 +91,7 @@ function Copy-Chm
 	{
 		if ($Destination | Is-Missing)
 		{
-			New-Item -Path $Destination -ItemType Directory
+			New-Item -LiteralPath $Destination -ItemType Directory
 		}
 
 		$Destination = [System.IO.Path]::Combine($Destination, [System.IO.Path]::GetFileName($Path))
@@ -107,7 +107,7 @@ function Copy-Chm
 	{
 		echo "`$CompiledHelp is: $Path"
 		echo "`$Destination  is: $Destination"
-		Copy-Item -Path $Path -Destination $Destination
+		Copy-Item -LiteralPath $Path -Destination $Destination
 	}
 	catch #[System.IO.IOException]
 	{
@@ -118,8 +118,7 @@ function Copy-Chm
 	return $true
 }
 
-$HtmlHelpProject = Convert-Path $HtmlHelpProject
-
+$HtmlHelpProject = Convert-Path -LiteralPath $HtmlHelpProject
 if (-not($HtmlHelpProject -imatch '\.hhp$'))
 {
 	throw [System.ArgumentException]::new("Bad filename of `$HtmlHelpProject: $HtmlHelpProject")
@@ -130,23 +129,22 @@ if ([string]::IsNullOrEmpty($env:CMD_HHC) -or ($env:CMD_HHC | Is-Missing))
 	$env:CMD_HHC = 'C:\Program Files (x86)\HTML Help Workshop\hhc.exe'
 }
 
-$hhc = $env:CMD_HHC -replace '(.+)', '""$1""'
 $CompiledHelp = $HtmlHelpProject -ireplace '\.hhp$', '.chm'
 $CompileLog = "$([System.IO.Path]::GetDirectoryName($HtmlHelpProject))\Compile.Log"
 
 if ($CompileLog | Is-Existing)
 {
-	rm $CompileLog
+	rm -LiteralPath $CompileLog
 }
 
 if ($CompiledHelp | Is-Existing)
 {
-	rm $CompiledHelp
+	rm -LiteralPath $CompiledHelp
 }
 
 if ($Destination | Is-Existing)
 {
-	rm $Destination
+	rm -LiteralPath $Destination
 }
 
 while ($true)
@@ -156,12 +154,12 @@ while ($true)
 		if ([string]::IsNullOrEmpty($env:CMD_LEPROC))
 		{
 			#kick cmd.exe for a legacy command.
-			Start-Process $env:CMD_HHC $HtmlHelpProject
+			Start-Process "$env:CMD_HHC" """$HtmlHelpProject"""
 		}
 		else
 		{
 			#kick LEProc.exe for a legacy command.
-			Start-Process $env:CMD_LEPROC "$env:COMSPEC /C `"$hhc $HtmlHelpProject`""
+			Start-Process $env:CMD_LEPROC """$env:CMD_HHC"" ""$HtmlHelpProject"""
 		}
 
 		#wait for complete
@@ -183,14 +181,19 @@ while ($true)
 			{
 				echo "`$CompileLog is still locked: $CompileLog"
 			}
-			elseif (Copy-Chm $CompiledHelp $Destination)
-			{
-				return
-			}
 			else
 			{
-				echo "Copy `$CompiledHelp has failed"
-				break
+				$bCopyChm=Copy-Chm $CompiledHelp $Destination
+				$bCopyChm -notmatch "True|False"
+				if($bCopyChm){
+					"`$CompiledHelp size: $((Get-Item -LiteralPath $CompiledHelp).Length)`n"
+					return
+				}
+				else
+				{
+					echo "Copy `$CompiledHelp has failed"
+					break
+				}
 			}
 
 			Start-Sleep -Second 1
