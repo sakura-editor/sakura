@@ -12,21 +12,21 @@ Sakura-Editor Macro Reference
 <h2>S_GetLineStrの使用例</h2>
 
 <pre>
-<span style="color:green;">//sample.js
+<span class="green">//sample.js
 //指定論理行の取得</span>
-<span style="color:blue;">var</span> oWsh = <span style="color:blue;">new</span> ActiveXObject(<span style="color:#800000;">"WScript.Shell"</span>);
-<span style="color:blue;">var</span> sBuf;
+<span class="blue">var</span> oWsh = <span class="blue">new</span> ActiveXObject(<span class="maroon">"WScript.Shell"</span>);
+<span class="blue">var</span> sBuf;
 
-sBuf = <span style="color:#800000;">"先頭行の内容は\n"</span> + <span style="color:blue;">GetLineStr</span>(<span style="color:red;">1</span>) + <span style="color:#800000;">"\n\n"</span>;
-sBuf += <span style="color:#800000;">"現在キャレット行の内容は\n"</span> + <span style="color:blue;">GetLineStr</span>(<span style="color:red;">0</span>) + <span style="color:#800000;">"\n\n"</span>;
-sBuf += <span style="color:#800000;">"最終行の内容は\n"</span> + <span style="color:blue;">GetLineStr</span>(<span style="color:blue;">GetLineCount</span>(<span style="color:red;">0</span>));
+sBuf = <span class="maroon">"先頭行の内容は\n"</span> + <span class="blue">GetLineStr</span>(<span class="red">1</span>) + <span class="maroon">"\n\n"</span>;
+sBuf += <span class="maroon">"現在キャレット行の内容は\n"</span> + <span class="blue">GetLineStr</span>(<span class="red">0</span>) + <span class="maroon">"\n\n"</span>;
+sBuf += <span class="maroon">"最終行の内容は\n"</span> + <span class="blue">GetLineStr</span>(<span class="blue">GetLineCount</span>(<span class="red">0</span>));
 
-oWsh.Popup(sBuf, <span style="color:red;">0</span>, <span style="color:#800000;">"行を取得"</span>, <span style="color:red;">0</span>);
+oWsh.Popup(sBuf, <span class="red">0</span>, <span class="maroon">"行を取得"</span>, <span class="red">0</span>);
 </pre>
 
 <pre>
-<span style="color:green;">//sample.ppa</span>
-<span style="color:blue;">MessageBox</span>(<span style="color:blue;">S_GetLineStr</span>(<span style="color:red;">0</span>), <span style="color:#800000;">'現在行の文字列'</span>, <span style="color:red;">0</span>);
+<span class="green">//sample.ppa</span>
+<span class="blue">MessageBox</span>(<span class="blue">S_GetLineStr</span>(<span class="red">0</span>), <span class="maroon">'現在行の文字列'</span>, <span class="red">0</span>);
 </pre>
 <hr>
 </body></html>
