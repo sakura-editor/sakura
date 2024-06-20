@@ -18,6 +18,7 @@
       Condition="!Exists('$(HeaderMake)')"
       AfterTargets="GenerateGitHash"
       BeforeTargets="FuncCodeDefine;FuncCodeEnum">
+    <Exec Command="chcp 65001 &gt;NUL &amp;&amp; bootstrap-vcpkg.bat" Condition="!Exists('$(VcpkgRoot)\vcpkg.exe')" StdOutEncoding="UTF-8" StdErrEncoding="UTF-8" WorkingDirectory="$(VcpkgRoot)" />
     <Exec Command="chcp 65001 &gt;NUL &amp;&amp; vcpkg.exe install --x-wait-for-lock --triplet &quot;$(VcpkgTriplet)&quot; &quot;--x-manifest-root=$(VcpkgManifestDirectory.TrimEnd('\'))&quot; &quot;--x-install-root=$(VcpkgInstalledDir.TrimEnd('\'))&quot;" StdOutEncoding="UTF-8" StdErrEncoding="UTF-8" WorkingDirectory="$(MSBuildThisFileDirectory).." />
   </Target>
   <Target Name="_WriteFuncCodeDefineRcTlogs"

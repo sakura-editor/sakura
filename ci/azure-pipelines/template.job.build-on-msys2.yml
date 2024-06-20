@@ -31,9 +31,6 @@ jobs:
 
   - template: /ci/azure-pipelines/template.steps.install-mingw-w64-gcc.yml
 
-  - pwsh: $(VCPKG_INSTALLATION_ROOT)\vcpkg.exe integrate install
-    displayName: Install vcpkg
-
   # Build GNU C++
   - script: build-gnu.bat       $(BuildPlatform) $(Configuration)
     displayName: Build with MinGW-w64-gcc

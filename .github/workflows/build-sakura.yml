@@ -78,9 +78,6 @@ jobs:
         }
       shell: pwsh
 
-    - name: Install vcpkg
-      run: vcpkg.exe integrate install
-
     - name: MSBuild
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd

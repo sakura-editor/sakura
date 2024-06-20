@@ -19,9 +19,6 @@ if "%configuration%" == "Release" (
 	call :showhelp %0
 	exit /b 1
 )
-
-set path=%path%;%VCPKG_INSTALLATION_ROOT%
-
 if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
 if not defined CMD_MSBUILD (
 	echo msbuild.exe was not found.

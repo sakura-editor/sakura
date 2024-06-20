@@ -33,9 +33,6 @@ jobs:
 
   - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
 
-  - pwsh: $(VCPKG_INSTALLATION_ROOT)\vcpkg.exe integrate install
-    displayName: Install vcpkg
-
   # Build solution
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution
