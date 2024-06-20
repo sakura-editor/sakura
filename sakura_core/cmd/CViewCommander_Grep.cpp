@@ -62,7 +62,7 @@ void CViewCommander::Command_GREP( void )
 	CNativeW		cmWork2;
 	CNativeW		cmWork3;
 	CNativeW		cmWork4;
-	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
+	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText );
 	cmWork2 = GetEditWindow()->m_cDlgGrep.GetPackedGFileString();
 	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
 
@@ -167,10 +167,10 @@ void CViewCommander::Command_GREP_REPLACE( void )
 	CNativeW		cmWork4;
 
 	CDlgGrepReplace& cDlgGrepRep = GetEditWindow()->m_cDlgGrepReplace;
-	cmWork1.SetString( cDlgGrepRep.m_strText.c_str() );
+	cmWork1.SetString( cDlgGrepRep.m_strText );
 	cmWork2 = cDlgGrepRep.GetPackedGFileString();
 	cmWork3.SetString( cDlgGrepRep.m_szFolder );
-	cmWork4.SetString( cDlgGrepRep.m_strText2.c_str() );
+	cmWork4.SetString( cDlgGrepRep.m_strText2 );
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき、または未編集で無題かつアウトプットでない場合。
