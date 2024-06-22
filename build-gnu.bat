@@ -28,10 +28,24 @@ if "%configuration%" == "Release" (
 @rem path=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%path%
 path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
 path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
-path=%~dp0tools\vcpkg;%path%
 
 :: find generic tools
 if not defined CMD_NINJA call %~dp0tools\find-tools.bat
+
+if not exist %~dp0tools\vcpkg\bootstrap-vcpkg.bat (
+	"%CMD_GIT%" submodule update --init
+)
+
+if errorlevel 1 (
+	echo ERROR submodule update %errorlevel%
+	exit /b 1
+)
+
+if not exist %~dp0tools\vcpkg\vcpkg.exe (
+	call %~dp0tools\vcpkg\bootstrap-vcpkg.bat
+)
+
+path=%~dp0tools\vcpkg;%path%
 
 @rem create output directory, all executables will be placed here.
 set OUTDIR=%~dp0%platform%\%configuration%

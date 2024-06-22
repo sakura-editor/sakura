@@ -1,4 +1,4 @@
-@echo off
+@echo on
 set platform=%1
 set configuration=%2
 
@@ -23,6 +23,19 @@ if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
 if not defined CMD_MSBUILD (
 	echo msbuild.exe was not found.
 	exit /b 1
+)
+
+if not exist %~dp0tools\vcpkg\bootstrap-vcpkg.bat (
+	"%CMD_GIT%" submodule update --init
+)
+
+if errorlevel 1 (
+	echo ERROR submodule update %errorlevel%
+	exit /b 1
+)
+
+if not exist %~dp0tools\vcpkg\vcpkg.exe (
+	call %~dp0tools\vcpkg\bootstrap-vcpkg.bat
 )
 
 set SLN_FILE=sakura.sln
