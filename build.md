@@ -24,7 +24,13 @@
     - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
     - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
     - [CI でのビルドをスキップする方法](#ci-でのビルドをスキップする方法)
+      - [参考情報](#参考情報)
     - [MinGW w64 ビルド](#mingw-w64-ビルド)
+    - [MinGW w64 インストール方法](#mingw-w64-インストール方法)
+    - [Msys2 コンソールを開く方法](#msys2-コンソールを開く方法)
+    - [Msys2 インストール方法](#msys2-インストール方法)
+    - [PowerShell の管理者コンソールを開く方法](#powershell-の管理者コンソールを開く方法)
+    - [Chocolatey のインストール方法](#chocolatey-のインストール方法)
 
 <!-- /TOC -->
 
@@ -188,26 +194,57 @@ build-sln.bat x64   Debug
 
 生成されるバイナリは正しく動作しないが、MinGWでのビルドも可能。
 
+コマンド実行例（[MinGW w64](#mingw-w64-インストール方法) のインストールが必要。）
 
-MinGW64のビルド環境
-
-* [pleiades 4.6 Neon](http://mergedoc.osdn.jp/)
-* [MSYS2+MinGW-w64](https://gist.github.com/Hamayama/eb4b4824ada3ac71beee0c9bb5fa546d)
-* [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/)
-
-cpu | thread モデル | 例外モデル | コメント
----- | ---- | ---- | ----
-x86_64 | win32 | seh | windows向け。外部DLL不要
-x86_64 | posix | seh | 標準。pthreadのDLLが必要
-x86_64 | win32 | sjlj | 外部DLL不要
-x86_64 | posix | sjlj | pthreadのDLLが必要
-
-標準的なMinGWセットアップでビルドしたバイナリは ```libwinpthread-1.dll``` に依存することに注意。
-
-
-コマンド実行例
-
+```cmd
+build-gnu.bat MinGW Debug
+build-gnu.bat MinGW Release
 ```
-path=C:\msys64\mingw64\bin;%path%
-mingw32-make -C sakura_core -j4
+
+### MinGW w64 インストール方法
+
+[Msys2 コンソール](#msys2-コンソールを開く方法) で以下のコマンドを入力し `pacman` パッケージ を最新化します。
+
+```bash
+pacman -Syuu
+```
+
+[Msys2 コンソール](#msys2-コンソールを開く方法) で以下のコマンドを入力し `MinGW-w64` をインストールします。  
+
+```bash
+pacman -S --noconfirm mingw-w64-x86_64-toolchain
+```
+
+### Msys2 コンソールを開く方法
+
+`C:\msys64\msys2.exe` を実行します。（[Msys2](#msys2-インストール方法) のインストールが必要。）
+
+### Msys2 インストール方法
+
+[PowerShell の管理者コンソール](#powershell-の管理者コンソールを開く方法)で以下のコマンドを入力し `msys2` をインストールします。（[Chocolatey](#chocolatey-のインストール方法) のインストールが必要。）
+
+```powershell
+choco install msys2 --params "/InstallDir:C:\msys64"
+```
+
+### PowerShell の管理者コンソールを開く方法
+
+Windowsタスクバーの検索窓に `powershell` と入力します。
+
+検索結果に `Windows PowerShell (x86)` が表示されるので `管理者として実行` をクリックします。
+
+### Chocolatey のインストール方法
+
+[PowerShell の管理者コンソール](#powershell-の管理者コンソールを開く方法) で以下のコマンドを実行します。
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+```
+
+詳細な手順は [Chocolateyの公式サイト](https://chocolatey.org/install) で確認してください。
+
+[PowerShell の管理者コンソール](#powershell-の管理者コンソールを開く方法) で以下のコマンドを実行し `Chocolatey` のバージョンが表示されたらインストールできています。
+
+```powershell
+choco
 ```
