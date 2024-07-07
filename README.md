@@ -123,7 +123,7 @@ vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 
 ## How to build
 
-- [7Zip](https://sevenzip.osdn.jp/) のインストールして 7z.exe へのパスを通します。
+- [7-Zip](https://7-zip.opensource.jp/) をインストールして 7z.exe へのパスを通します。
 - Visual Studio で `sakura.sln` を開いてビルドします。
 
 ### 詳細情報
