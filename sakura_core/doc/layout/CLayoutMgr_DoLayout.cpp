@@ -48,7 +48,7 @@ static bool _GetKeywordLength(
 	CLogicInt nWordBgn = nPos;
 	CLogicInt nWordLen = CLogicInt(0);
 	CLayoutInt nWordKetas = CLayoutInt(0);
-	while(nPos<cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr.At(nPos))){
+	while(nPos<cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr[nPos])){
 		CLogicXInt nCharSize = CNativeW::GetSizeOfChar( cLineStr, nPos );
 		CLayoutInt k = cLayoutMgr.GetLayoutXOfChar(cLineStr, nPos);
 
@@ -209,8 +209,8 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 		if( _IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 )
 		 && IsKinsokuHead( pWork->cLineStr.At( pWork->nPos + nCharSize ) )
-		 && !IsKinsokuHead( pWork->cLineStr.At( pWork->nPos ) )		// 1字前が行頭禁則の対象でないこと
-		 && !IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )	// 1字前が句読点ぶら下げの対象でないこと
+		 && !IsKinsokuHead( pWork->cLineStr[ pWork->nPos ] )		// 1字前が行頭禁則の対象でないこと
+		 && !IsKinsokuKuto( pWork->cLineStr[ pWork->nPos ] ) )	// 1字前が句読点ぶら下げの対象でないこと
 		{
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = nCharSize + CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
@@ -233,7 +233,7 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		CLayoutXInt nCharKetas1 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 		CLayoutXInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 
-		if( _IsKinsokuPosTail( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 ) && IsKinsokuTail( pWork->cLineStr.At( pWork->nPos ) ) )
+		if( _IsKinsokuPosTail( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 ) && IsKinsokuTail( pWork->cLineStr[ pWork->nPos ] ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = nCharSize;
@@ -305,7 +305,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		//@@@ 2002.09.22 YAZAKI
 		color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 
-		if( pWork->cLineStr.At(pWork->nPos) == WCODE::TAB ){
+		if( pWork->cLineStr[pWork->nPos] == WCODE::TAB ){
 			if(_DoTab(pWork, pfOnLine)){
 				continue;
 			}

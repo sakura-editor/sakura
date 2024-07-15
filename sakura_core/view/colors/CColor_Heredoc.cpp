@@ -78,7 +78,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 		const int length = cStr.GetLength();
 		int nPosIdStart = nPos + 3;
 		for(; nPosIdStart < length; nPosIdStart++ ){
-			if(cStr.At(nPosIdStart) != L'\t' && cStr.At(nPosIdStart) != L' '){
+			if(cStr[nPosIdStart] != L'\t' && cStr[nPosIdStart] != L' '){
 				break;
 			}
 		}
@@ -86,13 +86,13 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 		if( !(nPosIdStart < length) ){
 			return false;
 		}
-		if( cStr.At(nPosIdStart) == L'\'' || cStr.At(nPosIdStart) == L'"' ){
-			quote = cStr.At(nPosIdStart);
+		if (cStr[nPosIdStart] == L'\'' || cStr[nPosIdStart] == L'"') {
+			quote = cStr[nPosIdStart];
 			nPosIdStart++;
 		}
 		int i = nPosIdStart;
 		for(; i < length; i++ ){
-			if( !(WCODE::IsAZ(cStr.At(i)) || WCODE::Is09(cStr.At(i)) || cStr.At(i) == L'_') ){
+			if( !(WCODE::IsAZ(cStr[i]) || WCODE::Is09(cStr[i]) || cStr[i] == L'_') ){
 				break;
 			}
 		}
@@ -101,13 +101,13 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 		}
 		const int k = i;
 		if( quote != L'\0' ){
-			if( i < length && cStr.At(i) == quote ){
+			if( i < length && cStr[i] == quote ){
 				i++;
 			}else{
 				return false;
 			}
 		}
-		if( i < length && WCODE::IsLineDelimiter(cStr.At(i), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+		if( i < length && WCODE::IsLineDelimiter(cStr[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 			m_id = std::wstring(cStr.GetPtr()+nPosIdStart, k - nPosIdStart);
 			m_pszId = m_id.c_str();
 			m_nSize = m_id.size();
@@ -129,11 +129,11 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 				return false;
 			}else{
 				int i = m_nSize;
-				if( i + 1 < cStr.GetLength() && cStr.At(i) == L';' && WCODE::IsLineDelimiter(cStr.At(i+1), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+				if( i + 1 < cStr.GetLength() && cStr[i] == L';' && WCODE::IsLineDelimiter(cStr[i+1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID;
 					this->m_nCOMMENTEND = i;
 					return false;
-				}else if( m_nSize < cStr.GetLength() && WCODE::IsLineDelimiter(cStr.At(m_nSize), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+				}else if( m_nSize < cStr.GetLength() && WCODE::IsLineDelimiter(cStr[m_nSize], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID
 					this->m_nCOMMENTEND = m_nSize;
 					return false;
