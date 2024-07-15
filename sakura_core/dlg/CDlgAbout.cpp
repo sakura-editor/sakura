@@ -313,28 +313,28 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 //	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{
-			std::wstring url;
-			ApiWrap::DlgItem_GetText(GetHwnd(), wID, url);
-			OpenWithBrowser(GetHwnd(), url);
+			WCHAR buf[512];
+			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
+			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			OpenWithBrowser(GetHwnd(), _T(CI_BUILD_URL));
+			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			OpenWithBrowser(GetHwnd(), _T(GIT_REMOTE_ORIGIN_URL));
+			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		OpenWithBrowser(GetHwnd(), _T(GITHUB_COMMIT_URL));
+		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_COMMIT_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		OpenWithBrowser(GetHwnd(), _T(GITHUB_PR_HEAD_URL));
+		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_PR_HEAD_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	}

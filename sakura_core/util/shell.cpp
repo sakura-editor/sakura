@@ -29,9 +29,6 @@
 #include <ShlObj.h>
 #include <ShellAPI.h>
 #include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
-
-#include <regex>
-
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
@@ -217,8 +214,36 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 
 			// 選択されたメニューの処理
 			switch( nId ){
-			case 100:	// 設定フォルダーを開く
-				OpenWithExplorer(hwnd, GetIniFileName());
+			case 100:	// 設定フォルダを開く
+				WCHAR szPath[_MAX_PATH];
+				GetInidir( szPath );
+
+				// フォルダの ITEMIDLIST を取得して ShellExecuteEx() で開く
+				// Note. MSDN の ShellExecute() の解説にある方法でフォルダを開こうとした場合、
+				//       フォルダと同じ場所に <フォルダ名>.exe があるとうまく動かない。
+				//       verbが"open"やNULLではexeのほうが実行され"explore"では失敗する
+				//       （フォルダ名の末尾に'\\'を付加してもWindows 2000では付加しないのと同じ動作になってしまう）
+				LPSHELLFOLDER pDesktopFolder;
+				if( SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder)) ){
+					LPMALLOC pMalloc;
+					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
+						LPITEMIDLIST pIDL;
+						WCHAR* pszDisplayName = szPath;
+						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL)) ){
+							SHELLEXECUTEINFO si;
+							::ZeroMemory( &si, sizeof(si) );
+							si.cbSize   = sizeof(si);
+							si.fMask    = SEE_MASK_IDLIST;
+							si.lpVerb   = L"open";
+							si.lpIDList = pIDL;
+							si.nShow    = SW_SHOWNORMAL;
+							::ShellExecuteEx( &si );	// フォルダを開く
+							pMalloc->Free( (void*)pIDL );
+						}
+						pMalloc->Release();
+					}
+					pDesktopFolder->Release();
+				}
 				break;
 
 			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダーにする）
@@ -567,7 +592,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 		WCHAR buf[256];
 		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
-		OpenWithBrowser( ::GetActiveWindow(), buf );
+		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 	}
 
 	return TRUE;
@@ -620,64 +645,4 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	*piPointSize = cf.iPointSize;
 
 	return TRUE;
-}
-
-//! Windows エクスプローラーで開く
-bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path)
-{
-	if (path.empty()) {
-		return false;
-	}
-
-	std::filesystem::path explorerPath;
-	std::wstring_view verb = L"explore";
-	std::wstring_view file = path.c_str();
-	std::wstring params;
-	const wchar_t* lpParameters = nullptr;
-
-	// ファイル名（最後の'\'に続く部分）がドット('.')でない場合、
-	// Windowsエクスプローラーのコマンドを指定してファイルを選択させる。
-	// ※ドットは「フォルダー自身」を表す特殊なファイル名。
-	if (path.filename() != L".") {
-		std::wstring buf(_MAX_PATH, wchar_t());
-		size_t requiredSize;
-		_wgetenv_s(&requiredSize, buf.data(), buf.capacity(), L"windir");
-		verb = L"open";
-		explorerPath = buf.data();
-		explorerPath /= L"explorer.exe";
-		file = explorerPath.c_str();
-		params = strprintf(L"/select,\"%s\"", path.c_str());
-		lpParameters = params.c_str();
-	}
-
-	// If the function succeeds, it returns a value greater than 32. 
-	if (auto hInstance = ::ShellExecuteW(hWnd, verb.data(), file.data(), lpParameters, nullptr, SW_SHOWNORMAL);
-		hInstance <= (decltype(hInstance))32) {
-		return false;
-	}
-
-	return true;
-}
-
-//! ブラウザで開く
-bool OpenWithBrowser(HWND hWnd, std::wstring_view url)
-{
-	if (url.empty()) {
-		return false;
-	}
-
-	if (!std::regex_search(url.data(), std::wregex(LR"(^[a-z]+://\b)"))
-		&& !std::regex_search(url.data(), std::wregex(LR"(^(mailto|news):)"))
-		&& !std::regex_search(url.data(), std::wregex(LR"(^[A-Z]:\\)", std::wregex::icase))
-		&& !std::regex_search(url.data(), std::wregex(LR"(^\\\\:)"))) {
-		return false;
-	}
-
-	// If the function succeeds, it returns a value greater than 32. 
-	if (auto hInstance = ::ShellExecuteW(hWnd, L"open", url.data(), nullptr, nullptr, SW_SHOWNORMAL);
-		hInstance <= (decltype(hInstance))32) {
-		return false;
-	}
-
-	return true;
 }
