@@ -113,7 +113,6 @@ LIBS= \
  -lwinmm \
  -lwindowscodecs \
  -lmsimg32 \
- -lurlmon \
  -lkernel32 \
  -lgdi32 \
  -lcomdlg32 \
