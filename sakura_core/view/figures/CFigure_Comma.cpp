@@ -90,6 +90,14 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 			if (szViewString.length() < nTabDispWidth) {
 				szViewString.append(nTabDispWidth - szViewString.length(), L' ');
 			}
+			const INT* lpDx;
+			if( szViewString.length() > 64 ) {
+				static std::vector<int> anHankakuDx; //!< 半角用文字間隔配列
+				anHankakuDx.resize(szViewString.length(), pMetrics->GetHankakuDx());
+				lpDx = &anHankakuDx[0];
+			}else {
+				lpDx = pMetrics->GetDxArray_AllHankaku();
+			}
 			::ExtTextOut(
 				gr,
 				sPos.GetDrawPos().x,
@@ -98,7 +106,7 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 				&rcClip2,
 				szViewString.c_str(),
 				static_cast<UINT>(szViewString.length()),
-				pMetrics->GetDxArray_AllHankaku()
+				lpDx
 			);
 		}
 	}
