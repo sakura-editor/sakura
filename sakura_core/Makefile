@@ -98,7 +98,6 @@ LIBS= \
  -lwinmm \
  -lwindowscodecs \
  -lmsimg32 \
- -lurlmon \
  -mwindows \
  -municode \
  $(MYLIBS)
