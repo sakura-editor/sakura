@@ -17,4 +17,8 @@ IF not exist "%~dp0vcpkg\vcpkg.exe" (
 )
 
 : install command
+"%~dp0vcpkg\vcpkg.exe" install ^
+    header-make:x64-windows ^
+    header-make:x86-windows
+
 : "%~dp0vcpkg\vcpkg.exe" install --x-wait-for-lock --triplet "x64-windows-static" "--x-manifest-root=%~dp0.." "--x-install-root=%~dp0..\build\vcpkg_installed"
