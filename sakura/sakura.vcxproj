@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props" Condition="Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -898,10 +897,6 @@
     <ClCompile Include="..\sakura_core\_os\CDropTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="sakura.natvis" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="..\resource\auto_scroll_center.bmp" />
     <Image Include="..\resource\auto_scroll_horizontal.bmp" />
     <Image Include="..\resource\auto_scroll_vertical.bmp" />
@@ -924,14 +919,6 @@
   <Import Project="..\sakura\funccode.targets" />
   <Import Project="..\sakura\ExtractArchives.targets" />
   <Import Project="..\tests\compiletests.targets" />
-  <Import Project="..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets" Condition="Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props'))" />
-    <Error Condition="!Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets'))" />
-  </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>

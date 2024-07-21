@@ -1221,9 +1221,6 @@
     <None Include="..\sakura_core\sakura_rc.rc2">
       <Filter>Other Files</Filter>
     </None>
-    <None Include="packages.config">
-      <Filter>Other Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc">

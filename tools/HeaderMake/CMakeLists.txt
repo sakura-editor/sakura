@@ -1,21 +1,17 @@
-﻿cmake_minimum_required(VERSION 3.11)
+﻿cmake_minimum_required(VERSION 3.7)
 
-# define a variable of project name
-set( project_name HeaderMake)
+# define a project
+project (HeaderMake)
 
-# define a project name
-project (${project_name})
+# add test executable
+add_executable(${PROJECT_NAME} ../../HeaderMake/HeaderMake.cpp)
 
-# define a variable SOURCE_FILES with file GLOB
-file(GLOB SOURCE_FILES *.cpp *.h)
+# add definitions
+target_compile_definitions(${PROJECT_NAME} PUBLIC _CONSOLE UNICODE _UNICODE)
 
-# define sources files of an executable
-add_executable(${project_name} ${SOURCE_FILES})
-
-target_compile_definitions(${project_name} PUBLIC _CONSOLE UNICODE _UNICODE)
-
+# add install target
 install(
-    TARGETS HeaderMake
-    EXPORT HeaderMake-targets
+    TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}-targets
     RUNTIME DESTINATION bin
 )

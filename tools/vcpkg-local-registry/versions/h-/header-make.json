@@ -1,0 +1,9 @@
+﻿{
+    "versions": [
+        {
+          "version": "1.0.0",
+          "port-version": 0,
+          "path": "$/ports/header-make"
+        }
+    ]
+}  

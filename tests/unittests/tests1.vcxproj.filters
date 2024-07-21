@@ -20,11 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <Filter>Other Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="CMakeLists.txt">
       <Filter>Other Files</Filter>
     </Text>

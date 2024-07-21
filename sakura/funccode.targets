@@ -1,9 +1,26 @@
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="FuncCode">
-    <HeaderMake>$(VcpkgRoot)\installed\$(PlatformTarget)-windows\bin\HeaderMake.exe</HeaderMake>
-    <FuncCodeDefine>$(IntDir)Funccode_define.h</FuncCodeDefine>
-    <FuncCodeEnum>$(IntDir)Funccode_enum.h</FuncCodeEnum>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgConfiguration Condition="'$(Configuration)'=='Debug'">Debug</VcpkgConfiguration>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgManifestDirectory>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\'))</VcpkgManifestDirectory>
+    <VcpkgInstalledDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\build\vcpkg_installed\'))</VcpkgInstalledDir>
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
   </PropertyGroup>
+  <PropertyGroup Label="FuncCode">
+    <ExecutablePath Condition="'$(VcpkgRoot)'!=''">$(VcpkgRoot);$(ExecutablePath)</ExecutablePath>
+    <HeaderMake>$(VcpkgInstalledDir)$(VcpkgTriplet)\tools\header-make\HeaderMake.exe</HeaderMake>
+    <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
+    <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
+  </PropertyGroup>
+  <Target Name="InstallHeaderMake"
+      Condition="!Exists('$(HeaderMake)')"
+      AfterTargets="GenerateGitHash"
+      BeforeTargets="FuncCodeDefine;FuncCodeEnum">
+    <Exec Command="chcp 65001 &gt;NUL &amp;&amp; bootstrap-vcpkg.bat" Condition="!Exists('$(VcpkgRoot)\vcpkg.exe')" StdOutEncoding="UTF-8" StdErrEncoding="UTF-8" WorkingDirectory="$(VcpkgRoot)" />
+    <Exec Command="chcp 65001 &gt;NUL &amp;&amp; vcpkg.exe install --x-wait-for-lock --triplet &quot;$(VcpkgTriplet)&quot; &quot;--x-manifest-root=$(VcpkgManifestDirectory.TrimEnd('\'))&quot; &quot;--x-install-root=$(VcpkgInstalledDir.TrimEnd('\'))&quot;" StdOutEncoding="UTF-8" StdErrEncoding="UTF-8" WorkingDirectory="$(MSBuildThisFileDirectory).." />
+  </Target>
   <Target Name="_WriteFuncCodeDefineRcTlogs">
     <ItemGroup>
       <_FuncCodeDefineReadTlog Include="^$(FuncCodeDefine);%(FuncCodeRes.FullPath)" 

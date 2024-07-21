@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.props" Condition="Exists('..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -215,10 +214,6 @@
     <ClInclude Include="tests1_rc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="tests1_rc.rc" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
@@ -241,14 +236,6 @@
   <ItemGroup>
     <TestResource Include="test-plugin\plugin.def" />
   </ItemGroup>
-  <Import Project="..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.targets" Condition="Exists('..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.props'))" />
-    <Error Condition="!Exists('..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\tests1.dependencies.1.0.0\build\native\tests1.dependencies.targets'))" />
-  </Target>
   <Target Name="MakeTestResource" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\ja-JP\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.ja-JP.zip">
     <Exec Command="7z u &quot;$(IntDir)resources.ja-JP.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\ja-JP" />
   </Target>
