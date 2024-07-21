@@ -486,12 +486,14 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 };
 
 /*!
- * コンストラクタ
- */
-CSMacroMgr::CSMacroMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
+	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date 2002.04.29 genta オブジェクトの実体は実行時まで生成しない。
+*/
+CSMacroMgr::CSMacroMgr()
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CSMacroMgr::CSMacroMgr" );
+	
+	m_pShareData = &GetDllShareData();
 	
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();

@@ -60,6 +60,16 @@ inline DLLSHAREDATA& GetDllShareData()
 	return *g_theDLLSHAREDATA;
 }
 
+inline DLLSHAREDATA& GetDllShareData(bool bNullCheck)
+{
+	extern DLLSHAREDATA* g_theDLLSHAREDATA;
+
+	if( bNullCheck ){
+		assert(g_theDLLSHAREDATA);
+	}
+	return *g_theDLLSHAREDATA;
+}
+
 //DLLSHAREDATAを確保したら、まずこれを呼ぶ。破棄する前にも呼ぶ。
 inline void SetDllShareData(DLLSHAREDATA* pShareData)
 {
@@ -173,8 +183,6 @@ struct DLLSHAREDATA{
 	// -- -- テンポラリ -- -- //
 	//指定行へジャンプダイアログのオプション
 	bool						m_bLineNumIsCRLF_ForJump;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
-
-	bool IsValid() const noexcept;
 };
 
 class CShareDataLockCounter{

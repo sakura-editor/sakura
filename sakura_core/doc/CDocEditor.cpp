@@ -36,18 +36,15 @@
 #include "debug/CRunningTimer.h"
 #include "_os/CClipboard.h"
 
-/*!
- * コンストラクタ
- */
-CDocEditor::CDocEditor(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+CDocEditor::CDocEditor(CEditDoc* pcDoc)
+: m_pcDocRef(pcDoc)
 , m_cNewLineCode( EEolType::cr_and_lf )		//	New Line Type
 , m_pcOpeBlk( NULL )
 , m_bInsMode( true )	// Oct. 2, 2005 genta
 , m_bIsDocModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 	//	Oct. 2, 2005 genta 挿入モード
-	this->SetInsMode( GetShareData()->m_Common.m_sGeneral.m_bIsINSMode );
+	this->SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
 }
 
 /*! 変更フラグの設定

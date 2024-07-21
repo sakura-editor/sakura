@@ -23,15 +23,13 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgExec final : public CSakuraDialog
+class CDlgExec final : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgExec(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CDlgExec() override = default;
-
+	CDlgExec();
 	/*
 	||  Attributes & Operations
 	*/

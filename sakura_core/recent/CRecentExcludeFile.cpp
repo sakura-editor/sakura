@@ -30,8 +30,7 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentExcludeFile::CRecentExcludeFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CRecentImp<CExcludeFileString, LPCWSTR>(std::move(ShareDataAccessor_))
+CRecentExcludeFile::CRecentExcludeFile()
 {
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aExcludeFiles.dataPtr(),

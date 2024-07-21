@@ -19,9 +19,7 @@
 #define SAKURA_CWND_86C8E4DA_7921_4D79_A481_E3AB0557D767_H_
 #pragma once
 
-#include "window/CCustomWnd.hpp"
-
-#include "env/ShareDataAccessor.hpp"
+#include <Windows.h>
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -36,19 +34,21 @@
 	@li RegisterWC()	ウィンドウクラス登録
 	@li Create()		ウィンドウ作成
 */
-class CWnd : public CCustomWnd
+class CWnd
 {
 
 	using Me = CWnd;
 
+protected:
+	friend LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 public:
 	/* Constructors */
-	explicit CWnd(const WCHAR* pszInheritanceAppend = L"", std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>()) noexcept;
+	CWnd(const WCHAR* pszInheritanceAppend = L"");
 	CWnd(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CWnd(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CWnd() override;
+	virtual ~CWnd();
 
 	/*
 	||  Attributes & Operations
@@ -79,12 +79,9 @@ public:
 		HMENU		hMenu			// handle to menu, or child-window identifier
 	);
 
+	virtual LRESULT DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );/* メッセージ配送 */
 protected:
 	/* 仮想関数 */
-	LRESULT DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-
-	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
-
 	virtual LRESULT DispatchEvent_WM_APP( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 
 	/* 仮想関数 メッセージ処理(デフォルト動作) */
@@ -111,6 +108,7 @@ protected:
 
 public:
 	//インターフェース
+	HWND GetHwnd() const{ return m_hWnd; }
 	HWND GetParentHwnd() const{ return m_hwndParent; }
 	HINSTANCE GetAppInstance() const{ return m_hInstance; }
 
@@ -123,6 +121,7 @@ public:
 private: // 2002/2/10 aroka アクセス権変更
 	HINSTANCE	m_hInstance;	// アプリケーションインスタンスのハンドル
 	HWND		m_hwndParent;	// オーナーウィンドウのハンドル
+	HWND		m_hWnd;			// このダイアログのハンドル
 #ifdef _DEBUG
 	WCHAR		m_szClassInheritances[1024];
 #endif

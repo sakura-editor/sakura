@@ -37,8 +37,7 @@ typedef StaticString<WCHAR, _MAX_PATH> CCurDirString;
 class CRecentCurDir final : public CRecentImp<CCurDirString, LPCWSTR>{
 public:
 	//生成
-	explicit CRecentCurDir(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CRecentCurDir() override = default;
+	CRecentCurDir();
 
 	//オーバーライド
 	int				CompareItem( const CCurDirString* p1, LPCWSTR p2 ) const override;

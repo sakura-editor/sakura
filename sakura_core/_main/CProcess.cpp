@@ -18,7 +18,6 @@
 #include "StdAfx.h"
 #include "_main/CProcess.h"
 
-#include "_main/CCommandLine.h"
 #include "util/module.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -63,7 +62,7 @@ std::filesystem::path CProcess::GetIniFileName() const
 bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
-	if( !GetShareData().InitShareData(CCommandLine::getInstance()->GetProfileName()) ){
+	if( !GetShareData().InitShareData() ){
 		//	適切なデータを得られなかった
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
 			GSTR_APPNAME, L"異なるバージョンのエディタを同時に起動することはできません。" );

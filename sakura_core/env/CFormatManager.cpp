@@ -28,17 +28,10 @@
 */
 
 #include "StdAfx.h"
-#include "env/CFormatManager.h"
+#include "DLLSHAREDATA.h"
 
+#include "CFormatManager.h"
 #include "CSelectLang.h"
-
-/*!
- * コンストラクタ
- */
-CFormatManager::CFormatManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
-{
-}
 
 /*! 日付をフォーマット
 	systime：時刻データ

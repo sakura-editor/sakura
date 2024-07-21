@@ -34,13 +34,10 @@
 #include "view/figures/CFigureManager.h"
 #include "env/DllShareData.h"
 
-/*!
- * コンストラクタ
- */
-CDocType::CDocType(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+CDocType::CDocType(CEditDoc* pcDoc)
+: m_pcDocRef(pcDoc)
 , m_nSettingType( 0 )			// Sep. 11, 2002 genta
-	, m_typeConfig( GetShareData()->m_TypeBasis )
+, m_typeConfig( GetDllShareData().m_TypeBasis )
 , m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
 {
 }

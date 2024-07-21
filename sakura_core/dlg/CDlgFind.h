@@ -24,15 +24,13 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgFind final : public CSakuraDialog
+class CDlgFind final : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgFind(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CDlgFind() override = default;
-
+	CDlgFind();
 	/*
 	||  Attributes & Operations
 	*/

@@ -37,8 +37,7 @@ typedef StaticString<WCHAR, MAX_GREP_PATH> CGrepFileString;
 class CRecentGrepFile final : public CRecentImp<CGrepFileString, LPCWSTR>{
 public:
 	//生成
-	explicit CRecentGrepFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CRecentGrepFile() override = default;
+	CRecentGrepFile();
 
 	//オーバーライド
 	int				CompareItem( const CGrepFileString* p1, LPCWSTR p2 ) const override;

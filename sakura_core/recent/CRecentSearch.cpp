@@ -32,8 +32,7 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentSearch::CRecentSearch(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CRecentImp<CSearchString, LPCWSTR>(std::move(ShareDataAccessor_))
+CRecentSearch::CRecentSearch()
 {
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aSearchKeys.dataPtr(),

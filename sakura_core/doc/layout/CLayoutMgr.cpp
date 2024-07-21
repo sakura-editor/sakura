@@ -40,14 +40,10 @@
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*!
- * コンストラクタ
- */
-CLayoutMgr::CLayoutMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
+CLayoutMgr::CLayoutMgr()
+: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
   , m_layoutMemRes(new CPoolResource<CLayout>())
   //, m_layoutMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
-	, m_getIndentOffset(&CLayoutMgr::getIndentOffset_Normal)
 {
 	m_pcDocLineMgr = NULL;
 	m_pTypeConfig = NULL;
@@ -148,7 +144,7 @@ void CLayoutMgr::SetLayoutInfo(
 		// Viewが持ってるフォント情報は古い、しょうがないので自分で作る
 		HWND hwnd = NULL;
 		HDC hdc = ::GetDC(hwnd);
-		CViewFont viewFont(pLogfont, false, GetShareDataAccessor());
+		CViewFont viewFont(pLogfont);
 		CTextMetrics temp;
 		temp.Update(hdc, viewFont.GetFontHan(), DpiScaleY(refType.m_nLineSpace), DpiScaleX(refType.m_nColumnSpace));
 		m_nCharLayoutXPerKeta = temp.GetHankakuWidth() + DpiScaleX(m_pTypeConfig->m_nColumnSpace);

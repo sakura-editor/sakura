@@ -18,20 +18,17 @@
 #define SAKURA_CDLGJUMP_13AD9DC8_92E0_43AB_81D4_A0FBA28EE2D8_H_
 #pragma once
 
-#include "dlg/CDialog.h"
-
 class CDlgJump;
 
+#include "dlg/CDialog.h"
 //! 指定行へのジャンプダイアログボックス
-class CDlgJump final : public CSakuraDialog
+class CDlgJump final : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgJump(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CDlgJump() override = default;
-
+	CDlgJump();
 	/*
 	||  Attributes & Operations
 	*/

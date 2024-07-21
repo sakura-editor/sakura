@@ -43,20 +43,19 @@
 #include "util/design_template.h"
 #include "env/CommonSetting.h"
 
-#include <CommCtrl.h>
-
 class CGraphics;
 struct EditNode;
+struct DLLSHAREDATA;
 
 //! タブバーウィンドウ
-class CTabWnd final : public CWnd, private ShareDataAccessorClientWithCache
+class CTabWnd final : public CWnd
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CTabWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CTabWnd() override = default;
+	CTabWnd();
+	virtual ~CTabWnd();
 
 	/*
 	|| メンバ関数
@@ -170,6 +169,7 @@ protected:
 	|| メンバ変数
 	*/
 public:
+	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
 	HFONT			m_hFont;		/*!< 表示用フォント */
 	HWND			m_hwndTab;		/*!< タブコントロール */
 	HWND			m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
@@ -208,5 +208,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
-
 #endif /* SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_ */

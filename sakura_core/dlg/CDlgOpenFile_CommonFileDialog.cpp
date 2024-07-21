@@ -61,9 +61,9 @@ static const DWORD p_helpids[] = {	//13100
 
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
 
-struct CDlgOpenFile_CommonFileDialog final : public ShareDataAccessorClientWithCache, public IDlgOpenFile
+struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 {
-	explicit CDlgOpenFile_CommonFileDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
+	CDlgOpenFile_CommonFileDialog();
 
 	void Create(
 		HINSTANCE					hInstance,
@@ -79,8 +79,6 @@ struct CDlgOpenFile_CommonFileDialog final : public ShareDataAccessorClientWithC
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::wstring>*, bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode ) override;
 
-	bool IsItemDialog() const override { return false; }
-
 	void DlgOpenFail(void);
 
 	void InitOfn( OPENFILENAME* ofn );
@@ -94,6 +92,8 @@ struct CDlgOpenFile_CommonFileDialog final : public ShareDataAccessorClientWithC
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+
+	DLLSHAREDATA*	m_pShareData;
 
 	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
@@ -647,11 +647,13 @@ int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
 /*! コンストラクタ
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
-CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
+CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 
 	WCHAR	szFile[_MAX_PATH + 1];
 	WCHAR	szDrive[_MAX_DRIVE];
@@ -663,6 +665,8 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog(std::shared_ptr<Sha
 	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
+
+	return;
 }
 
 /* 初期化 */
@@ -1221,7 +1225,8 @@ bool CDlgOpenFile_CommonFileDialog::GetSaveFileNameRecover( OPENFILENAME* ofn )
 	return bRet!=FALSE;
 }
 
-std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog()
 {
-	return std::make_shared<CDlgOpenFile_CommonFileDialog>(std::move(ShareDataAccessor_));
+	std::shared_ptr<IDlgOpenFile> ret(new CDlgOpenFile_CommonFileDialog());
+	return ret;
 }

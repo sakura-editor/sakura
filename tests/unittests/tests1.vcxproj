@@ -40,25 +40,20 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <IntDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\..\build\$(Platform)\$(Configuration)\$(ProjectName)\'))</IntDir>
-    <OutDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\..\$(Platform)\$(Configuration)\'))</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Label="GoogleTest.Requirements">
-    <ClCompile>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(IntDir)..\sakura_core\;..\..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>$(IntDir);$(IntDir)..\sakura_core\;..\..\sakura_core/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -66,13 +61,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Label="tests1.define">
-    <ClCompile>
-      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -94,11 +85,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <Link>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
   </ItemDefinitionGroup>
@@ -109,54 +106,20 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Link Include="$(IntDir)..\sakura_core\*.obj" />
-    <Link Include="$(IntDir)..\sakura_core\*.res" />
+    <Link Include="$(SolutionDir)build\$(Platform)\$(Configuration)\sakura_core\*.obj" />
+    <Link Include="$(SolutionDir)build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
-    <ClCompile Include="test-apiwrap.cpp" />
-    <ClCompile Include="test-ccontroltray.cpp" />
-    <ClCompile Include="test-ccustomdialog.cpp" />
-    <ClCompile Include="test-ccustomwnd.cpp" />
-    <ClCompile Include="test-cdialog.cpp" />
-    <ClCompile Include="test-cdlgcompare.cpp" />
-    <ClCompile Include="test-cdlgdiff.cpp" />
-    <ClCompile Include="test-cdlgexec.cpp" />
-    <ClCompile Include="test-cdlgfavarite.cpp" />
-    <ClCompile Include="test-cdlgfind.cpp" />
-    <ClCompile Include="test-cdlgfunclist.cpp" />
-    <ClCompile Include="test-cdlggrep.cpp" />
-    <ClCompile Include="test-cdlginput1.cpp" />
-    <ClCompile Include="test-cdlgjump.cpp" />
-    <ClCompile Include="test-cdlgkeywordselect.cpp" />
-    <ClCompile Include="test-cdlgpluginoption.cpp" />
-    <ClCompile Include="test-cdlgproperty.cpp" />
-    <ClCompile Include="test-cdlgreplace.cpp" />
-    <ClCompile Include="test-cdlgsamecolor.cpp" />
-    <ClCompile Include="test-cdlgtagjumplist.cpp" />
-    <ClCompile Include="test-cdlgtagsmake.cpp" />
-    <ClCompile Include="test-cdlgwindowlist.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
-    <ClCompile Include="test-ceditdoc.cpp" />
-    <ClCompile Include="test-ceditwnd.cpp" />
-    <ClCompile Include="test-cformatmanager.cpp" />
-    <ClCompile Include="test-chelpmanager.cpp" />
-    <ClCompile Include="test-chokanmgr.cpp" />
-    <ClCompile Include="test-cimpexpmanager.cpp" />
-    <ClCompile Include="test-codechecker.cpp" />
     <ClCompile Include="test-cppa.cpp" />
-    <ClCompile Include="test-cproptypes.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />
     <ClCompile Include="test-csharedata.cpp" />
-    <ClCompile Include="test-cwnd.cpp" />
     <ClCompile Include="test-czipfile.cpp" />
     <ClCompile Include="test-extmodules.cpp" />
-    <ClCompile Include="test-module.cpp" />
-    <ClCompile Include="test-printEFunctionCode.cpp">
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
+    <ClCompile Include="test-printEFunctionCode.cpp" />
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccodebase.cpp" />
     <ClCompile Include="test-ccommandline.cpp" />
@@ -187,42 +150,33 @@
     <ClCompile Include="test-messageboxf.cpp" />
     <ClCompile Include="test-mydevmode.cpp" />
     <ClCompile Include="test-parameterized.cpp" />
-    <ClCompile Include="test-printECodeType.cpp">
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
+    <ClCompile Include="test-printECodeType.cpp" />
     <ClCompile Include="test-sample-disabled.cpp" />
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-ssearchoption.cpp" />
     <ClCompile Include="test-statictype.cpp" />
     <ClCompile Include="test-StdControl.cpp" />
-    <ClCompile Include="test-string_ex.cpp">
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
+    <ClCompile Include="test-string_ex.cpp" />
     <ClCompile Include="test-window.cpp" />
     <ClCompile Include="test-zoom.cpp" />
     <ClCompile Include="test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="eval_outputs.hpp" />
-    <ClInclude Include="MockKernel32Dll.hpp" />
-    <ClInclude Include="MockOle32Dll.hpp" />
-    <ClInclude Include="MockShareDataAccessor.hpp" />
-    <ClInclude Include="MockShell32Dll.hpp" />
-    <ClInclude Include="MockUser32Dll.hpp" />
-    <ClInclude Include="TAutoCloseDialog.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tests1_rc.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
-    <ClCompile Include="coverage.cpp">
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
+    <ClCompile Include="coverage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\sakura\sakura.vcxproj">
+    <ProjectReference Include="$(SolutionDir)sakura\sakura.vcxproj">
       <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\sakura_lang_en_US\sakura_lang_en_US.vcxproj">

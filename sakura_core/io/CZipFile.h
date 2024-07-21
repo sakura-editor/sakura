@@ -30,35 +30,28 @@
 #define SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_
 #pragma once
 
-#include "apimodule/Ole32Dll.hpp"
-
-#include <comdef.h>
 #include <ShlDisp.h>
 
-_COM_SMARTPTR_TYPEDEF(IShellDispatch, __uuidof(IShellDispatch));
-_COM_SMARTPTR_TYPEDEF(Folder, __uuidof(Folder));
-
-class CZipFile : private Ole32DllClient
-{
+class CZipFile {
 private:
-	IShellDispatchPtr psd;
-	FolderPtr         pZipFile;
-	std::wstring	  sZipName;
+	IShellDispatch*	psd;
+	Folder*			pZipFile;
+	std::wstring	sZipName;
 
 	using Me = CZipFile;
 
 public:
-	explicit CZipFile(std::shared_ptr<Ole32Dll> Ole32Dll_ = std::make_shared<Ole32Dll>()) noexcept;
+	CZipFile();		// コンストラクタ
 	CZipFile(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CZipFile(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CZipFile() override = default;
+	~CZipFile();	// デストラクタ
 
-	bool	IsOk() const { return (psd != NULL); }			// Zip Folderが使用できるか?
+public:
+	bool	IsOk() { return (psd != NULL); }			// Zip Folderが使用できるか?
 	bool	SetZip(const std::wstring& sZipPath);		// Zip File名 設定
 	bool	ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName);	// ZIP File 内 フォルダー名取得と定義ファイル検査(Plugin用)
 	bool	Unzip(const std::wstring sOutPath);			// Zip File 解凍
 };
-
 #endif /* SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_ */

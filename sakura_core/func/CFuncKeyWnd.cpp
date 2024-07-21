@@ -51,16 +51,15 @@ LRESULT CALLBACK CFuncKeyWndProc(
 }
 ***/
 
-/*!
- * コンストラクタ
- */
-CFuncKeyWnd::CFuncKeyWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+CFuncKeyWnd::CFuncKeyWnd()
 : CWnd(L"::CFuncKeyWnd")
-	, ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
 {
 	int		i;
 	LOGFONT	lf;
 	m_pcEditDoc = NULL;
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 	m_nCurrentKeyState = -1;
 	for( i = 0; i < _countof(m_szFuncNameArr); ++i ){
 		m_szFuncNameArr[i][0] = LTEXT('\0');

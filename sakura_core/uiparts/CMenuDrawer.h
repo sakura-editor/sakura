@@ -20,13 +20,13 @@
 #define SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_
 #pragma once
 
-#include "env/ShareDataAccessor.hpp"
 #include "Funccode_enum.h"
 #include "mem/CNativeW.h"
 
 class CMenuDrawer;
 
 class CImageListMgr;// 2002/2/10 aroka
+struct DLLSHAREDATA;
 
 //#define MAX_MENUPOS	10
 //	Jul. 2, 2005 genta : マクロをたくさん登録すると上限を超えてしまうので
@@ -42,9 +42,10 @@ class CImageListMgr;// 2002/2/10 aroka
 /*!
 	@brief メニュー表示＆管理
 
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 20050809 aroka クラス外部からアクセスされないメンバはprivateにした。
 */
-class CMenuDrawer : private ShareDataAccessorClientWithCache
+class CMenuDrawer
 {
 	using Me = CMenuDrawer;
 
@@ -52,7 +53,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CMenuDrawer(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	CMenuDrawer();
 	CMenuDrawer(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CMenuDrawer(Me&&) noexcept = delete;
@@ -95,6 +96,8 @@ private:
 	int ToolbarNoToIndex( int nToolbarNo ) const;
 
 private:
+	DLLSHAREDATA*	m_pShareData;
+
 	HINSTANCE		m_hInstance;
 	HWND			m_hWndOwner;
 
@@ -132,5 +135,4 @@ protected:
 						 BYTE fsState, BYTE fsStyle, DWORD_PTR dwData,
 						 INT_PTR iString ) const;	/* TBBUTTON構造体にデータをセット */
 };
-
 #endif /* SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_ */

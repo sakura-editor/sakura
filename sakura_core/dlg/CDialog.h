@@ -21,14 +21,9 @@
 #define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
-#include "dlg/CCustomDialog.hpp"
-
-#include "env/ShareDataAccessor.hpp"
-#include "env/DLLSHAREDATA.h"
-
-#include "sakura_rc.h"
-
 class CDialog;
+
+struct DLLSHAREDATA;
 class CRecent;
 
 enum EAnchorStyle
@@ -57,8 +52,6 @@ struct SAnchorList
 	EAnchorStyle anchor;
 };
 
-extern HINSTANCE GetLanguageResourceLibrary();
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -67,86 +60,42 @@ extern HINSTANCE GetLanguageResourceLibrary();
 
 	ダイアログボックスを作るときにはここから継承させる．
 
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CDialog : public CCustomDialog
-{
+class CDialog{
+
 	using Me = CDialog;
 
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDialog(WORD idDialog_ = 0, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>());
+	CDialog( bool bSizable = false, bool bCheckShareData = true );
 	CDialog(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CDialog(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CDialog() override;
-
+	virtual ~CDialog();
 	/*
 	||  Attributes & Operations
 	*/
 	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 	INT_PTR DoModal(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam);	/* モーダルダイアログの表示 */
-	HWND    DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
-
-	/*!
-	 * モードレスダイアログを表示する
-	 */
-	template<typename TFunc>
-	HWND DoModeless2(HWND hWndParent, const TFunc& func, LPARAM lParam, int nCmdShow)
-	{
-		m_bModal   = FALSE;
-		m_nShowCmd = nCmdShow;
-		m_bInited  = FALSE;
-
-		// 既存コード互換のため暫定で残しておく代入
-		m_hInstance         = static_cast<HINSTANCE>(nullptr);
-		m_hwndParent        = hWndParent;
-		m_lParam            = lParam;
-		m_hLangRsrcInstance = GetLanguageResourceLibrary();
-
-		const auto hWnd = CreateIndirect(m_hLangRsrcInstance, func, hWndParent);
-		if (hWnd)
-		{
-			GetUser32Dll()->ShowWindow(hWnd, nCmdShow);
-		}
-
-		return hWnd;
-	}
-
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
 	void CloseDialog(INT_PTR nModalRetVal);
 
-protected:
-	void    SetDlgData(HWND hDlg) const override;
-	INT_PTR GetDlgData(HWND hDlg) override;
-
-	INT_PTR DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-
-	BOOL    OnDlgInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam) override;
-
-	virtual BOOL    OnDlgDestroy(HWND hDlg);
-	virtual BOOL    OnDlgMove(HWND hDlg, int x, int y);
-	virtual BOOL    OnDlgActivate(HWND hDlg, UINT state, HWND hWndActDeact, BOOL fMinimized);
-	virtual BOOL    OnDlgKillFocus(HWND hDlg, HWND hWndNewFocus);
-	virtual BOOL    OnDlgNotify(HWND hDlg, int idFrom, LPNMHDR pNMHDR);
-	virtual BOOL    OnDlgKey(HWND hDlg, UINT vk, BOOL fDown, int cRepeat, UINT flags);
-	virtual BOOL    OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify);
-	virtual BOOL    OnDlgTimer(HWND hDlg, UINT id);
-	virtual BOOL    OnDlgHelp(HWND hDlg, LPHELPINFO pHelpInfo);
-	virtual BOOL    OnDlgContextMenu(HWND hDlg, HWND hWndContext, UINT xPos, UINT yPos);
-
-public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
 	virtual BOOL OnNotify(NMHDR* pNMHDR){return FALSE;}
 	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
-	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam ){return TRUE;}
+	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnTimer( WPARAM wParam ){return TRUE;}
 	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ){return TRUE;}
+	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
@@ -165,10 +114,11 @@ public:
 
 	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
 	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
+	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
+	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 	virtual BOOL OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual BOOL OnContextMenu(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-	virtual INT_PTR GetHelpIds(void) const noexcept;
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
@@ -182,6 +132,8 @@ public:
 
 	static bool DirectoryUp(WCHAR* szDir);
 
+public:
+	HWND GetHwnd() const{ return m_hWnd; }
 	//特殊インターフェース (使用は好ましくない)
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
@@ -189,6 +141,7 @@ public:
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 private:
+	HWND			m_hWnd;			/* このダイアログのハンドル */
 	HFONT			m_hFontDialog;	// ダイアログに設定されているフォント(破棄禁止)
 public:
 	HWND			m_hwndSizeBox;
@@ -197,6 +150,7 @@ public:
 	bool			m_bSizable;		// 可変ダイアログかどうか
 	int				m_nShowCmd;		//	最大化/最小化
 //	void*			m_pcEditView;
+	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 	HINSTANCE		m_hLangRsrcInstance;		// メッセージリソースDLLのインスタンスハンドル	// 2011.04.10 nasukoji
 
@@ -206,47 +160,13 @@ protected:
 	int				m_xPos;
 	int				m_yPos;
 	void CreateSizeBox( void );
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }
 
+	// コントロールに画面のフォントを設定	2012/11/27 Uchi
+	HFONT SetMainFont( HWND hTarget );
 	// このダイアログに設定されているフォントを取得
 	HFONT GetDialogFont() { return m_hFontDialog; }
 };
-
-/*!
- * 拡張版ダイアログの基底クラス
- *
- * 共有メモリにアクセスする機能を付加する。
- */
-class CSakuraDialog : public CDialog, public ShareDataAccessorClientWithCache
-{
-public:
-	explicit CSakuraDialog(WORD idDialog_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>())
-		: CDialog(idDialog_, std::move(User32Dll_))
-		, ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
-	{
-	}
-	~CSakuraDialog() override = default;
-
-protected:
-	// コントロールに画面のフォントを設定	2012/11/27 Uchi
-	HFONT SetMainFont(HWND hTarget);
-};
-
-/*!
- * 可変ダイアログの基底クラス
- *
- * 表示位置とサイズを復元する機能を付加する。
- */
-class CSizeRestorableDialog : public CSakuraDialog
-{
-public:
-	explicit CSizeRestorableDialog(WORD idDialog_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_ = std::make_shared<User32Dll>())
-		: CSakuraDialog(idDialog_, std::move(ShareDataAccessor_), std::move(User32Dll_))
-	{
-	}
-	~CSizeRestorableDialog() override = default;
-};
-
 #endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */

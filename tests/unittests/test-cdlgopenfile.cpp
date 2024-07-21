@@ -26,43 +26,21 @@
 #ifndef STRICT
 #define STRICT 1
 #endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
 #include <vector>
 #include <tchar.h>
 #include <Windows.h>
 #include "util/design_template.h"
 #include "dlg/CDlgOpenFile.h"
 
-#include "doc/CEditDoc.h"
-#include "view/CEditView.h"
+extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog();
+extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog();
 
-#include "MockShareDataAccessor.hpp"
-
-extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-
-/*!
- * ファイルを開くダイアログ、構築するだけ。
- */
 TEST(CDlgOpenFile, Construct)
 {
-	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
-	EXPECT_NO_THROW({ CDlgOpenFile dlg(std::move(pShareDataAccessor)); });
-}
-
-TEST(CDlgOpenFile_CommonFileDialog, Construct)
-{
-	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
-	pDllShareData->m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
-	CDlgOpenFile dlg(std::move(pShareDataAccessor));
-	EXPECT_FALSE(dlg.IsItemDialog());
-}
-
-TEST(CDlgOpenFile_CommonItemDialog, Construct)
-{
-	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
-	pDllShareData->m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
-	CDlgOpenFile dlg(std::move(pShareDataAccessor));
-	EXPECT_TRUE(dlg.IsItemDialog());
+	CDlgOpenFile cDlgOpenFile;
 }
 
 TEST(CDlgOpenFile, DISABLED_CommonItemDialogCreate)

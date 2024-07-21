@@ -18,8 +18,6 @@
 
 #include "global.h"
 #include "CProcess.h"
-#include "doc/CEditDoc.h"
-#include "window/CEditWnd.h"
 #include "extmodule/CMigemo.h"
 #include "CEditApp.h"
 #include "util/design_template.h"
@@ -51,9 +49,6 @@ protected:
 	void OpenFiles(HWND hwnd);
 
 private:
-	std::unique_ptr<CEditDoc> m_pcEditDoc;
-	std::unique_ptr<CEditWnd> m_pcEditWnd;
-
 	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
 	CMigemo		m_cMigemo;
 };

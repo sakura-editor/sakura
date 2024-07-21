@@ -62,6 +62,8 @@
 #define IDT_EDITCHECK 2
 // 3秒
 #define IDT_EDITCHECK_INTERVAL 3000
+/////////////////////////////////////////////////////////////////////////
+static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 
 //Stonee, 2001/03/21
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
@@ -162,23 +164,54 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 		false, NULL, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 }
 
+/* ウィンドウプロシージャじゃ */
+static LRESULT CALLBACK CControlTrayWndProc(
+	HWND	hwnd,	// handle of window
+	UINT	uMsg,	// message identifier
+	WPARAM	wParam,	// first message parameter
+	LPARAM	lParam 	// second message parameter
+)
+{
+	CREATESTRUCT* pCreate;
+	CControlTray* pSApp;
+
+	switch( uMsg ){
+	case WM_CREATE:
+		pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+		pSApp = reinterpret_cast<CControlTray*>(pCreate->lpCreateParams);
+		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
+	default:
+		// Modified by KEITA for WIN64 2003.9.6
+		//RELPRINT( L"dispatch\n" );
+		pSApp = ( CControlTray* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
+		if( NULL != pSApp ){
+			return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
+		}
+		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CControlTray
-CControlTray::CControlTray(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, std::shared_ptr<User32Dll> User32Dll_)
-	: CCustomWnd(std::move(User32Dll_))
-	, ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
-	, m_cMenuDrawer(GetShareDataAccessor())
-	, m_pcPropertyManager(NULL)
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+CControlTray::CControlTray()
+//	Apr. 24, 2001 genta
+: m_pcPropertyManager(NULL)
 , m_hInstance( NULL )
+, m_hWnd( NULL )
 , m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
-	, m_cDlgGrep(GetShareDataAccessor())
 , m_nCurSearchKeySequence(-1)
 , m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
 {
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
+
 	// アクセラレータテーブル作成
 	CreateAccelTbl();
 
 	m_bUseTrayMenu = false;
+
+	return;
 }
 
 CControlTray::~CControlTray()
@@ -205,40 +238,60 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		return NULL;
 	}
 
-	// ウインドウクラス登録
-	if (!RegisterWnd(strCEditAppName,
-		LoadSysCursor(IDC_ARROW),
-		MakeHBrush(COLOR_WINDOW),
-		CS_HREDRAW |
-		CS_VREDRAW |
-		CS_DBLCLKS |
-		CS_BYTEALIGNCLIENT |
-		CS_BYTEALIGNWINDOW,
-		LoadSysIcon(IDI_APPLICATION)))
+	//ウィンドウクラス登録
+	WNDCLASS	wc;
 	{
-		ErrorMessage(NULL, LS(STR_TRAY_CREATE));
-		return nullptr;
+		wc.style			=	CS_HREDRAW |
+								CS_VREDRAW |
+								CS_DBLCLKS |
+								CS_BYTEALIGNCLIENT |
+								CS_BYTEALIGNWINDOW;
+		wc.lpfnWndProc		= CControlTrayWndProc;
+		wc.cbClsExtra		= 0;
+		wc.cbWndExtra		= 0;
+		wc.hInstance		= m_hInstance;
+		wc.hIcon			= LoadIcon( NULL, IDI_APPLICATION );
+		wc.hCursor			= LoadCursor( NULL, IDC_ARROW );
+		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
+		wc.lpszMenuName		= NULL;
+		wc.lpszClassName	= strCEditAppName.c_str();
+		ATOM	atom = RegisterClass( &wc );
+		if( 0 == atom ){
+			ErrorMessage( NULL, LS(STR_TRAY_CREATE) );
+		}
 	}
 
-	// ウィンドウ作成
-	const auto hWnd = CreateWnd(NULL, strCEditAppName);
+	// ウィンドウ作成 (WM_CREATEで、GetHwnd() に HWND が格納される)
+	::CreateWindow(
+		strCEditAppName.c_str(),			// pointer to registered class name
+		strCEditAppName.c_str(),			// pointer to window name
+		WS_OVERLAPPEDWINDOW/*WS_VISIBLE *//*| WS_CHILD *//* | WS_CLIPCHILDREN*/	,	// window style
+		CW_USEDEFAULT,						// horizontal position of window
+		0,									// vertical position of window
+		100,								// window width
+		100,								// window height
+		NULL,								// handle to parent or owner window
+		NULL,								// handle to menu or child-window identifier
+		m_hInstance,						// handle to application instance
+		(LPVOID)this						// pointer to window-creation data(lpCreateParams)
+	);
 
 	// 最前面にする（トレイからのポップアップウィンドウが最前面になるように）
-	::SetWindowPos( hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+	::SetWindowPos( GetTrayHwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 	
 	// タスクトレイアイコン作成
 	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
 	m_cMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
 	if( GetTrayHwnd() ){
-		CreateTrayIcon( hWnd );
+		CreateTrayIcon( GetTrayHwnd() );
 	}
 
 	m_pcPropertyManager = new CPropertyManager();
-	m_pcPropertyManager->Create( hWnd, &m_hIcons, &m_cMenuDrawer );
+	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
 	wcscpy(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
 
-	return hWnd;
+	return GetTrayHwnd();
 }
 
 //! タスクトレイにアイコンを登録する
@@ -336,6 +389,8 @@ LRESULT CControlTray::DispatchEvent(
 	EditNode*	pEditNodeArr;
 	static HWND	hwndHtmlHelp;
 
+	static WORD		wHotKeyMods;
+	static WORD		wHotKeyCode;
 	LPMEASUREITEMSTRUCT	lpmis;	/* 項目サイズ情報 */
 	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
 	int					nItemWidth;
@@ -500,9 +555,10 @@ LRESULT CControlTray::DispatchEvent(
 		return 0;
 
 	case WM_CREATE:
-		// 親クラスのハンドラを呼び出す
-		// 本来はエラー処理を行うべきだが、いったん省略する
-		HANDLE_WM_CREATE(hwnd, wParam, lParam, OnCreate);
+		m_hWnd = hwnd;
+		hwndHtmlHelp = NULL;
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( GetTrayHwnd(), GWLP_USERDATA, (LONG_PTR)this );
 
 		/* タスクトレイ左クリックメニューへのショートカットキー登録 */
 		wHotKeyMods = 0;
@@ -1005,8 +1061,7 @@ LRESULT CControlTray::DispatchEvent(
 			break;	/* default */
 // >> by aroka
 	}
-
-	return __super::DispatchEvent(hwnd, uMsg, wParam, lParam);
+	return DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
 
 /* WM_COMMANDメッセージ処理 */

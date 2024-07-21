@@ -30,16 +30,12 @@
 #include "doc/CDocListener.h"
 #include "COpeBuf.h"
 
+class CEditDoc;
 class CDocLineMgr;
 
-/*!
- * ドキュメントエディタークラス
- */
-class CDocEditor : public ShareDataAccessorClient, public CDocListenerEx, private CDocRefClient
-{
+class CDocEditor : public CDocListenerEx{
 public:
-	explicit CDocEditor(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CDocEditor() override = default;
+	CDocEditor(CEditDoc* pcDoc);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //
@@ -90,6 +86,7 @@ public:
 	bool IsEnablePaste( void ) const;
 
 public:
+	CEditDoc*		m_pcDocRef;
 	CEol 			m_cNewLineCode;				//!< Enter押下時に挿入する改行コード種別
 	COpeBuf			m_cOpeBuf;					//!< アンドゥバッファ
 	COpeBlk*		m_pcOpeBlk;					//!< 操作ブロック

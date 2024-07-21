@@ -233,13 +233,13 @@ namespace WCODE {
 			// サイズやHDCが変わってもクリアする必要がある
 			m_localcache[fMode].Clear();
 		}
-		void Select( ECharWidthFontMode fMode, ECharWidthCacheMode cMode, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor = std::make_shared<ShareDataAccessor>() )
+		void Select( ECharWidthFontMode fMode, ECharWidthCacheMode cMode )
 		{
 			ECharWidthCacheMode cmode = (cMode==CWM_CACHE_NEUTRAL)?m_eLastEditCacheMode:cMode;
 
 			pcache = &m_localcache[fMode];
 			if( cmode == CWM_CACHE_SHARE ){
-				pcache->SelectCache( &(_ShareDataAccessor->GetShareData()->m_sCharWidth) );
+				pcache->SelectCache( &(GetDllShareData().m_sCharWidth) );
 			}else{
 				if( m_parCache[fMode] == 0 ){
 					m_parCache[fMode] = new SCharWidthCache;
@@ -290,11 +290,11 @@ void InitCharWidthCacheFromDC( const LOGFONT* lfs, ECharWidthFontMode fMode, HDC
 }
 
  //	文字幅の動的計算用キャッシュの選択	2013.04.08 aroka
-void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor )
+void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode  )
 {
 	assert( fMode==CWM_FONT_EDIT || cMode==CWM_CACHE_LOCAL );
 
-	WCODE::selector.Select( fMode, cMode, std::move(_ShareDataAccessor) );
+	WCODE::selector.Select( fMode, cMode );
 }
 
 [[nodiscard]] CCharWidthCache& GetCharWidthCache()

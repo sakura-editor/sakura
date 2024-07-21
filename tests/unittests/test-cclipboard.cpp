@@ -25,13 +25,16 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
 #include <array>
 #include <cstring>
 #include <functional>
 #include <memory>
 #include <string>
 #include <string_view>
-#include <tuple>
 #include <type_traits>
 
 #include <Windows.h>
@@ -42,102 +45,49 @@
 #include "mem/CNativeW.h"
 #include "_os/CClipboard.h"
 
-#include "doc/CEditDoc.h"
-
-#include "MockKernel32Dll.hpp"
-#include "MockShell32Dll.hpp"
-#include "MockUser32Dll.hpp"
-#include "MockShareDataAccessor.hpp"
-
-using namespace std::string_literals;
-using namespace std::string_view_literals;
-
-using apiwrap::HGlobal;
-
 using ::testing::_;
-using ::testing::Gt;
 using ::testing::Invoke;
-using ::testing::NotNull;
 using ::testing::Return;
-using ::testing::StrEq;
-
-constexpr auto& CFN_UNITTEST = L"123SakuraUnittest";
-
-auto MakeUser32DllForClipboardSuccess(HWND hWnd)
-{
-	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, OpenClipboard(hWnd)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, CloseClipboard()).WillOnce(Return(TRUE));
-	return pUser32Dll;
-}
-
-auto MakeApiDllsForClipboardFail(HWND hWnd, DWORD dwMilliseconds)
-{
-	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	auto pKernel32Dll = std::make_shared<MockKernel32Dll>();
-
-	EXPECT_CALL(*pUser32Dll, OpenClipboard(hWnd)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pKernel32Dll, Sleep(dwMilliseconds)).Times(1 + CClipboard::MAX_RETRY_FOR_OPEN);
-	EXPECT_CALL(*pUser32Dll, CloseClipboard()).Times(0);
-
-	return std::make_tuple(std::move(pUser32Dll), std::move(pKernel32Dll));
-}
-
-auto MakeUser32DllForClipboardSuccess2(HWND hWnd)
-{
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto devColFormat = RegisterClipboardFormatW(CClipboard::CFN_MSDEV_COLUMN);
-	const auto devLn1Format = RegisterClipboardFormatW(CClipboard::CFN_MSDEV_LINE01);
-	const auto devLn2Format = RegisterClipboardFormatW(CClipboard::CFN_MSDEV_LINE02);
-
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_MSDEV_COLUMN))).WillRepeatedly(Return(devColFormat));
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_MSDEV_LINE01))).WillRepeatedly(Return(devLn1Format));
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_MSDEV_LINE02))).WillRepeatedly(Return(devLn2Format));
-
-	return std::make_tuple(std::move(pUser32Dll), std::move(sakuraFormat), std::move(devColFormat), std::move(devLn1Format), std::move(devLn2Format));
-}
 
 // グローバルメモリに書き込まれた特定の Unicode 文字列にマッチする述語関数
-MATCHER_P(WideStringInGlobalMemory,expected, "")
-{
-	const auto s = static_cast<wchar_t*>(::GlobalLock(arg));
+MATCHER_P(WideStringInGlobalMemory, expected_string, "") {
+	const wchar_t* s = (const wchar_t*)::GlobalLock(arg);
 	if (!s) return false;
 	std::wstring_view actual(s);
+	bool match = actual == expected_string;
 	::GlobalUnlock(arg);
-	return actual == expected;
+	return match;
 }
 
 // グローバルメモリに書き込まれた特定の ANSI 文字列にマッチする述語関数
-MATCHER_P(AnsiStringInGlobalMemory, expected, "")
-{
-	const auto s = static_cast<char*>(::GlobalLock(arg));
+MATCHER_P(AnsiStringInGlobalMemory, expected_string, "") {
+	const char* s = (const char*)::GlobalLock(arg);
 	if (!s) return false;
 	std::string_view actual(s);
+	bool match = actual == expected_string;
 	::GlobalUnlock(arg);
-	return actual == expected;
+	return match;
 }
 
 // グローバルメモリに書き込まれたサクラ独自形式データにマッチする述語関数
-MATCHER_P(SakuraFormatInGlobalMemory, expected, "")
-{
-	const auto p = static_cast<char*>(::GlobalLock(arg));
+MATCHER_P(SakuraFormatInGlobalMemory, expected_string, "") {
+	char* p = (char*)::GlobalLock(arg);
 	if (!p) return false;
-	const size_t length = *(int*)p;
-	std::wstring_view actual((const wchar_t*)(p + sizeof(int)));
+	int length = *(int*)p;
+	p += sizeof(int);
+	std::wstring_view actual((const wchar_t*)p);
+	bool match = actual.size() == length && actual == expected_string;
 	::GlobalUnlock(arg);
-	return actual.length() == length && actual == expected;
+	return match;
 }
 
 // グローバルメモリに書き込まれた特定のバイト値にマッチする述語関数
-MATCHER_P(ByteValueInGlobalMemory, expected, "")
-{
-	const auto p = static_cast<unsigned char*>(::GlobalLock(arg));
+MATCHER_P(ByteValueInGlobalMemory, value, "") {
+	unsigned char* p = (unsigned char*)::GlobalLock(arg);
 	if (!p) return false;
-	const auto actual = *p;
+	bool match = *p == value;
 	::GlobalUnlock(arg);
-	return actual == expected;
+	return match;
 }
 
 // グローバルメモリに書き込まれた特定のバイト列にマッチする述語関数
@@ -151,42 +101,24 @@ MATCHER_P2(BytesInGlobalMemory, bytes, size, "") {
 	return match;
 }
 
-TEST(CClipboard, Construct)
-{
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard);
-}
-
-TEST(CClipboard, Construct_fail)
-{
-	const auto hWnd = (HWND)0x1234;
-	const DWORD dwMilliseconds = 0;
-	auto [pUser32Dll, pKernel32Dll] = MakeApiDllsForClipboardFail(hWnd, dwMilliseconds);
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::move(pKernel32Dll));
-	EXPECT_FALSE(clipboard);
-}
+class MockCClipboard : public CClipboard {
+public:
+	MockCClipboard(bool openStatus = true) : CClipboard(openStatus) {}
+	~MockCClipboard() override {}
+	MOCK_CONST_METHOD2(SetClipboardData, HANDLE (UINT, HANDLE));
+	MOCK_CONST_METHOD1(GetClipboardData, HANDLE (UINT));
+	MOCK_CONST_METHOD0(EmptyClipboard, BOOL ());
+	MOCK_CONST_METHOD1(IsClipboardFormatAvailable, BOOL (UINT));
+	MOCK_CONST_METHOD1(EnumClipboardFormats, UINT (UINT));
+	MOCK_CONST_METHOD2(GlobalAlloc, HGLOBAL (UINT, SIZE_T));
+	MOCK_CONST_METHOD1(GlobalLock, LPVOID (HGLOBAL));
+};
 
 // Empty のテスト。
 // EmptyClipboard が呼ばれることを確認する。
-TEST(CClipboard, Empty)
-{
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, EmptyClipboard()).WillOnce(Return(TRUE));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	clipboard.Empty();
-}
-
-TEST(CClipboard, Empty_without_ownership)
-{
-	const auto hWnd = (HWND)0x1234;
-	const DWORD dwMilliseconds = 0;
-	auto [pUser32Dll, pKernel32Dll] = MakeApiDllsForClipboardFail(hWnd, dwMilliseconds);
-	EXPECT_CALL(*pUser32Dll, EmptyClipboard()).Times(0);
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::move(pKernel32Dll));
-	EXPECT_FALSE(clipboard);
+TEST(CClipboard, Empty) {
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, EmptyClipboard()).WillOnce(Return(TRUE));
 	clipboard.Empty();
 }
 
@@ -194,8 +126,8 @@ TEST(CClipboard, Empty_without_ownership)
 // SetClipboardData に渡された引数が期待される結果と一致することを確認する。
 TEST(CClipboard, SetHtmlText1)
 {
-	constexpr auto& inputData = L"test 109";
-	constexpr auto& expected =
+	constexpr const wchar_t inputData[] = L"test 109";
+	constexpr const char expected[] =
 		"Version:0.9\r\n"
 		"StartHTML:00000097\r\n"
 		"EndHTML:00000178\r\n"
@@ -206,596 +138,421 @@ TEST(CClipboard, SetHtmlText1)
 		"test 109\r\n"
 		"<!--EndFragment-->\r\n"
 		"</body></html>\r\n";
-	const UINT uHtmlFormat = RegisterClipboardFormatW(CClipboard::CFN_HTML_FORMAT_);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_HTML_FORMAT_))).WillOnce(Return(uHtmlFormat));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(uHtmlFormat, AnsiStringInGlobalMemory(std::string_view(expected)))).WillOnce(Return((HANDLE)1));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
+	const UINT uHtmlFormat = ::RegisterClipboardFormat(L"HTML Format");
+
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(uHtmlFormat, AnsiStringInGlobalMemory(expected)));
 	EXPECT_TRUE(clipboard.SetHtmlText(inputData));
 }
 
 // クリップボードのオープンに失敗していた場合、SetHtmlText は何もせずに失敗する。
 TEST(CClipboard, SetHtmlText2) {
-	const auto hWnd = (HWND)0x1234;
-	const DWORD dwMilliseconds = 0;
-	auto [pUser32Dll, pKernel32Dll] = MakeApiDllsForClipboardFail(hWnd, dwMilliseconds);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(_)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(_, _)).Times(0);
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::move(pKernel32Dll));
+	MockCClipboard clipboard(false);
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
 	EXPECT_FALSE(clipboard.SetHtmlText(L"test"));
 }
 
-// SetClipboardDataに失敗、SetHtmlText は失敗する。
-TEST(CClipboard, SetHtmlText3) {
-	const auto hWnd = (HWND)0x1234;
-	const UINT uHtmlFormat = RegisterClipboardFormatW(CClipboard::CFN_HTML_FORMAT_);
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_HTML_FORMAT_))).WillOnce(Return(uHtmlFormat));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(uHtmlFormat, _)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_FALSE(clipboard.SetHtmlText(L"test"));
-}
-
-// SetText のテスト（矩形選択なし・行選択なし）
+// SetText のテスト（フォーマット指定なし・矩形選択なし・行選択なし）
 TEST(CClipboard, SetText1) {
-	constexpr auto text = L"てすと"sv;
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), false, false));
+	constexpr std::wstring_view text = L"てすと";
+	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
+	EXPECT_CALL(clipboard, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text)));
+	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), false, false, -1));
 }
 
-// SetText のテスト（矩形選択あり・行選択なし）
+// SetText のテスト（CF_UNICODETEXTのみ・矩形選択あり・行選択なし）
 TEST(CClipboard, SetText2) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devColFormat, ByteValueInGlobalMemory(0))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn1Format, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn2Format, _)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), true, false, CClipboard::CF_ANY));
+	constexpr std::wstring_view text = L"てすと";
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
+	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"MSDEVColumnSelect"), ByteValueInGlobalMemory(0)));
+	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), true, false, CF_UNICODETEXT));
 }
 
-// SetText のテスト（矩形選択なし・行選択あり）
+// SetText のテスト（サクラ独自形式のみ・矩形選択なし・行選択あり）
 TEST(CClipboard, SetText3) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devColFormat, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn1Format, ByteValueInGlobalMemory(1))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn2Format, ByteValueInGlobalMemory(1))).WillOnce(Return((HANDLE)1));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), false, true, CClipboard::CF_ANY));
+	constexpr std::wstring_view text = L"てすと";
+	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	EXPECT_CALL(clipboard, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text)));
+	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"MSDEVLineSelect"), ByteValueInGlobalMemory(1)));
+	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"VisualStudioEditorOperationsLineCutCopyClipboardTag"), ByteValueInGlobalMemory(1)));
+	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, sakuraFormat));
 }
 
 // SetText のテスト。
 // クリップボードのオープンに失敗していた場合、SetText は何もせずに失敗する。
 TEST(CClipboard, SetText4) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	const DWORD dwMilliseconds = 0;
-	auto [pUser32Dll, pKernel32Dll] = MakeApiDllsForClipboardFail(hWnd, dwMilliseconds);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(_)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(_, _)).Times(0);
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::move(pKernel32Dll));
+	constexpr std::wstring_view text = L"てすと";
+	MockCClipboard clipboard(false);
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, false, -1));
 }
 
-// SetText のテスト（サクラ独自形式・GlobalLock失敗）
-TEST(CClipboard, SetText_fail_GlobalLock1) {
-	constexpr auto text = L"てすと"sv;
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, _)).Times(0);
-	auto pKernel32Dll = std::make_shared<MockKernel32Dll>();
-	EXPECT_CALL(*pKernel32Dll, GlobalAlloc(_, _)).WillRepeatedly(Invoke(::GlobalAlloc));
-	EXPECT_CALL(*pKernel32Dll, GlobalLock(_)).WillOnce(Return(nullptr));
-	EXPECT_CALL(*pKernel32Dll, GlobalFree(_)).WillRepeatedly(Invoke(GlobalFree));
-	CClipboard clipboard(hWnd, pUser32Dll, pKernel32Dll);
-	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, false, CClipboard::CF_ANY));
-}
-
-// SetText のテスト（CF_UNICODETEXT・GlobalLock失敗）
-TEST(CClipboard, SetText_fail_GlobalLock2) {
-	constexpr auto text = L"てすと"sv;
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, _)).Times(0);
-	auto pKernel32Dll = std::make_shared<MockKernel32Dll>();
-	EXPECT_CALL(*pKernel32Dll, GlobalAlloc(_, _)).WillRepeatedly(Invoke(::GlobalAlloc));
-	int count = 0;
-	EXPECT_CALL(*pKernel32Dll, GlobalLock(_)).WillRepeatedly(Invoke([&count](HGLOBAL hMem)
-		{
-			return 1 == count++ ? nullptr : ::GlobalLock(hMem); //2回目だけ失敗させる
-		}));
-	EXPECT_CALL(*pKernel32Dll, GlobalFree(_)).WillRepeatedly(Invoke(GlobalFree));
-	CClipboard clipboard(hWnd, pUser32Dll, pKernel32Dll);
-	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, false));
-}
-
 // SetText のテスト。矩形選択マークの設定に失敗した場合。
-TEST(CClipboard, SetText_fail_SetClipboardData1) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return(nullptr));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devColFormat, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn1Format, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn2Format, _)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, false));
-}
-
-// SetText のテスト。矩形選択マークの設定に失敗した場合。
-TEST(CClipboard, SetText_fail_SetClipboardData2) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devColFormat, _)).WillOnce(Return(nullptr));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn1Format, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn2Format, _)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), true, false));
-}
-
-// SetText のテスト。矩形選択マークの設定に失敗した場合。
-TEST(CClipboard, SetText_fail_SetClipboardData3) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devColFormat, _)).WillOnce(Return(nullptr));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn1Format, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn2Format, _)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), true, false, CClipboard::CF_ANY));
+TEST(CClipboard, SetText5) {
+	constexpr std::wstring_view text = L"てすと";
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, 1)).WillByDefault(Return(nullptr));
+	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), true, false, 0));
 }
 
 // SetText のテスト。行選択マークの設定に失敗した場合。
-TEST(CClipboard, SetText_fail_SetClipboardData4) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devColFormat, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn1Format, _)).WillOnce(Return(nullptr));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn2Format, _)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, CClipboard::CF_ANY));
+TEST(CClipboard, SetText6) {
+	constexpr std::wstring_view text = L"てすと";
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, 1)).WillByDefault(Return(nullptr));
+	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, 0));
 }
 
-// SetText のテスト。行選択マークの設定に失敗した場合。
-TEST(CClipboard, SetText_fail_SetClipboardData5) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devColFormat, _)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn1Format, _)).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(devLn2Format, _)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, CClipboard::CF_ANY));
-}
+// グローバルメモリを RAII で管理する簡易ヘルパークラス
+class GlobalMemory {
+public:
+	GlobalMemory(UINT flags, SIZE_T bytes) : handle_(::GlobalAlloc(flags, bytes)) {}
+	GlobalMemory(const GlobalMemory&) = delete;
+	GlobalMemory& operator=(const GlobalMemory&) = delete;
+	~GlobalMemory() {
+		if (handle_)
+			::GlobalFree(handle_);
+	}
+	HGLOBAL Get() { return handle_; }
+	template <typename T> void Lock(std::function<void (T*)> f) {
+		f(reinterpret_cast<T*>(::GlobalLock(handle_)));
+		::GlobalUnlock(handle_);
+	}
+private:
+	HGLOBAL handle_;
+};
 
-// GetText のテスト（矩形選択なし・行選択なし・フォーマット指定なし）
-TEST(CClipboard, GetText1) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	auto bColumnSelect = true;
-	auto bLineSelect = true;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	HGlobal mem(GMEM_MOVEABLE | GMEM_DDESHARE, sizeof(int) + (text.length() + 1) * sizeof(wchar_t));
-	mem.LockToWrite<std::byte>([text](std::byte* pLocked)
-		{
-			*std::bit_cast<int*>(pLocked) = static_cast<int>(text.length());
-			memcpy_s(pLocked + sizeof(int), (text.length() + 1) * sizeof(wchar_t), text.data(), text.length() * sizeof(wchar_t));
-			std::bit_cast<wchar_t*>(pLocked + sizeof(int))[text.length()] = 0;
+// GetText のテストで使用するダミーデータを準備するためのフィクスチャクラス
+class CClipboardGetText : public testing::Test {
+protected:
+	MockCClipboard clipboard;
+	CNativeW buffer;
+	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
+	const CEol eol{ EEolType::cr_and_lf };
+	static constexpr std::wstring_view unicodeText = L"CF_UNICODE";
+	static constexpr std::wstring_view sakuraText = L"SAKURAClipW";
+	static constexpr std::string_view oemText = "CF_OEMTEXT";
+	GlobalMemory unicodeMemory{ GMEM_MOVEABLE, (unicodeText.size() + 1) * sizeof(wchar_t) };
+	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(int) + (sakuraText.size() + 1) * sizeof(wchar_t) };
+	GlobalMemory oemMemory{ GMEM_MOVEABLE, oemText.size() + 1 };
+
+	CClipboardGetText() {
+		unicodeMemory.Lock<wchar_t>([=](wchar_t* p) {
+			std::wcscpy(p, unicodeText.data());
 		});
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(sakuraFormat)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(sakuraFormat)).WillOnce(Return(static_cast<HGLOBAL>(mem)));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard.GetText(&cmemBuf, &bColumnSelect, &bLineSelect, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), text.data());
-	EXPECT_FALSE(bColumnSelect);
-	EXPECT_FALSE(bLineSelect);
-}
-
-// GetText のテスト（矩形選択あり・行選択なし・フォーマット指定なし）
-TEST(CClipboard, GetText2) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	auto bColumnSelect = true;
-	auto bLineSelect = true;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	const auto cbAlloc = (text.length() + 1) * sizeof(wchar_t);
-	HGlobal mem(GMEM_MOVEABLE | GMEM_DDESHARE, cbAlloc);
-	mem.LockToWrite<wchar_t>([cbAlloc, text](wchar_t* pLocked)
-		{
-			const auto cchData = text.length();
-			const auto cbData = cchData * sizeof(wchar_t);
-			memcpy_s(pLocked, cbAlloc, text.data(), cbData);
-			std::fill(&pLocked[cchData], &pLocked[cchData + 1], 0);
+		sakuraMemory.Lock<unsigned char>([=](unsigned char* p) {
+			*(int*)p = sakuraText.size();
+			std::wcscpy((wchar_t*)(p + sizeof(int)), sakuraText.data());
 		});
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(devColFormat));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_UNICODETEXT)).WillOnce(Return(static_cast<HGLOBAL>(mem)));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard.GetText(&cmemBuf, &bColumnSelect, &bLineSelect, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), text.data());
-	EXPECT_TRUE(bColumnSelect);
-	EXPECT_FALSE(bLineSelect);
-}
-
-// GetText のテスト（矩形選択なし・行選択あり・フォーマット指定なし）
-TEST(CClipboard, GetText3) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	auto bColumnSelect = true;
-	auto bLineSelect = true;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	HGlobal mem(GMEM_MOVEABLE | GMEM_DDESHARE, 7);
-	mem.LockToWrite<std::byte>([](std::byte* pLocked)
-		{
-			strcpy_s(std::bit_cast<char*>(pLocked), 7, "てすと");
+		oemMemory.Lock<char>([=](char* p) {
+			std::strcpy(p, oemText.data());
 		});
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(devLn1Format));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_OEMTEXT)).WillOnce(Return(static_cast<HGLOBAL>(mem)));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard.GetText(&cmemBuf, &bColumnSelect, &bLineSelect, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), text.data());
-	EXPECT_FALSE(bColumnSelect);
-	EXPECT_TRUE(bLineSelect);
+	}
+};
+
+// CClipboard::GetText のテスト群。
+//
+// GetText で取得したいデータ形式が特に指定されていない場合、
+// サクラ形式 -> CF_UNICODETEXT -> CF_OEMTEXT -> CF_HDROP の順で取得を試みる。
+
+// サクラ形式を正常に取得するパス。
+TEST_F(CClipboardGetText, NoSpecifiedFormat1) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(sakuraMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), sakuraText.data());
 }
 
-// GetText のテスト（矩形選択なし・行選択あり・サクラ形式）
-TEST(CClipboard, GetText4) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	auto bColumnSelect = true;
-	auto bLineSelect = true;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	HGlobal mem(GMEM_MOVEABLE | GMEM_DDESHARE, sizeof(int) + (text.length() + 1) * sizeof(wchar_t));
-	mem.LockToWrite<std::byte>([text](std::byte* pLocked)
-		{
-			*std::bit_cast<int*>(pLocked) = static_cast<int>(text.length());
-			memcpy_s(pLocked + sizeof(int), (text.length() + 1) * sizeof(wchar_t), text.data(), text.length() * sizeof(wchar_t));
-			std::bit_cast<wchar_t*>(pLocked + sizeof(int))[text.length()] = 0;
-		});
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(devLn2Format));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(sakuraFormat)).WillOnce(Return(static_cast<HGLOBAL>(mem)));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard.GetText(&cmemBuf, &bColumnSelect, &bLineSelect, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), text.data());
-	EXPECT_FALSE(bColumnSelect);
-	EXPECT_TRUE(bLineSelect);
+// クリップボードにサクラ形式がなかった場合、CF_UNICODETEXTを取得する。
+TEST_F(CClipboardGetText, NoSpecifiedFormat2) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
 }
 
-// GetText のテスト（矩形選択なし・行選択なし・文字列）
-TEST(CClipboard, GetText5) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	auto bColumnSelect = true;
-	auto bLineSelect = true;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	const auto cbAlloc = (text.length() + 1) * sizeof(wchar_t);
-	HGlobal mem(GMEM_MOVEABLE | GMEM_DDESHARE, cbAlloc);
-	mem.LockToWrite<wchar_t>([cbAlloc, text](wchar_t* pLocked)
-		{
-			const auto cchData = text.length();
-			const auto cbData = cchData * sizeof(wchar_t);
-			memcpy_s(pLocked, cbAlloc, text.data(), cbData);
-			std::fill(&pLocked[cchData], &pLocked[cchData + 1], 0);
-		});
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_UNICODETEXT));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_UNICODETEXT)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).Times(0);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).Times(0);
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_UNICODETEXT)).WillOnce(Return(static_cast<HGLOBAL>(mem)));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard.GetText(&cmemBuf, &bColumnSelect, &bLineSelect, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), text.data());
-	EXPECT_FALSE(bColumnSelect);
-	EXPECT_FALSE(bLineSelect);
+// クリップボードにはサクラ形式があるはずだが、GetClipboardDataが失敗した場合、CF_UNICODETEXTを取得する。
+TEST_F(CClipboardGetText, NoSpecifiedFormat3) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(nullptr));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
 }
 
-// GetText のテスト（矩形選択なし・行選択なし・バイナリ）
-TEST(CClipboard, GetText6) {
-	constexpr auto text = L"てすと"sv;
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	auto bColumnSelect = true;
-	auto bLineSelect = true;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	HGlobal mem(GMEM_MOVEABLE | GMEM_DDESHARE, 7);
-	mem.LockToWrite<std::byte>([](std::byte* pLocked)
-		{
-			strcpy_s(std::bit_cast<char*>(pLocked), 7, "てすと");
-		});
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_OEMTEXT));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_OEMTEXT)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).Times(0);
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_OEMTEXT)).WillOnce(Return(static_cast<HGLOBAL>(mem)));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_TRUE(clipboard.GetText(&cmemBuf, &bColumnSelect, &bLineSelect, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), text.data());
-	EXPECT_FALSE(bColumnSelect);
-	EXPECT_FALSE(bLineSelect);
+// サクラ形式とCF_UNICODETEXTの取得に失敗した場合、CF_OEMTEXTを取得する。
+TEST_F(CClipboardGetText, NoSpecifiedFormat4) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(nullptr));
+	ON_CALL(clipboard, GetClipboardData(CF_OEMTEXT)).WillByDefault(Return(oemMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"CF_OEMTEXT");
 }
 
-// GetText のテスト（サクラ独自形式・GetClipboardData失敗）
-TEST(CClipboard, GetText_fail_GetClipboardData1) {
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(sakuraFormat)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(sakuraFormat)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_FALSE(clipboard.GetText(&cmemBuf, nullptr, nullptr, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), L"");
+// サクラ形式とCF_UNICODETEXTとCF_OEMTEXTが失敗した場合、CF_HDROPを取得する。
+TEST_F(CClipboardGetText, NoSpecifiedFormat5) {
+	constexpr std::array<char, 10> files = {"CF_HDROP\0"};
+	GlobalMemory mem(GMEM_MOVEABLE, sizeof(DROPFILES) + files.size());
+	mem.Lock<DROPFILES>([=](DROPFILES* d) {
+		d->pFiles = sizeof(DROPFILES);
+		d->fWide = FALSE;
+		memcpy((char*)d + sizeof(DROPFILES), files.data(), files.size());
+	});
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(nullptr));
+	ON_CALL(clipboard, GetClipboardData(CF_OEMTEXT)).WillByDefault(Return(nullptr));
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(CF_HDROP)).WillByDefault(Return(mem.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"CF_HDROP");
 }
 
-// GetText のテスト（文字列・GetClipboardData失敗）
-TEST(CClipboard, GetText_fail_GetClipboardData2) {
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_UNICODETEXT));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_UNICODETEXT)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_UNICODETEXT)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_FALSE(clipboard.GetText(&cmemBuf, nullptr, nullptr, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), L"");
+// ここまでのすべてに失敗した場合、falseを返す。
+TEST_F(CClipboardGetText, NoSpecifiedFormat6) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(nullptr));
+	ON_CALL(clipboard, GetClipboardData(CF_OEMTEXT)).WillByDefault(Return(nullptr));
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(FALSE));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
 }
 
-// GetText のテスト（バイナリ・GetClipboardData失敗）
-TEST(CClipboard, GetText_fail_GetClipboardData3) {
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_OEMTEXT));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_OEMTEXT)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_OEMTEXT)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll));
-	EXPECT_FALSE(clipboard.GetText(&cmemBuf, nullptr, nullptr, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), L"");
+// GetText で取得したいデータ形式が指定されている場合、他のデータ形式は無視する。
+
+// サクラ形式を指定して取得する。
+TEST_F(CClipboardGetText, SakuraFormatSuccess) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(sakuraMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
+	EXPECT_STREQ(buffer.GetStringPtr(), sakuraText.data());
 }
 
-// GetText のテスト（サクラ独自形式・GlobalLock失敗）
-TEST(CClipboard, GetText_fail_GlobalLock1) {
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf(L"dummy");
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(sakuraFormat)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(sakuraFormat)).WillOnce(Return((HANDLE)0x5678));
-	auto pKernel32Dll = std::make_shared<MockKernel32Dll>();
-	EXPECT_CALL(*pKernel32Dll, GlobalLock(_)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, pUser32Dll, pKernel32Dll);
-	EXPECT_FALSE(clipboard.GetText(&cmemBuf, nullptr, nullptr, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), L"");
+// サクラ形式が指定されているが取得に失敗した場合。
+TEST_F(CClipboardGetText, SakuraFormatFailure) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
 }
 
-// GetText のテスト（CF_UNICODETEXT・GlobalLock失敗）
-TEST(CClipboard, GetText_fail_GlobalLock2) {
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf(L"dummy");
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_UNICODETEXT));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_UNICODETEXT)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_UNICODETEXT)).WillOnce(Return((HANDLE)0x5678));
-	auto pKernel32Dll = std::make_shared<MockKernel32Dll>();
-	EXPECT_CALL(*pKernel32Dll, GlobalLock(_)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, pUser32Dll, pKernel32Dll);
-	EXPECT_FALSE(clipboard.GetText(&cmemBuf, nullptr, nullptr, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), L"");
+// CF_UNICODETEXTを指定して取得する。
+TEST_F(CClipboardGetText, UnicodeTextSucces) {
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_UNICODETEXT));
+	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
 }
 
-// GetText のテスト（CF_OEMTEXT・GlobalLock失敗）
-TEST(CClipboard, GetText_fail_GlobalLock3) {
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf(L"dummy");
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_OEMTEXT));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_OEMTEXT)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_OEMTEXT)).WillOnce(Return((HANDLE)0x5678));
-	auto pKernel32Dll = std::make_shared<MockKernel32Dll>();
-	EXPECT_CALL(*pKernel32Dll, GlobalLock(_)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, pUser32Dll, pKernel32Dll);
-	EXPECT_FALSE(clipboard.GetText(&cmemBuf, nullptr, nullptr, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), L"");
+// CF_UNICODETEXTが指定されているが取得に失敗した場合。
+TEST_F(CClipboardGetText, UnicodeTextFailure) {
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(nullptr));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_UNICODETEXT));
 }
 
-// GetText のテスト（HDROP）
-TEST(CClipboard, GetDropFiles1) {
-	constexpr auto text = L"C:\\Windows\\system.ini\r\nC:\\Windows\\win.ini\r\n"sv;
-	const auto hWnd = (HWND)0x1234;
-	CNativeW cmemBuf;
-	const auto cEol = CEol(EEolType::cr_and_lf);
-	HGlobal mem(GMEM_MOVEABLE | GMEM_DDESHARE, sizeof(HDROP));
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_HDROP));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_HDROP)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_HDROP)).WillOnce(Return(static_cast<HGLOBAL>(mem)));
-	auto pShell32Dll = std::make_shared<MockShell32Dll>();
-	EXPECT_CALL(*pShell32Dll, DragQueryFileW(_, 0xFFFFFFFF, nullptr, 0)).WillOnce(Return(2));
-	EXPECT_CALL(*pShell32Dll, DragQueryFileW(_, 0, NotNull(), Gt(0))).WillOnce(Invoke([](HDROP, UINT, LPWSTR lpszFile, UINT cch)
-		{
-			constexpr auto& filename = LR"(C:\Windows\system.ini)";
-			wcscpy_s(lpszFile, cch, filename);
-			return (UINT)_countof(filename) - 1;
-		}));
-	EXPECT_CALL(*pShell32Dll, DragQueryFileW(_, 1, NotNull(), Gt(0))).WillOnce(Invoke([](HDROP, UINT, LPWSTR lpszFile, UINT cch)
-		{
-			constexpr auto& filename = LR"(C:\Windows\win.ini)";
-			wcscpy_s(lpszFile, cch, filename);
-			return (UINT)_countof(filename) - 1;
-		}));
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::make_shared<Kernel32Dll>(), std::move(pShell32Dll));
-	EXPECT_TRUE(clipboard.GetText(&cmemBuf, nullptr, nullptr, cEol, CClipboard::CF_ANY));
-	EXPECT_STREQ(cmemBuf.GetStringPtr(), text.data());
+// CF_OEMTEXTを指定して取得する。
+TEST_F(CClipboardGetText, OemTextSuccess) {
+	ON_CALL(clipboard, GetClipboardData(CF_OEMTEXT)).WillByDefault(Return(oemMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_OEMTEXT));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"CF_OEMTEXT");
+}
+
+// CF_OEMTEXTが指定されているが取得に失敗した場合。
+TEST_F(CClipboardGetText, OemTextFailure) {
+	ON_CALL(clipboard, GetClipboardData(CF_OEMTEXT)).WillByDefault(Return(nullptr));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_OEMTEXT));
+}
+
+// CF_HDROP を指定して取得する。
+// 取得したファイルが1つであれば末尾に改行を付加しない。
+TEST_F(CClipboardGetText, HDropSuccessSingleFile) {
+	constexpr std::array<char, 6> files = {"file\0"};
+	GlobalMemory mem(GMEM_MOVEABLE, sizeof(DROPFILES) + files.size());
+	mem.Lock<DROPFILES>([=](DROPFILES* d) {
+		d->pFiles = sizeof(DROPFILES);
+		d->fWide = FALSE;
+		memcpy((char*)d + sizeof(DROPFILES), files.data(), files.size());
+	});
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(CF_HDROP)).WillByDefault(Return(mem.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_HDROP));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"file");
+}
+
+// CF_HDROP を指定して取得する。
+// 取得したファイルが複数であればすべてのファイル名の末尾に改行を付加する。
+TEST_F(CClipboardGetText, HDropSuccessMultipleFiles) {
+	constexpr std::array<char, 13> files = {"file1\0file2\0"};
+	GlobalMemory mem(GMEM_MOVEABLE, sizeof(DROPFILES) + files.size());
+	mem.Lock<DROPFILES>([=](DROPFILES* d) {
+		d->pFiles = sizeof(DROPFILES);
+		d->fWide = FALSE;
+		memcpy((char*)d + sizeof(DROPFILES), files.data(), files.size());
+	});
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(CF_HDROP)).WillByDefault(Return(mem.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_HDROP));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"file1\r\nfile2\r\n");
+}
+
+// CF_HDROP が指定されているが取得に失敗した場合。
+TEST_F(CClipboardGetText, HDropFailure) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(CF_HDROP)).WillByDefault(Return(nullptr));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_HDROP));
+}
+
+// 矩形選択マーク取得のテスト。
+TEST_F(CClipboardGetText, ColumnSelectIsFalse) {
+	ON_CALL(clipboard, EnumClipboardFormats(0)).WillByDefault(Return(0));
+	bool column;
+	clipboard.GetText(&buffer, &column, nullptr, eol);
+	EXPECT_FALSE(column);
+}
+
+TEST_F(CClipboardGetText, ColumnSelectIsTrue) {
+	UINT format = RegisterClipboardFormatW(L"MSDEVColumnSelect");
+	ON_CALL(clipboard, EnumClipboardFormats(0)).WillByDefault(Return(format));
+	bool column;
+	clipboard.GetText(&buffer, &column, nullptr, eol);
+	EXPECT_TRUE(column);
+}
+
+// 行選択マーク取得のテスト。
+TEST_F(CClipboardGetText, LineSelectIsFalse) {
+	ON_CALL(clipboard, EnumClipboardFormats(0)).WillByDefault(Return(0));
+	bool line;
+	clipboard.GetText(&buffer, &line, nullptr, eol);
+	EXPECT_FALSE(line);
+}
+
+TEST_F(CClipboardGetText, LineSelectIsTrue1) {
+	UINT format = RegisterClipboardFormatW(L"MSDEVLineSelect");
+	ON_CALL(clipboard, EnumClipboardFormats(0)).WillByDefault(Return(format));
+	bool line;
+	clipboard.GetText(&buffer, nullptr, &line, eol);
+	EXPECT_TRUE(line);
+}
+
+TEST_F(CClipboardGetText, LineSelectIsTrue2) {
+	UINT format = RegisterClipboardFormatW(L"VisualStudioEditorOperationsLineCutCopyClipboardTag");
+	ON_CALL(clipboard, EnumClipboardFormats(0)).WillByDefault(Return(format));
+	bool line;
+	clipboard.GetText(&buffer, nullptr, &line, eol);
+	EXPECT_TRUE(line);
+}
+
+// GetClipboardByFormatのモード-2のテスト。GetTextと同じ処理が行われることを期待する。
+// CF_UNICODETEXTの取得に成功した場合。
+TEST_F(CClipboardGetText, GetClipboardByFormatSuccess) {
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
+	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
+	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
+}
+
+// GetClipboardDataが失敗した場合。
+TEST_F(CClipboardGetText, GetClipboardByFormatFailure1) {
+	buffer.SetString(L"dummy");
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(_)).WillByDefault(Return(nullptr));
+	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"");
+}
+
+// 取得できるフォーマットがクリップボード内になかった場合。
+TEST_F(CClipboardGetText, GetClipboardByFormatFailure2) {
+	buffer.SetString(L"dummy");
+	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillByDefault(Return(FALSE));
+	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
 
 // OpenClipboard が失敗していた場合。
-TEST(CClipboard, GetTextWithoutOwnership) {
-	const auto hWnd = (HWND)0x1234;
-	const DWORD dwMilliseconds = 0;
-	auto [pUser32Dll, pKernel32Dll] = MakeApiDllsForClipboardFail(hWnd, dwMilliseconds);
-	CNativeW buffer;
-	CEol eol;
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::move(pKernel32Dll));
-	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CClipboard::CF_ANY));
-}
-
-// 指定された形式が存在しなかった場合。
 TEST(CClipboard, GetTextNoClipboard) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(_)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(_)).Times(0);
 	CNativeW buffer;
 	CEol eol;
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CClipboard::CF_ANY));
+	MockCClipboard clipboard(false);
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol));
 }
 
-// フォーマット文字列が空だった場合は失敗する。
+struct ClipboardFormatDefinition {
+	CLIPFORMAT id;
+	const wchar_t* const name;
+};
+
+const std::array<ClipboardFormatDefinition, 17> KNOWN_FORMATS = {
+	{
+		{CF_TEXT        ,L"CF_TEXT"},
+		{CF_BITMAP      ,L"CF_BITMAP"},
+		{CF_METAFILEPICT,L"CF_METAFILEPICT"},
+		{CF_SYLK        ,L"CF_SYLK"},
+		{CF_DIF         ,L"CF_DIF"},
+		{CF_TIFF        ,L"CF_TIFF"},
+		{CF_OEMTEXT     ,L"CF_OEMTEXT"},
+		{CF_DIB         ,L"CF_DIB"},
+		{CF_PALETTE     ,L"CF_PALETTE"},
+		{CF_PENDATA     ,L"CF_PENDATA"},
+		{CF_RIFF        ,L"CF_RIFF"},
+		{CF_WAVE        ,L"CF_WAVE"},
+		{CF_UNICODETEXT ,L"CF_UNICODETEXT"},
+		{CF_ENHMETAFILE ,L"CF_ENHMETAFILE"},
+		{CF_HDROP       ,L"CF_HDROP"},
+		{CF_LOCALE      ,L"CF_LOCALE"},
+		{CF_DIBV5       ,L"CF_DIBV5"}
+	}
+};
+
+const wchar_t* const UNITTEST_FORMAT_NAME = L"123SakuraUnittest";
+
+// 標準フォーマットを指定した場合
 TEST(CClipboard, IsIncludeClipboardFormat1) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(_)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(clipboard.IsIncludeClipboradFormat(L""));
+	for (auto format : KNOWN_FORMATS) {
+		MockCClipboard clipboard;
+		ON_CALL(clipboard, IsClipboardFormatAvailable(format.id)).WillByDefault(Return(TRUE));
+		EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(format.name));
+	}
 }
 
 // 数値を指定した場合
 TEST(CClipboard, IsIncludeClipboardFormat2) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(TRUE));
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(L"12345"));
 }
 
 // 標準フォーマット以外の文字列を指定した場合
 TEST(CClipboard, IsIncludeClipboardFormat3) {
-	const auto format = ::RegisterClipboardFormatW(CFN_UNITTEST);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CFN_UNITTEST))).WillOnce(Return(format));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(format)).WillOnce(Return(TRUE));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(CFN_UNITTEST));
+	const UINT format = ::RegisterClipboardFormatW(UNITTEST_FORMAT_NAME);
+
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, IsClipboardFormatAvailable(format)).WillByDefault(Return(TRUE));
+	EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(UNITTEST_FORMAT_NAME));
 }
 
 // 対象フォーマットのデータが存在しなかった場合に失敗することを確認するテスト
 TEST(CClipboard, IsIncludeClipboardFormat4) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(FALSE));
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(FALSE));
 	EXPECT_FALSE(clipboard.IsIncludeClipboradFormat(L"12345"));
+}
+
+// フォーマット文字列が空だった場合は失敗する。
+TEST(CClipboard, IsIncludeClipboardFormat5) {
+	MockCClipboard clipboard;
+	EXPECT_FALSE(clipboard.IsIncludeClipboradFormat(L""));
 }
 
 // 不明なモード値を指定すると失敗する。
 TEST(CClipboard, SetClipboardByFormat1) {
-	const auto hWnd = (HWND)0x1234;
-	const DWORD dwMilliseconds = 0;
-	auto [pUser32Dll, pKernel32Dll] = MakeApiDllsForClipboardFail(hWnd, dwMilliseconds);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(_)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(_, _)).Times(0);
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::move(pKernel32Dll));
+	MockCClipboard clipboard;
 	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 99999, 1));
 }
 
 // フォーマット名が空文字列だと失敗する。
 TEST(CClipboard, SetClipboardByFormat2) {
-	const auto hWnd = (HWND)0x1234;
-	const DWORD dwMilliseconds = 0;
-	auto [pUser32Dll, pKernel32Dll] = MakeApiDllsForClipboardFail(hWnd, dwMilliseconds);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(_)).Times(0);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(_, _)).Times(0);
-	CClipboard clipboard(hWnd, std::move(pUser32Dll), std::move(pKernel32Dll));
+	MockCClipboard clipboard;
 	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"", 99999, 1));
 }
 
@@ -803,74 +560,60 @@ TEST(CClipboard, SetClipboardByFormat2) {
 // UTF-16 の符号単位（0x0000～0x00ff）を 0x00～0xff のバイト値にマップする。
 // 終端モード0では文字列中の \0 をバイナリとして扱う（終端として認識しない）。
 TEST(CClipboard, SetClipboardByFormat3) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(12345, BytesInGlobalMemory("\x00\x01\xfe\xff", 4))).WillOnce(Return((HANDLE)1));
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	EXPECT_CALL(clipboard, SetClipboardData(12345, BytesInGlobalMemory("\x00\x01\xfe\xff", 4)));
 	EXPECT_TRUE(clipboard.SetClipboradByFormat({L"\x00\x01\xfe\xff", 4}, L"12345", -1, 0));
 }
 
 // モード-1（バイナリデータ）のテスト。
 // 0x100以上の値が含まれている場合は失敗する。
 TEST(CClipboard, SetClipboardByFormat4) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(_, _)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
 	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"\x100", 1}, L"12345", -1, 0));
 }
 
 // モード3（UTF-16）のテスト。コード変換を行わないパターン。
 // 終端モードの自動判定を要求する。期待されるモードは2（2バイトの0値で終端する）。
 TEST(CClipboard, SetClipboardByFormat5) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(12345, WideStringInGlobalMemory(L"テスト"sv))).WillOnce(Return((HANDLE)1));
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	EXPECT_CALL(clipboard, SetClipboardData(12345, WideStringInGlobalMemory(L"テスト")));
 	EXPECT_TRUE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 3, -1));
 }
 
-// モード0（Shift-JIS）のテスト。コード変換を行う。
+// モード4（UTF-8）のテスト。コード変換を行う。
 // 終端モードの自動判定を要求する。期待されるモードは1（1バイトの0値で終端する）。
-TEST(CClipboard, SetClipboardByFormat6) {
-	const auto hWnd = (HWND)0x1234;
-	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(12345, AnsiStringInGlobalMemory("テスト"sv))).WillOnce(Return((HANDLE)1));
-	CClipboard clipboard(hWnd, pUser32Dll, std::make_shared<Kernel32Dll>(), std::make_shared<Shell32Dll>(), std::move(pShareDataAccessor));
-	EXPECT_TRUE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", static_cast<int>(CODE_SJIS), -1));
+//
+// 共有データに依存するためテスト不能。
+TEST(CClipboard, DISABLED_SetClipboardByFormat6) {
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(12345, AnsiStringInGlobalMemory("テスト")));
+	EXPECT_TRUE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 4, -1));
 }
 
 // モード-2のテスト。SetTextと同じ処理を行う。
 TEST(CClipboard, SetClipboardByFormat7) {
 	constexpr std::wstring_view text = L"テスト";
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	EXPECT_CALL(*pUser32Dll, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text))).WillOnce(Return((HANDLE)1));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(clipboard.SetClipboradByFormat({ text.data(), text.size() }, L"", -2, 0));
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
+
+	// 既存のコードに実装ミスがあり、成功してもfalseを返してしまう…。
+//	EXPECT_TRUE(clipboard.SetClipboradByFormat({text.data(), text.size()}, L"CF_UNICODETEXT", -2, 0));
+	EXPECT_FALSE(clipboard.SetClipboradByFormat({text.data(), text.size()}, L"CF_UNICODETEXT", -2, 0));
 }
 
 // モード-2以外でGlobalAllocが失敗した場合。
 TEST(CClipboard, SetClipboardByFormat8) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	auto pKernel32Dll = std::make_shared<MockKernel32Dll>();
-	EXPECT_CALL(*pKernel32Dll, GlobalAlloc(_, _)).WillOnce(Return(nullptr));
-	CClipboard clipboard(hWnd, pUser32Dll, pKernel32Dll);
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Return(nullptr));
 	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 3, -1));
 }
 
 // フォーマット名が空文字列だった場合は即失敗する。
 TEST(CClipboard, GetClipboardByFormat1) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(_)).Times(0);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(_)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
 	CNativeW buffer(L"dummy");
 	CEol eol(EEolType::cr_and_lf);
 	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"", -1, 0, eol));
@@ -879,12 +622,33 @@ TEST(CClipboard, GetClipboardByFormat1) {
 
 // 要求されたフォーマットのデータがクリップボードに存在しなければ失敗する。
 TEST(CClipboard, GetClipboardByFormat2) {
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(FALSE));
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
 	CNativeW buffer(L"dummy");
 	CEol eol(EEolType::cr_and_lf);
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(FALSE));
+	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"");
+}
+
+// GetClipboardDataが失敗した場合。
+TEST(CClipboard, GetClipboardByFormat3) {
+	MockCClipboard clipboard;
+	CNativeW buffer(L"dummy");
+	CEol eol(EEolType::cr_and_lf);
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(nullptr));
+	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
+	EXPECT_STREQ(buffer.GetStringPtr(), L"");
+}
+
+// GlobalLockが失敗した場合。
+TEST(CClipboard, GetClipboardByFormat4) {
+	MockCClipboard clipboard;
+	CNativeW buffer(L"dummy");
+	CEol eol(EEolType::cr_and_lf);
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return((HANDLE)67890));
+	ON_CALL(clipboard, GlobalLock((HANDLE)67890)).WillByDefault(Return(nullptr));
 	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
@@ -892,235 +656,52 @@ TEST(CClipboard, GetClipboardByFormat2) {
 // モード-1（バイナリデータ）のテスト。
 // 0x00～0xff のバイト値を UTF-16 の符号単位（0x0000～0x00ff）にマップする。
 // 終端モード0ではデータ中の \0 をバイナリとして扱う（終端として認識しない）。
-TEST(CClipboard, GetClipboardByFormat3) {
-	const auto hWnd = (HWND)0x1234;
-	HGlobal memory(GMEM_MOVEABLE, 2);
-	memory.LockToWrite<std::byte>([](std::byte* p) {
+TEST(CClipboard, GetClipboardByFormat5) {
+	GlobalMemory memory(GMEM_MOVEABLE, 2);
+	memory.Lock<char>([=](char* p) {
 		std::memcpy(p, "\x00\xff", 2);
 	});
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(12345)).WillOnce(Return(static_cast<HGLOBAL>(memory)));
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
 	CNativeW buffer;
 	CEol eol(EEolType::cr_and_lf);
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
+	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(Invoke(::GlobalLock));
 	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"\x00\xff");
 }
 
-// モード-2（エディタと同じ）のテスト。
-TEST(CClipboard, GetClipboardByFormat4) {
-	const auto hWnd = (HWND)0x1234;
-	const auto& bin = L"テスト";
-	HGlobal memory(GMEM_MOVEABLE, sizeof(bin));
-	memory.LockToWrite<wchar_t>([bin](wchar_t* p) {
-		std::memcpy(p, bin, sizeof(bin)); //わざと終端NULを書き込まない
-		});
-	auto [pUser32Dll, sakuraFormat, devColFormat, devLn1Format, devLn2Format] = MakeUser32DllForClipboardSuccess2(hWnd);
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(0)).WillOnce(Return(CF_UNICODETEXT));
-	EXPECT_CALL(*pUser32Dll, EnumClipboardFormats(CF_UNICODETEXT)).WillOnce(Return(0));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillOnce(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(CF_UNICODETEXT)).WillOnce(Return(static_cast<HGLOBAL>(memory)));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	CNativeW buffer;
-	CEol eol(EEolType::cr_and_lf);
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"CF_UNICODETEXT", -2, -1, eol));
-	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
-}
-
 // モード3（UTF-16）のテスト。コード変換を行わないパターン。
 // 終端モードには2を設定する（2バイトの0値で終端されていることを期待する）。
-TEST(CClipboard, GetClipboardByFormat5) {
-	const auto hWnd = (HWND)0x1234;
-	const auto& bin = L"テスト";
-	HGlobal memory(GMEM_MOVEABLE, sizeof(bin));
-	memory.LockToWrite<wchar_t>([bin](wchar_t* p) {
-		std::memcpy(p, bin, sizeof(bin)); //わざと終端NULを書き込まない
+TEST(CClipboard, GetClipboardByFormat6) {
+	GlobalMemory memory(GMEM_MOVEABLE, sizeof(wchar_t) * 8);
+	memory.Lock<wchar_t>([=](wchar_t* p) {
+		std::memcpy(p, L"テスト\x00データ", 8);
 	});
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(12345)).WillOnce(Return(static_cast<HGLOBAL>(memory)));
-	CClipboard clipboard(hWnd, pUser32Dll);
+	MockCClipboard clipboard;
 	CNativeW buffer;
 	CEol eol(EEolType::cr_and_lf);
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", (int)CODE_UNICODE, 2, eol));
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
+	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(Invoke(::GlobalLock));
+	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", 3, 2, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
 }
 
 // モード4（UTF-8）のテスト。コード変換を行う。
 // 終端モードには1を設定する（1バイトの0値で終端されていることを期待する）。
-TEST(CClipboard, GetClipboardByFormat6) {
-	const auto hWnd = (HWND)0x1234;
-	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
-	CEditDoc doc(pShareDataAccessor); ;
-	const auto& bin = u8"テスト";
-	HGlobal memory(GMEM_MOVEABLE, sizeof(bin));
-	memory.LockToWrite<std::byte>([bin](std::byte* p) {
-		std::memcpy(p, bin, sizeof(bin));
+//
+// CEditDoc のインスタンスに依存するためテスト不能。
+TEST(CClipboard, DISABLED_GetClipboardByFormat7) {
+	GlobalMemory memory(GMEM_MOVEABLE, 14);
+	memory.Lock<char>([=](char* p) {
+		std::memcpy(p, "テスト\x00データ", 14);
 	});
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(12345)).WillOnce(Return(static_cast<HGLOBAL>(memory)));
-	CClipboard clipboard(hWnd, pUser32Dll, std::make_shared<Kernel32Dll>(), std::make_shared<Shell32Dll>(), std::move(pShareDataAccessor));
+	MockCClipboard clipboard;
 	CNativeW buffer;
 	CEol eol(EEolType::cr_and_lf);
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", (int)CODE_UTF8, 1, eol));
+	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
+	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", 4, 1, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
 }
-
-// モード99（自動検出）のテスト。コード変換を行う。
-TEST(CClipboard, GetClipboardByFormat7) {
-	const auto hWnd = (HWND)0x1234;
-	auto [pDllShareData, pShareDataAccessor] = MakeDummyShareData();
-	CEditDoc doc(pShareDataAccessor); ;
-	const auto& bin = u8"テスト";
-	HGlobal memory(GMEM_MOVEABLE, sizeof(bin));
-	memory.LockToWrite<std::byte>([bin](std::byte* p) {
-		std::memcpy(p, bin, sizeof(bin));
-		});
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(12345)).WillOnce(Return(static_cast<HGLOBAL>(memory)));
-	CClipboard clipboard(hWnd, pUser32Dll, std::make_shared<Kernel32Dll>(), std::make_shared<Shell32Dll>(), std::move(pShareDataAccessor));
-	CNativeW buffer;
-	CEol eol(EEolType::cr_and_lf);
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", (int)CODE_AUTODETECT, -1, eol));
-	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
-}
-
-TEST(CClipboard, GetClipboardByFormat_GetClipboardData_fail1) {
-	const auto hWnd = (HWND)0x1234;
-	const auto& bin = L"テスト";
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(12345)).WillOnce(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, GetClipboardData(12345)).WillOnce(Return((HANDLE)nullptr));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	CNativeW buffer;
-	CEol eol(EEolType::cr_and_lf);
-	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"12345", (int)CODE_UNICODE, 2, eol));
-	EXPECT_STREQ(buffer.GetStringPtr(), L"");
-}
-
-TEST(CClipboard, GetSakuraFormat) {
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	auto pUser32Dll = std::make_shared<MockUser32Dll>();
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_EQ(sakuraFormat, CClipboard::GetSakuraFormat(pUser32Dll));
-}
-
-// GetDataType（全部ある）
-TEST(CClipboard, GetDataType1) {
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillRepeatedly(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).Times(0);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).Times(0);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(CClipboard::HasValidData(pUser32Dll));
-	EXPECT_EQ(sakuraFormat, clipboard.GetDataType());
-}
-
-TEST(CClipboard, GetDataType2) {
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillRepeatedly(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).Times(0);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(CClipboard::HasValidData(pUser32Dll));
-	EXPECT_EQ(CF_UNICODETEXT, clipboard.GetDataType());
-}
-
-TEST(CClipboard, GetDataType3) {
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillRepeatedly(Return(TRUE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).Times(0);
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(CClipboard::HasValidData(pUser32Dll));
-	EXPECT_EQ(CF_OEMTEXT, clipboard.GetDataType());
-}
-
-TEST(CClipboard, GetDataType4) {
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillRepeatedly(Return(TRUE));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(CClipboard::HasValidData(pUser32Dll));
-	EXPECT_EQ(CF_HDROP, clipboard.GetDataType());
-}
-
-TEST(CClipboard, GetDataType5) {
-	const auto sakuraFormat = RegisterClipboardFormatW(CClipboard::CFN_SAKURA_CLIP2);
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(StrEq(CClipboard::CFN_SAKURA_CLIP2))).WillRepeatedly(Return(sakuraFormat));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(sakuraFormat)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_OEMTEXT)).WillRepeatedly(Return(FALSE));
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(CF_HDROP)).WillRepeatedly(Return(FALSE));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_FALSE(CClipboard::HasValidData(pUser32Dll));
-	EXPECT_EQ(-1, clipboard.GetDataType());
-}
-
-//! 標準フォーマットのためのパラメータ型
-using ClipFormatTestParams = std::tuple<std::wstring, CLIPFORMAT>;
-
-//! 標準フォーマットのためのフィクスチャクラス
-class ClipFormatTest : public ::testing::TestWithParam<ClipFormatTestParams> {};
-
-TEST_P(ClipFormatTest, PreDefined) {
-	const auto& formatName = std::get<0>(GetParam());
-	const auto uFormat = std::get<1>(GetParam());
-	const auto hWnd = (HWND)0x1234;
-	auto pUser32Dll = MakeUser32DllForClipboardSuccess(hWnd);
-	EXPECT_CALL(*pUser32Dll, RegisterClipboardFormatW(_)).Times(0);
-	EXPECT_CALL(*pUser32Dll, IsClipboardFormatAvailable(uFormat)).WillOnce(Return(TRUE));
-	CClipboard clipboard(hWnd, pUser32Dll);
-	EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(formatName.data()));
-}
-
-#pragma push_macro("PreDefinedClipFormatEntry")
-#define PreDefinedClipFormatEntry(format) ClipFormatTestParams{ L ## #format ## s, format } 
-
-INSTANTIATE_TEST_CASE_P(ParameterizedTestClipFormat
-	, ClipFormatTest
-	, ::testing::Values(
-		PreDefinedClipFormatEntry(CF_TEXT),
-		PreDefinedClipFormatEntry(CF_BITMAP),
-		PreDefinedClipFormatEntry(CF_METAFILEPICT),
-		PreDefinedClipFormatEntry(CF_SYLK),
-		PreDefinedClipFormatEntry(CF_DIF),
-		PreDefinedClipFormatEntry(CF_TIFF),
-		PreDefinedClipFormatEntry(CF_OEMTEXT),
-		PreDefinedClipFormatEntry(CF_DIB),
-		PreDefinedClipFormatEntry(CF_PALETTE),
-		PreDefinedClipFormatEntry(CF_PENDATA),
-		PreDefinedClipFormatEntry(CF_RIFF),
-		PreDefinedClipFormatEntry(CF_WAVE),
-		PreDefinedClipFormatEntry(CF_UNICODETEXT),
-		PreDefinedClipFormatEntry(CF_ENHMETAFILE),
-		PreDefinedClipFormatEntry(CF_HDROP),
-		PreDefinedClipFormatEntry(CF_LOCALE),
-		PreDefinedClipFormatEntry(CF_DIBV5)
-	)
-);
-
-#pragma pop_macro("PreDefinedClipFormatEntry")

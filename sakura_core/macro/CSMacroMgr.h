@@ -71,8 +71,10 @@ typedef MacroFuncInfo* MacroFuncInfoArray;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
+
+@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 -----------------------------------------------------------------------*/
-class CSMacroMgr : private ShareDataAccessorClientWithCache
+class CSMacroMgr
 {
 	//	データの型宣言
 	CMacroManagerBase* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
@@ -88,7 +90,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	explicit CSMacroMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	CSMacroMgr();
 	~CSMacroMgr();
 
 	/*
@@ -166,6 +168,7 @@ public:
 	CMacroManagerBase* SetTempMacro( CMacroManagerBase *newMacro );
 
 private:
+	DLLSHAREDATA*	m_pShareData;
 	CMacroManagerBase** Idx2Ptr(int idx);
 
 	/*!	実行中マクロのインデックス番号 (INVALID_MACRO_IDX:無効)
@@ -181,5 +184,4 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(CSMacroMgr);
 };
-
 #endif /* SAKURA_CSMACROMGR_9F01D007_5F13_4963_887B_B37E861070DA_H_ */

@@ -226,7 +226,7 @@ private:
 
 //	Jun. 26, 2001 genta
 //!	正規表現ライブラリのバージョン取得
-bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor = std::make_shared<ShareDataAccessor>() );
+bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
 bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1, bool bKakomi = false );// 2002/2/1 hor追加
-bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor = std::make_shared<ShareDataAccessor>() );
+bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 #endif /* SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_ */

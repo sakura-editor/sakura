@@ -51,8 +51,8 @@ static const SAnchorList anchorList[] = {
 	{IDC_BUTTON_HELP,           ANCHOR_BOTTOM},
 };
 
-CDlgWindowList::CDlgWindowList(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CSizeRestorableDialog(IDD_WINLIST, std::move(ShareDataAccessor_))
+CDlgWindowList::CDlgWindowList()
+	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert(_countof(anchorList) == _countof(m_rcItems));
@@ -145,7 +145,7 @@ void CDlgWindowList::SetData()
 	HWND hwndList = GetItemHwnd(IDC_LIST_WINDOW);
 	ListView_DeleteAllItems(hwndList);
 	EditNode *pEditNode;
-	int nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNode, TRUE, FALSE, GetShareDataAccessor());
+	int nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNode, TRUE);
 	if (0 < nRowNum) {
 		CTextWidthCalc calc(hwndList);
 		for (int i = 0; i < nRowNum; i++) {
@@ -205,7 +205,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 		GetItemClientRect(anchorList[i].id, m_rcItems[i]);
 	}
 
-	RECT rcDialog = GetShareData()->m_Common.m_sOthers.m_rcWindowListDialog;
+	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
 	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
 		m_xPos = rcDialog.left;
 		m_yPos = rcDialog.top;
@@ -239,7 +239,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 BOOL CDlgWindowList::OnDestroy( void )
 {
 	CDialog::OnDestroy();
-	RECT& rect = GetShareData()->m_Common.m_sOthers.m_rcWindowListDialog;
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
 	rect.left = m_xPos;
 	rect.top = m_yPos;
 	rect.right = rect.left + m_nWidth;

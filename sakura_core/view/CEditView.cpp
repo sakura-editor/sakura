@@ -156,9 +156,6 @@ CEditView::CEditView( void )
 , m_cHistory(NULL)
 , m_cRegexKeyword(NULL)
 {
-	m_pcEditDoc = CEditDoc::getInstance();
-
-	m_pcCaret = new CCaret(this, m_pcEditDoc);
 }
 
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
@@ -172,6 +169,7 @@ BOOL CEditView::Create(
 {
 	m_bMiniMap = bMiniMap;
 	m_pcTextArea = new CTextArea(this);
+	m_pcCaret = new CCaret(this, pcEditDoc);
 	m_pcRuler = new CRuler(this, pcEditDoc);
 	if( m_bMiniMap ){
 		m_pcViewFont = GetEditWnd().m_pcViewFontMiniMap;

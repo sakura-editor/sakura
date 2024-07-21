@@ -20,8 +20,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <algorithm>
+#include <memory>
 #include "dlg/CDialog.h"
-
 #include "CEditApp.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -34,21 +35,49 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 
-#include <algorithm>
-#include <memory>
-#include <vector>
+/* ダイアログプロシージャ */
+INT_PTR CALLBACK MyDialogProc(
+	HWND hwndDlg,	// handle to dialog box
+	UINT uMsg,		// message
+	WPARAM wParam,	// first message parameter
+	LPARAM lParam 	// second message parameter
+)
+{
+	CDialog* pCDialog;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pCDialog = ( CDialog* )lParam;
+		if( NULL != pCDialog ){
+			return pCDialog->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		// Modified by KEITA for WIN64 2003.9.6
+		pCDialog = ( CDialog* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		if( NULL != pCDialog ){
+			return pCDialog->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
 
 /*!	コンストラクタ
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-CDialog::CDialog(WORD idDialog_, std::shared_ptr<User32Dll> User32Dll_)
-	: CCustomDialog(idDialog_, std::move(User32Dll_))
+CDialog::CDialog(bool bSizable, bool bCheckShareData)
 {
 //	MYTRACE( L"CDialog::CDialog()\n" );
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData(bCheckShareData);
+
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
+	m_hWnd  = NULL;			/* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
+	m_bSizable = bSizable;
 	m_lParam = (LPARAM)NULL;
 	m_nShowCmd = SW_SHOW;
 	m_xPos = -1;
@@ -74,18 +103,19 @@ CDialog::~CDialog()
 */
 INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam )
 {
-	_idDialog = static_cast<WORD>(nDlgTemplete);
-
-	m_bModal  = TRUE;
 	m_bInited = FALSE;
-
-	// 既存コード互換のため暫定で残しておく代入
-	m_hInstance         = hInstance;
-	m_hwndParent        = hwndParent;
-	m_lParam            = lParam;
-	m_hLangRsrcInstance = GetLanguageResourceLibrary();
-
-	return CCustomDialog::Box(GetLanguageResourceLibrary(), m_hwndParent);
+	m_bModal = TRUE;
+	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_lParam = lParam;
+	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
+	return ::DialogBoxParam(
+		m_hLangRsrcInstance,
+		MAKEINTRESOURCE( nDlgTemplete ),
+		m_hwndParent,
+		MyDialogProc,
+		(LPARAM)this
+	);
 }
 
 //! モードレスダイアログの表示
@@ -97,63 +127,45 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 */
 HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow )
 {
-	_idDialog = static_cast<WORD>(nDlgTemplete);
-
-	m_bModal   = FALSE;
-	m_nShowCmd = nCmdShow;
-	m_bInited  = FALSE;
-
-	// 既存コード互換のため暫定で残しておく代入
-	m_hInstance         = hInstance;
-	m_hwndParent        = hwndParent;
-	m_lParam            = lParam;
-	m_hLangRsrcInstance = GetLanguageResourceLibrary();
-
-	const auto hWnd = CCustomDialog::Create(m_hLangRsrcInstance, m_hwndParent);
-
-	if (hWnd)
-	{
-		GetUser32Dll()->ShowWindow(hWnd, nCmdShow);
+	m_bInited = FALSE;
+	m_bModal = FALSE;
+	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_lParam = lParam;
+	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
+	m_hWnd = ::CreateDialogParam(
+		m_hLangRsrcInstance,
+		MAKEINTRESOURCE( nDlgTemplete ),
+		m_hwndParent,
+		MyDialogProc,
+		(LPARAM)this
+	);
+	if( NULL != m_hWnd ){
+		::ShowWindow( m_hWnd, nCmdShow );
 	}
-
-	return hWnd;
+	return m_hWnd;
 }
 
-/*!
- * ダイアログにデータを反映する
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @note 反映コードでメンバーを変更してはならない
- */
-void CDialog::SetDlgData(HWND hDlg) const
+HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow )
 {
-	UNREFERENCED_PARAMETER(hDlg);
-
-	// 既存コード互換とするため、意図的にconst外しする
-	const_cast<Me&>(*this).SetData();
+	m_bInited = FALSE;
+	m_bModal = FALSE;
+	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_lParam = lParam;
+	m_hWnd = ::CreateDialogIndirectParam(
+		m_hInstance,
+		lpTemplate,
+		m_hwndParent,
+		MyDialogProc,
+		(LPARAM)this
+	);
+	if( NULL != m_hWnd ){
+		::ShowWindow( m_hWnd, nCmdShow );
+	}
+	return m_hWnd;
 }
 
-/*!
- * ダイアログからデータを取り込む
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @retval >  0 取り込み正常
- * @retval == 0 取り込みデータなし
- * @retval <  0 取り込み異常
- */
-INT_PTR CDialog::GetDlgData(HWND hDlg)
-{
-	UNREFERENCED_PARAMETER(hDlg);
-
-	// 既存コード互換のために旧関数を呼び出す。
-	return GetData();
-}
-
-/*!
- * ダイアログを閉じる
- *
- * @param [in] nModalRetVal DoModalの返却値
- */
 void CDialog::CloseDialog( INT_PTR nModalRetVal )
 {
 	if( NULL != m_hWnd ){
@@ -162,112 +174,25 @@ void CDialog::CloseDialog( INT_PTR nModalRetVal )
 		}else{
 			::DestroyWindow( m_hWnd );
 		}
+		m_hWnd = NULL;
 	}
 	return;
 }
 
-/*!
- * ダイアログのメッセージ配送
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @param [in] uMsg メッセージコード
- * @param [in, opt] wParam 第1パラメーター
- * @param [in, opt] lParam 第2パラメーター
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-INT_PTR CDialog::DispatchDlgEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return DispatchEvent(hDlg, uMsg, wParam, lParam);
-}
-
-/*!
- * ダイアログのメッセージ配送(旧関数)
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @param [in] uMsg メッセージコード
- * @param [in, opt] wParam 第1パラメーター
- * @param [in, opt] lParam 第2パラメーター
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-INT_PTR CDialog::DispatchEvent(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch (uMsg)
-	{
-// clang-format off
-	case WM_DESTROY:	 return OnDlgDestroy(hDlg);
-	case WM_MOVE:        return OnDlgMove(hDlg, LOWORD(lParam), HIWORD(lParam));
-	case WM_ACTIVATE:	 return OnDlgActivate(hDlg, LOWORD(wParam), std::bit_cast<HWND>(lParam), HIWORD(wParam));
-	case WM_KILLFOCUS:	 return OnDlgKillFocus(hDlg, std::bit_cast<HWND>(wParam));
-	case WM_NOTIFY:		 return OnDlgNotify(hDlg, static_cast<int>(wParam), std::bit_cast<LPNMHDR>(lParam));
-	case WM_KEYDOWN:	 return OnDlgKey(hDlg, static_cast<UINT>(wParam), TRUE, LOWORD(lParam), HIWORD(lParam));
-	case WM_COMMAND:	 return OnDlgCommand(hDlg, LOWORD(wParam), std::bit_cast<HWND>(lParam), HIWORD(wParam));
-	case WM_TIMER:		 return OnDlgTimer(hDlg, static_cast<UINT>(wParam));
-	case WM_HELP:		 return OnDlgHelp(hDlg, std::bit_cast<LPHELPINFO>(lParam));
-	case WM_CONTEXTMENU: return OnDlgContextMenu(hDlg, std::bit_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
-// clang-format on
-
-	default:
-		break;
-	}
-
-	// サイズ変更可能なダイアログのみ
-	if (uMsg == WM_SIZE)
-	{
-		return OnSize(wParam, lParam);
-	}
-
-	// オーナードローはCDlgSameColorのみ
-	if (uMsg == WM_DRAWITEM)
-	{
-		return OnDrawItem(wParam, lParam);
-	}
-
-	// WM_INITDIALOGの戻り値は他と意味が異なるので個別に処理する
-	if (uMsg == WM_INITDIALOG)
-	{
-		const auto ret = FORWARD_WM_INITDIALOG(hDlg, wParam, lParam, __super::DispatchDlgEvent);
-
-		SetDialogPosSize();
-
-		m_bInited = TRUE;
-
-		return ret;
-	}
-
-	return __super::DispatchDlgEvent(hDlg, uMsg, wParam, lParam);
-}
-
-/*!
- * WM_INITDIALOGハンドラ
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @param [in] hWndFocus フォーカスを受け取る子ウインドウのハンドル
- * @param [in] lParam ダイアログパラメーター
- * @retval TRUE フォーカスを設定する
- * @retval FALSE フォーカスを設定しない
- */
-BOOL CDialog::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnInitDialog(hDlg, std::bit_cast<WPARAM>(hWndFocus), lParam);
-}
-
-/*!
- * WM_INITDIALOGハンドラ(旧関数)
- *
- * @param [in] hwndDlg 宛先ウインドウのハンドル
- * @param [in] wParam フォーカスを受け取る子ウインドウのハンドル
- * @param [in] lParam ダイアログパラメーター
- * @retval TRUE フォーカスを設定する
- * @retval FALSE フォーカスを設定しない
- */
 BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	m_hWnd = hwndDlg;
+	// Modified by KEITA for WIN64 2003.9.6
+	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
+
 	m_hFontDialog = UpdateDialogFont( hwndDlg );
 
+	/* ダイアログデータの設定 */
+	SetData();
+
+	SetDialogPosSize();
+
+	m_bInited = TRUE;
 	return TRUE;
 }
 
@@ -383,18 +308,6 @@ void CDialog::SetDialogPosSize()
 	}
 }
 
-/*!
- * WM_DESTROYハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgDestroy(HWND hDlg)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnDestroy();
-}
-
 BOOL CDialog::OnDestroy( void )
 {
 	/* ウィンドウ位置・サイズを記憶 */
@@ -416,67 +329,8 @@ BOOL CDialog::OnDestroy( void )
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
 	}
+	m_hWnd = NULL;
 	return TRUE;
-}
-
-/*!
- * WM_MOVEハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgMove(HWND hDlg, int x, int y)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnMove(0L, MAKELPARAM(x, y));
-}
-
-/*!
- * WM_ACTIVATEハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgActivate(HWND hDlg, UINT state, HWND hWndActDeact, BOOL fMinimized)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnActivate(MAKEWPARAM(state, fMinimized), (LPARAM)hWndActDeact);
-}
-
-/*!
- * WM_KILLFOCUSハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgKillFocus(HWND hDlg, HWND hWndNewFocus)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnKillFocus(std::bit_cast<WPARAM>(hWndNewFocus), 0L);
-}
-
-/*!
- * WM_NOTIFYハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgNotify(HWND hDlg, int idFrom, LPNMHDR pNMHDR)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnNotify(pNMHDR);
-}
-
-/*!
- * WM_KEYDOWNハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgKey(HWND hDlg, UINT vk, BOOL fDown, int cRepeat, UINT flags)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnKeyDown(static_cast<WPARAM>(vk), MAKELPARAM(cRepeat, flags));
 }
 
 BOOL CDialog::OnBnClicked( int wID )
@@ -534,6 +388,11 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
+BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
+{
+	return TRUE;
+}
+
 void CDialog::CreateSizeBox( void )
 {
 	/* サイズボックス */
@@ -554,16 +413,32 @@ void CDialog::CreateSizeBox( void )
 	::ShowWindow( m_hwndSizeBox, SW_SHOW );
 }
 
-/*!
- * WM_COMMANDハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify)
+/* ダイアログのメッセージ処理 */
+INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnCommand(MAKEWPARAM(id, codeNotify), std::bit_cast<LPARAM>(hWndCtl));
+//	DEBUG_TRACE( L"CDialog::DispatchEvent() uMsg == %xh\n", uMsg );
+	switch( uMsg ){
+	case WM_INITDIALOG:	return OnInitDialog( hwndDlg, wParam, lParam );
+	case WM_DESTROY:	return OnDestroy();
+	case WM_COMMAND:	return OnCommand( wParam, lParam );
+	case WM_NOTIFY:		return OnNotify( (NMHDR*)lParam );
+	case WM_SIZE:
+		m_hWnd = hwndDlg;
+		return OnSize( wParam, lParam );
+	case WM_MOVE:
+		m_hWnd = hwndDlg;
+		return OnMove( wParam, lParam );
+	case WM_DRAWITEM:	return OnDrawItem( wParam, lParam );
+	case WM_TIMER:		return OnTimer( wParam );
+	case WM_KEYDOWN:	return OnKeyDown( wParam, lParam );
+	case WM_KILLFOCUS:	return OnKillFocus( wParam, lParam );
+	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
+	case WM_VKEYTOITEM:	return OnVKeyToItem( wParam, lParam );
+	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
+	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
+	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
+	}
+	return FALSE;
 }
 
 BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
@@ -621,49 +496,12 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
-/*!
- * WM_TIMERハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgTimer(HWND hDlg, UINT id)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnTimer(static_cast<WPARAM>(id));
-}
-
-
-/*!
- * WM_HELPハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgHelp(HWND hDlg, LPHELPINFO pHelpInfo)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnPopupHelp(0L, std::bit_cast<LPARAM>(pHelpInfo));
-}
-
 //@@@ 2002.01.18 add start
 BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
 {
 	HELPINFO *p = (HELPINFO *)lParam;
 	MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
-}
-
-/*!
- * WM_CONTEXTMENUハンドラ
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDialog::OnDlgContextMenu(HWND hDlg, HWND hWndContext, UINT xPos, UINT yPos)
-{
-	// 既存コード互換のために旧関数を呼び出す。
-	return OnContextMenu(std::bit_cast<WPARAM>(hWndContext), MAKELPARAM(xPos, yPos));
 }
 
 BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )
@@ -678,17 +516,9 @@ const DWORD p_helpids[] = {
 
 LPVOID CDialog::GetHelpIdTable(void)
 {
-	return (LPVOID)GetHelpIds();
+	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
-/*!
- * ヘルプIDテーブルを取得する
- */
-INT_PTR CDialog::GetHelpIds(void) const noexcept
-{
-	return (INT_PTR)p_helpids;
-}
 
 BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 {
@@ -792,7 +622,7 @@ bool CDialog::DirectoryUp( WCHAR* szDir )
 }
 
 // コントロールに画面のフォントを設定	2012/11/27 Uchi
-HFONT CSakuraDialog::SetMainFont( HWND hTarget )
+HFONT CDialog::SetMainFont( HWND hTarget )
 {
 	if (hTarget == NULL)	return NULL;
 

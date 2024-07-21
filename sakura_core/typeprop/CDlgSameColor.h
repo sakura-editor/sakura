@@ -46,17 +46,8 @@ class CDlgSameColor final : public CDialog
 {
 public:
 	CDlgSameColor();
-	~CDlgSameColor() override = default;
-
+	~CDlgSameColor();
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, WORD wID, STypeConfig* pTypes, COLORREF cr );		//!< モーダルダイアログの表示
-
-	//! テスト不能だったので追加。（アプリで使用しないこと！）
-	void SetNanikaForTest(WORD wID, STypeConfig* pTypes, COLORREF cr)
-	{
-		m_wID = wID;
-		m_pTypes = pTypes;
-		m_cr = cr;
-	}
 
 protected:
 

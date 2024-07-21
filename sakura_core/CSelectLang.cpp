@@ -70,7 +70,7 @@ HINSTANCE CSelectLang::getLangRsrcInstance( void )
 */
 LPCWSTR CSelectLang::getDefaultLangString( void )
 {
-	return m_psLangInfo ? m_psLangInfo->szLangName : L"Japanese";
+	return m_psLangInfo->szLangName;
 }
 
 // 言語IDを返す
@@ -366,13 +366,13 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 	return nRet;
 }
 
-void CSelectLang::ChangeLang( std::wstring_view dllName )
+void CSelectLang::ChangeLang( WCHAR* pszDllName )
 {
 	/* 言語を選択する */
 	UINT unIndex;
 	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
 		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
-		if ( dllName == psLangInfo->szDllName ) {
+		if ( wcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
 			CSelectLang::ChangeLang( unIndex );
 			break;
 		}
@@ -413,9 +413,4 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 	}
 
 	return m_psLangInfo->hInstance;
-}
-
-HINSTANCE GetLanguageResourceLibrary()
-{
-	return CSelectLang::getLangRsrcInstance();
 }

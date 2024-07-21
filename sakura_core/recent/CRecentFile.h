@@ -34,8 +34,7 @@
 class CRecentFile final : public CRecentImp<EditInfo>{
 public:
 	//生成
-	explicit CRecentFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CRecentFile() override = default;
+	CRecentFile();
 
 	//オーバーライド
 	int				CompareItem( const EditInfo* p1, const EditInfo* p2 ) const override;

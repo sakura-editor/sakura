@@ -214,22 +214,4 @@ class CFlowInterruption : public std::exception{
 public:
 	const char* what() const throw(){ return "CFlowInterruption"; }
 };
-
-/*!
- * ドキュメントを参照するクラスの基底クラス
- *
- * コンストラクタでメンバー変数にドキュメント参照を取得する。
- * CEditDocの構築を開始する前にインスタンス化しようとすると失敗する。
- *
- * 将来的には廃止すべき。
- * m_pcDocRefの直接参照は控え、グローバル関数を利用すること。
- */
-struct CDocRefClient
-{
-	//! ドキュメント参照
-	CEditDoc* m_pcDocRef;
-
-	CDocRefClient();
-};
-
 #endif /* SAKURA_CDOCLISTENER_BEF5B814_A5B8_4D07_9B2F_009A5CB29B2F_H_ */

@@ -59,10 +59,7 @@ const DWORD p_helpids[] = {	//11900
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-CDlgReplace::CDlgReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CSakuraDialog(IDD_REPLACE, std::move(ShareDataAccessor_))
-	, m_cRecentSearch(GetShareDataAccessor())
-	, m_cRecentReplace(GetShareDataAccessor())
+CDlgReplace::CDlgReplace()
 {
 	m_sSearchOption.Reset();	// 検索オプション
 	m_bConsecutiveAll = FALSE;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
@@ -142,7 +139,7 @@ void CDlgReplace::SetData( void )
 	// 正規表現ライブラリの差し替えに伴う処理の見直し
 	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
 	// 無関係にCheckRegexpVersionを通過するようにした。
-	if( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false, GetShareDataAccessor() )
+	if( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false )
 		&& m_sSearchOption.bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 1 );

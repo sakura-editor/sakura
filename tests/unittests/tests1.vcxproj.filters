@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Mock Classes">
-      <UniqueIdentifier>{2ae74e10-2559-43f4-b754-11613d247854}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Test Files">
       <UniqueIdentifier>{690c7184-b796-460a-8fed-595dfa1930f4}</UniqueIdentifier>
     </Filter>
@@ -23,26 +20,6 @@
     <Text Include="CMakeLists.txt">
       <Filter>Other Files</Filter>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="MockShareDataAccessor.hpp">
-      <Filter>Mock Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="MockUser32Dll.hpp">
-      <Filter>Mock Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="MockKernel32Dll.hpp">
-      <Filter>Mock Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="MockShell32Dll.hpp">
-      <Filter>Mock Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="TAutoCloseDialog.hpp">
-      <Filter>Other Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MockOle32Dll.hpp">
-      <Filter>Mock Classes</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test-cmemory.cpp">
@@ -193,103 +170,6 @@
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="test-extmodules.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdialog.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-apiwrap.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlginput1.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ceditdoc.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ceditwnd.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgcompare.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgdiff.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgexec.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgfavarite.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgfunclist.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlggrep.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgjump.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgkeywordselect.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgpluginoption.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgproperty.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgreplace.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgtagjumplist.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgtagsmake.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgwindowlist.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-chokanmgr.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="coverage.cpp" />
-    <ClCompile Include="test-cdlgsamecolor.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cdlgfind.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cimpexpmanager.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cproptypes.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-chelpmanager.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cformatmanager.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ccustomwnd.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cwnd.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-module.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ccontroltray.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ccustomdialog.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-codechecker.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,11 +23,9 @@
 #define SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_
 #pragma once
 
+#include <Windows.h>
 #include "dlg/CDialog.h"
 #include "doc/CEditDoc.h"
-
-#include <Windows.h>
-#include <CommCtrl.h>
 
 class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
@@ -62,32 +60,17 @@ public:
 };
 
 //!	アウトライン解析ダイアログボックス
-class CDlgFuncList final : public CSizeRestorableDialog
+class CDlgFuncList final : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgFuncList(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CDlgFuncList() override = default;
-
+	CDlgFuncList();
 	/*
 	||  Attributes & Operations
 	*/
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int, bool );/* モードレスダイアログの表示 */
-
-	//! テスト不能だったので追加。（アプリで使用しないこと！）
-	void SetFuncInfoForTest(
-		std::shared_ptr<CFuncInfoArr> pcFuncInfoArr)
-	{
-		m_pcFuncInfoArr  = pcFuncInfoArr.get();
-		m_nCurLine       = CLayoutInt(1);
-		m_nCurCol        = CLayoutInt(1);
-		m_nOutlineType   = 0;
-		m_nListType      = 0;
-		m_bLineNumIsCRLF = false;
-	}
-
 	void ChangeView(LPARAM pcEditView);	/* モードレス時：検索対象となるビューの変更 */
 	bool IsDocking() { return m_eDockSide > DOCKSIDE_FLOAT; }
 	EDockSide GetDockSide() { return m_eDockSide; }

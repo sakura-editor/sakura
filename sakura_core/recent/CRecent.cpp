@@ -35,9 +35,3 @@
 */
 
 #include "StdAfx.h"
-#include "recent/CRecent.h"
-
-CRecent::CRecent(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
-{
-}

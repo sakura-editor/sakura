@@ -129,4 +129,6 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Import Project="..\sakura\githash.targets" />
+  <Import Project="..\sakura\funccode.targets" />
 </Project>

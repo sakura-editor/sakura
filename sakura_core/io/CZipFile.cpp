@@ -27,16 +27,28 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CZipFile.h"
-
 #include <shellapi.h>
+#include "CZipFile.h"
 #include "basis/CMyString.h"
 
 // コンストラクタ
-CZipFile::CZipFile(std::shared_ptr<Ole32Dll> Ole32Dll_) noexcept
-	: Ole32DllClient(std::move(Ole32Dll_))
-{
-	GetOle32Dll()->CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&psd));
+CZipFile::CZipFile() {
+	HRESULT		hr;
+
+	hr = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_IShellDispatch, reinterpret_cast<void **>(&psd));
+	if (FAILED(hr)) {
+		psd = NULL;
+	}
+	pZipFile = NULL;
+}
+
+// デストラクタ
+CZipFile::~CZipFile() {
+	if (pZipFile != NULL) {
+		pZipFile->Release();
+		pZipFile = NULL;
+	}
+	psd = NULL;
 }
 
 // Zip File名 設定

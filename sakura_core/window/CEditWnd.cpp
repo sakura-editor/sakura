@@ -182,7 +182,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 /*!
  * 編集ウインドウのインスタンスを取得します。
  *
- * 編集ウインドウの生存期間はエディタプロセスとほぼ同じなので、
+ * 編集ウインドウの生存期間ははエディタプロセスと同じなので、
  * ほとんどの場合、このグローバル関数を使ってアクセスできます。
  */
 CEditWnd& GetEditWnd( void )
@@ -195,30 +195,33 @@ CEditWnd& GetEditWnd( void )
 	return *pcEditWnd;
 }
 
-/*!
- * コンストラクタ
- */
-CEditWnd::CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CCustomWnd(std::make_shared<User32Dll>())
-	, ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
-	, m_cToolbar(GetShareDataAccessor())
-	, m_cTabWnd(GetShareDataAccessor())
-	, m_cFuncKeyWnd(GetShareDataAccessor())
+//	/* メッセージループ */
+//	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
+
+LRESULT CALLBACK CEditWndProc(
+	HWND	hwnd,	// handle of window
+	UINT	uMsg,	// message identifier
+	WPARAM	wParam,	// first message parameter
+	LPARAM	lParam 	// second message parameter
+)
+{
+	CEditWnd* pcWnd = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
+	if( pcWnd ){
+		return pcWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
+	}
+	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+}
+
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+CEditWnd::CEditWnd()
+: m_hWnd( NULL )
+, m_cToolbar(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cStatusBar(this)		// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	, m_cSplitterWnd(GetShareDataAccessor())
 , m_pcDragSourceView( NULL )
-	, m_cDlgFind(GetShareDataAccessor())
-	, m_cDlgReplace(GetShareDataAccessor())
-	, m_cDlgJump(GetShareDataAccessor())
-	, m_cDlgGrep(GetShareDataAccessor())
-	, m_cDlgGrepReplace(GetShareDataAccessor())
-	, m_cDlgFuncList(GetShareDataAccessor())
-	, m_cHokanMgr(GetShareDataAccessor())
 , m_nActivePaneIndex( 0 )
 , m_nEditViewCount( 1 )
 , m_nEditViewMaxCount( _countof(m_pcEditViewArr) )	// 今のところ最大値は固定
-	, m_cMenuDrawer(GetShareDataAccessor())
 , m_bIsActiveApp( false )
 , m_pszLastCaption( NULL )
 , m_pszMenubarMessage( new WCHAR[MENUBAR_MESSAGE_MAX_LEN] )
@@ -230,7 +233,6 @@ CEditWnd::CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 {
-	m_pcEditDoc = CEditDoc::getInstance();
 }
 
 CEditWnd::~CEditWnd()
@@ -243,6 +245,12 @@ CEditWnd::~CEditWnd()
 		m_pcEditViewArr[i] = NULL;
 	}
 	m_pcEditView = NULL;
+
+	delete m_pcViewFont;
+	m_pcViewFont = NULL;
+
+	delete m_pcViewFontMiniMap;
+	m_pcViewFontMiniMap = NULL;
 
 	delete[] m_pszMenubarMessage;
 	delete[] m_pszLastCaption;
@@ -362,14 +370,28 @@ void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGr
 HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
 	// -- -- -- -- ウィンドウクラス登録 -- -- -- -- //
-	if (!RegisterWnd(GSTR_EDITWINDOWNAME,
-		static_cast<HCURSOR>(nullptr),
-		static_cast<HBRUSH>(nullptr),
-		CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW,
-		LoadAppIcon(ICON_DEFAULT_APP, false),
-		LoadAppIcon(ICON_DEFAULT_APP, true),
-		sizeof(LONG_PTR) * 1))
-	{
+	WNDCLASSEX	wc;
+	//	Apr. 27, 2000 genta
+	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
+	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
+	wc.lpfnWndProc		= CEditWndProc;
+	wc.cbClsExtra		= 0;
+	wc.cbWndExtra		= sizeof(LONG_PTR) * 1;                                  //拡張領域を1個確保。
+	wc.hInstance		= G_AppInstance();
+	//	Dec, 2, 2002 genta アイコン読み込み方法変更
+	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
+
+	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
+	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
+	wc.lpszMenuName		= NULL;	// MAKEINTRESOURCE( IDR_MENU1 );	2010/5/16 Uchi
+	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
+
+	//	Dec. 6, 2002 genta
+	//	small icon指定のため RegisterClassExに変更
+	wc.cbSize			= sizeof( wc );
+	wc.hIconSm			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
+	ATOM	atom = RegisterClassEx( &wc );
+	if( 0 == atom ){
 		//	2004.05.13 Moca return NULLを有効にした
 		return NULL;
 	}
@@ -378,12 +400,21 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	CMyRect rc;
 	_GetWindowRectForInit(&rc, nGroup, sTabGroupInfo);
 
-	// 仕様差分を吸収させる
-	rc.right  -= rc.left; 
-	rc.bottom -= rc.top;
-
 	//作成
-	const auto hwndResult = CreateWnd(NULL, GSTR_EDITWINDOWNAME, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, 0L, 0L, &rc);
+	HWND hwndResult = ::CreateWindowEx(
+		0,				 	// extended window style
+		GSTR_EDITWINDOWNAME,		// pointer to registered class name
+		GSTR_EDITWINDOWNAME,		// pointer to window name
+		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,	// window style
+		rc.left,			// horizontal position of window
+		rc.top,				// vertical position of window
+		rc.Width(),			// window width
+		rc.Height(),		// window height
+		NULL,				// handle to parent or owner window
+		NULL,				// handle to menu or child-window identifier
+		G_AppInstance(),		// handle to application instance
+		NULL				// pointer to window-creation data
+	);
 	return hwndResult;
 }
 
@@ -562,18 +593,32 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
+	CEditDoc*		pcEditDoc,
 	CImageListMgr*	pcIcons,	//!< [in] Image List
 	int				nGroup		//!< [in] グループID
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
 
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
+
+	m_pcEditDoc = pcEditDoc;
+
+	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
+		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
+		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
+
+	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
+		m_pcEditViewArr[i] = NULL;
+	}
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView();
 	m_pcEditView = m_pcEditViewArr[0];
 
-	m_pcViewFont        = std::make_shared<CViewFont>(&GetLogfont(), false, GetShareDataAccessor());
-	m_pcViewFontMiniMap = std::make_shared<CViewFont>(&GetLogfont(), true, GetShareDataAccessor());
+	m_pcViewFont = new CViewFont(&GetLogfont());
+
+	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
 
 	wmemset( m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
@@ -601,6 +646,7 @@ HWND CEditWnd::Create(
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
 	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
 	if(!hWnd)return NULL;
+	m_hWnd = hWnd;
 
 	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
 	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
@@ -676,7 +722,7 @@ HWND CEditWnd::Create(
 	// -- -- -- -- その他調整など -- -- -- -- //
 
 	// 画面表示直前にDispatchEventを有効化する
-	_Initialized = true;
+	::SetWindowLongPtr( GetHwnd(), GWLP_USERDATA, (LONG_PTR)this );
 
 	// デスクトップからはみ出さないようにする
 	_AdjustInMonitor(sTabGroupInfo);
@@ -1098,10 +1144,6 @@ LRESULT CEditWnd::DispatchEvent(
 	CTypeConfig			cTypeNew;
 
 	switch( uMsg ){
-	case WM_NCCREATE:
-		m_hWnd = hwnd;
-		return TRUE;
-
 	case WM_PAINTICON:
 		return 0;
 	case WM_ICONERASEBKGND:
@@ -1268,9 +1310,6 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_WINDOWPOSCHANGED:
-		// 表示直前まではデフォルト処理を実行させる
-		if (!_Initialized) break;
-
 		// ポップアップウィンドウの表示切替指示をポストする	// 2007.10.22 ryoji
 		// ・WM_SHOWWINDOWはすべての表示切替で呼ばれるわけではないのでWM_WINDOWPOSCHANGEDで処理
 		//   （タブグループ解除などの設定変更時はWM_SHOWWINDOWは呼ばれない）
@@ -1289,9 +1328,6 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_SIZE:
-		// 表示直前まではデフォルト処理を実行させる
-		if (!_Initialized) break;
-
 //		MYTRACE( L"WM_SIZE\n" );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
@@ -1301,9 +1337,6 @@ LRESULT CEditWnd::DispatchEvent(
 
 	//From here 2003.05.31 MIK
 	case WM_MOVE:
-		// 表示直前まではデフォルト処理を実行させる
-		if (!_Initialized) break;
-
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
@@ -2056,10 +2089,8 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 // >> by aroka
 #endif
-		break;
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
-
-	return __super::DispatchEvent(hwnd, uMsg, wParam, lParam);
 }
 
 /*! 終了時の処理
@@ -4815,19 +4846,39 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 	m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 }
 
-const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting) const
+const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting)
 {
-	return GetEditDoc().GetLogFont(bTempSetting);
+	if( bTempSetting && GetDocument()->m_blfCurTemp ){
+		return GetDocument()->m_lfCur;
+	}
+	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	if( bUseTypeFont ){
+		return GetDocument()->m_cDocType.GetDocumentAttribute().m_lf;
+	}
+	return m_pShareData->m_Common.m_sView.m_lf;
 }
 
-int CEditWnd::GetFontPointSize(bool bTempSetting) const
+int CEditWnd::GetFontPointSize(bool bTempSetting)
 {
-	return GetEditDoc().GetFontSize(bTempSetting);
+	if( bTempSetting && GetDocument()->m_blfCurTemp ){
+		return GetDocument()->m_nPointSizeCur;
+	}
+	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	if( bUseTypeFont ){
+		return GetDocument()->m_cDocType.GetDocumentAttribute().m_nPointSize;
+	}
+	return m_pShareData->m_Common.m_sView.m_nPointSize;
 }
-
-ECharWidthCacheMode CEditWnd::GetLogfontCacheMode() const
+ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 {
-	return GetEditDoc().GetFontCacheMode();
+	if( GetDocument()->m_blfCurTemp ){
+		return CWM_CACHE_LOCAL;
+	}
+	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	if( bUseTypeFont ){
+		return CWM_CACHE_LOCAL;
+	}
+	return CWM_CACHE_SHARE;
 }
 
 /*!

@@ -32,8 +32,7 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentReplace::CRecentReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CRecentImp<CReplaceString, LPCWSTR>(std::move(ShareDataAccessor_))
+CRecentReplace::CRecentReplace()
 {
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr(),

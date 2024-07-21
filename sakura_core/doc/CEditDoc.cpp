@@ -79,7 +79,6 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
-#include "basis/CErrorInfo.h"
 #include "sakura_rc.h"
 #include "config/app_constants.h"
 #include "String_define.h"
@@ -166,19 +165,16 @@ static const EFunctionCode EIsModificationForbidden[] = {
 	@date 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
-CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
-	, m_cLayoutMgr(GetShareDataAccessor())
-	, m_cDocEditor(GetShareDataAccessor())
-	, m_cDocType(GetShareDataAccessor())
-	, m_cAutoSaveAgent(GetShareDataAccessor())
+CEditDoc::CEditDoc(CEditApp* pcApp)
+: m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::CEditDoc" );
-
-	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE, GetShareDataAccessor());
-	InitCharWidthCache(GetShareData()->m_Common.m_sView.m_lf);
 
 	// レイアウト管理情報の初期化
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
@@ -216,11 +212,7 @@ CEditDoc::CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 	m_cDocEditor.m_cNewLineCode = ref.m_encoding.m_eDefaultEoltype;
 
 	// 排他制御オプションを初期化
-	m_cDocFile.SetShareMode( GetShareData()->m_Common.m_sFile.m_nFileShareMode );
-
-	m_cLayoutMgr.SetLayoutInfo(true, false, m_cDocType.GetDocumentAttribute(),
-		m_cLayoutMgr.GetTabSpaceKetas(), m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
-		m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogFont());
+	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
 
 #ifdef _DEBUG
 	{
@@ -497,42 +489,6 @@ void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 	pSaveInfo->cEol        = m_cDocEditor.m_cNewLineCode; //編集時改行コードを保存時改行コードとして設定
 }
 
-const LOGFONT& CEditDoc::GetLogFont(bool bTempSetting) const
-{
-	if (bTempSetting && m_blfCurTemp) {
-		return m_lfCur;
-	}
-	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
-	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
-		return typeConfig.m_lf;
-	}
-	return GetShareData()->m_Common.m_sView.m_lf;
-}
-
-int CEditDoc::GetFontSize(bool bTempSetting) const
-{
-	if (bTempSetting && m_blfCurTemp) {
-		return m_nPointSizeCur;
-	}
-	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
-	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
-		return typeConfig.m_nPointSize;
-	}
-	return GetShareData()->m_Common.m_sView.m_nPointSize;
-}
-
-ECharWidthCacheMode CEditDoc::GetFontCacheMode() const
-{
-	if (m_blfCurTemp) {
-		return CWM_CACHE_LOCAL;
-	}
-	const auto& typeConfig = m_cDocType.GetDocumentAttribute();
-	if (const auto useTypeFont = typeConfig.m_bUseTypeFont) {
-		return CWM_CACHE_LOCAL;
-	}
-	return CWM_CACHE_SHARE;
-}
-
 /* 編集ファイル情報を格納 */
 void CEditDoc::GetEditInfo(
 	EditInfo* pfi	//!< [out]
@@ -707,7 +663,7 @@ void CEditDoc::OnChangeSetting(
 	int			i;
 	HWND		hwndProgress = NULL;
 
-	const auto  pCEditWnd = &GetEditWnd();
+	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
@@ -1069,20 +1025,4 @@ void CEditDoc::SetCurDirNotitle()
 	if( pszDir != NULL ){
 		::SetCurrentDirectory( pszDir );
 	}
-}
-
-/*!
- * 編集中ドキュメントのインスタンスを取得します。
- *
- * 編集中ドキュメントの生存期間はエディタプロセスとほぼ同じなので、
- * ほとんどの場合、このグローバル関数を使ってアクセスできます。
- */
-CEditDoc& GetEditDoc(void)
-{
-	auto pcEditDoc = CEditDoc::getInstance();
-	if (!pcEditDoc)
-	{
-		::_com_raise_error(E_FAIL, MakeMsgError(L"Any CEditDoc has been instantiated."));
-	}
-	return *pcEditDoc;
 }

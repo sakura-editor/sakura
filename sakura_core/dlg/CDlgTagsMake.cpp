@@ -57,8 +57,7 @@ const DWORD p_helpids[] = {	//13700
 	0, 0
 };
 
-CDlgTagsMake::CDlgTagsMake(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CSakuraDialog(IDD_TAG_MAKE, std::move(ShareDataAccessor_))
+CDlgTagsMake::CDlgTagsMake()
 {
 	m_szPath[0] = L'\0';
 	m_szTagsCmdLine[0] = L'\0';
