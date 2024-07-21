@@ -64,6 +64,10 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
+    - name: Run the normal MSBuild process
+      run: build-sln.bat ${{ env.BUILD_PLATFORM }} ${{ env.BUILD_CONFIGURATION }}
+      shell: cmd
+
     - name: Fetch Build-Wrapper
       working-directory: ${{ github.workspace }}\.sonar
       run: |
