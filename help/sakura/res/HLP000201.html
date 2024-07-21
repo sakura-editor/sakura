@@ -36,55 +36,55 @@
 マクロの詳細は、<a href="HLP000204.html">マクロについて</a>をご覧ください。<br>
 <br>
 
-<strong>マクロフォルダー</strong><br>
+<span class="bold">マクロフォルダー</span><br>
 <div class="li200">マクロリストのファイル名が相対パスの場合の元になるフォルダーを指定します。<br>
 フォルダー名が相対パスの場合も、フォルダー名は、設定フォルダーからの相対パスとして認識します。ただし、「..」は使えません。<br>
 たとえば、「Macro\」と指定し、設定ファイルが「C:\Program files\sakura」フォルダーにある場合は、「C:\Program files\sakura\Macro\」を指すことになります。<br>
 <a href="HLP000125.html">キーマクロの記録</a>は、このフォルダーに「RecKey.mac」と言うファイル名で保存されます。<br>
 </div><br>
-<strong>[参照]</strong>ボタン<br>
+<span class="bold">[参照]</span>ボタン<br>
 <div class="li200">マクロが格納されているフォルダーを指定します。<br>
 </div><br>
-<strong>マクロ一覧</strong>リスト<br>
+<span class="bold">マクロ一覧</span>リスト<br>
 <div class="li200">マクロの一覧を表示します。<br>
 ５０個まで登録できます。<br>
 マクロを選択すると、下に詳細を表示します。
 </div><br>
-<strong>名前</strong><br>
+<span class="bold">名前</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロの名前を指定します。<br>
-<strong>ID</strong><br>
+<span class="bold">ID</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロを登録する位置を指定します。<br>
-<strong>File</strong><br>
+<span class="bold">File</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロのファイル名を指定します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;※フルパス指定も有効です。<br>
-□<strong>マクロを実行するたびにファイルを読み込みなおす</strong><br>
+□<span class="bold">マクロを実行するたびにファイルを読み込みなおす</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロ実行時に対応するマクロファイルを読み込みなおしてからマクロを実行します。<br>
-<strong>キャンセル確認待ち時間</strong>(10秒)<br>
+<span class="bold">キャンセル確認待ち時間</span>(10秒)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;WSHマクロ・WSHプラグインのキャンセル確認ダイアログを表示するまでの時間を秒で指定します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0を指定すると、ダイアログを表示しません。(sakura:2.0.6.0 以降)<br>
-□<strong>自動実行：新規／開ファイル後</strong><br>
+□<span class="bold">自動実行：新規／開ファイル後</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;ファイルを読み取った直後または(無題)になるタイミングでマクロを実行します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;新規作成、ファイルを開く、閉じて(無題)、名前をつけて保存、開き直す系コマンドなどで発生します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロ一覧では「O」で表示されます。1つのみ指定可能です。<br>
-□<strong>自動実行：タイプ変更後</strong><br>
+□<span class="bold">自動実行：タイプ変更後</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定一覧で、「一時適用」を行ったときに実行します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロ一覧では「T」で表示されます。1つのみ指定可能です。<br>
-□<strong>自動実行：ファイル保存前</strong><br>
+□<span class="bold">自動実行：ファイル保存前</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;ファイル保存の直前にマクロを実行します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ファイル名の扱いは <a href="HLP000268.html#GetSaveFilename">GetSaveFilename</a> などを参照してください。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロ一覧では「S」で表示されます。1つのみ指定可能です。<br>
-<strong>[設定]</strong>ボタン<br>
+<span class="bold">[設定]</span>ボタン<br>
 <div class="li200">マクロファイルをIDで示す位置に登録します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;・ファイル名が未入力の場合 --&gt; 未登録として扱われる<br>
 &nbsp;&nbsp;&nbsp;&nbsp;・名前が未入力の場合 --&gt; ファイル名がマクロ名とみなされる<br>
 登録を解除するには、名前及びファイル名を空欄にして[設定]ボタンを押します。<br>
 </div>
 <br>
-<strong>[設定フォルダー]</strong><br>
+<span class="bold">[設定フォルダー]</span><br>
 <a href="HLP000077.html">設定フォルダー</a>ボタンは、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合のみ表示されます。<br>
 <br>
 <img alt="hint" src="images/hint.png" />ヒント<br>
-名前、ファイルなどを変更しても、<strong>[設定]</strong>ボタンを押さないとリストには登録されません。<br>
+名前、ファイルなどを変更しても、<span class="bold">[設定]</span>ボタンを押さないとリストには登録されません。<br>
 <a href="HLP000109.html">コマンドラインオプション</a> による起動時のマクロ実行もあります。<br>
 <br>
 <img alt="note" src="images/note.png" />注意<br>
