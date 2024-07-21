@@ -33,6 +33,7 @@
 #define SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_
 #pragma once
 
+#include <algorithm>
 #include <stdexcept>
 #include <vector>
 

@@ -557,7 +557,7 @@ void CEditView::DeleteData(
 			
 			CLayoutPoint caretOld = CLayoutPoint(rcSel.left, rcSel.top);
 			m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
-			if( rcSel.left <= pcLayout->CalcLayoutWidth( m_pcEditDoc->m_cLayoutMgr ) ){
+			if( pcLayout != NULL && rcSel.left <= pcLayout->CalcLayoutWidth( m_pcEditDoc->m_cLayoutMgr ) ){
 				// EOLより左なら文字の単位にそろえる
 				CLogicInt nIdxCaret = LineColumnToIndex( pcLayout, rcSel.left );
 				caretOld.SetX( LineIndexToColumn( pcLayout, nIdxCaret ) );
@@ -613,7 +613,7 @@ void CEditView::DeleteData(
 			nNxtPos = GetCaret().GetCaretLayoutPos().GetX() + CLayoutInt(pcLayout->GetLayoutEol().GetLen()>0?1+m_pcEditDoc->m_cLayoutMgr.GetCharSpacing():0);
 		}
 		else{
-			nNxtIdx = CLogicInt(CNativeW::GetCharNext( pLine, nLineLen, &pLine[nCurIdx] ) - pLine);
+			nNxtIdx = nCurIdx + CNativeW::GetSizeOfChar( pLine, nLineLen, nCurIdx);
 			// 指定された行のデータ内の位置に対応する桁の位置を調べる
 			nNxtPos = LineIndexToColumn( pcLayout, nNxtIdx );
 		}

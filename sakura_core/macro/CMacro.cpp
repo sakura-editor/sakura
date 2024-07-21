@@ -1301,6 +1301,7 @@ bool CMacro::HandleCommand(
 	case F_CHGWRAPCOLUMN:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
 	case F_MACROSLEEP:
 	case F_SETDRAWSWITCH:	//  再描画スイッチを取得、設定する
+	case F_CHGINSSPACE:		// SPACEの挿入を取得、設定する
 		{
 			VARIANT vArg[1];			// HandleFunctionに渡す引数
 			VARIANT vResult;			// HandleFunctionから返る値
@@ -1448,14 +1449,14 @@ bool CMacro::HandleCommand(
 	return true;
 }
 
-inline bool VariantToBStr(Variant& varCopy, const VARIANT& arg)
+inline bool VariantToBStr(Variant& varCopy, VARIANT& arg)
 {
-	return VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(arg) ), 0, VT_BSTR) == S_OK;
+	return VariantChangeType(&varCopy.Data, &(arg), 0, VT_BSTR) == S_OK;
 }
 
-inline bool VariantToI4(Variant& varCopy, const VARIANT& arg)
+inline bool VariantToI4(Variant& varCopy, VARIANT& arg)
 {
-	return VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(arg) ), 0, VT_I4) == S_OK;
+	return VariantChangeType(&varCopy.Data, &(arg), 0, VT_I4) == S_OK;
 }
 
 /**	値を返す関数を処理する
@@ -1474,7 +1475,7 @@ inline bool VariantToI4(Variant& varCopy, const VARIANT& arg)
 	@date 2005.08.05 maru,zenryaku 関数追加
 	@date 2005.11.29 FILE VariantChangeType対応
 */
-bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Arguments, int ArgSize, VARIANT &Result)
+bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Arguments, int ArgSize, VARIANT &Result)
 {
 	Variant varCopy;	// VT_BYREFだと困るのでコピー用
 
@@ -1516,7 +1517,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		// 2003.02.24 Moca
 		{
 			if(ArgSize != 1) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			//void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);
 			//pszSourceを展開して、pszBufferにコピー
 			wchar_t *Source;
@@ -1533,7 +1534,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2003.06.01 Moca マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			if( -1 < varCopy.Data.lVal ){
 				const wchar_t *Buffer;
 				CLogicInt nLength;
@@ -1560,7 +1561,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2003.06.01 Moca マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			if( 0 == varCopy.Data.lVal ){
 				int nLineCount;
 				nLineCount = View->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
@@ -1574,7 +1575,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2004.03.16 zenryaku マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			int nTab = (Int)View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas();
 			Wrap( &Result )->Receive( nTab );
 			// 2013.04.30 Moca 条件追加。不要な場合はChangeLayoutParamを呼ばない
@@ -1678,7 +1679,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2008.06.19 ryoji マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			Wrap( &Result )->Receive( (Int)View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() );
 			if( varCopy.Data.iVal < MINLINEKETAS || varCopy.Data.iVal > MAXLINEKETAS )
 				return true;
@@ -1702,7 +1703,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			int nType1 = View->m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex();	// 現在のタイプ
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 指定拡張子のタイプ
 			delete[] Source;
@@ -1718,12 +1719,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			WCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			int nType1 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 拡張子１のタイプ
 			delete[] Source;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 拡張子２のタイプ
 			delete[] Source;
@@ -1738,14 +1739,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			WCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::wstring sMessage = Source;	// 表示メッセージ
 			delete[] Source;
 
 			std::wstring sDefaultValue = L"";
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefaultValue = Source;	// デフォルト値
 				delete[] Source;
@@ -1753,7 +1754,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			int nMaxLen = _MAX_PATH;
 			if( ArgSize >= 3 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[2]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[2]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 				nMaxLen = varCopy.Data.intVal;	// 最大入力長
 				if( nMaxLen <= 0 ){
 					nMaxLen = _MAX_PATH;
@@ -1787,7 +1788,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			WCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::wstring sMessage = Source;	// 表示文字列
 			delete[] Source;
@@ -1796,7 +1797,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			switch( LOWORD(ID) ) {
 			case F_MESSAGEBOX:
 				if( ArgSize >= 2 ){
-					if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+					if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 					uType = varCopy.Data.uintVal;
 				}else{
 					uType = MB_OK;
@@ -1829,12 +1830,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			WCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::wstring sVerA = Source;	// バージョンA
 			delete[] Source;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::wstring sVerB = Source;	// バージョンB
 			delete[] Source;
@@ -1847,7 +1848,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			if( ArgSize != 1 ) return false;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_UI4) != S_OK) return false;	// VT_UI4として解釈
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_UI4) != S_OK) return false;	// VT_UI4として解釈
 			CWaitCursor cWaitCursor( View->GetHwnd() );	// カーソルを砂時計にする
 			::Sleep( varCopy.Data.uintVal );
 			Wrap( &Result )->Receive( 0 );	//戻り値は今のところ0固定
@@ -1863,14 +1864,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			std::wstring sFilter;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefault = Source;	// 既定のファイル名
 				delete[] Source;
 			}
 
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sFilter = Source;	// フィルタ文字列
 				delete[] Source;
@@ -1912,14 +1913,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			std::wstring sDefault;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sMessage = Source;	// 表示メッセージ
 				delete[] Source;
 			}
 
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefault = Source;	// 既定のファイル名
 				delete[] Source;
@@ -1946,7 +1947,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int nOpt = 0;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 				nOpt = varCopy.Data.intVal;	// オプション
 			}
 
@@ -1970,12 +1971,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int nOpt = 0;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 				nOpt = varCopy.Data.intVal;	// オプション
 			}
 
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&sValue);
 			}
 
@@ -2069,8 +2070,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			Variant varCopy2;
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;
-				if(VariantChangeType(&varCopy2.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
 				SysString ret = View->GetDocument()->m_cCookie.GetCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal);
 				Wrap( &Result )->Receive( ret );
 				return true;
@@ -2081,9 +2082,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			Variant varCopy2, varCopy3;
 			if( ArgSize >= 3 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;
-				if(VariantChangeType(&varCopy2.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;
-				if(VariantChangeType(&varCopy3.Data, const_cast<VARIANTARG*>( &(Arguments[2]) ), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy3.Data, &(Arguments[2]), 0, VT_BSTR) != S_OK) return false;
 				SysString ret = View->GetDocument()->m_cCookie.GetCookieDefault(varCopy.Data.bstrVal, varCopy2.Data.bstrVal,
 					varCopy3.Data.bstrVal, SysStringLen(varCopy3.Data.bstrVal) );
 				Wrap( &Result )->Receive( ret );
@@ -2095,9 +2096,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			Variant varCopy2, varCopy3;
 			if( ArgSize >= 3 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;
-				if(VariantChangeType(&varCopy2.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;
-				if(VariantChangeType(&varCopy3.Data, const_cast<VARIANTARG*>( &(Arguments[2]) ), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy3.Data, &(Arguments[2]), 0, VT_BSTR) != S_OK) return false;
 				int ret = View->GetDocument()->m_cCookie.SetCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal,
 					varCopy3.Data.bstrVal, SysStringLen(varCopy3.Data.bstrVal) );
 				Wrap( &Result )->Receive( ret );
@@ -2109,8 +2110,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			Variant varCopy2;
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;
-				if(VariantChangeType(&varCopy2.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
 				int ret = View->GetDocument()->m_cCookie.DeleteCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal);
 				Wrap( &Result )->Receive( ret );
 				return true;
@@ -2120,7 +2121,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_GETCOOKIENAMES:
 		{
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;
+				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
 				SysString ret = View->GetDocument()->m_cCookie.GetCookieNames(varCopy.Data.bstrVal);
 				Wrap( &Result )->Receive( ret );
 				return true;
@@ -2456,6 +2457,16 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			int nLine = (Int)View->GetTextArea().GetViewTopLine();
 			Wrap( &Result )->Receive( nLine + 1 );
+			return true;
+		}
+	case F_CHGINSSPACE:
+		{
+			if( ArgSize != 1 ) return false;
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			auto& bInsSpace = View->m_pcEditDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
+			Wrap( &Result )->Receive( bInsSpace ? 1 : 0 );
+			if (varCopy.Data.iVal == 0) bInsSpace = false;
+			else if (varCopy.Data.iVal == 1) bInsSpace = true;
 			return true;
 		}
 	default:

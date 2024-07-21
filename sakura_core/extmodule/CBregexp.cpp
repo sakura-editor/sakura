@@ -675,7 +675,9 @@ bool CheckRegexpSyntax(
 	}
 	if( !cRegexp.Compile( szPattern, NULL, nOption, bKakomi ) ){	// 2002/2/1 hor追加
 		if( bShowMessage ){
-			::MessageBox( hWnd, cRegexp.GetLastMessage(),
+			std::wstring message(LS(STR_REGEX_COMPILE_ERR_PREAMBLE));
+			message += cRegexp.GetLastMessage();
+			::MessageBox( hWnd, message.c_str(),
 				LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION );
 		}
 		return false;

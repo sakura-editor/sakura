@@ -55,4 +55,7 @@ const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
 // 2014.08.02 定数定義追加 katze
 const int LINENUMWIDTH_MIN = 2;
 const int LINENUMWIDTH_MAX = 11;
+
+constexpr auto TABSPACE_MAX = 64;
+
 #endif /* SAKURA_APP_CONSTANTS_30AEF8B3_BD9C_404E_B5CE_CDFE9E8FE451_H_ */

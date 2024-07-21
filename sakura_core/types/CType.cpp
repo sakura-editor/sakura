@@ -248,6 +248,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bIndentCppStringIgnore = true;
 	pType->m_bIndentCppCommentIgnore = true;
 	pType->m_bIndentCppUndoSep = false;
+	pType->m_bDetectIndentationStyleOnFileLoad = false;
 	pType->m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
 	pType->m_szOutlineRuleFilename[0] = L'\0';		//Dec. 4, 2000 MIK

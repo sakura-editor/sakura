@@ -124,7 +124,7 @@ public:
 	int GetParamCount() const;
 
 	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgLengths[], const int ArgSize );
-	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
+	static bool HandleFunction( CEditView *View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result);
 	//2009.10.29 syat HandleCommandとHandleFunctionの引数を少しそろえた
 
 	/*

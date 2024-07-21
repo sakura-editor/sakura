@@ -851,6 +851,7 @@ BEGIN
     CONTROL         "コメントを無視する(&C)",IDC_CHECK_INDENTCPPCMT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,158,171,130,10
     CONTROL         "Undoバッファを分ける(&U)",IDC_CHECK_INDENTCPPUNDO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,183,146,10
     GROUPBOX        "C/C++インデント詳細設定",IDC_STATIC,3,159,295,40,WS_GROUP
+    CONTROL         "ファイル読み込み時にインデントスタイルを検出する(&T)",IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,205,240,10
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244
@@ -3160,6 +3161,7 @@ BEGIN
     STR_DLGFNCLST_UNIFY     "現在の画面のドッキング配置情報をすべての共通設定・タイプ別設定にコピーして統一します。\n（現在開いている他画面の状態も統一します。）\n"
     STR_BREGONIG_ERROR      "bregonig.dll のロードで予期せぬエラーが発生しました。"
     STR_BREGONIG_TITLE      "正規表現エラー"
+    STR_REGEX_COMPILE_ERR_PREAMBLE "正規表現の構文に誤りがあります。\n詳細："
     STR_ERR_CWSH09          "マクロの実行を中断しました。"
     STR_ERR_DLGMACRO03_1    "入力改行コードが指定されていません．"
     STR_ERR_DLGMACRO16      "数値を指定してください．"
