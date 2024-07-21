@@ -56,13 +56,9 @@ public:
 	void	SetFileTime( FILETIME& Time )			{ cFileTime.SetFILETIME( Time ); }
 };
 
-/*!
- * 編集中ドキュメントのファイル管理クラス
- */
 class CDocFile : public CFile{
 public:
-	CDocFile() = default;
-	~CDocFile() override = default;
+	CDocFile(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) {}
 
 	void			SetCodeSet(ECodeType eCodeSet , bool bBomExist)	{ m_sFileInfo.SetCodeSet(eCodeSet, bBomExist); }	//!< 文字コードセットを設定
 	void			SetCodeSetChg(ECodeType eCodeSet , bool bBomExist)	{ m_sFileInfo.eCharCode = eCodeSet; m_sFileInfo.bBomExist = bBomExist; }	//!< 文字コードセットを設定(文字コード指定用)
@@ -82,6 +78,7 @@ public:
 	const WCHAR*	GetSaveFilePath(void) const;
 	void			SetSaveFilePath(LPCWSTR pszPath){ m_szSaveFilePath.Assign(pszPath); }
 public: //####
+	CEditDoc*	m_pcDocRef;
 	SFileInfo	m_sFileInfo;
 	CFilePath	m_szSaveFilePath;	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 };

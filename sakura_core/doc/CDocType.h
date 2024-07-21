@@ -32,20 +32,14 @@
 #define SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_
 #pragma once
 
-#include "doc/CDocListener.h"
 #include "types/CType.h" // CTypeConfig
 #include "env/CDocTypeManager.h"
 
-/*!
- * 編集中ドキュメントの設定管理クラス
- */
-class CDocType : public ShareDataAccessorClient, private CDocRefClient
-{
+class CDocType{
 public:
 	//生成と破棄
-	explicit CDocType(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	virtual ~CDocType() = default;
-
+	CDocType(CEditDoc* pcDoc);
+	
 	//ロック機能	//	Nov. 29, 2000 genta 設定の一時変更時に拡張子による強制的な設定変更を無効にする
 	void LockDocumentType(){ m_nSettingTypeLocked = true; }
 	void UnlockDocumentType(){ m_nSettingTypeLocked = false; }
@@ -71,9 +65,9 @@ public:
 	void SetDocumentIcon();	//アイコンの設定	//Sep. 10, 2002 genta
 
 private:
+	CEditDoc*				m_pcDocRef;
 	CTypeConfig				m_nSettingType;
 	STypeConfig				m_typeConfig;
 	bool					m_nSettingTypeLocked;		//!< 文書種別の一時設定状態
 };
-
 #endif /* SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_ */

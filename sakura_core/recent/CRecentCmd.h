@@ -37,8 +37,7 @@ typedef StaticString<WCHAR, MAX_CMDLEN> CCmdString;
 class CRecentCmd final : public CRecentImp<CCmdString, LPCWSTR>{
 public:
 	//生成
-	explicit CRecentCmd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CRecentCmd() override = default;
+	CRecentCmd();
 
 	//オーバーライド
 	int				CompareItem( const CCmdString* p1, LPCWSTR p2 ) const override;

@@ -34,11 +34,6 @@
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
 
-CAutoSaveAgent::CAutoSaveAgent(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClient(std::move(ShareDataAccessor_))
-{
-}
-
 //	From Here Aug. 21, 2000 genta
 //
 //	自動保存を行うかどうかのチェック
@@ -69,8 +64,8 @@ void CAutoSaveAgent::CheckAutoSave()
 //
 void CAutoSaveAgent::ReloadAutoSaveParam()
 {
-	m_cPassiveTimer.SetInterval( GetShareData()->m_Common.m_sBackup.GetAutoBackupInterval() );
-	m_cPassiveTimer.Enable( GetShareData()->m_Common.m_sBackup.IsAutoBackupEnabled() );
+	m_cPassiveTimer.SetInterval( GetDllShareData().m_Common.m_sBackup.GetAutoBackupInterval() );
+	m_cPassiveTimer.Enable( GetDllShareData().m_Common.m_sBackup.IsAutoBackupEnabled() );
 }
 
 //----------------------------------------------------------

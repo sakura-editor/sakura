@@ -589,12 +589,11 @@ const WCHAR* CBregexp::GetLastMessage() const
 bool InitRegexp(
 	HWND		hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
 	CBregexp&	rRegexp,		//!< [in] チェックに利用するCBregexpクラスへの参照
-	bool		bShowMessage,	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
-	std::shared_ptr<ShareDataAccessor> _ShareDataAccessor
+	bool		bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
 )
 {
 	//	From Here 2007.08.12 genta
-	const auto pShareData = _ShareDataAccessor->GetShareData();
+	DLLSHAREDATA* pShareData = &GetDllShareData();
 
 	LPCWSTR RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
 	//	To Here 2007.08.12 genta
@@ -630,13 +629,12 @@ bool InitRegexp(
 bool CheckRegexpVersion(
 	HWND	hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
 	int		nCmpId,			//!< [in] バージョン文字列を設定するコンポーネントID
-	bool	bShowMessage,	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
-	std::shared_ptr<ShareDataAccessor> _ShareDataAccessor
+	bool	bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
 )
 {
 	CBregexp cRegexp;
 
-	if( !InitRegexp( hWnd, cRegexp, bShowMessage, std::move(_ShareDataAccessor) ) ){
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		if( hWnd != NULL ){
 			::DlgItem_SetText( hWnd, nCmpId, L" ");
 		}
@@ -677,7 +675,9 @@ bool CheckRegexpSyntax(
 	}
 	if( !cRegexp.Compile( szPattern, NULL, nOption, bKakomi ) ){	// 2002/2/1 hor追加
 		if( bShowMessage ){
-			::MessageBox( hWnd, cRegexp.GetLastMessage(),
+			std::wstring message(LS(STR_REGEX_COMPILE_ERR_PREAMBLE));
+			message += cRegexp.GetLastMessage();
+			::MessageBox( hWnd, message.c_str(),
 				LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION );
 		}
 		return false;

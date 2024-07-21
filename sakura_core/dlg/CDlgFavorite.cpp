@@ -105,17 +105,8 @@ struct CompareListViewLParam
 	DLLSHAREDATAが一致しない可能性もある。
 */
 
-CDlgFavorite::CDlgFavorite(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	 : CSizeRestorableDialog(IDD_FAVORITE, std::move(ShareDataAccessor_))
-	, m_cRecentFile(GetShareDataAccessor())
-	, m_cRecentFolder(GetShareDataAccessor())
-	, m_cRecentExceptMRU(GetShareDataAccessor())
-	, m_cRecentSearch(GetShareDataAccessor())
-	, m_cRecentReplace(GetShareDataAccessor())
-	, m_cRecentGrepFile(GetShareDataAccessor())
-	, m_cRecentGrepFolder(GetShareDataAccessor())
-	, m_cRecentCmd(GetShareDataAccessor())
-	, m_cRecentCurDir(GetShareDataAccessor())
+CDlgFavorite::CDlgFavorite()
+	 : CDialog(true)
 {
 	int	i;
 
@@ -401,7 +392,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CreateSizeBox();
 	CDialog::OnSize();
 
-	RECT rcDialog = GetShareData()->m_Common.m_sOthers.m_rcFavoriteDialog;
+	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
 	if( rcDialog.left != 0 ||
 		rcDialog.bottom != 0 ){
 		m_xPos = rcDialog.left;
@@ -498,7 +489,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgFavorite::OnDestroy( void )
 {
 	CDialog::OnDestroy();
-	RECT& rect = GetShareData()->m_Common.m_sOthers.m_rcFavoriteDialog;
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
 	rect.left = m_xPos;
 	rect.top = m_yPos;
 	rect.right = rect.left + m_nWidth;

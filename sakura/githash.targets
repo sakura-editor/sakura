@@ -24,4 +24,10 @@
       <Clean Include="$(GeneratedGitHash)" />
     </ItemGroup>
   </Target>
+  <Target Name="CleanGitHash" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(GeneratedGitHash)" />
+    </ItemGroup>
+  </Target>
 </Project>

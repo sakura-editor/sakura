@@ -48,7 +48,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_cIcons.Create( m_hInst );	//	CreateImage List
 
 	//ドキュメントの作成
-	m_pcEditDoc = CEditDoc::getInstance();
+	m_pcEditDoc = new CEditDoc(this);
 
 	//IO管理
 	m_pcLoadAgent = new CLoadAgent();
@@ -69,7 +69,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
-	m_pcEditWnd->Create( &m_cIcons, nGroupId );
+	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
 
 	//MRU管理
 	m_pcMruListener = new CMruListener();
@@ -78,7 +78,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create(
 		m_pcEditWnd->GetHwnd(),
-		&m_cIcons,
+		&GetIcons(),
 		&m_pcEditWnd->GetMenuDrawer()
 	);
 }
@@ -92,6 +92,7 @@ CEditApp::~CEditApp()
 	delete m_pcVisualProgress;
 	delete m_pcSaveAgent;
 	delete m_pcLoadAgent;
+	delete m_pcEditDoc;
 }
 
 /*! 共通設定 プロパティシート */

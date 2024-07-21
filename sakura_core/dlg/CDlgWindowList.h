@@ -34,12 +34,10 @@
 #pragma once
 
 #include "dlg/CDialog.h"
-
-class CDlgWindowList final : public CSizeRestorableDialog
+class CDlgWindowList final : public CDialog
 {
 public:
-	explicit CDlgWindowList(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CDlgWindowList() override = default;
+	CDlgWindowList();
 
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
 protected:

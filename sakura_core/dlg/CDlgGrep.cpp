@@ -73,13 +73,7 @@ const DWORD p_helpids[] = {	//12000
 
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
 
-CDlgGrep::CDlgGrep(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_, WORD idDialog_)
-	: CSakuraDialog(idDialog_, std::move(ShareDataAccessor_))
-	, m_cRecentSearch(GetShareDataAccessor())
-	, m_cRecentGrepFile(GetShareDataAccessor())
-	, m_cRecentGrepFolder(GetShareDataAccessor())
-	, m_cRecentExcludeFile(GetShareDataAccessor())
-	, m_cRecentExcludeFolder(GetShareDataAccessor())
+CDlgGrep::CDlgGrep()
 {
 	m_bEnableThisText = true;
 	m_bSelectOnceThisText = false;
@@ -688,7 +682,7 @@ void CDlgGrep::SetData( void )
 	// 正規表現ライブラリの差し替えに伴う処理の見直し
 	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
 	// 無関係にCheckRegexpVersionを通過するようにした。
-	if( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false, GetShareDataAccessor() )
+	if( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false )
 		&& m_sSearchOption.bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 1 );

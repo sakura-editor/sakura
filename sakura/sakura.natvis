@@ -9,41 +9,4 @@
       <Item Name="_Size">m_nDataBufSize / 2</Item>
     </Expand>
   </Type>
-  <Type Name="CStrictInteger&lt;*,*,*,*,*&gt;">
-    <DisplayString>{m_value}</DisplayString>
-    <Expand>
-      <Item Name="value">m_value</Item>
-    </Expand>
-  </Type>
-  <Type Name="SLayoutPoint">
-    <DisplayString>{{{x}, {y}}}</DisplayString>
-    <Expand>
-      <Item Name="x">x</Item>
-      <Item Name="y">y</Item>
-    </Expand>
-  </Type>
-  <Type Name="SLogicPoint">
-    <DisplayString>{{{x}, {y}}}</DisplayString>
-    <Expand>
-      <Item Name="x">x</Item>
-      <Item Name="y">y</Item>
-    </Expand>
-  </Type>
-  <Type Name="CRangeBase&lt;*&gt;">
-    <DisplayString>{{{m_ptFrom}, {m_ptTo}}}</DisplayString>
-    <Expand>
-      <Item Name="From">m_ptFrom</Item>
-      <Item Name="To">m_ptTo</Item>
-    </Expand>
-  </Type>
-  <Type Name="StaticString&lt;wchar_t,*&gt;">
-    <DisplayString Condition="m_szData[0] == 0">empty</DisplayString>
-    <DisplayString Condition="m_szData[0] != 0">{m_szData,su}</DisplayString>
-    <Expand>
-       <ArrayItems>
-        <Size>BUFFER_COUNT</Size>
-        <ValuePointer>m_szData</ValuePointer>
-      </ArrayItems>
-    </Expand>
-  </Type>
 </AutoVisualizer>

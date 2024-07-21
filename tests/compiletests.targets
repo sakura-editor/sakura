@@ -1,34 +1,26 @@
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="CompileTests">
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="CompileTest">
     <CompileTestSourceDir>$(MSBuildThisFileDirectory)compiletests\</CompileTestSourceDir>
-    <CompileTestBuildDir>$([MSBuild]::NormalizePath('$(IntDir)', '..\compiletests\'))</CompileTestBuildDir>
+    <CompileTestBuildDir>$(SolutionDir)build\$(Platform)\$(Configuration)\compiletests\</CompileTestBuildDir>
   </PropertyGroup>
   <ItemGroup>
     <CompileTestTarget Include="..\sakura_core\basis\CLaxInteger.h" />
     <CompileTestTarget Include="..\sakura_core\basis\CStrictInteger.h" />
     <CompileTestTarget Include="..\sakura_core\basis\SakuraBasis.h" />
   </ItemGroup>
-  <ItemGroup>
-    <CompileTestSource Include="$(CompileTestSourceDir)CMakeLists.txt" />
-    <CompileTestSource Include="$(CompileTestSourceDir)clayoutint_test.cpp.in" />
-  </ItemGroup>
   <Target Name="MakeCompileTestBuildDir" Condition="!Exists('$(CompileTestBuildDir)')">
     <MakeDir Directories="$(CompileTestBuildDir)" />
   </Target>
-  <Target Name="RunCompileTests"
-      Inputs="@(CompileTestTarget);@(CompileTestSource);$(MSBuildThisFilePath)"
-      Outputs="$(CompileTestBuildDir)CMakeCache.txt"
-      DependsOnTargets="MakeCompileTestBuildDir"
-      BeforeTargets="ClCompile">
+  <Target Name="RunCompileTests" DependsOnTargets="MakeCompileTestBuildDir" BeforeTargets="ClCompile" Inputs="@(CompileTestTarget)" Outputs="$(CompileTestBuildDir)CMakeCache.txt">
     <PropertyGroup>
-      <VsVersion>$([System.Double]::Parse('$(VisualStudioVersion)'))</VsVersion>
+      <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
     </PropertyGroup>
-    <SetEnv prefix="false" name="platform"      value="$(Platform)" />
-    <SetEnv prefix="false" name="configuration" value="$(Configuration)" />
-    <SetEnv prefix="false" name="NUM_VSVERSION" value="$(VsVersion)" />
+    <SetEnv name="platform" value="$(Platform)" prefix="false" />
+    <SetEnv name="configuration" value="$(Configuration)" prefix="false" />
+    <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
     <Exec Command="$(MSBuildThisFileDirectory)compiletests.run.cmd &quot;$(CompileTestBuildDir)&quot;" ConsoleToMSBuild="true" />
   </Target>
-  <Target Name="CleanCompileTest" BeforeTargets="CoreClean">
+  <Target Name="AppendCleanTargetsForCompileTest" BeforeTargets="CoreClean">
     <RemoveDir Directories="$(CompileTestBuildDir)" />
   </Target>
 </Project>

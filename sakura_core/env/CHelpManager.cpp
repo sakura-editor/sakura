@@ -25,17 +25,13 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
- */
-#include "StdAfx.h"
-#include "env/CHelpManager.h"
+*/
 
-/*!
- * コンストラクタ
- */
-CHelpManager::CHelpManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
-{
-}
+#include "StdAfx.h"
+#include "DLLSHAREDATA.h"
+
+#include "CHelpManager.h"
+#include "env/CDocTypeManager.h"
 
 /*!	外部Winヘルプが設定されているか確認。
 */

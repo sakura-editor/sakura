@@ -33,12 +33,7 @@
 #define SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_
 #pragma once
 
-#include "apimodule/Kernel32Dll.hpp"
-#include "env/ShareDataAccessor.hpp"
-
 #include <string>
-#include <string_view>
-
 #include "CSelectLang.h"		// 2011.04.10 nasukoji
 #include "charset/charset.h"
 #include "util/design_template.h"
@@ -65,18 +60,16 @@ struct STypeConfig;
 
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
-class CShareData : private Kernel32DllClient, private ShareDataAccessorClient, public TSingleInstance<CShareData>
+class CShareData : public TSingleInstance<CShareData>
 {
-	using TypeVectorPtr = std::vector<STypeConfig*>*;
-
 public:
-	explicit CShareData(std::shared_ptr<Kernel32Dll> Kernel32Dll_ = std::make_shared<Kernel32Dll>(), std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CShareData() override;
+	CShareData();
+	~CShareData();
 
 	/*
 	||  Attributes & Operations
 	*/
-	bool InitShareData(std::wstring_view profileName);	/* CShareDataクラスの初期化処理 */
+	bool InitShareData();	/* CShareDataクラスの初期化処理 */
 	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
 	
 	//MRU系
@@ -119,62 +112,11 @@ protected:
 public:
 	static void InitFileTree(SFileTree*);
 
-protected:
-	bool CloseHandle(
-		_In_ _Post_ptr_invalid_ HANDLE hObject
-	) const
-	{
-		return GetKernel32Dll()->CloseHandle(hObject);
-	}
-
-	HANDLE CreateFileMappingW(
-		_In_     HANDLE hFile,
-		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
-		_In_     DWORD flProtect,
-		_In_     DWORD dwMaximumSizeHigh,
-		_In_     DWORD dwMaximumSizeLow,
-		std::wstring_view fileMapName
-	) const
-	{
-		return GetKernel32Dll()->CreateFileMappingW(hFile, lpFileMappingAttributes, flProtect, dwMaximumSizeHigh, dwMaximumSizeLow, fileMapName.data());
-	}
-
-	DWORD GetLastError(
-		VOID
-	) const
-	{
-		return GetKernel32Dll()->GetLastError();
-	}
-
-	LPVOID MapViewOfFile(
-		_In_ HANDLE hFileMappingObject,
-		_In_ DWORD dwDesiredAccess,
-		_In_ DWORD dwFileOffsetHigh,
-		_In_ DWORD dwFileOffsetLow,
-		_In_ SIZE_T dwNumberOfBytesToMap
-	) const
-	{
-		return GetKernel32Dll()->MapViewOfFile(hFileMappingObject, dwDesiredAccess, dwFileOffsetHigh, dwFileOffsetLow, dwNumberOfBytesToMap);
-	}
-
-	BOOL UnmapViewOfFile(
-		_In_ LPCVOID lpBaseAddress
-	)const
-	{
-		return GetKernel32Dll()->UnmapViewOfFile(lpBaseAddress);
-	}
-
-	void SetDllShareData(DLLSHAREDATA* pShareData) const
-	{
-		return GetShareDataAccessor()->SetShareData(pShareData);
-	}
-
 private:
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-	HANDLE			m_hFileMap           = nullptr;
-	DLLSHAREDATA*	m_pShareData         = nullptr;
-	TypeVectorPtr 	m_pvTypeSettings     = nullptr;	//	(コントロールプロセスのみ)
-	HWND			m_hwndTraceOutSource = nullptr;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
+	HANDLE			m_hFileMap;
+	DLLSHAREDATA*	m_pShareData;
+	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
+	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 };
-
 #endif /* SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_ */

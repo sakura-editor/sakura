@@ -51,8 +51,8 @@ static const SAnchorList anchorList[] = {
 	{IDC_STATIC_COMPARESRC, ANCHOR_LEFT_RIGHT},
 };
 
-CDlgCompare::CDlgCompare(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CSizeRestorableDialog(IDD_COMPARE, std::move(ShareDataAccessor_))
+CDlgCompare::CDlgCompare()
+	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert( _countof(anchorList) == _countof(m_rcItems) );
@@ -142,7 +142,7 @@ void CDlgCompare::SetData( void )
 //	setlocale ( LC_ALL, "C" );
 
 	/* 現在開いている編集窓のリストをメニューにする */
-	nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE, FALSE, GetShareDataAccessor() );
+	nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){
 		// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
 		CTextWidthCalc calc(hwndList);
@@ -253,7 +253,7 @@ BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
-	RECT rcDialog = GetShareData()->m_Common.m_sOthers.m_rcCompareDialog;
+	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog;
 	if( rcDialog.left != 0 ||
 		rcDialog.bottom != 0 ){
 		m_xPos = rcDialog.left;
@@ -268,7 +268,7 @@ BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgCompare::OnDestroy( void )
 {
 	CDialog::OnDestroy();
-	RECT& rect = GetShareData()->m_Common.m_sOthers.m_rcCompareDialog;
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog;
 	rect.left = m_xPos;
 	rect.top = m_yPos;
 	rect.right = rect.left + m_nWidth;

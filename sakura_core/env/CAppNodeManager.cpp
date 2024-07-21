@@ -361,7 +361,7 @@ int CAppNodeGroupHandle::GetEditorWindowsNum( bool bExcludeClosing/* = true */ )
 	j = 0;
 	for( i = 0; i < pShare->m_sNodes.m_nEditArrNum; ++i ){
 		if( IsSakuraMainWindow( pShare->m_sNodes.m_pEditArr[i].m_hWnd ) ){
-			if( m_nGroup != 0 && m_nGroup != static_cast<int>(CAppNodeManager::getInstance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup()) )
+			if( m_nGroup != 0 && m_nGroup != CAppNodeManager::getInstance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup() )
 				continue;
 			if( bExcludeClosing && pShare->m_sNodes.m_pEditArr[i].m_bClosing )
 				continue;
@@ -556,20 +556,20 @@ int CAppNodeManager::GetNoNameNumber( HWND hWnd )
 	@date 2003.06.28 MIK CRecent利用で書き換え
 	@date 2007.06.20 ryoji bGroup引数追加、ソート処理を自前のものからqsortに変更
 */
-int CAppNodeManager::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor )
+int CAppNodeManager::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
 {
 	int nRet;
 
 	LockGuard<CMutex> guard( g_cEditArrMutex );
-	nRet = _GetOpenedWindowArrCore( ppEditNode, bSort, bGSort, _ShareDataAccessor );
+	nRet = _GetOpenedWindowArrCore( ppEditNode, bSort, bGSort );
 
 	return nRet;
 }
 
 // GetOpenedWindowArr関数コア処理部
-int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor )
+int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
 {
-	DLLSHAREDATA* pShare = _ShareDataAccessor->GetShareData();
+	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	//編集ウインドウ数を取得する。
 	EditNodeEx*	pNode;	// ソート処理用の拡張リスト

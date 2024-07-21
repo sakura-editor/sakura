@@ -9,15 +9,21 @@
 	Copyright (C) 2002, MIK
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2018-2023, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "dlg/CDlgInput1.h"
-
+#include "CEditApp.h"
+#include "Funccode_enum.h"	// EFunctionCode
+#include "util/shell.h"
+#include "sakura_rc.h"
 #include "sakura.hh"
+#include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 
 // 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
 static const DWORD p_helpids[] = {	//13000
@@ -29,109 +35,119 @@ static const DWORD p_helpids[] = {	//13000
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-using namespace apiwrap;
-
-/*!
- * コンストラクター
- */
-CDlgInput1::CDlgInput1(WORD DialogId_, std::shared_ptr<User32Dll> User32Dll_) noexcept
-	: CDialog(DialogId_, std::move(User32Dll_))
+/* ダイアログプロシージャ */
+INT_PTR CALLBACK CDlgInput1Proc(
+	HWND hwndDlg,	// handle to dialog box
+	UINT uMsg,		// message
+	WPARAM wParam,	// first message parameter
+	LPARAM lParam 	// second message parameter
+)
 {
+	CDlgInput1* pCDlgInput1;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pCDlgInput1 = ( CDlgInput1* )lParam;
+		if( NULL != pCDlgInput1 ){
+			UpdateDialogFont( hwndDlg );
+			return pCDlgInput1->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		// Modified by KEITA for WIN64 2003.9.6
+		pCDlgInput1 = ( CDlgInput1* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		if( NULL != pCDlgInput1 ){
+			return pCDlgInput1->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
 }
 
 /* モードレスダイアログの表示 */
-INT_PTR CDlgInput1::DoModal(
-	HINSTANCE		  hInstance,
-	HWND			  hwndParent,
-	std::wstring_view title,
-	std::wstring_view message,
-	int				  nMaxTextLen,
-	WCHAR*			  pszText
+BOOL CDlgInput1::DoModal(
+	HINSTANCE		hInstApp,
+	HWND			hwndParent,
+	const WCHAR*	pszTitle,
+	const WCHAR*	pszMessage,
+	int				nMaxTextLen,
+	WCHAR*			pszText
 )
 {
-	_Title         = title;			/* ダイアログタイトル */
-	_Message       = message;		/* メッセージ */
-	_MaxTextLength = nMaxTextLen;	/* 入力サイズ上限 */
-	_Text          = pszText;
-
-	if (_Text.length() > _MaxTextLength)
-	{
-		_Text.resize(_MaxTextLength);
-	}
-
-	const auto bRet = CDialog::DoModal(hInstance, hwndParent, IDD_INPUT1, 0);
-
-	wcscpy_s(pszText, _MaxTextLength + 1, _Text.data());
-
+	BOOL bRet;
+	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_pszTitle = pszTitle;		/* ダイアログタイトル */
+	m_pszMessage = pszMessage;		/* メッセージ */
+	m_nMaxTextLen = nMaxTextLen;	/* 入力サイズ上限 */
+//	m_pszText = pszText;			/* テキスト */
+	m_cmemText.SetString( pszText );
+	bRet = (BOOL)::DialogBoxParam(
+		CSelectLang::getLangRsrcInstance(),
+		MAKEINTRESOURCE( IDD_INPUT1 ),
+		m_hwndParent,
+		CDlgInput1Proc,
+		(LPARAM)this
+	);
+	wcscpy( pszText, m_cmemText.GetStringPtr() );
 	return bRet;
 }
 
-/*!
- * ダイアログにデータを反映する
- */
-void CDlgInput1::SetDlgData(HWND hDlg) const
+/* ダイアログのメッセージ処理 */
+INT_PTR CDlgInput1::DispatchEvent(
+	HWND hwndDlg,	// handle to dialog box
+	UINT uMsg,		// message
+	WPARAM wParam,	// first message parameter
+	LPARAM lParam 	// second message parameter
+)
 {
-	SetDlgItemTextW(hDlg, IDC_EDIT_INPUT1, _Text);
-}
+	WORD	wNotifyCode;
+	WORD	wID;
+//	int		nRet;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		/* ダイアログデータの設定 */
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-/*!
- * ダイアログからデータを取り込む
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @retval >  0 取り込み正常
- * @retval == 0 取り込みデータなし
- * @retval <  0 取り込み異常
- */
-INT_PTR CDlgInput1::GetDlgData(HWND hDlg)
-{
-	_Text = GetDlgItemTextW(hDlg, IDC_EDIT_INPUT1, std::move(_Text));
+		::SetWindowText( hwndDlg, m_pszTitle );	/* ダイアログタイトル */
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), m_nMaxTextLen );	/* 入力サイズ上限 */
+		DlgItem_SetText( hwndDlg, IDC_EDIT_INPUT1, m_cmemText.GetStringPtr() );	/* テキスト */
+		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_MSG ), m_pszMessage );	/* メッセージ */
 
-	return TRUE;
-}
+		return TRUE;
+	case WM_COMMAND:
+		wNotifyCode = HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID、 コントロールID、 またはアクセラレータID */
+		switch( wNotifyCode ){
+		/* ボタン／チェックボックスがクリックされた */
+		case BN_CLICKED:
+			switch( wID ){
+			case IDOK:
+				m_cmemText.AllocStringBuffer( ::GetWindowTextLength( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ) ) );
+				::GetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), m_cmemText.GetStringPtr(), m_nMaxTextLen + 1 );	/* テキスト */
+				::EndDialog( hwndDlg, TRUE );
+				return TRUE;
+			case IDCANCEL:
+				::EndDialog( hwndDlg, FALSE );
+				return TRUE;
+			}
+			break;	//@@@ 2002.01.07 add
+		}
+		break;	//@@@ 2002.01.07 add
+	//@@@ 2002.01.07 add start
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		}
+		return TRUE;
 
-/*!
- * WM_INITDIALOGハンドラ
- *
- * @param [in] hDlg 宛先ウインドウのハンドル
- * @param [in] hWndFocus フォーカスを受け取る子ウインドウのハンドル
- * @param [in] lParam ダイアログパラメーター
- * @retval TRUE フォーカスが設定されます。
- * @retval FALSE フォーカスは設定されません。
- */
-BOOL CDlgInput1::OnDlgInitDialog(HWND hDlg, HWND hWndFocus, LPARAM lParam)
-{
-	const auto ret = CDialog::OnDlgInitDialog(hDlg, hWndFocus, lParam);
-
-	SetWindowTextW(hDlg, _Title);
-
-	SendEmLimitTextW(hDlg, IDC_EDIT_INPUT1, _MaxTextLength);
-
-	SetDlgItemTextW(hDlg, IDC_STATIC_MSG, _Text);
-
-	return ret;
-}
-
-/*!
- * WM_COMMANDハンドラ。
- *
- * @retval TRUE メッセージは処理された（≒デフォルト処理は呼び出されない。）
- * @retval FALSE メッセージは処理されなかった（≒デフォルト処理が呼び出される。）
- */
-BOOL CDlgInput1::OnDlgCommand(HWND hDlg, int id, HWND hWndCtl, UINT codeNotify)
-{
-	// OKボタンを押下されたとき、データを取り込む
-	if (id == IDOK)
-	{
-		GetDlgData(hDlg);
+	//Context Menu
+	case WM_CONTEXTMENU:
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		return TRUE;
+	//@@@ 2002.01.07 add end
 	}
-
-	return __super::OnDlgCommand(hDlg, id, hWndCtl, codeNotify);
-}
-
-/*!
- * ヘルプIDテーブルを取得する
- */
-INT_PTR CDlgInput1::GetHelpIds(void) const noexcept
-{
-	return (INT_PTR)p_helpids;
+	return FALSE;
 }

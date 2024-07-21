@@ -900,7 +900,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 					nPos += CNativeW::GetSizeOfChar(line.GetPtr(), line.GetLength(), nPos);
 					nDelLen = 1;
 					if( nKetaDiff < 0 && nPos < line.GetLength() ){
-						wchar_t c = line.At(nPos);
+						wchar_t c = line[nPos];
 						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c,
 								GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 							nDelLen = 2;

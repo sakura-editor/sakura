@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props" Condition="Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -66,9 +65,10 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>/FAsu /Fa$(IntDir) /source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -81,6 +81,7 @@
       <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
     <Link>
+      <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
@@ -93,15 +94,21 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
     <Link>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
+      <Optimization>MinSpace</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -118,11 +125,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
     <Link>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
   </ItemDefinitionGroup>
@@ -133,20 +152,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="$(IntDir)Funccode_define.h" />
-    <ClInclude Include="$(IntDir)Funccode_enum.h" />
-    <ClInclude Include="$(IntDir)githash.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\sakura_core\apimodule\Kernel32Dll.hpp" />
-    <ClInclude Include="..\sakura_core\apimodule\Ole32Dll.hpp" />
-    <ClInclude Include="..\sakura_core\apimodule\Shell32Dll.hpp" />
-    <ClInclude Include="..\sakura_core\apimodule\User32Dll.hpp" />
-    <ClInclude Include="..\sakura_core\apiwrap\apiwrap.hpp" />
-    <ClInclude Include="..\sakura_core\apiwrap\CClipboardApi.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
-    <ClInclude Include="..\sakura_core\apiwrap\cstring.hpp" />
-    <ClInclude Include="..\sakura_core\apiwrap\HGlobal.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
     <ClInclude Include="..\sakura_core\basis\TComImpl.hpp" />
@@ -245,7 +251,6 @@
     <ClInclude Include="..\sakura_core\debug\Debug1.h" />
     <ClInclude Include="..\sakura_core\debug\Debug2.h" />
     <ClInclude Include="..\sakura_core\debug\Debug3.h" />
-    <ClInclude Include="..\sakura_core\dlg\CCustomDialog.hpp" />
     <ClInclude Include="..\sakura_core\dlg\CDialog.h" />
     <ClInclude Include="..\sakura_core\dlg\CDlgAbout.h" />
     <ClInclude Include="..\sakura_core\dlg\CDlgCancel.h" />
@@ -307,7 +312,6 @@
     <ClInclude Include="..\sakura_core\env\CShareData_IO.h" />
     <ClInclude Include="..\sakura_core\env\CTagJumpManager.h" />
     <ClInclude Include="..\sakura_core\env\DLLSHAREDATA.h" />
-    <ClInclude Include="..\sakura_core\env\ShareDataAccessor.hpp" />
     <ClInclude Include="..\sakura_core\extmodule\CBregexp.h" />
     <ClInclude Include="..\sakura_core\extmodule\CBregexpDll2.h" />
     <ClInclude Include="..\sakura_core\extmodule\CDllHandler.h" />
@@ -316,6 +320,8 @@
     <ClInclude Include="..\sakura_core\extmodule\CMigemo.h" />
     <ClInclude Include="..\sakura_core\extmodule\CUchardet.h" />
     <ClInclude Include="..\sakura_core\extmodule\CUxTheme.h" />
+    <ClInclude Include="..\sakura_core\Funccode_define.h" />
+    <ClInclude Include="..\sakura_core\Funccode_enum.h" />
     <ClInclude Include="..\sakura_core\func\CFuncKeyWnd.h" />
     <ClInclude Include="..\sakura_core\func\CFuncLookup.h" />
     <ClInclude Include="..\sakura_core\func\CKeyBind.h" />
@@ -354,6 +360,7 @@
     <ClInclude Include="..\sakura_core\outline\CFuncInfo.h" />
     <ClInclude Include="..\sakura_core\outline\CFuncInfoArr.h" />
     <ClInclude Include="..\sakura_core\parse\CWordParse.h" />
+    <ClInclude Include="..\sakura_core\parse\DetectIndentationStyle.h" />
     <ClInclude Include="..\sakura_core\plugin\CComplementIfObj.h" />
     <ClInclude Include="..\sakura_core\plugin\CDllPlugin.h" />
     <ClInclude Include="..\sakura_core\plugin\CJackManager.h" />
@@ -389,6 +396,7 @@
     <ClInclude Include="..\sakura_core\sakura_rc.h" />
     <ClInclude Include="..\sakura_core\StdAfx.h" />
     <ClInclude Include="..\sakura_core\String_define.h" />
+    <ClInclude Include="..\sakura_core\githash.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgKeywordSelect.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgSameColor.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgTypeAscertain.h" />
@@ -457,9 +465,7 @@
     <ClInclude Include="..\sakura_core\view\figures\CFigure_Tab.h" />
     <ClInclude Include="..\sakura_core\view\figures\CFigure_ZenSpace.h" />
     <ClInclude Include="..\sakura_core\window\CAutoScrollWnd.h" />
-    <ClInclude Include="..\sakura_core\window\CCustomWnd.hpp" />
     <ClInclude Include="..\sakura_core\window\CEditWnd.h" />
-    <ClInclude Include="..\sakura_core\window\CGenericWnd.hpp" />
     <ClInclude Include="..\sakura_core\window\CMainStatusBar.h" />
     <ClInclude Include="..\sakura_core\window\CMainToolBar.h" />
     <ClInclude Include="..\sakura_core\window\CSplitBoxWnd.h" />
@@ -506,10 +512,6 @@
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sakura_core\apiwrap\apiwrap.cpp" />
-    <ClCompile Include="..\sakura_core\apiwrap\CClipboardApi.cpp" />
-    <ClCompile Include="..\sakura_core\apiwrap\cstring.cpp" />
-    <ClCompile Include="..\sakura_core\apiwrap\HGlobal.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />
@@ -616,7 +618,6 @@
     <ClCompile Include="..\sakura_core\debug\Debug1.cpp" />
     <ClCompile Include="..\sakura_core\debug\Debug2.cpp" />
     <ClCompile Include="..\sakura_core\debug\Debug3.cpp" />
-    <ClCompile Include="..\sakura_core\dlg\CCustomDialog.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDialog.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgAbout.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgCancel.cpp" />
@@ -682,7 +683,6 @@
     <ClCompile Include="..\sakura_core\env\CShareData_IO.cpp" />
     <ClCompile Include="..\sakura_core\env\CTagJumpManager.cpp" />
     <ClCompile Include="..\sakura_core\env\DLLSHAREDATA.cpp" />
-    <ClCompile Include="..\sakura_core\env\ShareDataAccessor.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CBregexp.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CBregexpDll2.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CDllHandler.cpp" />
@@ -727,6 +727,7 @@
     <ClCompile Include="..\sakura_core\outline\CFuncInfo.cpp" />
     <ClCompile Include="..\sakura_core\outline\CFuncInfoArr.cpp" />
     <ClCompile Include="..\sakura_core\parse\CWordParse.cpp" />
+    <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp" />
     <ClCompile Include="..\sakura_core\plugin\CDllPlugin.cpp" />
     <ClCompile Include="..\sakura_core\plugin\CJackManager.cpp" />
     <ClCompile Include="..\sakura_core\plugin\CPlugin.cpp" />
@@ -875,9 +876,7 @@
     <ClCompile Include="..\sakura_core\view\figures\CFigure_Tab.cpp" />
     <ClCompile Include="..\sakura_core\view\figures\CFigure_ZenSpace.cpp" />
     <ClCompile Include="..\sakura_core\window\CAutoScrollWnd.cpp" />
-    <ClCompile Include="..\sakura_core\window\CCustomWnd.cpp" />
     <ClCompile Include="..\sakura_core\window\CEditWnd.cpp" />
-    <ClCompile Include="..\sakura_core\window\CGenericWnd.cpp" />
     <ClCompile Include="..\sakura_core\window\CMainStatusBar.cpp" />
     <ClCompile Include="..\sakura_core\window\CMainToolBar.cpp" />
     <ClCompile Include="..\sakura_core\window\CSplitBoxWnd.cpp" />
@@ -899,7 +898,6 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="sakura.natvis" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resource\auto_scroll_center.bmp" />
@@ -924,14 +922,6 @@
   <Import Project="..\sakura\funccode.targets" />
   <Import Project="..\sakura\ExtractArchives.targets" />
   <Import Project="..\tests\compiletests.targets" />
-  <Import Project="..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets" Condition="Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.props'))" />
-    <Error Condition="!Exists('..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sakura.dependencies.1.0.0\build\native\sakura.dependencies.targets'))" />
-  </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>

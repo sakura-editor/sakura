@@ -33,21 +33,19 @@
 #define SAKURA_CDLGTAGSMAKE_65A013DF_4315_4254_8C64_4E7489E8E5FC_H_
 #pragma once
 
-#include "dlg/CDialog.h"
-
 class CDlgTagsMake;
 
+#include "dlg/CDialog.h"
 /*!
 	@brief タグファイル作成ダイアログボックス
 */
-class CDlgTagsMake final : public CSakuraDialog
+class CDlgTagsMake final : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgTagsMake(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CDlgTagsMake() override = default;
+	CDlgTagsMake();
 
 	/*
 	||  Attributes & Operations

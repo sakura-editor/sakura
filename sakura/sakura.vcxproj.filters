@@ -119,14 +119,14 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Generated Headers">
-      <UniqueIdentifier>{855b22dd-2214-4706-9283-42d4d5c5c722}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\apimodule">
-      <UniqueIdentifier>{1820d911-5cdc-4de8-b34c-4395e0223d13}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\sakura_core\Funccode_define.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\Funccode_enum.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\sakura_core\sakura.hh">
       <Filter>Other Files</Filter>
     </ClInclude>
@@ -1066,6 +1066,7 @@
     <ClInclude Include="..\sakura_core\uiparts\HandCursor.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\githash.h" />
     <ClInclude Include="..\sakura_core\version.h">
       <Filter>Other Files</Filter>
     </ClInclude>
@@ -1114,50 +1115,8 @@
     <ClInclude Include="..\sakura_core\view\CMiniMapView.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="$(IntDir)githash.h">
-      <Filter>Generated Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(IntDir)Funccode_enum.h">
-      <Filter>Generated Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(IntDir)Funccode_define.h">
-      <Filter>Generated Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apiwrap\apiwrap.hpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apimodule\User32Dll.hpp">
-      <Filter>Cpp Source Files\apimodule</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\env\ShareDataAccessor.hpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apiwrap\cstring.hpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CCustomWnd.hpp">
-      <Filter>Cpp Source Files\window</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CGenericWnd.hpp">
-      <Filter>Cpp Source Files\window</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apimodule\Kernel32Dll.hpp">
-      <Filter>Cpp Source Files\apimodule</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apimodule\Shell32Dll.hpp">
-      <Filter>Cpp Source Files\apimodule</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apiwrap\CClipboardApi.hpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apiwrap\HGlobal.hpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\apimodule\Ole32Dll.hpp">
-      <Filter>Cpp Source Files\apimodule</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CCustomDialog.hpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClInclude Include="..\sakura_core\parse\DetectIndentationStyle.h">
+      <Filter>Cpp Source Files\parse</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1219,9 +1178,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\sakura_core\sakura_rc.rc2">
-      <Filter>Other Files</Filter>
-    </None>
-    <None Include="packages.config">
       <Filter>Other Files</Filter>
     </None>
   </ItemGroup>
@@ -2362,29 +2318,8 @@
     <ClCompile Include="..\sakura_core\view\CMiniMapView.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\apiwrap\apiwrap.cpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\env\ShareDataAccessor.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\apiwrap\cstring.cpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CCustomWnd.cpp">
-      <Filter>Cpp Source Files\window</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CGenericWnd.cpp">
-      <Filter>Cpp Source Files\window</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\apiwrap\CClipboardApi.cpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\apiwrap\HGlobal.cpp">
-      <Filter>Cpp Source Files\apiwrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CCustomDialog.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp">
+      <Filter>Cpp Source Files\parse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

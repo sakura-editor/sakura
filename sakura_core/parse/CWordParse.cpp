@@ -187,7 +187,7 @@ ECharKind CWordParse::WhatKindOfChar(
 	}
 	// IVS（正字 + 異体字セレクタ）
 	else if (nCharChars == 3 &&
-		IsVariationSelector(pData + nIdx + 1))
+		IsVariationSelector(std::wstring_view(pData + nIdx + 1, pDataLen - (nIdx + 1))))
 	{
 		ret = CK_ZEN_ETC;				// 全角のその他(漢字など)
 	}

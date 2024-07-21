@@ -1639,6 +1639,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("bIndentCppStringIgnore")		, types.m_bIndentCppStringIgnore );
 	cProfile.IOProfileData( pszSecName, LTEXT("bIndentCppCommentIgnore")	, types.m_bIndentCppCommentIgnore );
 	cProfile.IOProfileData( pszSecName, LTEXT("bIndentCppUndoSep")	, types.m_bIndentCppUndoSep );
+	cProfile.IOProfileData( pszSecName, LTEXT("bDetectIndentationStyleOnFileLoad"), types.m_bDetectIndentationStyleOnFileLoad );
 	//	Nov. 20, 2000 genta
 	cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME制御
 

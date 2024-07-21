@@ -22,13 +22,15 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
- */
-#include "StdAfx.h"
-#include "CClipboard.h"
+*/
 
+#include "StdAfx.h"
+#include <shellapi.h>// HDROP
+#include "CClipboard.h"
 #include "doc/CEditDoc.h"
 #include "charset/CCodeMediator.h"
 #include "charset/CCodeFactory.h"
+#include "charset/CShiftJis.h"
 #include "charset/CUtf8.h"
 #include "CEol.h"
 #include "mem/CNativeA.h"
@@ -37,108 +39,179 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CClipboard::CClipboard(HWND hWnd, std::shared_ptr<User32Dll> User32Dll_, std::shared_ptr<Kernel32Dll> Kernel32Dll_, std::shared_ptr<Shell32Dll> Shell32Dll_, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CClipboardApi(std::move(User32Dll_), std::move(Kernel32Dll_), std::move(Shell32Dll_))
-	, ShareDataAccessorClient(std::move(ShareDataAccessor_))
+CClipboard::CClipboard(HWND hwnd)
 {
-	if (OpenClipboard(hWnd, MAX_RETRY_FOR_OPEN))
-	{
-		m_bOpenResult = ClipboardHolder(hWnd, ClipboardCloser(GetUser32Dll()));
-	}
+	m_hwnd = hwnd;
+	m_bOpenResult = ::OpenClipboard(hwnd);
+}
+
+CClipboard::~CClipboard()
+{
+	Close();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     インターフェース                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CClipboard::Empty() const
+void CClipboard::Empty()
 {
-	if (m_bOpenResult)
-	{
-		EmptyClipboard();
-	}
+	EmptyClipboard();
 }
 
 void CClipboard::Close()
 {
-	if (m_bOpenResult)
-	{
-		m_bOpenResult.reset();
+	if(m_bOpenResult){
+		::CloseClipboard();
+		m_bOpenResult=FALSE;
 	}
 }
 
 bool CClipboard::SetText(
-	const CStringRef& cstr,
-	bool			  bColumnSelect,
-	bool			  bLineSelect) const
+	const wchar_t*	pData,			//!< コピーするUNICODE文字列
+	int				nDataLen,		//!< pDataの長さ（文字単位）
+	bool			bColumnSelect,
+	bool			bLineSelect,
+	UINT			uFormat
+)
 {
-	if (!m_bOpenResult)
-	{
+	if( !m_bOpenResult ){
 		return false;
 	}
+
+	/*
+	// テキスト形式のデータ (CF_OEMTEXT)
+	HGLOBAL hgClipText = ::GlobalAlloc(
+		GMEM_MOVEABLE | GMEM_DDESHARE,
+		nTextLen + 1
+	);
+	if( hgClipText ){
+		char* pszClip = static_cast<char*>(::GlobalLock(hgClipText));
+		memcpy( pszClip, pszText, nTextLen );
+		pszClip[nTextLen] = '\0';
+		::GlobalUnlock( hgClipText );
+		::SetClipboardData( CF_OEMTEXT, hgClipText );
+	}
+	*/
 
 	// UNICODE形式のデータ (CF_UNICODETEXT)
-	if (!SetClipboardData(CF_UNICODETEXT, cstr.GetPtr(), cstr.GetLength(), cstr.GetLength() + 1))
-	{
-		return false;
-	}
+	HGLOBAL hgClipText = NULL;
+	bool bUnicodeText = (uFormat == (UINT)-1 || uFormat == CF_UNICODETEXT);
+	while(bUnicodeText){
+		//領域確保
+		hgClipText = ::GlobalAlloc(
+			GMEM_MOVEABLE | GMEM_DDESHARE,
+			(nDataLen + 1) * sizeof(wchar_t)
+		);
+		if( !hgClipText )break;
 
-	// サクラエディタ専用フォーマット
+		//確保した領域にデータをコピー
+		wchar_t* pszClip = static_cast<wchar_t*>(::GlobalLock(hgClipText));
+		wmemcpy( pszClip, pData, nDataLen );	//データ
+		pszClip[nDataLen] = L'\0';				//終端ヌル
+		::GlobalUnlock( hgClipText );
+
+		//クリップボードに設定
+		SetClipboardData( CF_UNICODETEXT, hgClipText );
+		bUnicodeText = false;
+	}
+	//	1回しか通らない. breakでここまで飛ぶ
+
 	// バイナリ形式のデータ
 	//	(int) 「データ」の長さ
 	//	「データ」
-	if (const auto uClipFormat = GetClipFormat(CFN_SAKURA_CLIP2))
-	{
-		int cchClipSakura = cstr.GetLength();
-		size_t cbClipSakura = sizeof(int) + (cstr.GetLength() + 1) * sizeof(wchar_t);
-		BinarySequence bin(cbClipSakura, std::byte());
-		bin.assign(std::bit_cast<const std::byte*>(&cchClipSakura), sizeof(int));
-		bin.append(std::bit_cast<const std::byte*>(cstr.GetPtr()), cchClipSakura * sizeof(wchar_t));
-		bin.resize(cbClipSakura);
-		if (!SetClipboardData(uClipFormat, bin.data(), bin.length(), bin.length()))
-		{
-			return false;
-		}
+	HGLOBAL hgClipSakura = NULL;
+	//サクラエディタ専用フォーマットを取得
+	CLIPFORMAT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
+	bool bSakuraText = (uFormat == (UINT)-1 || uFormat == uFormatSakuraClip);
+	while(bSakuraText){
+		if( 0 == uFormatSakuraClip )break;
+
+		//領域確保
+		hgClipSakura = ::GlobalAlloc(
+			GMEM_MOVEABLE | GMEM_DDESHARE,
+			sizeof(int) + (nDataLen + 1) * sizeof(wchar_t)
+		);
+		if( !hgClipSakura )break;
+
+		//確保した領域にデータをコピー
+		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
+		*((int*)pClip) = nDataLen; pClip += sizeof(int);								//データの長さ
+		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
+		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
+		::GlobalUnlock( hgClipSakura );
+
+		//クリップボードに設定
+		SetClipboardData( uFormatSakuraClip, hgClipSakura );
+		bSakuraText = false;
 	}
+	//	1回しか通らない. breakでここまで飛ぶ
 
 	// 矩形選択を示すダミーデータ
-	if (bColumnSelect)
-	{
-		if (const auto uClipFormat = GetClipFormat(CFN_MSDEV_COLUMN))
-		{
-			const auto msDevColumn = std::byte(0);
-			if (!SetClipboardData(uClipFormat, &msDevColumn, 1, 1))
-			{
-				return false;
+	HGLOBAL hgClipMSDEVColumn = NULL;
+	if( bColumnSelect ){
+		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVColumnSelect" );
+		if( 0 != uFormat ){
+			hgClipMSDEVColumn = GlobalAlloc(
+				GMEM_MOVEABLE | GMEM_DDESHARE,
+				1
+			);
+			if( hgClipMSDEVColumn ){
+				BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipMSDEVColumn));
+				pClip[0] = 0;
+				::GlobalUnlock( hgClipMSDEVColumn );
+				SetClipboardData( uFormat, hgClipMSDEVColumn );
 			}
 		}
 	}
 
 	/* 行選択を示すダミーデータ */
-	if (bLineSelect)
-	{
-		if (const auto uClipFormat = GetClipFormat(CFN_MSDEV_LINE01))
-		{
-			const auto msDevLine = std::byte(1);
-			if (!SetClipboardData(uClipFormat, &msDevLine, 1, 1))
-			{
-				return false;
+	HGLOBAL hgClipMSDEVLine = NULL;		// VS2008 以前の形式
+	if( bLineSelect ){
+		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVLineSelect" );
+		if( 0 != uFormat ){
+			hgClipMSDEVLine = GlobalAlloc(
+				GMEM_MOVEABLE | GMEM_DDESHARE,
+				1
+			);
+			if( hgClipMSDEVLine ){
+				BYTE* pClip = (BYTE*)::GlobalLock( hgClipMSDEVLine );
+				pClip[0] = 0x01;
+				::GlobalUnlock( hgClipMSDEVLine );
+				SetClipboardData( uFormat, hgClipMSDEVLine );
 			}
 		}
+	}
+	HGLOBAL hgClipMSDEVLine2 = NULL;	// VS2010 形式
+	if( bLineSelect ){
+		UINT uFormat = ::RegisterClipboardFormat( L"VisualStudioEditorOperationsLineCutCopyClipboardTag" );
+		if( 0 != uFormat ){
+			hgClipMSDEVLine2 = GlobalAlloc(
+				GMEM_MOVEABLE | GMEM_DDESHARE,
+				1
+			);
+			if( hgClipMSDEVLine2 ){
+				BYTE* pClip = (BYTE*)::GlobalLock( hgClipMSDEVLine2 );
+				pClip[0] = 0x01;	// ※ ClipSpy で調べるとデータはこれとは違うが内容には無関係に動くっぽい
+				::GlobalUnlock( hgClipMSDEVLine2 );
+				SetClipboardData( uFormat, hgClipMSDEVLine2 );
+			}
+		}
+	}
 
-		if (const auto uClipFormat = GetClipFormat(CFN_MSDEV_LINE02))
-		{
-			const auto msDevLine2 = std::byte(1); // ※ ClipSpy で調べるとデータはこれとは違うが内容には無関係に動くっぽい
-			if (!SetClipboardData(uClipFormat, &msDevLine2, 1, 1))
-			{
-				return false;
-			}
-		}
+	if( bColumnSelect && !hgClipMSDEVColumn ){
+		return false;
+	}
+	if( bLineSelect && !(hgClipMSDEVLine && hgClipMSDEVLine2) ){
+		return false;
+	}
+	if( !(hgClipText && hgClipSakura) ){
+		return false;
 	}
 	return true;
 }
 
-bool CClipboard::SetHtmlText(const CNativeW& cmemBUf) const
+bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 {
 	if( !m_bOpenResult ){
 		return false;
@@ -158,106 +231,137 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf) const
 	CNativeA cmemFooter;
 	cmemFooter.AppendString("\r\n<!--EndFragment-->\r\n</body></html>\r\n");
 
-	BinarySequence text;
-	text.append(std::bit_cast<std::byte*>(cmemHeader.GetStringPtr()), cmemHeader.GetStringLength());
-	text.append(std::bit_cast<std::byte*>(cmemUtf8.GetStringPtr()), cmemUtf8.GetStringLength());
-	text.append(std::bit_cast<std::byte*>(cmemFooter.GetStringPtr()), cmemFooter.GetStringLength());
+	HGLOBAL hgClipText = NULL;
+	size_t nLen = cmemHeader.GetStringLength() + cmemUtf8.GetStringLength() + cmemFooter.GetStringLength();
+	//領域確保
+	hgClipText = ::GlobalAlloc(
+		GMEM_MOVEABLE | GMEM_DDESHARE,
+		nLen + 1
+	);
+	if( !hgClipText ) return false;
+
+	//確保した領域にデータをコピー
+	char* pszClip = static_cast<char*>(::GlobalLock(hgClipText));
+	memcpy_raw( pszClip, cmemHeader.GetStringPtr(), cmemHeader.GetStringLength() );	//データ
+	memcpy_raw( pszClip + cmemHeader.GetStringLength(), cmemUtf8.GetStringPtr(), cmemUtf8.GetStringLength() );	//データ
+	memcpy_raw( pszClip + cmemHeader.GetStringLength() + cmemUtf8.GetStringLength(), cmemFooter.GetStringPtr(), cmemFooter.GetStringLength() );	//データ
+	pszClip[nLen] = '\0';				//終端ヌル
+	::GlobalUnlock( hgClipText );
 
 	//クリップボードに設定
-	const auto uFormat = GetClipboardFormatW(CFN_HTML_FORMAT_, GetUser32Dll());
-	return SetClipboardData(uFormat, text.data(), text.size(), text.size() + 1);
+	UINT uFormat = ::RegisterClipboardFormat( L"HTML Format" );
+	SetClipboardData( uFormat, hgClipText );
+	return true;
 }
 
-/*!
- * テキストを取得する
- *
- * @param [out] cmemBuf 取得したテキストの格納先
- * @param [in,out] pbColumnSelect 矩形選択形式
- * @param [in,out] pbLineSelect 行選択形式
- */
-bool CClipboard::GetText(
-	CNativeW&       cmemBuf,
-	_Out_opt_ bool* pbColumnSelect,
-	_Out_opt_ bool* pbLineSelect) const
+/*! テキストを取得する
+	@param [out] cmemBuf 取得したテキストの格納先
+	@param [in,out] pbColumnSelect 矩形選択形式
+	@param [in,out] pbLineSelect 行選択形式
+	@param [in] cEol HDROP形式のときの改行コード
+	@param [in] uGetFormat クリップボード形式
+*/
+bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat)
 {
-	cmemBuf.SetString(L"");
-
-	if (pbColumnSelect)
-	{
+	if( !m_bOpenResult ){
+		return false;
+	}
+	if( NULL != pbColumnSelect ){
 		*pbColumnSelect = false;
 	}
-
-	if (pbLineSelect)
-	{
+	if( NULL != pbLineSelect ){
 		*pbLineSelect = false;
 	}
 
-	if (!m_bOpenResult)
-	{
-		return false;
-	}
-
 	//矩形選択や行選択のデータがあれば取得
-	bool done = false;
-	UINT uFormat = 0;
-	do
-	{
-		uFormat = EnumClipboardFormats(uFormat);
-
-		if (pbColumnSelect && uFormat == GetClipFormat(CFN_MSDEV_COLUMN)) {
-			done = *pbColumnSelect = true;
-		}
-		if (pbLineSelect && (uFormat == GetClipFormat(CFN_MSDEV_LINE01) || uFormat == GetClipFormat(CFN_MSDEV_LINE02))) {
-			done = *pbLineSelect = true;
+	if( NULL != pbColumnSelect || NULL != pbLineSelect ){
+		UINT uFormat = 0;
+		while( ( uFormat = EnumClipboardFormats( uFormat ) ) != 0 ){
+			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
+			WCHAR szFormatName[128];
+			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){
+				if( NULL != pbColumnSelect && 0 == lstrcmpi( L"MSDEVColumnSelect", szFormatName ) ){
+					*pbColumnSelect = true;
+					break;
+				}
+				if( NULL != pbLineSelect && 0 == lstrcmpi( L"MSDEVLineSelect", szFormatName ) ){
+					*pbLineSelect = true;
+					break;
+				}
+				if( NULL != pbLineSelect && 0 == lstrcmpi( L"VisualStudioEditorOperationsLineCutCopyClipboardTag", szFormatName ) ){
+					*pbLineSelect = true;
+					break;
+				}
+			}
 		}
 	}
-	while (!done && uFormat);
 
 	//サクラ形式のデータがあれば取得
-	if (const auto uClipFormat = GetClipFormat(CFN_SAKURA_CLIP2);
-		IsClipboardFormatAvailable(uClipFormat))
-	{
-		if (BinarySequence buffer;
-			GetClipboardString(uClipFormat, buffer))
-		{
-			const auto nLength = *std::bit_cast<int*>(buffer.data());
-			cmemBuf.SetString(std::bit_cast<const wchar_t*>(&buffer[sizeof(int)]), nLength);
+	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
+	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
+		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
+		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
+		if (hSakura != NULL) {
+			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
+			size_t nLength        = *((int*)pData);
+			const wchar_t* szData = (const wchar_t*)(pData + sizeof(int));
+			cmemBuf->SetString( szData, nLength );
+			::GlobalUnlock(hSakura);
 			return true;
 		}
 	}
 
 	//UNICODE形式のデータがあれば取得
 	// From Here 2005/05/29 novice UNICODE TEXT 対応処理を追加
-	if (IsClipboardFormatAvailable(CF_UNICODETEXT))
-	{
-		if (std::wstring buffer;
-			GetClipboardString(CF_UNICODETEXT, buffer))
-		{
-			if (const auto length = ::wcsnlen_s(buffer.data(), buffer.length());
-				length < buffer.length())
-			{
-				buffer.resize(length);
-			}
-			cmemBuf.SetString(buffer.c_str(), buffer.length());
-			return true;
-		}
+	HGLOBAL hUnicode = NULL;
+	if( uGetFormat == -1 || uGetFormat == CF_UNICODETEXT ){
+		hUnicode = GetClipboardData( CF_UNICODETEXT );
+	}
+	if( hUnicode != NULL ){
+		//DWORD nLen = GlobalSize(hUnicode);
+		wchar_t* szData = static_cast<wchar_t*>(::GlobalLock(hUnicode));
+		cmemBuf->SetString( szData );
+		::GlobalUnlock(hUnicode);
+		return true;
 	}
 	//	To Here 2005/05/29 novice
 
 	//OEMTEXT形式のデータがあれば取得
-	if (IsClipboardFormatAvailable(CF_OEMTEXT))
-	{
-		if (BinarySequence buffer;
-			GetClipboardString(CF_OEMTEXT, buffer))
-		{
-			if (const auto length = ::strnlen_s(std::bit_cast<const char*>(buffer.data()), buffer.length());
-				length < buffer.length())
-			{
-				buffer.resize(length);
+	HGLOBAL hText = NULL;
+	if( uGetFormat == -1 || uGetFormat == CF_OEMTEXT ){
+		hText = GetClipboardData( CF_OEMTEXT );
+	}
+	if( hText != NULL ){
+		char* szData = static_cast<char*>(::GlobalLock(hText));
+		//SJIS→UNICODE
+		CMemory cmemSjis( szData, GlobalSize(hText) );
+		CNativeW cmemUni;
+		CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
+		cmemSjis.Reset();
+		// '\0'までを取得
+		cmemUni._SetStringLength(wcslen(cmemUni.GetStringPtr()));
+		cmemUni.swap(*cmemBuf);
+		::GlobalUnlock(hText);
+		return true;
+	}
+
+	/* 2008.09.10 bosagami パス貼り付け対応 */
+	//HDROP形式のデータがあれば取得
+	if( (uGetFormat == -1 || uGetFormat == CF_HDROP)
+		&& IsClipboardFormatAvailable(CF_HDROP) ){
+		HDROP hDrop = (HDROP)GetClipboardData(CF_HDROP);
+		if(hDrop != NULL){
+			WCHAR sTmpPath[_MAX_PATH + 1] = {0};
+			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
+
+			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
+				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
+				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
+				cmemBuf->AppendString(sTmpPath);
+				if(nMaxCnt > 1){
+					cmemBuf->AppendString( cEol.GetValue2() );
+				}
 			}
-			//SJIS→UNICODE
-			auto converter = CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS);
-			cmemBuf = converter->CodeToUnicode(BinarySequenceView(buffer.data(), buffer.length()));
 			return true;
 		}
 	}
@@ -265,67 +369,64 @@ bool CClipboard::GetText(
 	return false;
 }
 
-/*!
- * ドロップされたファイルを取得します。
- *
- * @date 2008/09/10 bosagami パス貼り付け対応
- * @date 2012/10/05 Moca ANSI版に合わせて最終行にも改行コードをつける
- */
-bool CClipboard::GetDropFiles(
-	CNativeW&   cmemBuf,
-	const CEol& cEol) const
+struct SSystemClipFormatNames
 {
-	cmemBuf.SetString(L"");
+	CLIPFORMAT	m_nClipFormat;
+	const wchar_t* m_pszName;
+};
+static const SSystemClipFormatNames sClipFormatNames[] =
+{
+	{CF_TEXT        ,L"CF_TEXT"},
+	{CF_BITMAP      ,L"CF_BITMAP"},
+	{CF_METAFILEPICT,L"CF_METAFILEPICT"},
+	{CF_SYLK        ,L"CF_SYLK"},
+	{CF_DIF         ,L"CF_DIF"},
+	{CF_TIFF        ,L"CF_TIFF"},
+	{CF_OEMTEXT     ,L"CF_OEMTEXT"},
+	{CF_DIB         ,L"CF_DIB"},
+	{CF_PALETTE     ,L"CF_PALETTE"},
+	{CF_PENDATA     ,L"CF_PENDATA"},
+	{CF_RIFF        ,L"CF_RIFF"},
+	{CF_WAVE        ,L"CF_WAVE"},
+	{CF_UNICODETEXT ,L"CF_UNICODETEXT"},
+	{CF_ENHMETAFILE ,L"CF_ENHMETAFILE"},
+	{CF_HDROP       ,L"CF_HDROP"},
+	{CF_LOCALE      ,L"CF_LOCALE"},
+	{CF_DIBV5       ,L"CF_DIBV5"},
+};
 
-	if (!m_bOpenResult)
-	{
-		return false;
+static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
+{
+	CLIPFORMAT uFormat = (CLIPFORMAT)-1;
+	if( pFormatName[0] == L'\0' ){
+		return uFormat;
 	}
-
-	//HDROP形式のデータがあれば取得
-	if (IsClipboardFormatAvailable(CF_HDROP))
-	{
-		HDROP hDrop   = NULL;
-		UINT  nMaxCnt = 0;
-
-		if (BinarySequence buffer;
-			GetClipboardString(CF_HDROP, buffer))
-		{
-			hDrop   = std::bit_cast<HDROP>(buffer.data());
-			nMaxCnt = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
+	for(int i = 0; i < _countof(sClipFormatNames); i++){
+		if( 0 == _wcsicmp(pFormatName, sClipFormatNames[i].m_pszName) ){
+			uFormat = sClipFormatNames[i].m_nClipFormat;
 		}
-
-		std::array<WCHAR, _MAX_PATH + 1> path = {};
-		for (UINT nLoop = 0; hDrop && nLoop < nMaxCnt; nLoop++) {
-			DragQueryFileW(hDrop, nLoop, path.data(), static_cast<int>(path.size()));
-			cmemBuf.AppendString(path.data());
-			if (nMaxCnt > 1) {
-				cmemBuf.AppendString(cEol.GetValue2());
+	}
+	if( uFormat == (CLIPFORMAT)-1 ){
+		bool bNumber = true;
+		for( int i =0; pFormatName[i]; i++ ){
+			if( !WCODE::Is09(pFormatName[i]) ){
+				bNumber = false;
 			}
 		}
+		if( bNumber ){
+			uFormat = _wtoi(pFormatName);
+		}else{
+			uFormat = ::RegisterClipboardFormat( pFormatName );
+		}
+	}
+	return uFormat;
+}
 
+bool CClipboard::IsIncludeClipboradFormat(const wchar_t* pFormatName)
+{
+	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
+	if( IsClipboardFormatAvailable(uFormat) ){
 		return true;
-	}
-
-	return false;
-}
-
-CLIPFORMAT CClipboard::GetClipFormat(std::wstring_view name) const
-{
-	if (name.length() > 0 && std::ranges::all_of(name, WCODE::Is09))
-	{
-		return static_cast<CLIPFORMAT>(_wtoi(name.data()));
-	}
-
-	return static_cast<CLIPFORMAT>(GetClipboardFormatW(name, GetUser32Dll()));
-}
-
-bool CClipboard::IsIncludeClipboardFormat(std::wstring_view name) const
-{
-	if (const auto uFormat = GetClipFormat(name);
-		uFormat != CF_INVALID)
-	{
-		return IsClipboardFormatAvailable(uFormat);
 	}
 	return false;
 }
@@ -350,57 +451,54 @@ static int GetEndModeByMode(int nMode, int nEndMode)
 	return nEndMode;
 }
 
-/*!
- * 指定のクリップボード形式で設定
- * (スクリプト用関数)
- *
- * @param nMode -2:通常のサクラの処理, -1:バイナリモード, それ以外:文字コード
- * @param nEndMode -1:文字コードに依存 0:GlobalSize 1:strlen 2:wcslen 4:wchar32_tの文字列
- */
-bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, std::wstring_view name, int nMode, int nEndMode) const
+bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode)
 {
-	if (nMode == MODE_SAKURA) {
-		return SetText(cstr, false, false);
-	}
-
-	const auto uFormat = GetClipFormat(name);
-	if( uFormat == CF_INVALID ){
+	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
+	if( uFormat == (CLIPFORMAT)-1 ){
 		return false;
 	}
+	if( nMode == -2 ){
+		if( uFormat == CF_UNICODETEXT || uFormat == GetSakuraFormat() ){
+			return SetText(cstr.GetPtr(), cstr.GetLength(), false, false, uFormat);
+		}
+		return false;
+	}
+
 	CMemory cmemBuf;
 	char* pBuf = NULL;
 	size_t nTextByteLen = 0;
-	if( nMode == MODE_BINARY ){
+	if( nMode == -1 ){
+		// バイナリモード U+00 - U+ffを0x00 - 0xffにマッピング
 		cmemBuf.AllocBuffer(cstr.GetLength());
 		cmemBuf._SetRawLength(cstr.GetLength());
-		pBuf = std::bit_cast<char*>(cmemBuf.GetRawPtr());
-		const auto len = cstr.GetLength();
-		const auto mem = cstr.GetPtr();
+		pBuf = (char*)cmemBuf.GetRawPtr();
+		size_t len = cstr.GetLength();
+		const wchar_t* pMem = cstr.GetPtr();
 		for(size_t i = 0; i < len; i++){
-			pBuf[i] = static_cast<uint8_t>(mem[i]);
-			if( 0xff < mem[i] ){
+			pBuf[i] = (unsigned char)pMem[i];
+			if( 0xff < pMem[i] ){
 				return false;
 			}
 		}
 		nTextByteLen = len;
  	}else{
-		const auto eMode = static_cast<ECodeType>(nMode);
+		ECodeType eMode = (ECodeType)nMode;
 		if( !IsValidCodeType(eMode) ){
 			return false;
 		}
-		if (eMode == CODE_UNICODE) {
-			pBuf = std::bit_cast<char*>(cstr.GetPtr());
+		if( eMode == CODE_UNICODE ){
+			pBuf = (char*)cstr.GetPtr();
 			nTextByteLen = cstr.GetLength() * sizeof(wchar_t);
-		}
-		else {
-			if (auto converter = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(eMode, GetShareData()->m_Common.m_sFile.GetAutoMIMEdecode()));
-				RESULT_FAILURE == converter->UnicodeToCode(cstr, &cmemBuf)) {
+		}else{
+			CCodeBase* pCode = CCodeFactory::CreateCodeBase(eMode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode());
+			if( RESULT_FAILURE == pCode->UnicodeToCode(cstr, &cmemBuf) ){
 				return false;
 			}
-			pBuf = std::bit_cast<char*>(cmemBuf.GetRawPtr());
+			delete pCode;
+			pBuf = (char*)cmemBuf.GetRawPtr();
 			nTextByteLen = cmemBuf.GetRawLength();
 		}
-	}
+ 	}
 	nEndMode = GetEndModeByMode(nMode, nEndMode);
 	size_t nulLen = 0;
 	switch( nEndMode ){
@@ -410,27 +508,45 @@ bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, std::wstring_view 
 	case 0: nulLen = 0; break;
 	default: nulLen = 0; break;
 	}
+	HGLOBAL hgClipText = GlobalAlloc(
+		GMEM_MOVEABLE | GMEM_DDESHARE,
+		nTextByteLen + nulLen
+	);
+	if( !hgClipText ){
+		return false;
+	}
+	char* pszClip = static_cast<char*>(::GlobalLock(hgClipText));
+	memcpy( pszClip, pBuf, nTextByteLen );
+	if( nulLen ){
+		memset( &pszClip[nTextByteLen], 0, nulLen );
+	}
+	::GlobalUnlock( hgClipText );
+	SetClipboardData( uFormat, hgClipText );
 
-	return SetClipboardData(uFormat, std::bit_cast<const std::byte*>(pBuf), nTextByteLen, nTextByteLen + nulLen);
+	return true;
 }
 
-static size_t GetLengthByMode(BinarySequenceView data, int nMode, int nEndMode)
+static int GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, int nEndMode)
 {
-	const auto pData  = data.data();
-	const auto cbData = data.size();
+	size_t nMemLength = ::GlobalSize(hClipData);
 	nEndMode = GetEndModeByMode(nMode, nEndMode);
-	size_t cbLength = cbData;
+	size_t nLength;
 	if( nEndMode == 1 ) {
-		cbLength = strnlen(std::bit_cast<const char*>(pData), cbData);
+		nLength = strnlen((const char *)pData, nMemLength);
 	}else if( nEndMode == 2 ){
-		cbLength = wcsnlen(std::bit_cast<const wchar_t*>(pData), cbData / 2) * 2;
+		nLength = wcsnlen((const wchar_t *)pData, nMemLength / 2) * 2;
 	}else if( nEndMode == 4 ){
-		const auto pData32   = std::bit_cast<const char32_t*>(pData);
-		const auto cchData32 = cbData / 4;
-		for (cbLength = 0; cbLength < cchData32 && pData32[cbLength]; ++cbLength);
-		cbLength *= 4;
+		const wchar32_t* pData32 = (const wchar32_t*)pData;
+		const size_t len = nMemLength / 4;
+		nLength = 0;
+		while( pData32[nLength] != 0 && nLength < len ){
+			nLength++;
+		}
+		nLength *= 4;
+	}else{
+		nLength = nMemLength;
 	}
-	return cbLength;
+	return nLength;
 }
 
 /*!
@@ -439,95 +555,98 @@ static size_t GetLengthByMode(BinarySequenceView data, int nMode, int nEndMode)
 	@param nMode -2:通常のサクラの処理, -1:バイナリモード, それ以外:文字コード
 	@param nEndMode -1:文字コードに依存 0:GlobalSize 1:strlen 2:wcslen 4:wchar32_tの文字列
 	@date 2013.06.12 Moca 新規作成
- */
-bool CClipboard::GetClipboardByFormat(CNativeW& mem, std::wstring_view name, int nMode, int nEndMode, const CEol& cEol) const
+*/
+bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol)
 {
 	mem.SetString(L"");
-
-	if( nMode == MODE_SAKURA ){
-		return GetText(&mem, nullptr, nullptr, cEol, CF_ANY);
-	}
-
-	const auto uFormat = GetClipFormat(name);
-	if( uFormat == CF_INVALID ){
+	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
+	if( uFormat == (CLIPFORMAT)-1 ){
 		return false;
 	}
 	if( !IsClipboardFormatAvailable(uFormat) ){
 		return false;
 	}
-
-	BinarySequence data;
-	if (!GetClipboardString(uFormat, data))
-	{
-		return false;
+	if( nMode == -2 ){
+		bool bret = false;
+		if( -1 != GetDataType() ){
+			bret = GetText(&mem, NULL, NULL, cEol, uFormat);
+			if( !bret ){
+				mem.SetString(L"");
+			}
+		}
+		return bret;
 	}
-
-	// 長さオプションの解釈
-	size_t nLength = GetLengthByMode(data, nMode, nEndMode);
-
-	// バイナリモード。1byteをU+00-U+ffにマッピング
-	if (nMode == MODE_BINARY)
-	{
-		data.resize(nLength);
-		mem.AllocStringBuffer(nLength);
-		mem._SetStringLength(nLength);
-		auto pBuf = mem.GetStringPtr();
-		for( size_t i = 0; i < data.length(); ++i ){
-			pBuf[i] = static_cast<wchar_t>(data[i]);
+	HGLOBAL hClipData = GetClipboardData( uFormat );
+	if( hClipData != NULL ){
+		bool retVal = true;
+		const BYTE* pData = (BYTE*)GlobalLock( hClipData );
+		if( pData == NULL ){
+			return false;
 		}
 
-		return true;
-	}
+		// 長さオプションの解釈
+		size_t nLength = GetLengthByMode(hClipData, pData, nMode, nEndMode);
 
-	auto eMode = static_cast<ECodeType>(nMode);
-	if (!IsValidCodeType(eMode)) {
-		const auto& type = CEditDoc::getInstance()->m_cDocType.GetDocumentAttribute();
-		CCodeMediator mediator(type.m_encoding);
-		eMode = mediator.CheckKanjiCode(std::bit_cast<const char*>(data.data()), nLength);
-
-		if (!IsValidCodeType(eMode)) {
-			eMode = CODE_DEFAULT;
+		// エンコードオプション
+		if( nMode == -1 ){
+			// バイナリモード。1byteをU+00-U+ffにマッピング
+			mem.AllocStringBuffer(nLength);
+			mem._SetStringLength(nLength);
+			wchar_t* pBuf = (wchar_t *)mem.GetStringPtr();
+			for( size_t i = 0; i < nLength; i++ ){
+				pBuf[i] = (unsigned char)pData[i];
+			}
+		}else{
+			ECodeType eMode = (ECodeType)nMode;
+			if( !IsValidCodeType(eMode) ){
+				{
+					const STypeConfig& type = CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute();
+					CCodeMediator mediator(type.m_encoding);
+					eMode = mediator.CheckKanjiCode((const char*)pData, nLength);
+				}
+				if( !IsValidCodeType(eMode) ){
+					eMode = CODE_DEFAULT;
+				}
+				if( -1 == nEndMode ){
+					// nLength 再設定
+					nLength = GetLengthByMode(hClipData, pData, eMode, nEndMode);
+				}
+			}
+			if( eMode == CODE_UNICODE ){
+				mem.SetString((wchar_t *)pData, nLength / sizeof(wchar_t));
+			}else{
+				CMemory cmem;
+				cmem.SetRawData(pData, nLength);
+				if( NULL != cmem.GetRawPtr() ){
+					CCodeBase* pCode = CCodeFactory::CreateCodeBase(eMode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode());
+					if( RESULT_FAILURE == pCode->CodeToUnicode(cmem, &mem) ){
+						mem.SetString(L"");
+						retVal = false;
+					}
+					delete pCode;
+				}
+			}
 		}
-		if (-1 == nEndMode) {
-			// nLength 再設定
-			nLength = GetLengthByMode(data, eMode, nEndMode);
-		}
+		::GlobalUnlock(hClipData);
+		return retVal;
 	}
-	if (eMode == CODE_UNICODE) {
-		mem.SetString((wchar_t*)data.data(), nLength / sizeof(wchar_t));
-		return true;
-	}
-
-	auto converter = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(eMode, GetShareData()->m_Common.m_sFile.GetAutoMIMEdecode()));
-
-	bool bResult = true;
-	mem = converter->CodeToUnicode(data, &bResult);
-	if (bResult) {
-		return true;
-	}
-
-	mem.SetString(L"");
 	return false;
 }
 
 //! クリップボード内に、サクラエディタで扱えるデータがあればtrue
-bool CClipboard::HasValidData(std::shared_ptr<User32Dll> _User32Dll)
+bool CClipboard::HasValidData()
 {
 	//扱える形式が１つでもあればtrue
-	if (const auto uFormat = GetSakuraFormat(_User32Dll);
-		_User32Dll->IsClipboardFormatAvailable(uFormat))
-	{
-		return true;
-	}
-	if (_User32Dll->IsClipboardFormatAvailable(CF_UNICODETEXT))return true;
-	if (_User32Dll->IsClipboardFormatAvailable(CF_OEMTEXT))return true;
+	if(::IsClipboardFormatAvailable(CF_OEMTEXT))return true;
+	if(::IsClipboardFormatAvailable(CF_UNICODETEXT))return true;
+	if(::IsClipboardFormatAvailable(GetSakuraFormat()))return true;
 	/* 2008.09.10 bosagami パス貼り付け対応 */
-	if(_User32Dll->IsClipboardFormatAvailable(CF_HDROP))return true;
+	if(::IsClipboardFormatAvailable(CF_HDROP))return true;
 	return false;
 }
 
 //!< サクラエディタ独自のクリップボードデータ形式
-CLIPFORMAT CClipboard::GetSakuraFormat(std::shared_ptr<User32Dll> _User32Dll)
+CLIPFORMAT CClipboard::GetSakuraFormat()
 {
 	/*
 		2007.09.30 kobake
@@ -536,7 +655,7 @@ CLIPFORMAT CClipboard::GetSakuraFormat(std::shared_ptr<User32Dll> _User32Dll)
 		以前のバージョンのクリップボードデータと競合しないように
 		フォーマット名を変更
 	*/
-	return static_cast<CLIPFORMAT>(GetClipboardFormatW(CFN_SAKURA_CLIP2, _User32Dll));
+	return (CLIPFORMAT)::RegisterClipboardFormat( L"SAKURAClipW" );
 }
 
 //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
@@ -544,13 +663,37 @@ int CClipboard::GetDataType() const
 {
 	//扱える形式が１つでもあればtrue
 	// 2013.06.11 GetTextの取得順に変更
-	if (const auto uFormat = GetSakuraFormat(GetUser32Dll());
-		IsClipboardFormatAvailable(uFormat))
-	{
-		return uFormat;
-	}
+	if(IsClipboardFormatAvailable(GetSakuraFormat()))return GetSakuraFormat();
 	if(IsClipboardFormatAvailable(CF_UNICODETEXT))return CF_UNICODETEXT;
 	if(IsClipboardFormatAvailable(CF_OEMTEXT))return CF_OEMTEXT;
 	if(IsClipboardFormatAvailable(CF_HDROP))return CF_HDROP;
 	return -1;
+}
+
+HANDLE CClipboard::SetClipboardData(UINT uFormat, HANDLE hMem) const {
+	return ::SetClipboardData(uFormat, hMem);
+}
+
+HANDLE CClipboard::GetClipboardData(UINT uFormat) const {
+	return ::GetClipboardData(uFormat);
+}
+
+BOOL CClipboard::EmptyClipboard() const {
+	return ::EmptyClipboard();
+}
+
+BOOL CClipboard::IsClipboardFormatAvailable(UINT format) const {
+	return ::IsClipboardFormatAvailable(format);
+}
+
+UINT CClipboard::EnumClipboardFormats(UINT format) const {
+	return ::EnumClipboardFormats(format);
+}
+
+HGLOBAL CClipboard::GlobalAlloc(UINT uFlags, SIZE_T dwBytes) const {
+	return ::GlobalAlloc(uFlags, dwBytes);
+}
+
+LPVOID CClipboard::GlobalLock(HGLOBAL hMem) const {
+	return ::GlobalLock(hMem);
 }

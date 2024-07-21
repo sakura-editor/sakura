@@ -35,12 +35,12 @@
 // メニューの選択色を淡くする
 #define DRAW_MENU_SELECTION_LIGHT
 
-/*!
- * コンストラクタ
- */
-CMenuDrawer::CMenuDrawer(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+CMenuDrawer::CMenuDrawer()
 {
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
+
 	m_hInstance = NULL;
 	m_hWndOwner = NULL;
 	m_nMenuHeight = 0;

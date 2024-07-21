@@ -71,12 +71,8 @@ private:
 	bool	bEnabled;	//!< 有効かどうか
 };
 
-class CAutoSaveAgent : public ShareDataAccessorClient, public CDocListenerEx
-{
+class CAutoSaveAgent : public CDocListenerEx{
 public:
-	explicit CAutoSaveAgent(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CAutoSaveAgent() override = default;
-
 	void CheckAutoSave();
 	void ReloadAutoSaveParam();	//!< 設定をSharedAreaから読み出す
 

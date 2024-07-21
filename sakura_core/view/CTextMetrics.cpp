@@ -109,7 +109,7 @@ const int* CTextMetrics::GenerateDxArray(
 		vResultArray.push_back(cache.CalcPxWidthByFont(pText[i]) + spacing);
 		nIndent += vResultArray.back();
 
-		if (IsVariationSelector(pText + i + 1)) {
+		if (IsVariationSelector(std::wstring_view(pText + i + 1, nLength - (i + 1)))) {
 			vResultArray.push_back(0);
 			vResultArray.push_back(0);
 			i += 2;

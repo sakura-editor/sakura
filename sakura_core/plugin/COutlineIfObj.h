@@ -69,7 +69,7 @@ public:
 	//関数情報を取得する
 	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; }
 	//関数を処理する
-	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
 		return false;
 	}

@@ -59,13 +59,17 @@ LPVOID CDlgSameColor::GetHelpIdTable( void )
 	return (LPVOID)p_helpids;
 }
 
-CDlgSameColor::CDlgSameColor()
-	: CDialog(IDD_SAMECOLOR)
-	, m_wpColorStaticProc(NULL),
+CDlgSameColor::CDlgSameColor() :
+	m_wpColorStaticProc(NULL),
 	m_wpColorListProc(NULL),
 	m_wID(0),
 	m_pTypes(NULL),
 	m_cr(0)
+{
+	return;
+}
+
+CDlgSameColor::~CDlgSameColor()
 {
 	return;
 }
@@ -75,6 +79,8 @@ CDlgSameColor::CDlgSameColor()
 */
 INT_PTR CDlgSameColor::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
 	switch( wMsg ){
 	case WM_COMMAND:
 		// 色選択リストボックスの選択が変更された場合の処理
@@ -99,8 +105,7 @@ INT_PTR CDlgSameColor::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARA
 	default:
 		break;
 	}
-
-	return __super::DispatchEvent(hWnd, wMsg, wParam, lParam);
+	return result;
 }
 
 /*! モーダルダイアログの表示

@@ -412,8 +412,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			if( nVal < 1 ){
 				nVal = 1;
 			}
-			if( nVal > 64 ){
-				nVal = 64;
+			if( nVal > TABSPACE_MAX ){
+				nVal = TABSPACE_MAX;
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, nVal, FALSE );
 			return TRUE;

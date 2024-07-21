@@ -116,13 +116,6 @@
 # pragma warning( pop )
 #endif // end of #ifdef __cplusplus
 
-/*!
- * MessageBox関数をサクラエディタ仕様に差し替える
- *
- * テストプログラムのコンソール出力が文字化けする対策
- */
-#include "util/MessageBoxF.h"
-
 // プロジェクト内のファイルだがプリコンパイル対象とする。
 // プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"

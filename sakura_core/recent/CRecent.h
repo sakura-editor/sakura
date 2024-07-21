@@ -38,13 +38,11 @@
 #define SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_
 #pragma once
 
-#include "env/ShareDataAccessor.hpp"
+#include "env/DLLSHAREDATA.h"
 
-class CRecent : public ShareDataAccessorClient
-{
+class CRecent{
 public:
-	explicit CRecent(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	virtual ~CRecent() = default;
+	virtual ~CRecent(){}
 
 	//インスタンス管理
 	virtual void	Terminate() = 0;
@@ -76,6 +74,12 @@ public:
 	//その他
 	virtual int		GetViewCount() const = 0;
 	virtual bool	UpdateView() = 0;
+
+	// 共有メモリアクセス
+	DLLSHAREDATA*	GetShareData()
+	{
+		return &GetDllShareData();
+	}
 };
 
 #endif /* SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_ */

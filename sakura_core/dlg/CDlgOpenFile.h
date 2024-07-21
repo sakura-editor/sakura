@@ -22,8 +22,6 @@
 #define SAKURA_CDLGOPENFILE_8084B9DB_6463_4168_BA59_132EB2596AE7_H_
 #pragma once
 
-#include "env/ShareDataAccessor.hpp"
-
 #include <memory>
 #include <vector>
 #include "util/design_template.h"
@@ -83,18 +81,16 @@ public:
 		SSaveInfo*	pSaveInfo,
 		bool bSimpleMode
 	) = 0;
-
-	virtual bool IsItemDialog() const = 0;
 };
 
 
 /*!	ファイルオープンダイアログボックス
 */
-class CDlgOpenFile final : public IDlgOpenFile, private ShareDataAccessorClient
+class CDlgOpenFile final : public IDlgOpenFile
 {
 public:
 	//コンストラクタ・デストラクタ
-	explicit CDlgOpenFile(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
+	CDlgOpenFile();
 	~CDlgOpenFile() = default;
 
 	void Create(
@@ -113,8 +109,6 @@ public:
 		std::vector<std::wstring>* pFilenames,
 		bool bOptions = true) override;
 	bool DoModalSaveDlg(SSaveInfo*	pSaveInfo, bool bSimpleMode) override;
-
-	bool IsItemDialog() const override;
 
 	// 設定フォルダー相対ファイル選択(共有データ,ini位置依存)
 	static BOOL SelectFile(HWND parent, HWND hwndCtl, const WCHAR* filter,

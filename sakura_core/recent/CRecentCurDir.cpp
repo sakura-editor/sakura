@@ -32,8 +32,7 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentCurDir::CRecentCurDir(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CRecentImp<CCurDirString, LPCWSTR>(std::move(ShareDataAccessor_))
+CRecentCurDir::CRecentCurDir()
 {
 	Create(
 		GetShareData()->m_sHistory.m_aCurDirs.dataPtr(),

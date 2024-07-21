@@ -27,11 +27,13 @@ endif
 # The directory where "sakura_core" is built.
 SAKURA_CORE = ../sakura_core
 
-GOOGLETEST_INSTALL_DIR = ../googletest
-
 # The directory where the .exe files will be output.
 # If empty, they will be output to the default directories.
 OUTDIR =
+
+CURRENT_INSTALLED_DIR = ../../../vcpkg_installed
+
+TARGET_TRIPLET = x64-mingw-static
 
 ifeq ($(SHELL),sh.exe)
 # If cmd.exe is used as a shell.
@@ -87,10 +89,10 @@ CFLAGS= \
  -finput-charset=utf-8 \
  -fexec-charset=cp932 \
  -MMD \
- -isystem $(GOOGLETEST_INSTALL_DIR)/include \
+ -I. \
+ -I$(CURRENT_INSTALLED_DIR)/$(TARGET_TRIPLET)/include \
  -I$(SAKURA_CORE) \
  -I$(SRCDIR)/../../sakura_core \
- -I. \
  -I$(SRCDIR) \
  $(DEFINES) $(MYCFLAGS)
 
@@ -98,8 +100,13 @@ CXXFLAGS= $(CFLAGS) \
  -std=c++17 \
  $(MYCXXFLAGS)
 
-LIBS= \
+LDFLAGS= \
  -static \
+ -mwindows \
+ -municode \
+ -L$(CURRENT_INSTALLED_DIR)/$(TARGET_TRIPLET)/lib
+
+LIBS= \
  -lwinspool \
  -lole32 \
  -loleaut32 \
@@ -117,7 +124,6 @@ LIBS= \
  -lkernel32 \
  -lgdi32 \
  -lcomdlg32 \
- -L$(GOOGLETEST_INSTALL_DIR)/lib \
  -lgtest \
  -lgmock \
  $(MYLIBS)
@@ -140,7 +146,7 @@ SAKURA_OBJS = $(SAKURA_SRCS:$(SRCDIR)/../../sakura_core/%.cpp=$(SAKURA_CORE)/%.o
 all: $(exe)
 
 $(exe): $(OBJS) $(SAKURA_OBJS)
-	$(CXX) -o $@ $(OBJS) $(SAKURA_OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(SAKURA_OBJS) $(LIBS)
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

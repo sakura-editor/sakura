@@ -30,8 +30,7 @@
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentExcludeFolder::CRecentExcludeFolder(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CRecentImp<CExcludeFolderString, LPCWSTR>(std::move(ShareDataAccessor_))
+CRecentExcludeFolder::CRecentExcludeFolder()
 {
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aExcludeFolders.dataPtr(),

@@ -75,16 +75,13 @@ class CEditApp;
 	@date 2007.12.13 kobake IsViewMode作成
 */
 class CEditDoc
-    : public ShareDataAccessorClient
-	, public CDocSubject
+: public CDocSubject
 , public TInstanceHolder<CEditDoc>
 {
-	using Me = CEditDoc;
-
 public:
 	//コンストラクタ・デストラクタ
-	explicit CEditDoc(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CEditDoc() override;
+	CEditDoc(CEditApp* pcApp);
+	~CEditDoc();
 
 	//初期化
 	BOOL Create( void );
@@ -102,10 +99,6 @@ public:
 	bool IsModificationForbidden( EFunctionCode nCommand ) const;	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
 	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< 編集可能かどうか
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
-
-	const LOGFONT&      GetLogFont(bool bTempSetting = true) const;
-	int                 GetFontSize(bool bTempSetting = true) const;
-	ECharWidthCacheMode GetFontCacheMode() const;
 
 	//状態
 	void GetEditInfo( EditInfo* ) const;	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
@@ -174,7 +167,4 @@ public:
 	int				m_nBackImgWidth;
 	int				m_nBackImgHeight;
 };
-
-CEditDoc& GetEditDoc( void );
-
 #endif /* SAKURA_CEDITDOC_D845B5F3_FD71_4722_B115_63145B804253_H_ */

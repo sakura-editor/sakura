@@ -42,7 +42,7 @@ public:
 	// 実装
 	MacroFuncInfoArray GetMacroCommandInfo() const;	//コマンド情報を取得する
 	MacroFuncInfoArray GetMacroFuncInfo() const;	//関数情報を取得する
-	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);	//関数を処理する
+	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result);	//関数を処理する
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize);	//コマンドを処理する
 };
 #endif /* SAKURA_CEDITORIFOBJ_1C8AA37E_D9FB_4C26_AE83_22E62D9B7C3D_H_ */

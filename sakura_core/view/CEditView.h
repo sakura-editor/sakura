@@ -123,8 +123,6 @@ class CEditView
 , public CMyWnd
 , public CDocListenerEx
 {
-	using CViewFontPtr = std::shared_ptr<CViewFont>;
-
 	std::thread m_threadUrlOpen;
 
 public:
@@ -635,7 +633,7 @@ public:
 	CViewSelect		m_cViewSelect;
 
 	//主要オブジェクト
-	CViewFontPtr    m_pcViewFont;
+	CViewFont*		m_pcViewFont;
 
 	//主要ヘルパ
 	CViewParser		m_cParser;

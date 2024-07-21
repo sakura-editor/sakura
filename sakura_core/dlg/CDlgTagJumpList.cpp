@@ -138,8 +138,8 @@ inline void CDlgTagJumpList::ClearPrevFindInfo(){
 	m_psFind0Match->m_nMatchAll = 0;
 }
 
-CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump, std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CSizeRestorableDialog(IDD_TAGJUMPLIST, std::move(ShareDataAccessor_)),
+CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
+	: CDialog(true),
 	  m_bDirectTagJump(bDirectTagJump),
 	  m_nIndex( -1 ),
 	  m_pszFileName( NULL ),
@@ -154,7 +154,6 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump, std::shared_ptr<ShareDataA
 	  m_psFindPrev( NULL ),
 	  m_psFind0Match( NULL ),
 	  m_strOldKeyword( L"" )
-	, m_cRecentKeyword(GetShareDataAccessor())
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert( _countof(anchorList) == _countof(m_rcItems) );
@@ -447,7 +446,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
-	RECT rcDialog = GetShareData()->m_Common.m_sOthers.m_rcTagJumpDialog;
+	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog;
 	if( rcDialog.left != 0 ||
 		rcDialog.bottom != 0 ){
 		m_xPos = rcDialog.left;
@@ -541,7 +540,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgTagJumpList::OnDestroy( void )
 {
 	CDialog::OnDestroy();
-	RECT& rect = GetShareData()->m_Common.m_sOthers.m_rcTagJumpDialog;
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog;
 	rect.left = m_xPos;
 	rect.top = m_yPos;
 	rect.right = rect.left + m_nWidth;

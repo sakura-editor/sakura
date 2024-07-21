@@ -22,16 +22,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#if defined(_MSVC_LANG) && _MSVC_LANG < 202002L
-
 #include <CodeCoverage/CodeCoverage.h>
 
 // Exclude all the code from a particular files:
 // see https://docs.microsoft.com/ja-jp/visualstudio/test/using-code-coverage-to-determine-how-much-code-is-being-tested
-ExcludeSourceFromCodeCoverage(Exclusion1, L"*\\VC\\Tools\\MSVC\\*\\include\\*");
-ExcludeSourceFromCodeCoverage(Exclusion2, L"*\\Windows Kits\\10\\Include\\*");
-ExcludeSourceFromCodeCoverage(Exclusion3, L"*\\gtest\\*");
-ExcludeSourceFromCodeCoverage(Exclusion4, L"*\\gmock\\*");
-ExcludeSourceFromCodeCoverage(Exclusion5, L"*\\tests\\unittests\\*");
-
-#endif // #if defined(_MSVC_LANG) && _MSVC_LANG < 202002L
+ExcludeSourceFromCodeCoverage(Exclusion1, L"*\\tests\\unittests\\*");
+ExcludeSourceFromCodeCoverage(Exclusion2, L"*\\googletest\\*");
+ExcludeSourceFromCodeCoverage(Exclusion3, L"*\\Windows Kits\\10\\Include\\*");
+ExcludeSourceFromCodeCoverage(Exclusion4, L"*\\VC\\Tools\\MSVC\\*\\include\\*");

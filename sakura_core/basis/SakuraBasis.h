@@ -29,7 +29,6 @@
 
 #include <Windows.h> //POINT,LONG
 
-#include "env/ShareDataAccessor.hpp"
 #include "basis/primitive.h" // for Int
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

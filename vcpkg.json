@@ -1,0 +1,6 @@
+﻿{
+  "dependencies": [
+    "header-make",
+    "gtest"
+  ]
+}

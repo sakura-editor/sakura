@@ -477,6 +477,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_GETVIEWCOLUMNS,			L"GetViewColumns",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ビューの列数取得
 	{F_CREATEMENU,				L"CreateMenu",				{VT_I4,    VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メニュー作成
 	{F_GETVIEWTOP,				L"GetViewTop",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //画面に表示される一番上の行番号を取得
+	{F_CHGINSSPACE,				L"ChangeInsertSpace",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // SPACEの挿入の変更
 
 	//	終端
 	//	Jun. 27, 2002 genta
@@ -486,12 +487,14 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 };
 
 /*!
- * コンストラクタ
- */
-CSMacroMgr::CSMacroMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
+	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date 2002.04.29 genta オブジェクトの実体は実行時まで生成しない。
+*/
+CSMacroMgr::CSMacroMgr()
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CSMacroMgr::CSMacroMgr" );
+	
+	m_pShareData = &GetDllShareData();
 	
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();

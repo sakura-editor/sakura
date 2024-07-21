@@ -31,15 +31,13 @@
 /*!
 	@brief 置換ダイアログボックス
 */
-class CDlgReplace final : public CSakuraDialog
+class CDlgReplace final : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgReplace(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CDlgReplace() override = default;
-
+	CDlgReplace();
 	/*
 	||  Attributes & Operations
 	*/

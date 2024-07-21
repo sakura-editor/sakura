@@ -54,29 +54,19 @@ static const wstring	OPTION_TYPE_INT  = wstring( L"int" );
 static const wstring	OPTION_TYPE_SEL  = wstring( L"sel" );
 static const wstring	OPTION_TYPE_DIR  = wstring( L"dir" );
 
-class CDlgPluginOption final : public CSakuraDialog
+class CDlgPluginOption final : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CDlgPluginOption(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_ = std::make_shared<ShareDataAccessor>());
-	~CDlgPluginOption() override = default;
+	CDlgPluginOption();
+	~CDlgPluginOption();
 
 	/*
 	||  Attributes & Operations
 	*/
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, CPropPlugin* cPropPlugin, int ID );	/* モーダルダイアログの表示 */
-
-	//! テスト不能だったので追加。（アプリで使用しないこと！）
-	void SetPluginForTest(
-		std::shared_ptr<CPlugin> plugin,
-		std::shared_ptr<CPropPlugin> propPlugin)
-	{
-		m_ID          = 0L;
-		m_cPlugin     = plugin.get();
-		m_cPropPlugin = propPlugin.get();
-	}
 
 protected:
 	/*

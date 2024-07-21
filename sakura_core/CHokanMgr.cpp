@@ -58,13 +58,16 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
 }
 
-CHokanMgr::CHokanMgr(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CSakuraDialog(IDD_HOKAN, std::move(ShareDataAccessor_))
+CHokanMgr::CHokanMgr()
 {
 	m_cmemCurWord.SetString(L"");
 
 	m_nCurKouhoIdx = -1;
 	m_bTimerFlag = TRUE;
+}
+
+CHokanMgr::~CHokanMgr()
+{
 }
 
 /* モードレスダイアログの表示 */
@@ -118,6 +121,9 @@ int CHokanMgr::Search(
 )
 {
 	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 
 	/*
 	||  補完キーワードの検索

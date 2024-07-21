@@ -22,9 +22,16 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "dlg/CDlgProfileMgr.h"
+#include <gtest/gtest.h>
 
-#include "MockShareDataAccessor.hpp"
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+
+#include "dlg/CDlgProfileMgr.h"
 
 #include <cstdlib>
 #include <filesystem>
@@ -43,26 +50,6 @@
 #include "_main/CControlProcess.h"
 #include "CDataProfile.h"
 #include "util/file.h"
-
-/*!
- * プロファイルマネージャ、構築するだけ。
- */
-TEST(CDlgProfileMgr, Construct)
-{
-	EXPECT_NO_THROW({ CDlgProfileMgr dlg; });
-}
-
-/*!
- * 表示テスト
- */
-TEST(CDlgProfileMgr, DISABLED_SimpleShowDialog)
-{
-	CDlgProfileMgr dlg;
-	const auto hWndParent = static_cast<HWND>(nullptr);
-	const auto hDlg       = dlg.DoModeless(nullptr, hWndParent, IDD_PROFILEMGR, static_cast<LPARAM>(0), SW_SHOW);
-	EXPECT_NE(nullptr, hDlg);
-	dlg.CloseDialog(0);
-}
 
 /*!
  * プロファイルマネージャ設定ファイルを使うテストのためのフィクスチャクラス

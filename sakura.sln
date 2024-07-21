@@ -8,6 +8,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura_lang_en_US", "sakura
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests1", "tests\unittests\tests1.vcxproj", "{701E3407-EC27-49F7-ADC7-520CF2B4B438}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DD14BD9B-2E0F-4C53-8F16-EA9969FDEA45}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.vsconfig = .vsconfig
+		sakura_core\Funccode_x.hsrc = sakura_core\Funccode_x.hsrc
+		sakura\sakura.natvis = sakura\sakura.natvis
+		sonar-project.properties = sonar-project.properties
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32

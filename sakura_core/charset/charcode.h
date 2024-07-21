@@ -273,7 +273,7 @@ private:
 };
 
 // キャッシュの初期化関数群
-void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode, std::shared_ptr<ShareDataAccessor> _ShareDataAccessor = std::make_shared<ShareDataAccessor>() );  //!< モードを変更したいとき
+void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //!< モードを変更したいとき
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< フォントを変更したとき
 void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
 [[nodiscard]] CCharWidthCache& GetCharWidthCache();

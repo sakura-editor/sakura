@@ -32,8 +32,7 @@
 #include "typeprop/CPropTypes.h"
 
 //コンストラクタ
-CJackManager::CJackManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
+CJackManager::CJackManager()
 {
 	int i;
 
@@ -59,6 +58,8 @@ CJackManager::CJackManager(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_
 		{ PP_COMPLEMENT				, L"Complement"			},
 		{ PP_COMPLEMENTGLOBAL		, L"ComplementGlobal"	},
 	};
+
+	m_pShareData = &GetDllShareData();
 
 	m_Jacks.reserve( PP_BUILTIN_JACK_COUNT );
 	for( i=0; i<PP_BUILTIN_JACK_COUNT; i++ ){

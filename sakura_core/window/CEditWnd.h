@@ -44,12 +44,8 @@
 #define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
 
-#include "doc/CEditDoc.h"
-
-#include "window/CCustomWnd.hpp"
-
 #include <shellapi.h>// HDROP
-
+#include "_main/global.h"
 #include "CMainToolBar.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
 #include "func/CFuncKeyWnd.h"
@@ -76,6 +72,8 @@ static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
 class CPlug;
+class CEditDoc;
+struct DLLSHAREDATA;
 
 //メインウィンドウ内コントロールID
 #define IDT_EDIT		455  // 20060128 aroka
@@ -98,25 +96,14 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-	: public CCustomWnd
-	, private ShareDataAccessorClientWithCache
+: public TSingleton<CEditWnd>
 , public CDocListenerEx
-	, public TSingleInstance<CEditWnd>
 {
-	using CViewFontPtr = std::shared_ptr<CViewFont>;
-
-	/*!
-	 * ウインドウの初期化が完了したかどうかを保持するフラグ
-	 *
-	 * 表示直前まではウインドウメッセージをすべて無視するようになっていた既存コードの挙動を再現する目的で導入。
-	 * 暫定フラグなので、いつか削除すること。
-	 */
-	bool _Initialized = false;
+	friend class TSingleton<CEditWnd>;
+	CEditWnd();
+	~CEditWnd();
 
 public:
-	explicit CEditWnd(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_);
-	~CEditWnd() override;
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -124,6 +111,7 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
+		CEditDoc*		pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
@@ -150,7 +138,7 @@ public:
 
 	//管理
 	void MessageLoop( void );								/* メッセージループ */
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
 
 	//各種イベント
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
@@ -278,6 +266,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
 	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
 	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
@@ -347,15 +336,22 @@ public:
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
 
-	const LOGFONT&	    GetLogfont(bool bTempSetting = true) const;
-	int			        GetFontPointSize(bool bTempSetting = true) const;
-	ECharWidthCacheMode GetLogfontCacheMode() const;
+	const LOGFONT&	GetLogfont(bool bTempSetting = true);
+	int			GetFontPointSize(bool bTempSetting = true);
+	ECharWidthCacheMode GetLogfontCacheMode();
 	double GetFontZoom();
 
 	void ClearViewCaretPosInfo();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+private:
+	//自ウィンドウ
+	HWND			m_hWnd;
+
+	//親ウィンドウ
+	HWND			m_hwndParent;
+
 public:
 	//子ウィンドウ
 	CMainToolBar	m_cToolbar;			//!< ツールバー
@@ -366,8 +362,8 @@ public:
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
-	CViewFontPtr    m_pcViewFont;           //!< フォント
-	CViewFontPtr    m_pcViewFontMiniMap;    //!< フォント
+	CViewFont*		m_pcViewFont;		//!< フォント
+	CViewFont*		m_pcViewFontMiniMap;		//!< フォント
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
@@ -382,12 +378,15 @@ public:
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
 	CEditDoc* 		m_pcEditDoc;
-	CEditView* m_pcEditViewArr[4] = {};	//!< ビュー
+	CEditView*		m_pcEditViewArr[4];	//!< ビュー
 	CEditView*		m_pcEditView;		//!< 有効なビュー
 	CMiniMapView	m_cMiniMapView;		//!< ミニマップ
 	int				m_nActivePaneIndex;	//!< 有効なビューのindex
 	int				m_nEditViewCount;	//!< 有効なビューの数
 	const int		m_nEditViewMaxCount;//!< ビューの最大数=4
+
+	//共有データ
+	DLLSHAREDATA*	m_pShareData;
 
 	//ヘルパ
 	CMenuDrawer		m_cMenuDrawer;
@@ -415,7 +414,7 @@ private:
 	//D&Dフラグ
 	bool			m_bDragMode;
 	CMyPoint		m_ptDragPosOrg;
-	CDropTarget* m_pcDropTarget = nullptr;
+	CDropTarget*	m_pcDropTarget;
 
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji

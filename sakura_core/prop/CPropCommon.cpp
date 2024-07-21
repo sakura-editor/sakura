@@ -127,8 +127,8 @@ INT_PTR CPropCommon::DlgProc2(
 	}
 }
 
-CPropCommon::CPropCommon(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: ShareDataAccessorClientWithCache(std::move(ShareDataAccessor_))
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+CPropCommon::CPropCommon()
 {
 	{
 		assert( sizeof(CPropGeneral)   - sizeof(CPropCommon) == 0 );
@@ -151,11 +151,18 @@ CPropCommon::CPropCommon(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
 		assert( sizeof(CPropPlugin)    - sizeof(CPropCommon) == 0 );
 	}
 
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
+
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
 	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;
 	m_nKeywordSet1 = -1;
+
+	return;
 }
+
+CPropCommon::~CPropCommon() = default;
 
 /* 初期化 */
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。

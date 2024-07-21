@@ -60,11 +60,6 @@ const DWORD p_helpids[] = {	//12600
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-CDlgProperty::CDlgProperty(std::shared_ptr<ShareDataAccessor> ShareDataAccessor_)
-	: CSakuraDialog(IDD_PROPERTY_FILE, std::move(ShareDataAccessor_))
-{
-}
-
 /* モーダルダイアログの表示 */
 int CDlgProperty::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {

@@ -45,6 +45,7 @@ public:
 	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
 	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
 	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
+	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
 
 private:
 	const wchar_t*	m_pData = nullptr;
