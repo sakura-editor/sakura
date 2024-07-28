@@ -10,7 +10,7 @@
   </PropertyGroup>
   <PropertyGroup Label="FuncCode">
     <ExecutablePath Condition="'$(VcpkgRoot)'!=''">$(VcpkgRoot);$(ExecutablePath)</ExecutablePath>
-    <HeaderMake>$(VcpkgInstalledDir)$(VcpkgTriplet)\tools\header-make\HeaderMake.exe</HeaderMake>
+    <HeaderMake>$(VcpkgInstalledDir)x64-windows\tools\header-make\HeaderMake.exe</HeaderMake>
     <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
     <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
   </PropertyGroup>
