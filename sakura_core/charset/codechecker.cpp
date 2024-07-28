@@ -38,8 +38,6 @@
 #include "convert/convert_util2.h"
 #include "charset/codeutil.h"
 #include "charset/charcode.h"
-#include <algorithm>
-
 /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 
                          データ表と変換補助

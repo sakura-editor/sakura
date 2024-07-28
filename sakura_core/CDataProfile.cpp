@@ -25,8 +25,6 @@
 #include "StdAfx.h"
 #include "CDataProfile.h"
 
-#include <stdexcept>
-
 /*!
 	コンストラクタ
  */

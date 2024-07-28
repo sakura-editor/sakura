@@ -42,8 +42,6 @@
 */
 
 #include "StdAfx.h"
-#include <ShlObj.h>
-
 #include "window/CEditWnd.h"
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"	/// 2003/1/26 aroka

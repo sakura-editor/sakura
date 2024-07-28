@@ -23,7 +23,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <limits.h>
 #include "CViewSelect.h"
 #include "CEditView.h"
 #include "doc/CEditDoc.h"

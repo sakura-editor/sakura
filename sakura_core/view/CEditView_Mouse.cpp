@@ -24,13 +24,6 @@
 #include "StdAfx.h"
 #include "CEditView.h"
 
-#include <limits.h>
-
-#include <thread>
-#include <atomic>
-#include <mutex>
-#include <condition_variable>
-
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h" // use CEditApp.h

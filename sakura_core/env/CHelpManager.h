@@ -30,6 +30,8 @@
 #define SAKURA_CHELPMANAGER_57445D73_99E9_4B85_A905_47685753D1DF_H_
 #pragma once
 
+#include "types/CType.h"
+
 struct DLLSHAREDATA;
 
 //!ヘルプ管理

@@ -23,6 +23,8 @@
 		   distribution.
 */
 #include <gtest/gtest.h>
+#include <Windows.h>
+#include <CommCtrl.h>
 #include "apiwrap/StdControl.h"
 
 /*!

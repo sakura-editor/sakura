@@ -33,8 +33,6 @@
 #include "StdAfx.h"
 #include "dlg/CDlgTagsMake.h"
 
-#include <Shlwapi.h>
-
 #include "env/DLLSHAREDATA.h"
 #include "func/Funccode.h"
 #include "util/shell.h"

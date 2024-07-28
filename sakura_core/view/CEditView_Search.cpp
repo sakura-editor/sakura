@@ -25,7 +25,6 @@
 */
 
 #include "StdAfx.h"
-#include <limits.h>
 #include "CEditView.h"
 #include "window/CEditWnd.h"
 #include "parse/CWordParse.h"

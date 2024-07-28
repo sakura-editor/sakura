@@ -30,7 +30,6 @@
 #include "CPropertyManager.h"
 #include "util/window.h"
 #include "util/zoom.h"
-#include <array>
 #include "config/system_constants.h"
 #include "config/app_constants.h"
 

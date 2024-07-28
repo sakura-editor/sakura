@@ -27,9 +27,6 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "env/CommonSetting.h"
-#include <new>
-
-//! 指定した位置の文字が何バイト文字かを返す
 /*!
 	@param[in] pData 位置を求めたい文字列の先頭
 	@param[in] nDataLen 文字列長

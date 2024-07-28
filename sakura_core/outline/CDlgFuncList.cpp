@@ -24,7 +24,6 @@
 */
 
 #include "StdAfx.h"
-#include <limits.h>
 #include "outline/CDlgFuncList.h"
 #include "outline/CFuncInfo.h"
 #include "outline/CFuncInfoArr.h"// 2002/2/3 aroka

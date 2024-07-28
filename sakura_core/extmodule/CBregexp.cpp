@@ -41,9 +41,6 @@
 */
 
 #include "StdAfx.h"
-#include <string>
-#include <stdio.h>
-#include <string.h>
 #include "CBregexp.h"
 #include "charset/charcode.h"
 #include "env/CShareData.h"

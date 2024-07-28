@@ -30,6 +30,8 @@
 #define SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_
 #pragma once
 
+#include "basis/SakuraBasis.h"
+
 //共有メモリ内構造体
 struct SShare_SearchKeywords{
 	// -- -- 検索キー -- -- //

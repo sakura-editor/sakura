@@ -16,7 +16,6 @@
 #include "CPPAMacroMgr.h"
 #include "mem/CNativeW.h"
 #include "CMacroFactory.h"
-#include <string.h>
 #include "io/CTextStream.h"
 #include "util/tchar_convert.h"
 

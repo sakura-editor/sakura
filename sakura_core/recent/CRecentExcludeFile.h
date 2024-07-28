@@ -27,7 +27,6 @@
 #pragma once
 
 #include "CRecentImp.h"
-#include "util/StaticType.h"
 #include "config/maxdata.h"
 
 typedef StaticString<WCHAR, MAX_EXCLUDE_PATH> CExcludeFileString;

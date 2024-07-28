@@ -33,8 +33,6 @@
 
 #include "StdAfx.h"
 
-#include <limits.h>
-#include <stdio.h>
 #include "charset/codechecker.h"
 #include "charset/CESI.h"
 #include "charset/CCodePage.h"

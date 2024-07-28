@@ -34,13 +34,9 @@
 */
 
 #include "StdAfx.h"
-#include <process.h> // _beginthreadex
 #ifdef __MINGW32__
 #define INITGUID 1
 #endif
-#include <ObjBase.h>
-#include <InitGuid.h>
-#include <ShlDisp.h>
 #include "macro/CWSH.h"
 #include "macro/CIfObj.h"
 #include "window/CEditWnd.h"

@@ -57,25 +57,50 @@
 #define _wcstok wcstok
 #endif
 
+#include <comdef.h>
+#include <ctype.h>
+#include <errno.h>
+#include <intrin.h>
 #include <io.h>
+#include <limits.h>
+#include <locale.h>
+#include <math.h>
+#include <mbstring.h>
+#include <process.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <tchar.h>
 #include <wchar.h>
+#include <time.h>
 
 #include <algorithm>
 #include <array>
+#include <atomic>
+#include <cmath>
+#include <condition_variable>
+#include <cstdlib>
+#include <deque>
 #include <exception>
 #include <functional>
 #include <initializer_list>
+#include <iostream>
+#include <iterator>
+#include <limits>
 #include <list>
 #include <map>
-#include <unordered_map>
 #include <memory>
+#include <mutex>
+#include <new>
 #include <optional>
-#include <string>
+#include <regex>
+#include <sstream>
+#include <stdexcept>
 #include <string_view>
+#include <string>
+#include <thread>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -84,10 +109,26 @@
 #include <CommCtrl.h>
 #include <HtmlHelp.h>
 #include <ImageHlp.h>
-#include <imm.h>
-#include <ObjIdl.h>
-#include <shellapi.h>
+#include <ShlDisp.h>
 #include <ShlObj.h>
+#include <Shlwapi.h>
+#include <ShObjIdl.h>
+
+#include <cderr.h>
+#include <commdlg.h>
+#include <comutil.h>
+#include <dlgs.h>
+#include <dwmapi.h>
+#include <imm.h>
+#include <initguid.h>
+#include <objbase.h>
+#include <objidl.h>
+#include <ole2.h>
+#include <olectl.h>
+#include <shellapi.h>
+#include <urlmon.h>
+#include <wincodec.h>
+#include <winspool.h>
 #include <wrl.h>
 
 // Windows SDKのマクロ定数「NULL」を訂正する。
@@ -102,10 +143,6 @@
 # define NULL nullptr
 # pragma warning( pop )
 #endif // end of #ifdef __cplusplus
-
-// プロジェクト内のファイルだがプリコンパイル対象とする。
-// プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
-#include "env/DLLSHAREDATA.h"
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。

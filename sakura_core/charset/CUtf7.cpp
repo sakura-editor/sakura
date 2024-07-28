@@ -27,8 +27,6 @@
 #include "StdAfx.h"
 #include "CUtf7.h"
 
-#include <string_view>
-
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "convert/convert_util2.h"

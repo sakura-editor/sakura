@@ -1,5 +1,7 @@
 #pragma once
 
+class CEditDoc;
+
 struct IndentationStyle
 {
 	enum class Character {
@@ -12,4 +14,3 @@ struct IndentationStyle
 };
 
 void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style);
-

@@ -39,7 +39,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-#include <Shlwapi.h>
 #include "_main/CControlTray.h"
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"

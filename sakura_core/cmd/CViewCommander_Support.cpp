@@ -21,7 +21,6 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 

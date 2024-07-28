@@ -25,6 +25,7 @@
 #include <gtest/gtest.h>
 #include <cstdlib>
 #include <string>
+#include <Windows.h>
 #include "convert/CDecode.h"
 #include "convert/CDecode_Base64Decode.h"
 #include "convert/CDecode_UuDecode.h"

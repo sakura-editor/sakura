@@ -28,7 +28,6 @@
 #pragma once
 
 #include "CRecentImp.h"
-#include "util/StaticType.h"
 
 typedef StaticString<WCHAR, _MAX_PATH> CReplaceString;
 
