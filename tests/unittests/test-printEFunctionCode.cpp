@@ -21,8 +21,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <ostream>
-
+#include "pch.h"
 #include "Funccode_enum.h"
 
 /*!

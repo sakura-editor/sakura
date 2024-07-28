@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021-2022, Sakura Editor Organization
+	Copyright (C) 2024, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -23,30 +23,3 @@
 		   distribution.
 */
 #include "pch.h"
-
-#include "env/CSakuraEnvironment.h"
-
-#include "util/file.h"
-
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
-
-/*!
- * @brief exeファイルパスの取得
- */
-TEST(CSakuraEnvironment, ExpandParameter_ExeFileName)
-{
-	SFilePath szExeFile;
-	CSakuraEnvironment::ExpandParameter(L"$S", szExeFile, _countof2(szExeFile));
-	ASSERT_STREQ(GetExeFileName().c_str(), szExeFile.c_str());
-}
-
-/*!
- * @brief iniファイルパスの取得
- */
-TEST(CSakuraEnvironment, ExpandParameter_IniFileName)
-{
-	SFilePath szIniFile;
-	CSakuraEnvironment::ExpandParameter(L"$I", szIniFile, _countof2(szIniFile));
-	ASSERT_STREQ(GetIniFileName().c_str(), szIniFile.c_str());
-}

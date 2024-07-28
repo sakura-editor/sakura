@@ -22,18 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-#include <windowsx.h>
-#include <Shlwapi.h>
-
-#include <memory>
+#include "pch.h"
 
 #include "env/CShareData.h"
 

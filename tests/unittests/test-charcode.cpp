@@ -22,13 +22,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#define NOMINMAX
+#include "pch.h"
+
 #include "charset/charcode.h"
-#include <gtest/gtest.h>
-#include <algorithm>
-#include <cstring>
-#include <string>
-#include <Windows.h>
 
 class CharWidthCache : public testing::Test {
 protected:

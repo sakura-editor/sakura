@@ -22,8 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
-#include <algorithm>
+#include "pch.h"
+
 #include "util/zoom.h"
 
 /*!

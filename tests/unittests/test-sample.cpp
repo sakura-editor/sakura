@@ -22,9 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
-#include <cstdio>
-#include <exception>
+#include "pch.h"
 
 class DivideByZeroException : public std::exception
 {

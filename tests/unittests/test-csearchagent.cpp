@@ -21,14 +21,10 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#include "pch.h"
 
-#include <gtest/gtest.h>
 #include "CSaveAgent.h"
 
-#include <array>
-#include <initializer_list>
-#include <string_view>
-#include <utility>
 #include "doc/logic/CDocLineMgr.h"
 
 namespace {

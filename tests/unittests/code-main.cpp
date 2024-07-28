@@ -22,26 +22,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-
-#include <algorithm>
-#include <cstdio>
-#include <iostream>
-#include <regex>
-#include <string>
-#include <string_view>
-
-#include "basis/primitive.h"
-#include "util/string_ex.h"
 #include "StartEditorProcessForTest.h"
+
+#include "util/string_ex.h"
 
 /*!
  * テストコード専用wWinMain呼出のラッパー関数

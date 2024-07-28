@@ -22,6 +22,9 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
     <ClCompile Include="test-cmemory.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -188,6 +191,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
     <ClInclude Include="tests1_rc.h">
       <Filter>Other Files</Filter>
     </ClInclude>

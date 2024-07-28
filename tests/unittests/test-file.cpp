@@ -22,18 +22,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
+#include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-#include <Shlwapi.h>
-
-#include <cstdlib>
-#include <fstream>
+#include "util/file.h"
 
 #include "config/maxdata.h"
 #include "basis/primitive.h"
@@ -44,7 +35,6 @@
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
 #include "CDataProfile.h"
-#include "util/file.h"
 
 /*!
  * @brief パスがファイル名に使えない文字を含んでいるかチェックする

@@ -22,17 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
+#include "pch.h"
 
-#include <limits>
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <Windows.h>
-#include <tchar.h>
-#include "basis/primitive.h"
 #include "util/string_ex2.h"
 
 template <typename T>

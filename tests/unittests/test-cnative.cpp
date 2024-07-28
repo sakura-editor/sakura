@@ -22,10 +22,10 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <stdexcept>
-#include <gtest/gtest.h>
-#include "charset/charcode.h"
+#include "pch.h"
+
 #include "mem/CNativeW.h"
+
 #include "mem/CNativeA.h"
 
 // NULL定義補正
