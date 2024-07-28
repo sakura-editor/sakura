@@ -25,10 +25,10 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-
+ */
 #include "StdAfx.h"
-#include "CDocTypeManager.h"
+#include "env/CDocTypeManager.h"
+
 #include "_main/CMutex.h"
 #include "CFileExt.h"
 #include <Shlwapi.h>	// PathMatchSpec
@@ -40,6 +40,11 @@ const WCHAR* CDocTypeManager::m_typeExtSeps = L" ;,";	// タイプ別拡張子 �
 const WCHAR* CDocTypeManager::m_typeExtWildcards = L"*?";	// タイプ別拡張子 ワイルドカード
 
 static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
+
+CDocTypeManager::CDocTypeManager()
+{
+	m_pShareData = &GetDllShareData();
+}
 
 /*!
 	ファイル名から、ドキュメントタイプ（数値）を取得する

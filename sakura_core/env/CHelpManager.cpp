@@ -25,13 +25,17 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-
+ */
 #include "StdAfx.h"
-#include "DLLSHAREDATA.h"
+#include "env/CHelpManager.h"
 
-#include "CHelpManager.h"
+#include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
+
+CHelpManager::CHelpManager()
+{
+	m_pShareData = &GetDllShareData();
+}
 
 /*!	外部Winヘルプが設定されているか確認。
 */

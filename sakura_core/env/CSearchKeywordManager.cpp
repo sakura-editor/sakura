@@ -25,18 +25,23 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-
+ */
 #include "StdAfx.h"
-#include "DLLSHAREDATA.h"
+#include "env/CSearchKeywordManager.h"
 
-#include "CSearchKeywordManager.h"
+#include "env/DLLSHAREDATA.h"
+
 #include "recent/CRecentSearch.h"
 #include "recent/CRecentReplace.h"
 #include "recent/CRecentGrepFile.h"
 #include "recent/CRecentGrepFolder.h"
 #include "recent/CRecentExcludeFile.h"
 #include "recent/CRecentExcludeFolder.h"
+
+CSearchKeywordManager::CSearchKeywordManager()
+{
+	m_pShareData = &GetDllShareData();
+}
 
 /*!	m_aSearchKeysにpszSearchKeyを追加する。
 	YAZAKI

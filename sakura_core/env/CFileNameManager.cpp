@@ -28,9 +28,9 @@
 */
 
 #include "StdAfx.h"
+#include "env/CFileNameManager.h"
 
-#include "DLLSHAREDATA.h"
-#include "CFileNameManager.h"
+#include "env/DLLSHAREDATA.h"
 #include "charset/CCodePage.h"
 #include "util/module.h"
 #include "util/os.h"
@@ -44,6 +44,11 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+CFileNameManager::CFileNameManager()
+{
+	m_pShareData = &GetDllShareData();
+}
 
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名

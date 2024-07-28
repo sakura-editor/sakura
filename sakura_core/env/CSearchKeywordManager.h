@@ -42,15 +42,12 @@ struct SShare_SearchKeywords{
 };
 
 struct DLLSHAREDATA;
-DLLSHAREDATA& GetDllShareData();
 
 //! 検索キーワード管理
 class CSearchKeywordManager{
 public:
-	CSearchKeywordManager()
-	{
-		m_pShareData = &GetDllShareData();
-	}
+	CSearchKeywordManager();
+
 	//@@@ 2002.2.2 YAZAKI
 	void		AddToSearchKeyArr( const wchar_t* pszSearchKey );	//	m_aSearchKeysにpszSearchKeyを追加する
 	void		AddToReplaceKeyArr( const wchar_t* pszReplaceKey );	//	m_aReplaceKeysにpszReplaceKeyを追加する
@@ -58,7 +55,9 @@ public:
 	void		AddToGrepFolderArr( const WCHAR* pszGrepFolder );	//	m_aGrepFolders にpszGrepFolder を追加する
 	void		AddToExcludeFileArr( const WCHAR* pszExcludeFile );		//	m_aExcludeFiles に pszExcludeFile を追加する
 	void		AddToExcludeFolderArr( const WCHAR* pszExcludeFolder );	//	m_aExcludeFolders に pszExcludeFolder を追加する
+
 private:
 	DLLSHAREDATA* m_pShareData;
 };
+
 #endif /* SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_ */
