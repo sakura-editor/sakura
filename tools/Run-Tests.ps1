@@ -1,35 +1,18 @@
 Param(
     [String]$Platform = $env:BUILD_PLATFORM,
-    [String]$Configuration = $env:BUILD_CONFIGURATION,
-    [String]$HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
+    [String]$Configuration = $env:BUILD_CONFIGURATION
 )
 
-# Run Tests1.
-$TestName = "tests1"
-
-# Resolve Path to execute.
-$CmdTests = [System.IO.Path]::Combine($HomePath, "$Platform\$Configuration\$TestName.exe")
+$HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
 
 # Invoke Tests1.
-$p = Start-Process `
-    -FilePath "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" `
-    -ArgumentList @( `
-      "--export_type xml:$HomePath\$TestName-coverage.xml", `
-      "--modules $CmdTests", `
-      "--sources $HomePath", `
-      "--excluded_sources $HomePath\tests\googletest", `
-      "--working_dir $HomePath\$Platform\$Configuration", `
-      "--cover_children", `
-      "--", `
-      "$CmdTests", `
-      "--gtest_output=xml:$HomePath\$TestName-googletest.xml") `
-    -NoNewWindow `
-    -WorkingDirectory $HomePath `
-    -PassThru `
-    -Wait
+& "$PSScriptRoot\Run-OpenCppCoverage.ps1" `
+  $([System.IO.Path]::GetFullPath("$HomePath\tests1-coverage.xml")) `
+  $([System.IO.Path]::GetFullPath("$HomePath\$Platform\$Configuration\tests1.exe")) `
+  @("--gtest_output=xml:tests1-googletest.xml")
 
-if ($p.ExitCode -ne 0) {
-  #(暫定対応)テストが失敗しても続行する
-  #throw "$TestName was Failed."
-  Write-Host "${TestName} was Failed with ${p.ExitCode}."
-}
+# Invoke Tests2.
+& "$PSScriptRoot\Run-SakuraEditorWithCoverage.ps1" `
+  $([System.IO.Path]::GetFullPath("$HomePath\tests2-coverage.xml")) `
+  $Platform `
+  $Configuration

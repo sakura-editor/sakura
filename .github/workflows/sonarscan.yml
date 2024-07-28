@@ -80,18 +80,14 @@ jobs:
         restore-keys:
           sonar-cache-${{ env.SCANNER_CLI_VERSION }}-${{ env.BASE_SHA }}
 
-    - name: Make BuildDependencies
-      working-directory: ${{ github.workspace }}
-      run: .\tools\BuildDependencies.bat
+    - name: Fetch SonarScanner
+      run: .\tools\Fetch-SonarScanner.ps1
 
-    - name: Build with Build-Wrapper
-      run: .\tools\Build-SakuraEditorWithBuildWrapper.ps1
+    - name: Build
+      run: .\tools\Build-SakuraEditor.ps1
 
     - name: Run Tests
       run: .\tools\Run-Tests.ps1
-
-    - name: Fetch SonarScanner
-      run: .\tools\Fetch-SonarScanner.ps1
 
     - name: Analyze with SonarScanner
       env:

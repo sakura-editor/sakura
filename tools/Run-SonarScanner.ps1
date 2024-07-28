@@ -21,6 +21,11 @@ if (-not((Get-Content $SonarScannerProperties | Select-String "^sonar.host.url=.
 # Fetch the sonar-scanner.
 .\tools\Fetch-SonarScanner.ps1
 
+# SONAR_TOKEN未定義の場合、ファイルから取得を試みる
+if ([string]::IsNullOrEmpty($env:SONAR_TOKEN)) {
+    $env:SONAR_TOKEN = "$(Get-Content $HomePath\tools\SONAR_TOKEN)"
+}
+
 # Check SONAR_TOKEN
 if ([string]::IsNullOrEmpty($env:SONAR_TOKEN)) {
     Throw "`$env:SONAR_TOKEN is not defined"
