@@ -1,6 +1,12 @@
 ﻿{
   "dependencies": [
-    "header-make",
-    "gtest"
+    {
+      "name": "header-make",
+      "host": true
+    },
+    {
+      "name": "gtest",
+      "platform": "static"
+    }
   ]
 }

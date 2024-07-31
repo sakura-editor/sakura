@@ -17,7 +17,6 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <memory>
 #include "CHokanMgr.h"
 #include "env/CShareData.h"
 #include "view/CEditView.h"
@@ -121,9 +120,6 @@ int CHokanMgr::Search(
 )
 {
 	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
 
 	/*
 	||  補完キーワードの検索

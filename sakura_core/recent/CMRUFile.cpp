@@ -17,7 +17,6 @@
 */
 
 #include "StdAfx.h"
-#include <ShlObj.h>
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "env/CShareData.h"
@@ -27,15 +26,6 @@
 #include "window/CEditWnd.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
-
-/*!	コンストラクタ
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-*/
-CMRUFile::CMRUFile()
-{
-	//	初期化。
-	m_pShareData = &GetDllShareData();
-}
 
 /*	デストラクタ	*/
 CMRUFile::~CMRUFile()

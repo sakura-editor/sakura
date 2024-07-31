@@ -19,13 +19,12 @@
 */
 
 #include "StdAfx.h"
-#include <CdErr.h>
-#include <Dlgs.h>
-#include <CommDlg.h>
 #include "dlg/CDlgOpenFile.h"
+
 #include "dlg/CDialog.h"
 #include "func/Funccode.h"	//Stonee, 2001/05/18
 #include "CFileExt.h"
+#include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "CEditApp.h"
@@ -651,9 +650,6 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
 
 	WCHAR	szFile[_MAX_PATH + 1];
 	WCHAR	szDrive[_MAX_DRIVE];

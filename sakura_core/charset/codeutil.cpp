@@ -23,8 +23,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <locale.h>
-#include <mbstring.h>
 #include "charset/codeutil.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"

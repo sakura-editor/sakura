@@ -25,12 +25,11 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-
+ */
 #include "StdAfx.h"
-#include "DLLSHAREDATA.h"
+#include "env/CFormatManager.h"
 
-#include "CFormatManager.h"
+#include "env/DLLSHAREDATA.h"
 #include "CSelectLang.h"
 
 /*! 日付をフォーマット

@@ -21,12 +21,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#include "pch.h"
 
-#include <gtest/gtest.h>
-#include <windows.h>
-#include <string>
-#include "mem/CNativeW.h"
 #include "env/CDocTypeManager.h"
+
+#include "mem/CNativeW.h"
 
 TEST(CDocTypeManager, ConvertTypesExtToDlgExtNullptr1)
 {

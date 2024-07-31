@@ -37,12 +37,6 @@
 #include "StdAfx.h"
 #include "CProfile.h"
 
-#include <algorithm>
-#include <map>
-#include <string>
-#include <string_view>
-#include <vector>
-
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resource読み込みに使用
 #include "CEol.h"

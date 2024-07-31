@@ -27,17 +27,6 @@
 #include "StdAfx.h"
 #include "util/shell.h"
 
-#include <cderr.h>			// CDERR_FINDRESFAILURE等
-#include <comdef.h>
-#include <comutil.h>
-#include <urlmon.h>
-#include <wrl.h>
-#include <HtmlHelp.h>
-#include <shellapi.h>
-#include <ShlObj.h>
-
-#include <regex>
-
 #include "debug/Debug1.h"
 #include "util/RegKey.h"
 #include "util/string_ex2.h"

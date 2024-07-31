@@ -28,9 +28,9 @@
 */
 
 #include "StdAfx.h"
+#include "env/CFileNameManager.h"
 
-#include "DLLSHAREDATA.h"
-#include "CFileNameManager.h"
+#include "env/DLLSHAREDATA.h"
 #include "charset/CCodePage.h"
 #include "util/module.h"
 #include "util/os.h"

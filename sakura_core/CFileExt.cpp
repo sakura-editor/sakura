@@ -30,8 +30,6 @@
 */
 
 #include "StdAfx.h"
-#include <string.h>
-#include <stdlib.h>
 #include "CFileExt.h"
 #include "env/CDocTypeManager.h"
 

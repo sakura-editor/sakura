@@ -59,8 +59,6 @@ CJackManager::CJackManager()
 		{ PP_COMPLEMENTGLOBAL		, L"ComplementGlobal"	},
 	};
 
-	m_pShareData = &GetDllShareData();
-
 	m_Jacks.reserve( PP_BUILTIN_JACK_COUNT );
 	for( i=0; i<PP_BUILTIN_JACK_COUNT; i++ ){
 		assert( i == jackNames[i].id );

@@ -38,9 +38,6 @@
 #include "StdAfx.h"
 #include "mem/CMemory.h"
 
-#include <algorithm>
-#include <cstdlib>
-
 #include "_main/global.h"
 #include "config/app_constants.h"
 #include "util/MessageBoxF.h"

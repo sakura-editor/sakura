@@ -22,17 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
-#ifndef STRICT
-#define STRICT 1
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-#include <vector>
-#include <tchar.h>
-#include <Windows.h>
-#include "util/design_template.h"
+#include "pch.h"
+
 #include "dlg/CDlgOpenFile.h"
 
 extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog();

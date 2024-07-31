@@ -38,7 +38,6 @@
 */
 
 #include "StdAfx.h"
-#include <limits.h>
 #include "CTabWnd.h"
 #include "window/CEditWnd.h"
 #include "_main/global.h"
@@ -54,7 +53,6 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
-#include <windowsx.h>
 #include "config/system_constants.h"
 #include "String_define.h"
 
@@ -827,9 +825,6 @@ CTabWnd::CTabWnd()
 ,m_hwndSizeBox(NULL)
 ,m_bSizeBox(false)
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;

@@ -30,18 +30,15 @@
 #define SAKURA_CDOCTYPEMANAGER_ACE5AE64_5C6A_4A70_BACF_99F9A448360D_H_
 #pragma once
 
+#include "env/SShareDataClientWithCache.hpp"
+
 #include "types/CType.h"
 
 struct DLLSHAREDATA;
-DLLSHAREDATA& GetDllShareData();
 
 //! ドキュメントタイプ管理
-class CDocTypeManager{
+class CDocTypeManager : private SShareDataClientWithCache {
 public:
-	CDocTypeManager()
-	{
-		m_pShareData = &GetDllShareData();
-	}
 	CTypeConfig GetDocumentTypeOfPath( const WCHAR* pszFilePath );	/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
 	CTypeConfig GetDocumentTypeOfExt( const WCHAR* pszExt );		/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	CTypeConfig GetDocumentTypeOfId( int id );
@@ -58,8 +55,6 @@ public:
 
 	static const WCHAR* m_typeExtSeps;			// タイプ別拡張子の区切り文字
 	static const WCHAR* m_typeExtWildcards;		// タイプ別拡張子のワイルドカード
-
-private:
-	DLLSHAREDATA* m_pShareData;
 };
+
 #endif /* SAKURA_CDOCTYPEMANAGER_ACE5AE64_5C6A_4A70_BACF_99F9A448360D_H_ */

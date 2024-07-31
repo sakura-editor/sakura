@@ -24,7 +24,6 @@
 */
 
 #include "StdAfx.h"
-#include <limits.h>
 #include "outline/CDlgFuncList.h"
 #include "outline/CFuncInfo.h"
 #include "outline/CFuncInfoArr.h"// 2002/2/3 aroka
@@ -204,7 +203,7 @@ HINSTANCE CDlgFuncList::m_lastRcInstance = 0;
 CDlgFuncList::CDlgFuncList() : CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */

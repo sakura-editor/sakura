@@ -14,7 +14,6 @@
 */
 
 #include "StdAfx.h"
-#include <stdlib.h>
 #include "outline/CFuncInfoArr.h"
 #include "outline/CFuncInfo.h"
 

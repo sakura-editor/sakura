@@ -33,7 +33,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <map>
 #include "doc/CDocListener.h"
 #include "doc/CEditDoc.h"
 

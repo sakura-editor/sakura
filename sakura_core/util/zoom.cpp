@@ -27,9 +27,6 @@
 
 #include "StdAfx.h"
 #include "zoom.h"
-#include <algorithm>
-#include <cmath>
-
 /*!
 	@brief 値テーブル上における指定値の位置を取得
 	@param[in] vTable 値テーブル

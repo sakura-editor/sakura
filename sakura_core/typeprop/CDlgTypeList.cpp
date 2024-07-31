@@ -26,7 +26,6 @@
 #include "util/window.h"
 #include "util/RegKey.h"
 #include "util/string_ex2.h"
-#include <memory>
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"

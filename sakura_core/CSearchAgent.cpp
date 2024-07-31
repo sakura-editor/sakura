@@ -24,15 +24,12 @@
 */
 #include "StdAfx.h"
 
-#include <vector>
-#include <utility>
 #include "CSearchAgent.h"
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
 #include "COpe.h"
 #include "dlg/CDlgCancel.h"
 #include "util/string_ex.h"
-#include <algorithm>
 #include "sakura_rc.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
@@ -41,7 +38,6 @@
 
 //#define MEASURE_SEARCH_TIME
 #ifdef MEASURE_SEARCH_TIME
-#include <time.h>
 #endif
 
 // CSearchStringPattern

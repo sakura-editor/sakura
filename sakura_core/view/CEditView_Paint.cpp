@@ -25,8 +25,6 @@
 */
 
 #include "StdAfx.h"
-#include <vector>
-#include <limits.h>
 #pragma comment(lib, "Msimg32.lib")
 #include "view/CEditView_Paint.h"
 #include "view/CEditView.h"
@@ -43,9 +41,7 @@
 #include "util/string_ex2.h"
 #ifdef USE_SSE2
 #ifdef __MINGW32__
-#include <x86intrin.h>
 #else
-#include <intrin.h>
 #endif
 #endif
 

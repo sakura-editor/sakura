@@ -22,22 +22,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#include "pch.h"
 
-#include <gtest/gtest.h>
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-
-#include "basis/primitive.h"
 #include "print/CPrint.h"
-
-#include <cassert>
-#include <limits>
-#include <string>
 
 /*! テストのベースとなる値 */
 static constexpr MYDEVMODE myDevMode = {

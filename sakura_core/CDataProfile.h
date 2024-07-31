@@ -31,7 +31,6 @@
 
 #include "basis/SakuraBasis.h"
 #include "debug/Debug2.h"
-#include "util/StaticType.h"
 
 /*!
  * バッファ参照型

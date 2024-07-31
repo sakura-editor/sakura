@@ -23,7 +23,6 @@
 
 #include "StdAfx.h"
 #include "CEditView.h"
-#include <algorithm>
 #include "charset/CShiftJis.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"

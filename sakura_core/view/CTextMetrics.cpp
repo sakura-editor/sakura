@@ -24,8 +24,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <algorithm>
-#include <vector>
 #include "CTextMetrics.h"
 #include "charset/codechecker.h"
 #include "mem/CNativeW.h"

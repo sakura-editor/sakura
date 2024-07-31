@@ -28,7 +28,6 @@
 #pragma once
 
 #include "CRecentImp.h"
-#include "util/StaticType.h"
 #include "config/maxdata.h" //MAX_CMDLEN
 
 typedef StaticString<WCHAR, MAX_CMDLEN> CCmdString;

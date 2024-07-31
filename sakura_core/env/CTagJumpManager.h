@@ -32,6 +32,8 @@
 
 #include "basis/SakuraBasis.h"
 
+#include "env/SShareDataClientWithCache.hpp"
+
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
 struct TagJump {
@@ -59,18 +61,12 @@ struct SShare_TagJump{
 };
 
 struct DLLSHAREDATA;
-DLLSHAREDATA& GetDllShareData();
 
-class CTagJumpManager{
+class CTagJumpManager : private SShareDataClientWithCache {
 public:
-	CTagJumpManager()
-	{
-		m_pShareData = &GetDllShareData();
-	}
 	//タグジャンプ関連	// 2004/06/21 novice タグジャンプ機能追加
 	void PushTagJump(const TagJump * pTagJump);		//!< タグジャンプ情報の保存
 	bool PopTagJump(TagJump *pTagJump);				//!< タグジャンプ情報の参照
-private:
-	DLLSHAREDATA* m_pShareData;
 };
+
 #endif /* SAKURA_CTAGJUMPMANAGER_487A43FC_EB78_44CF_B1E4_6FD78EF1F35A_H_ */

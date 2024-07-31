@@ -22,6 +22,9 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
     <ClCompile Include="test-cmemory.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -175,6 +178,10 @@
     <ClCompile Include="test-codechecker.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="coverage.cpp" />
+    <ClCompile Include="test-cimpexpmanager.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
@@ -188,6 +195,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
     <ClInclude Include="tests1_rc.h">
       <Filter>Other Files</Filter>
     </ClInclude>

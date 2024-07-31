@@ -151,9 +151,6 @@ CPropCommon::CPropCommon()
 		assert( sizeof(CPropPlugin)    - sizeof(CPropCommon) == 0 );
 	}
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
 	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;

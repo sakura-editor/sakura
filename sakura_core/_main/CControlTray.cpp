@@ -26,7 +26,6 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
 #include "CControlTray.h"
 #include "CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
@@ -203,9 +202,6 @@ CControlTray::CControlTray()
 , m_nCurSearchKeySequence(-1)
 , m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	// アクセラレータテーブル作成
 	CreateAccelTbl();
 

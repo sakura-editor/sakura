@@ -19,9 +19,6 @@
 #include "StdAfx.h"
 #include "debug/Debug1.h"
 
-#include <stdio.h>
-#include <stdarg.h>
-
 #include "util/string_ex.h"
 
 #if defined(_DEBUG) || defined(USE_RELPRINT)

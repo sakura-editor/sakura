@@ -27,8 +27,6 @@
 #include "CColor_Found.h"
 #include "types/CTypeSupport.h"
 #include "view/CViewSelect.h"
-#include <limits.h>
-
 void CColor_Select::OnStartScanLogic()
 {
 	m_nSelectLine	= CLayoutInt(-1);

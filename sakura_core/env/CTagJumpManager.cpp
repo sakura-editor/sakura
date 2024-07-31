@@ -25,12 +25,11 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-
+ */
 #include "StdAfx.h"
-#include "env/DLLSHAREDATA.h"
+#include "env/CTagJumpManager.h"
 
-#include "CTagJumpManager.h"
+#include "env/DLLSHAREDATA.h"
 
 /*!
 	@brief タグジャンプ情報の保存

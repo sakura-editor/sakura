@@ -23,11 +23,8 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <stdexcept>
 #include "charset/codechecker.h"
 #include "mem/CNativeW.h"
-
-#include <string_view>
 
 #include "CEol.h"
 
