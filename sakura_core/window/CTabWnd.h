@@ -40,6 +40,8 @@
 #pragma once
 
 #include "CWnd.h"
+#include "env/SShareDataClientWithCache.hpp"
+
 #include "util/design_template.h"
 #include "env/CommonSetting.h"
 
@@ -48,7 +50,7 @@ struct EditNode;
 struct DLLSHAREDATA;
 
 //! タブバーウィンドウ
-class CTabWnd final : public CWnd
+class CTabWnd final : private SShareDataClientWithCache, public CWnd
 {
 public:
 	/*
@@ -169,7 +171,6 @@ protected:
 	|| メンバ変数
 	*/
 public:
-	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
 	HFONT			m_hFont;		/*!< 表示用フォント */
 	HWND			m_hwndTab;		/*!< タブコントロール */
 	HWND			m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
@@ -208,4 +209,5 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
+
 #endif /* SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_ */

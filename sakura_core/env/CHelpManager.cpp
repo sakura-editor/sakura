@@ -32,11 +32,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
 
-CHelpManager::CHelpManager()
-{
-	m_pShareData = &GetDllShareData();
-}
-
 /*!	外部Winヘルプが設定されているか確認。
 */
 bool CHelpManager::ExtWinHelpIsSet( const STypeConfig* type )

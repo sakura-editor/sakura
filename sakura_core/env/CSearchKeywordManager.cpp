@@ -38,11 +38,6 @@
 #include "recent/CRecentExcludeFile.h"
 #include "recent/CRecentExcludeFolder.h"
 
-CSearchKeywordManager::CSearchKeywordManager()
-{
-	m_pShareData = &GetDllShareData();
-}
-
 /*!	m_aSearchKeysにpszSearchKeyを追加する。
 	YAZAKI
 */

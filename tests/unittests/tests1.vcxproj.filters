@@ -178,6 +178,10 @@
     <ClCompile Include="test-codechecker.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="coverage.cpp" />
+    <ClCompile Include="test-cimpexpmanager.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">

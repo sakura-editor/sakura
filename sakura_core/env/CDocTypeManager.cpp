@@ -40,11 +40,6 @@ const WCHAR* CDocTypeManager::m_typeExtWildcards = L"*?";	// タイプ別拡張�
 
 static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
 
-CDocTypeManager::CDocTypeManager()
-{
-	m_pShareData = &GetDllShareData();
-}
-
 /*!
 	ファイル名から、ドキュメントタイプ（数値）を取得する
 	

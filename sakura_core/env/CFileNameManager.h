@@ -30,6 +30,8 @@
 #define SAKURA_CFILENAMEMANAGER_2B89B426_470E_40D6_B62E_5321E383ECD6_H_
 #pragma once
 
+#include "env/SShareDataClientWithCache.hpp"
+
 #include "util/design_template.h"
 #include "config/maxdata.h"
 #include "charset/charset.h"
@@ -40,9 +42,9 @@ struct DLLSHAREDATA;
 struct EditInfo;
 
 //!ファイル名管理
-class CFileNameManager : public TSingleton<CFileNameManager>{
+class CFileNameManager : private SShareDataClientWithCache, public TSingleton<CFileNameManager> {
 	friend class TSingleton<CFileNameManager>;
-	CFileNameManager();
+	CFileNameManager() = default;
 
 public:
 	//ファイル名関連
@@ -74,8 +76,6 @@ public:
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
 private:
-	DLLSHAREDATA* m_pShareData;
-
 	// ファイル名簡易表示用キャッシュ
 	int		m_nTransformFileNameCount = -1; // 有効数
 	WCHAR	m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];

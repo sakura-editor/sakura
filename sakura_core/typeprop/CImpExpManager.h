@@ -33,6 +33,8 @@
 #define SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
 #pragma once
 
+#include "env/SShareDataClientWithCache.hpp"
+
 #include "CDataProfile.h"
 #include "env/DLLSHAREDATA.h"
 
@@ -41,11 +43,15 @@ using std::wstring;
 class CImpExpManager
 {
 public:
+	virtual ~CImpExpManager() = default;
+
 	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
 	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
+
 	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const wstring& sFileName, wstring& sErrMsg);
 	virtual bool Import(const wstring& sFileName, wstring& sErrMsg) = 0;
 	virtual bool Export(const wstring& sFileName, wstring& sErrMsg) = 0;
+
 	// ファイル名の初期値を設定
 	void SetBaseName(const wstring& sBase);
 	// フルパス名を取得
@@ -84,7 +90,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          タイプ別設定                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpType : public CImpExpManager
+class CImpExpType : private SShareDataClientWithCache, public CImpExpManager
 {
 public:
 	// Constructor
@@ -93,14 +99,12 @@ public:
 		, m_Types( types )
 		, m_hwndList( hwndList )
 	{
-		/* 共有データ構造体のアドレスを返す */
-		m_pShareData = &GetDllShareData();
 	}
 
 public:
-	bool ImportAscertain( HINSTANCE, HWND, const wstring&, wstring& );
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const wstring& sFileName, wstring& sErrMsg) override;
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -115,7 +119,6 @@ private:
 	HWND			m_hwndList;
 
 	// 内部使用
-	DLLSHAREDATA*	m_pShareData;
 	int				m_nColorType;
 	wstring 		m_sColorFile;
 	bool			m_bAddType;
@@ -135,8 +138,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -160,8 +163,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -185,8 +188,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -210,8 +213,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -235,8 +238,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -262,8 +265,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -289,8 +292,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -314,8 +317,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+	bool Import(const wstring& sFileName, wstring& sErrMsg) override;
+	bool Export(const wstring& sFileName, wstring& sErrMsg) override;
 	static void IO_FileTreeIni( CDataProfile&, std::vector<SFileTreeItem>& );
 
 public:
@@ -326,4 +329,5 @@ public:
 private:
 	std::vector<SFileTreeItem>&		m_aFileTreeItems;
 };
+
 #endif /* SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_ */

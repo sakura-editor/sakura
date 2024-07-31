@@ -31,7 +31,6 @@
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(L"::CSplitterWnd")
 , m_nAllSplitRows(1)					/* 分割行数 */
@@ -44,9 +43,6 @@ CSplitterWnd::CSplitterWnd()
 , m_nDragPosY(0)						/* ドラッグ位置Ｙ */
 , m_nActivePane(0)					/* アクティブなペイン 0-3 */
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	m_hcurOld = NULL;						/* もとのマウスカーソル */
 
 	for( int v=0; v < MAXCOUNTOFVIEW; v++ ){

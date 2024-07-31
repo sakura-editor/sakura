@@ -45,11 +45,6 @@
 //                      ファイル名管理                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CFileNameManager::CFileNameManager()
-{
-	m_pShareData = &GetDllShareData();
-}
-
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名
 	@param pszDest  [out] 変換後のファイル名の格納先

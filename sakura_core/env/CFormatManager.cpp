@@ -32,11 +32,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "CSelectLang.h"
 
-CFormatManager::CFormatManager()
-{
-	m_pShareData = &GetDllShareData();
-}
-
 /*! 日付をフォーマット
 	systime：時刻データ
 	

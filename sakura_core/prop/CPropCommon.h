@@ -41,6 +41,8 @@
 #define SAKURA_CPROPCOMMON_82053028_AB71_4E4C_AE50_0E46E173828C_H_
 #pragma once
 
+#include "env/SShareDataClientWithCache.hpp"
+
 #include "func/CFuncLookup.h"
 #include "env/CommonSetting.h"
 
@@ -85,7 +87,7 @@ enum PropComSheetOrder {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CPropCommon
+class CPropCommon : public SShareDataClientWithCache
 {
 public:
 	/*
@@ -117,7 +119,6 @@ public:
 	HWND				m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND				m_hwndThis;		/* このダイアログのハンドル */
 	PropComSheetOrder	m_nPageNum;
-	DLLSHAREDATA*		m_pShareData;
 	int					m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List
@@ -544,4 +545,5 @@ private:
 	bool Check_MainMenu(HWND hwndTree, std::wstring& sErrMsg);						// メニューの検査
 	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, std::wstring& sErrMsg);	// メニューの検査
 };
+
 #endif /* SAKURA_CPROPCOMMON_82053028_AB71_4E4C_AE50_0E46E173828C_H_ */

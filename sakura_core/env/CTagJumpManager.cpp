@@ -31,11 +31,6 @@
 
 #include "env/DLLSHAREDATA.h"
 
-CTagJumpManager::CTagJumpManager()
-{
-	m_pShareData = &GetDllShareData();
-}
-
 /*!
 	@brief タグジャンプ情報の保存
 

@@ -95,9 +95,6 @@ CPropTypes::CPropTypes()
 		assert( sizeof(CPropTypesKeyHelp) - sizeof(CPropTypes) == 0 );
 	}
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
 	m_pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 

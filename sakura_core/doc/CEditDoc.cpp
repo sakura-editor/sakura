@@ -39,11 +39,10 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-
+ */
 #include "StdAfx.h"
-#pragma comment(lib, "windowscodecs.lib")
 #include "doc/CEditDoc.h"
+
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
 #include "docplus/CModifyManager.h"
@@ -76,6 +75,8 @@
 #include "sakura_rc.h"
 #include "config/app_constants.h"
 #include "String_define.h"
+
+#pragma comment(lib, "windowscodecs.lib")
 
 #define IDT_ROLLMOUSE	1
 

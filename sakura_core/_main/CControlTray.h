@@ -27,7 +27,8 @@
 #define SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_
 #pragma once
 
-#include <Windows.h>
+#include "env/SShareDataClientWithCache.hpp"
+
 #include "uiparts/CMenuDrawer.h"
 #include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
@@ -41,10 +42,8 @@ class CPropertyManager;
 /*!
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
-	
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-*/
-class CControlTray
+ */
+class CControlTray : private SShareDataClientWithCache
 {
 public:
 	/*
@@ -121,7 +120,6 @@ private:
 	HWND			m_hWnd;
 	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
 
-	DLLSHAREDATA*	m_pShareData;
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
 	int				m_nCurSearchKeySequence;
 

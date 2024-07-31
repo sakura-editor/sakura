@@ -825,9 +825,6 @@ CTabWnd::CTabWnd()
 ,m_hwndSizeBox(NULL)
 ,m_bSizeBox(false)
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
