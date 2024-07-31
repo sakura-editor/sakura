@@ -41,6 +41,7 @@ UNICODE版では問題無いが、ANSI版では設定の前にコード変換す
 
 #include <windows.h>
 #include <Commctrl.h>
+#include <shlwapi.h>
 #include "mem/CNativeW.h"
 #include <vector>
 
@@ -218,6 +219,15 @@ namespace ApiWrap{
 	inline void Combo_GetEditSel( HWND hwndCombo, DWORD& dwSelStart, DWORD& dwSelEnd )
 	{
 		::SendMessage( hwndCombo, CB_GETEDITSEL, WPARAM( &dwSelStart ), LPARAM( &dwSelEnd ) );
+	}
+	inline void Combo_SHAutoComplete( HWND hwndCombo, DWORD dwFlags )
+	{
+		COMBOBOXINFO comboInfo;
+		comboInfo.cbSize = sizeof(comboInfo);
+		if (0 != GetComboBoxInfo(hwndCombo, &comboInfo))
+		{
+			SHAutoComplete(comboInfo.hwndItem, dwFlags);
+		}
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
