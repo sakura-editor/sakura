@@ -323,6 +323,9 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), TRUE );
 
+	/* 入力補完を機能させる */
+	Combo_SHAutoComplete(GetItemHwnd( IDC_COMBO_FOLDER ), SHACF_FILESYS_DIRS|SHACF_AUTOAPPEND_FORCE_ON);
+
 	/* ダイアログのアイコン */
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
