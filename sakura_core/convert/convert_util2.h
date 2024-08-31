@@ -135,7 +135,7 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 		pr += ninc_len;
 	}
 
-	return pw - pDst;
+	return int(pw - pDst);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -434,7 +434,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 
 	/* begin を取得 */
 
-	pr += CWordParse::GetWord( pr, pr_end-pr, pszSplitChars, &pwstart, &nwlen );
+	pr += CWordParse::GetWord( pr, int(pr_end - pr), pszSplitChars, &pwstart, &nwlen );
 	if( nwlen != 5 ){
 		// error.
 		return false;
@@ -453,7 +453,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 
 	/* 3桁の8進数（Unix システムのパーミッション）を取得 */
 
-	pr += CWordParse::GetWord( pr, pr_end-pr, pszSplitChars, &pwstart, &nwlen );
+	pr += CWordParse::GetWord( pr, int(pr_end - pr), pszSplitChars, &pwstart, &nwlen );
 	if( nwlen != 3 ){
 		// error.
 		return false;
@@ -476,7 +476,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 
 	/* 書き出し用のファイル名を取得 */
 
-	pr += CWordParse::GetWord( pr, pr_end-pr, pszSplitChars, &pwstart, &nwlen );
+	pr += CWordParse::GetWord( pr, int(pr_end - pr), pszSplitChars, &pwstart, &nwlen );
 	// 末尾の空白・改行文字をスキップ
 	for( ; nwlen > 0; --nwlen ){
 		CHAR_TYPE c = pwstart[nwlen-1];
@@ -698,7 +698,7 @@ finish_first_detect:;
 		return 0;
 	}
 
-	nskipped_len = pr - pSrc + 2;  // =? から ?= までの、全体の長さを記録
+	nskipped_len = int(pr - pSrc) + 2;  // =? から ?= までの、全体の長さを記録
 
 	//   デコード ----------------------------------------------------
 	//
@@ -711,9 +711,9 @@ finish_first_detect:;
 	}
 
 	if( emethod == EM_BASE64 ){
-		ndecoded_len = _DecodeBase64( pr_base, pr-pr_base, pdst );
+		ndecoded_len = _DecodeBase64( pr_base, int(pr - pr_base), pdst );
 	}else{
-		ndecoded_len = _DecodeQP( pr_base, pr-pr_base, pdst );
+		ndecoded_len = _DecodeQP( pr_base, int(pr - pr_base), pdst );
 	}
 
 	pcMem_alt->_SetRawLength( ndecoded_len );
