@@ -37,7 +37,15 @@
 
 #include "StartEditorProcessForTest.h"
 
-using namespace std::literals::string_literals;
+TEST(WinMain, OleInitialize)
+{
+	//先にOleInitializeを呼び出して失敗させる
+	EXPECT_EQ(S_OK, OleInitialize(nullptr));
+
+	EXPECT_EQ(1, wWinMain(GetModuleHandleW(nullptr), nullptr, L"", SW_SHOWDEFAULT));
+
+	OleUninitialize();
+}
 
 /*!
  * HANDLE型のスマートポインタを実現するためのdeleterクラス
@@ -107,6 +115,9 @@ protected:
 			std::filesystem::remove(iniPath.parent_path());
 		}
 	}
+
+	void CControlProcess_Terminate(std::wstring_view profileName);
+	void CControlProcess_StartAndTerminate(std::wstring_view profileName);
 };
 
 /*!
@@ -195,7 +206,7 @@ void CControlProcess_Start(std::wstring_view profileName)
  * CControlProcess::Terminateとして実装したいコードです。本体を変えたくないので一時定義しました。
  * 既存コードに該当する処理はありません。
  */
-void CControlProcess_Terminate(std::wstring_view profileName)
+void WinMainTest::CControlProcess_Terminate(std::wstring_view profileName)
 {
 	// トレイウインドウを検索する
 	std::wstring strCEditAppName( GSTR_CEDITAPP );
@@ -235,12 +246,15 @@ void CControlProcess_Terminate(std::wstring_view profileName)
 			throw std::runtime_error( "waitProcess is timeout." );
 		}
 	}
+
+	// コントロールプロセスが終了すると、INIファイルが作成される
+	ASSERT_TRUE( fexist( iniPath.c_str() ) );
 }
 
 /*!
  * @brief コントロールプロセスを起動し、終了指示を出して、終了を待つ
  */
-void CControlProcess_StartAndTerminate(std::wstring_view profileName)
+void WinMainTest::CControlProcess_StartAndTerminate(std::wstring_view profileName)
 {
 	// コントロールプロセスを起動する
 	CControlProcess_Start(profileName.data());
@@ -263,14 +277,8 @@ TEST_P(WinMainTest, runWithNoWin)
 	// コントロールプロセスを起動し、終了指示を出して、終了を待つ
 	CControlProcess_StartAndTerminate(szProfileName);
 
-	// コントロールプロセスが終了すると、INIファイルが作成される
-	ASSERT_TRUE(fexist(iniPath.c_str()));
-
 	// コントロールプロセスを起動し、終了指示を出して、終了を待つ
 	CControlProcess_StartAndTerminate(szProfileName);
-
-	// コントロールプロセスが終了すると、INIファイルが作成される
-	ASSERT_TRUE(fexist(iniPath.c_str()));
 }
 
 /*!
@@ -283,65 +291,69 @@ TEST_P(WinMainTest, runEditorProcess)
 	// テスト用プロファイル名
 	const auto szProfileName(GetParam());
 
-	// エディタプロセスを起動するため、テスト実行はプロセスごと分離して行う
-	auto separatedTestProc = [szProfileName]() {
-		// 起動時実行マクロの中身を作る
-		std::wstring strStartupMacro;
-		strStartupMacro += L"Down();";
-		strStartupMacro += L"Up();";
-		strStartupMacro += L"Right();";
-		strStartupMacro += L"Left();";
-		strStartupMacro += L"Outline(0);";		//アウトライン解析
-		strStartupMacro += L"ShowFunckey();";	//ShowFunckey 出す
-		strStartupMacro += L"ShowMiniMap();";	//ShowMiniMap 出す
-		strStartupMacro += L"ShowTab();";		//ShowTab 出す
-		strStartupMacro += L"SelectAll();";
-		strStartupMacro += L"GoFileEnd();";
-		strStartupMacro += L"GoFileTop();";
-		strStartupMacro += L"ShowFunckey();";	//ShowFunckey 消す
-		strStartupMacro += L"ShowMiniMap();";	//ShowMiniMap 消す
-		strStartupMacro += L"ShowTab();";		//ShowTab 消す
-		strStartupMacro += L"ExpandParameter('$I');";	// INIファイルパスの取得(呼ぶだけ)
+	// 起動時実行マクロの中身
+	constexpr std::array macroCommands = {
+		L"Down();"sv,
+		L"Up();"sv,
+		L"Right();"sv,
+		L"Left();"sv,
+		L"Outline(0);"sv,				//アウトライン解析
+		L"ShowFunckey();"sv,			//ShowFunckey 出す
+		L"ShowMiniMap();"sv,			//ShowMiniMap 出す
+		L"ShowTab();"sv,				//ShowTab 出す
+		L"SelectAll();"sv,
+		L"GoFileEnd();"sv,
+		L"GoFileTop();"sv,
+		L"ShowFunckey();"sv,			//ShowFunckey 消す
+		L"ShowMiniMap();"sv,			//ShowMiniMap 消す
+		L"ShowTab();"sv,				//ShowTab 消す
+		L"ExpandParameter('$I');"sv,	// INIファイルパスの取得(呼ぶだけ)
+
 		// フォントサイズ設定のテスト(ここから)
-		strStartupMacro += L"SetFontSize(0, 1, 0);";	// 相対指定 - 拡大 - 対象：共通設定
-		strStartupMacro += L"SetFontSize(0, -1, 0);";	// 相対指定 - 縮小 - 対象：共通設定
-		strStartupMacro += L"SetFontSize(100, 0, 0);";	// 直接指定 - 対象：共通設定
-		strStartupMacro += L"SetFontSize(100, 0, 1);";	// 直接指定 - 対象：タイプ別設定
-		strStartupMacro += L"SetFontSize(100, 0, 2);";	// 直接指定 - 対象：一時適用
-		strStartupMacro += L"SetFontSize(100, 0, 3);";	// 直接指定 - 対象が不正
-		strStartupMacro += L"SetFontSize(0, 0, 0);";	// 直接指定 - フォントサイズ下限未満
-		strStartupMacro += L"SetFontSize(9999, 0, 0);";	// 直接指定 - フォントサイズ上限超過
-		strStartupMacro += L"SetFontSize(0, 0, 2);";	// 相対指定 - サイズ変化なし
-		strStartupMacro += L"SetFontSize(0, 1, 2);";	// 相対指定 - 拡大
-		strStartupMacro += L"SetFontSize(0, -1, 2);";	// 相対指定 - 縮小
-		strStartupMacro += L"SetFontSize(0, 9999, 2);";	// 相対指定 - 限界まで拡大
-		strStartupMacro += L"SetFontSize(0, 1, 2);";	// 相対指定 - これ以上拡大できない
-		strStartupMacro += L"SetFontSize(0, -9999, 2);";// 相対指定 - 限界まで縮小
-		strStartupMacro += L"SetFontSize(0, -1, 2);";	// 相対指定 - これ以上縮小できない
-		strStartupMacro += L"SetFontSize(100, 0, 2);";	// 元に戻す
+		L"SetFontSize(0, 1, 0);"sv,		// 相対指定 - 拡大 - 対象：共通設定
+		L"SetFontSize(0, -1, 0);"sv,	// 相対指定 - 縮小 - 対象：共通設定
+		L"SetFontSize(100, 0, 0);"sv,	// 直接指定 - 対象：共通設定
+		L"SetFontSize(100, 0, 1);"sv,	// 直接指定 - 対象：タイプ別設定
+		L"SetFontSize(100, 0, 2);"sv,	// 直接指定 - 対象：一時適用
+		L"SetFontSize(100, 0, 3);"sv,	// 直接指定 - 対象が不正
+		L"SetFontSize(0, 0, 0);"sv,		// 直接指定 - フォントサイズ下限未満
+		L"SetFontSize(9999, 0, 0);"sv,	// 直接指定 - フォントサイズ上限超過
+		L"SetFontSize(0, 0, 2);"sv,		// 相対指定 - サイズ変化なし
+		L"SetFontSize(0, 1, 2);"sv,		// 相対指定 - 拡大
+		L"SetFontSize(0, -1, 2);"sv,	// 相対指定 - 縮小
+		L"SetFontSize(0, 9999, 2);"sv,	// 相対指定 - 限界まで拡大
+		L"SetFontSize(0, 1, 2);"sv,		// 相対指定 - これ以上拡大できない
+		L"SetFontSize(0, -9999, 2);"sv,	// 相対指定 - 限界まで縮小
+		L"SetFontSize(0, -1, 2);"sv,	// 相対指定 - これ以上縮小できない
+		L"SetFontSize(100, 0, 2);"sv,	// 元に戻す
 		// フォントサイズ設定のテスト(ここまで)
-		strStartupMacro += L"Outline(2);";		//アウトライン解析を閉じる
-		strStartupMacro += L"ExitAll();";		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
 
-		// コマンドラインを組み立てる
-		std::wstring strCommandLine(_T(__FILE__));
-		strCommandLine += strprintf(LR"( -PROF="%s")", szProfileName);
-		strCommandLine += strprintf(LR"( -MTYPE=js -M="%s")", std::regex_replace( strStartupMacro, std::wregex( L"\"" ), L"\"\"" ).c_str());
+		L"Outline(2);"sv,	//アウトライン解析を閉じる
 
-		// エディタプロセスを起動する
-		const int ret = StartEditorProcessForTest(strCommandLine);
-
-		exit(ret);
+		L"ExitAll();"sv		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
 	};
 
+	// 起動時実行マクロを組み立てる
+	const auto strStartupMacro = std::accumulate(macroCommands.begin(), macroCommands.end(), std::wstring(),
+		[](const auto& a, std::wstring_view b) {
+			return a + b.data();
+		});
+
+	constexpr auto& quote= LR"(")";
+	constexpr auto& doubled_quote = LR"("")";
+
+	const std::wregex quote_regex(quote);
+
+	// コマンドラインを組み立てる
+	std::wstring strCommandLine(_T(__FILE__));
+	strCommandLine += fmt::format(LR"( -PROF="{}")", szProfileName);
+	strCommandLine += fmt::format(LR"( -MTYPE=js -M="{}")", std::regex_replace(strStartupMacro, quote_regex, doubled_quote));
+
 	// テストプログラム内のグローバル変数を汚さないために、別プロセスで起動させる
-	ASSERT_EXIT({ separatedTestProc(); }, ::testing::ExitedWithCode(0), ".*" );
+	ASSERT_EXIT({ exit(StartEditorProcessForTest(strCommandLine)); }, ::testing::ExitedWithCode(0), ".*" );
 
 	// コントロールプロセスに終了指示を出して終了を待つ
 	CControlProcess_Terminate(szProfileName);
-
-	// コントロールプロセスが終了すると、INIファイルが作成される
-	ASSERT_TRUE( fexist( iniPath.c_str() ) );
 }
 
 /*!

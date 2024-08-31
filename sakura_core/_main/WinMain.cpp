@@ -42,12 +42,12 @@
 		+----------+---------------------------+---------------------------+
 		|無        |エディタプロセスとなる     |CNormalProcessクラス       |
 		+----------+---------------------------+---------------------------+
-*/
+ */
 int WINAPI wWinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPWSTR		lpCmdLine,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
+	_In_ HINSTANCE	    hInstance,      //!< handle to current instance
+	_In_opt_ HINSTANCE  hPrevInstance,  //!< handle to previous instance
+	_In_ LPWSTR         lpCmdLine,      //!< pointer to command line
+	_In_ int            nCmdShow        //!< show state of window
 )
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
@@ -62,9 +62,21 @@ int WINAPI wWinMain(
 		::SetSearchPathMode( BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT );
 
 		setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
-		::OleInitialize( NULL );	// 2009.01.07 ryoji 追加
 	}
-	
+
+	//OleInitializeを呼び出す
+	if (const auto hr = OleInitialize(nullptr);
+		S_OK != hr)
+	{
+		return 1;
+	}
+
+	//終了時にOleUninitializeを呼び出すよう設定
+	const auto oleUninitialize = [](const int*) { OleUninitialize(); };
+	using oleUninitializer = std::unique_ptr<int, decltype(oleUninitialize)>;
+	auto dummyPointer = PINT(1);
+	oleUninitializer deinitializer(dummyPointer, oleUninitialize);
+
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
@@ -86,6 +98,5 @@ int WINAPI wWinMain(
 		delete process;
 	}
 
-	::OleUninitialize();	// 2009.01.07 ryoji 追加
 	return 0;
 }

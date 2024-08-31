@@ -26,63 +26,43 @@
 
 #include "StartEditorProcessForTest.h"
 
-#include "util/string_ex.h"
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 /*!
  * テストコード専用wWinMain呼出のラッパー関数
  *
  * 単体テストから wWinMain を呼び出すためのラッパー関数です。
  * コマンドラインには -PROF 指定が含まれている必要があります。
+
+ * @param[in] commandLine コマンドライン文字列
+ * @retval 0     正常終了
+ * @retval 0以外 異常終了
  */
 int StartEditorProcessForTest(std::wstring_view commandLine)
 {
-	//戻り値は0が正常。適当なエラー値を指定しておく。
-	int ret = -1;
+	// ログ出力
+	std::wcout << fmt::format(L"launching process [{}]", commandLine) << std::endl;
 
-	// コマンドラインに -PROF 指定がない場合は異常終了させる
-	if (std::regex_search(commandLine.data(), std::wregex(LR"(-PROF\b)", std::wregex::icase))) {
-		// 実行中モジュールのインスタンスハンドルを取得する
-		HINSTANCE hInstance = ::GetModuleHandleW(nullptr);
+	// wWinMainに渡すためのコマンドライン
+	std::wstring commandLineBuf(commandLine);
 
-		// WinMainに渡すためのコマンドライン
-		std::wstring strCommandLine(commandLine);
-
-		// ログ出力
-		std::wcout << strprintf(L"%hs(%d): launching process [%s]", __FILE__, __LINE__, commandLine.data()) << std::endl;
-
-		// wWinMainを起動する
-		ret = wWinMain(hInstance, nullptr, strCommandLine.data(), SW_SHOWDEFAULT);
-
-		// ログ出力(途中でexitした場合は出力されない)
-		std::wcout << strprintf(L"%hs(%d): leaving process   [%s] => %d\n", __FILE__, __LINE__, commandLine.data(), ret) << std::endl;
+	// コマンドラインに -CODE 指定がない場合は付与する
+	if (!std::regex_search(commandLineBuf, std::wregex(LR"(-CODE\b)", std::wregex::icase)) &&
+		!std::regex_search(commandLineBuf, std::wregex(LR"(-NOWIN\b)", std::wregex::icase)))
+	{
+		commandLineBuf += L" -CODE=99"; // 指定しないとファイル名から文字コードを判定する仕様によりJIS指定になってしまう。
 	}
+
+	// 実行中モジュールのインスタンスハンドルを取得する
+	const auto hInstance = GetModuleHandleW(nullptr);
+
+	// wWinMainを起動する(戻り値は0が正常)
+	const auto ret = wWinMain(hInstance, nullptr, commandLineBuf.data(), SW_SHOWDEFAULT);
+
+	// ログ出力(例外でexitした場合は出力されない)
+	std::wcout << fmt::format(L"leaving process   [{}] => {}\n", commandLine, ret) << std::endl;
 
 	return ret;
-}
-
-/*!
- * 必要な場合にwWinMainを起動して終了する。
- *
- * コマンドラインに -PROF 指定がない場合、呼出元に制御を返す。
- * コマンドラインに -PROF 指定がある場合、wWinMainを呼出してプログラムを終了する。
- */
-static void InvokeWinMainIfNeeded(std::wstring_view commandLine)
-{
-	// コマンドライン引数がない場合
-	if (commandLine.empty()) {
-		return;
-	}
-
-	// コマンドラインに -PROF 指定がない場合
-	if (!std::regex_search(commandLine.data(), std::wregex(LR"(-PROF\b)", std::wregex::icase))) {
-		return;
-	}
-
-	// wWinMainを起動する
-	const int ret = StartEditorProcessForTest(commandLine);
-
-	// プログラムを終了する(呼出元に制御は返らない)
-	exit(ret);
 }
 
 /*!
@@ -90,7 +70,10 @@ static void InvokeWinMainIfNeeded(std::wstring_view commandLine)
  */
 int main(int argc, char **argv) {
 	// コマンドラインに -PROF 指定がある場合、wWinMainを起動して終了する。
-	InvokeWinMainIfNeeded(::GetCommandLineW());
+	if (const auto commandLine = std::wstring_view(GetCommandLineW());
+		std::regex_search(commandLine.data(), std::wregex(LR"(-PROF\b)", std::wregex::icase))) {
+		return StartEditorProcessForTest(commandLine);
+	}
 
 	// WinMainを起動しない場合、標準のgmock_main同様の処理を実行する。
 	// InitGoogleMock は Google Test の初期化も行うため、InitGoogleTest を別に呼ぶ必要はない。

@@ -83,6 +83,7 @@
 #include <cstdlib>
 #include <deque>
 #include <exception>
+#include <filesystem>
 #include <functional>
 #include <initializer_list>
 #include <iostream>
@@ -93,6 +94,7 @@
 #include <memory>
 #include <mutex>
 #include <new>
+#include <numeric>
 #include <optional>
 #include <regex>
 #include <sstream>
@@ -131,6 +133,9 @@
 #include <winspool.h>
 #include <wrl.h>
 
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h> // wchar_t のサポートを有効にするために必要
+
 // Windows SDKのマクロ定数「NULL」を訂正する。
 // マクロ定数「NULL」は、省略可能なポインタ型パラメータに「省略」を指定するために使う。
 // オリジナルでは「#define NULL 0」と定義されている。
@@ -143,6 +148,9 @@
 # define NULL nullptr
 # pragma warning( pop )
 #endif // end of #ifdef __cplusplus
+
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
