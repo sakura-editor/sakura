@@ -13,7 +13,7 @@ $CMD_MSBUILD = $(vswhere -find 'MSBuild\**\Bin\MSBuild.exe' -version "[$VsVersio
 
 $p = Start-Process `
     -FilePath .sonar\build-wrapper\build-wrapper-win-x86-64.exe `
-    -ArgumentList @("--out-dir bw-output", $CMD_MSBUILD, "/p:Platform=$Platform", "/p:Configuration=$Configuration", "/t:ReBuild") `
+    -ArgumentList @("--out-dir bw-output", $CMD_MSBUILD, "/p:Platform=$Platform", "/p:Configuration=$Configuration", "/t:ReBuild", "/flp:logfile=msbuild-$Platform-$Configuration.log") `
     -NoNewWindow `
     -WorkingDirectory $HomePath `
     -PassThru `
