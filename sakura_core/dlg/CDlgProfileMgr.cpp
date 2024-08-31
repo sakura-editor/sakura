@@ -30,17 +30,17 @@
 */
 #include "StdAfx.h"
 #include "dlg/CDlgProfileMgr.h"
+
+#include "_main/CProcess.h"
+
 #include "dlg/CDlgInput1.h"
 #include "CDataProfile.h"
 #include "util/file.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
-#include "CSelectLang.h"
 #include "func/Funccode.h"
-#include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_LIST_PROFILE,				HIDC_LIST_PROFILE,				//プロファイル一覧
@@ -104,9 +104,11 @@ int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam
 std::filesystem::path GetProfileMgrFileName()
 {
 	auto privateIniPath = GetIniFileName();
-	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
-		auto filename = privateIniPath.filename();
-		privateIniPath = privateIniPath.parent_path().parent_path().append(filename.c_str());
+	if (const auto process = CProcess::getInstance()) {
+		if (const auto profileName = process->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+			auto filename = privateIniPath.filename();
+			privateIniPath = privateIniPath.parent_path().parent_path().append(filename.c_str());
+		}
 	}
 	return privateIniPath.replace_extension().concat(L"_prof.ini");
 }
@@ -117,8 +119,10 @@ std::filesystem::path GetProfileMgrFileName()
 std::filesystem::path GetProfileDirectory(const std::wstring& name)
 {
 	auto privateIniDir = GetIniFileName().parent_path();
-	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
-		privateIniDir = privateIniDir.parent_path();
+	if (const auto process = CProcess::getInstance()) {
+		if (const auto profileName = process->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+			privateIniDir = privateIniDir.parent_path();
+		}
 	}
 	return privateIniDir.append(name).append(L"a.txt").remove_filename();
 }

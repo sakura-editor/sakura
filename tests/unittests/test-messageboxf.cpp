@@ -26,9 +26,6 @@
 
 #include "util/MessageBoxF.h"
 
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
-
 #include "eval_outputs.hpp"
 
 /*!
@@ -46,14 +43,6 @@ TEST(MessageBoxF, test)
 TEST(MessageBoxF, customMessageBoxFunctions)
 {
 	const HWND hWnd = nullptr;
-
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
-
-	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	//エラー：赤丸に「×」[OK]
 	EXPECT_ERROUT(ErrorMessage(hWnd, L"%d行をマージしました。", 2), L"2行をマージしました。");

@@ -174,14 +174,6 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
  */
 TEST(file, GetProfileMgrFileName_NoArg1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
-	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
 	// iniファイルの拡張子を_prof.iniに変えたパスが返る
 	const auto profileMgrIniPath = GetIniFileName().replace_extension().concat(L"_prof.ini");
 	ASSERT_STREQ(profileMgrIniPath.c_str(), GetProfileMgrFileName().c_str());
@@ -210,14 +202,6 @@ TEST(file, GetProfileMgrFileName_NoArg2)
  */
 TEST(file, GetProfileMgrFileName_DefaultProfile1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
-	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
 	// 設定フォルダーのパスが返る
 	const auto iniDir = GetExeFileName().replace_filename(L"").append("a.txt").remove_filename();
 	ASSERT_STREQ(iniDir.c_str(), GetProfileMgrFileName(L"").c_str());
@@ -246,16 +230,16 @@ TEST(file, GetProfileMgrFileName_DefaultProfile2)
  */
 TEST(file, GetProfileMgrFileName_NamedProfile1)
 {
+	// テスト用プロファイル名
+	constexpr auto profile = L"profile1";
+
 	// コマンドラインのインスタンスを用意する
 	CCommandLine cCommandLine;
 	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
-	// テスト用プロファイル名
-	constexpr auto profile = L"profile1";
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	// 指定したプロファイルの設定保存先フォルダーのパスが返る
 	const auto profileDir = GetExeFileName().replace_filename(profile).append("a.txt").remove_filename();

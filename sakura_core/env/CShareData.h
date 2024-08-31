@@ -70,6 +70,9 @@ public:
 	||  Attributes & Operations
 	*/
 	bool InitShareData();	/* CShareDataクラスの初期化処理 */
+
+	DLLSHAREDATA* GetDllShareData() const { return m_pShareData; }
+
 	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
 	
 	//MRU系
@@ -119,4 +122,5 @@ private:
 	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
 	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 };
+
 #endif /* SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_ */

@@ -26,7 +26,10 @@
 */
 
 #include "StdAfx.h"
-#include "CControlTray.h"
+#include "_main/CControlTray.h"
+
+#include "_main/CControlProcess.h"
+
 #include "CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
 #include "debug/CRunningTimer.h"
@@ -48,13 +51,10 @@
 #include "doc/CDocListener.h" // SLoadInfo,EditInfo
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
-#include "_main/CCommandLine.h"
 #include "CGrepEnumKeys.h"
 #include "apiwrap/StdApi.h"
-#include "sakura_rc.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 #define ID_HOTKEY_TRAYMENU	0x1234
 
@@ -226,9 +226,10 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strCEditAppName = GSTR_CEDITAPP;
-	strCEditAppName += pszProfileName;
+	if (const auto profileName = CProcess::getInstance()->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+		strCEditAppName += profileName.value();
+	}
 	HWND hwndWork = ::FindWindow( strCEditAppName.c_str(), strCEditAppName.c_str() );
 	if( NULL != hwndWork ){
 		return NULL;
@@ -308,9 +309,9 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 			&dwVersionMS, &dwVersionLS );
 
 		std::wstring profname;
-		if( CCommandLine::getInstance()->GetProfileName()[0] != L'\0' ){
+		if (const auto profileName = CProcess::getInstance()->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
 			profname = L" ";
-			profname += CCommandLine::getInstance()->GetProfileName();
+			profname += profileName.value();
 		}
 		auto_snprintf_s( pszTips, _countof(pszTips), L"%s %d.%d.%d.%d%ls",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,

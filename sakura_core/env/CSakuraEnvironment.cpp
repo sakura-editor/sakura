@@ -25,13 +25,15 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CSakuraEnvironment.h"
+#include "env/CSakuraEnvironment.h"
+
+#include "_main/CProcess.h"
+
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFormatManager.h"
 #include "env/CFileNameManager.h"
 #include "_main/CAppMode.h"
-#include "_main/CCommandLine.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "print/CPrintPreview.h"
@@ -695,8 +697,8 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	switch( eLongParam ){
 	case EExpParamName_profile:
 		{
-			LPCWSTR pszProf = CCommandLine::getInstance()->GetProfileName();
-			q = wcs_pushW( q, q_max - q, pszProf );
+			const auto profileName = CProcess::getInstance() ? CProcess::getInstance()->GetCCommandLine().GetProfileOpt() : std::nullopt;
+			q = wcs_pushW( q, q_max - q, profileName.value_or(L"") );
 		}
 		break;
 	default:

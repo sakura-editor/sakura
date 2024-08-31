@@ -19,7 +19,8 @@
 */
 
 #include "StdAfx.h"
-#include "CCommandLine.h"
+#include "_main/CCommandLine.h"
+
 #include "mem/CMemory.h"
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
@@ -184,14 +185,10 @@ CCommandLine::CCommandLine() noexcept
 	, m_bDebugMode(false)
 	, m_bNoWindow(false)
 	, m_bProfileMgr(false)
-	, m_bSetProfile(false)
 	, m_fi()
 	, m_gi()
 	, m_bViewMode(false)
 	, m_nGroup(-1)
-	, m_cmMacro()
-	, m_cmMacroType()
-	, m_cmProfile(L"")
 	, m_vFiles()
 {
 }
@@ -503,15 +500,13 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat 追加
-				m_cmMacro.SetString( arg, nArgLen );
-				m_cmMacro.Replace( L"\"\"", L"\"" );
+				SetMacro(std::regex_replace(std::wstring(arg, nArgLen), std::wregex(L"\"\""), L"\""));
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
-				m_cmMacroType.SetString( arg, nArgLen );
+				SetMacroType(std::wstring_view(arg, nArgLen));
 				break;
 			case CMDLINEOPT_PROF:		// 2013.12.20 Moca 追加
-				m_cmProfile.SetString( arg, nArgLen );
-				m_bSetProfile = true;
+				SetProfileName(std::wstring_view(arg, nArgLen));
 				break;
 			case CMDLINEOPT_PROFMGR:
 				m_bProfileMgr = true;

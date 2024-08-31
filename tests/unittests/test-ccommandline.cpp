@@ -75,9 +75,9 @@ TEST(CCommandLine, ConstructWithoutParam)
 	EXPECT_EQ(GrepInfo(), cCommandLine.GetGrepInfoRef());
 
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
-	EXPECT_EQ(NULL, cCommandLine.GetMacro());
-	EXPECT_EQ(NULL, cCommandLine.GetMacroType());
-	EXPECT_STREQ(L"", cCommandLine.GetProfileName());	//不自然
+	EXPECT_FALSE(cCommandLine.GetMacro().has_value());
+	EXPECT_FALSE(cCommandLine.GetMacroType().has_value());
+	EXPECT_FALSE(cCommandLine.GetProfileOpt().has_value());
 	EXPECT_FALSE(cCommandLine.IsSetProfile());
 	EXPECT_FALSE(cCommandLine.IsProfileMgr());
 	EXPECT_EQ(0, cCommandLine.GetFileNum());
@@ -186,10 +186,11 @@ TEST(CCommandLine, ParseMacroFileName)
 {
 	CCommandLine cCommandLine;
 	cCommandLine.ParseCommandLine(L"", false);
-	EXPECT_EQ(NULL, cCommandLine.GetMacro());
+	EXPECT_FALSE(cCommandLine.GetMacro().has_value());
 #define TESTLOCAL_MACRO_NAME L"真っ黒.mac"
 	cCommandLine.ParseCommandLine(L"-M=" TESTLOCAL_MACRO_NAME, false);
-	ASSERT_STREQ(TESTLOCAL_MACRO_NAME, cCommandLine.GetMacro());
+	EXPECT_TRUE(cCommandLine.GetMacro().has_value());
+	ASSERT_STREQ(TESTLOCAL_MACRO_NAME, cCommandLine.GetMacro().value());
 #undef TESTLOCAL_MACRO_NAME
 }
 
@@ -203,10 +204,11 @@ TEST(CCommandLine, ParseMacroType)
 {
 	CCommandLine cCommandLine;
 	cCommandLine.ParseCommandLine(L"", false);
-	EXPECT_EQ(NULL, cCommandLine.GetMacroType());
+	EXPECT_FALSE(cCommandLine.GetMacroType().has_value());
 #define TESTLOCAL_MACRO_TYPE L"PascalScript"
 	cCommandLine.ParseCommandLine(L"-MTYPE=" TESTLOCAL_MACRO_TYPE, false);
-	ASSERT_STREQ(TESTLOCAL_MACRO_TYPE, cCommandLine.GetMacroType());
+	EXPECT_TRUE(cCommandLine.GetMacroType().has_value());
+	ASSERT_STREQ(TESTLOCAL_MACRO_TYPE, cCommandLine.GetMacroType().value());
 #undef TESTLOCAL_MACRO_TYPE
 }
 
@@ -219,11 +221,12 @@ TEST(CCommandLine, ParseProfileName)
 {
 	CCommandLine cCommandLine;
 	cCommandLine.ParseCommandLine(L"", false);
-	EXPECT_STREQ(L"", cCommandLine.GetProfileName());
+	EXPECT_FALSE(cCommandLine.GetProfileOpt().has_value());
 	EXPECT_FALSE(cCommandLine.IsSetProfile());
+	EXPECT_FALSE(cCommandLine.GetProfileName());
 #define TESTLOCAL_PROFILE_NAME L"執筆用"
 	cCommandLine.ParseCommandLine(L"-PROF=" TESTLOCAL_PROFILE_NAME, false);
-	ASSERT_STREQ(TESTLOCAL_PROFILE_NAME, cCommandLine.GetProfileName());
+	ASSERT_STREQ(TESTLOCAL_PROFILE_NAME, cCommandLine.GetProfileOpt().value_or(L""));
 	EXPECT_TRUE(cCommandLine.IsSetProfile());
 #undef TESTLOCAL_PROFILE_NAME
 }

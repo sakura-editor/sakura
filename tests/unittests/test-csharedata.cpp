@@ -26,27 +26,29 @@
 
 #include "env/CShareData.h"
 
-#include "_main/CCommandLine.h"
-#include "_main/CNormalProcess.h"
+#include "_main/CControlProcess.h"
 
 /*!
  * @brief CShareDataのテスト
  */
 TEST( CShareData, test )
 {
-	// 共有メモリをインスタンス化するにはプロセスのインスタンスが必要。
-	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	// 共有メモリのインスタンスを取得する
 	auto pShareData = CShareData::getInstance();
 	ASSERT_NE(nullptr, pShareData);
 
-	// 共有メモリを初期化するにはコマンドラインのインスタンスが必要
-	CCommandLine cCommandLine;
-	cCommandLine.ParseCommandLine(L"", false);
-
 	// 共有メモリのインスタンスを初期化する
 	ASSERT_TRUE(pShareData->InitShareData());
+
+	ASSERT_TRUE(pShareData->IsPrivateSettings());
 
 	// 言語切り替えのテストを実施する
 	std::vector<std::wstring> values;
