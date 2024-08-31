@@ -57,21 +57,21 @@ const DWORD p_helpids[] = {
 };
 
 //! コマンドラインだけでプロファイルが確定するか調べる
-bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
+bool CDlgProfileMgr::TrySelectProfile(std::wstring& strProfileName, bool hasProfileName, bool showProfileMgr) noexcept
 {
 	SProfileSettings settings;
 	bool bSettingLoaded = ReadProfSettings( settings );
 
 	bool bDialog;
-	if( pcCommandLine->IsProfileMgr() ){		// コマンドラインでプロファイルマネージャの表示が指定されている
+	if (showProfileMgr) {		// コマンドラインでプロファイルマネージャの表示が指定されている
 		bDialog = true;
-	}else if( pcCommandLine->IsSetProfile() ){	// コマンドラインでプロファイル名が指定されている
+	} else if (hasProfileName) {	// コマンドラインでプロファイル名が指定されている
 		bDialog = false;
 	}else if( !bSettingLoaded ){				// プロファイル設定がなかった
 		bDialog = false;
 	}else if( 0 < settings.m_nDefaultIndex && settings.m_nDefaultIndex <= static_cast<int>(settings.m_vProfList.size()) ){
 		// プロファイル設定のデフォルトインデックス値から該当のプロファイル名が指定されたものとして動作する
-		pcCommandLine->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
+		strProfileName = settings.m_vProfList[settings.m_nDefaultIndex - 1];
 		bDialog = false;
 	}else{
 		// プロファイル設定のデフォルトインデックス値が不正なのでプロファイルマネージャを表示して設定更新を促す

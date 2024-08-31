@@ -94,11 +94,17 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 	commandLine->ParseCommandLine(lpCmdLine);
 
+	std::wstring strProfileName;
+	bool hasProfileName = commandLine->IsSetProfile();
+	bool showProfileMgr = commandLine->IsProfileMgr();
+
 	// コマンドラインオプションから起動プロファイルを判定する
-	bool profileSelected = CDlgProfileMgr::TrySelectProfile( commandLine );
-	if( !profileSelected ){
-		CDlgProfileMgr dlgProf;
-		if( dlgProf.DoModal( hInstance, NULL, 0 ) ){
+	if (const auto profileSelected = CDlgProfileMgr::TrySelectProfile(strProfileName, hasProfileName, showProfileMgr);
+		!profileSelected)
+	{
+		if (CDlgProfileMgr dlgProf;
+			dlgProf.DoModal(hInstance, HWND(nullptr), 0))
+		{
 			commandLine->SetProfileName(dlgProf.m_strProfileName);
 		}else{
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了

@@ -81,9 +81,8 @@ protected:
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_001 )
 {
 	// プロファイルマネージャ表示オプションが付いてたらプロファイルは確定しない
-	CCommandLine cCommandLine;
-	cCommandLine.ParseCommandLine( L"-PROFMGR", false );
-	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	std::wstring strProfileName;
+	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(strProfileName, false, true));
 }
 
 /*!
@@ -92,9 +91,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_001 )
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_002 )
 {
 	// プロファイル名が指定されていたらプロファイルは確定する
-	CCommandLine cCommandLine;
-	cCommandLine.ParseCommandLine( L"-PROF=執筆用", false );
-	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	std::wstring strProfileName = L"執筆用";
+	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(strProfileName, true));
 }
 
 /*!
@@ -103,8 +101,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_002 )
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_003 )
 {
 	// プロファイルマネージャー設定がなかったらプロファイルは確定する
-	CCommandLine cCommandLine;
-	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	std::wstring strProfileName;
+	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(strProfileName));
 }
 
 /*!
@@ -125,8 +123,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_004 )
 	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定にデフォルト定義があればプロファイルは確定する
-	CCommandLine cCommandLine;
-	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	std::wstring strProfileName;
+	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(strProfileName));
 }
 
 /*!
@@ -147,8 +145,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_005 )
 	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定のデフォルト定義がおかしればプロファイルは確定しない
-	CCommandLine cCommandLine;
-	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	std::wstring strProfileName;
+	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(strProfileName));
 }
 
 /*!
@@ -165,8 +163,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
 	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定が空定義ならプロファイルは確定しない
-	CCommandLine cCommandLine;
-	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	std::wstring strProfileName;
+	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(strProfileName));
 }
 
 /*!
