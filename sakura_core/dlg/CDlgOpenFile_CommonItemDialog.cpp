@@ -32,11 +32,14 @@
 #include "env/DLLSHAREDATA.h"
 #include "String_define.h"
 
+#include "env/SShareDataClientWithCache.hpp"
+
 struct CDlgOpenFile_CommonItemDialog final
 	:
 	public IDlgOpenFile,
 	private IFileDialogEvents,
 	private IFileDialogControlEvents
+	, private SShareDataClientWithCache
 {
 	CDlgOpenFile_CommonItemDialog();
 
@@ -72,8 +75,6 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
-
-	DLLSHAREDATA*	m_pShareData;
 
 	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */

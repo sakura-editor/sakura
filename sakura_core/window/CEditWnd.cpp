@@ -598,9 +598,6 @@ HWND CEditWnd::Create(
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	m_pcEditDoc = pcEditDoc;
 
 	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),

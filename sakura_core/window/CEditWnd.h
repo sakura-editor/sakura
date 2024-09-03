@@ -44,6 +44,8 @@
 #define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
 
+#include "env/SShareDataClientWithCache.hpp"
+
 #include <shellapi.h>// HDROP
 #include "_main/global.h"
 #include "CMainToolBar.h"
@@ -98,6 +100,7 @@ struct STabGroupInfo{
 class CEditWnd
 : public TSingleton<CEditWnd>
 , public CDocListenerEx
+	, private SShareDataClientWithCache
 {
 	friend class TSingleton<CEditWnd>;
 	CEditWnd();
@@ -384,9 +387,6 @@ private:
 	int				m_nActivePaneIndex;	//!< 有効なビューのindex
 	int				m_nEditViewCount;	//!< 有効なビューの数
 	const int		m_nEditViewMaxCount;//!< ビューの最大数=4
-
-	//共有データ
-	DLLSHAREDATA*	m_pShareData;
 
 	//ヘルパ
 	CMenuDrawer		m_cMenuDrawer;

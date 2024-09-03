@@ -9,11 +9,7 @@ $SonarScannerProperties = "$HomePath\.sonar\scanner\conf\sonar-scanner.propertie
 
 $hostUrlMatcher = (Get-Content $SonarScannerProperties | Select-String "^sonar.host.url=(.+)").Matches
 
-if (-not($hostUrlMatcher.Success)) {
-  Throw "Missing 'sonar.host.url' in $SonarScannerProperties."
-}
-
-if ($hostUrlMatcher.Groups[1].Value -eq "https://sonarcloud.io") {
+if (-not($hostUrlMatcher.Success) -or $hostUrlMatcher.Groups[1].Value -eq "https://sonarcloud.io") {
   .\tools\Build-SakuraEditorWithBuildWrapper.ps1 $VsVersion $Platform $Configuration $HomePath
   exit 0
 }
