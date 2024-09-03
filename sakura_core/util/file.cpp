@@ -593,7 +593,8 @@ void GetInidirOrExedir(
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	if( GetExedir( szExedir, szFile ); fexist(szExedir) ){
+	GetExedir( szExedir, szFile ); 
+	if( fexist(szExedir) ){
 		::wcsncpy_s( pDir, _MAX_PATH - 1, szExedir, _TRUNCATE );
 		return;
 	}
