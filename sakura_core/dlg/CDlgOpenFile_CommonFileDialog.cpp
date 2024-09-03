@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 #include "dlg/CDlgOpenFile.h"
 
+#include "env/SShareDataClientWithCache.hpp"
+
 #include "dlg/CDialog.h"
 #include "func/Funccode.h"	//Stonee, 2001/05/18
 #include "CFileExt.h"
@@ -61,6 +63,7 @@ static const DWORD p_helpids[] = {	//13100
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
 
 struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
+	, public SShareDataClientWithCache
 {
 	CDlgOpenFile_CommonFileDialog();
 
@@ -91,8 +94,6 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
-
-	DLLSHAREDATA*	m_pShareData;
 
 	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
@@ -650,9 +651,6 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
 
 	WCHAR	szFile[_MAX_PATH + 1];
 	WCHAR	szDrive[_MAX_DRIVE];
