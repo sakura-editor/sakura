@@ -1,7 +1,7 @@
 Param(
-    [String]$VsVersion = $env:NUM_VSVERSION,
-    [String]$Platform = $env:BUILD_PLATFORM,
-    [String]$Configuration = $env:BUILD_CONFIGURATION,
+    [String]$VsVersion = "17",
+    [String]$Platform = "x64",
+    [String]$Configuration = "Debug",
     [String]$HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
 )
 

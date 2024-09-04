@@ -1,6 +1,14 @@
 .nuget
 .sonar
 .scannerwork
+.vs
+build
+bw-output
+node_modules
+packages
+x64
+MinGW
+Win32
 
 *.aps
 *.bak
@@ -8,21 +16,14 @@
 *.ipdb
 *.pyc
 *.vcxproj.user
-**/packages
 **/TestResults
 .sonarqube
 /*.patch
-/.vs
 /cppcheck-*.xml
 /cppcheck-install.log
 /help/sakura/sakura.hh
-/build
-/MinGW
-/Win32
-/x64
 Backup
 build-wrapper-win-x86*
-bw-output
 doxygen*.log
 html
 iss-*-*.log
