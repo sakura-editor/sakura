@@ -1,28 +1,24 @@
 Param(
     [String]$coverage,
     [String]$command,
-    [String]$commandArgs
+    [String]$commandArgs = "`r`n"
 )
-
-Write-Host "coverage was ${coverage}."
-Write-Host "command was ${command}."
-Write-Host "commandArgs was ${commandArgs}."
 
 $HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
 
 $command = [System.IO.Path]::GetFullPath($command)
 
 $openCppCoverageArgs = @( `
-  "--export_type xml:$coverage", `
+  "--export_type xml:$HomePath\$coverage", `
   "--modules $command", `
   "--sources $HomePath", `
   "--excluded_sources $HomePath\build", `
-  "--working_dir $HomePath", `
+  "--working_dir $([System.IO.Path]::GetDirectoryName($command))", `
   "--cover_children", `
   "--", `
   $command)
 
-$openCppCoverageArgs += $commandArgs -split "`r`n"
+$openCppCoverageArgs += $commandArgs -split "`r`n" | Where-Object { $_ -ne '' }
 
 # Invoke command with OpenCppCoverage.
 $p = Start-Process `

@@ -90,16 +90,12 @@ bool CNormalProcess::InitializeProcess()
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 
 	/* コマンドラインオプション */
-	bool			bViewMode = false;
-	bool			bDebugMode;
-	bool			bGrepMode;
-	bool			bGrepDlg;
 	GrepInfo		gi;
 	EditInfo		fi;
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
-	CCommandLine::getInstance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
+	GetCCommandLine().GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
 	if( fi.m_szPath[0] != L'\0' ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
@@ -149,7 +145,7 @@ bool CNormalProcess::InitializeProcess()
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	// グループIDを取得
-	int nGroupId = CCommandLine::getInstance()->GetGroupId();
+	int nGroupId = GetCCommandLine().GetGroupId();
 	if( GetDllShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
 		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
 	}
@@ -164,9 +160,9 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
-	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
-	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
-	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
+	const auto bDebugMode = GetCCommandLine().IsDebugMode();
+	const auto bGrepMode  = GetCCommandLine().IsGrepMode();
+	const auto bGrepDlg   = GetCCommandLine().IsGrepDlg();
 
 	MY_TRACETIME( cRunningTimer, L"CheckFile" );
 
@@ -302,7 +298,7 @@ bool CNormalProcess::InitializeProcess()
 	else{
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
-		bViewMode = CCommandLine::getInstance()->IsViewMode(); // 2002/2/8 aroka ここに移動
+		const auto bViewMode = GetCCommandLine().IsViewMode(); // 2002/2/8 aroka ここに移動
 		if( fi.m_szPath[0] != L'\0' ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(
@@ -416,12 +412,11 @@ bool CNormalProcess::InitializeProcess()
 		pEditWnd->GetDocument()->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 	// 起動時マクロオプション
-	LPCWSTR pszMacro = CCommandLine::getInstance()->GetMacro();
-	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){
-		LPCWSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
-		if( pszMacroType == NULL || pszMacroType[0] == L'\0' || _wcsicmp(pszMacroType, L"file") == 0 ){
-			pszMacroType = NULL;
-		}
+	if (const auto macro = GetCCommandLine().GetMacro();
+		pEditWnd->GetHwnd() && macro.has_value())
+	{
+		LPCWSTR pszMacro = macro.value();
+		LPCWSTR pszMacroType = GetCCommandLine().GetMacroType().value_or(nullptr);
 		CEditView& view = pEditWnd->GetActiveView();
 		view.GetCommander().HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
@@ -480,9 +475,10 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::_GetInitializeMutex" );
 	HANDLE hMutex;
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
-	strMutexInitName += pszProfileName;
+	if (const auto profileName = GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+		strMutexInitName += profileName.value();
+	}
 	hMutex = ::CreateMutex( NULL, TRUE, strMutexInitName.c_str() );
 	if( NULL == hMutex ){
 		ErrorBeep();

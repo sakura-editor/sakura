@@ -1,18 +1,17 @@
 Param(
-    [String]$Platform = $env:BUILD_PLATFORM,
-    [String]$Configuration = $env:BUILD_CONFIGURATION
+    [String]$Platform = "x64",
+    [String]$Configuration = "Debug",
+    [String]$HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
 )
-
-$HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
 
 # Invoke Tests1.
 & "$PSScriptRoot\Run-OpenCppCoverage.ps1" `
-  $([System.IO.Path]::GetFullPath("$HomePath\tests1-coverage.xml")) `
-  $([System.IO.Path]::GetFullPath("$HomePath\$Platform\$Configuration\tests1.exe")) `
-  @("--gtest_output=xml:tests1-googletest.xml")
+    "tests1-coverage.xml" `
+    "$HomePath\$Platform\$Configuration\tests1.exe" `
+    @("--gtest_output=xml:$HomePath\tests1-googletest.xml")
 
 # Invoke Tests2.
-& "$PSScriptRoot\Run-SakuraEditorWithCoverage.ps1" `
-  $([System.IO.Path]::GetFullPath("$HomePath\tests2-coverage.xml")) `
-  $Platform `
-  $Configuration
+& "$PSScriptRoot\Run-FuncTest.ps1" `
+    "tests2-coverage.xml" `
+    $Platform `
+    $Configuration

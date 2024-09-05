@@ -84,20 +84,28 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 {
+	auto commandLine = CCommandLine::getInstance();
+
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
 	WCHAR szExeFileName[MAX_PATH];
 	const int cchExeFileName = ::GetModuleFileName(NULL, szExeFileName, _countof(szExeFileName));
-	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
+	commandLine->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
 
-	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
+	commandLine->ParseCommandLine(lpCmdLine);
+
+	std::wstring strProfileName;
+	bool hasProfileName = commandLine->IsSetProfile();
+	bool showProfileMgr = commandLine->IsProfileMgr();
 
 	// コマンドラインオプションから起動プロファイルを判定する
-	bool profileSelected = CDlgProfileMgr::TrySelectProfile( CCommandLine::getInstance() );
-	if( !profileSelected ){
-		CDlgProfileMgr dlgProf;
-		if( dlgProf.DoModal( hInstance, NULL, 0 ) ){
-			CCommandLine::getInstance()->SetProfileName( dlgProf.m_strProfileName.c_str() );
+	if (const auto profileSelected = CDlgProfileMgr::TrySelectProfile(strProfileName, hasProfileName, showProfileMgr);
+		!profileSelected)
+	{
+		if (CDlgProfileMgr dlgProf;
+			dlgProf.DoModal(hInstance, HWND(nullptr), 0))
+		{
+			commandLine->SetProfileName(dlgProf.m_strProfileName);
 		}else{
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
 		}
@@ -141,9 +149,10 @@ bool CProcessFactory::IsStartingControlProcess()
 */
 bool CProcessFactory::IsExistControlProcess()
 {
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
-	strMutexSakuraCp += pszProfileName;
+	if (const auto profileName = CCommandLine::getInstance()->GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+		strMutexSakuraCp += profileName.value();
+	}
  	HANDLE hMutexCP;
 	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, strMutexSakuraCp.c_str() );	// 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
 	if( NULL != hMutexCP ){
@@ -186,9 +195,9 @@ bool CProcessFactory::StartControlProcess()
 	WCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
-	if( CCommandLine::getInstance()->IsSetProfile() ){
+	if (const auto profileName = CCommandLine::getInstance()->GetProfileOpt(); profileName.has_value()) {
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
-			szEXE, CCommandLine::getInstance()->GetProfileName() );
+			szEXE, profileName.value() );
 	}else{
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN", szEXE ); // ""付加
 	}
@@ -248,9 +257,10 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
 	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
 	//
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
-	strInitEvent += pszProfileName;
+	if (const auto profileName = CCommandLine::getInstance()->GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+		strInitEvent += profileName.value();
+	}
 	HANDLE hEvent;
 	hEvent = ::CreateEventW( NULL, TRUE, FALSE, strInitEvent.c_str() );
 	if( NULL == hEvent ){

@@ -116,9 +116,10 @@ bool CShareData::InitShareData()
 
 	/* ファイルマッピングオブジェクト */
 	{
-		const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 		std::wstring strShareDataName = GSTR_SHAREDATA;
-		strShareDataName += pszProfileName;
+		if (const auto profileName = CProcess::getInstance()->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+			strShareDataName += profileName.value();
+		}
 		m_hFileMap = ::CreateFileMapping(
 			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
 			NULL,
@@ -1072,7 +1073,7 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 */
 [[nodiscard]]  bool CShareData::IsPrivateSettings( void ) const noexcept
 {
-	return m_pShareData != nullptr && 0 != ::wcscmp(m_pShareData->m_szPrivateIniFile, m_pShareData->m_szIniFile);
+	return m_pShareData && m_pShareData->m_szPrivateIniFile != m_pShareData->m_szIniFile;
 }
 
 /*

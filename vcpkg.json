@@ -5,6 +5,11 @@
       "host": true
     },
     {
+      "name": "spdlog",
+      "default-features": false,
+      "features": ["wchar"]
+    },
+    {
       "name": "gtest",
       "platform": "static"
     }

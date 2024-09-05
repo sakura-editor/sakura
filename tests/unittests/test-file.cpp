@@ -167,14 +167,6 @@ TEST(file, GetIniFileName_OutOfProcess)
  */
 TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
-	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
 	// exeファイルの拡張子をiniに変えたパスが返る
 	auto path = GetExeFileName().replace_extension(L".ini");
 	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
@@ -272,14 +264,6 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
-	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
 	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"3", exeIniPath.c_str());
@@ -303,14 +287,6 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
-	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
 	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"1", exeIniPath.c_str());
@@ -334,14 +310,6 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateDocument)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
-	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
 	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"2", exeIniPath.c_str());

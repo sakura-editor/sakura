@@ -51,7 +51,7 @@ class CDlgProfileMgr final : public CDialog
 {
 public:
 	//! コマンドラインだけでプロファイルが確定するか調べる
-	static bool TrySelectProfile( CCommandLine* pcCommandLine ) noexcept;
+	static bool TrySelectProfile(std::wstring& strProfileName, bool hasProfileName = false, bool showProfileMgr = false) noexcept;
 
 	/*
 	||  Constructors

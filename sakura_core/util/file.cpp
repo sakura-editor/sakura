@@ -526,14 +526,102 @@ void GetExedir(
 }
 
 /*!
+	@brief マルチユーザー用のiniファイルパスを取得する
+ */
+std::filesystem::path GetExeIniPath() noexcept
+{
+	// マルチユーザー用のiniファイルパス
+	//		exeと同じフォルダーに置かれたマルチユーザー構成設定ファイル（sakura.exe.ini）の内容
+	//		に従ってマルチユーザー用のiniファイルパスを決める
+	return GetExeFileName().concat(L".ini");
+}
+
+/*!
+	@brief iniファイルパスを取得する
+ */
+bool IsMultiUserSettings() noexcept
+{
+	const auto exeIniPath = GetExeIniPath();
+	return GetPrivateProfileIntW(L"Settings", L"MultiUser", 0, exeIniPath.c_str());
+}
+
+/*!
+	@brief マルチユーザー用のiniファイルパスを取得する
+ */
+std::filesystem::path GetPrivateIniFileName(
+	const std::filesystem::path& exeIniPath,
+	const std::wstring&          filename
+) noexcept
+{
+	const auto nFolder = GetPrivateProfileIntW(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str());
+	KNOWNFOLDERID refFolderId;
+	switch (nFolder) {
+	case 1:
+	case 3:
+		refFolderId = FOLDERID_Profile;			// ユーザーのルートフォルダー
+		break;
+	case 2:
+		refFolderId = FOLDERID_Documents;		// ユーザーのドキュメントフォルダー
+		break;
+
+	default:
+		refFolderId = FOLDERID_RoamingAppData;	// ユーザーのアプリケーションデータフォルダー
+		break;
+	}
+
+	PWSTR pFolderPath = nullptr;
+	SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT_PATH, NULL, &pFolderPath);
+	std::filesystem::path privateIniPath(pFolderPath);
+	CoTaskMemFree(pFolderPath);
+
+	std::wstring subFolder(_MAX_DIR, L'\0');
+	GetPrivateProfileStringW(L"Settings", L"UserSubFolder", L"sakura", subFolder.data(), DWORD(subFolder.capacity()), exeIniPath.c_str());
+	subFolder.assign(subFolder.data());
+	if (subFolder.empty())
+	{
+		subFolder = L"sakura";
+	}
+	if (nFolder == 3) {
+		privateIniPath.append(L"Desktop");
+	}
+	privateIniPath.append(subFolder);
+
+	if (const auto process = CProcess::getInstance())
+	{
+		if (const auto profileName = process->GetCCommandLine().GetProfileOpt();
+			profileName.has_value() && *profileName.value())
+		{
+			privateIniPath.append(profileName.value());
+		}
+	}
+
+	return privateIniPath.append(filename);
+}
+
+/*!
 	@brief iniファイルパスを取得する
  */
 std::filesystem::path GetIniFileName()
 {
-	if (const auto pProcess = CProcess::getInstance(); pProcess != nullptr) {
-		return pProcess->GetIniFileName();
+	// exe基準のiniファイルパスを得る
+	auto iniPath = GetExeFileName().replace_extension(L".ini");
+
+	if (IsMultiUserSettings()) {
+		const auto exeIniPath = GetExeIniPath();
+		return GetPrivateIniFileName(exeIniPath, iniPath.filename());
 	}
-	return GetExeFileName().replace_extension(L".ini");
+
+
+	const auto filename = iniPath.filename();
+	iniPath.remove_filename();
+
+	if (const auto process = CProcess::getInstance()) {
+		if (const auto profileName = process->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+			iniPath.append(profileName.value());
+		}
+	}
+
+	return iniPath.append(filename.c_str());
 }
 
 /*!
@@ -593,7 +681,8 @@ void GetInidirOrExedir(
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	if( GetExedir( szExedir, szFile ); fexist(szExedir) ){
+	GetExedir( szExedir, szFile ); 
+	if( fexist(szExedir) ){
 		::wcsncpy_s( pDir, _MAX_PATH - 1, szExedir, _TRUNCATE );
 		return;
 	}

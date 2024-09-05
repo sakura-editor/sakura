@@ -17,13 +17,14 @@
 #define SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_
 #pragma once
 
-#include <filesystem>
-#include <string>
-#include <string_view>
+#include "_main/CCommandLine.h"
 
-#include "global.h"
 #include "util/design_template.h"
 #include "env/CShareData.h"
+
+#include "CSelectLang.h"
+#include "sakura_rc.h"
+#include "String_define.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -38,8 +39,6 @@ public:
 	virtual ~CProcess(){}
 	virtual void RefreshString();
 
-	virtual std::filesystem::path GetIniFileName() const;
-
 protected:
 	CProcess();
 	virtual bool InitializeProcess();
@@ -51,17 +50,16 @@ protected:
 
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
+	CCommandLine&   GetCCommandLine() const { return *CCommandLine::getInstance(); }
 	CShareData&		GetShareData()   { return m_cShareData; }
 	HWND			GetMainWindow() const{ return m_hWnd; }
 
 	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
-	[[nodiscard]] LPCWSTR	GetAppName( void ) const { return m_strAppName.c_str(); }
-	void UpdateAppName( std::wstring_view appName );
 
 private:
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
 	CShareData		m_cShareData;
-	std::wstring	m_strAppName;
 };
+
 #endif /* SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_ */

@@ -38,20 +38,6 @@ CProcess::CProcess(
 : m_hInstance( hInstance )
 , m_hWnd( 0 )
 {
-	// アプリ名をリソースから読み込む
-	m_strAppName = LS(STR_GSTR_APPNAME);
-}
-
-/*!
-	@brief iniファイルパスを取得する
- */
-std::filesystem::path CProcess::GetIniFileName() const
-{
-	if (m_cShareData.IsPrivateSettings()) {
-		const DLLSHAREDATA *pShareData = &GetDllShareData();
-		return pShareData->m_szPrivateIniFile.c_str();
-	}
-	return GetExeFileName().replace_extension(L".ini");
 }
 
 /*!
@@ -99,12 +85,4 @@ bool CProcess::Run()
 void CProcess::RefreshString()
 {
 	m_cShareData.RefreshString();
-}
-
-/*!
-	言語選択後にアプリ名を更新します。
- */
-void CProcess::UpdateAppName( std::wstring_view appName )
-{
-	m_strAppName = appName;
 }
