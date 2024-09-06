@@ -18,13 +18,6 @@
 #include "StdAfx.h"
 #include "_main/CProcess.h"
 
-#include "util/module.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
-#include "config/app_constants.h"
-#include "CSelectLang.h"
-#include "String_define.h"
-
 /*!
 	@brief プロセス基底クラス
 	
@@ -36,24 +29,19 @@ CProcess::CProcess(
 	LPCWSTR		lpCmdLine		//!< pointer to command line
 )
 : m_hInstance( hInstance )
-, m_hWnd( 0 )
 {
+	UNREFERENCED_PARAMETER(lpCmdLine);
 }
 
 /*!
 	@brief プロセスを初期化する
 
 	共有メモリを初期化する
-*/
+ */
 bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
-	if( !GetShareData().InitShareData() ){
-		//	適切なデータを得られなかった
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
-			GSTR_APPNAME, L"異なるバージョンのエディタを同時に起動することはできません。" );
-		return false;
-	}
+	m_cShareData.InitShareData();
 
 	/* リソースから製品バージョンの取得 */
 	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
@@ -70,7 +58,16 @@ bool CProcess::InitializeProcess()
 */
 bool CProcess::Run()
 {
-	if( InitializeProcess() )
+	bool initialized = false;
+	try
+	{
+		initialized = InitializeProcess();
+	}
+	catch (const message_error& e)
+	{
+		TopErrorMessage(nullptr, e.message());
+	}
+	if (initialized)
 	{
 			MainLoop() ;
 			OnExitProcess();

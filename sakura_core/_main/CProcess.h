@@ -19,6 +19,8 @@
 
 #include "_main/CCommandLine.h"
 
+#include "apiwrap/kernel/handle_closer.hpp"
+
 #include "util/design_template.h"
 #include "env/CShareData.h"
 
@@ -31,16 +33,17 @@
 -----------------------------------------------------------------------*/
 /*!
 	@brief プロセス基底クラス
-*/
+ */
 class CProcess : public TSingleInstance<CProcess> {
 public:
 	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
+	~CProcess() override = default;
+
 	bool Run();
-	virtual ~CProcess(){}
+
 	virtual void RefreshString();
 
 protected:
-	CProcess();
 	virtual bool InitializeProcess();
 	virtual bool MainLoop() = 0;
 	virtual void OnExitProcess() = 0;
@@ -57,8 +60,8 @@ public:
 	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
 
 private:
-	HINSTANCE	m_hInstance;
-	HWND		m_hWnd;
+	HINSTANCE       m_hInstance;
+	HWND            m_hWnd       = nullptr;
 	CShareData		m_cShareData;
 };
 

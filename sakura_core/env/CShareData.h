@@ -33,16 +33,17 @@
 #define SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_
 #pragma once
 
-#include <string>
+#include "apiwrap/kernel/file_mapping.hpp"
+#include "apiwrap/kernel/handle_closer.hpp"
+
+#include "env/DLLSHAREDATA.h"
+
 #include "CSelectLang.h"		// 2011.04.10 nasukoji
-#include "charset/charset.h"
-#include "util/design_template.h"
 #include "charset/charset.h"
 
 // 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
 // CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
 class CMutex;
-struct DLLSHAREDATA;
 struct SFileTree;
 struct STypeConfig;
 
@@ -59,19 +60,23 @@ struct STypeConfig;
 	注意してください．
 
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-*/
-class CShareData : public TSingleInstance<CShareData>
+ */
+class CShareData : public file_mapping<DLLSHAREDATA>
 {
+	using TypeConfigVector = std::vector<STypeConfig*>;
+
 public:
-	CShareData();
-	~CShareData();
+	static CShareData* getInstance();
+
+	CShareData() = default;
+	~CShareData() override;
 
 	/*
 	||  Attributes & Operations
 	*/
 	bool InitShareData();	/* CShareDataクラスの初期化処理 */
 
-	DLLSHAREDATA* GetDllShareData() const { return m_pShareData; }
+	DLLSHAREDATA& GetShareData() const { return *m_pData; }
 
 	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
 	
@@ -116,11 +121,9 @@ public:
 	static void InitFileTree(SFileTree*);
 
 private:
-	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-	HANDLE			m_hFileMap;
-	DLLSHAREDATA*	m_pShareData;
-	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
-	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
+	DLLSHAREDATA*       m_pShareData            = nullptr;
+	TypeConfigVector*   m_pvTypeSettings        = nullptr;	//	(コントロールプロセスのみ)
+	HWND                m_hwndTraceOutSource    = nullptr;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 };
 
 #endif /* SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_ */

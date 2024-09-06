@@ -48,20 +48,6 @@ TEST(WinMain, OleInitialize)
 }
 
 /*!
- * HANDLE型のスマートポインタを実現するためのdeleterクラス
- */
-struct handle_closer
-{
-	void operator()( HANDLE handle ) const
-	{
-		::CloseHandle( handle );
-	}
-};
-
-//! HANDLE型のスマートポインタ
-using handleHolder = std::unique_ptr<std::remove_pointer<HANDLE>::type, handle_closer>;
-
-/*!
  * WinMain起動テストのためのフィクスチャクラス
  *
  * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので

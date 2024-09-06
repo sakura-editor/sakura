@@ -26,6 +26,8 @@
 
 #include "io/CZipFile.h"
 
+#include "util/file.h"
+
 #include <iostream>
 #include <filesystem>
 #include <fstream>
@@ -149,9 +151,9 @@ std::filesystem::path GetTempFilePath(std::wstring_view prefix, std::wstring_vie
 }
 
 /*!
- * @brief CZipFIleのテスト
+ * @brief CZipFileのテスト
  */
-TEST(CZipFIle, IsNG)
+TEST(CZipFile, IsNG)
 {
 	// IShellDispatchを使うためにOLEを初期化する必要がある
 	// このテストでは初期化を忘れた場合の挙動を確認する
@@ -162,15 +164,23 @@ TEST(CZipFIle, IsNG)
 }
 
 /*!
- * @brief CZipFIleのテスト
+ * @brief CZipFileのテスト
  */
-TEST(CZipFIle, CZipFIle)
+TEST(CZipFile, CZipFile)
 {
 	// IShellDispatchを使うためにOLEを初期化する
 	if (FAILED(::OleInitialize(nullptr))) {
 		FAIL();
 	}
-	else {
+
+	//終了時にOleUninitializeを呼び出すよう設定
+	const auto oleUninitialize = [](const int*) { OleUninitialize(); };
+	using oleUninitializer = std::unique_ptr<int, decltype(oleUninitialize)>;
+	auto dummyPointer = PINT(1);
+	oleUninitializer deinitializer(dummyPointer, oleUninitialize);
+
+	if (deinitializer)
+	{
 		// インスタンス作成時にOLEが初期化されていればIsOkはtrueを返す
 		CZipFile cZipFile;
 		ASSERT_TRUE(cZipFile.IsOk());
@@ -211,7 +221,4 @@ TEST(CZipFIle, CZipFIle)
 		// 作成した一時ファイルを削除する
 		std::filesystem::remove(tempPath);
 	}
-
-	// OLEをシャットダウンする
-	::OleUninitialize();
 }

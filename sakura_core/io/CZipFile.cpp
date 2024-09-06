@@ -187,7 +187,7 @@ bool CZipFile::Unzip(const std::wstring sOutPath)
 	var.pdispVal = pZipFileItems;
 	VariantInit(&varOpt);
 	varOpt.vt = VT_I4;
-	varOpt.lVal = FOF_SILENT | FOF_NOCONFIRMATION;
+	varOpt.lVal = FOF_SILENT | FOF_NOCONFIRMATION | FOF_NO_UI;
 
 	// 展開
 	hr = pOutFolder->CopyHere(var, varOpt);
