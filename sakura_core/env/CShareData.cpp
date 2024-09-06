@@ -26,7 +26,7 @@
 
 #include "StdAfx.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
+
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
@@ -55,13 +55,19 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
-//	CShareData_new2.cppと統合
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
-CShareData::CShareData()
+std::wstring GetSharaDataName(std::optional<LPCWSTR> profileName)
 {
-	m_hFileMap   = NULL;
-	m_pShareData = NULL;
-	m_pvTypeSettings = NULL;
+	std::wstring strShareDataName = GSTR_SHAREDATA;
+	if (profileName.has_value() && *profileName.value()) {
+		strShareDataName += profileName.value();
+	}
+	return strShareDataName;
+}
+
+/*static*/ CShareData* CShareData::getInstance()
+{
+	const auto process = CProcess::getInstance();
+	return &process->GetShareData();
 }
 
 /*!
@@ -70,15 +76,6 @@ CShareData::CShareData()
 */
 CShareData::~CShareData()
 {
-	if( m_pShareData ){
-		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
-		SetDllShareData( NULL );
-		::UnmapViewOfFile( m_pShareData );
-		m_pShareData = NULL;
-	}
-	if( m_hFileMap ){
-		CloseHandle( m_hFileMap );
-	}
 	if( m_pvTypeSettings ){
 		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
 			delete (*m_pvTypeSettings)[i];
@@ -90,7 +87,7 @@ CShareData::~CShareData()
 }
 
 static CMutex g_cMutexShareWork( FALSE, GSTR_MUTEX_SAKURA_SHAREWORK );
- 
+
 CMutex& CShareData::GetMutexShareWork(){
 	return g_cMutexShareWork;
 }
@@ -115,42 +112,21 @@ bool CShareData::InitShareData()
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
 	/* ファイルマッピングオブジェクト */
-	{
-		std::wstring strShareDataName = GSTR_SHAREDATA;
-		if (const auto profileName = CProcess::getInstance()->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
-			strShareDataName += profileName.value();
-		}
-		m_hFileMap = ::CreateFileMapping(
-			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
-			NULL,
-			PAGE_READWRITE | SEC_COMMIT,
-			0,
-			sizeof( DLLSHAREDATA ),
-			strShareDataName.c_str()
-		);
-	}
-	if( NULL == m_hFileMap ){
-		::MessageBox(
-			NULL,
-			L"CreateFileMapping()に失敗しました",
-			L"予期せぬエラー",
-			MB_OK | MB_APPLMODAL | MB_ICONSTOP
-		);
-		return false;
-	}
+	const bool isCreated = CreateMapping(
+		INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
+		NULL,
+		PAGE_READWRITE | SEC_COMMIT,
+		0,
+		sizeof(DLLSHAREDATA),
+		GetSharaDataName(CProcess::getInstance()->GetCCommandLine().GetProfileOpt())
+	);
 
-	if( GetLastError() != ERROR_ALREADY_EXISTS ){
-		/* オブジェクトが存在していなかった場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
-		);
+	m_pShareData = m_pData.get();
+	SetDllShareData(m_pShareData);
+
+	if (isCreated)
+	{
 		CreateTypeSettings();
-		SetDllShareData( m_pShareData );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -727,33 +703,28 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 		}
-	}else{
-		/* オブジェクトがすでに存在する場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
-		);
-		SetDllShareData( m_pShareData );
-
-		SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_SHARE );
-		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
-
+	}
+	else
+	{
 		//	From Here Oct. 27, 2000 genta
 		//	2014.01.08 Moca サイズチェック追加
 		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
+			SetDllShareData(nullptr);
+			m_pShareData = nullptr;
+
 			//	ハンドルを解放する
-			SetDllShareData( NULL );
-			::UnmapViewOfFile( m_pShareData );
-			m_pShareData = NULL;
-			return false;
+			m_pData.reset();
+			m_hFileMap.reset();
+
+			throw message_error(L"異なるバージョンのエディタを同時に起動することはできません。");
 		}
 		//	To Here Oct. 27, 2000 genta
+
+		/* オブジェクトがすでに存在する場合 */
+		SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
+		InitCharWidthCache(m_pData->m_Common.m_sView.m_lf);
 	}
 	return true;
 }

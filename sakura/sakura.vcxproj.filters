@@ -119,6 +119,9 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\apiwrap\kernel">
+      <UniqueIdentifier>{eea65598-f17e-433c-ac03-de058e294aad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -1120,6 +1123,21 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\env\SShareDataClientWithCache.hpp">
       <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\kernel\handle_closer.hpp">
+      <Filter>Cpp Source Files\apiwrap\kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\kernel\file_mapping.hpp">
+      <Filter>Cpp Source Files\apiwrap\kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\kernel\format_message.hpp">
+      <Filter>Cpp Source Files\apiwrap\kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\kernel\message_error.hpp">
+      <Filter>Cpp Source Files\apiwrap\kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\kernel\to_multibyte.hpp">
+      <Filter>Cpp Source Files\apiwrap\kernel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2326,6 +2344,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\env\SShareDataClientWithCache.cpp">
       <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\kernel\to_multibyte.cpp">
+      <Filter>Cpp Source Files\apiwrap\kernel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
