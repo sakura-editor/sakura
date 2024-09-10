@@ -28,25 +28,28 @@
 	
 	コントロールプロセスはCControlTrayクラスのインスタンスを作る。
  */
-class CControlProcess final : public CProcess {
+class CControlProcess : public CProcess {
 
 	using Me = CControlProcess;
 	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
+	using CControlTrayHolder = std::unique_ptr<CControlTray>;
 
 public:
 	explicit CControlProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine) noexcept;
-	~CControlProcess() override;
+	~CControlProcess() override = default;
 
 protected:
 	bool InitializeProcess() override;
 	bool MainLoop() override;
 	void OnExitProcess() override;
 
+	bool    InitShareData() override;
+	void    LoadShareData();
+	void    SaveShareData() const;
+
 private:
-	HANDLE			m_hMutex              = nullptr;    //!< アプリケーション実行検出用ミューテックス
-	HANDLE			m_hMutexCP            = nullptr;    //!< コントロールプロセスミューテックス
-	HANDLE			m_hEventCPInitialized = nullptr;    //!< コントロールプロセス初期化完了イベント 2006.04.10 ryoji
-	CControlTray*	m_pcTray              = nullptr;
+	handleHolder        m_InitEvent     = handleHolder(nullptr, handle_closer());
+	CControlTrayHolder  m_pcTray        = nullptr;
 };
 
 #endif /* SAKURA_CCONTROLPROCESS_AFB90808_4287_4A11_B7FB_9CD21CF8BFD6_H_ */

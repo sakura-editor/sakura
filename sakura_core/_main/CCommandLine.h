@@ -63,9 +63,7 @@ public:
 	bool IsDebugMode() const noexcept { return m_bDebugMode; }
 	bool IsViewMode() const noexcept { return m_bViewMode; }
 	bool GetEditInfo(EditInfo* fi) const noexcept { *fi = m_fi; return true; }
-	const EditInfo& GetEditInfoRef() const noexcept { return m_fi; }
 	bool GetGrepInfo(GrepInfo* gi) const noexcept { *gi = m_gi; return true; }
-	const GrepInfo& GetGrepInfoRef() const noexcept { return m_gi; }
 	int GetGroupId() const noexcept { return m_nGroup; }	// 2007.06.26 ryoji
 	std::optional<LPCWSTR> GetMacro() const noexcept { return m_Macro.size() ? std::optional<LPCWSTR>(m_Macro.c_str()) : std::nullopt; }
 	std::optional<LPCWSTR> GetMacroType() const noexcept {
@@ -86,9 +84,13 @@ public:
 	void ClearFile(void) noexcept { m_vFiles.clear(); }
 	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
 	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
+
+	std::wstring ToCommandArgs() const;
+
 	void ParseKanjiCodeFromFileName( LPWSTR pszExeFileName, int cchExeFileName );
 	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
 
+	void SetNoWindow(bool noWindow) { m_bNoWindow = noWindow; }
 	void SetMacro(std::wstring_view macro) { m_Macro = macro; }
 	void SetMacroType(std::wstring_view macroType) { m_MacroType = macroType; }
 	void SetProfileName(std::wstring_view profileName) {

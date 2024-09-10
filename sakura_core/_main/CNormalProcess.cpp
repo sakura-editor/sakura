@@ -21,10 +21,11 @@
 */
 
 #include "StdAfx.h"
-#include "CNormalProcess.h"
-#include "CCommandLine.h"
-#include "CControlTray.h"
-#include "window/CEditWnd.h" // 2002/2/3 aroka
+#include "_main/CNormalProcess.h"
+
+#include "apiwrap/kernel/handle_closer.hpp"
+
+#include "_main/CControlTray.h"
 #include "CGrepAgent.h"
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h" // 2003/03/28 MIK
@@ -39,6 +40,14 @@
 #include "CSelectLang.h"
 #include "env/CShareData.h"
 #include "config/system_constants.h"
+
+CEditorProcess* getEditorProcess() noexcept
+{
+	if (auto process = dynamic_cast<CEditorProcess*>(CProcess::getInstance())) {
+		return process;
+	}
+	return nullptr;
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
@@ -70,19 +79,46 @@ bool CNormalProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::Init" );
 
-	/* プロセス初期化の目印 */
-	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
-	if( NULL == hMutex ){
-		return false;
+	const auto profileName = GetCCommandLine().GetProfileName();
+
+	// ミューテックスを使って排他ロックをかける
+	std::wstring mutexName = GSTR_MUTEX_SAKURA_INIT;
+	if (profileName && *profileName)
+	{
+		mutexName += profileName;
+	}
+	auto hMutex = CreateMutexW(nullptr, true, mutexName);
+	if (!hMutex)
+	{
+		throw process_init_failed( LS(STR_ERR_DLGNRMPROC1) ); // L"CreateMutex()失敗。\n終了します。"
+	}
+
+	// ミューテックスハンドルをスマートポインタに入れる
+	handleHolder mutexHolder( hMutex, handle_closer() );
+
+	if (ERROR_ALREADY_EXISTS == GetLastError())
+	{
+		if (const auto waitResult = WaitForSingleObject(hMutex, 15 * 1000);
+			WAIT_FAILED == waitResult || WAIT_TIMEOUT == waitResult)
+		{
+			throw process_init_failed( LS(STR_ERR_DLGNRMPROC2) ); // L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
+		}
+	}
+
+	// コントロールプロセスを起動する
+	if (!StartControlProcess(profileName))
+	{
+		throw process_init_failed( LS(STR_ERR_DLGNRMPROC2) ); // L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
 	}
 
 	/* 共有メモリを初期化する */
-	if ( !CProcess::InitializeProcess() ){
-		return false;
+	if (!InitShareData())
+	{
+		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
 	}
 
-	/* 言語を選択する */
-	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
+	// ミューテックスハンドルをスマートポインタから切り離す
+	mutexHolder.release();
 
 	/* コマンドラインオプション */
 	GrepInfo		gi;
@@ -91,6 +127,8 @@ bool CNormalProcess::InitializeProcess()
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
 	GetCCommandLine().GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
+	GetCCommandLine().GetGrepInfo(&gi);
+
 	if( fi.m_szPath[0] != L'\0' ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
@@ -190,7 +228,6 @@ bool CNormalProcess::InitializeProcess()
 			::GetClientRect( hEditWnd, &rc );
 			::SendMessageAny( hEditWnd, WM_SIZE, ::IsZoomed( hEditWnd )? SIZE_MAXIMIZED: SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		}
-		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
 			// pEditWnd->GetDocument()->SetCurDirNotitle();
@@ -425,6 +462,17 @@ bool CNormalProcess::InitializeProcess()
 	return pEditWnd->GetHwnd() ? true : false;
 }
 
+bool CNormalProcess::InitShareData()
+{
+	const auto result = __super::InitShareData();
+	if (result)
+	{
+		/* 言語を選択する */
+		CSelectLang::ChangeLang(GetShareData().m_Common.m_sWindow.m_szLanguageDll);
+	}
+	return result;
+}
+
 /*!
 	@brief エディタプロセスのメッセージループ
 	
@@ -456,40 +504,6 @@ void CNormalProcess::OnExitProcess()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-/*!
-	@brief Mutex(プロセス初期化の目印)を取得する
-
-	多数同時に起動するとウィンドウが表に出てこないことがある。
-	
-	@date 2002/2/8 aroka InitializeProcessから移動
-	@retval Mutex のハンドルを返す
-	@retval 失敗した時はリリースしてから NULL を返す
-*/
-HANDLE CNormalProcess::_GetInitializeMutex() const
-{
-	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::_GetInitializeMutex" );
-	HANDLE hMutex;
-	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
-	if (const auto profileName = GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
-		strMutexInitName += profileName.value();
-	}
-	hMutex = ::CreateMutex( NULL, TRUE, strMutexInitName.c_str() );
-	if( NULL == hMutex ){
-		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
-		return NULL;
-	}
-	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
-		DWORD dwRet = ::WaitForSingleObject( hMutex, 15000 );	// 2002/2/8 aroka 少し長くした
-		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
-			TopErrorMessage( NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
-			::CloseHandle( hMutex );
-			return NULL;
-		}
-	}
-	return hMutex;
-}
 
 /*!
 	@brief 複数ファイル読み込み

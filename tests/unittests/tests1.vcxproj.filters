@@ -182,6 +182,12 @@
     <ClCompile Include="test-cimpexpmanager.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-ccontrolprocess.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-ceditorprocess.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
@@ -191,6 +197,9 @@
       <Filter>Other Files</Filter>
     </ClInclude>
     <ClInclude Include="TExtModule.hpp">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMockProcess.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
   </ItemGroup>

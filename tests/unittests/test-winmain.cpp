@@ -50,6 +50,11 @@ TEST(WinMain, OleInitialize)
 struct WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
 
 	/*!
+	 * プロセスのインスタンス
+	 */
+	std::unique_ptr<CProcess> process;
+
+	/*!
 	 * 設定ファイルのパス
 	 *
 	 * GetIniFileNameを使ってtests1.iniのパスを取得する。
@@ -61,12 +66,17 @@ struct WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
 	 */
 	void SetUp() override {
 		// テスト用プロファイル名
-		const std::wstring_view profileName(GetParam());
+		const auto profileName(GetParam());
 
 		ASSERT_FALSE(CProcess::getInstance());
 
 		// プロセスのインスタンスを用意する
-		const auto process = CProcessFactory().CreateInstance(fmt::format(LR"(-PROF="{}")", profileName));
+		process = CProcessFactory().CreateInstance(fmt::format(LR"(-PROF="{}")", profileName));
+
+		// 起動中プロセスがあれば終了する
+		if (process->IsExistControlProcess(profileName)) {
+			process->TerminateControlProcess(profileName);
+		}
 
 		// INIファイルのパスを取得
 		iniPath = GetIniFileName();
@@ -92,152 +102,23 @@ struct WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
 		}
 	}
 
-	void CControlProcess_Terminate(std::wstring_view profileName);
-	void CControlProcess_StartAndTerminate(std::wstring_view profileName);
+	/*!
+	 * @brief コントロールプロセスを起動し、終了指示を出して、終了を待つ
+	 */
+	void WinMainTest::CControlProcess_StartAndTerminate(LPCWSTR profileName) const
+	{
+		// コントロールプロセスを起動する
+		process->StartControlProcess(profileName);
+
+		EXPECT_TRUE(process->IsExistControlProcess(profileName));
+
+		// コントロールプロセスに終了指示を出して終了を待つ
+		process->TerminateControlProcess(profileName);
+
+		// コントロールプロセスが終了すると、INIファイルが作成される
+		ASSERT_TRUE(fexist(iniPath.c_str()));
+	}
 };
-
-/*!
- * @brief コントロールプロセスの初期化完了を待つ
- *
- * CControlProcess::WaitForInitializedとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存CProcessFactory::WaitForInitializedControlProcess()と概ね等価です。
- */
-void CControlProcess_WaitForInitialized(std::wstring_view profileName)
-{
-	// 初期化完了イベントを作成する
-	std::wstring strInitEvent( GSTR_EVENT_SAKURA_CP_INITIALIZED );
-	if (profileName.length() > 0) {
-		strInitEvent += profileName;
-	}
-	auto hEvent = ::CreateEventW( NULL, TRUE, FALSE, strInitEvent.data() );
-	if (!hEvent) {
-		throw std::runtime_error( "create event failed." );
-	}
-
-	// イベントハンドラをスマートポインタに入れる
-	handleHolder eventHolder( hEvent );
-
-	// 初期化完了イベントを待つ
-	DWORD dwRet = ::WaitForSingleObject( hEvent, 30000 );
-	if( WAIT_TIMEOUT == dwRet ){
-		throw std::runtime_error( "waitEvent is timeout." );
-	}
-}
-
-/*!
- * @brief コントロールプロセスを起動する
- *
- * CControlProcess::Startとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存CProcessFactory::StartControlProcess()と概ね等価です。
- */
-void CControlProcess_Start(std::wstring_view profileName)
-{
-	// スタートアップ情報
-	STARTUPINFO si = { sizeof(STARTUPINFO), 0 };
-	si.lpTitle = (LPWSTR)L"sakura control process";
-	si.dwFlags = STARTF_USESHOWWINDOW;
-	si.wShowWindow = SW_SHOWDEFAULT;
-
-	const auto exePath = GetExeFileName();
-
-	std::wstring strProfileName;
-	if (profileName.length() > 0) {
-		strProfileName = profileName;
-	}
-
-	std::wstring strCommandLine = strprintf(LR"("%s" -PROF="%s" -NOWIN)", exePath.c_str(), strProfileName.c_str());
-
-	LPWSTR pszCommandLine = strCommandLine.data();
-	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
-	PROCESS_INFORMATION pi;
-
-	// コントロールプロセスを起動する
-	BOOL createSuccess = ::CreateProcess(
-		exePath.c_str(),	// 実行可能モジュールパス
-		pszCommandLine,		// コマンドラインバッファ
-		NULL,				// プロセスのセキュリティ記述子
-		NULL,				// スレッドのセキュリティ記述子
-		FALSE,				// ハンドルの継承オプション(継承させない)
-		dwCreationFlag,		// 作成のフラグ
-		NULL,				// 環境変数(変更しない)
-		NULL,				// カレントディレクトリ(変更しない)
-		&si,				// スタートアップ情報
-		&pi					// プロセス情報(作成されたプロセス情報を格納する構造体)
-	);
-	if( !createSuccess ){
-		throw std::runtime_error( "create process failed." );
-	}
-
-	// 開いたハンドルは使わないので閉じておく
-	::CloseHandle( pi.hThread );
-	::CloseHandle( pi.hProcess );
-
-	// コントロールプロセスの初期化完了を待つ
-	CControlProcess_WaitForInitialized(profileName);
-}
-
-/*!
- * @brief コントロールプロセスに終了指示を出して終了を待つ
- *
- * CControlProcess::Terminateとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存コードに該当する処理はありません。
- */
-void WinMainTest::CControlProcess_Terminate(std::wstring_view profileName)
-{
-	// トレイウインドウを検索する
-	std::wstring strCEditAppName( GSTR_CEDITAPP );
-	if (profileName.length() > 0) {
-		strCEditAppName += profileName;
-	}
-	HWND hTrayWnd = ::FindWindow( strCEditAppName.data(), strCEditAppName.data() );
-	if( !hTrayWnd ){
-		// ウインドウがなければそのまま抜ける
-		return;
-	}
-
-	// トレイウインドウからプロセスIDを取得する
-	DWORD dwControlProcessId = 0;
-	::GetWindowThreadProcessId( hTrayWnd, &dwControlProcessId );
-	if( !dwControlProcessId ){
-		throw std::runtime_error( "dwControlProcessId can't be retrived." );
-	}
-
-	// プロセス情報の問い合せを行うためのハンドルを開く
-	HANDLE hControlProcess = ::OpenProcess( PROCESS_QUERY_INFORMATION | SYNCHRONIZE, FALSE, dwControlProcessId );
-	if( !hControlProcess ){
-		throw std::runtime_error( "hControlProcess can't be opened." );
-	}
-
-	// プロセスハンドルをスマートポインタに入れる
-	handleHolder processHolder( hControlProcess );
-
-	// トレイウインドウを閉じる
-	::SendMessage( hTrayWnd, WM_CLOSE, 0, 0 );
-
-	// プロセス終了を待つ
-	DWORD dwExitCode = 0;
-	if( ::GetExitCodeProcess( hControlProcess, &dwExitCode ) && dwExitCode == STILL_ACTIVE ){
-		DWORD waitProcessResult = ::WaitForSingleObject( hControlProcess, INFINITE );
-		if( WAIT_TIMEOUT == waitProcessResult ){
-			throw std::runtime_error( "waitProcess is timeout." );
-		}
-	}
-
-	// コントロールプロセスが終了すると、INIファイルが作成される
-	ASSERT_TRUE( fexist( iniPath.c_str() ) );
-}
-
-/*!
- * @brief コントロールプロセスを起動し、終了指示を出して、終了を待つ
- */
-void WinMainTest::CControlProcess_StartAndTerminate(std::wstring_view profileName)
-{
-	// コントロールプロセスを起動する
-	CControlProcess_Start(profileName.data());
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	CControlProcess_Terminate(profileName.data());
-}
 
 /*!
  * @brief wWinMainを起動してみるテスト
@@ -325,11 +206,20 @@ TEST_P(WinMainTest, runEditorProcess)
 	strCommandLine += fmt::format(LR"( -PROF="{}")", szProfileName);
 	strCommandLine += fmt::format(LR"( -MTYPE=js -M="{}")", std::regex_replace(strStartupMacro, quote_regex, doubled_quote));
 
+	// プロセスのインスタンスを一回消す
+	process.reset();
+
 	// テストプログラム内のグローバル変数を汚さないために、別プロセスで起動させる
 	ASSERT_EXIT({ exit(StartEditorProcessForTest(strCommandLine)); }, ::testing::ExitedWithCode(0), ".*" );
 
+	// プロセスのインスタンスを再生成する
+	process = CProcessFactory().CreateInstance(fmt::format(LR"(-PROF="{}")", szProfileName));
+
 	// コントロールプロセスに終了指示を出して終了を待つ
-	CControlProcess_Terminate(szProfileName);
+	process->TerminateControlProcess(szProfileName);
+
+	// コントロールプロセスが終了すると、INIファイルが作成される
+	ASSERT_TRUE(fexist(iniPath.c_str()));
 }
 
 /*!
