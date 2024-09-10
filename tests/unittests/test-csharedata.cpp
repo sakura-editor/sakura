@@ -27,8 +27,6 @@
 #include "env/CShareData.h"
 
 #include "_main/CProcessFactory.h"
-#include "_main/CControlProcess.h"
-#include "_main/CControlTray.h"
 
 #include "apiwrap/kernel/message_error.hpp"
 
@@ -95,8 +93,7 @@ struct CProcessTest : public CProcess
 {
 	constexpr static auto MESSAGE = L"異なるバージョンのエディタを同時に起動することはできません。"sv;
 
-	CProcessTest()
-		: CProcess( nullptr, L"" ) {}
+	using CProcess::CProcess;
 
 	MOCK_METHOD0(InitializeProcess, bool());
 	MOCK_METHOD0(MainLoop, bool());
@@ -105,7 +102,7 @@ struct CProcessTest : public CProcess
 
 TEST(CProcess, Run_failWithMessage)
 {
-	auto process = std::make_unique<CProcessTest>();
+	auto process = std::make_unique<CProcessTest>(nullptr, std::make_unique<CCommandLine>(), SW_SHOWDEFAULT);
 	EXPECT_CALL(*process, InitializeProcess()).WillOnce(Invoke([]() -> bool { throw message_error(CProcessTest::MESSAGE); }));
 	EXPECT_ERROUT(process->Run(), CProcessTest::MESSAGE.data());
 }
@@ -130,9 +127,7 @@ TEST(CShareData, InitShareData)
 	pShareData->m_vStructureVersion = 1;
 	pShareData->m_nSize = sizeof(DLLSHAREDATA) + 1;
 
-	CCommandLine cCommandLine;
-
-	auto process = std::make_unique<CControlProcess>(nullptr, L"-NOWIN");
-	auto shareData = &process->GetShareData();
+	auto process = CProcessFactory().CreateInstance(L"-NOWIN");
+	auto shareData = &process->GetCShareData();
 	ASSERT_THROW_MESSAGE(shareData->InitShareData(), message_error, CProcessTest::MESSAGE.data());
 }

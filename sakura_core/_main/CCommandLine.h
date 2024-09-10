@@ -25,7 +25,6 @@
 #include "mem/CNativeW.h"
 #include "EditInfo.h"
 #include "GrepInfo.h"
-#include "util/design_template.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -34,8 +33,10 @@
 /*!
  * @brief コマンドラインパーサ クラス
  */
-class CCommandLine : public TInstanceHolder<CCommandLine> {
+class CCommandLine {
 public:
+	[[nodiscard]] static CCommandLine* getInstance();
+
 	CCommandLine() noexcept;
 
 private:
@@ -100,7 +101,7 @@ private:
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		
-	bool		m_bNoWindow;		//! [out] TRUE: 編集Windowを開かない
+	bool		m_bNoWindow = false;		//! [out] TRUE: 編集Windowを開かない
 	bool		m_bProfileMgr;
 	EditInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!

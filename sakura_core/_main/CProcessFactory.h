@@ -17,9 +17,8 @@
 #define SAKURA_CPROCESSFACTORY_5006562F_7795_40FF_AA4C_FFB94842F7C5_H_
 #pragma once
 
-#include "global.h"
-
-class CProcess;
+#include "_main/CCommandLine.h"
+#include "_main/CProcess.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -34,15 +33,28 @@ class CProcess;
 	起動の起動をエディタの起動に先立って行う．
 */
 class CProcessFactory {
-public:
-	CProcess* Create( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-protected:
 private:
-	bool IsValidVersion();
-	bool ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine);
+	using CommandLineHolder = std::unique_ptr<CCommandLine>;
+	using ProcessHolder = std::unique_ptr<CProcess>;
+
+	HINSTANCE         m_hInstance;
+	int               m_nCmdShow;
+	CommandLineHolder m_pCommandLine = nullptr;
+
+public:
+	explicit CProcessFactory(
+		_In_ HINSTANCE hInstance = GetModuleHandleW(nullptr),
+		_In_ int nCmdShow = SW_SHOWDEFAULT
+	) noexcept;
+
+	ProcessHolder CreateInstance(std::wstring_view commandLine);
+
+private:
+	bool ProfileSelect(HINSTANCE hInstance) const;
 	bool IsStartingControlProcess();
 	bool IsExistControlProcess();
 	bool StartControlProcess();
 	bool WaitForInitializedControlProcess();	// 2006.04.10 ryoji コントロールプロセスの初期化完了イベントを待つ
 };
+
 #endif /* SAKURA_CPROCESSFACTORY_5006562F_7795_40FF_AA4C_FFB94842F7C5_H_ */

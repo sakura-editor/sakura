@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 #include "_main/CCommandLine.h"
 
+#include "_main/CProcess.h"
+
 #include "mem/CMemory.h"
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
@@ -173,6 +175,15 @@ int CCommandLine::CheckCommandLine(
 	return 0;	//	該当無し
 }
 
+[[nodiscard]]
+/* static */ CCommandLine* CCommandLine::getInstance()
+{
+	if (const auto process = CProcess::getInstance()) {
+		return &process->GetCCommandLine();
+	}
+	return nullptr;
+}
+
 /*! 
  * コンストラクタ
  *
@@ -183,7 +194,6 @@ CCommandLine::CCommandLine() noexcept
 	: m_bGrepMode(false)
 	, m_bGrepDlg(false)
 	, m_bDebugMode(false)
-	, m_bNoWindow(false)
 	, m_bProfileMgr(false)
 	, m_fi()
 	, m_gi()

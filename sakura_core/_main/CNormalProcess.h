@@ -16,8 +16,7 @@
 #define SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_
 #pragma once
 
-#include "global.h"
-#include "CProcess.h"
+#include "_main/CProcess.h"
 #include "extmodule/CMigemo.h"
 #include "CEditApp.h"
 #include "util/design_template.h"
@@ -30,12 +29,17 @@ class CEditWnd;
 	@brief エディタプロセスクラス
 	
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
-*/
+ */
 class CNormalProcess final : public CProcess {
+
+	using Me = CNormalProcess;
+	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
+
 public:
 	//コンストラクタ・デストラクタ
-	CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-	~CNormalProcess();
+	explicit CNormalProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine, int nCmdShow) noexcept;
+	~CNormalProcess() override = default;
+
 
 protected:
 	//プロセスハンドラ
@@ -49,7 +53,10 @@ protected:
 	void OpenFiles(HWND hwnd);
 
 private:
-	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
+	CEditApp*	m_pcEditApp = nullptr;
 	CMigemo		m_cMigemo;
 };
+
+using CEditorProcess = CNormalProcess;
+
 #endif /* SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_ */

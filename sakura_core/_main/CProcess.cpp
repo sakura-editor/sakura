@@ -23,14 +23,16 @@
 	
 	@author aroka
 	@date 2002/01/07
-*/
+ */
 CProcess::CProcess(
-	HINSTANCE	hInstance,		//!< handle to process instance
-	LPCWSTR		lpCmdLine		//!< pointer to command line
-)
-: m_hInstance( hInstance )
+	HINSTANCE               hInstance,      //!< handle to process instance
+	CCommandLineHolder&&    pCommandLine,   //!< pointer to command line
+	int                     nCmdShow
+) noexcept
+	: m_hInstance(hInstance)
+	, m_pCommandLine(std::move(pCommandLine))
+	, m_nCmdShow(nCmdShow)
 {
-	UNREFERENCED_PARAMETER(lpCmdLine);
 }
 
 /*!
@@ -42,6 +44,9 @@ bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_cShareData.InitShareData();
+
+	// 派生クラスでウインドウを作成する際に以下パラメーターを使用したい
+	UNREFERENCED_PARAMETER(m_nCmdShow);
 
 	/* リソースから製品バージョンの取得 */
 	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
@@ -55,8 +60,8 @@ bool CProcess::InitializeProcess()
 	
 	@author aroka
 	@date 2002/01/16
-*/
-bool CProcess::Run()
+ */
+int CProcess::Run() noexcept
 {
 	bool initialized = false;
 	try
@@ -71,9 +76,8 @@ bool CProcess::Run()
 	{
 			MainLoop() ;
 			OnExitProcess();
-		return true;
 	}
-	return false;
+	return 0;
 }
 
 /*!

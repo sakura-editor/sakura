@@ -26,14 +26,8 @@
 
 #include "util/file.h"
 
-#include "config/maxdata.h"
-#include "basis/primitive.h"
-#include "debug/Debug2.h"
-#include "basis/CMyString.h"
-#include "mem/CNativeW.h"
-#include "env/DLLSHAREDATA.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
+#include "_main/CProcessFactory.h"
+
 #include "CDataProfile.h"
 
 /*!
@@ -177,13 +171,10 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
  */
 TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+	ASSERT_FALSE(CProcess::getInstance());
 
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-PROF="profile1")");
 
 	// exeファイルの拡張子をiniに変えたパスの最後のフォルダーにプロファイル名を加えたパスが返る
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
@@ -233,13 +224,10 @@ protected:
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+	ASSERT_FALSE(CProcess::getInstance());
 
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-PROF="profile1")");
 
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
@@ -365,13 +353,10 @@ void EnsureDirectoryExist(const std::wstring& strProfileName);
  */
 TEST(file, GetInidirOrExedir)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+	ASSERT_FALSE(CProcess::getInstance());
 
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-PROF="profile1")");
 
 	std::wstring buf(_MAX_PATH, L'\0');
 

@@ -23,7 +23,10 @@
 #include "debug/CRunningTimer.h"
 #include "config/system_constants.h"
 
-//-------------------------------------------------
+CControlProcess::CControlProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine) noexcept
+	: CProcess(hInstance, std::move(pCommandLine), SW_SHOWNA)
+{
+}
 
 /*!
 	@brief コントロールプロセスを初期化する
