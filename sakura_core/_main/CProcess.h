@@ -35,11 +35,15 @@
 	@brief プロセス基底クラス
  */
 class CProcess : public TSingleInstance<CProcess> {
+
+	using Me = CProcess;
+	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
+
 public:
-	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
+	explicit CProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine, int nCmdShow) noexcept;
 	~CProcess() override = default;
 
-	bool Run();
+	int Run() noexcept;
 
 	virtual void RefreshString();
 
@@ -48,21 +52,21 @@ protected:
 	virtual bool MainLoop() = 0;
 	virtual void OnExitProcess() = 0;
 
-protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
 
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
-	CCommandLine&   GetCCommandLine() const { return *CCommandLine::getInstance(); }
-	CShareData&		GetShareData()   { return m_cShareData; }
+	CCommandLine&   GetCCommandLine() const { return *m_pCommandLine; }
+	CShareData&	    GetCShareData() { return m_cShareData; }
+	DLLSHAREDATA&   GetShareData() const { return m_cShareData.GetShareData(); }
 	HWND			GetMainWindow() const{ return m_hWnd; }
 
-	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
-
 private:
-	HINSTANCE       m_hInstance;
-	HWND            m_hWnd       = nullptr;
-	CShareData		m_cShareData;
+	HINSTANCE           m_hInstance;
+	CCommandLineHolder  m_pCommandLine;
+	int                 m_nCmdShow;
+	CShareData          m_cShareData;
+	HWND                m_hWnd         = nullptr;
 };
 
 #endif /* SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_ */

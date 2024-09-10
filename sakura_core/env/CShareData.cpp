@@ -67,7 +67,7 @@ std::wstring GetSharaDataName(std::optional<LPCWSTR> profileName)
 /*static*/ CShareData* CShareData::getInstance()
 {
 	const auto process = CProcess::getInstance();
-	return &process->GetShareData();
+	return &process->GetCShareData();
 }
 
 /*!

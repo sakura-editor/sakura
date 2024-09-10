@@ -44,13 +44,8 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
-: CProcess( hInstance, lpCmdLine )
-, m_pcEditApp( NULL )
-{
-}
-
-CNormalProcess::~CNormalProcess()
+CNormalProcess::CNormalProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine, int nCmdShow) noexcept
+	: CProcess(hInstance, std::move(pCommandLine), nCmdShow)
 {
 }
 
@@ -104,7 +99,7 @@ bool CNormalProcess::InitializeProcess()
 		HWND hwndOwner;
 		/* 指定ファイルが開かれているか調べる */
 		// 2007.03.13 maru 文字コードが異なるときはワーニングを出すように
-		if( GetShareData().ActiveAlreadyOpenedWindow( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
+		if( GetCShareData().ActiveAlreadyOpenedWindow( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか

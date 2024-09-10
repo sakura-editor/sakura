@@ -21,14 +21,8 @@
 */
 
 #include "StdAfx.h"
-#include "_main/CCommandLine.h"
-#include "CProcessFactory.h"
-#include "CProcess.h"
-#include "util/os.h"
-#include "util/module.h"
-#include "debug/CRunningTimer.h"
-#include "version.h"
-#include "util/std_macro.h"
+#include "_main/CProcessFactory.h"
+
 #include "env/DLLSHAREDATA.h"
 
 /*!
@@ -55,7 +49,6 @@ int WINAPI wWinMain(
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
 
-	MY_RUNNINGTIMER(cRunningTimer, L"WinMain" );
 	{
 		// 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
 		::SetDllDirectory( L"" );
@@ -81,22 +74,12 @@ int WINAPI wWinMain(
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
 
-	//コマンドラインクラスのインスタンスを確保する
-	CCommandLine cCommandLine;
-
-	//プロセスの生成とメッセージループ
-	CProcessFactory aFactory;
-	CProcess *process = 0;
-	try{
-		process = aFactory.Create( hInstance, lpCmdLine );
-		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
-	}
-	catch(...){
-	}
-	if( 0 != process ){
-		process->Run();
-		delete process;
+	//プロセスの生成
+	const auto process = CProcessFactory(hInstance, nCmdShow).CreateInstance(lpCmdLine);
+	if (!process) {
+		return 0;
 	}
 
-	return 0;
+	//メッセージループ
+	return process->Run();
 }

@@ -23,17 +23,10 @@
 		   distribution.
 */
 #include "pch.h"
+#include "_main/CProcessFactory.h"
 
-#include "config/maxdata.h"
-#include "basis/primitive.h"
-#include "debug/Debug2.h"
-#include "basis/CMyString.h"
-#include "mem/CNativeW.h"
-#include "env/DLLSHAREDATA.h"
 #include "util/file.h"
 #include "config/system_constants.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
 
 #include "StartEditorProcessForTest.h"
 
@@ -54,8 +47,8 @@ TEST(WinMain, OleInitialize)
  * 始動前に設定ファイルを削除するようにしている。
  * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
  */
-class WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
-protected:
+struct WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
+
 	/*!
 	 * 設定ファイルのパス
 	 *
@@ -70,13 +63,10 @@ protected:
 		// テスト用プロファイル名
 		const std::wstring_view profileName(GetParam());
 
-		// コマンドラインのインスタンスを用意する
-		CCommandLine commandLine;
-		const auto strCommandLine = strprintf(LR"(-PROF="%s")", profileName.data());
-		commandLine.ParseCommandLine(strCommandLine.data(), false);
+		ASSERT_FALSE(CProcess::getInstance());
 
 		// プロセスのインスタンスを用意する
-		CControlProcess dummy(nullptr, strCommandLine.data());
+		const auto process = CProcessFactory().CreateInstance(fmt::format(LR"(-PROF="{}")", profileName));
 
 		// INIファイルのパスを取得
 		iniPath = GetIniFileName();

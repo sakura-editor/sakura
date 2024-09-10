@@ -17,18 +17,24 @@
 */
 
 #include "StdAfx.h"
-#include "CProcessFactory.h"
-#include "CControlProcess.h"
-#include "CNormalProcess.h"
-#include "CCommandLine.h"
-#include "CControlTray.h"
+#include "_main/CProcessFactory.h"
+
+#include "_main/CControlProcess.h"
+#include "_main/CNormalProcess.h"
+
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
-#include "util/os.h"
-#include "CSelectLang.h"
+
 #include "config/system_constants.h"
 
-class CProcess;
+CProcessFactory::CProcessFactory(
+	_In_ HINSTANCE hInstance,
+	_In_ int nCmdShow
+) noexcept
+	: m_hInstance(hInstance)
+	, m_nCmdShow(nCmdShow)
+{
+}
 
 /*!
 	@brief プロセスクラスを生成する
@@ -36,24 +42,26 @@ class CProcess;
 	コマンドライン、コントロールプロセスの有無を判定し、
 	適当なプロセスクラスを生成する。
 	
-	@param[in] hInstance インスタンスハンドル
-	@param[in] lpCmdLine コマンドライン文字列
-	
 	@author aroka
 	@date 2002/01/08
 	@date 2006/04/10 ryoji
-*/
-CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
+ */
+std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
+	std::wstring_view commandLine     //!< [in] コマンドライン文字列
+)
 {
 	// 言語環境を初期化する
 	CSelectLang::InitializeLanguageEnvironment();
 
-	if( !ProfileSelect( hInstance, lpCmdLine ) ){
-		return 0;
-	}
+	//コマンドラインクラスのインスタンスを確保する
+	m_pCommandLine = std::make_unique<CCommandLine>();
 
-	CProcess* process = 0;
-	if( !IsValidVersion() ){
+	//実行ファイル名をもとに漢字コードを固定する．
+	auto exeFilePath = GetExeFileName().wstring();
+	m_pCommandLine->ParseKanjiCodeFromFileName(exeFilePath.data(), int(exeFilePath.length()));
+	m_pCommandLine->ParseCommandLine(commandLine.data(), true);
+
+	if( !ProfileSelect(m_hInstance)){
 		return 0;
 	}
 
@@ -68,7 +76,7 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	//
 	if( IsStartingControlProcess() ){
 		if( !IsExistControlProcess() ){
-			process = new CControlProcess( hInstance, lpCmdLine );
+			return std::make_unique<CControlProcess>(m_hInstance, std::move(m_pCommandLine));
 		}
 	}
 	else{
@@ -76,23 +84,15 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 			StartControlProcess();
 		}
 		if( WaitForInitializedControlProcess() ){	// 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
-			process = new CNormalProcess( hInstance, lpCmdLine );
+			return std::make_unique<CEditorProcess>(m_hInstance, std::move(m_pCommandLine), m_nCmdShow);
 		}
 	}
-	return process;
+	return {};
 }
 
-bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
+bool CProcessFactory::ProfileSelect(HINSTANCE hInstance) const
 {
-	auto commandLine = CCommandLine::getInstance();
-
-	//	May 30, 2000 genta
-	//	実行ファイル名をもとに漢字コードを固定する．
-	WCHAR szExeFileName[MAX_PATH];
-	const int cchExeFileName = ::GetModuleFileName(NULL, szExeFileName, _countof(szExeFileName));
-	commandLine->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
-
-	commandLine->ParseCommandLine(lpCmdLine);
+	auto commandLine = m_pCommandLine.get();
 
 	std::wstring strProfileName;
 	bool hasProfileName = commandLine->IsSetProfile();
@@ -114,22 +114,6 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 }
 
 /*!
-	@brief Windowsバージョンのチェック
-	
-	Windows 95以上，Windows NT4.0以上であることを確認する．
-	Windows 95系では残りリソースのチェックも行う．
-	
-	@author aroka
-	@date 2002/01/03
-*/
-bool CProcessFactory::IsValidVersion()
-{
-	// Windowsバージョンは廃止。
-	// 動作可能バージョン(=windows7以降)でなければ起動できない。
-	return true;
-}
-
-/*!
 	@brief コマンドラインに -NOWIN があるかを判定する。
 	
 	@author aroka
@@ -137,7 +121,7 @@ bool CProcessFactory::IsValidVersion()
 */
 bool CProcessFactory::IsStartingControlProcess()
 {
-	return CCommandLine::getInstance()->IsNoWindow();
+	return m_pCommandLine->IsNoWindow();
 }
 
 /*!
@@ -150,7 +134,7 @@ bool CProcessFactory::IsStartingControlProcess()
 bool CProcessFactory::IsExistControlProcess()
 {
 	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
-	if (const auto profileName = CCommandLine::getInstance()->GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+	if (const auto profileName = m_pCommandLine->GetProfileOpt(); profileName.has_value() && *profileName.value()) {
 		strMutexSakuraCp += profileName.value();
 	}
  	HANDLE hMutexCP;
@@ -195,7 +179,7 @@ bool CProcessFactory::StartControlProcess()
 	WCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
-	if (const auto profileName = CCommandLine::getInstance()->GetProfileOpt(); profileName.has_value()) {
+	if (const auto profileName = m_pCommandLine->GetProfileOpt(); profileName.has_value()) {
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
 			szEXE, profileName.value() );
 	}else{
@@ -258,7 +242,7 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
 	//
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
-	if (const auto profileName = CCommandLine::getInstance()->GetProfileOpt(); profileName.has_value() && *profileName.value()) {
+	if (const auto profileName = m_pCommandLine->GetProfileOpt(); profileName.has_value() && *profileName.value()) {
 		strInitEvent += profileName.value();
 	}
 	HANDLE hEvent;
