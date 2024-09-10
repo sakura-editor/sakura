@@ -89,7 +89,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Label="sakura.define">
     <ClCompile>
-      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
@@ -162,6 +162,7 @@
     <ClInclude Include="..\sakura_core\apiwrap\kernel\format_message.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\kernel\handle_closer.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\kernel\message_error.hpp" />
+    <ClInclude Include="..\sakura_core\apiwrap\kernel\system_path.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\kernel\to_multibyte.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
@@ -493,6 +494,7 @@
     <ClInclude Include="..\sakura_core\_main\CProcess.h" />
     <ClInclude Include="..\sakura_core\_main\CProcessFactory.h" />
     <ClInclude Include="..\sakura_core\_main\global.h" />
+    <ClInclude Include="..\sakura_core\_main\process_init_failed.hpp" />
     <ClInclude Include="..\sakura_core\_os\CClipboard.h" />
     <ClInclude Include="..\sakura_core\_os\CDropTarget.h" />
     <ClInclude Include="..\sakura_core\_os\OleTypes.h" />
@@ -523,6 +525,7 @@
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\sakura_core\apiwrap\kernel\system_path.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\kernel\to_multibyte.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />

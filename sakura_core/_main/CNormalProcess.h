@@ -19,8 +19,7 @@
 #include "_main/CProcess.h"
 #include "extmodule/CMigemo.h"
 #include "CEditApp.h"
-#include "util/design_template.h"
-class CEditWnd;
+#include "window/CEditWnd.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -30,16 +29,15 @@ class CEditWnd;
 	
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
  */
-class CNormalProcess final : public CProcess {
+class CNormalProcess : public CProcess {
 
 	using Me = CNormalProcess;
 	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
 
 public:
 	//コンストラクタ・デストラクタ
-	explicit CNormalProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine, int nCmdShow) noexcept;
+	explicit CNormalProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine, int nCmdShow = SW_SHOWDEFAULT) noexcept;
 	~CNormalProcess() override = default;
-
 
 protected:
 	//プロセスハンドラ
@@ -47,9 +45,10 @@ protected:
 	bool MainLoop() override;
 	void OnExitProcess() override;
 
+	bool    InitShareData() override;
+
 protected:
 	//実装補助
-	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
 	void OpenFiles(HWND hwnd);
 
 private:
@@ -58,5 +57,7 @@ private:
 };
 
 using CEditorProcess = CNormalProcess;
+
+CEditorProcess* getEditorProcess() noexcept;
 
 #endif /* SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_ */

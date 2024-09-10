@@ -28,10 +28,7 @@
 
 	与えられたコマンドライン引数から生成すべきプロセスの種別を判定し，
 	対応するオブジェクトを返すFactoryクラス．
-
-	通常のエディタプロセスの起動が指定された場合には，必要に応じてコントロールプロセス
-	起動の起動をエディタの起動に先立って行う．
-*/
+ */
 class CProcessFactory {
 private:
 	using CommandLineHolder = std::unique_ptr<CCommandLine>;
@@ -51,10 +48,6 @@ public:
 
 private:
 	bool ProfileSelect(HINSTANCE hInstance) const;
-	bool IsStartingControlProcess();
-	bool IsExistControlProcess();
-	bool StartControlProcess();
-	bool WaitForInitializedControlProcess();	// 2006.04.10 ryoji コントロールプロセスの初期化完了イベントを待つ
 };
 
 #endif /* SAKURA_CPROCESSFACTORY_5006562F_7795_40FF_AA4C_FFB94842F7C5_H_ */

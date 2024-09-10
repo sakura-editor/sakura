@@ -18,10 +18,11 @@
 #include "StdAfx.h"
 #include "_main/CControlProcess.h"
 
-#include "env/DLLSHAREDATA.h"
 #include "env/CShareData_IO.h"
 #include "debug/CRunningTimer.h"
 #include "config/system_constants.h"
+
+#include "apiwrap/kernel/system_path.hpp"
 
 CControlProcess::CControlProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine) noexcept
 	: CProcess(hInstance, std::move(pCommandLine), SW_SHOWNA)
@@ -39,93 +40,114 @@ CControlProcess::CControlProcess(HINSTANCE hInstance, CCommandLineHolder&& pComm
 	@date 2002/02/17 YAZAKI 共有メモリを初期化するのはCProcessに移動。
 	@date 2006/04/10 ryoji 初期化完了イベントの処理を追加、異常時の後始末はデストラクタに任せる
 	@date 2013.03.20 novice コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
-*/
+ */
 bool CControlProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
-	// アプリケーション実行検出用(インストーラで使用)
-	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
-	if( NULL == m_hMutex ){
-		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
+	const auto profileName = GetCCommandLine().GetProfileName();
+
+	// ミューテックスを使って排他ロックをかける
+	std::wstring mutexName = GSTR_MUTEX_SAKURA_CP;
+	if (profileName && *profileName) {
+		mutexName += profileName;
+	}
+	const auto hMutex = CreateMutexW(nullptr, true, mutexName);
+	if (!hMutex)
+	{
+		throw process_init_failed( LS(STR_ERR_CTRLMTX1) ); // L"CreateMutex()失敗。\n終了します。"
+	}
+
+	// ミューテックスハンドルをスマートポインタに入れる
+	handleHolder mutexHolder(hMutex, handle_closer());
+
+	if (ERROR_ALREADY_EXISTS == GetLastError())
+	{
 		return false;
 	}
 
-	const auto profileName = GetCCommandLine().GetProfileOpt();
+	// すでに起動されていたら終了。
+	if (IsExistControlProcess(profileName))
+	{
+		return false;
+	}
 
 	// 初期化完了イベントを作成する
-	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
-	if (profileName.has_value() && *profileName.value()) {
-		strInitEvent += profileName.value();
+	std::wstring eventName = GSTR_EVENT_SAKURA_CP_INITIALIZED;
+	if (profileName && *profileName) {
+		eventName += profileName;
 	}
-	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, strInitEvent.c_str() );
-	if( NULL == m_hEventCPInitialized )
+	const auto hEvent = CreateEventW(nullptr, true, false, eventName);
+	if (!hEvent)
 	{
-		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateEvent()失敗。\n終了します。" );
-		return false;
+		throw process_init_failed( LS(STR_ERR_CTRLMTX2) ); // L"CreateEvent()失敗。\n終了します。"
 	}
 
-	/* コントロールプロセスの目印 */
-	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
-	if (profileName.has_value() && *profileName.value()) {
-		strCtrlProcEvent += profileName.value();
-	}
-	m_hMutexCP = ::CreateMutex( NULL, TRUE, strCtrlProcEvent.c_str() );
-	if( NULL == m_hMutexCP ){
-		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
-		return false;
-	}
-	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
-		return false;
-	}
-	
+	// イベントハンドルをスマートポインタに入れる
+	m_InitEvent.reset(hEvent);
+
 	/* 共有メモリを初期化 */
-	if( !CProcess::InitializeProcess() ){
-		return false;
+	if (!InitShareData())
+	{
+		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
 	}
-
-	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
-	WCHAR szDir[_MAX_PATH];
-	::GetSystemDirectory( szDir, _countof(szDir) );
-	::SetCurrentDirectory( szDir );
-
-	/* 共有データのロード */
-	if( !CShareData_IO::LoadShareData() ){
-		/* レジストリ項目 作成 */
-		CShareData_IO::SaveShareData();
-	}
-
-	/* 言語を選択する */
-	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
-	RefreshString();
 
 	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
-	m_pcTray = new CControlTray;
+	m_pcTray = std::make_unique<CControlTray>();
 
 	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
 
-	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
-	if( !hwnd ){
+	const auto hWndTray = m_pcTray->Create( GetProcessInstance() );
+	if (!hWndTray) {
 		ErrorBeep();
 		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX3) );
 		return false;
 	}
-	SetMainWindow(hwnd);
-	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
+	SetMainWindow(hWndTray);
+	GetDllShareData().m_sHandles.m_hwndTray = hWndTray;
 
 	// 初期化完了イベントをシグナル状態にする
-	if( !::SetEvent( m_hEventCPInitialized ) ){
+	if (!SetEvent(hEvent)) {
 		ErrorBeep();
 		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX4) );
 		return false;
 	}
 
 	return true;
+}
+
+bool CControlProcess::InitShareData()
+{
+	const auto result = __super::InitShareData();
+	if (result) {
+		LoadShareData();
+	}
+	return result;
+}
+
+void CControlProcess::LoadShareData()
+{
+	// システムディレクトリパスを取得
+	const auto systemPath = system_path();
+
+	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
+	SetCurrentDirectoryW(systemPath.c_str());
+
+	/* 共有データのロード */
+	if (!CShareData_IO::LoadShareData()) {
+		SaveShareData();
+	}
+
+	/* 言語を選択する */
+	CSelectLang::ChangeLang(GetShareData().m_Common.m_sWindow.m_szLanguageDll);
+	RefreshString();
+}
+
+void CControlProcess::SaveShareData() const
+{
+	CShareData_IO::SaveShareData();
 }
 
 /*!
@@ -155,21 +177,3 @@ void CControlProcess::OnExitProcess()
 	GetDllShareData().m_sHandles.m_hwndTray = NULL;
 }
 
-CControlProcess::~CControlProcess()
-{
-	delete m_pcTray;
-
-	if( m_hEventCPInitialized ){
-		::ResetEvent( m_hEventCPInitialized );
-	}
-	::CloseHandle( m_hEventCPInitialized );
-	if( m_hMutexCP ){
-		::ReleaseMutex( m_hMutexCP );
-	}
-	::CloseHandle( m_hMutexCP );
-	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	if( m_hMutex ){
-		::ReleaseMutex( m_hMutex );
-	}
-	::CloseHandle( m_hMutex );
-};

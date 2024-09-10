@@ -128,8 +128,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
+    <ClCompile Include="test-ccontrolprocess.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
+    <ClCompile Include="test-ceditorprocess.cpp" />
     <ClCompile Include="test-cimpexpmanager.cpp" />
     <ClCompile Include="test-codechecker.cpp" />
     <ClCompile Include="test-cppa.cpp" />
@@ -188,6 +190,7 @@
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TMockProcess.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tests1_rc.rc" />

@@ -542,3 +542,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 	return;
 }
+
+std::wstring CCommandLine::ToCommandArgs() const {
+	std::wstring strCommandArgs;
+	if (IsNoWindow()) {
+		strCommandArgs += L" -NOWIN";
+	}
+	if (m_bSetProfile) {
+		strCommandArgs += fmt::format(LR"( -PROF="{}")", m_ProfileName);
+	}
+	return strCommandArgs;
+}
