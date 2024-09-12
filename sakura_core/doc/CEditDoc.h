@@ -124,6 +124,8 @@ public:
 
 	void SetCurDirNotitle();
 
+	CAutoSaveAgent* GetAutoSaveAgent() { return &m_cAutoSaveAgent; }
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

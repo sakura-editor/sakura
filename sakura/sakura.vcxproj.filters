@@ -1145,6 +1145,9 @@
     <ClInclude Include="..\sakura_core\apiwrap\kernel\system_path.hpp">
       <Filter>Cpp Source Files\apiwrap\kernel</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\env\SShareDataClient.hpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2356,6 +2359,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\apiwrap\kernel\system_path.cpp">
       <Filter>Cpp Source Files\apiwrap\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\env\SShareDataClient.cpp">
+      <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

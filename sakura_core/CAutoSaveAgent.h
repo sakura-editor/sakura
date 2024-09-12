@@ -32,9 +32,9 @@
 #define SAKURA_CAUTOSAVEAGENT_AB1DD112_42B8_4A93_8E04_C2889F16DC53_H_
 #pragma once
 
-#include <Windows.h>
-#include "_main/global.h"
 #include "doc/CDocListener.h"
+
+#include "env/SShareDataClient.hpp"
 
 //! 分→ミリ秒に変換するための係数
 const int MSec2Min = 1000 * 60;
@@ -50,13 +50,13 @@ class CPassiveTimer {
 public:
 	/*!
 		初期値は間隔1msecでタイマーは無効。
-	*/
-	CPassiveTimer() : nInterval(1), bEnabled(false){ Reset(); }
+	 */
+	CPassiveTimer() = default;
 
 	//時間間隔
 	void SetInterval(int m);	//!	時間間隔の設定
 	int GetInterval(void) const {return nInterval / MSec2Min; }	//!< 時間間隔の取得
-	void Reset(void){ nLastTick = ::GetTickCount(); }			//!< 基準時刻のリセット
+	void Reset(void) { nLastTick = ::GetTickCount64(); }			//!< 基準時刻のリセット
 
 	//有効／無効
 	void Enable(bool flag);							//!< 有効／無効の設定
@@ -66,17 +66,20 @@ public:
 	bool CheckAction(void);
 
 private:
-	DWORD	nLastTick;	//!< 最後にチェックしたときの時刻 (GetTickCount()で取得したもの)
-	int		nInterval;	//!< Action間隔 (分)
-	bool	bEnabled;	//!< 有効かどうか
+	ULONGLONG   nLastTick   = ::GetTickCount64();   //!< 最後にチェックしたときの時刻 (GetTickCount()で取得したもの)
+	int         nInterval   = 1;                    //!< Action間隔 (分)
+	bool        bEnabled    = false;                //!< 有効かどうか
 };
 
-class CAutoSaveAgent : public CDocListenerEx{
+class CAutoSaveAgent : public CDocListenerEx,  public SShareDataClient {
 public:
+	explicit CAutoSaveAgent(CEditDoc* pcDoc);
+
 	void CheckAutoSave();
 	void ReloadAutoSaveParam();	//!< 設定をSharedAreaから読み出す
 
 private:
 	CPassiveTimer m_cPassiveTimer;
 };
+
 #endif /* SAKURA_CAUTOSAVEAGENT_AB1DD112_42B8_4A93_8E04_C2889F16DC53_H_ */

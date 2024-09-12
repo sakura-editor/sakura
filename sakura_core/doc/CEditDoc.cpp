@@ -164,6 +164,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 , m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+	, m_cAutoSaveAgent(this)
 , m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
