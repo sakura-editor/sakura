@@ -117,52 +117,40 @@ bool CNormalProcess::InitializeProcess()
 		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
 	}
 
-	// ミューテックスハンドルをスマートポインタから切り離す
-	mutexHolder.release();
-
 	/* コマンドラインオプション */
-	GrepInfo		gi;
-	EditInfo		fi;
+	EditInfo fi;
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
 	GetCCommandLine().GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
-	GetCCommandLine().GetGrepInfo(&gi);
 
-	if( fi.m_szPath[0] != L'\0' ){
+	if (HWND hwndOwner;
+		fi.m_szPath[0] != L'\0' && GetCShareData().ActiveAlreadyOpenedWindow(fi.m_szPath, &hwndOwner, fi.m_nCharCode))
+	{
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
 		//	行われるのでここでは必要なし．
 
-		HWND hwndOwner;
-		/* 指定ファイルが開かれているか調べる */
-		// 2007.03.13 maru 文字コードが異なるときはワーニングを出すように
-		if( GetCShareData().ActiveAlreadyOpenedWindow( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
-			//	From Here Oct. 19, 2001 genta
-			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
-			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか
-				CLogicPoint& pt = GetDllShareData().m_sWorkBuffer.m_LogicPoint;
-				if( fi.m_ptCursor.x < 0 ){
-					//	桁の指定が無い場合
-					::SendMessageAny( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
-				}
-				else {
-					pt.x = fi.m_ptCursor.x;
-				}
-				pt.y = fi.m_ptCursor.y;
-				::SendMessageAny( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
+		//	カーソル位置が引数に指定されていたら指定位置にジャンプ
+		if (0 <= fi.m_ptCursor.y) {	//	行の指定があるか
+			auto& pt = GetShareData().m_sWorkBuffer.m_LogicPoint;
+			pt.y = fi.m_ptCursor.y;
+
+			// 桁の指定が無い場合
+			if (fi.m_ptCursor.x < 0) {
+				SendMessageW(hwndOwner, MYWM_GETCARETPOS, 0, 0);
+			} else {
+				pt.x = fi.m_ptCursor.x;
 			}
-			//	To Here Oct. 19, 2001 genta
-			/* アクティブにする */
-			ActivateFrameWindow( hwndOwner );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
-
-			// 複数ファイル読み込み
-			OpenFiles( hwndOwner );
-
-			return false;
+			SendMessageW(hwndOwner, MYWM_SETCARETPOS, 0, 0);
 		}
+		/* アクティブにする */
+		ActivateFrameWindow(hwndOwner);
+
+		// 複数ファイル読み込み
+		OpenFiles(hwndOwner);
+
+		return false;
 	}
 
 	// プラグイン読み込み
@@ -184,6 +172,10 @@ bool CNormalProcess::InitializeProcess()
 	}
 	// CEditAppを作成
 	m_pcEditApp = CEditApp::getInstance();
+
+	// ミューテックスハンドルをスマートポインタから切り離す
+	mutexHolder.release();
+
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
 	if( NULL == pEditWnd->GetHwnd() ){
@@ -201,6 +193,9 @@ bool CNormalProcess::InitializeProcess()
 
 	// -1: SetDocumentTypeWhenCreate での強制指定なし
 	const CTypeConfig nType = (fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt(fi.m_szDocType));
+
+	GrepInfo gi = {};
+	GetCCommandLine().GetGrepInfo(&gi);
 
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
