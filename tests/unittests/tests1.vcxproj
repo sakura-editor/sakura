@@ -131,6 +131,7 @@
     <ClCompile Include="test-ccontrolprocess.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
+    <ClCompile Include="test-ceditdoc.cpp" />
     <ClCompile Include="test-ceditorprocess.cpp" />
     <ClCompile Include="test-cimpexpmanager.cpp" />
     <ClCompile Include="test-codechecker.cpp" />

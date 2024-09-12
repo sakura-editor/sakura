@@ -49,13 +49,15 @@ using ::testing::Return;
 std::wstring GetSharaDataName(std::optional<LPCWSTR> profileName);
 
 // 言語選択（呼ぶだけ）
-TEST(CShareDataTest, DISABLED_ChangeLang)
+TEST(CShareData, ChangeLang)
 {
+	const auto process = CProcessFactory().CreateInstance( L"-NOWIN");
+
 	// 共有メモリのインスタンスを取得する
 	auto pShareData = CShareData::getInstance();
-	ASSERT_NE(nullptr, pShareData);
+	EXPECT_NE(nullptr, pShareData);
 
-	ASSERT_TRUE(pShareData->IsPrivateSettings());
+	EXPECT_TRUE(pShareData->InitShareData());
 
 	// 言語切り替えのテストを実施する
 	std::vector<std::wstring> values;
@@ -98,6 +100,8 @@ struct CProcessTest : public CProcess
 	MOCK_METHOD0(InitializeProcess, bool());
 	MOCK_METHOD0(MainLoop, bool());
 	MOCK_METHOD0(OnExitProcess, void());
+
+	MOCK_METHOD0(InitProcess, void());
 };
 
 TEST(CProcess, Run_failWithMessage)

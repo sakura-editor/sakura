@@ -22,10 +22,9 @@
 		   distribution.
 */
 #include "pch.h"
-
-#include "CSaveAgent.h"
-
 #include "doc/logic/CDocLineMgr.h"
+
+#include "_main/CProcessFactory.h"
 
 namespace {
 
@@ -60,14 +59,34 @@ COpeLineData MakeOpeLineData(std::initializer_list<RawLineData> lines)
 	return data;
 }
 
-}
+} // end of namespace
+
+struct CSearchAgentTest : public ::testing::Test
+{
+	static inline std::shared_ptr<CProcess> process = nullptr;
+
+    static void SetUpTestSuite()
+    {
+		// エディタープロセスを生成する
+		process = CProcessFactory().CreateInstance(LR"(-PROF="")");
+
+		// エディタープロセスを初期化する
+		process->InitProcess();
+	}
+
+    static void TearDownTestSuite() {
+		process->TerminateControlProcess();
+
+		process.reset();
+	}
+};
 
 /*!
 	CSearchAgent::ReplaceData のテスト
 
 	行の一部を置き換える。
  */
-TEST(CSearchAgent, ReplaceData1)
+TEST_F(CSearchAgentTest, ReplaceData1)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n", L"CCC\n"});
@@ -105,7 +124,7 @@ TEST(CSearchAgent, ReplaceData1)
 
 	行全体を置き換える。
  */
-TEST(CSearchAgent, ReplaceData2)
+TEST_F(CSearchAgentTest, ReplaceData2)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n", L"CCC\n"});
@@ -143,7 +162,7 @@ TEST(CSearchAgent, ReplaceData2)
 
 	行末の改行を削除する。
  */
-TEST(CSearchAgent, ReplaceData3)
+TEST_F(CSearchAgentTest, ReplaceData3)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n", L"CCC\n"});
@@ -180,7 +199,7 @@ TEST(CSearchAgent, ReplaceData3)
 
 	行末の改行を削除する。削除するデータ長が長いケース。
  */
-TEST(CSearchAgent, ReplaceData4)
+TEST_F(CSearchAgentTest, ReplaceData4)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n", L"CCC\n"});
@@ -217,7 +236,7 @@ TEST(CSearchAgent, ReplaceData4)
 
 	行末の改行を削除する。対象行がデータ末尾であるケース。
  */
-TEST(CSearchAgent, ReplaceData5)
+TEST_F(CSearchAgentTest, ReplaceData5)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n"});
@@ -250,7 +269,7 @@ TEST(CSearchAgent, ReplaceData5)
 
 	文字を挿入して複数行を連結する。
  */
-TEST(CSearchAgent, ReplaceData6)
+TEST_F(CSearchAgentTest, ReplaceData6)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n", L"CCC\n"});
@@ -289,7 +308,7 @@ TEST(CSearchAgent, ReplaceData6)
 	既存行の間に行を挿入し、次の行の先頭に文字を挿入する。
 	先頭に文字を挿入した行がデータの末尾であるケース。
  */
-TEST(CSearchAgent, ReplaceData7)
+TEST_F(CSearchAgentTest, ReplaceData7)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n"});
@@ -326,7 +345,7 @@ TEST(CSearchAgent, ReplaceData7)
 	既存行の間に行を挿入し、次の行の先頭に文字を挿入する。
 	先頭に文字を挿入した行がデータの末尾ではないケース。
  */
-TEST(CSearchAgent, ReplaceData8)
+TEST_F(CSearchAgentTest, ReplaceData8)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n", L"CCC\n"});
@@ -364,7 +383,7 @@ TEST(CSearchAgent, ReplaceData8)
 
 	既存行の末尾に新しい行を追加する。
  */
-TEST(CSearchAgent, ReplaceData9)
+TEST_F(CSearchAgentTest, ReplaceData9)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"AAA\n", L"BBB\n"});
@@ -400,7 +419,7 @@ TEST(CSearchAgent, ReplaceData9)
 
 	置換後の文字列が既存の行バッファの有効長に収まる場合の最適化済みコードパスの検査。
  */
-TEST(CSearchAgent, ReplaceData10)
+TEST_F(CSearchAgentTest, ReplaceData10)
 {
 	CDocLineMgr m;
 	SetLines(m, 1, {L"0123456789\n"});

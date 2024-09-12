@@ -32,16 +32,9 @@
 */
 
 #include "StdAfx.h"
-#include "CUxTheme.h"
+#include "extmodule/CUxTheme.h"
 
-CUxTheme::CUxTheme()
- : m_bInitialized(false)
-{
-}
-
-CUxTheme::~CUxTheme()
-{
-}
+#include "_main/CProcess.h"
 
 /*! DLL のロード
 

@@ -43,19 +43,19 @@
 
 #include "StdAfx.h"
 #include "window/CEditWnd.h"
+
+#include "_main/CNormalProcess.h"
+#include "CEditApp.h"
+
 #include "_main/CControlTray.h"
-#include "_main/CCommandLine.h"	/// 2003/1/26 aroka
-#include "_main/CAppMode.h"
 #include "_os/CDropTarget.h"
 #include "basis/CErrorInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
-#include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "print/CPrintPreview.h"	/// 2002/2/3 aroka
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
-#include "CEditApp.h"
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "util/module.h"
@@ -210,6 +210,16 @@ LRESULT CALLBACK CEditWndProc(
 	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
 
+/*static*/ CEditWnd* CEditWnd::getInstance()
+{
+	const auto editApp = CEditApp::getInstance();
+	if (!editApp)
+	{
+		return nullptr;
+	}
+	return editApp->GetEditWindow();
+}
+
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd()
 : m_hWnd( NULL )
@@ -231,6 +241,19 @@ CEditWnd::CEditWnd()
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 {
+	m_pcEditDoc = CEditDoc::getInstance();
+
+	auto& cLayoutMgr = GetDocument()->m_cLayoutMgr;
+	cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
+		cLayoutMgr.GetTabSpaceKetas(), cLayoutMgr.m_tsvInfo.m_nTsvMode,
+		cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
+
+	for (auto pcEditView : m_pcEditViewArr) {
+		pcEditView = nullptr;
+	}
+	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
+	m_pcEditViewArr[0] = new CEditView();
+	m_pcEditView = m_pcEditViewArr[0];
 }
 
 CEditWnd::~CEditWnd()
@@ -597,19 +620,6 @@ HWND CEditWnd::Create(
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
-
-	m_pcEditDoc = pcEditDoc;
-
-	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
-		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
-		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
-
-	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
-		m_pcEditViewArr[i] = NULL;
-	}
-	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView();
-	m_pcEditView = m_pcEditViewArr[0];
 
 	m_pcViewFont = new CViewFont(&GetLogfont());
 

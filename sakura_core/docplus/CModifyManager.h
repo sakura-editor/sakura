@@ -27,18 +27,18 @@
 #define SAKURA_CMODIFYMANAGER_12000875_531F_42DC_A6B0_231385193CB8_H_
 #pragma once
 
-#include "util/design_template.h" //TSingleton
 #include "doc/CDocListener.h" // CDocListenerEx
 
 class CDocLine;
 class CDocLineMgr;
 
 //! Modified管理
-class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx{
-	friend class TSingleton<CModifyManager>;
-	CModifyManager(){}
-
+class CModifyManager : public CDocListenerEx {
 public:
+	static CModifyManager* getInstance();
+
+	explicit CModifyManager(CEditDoc* pcDoc);
+
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 };
 
@@ -67,4 +67,5 @@ public:
 	//一括操作
 	void ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int nSeq);	// 行変更状態をすべてリセット
 };
+
 #endif /* SAKURA_CMODIFYMANAGER_12000875_531F_42DC_A6B0_231385193CB8_H_ */

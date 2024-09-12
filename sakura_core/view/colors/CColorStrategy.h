@@ -31,6 +31,9 @@
 // #include "view/CEditView.h"
 #include "EColorIndexType.h"
 #include "uiparts/CGraphics.h"
+#include "view/DispPos.h"
+
+#include "util/design_template.h"
 
 class	CEditView;
 class CStringRef;
@@ -76,7 +79,6 @@ const WCHAR* GetColorNameByIndex( int index );
 
 struct DispPos;
 class CColorStrategy;
-#include "view/DispPos.h"
 
 class CColor_Found;
 class CColor_Select;
@@ -190,8 +192,6 @@ protected:
 	const STypeConfig* m_pTypeData;
 };
 
-#include "util/design_template.h"
-#include <vector>
 class CColor_LineComment;
 class CColor_BlockComment;
 class CColor_BlockComment;
@@ -199,12 +199,14 @@ class CColor_SingleQuote;
 class CColor_DoubleQuote;
 class CColor_Heredoc;
 
-class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
-	friend class TSingleton<CColorStrategyPool>;
-	CColorStrategyPool();
-	virtual ~CColorStrategyPool();
+class CColorStrategyPool : public TSingleInstance<CColorStrategyPool>{
+	using Me = CColorStrategyPool;
 
 public:
+	CColorStrategyPool();
+	CColorStrategyPool(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	~CColorStrategyPool() override;
 
 	//取得
 	CColorStrategy*	GetStrategy(int nIndex) const{ return m_vStrategiesDisp[nIndex]; }
@@ -251,4 +253,5 @@ private:
 	bool	m_bSkipBeforeLayoutGeneral;
 	bool	m_bSkipBeforeLayoutFound;
 };
+
 #endif /* SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_ */

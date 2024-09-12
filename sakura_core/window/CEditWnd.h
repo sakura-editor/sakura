@@ -62,7 +62,6 @@
 #include "dlg/CDlgSetCharSet.h"
 #include "outline/CDlgFuncList.h"
 #include "CHokanMgr.h"
-#include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "uiparts/CMenuDrawer.h"
 #include "view/CViewFont.h"
@@ -98,15 +97,17 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-: public TSingleton<CEditWnd>
-, public CDocListenerEx
+	: public CDocListenerEx
 	, private SShareDataClientWithCache
 {
-	friend class TSingleton<CEditWnd>;
+	using Me = CEditWnd;
+
+public:
+	static Me* getInstance();
+
 	CEditWnd();
 	~CEditWnd();
 
-public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

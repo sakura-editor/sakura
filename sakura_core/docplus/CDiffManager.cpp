@@ -24,8 +24,21 @@
 */
 #include "StdAfx.h"
 #include "docplus/CDiffManager.h"
+
+#include "doc/CEditDoc.h"
+
 #include "types/CTypeSupport.h"
 #include "window/CEditWnd.h"
+
+/* static */ CDiffManager* CDiffManager::getInstance()
+{
+	const auto pcDoc = CEditDoc::getInstance();
+	if (!pcDoc)
+	{
+		return nullptr;
+	}
+	return pcDoc->m_cDocLineMgr.GetDiffManager();
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CDiffLineGetter                         //

@@ -34,17 +34,18 @@
 #include <list>
 #include <string>
 
-class CPluginManager final : public TSingleton<CPluginManager>{
-	friend class TSingleton<CPluginManager>;
-	CPluginManager();
-
+class CPluginManager final {
 	// 型定義
 private:
 	typedef std::wstring wstring;
 	typedef std::string string;
 
-	// 操作
 public:
+	static CPluginManager* getInstance();
+
+	CPluginManager();
+
+	// 操作
 	bool LoadAllPlugin(CommonSetting* common = NULL);				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
@@ -73,4 +74,5 @@ private:
 	wstring m_sBaseDir;					//pluginsフォルダーのパス
 	wstring m_sExePluginDir;			//Exeフォルダー配下pluginsフォルダーのパス
 };
+
 #endif /* SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_ */

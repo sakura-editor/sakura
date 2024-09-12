@@ -30,6 +30,9 @@
 
 #include "apiwrap/kernel/format_message.hpp"
 
+#include "view/colors/CColorStrategy.h"
+#include "view/figures/CFigureManager.h"
+
 /*!
  * @brief エディタープロセスの異常系テスト
  */
@@ -227,6 +230,46 @@ TEST_F(CEditorProcessTest, TerminateControlProcess006)
 		.WillOnce(Invoke([](const HANDLE, DWORD* p) { *p = 0; return true; }));
 
 	process->TerminateControlProcess();
+}
+
+TEST(CEditorProcess, CCodeChecker)
+{
+	EXPECT_FALSE(CCodeChecker::getInstance());
+}
+
+TEST(CEditorProcess, CDiffManager)
+{
+	EXPECT_FALSE(CDiffManager::getInstance());
+}
+
+TEST(CEditorProcess, CEditWnd)
+{
+	EXPECT_FALSE(CEditWnd::getInstance());
+}
+
+TEST(CEditorProcess, CMacroFactory)
+{
+	EXPECT_FALSE(CMacroFactory::getInstance());
+}
+
+TEST(CEditorProcess, CMigemo)
+{
+	EXPECT_FALSE(CMigemo::getInstance());
+}
+
+TEST(CEditorProcess, CFigureManager)
+{
+	EXPECT_FALSE(CFigureManager::getInstance());
+}
+
+TEST(CEditorProcess, CColorStrategyPool)
+{
+	EXPECT_FALSE(CColorStrategyPool::getInstance());
+}
+
+TEST(CEditorProcess, CAppMode)
+{
+	EXPECT_FALSE(CAppMode::getInstance());
 }
 
 HANDLE DefaultOpenEventW(DWORD, bool, std::wstring_view name)

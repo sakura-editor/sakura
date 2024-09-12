@@ -35,10 +35,16 @@
 #include "types/CType.h" // CTypeConfig
 #include "env/CDocTypeManager.h"
 
+class CColorStrategyPool;
+class CFigureManager;
+
 class CDocType{
+	using CColorStrategyPoolHolder = std::unique_ptr<CColorStrategyPool>;
+	using CFigureManagerHolder = std::unique_ptr<CFigureManager>;
+
 public:
 	//生成と破棄
-	CDocType(CEditDoc* pcDoc);
+	explicit CDocType(CEditDoc* pcDoc);
 	
 	//ロック機能	//	Nov. 29, 2000 genta 設定の一時変更時に拡張子による強制的な設定変更を無効にする
 	void LockDocumentType(){ m_nSettingTypeLocked = true; }
@@ -64,10 +70,16 @@ public:
 	// 拡張機能
 	void SetDocumentIcon();	//アイコンの設定	//Sep. 10, 2002 genta
 
+	void    InitColorStrategyPool();
+
 private:
 	CEditDoc*				m_pcDocRef;
 	CTypeConfig				m_nSettingType;
 	STypeConfig				m_typeConfig;
 	bool					m_nSettingTypeLocked;		//!< 文書種別の一時設定状態
+
+	CColorStrategyPoolHolder    m_ColorStrategyPool = nullptr;
+	CFigureManagerHolder        m_FigureManager = std::make_unique<CFigureManager>();
 };
+
 #endif /* SAKURA_CDOCTYPE_7009DED0_A784_49F3_B8C0_9A2559A9DAFA_H_ */

@@ -123,6 +123,10 @@ class CEditView
 , public CMyWnd
 , public CDocListenerEx
 {
+	using CTextAreaHolder = std::unique_ptr<CTextArea>;
+	using CCaretHolder = std::unique_ptr<CCaret>;
+	using CRulerHolder = std::unique_ptr<CRuler>;
+
 	std::thread m_threadUrlOpen;
 
 public:
@@ -158,7 +162,8 @@ public:
 public:
 	/* Constructors */
 	CEditView( void );
-	~CEditView();
+	~CEditView() override;
+
 	void Close();
 	/* 初期化系メンバ関数 */
 	BOOL Create(
@@ -561,36 +566,9 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//主要構成部品アクセス
-	CTextArea& GetTextArea()
-	{
-		assert(m_pcTextArea);
-		return *m_pcTextArea;
-	}
-	const CTextArea& GetTextArea() const
-	{
-		assert(m_pcTextArea);
-		return *m_pcTextArea;
-	}
-	CCaret& GetCaret()
-	{
-		assert(m_pcCaret);
-		return *m_pcCaret;
-	}
-	const CCaret& GetCaret() const
-	{
-		assert(m_pcCaret);
-		return *m_pcCaret;
-	}
-	CRuler& GetRuler()
-	{
-		assert(m_pcRuler);
-		return *m_pcRuler;
-	}
-	const CRuler& GetRuler() const
-	{
-		assert(m_pcRuler);
-		return *m_pcRuler;
-	}
+	CTextArea& GetTextArea() const { return *m_pcTextArea; }
+	CCaret&    GetCaret() const { return *m_pcCaret; }
+	CRuler&    GetRuler() const { return *m_pcRuler; }
 
 	//主要属性アクセス
 	CTextMetrics& GetTextMetrics(){ return m_cTextMetrics; }
@@ -624,9 +602,9 @@ public:
 	const STypeConfig*	m_pTypeData;
 
 	//主要構成部品
-	CTextArea*		m_pcTextArea;
-	CCaret*			m_pcCaret;
-	CRuler*			m_pcRuler;
+	CTextAreaHolder	m_pcTextArea    = std::make_unique<CTextArea>(this);
+	CCaretHolder    m_pcCaret       = std::make_unique<CCaret>(this, CEditDoc::getInstance());
+	CRulerHolder    m_pcRuler       = std::make_unique<CRuler>(this, CEditDoc::getInstance());
 
 	//主要属性
 	CTextMetrics	m_cTextMetrics;

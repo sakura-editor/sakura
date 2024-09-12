@@ -25,12 +25,6 @@
 #include "config/system_constants.h"
 #include "config/app_constants.h"
 
-bool is_completed(DWORD waitResult)
-{
-	constexpr std::array okCodes = { WAIT_OBJECT_0, WAIT_ABANDONED_0 };
-	return okCodes.cend() != std::find(okCodes.cbegin(), okCodes.cend(), waitResult);
-}
-
 /*!
 	@brief プロセス基底クラス
 	
@@ -53,7 +47,7 @@ CProcess::CProcess(
 
 	共有メモリを初期化する
  */
-bool CProcess::InitShareData()
+bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_cShareData.InitShareData();
@@ -66,6 +60,17 @@ bool CProcess::InitShareData()
 	//	ShareDataで設定するように変更したのでここからは削除
 
 	return true;
+}
+
+bool CProcess::InitShareData()
+{
+	const auto result = m_cShareData.InitShareData();
+	if (result)
+	{
+		m_FileNameManager = std::make_unique<CFileNameManager>();
+		m_JackManager     = std::make_unique<CJackManager>();
+	}
+	return result;
 }
 
 [[nodiscard]] HANDLE CProcess::OpenInitEvent(std::optional<LPCWSTR> profileName) const
@@ -99,7 +104,7 @@ bool CProcess::IsExistControlProcess(std::optional<LPCWSTR> profileName) const
 
 	// イベントを待つ
 	const auto waitResult = WaitForSingleObject(hEvent, 15 * 1000);
-	return is_completed(waitResult);
+	return WAIT_OBJECT_0 == waitResult || WAIT_ABANDONED_0 == waitResult;
 }
 
 /*!
@@ -123,9 +128,9 @@ bool CProcess::StartControlProcess(std::optional<LPCWSTR> profileName) const
 	CCommandLine cCommandLine;
 	cCommandLine.SetNoWindow(true);
 
-	if (const auto name = profileName.value_or(nullptr)) // ここでは、空文字も有効値。
+	if (profileName.has_value()) // ここでは、空文字も有効値。
 	{
-		cCommandLine.SetProfileName(name);
+		cCommandLine.SetProfileName(profileName.value());
 	}
 
 	// システムディレクトリパスを取得

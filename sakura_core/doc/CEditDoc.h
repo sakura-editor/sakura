@@ -60,6 +60,8 @@
 #include "macro/CCookieManager.h"
 #include "util/design_template.h"
 
+#include "CCodeChecker.h"
+
 class CSMacroMgr; // 2002/2/10 aroka
 class CEditWnd; // Sep. 10, 2002 genta
 struct EditInfo; // 20050705 aroka
@@ -78,6 +80,8 @@ class CEditDoc
 : public CDocSubject
 , public TInstanceHolder<CEditDoc>
 {
+	using CCodeCheckerHolder = std::unique_ptr<CCodeChecker>;
+
 public:
 	//コンストラクタ・デストラクタ
 	CEditDoc(CEditApp* pcApp);
@@ -99,6 +103,8 @@ public:
 	bool IsModificationForbidden( EFunctionCode nCommand ) const;	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
 	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< 編集可能かどうか
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
+
+	CCodeChecker*   GetCodeChecker() const { return m_CodeChecker.get(); }
 
 	//状態
 	void GetEditInfo( EditInfo* ) const;	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
@@ -136,6 +142,8 @@ public:
 	CDocType			m_cDocType;
 	CCookieManager		m_cCookie;
 
+	CCodeCheckerHolder  m_CodeChecker = nullptr;
+
 	//ヘルパ
 public:
 	CBackupAgent		m_cBackupAgent;
@@ -167,4 +175,5 @@ public:
 	int				m_nBackImgWidth;
 	int				m_nBackImgHeight;
 };
+
 #endif /* SAKURA_CEDITDOC_D845B5F3_FD71_4722_B115_63145B804253_H_ */

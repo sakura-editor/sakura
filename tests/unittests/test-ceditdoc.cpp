@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021-2022, Sakura Editor Organization
+	Copyright (C) 2024, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,9 +29,14 @@
 #include "_main/CProcessFactory.h"
 #include "_main/CNormalProcess.h"
 
+#include "CCodeChecker.h"
+#include "window/CEditWnd.h"
+#include "macro/CMacroFactory.h"
+#include "extmodule/CMigemo.h"
+
 #include "util/file.h"
 
-struct CSakuraEnvironmentTest : public ::testing::Test
+struct CEditDocTest : public ::testing::Test
 {
 	static inline std::shared_ptr<CProcess> process = nullptr;
 
@@ -51,22 +56,27 @@ struct CSakuraEnvironmentTest : public ::testing::Test
 	}
 };
 
-/*!
- * @brief exeファイルパスの取得
- */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_ExeFileName)
+TEST_F(CEditDocTest, CCodeChecker)
 {
-	SFilePath szExeFile;
-	CSakuraEnvironment::ExpandParameter(L"$S", szExeFile, _countof2(szExeFile));
-	ASSERT_STREQ(GetExeFileName().c_str(), szExeFile.c_str());
+	EXPECT_TRUE(CCodeChecker::getInstance());
 }
 
-/*!
- * @brief iniファイルパスの取得
- */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_IniFileName)
+TEST_F(CEditDocTest, CDiffManager)
 {
-	SFilePath szIniFile;
-	CSakuraEnvironment::ExpandParameter(L"$I", szIniFile, _countof2(szIniFile));
-	ASSERT_STREQ(GetIniFileName().c_str(), szIniFile.c_str());
+	EXPECT_TRUE(CDiffManager::getInstance());
+}
+
+TEST_F(CEditDocTest, CEditWnd)
+{
+	EXPECT_TRUE(CEditWnd::getInstance());
+}
+
+TEST_F(CEditDocTest, CMacroFactory)
+{
+	EXPECT_TRUE(CMacroFactory::getInstance());
+}
+
+TEST_F(CEditDocTest, CMigemo)
+{
+	EXPECT_TRUE(CMigemo::getInstance());
 }

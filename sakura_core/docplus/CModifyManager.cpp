@@ -24,9 +24,15 @@
 */
 #include "StdAfx.h"
 #include "docplus/CModifyManager.h"
+
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
+
+CModifyManager::CModifyManager(CEditDoc* pcDoc)
+	: CDocListenerEx(pcDoc)
+{
+}
 
 void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
 {

@@ -25,14 +25,15 @@
 */
 
 #include "StdAfx.h"
-#include "CDocType.h"
+#include "doc/CDocType.h"
+
+#include "view/colors/CColorStrategy.h"
+#include "view/figures/CFigureManager.h"
+
 #include "CEditDoc.h"
 #include "CEditApp.h"
 #include "window/CEditWnd.h"
 #include "CGrepAgent.h"
-#include "view/colors/CColorStrategy.h"
-#include "view/figures/CFigureManager.h"
-#include "env/DllShareData.h"
 
 CDocType::CDocType(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
@@ -40,6 +41,11 @@ CDocType::CDocType(CEditDoc* pcDoc)
 , m_typeConfig( GetDllShareData().m_TypeBasis )
 , m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
 {
+}
+
+void CDocType::InitColorStrategyPool()
+{
+	m_ColorStrategyPool = std::make_unique<CColorStrategyPool>();
 }
 
 //! 文書種別の設定
@@ -71,8 +77,8 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 	}
 
 	// タイプ別設定更新を反映
-	CColorStrategyPool::getInstance()->OnChangeSetting();
-	CFigureManager::getInstance()->OnChangeSetting();
+	m_ColorStrategyPool->OnChangeSetting();
+	m_FigureManager->OnChangeSetting();
 	this->SetDocumentIcon();	// Sep. 11, 2002 genta
 	m_pcDocRef->SetBackgroundImage();
 }

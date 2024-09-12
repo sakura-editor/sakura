@@ -30,7 +30,6 @@
 #pragma once
 
 #include "view/colors/EColorIndexType.h"
-#include "util/design_template.h" //TSingleton
 #include "basis/SakuraBasis.h"
 #include "_main/global.h"
 
@@ -48,16 +47,17 @@ enum EDiffMark : char {
 };
 
 //! DIFF挙動の管理
-class CDiffManager : public TSingleton<CDiffManager>{
-	friend class TSingleton<CDiffManager>;
+class CDiffManager {
+public:
+	static CDiffManager* getInstance();
+
 	CDiffManager() = default;
 
-public:
 	void SetDiffUse(bool b){ m_bIsDiffUse = b; }
 	bool IsDiffUse() const{ return m_bIsDiffUse; }		//!< DIFF使用中
 
 private:
-	bool	m_bIsDiffUse;		//!< DIFF差分表示実施中 @@@ 2002.05.25 MIK
+	bool    m_bIsDiffUse = false;   //!< DIFF差分表示実施中 @@@ 2002.05.25 MIK
 };
 
 //! 行に付加するDIFF情報
@@ -100,4 +100,5 @@ public:
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
+
 #endif /* SAKURA_CDIFFMANAGER_65AC06D5_0F1A_4E27_94E5_53F786F76D9F_H_ */

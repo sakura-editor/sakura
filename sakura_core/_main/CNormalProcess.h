@@ -17,9 +17,11 @@
 #pragma once
 
 #include "_main/CProcess.h"
-#include "extmodule/CMigemo.h"
-#include "CEditApp.h"
 #include "window/CEditWnd.h"
+
+#include "extmodule/CMigemo.h"
+#include "macro/CMacroFactory.h"
+#include "CEditApp.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -33,11 +35,18 @@ class CNormalProcess : public CProcess {
 
 	using Me = CNormalProcess;
 	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
+	using CEditAppHolder = std::shared_ptr<CEditApp>;
+	using CEditWndHolder = std::unique_ptr<CEditWnd>;
+	using CMacroFactoryHolder = std::unique_ptr<CMacroFactory>;
+	using CMigemoHolder = std::unique_ptr<CMigemo>;
 
 public:
 	//コンストラクタ・デストラクタ
 	explicit CNormalProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine, int nCmdShow = SW_SHOWDEFAULT) noexcept;
 	~CNormalProcess() override = default;
+
+	CEditApp*       GetEditApp() const { return m_pcEditApp.get(); }
+	CEditWnd*       GetEditWnd() const { return m_pcEditWnd.get(); }
 
 protected:
 	//プロセスハンドラ
@@ -45,6 +54,7 @@ protected:
 	bool MainLoop() override;
 	void OnExitProcess() override;
 
+	void    InitProcess() override;
 	bool    InitShareData() override;
 
 protected:
@@ -52,8 +62,16 @@ protected:
 	void OpenFiles(HWND hwnd);
 
 private:
-	CEditApp*	m_pcEditApp = nullptr;
-	CMigemo		m_cMigemo;
+	/*!
+	 * エディターアプリケーションのインスタンス。
+	 */
+	CEditAppHolder      m_pcEditApp = nullptr;
+
+	CEditWndHolder      m_pcEditWnd = nullptr;
+
+	CMacroFactoryHolder	m_MacroFactory = nullptr;
+
+	CMigemoHolder		m_Migemo = std::make_unique<CMigemo>();
 };
 
 using CEditorProcess = CNormalProcess;

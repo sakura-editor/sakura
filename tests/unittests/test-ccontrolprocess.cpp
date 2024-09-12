@@ -116,3 +116,28 @@ TEST_F(CControlProcessTest, Run001)
 
 	EXPECT_ERROUT(process->Run(), LS(STR_ERR_DLGPROCESS1));
 }
+
+TEST(CProcess, CUxTheme)
+{
+	EXPECT_FALSE(CUxTheme::getInstance());
+}
+
+TEST(CProcess, CAppNodeManager)
+{
+	EXPECT_FALSE(CAppNodeManager::getInstance());
+}
+
+TEST(CProcess, CFileNameManager)
+{
+	EXPECT_FALSE(CFileNameManager::getInstance());
+}
+
+TEST(CProcess, CPluginManager)
+{
+	EXPECT_FALSE(CPluginManager::getInstance());
+}
+
+TEST(CProcess, CJackManager)
+{
+	EXPECT_FALSE(CJackManager::getInstance());
+}

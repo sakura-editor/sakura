@@ -30,11 +30,10 @@
 #include "doc/CDocListener.h"
 #include "util/design_template.h"
 
-class CCodeChecker : public CDocListenerEx, public TSingleton<CCodeChecker>{
-	friend class TSingleton<CCodeChecker>;
-	CCodeChecker(){}
-
+class CCodeChecker : public CDocListenerEx, public TSingleInstance<CCodeChecker> {
 public:
+	explicit CCodeChecker(CEditDoc* pcDoc);
+
 	//セーブ時チェック
 	ECallbackResult OnCheckSave(SSaveInfo* pSaveInfo) override;
 	void OnFinalSave(ESaveResult eSaveResult) override;
@@ -42,4 +41,5 @@ public:
 	//ロード時チェック
 	void OnFinalLoad(ELoadResult eLoadResult) override;
 };
+
 #endif /* SAKURA_CCODECHECKER_44D0ED68_9D9D_4B3E_88F5_185934F5FF0E_H_ */

@@ -188,6 +188,9 @@
     <ClCompile Include="test-ceditorprocess.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-ceditdoc.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">

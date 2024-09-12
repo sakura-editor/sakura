@@ -43,16 +43,17 @@
 #include "StdAfx.h"
 #include "doc/CEditDoc.h"
 
+#include "view/colors/CColorStrategy.h"
+#include "view/figures/CFigureManager.h"
+
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
-#include "docplus/CModifyManager.h"
 #include "_main/global.h"
 #include "_main/CAppMode.h"
 #include "_main/CControlTray.h"
 #include "_main/CNormalProcess.h"
 #include "window/CEditWnd.h"
 #include "_os/CClipboard.h"
-#include "CCodeChecker.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
 #include "print/CPrintPreview.h"
@@ -61,8 +62,6 @@
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
 #include "env/CSakuraEnvironment.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "func/Funccode.h"
 #include "outline/CFuncInfoArr.h" /// 2002/2/3 aroka
 #include "macro/CSMacroMgr.h"
@@ -189,10 +188,10 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
 
 	//$$ CModifyManager インスタンスを生成
-	CModifyManager::getInstance();
+	m_cDocLineMgr.m_ModifyManager = std::make_unique<CModifyManager>(this);
 
 	//$$ CCodeChecker インスタンスを生成
-	CCodeChecker::getInstance();
+	m_CodeChecker = std::make_unique<CCodeChecker>(this);
 
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法

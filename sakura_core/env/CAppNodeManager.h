@@ -107,11 +107,12 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager : public TSingleton<CAppNodeManager>{
-	friend class TSingleton<CAppNodeManager>;
-	CAppNodeManager(){}
-
+class CAppNodeManager {
 public:
+	static CAppNodeManager* getInstance();
+
+	CAppNodeManager() = default;
+
 	//グループ
 	void ResetGroupId();									/* グループをIDリセットする */
 

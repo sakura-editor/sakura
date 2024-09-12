@@ -105,79 +105,19 @@ bool CNormalProcess::InitializeProcess()
 		}
 	}
 
-	// コントロールプロセスを起動する
-	if (!StartControlProcess(profileName))
-	{
-		throw process_init_failed( LS(STR_ERR_DLGNRMPROC2) ); // L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
-	}
-
-	/* 共有メモリを初期化する */
-	if (!InitShareData())
-	{
-		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
-	}
-
-	/* コマンドラインオプション */
-	EditInfo fi;
-	
-	/* コマンドラインで受け取ったファイルが開かれている場合は */
-	/* その編集ウィンドウをアクティブにする */
-	GetCCommandLine().GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
-
-	if (HWND hwndOwner;
-		fi.m_szPath[0] != L'\0' && GetCShareData().ActiveAlreadyOpenedWindow(fi.m_szPath, &hwndOwner, fi.m_nCharCode))
-	{
-		//	Oct. 27, 2000 genta
-		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
-		//	行われるのでここでは必要なし．
-
-		//	カーソル位置が引数に指定されていたら指定位置にジャンプ
-		if (0 <= fi.m_ptCursor.y) {	//	行の指定があるか
-			auto& pt = GetShareData().m_sWorkBuffer.m_LogicPoint;
-			pt.y = fi.m_ptCursor.y;
-
-			// 桁の指定が無い場合
-			if (fi.m_ptCursor.x < 0) {
-				SendMessageW(hwndOwner, MYWM_GETCARETPOS, 0, 0);
-			} else {
-				pt.x = fi.m_ptCursor.x;
-			}
-			SendMessageW(hwndOwner, MYWM_SETCARETPOS, 0, 0);
-		}
-		/* アクティブにする */
-		ActivateFrameWindow(hwndOwner);
-
-		// 複数ファイル読み込み
-		OpenFiles(hwndOwner);
-
-		return false;
-	}
-
-	// プラグイン読み込み
-	MY_TRACETIME( cRunningTimer, L"Before Init Jack" );
-	/* ジャック初期化 */
-	CJackManager::getInstance();
-	MY_TRACETIME( cRunningTimer, L"After Init Jack" );
-
-	MY_TRACETIME( cRunningTimer, L"Before Load Plugins" );
-	/* プラグイン読み込み */
-	CPluginManager::getInstance()->LoadAllPlugin();
-	MY_TRACETIME( cRunningTimer, L"After Load Plugins" );
-
-	// エディタアプリケーションを作成。2007.10.23 kobake
-	// グループIDを取得
-	int nGroupId = GetCCommandLine().GetGroupId();
-	if( GetDllShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
-		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
-	}
-	// CEditAppを作成
-	m_pcEditApp = CEditApp::getInstance();
+	InitProcess();
 
 	// ミューテックスハンドルをスマートポインタから切り離す
 	mutexHolder.release();
 
-	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
-	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
+	auto pEditWnd = m_pcEditWnd.get();
+
+	// グループIDを取得
+	int nGroupId = GetCCommandLine().GetGroupId();
+	if (GetShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1) {
+		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
+	}
+	m_pcEditApp->Create(pEditWnd, nGroupId);
 	if( NULL == pEditWnd->GetHwnd() ){
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );
@@ -190,6 +130,9 @@ bool CNormalProcess::InitializeProcess()
 	const auto bGrepDlg   = GetCCommandLine().IsGrepDlg();
 
 	MY_TRACETIME( cRunningTimer, L"CheckFile" );
+
+	EditInfo fi = {};
+	GetCCommandLine().GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
 
 	// -1: SetDocumentTypeWhenCreate での強制指定なし
 	const CTypeConfig nType = (fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt(fi.m_szDocType));
@@ -455,6 +398,74 @@ bool CNormalProcess::InitializeProcess()
 	OpenFiles( pEditWnd->GetHwnd() );
 
 	return pEditWnd->GetHwnd() ? true : false;
+}
+
+void CNormalProcess::InitProcess()
+{
+	// コントロールプロセスを起動する
+	if (const auto profileName = GetCCommandLine().GetProfileOpt();
+		!StartControlProcess(profileName))
+	{
+		throw process_init_failed( LS(STR_ERR_DLGNRMPROC2) ); // L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
+	}
+
+	/* 共有メモリを初期化する */
+	if (!InitShareData())
+	{
+		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
+	}
+
+// 微妙な仕様実装なので一旦コメントアウト
+#if 0
+
+	/* コマンドラインオプション */
+	EditInfo fi;
+	
+	/* コマンドラインで受け取ったファイルが開かれている場合は */
+	/* その編集ウィンドウをアクティブにする */
+	GetCCommandLine().GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
+
+	if (HWND hwndOwner;
+		fi.m_szPath[0] != L'\0' && GetCShareData().ActiveAlreadyOpenedWindow(fi.m_szPath, &hwndOwner, fi.m_nCharCode))
+	{
+		//	Oct. 27, 2000 genta
+		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
+		//	行われるのでここでは必要なし．
+
+		//	カーソル位置が引数に指定されていたら指定位置にジャンプ
+		if (0 <= fi.m_ptCursor.y) {	//	行の指定があるか
+			auto& pt = GetShareData().m_sWorkBuffer.m_LogicPoint;
+			pt.y = fi.m_ptCursor.y;
+
+			// 桁の指定が無い場合
+			if (fi.m_ptCursor.x < 0) {
+				SendMessageW(hwndOwner, MYWM_GETCARETPOS, 0, 0);
+			} else {
+				pt.x = fi.m_ptCursor.x;
+			}
+			SendMessageW(hwndOwner, MYWM_SETCARETPOS, 0, 0);
+		}
+		/* アクティブにする */
+		ActivateFrameWindow(hwndOwner);
+
+		// 複数ファイル読み込み
+		OpenFiles(hwndOwner);
+
+		return false;
+	}
+#endif
+
+	// プラグイン読み込み
+	GetPluginManager()->LoadAllPlugin();
+
+	m_MacroFactory = std::make_unique<CMacroFactory>();
+
+	// CEditAppを作成
+	m_pcEditApp = std::make_unique<CEditApp>(GetProcessInstance());
+
+	m_pcEditWnd = std::make_unique<CEditWnd>();
+
+	m_pcEditApp->GetDocument()->m_cDocType.InitColorStrategyPool();
 }
 
 bool CNormalProcess::InitShareData()

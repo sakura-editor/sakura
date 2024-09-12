@@ -241,7 +241,7 @@ void CDocLineMgr::_Init()
 	m_nPrevReferLine = CLogicInt(0);
 	m_pCodePrevRefer = NULL;
 	m_pDocLineCurrent = NULL;
-	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFF使用中 */	//@@@ 2002.05.25 MIK     //##後でCDocListener::OnClear (OnAfterClose) を作成し、そこに移動
+	m_DiffManager->SetDiffUse(false);	/* DIFF使用中 */	//@@@ 2002.05.25 MIK     //##後でCDocListener::OnClear (OnAfterClose) を作成し、そこに移動
 }
 
 // -- -- チェーン関数 -- -- // 2007.10.11 kobake 作成

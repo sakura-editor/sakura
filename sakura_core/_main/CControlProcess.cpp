@@ -43,8 +43,6 @@ CControlProcess::CControlProcess(HINSTANCE hInstance, CCommandLineHolder&& pComm
  */
 bool CControlProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
-
 	const auto profileName = GetCCommandLine().GetProfileName();
 
 	// ミューテックスを使って排他ロックをかける
@@ -85,18 +83,7 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 
-	/* 共有メモリを初期化 */
-	if (!InitShareData())
-	{
-		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
-	}
-
-	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
-
-	/* タスクトレイにアイコン作成 */
-	m_pcTray = std::make_unique<CControlTray>();
-
-	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
+	InitProcess();
 
 	const auto hWndTray = m_pcTray->Create( GetProcessInstance() );
 	if (!hWndTray) {
@@ -115,6 +102,18 @@ bool CControlProcess::InitializeProcess()
 	}
 
 	return true;
+}
+
+void CControlProcess::InitProcess()
+{
+	/* 共有メモリを初期化 */
+	if (!InitShareData())
+	{
+		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
+	}
+
+	/* タスクトレイにアイコン作成 */
+	m_pcTray = std::make_unique<CControlTray>();
 }
 
 bool CControlProcess::InitShareData()
