@@ -29,8 +29,10 @@
 
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
+#include "util/StaticType.h"
 
 class CAppMode : public CDocListenerEx, public TSingleInstance<CAppMode> {
+	using SGrepKey = StaticString<WCHAR, 1024>;
 
 public:
 	CAppMode();
@@ -41,6 +43,8 @@ public:
 	bool	IsDebugMode() const				{ return m_bDebugMode; }
 	void	SetDebugModeON();	//!< デバッグモニタモード設定
 	void	SetDebugModeOFF();	//!< デバッグモニタモード解除
+	LPCWSTR GetGrepKey() const { return m_szGrepKey; }
+	void    SetGrepKey(std::wstring_view grepKey) { m_szGrepKey = grepKey.data(); }
 
 	//イベント
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
@@ -51,8 +55,7 @@ protected:
 private:
 	bool			m_bViewMode  = false;			//!< ビューモード
 	bool			m_bDebugMode = false;				//!< デバッグモニタモード
-public:
-	WCHAR           m_szGrepKey[1024] = {};			//!< Grepモードの場合、その検索キー
+	SGrepKey        m_szGrepKey  = {};			//!< Grepモードの場合、その検索キー
 };
 
 #endif /* SAKURA_CAPPMODE_797AE845_5323_4D8A_A263_C534249DBB1C_H_ */

@@ -220,7 +220,7 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	// 名前を付けて保存から再ロードが除去された分の不足処理を追加（ANSI版との差異）	// 2009.08.12 ryoji
 	m_bGrepMode = false;	// grepウィンドウは通常ウィンドウ化
-	CAppMode::getInstance()->m_szGrepKey[0] = L'\0';
+	CAppMode::getInstance()->SetGrepKey(L""sv);
 }
 
 /*!
@@ -490,7 +490,7 @@ DWORD CGrepAgent::DoGrep(
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
 	//	2011.12.10 Moca 表示の際に...に切り捨てられるので登録するように
-	wcsncpy_s( CAppMode::getInstance()->m_szGrepKey, _countof(CAppMode::getInstance()->m_szGrepKey), pcmGrepKey->GetStringPtr(), _TRUNCATE );
+	CAppMode::getInstance()->SetGrepKey(pcmGrepKey->GetStringPtr());
 	this->m_bGrepMode = true;
 
 	//	2007.07.22 genta

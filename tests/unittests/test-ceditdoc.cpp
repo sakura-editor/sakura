@@ -80,3 +80,17 @@ TEST_F(CEditDocTest, CMigemo)
 {
 	EXPECT_TRUE(CMigemo::getInstance());
 }
+
+/*!
+ * @brief GREP検索キーの取得(設定なし)
+ */
+TEST_F(CEditDocTest, OnFileClose001)
+{
+	CAppMode::getInstance()->SetGrepKey( L"1234567890ABCDEF1234567890abcdef"sv );
+
+	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = true;
+
+	process->GetShareData().m_Common.m_sSearch.m_bGrepExitConfirm = true;
+
+	EXPECT_FALSE(CEditDoc::getInstance()->OnFileClose(false));
+}
