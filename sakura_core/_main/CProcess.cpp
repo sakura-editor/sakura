@@ -305,7 +305,6 @@ int CProcess::Run() noexcept
 	if (initialized)
 	{
 			MainLoop() ;
-			OnExitProcess();
 	}
 	return 0;
 }

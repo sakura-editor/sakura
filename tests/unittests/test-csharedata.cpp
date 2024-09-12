@@ -99,7 +99,6 @@ struct CProcessTest : public CProcess
 
 	MOCK_METHOD0(InitializeProcess, bool());
 	MOCK_METHOD0(MainLoop, bool());
-	MOCK_METHOD0(OnExitProcess, void());
 
 	MOCK_METHOD0(InitProcess, void());
 };

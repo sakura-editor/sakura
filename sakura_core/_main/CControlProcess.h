@@ -41,7 +41,6 @@ public:
 protected:
 	bool InitializeProcess() override;
 	bool MainLoop() override;
-	void OnExitProcess() override;
 
 	void    InitProcess() override;
 	bool    InitShareData() override;

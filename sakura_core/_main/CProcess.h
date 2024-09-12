@@ -77,7 +77,6 @@ public:
 protected:
 	virtual bool InitializeProcess() = 0;
 	virtual bool MainLoop() = 0;
-	virtual void OnExitProcess() = 0;
 
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
 

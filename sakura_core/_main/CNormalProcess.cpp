@@ -494,19 +494,6 @@ bool CNormalProcess::MainLoop()
 	return false;
 }
 
-/*!
-	@brief エディタプロセスを終了する
-	
-	@author aroka
-	@date 2002/01/07
-	こいつはなにもしない。後始末はdtorで。
-*/
-void CNormalProcess::OnExitProcess()
-{
-	/* プラグイン解放 */
-	CPluginManager::getInstance()->UnloadAllPlugin();		// Mpve here	2010/7/11 Uchi
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

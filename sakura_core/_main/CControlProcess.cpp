@@ -92,7 +92,6 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 	SetMainWindow(hWndTray);
-	GetDllShareData().m_sHandles.m_hwndTray = hWndTray;
 
 	// 初期化完了イベントをシグナル状態にする
 	if (!SetEvent(hEvent)) {
@@ -162,16 +161,3 @@ bool CControlProcess::MainLoop()
 	}
 	return false;
 }
-
-/*!
-	@brief コントロールプロセスを終了する
-	
-	@author aroka
-	@date 2002/01/07
-	@date 2006/07/02 ryoji 共有データ保存を CControlTray へ移動
-*/
-void CControlProcess::OnExitProcess()
-{
-	GetDllShareData().m_sHandles.m_hwndTray = NULL;
-}
-
