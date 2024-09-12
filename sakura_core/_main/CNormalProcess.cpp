@@ -463,7 +463,7 @@ void CNormalProcess::InitProcess()
 	// CEditAppを作成
 	m_pcEditApp = std::make_unique<CEditApp>(GetProcessInstance());
 
-	m_pcEditWnd = std::make_unique<CEditWnd>();
+	m_pcEditWnd = std::make_unique<CEditWnd>(m_pcEditApp->GetDocument());
 
 	m_pcEditApp->GetDocument()->m_cDocType.InitColorStrategyPool();
 }

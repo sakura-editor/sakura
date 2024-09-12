@@ -25,7 +25,8 @@
 */
 
 #include "StdAfx.h"
-#include "CMruListener.h"
+#include "recent/CMruListener.h"
+
 #include "recent/CMRUFile.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
@@ -35,6 +36,11 @@
 #include "util/file.h"
 #include "CSelectLang.h"
 #include "String_define.h"
+
+CMruListener::CMruListener()
+	: CDocListenerEx(CEditDoc::getInstance())
+{
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //

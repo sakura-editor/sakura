@@ -34,6 +34,7 @@
 */
 #include "StdAfx.h"
 #include "doc/CDocListener.h"
+
 #include "doc/CEditDoc.h"
 
 bool SLoadInfo::IsSamePath(LPCWSTR pszPath) const
@@ -128,19 +129,13 @@ DEF_NOTIFY(BeforeClose)
 
 CDocListener::CDocListener(CDocSubject* pcDoc)
 {
-	if(pcDoc==NULL)pcDoc = CEditDoc::GetInstance(0); //$$ インチキ
 	assert( pcDoc );
 	Listen(pcDoc);
-}
-
-CDocListener::~CDocListener()
-{
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      CDocListenerEx                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#include "doc/CEditDoc.h"
 
 CEditDoc* CDocListenerEx::GetListeningDoc() const
 {

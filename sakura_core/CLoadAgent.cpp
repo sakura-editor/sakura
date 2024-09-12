@@ -25,6 +25,7 @@
 */
 #include "StdAfx.h"
 #include "CLoadAgent.h"
+
 #include "CReadManager.h"
 #include "_main/CAppMode.h"
 #include "_main/CControlTray.h"
@@ -40,6 +41,11 @@
 #include "apiwrap/StdApi.h"
 #include "config/app_constants.h"
 #include "String_define.h"
+
+CLoadAgent::CLoadAgent()
+	: CDocListenerEx(CEditDoc::getInstance())
+{
+}
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {

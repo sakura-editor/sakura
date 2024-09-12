@@ -25,7 +25,9 @@
 */
 #include "StdAfx.h"
 #include "CAutoReloadAgent.h"
-// #include "doc/CEditDoc.h"	//  in under CEditWnd.h
+
+#include "doc/CEditDoc.h"
+
 #include "window/CEditWnd.h"
 #include "dlg/CDlgFileUpdateQuery.h"
 #include "CSelectLang.h"
@@ -36,9 +38,8 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CAutoReloadAgent::CAutoReloadAgent()
-: m_eWatchUpdate( WU_QUERY )
-, m_nPauseCount(0)
+CAutoReloadAgent::CAutoReloadAgent(CEditDoc* pcDoc)
+	: CDocListenerEx(pcDoc)
 {
 }
 

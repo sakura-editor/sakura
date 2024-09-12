@@ -105,8 +105,8 @@ class CEditWnd
 public:
 	static Me* getInstance();
 
-	CEditWnd();
-	~CEditWnd();
+	explicit CEditWnd(CEditDoc* pcEditDoc);
+	~CEditWnd() override;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
@@ -115,7 +115,6 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
-		CEditDoc*		pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
@@ -351,10 +350,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
 	//自ウィンドウ
-	HWND			m_hWnd;
-
-	//親ウィンドウ
-	HWND			m_hwndParent;
+	HWND			m_hWnd          = nullptr;
 
 public:
 	//子ウィンドウ

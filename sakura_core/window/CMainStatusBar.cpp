@@ -29,7 +29,8 @@
 #include "apiwrap/CommonControl.h"
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
-: m_pOwner(pOwner)
+	: CDocListenerEx(CEditDoc::getInstance())
+	, m_pOwner(pOwner)
 , m_hwndStatusBar( NULL )
 , m_hwndProgressBar( NULL )
 {

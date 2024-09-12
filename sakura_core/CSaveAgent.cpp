@@ -38,6 +38,7 @@
 #include "String_define.h"
 
 CSaveAgent::CSaveAgent()
+	: CDocListenerEx(CEditDoc::getInstance())
 {
 }
 

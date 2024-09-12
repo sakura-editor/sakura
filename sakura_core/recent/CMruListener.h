@@ -31,6 +31,8 @@
 
 class CMruListener : public CDocListenerEx{
 public:
+	CMruListener();
+
 	//ロード前後
 //	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo) override;
 	void OnBeforeLoad(SLoadInfo* sLoadInfo) override;

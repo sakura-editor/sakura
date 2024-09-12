@@ -52,7 +52,7 @@ void CEditApp::Create(CEditWnd* pcEditWnd, int nGroupId)
 	m_pcEditWnd = pcEditWnd;
 
 	//ウィンドウの作成
-	m_pcEditWnd->Create(GetDocument(), &GetIcons(), nGroupId);
+	m_pcEditWnd->Create(&GetIcons(), nGroupId);
 
 	//プロパティ管理
 	m_pcPropertyManager->Create(
