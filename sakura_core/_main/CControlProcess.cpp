@@ -66,12 +66,6 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 
-	// すでに起動されていたら終了。
-	if (IsExistControlProcess(profileName))
-	{
-		return false;
-	}
-
 	// 初期化完了イベントを作成する
 	std::wstring eventName = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	if (profileName && *profileName) {
@@ -85,6 +79,11 @@ bool CControlProcess::InitializeProcess()
 
 	// イベントハンドルをスマートポインタに入れる
 	m_InitEvent.reset(hEvent);
+
+	if (ERROR_ALREADY_EXISTS == GetLastError())
+	{
+		return false;
+	}
 
 	/* 共有メモリを初期化 */
 	if (!InitShareData())
