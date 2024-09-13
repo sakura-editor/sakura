@@ -76,14 +76,15 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : private SShareDataClientWithCache, public TSingleton<CJackManager>{
-	friend class TSingleton<CJackManager>;
+class CJackManager final : private SShareDataClientWithCache {
+public:
+	static CJackManager* getInstance();
+
 	CJackManager();
 
 	typedef std::wstring wstring;
 
 	//操作
-public:
 	ERegisterPlugResult RegisterPlug( wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
 	bool UnRegisterPlug( wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
 	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する
@@ -103,7 +104,7 @@ public:
 
 	//メンバ変数
 private:
-	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
+	std::vector<JackDef> m_Jacks = {};	//ジャック定義の一覧
 };
 
 #endif /* SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_ */

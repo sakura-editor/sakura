@@ -31,10 +31,13 @@
 
 class CLoadAgent : public CDocListenerEx{
 public:
+	CLoadAgent();
+
 	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo) override;
 	void OnBeforeLoad(SLoadInfo* sLoadInfo) override;
 	ELoadResult OnLoad(const SLoadInfo& sLoadInfo) override;
 	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
 	void OnFinalLoad(ELoadResult eLoadResult) override;
 };
+
 #endif /* SAKURA_CLOADAGENT_369F511F_4F3E_41A2_84AB_EDE3BB368568_H_ */

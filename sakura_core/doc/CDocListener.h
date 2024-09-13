@@ -173,8 +173,8 @@ public:
 //Listenerは1つのSubjectを観察する
 class CDocListener : public CListenerT<CDocSubject>{
 public:
-	CDocListener(CDocSubject* pcDoc = NULL);
-	virtual ~CDocListener();
+	explicit CDocListener(CDocSubject* pcDoc);
+	~CDocListener() override = default;
 
 	// -- -- 属性 -- -- //
 	CDocSubject* GetListeningDoc() const{ return GetListeningSubject(); }
@@ -205,7 +205,7 @@ public:
 class CEditDoc;
 class CDocListenerEx : public CDocListener{
 public:
-	CDocListenerEx(CDocSubject* pcDoc = NULL) : CDocListener(pcDoc) { }
+	explicit CDocListenerEx(CDocSubject* pcDoc) : CDocListener(pcDoc) { }
 	CEditDoc* GetListeningDoc() const;
 };
 

@@ -55,11 +55,10 @@ class CMacroManagerBase;
 
 	Singleton
 */
-class CMacroFactory : public TSingleton<CMacroFactory> {
-	friend class TSingleton<CMacroFactory>;
-	CMacroFactory();
-
+class CMacroFactory : public TSingleInstance<CMacroFactory> {
 public:
+	CMacroFactory() = default;
+
 	typedef CMacroManagerBase* (*Creator)(const WCHAR*);
 
 	bool RegisterCreator(Creator f);
@@ -85,6 +84,7 @@ private:
 		Creatorリスト
 		@date 2002.08.25 genta 追加
 	*/
-	MacroEngineRep m_mMacroCreators;
+	MacroEngineRep m_mMacroCreators = {};
 };
+
 #endif /* SAKURA_CMACROFACTORY_67B6F8F6_0951_4717_84AD_C67E6D5F68AB_H_ */

@@ -23,8 +23,9 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CDocLocker.h"
-#include "CDocFile.h"
+#include "doc/CDocLocker.h"
+
+#include "doc/CDocFile.h"
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
 #include "String_define.h"
@@ -33,8 +34,8 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CDocLocker::CDocLocker()
-: m_bIsDocWritable(true)
+CDocLocker::CDocLocker(CEditDoc* pcDoc)
+	: CDocListenerEx(pcDoc)
 {
 }
 

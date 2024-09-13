@@ -23,9 +23,17 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CAppMode.h"
+#include "_main/CAppMode.h"
+
+#include "CEditApp.h"
+
 #include "window/CEditWnd.h"
 #include "env/CSakuraEnvironment.h"
+
+CAppMode::CAppMode()
+	: CDocListenerEx(CEditDoc::getInstance())
+{
+}
 
 void CAppMode::OnAfterSave(const SSaveInfo& sSaveInfo)
 {

@@ -38,7 +38,8 @@
 #include "parse/DetectIndentationStyle.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
-: m_pcDocRef(pcDoc)
+	: CDocListenerEx(pcDoc)
+	, m_pcDocRef(pcDoc)
 , m_cNewLineCode( EEolType::cr_and_lf )		//	New Line Type
 , m_pcOpeBlk( NULL )
 , m_bInsMode( true )	// Oct. 2, 2005 genta

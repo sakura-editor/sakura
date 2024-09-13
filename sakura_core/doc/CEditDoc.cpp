@@ -43,16 +43,17 @@
 #include "StdAfx.h"
 #include "doc/CEditDoc.h"
 
+#include "view/colors/CColorStrategy.h"
+#include "view/figures/CFigureManager.h"
+
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
-#include "docplus/CModifyManager.h"
 #include "_main/global.h"
 #include "_main/CAppMode.h"
 #include "_main/CControlTray.h"
 #include "_main/CNormalProcess.h"
 #include "window/CEditWnd.h"
 #include "_os/CClipboard.h"
-#include "CCodeChecker.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
 #include "print/CPrintPreview.h"
@@ -61,8 +62,6 @@
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
 #include "env/CSakuraEnvironment.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "func/Funccode.h"
 #include "outline/CFuncInfoArr.h" /// 2002/2/3 aroka
 #include "macro/CSMacroMgr.h"
@@ -165,7 +164,11 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 , m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+	, m_cBackupAgent(this)
+	, m_cAutoSaveAgent(this)
+	, m_cAutoReloadAgent(this)
 , m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+	, m_cDocLocker(this)
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
 {
@@ -189,10 +192,10 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
 
 	//$$ CModifyManager インスタンスを生成
-	CModifyManager::getInstance();
+	m_cDocLineMgr.m_ModifyManager = std::make_unique<CModifyManager>(this);
 
 	//$$ CCodeChecker インスタンスを生成
-	CCodeChecker::getInstance();
+	m_CodeChecker = std::make_unique<CCodeChecker>(this);
 
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
@@ -274,7 +277,7 @@ void CEditDoc::Clear()
 void CEditDoc::InitDoc()
 {
 	CAppMode::getInstance()->SetViewMode(false);	// ビューモード $$ 今後OnClearDocを用意したい
-	CAppMode::getInstance()->m_szGrepKey[0] = L'\0';	//$$
+	CAppMode::getInstance()->SetGrepKey(L""sv);
 
 	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = false;	/* Grepモード */	//$$同上
 	m_cAutoReloadAgent.m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法 $$
@@ -507,7 +510,7 @@ void CEditDoc::GetEditInfo(
 
 	//GREPモード
 	pfi->m_bIsGrep = CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode;
-	wcscpy( pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey );
+	wcsncpy_s( pfi->m_szGrepKey, CAppMode::getInstance()->GetGrepKey(), _TRUNCATE );
 
 	//デバッグモニタ (アウトプットウインドウ) モード
 	pfi->m_bIsDebug = CAppMode::getInstance()->IsDebugMode();
@@ -879,7 +882,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	WCHAR szGrepTitle[90];
 	LPCWSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : NULL;
 	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
-		LPCWSTR		pszGrepKey = CAppMode::getInstance()->m_szGrepKey;
+		LPCWSTR		pszGrepKey = CAppMode::getInstance()->GetGrepKey();
 		int			nLen = (int)wcslen( pszGrepKey );
 		CNativeW	cmemDes;
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );

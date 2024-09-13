@@ -30,11 +30,9 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CMacroFactory.h"
+#include "macro/CMacroFactory.h"
 
 static const WCHAR NULSTR[] = L"";
-
-CMacroFactory::CMacroFactory() = default;
 
 /*!
 	与えられた拡張子をmapのkeyに変換する

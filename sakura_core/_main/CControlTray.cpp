@@ -273,6 +273,8 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		(LPVOID)this						// pointer to window-creation data(lpCreateParams)
 	);
 
+	GetShareData().m_sHandles.m_hwndTray = GetTrayHwnd();
+
 	// 最前面にする（トレイからのポップアップウィンドウが最前面になるように）
 	::SetWindowPos( GetTrayHwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 	
@@ -1733,6 +1735,8 @@ void CControlTray::DeleteAccelTbl( void )
 */
 void CControlTray::OnDestroy()
 {
+	GetShareData().m_sHandles.m_hwndTray = nullptr;
+
 	HWND hwndExitingDlg = 0;
 
 	if (GetTrayHwnd() == NULL)

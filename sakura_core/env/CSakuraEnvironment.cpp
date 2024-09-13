@@ -458,15 +458,20 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			break;
 		case L'h':	//	Apr. 4, 2003 genta
 			//	Grep Key文字列 MAX 32文字
-			//	中身はSetParentCaption()より移植
 			{
-				CNativeW	cmemDes;
-				// m_szGrepKey → cmemDes
-				LimitStringLengthW( CAppMode::getInstance()->m_szGrepKey, wcslen( CAppMode::getInstance()->m_szGrepKey ), (q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
-				if( (int)wcslen( CAppMode::getInstance()->m_szGrepKey ) > cmemDes.GetStringLength() ){
-					cmemDes.AppendString(L"...");
+				StaticString<WCHAR, 32 + 3 + 1> dest;
+				std::wstring_view grepKey = CAppMode::getInstance()->GetGrepKey();
+				const auto copyLen = std::min<size_t>(grepKey.size(), 32);
+				wcsncpy_s(dest.GetBufferPointer(), dest.GetBufferCount(), grepKey.data(), copyLen);
+				if (copyLen < grepKey.size()) {
+					wcscat_s(dest.GetBufferPointer(), dest.GetBufferCount(), L"...");
 				}
-				q = wcs_pushW( q, q_max - q, cmemDes.GetStringPtr(), cmemDes.GetStringLength());
+				auto destLen = dest.Length();
+				if (q_max - q < destLen) {
+					wcscpy_s(&dest[q_max - q - 4], 4, L"...");
+					destLen = int(q_max - q);
+				}
+				q = wcs_pushW( q, q_max - q, dest.c_str(), destLen);
 				++p;
 			}
 			break;

@@ -27,6 +27,9 @@
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
+
+#include "_main/CNormalProcess.h"
+
 #include "CColor_Comment.h"
 #include "CColor_Quote.h"
 #include "CColor_RegexKeyword.h"
@@ -141,7 +144,7 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 	if( m_pcView->m_bMiniMap ){
 		CTypeSupport cPageViewBg(m_pcView, COLORIDX_PAGEVIEW);
 		if( cPageViewBg.IsDisp() ){
-			CEditView& cActiveView = GetEditWnd().GetActiveView();
+			const auto& cActiveView = GetEditWnd().GetActiveView();
 			CLayoutInt curLine = m_pDispPos->GetLayoutLineRef();
 			if( m_colorIdxBackLine == COLORIDX_PAGEVIEW ){
 				if( cActiveView.GetTextArea().GetViewTopLine() <= curLine && curLine < cActiveView.GetTextArea().GetBottomLine() ){

@@ -30,67 +30,83 @@
 //2007.10.23 kobake 作成
 
 #include "util/design_template.h"
+
+#include "doc/CEditDoc.h"
+
+#include "_main/CAppMode.h"
 #include "uiparts/CSoundSet.h"
 #include "uiparts/CImageListMgr.h"
 #include "types/CType.h"
-
-class CEditDoc;
-class CEditWnd;
-class CLoadAgent;
-class CSaveAgent;
-class CVisualProgress;
-class CMruListener;
-class CSMacroMgr;
-class CPropertyManager;
-class CGrepAgent;
-enum EFunctionCode;
+#include "CPropertyManager.h"
+#include "window/CEditWnd.h"
+#include "CLoadAgent.h"
+#include "CSaveAgent.h"
+#include "uiparts/CVisualProgress.h"
+#include "recent/CMruListener.h"
+#include "macro/CSMacroMgr.h"
+#include "CGrepAgent.h"
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
-class CEditApp : public TSingleton<CEditApp>{
-	friend class TSingleton<CEditApp>;
-	CEditApp(){}
-	virtual ~CEditApp();
+class CEditApp : public TSingleInstance<CEditApp> {
+	using CEditDocHolder = std::shared_ptr<CEditDoc>;
+	using CLoadAgentHolder = std::unique_ptr<CLoadAgent>;
+	using CSaveAgentHolder = std::unique_ptr<CSaveAgent>;
+	using CProgressHolder = std::unique_ptr<CVisualProgress>;
+	using CGrepAgentHolder = std::unique_ptr<CGrepAgent>;
+	using CAppModeHolder = std::unique_ptr<CAppMode>;
+	using CMruListenerHolder = std::unique_ptr<CMruListener>;
+	using CPropManagerHolder = std::unique_ptr<CPropertyManager>;
+	using CSMacroMgrHolder = std::unique_ptr<CSMacroMgr>;
 
 public:
-	void Create(HINSTANCE hInst, int);
+	explicit CEditApp(HINSTANCE hInstance);
+
+	void Create(CEditWnd* pcEditWnd, int nGroupId);
 
 	//モジュール情報
 	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
 
 	//ウィンドウ情報
-	CEditWnd* GetEditWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
+	CEditWnd*       GetEditWindow() const;
 
-	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
+	CEditDoc*		GetDocument() const { return m_pcEditDoc.get(); }
+	CAppMode*       GetAppMode() const { return m_AppMode.get(); }
+	CSMacroMgr*     GetSMacroMgr() const { return m_SMacroMgr.get(); }
 	CImageListMgr&	GetIcons(){ return m_cIcons; }
 
 	bool OpenPropertySheet( int nPageNum );
 	bool OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType );
 
-public:
 	HINSTANCE			m_hInst;
 
 	//ドキュメント
-	CEditDoc*			m_pcEditDoc;
+	CEditDocHolder		m_pcEditDoc = std::make_unique<CEditDoc>(nullptr);
 
 	//ウィンドウ
-	CEditWnd*			m_pcEditWnd;
+	CEditWnd*			m_pcEditWnd = nullptr;
 
 	//IO管理
-	CLoadAgent*			m_pcLoadAgent;
-	CSaveAgent*			m_pcSaveAgent;
-	CVisualProgress*	m_pcVisualProgress;
+	CLoadAgentHolder    m_pcLoadAgent = std::make_unique<CLoadAgent>();
+	CSaveAgentHolder    m_pcSaveAgent = std::make_unique<CSaveAgent>();
+	CProgressHolder     m_pcVisualProgress = std::make_unique<CVisualProgress>();
 
-	//その他ヘルパ
-	CMruListener*		m_pcMruListener;		//MRU管理
-	CSMacroMgr*			m_pcSMacroMgr;			//マクロ管理
-private:
-	CPropertyManager*	m_pcPropertyManager;	//プロパティ管理
-public:
-	CGrepAgent*			m_pcGrepAgent;			//GREPモード
+	CGrepAgentHolder    m_GrepAgent = std::make_unique<CGrepAgent>();	//GREPモード
+
+	CAppModeHolder		m_AppMode = std::make_unique<CAppMode>();	//編集モード
+
+	CMruListenerHolder  m_pcMruListener = std::make_unique<CMruListener>();		//MRU管理
+
+	CPropManagerHolder	m_pcPropertyManager = std::make_unique<CPropertyManager>();	//プロパティ管理
+
 	CSoundSet			m_cSoundSet;			//サウンド管理
 
 	//GUIオブジェクト
 	CImageListMgr		m_cIcons;					//!< Image List
+
+	CSMacroMgrHolder    m_SMacroMgr = std::make_unique<CSMacroMgr>();	//マクロ管理
+
+	CGrepAgent*         m_pcGrepAgent = m_GrepAgent.get();
+	CSMacroMgr*         m_pcSMacroMgr = m_SMacroMgr.get();
 };
 
 //WM_QUIT検出例外
@@ -98,4 +114,5 @@ class CAppExitException : public std::exception{
 public:
 	const char* what() const throw(){ return "CAppExitException"; }
 };
+
 #endif /* SAKURA_CEDITAPP_421797BC_DD8E_4209_AAF7_6BDC4D1CAAE9_H_ */

@@ -31,8 +31,14 @@
 */
 #include "StdAfx.h"
 #include "CAutoSaveAgent.h"
+
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
+
+CAutoSaveAgent::CAutoSaveAgent(CEditDoc* pcDoc)
+	: CDocListenerEx(pcDoc)
+{
+}
 
 //	From Here Aug. 21, 2000 genta
 //
@@ -64,8 +70,9 @@ void CAutoSaveAgent::CheckAutoSave()
 //
 void CAutoSaveAgent::ReloadAutoSaveParam()
 {
-	m_cPassiveTimer.SetInterval( GetDllShareData().m_Common.m_sBackup.GetAutoBackupInterval() );
-	m_cPassiveTimer.Enable( GetDllShareData().m_Common.m_sBackup.IsAutoBackupEnabled() );
+	const auto& sBackup = GetShareData().m_Common.m_sBackup;
+	m_cPassiveTimer.SetInterval(sBackup.GetAutoBackupInterval());
+	m_cPassiveTimer.Enable(sBackup.IsAutoBackupEnabled());
 }
 
 //----------------------------------------------------------
@@ -113,12 +120,8 @@ bool CPassiveTimer::CheckAction(void)
 		return false;
 
 	//	時刻比較
-	DWORD now = ::GetTickCount();
-	int diff;
-
-	diff = now - nLastTick;	//	TickCountが一回りしてもこれでうまくいくはず...
-
-	if( diff < nInterval )	//	規定時間に達していない
+	if (const auto diff = GetTickCount64() - nLastTick;
+		diff < nInterval)	//	規定時間に達していない
 		return false;
 
 	Reset();

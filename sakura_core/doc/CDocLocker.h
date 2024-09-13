@@ -31,7 +31,7 @@
 
 class CDocLocker : public CDocListenerEx{
 public:
-	CDocLocker();
+	explicit CDocLocker(CEditDoc* pcDoc);
 
 	//クリア
 	void Clear(void) { m_bIsDocWritable = true; }
@@ -50,6 +50,7 @@ public:
 	void CheckWritable(bool bMsg);
 
 private:
-	bool m_bIsDocWritable;
+	bool m_bIsDocWritable = true;
 };
+
 #endif /* SAKURA_CDOCLOCKER_6B8C1CF4_B0FD_4631_ADB4_E53776A2FAAE_H_ */

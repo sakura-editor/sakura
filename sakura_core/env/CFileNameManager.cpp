@@ -30,7 +30,8 @@
 #include "StdAfx.h"
 #include "env/CFileNameManager.h"
 
-#include "env/DLLSHAREDATA.h"
+#include "_main/CProcess.h"
+
 #include "charset/CCodePage.h"
 #include "util/module.h"
 #include "util/os.h"
@@ -38,8 +39,6 @@
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/window.h"
-#include "CSelectLang.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //

@@ -22,13 +22,14 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
  */
-#pragma once
-
+#include "StdAfx.h"
 #include "env/SShareDataClient.hpp"
 
-struct SShareDataClientWithCache : public SShareDataClient
-{
-	DLLSHAREDATA* m_pShareData;
+#include "_main/CProcess.h"
 
-	SShareDataClientWithCache() noexcept;
-};
+#include "env/DLLSHAREDATA.h"
+
+DLLSHAREDATA& SShareDataClient::GetShareData() const
+{
+	return CProcess::getInstance()->GetShareData();
+}

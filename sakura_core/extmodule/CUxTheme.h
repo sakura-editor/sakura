@@ -37,26 +37,28 @@
 
 #include <vsstyle.h>
 #include "CDllHandler.h"
+
 #include "util/design_template.h"
 
 /*!
 	@brief UxTheme 動的ロード
 
 	UxTheme コンポーネントの動的ロードをサポートするクラス
-*/
-class CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
-	friend class TSingleton<CUxTheme>;
-	CUxTheme();
-	virtual ~CUxTheme();
+ */
+class CUxTheme : public CDllImp, public TSingleInstance<CUxTheme> {
+
+public:
+	CUxTheme() = default;
+	~CUxTheme() override = default;
 
 protected:
-	bool m_bInitialized;
+	bool    InitThemeDll( WCHAR* str = NULL );
+	bool    InitDllImp() override;
+	LPCWSTR GetDllNameImp(int nIndex) override;
 
-	bool InitThemeDll( WCHAR* str = NULL );
-	virtual bool InitDllImp();
-	virtual LPCWSTR GetDllNameImp(int nIndex);
+private:
+	bool    m_bInitialized = false;
 
-protected:
 	// UxTheme API Entry Points
 	BOOL (WINAPI* m_pfnIsThemeActive)( VOID );
 	HRESULT (WINAPI* m_pfnSetWindowTheme)( HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList );
@@ -74,4 +76,5 @@ public:
 	HRESULT DrawThemeParentBackground( HWND hwnd, HDC hdc, RECT* prc );
 	BOOL IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId );
 };
+
 #endif /* SAKURA_CUXTHEME_430C1CAA_3F14_4C30_8EB6_FCC34E9E0FF5_H_ */

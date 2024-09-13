@@ -24,12 +24,14 @@
 */
 #include "StdAfx.h"
 #include "CCodeChecker.h"
+
+#include "doc/CEditDoc.h"
+
 #include "charset/CCodePage.h"
 #include "io/CIoBridge.h"
 #include "charset/CCodeFactory.h" ////
 #include "charset/CUnicode.h"
 
-#include "doc/CEditDoc.h"
 #include "doc/logic/CDocLineMgr.h"
 #include "window/CEditWnd.h"
 #include "util/string_ex.h"
@@ -147,6 +149,11 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 	}
 	delete pCodeBase;
 	return RESULT_COMPLETE;
+}
+
+CCodeChecker::CCodeChecker(CEditDoc* pcDoc)
+	: CDocListenerEx(pcDoc)
+{
 }
 
 ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)

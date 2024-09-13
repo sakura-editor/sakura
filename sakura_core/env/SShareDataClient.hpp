@@ -24,11 +24,9 @@
  */
 #pragma once
 
-#include "env/SShareDataClient.hpp"
+struct DLLSHAREDATA;
 
-struct SShareDataClientWithCache : public SShareDataClient
+struct SShareDataClient
 {
-	DLLSHAREDATA* m_pShareData;
-
-	SShareDataClientWithCache() noexcept;
+	DLLSHAREDATA& GetShareData() const;
 };

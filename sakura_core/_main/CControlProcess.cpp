@@ -43,8 +43,6 @@ CControlProcess::CControlProcess(HINSTANCE hInstance, CCommandLineHolder&& pComm
  */
 bool CControlProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
-
 	const auto profileName = GetCCommandLine().GetProfileName();
 
 	// ミューテックスを使って排他ロックをかける
@@ -66,12 +64,6 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 
-	// すでに起動されていたら終了。
-	if (IsExistControlProcess(profileName))
-	{
-		return false;
-	}
-
 	// 初期化完了イベントを作成する
 	std::wstring eventName = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	if (profileName && *profileName) {
@@ -86,18 +78,12 @@ bool CControlProcess::InitializeProcess()
 	// イベントハンドルをスマートポインタに入れる
 	m_InitEvent.reset(hEvent);
 
-	/* 共有メモリを初期化 */
-	if (!InitShareData())
+	if (ERROR_ALREADY_EXISTS == GetLastError())
 	{
-		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
+		return false;
 	}
 
-	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
-
-	/* タスクトレイにアイコン作成 */
-	m_pcTray = std::make_unique<CControlTray>();
-
-	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
+	InitProcess();
 
 	const auto hWndTray = m_pcTray->Create( GetProcessInstance() );
 	if (!hWndTray) {
@@ -106,7 +92,6 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 	SetMainWindow(hWndTray);
-	GetDllShareData().m_sHandles.m_hwndTray = hWndTray;
 
 	// 初期化完了イベントをシグナル状態にする
 	if (!SetEvent(hEvent)) {
@@ -116,6 +101,18 @@ bool CControlProcess::InitializeProcess()
 	}
 
 	return true;
+}
+
+void CControlProcess::InitProcess()
+{
+	/* 共有メモリを初期化 */
+	if (!InitShareData())
+	{
+		throw process_init_failed( LS(STR_ERR_DLGPROCESS1) ); // L"異なるバージョンのエディタを同時に起動することはできません。"
+	}
+
+	/* タスクトレイにアイコン作成 */
+	m_pcTray = std::make_unique<CControlTray>();
 }
 
 bool CControlProcess::InitShareData()
@@ -164,16 +161,3 @@ bool CControlProcess::MainLoop()
 	}
 	return false;
 }
-
-/*!
-	@brief コントロールプロセスを終了する
-	
-	@author aroka
-	@date 2002/01/07
-	@date 2006/07/02 ryoji 共有データ保存を CControlTray へ移動
-*/
-void CControlProcess::OnExitProcess()
-{
-	GetDllShareData().m_sHandles.m_hwndTray = NULL;
-}
-

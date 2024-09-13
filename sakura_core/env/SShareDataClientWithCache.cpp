@@ -29,5 +29,5 @@
 
 SShareDataClientWithCache::SShareDataClientWithCache() noexcept
 {
-	m_pShareData = &GetDllShareData();
+	m_pShareData = &GetShareData();
 }

@@ -137,9 +137,7 @@ VOID CALLBACK EditViewTimerProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditView::CEditView( void )
 : CViewCalc(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_pcTextArea(NULL)
-, m_pcCaret(NULL)
-, m_pcRuler(NULL)
+	, CDocListenerEx(CEditDoc::getInstance())
 , m_cViewSelect(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cParser(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cTextDrawer(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
@@ -155,6 +153,7 @@ CEditView::CEditView( void )
 , m_cHistory(NULL)
 , m_cRegexKeyword(NULL)
 {
+	m_pcEditDoc = CEditDoc::getInstance();
 }
 
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
@@ -167,9 +166,6 @@ BOOL CEditView::Create(
 )
 {
 	m_bMiniMap = bMiniMap;
-	m_pcTextArea = new CTextArea(this);
-	m_pcCaret = new CCaret(this, pcEditDoc);
-	m_pcRuler = new CRuler(this, pcEditDoc);
 	if( m_bMiniMap ){
 		m_pcViewFont = GetEditWnd().m_pcViewFontMiniMap;
 	}else{
@@ -412,13 +408,6 @@ void CEditView::Close()
 
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = NULL;
-
-	delete m_pcTextArea;
-	m_pcTextArea = NULL;
-	delete m_pcCaret;
-	m_pcCaret = NULL;
-	delete m_pcRuler;
-	m_pcRuler = NULL;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

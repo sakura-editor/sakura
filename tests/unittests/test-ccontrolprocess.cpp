@@ -50,7 +50,6 @@ TEST_F(CControlProcessTest, InitializeProcess001)
 {
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Return(nullptr));
     EXPECT_CALL(*process, GetLastError()).Times(0);
-    EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
     EXPECT_CALL(*process, InitShareData()).Times(0);
 
@@ -62,20 +61,6 @@ TEST_F(CControlProcessTest, InitializeProcess002)
 {
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
     EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_ALREADY_EXISTS));
-    EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
-    EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
-    EXPECT_CALL(*process, InitShareData()).Times(0);
-
-	EXPECT_FALSE(process->InitializeProcess());
-}
-
-// すでに起動中
-TEST_F(CControlProcessTest, InitializeProcess011)
-{
-    EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
-    EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
-    EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultOpenEventW));
-    EXPECT_CALL(*process, WaitForSingleObject(_, _)).WillOnce(Return(WAIT_OBJECT_0));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
     EXPECT_CALL(*process, InitShareData()).Times(0);
 
@@ -83,35 +68,36 @@ TEST_F(CControlProcessTest, InitializeProcess011)
 }
 
 // 初期化完了イベントの作成失敗
-TEST_F(CControlProcessTest, InitializeProcess021)
+TEST_F(CControlProcessTest, InitializeProcess011)
 {
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
     EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
-    EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Return(nullptr));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Return(nullptr));
     EXPECT_CALL(*process, InitShareData()).Times(0);
 
 	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_CTRLMTX2));
 }
 
-// インストール検知ミューテクスの作成に失敗
-TEST_F(CControlProcessTest, InitializeProcess031)
+// 初期化完了イベントがすでに存在している
+TEST_F(CControlProcessTest, InitializeProcess012)
 {
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
-    EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
-    EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Return(nullptr));
+    EXPECT_CALL(*process, GetLastError())
+        .WillOnce(Return(ERROR_SUCCESS))
+        .WillOnce(Return(ERROR_ALREADY_EXISTS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
-    EXPECT_CALL(*process, InitShareData()).WillOnce(Return(false));
+    EXPECT_CALL(*process, InitShareData()).Times(0);
 
-	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_DLGPROCESS1));
+	EXPECT_FALSE(process->InitializeProcess());
 }
 
 // 共有メモリの初期化失敗
-TEST_F(CControlProcessTest, InitializeProcess041)
+TEST_F(CControlProcessTest, InitializeProcess021)
 {
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
-    EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
-    EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Return(nullptr));
+    EXPECT_CALL(*process, GetLastError())
+        .WillOnce(Return(ERROR_SUCCESS))
+        .WillOnce(Return(ERROR_SUCCESS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
     EXPECT_CALL(*process, InitShareData()).WillOnce(Return(false));
 
@@ -122,10 +108,36 @@ TEST_F(CControlProcessTest, InitializeProcess041)
 TEST_F(CControlProcessTest, Run001)
 {
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
-    EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
-    EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Return(nullptr));
+    EXPECT_CALL(*process, GetLastError())
+        .WillOnce(Return(ERROR_SUCCESS))
+        .WillOnce(Return(ERROR_SUCCESS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
     EXPECT_CALL(*process, InitShareData()).WillOnce(Return(false));
 
 	EXPECT_ERROUT(process->Run(), LS(STR_ERR_DLGPROCESS1));
+}
+
+TEST(CProcess, CUxTheme)
+{
+	EXPECT_FALSE(CUxTheme::getInstance());
+}
+
+TEST(CProcess, CAppNodeManager)
+{
+	EXPECT_FALSE(CAppNodeManager::getInstance());
+}
+
+TEST(CProcess, CFileNameManager)
+{
+	EXPECT_FALSE(CFileNameManager::getInstance());
+}
+
+TEST(CProcess, CPluginManager)
+{
+	EXPECT_FALSE(CPluginManager::getInstance());
+}
+
+TEST(CProcess, CJackManager)
+{
+	EXPECT_FALSE(CJackManager::getInstance());
 }

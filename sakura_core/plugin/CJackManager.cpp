@@ -27,9 +27,21 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CJackManager.h"
+#include "plugin/CJackManager.h"
+
+#include "_main/CProcess.h"
+
 #include "CPropertyManager.h"
 #include "typeprop/CPropTypes.h"
+
+/* static */ CJackManager* CJackManager::getInstance()
+{
+	const auto process = CProcess::getInstance();
+	if (!process) {
+		return nullptr;
+	}
+	return process->GetJackManager();
+}
 
 //コンストラクタ
 CJackManager::CJackManager()

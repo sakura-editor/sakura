@@ -30,6 +30,12 @@
 #include "sakura_rc.h"
 #include "String_define.h"
 
+#include "env/CAppNodeManager.h"
+#include "env/CFileNameManager.h"
+#include "plugin/CJackManager.h"
+#include "plugin/CPluginManager.h"
+#include "extmodule/CUxTheme.h"
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -40,6 +46,11 @@ class CProcess : public TSingleInstance<CProcess> {
 
 	using Me = CProcess;
 	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
+	using CAppNodeManagerHolder = std::unique_ptr<CAppNodeManager>;
+	using CFileNameManagerHolder = std::unique_ptr<CFileNameManager>;
+	using CPluginManagerHolder = std::unique_ptr<CPluginManager>;
+	using CJackManagerHolder = std::unique_ptr<CJackManager>;
+	using CUxThemeHolder = std::unique_ptr<CUxTheme>;
 
 public:
 	explicit CProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine, int nCmdShow) noexcept;
@@ -57,11 +68,15 @@ public:
 	void    TerminateControlProcess(std::optional<LPCWSTR> profileName = std::nullopt) const;
 
 	virtual void RefreshString();
+	virtual void    InitProcess() = 0;
+
+	CAppNodeManager*  GetAppNodeManager() const { return m_AppNodeManager.get(); }
+	CJackManager*     GetJackManager() const { return m_JackManager.get(); }
+	CPluginManager*   GetPluginManager() const { return m_PluginManager.get(); }
 
 protected:
 	virtual bool InitializeProcess() = 0;
 	virtual bool MainLoop() = 0;
-	virtual void OnExitProcess() = 0;
 
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
 
@@ -195,6 +210,12 @@ private:
 	int                 m_nCmdShow;
 	CShareData          m_cShareData;
 	HWND                m_hWnd         = nullptr;
+
+	CUxThemeHolder          m_UxTheme         = std::make_unique<CUxTheme>();
+	CAppNodeManagerHolder   m_AppNodeManager  = std::make_unique<CAppNodeManager>();
+	CPluginManagerHolder    m_PluginManager   = std::make_unique<CPluginManager>();
+	CFileNameManagerHolder  m_FileNameManager = nullptr;
+	CJackManagerHolder      m_JackManager     = nullptr;
 };
 
 #endif /* SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_ */

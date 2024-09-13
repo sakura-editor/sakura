@@ -26,10 +26,16 @@
 
 #include "StdAfx.h"
 #include "CBackupAgent.h"
+
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat
 #include "CSelectLang.h"
 #include "String_define.h"
+
+CBackupAgent::CBackupAgent(CEditDoc* pcDoc)
+	: CDocListenerEx(pcDoc)
+{
+}
 
 /*! セーブ前おまけ処理
 	@param pSaveInfo [in] 保存ファイル情報

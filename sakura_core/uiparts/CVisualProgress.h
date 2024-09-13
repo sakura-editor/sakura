@@ -29,13 +29,14 @@
 
 #include "doc/CDocListener.h"
 #include "util/design_template.h"
+
 class CWaitCursor;
 
 class CVisualProgress final : public CDocListenerEx, public CProgressListener{
 public:
 	//コンストラクタ・デストラクタ
 	CVisualProgress();
-	virtual ~CVisualProgress();
+	~CVisualProgress() override;
 
 	//ロード前後
 	void OnBeforeLoad(SLoadInfo* sLoadInfo) override;
@@ -53,10 +54,12 @@ protected:
 	void _Begin();
 	void _Doing(int nPer);
 	void _End();
+
 private:
-	CWaitCursor* m_pcWaitCursor;
-	int	nOldValue;
+	CWaitCursor* m_pcWaitCursor = nullptr;
+	int	         nOldValue      = -1;
 
 	DISALLOW_COPY_AND_ASSIGN(CVisualProgress);
 };
+
 #endif /* SAKURA_CVISUALPROGRESS_A9390FAB_E0F3_4EA2_8A6C_1ACB3143DD3F_H_ */

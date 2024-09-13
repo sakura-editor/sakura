@@ -28,13 +28,23 @@
 */
 #include "StdAfx.h"
 #include "plugin/CPluginManager.h"
+
+#include "_main/CProcess.h"
+
 #include "plugin/CJackManager.h"
 #include "plugin/CWSHPlugin.h"
 #include "plugin/CDllPlugin.h"
 #include "util/module.h"
 #include "io/CZipFile.h"
-#include "CSelectLang.h"
-#include "String_define.h"
+
+/* static */ CPluginManager* CPluginManager::getInstance()
+{
+	const auto process = CProcess::getInstance();
+	if (!process) {
+		return nullptr;
+	}
+	return process->GetPluginManager();
+}
 
 //コンストラクタ
 CPluginManager::CPluginManager()

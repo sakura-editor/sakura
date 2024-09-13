@@ -323,6 +323,7 @@
     <ClInclude Include="..\sakura_core\env\CShareData_IO.h" />
     <ClInclude Include="..\sakura_core\env\CTagJumpManager.h" />
     <ClInclude Include="..\sakura_core\env\DLLSHAREDATA.h" />
+    <ClInclude Include="..\sakura_core\env\SShareDataClient.hpp" />
     <ClInclude Include="..\sakura_core\env\SShareDataClientWithCache.hpp" />
     <ClInclude Include="..\sakura_core\extmodule\CBregexp.h" />
     <ClInclude Include="..\sakura_core\extmodule\CBregexpDll2.h" />
@@ -698,6 +699,7 @@
     <ClCompile Include="..\sakura_core\env\CShareData_IO.cpp" />
     <ClCompile Include="..\sakura_core\env\CTagJumpManager.cpp" />
     <ClCompile Include="..\sakura_core\env\DLLSHAREDATA.cpp" />
+    <ClCompile Include="..\sakura_core\env\SShareDataClient.cpp" />
     <ClCompile Include="..\sakura_core\env\SShareDataClientWithCache.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CBregexp.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CBregexpDll2.cpp" />

@@ -25,7 +25,10 @@
 */
 
 #include "StdAfx.h"
-#include "CFigureManager.h"
+#include "view/figures/CFigureManager.h"
+
+#include "_main/CNormalProcess.h"
+
 #include "CFigure_Tab.h"
 #include "CFigure_Comma.h"
 #include "CFigure_HanSpace.h"
