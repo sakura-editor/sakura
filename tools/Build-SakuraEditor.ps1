@@ -7,9 +7,16 @@ Param(
 
 $SonarScannerProperties = "$HomePath\.sonar\scanner\conf\sonar-scanner.properties"
 
-$hostUrlMatcher = (Get-Content $SonarScannerProperties | Select-String "^sonar.host.url=(.+)").Matches
+$UseBuildWrapper = $env:GITHUB_ACTIONS -eq 'true'
 
-if (-not($hostUrlMatcher.Success) -or $hostUrlMatcher.Groups[1].Value -eq "https://sonarcloud.io") {
+if (Test-Path $SonarScannerProperties) {
+  $hostUrlMatcher = (Get-Content $SonarScannerProperties | Select-String "^sonar.host.url=(.+)").Matches
+  if (-not($hostUrlMatcher.Success) -or $hostUrlMatcher.Groups[1].Value -eq "https://sonarcloud.io") {
+    $UseBuildWrapper = $true
+  }
+}
+
+if ($UseBuildWrapper) {
   .\tools\Build-SakuraEditorWithBuildWrapper.ps1 $VsVersion $Platform $Configuration $HomePath
   exit 0
 }
