@@ -23,7 +23,8 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CMainStatusBar.h"
+#include "window/CMainStatusBar.h"
+
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "apiwrap/CommonControl.h"
@@ -70,13 +71,6 @@ void CMainStatusBar::CreateStatusBar()
 		CEditApp::getInstance()->GetAppInstance(),
 		0
 	);
-
-	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
-		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( FALSE );
-	}
-
-	//スプリッターの、サイズボックスの位置を変更
-	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1);
 }
 
 /* ステータスバー破棄 */
@@ -88,24 +82,6 @@ void CMainStatusBar::DestroyStatusBar()
 	}
 	::DestroyWindow( m_hwndStatusBar );
 	m_hwndStatusBar = NULL;
-
-	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
-		bool bSizeBox;
-		if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-			/* サイズボックスの表示／非表示切り替え */
-			bSizeBox = false;
-		}
-		else{
-			bSizeBox = true;
-			/* ステータスパーを表示している場合はサイズボックスを表示しない */
-			if( NULL != m_hwndStatusBar ){
-				bSizeBox = false;
-			}
-		}
-		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
-	}
-	//スプリッターの、サイズボックスの位置を変更
-	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1 );
 }
 
 /*!
