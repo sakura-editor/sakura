@@ -493,6 +493,7 @@
     <ClInclude Include="..\sakura_core\_main\CCommandLine.h" />
     <ClInclude Include="..\sakura_core\_main\CControlProcess.h" />
     <ClInclude Include="..\sakura_core\_main\CControlTray.h" />
+    <ClInclude Include="..\sakura_core\_main\CMainWindow.hpp" />
     <ClInclude Include="..\sakura_core\_main\CMutex.h" />
     <ClInclude Include="..\sakura_core\_main\CNormalProcess.h" />
     <ClInclude Include="..\sakura_core\_main\CProcess.h" />
@@ -912,6 +913,7 @@
     <ClCompile Include="..\sakura_core\_main\CCommandLine.cpp" />
     <ClCompile Include="..\sakura_core\_main\CControlProcess.cpp" />
     <ClCompile Include="..\sakura_core\_main\CControlTray.cpp" />
+    <ClCompile Include="..\sakura_core\_main\CMainWindow.cpp" />
     <ClCompile Include="..\sakura_core\_main\CNormalProcess.cpp" />
     <ClCompile Include="..\sakura_core\_main\CProcess.cpp" />
     <ClCompile Include="..\sakura_core\_main\CProcessFactory.cpp" />

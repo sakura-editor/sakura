@@ -27,26 +27,21 @@
 #define SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_
 #pragma once
 
-#include "apiwrap/window/COriginalWnd.hpp"
-#include "env/SShareDataClientWithCache.hpp"
+#include "_main/CMainWindow.hpp"
 
-#include "uiparts/CMenuDrawer.h"
-#include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
 
 struct SLoadInfo;
 struct EditInfo;
 struct DLLSHAREDATA;
-class CPropertyManager;
 
 //!	常駐部の管理
 /*!
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
  */
-class CControlTray : public apiwrap::window::COriginalWnd, private SShareDataClientWithCache {
+class CControlTray : public CMainWindow {
 	using Me = CControlTray;
-	using CPropertyManagerHolder = std::unique_ptr<CPropertyManager>;
 
 public:
 	/*
@@ -58,14 +53,14 @@ public:
 	/*
 	|| メンバ関数
 	*/
-	HWND Create(HINSTANCE hInstance);	/* 作成 */
+	HWND    CreateMainWnd(int nCmdShow) override;	/* 作成 */
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
 
 	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 
 	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
 
-	void MessageLoop( void );	/* メッセージループ */
+	void    MessageLoop(void) override;
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
@@ -119,8 +114,6 @@ protected:
 	|| メンバ変数
 	*/
 private:
-	CMenuDrawer		m_cMenuDrawer;
-	CPropertyManagerHolder  m_pcPropertyManager = std::make_unique<CPropertyManager>();
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
 	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
 
@@ -132,8 +125,6 @@ private:
 
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
 	int				m_nCurSearchKeySequence;
-
-	CImageListMgr	m_hIcons;
 
 	UINT			m_uCreateTaskBarMsg;	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 

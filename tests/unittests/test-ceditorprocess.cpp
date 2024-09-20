@@ -25,6 +25,9 @@
 #include "pch.h"
 
 #include "TMockProcess.hpp"
+#include "TMockMainWindow.hpp"
+
+#include "CEditorProcessInitTest.hpp"
 
 #include "_main/CNormalProcess.h"
 
@@ -37,6 +40,8 @@
  * @brief エディタープロセスの異常系テスト
  */
 using CEditorProcessTest = TProcessTest<CEditorProcess>;
+
+using MockCEditorProcess = TMockProcess<CEditorProcess>;
 
 TEST_F(CEditorProcessTest, getEditorProcess)
 {
@@ -75,7 +80,10 @@ TEST_F(CEditorProcessTest, InitializeProcess003)
 
 	EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Return(nullptr));
 
-    EXPECT_CALL(*process, CreateProcessW(_, _, _, _, _)).WillOnce(Return(false));
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(&*process, &MockCEditorProcess::OriginalInitProcess));
+    EXPECT_CALL(*process, InitShareData()).Times(0);
+
+	EXPECT_CALL(*process, CreateProcessW(_, _, _, _, _)).WillOnce(Return(false));
 
 	EXPECT_CALL(*process, GetLastError())
 		.WillOnce(Return(ERROR_SUCCESS))
@@ -98,6 +106,9 @@ TEST_F(CEditorProcessTest, InitializeProcess004)
     EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
     EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillRepeatedly(Return(nullptr));
 
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(&*process, &MockCEditorProcess::OriginalInitProcess));
+    EXPECT_CALL(*process, InitShareData()).Times(0);
+
 	// プロセス起動は成功させる
 	EXPECT_CALL(*process, CreateProcessW(_, _, _, _, _)).WillOnce(Invoke(CreateDummyProcessW));
 
@@ -116,6 +127,9 @@ TEST_F(CEditorProcessTest, InitializeProcess005)
     EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED)))
 		.WillOnce(Return(nullptr)) // 起動前チェックの分
 		.WillOnce(Invoke(DefaultOpenEventW));
+
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(&*process, &MockCEditorProcess::OriginalInitProcess));
+    EXPECT_CALL(*process, InitShareData()).Times(0);
 
 	// プロセス起動は成功させる
 	EXPECT_CALL(*process, CreateProcessW(_, _, _, _, _)).WillOnce(Invoke(CreateDummyProcessW));
@@ -137,14 +151,38 @@ TEST_F(CEditorProcessTest, InitializeProcess006)
 		.WillOnce(Return(nullptr)) // 起動前チェックの分
 		.WillOnce(Invoke(DefaultOpenEventW));
 
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(&*process, &MockCEditorProcess::OriginalInitProcess));
+    EXPECT_CALL(*process, InitShareData()).WillOnce(Return(false));
+
 	// プロセス起動は成功させる
 	EXPECT_CALL(*process, CreateProcessW(_, _, _, _, _)).WillOnce(Invoke(CreateDummyProcessW));
 
     EXPECT_CALL(*process, WaitForSingleObject(_, _)).WillOnce(Return(WAIT_OBJECT_0));
-    EXPECT_CALL(*process, InitShareData()).WillOnce(Return(false));
 
 	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_DLGPROCESS1));
 }
+
+// メインウインドウの作成に失敗
+TEST_F(CEditorProcessTest, InitializeProcess007)
+{
+	auto mainWindow = std::make_unique<MockCMainWindow>(L"test");
+    EXPECT_CALL(*mainWindow, CreateMainWnd(_)).WillOnce(Return(nullptr));
+
+	EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_INIT))).WillOnce(Invoke(DefaultCreateMutexW));
+
+    EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
+
+	EXPECT_CALL(*process, OpenEventW(_, _, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
+    EXPECT_CALL(*process, WaitForSingleObject(_, _)).Times(0);
+
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(DoNothing));
+    EXPECT_CALL(*process, InitShareData()).Times(0);
+
+    EXPECT_CALL(*process, GetMainWnd()).WillOnce(Return(mainWindow.get()));
+
+	EXPECT_FALSE(process->InitializeProcess());
+}
+
 
 // コントロールプロセスが既に起動中
 TEST_F(CEditorProcessTest, StartControlProcess001)
@@ -232,44 +270,98 @@ TEST_F(CEditorProcessTest, TerminateControlProcess006)
 	process->TerminateControlProcess();
 }
 
-TEST(CEditorProcess, CCodeChecker)
+TEST(CProcess, CCodeChecker)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CCodeChecker::getInstance());
 }
 
-TEST(CEditorProcess, CDiffManager)
+TEST(CProcess, CDiffManager)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CDiffManager::getInstance());
 }
 
-TEST(CEditorProcess, CEditWnd)
+TEST(CProcess, CEditWnd)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CEditWnd::getInstance());
 }
 
-TEST(CEditorProcess, CMacroFactory)
+TEST(CProcess, CMacroFactory)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CMacroFactory::getInstance());
 }
 
-TEST(CEditorProcess, CMigemo)
+TEST(CProcess, CMigemo)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CMigemo::getInstance());
 }
 
-TEST(CEditorProcess, CFigureManager)
+TEST(CProcess, CFigureManager)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CFigureManager::getInstance());
 }
 
-TEST(CEditorProcess, CColorStrategyPool)
+TEST(CProcess, CColorStrategyPool)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CColorStrategyPool::getInstance());
 }
 
-TEST(CEditorProcess, CAppMode)
+TEST(CProcess, CAppMode)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CAppMode::getInstance());
+}
+
+TEST_F(CEditorProcessInitTest, CCommandLine)
+{
+	EXPECT_TRUE(CCommandLine::getInstance());
+}
+
+TEST_F(CEditorProcessInitTest, CCodeChecker)
+{
+	EXPECT_TRUE(CCodeChecker::getInstance());
+}
+
+TEST_F(CEditorProcessInitTest, CDiffManager)
+{
+	EXPECT_TRUE(CDiffManager::getInstance());
+}
+
+TEST_F(CEditorProcessInitTest, CEditWnd)
+{
+	EXPECT_TRUE(CEditWnd::getInstance());
+}
+
+TEST_F(CEditorProcessInitTest, CMacroFactory)
+{
+	EXPECT_TRUE(CMacroFactory::getInstance());
+}
+
+TEST_F(CEditorProcessInitTest, CMigemo)
+{
+	EXPECT_TRUE(CMigemo::getInstance());
+}
+
+TEST_F(CEditorProcessInitTest, OnCreate)
+{
+	EXPECT_FALSE(process->GetMainWnd()->OnCreate(nullptr, nullptr));
+
+	auto pcView = &GetEditWnd().GetActiveView();
+	EXPECT_FALSE(pcView->OnCreate(nullptr, nullptr));
+
+	const auto hWnd = HWND(0x1234);
+	pcView->DispatchEvent(hWnd, WM_COMMAND, 0, 0);
+}
+
+TEST_F(CEditorProcessInitTest, GetGroupId)
+{
+	EXPECT_EQ(1, GetGroupId(-1, true));
 }
 
 HANDLE DefaultOpenEventW(DWORD, bool, std::wstring_view name)

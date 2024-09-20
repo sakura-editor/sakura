@@ -188,10 +188,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CControlProcessInitTest.hpp" />
+    <ClInclude Include="CEditorProcessInitTest.hpp" />
     <ClInclude Include="eval_outputs.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TMockMainWindow.hpp" />
     <ClInclude Include="TMockProcess.hpp" />
   </ItemGroup>
   <ItemGroup>

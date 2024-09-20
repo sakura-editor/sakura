@@ -159,7 +159,7 @@ static const EFunctionCode EIsModificationForbidden[] = {
 	@date 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
-CEditDoc::CEditDoc(CEditApp* pcApp)
+CEditDoc::CEditDoc()
 : m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
@@ -661,7 +661,7 @@ void CEditDoc::OnChangeSetting(
 	int			i;
 	HWND		hwndProgress = NULL;
 
-	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
+	const auto  pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();

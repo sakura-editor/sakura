@@ -21,31 +21,35 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-#include "pch.h"
+ */
+#pragma once
 
-#include "env/CSakuraEnvironment.h"
+#include "apiwrap/window/COriginalWnd.hpp"
+#include "env/SShareDataClientWithCache.hpp"
 
-#include "CEditorProcessInitTest.hpp"
-
-#include "_main/CNormalProcess.h"
-
-#include "CEditApp.h"
-
-#include "util/file.h"
-
-struct CEditDocTest : public CEditorProcessInitTest {};
+#include "uiparts/CMenuDrawer.h"
+#include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
+#include "CPropertyManager.h"
 
 /*!
- * @brief GREP検索キーの取得(設定なし)
+ * メインウインドウ
  */
-TEST_F(CEditDocTest, OnFileClose001)
+class CMainWindow : public apiwrap::window::COriginalWnd, public SShareDataClientWithCache
 {
-	CAppMode::getInstance()->SetGrepKey( L"1234567890ABCDEF1234567890abcdef"sv );
+private:
+    using Me = CMainWindow;
+	using CPropManagerHolder = std::shared_ptr<CPropertyManager>;
 
-	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = true;
+public:
+	using COriginalWnd::COriginalWnd;
+	~CMainWindow() override = default;
 
-	process->GetShareData().m_Common.m_sSearch.m_bGrepExitConfirm = true;
+	virtual HWND    CreateMainWnd(int nCmdShow) = 0;
+	virtual void    MessageLoop(void) = 0;
 
-	EXPECT_FALSE(CEditDoc::getInstance()->OnFileClose(false));
-}
+	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
+
+	CImageListMgr       m_hIcons;
+	CMenuDrawer         m_cMenuDrawer;
+	CPropManagerHolder  m_pcPropertyManager = std::make_shared<CPropertyManager>();
+};

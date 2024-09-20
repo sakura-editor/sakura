@@ -76,10 +76,8 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : private SShareDataClientWithCache {
+class CJackManager final : public TSingleInstance<CJackManager>, private SShareDataClientWithCache {
 public:
-	static CJackManager* getInstance();
-
 	CJackManager();
 
 	typedef std::wstring wstring;

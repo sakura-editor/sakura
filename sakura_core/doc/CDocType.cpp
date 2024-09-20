@@ -43,11 +43,6 @@ CDocType::CDocType(CEditDoc* pcDoc)
 {
 }
 
-void CDocType::InitColorStrategyPool()
-{
-	m_ColorStrategyPool = std::make_unique<CColorStrategyPool>();
-}
-
 //! 文書種別の設定
 void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 {
@@ -77,8 +72,8 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 	}
 
 	// タイプ別設定更新を反映
-	m_ColorStrategyPool->OnChangeSetting();
-	m_FigureManager->OnChangeSetting();
+	CColorStrategyPool::getInstance()->OnChangeSetting();
+	CFigureManager::getInstance()->OnChangeSetting();
 	this->SetDocumentIcon();	// Sep. 11, 2002 genta
 	m_pcDocRef->SetBackgroundImage();
 }

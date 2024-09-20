@@ -1160,6 +1160,9 @@
     <ClInclude Include="..\sakura_core\apiwrap\window\CWndClass.hpp">
       <Filter>Cpp Source Files\apiwrap\window</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\_main\CMainWindow.hpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2383,6 +2386,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\apiwrap\window\CGenericWnd.cpp">
       <Filter>Cpp Source Files\apiwrap\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\_main\CMainWindow.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

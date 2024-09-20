@@ -69,6 +69,7 @@
 #include "mfclike/CMyWnd.h"		// parent
 #include "doc/CDocListener.h"	// parent
 #include "basis/SakuraBasis.h"	// CLogicInt, CLayoutInt
+#include "extmodule/CMigemo.h"
 #include "util/container.h"		// vector_ex
 #include "util/design_template.h"
 
@@ -81,7 +82,6 @@ class CRegexKeyword;///
 class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
 class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
-class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
 struct CColor3Setting;
 class COutputAdapter;
@@ -732,7 +732,7 @@ public:
 	CAutoMarkMgr*	m_cHistory;	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	int				m_nMyIndex      = 0;
-	CMigemo*		m_pcmigemo;
+	CMigemo*		m_pcmigemo      = CMigemo::getInstance();
 	bool			m_bMiniMap;
 	bool			m_bMiniMapMouseDown;
 	CLayoutInt		m_nPageViewTop;

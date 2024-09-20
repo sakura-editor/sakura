@@ -134,6 +134,10 @@ struct TMockProcess : public Base
 		_Pre_maybenull_ _Post_valid_ LPARAM lParam
 	));
 
+	MOCK_CONST_METHOD1(SetEvent, bool(
+		_In_ HANDLE hEvent
+	));
+
 	MOCK_CONST_METHOD2(WaitForSingleObject, DWORD(
 		_In_ HANDLE hHandle,
 		_In_ DWORD dwMilliseconds
@@ -144,6 +148,20 @@ struct TMockProcess : public Base
 	bool OriginalInitShareData()
 	{
 		return Base::InitShareData();
+	}
+
+	MOCK_METHOD0(InitProcess, void());
+
+	void OriginalInitProcess()
+	{
+		Base::InitProcess();
+	}
+
+	MOCK_CONST_METHOD0(GetMainWnd, CMainWindow*());
+
+	CMainWindow* OriginalGetMainWnd() const
+	{
+		return Base::GetMainWnd();
 	}
 };
 

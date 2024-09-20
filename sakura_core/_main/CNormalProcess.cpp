@@ -25,6 +25,8 @@
 
 #include "apiwrap/kernel/handle_closer.hpp"
 
+#include "CEditApp.h"
+
 #include "_main/CControlTray.h"
 #include "CGrepAgent.h"
 #include "doc/CEditDoc.h"
@@ -107,22 +109,15 @@ bool CNormalProcess::InitializeProcess()
 
 	InitProcess();
 
+	//ウィンドウの作成
+	if (!GetEditWnd()->CreateMainWnd(GetCmdShow())) {
+		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
+	}
+
 	// ミューテックスハンドルをスマートポインタから切り離す
 	mutexHolder.release();
 
-	auto pEditWnd = m_pcEditWnd.get();
-
-	// グループIDを取得
-	int nGroupId = GetCCommandLine().GetGroupId();
-	if (GetShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1) {
-		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
-	}
-	m_pcEditApp->Create(pEditWnd, nGroupId);
-	if( NULL == pEditWnd->GetHwnd() ){
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
-		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
-	}
+	auto pEditWnd = GetEditWnd();
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	const auto bDebugMode = GetCCommandLine().IsDebugMode();
@@ -171,7 +166,6 @@ bool CNormalProcess::InitializeProcess()
 			// pEditWnd->GetDocument()->SetCurDirNotitle();
 			// 2003.06.23 Moca GREP実行前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
@@ -225,7 +219,6 @@ bool CNormalProcess::InitializeProcess()
 			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			hMutex = NULL;
@@ -351,8 +344,6 @@ bool CNormalProcess::InitializeProcess()
 		}
 	}
 
-	SetMainWindow( pEditWnd->GetHwnd() );
-
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	pEditWnd->GetActiveView().SetIMECompFormPos();
 
@@ -455,17 +446,30 @@ void CNormalProcess::InitProcess()
 	}
 #endif
 
-	// プラグイン読み込み
-	GetPluginManager()->LoadAllPlugin();
+	//ドキュメントの作成
+	m_pcEditDoc = std::make_unique<CEditDoc>();
+	m_pcEditDoc->Create();
+
+	m_pcLoadAgent = std::make_unique<CLoadAgent>();
+	m_pcSaveAgent = std::make_unique<CSaveAgent>();
+	m_pcVisualProgress = std::make_unique<CVisualProgress>();
+	m_GrepAgent = std::make_unique<CGrepAgent>();	//GREPモード
+	m_AppMode = std::make_unique<CAppMode>();	//編集モード
+	m_pcMruListener = std::make_unique<CMruListener>();		//MRU管理
 
 	m_MacroFactory = std::make_unique<CMacroFactory>();
+	m_SMacroMgr = std::make_unique<CSMacroMgr>();	//マクロ管理
 
 	// CEditAppを作成
-	m_pcEditApp = std::make_unique<CEditApp>(GetProcessInstance());
+	m_pcEditApp = std::make_unique<CEditApp>();
 
-	m_pcEditWnd = std::make_unique<CEditWnd>(m_pcEditApp->GetDocument());
+	SetMainWindow(std::make_unique<CEditWnd>());
 
-	m_pcEditApp->GetDocument()->m_cDocType.InitColorStrategyPool();
+	m_pcEditApp->m_pcEditWnd = GetEditWnd();
+	m_pcEditApp->m_pcPropertyManager = GetEditWnd()->m_pcPropertyManager.get();
+
+	// プラグイン読み込み
+	GetPluginManager()->LoadAllPlugin();
 }
 
 bool CNormalProcess::InitShareData()
@@ -477,21 +481,6 @@ bool CNormalProcess::InitShareData()
 		CSelectLang::ChangeLang(GetShareData().m_Common.m_sWindow.m_szLanguageDll);
 	}
 	return result;
-}
-
-/*!
-	@brief エディタプロセスのメッセージループ
-	
-	@author aroka
-	@date 2002/01/07
-*/
-bool CNormalProcess::MainLoop()
-{
-	if( GetMainWindow() ){
-		m_pcEditApp->GetEditWindow()->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

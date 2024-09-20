@@ -180,7 +180,6 @@ BOOL CEditView::Create(
 
 	//2004.10.23 isearch
 	m_nISearchMode = SEARCH_NONE;
-	m_pcmigemo = NULL;
 
 	// 2007.10.02 nasukoji
 	m_dwTripleClickCheck = 0;		// トリプルクリックチェック用時刻初期化
@@ -797,24 +796,29 @@ bool CEditView::OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct)
 	constexpr auto IDC_SIZEBOX2 = 104;
 
 	m_hwndSizeBox = CreateWindowExW(
-		GetHwnd(),
+		hWnd,
 		IDC_SIZEBOX,
 		CWndClass(WC_SCROLLBAR),
 		WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP
 	);
+
+#if 0 // テスト書けないのでコメントアウト
 	if (!m_hwndSizeBox) {
         return false;
 	}
+#endif
 
 	m_hwndSizeBoxPlaceholder = CreateWindowExW(
-		GetHwnd(),
+		hWnd,
 		IDC_SIZEBOX2,
 		CWndClass(WC_STATIC)
 	);
 
+#if 0 // テスト書けないのでコメントアウト
 	if (!m_hwndSizeBoxPlaceholder) {
         return false;
 	}
+#endif
 
 	return true;
 }

@@ -30,7 +30,6 @@
 
 #include "_main/CControlProcess.h"
 
-#include "CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
 #include "debug/CRunningTimer.h"
 #include "dlg/CDlgOpenFile.h"
@@ -189,7 +188,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 /////////////////////////////////////////////////////////////////////////////
 // CControlTray
 CControlTray::CControlTray() noexcept
-	: COriginalWnd(GetEditAppName(CProcess::getInstance()->GetCCommandLine().GetProfileOpt()), G_AppInstance())
+	: CMainWindow(GetEditAppName(CProcess::getInstance()->GetCCommandLine().GetProfileOpt()), G_AppInstance())
 , m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
 , m_nCurSearchKeySequence(-1)
 , m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
@@ -206,11 +205,9 @@ CControlTray::CControlTray() noexcept
 // CControlTray メンバ関数
 
 /* 作成 */
-HWND CControlTray::Create( HINSTANCE hInstance )
+HWND CControlTray::CreateMainWnd(int nCmdShow)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CControlTray::Create" );
-
-	m_hInstance = hInstance;
 
 	const auto profileName = CProcess::getInstance()->GetCCommandLine().GetProfileOpt();
 
@@ -976,17 +973,10 @@ LRESULT CControlTray::DispatchEvent(
  */
 bool CControlTray::OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct)
 {
-#if 0 // テスト書けないのでコメントアウト
     if (!__super::OnCreate(hWnd, lpCreateStruct))
     {
         return false;
     }
-#endif
-
-	m_hIcons.Create(m_hInstance);	//	Oct. 16, 2000 genta
-	m_cMenuDrawer.Create(CSelectLang::getLangRsrcInstance(), hWnd, &m_hIcons);
-
-	m_pcPropertyManager->Create(hWnd, &m_hIcons, &m_cMenuDrawer );
 
 	m_szLanguageDll = m_pShareData->m_Common.m_sWindow.m_szLanguageDll;
 

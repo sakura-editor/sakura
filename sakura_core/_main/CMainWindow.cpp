@@ -21,31 +21,31 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
-#include "pch.h"
-
-#include "env/CSakuraEnvironment.h"
-
-#include "CEditorProcessInitTest.hpp"
-
-#include "_main/CNormalProcess.h"
-
-#include "CEditApp.h"
-
-#include "util/file.h"
-
-struct CEditDocTest : public CEditorProcessInitTest {};
-
-/*!
- * @brief GREP検索キーの取得(設定なし)
  */
-TEST_F(CEditDocTest, OnFileClose001)
+#include "StdAfx.h"
+#include "_main/CMainWindow.hpp"
+
+#include "CSelectLang.h"
+
+ /*!
+ * WM_CREATEハンドラ
+ *
+ * WM_CREATEはCreateWindowEx関数によるウインドウ作成中にポストされます。
+ * メッセージの戻り値はウインドウの作成を続行するかどうかの判断に使われます。
+ *
+ * @retval true  ウィンドウの作成を続行する
+ * @retval false ウィンドウの作成を中止する
+ */
+bool CMainWindow::OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct)
 {
-	CAppMode::getInstance()->SetGrepKey( L"1234567890ABCDEF1234567890abcdef"sv );
+    if (!__super::OnCreate(hWnd, lpCreateStruct))
+    {
+        return false;
+    }
 
-	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = true;
+	m_hIcons.Create(m_hInstance);
+	m_cMenuDrawer.Create(CSelectLang::getLangRsrcInstance(), hWnd, &m_hIcons);
+	m_pcPropertyManager->Create(hWnd, &m_hIcons, &m_cMenuDrawer );
 
-	process->GetShareData().m_Common.m_sSearch.m_bGrepExitConfirm = true;
-
-	EXPECT_FALSE(CEditDoc::getInstance()->OnFileClose(false));
+	return true;
 }

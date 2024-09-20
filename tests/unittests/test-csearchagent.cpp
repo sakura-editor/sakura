@@ -24,7 +24,7 @@
 #include "pch.h"
 #include "doc/logic/CDocLineMgr.h"
 
-#include "_main/CProcessFactory.h"
+#include "CEditorProcessInitTest.hpp"
 
 namespace {
 
@@ -61,25 +61,7 @@ COpeLineData MakeOpeLineData(std::initializer_list<RawLineData> lines)
 
 } // end of namespace
 
-struct CSearchAgentTest : public ::testing::Test
-{
-	static inline std::shared_ptr<CProcess> process = nullptr;
-
-    static void SetUpTestSuite()
-    {
-		// エディタープロセスを生成する
-		process = CProcessFactory().CreateInstance(LR"(-PROF="")");
-
-		// エディタープロセスを初期化する
-		process->InitProcess();
-	}
-
-    static void TearDownTestSuite() {
-		process->TerminateControlProcess();
-
-		process.reset();
-	}
-};
+struct CSearchAgentTest : public CEditorProcessInitTest {};
 
 /*!
 	CSearchAgent::ReplaceData のテスト
