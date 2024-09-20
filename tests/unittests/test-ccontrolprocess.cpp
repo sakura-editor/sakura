@@ -28,11 +28,14 @@
 
 #include "eval_outputs.hpp"
 
+#include "_main/CProcessFactory.h"
 #include "_main/CControlProcess.h"
 
 #include "config/system_constants.h"
 
 #include "_main/CNormalProcess.h"
+
+#include "apiwrap/window/COriginalWnd.hpp"
 
 /*!
  * @brief コントロールプロセスの異常系テスト
@@ -141,3 +144,107 @@ TEST(CProcess, CJackManager)
 {
 	EXPECT_FALSE(CJackManager::getInstance());
 }
+
+namespace apiwrap::window
+{
+
+// クラス名が空
+TEST(CWndClass, RegisterWndClass001)
+{
+	CWndClass wc(L""sv);
+
+	EXPECT_FALSE(wc.RegisterWndClass());
+}
+
+// 正常+二度呼び
+TEST(CWndClass, RegisterWndClass002)
+{
+	constexpr auto& className = L"test";
+
+	const auto hInstance = GetModuleHandleW(nullptr);
+
+	CWndClass wc(className, hInstance, &COriginalWnd::WndProc);
+	EXPECT_STREQ(className, wc.GetOriginalClassName().data());
+	EXPECT_STREQ(className, wc.GetClassNameW());
+
+	EXPECT_TRUE(wc.RegisterWndClass());
+	EXPECT_STREQ(className, wc.GetOriginalClassName().data());
+	EXPECT_NE(className, wc.GetClassNameW());
+
+	EXPECT_TRUE(wc.RegisterWndClass());
+
+	UnregisterClassW(className, hInstance);
+}
+
+struct STestWnd : public apiwrap::window::COriginalWnd
+{
+    using COriginalWnd::WndProc;
+    using COriginalWnd::OnCreate;
+
+	STestWnd() : COriginalWnd(L"test") {}
+};
+
+struct COriginalWndTest : public ::testing::Test
+{
+	std::unique_ptr<COriginalWnd> pWnd = nullptr;
+
+	void SetUp() override {
+		pWnd = std::make_unique<STestWnd>();
+	}
+};
+
+TEST_F(COriginalWndTest, WndProc001)
+{
+	EXPECT_FALSE(STestWnd::WndProc(nullptr, WM_NULL, 0, 0));
+}
+
+TEST_F(COriginalWndTest, OnCreate001)
+{
+	EXPECT_FALSE(pWnd->OnCreate(nullptr, nullptr));
+}
+
+TEST_F(COriginalWndTest, OnCreate002)
+{
+    const auto hWnd = HWND(0x1234);
+	EXPECT_FALSE(pWnd->OnCreate(hWnd, nullptr));
+}
+
+TEST_F(COriginalWndTest, OnCreate003)
+{
+    const auto hWnd = HWND(0x1234);
+    const auto createStruct = std::make_unique<CREATESTRUCT>();
+	EXPECT_TRUE(pWnd->OnCreate(hWnd, &*createStruct));
+}
+
+TEST_F(COriginalWndTest, CreateWnd001)
+{
+	EXPECT_FALSE(pWnd->CreateWnd(HWND(nullptr)));
+}
+
+} // end of namespace apiwrap::window
+
+using ConvertHotKeyModsTestParamType = std::tuple<WORD, WORD>;
+class ConvertHotKeyModsTest : public ::testing::TestWithParam<ConvertHotKeyModsTestParamType> {};
+
+TEST_P(ConvertHotKeyModsTest, convert)
+{
+	const auto arg      = std::get<0>(GetParam());
+	const auto expected = std::get<1>(GetParam());
+	EXPECT_EQ(expected, convertHotKeyMods(arg));
+}
+
+// clang-format off
+INSTANTIATE_TEST_SUITE_P(Parameterized
+	, ConvertHotKeyModsTest
+	, ::testing::Values(
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL | HOTKEYF_SHIFT | HOTKEYF_ALT,   MOD_CONTROL | MOD_SHIFT | MOD_ALT },
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL | HOTKEYF_SHIFT,                 MOD_CONTROL | MOD_SHIFT           },
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL                 | HOTKEYF_ALT,   MOD_CONTROL             | MOD_ALT },
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL,                                 MOD_CONTROL                       },
+		ConvertHotKeyModsTestParamType{                   HOTKEYF_SHIFT | HOTKEYF_ALT,                 MOD_SHIFT | MOD_ALT },
+		ConvertHotKeyModsTestParamType{                   HOTKEYF_SHIFT,                               MOD_SHIFT           },
+		ConvertHotKeyModsTestParamType{                                   HOTKEYF_ALT,                             MOD_ALT },
+		ConvertHotKeyModsTestParamType{ 0,                                               0                                 }
+	)
+);
+// clang-format on

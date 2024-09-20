@@ -127,6 +127,8 @@ class CEditView
 	using CCaretHolder = std::unique_ptr<CCaret>;
 	using CRulerHolder = std::unique_ptr<CRuler>;
 
+	static constexpr auto IDT_ROLLMOUSE = 1;
+
 	std::thread m_threadUrlOpen;
 
 public:
@@ -195,9 +197,12 @@ public:
 public:
 	//ドキュメントイベント
 	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
+
 	/* メッセージディスパッチャ */
-	LRESULT DispatchEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	//
+	LRESULT DispatchEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+
+	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
+
 	void OnChangeSetting();										/* 設定変更を反映させる */
 	void OnPaint(HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp);			/* 通常の描画処理 */
 	void OnPaint2(HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp);			/* 通常の描画処理 */
@@ -620,7 +625,6 @@ public:
 
 public:
 	//ウィンドウ
-	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
 	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
 	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
@@ -727,7 +731,7 @@ public:
 	// その他
 	CAutoMarkMgr*	m_cHistory;	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
-	int				m_nMyIndex;	/* 分割状態 */
+	int				m_nMyIndex      = 0;
 	CMigemo*		m_pcmigemo;
 	bool			m_bMiniMap;
 	bool			m_bMiniMapMouseDown;

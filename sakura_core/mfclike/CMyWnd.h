@@ -27,17 +27,16 @@
 #define SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_
 #pragma once
 
-#include "apiwrap/window/CGenericWnd.hpp"
+#include "apiwrap/window/COriginalWnd.hpp"
 
 /*
 	MFCのCWnd的なクラス。
 
 	2008.01.26 kobake 作成
-*/
-
-class CMyWnd : public apiwrap::window::CGenericWnd {
+ */
+class CMyWnd : public apiwrap::window::COriginalWnd {
 public:
-	CMyWnd() = default;
+	explicit CMyWnd(std::wstring_view className) noexcept;
 
 	void SetHwnd(HWND hwnd){ _SetHwnd(hwnd); }
 

@@ -44,7 +44,7 @@
 #define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
 
-#include "apiwrap/window/CGenericWnd.hpp"
+#include "apiwrap/window/COriginalWnd.hpp"
 #include "env/SShareDataClientWithCache.hpp"
 
 #include <shellapi.h>// HDROP
@@ -98,7 +98,7 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-	: public apiwrap::window::CGenericWnd
+	: public apiwrap::window::COriginalWnd
 	, public CDocListenerEx
 	, private SShareDataClientWithCache
 {
@@ -116,8 +116,8 @@ public:
 	//	Mar. 7, 2002 genta 文書タイプ用引数追加
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
-	HWND Create(
-		CImageListMgr*	pcIcons,
+	HWND    Create(
+		const CImageListMgr*,
 		int				nGroup
 	);
 	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
@@ -147,6 +147,8 @@ public:
 	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 
 	//各種イベント
+	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
+
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
 	LRESULT OnSize(WPARAM wParam, LPARAM lParam);	/* WM_SIZE 処理 */
 	LRESULT OnSize2(WPARAM wParam, LPARAM lParam, bool bUpdateStatus);

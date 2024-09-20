@@ -24,6 +24,8 @@
  */
 #pragma once
 
+#include "apiwrap/window/CWndClass.hpp"
+
 namespace apiwrap::window
 {
 
@@ -40,7 +42,24 @@ private:
 public:
     HWND    m_hWnd = nullptr;
 
+    template<typename T, std::enable_if_t<std::is_base_of_v<CGenericWnd, T>, int> = 0>
+    static T* FromHwnd(HWND hWnd)
+    {
+        return static_cast<T*>((CGenericWnd*)GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+    }
+
+    CGenericWnd() = default;
     virtual ~CGenericWnd() = default;
+
+    HWND    CreateWindowExW(
+        HWND                hWndParent,
+        UINT                windowId,
+        const CWndClass&    wndClass,
+        DWORD               dwStyle     = WS_CHILD,
+        DWORD               dwExStyle   = 0L,
+        std::wstring_view   windowTitle = L""sv,
+        std::optional<RECT> rcDesired   = std::nullopt
+    ) const;
 
     HWND    GetHwnd() const noexcept { return m_hWnd; }
 

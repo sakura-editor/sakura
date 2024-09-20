@@ -27,7 +27,7 @@
 #define SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_
 #pragma once
 
-#include "apiwrap/window/CGenericWnd.hpp"
+#include "apiwrap/window/COriginalWnd.hpp"
 #include "env/SShareDataClientWithCache.hpp"
 
 #include "uiparts/CMenuDrawer.h"
@@ -44,13 +44,16 @@ class CPropertyManager;
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
  */
-class CControlTray : public apiwrap::window::CGenericWnd, private SShareDataClientWithCache {
+class CControlTray : public apiwrap::window::COriginalWnd, private SShareDataClientWithCache {
+	using Me = CControlTray;
+	using CPropertyManagerHolder = std::unique_ptr<CPropertyManager>;
+
 public:
 	/*
 	||  Constructors
 	*/
-	CControlTray();
-	~CControlTray() override;
+	explicit CControlTray() noexcept;
+	~CControlTray() override = default;
 
 	/*
 	|| メンバ関数
@@ -59,6 +62,8 @@ public:
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
 
 	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
+
+	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
 
 	void MessageLoop( void );	/* メッセージループ */
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
@@ -101,7 +106,6 @@ public:
 protected:
 	void	DoGrep();	//Stonee, 2001/03/21
 	BOOL TrayMessage(HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const WCHAR* pszTip);	/*!< タスクトレイのアイコンに関する処理 */
-	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);	/*!< WM_COMMANDメッセージ処理 */
 	void OnNewEditor(bool bNewWindow); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
 	static INT_PTR CALLBACK ExitingDlgProc(	/*!< 終了ダイアログ用プロシージャ */	// 2006.07.02 ryoji CControlProcess から移動
@@ -116,10 +120,15 @@ protected:
 	*/
 private:
 	CMenuDrawer		m_cMenuDrawer;
-	CPropertyManager*	m_pcPropertyManager;
+	CPropertyManagerHolder  m_pcPropertyManager = std::make_unique<CPropertyManager>();
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
-	HINSTANCE		m_hInstance;
 	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
+
+	HWND            hwndHtmlHelp    = nullptr;
+	WORD            wHotKeyMods     = 0;
+	WORD            wHotKeyCode     = 0;
+
+	bool			bLDClick        = false;	/* 左ダブルクリックをしたか 03/02/20 ai */
 
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
 	int				m_nCurSearchKeySequence;
@@ -128,7 +137,9 @@ private:
 
 	UINT			m_uCreateTaskBarMsg;	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 
-	WCHAR			m_szLanguageDll[MAX_PATH];
+	SFilePath       m_szLanguageDll;
 };
+
+WORD convertHotKeyMods(WORD wHotKeyMods);
 
 #endif /* SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_ */

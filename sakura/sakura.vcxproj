@@ -167,6 +167,8 @@
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
     <ClInclude Include="..\sakura_core\apiwrap\window\CGenericWnd.hpp" />
+    <ClInclude Include="..\sakura_core\apiwrap\window\COriginalWnd.hpp" />
+    <ClInclude Include="..\sakura_core\apiwrap\window\CWndClass.hpp" />
     <ClInclude Include="..\sakura_core\basis\TComImpl.hpp" />
     <ClInclude Include="..\sakura_core\basis\CErrorInfo.h" />
     <ClInclude Include="..\sakura_core\basis\CLaxInteger.h" />
@@ -531,6 +533,9 @@
     <ClCompile Include="..\sakura_core\apiwrap\kernel\to_multibyte.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
+    <ClCompile Include="..\sakura_core\apiwrap\window\CGenericWnd.cpp" />
+    <ClCompile Include="..\sakura_core\apiwrap\window\COriginalWnd.cpp" />
+    <ClCompile Include="..\sakura_core\apiwrap\window\CWndClass.cpp" />
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />
     <ClCompile Include="..\sakura_core\basis\CLaxInteger.cpp" />
     <ClCompile Include="..\sakura_core\basis\CMyPoint.cpp" />
