@@ -335,10 +335,10 @@ BOOL CEditView::Create(
 	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompatibleBMP );
 
 	/* 垂直分割ボックス */
-	m_pcsbwVSplitBox = new CSplitBoxWnd;
+	m_pcsbwVSplitBox = std::make_unique<CVSplitBoxWnd>().release();
 	m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
 	/* 水平分割ボックス */
-	m_pcsbwHSplitBox = new CSplitBoxWnd;
+	m_pcsbwHSplitBox = std::make_unique<CHSplitBoxWnd>().release();
 	m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
 
 	/* スクロールバー作成 */
@@ -1750,7 +1750,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 {
 	if( bVert ){
 		if( m_pcsbwVSplitBox == NULL ){	/* 垂直分割ボックス */
-			m_pcsbwVSplitBox = new CSplitBoxWnd;
+			m_pcsbwVSplitBox = std::make_unique<CVSplitBoxWnd>().release();
 			m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
 		}
 	}
@@ -1759,7 +1759,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 	}
 	if( bHorz ){
 		if( m_pcsbwHSplitBox == NULL ){	/* 水平分割ボックス */
-			m_pcsbwHSplitBox = new CSplitBoxWnd;
+			m_pcsbwHSplitBox = std::make_unique<CHSplitBoxWnd>().release();
 			m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
 		}
 	}
