@@ -166,6 +166,7 @@
     <ClInclude Include="..\sakura_core\apiwrap\kernel\to_multibyte.hpp" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
+    <ClInclude Include="..\sakura_core\apiwrap\window\CGenericWnd.hpp" />
     <ClInclude Include="..\sakura_core\basis\TComImpl.hpp" />
     <ClInclude Include="..\sakura_core\basis\CErrorInfo.h" />
     <ClInclude Include="..\sakura_core\basis\CLaxInteger.h" />

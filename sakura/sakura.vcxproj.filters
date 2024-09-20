@@ -122,6 +122,9 @@
     <Filter Include="Cpp Source Files\apiwrap\kernel">
       <UniqueIdentifier>{eea65598-f17e-433c-ac03-de058e294aad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\apiwrap\window">
+      <UniqueIdentifier>{400de289-d814-463a-a835-1a22e683d33e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -1147,6 +1150,9 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\env\SShareDataClient.hpp">
       <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\window\CGenericWnd.hpp">
+      <Filter>Cpp Source Files\apiwrap\window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

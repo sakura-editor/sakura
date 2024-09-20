@@ -44,6 +44,7 @@
 #define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
 
+#include "apiwrap/window/CGenericWnd.hpp"
 #include "env/SShareDataClientWithCache.hpp"
 
 #include <shellapi.h>// HDROP
@@ -97,7 +98,8 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-	: public CDocListenerEx
+	: public apiwrap::window::CGenericWnd
+	, public CDocListenerEx
 	, private SShareDataClientWithCache
 {
 	using Me = CEditWnd;
@@ -141,7 +143,8 @@ public:
 
 	//管理
 	void MessageLoop( void );								/* メッセージループ */
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 
 	//各種イベント
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
@@ -269,7 +272,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
 	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
 	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
@@ -348,10 +350,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-private:
-	//自ウィンドウ
-	HWND			m_hWnd          = nullptr;
-
 public:
 	//子ウィンドウ
 	CMainToolBar	m_cToolbar;			//!< ツールバー

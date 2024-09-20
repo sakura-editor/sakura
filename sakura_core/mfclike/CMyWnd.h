@@ -27,18 +27,20 @@
 #define SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_
 #pragma once
 
+#include "apiwrap/window/CGenericWnd.hpp"
+
 /*
 	MFCのCWnd的なクラス。
 
 	2008.01.26 kobake 作成
 */
 
-class CMyWnd{
+class CMyWnd : public apiwrap::window::CGenericWnd {
 public:
-	CMyWnd() : m_hWnd(NULL) { }
+	CMyWnd() = default;
 
-	void SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
-	HWND GetHwnd() const{ return m_hWnd; }
+	void SetHwnd(HWND hwnd){ _SetHwnd(hwnd); }
+
 	static HWND GetSafeHwnd(const CMyWnd* wnd) { return wnd ? wnd->m_hWnd : NULL; }
 	void InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE){ ::InvalidateRect(m_hWnd, lpRect, bErase); }
 	int ScrollWindowEx(int dx, int dy, const RECT* prcScroll, const RECT* prcClip, HRGN hrgnUpdate, RECT* prcUpdate, UINT uFlags)
@@ -78,7 +80,6 @@ public:
 	{
 		return ::GetClientRect(m_hWnd, lpRect);
 	}
-private:
-	HWND m_hWnd;
 };
+
 #endif /* SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_ */

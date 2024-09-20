@@ -197,7 +197,6 @@ CControlTray::CControlTray()
 //	Apr. 24, 2001 genta
 : m_pcPropertyManager(NULL)
 , m_hInstance( NULL )
-, m_hWnd( NULL )
 , m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
 , m_nCurSearchKeySequence(-1)
 , m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
