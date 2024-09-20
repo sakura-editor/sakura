@@ -1748,7 +1748,6 @@ void CEditView::CopyViewStatus( CEditView* pView ) const
 /* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 {
-	RECT	rc;
 	if( bVert ){
 		if( m_pcsbwVSplitBox == NULL ){	/* 垂直分割ボックス */
 			m_pcsbwVSplitBox = new CSplitBoxWnd;
@@ -1775,9 +1774,6 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 		::ShowWindow( m_hwndSizeBox, SW_HIDE );
 		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_SHOW );
 	}
-
-	::GetClientRect( GetHwnd(), &rc );
-	OnSize( rc.right, rc.bottom );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
