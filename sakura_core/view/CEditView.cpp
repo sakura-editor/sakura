@@ -66,70 +66,6 @@
 #include "CSelectLang.h"
 #include "String_define.h"
 
-LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
-VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
-
-#define IDT_ROLLMOUSE	1
-
-/*
-|| ウィンドウプロシージャ
-||
-*/
-
-LRESULT CALLBACK EditViewWndProc(
-	HWND		hwnd,	// handle of window
-	UINT		uMsg,	// message identifier
-	WPARAM		wParam,	// first message parameter
-	LPARAM		lParam 	// second message parameter
-)
-{
-//	DEBUG_TRACE(L"EditViewWndProc(0x%08X): %ls\n", hwnd, GetWindowsMessageName(uMsg));
-
-	CREATESTRUCT* pCreate;
-	CEditView* pCEdit;
-
-	switch( uMsg ){
-	case WM_CREATE:
-		pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-		pCEdit = reinterpret_cast<CEditView*>(pCreate->lpCreateParams);
-		return pCEdit->DispatchEvent( hwnd, uMsg, wParam, lParam );
-	default:
-		pCEdit = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-		if( NULL != pCEdit ){
-			//	May 16, 2000 genta
-			//	From Here
-			if( uMsg == WM_COMMAND ){
-				::SendMessage( ::GetParent( pCEdit->m_hwndParent ), WM_COMMAND, wParam,  lParam );
-			}
-			else{
-				return pCEdit->DispatchEvent( hwnd, uMsg, wParam, lParam );
-			}
-			//	To Here
-		}
-		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
-	}
-}
-
-/*
-||  タイマーメッセージのコールバック関数
-||
-||	現在は、マウスによる領域選択時のスクロール処理のためにタイマーを使用しています。
-*/
-VOID CALLBACK EditViewTimerProc(
-	HWND hwnd,		// handle of window for timer messages
-	UINT uMsg,		// WM_TIMER message
-	UINT_PTR idEvent,	// timer identifier
-	DWORD dwTime 	// current system time
-)
-{
-	CEditView*	pCEditView;
-	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-	if( NULL != pCEditView ){
-		pCEditView->OnTimer( hwnd, uMsg, idEvent, dwTime );
-	}
-	return;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -137,6 +73,7 @@ VOID CALLBACK EditViewTimerProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditView::CEditView( void )
 : CViewCalc(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+	, CMyWnd(GSTR_VIEWNAME)
 	, CDocListenerEx(CEditDoc::getInstance())
 , m_cViewSelect(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cParser(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
@@ -183,8 +120,6 @@ BOOL CEditView::Create(
 	m_sCurSearchOption.Reset();				// 検索／置換 オプション
 	m_bCurSearchUpdate = false;
 	m_nCurSearchKeySequence = -1;
-
-	m_nMyIndex = 0;
 
 	//	Dec. 4, 2002 genta
 	//	メニューバーへのメッセージ表示機能はCEditWndへ移管
@@ -245,7 +180,6 @@ BOOL CEditView::Create(
 
 	//2004.10.23 isearch
 	m_nISearchMode = SEARCH_NONE;
-	m_pcmigemo = NULL;
 
 	// 2007.10.02 nasukoji
 	m_dwTripleClickCheck = 0;		// トリプルクリックチェック用時刻初期化
@@ -259,8 +193,6 @@ BOOL CEditView::Create(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//↓今までCreateでやってたこと
 
-	WNDCLASS	wc;
-	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
 	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	m_nMyIndex = nMyIndex;
@@ -280,43 +212,27 @@ BOOL CEditView::Create(
 	/* ウィンドウクラスの登録 */
 	//	Apr. 27, 2000 genta
 	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
-	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
-	wc.lpfnWndProc		= EditViewWndProc;
-	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= 0;
-	wc.hInstance		= G_AppInstance();
-	wc.hIcon			= LoadIcon( NULL, IDI_APPLICATION );
-	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_IBEAM )*/;
-	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_WINDOW + 1)*/;
-	wc.lpszMenuName		= NULL;
-	wc.lpszClassName	= GSTR_VIEWNAME;
+	RegisterWnd(
+		HCURSOR(nullptr),
+		HBRUSH(nullptr),
+		CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW,
+		LoadIconW(nullptr, IDI_APPLICATION)
+	);
 
-	// TODO: 実装を改善する余地があります。
-	// RegisterClassは既に登録された状態で呼ぶと失敗するため、
-	// 単純に成否チェックして抜けたらマズいです。
-	::RegisterClass( &wc );
+	const auto pParentWnd = hwndParent ? (CGenericWnd*)GetWindowLongPtrW(hwndParent, GWLP_USERDATA) : nullptr;
 
 	/* エディタウィンドウの作成 */
-	SetHwnd(
-		::CreateWindowEx(
-			WS_EX_STATICEDGE,		// extended window style
-			GSTR_VIEWNAME,			// pointer to registered class name
-			GSTR_VIEWNAME,			// pointer to window name
-			0						// window style
-			| WS_VISIBLE
-			| WS_CHILD
-			| WS_CLIPCHILDREN
-			,
-			CW_USEDEFAULT,			// horizontal position of window
-			0,						// vertical position of window
-			CW_USEDEFAULT,			// window width
-			0,						// window height
-			hwndParent,				// handle to parent or owner window
-			NULL,					// handle to menu or child-window identifier
-			G_AppInstance(),		// handle to application instance
-			(LPVOID)this			// pointer to window-creation data(lpCreateParams)
-		)
+	const auto hWnd = __super::CreateWnd(
+		pParentWnd,
+		100 + m_nMyIndex,
+		WS_CHILD
+		| WS_VISIBLE
+		| WS_CLIPCHILDREN
+		,
+		WS_EX_STATICEDGE,
+		GSTR_VIEWNAME
 	);
+
 	if( NULL == GetHwnd() ){
 		return FALSE;
 	}
@@ -335,10 +251,10 @@ BOOL CEditView::Create(
 	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompatibleBMP );
 
 	/* 垂直分割ボックス */
-	m_pcsbwVSplitBox = new CSplitBoxWnd;
+	m_pcsbwVSplitBox = std::make_unique<CVSplitBoxWnd>().release();
 	m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
 	/* 水平分割ボックス */
-	m_pcsbwHSplitBox = new CSplitBoxWnd;
+	m_pcsbwHSplitBox = std::make_unique<CHSplitBoxWnd>().release();
 	m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
 
 	/* スクロールバー作成 */
@@ -362,10 +278,9 @@ BOOL CEditView::Create(
 		constexpr DWORD keyboardRepeatSpeedDefault = keyboardRepeatSpeedMax;
 		dwKeyBoardSpeed = keyboardRepeatSpeedDefault;
 	}
-	/* リピート速度の設定をミリ秒に変換 */
-	UINT uElapse = 400 - dwKeyBoardSpeed * (400 - 33) / keyboardRepeatSpeedMax;
-	/* タイマー起動 */
-	if( 0 == ::SetTimer( GetHwnd(), IDT_ROLLMOUSE, uElapse, EditViewTimerProc ) ){
+
+	if (const auto uElapse = 400 - dwKeyBoardSpeed * (400 - 33) / keyboardRepeatSpeedMax;
+		!SetTimer(hWnd, IDT_ROLLMOUSE, uElapse, nullptr)) {
 		WarningMessage( GetHwnd(), LS(STR_VIEW_TIMER) );
 	}
 
@@ -424,11 +339,12 @@ LRESULT CEditView::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
-	HDC			hdc;
-//	int			nPosX;
-//	int			nPosY;
+	const auto hWnd = hwnd;
 
 	switch ( uMsg ){
+	case WM_COMMAND:
+		return SendMessageW(GetEditWnd().GetHwnd(), WM_COMMAND, wParam, lParam);
+		
 	case WM_MOUSEWHEEL:
 		if( GetEditWnd().DoMouseWheel( wParam, lParam ) ){
 			return 0L;
@@ -437,44 +353,6 @@ LRESULT CEditView::DispatchEvent(
 
 	case WM_MOUSEHWHEEL:
 		return OnMOUSEHWHEEL( wParam, lParam );
-
-	case WM_CREATE:
-		::SetWindowLongPtr( hwnd, GWLP_USERDATA, (LONG_PTR) this );
-		m_hwndSizeBox = ::CreateWindowEx(
-			0L,									/* no extended styles */
-			WC_SCROLLBAR,						/* scroll bar control class */
-			NULL,								/* text for window title bar */
-			WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
-			0,									/* horizontal position */
-			0,									/* vertical position */
-			200,								/* width of the scroll bar */
-			CW_USEDEFAULT,						/* default height */
-			hwnd, 								/* handle of main window */
-			(HMENU) NULL,						/* no menu for a scroll bar */
-			((CREATESTRUCT*)lParam)->hInstance,	/* instance owning this window */
-			(LPVOID) NULL						/* pointer not needed */
-		);
-		if (m_hwndSizeBox == NULL) {
-			return -1;
-		}
-		m_hwndSizeBoxPlaceholder = ::CreateWindowEx(
-			0L, 								/* no extended styles */
-			WC_STATIC,							/* scroll bar control class */
-			NULL,								/* text for window title bar */
-			WS_CHILD,							/* innocent child */
-			0,									/* horizontal position */
-			0,									/* vertical position */
-			200,								/* width of the scroll bar */
-			CW_USEDEFAULT,						/* default height */
-			hwnd, 								/* handle of main window */
-			(HMENU) NULL,						/* no menu for a scroll bar */
-			((CREATESTRUCT*)lParam)->hInstance,	/* instance owning this window */
-			(LPVOID) NULL						/* pointer not needed */
-		);
-		if (m_hwndSizeBoxPlaceholder == NULL) {
-			return -1;
-		}
-		return 0L;
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	case WM_SHOWWINDOW:
@@ -742,11 +620,11 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_PAINT:
+		if (PAINTSTRUCT	ps = {};
+			BeginPaint(hWnd, &ps))
 		{
-			PAINTSTRUCT	ps;
-			hdc = ::BeginPaint( hwnd, &ps );
-			OnPaint( hdc, &ps, FALSE );
-			::EndPaint(hwnd, &ps);
+			OnPaint(ps.hdc, &ps, FALSE);
+			EndPaint(hWnd, &ps);
 		}
 		return 0L;
 
@@ -788,7 +666,6 @@ LRESULT CEditView::DispatchEvent(
 		SAFE_DELETE(m_pcsbwVSplitBox);	/* 垂直分割ボックス */
 		SAFE_DELETE(m_pcsbwHSplitBox);	/* 水平分割ボックス */
 
-		SetHwnd(NULL);
 		return 0L;
 
 	case MYWM_DOSPLIT:
@@ -887,13 +764,64 @@ LRESULT CEditView::DispatchEvent(
 	}
 
 	default:
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 	}
+
+	return __super::DispatchEvent(hWnd, uMsg, wParam, lParam);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    ウィンドウイベント                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+/*!
+ * WM_CREATEハンドラ
+ *
+ * WM_CREATEはCreateWindowEx関数によるウインドウ作成中にポストされます。
+ * メッセージの戻り値はウインドウの作成を続行するかどうかの判断に使われます。
+ *
+ * @retval true  ウィンドウの作成を続行する
+ * @retval false ウィンドウの作成を中止する
+ */
+bool CEditView::OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct)
+{
+    if (!__super::OnCreate(hWnd, lpCreateStruct))
+    {
+        return false;
+    }
+
+	using CWndClass = apiwrap::window::CWndClass;
+
+	constexpr auto IDC_SIZEBOX = 103;
+	constexpr auto IDC_SIZEBOX2 = 104;
+
+	m_hwndSizeBox = CreateWindowExW(
+		hWnd,
+		IDC_SIZEBOX,
+		CWndClass(WC_SCROLLBAR),
+		WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP
+	);
+
+#if 0 // テスト書けないのでコメントアウト
+	if (!m_hwndSizeBox) {
+        return false;
+	}
+#endif
+
+	m_hwndSizeBoxPlaceholder = CreateWindowExW(
+		hWnd,
+		IDC_SIZEBOX2,
+		CWndClass(WC_STATIC)
+	);
+
+#if 0 // テスト書けないのでコメントアウト
+	if (!m_hwndSizeBoxPlaceholder) {
+        return false;
+	}
+#endif
+
+	return true;
+}
 
 void CEditView::OnMove( int x, int y, int nWidth, int nHeight )
 {
@@ -1745,13 +1673,16 @@ void CEditView::CopyViewStatus( CEditView* pView ) const
 //                       分割ボックス                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
+/*!
+ * 分割ボックスの表示切替
+ *
+ * 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ
+ */
 void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 {
-	RECT	rc;
 	if( bVert ){
 		if( m_pcsbwVSplitBox == NULL ){	/* 垂直分割ボックス */
-			m_pcsbwVSplitBox = new CSplitBoxWnd;
+			m_pcsbwVSplitBox = std::make_unique<CVSplitBoxWnd>().release();
 			m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
 		}
 	}
@@ -1760,7 +1691,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 	}
 	if( bHorz ){
 		if( m_pcsbwHSplitBox == NULL ){	/* 水平分割ボックス */
-			m_pcsbwHSplitBox = new CSplitBoxWnd;
+			m_pcsbwHSplitBox = std::make_unique<CHSplitBoxWnd>().release();
 			m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
 		}
 	}
@@ -1775,9 +1706,6 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 		::ShowWindow( m_hwndSizeBox, SW_HIDE );
 		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_SHOW );
 	}
-
-	::GetClientRect( GetHwnd(), &rc );
-	OnSize( rc.right, rc.bottom );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

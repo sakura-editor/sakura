@@ -24,3 +24,10 @@
 */
 #include "StdAfx.h"
 #include "CMyWnd.h"
+
+#include "_main/global.h"
+
+CMyWnd::CMyWnd(std::wstring_view className) noexcept
+	: COriginalWnd(className, G_AppInstance())
+{
+}

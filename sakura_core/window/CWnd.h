@@ -19,7 +19,7 @@
 #define SAKURA_CWND_86C8E4DA_7921_4D79_A481_E3AB0557D767_H_
 #pragma once
 
-#include <Windows.h>
+#include "apiwrap/window/CGenericWnd.hpp"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -34,9 +34,7 @@
 	@li RegisterWC()	ウィンドウクラス登録
 	@li Create()		ウィンドウ作成
 */
-class CWnd
-{
-
+class CWnd : public apiwrap::window::CGenericWnd {
 	using Me = CWnd;
 
 protected:
@@ -46,9 +44,9 @@ public:
 	CWnd(const WCHAR* pszInheritanceAppend = L"");
 	CWnd(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
-	CWnd(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	virtual ~CWnd();
+	~CWnd() override;
+
+	using CGenericWnd::_SetHwnd;
 
 	/*
 	||  Attributes & Operations
@@ -79,7 +77,8 @@ public:
 		HMENU		hMenu			// handle to menu, or child-window identifier
 	);
 
-	virtual LRESULT DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );/* メッセージ配送 */
+	LRESULT DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+
 protected:
 	/* 仮想関数 */
 	virtual LRESULT DispatchEvent_WM_APP( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
@@ -108,12 +107,8 @@ protected:
 
 public:
 	//インターフェース
-	HWND GetHwnd() const{ return m_hWnd; }
 	HWND GetParentHwnd() const{ return m_hwndParent; }
 	HINSTANCE GetAppInstance() const{ return m_hInstance; }
-
-	//特殊インターフェース (使用は好ましくない)
-	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
 	//ウィンドウ標準操作
 	void DestroyWindow();
@@ -121,7 +116,7 @@ public:
 private: // 2002/2/10 aroka アクセス権変更
 	HINSTANCE	m_hInstance;	// アプリケーションインスタンスのハンドル
 	HWND		m_hwndParent;	// オーナーウィンドウのハンドル
-	HWND		m_hWnd;			// このダイアログのハンドル
+
 #ifdef _DEBUG
 	WCHAR		m_szClassInheritances[1024];
 #endif

@@ -122,6 +122,9 @@
     <Filter Include="Cpp Source Files\apiwrap\kernel">
       <UniqueIdentifier>{eea65598-f17e-433c-ac03-de058e294aad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\apiwrap\window">
+      <UniqueIdentifier>{400de289-d814-463a-a835-1a22e683d33e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -1147,6 +1150,18 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\env\SShareDataClient.hpp">
       <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\window\CGenericWnd.hpp">
+      <Filter>Cpp Source Files\apiwrap\window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\window\COriginalWnd.hpp">
+      <Filter>Cpp Source Files\apiwrap\window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\apiwrap\window\CWndClass.hpp">
+      <Filter>Cpp Source Files\apiwrap\window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\_main\CMainWindow.hpp">
+      <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2362,6 +2377,18 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\env\SShareDataClient.cpp">
       <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\window\COriginalWnd.cpp">
+      <Filter>Cpp Source Files\apiwrap\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\window\CWndClass.cpp">
+      <Filter>Cpp Source Files\apiwrap\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\apiwrap\window\CGenericWnd.cpp">
+      <Filter>Cpp Source Files\apiwrap\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\_main\CMainWindow.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

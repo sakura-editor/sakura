@@ -25,54 +25,17 @@
 #include "pch.h"
 #include "CAutoSaveAgent.h"
 
-#include "_main/CProcessFactory.h"
+#include "CEditorProcessInitTest.hpp"
+
 #include "_main/CNormalProcess.h"
 
-struct CAutoSaveAgentTest : public ::testing::Test
-{
-	static inline std::shared_ptr<CProcess> process = nullptr;
-
-    static void SetUpTestSuite()
-    {
-		EXPECT_FALSE(CProcess::getInstance());
-
-		// エディタープロセスを生成する
-		process = CProcessFactory().CreateInstance(LR"(-PROF="")");
-
-		// コントロールプロセスを起動する
-		if (const auto profileName = process->GetCCommandLine().GetProfileName();
-			!process->StartControlProcess(profileName))
-		{
-			if (const auto hEvent = process->OpenInitEvent(profileName))
-			{
-				// イベントハンドルをスマートポインタに入れる
-				handleHolder eventHolder(hEvent, handle_closer());
-
-				// イベントを待つ
-				const auto waitResult = WaitForSingleObject(hEvent, 10 * 1000);
-				if (WAIT_FAILED == waitResult)
-				{
-					throw message_error( L"waitProcess has failed." );
-				}
-			}
-		}
-
-		// エディタープロセスを初期化する
-		process->InitProcess();
-	}
-
-    static void TearDownTestSuite() {
-		process->TerminateControlProcess();
-
-        process.reset();
-
-		EXPECT_FALSE(CProcess::getInstance());
-	}
-};
+struct CAutoSaveAgentTest : public CEditorProcessInitTest {};
 
 TEST_F(CAutoSaveAgentTest, CheckAutoSave)
 {
-	auto pAutoSaveAgent = CEditDoc::getInstance()->GetAutoSaveAgent();
+	auto pcDoc = CEditDoc::getInstance();
+
+	auto pAutoSaveAgent = pcDoc->GetAutoSaveAgent();
 	EXPECT_TRUE(pAutoSaveAgent);
 
 	auto& sBackup = GetDllShareData().m_Common.m_sBackup;
@@ -82,5 +45,9 @@ TEST_F(CAutoSaveAgentTest, CheckAutoSave)
 
 	Sleep(60 * 1000 + 100);
 
+	pcDoc->m_cDocEditor.SetModified(true, false);
+
 	pAutoSaveAgent->CheckAutoSave();
+
+	pcDoc->m_cDocEditor.SetModified(false, false);
 }

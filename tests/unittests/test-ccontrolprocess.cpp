@@ -25,19 +25,25 @@
 #include "pch.h"
 
 #include "TMockProcess.hpp"
+#include "TMockMainWindow.hpp"
 
 #include "eval_outputs.hpp"
 
+#include "CControlProcessInitTest.hpp"
 #include "_main/CControlProcess.h"
 
 #include "config/system_constants.h"
 
 #include "_main/CNormalProcess.h"
 
+#include "apiwrap/window/COriginalWnd.hpp"
+
 /*!
  * @brief コントロールプロセスの異常系テスト
  */
 using CControlProcessTest = TProcessTest<CControlProcess>;
+
+using MockCControlProcess = TMockProcess<CControlProcess>;
 
 TEST_F(CControlProcessTest, getEditorProcess)
 {
@@ -51,7 +57,10 @@ TEST_F(CControlProcessTest, InitializeProcess001)
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Return(nullptr));
     EXPECT_CALL(*process, GetLastError()).Times(0);
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
+    EXPECT_CALL(*process, InitProcess()).Times(0);
     EXPECT_CALL(*process, InitShareData()).Times(0);
+    EXPECT_CALL(*process, GetMainWnd()).Times(0);
+    EXPECT_CALL(*process, SetEvent(_)).Times(0);
 
 	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_CTRLMTX1));
 }
@@ -62,7 +71,10 @@ TEST_F(CControlProcessTest, InitializeProcess002)
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
     EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_ALREADY_EXISTS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).Times(0);
+    EXPECT_CALL(*process, InitProcess()).Times(0);
     EXPECT_CALL(*process, InitShareData()).Times(0);
+    EXPECT_CALL(*process, GetMainWnd()).Times(0);
+    EXPECT_CALL(*process, SetEvent(_)).Times(0);
 
 	EXPECT_FALSE(process->InitializeProcess());
 }
@@ -73,7 +85,10 @@ TEST_F(CControlProcessTest, InitializeProcess011)
     EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
     EXPECT_CALL(*process, GetLastError()).WillOnce(Return(ERROR_SUCCESS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Return(nullptr));
+    EXPECT_CALL(*process, InitProcess()).Times(0);
     EXPECT_CALL(*process, InitShareData()).Times(0);
+    EXPECT_CALL(*process, GetMainWnd()).Times(0);
+    EXPECT_CALL(*process, SetEvent(_)).Times(0);
 
 	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_CTRLMTX2));
 }
@@ -86,7 +101,10 @@ TEST_F(CControlProcessTest, InitializeProcess012)
         .WillOnce(Return(ERROR_SUCCESS))
         .WillOnce(Return(ERROR_ALREADY_EXISTS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
+    EXPECT_CALL(*process, InitProcess()).Times(0);
     EXPECT_CALL(*process, InitShareData()).Times(0);
+    EXPECT_CALL(*process, GetMainWnd()).Times(0);
+    EXPECT_CALL(*process, SetEvent(_)).Times(0);
 
 	EXPECT_FALSE(process->InitializeProcess());
 }
@@ -99,9 +117,55 @@ TEST_F(CControlProcessTest, InitializeProcess021)
         .WillOnce(Return(ERROR_SUCCESS))
         .WillOnce(Return(ERROR_SUCCESS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(&*process, &MockCControlProcess::OriginalInitProcess));
     EXPECT_CALL(*process, InitShareData()).WillOnce(Return(false));
+    EXPECT_CALL(*process, GetMainWnd()).Times(0);
+    EXPECT_CALL(*process, SetEvent(_)).Times(0);
 
 	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_DLGPROCESS1));
+}
+
+// メインウインドウの作成に失敗
+TEST_F(CControlProcessTest, InitializeProcess031)
+{
+	auto mainWindow = std::make_unique<MockCMainWindow>(L"test");
+    EXPECT_CALL(*mainWindow, CreateMainWnd(_)).WillOnce(Return(nullptr));
+
+	EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
+    EXPECT_CALL(*process, GetLastError())
+        .WillOnce(Return(ERROR_SUCCESS))
+        .WillOnce(Return(ERROR_SUCCESS));
+    EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(DoNothing));
+    EXPECT_CALL(*process, InitShareData()).Times(0);
+    EXPECT_CALL(*process, GetMainWnd()).WillOnce(Return(mainWindow.get()));
+    EXPECT_CALL(*process, SetEvent(_)).Times(0);
+
+	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_CTRLMTX3));
+}
+
+// 初期化完了イベントの発行失敗
+TEST_F(CControlProcessTest, InitializeProcess041)
+{
+	const auto hWndTray = HWND(0x1234);
+
+	auto mainWindow = std::make_unique<MockCMainWindow>(L"test");
+    EXPECT_CALL(*mainWindow, CreateMainWnd(_)).WillOnce(Return(hWndTray));
+
+    EXPECT_CALL(*process, CreateMutexW(_, true, StrEq(GSTR_MUTEX_SAKURA_CP))).WillOnce(Invoke(DefaultCreateMutexW));
+    EXPECT_CALL(*process, GetLastError())
+        .WillOnce(Return(ERROR_SUCCESS))
+        .WillOnce(Return(ERROR_SUCCESS));
+    EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(&*process, &MockCControlProcess::OriginalInitProcess));
+    EXPECT_CALL(*process, InitShareData()).WillOnce(Invoke(&*process, &MockCControlProcess::OriginalInitShareData));
+    EXPECT_CALL(*process, GetMainWnd()).WillOnce(Return(mainWindow.get()));
+    EXPECT_CALL(*process, SetEvent(_)).WillOnce(Return(false));
+
+	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
+
+	ASSERT_THROW_MESSAGE(process->InitializeProcess(), process_init_failed, LS(STR_ERR_CTRLMTX4));
 }
 
 // 初期化処理で発生したエラーメッセージを表示する
@@ -112,6 +176,7 @@ TEST_F(CControlProcessTest, Run001)
         .WillOnce(Return(ERROR_SUCCESS))
         .WillOnce(Return(ERROR_SUCCESS));
     EXPECT_CALL(*process, CreateEventW(_, true, false, StrEq(GSTR_EVENT_SAKURA_CP_INITIALIZED))).WillOnce(Invoke(DefaultCreateEventW));
+    EXPECT_CALL(*process, InitProcess()).WillOnce(Invoke(&*process, &MockCControlProcess::OriginalInitProcess));
     EXPECT_CALL(*process, InitShareData()).WillOnce(Return(false));
 
 	EXPECT_ERROUT(process->Run(), LS(STR_ERR_DLGPROCESS1));
@@ -119,25 +184,139 @@ TEST_F(CControlProcessTest, Run001)
 
 TEST(CProcess, CUxTheme)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CUxTheme::getInstance());
 }
 
 TEST(CProcess, CAppNodeManager)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CAppNodeManager::getInstance());
 }
 
 TEST(CProcess, CFileNameManager)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CFileNameManager::getInstance());
 }
 
 TEST(CProcess, CPluginManager)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CPluginManager::getInstance());
 }
 
 TEST(CProcess, CJackManager)
 {
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CJackManager::getInstance());
 }
+
+TEST_F(CControlProcessInitTest, OnCreate)
+{
+	EXPECT_FALSE(process->GetMainWnd()->OnCreate(nullptr, nullptr));
+}
+
+namespace apiwrap::window
+{
+
+// クラス名が空
+TEST(CWndClass, RegisterWndClass001)
+{
+	CWndClass wc(L""sv);
+
+	EXPECT_FALSE(wc.RegisterWndClass());
+}
+
+// 正常+二度呼び
+TEST(CWndClass, RegisterWndClass002)
+{
+	constexpr auto& className = L"test";
+
+	const auto hInstance = GetModuleHandleW(nullptr);
+
+	CWndClass wc(className, hInstance, &COriginalWnd::WndProc);
+	EXPECT_STREQ(className, wc.GetOriginalClassName().data());
+	EXPECT_STREQ(className, wc.GetClassNameW());
+
+	EXPECT_TRUE(wc.RegisterWndClass());
+	EXPECT_STREQ(className, wc.GetOriginalClassName().data());
+	EXPECT_NE(className, wc.GetClassNameW());
+
+	EXPECT_TRUE(wc.RegisterWndClass());
+
+	UnregisterClassW(className, hInstance);
+}
+
+struct STestWnd : public apiwrap::window::COriginalWnd
+{
+    using COriginalWnd::WndProc;
+    using COriginalWnd::OnCreate;
+
+	STestWnd() : COriginalWnd(L"test") {}
+};
+
+struct COriginalWndTest : public ::testing::Test
+{
+	std::unique_ptr<COriginalWnd> pWnd = nullptr;
+
+	void SetUp() override {
+		pWnd = std::make_unique<STestWnd>();
+	}
+};
+
+TEST_F(COriginalWndTest, WndProc001)
+{
+	EXPECT_FALSE(STestWnd::WndProc(nullptr, WM_NULL, 0, 0));
+}
+
+TEST_F(COriginalWndTest, OnCreate001)
+{
+	EXPECT_FALSE(pWnd->OnCreate(nullptr, nullptr));
+}
+
+TEST_F(COriginalWndTest, OnCreate002)
+{
+    const auto hWnd = HWND(0x1234);
+	EXPECT_FALSE(pWnd->OnCreate(hWnd, nullptr));
+}
+
+TEST_F(COriginalWndTest, OnCreate003)
+{
+    const auto hWnd = HWND(0x1234);
+    const auto createStruct = std::make_unique<CREATESTRUCT>();
+	EXPECT_TRUE(pWnd->OnCreate(hWnd, &*createStruct));
+}
+
+TEST_F(COriginalWndTest, CreateWnd001)
+{
+	EXPECT_FALSE(pWnd->CreateWnd(HWND(nullptr)));
+}
+
+} // end of namespace apiwrap::window
+
+using ConvertHotKeyModsTestParamType = std::tuple<WORD, WORD>;
+class ConvertHotKeyModsTest : public ::testing::TestWithParam<ConvertHotKeyModsTestParamType> {};
+
+TEST_P(ConvertHotKeyModsTest, convert)
+{
+	const auto arg      = std::get<0>(GetParam());
+	const auto expected = std::get<1>(GetParam());
+	EXPECT_EQ(expected, convertHotKeyMods(arg));
+}
+
+// clang-format off
+INSTANTIATE_TEST_SUITE_P(Parameterized
+	, ConvertHotKeyModsTest
+	, ::testing::Values(
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL | HOTKEYF_SHIFT | HOTKEYF_ALT,   MOD_CONTROL | MOD_SHIFT | MOD_ALT },
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL | HOTKEYF_SHIFT,                 MOD_CONTROL | MOD_SHIFT           },
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL                 | HOTKEYF_ALT,   MOD_CONTROL             | MOD_ALT },
+		ConvertHotKeyModsTestParamType{ HOTKEYF_CONTROL,                                 MOD_CONTROL                       },
+		ConvertHotKeyModsTestParamType{                   HOTKEYF_SHIFT | HOTKEYF_ALT,                 MOD_SHIFT | MOD_ALT },
+		ConvertHotKeyModsTestParamType{                   HOTKEYF_SHIFT,                               MOD_SHIFT           },
+		ConvertHotKeyModsTestParamType{                                   HOTKEYF_ALT,                             MOD_ALT },
+		ConvertHotKeyModsTestParamType{ 0,                                               0                                 }
+	)
+);
+// clang-format on

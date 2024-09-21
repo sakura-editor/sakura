@@ -85,19 +85,13 @@ bool CControlProcess::InitializeProcess()
 
 	InitProcess();
 
-	const auto hWndTray = m_pcTray->Create( GetProcessInstance() );
-	if (!hWndTray) {
-		ErrorBeep();
-		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX3) );
-		return false;
+	if (!GetMainWnd()->CreateMainWnd(GetCmdShow())) {
+		throw process_init_failed( LS(STR_ERR_CTRLMTX3) ); // L"ウィンドウの作成に失敗しました。\n起動できません。"
 	}
-	SetMainWindow(hWndTray);
 
 	// 初期化完了イベントをシグナル状態にする
 	if (!SetEvent(hEvent)) {
-		ErrorBeep();
-		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX4) );
-		return false;
+		throw process_init_failed( LS(STR_ERR_CTRLMTX4) ); // L"SetEvent()失敗。\n終了します。"
 	}
 
 	return true;
@@ -112,7 +106,7 @@ void CControlProcess::InitProcess()
 	}
 
 	/* タスクトレイにアイコン作成 */
-	m_pcTray = std::make_unique<CControlTray>();
+	SetMainWindow(std::make_unique<CControlTray>());
 }
 
 bool CControlProcess::InitShareData()
@@ -145,19 +139,4 @@ void CControlProcess::LoadShareData()
 void CControlProcess::SaveShareData() const
 {
 	CShareData_IO::SaveShareData();
-}
-
-/*!
-	@brief コントロールプロセスのメッセージループ
-	
-	@author aroka
-	@date 2002/01/07
-*/
-bool CControlProcess::MainLoop()
-{
-	if( m_pcTray && GetMainWindow() ){
-		m_pcTray->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
 }

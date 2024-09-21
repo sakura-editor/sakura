@@ -304,7 +304,7 @@ int CProcess::Run() noexcept
 	}
 	if (initialized)
 	{
-			MainLoop() ;
+		GetMainWnd()->MessageLoop();
 	}
 	return 0;
 }

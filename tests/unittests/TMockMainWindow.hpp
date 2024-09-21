@@ -22,30 +22,28 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "pch.h"
+#pragma once
 
-#include "env/CSakuraEnvironment.h"
+#include <gmock/gmock.h>
 
-#include "CEditorProcessInitTest.hpp"
+#include "_main/CMainWindow.hpp"
 
-#include "_main/CNormalProcess.h"
-
-#include "CEditApp.h"
-
-#include "util/file.h"
-
-struct CEditDocTest : public CEditorProcessInitTest {};
-
-/*!
- * @brief GREP検索キーの取得(設定なし)
- */
-TEST_F(CEditDocTest, OnFileClose001)
+template<typename Base, std::enable_if_t<std::is_base_of_v<CMainWindow, Base>, int> = 0>
+struct TMockMainWindow : public Base
 {
-	CAppMode::getInstance()->SetGrepKey( L"1234567890ABCDEF1234567890abcdef"sv );
+	using Base::Base;
 
-	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = true;
+	MOCK_METHOD1(CreateMainWnd, HWND(
+		int nCmdShow
+	));
 
-	process->GetShareData().m_Common.m_sSearch.m_bGrepExitConfirm = true;
+	MOCK_METHOD0(MessageLoop, void(
+	));
+};
 
-	EXPECT_FALSE(CEditDoc::getInstance()->OnFileClose(false));
+using MockCMainWindow = TMockMainWindow<CMainWindow>;
+
+inline void DoNothing()
+{
+	// 何もしない
 }

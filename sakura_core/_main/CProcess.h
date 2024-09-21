@@ -18,11 +18,13 @@
 #pragma once
 
 #include "_main/CCommandLine.h"
+#include "_main/CMainWindow.hpp"
 
-#include "apiwrap/kernel/handle_closer.hpp"
+#include "env/CShareData.h"
 
 #include "util/design_template.h"
-#include "env/CShareData.h"
+
+#include "apiwrap/kernel/handle_closer.hpp"
 
 #include "_main/process_init_failed.hpp"
 
@@ -46,6 +48,7 @@ class CProcess : public TSingleInstance<CProcess> {
 
 	using Me = CProcess;
 	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
+	using CMainWindowHolder = std::unique_ptr<CMainWindow>;
 	using CAppNodeManagerHolder = std::unique_ptr<CAppNodeManager>;
 	using CFileNameManagerHolder = std::unique_ptr<CFileNameManager>;
 	using CPluginManagerHolder = std::unique_ptr<CPluginManager>;
@@ -62,23 +65,19 @@ public:
 
 	bool    IsExistControlProcess(std::optional<LPCWSTR> profileName = std::nullopt) const;
 	bool    StartControlProcess(std::optional<LPCWSTR> profileName = std::nullopt) const;
-	DWORD   StartProcess(
-		const CCommandLine& cCommandLine,
-		std::optional<std::wstring_view> workingDirectory = std::nullopt) const;
+	DWORD   StartProcess(const CCommandLine& cCommandLine, std::optional<std::wstring_view> workingDirectory = std::nullopt) const;
 	void    TerminateControlProcess(std::optional<LPCWSTR> profileName = std::nullopt) const;
 
 	virtual void RefreshString();
 	virtual void    InitProcess() = 0;
+	virtual CMainWindow*    GetMainWnd() const { return m_MainWindow.get(); }
 
-	CAppNodeManager*  GetAppNodeManager() const { return m_AppNodeManager.get(); }
-	CJackManager*     GetJackManager() const { return m_JackManager.get(); }
 	CPluginManager*   GetPluginManager() const { return m_PluginManager.get(); }
 
 protected:
 	virtual bool InitializeProcess() = 0;
-	virtual bool MainLoop() = 0;
 
-	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
+	void			SetMainWindow(std::unique_ptr<CMainWindow>&& mainWindow) { m_MainWindow = std::move(mainWindow); }
 
 	virtual bool InitShareData();
 
@@ -199,17 +198,19 @@ protected:
 
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
+	int             GetCmdShow() const{ return m_nCmdShow; }
 	CCommandLine&   GetCCommandLine() const { return *m_pCommandLine; }
 	CShareData&	    GetCShareData() { return m_cShareData; }
 	DLLSHAREDATA&   GetShareData() const { return m_cShareData.GetShareData(); }
-	HWND			GetMainWindow() const{ return m_hWnd; }
+	HWND            GetMainWindow() const{ return m_MainWindow ? GetMainWnd()->GetHwnd() : nullptr; }
 
 private:
 	HINSTANCE           m_hInstance;
 	CCommandLineHolder  m_pCommandLine;
 	int                 m_nCmdShow;
 	CShareData          m_cShareData;
-	HWND                m_hWnd         = nullptr;
+
+	CMainWindowHolder       m_MainWindow      = nullptr;
 
 	CUxThemeHolder          m_UxTheme         = std::make_unique<CUxTheme>();
 	CAppNodeManagerHolder   m_AppNodeManager  = std::make_unique<CAppNodeManager>();

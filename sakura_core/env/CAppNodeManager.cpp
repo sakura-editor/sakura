@@ -100,15 +100,6 @@ static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
 	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
 }
 
-/* static */ CAppNodeManager* CAppNodeManager::getInstance()
-{
-	const auto process = CProcess::getInstance();
-	if (!process) {
-		return nullptr;
-	}
-	return process->GetAppNodeManager();
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         グループ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

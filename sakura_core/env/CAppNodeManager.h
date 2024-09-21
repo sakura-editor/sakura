@@ -107,10 +107,8 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager {
+class CAppNodeManager : public TSingleInstance<CAppNodeManager> {
 public:
-	static CAppNodeManager* getInstance();
-
 	CAppNodeManager() = default;
 
 	//グループ

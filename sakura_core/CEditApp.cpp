@@ -27,40 +27,8 @@
 #include "StdAfx.h"
 #include "CEditApp.h"
 
-#include "_main/CNormalProcess.h"
-
 #include "util/module.h"
 #include "util/shell.h"
-
-CEditApp::CEditApp(HINSTANCE hInstance)
-	: m_hInst(hInstance)
-{
-	//ヘルパ作成
-	m_cIcons.Create(m_hInst);	//	CreateImage List
-
-	//ドキュメントの作成
-	m_pcEditDoc->Create();
-}
-
-CEditWnd* CEditApp::GetEditWindow() const
-{
-	return getEditorProcess()->GetEditWnd();
-}
-
-void CEditApp::Create(CEditWnd* pcEditWnd, int nGroupId)
-{
-	m_pcEditWnd = pcEditWnd;
-
-	//ウィンドウの作成
-	m_pcEditWnd->Create(&GetIcons(), nGroupId);
-
-	//プロパティ管理
-	m_pcPropertyManager->Create(
-		m_pcEditWnd->GetHwnd(),
-		&GetIcons(),
-		&m_pcEditWnd->GetMenuDrawer()
-	);
-}
 
 /*! 共通設定 プロパティシート */
 bool CEditApp::OpenPropertySheet( int nPageNum )

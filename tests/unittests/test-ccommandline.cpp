@@ -62,20 +62,9 @@ std::wstring GetLocalPath(const std::wstring_view& filename)
  */
 TEST(CCommandLine, getInstance)
 {
-	EXPECT_FALSE(CProcess::getInstance());
-
 	//プロセスクラスが存在しない場合、NULLを返す
+	EXPECT_FALSE(CProcess::getInstance());
 	EXPECT_FALSE(CCommandLine::getInstance());
-
-	const auto process = CProcessFactory().CreateInstance(L"-NOWIN");
-
-	EXPECT_TRUE(CProcess::getInstance());
-
-	//プロセスクラスが存在する場合、NULL以外を返す
-	const auto pcCommandLine = CCommandLine::getInstance();
-	EXPECT_TRUE(pcCommandLine);
-
-	EXPECT_TRUE(pcCommandLine->IsNoWindow());
 }
 
 /*!

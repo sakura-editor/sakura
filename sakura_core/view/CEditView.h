@@ -69,6 +69,7 @@
 #include "mfclike/CMyWnd.h"		// parent
 #include "doc/CDocListener.h"	// parent
 #include "basis/SakuraBasis.h"	// CLogicInt, CLayoutInt
+#include "extmodule/CMigemo.h"
 #include "util/container.h"		// vector_ex
 #include "util/design_template.h"
 
@@ -81,7 +82,6 @@ class CRegexKeyword;///
 class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
 class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
-class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
 struct CColor3Setting;
 class COutputAdapter;
@@ -126,6 +126,8 @@ class CEditView
 	using CTextAreaHolder = std::unique_ptr<CTextArea>;
 	using CCaretHolder = std::unique_ptr<CCaret>;
 	using CRulerHolder = std::unique_ptr<CRuler>;
+
+	static constexpr auto IDT_ROLLMOUSE = 1;
 
 	std::thread m_threadUrlOpen;
 
@@ -195,9 +197,12 @@ public:
 public:
 	//ドキュメントイベント
 	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
+
 	/* メッセージディスパッチャ */
-	LRESULT DispatchEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	//
+	LRESULT DispatchEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+
+	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
+
 	void OnChangeSetting();										/* 設定変更を反映させる */
 	void OnPaint(HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp);			/* 通常の描画処理 */
 	void OnPaint2(HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp);			/* 通常の描画処理 */
@@ -620,7 +625,6 @@ public:
 
 public:
 	//ウィンドウ
-	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
 	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
 	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
@@ -727,8 +731,8 @@ public:
 	// その他
 	CAutoMarkMgr*	m_cHistory;	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
-	int				m_nMyIndex;	/* 分割状態 */
-	CMigemo*		m_pcmigemo;
+	int				m_nMyIndex      = 0;
+	CMigemo*		m_pcmigemo      = CMigemo::getInstance();
 	bool			m_bMiniMap;
 	bool			m_bMiniMapMouseDown;
 	CLayoutInt		m_nPageViewTop;

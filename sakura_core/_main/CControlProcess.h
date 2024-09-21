@@ -32,16 +32,13 @@ class CControlProcess : public CProcess {
 
 	using Me = CControlProcess;
 	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
-	using CControlTrayHolder = std::unique_ptr<CControlTray>;
 
 public:
 	explicit CControlProcess(HINSTANCE hInstance, CCommandLineHolder&& pCommandLine) noexcept;
 	~CControlProcess() override = default;
 
 protected:
-	bool InitializeProcess() override;
-	bool MainLoop() override;
-
+	bool    InitializeProcess() override;
 	void    InitProcess() override;
 	bool    InitShareData() override;
 	void    LoadShareData();
@@ -49,7 +46,6 @@ protected:
 
 private:
 	handleHolder        m_InitEvent     = handleHolder(nullptr, handle_closer());
-	CControlTrayHolder  m_pcTray        = nullptr;
 };
 
 #endif /* SAKURA_CCONTROLPROCESS_AFB90808_4287_4A11_B7FB_9CD21CF8BFD6_H_ */

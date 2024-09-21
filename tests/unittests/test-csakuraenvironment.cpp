@@ -26,30 +26,13 @@
 
 #include "env/CSakuraEnvironment.h"
 
-#include "_main/CProcessFactory.h"
+#include "CEditorProcessInitTest.hpp"
+
 #include "_main/CNormalProcess.h"
 
 #include "util/file.h"
 
-struct CSakuraEnvironmentTest : public ::testing::Test
-{
-	static inline std::shared_ptr<CProcess> process = nullptr;
-
-    static void SetUpTestSuite()
-    {
-		// エディタープロセスを生成する
-		process = CProcessFactory().CreateInstance(LR"(-PROF="")");
-
-		// エディタープロセスを初期化する
-		process->InitProcess();
-	}
-
-    static void TearDownTestSuite() {
-		process->TerminateControlProcess();
-
-		process.reset();
-	}
-};
+struct CSakuraEnvironmentTest : public CEditorProcessInitTest {};
 
 /*!
  * @brief exeファイルパスの取得

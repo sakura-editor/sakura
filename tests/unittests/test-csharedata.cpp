@@ -91,23 +91,22 @@ TEST(file_mapping, CreateMapping001)
 	ASSERT_THROW_MESSAGE(mapping->CreateMapping(nullptr, nullptr, 0, 0, 0, L"test"), message_error, L"CreateFileMapping()に失敗しました");
 }
 
-struct CProcessTest : public CProcess
+struct MockCProcess : public CProcess
 {
-	constexpr static auto MESSAGE = L"異なるバージョンのエディタを同時に起動することはできません。"sv;
+	constexpr static auto& MESSAGE = L"異なるバージョンのエディタを同時に起動することはできません。";
 
 	using CProcess::CProcess;
 
 	MOCK_METHOD0(InitializeProcess, bool());
-	MOCK_METHOD0(MainLoop, bool());
 
 	MOCK_METHOD0(InitProcess, void());
 };
 
 TEST(CProcess, Run_failWithMessage)
 {
-	auto process = std::make_unique<CProcessTest>(nullptr, std::make_unique<CCommandLine>(), SW_SHOWDEFAULT);
-	EXPECT_CALL(*process, InitializeProcess()).WillOnce(Invoke([]() -> bool { throw message_error(CProcessTest::MESSAGE); }));
-	EXPECT_ERROUT(process->Run(), CProcessTest::MESSAGE.data());
+	auto process = std::make_unique<MockCProcess>(nullptr, std::make_unique<CCommandLine>(), SW_SHOWDEFAULT);
+	EXPECT_CALL(*process, InitializeProcess()).WillOnce(Invoke([]() -> bool { throw message_error(MockCProcess::MESSAGE); }));
+	EXPECT_ERROUT(process->Run(), MockCProcess::MESSAGE);
 }
 
 TEST(CShareData, InitShareData)
@@ -132,5 +131,5 @@ TEST(CShareData, InitShareData)
 
 	auto process = CProcessFactory().CreateInstance(L"-NOWIN");
 	auto shareData = &process->GetCShareData();
-	ASSERT_THROW_MESSAGE(shareData->InitShareData(), message_error, CProcessTest::MESSAGE.data());
+	ASSERT_THROW_MESSAGE(shareData->InitShareData(), message_error, MockCProcess::MESSAGE);
 }

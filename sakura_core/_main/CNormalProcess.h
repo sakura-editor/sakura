@@ -17,11 +17,23 @@
 #pragma once
 
 #include "_main/CProcess.h"
+#include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
+
+#include "_main/CAppMode.h"
+#include "uiparts/CSoundSet.h"
+#include "types/CType.h"
+#include "CLoadAgent.h"
+#include "CSaveAgent.h"
+#include "uiparts/CVisualProgress.h"
+#include "recent/CMruListener.h"
+#include "macro/CSMacroMgr.h"
+#include "CGrepAgent.h"
 
 #include "extmodule/CMigemo.h"
 #include "macro/CMacroFactory.h"
-#include "CEditApp.h"
+
+class CEditApp;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -35,8 +47,17 @@ class CNormalProcess : public CProcess {
 
 	using Me = CNormalProcess;
 	using CCommandLineHolder = std::unique_ptr<CCommandLine>;
+
+	using CEditDocHolder = std::shared_ptr<CEditDoc>;
+	using CLoadAgentHolder = std::unique_ptr<CLoadAgent>;
+	using CSaveAgentHolder = std::unique_ptr<CSaveAgent>;
+	using CProgressHolder = std::unique_ptr<CVisualProgress>;
+	using CGrepAgentHolder = std::unique_ptr<CGrepAgent>;
+	using CAppModeHolder = std::unique_ptr<CAppMode>;
+	using CMruListenerHolder = std::unique_ptr<CMruListener>;
+	using CSMacroMgrHolder = std::unique_ptr<CSMacroMgr>;
+
 	using CEditAppHolder = std::shared_ptr<CEditApp>;
-	using CEditWndHolder = std::unique_ptr<CEditWnd>;
 	using CMacroFactoryHolder = std::unique_ptr<CMacroFactory>;
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
 
@@ -46,27 +67,38 @@ public:
 	~CNormalProcess() override = default;
 
 	CEditApp*       GetEditApp() const { return m_pcEditApp.get(); }
-	CEditWnd*       GetEditWnd() const { return m_pcEditWnd.get(); }
+	CEditDoc*		GetEditDoc() const { return m_pcEditDoc.get(); }
+	CEditWnd*       GetEditWnd() const { return static_cast<CEditWnd*>(GetMainWnd()); }
+
+	CAppMode*           GetAppMode() const { return m_AppMode.get(); }
+	CGrepAgent*         GetGrepAgent() const { return m_GrepAgent.get(); }
+	CVisualProgress*    GetProgress() const { return m_pcVisualProgress.get(); }
+	CSMacroMgr*         GetSMacroMgr() const { return m_SMacroMgr.get(); }
 
 protected:
 	//プロセスハンドラ
 	bool InitializeProcess() override;
-	bool MainLoop() override;
 
 	void    InitProcess() override;
 	bool    InitShareData() override;
 
-protected:
 	//実装補助
 	void OpenFiles(HWND hwnd);
 
 private:
+	CEditDocHolder		m_pcEditDoc = nullptr;
+	CLoadAgentHolder    m_pcLoadAgent = nullptr;
+	CSaveAgentHolder    m_pcSaveAgent = nullptr;
+	CProgressHolder     m_pcVisualProgress = nullptr;
+	CGrepAgentHolder    m_GrepAgent = nullptr;	//GREPモード
+	CAppModeHolder		m_AppMode = nullptr;	//編集モード
+	CMruListenerHolder  m_pcMruListener = nullptr;		//MRU管理
+	CSMacroMgrHolder    m_SMacroMgr = nullptr;	//マクロ管理
+
 	/*!
 	 * エディターアプリケーションのインスタンス。
 	 */
 	CEditAppHolder      m_pcEditApp = nullptr;
-
-	CEditWndHolder      m_pcEditWnd = nullptr;
 
 	CMacroFactoryHolder	m_MacroFactory = nullptr;
 
