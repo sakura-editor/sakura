@@ -122,7 +122,6 @@ bool CShareData::InitShareData()
 	);
 
 	m_pShareData = m_pData.get();
-	SetDllShareData(m_pShareData);
 
 	if (isCreated)
 	{
@@ -711,7 +710,6 @@ bool CShareData::InitShareData()
 		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
-			SetDllShareData(nullptr);
 			m_pShareData = nullptr;
 
 			//	ハンドルを解放する

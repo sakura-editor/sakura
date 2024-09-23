@@ -29,7 +29,6 @@
 
 #include "basis/SakuraBasis.h"
 
-#include "debug/Debug2.h"
 #include "config/maxdata.h"
 
 #include "env/CAppNodeManager.h"	//SShare_Nodes
@@ -54,31 +53,9 @@
 struct DLLSHAREDATA;
 
 //DLLSHAREDATAへの簡易アクセサ
-inline DLLSHAREDATA& GetDllShareData()
-{
-	extern DLLSHAREDATA* g_theDLLSHAREDATA;
+DLLSHAREDATA& GetDllShareData();
 
-	assert(g_theDLLSHAREDATA);
-	return *g_theDLLSHAREDATA;
-}
-
-inline DLLSHAREDATA& GetDllShareData(bool bNullCheck)
-{
-	extern DLLSHAREDATA* g_theDLLSHAREDATA;
-
-	if( bNullCheck ){
-		assert(g_theDLLSHAREDATA);
-	}
-	return *g_theDLLSHAREDATA;
-}
-
-//DLLSHAREDATAを確保したら、まずこれを呼ぶ。破棄する前にも呼ぶ。
-inline void SetDllShareData(DLLSHAREDATA* pShareData)
-{
-	extern DLLSHAREDATA* g_theDLLSHAREDATA;
-
-	g_theDLLSHAREDATA = pShareData;
-}
+DLLSHAREDATA& GetDllShareData(bool bNullCheck);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    共有メモリ構成要素                       //

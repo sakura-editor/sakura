@@ -25,7 +25,11 @@
 */
 
 #include "StdAfx.h"
-#include "DLLSHAREDATA.h"
+#include "env/DLLSHAREDATA.h"
+
+#include "_main/CProcess.h"
+
+#include "debug/Debug2.h"
 #include "_main/CMutex.h"
 #include "dlg/CDlgCancel.h"
 #include "uiparts/CWaitCursor.h"
@@ -37,10 +41,21 @@
 #include "config/system_constants.h"
 #include "String_define.h"
 
-//GetDllShareData用グローバル変数
-DLLSHAREDATA* g_theDLLSHAREDATA = NULL;
-
 static CMutex g_cKeywordMutex( FALSE, GSTR_MUTEX_SAKURA_KEYWORD );
+
+DLLSHAREDATA& GetDllShareData(bool bNullCheck)
+{
+	const auto process = CProcess::getInstance();
+	if (bNullCheck) {
+		assert(process);
+	}
+	return process->GetShareData();
+}
+
+DLLSHAREDATA& GetDllShareData()
+{
+	return GetDllShareData(true);
+}
 
 CShareDataLockCounter::CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
