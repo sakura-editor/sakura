@@ -44,6 +44,7 @@
 #include "env/SShareDataClientWithCache.hpp"
 
 #include "func/CFuncLookup.h"
+#include "Funccode_enum.h"
 #include "env/CommonSetting.h"
 
 struct DLLSHAREDATA;

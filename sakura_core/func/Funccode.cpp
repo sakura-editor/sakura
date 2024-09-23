@@ -46,6 +46,10 @@
 
 #include "StdAfx.h"
 #include "func/Funccode.h"
+
+//2007.09.30 kobake 機能番号定数を列挙型に変更。(デバッグをしやすくするため)
+#include "Funccode_enum.h"
+
 #include "config/maxdata.h" //MAX_MRU
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"

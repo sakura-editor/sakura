@@ -11,8 +11,8 @@
   <PropertyGroup Label="FuncCode">
     <ExecutablePath Condition="'$(VcpkgRoot)'!=''">$(VcpkgRoot);$(ExecutablePath)</ExecutablePath>
     <HeaderMake>$(VcpkgInstalledDir)x64-windows\tools\header-make\HeaderMake.exe</HeaderMake>
-    <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
-    <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
+    <FuncCodeDefine>$(IntDir)Funccode_define.h</FuncCodeDefine>
+    <FuncCodeEnum>$(IntDir)Funccode_enum.h</FuncCodeEnum>
   </PropertyGroup>
   <Target Name="InstallHeaderMake"
       Condition="!Exists('$(HeaderMake)')"
