@@ -42,26 +42,6 @@ CProcess::CProcess(
 {
 }
 
-/*!
-	@brief プロセスを初期化する
-
-	共有メモリを初期化する
- */
-bool CProcess::InitializeProcess()
-{
-	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.InitShareData();
-
-	// 派生クラスでウインドウを作成する際に以下パラメーターを使用したい
-	UNREFERENCED_PARAMETER(m_nCmdShow);
-
-	/* リソースから製品バージョンの取得 */
-	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
-	//	ShareDataで設定するように変更したのでここからは削除
-
-	return true;
-}
-
 bool CProcess::InitShareData()
 {
 	const auto result = m_cShareData.InitShareData();
