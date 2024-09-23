@@ -6,6 +6,7 @@
     },
     {
       "name": "spdlog",
+      "platform": "static",
       "default-features": false,
       "features": ["wchar"]
     },

@@ -42,26 +42,6 @@ CProcess::CProcess(
 {
 }
 
-/*!
-	@brief プロセスを初期化する
-
-	共有メモリを初期化する
- */
-bool CProcess::InitializeProcess()
-{
-	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.InitShareData();
-
-	// 派生クラスでウインドウを作成する際に以下パラメーターを使用したい
-	UNREFERENCED_PARAMETER(m_nCmdShow);
-
-	/* リソースから製品バージョンの取得 */
-	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
-	//	ShareDataで設定するように変更したのでここからは削除
-
-	return true;
-}
-
 bool CProcess::InitShareData()
 {
 	const auto result = m_cShareData.InitShareData();
@@ -73,14 +53,15 @@ bool CProcess::InitShareData()
 	return result;
 }
 
-[[nodiscard]] HANDLE CProcess::OpenInitEvent(std::optional<LPCWSTR> profileName) const
+handleHolder CProcess::OpenInitEvent(std::optional<LPCWSTR> profileName) const
 {
 	std::wstring eventName = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	if (profileName.has_value() && profileName.value())
 	{
 		eventName += profileName.value();
 	}
-	return OpenEventW(SYNCHRONIZE, FALSE, eventName);
+	const auto hEvent = OpenEventW(SYNCHRONIZE, FALSE, eventName);
+	return handleHolder(hEvent, handle_closer());
 }
 
 /*!
@@ -94,16 +75,13 @@ bool CProcess::InitShareData()
 bool CProcess::IsExistControlProcess(std::optional<LPCWSTR> profileName) const
 {
 	// 初期化完了イベントを開く
-	const auto hEvent = OpenInitEvent(profileName);
-	if (!hEvent) {
+	const auto initEvent = OpenInitEvent(profileName);
+	if (!initEvent) {
 		return false;
 	}
 
-	// イベントハンドルをスマートポインタに入れる
-	handleHolder eventHolder(hEvent, handle_closer());
-
 	// イベントを待つ
-	const auto waitResult = WaitForSingleObject(hEvent, 15 * 1000);
+	const auto waitResult = WaitForSingleObject(initEvent.get(), 15 * 1000);
 	return WAIT_OBJECT_0 == waitResult || WAIT_ABANDONED_0 == waitResult;
 }
 
@@ -139,18 +117,12 @@ bool CProcess::StartControlProcess(std::optional<LPCWSTR> profileName) const
 	// コントロールプロセスを起動
 	StartProcess(cCommandLine, systemPath.c_str());
 
-	//初期化完了イベント
-	handleHolder eventHolder(nullptr, handle_closer());
-
 	// 初期化完了イベントが生成されるまで待つ
 	for (int i = 0; i < 30 * 1000 / 200; ++i) {
-		if (const auto hEvent = OpenInitEvent(profileName))
+		if (const auto initEvent = OpenInitEvent(profileName))
 		{
-			// イベントハンドルをスマートポインタに入れる
-			eventHolder.reset(hEvent);
-
 			// イベントを待つ
-			if (const auto waitResult = WaitForSingleObject(hEvent, 10 * 1000);
+			if (const auto waitResult = WaitForSingleObject(initEvent.get(), 10 * 1000);
 				WAIT_FAILED == waitResult)
 			{
 				throw message_error( L"waitProcess has failed." );

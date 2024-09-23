@@ -51,7 +51,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;$(IntDir)../sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

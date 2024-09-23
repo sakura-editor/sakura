@@ -34,6 +34,8 @@
 #pragma once
 
 #include <Windows.h>
+#include "Funccode_enum.h"
+
 class CEditView;
 
 class CMacroBeforeAfter {

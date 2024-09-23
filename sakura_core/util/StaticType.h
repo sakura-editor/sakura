@@ -27,10 +27,11 @@
 #define SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_
 #pragma once
 
+#include <array>
+#include <cassert>
 #include <stdexcept>
 
 #include "util/string_ex.h"
-#include "debug/Debug2.h"
 
 //! ヒープを用いないvector
 //2007.09.23 kobake 作成。
@@ -49,13 +50,11 @@ public:
 	ElementType&       operator[](int nIndex)
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
 	const ElementType& operator[](int nIndex) const
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
 
@@ -104,31 +103,41 @@ public:
 	static const int BUFFER_COUNT = N_BUFFER_COUNT;
 public:
 	//コンストラクタ・デストラクタ
-	StaticString(){ m_szData[0]=0; }
-	StaticString(const CHAR_TYPE* rhs){ if(!rhs) m_szData[0]=0; else wcscpy(m_szData,rhs); }
+	StaticString() noexcept = default;
+	StaticString(const CHAR_TYPE* rhs) { Assign(rhs); }
 
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
 
 	//データアクセス
-	CHAR_TYPE*       GetBufferPointer()      { return m_szData; }
-	const CHAR_TYPE* GetBufferPointer() const{ return m_szData; }
-	const CHAR_TYPE* c_str()            const{ return m_szData; } //std::string風
+	CHAR_TYPE*       GetBufferPointer()       { return m_szData.data(); }
+	const CHAR_TYPE* GetBufferPointer() const { return m_szData.data(); }
+	CHAR_TYPE*       data()                   { return GetBufferPointer(); } //std::string風
+	const CHAR_TYPE* c_str()            const { return GetBufferPointer(); } //std::string風
 
 	//簡易データアクセス
-	operator       CHAR_TYPE*()      { return m_szData; }
-	operator const CHAR_TYPE*() const{ return m_szData; }
+	operator       CHAR_TYPE*()       { return GetBufferPointer(); }
+	operator const CHAR_TYPE*() const { return GetBufferPointer(); }
+
 	CHAR_TYPE At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const CHAR_TYPE* src){ if(!src) m_szData[0]=0; else wcscpy_s(m_szData,_countof(m_szData),src); }
+	void Assign(const CHAR_TYPE* src) {
+		if (!src) m_szData[0] = 0;
+		else auto_strcpy_s(m_szData.data(), m_szData.size(), src);
+	}
+	void Append(std::basic_string_view<CHAR_TYPE> src) {
+		auto_strcat_s(m_szData.data(), m_szData.size(), src.data());
+	}
+
 	Me& operator = (const CHAR_TYPE* src){ Assign(src); return *this; }
+	Me& operator += (const CHAR_TYPE* src) { Append(src); return *this; }
 
 	//各種メソッド
-	int Length() const { return static_cast<int>(auto_strnlen(m_szData, BUFFER_COUNT)); }
+	int Length() const { return static_cast<int>(auto_strnlen(m_szData.data(), m_szData.size())); }
 
 private:
-	CHAR_TYPE m_szData[N_BUFFER_COUNT];
+	std::array<CHAR_TYPE, N_BUFFER_COUNT> m_szData = {};
 };
 
 #define _countof2(s) s.BUFFER_COUNT

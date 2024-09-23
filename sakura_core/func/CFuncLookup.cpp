@@ -35,6 +35,9 @@
 
 #include "StdAfx.h"
 #include "func/CFuncLookup.h"
+
+#include "Funccode_enum.h"
+
 #include "plugin/CJackManager.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"

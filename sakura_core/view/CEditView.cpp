@@ -802,11 +802,9 @@ bool CEditView::OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct)
 		WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP
 	);
 
-#if 0 // テスト書けないのでコメントアウト
 	if (!m_hwndSizeBox) {
         return false;
 	}
-#endif
 
 	m_hwndSizeBoxPlaceholder = CreateWindowExW(
 		hWnd,

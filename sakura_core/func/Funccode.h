@@ -161,8 +161,9 @@
 を参照
 */
 
-//2007.09.30 kobake 機能番号定数を列挙型に変更。(デバッグをしやすくするため)
-#include "Funccode_enum.h"
+class CEditDoc;
+struct DLLSHAREDATA;
+enum EFunctionCode;
 
 // 機能一覧に関するデータ宣言
 namespace nsFuncCode{
@@ -179,10 +180,8 @@ namespace nsFuncCode{
 /*機能番号に対応したヘルプトピックIDを返す*/
 int FuncID_To_HelpContextID( EFunctionCode nFuncID );	//Stonee, 2001/02/23
 
-class CEditDoc;
-struct DLLSHAREDATA;
-
 //2007.10.30 kobake 機能チェックをCEditWndからここへ移動
 bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能が利用可能か調べる */
 bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能がチェック状態か調べる */
+
 #endif /* SAKURA_FUNCCODE_071442E9_78EF_47B8_ABB5_CBB12C3EC84B_H_ */

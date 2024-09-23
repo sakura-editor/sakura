@@ -8,25 +8,16 @@ from appium.webdriver.webelement import WebElement
 from helper import wait_for_context_menu
 from helper import wait_for_dialog
 from helper import cancel_element
+from helper import emulate_click
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from typing import Final
 
-def test_show_and_cancel(desktop: WebElement):
-    # ホットキーでポップアップメニューを表示
-    desktop.send_keys(Keys.CONTROL + Keys.ALT, 'z')
-
-    context_menu = WebDriverWait(desktop, 15).until(EC.visibility_of_element_located((By.CLASS_NAME, '#32768'))) # ContextMenu
-    time.sleep(1)
-
-    # ESCキーを押下してポップアップメニューを閉じる
-    cancel_element(desktop, context_menu)
-
-def test_show_grep_dialog(desktop: WebElement):
-    # ホットキーでポップアップメニューを表示
-    desktop.send_keys(Keys.CONTROL + Keys.ALT, 'z')
+def test_show_grep_dialog(desktop):
+    # 左クリックでポップアップメニューを表示
+    emulate_click('click')
 
     # メニュー項目F_GREP_DIALOGをクリック
     F_GREP_DIALOG: Final = '30910'
@@ -40,9 +31,9 @@ def test_show_grep_dialog(desktop: WebElement):
     # キャンセルで閉じる
     cancel_element(desktop, grep_dialog)
 
-def test_show_favorite_dialog(desktop: WebElement):
-    # ホットキーでポップアップメニューを表示
-    desktop.send_keys(Keys.CONTROL + Keys.ALT, 'z')
+def test_show_favorite_dialog(desktop):
+    # 左クリックでポップアップメニューを表示
+    emulate_click('click')
 
     # メニュー項目F_FAVORITEをクリック
     F_FAVORITE: Final = '31113'

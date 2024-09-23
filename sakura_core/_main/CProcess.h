@@ -61,7 +61,7 @@ public:
 
 	int Run() noexcept;
 
-	[[nodiscard]] HANDLE OpenInitEvent(std::optional<LPCWSTR> profileName) const;
+	handleHolder OpenInitEvent(std::optional<LPCWSTR> profileName) const;
 
 	bool    IsExistControlProcess(std::optional<LPCWSTR> profileName = std::nullopt) const;
 	bool    StartControlProcess(std::optional<LPCWSTR> profileName = std::nullopt) const;

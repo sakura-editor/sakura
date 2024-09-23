@@ -2010,7 +2010,6 @@ bool CEditWnd::OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct)
         return false;
     }
 
-#if 0 // テスト書けないのでコメントアウト
 	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
 	if (const auto hWndTray = m_pShareData->m_sHandles.m_hwndTray) {
 		SendMessageW(hWndTray, MYWM_UIPI_CHECK, WPARAM(0L), LPARAM(hWnd));
@@ -2019,7 +2018,6 @@ bool CEditWnd::OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct)
 			return false;
 		}
 	}
-#endif
 
 	m_cToolbar.Create(&m_hIcons);
 
