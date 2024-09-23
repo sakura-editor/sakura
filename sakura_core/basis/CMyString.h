@@ -40,14 +40,15 @@
 #define _FT _T
 
 //共通型
-typedef StaticString<WCHAR,_MAX_PATH> SFilePath;
+using SFilePath = StaticString<WCHAR,_MAX_PATH>;
 typedef StaticString<WCHAR, MAX_GREP_PATH> SFilePathLong;
-class CFilePath : public StaticString<WCHAR,_MAX_PATH>{
+
+class CFilePath : public SFilePath {
 private:
-	typedef StaticString<WCHAR,_MAX_PATH> Super;
+	using Super = SFilePath;
+
 public:
-	CFilePath() = default;
-	CFilePath(const WCHAR* rhs) : Super(rhs) { }
+	using SFilePath::SFilePath;
 
 	[[nodiscard]] bool IsValidPath() const{ return At(0)!=L'\0'; }
 	[[nodiscard]] std::wstring GetDirPath() const
