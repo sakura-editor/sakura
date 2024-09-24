@@ -18,7 +18,7 @@ def test_show_and_cancel(desktop: WebElement):
     # ホットキーでポップアップメニューを表示
     desktop.send_keys(Keys.CONTROL + Keys.ALT, 'z')
 
-    context_menu = WebDriverWait(desktop, 15).until(EC.visibility_of_element_located((By.CLASS_NAME, '#32768'))) # ContextMenu
+    context_menu = WebDriverWait(desktop, 120).until(EC.visibility_of_element_located((By.CLASS_NAME, '#32768'))) # ContextMenu
     time.sleep(1)
 
     # ESCキーを押下してポップアップメニューを閉じる
@@ -32,7 +32,7 @@ def test_show_grep_dialog(desktop: WebElement):
     F_GREP_DIALOG: Final = '30910'
     context_menu = wait_for_context_menu(desktop,  F_GREP_DIALOG)
     context_menu.click()
-    WebDriverWait(desktop, 15).until_not(EC.visibility_of_element_located((By.ID, context_menu.id)))
+    WebDriverWait(desktop, 120).until_not(EC.visibility_of_element_located((By.ID, context_menu.id)))
 
     # Grepダイアログが表示されるまで待つ
     grep_dialog = wait_for_dialog(desktop, 'Grep')
@@ -48,7 +48,7 @@ def test_show_favorite_dialog(desktop: WebElement):
     F_FAVORITE: Final = '31113'
     context_menu = wait_for_context_menu(desktop,  F_FAVORITE)
     context_menu.click()
-    WebDriverWait(desktop, 15).until_not(EC.visibility_of_element_located((By.ID, context_menu.id)))
+    WebDriverWait(desktop, 120).until_not(EC.visibility_of_element_located((By.ID, context_menu.id)))
 
     # 「履歴とお気に入りの管理」ダイアログが表示されるまで待つ
     favorite_dialog = wait_for_dialog(desktop, '履歴とお気に入りの管理')

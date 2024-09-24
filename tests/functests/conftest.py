@@ -13,6 +13,8 @@ from appium.webdriver.webelement import WebElement
 from helper import appium_host as APPIUM_HOST
 from helper import appium_port as APPIUM_PORT
 from helper import appium_url as APPIUM_URL
+from helper import get_win_handle
+from helper import text_editor_window_classname as TEXT_EDITOR_WINDOW
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -42,5 +44,21 @@ def root_driver(appium_service) -> Generator[WebDriver, None, None]:
     root_driver.quit()
 
 @pytest.fixture(scope='session')
+def driver(root_driver: WebDriver) -> Generator[WebDriver, None, None]:
+    win = WebDriverWait(root_driver, 120).until(EC.presence_of_element_located((By.CLASS_NAME, TEXT_EDITOR_WINDOW)))
+    win_handle = get_win_handle(win)
+    options = WindowsOptions()
+    options.app_top_level_window = win_handle
+    driver = webdriver.Remote(APPIUM_URL, options=options)
+    try:
+        yield driver
+    finally:
+        driver.quit()
+
+@pytest.fixture(scope='session')
 def desktop(root_driver: WebDriver) -> WebElement:
     return root_driver.find_element(By.CLASS_NAME, '#32769') # Desktop
+
+@pytest.fixture(scope='session')
+def wnd(driver: WebDriver) -> WebElement:
+    return driver.find_element(By.CLASS_NAME, TEXT_EDITOR_WINDOW)
