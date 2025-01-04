@@ -96,13 +96,11 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 		if ( x < 0 ){
 			const CLayoutMgr& layoutMgr = m_pEditView->m_pcEditDoc->m_cLayoutMgr;
 			const int nLeftLayout = (0 - x) / nDx;
-			while (nBeforeLogic < nLength) {
-				const CLayoutXInt nCharLayout = layoutMgr.GetLayoutXOfChar(pData, nLength, nBeforeLogic);
-				if (nLeftLayout < (nBeforeLayout + nCharLayout)) {
-					break;
-				}
+			CLayoutXInt nCharLayout = layoutMgr.GetLayoutXOfChar(pData, nLength, nBeforeLogic);
+			while ((nBeforeLayout + nCharLayout) <= nLeftLayout) {
 				nBeforeLayout += nCharLayout;
 				nBeforeLogic  += CNativeW::GetSizeOfChar( pData, nLength, nBeforeLogic );
+				nCharLayout = layoutMgr.GetLayoutXOfChar(pData, nLength, nBeforeLogic);
 			}
 		}
 
