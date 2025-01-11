@@ -66,8 +66,6 @@
 #define DUMMYUNION5_MEMBER(x) DUMMYUNIONNAME5.x
 #endif
 #endif
-// MinGW-w64-gcc にない関数をマクロ定義する
-#define _wcstok wcstok
 #endif
 
 #include <io.h>
