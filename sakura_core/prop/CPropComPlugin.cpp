@@ -243,7 +243,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							break;
 						}
 					}
-					OpenWithExplorer( hwndDlg, sBaseDir );
+					::ShellExecute( NULL, L"open", sBaseDir.c_str(), NULL, NULL, SW_SHOW );
 				}
 				break;
 			case IDC_PLUGIN_README:		// ReadMe表示	// 2011/11/2 Uchi
@@ -268,7 +268,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if (sel >= 0){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if (plugin != NULL){
-							OpenWithBrowser( hwndDlg, plugin->m_sUrl );
+							::ShellExecute(NULL, L"Open", plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW);
 						}
 					}
 				}
