@@ -817,7 +817,9 @@ void CEditDoc::OnChangeSetting(
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
-		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+		// レイアウト情報再生成時(bDoLayout=true)はCLayoutMgr::SetLayoutInfo->
+		// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+		m_cLayoutMgr.CalculateTextWidth(!bDoLayout);		// テキスト最大幅を算出する
 	else
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
