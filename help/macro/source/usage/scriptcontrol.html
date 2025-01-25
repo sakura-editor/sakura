@@ -16,56 +16,56 @@ Sakura-Editor Macro Reference
 
 <h3>JScriptサンプル</h3>
 <pre>
-<span style="color:green;">//JScriptからVBSのInputBox関数を実行</span>
-<span style="color:blue;">var</span> oSC = <span style="color:blue;">new</span> ActiveXObject(<span style="color:#800000;">"ScriptControl"</span>);
-oSC.Language = <span style="color:#800000;">"VBScript"</span>;
-<span style="color:blue;">var</span> sFunc = <span style="color:#800000;">'Function InBox(prompt, title, default)\n'</span>;
-sFunc += <span style="color:#800000;">'    InBox = InputBox(prompt, title, default)\n'</span>;
-sFunc += <span style="color:#800000;">'End Function\n'</span>;
+<span class="green">//JScriptからVBSのInputBox関数を実行</span>
+<span class="blue">var</span> oSC = <span class="blue">new</span> ActiveXObject(<span class="maroon">"ScriptControl"</span>);
+oSC.Language = <span class="maroon">"VBScript"</span>;
+<span class="blue">var</span> sFunc = <span class="maroon">'Function InBox(prompt, title, default)\n'</span>;
+sFunc += <span class="maroon">'    InBox = InputBox(prompt, title, default)\n'</span>;
+sFunc += <span class="maroon">'End Function\n'</span>;
 oSC.AddCode(sFunc);
-<span style="color:blue;">var</span> Ret = oSC.Run (<span style="color:#800000;">"InBox"</span>, <span style="color:#800000;">"メッセージ"</span>, <span style="color:#800000;">"タイトル"</span>, <span style="color:#800000;">"初期値"</span>);
-<span style="color:blue;">InsText</span>(Ret);
+<span class="blue">var</span> Ret = oSC.Run (<span class="maroon">"InBox"</span>, <span class="maroon">"メッセージ"</span>, <span class="maroon">"タイトル"</span>, <span class="maroon">"初期値"</span>);
+<span class="blue">InsText</span>(Ret);
 </pre>
 
 
 <h3>VBScriptサンプル</h3>
 <pre>
-<span style="color:green;">&#39;VBScriptからJscriptのsplit関数を実行</span>
-<span style="color:blue;">Dim</span> sCode, oSC, sFileName
+<span class="green">&#39;VBScriptからJscriptのsplit関数を実行</span>
+<span class="blue">Dim</span> sCode, oSC, sFileName
 
-sCode = <span style="color:#800000;">"GetFileNameFromFulPath=function(sBuf) {aRet=sBuf.split('\\');return aRet[aRet.length-1];}"</span>
+sCode = <span class="maroon">"GetFileNameFromFulPath=function(sBuf) {aRet=sBuf.split('\\');return aRet[aRet.length-1];}"</span>
 
-<span style="color:blue;">Set</span> oSC = CreateObject(<span style="color:#800000;">"ScriptControl"</span>)
-oSC.Language = <span style="color:#800000;">"JScript"</span>
+<span class="blue">Set</span> oSC = CreateObject(<span class="maroon">"ScriptControl"</span>)
+oSC.Language = <span class="maroon">"JScript"</span>
 oSC.AddCode(sCode)
-sFileName = oSC.Run(<span style="color:#800000;">"GetFileNameFromFulPath"</span>, <span style="color:#800000;">"c:\winnt\notepad.exe"</span>)
-<span style="color:blue;">Set</span> oSC = <span style="color:blue;">Nothing</span>
+sFileName = oSC.Run(<span class="maroon">"GetFileNameFromFulPath"</span>, <span class="maroon">"c:\winnt\notepad.exe"</span>)
+<span class="blue">Set</span> oSC = <span class="blue">Nothing</span>
 
-<span style="color:blue;">InsText</span>(sFileName)
+<span class="blue">InsText</span>(sFileName)
 </pre>
 
 <h3>PerlScriptサンプル</h3>
 <pre>
-<span style="color:green;"># http://miau.s9.xrea.com/blog/index.php?itemid=397</span>
-<span style="color:blue;">sub</span> InputBox
+<span class="green"># http://miau.s9.xrea.com/blog/index.php?itemid=397</span>
+<span class="blue">sub</span> InputBox
 {
-    <span style="color:blue;">my</span> @args = @_;
+    <span class="blue">my</span> @args = @_;
     @args = map { encode('cp932', $_) } @args;
-    <span style="color:blue;">while</span> (@args &lt; 3) {
-        <span style="color:blue;">push</span> @args, '';
+    <span class="blue">while</span> (@args &lt; 3) {
+        <span class="blue">push</span> @args, '';
     }
     
-    <span style="color:blue;">my</span> $sc = Win32::OLE-&gt;CreateObject(<span style="color:#800000;">"ScriptControl"</span>);
-    $sc-&gt;{Language} = <span style="color:#800000;">"VBScript"</span>;
+    <span class="blue">my</span> $sc = Win32::OLE-&gt;CreateObject(<span class="maroon">"ScriptControl"</span>);
+    $sc-&gt;{Language} = <span class="maroon">"VBScript"</span>;
     $sc-&gt;AddCode(&lt;&lt;EOC);
 Function Main(prompt, title, default)
     Main = InputBox(prompt, title, default)
 End Function
 EOC
-    <span style="color:blue;">my</span> $ret = $sc-&gt;Run(<span style="color:#800000;">"Main"</span>, @args);
+    <span class="blue">my</span> $ret = $sc-&gt;Run(<span class="maroon">"Main"</span>, @args);
     $ret = decode('cp932', $ret);
     
-    <span style="color:blue;">return</span> $ret;
+    <span class="blue">return</span> $ret;
 }
 </pre>
 
