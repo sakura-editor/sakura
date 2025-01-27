@@ -131,24 +131,24 @@ INT_PTR CPropCommon::DlgProc2(
 CPropCommon::CPropCommon()
 {
 	{
-		assert( sizeof(CPropGeneral)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropWin)       - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropMainMenu)  - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropToolbar)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropTab)       - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropStatusbar) - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropEdit)      - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropFile)      - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropFileName)  - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropBackup)    - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropFormat)    - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropGrep)      - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropKeybind)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropCustmenu)  - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropKeyword)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropHelper)    - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropMacro)     - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropPlugin)    - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropGeneral)   - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropWin)       - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropMainMenu)  - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropToolbar)   - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropTab)       - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropStatusbar) - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropEdit)      - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropFile)      - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropFileName)  - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropBackup)    - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropFormat)    - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropGrep)      - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropKeybind)   - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropCustmenu)  - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropKeyword)   - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropHelper)    - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropMacro)     - sizeof(CPropCommon) == 0, "size check" );
+		static_assert( sizeof(CPropPlugin)    - sizeof(CPropCommon) == 0, "size check" );
 	}
 
 	/* 共有データ構造体のアドレスを返す */

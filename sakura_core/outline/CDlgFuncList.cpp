@@ -204,7 +204,7 @@ HINSTANCE CDlgFuncList::m_lastRcInstance = 0;
 CDlgFuncList::CDlgFuncList() : CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( _countof(anchorList) == _countof(m_rcItems), "size check" );
 
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */

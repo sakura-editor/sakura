@@ -114,7 +114,7 @@ CDlgFavorite::CDlgFavorite()
 	m_szMsg[0] = L'\0';
 
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( _countof(anchorList) == _countof(m_rcItems), "size check" );
 
 	{
 		i = 0;
