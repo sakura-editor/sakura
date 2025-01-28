@@ -3394,7 +3394,6 @@ STRINGTABLE
 BEGIN
     STR_TRAY_CREATEPROC2    "'%s'\nFailed to execute process."
     STR_TRAY_EXITALL        "Close all open windows, and exit editor without saving?"
-    STR_TRAY_ACCELTABLE     "CControlTray::CreateAccelTbl()\nCould not create accelerator table.\nInsufficient system resources."
     STR_LOADAGENT_ERR_OPEN  "'%s'\nCannot open file.\nYou do not have read access to this file."
     STR_LOADAGENT_BIG_WARNING 
                             "'%s'\nFile size is %dMB or over. Do you want to open?"
