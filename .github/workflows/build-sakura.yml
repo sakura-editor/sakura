@@ -41,7 +41,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -121,49 +121,49 @@ jobs:
 
     ## see https://github.com/actions/upload-artifact
     - name: Upload Installer
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Installer ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Installer.zip'
 
     - name: Upload Installer MD5
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Installer MD5 ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Installer.zip.md5'
 
     - name: Upload Exe
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Exe ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip'
 
     - name: Upload Exe MD5
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Exe MD5 ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip.md5'
 
     - name: Upload Log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Log ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Log.zip'
 
     - name: Upload Asm
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Asm ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Asm.zip'
 
     - name: Upload Dev
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Dev ${{ matrix.platform }} ${{ matrix.config }}
