@@ -53,8 +53,6 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] );
 /* ヘルプの目次を表示 */
 void ShowWinHelpContents( HWND hwnd );
 
-BOOL GetSpecialFolderPath( int nFolder, LPWSTR pszPath );	// 特殊フォルダーのパスを取得する	// 2007.05.19 ryoji
-
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 2007.05.24 ryoji
 
 //!フォント選択ダイアログ
