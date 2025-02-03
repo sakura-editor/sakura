@@ -88,7 +88,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConf
 		new CType_Ini(),	//設定ファイル
 	};
 	types.clear();
-	static_assert( _countof(table) <= MAX_TYPES, "size check" );
+	static_assert( _countof(table) <= MAX_TYPES );
 	for(int i = 0; i < _countof(table) && i < MAX_TYPES; i++){
 		STypeConfig* type = new STypeConfig;
 		types.push_back(type);
@@ -213,7 +213,7 @@ void _DefaultConfig(STypeConfig* pType)
 
 	pType->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
-	static_assert( COLORIDX_LAST <= _countof(pType->m_ColorInfoArr), "size check" );
+	static_assert( COLORIDX_LAST <= _countof(pType->m_ColorInfoArr) );
 	for( int i = 0; i < COLORIDX_LAST; ++i ){
 		GetDefaultColorInfo(&pType->m_ColorInfoArr[i],i);
 	}

@@ -89,7 +89,7 @@ CDlgDiff::CDlgDiff()
 	, m_nIndexSave( 0 )
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( _countof(anchorList) == _countof(m_rcItems), "size check" );
+	static_assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	m_nDiffFlgOpt    = 0;
 	m_bIsModifiedDst = false;
