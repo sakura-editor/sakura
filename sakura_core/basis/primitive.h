@@ -35,9 +35,6 @@
 //char,wchar_t の変わりに、別名の ACHAR,WCHAR を使うと、ソース整形がしやすいケースがある。
 typedef char ACHAR;
 
-//WIN_CHAR (WinAPIに渡すので、必ずTCHARでなければならないもの)
-typedef WCHAR WIN_CHAR;
-
 //EDIT_CHAR
 typedef wchar_t WChar;      //エディタで用いるテキスト管理データ型
 typedef wchar_t EDIT_CHAR;

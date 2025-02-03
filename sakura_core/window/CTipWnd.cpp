@@ -194,7 +194,7 @@ void CTipWnd::ComputeWindowSize(
 			nLineBgn = i + 1; // "\n" の文字数
 			i = nLineBgn;
 		}else{
-			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
+			// 現在位置の文字がWCHAR単位で何文字に当たるか計算してインデックスを進める
 			size_t nCharCount = CNativeW::GetSizeOfChar( pszText, cchText, i );
 			i += nCharCount;
 		}
@@ -266,7 +266,7 @@ void CTipWnd::DrawTipText(
 			nLineBgn = i + 1; // "\n" の文字数
 			i = nLineBgn;
 		}else{
-			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
+			// 現在位置の文字がWCHAR単位で何文字に当たるか計算してインデックスを進める
 			size_t nCharCount = CNativeW::GetSizeOfChar( pszText, cchText, i );
 			i += nCharCount;
 		}
