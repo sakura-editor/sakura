@@ -74,10 +74,10 @@ public:
 	}
 	bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params ) override;
 
-	bool InitDllImp() {
+	bool InitDllImp() override {
 		return true;
 	}
-	LPCWSTR GetDllNameImp(int nIndex) {
+	LPCWSTR GetDllNameImp(int nIndex) override {
 		return L"";
 	}
 

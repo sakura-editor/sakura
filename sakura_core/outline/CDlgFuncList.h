@@ -128,7 +128,7 @@ protected:
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
 	BOOL OnDestroy(void) override; // 20060201 aroka
-	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
+	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID ) override;
 	BOOL OnContextMenu(WPARAM wParam, LPARAM lParam) override;
 	void SetData() override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */

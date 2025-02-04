@@ -41,10 +41,10 @@ public:
 	//オーバーライド
 	int				CompareItem( const CTagjumpKeywordString* p1, LPCWSTR p2 ) const override;
 	void			CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywordString* src ) const override;
 	bool			TextToDataType( CTagjumpKeywordString* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	size_t			GetTextMaxLength() const override;
 };
 #endif /* SAKURA_CRECENTTAGJUMPKEYWORD_1416AC30_3714_4760_A313_76588D26A0A1_H_ */

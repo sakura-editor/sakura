@@ -39,11 +39,11 @@ public:
 	//オーバーライド
 	int				CompareItem( const EditInfo* p1, const EditInfo* p2 ) const override;
 	void			CopyItem( EditInfo* dst, const EditInfo* src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( const EditInfo** dst, const EditInfo* src ) const override;
 	bool			TextToDataType( EditInfo* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( const EditInfo* ) const override;
-	size_t			GetTextMaxLength() const;
+	size_t			GetTextMaxLength() const override;
 	//固有インターフェース
 	int FindItemByPath(const WCHAR* pszPath) const;
 };

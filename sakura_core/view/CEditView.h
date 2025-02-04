@@ -139,7 +139,7 @@ public:
 	}
 
 public:
-	CEditView* GetEditView()
+	CEditView* GetEditView() override
 	{
 		return this;
 	}

@@ -37,7 +37,7 @@ public:
 	bool BeginColor(const CStringRef& cStr, int nPos) override;
 	bool EndColor(const CStringRef& cStr, int nPos) override;
 	bool Disp() const override{ return m_pTypeData->m_bUseRegexKeyword; }
-	void OnStartScanLogic();
+	void OnStartScanLogic() override;
 private:
 	int m_nCOMMENTEND;
 	EColorIndexType m_nCOMMENTMODE;

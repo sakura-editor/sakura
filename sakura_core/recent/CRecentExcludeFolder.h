@@ -41,10 +41,10 @@ public:
 	//オーバーライド
 	int				CompareItem( const CExcludeFolderString* p1, LPCWSTR p2 ) const override;
 	void			CopyItem( CExcludeFolderString* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CExcludeFolderString* src ) const override;
 	bool			TextToDataType( CExcludeFolderString* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	size_t			GetTextMaxLength() const override;
 };
 #endif /* SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_ */
