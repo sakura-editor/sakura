@@ -664,7 +664,7 @@ BOOL CDlgTagJumpList::OnNotify(NMHDR* pNMHDR)
 
 	タイマーを停止し，候補リストを更新する
 */
-BOOL CDlgTagJumpList::OnTimer( WPARAM wParam )
+BOOL CDlgTagJumpList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	StopTimer();
 
