@@ -156,7 +156,7 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	  m_strOldKeyword( L"" )
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	// 2010.07.22 Moca ページング採用で 最大値を100→50に減らす
 	m_pcList = new CSortedTagJumpList(50);
