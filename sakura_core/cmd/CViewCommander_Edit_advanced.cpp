@@ -962,7 +962,6 @@ void CViewCommander::Command_Reconvert(void)
 	if( 0 == nSize )  // サイズ０の時は何もしない
 		return ;
 
-	bool bUseUnicodeATOK = false;
 	{
 		//現在のIMEが対応しているかどうか
 		//IMEのプロパティ
@@ -986,13 +985,13 @@ void CViewCommander::Command_Reconvert(void)
 	// Sizeはバッファ確保側が設定
 	pReconv->dwSize = nSize;
 	pReconv->dwVersion = 0;
-	m_pCommanderView->SetReconvertStruct( pReconv, UNICODE_BOOL || bUseUnicodeATOK);
+	m_pCommanderView->SetReconvertStruct( pReconv, UNICODE_BOOL);
 	
 	//変換範囲の調整
 	::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 
 	//調整した変換範囲を選択する
-	m_pCommanderView->SetSelectionFromReonvert(pReconv, UNICODE_BOOL || bUseUnicodeATOK);
+	m_pCommanderView->SetSelectionFromReonvert(pReconv, UNICODE_BOOL);
 	
 	//再変換実行
 	::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);
