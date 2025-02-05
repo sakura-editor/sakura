@@ -813,14 +813,14 @@ LRESULT CEditView::DispatchEvent(
 		// 2002.04.09 switch case に変更  minfu
 		switch ( wParam ){
 		case IMR_RECONVERTSTRING:
-			return SetReconvertStruct((PRECONVERTSTRING)lParam, UNICODE_BOOL);
+			return SetReconvertStruct((PRECONVERTSTRING)lParam);
 
 		case IMR_CONFIRMRECONVERTSTRING:
-			return SetSelectionFromReonvert((PRECONVERTSTRING)lParam, UNICODE_BOOL);
+			return SetSelectionFromReonvert((PRECONVERTSTRING)lParam);
 
 		// 2010.03.16 MS-IME 2002 だと「カーソル位置の前後の内容を参照して変換を行う」の機能
 		case IMR_DOCUMENTFEED:
-			return SetReconvertStruct((PRECONVERTSTRING)lParam, UNICODE_BOOL, true);
+			return SetReconvertStruct((PRECONVERTSTRING)lParam, true);
 
 		default:
 			break;

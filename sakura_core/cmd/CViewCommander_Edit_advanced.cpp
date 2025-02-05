@@ -955,10 +955,8 @@ void CViewCommander::Command_MERGE(void)
 */
 void CViewCommander::Command_Reconvert(void)
 {
-	const int ATRECONVERTSTRING_SET = 1;
-
 	//サイズを取得
-	int nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL);
+	int nSize = m_pCommanderView->SetReconvertStruct(NULL);
 	if( 0 == nSize )  // サイズ０の時は何もしない
 		return ;
 
@@ -985,13 +983,13 @@ void CViewCommander::Command_Reconvert(void)
 	// Sizeはバッファ確保側が設定
 	pReconv->dwSize = nSize;
 	pReconv->dwVersion = 0;
-	m_pCommanderView->SetReconvertStruct( pReconv, UNICODE_BOOL);
+	m_pCommanderView->SetReconvertStruct( pReconv);
 	
 	//変換範囲の調整
 	::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 
 	//調整した変換範囲を選択する
-	m_pCommanderView->SetSelectionFromReonvert(pReconv, UNICODE_BOOL);
+	m_pCommanderView->SetSelectionFromReonvert(pReconv);
 	
 	//再変換実行
 	::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);

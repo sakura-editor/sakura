@@ -54,9 +54,6 @@
 //! USE_UNFIXED_FONT を定義すると、フォント選択ダイアログで等幅フォント以外も選べるようになる
 //#define USE_UNFIXED_FONT
 
-//UNICODE BOOL定数.
-static const bool UNICODE_BOOL=true;
-
 //newされた領域をわざと汚すかどうか (デバッグ用)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 #define FILL_STRANGE_IN_NEW_MEMORY
