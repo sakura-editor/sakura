@@ -38,7 +38,7 @@
 
 ### 実行ファイルのビルドに必要なもの
 
-- (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
+- (オプション) [7-Zip](https://7-zip.opensource.jp/) (外部依存ファイルの解凍に使用)
 - Community または Professional エディション以上の Visual Studio 2017 または Visual Studio 2019
    - Windows 10 SDK のインストールも必要です。
 
