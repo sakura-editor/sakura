@@ -128,4 +128,4 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
 * 作業用フォルダーに必要なファイルをコピーする
 * [calc-hash.bat](../calc-hash.bat) で sha256 のハッシュを計算して、作業用フォルダーにコピーする
 * [tools\zip\zip.bat](../tools/zip/zip.bat) を使用して作業用フォルダーの中身を zip ファイルにまとめる
-    - [7-Zip](https://sevenzip.osdn.jp/) が利用できる場合は 7z.exe を、利用できない場合は PowerShell を利用してファイルを作成します。
+    - [7-Zip](https://7-zip.opensource.jp/) が利用できる場合は 7z.exe を、利用できない場合は PowerShell を利用してファイルを作成します。
