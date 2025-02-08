@@ -62,7 +62,7 @@ jobs:
           sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ env.BASE_SHA }}
 
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Run the normal MSBuild process
       run: build-sln.bat ${{ env.BUILD_PLATFORM }} ${{ env.BUILD_CONFIGURATION }}
