@@ -283,7 +283,7 @@ LPCWSTR CLoadString::LoadString( UINT uid )
 
 	@param[in] uid  リソースID
 
-	@retval 読み込んだ文字数（TCHAR単位）
+	@retval 読み込んだ文字数（WCHAR単位）
 
 	@note メッセージリソースより文字列を読み込む。メッセージリソースDLLに指定の
 	@note リソースが存在しない、またはメッセージリソースDLL自体が読み込まれて

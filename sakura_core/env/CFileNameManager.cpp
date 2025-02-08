@@ -48,7 +48,7 @@
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名
 	@param pszDest  [out] 変換後のファイル名の格納先
-	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ _MAX_PATH まで
+	@param nDestLen [in]  終端のNULLを含むpszDestのWCHAR単位の長さ _MAX_PATH まで
 	@date 2003.01.27 Moca 新規作成
 	@note 連続して呼び出す場合のため、展開済みメタ文字列をキャッシュして高速化している。
 */
@@ -149,7 +149,7 @@ LPCWSTR CFileNameManager::GetFilePathFormat( std::wstring_view strSrc, LPWSTR ps
 
 	@param pszSrc  [in]  変換前文字列
 	@param pszDes  [out] 変換後文字列
-	@param nDesLen [in]  pszDesのNULLを含むTCHAR単位の長さ
+	@param nDesLen [in]  pszDesのNULLを含むWCHAR単位の長さ
 	@retval true  正常に変換できた
 	@retval false バッファが足りなかった，またはエラー。pszDesは不定
 	@date 2002.11.27 Moca 作成開始
