@@ -51,9 +51,7 @@ const DWORD p_helpids[] = {	//12900
 //	From Here Feb. 7, 2002 genta
 // 2006.01.17 Moca COMPILER_VERを追加
 // 2010.04.15 Moca icc/dmcを追加しCPUを分離
-#if defined(_M_IA64)
-#  define TARGET_M_SUFFIX "_I64"
-#elif defined(_M_AMD64)
+#if defined(_M_AMD64)
 #  define TARGET_M_SUFFIX "_A64"
 #else
 #  define TARGET_M_SUFFIX ""
