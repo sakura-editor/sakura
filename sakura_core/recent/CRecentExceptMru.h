@@ -41,10 +41,10 @@ public:
 	//オーバーライド
 	int				CompareItem( const CMetaPath* p1, LPCWSTR p2 ) const override;
 	void			CopyItem( CMetaPath* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CMetaPath* src ) const override;
 	bool			TextToDataType( CMetaPath* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	size_t			GetTextMaxLength() const override;
 };
 #endif /* SAKURA_CRECENTEXCEPTMRU_4DF7E5C5_2EC1_4A19_B31C_74EF43DC08AE_H_ */

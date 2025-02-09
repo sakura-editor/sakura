@@ -42,10 +42,10 @@ public:
 	//オーバーライド
 	int				CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) const override;
 	void			CopyItem( CGrepFolderString* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const override;
 	bool			TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	size_t			GetTextMaxLength() const override;
 };
 #endif /* SAKURA_CRECENTGREPFOLDER_A0D1E75B_4587_4587_9A33_A5EA13349BAB_H_ */

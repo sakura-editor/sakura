@@ -41,10 +41,10 @@ public:
 	//オーバーライド
 	int				CompareItem( const CExcludeFileString* p1, LPCWSTR p2 ) const override;
 	void			CopyItem( CExcludeFileString* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CExcludeFileString* src ) const override;
 	bool			TextToDataType( CExcludeFileString* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	size_t			GetTextMaxLength() const override;
 };
 #endif /* SAKURA_CRECENTEXCLUDEFILE_74BD9C61_4E41_4D1D_A8CE_8C78B4DDDEBA_H_ */

@@ -53,7 +53,7 @@ public:
 
 	bool OutputW(const WCHAR* pBuf, int size = -1) override;
 	bool OutputA(const ACHAR* pBuf, int size = -1) override;
-	bool IsActiveDebugWindow(){ return FALSE == m_bWindow; }
+	bool IsActiveDebugWindow() override { return FALSE == m_bWindow; }
 
 protected:
 	void OutputBuf(const WCHAR* pBuf, int size);
