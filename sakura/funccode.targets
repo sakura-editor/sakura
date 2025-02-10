@@ -1,15 +1,8 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="FuncCode">
-    <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
     <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
     <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HeaderMake\HeaderMake.vcxproj">
-      <Project>{0f2918b0-23e3-42e8-a1a8-8739f726a23e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
   <Target Name="_WriteFuncCodeDefineRcTlogs"
       Condition="'@(FuncCodeRes)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
@@ -42,7 +35,7 @@
       DependsOnTargets="_WriteFuncCodeDefineRcTlogs;_SelectedFiles"
       AfterTargets="SelectClCompile;GenerateGitHash"
       BeforeTargets="ResourceCompile">
-    <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
+    <Exec Command="cl.exe /nologo /utf-8 /P /EP @(FuncCodeRes) /Fi$(FuncCodeDefine) -DFUNC_CODE_DEFINE" />
   </Target>
   <Target Name="_WriteFuncCodeEnumClTlogs"
       Condition="'@(FuncCodeRes)' != '' and '@(SelectedFiles)' == ''">
@@ -76,6 +69,6 @@
       DependsOnTargets="_WriteFuncCodeEnumClTlogs;_SelectedFiles"
       AfterTargets="SelectClCompile;GenerateGitHash"
       BeforeTargets="ClCompile">
-    <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeEnum) -mode=enum -enum=EFunctionCode" />
+    <Exec Command="cl.exe /nologo /utf-8 /P /EP @(FuncCodeRes) /Fi$(FuncCodeEnum) -DFUNC_CODE_ENUM" />
   </Target>
 </Project>

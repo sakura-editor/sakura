@@ -123,9 +123,6 @@ GENERATED_FILES= \
  Funccode_enum.h \
  githash.h \
 
-HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
-HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
-
 all: $(exe) \
      $(bregonig) \
      $(ctags)
@@ -139,11 +136,11 @@ $(bregonig): ../installer/externals/bregonig/bron420.zip
 $(ctags): ../installer/externals/universal-ctags/ctags-v6.1.0-x64.zip
 	$(P7Z) e $< -o$(@D) -y $(@F)
 
-Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)
-	$(HEADERMAKE) -in=$< -out=$@ -mode=define
+Funccode_define.h: Funccode_x.hsrc
+	$(CXX) -x c++ -finput-charset=utf-8 -fexec-charset=utf-8 -E -P $< -o $@ -DFUNC_CODE_DEFINE
 
-Funccode_enum.h: Funccode_x.hsrc $(HEADERMAKE)
-	$(HEADERMAKE) -in=$< -out=$@ -mode=enum -enum=EFunctionCode
+Funccode_enum.h: Funccode_x.hsrc
+	$(CXX) -x c++ -finput-charset=utf-8 -fexec-charset=utf-8 -E -P $< -o $@ -DFUNC_CODE_ENUM
 
 githash.h:
 	cmd /c $(subst /,\,$(SRCDIR))\..\sakura\githash.bat .
@@ -159,9 +156,6 @@ endif
 
 $(OBJS): StdAfx.h.gch
 
-$(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
-	$(CXX) $(CXXFLAGS:-MMD=) $< -o $@ -static-libgcc
-
 sakura_rc.o: sakura_rc.rc.utf8 sakura_rc.rc2.utf8 githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
 
@@ -169,7 +163,7 @@ sakura_rc.rc.utf8 sakura_rc.rc2.utf8: sakura_rc.rc sakura_rc.rc2
 	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' -e '/#include/s/.rc2\b/.rc2.utf8/' > $@
 
 clean:
-	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES) sakura_rc.o sakura_rc.*.utf8
+	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS)) StdAfx.h.gch $(GENERATED_FILES) sakura_rc.o sakura_rc.*.utf8
 	-$(RM) $(subst /,$(DIRSEP),$(DEPS))
 
 .SUFFIXES: .cpp .o .rc
