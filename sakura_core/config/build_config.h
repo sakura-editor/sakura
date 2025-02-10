@@ -57,9 +57,6 @@
 //UNICODE BOOL定数.
 static const bool UNICODE_BOOL=true;
 
-//DebugMonitorLib(仮)を使うかどうか
-//#define USE_DEBUGMON
-
 //newされた領域をわざと汚すかどうか (デバッグ用)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 #define FILL_STRANGE_IN_NEW_MEMORY
