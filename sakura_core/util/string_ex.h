@@ -203,7 +203,6 @@ inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...) { va_list args; va
 
 inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v) { return ::_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
 inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v) { return ::_vsnwprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
-#define auto_sprintf_s(buf, nBufCount, format, ...)		::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 #define auto_snprintf_s(buf, nBufCount, format, ...)	::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 
 std::wstring& eos(std::wstring& strOut, size_t cchOut);
