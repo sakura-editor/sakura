@@ -861,7 +861,7 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	// 1pt = 1/72in = 25.4/72mm
 	int		nFontPoints = pPS->m_nPrintFontHeight * 720 / 254;
 	WCHAR	szFontPoints[20];
-	auto_sprintf_s( szFontPoints, _countof(szFontPoints), L"%d.%dpt", nFontPoints/10, nFontPoints%10 );
+	auto_snprintf_s( szFontPoints, _countof(szFontPoints), L"%d.%dpt", nFontPoints/10, nFontPoints%10 );
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
 
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
