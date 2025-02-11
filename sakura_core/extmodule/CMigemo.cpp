@@ -76,7 +76,7 @@ bool CMigemo::InitDllImp()
 	m_migemo_load_s             = (Proc_migemo_load_s)            m_migemo_load;
 	m_migemo_is_enable_s        = (Proc_migemo_is_enable_s)       m_migemo_is_enable;
 
-	// IA64/x64は対応不要
+	// x64は対応不要
 #ifdef _WIN64
 #else
 	// ver 1.3 以降は stdcall
