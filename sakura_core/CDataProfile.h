@@ -328,7 +328,7 @@ public:
 	bool IOProfileData(
 		std::wstring_view		sectionName,	//!< [in] セクション名
 		std::wstring_view		entryKey,		//!< [in] エントリ名
-		StaticString<WCHAR, N>&	szEntryValue	//!< [in,out] エントリ値
+		StaticString<N>&		szEntryValue	//!< [in,out] エントリ値
 	)
 	{
 		// バッファ参照型に変換して入出力する

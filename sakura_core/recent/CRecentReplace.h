@@ -30,7 +30,7 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-typedef StaticString<WCHAR, _MAX_PATH> CReplaceString;
+using CReplaceString = StaticString<_MAX_PATH>;
 
 //! 置換の履歴を管理 (RECENT_FOR_REPLACE)
 class CRecentReplace final : public CRecentImp<CReplaceString, LPCWSTR>{

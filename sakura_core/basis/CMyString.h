@@ -33,11 +33,11 @@
 #include "config/maxdata.h"
 
 //共通型
-typedef StaticString<WCHAR,_MAX_PATH> SFilePath;
-typedef StaticString<WCHAR, MAX_GREP_PATH> SFilePathLong;
-class CFilePath : public StaticString<WCHAR,_MAX_PATH>{
+using SFilePath = StaticString<_MAX_PATH>;
+using SFilePathLong = StaticString<MAX_GREP_PATH>;
+class CFilePath : public StaticString<_MAX_PATH>{
 private:
-	typedef StaticString<WCHAR,_MAX_PATH> Super;
+	using Super = StaticString<_MAX_PATH>;
 public:
 	CFilePath() = default;
 	CFilePath(const WCHAR* rhs) : Super(rhs) { }
