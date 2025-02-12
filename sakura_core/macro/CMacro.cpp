@@ -1590,8 +1590,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 				// 2009.08.28 nasukoji	「折り返さない」選択時にTAB幅が変更されたらテキスト最大幅の再算出が必要
 				if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-					// 最大幅の再算出時に各行のレイアウト長の計算も行う
-					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
+					// CEditWnd::ChangeLayoutParam->CLayoutMgr::ChangeLayoutParam->
+					// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth(FALSE);
 				}
 				GetEditWnd().RedrawAllViews( NULL );		// TAB幅が変わったので再描画が必要
 			}

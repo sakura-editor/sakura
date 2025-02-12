@@ -83,7 +83,8 @@ void CDocVisitor::SetAllEol(CEol cEol)
 		m_pcDocRef->m_cLayoutMgr._DoLayout(false);
 		GetEditWnd().ClearViewCaretPosInfo();
 		if( m_pcDocRef->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-			m_pcDocRef->m_cLayoutMgr.CalculateTextWidth();
+			// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+			m_pcDocRef->m_cLayoutMgr.CalculateTextWidth(FALSE);
 		}else{
 			m_pcDocRef->m_cLayoutMgr.ClearLayoutLineWidth();
 		}
