@@ -244,20 +244,6 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	}
 }
 
-//折り返す場合はtrueを返す
-bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
-{
-	//	Sep. 23, 2002 genta せっかく作ったので関数を使う
-	CLayoutInt nCharKetas = GetActualTabSpace( pWork->nPosX );
-	if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
-		(this->*pfOnLine)(pWork);
-		return true;
-	}
-	pWork->nPosX += nCharKetas;
-	pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
-	return false;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          準処理                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -305,31 +291,26 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		//@@@ 2002.09.22 YAZAKI
 		color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 
-		if( pWork->cLineStr[pWork->nPos] == WCODE::TAB ){
-			if(_DoTab(pWork, pfOnLine)){
-				continue;
-			}
+		const auto& ch = pWork->cLineStr[pWork->nPos];
+		CLayoutInt nCharKetas {0};
+		if( ch == WCODE::TAB || (ch == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) ){
+			nCharKetas = GetActualTsvSpace( pWork->nPosX, ch );
+		}else{
+			nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 		}
-		else{
-			if( pWork->nPos >= pWork->cLineStr.GetLength() ){
-				break;
-			}
-			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
-			CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 
-			if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
-				if( pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+		if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
+			if( pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+			{
+				if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 				{
-					if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-					{
-						(this->*pfOnLine)(pWork);
-						continue;
-					}
+					(this->*pfOnLine)(pWork);
+					continue;
 				}
 			}
-			pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
-			pWork->nPosX += nCharKetas;
 		}
+		pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
+		pWork->nPosX += nCharKetas;
 	}
 }
 
