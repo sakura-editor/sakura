@@ -43,7 +43,6 @@
 #include "window/CEditWnd.h"
 #include "_main/global.h"
 #include "charset/charcode.h"
-#include "extmodule/CUxTheme.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "uiparts/CGraphics.h"
@@ -1352,10 +1351,9 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		if( !IsVisualStyle() ) {
 			::MyFillRect( gr, rcItem, COLOR_BTNFACE );
 		}else{
-			CUxTheme& uxTheme = *CUxTheme::getInstance();
 			int iPartId = TABP_TABITEM;
 			int iStateId = TIS_NORMAL;
-			HTHEME hTheme = uxTheme.OpenThemeData( m_hwndTab, L"TAB" );
+			HTHEME hTheme = ::OpenThemeData( m_hwndTab, L"TAB" );
 			if( hTheme ) {
 				if( !bSelected ){
 					::InflateRect( &rcFullItem, DpiScaleX(2), DpiScaleY(2) );
@@ -1398,10 +1396,10 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 					}
 				}
 
-				if( uxTheme.IsThemeBackgroundPartiallyTransparent(hTheme, iPartId, iStateId) ) {
-					uxTheme.DrawThemeParentBackground(m_hwndTab, hdc, &rcFullItem);
+				if( ::IsThemeBackgroundPartiallyTransparent(hTheme, iPartId, iStateId) ) {
+					::DrawThemeParentBackground(m_hwndTab, hdc, &rcFullItem);
 				}
-				uxTheme.DrawThemeBackground(hTheme, hdc, iPartId, iStateId, &rcBk, NULL);
+				::DrawThemeBackground(hTheme, hdc, iPartId, iStateId, &rcBk, NULL);
 			}
 		}
 

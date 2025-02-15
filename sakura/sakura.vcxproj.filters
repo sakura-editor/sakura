@@ -1036,9 +1036,6 @@
     <ClInclude Include="..\sakura_core\extmodule\CMigemo.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CUxTheme.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\print\CPrint.h">
       <Filter>Cpp Source Files\print</Filter>
     </ClInclude>
@@ -2241,9 +2238,6 @@
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\extmodule\CMigemo.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CUxTheme.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\print\CPrint.cpp">

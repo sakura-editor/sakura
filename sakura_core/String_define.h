@@ -1005,8 +1005,6 @@
 
 // CTipWnd.cpp
 
-// CUxTheme.cpp
-
 // CWaitCursor.cpp
 
 // CWnd.cpp
