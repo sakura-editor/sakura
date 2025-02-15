@@ -327,11 +327,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 				m_pszString[0] = L'\0';
 				break;
 			}
-#ifdef UNICODE
 		}else if( nRet >= m_nBufferSize - 1 ){
-#else
-		}else if( nRet >= m_nBufferSize - 2 ){		// ANSI版は1小さい長さで再読み込みを判定する
-#endif
 			// 読みきれなかった場合、バッファを拡張して読み直す
 			int nTemp = m_nBufferSize + LOADSTR_ADD_SIZE;		// 拡張したサイズ
 			LPWSTR pTemp;
