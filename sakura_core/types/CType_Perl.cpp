@@ -30,7 +30,7 @@
 #include "doc/CDocOutline.h"
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/Colors/EColorIndexType.h"
+#include "view/colors/EColorIndexType.h"
 
 /* Perl */
 //Jul. 08, 2001 JEPRO Perl ユーザーに贈る

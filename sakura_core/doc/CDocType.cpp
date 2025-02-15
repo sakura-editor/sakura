@@ -32,7 +32,7 @@
 #include "CGrepAgent.h"
 #include "view/colors/CColorStrategy.h"
 #include "view/figures/CFigureManager.h"
-#include "env/DllShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 CDocType::CDocType(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
