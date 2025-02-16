@@ -413,7 +413,7 @@ bool CBackupAgent::FormatBackUpPath(
 				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wSecond);
 				}
-				if( -1 == auto_sprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
+				if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
 					return false;
 				}
 			}

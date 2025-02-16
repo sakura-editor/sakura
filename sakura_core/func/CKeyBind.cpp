@@ -421,7 +421,7 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 			wcscat_s( sLabel, L")..." );
 		}
 		else {
-			auto_sprintf_s( sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey );
+			auto_snprintf_s( sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey );
 		}
 
 		return sLabel;

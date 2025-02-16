@@ -874,9 +874,9 @@ void CCaret::ShowCaretPosInfo()
 
 		WCHAR szFontSize[16];
 		if( const double nZoomPercentage = GetEditWnd().GetFontZoom() * 100.0; nZoomPercentage < 5.0 ){
-			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
+			auto_snprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
 		}else{
-			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
+			auto_snprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
 		}
 
 		auto& statusBar = GetEditWnd().m_cStatusBar;
