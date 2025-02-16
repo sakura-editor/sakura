@@ -98,6 +98,8 @@
 #include <shellapi.h>
 #include <ShlObj.h>
 #include <wrl.h>
+#include <uxtheme.h>
+#include <vsstyle.h>
 
 // Windows SDKのマクロ定数「NULL」を訂正する。
 // マクロ定数「NULL」は、省略可能なポインタ型パラメータに「省略」を指定するために使う。

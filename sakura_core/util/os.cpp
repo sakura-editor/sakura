@@ -25,8 +25,9 @@
 #include "StdAfx.h"
 #include "os.h"
 #include "util/module.h"
-#include "extmodule/CUxTheme.h"
 #include "basis/CMyString.h"
+
+#pragma comment(lib, "UxTheme.lib")
 
 /*!	Comctl32.dll のバージョン番号を取得
 
@@ -55,7 +56,7 @@ BOOL IsVisualStyle()
 {
 	// ロードした Comctl32.dll が Ver 6 以上で画面設定がビジュアルスタイル指定になっている場合だけ
 	// ビジュアルスタイル表示になる（マニフェストで指定しないと Comctl32.dll は 6 未満になる）
-	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && CUxTheme::getInstance()->IsThemeActive() );
+	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && ::IsThemeActive() );
 }
 
 /*!	指定ウィンドウでビジュアルスタイルを使わないようにする
@@ -67,7 +68,7 @@ BOOL IsVisualStyle()
 */
 void PreventVisualStyle( HWND hWnd )
 {
-	CUxTheme::getInstance()->SetWindowTheme( hWnd, L"", L"" );
+	::SetWindowTheme( hWnd, L"", L"" );
 	return;
 }
 
