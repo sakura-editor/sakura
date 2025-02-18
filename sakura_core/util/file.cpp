@@ -357,14 +357,7 @@ void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* ps
 		*out++ = *in++;
 	}
 	//円記号を付加
-#if UNICODE
 	if( *(out-1) != '\\' ){ *out++ = '\\'; }
-#else
-	if( *(out-1) != '\\' ||
-		(1 == out - CNativeW::GetCharPrev( pszDir, out - pszDir, out )) ){
-			*out++ = '\\';
-	}
-#endif
 	//ファイル名をコピー
 	for( in=pszTitle; *in != '\0'; ){
 		*out++ = *in++;
