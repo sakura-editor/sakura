@@ -32,13 +32,6 @@
 #include "util/StaticType.h"
 #include "config/maxdata.h"
 
-#define m_delete2(p) { if(p){ delete[] p; p=0; } }
-
-#define astring string
-
-//共通マクロ
-#define _FT _T
-
 //共通型
 typedef StaticString<WCHAR,_MAX_PATH> SFilePath;
 typedef StaticString<WCHAR, MAX_GREP_PATH> SFilePathLong;

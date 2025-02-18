@@ -4039,7 +4039,7 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 	int		nIndex;
 
 	if( NULL == pszTabCaption ) pszTabCaption = L"";	//ガード
-	if( NULL == pszFilePath )pszFilePath = _FT("");		//ガード 2006.01.28 ryoji
+	if( NULL == pszFilePath ) pszFilePath = L"";		//ガード 2006.01.28 ryoji
 
 	CRecentEditNode	cRecentEditNode;
 	nIndex = cRecentEditNode.FindItemByHwnd( GetHwnd() );
