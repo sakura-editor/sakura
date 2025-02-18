@@ -217,7 +217,7 @@
 #define HLP000315	315 //タイプ別設定 『キーワードヘルプ』プロパティ	// 2006.10.06 ryoji
 #define HLP000077	77 //設定フォルダー（iniフォルダー）	// 2007.09.09 maru
 #define HLP000078	78 //ユーザー別設定					// 2007.09.23 maru
-#define HLP000079	79 //Visual Style					// 2007.09.30 maru
+//#define HLP000079	79 //Visual Style					// 2007.09.30 maru
 #define HLP000080	80 //Virtual Store					// 2007.09.30 maru
 #define HLP000076	76 //共通設定
 #define HLP000081	81 //共通設定 『全般』プロパティ
