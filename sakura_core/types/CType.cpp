@@ -26,7 +26,7 @@
 
 #include "StdAfx.h"
 #include "CType.h"
-#include "view/Colors/EColorIndexType.h"
+#include "view/colors/EColorIndexType.h"
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"

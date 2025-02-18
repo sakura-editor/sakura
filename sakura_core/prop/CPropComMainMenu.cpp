@@ -31,7 +31,7 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "env/CShareData.h"
-#include "env/cShareData_IO.h"
+#include "env/CShareData_IO.h"
 #include "typeprop/CImpExpManager.h"
 #include "dlg/CDlgInput1.h"
 #include "util/shell.h"

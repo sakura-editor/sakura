@@ -32,7 +32,7 @@
 #include "doc/CDocOutline.h"
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/Colors/EColorIndexType.h"
+#include "view/colors/EColorIndexType.h"
 
 /* TeX */
 //Oct. 31, 2000 JEPRO TeX  ユーザーに贈る

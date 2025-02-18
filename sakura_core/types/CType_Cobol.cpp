@@ -30,7 +30,7 @@
 #include "doc/CDocOutline.h"
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/Colors/EColorIndexType.h"
+#include "view/colors/EColorIndexType.h"
 
 /* COBOL */
 void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)

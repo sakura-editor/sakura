@@ -18,7 +18,7 @@
 */
 #include "StdAfx.h"
 #include "dlg/CDlgGrepReplace.h"
-#include "View/CEditView.h"
+#include "view/CEditView.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/module.h"
 #include "util/shell.h"

@@ -30,7 +30,7 @@
 #include "doc/CDocOutline.h"
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/Colors/EColorIndexType.h"
+#include "view/colors/EColorIndexType.h"
 
 /* Visual Basic */
 //JUl. 10, 2001 JEPRO VB   ユーザーに贈る
