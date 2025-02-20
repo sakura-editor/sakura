@@ -294,7 +294,6 @@ bool CShareData::InitShareData()
 
 			sWindow.m_nRulerHeight = 13;					/* ルーラーの高さ */
 			sWindow.m_nRulerBottomSpace = 0;				/* ルーラーとテキストの隙間 */
-			sWindow.m_nRulerType = 0;					/* ルーラーのタイプ */
 			sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 			sWindow.m_nVertLineOffset = -1;			// 2005.11.10 Moca 指定桁縦線
 			sWindow.m_bUseCompatibleBMP = TRUE;		// 2007.09.09 Moca 画面キャッシュを使う	// 2009.06.09 ryoji FALSE->TRUE
@@ -526,7 +525,6 @@ bool CShareData::InitShareData()
 			sHelper.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
 			sHelper.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
 			sHelper.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
-			sHelper.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
 		}
 
 		// [アウトライン]タブ
