@@ -37,7 +37,6 @@ public:
 		m_szQuote[2] = cQuote;
 	}
 	void Update(void) override;
-	virtual EColorIndexType GetStrategyColor() const = 0;
 	CLayoutColorInfo* GetStrategyColorInfo() const override;
 	void InitStrategyStatus() override{ m_nCOMMENTEND = -1; }
 	void SetStrategyColorInfo(const CLayoutColorInfo*) override;
@@ -46,7 +45,7 @@ public:
 	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[this->GetStrategyColor()].m_bDisp; }
 
 	static bool IsCppRawString(const CStringRef& cStr, int nPos);
-	static int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd = NULL );
+	static int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd = nullptr );
 	static int Match_QuoteStr( const wchar_t* szQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape );
 private:
 
