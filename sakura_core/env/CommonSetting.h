@@ -134,7 +134,6 @@ struct CommonSetting_Window
 	//ルーラー・行番号
 	int				m_nRulerHeight;				//!< ルーラー高さ
 	int				m_nRulerBottomSpace;		//!< ルーラーとテキストの隙間
-	int				m_nRulerType;				//!< ルーラーのタイプ $$$未使用っぽい
 	int				m_nLineNumRightSpace;		//!< 行番号の右のスペース Sep. 18, 2002 genta
 
 	//分割ウィンドウ
@@ -230,7 +229,6 @@ struct CommonSetting_Edit
 	bool	m_bOverWriteBoxDelete;		//!< 上書きモードでの矩形入力で選択範囲を削除する
 
 	//クリッカブルURL
-	BOOL	m_bJumpSingleClickURL;		//!< URLのシングルクリックでJump $$$未使用
 	BOOL	m_bSelectClickedURL;		//!< URLがクリックされたら選択するか
 
 	EOpenDialogDir	m_eOpenDialogDir;	//!< ファイルダイアログの初期位置
@@ -483,7 +481,6 @@ struct CommonSetting_Helper
 	BOOL		m_bHokanKey_RETURN;				//!< VK_RETURN	補完決定キーが有効/無効
 	BOOL		m_bHokanKey_TAB;				//!< VK_TAB		補完決定キーが有効/無効
 	BOOL		m_bHokanKey_RIGHT;				//!< VK_RIGHT	補完決定キーが有効/無効
-	BOOL		m_bHokanKey_SPACE;				//!< VK_SPACE	補完決定キーが有効/無効 $$$ほぼ未使用
 
 	//外部ヘルプの設定
 	WCHAR		m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１

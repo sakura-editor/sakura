@@ -514,7 +514,7 @@
 #define HIDC_CHECK_m_bHokanKey_RETURN			10612 //候補決定キー（Enter）
 #define HIDC_CHECK_m_bHokanKey_TAB				10613 //候補決定キー（Tab）
 #define HIDC_CHECK_m_bHokanKey_RIGHT			10614 //候補決定キー（→）
-#define HIDC_CHECK_m_bHokanKey_SPACE			10615 //候補決定キー（Space）
+//#define HIDC_CHECK_m_bHokanKey_SPACE			10615 //候補決定キー（Space）
 //#define HIDC_CHECK_USEKEYWORDHELP				10616 //キーワードヘルプ機能				//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_CHECK_HTMLHELPISSINGLE				10617 //ビューアの複数起動
 #define HIDC_CHECK_CLICKKEYSEARCH				10618 //キャレット位置の単語を辞書検索		// 2006.03.24 fon
