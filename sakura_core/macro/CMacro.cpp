@@ -516,6 +516,8 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
 				out.WriteString( L"'" );
 				break;
+			default:
+				break;
 			}
 			pParam = pParam->m_pNext;
 		}

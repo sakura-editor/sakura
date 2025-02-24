@@ -995,6 +995,8 @@ void CEditView::OnSize( int cx, int cy )
 			case BGIMAGE_CENTER:
 				bUpdateWidth = true;
 				break;
+			default:
+				break;
 			}
 			switch( imgPos ){
 			case BGIMAGE_BOTTOM_CENTER:
@@ -1004,6 +1006,8 @@ void CEditView::OnSize( int cx, int cy )
 			case BGIMAGE_CENTER_LEFT:
 			case BGIMAGE_CENTER_RIGHT:
 				bUpdateHeight = true;
+				break;
+			default:
 				break;
 			}
 			if( bUpdateWidth  && nAreaWidthOld  != GetTextArea().GetAreaWidth() ||

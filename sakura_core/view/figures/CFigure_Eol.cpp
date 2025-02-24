@@ -479,6 +479,8 @@ void _DrawEOL(
 			}
 		}
 		break;
+	default:
+		break;
 	}
 
 	SelectObject(gr, hPenOld);
