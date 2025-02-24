@@ -922,9 +922,6 @@
     <ClInclude Include="..\sakura_core\debug\Debug2.h">
       <Filter>Cpp Source Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\debug\Debug3.h">
-      <Filter>Cpp Source Files\debug</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\_main\CAppMode.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
@@ -2079,9 +2076,6 @@
       <Filter>Cpp Source Files\debug</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\debug\Debug2.cpp">
-      <Filter>Cpp Source Files\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\debug\Debug3.cpp">
       <Filter>Cpp Source Files\debug</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\_main\CAppMode.cpp">
