@@ -354,6 +354,9 @@ F_CHG_CHARSET		= 31010,	//文字コードセット指定
 F_CHGMOD_EOL_CRLF	= 31081,	//入力改行コード指定(CRLF)				なし
 F_CHGMOD_EOL_LF		= 31082,	//入力改行コード指定(LF)				なし
 F_CHGMOD_EOL_CR		= 31083,	//入力改行コード指定(CR)				なし
+F_CHGMOD_EOL_NEL    = 31084,	//入力改行コード指定(NEL)				なし
+F_CHGMOD_EOL_PS	    = 31085,	//入力改行コード指定(PS)				なし
+F_CHGMOD_EOL_LS	    = 31086,	//入力改行コード指定(LS)				なし
 F_CANCEL_MODE		= 31099,	//各種モードの取り消し					なし
 
 // 設定系 
