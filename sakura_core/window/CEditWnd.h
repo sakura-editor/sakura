@@ -424,6 +424,15 @@ public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
 };
 
-CEditWnd& GetEditWnd( void );
+/*!
+ * 編集ウインドウのインスタンスを取得します。
+ *
+ * 編集ウインドウの生存期間ははエディタプロセスと同じなので、
+ * ほとんどの場合、このグローバル関数を使ってアクセスできます。
+ */
+inline CEditWnd& GetEditWnd( void )
+{
+	return *CEditWnd::getInstance();
+}
 
 #endif /* SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_ */

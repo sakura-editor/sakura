@@ -49,7 +49,6 @@
 #include "_main/CCommandLine.h"	/// 2003/1/26 aroka
 #include "_main/CAppMode.h"
 #include "_os/CDropTarget.h"
-#include "basis/CErrorInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
 #include "env/CShareData.h"
@@ -178,25 +177,6 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 		}
 	}
 }
-
-/*!
- * 編集ウインドウのインスタンスを取得します。
- *
- * 編集ウインドウの生存期間ははエディタプロセスと同じなので、
- * ほとんどの場合、このグローバル関数を使ってアクセスできます。
- */
-CEditWnd& GetEditWnd( void )
-{
-	auto pcEditWnd = CEditWnd::getInstance();
-	if( !pcEditWnd )
-	{
-		::_com_raise_error(E_FAIL, MakeMsgError(L"Any CEditWnd has been instantiated."));
-	}
-	return *pcEditWnd;
-}
-
-//	/* メッセージループ */
-//	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
 
 LRESULT CALLBACK CEditWndProc(
 	HWND	hwnd,	// handle of window
