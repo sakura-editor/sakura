@@ -65,7 +65,7 @@ protected:
  	void* do_allocate([[maybe_unused]] std::size_t bytes,
  					  [[maybe_unused]] std::size_t alignment) override
 	{
-		std::lock_guard<std::mutex> lock(mtx);
+		std::lock_guard lock(m_mtx);
 
 		// メモリ確保時には未割当領域から使用していく
 		if (m_unassignedNode) {
@@ -93,7 +93,7 @@ protected:
 					   [[maybe_unused]] std::size_t alignment) override
 	{
 		if (p) {
-			std::lock_guard<std::mutex> lock(mtx);
+			std::lock_guard lock(m_mtx);
 
 			// メモリ解放した領域を未割当領域として自己参照共用体の片方向連結リストで繋げる
 			// 次回のメモリ確保時にその領域を再利用する
@@ -145,6 +145,6 @@ private:
 	Node* m_currentBlock = nullptr; // 現在のブロック
 	Node* m_currentNode = nullptr; // 要素確保処理時に現在のブロックの中から切り出すNodeを指すポインタ、メモリ確保時に未割当領域が無い場合はここを使う
 
-	std::mutex mtx;
+	std::mutex m_mtx;
 };
 #endif /* SAKURA_CPOOLRESOURCE_4DEA6BEC_4D80_408F_9AEE_67AAF95BFE90_H_ */
