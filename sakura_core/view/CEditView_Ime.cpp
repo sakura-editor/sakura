@@ -284,22 +284,20 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	const void* pszReconv; 
 	const void* pszInsBuffer;
 
-	{
-		const WCHAR* pszCompInsStr = L"";
-		int nCompInsStr   = 0;
-		if( nInsertCompLen ){
-			pszCompInsStr = m_szComposition;
-			nCompInsStr   = wcslen( pszCompInsStr );
-		}
-		dwInsByteCount      = nCompInsStr * sizeof(wchar_t);
-		dwReconvTextLen     = nReconvLen;
-		dwReconvTextInsLen  = dwReconvTextLen + nCompInsStr;                 //reconv文字列長。文字単位。
-		cbReconvLenWithNull = (dwReconvTextInsLen + 1) * sizeof(wchar_t);    //reconvデータ長。バイト単位。
-		dwCompStrOffset     = (Int)(ptSelect.x - nReconvIndex) * sizeof(wchar_t);    //compオフセット。バイト単位。
-		dwCompStrLen        = nSelectedLen + nCompInsStr;                            //comp文字列長。文字単位。
-		pszReconv           = reinterpret_cast<const void*>(pLine + nReconvIndex);   //reconv文字列へのポインタ。
-		pszInsBuffer        = pszCompInsStr;
+	const WCHAR* pszCompInsStr = L"";
+	int nCompInsStr   = 0;
+	if( nInsertCompLen ){
+		pszCompInsStr = m_szComposition;
+		nCompInsStr   = wcslen( pszCompInsStr );
 	}
+	dwInsByteCount      = nCompInsStr * sizeof(wchar_t);
+	dwReconvTextLen     = nReconvLen;
+	dwReconvTextInsLen  = dwReconvTextLen + nCompInsStr;                 //reconv文字列長。文字単位。
+	cbReconvLenWithNull = (dwReconvTextInsLen + 1) * sizeof(wchar_t);    //reconvデータ長。バイト単位。
+	dwCompStrOffset     = (Int)(ptSelect.x - nReconvIndex) * sizeof(wchar_t);    //compオフセット。バイト単位。
+	dwCompStrLen        = nSelectedLen + nCompInsStr;                            //comp文字列長。文字単位。
+	pszReconv           = reinterpret_cast<const void*>(pLine + nReconvIndex);   //reconv文字列へのポインタ。
+	pszInsBuffer        = pszCompInsStr;
 	
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        構造体設定                           //
@@ -326,28 +324,26 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 		pReconv->dwTargetStrOffset = dwCompStrOffset;	//バイト単位
 		
 		// 2004.01.28 Moca ヌル終端の修正
-		{
-			WCHAR* p = (WCHAR*)(pReconv + 1);
-			if( dwInsByteCount ){
-				// カーソル位置に、入力中IMEデータを挿入
-				CHAR* pb = (CHAR*)p;
-				CopyMemory(pb, pszReconv, dwCompStrOffset);
-				pb += dwCompStrOffset;
-				CopyMemory(pb, pszInsBuffer, dwInsByteCount);
-				pb += dwInsByteCount;
-				CopyMemory(pb, ((char*)pszReconv) + dwCompStrOffset,
-					dwReconvTextLen*sizeof(wchar_t) - dwCompStrOffset);
-			}else{
-				CopyMemory(p, pszReconv, cbReconvLenWithNull - sizeof(wchar_t));
-			}
-			// \0があると応答なしになることがある
-			for( DWORD i = 0; i < dwReconvTextInsLen; i++ ){
-				if( p[i] == 0 ){
-					p[i] = L' ';
-				}
-			}
-			p[dwReconvTextInsLen] = L'\0';
+		WCHAR* p = (WCHAR*)(pReconv + 1);
+		if( dwInsByteCount ){
+			// カーソル位置に、入力中IMEデータを挿入
+			CHAR* pb = (CHAR*)p;
+			CopyMemory(pb, pszReconv, dwCompStrOffset);
+			pb += dwCompStrOffset;
+			CopyMemory(pb, pszInsBuffer, dwInsByteCount);
+			pb += dwInsByteCount;
+			CopyMemory(pb, ((char*)pszReconv) + dwCompStrOffset,
+				dwReconvTextLen*sizeof(wchar_t) - dwCompStrOffset);
+		}else{
+			CopyMemory(p, pszReconv, cbReconvLenWithNull - sizeof(wchar_t));
 		}
+		// \0があると応答なしになることがある
+		for( DWORD i = 0; i < dwReconvTextInsLen; i++ ){
+			if( p[i] == 0 ){
+				p[i] = L' ';
+			}
+		}
+		p[dwReconvTextInsLen] = L'\0';
 	}
 	
 	if( false == bDocumentFeed ){
@@ -376,11 +372,8 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv){
 	}
 	
 	DWORD dwOffset, dwLen;
-
-	{
-		dwOffset = pReconv->dwCompStrOffset/sizeof(WCHAR);	//0またはデータ長。バイト単位。→文字単位
-		dwLen    = pReconv->dwCompStrLen;					//0または文字列長。文字単位。
-	}
+	dwOffset = pReconv->dwCompStrOffset/sizeof(WCHAR);	//0またはデータ長。バイト単位。→文字単位
+	dwLen    = pReconv->dwCompStrLen;					//0または文字列長。文字単位。
 	
 	//選択開始の位置を取得
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout(

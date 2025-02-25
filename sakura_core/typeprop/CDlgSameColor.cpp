@@ -353,8 +353,8 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 		{
 		case IDC_BUTTON_SAMETEXTCOLOR:
 			for( j = 0; j < COLORIDX_LAST; ++j ){
-			if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) )
-				continue;
+				if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) )
+					continue;
 				if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT ){
 					::List_AddString( hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
 				}
@@ -363,7 +363,7 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 
 		case IDC_BUTTON_SAMEBKCOLOR:
 			for( j = 0; j < COLORIDX_LAST; ++j ){
-			if( 0 != (g_ColorAttributeArr[j].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
+				if( 0 != (g_ColorAttributeArr[j].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 					continue;
 				if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK ){
 					::List_AddString( hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
