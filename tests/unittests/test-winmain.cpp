@@ -361,6 +361,37 @@ TEST_P(WinMainTest, runEditorProcess)
 	ASSERT_TRUE( fexist( iniPath.c_str() ) );
 }
 
+TEST_P(WinMainTest, LargeFile)
+{
+	// テスト用プロファイル名
+	const auto szProfileName(GetParam());
+
+	// エディタプロセスを起動するため、テスト実行はプロセスごと分離して行う
+	auto separatedTestProc = [szProfileName]() {
+		// 起動時実行マクロの中身を作る
+		std::wstring strStartupMacro;
+		strStartupMacro += L"ExitAll();";		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
+
+		// コマンドラインを組み立てる
+		std::wstring path(_T(__FILE__));
+		std::wstring strCommandLine = path.substr(0, path.length() - lstrlen(L"test-winmain.cpp")) + L"largefile.txt";
+		strCommandLine += strprintf(LR"( -PROF="%s")", szProfileName);
+		strCommandLine += strprintf(LR"( -MTYPE=js -M="%s")", std::regex_replace( strStartupMacro, std::wregex( L"\"" ), L"\"\"" ).c_str());
+
+		// エディタプロセスを起動する
+		const int ret = StartEditorProcessForTest(strCommandLine);
+
+		exit(ret);
+		};
+
+	// テストプログラム内のグローバル変数を汚さないために、別プロセスで起動させる
+	ASSERT_EXIT({ separatedTestProc(); }, ::testing::ExitedWithCode(0), ".*" );
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	CControlProcess_Terminate(szProfileName);
+
+}
+
 /*!
  * @brief パラメータテストをインスタンス化する
  *  プロファイル指定なしとプロファイル指定ありの2パターンで実体化させる
