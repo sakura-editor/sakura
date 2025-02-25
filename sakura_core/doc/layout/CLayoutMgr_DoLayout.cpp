@@ -272,10 +272,8 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	while( pWork->nPos < nLength ){
 		// インデント幅は_OnLineで計算済みなのでここからは削除
 
-		// 禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-		// 禁則関係の設定が全部OFFの場合もスキップ
-		if(!bKinsokuEnabled || _DoKinsokuSkip(pWork, pfOnLine)){ }
-		else{
+		// 禁則関係の設定がONかつ現在禁則処理中でなければ次の禁則の開始をチェック
+		if( bKinsokuEnabled && !_DoKinsokuSkip(pWork, pfOnLine) ){
 			// 英文ワードラップをする
 			if( m_pTypeConfig->m_bWordWrap ){
 				_DoWordWrap(pWork, pfOnLine);
@@ -298,7 +296,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		}
 
 		if( bCheckColorEnabled ){
-			//@@@ 2002.09.22 YAZAKI
+			// 範囲を持つ色分けの開始終了チェック
 			color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 		}
 
@@ -361,8 +359,8 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		// 行数が多くなければマルチスレッド処理するまでもない
 		nWorkerThreadCount = 0;
 	} else if (CColorStrategyPool::getInstance()->HasRangeBasedColorStrategies()) {
-		// 行をまたぐ可能性のある色分け (例：/*...*/) が有効の場合、途中で処理単位が
-		// 分割されてしまうと色分けがおかしくなってしまうためやむなくマルチスレッド処理の対象外とする
+		// 行をまたぐ可能性のある色分けが有効の場合、途中で処理単位が分割されて
+		// しまうと色分けがおかしくなってしまうためやむなくマルチスレッド処理の対象外とする
 		nWorkerThreadCount = 0;
 	} else {
 		nWorkerThreadCount = (std::max)(1, (int)std::thread::hardware_concurrency()) - 1;
@@ -391,9 +389,9 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	auto pbCanceled = bBlockingHook ? &bCanceled : nullptr;
 
 	int nLineIndexEnd = nAllLineCount;
-	CDocLine* pDocLineEnd = nullptr;
+	const CDocLine* pDocLineEnd = nullptr;
 	for (int i = nWorkerThreadCount; i >= 0; i--) {
-		const int nLineIndexBegin = (int)((double)nAllLineCount / (nWorkerThreadCount + 1) * i);
+		const auto nLineIndexBegin = (int)((double)nAllLineCount / (nWorkerThreadCount + 1) * i);
 		const int nLineCount = nLineIndexEnd - nLineIndexBegin;
 		CDocLine* pDocLineBegin = m_pcDocLineMgr->GetLine(CLogicInt(nLineIndexBegin));
 
@@ -423,7 +421,7 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 /*!
 	@brief 指定された行範囲をレイアウトします
 */
-void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, CDocLine* pDocLineEnd, int nLineIndex, int nLineCount, std::atomic<bool>* pbCanceled)
+void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineEnd, int nLineIndex, int nLineCount, std::atomic<bool>* pbCanceled)
 {
 	const int nListenerCount = GetListenerCount();
 
