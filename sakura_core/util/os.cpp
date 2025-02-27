@@ -8,6 +8,7 @@
 #include "os.h"
 #include "util/module.h"
 #include "basis/CMyString.h"
+#include "_os/CClipboard.h"
 
 #pragma comment(lib, "UxTheme.lib")
 
@@ -164,9 +165,6 @@ bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer
 //                      クリップボード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SetClipboardTextA,SetClipboardTextT 実装用テンプレート
-//2007.08.14 kobake UNICODE用に改造
-//
 /*! クリープボードにText形式でコピーする
 	@param hwnd    [in] クリップボードのオーナー
 	@param pszText [in] 設定するテキスト
@@ -176,46 +174,14 @@ bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer
 	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
 	@date 2004.02.17 Moca 各所のソースを統合
 */
-template <class T>
-bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
-{
-	HGLOBAL	hgClip;
-	T*		pszClip;
-
-	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, (nLength + 1) * sizeof(T) );
-	if( nullptr == hgClip ){
-		return false;
-	}
-	pszClip = (T*)::GlobalLock( hgClip );
-	if( nullptr == pszClip ){
-		::GlobalFree( hgClip );
-		return false;
-	}
-	auto_memcpy( pszClip, pszText, nLength );
-	pszClip[nLength] = 0;
-	::GlobalUnlock( hgClip );
-	if( !::OpenClipboard( hwnd ) ){
-		::GlobalFree( hgClip );
-		return false;
-	}
-	::EmptyClipboard();
-	if(sizeof(T)==sizeof(char)){
-		::SetClipboardData( CF_OEMTEXT, hgClip );
-	}
-	else if(sizeof(T)==sizeof(wchar_t)){
-		::SetClipboardData( CF_UNICODETEXT, hgClip );
-	}
-	else{
-		assert(0); //※ここには来ない
-	}
-	::CloseClipboard();
-
-	return true;
-}
-
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
 {
-	return SetClipboardTextImp<WCHAR>(hwnd,pszText,nLength);
+	CClipboard cClipboard(hwnd);
+	if(!cClipboard){
+		return false;
+	}
+	cClipboard.Empty();
+	return cClipboard.SetText(pszText, nLength, false, false);
 }
 
 /*
