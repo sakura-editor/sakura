@@ -31,7 +31,7 @@
 	http://d.hatena.ne.jp/nobu-q/20110103
 	http://tatsyblog.sakura.ne.jp/wordpress/ci/1190/
 */
-#include <gtest/gtest.h>
+#include "pch.h"
 #include <stdio.h>
 
 

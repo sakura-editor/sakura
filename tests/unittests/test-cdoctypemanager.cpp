@@ -22,7 +22,7 @@
 		   distribution.
 */
 
-#include <gtest/gtest.h>
+#include "pch.h"
 #include <windows.h>
 #include <string>
 #include "mem/CNativeW.h"
