@@ -956,7 +956,7 @@ void CViewCommander::Command_MERGE(void)
 void CViewCommander::Command_Reconvert(void)
 {
 	//サイズを取得
-	int nSize = m_pCommanderView->SetReconvertStruct(NULL);
+	LRESULT nSize = m_pCommanderView->SetReconvertStruct(nullptr);
 	if( 0 == nSize )  // サイズ０の時は何もしない
 		return ;
 
@@ -981,7 +981,7 @@ void CViewCommander::Command_Reconvert(void)
 	
 	//構造体設定
 	// Sizeはバッファ確保側が設定
-	pReconv->dwSize = nSize;
+	pReconv->dwSize = static_cast<DWORD>(nSize);
 	pReconv->dwVersion = 0;
 	m_pCommanderView->SetReconvertStruct( pReconv);
 	
