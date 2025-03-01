@@ -22,7 +22,7 @@
 		   distribution.
 */
 
-#include <gtest/gtest.h>
+#include "pch.h"
 #include "charset/CCodeFactory.h"
 
 #include <cstdlib>

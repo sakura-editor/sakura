@@ -23,7 +23,7 @@
 		   distribution.
 */
 #include <stdexcept>
-#include <gtest/gtest.h>
+#include "pch.h"
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
