@@ -149,19 +149,16 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetProp( hwnd, s_pszOpenFileDataName );
 	WORD					wNotifyCode;
 	WORD					wID;
-	static DLLSHAREDATA*	pShareData;
 	switch( uMsg ){
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
-		pShareData = &GetDllShareData();
-		::GetWindowRect( hwnd, &pShareData->m_Common.m_sOthers.m_rcOpenDialog );
+		::GetWindowRect( hwnd, &GetDllShareData().m_Common.m_sOthers.m_rcOpenDialog );
 //		MYTRACE( L"WM_MOVE 1\n" );
 		break;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	// notification code
 		wID = LOWORD(wParam);			// item, control, or accelerator identifier
 		switch( wNotifyCode ){
-//			break;
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
@@ -184,7 +181,6 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 //		MYTRACE( L"pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
 		break;
 	}
-//	return ::CallWindowProc( (int (__stdcall *)( void ))(WNDPROC)m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
 
 	return ::CallWindowProc( pData->m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
 }
