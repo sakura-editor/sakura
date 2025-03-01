@@ -47,11 +47,6 @@
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="Visual Style">
-				<param name="Local" value="res\HLP000079.html">
-				<param name="ImageNumber" value="9">
-				</OBJECT>
-			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Virtual Store">
 				<param name="Local" value="res\HLP000080.html">
 				<param name="ImageNumber" value="9">
