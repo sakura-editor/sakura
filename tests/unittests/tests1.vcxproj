@@ -44,7 +44,8 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
@@ -107,6 +108,9 @@
     <Link Include="$(SolutionDir)build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
@@ -160,6 +164,7 @@
     <ClCompile Include="test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="pch.h" />
     <ClInclude Include="eval_outputs.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
@@ -171,7 +176,10 @@
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
-    <ClCompile Include="coverage.cpp" />
+    <ClCompile Include="coverage.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)sakura\sakura.vcxproj">

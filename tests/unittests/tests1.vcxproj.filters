@@ -10,11 +10,9 @@
     <Filter Include="Other Files">
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
-    <ClCompile Include="coverage.cpp">
-      <Filter>Other Files</Filter>
-    </ClCompile>
+    <Filter Include="Pre-copiled Header">
+      <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt">
@@ -22,6 +20,10 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Pre-copiled Header</Filter>
+    </ClCompile>
+    <ClCompile Include="coverage.cpp" />
     <ClCompile Include="test-cmemory.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -177,6 +179,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Pre-copiled Header</Filter>
+    </ClInclude>
     <ClInclude Include="StartEditorProcessForTest.h">
       <Filter>Other Files</Filter>
     </ClInclude>

@@ -23,7 +23,7 @@
 		   distribution.
 */
 
-#include <gtest/gtest.h>
+#include "pch.h"
 
 #ifndef NOMINMAX
 #define NOMINMAX

@@ -24,7 +24,7 @@
 */
 #define NOMINMAX
 #include "charset/charcode.h"
-#include <gtest/gtest.h>
+#include "pch.h"
 #include <algorithm>
 #include <cstring>
 #include <string>
