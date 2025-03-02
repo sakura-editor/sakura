@@ -64,6 +64,8 @@ bool CDiffLineGetter::GetDiffColor(EColorIndexType* pnColorIndex) const
 				return true;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 	return false;
@@ -115,6 +117,8 @@ bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, COLORR
 			::LineTo  ( gr, 3, cy - 2 );
 			::LineTo  ( gr, 3, cy );
 			::LineTo  ( gr, 7, cy - 4 );
+			break;
+		default:
 			break;
 		}
 

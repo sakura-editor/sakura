@@ -1764,6 +1764,8 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 			case DOCKSIDE_TOP:		m_nHeight = ProfDockTop();		break;
 			case DOCKSIDE_RIGHT:	m_nWidth = ProfDockRight();		break;
 			case DOCKSIDE_BOTTOM:	m_nHeight = ProfDockBottom();	break;
+			default:
+				break;
 			}
 			if( eDockSide == DOCKSIDE_LEFT || eDockSide == DOCKSIDE_RIGHT ){
 				if( m_nWidth == 0 )	// 初回
@@ -2546,6 +2548,8 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	case F_CUT:
 		OnBnClicked( IDC_BUTTON_COPY );
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2702,6 +2706,8 @@ bool CDlgFuncList::HitTestSplitter( int xPos, int yPos )
 	case DOCKSIDE_TOP:		bRet = (rc.bottom - yPos < DOCK_SPLITTER_WIDTH);	break;
 	case DOCKSIDE_RIGHT:	bRet = (xPos - rc.left< DOCK_SPLITTER_WIDTH);		break;
 	case DOCKSIDE_BOTTOM:	bRet = (yPos - rc.top < DOCK_SPLITTER_WIDTH);		break;
+	default:
+		break;
 	}
 
 	return bRet;
@@ -2753,6 +2759,8 @@ INT_PTR CDlgFuncList::OnNcCalcSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	case DOCKSIDE_TOP:		pNCS->rgrc[0].bottom -= DOCK_SPLITTER_WIDTH;	break;
 	case DOCKSIDE_RIGHT:	pNCS->rgrc[0].left += DOCK_SPLITTER_WIDTH;		break;
 	case DOCKSIDE_BOTTOM:	pNCS->rgrc[0].top += DOCK_SPLITTER_WIDTH;		break;
+	default:
+		break;
 	}
 	return 1L;
 }
@@ -2775,6 +2783,8 @@ INT_PTR CDlgFuncList::OnNcHitTest( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		case DOCKSIDE_TOP:		nRet = HTBOTTOM;	break;
 		case DOCKSIDE_RIGHT:	nRet = HTLEFT;		break;
 		case DOCKSIDE_BOTTOM:	nRet = HTTOP;		break;
+		default:
+			break;
 		}
 	}else {
 		RECT rc;
@@ -2940,6 +2950,8 @@ INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		case DOCKSIDE_TOP:		rc.bottom = pt.y - DOCK_SPLITTER_WIDTH / 2 + DOCK_SPLITTER_WIDTH;	break;
 		case DOCKSIDE_RIGHT:	rc.left = pt.x - DOCK_SPLITTER_WIDTH / 2;	break;
 		case DOCKSIDE_BOTTOM:	rc.top = pt.y - DOCK_SPLITTER_WIDTH / 2;	break;
+		default:
+			break;
 		}
 
 		// 以前と同じ配置なら無駄に移動しない
@@ -2969,6 +2981,8 @@ INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		case DOCKSIDE_TOP:		ProfDockTop() = rc.bottom - rc.top;		break;
 		case DOCKSIDE_RIGHT:	ProfDockRight() = rc.right - rc.left;	break;
 		case DOCKSIDE_BOTTOM:	ProfDockBottom() = rc.bottom - rc.top;	break;
+		default:
+			break;
 		}
 		if( bType ){
 			SetTypeConfig(CTypeConfig(m_nDocType), m_type);
@@ -3099,6 +3113,8 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	case DOCKSIDE_TOP:		rcWk.top = rcWk.bottom - DOCK_SPLITTER_WIDTH; break;
 	case DOCKSIDE_RIGHT:	rcWk.right = rcWk.left + DOCK_SPLITTER_WIDTH; break;
 	case DOCKSIDE_BOTTOM:	rcWk.bottom = rcWk.top + DOCK_SPLITTER_WIDTH; break;
+	default:
+		break;
 	}
 	::MyFillRect( gr, rcWk, COLOR_3DFACE );
 	::DrawEdge( gr, &rcWk, EDGE_ETCHED, BF_TOPLEFT );
@@ -3320,6 +3336,8 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 					case DOCKSIDE_TOP:		CommonSet().m_cyOutlineDockTop = rc.bottom - rc.top;	break;
 					case DOCKSIDE_RIGHT:	CommonSet().m_cxOutlineDockRight = rc.right - rc.left;	break;
 					case DOCKSIDE_BOTTOM:	CommonSet().m_cyOutlineDockBottom = rc.bottom - rc.top;	break;
+					default:
+						break;
 				}
 			}
 			STypeConfig* type = new STypeConfig();
@@ -3361,6 +3379,8 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 			case DOCKSIDE_TOP:		pnHeight = &ProfDockTop();		break;
 			case DOCKSIDE_RIGHT:	pnWidth = &ProfDockRight();		break;
 			case DOCKSIDE_BOTTOM:	pnHeight = &ProfDockBottom();	break;
+			default:
+				break;
 			}
 			if( eDockSide == DOCKSIDE_LEFT || eDockSide == DOCKSIDE_RIGHT ){
 				if( *pnWidth == 0 )	// 初回
@@ -3511,6 +3531,8 @@ bool CDlgFuncList::ChangeLayout( int nId )
 		case DOCKSIDE_TOP:		rc.bottom = rc.top + ProfDockTop();		break;
 		case DOCKSIDE_RIGHT:	rc.left = rc.right - ProfDockRight();	break;
 		case DOCKSIDE_BOTTOM:	rc.top = rc.bottom - ProfDockBottom();	break;
+		default:
+			break;
 		}
 
 		// 以前と同じ配置なら無駄に移動しない
@@ -3785,6 +3807,8 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 				case DOCKSIDE_TOP:		ProfDockTop() = rc.bottom - rc.top;		break;
 				case DOCKSIDE_RIGHT:	ProfDockRight() = rc.right - rc.left;	break;
 				case DOCKSIDE_BOTTOM:	ProfDockBottom() = rc.bottom - rc.top;	break;
+				default:
+					break;
 				}
 				if( bType ){
 					SetTypeConfig(CTypeConfig(m_nDocType), m_type);
