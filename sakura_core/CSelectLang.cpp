@@ -362,12 +362,11 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 	return nRet;
 }
 
-void CSelectLang::ChangeLang( WCHAR* pszDllName )
+void CSelectLang::ChangeLang( const WCHAR* pszDllName )
 {
 	/* 言語を選択する */
-	UINT unIndex;
-	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
-		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
+	for ( UINT unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
+		const CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
 		if ( wcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
 			CSelectLang::ChangeLang( unIndex );
 			break;

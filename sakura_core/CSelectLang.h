@@ -63,7 +63,7 @@ public:
 
 	static HINSTANCE InitializeLanguageEnvironment(void);		// 言語環境を初期化する
 	static HINSTANCE LoadLangRsrcLibrary( SSelLangInfo& lang );	// メッセージ用リソースDLLをロードする
-	static void ChangeLang( WCHAR* pszDllName );	// 言語を変更する
+	static void ChangeLang( const WCHAR* pszDllName );	// 言語を変更する
 
 protected:
 	/*
