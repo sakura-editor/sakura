@@ -929,6 +929,8 @@ void CEditWnd::LayoutMainMenu()
 					}
 				}
 				break;
+			default:
+				break;
 			}
 			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(),
 				CKeyBind::MakeMenuLabel( LS(cMainMenu->m_nFunc), cMainMenu->m_sKey ) );
@@ -2659,6 +2661,8 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 			}
 			bInList = (prevPlugin != NULL);
 		}
+		break;
+	default:
 		break;
 	}
 	return bInList;

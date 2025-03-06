@@ -120,6 +120,8 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 			CPropTypesSupport::AddHokanMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
+	default:
+		break;
 	}
 	return PPMGR_REG_OK;
 }
@@ -147,6 +149,8 @@ bool CJackManager::UnRegisterPlug( wstring pszJack, CPlug* plug )
 			int nMethod = CPlug::GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );
 			CPropTypesSupport::RemoveHokanMethod( nMethod, plug->m_sLabel.c_str() );
 		}
+		break;
+	default:
 		break;
 	}
 

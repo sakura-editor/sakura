@@ -214,6 +214,8 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 					return;
 				}
 				break;
+			default:
+				break;
 		}
 		
 		//	Feb. 04, 2005 genta	検索開始位置を記録
@@ -516,6 +518,8 @@ void CEditView::ISearchWordMake(void)
 			const wchar_t* p = strMigemoWord.c_str();
 			m_sSearchPattern.SetPattern(this->GetHwnd(), p, (int)strMigemoWord.size(), m_sCurSearchOption, &m_CurRegexp);
 		}
+		break;
+	default:
 		break;
 	}
 }

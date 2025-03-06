@@ -445,6 +445,8 @@ void CViewCommander::Command_UNDO( void )
 					GetCaret().MoveCursor( ptCaretPos_After, false );
 				}
 				break;
+			default:
+				break;
 			}
 
 			if( bFastMode ){
@@ -699,6 +701,8 @@ void CViewCommander::Command_REDO( void )
 				}
 				break;
 			case OPE_MOVECARET:
+				break;
+			default:
 				break;
 			}
 			if( bFastMode ){
