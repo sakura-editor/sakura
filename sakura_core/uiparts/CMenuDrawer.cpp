@@ -1424,7 +1424,7 @@ WCHAR CMenuDrawer::GetAccelCharFromLabel( const WCHAR* pszLabel )
 			if( L'&' == pszLabel[i + 1]  ){
 				i++;
 			}else{
-				return (WCHAR)_totupper( pszLabel[i + 1] );
+				return (WCHAR)towupper( pszLabel[i + 1] );
 			}
 		}
 	}
@@ -1451,7 +1451,7 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		chUser += '@';
 	}
 	else {
-		chUser = (WCHAR)_totupper( chUser );
+		chUser = (WCHAR)towupper( chUser );
 	}
 
 	// 2011.11.18 vector化

@@ -399,7 +399,7 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 	}
 	else {
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
-			  && (((p = wcschr( sName, sKey[0])) != NULL) || ((p = wcschr( sName, _totlower(sKey[0]))) != NULL)) ){
+			  && (((p = wcschr( sName, sKey[0])) != nullptr) || ((p = wcschr( sName, towlower(sKey[0]))) != nullptr)) ){
 			// 欧文風、使用している文字をアクセスキーに
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
