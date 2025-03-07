@@ -90,11 +90,6 @@ public:
 //	static const int gm_nBufSizeMin; // ロード用バッファサイズの設定可能な最低値
 
 protected:
-	// Oct. 19, 2002 genta スペルミス修正
-//	void SeekBegin( void );		// ファイルの先頭位置に移動する(BOMを考慮する)
-	void Buffering( void );		// バッファにデータをロードする
-	void ReadBufEmpty( void );	// バッファを空にする
-
 	// GetLextLine の 文字コード考慮版
 	const char* GetNextLineCharCode(const char*	pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, int* pnEolLen, int* pnBufferNext);
 	EConvertResult ReadLine_core(CNativeW* pUnicodeBuffer, CEol* pcEol);
@@ -107,6 +102,7 @@ protected:
 
 //	LPWSTR	m_pszFileName;	// ファイル名
 	HANDLE	m_hFile;		// ファイルハンドル
+	HANDLE	m_hFileMapping;	// メモリマップドファイルハンドル
 	LONGLONG	m_nFileSize;	// ファイルサイズ(64bit)
 	LONGLONG	m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
 	LONGLONG	m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
@@ -130,11 +126,8 @@ protected:
 	enumFileLoadMode	m_eMode;		// 現在の読み込み状態
 
 	// 読み込みバッファ系
-	char*	m_pReadBuf;			// 読み込みバッファへのポインタ
-	int		m_nReadBufSize;		// 読み込みバッファの実際に確保しているサイズ
-	int		m_nReadDataLen;		// 読み込みバッファの有効データサイズ
-	int		m_nReadBufOffSet;	// 読み込みバッファ中のオフセット(次の行頭位置)
-//	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
+	const char*	m_pReadBuf;	// 読み込みバッファ(メモリマップドファイル)の先頭を指すポインタ
+	int m_nReadBufOffset;	// 読み込みバッファ中のオフセット(次の行頭位置)
 	CMemory m_cLineBuffer;
 	CNativeW m_cLineTemp;
 	int		m_nReadOffset2;
