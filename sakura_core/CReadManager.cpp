@@ -33,6 +33,8 @@
 #include "util/window.h"
 #include "CSelectLang.h"
 #include "String_define.h"
+#include <atomic>
+#include <future>
 
 /*!
 	ファイルを読み込んで格納する（分割読み込みテスト版）
@@ -84,7 +86,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	EConvertResult eRet = RESULT_COMPLETE;
 
 	try{
-		CFileLoad cfl(type->m_encoding);
+		CFileLoad cFileLoad( type->m_encoding );
 
 		bool bBigFile;
 #ifdef _WIN64
@@ -95,43 +97,74 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		// ファイルを開く
 		// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
 		//	Jul. 28, 2003 ryoji BOMパラメータ追加
-		cfl.FileOpen( pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
+		cFileLoad.FileOpen( pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
 		pFileInfo->SetBomExist( bBom );
 
 		/* ファイル時刻の取得 */
 		FILETIME	FileTime;
-		if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
+		if( cFileLoad.GetFileTime( NULL, NULL, &FileTime ) ){
 			pFileInfo->SetFileTime( FileTime );
 		}
 
-		// ReadLineはファイルから 文字コード変換された1行を読み出します
-		// エラー時はthrow CError_FileRead を投げます
-		CEol			cEol;
-		CNativeW		cUnicodeBuffer;
-		EConvertResult	eRead;
-		constexpr DWORD timeInterval = 33;
-		ULONGLONG nextTime = GetTickCount64() + timeInterval;
-		while( RESULT_FAILURE != (eRead = cfl.ReadLine( &cUnicodeBuffer, &cEol )) ){
-			if(eRead==RESULT_LOSESOME){
-				eRet = RESULT_LOSESOME;
+		// 行データ読み込みに使うスレッド数 (メインスレッドを含む)
+		const int nThreadCount = (std::max)(1, (int)std::thread::hardware_concurrency());
+
+		std::vector<CFileLoad> vecThreadFileLoads( nThreadCount );
+		std::vector<CDocLineMgr> vecThreadDocLineMgrs( nThreadCount );
+		std::vector<std::future<EConvertResult>> vecWorkerFutures;
+		std::atomic<bool> bCanceled = false;
+
+		size_t nOffsetBegin = cFileLoad.GetNextLineOffset( (size_t)cFileLoad.GetFileSize() );
+		for( int i = nThreadCount - 1; 0 <= i; i-- ){
+			// 分担する範囲を決める
+			const size_t nOffsetEnd = nOffsetBegin;
+			nOffsetBegin = cFileLoad.GetNextLineOffset( (size_t)((double)cFileLoad.GetFileSize() / nThreadCount * i) );
+
+			if( nOffsetBegin == nOffsetEnd ){
+				continue;
 			}
-			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-			int		nLineLen = cUnicodeBuffer.GetStringLength();
-			CDocEditAgent(pcDocLineMgr).AddLineStrX( pLine, nLineLen );
-			//経過通知
-			ULONGLONG currTime = GetTickCount64();
-			if(currTime >= nextTime){
-				nextTime += timeInterval;
-				NotifyProgress(cfl.GetPercent());
-				// 処理中のユーザー操作を可能にする
-				if( !::BlockingHook( NULL ) ){
-					throw CAppExitException(); //中断検出
-				}
+
+			vecThreadFileLoads[i].Prepare( cFileLoad, nOffsetBegin, nOffsetEnd );
+			vecThreadDocLineMgrs[i].SetMemoryResource(pcDocLineMgr->GetMemoryResource());
+
+			if( i == 0 ){
+				// 最後はメインスレッドで処理
+				eRet = ReadLines( true, vecThreadFileLoads[i], vecThreadDocLineMgrs[i], bCanceled );
+			}else{
+				// ワーカースレッドで処理
+				vecWorkerFutures.push_back(
+					std::async(
+						std::launch::async,
+						&CReadManager::ReadLines,
+						this,
+						false,
+						std::ref(vecThreadFileLoads[i]),
+						std::ref(vecThreadDocLineMgrs[i]),
+						std::ref(bCanceled)
+					)
+				);
 			}
 		}
 
-		// ファイルをクローズする
-		cfl.FileClose();
+		// ワーカースレッド待ち合わせ
+		for( auto&& future : vecWorkerFutures ){
+			EConvertResult eRetSub = future.get();
+			if( eRetSub != RESULT_COMPLETE ){
+				eRet = eRetSub;
+			}
+		}
+
+		if( bCanceled.load() ){
+			// 中断
+			throw CAppExitException();
+		}
+
+		// 各スレッドの処理結果をpcDocLineMgrに集約
+		for( int i = 0; i < nThreadCount; i++ ){
+			pcDocLineMgr->AppendAsMove( vecThreadDocLineMgrs[i] );
+		}
+
+		cFileLoad.FileClose();
 	}
 	catch(const CAppExitException&){
 		//WM_QUITが発生した
@@ -190,5 +223,60 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 
 	/* 行変更状態をすべてリセット */
 //	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr, 0);
+	return eRet;
+}
+
+/*!
+	ファイルから行データを読み込む
+	@param[in]		bMainThread	メインスレッドで実行しているかどうか
+	@param[in]		cFileLoad	ファイル読み込みクラス
+	@param[out]		cDocLineMgr	読み込んだ行データを格納
+	@param[in,out]	bCanceled	処理中断フラグ
+	@returns	読み込み処理結果
+*/
+EConvertResult CReadManager::ReadLines(
+	bool				bMainThread,
+	CFileLoad&			cFileLoad,
+	CDocLineMgr&		cDocLineMgr,
+	std::atomic<bool>&	bCanceled
+)
+{
+	CEol			cEol;
+	CNativeW		cUnicodeBuffer;
+	EConvertResult	eRead;
+	constexpr DWORD timeInterval = 33;
+	auto			nextTime = GetTickCount64() + timeInterval;
+	EConvertResult	eRet = RESULT_COMPLETE;
+
+	while( RESULT_FAILURE != (eRead = cFileLoad.ReadLine( &cUnicodeBuffer, &cEol )) ){
+		if( eRead == RESULT_LOSESOME ){
+			eRet = RESULT_LOSESOME;
+		}
+
+		if( bCanceled.load() ){
+			break;
+		}
+
+		const wchar_t* pLine = cUnicodeBuffer.GetStringPtr();
+		const auto nLineLen = cUnicodeBuffer.GetStringLength();
+		CDocEditAgent(&cDocLineMgr).AddLineStrX( pLine, nLineLen );
+
+		if( bMainThread ){
+			// 経過通知
+			const auto currTime = GetTickCount64();
+			if( currTime >= nextTime ){
+				nextTime += timeInterval;
+				NotifyProgress( cFileLoad.GetPercent() );
+				// 処理中のユーザー操作を可能にする
+				if( !::BlockingHook( NULL ) ){
+					// 中断検知
+					bCanceled.store( true );
+					eRet = RESULT_FAILURE;
+					break;
+				}
+			}
+		}
+	}
+
 	return eRet;
 }

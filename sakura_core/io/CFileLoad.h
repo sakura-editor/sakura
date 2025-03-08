@@ -55,8 +55,11 @@ public:
 	static std::wstring GetSizeStringForHuman(ULONGLONG size); //!< 人にとって見やすいサイズ文字列を作る (例: "2 GB", "10 GB", "400 MB", "32 KB")
 
 public:
+	CFileLoad() : CFileLoad( SEncodingConfig{} ) {};
 	CFileLoad( const SEncodingConfig& encode );
 	~CFileLoad( void );
+
+	void Prepare( const CFileLoad& other, size_t nOffsetBegin, size_t nOffsetEnd );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
 	ECodeType FileOpen( LPCWSTR, bool bBigFile, ECodeType, int, bool* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
@@ -86,12 +89,15 @@ public:
 	//! ファイルサイズを取得する
 	inline LONGLONG GetFileSize( void ){ return m_nFileSize; }
 
+	//! 指定オフセットから末尾に向かって最初に現れる行頭のオフセットを取得
+	size_t GetNextLineOffset( size_t nOffset );
+
 	static const int gm_nBufSizeDef; // ロード用バッファサイズの初期値
 //	static const int gm_nBufSizeMin; // ロード用バッファサイズの設定可能な最低値
 
 protected:
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode(const char*	pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, int* pnEolLen, int* pnBufferNext);
+	const char* GetNextLineCharCode(const char*	pData, size_t nDataLen, size_t* pnLineLen, size_t* pnBgn, CEol* pcEol, int* pnEolLen, int* pnBufferNext);
 	EConvertResult ReadLine_core(CNativeW* pUnicodeBuffer, CEol* pcEol);
 
 	int Read(void* pBuf, size_t nSize); // inline
@@ -105,7 +111,6 @@ protected:
 	HANDLE	m_hFileMapping;	// メモリマップドファイルハンドル
 	LONGLONG	m_nFileSize;	// ファイルサイズ(64bit)
 	LONGLONG	m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
-	LONGLONG	m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	ECodeType	m_CharCode;		// 文字コード
 	CCodeBase*	m_pCodeBase;	////
@@ -126,8 +131,10 @@ protected:
 	enumFileLoadMode	m_eMode;		// 現在の読み込み状態
 
 	// 読み込みバッファ系
-	const char*	m_pReadBuf;	// 読み込みバッファ(メモリマップドファイル)の先頭を指すポインタ
-	int m_nReadBufOffset;	// 読み込みバッファ中のオフセット(次の行頭位置)
+	const char*	m_pReadBufTop;	// 読み込みバッファの先頭を指すポインタ
+	size_t m_nReadBufOffsetBegin;
+	size_t m_nReadBufOffsetEnd;
+	size_t m_nReadBufOffsetCurrent;	// 読み込みバッファ中のオフセット(次の行頭位置)
 	CMemory m_cLineBuffer;
 	CNativeW m_cLineTemp;
 	int		m_nReadOffset2;
@@ -147,7 +154,7 @@ inline BOOL CFileLoad::GetFileTime( FILETIME* pftCreate, FILETIME* pftLastAccess
 inline int CFileLoad::Read( void* pBuf, size_t nSize )
 {
 	DWORD ReadSize;
-	if( !::ReadFile( m_hFile, pBuf, nSize, &ReadSize, NULL ) )
+	if( !::ReadFile( m_hFile, pBuf, (DWORD)nSize, &ReadSize, NULL ) )
 		throw CError_FileRead();
 	return (int)ReadSize;
 }

@@ -24,6 +24,7 @@
 
 #include <Windows.h>
 #include <memory_resource>
+#include <memory>
 #include "_main/global.h" // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
@@ -71,6 +72,11 @@ public:
 	CDocLine* AddNewLine();						//!< 最下部に新しい行を挿入
 	void DeleteAllLine();						//!< 全ての行を削除する
 	void DeleteLine( CDocLine* );				//!< 行の削除
+	void AppendAsMove( CDocLineMgr& other );	//!< 他のCDocLineMgrの内容を末尾に追加する
+
+	// メモリリソースのアクセス
+	std::shared_ptr<std::pmr::memory_resource> GetMemoryResource() const { return m_docLineMemRes; }
+	void SetMemoryResource(std::shared_ptr<std::pmr::memory_resource> memoryResource) { m_docLineMemRes = memoryResource; }
 
 	//デバッグ
 	void DUMP();
@@ -92,7 +98,7 @@ private:
 	CDocLine*	m_pDocLineTop;		//!< 最初の行
 	CDocLine*	m_pDocLineBot;		//!< 最後の行(※1行しかない場合はm_pDocLineTopと等しくなる)
 	CLogicInt	m_nLines;			//!< 全行数
-	std::unique_ptr<std::pmr::memory_resource> m_docLineMemRes;
+	std::shared_ptr<std::pmr::memory_resource> m_docLineMemRes;
 
 public:
 	//$$ kobake注: 以下、絶対に切り離したい（最低切り離せなくても、変数の意味をコメントで明確に記すべき）変数群
