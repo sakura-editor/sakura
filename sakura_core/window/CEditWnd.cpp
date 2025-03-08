@@ -1454,11 +1454,6 @@ LRESULT CEditWnd::DispatchEvent(
 			else if( pnmh->code == NM_RCLICK ){
 				LPNMMOUSE mp = (LPNMMOUSE) lParam;
 				if( mp->dwItemSpec == 2 ){	//	入力改行モード
-					enum eEolExts {
-						F_CHGMOD_EOL_NEL = F_CHGMOD_EOL_CR + 1,
-						F_CHGMOD_EOL_PS,
-						F_CHGMOD_EOL_LS,
-					};
 					m_cMenuDrawer.ResetContents();
 					HMENU hMenuPopUp = ::CreatePopupMenu();
 					m_cMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF,
