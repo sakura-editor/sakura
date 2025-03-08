@@ -95,7 +95,7 @@ CFLAGS= \
  $(DEFINES) $(MYCFLAGS)
 
 CXXFLAGS= $(CFLAGS) \
- -std=c++17 \
+ -std=c++20 \
  $(MYCXXFLAGS)
 
 LIBS= \
