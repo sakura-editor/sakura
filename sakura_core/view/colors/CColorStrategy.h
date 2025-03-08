@@ -28,7 +28,6 @@
 #pragma once
 
 // 要先行定義
-// #include "view/CEditView.h"
 #include "EColorIndexType.h"
 #include "uiparts/CGraphics.h"
 
@@ -89,17 +88,10 @@ struct CColor3Setting {
 };
 
 struct SColorStrategyInfo{
-	SColorStrategyInfo(HDC hDC = NULL)
-		: m_sDispPosBegin(0,0)
-		, m_pStrategy(NULL)
-		, m_pStrategyFound(NULL)
-		, m_pStrategySelect(NULL)
-		, m_colorIdxBackLine(COLORIDX_TEXT)
-		, m_gr(hDC)
+	explicit SColorStrategyInfo(HDC hDC = nullptr)
+		: m_gr(hDC)
+		, m_sDispPosBegin(0,0)
 	{
-		m_cIndex.eColorIndex = COLORIDX_TEXT;
-		m_cIndex.eColorIndex2 = COLORIDX_TEXT;
-		m_cIndex.eColorIndexBg = COLORIDX_TEXT;
 	}
 
 	//参照
@@ -115,11 +107,11 @@ struct SColorStrategyInfo{
 	DispPos			m_sDispPosBegin;
 
 	//色変え
-	CColorStrategy*		m_pStrategy;
-	CColor_Found*		m_pStrategyFound;
-	CColor_Select*		m_pStrategySelect;
-	EColorIndexType		m_colorIdxBackLine;
-	CColor3Setting		m_cIndex;
+	CColorStrategy*		m_pStrategy = nullptr;
+	CColor_Found*		m_pStrategyFound = nullptr;
+	CColor_Select*		m_pStrategySelect = nullptr;
+	EColorIndexType		m_colorIdxBackLine = COLORIDX_TEXT;
+	CColor3Setting		m_cIndex = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
 
 	//! 色の切り替え
 	bool CheckChangeColor(const CStringRef& cLineStr);
