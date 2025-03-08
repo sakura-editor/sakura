@@ -76,7 +76,6 @@
 #include <algorithm>
 #include <array>
 #include <exception>
-#include <format>
 #include <functional>
 #include <initializer_list>
 #include <list>
