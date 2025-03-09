@@ -188,12 +188,12 @@ private:
 		const SGrepOption&	sGrepOption
 	);
 
-	DWORD m_dwTickAddTail;	// AddTail() を呼び出した時間
-	DWORD m_dwTickUICheck;	// 処理中にユーザーによるUI操作が行われていないか確認した時間
-	DWORD m_dwTickUIFileName;	// Cancelダイアログのファイル名表示更新を行った時間
+	DWORD m_dwTickAddTail = 0;	// AddTail() を呼び出した時間
+	DWORD m_dwTickUICheck = 0;	// 処理中にユーザーによるUI操作が行われていないか確認した時間
+	DWORD m_dwTickUIFileName = 0;	// Cancelダイアログのファイル名表示更新を行った時間
 
 public: //$$ 仮
-	bool	m_bGrepMode;		//!< Grepモードか
-	bool	m_bGrepRunning;		//!< Grep処理中
+	bool	m_bGrepMode = false;		//!< Grepモードか
+	bool	m_bGrepRunning = false;		//!< Grep処理中
 };
 #endif /* SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_ */

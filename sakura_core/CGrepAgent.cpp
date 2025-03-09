@@ -196,11 +196,6 @@ public:
 };
 
 CGrepAgent::CGrepAgent()
-: m_bGrepMode( false )			/* Grepモードか */
-, m_bGrepRunning( false )		/* Grep処理中 */
-, m_dwTickAddTail( 0 )
-, m_dwTickUICheck( 0 )
-, m_dwTickUIFileName( 0 )
 {
 }
 
