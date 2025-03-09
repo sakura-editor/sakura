@@ -1986,7 +1986,7 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 		case NM_CLICK:
 			if( IsDocking() ){
 				// この時点ではまだ選択変更されていないが OnJump() の予備動作として先に選択変更しておく
-				TVHITTESTINFO tvht = {0};
+				TVHITTESTINFO tvht = {};
 				::GetCursorPos( &tvht.pt );
 				::ScreenToClient( hwndTree, &tvht.pt );
 				TreeView_HitTest( hwndTree, &tvht );
