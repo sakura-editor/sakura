@@ -92,12 +92,9 @@ public:
 	//! 指定オフセットから末尾に向かって最初に現れる行頭のオフセットを取得
 	size_t GetNextLineOffset( size_t nOffset );
 
-	static const int gm_nBufSizeDef; // ロード用バッファサイズの初期値
-//	static const int gm_nBufSizeMin; // ロード用バッファサイズの設定可能な最低値
-
 protected:
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode(const char*	pData, size_t nDataLen, size_t* pnLineLen, size_t* pnBgn, CEol* pcEol, int* pnEolLen, int* pnBufferNext);
+	const char* GetNextLineCharCode(const char*	pData, size_t nDataLen, size_t* pnLineLen, size_t* pnBgn, CEol* pcEol, size_t* pnEolLen);
 	EConvertResult ReadLine_core(CNativeW* pUnicodeBuffer, CEol* pcEol);
 
 	int Read(void* pBuf, size_t nSize); // inline
@@ -105,6 +102,9 @@ protected:
 
 	/* メンバオブジェクト */
 	const SEncodingConfig* m_pEencoding;
+
+	//! 文字コード自動検出のために読み込む最大サイズ(byte)
+	static constexpr LONGLONG m_nAutoDetectReadLen = 32768LL;
 
 //	LPWSTR	m_pszFileName;	// ファイル名
 	HANDLE	m_hFile;		// ファイルハンドル
