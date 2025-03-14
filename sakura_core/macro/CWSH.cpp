@@ -73,7 +73,6 @@ class CWSHSite: public IActiveScriptSite, public IActiveScriptSiteWindow
 {
 private:
 	CWSHClient *m_Client;
-	ITypeInfo *m_TypeInfo;
 	ULONG m_RefCount;
 public:
 	CWSHSite(CWSHClient *AClient): m_Client(AClient), m_RefCount(0)
