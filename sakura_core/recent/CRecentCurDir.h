@@ -31,7 +31,7 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-typedef StaticString<WCHAR, _MAX_PATH> CCurDirString;
+using CCurDirString = StaticString<_MAX_PATH>;
 
 //! コマンドの履歴を管理 (RECENT_FOR_CUR_DIR)
 class CRecentCurDir final : public CRecentImp<CCurDirString, LPCWSTR>{

@@ -548,11 +548,11 @@ struct SFileTreeItem{
 public:
 	EFileTreeItemType m_eFileTreeItemType;
 	SFilePath	m_szTargetPath;	//!< フォルダーorファイルパス
-	StaticString<WCHAR,_MAX_PATH> m_szLabelName; //!< ラベル名(""のときはファイル名を使う)
+	StaticString<_MAX_PATH> m_szLabelName; //!< ラベル名(""のときはファイル名を使う)
 	int  m_nDepth;	//!< 階層
 
 	// GrepタイプTreeItem
-	StaticString<WCHAR,_MAX_PATH>	m_szTargetFile;	//!< ファイル一覧
+	StaticString<_MAX_PATH>	m_szTargetFile;	//!< ファイル一覧
 	bool		m_bIgnoreHidden;		//!< 隠しファイルを除く
 	bool		m_bIgnoreReadOnly;		//!< 読み取り専用ファイルを除く
 	bool		m_bIgnoreSystem;		//!< システムファイルを除く

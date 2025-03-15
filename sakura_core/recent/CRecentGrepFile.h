@@ -31,7 +31,7 @@
 #include "util/StaticType.h"
 #include "config/maxdata.h"
 
-typedef StaticString<WCHAR, MAX_GREP_PATH> CGrepFileString;
+using CGrepFileString = StaticString<MAX_GREP_PATH>;
 
 //! GREPファイルの履歴を管理 (RECENT_FOR_GREP_FILE)
 class CRecentGrepFile final : public CRecentImp<CGrepFileString, LPCWSTR>{
