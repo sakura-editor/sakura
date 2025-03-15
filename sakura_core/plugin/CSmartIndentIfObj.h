@@ -49,7 +49,7 @@ public:
 	MacroFuncInfoArray GetMacroFuncInfo() const override{
 		static MacroFuncInfo macroFuncInfoNotCommandArr[] = {
 			//ID									関数名							引数										戻り値の型	m_pszData
-			{EFunctionCode(F_SI_GETCHAR),			LTEXT("GetChar"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //押下したキーを取得する
+			{EFunctionCode(F_SI_GETCHAR),			L"GetChar",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //押下したキーを取得する
 			//	終端
 			{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
 		};

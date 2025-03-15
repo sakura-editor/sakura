@@ -985,7 +985,7 @@ int CGrepAgent::DoGrepTree(
 
 		// 2003.06.23 Moca リアルタイム表示のときは早めに表示
 		if( pcViewDst->GetDrawSwitch() ){
-			if( LTEXT('\0') != pszKey[0] ){
+			if( L'\0' != pszKey[0] ){
 				// データ検索のときファイルの合計が最大10MBを超えたら表示
 				nWork += ( cGrepEnumFilterFiles.GetFileSizeLow( i ) + 1023 ) / 1024;
 			}

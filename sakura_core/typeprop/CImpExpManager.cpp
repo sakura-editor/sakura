@@ -724,19 +724,19 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 		// 2007.02.03 genta コメントみたいな行は黙ってスキップ
 		// 2007.10.08 kobake 空行もスキップ
-		if( buff[0] == LTEXT('\0') ||
-			buff[0] == LTEXT('\n') ||
-			buff[0] == LTEXT('#') ||
-			buff[0] == LTEXT(';') ||
-			( buff[0] == LTEXT('/') && buff[1] == LTEXT('/') )){
+		if( buff[0] == L'\0' ||
+			buff[0] == L'\n' ||
+			buff[0] == L'#' ||
+			buff[0] == L';' ||
+			( buff[0] == L'/' && buff[1] == L'/' )){
 				//	2007.02.03 genta 処理を継続
 				continue;
 		}
 
 		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
 		if( buff.length() < 10 ||
-			wmemcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
-			wmemcmp(&buff[7], LTEXT("]="), 2) != 0
+			wmemcmp(buff.c_str(), L"KDct[", 5) != 0 ||
+			wmemcmp(&buff[7], L"]=", 2) != 0
 			){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;
@@ -747,10 +747,10 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		auto p2 = wcschr(p1, L',');
 		auto p3 = p1;					//結果確認用に初期化
 		if (p2) {
-			*p2 = LTEXT('\0');
+			*p2 = L'\0';
 			p2 += 1;				//カンマの次が、次の要素
-			if( nullptr != (p3=wcschr(p2,LTEXT(','))) ){
-				*p3 = LTEXT('\0');
+			if( nullptr != (p3=wcschr(p2,L',')) ){
+				*p3 = L'\0';
 				p3 += 1;			//カンマの次が、次の要素
 			}
 		}/* 結果の確認 */

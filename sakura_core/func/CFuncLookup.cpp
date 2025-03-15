@@ -118,18 +118,18 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, size_t size ) const
 	}
 	else if( funccode == F_MENU_RBUTTON ){
 		Custmenu2Name( 0, ptr, bufsize );
-		ptr[bufsize-1] = LTEXT('\0');
+		ptr[bufsize-1] = L'\0';
 		return true;
 	}
 	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU ){	// MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/3/14 Uchi
 		Custmenu2Name( funccode - F_CUSTMENU_BASE, ptr, bufsize );
-		ptr[bufsize-1] = LTEXT('\0');
+		ptr[bufsize-1] = L'\0';
 		return true;
 	}
 	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
 		if( ( pszStr = LS( funccode ) )[0] != L'\0' ){
 			wcsncpy( ptr, pszStr, bufsize );
-			ptr[bufsize-1] = LTEXT('\0');
+			ptr[bufsize-1] = L'\0';
 			return true;	// 定義されたコマンド
 		}
 	}
@@ -142,19 +142,19 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, size_t size ) const
 	// 未定義コマンド(または現在のプロセスではロードされていないプラグインなど)
 	if( ( pszStr = LS( funccode ) )[0] != L'\0' ){
 		wcsncpy( ptr, pszStr, bufsize );
-		ptr[bufsize-1] = LTEXT('\0');
+		ptr[bufsize-1] = L'\0';
 		return false;
 	}
 
 	// なにかコピーしないとループ処理などで一つ前の名前になることがあるので(-- 不明 --)をコピーしておく
 	if( ( pszStr = LS( F_DISABLE ) )[0] != L'\0' ){
 		wcsncpy( ptr, pszStr, bufsize );
-		ptr[bufsize-1] = LTEXT('\0');
+		ptr[bufsize-1] = L'\0';
 		return false;
 	}
 	// リソース全死亡ガード
 	wcsncpy( ptr, L"unknown", bufsize );
-	ptr[bufsize-1] = LTEXT('\0');
+	ptr[bufsize-1] = L'\0';
 
 	return false;
 }

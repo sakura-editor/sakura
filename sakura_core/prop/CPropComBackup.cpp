@@ -504,56 +504,56 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 	wchar_t temp[MAX_PATH];
 	/* バックアップを作成するファイル */ // 20051107 aroka
 	if( !m_Common.m_sBackup.m_bBackUp ){
-		temp[0] = LTEXT('\0');
+		temp[0] = L'\0';
 	}
 	else{
 		if( m_Common.m_sBackup.m_bBackUpFolder ){
-			temp[0] = LTEXT('\0');
+			temp[0] = L'\0';
 		}
 		else if( m_Common.m_sBackup.m_bBackUpDustBox  ){
-			auto_sprintf( temp, LTEXT("%ls\\"), LS(STR_PROPCOMBK_DUSTBOX) );
+			auto_sprintf( temp, L"%ls\\", LS(STR_PROPCOMBK_DUSTBOX) );
 		}
 		else{
-			wcsncpy_s( temp, LTEXT(".\\"), _TRUNCATE );
+			wcsncpy_s( temp, L".\\", _TRUNCATE );
 		}
 
 		switch( m_Common.m_sBackup.GetBackupType() ){
 		case 1: // .bak
-			wcscat( temp, LTEXT("$0.bak") );
+			wcscat( temp, L"$0.bak" );
 			break;
 		case 5: // .*.bak
-			wcscat( temp, LTEXT("$0.*.bak") );
+			wcscat( temp, L"$0.*.bak" );
 			break;
 		case 3: // .b??
-			wcscat( temp, LTEXT("$0.b??") );
+			wcscat( temp, L"$0.b??" );
 			break;
 		case 6: // .*.b??
-			wcscat( temp, LTEXT("$0.*.b??") );
+			wcscat( temp, L"$0.*.b??" );
 			break;
 		case 2:	//	日付，時刻
 		case 4:	//	日付，時刻
-			wcscat( temp, LTEXT("$0_") );
+			wcscat( temp, L"$0_" );
 
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-				wcscat( temp, LTEXT("%Y") );
+				wcscat( temp, L"%Y" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-				wcscat( temp, LTEXT("%m") );
+				wcscat( temp, L"%m" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-				wcscat( temp, LTEXT("%d") );
+				wcscat( temp, L"%d" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-				wcscat( temp, LTEXT("%H") );
+				wcscat( temp, L"%H" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-				wcscat( temp, LTEXT("%M") );
+				wcscat( temp, L"%M" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-				wcscat( temp, LTEXT("%S") );
+				wcscat( temp, L"%S" );
 			}
 
-			wcscat( temp, LTEXT(".*") );
+			wcscat( temp, L".*" );
 			break;
 		default:
 			break;

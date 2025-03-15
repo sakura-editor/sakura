@@ -128,13 +128,13 @@ MacroFuncInfoEx g_OutlineIfObj_FuncInfoEx_s = {5, 5, g_OutlineIfObj_MacroArgEx_s
 MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] = 
 {
 	//ID									関数名							引数										戻り値の型	m_pszData
-	{EFunctionCode(F_OL_ADDFUNCINFO),		LTEXT("AddFuncInfo"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	nullptr }, //アウトライン解析に追加する
-	{EFunctionCode(F_OL_ADDFUNCINFO2),		LTEXT("AddFuncInfo2"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	nullptr }, //アウトライン解析に追加する（深さ指定）
-	{EFunctionCode(F_OL_SETTITLE),			LTEXT("SetTitle"),				{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr },	//アウトラインダイアログタイトルを指定
-	{EFunctionCode(F_OL_SETLISTTYPE),		LTEXT("SetListType"),			{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //アウトラインリスト種別を指定
-	{EFunctionCode(F_OL_SETLABEL),			LTEXT("SetLabel"),				{VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //ラベル文字列を指定
-	{EFunctionCode(F_OL_ADDFUNCINFO3),		LTEXT("AddFuncInfo3"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //アウトライン解析に追加する（ファイル名）
-	{EFunctionCode(F_OL_ADDFUNCINFO4),		LTEXT("AddFuncInfo4"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //アウトライン解析に追加する（ファイル名、深さ指定）
+	{EFunctionCode(F_OL_ADDFUNCINFO),		L"AddFuncInfo",				{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	nullptr }, //アウトライン解析に追加する
+	{EFunctionCode(F_OL_ADDFUNCINFO2),		L"AddFuncInfo2",			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	nullptr }, //アウトライン解析に追加する（深さ指定）
+	{EFunctionCode(F_OL_SETTITLE),			L"SetTitle",				{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr },	//アウトラインダイアログタイトルを指定
+	{EFunctionCode(F_OL_SETLISTTYPE),		L"SetListType",				{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //アウトラインリスト種別を指定
+	{EFunctionCode(F_OL_SETLABEL),			L"SetLabel",				{VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //ラベル文字列を指定
+	{EFunctionCode(F_OL_ADDFUNCINFO3),		L"AddFuncInfo3",			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //アウトライン解析に追加する（ファイル名）
+	{EFunctionCode(F_OL_ADDFUNCINFO4),		L"AddFuncInfo4",			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //アウトライン解析に追加する（ファイル名、深さ指定）
 
 	//	終端
 	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}

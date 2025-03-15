@@ -304,13 +304,13 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				}
 //@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
 				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
-					auto_sprintf( szLabel2, LTEXT("%s(%hc)"),
+					auto_sprintf( szLabel2, L"%s(%hc)",
 						szLabel,
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]
 					);
 				}
 				else {
-					auto_sprintf( szLabel2, LTEXT("%ls"), szLabel );
+					auto_sprintf( szLabel2, L"%ls", szLabel );
 				}
 
 				ApiWrap::List_InsertString( hwndLIST_RES, nIdx2, szLabel2 );
@@ -688,7 +688,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
 			wcscpy( szLabel2, szLabel );
 		}else{
-			auto_sprintf( szLabel2, LTEXT("%ls(%hc)"),
+			auto_sprintf( szLabel2, L"%ls(%hc)",
 				szLabel,
 				m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]
 			);

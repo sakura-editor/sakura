@@ -61,7 +61,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	m_pShareData = &GetDllShareData();
 	m_nCurrentKeyState = -1;
 	for( i = 0; i < int(std::size(m_szFuncNameArr)); ++i ){
-		m_szFuncNameArr[i][0] = LTEXT('\0');
+		m_szFuncNameArr[i][0] = L'\0';
 	}
 //	2002.11.04 Moca Open()側で設定
 //	m_nButtonGroupNum = 4;
@@ -307,7 +307,7 @@ LRESULT CFuncKeyWnd::OnTimer( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT 
 			if( nFuncCode != m_nFuncCodeArr[i] ){
 				m_nFuncCodeArr[i] = nFuncCode;
 				if( 0 == m_nFuncCodeArr[i] ){
-					m_szFuncNameArr[i][0] = LTEXT('\0');
+					m_szFuncNameArr[i][0] = L'\0';
 				}else{
 					//	Oct. 2, 2001 genta
 					m_pcEditDoc->m_cFuncLookup.Funccode2Name(
