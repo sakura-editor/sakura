@@ -64,10 +64,10 @@ struct SEolDefinition{
 	const WCHAR*	m_szName;
 	const WCHAR*	m_szDataW;
 	const ACHAR*	m_szDataA;
-	int				m_nLen;
+	size_t			m_nLen;
 
-	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==memcmp(pData,m_szDataA,m_nLen); }
+	bool StartsWith(const WCHAR* pData, size_t nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
+	bool StartsWith(const ACHAR* pData, size_t nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==memcmp(pData,m_szDataA,m_nLen); }
 };
 
 constexpr auto EOL_TYPE_NUM = static_cast<size_t>(EEolType::code_max); // 8
@@ -140,13 +140,13 @@ public:
 	CEol& operator = ( EEolType t ) noexcept { SetType( t ); return *this; }
 
 	//文字列内の行終端子を解析
-	void SetTypeByString( const wchar_t* pszData, int nDataLen );
-	void SetTypeByString( const char* pszData, int nDataLen );
+	void SetTypeByString( const wchar_t* pszData, size_t nDataLen );
+	void SetTypeByString( const char* pszData, size_t nDataLen );
 
 	//設定（ファイル読み込み時に使用）
-	void SetTypeByStringForFile( const char* pszData, int nDataLen ){ SetTypeByString( pszData, nDataLen ); }
-	void SetTypeByStringForFile_uni( const char* pszData, int nDataLen );
-	void SetTypeByStringForFile_unibe( const char* pszData, int nDataLen );
+	void SetTypeByStringForFile( const char* pszData, size_t nDataLen ){ SetTypeByString( pszData, nDataLen ); }
+	void SetTypeByStringForFile_uni( const char* pszData, size_t nDataLen );
+	void SetTypeByStringForFile_unibe( const char* pszData, size_t nDataLen );
 };
 
 // グローバル演算子
