@@ -98,8 +98,12 @@ CXXFLAGS= $(CFLAGS) \
  -std=c++17 \
  $(MYCXXFLAGS)
 
-LIBS= \
+LDFLAGS= \
  -static \
+ -municode \
+ -L$(GOOGLETEST_INSTALL_DIR)/lib \
+
+LIBS= \
  -lwinspool \
  -lole32 \
  -loleaut32 \
@@ -117,7 +121,6 @@ LIBS= \
  -lkernel32 \
  -lgdi32 \
  -lcomdlg32 \
- -L$(GOOGLETEST_INSTALL_DIR)/lib \
  -lgtest \
  -lgmock \
  $(MYLIBS)
@@ -140,9 +143,12 @@ SAKURA_OBJS = $(SAKURA_SRCS:$(SRCDIR)/../../sakura_core/%.cpp=$(SAKURA_CORE)/%.o
 all: $(exe)
 
 $(exe): $(OBJS) $(SAKURA_OBJS)
-	$(CXX) -o $@ $(OBJS) $(SAKURA_OBJS) $(LIBS)
+	$(CXX) -o $@ -mconsole $(LDFLAGS) $(OBJS) $(SAKURA_OBJS) $(LIBS)
 
-.cpp.o:
+pch.h.gch: pch.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+.cpp.o: pch.h.gch
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OBJS):
@@ -154,7 +160,7 @@ tests1_rc.rc.utf8: tests1_rc.rc
 	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' > $@
 
 clean:
-	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS))
+	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS) pch.h.gch)
 	-$(RM) $(subst /,$(DIRSEP),$(DEPS))
 
 .SUFFIXES: .cpp .o

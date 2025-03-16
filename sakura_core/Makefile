@@ -80,11 +80,16 @@ CFLAGS= \
  -I. \
  -I$(SRCDIR) \
  $(DEFINES) $(MYCFLAGS)
+
 CXXFLAGS= $(CFLAGS) \
  -std=c++17 \
  $(MYCXXFLAGS)
-LIBS= \
+
+LDFLAGS= \
  -static \
+ -municode \
+
+LIBS= \
  -lwinspool \
  -lole32 \
  -loleaut32 \
@@ -99,8 +104,6 @@ LIBS= \
  -lwindowscodecs \
  -lmsimg32 \
  -luxtheme \
- -mwindows \
- -municode \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/sakura.exe
@@ -131,7 +134,7 @@ all: $(exe) \
      $(ctags)
 
 $(exe): $(OBJS) sakura_rc.o
-	$(CXX) -o $@ $(OBJS) sakura_rc.o $(LIBS)
+	$(CXX) -o $@ -mwindows $(LDFLAGS) $(OBJS) sakura_rc.o $(LIBS)
 
 $(bregonig): ../installer/externals/bregonig/bron420.zip
 	$(P7Z) e $< -o$(@D) -y x64/$(@F)
