@@ -133,8 +133,7 @@ GENERATED_FILES= \
  Funccode_enum.h \
  githash.h \
 
-HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
-HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
+HEADERMAKE = $(VCPKG_INSTALLED_DIR)/$(VCPKG_HOST_TRIPLET)/tools/header-make/HeaderMake.exe
 
 all: $(exe) \
      $(bregonig) \
@@ -169,8 +168,7 @@ endif
 
 $(OBJS): StdAfx.h.gch
 
-$(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
-	$(CXX) $(CXXFLAGS:-MMD=) $< -o $@ -static-libgcc
+$(HEADERMAKE): ../HeaderMake/HeaderMake.cpp
 	vcpkg install --x-wait-for-lock --triplet $(VCPKG_TARGET_TRIPLET) --host-triplet $(VCPKG_HOST_TRIPLET) "--x-manifest-root=$(SRCDIR)/../" "--x-install-root=$(VCPKG_INSTALLED_DIR)"
 
 sakura_rc.o: sakura_rc.rc.utf8 sakura_rc.rc2.utf8 githash.h Funccode_define.h

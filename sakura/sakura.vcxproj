@@ -63,7 +63,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="sakura.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\sakura_core'));%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINNT=_WIN32_WINNT_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -79,6 +79,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <ResourceCompile>
+      <AdditionalIncludeDirectories>$(IntDir);$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\sakura_core'));%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0411</Culture>
     </ResourceCompile>
     <Manifest>

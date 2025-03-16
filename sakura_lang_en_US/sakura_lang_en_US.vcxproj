@@ -39,6 +39,15 @@
     <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgConfiguration Condition="'$(Configuration)'=='Debug'">Debug</VcpkgConfiguration>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgManifestDirectory>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\'))</VcpkgManifestDirectory>
+    <VcpkgInstalledDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\build\vcpkg_installed\'))</VcpkgInstalledDir>
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
   </PropertyGroup>
@@ -52,7 +61,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="Common Settings">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\sakura_core;$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$([MSBuild]::NormalizePath('$(IntDir)', '..\sakura_core'));$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\sakura_core'));%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
