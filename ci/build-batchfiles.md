@@ -29,7 +29,6 @@
 |[sakura\preBuild.bat](../sakura/preBuild.bat) | 特に何もしない |
 |[sakura\githash.bat](../sakura/githash.bat) | Git や CI の環境変数から githash.h を生成する |
 |[sakura\postBuild.bat](../sakura/postBuild.bat) | bregonig.dll と ctags.exe を展開しコピーする |
-|[tests\googletest.build.cmd](../tests/googletest.build.cmd) | Google Test をビルドする |
 |[tests\compiletests.run.cmd](../tests/compiletests.run.cmd) | コンパイルテストを実行する |
 |[build-sonar-qube-finish.bat](../build-sonar-qube-finish.bat) | SonarQube の解析結果をアップロードする |
 |[parse-buildlog.bat](../parse-buildlog.bat) | ビルドログを解析する |
@@ -51,6 +50,7 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
             - [tools\zip\unzip.bat](../tools/zip/unzip.bat) : ZIP ファイルを展開する
                 - 7z.exe または [tools\zip\unzip.ps1](../tools/zip/unzip.ps1)
         - MSBuild.exe sakura.sln
+            - vcpkg.exe
             - [sakura\preBuild.bat](../sakura/preBuild.bat)
             - HeaderMake.exe : Funccode_define.h, Funccode_enum.h を生成する
             - [sakura\githash.bat](../sakura/githash.bat)
@@ -58,9 +58,6 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
             - [sakura\postBuild.bat](../sakura/postBuild.bat)
                 - [tools\zip\unzip.bat](../tools/zip/unzip.bat)
                     - 7z.exe または [tools\zip\unzip.ps1](../tools/zip/unzip.ps1)
-            - [tests\googletest.build.cmd](../tests/googletest.build.cmd)
-                - git.exe
-                - cmake.exe
             - [tests\compiletests.run.cmd](../tests/compiletests.run.cmd)
                 - cmake.exe
         - [build-sonar-qube-finish.bat](../build-sonar-qube-finish.bat)
@@ -73,6 +70,7 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
         - mingw32-make.exe sakura_core
             - [sakura\githash.bat](../sakura/githash.bat)
                 - git.exe
+            - vcpkg.exe
             - HeaderMake.exe
     - [build-chm.bat](../build-chm.bat)
         - [help\remove-comment.py](../help/remove-comment.py) : [sakura_core\sakura.hh](../sakura_core/sakura.hh) に記述された日本語を含む行コメントを削除する

@@ -43,6 +43,15 @@
     <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\sakura_core\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgConfiguration Condition="'$(Configuration)'=='Debug'">Debug</VcpkgConfiguration>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgInstalledDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\build\vcpkg_installed\'))</VcpkgInstalledDir>
+    <VcpkgManifestDirectory>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\'))</VcpkgManifestDirectory>
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
   </PropertyGroup>

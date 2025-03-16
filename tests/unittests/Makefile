@@ -27,11 +27,15 @@ endif
 # The directory where "sakura_core" is built.
 SAKURA_CORE = ../sakura_core
 
-GOOGLETEST_INSTALL_DIR = ../googletest
-
 # The directory where the .exe files will be output.
 # If empty, they will be output to the default directories.
 OUTDIR =
+
+VCPKG_INSTALLED_DIR = ../../../vcpkg_installed
+
+VCPKG_TARGET_TRIPLET = x64-mingw-static
+
+VCPKG_HOST_TRIPLET = x64-mingw-dynamic
 
 ifeq ($(SHELL),sh.exe)
 # If cmd.exe is used as a shell.
@@ -87,7 +91,7 @@ CFLAGS= \
  -finput-charset=utf-8 \
  -fexec-charset=cp932 \
  -MMD \
- -isystem $(GOOGLETEST_INSTALL_DIR)/include \
+ -isystem $(VCPKG_INSTALLED_DIR)/$(VCPKG_TARGET_TRIPLET)/include \
  -I$(SAKURA_CORE) \
  -I$(SRCDIR)/../../sakura_core \
  -I. \
@@ -101,7 +105,12 @@ CXXFLAGS= $(CFLAGS) \
 LDFLAGS= \
  -static \
  -municode \
- -L$(GOOGLETEST_INSTALL_DIR)/lib \
+
+ifeq (,$(findstring -D_DEBUG,$(DEFINES)))
+LDFLAGS += -L$(VCPKG_INSTALLED_DIR)/$(VCPKG_TARGET_TRIPLET)/debug/lib
+else
+LDFLAGS += -L$(VCPKG_INSTALLED_DIR)/$(VCPKG_TARGET_TRIPLET)/lib
+endif
 
 LIBS= \
  -lwinspool \

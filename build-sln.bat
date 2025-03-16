@@ -25,6 +25,19 @@ if not defined CMD_MSBUILD (
 	exit /b 1
 )
 
+if not exist %~dp0tools\vcpkg\bootstrap-vcpkg.bat (
+	"%CMD_GIT%" submodule update --init
+)
+
+if errorlevel 1 (
+	echo ERROR submodule update %errorlevel%
+	exit /b 1
+)
+
+if not exist %~dp0tools\vcpkg\vcpkg.exe (
+	call %~dp0tools\vcpkg\bootstrap-vcpkg.bat
+)
+
 set SLN_FILE=sakura.sln
 
 @rem https://www.appveyor.com/docs/environment-variables/
