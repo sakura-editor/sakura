@@ -66,7 +66,6 @@ private:
 	CDlgFuncList*		m_pcDlgFuncList;
 	CFileTreeSetting	m_fileTreeSetting;
 	std::vector<int>	m_aItemRemoveList;
-	int					m_nlParamCount;
 	int					m_nDocType;
 
 	int					m_bInMove;
