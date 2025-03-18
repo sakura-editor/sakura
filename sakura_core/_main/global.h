@@ -23,10 +23,6 @@
 #define SAKURA_GLOBAL_BD124BE7_A850_41F3_9F5D_8A4F0E45A4C9_H_
 #pragma once
 
-#ifndef STRICT
-#define STRICT
-#endif
-
 #include <Windows.h>
 #include <tchar.h>
 

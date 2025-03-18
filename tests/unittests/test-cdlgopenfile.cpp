@@ -5,9 +5,6 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#ifndef STRICT
-#define STRICT 1
-#endif
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif /* #ifndef NOMINMAX */
