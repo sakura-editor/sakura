@@ -45,7 +45,7 @@ struct TagJump {
 struct SShare_TagJump{
 	//型
 	typedef StaticVector<
-		StaticString<WCHAR, _MAX_PATH>,
+		StaticString<_MAX_PATH>,
 		MAX_TAGJUMP_KEYWORD
 	>					ATagJumpKeywords;
 
