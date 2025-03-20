@@ -366,16 +366,6 @@ bool CColorStrategyPool::IsSkipBeforeLayout()
 	return true;
 }
 
-bool CColorStrategyPool::HasRangeBasedColorStrategies(void) const noexcept
-{
-	return (m_pcLineComment != nullptr)
-		|| (m_pcBlockComment1 != nullptr)
-		|| (m_pcBlockComment2 != nullptr)
-		|| (m_pcSingleQuote != nullptr)
-		|| (m_pcDoubleQuote != nullptr)
-		|| (m_pcHeredoc != nullptr);
-}
-
 /*!
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)
   配列の順番は共有メモリ中のデータの順番と一致している。
