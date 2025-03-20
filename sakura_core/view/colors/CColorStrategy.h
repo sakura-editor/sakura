@@ -225,17 +225,12 @@ public:
 	CEditView* GetCurrentView(void) const{ return m_pcView; }
 	void SetCurrentView(CEditView* pcView) { m_pcView = pcView; }
 
-	//範囲を持つ色分けがあるかどうか
-	bool HasRangeBasedColorStrategies() const noexcept;
-
 private:
 	std::vector<CColorStrategy*>	m_vStrategies;
 	std::vector<CColorStrategy*>	m_vStrategiesDisp;	//!< 色分け表示対象
 	CColor_Found*					m_pcFoundStrategy;
 	CColor_Select*					m_pcSelectStrategy;
 
-	// 範囲を持つ色分け
-	// 追加/削除した時はHasRangeBasedColorStrategiesをメンテして下さい
 	CColor_LineComment*				m_pcLineComment;
 	CColor_BlockComment*			m_pcBlockComment1;
 	CColor_BlockComment*			m_pcBlockComment2;
