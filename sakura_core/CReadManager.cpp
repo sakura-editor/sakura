@@ -86,7 +86,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	EConvertResult eRet = RESULT_COMPLETE;
 
 	try{
-		CFileLoad cFileLoad( type->m_encoding );
+		CFileLoad cfl( type->m_encoding );
 
 		bool bBigFile;
 #ifdef _WIN64
@@ -97,12 +97,12 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		// ファイルを開く
 		// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
 		//	Jul. 28, 2003 ryoji BOMパラメータ追加
-		cFileLoad.FileOpen( pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
+		cfl.FileOpen( pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
 		pFileInfo->SetBomExist( bBom );
 
 		/* ファイル時刻の取得 */
 		FILETIME	FileTime;
-		if( cFileLoad.GetFileTime( NULL, NULL, &FileTime ) ){
+		if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
 			pFileInfo->SetFileTime( FileTime );
 		}
 
@@ -114,17 +114,17 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		std::vector<std::future<EConvertResult>> vecWorkerFutures;
 		std::atomic<bool> bCanceled = false;
 
-		size_t nOffsetBegin = cFileLoad.GetNextLineOffset( (size_t)cFileLoad.GetFileSize() );
+		size_t nOffsetBegin = cfl.GetNextLineOffset( (size_t)cfl.GetFileSize() );
 		for( int i = nThreadCount - 1; 0 <= i; i-- ){
 			// 分担する範囲を決める
 			const size_t nOffsetEnd = nOffsetBegin;
-			nOffsetBegin = cFileLoad.GetNextLineOffset( (size_t)((double)cFileLoad.GetFileSize() / nThreadCount * i) );
+			nOffsetBegin = cfl.GetNextLineOffset( (size_t)((double)cfl.GetFileSize() / nThreadCount * i) );
 
 			if( nOffsetBegin == nOffsetEnd ){
 				continue;
 			}
 
-			vecThreadFileLoads[i].Prepare( cFileLoad, nOffsetBegin, nOffsetEnd );
+			vecThreadFileLoads[i].Prepare( cfl, nOffsetBegin, nOffsetEnd );
 			vecThreadDocLineMgrs[i].SetMemoryResource(pcDocLineMgr->GetMemoryResource());
 
 			if( i == 0 ){
@@ -164,7 +164,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			pcDocLineMgr->AppendAsMove( vecThreadDocLineMgrs[i] );
 		}
 
-		cFileLoad.FileClose();
+		cfl.FileClose();
 	}
 	catch(const CAppExitException&){
 		//WM_QUITが発生した

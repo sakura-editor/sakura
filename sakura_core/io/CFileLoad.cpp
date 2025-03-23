@@ -105,7 +105,6 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 	m_pEencoding = &encode;
 
 	m_hFile			= NULL;
-	m_hFileMapping	= NULL;
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
 	m_CharCode		= CODE_DEFAULT;
@@ -116,11 +115,6 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 	m_eMode			= FLMODE_CLOSE;	// Jun. 08, 2003 Moca
 
 	m_nLineIndex	= -1;
-
-	m_pReadBufTop	= NULL;
-	m_nReadBufOffsetCurrent = 0;
-	m_nReadBufOffsetBegin	= 0;
-	m_nReadBufOffsetEnd		= 0;
 }
 
 /*! デストラクタ */

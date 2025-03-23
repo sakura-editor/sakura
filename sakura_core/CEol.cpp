@@ -55,13 +55,13 @@ struct SEolDefinitionForUniFile{
 	bool StartsWithWB(const char* pData, size_t nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
 };
 static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
-	{ "",					"", 					0U },
-	{ "\x0d\x00\x0a\x00",	"\x00\x0d\x00\x0a",		4U },
-	{ "\x0a\x00",			"\x00\x0a",				2U },
-	{ "\x0d\x00",			"\x00\x0d",				2U },
-	{ "\x85\x00",			"\x00\x85",				2U },
-	{ "\x28\x20",			"\x20\x28",				2U },
-	{ "\x29\x20",			"\x20\x29",				2U },
+	{ "",					"", 					0 },
+	{ "\x0d\x00\x0a\x00",	"\x00\x0d\x00\x0a",		4 },
+	{ "\x0a\x00",			"\x00\x0a",				2 },
+	{ "\x0d\x00",			"\x00\x0d",				2 },
+	{ "\x85\x00",			"\x00\x85",				2 },
+	{ "\x28\x20",			"\x20\x28",				2 },
+	{ "\x29\x20",			"\x20\x29",				2 },
 };
 
 //-----------------------------------------------

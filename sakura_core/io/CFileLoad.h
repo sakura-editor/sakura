@@ -97,9 +97,6 @@ protected:
 	const char* GetNextLineCharCode(const char*	pData, size_t nDataLen, size_t* pnLineLen, size_t* pnBgn, CEol* pcEol, size_t* pnEolLen);
 	EConvertResult ReadLine_core(CNativeW* pUnicodeBuffer, CEol* pcEol);
 
-	int Read(void* pBuf, size_t nSize); // inline
-	DWORD FilePointer(DWORD offset, DWORD origin); // inline
-
 	/* メンバオブジェクト */
 	const SEncodingConfig* m_pEencoding;
 
@@ -108,7 +105,7 @@ protected:
 
 //	LPWSTR	m_pszFileName;	// ファイル名
 	HANDLE	m_hFile;		// ファイルハンドル
-	HANDLE	m_hFileMapping;	// メモリマップドファイルハンドル
+	HANDLE	m_hFileMapping = nullptr;	// メモリマップドファイルハンドル
 	LONGLONG	m_nFileSize;	// ファイルサイズ(64bit)
 	LONGLONG	m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
@@ -131,10 +128,10 @@ protected:
 	enumFileLoadMode	m_eMode;		// 現在の読み込み状態
 
 	// 読み込みバッファ系
-	const char*	m_pReadBufTop;	// 読み込みバッファの先頭を指すポインタ
-	size_t m_nReadBufOffsetBegin;
-	size_t m_nReadBufOffsetEnd;
-	size_t m_nReadBufOffsetCurrent;	// 読み込みバッファ中のオフセット(次の行頭位置)
+	const char*	m_pReadBufTop = nullptr;	// 読み込みバッファの先頭を指すポインタ
+	size_t m_nReadBufOffsetBegin = 0;
+	size_t m_nReadBufOffsetEnd = 0;
+	size_t m_nReadBufOffsetCurrent = 0;		// 読み込みバッファ中のオフセット(次の行頭位置)
 	CMemory m_cLineBuffer;
 	CNativeW m_cLineTemp;
 	int		m_nReadOffset2;
@@ -148,23 +145,5 @@ protected:
 // public
 inline BOOL CFileLoad::GetFileTime( FILETIME* pftCreate, FILETIME* pftLastAccess, FILETIME* pftLastWrite ){
 	return ::GetFileTime( m_hFile, pftCreate, pftLastAccess, pftLastWrite );
-}
-
-// protected
-inline int CFileLoad::Read( void* pBuf, size_t nSize )
-{
-	DWORD ReadSize;
-	if( !::ReadFile( m_hFile, pBuf, (DWORD)nSize, &ReadSize, NULL ) )
-		throw CError_FileRead();
-	return (int)ReadSize;
-}
-
-// protected
-inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
-{
-	DWORD fp;
-	if( INVALID_SET_FILE_POINTER == ( fp = ::SetFilePointer( m_hFile, offset, NULL, FILE_BEGIN ) ) )
-		throw CError_FileRead();
-	return fp;
 }
 #endif /* SAKURA_CFILELOAD_B9B7A22E_8C14_4913_8B92_3B5ABA6FC0DB_H_ */
