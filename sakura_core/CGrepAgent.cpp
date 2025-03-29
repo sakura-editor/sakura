@@ -1736,7 +1736,6 @@ public:
 		:nHitCount(hit)
 		,fileName(name_)
 		,name(name_)
-		,code(code_)
 		,bBom(bBom_)
 		,bOldSave(bOldSave_)
 		,bufferSize(0)
@@ -1835,7 +1834,6 @@ private:
 	int& nHitCount;
 	LPCWSTR fileName;
 	std::wstring name;
-	ECodeType code;
 	bool bBom;
 	bool bOldSave;
 	size_t bufferSize;

@@ -349,9 +349,6 @@ private:
 	//自ウィンドウ
 	HWND			m_hWnd;
 
-	//親ウィンドウ
-	HWND			m_hwndParent;
-
 public:
 	//子ウィンドウ
 	CMainToolBar	m_cToolbar;			//!< ツールバー

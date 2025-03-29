@@ -295,8 +295,6 @@ public:
 	wstring m_sLangName;		//!< 言語名
 	CPluginOption::Array m_options;		// オプション	// 2010/3/24 Uchi
 	std::vector<std::wstring> m_aStrings;	// 文字列
-private:
-	bool m_bLoaded;
 protected:
 	CPlug::Array m_plugs;
 	int m_nCommandCount;
