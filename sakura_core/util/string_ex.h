@@ -256,29 +256,25 @@ std::string wcstou8s(std::wstring_view strInput);
 
 //wcsncmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int wcsncmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
+inline int wcsncmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
 	return ::wcsncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //strncmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int strncmp_literal(const char* strData1, const char (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
+inline int strncmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	return ::strncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //_wcsnicmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int wcsnicmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
+inline int wcsnicmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
 	return ::_wcsnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //_strnicmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
+inline int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 #endif /* SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_ */
