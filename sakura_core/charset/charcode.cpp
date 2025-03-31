@@ -67,8 +67,8 @@ namespace WCODE
 		if(wc>=0x007F && wc<=0x00A0)return true;	// Control Code ISO/IEC 6429
 
 		// 漢字はすべて同一幅とみなす	// 2013.04.07 aroka
-		if ( wc>=0x4E00 && wc<=0x9FBB		// Unified Ideographs, CJK
-		  || wc>=0x3400 && wc<=0x4DB5		// Unified Ideographs Extension A, CJK
+		if ( (wc>=0x4E00 && wc<=0x9FBB)		// Unified Ideographs, CJK
+		  || (wc>=0x3400 && wc<=0x4DB5)		// Unified Ideographs Extension A, CJK
 		){
 			wc = 0x4E00; // '一'(0x4E00)の幅で代用
 		}

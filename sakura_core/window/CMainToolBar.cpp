@@ -580,8 +580,8 @@ void CMainToolBar::AcceptSharedSearchKey()
 			Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
 		}
 		const wchar_t* pszText;
-		if( GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
-			&& m_pOwner->GetActiveView().m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
+		if( (GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
+			&& m_pOwner->GetActiveView().m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence)
 				|| 0 == m_pOwner->GetActiveView().m_strCurSearchKey.size() ){
 			if( 0 < nSize ){
 				pszText = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];
