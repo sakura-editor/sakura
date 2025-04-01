@@ -30,7 +30,6 @@
 #include "CProfile.h"
 
 #include "basis/SakuraBasis.h"
-#include "debug/Debug2.h"
 #include "util/StaticType.h"
 
 /*!
@@ -226,7 +225,8 @@ namespace profile_data {
 	[[nodiscard]] inline std::wstring ToString<KEYCODE>(KEYCODE value)
 	{
 		// WCHAR型を介して文字列化する
-		const WCHAR ch = value < 0 || value >= 0x80 ? L'\0' : value;
+		static_assert(std::numeric_limits<KEYCODE>::max() < 0x80);
+		const WCHAR ch = (value < 0) ? L'\0' : static_cast<std::make_unsigned_t<KEYCODE>>(value);
 		return ToString(ch);
 	}
 
