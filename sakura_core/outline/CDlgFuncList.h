@@ -175,7 +175,7 @@ protected:
 	INT_PTR OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	INT_PTR OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	INT_PTR OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	INT_PTR OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	BOOL OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;
 	void GetDockSpaceRect( LPRECT pRect );
 	void GetCaptionRect( LPRECT pRect );
 	bool GetCaptionButtonRect( int nButton, LPRECT pRect );

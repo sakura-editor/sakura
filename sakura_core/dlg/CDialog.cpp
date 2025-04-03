@@ -429,7 +429,7 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 		m_hWnd = hwndDlg;
 		return OnMove( wParam, lParam );
 	case WM_DRAWITEM:	return OnDrawItem( wParam, lParam );
-	case WM_TIMER:		return OnTimer( wParam );
+	case WM_TIMER:		return OnTimer( hwndDlg, uMsg, wParam, lParam );
 	case WM_KEYDOWN:	return OnKeyDown( wParam, lParam );
 	case WM_KILLFOCUS:	return OnKillFocus( wParam, lParam );
 	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
