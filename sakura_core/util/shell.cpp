@@ -119,13 +119,11 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 ///////////////////////////////////////////////////////////////////////
 // From Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群
 
-static WNDPROC s_pOldPropSheetWndProc;	// プロパティシートの元のウィンドウプロシージャ
-
 /*!	独自拡張プロパティシートのウィンドウプロシージャ
 	@author ryoji
 	@date 2007.05.25 新規
 */
-static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, [[maybe_unused]] DWORD_PTR dwRefData )
 {
 	switch( uMsg ){
 	case WM_SHOWWINDOW:
@@ -222,18 +220,20 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 		break;
 
 	case WM_DESTROY:
-		::SetWindowLongPtr( hwnd, GWLP_WNDPROC, (LONG_PTR)s_pOldPropSheetWndProc );
+		::RemoveWindowSubclass(hwnd, &PropSheetWndProc, uIdSubclass);
+		return 0;
+	default:
 		break;
 	}
 
-	return ::CallWindowProc( s_pOldPropSheetWndProc, hwnd, uMsg, wParam, lParam );
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
 /*!	独自拡張プロパティシートのコールバック関数
 	@author ryoji
 	@date 2007.05.25 新規
 */
-static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
+static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, [[maybe_unused]] LPARAM lParam )
 {
 	// プロパティシートの初期化時にシステムフォント設定、ボタン追加、プロパティシートのサブクラス化を行う
 	if( uMsg == PSCB_INITIALIZED ){
@@ -242,7 +242,7 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 
 		if( CShareData::getInstance()->IsPrivateSettings() ){
 			// 個人設定フォルダーを使用するときは「設定フォルダー」ボタンを追加する
-			s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
+			::SetWindowSubclass(hwndDlg, &PropSheetWndProc, 0, 0);
 			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
 			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
 			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
