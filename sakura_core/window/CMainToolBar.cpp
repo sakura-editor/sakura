@@ -81,9 +81,7 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 	@author ryoji
 	@date 2006.09.06 ryoji
 */
-static WNDPROC g_pOldToolBarWndProc;	// ツールバーの本来のウィンドウプロシージャ
-
-static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK CMainToolBar::ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, [[maybe_unused]] DWORD_PTR dwRefData )
 {
 	switch( msg )
 	{
@@ -95,10 +93,12 @@ static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 	case WM_DESTROY:
 		// サブクラス化解除
-		::SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)g_pOldToolBarWndProc );
+		::RemoveWindowSubclass(hWnd, &ToolBarWndProc, uIdSubclass);
+		return 0L;
+	default:
 		break;
 	}
-	return ::CallWindowProc( g_pOldToolBarWndProc, hWnd, msg, wParam, lParam );
+	return ::DefSubclassProc( hWnd, msg, wParam, lParam );
 }
 
 /* ツールバー作成
@@ -179,11 +179,7 @@ void CMainToolBar::CreateToolBar( void )
 	}
 	else{
 		// 2006.09.06 ryoji ツールバーをサブクラス化する
-		g_pOldToolBarWndProc = (WNDPROC)::SetWindowLongPtr(
-			m_hwndToolBar,
-			GWLP_WNDPROC,
-			(LONG_PTR)ToolBarWndProc
-		);
+		::SetWindowSubclass(m_hwndToolBar, &ToolBarWndProc, 0, 0);
 
 		// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
 		const int cxBorder = DpiScaleX( 1 );

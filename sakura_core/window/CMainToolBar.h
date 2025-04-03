@@ -49,6 +49,8 @@ public:
 	void SetFocusSearchBox( void ) const;		/* ツールバー検索ボックスへフォーカスを移動 */	// 2006.06.04 yukihane
 
 private:
+	static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
+
 	CEditWnd*	m_pOwner;
     HWND		m_hwndToolBar;
 
