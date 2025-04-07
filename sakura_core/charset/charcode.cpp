@@ -144,6 +144,7 @@ void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
 		// KB145994
 		// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
 		SIZE sz;
+		std::lock_guard lock(m_mtx);
 		GetTextExtentPoint32(hdcArr[i], L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
 		sz.cx = (sz.cx / 26 + 1) / 2;
 		if( m_han_size.cx < sz.cx ){
@@ -173,6 +174,7 @@ bool CCharWidthCache::CalcHankakuByFont(wchar_t c)
 int CCharWidthCache::QueryPixelWidth(wchar_t c) const
 {
 	SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
+	std::lock_guard lock(m_mtx);
 	// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
 	if (WCODE::IsControlCode(c)) {
 		GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
@@ -200,6 +202,7 @@ int CCharWidthCache::CalcPxWidthByFont(wchar_t c) {
 int CCharWidthCache::CalcPxWidthByFont2(const wchar_t* pc2) const
 {
 	SIZE size={m_han_size.cx*2,0};
+	std::lock_guard lock(m_mtx);
 	// サロゲートは全角フォント
 	GetTextExtentPoint32(m_hdcFull?m_hdcFull:m_hdc,pc2,2,&size);
 	return t_max<int>(1,size.cx);

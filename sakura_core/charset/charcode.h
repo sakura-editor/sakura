@@ -29,6 +29,7 @@
 
 //2007.09.13 kobake 作成
 #include <array>
+#include <mutex>
 #include "parse/CWordParse.h"
 #include "util/std_macro.h"
 
@@ -270,6 +271,7 @@ private:
 	LOGFONT m_lf{};				// 2008/5/15 Uchi
 	LOGFONT m_lf2{};
 	SCharWidthCache* m_pCache = nullptr;
+	mutable std::mutex m_mtx;
 };
 
 // キャッシュの初期化関数群
