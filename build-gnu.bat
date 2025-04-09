@@ -30,7 +30,25 @@ path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
 path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
 
 :: find generic tools
-if not defined CMD_NINJA call %~dp0tools\find-tools.bat
+if not defined CMD_GIT call %~dp0tools\find-tools.bat
+
+:: Reset errorlevel
+cmd /c exit /b 0
+
+if not exist %~dp0tools\vcpkg\bootstrap-vcpkg.bat (
+	"%CMD_GIT%" submodule update --init
+)
+
+if errorlevel 1 (
+	echo ERROR submodule update %errorlevel%
+	exit /b 1
+)
+
+if not exist %~dp0tools\vcpkg\vcpkg.exe (
+	call %~dp0tools\vcpkg\bootstrap-vcpkg.bat
+)
+
+path=%~dp0tools\vcpkg;%path%
 
 @rem create output directory, all executables will be placed here.
 set OUTDIR=%~dp0%platform%\%configuration%
@@ -67,14 +85,6 @@ if errorlevel 1 (
 	exit /b 1
 )
 popd
-
-@rem build "googletest".
-call %~dp0tests\googletest.build.cmd %~dp0build\%platform%\%configuration%\gtest_build\ %~dp0build\%platform%\%configuration%\googletest\
-if errorlevel 1 (
-	echo error 2 errorlevel %errorlevel%
-	popd
-	exit /b 1
-)
 
 @rem build "tests1".
 set TESTS1_MAKEFILE=%~dp0tests\unittests\Makefile
