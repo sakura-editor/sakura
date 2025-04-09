@@ -88,7 +88,7 @@ protected:
 	BOOL	OnCbnSelChange( HWND hwndCtl, int wID ) override;
 	BOOL	OnCbnEditChange( HWND hwndCtl, int wID ) override;
 	//BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
-	BOOL	OnTimer( WPARAM wParam ) override;
+	BOOL	OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;
 	LPVOID	GetHelpIdTable( void ) override;
 
 private:
