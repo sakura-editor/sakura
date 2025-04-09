@@ -628,7 +628,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		}
 		return;
 	}
-	if( m_hdcCompatDC && NULL == m_hbmpCompatBMP
+	if( (m_hdcCompatDC && nullptr == m_hbmpCompatBMP)
 		 || m_nCompatBMPWidth < (pPs->rcPaint.right - pPs->rcPaint.left)
 		 || m_nCompatBMPHeight < (pPs->rcPaint.bottom - pPs->rcPaint.top) ){
 		RECT rect;

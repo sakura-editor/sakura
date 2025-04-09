@@ -846,7 +846,7 @@ HWND CAppNodeManager::GetNextTab(HWND hWndCur)
 						bFound= true;
 					}
 					else {
-						if (!bFound && hWnd == NULL || bFound) {
+						if ((!bFound && hWnd == nullptr) || bFound) {
 							hWnd = p[i].GetHwnd();
 						}
 						if (bFound) {

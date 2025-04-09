@@ -2418,7 +2418,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 	/* メニューラベルの作成 */
 	// カスタムメニュー
 	if (eFunc == F_MENU_RBUTTON
-	  || eFunc >= F_CUSTMENU_1 && eFunc <= F_CUSTMENU_24) {
+	  || (eFunc >= F_CUSTMENU_1 && eFunc <= F_CUSTMENU_24)) {
 		int j;
 		//	右クリックメニュー
 		if (eFunc == F_MENU_RBUTTON) {

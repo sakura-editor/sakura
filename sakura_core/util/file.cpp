@@ -418,9 +418,9 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 bool _IS_REL_PATH(const WCHAR* path)
 {
 	bool ret = true;
-	if( ( L'A' <= path[0] && path[0] <= L'Z' || L'a' <= path[0] && path[0] <= L'z' )
-		&& path[1] == L':' && path[2] == L'\\'
-		|| path[0] == L'\\' && path[1] == L'\\'
+	if( (((L'A' <= path[0] && path[0] <= L'Z') || (L'a' <= path[0] && path[0] <= L'z'))
+		&& path[1] == L':' && path[2] == L'\\')
+		|| (path[0] == L'\\' && path[1] == L'\\')
 		 ){
 		ret = false;
 	}

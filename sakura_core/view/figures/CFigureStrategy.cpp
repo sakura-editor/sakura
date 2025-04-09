@@ -49,14 +49,14 @@ FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 		// 未合成で一度に描画しても安全そうな文字一覧(その範囲の文字が合成用文字ではないもの)
 		// 合成は未サポート
 		if((0x20 <= code && code <= 0x7f) // ASCII
-			|| 0x2E80 <= code && code <= 0x2FDF // 漢字部首
-			|| 0x3041 <= code && code <= 0x3096 // ひらがな
-			|| 0x30A1 <= code && code <= 0x30FA // カタカナ(合成用濁点などを除く)
-			|| 0x3400 <= code && code <= 0x4DBF // CJK統合漢字拡張A
-			|| 0x4E00 <= code && code <= 0x9FFF // CJK統合漢字
-			|| 0xF900 <= code && code <= 0xFAFF // CJK互換漢字
-			|| 0xFF01 <= code && code <= 0xFF5E // 全角ASCII
-			|| 0xFF61 <= code && code <= 0xFF9F // 半角カナ
+			|| (0x2E80 <= code && code <= 0x2FDF) // 漢字部首
+			|| (0x3041 <= code && code <= 0x3096) // ひらがな
+			|| (0x30A1 <= code && code <= 0x30FA) // カタカナ(合成用濁点などを除く)
+			|| (0x3400 <= code && code <= 0x4DBF) // CJK統合漢字拡張A
+			|| (0x4E00 <= code && code <= 0x9FFF) // CJK統合漢字
+			|| (0xF900 <= code && code <= 0xFAFF) // CJK互換漢字
+			|| (0xFF01 <= code && code <= 0xFF5E) // 全角ASCII
+			|| (0xFF61 <= code && code <= 0xFF9F) // 半角カナ
 		){
 			nType = 1;
 		}

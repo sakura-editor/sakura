@@ -1010,8 +1010,8 @@ void CEditView::OnSize( int cx, int cy )
 			default:
 				break;
 			}
-			if( bUpdateWidth  && nAreaWidthOld  != GetTextArea().GetAreaWidth() ||
-			    bUpdateHeight && nAreaHeightOld != GetTextArea().GetAreaHeight() ){
+			if( (bUpdateWidth  && nAreaWidthOld  != GetTextArea().GetAreaWidth()) ||
+			    (bUpdateHeight && nAreaHeightOld != GetTextArea().GetAreaHeight()) ){
 				InvalidateRect(NULL, FALSE);
 			}
 		}
