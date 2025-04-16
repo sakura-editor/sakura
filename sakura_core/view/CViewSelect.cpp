@@ -594,8 +594,8 @@ void CViewSelect::GetSelectAreaLineFromRange(
 ) const
 {
 	const CEditView& view = *GetEditView();
-	if( nLineNum >= sRange.GetFrom().y && nLineNum <= sRange.GetTo().y ||
-		nLineNum >= sRange.GetTo().y && nLineNum <= sRange.GetFrom().y ){
+	if( (nLineNum >= sRange.GetFrom().y && nLineNum <= sRange.GetTo().y) ||
+		(nLineNum >= sRange.GetTo().y && nLineNum <= sRange.GetFrom().y) ){
 		CLayoutInt	nSelectFrom = sRange.GetFrom().GetX2();
 		CLayoutInt	nSelectTo   = sRange.GetTo().GetX2();
 		if( IsBoxSelecting() ){		/* 矩形範囲選択中 */

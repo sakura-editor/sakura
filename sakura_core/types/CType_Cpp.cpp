@@ -615,7 +615,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						continue;
 					}else{
 						if( pLine[i] == L':' ){
-							if( pLine[i + 1] == L':' ||  0 < i && pLine[i-1] == L':' ){
+							if( pLine[i + 1] == L':' || (0 < i && pLine[i-1] == L':') ){
 								// name ::class or class :: member
 							}else{
 								// class Klass:base のように:の前にスペースがない場合
