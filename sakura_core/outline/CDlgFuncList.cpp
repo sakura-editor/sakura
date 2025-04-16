@@ -277,8 +277,6 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			return 1L;
 		}
 		break;
-	case WM_TIMER:
-		return OnTimer( hWnd, wMsg, wParam, lParam );
 	case WM_GETMINMAXINFO:
 		return OnMinMaxInfo( lParam );
 	case WM_SETTEXT:
@@ -2799,7 +2797,7 @@ INT_PTR CDlgFuncList::OnNcHitTest( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /** WM_TIMER 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+BOOL CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	if( wParam == 2 ){
 		CEditView* pcView = reinterpret_cast<CEditView*>(m_lParam);
@@ -2825,7 +2823,7 @@ INT_PTR CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			}
 		}
 		::KillTimer(hwnd, 2);
-		return 0L;
+		return FALSE;
 	}else if( wParam == 3 ){
 		::KillTimer(hwnd, 3);
 		HWND hwndTree = ::GetDlgItem(hwnd, IDC_TREE_FL);
@@ -2837,7 +2835,7 @@ INT_PTR CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	}
 
 	if( !IsDocking() )
-		return 0L;
+		return FALSE;
 
 	if( wParam == 1 ){
 		// カーソルがウィンドウ外にある場合にも WM_NCMOUSEMOVE を送る
@@ -2850,7 +2848,7 @@ INT_PTR CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		}
 	}
 
-	return 0L;
+	return FALSE;
 }
 
 /** WM_NCMOUSEMOVE 処理
