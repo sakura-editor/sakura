@@ -23,6 +23,12 @@ endif
 # If empty, they will be output to the default directories.
 OUTDIR =
 
+VCPKG_INSTALLED_DIR = ../../../vcpkg_installed
+
+VCPKG_TARGET_TRIPLET = x64-mingw-static
+
+VCPKG_HOST_TRIPLET = x64-mingw-dynamic
+
 ifeq ($(SHELL),sh.exe)
 # If cmd.exe is used as a shell.
 MKDIR = md
@@ -78,13 +84,19 @@ CFLAGS= \
  -fexec-charset=cp932 \
  -MMD \
  -I. \
+ -I$(VCPKG_INSTALLED_DIR)/$(VCPKG_TARGET_TRIPLET)/include \
  -I$(SRCDIR) \
  $(DEFINES) $(MYCFLAGS)
+
 CXXFLAGS= $(CFLAGS) \
  -std=c++17 \
  $(MYCXXFLAGS)
-LIBS= \
+
+LDFLAGS= \
  -static \
+ -municode \
+ -L$(VCPKG_INSTALLED_DIR)/$(VCPKG_TARGET_TRIPLET)/lib
+LIBS= \
  -lwinspool \
  -lole32 \
  -loleaut32 \
@@ -99,8 +111,6 @@ LIBS= \
  -lwindowscodecs \
  -lmsimg32 \
  -luxtheme \
- -mwindows \
- -municode \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/sakura.exe
@@ -123,15 +133,14 @@ GENERATED_FILES= \
  Funccode_enum.h \
  githash.h \
 
-HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
-HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
+HEADERMAKE = $(VCPKG_INSTALLED_DIR)/$(VCPKG_HOST_TRIPLET)/tools/header-make/HeaderMake.exe
 
 all: $(exe) \
      $(bregonig) \
      $(ctags)
 
 $(exe): $(OBJS) sakura_rc.o
-	$(CXX) -o $@ $(OBJS) sakura_rc.o $(LIBS)
+	$(CXX) -o $@ -mwindows $(LDFLAGS) $(OBJS) sakura_rc.o $(LIBS)
 
 $(bregonig): ../installer/externals/bregonig/bron420.zip
 	$(P7Z) e $< -o$(@D) -y x64/$(@F)
@@ -159,8 +168,8 @@ endif
 
 $(OBJS): StdAfx.h.gch
 
-$(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
-	$(CXX) $(CXXFLAGS:-MMD=) $< -o $@ -static-libgcc
+$(HEADERMAKE): ../HeaderMake/HeaderMake.cpp
+	vcpkg install --x-wait-for-lock --triplet $(VCPKG_TARGET_TRIPLET) --host-triplet $(VCPKG_HOST_TRIPLET) "--x-manifest-root=$(SRCDIR)/../" "--x-install-root=$(VCPKG_INSTALLED_DIR)"
 
 sakura_rc.o: sakura_rc.rc.utf8 sakura_rc.rc2.utf8 githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
