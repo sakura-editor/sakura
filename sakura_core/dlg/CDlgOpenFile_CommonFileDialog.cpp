@@ -28,6 +28,7 @@
 #include "CFileExt.h"
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "CEditApp.h"
 #include "CEol.h"
 #include "charset/CCodePage.h"
