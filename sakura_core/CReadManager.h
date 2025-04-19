@@ -29,6 +29,8 @@
 
 #include "doc/CDocListener.h" // CProgressSubject
 #include "charset/CCodeBase.h" // EConvertResult
+#include "io/CFileLoad.h"
+#include <atomic>
 
 class CDocLineMgr;
 struct SFileInfo; // doc/CDocFile.h
@@ -41,6 +43,14 @@ public:
 		CDocLineMgr*		pcDocLineMgr,
 		const SLoadInfo&	sLoadInfo,
 		SFileInfo*			pFileInfo
+	);
+
+private:
+	EConvertResult ReadLines(
+		bool				bRunInMainThread,
+		CFileLoad&			cFileLoad,
+		CDocLineMgr&		cDocLineMgr,
+		std::atomic<bool>&	bCanceled
 	);
 };
 #endif /* SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_ */
