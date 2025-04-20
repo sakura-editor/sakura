@@ -28,9 +28,6 @@
 #define SAKURA_FORMAT_A006AC9B_ADE2_499D_9CC6_00A649F32B4F_H_
 #pragma once
 
-#include <string>
-#include <string_view>
-
 // 20051121 aroka
 std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& systime );
 UINT32 ParseVersion( const WCHAR* ver );	//バージョン番号の解析

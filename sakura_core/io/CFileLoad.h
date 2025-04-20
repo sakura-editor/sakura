@@ -33,7 +33,6 @@
 #define SAKURA_CFILELOAD_B9B7A22E_8C14_4913_8B92_3B5ABA6FC0DB_H_
 #pragma once
 
-#include <Windows.h>
 #include "CStream.h" //CError_FileOpen
 #include "charset/CCodeBase.h"
 #include "charset/CCodePage.h"

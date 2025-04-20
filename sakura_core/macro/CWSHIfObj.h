@@ -33,8 +33,6 @@
 #define SAKURA_CWSHIFOBJ_7C4DEA59_C6E2_4814_9209_8818D90096DE_H_
 #pragma once
 
-#include <list>
-#include <ActivScp.h>
 #include "_os/OleTypes.h"
 #include "macro/CIfObj.h"
 #include "macro/CWSH.h" // CWSHClient::List, ListIter

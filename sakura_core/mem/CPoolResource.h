@@ -26,9 +26,6 @@
 #define SAKURA_CPOOLRESOURCE_4DEA6BEC_4D80_408F_9AEE_67AAF95BFE90_H_
 #pragma once
 
-#include <memory_resource>
-#include <Windows.h>
-
 // std::pmr::unsynchronized_pool_resource だとメモリ使用量が大きい為、自前実装を用意
 // T : 要素型
 template <typename T>

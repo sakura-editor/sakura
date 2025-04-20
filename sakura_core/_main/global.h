@@ -27,9 +27,6 @@
 #define STRICT
 #endif
 
-#include <Windows.h>
-#include <tchar.h>
-
 #include "charset/charset.h"
 
 /* ウィンドウのID */

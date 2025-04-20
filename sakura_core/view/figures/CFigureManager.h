@@ -27,7 +27,6 @@
 #define SAKURA_CFIGUREMANAGER_34C07527_BAEA_4B91_A3E0_7FCAFCFBAF0C_H_
 #pragma once
 
-#include <vector>
 #include "util/design_template.h"
 #include "CFigureStrategy.h"
 

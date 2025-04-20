@@ -16,7 +16,6 @@
 #define SAKURA_CDICMGR_70378DC4_733D_4F64_8D2A_E23C548E19EB_H_
 #pragma once
 
-#include <Windows.h>
 #include "util/container.h"
 #include "_main/global.h"
 

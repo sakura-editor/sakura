@@ -81,6 +81,7 @@
 #include <string.h>
 #include <tchar.h>
 #include <time.h>
+#include <vadefs.h>
 #include <wchar.h>
 
 #ifdef USE_SSE2
@@ -96,6 +97,7 @@
 #include <atomic>
 #include <cassert>
 #include <cmath>
+#include <chrono>
 #include <condition_variable>
 #include <cstdio>
 #include <cstring>
@@ -113,6 +115,7 @@
 #include <locale.h>
 #include <map>
 #include <memory>
+#include <memory_resource>
 #include <mutex>
 #include <new>
 #include <optional>
@@ -124,24 +127,31 @@
 #include <string_view>
 #include <thread>
 #include <tuple>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include <Windows.h>
 #include <windowsx.h>
+#include <ActivScp.h>
 #include <CdErr.h>
 #include <CommCtrl.h>
 #include <CommDlg.h>
 #include <Dlgs.h>
 #include <HtmlHelp.h>
 #include <ImageHlp.h>
+#include <OAIdl.h>
 #include <ObjIdl.h>
 #include <Ole2.h>
+#include <OleAuto.h>
 #include <OleCtl.h>
 #include <ShlObj.h>
 #include <Shlwapi.h>
 #include <WinSpool.h>
+#include <WTypes.h>
+#include <comdef.h>
+#include <comutil.h>
 #include <dwmapi.h>
 #include <imm.h>
 #include <shellapi.h>

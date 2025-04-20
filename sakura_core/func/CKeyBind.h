@@ -17,7 +17,6 @@
 #define SAKURA_CKEYBIND_9B930CDD_DCA8_4096_B61C_37CED61C575A_H_
 #pragma once
 
-#include <Windows.h>
 #include "Funccode_enum.h"
 
 class CFuncLookup;

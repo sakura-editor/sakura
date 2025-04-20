@@ -27,7 +27,6 @@
 #define SAKURA_CMYPOINT_267964EB_3FB3_4AC3_AA75_58B756396229_H_
 #pragma once
 
-#include <Windows.h> //POINT
 #include "basis/primitive.h"
 
 class CMyPoint : public POINT{

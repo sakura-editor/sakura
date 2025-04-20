@@ -24,10 +24,6 @@
 #define SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
 #pragma once
 
-#include <Windows.h>// 2002/2/10 aroka
-#include <vector>
-#include <memory_resource>
-#include <atomic>
 #include "doc/CDocListener.h"
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"

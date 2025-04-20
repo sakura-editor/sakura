@@ -31,8 +31,6 @@
 #pragma once
 
 #include "plugin/CPlugin.h"
-#include <list>
-#include <string>
 
 class CPluginManager final : public TSingleton<CPluginManager>{
 	friend class TSingleton<CPluginManager>;

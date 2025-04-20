@@ -27,8 +27,6 @@
 #define SAKURA_CSAKURAENVIRONMENT_4B226B3A_5208_4C29_9D2E_E42DA8EFD875_H_
 #pragma once
 
-#include <string>
-
 class CEditWnd;
 
 class CSakuraEnvironment{

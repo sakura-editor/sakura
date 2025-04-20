@@ -18,8 +18,7 @@
 #pragma once
 
 class CFuncInfo;
-#include <string>
-#include <map>
+
 #include "util/design_template.h"
 #include "basis/SakuraBasis.h"
 #include "basis/CMyString.h"

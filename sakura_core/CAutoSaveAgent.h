@@ -32,7 +32,6 @@
 #define SAKURA_CAUTOSAVEAGENT_AB1DD112_42B8_4A93_8E04_C2889F16DC53_H_
 #pragma once
 
-#include <Windows.h>
 #include "_main/global.h"
 #include "doc/CDocListener.h"
 

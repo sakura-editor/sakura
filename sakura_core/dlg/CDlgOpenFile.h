@@ -22,8 +22,6 @@
 #define SAKURA_CDLGOPENFILE_8084B9DB_6463_4168_BA59_132EB2596AE7_H_
 #pragma once
 
-#include <memory>
-#include <vector>
 #include "util/design_template.h"
 
 struct SLoadInfo;	// doc/CDocListener.h

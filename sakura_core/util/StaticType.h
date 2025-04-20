@@ -27,8 +27,6 @@
 #define SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_
 #pragma once
 
-#include <stdexcept>
-
 #include "util/string_ex.h"
 #include "debug/Debug2.h"
 

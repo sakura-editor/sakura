@@ -34,8 +34,6 @@
 #define SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_
 #pragma once
 
-#include <WinSpool.h>
-#include <CommDlg.h> // PRINTDLG
 #include "basis/primitive.h"
 
 struct	MYDEVMODE {

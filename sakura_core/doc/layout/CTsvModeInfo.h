@@ -29,7 +29,6 @@
 #define SAKURA_CTSVMODEINFO_3AD2F099_5EBE_493E_9DD3_FEBAEDDE9513_H_
 #pragma once
 
-#include <vector>
 #include "basis/SakuraBasis.h"
 
 // TSVモード

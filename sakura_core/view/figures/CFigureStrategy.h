@@ -27,7 +27,6 @@
 #define SAKURA_CFIGURESTRATEGY_5D122522_91F9_4FC5_A31A_E78FB5DB0D0F_H_
 #pragma once
 
-#include <vector>
 #include "view/colors/CColorStrategy.h" //SColorStrategyInfo
 
 //$$レイアウト構築フロー(DoLayout)も CFigure で行うと整理しやすい

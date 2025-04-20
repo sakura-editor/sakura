@@ -24,15 +24,6 @@
 */
 #pragma once
 
-#include <Windows.h>
-
-#include <comdef.h>
-#include <comutil.h>
-#include <OAIdl.h>
-
-#include <memory>
-#include <type_traits>
-
 /*!
  * TComImpl - COMオブジェクトの実装クラステンプレート
  * 使用上の注意:

@@ -22,8 +22,6 @@
 #define SAKURA_CDOCLINEMGR_2896A92E_87D2_4BA6_A745_95A5C157E59D_H_
 #pragma once
 
-#include <Windows.h>
-#include <memory_resource>
 #include "_main/global.h" // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"

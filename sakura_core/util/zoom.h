@@ -29,9 +29,6 @@
 #define SAKURA_ZOOM_0CD4E589_F708_48BF_8601_8BF851827765_H_
 #pragma once
 
-#include <vector>
-#include <initializer_list>
-
 /*!
 	@brief ズーム設定を保持
 */

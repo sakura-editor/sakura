@@ -26,8 +26,6 @@
 #define SAKURA_CHARSETDETECTOR_23D1755A_0001_4BAE_96C1_C3BD492E6BD0_H_
 #pragma once
 
-#include <string_view>
-
 #include "extmodule/CIcu4cI18n.h"
 #include "extmodule/CUchardet.h"
 

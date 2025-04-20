@@ -28,8 +28,6 @@
 #pragma once
 
 //2007.09.13 kobake 作成
-#include <array>
-#include <mutex>
 #include "parse/CWordParse.h"
 #include "util/std_macro.h"
 

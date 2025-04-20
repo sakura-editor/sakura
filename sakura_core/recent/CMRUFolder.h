@@ -36,7 +36,6 @@
 #define SAKURA_CMRUFOLDER_32D69CDD_037F_4DE1_961E_B730F56F4189_H_
 #pragma once
 
-#include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include "recent/CRecentFolder.h"
 
 class CMenuDrawer;

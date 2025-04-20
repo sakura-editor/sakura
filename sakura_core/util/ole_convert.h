@@ -29,7 +29,6 @@
 #define SAKURA_OLE_CONVERT_4D549FAC_BEAA_4E5F_ACC1_9EEEA9B8DC6F_H_
 #pragma once
 
-#include <string>
 #include "_os/OleTypes.h"
 
 bool variant_to_wstr( VARIANT v, std::wstring& wstr );	// VARIANT変数をBSTRとみなし、wstringに変換する

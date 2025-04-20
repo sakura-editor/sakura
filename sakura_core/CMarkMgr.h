@@ -34,7 +34,6 @@
 #define SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_
 #pragma once
 
-#include <vector>
 #include "basis/SakuraBasis.h"
 
 /*!

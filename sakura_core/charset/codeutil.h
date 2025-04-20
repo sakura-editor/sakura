@@ -27,7 +27,6 @@
 #define SAKURA_CODEUTIL_72398A53_6BF2_4A77_93D9_506C19E55681_H_
 #pragma once
 
-#include <Windows.h>
 #include "basis/primitive.h"
 
 #if 0  // 未使用

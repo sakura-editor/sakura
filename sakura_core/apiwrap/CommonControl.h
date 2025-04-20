@@ -27,8 +27,6 @@
 #define SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_
 #pragma once
 
-#include <CommCtrl.h> // コモンコントロール
-
 namespace ApiWrap
 {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

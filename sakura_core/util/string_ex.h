@@ -27,9 +27,6 @@
 #define SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
 #pragma once
 
-#include <vadefs.h>
-#include <string>
-#include <string_view>
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
 
@@ -220,8 +217,6 @@ std::string strprintf(const CHAR* pszFormat, ...);
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-#include <vector>
 
 //SJIS→UNICODE。終端にL'\0'を付けてくれる版。
 size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count);

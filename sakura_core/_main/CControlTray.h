@@ -27,7 +27,6 @@
 #define SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_
 #pragma once
 
-#include <Windows.h>
 #include "uiparts/CMenuDrawer.h"
 #include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka

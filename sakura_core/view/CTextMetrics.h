@@ -29,9 +29,6 @@
 
 //2007.08.25 kobake 追加
 
-#include <array>
-#include <vector>
-#include <Windows.h>
 #include "basis/SakuraBasis.h"
 #include "charset/charcode.h"
 #include "debug/Debug2.h"

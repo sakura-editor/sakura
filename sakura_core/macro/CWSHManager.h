@@ -24,8 +24,6 @@
 #define SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_
 #pragma once
 
-#include <Windows.h>
-#include <string>
 #include "macro/CSMacroMgr.h"
 #include "macro/CMacroManagerBase.h"
 #include "macro/CWSHIfObj.h"

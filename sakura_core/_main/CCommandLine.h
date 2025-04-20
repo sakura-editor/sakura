@@ -21,8 +21,6 @@
 #define SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_
 #pragma once
 
-#include <vector>
-
 #include "global.h"
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"

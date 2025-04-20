@@ -33,8 +33,6 @@
 #define SAKURA_CMUTEX_51EDDE78_F635_419A_9E10_159485D0F710_H_
 #pragma once
 
-#include <Windows.h>
-
 /** ミューテックスを扱うクラス
 	@date 2007.07.05 ryoji 新規作成
 */

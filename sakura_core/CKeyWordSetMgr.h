@@ -39,7 +39,6 @@
 #define SAKURA_CKEYWORDSETMGR_2DE7B72E_8DAF_433A_B91F_A807FAD06FB8_H_
 #pragma once
 
-#include <Windows.h>
 #include "_main/global.h"// 2002/2/10 aroka
 
 #define		MAX_SETNUM		100	//2007.12.01 genta 最大値増加

@@ -183,7 +183,7 @@ protected:
 };
 
 #include "util/design_template.h"
-#include <vector>
+
 class CColor_LineComment;
 class CColor_BlockComment;
 class CColor_BlockComment;

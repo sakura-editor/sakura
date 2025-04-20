@@ -28,7 +28,6 @@
 #pragma once
 
 #include "charset/charset.h"
-#include <memory>
 #include "charset/CCodeBase.h"
 
 class CCodeFactory{

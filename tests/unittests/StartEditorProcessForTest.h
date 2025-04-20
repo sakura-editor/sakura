@@ -24,8 +24,6 @@
 */
 #pragma once
 
-#include <string_view>
-
 /*!
  * テストコード専用wWinMain呼出のラッパー関数
  *

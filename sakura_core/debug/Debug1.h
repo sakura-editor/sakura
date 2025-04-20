@@ -17,11 +17,6 @@
 #define SAKURA_DEBUG1_382EF8C2_DA86_410F_80D9_7F357A356C80_H_
 #pragma once
 
-#include <vadefs.h>
-
-#include <Windows.h>
-#include <tchar.h>
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

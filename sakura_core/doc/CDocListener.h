@@ -209,7 +209,6 @@ public:
 	CEditDoc* GetListeningDoc() const;
 };
 
-#include <exception>
 class CFlowInterruption : public std::exception{
 public:
 	const char* what() const throw(){ return "CFlowInterruption"; }

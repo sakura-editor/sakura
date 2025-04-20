@@ -33,11 +33,6 @@
 #define SAKURA_CGREPENUMFILEBASE_6B85547E_13E4_4183_AE06_B4D6395ABC88_H_
 #pragma once
 
-#include <vector>
-#include <windows.h>
-#include <string.h>
-#include <tchar.h>
-#include <Shlwapi.h>
 #include "CGrepEnumKeys.h"
 #include "util/string_ex.h"
 

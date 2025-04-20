@@ -18,7 +18,6 @@
 
 class COpeBuf;
 
-#include <vector>
 #include "_main/global.h"
 class COpeBlk;/// 2002/2/10 aroka
 

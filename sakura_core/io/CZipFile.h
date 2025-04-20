@@ -30,8 +30,6 @@
 #define SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_
 #pragma once
 
-#include <ShlDisp.h>
-
 class CZipFile {
 private:
 	IShellDispatch*	psd;

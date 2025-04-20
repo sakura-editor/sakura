@@ -29,8 +29,6 @@
 #define SAKURA_SHELL_0A8B6454_B007_46E5_9606_8D2FD7993B91_H_
 #pragma once
 
-#include <Windows.h>
-
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 /* Shell Interface系(?) */

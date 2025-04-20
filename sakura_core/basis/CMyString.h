@@ -27,7 +27,6 @@
 #define SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_
 #pragma once
 
-#include <string>
 #include "util/string_ex.h"
 #include "util/StaticType.h"
 #include "config/maxdata.h"

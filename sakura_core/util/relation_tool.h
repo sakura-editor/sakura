@@ -30,7 +30,6 @@
 #define SAKURA_RELATION_TOOL_4B723E5C_5042_4F93_8899_EE2077DB8CFE_H_
 #pragma once
 
-#include <vector>
 class CSubject;
 class CListener;
 

@@ -27,8 +27,6 @@
 #define SAKURA_SAKURABASIS_9AF1C7D6_E092_41E8_8BC6_6194067C0CA2_H_
 #pragma once
 
-#include <Windows.h> //POINT,LONG
-
 #include "basis/primitive.h" // for Int
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

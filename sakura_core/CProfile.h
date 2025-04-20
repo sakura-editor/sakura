@@ -36,12 +36,6 @@
 #define SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_
 #pragma once
 
-#include <Windows.h>
-#include <string>
-#include <string_view>
-#include <vector>
-#include <map>
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/

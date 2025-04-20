@@ -27,8 +27,6 @@
 #define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
-#include <ObjIdl.h> // LPDATAOBJECT
-
 //クリップボード
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );

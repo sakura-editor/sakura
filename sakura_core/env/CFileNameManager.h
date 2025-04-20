@@ -30,8 +30,6 @@
 #define SAKURA_CFILENAMEMANAGER_2B89B426_470E_40D6_B62E_5321E383ECD6_H_
 #pragma once
 
-#include <string_view>
-
 #include "util/design_template.h"
 #include "config/maxdata.h"
 

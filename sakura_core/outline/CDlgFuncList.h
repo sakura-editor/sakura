@@ -23,7 +23,6 @@
 #define SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_
 #pragma once
 
-#include <Windows.h>
 #include "dlg/CDialog.h"
 #include "doc/CEditDoc.h"
 

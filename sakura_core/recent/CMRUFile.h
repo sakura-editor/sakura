@@ -37,8 +37,6 @@
 #define SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
 #pragma once
 
-#include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
-#include <vector>
 #include "recent/CRecentFile.h"
 
 struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策

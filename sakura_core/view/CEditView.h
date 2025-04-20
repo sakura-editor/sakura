@@ -43,10 +43,6 @@
 #define SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_
 #pragma once
 
-#include <Windows.h>
-#include <ObjIdl.h>  // LPDATAOBJECT
-#include <shellapi.h>  // HDROP
-
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
 #include "CTextArea.h"

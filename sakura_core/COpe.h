@@ -16,8 +16,6 @@
 #define SAKURA_COPE_45A75845_2C52_4602_9236_743A423DF1DB_H_
 #pragma once
 
-#include <vector>
-
 #include "mem/CNativeW.h"
 
 //! アンドゥバッファ用 操作コード

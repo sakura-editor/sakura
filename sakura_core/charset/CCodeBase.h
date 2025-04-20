@@ -27,11 +27,6 @@
 #define SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_
 #pragma once
 
-#include <cstddef>
-#include <map>
-#include <string>
-#include <string_view>
-
 #include "mem/CNativeW.h"
 #include "charset/charset.h"
 #include "CEol.h"

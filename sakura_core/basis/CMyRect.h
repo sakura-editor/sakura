@@ -27,7 +27,6 @@
 #define SAKURA_CMYRECT_81DBCEE2_C3DC_4D81_862E_0E984105F371_H_
 #pragma once
 
-#include <Windows.h> //RECT
 #include "CMyPoint.h"
 
 class CMyRect : public RECT{

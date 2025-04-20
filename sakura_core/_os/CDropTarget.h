@@ -18,7 +18,6 @@
 #define SAKURA_CDROPTARGET_365C215D_E844_49BD_8E96_549970AE0A50_H_
 #pragma once
 
-#include <Unknwn.h>
 #include "util/design_template.h"
 
 class CDropTarget;

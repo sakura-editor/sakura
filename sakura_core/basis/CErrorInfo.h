@@ -24,13 +24,6 @@
 */
 #pragma once
 
-#include <Windows.h>
-
-#include <comdef.h>
-#include <OAIdl.h>
-
-#include <string_view>
-
 #include "basis/TComImpl.hpp"
 
 /*!

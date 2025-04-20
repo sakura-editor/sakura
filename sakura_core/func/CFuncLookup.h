@@ -37,7 +37,6 @@
 #define SAKURA_CFUNCLOOKUP_9470508D_849D_463F_B507_7843D4D85B4A_H_
 #pragma once
 
-#include <Windows.h>
 #include "_main/global.h"
 #include "config/maxdata.h"
 #include "func/Funccode.h"

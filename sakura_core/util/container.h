@@ -32,9 +32,6 @@
 #define SAKURA_CONTAINER_30F2CB18_623C_48C4_BC32_ED3563FB2763_H_
 #pragma once
 
-#include <vector>
-#include <algorithm> //find
-
 //! vectorにちょっと機能を追加した版
 template <class T>
 class vector_ex : public std::vector<T>{

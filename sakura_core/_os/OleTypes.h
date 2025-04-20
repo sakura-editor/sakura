@@ -16,9 +16,6 @@
 #define SAKURA_OLETYPES_035185FF_696C_4427_A550_9EA1EDF22BD4_H_
 #pragma once
 
-#include <Windows.h>
-#include <OleAuto.h>
-
 /*! BSTRのWrapper class
 
 	データ構造はBSTRと互換性あり

@@ -34,8 +34,6 @@
 #define SAKURA_CTEXTSTREAM_CF4FEC73_4575_4B80_98F7_CFCBC0B433CD_H_
 #pragma once
 
-#include <string>
-
 #include "CStream.h"
 #include "charset/charset.h"
 

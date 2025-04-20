@@ -36,8 +36,6 @@
 #define SAKURA_CMACRO_E1ABA5D8_7ACF_417B_A668_A7AD9714118A_H_
 #pragma once
 
-#include <Windows.h>
-#include <ObjIdl.h>  // VARIANT等
 #include "func/Funccode.h"
 
 class CTextOutputStream;

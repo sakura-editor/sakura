@@ -30,7 +30,6 @@
 #define SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_
 #pragma once
 
-#include <algorithm>
 #include "macro/CWSHIfObj.h"
 #include "CDataProfile.h"
 #include "util/string_ex.h"

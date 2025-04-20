@@ -34,8 +34,6 @@
 #define SAKURA_CDLLHANDLER_B27A5A93_E49F_4618_8958_6883D63BBABB_H_
 #pragma once
 
-#include <Windows.h>
-#include <string>
 #include "_main/global.h"
 
 /*! CDllImp をラップ

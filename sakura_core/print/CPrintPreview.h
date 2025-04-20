@@ -34,7 +34,6 @@
 #define SAKURA_CPRINTPREVIEW_71FC07B8_7648_4179_81A7_0FE3299DBA0A_H_
 #pragma once
 
-#include <Windows.h> // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
 #include "CPrint.h" // 2002/2/10 aroka

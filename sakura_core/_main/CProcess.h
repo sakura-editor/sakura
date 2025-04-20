@@ -17,10 +17,6 @@
 #define SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_
 #pragma once
 
-#include <filesystem>
-#include <string>
-#include <string_view>
-
 #include "global.h"
 #include "util/design_template.h"
 #include "env/CShareData.h"

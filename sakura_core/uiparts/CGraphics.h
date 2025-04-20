@@ -31,9 +31,6 @@
 2008.05.20 kobake 作成
 */
 
-#include <Windows.h>
-#include <cassert>
-#include <vector>
 #include "doc/CDocTypeSetting.h"
 
 /*!

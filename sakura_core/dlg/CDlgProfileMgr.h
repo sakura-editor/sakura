@@ -34,10 +34,6 @@
 
 #include "dlg/CDialog.h"
 #include "_main/CCommandLine.h"
-#include <filesystem>
-#include <string>
-#include <string_view>
-#include <vector>
 
 struct SProfileSettings
 {

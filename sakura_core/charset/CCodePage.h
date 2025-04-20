@@ -32,9 +32,6 @@
 #pragma once
 
 #include "CCodeBase.h"
-#include <vector>
-#include <utility>
-#include <string>
 #include "CShiftJis.h"
 
 enum EEncodingTrait

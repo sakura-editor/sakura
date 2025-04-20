@@ -37,10 +37,6 @@
 #pragma once
 
 #include "util/string_ex.h"
-#include <string>
-#include <string_view>
-#include <chrono>
-#include <vector>
 
 // 本番コードに組み込まれている時間計測の結果を出力ペインに出したい時にコメントを外して下さい
 //#define TIME_MEASURE

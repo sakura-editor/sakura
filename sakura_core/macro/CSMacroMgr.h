@@ -36,9 +36,6 @@
 #define SAKURA_CSMACROMGR_9F01D007_5F13_4963_887B_B37E861070DA_H_
 #pragma once
 
-#include <Windows.h>
-#include <WTypes.h> //VARTYPE
-
 #include "CMacroManagerBase.h"
 #include "env/DLLSHAREDATA.h"
 #include "config/maxdata.h"

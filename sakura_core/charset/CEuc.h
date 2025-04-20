@@ -27,7 +27,6 @@
 #define SAKURA_CEUC_321D75BD_0B34_4417_BC69_6BF9AAAE794C_H_
 #pragma once
 
-#include <mbstring.h>
 #include "charset/CCodeBase.h"
 #include "charset/codechecker.h"
 #include "charset/codeutil.h"

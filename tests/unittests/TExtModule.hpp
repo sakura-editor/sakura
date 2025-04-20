@@ -22,11 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
 
 #include "extmodule/CDllHandler.h"
-
-#include <type_traits>
 
 /*!
 	外部DLL読み込みをテストするためのテンプレートクラス
