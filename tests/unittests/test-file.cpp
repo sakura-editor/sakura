@@ -24,17 +24,6 @@
 */
 #include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-#include <Shlwapi.h>
-
-#include <cstdlib>
-#include <fstream>
-
 #include "config/maxdata.h"
 #include "basis/primitive.h"
 #include "debug/Debug2.h"

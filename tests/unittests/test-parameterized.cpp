@@ -32,7 +32,6 @@
 	http://tatsyblog.sakura.ne.jp/wordpress/ci/1190/
 */
 #include "pch.h"
-#include <stdio.h>
 
 
 typedef std::tuple<int, int>                  Parameters2; /* Parameterized Test のパラメータ */

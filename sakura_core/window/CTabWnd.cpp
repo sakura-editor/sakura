@@ -38,7 +38,6 @@
 */
 
 #include "StdAfx.h"
-#include <limits.h>
 #include "CTabWnd.h"
 #include "window/CEditWnd.h"
 #include "_main/global.h"
@@ -53,7 +52,6 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
-#include <windowsx.h>
 #include "config/system_constants.h"
 #include "String_define.h"
 

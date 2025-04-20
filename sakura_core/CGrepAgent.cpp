@@ -46,9 +46,6 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "debug/CRunningTimer.h"
-#include <iterator>
-#include <deque>
-#include <memory>
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"

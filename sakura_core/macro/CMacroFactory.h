@@ -34,9 +34,6 @@
 #define SAKURA_CMACROFACTORY_67B6F8F6_0951_4717_84AD_C67E6D5F68AB_H_
 #pragma once
 
-#include <map>
-#include <list>
-#include <string>
 #include "util/design_template.h"
 
 class CMacroManagerBase;

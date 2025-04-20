@@ -32,7 +32,6 @@
 */
 
 #include "StdAfx.h"
-#include <algorithm>
 #include "CDlgFavorite.h"
 #include "dlg/CDlgInput1.h"
 #include "env/DLLSHAREDATA.h"

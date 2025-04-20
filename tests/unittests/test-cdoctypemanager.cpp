@@ -23,8 +23,6 @@
 */
 
 #include "pch.h"
-#include <windows.h>
-#include <string>
 #include "mem/CNativeW.h"
 #include "env/CDocTypeManager.h"
 

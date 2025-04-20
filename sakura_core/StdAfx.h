@@ -64,42 +64,92 @@
 #define DUMMYUNION5_MEMBER(x) DUMMYUNIONNAME5.x
 #endif
 #endif
+#define INITGUID 1
 #endif
 
+#include <assert.h>
+#include <ctype.h>
+#include <errno.h>
 #include <io.h>
+#include <limits.h>
+#include <math.h>
+#include <mbstring.h>
+#include <process.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <tchar.h>
 #include <time.h>
 #include <wchar.h>
 
+#ifdef USE_SSE2
+#ifdef __MINGW32__
+#include <x86intrin.h>
+#else
+#include <intrin.h>
+#endif
+#endif
+
 #include <algorithm>
 #include <array>
+#include <atomic>
+#include <cassert>
+#include <cmath>
+#include <condition_variable>
+#include <cstdio>
+#include <cstring>
+#include <deque>
 #include <exception>
+#include <filesystem>
+#include <fstream>
 #include <functional>
+#include <future>
 #include <initializer_list>
+#include <iostream>
+#include <iterator>
+#include <limits>
 #include <list>
+#include <locale.h>
 #include <map>
-#include <unordered_map>
 #include <memory>
+#include <mutex>
+#include <new>
 #include <optional>
+#include <ostream>
+#include <regex>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
+#include <thread>
+#include <tuple>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include <Windows.h>
 #include <windowsx.h>
+#include <CdErr.h>
 #include <CommCtrl.h>
+#include <CommDlg.h>
+#include <Dlgs.h>
 #include <HtmlHelp.h>
 #include <ImageHlp.h>
-#include <imm.h>
 #include <ObjIdl.h>
-#include <shellapi.h>
+#include <Ole2.h>
+#include <OleCtl.h>
 #include <ShlObj.h>
-#include <wrl.h>
+#include <Shlwapi.h>
+#include <WinSpool.h>
+#include <dwmapi.h>
+#include <imm.h>
+#include <shellapi.h>
+#include <shobjidl.h>
 #include <uxtheme.h>
 #include <vsstyle.h>
+#include <wincodec.h>
+#include <wrl.h>
 
 // Windows SDKのマクロ定数「NULL」を訂正する。
 // マクロ定数「NULL」は、省略可能なポインタ型パラメータに「省略」を指定するために使う。

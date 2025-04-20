@@ -17,8 +17,6 @@
 #define SAKURA_CCONTROLPROCESS_AFB90808_4287_4A11_B7FB_9CD21CF8BFD6_H_
 #pragma once
 
-#include <filesystem>
-
 #include "global.h"
 #include "CProcess.h"
 

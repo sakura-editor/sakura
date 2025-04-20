@@ -25,7 +25,6 @@
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_KeywordSet.h"
-#include <limits>
 #include "mem/CNativeW.h"
 #include "charset/charcode.h"
 

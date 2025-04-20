@@ -24,22 +24,6 @@
 */
 #include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <array>
-#include <cstring>
-#include <functional>
-#include <memory>
-#include <string>
-#include <string_view>
-#include <type_traits>
-
-#include <Windows.h>
-#include <CommCtrl.h>
-#include <ShlObj.h>
-
 #include "CEol.h"
 #include "mem/CNativeW.h"
 #include "_os/CClipboard.h"

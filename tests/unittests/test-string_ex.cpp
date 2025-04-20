@@ -24,15 +24,6 @@
 */
 #include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-
-#include <stdexcept>
-
 #include "basis/primitive.h"
 #include "util/string_ex.h"
 

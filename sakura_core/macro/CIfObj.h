@@ -33,8 +33,6 @@
 #define SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_
 #pragma once
 
-#include <string>
-#include <vector>
 #include "_os/OleTypes.h"
 class CEditView;
 

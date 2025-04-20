@@ -26,7 +26,6 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
 #include "CControlTray.h"
 #include "CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"

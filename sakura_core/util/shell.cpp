@@ -25,10 +25,6 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
-#include <ShlObj.h>
-#include <shellapi.h>
-#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
@@ -40,7 +36,6 @@
 #include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
 #include "String_define.h"
-#include <wrl.h>
 
 
 /* フォルダー選択ダイアログ */

@@ -19,11 +19,6 @@
 #include "StdAfx.h"
 #include "CImageListMgr.h"
 
-#include <cmath>
-#include <array>
-#include <list>
-#include <functional>
-
 #include "env/CommonSetting.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"

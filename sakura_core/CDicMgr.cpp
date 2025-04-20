@@ -17,7 +17,6 @@
 */
 
 #include "StdAfx.h"
-#include <stdio.h>
 #include "CDicMgr.h"
 #include "mem/CMemory.h" // 2002/2/10 aroka ヘッダー整理
 #include "mem/CNativeW.h"

@@ -21,8 +21,6 @@
 #include "debug/Debug2.h"
 #include "String_define.h"
 
-#include <new>
-
 CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = nullptr;	// メッセージリソース用構造体
 CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 

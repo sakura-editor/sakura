@@ -24,7 +24,6 @@
 */
 #include "StdAfx.h"
 #include "CWriteManager.h"
-#include <list>
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
 #include "CEditApp.h" // CAppExitException

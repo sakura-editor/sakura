@@ -25,9 +25,6 @@
 #include "pch.h"
 #include "convert/CConvert.h"
 
-#include <ostream>
-#include <tuple>
-
 #include "convert/CConvert_HaneisuToZeneisu.h"
 #include "convert/CConvert_HankataToZenhira.h"
 #include "convert/CConvert_HankataToZenkata.h"

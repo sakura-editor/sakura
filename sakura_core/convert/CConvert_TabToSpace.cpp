@@ -25,8 +25,6 @@
 #include "StdAfx.h"
 #include "CConvert_TabToSpace.h"
 
-#include <algorithm>
-#include <string_view>
 #include "charset/charcode.h"
 #include "CEol.h"
 #include "util/string_ex2.h"

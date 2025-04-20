@@ -24,19 +24,9 @@
 */
 #include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-
 #include "_main/CCommandLine.h"
 #include "env/CSakuraEnvironment.h"
 #include "util/string_ex.h"
-
-#include <cstdlib>
-#include <fstream>
 
 bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;

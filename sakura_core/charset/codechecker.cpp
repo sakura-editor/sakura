@@ -38,7 +38,6 @@
 #include "convert/convert_util2.h"
 #include "charset/codeutil.h"
 #include "charset/charcode.h"
-#include <algorithm>
 
 /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 

@@ -23,7 +23,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <vector>
 #include "StdApi.h"
 #include "charset/charcode.h"
 

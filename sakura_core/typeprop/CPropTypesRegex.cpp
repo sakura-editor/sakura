@@ -18,7 +18,6 @@
 //@@@ 2001.11.17 add start MIK
 
 #include "StdAfx.h"
-#include <memory>
 #include "CPropTypes.h"
 #include "env/CShareData.h"
 #include "CRegexKeyword.h"

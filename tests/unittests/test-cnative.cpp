@@ -22,7 +22,6 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <stdexcept>
 #include "pch.h"
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"

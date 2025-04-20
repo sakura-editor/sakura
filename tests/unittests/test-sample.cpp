@@ -23,8 +23,6 @@
 		   distribution.
 */
 #include "pch.h"
-#include <cstdio>
-#include <exception>
 
 class DivideByZeroException : public std::exception
 {

@@ -24,10 +24,6 @@
 
 #include "pch.h"
 #include "charset/CCodeFactory.h"
-
-#include <cstdlib>
-#include <ostream>
-
 #include "env/CommonSetting.h"
 
 TEST(CCodeBase, MIMEHeaderDecode)

@@ -34,9 +34,6 @@
 
 #include "StdAfx.h"
 #include "MessageBoxF.h"
-
-#include <iostream>
-
 #include "_main/CProcess.h"
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"

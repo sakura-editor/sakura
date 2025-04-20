@@ -20,7 +20,6 @@
 */
 
 #include "StdAfx.h"
-#include <shellapi.h>
 #include "dlg/CDlgAbout.h"
 #include "uiparts/HandCursor.h"
 #include "util/file.h"

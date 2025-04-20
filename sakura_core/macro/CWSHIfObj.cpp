@@ -33,7 +33,6 @@
 */
 
 #include "StdAfx.h"
-#include <memory>
 #include "macro/CWSHIfObj.h"
 #include "macro/CSMacroMgr.h" // MacroFuncInfo
 #include "Funccode_enum.h" // EFunctionCode::FA_FROMMACRO

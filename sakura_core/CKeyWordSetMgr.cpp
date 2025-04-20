@@ -36,7 +36,6 @@
 */
 #include "StdAfx.h"
 #include "CKeyWordSetMgr.h"
-#include <limits>
 #include "basis/CMyString.h"
 
 //! 1ブロック当たりのキーワード数

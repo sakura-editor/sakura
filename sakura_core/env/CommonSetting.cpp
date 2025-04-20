@@ -26,7 +26,7 @@
 
 #include "StdAfx.h"
 #include "CommonSetting.h"
-#include <vector>
+
 using namespace std;
 
 //CommonValue管理

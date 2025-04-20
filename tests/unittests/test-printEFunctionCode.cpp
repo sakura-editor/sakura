@@ -22,7 +22,6 @@
 		   distribution.
 */
 #include "pch.h"
-#include <ostream>
 
 #include "Funccode_enum.h"
 

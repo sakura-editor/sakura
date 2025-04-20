@@ -24,18 +24,7 @@
 */
 #include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-#include <Shlwapi.h>
-
 #include "CProfile.h"
-
-#include <cstdlib>
-#include <filesystem>
 
 #include "util/file.h"
 #include "CDataProfile.h"

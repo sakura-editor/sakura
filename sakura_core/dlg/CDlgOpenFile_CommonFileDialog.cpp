@@ -19,9 +19,6 @@
 */
 
 #include "StdAfx.h"
-#include <CdErr.h>
-#include <Dlgs.h>
-#include <CommDlg.h>
 #include "dlg/CDlgOpenFile.h"
 #include "dlg/CDialog.h"
 #include "func/Funccode.h"	//Stonee, 2001/05/18

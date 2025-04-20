@@ -37,8 +37,6 @@
 #include "StdAfx.h"
 #include "charset.h"
 #include "CCodePage.h"
-#include <vector>
-#include <map>
 #include "CSelectLang.h"
 #include "String_define.h"
 

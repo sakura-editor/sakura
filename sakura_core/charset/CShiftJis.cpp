@@ -27,7 +27,6 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "env/CommonSetting.h"
-#include <new>
 
 //! 指定した位置の文字が何バイト文字かを返す
 /*!

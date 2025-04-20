@@ -24,7 +24,6 @@
 */
 #include "StdAfx.h"
 #include "build_config.h"
-#include <stdlib.h> //malloc,free
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY

@@ -24,21 +24,7 @@
 */
 #include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-
 #include "dlg/CDlgProfileMgr.h"
-
-#include <cstdlib>
-#include <filesystem>
-#include <fstream>
-#include <iterator>
-#include <regex>
-#include <string>
 
 #include "config/maxdata.h"
 #include "basis/primitive.h"

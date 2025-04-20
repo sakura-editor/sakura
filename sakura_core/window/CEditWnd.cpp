@@ -42,7 +42,6 @@
 */
 
 #include "StdAfx.h"
-#include <ShlObj.h>
 
 #include "window/CEditWnd.h"
 #include "_main/CControlTray.h"

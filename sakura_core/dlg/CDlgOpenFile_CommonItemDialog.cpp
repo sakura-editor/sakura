@@ -19,10 +19,6 @@
 */
 
 #include "StdAfx.h"
-#include <array>
-#include <wrl.h>
-#include <shlwapi.h>
-#include <shobjidl.h>
 #include "charset/CCodePage.h"
 #include "dlg/CDlgOpenFile.h"
 #include "env/CShareData.h"

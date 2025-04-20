@@ -33,8 +33,6 @@
 #include "view/colors/CColorStrategy.h"
 #include "util/window.h"
 #include "debug/CRunningTimer.h"
-#include <atomic>
-#include <thread>
 
 //2008.07.27 kobake
 static bool _GetKeywordLength(

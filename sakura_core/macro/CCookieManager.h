@@ -31,8 +31,6 @@
 #define SAKURA_CCOOKIEMANAGER_69A96E71_61BD_417E_BD29_10B3D27AA11D_H_
 #pragma once
 
-#include <map>
-#include <string>
 #include "_os/OleTypes.h"
 
 class CCookieManager

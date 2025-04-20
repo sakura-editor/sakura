@@ -18,7 +18,6 @@
 #define SAKURA_CPPAMACROMGR_C2A77DE3_E368_4D65_AC46_7E743718D84A_H_
 #pragma once
 
-#include <Windows.h>
 #include "CKeyMacroMgr.h"
 #include "CPPA.h"
 #include "mem/CNativeW.h"

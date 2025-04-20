@@ -24,8 +24,6 @@
 */
 #include "pch.h"
 #include "view/CTextMetrics.h"
-#include <vector>
-#include <Windows.h>
 
 class CTextMetricsWithGDI : public testing::Test {
 protected:

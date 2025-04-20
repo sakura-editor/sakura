@@ -30,8 +30,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <algorithm>
-#include <ctype.h>
 #include "CMacroFactory.h"
 
 static const WCHAR NULSTR[] = L"";

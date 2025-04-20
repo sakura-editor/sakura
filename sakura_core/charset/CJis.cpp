@@ -25,7 +25,6 @@
 // 2008.11.10  変換ロジックを書き直す
 
 #include "StdAfx.h"
-#include <mbstring.h>
 #include "charset/CJis.h"
 #include "charset/charcode.h"
 #include "charset/codeutil.h"

@@ -17,7 +17,6 @@
 
 #include "StdAfx.h"
 #include "debug/CRunningTimer.h"
-#include <stdarg.h>
 
 int CRunningTimer::m_nNestCount = 0;
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();

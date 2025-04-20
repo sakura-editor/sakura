@@ -26,14 +26,7 @@
 */
 
 #include "StdAfx.h"
-#include <io.h>
 #include "file.h"
-
-#include <Shlwapi.h>
-
-#include <regex>
-#include <string_view>
-
 #include "charset/codechecker.h"
 #include "util/module.h"
 #include "util/window.h"

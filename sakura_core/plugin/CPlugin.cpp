@@ -27,7 +27,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <vector>		// wstring_split用 2010/4/4 Uchi
 #include "CPlugin.h"
 #include "CJackManager.h"
 

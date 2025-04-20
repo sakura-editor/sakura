@@ -40,8 +40,6 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタープ�
 #define SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_
 #pragma once
 
-#include <ObjIdl.h>  // VARIANT等
-#include <stdio.h>
 #include "macro/CSMacroMgr.h"
 #include "extmodule/CDllHandler.h"
 #include "mem/CNativeA.h"

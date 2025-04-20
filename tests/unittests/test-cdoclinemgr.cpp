@@ -25,8 +25,6 @@
 #include "pch.h"
 #include "doc/logic/CDocLineMgr.h"
 
-#include <array>
-
 TEST(CDocLineMgr, ListManipulations)
 {
 	CDocLineMgr m;

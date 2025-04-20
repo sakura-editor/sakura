@@ -28,7 +28,6 @@
 #include "module.h"
 #include "util/os.h"
 #include "util/file.h"
-#include <Shlwapi.h>	// 2006.06.17 ryoji
 
 /*! 
 	カレントディレクトリを実行ファイルの場所に移動
