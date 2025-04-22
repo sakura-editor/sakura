@@ -784,7 +784,7 @@ static int DeletePreviousWord(wchar_t* text, int length, int curPos)
 	return prevWordStartPos;
 }
 
-LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
 	HWND hwndCombo = GetParent(hwnd);
@@ -822,6 +822,11 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 			return 0;
 		}
 		break;
+	case WM_DESTROY:
+		::RemoveWindowSubclass(hwnd, &SubEditProc, uIdSubclass);
+		return 0;
+	default:
+		break;
 	}
 	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
@@ -833,5 +838,5 @@ void CDialog::SetComboBoxDeleter(HWND hwndCtl, CRecent* pRecent)
 	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
 	if (!::GetComboBoxInfo(hwndCtl, &info))
 		return;
-	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, (DWORD_PTR)pRecent);
+	::SetWindowSubclass(info.hwndItem, &SubEditProc, 0, (DWORD_PTR)pRecent);
 }

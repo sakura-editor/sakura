@@ -121,6 +121,7 @@ public:
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
 
+	static LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 	//! @brief コンボボックスに履歴削除・単語削除の機能を追加する
 	//!
 	//! @param hwndCtl コンボボックスのハンドル。CBS_DROPDOWNLISTスタイルのコンボボックスには対応していません。
