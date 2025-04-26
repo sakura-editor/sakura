@@ -260,7 +260,7 @@ CEditWnd::~CEditWnd()
 	delete m_pcDropTarget;	// 2008.06.20 ryoji
 	m_pcDropTarget = NULL;
 
-	// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+	// ウィンドウ毎に作成したアクセラレータテーブルを破棄する
 	DeleteAccelTbl();
 
 	m_hWnd = NULL;
@@ -628,7 +628,7 @@ HWND CEditWnd::Create(
 	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
 	ClearMouseState();
 
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	// ウィンドウ毎にアクセラレータテーブルを作成する
 	CreateAccelTbl();
 
 	//ウィンドウ数制限
@@ -1722,10 +1722,10 @@ LRESULT CEditWnd::DispatchEvent(
 			// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 			EndLayoutBars();
 
-			// アクセラレータテーブルを再作成する(Wine用)
-			// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+			// アクセラレータテーブルを再作成する
+			// ウィンドウ毎に作成したアクセラレータテーブルを破棄する
 			DeleteAccelTbl();
-			// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+			// ウィンドウ毎にアクセラレータテーブルを作成する
 			CreateAccelTbl();
 
 			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
@@ -4776,7 +4776,7 @@ void CEditWnd::ClearMouseState( void )
 	SetHScrollByWheel( FALSE );			// ホイール操作による横スクロール有無
 }
 
-/*! ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+/*! ウィンドウ毎にアクセラレータテーブルを作成する
 	@date 2009.08.15 Hidetaka Sakai, nasukoji
 	@date 2013.10.19 novice 共有メモリの代わりにWine実行判定処理を呼び出す
 
@@ -4786,18 +4786,16 @@ void CEditWnd::ClearMouseState( void )
 */
 void CEditWnd::CreateAccelTbl( void )
 {
-	{
-		m_hAccel = CKeyBind::CreateAccerelator(
-			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
-		);
+	m_hAccel = CKeyBind::CreateAccerelator(
+		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
+	);
 
-		if( nullptr == m_hAccel ){
-			ErrorMessage(
-				NULL,
-				LS(STR_ERR_DLGEDITWND01)
-			);
-		}
+	if( nullptr == m_hAccel ){
+		ErrorMessage(
+			NULL,
+			LS(STR_ERR_DLGEDITWND01)
+		);
 	}
 }
 
