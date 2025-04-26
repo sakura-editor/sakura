@@ -227,8 +227,6 @@ CEditWnd::CEditWnd()
 , m_pszMenubarMessage( new WCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 , m_posSaveAry( NULL )
 , m_nCurrentFocus( 0 )
-, m_hAccelWine( NULL )
-, m_hAccel( NULL )
 , m_bDragMode( false )
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
@@ -4789,20 +4787,18 @@ void CEditWnd::ClearMouseState( void )
 void CEditWnd::CreateAccelTbl( void )
 {
 	{
-		m_hAccelWine = CKeyBind::CreateAccerelator(
+		m_hAccel = CKeyBind::CreateAccerelator(
 			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 		);
 
-		if( NULL == m_hAccelWine ){
+		if( nullptr == m_hAccel ){
 			ErrorMessage(
 				NULL,
 				LS(STR_ERR_DLGEDITWND01)
 			);
 		}
 	}
-
-	m_hAccel = m_hAccelWine;
 }
 
 /*! ウィンドウ毎に作成したアクセラレータテーブルを破棄する
@@ -4810,11 +4806,9 @@ void CEditWnd::CreateAccelTbl( void )
 */
 void CEditWnd::DeleteAccelTbl( void )
 {
-	m_hAccel = NULL;
-
-	if( m_hAccelWine ){
-		::DestroyAcceleratorTable( m_hAccelWine );
-		m_hAccelWine = NULL;
+	if( m_hAccel ){
+		::DestroyAcceleratorTable( m_hAccel );
+		m_hAccel = nullptr;
 	}
 }
 
