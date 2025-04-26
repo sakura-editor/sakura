@@ -41,12 +41,7 @@ LPVOID CDlgSameColor::GetHelpIdTable( void )
 	return (LPVOID)p_helpids;
 }
 
-CDlgSameColor::CDlgSameColor() :
-	m_wpColorStaticProc(NULL),
-	m_wpColorListProc(NULL),
-	m_wID(0),
-	m_pTypes(NULL),
-	m_cr(0)
+CDlgSameColor::CDlgSameColor()
 {
 	return;
 }
@@ -119,10 +114,8 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	HWND hwndList = GetItemHwnd( IDC_LIST_COLORS );
 
 	// 指定色スタティック、色選択リストをサブクラス化
-	::SetWindowLongPtr( hwndStatic, GWLP_USERDATA, (LONG_PTR)this );
-	m_wpColorStaticProc = (WNDPROC)::SetWindowLongPtr( hwndStatic, GWLP_WNDPROC, (LONG_PTR)ColorStatic_SubclassProc );
-	::SetWindowLongPtr( hwndList, GWLP_USERDATA, (LONG_PTR)this );
-	m_wpColorListProc = (WNDPROC)::SetWindowLongPtr( hwndList, GWLP_WNDPROC, (LONG_PTR)ColorList_SubclassProc );
+	::SetWindowSubclass(hwndStatic, &ColorStatic_SubclassProc, 0, (DWORD_PTR)this);
+	::SetWindowSubclass(hwndList, &ColorList_SubclassProc, 0, 0);
 
 	WCHAR szText[30];
 	int nItem;
@@ -364,13 +357,12 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 /*! サブクラス化された指定色スタティックのウィンドウプロシージャ
 	@date 2006.04.26 ryoji 新規作成
 */
-LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData )
 {
 	HDC			hDC;
 	RECT		rc;
 
-	CDlgSameColor* pCDlgSameColor;
-	pCDlgSameColor = (CDlgSameColor*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
+	auto pCDlgSameColor = (CDlgSameColor *)dwRefData;
 
 	switch( uMsg ){
 	case WM_PAINT:
@@ -408,30 +400,26 @@ LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, 
 
 	case WM_DESTROY:
 		// サブクラス化解除
-		::SetWindowLongPtr( hwnd, GWLP_WNDPROC, (LONG_PTR)pCDlgSameColor->m_wpColorStaticProc );
-		pCDlgSameColor->m_wpColorStaticProc = NULL;
+		::RemoveWindowSubclass(hwnd, &ColorStatic_SubclassProc, uIdSubclass);
 		return (LRESULT)0;
 
 	default:
 		break;
 	}
 
-	return CallWindowProc( pCDlgSameColor->m_wpColorStaticProc, hwnd, uMsg, wParam, lParam );
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
 /*! サブクラス化された色選択リストのウィンドウプロシージャ
 	@date 2006.04.26 ryoji 新規作成
 */
-LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, [[maybe_unused]] DWORD_PTR dwRefData )
 {
 	POINT po;
 	RECT rcItem;
 	RECT rc;
 	int nItemNum;
 	int i;
-
-	CDlgSameColor* pCDlgSameColor;
-	pCDlgSameColor = (CDlgSameColor*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 
 	switch( uMsg ){
 	case WM_LBUTTONUP:
@@ -471,13 +459,12 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 
 	case WM_DESTROY:
 		// サブクラス化解除
-		::SetWindowLongPtr( hwnd, GWLP_WNDPROC, (LONG_PTR)pCDlgSameColor->m_wpColorListProc );
-		pCDlgSameColor->m_wpColorListProc = NULL;
+		::RemoveWindowSubclass(hwnd, &ColorList_SubclassProc, uIdSubclass);
 		return (LRESULT)0;
 
 	default:
 		break;
 	}
 
-	return ::CallWindowProc( pCDlgSameColor->m_wpColorListProc, hwnd, uMsg, wParam, lParam );
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
