@@ -11,11 +11,11 @@
 
 ## 取り込みバイナリ
 
-- [2020-01-12/feffe43a](https://github.com/universal-ctags/ctags-win32/releases/tag/2020-01-12%2Ffeffe43a)
+- [2023-12-29/v6.1.0](https://github.com/universal-ctags/ctags-win32/releases/tag/v6.1.0)
     - バイナリ
-        - [Win32(ctags-2020-01-12_feffe43a-x86.zip)](https://github.com/universal-ctags/ctags-win32/releases/download/2020-01-12%2Ffeffe43a/ctags-2020-01-12_feffe43a-x86.zip)
-        - [x64(ctags-2020-01-12_feffe43a-x64.zip)](https://github.com/universal-ctags/ctags-win32/releases/download/2020-01-12%2Ffeffe43a/ctags-2020-01-12_feffe43a-x64.zip)
-    - [ソースコード](https://github.com/universal-ctags/ctags-win32/archive/2020-01-12/feffe43a.zip)
+        - [x86(ctags-v6.1.0-x86.zip)](https://github.com/universal-ctags/ctags-win32/releases/download/v6.1.0/ctags-v6.1.0-x86.zip)
+        - [x64(ctags-v6.1.0-x64.zip)](https://github.com/universal-ctags/ctags-win32/releases/download/v6.1.0/ctags-v6.1.0-x64.zip)
+    - [ソースコード](https://github.com/universal-ctags/ctags-win32/archive/refs/tags/v6.1.0.zip)
 
 ## ライセンス
-- [GPL2](https://github.com/universal-ctags/ctags/blob/master/COPYING)
+- [GPL2](https://github.com/universal-ctags/ctags/blob/v6.1.0/COPYING)
