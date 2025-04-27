@@ -46,12 +46,19 @@ if "%PLATFORM%" == "Win32" (
 if "%PLATFORM%" == "x64" (
   call :find_cl_compilers
 )
+if "%PLATFORM%" == "arm64" (
+  call :find_cl_compilers
+)
 if "%PLATFORM%" == "MinGW" (
   call :find_gcc_compilers
 )
 
 :: install lib64 for x64-platform.
 if "%PLATFORM%" == "x64" (
+  set GENERATOR_OPTS=-DCMAKE_INSTALL_LIBDIR=lib64 %GENERATOR_OPTS%
+)
+:: install lib64 for arm64-platform.
+if "%PLATFORM%" == "arm64" (
   set GENERATOR_OPTS=-DCMAKE_INSTALL_LIBDIR=lib64 %GENERATOR_OPTS%
 )
 

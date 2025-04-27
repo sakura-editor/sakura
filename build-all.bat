@@ -6,6 +6,8 @@ if "%platform%" == "Win32" (
 	@rem OK
 ) else if "%platform%" == "x64" (
 	@rem OK
+) else if "%platform%" == "arm64" (
+	@rem OK
 ) else if "%platform%" == "MinGW" (
 	@rem OK
 ) else (
@@ -64,7 +66,7 @@ exit /b 0
 @echo    %~nx1 platform configuration
 @echo.
 @echo parameter
-@echo    platform      : Win32   or x64   or MinGW
+@echo    platform      : Win32   or x64   arm64 or MinGW
 @echo    configuration : Release or Debug
 @echo.
 @echo example
@@ -72,6 +74,8 @@ exit /b 0
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
 @echo    %~nx1 x64   Debug
+@echo    %~nx1 arm64 Release
+@echo    %~nx1 arm64 Debug
 @echo    %~nx1 MinGW Release
 @echo    %~nx1 MinGW Debug
 exit /b 0

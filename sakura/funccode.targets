@@ -1,6 +1,6 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="FuncCode">
-    <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
+    <HeaderMake>..\$(Platform)\$(Configuration)\HeaderMake.exe</HeaderMake>
     <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
     <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
   </PropertyGroup>
