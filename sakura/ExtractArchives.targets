@@ -4,8 +4,8 @@
     <BregOnigInternalPath Condition="'$(Platform)' == 'x64'"  >x64/bregonig.dll</BregOnigInternalPath>
     <BregOnigInternalPath Condition="'$(Platform)' == 'Win32'">bregonig.dll</BregOnigInternalPath>
     <BregOnigOutPath>$(OutDir)bregonig.dll</BregOnigOutPath>
-    <CtagsArchive Condition="'$(Platform)' == 'x64'"  >$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip</CtagsArchive>
-    <CtagsArchive Condition="'$(Platform)' == 'Win32'">$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip</CtagsArchive>
+    <CtagsArchive Condition="'$(Platform)' == 'x64'"  >$(SolutionDir)installer/externals/universal-ctags/ctags-v6.1.0-x64.zip</CtagsArchive>
+    <CtagsArchive Condition="'$(Platform)' == 'Win32'">$(SolutionDir)installer/externals/universal-ctags/ctags-v6.1.0-x86.zip</CtagsArchive>
     <CtagsInternalPath>ctags.exe</CtagsInternalPath>
     <CtagsOutPath>$(OutDir)ctags.exe</CtagsOutPath>
   </PropertyGroup>
