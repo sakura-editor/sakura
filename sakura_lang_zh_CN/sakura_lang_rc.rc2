@@ -158,15 +158,7 @@ BEGIN
 		//  http://msdn.microsoft.com/en-us/library/dd318693.aspx
 
 	// CBregexp.cpp
-#if defined(_WIN64)
-	STR_BREGONIG_LOAD "无法加载 bregonig.dll\r\n正则表达式功能需要此文件(Unicode/64位版本)\r\n请参考帮助文档获取更多信息"
-#else
-	STR_BREGONIG_LOAD "无法加载 bregonig.dll\r\n正则表达式功能需要此文件(Unicode/64位版本)\r\n请参考帮助文档获取更多信息"
-#endif
-#if defined(_WIN64)
-	STR_BREGONIG_INIT "初始化 bregonig.dll 失败\r\n正则表达式功能需要此文件(Unicode/64位版本)\r\n请参考帮助文档获取更多信息"
-#else
-	STR_BREGONIG_INIT "初始化 bregonig.dll 失败\r\n正则表达式功能需要此文件(Unicode/64位版本)\r\n请参考帮助文档获取更多信息"
-#endif
+	STR_BREGONIG_LOAD "无法加载 bregonig.dll\r\n正则表达式功能需要此文件(Unicode版本)\r\n请参考帮助文档获取更多信息"
+	STR_BREGONIG_INIT "初始化 bregonig.dll 失败\r\n正则表达式功能需要此文件(Unicode版本)\r\n请参考帮助文档获取更多信息"
 	STR_GSTR_APPNAME				_GSTR_APPNAME
 END
