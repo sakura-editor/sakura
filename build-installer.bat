@@ -49,7 +49,7 @@ set BRON_ZIP=installer\externals\bregonig\bron420.zip
 7z e %BRON_ZIP% -o%INSTALLER_RESOURCES_BRON% -y *.txt
 if "%platform%" == "x64" (
 	7z e %BRON_ZIP% -o%platform%\%configuration% -y x64/%BREGONIG_DLL%
-) else if "%platform%" == "arm6464" (
+) else if "%platform%" == "arm64" (
 	@rem provisional
 	7z e %BRON_ZIP% -o%platform%\%configuration% -y x64/%BREGONIG_DLL%
 ) else (
