@@ -66,7 +66,7 @@ exit /b 0
 @echo    %~nx1 platform configuration
 @echo.
 @echo parameter
-@echo    platform      : Win32   or x64   arm64 or MinGW
+@echo    platform      : Win32   or x64   or arm64 or MinGW
 @echo    configuration : Release or Debug
 @echo.
 @echo example
