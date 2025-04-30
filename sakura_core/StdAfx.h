@@ -92,7 +92,6 @@
 #include <windowsx.h>
 #include <CommCtrl.h>
 #include <HtmlHelp.h>
-#include <ImageHlp.h>
 #include <imm.h>
 #include <ObjIdl.h>
 #include <shellapi.h>

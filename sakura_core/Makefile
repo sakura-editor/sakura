@@ -92,7 +92,6 @@ LIBS= \
  -lcomctl32 \
  -limm32 \
  -lmpr \
- -limagehlp \
  -lshlwapi \
  -ldwmapi \
  -lwinmm \
