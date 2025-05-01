@@ -3384,7 +3384,6 @@ STRINGTABLE
 BEGIN
     STR_TRAY_CREATEPROC2    "'%s'\n进程执行失败。"
     STR_TRAY_EXITALL        "是否关闭所有打开的窗口并退出编辑器而不保存?"
-    STR_TRAY_ACCELTABLE     "CControlTray::CreateAccelTbl()\n无法创建快捷键表。\n系统资源不足。"
     STR_LOADAGENT_ERR_OPEN  "'%s'\n无法打开文件。\n您没有读取该文件的权限。"
     STR_LOADAGENT_BIG_WARNING 
                             "'%s'\n文件大小超过 %dMB。是否要打开?"

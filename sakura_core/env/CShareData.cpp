@@ -168,7 +168,6 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sNodes.m_nEditArrNum = 0;
 
 		m_pShareData->m_sHandles.m_hwndTray = NULL;
-		m_pShareData->m_sHandles.m_hAccel = NULL;
 		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 
 		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){

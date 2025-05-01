@@ -118,7 +118,6 @@ public:
 struct SShare_Handles{
 	HWND				m_hwndTray;
 	HWND				m_hwndDebug;
-	HACCEL				m_hAccel;
 };
 
 //! EXE情報

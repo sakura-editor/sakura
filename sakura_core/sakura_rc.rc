@@ -3355,7 +3355,6 @@ STRINGTABLE
 BEGIN
     STR_TRAY_CREATEPROC2    "'%s'\nプロセスの起動に失敗しました。"
     STR_TRAY_EXITALL        "現在開いている編集用のウィンドウをすべて閉じて終了しますか?"
-    STR_TRAY_ACCELTABLE     "CControlTray::CreateAccelTbl()\nアクセラレータ テーブルが作成できません。\nシステムリソースが不足しています。"
     STR_LOADAGENT_ERR_OPEN  "'%s'\nというファイルを開けません。\n読み込みアクセス権がありません。"
     STR_LOADAGENT_BIG_WARNING "'%s'\nファイルサイズが%dMB以上あります。開きますか？"
     STR_SAVEAGENT_VIEW_FILE "ビューモードでは同一ファイルへの保存はできません。"
