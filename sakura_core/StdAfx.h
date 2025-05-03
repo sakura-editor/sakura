@@ -87,6 +87,7 @@
 #include <string_view>
 #include <utility>
 #include <vector>
+#include <cstdint>
 
 #include <Windows.h>
 #include <windowsx.h>
