@@ -77,7 +77,7 @@
     </Manifest>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;Shlwapi.lib;Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
