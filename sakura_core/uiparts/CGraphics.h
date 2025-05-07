@@ -259,7 +259,6 @@ public:
 		::MoveToEx(m_hdc,x1,y1,nullptr);
 		::LineTo(m_hdc,x2,y2);
 	}
-	void DrawDotLine(int x1, int y1, int x2, int y2);	//点線
 	//! 矩形塗り潰し
 	void FillMyRect(const RECT& rc)
 	{
