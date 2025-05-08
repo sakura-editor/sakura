@@ -18,8 +18,6 @@
 #define SAKURA_CFUNCINFO_9A6DFB84_EFEE_4E20_8E60_9F6F4D83B93C_H_
 #pragma once
 
-class CFuncInfo;
-
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
 
@@ -35,7 +33,7 @@ class CFuncInfo {
 		CFuncInfo( CLogicInt nFuncLineCRLF, CLogicInt nFuncColCRLF,
 				   CLayoutInt nFuncLineLAYOUT, CLayoutInt nFuncColLAYOUT,
 				   const WCHAR* pszFuncName, const WCHAR* pszFileName,
-				   int nInfo );	/* CFuncInfoクラス構築 */
+				   int nInfo, int nDepth );	/* CFuncInfoクラス構築 */
 		~CFuncInfo();	/* CFuncInfoクラス消滅 */
 
 		//! クリップボードに追加する要素か？
@@ -49,8 +47,8 @@ class CFuncInfo {
 		CLayoutInt	m_nFuncLineLAYOUT;	/*!< 関数のある行(折り返し単位) */
 		CLogicInt	m_nFuncColCRLF;		/*!< 関数のある桁(CRLF単位) */
 		CLayoutInt	m_nFuncColLAYOUT;	/*!< 関数のある桁(折り返し単位) */
-		CNativeW	m_cmemFuncName;	/*!< 関数名 */
-		CNativeW	m_cmemFileName;	/*!< ファイル名 */
+		std::wstring	m_strFuncName;	/*!< 関数名 */
+		std::wstring	m_strFileName;	/*!< ファイル名 */
 		int			m_nInfo;		/*!< 付加情報 */
 		int			m_nDepth;		/*!< 深さ */
 };
