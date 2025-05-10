@@ -75,15 +75,14 @@ void CAutoSaveAgent::ReloadAutoSaveParam()
 /*!
 	時間間隔の設定
 	@param m 間隔(min)
-	間隔を0以下に設定したときは1秒とみなす。設定可能な最大間隔は35792分。
+	間隔を0以下に設定したときは1秒とみなす。設定可能な最大間隔は35791分。
 */
 void CPassiveTimer::SetInterval(int m)
 {
-	if( m <= 0 )
-		m = 1;
-	else if( m >= 35792 )	//	35792分以上だと int で表現できなくなる
-		m = 35792;
+	constexpr int nMaxInterval = INT_MAX / MSec2Min;
+	static_assert(nMaxInterval == 35791);
 
+	m = std::clamp(m, 1, nMaxInterval);
 	nInterval = m * MSec2Min;
 }
 /*!
