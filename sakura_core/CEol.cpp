@@ -49,10 +49,10 @@ const SEolDefinition g_aEolTable[] = {
 struct SEolDefinitionForUniFile{
 	const char*	m_szDataW;
 	const char* m_szDataWB;
-	int			m_nLen;
+	size_t		m_nLen;
 
-	bool StartsWithW(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWithWB(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
+	bool StartsWithW(const char* pData, size_t nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataW,m_nLen); }
+	bool StartsWithWB(const char* pData, size_t nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
 };
 static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	{ "",					"", 					0 },
@@ -75,7 +75,7 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	@return 改行コードの種類。終端子が見つからなかったときはEEolType::noneを返す。
 */
 template <class T>
-EEolType GetEOLType( const T* pszData, int nDataLen )
+EEolType GetEOLType( const T* pszData, size_t nDataLen )
 {
 	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( g_aEolTable[i].StartsWith(pszData, nDataLen) ){
@@ -89,7 +89,7 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 	ファイルを読み込むときに使用するもの
 */
 
-EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
+EEolType _GetEOLType_uni( const char* pszData, size_t nDataLen )
 {
 	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) ){
@@ -99,7 +99,7 @@ EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
 	return EEolType::none;
 }
 
-EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
+EEolType _GetEOLType_unibe( const char* pszData, size_t nDataLen )
 {
 	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) ){
@@ -131,22 +131,22 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 	return CLogicInt(g_aEolTable[static_cast<size_t>(m_eEolType)].m_nLen);
 }
 
-void CEol::SetTypeByString( const wchar_t* pszData, int nDataLen )
+void CEol::SetTypeByString( const wchar_t* pszData, size_t nDataLen )
 {
 	SetType( GetEOLType( pszData, nDataLen ) );
 }
 
-void CEol::SetTypeByString( const char* pszData, int nDataLen )
+void CEol::SetTypeByString( const char* pszData, size_t nDataLen )
 {
 	SetType( GetEOLType( pszData, nDataLen ) );
 }
 
-void CEol::SetTypeByStringForFile_uni( const char* pszData, int nDataLen )
+void CEol::SetTypeByStringForFile_uni( const char* pszData, size_t nDataLen )
 {
 	SetType( _GetEOLType_uni( pszData, nDataLen ) );
 }
 
-void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
+void CEol::SetTypeByStringForFile_unibe( const char* pszData, size_t nDataLen )
 {
 	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
 }
