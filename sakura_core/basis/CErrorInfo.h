@@ -27,7 +27,7 @@
 #include <Windows.h>
 
 #include <comdef.h>
-#include <OAIdl.h>
+#include <oaidl.h>
 
 #include <string_view>
 
