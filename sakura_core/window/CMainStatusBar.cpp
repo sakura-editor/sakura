@@ -67,7 +67,7 @@ void CMainStatusBar::CreateStatusBar()
 		m_hwndStatusBar,
 		NULL,
 		CEditApp::getInstance()->GetAppInstance(),
-		0
+		nullptr
 	);
 
 	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){

@@ -36,7 +36,7 @@ CProcess::CProcess(
 	LPCWSTR		lpCmdLine		//!< pointer to command line
 )
 : m_hInstance( hInstance )
-, m_hWnd( 0 )
+, m_hWnd( nullptr )
 {
 	// アプリ名をリソースから読み込む
 	m_strAppName = LS(STR_GSTR_APPNAME);

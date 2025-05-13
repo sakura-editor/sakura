@@ -231,7 +231,7 @@ CDlgFavorite::CDlgFavorite()
 		assert( i < _countof(m_aFavoriteInfo) );
 	}
 	for( i = 0; i < FAVORITE_INFO_MAX; i++ ){
-		m_aListViewInfo[i].hListView   = 0;
+		m_aListViewInfo[i].hListView   = nullptr;
 		m_aListViewInfo[i].nSortColumn = -1;
 		m_aListViewInfo[i].bSortAscending = false;
 	}

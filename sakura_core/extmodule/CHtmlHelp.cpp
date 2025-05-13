@@ -52,7 +52,7 @@ bool CHtmlHelp::InitDllImp()
 	//DLL内関数名リスト
 	const ImportTable table[] = {
 		{ (void*)&m_pfnHtmlHelp,		"HtmlHelpW" },
-		{ NULL, 0 }
+		{ nullptr, nullptr }
 	};
 
 	if (!RegisterEntries(table)) {

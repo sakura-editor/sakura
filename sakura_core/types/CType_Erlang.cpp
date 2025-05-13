@@ -87,7 +87,7 @@ private:
 
 	bool IS_SPACE( wchar_t wc )
 	{
-		return ( wcschr( L" \t\r\n", wc ) != 0 );
+		return ( wcschr( L" \t\r\n", wc ) != nullptr );
 	}
 	
 	void build_arity(int);

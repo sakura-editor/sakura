@@ -83,7 +83,7 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 				// 02/07/28 ai end
 
 				//次を検索
-				m_pOwner->OnCommand( (WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
+				m_pOwner->OnCommand( (WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, nullptr );
 			}
 		}
 		else if( msg->wParam == VK_TAB )	//タブキー

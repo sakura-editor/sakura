@@ -1729,7 +1729,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 
 			// 2005.09.01 ryoji スクロール位置調整
 			// （右端のほうのタブアイテムを削除したとき、スクロール可能なのに右に余白ができることへの対策）
-			hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
+			hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );	// タブ内の Up-Down コントロール
 			if( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 			{
 				nScrollPos = LOWORD( UpDown_GetPos( hwndUpDown ) );
@@ -1755,7 +1755,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 
 				// 自タブアイテムを強制的に可視位置にするために、
 				// 自タブアイテム選択前に一時的に画面左端のタブアイテムを選択する
-				hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
+				hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );	// タブ内の Up-Down コントロール
 				nScrollPos = ( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )? LOWORD( UpDown_GetPos( hwndUpDown ) ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 				TabCtrl_SetCurSel( m_hwndTab, nScrollPos );
 				TabCtrl_SetCurSel( m_hwndTab, nIndex );
@@ -2183,7 +2183,7 @@ void CTabWnd::ForceActiveWindow( HWND hwnd )
 	::AttachThreadInput( nId1, nId2, TRUE );
 
 	::SystemParametersInfo( SPI_GETFOREGROUNDLOCKTIMEOUT, 0, &dwTime, 0 );
-	::SystemParametersInfo( SPI_SETFOREGROUNDLOCKTIMEOUT, 0, (LPVOID)0, 0 );
+	::SystemParametersInfo( SPI_SETFOREGROUNDLOCKTIMEOUT, 0, nullptr, 0 );
 
 	//ウィンドウをフォアグラウンドにする
 	::SetForegroundWindow( hwnd );
