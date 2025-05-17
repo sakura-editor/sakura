@@ -42,7 +42,7 @@ public:
 		m_hMutex( NULL ),
 		m_hMutexCP( NULL ),
 		m_hEventCPInitialized( NULL ),
-		m_pcTray( 0 )
+		m_pcTray( nullptr )
 	{}
 
 	~CControlProcess();

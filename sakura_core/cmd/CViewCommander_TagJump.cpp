@@ -553,7 +553,7 @@ bool CViewCommander::Command_TagsMake( void )
 	sa.nLength              = sizeof(sa);
 	sa.bInheritHandle       = TRUE;
 	sa.lpSecurityDescriptor = NULL;
-	hStdOutRead = hStdOutWrite = 0;
+	hStdOutRead = hStdOutWrite = nullptr;
 	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE )
 	{
 		//エラー

@@ -313,7 +313,7 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 	nr.lpRemoteName  = sTemp;
 
 	//ユーザー認証ダイアログを表示
-	dwRet = WNetAddConnection3(0, &nr, NULL, NULL, CONNECT_UPDATE_PROFILE | CONNECT_INTERACTIVE);
+	dwRet = WNetAddConnection3(nullptr, &nr, nullptr, nullptr, CONNECT_UPDATE_PROFILE | CONNECT_INTERACTIVE);
 
 	return dwRet;
 }

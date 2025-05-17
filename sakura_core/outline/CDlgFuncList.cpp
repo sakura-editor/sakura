@@ -198,7 +198,7 @@ static EOutlineType GetOutlineTypeRedraw(int outlineType)
 
 LPDLGTEMPLATE CDlgFuncList::m_pDlgTemplate = NULL;
 DWORD CDlgFuncList::m_dwDlgTmpSize = 0;
-HINSTANCE CDlgFuncList::m_lastRcInstance = 0;
+HINSTANCE CDlgFuncList::m_lastRcInstance = nullptr;
 
 CDlgFuncList::CDlgFuncList() : CDialog(true)
 {

@@ -181,10 +181,10 @@ bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vect
 	CNativeW cmLineW;
 	m_strProfileName = L"-Res-";
 
-	if (( hRsrc = ::FindResource( 0, pName, pType )) != NULL
-	 && ( hGlobal = ::LoadResource( 0, hRsrc )) != NULL
+	if (( hRsrc = ::FindResource( nullptr, pName, pType )) != nullptr
+	 && ( hGlobal = ::LoadResource( nullptr, hRsrc )) != nullptr
 	 && ( psMMres = (char *)::LockResource(hGlobal)) != NULL
-	 && ( nSize = (size_t)::SizeofResource( 0, hRsrc )) != 0) {
+	 && ( nSize = (size_t)::SizeofResource( nullptr, hRsrc )) != 0) {
 		p    = psMMres;
 		if (nSize >= sizeof(UTF8_BOM) && memcmp( p, UTF8_BOM, sizeof(UTF8_BOM) )==0) {
 			// Skip BOM

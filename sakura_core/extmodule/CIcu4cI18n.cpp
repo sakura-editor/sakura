@@ -58,7 +58,7 @@ bool CIcu4cI18n::InitDllImp()
 		{ &_ucsdet_detect,		"ucsdet_detect_66" },	//バージョンは固定
 		{ &_ucsdet_getName,		"ucsdet_getName_66" },	//バージョンは固定
 		{ &_ucsdet_close,		"ucsdet_close_66" },	//バージョンは固定
-		{ NULL, 0 }
+		{ nullptr, nullptr }
 	};
 	return RegisterEntries(table);
 }

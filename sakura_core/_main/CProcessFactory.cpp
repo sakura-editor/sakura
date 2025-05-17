@@ -51,12 +51,12 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	CSelectLang::InitializeLanguageEnvironment();
 
 	if( !ProfileSelect( hInstance, lpCmdLine ) ){
-		return 0;
+		return nullptr;
 	}
 
-	CProcess* process = 0;
+	CProcess* process = nullptr;
 	if( !IsValidVersion() ){
-		return 0;
+		return nullptr;
 	}
 
 	// プロセスクラスを生成する

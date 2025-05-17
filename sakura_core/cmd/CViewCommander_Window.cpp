@@ -308,7 +308,7 @@ void CViewCommander::Command_TILE_V( void )
 			//	Jul. 21, 2002 genta
 			::ShowWindow( phwndArr[i], SW_RESTORE );
 			::SetWindowPos(
-				phwndArr[i], 0,
+				phwndArr[i], nullptr,
 				rcDesktop.left, rcDesktop.top + height * i, //Mar. 19, 2004 crayonzen 上端調整
 				rcDesktop.right - rcDesktop.left, height,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
@@ -367,7 +367,7 @@ void CViewCommander::Command_TILE_H( void )
 			//	Jul. 21, 2002 genta
 			::ShowWindow( phwndArr[i], SW_RESTORE );
 			::SetWindowPos(
-				phwndArr[i], 0,
+				phwndArr[i], nullptr,
 				width * i + rcDesktop.left, rcDesktop.top, // Oct. 18, 2003 genta タスクバーが左にある場合を考慮
 				width, rcDesktop.bottom - rcDesktop.top,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
@@ -569,7 +569,7 @@ void CViewCommander::Command_MAXIMIZE_V( void )
 	//	May 01, 2004 genta マルチモニタ対応
 	::GetMonitorWorkRect( hwndFrame, &rcDesktop );
 	::SetWindowPos(
-		hwndFrame, 0,
+		hwndFrame, nullptr,
 		rcOrg.left, rcDesktop.top,
 		rcOrg.right - rcOrg.left, rcDesktop.bottom - rcDesktop.top,
 		SWP_NOOWNERZORDER | SWP_NOZORDER
@@ -590,7 +590,7 @@ void CViewCommander::Command_MAXIMIZE_H( void )
 	//	May 01, 2004 genta マルチモニタ対応
 	::GetMonitorWorkRect( hwndFrame, &rcDesktop );
 	::SetWindowPos(
-		hwndFrame, 0,
+		hwndFrame, nullptr,
 		rcDesktop.left, rcOrg.top,
 		rcDesktop.right - rcDesktop.left, rcOrg.bottom - rcOrg.top,
 		SWP_NOOWNERZORDER | SWP_NOZORDER

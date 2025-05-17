@@ -28,7 +28,7 @@
 #define SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_
 #pragma once
 
-#define SAFE_DELETE(p) { delete p; p=0; }
+#define SAFE_DELETE(p) { delete p; p=nullptr; }
 
 /*
 	2007.10.18 kobake

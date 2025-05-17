@@ -473,7 +473,7 @@ bool CBackupAgent::FormatBackUpPath(
 				//	Jan. 9, 2006 genta VC6対策
 				int idx;
 				for( idx=0; idx<10; ++idx ){
-					folders[idx] = 0;
+					folders[idx] = nullptr;
 				}
 				folders[0] = szFname;
 

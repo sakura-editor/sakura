@@ -202,7 +202,7 @@ CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
 
 CTextWidthCalc::CTextWidthCalc(HFONT font)
 {
-	hwnd = 0;
+	hwnd = nullptr;
 	HDC hDCTemp = ::GetDC( NULL ); // Desktop
 	hDC = ::CreateCompatibleDC( hDCTemp );
 	::ReleaseDC( NULL, hDCTemp );
@@ -217,7 +217,7 @@ CTextWidthCalc::CTextWidthCalc(HFONT font)
 
 CTextWidthCalc::CTextWidthCalc(HDC hdc)
 {
-	hwnd = 0;
+	hwnd = nullptr;
 	hDC = hdc;
 	assert(hDC);
 	nCx = 0;
@@ -235,8 +235,8 @@ CTextWidthCalc::~CTextWidthCalc()
 		}else{
 			::ReleaseDC(hwnd, hDC);
 		}
-		hwnd = 0;
-		hDC = 0;
+		hwnd = nullptr;
+		hDC = nullptr;
 	}
 }
 

@@ -465,12 +465,12 @@ void CViewCommander::Command_BROWSE( void )
     info.lpParameters = NULL;
     info.lpDirectory = NULL;
     info.nShow = SW_SHOWNORMAL;
-    info.hInstApp = 0;
+    info.hInstApp = nullptr;
     info.lpIDList = NULL;
     info.lpClass = NULL;
-    info.hkeyClass = 0; 
+    info.hkeyClass = nullptr;
     info.dwHotKey = 0;
-    info.hIcon =0;
+    info.hIcon = nullptr;
 
 	::ShellExecuteEx(&info);
 

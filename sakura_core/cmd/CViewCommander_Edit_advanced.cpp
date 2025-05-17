@@ -198,7 +198,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 					} sortedKetas[] = {
 						{ rcSel.GetFrom().x, &nIdxFrom, &xLayoutFrom },
 						{ rcSel.GetTo().x, &nIdxTo, &xLayoutTo },
-						{ CLayoutInt(-1), 0, 0 }
+						{ CLayoutInt(-1), nullptr, nullptr }
 					};
 					CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 					for( int i = 0; 0 <= sortedKetas[i].keta; ++i ) {

@@ -1291,7 +1291,7 @@ bool CControlTray::OpenNewEditor(
 		for( i = 0; i < 200; i++ ){
 			MSG msg;
 			DWORD dwExitCode;
-			if( ::PeekMessage( &msg, 0, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
+			if( ::PeekMessage( &msg, nullptr, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
 				if( msg.message == WM_QUIT ){	// 指定範囲外でも WM_QUIT は取り出される
 					::PostQuitMessage( msg.wParam );
 					break;
@@ -1696,7 +1696,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 */
 void CControlTray::OnDestroy()
 {
-	HWND hwndExitingDlg = 0;
+	HWND hwndExitingDlg = nullptr;
 
 	if (GetTrayHwnd() == NULL)
 		return;	// 既に破棄されている

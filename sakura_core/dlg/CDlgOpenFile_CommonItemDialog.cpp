@@ -112,7 +112,7 @@ struct CDlgOpenFile_CommonItemDialog final
 		static const QITAB qit[] = {
 			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogEvents),
 			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogControlEvents),
-			{ 0 },
+			{ },
 		};
 		return QISearch(this, qit, iid, ppvObject);
 	}

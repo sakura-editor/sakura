@@ -158,7 +158,7 @@ void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
 
 void CCharWidthCache::Clear()
 {
-	assert(m_pCache!=0);
+	assert(m_pCache!=nullptr);
 	// キャッシュのクリア
 	memcpy(m_pCache->m_lfFaceName.data(), m_lf.lfFaceName, sizeof(m_lf.lfFaceName));
 	memcpy(m_pCache->m_lfFaceName2.data(), m_lf2.lfFaceName, sizeof(m_lf2.lfFaceName));

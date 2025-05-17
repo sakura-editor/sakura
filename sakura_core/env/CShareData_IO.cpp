@@ -854,7 +854,7 @@ static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 	  && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1]))) {
 		n = (EFunctionCode)_wtol(pszFuncName);
 	}else {
-		n = CSMacroMgr::GetFuncInfoByName(0, pszFuncName, NULL);
+		n = CSMacroMgr::GetFuncInfoByName(nullptr, pszFuncName, nullptr);
 	}
 	if (n == F_INVALID) {
 		n = F_DEFAULT;
@@ -1183,7 +1183,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 						// 2010.06.30 Moca 日本語名を取得しないように
 						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-							0,
+							nullptr,
 							keydata.m_nFuncCodeArr[j],
 							szFuncName,
 							NULL

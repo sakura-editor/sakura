@@ -66,7 +66,7 @@ bool CBregexpDll2::InitDllImp()
 		{ &m_BRegexpVersion,	"BRegexpVersionW" },
 		{ &m_BMatchEx,			"BMatchExW" },
 		{ &m_BSubstEx,			"BSubstExW" },
-		{ NULL, 0 }
+		{ nullptr, nullptr }
 	};
 	
 	if( ! RegisterEntries( table )){

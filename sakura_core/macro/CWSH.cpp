@@ -255,7 +255,7 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 			ClassID = CLSID_JSScript9;
 		}
 #endif
-		if(CoCreateInstance(ClassID, 0, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
+		if(CoCreateInstance(ClassID, nullptr, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
 			Error(LS(STR_ERR_CWSH02));
 		else
 		{
@@ -395,7 +395,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 					Error(LS(STR_ERR_CWSH07));
 				else
 				{
-					HRESULT hr = Parser->ParseScriptText(AScript, 0, 0, 0, 0, 0, SCRIPTTEXT_ISVISIBLE, 0, 0);
+					HRESULT hr = Parser->ParseScriptText(AScript, nullptr, nullptr, nullptr, 0, 0, SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 					if (hr == SCRIPT_E_REPORTED) {
 					/*
 						IActiveScriptSite->OnScriptErrorに通知済み。

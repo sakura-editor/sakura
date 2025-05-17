@@ -159,7 +159,7 @@ bool CPPA::InitDllImp()
 		{ &m_fnSetFinishProc, "SetFinishProc"}, // 2003.06.23 Moca
 #endif
 
-		{ NULL, 0 }
+		{ nullptr, nullptr }
 	};
 
 	//	Apr. 15, 2002 genta
