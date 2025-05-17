@@ -28,7 +28,7 @@
 
 #include <comdef.h>
 #include <comutil.h>
-#include <OAIdl.h>
+#include <oaidl.h>
 
 #include <memory>
 #include <type_traits>
