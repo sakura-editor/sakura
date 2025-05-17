@@ -261,7 +261,7 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetNames(
 
 //コンストラクタ
 CIfObj::CIfObj(const wchar_t* name, bool isGlobal)
-: ImplementsIUnknown<IDispatch>(), m_sName(name), m_isGlobal(isGlobal), m_Owner(0), m_Methods(), m_TypeInfo(NULL)
+: ImplementsIUnknown<IDispatch>(), m_sName(name), m_isGlobal(isGlobal), m_Owner(nullptr), m_Methods(), m_TypeInfo(nullptr)
 { 
 };
 

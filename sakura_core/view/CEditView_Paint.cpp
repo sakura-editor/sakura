@@ -659,7 +659,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 	bool bTransText = IsBkBitmap();
 	// メモリＤＣを利用した再描画の場合は描画先のＤＣを切り替える
-	HDC hdcOld = 0;
+	HDC hdcOld = nullptr;
 	// 2007.09.09 Moca bUseMemoryDCを有効化。
 	// bUseMemoryDC = FALSE;
 	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);

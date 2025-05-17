@@ -234,10 +234,10 @@ public:
 				break;
 			}
 
-			const wchar_t *pTag      = 0, // \section{dddd} または \section*{dddd} の、s を指すポインタ。
-			              *pTagEnd   = 0, // \section{dddd} または \section*{dddd} の、{ を指すポインタ。
-			              *pTitle    = 0, // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
-			              *pTitleEnd = 0; // \section{dddd} または \section*{dddd} の、} を指すポインタ。
+			const wchar_t *pTag      = nullptr; // \section{dddd} または \section*{dddd} の、s を指すポインタ。
+			const wchar_t *pTagEnd   = nullptr; // \section{dddd} または \section*{dddd} の、{ を指すポインタ。
+			const wchar_t *pTitle    = nullptr; // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
+			const wchar_t *pTitleEnd = nullptr; // \section{dddd} または \section*{dddd} の、} を指すポインタ。
 
 			const wchar_t Meta[] = { L'\\', L'%' };
 			const wchar_t* p = pLine;

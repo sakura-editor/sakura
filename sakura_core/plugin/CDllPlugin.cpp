@@ -87,7 +87,7 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 		//DLL関数の取得
 		ImportTable imp[2] = {
 			{ &plug.m_handler, to_achar( plug.m_sHandler.c_str() ) },
-			{ NULL, 0 }
+			{ nullptr, nullptr }
 		};
 		if( ! RegisterEntries( imp ) ){
 //			DWORD err = GetLastError();

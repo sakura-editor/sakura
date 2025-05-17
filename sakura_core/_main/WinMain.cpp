@@ -76,14 +76,14 @@ int WINAPI wWinMain(
 
 	//プロセスの生成とメッセージループ
 	CProcessFactory aFactory;
-	CProcess *process = 0;
+	CProcess *process = nullptr;
 	try{
 		process = aFactory.Create( hInstance, lpCmdLine );
 		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
 	}
 	catch(...){
 	}
-	if( 0 != process ){
+	if( nullptr != process ){
 		process->Run();
 		delete process;
 	}

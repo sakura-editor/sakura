@@ -560,7 +560,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	else
 	{
 		::SetWindowPos(
-			GetHwnd(), 0,
+			GetHwnd(), nullptr,
 			rcOrg.left, rcOrg.top,
 			rcOrg.right - rcOrg.left, rcOrg.bottom - rcOrg.top,
 			SWP_NOOWNERZORDER | SWP_NOZORDER
@@ -1527,7 +1527,7 @@ LRESULT CEditWnd::DispatchEvent(
 			{
 				int	nId;
 				nId = CreateFileDropDownMenu( pnmh->hwndFrom );
-				if( nId != 0 ) OnCommand( (WORD)0 /*メニュー*/, (WORD)nId, (HWND)0 );
+				if( nId != 0 ) OnCommand( (WORD)0 /*メニュー*/, (WORD)nId, nullptr );
 			}
 			return FALSE;
 		//	From Here Jul. 21, 2003 genta
@@ -2635,7 +2635,7 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 		{
 			const CJackManager* pcJackManager = CJackManager::getInstance();
 			const CPlugin* prevPlugin = NULL;
-			HMENU hMenuPlugin = 0;
+			HMENU hMenuPlugin = nullptr;
 
 			CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
 			for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ){
@@ -3439,15 +3439,15 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 					SHGetMalloc(&Malloc);
 					SHGetDesktopFolder(&Desktop);
 					DWORD Eaten, Attribs;
-					if(SUCCEEDED(Desktop->ParseDisplayName(0, NULL, cmemDir.GetStringPtr(), &Eaten, &PathID, &Attribs)))
+					if(SUCCEEDED(Desktop->ParseDisplayName(nullptr, nullptr, cmemDir.GetStringPtr(), &Eaten, &PathID, &Attribs)))
 					{
 						Desktop->BindToObject(PathID, NULL, IID_IShellFolder, (void**)&Folder);
 						Malloc->Free(PathID);
-						if(SUCCEEDED(Folder->ParseDisplayName(0, NULL, cmemTitle.GetStringPtr(), &Eaten, &ItemID, &Attribs)))
+						if(SUCCEEDED(Folder->ParseDisplayName(nullptr, nullptr, cmemTitle.GetStringPtr(), &Eaten, &ItemID, &Attribs)))
 						{
 							LPCITEMIDLIST List[1];
 							List[0] = ItemID;
-							Folder->GetUIObjectOf(0, 1, List, IID_IDataObject, NULL, (void**)&DataObject);
+							Folder->GetUIObjectOf(nullptr, 1, List, IID_IDataObject, nullptr, (void**)&DataObject);
 							Malloc->Free(ItemID);
 #define DDASTEXT
 #ifdef  DDASTEXT

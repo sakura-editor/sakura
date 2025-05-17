@@ -188,7 +188,7 @@ void CViewCommander::Command_COMPARE( void )
 		int width = (rcDesktop.right - rcDesktop.left ) / 2;
 		for( i = 1; i >= 0; i-- ){
 			::SetWindowPos(
-				phwndArr[i], 0,
+				phwndArr[i], nullptr,
 				width * i + rcDesktop.left, rcDesktop.top, // Oct. 18, 2003 genta タスクバーが左にある場合を考慮
 				width, rcDesktop.bottom - rcDesktop.top,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
