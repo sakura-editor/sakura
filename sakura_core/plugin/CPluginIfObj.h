@@ -51,7 +51,6 @@ class CPluginIfObj : public CWSHIfObj {
 		F_PL_GETCOMMANDNO,						//実行中プラグの番号を取得する
 		F_PL_GETSTRING,							//設定ファイルから文字列を読みだす(多言語対応)
 	};
-	typedef std::string string;
 	typedef std::wstring wstring;
 
 	// コンストラクタ

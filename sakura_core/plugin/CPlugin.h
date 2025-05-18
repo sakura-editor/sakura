@@ -235,7 +235,6 @@ class CPlugin
 	//型定義
 protected:
 	typedef std::wstring wstring;
-	typedef std::string string;
 
 public:
 	typedef std::list<CPlugin*> List;		//プラグインのリスト

@@ -42,7 +42,6 @@ class CSmartIndentIfObj final : public CWSHIfObj
 		F_SI_FUNCTION_FIRST = F_FUNCTION_FIRST,	//↓関数は以下に追加する
 		F_SI_GETCHAR							//押下したキーを取得する
 	};
-	typedef std::string string;
 	typedef std::wstring wstring;
 
 	// コンストラクタ

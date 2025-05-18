@@ -52,7 +52,6 @@ class CProfile
 {
 	//文字列型
 	typedef std::wstring wstring;
-	typedef std::string string;
 
 	typedef std::map< wstring, wstring > MAP_STR_STR;
 	struct Section
@@ -87,5 +86,4 @@ protected:
 	bool					m_bRead;			//!< モード(true=読み込み/false=書き出し)
 };
 
-#define _INI_T LTEXT
 #endif /* SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_ */

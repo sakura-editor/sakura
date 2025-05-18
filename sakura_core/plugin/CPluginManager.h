@@ -41,7 +41,6 @@ class CPluginManager final : public TSingleton<CPluginManager>{
 	// 型定義
 private:
 	typedef std::wstring wstring;
-	typedef std::string string;
 
 	// 操作
 public:
