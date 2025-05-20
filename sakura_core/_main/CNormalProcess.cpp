@@ -94,7 +94,6 @@ bool CNormalProcess::InitializeProcess()
 	bool			bDebugMode;
 	bool			bGrepMode;
 	bool			bGrepDlg;
-	GrepInfo		gi;
 	EditInfo		fi;
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
@@ -199,6 +198,7 @@ bool CNormalProcess::InitializeProcess()
 			::GetClientRect( hEditWnd, &rc );
 			::SendMessageAny( hEditWnd, WM_SIZE, ::IsZoomed( hEditWnd )? SIZE_MAXIMIZED: SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		}
+		GrepInfo gi;
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
