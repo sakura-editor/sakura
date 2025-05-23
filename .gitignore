@@ -16,6 +16,7 @@
 /MinGW
 /Win32
 /x64
+/ARM64
 Backup
 build-wrapper-win-x86*
 bw-output

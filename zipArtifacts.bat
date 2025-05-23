@@ -7,6 +7,8 @@ if "%platform%" == "Win32" (
 	@rem OK
 ) else if "%platform%" == "x64" (
 	@rem OK
+) else if "%platform%" == "arm64" (
+	@rem OK
 ) else (
 	call :showhelp %0
 	exit /b 1
@@ -22,6 +24,8 @@ if "%configuration%" == "Release" (
 )
 
 if "%platform%" == "x64" (
+	set ALPHA=1
+) else if "%platform%" == "arm64" (
 	set ALPHA=1
 ) else (
 	set ALPHA=0
@@ -134,9 +138,9 @@ if not "%RELEASE_PHASE%" == "" (
 @rem PR_NAME      : (option) PRxxx (xxx is a PR number)
 @rem BUILD_NUMBER : (option) buildYYY or "buildLocal" (YYY is build number)
 @rem SHORTHASH    : (option) hash or "buildLocal" (hash is leading 8 charactors)
-@rem platform     : Platform ("Win32" or "x64")
+@rem platform     : Platform ("Win32" or "x64" or "arm64")
 @rem configuration: Configuration ("Debug" or "Release")
-@rem RELEASE_PHASE: (option) "alpha" (x64 build only)
+@rem RELEASE_PHASE: (option) "alpha" (x64 and arm64 builds only)
 @rem ----------------------------------------------------------------
 
 @rem ----------------------------------------------------------------
@@ -313,7 +317,7 @@ exit /b 0
 @echo    %~nx1 platform configuration
 @echo.
 @echo parameter
-@echo    platform      : Win32   or x64
+@echo    platform      : Win32   or x64   or arm64
 @echo    configuration : Release or Debug
 @echo.
 @echo example
@@ -321,4 +325,6 @@ exit /b 0
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
 @echo    %~nx1 x64   Debug
+@echo    %~nx1 arm64 Release
+@echo    %~nx1 arm64 Debug
 exit /b 0

@@ -22,6 +22,7 @@
 # /*.vcxproj
 /Win32
 /x64
+/ARM64
 /Toolkit2003Env.bat
 /_UpgradeReport_Files
 /ipch
