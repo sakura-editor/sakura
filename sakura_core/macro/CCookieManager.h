@@ -19,8 +19,6 @@
 
 class CCookieManager
 {
-	typedef std::wstring wstring;
-
 public:
 	SysString GetCookie(LPCWSTR scope, LPCWSTR cookieName) const;
 	SysString GetCookieDefault(LPCWSTR scope, LPCWSTR cookieName, LPCWSTR defVal, int len) const;
@@ -30,10 +28,10 @@ public:
 	int DeleteAll(LPCWSTR scope);
 
 private:
-	std::map<wstring, wstring>* SelectCookieType(LPCWSTR scope) const;
+	std::map<std::wstring, std::wstring>* SelectCookieType(LPCWSTR scope) const;
 	bool ValidateCookieName(LPCWSTR cookieName) const;
 
-	std::map<wstring, wstring> m_cookieWindow;
-	std::map<wstring, wstring> m_cookieDocument;
+	std::map<std::wstring, std::wstring> m_cookieWindow;
+	std::map<std::wstring, std::wstring> m_cookieDocument;
 };
 #endif /* SAKURA_CCOOKIEMANAGER_69A96E71_61BD_417E_BD29_10B3D27AA11D_H_ */

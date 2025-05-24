@@ -33,7 +33,6 @@ class CPluginIfObj : public CWSHIfObj {
 		F_PL_GETCOMMANDNO,						//実行中プラグの番号を取得する
 		F_PL_GETSTRING,							//設定ファイルから文字列を読みだす(多言語対応)
 	};
-	typedef std::wstring wstring;
 
 	// コンストラクタ
 public:
@@ -79,9 +78,9 @@ public:
 		case F_PL_GETOPTION:			//オプションファイルから値を読む
 			{
 				CDataProfile cProfile;
-				wstring sSection;
-				wstring sKey;
-				wstring sValue;
+				std::wstring sSection;
+				std::wstring sKey;
+				std::wstring sValue;
 				if( variant_to_wstr( Arguments[0], sSection ) != true) return false;
 				if( variant_to_wstr( Arguments[1], sKey ) != true) return false;
 
@@ -96,8 +95,8 @@ public:
 					// 設定されていなければデフォルトを取得 
 					CPluginOption::ArrayIter it;
 					for (it = m_cPlugin.m_options.cbegin(); it != m_cPlugin.m_options.cend(); it++) {
-						wstring sSectionTmp;
-						wstring sKeyTmp;
+						std::wstring sSectionTmp;
+						std::wstring sKeyTmp;
 						(*it)->GetKey(&sSectionTmp, &sKeyTmp);
 						if (sSection == sSectionTmp && sKey == sKeyTmp) {
 							sValue = (*it)->GetDefaultVal();
@@ -148,7 +147,7 @@ public:
 
 				cProfile.ReadProfile( m_cPlugin.GetOptionPath().c_str() );
 				cProfile.SetWritingMode();
-				wstring tmp(Arguments[2]);
+				std::wstring tmp(Arguments[2]);
 				cProfile.IOProfileData( Arguments[0], Arguments[1], tmp );
 				cProfile.WriteProfile( m_cPlugin.GetOptionPath().c_str(), (m_cPlugin.m_sName + L" プラグイン設定ファイル").c_str() );
 			}

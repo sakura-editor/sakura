@@ -52,8 +52,6 @@ class CPlugin;
 class CPlug
 {
 	//型定義
-protected:
-	typedef std::wstring wstring;
 public:
 	/*!
 	  CPlug::Arrayはstd::vectorなので、要素の追加削除（insert/erase）をすると
@@ -66,7 +64,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
+	CPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
 		: m_id( id )
 		, m_sJack( sJack )
 		, m_sHandler( sHandler )
@@ -145,10 +143,10 @@ public:
 	//メンバ変数
 public:
 	const PlugId m_id;					//プラグID
-	const wstring m_sJack;				//関連付けるジャック名
-	const wstring m_sHandler;			//ハンドラ文字列（関数名）
-	const wstring m_sLabel;				//ラベル文字列
-	wstring m_sIcon;					//アイコンのファイルパス
+	const std::wstring m_sJack;			//関連付けるジャック名
+	const std::wstring m_sHandler;		//ハンドラ文字列（関数名）
+	const std::wstring m_sLabel;		//ラベル文字列
+	std::wstring m_sIcon;				//アイコンのファイルパス
 	CPlugin& m_cPlugin;					//親プラグイン
 };
 
@@ -158,15 +156,13 @@ std::vector<std::wstring> wstring_split( std::wstring, wchar_t );
 class CPluginOption
 {
 	//型定義
-protected:
-	typedef std::wstring wstring;
 public:
 	typedef std::vector<CPluginOption*> Array;	// オプションのリスト
 	typedef Array::const_iterator ArrayIter;	// そのイテレータ
 
 	//コンストラクタ
 public:
-	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, wstring sSelects, wstring sDefaultVal, int index) 
+	CPluginOption( CPlugin* parent, std::wstring sLabel, std::wstring sSection, std::wstring sKey, std::wstring sType, std::wstring sSelects, std::wstring sDefaultVal, int index) 
 		: m_sLabel(sLabel), m_sSection(sSection), m_sKey(sKey)
 	{
 		m_parent	= parent;
@@ -184,27 +180,27 @@ public:
 
 	//操作
 public:
-	wstring	GetLabel( void ) const  { return m_sLabel; }
-	void	GetKey( wstring* sectin, wstring* key ) const { 
+	std::wstring	GetLabel( void ) const  { return m_sLabel; }
+	void	GetKey( std::wstring* sectin, std::wstring* key ) const {
 		*sectin = m_sSection; 
 		*key = m_sKey;
 	}
-	wstring	GetType( void ) const	{ return m_sType; }
+	std::wstring	GetType( void ) const	{ return m_sType; }
 	int 	GetIndex( void ) const	{ return m_index; }
-	std::vector<wstring>	GetSelects() const
+	std::vector<std::wstring>	GetSelects() const
 	{
 		return (wstring_split(m_sSelects, L'|'));
 	}
-	wstring	GetDefaultVal() const { return m_sDefaultVal; }
+	std::wstring	GetDefaultVal() const { return m_sDefaultVal; }
 
 protected:
 	CPlugin*	m_parent;
-	wstring		m_sLabel;
-	wstring		m_sSection;
-	wstring		m_sKey;
-	wstring		m_sType;
-	wstring		m_sSelects;		// 選択候補
-	wstring		m_sDefaultVal;
+	std::wstring		m_sLabel;
+	std::wstring		m_sSection;
+	std::wstring		m_sKey;
+	std::wstring		m_sType;
+	std::wstring		m_sSelects;		// 選択候補
+	std::wstring		m_sDefaultVal;
 	int 		m_index; 
 };
 
@@ -215,16 +211,13 @@ class CPlugin
 	using Me = CPlugin;
 
 	//型定義
-protected:
-	typedef std::wstring wstring;
-
 public:
 	typedef std::list<CPlugin*> List;		//プラグインのリスト
 	typedef List::const_iterator ListIter;	//そのイテレータ
 
 	//コンストラクタ
 public:
-	CPlugin( const wstring& sBaseDir );
+	CPlugin( const std::wstring& sBaseDir );
 	CPlugin(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CPlugin(Me&&) noexcept = delete;
@@ -247,7 +240,7 @@ protected:
 	bool ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//プラグイン定義ファイルのStringセクションを読み込む
 
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
-	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
+	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
 	{
 		return new CPlug( plugin, id, sJack, sHandler, sLabel );
 	}
@@ -256,25 +249,25 @@ protected:
 
 	//属性
 public:
-	wstring GetFilePath( const wstring& sFileName ) const;				//プラグインフォルダー基準の相対パスをフルパスに変換
-	wstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
-	wstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
-	wstring GetFolderName() const;	//プラグインのフォルダー名を取得
+	std::wstring GetFilePath( const std::wstring& sFileName ) const;				//プラグインフォルダー基準の相対パスをフルパスに変換
+	std::wstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
+	std::wstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
+	std::wstring GetFolderName() const;	//プラグインのフォルダー名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数
 public:
-	PluginId m_id;				//!< プラグイン番号（エディタがふる0～MAX_PLUGIN-1の番号）
-	wstring m_sId;				//!< プラグインID
-	wstring m_sName;			//!< プラグイン和名
-	wstring m_sDescription;		//!< プラグインについての簡単な記述
-	wstring m_sAuthor;			//!< 作者
-	wstring m_sVersion;			//!< バージョン
-	wstring m_sUrl;				//!< 配布URL
-	wstring m_sBaseDir;
-	wstring m_sOptionDir;
-	wstring m_sLangName;		//!< 言語名
-	CPluginOption::Array m_options;		// オプション	// 2010/3/24 Uchi
+	PluginId m_id;					//!< プラグイン番号（エディタがふる0～MAX_PLUGIN-1の番号）
+	std::wstring m_sId;				//!< プラグインID
+	std::wstring m_sName;			//!< プラグイン和名
+	std::wstring m_sDescription;	//!< プラグインについての簡単な記述
+	std::wstring m_sAuthor;			//!< 作者
+	std::wstring m_sVersion;		//!< バージョン
+	std::wstring m_sUrl;			//!< 配布URL
+	std::wstring m_sBaseDir;
+	std::wstring m_sOptionDir;
+	std::wstring m_sLangName;		//!< 言語名
+	CPluginOption::Array m_options;	// オプション	// 2010/3/24 Uchi
 	std::vector<std::wstring> m_aStrings;	// 文字列
 protected:
 	CPlug::Array m_plugs;

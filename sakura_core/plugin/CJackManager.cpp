@@ -62,7 +62,7 @@ std::vector<JackDef> CJackManager::GetJackDef() const
 }
 
 //プラグをジャックに関連付ける
-ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
+ERegisterPlugResult CJackManager::RegisterPlug( std::wstring pszJack, CPlug* plug )
 {
 	EJack ppId = GetJackFromName( pszJack );
 	if( ppId == PP_NONE ){
@@ -109,7 +109,7 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 }
 
 //プラグの関連付けを解除する
-bool CJackManager::UnRegisterPlug( wstring pszJack, CPlug* plug )
+bool CJackManager::UnRegisterPlug( std::wstring pszJack, CPlug* plug )
 {
 	EJack ppId = GetJackFromName( pszJack );
 
@@ -147,7 +147,7 @@ bool CJackManager::UnRegisterPlug( wstring pszJack, CPlug* plug )
 }
 
 //ジャック名をジャック番号に変換する
-EJack CJackManager::GetJackFromName( wstring sName )
+EJack CJackManager::GetJackFromName( std::wstring sName )
 {
 	unsigned int i;
 	const WCHAR* szName = sName.c_str();
