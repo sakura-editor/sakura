@@ -191,6 +191,7 @@ protected:
 	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
 	bool Import(HWND hwndDlg);											//!< インポート
 	bool Export(HWND hwndDlg);											//!< エクスポート
+	static LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
 
 protected:
 	void DrawColorListItem( DRAWITEMSTRUCT* );				//!< 色種別リスト オーナー描画
@@ -199,7 +200,6 @@ protected:
 	void DrawColorButton(DRAWITEMSTRUCT* pDis, COLORREF cColor);		//!< 色ボタンの描画
 public:
 	static BOOL SelectColor(HWND hwndParent, COLORREF* pColor, DWORD* pCustColors);	//!< 色選択ダイアログ
-private:
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
