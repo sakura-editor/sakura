@@ -65,9 +65,9 @@ public:
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
 public:
-	virtual LPCWSTR GetDllNameImp(int nIndex);
+	LPCWSTR GetDllNameImp(int nIndex) override;
 protected:
-	virtual bool InitDllImp();
+	bool InitDllImp() override;
 
 private:
 	//	DLL Interfaceの受け皿

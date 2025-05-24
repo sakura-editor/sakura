@@ -104,10 +104,10 @@ private: // 2002/2/10 aroka アクセス権変更
 public:
 	BOOL			Register_DropTarget(HWND hWnd);
 	BOOL			Revoke_DropTarget( void );
-	STDMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP	DragLeave( void );
-	STDMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
+	STDMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	STDMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	STDMETHODIMP	DragLeave( void ) override;
+	STDMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
 protected:
 	/*
 	||  実装ヘルパ関数

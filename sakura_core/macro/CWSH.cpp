@@ -58,11 +58,11 @@ public:
 	{
 	}
 
-	virtual ULONG STDMETHODCALLTYPE AddRef() {
+	ULONG STDMETHODCALLTYPE AddRef() override {
 		return ++m_RefCount;
 	}
 
-	virtual ULONG STDMETHODCALLTYPE Release() {
+	ULONG STDMETHODCALLTYPE Release() override {
 		if(--m_RefCount == 0)
 		{
 			delete this;
@@ -71,9 +71,9 @@ public:
 		return m_RefCount;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE QueryInterface(
+	HRESULT STDMETHODCALLTYPE QueryInterface(
 	    /* [in] */ REFIID iid,
-	    /* [out] */ void ** ppvObject)
+	    /* [out] */ void ** ppvObject) override
 	{
 		*ppvObject = NULL;
 
@@ -86,8 +86,8 @@ public:
 		return E_NOTIMPL;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE GetLCID( 
-	    /* [out] */ LCID *plcid) 
+	HRESULT STDMETHODCALLTYPE GetLCID(
+	    /* [out] */ LCID *plcid) override
 	{ 
 #ifdef TEST
 		cout << "GetLCID" << endl;
@@ -95,11 +95,11 @@ public:
 		return E_NOTIMPL; //システムデフォルトを使用
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE GetItemInfo( 
+	HRESULT STDMETHODCALLTYPE GetItemInfo(
 	    /* [in] */ LPCOLESTR pstrName,
 	    /* [in] */ DWORD dwReturnMask,
 	    /* [out] */ IUnknown **ppiunkItem,
-	    /* [out] */ ITypeInfo **ppti) 
+	    /* [out] */ ITypeInfo **ppti) override
 	{
 #ifdef TEST
 		wcout << L"GetItemInfo:" << pstrName << endl;
@@ -126,8 +126,8 @@ public:
 		return TYPE_E_ELEMENTNOTFOUND;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE GetDocVersionString( 
-	    /* [out] */ BSTR *pbstrVersion) 
+	HRESULT STDMETHODCALLTYPE GetDocVersionString(
+	    /* [out] */ BSTR *pbstrVersion) override
 	{ 
 #ifdef TEST
 		cout << "GetDocVersionString" << endl;
@@ -135,9 +135,9 @@ public:
 		return E_NOTIMPL; 
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE OnScriptTerminate( 
+	HRESULT STDMETHODCALLTYPE OnScriptTerminate(
 	    /* [in] */ const VARIANT *pvarResult,
-	    /* [in] */ const EXCEPINFO *pexcepinfo) 
+	    /* [in] */ const EXCEPINFO *pexcepinfo) override
 	{ 
 #ifdef TEST
 		cout << "OnScriptTerminate" << endl;
@@ -145,8 +145,8 @@ public:
 		return S_OK; 
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE OnStateChange( 
-	    /* [in] */ SCRIPTSTATE ssScriptState) 
+	HRESULT STDMETHODCALLTYPE OnStateChange(
+	    /* [in] */ SCRIPTSTATE ssScriptState) override
 	{ 
 #ifdef TEST
 		cout << "OnStateChange" << endl;
@@ -156,8 +156,8 @@ public:
 
 	//	Nov. 3, 2002 鬼
 	//	エラー行番号表示対応
-	virtual HRESULT STDMETHODCALLTYPE OnScriptError(
-	  /* [in] */ IActiveScriptError *pscripterror)
+	HRESULT STDMETHODCALLTYPE OnScriptError(
+	  /* [in] */ IActiveScriptError *pscripterror) override
 	{ 
 		EXCEPINFO Info;
 		if(pscripterror->GetExceptionInfo(&Info) == S_OK)
@@ -185,14 +185,14 @@ public:
 		return S_OK;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE OnEnterScript() {
+	HRESULT STDMETHODCALLTYPE OnEnterScript() override {
 #ifdef TEST
 		cout << "OnEnterScript" << endl;
 #endif
 		return S_OK; 
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE OnLeaveScript() {
+	HRESULT STDMETHODCALLTYPE OnLeaveScript() override {
 #ifdef TEST
 		cout << "OnLeaveScript" << endl;
 #endif
@@ -200,16 +200,16 @@ public:
 	}
 
 	//	Sep. 15, 2005 FILE IActiveScriptSiteWindow実装
-	virtual HRESULT STDMETHODCALLTYPE GetWindow(
-	    /* [out] */ HWND *phwnd)
+	HRESULT STDMETHODCALLTYPE GetWindow(
+	    /* [out] */ HWND *phwnd) override
 	{
 		*phwnd = CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd();
 		return S_OK;
 	}
 
 	//	Sep. 15, 2005 FILE IActiveScriptSiteWindow実装
-	virtual HRESULT STDMETHODCALLTYPE EnableModeless(
-	    /* [in] */ BOOL fEnable)
+	HRESULT STDMETHODCALLTYPE EnableModeless(
+	    /* [in] */ BOOL fEnable) override
 	{
 		return S_OK;
 	}
