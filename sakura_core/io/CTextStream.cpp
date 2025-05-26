@@ -13,8 +13,6 @@
 #include "util/file.h"			// _IS_REL_PATH
 #include "util/module.h"
 
-using namespace std;
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CTextInputStream                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,7 +52,7 @@ CTextInputStream::~CTextInputStream()
 {
 }
 
-wstring CTextInputStream::ReadLineW()
+std::wstring CTextInputStream::ReadLineW()
 {
 	//$$ 非効率だけど今のところは許して。。
 	CNativeW line;

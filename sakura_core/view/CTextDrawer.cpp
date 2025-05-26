@@ -25,8 +25,6 @@ const CTextArea* CTextDrawer::GetTextArea() const
 	return &m_pEditView->GetTextArea();
 }
 
-using namespace std;
-
 /*
 テキスト表示
 @@@ 2002.09.22 YAZAKI    const unsigned char* pDataを、const char* pDataに変更
@@ -45,7 +43,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 	const CTextArea* pArea=GetTextArea();
 
 	//文字間隔配列を生成
-	static vector<int> vDxArray(1);
+	static std::vector<int> vDxArray(1);
 	const int* pDxArray = pMetrics->GenerateDxArray2(&vDxArray, pData, nLength);
 
 	//文字列のピクセル幅

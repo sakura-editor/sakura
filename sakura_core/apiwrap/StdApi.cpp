@@ -9,8 +9,6 @@
 #include "StdApi.h"
 #include "charset/charcode.h"
 
-using namespace std;
-
 namespace ApiWrap{
 
 	/*!

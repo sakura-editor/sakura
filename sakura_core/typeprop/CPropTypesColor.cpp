@@ -41,8 +41,6 @@
 #include "config/app_constants.h"
 #include "String_define.h"
 
-using namespace std;
-
 namespace {
 //! カスタムカラー用の識別文字列
 const WCHAR* TSTR_PTRCUSTOMCOLORS = L"ptrCustomColors";

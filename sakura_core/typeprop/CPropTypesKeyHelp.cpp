@@ -27,8 +27,6 @@
 #include "sakura.hh"
 #include "String_define.h"
 
-using namespace std;
-
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDC_CHECK_KEYHELP,				HIDC_CHECK_KEYHELP,				//キーワードヘルプ機能を使う
 	IDC_LIST_KEYHELP,				HIDC_LIST_KEYHELP,				//SysListView32

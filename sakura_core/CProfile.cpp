@@ -46,8 +46,6 @@ void EnsureDirectoryExist( const std::wstring& strProfileName )
 	}
 }
 
-using namespace std;
-
 /*! Profileを初期化
 	
 	@date 2003-10-21 D.S.Koba STLで書き直す
@@ -284,7 +282,7 @@ bool CProfile::WriteProfile(
 */
 bool CProfile::_WriteFile(
 	const wstring&			strFilename,	//!< [in]  ファイル名
-	const vector<wstring>&	vecLine			//!< [out] 文字列格納先
+	const std::vector<wstring>&	vecLine		//!< [out] 文字列格納先
 )
 {
 	CTextOutputStream out(strFilename.c_str());

@@ -39,8 +39,6 @@
 #include "config/system_constants.h"
 #include "String_define.h"
 
-using namespace std;
-
 #define MIN_PREVIEW_ZOOM 10
 #define MAX_PREVIEW_ZOOM 400
 
@@ -1500,7 +1498,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				const int nLineCols = wcslen( szLineNum );
 
 				//文字間隔配列を生成
-				vector<int> vDxArray;
+				std::vector<int> vDxArray;
 				int spacing = 0;
 				const int* pDxArray = CTextMetrics::GenerateDxArray(&vDxArray, szLineNum, nLineCols, m_pPrintSetting->m_nPrintFontWidth, spacing);
 
@@ -1665,7 +1663,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	const int charWidth = 1; // 1 LayoutIntあたりの幅
 
 	//文字間隔配列を生成
-	vector<int> vDxArray;
+	std::vector<int> vDxArray;
 	const int* pDxArray = CTextMetrics::GenerateDxArray(
 		&vDxArray,
 		pLine + nLineStart,

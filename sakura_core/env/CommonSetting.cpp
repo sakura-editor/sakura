@@ -9,7 +9,6 @@
 #include "StdAfx.h"
 #include "CommonSetting.h"
 #include <vector>
-using namespace std;
 
 //CommonValue管理
 struct CommonValueInfo{
@@ -46,7 +45,7 @@ struct CommonValueInfo{
 		}
 	}
 };
-vector<CommonValueInfo> g_commonvalues;
+std::vector<CommonValueInfo> g_commonvalues;
 void CommonValue_AllSave()
 {
 	int nSize = (int)g_commonvalues.size();
