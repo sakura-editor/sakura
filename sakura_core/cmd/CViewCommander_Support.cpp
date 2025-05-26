@@ -180,13 +180,13 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 		po.y,
 		0,
 		GetMainWindow()/*GetHwnd()*/,
-		NULL
+		nullptr
 	);
 	::DestroyMenu( hMenu );
 	if( 0 != nId ){
 		/* コマンドコードによる処理振り分け */
 //		HandleCommand( nFuncID, true, 0, 0, 0, 0 );
-		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ), (LPARAM)NULL );
+		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ), (LPARAM)nullptr );
 	}
 	return;
 }
@@ -202,7 +202,7 @@ retry:;
 		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
-		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+		if( IDYES == ::MYMESSAGEBOX( nullptr, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 //To Here Sept. 15, 2000
 			LS(STR_ERR_CEDITVIEW_CMD01)
 		) ){
@@ -233,7 +233,7 @@ retry:;
 	}
 	// 2012.09.26 Moca HTMLHELP対応
 	WCHAR	szExt[_MAX_EXT];
-	_wsplitpath( path, NULL, NULL, NULL, szExt );
+	_wsplitpath( path, nullptr, nullptr, nullptr, szExt );
 	if( 0 == _wcsicmp(szExt, L".chi") || 0 == _wcsicmp(szExt, L".chm") || 0 == _wcsicmp(szExt, L".col") ){
 		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
 	}else{
@@ -252,7 +252,7 @@ retry:;
 void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* kwd )
 {
 	std::wstring helpfile;
-	if( _helpfile != NULL ){
+	if( _helpfile != nullptr ){
 		helpfile = _helpfile;
 	}
 
@@ -262,13 +262,13 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	DEBUG_TRACE( L"helpfile=%s\n", helpfile.c_str() );
 
 	//	From Here Jul. 5, 2002 genta
-	const WCHAR *filename = NULL;
+	const WCHAR *filename = nullptr;
 	if ( 0 == helpfile.length() ){
 		while( !CHelpManager().ExtHTMLHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
 			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
 	//		[Esc]キーと[x]ボタンでも中止できるように変更
-			if( IDYES != ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+			if( IDYES != ::MYMESSAGEBOX( nullptr, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 	//	To Here Sept. 15, 2000
 				LS(STR_ERR_CEDITVIEW_CMD02)
 			) ){
@@ -289,7 +289,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//	Jul. 5, 2002 genta
 	//	キーワードの外部指定を可能に
 	CNativeW	cmemCurText;
-	if( kwd != NULL && kwd[0] != L'\0' ){
+	if( kwd != nullptr && kwd[0] != L'\0' ){
 		cmemCurText.SetString( kwd );
 	}
 	else {
@@ -323,10 +323,10 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		link.cbStruct = sizeof( link ) ;
 		link.fReserved = FALSE ;
 		link.pszKeywords = cmemCurText.GetStringPtr();
-		link.pszUrl = NULL;
-		link.pszMsgText = NULL;
-		link.pszMsgTitle = NULL;
-		link.pszWindow = NULL;
+		link.pszUrl = nullptr;
+		link.pszMsgText = nullptr;
+		link.pszMsgTitle = nullptr;
+		link.pszWindow = nullptr;
 		link.fIndexOnFail = TRUE;
 
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
@@ -336,7 +336,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 			GetInidirOrExedir( path, filename );
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
+				nullptr/*GetDllShareData().m_sHandles.m_hwndTray*/,
 				path, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
 				(DWORD_PTR)&link
@@ -344,7 +344,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		}else{
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
+				nullptr/*GetDllShareData().m_sHandles.m_hwndTray*/,
 				filename, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
 				(DWORD_PTR)&link
@@ -353,7 +353,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	}
 
 	//	Jul. 6, 2001 genta hwndHtmlHelpのチェックを追加
-	if( hwndHtmlHelp != NULL ){
+	if( hwndHtmlHelp != nullptr ){
 		::BringWindowToTop( hwndHtmlHelp );
 	}
 

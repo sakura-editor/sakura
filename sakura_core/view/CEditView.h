@@ -117,7 +117,7 @@ public:
 	//! 背景にビットマップを使用するかどうか
 	//! 2010.10.03 背景実装
 	bool IsBkBitmap() const{
-		return NULL != m_pcEditDoc->m_hBackImg
+		return nullptr != m_pcEditDoc->m_hBackImg
 			&& 0 != GetDocument()->m_cDocType.GetDocumentAttribute().m_backImgOpacity;
 	}
 
@@ -154,8 +154,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//取得
-	bool MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = NULL );			/* クリップボードからデータを取得 */
-	bool MyGetClipboardData( std::wstring& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = NULL);			/* クリップボードからデータを取得 */
+	bool MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = nullptr );			/* クリップボードからデータを取得 */
+	bool MyGetClipboardData( std::wstring& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = nullptr);			/* クリップボードからデータを取得 */
 
 	//設定
 	bool MySetClipboardData( const WCHAR* pszText, size_t nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
@@ -325,7 +325,7 @@ public:
 	bool IsCurrentPositionURL( const CLayoutPoint& ptCaretPos, CLogicRange* pUrlRange, std::wstring* pstrURL );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( CMyPoint ptMouse );							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
 
-	bool ExecCmd(const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDir, COutputAdapter* customOa = NULL ) ;							// 子プロセスの標準出力をリダイレクトする
+	bool ExecCmd(const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDir, COutputAdapter* customOa = nullptr ) ;							// 子プロセスの標準出力をリダイレクトする
 	void AddToCmdArr(const WCHAR* szCmd);
 	BOOL ChangeCurRegexp(bool bRedrawIfChanged= true);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const WCHAR* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
@@ -383,7 +383,7 @@ public:
 		bool				bRedraw,
 		COpeBlk*			pcOpeBlk,
 		bool				bFastMode = false,
-		const CLogicRange*	psDelRangeLogicFast = NULL
+		const CLogicRange*	psDelRangeLogicFast = nullptr
 	);
 	void ReplaceData_CEditView2(
 		const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
@@ -402,7 +402,7 @@ public:
 		int				nDelSeq,
 		int*			pnInsSeq,
 		bool			bFastMode = false,
-		const CLogicRange*	psDelRangeLogicFast = NULL
+		const CLogicRange*	psDelRangeLogicFast = nullptr
 	);
 	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
 
@@ -487,7 +487,7 @@ public:
 	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
 	//	Feb. 17, 2007 genta 相対パスの基準ディレクトリ指示を追加
 	bool TagJumpSub( const WCHAR* pszJumpToFile, CMyPoint ptJumpTo,bool bClose = false,
-		bool bRelFromIni = false, bool* pbJumpToSelf = NULL );
+		bool bRelFromIni = false, bool* pbJumpToSelf = nullptr );
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         メニュー                            //

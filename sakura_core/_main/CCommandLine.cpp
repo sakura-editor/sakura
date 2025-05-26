@@ -103,7 +103,7 @@ int CCommandLine::CheckCommandLine(
 		{L"GREPDLG",		7,	CMDLINEOPT_GREPDLG, false},
 		{L"DEBUGMODE",	9,	CMDLINEOPT_DEBUGMODE, false},
 		{L"PROFMGR",		7,	CMDLINEOPT_PROFMGR, false},
-		{NULL, 0, 0}
+		{nullptr, 0, 0}
 	};
 
 	/*!
@@ -132,14 +132,14 @@ int CCommandLine::CheckCommandLine(
 		{L"M",		1,			CMDLINEOPT_M, false},		// 2009.06.14 syat
 		{L"MTYPE",	5,			CMDLINEOPT_MTYPE, false},	// 2009.06.14 syat
 		{L"PROF",	4,			CMDLINEOPT_PROF, true},	// 2013.12.20 Moca
-		{NULL, 0, 0}
+		{nullptr, 0, 0}
 	};
 
 	const _CmdLineOpt *ptr;
 	int len = lstrlen( str );
 
 	//	引数がある場合を先に確認
-	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ )
+	for( ptr = _COptWithA; ptr->opt != nullptr; ptr++ )
 	{
 		if( len >= ptr->len &&	//	長さが足りているか
 			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&	//	オプション部分の長さチェック
@@ -163,7 +163,7 @@ int CCommandLine::CheckCommandLine(
 	}
 
 	//	引数がない場合
-	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ )
+	for( ptr = _COptWoA; ptr->opt != nullptr; ptr++ )
 	{
 		if( len == ptr->len &&	//	長さチェック
 			wmemicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較
@@ -280,7 +280,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	wcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
-	while( pszToken != NULL )
+	while( pszToken != nullptr )
 	{
 		DEBUG_TRACE( L"OPT=[%s]\n", pszToken );
 
@@ -308,7 +308,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 						// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
 						strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), cmWork.GetStringPtr() );
 						const WCHAR* msg_str = msg.c_str();
-						MessageBox( NULL, msg_str, L"FileNameError", MB_OK );
+						MessageBox( nullptr, msg_str, L"FileNameError", MB_OK );
 						szPath[0] = L'\0';
 					}
 				}
@@ -322,7 +322,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 					// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
 					strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), pszToken );
 					const WCHAR* msg_str = msg.c_str();
-					MessageBox( NULL, msg_str, L"FileNameError", MB_OK );
+					MessageBox( nullptr, msg_str, L"FileNameError", MB_OK );
 					szPath[0] = L'\0';
 				}
 			}
@@ -339,7 +339,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				// "%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
 				strprintf( msg, LS(STR_CMDLINE_PARSECMD1), szPath );
 				const WCHAR* msg_str = msg.c_str();
-				MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
+				MessageBox( nullptr, msg_str, L"FileNameError", MB_OK);
 				szPath[0] = L'\0';
 			}
 
@@ -362,7 +362,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				}
 			}
 			++pszToken;	//	先頭の'-'はskip
-			WCHAR *arg = NULL;
+			WCHAR *arg = nullptr;
 			int nArgLen;
 			switch( CheckCommandLine( pszToken, &arg, &nArgLen ) ){
 			case CMDLINEOPT_AT:

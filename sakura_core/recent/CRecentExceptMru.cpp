@@ -20,9 +20,9 @@ CRecentExceptMRU::CRecentExceptMRU()
 		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr(),
 		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sHistory.m_aExceptMRU._GetSizeRef(),
-		NULL,
+		nullptr,
 		MAX_MRU,
-		NULL
+		nullptr
 	);
 }
 

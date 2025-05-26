@@ -195,7 +195,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 
 	//ドキュメント行取得 -> pcCurDocLine
 	const CDocLine* pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptSelect.GetY2());
-	if (NULL == pcCurDocLine )
+	if (nullptr == pcCurDocLine )
 		return 0;
 
 	//テキスト取得 -> pLine, nLineLen
@@ -302,7 +302,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        構造体設定                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	if ( NULL != pReconv) {
+	if ( nullptr != pReconv) {
 		//再変換構造体の設定
 		DWORD dwOrgSize = pReconv->dwSize;
 		// 2010.03.17 Moca dwSizeはpReconvを用意する側(IME等)が設定

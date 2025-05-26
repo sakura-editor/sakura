@@ -100,10 +100,10 @@ EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int c
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	UINT codepage = CodePageExToMSCP(codepageEx);
-	int nDstCch = MultiByteToWideChar2(codepage, nToWideCharFlags, pSrc, nSrcLen, NULL, 0);
+	int nDstCch = MultiByteToWideChar2(codepage, nToWideCharFlags, pSrc, nSrcLen, nullptr, 0);
 	// 変換先バッファサイズとその確保
 	wchar_t* pDstBuffer = new (std::nothrow) wchar_t[nDstCch];
-	if( pDstBuffer == NULL ){
+	if( pDstBuffer == nullptr ){
 		return RESULT_FAILURE;
 	}
 
@@ -164,7 +164,7 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 	// 必要なバッファサイズを調べてメモリを確保
 	// なんだけど、Windows 2000では 50220,50221,50222(ISO-2022-JP系)を使うと値がおかしいことがあるとか
 	DWORD flag = GetMultiByteFlgas(codepage);
-	int nBuffSize = WideCharToMultiByte2(codepage, flag, pSrc, nSrcLen, NULL, 0);
+	int nBuffSize = WideCharToMultiByte2(codepage, flag, pSrc, nSrcLen, nullptr, 0);
 	if( 0 == nBuffSize ){
 #ifdef _DEBUG
 		DWORD errorCd = GetLastError();
@@ -184,7 +184,7 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 		return RESULT_FAILURE;
 	}
 	char* pDstBuffer = new (std::nothrow) char[nBuffSize];
-	if( pDstBuffer == NULL ){
+	if( pDstBuffer == nullptr ){
 		return RESULT_FAILURE;
 	}
 
@@ -312,13 +312,13 @@ EEncodingTrait CCodePage::GetEncodingTrait(int charcodeEx)
 		return ENCODING_TRAIT_UTF32BE;
 	}
 	CHAR testCrlf[10];
-	int nRet = ::WideCharToMultiByte(codepage, 0, L"\r\n", 2, testCrlf, sizeof(testCrlf), NULL, NULL);
+	int nRet = ::WideCharToMultiByte(codepage, 0, L"\r\n", 2, testCrlf, sizeof(testCrlf), nullptr, nullptr);
 	switch(nRet){
 	case 2:
 		if( 0 == memcmp(testCrlf, "\x0d\x25", 2) ){
 			WCHAR nel[1] = {0x0085};
 			CHAR testNel[10];
-			int nRetNel = ::WideCharToMultiByte(codepage, 0, nel, 1, testNel, sizeof(testNel), NULL, NULL);
+			int nRetNel = ::WideCharToMultiByte(codepage, 0, nel, 1, testNel, sizeof(testNel), nullptr, nullptr);
 			if( nRetNel && 0 == memcmp(testNel, "\x15", 1) ){
 				return ENCODING_TRAIT_EBCDIC;
 			}
@@ -339,7 +339,7 @@ EEncodingTrait CCodePage::GetEncodingTrait(int charcodeEx)
 	}
 }
 
-volatile CCodePage::CodePageList* s_list = NULL;
+volatile CCodePage::CodePageList* s_list = nullptr;
 
 struct sortByCodePage{
 	bool operator() (const std::pair<int, std::wstring>& left, const std::pair<int, std::wstring>& right) const {
@@ -352,7 +352,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 {
 	static CCodePage::CodePageList result;
 	// マルチスレッド:s_listにロックが必要
-	if( NULL != s_list ){
+	if( nullptr != s_list ){
 		return result;
 	}
 	result.clear();
@@ -360,7 +360,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 	if( FALSE == ::EnumSystemCodePages(reinterpret_cast<CODEPAGE_ENUMPROC>(CallBackEnumCodePages), CP_INSTALLED) ){
 		return result;
 	}
-	s_list = NULL;
+	s_list = nullptr;
 
 	// 名前を取得
 	CPINFOEX cpInfo;
@@ -440,12 +440,12 @@ int CCodePage::WideCharToMultiByte2( UINT codepage, int flags, const wchar_t* pS
 	}else if( codepage == 12001 ){
 		return S_UnicodeToUTF32BE(pSrc, nSrcLen, pDst, nDstLen);
 	}
-	int ret = ::WideCharToMultiByte(codepage, flags, pSrc, nSrcLen, pDst, nDstLen, NULL, NULL);
+	int ret = ::WideCharToMultiByte(codepage, flags, pSrc, nSrcLen, pDst, nDstLen, nullptr, nullptr);
 	if( ret == 0 && nSrcLen != 0 ){
 		DWORD errorCd = GetLastError();
 		if( errorCd == ERROR_INVALID_FLAGS ){
 			// flagsを0にして再挑戦
-			ret = ::WideCharToMultiByte(codepage, 0, pSrc, nSrcLen, pDst, nDstLen, NULL, NULL);
+			ret = ::WideCharToMultiByte(codepage, 0, pSrc, nSrcLen, pDst, nDstLen, nullptr, nullptr);
 		}
 	}
 	return ret;
@@ -454,7 +454,7 @@ int CCodePage::WideCharToMultiByte2( UINT codepage, int flags, const wchar_t* pS
 int CCodePage::S_UTF32LEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen )
 {
 	const unsigned char* pSrcByte = reinterpret_cast<const unsigned char*>(pSrc);
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		int nDstUseLen = 0;
 		int i = 0;
 		for(; i < nSrcLen; ){
@@ -545,7 +545,7 @@ int CCodePage::S_UTF32LEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 int CCodePage::S_UTF32BEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen )
 {
 	const unsigned char* pSrcByte = reinterpret_cast<const unsigned char*>(pSrc);
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		int nDstUseLen = 0;
 		int i = 0;
 		for(; i < nSrcLen; ){
@@ -649,7 +649,7 @@ static bool BinToUTF32( const unsigned short* pSrc, int Len, char* pDst, int nDs
 
 int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen )
 {
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		int nDstUseLen = 0;
 		int nBinaryLen = 0;
 		int i = 0;
@@ -763,7 +763,7 @@ int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 
 int CCodePage::S_UnicodeToUTF32BE( const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen )
 {
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		int nDstUseLen = 0;
 		int nBinaryLen = 0;
 		int i = 0;

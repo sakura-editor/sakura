@@ -79,11 +79,11 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	szWordPrev[0] = L'\0';
 	szWord[nWordIdx] = L'\0';
 	nMode = 0;
-	pLine = NULL;
+	pLine = nullptr;
 	bProcedure	= false;
 	CLogicInt		nLineCount;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-		if( NULL != pLine ){
+		if( nullptr != pLine ){
 			if( L'_' != pLine[nLineLen-1]){
 				nParseCnt = 0;
 			}

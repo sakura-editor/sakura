@@ -93,7 +93,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 ){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
-						if( plugin != NULL ){
+						if( plugin != nullptr ){
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), plugin->m_sDescription.c_str() );
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), plugin->m_sAuthor.c_str() );
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), plugin->m_sVersion.c_str() );
@@ -210,7 +210,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						std::wstring sDirName = plugin->GetFolderName();
 						if( plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
-							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, this, sel );
+							cDlgPluginOption.DoModal( ::GetModuleHandle(nullptr), hwndDlg, this, sel );
 						}else{
 							WarningMessage( hwndDlg, LS(STR_PROPCOMPLG_ERR1) );
 						}
@@ -221,11 +221,11 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					std::wstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + L".";
 					if( ! IsDirectory(sBaseDir.c_str()) ){
-						if( ::CreateDirectory(sBaseDir.c_str(), NULL) == 0 ){
+						if( ::CreateDirectory(sBaseDir.c_str(), nullptr) == 0 ){
 							break;
 						}
 					}
-					::ShellExecute( NULL, L"open", sBaseDir.c_str(), NULL, NULL, SW_SHOW );
+					::ShellExecute( nullptr, L"open", sBaseDir.c_str(), nullptr, nullptr, SW_SHOW );
 				}
 				break;
 			case IDC_PLUGIN_README:		// ReadMe表示	// 2011/11/2 Uchi
@@ -249,8 +249,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					int sel = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 					if (sel >= 0){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
-						if (plugin != NULL){
-							::ShellExecute(NULL, L"Open", plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW);
+						if (plugin != nullptr){
+							::ShellExecute(nullptr, L"Open", plugin->m_sUrl.c_str(), nullptr, nullptr, SW_SHOW);
 						}
 					}
 				}
@@ -547,7 +547,7 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 
 	//アプリケーションパス
 	WCHAR szExePath[MAX_PATH + 1];
-	::GetModuleFileName( NULL, szExePath, _countof( szExePath ) );
+	::GetModuleFileName( nullptr, szExePath, _countof( szExePath ) );
 	cCmdLineBuf.AppendF( L"\"%s\"", szExePath );
 
 	// ファイル名
@@ -572,8 +572,8 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	WCHAR	szCmdLine[1024];
 	wcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
 	//リソースリーク対策
-	BOOL bRet = ::CreateProcess( NULL, szCmdLine, NULL, NULL, TRUE,
-		CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi );
+	BOOL bRet = ::CreateProcess( nullptr, szCmdLine, nullptr, nullptr, TRUE,
+		CREATE_NEW_CONSOLE, nullptr, nullptr, &sui, &pi );
 
 	//プロセス作成に成功した場合
 	if ( bRet )

@@ -19,9 +19,9 @@ CRecentEditNode::CRecentEditNode()
 		GetShareData()->m_sNodes.m_pEditArr,
 		0,
 		&GetShareData()->m_sNodes.m_nEditArrNum,
-		NULL,
+		nullptr,
 		MAX_EDITWINDOWS,
-		NULL
+		nullptr
 	);
 }
 

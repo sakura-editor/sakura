@@ -44,7 +44,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 
 	if( m_pCommanderView->m_bHideMouse && 0 <= m_pCommanderView->m_nMousePause ){
 		m_pCommanderView->m_nMousePause = -1;
-		::SetCursor( NULL );
+		::SetCursor( nullptr );
 	}
 
 	/* 現在位置にデータを挿入 */
@@ -65,11 +65,11 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 			const wchar_t*	pLine;
 			CLogicInt		nLineLen;
 			pLine = GetDocument()->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pCLayout );
-			if( NULL != pCLayout ){
+			if( nullptr != pCLayout ){
 				const CDocLine* pcDocLine;
 				pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( pCLayout->GetLogicLineNo() );
 				pLine = pcDocLine->GetDocLineStrWithEOL( &nLineLen );
-				if( NULL != pLine ){
+				if( nullptr != pLine ){
 					/*
 					  カーソル位置変換
 					  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -96,7 +96,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 							wmemcpy( szCurrent, &pLine[nPos], nCharChars );
 							szCurrent[nCharChars] = L'\0';
 							/* その他のインデント対象文字 */
-							if( NULL != wcsstr(
+							if( nullptr != wcsstr(
 								m_pCommanderView->m_pTypeData->m_szIndentChars,
 								szCurrent
 							) ){
@@ -186,7 +186,7 @@ end_of_for:;
 				m_pCommanderView->SetUndoBuffer();
 
 				//キー入力とは別の操作ブロックにする（ただしプラグイン内の操作はまとめる）
-				if( GetOpeBlk() == NULL ){
+				if( GetOpeBlk() == nullptr ){
 					SetOpeBlk(new COpeBlk);
 				}
 				GetOpeBlk()->AddRef();	// ※ReleaseはHandleCommandの最後で行う
@@ -236,7 +236,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 
 	if( m_pCommanderView->m_bHideMouse && 0 <= m_pCommanderView->m_nMousePause ){
 		m_pCommanderView->m_nMousePause = -1;
-		::SetCursor( NULL );
+		::SetCursor( nullptr );
 	}
 
 	// Oct. 6 ,2002 genta バッファに格納する
@@ -286,7 +286,7 @@ void CViewCommander::Command_UNDO( void )
 			int nCount = opeBlk->GetRefCount();
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 			m_pCommanderView->SetUndoBuffer();
-			if( m_pCommanderView->m_cCommander.GetOpeBlk() == NULL && 0 < nCount ){
+			if( m_pCommanderView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
 				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
 				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
 			}
@@ -299,7 +299,7 @@ void CViewCommander::Command_UNDO( void )
 
 	MY_RUNNINGTIMER( cRunningTimer, L"CViewCommander::Command_UNDO()" );
 
-	COpe*		pcOpe = NULL;
+	COpe*		pcOpe = nullptr;
 
 	COpeBlk*	pcOpeBlk;
 	int			nOpeBlkNum;
@@ -318,14 +318,14 @@ void CViewCommander::Command_UNDO( void )
 	m_pCommanderView->m_bDoing_UndoRedo = true;	/* アンドゥ・リドゥの実行中か */
 
 	/* 現在のUndo対象の操作ブロックを返す */
-	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoUndo( &bIsModified ) ) ){
+	if( nullptr != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoUndo( &bIsModified ) ) ){
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		bool bDraw = (nOpeBlkNum < 5) && m_pCommanderView->GetDrawSwitch();
 		bool bDrawAll = false;
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(bDraw);	// hor
 
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < nOpeBlkNum );
-		HWND hwndProgress = NULL;
+		HWND hwndProgress = nullptr;
 		int nProgressPos = 0;
 		if( cWaitCursor.IsEnable() ){
 			hwndProgress = m_pCommanderView->StartProgress();
@@ -371,11 +371,11 @@ void CViewCommander::Command_UNDO( void )
 					bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 						m_pCommanderView->GetSelectionInfo().m_sSelect,				// 削除範囲
 						&pcInsertOpe->m_cOpeLineData,	// 削除されたデータのコピー(NULL可能)
-						NULL,
+						nullptr,
 						bDraw,						// 再描画するか否か
-						NULL,
+						nullptr,
 						pcInsertOpe->m_nOrgSeq,
-						NULL,
+						nullptr,
 						bFastMode,
 						&cSelectLogic
 					);
@@ -398,10 +398,10 @@ void CViewCommander::Command_UNDO( void )
 						cSelectLogic.Set(pcOpe->m_ptCaretPos_PHY_Before);
 						bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
-							NULL,										/* 削除されたデータのコピー(NULL可能) */
+							nullptr,										/* 削除されたデータのコピー(NULL可能) */
 							&pcDeleteOpe->m_cOpeLineData,
 							bDraw,										/*再描画するか否か*/
-							NULL,
+							nullptr,
 							0,
 							&pcDeleteOpe->m_nOrgSeq,
 							bFastMode,
@@ -428,7 +428,7 @@ void CViewCommander::Command_UNDO( void )
 						&pcReplaceOpe->m_pcmemDataIns,	// 削除されたデータのコピー(NULL可能)
 						&pcReplaceOpe->m_pcmemDataDel,	// 挿入するデータ
 						bDraw,						// 再描画するか否か
-						NULL,
+						nullptr,
 						pcReplaceOpe->m_nOrgInsSeq,
 						&pcReplaceOpe->m_nOrgDelSeq,
 						bFastMode,
@@ -546,7 +546,7 @@ void CViewCommander::Command_REDO( void )
 			int nCount = opeBlk->GetRefCount();
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 			m_pCommanderView->SetUndoBuffer();
-			if( m_pCommanderView->m_cCommander.GetOpeBlk() == NULL && 0 < nCount ){
+			if( m_pCommanderView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
 				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
 				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
 			}
@@ -559,7 +559,7 @@ void CViewCommander::Command_REDO( void )
 	}
 	MY_RUNNINGTIMER( cRunningTimer, L"CViewCommander::Command_REDO()" );
 
-	COpe*		pcOpe = NULL;
+	COpe*		pcOpe = nullptr;
 	COpeBlk*	pcOpeBlk;
 	int			nOpeBlkNum;
 	int			i;
@@ -577,14 +577,14 @@ void CViewCommander::Command_REDO( void )
 	m_pCommanderView->m_bDoing_UndoRedo = true;	/* アンドゥ・リドゥの実行中か */
 
 	/* 現在のRedo対象の操作ブロックを返す */
-	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoRedo( &bIsModified ) ) ){
+	if( nullptr != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoRedo( &bIsModified ) ) ){
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		bool bDraw = (nOpeBlkNum < 5) && m_pCommanderView->GetDrawSwitch();
 		bool bDrawAll = false;
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(bDraw);	// 2007.07.22 ryoji
 
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < nOpeBlkNum );
-		HWND hwndProgress = NULL;
+		HWND hwndProgress = nullptr;
 		int nProgressPos = 0;
 		if( cWaitCursor.IsEnable() ){
 			hwndProgress = m_pCommanderView->StartProgress();
@@ -628,10 +628,10 @@ void CViewCommander::Command_REDO( void )
 						cSelectLogic.Set(pcOpe->m_ptCaretPos_PHY_Before);
 						bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
-							NULL,										/* 削除されたデータのコピー(NULL可能) */
+							nullptr,										/* 削除されたデータのコピー(NULL可能) */
 							&pcInsertOpe->m_cOpeLineData,				/* 挿入するデータ */
 							bDraw,										/*再描画するか否か*/
-							NULL,
+							nullptr,
 							0,
 							&pcInsertOpe->m_nOrgSeq,
 							bFastMode,
@@ -660,11 +660,11 @@ void CViewCommander::Command_REDO( void )
 					bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 						CLayoutRange(ptCaretPos_Before,ptCaretPos_To),
 						&pcDeleteOpe->m_cOpeLineData,	/* 削除されたデータのコピー(NULL可能) */
-						NULL,
+						nullptr,
 						bDraw,
-						NULL,
+						nullptr,
 						pcDeleteOpe->m_nOrgSeq,
-						NULL,
+						nullptr,
 						bFastMode,
 						&cSelectLogic
 					);
@@ -691,7 +691,7 @@ void CViewCommander::Command_REDO( void )
 						&pcReplaceOpe->m_pcmemDataDel,	// 削除されたデータのコピー(NULL可能)
 						&pcReplaceOpe->m_pcmemDataIns,	// 挿入するデータ
 						bDraw,
-						NULL,
+						nullptr,
 						pcReplaceOpe->m_nOrgDelSeq,
 						&pcReplaceOpe->m_nOrgInsSeq,
 						bFastMode,
@@ -812,7 +812,7 @@ void CViewCommander::Command_DELETE( void )
 							nIndex = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 						}
 						if( nLineLen != 0 ){	// （スペース挿入後も）折り返し行末なら次文字を削除するために次行の先頭に移動する必要がある
-							if( pcLayout->GetNextLayout() != NULL ){	// 最終行末ではない
+							if( pcLayout->GetNextLayout() != nullptr ){	// 最終行末ではない
 								CLayoutPoint ptLay;
 								CLogicPoint ptLog(pcLayout->GetLogicOffset() + nIndex, pcLayout->GetLogicLineNo());
 								GetDocument()->m_cLayoutMgr.LogicToLayout( ptLog, &ptLay );
@@ -883,7 +883,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 	int nDelLen = 0;
 	CKetaXInt nKetaDiff = CKetaXInt(0);
 	CKetaXInt nKetaAfterIns = CKetaXInt(0);
-	if( NULL != pcLayout ){
+	if( nullptr != pcLayout ){
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		CLogicInt nIdxTo = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 		if( nIdxTo >= pcLayout->GetLengthWithoutEOL() ){

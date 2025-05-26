@@ -158,7 +158,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 		{  L"MYPICT",   6, L"My Pictures" },
 		{  L"COMDOC",   6, L"Common Documents" },
 		{  L"MYDOC",    5, L"Personal" },
-		{ NULL, 0 , NULL }
+		{ nullptr, 0 , nullptr }
 	};
 #endif
 
@@ -206,7 +206,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				nMetaLen = 10;
 			}
 			// メタ文字列っぽい
-			else if( NULL != (pStr = wcschr( ps, L'%' ) )){
+			else if( nullptr != (pStr = wcschr( ps, L'%' ) )){
 				nMetaLen = pStr - ps;
 				if( nMetaLen < _MAX_PATH ){
 					wmemcpy( szMeta, ps, nMetaLen );
@@ -241,7 +241,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				if( false == bFolderPath || L'\0' == szPath[0] ){
 					pStr = _wgetenv( szMeta );
 					// 環境変数
-					if( NULL != pStr ){
+					if( nullptr != pStr ){
 						nPathLen = wcslen( pStr );
 						if( nPathLen < _MAX_PATH ){
 							wcscpy( szPath, pStr );
@@ -353,7 +353,7 @@ bool CFileNameManager::GetMenuFullLabel(
 	const EditInfo* pfi = editInfo;
 	WCHAR szAccKey[4];
 	int ret = 0;
-	if( NULL == pfi ){
+	if( nullptr == pfi ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
 		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_UNKOWN), szAccKey );
 		return 0 < ret;

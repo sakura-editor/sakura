@@ -133,7 +133,7 @@ bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 const wchar_t* CKeyWordSetMgr::GetTypeName( int nIdx )
 {
 	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
+		return nullptr;
 	}
 	return m_szSetNameArr[nIdx];
 }
@@ -144,8 +144,8 @@ const wchar_t* CKeyWordSetMgr::GetTypeName( int nIdx )
 */
 const wchar_t* CKeyWordSetMgr::SetTypeName( int nIdx, const wchar_t* name )
 {
-	if( NULL == name || nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
+	if( nullptr == name || nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
+		return nullptr;
 	}
 	wcsncpy( m_szSetNameArr[nIdx], name, MAX_SETNAMELEN );
 	m_szSetNameArr[nIdx][MAX_SETNAMELEN] = L'\0';
@@ -169,10 +169,10 @@ int CKeyWordSetMgr::GetKeyWordNum( int nIdx )
 const wchar_t* CKeyWordSetMgr::GetKeyWord( int nIdx, int nIdx2 )
 {
 	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
+		return nullptr;
 	}
 	if( nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2 ){
-		return NULL;
+		return nullptr;
 	}
 	return m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2];
 }
@@ -186,19 +186,19 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 {
 	int i;
 	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
+		return nullptr;
 	}
 	if( nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2 ){
-		return NULL;
+		return nullptr;
 	}
 	/* 0バイトの長さのキーワードは編集しない */
 	if( pszKeyWord[0] == L'\0' ){
-		return NULL;
+		return nullptr;
 	}
 	/* 重複したキーワードは編集しない */
 	for( i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; ++i ){
 		if( 0 == wcscmp( m_szKeyWordArr[i], pszKeyWord ) ){
-			return NULL;
+			return nullptr;
 		}
 	}
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search

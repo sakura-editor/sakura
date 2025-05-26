@@ -49,8 +49,8 @@ public:
 		CLayoutColorInfo*		pColorInfo
 	)
 	{
-		m_pPrev			= NULL;
-		m_pNext			= NULL;
+		m_pPrev			= nullptr;
+		m_pNext			= nullptr;
 		m_pCDocLine		= pcDocLine;
 		m_ptLogicPos	= ptLogicPos;	// 実データ参照位置
 		m_nLength		= nLength;		// 実データ内データ長
@@ -106,7 +106,7 @@ public:
 	void _SetNextLayout(CLayout* pcLayout){ m_pNext = pcLayout; }
 
 	//実データ参照
-	const CDocLine* GetDocLineRef() const{ if(this)return m_pCDocLine; else return NULL; } //$$note:高速化 // TODO: Remove "this" check
+	const CDocLine* GetDocLineRef() const{ if(this)return m_pCDocLine; else return nullptr; } //$$note:高速化 // TODO: Remove "this" check
 
 	//その他属性参照
 	const CEol& GetLayoutEol() const{ return m_cEol; }

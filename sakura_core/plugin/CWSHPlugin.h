@@ -27,7 +27,7 @@ public:
 	CWSHPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) :
 		CPlug( plugin, id, sJack, sHandler, sLabel )
 	{
-		m_Wsh = NULL;
+		m_Wsh = nullptr;
 	}
 	CWSHPlug(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
@@ -36,7 +36,7 @@ public:
 	virtual ~CWSHPlug() {
 		if( m_Wsh ){
 			delete m_Wsh;
-			m_Wsh = NULL;
+			m_Wsh = nullptr;
 		}
 	}
 	CWSHMacroManager* m_Wsh;

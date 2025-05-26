@@ -36,7 +36,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	LPCWSTR pszPath = sLoadInfo.cFilePath.c_str();
 
 	// 文字コード種別
-	const STypeConfigMini* type = NULL;
+	const STypeConfigMini* type = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( sLoadInfo.nType, &type ) ){
 		return RESULT_FAILURE;
 	}
@@ -61,7 +61,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	pcDocLineMgr->DeleteAllLine();
 
 	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( NULL ) ){
+	if( !::BlockingHook( nullptr ) ){
 		return RESULT_FAILURE; //######INTERRUPT
 	}
 
@@ -84,7 +84,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 
 		/* ファイル時刻の取得 */
 		FILETIME	FileTime;
-		if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
+		if( cfl.GetFileTime( nullptr, nullptr, &FileTime ) ){
 			pFileInfo->SetFileTime( FileTime );
 		}
 
@@ -199,7 +199,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 
 	NotifyProgress(0);
 	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( NULL ) ){
+	if( !::BlockingHook( nullptr ) ){
 		return RESULT_FAILURE; //####INTERRUPT
 	}
 
@@ -250,7 +250,7 @@ EConvertResult CReadManager::ReadLines(
 				nextTime += timeInterval;
 				NotifyProgress( cFileLoad.GetPercent() );
 				// 処理中のユーザー操作を可能にする
-				if( !::BlockingHook( NULL ) ){
+				if( !::BlockingHook( nullptr ) ){
 					// 中断検知
 					bCanceled.store( true );
 					eRet = RESULT_FAILURE;

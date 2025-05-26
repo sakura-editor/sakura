@@ -89,11 +89,11 @@ int Listbox_INSERTDATA(
 {
 	int nIndex1 = List_InsertItemData( hWnd, index, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR01), index, nIndex1 );
+		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR01), index, nIndex1 );
 		return nIndex1;
 	}
 	else if( List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
-		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR02), nIndex1 );
+		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR02), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
@@ -121,11 +121,11 @@ int Listbox_ADDDATA(
 {
 	int nIndex1 = List_AddItemData( hWnd, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR03), nIndex1 );
+		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR03), nIndex1 );
 		return nIndex1;
 	}
 	else if( List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
-		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR04), nIndex1 );
+		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR04), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
@@ -222,7 +222,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 //	To Here Oct. 14, 2000
 
-		::SetTimer( hwndDlg, 1, 300, NULL );
+		::SetTimer( hwndDlg, 1, 300, nullptr );
 		SetDlgItemsEnableState( hwndDlg, hwndResList, hwndFuncList );
 
 		return TRUE;
@@ -386,7 +386,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	ここでは i != 0 だとは思うけど、一応保険です。
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
+						TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -410,7 +410,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 - 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
+						TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -432,7 +432,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 + 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
+						TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
 						break;
 					}
 					List_SetCurSel( hwndResList, nIndex1 );
@@ -629,7 +629,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	::InflateRect( &rcText, -cxBorder, -cyBorder );
 
 	// 選択アイテムの背景を描画
-	::ExtTextOut( pDis->hDC, 0, 0, ETO_OPAQUE, &rcText, (LPCWSTR) NULL, 0, NULL );
+	::ExtTextOut( pDis->hDC, 0, 0, ETO_OPAQUE, &rcText, (LPCWSTR) nullptr, 0, nullptr );
 
 	// 微調整 インデントと上余白
 	rcText.left += cxFrame;

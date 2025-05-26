@@ -40,7 +40,7 @@ public:
 	EColorIndexType GetColorIdx(void) const override { return COLORIDX_EOL; }
 
 private:
-	HPEN m_hPen = NULL;
+	HPEN m_hPen = nullptr;
 	COLORREF m_clrPen;
 };
 #endif /* SAKURA_CFIGURE_EOL_C51A4502_29AE_4D38_8056_5B0CFCC3686B_H_ */

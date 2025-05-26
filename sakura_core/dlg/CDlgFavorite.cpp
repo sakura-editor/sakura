@@ -200,8 +200,8 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		i++;
-		m_aFavoriteInfo[i].m_pRecent    = NULL;
-		m_aFavoriteInfo[i].m_pszCaption = NULL;
+		m_aFavoriteInfo[i].m_pRecent    = nullptr;
+		m_aFavoriteInfo[i].m_pszCaption = nullptr;
 		m_aFavoriteInfo[i].m_nId        = -1;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -244,7 +244,7 @@ void CDlgFavorite::SetData( void )
 {
 	int		nTab;
 
-	for( nTab = 0; NULL != m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
+	for( nTab = 0; nullptr != m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
 		SetDataOne( nTab, 0 );
 	}
@@ -738,7 +738,7 @@ bool CDlgFavorite::RefreshList( void )
 	m_szMsg[0] = L'\0';
 
 	//全リストの現在選択中のアイテムを取得する。
-	for( nTab = 0; NULL != m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
+	for( nTab = 0; nullptr != m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
 		bret = RefreshListOne( nTab );
 		if( bret == true )
@@ -991,14 +991,14 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	int nEnable;
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bEditable && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
 	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_EDIT, LS( STR_DLGFAV_MENU_EDIT ) );
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	nullptr );
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bEditable ? 0 : MF_GRAYED);
 	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_NEW, LS( STR_DLGFAV_MENU_ADD ) );
 	if( m_aFavoriteInfo[m_nCurrentTab].m_bAddExcept ){
 		nEnable = (exceptMRU.GetItemCount() <= exceptMRU.GetArrayCount() ? 0 : MF_GRAYED);
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_EXCEPT, LS( STR_DLGFAV_MENU_EXCLUDE ) );
 	}
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	nullptr );
 	nEnable = (0 < recent.GetItemCount() ? 0 : MF_GRAYED);
 	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_ALL, LS( STR_DLGFAV_MENU_DEL_ALL ) );
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
@@ -1015,7 +1015,7 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 								( pt.x > rcWork.left )? pt.x: rcWork.left,
 								( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
-								0, GetHwnd(), NULL);
+								0, GetHwnd(), nullptr);
 	::DestroyMenu( hMenu );	// サブメニューは再帰的に破棄される
 
 	switch( nId ){
@@ -1196,7 +1196,7 @@ BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
 		HWND hwndList = GetItemHwnd( m_aFavoriteInfo[i].m_nId );
 		ResizeItem( hwndList, m_ptDefaultSize, ptNew, m_rcListDefault, ANCHOR_ALL, (i==m_nCurrentTab) );
 	}
-	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	::InvalidateRect( GetHwnd(), nullptr, TRUE );
 	return TRUE;
 }
 

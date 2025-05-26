@@ -154,7 +154,7 @@ void CMRUFile::ClearAll(void)
 bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 {
 	const EditInfo*	p = m_cRecentFile.GetItem( num );
-	if( NULL == p ) return false;
+	if( nullptr == p ) return false;
 
 	*pfi = *p;
 
@@ -175,7 +175,7 @@ bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 bool CMRUFile::GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const
 {
 	const EditInfo*	p = m_cRecentFile.GetItem( m_cRecentFile.FindItemByPath( pszPath ) );
-	if( NULL == p ) return false;
+	if( nullptr == p ) return false;
 
 	*pfi = *p;
 
@@ -194,7 +194,7 @@ bool CMRUFile::GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const
 void CMRUFile::Add( EditInfo* pEditInfo )
 {
 	//	ファイル名が無ければ無視
-	if( NULL == pEditInfo || pEditInfo->m_szPath[0] == L'\0' ){
+	if( nullptr == pEditInfo || pEditInfo->m_szPath[0] == L'\0' ){
 		return;
 	}
 	
@@ -204,7 +204,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 		for( int i = 0 ; i < nSize; i++ ){
 			WCHAR szExceptMRU[_MAX_PATH];
 			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
-			if( NULL != wcsistr( pEditInfo->m_szPath,  szExceptMRU) ){
+			if( nullptr != wcsistr( pEditInfo->m_szPath,  szExceptMRU) ){
 				return;
 			}
 		}
@@ -216,7 +216,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 	WCHAR	szDir[_MAX_DIR];
 	WCHAR	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダー
 
-	_wsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダーを取り出す。
+	_wsplitpath( pEditInfo->m_szPath, szDrive, szDir, nullptr, nullptr );	//	ドライブとフォルダーを取り出す。
 
 	//	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
 	//	一応無効化する．

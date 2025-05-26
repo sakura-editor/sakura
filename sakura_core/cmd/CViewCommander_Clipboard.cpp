@@ -59,7 +59,7 @@ void CViewCommander::Command_CUT( void )
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 	std::wstring wstr;
-	if( !m_pCommanderView->GetSelectedData( &wstr, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedData( &wstr, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
@@ -108,7 +108,7 @@ void CViewCommander::Command_COPY(
 		}
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		if( !m_pCommanderView->GetSelectedData( &wstr, FALSE, NULL, FALSE, bAddCRLFWhenCopy, neweol ) ){
+		if( !m_pCommanderView->GetSelectedData( &wstr, FALSE, nullptr, FALSE, bAddCRLFWhenCopy, neweol ) ){
 			ErrorBeep();
 			return;
 		}
@@ -168,7 +168,7 @@ void CViewCommander::Command_PASTE( int option )
 		((option & 0x08) == 0x08) ? false :
 		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste;
 
-	if( !m_pCommanderView->MyGetClipboardData( clipData, &bColumnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
+	if( !m_pCommanderView->MyGetClipboardData( clipData, &bColumnSelect, bLineSelectOption ? &bLineSelect: nullptr ) ){
 		ErrorBeep();
 		return;
 	}
@@ -217,7 +217,7 @@ void CViewCommander::Command_PASTE( int option )
 	}
 
 	if( bConvertEol ){
-		auto nConvertedTextLen = ConvertEol( pszText, (ptrdiff_t)nTextLen, NULL );
+		auto nConvertedTextLen = ConvertEol( pszText, (ptrdiff_t)nTextLen, nullptr );
 		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
 		ConvertEol( pszText, nTextLen, pszConvertedText );
 		// テキストを貼り付け
@@ -281,7 +281,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 	}
 
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 10000 < nPasteSize );
-	HWND hwndProgress = NULL;
+	HWND hwndProgress = nullptr;
 	int nProgressPos = 0;
 	if( cWaitCursor.IsEnable() ){
 		hwndProgress = m_pCommanderView->StartProgress();
@@ -322,7 +322,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 			CLogicInt		nLineLen = CLogicInt(0);
 			const wchar_t*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
-			if( NULL != pLine && 1 <= nLineLen )
+			if( nullptr != pLine && 1 <= nLineLen )
 			{
 				if( WCODE::IsLineDelimiter(pLine[nLineLen - 1], bExtEol) )
 				{
@@ -423,7 +423,7 @@ void CViewCommander::Command_PASTEBOX( int option )
 
 	// クリップボードからデータを取得
 	CNativeW	cmemClip;
-	if( !m_pCommanderView->MyGetClipboardData( cmemClip, NULL ) ){
+	if( !m_pCommanderView->MyGetClipboardData( cmemClip, nullptr ) ){
 		ErrorBeep();
 		return;
 	}
@@ -511,7 +511,7 @@ void CViewCommander::Command_INSTEXT(
 				const CLayout* pcLayout;
 				line = GetDocument()->m_cLayoutMgr.GetLineStr( GetSelect().GetFrom().GetY2(), &len, &pcLayout );
 
-				pos = ( line == NULL ) ? 0 : m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() );
+				pos = ( line == nullptr ) ? 0 : m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() );
 
 				//	開始位置が行末より後ろで、終了位置が同一行
 				if( pos >= len && GetSelect().IsLineOne()){
@@ -528,7 +528,7 @@ void CViewCommander::Command_INSTEXT(
 					bLinePaste? L"": pszText,	// 挿入するデータ
 					bLinePaste? CLogicInt(0): CLogicInt(nTextLen),	// 挿入するデータの長さ
 					bRedraw,
-					m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk(),
+					m_pCommanderView->m_bDoing_UndoRedo?nullptr:GetOpeBlk(),
 					bFastMode,
 					pcSelectLogic
 				);
@@ -610,7 +610,7 @@ void CViewCommander::Command_ADDTAIL(
 )
 {
 	//テキスト長自動計算
-	if(nDataLen==-1 && pszData!=NULL)nDataLen=wcslen(pszData);
+	if(nDataLen==-1 && pszData!=nullptr)nDataLen=wcslen(pszData);
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
@@ -638,7 +638,7 @@ void CViewCommander::Command_COPYLINES( void )
 {
 	/* 選択範囲内の全行をクリップボードにコピーする */
 	m_pCommanderView->CopySelectedAllLines(
-		NULL,	/* 引用符 */
+		nullptr,	/* 引用符 */
 		FALSE	/* 行番号を付与する */
 	);
 	return;
@@ -660,7 +660,7 @@ void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 {
 	/* 選択範囲内の全行をクリップボードにコピーする */
 	m_pCommanderView->CopySelectedAllLines(
-		NULL,	/* 引用符 */
+		nullptr,	/* 引用符 */
 		TRUE	/* 行番号を付与する */
 	);
 	return;
@@ -738,7 +738,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	CLogicRange sSelectLogic;
 	sSelectLogic.Clear(-1);
 	int nBuffSize = 0;
-	const CLayout* pcLayoutTop = NULL;
+	const CLayout* pcLayoutTop = nullptr;
 	{
 		const CLayout* pcLayout;
 		{
@@ -747,7 +747,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		}
 		pcLayoutTop = pcLayout;
 		CLayoutInt i = rcSel.top;
-		for(; pcLayout != NULL && i <= rcSel.bottom; i++, pcLayout = pcLayout->GetNextLayout())
+		for(; pcLayout != nullptr && i <= rcSel.bottom; i++, pcLayout = pcLayout->GetNextLayout())
 		{
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
 			CLogicInt nIdxFrom;
@@ -856,13 +856,13 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(m_pCommanderView);
 	for(CLogicInt nLineNum = sSelectLogic.GetFrom().y; nLineNum <= nLineNumLast; nLineNum++, pcDocLine = pcDocLine->GetNextLine()){
-		if( pcDocLine == NULL ){
+		if( pcDocLine == nullptr ){
 			break;
 		}
 		pool->NotifyOnStartScanLogic();
-		CColorStrategy* pStrategyNormal = NULL;
-		CColorStrategy* pStrategyFound = NULL;
-		CColorStrategy* pStrategy = NULL;
+		CColorStrategy* pStrategyNormal = nullptr;
+		CColorStrategy* pStrategyFound = nullptr;
+		CColorStrategy* pStrategy = nullptr;
 		CStringRef cStringLine(pcDocLine->GetPtr(), pcDocLine->GetLengthWithEOL());
 		{
 			pStrategy = pStrategyNormal = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
@@ -1037,7 +1037,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	//検索色終了
 	if(*ppStrategyFound){
 		if((*ppStrategyFound)->EndColor(cStringLine, iLogic)){
-			*ppStrategyFound = NULL;
+			*ppStrategyFound = nullptr;
 			bChange = true;
 		}
 	}
@@ -1054,7 +1054,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	//色終了
 	if(*ppStrategy){
 		if((*ppStrategy)->EndColor(cStringLine, iLogic)){
-			*ppStrategy = NULL;
+			*ppStrategy = nullptr;
 			bChange = true;
 		}
 	}

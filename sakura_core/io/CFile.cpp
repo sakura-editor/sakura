@@ -53,10 +53,10 @@ bool CFile::IsFileWritable() const
 		this->GetFilePath(),			//ファイル名
 		GENERIC_WRITE,					//書きモード
 		FILE_SHARE_READ | FILE_SHARE_WRITE,	//読み書き共有
-		NULL,							//既定のセキュリティ記述子
+		nullptr,							//既定のセキュリティ記述子
 		OPEN_EXISTING,					//ファイルが存在しなければ失敗
 		FILE_ATTRIBUTE_NORMAL,			//特に属性は指定しない
-		NULL							//テンプレート無し
+		nullptr							//テンプレート無し
 	);
 	if(hFile==INVALID_HANDLE_VALUE){
 		return false;
@@ -71,10 +71,10 @@ bool CFile::IsFileReadable() const
 		this->GetFilePath(),
 		GENERIC_READ,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL,
+		nullptr,
 		OPEN_EXISTING,
 		FILE_FLAG_SEQUENTIAL_SCAN,
-		NULL
+		nullptr
 	);
 	if(hTest==INVALID_HANDLE_VALUE){
 		// 読み込みアクセス権がない
@@ -126,10 +126,10 @@ bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 		this->GetFilePath(),			//ファイル名
 		GENERIC_READ,					//読み書きタイプ
 		dwShareMode,					//共有モード
-		NULL,							//既定のセキュリティ記述子
+		nullptr,							//既定のセキュリティ記述子
 		OPEN_EXISTING,					//ファイルが存在しなければ失敗
 		FILE_ATTRIBUTE_NORMAL,			//特に属性は指定しない
-		NULL							//テンプレート無し
+		nullptr							//テンプレート無し
 	);
 
 	//結果

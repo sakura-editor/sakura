@@ -95,7 +95,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		//行取得
 		CLogicInt		nLineLen;
 		const wchar_t*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
-		if( NULL == pLine )break;
+		if( nullptr == pLine )break;
 
 		//行頭の空白飛ばし
 		int i;

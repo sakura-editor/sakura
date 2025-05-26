@@ -202,22 +202,22 @@ int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pb
 		case MYJISESC_ASCII7:
 			// ASCII7 ブロックをチェック
 			nblocklen = CheckJisAscii7Part(
-				reinterpret_cast<const char*>(pr), pr_end-pr, reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+				reinterpret_cast<const char*>(pr), pr_end-pr, reinterpret_cast<const char**>(&pr_next), &next_esctype, nullptr );
 			break;
 		case MYJISESC_HANKATA:
 			// 半角カタカナブロックをチェック
 			nblocklen = CheckJisHankataPart(
-				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, nullptr );
 			break;
 		case MYJISESC_ZENKAKU:
 			// 全角ブロックをチェック
 			nblocklen = CheckJisZenkakuPart(
-				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, nullptr );
 			break;
 		default: // MYJISESC_UNKNOWN:
 			// 不明なエスケープシーケンスから始まるブロックをチェック
 			nblocklen = CheckJisUnknownPart(
-				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, nullptr );
 		}
 		// 変換実行
 		pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
@@ -266,7 +266,7 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 
 	// 変換先バッファを取得
 	wchar_t* pDst = new (std::nothrow) wchar_t[nsrclen * 3 + 1];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 
@@ -452,7 +452,7 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 
 	// 必要なバッファ容量を確認してバッファを確保
 	char* pDst = new (std::nothrow) char[nSrcLen * 8];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 

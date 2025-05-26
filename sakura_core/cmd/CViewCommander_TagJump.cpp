@@ -71,7 +71,7 @@ static bool IsFileExists2( const wchar_t* pszFile )
 	return IsFileExists(pszFile, true);
 }
 
-static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = NULL )
+static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = nullptr )
 {
 	if( 0 == wcsncmp(pLine, L":HWND:[", 7) ){
 		const wchar_t* pFileEnd = wcschr( pLine, L']' );
@@ -115,7 +115,7 @@ static int GetLineColumnPos(const wchar_t* pLine)
 			if( ')' == pLine[fileEnd] ){
 				pTagEnd = &pLine[fileEnd];
 			}else{
-				pTagEnd = NULL;
+				pTagEnd = nullptr;
 			}
 		}
 	}
@@ -177,7 +177,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 	/* 現在行のデータを取得 */
 	CLogicInt		nLineLen;
 	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen);
-	if( NULL == pLine ){
+	if( nullptr == pLine ){
 		return false;
 	}
 
@@ -339,7 +339,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 
 		for( ; 0 <= ptXY.y; ptXY.y-- ){
 			pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen);
-			if( NULL == pLine ){
+			if( nullptr == pLine ){
 				break;
 			}
 			if( 0 == wmemcmp( pLine, L"・", 1 ) ){
@@ -418,7 +418,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 
 	if (strJumpToFile.empty()) {
 		pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXYOrg.GetY2())->GetDocLineStrWithEOL(&nLineLen);
-		if( NULL == pLine ){
+		if( nullptr == pLine ){
 			return false;
 		}
 		int nLen = 0;
@@ -531,7 +531,7 @@ bool CViewCommander::Command_TagsMake( void )
 	WCHAR	szExeFolder[_MAX_PATH + 1];
 
 	GetExedir( cmdline, CTAGS_COMMAND );
-	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
+	SplitPath_FolderAndFile( cmdline, szExeFolder, nullptr );
 
 	//ctags.exeの存在チェック
 	if( (DWORD)-1 == ::GetFileAttributes( cmdline ) )
@@ -552,7 +552,7 @@ bool CViewCommander::Command_TagsMake( void )
 	ZeroMemory( &sa, sizeof(sa) );
 	sa.nLength              = sizeof(sa);
 	sa.bInheritHandle       = TRUE;
-	sa.lpSecurityDescriptor = NULL;
+	sa.lpSecurityDescriptor = nullptr;
 	hStdOutRead = hStdOutWrite = nullptr;
 	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE )
 	{
@@ -562,7 +562,7 @@ bool CViewCommander::Command_TagsMake( void )
 
 	//継承不能にする
 	DuplicateHandle( GetCurrentProcess(), hStdOutRead,
-				GetCurrentProcess(), NULL,
+				GetCurrentProcess(), nullptr,
 				0, FALSE, DUPLICATE_SAME_ACCESS );
 
 	//CreateProcessに渡すSTARTUPINFOを作成
@@ -603,8 +603,8 @@ bool CViewCommander::Command_TagsMake( void )
 
 	//コマンドライン実行
 	BOOL bProcessResult = CreateProcess(
-		NULL, cmdline, NULL, NULL, TRUE,
-		CREATE_NEW_CONSOLE, NULL, cDlgTagsMake.m_szPath, &sui, &pi
+		nullptr, cmdline, nullptr, nullptr, TRUE,
+		CREATE_NEW_CONSOLE, nullptr, cDlgTagsMake.m_szPath, &sui, &pi
 	);
 	if( !bProcessResult )
 	{
@@ -655,7 +655,7 @@ bool CViewCommander::Command_TagsMake( void )
 			}
 
 			new_cnt = 0;
-			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) )	//パイプの中の読み出し待機中の文字数を取得
+			if( PeekNamedPipe( hStdOutRead, nullptr, 0, nullptr, &new_cnt, nullptr ) )	//パイプの中の読み出し待機中の文字数を取得
 			{
 				if( new_cnt > 0 )												//待機中のものがある
 				{
@@ -663,7 +663,7 @@ bool CViewCommander::Command_TagsMake( void )
 					{
 						new_cnt = _countof(work) - 2;
 					}
-					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
+					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, nullptr );	//パイプから読み出し
 					if( read_cnt == 0 )
 					{
 						continue;
@@ -760,7 +760,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 		WCHAR fileName[1024];
 		int   fileLine;
 
-		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , NULL ) ){
+		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , nullptr ) ){
 			return false;
 		}
 		return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine), bClose );
@@ -796,7 +796,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	}
 
 	//タグジャンプする。
-	if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine, NULL ) )
+	if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine, nullptr ) )
 	{
 		return false;
 	}

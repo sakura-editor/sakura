@@ -103,11 +103,11 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//! DLLの関数を呼び出せるか状態どうか
-	virtual bool IsAvailable() const { return m_hInstance != NULL; }
+	virtual bool IsAvailable() const { return m_hInstance != nullptr; }
 
 	//! DLLロードと初期処理
 	EDllResult InitDll(
-		LPCWSTR pszSpecifiedDllName = NULL	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
+		LPCWSTR pszSpecifiedDllName = nullptr	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
 	);
 
 	//! 終了処理とDLLアンロード

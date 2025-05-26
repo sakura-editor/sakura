@@ -20,7 +20,7 @@
 	@date 2005.04.23 genta 管理数の最大値を指定する引数追加
 */
 CSortedTagJumpList::CSortedTagJumpList(int max)
-	: m_pTagjump( NULL ),
+	: m_pTagjump( nullptr ),
 	  m_nCount( 0 ),
 	  m_bOverflow( false ),
 	  m_MAX_TAGJUMPLIST( max )
@@ -60,7 +60,7 @@ void CSortedTagJumpList::Empty( void )
 		next = p->next;
 		Free( p );
 	}
-	m_pTagjump = NULL;
+	m_pTagjump = nullptr;
 	m_nCount = 0;
 	m_bOverflow = false;
 	m_baseDirArr.clear();
@@ -98,14 +98,14 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 {
 	//アイテムを作成する。
 	TagJumpInfo* item = (TagJumpInfo*)malloc( sizeof( TagJumpInfo ) );
-	if( NULL == item ) return FALSE;
+	if( nullptr == item ) return FALSE;
 	item->keyword  = _wcsdup( to_wchar(keyword) );
 	item->filename = _wcsdup( to_wchar(filename) );
 	item->no       = no;
 	item->type     = type;
 	item->note     = _wcsdup( to_wchar(note) );
 	item->depth    = depth;
-	item->next     = NULL;
+	item->next     = nullptr;
 	item->baseDirId = baseDirId;
 
 	//文字列長ガード
@@ -114,7 +114,7 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	if( wcslen( item->note     ) >= MAX_TAG_STRING_LENGTH ) item->note[     MAX_TAG_STRING_LENGTH-1 ] = 0;
 
 	TagJumpInfo* p;
-	TagJumpInfo* prev = NULL;
+	TagJumpInfo* prev = nullptr;
 
 	//アイテムをリストの適当な位置に追加する。
 	for( p = m_pTagjump; p; p = p->next )
@@ -130,10 +130,10 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	//最大数を超えたら最後のアイテムを削除する。
 	if( m_nCount > m_MAX_TAGJUMPLIST )
 	{
-		prev = NULL;
+		prev = nullptr;
 		for( p = m_pTagjump; p->next; p = p->next ) prev = p;
-		if( prev ) prev->next = NULL;
-		else       m_pTagjump = NULL;
+		if( prev ) prev->next = nullptr;
+		else       m_pTagjump = nullptr;
 		Free( p );
 		m_nCount--;
 		m_bOverflow = true;
@@ -167,7 +167,7 @@ BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, i
 
 	CSortedTagJumpList::TagJumpInfo* p;
 	p = GetPtr( index );
-	if( NULL != p )
+	if( nullptr != p )
 	{
 		if( keyword  ) wcscpy( keyword, p->keyword );
 		if( filename ) wcscpy( filename, p->filename );
@@ -202,5 +202,5 @@ CSortedTagJumpList::TagJumpInfo* CSortedTagJumpList::GetPtr( int index )
 		if( index == i ) return p;
 		i++;
 	}
-	return NULL;
+	return nullptr;
 }

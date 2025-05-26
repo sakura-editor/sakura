@@ -94,7 +94,7 @@ public:
 						 bool bFromSetFontSize = false);		// ビューに設定変更を反映させる
 	BOOL OnFileClose(bool bGrepNoConfirm);			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 
-	void RunAutoMacro( int idx, LPCWSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
+	void RunAutoMacro( int idx, LPCWSTR pszSaveFilePath = nullptr );	// 2006.09.01 ryoji マクロ自動実行
 
 	void SetBackgroundImage();
 

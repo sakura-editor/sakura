@@ -85,7 +85,7 @@ HACCEL CKeyBind::CreateAccerelator(
 
 	if( nAccelArrNum <= 0 ){
 		/* 機能割り当てがゼロ */
-		return NULL;
+		return nullptr;
 	}
 	pAccelArr = new ACCEL[nAccelArrNum];
 	k = 0;
@@ -366,7 +366,7 @@ int CKeyBind::GetKeyStrList(
 	for( i = 0; i < nAssignedKeysNum; ++i ){
 		(*pppcMemList)[i] = new CNativeW;
 	}
-	(*pppcMemList)[i] = NULL;
+	(*pppcMemList)[i] = nullptr;
 
 	nAssignedKeysNum = 0;
 	for( j = 0; j < 8; ++j ){
@@ -394,19 +394,19 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 	static	WCHAR	sLabel[MAX_LABEL_CCH];
 	const	WCHAR*	p;
 
-	if (sKey == NULL || sKey[0] == L'\0') {
+	if (sKey == nullptr || sKey[0] == L'\0') {
 		return const_cast<WCHAR*>( sName );
 	}
 	else {
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
-			  && (((p = wcschr( sName, sKey[0])) != nullptr) || ((p = wcschr( sName, towlower(sKey[0]))) != nullptr)) ){
+			  && (((p = wcschr( sName, sKey[0])) != nullptr) || ((p = wcschr( sName, _totlower(sKey[0]))) != nullptr)) ){
 			// 欧文風、使用している文字をアクセスキーに
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
 			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
-		else if( (p = wcschr( sName, L'(' )) != NULL
-			  && (p = wcschr( p, sKey[0] )) != NULL) {
+		else if( (p = wcschr( sName, L'(' )) != nullptr
+			  && (p = wcschr( p, sKey[0] )) != nullptr) {
 			// (付その後にアクセスキー
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
@@ -486,7 +486,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 EFunctionCode CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 {
 	DLLSHAREDATA* pShareData = &GetDllShareData();
-	if( pShareData == NULL )
+	if( pShareData == nullptr )
 		return F_DEFAULT;
 
 	EFunctionCode nDefFuncCode = F_DEFAULT;

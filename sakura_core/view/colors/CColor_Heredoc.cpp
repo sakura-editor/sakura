@@ -18,7 +18,7 @@ public:
 			return false;
 		}
 		const CLayoutColorHeredocInfo* info = dynamic_cast<const CLayoutColorHeredocInfo*>(p);
-		if( info == NULL ){
+		if( info == nullptr ){
 			return false;
 		}
 		return info->m_id == this->m_id;
@@ -29,7 +29,7 @@ void CColor_Heredoc::SetStrategyColorInfo(const CLayoutColorInfo* colorInfo)
 {
 	if( colorInfo ){
 		const CLayoutColorHeredocInfo* info = dynamic_cast<const CLayoutColorHeredocInfo*>(colorInfo);
-		if( info == NULL ){
+		if( info == nullptr ){
 			return;
 		}
 		m_pszId = info->m_id.c_str();

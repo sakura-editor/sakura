@@ -117,7 +117,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	PROCESS_INFORMATION	pi;
 	ZeroMemory( &pi, sizeof(pi) );
 	CDlgCancel				cDlgCancel;
-	COutputAdapter* oaInst = NULL;
+	COutputAdapter* oaInst = nullptr;
 
 	bool bEditable = m_pcEditDoc->IsEditable();
 
@@ -161,7 +161,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	SECURITY_ATTRIBUTES	sa;
 	sa.nLength = sizeof(sa);
 	sa.bInheritHandle = TRUE;
-	sa.lpSecurityDescriptor = NULL;
+	sa.lpSecurityDescriptor = nullptr;
 	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE ) {
 		//エラー。対策無し
 		return false;
@@ -176,7 +176,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	// CDocLineMgr::WriteFileなど既存のファイル出力系の関数のなかには
 	// ファイルハンドルを返すタイプのものがないので、一旦書き出してから
 	// 一時ファイル属性でオープンすることに。
-	hStdIn = NULL;
+	hStdIn = nullptr;
 	if(bSendStdin){	/* 現在編集中のファイルを子プロセスの標準入力へ */
 		WCHAR		szPathName[MAX_PATH];
 		WCHAR		szTempFileName[MAX_PATH];
@@ -189,7 +189,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 
 		if( !GetCommander().Command_PUTFILE( szTempFileName, sendEncoding, nFlgOpt) ){	// 一時ファイル出力
-			hStdIn = NULL;
+			hStdIn = nullptr;
 		} else {
 			// 子プロセスへの継承用にファイルを開く
 			hStdIn = CreateFile(
@@ -199,23 +199,23 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 				&sa,
 				OPEN_EXISTING,
 				FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
-				NULL
+				nullptr
 			);
-			if(hStdIn == INVALID_HANDLE_VALUE) hStdIn = NULL;
+			if(hStdIn == INVALID_HANDLE_VALUE) hStdIn = nullptr;
 		}
 	}
 	
-	if (hStdIn == NULL) {	/* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
+	if (hStdIn == nullptr) {	/* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
 		bSendStdin = FALSE;
 		hStdIn = GetStdHandle( STD_INPUT_HANDLE );
-		if(hStdIn == NULL){
+		if(hStdIn == nullptr){
 			// 2013.06.12 Moca 標準入力ハンドルを用意する
-			HANDLE hStdInWrite = NULL;
+			HANDLE hStdInWrite = nullptr;
 			if( CreatePipe( &hStdIn, &hStdInWrite, &sa, 1000 ) == FALSE ) {
 				//エラー
-				hStdIn = hStdInWrite = NULL;
+				hStdIn = hStdInWrite = nullptr;
 			}
-			if( hStdInWrite != NULL ){
+			if( hStdInWrite != nullptr ){
 				::CloseHandle( hStdInWrite );
 			}
 		}
@@ -238,8 +238,8 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	//コマンドライン実行
 	WCHAR	cmdline[1024];
 	wcscpy( cmdline, pszCmd );
-	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
-				CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi ) == FALSE ) {
+	if( CreateProcess( nullptr, cmdline, nullptr, nullptr, TRUE,
+				CREATE_NEW_CONSOLE, nullptr, bCurDir ? pszCurDir : nullptr, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
 		// command(9x) か cmd(NT) を呼び出す
 
@@ -257,9 +257,9 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 			( bGetStdout ? L"/C " : L"/K " ),
 			pszCmd
 		);
-		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
-					CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi ) == FALSE ) {
-			MessageBox( NULL, cmdline, LS(STR_EDITVIEW_EXECCMD_ERR), MB_OK | MB_ICONEXCLAMATION );
+		if( CreateProcess( nullptr, cmdline, nullptr, nullptr, TRUE,
+					CREATE_NEW_CONSOLE, nullptr, bCurDir ? pszCurDir : nullptr, &sui, &pi ) == FALSE ) {
+			MessageBox( nullptr, cmdline, LS(STR_EDITVIEW_EXECCMD_ERR), MB_OK | MB_ICONEXCLAMATION );
 			goto finish;
 		}
 	}
@@ -284,7 +284,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	// hStdInも親プロセスでは使用しないが、Win9x系では子プロセスが終了してから
 	// クローズするようにしないと一時ファイルが自動削除されない
 	CloseHandle(hStdOutWrite);
-	hStdOutWrite = NULL;	// 2007.09.08 genta 二重closeを防ぐ
+	hStdOutWrite = nullptr;	// 2007.09.08 genta 二重closeを防ぐ
 
 	if( bGetStdout ) {
 		DWORD	new_cnt;
@@ -292,7 +292,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		bool	bLoopFlag = true;
 		bool	bCancelEnd = false; // キャンセルでプロセス停止
 		oaInst =  (customOa
-					? NULL
+					? nullptr
 					: (outputEncoding == CODE_UTF8
 						? new COutputAdapterUTF8(this, bToEditWindow)
 						: new COutputAdapterDefault(this, bToEditWindow)) );
@@ -372,14 +372,14 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 			}
 			new_cnt = 0;
 
-			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ) {	//パイプの中の読み出し待機中の文字数を取得
+			if( PeekNamedPipe( hStdOutRead, nullptr, 0, nullptr, &new_cnt, nullptr ) ) {	//パイプの中の読み出し待機中の文字数を取得
 				while( new_cnt > 0 ) {												//待機中のものがある
 
 					if( new_cnt > MAX_WORK_READ) {							//パイプから読み出す量を調整
 						new_cnt = MAX_WORK_READ;
 					}
 					DWORD	read_cnt = 0;
-					::ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
+					::ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, nullptr );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
 
 					if( read_cnt == 0 ) {
@@ -517,7 +517,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 					// 子プロセスの出力をどんどん受け取らないと子プロセスが
 					// 停止してしまうため，バッファが空になるまでどんどん読み出す．
 					new_cnt = 0;
-					if( ! PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ){
+					if( ! PeekNamedPipe( hStdOutRead, nullptr, 0, nullptr, &new_cnt, nullptr ) ){
 						break;
 					}
 					Sleep(0);
@@ -612,7 +612,7 @@ user_cancel:
 
 finish:
 	//終了処理
-	if(hStdIn != NULL) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
+	if(hStdIn != nullptr) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
 	if(hStdOutWrite) CloseHandle( hStdOutWrite );
 	CloseHandle( hStdOutRead );
 	if( pi.hProcess ) CloseHandle( pi.hProcess );

@@ -299,7 +299,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), m_Types.m_bUseTypeFont );
 						// フォント表示	// 2013/6/23 Uchi
 						HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, m_Types.m_bUseTypeFont);
-						if(m_hTypeFont != NULL){
+						if(m_hTypeFont != nullptr){
 							::DeleteObject( m_hTypeFont );
 						}
 						m_hTypeFont = hFont;
@@ -311,7 +311,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), FALSE );
 					// フォント表示
 					HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, FALSE);
-					if(m_hTypeFont != NULL){
+					if(m_hTypeFont != nullptr){
 						::DeleteObject( m_hTypeFont );
 					}
 					m_hTypeFont = hFont;
@@ -342,7 +342,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		switch( idCtrl ){
 		case IDC_SPIN_MAXLINELEN:
 			/* 折り返し桁数 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -360,7 +360,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		case IDC_SPIN_CHARSPACE:
 			/* 文字の隙間 */
 //			MYTRACE( L"IDC_SPIN_CHARSPACE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -378,7 +378,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		case IDC_SPIN_LINESPACE:
 			/* 行の隙間 */
 //			MYTRACE( L"IDC_SPIN_LINESPACE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, TRUE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nullptr, TRUE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -402,7 +402,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			//	Sep. 22, 2002 genta
 			/* TAB幅 */
 //			MYTRACE( L"IDC_SPIN_CHARSPACE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -463,9 +463,9 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 
 	case WM_DESTROY:
 		// タイプフォント破棄	// 2013/6/23 Uchi
-		if (m_hTypeFont != NULL) {
+		if (m_hTypeFont != nullptr) {
 			::DeleteObject( m_hTypeFont );
-			m_hTypeFont = NULL;
+			m_hTypeFont = nullptr;
 		}
 		return TRUE;
 	}
@@ -540,7 +540,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		int		nSelPos = 0;
 		int nSize = (int)m_SIndentArr.size();
 		for( int i = 0; i < nSize; ++i ){
-			if( m_SIndentArr[i].pszName == NULL ){
+			if( m_SIndentArr[i].pszName == nullptr ){
 				Combo_InsertString( hwndCombo, i, LS(m_SIndentArr[i].nNameId) );
 			}else{
 				Combo_InsertString( hwndCombo, i, m_SIndentArr[i].pszName );
@@ -579,7 +579,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		int		nSelPos = 0;
 		int nSize = (int)m_OlmArr.size();
 		for( int i = 0; i < nSize; ++i ){
-			if( m_OlmArr[i].pszName == NULL ){
+			if( m_OlmArr[i].pszName == nullptr ){
 				if( m_OlmArr[i].nNameId < STR2_OUTLINE_MAX ){
 					Combo_InsertString( hwndCombo, i, pszOutlineNames[m_OlmArr[i].nNameId] );
 				}else{
@@ -663,10 +663,10 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		/* 折り返し桁数 */
 		m_Types.m_nMaxLineKetas = CKetaXInt(t_max(MINLINEKETAS,
-			t_min<int>(MAXLINEKETAS, ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE ))));
+			t_min<int>(MAXLINEKETAS, ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nullptr, FALSE ))));
 
 		/* 文字の間隔 */
-		m_Types.m_nColumnSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
+		m_Types.m_nColumnSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, nullptr, FALSE );
 		if( m_Types.m_nColumnSpace < 0 ){
 			m_Types.m_nColumnSpace = 0;
 		}
@@ -675,7 +675,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		}
 
 		/* 行の間隔 */
-		m_Types.m_nLineSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, TRUE );
+		m_Types.m_nLineSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nullptr, TRUE );
 		if( m_Types.m_nLineSpace < -LINESPACE_MAX ){
 			m_Types.m_nLineSpace = -LINESPACE_MAX;
  		}
@@ -685,7 +685,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		/* TAB幅 */
 		m_Types.m_nTabSpace = CKetaXInt(t_max(1,
-			t_min<int>(64, ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE ))));
+			t_min<int>(64, ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, nullptr, FALSE ))));
 
 		/* TAB表示文字列 */
 		WCHAR szTab[8+1]; /* +1. happy */

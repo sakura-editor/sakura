@@ -106,15 +106,15 @@ CMacroManagerBase* CWSHMacroManager::Creator(const WCHAR* FileExt)
 	wcscpy( FileExtWithDot, L"." );
 	wcscat( FileExtWithDot, FileExt );
 
-	if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, NULL, FileType, 1024))
+	if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, nullptr, FileType, 1024))
 	{
 		lstrcat(FileType, L"\\ScriptEngine");
-		if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, EngineName, 1024))
+		if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, nullptr, EngineName, 1024))
 		{
 			return new CWSHMacroManager(EngineName);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void CWSHMacroManager::declare()

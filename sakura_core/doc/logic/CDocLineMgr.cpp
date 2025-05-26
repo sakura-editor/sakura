@@ -173,19 +173,19 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	CLogicInt nCounter;
 	CDocLine* pDocLine;
 	if( CLogicInt(0) == m_nLines ){
-		return NULL;
+		return nullptr;
 	}
 	// 2004.03.28 Moca nLineが負の場合のチェックを追加
 	if( CLogicInt(0) > nLine || nLine >= m_nLines ){
-		return NULL;
+		return nullptr;
 	}
 	// 2004.03.28 Moca m_pCodePrevReferより、Top,Botのほうが近い場合は、そちらを利用する
 	CLogicInt nPrevToLineNumDiff = t_abs( m_nPrevReferLine - nLine );
-	if( m_pCodePrevRefer == NULL
+	if( m_pCodePrevRefer == nullptr
 	  || nLine < nPrevToLineNumDiff
 	  || m_nLines - nLine < nPrevToLineNumDiff
 	){
-		if( m_pCodePrevRefer == NULL ){
+		if( m_pCodePrevRefer == nullptr ){
 			MY_RUNNINGTIMER( cRunningTimer, L"CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL" );
 		}
 
@@ -206,7 +206,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 		else{
 			nCounter = m_nLines - CLogicInt(1);
 			pDocLine = m_pDocLineBot;
-			while( NULL != pDocLine ){
+			while( nullptr != pDocLine ){
 				if( nLine == nCounter ){
 					m_nPrevReferLine = nLine;
 					m_pCodePrevRefer = pDocLine;
@@ -227,7 +227,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 		else if( nLine > m_nPrevReferLine ){
 			nCounter = m_nPrevReferLine + CLogicInt(1);
 			pDocLine = m_pCodePrevRefer->GetNextLine();
-			while( NULL != pDocLine ){
+			while( nullptr != pDocLine ){
 				if( nLine == nCounter ){
 					m_nPrevReferLine = nLine;
 					m_pCodePrevRefer = pDocLine;
@@ -241,7 +241,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 		else{
 			nCounter = m_nPrevReferLine - CLogicInt(1);
 			pDocLine = m_pCodePrevRefer->GetPrevLine();
-			while( NULL != pDocLine ){
+			while( nullptr != pDocLine ){
 				if( nLine == nCounter ){
 					m_nPrevReferLine = nLine;
 					m_pCodePrevRefer = pDocLine;
@@ -253,7 +253,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -262,12 +262,12 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 
 void CDocLineMgr::_Init()
 {
-	m_pDocLineTop = NULL;
-	m_pDocLineBot = NULL;
+	m_pDocLineTop = nullptr;
+	m_pDocLineBot = nullptr;
 	m_nLines = CLogicInt(0);
 	m_nPrevReferLine = CLogicInt(0);
-	m_pCodePrevRefer = NULL;
-	m_pDocLineCurrent = NULL;
+	m_pCodePrevRefer = nullptr;
+	m_pDocLineCurrent = nullptr;
 	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFF使用中 */	//@@@ 2002.05.25 MIK     //##後でCDocListener::OnClear (OnAfterClose) を作成し、そこに移動
 }
 
@@ -284,7 +284,7 @@ void CDocLineMgr::_PushBottom(CDocLine* pDocLineNew)
 		m_pDocLineBot->m_pNext = pDocLineNew;
 	}
 	m_pDocLineBot = pDocLineNew;
-	pDocLineNew->m_pNext = NULL;
+	pDocLineNew->m_pNext = nullptr;
 
 	++m_nLines;
 }
@@ -363,27 +363,27 @@ void CDocLineMgr::DUMP()
 
 	CDocLine* pDocLine;
 	CDocLine* pDocLineNext;
-	CDocLine* pDocLineEnd = NULL;
+	CDocLine* pDocLineEnd = nullptr;
 	pDocLine = m_pDocLineTop;
 
 	// 正当性を調べる
 	bool bIncludeCurrent = false;
 	bool bIncludePrevRefer = false;
 	CLogicInt nNum = CLogicInt(0);
-	if( m_pDocLineTop->m_pPrev != NULL ){
+	if( m_pDocLineTop->m_pPrev != nullptr ){
 		MYTRACE( L"error: m_pDocLineTop->m_pPrev != NULL\n");
 	}
-	if( m_pDocLineBot->m_pNext != NULL ){
+	if( m_pDocLineBot->m_pNext != nullptr ){
 		MYTRACE( L"error: m_pDocLineBot->m_pNext != NULL\n" );
 	}
-	while( NULL != pDocLine ){
+	while( nullptr != pDocLine ){
 		if( m_pDocLineCurrent == pDocLine ){
 			bIncludeCurrent = true;
 		}
 		if( m_pCodePrevRefer == pDocLine ){
 			bIncludePrevRefer = true;
 		}
-		if( NULL != pDocLine->GetNextLine() ){
+		if( nullptr != pDocLine->GetNextLine() ){
 			if( pDocLine->m_pNext == pDocLine ){
 				MYTRACE( L"error: pDocLine->m_pPrev Invalid value.\n" );
 				break;
@@ -406,10 +406,10 @@ void CDocLineMgr::DUMP()
 	if( nNum != m_nLines ){
 		MYTRACE( L"error: nNum(%d) != m_nLines(%d)\n", nNum, m_nLines );
 	}
-	if( false == bIncludeCurrent && m_pDocLineCurrent != NULL ){
+	if( false == bIncludeCurrent && m_pDocLineCurrent != nullptr ){
 		MYTRACE( L"error: m_pDocLineCurrent=%08lxh Invalid value.\n", m_pDocLineCurrent );
 	}
-	if( false == bIncludePrevRefer && m_pCodePrevRefer != NULL ){
+	if( false == bIncludePrevRefer && m_pCodePrevRefer != nullptr ){
 		MYTRACE( L"error: m_pCodePrevRefer =%08lxh Invalid value.\n", m_pCodePrevRefer );
 	}
 
@@ -418,7 +418,7 @@ void CDocLineMgr::DUMP()
 	MYTRACE( L"m_pDocLineTop=%08lxh\n", m_pDocLineTop );
 	MYTRACE( L"m_pDocLineBot=%08lxh\n", m_pDocLineBot );
 	pDocLine = m_pDocLineTop;
-	while( NULL != pDocLine ){
+	while( nullptr != pDocLine ){
 		pDocLineNext = pDocLine->GetNextLine();
 		MYTRACE( L"\t-------\n" );
 		MYTRACE( L"\tthis=%08lxh\n", pDocLine );

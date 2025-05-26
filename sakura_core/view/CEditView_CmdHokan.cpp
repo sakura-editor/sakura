@@ -114,7 +114,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		pcmemHokanWord = &cmemHokanWord;
 	}
 	else {
-		pcmemHokanWord = NULL;
+		pcmemHokanWord = nullptr;
 	}
 
 	/* 入力補完ウィンドウ作成 */
@@ -198,7 +198,7 @@ int CEditView::HokanSearchByFile(
 	bool bWordStartWithMark;		//候補が記号で始まるか
 
 	// キーの先頭が記号(#$@\)かどうか判定
-	bKeyStartWithMark = ( wcschr( L"$@#\\", pszKey[0] ) != NULL ? true : false );
+	bKeyStartWithMark = ( wcschr( L"$@#\\", pszKey[0] ) != nullptr ? true : false );
 
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
 		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
@@ -210,7 +210,7 @@ int CEditView::HokanSearchByFile(
 			if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
 
 			// キーの先頭が記号以外の場合、記号で始まる単語は候補からはずす
-			if( !bKeyStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != NULL )continue;
+			if( !bKeyStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != nullptr )continue;
 
 			// 文字種類取得
 			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
@@ -219,7 +219,7 @@ int CEditView::HokanSearchByFile(
 			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ||
 				 kindPre == CK_ZEN_KIGO  || kindPre == CK_ZEN_SKIGO )continue;
 
-			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != NULL ? true : false );
+			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != nullptr ? true : false );
 
 			nWordBegin = j;
 			// 候補単語の終了位置を求める

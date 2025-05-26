@@ -229,7 +229,7 @@ CPlug* CJackManager::GetCommandById( int id ) const
 		}
 	}
 	assert_warning(false);	//IDに合致するプラグが登録されていない
-	return NULL;
+	return nullptr;
 }
 
 //プラグを返す

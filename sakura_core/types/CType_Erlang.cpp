@@ -221,7 +221,7 @@ const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 					case L']': op = L'['; break;
 					case L'}': op = L'{'; break;
 					default:
-						PleaseReportToAuthor(NULL, LS(STR_OUTLINE_ERLANG_SCANARGS));
+						PleaseReportToAuthor(nullptr, LS(STR_OUTLINE_ERLANG_SCANARGS));
 						op = 0;
 						break;
 				}
@@ -344,7 +344,7 @@ bool COutlineErlang::parse( const wchar_t* buf, int linelen, CLogicInt linenum )
 			case STATE_FUNC_ARGS_FIN:
 				pos = EnterCond( end, pos ); break;
 			default:
-				PleaseReportToAuthor(NULL, L"COutlineErlang::parse Unknown State: %d", m_state );
+				PleaseReportToAuthor(nullptr, L"COutlineErlang::parse Unknown State: %d", m_state );
 				break;
 		}
 		if( m_state == STATE_FUNC_FOUND ){

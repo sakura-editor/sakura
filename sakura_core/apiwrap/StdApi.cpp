@@ -79,11 +79,11 @@ namespace ApiWrap{
 	{
 		{
 		//Vista以降：SetPixelエミュレート
-			static HPEN hPen = NULL;
+			static HPEN hPen = nullptr;
 			static COLORREF clrPen = 0;
 			if(hPen && c!=clrPen){
 				DeleteObject(hPen);
-				hPen = NULL;
+				hPen = nullptr;
 			}
 			//ペン生成
 			if(!hPen){
@@ -91,7 +91,7 @@ namespace ApiWrap{
 			}
 			//描画
 			HPEN hpnOld = (HPEN)SelectObject(hdc,hPen);
-			::MoveToEx(hdc,x,y,NULL);
+			::MoveToEx(hdc,x,y,nullptr);
 			::LineTo(hdc,x+1,y+1);
 			SelectObject(hdc,hpnOld);
 		}

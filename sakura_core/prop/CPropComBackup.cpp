@@ -127,7 +127,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 
 		case IDC_SPIN_BACKUP_GENS:
 			/* バックアップファイルの世代数 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -405,7 +405,7 @@ int CPropBackup::GetData( HWND hwndDlg )
 	//	From Here Aug. 16, 2000 genta
 	//	世代数の取得
 	int	 nN;
-	nN = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, NULL, FALSE );	//	Oct. 29, 2001 genta
+	nN = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, nullptr, FALSE );	//	Oct. 29, 2001 genta
 
 //	for( nN = 0, pDigit = szNumBuf; *pDigit != '\0'; pDigit++ ){
 //		if( '0' <= *pDigit && *pDigit <= '9' ){
