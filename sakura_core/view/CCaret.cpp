@@ -35,8 +35,6 @@
 #include "apiwrap/CommonControl.h"
 #include "String_define.h"
 
-using namespace std;
-
 #define SCROLLMARGIN_LEFT 4
 #define SCROLLMARGIN_RIGHT 4
 #define SCROLLMARGIN_NOMOVE 4

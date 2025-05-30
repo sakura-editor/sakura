@@ -34,8 +34,6 @@
 #include "CSelectLang.h"
 #include "String_define.h"
 
-using namespace std; // 2002/2/3 aroka to here
-
 /* インデント ver1 */
 void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
 {
