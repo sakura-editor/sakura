@@ -190,19 +190,19 @@ INT_PTR CPropGeneral::DispatchEvent(
 			// 組み合わせてホイール操作した時ページスクロールする
 			case IDC_COMBO_WHEEL_PAGESCROLL:
 				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
-				nSelPos = Combo_GetCurSel( hwndCombo );
+				nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
-				if( nSelPos && nSelPos == Combo_GetCurSel( hwndCombo ) ){
-					Combo_SetCurSel( hwndCombo, 0 );
+				if( nSelPos && nSelPos == ApiWrap::Combo_GetCurSel( hwndCombo ) ){
+					ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 				}
 				return TRUE;
 			// 組み合わせてホイール操作した時横スクロールする
 			case IDC_COMBO_WHEEL_HSCROLL:
 				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
-				nSelPos = Combo_GetCurSel( hwndCombo );
+				nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
-				if( nSelPos && nSelPos == Combo_GetCurSel( hwndCombo ) ){
-					Combo_SetCurSel( hwndCombo, 0 );
+				if( nSelPos && nSelPos == ApiWrap::Combo_GetCurSel( hwndCombo ) ){
+					ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 				}
 				return TRUE;
 			}
@@ -364,27 +364,27 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	int		i;
 
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	nSelPos = 0;
 	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
+		ApiWrap::Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
 		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nPageScrollByWheel ){	// ページスクロールとする組み合わせ操作
 			nSelPos = i;
 		}
 	}
-	Combo_SetCurSel( hwndCombo, nSelPos );
+	ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 	// 2009.01.12 nasukoji	組み合わせてホイール操作した時横スクロールする
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	nSelPos = 0;
 	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
+		ApiWrap::Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
 		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nHorizontalScrollByWheel ){	// 横スクロールとする組み合わせ操作
 			nSelPos = i;
 		}
 	}
-	Combo_SetCurSel( hwndCombo, nSelPos );
+	ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 	// 2007.09.09 Moca 画面キャッシュ設定追加
 	// 画面キャッシュを使う
@@ -410,7 +410,7 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, m_Common.m_sGeneral.m_bStayTaskTray );
 
 	/* タスクトレイ左クリックメニューのショートカット */
-	HotKey_SetHotKey( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ), m_Common.m_sGeneral.m_wTrayMenuHotKeyCode, m_Common.m_sGeneral.m_wTrayMenuHotKeyMods );
+	ApiWrap::HotKey_SetHotKey( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ), m_Common.m_sGeneral.m_wTrayMenuHotKeyCode, m_Common.m_sGeneral.m_wTrayMenuHotKeyMods );
 
 	return;
 }
@@ -464,12 +464,12 @@ int CPropGeneral::GetData( HWND hwndDlg )
 	m_Common.m_sWindow.m_bUseCompatibleBMP = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MEMDC );
 
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
-	nSelPos = Combo_GetCurSel( hwndCombo );
+	nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 	m_Common.m_sGeneral.m_nPageScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;		// ページスクロールとする組み合わせ操作
 
 	// 2009.01.17 nasukoji	組み合わせてホイール操作した時横スクロールする
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
-	nSelPos = Combo_GetCurSel( hwndCombo );
+	nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 	m_Common.m_sGeneral.m_nHorizontalScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;	// 横スクロールとする組み合わせ操作
 
 	/* ファイルの履歴MAX */
@@ -515,7 +515,7 @@ int CPropGeneral::GetData( HWND hwndDlg )
 
 	/* タスクトレイ左クリックメニューのショートカット */
 	LRESULT	lResult;
-	lResult = HotKey_GetHotKey( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ) );
+	lResult = ApiWrap::HotKey_GetHotKey( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ) );
 	m_Common.m_sGeneral.m_wTrayMenuHotKeyCode = LOBYTE( lResult );
 	m_Common.m_sGeneral.m_wTrayMenuHotKeyMods = HIBYTE( lResult );
 

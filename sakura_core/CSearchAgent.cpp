@@ -762,8 +762,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 			pCDlgCancel = new CDlgCancel;
 			if( nullptr != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( nullptr ), nullptr, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
-				Progress_SetRange( hwndProgress, 0, 101 );
-				Progress_SetPos( hwndProgress, 0 );
+				ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
+				ApiWrap::Progress_SetPos( hwndProgress, 0 );
 			}
 		}
 	}
@@ -1004,8 +1004,8 @@ prev_line:;
 				nProgress = ::MulDiv(nLines, 100, nEditLines);
 				if( nProgressOld != nProgress ){
 					nProgressOld = nProgress;
-					Progress_SetPos( hwndProgress, nProgress + 1 );
-					Progress_SetPos( hwndProgress, nProgress );
+					ApiWrap::Progress_SetPos( hwndProgress, nProgress + 1 );
+					ApiWrap::Progress_SetPos( hwndProgress, nProgress );
 				}
 			}
 		}
@@ -1138,8 +1138,8 @@ prev_line:;
 					nProgress = ::MulDiv(nCount + nDelLines, 100, nEditLines);
 					if( nProgressOld != nProgress ){
 						nProgressOld = nProgress;
-						Progress_SetPos( hwndProgress, nProgress + 1 );
-						Progress_SetPos( hwndProgress, nProgress );
+						ApiWrap::Progress_SetPos( hwndProgress, nProgress + 1 );
+						ApiWrap::Progress_SetPos( hwndProgress, nProgress );
 					}
 				}
 			}

@@ -191,19 +191,19 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 	int i;
 
 	//	コンボボックスを初期化する
-	Combo_ResetContent( hComboBox );
+	ApiWrap::Combo_ResetContent( hComboBox );
 
 	//	固定機能リスト
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
-		Combo_AddString( hComboBox, LS( nsFuncCode::ppszFuncKind[i] ) );
+		ApiWrap::Combo_AddString( hComboBox, LS( nsFuncCode::ppszFuncKind[i] ) );
 	}
 
 	//	ユーザーマクロ
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP01 ) );
+	ApiWrap::Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP01 ) );
 	//	カスタムメニュー
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP02 ) );
+	ApiWrap::	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP02 ) );
 	//	プラグイン
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP19 ) );
+	ApiWrap::Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP19 ) );
 }
 
 /*!	@brief 指定された分類に属する機能リストをListBoxに登録する．
@@ -220,14 +220,14 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 	int i;
 
 	//	リストを初期化する
-	List_ResetContent( hListBox );
+	ApiWrap::List_ResetContent( hListBox );
 
 	n = GetItemCount( category );
 	for( i = 0; i < n; i++ ){
 		if( Pos2FuncCode( category, i ) == F_DISABLE )
 			continue;
 		Pos2FuncName( category, i, pszLabel, _countof(pszLabel) );
-		List_AddString( hListBox, pszLabel );
+		ApiWrap::List_AddString( hListBox, pszLabel );
 	}
 }
 

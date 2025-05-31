@@ -3113,7 +3113,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, L"");
 		}
 
-		StatusBar_SetParts( m_cStatusBar.GetStatusHwnd(), nStArrNum, nStArr );
+		ApiWrap::StatusBar_SetParts( m_cStatusBar.GetStatusHwnd(), nStArrNum, nStArr );
 		if (hFont != nullptr)
 		{
 			::SelectObject(hdc, hFont);
@@ -3713,11 +3713,11 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	//    複数あるときはどれを押した時も１個目のボタン情報が入るようなのでマウス位置からボタン位置を求める
 	::GetCursorPos( &po );
 	::ScreenToClient( hwnd, &po );
-	nIndex = Toolbar_Hittest( hwnd, &po );
+	nIndex = ApiWrap::Toolbar_Hittest( hwnd, &po );
 	if( nIndex < 0 ){
 		return 0;
 	}
-	Toolbar_GetItemRect( hwnd, nIndex, &rc );
+	ApiWrap::Toolbar_GetItemRect( hwnd, nIndex, &rc );
 	po.x = rc.left;
 	po.y = rc.bottom;
 	::ClientToScreen( hwnd, &po );

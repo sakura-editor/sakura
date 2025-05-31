@@ -41,7 +41,7 @@ void EnsureDirectoryExist( const std::wstring& strProfileName )
 
 		// フォルダーが存在しなければ作成する
 		if( !IsDirectory( szProfileFolder ) ){
-			MakeSureDirectoryPathExistsW( szProfileFolder );
+			ApiWrap::MakeSureDirectoryPathExistsW( szProfileFolder );
 		}
 	}
 }

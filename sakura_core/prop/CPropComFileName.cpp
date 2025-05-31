@@ -123,9 +123,9 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 			SetData( hwndDlg );
 
 			// エディット コントロールに入力できるテキストの長さを制限する
-			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_SHORTMAXWIDTH ), 4 );
-			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_FROM ), _MAX_PATH - 1 );
-			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_TO ),   _MAX_PATH - 1 );
+			ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_SHORTMAXWIDTH ), 4 );
+			ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_FROM ), _MAX_PATH - 1 );
+			ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_TO ),   _MAX_PATH - 1 );
 		}
 		return TRUE;
 
@@ -142,13 +142,13 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					nIndex = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					// 未選択
 					if( -1 == nIndex ){
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, L"" );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, L"" );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, L"" );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, L"" );
 					}
 					else if( nIndex != m_nLastPos_FILENAME ){
 						GetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo );
 					}
 					else{
 						// nIndex == m_nLastPos_FILENAMEのとき
@@ -196,8 +196,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 						// 選択中でなければ最後に追加
 						nIndex = nCount;
 					}
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
 
 					if( -1 != SetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo, true ) ){
 						return TRUE;
@@ -206,8 +206,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 				case IDC_BUTTON_FNAME_ADD:	// 追加
 					nCount = ListView_GetItemCount( hListView );
 
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
 					
 					if( -1 != SetListViewItem_FILENAME( hListView, nCount, szFrom, szTo, true ) ){
 						return TRUE;
@@ -215,8 +215,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					break;
 
 				case IDC_BUTTON_FNAME_UPD:	// 更新
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo, _MAX_PATH );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo, _MAX_PATH );
 					if( -1 != nIndex ){
 						if( -1 != SetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo, false ) ){
 							return TRUE;

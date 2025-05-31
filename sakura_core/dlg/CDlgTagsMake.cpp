@@ -108,14 +108,14 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 	WCHAR	szPath[_MAX_PATH + 1];
 
 	/* フォルダー */
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH );
 
 	if( SelectDir( hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath ) )
 	{
 		//末尾に\\マークを追加する．
 		::PathAddBackslashW( szPath );
 
-		::DlgItem_SetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath );
+		ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath );
 	}
 }
 
@@ -123,17 +123,17 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 void CDlgTagsMake::SetData( void )
 {
 	//作成フォルダー
-	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), _countof( m_szPath ) );
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), _countof( m_szPath ) );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
 
 	//オプション
 	m_nTagsOpt = m_pShareData->m_nTagsOpt;
 	if( m_nTagsOpt & 0x0001 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_TAG_MAKE_RECURSE, TRUE );
 
 	//コマンドライン
-	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), _countof( m_pShareData->m_szTagsCmdLine ) );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), _countof( m_pShareData->m_szTagsCmdLine ) );
 	wcscpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
 
 	return;
 }
@@ -143,7 +143,7 @@ void CDlgTagsMake::SetData( void )
 int CDlgTagsMake::GetData( void )
 {
 	//フォルダー
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof( m_szPath ) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof( m_szPath ) );
 	int length = wcslen( m_szPath );
 	if( length > 0 )
 	{
@@ -156,7 +156,7 @@ int CDlgTagsMake::GetData( void )
 	m_pShareData->m_nTagsOpt = m_nTagsOpt;
 
 	//コマンドライン
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, _countof( m_szTagsCmdLine ) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, _countof( m_szTagsCmdLine ) );
 	wcscpy( m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine );
 
 	return TRUE;

@@ -120,8 +120,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		}
 		/* リストがなければ初期値として用途を表示 */
 		else{
-			::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
-			::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
+			ApiWrap::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
+			ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
 		}
 
 		/* 初期状態を設定 */
@@ -192,7 +192,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				}
 				/* 更新するキー情報を取得する。 */
 				wmemset(szPath, 0, _countof(szPath));
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, _countof(szPath) );
+				ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, _countof(szPath) );
 				if( szPath[0] == L'\0' ) return FALSE;
 				/* 重複検査 */
 				nIndex2 = ListView_GetItemCount(hwndList);
@@ -225,7 +225,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				strcnv(szAbout);
 
 				/* ついでに辞書の説明を更新 */
-				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書ファイルの概要 */
+				ApiWrap::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書ファイルの概要 */
 				
 				/* 更新のときは行削除する。 */
 				if(wID == IDC_BUTTON_KEYHELP_UPD){	/* 更新 */
@@ -267,8 +267,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				ListView_DeleteItem( hwndList, nIndex );
 				/* リストがなくなったら初期値として用途を表示 */
 				if(ListView_GetItemCount(hwndList) == 0){
-					::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
-					::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
+					ApiWrap::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
+					ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
 				}/* リストの最後を削除した場合は、削除後のリストの最後を選択する。 */
 				else if(nIndex > ListView_GetItemCount(hwndList)-1){
 					ListView_SetItemState( hwndList, ListView_GetItemCount(hwndList)-1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -467,8 +467,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				}
 				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
 				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
-				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書の説明 */
-				::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ファイルパス */
+				ApiWrap::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書の説明 */
+				ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ファイルパス */
 			}
 			break;
 		}
@@ -502,7 +502,7 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	DWORD	dwStyle;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), _countof2( m_Types.m_KeyHelpArr[0].m_szPath ) - 1 );
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), _countof2( m_Types.m_KeyHelpArr[0].m_szPath ) - 1 );
 
 	// 使用する・使用しない
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP, m_Types.m_bUseKeyWordHelp );
@@ -511,11 +511,11 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, m_Types.m_bUseKeyHelpPrefix );
 
 	HWND hwndCombo = GetDlgItem(hwndDlg, IDC_COMBO_MENU);
-	Combo_ResetContent(hwndCombo);
+	ApiWrap::Combo_ResetContent(hwndCombo);
 	for( i = 0; i < (int)_countof(nKeyHelpRMenuType); i++ ){
-		Combo_AddString(hwndCombo, LS(nKeyHelpRMenuType[i]));
+		ApiWrap::Combo_AddString(hwndCombo, LS(nKeyHelpRMenuType[i]));
 	}
-	Combo_SetCurSel(hwndCombo, m_Types.m_eKeyHelpRMenuShowType);
+	ApiWrap::Combo_SetCurSel(hwndCombo, m_Types.m_eKeyHelpRMenuShowType);
 
 	/* リスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
@@ -573,7 +573,7 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 	m_Types.m_bUseKeyHelpAllSearch = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ) );
 	m_Types.m_bUseKeyHelpKeyDisp   = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ) );
 	m_Types.m_bUseKeyHelpPrefix    = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ) );
-	m_Types.m_eKeyHelpRMenuShowType = (EKeyHelpRMenuType)Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_MENU));
+	m_Types.m_eKeyHelpRMenuShowType = (EKeyHelpRMenuType)ApiWrap::Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_MENU));
 
 	/* リストに登録されている情報を配列に取り込む */
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );

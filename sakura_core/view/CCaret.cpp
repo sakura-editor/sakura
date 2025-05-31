@@ -868,7 +868,7 @@ void CCaret::ShowCaretPosInfo()
 			bool ret = statusBar.SetStatusText(nIndex, nOption, pszText);
 			if (ret) {
 				RECT partRect;
-				StatusBar_GetRect(hWnd, nIndex, &partRect);
+				ApiWrap::StatusBar_GetRect(hWnd, nIndex, &partRect);
 				::UnionRect(&updatedRect, &updatedRect, &partRect);
 			}
 		};

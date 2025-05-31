@@ -64,8 +64,8 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 
 		m_psi->bAddType = IsDlgButtonCheckedBool( GetHwnd(), IDC_RADIO_TYPE_ADD );
 		m_psi->sColorFile.clear();
-		m_psi->nColorType = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_COLORS ) ) - 1;
-		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( GetItemHwnd( IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
+		m_psi->nColorType = ApiWrap::Combo_GetCurSel( GetItemHwnd( IDC_COMBO_COLORS ) ) - 1;
+		if (m_psi->nColorType >= MAX_TYPES && ApiWrap::Combo_GetLBText( GetItemHwnd( IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
 			if (swscanf( buff1, L"File -- %ls", buff2 ) > 0) {
 				m_psi->sColorFile = buff2;
 				m_psi->nColorType = MAX_TYPES;
@@ -96,9 +96,9 @@ void CDlgTypeAscertain::SetData( void )
 	WCHAR	szText[_MAX_PATH + 10];
 	hwndCombo = GetItemHwnd( IDC_COMBO_COLORS );
 	/* コンボボックスを空にする */
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	/* 一行目はそのまま */
-	Combo_AddString( hwndCombo, LS(STR_DLGTYPEASC_IMPORT) );
+	ApiWrap::Combo_AddString( hwndCombo, LS(STR_DLGTYPEASC_IMPORT) );
 
 	// エディタ内の設定
 	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {
@@ -117,7 +117,7 @@ void CDlgTypeAscertain::SetData( void )
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
-		::Combo_AddString( hwndCombo, szText );
+		ApiWrap::Combo_AddString( hwndCombo, szText );
 	}
 	// 読込色設定ファイル設定
 	HANDLE	hFind;
@@ -133,13 +133,13 @@ void CDlgTypeAscertain::SetData( void )
 		if ( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
 			// 読込色設定ファイル発見
 			auto_sprintf( szText, L"File -- %s", wf.cFileName );
-			::Combo_AddString( hwndCombo, szText );
+			ApiWrap::Combo_AddString( hwndCombo, szText );
 		}
 	}
 	FindClose( hFind );
 
 	// コンボボックスのデフォルト選択
-	Combo_SetCurSel( hwndCombo, 0 );
+	ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 	return;
 }
 

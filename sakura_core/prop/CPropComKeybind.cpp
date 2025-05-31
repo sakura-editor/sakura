@@ -140,7 +140,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 		/* キー選択時の処理 */
 //	From Here Oct. 14, 2000 JEPRO わかりにくいので選択しないように変更	//Oct. 17, 2000 JEPRO 復活！
 //	/* キーリストの先頭の項目を選択（リストボックス）*/
-		List_SetCurSel( hwndKeyList, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
+		ApiWrap::List_SetCurSel( hwndKeyList, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );	//Oct. 14, 2000 JEPRO ここはどっちでもいい？(わからん)
 //	To Here Oct. 14, 2000
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
@@ -166,16 +166,16 @@ INT_PTR CPropKeybind::DispatchEvent(
 			m_nPageNum = ID_PROPCOM_PAGENUM_KEYBOARD;
 
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
-			nIndex = List_GetCurSel( hwndKeyList );
-			nIndex2 = Combo_GetCurSel( hwndCombo );
-			nIndex3 = List_GetCurSel( hwndFuncList );
+			nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
+			nIndex2 = ApiWrap::Combo_GetCurSel( hwndCombo );
+			nIndex3 = ApiWrap::List_GetCurSel( hwndFuncList );
 			if( nIndex != LB_ERR ){
 				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 			}
 			if( nIndex2 != CB_ERR ){
 				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 				if( nIndex3 != LB_ERR ){
-					List_SetCurSel( hwndFuncList, nIndex3 );
+					ApiWrap::List_SetCurSel( hwndFuncList, nIndex3 );
 				}
 			}
 			return TRUE;
@@ -200,9 +200,9 @@ INT_PTR CPropKeybind::DispatchEvent(
 				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_ASSIGN:	/* 割当 */
-				nIndex = List_GetCurSel( hwndKeyList );
-				nIndex2 = Combo_GetCurSel( hwndCombo );
-				nIndex3 = List_GetCurSel( hwndFuncList );
+				nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
+				nIndex2 = ApiWrap::Combo_GetCurSel( hwndCombo );
+				nIndex3 = ApiWrap::List_GetCurSel( hwndFuncList );
 				if( nIndex == LB_ERR || nIndex2 == CB_ERR || nIndex3 == LB_ERR ){
 					return TRUE;
 				}
@@ -222,7 +222,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndFuncList );
 				return TRUE;
 			case IDC_BUTTON_RELEASE:	/* 解除 */
-				nIndex = List_GetCurSel( hwndKeyList );
+				nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
 				if( nIndex == LB_ERR ){
 					return TRUE;
 				}
@@ -258,7 +258,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 		if( hwndKeyList == hwndCtl ){
 			switch( wNotifyCode ){
 			case LBN_SELCHANGE:
-				nIndex = List_GetCurSel( hwndKeyList );
+				nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
 				i = 0;
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 					i |= _SHIFT;
@@ -278,16 +278,16 @@ INT_PTR CPropKeybind::DispatchEvent(
 				}else{
 					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );
 				}
-				Wnd_SetText( hwndEDIT_KEYSFUNC, pszLabel );
+				ApiWrap::Wnd_SetText( hwndEDIT_KEYSFUNC, pszLabel );
 				return TRUE;
 			}
 		}else
 		if( hwndFuncList == hwndCtl ){
 			switch( wNotifyCode ){
 			case LBN_SELCHANGE:
-				nIndex = List_GetCurSel( hwndKeyList );
-				nIndex2 = Combo_GetCurSel( hwndCombo );
-				nIndex3 = List_GetCurSel( hwndFuncList );
+				nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
+				nIndex2 = ApiWrap::Combo_GetCurSel( hwndCombo );
+				nIndex3 = ApiWrap::List_GetCurSel( hwndFuncList );
 				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
 				/* 機能に対応するキー名の取得(複数) */
 				CNativeW**	ppcAssignedKeyList;
@@ -297,12 +297,12 @@ INT_PTR CPropKeybind::DispatchEvent(
 					FALSE	// 2007.02.22 ryoji デフォルト機能は取得しない
 				);	
 				/* 割り当てキーリストをクリアして値の設定 */
-				List_ResetContent( hwndAssignedkeyList );
+				ApiWrap::List_ResetContent( hwndAssignedkeyList );
 				if( 0 < nAssignedKeyNum){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
 						/* デバッグモニタに出力 */
 						const WCHAR* cpszString = ppcAssignedKeyList[j]->GetStringPtr();
-						::List_AddString( hwndAssignedkeyList, cpszString );
+						ApiWrap::List_AddString( hwndAssignedkeyList, cpszString );
 						delete ppcAssignedKeyList[j];
 					}
 					delete [] ppcAssignedKeyList;
@@ -313,7 +313,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 		if( hwndCombo == hwndCtl){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIndex2 = Combo_GetCurSel( hwndCombo );
+				nIndex2 = ApiWrap::Combo_GetCurSel( hwndCombo );
 				/* 機能一覧に文字列をセット（リストボックス）*/
 				m_cLookup.SetListItem( hwndFuncList, nIndex2 );	//	Oct. 2, 2001 genta
 				return TRUE;
@@ -329,9 +329,9 @@ INT_PTR CPropKeybind::DispatchEvent(
 					WCHAR	buff[1024], *p;
 					int	ret;
 
-					nIndex = List_GetCurSel( hwndAssignedkeyList );
+					nIndex = ApiWrap::List_GetCurSel( hwndAssignedkeyList );
 					wmemset(buff, 0, _countof(buff));
-					ret = List_GetText( hwndAssignedkeyList, nIndex, buff);
+					ret = ApiWrap::List_GetText( hwndAssignedkeyList, nIndex, buff);
 					if( ret != LB_ERR )
 					{
 						i = 0;
@@ -355,7 +355,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 						{
 							if( wcscmp(m_Common.m_sKeyBind.m_pKeyNameArr[j].m_szKeyName, p) == 0 )
 							{
-								List_SetCurSel( hwndKeyList, j);
+								ApiWrap::List_SetCurSel( hwndKeyList, j);
 								if( i & _SHIFT ) ::CheckDlgButton( hwndDlg, IDC_CHECK_SHIFT, BST_CHECKED );  //チェック
 								else             ::CheckDlgButton( hwndDlg, IDC_CHECK_SHIFT, BST_UNCHECKED );  //チェックをはずす
 								if( i & _CTRL )  ::CheckDlgButton( hwndDlg, IDC_CHECK_CTRL,  BST_CHECKED );  //チェック
@@ -379,9 +379,9 @@ INT_PTR CPropKeybind::DispatchEvent(
 
 	case WM_TIMER:
 		// ボタンの有効／無効を切り替える	// 2007.11.02 ryoji
-		nIndex = List_GetCurSel( hwndKeyList );
-		nIndex2 = Combo_GetCurSel( hwndCombo );
-		nIndex3 = List_GetCurSel( hwndFuncList );
+		nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
+		nIndex2 = ApiWrap::Combo_GetCurSel( hwndCombo );
+		nIndex3 = ApiWrap::List_GetCurSel( hwndFuncList );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ASSIGN ), !( LB_ERR == nIndex || nIndex2 == CB_ERR || nIndex3 == LB_ERR ) );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RELEASE ), !( LB_ERR == nIndex ) );
 		break;
@@ -423,12 +423,12 @@ void CPropKeybind::SetData( HWND hwndDlg )
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 2, 2001 genta
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
-	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
+	ApiWrap::Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
 
 	/* キー一覧に文字列をセット（リストボックス）*/
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
-		::List_AddString( hwndKeyList, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		ApiWrap::List_AddString( hwndKeyList, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 	}
 
 	return;
@@ -449,8 +449,8 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	wchar_t	szKeyState[64];
 	
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
-	nIndex = List_GetCurSel( hwndKeyList );
-	nIndexTop = List_GetTopIndex( hwndKeyList );
+	nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
+	nIndexTop = ApiWrap::List_GetTopIndex( hwndKeyList );
 	szKeyState[0] = L'\0';
 	i = 0;
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
@@ -467,14 +467,14 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	}
 	::SendMessage( hwndKeyList, WM_SETREDRAW, FALSE, 0 );
 	/* キー一覧に文字列をセット（リストボックス）*/
-	List_ResetContent( hwndKeyList );
+	ApiWrap::List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
 		WCHAR	pszLabel[256];
 		auto_sprintf( pszLabel, L"%ls%s", szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
-		::List_AddString( hwndKeyList, pszLabel );
+		ApiWrap::List_AddString( hwndKeyList, pszLabel );
 	}
-	List_SetCurSel( hwndKeyList, nIndex );
-	List_SetTopIndex( hwndKeyList, nIndexTop );
+	ApiWrap::List_SetCurSel( hwndKeyList, nIndex );
+	ApiWrap::List_SetTopIndex( hwndKeyList, nIndexTop );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 	::SendMessage( hwndKeyList, WM_SETREDRAW, TRUE, 0 );
 }

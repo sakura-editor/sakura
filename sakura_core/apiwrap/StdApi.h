@@ -67,5 +67,4 @@ namespace ApiWrap
 	//WM_COMMAND系の PostMessage は PostMessageCmd に差し替えておく。
 	#define PostMessageCmd PostMessage
 }
-using namespace ApiWrap;
 #endif /* SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_ */

@@ -177,9 +177,9 @@ void CDlgFileTree::SetDataItem(int nItemIndex)
 	::CheckDlgButton(hwndDlg, nIDs[nID1], TRUE);
 	::CheckDlgButton(hwndDlg, nIDs[nID2], FALSE);
 	::CheckDlgButton(hwndDlg, nIDs[nID3], FALSE);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile);
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath);
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName);
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile);
 	::CheckDlgButtonBool(hwndDlg, IDC_CHECK_HIDDEN, item.m_bIgnoreHidden);
 	::CheckDlgButtonBool(hwndDlg, IDC_CHECK_READONLY, item.m_bIgnoreReadOnly);
 	::CheckDlgButtonBool(hwndDlg, IDC_CHECK_SYSTEM, item.m_bIgnoreSystem);
@@ -250,7 +250,7 @@ int CDlgFileTree::GetData()
 	}
 	if( pFileTree ){
 		pFileTree->m_bProject = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_LOADINI);
-		DlgItem_GetText(hwndDlg, IDC_EDIT_DEFINI, pFileTree->m_szProjectIni, pFileTree->m_szProjectIni.GetBufferCount());
+		ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_DEFINI, pFileTree->m_szProjectIni, pFileTree->m_szProjectIni.GetBufferCount());
 		if( bSaveShareData ){
 			pFileTree->m_nItemCount = (int)items.size();
 			assert(pFileTree->m_nItemCount <= _countof(pFileTree->m_aItems));
@@ -318,11 +318,11 @@ int CDlgFileTree::GetDataItem( SFileTreeItem& item )
 		item.m_eFileTreeItemType = EFileTreeItemType_Folder;
 	}
 	if( bPathEnable ){
-		::DlgItem_GetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath, item.m_szTargetPath.GetBufferCount());
+		ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath, item.m_szTargetPath.GetBufferCount());
 	}
-	::DlgItem_GetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName, item.m_szLabelName.GetBufferCount());
+	ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName, item.m_szLabelName.GetBufferCount());
 	if( bGrepEnable ){
-		::DlgItem_GetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile, item.m_szTargetFile.GetBufferCount());
+		ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile, item.m_szTargetFile.GetBufferCount());
 		item.m_bIgnoreHidden = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_HIDDEN);
 		item.m_bIgnoreReadOnly = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_READONLY);
 		item.m_bIgnoreSystem = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_SYSTEM);	
@@ -335,10 +335,10 @@ BOOL CDlgFileTree::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	_SetHwnd(hwndDlg);
 	SFileTreeItem item;
 
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_DEFINI), m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() -1);
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_PATH), item.m_szTargetPath.GetBufferCount() -1);
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_LABEL), item.m_szLabelName.GetBufferCount() -1);
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_FILE), item.m_szTargetFile.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_DEFINI), m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_PATH), item.m_szTargetPath.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_LABEL), item.m_szLabelName.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_FILE), item.m_szTargetFile.GetBufferCount() -1);
 
 	CFilePath path;
 	m_pcDlgFuncList->LoadFileTreeSetting(m_fileTreeSetting, path);
@@ -382,7 +382,7 @@ void CDlgFileTree::SetDataInit()
 	}
 	::EnableWindow(GetItemHwnd(IDC_BUTTON_LOAD), bEnableDefIni);
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_LOADINI, m_fileTreeSetting.m_bProject);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni); 
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni); 
 }
 
 HTREEITEM CDlgFileTree::InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent, HTREEITEM htiInsert )
@@ -472,7 +472,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_LOAD:
 		{
-			DlgItem_GetText( GetHwnd(), IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni, m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() );
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni, m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() );
 			if( m_fileTreeSetting.m_szDefaultProjectIni[0] != L'\0' ){
 				CDataProfile cProfile;
 				cProfile.SetReadingMode();
@@ -522,9 +522,9 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			if( IsDlgButtonCheckedBool(hwndDlg, IDC_RADIO_GREP) ){
 				// RADIO_GREP == folder
 				WCHAR szDir[MAX_PATH];
-				DlgItem_GetText(GetHwnd(), IDC_EDIT_PATH, szDir, _countof(szDir) );
+				ApiWrap::DlgItem_GetText(GetHwnd(), IDC_EDIT_PATH, szDir, _countof(szDir) );
 				if( SelectDir(hwndDlg, LS(STR_DLGGREP1), szDir, szDir) ){
-					DlgItem_SetText(GetHwnd(), IDC_EDIT_PATH, szDir );
+					ApiWrap::DlgItem_SetText(GetHwnd(), IDC_EDIT_PATH, szDir );
 				}
 			}else{
 				// RADIO_FILE == file
@@ -537,7 +537,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				if( dlg.DoModal_GetOpenFileName(szFile) ){
 					CNativeW cmemFile = szFile;
 					cmemFile.Replace(L"%", L"%%");
-					DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
+					ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
 				}
 			}
 		}
@@ -578,7 +578,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				int index = nId - MENU_ROOT;
 				const WCHAR* pszPaths[] = { L"<iniroot>", L"%MYDOC%", L"%MYMUSIC%", L"%MYVIDEO%",
 					L"%DESKTOP%", L"%TEMP%", L"%SAKURA%", L"%SAKURADATA%" };
-				EditCtl_ReplaceSel(GetItemHwnd(IDC_EDIT_PATH), pszPaths[index]);
+				ApiWrap::EditCtl_ReplaceSel(GetItemHwnd(IDC_EDIT_PATH), pszPaths[index]);
 			}
 		}
 		return TRUE;

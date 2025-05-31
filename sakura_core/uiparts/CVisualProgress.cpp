@@ -79,8 +79,8 @@ void CVisualProgress::_Begin()
 	if( hwndProgress ){
 		CEditWnd::getInstance()->m_cStatusBar.ShowProgressBar(true);
 		//範囲設定・リセット
-		Progress_SetRange( hwndProgress, 0, 101 );
-		Progress_SetPos( hwndProgress, 0);
+		ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
+		ApiWrap::Progress_SetPos( hwndProgress, 0);
 	}
 }
 
@@ -90,8 +90,8 @@ void CVisualProgress::_Doing(int nPer)
 	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if(hwndProgress){
 		if( nOldValue != nPer ){
-			Progress_SetPos( hwndProgress, nPer + 1 ); // 2013.06.10 Moca Vista/7等でプログレスバーがアニメーションで遅れる対策
-			Progress_SetPos( hwndProgress, nPer );
+			ApiWrap::Progress_SetPos( hwndProgress, nPer + 1 ); // 2013.06.10 Moca Vista/7等でプログレスバーがアニメーションで遅れる対策
+			ApiWrap::Progress_SetPos( hwndProgress, nPer );
 			nOldValue = nPer;
 		}
 	}
@@ -102,7 +102,7 @@ void CVisualProgress::_End()
 	//プログレスバー
 	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if( hwndProgress ){
-		Progress_SetPos( hwndProgress, 0);
+		ApiWrap::Progress_SetPos( hwndProgress, 0);
 		CEditWnd::getInstance()->m_cStatusBar.ShowProgressBar(false);
 	}
 

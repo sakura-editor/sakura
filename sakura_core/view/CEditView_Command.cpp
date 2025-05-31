@@ -468,8 +468,8 @@ HWND CEditView::StartProgress()
 	HWND hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
 	if( nullptr != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_SHOW );
-		Progress_SetRange( hwndProgress, 0, 101 );
-		Progress_SetPos( hwndProgress, 0 );
+		ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
+		ApiWrap::Progress_SetPos( hwndProgress, 0 );
 	}
 	return hwndProgress;
 }

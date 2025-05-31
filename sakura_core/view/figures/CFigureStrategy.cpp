@@ -241,7 +241,7 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 			pInfo->m_gr,
 			sPos.GetDrawPos().x,
 			sPos.GetDrawPos().y + nHeightMargin,
-			ExtTextOutOption() & ~(ETO_OPAQUE),
+			ApiWrap::ExtTextOutOption() & ~(ETO_OPAQUE),
 			&rcClip2,
 			pszText,
 			nLength,

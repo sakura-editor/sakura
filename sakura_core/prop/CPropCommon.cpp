@@ -473,7 +473,7 @@ HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf
 	// フォント名の設定
 	auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
 		lf.lfFaceName, double(nps)/10 );
-	::DlgItem_SetText( hwndDlg, idc_static, szFontName );
+	ApiWrap::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 
 	return hFont;
 }

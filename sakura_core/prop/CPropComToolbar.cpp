@@ -87,12 +87,12 @@ int Listbox_INSERTDATA(
 	int value
 )
 {
-	int nIndex1 = List_InsertItemData( hWnd, index, 1 );
+	int nIndex1 = ApiWrap::List_InsertItemData( hWnd, index, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR01), index, nIndex1 );
 		return nIndex1;
 	}
-	else if( List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
+	else if( ApiWrap::List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
 		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR02), nIndex1 );
 		return LB_ERR;
 	}
@@ -119,12 +119,12 @@ int Listbox_ADDDATA(
 	int value
 )
 {
-	int nIndex1 = List_AddItemData( hWnd, 1 );
+	int nIndex1 = ApiWrap::List_AddItemData( hWnd, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR03), nIndex1 );
 		return nIndex1;
 	}
-	else if( List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
+	else if( ApiWrap::List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
 		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR04), nIndex1 );
 		return LB_ERR;
 	}
@@ -138,9 +138,9 @@ static void SetDlgItemsEnableState(
 	HWND	hwndFuncList
 )
 {
-	int nIndex1 = List_GetCurSel( hwndResList );
-	int nIndex2 = List_GetCurSel( hwndFuncList );
-	int i = List_GetCount( hwndResList );
+	int nIndex1 = ApiWrap::List_GetCurSel( hwndResList );
+	int nIndex2 = ApiWrap::List_GetCurSel( hwndFuncList );
+	int i = ApiWrap::List_GetCount( hwndResList );
 	if( LB_ERR == nIndex1 ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
@@ -271,10 +271,10 @@ INT_PTR CPropToolbar::DispatchEvent(
 		if( hwndCombo == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIndex2 = Combo_GetCurSel( hwndCombo );
+				nIndex2 = ApiWrap::Combo_GetCurSel( hwndCombo );
 
 				::SendMessage( hwndFuncList, WM_SETREDRAW, FALSE, 0 );
-				List_ResetContent( hwndFuncList );
+				ApiWrap::List_ResetContent( hwndFuncList );
 
 				/* 機能一覧に文字列をセット (リストボックス) */
 				//	From Here Oct. 15, 2001 genta Lookupを使うように変更
@@ -289,7 +289,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 						if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
 							break;
 						}
-						lResult = List_SetItemHeight( hwndFuncList, lResult, nListItemHeight );
+						lResult = ApiWrap::List_SetItemHeight( hwndFuncList, lResult, nListItemHeight );
 					}
 				}
 				::SendMessage( hwndFuncList, WM_SETREDRAW, TRUE, 0 );
@@ -301,7 +301,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 			case BN_CLICKED:
 				switch( wID ){
 				case IDC_BUTTON_INSERTSEPARATOR:
-					nIndex1 = List_GetCurSel( hwndResList );
+					nIndex1 = ApiWrap::List_GetCurSel( hwndResList );
 					if( LB_ERR == nIndex1 ){
 //						break;
 						nIndex1 = 0;
@@ -312,12 +312,12 @@ INT_PTR CPropToolbar::DispatchEvent(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					List_SetCurSel( hwndResList, nIndex1 );
+					ApiWrap::List_SetCurSel( hwndResList, nIndex1 );
 					break;
 
 // 2005/8/9 aroka 折返ボタンが押されたら、右のリストに「ツールバー折返」を追加する。
 				case IDC_BUTTON_INSERTWRAP:
-					nIndex1 = List_GetCurSel( hwndResList );
+					nIndex1 = ApiWrap::List_GetCurSel( hwndResList );
 					if( LB_ERR == nIndex1 ){
 //						break;
 						nIndex1 = 0;
@@ -329,59 +329,59 @@ INT_PTR CPropToolbar::DispatchEvent(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					List_SetCurSel( hwndResList, nIndex1 );
+					ApiWrap::List_SetCurSel( hwndResList, nIndex1 );
 					break;
 
 				case IDC_BUTTON_DELETE:
-					nIndex1 = List_GetCurSel( hwndResList );
+					nIndex1 = ApiWrap::List_GetCurSel( hwndResList );
 					if( LB_ERR == nIndex1 ){
 						break;
 					}
-					i = List_DeleteString( hwndResList, nIndex1 );
+					i = ApiWrap::List_DeleteString( hwndResList, nIndex1 );
 					if( i == LB_ERR ){
 						break;
 					}
 					if( nIndex1 >= i ){
 						if( i == 0 ){
-							i = List_SetCurSel( hwndResList, 0 );
+							i = ApiWrap::List_SetCurSel( hwndResList, 0 );
 						}else{
-							i = List_SetCurSel( hwndResList, i - 1 );
+							i = ApiWrap::List_SetCurSel( hwndResList, i - 1 );
 						}
 					}else{
-						i = List_SetCurSel( hwndResList, nIndex1 );
+						i = ApiWrap::List_SetCurSel( hwndResList, nIndex1 );
 					}
 					break;
 
 				case IDC_BUTTON_INSERT:
-					nIndex1 = List_GetCurSel( hwndResList );
+					nIndex1 = ApiWrap::List_GetCurSel( hwndResList );
 					if( LB_ERR == nIndex1 ){
 //						break;
 						nIndex1 = 0;
 					}
-					nIndex2 = List_GetCurSel( hwndFuncList );
+					nIndex2 = ApiWrap::List_GetCurSel( hwndFuncList );
 					if( LB_ERR == nIndex2 ){
 						break;
 					}
-					i = List_GetItemData( hwndFuncList, nIndex2 );
+					i = ApiWrap::List_GetItemData( hwndFuncList, nIndex2 );
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					List_SetCurSel( hwndResList, nIndex1 + 1 );
+					ApiWrap::List_SetCurSel( hwndResList, nIndex1 + 1 );
 
 					// 機能リストを1つ進める
-					List_SetCurSel( hwndFuncList, nIndex2 + 1 );
+					ApiWrap::List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					break;
 
 				case IDC_BUTTON_ADD:
-					nIndex1 = List_GetCount( hwndResList );
-					nIndex2 = List_GetCurSel( hwndFuncList );
+					nIndex1 = ApiWrap::List_GetCount( hwndResList );
+					nIndex2 = ApiWrap::List_GetCurSel( hwndFuncList );
 					if( LB_ERR == nIndex2 ){
 						break;
 					}
-					i = List_GetItemData( hwndFuncList, nIndex2 );
+					i = ApiWrap::List_GetItemData( hwndFuncList, nIndex2 );
 					//	From Here Apr. 13, 2002 genta
 					//	ここでは i != 0 だとは思うけど、一応保険です。
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
@@ -390,20 +390,20 @@ INT_PTR CPropToolbar::DispatchEvent(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					List_SetCurSel( hwndResList, nIndex1 );
+					ApiWrap::List_SetCurSel( hwndResList, nIndex1 );
 
 					// 機能リストを1つ進める
-					List_SetCurSel( hwndFuncList, nIndex2 + 1 );
+					ApiWrap::List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					break;
 
 				case IDC_BUTTON_UP:
-					nIndex1 = List_GetCurSel( hwndResList );
+					nIndex1 = ApiWrap::List_GetCurSel( hwndResList );
 					if( LB_ERR == nIndex1 || 0 >= nIndex1 ){
 						break;
 					}
-					i = List_GetItemData( hwndResList, nIndex1 );
+					i = ApiWrap::List_GetItemData( hwndResList, nIndex1 );
 
-					j = List_DeleteString( hwndResList, nIndex1 );
+					j = ApiWrap::List_DeleteString( hwndResList, nIndex1 );
 					if( j == LB_ERR ){
 						break;
 					}
@@ -414,18 +414,18 @@ INT_PTR CPropToolbar::DispatchEvent(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					List_SetCurSel( hwndResList, nIndex1 );
+					ApiWrap::List_SetCurSel( hwndResList, nIndex1 );
 					break;
 
 				case IDC_BUTTON_DOWN:
-					i = List_GetCount( hwndResList );
-					nIndex1 = List_GetCurSel( hwndResList );
+					i = ApiWrap::List_GetCount( hwndResList );
+					nIndex1 = ApiWrap::List_GetCurSel( hwndResList );
 					if( LB_ERR == nIndex1 || nIndex1 + 1 >= i ){
 						break;
 					}
-					i = List_GetItemData( hwndResList, nIndex1 );
+					i = ApiWrap::List_GetItemData( hwndResList, nIndex1 );
 
-					j = List_DeleteString( hwndResList, nIndex1 );
+					j = ApiWrap::List_DeleteString( hwndResList, nIndex1 );
 					if( j == LB_ERR ){
 						break;
 					}
@@ -435,7 +435,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 						TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
 						break;
 					}
-					List_SetCurSel( hwndResList, nIndex1 );
+					ApiWrap::List_SetCurSel( hwndResList, nIndex1 );
 					//	To Here Apr. 13, 2002 genta
 					break;
 				}
@@ -491,7 +491,7 @@ void CPropToolbar::SetData( HWND hwndDlg )
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 15, 2001 genta
 	
 	/* 種別の先頭の項目を選択(コンボボックス) */
-	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
+	ApiWrap::Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
 	::PostMessageCmd( hwndCombo, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 
 	/* コントロールのハンドルを取得 */
@@ -510,10 +510,10 @@ void CPropToolbar::SetData( HWND hwndDlg )
 			break;
 		}
 		//	To Here Apr. 13, 2002 genta
-		lResult = List_SetItemHeight( hwndResList, lResult, nListItemHeight );
+		lResult = ApiWrap::List_SetItemHeight( hwndResList, lResult, nListItemHeight );
 	}
 	/* ツールバーの先頭の項目を選択(リストボックス)*/
-	List_SetCurSel( hwndResList, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
+	ApiWrap::List_SetCurSel( hwndResList, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 
 	/* フラットツールバーにする／しない  */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TOOLBARISFLAT, m_Common.m_sToolBar.m_bToolBarIsFlat );
@@ -531,12 +531,12 @@ int CPropToolbar::GetData( HWND hwndDlg )
 	hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
 	/* ツールバーボタンの数 */
-	m_Common.m_sToolBar.m_nToolBarButtonNum = List_GetCount( hwndResList );
+	m_Common.m_sToolBar.m_nToolBarButtonNum = ApiWrap::List_GetCount( hwndResList );
 
 	/* ツールバーボタンの情報を取得 */
 	k = 0;
 	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
-		j = List_GetItemData( hwndResList, i );
+		j = ApiWrap::List_GetItemData( hwndResList, i );
 		if( LB_ERR != j ){
 			m_Common.m_sToolBar.m_nToolBarButtonIdxArr[k] = j;
 			k++;

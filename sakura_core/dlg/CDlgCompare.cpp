@@ -158,14 +158,14 @@ void CDlgCompare::SetData( void )
 			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()){
 				// 2010.07.30 自分の名前もここから設定する
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, -1, calc.GetDC() );
-				::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szMenu );
+				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szMenu );
 				continue;
 			}
 			// 番号は ウィンドウリストと同じになるようにする
 			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i, calc.GetDC() );
 
-			nItem = ::List_AddString( hwndList, szMenu );
-			List_SetItemData( hwndList, nItem, pEditNodeArr[i].GetHwnd() );
+			nItem = ApiWrap::List_AddString( hwndList, szMenu );
+			ApiWrap::List_SetItemData( hwndList, nItem, pEditNodeArr[i].GetHwnd() );
 
 			// 横幅を計算する
 			calc.SetTextWidthIfMax(szMenu);
@@ -182,9 +182,9 @@ void CDlgCompare::SetData( void )
 		}
 		delete [] pEditNodeArr;
 		// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
-		List_SetHorizontalExtent( hwndList, calc.GetCx() );
+		ApiWrap::List_SetHorizontalExtent( hwndList, calc.GetCx() );
 	}
-	List_SetCurSel( hwndList, selIndex );
+	ApiWrap::List_SetCurSel( hwndList, selIndex );
 
 	/* 左右に並べて表示 */
 	//@@@ 2003.06.12 MIK
@@ -206,11 +206,11 @@ int CDlgCompare::GetData( void )
 	HWND			hwndList;
 	int				nItem;
 	hwndList = GetItemHwnd( IDC_LIST_FILES );
-	nItem = List_GetCurSel( hwndList );
+	nItem = ApiWrap::List_GetCurSel( hwndList );
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}else{
-		*m_phwndCompareWnd = (HWND)List_GetItemData( hwndList, nItem );
+		*m_phwndCompareWnd = (HWND)ApiWrap::List_GetItemData( hwndList, nItem );
 
 		/* 左右に並べて表示 */
 		m_bCompareAndTileHorz = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TILE_H );

@@ -681,7 +681,7 @@ LRESULT CEditView::DispatchEvent(
 			auto Scroll = OnVScroll(LOWORD(wParam), HIWORD(wParam) * m_nVScrollRate);
 
 			//	シフトキーが押されていないときだけ同期スクロール
-			if(!GetKeyState_Shift()){
+			if(!ApiWrap::GetKeyState_Shift()){
 				SyncScrollV( Scroll );
 			}
 		}
@@ -696,7 +696,7 @@ LRESULT CEditView::DispatchEvent(
 			auto Scroll = OnHScroll(LOWORD(wParam), HIWORD(wParam));
 
 			//	シフトキーが押されていないときだけ同期スクロール
-			if(!GetKeyState_Shift()){
+			if(!ApiWrap::GetKeyState_Shift()){
 				SyncScrollH( Scroll );
 			}
 		}
@@ -2128,7 +2128,7 @@ int CEditView::IsCurrentPositionSelected(
 		++rcSel.bottom;
 		po = ptCaretPos;
 		if( IsDragSource() ){
-			if( GetKeyState_Control() ){ /* Ctrlキーが押されていたか */
+			if( ApiWrap::GetKeyState_Control() ){ /* Ctrlキーが押されていたか */
 				++rcSel.left;
 			}else{
 				++rcSel.right;
@@ -2158,7 +2158,7 @@ int CEditView::IsCurrentPositionSelected(
 		}
 		if( GetSelectionInfo().m_sSelect.GetFrom().y == ptCaretPos.y ){
 			if( IsDragSource() ){
-				if( GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
+				if( ApiWrap::GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
 					if( GetSelectionInfo().m_sSelect.GetFrom().x >= ptCaretPos.x ){
 						return -1;
 					}
@@ -2174,7 +2174,7 @@ int CEditView::IsCurrentPositionSelected(
 		}
 		if( GetSelectionInfo().m_sSelect.GetTo().y == ptCaretPos.y ){
 			if( IsDragSource() ){
-				if( GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
+				if( ApiWrap::GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
 					if( GetSelectionInfo().m_sSelect.GetTo().x <= ptCaretPos.x ){
 						return 1;
 					}

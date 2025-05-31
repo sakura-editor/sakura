@@ -219,7 +219,7 @@ void CDlgTagJumpList::SetData( void )
 		m_bTagJumpExactMatch = TRUE;
 
 		if( m_pszKeyword != nullptr ){
-			::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
 		}
 	}
 	//	From Here 2005.04.03 MIK 設定値の読み込み
@@ -232,16 +232,16 @@ void CDlgTagJumpList::SetData( void )
 		m_bTagJumpPartialMatch = m_pShareData->m_sTagJump.m_bTagJumpPartialMatch;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, m_bTagJumpPartialMatch ? BST_CHECKED : BST_UNCHECKED );
 		m_bTagJumpExactMatch = FALSE;
-		Combo_LimitText( hwndKey, _MAX_PATH-1 );
+		ApiWrap::Combo_LimitText( hwndKey, _MAX_PATH-1 );
 		CRecentTagjumpKeyword cRecentTagJump;
 		for( int i = 0; i < cRecentTagJump.GetItemCount(); i++ ){
-			Combo_AddString( hwndKey, cRecentTagJump.GetItemText(i) );
+			ApiWrap::Combo_AddString( hwndKey, cRecentTagJump.GetItemText(i) );
 		}
 		if( m_pszKeyword != nullptr ){
-			::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
 		}
 		else if( cRecentTagJump.GetItemCount() > 0 ){
-			Combo_SetCurSel( hwndKey, 0 );
+			ApiWrap::Combo_SetCurSel( hwndKey, 0 );
 		}
 		cRecentTagJump.Terminate();
 	}
@@ -375,7 +375,7 @@ int CDlgTagJumpList::GetData( void )
 		}
 		wchar_t	tmp[MAX_TAG_STRING_LENGTH];
 		tmp[0] = L'\0';
-		::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, _countof( tmp ) );
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, _countof( tmp ) );
 		SetKeyword( tmp );
 
 		//設定を保存
@@ -973,7 +973,7 @@ void CDlgTagJumpList::FindNext( bool bNewFind )
 {
 	wchar_t	szKey[ MAX_TAG_STRING_LENGTH ];
 	szKey[0] = L'\0';
-	::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, _countof( szKey ) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, _countof( szKey ) );
 	if( bNewFind ){
 		// 前回のキーワードからの絞込検索のときで、tagsをスキップできるときはスキップ
 		if( -1 < m_psFind0Match->m_nDepth
@@ -1009,7 +1009,7 @@ int CDlgTagJumpList::FindDirectTagJump()
 
 void CDlgTagJumpList::find_key( const wchar_t* keyword )
 {
-	DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, LS(STR_DLGTAGJMP3) );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, LS(STR_DLGTAGJMP3) );
 	::UpdateWindow(GetItemHwnd(IDC_STATIC_KEYWORD));
 
 	find_key_core(
@@ -1021,7 +1021,7 @@ void CDlgTagJumpList::find_key( const wchar_t* keyword )
 		IsDirectTagJump(),
 		IsDirectTagJump() ? (m_pShareData->m_Common.m_sSearch.m_nTagJumpMode) : m_pShareData->m_Common.m_sSearch.m_nTagJumpModeKeyword
 	);
-	DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, LS(STR_DLGTAGJMP_LIST1) );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, LS(STR_DLGTAGJMP_LIST1) );
 	::UpdateWindow(GetItemHwnd(IDC_STATIC_KEYWORD));
 }
 
@@ -1568,11 +1568,11 @@ const WCHAR* CDlgTagJumpList::GetFileName( void )
 void CDlgTagJumpList::SetTextDir()
 {
 	if( GetHwnd() ){
-		DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, L"" );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, L"" );
 		if( GetFileName() ){
 			std::wstring strPath = GetFilePath();
 			strPath[ GetFileName() - GetFilePath() ] = L'\0';
-			DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, strPath.c_str() );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, strPath.c_str() );
 		}
 	}
 }

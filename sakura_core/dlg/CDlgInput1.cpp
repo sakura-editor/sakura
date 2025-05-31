@@ -111,8 +111,8 @@ INT_PTR CDlgInput1::DispatchEvent(
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		::SetWindowText( hwndDlg, m_pszTitle );	/* ダイアログタイトル */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), m_nMaxTextLen );	/* 入力サイズ上限 */
-		DlgItem_SetText( hwndDlg, IDC_EDIT_INPUT1, m_cmemText.GetStringPtr() );	/* テキスト */
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), m_nMaxTextLen );	/* 入力サイズ上限 */
+		ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_INPUT1, m_cmemText.GetStringPtr() );	/* テキスト */
 		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_MSG ), m_pszMessage );	/* メッセージ */
 
 		return TRUE;

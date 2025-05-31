@@ -270,7 +270,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 			delete[] m_nTabBorderArray;
 			m_nTabBorderArray = nullptr;
 		}
-		Tooltip_Activate( TabCtrl_GetToolTips( m_hwndTab ), TRUE );	// ツールチップ有効化
+		ApiWrap::Tooltip_Activate( TabCtrl_GetToolTips( m_hwndTab ), TRUE );	// ツールチップ有効化
 		break;
 
 	default:
@@ -386,7 +386,7 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 			m_nTabBorderArray[ i ] = rc.right;
 		}
 		m_nTabBorderArray[ i ] = 0;		// 最後の要素は番兵
-		Tooltip_Activate( TabCtrl_GetToolTips( m_hwndTab ), FALSE );	// ツールチップ無効化
+		ApiWrap::Tooltip_Activate( TabCtrl_GetToolTips( m_hwndTab ), FALSE );	// ツールチップ無効化
 		// ここに来たらドラッグ開始なので break しないでそのまま DRAG_DRAG 処理に入る
 
 	case DRAG_DRAG:
@@ -928,7 +928,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 			);
 
 		// ツールチップをマルチライン可能にする（SHRT_MAX: Win95でINT_MAXだと表示されない）	// 2007.03.03 ryoji
-		Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
+		ApiWrap::Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
 
 		// タブバーにツールチップを追加する
 		TOOLINFO	ti;
@@ -942,7 +942,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		ti.rect.top    = 0;
 		ti.rect.right  = 0;
 		ti.rect.bottom = 0;
-		Tooltip_AddTool( m_hwndToolTip, &ti );
+		ApiWrap::Tooltip_AddTool( m_hwndToolTip, &ti );
 
 		// 2006.02.22 ryoji イメージリストを初期化する
 		InitImageList();
@@ -1508,7 +1508,7 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		ti.hinst        = GetAppInstance();
 		ti.uId          = (UINT_PTR)GetHwnd();
 		ti.lpszText     = pszTip;
-		Tooltip_UpdateTipText( m_hwndToolTip, &ti );
+		ApiWrap::Tooltip_UpdateTipText( m_hwndToolTip, &ti );
 	}
 
 	return 0L;
@@ -1695,7 +1695,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );	// タブ内の Up-Down コントロール
 			if( hwndUpDown != nullptr && ::IsWindowVisible( hwndUpDown ) )	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 			{
-				nScrollPos = LOWORD( UpDown_GetPos( hwndUpDown ) );
+				nScrollPos = LOWORD( ApiWrap::UpDown_GetPos( hwndUpDown ) );
 
 				// 現在位置 nScrollPos と画面表示とを一致させる
 				::SendMessageAny( m_hwndTab, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, LOWORD( nScrollPos ) ), (LPARAM)nullptr );	// 設定位置にタブをスクロール
@@ -1719,7 +1719,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 				// 自タブアイテムを強制的に可視位置にするために、
 				// 自タブアイテム選択前に一時的に画面左端のタブアイテムを選択する
 				hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );	// タブ内の Up-Down コントロール
-				nScrollPos = ( hwndUpDown != nullptr && ::IsWindowVisible( hwndUpDown ) )? LOWORD( UpDown_GetPos( hwndUpDown ) ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
+				nScrollPos = ( hwndUpDown != nullptr && ::IsWindowVisible( hwndUpDown ) )? LOWORD( ApiWrap::UpDown_GetPos( hwndUpDown ) ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 				TabCtrl_SetCurSel( m_hwndTab, nScrollPos );
 				TabCtrl_SetCurSel( m_hwndTab, nIndex );
 

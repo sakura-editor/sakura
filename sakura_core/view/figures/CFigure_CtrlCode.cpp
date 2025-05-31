@@ -65,7 +65,7 @@ void CFigure_CtrlCode::DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* 
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y + nHeightMargin,
-			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rc,
 			wc,
 			1,

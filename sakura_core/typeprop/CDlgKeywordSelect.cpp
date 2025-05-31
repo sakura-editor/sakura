@@ -114,27 +114,27 @@ void CDlgKeywordSelect::SetData( void )
 		hwndCombo = GetItemHwnd( keyword_select_target_combo[ index ] );
 
 		/* コンボボックスを空にする */
-		Combo_ResetContent( hwndCombo );
+		ApiWrap::Combo_ResetContent( hwndCombo );
 		
 		/* 一行目は空白 */
-		Combo_AddString( hwndCombo, L" " );
+		ApiWrap::Combo_AddString( hwndCombo, L" " );
 
 		if( m_pCKeyWordSetMgr->m_nKeyWordSetNum > 0 )
 		{
 			for( i = 0; i < m_pCKeyWordSetMgr->m_nKeyWordSetNum; i++ )
 			{
-				Combo_AddString( hwndCombo, m_pCKeyWordSetMgr->GetTypeName( i ) );
+				ApiWrap::Combo_AddString( hwndCombo, m_pCKeyWordSetMgr->GetTypeName( i ) );
 			}
 
 			if( -1 == m_nSet[ index ] )
 			{
 				/* セット名コンボボックスのデフォルト選択 */
-				Combo_SetCurSel( hwndCombo, 0 );
+				ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 			}
 			else
 			{
 				/* セット名コンボボックスのデフォルト選択 */
-				Combo_SetCurSel( hwndCombo, m_nSet[ index ] + 1 );
+				ApiWrap::Combo_SetCurSel( hwndCombo, m_nSet[ index ] + 1 );
 			}
 		}
 	}
@@ -152,7 +152,7 @@ int CDlgKeywordSelect::GetData( void )
 	{
 		hwndCombo = GetItemHwnd( keyword_select_target_combo[ index ] );
 
-		n = Combo_GetCurSel( hwndCombo );
+		n = ApiWrap::Combo_GetCurSel( hwndCombo );
 		if( CB_ERR == n || 0 == n )
 		{
 			m_nSet[ index ] = -1;

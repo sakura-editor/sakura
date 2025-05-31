@@ -395,24 +395,24 @@ BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCWSTR pCodePageString )
 int CCodePage::AddComboCodePages(HWND hwnd, HWND combo, int nSelCode)
 {
 	int nSel = -1;
-	int nIdx = Combo_AddString( combo, L"CP_ACP" );
-	Combo_SetItemData( combo, nIdx, CODE_CPACP );
+	int nIdx = ApiWrap::Combo_AddString( combo, L"CP_ACP" );
+	ApiWrap::Combo_SetItemData( combo, nIdx, CODE_CPACP );
 	if( nSelCode == CODE_CPACP ){
-		Combo_SetCurSel(combo, nIdx);
+		ApiWrap::Combo_SetCurSel(combo, nIdx);
 		nSel = nIdx;
 	}
-	nIdx = Combo_AddString( combo, L"CP_OEM" );
+	nIdx = ApiWrap::Combo_AddString( combo, L"CP_OEM" );
 	if( nSelCode == CODE_CPOEM ){
-		Combo_SetCurSel(combo, nIdx);
+		ApiWrap::Combo_SetCurSel(combo, nIdx);
 		nSel = nIdx;
 	}
-	Combo_SetItemData( combo, nIdx, CODE_CPOEM );
+	ApiWrap::Combo_SetItemData( combo, nIdx, CODE_CPOEM );
 	CCodePage::CodePageList& cpList = CCodePage::GetCodePageList();
 	for( auto it = cpList.cbegin(); it != cpList.cend(); ++it ){
-		nIdx = Combo_AddString(combo, it->second.c_str());
-		Combo_SetItemData(combo, nIdx, it->first);
+		nIdx = ApiWrap::Combo_AddString(combo, it->second.c_str());
+		ApiWrap::Combo_SetItemData(combo, nIdx, it->first);
 		if( nSelCode == it->first ){
-			Combo_SetCurSel(combo, nIdx);
+			ApiWrap::Combo_SetCurSel(combo, nIdx);
 			nSel = nIdx;
 		}
 	}

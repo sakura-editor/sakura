@@ -89,7 +89,7 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* 入力補完 単語ファイル */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), _MAX_PATH - 1 );
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), _MAX_PATH - 1 );
 
 		return TRUE;
 	case WM_COMMAND:
@@ -171,18 +171,18 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 void CPropTypesSupport::SetData( HWND hwndDlg )
 {
 	/* 入力補完 単語ファイル */
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
 
 	{
 		HWND hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_HOKAN_TYPE );
 		std::vector<SHokanMethod>* pMedothList = GetHokanMethodList();
 		ApiWrap::Combo_AddString( hCombo, LS(STR_SMART_INDENT_NONE) );
-		Combo_SetCurSel( hCombo, 0 );
+		ApiWrap::Combo_SetCurSel( hCombo, 0 );
 		size_t nSize = pMedothList->size();
 		for( size_t i = 0; i < nSize; i++ ){
 			ApiWrap::Combo_AddString( hCombo, (*pMedothList)[i].name.c_str() );
 			if( m_Types.m_nHokanType == (*pMedothList)[i].nMethod ){
-				Combo_SetCurSel( hCombo, i + 1 );
+				ApiWrap::Combo_SetCurSel( hCombo, i + 1 );
 			}
 		}
 	}
@@ -196,8 +196,8 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_HOKANBYKEYWORD, m_Types.m_bUseHokanByKeyword );
 
 	//@@@ 2002.2.2 YAZAKI
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE, m_Types.m_bHtmlHelpIsSingle ? BST_CHECKED : BST_UNCHECKED);
 
 	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
@@ -221,12 +221,12 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	m_Types.m_bUseHokanByKeyword = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_HOKANBYKEYWORD );
 
 	/* 入力補完 単語ファイル */
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _countof2( m_Types.m_szHokanFile ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _countof2( m_Types.m_szHokanFile ));
 
 	// 入力補完種別
 	{
 		HWND hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_HOKAN_TYPE );
-		int i = Combo_GetCurSel( hCombo );
+		int i = ApiWrap::Combo_GetCurSel( hCombo );
 		if( 0 == i ){
 			m_Types.m_nHokanType = 0;
 		}else if( CB_ERR != i ){
@@ -235,8 +235,8 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	}
 
 	//@@@ 2002.2.2 YAZAKI
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _countof2( m_Types.m_szExtHelp ));
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _countof2( m_Types.m_szExtHelp ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE ) != 0;
 
 	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
