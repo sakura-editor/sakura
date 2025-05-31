@@ -1904,7 +1904,6 @@ int CGrepAgent::DoGrepReplaceFile(
 
 	CNativeW cOutBuffer;
 	// 注意 : cfl.ReadLine が throw する可能性がある
-	CNativeW cUnicodeBuffer;
 	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
 	{
 		const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
