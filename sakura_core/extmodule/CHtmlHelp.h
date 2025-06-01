@@ -49,7 +49,7 @@ public:
 	}
 
 protected:
-	virtual bool InitDllImp();
-	virtual LPCWSTR GetDllNameImp(int nIndex);
+	bool InitDllImp() override;
+	LPCWSTR GetDllNameImp(int nIndex) override;
 };
 #endif /* SAKURA_CHTMLHELP_7003298B_3900_42FD_9A02_1BCD4E9A8546_H_ */

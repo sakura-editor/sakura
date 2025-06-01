@@ -33,12 +33,12 @@ public:
 	#ifdef __BORLANDC__
 	#pragma argsused
 	#endif
-	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject) 
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject) override
 	{ 
 		return E_NOINTERFACE; 
 	}
-	virtual ULONG STDMETHODCALLTYPE AddRef() { ++ m_RefCount; return m_RefCount; }
-	virtual ULONG STDMETHODCALLTYPE Release() { -- m_RefCount; int R = m_RefCount; if(m_RefCount == 0) delete this; return R; }
+	ULONG STDMETHODCALLTYPE AddRef() override { ++ m_RefCount; return m_RefCount; }
+	ULONG STDMETHODCALLTYPE Release() override { -- m_RefCount; int R = m_RefCount; if(m_RefCount == 0) delete this; return R; }
 public:
 	ImplementsIUnknown(): m_RefCount(0) {}
 	virtual ~ImplementsIUnknown() = default;
@@ -94,14 +94,14 @@ public:
 	}
 
 	// 実装
-	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject);
-	virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject) override;
+	HRESULT STDMETHODCALLTYPE GetIDsOfNames(
 					REFIID riid,
 					OLECHAR FAR* FAR* rgszNames,
 					UINT cNames,
 					LCID lcid,
-					DISPID FAR* rgdispid);
-	virtual HRESULT STDMETHODCALLTYPE Invoke(
+					DISPID FAR* rgdispid) override;
+	HRESULT STDMETHODCALLTYPE Invoke(
 					DISPID dispidMember,
 					REFIID riid,
 					LCID lcid,
@@ -109,13 +109,13 @@ public:
 					DISPPARAMS FAR* pdispparams,
 					VARIANT FAR* pvarResult,
 					EXCEPINFO FAR* pexcepinfo,
-					UINT FAR* puArgErr);
-	virtual HRESULT STDMETHODCALLTYPE GetTypeInfo( 
+					UINT FAR* puArgErr) override;
+	HRESULT STDMETHODCALLTYPE GetTypeInfo(
 					/* [in] */ UINT iTInfo,
 					/* [in] */ LCID lcid,
-					/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo);
-	virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount( 
-					/* [out] */ UINT __RPC_FAR *pctinfo);
+					/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo) override;
+	HRESULT STDMETHODCALLTYPE GetTypeInfoCount(
+					/* [out] */ UINT __RPC_FAR *pctinfo) override;
 
 private:
 	// メンバ変数

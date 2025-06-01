@@ -194,6 +194,6 @@ public:
 #include <exception>
 class CFlowInterruption : public std::exception{
 public:
-	const char* what() const throw(){ return "CFlowInterruption"; }
+	const char* what() const throw() override{ return "CFlowInterruption"; }
 };
 #endif /* SAKURA_CDOCLISTENER_BEF5B814_A5B8_4D07_9B2F_009A5CB29B2F_H_ */

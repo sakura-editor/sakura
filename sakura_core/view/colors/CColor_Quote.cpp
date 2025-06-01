@@ -15,7 +15,7 @@ class CLayoutColorQuoteInfo : public CLayoutColorInfo{
 public:
 	std::wstring m_tag;
 	int m_nColorTypeIndex;
-	bool IsEqual(const CLayoutColorInfo* p) const{
+	bool IsEqual(const CLayoutColorInfo* p) const override{
 		if( !p ){
 			return false;
 		}

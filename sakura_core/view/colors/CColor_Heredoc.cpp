@@ -13,7 +13,7 @@
 class CLayoutColorHeredocInfo : public CLayoutColorInfo{
 public:
 	std::wstring m_id;
-	bool IsEqual(const CLayoutColorInfo* p) const{
+	bool IsEqual(const CLayoutColorInfo* p) const override{
 		if( !p ){
 			return false;
 		}
