@@ -239,7 +239,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 						szMeta, szPath, _countof( szPath ) );
 				}
 				if( false == bFolderPath || L'\0' == szPath[0] ){
-					pStr = _tgetenv( szMeta );
+					pStr = _wgetenv( szMeta );
 					// 環境変数
 					if( NULL != pStr ){
 						nPathLen = wcslen( pStr );

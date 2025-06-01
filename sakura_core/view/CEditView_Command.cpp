@@ -207,7 +207,7 @@ open_c:;
 	_wsplitpath( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
 
 	for( i = 0; i < open_extno; i++ ){
-		_tmakepath( szPath, szDrive, szDir, szFname, open_ext[i] );
+		_wmakepath( szPath, szDrive, szDir, szFname, open_ext[i] );
 		if( !fexist(szPath) ){
 			if( i < open_extno - 1 )
 				continue;

@@ -66,7 +66,7 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 		m_psi->sColorFile.clear();
 		m_psi->nColorType = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_COLORS ) ) - 1;
 		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( GetItemHwnd( IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
-			if (_stscanf( buff1, L"File -- %ls", buff2 ) > 0) {
+			if (swscanf( buff1, L"File -- %ls", buff2 ) > 0) {
 				m_psi->sColorFile = buff2;
 				m_psi->nColorType = MAX_TYPES;
 			}

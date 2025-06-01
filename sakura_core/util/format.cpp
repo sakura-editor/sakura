@@ -108,15 +108,15 @@ UINT32 ParseVersion( const WCHAR* sVer )
 			else p++;
 			nShift = 0x20;
 		}
-		else if( !_istdigit(*p) ){
+		else if( !iswdigit(*p) ){
 			nShift = -0x80;
 		}
 		else{
 			nShift = 0;
 		}
-		while( *p && !_istdigit(*p) ){ p++; }
+		while( *p && !iswdigit(*p) ){ p++; }
 		//数値の抽出
-		for( nVer = 0, nDigit = 0; _istdigit(*p); p++ ){
+		for( nVer = 0, nDigit = 0; iswdigit(*p); p++ ){
 			if( ++nDigit > 2 )break;	//数字は2桁までで止める
 			nVer = nVer * 10 + *p - L'0';
 		}
