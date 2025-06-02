@@ -47,6 +47,6 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 	}
 	if (buffer.empty())
 		return false;
-	pcData->SetString(buffer.c_str(), buffer.length());
+	pcData->SetString(buffer);
 	return true;
 }
