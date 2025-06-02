@@ -41,23 +41,115 @@
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 // 2009.10.01 ryoji 高DPI対応スケーリング
-#define TAB_MARGIN_TOP		DpiScaleY(3)
-#define TAB_MARGIN_LEFT		DpiScaleX(1)
-#define TAB_MARGIN_RIGHT	DpiScaleX(47)
 
-//#define TAB_FONT_HEIGHT		DpiPointsToPixels(9)
+// タブバー構成
+// (図中の「TAB_～」は該当部品に関連する定数名のプリフィックス)
+// +--------------------------------------------------------------+
+// |                                          TAB_WINDOW(CTabWnd) |
+// | +-------------------------------------------+                |
+// | | +----------+ +----------+     TAB_CONTROL | +--+ +--+ +--+ |
+// | | | TAB_ITEM | |          | (WC_TABCONTROL) | |▼| |×| |⊿| |
+// | +----|--------------------------------------+ +--+ +--+ +--+ |
+// +------|------------------------------------------|----|----|--+
+//        |                                          |    |   TAB_SIZEBOX
+//        |          TAB_ITEM(拡大)                  |   TAB_CLOSEBUTTON
+// +------------------------------+                 TAB_LISTBUTTON
+// | +---+ +---------------+ +--+ |
+// | |   | | TAB_ITEM_TEXT | |×| |
+// | +---+ +---------------+ +--+ |
+//     |                       |
+//    TAB_ITEM_ICON           TAB_ITEM_CLOSEBUTTON
+//
+// TAB_SIZEBOXはタブバーの「表示位置」が「下」かつステータスバーが非表示の場合のみ表示
+// TAB_ITEM_ICONは「アイコン表示」が有効の場合のみ表示
+// TAB_ITEM_CLOSEBUTTONは「閉じるボタン」が「常に表示」または「自動表示」の場合のみ表示
+// (「自動表示」の場合はTAB_ITEM_TEXTの上に重なる形で表示)
+
+// タブウィンドウ境界線の太さ
+#define TAB_WINDOW_EDGE_WIDTH		(1)
+
+// タブ下端(タブ上端+TAB_ITEM_HEIGHT)からタブページ外枠までの隙間
+#define TAB_ITEM_BOTTOM_SPACING		(2)
+
+// タブページ外枠境界線の太さ
+#define TAB_CONTROL_PAGEEDGE_WIDTH	(2)
+
+// タブバーのフォント高さ
 #define TAB_FONT_HEIGHT		abs(GetDllShareData().m_Common.m_sTabBar.m_lf.lfHeight)
-#define TAB_ITEM_HEIGHT		(TAB_FONT_HEIGHT + DpiScaleY(7))
-#define TAB_WINDOW_HEIGHT	(TAB_ITEM_HEIGHT + TAB_MARGIN_TOP + 2)
 
-#define MAX_TABITEM_WIDTH	DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMaxWidth)
-#define MIN_TABITEM_WIDTH	DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMinWidth)
-#define MIN_TABITEM_WIDTH_MULTI	DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMinWidthOnMulti)
+// 独自描画するボタンの幅高さ
+#define TAB_BUTTONBASE_WIDTH			DpiScaleX(16)
+#define TAB_BUTTONBASE_HEIGHT			DpiScaleX(16)
+#define TAB_BUTTONBASE_WIDTH_FIXED		(16)
+#define TAB_BUTTONBASE_HEIGHT_FIXED		(16)
 
-#define CX_SMICON			DpiScaleX(16)
-#define CY_SMICON			DpiScaleY(16)
+// タブの幅高さ
+#define TAB_ITEM_WIDTH_MAX				DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMaxWidth)
+#define TAB_ITEM_WIDTH_MIN				DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMinWidth)
+#define TAB_ITEM_WIDTH_MIN_MULTI		DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMinWidthOnMulti)
+#define TAB_ITEM_HEIGHT					(TAB_FONT_HEIGHT + DpiScaleY(7))
 
-static const RECT rcBtnBase = { 0, 0, 16, 16 };
+// タブの内側余白(非オーナードロー時のみ適用)
+#define TAB_ITEM_PADDING_X		DpiScaleX(6)
+#define TAB_ITEM_PADDING_Y		DpiScaleX(3)
+
+// タブのオーナードロー時描画エリア拡張量(非アクティブタブ用)
+#define TAB_ITEM_DRAWAREA_EXPAND_TOP		DpiScaleY(0)
+#define TAB_ITEM_DRAWAREA_EXPAND_LEFT		DpiScaleX(2)
+#define TAB_ITEM_DRAWAREA_EXPAND_RIGHT		DpiScaleX(2)
+#define TAB_ITEM_DRAWAREA_EXPAND_BOTTOM		DpiScaleY(2)
+
+// タブに表示するアイコンの幅高さ/余白
+#define TAB_ITEM_ICON_WIDTH					DpiScaleX(16)
+#define TAB_ITEM_ICON_HEIGHT				DpiScaleY(16)
+#define TAB_ITEM_ICON_MARGIN_TOP			DpiScaleY(3)
+#define TAB_ITEM_ICON_MARGIN_TOP_ACTIVE		DpiScaleY(0)
+#define TAB_ITEM_ICON_MARGIN_LEFT			DpiScaleX(4)
+#define TAB_ITEM_ICON_MARGIN_LEFT_ACTIVE	DpiScaleX(8)
+#define TAB_ITEM_ICON_MARGIN_RIGHT			DpiScaleX(6)
+#define TAB_ITEM_ICON_MARGIN_RIGHT_ACTIVE	DpiScaleX(6)
+
+// タブに表示する文字列の余白
+#define TAB_ITEM_TEXT_MARGIN_TOP			DpiScaleY(4)
+#define TAB_ITEM_TEXT_MARGIN_TOP_ACTIVE		DpiScaleY(-1)
+
+// タブに表示する閉じるボタンの幅高さ/余白
+#define TAB_ITEM_CLOSEBUTTON_MARGIN_TOP				(DpiScaleY(2) + 0)
+#define TAB_ITEM_CLOSEBUTTON_MARGIN_TOP_ACTIVE		(DpiScaleY(2) - 2)
+#define TAB_ITEM_CLOSEBUTTON_MARGIN_LEFT			(0)
+#define TAB_ITEM_CLOSEBUTTON_MARGIN_LEFT_ACTIVE		(0)
+#define TAB_ITEM_CLOSEBUTTON_MARGIN_RIGHT			(DpiScaleX(2) + 2)
+#define TAB_ITEM_CLOSEBUTTON_MARGIN_RIGHT_ACTIVE	(DpiScaleX(2) + 0)
+
+// タブ一覧表示ボタンの余白
+#define TAB_LISTBUTTON_MARGIN_TOP		(TAB_CONTROL_MARGIN_TOP + DpiScaleX(2))
+#define TAB_LISTBUTTON_MARGIN_LEFT		DpiScaleX(4)
+#define TAB_LISTBUTTON_MARGIN_RIGHT		DpiScaleX(0)
+
+// 閉じるボタンの余白
+#define TAB_CLOSEBUTTON_MARGIN_TOP		(TAB_CONTROL_MARGIN_TOP + DpiScaleX(2))
+#define TAB_CLOSEBUTTON_MARGIN_LEFT		DpiScaleX(7)
+#define TAB_CLOSEBUTTON_MARGIN_RIGHT	DpiScaleX(4)
+
+// ウィンドウサイズ変更グリップの幅高さ
+#define TAB_SIZEBOX_WIDTH		::GetSystemMetrics( SM_CXVSCROLL )
+#define TAB_SIZEBOX_HEIGHT		::GetSystemMetrics( SM_CYHSCROLL )
+
+// タブコントロールの配置
+#define TAB_CONTROL_MARGIN_TOP			DpiScaleY(3)
+#define TAB_CONTROL_MARGIN_LEFT			DpiScaleX(1)
+#define TAB_CONTROL_MARGIN_RIGHT		((TAB_LISTBUTTON_MARGIN_LEFT + TAB_BUTTONBASE_WIDTH + TAB_LISTBUTTON_MARGIN_RIGHT) \
+										+ (TAB_CLOSEBUTTON_MARGIN_LEFT + TAB_BUTTONBASE_WIDTH + TAB_CLOSEBUTTON_MARGIN_RIGHT))
+// TAB_CONTROL_MARGIN_RIGHTにはTAB_SIZEBOXの幅は含まれない
+
+// タブバーウィンドウの高さ(タブが一段の時)
+#define TAB_WINDOW_HEIGHT		(TAB_CONTROL_MARGIN_TOP + TAB_ITEM_HEIGHT + TAB_ITEM_BOTTOM_SPACING)
+
+// タブ一覧メニューのアイテムの高さ
+#define TAB_MENU_ITEM_HEIGHT			::GetSystemMetrics( SM_CYMENU )
+
+// タブ一覧メニューのアイコンの余白
+#define TAB_MENU_ICON_MARGIN_RIGHT		DpiScaleX(8)
 
 // 2006.02.01 ryoji タブ一覧メニュー用データ
 typedef struct {
@@ -883,9 +975,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		// 2007.12.06 ryoji TCS_TOOLTIPS追加（タブ用のツールチップはタブに作らせる）
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | TCS_TOOLTIPS,
 		// 2006.01.30 ryoji 初期配置見直し
-		TAB_MARGIN_LEFT,
-		TAB_MARGIN_TOP,
-		rcParent.right - rcParent.left - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT),
+		TAB_CONTROL_MARGIN_LEFT,
+		TAB_CONTROL_MARGIN_TOP,
+		(rcParent.right - rcParent.left) - (TAB_CONTROL_MARGIN_LEFT + TAB_CONTROL_MARGIN_RIGHT),
 		TAB_WINDOW_HEIGHT,
 		GetHwnd(),
 		(HMENU)NULL,
@@ -913,7 +1005,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		//lngStyle &= ~(TCS_BUTTONS | TCS_SINGLELINE);	//2004.01.31
 		//lngStyle |= TCS_TABS | TCS_MULTILINE;
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
-		TabCtrl_SetItemSize( m_hwndTab, MAX_TABITEM_WIDTH, TAB_ITEM_HEIGHT );	// 2006.01.28 ryoji
+		TabCtrl_SetItemSize( m_hwndTab, TAB_ITEM_WIDTH_MAX, TAB_ITEM_HEIGHT );	// 2006.01.28 ryoji
 
 		// タブのツールチップスタイルを変更する	// 2007.12.06 ryoji
 		HWND hwndToolTips;
@@ -1023,8 +1115,8 @@ LRESULT CTabWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	int nSizeBoxWidth = 0;
 	if( m_hwndSizeBox ){
-		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
-		int nSizeBoxHeight = ::GetSystemMetrics( SM_CYHSCROLL );
+		nSizeBoxWidth = TAB_SIZEBOX_WIDTH;
+		const int nSizeBoxHeight = TAB_SIZEBOX_HEIGHT;
 		::MoveWindow( m_hwndSizeBox,  rcWnd.right - rcWnd.left - nSizeBoxWidth,
 			rcWnd.bottom - rcWnd.top - nSizeBoxHeight, nSizeBoxWidth, nSizeBoxHeight, TRUE );
 	}
@@ -1219,15 +1311,15 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		SIZE size;
 		::GetTextExtentPoint32( hdc, pData->szText, ::wcslen(pData->szText), &size );
 
-		int cxIcon = CX_SMICON;
-		int cyIcon = CY_SMICON;
+		int cxIcon = TAB_ITEM_ICON_WIDTH;
+		int cyIcon = TAB_ITEM_ICON_HEIGHT;
 		if( NULL != m_hIml )
 		{
 			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
 		}
 
-		lpmis->itemHeight = ::GetSystemMetrics( SM_CYMENU );
-		lpmis->itemWidth = (cxIcon + DpiScaleX(8)) + size.cx;
+		lpmis->itemHeight = TAB_MENU_ITEM_HEIGHT;
+		lpmis->itemWidth = cxIcon + TAB_MENU_ICON_MARGIN_RIGHT + size.cx;
 
 		::SelectObject( hdc, hFontOld );
 		::DeleteObject( hFont );
@@ -1272,8 +1364,8 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		::MyFillRect( gr, rcItem, nSysClrBk );
 
 		// アイコン描画
-		int cxIcon = CX_SMICON;
-		int cyIcon = CY_SMICON;
+		int cxIcon = TAB_ITEM_ICON_WIDTH;
+		int cyIcon = TAB_ITEM_ICON_HEIGHT;
 		if( NULL != m_hIml )
 		{
 			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
@@ -1338,7 +1430,10 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 			HTHEME hTheme = ::OpenThemeData( m_hwndTab, L"TAB" );
 			if( hTheme ) {
 				if( !bSelected ){
-					::InflateRect( &rcFullItem, DpiScaleX(2), DpiScaleY(2) );
+					rcFullItem.top -= TAB_ITEM_DRAWAREA_EXPAND_TOP;
+					rcFullItem.left -= TAB_ITEM_DRAWAREA_EXPAND_LEFT;
+					rcFullItem.right += TAB_ITEM_DRAWAREA_EXPAND_RIGHT;
+					rcFullItem.bottom += TAB_ITEM_DRAWAREA_EXPAND_BOTTOM;
 					if( nTabIndex == nSelIndex - 1 ){
 						rcFullItem.right -= DpiScaleX(1);
 					}else if( nTabIndex == nSelIndex + 1 ){
@@ -1362,8 +1457,6 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 						iPartId = TABP_TOPTABITEM;
 					}
 				}else{
-					rcFullItem.top += DpiScaleY(2);
-					rcBk.top += DpiScaleY(2);
 					iStateId = bHotTracked ? TIS_HOT : TIS_NORMAL;
 					if( nTabIndex == 0 ){
 						if( nTabIndex == nTabCount - 1 ){
@@ -1385,20 +1478,20 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 			}
 		}
 
-		rcItem.left += DpiScaleX(4) + (bSelected ? DpiScaleX(4) : 0);
+		rcItem.left += bSelected ? TAB_ITEM_ICON_MARGIN_LEFT_ACTIVE : TAB_ITEM_ICON_MARGIN_LEFT;
 
 		// アイコン描画
-		int cxIcon = CX_SMICON;
-		int cyIcon = CY_SMICON;
+		int cxIcon = TAB_ITEM_ICON_WIDTH;
+		int cyIcon = TAB_ITEM_ICON_HEIGHT;
 		if( NULL != m_hIml )
 		{
 			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
 			if( 0 <= item.iImage )
 			{
-				int top = rcItem.top + ( rcItem.bottom - rcItem.top - cyIcon ) / 2 - 1;
+				const int top = rcItem.top + ( rcItem.bottom - rcItem.top - cyIcon ) / 2 - 1;
 				ImageList_Draw( m_hIml, item.iImage, lpdis->hDC, rcItem.left,
-					top + (bSelected ? 0 : DpiScaleY(3)), ILD_TRANSPARENT );
-				rcItem.left += cxIcon + DpiScaleX(6);
+					top + (bSelected ? TAB_ITEM_ICON_MARGIN_TOP_ACTIVE : TAB_ITEM_ICON_MARGIN_TOP), ILD_TRANSPARENT );
+				rcItem.left += cxIcon + (bSelected ? TAB_ITEM_ICON_MARGIN_RIGHT_ACTIVE : TAB_ITEM_ICON_MARGIN_RIGHT);
 			}
 		}
 
@@ -1408,7 +1501,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		gr.PushTextForeColor( clrText );
 		gr.SetTextBackTransparent(true);
 		RECT rcText = rcItem;
-		rcText.top += (bSelected ? 0 : DpiScaleY(5)) - DpiScaleY(1);
+		rcText.top += bSelected ? TAB_ITEM_TEXT_MARGIN_TOP_ACTIVE : TAB_ITEM_TEXT_MARGIN_TOP;
 
 		// テキスト矩形は最大でもタブを閉じるボタンの左端までに切り詰める
 		// タブを閉じるボタンの矩形は他の箇所と同様 TabCtrl_GetItemRect の矩形から取得（lpdis->rcItem の矩形だと若干ずれる）
@@ -2237,10 +2330,7 @@ void CTabWnd::LayoutTab( void )
 {
 	// フォントを切り替える 2011.12.01 Moca
 	bool bChgFont = (0 != memcmp( &m_lf, &m_pShareData->m_Common.m_sTabBar.m_lf, sizeof(m_lf) ));
-	int nSizeBoxWidth = 0;
-	if( m_hwndSizeBox ){
-		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
-	}
+	const int nSizeBoxWidth = m_hwndSizeBox ? TAB_SIZEBOX_WIDTH : 0;
 	if( bChgFont ){
 		HFONT hFontOld = m_hFont;
 		m_lf = m_pShareData->m_Common.m_sTabBar.m_lf;
@@ -2294,12 +2384,9 @@ void CTabWnd::LayoutTab( void )
 	if( 0 < nCount )
 	{
 		cx = (rcTab.right - rcTab.left - 8) / nCount;
-		int min = MIN_TABITEM_WIDTH;
-		if( m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine ){
-			min = MIN_TABITEM_WIDTH_MULTI;
-		}
-		if( MAX_TABITEM_WIDTH < cx )
-			cx = MAX_TABITEM_WIDTH;
+		const int min = (0 < m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine) ? TAB_ITEM_WIDTH_MIN_MULTI : TAB_ITEM_WIDTH_MIN;
+		if( TAB_ITEM_WIDTH_MAX < cx )
+			cx = TAB_ITEM_WIDTH_MAX;
 		else if( min > cx )
 			cx = min;
 		TabCtrl_SetItemSize( m_hwndTab, cx, TAB_ITEM_HEIGHT );
@@ -2307,13 +2394,13 @@ void CTabWnd::LayoutTab( void )
 
 	// タブ余白設定（「閉じるボタン」や「アイコン」の設定切替時の余白切替）
 	// ※ 画面のちらつきや体感性能にさほど影響は無さそうなので条件を絞らず毎回 TabCtrl_SetPadding() を実行する
-	cx = 6;
+	cx = TAB_ITEM_PADDING_X;
 	if( bDispTabClose == DISPTABCLOSE_ALLWAYS ){
 		// 閉じるボタンの分だけパディングを追加して横幅を広げる
-		int nWidth = rcBtnBase.right - rcBtnBase.left;
-		cx += bDispTabIcon? (nWidth + 2)/3: (nWidth + 1)/2;	// それっぽく調整: ボタン幅の 1/3（アイコン有） or 1/2（アイコン無）
+		const int nWidth = TAB_BUTTONBASE_WIDTH;
+		cx += bDispTabIcon ? (nWidth + 2)/3 : (nWidth + 1)/2;	// それっぽく調整: ボタン幅の 1/3（アイコン有） or 1/2（アイコン無）
 	}
-	TabCtrl_SetPadding( m_hwndTab, DpiScaleX(cx), DpiScaleY(3) );
+	TabCtrl_SetPadding( m_hwndTab, cx, TAB_ITEM_PADDING_Y );
 
 	// 新しいウィンドウスタイルを適用する
 	// ※ TabCtrl_SetPadding() の後でやらないと設定変更の直後にアイコンやテキストの描画位置がずれる場合がある
@@ -2333,21 +2420,23 @@ void CTabWnd::LayoutTab( void )
 	RECT rcWnd;
 	::GetWindowRect( GetHwnd(), &rcWnd );
 
+	// タブウィンドウ(CTabWnd)の幅高さ/位置決め
 	int nHeight = TAB_WINDOW_HEIGHT;
 	::GetWindowRect( m_hwndTab, &rcTab );
 	if( m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine
 		&& TabCtrl_GetItemCount( m_hwndTab ) ){
-		// 正確に再配置（多段タブでは段数が変わることがあるので必須）
+		// 多段の時は段数によりタブ部分の高さが変動するので
+		// AdjustRectで得たタブページ上端の位置を元にタブ部分の高さを算出しタブウィンドウ高さを決める
 		RECT rcDisp = rcTab;
-		rcDisp.left = TAB_MARGIN_LEFT;
-		rcDisp.right = rcTab.left + (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT + nSizeBoxWidth);
+		rcDisp.left = TAB_CONTROL_MARGIN_LEFT;
+		rcDisp.right = rcTab.left + (rcWnd.right - rcWnd.left) - (TAB_CONTROL_MARGIN_LEFT + TAB_CONTROL_MARGIN_RIGHT + nSizeBoxWidth);
 		TabCtrl_AdjustRect( m_hwndTab, FALSE, &rcDisp );
-		nHeight = (rcDisp.top - rcTab.top - 2) + TAB_MARGIN_TOP;
+		nHeight = TAB_CONTROL_MARGIN_TOP + (rcDisp.top - rcTab.top) - TAB_CONTROL_PAGEEDGE_WIDTH;
 	}
 	::SetWindowPos( GetHwnd(), NULL, 0, 0, rcWnd.right - rcWnd.left, nHeight, SWP_NOMOVE | SWP_NOZORDER );
-	int nWidth = (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT + nSizeBoxWidth);
+	int nWidth = (rcWnd.right - rcWnd.left) - (TAB_CONTROL_MARGIN_LEFT + TAB_CONTROL_MARGIN_RIGHT + nSizeBoxWidth);
 	if( (nWidth != rcTab.right - rcTab.left) || (nHeight != rcTab.bottom - rcTab.top) ){
-		::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, nWidth, nHeight, TRUE );
+		::MoveWindow( m_hwndTab, TAB_CONTROL_MARGIN_LEFT, TAB_CONTROL_MARGIN_TOP, nWidth, nHeight, TRUE );
 	}
 }
 
@@ -2492,8 +2581,8 @@ HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 	// 本物の ImageList_Duplicate() の代替処理
 	// 新しいイメージリストを作成してアイコン単位でコピーする
 	//（この場合、多色アイコンは綺麗には表示されないかもしれない）
-	int cxIcon = CX_SMICON;
-	int cyIcon = CY_SMICON;
+	int cxIcon = TAB_ITEM_ICON_WIDTH;
+	int cyIcon = TAB_ITEM_ICON_HEIGHT;
 	ImageList_GetIconSize( himl, &cxIcon, &cyIcon );
 	hImlNew = ImageList_Create( cxIcon, cyIcon, ILC_COLOR32 | ILC_MASK, 4, 4 );
 	if( hImlNew )
@@ -2550,10 +2639,10 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	DrawBtnBkgnd( gr, &rcBtn, m_bListBtnHilighted );	// 2006.10.21 ryoji
 
 	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
-	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
-	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2;
-	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
-	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - TAB_BUTTONBASE_WIDTH_FIXED) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - TAB_BUTTONBASE_HEIGHT_FIXED) / 2;
+	rcBtn.right = rcBtn.left + TAB_BUTTONBASE_WIDTH_FIXED;
+	rcBtn.bottom = rcBtn.top + TAB_BUTTONBASE_HEIGHT_FIXED;
 
 	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	gr.SetPen( ::GetSysColor( nIndex ) );
@@ -2628,10 +2717,10 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	DrawBtnBkgnd( gr, &rcBtn, m_bCloseBtnHilighted );
 
 	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
-	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
-	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2;
-	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
-	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - TAB_BUTTONBASE_WIDTH_FIXED) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - TAB_BUTTONBASE_HEIGHT_FIXED) / 2;
+	rcBtn.right = rcBtn.left + TAB_BUTTONBASE_WIDTH_FIXED;
+	rcBtn.bottom = rcBtn.top + TAB_BUTTONBASE_HEIGHT_FIXED;
 
 	int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	gr.SetPen( ::GetSysColor(nIndex) );
@@ -2668,10 +2757,10 @@ void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool sele
 	DrawBtnBkgnd( gr, &rcBtn, bHover );
 
 	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
-	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
-	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2 - 1;
-	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
-	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - TAB_BUTTONBASE_WIDTH_FIXED) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - TAB_BUTTONBASE_HEIGHT_FIXED) / 2 - 1;
+	rcBtn.right = rcBtn.left + TAB_BUTTONBASE_WIDTH_FIXED;
+	rcBtn.bottom = rcBtn.top + TAB_BUTTONBASE_HEIGHT_FIXED;
 
 	int nIndex = COLOR_BTNTEXT;
 	gr.SetPen( ::GetSysColor(nIndex) );
@@ -2694,8 +2783,8 @@ void CTabWnd::DrawTopBand( const CGraphics& gr, const RECT& rcClient, int nTabIn
 	RECT rcTopBand = {};
 	rcTopBand.left = pt.x;
 	rcTopBand.right = pt.x + (rcTab.right - rcTab.left);
-	rcTopBand.top = rcClient.top + 1;	// DrawEdgeで描画した境界線(1px)をよける
-	rcTopBand.bottom = rcClient.top + TAB_MARGIN_TOP;
+	rcTopBand.top = rcClient.top + TAB_WINDOW_EDGE_WIDTH;		// DrawEdgeで描画した境界線をよける
+	rcTopBand.bottom = rcClient.top + TAB_CONTROL_MARGIN_TOP;
 
 	// 左右の範囲制限
 	// - 左側はそのまま
@@ -2723,13 +2812,11 @@ void CTabWnd::DrawTopBand( const CGraphics& gr, const RECT& rcClient, int nTabIn
 */
 void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
-	*lprc = rcBtnBase;
-	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
-	int nSizeBoxWidth = 0;
-	if( m_hwndSizeBox ){
-		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
-	}
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT - nSizeBoxWidth + DpiScaleX(4), lprcClient->top + TAB_MARGIN_TOP + DpiScaleY(2) );
+	const int nSizeBoxWidth = m_hwndSizeBox ? TAB_SIZEBOX_WIDTH : 0;
+	lprc->top = lprcClient->top + TAB_LISTBUTTON_MARGIN_TOP;
+	lprc->left = lprcClient->right - (TAB_CONTROL_MARGIN_RIGHT + nSizeBoxWidth) + TAB_LISTBUTTON_MARGIN_LEFT;
+	lprc->right = lprc->left + TAB_BUTTONBASE_WIDTH;
+	lprc->bottom = lprc->top + TAB_BUTTONBASE_HEIGHT;
 }
 
 /*! 閉じるボタンの矩形取得処理
@@ -2737,15 +2824,11 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 */
 void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
-	*lprc = rcBtnBase;
-	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
-	int nSizeBoxWidth = 0;
-	if( m_hwndSizeBox ){
-		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
-	}
-	::OffsetRect(lprc,
-		lprcClient->right - TAB_MARGIN_RIGHT - nSizeBoxWidth + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(7),
-		lprcClient->top + TAB_MARGIN_TOP + DpiScaleY(2) );
+	const int nSizeBoxWidth = m_hwndSizeBox ? TAB_SIZEBOX_WIDTH : 0;
+	lprc->top = lprcClient->top + TAB_CLOSEBUTTON_MARGIN_TOP;
+	lprc->left = lprcClient->right - (TAB_BUTTONBASE_WIDTH + TAB_CLOSEBUTTON_MARGIN_RIGHT + nSizeBoxWidth);
+	lprc->right = lprc->left + TAB_BUTTONBASE_WIDTH;
+	lprc->bottom = lprc->top + TAB_BUTTONBASE_HEIGHT;
 }
 
 /*! タブを閉じるボタンの矩形取得処理
@@ -2753,11 +2836,10 @@ void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
 */
 void CTabWnd::GetTabCloseBtnRect( const LPRECT lprcTab, LPRECT lprc, bool selected )
 {
-	*lprc = rcBtnBase;
-	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
-	::OffsetRect(lprc,
-		(lprcTab->right + (selected ? 0: -2)) - ((DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(2)),
-		(lprcTab->top + (selected ? -2: 0)) + DpiScaleY(2) );
+	lprc->top = lprcTab->top + (selected ? TAB_ITEM_CLOSEBUTTON_MARGIN_TOP_ACTIVE : TAB_ITEM_CLOSEBUTTON_MARGIN_TOP);
+	lprc->left = lprcTab->right - (selected ? TAB_ITEM_CLOSEBUTTON_MARGIN_RIGHT_ACTIVE : TAB_ITEM_CLOSEBUTTON_MARGIN_RIGHT) - TAB_BUTTONBASE_WIDTH;
+	lprc->right = lprc->left + TAB_BUTTONBASE_WIDTH;
+	lprc->bottom = lprc->top + TAB_BUTTONBASE_HEIGHT;
 }
 
 /** タブ名取得処理
