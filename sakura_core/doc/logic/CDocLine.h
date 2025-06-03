@@ -48,9 +48,9 @@ public:
 	bool			IsEmptyLine() const;		//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
 
 	//データ取得
-	CLogicInt		GetLengthWithoutEOL() const			{ return m_cLine.GetStringLength() - m_cEol.GetLen(); } //!< 戻り値は文字単位。
+	CLogicInt		GetLengthWithoutEOL() const			{ return static_cast<CLogicInt>(m_cLine.GetStringLength()) - m_cEol.GetLen(); } //!< 戻り値は文字単位。
 	const wchar_t*	GetPtr() const						{ return m_cLine.GetStringPtr(); }
-	CLogicInt		GetLengthWithEOL() const			{ return m_cLine.GetStringLength(); }	//	CMemoryIterator用
+	CLogicInt		GetLengthWithEOL() const			{ return static_cast<CLogicInt>(m_cLine.GetStringLength()); }	//	CMemoryIterator用
 #ifdef USE_STRICT_INT
 	const wchar_t*	GetDocLineStrWithEOL(int* pnLen) const //###仮の名前、仮の対処
 	{

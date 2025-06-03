@@ -940,7 +940,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 			tmp.AppendString(L" ");
 		}
 		if( 0 < tmp.GetStringLength() ){
-			Command_INSTEXT( false, tmp.GetStringPtr(), tmp.GetStringLength(), false, false);
+			Command_INSTEXT( false, tmp.GetStringPtr(), static_cast<CLogicInt>(tmp.GetStringLength()), false, false);
 			GetCaret().MoveCursor(posBefore, false);
 		}
 	}

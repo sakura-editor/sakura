@@ -158,7 +158,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		// 2004.05.14 Moca CHokanMgr::Search側で改行を削除するようにし、直接書き換えるのをやめた
 
 		GetCommander().Command_WordDeleteToStart();
-		GetCommander().Command_INSTEXT( true, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE );
+		GetCommander().Command_INSTEXT( true, cmemHokanWord.GetStringPtr(), static_cast<CLogicInt>(cmemHokanWord.GetStringLength()), TRUE );
 	}
 	else {
 		m_bHokan = TRUE;
