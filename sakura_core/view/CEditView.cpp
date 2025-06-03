@@ -2286,7 +2286,7 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, boo
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
  */
-bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
+bool CEditView::MySetClipboardData( const WCHAR* pszText, size_t nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
 {
 	/* Windowsクリップボードにコピー */
 	CClipboard cClipboard(GetHwnd());

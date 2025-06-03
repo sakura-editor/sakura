@@ -51,7 +51,7 @@ void CClipboard::Close()
 
 bool CClipboard::SetText(
 	const wchar_t*	pData,			//!< コピーするUNICODE文字列
-	int				nDataLen,		//!< pDataの長さ（文字単位）
+	size_t			nDataLen,		//!< pDataの長さ（文字単位）
 	bool			bColumnSelect,
 	bool			bLineSelect,
 	UINT			uFormat

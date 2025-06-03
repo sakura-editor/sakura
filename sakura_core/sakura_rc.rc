@@ -3639,7 +3639,7 @@ END
 
 STRINGTABLE
 BEGIN
-    STR_ERR_DLGMEM1         "CMemory::AllocBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n"
+    STR_ERR_DLGMEM1         "CMemory::AllocBuffer(nNewDataLen==%zu)\nメモリ確保に失敗しました。\n"
     STR_ERR_DLGNRMPROC1     "CreateMutex()失敗。\n終了します。"
     STR_ERR_DLGNRMPROC2     "エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
     STR_ERR_DLGPPA1         "PPA実行中に新たにPPAマクロを呼び出すことはできません"

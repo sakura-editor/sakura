@@ -192,7 +192,7 @@ private:
 
 	// -- -- -- -- メンバ変数 -- -- -- -- //
 private:
-	int m_value;
+	ptrdiff_t m_value;
 };
 
 //左辺がint等の場合の演算子

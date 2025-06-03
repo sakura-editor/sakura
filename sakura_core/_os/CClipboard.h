@@ -29,7 +29,7 @@ public:
 	//インターフェース
 	void Empty(); //!< クリップボードを空にする
 	void Close(); //!< クリップボードを閉じる
-	bool SetText(const wchar_t* pData, int nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< テキストを設定する
+	bool SetText(const wchar_t* pData, size_t nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< テキストを設定する
 	bool SetHtmlText(const CNativeW& cmemBUf);
 	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
 	bool IsIncludeClipboradFormat(const wchar_t* pFormatName);
