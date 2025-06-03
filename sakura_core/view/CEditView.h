@@ -156,7 +156,7 @@ public:
 	bool MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = NULL );			/* クリップボードからデータを取得 */
 
 	//設定
-	bool MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
+	bool MySetClipboardData( const WCHAR* pszText, size_t nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
 
 	//利用
 	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji

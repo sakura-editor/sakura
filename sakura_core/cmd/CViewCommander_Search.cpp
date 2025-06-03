@@ -695,7 +695,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
-			Command_INSTEXT( false, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
+			Command_INSTEXT( false, cMemRepKey.GetStringPtr(), static_cast<CLogicInt>(cMemRepKey.GetStringLength()), TRUE );
 		}
 
 		// 挿入後の検索開始位置を調整
@@ -913,7 +913,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		cmemClip.SetString( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
 	}
 
-	CLogicInt nREPLACEKEY = cmemClip.GetStringLength();
+	CLogicInt nREPLACEKEY = static_cast<CLogicInt>(cmemClip.GetStringLength());
 	const wchar_t* szREPLACEKEY = cmemClip.GetStringPtr();
 
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する

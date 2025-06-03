@@ -246,7 +246,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[1], EEolType::line_separator );
 	m_pCodeBase->GetEol( &m_memEols[2], EEolType::paragraph_separator );
 	bool bEolEx = false;
-	int  nMaxEolLen = 0;
+	size_t  nMaxEolLen = 0;
 	for( int k = 0; k < (int)_countof(m_memEols); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
@@ -254,7 +254,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 		}
 	}
 	m_bEolEx = bEolEx;
-	m_nMaxEolLen = nMaxEolLen;
+	m_nMaxEolLen = decltype(m_nMaxEolLen)(nMaxEolLen);
 	if(	false == GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol ){
 		m_bEolEx = false;
 	}

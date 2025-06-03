@@ -55,7 +55,7 @@ public:
 
 	[[nodiscard]] const std::byte* GetRawPtr() const noexcept { return m_pRawData; } //!< データへのポインタを返す
 	std::byte* GetRawPtr() noexcept { return m_pRawData; }             //!< データへのポインタを返す
-	[[nodiscard]] int GetRawLength() const noexcept { return static_cast<int>(m_nRawLen); }                //!<データ長を返す。バイト単位。
+	[[nodiscard]] size_t GetRawLength() const noexcept { return m_nRawLen; }                //!<データ長を返す。バイト単位。
 
 	// 演算子
 	CMemory& operator = ( const CMemory& rhs );
@@ -72,15 +72,15 @@ public:
 	void _SetRawLength( size_t nLength );
 	void swap( CMemory& left ) noexcept;
 	//! メモリ再確保を行わずに格納できる最大バイト数を求める
-	[[nodiscard]] int capacity() const noexcept { return 8 <= m_nDataBufSize ? m_nDataBufSize - 2: 0; }
+	[[nodiscard]] size_t capacity() const noexcept { return 8 <= m_nDataBufSize ? m_nDataBufSize - 2: 0; }
 
 private: // 2002/2/10 aroka アクセス権変更
 	/*
 	|| メンバ変数
 	*/
 	std::byte*	m_pRawData = nullptr;	//!< バッファ
-	unsigned	m_nRawLen = 0;			//!< データサイズ(m_nDataBufSize未満)。バイト単位。
-	unsigned	m_nDataBufSize = 0;		//!< バッファサイズ。バイト単位。
+	size_t	m_nRawLen = 0;			//!< データサイズ(m_nDataBufSize未満)。バイト単位。
+	size_t	m_nDataBufSize = 0;		//!< バッファサイズ。バイト単位。
 };
 
 #endif /* SAKURA_CMEMORY_EE37AF3F_6B73_412E_8F0C_8A64F4250AE3_H_ */

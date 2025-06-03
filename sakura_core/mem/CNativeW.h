@@ -79,9 +79,9 @@ public:
 
 	//ネイティブ取得インターフェース
 	[[nodiscard]] wchar_t operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
-	CLogicInt GetStringLength() const                        //!< 文字列長を返す。文字単位。
+	size_t GetStringLength() const                        //!< 文字列長を返す。文字単位。
 	{
-		return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
+		return CNative::GetRawLength() / sizeof(wchar_t);
 	}
 	const wchar_t* GetStringPtr() const
 	{

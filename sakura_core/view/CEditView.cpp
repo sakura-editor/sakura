@@ -1440,7 +1440,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		ReplaceData_CEditView(
 			GetSelectionInfo().m_sSelect,
 			cmemBuf.GetStringPtr(),		/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
-			cmemBuf.GetStringLength(),	/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
+			static_cast<CLogicInt>(cmemBuf.GetStringLength()),	/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
 			false,
 			m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 		);
@@ -2286,7 +2286,7 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, boo
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
  */
-bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
+bool CEditView::MySetClipboardData( const WCHAR* pszText, size_t nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
 {
 	/* Windowsクリップボードにコピー */
 	CClipboard cClipboard(GetHwnd());

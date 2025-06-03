@@ -140,9 +140,9 @@ void CMemory::AllocBuffer( size_t nNewDataLen )
 
 	void* pAllocated = nullptr;
 
-	if( m_nDataBufSize == 0 && nAllocSize <= INT_MAX ){
+	if( m_nDataBufSize == 0 ){
 		pAllocated = ::malloc( nAllocSize );
-	}else if( nAllocSize <= INT_MAX ){
+	}else {
 		pAllocated = ::realloc( m_pRawData, nAllocSize );
 	}
 

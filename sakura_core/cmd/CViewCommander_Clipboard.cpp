@@ -175,7 +175,7 @@ void CViewCommander::Command_PASTE( int option )
 	}
 
 	// クリップボードデータ取得 -> pszText, nTextLen
-	CLogicInt nTextLen = cmemClip.GetStringLength();
+	CLogicInt nTextLen = static_cast<CLogicInt>(cmemClip.GetStringLength());
 	const wchar_t*	pszText = cmemClip.GetStringPtr();
 
 	bool bConvertEol = 
