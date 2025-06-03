@@ -114,7 +114,7 @@ TEST(CMemory, OverHeapMaxReq)
 	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
 
 	// _HEAP_MAXREQを越える値を指定すると、メモリは確保されない
-	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
+	cmem.AllocBuffer(_HEAP_MAXREQ + 1);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
@@ -124,7 +124,7 @@ TEST(CMemory, OverHeapMaxReq)
 	ASSERT_EQ((_countof(data) - 1) * sizeof(wchar_t), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
-	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
+	cmem.AllocBuffer(_HEAP_MAXREQ + 1);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 }
 
@@ -140,8 +140,8 @@ TEST(CMemory, OverMaxSize)
 	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
 	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
 
-	// INT_MAXを越える値を指定すると、メモリは確保されない
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
+	// PTRDIFF_MAX値を指定すると、メモリは確保されない
+	cmem.AllocBuffer(PTRDIFF_MAX);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
@@ -151,7 +151,7 @@ TEST(CMemory, OverMaxSize)
 	ASSERT_EQ((_countof(data) - 1) * sizeof(wchar_t), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
+	cmem.AllocBuffer(PTRDIFF_MAX);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 }
 
