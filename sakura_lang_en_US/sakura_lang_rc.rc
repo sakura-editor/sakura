@@ -3987,7 +3987,7 @@ BEGIN
     STR_ERR_CSHAREDATA15    "yyyy'Y'M'M'd'D('dddd')'"
     STR_ERR_CSHAREDATA16    "tthh'H'mm'M'ss'S'"
     STR_ERR_CSHAREDATA17    "${w?$h$:Output$:${I?$f$n$:$N$n$}$}${U?(Changed)$} - $A $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$} $<profile>"
-    STR_ERR_CSHAREDATA18    "${w?$h$:Output$:$f$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
+    STR_ERR_CSHAREDATA18    "${w?$h$:Output$:$f$n$}${U?(Changed)$} - $A $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$} $<profile>"
 END
 
 STRINGTABLE
