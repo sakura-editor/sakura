@@ -171,6 +171,8 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="eval_outputs.hpp" />
+    <ClInclude Include="testing\StartEditorProcess.hpp" />
+    <ClInclude Include="testing\GuiAwareTestSuite.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
   </ItemGroup>
@@ -193,9 +195,6 @@
     <ProjectReference Include="..\..\sakura_lang_en_US\sakura_lang_en_US.vcxproj">
       <Project>{7a6d0f29-e560-4985-835b-5f92a08eb242}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="StartEditorProcessForTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

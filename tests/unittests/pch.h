@@ -22,10 +22,17 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
  */
+
+#pragma once
+
+ // プロジェクトのプリコンパイル済みヘッダーを参照する
 #include "StdAfx.h"
 
 // テストではGMockを使う前提にする
 #include <gmock/gmock.h>
+
+// テストで使う標準C++ヘッダー（追加するときは昇順で。）
+#include <fstream>
 
 // マッチャーのusing（追加するときは昇順で。）
 using ::testing::_;
