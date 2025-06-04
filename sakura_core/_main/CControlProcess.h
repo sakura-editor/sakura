@@ -45,22 +45,18 @@ public:
 		m_pcTray( nullptr )
 	{}
 
-	~CControlProcess();
-
-	std::filesystem::path GetIniFileName() const override;
+	~CControlProcess() override;
 
 protected:
-	CControlProcess();
 	bool InitializeProcess() override;
 	bool MainLoop() override;
 	void OnExitProcess() override;
 
 private:
-	std::filesystem::path GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const;
-
 	HANDLE			m_hMutex;				//!< アプリケーション実行検出用ミューテックス
 	HANDLE			m_hMutexCP;				//!< コントロールプロセスミューテックス
 	HANDLE			m_hEventCPInitialized;	//!< コントロールプロセス初期化完了イベント 2006.04.10 ryoji
 	CControlTray*	m_pcTray;
 };
+
 #endif /* SAKURA_CCONTROLPROCESS_AFB90808_4287_4A11_B7FB_9CD21CF8BFD6_H_ */

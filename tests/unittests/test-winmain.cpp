@@ -83,7 +83,7 @@ protected:
 	/*!
 	 * 設定ファイルのパス
 	 *
-	 * GetIniFileNameを使ってtests1.iniのパスを取得する。
+	 * CShareData::BuildPrivateIniFileNameを使ってtests1.iniのパスを取得する。
 	 */
 	std::filesystem::path iniPath;
 
@@ -102,8 +102,22 @@ protected:
 		// プロセスのインスタンスを用意する
 		CControlProcess dummy(nullptr, strCommandLine.data());
 
-		// INIファイルのパスを取得
-		iniPath = GetIniFileName();
+		const auto isMultiUserSettings = false;
+		const auto userRootFolder = 0;
+		const auto& userSubFolder = L"sakura";
+
+		// exe基準のiniファイルパスを得る
+		const auto defaultIniPath = GetExeFileName().replace_extension(L".ini");
+
+		// 設定ファイルフォルダー
+		auto iniFolder = defaultIniPath;
+		iniFolder.remove_filename();
+
+		// iniファイル名を得る
+		const auto filename = defaultIniPath.filename();
+
+		// INIファイルのパスを組み立てる
+		iniPath = CShareData::BuildPrivateIniFileName(iniFolder, isMultiUserSettings, userRootFolder, userSubFolder, profileName.data(), filename);
 
 		// INIファイルを削除する
 		if (fexist(iniPath.c_str())) {

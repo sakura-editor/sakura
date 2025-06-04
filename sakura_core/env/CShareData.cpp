@@ -55,6 +55,94 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
+UINT GetPrivateProfileIntW(
+	_In_ LPCWSTR lpAppName,
+	_In_ LPCWSTR lpKeyName,
+	_In_ INT nDefault,
+	std::optional<std::filesystem::path> iniPath
+)
+{
+	return GetPrivateProfileIntW(lpAppName, lpKeyName, nDefault, iniPath.has_value() ? iniPath.value().c_str() : nullptr);
+}
+
+std::wstring GetPrivateProfileStringW(
+	_In_opt_ LPCWSTR lpAppName,
+	_In_opt_ LPCWSTR lpKeyName,
+	_In_opt_ LPCWSTR lpDefault,
+	_In_     DWORD nSize,
+	std::optional<std::filesystem::path> iniPath
+)
+{
+	std::wstring buffer(nSize, L'\0');
+	if (!GetPrivateProfileStringW(lpAppName, lpKeyName, lpDefault, buffer.data(), DWORD(buffer.size()), iniPath.has_value() ? iniPath.value().c_str() : nullptr) && lpDefault && *lpDefault) {
+		buffer = lpDefault;
+	}
+	return buffer.data();
+}
+
+std::filesystem::path SHGetKnownFolderPath(
+	_In_ REFKNOWNFOLDERID refFolderId,
+	_In_ DWORD dwFlags,
+	_In_opt_ HANDLE hToken = nullptr
+)
+{
+	PWSTR pFolderPath = nullptr;
+	if (FAILED(::SHGetKnownFolderPath(refFolderId, dwFlags, hToken, &pFolderPath))) {
+		return std::filesystem::path();
+	}
+	std::filesystem::path privateIniPath(pFolderPath);
+	::CoTaskMemFree(pFolderPath);
+	return privateIniPath;
+}
+
+/*!
+	@brief マルチユーザー用のiniファイルパスを組み立てる
+ */
+/* static */ std::filesystem::path CShareData::BuildPrivateIniFileName(
+	const std::filesystem::path& iniFolder,
+	bool isMultiUserSettings,
+	UINT userRootFolder,
+	const std::wstring& userSubFolder,
+	_In_opt_z_ LPCWSTR pszProfileName,
+	const std::wstring& iniFileName
+)
+{
+	std::filesystem::path privateIniPath = iniFolder;
+	if (isMultiUserSettings) {
+		KNOWNFOLDERID refFolderId;
+		switch (userRootFolder) {
+		case 1:
+		case 3:
+			refFolderId = FOLDERID_Profile;			// ユーザーのルートフォルダー
+			break;
+
+		case 2:
+			refFolderId = FOLDERID_Documents;		// ユーザーのドキュメントフォルダー
+			break;
+
+		default:
+			refFolderId = FOLDERID_RoamingAppData;	// ユーザーのアプリケーションデータフォルダー
+			break;
+		}
+
+		privateIniPath = SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT_PATH);
+		if (3 == userRootFolder) {
+			privateIniPath /= L"Desktop";
+		}
+
+		assert(!userSubFolder.empty());
+		privateIniPath /= userSubFolder;
+	}
+
+	if (pszProfileName && *pszProfileName) {
+		privateIniPath /= pszProfileName;
+	}
+
+	privateIniPath /= iniFileName;
+
+	return privateIniPath;
+}
+
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
 CShareData::CShareData()
