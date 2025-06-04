@@ -143,5 +143,12 @@ jobs:
         .\.sonar\scanner\bin\sonar-scanner.bat `
         -D"sonar.organization=${{ github.repository_owner }}" `
         -D"sonar.projectKey=$('${{ github.repository }}' -replace '/', '_')" `
-        -D"sonar.host.url=https://sonarcloud.io"
- 
+        -D"sonar.host.url=https://sonarcloud.io" `
+        -D"sonar.sourceEncoding=UTF-8" `
+        -D"sonar.sources=." `
+        -D"sonar.cfamily.build-wrapper-output=bw-output" `
+        -D"sonar.cfamily.cppunit.reportPath=tests1-googletest.xml" `
+        -D"sonar.python.version=3" `
+        -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tests\stubs\**\*.cpp,tools\**\*.js" `
+        -D"sonar.coverageReportPaths=tests1-coverage.xml" `
+        -D"sonar.exclusions=.sonar\**\*,build\**\*,bw-output\**\*,HeaderMake\**\*,tests\googletest\**\,**\test-*,tests\stubs\**\*,tests*-*.xml*"
