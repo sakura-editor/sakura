@@ -122,13 +122,19 @@
     <Filter Include="Pre-Compiled Headers">
       <UniqueIdentifier>{131a015e-b8b0-4788-becf-6a9407fb3a1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{b50fc2d7-a5f2-4b9f-af30-bf04dda44839}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
-      <Filter>Other Files</Filter>
+      <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\Funccode_enum.h">
-      <Filter>Other Files</Filter>
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\githash.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\sakura.hh">
       <Filter>Other Files</Filter>
@@ -1063,7 +1069,6 @@
     <ClInclude Include="..\sakura_core\uiparts\HandCursor.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\githash.h" />
     <ClInclude Include="..\sakura_core\version.h">
       <Filter>Other Files</Filter>
     </ClInclude>
@@ -2345,9 +2350,13 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
+    <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc">
+      <Filter>Other Files</Filter>
+    </FuncCodeRes>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="sakura.natvis" />
+    <Natvis Include="sakura.natvis">
+      <Filter>Other Files</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>
