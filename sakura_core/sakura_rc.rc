@@ -3909,7 +3909,7 @@ BEGIN
     STR_PROPTYPEREGEX_NOSEL "キーワードが選択されていません。"
     STR_ERR_CSHAREDATA01    "CreateFileMapping()に失敗しました"
     STR_ERR_CSHAREDATA02    "予期せぬエラー"
-    STR_ERR_CSHAREDATA10    "${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
+    STR_ERR_CSHAREDATA10    "${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
     STR_CUSTMENU_RIGHT_CLICK "右クリックメニュー"
     STR_CUSTMENU_CUSTOM     "メニュー%d"
     STR_CUSTMENU_TAB        "タブメニュー"

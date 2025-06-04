@@ -3979,7 +3979,7 @@ BEGIN
     STR_PROPTYPEREGEX_NOSEL "No selected Keyword."
     STR_ERR_CSHAREDATA01    "CreateFileMapping() failed."
     STR_ERR_CSHAREDATA02    "Unexpected error"
-    STR_ERR_CSHAREDATA10    "${w?【Grep】$h$:【Output】$:$f$}${U?(Changed)$}${R?(Read Only)$:(Write Protected)$}${M?【Recording Macro】$}"
+    STR_ERR_CSHAREDATA10    "${w?【Grep】$h$:【Output】$:$f$n$}${U?(Changed)$}${R?(Read Only)$:(Write Protected)$}${M?【Recording Macro】$}"
     STR_CUSTMENU_RIGHT_CLICK "Right Click Menu"
     STR_CUSTMENU_CUSTOM     "Menu%d"
     STR_CUSTMENU_TAB        "Tab Menu"
