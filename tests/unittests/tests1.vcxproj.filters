@@ -13,6 +13,9 @@
     <Filter Include="Pre-Compiled Headers">
       <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="testing">
+      <UniqueIdentifier>{d37419a0-0151-41ee-a41f-4bedae3fd69e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt">
@@ -22,6 +25,9 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Pre-Compiled Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="code-main.cpp">
+      <Filter>Other Files</Filter>
     </ClCompile>
     <ClCompile Include="coverage.cpp" />
     <ClCompile Include="test-cmemory.cpp">
@@ -71,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="test-cdlgprofilemgr.cpp">
       <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="code-main.cpp">
-      <Filter>Other Files</Filter>
     </ClCompile>
     <ClCompile Include="test-winmain.cpp">
       <Filter>Test Files</Filter>
@@ -182,11 +185,14 @@
     <ClInclude Include="pch.h">
       <Filter>Pre-Compiled Headers</Filter>
     </ClInclude>
-    <ClInclude Include="StartEditorProcessForTest.h">
-      <Filter>Other Files</Filter>
-    </ClInclude>
     <ClInclude Include="eval_outputs.hpp">
       <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="testing\StartEditorProcess.hpp">
+      <Filter>testing</Filter>
+    </ClInclude>
+    <ClInclude Include="testing\GuiAwareTestSuite.hpp">
+      <Filter>testing</Filter>
     </ClInclude>
     <ClInclude Include="TExtModule.hpp">
       <Filter>Other Files</Filter>
