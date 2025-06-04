@@ -394,12 +394,11 @@ TEST(CDataProfile, IOProfileData_get_int_101)
 	CDataProfile cProfile;
 	cProfile.SetProfileData(L"Test", L"nTest", strValue);
 
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
 	// ASSERT
-	// FIXME: 不正な設定値を読めてしまう不具合
-	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	EXPECT_THAT(value, 2147483647);
-	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	//EXPECT_THAT(value, 1234);
+	EXPECT_THAT(value, 1234);
 }
 
 /*!
@@ -433,12 +432,11 @@ TEST(CDataProfile, IOProfileData_get_int_103)
 	CDataProfile cProfile;
 	cProfile.SetProfileData(L"Test", L"nTest", strValue);
 
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
 	// ASSERT
-	// FIXME: 不正な設定値を読めてしまう不具合
-	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	EXPECT_THAT(value, -2147483648);
-	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	//EXPECT_THAT(value, 1234);
+	EXPECT_THAT(value, 1234);
 }
 
 /*!
@@ -488,12 +486,11 @@ TEST(CDataProfile, IOProfileData_get_WORD_101)
 	CDataProfile cProfile;
 	cProfile.SetProfileData(L"Test", L"nTest", strValue);
  
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
 	// ASSERT
-	// FIXME: 不正な設定値を読めてしまう不具合
-	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	EXPECT_THAT(value, 0);
- 	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	//EXPECT_THAT(value, 1234);
+	EXPECT_THAT(value, 1234);
 }
  
 /*!
@@ -523,12 +520,11 @@ TEST(CDataProfile, IOProfileData_get_WORD_103)
 	CDataProfile cProfile;
 	cProfile.SetProfileData(L"Test", L"nTest", L"-1");
  
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
 	// ASSERT
-	// FIXME: 不正な設定値を読めてしまう不具合
-	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	EXPECT_THAT(value, 65535);
- 	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	//EXPECT_THAT(value, 1234);
+	EXPECT_THAT(value, 1234);
 }
  
 /*!
