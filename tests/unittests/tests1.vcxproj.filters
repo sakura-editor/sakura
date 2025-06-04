@@ -10,7 +10,7 @@
     <Filter Include="Other Files">
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pre-copiled Header">
+    <Filter Include="Pre-Compiled Headers">
       <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -21,7 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
-      <Filter>Pre-copiled Header</Filter>
+      <Filter>Pre-Compiled Headers</Filter>
     </ClCompile>
     <ClCompile Include="coverage.cpp" />
     <ClCompile Include="test-cmemory.cpp">
@@ -180,7 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>Pre-copiled Header</Filter>
+      <Filter>Pre-Compiled Headers</Filter>
     </ClInclude>
     <ClInclude Include="StartEditorProcessForTest.h">
       <Filter>Other Files</Filter>
