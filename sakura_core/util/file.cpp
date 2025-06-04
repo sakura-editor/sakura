@@ -31,6 +31,11 @@ bool fexist(LPCWSTR pszPath)
 	return _waccess(pszPath,0)!=-1;
 }
 
+bool fexist(const std::filesystem::path& path)
+{
+	std::error_code ec;
+	return std::filesystem::exists(path, ec) && 0 == _waccess_s(path.c_str(), 0);
+}
 
 /*!
  * パスがファイル名に使えない文字を含んでいるかチェックする
