@@ -148,20 +148,6 @@ TEST(CProfile, GetProfileData_NewEntry)
 }
 
 /*!
- * @brief StringBufferWのテスト
- */
-TEST(StringBufferW, ctor)
-{
-	WCHAR szBuf[12]{ 0 };
-	StringBufferW buf1(szBuf, _countof(szBuf));
-	StringBufferW buf2(szBuf);
-
-	ASSERT_THROW({ StringBufferW buf3(nullptr, 1); }, std::invalid_argument);
-
-	ASSERT_THROW({ StringBufferW buf4(szBuf, 0); }, std::invalid_argument);
-}
-
-/*!
  * @brief TryParseのテスト
  */
 TEST(profile_data, TryParse_int)
@@ -325,3 +311,74 @@ TEST(CDataProfile, IOProfileData)
 	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", nValue));
 	ASSERT_EQ(109, nValue);
 }
+
+namespace mystring {
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 引数なしで初期化する
+ */
+TEST(StringBufferW, init001)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+
+	// ACT
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ASSERT
+	EXPECT_THAT(szText.c_str(), lf.lfFaceName);
+	EXPECT_THAT(szText.capacity(), std::size(lf.lfFaceName));
+
+	// ASSERT
+	EXPECT_THAT(szText.c_str(), StrEq(L"初期値"));
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ */
+TEST(StringBufferW, init002)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+
+	// ACT
+	auto szText = StringBufferW(lf.lfFaceName, std::size(lf.lfFaceName));
+
+	// ASSERT
+	EXPECT_THAT(szText.c_str(), lf.lfFaceName);
+	EXPECT_THAT(szText.capacity(), std::size(lf.lfFaceName));
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ */
+TEST(StringBufferW, init102)
+{
+	EXPECT_THROW({ StringBufferW buf(nullptr, 1); }, std::invalid_argument);
+
+	auto nul = L'\0';
+	EXPECT_THROW({ StringBufferW buf(&nul, 0);}, std::invalid_argument);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ */
+TEST(StringBufferW, assign001)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	StringBufferW buf(lf.lfFaceName);
+
+	// ACT
+	buf = L"ＭＳ ゴシック";
+
+	// ASSERT
+	EXPECT_THAT(buf.c_str(), StrEq(L"ＭＳ ゴシック"));
+}
+
+} // namespace mystring

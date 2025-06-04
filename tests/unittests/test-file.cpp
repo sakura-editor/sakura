@@ -597,6 +597,8 @@ TEST(file, FileMatchScoreSepExt)
 	ASSERT_EQ(_countof(LR"(testXX)") - 1 + _countof(LR"(.t)") - 1, result);
 }
 
+namespace mystring {
+
 /*!
 	GetExtのテスト
  */
@@ -625,6 +627,8 @@ TEST(CFilePath, GetExt)
 	// 拡張子がない場合に返却されるポインタ値の確認
 	ASSERT_EQ(path.c_str() + path.Length(), path.GetExt());
 }
+
+} // namespace mystring
 
 /*!
 	CFileNameManager::GetFilePathFormatのテスト
