@@ -3916,7 +3916,7 @@ BEGIN
     STR_ERR_CSHAREDATA14    "１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍"
     STR_ERR_CSHAREDATA15    "yyyy'年'M'月'd'日('dddd')'"
     STR_ERR_CSHAREDATA16    "tthh'時'mm'分'ss'秒'"
-    STR_ERR_CSHAREDATA17    "${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}"
+    STR_ERR_CSHAREDATA17    "${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>"
     STR_ERR_CSHAREDATA18    "${w?$h$:アウトプット$:$f$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}"
 END
 
