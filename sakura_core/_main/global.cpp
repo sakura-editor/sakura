@@ -24,6 +24,8 @@
 #include "window/CEditWnd.h"
 #include "version.h"
 
+#include "String_define.h"
+
 #ifdef DEV_VERSION
 #pragma message("-------------------------------------------------------------------------------------")
 #pragma message("---  This is a Dev version and under development. Be careful to use this version. ---")
@@ -32,18 +34,12 @@
 
 /*!
 	アプリ名を取得します。
-	プロセスの生成前にアプリ名を取得することはできません。
 
 	@date 2007/09/21 kobake 整理
  */
 LPCWSTR GetAppName( void )
 {
-	const auto pcProcess = CProcess::getInstance();
-	if( !pcProcess )
-	{
-		::_com_raise_error(E_FAIL, MakeMsgError(L"Any process has been instantiated."));
-	}
-	return pcProcess->GetAppName();
+	return LS(STR_GSTR_APPNAME);
 }
 
 /*! 選択領域描画用パラメータ */
