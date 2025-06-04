@@ -63,6 +63,15 @@ struct STypeConfig;
 class CShareData : public TSingleInstance<CShareData>
 {
 public:
+	static std::filesystem::path BuildPrivateIniFileName(
+		const std::filesystem::path& iniFolder,
+		bool isMultiUserSettings,
+		UINT userRootFolder,
+		const std::wstring& userSubFolder,
+		_In_opt_z_ LPCWSTR pszProfileName,
+		const std::wstring& iniFileName
+	);
+
 	CShareData();
 	~CShareData();
 
