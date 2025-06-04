@@ -38,8 +38,6 @@ CProcess::CProcess(
 : m_hInstance( hInstance )
 , m_hWnd( nullptr )
 {
-	// アプリ名をリソースから読み込む
-	m_strAppName = LS(STR_GSTR_APPNAME);
 }
 
 /*!
@@ -99,12 +97,4 @@ bool CProcess::Run()
 void CProcess::RefreshString()
 {
 	m_cShareData.RefreshString();
-}
-
-/*!
-	言語選択後にアプリ名を更新します。
- */
-void CProcess::UpdateAppName( std::wstring_view appName )
-{
-	m_strAppName = appName;
 }

@@ -55,13 +55,10 @@ public:
 	HWND			GetMainWindow() const{ return m_hWnd; }
 
 	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
-	[[nodiscard]] LPCWSTR	GetAppName( void ) const { return m_strAppName.c_str(); }
-	void UpdateAppName( std::wstring_view appName );
 
 private:
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
 	CShareData		m_cShareData;
-	std::wstring	m_strAppName;
 };
 #endif /* SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_ */

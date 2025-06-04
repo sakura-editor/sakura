@@ -42,8 +42,6 @@
 #include "convert/CConvert_ZeneisuToHaneisu.h"
 #include "convert/CConvert_ZenkataToHankata.h"
 
-#include "_main/CNormalProcess.h"
-
 TEST(CConvert, ZenkataToHankata)
 {
 	CNativeW actual;
@@ -407,10 +405,6 @@ class ConvTest : public ::testing::TestWithParam<ConvTestParamType> {};
  */
 TEST_P(ConvTest, test)
 {
-	// メモリ確保失敗時に表示するメッセージボックスで、
-	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
-	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
-
 	const auto eFuncCode = std::get<0>(GetParam());
 	std::wstring_view source = std::get<1>(GetParam());
 	std::wstring_view expected = std::get<2>(GetParam());

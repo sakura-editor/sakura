@@ -403,11 +403,5 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 	// ロケールを設定
 	::SetThreadUILanguage( m_psLangInfo->wLangId );
 
-	// アプリ名をリソースから読み込む
-	if( auto pcProcess = CProcess::getInstance() )
-	{
-		pcProcess->UpdateAppName(LS(STR_GSTR_APPNAME));
-	}
-
 	return m_psLangInfo->hInstance;
 }
