@@ -40,6 +40,8 @@
 #include "util/file.h"
 #include "CDataProfile.h"
 
+namespace sakura_ini {
+
 /*!
  * @brief WriteProfileは指定されたパスに含まれるサブディレクトリを作成する
  */
@@ -311,6 +313,275 @@ TEST(CDataProfile, IOProfileData)
 	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", nValue));
 	ASSERT_EQ(109, nValue);
 }
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_wstring_000)
+{
+	// ARRANGE
+	std::wstring value = L"初期値";
+	CDataProfile cProfile;
+
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, StrEq(L"初期値"));
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_wstring_001)
+{
+	// ARRANGE
+	std::wstring value = L"初期値";
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"szTest", L"設定値");
+
+	// ACT
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"szTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, StrEq(L"設定値"));
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_int_000)
+{
+	// ARRANGE
+	int value = 1234;
+	CDataProfile cProfile;
+
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, 1234);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_int_001)
+{
+	// ARRANGE
+	int value = 1234;
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"nTest", L"109");
+
+	// ACT
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, 109);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_int_101)
+{
+	// PRE-ARRANGE
+	const auto strValue = std::to_wstring(int64_t(std::numeric_limits<int>::max()) + 1);
+	EXPECT_THAT(strValue, StrEq(L"2147483648"));
+
+	// ARRANGE
+	int value = 1234;
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"nTest", strValue);
+
+	// ASSERT
+	// FIXME: 不正な設定値を読めてしまう不具合
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	EXPECT_THAT(value, 2147483647);
+	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	//EXPECT_THAT(value, 1234);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_int_102)
+{
+	// ARRANGE
+	int value = 1234;
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"nTest", L"text");
+
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, 1234);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_int_103)
+{
+	// PRE-ARRANGE
+	const auto strValue = std::to_wstring(int64_t(std::numeric_limits<int>::min()) - 1);
+	EXPECT_THAT(strValue, StrEq(L"-2147483649"));
+
+	// ARRANGE
+	int value = 1234;
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"nTest", strValue);
+
+	// ASSERT
+	// FIXME: 不正な設定値を読めてしまう不具合
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	EXPECT_THAT(value, -2147483648);
+	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	//EXPECT_THAT(value, 1234);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_WORD_000)
+{
+	// ARRANGE
+	WORD value = 1234;
+	CDataProfile cProfile;
+ 
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, 1234);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+ TEST(CDataProfile, IOProfileData_get_WORD_001)
+ {
+	 // ARRANGE
+	 WORD value = 1234;
+	 CDataProfile cProfile;
+	 cProfile.SetProfileData(L"Test", L"nTest", L"109");
+ 
+	 // ACT
+	 EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
+	 // ASSERT
+	 EXPECT_THAT(value, 109);
+}
+ 
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_WORD_101)
+{
+	// PRE-ARRANGE
+	const auto strValue = std::to_wstring(int64_t(std::numeric_limits<WORD>::max()) + 1);
+	EXPECT_THAT(strValue, StrEq(L"65536"));
+ 
+	// ARRANGE
+	WORD value = 1234;
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"nTest", strValue);
+ 
+	// ASSERT
+	// FIXME: 不正な設定値を読めてしまう不具合
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	EXPECT_THAT(value, 0);
+ 	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	//EXPECT_THAT(value, 1234);
+}
+ 
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_WORD_102)
+{
+	// ARRANGE
+	WORD value = 1234;
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"nTest", L"text");
+ 
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, 1234);
+}
+ 
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_WORD_103)
+{
+	// ARRANGE
+	WORD value = 1234;
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"nTest", L"-1");
+ 
+	// ASSERT
+	// FIXME: 不正な設定値を読めてしまう不具合
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	EXPECT_THAT(value, 65535);
+ 	//EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	//EXPECT_THAT(value, 1234);
+}
+ 
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_StaticString_000)
+{
+	// ARRANGE
+	StaticString<4> value = L"初期値";
+	CDataProfile cProfile;
+
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, StrEq(L"初期値"));
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_StaticString_001)
+{
+	// ARRANGE
+	StaticString<4> value = L"初期値";
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"szTest", L"val");
+
+	// ACT
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"szTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, StrEq(L"val"));
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_get_StaticString_101)
+{
+	// ARRANGE
+	StaticString<4> value = L"初期値";
+	CDataProfile cProfile;
+	cProfile.SetProfileData(L"Test", L"szTest", L"長すぎる文字列");
+
+	// ACT
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", value));
+
+	// ASSERT
+	EXPECT_THAT(value, StrEq(L"初期値"));
+}
+
+} // namespace sakura_ini
 
 namespace mystring {
 
