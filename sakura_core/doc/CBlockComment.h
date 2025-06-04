@@ -41,7 +41,7 @@ class CStringRef;
 class CBlockComment{
 public:
 	//生成と破棄
-	CBlockComment();
+	CBlockComment() = default;
 
 	//設定
 	void SetBlockCommentRule( const wchar_t* pszFrom, const wchar_t* pszTo );	//	行コメントデリミタをコピーする
@@ -57,9 +57,10 @@ public:
 	int getBlockToLen() const { return m_nBlockToLen; }
 
 private:
-	wchar_t	m_szBlockCommentFrom[BLOCKCOMMENT_BUFFERSIZE]; //!< ブロックコメントデリミタ(From)
-	wchar_t	m_szBlockCommentTo[BLOCKCOMMENT_BUFFERSIZE];   //!< ブロックコメントデリミタ(To)
-	int		m_nBlockFromLen;
-	int		m_nBlockToLen;
+	wchar_t	m_szBlockCommentFrom[BLOCKCOMMENT_BUFFERSIZE]{}; //!< ブロックコメントデリミタ(From)
+	wchar_t	m_szBlockCommentTo[BLOCKCOMMENT_BUFFERSIZE]{};   //!< ブロックコメントデリミタ(To)
+	int		m_nBlockFromLen = 0;
+	int		m_nBlockToLen = 0;
 };
+
 #endif /* SAKURA_CBLOCKCOMMENT_95985D15_B554_4761_9C32_30FE0E1724EC_H_ */

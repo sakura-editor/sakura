@@ -9,6 +9,8 @@
 #define SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #pragma once
 
+#include "config/system_constants.h"
+
 #include "debug/Debug2.h"
 #include "config/maxdata.h"
 
@@ -25,6 +27,12 @@
 #include "recent/SShare_History.h"	//SShare_History
 #include "charset/charcode.h"
 
+#include "version.h"
+
+struct SMultiUserSettings {
+	UINT         userRootFolder = 0;
+	std::wstring userSubFolder  = L"sakura";
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         アクセサ                            //
@@ -68,13 +76,13 @@ inline void SetDllShareData(DLLSHAREDATA* pShareData)
 
 //! 共有フラグ
 struct SShare_Flags{
-	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
+	BOOL				m_bEditWndChanging = FALSE;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 	/*	@@@ 2002.1.24 YAZAKI
 		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
 		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
 	*/
-	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */
-	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
+	BOOL				m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
+	HWND				m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
 };
 
 //! 共有ワークバッファ
@@ -96,16 +104,37 @@ public:
 	STypeConfig			m_TypeConfig;
 };
 
-//! 共有ハンドル
+/*!
+ * 共有ハンドル構造体
+ *
+ * プロセス間通信に利用するウインドウハンドルを格納する構造体。
+ * 該当ウインドウはトップレベルウインドウなので、
+ * これらのハンドルはFindWindowで取得可能。
+ *
+ * 影響が大きいので放置するが、
+ * 将来的に削除するのが妥当と考えられる。
+ */
 struct SShare_Handles{
-	HWND				m_hwndTray;
-	HWND				m_hwndDebug;
+	HWND				m_hwndTray = nullptr;
+	HWND				m_hwndDebug = nullptr;
 };
 
-//! EXE情報
+/*!
+ * EXE情報構造体
+ *
+ * プログラムリソースに埋め込んだバージョン情報を解析して格納する構造体。
+ * version.hの導入により、微妙な存在になっている。、
+ *
+ * 一応、共有メモリの整合性チェックに使われてはいるが、
+ * 共有メモリを開くときに指定する名前は N_SHAREDATA_VERSION を含むので、
+ * プログラムバージョンの違いをチェックする意義は薄いと考えられる。
+ *
+ * 影響が大きいので放置するが、
+ * 将来的に削除するのが妥当と考えられる。
+ */
 struct SShare_Version{
-	DWORD				m_dwProductVersionMS;
-	DWORD				m_dwProductVersionLS;
+	DWORD				m_dwProductVersionMS =  MAKELONG(VER_B, VER_A);
+	DWORD				m_dwProductVersionLS =  MAKELONG(VER_D, VER_C);
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -119,8 +148,8 @@ struct DLLSHAREDATA{
 		データ構造の異なるバージョンの同時起動を防ぐため
 		必ず先頭になくてはならない．
 	*/
-	unsigned int				m_vStructureVersion;
-	unsigned int				m_nSize;
+	unsigned int				m_vStructureVersion = N_SHAREDATA_VERSION;
+	unsigned int				m_nSize = sizeof(DLLSHAREDATA);
 
 	// -- -- 非保存対象 -- -- //
 	SShare_Version				m_sVersion;	//※読込は行わないが、書込は行う
@@ -154,16 +183,25 @@ struct DLLSHAREDATA{
 	SShare_History				m_sHistory;
 
 	//外部コマンド実行ダイアログのオプション
-	int							m_nExecFlgOpt;				/* 外部コマンド実行オプション */	//	2006.12.03 maru オプションの拡張のため
+	int							m_nExecFlgOpt = 1;				/* 外部コマンド実行オプション */	//	2006.12.03 maru オプションの拡張のため
 	//DIFF差分表示ダイアログのオプション
-	int							m_nDiffFlgOpt;				/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
+	int							m_nDiffFlgOpt = 0;				/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 	//タグファイルの作成ダイアログのオプション
-	WCHAR						m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
-	int							m_nTagsOpt;					/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
+	WCHAR						m_szTagsCmdLine[_MAX_PATH]{};	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
+	int							m_nTagsOpt = 0;					/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
 
 	// -- -- テンポラリ -- -- //
 	//指定行へジャンプダイアログのオプション
-	bool						m_bLineNumIsCRLF_ForJump;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+	bool						m_bLineNumIsCRLF_ForJump = true;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+
+	DLLSHAREDATA(
+		const std::filesystem::path& iniPath,
+		const std::filesystem::path& privateIniPath,
+		const std::filesystem::path& iniFolder,
+		std::vector<STypeConfig*>& types
+	) noexcept;
+
+	void InitTypeConfigs(std::vector<STypeConfig*>& types);
 };
 
 class CShareDataLockCounter{

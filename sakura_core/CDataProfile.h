@@ -30,32 +30,38 @@ namespace profile_data {
 	 * 指定した型の変換に対応しているかどうかを返すインライン関数
 	 */
 	template<class T>
-	constexpr bool is_supported_v = std::is_integral_v<T> || std::is_enum_v<T> || std::is_same_v<T, CLogicInt> || std::is_same_v<T, CLayoutInt> || std::is_same_v<T, StringBufferW>;
+	constexpr bool is_supported_v = std::is_integral_v<T> || std::is_enum_v<T>;
 
 	/*!
 	 * 文字列を設定値に変換する
 	 *
 	 * テンプレート定義は、32bit以下の整数型とenum型に対応している。
 	 * それ以外の型で利用したい場合は、特殊化定義を書いて使う。
-	 * 既存コードにあった bool, CLayoutInt, WCHAR, KEYCODE は特殊化済み。
-	 * 独自型 CLogicInt は int に暗黙変換できるので特殊化不要。
+	 * 既存コードにあった bool, WCHAR, KEYCODE は特殊化済み。
 	 */
 	template<class NumType>
 	[[nodiscard]] bool TryParse(std::wstring_view profile, NumType& value) noexcept
 	{
-		if (profile.length() > 0) {
-			const WCHAR* pStart = profile.data();
-			WCHAR* pEnd = nullptr;
-			if constexpr (std::is_unsigned_v<NumType>) {
-				if (const auto parsedNum = wcstoull(pStart, &pEnd, 10); pStart != pEnd && parsedNum <= std::numeric_limits<NumType>::max()) {
-					value = static_cast<NumType>(parsedNum);
-					return true;
-				}
+		if (profile.empty()) {
+			return false;
+		}
+
+		const WCHAR* pStart = profile.data();
+		WCHAR* pEnd = nullptr;
+		if constexpr (std::is_signed_v<NumType>) {
+			if (const auto parsedNum = wcstoll(pStart, &pEnd, 10); pStart != pEnd && parsedNum <= std::numeric_limits<NumType>::max() && std::numeric_limits<NumType>::min() <= parsedNum) {
+				value = static_cast<NumType>(parsedNum);
+				return true;
 			}
-			else if (const auto parsedNum = wcstoll(pStart, &pEnd, 10); pStart != pEnd) {
-				if constexpr (std::is_signed_v<NumType>) {
-					if (parsedNum < std::numeric_limits<NumType>::min() || std::numeric_limits<NumType>::max() < parsedNum) return false;
-				}
+		}
+		else if constexpr (std::is_unsigned_v<NumType>) {
+			if (const auto parsedNum = wcstoull(pStart, &pEnd, 10); pStart != pEnd && parsedNum <= std::numeric_limits<NumType>::max()) {
+				value = static_cast<NumType>(parsedNum);
+				return true;
+			}
+		}
+		else if constexpr (std::is_enum_v<NumType>) {
+			if (int32_t parsedNum; TryParse(profile, parsedNum)) {
 				value = static_cast<NumType>(parsedNum);
 				return true;
 			}
@@ -69,46 +75,19 @@ namespace profile_data {
 	 *
 	 * テンプレート定義は、組込の整数型に対応している。
 	 * 整数以外の型で利用したい場合は、特殊化定義を書いて使う。
-	 * 既存コードにあった型 bool, CLayoutInt, WCHAR, KEYCODE は特殊化済み。
-	 * 独自型 CLogicInt は int に暗黙変換できるので特殊化不要。
+	 * 既存コードにあった型 bool, WCHAR, KEYCODE は特殊化済み。
 	 */
-	template<class NumType, std::enable_if_t<!std::is_enum_v<NumType>, std::nullptr_t> = nullptr>
+	template<class NumType>
 	[[nodiscard]] std::wstring ToString(NumType value)
 	{
-		return std::to_wstring(value);
-	}
-
-	//! 設定値を文字列に変換する
-	template<class EnumType, std::enable_if_t<std::is_enum_v<EnumType>, std::nullptr_t> = nullptr>
-	[[nodiscard]] std::wstring ToString(EnumType value)
-	{
-		auto nValue = static_cast<int32_t>(value);
-		return ToString(nValue);
-	}
-
-#ifdef USE_STRICT_INT
-
-	//! 文字列を設定値に変換する
-	template<>
-	[[nodiscard]] inline bool TryParse<CLayoutInt>(std::wstring_view profile, CLayoutInt& value) noexcept
-	{
-		// int型を介して値を読み取る
-		if (int nValue = 0; TryParse(profile, nValue)) {
-			value = CLayoutInt(nValue);
-			return true;
+		if constexpr (std::is_enum_v<NumType>) {
+			const auto nValue = static_cast<int32_t>(value);
+			return ToString(nValue);
 		}
-		return false;
+		else if constexpr (std::is_integral_v<NumType>) {
+			return std::to_wstring(value);
+		}
 	}
-
-	//! 設定値を文字列に変換する
-	template<>
-	[[nodiscard]] inline std::wstring ToString<CLayoutInt>(CLayoutInt value)
-	{
-		// int型を介して文字列化する
-		return ToString((Int)value);
-	}
-
-#endif //ifdef USE_STRICT_INT
 
 	//! 文字列を設定値に変換する
 	template<>
@@ -199,24 +178,6 @@ namespace profile_data {
 		return ToString(ch);
 	}
 
-	/*!
-	 * 文字列を設定値に変換する
-	 *
-	 * @sa StringBufferW
-	 */
-	template<>
-	[[nodiscard]] inline bool TryParse<StringBufferW>(std::wstring_view profile, StringBufferW& value) noexcept
-	{
-		if (profile.length() < std::size(value)) {
-			value = profile;
-			return true;
-		}
-		return false;
-	}
-
-	//! 設定値を文字列に変換する
-	[[nodiscard]] std::wstring ToString(const StringBufferW& value);
-
 }; // end of namespace profile_data
 
 /*!
@@ -229,13 +190,13 @@ public:
 	using CProfile::GetProfileData;
 	using CProfile::SetProfileData;
 
-	 /*!
-	  * Profileから読み込んだ文字列を設定値に変換して取得する
-	  *
-	  * @retval true 成功
-	  * @retval false 失敗
-	  */
-	template<class T, std::enable_if_t<profile_data::is_supported_v<T>, std::nullptr_t> = nullptr>
+	/*!
+	 * Profileから読み込んだ文字列を設定値に変換して取得する
+	 *
+	 * @retval true 成功
+	 * @retval false 失敗
+	 */
+	template<class T, std::enable_if_t<profile_data::is_supported_v<T>, int> = 0>
 	[[nodiscard]] bool GetProfileData(
 		std::wstring_view		sectionName,	//!< [in] セクション名
 		std::wstring_view		entryKey,		//!< [in] エントリ名
@@ -249,17 +210,48 @@ public:
 	}
 
 	/*!
+	 * Profileから読み込んだ設定値を取得する
+	 *
+	 * @retval true 成功
+	 * @retval false 失敗
+	 */
+	[[nodiscard]] bool GetProfileData(
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
+		StringBufferW&			szEntryValue	//!< [out] エントリ値
+	) const
+	{
+		if (std::wstring strEntryValue; GetProfileData(sectionName, entryKey, strEntryValue) && strEntryValue.length() < std::size(szEntryValue)) {
+			szEntryValue = strEntryValue;
+			return true;
+		}
+		return false;
+	}
+
+	/*!
 	 * 設定値を文字列に変換してProfileへ書き込む
 	 */
-	template<class T, std::enable_if_t<profile_data::is_supported_v<T>, std::nullptr_t> = nullptr>
+	template<class T, std::enable_if_t<profile_data::is_supported_v<T>, int> = 0>
 	void SetProfileData(
 		std::wstring_view		sectionName,	//!< [in] セクション名
 		std::wstring_view		entryKey,		//!< [in] エントリ名
-		const T					tEntryValue		//!< [in] エントリ値
+		const T&				tEntryValue		//!< [in] エントリ値
 	)
 	{
-		const std::wstring strEntryValue = profile_data::ToString(tEntryValue);
-		SetProfileData(sectionName, entryKey, strEntryValue.data());
+		const auto strEntryValue = profile_data::ToString(tEntryValue);
+		SetProfileData(sectionName, entryKey, strEntryValue);
+	}
+
+	/*!
+	 * 設定値をProfileへ書き込む
+	 */
+	void SetProfileData(
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
+		const StringBufferW&	szEntryValue	//!< [in] エントリ値
+	)
+	{
+		SetProfileData(sectionName, entryKey, szEntryValue.c_str());
 	}
 
 	/*!
@@ -270,7 +262,7 @@ public:
 	 * @retval true	設定値を正しく読み書きできた
 	 * @retval false 設定値を読み込めなかった
 	 */
-	template <class T> //T=={int, bool, WCHAR, KEYCODE, StringBufferW}
+	template <class T, std::enable_if_t<profile_data::is_supported_v<T> || std::is_same_v<T, StringBufferW> || std::is_same_v<T, std::wstring>, int> = 0>
 	bool IOProfileData(
 		std::wstring_view		sectionName,	//!< [in] セクション名
 		std::wstring_view		entryKey,		//!< [in] エントリ名
@@ -285,13 +277,76 @@ public:
 		}
 	}
 
+#ifdef USE_STRICT_INT
+
+	/*!
+	 * 設定値の入出力テンプレート
+	 *
+	 * 設定値の入出力を行う。
+	 *
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めなかった
+	 */
+	template <int N,bool B0,bool B1,bool B2,bool B3>
+	bool IOProfileData(
+		std::wstring_view					sectionName,	//!< [in] セクション名
+		std::wstring_view					entryKey,		//!< [in] エントリ名
+		CStrictInteger<N, B0, B1, B2, B3>&	tEntryValue		//!< [in,out] エントリ値
+	)
+	{
+		bool ret = true;
+		if (int nValue = tEntryValue.GetValue(); IsReadingMode()) {
+			// int型を介して値を読み取る
+			ret = GetProfileData(sectionName, entryKey, nValue);
+			if (ret) {
+				tEntryValue.SetValue(nValue);
+			}
+		} else {
+			// int型を介して文字列化して設定する
+			SetProfileData(sectionName, entryKey, nValue);
+		}
+		return ret;
+	}
+
+#endif //ifdef USE_STRICT_INT
+
+	/*!
+	 * 独自定義バッファ参照型(StringBufferW)の入出力
+	 *
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めなかった
+	 */
+	bool IOProfileData(
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
+		StringBufferW			refEntryValue	//!< [in,out] エントリ値
+	)
+	{
+		return IOProfileData<StringBufferW>(sectionName, entryKey, refEntryValue);
+	}
+
 	/*!
 	 * 独自定義文字配列拡張型(StaticString)の入出力
 	 *
 	 * 型引数が合わないために通常入出力と分離。
 	 *
-	 * @retval true	設定値を正しく読み書きできた
-	 * @retval false 設定値を読み込めなかった
+	 */
+	template <int N>
+	bool IOProfileData(
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
+		basis::SString<N>&		szEntryValue	//!< [in,out] エントリ値
+	)
+	{
+		// バッファ参照型に変換して入出力する
+		return IOProfileData(sectionName, entryKey, StringBufferW(szEntryValue, std::size(szEntryValue)));
+	}
+
+	/*!
+	 * 独自定義文字配列拡張型(StaticString)の入出力
+	 *
+	 * 型引数が合わないために通常入出力と分離。
+	 *
 	 */
 	template <int N>
 	bool IOProfileData(
@@ -301,20 +356,8 @@ public:
 	)
 	{
 		// バッファ参照型に変換して入出力する
-		return IOProfileData(sectionName, entryKey, StringBufferW(szEntryValue.GetBufferPointer(), szEntryValue.GetBufferCount()));
+		return IOProfileData(sectionName, entryKey, StringBufferW(szEntryValue, std::size(szEntryValue)));
 	}
-
-	/*!
-	 * 独自定義バッファ参照型(StringBufferW)の入出力(右辺値参照バージョン)
-	 *
-	 * @retval true	設定値を正しく読み書きできた
-	 * @retval false 設定値を読み込めなかった
-	 */
-	bool IOProfileData(
-		std::wstring_view		sectionName,	//!< [in] セクション名
-		std::wstring_view		entryKey,		//!< [in] エントリ名
-		StringBufferW&&			refEntryValue	//!< [in,out] エントリ値
-	);
 };
 
 #endif /* SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_ */

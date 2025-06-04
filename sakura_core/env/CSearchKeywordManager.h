@@ -21,6 +21,11 @@ struct SShare_SearchKeywords{
 	StaticVector< StaticString<MAX_GREP_PATH>, MAX_GREPFOLDER, const WCHAR*>	m_aGrepFolders;
 	StaticVector< StaticString<MAX_EXCLUDE_PATH>, MAX_EXCLUDEFILE,   const WCHAR*>	m_aExcludeFiles;
 	StaticVector< StaticString<MAX_EXCLUDE_PATH>, MAX_EXCLUDEFOLDER, const WCHAR*>	m_aExcludeFolders;
+
+	SShare_SearchKeywords() noexcept
+	{
+		m_aGrepFiles.push_back(L"*.*");
+	}
 };
 
 struct DLLSHAREDATA;

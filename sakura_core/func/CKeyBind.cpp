@@ -46,7 +46,7 @@ struct KEYDATAINIT {
 //実装補助
 /* KEYDATA配列にデータをセット */
 static void SetKeyNameArrVal(
-	DLLSHAREDATA*		pShareData,
+	CommonSetting_KeyBind& sKeyBind,
 	int					nIdx,
 	const KEYDATAINIT*	pKeydata
 );
@@ -792,13 +792,13 @@ const int jpVKEXNamesLen = _countof( jpVKEXNames );
 	@date 2005.01.30 genta CShareData::Init()から分離
 	@date 2007.11.04 genta キー設定数がDLLSHAREの領域を超えたら起動できないように
 */
-bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
+CommonSetting_KeyBind::CommonSetting_KeyBind() noexcept
 {
 	/********************/
 	/* 共通設定の規定値 */
 	/********************/
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
-	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	const int	KEYNAME_SIZE = _countof( m_pKeyNameArr ) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
 	assert( !(nKeyDataInitNum > KEYNAME_SIZE) );
 //	if( nKeyDataInitNum > KEYNAME_SIZE ) {
@@ -813,20 +813,19 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	};
 
 	// インデックス用ダミー作成
-	SetKeyNameArrVal( pShareData, KEYNAME_SIZE, &dummy[0] );
+	SetKeyNameArrVal( *this, KEYNAME_SIZE, &dummy[0] );
 	// インデックス作成 重複した場合は先頭にあるものを優先
-	for( int ii = 0; ii< _countof(pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr); ii++ ){
-		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[ii] = KEYNAME_SIZE;
+	for( int ii = 0; ii< _countof(m_VKeyToKeyNameArr); ii++ ){
+		m_VKeyToKeyNameArr[ii] = KEYNAME_SIZE;
 	}
 	for( int i=nKeyDataInitNum-1; i>=0; i-- ){
-		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[KeyDataInit[i].m_nKeyCode] = (BYTE)i;
+		m_VKeyToKeyNameArr[KeyDataInit[i].m_nKeyCode] = (BYTE)i;
 	}
 
 	for( int i = 0; i < nKeyDataInitNum; ++i ){
-		SetKeyNameArrVal( pShareData, i, &KeyDataInit[i] );
+		SetKeyNameArrVal( *this, i, &KeyDataInit[i] );
 	}
-	pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyDataInitNum;
-	return true;
+	m_nKeyNameArrNum = nKeyDataInitNum;
 }
 
 /*!	@brief 言語選択後の文字列更新処理 */
@@ -849,12 +848,12 @@ void CShareData::RefreshKeyAssignString(DLLSHAREDATA* pShareData)
 
 /*! KEYDATA配列にデータをセット */
 static void SetKeyNameArrVal(
-	DLLSHAREDATA*		pShareData,
+	CommonSetting_KeyBind& sKeyBind,
 	int					nIdx,
 	const KEYDATAINIT*	pKeydataInit
 )
 {
-	KEYDATA* pKeydata = &pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[nIdx];
+	KEYDATA* pKeydata = &sKeyBind.m_pKeyNameArr[nIdx];
 
 	pKeydata->m_nKeyCode = pKeydataInit->m_nKeyCode;
 	if ( 0xFFFF < pKeydataInit->m_nKeyNameId ) {

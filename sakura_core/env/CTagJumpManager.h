@@ -32,12 +32,12 @@ struct SShare_TagJump{
 	>					ATagJumpKeywords;
 
 	//データ
-	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
-	int					m_TagJumpTop;					//!< スタックの一番上の位置
+	int					m_TagJumpNum = 0;					//!< タグジャンプ情報の有効データ数
+	int					m_TagJumpTop = 0;					//!< スタックの一番上の位置
 	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
 	ATagJumpKeywords	m_aTagJumpKeywords;
-	BOOL				m_bTagJumpICase;				//!< 大文字小文字を同一視
-	BOOL				m_bTagJumpPartialMatch;				//!< 文字列の途中にマッチ
+	BOOL				m_bTagJumpICase = FALSE;		//!< 大文字小文字を同一視
+	BOOL				m_bTagJumpPartialMatch = FALSE;	//!< 文字列の途中にマッチ
 };
 
 struct DLLSHAREDATA;

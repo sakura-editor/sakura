@@ -25,11 +25,13 @@
 #include "extmodule/CBregexp.h"
 #include "config/maxdata.h" //MAX_REGEX_KEYWORD
 
+#include "view/colors/EColorIndexType.h"
+
 struct STypeConfig;
 
 //@@@ 2001.11.17 add start MIK
 struct RegexKeywordInfo {
-	int	m_nColorIndex;		//色指定番号
+	int	m_nColorIndex = COLORIDX_REGEX1;		//色指定番号
 };
 //@@@ 2001.11.17 add end MIK
 

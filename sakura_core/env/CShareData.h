@@ -68,17 +68,17 @@ public:
 		bool isMultiUserSettings,
 		UINT userRootFolder,
 		const std::wstring& userSubFolder,
-		_In_opt_z_ LPCWSTR pszProfileName,
+		_In_opt_z_ LPCWSTR szProfileName,
 		const std::wstring& iniFileName
 	);
 
-	CShareData();
-	~CShareData();
+	explicit CShareData(_In_opt_z_ LPCWSTR profileName = nullptr) noexcept;
+	~CShareData() override;
 
 	/*
 	||  Attributes & Operations
 	*/
-	bool InitShareData();	/* CShareDataクラスの初期化処理 */
+	bool InitShareData(const std::optional<SMultiUserSettings>& multiUserSettings = std::nullopt);	/* CShareDataクラスの初期化処理 */
 	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
 	
 	//MRU系
@@ -105,27 +105,19 @@ public:
 
 	static CMutex& GetMutexShareWork();
 
-protected:
 	/*
 	||  実装ヘルパ関数
 	*/
 
-	//	Jan. 30, 2005 genta 初期化関数の分割
-	void InitKeyword(DLLSHAREDATA* pShareData);
-	bool InitKeyAssign(DLLSHAREDATA* pShareData); // 2007.11.04 genta 起動中止のため値を返す
 	void RefreshKeyAssignString(DLLSHAREDATA* pShareData);
-	void InitToolButtons(DLLSHAREDATA* pShareData);
-	void InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types);
-	void InitPopupMenu(DLLSHAREDATA* pShareData);
-
-public:
-	static void InitFileTree(SFileTree*);
 
 private:
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-	HANDLE			m_hFileMap;
-	DLLSHAREDATA*	m_pShareData;
-	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
-	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
+	HANDLE			m_hFileMap = nullptr;
+	DLLSHAREDATA*	m_pShareData = nullptr;
+	std::vector<STypeConfig*>* 	m_pvTypeSettings = nullptr;	//	(コントロールプロセスのみ)
+	HWND			m_hwndTraceOutSource = nullptr;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
+	LPCWSTR         m_szProfileName = nullptr;	//!< プロファイル名
 };
+
 #endif /* SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_ */

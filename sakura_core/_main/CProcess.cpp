@@ -18,6 +18,8 @@
 #include "StdAfx.h"
 #include "_main/CProcess.h"
 
+#include "_main/CCommandLine.h"
+
 #include "util/module.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -37,6 +39,7 @@ CProcess::CProcess(
 )
 : m_hInstance( hInstance )
 , m_hWnd( nullptr )
+	, m_cShareData(CCommandLine::getInstance() ? CCommandLine::getInstance()->GetProfileName() : nullptr)
 {
 }
 

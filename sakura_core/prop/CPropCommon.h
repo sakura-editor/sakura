@@ -99,7 +99,7 @@ public:
 	HWND				m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND				m_hwndThis;		/* このダイアログのハンドル */
 	PropComSheetOrder	m_nPageNum;
-	DLLSHAREDATA*		m_pShareData;
+	DLLSHAREDATA*		m_pShareData = &GetDllShareData();
 	int					m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List
@@ -113,7 +113,7 @@ public:
 	/*
 	|| ダイアログデータ
 	*/
-	CommonSetting	m_Common;
+	CommonSetting	m_Common = m_pShareData->m_Common;
 
 	// 2005.01.13 MIK セット数増加
 	struct SKeywordSetIndex{

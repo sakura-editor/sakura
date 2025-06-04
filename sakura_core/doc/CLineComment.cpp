@@ -17,13 +17,9 @@
 #include "mem/CNativeW.h"
 #include "util/string_ex.h"
 
-CLineComment::CLineComment()
+CLineComment::CLineComment() noexcept
 {
-	int i;
-	for ( i=0; i<COMMENT_DELIMITER_NUM; i++ ){
-		m_pszLineComment[i][0] = '\0';
-		m_nLineCommentPos[i] = -1;
-	}
+	std::fill(std::begin(m_nLineCommentPos), std::end(m_nLineCommentPos), -1);
 }
 
 /*!

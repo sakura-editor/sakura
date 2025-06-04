@@ -19,14 +19,6 @@
 #include "mem/CNativeW.h"
 #include "util/string_ex.h"
 
-CBlockComment::CBlockComment()
-{
-	m_szBlockCommentFrom[ 0 ] = '\0';
-	m_szBlockCommentTo[ 0 ] = '\0';
-	m_nBlockFromLen = 0;
-	m_nBlockToLen = 0;
-}
-
 /*!
 	ブロックコメントデリミタをコピーする
 */
