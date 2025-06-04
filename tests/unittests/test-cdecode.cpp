@@ -130,6 +130,10 @@ TEST(CDecode, uuencode)
 	s.SetString(L"begin 666 test");
 	EXPECT_FALSE(CDecode_UuDecode().DoDecode(s, &m));
 
+	// ボディに空行が含まれる場合
+	s.SetString(L"begin 666 test\r\n\r\n");
+	EXPECT_FALSE(CDecode_UuDecode().DoDecode(s, &m));
+
 	// 文字列が end で終わっていない場合
 	s.SetString(L"begin 666 test\r\n!<P  \r\n \r\nen");
 	EXPECT_FALSE(CDecode_UuDecode().DoDecode(s, &m));
