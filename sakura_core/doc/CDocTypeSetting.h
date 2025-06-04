@@ -38,12 +38,13 @@ struct ColorInfoBase{
 struct ColorInfo : public ColorInfoBase{
 	int			m_nColorIdx;		//!< インデックス
 	WCHAR		m_szName[64];		//!< 名前
+
+	static std::wstring GetColorName(size_t nIndex);
+	void SetDefault(size_t nIndex);
 };
 
 //デフォルト色設定
-void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex );
 void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex );
-int GetDefaultColorInfoCount();
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           辞書                              //
@@ -51,8 +52,8 @@ int GetDefaultColorInfoCount();
 //@@@ 2006.04.10 fon ADD-start
 const int DICT_ABOUT_LEN = 50; /*!< 辞書の説明の最大長 -1 */
 struct KeyHelpInfo {
-	bool		m_bUse;						//!< 辞書を 使用する/しない
-	WCHAR		m_szAbout[DICT_ABOUT_LEN];	//!< 辞書の説明(辞書ファイルの1行目から生成)
+	bool		m_bUse = false;						//!< 辞書を 使用する/しない
+	WCHAR		m_szAbout[DICT_ABOUT_LEN]{};	//!< 辞書の説明(辞書ファイルの1行目から生成)
 	SFilePath	m_szPath;					//!< ファイルパス
 };
 //@@@ 2006.04.10 fon ADD-end

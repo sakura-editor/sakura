@@ -28,9 +28,9 @@ struct CommonSetting;// 2002/2/10 aroka
 
 //! マクロ情報
 struct MacroRec {
-	WCHAR	m_szName[MACRONAME_MAX];	//!< 表示名
-	WCHAR	m_szFile[_MAX_PATH+1];	//!< ファイル名(ディレクトリを含まない)
-	bool	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
+	WCHAR	m_szName[MACRONAME_MAX]{};	//!< 表示名
+	WCHAR	m_szFile[_MAX_PATH+1]{};	//!< ファイル名(ディレクトリを含まない)
+	bool		m_bReloadWhenExecute = false;	//!< 実行時に読み込みなおすか（デフォルトon）
 	
 	bool IsEnabled() const { return m_szFile[0] != L'\0'; }
 	const WCHAR* GetTitle() const { return m_szName[0] == L'\0' ? m_szFile: m_szName; }	// 2007.11.02 ryoji 追加

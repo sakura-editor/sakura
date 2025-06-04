@@ -8,6 +8,9 @@
 
 #include "StdAfx.h"
 #include "DLLSHAREDATA.h"
+
+#include "env/CShareData.h"
+
 #include "_main/CMutex.h"
 #include "dlg/CDlgCancel.h"
 #include "uiparts/CWaitCursor.h"
@@ -23,6 +26,38 @@
 DLLSHAREDATA* g_theDLLSHAREDATA = NULL;
 
 static CMutex g_cKeywordMutex( FALSE, GSTR_MUTEX_SAKURA_KEYWORD );
+
+/*!
+ * コンストラクタ
+ */
+DLLSHAREDATA::DLLSHAREDATA(
+	const std::filesystem::path& iniPath,
+	const std::filesystem::path& privateIniPath,
+	const std::filesystem::path& iniFolder,
+	std::vector<STypeConfig*>& types
+) noexcept
+	: m_szIniFile(iniPath)
+	, m_szPrivateIniFile(privateIniPath)
+	, m_Common(iniFolder)
+	, m_sHistory(iniFolder)
+{
+	std::fill(std::begin(m_dwCustColors), std::end(m_dwCustColors), RGB(255, 255, 255));
+
+	/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
+		必要になるまで遅らせるために、CPrintに、CShareDataを操作する権限を与える。
+		YAZAKI.
+	 */
+	SString<64> szSettingName;
+	szSettingName = strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), 1);	// L"印刷設定 1"
+	CPrint::SettingInitialize(m_PrintSettingArr[0], szSettingName );
+
+	InitTypeConfigs(types);
+
+	for (int i = 1; i < MAX_PRINTSETTINGARR; ++i) {
+		m_PrintSettingArr[i] = m_PrintSettingArr[0];
+		swprintf_s(m_PrintSettingArr[i].m_szPrintSettingName, L"%s %d", LS(STR_PRINT_SET_NAME), i + 1);
+	}
+}
 
 CShareDataLockCounter::CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );

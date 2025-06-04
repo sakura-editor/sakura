@@ -45,11 +45,11 @@ struct EditNodeEx{
 
 //! 共有メモリ内構造体
 struct SShare_Nodes{
-	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
+	int					m_nEditArrNum = 0;	//short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
-	LONG				m_nSequences;	/* ウィンドウ連番 */
-	LONG				m_nNonameSequences;	/* 無題連番 */
-	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
+	LONG				m_nSequences = 0;			/* ウィンドウ連番 */
+	LONG				m_nNonameSequences = 0;		/* 無題連番 */
+	LONG				m_nGroupSequences = 0;		// タブグループ連番	// 2007.06.20 ryoji
 };
 
 //! ノードアクセサ

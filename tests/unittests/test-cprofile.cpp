@@ -234,23 +234,6 @@ TEST(profile_data, TryParse_KEYCODE)
 }
 
 /*!
- * @brief TryParseのテスト
- */
-TEST(profile_data, TryParse_StringBufferW)
-{
-	WCHAR buffer[5]{ 0 };
-	StringBufferW value(buffer);
-	ASSERT_TRUE(profile_data::TryParse(L"test", value));
-	ASSERT_STREQ(L"test", value.c_str());
-
-	ASSERT_FALSE(profile_data::TryParse(L"overflow", value));
-	ASSERT_STREQ(L"test", value.c_str());
-
-	ASSERT_TRUE(profile_data::TryParse(L"", value));
-	ASSERT_STREQ(L"", value.c_str());
-}
-
-/*!
  * @brief ToString(KEYCODE)のテスト
  */
 TEST(profile_data, ToString_KEYCODE)

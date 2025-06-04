@@ -37,7 +37,7 @@ public:
 	/*
 	||  Constructors：コンパイラ標準を使用。
 	*/
-	CLineComment();
+	CLineComment() noexcept;
 
 	void CopyTo( const int n, const wchar_t* buffer, int nCommentPos );	//	行コメントデリミタをコピーする
 	bool Match( int nPos, const CStringRef& cStr ) const;	//	行コメントに値するか確認する
@@ -50,8 +50,9 @@ public:
 	}
 
 private:
-	wchar_t	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	//!< 行コメントデリミタ
-	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< 行コメントの開始位置(負数は指定無し)
-	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
+	wchar_t	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE]{};	//!< 行コメントデリミタ
+	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM]{};	//!< 行コメントの開始位置(負数は指定無し)
+	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM]{};	//!< 行コメント文字列の長さ
 };
+
 #endif /* SAKURA_CLINECOMMENT_FAE12DDF_1FAE_45C6_8614_AB0F03F9E888_H_ */
