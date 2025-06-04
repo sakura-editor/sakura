@@ -21,28 +21,23 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
+ */
+
 #include "pch.h"
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-
 #include "_main/CCommandLine.h"
+
+#include "testing/GuiAwareTestSuite.hpp"
+
 #include "env/CSakuraEnvironment.h"
 #include "util/string_ex.h"
-
-#include <cstdlib>
-#include <fstream>
 
 bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 
 bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
 bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
+
+using CCommandLineTest = testing::TGuiAware<::testing::Test>;
 
 /*!
  * ローカルパスをフルパスに変換する
@@ -896,24 +891,25 @@ TEST(CCommandLine, UnterminatedQuotedFilename)
  * @brief ファイルパスに「ファイルに使えない文字」を含めた場合の仕様
  * @remark 無視される
  */
-TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
+TEST_F(CCommandLineTest, ParseFileNameIncludesInvalidFilenameChars)
 {
 	// ファイル名に使えない文字 = "\\/:*?\"<>|"
 	// このうち、\\と/はパス区切りのため実質対象外になる。
 	// このうち、:は代替データストリーム(ADS)の識別記号のため対象外とする。
-	const std::wstring_view badNames[] = {
-		L"test*.txt",
-		L"test?.txt",
-		L"test\".txt",
-		L"test<.txt",
-		L"test>.txt",
-		L"test|.txt",
+	constexpr std::array badNames = {
+		L"test*.txt"sv,
+		L"test?.txt"sv,
+		L"test\".txt"sv,
+		L"test<.txt"sv,
+		L"test>.txt"sv,
+		L"test|.txt"sv,
 	};
 
 	// ファイル名に使えない文字を含んでいたら、ファイル名としては認識されない。
 	CCommandLine cCommandLine;
 	for (const auto& badName : badNames) {
-		cCommandLine.ParseCommandLine( badName.data(), false );
+		const auto expected = strprintf(LS(STR_CMDLINE_PARSECMD1), badName.data());
+		EXPECT_MSGBOX(cCommandLine.ParseCommandLine(badName.data(), false), L"FileNameError", expected);
 		EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
 		EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
 		EXPECT_EQ(0, cCommandLine.GetFileNum());
@@ -924,14 +920,15 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
  * @brief 長過ぎるファイルパスに関する仕様
  * @remark _MAX_PATH - 1を超えるファイル名は利用できない
  */
-TEST(CCommandLine, ParseTooLongFilePath)
+TEST_F(CCommandLineTest, ParseTooLongFilePath)
 {
 	// _MAX_PATH - 1を超えるパスは無視される
 	CCommandLine cCommandLine;
 	std::wstring strCmdLine;
 	std::wstring strPath(_MAX_PATH, L'a');
 	strprintf(strCmdLine, L"%s test.txt", strPath.c_str());
-	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
+	const auto expected = strprintf(LS(STR_ERR_FILEPATH_TOO_LONG), strPath.c_str());
+	EXPECT_MSGBOX(cCommandLine.ParseCommandLine(strCmdLine.data(), false), L"FileNameError", expected);
 	// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
 	//EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetOpenFile());
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));

@@ -21,9 +21,14 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
+ */
+
 #include "pch.h"
 #include "mem/CMemory.h"
+
+#include "testing/GuiAwareTestSuite.hpp"
+
+using CMemoryTest = testing::TGuiAware<::testing::Test>;
 
 /*!
 	_SetRawLength(0) を呼び出して落ちないことを確認する
@@ -103,22 +108,23 @@ TEST(CMemory, SwapHLByte)
 	CMemoryのテスト
 	ヒープに確保できる限界量を越えるサイズを要求した場合の挙動確認
  */
-TEST(CMemory, OverHeapMaxReq)
+TEST_F(CMemoryTest, OverHeapMaxReq)
 {
 	CMemory cmem;
+	const auto expected = strprintf(LS(STR_ERR_DLGMEM1), -31);	//FIXME: 確保サイズ == -31 はバグと思われる
 
 	// _HEAP_MAXREQを越える値を指定すると、メモリは確保されない
-	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
+	EXPECT_MSGBOX(cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1), GSTR_APPNAME, expected);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
 	constexpr auto& data = L"テストデータ";
 	cmem.SetRawData(data, (_countof(data) - 1) * sizeof(wchar_t));
-	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((_countof(data) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	ASSERT_THAT(reinterpret_cast<wchar_t*>(cmem.GetRawPtr()), StrEq(data));
+	ASSERT_THAT(cmem.GetRawLength(), (_countof(data) - 1) * sizeof(wchar_t));
 
 	// メモリ確保失敗時は、メモリが解放される
-	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
+	EXPECT_MSGBOX(cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1), GSTR_APPNAME, expected);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 }
 
@@ -126,22 +132,23 @@ TEST(CMemory, OverHeapMaxReq)
 	CMemoryのテスト
 	仕様上の上限値を越えるサイズを要求した場合の挙動確認
  */
-TEST(CMemory, OverMaxSize)
+TEST_F(CMemoryTest, OverMaxSize)
 {
 	CMemory cmem;
+	const auto expected = strprintf(LS(STR_ERR_DLGMEM1), -2147483648);	//FIXME: 確保サイズ == -2147483648 はバグと思われる
 
 	// INT_MAXを越える値を指定すると、メモリは確保されない
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
+	EXPECT_MSGBOX(cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1), GSTR_APPNAME, expected);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
 	constexpr auto& data = L"テストデータ";
 	cmem.SetRawData(data, (_countof(data) - 1) * sizeof(wchar_t));
-	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((_countof(data) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	ASSERT_THAT(reinterpret_cast<wchar_t*>(cmem.GetRawPtr()), StrEq(data));
+	ASSERT_THAT(cmem.GetRawLength(), (_countof(data) - 1) * sizeof(wchar_t));
 
 	// メモリ確保失敗時は、メモリが解放される
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
+	EXPECT_MSGBOX(cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1), GSTR_APPNAME, expected);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 }
 

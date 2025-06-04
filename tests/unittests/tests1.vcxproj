@@ -170,7 +170,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="eval_outputs.hpp" />
     <ClInclude Include="testing\StartEditorProcess.hpp" />
     <ClInclude Include="testing\GuiAwareTestSuite.hpp" />
     <ClInclude Include="TExtModule.hpp" />
