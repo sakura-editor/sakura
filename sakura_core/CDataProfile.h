@@ -47,16 +47,17 @@ namespace profile_data {
 			const WCHAR* pStart = profile.data();
 			WCHAR* pEnd = nullptr;
 			if constexpr (std::is_unsigned_v<NumType>) {
-				if (const auto parsedNum = ::wcstoul(pStart, &pEnd, 10); pStart != pEnd) {
+				if (const auto parsedNum = wcstoull(pStart, &pEnd, 10); pStart != pEnd && parsedNum <= std::numeric_limits<NumType>::max()) {
 					value = static_cast<NumType>(parsedNum);
 					return true;
 				}
 			}
-			else {
-				if (const auto parsedNum = ::wcstol(pStart, &pEnd, 10); pStart != pEnd) {
-					value = static_cast<NumType>(parsedNum);
-					return true;
+			else if (const auto parsedNum = wcstoll(pStart, &pEnd, 10); pStart != pEnd) {
+				if constexpr (std::is_signed_v<NumType>) {
+					if (parsedNum < std::numeric_limits<NumType>::min() || std::numeric_limits<NumType>::max() < parsedNum) return false;
 				}
+				value = static_cast<NumType>(parsedNum);
+				return true;
 			}
 		}
 
