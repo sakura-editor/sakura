@@ -307,10 +307,10 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	Combo_LimitText( GetItemHwnd( IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
-	Combo_LimitText( GetItemHwnd( IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
-	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), _countof2(m_szExcludeFile) - 1);
-	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), _countof2(m_szExcludeFolder) - 1);
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_FILE ), m_szFile );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_FOLDER ), m_szFolder );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), m_szExcludeFile);
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), m_szExcludeFolder);
 
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );

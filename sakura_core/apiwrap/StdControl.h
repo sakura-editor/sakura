@@ -150,7 +150,7 @@ namespace ApiWrap{
 	inline int Combo_SetItemData(HWND hwndCtl, int index, void* data)	{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETITEMDATA, (WPARAM)index, (LPARAM)data); }
 	inline int Combo_GetLBTextLen(HWND hwndCtl, int index)				{ return (int)(DWORD)::SendMessage(hwndCtl, CB_GETLBTEXTLEN, (WPARAM)index, 0L); }
 	inline int Combo_InsertString(HWND hwndCtl, int index, const WCHAR* lpsz)	{ return (int)(DWORD)::SendMessage(hwndCtl, CB_INSERTSTRING, (WPARAM)index, LPARAM(lpsz) ); }
-	inline int Combo_LimitText(HWND hwndCtl, int cchLimit)				{ return (int)(DWORD)::SendMessage(hwndCtl, CB_LIMITTEXT, (WPARAM)cchLimit, 0L); }
+	inline int Combo_LimitText(HWND hwndCtl, size_t cchLimit)			{ return (int)(DWORD)::SendMessage(hwndCtl, CB_LIMITTEXT, WPARAM(cchLimit), 0L); }
 	inline int Combo_ResetContent(HWND hwndCtl)							{ return (int)(DWORD)::SendMessage(hwndCtl, CB_RESETCONTENT, 0L, 0L); }
 	inline int Combo_SetEditSel(HWND hwndCtl, int ichStart, int ichEnd)	{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETEDITSEL, 0L, MAKELPARAM(ichStart, ichEnd)); }
 	inline int Combo_SetExtendedUI(HWND hwndCtl, UINT flags)			{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETEXTENDEDUI, (WPARAM)flags, 0L); }
@@ -212,6 +212,11 @@ namespace ApiWrap{
 		}
 	}
 
+	template<typename T, std::enable_if_t<std::is_integral_v<decltype(std::size(std::declval<T>()))>, int> = 0> inline
+	void Combo_LimitText(HWND hwndCtl, const T& buffer) {
+		Combo_LimitText(hwndCtl, std::size(buffer) - 1);
+	}
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -251,8 +256,13 @@ namespace ApiWrap{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      エディット コントロール                //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	inline void EditCtl_LimitText(HWND hwndCtl, int cchLimit)			{ ::SendMessage(hwndCtl, EM_LIMITTEXT, (WPARAM)(cchLimit), 0L); }
+	inline void EditCtl_LimitText(HWND hwndCtl, size_t cchLimit)			{ ::SendMessage(hwndCtl, EM_LIMITTEXT, WPARAM(cchLimit), 0L); }
 	inline void EditCtl_SetSel(HWND hwndCtl, int ichStart, int ichEnd)	{ ::SendMessage(hwndCtl, EM_SETSEL, ichStart, ichEnd); }
+
+	template<typename T, std::enable_if_t<std::is_integral_v<decltype(std::size(std::declval<T>()))>, int> = 0>
+	inline void EditCtl_LimitText(HWND hwndCtl, const T& buffer) {
+		EditCtl_LimitText(hwndCtl, std::size(buffer) - 1);
+	}
 
 	inline void EditCtl_ReplaceSel(HWND hwndCtl, const WCHAR* lpsz)		{ ::SendMessage(hwndCtl, EM_REPLACESEL, 0, LPARAM(lpsz)); }
 

@@ -100,10 +100,10 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRONAME ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1 );
-		Combo_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROPATH ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRONAME ), m_Common.m_sMacro.m_MacroTable[0].m_szName );
+		Combo_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROPATH ), m_Common.m_sMacro.m_MacroTable[0].m_szFile );
 		// 2003.06.23 Moca
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRODIR ), _countof2( m_Common.m_sMacro.m_szMACROFOLDER ) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRODIR ), m_Common.m_sMacro.m_szMACROFOLDER );
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROCANCELTIMER ), 4 );
 
 		return TRUE;

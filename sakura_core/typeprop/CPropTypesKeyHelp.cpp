@@ -502,7 +502,7 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	DWORD	dwStyle;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), _countof2( m_Types.m_KeyHelpArr[0].m_szPath ) - 1 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), m_Types.m_KeyHelpArr[0].m_szPath );
 
 	// 使用する・使用しない
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP, m_Types.m_bUseKeyWordHelp );
