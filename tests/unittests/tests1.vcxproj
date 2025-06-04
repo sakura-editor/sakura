@@ -204,14 +204,10 @@
   <Target Name="MakeTestResource" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\ja-JP\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.ja-JP.zip">
     <Exec Command="7z u &quot;$(IntDir)resources.ja-JP.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\ja-JP" />
   </Target>
-  <Target Name="MakeTestResourceEnUS" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\en-US\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.en-US.zip">
-    <Exec Command="7z u &quot;$(IntDir)resources.en-US.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\en-US" />
-  </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
       <Clean Include="$(IntDir)resources.ja-JP.zip" />
-      <Clean Include="$(IntDir)resources.en-US.zip" />
     </ItemGroup>
   </Target>
 </Project>

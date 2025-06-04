@@ -103,8 +103,23 @@ static void InvokeWinMainIfNeeded(std::wstring_view commandLine)
  * テストモジュールのエントリポイント
  */
 int main(int argc, char **argv) {
+
+	// テスト実行時のロケールは日本語に固定する
+	const LCID lcid = 0x0411;
+	SetThreadUILanguage(lcid);	// スレッドのUI言語を変更
+
 	// コマンドラインに -PROF 指定がある場合、wWinMainを起動して終了する。
 	InvokeWinMainIfNeeded(::GetCommandLineW());
+
+	// LCIDからロケール名を取得（"ja-JP"が取れる）
+	SString<LOCALE_NAME_MAX_LENGTH> szLocaleName;
+	LCIDToLocaleName(lcid, szLocaleName, int(std::size(szLocaleName)), NULL);
+
+	// TODO: 以下をコメントインする
+	// szLocaleName += L".UTF-8";	// UCRTのutf8サポートを有効にする
+
+	// Cロケールも変更
+	_wsetlocale(LC_ALL, szLocaleName);
 
 	// WinMainを起動しない場合、標準のgmock_main同様の処理を実行する。
 	// InitGoogleMock は Google Test の初期化も行うため、InitGoogleTest を別に呼ぶ必要はない。
