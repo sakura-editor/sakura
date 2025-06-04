@@ -3969,7 +3969,7 @@ BEGIN
     STR_PROPTYPEREGEX_NOSEL "未选择关键字"
     STR_ERR_CSHAREDATA01    "CreateFileMapping() 执行失败"
     STR_ERR_CSHAREDATA02    "发生意外错误"
-    STR_ERR_CSHAREDATA10    "${w?【Grep】$h$:【输出】$:$f$}${U?(已修改)$}${R?(只读)$:(写保护)$}${M?【正在录制宏】$}"
+    STR_ERR_CSHAREDATA10    "${w?【Grep】$h$:【输出】$:$f$n$}${U?(已修改)$}${R?(只读)$:(写保护)$}${M?【正在录制宏】$}"
     STR_CUSTMENU_RIGHT_CLICK "右键菜单"
     STR_CUSTMENU_CUSTOM     "自定义菜单%d"
     STR_CUSTMENU_TAB        "标签页菜单"
