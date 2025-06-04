@@ -119,6 +119,9 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pre-Compiled Headers">
+      <UniqueIdentifier>{131a015e-b8b0-4788-becf-6a9407fb3a1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -134,7 +137,7 @@
       <Filter>Other Files</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\StdAfx.h">
-      <Filter>Other Files</Filter>
+      <Filter>Pre-Compiled Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\String_define.h">
       <Filter>Other Files</Filter>
@@ -1182,7 +1185,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sakura_core\StdAfx.cpp">
-      <Filter>Other Files</Filter>
+      <Filter>Pre-Compiled Headers</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\CAutoReloadAgent.cpp">
       <Filter>Cpp Source Files</Filter>
