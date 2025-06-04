@@ -51,6 +51,7 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	CSelectLang::InitializeLanguageEnvironment();
 
 	if( !ProfileSelect( hInstance, lpCmdLine ) ){
+		CSelectLang::UninitializeLanguageEnvironment();
 		return nullptr;
 	}
 

@@ -35,6 +35,11 @@ CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 */
 CSelectLang::~CSelectLang( void )
 {
+	UninitializeLanguageEnvironment();
+}
+
+/* static */ void CSelectLang::UninitializeLanguageEnvironment()
+{
 	m_psLangInfo = nullptr;
 
 	for (auto it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
