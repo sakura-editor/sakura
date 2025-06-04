@@ -104,19 +104,6 @@
 #include <wrl.h>
 #include <wtypes.h>
 
-// Windows SDKのマクロ定数「NULL」を訂正する。
-// マクロ定数「NULL」は、省略可能なポインタ型パラメータに「省略」を指定するために使う。
-// オリジナルでは「#define NULL 0」と定義されている。
-// C++ではC++11からnullptrキーワードが導入されており、
-// ポインタ型に0を渡すのは「不適切」になっている。
-// 従来通りマクロ定数「NULL」を書けるようにするため、独自に上書き定義してしまう。
-#ifdef __cplusplus
-# pragma warning( push )
-# pragma warning( disable : 4005 )
-# define NULL nullptr
-# pragma warning( pop )
-#endif // end of #ifdef __cplusplus
-
 // プロジェクト内のファイルだがプリコンパイル対象とする。
 // プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"
