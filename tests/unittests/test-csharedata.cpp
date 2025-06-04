@@ -1646,7 +1646,7 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 	auto privateIniPath = CShareData::BuildPrivateIniFileName(iniFolder, isMultiUserSettings, userRootFolder, userSubFolder, pszProfileName, filename);
 
 	EXPECT_THAT(shareData.m_vStructureVersion, N_SHAREDATA_VERSION);
-	EXPECT_THAT(shareData.m_nSize, 3241344);
+	EXPECT_THAT(shareData.m_nSize, sizeof(DLLSHAREDATA));
 
 	EXPECT_THAT(shareData.m_sVersion.m_dwProductVersionMS, MAKELONG(VER_B, VER_A));
 	EXPECT_THAT(shareData.m_sVersion.m_dwProductVersionLS, MAKELONG(VER_D, VER_C));
