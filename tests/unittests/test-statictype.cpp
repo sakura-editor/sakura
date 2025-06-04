@@ -73,3 +73,91 @@ TEST(StaticVector, push_back)
 	// 追加できないので、サイズをカウントアップしてはいけない
 	EXPECT_EQ(1, vec.size());
 }
+
+namespace mystring {
+
+/*!
+ * @brief StaticStringのテスト
+ *
+ * 引数なしで初期化する
+ */
+TEST(StaticString, init001)
+{
+	// ACT
+	StaticString<4> buf;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L""));
+	EXPECT_THAT(buf.GetBufferCount(), 4);
+}
+
+/*!
+ * @brief StaticStringのテスト
+ *
+ * 文字列ポインタで初期化する
+ */
+TEST(StaticString, init002)
+{
+	// ARRANGE
+	constexpr auto& initialValue = L"初期値";
+
+	// ACT
+	StaticString<4> buf(initialValue);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"初期値"));
+	EXPECT_THAT(buf.Length(), 3);
+}
+
+/*!
+ * @brief StaticStringのテスト
+ *
+ * 文字列ポインタで初期化する
+ */
+TEST(StaticString, init102)
+{
+	// ACT
+	StaticString<4> buf(nullptr);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L""));
+	EXPECT_THAT(buf.Length(), 0);
+}
+
+/*!
+ * @brief StaticStringのテスト
+ */
+TEST(StaticString, assign001)
+{
+	// ARRANGE
+	constexpr auto& initialValue = L"初期値";
+	StaticString<4> buf(initialValue);
+
+	// ACT
+	buf = L"設定値";
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"設定値"));
+	EXPECT_THAT(buf.Length(), 3);
+}
+
+/*!
+ * @brief StaticStringのテスト
+ *
+ * nullptrを代入する
+ */
+TEST(StaticString, assign101)
+{
+	// ARRANGE
+	constexpr auto& initialValue = L"初期値";
+	StaticString<4> buf(initialValue);
+
+	// ACT
+	buf = nullptr;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L""));
+	EXPECT_THAT(buf.Length(), 0);
+}
+
+} // namespace mystring
