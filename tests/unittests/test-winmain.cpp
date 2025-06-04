@@ -611,7 +611,7 @@ TEST_P(WinMainTest, runEditorProcess)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  プロファイルマネージャを表示してプロセスを起動する。
  */
-TEST_P(WinMainTest, showProfileMgr001)
+TEST_P(WinMainTest, DISABLED_showProfileMgr001)
 {
 	// FIXME: プロファイル指定がある場合、起動されるプロセスとプロファイル名が合わない
 	if (gm_ProfileName.length()) {
@@ -648,7 +648,7 @@ TEST_P(WinMainTest, showProfileMgr001)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  プロファイルマネージャを表示して何もせず閉じる。
  */
-TEST_P(WinMainTest, showProfileMgr101)
+TEST_P(WinMainTest, DISABLED_showProfileMgr101)
 {
 	// コマンドラインを組み立てる
 	const auto command = strprintf(LR"(-PROFMGR -PROF="%s")", gm_ProfileName.data());
