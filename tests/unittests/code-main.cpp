@@ -102,7 +102,7 @@ static void InvokeWinMainIfNeeded(std::wstring_view commandLine)
 /*!
  * テストモジュールのエントリポイント
  */
-int main(int argc, char **argv) {
+int wmain(int argc, wchar_t **argv) {
 
 	// テスト実行時のロケールは日本語に固定する
 	const LCID lcid = 0x0411;
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
 
 	// WinMainを起動しない場合、標準のgmock_main同様の処理を実行する。
 	// InitGoogleMock は Google Test の初期化も行うため、InitGoogleTest を別に呼ぶ必要はない。
-	printf("Running main() from %s\n", __FILE__);
+	wprintf(L"Running main() from %hs\n", __FILE__);
 	testing::InitGoogleMock(&argc, argv);
 	return RUN_ALL_TESTS();
 }
