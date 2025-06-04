@@ -99,9 +99,9 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		//	Oct. 5, 2002 genta バックアップフォルダー名の入力サイズを指定
 		//	Oct. 8, 2002 genta 最後に付加される\の領域を残すためバッファサイズ-1しか入力させない
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), _countof2(m_Common.m_sBackup.m_szBackUpFolder) - 1 - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), std::size(m_Common.m_sBackup.m_szBackUpFolder) - 2 );
 		// 20051107 aroka
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), _countof2(m_Common.m_sBackup.m_szBackUpPathAdvanced) - 1 - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), std::size(m_Common.m_sBackup.m_szBackUpPathAdvanced) - 2 );
 		return TRUE;
 
 	case WM_NOTIFY:

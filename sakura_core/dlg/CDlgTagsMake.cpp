@@ -123,7 +123,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 void CDlgTagsMake::SetData( void )
 {
 	//作成フォルダー
-	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), _countof( m_szPath ) );
+	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), m_szPath );
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
 
 	//オプション
@@ -131,7 +131,7 @@ void CDlgTagsMake::SetData( void )
 	if( m_nTagsOpt & 0x0001 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_TAG_MAKE_RECURSE, TRUE );
 
 	//コマンドライン
-	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), _countof( m_pShareData->m_szTagsCmdLine ) );
+	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), m_pShareData->m_szTagsCmdLine );
 	wcscpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
 

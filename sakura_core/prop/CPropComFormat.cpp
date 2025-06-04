@@ -139,16 +139,16 @@ INT_PTR CPropFormat::DispatchEvent(
 		ChangeTimeExample( hwndDlg );
 
 		/* 見出し記号 */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), _countof(m_Common.m_sFormat.m_szMidashiKigou) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), m_Common.m_sFormat.m_szMidashiKigou );
 
 		/* 引用符 */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), _countof(m_Common.m_sFormat.m_szInyouKigou) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), m_Common.m_sFormat.m_szInyouKigou );
 
 		/* 日付書式 */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), _countof(m_Common.m_sFormat.m_szDateFormat) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), m_Common.m_sFormat.m_szDateFormat );
 
 		/* 時刻書式 */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), _countof(m_Common.m_sFormat.m_szTimeFormat) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), m_Common.m_sFormat.m_szTimeFormat );
 
 		return TRUE;
 	case WM_COMMAND:
