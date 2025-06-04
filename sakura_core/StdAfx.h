@@ -102,6 +102,7 @@
 #include <Uxtheme.h>
 #include <vsstyle.h>
 #include <wrl.h>
+#include <wtypes.h>
 
 // Windows SDKのマクロ定数「NULL」を訂正する。
 // マクロ定数「NULL」は、省略可能なポインタ型パラメータに「省略」を指定するために使う。
@@ -119,6 +120,12 @@
 // プロジェクト内のファイルだがプリコンパイル対象とする。
 // プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"
+
+// 文字列リテラルのサッフィクス L""s を有効にします
+using namespace std::literals::string_literals;
+
+// 文字列参照リテラルのサッフィクス L""sv を有効にします
+using namespace std::literals::string_view_literals;
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
