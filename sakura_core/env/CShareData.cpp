@@ -419,7 +419,7 @@ bool CShareData::InitShareData()
 			CommonSetting_Format& sFormat = m_pShareData->m_Common.m_sFormat;
 
 			/* 見出し記号 */
-			wcscpy( sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
+			wcscpy( sFormat.m_szMidashiKigou, LS(STR_ERR_CSHAREDATA14) );
 			/* 引用符 */
 			wcscpy( sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
 
@@ -428,9 +428,9 @@ bool CShareData::InitShareData()
 			*/
 
 			sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
-			wcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
+			wcscpy( sFormat.m_szDateFormat, LS(STR_ERR_CSHAREDATA15) );	//日付書式
 			sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
-			wcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
+			wcscpy( sFormat.m_szTimeFormat, LS(STR_ERR_CSHAREDATA16) );			//時刻書式
 		}
 
 		// [検索]タブ
