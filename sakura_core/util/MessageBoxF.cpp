@@ -17,12 +17,11 @@
 #include "StdAfx.h"
 #include "MessageBoxF.h"
 
-#include <iostream>
-
 #include "_main/CProcess.h"
-#include "window/CEditWnd.h"
-#include "CSelectLang.h"
-#include "config/app_constants.h"
+
+#include "config/app_constants.h"	//GSTR_APPNAME
+
+#include "CSelectLang.h"	//LS(STR_ERR_DLGDOCLMN1)
 #include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -32,15 +31,6 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 {
 	// 選択中の言語IDを取得する
 	LANGID wLangId = CSelectLang::getDefaultLangId();
-
-	// 標準エラー出力が存在する場合
-	if(::GetStdHandle(STD_ERROR_HANDLE)){
-		// lpText を標準エラー出力に書き出す
-		std::clog << (lpText ? wcstou8s(lpText) : "") << std::endl;
-
-		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
-		return 0;
-	}
 
 	// lpText, lpCaption をローカルバッファにコピーして MessageBox API を呼び出す
 	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも

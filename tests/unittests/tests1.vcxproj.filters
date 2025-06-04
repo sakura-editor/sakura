@@ -185,9 +185,6 @@
     <ClInclude Include="pch.h">
       <Filter>Pre-Compiled Headers</Filter>
     </ClInclude>
-    <ClInclude Include="eval_outputs.hpp">
-      <Filter>Other Files</Filter>
-    </ClInclude>
     <ClInclude Include="testing\StartEditorProcess.hpp">
       <Filter>testing</Filter>
     </ClInclude>

@@ -21,23 +21,19 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
-*/
+ */
+
 #include "pch.h"
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-#include <Shlwapi.h>
-
 #include "util/StaticType.h"
+
+#include "testing/GuiAwareTestSuite.hpp"
+
+using StaticVectorTest = testing::TGuiAware<::testing::Test>;
 
 /*!
 	@brief StaticVectorのテスト
  */
-TEST(StaticVector, push_back)
+TEST_F(StaticVectorTest, push_back)
 {
 	// サイズ1の配列を用意する
 	auto vec = StaticVector<long long, 1>();
@@ -58,7 +54,9 @@ TEST(StaticVector, push_back)
 
 #ifdef _DEBUG
 	// デバッグビルドでは、正常にクラッシュする
-	EXPECT_DEATH({ vec.push_back(0xffffff); }, "");
+	EXPECT_DEATH({
+		EXPECT_MSGBOX(vec.push_back(0xffffff), GSTR_APPNAME, L"DEATHテストでは、メッセージを評価できない。");
+	}, "");
 #else
 	// リリースビルドでもクラッシュする
 	EXPECT_THROW({ vec.push_back(0xffffff); }, std::out_of_range);

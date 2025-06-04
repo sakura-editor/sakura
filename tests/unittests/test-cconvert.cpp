@@ -25,6 +25,8 @@
 #include "pch.h"
 #include "convert/CConvert.h"
 
+#include "testing/GuiAwareTestSuite.hpp"
+
 #include <ostream>
 #include <tuple>
 
@@ -41,6 +43,11 @@
 #include "convert/CConvert_Trim.h"
 #include "convert/CConvert_ZeneisuToHaneisu.h"
 #include "convert/CConvert_ZenkataToHankata.h"
+
+//! googletestの出力に機能IDを出力させる
+std::ostream& operator << (std::ostream& os, const EFunctionCode& eFuncCode);
+
+namespace convert {
 
 TEST(CConvert, ZenkataToHankata)
 {
@@ -391,14 +398,15 @@ TEST(CConvert, Trim)
 	EXPECT_EQ(actual, expected);
 }
 
-//! googletestの出力に機能IDを出力させる
-std::ostream& operator << (std::ostream& os, const EFunctionCode& eFuncCode);
-
 //!変換テストのためのテストパラメータ型
-using ConvTestParamType = std::tuple<EFunctionCode, std::wstring_view, std::wstring_view>;
+using ConvTestParamType = std::tuple<EFunctionCode, std::wstring_view, std::wstring_view, bool>;
 
 //!変換テストのためのフィクスチャクラス
-class ConvTest : public ::testing::TestWithParam<ConvTestParamType> {};
+struct ConvTest : public testing::TGuiAware<::testing::TestWithParam<ConvTestParamType>> {
+	using Base = testing::TGuiAware<::testing::TestWithParam<ConvTestParamType>>;
+
+	ConvTest() = default;
+};
 
 /*!
  * @brief 機能コードによるバッファ変換のテスト
@@ -406,55 +414,64 @@ class ConvTest : public ::testing::TestWithParam<ConvTestParamType> {};
 TEST_P(ConvTest, test)
 {
 	const auto eFuncCode = std::get<0>(GetParam());
-	std::wstring_view source = std::get<1>(GetParam());
-	std::wstring_view expected = std::get<2>(GetParam());
+	const auto source = std::get<1>(GetParam());
+	const auto expected = std::get<2>(GetParam());
+	const auto result = std::get<3>(GetParam());
 	SEncodingConfig sEncodingConfig;
 	CCharWidthCache cCharWidthCache;
-	CNativeW cmemBuf(source.data(), source.length());
-	CConversionFacade(
+	CConversionFacade facade(
 		4,								// タブ幅(タブ幅が半角スペース何個分かを指定する)
 		0,								// 変換開始桁位置
 		false,							// 拡張改行コードを有効にするかどうか
 		sEncodingConfig,				// 文字コード自動検出のオプション
 		cCharWidthCache					// 文字幅キャッシュ
-	).ConvMemory(eFuncCode, cmemBuf);
+	);
 
-	EXPECT_STREQ(expected.data(), cmemBuf.GetStringPtr());
+	CNativeW cmemBuf(source);
+	if (result) {
+		EXPECT_TRUE(facade.ConvMemory(eFuncCode, cmemBuf));
+	} else {
+		EXPECT_MSGBOX(facade.ConvMemory(eFuncCode, cmemBuf), GSTR_APPNAME, L"変換でエラーが発生しました");
+	}
+
+	EXPECT_THAT(cmemBuf.GetStringPtr(), StrEq(expected.data()));
 }
 
 /*!
  * @brief パラメータテストをインスタンス化する
  *  各変換機能の正常系をチェックするパターンで実体化させる
  */
-INSTANTIATE_TEST_CASE_P(ParameterizedTestConv
+INSTANTIATE_TEST_SUITE_P(CConvert
 	, ConvTest
 	, ::testing::Values(
-		ConvTestParamType{ F_TOLOWER,					L"AbＣｄ",			L"abｃｄ" },
-		ConvTestParamType{ F_TOUPPER,					L"AbＣｄ",			L"ABＣＤ" },
-		ConvTestParamType{ F_TOHANKAKU,					L"カナかなｶﾅ",		L"ｶﾅｶﾅｶﾅ" },
-		ConvTestParamType{ F_TOHANKATA,					L"カナかなｶﾅ",		L"ｶﾅかなｶﾅ" },
-		ConvTestParamType{ F_TOZENEI,					L"AbＣｄ",			L"ＡｂＣｄ" },
-		ConvTestParamType{ F_TOHANEI,					L"AbＣｄ",			L"AbCd" },
-		ConvTestParamType{ F_TOZENKAKUKATA,				L"カナかなｶﾅ",		L"カナカナカナ" },
-		ConvTestParamType{ F_TOZENKAKUHIRA,				L"カナかなｶﾅ",		L"かなかなかな" },
-		ConvTestParamType{ F_HANKATATOZENKATA,			L"カナかなｶﾅ",		L"カナかなカナ" },
-		ConvTestParamType{ F_HANKATATOZENHIRA,			L"カナかなｶﾅ",		L"カナかなかな" },
-		ConvTestParamType{ F_TABTOSPACE,				L"\t",				L"    " },
-		ConvTestParamType{ F_SPACETOTAB,				L"    ",			L"\t" },
-		ConvTestParamType{ F_LTRIM,						L" x ",				L"x " },
-		ConvTestParamType{ F_RTRIM,						L" x ",				L" x" },
-		ConvTestParamType{ F_CODECNV_EMAIL,				L"\x1b$B2=$1%i%C%?\x1b(B!!",	L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_EUC2SJIS,			L"ｲｽ､ｱ･鬣ﾃ･ｿ!!",				L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_UNICODE2SJIS,		L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ。
-		ConvTestParamType{ F_CODECNV_UNICODEBE2SJIS,	L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ
-		ConvTestParamType{ F_CODECNV_UTF82SJIS,			L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ
-		ConvTestParamType{ F_CODECNV_UTF72SJIS,			L"+UxYwUTDpMMMwvwAhACE-",		L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"化けラッタ!!",				L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"\x1b$B2=$1%i%C%?\x1b(B!!",	L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"ｲｽ､ｱ･鬣ﾃ･ｿ!!",				L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_SJIS2JIS,			L"化けラッタ!!",				L"\x1b$B2=$1%i%C%?\x1b(B!!" },
-		ConvTestParamType{ F_CODECNV_SJIS2EUC,			L"化けラッタ!!",				L"ｲｽ､ｱ･鬣ﾃ･ｿ!!" },
-		ConvTestParamType{ F_CODECNV_SJIS2UTF8,			L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ
-		ConvTestParamType{ F_CODECNV_SJIS2UTF7,			L"化けラッタ!!",				L"+UxYwUTDpMMMwvwAhACE-" }
+		ConvTestParamType{ F_TOLOWER,					L"AbＣｄ",						L"abｃｄ",						true },
+		ConvTestParamType{ F_TOUPPER,					L"AbＣｄ",						L"ABＣＤ",						true },
+		ConvTestParamType{ F_TOHANKAKU,					L"カナかなｶﾅ",					L"ｶﾅｶﾅｶﾅ",						true },
+		ConvTestParamType{ F_TOHANKATA,					L"カナかなｶﾅ",					L"ｶﾅかなｶﾅ",					true },
+		ConvTestParamType{ F_TOZENEI,					L"AbＣｄ",						L"ＡｂＣｄ",					true },
+		ConvTestParamType{ F_TOHANEI,					L"AbＣｄ",						L"AbCd",						true },
+		ConvTestParamType{ F_TOZENKAKUKATA,				L"カナかなｶﾅ",					L"カナカナカナ",				true },
+		ConvTestParamType{ F_TOZENKAKUHIRA,				L"カナかなｶﾅ",					L"かなかなかな",				true },
+		ConvTestParamType{ F_HANKATATOZENKATA,			L"カナかなｶﾅ",					L"カナかなカナ",				true },
+		ConvTestParamType{ F_HANKATATOZENHIRA,			L"カナかなｶﾅ",					L"カナかなかな",				true },
+		ConvTestParamType{ F_TABTOSPACE,				L"\t",							L"    ",						true },
+		ConvTestParamType{ F_SPACETOTAB,				L"    ",						L"\t",							true },
+		ConvTestParamType{ F_LTRIM,						L" x ",							L"x ",							true },
+		ConvTestParamType{ F_RTRIM,						L" x ",							L" x",							true },
+		ConvTestParamType{ F_CODECNV_EMAIL,				L"\x1b$B2=$1%i%C%?\x1b(B!!",	L"化けラッタ!!",				true },
+		ConvTestParamType{ F_CODECNV_EUC2SJIS,			L"ｲｽ､ｱ･鬣ﾃ･ｿ!!",				L"化けラッタ!!",				true },
+		ConvTestParamType{ F_CODECNV_UNICODE2SJIS,		L"\x16S",						L"化",							true },
+		ConvTestParamType{ F_CODECNV_UNICODEBE2SJIS,	L"S\x16",						L"化",							true },
+		ConvTestParamType{ F_CODECNV_UTF82SJIS,			L"蛹悶￠繝ｩ繝\xDC83\xDCE3ち!!",	L"化けラッタ!!",				true },
+		ConvTestParamType{ F_CODECNV_UTF72SJIS,			L"+UxYwUTDpMMMwvwAhACE-",		L"化けラッタ!!",				true },
+		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"化けラッタ!!",				L"化けラッタ!!",				false },
+		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"\x1b$B2=$1%i%C%?\x1b(B!!",	L"化けラッタ!!",				true },
+		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"ｲｽ､ｱ･鬣ﾃ･ｿ!!",				L"化けラッタ!!",				true },
+		ConvTestParamType{ F_CODECNV_SJIS2JIS,			L"化けラッタ!!",				L"\x1b$B2=$1%i%C%?\x1b(B!!",	true },
+		ConvTestParamType{ F_CODECNV_SJIS2EUC,			L"化けラッタ!!",				L"ｲｽ､ｱ･鬣ﾃ･ｿ!!",				true },
+		ConvTestParamType{ F_CODECNV_SJIS2UTF8,			L"化けラッタ!!",				L"蛹悶￠繝ｩ繝\xDC83\xDCE3ち!!",	true },
+		ConvTestParamType{ F_CODECNV_SJIS2UTF7,			L"化けラッタ!!",				L"+UxYwUTDpMMMwvwAhACE-",		true }
 	)
 );
+
+} // namespace convert
