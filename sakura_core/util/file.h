@@ -15,6 +15,7 @@
 #include <filesystem>
 
 bool fexist(LPCWSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
+bool fexist(const std::filesystem::path& path);
 
 bool IsFilePath( const wchar_t* pLine, size_t* pnBgn, size_t* pnPathLen, bool bFileOnly = true );
 bool IsFileExists(const WCHAR* path, bool bFileOnly = false);
