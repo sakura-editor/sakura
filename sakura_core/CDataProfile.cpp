@@ -7,34 +7,6 @@
 #include "StdAfx.h"
 #include "CDataProfile.h"
 
-#include <stdexcept>
-
-/*!
-	コンストラクタ
- */
-StringBufferW::StringBufferW(WCHAR* pData, size_t maxCount)
-	: pszData_(pData)
-	, cchDataSize_(maxCount)
-{
-	if (pszData_ == nullptr) {
-		throw std::invalid_argument("data can't be nullptr");
-	}
-
-	if (cchDataSize_ == 0) {
-		throw std::invalid_argument("count can't be zero");
-	}
-}
-
-/*!
-	代入演算子
- */
-StringBufferW& StringBufferW::operator = (std::wstring_view rhs)
-{
-	::wcsncpy_s(pszData_, cchDataSize_, rhs.data(), _TRUNCATE);
-
-	return *this;
-}
-
 namespace profile_data {
 
 	//! 設定値を文字列に変換する

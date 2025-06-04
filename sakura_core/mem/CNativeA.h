@@ -11,37 +11,16 @@
 
 #include "CNative.h"
 
-class CNativeA final : public CNative{
-public:
-	CNativeA() noexcept = default;
-	CNativeA( const char* szData, size_t cchData );
-	CNativeA( const char* szData );
+/*!
+ * マルチバイト文字列管理クラス
+ *
+ * @author kobake
+ * @date 2007/11/06 kobake 新規作成
+ * @deprecated use std::string instead
+ */
+using CNativeA = CNative<CHAR>;
 
-	//ネイティブ設定
-	void SetString( const char* pszData );                  //!< バッファの内容を置き換える
-	void SetString( const char* pData, size_t nDataLen );      //!< バッファの内容を置き換える。nDataLenは文字単位。
-	void SetNativeData( const CNativeA& cNative );         //!< バッファの内容を置き換える
-	void AppendString( const char* pszData );               //!< バッファの最後にデータを追加する
-	void AppendString( const char* pszData, size_t nLength );  //!< バッファの最後にデータを追加する。nLengthは文字単位。
-	void AppendStringF(const char* pszData, ...);           //!< バッファの最後にデータを追加する (フォーマット機能付き)
-	void AppendNativeData( const CNativeA& cNative );      //!< バッファの最後にデータを追加する
-	void AllocStringBuffer( size_t nDataLen );            //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
-
-	//ネイティブ取得
-	int GetStringLength() const;
-	char operator[]( size_t nIndex ) const;                 //!< 任意位置の文字取得。nIndexは文字単位。
-	const char* GetStringPtr() const
-	{
-		return reinterpret_cast<const char*>(GetRawPtr());
-	}
-	char* GetStringPtr()
-	{
-		return reinterpret_cast<char*>(GetRawPtr());
-	}
-
-	//演算子
-	const CNativeA& operator=( char );
-	const CNativeA& operator+=( char );
-};
+// CMemory派生クラスにはメンバー追加禁止
+static_assert(sizeof(CNativeA) == sizeof(CMemory), "size check");
 
 #endif /* SAKURA_CNATIVEA_03C02187_A42C_4403_9D24_8B4CA20EEA81_H_ */

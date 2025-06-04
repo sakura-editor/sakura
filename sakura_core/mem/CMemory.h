@@ -25,11 +25,20 @@
 #define CheckKanjiCode_MAXREADLENGTH 16384
 
 /*!
-	メモリバッファクラス
-
-	ヒープメモリにバッファ領域を確保する
-	内部バッファのサイズは8の倍数に切り上げて確保される。
-	NUL文字(\0)を含むバイナリシーケンスを格納することができる。
+ * メモリバッファクラス
+ *
+ * ヒープメモリにバッファ領域を確保する
+ * 内部バッファのサイズは8の倍数に切り上げて確保される。
+ * NUL文字(\0)を含むバイナリシーケンスを格納することができる。
+ *
+ * * 元々は文字列バッファの変換機能を多く含むゴッドオブジェクトだった。
+ * * UNICODE対応で文字列変換機能の一部が分離された。
+ * * 残タスク _AppendSzメソッドの分離。
+ * * 残タスク SwapHLByteメソッドの分離。
+ *
+ * @author Norio Nakatani
+ * @date 1998/03/06 新規作成
+ * @date 2007/11/06 kobake Unicode対応
  */
 class CMemory
 {
@@ -39,6 +48,7 @@ public:
 	CMemory( const void* pData, size_t nDataLen );
 	CMemory( const CMemory& rhs );
 	CMemory( CMemory&& other ) noexcept;
+
 	// デストラクタを仮想にすると仮想関数テーブルへのポインタを持つ為にインスタンスの容量が増えてしまうので仮想にしない
 	// 仮想デストラクタでは無いので派生クラスでメンバー変数を追加しない事
 	~CMemory() noexcept;
@@ -53,9 +63,16 @@ public:
 	void AppendRawData( const void* pData, size_t nDataLen );			//!< バッファの最後にデータを追加する
 	void Reset( void ) noexcept;										//!< バッファをリセットする
 
-	[[nodiscard]] const std::byte* GetRawPtr() const noexcept { return m_pRawData; } //!< データへのポインタを返す
-	std::byte* GetRawPtr() noexcept { return m_pRawData; }             //!< データへのポインタを返す
-	[[nodiscard]] int GetRawLength() const noexcept { return static_cast<int>(m_nRawLen); }                //!<データ長を返す。バイト単位。
+	template<typename T> auto get()       noexcept { return (T*)m_pRawData; } //!< データへのポインタを返す
+	template<typename T> auto get() const noexcept { return (const T*)m_pRawData; } //!< データへのポインタを返す
+
+	auto GetRawPtr()       noexcept { return m_pRawData; } //!< データへのポインタを返す
+	auto GetRawPtr() const noexcept { return m_pRawData; } //!< データへのポインタを返す
+
+	int GetRawLength() const noexcept { return Length<std::byte>(); }                //!<データ長を返す。バイト単位。
+
+	template<typename T> auto length() const noexcept { return m_nRawLen / sizeof(T); }
+	template<typename T> int  Length() const noexcept { return int(length<T>()); }
 
 	// 演算子
 	CMemory& operator = ( const CMemory& rhs );
@@ -72,7 +89,7 @@ public:
 	void _SetRawLength( size_t nLength );
 	void swap( CMemory& left ) noexcept;
 	//! メモリ再確保を行わずに格納できる最大バイト数を求める
-	[[nodiscard]] int capacity() const noexcept { return 8 <= m_nDataBufSize ? m_nDataBufSize - 2: 0; }
+	int capacity() const noexcept { return 8 <= m_nDataBufSize ? m_nDataBufSize - 2: 0; }
 
 private: // 2002/2/10 aroka アクセス権変更
 	/*
