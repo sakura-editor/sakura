@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-  <Type Name="CNativeW">
+  <Type Name="CNative&lt;wchar_t&gt;">
     <DisplayString Condition="m_pRawData == 0">empty</DisplayString>
     <DisplayString Condition="m_pRawData != 0">{m_pRawData,su}</DisplayString>
     <Expand>
       <Item Condition="m_pRawData != 0" Name="_Data">m_pRawData,su</Item>
       <Item Name="_Length">m_nRawLen / 2</Item>
       <Item Name="_Size">m_nDataBufSize / 2</Item>
+    </Expand>
+  </Type>
+  <Type Name="CNative&lt;char&gt;">
+    <DisplayString Condition="m_pRawData == 0">empty</DisplayString>
+    <DisplayString Condition="m_pRawData != 0">{m_pRawData,s}</DisplayString>
+    <Expand>
+      <Item Condition="m_pRawData != 0" Name="_Data">m_pRawData,s</Item>
+      <Item Name="_Length">m_nRawLen</Item>
+      <Item Name="_Size">m_nDataBufSize</Item>
+    </Expand>
+  </Type>
+  <Type Name="basis::SString&lt;*,wchar_t&gt;">
+    <DisplayString Condition="m_szData._Elems[0] == 0">empty</DisplayString>
+    <DisplayString Condition="m_szData._Elems[0] != 0">{m_szData._Elems,su}</DisplayString>
+    <Expand>
+      <Item Condition="m_szData._Elems[0] != 0" Name="_Data">m_szData._Elems,su</Item>
+    </Expand>
+  </Type>
+  <Type Name="basis::SString&lt;*,char&gt;">
+    <DisplayString Condition="m_szData._Elems[0] == 0">empty</DisplayString>
+    <DisplayString Condition="m_szData._Elems[0] != 0">{m_szData._Elems,s}</DisplayString>
+    <Expand>
+      <Item Condition="m_szData._Elems[0] != 0" Name="_Data">m_szData._Elems,s</Item>
     </Expand>
   </Type>
 </AutoVisualizer>
