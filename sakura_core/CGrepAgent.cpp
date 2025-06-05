@@ -1422,108 +1422,108 @@ int CGrepAgent::DoGrepFile(
 	}
 
 	try{
-	// ファイルを開く
-	// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
-	// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
-	nCharCode = cfl.FileOpen( pszFullPath, true, sGrepOption.nGrepCharSet, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode() );
-	WCHAR szCpName[100];
-	{
-		if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
-			if( IsValidCodeType(nCharCode) ){
-				wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
-				pszCodeName = szCpName;
-			}else{
-				CCodePage::GetNameBracket(szCpName, nCharCode);
-				pszCodeName = szCpName;
-			}
-		}
-	}
-
-	DWORD dwNow = ::GetTickCount();
-	if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
-		m_dwTickUICheck = dwNow;
-		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-			return -1;
-		}
-		/* 中断ボタン押下チェック */
-		if( pcDlgCancel->IsCanceled() ){
-			return -1;
-		}
-	}
-	int nOutputHitCount = 0;
-
-	/* 検索条件が長さゼロの場合はファイル名だけ返す */
-	// 2002/08/29 ファイルオープンの手前へ移動
-	
-	std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
-	if( sSearchOption.bWordOnly ){
-		CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
-	}
-
-	// 注意 : cfl.ReadLine が throw する可能性がある
-	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
-	{
-		const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-		int		nLineLen = cUnicodeBuffer.GetStringLength();
-
-		nEolCodeLen = cEol.GetLen();
-		++nLine;
-		pCompareData = pLine;
-
-		/* 処理中のユーザー操作を可能にする */
-		// 2010.08.31 間隔を1/32にする
-		if( 0 == nLine % 32 ) {
-			DWORD dwNow = ::GetTickCount();
-			if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
-				m_dwTickUICheck = dwNow;
-				if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {
-					return -1;
-				}
-				/* 中断ボタン押下チェック */
-				if( pcDlgCancel->IsCanceled() ){
-					return -1;
-				}
-				//	2003.06.23 Moca 表示設定をチェック
-				CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-				);
-				// 2002/08/30 Moca 進行状態を表示する(5MB以上)
-				if( 5000000 < cfl.GetFileSize() ){
-					int nPercent = cfl.GetPercent();
-					if( 5 <= nPercent - nOldPercent ){
-						nOldPercent = nPercent;
-						WCHAR szWork[10];
-						::auto_sprintf( szWork, L" (%3d%%)", nPercent );
-						std::wstring str;
-						str = str + pszFile + szWork;
-						::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
-					}
+		// ファイルを開く
+		// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
+		// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
+		nCharCode = cfl.FileOpen( pszFullPath, true, sGrepOption.nGrepCharSet, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode() );
+		WCHAR szCpName[100];
+		{
+			if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
+				if( IsValidCodeType(nCharCode) ){
+					wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
+					pszCodeName = szCpName;
 				}else{
-					::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, pszFile );
+					CCodePage::GetNameBracket(szCpName, nCharCode);
+					pszCodeName = szCpName;
 				}
-				::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszFolder );
 			}
 		}
-		int nHitOldLine = nHitCount;
-		int nHitCountOldLine = *pnHitCount;
 
-		/* 正規表現検索 */
-		if( sSearchOption.bRegularExp ){
-			int nIndex = 0;
+		DWORD dwNow = ::GetTickCount();
+		if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+			m_dwTickUICheck = dwNow;
+			/* 処理中のユーザー操作を可能にする */
+			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+				return -1;
+			}
+			/* 中断ボタン押下チェック */
+			if( pcDlgCancel->IsCanceled() ){
+				return -1;
+			}
+		}
+		int nOutputHitCount = 0;
+
+		/* 検索条件が長さゼロの場合はファイル名だけ返す */
+		// 2002/08/29 ファイルオープンの手前へ移動
+	
+		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
+		if( sSearchOption.bWordOnly ){
+			CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
+		}
+
+		// 注意 : cfl.ReadLine が throw する可能性がある
+		while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
+		{
+			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
+			int		nLineLen = cUnicodeBuffer.GetStringLength();
+
+			nEolCodeLen = cEol.GetLen();
+			++nLine;
+			pCompareData = pLine;
+
+			/* 処理中のユーザー操作を可能にする */
+			// 2010.08.31 間隔を1/32にする
+			if( 0 == nLine % 32 ) {
+				DWORD dwNow = ::GetTickCount();
+				if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+					m_dwTickUICheck = dwNow;
+					if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {
+						return -1;
+					}
+					/* 中断ボタン押下チェック */
+					if( pcDlgCancel->IsCanceled() ){
+						return -1;
+					}
+					//	2003.06.23 Moca 表示設定をチェック
+					CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+						0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+					);
+					// 2002/08/30 Moca 進行状態を表示する(5MB以上)
+					if( 5000000 < cfl.GetFileSize() ){
+						int nPercent = cfl.GetPercent();
+						if( 5 <= nPercent - nOldPercent ){
+							nOldPercent = nPercent;
+							WCHAR szWork[10];
+							::auto_sprintf( szWork, L" (%3d%%)", nPercent );
+							std::wstring str;
+							str = str + pszFile + szWork;
+							::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
+						}
+					}else{
+						::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, pszFile );
+					}
+					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+					::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszFolder );
+				}
+			}
+			int nHitOldLine = nHitCount;
+			int nHitCountOldLine = *pnHitCount;
+
+			/* 正規表現検索 */
+			if( sSearchOption.bRegularExp ){
+				int nIndex = 0;
 #ifdef _DEBUG
-			int nIndexPrev = -1;
+				int nIndexPrev = -1;
 #endif
 
-			//	Jun. 21, 2003 genta ループ条件見直し
-			//	マッチ箇所を1行から複数検出するケースを標準に，
-			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
-			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-			// 2010.08.25 行頭以外で^にマッチする不具合の修正
-			while( nIndex <= nLineLen && pRegexp->Match( pLine, nLineLen, nIndex ) ){
+				//	Jun. 21, 2003 genta ループ条件見直し
+				//	マッチ箇所を1行から複数検出するケースを標準に，
+				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
+				//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
+				//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+				// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
+				// 2010.08.25 行頭以外で^にマッチする不具合の修正
+				while( nIndex <= nLineLen && pRegexp->Match( pLine, nLineLen, nIndex ) ){
 
 					//	パターン発見
 					nIndex = pRegexp->GetIndex();
@@ -1563,27 +1563,104 @@ int CGrepAgent::DoGrepFile(
 						}
 					}
 					nIndex += matchlen;
+				}
 			}
-		}
-		/* 単語のみ検索 */
-		else if( sSearchOption.bWordOnly ){
-			/*
-				2002/02/23 Norio Nakatani
-				単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
-				英単語やC/C++識別子などの検索条件ならヒットします。
+			/* 単語のみ検索 */
+			else if( sSearchOption.bWordOnly ){
+				/*
+					2002/02/23 Norio Nakatani
+					単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
+					英単語やC/C++識別子などの検索条件ならヒットします。
 
-				2002/03/06 YAZAKI
-				Grepにも試験導入。
-				WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
-			*/
-			int nMatchLen;
-			int nIdx = 0;
-			// Jun. 26, 2003 genta 無駄なwhileは削除
-			while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != NULL ){
-				nIdx = pszRes - pLine + nMatchLen;
-				++nHitCount;
-				++(*pnHitCount);
-				if( sGrepOption.nGrepOutputLineType != 2 ){
+					2002/03/06 YAZAKI
+					Grepにも試験導入。
+					WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
+				*/
+				int nMatchLen;
+				int nIdx = 0;
+				// Jun. 26, 2003 genta 無駄なwhileは削除
+				while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != NULL ){
+					nIdx = pszRes - pLine + nMatchLen;
+					++nHitCount;
+					++(*pnHitCount);
+					if( sGrepOption.nGrepOutputLineType != 2 ){
+						OutputPathInfo(
+							cmemMessage, sGrepOption,
+							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+							bOutputBaseFolder, bOutputFolderName, bOutFileName
+						);
+						SetGrepResult(
+							cmemMessage, pszDispFilePath, pszCodeName,
+							//	Jun. 25, 2002 genta
+							//	桁位置は1始まりなので1を足す必要がある
+							nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
+							pszRes, nMatchLen, sGrepOption
+						);
+					}
+
+					// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
+					if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
+						break;
+					}
+				}
+			}
+			else {
+				/* 文字列検索 */
+				int nColumnPrev = 0;
+				//	Jun. 21, 2003 genta ループ条件見直し
+				//	マッチ箇所を1行から複数検出するケースを標準に，
+				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
+				//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
+				for (;;) {
+					pszRes = CSearchAgent::SearchString(
+						pCompareData,
+						nLineLen,
+						0,
+						pattern
+					);
+					if(!pszRes)break;
+
+					nColumn = pszRes - pCompareData + 1;
+
+					++nHitCount;
+					++(*pnHitCount);
+					if( sGrepOption.nGrepOutputLineType != 2 ){
+						OutputPathInfo(
+							cmemMessage, sGrepOption,
+							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+							bOutputBaseFolder, bOutputFolderName, bOutFileName
+						);
+						SetGrepResult(
+							cmemMessage, pszDispFilePath, pszCodeName,
+							nLine, nColumn + nColumnPrev, pCompareData, nLineLen, nEolCodeLen,
+							pszRes, nKeyLen, sGrepOption
+						);
+					}
+
+					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
+					if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
+						break;
+					}
+					//	探し始める位置を補正
+					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
+					//	nClom : マッチ位置
+					//	matchlen : マッチした文字列の長さ
+					int nPosDiff = nColumn += nKeyLen - 1;
+					pCompareData += nPosDiff;
+					nLineLen -= nPosDiff;
+					nColumnPrev += nPosDiff;
+				}
+			}
+			// 2014.09.23 否ヒット行を出力
+			if( sGrepOption.nGrepOutputLineType == 2 ){
+				bool bNoHit = nHitOldLine == nHitCount;
+				// ヒット数を戻す
+				nHitCount = nHitOldLine;
+				*pnHitCount = nHitCountOldLine;
+				// 否ヒット行だった
+				if( bNoHit ){
+					nHitCount++;
+					(*pnHitCount)++;
 					OutputPathInfo(
 						cmemMessage, sGrepOption,
 						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
@@ -1591,105 +1668,28 @@ int CGrepAgent::DoGrepFile(
 					);
 					SetGrepResult(
 						cmemMessage, pszDispFilePath, pszCodeName,
-						//	Jun. 25, 2002 genta
-						//	桁位置は1始まりなので1を足す必要がある
-						nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
-						pszRes, nMatchLen, sGrepOption
+						nLine, 1, pLine, nLineLen, nEolCodeLen,
+						pLine, nLineLen, sGrepOption
 					);
 				}
+			}
+			if( 0 < cmemMessage.GetStringLength() &&
+				(nHitCount - nOutputHitCount >= 10) &&
+				(::GetTickCount() - m_dwTickAddTail) >= ADDTAIL_INTERVAL_MILLISEC
+			){
+				nOutputHitCount = nHitCount;
+				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+				cmemMessage._SetStringLength(0);
+			}
 
-				// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
-				if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
-					break;
-				}
+			// ファイル検索の場合は、1つ見つかったら終了
+			if( sGrepOption.bGrepOutputFileOnly && 1 <= nHitCount ){
+				break;
 			}
 		}
-		else {
-			/* 文字列検索 */
-			int nColumnPrev = 0;
-			//	Jun. 21, 2003 genta ループ条件見直し
-			//	マッチ箇所を1行から複数検出するケースを標準に，
-			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
-			for (;;) {
-				pszRes = CSearchAgent::SearchString(
-					pCompareData,
-					nLineLen,
-					0,
-					pattern
-				);
-				if(!pszRes)break;
 
-				nColumn = pszRes - pCompareData + 1;
-
-				++nHitCount;
-				++(*pnHitCount);
-				if( sGrepOption.nGrepOutputLineType != 2 ){
-					OutputPathInfo(
-						cmemMessage, sGrepOption,
-						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-						bOutputBaseFolder, bOutputFolderName, bOutFileName
-					);
-					SetGrepResult(
-						cmemMessage, pszDispFilePath, pszCodeName,
-						nLine, nColumn + nColumnPrev, pCompareData, nLineLen, nEolCodeLen,
-						pszRes, nKeyLen, sGrepOption
-					);
-				}
-				
-				//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-				if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
-					break;
-				}
-				//	探し始める位置を補正
-				//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-				//	nClom : マッチ位置
-				//	matchlen : マッチした文字列の長さ
-				int nPosDiff = nColumn += nKeyLen - 1;
-				pCompareData += nPosDiff;
-				nLineLen -= nPosDiff;
-				nColumnPrev += nPosDiff;
-			}
-		}
-		// 2014.09.23 否ヒット行を出力
-		if( sGrepOption.nGrepOutputLineType == 2 ){
-			bool bNoHit = nHitOldLine == nHitCount;
-			// ヒット数を戻す
-			nHitCount = nHitOldLine;
-			*pnHitCount = nHitCountOldLine;
-			// 否ヒット行だった
-			if( bNoHit ){
-				nHitCount++;
-				(*pnHitCount)++;
-				OutputPathInfo(
-					cmemMessage, sGrepOption,
-					pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-					bOutputBaseFolder, bOutputFolderName, bOutFileName
-				);
-				SetGrepResult(
-					cmemMessage, pszDispFilePath, pszCodeName,
-					nLine, 1, pLine, nLineLen, nEolCodeLen,
-					pLine, nLineLen, sGrepOption
-				);
-			}
-		}
-		if( 0 < cmemMessage.GetStringLength() &&
-		   (nHitCount - nOutputHitCount >= 10) &&
-		   (::GetTickCount() - m_dwTickAddTail) >= ADDTAIL_INTERVAL_MILLISEC
-		){
-			nOutputHitCount = nHitCount;
-			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-			cmemMessage._SetStringLength(0);
-		}
-
-		// ファイル検索の場合は、1つ見つかったら終了
-		if( sGrepOption.bGrepOutputFileOnly && 1 <= nHitCount ){
-			break;
-		}
-	}
-
-	// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
-	cfl.FileClose();
+		// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
+		cfl.FileClose();
 	} // try
 	catch( const CError_FileOpen& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
@@ -1870,261 +1870,260 @@ int CGrepAgent::DoGrepReplaceFile(
 	const WCHAR* pszDispFilePath = ( sGrepOption.bGrepSeparateFolder || sGrepOption.bGrepOutputBaseFolder ) ? pszRelPath : pszFullPath;
 
 	try{
-	// ファイルを開く
-	// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
-	// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
-	nCharCode = cfl.FileOpen( pszFullPath, true, sGrepOption.nGrepCharSet, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
-	CWriteData output(nHitCount, pszFullPath, nCharCode, bBom, sGrepOption.bGrepBackup, cmemMessage );
-	WCHAR szCpName[100];
-	{
-		if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
-			if( IsValidCodeType(nCharCode) ){
-				wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
-				pszCodeName = szCpName;
-			}else{
-				CCodePage::GetNameBracket(szCpName, nCharCode);
-				pszCodeName = szCpName;
-			}
-		}
-	}
-	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-		return -1;
-	}
-	/* 中断ボタン押下チェック */
-	if( pcDlgCancel->IsCanceled() ){
-		return -1;
-	}
-	int nOutputHitCount = 0;
-
-	std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
-	if( sSearchOption.bWordOnly ){
-		CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
-	}
-
-	CNativeW cOutBuffer;
-	// 注意 : cfl.ReadLine が throw する可能性がある
-	CNativeW cUnicodeBuffer;
-	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
-	{
-		const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-		int		nLineLen = cUnicodeBuffer.GetStringLength();
-
-		nEolCodeLen = cEol.GetLen();
-		++nLine;
-
-		DWORD dwNow = ::GetTickCount();
-		if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
-			m_dwTickUICheck = dwNow;
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-				return -1;
-			}
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				return -1;
-			}
-			//	2003.06.23 Moca 表示設定をチェック
-			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-			);
-			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
-			if( 5000000 < cfl.GetFileSize() ){
-				int nPercent = cfl.GetPercent();
-				if( 5 <= nPercent - nOldPercent ){
-					nOldPercent = nPercent;
-					WCHAR szWork[10];
-					::auto_sprintf( szWork, L" (%3d%%)", nPercent );
-					std::wstring str;
-					str = str + pszFile + szWork;
-					::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
+		// ファイルを開く
+		// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
+		// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
+		nCharCode = cfl.FileOpen( pszFullPath, true, sGrepOption.nGrepCharSet, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
+		CWriteData output(nHitCount, pszFullPath, nCharCode, bBom, sGrepOption.bGrepBackup, cmemMessage );
+		WCHAR szCpName[100];
+		{
+			if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
+				if( IsValidCodeType(nCharCode) ){
+					wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
+					pszCodeName = szCpName;
+				}else{
+					CCodePage::GetNameBracket(szCpName, nCharCode);
+					pszCodeName = szCpName;
 				}
 			}
 		}
-		cOutBuffer.SetString( L"", 0 );
-		bool bOutput = true;
-		if( sGrepOption.bGrepOutputFileOnly && 1 <= nHitCount ){
-			bOutput = false;
+		/* 処理中のユーザー操作を可能にする */
+		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+			return -1;
+		}
+		/* 中断ボタン押下チェック */
+		if( pcDlgCancel->IsCanceled() ){
+			return -1;
+		}
+		int nOutputHitCount = 0;
+
+		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
+		if( sSearchOption.bWordOnly ){
+			CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
 		}
 
-		/* 正規表現検索 */
-		if( sSearchOption.bRegularExp ){
-			int nIndex = 0;
-			int nIndexOld = nIndex;
-			int nMatchNum = 0;
-			//	Jun. 21, 2003 genta ループ条件見直し
-			//	マッチ箇所を1行から複数検出するケースを標準に，
-			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-			// 2010.08.25 行頭以外で^にマッチする不具合の修正
-			while( nIndex <= nLineLen &&
-				(( !sGrepOption.bGrepPaste && (nMatchNum = pRegexp->Replace( pLine, nLineLen, nIndex ))) || 
-				 ( sGrepOption.bGrepPaste && pRegexp->Match( pLine, nLineLen, nIndex ))) ){
-				//	パターン発見
-				nIndex = pRegexp->GetIndex();
-				int matchlen = pRegexp->GetMatchLen();
-				if( bOutput ){
-					OutputPathInfo(
-						cmemMessage, sGrepOption,
-						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-						bOutputBaseFolder, bOutputFolderName, bOutFileName
-					);
-					/* Grep結果を、cmemMessageに格納する */
-					SetGrepResult(
-						cmemMessage, pszDispFilePath, pszCodeName,
-						nLine, nIndex + 1,
-						pLine, nLineLen, nEolCodeLen,
-						pLine + nIndex, matchlen,
-						sGrepOption
-					);
-					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-					if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
-						bOutput = false;
+		CNativeW cOutBuffer;
+		// 注意 : cfl.ReadLine が throw する可能性がある
+		while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
+		{
+			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
+			int		nLineLen = cUnicodeBuffer.GetStringLength();
+
+			nEolCodeLen = cEol.GetLen();
+			++nLine;
+
+			DWORD dwNow = ::GetTickCount();
+			if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
+				m_dwTickUICheck = dwNow;
+				/* 処理中のユーザー操作を可能にする */
+				if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+					return -1;
+				}
+				/* 中断ボタン押下チェック */
+				if( pcDlgCancel->IsCanceled() ){
+					return -1;
+				}
+				//	2003.06.23 Moca 表示設定をチェック
+				CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+				);
+				// 2002/08/30 Moca 進行状態を表示する(5MB以上)
+				if( 5000000 < cfl.GetFileSize() ){
+					int nPercent = cfl.GetPercent();
+					if( 5 <= nPercent - nOldPercent ){
+						nOldPercent = nPercent;
+						WCHAR szWork[10];
+						::auto_sprintf( szWork, L" (%3d%%)", nPercent );
+						std::wstring str;
+						str = str + pszFile + szWork;
+						::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
 					}
 				}
-				output.OutputHead();
-				++nHitCount;
-				++(*pnHitCount);
-				if( !sGrepOption.bGrepPaste ){
-					// gオプションでは行末まで一度に置換済み
-					nHitCount += nMatchNum - 1;
-					*pnHitCount += nMatchNum - 1;
-					cOutBuffer.AppendString( pRegexp->GetString(), pRegexp->GetStringLen() );
-					nIndexOld = nLineLen;
-					break;
-				}
-				if( 0 < nIndex - nIndexOld ){
-					cOutBuffer.AppendString( &pLine[nIndexOld], nIndex - nIndexOld );
-				}
-				cOutBuffer.AppendNativeData( cmGrepReplace );
-				//	探し始める位置を補正
-				//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-				if( matchlen <= 0 ){
-					matchlen = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
+			}
+			cOutBuffer.SetString( L"", 0 );
+			bool bOutput = true;
+			if( sGrepOption.bGrepOutputFileOnly && 1 <= nHitCount ){
+				bOutput = false;
+			}
+
+			/* 正規表現検索 */
+			if( sSearchOption.bRegularExp ){
+				int nIndex = 0;
+				int nIndexOld = nIndex;
+				int nMatchNum = 0;
+				//	Jun. 21, 2003 genta ループ条件見直し
+				//	マッチ箇所を1行から複数検出するケースを標準に，
+				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
+				//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
+				//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+				// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
+				// 2010.08.25 行頭以外で^にマッチする不具合の修正
+				while( nIndex <= nLineLen &&
+					(( !sGrepOption.bGrepPaste && (nMatchNum = pRegexp->Replace( pLine, nLineLen, nIndex ))) || 
+					( sGrepOption.bGrepPaste && pRegexp->Match( pLine, nLineLen, nIndex ))) ){
+					//	パターン発見
+					nIndex = pRegexp->GetIndex();
+					int matchlen = pRegexp->GetMatchLen();
+					if( bOutput ){
+						OutputPathInfo(
+							cmemMessage, sGrepOption,
+							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+							bOutputBaseFolder, bOutputFolderName, bOutFileName
+						);
+						/* Grep結果を、cmemMessageに格納する */
+						SetGrepResult(
+							cmemMessage, pszDispFilePath, pszCodeName,
+							nLine, nIndex + 1,
+							pLine, nLineLen, nEolCodeLen,
+							pLine + nIndex, matchlen,
+							sGrepOption
+						);
+						// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
+						if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
+							bOutput = false;
+						}
+					}
+					output.OutputHead();
+					++nHitCount;
+					++(*pnHitCount);
+					if( !sGrepOption.bGrepPaste ){
+						// gオプションでは行末まで一度に置換済み
+						nHitCount += nMatchNum - 1;
+						*pnHitCount += nMatchNum - 1;
+						cOutBuffer.AppendString( pRegexp->GetString(), pRegexp->GetStringLen() );
+						nIndexOld = nLineLen;
+						break;
+					}
+					if( 0 < nIndex - nIndexOld ){
+						cOutBuffer.AppendString( &pLine[nIndexOld], nIndex - nIndexOld );
+					}
+					cOutBuffer.AppendNativeData( cmGrepReplace );
+					//	探し始める位置を補正
+					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
 					if( matchlen <= 0 ){
-						matchlen = 1;
+						matchlen = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
+						if( matchlen <= 0 ){
+							matchlen = 1;
+						}
 					}
+					nIndex += matchlen;
+					nIndexOld = nIndex;
 				}
-				nIndex += matchlen;
-				nIndexOld = nIndex;
+				if( 0 < nLineLen - nIndexOld ){
+					cOutBuffer.AppendString( &pLine[nIndexOld], nLineLen - nIndexOld );
+				}
 			}
-			if( 0 < nLineLen - nIndexOld ){
-				cOutBuffer.AppendString( &pLine[nIndexOld], nLineLen - nIndexOld );
-			}
-		}
-		/* 単語のみ検索 */
-		else if( sSearchOption.bWordOnly ){
-			/*
-				2002/02/23 Norio Nakatani
-				単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
-				英単語やC/C++識別子などの検索条件ならヒットします。
+			/* 単語のみ検索 */
+			else if( sSearchOption.bWordOnly ){
+				/*
+					2002/02/23 Norio Nakatani
+					単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
+					英単語やC/C++識別子などの検索条件ならヒットします。
 
-				2002/03/06 YAZAKI
-				Grepにも試験導入。
-				WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
-			*/
-			const wchar_t* pszRes;
-			int nMatchLen;
-			int nIdx = 0;
-			int nOutputPos = 0;
-			// Jun. 26, 2003 genta 無駄なwhileは削除
-			while( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
-				nIdx = pszRes - pLine + nMatchLen;
-				if( bOutput ){
-					OutputPathInfo(
-						cmemMessage, sGrepOption,
-						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-						bOutputBaseFolder, bOutputFolderName, bOutFileName
-					);
-					/* Grep結果を、cmemMessageに格納する */
-					SetGrepResult(
-						cmemMessage, pszDispFilePath, pszCodeName,
-						//	Jun. 25, 2002 genta
-						//	桁位置は1始まりなので1を足す必要がある
-						nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
-						pszRes, nMatchLen,
-						sGrepOption
-					);
-					if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
-						bOutput = false;
+					2002/03/06 YAZAKI
+					Grepにも試験導入。
+					WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
+				*/
+				const wchar_t* pszRes;
+				int nMatchLen;
+				int nIdx = 0;
+				int nOutputPos = 0;
+				// Jun. 26, 2003 genta 無駄なwhileは削除
+				while( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
+					nIdx = pszRes - pLine + nMatchLen;
+					if( bOutput ){
+						OutputPathInfo(
+							cmemMessage, sGrepOption,
+							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+							bOutputBaseFolder, bOutputFolderName, bOutFileName
+						);
+						/* Grep結果を、cmemMessageに格納する */
+						SetGrepResult(
+							cmemMessage, pszDispFilePath, pszCodeName,
+							//	Jun. 25, 2002 genta
+							//	桁位置は1始まりなので1を足す必要がある
+							nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
+							pszRes, nMatchLen,
+							sGrepOption
+						);
+						if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
+							bOutput = false;
+						}
 					}
-				}
-				output.OutputHead();
-				++nHitCount;
-				++(*pnHitCount);
-				if( 0 < pszRes - pLine - nOutputPos ){
-					cOutBuffer.AppendString( &pLine[nOutputPos], pszRes - pLine - nOutputPos );
-				}
-				cOutBuffer.AppendNativeData( cmGrepReplace );
-				nOutputPos = pszRes - pLine + nMatchLen;
-			}
-			cOutBuffer.AppendString( &pLine[nOutputPos], nLineLen - nOutputPos );
-		}
-		else {
-			/* 文字列検索 */
-			int nColumnPrev = 0;
-			const wchar_t*	pCompareData = pLine;
-			int nCompareLen = nLineLen;
-			//	Jun. 21, 2003 genta ループ条件見直し
-			//	マッチ箇所を1行から複数検出するケースを標準に，
-			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-			for(;;){
-				const wchar_t* pszRes = CSearchAgent::SearchString( pCompareData, nCompareLen, 0, pattern );
-				if(!pszRes)break;
-
-				int	nColumn = pszRes - pCompareData;
-				if( bOutput ){
-					OutputPathInfo(
-						cmemMessage, sGrepOption,
-						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-						bOutputBaseFolder, bOutputFolderName, bOutFileName
-					);
-					/* Grep結果を、cmemMessageに格納する */
-					SetGrepResult(
-						cmemMessage, pszDispFilePath, pszCodeName,
-						nLine, nColumn + nColumnPrev + 1, pLine, nLineLen, nEolCodeLen,
-						pszRes, nKeyLen,
-						sGrepOption
-					);
-					if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
-						bOutput = false;
+					output.OutputHead();
+					++nHitCount;
+					++(*pnHitCount);
+					if( 0 < pszRes - pLine - nOutputPos ){
+						cOutBuffer.AppendString( &pLine[nOutputPos], pszRes - pLine - nOutputPos );
 					}
+					cOutBuffer.AppendNativeData( cmGrepReplace );
+					nOutputPos = pszRes - pLine + nMatchLen;
 				}
-				output.OutputHead();
-				++nHitCount;
-				++(*pnHitCount);
-				if( nColumn ){
-					cOutBuffer.AppendString( pCompareData, nColumn );
-				}
-				cOutBuffer.AppendNativeData( cmGrepReplace );
-				//	探し始める位置を補正
-				//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-				//	nClom : マッチ位置
-				//	matchlen : マッチした文字列の長さ
-				int nPosDiff = nColumn + nKeyLen;
-				pCompareData += nPosDiff;
-				nCompareLen -= nPosDiff;
-				nColumnPrev += nPosDiff;
+				cOutBuffer.AppendString( &pLine[nOutputPos], nLineLen - nOutputPos );
 			}
-			cOutBuffer.AppendString( &pLine[nColumnPrev], nLineLen - nColumnPrev );
-		}
-		output.AppendBuffer(cOutBuffer);
+			else {
+				/* 文字列検索 */
+				int nColumnPrev = 0;
+				const wchar_t*	pCompareData = pLine;
+				int nCompareLen = nLineLen;
+				//	Jun. 21, 2003 genta ループ条件見直し
+				//	マッチ箇所を1行から複数検出するケースを標準に，
+				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
+				//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
+				for(;;){
+					const wchar_t* pszRes = CSearchAgent::SearchString( pCompareData, nCompareLen, 0, pattern );
+					if(!pszRes)break;
 
-		if( 0 < cmemMessage.GetStringLength() &&
-		   (::GetTickCount() - m_dwTickAddTail > ADDTAIL_INTERVAL_MILLISEC)
-		){
-			nOutputHitCount = nHitCount;
-			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-			cmemMessage._SetStringLength(0);
-		}
-	}
+					int	nColumn = pszRes - pCompareData;
+					if( bOutput ){
+						OutputPathInfo(
+							cmemMessage, sGrepOption,
+							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+							bOutputBaseFolder, bOutputFolderName, bOutFileName
+						);
+						/* Grep結果を、cmemMessageに格納する */
+						SetGrepResult(
+							cmemMessage, pszDispFilePath, pszCodeName,
+							nLine, nColumn + nColumnPrev + 1, pLine, nLineLen, nEolCodeLen,
+							pszRes, nKeyLen,
+							sGrepOption
+						);
+						if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
+							bOutput = false;
+						}
+					}
+					output.OutputHead();
+					++nHitCount;
+					++(*pnHitCount);
+					if( nColumn ){
+						cOutBuffer.AppendString( pCompareData, nColumn );
+					}
+					cOutBuffer.AppendNativeData( cmGrepReplace );
+					//	探し始める位置を補正
+					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
+					//	nClom : マッチ位置
+					//	matchlen : マッチした文字列の長さ
+					int nPosDiff = nColumn + nKeyLen;
+					pCompareData += nPosDiff;
+					nCompareLen -= nPosDiff;
+					nColumnPrev += nPosDiff;
+				}
+				cOutBuffer.AppendString( &pLine[nColumnPrev], nLineLen - nColumnPrev );
+			}
+			output.AppendBuffer(cOutBuffer);
 
-	// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
-	cfl.FileClose();
-	output.Close();
+			if( 0 < cmemMessage.GetStringLength() &&
+				(::GetTickCount() - m_dwTickAddTail > ADDTAIL_INTERVAL_MILLISEC)
+			){
+				nOutputHitCount = nHitCount;
+				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+				cmemMessage._SetStringLength(0);
+			}
+		}
+
+		// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
+		cfl.FileClose();
+		output.Close();
 	} // try
 	catch( const CError_FileOpen& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
