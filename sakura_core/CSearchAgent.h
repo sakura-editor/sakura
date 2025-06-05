@@ -25,7 +25,6 @@ class CSearchStringPattern
 {
 public:
 	CSearchStringPattern();
-	CSearchStringPattern(HWND, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp);
 	~CSearchStringPattern();
 	void Reset();
 	bool SetPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp){
@@ -50,20 +49,20 @@ public:
 
 private:
 	// 外部依存
-	const wchar_t*	m_pszKey;
-	const SSearchOption* m_psSearchOption;
-	mutable CBregexp* m_pRegexp;
+	const wchar_t*	m_pszKey = nullptr;
+	const SSearchOption* m_psSearchOption = nullptr;
+	mutable CBregexp* m_pRegexp = nullptr;
 
-	const wchar_t* m_pszCaseKeyRef;
+	const wchar_t* m_pszCaseKeyRef = nullptr;
 
 	// 内部バッファ
-	wchar_t* m_pszPatternCase;
+	wchar_t* m_pszPatternCase = nullptr;
 	int  m_nPatternLen;
 #ifdef SEARCH_STRING_KMP
-	int* m_pnNextPossArr;
+	int* m_pnNextPossArr = nullptr;
 #endif
 #ifdef SEARCH_STRING_SUNDAY_QUICK
-	int* m_pnUseCharSkipArr;
+	int* m_pnUseCharSkipArr = nullptr;
 #endif
 
 	DISALLOW_COPY_AND_ASSIGN(CSearchStringPattern);

@@ -35,35 +35,8 @@ inline int CSearchStringPattern::GetMapIndex( wchar_t c )
 	return ((c & 0xff00) ? 0x100 : 0 ) | (c & 0xff);
 }
 
-CSearchStringPattern::CSearchStringPattern() : 
-	m_pszKey(NULL),
-	m_psSearchOption(NULL),
-	m_pRegexp(NULL),
-	m_pszCaseKeyRef(NULL),
-	m_pszPatternCase(NULL),
-#ifdef SEARCH_STRING_KMP
-	m_pnNextPossArr(NULL),
-#endif
-#ifdef SEARCH_STRING_SUNDAY_QUICK
-	m_pnUseCharSkipArr(NULL)
-#endif
+CSearchStringPattern::CSearchStringPattern()
 {
-}
-
-	CSearchStringPattern::CSearchStringPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp) :
-	m_pszKey(NULL),
-	m_psSearchOption(NULL),
-	m_pRegexp(NULL),
-	m_pszCaseKeyRef(NULL),
-	m_pszPatternCase(NULL),
-#ifdef SEARCH_STRING_KMP
-	m_pnNextPossArr(NULL),
-#endif
-#ifdef SEARCH_STRING_SUNDAY_QUICK
-	m_pnUseCharSkipArr(NULL)
-#endif
-{
-	SetPattern(hwnd, pszPattern, nPatternLen, sSearchOption, pRegexp);
 }
 
 CSearchStringPattern::~CSearchStringPattern()
