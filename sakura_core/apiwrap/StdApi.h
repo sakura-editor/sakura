@@ -9,15 +9,6 @@
 #define SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_
 #pragma once
 
-//デバッグ用。
-//VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
-//デバッグ時ステップ実行する際に便利になる。ただし、当然重くなる。
-#ifdef _DEBUG
-#define DEBUG_SETPIXEL(hdc) SetPixel(hdc,-1,-1,0); //SetPixelをすると、結果が即反映される。
-#else
-#define DEBUG_SETPIXEL(hdc)
-#endif
-
 namespace ApiWrap
 {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
