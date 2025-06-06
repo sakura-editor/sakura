@@ -18,30 +18,28 @@
 #include "CDataProfile.h"
 #include "env/DLLSHAREDATA.h"
 
-using std::wstring;
-
 class CImpExpManager
 {
 public:
 	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
 	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
-	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const wstring& sFileName, wstring& sErrMsg);
-	virtual bool Import(const wstring& sFileName, wstring& sErrMsg) = 0;
-	virtual bool Export(const wstring& sFileName, wstring& sErrMsg) = 0;
+	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg);
+	virtual bool Import(const std::wstring& sFileName, std::wstring& sErrMsg) = 0;
+	virtual bool Export(const std::wstring& sFileName, std::wstring& sErrMsg) = 0;
 	// ファイル名の初期値を設定
-	void SetBaseName(const wstring& sBase);
+	void SetBaseName(const std::wstring& sBase);
 	// フルパス名を取得
-	inline wstring GetFullPath()
+	inline std::wstring GetFullPath()
 	{
 		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + m_sOriginName };
 	}
 	// フルパス名を取得
-	inline wstring MakeFullPath( wstring sFileName )
+	inline std::wstring MakeFullPath( std::wstring sFileName )
 	{
 		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + sFileName };
 	}
 	// ファイル名を取得
-	inline wstring GetFileName()	{ return m_sOriginName; }
+	inline std::wstring GetFileName()	{ return m_sOriginName; }
 
 protected:
 	// Import Folderの設定
@@ -59,8 +57,8 @@ protected:
 	virtual const wchar_t* GetOriginExtension();
 
 protected:
-	wstring		m_sBase;
-	wstring		m_sOriginName;
+	std::wstring		m_sBase;
+	std::wstring		m_sOriginName;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -80,9 +78,9 @@ public:
 	}
 
 public:
-	bool ImportAscertain( HINSTANCE, HWND, const wstring&, wstring& ) override;
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool ImportAscertain( HINSTANCE, HWND, const std::wstring&, std::wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -99,7 +97,7 @@ private:
 	// 内部使用
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nColorType;
-	wstring 		m_sColorFile;
+	std::wstring 	m_sColorFile;
 	bool			m_bAddType;
 	CDataProfile	m_cProfile;
 };
@@ -117,8 +115,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -142,8 +140,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -167,8 +165,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -192,8 +190,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -217,8 +215,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -244,8 +242,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -271,8 +269,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 
 public:
 	// デフォルト拡張子の取得
@@ -296,8 +294,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring&, wstring& ) override;
-	bool Export( const wstring&, wstring& ) override;
+	bool Import( const std::wstring&, std::wstring& ) override;
+	bool Export( const std::wstring&, std::wstring& ) override;
 	static void IO_FileTreeIni( CDataProfile&, std::vector<SFileTreeItem>& );
 
 public:

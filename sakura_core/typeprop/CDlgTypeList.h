@@ -17,10 +17,7 @@
 #define SAKURA_CDLGTYPELIST_BF7E3CFF_28C8_4424_ACC3_068C04462C86_H_
 #pragma once
 
-class CDlgTypeList;
-
 #include "dlg/CDialog.h"
-using std::wstring;
 
 /*-----------------------------------------------------------------------
 クラスの宣言

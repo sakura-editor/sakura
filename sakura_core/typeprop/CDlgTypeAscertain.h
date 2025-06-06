@@ -15,10 +15,6 @@
 #define SAKURA_CDLGTYPEASCERTAIN_7000A035_D26C_4FB2_AE75_6A63F3F806B9_H_
 #pragma once
 
-class CDlgTypeAscertain;
-
-using std::wstring;
-
 #include "dlg/CDialog.h"
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -31,12 +27,12 @@ class CDlgTypeAscertain final : public CDialog
 public:
 	// 型
 	struct SAscertainInfo {
-		wstring	sImportFile;	//!< in インポートファイル名
-		wstring	sTypeNameTo;	//!< in タイプ名（インポート先）
-		wstring	sTypeNameFile;	//!< in タイプ名（ファイルから）
-		int 	nColorType;		//!< out 文書種類(カラーコピー用)
-		wstring	sColorFile;		//!< out 色設定ファイル名
-		bool	bAddType;		//!< out タイプを追加する
+		std::wstring	sImportFile;	//!< in インポートファイル名
+		std::wstring	sTypeNameTo;	//!< in タイプ名（インポート先）
+		std::wstring	sTypeNameFile;	//!< in タイプ名（ファイルから）
+		int 			nColorType;		//!< out 文書種類(カラーコピー用)
+		std::wstring	sColorFile;		//!< out 色設定ファイル名
+		bool			bAddType;		//!< out タイプを追加する
 	};
 
 public:
