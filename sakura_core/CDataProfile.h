@@ -222,7 +222,8 @@ public:
 	) const
 	{
 		if (std::wstring strEntryValue; GetProfileData(sectionName, entryKey, strEntryValue) && strEntryValue.length() < std::size(szEntryValue)) {
-			return (szEntryValue = strEntryValue, true);
+			szEntryValue = strEntryValue;
+			return true;
 		}
 		return false;
 	}
@@ -271,7 +272,8 @@ public:
 		if( IsReadingMode() ){
 			return GetProfileData(sectionName, entryKey, tEntryValue);
 		}else{
-			return (SetProfileData(sectionName, entryKey, tEntryValue), true);
+			SetProfileData(sectionName, entryKey, tEntryValue);
+			return true;
 		}
 	}
 
