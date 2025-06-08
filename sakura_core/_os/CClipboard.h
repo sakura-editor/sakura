@@ -33,8 +33,15 @@ struct CNativeWBuffer : public IWBuffer {
 struct StdWStringBuffer : public IWBuffer {
 	StdWStringBuffer(std::wstring* wstr) : wstr(wstr) {}
 	void Clear() override { wstr->clear(); }
-	void Reserve(size_t nDataLen) override { wstr->reserve(nDataLen); }
-	size_t Capacity() const override { return (size_t)wstr->capacity(); }
+	void Reserve(size_t nDataLen) override {
+		try {
+			wstr->reserve(nDataLen);
+		}
+		catch (std::bad_alloc& exp) {
+			;
+		}
+	}
+	size_t Capacity() const override { return wstr->capacity(); }
 	void Append(const wchar_t* pszData, size_t nDataLen) override { wstr->append(pszData, nDataLen); }
 	std::wstring* wstr;
 };
