@@ -681,16 +681,16 @@ void CViewCommander::Sub_BoxSelectLock( int flags )
 	}
 }
 
-CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText)
+ptrdiff_t CViewCommander::ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen, wchar_t* pszConvertedText)
 {
 	// original by 2009.02.28 salarm
-	CLogicInt nConvertedTextLen;
+	ptrdiff_t nConvertedTextLen;
 	CEol eol = GetDocument()->m_cDocEditor.GetNewLineCode();
 
 	nConvertedTextLen = 0;
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	if( pszConvertedText == NULL ){
-		for( int i = 0; i < nTextLen; i++ ){
+		for( ptrdiff_t i = 0; i < nTextLen; i++ ){
 			if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 				if( pszText[i] == WCODE::CR ){
 					if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
@@ -703,7 +703,7 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 			}
 		}
 	}else{
-		for( int i = 0; i < nTextLen; i++ ){
+		for( ptrdiff_t i = 0; i < nTextLen; i++ ){
 			if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 				if( pszText[i] == WCODE::CR ){
 					if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
