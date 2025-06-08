@@ -10,11 +10,9 @@
     <Filter Include="Other Files">
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
-    <ClCompile Include="coverage.cpp">
-      <Filter>Other Files</Filter>
-    </ClCompile>
+    <Filter Include="Pre-copiled Header">
+      <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt">
@@ -23,8 +21,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
-      <Filter>Other Files</Filter>
+      <Filter>Pre-copiled Header</Filter>
     </ClCompile>
+    <ClCompile Include="coverage.cpp" />
     <ClCompile Include="test-cmemory.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -178,24 +177,11 @@
     <ClCompile Include="test-codechecker.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
-    <ClCompile Include="coverage.cpp" />
-    <ClCompile Include="test-cimpexpmanager.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ccontrolprocess.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ceditorprocess.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-ceditdoc.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test-cautosaveagent.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Pre-copiled Header</Filter>
+    </ClInclude>
     <ClInclude Include="StartEditorProcessForTest.h">
       <Filter>Other Files</Filter>
     </ClInclude>
@@ -205,23 +191,8 @@
     <ClInclude Include="TExtModule.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMockProcess.hpp">
-      <Filter>Other Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CControlProcessInitTest.hpp">
-      <Filter>Other Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CEditorProcessInitTest.hpp">
-      <Filter>Other Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TMockMainWindow.hpp">
-      <Filter>Other Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Other Files</Filter>
-    </ClInclude>
     <ClInclude Include="tests1_rc.h">
       <Filter>Other Files</Filter>
     </ClInclude>

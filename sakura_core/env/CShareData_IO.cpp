@@ -4,25 +4,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
@@ -116,7 +98,6 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	if( bRead ){
 		if( !cProfile.ReadProfile( szIniFileName ) ){
 			/* 設定ファイルが存在しない */
-#if 0 //GitHubActionsで機能テストするのに邪魔なので無効化する
 			LANGID langId = GetUserDefaultUILanguage();
 			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
 			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
@@ -129,7 +110,6 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 				pcShare->ConvertLangValues( values, false );
 				pcShare->RefreshString();
 			}
-#endif
 			return false;
 		}
 
@@ -670,10 +650,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bEnableUnmodifiedOverwrite")	, common.m_sFile.m_bEnableUnmodifiedOverwrite );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSelectClickedURL")			, common.m_sEdit.m_bSelectClickedURL );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepExitConfirm")			, common.m_sSearch.m_bGrepExitConfirm );/* Grepモードで保存確認するか */
-//	cProfile.IOProfileData( pszSecName, LTEXT("bRulerDisp")					, common.m_bRulerDisp );/* ルーラー表示 */
 	cProfile.IOProfileData( pszSecName, LTEXT("nRulerHeight")				, common.m_sWindow.m_nRulerHeight );/* ルーラー高さ */
 	cProfile.IOProfileData( pszSecName, LTEXT("nRulerBottomSpace")			, common.m_sWindow.m_nRulerBottomSpace );/* ルーラーとテキストの隙間 */
-	cProfile.IOProfileData( pszSecName, LTEXT("nRulerType")					, common.m_sWindow.m_nRulerType );/* ルーラーのタイプ */
 	//	Sep. 18, 2002 genta 追加
 	cProfile.IOProfileData( pszSecName, LTEXT("nLineNumberRightSpace")		, common.m_sWindow.m_nLineNumRightSpace );/* 行番号の右側の隙間 */
 	cProfile.IOProfileData( pszSecName, LTEXT("nVertLineOffset")			, common.m_sWindow.m_nVertLineOffset ); // 2005.11.10 Moca
@@ -704,7 +682,6 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_RETURN")			, common.m_sHelper.m_bHokanKey_RETURN );/* VK_RETURN 補完決定キーが有効/無効 */
 	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_TAB")				, common.m_sHelper.m_bHokanKey_TAB );/* VK_TAB    補完決定キーが有効/無効 */
 	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_RIGHT")			, common.m_sHelper.m_bHokanKey_RIGHT );/* VK_RIGHT  補完決定キーが有効/無効 */
-	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_SPACE")			, common.m_sHelper.m_bHokanKey_SPACE );/* VK_SPACE  補完決定キーが有効/無効 */
 	
 	cProfile.IOProfileData( pszSecName, LTEXT("nDateFormatType")			, common.m_sFormat.m_nDateFormatType );/* 日付書式のタイプ */
 	cProfile.IOProfileData(pszSecName, L"szDateFormat", StringBufferW(common.m_sFormat.m_szDateFormat));//日付書式
@@ -859,7 +836,7 @@ static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 	  && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1]))) {
 		n = (EFunctionCode)_wtol(pszFuncName);
 	}else {
-		n = CSMacroMgr::GetFuncInfoByName(0, pszFuncName, NULL);
+		n = CSMacroMgr::GetFuncInfoByName(nullptr, pszFuncName, nullptr);
 	}
 	if (n == F_INVALID) {
 		n = F_DEFAULT;
@@ -1188,7 +1165,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 						// 2010.06.30 Moca 日本語名を取得しないように
 						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-							0,
+							nullptr,
 							keydata.m_nFuncCodeArr[j],
 							szFuncName,
 							NULL
@@ -1497,7 +1474,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	int		j;
 	WCHAR	szKeyName[64];
 	WCHAR	szKeyData[MAX_REGEX_KEYWORDLEN + 20];
-	assert( 100 < MAX_REGEX_KEYWORDLEN + 20 );
+	static_assert( 100 < MAX_REGEX_KEYWORDLEN + 20 );
 
 	// 2005.04.07 D.S.Koba
 	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK

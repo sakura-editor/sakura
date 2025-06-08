@@ -19,6 +19,10 @@
 */
 
 #include "StdAfx.h"
+#include <array>
+#include <wrl.h>
+#include <shlwapi.h>
+#include <shobjidl.h>
 #include "charset/CCodePage.h"
 #include "dlg/CDlgOpenFile.h"
 #include "env/CShareData.h"
@@ -32,14 +36,11 @@
 #include "env/DLLSHAREDATA.h"
 #include "String_define.h"
 
-#include "env/SShareDataClientWithCache.hpp"
-
 struct CDlgOpenFile_CommonItemDialog final
 	:
 	public IDlgOpenFile,
 	private IFileDialogEvents,
 	private IFileDialogControlEvents
-	, private SShareDataClientWithCache
 {
 	CDlgOpenFile_CommonItemDialog();
 
@@ -76,6 +77,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 
+	DLLSHAREDATA*	m_pShareData;
+
 	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
@@ -109,7 +112,7 @@ struct CDlgOpenFile_CommonItemDialog final
 		static const QITAB qit[] = {
 			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogEvents),
 			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogControlEvents),
-			{ 0 },
+			{ },
 		};
 		return QISearch(this, qit, iid, ppvObject);
 	}
@@ -400,6 +403,9 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 
 	WCHAR	szFile[_MAX_PATH + 1];
 	WCHAR	szDrive[_MAX_DRIVE];

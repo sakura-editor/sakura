@@ -24,13 +24,27 @@
 */
 #include "pch.h"
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+#include <Shlwapi.h>
+
 #include "util/StaticType.h"
+
+#include "_main/CNormalProcess.h"
 
 /*!
 	@brief StaticVectorのテスト
  */
 TEST(StaticVector, push_back)
 {
+	// メモリ確保失敗時に表示するメッセージボックスで、
+	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
+	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
+
 	// サイズ1の配列を用意する
 	auto vec = StaticVector<long long, 1>();
 	const auto& constVec = vec;

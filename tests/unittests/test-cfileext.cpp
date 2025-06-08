@@ -24,6 +24,11 @@
 */
 #include "pch.h"
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <Windows.h>
 #include "CFileExt.h"
 
 

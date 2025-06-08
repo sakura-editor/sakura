@@ -12,7 +12,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CSelectLang.h"
 
 #include "_main/CProcess.h"
@@ -21,7 +21,9 @@
 #include "debug/Debug2.h"
 #include "String_define.h"
 
-CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = NULL;	// メッセージリソース用構造体
+#include <new>
+
+CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = nullptr;	// メッセージリソース用構造体
 CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 
 /*!
@@ -33,6 +35,8 @@ CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 */
 CSelectLang::~CSelectLang( void )
 {
+	m_psLangInfo = nullptr;
+
 	for (auto it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
 		if( (*it)->hInstance ){
 			FreeLibrary( (*it)->hInstance );
@@ -74,7 +78,7 @@ LPCWSTR CSelectLang::getDefaultLangString( void )
 // 言語IDを返す
 WORD CSelectLang::getDefaultLangId(void)
 {
-	if (m_psLangInfo == NULL){
+	if (m_psLangInfo == nullptr){
 		return ::GetUserDefaultLangID();
 	}
 	return m_psLangInfo->wLangId;
@@ -119,11 +123,11 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		m_psLangInfoList.push_back( psLangInfo );
 	}
 
-	if( m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
+	if( m_psLangInfo != nullptr && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
 		// 読み込み済みのDLLを解放する
 		::FreeLibrary( m_psLangInfo->hInstance );
 		m_psLangInfo->hInstance = NULL;
-		m_psLangInfo = NULL;
+		m_psLangInfo = nullptr;
 	}
 
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
@@ -281,7 +285,7 @@ LPCWSTR CLoadString::LoadString( UINT uid )
 
 	@param[in] uid  リソースID
 
-	@retval 読み込んだ文字数（TCHAR単位）
+	@retval 読み込んだ文字数（WCHAR単位）
 
 	@note メッセージリソースより文字列を読み込む。メッセージリソースDLLに指定の
 	@note リソースが存在しない、またはメッセージリソースDLL自体が読み込まれて
@@ -325,11 +329,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 				m_pszString[0] = L'\0';
 				break;
 			}
-#ifdef UNICODE
 		}else if( nRet >= m_nBufferSize - 1 ){
-#else
-		}else if( nRet >= m_nBufferSize - 2 ){		// ANSI版は1小さい長さで再読み込みを判定する
-#endif
 			// 読みきれなかった場合、バッファを拡張して読み直す
 			int nTemp = m_nBufferSize + LOADSTR_ADD_SIZE;		// 拡張したサイズ
 			LPWSTR pTemp;
@@ -364,12 +364,11 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 	return nRet;
 }
 
-void CSelectLang::ChangeLang( WCHAR* pszDllName )
+void CSelectLang::ChangeLang( const WCHAR* pszDllName )
 {
 	/* 言語を選択する */
-	UINT unIndex;
-	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
-		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
+	for ( UINT unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
+		const CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
 		if ( wcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
 			CSelectLang::ChangeLang( unIndex );
 			break;
@@ -403,6 +402,12 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 
 	// ロケールを設定
 	::SetThreadUILanguage( m_psLangInfo->wLangId );
+
+	// アプリ名をリソースから読み込む
+	if( auto pcProcess = CProcess::getInstance() )
+	{
+		pcProcess->UpdateAppName(LS(STR_GSTR_APPNAME));
+	}
 
 	return m_psLangInfo->hInstance;
 }

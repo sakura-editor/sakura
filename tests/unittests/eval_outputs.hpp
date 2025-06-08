@@ -21,7 +21,9 @@
 
 		3. This notice may not be removed or altered from any source
 		   distribution.
- */
+*/
+#include "pch.h"
+
 #include "util/string_ex.h"
 
 // 標準エラー出力に吐き出されたメッセージを評価します

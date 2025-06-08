@@ -3,25 +3,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_
 #define SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_
@@ -30,7 +12,7 @@
 #include "CProfile.h"
 
 #include "basis/SakuraBasis.h"
-#include "debug/Debug2.h"
+#include "util/StaticType.h"
 
 /*!
  * バッファ参照型
@@ -225,7 +207,8 @@ namespace profile_data {
 	[[nodiscard]] inline std::wstring ToString<KEYCODE>(KEYCODE value)
 	{
 		// WCHAR型を介して文字列化する
-		const WCHAR ch = value < 0 || value >= 0x80 ? L'\0' : value;
+		static_assert(std::numeric_limits<KEYCODE>::max() < 0x80);
+		const WCHAR ch = (value < 0) ? L'\0' : static_cast<std::make_unsigned_t<KEYCODE>>(value);
 		return ToString(ch);
 	}
 
@@ -327,7 +310,7 @@ public:
 	bool IOProfileData(
 		std::wstring_view		sectionName,	//!< [in] セクション名
 		std::wstring_view		entryKey,		//!< [in] エントリ名
-		StaticString<WCHAR, N>&	szEntryValue	//!< [in,out] エントリ値
+		StaticString<N>&		szEntryValue	//!< [in,out] エントリ値
 	)
 	{
 		// バッファ参照型に変換して入出力する

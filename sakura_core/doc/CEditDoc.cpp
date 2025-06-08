@@ -20,40 +20,28 @@
 	Copyright (C) 2013, Uchi
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
+	SPDX-License-Identifier: Zlib
+*/
 
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
- */
 #include "StdAfx.h"
+#include <stdlib.h>
+#include <string.h>	// Apr. 03, 2003 genta
+#include <memory>
+#include <OleCtl.h>
+#include <wincodec.h>
+#pragma comment(lib, "windowscodecs.lib")
+#include <wrl.h>
 #include "doc/CEditDoc.h"
-
-#include "view/colors/CColorStrategy.h"
-#include "view/figures/CFigureManager.h"
-
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
+#include "docplus/CModifyManager.h"
 #include "_main/global.h"
 #include "_main/CAppMode.h"
 #include "_main/CControlTray.h"
 #include "_main/CNormalProcess.h"
 #include "window/CEditWnd.h"
 #include "_os/CClipboard.h"
+#include "CCodeChecker.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
 #include "print/CPrintPreview.h"
@@ -62,6 +50,8 @@
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
 #include "env/CSakuraEnvironment.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "func/Funccode.h"
 #include "outline/CFuncInfoArr.h" /// 2002/2/3 aroka
 #include "macro/CSMacroMgr.h"
@@ -74,8 +64,6 @@
 #include "sakura_rc.h"
 #include "config/app_constants.h"
 #include "String_define.h"
-
-#pragma comment(lib, "windowscodecs.lib")
 
 #define IDT_ROLLMOUSE	1
 
@@ -159,16 +147,12 @@ static const EFunctionCode EIsModificationForbidden[] = {
 	@date 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
-CEditDoc::CEditDoc()
+CEditDoc::CEditDoc(CEditApp* pcApp)
 : m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-	, m_cBackupAgent(this)
-	, m_cAutoSaveAgent(this)
-	, m_cAutoReloadAgent(this)
 , m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-	, m_cDocLocker(this)
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
 {
@@ -192,10 +176,10 @@ CEditDoc::CEditDoc()
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
 
 	//$$ CModifyManager インスタンスを生成
-	m_cDocLineMgr.m_ModifyManager = std::make_unique<CModifyManager>(this);
+	CModifyManager::getInstance();
 
 	//$$ CCodeChecker インスタンスを生成
-	m_CodeChecker = std::make_unique<CCodeChecker>(this);
+	CCodeChecker::getInstance();
 
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
@@ -277,7 +261,7 @@ void CEditDoc::Clear()
 void CEditDoc::InitDoc()
 {
 	CAppMode::getInstance()->SetViewMode(false);	// ビューモード $$ 今後OnClearDocを用意したい
-	CAppMode::getInstance()->SetGrepKey(L""sv);
+	CAppMode::getInstance()->m_szGrepKey[0] = L'\0';	//$$
 
 	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = false;	/* Grepモード */	//$$同上
 	m_cAutoReloadAgent.m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法 $$
@@ -360,7 +344,7 @@ void CEditDoc::SetBackgroundImage()
 	UINT width, height;
 	hr = pConverter->GetSize(&width, &height);
 	if( FAILED(hr) ) return;
-	BITMAPINFO bminfo = {0};
+	BITMAPINFO bminfo = {};
 	BITMAPINFOHEADER& bmih = bminfo.bmiHeader;
 	bmih.biSize	= sizeof(BITMAPINFOHEADER);
 	bmih.biWidth = (LONG)width;
@@ -510,7 +494,7 @@ void CEditDoc::GetEditInfo(
 
 	//GREPモード
 	pfi->m_bIsGrep = CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode;
-	wcsncpy_s( pfi->m_szGrepKey, CAppMode::getInstance()->GetGrepKey(), _TRUNCATE );
+	wcscpy( pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey );
 
 	//デバッグモニタ (アウトプットウインドウ) モード
 	pfi->m_bIsDebug = CAppMode::getInstance()->IsDebugMode();
@@ -661,7 +645,7 @@ void CEditDoc::OnChangeSetting(
 	int			i;
 	HWND		hwndProgress = NULL;
 
-	const auto  pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
@@ -815,7 +799,9 @@ void CEditDoc::OnChangeSetting(
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
-		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+		// レイアウト情報再生成時(bDoLayout=true)はCLayoutMgr::SetLayoutInfo->
+		// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+		m_cLayoutMgr.CalculateTextWidth(!bDoLayout);		// テキスト最大幅を算出する
 	else
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
@@ -882,7 +868,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	WCHAR szGrepTitle[90];
 	LPCWSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : NULL;
 	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
-		LPCWSTR		pszGrepKey = CAppMode::getInstance()->GetGrepKey();
+		LPCWSTR		pszGrepKey = CAppMode::getInstance()->m_szGrepKey;
 		int			nLen = (int)wcslen( pszGrepKey );
 		CNativeW	cmemDes;
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );

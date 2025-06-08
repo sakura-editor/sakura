@@ -1,6 +1,10 @@
-#pragma once
+/*! @file */
+/*
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
-class CEditDoc;
+	SPDX-License-Identifier: Zlib
+*/
+#pragma once
 
 struct IndentationStyle
 {
@@ -14,3 +18,4 @@ struct IndentationStyle
 };
 
 void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style);
+

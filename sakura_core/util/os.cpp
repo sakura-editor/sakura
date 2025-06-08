@@ -2,31 +2,14 @@
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "os.h"
 #include "util/module.h"
-#include "extmodule/CUxTheme.h"
 #include "basis/CMyString.h"
+
+#pragma comment(lib, "UxTheme.lib")
 
 /*!	Comctl32.dll のバージョン番号を取得
 
@@ -55,7 +38,7 @@ BOOL IsVisualStyle()
 {
 	// ロードした Comctl32.dll が Ver 6 以上で画面設定がビジュアルスタイル指定になっている場合だけ
 	// ビジュアルスタイル表示になる（マニフェストで指定しないと Comctl32.dll は 6 未満になる）
-	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && CUxTheme::getInstance()->IsThemeActive() );
+	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && ::IsThemeActive() );
 }
 
 /*!	指定ウィンドウでビジュアルスタイルを使わないようにする
@@ -67,7 +50,7 @@ BOOL IsVisualStyle()
 */
 void PreventVisualStyle( HWND hWnd )
 {
-	CUxTheme::getInstance()->SetWindowTheme( hWnd, L"", L"" );
+	::SetWindowTheme( hWnd, L"", L"" );
 	return;
 }
 
@@ -289,101 +272,6 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	}
 	return hDest;
 }
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       システム資源                          //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-/* システムリソースを調べる
-	Win16 の時は、GetFreeSystemResources という関数がありました。しかし、Win32 ではありません。
-	サンクを作るだの DLL を作るだのは難しすぎます。簡単な方法を説明します。
-	お使いの Windows95 の [アクセサリ]-[システムツール] にリソースメータがあるのなら、
-	c:\windows\system\rsrc32.dll があるはずです。これは、リソースメータという Win32 アプリが、
-	Win16 の GetFreeSystemResources 関数を呼ぶ為の DLL です。これを使いましょう。
-*/
-BOOL GetSystemResources(
-	int*	pnSystemResources,
-	int*	pnUserResources,
-	int*	pnGDIResources
-)
-{
-	#define GFSR_SYSTEMRESOURCES	0x0000
-	#define GFSR_GDIRESOURCES		0x0001
-	#define GFSR_USERRESOURCES		0x0002
-	HINSTANCE	hlib;
-	int (CALLBACK *GetFreeSystemResources)( int );
-
-	hlib = ::LoadLibraryExedir( L"RSRC32.dll" );
-	if( (INT_PTR)hlib > 32 ){
-		GetFreeSystemResources = (int (CALLBACK *)( int ))GetProcAddress(
-			hlib,
-			"_MyGetFreeSystemResources32@4"
-		);
-		if( GetFreeSystemResources != NULL ){
-			*pnSystemResources = GetFreeSystemResources( GFSR_SYSTEMRESOURCES );
-			*pnUserResources = GetFreeSystemResources( GFSR_USERRESOURCES );
-			*pnGDIResources = GetFreeSystemResources( GFSR_GDIRESOURCES );
-			::FreeLibrary( hlib );
-			return TRUE;
-		}else{
-			::FreeLibrary( hlib );
-			return FALSE;
-		}
-	}else{
-		return FALSE;
-	}
-}
-
-#if (WINVER < _WIN32_WINNT_WIN2K)
-// NTではリソースチェックを行わない
-/* システムリソースのチェック */
-BOOL CheckSystemResources( const WCHAR* pszAppName )
-{
-	int		nSystemResources;
-	int		nUserResources;
-	int		nGDIResources;
-	const WCHAR*	pszResourceName;
-	/* システムリソースの取得 */
-	if( GetSystemResources( &nSystemResources, &nUserResources,	&nGDIResources ) ){
-//		MYTRACE( L"nSystemResources=%d\n", nSystemResources );
-//		MYTRACE( L"nUserResources=%d\n", nUserResources );
-//		MYTRACE( L"nGDIResources=%d\n", nGDIResources );
-		pszResourceName = NULL;
-		if( nSystemResources <= 5 ){
-			pszResourceName = L"システム ";
-		}else
-		if( nUserResources <= 5 ){
-			pszResourceName = L"ユーザー ";
-		}else
-		if( nGDIResources <= 5 ){
-			pszResourceName = L"GDI ";
-		}
-		if( NULL != pszResourceName ){
-			ErrorBeep();
-			ErrorBeep();
-			::MYMESSAGEBOX( NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
-				L"%sリソースが極端に不足しています。\n"
-				L"このまま%sを起動すると、正常に動作しない可能性があります。\n"
-				L"新しい%sの起動を中断します。\n"
-				L"\n"
-				L"システム リソース\t残り  %d%%\n"
-				L"User リソース\t残り  %d%%\n"
-				L"GDI リソース\t残り  %d%%\n\n",
-				pszResourceName,
-				pszAppName,
-				pszAppName,
-				nSystemResources,
-				nUserResources,
-				nGDIResources
-			);
-//			) ){
-				return FALSE;
-//			}
-		}
-	}
-	return TRUE;
-}
-#endif	// (WINVER < _WIN32_WINNT_WIN2K)
 
 /*
 	https://docs.microsoft.com/en-us/windows/desktop/api/wow64apiset/nf-wow64apiset-iswow64process

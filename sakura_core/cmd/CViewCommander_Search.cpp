@@ -30,6 +30,7 @@
 #include "CSearchAgent.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
+#include <limits.h>
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
@@ -851,7 +852,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	CLogicRange cSelectLogic;	// 置換文字列GetSelect()のLogic単位版
 	/* 次を検索 */
-	Command_SEARCH_NEXT( true, bDisplayUpdate, true, 0, NULL, bFastMode ? &cSelectLogic : NULL );
+	Command_SEARCH_NEXT( true, bDisplayUpdate, true, nullptr, nullptr, bFastMode ? &cSelectLogic : nullptr );
 	// To Here 2001.12.03 hor
 
 	//<< 2002/03/26 Azumaiya
@@ -1118,7 +1119,7 @@ void CViewCommander::Command_REPLACE_ALL()
 						ptNewFrom.y + CLayoutInt(firstLeft < sRangeA.GetFrom().x ? 0 : 1)
 					));
 					// 2004.05.30 Moca 現在の検索文字列を使って検索する
-					Command_SEARCH_NEXT( false, bDisplayUpdate, true, 0, NULL );
+					Command_SEARCH_NEXT( false, bDisplayUpdate, true, nullptr, nullptr );
 					continue;
 				}
 			}
@@ -1430,7 +1431,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 		/* 次を検索 */
 		// 2004.05.30 Moca 現在の検索文字列を使って検索する
-		Command_SEARCH_NEXT( false, bDisplayUpdate, true, 0, NULL, bFastMode ? &cSelectLogic : NULL );
+		Command_SEARCH_NEXT( false, bDisplayUpdate, true, nullptr, nullptr, bFastMode ? &cSelectLogic : nullptr );
 	}
 
 	if( bFastMode ){

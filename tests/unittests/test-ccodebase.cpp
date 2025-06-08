@@ -21,9 +21,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "pch.h"
 
+#include "pch.h"
 #include "charset/CCodeFactory.h"
+
+#include <cstdlib>
+#include <ostream>
 
 #include "env/CommonSetting.h"
 

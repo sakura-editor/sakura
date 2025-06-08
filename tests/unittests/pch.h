@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2024, Sakura Editor Organization
+	Copyright (C) 2025, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +22,6 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
  */
-#include "../../sakura_core/StdAfx.h"
+#include "StdAfx.h"
 
 #include <gmock/gmock.h>

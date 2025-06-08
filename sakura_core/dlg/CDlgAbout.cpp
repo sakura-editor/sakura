@@ -20,6 +20,7 @@
 */
 
 #include "StdAfx.h"
+#include <shellapi.h>
 #include "dlg/CDlgAbout.h"
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
@@ -50,9 +51,7 @@ const DWORD p_helpids[] = {	//12900
 //	From Here Feb. 7, 2002 genta
 // 2006.01.17 Moca COMPILER_VERを追加
 // 2010.04.15 Moca icc/dmcを追加しCPUを分離
-#if defined(_M_IA64)
-#  define TARGET_M_SUFFIX "_I64"
-#elif defined(_M_AMD64)
+#if defined(_M_AMD64)
 #  define TARGET_M_SUFFIX "_A64"
 #else
 #  define TARGET_M_SUFFIX ""
@@ -100,18 +99,6 @@ const DWORD p_helpids[] = {	//12900
 #endif
 
 #define TSTR_TARGET_MODE _T(TARGET_STRING_MODEL) _T(TARGET_DEBUG_MODE)
-
-#ifdef _WIN32_WINDOWS
-	#define MY_WIN32_WINDOWS _WIN32_WINDOWS
-#else
-	#define MY_WIN32_WINDOWS 0
-#endif
-
-#ifdef _WIN32_WINNT
-	#define MY_WIN32_WINNT _WIN32_WINNT
-#else
-	#define MY_WIN32_WINNT 0
-#endif
 
 #if defined(CI_BUILD_URL)
 #pragma message("CI_BUILD_URL: " CI_BUILD_URL)
@@ -174,8 +161,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//サクラエディタ開発版(64bitデバッグ) Ver. 2.4.1.1234 GHA (xxxxxxxx)
 	//(GitURL https://github.com/sakura/sakura-editor.git)
 	//
-	//      Share Ver: 96
-	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
+	//      Compile Info: V 1400  WR WIN600/I601/N600
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeW cmemMsg;
@@ -206,8 +192,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// コンパイル情報
 	cmemMsg.AppendStringF(
-		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
-		COMPILER_VER, WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
+		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/N%03x\r\n",
+		COMPILER_VER, WINVER, _WIN32_IE, _WIN32_WINNT
 	);
 
 	// 更新日情報
@@ -312,28 +298,28 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 //	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{
-			std::wstring url;
-			ApiWrap::DlgItem_GetText(GetHwnd(), wID, url);
-			OpenWithBrowser(GetHwnd(), url);
+			WCHAR buf[512];
+			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
+			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			OpenWithBrowser(GetHwnd(), _T(CI_BUILD_URL));
+			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			OpenWithBrowser(GetHwnd(), _T(GIT_REMOTE_ORIGIN_URL));
+			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		OpenWithBrowser(GetHwnd(), _T(GITHUB_COMMIT_URL));
+		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_COMMIT_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		OpenWithBrowser(GetHwnd(), _T(GITHUB_PR_HEAD_URL));
+		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_PR_HEAD_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	}

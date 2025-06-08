@@ -26,7 +26,7 @@
 
 #include "StdAfx.h"
 #include "env/CShareData.h"
-
+#include "env/DLLSHAREDATA.h"
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
@@ -55,19 +55,13 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
-std::wstring GetSharaDataName(std::optional<LPCWSTR> profileName)
+//	CShareData_new2.cppと統合
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
+CShareData::CShareData()
 {
-	std::wstring strShareDataName = GSTR_SHAREDATA;
-	if (profileName.has_value() && *profileName.value()) {
-		strShareDataName += profileName.value();
-	}
-	return strShareDataName;
-}
-
-/*static*/ CShareData* CShareData::getInstance()
-{
-	const auto process = CProcess::getInstance();
-	return &process->GetCShareData();
+	m_hFileMap   = NULL;
+	m_pShareData = NULL;
+	m_pvTypeSettings = NULL;
 }
 
 /*!
@@ -76,6 +70,15 @@ std::wstring GetSharaDataName(std::optional<LPCWSTR> profileName)
 */
 CShareData::~CShareData()
 {
+	if( m_pShareData ){
+		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
+		SetDllShareData( NULL );
+		::UnmapViewOfFile( m_pShareData );
+		m_pShareData = NULL;
+	}
+	if( m_hFileMap ){
+		CloseHandle( m_hFileMap );
+	}
 	if( m_pvTypeSettings ){
 		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
 			delete (*m_pvTypeSettings)[i];
@@ -87,7 +90,7 @@ CShareData::~CShareData()
 }
 
 static CMutex g_cMutexShareWork( FALSE, GSTR_MUTEX_SAKURA_SHAREWORK );
-
+ 
 CMutex& CShareData::GetMutexShareWork(){
 	return g_cMutexShareWork;
 }
@@ -112,20 +115,41 @@ bool CShareData::InitShareData()
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
 	/* ファイルマッピングオブジェクト */
-	const bool isCreated = CreateMapping(
-		INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
-		NULL,
-		PAGE_READWRITE | SEC_COMMIT,
-		0,
-		sizeof(DLLSHAREDATA),
-		GetSharaDataName(CProcess::getInstance()->GetCCommandLine().GetProfileOpt())
-	);
-
-	m_pShareData = m_pData.get();
-
-	if (isCreated)
 	{
+		const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+		std::wstring strShareDataName = GSTR_SHAREDATA;
+		strShareDataName += pszProfileName;
+		m_hFileMap = ::CreateFileMapping(
+			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
+			NULL,
+			PAGE_READWRITE | SEC_COMMIT,
+			0,
+			sizeof( DLLSHAREDATA ),
+			strShareDataName.c_str()
+		);
+	}
+	if( NULL == m_hFileMap ){
+		::MessageBox(
+			NULL,
+			L"CreateFileMapping()に失敗しました",
+			L"予期せぬエラー",
+			MB_OK | MB_APPLMODAL | MB_ICONSTOP
+		);
+		return false;
+	}
+
+	if( GetLastError() != ERROR_ALREADY_EXISTS ){
+		/* オブジェクトが存在していなかった場合 */
+		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
+		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
+			m_hFileMap,
+			FILE_MAP_ALL_ACCESS,
+			0,
+			0,
+			0
+		);
 		CreateTypeSettings();
+		SetDllShareData( m_pShareData );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -144,7 +168,6 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sNodes.m_nEditArrNum = 0;
 
 		m_pShareData->m_sHandles.m_hwndTray = NULL;
-		m_pShareData->m_sHandles.m_hAccel = NULL;
 		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 
 		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
@@ -270,7 +293,6 @@ bool CShareData::InitShareData()
 
 			sWindow.m_nRulerHeight = 13;					/* ルーラーの高さ */
 			sWindow.m_nRulerBottomSpace = 0;				/* ルーラーとテキストの隙間 */
-			sWindow.m_nRulerType = 0;					/* ルーラーのタイプ */
 			sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 			sWindow.m_nVertLineOffset = -1;			// 2005.11.10 Moca 指定桁縦線
 			sWindow.m_bUseCompatibleBMP = TRUE;		// 2007.09.09 Moca 画面キャッシュを使う	// 2009.06.09 ryoji FALSE->TRUE
@@ -502,7 +524,6 @@ bool CShareData::InitShareData()
 			sHelper.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
 			sHelper.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
 			sHelper.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
-			sHelper.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
 		}
 
 		// [アウトライン]タブ
@@ -702,27 +723,33 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 		}
-	}
-	else
-	{
+	}else{
+		/* オブジェクトがすでに存在する場合 */
+		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
+		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
+			m_hFileMap,
+			FILE_MAP_ALL_ACCESS,
+			0,
+			0,
+			0
+		);
+		SetDllShareData( m_pShareData );
+
+		SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_SHARE );
+		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
+
 		//	From Here Oct. 27, 2000 genta
 		//	2014.01.08 Moca サイズチェック追加
 		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
-			m_pShareData = nullptr;
-
 			//	ハンドルを解放する
-			m_pData.reset();
-			m_hFileMap.reset();
-
-			throw message_error(L"異なるバージョンのエディタを同時に起動することはできません。");
+			SetDllShareData( NULL );
+			::UnmapViewOfFile( m_pShareData );
+			m_pShareData = NULL;
+			return false;
 		}
 		//	To Here Oct. 27, 2000 genta
-
-		/* オブジェクトがすでに存在する場合 */
-		SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
-		InitCharWidthCache(m_pData->m_Common.m_sView.m_lf);
 	}
 	return true;
 }
@@ -749,8 +776,8 @@ static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, s
 	index++;
 }
 
-#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, true);
-#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, false);
+#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, true)
+#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, false)
 
 /*!
 	国際化対応のための文字列を変更する
@@ -1042,7 +1069,7 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 */
 [[nodiscard]]  bool CShareData::IsPrivateSettings( void ) const noexcept
 {
-	return m_pShareData && m_pShareData->m_szPrivateIniFile != m_pShareData->m_szIniFile;
+	return m_pShareData != nullptr && 0 != ::wcscmp(m_pShareData->m_szPrivateIniFile, m_pShareData->m_szIniFile);
 }
 
 /*

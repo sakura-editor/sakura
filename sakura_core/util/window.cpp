@@ -2,33 +2,18 @@
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include <limits.h>
 #include "window.h"
+#include <sstream>
 #include "apiwrap/StdApi.h"
 #include "config/system_constants.h"
+#include <dwmapi.h>	//DwmGetColorizationColor
 
 int CDPI::nDpiX = 96;
 int CDPI::nDpiY = 96;
@@ -199,7 +184,7 @@ CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
 
 CTextWidthCalc::CTextWidthCalc(HFONT font)
 {
-	hwnd = 0;
+	hwnd = nullptr;
 	HDC hDCTemp = ::GetDC( NULL ); // Desktop
 	hDC = ::CreateCompatibleDC( hDCTemp );
 	::ReleaseDC( NULL, hDCTemp );
@@ -214,7 +199,7 @@ CTextWidthCalc::CTextWidthCalc(HFONT font)
 
 CTextWidthCalc::CTextWidthCalc(HDC hdc)
 {
-	hwnd = 0;
+	hwnd = nullptr;
 	hDC = hdc;
 	assert(hDC);
 	nCx = 0;
@@ -232,8 +217,8 @@ CTextWidthCalc::~CTextWidthCalc()
 		}else{
 			::ReleaseDC(hwnd, hDC);
 		}
-		hwnd = 0;
-		hDC = 0;
+		hwnd = nullptr;
+		hDC = nullptr;
 	}
 }
 

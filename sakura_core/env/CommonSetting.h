@@ -4,25 +4,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_COMMONSETTING_2CBDBC26_EA7F_466E_842F_AFB0D93207D2_H_
 #define SAKURA_COMMONSETTING_2CBDBC26_EA7F_466E_842F_AFB0D93207D2_H_
@@ -134,7 +116,6 @@ struct CommonSetting_Window
 	//ルーラー・行番号
 	int				m_nRulerHeight;				//!< ルーラー高さ
 	int				m_nRulerBottomSpace;		//!< ルーラーとテキストの隙間
-	int				m_nRulerType;				//!< ルーラーのタイプ $$$未使用っぽい
 	int				m_nLineNumRightSpace;		//!< 行番号の右のスペース Sep. 18, 2002 genta
 
 	//分割ウィンドウ
@@ -230,7 +211,6 @@ struct CommonSetting_Edit
 	bool	m_bOverWriteBoxDelete;		//!< 上書きモードでの矩形入力で選択範囲を削除する
 
 	//クリッカブルURL
-	BOOL	m_bJumpSingleClickURL;		//!< URLのシングルクリックでJump $$$未使用
 	BOOL	m_bSelectClickedURL;		//!< URLがクリックされたら選択するか
 
 	EOpenDialogDir	m_eOpenDialogDir;	//!< ファイルダイアログの初期位置
@@ -483,7 +463,6 @@ struct CommonSetting_Helper
 	BOOL		m_bHokanKey_RETURN;				//!< VK_RETURN	補完決定キーが有効/無効
 	BOOL		m_bHokanKey_TAB;				//!< VK_TAB		補完決定キーが有効/無効
 	BOOL		m_bHokanKey_RIGHT;				//!< VK_RIGHT	補完決定キーが有効/無効
-	BOOL		m_bHokanKey_SPACE;				//!< VK_SPACE	補完決定キーが有効/無効 $$$ほぼ未使用
 
 	//外部ヘルプの設定
 	WCHAR		m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
@@ -551,11 +530,11 @@ struct SFileTreeItem{
 public:
 	EFileTreeItemType m_eFileTreeItemType;
 	SFilePath	m_szTargetPath;	//!< フォルダーorファイルパス
-	StaticString<WCHAR,_MAX_PATH> m_szLabelName; //!< ラベル名(""のときはファイル名を使う)
+	StaticString<_MAX_PATH> m_szLabelName; //!< ラベル名(""のときはファイル名を使う)
 	int  m_nDepth;	//!< 階層
 
 	// GrepタイプTreeItem
-	StaticString<WCHAR,_MAX_PATH>	m_szTargetFile;	//!< ファイル一覧
+	StaticString<_MAX_PATH>	m_szTargetFile;	//!< ファイル一覧
 	bool		m_bIgnoreHidden;		//!< 隠しファイルを除く
 	bool		m_bIgnoreReadOnly;		//!< 読み取り専用ファイルを除く
 	bool		m_bIgnoreSystem;		//!< システムファイルを除く

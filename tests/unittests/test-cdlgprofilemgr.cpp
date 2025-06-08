@@ -24,10 +24,30 @@
 */
 #include "pch.h"
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+
 #include "dlg/CDlgProfileMgr.h"
 
-#include "_main/CProcessFactory.h"
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <iterator>
+#include <regex>
+#include <string>
 
+#include "config/maxdata.h"
+#include "basis/primitive.h"
+#include "debug/Debug2.h"
+#include "basis/CMyString.h"
+#include "mem/CNativeW.h"
+#include "env/DLLSHAREDATA.h"
+#include "_main/CCommandLine.h"
+#include "_main/CControlProcess.h"
 #include "CDataProfile.h"
 #include "util/file.h"
 
@@ -75,8 +95,9 @@ protected:
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_001 )
 {
 	// プロファイルマネージャ表示オプションが付いてたらプロファイルは確定しない
-	std::wstring strProfileName;
-	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(strProfileName, false, true));
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine( L"-PROFMGR", false );
+	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
 
 /*!
@@ -85,8 +106,9 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_001 )
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_002 )
 {
 	// プロファイル名が指定されていたらプロファイルは確定する
-	std::wstring strProfileName = L"執筆用";
-	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(strProfileName, true));
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine( L"-PROF=執筆用", false );
+	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
 
 /*!
@@ -95,8 +117,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_002 )
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_003 )
 {
 	// プロファイルマネージャー設定がなかったらプロファイルは確定する
-	std::wstring strProfileName;
-	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(strProfileName));
+	CCommandLine cCommandLine;
+	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
 
 /*!
@@ -117,8 +139,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_004 )
 	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定にデフォルト定義があればプロファイルは確定する
-	std::wstring strProfileName;
-	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(strProfileName));
+	CCommandLine cCommandLine;
+	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
 
 /*!
@@ -139,8 +161,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_005 )
 	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定のデフォルト定義がおかしればプロファイルは確定しない
-	std::wstring strProfileName;
-	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(strProfileName));
+	CCommandLine cCommandLine;
+	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
 
 /*!
@@ -157,8 +179,8 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
 	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定が空定義ならプロファイルは確定しない
-	std::wstring strProfileName;
-	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(strProfileName));
+	CCommandLine cCommandLine;
+	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
 
 /*!
@@ -166,6 +188,14 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
  */
 TEST(file, GetProfileMgrFileName_NoArg1)
 {
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
 	// iniファイルの拡張子を_prof.iniに変えたパスが返る
 	const auto profileMgrIniPath = GetIniFileName().replace_extension().concat(L"_prof.ini");
 	ASSERT_STREQ(profileMgrIniPath.c_str(), GetProfileMgrFileName().c_str());
@@ -176,10 +206,13 @@ TEST(file, GetProfileMgrFileName_NoArg1)
  */
 TEST(file, GetProfileMgrFileName_NoArg2)
 {
-	ASSERT_FALSE(CProcess::getInstance());
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
-	const auto dummy = CProcessFactory().CreateInstance(LR"(-PROF="profile1")");
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	// iniファイルの拡張子を_prof.iniに変えたパスが返る
 	const auto profileMgrIniPath = GetIniFileName().parent_path().parent_path().append(GetIniFileName().replace_extension().concat(L"_prof.ini").filename().c_str());
@@ -191,6 +224,14 @@ TEST(file, GetProfileMgrFileName_NoArg2)
  */
 TEST(file, GetProfileMgrFileName_DefaultProfile1)
 {
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
 	// 設定フォルダーのパスが返る
 	const auto iniDir = GetExeFileName().replace_filename(L"").append("a.txt").remove_filename();
 	ASSERT_STREQ(iniDir.c_str(), GetProfileMgrFileName(L"").c_str());
@@ -201,13 +242,13 @@ TEST(file, GetProfileMgrFileName_DefaultProfile1)
  */
 TEST(file, GetProfileMgrFileName_DefaultProfile2)
 {
-	// テスト用プロファイル名
-	constexpr auto& profileName = L"profile1";
-
-	ASSERT_FALSE(CProcess::getInstance());
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
-	const auto dummy = CProcessFactory().CreateInstance(fmt::format(LR"(-PROF="{}")", profileName));
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	// 設定フォルダーのパスが返る
 	const auto iniDir = GetIniFileName().parent_path().parent_path().append("a.txt").remove_filename();
@@ -219,17 +260,20 @@ TEST(file, GetProfileMgrFileName_DefaultProfile2)
  */
 TEST(file, GetProfileMgrFileName_NamedProfile1)
 {
-	// テスト用プロファイル名
-	constexpr auto& profileName = L"profile1";
-
-	ASSERT_FALSE(CProcess::getInstance());
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
-	const auto dummy = CProcessFactory().CreateInstance(fmt::format(LR"(-PROF="{}")", profileName));
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
+	// テスト用プロファイル名
+	constexpr auto profile = L"profile1";
 
 	// 指定したプロファイルの設定保存先フォルダーのパスが返る
-	const auto profileDir = GetExeFileName().replace_filename(profileName).append("a.txt").remove_filename();
-	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profileName).c_str());
+	const auto profileDir = GetExeFileName().replace_filename(profile).append("a.txt").remove_filename();
+	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profile).c_str());
 }
 
 /*!
@@ -237,15 +281,18 @@ TEST(file, GetProfileMgrFileName_NamedProfile1)
  */
 TEST(file, GetProfileMgrFileName_NamedProfile2)
 {
-	// テスト用プロファイル名
-	constexpr auto& profileName = L"profile1";
-
-	ASSERT_FALSE(CProcess::getInstance());
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
-	const auto dummy = CProcessFactory().CreateInstance(fmt::format(LR"(-PROF="{}")", profileName));
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+
+	// テスト用プロファイル名
+	constexpr auto profile = L"profile1";
 
 	// 指定したプロファイルの設定保存先フォルダーのパスが返る
-	const auto profileDir = GetIniFileName().parent_path().parent_path().append(profileName).append("a.txt").remove_filename();
-	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profileName).c_str());
+	const auto profileDir = GetIniFileName().parent_path().parent_path().append(profile).append("a.txt").remove_filename();
+	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profile).c_str());
 }

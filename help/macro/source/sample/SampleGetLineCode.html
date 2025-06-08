@@ -1,0 +1,45 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<title>S_GetLineCodeの使用例</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_GetLineCodeの使用例</h2>
+
+<pre>
+<span style="color:green;">//sample.js</span>
+<span style="color:blue;">var</span> oWsh = <span style="color:blue;">new</span> ActiveXObject(<span style="color:#800000;">"WScript.Shell"</span>);
+<span style="color:blue;">switch</span> (<span style="color:blue;">GetLineCode</span>) {
+<span style="color:blue;">case</span> <span style="color:red;">0</span>:
+    oWsh.Popup(<span style="color:#800000;">"CRLF"</span>, <span style="color:red;">0</span>, <span style="color:#800000;">"改行コード"</span>, <span style="color:red;">0</span>);
+    <span style="color:blue;">break</span>;
+<span style="color:blue;">case</span> <span style="color:red;">1</span>:
+    oWsh.Popup(<span style="color:#800000;">"CR"</span>, <span style="color:red;">0</span>, <span style="color:#800000;">"改行コード"</span>, <span style="color:red;">0</span>);
+    <span style="color:blue;">break</span>;
+<span style="color:blue;">case</span> <span style="color:red;">2</span>:
+    oWsh.Popup(<span style="color:#800000;">"LF"</span>, <span style="color:red;">0</span>, <span style="color:#800000;">"改行コード"</span>, <span style="color:red;">0</span>);
+    <span style="color:blue;">break</span>;
+<span style="color:blue;">default</span>:
+    oWsh.Popup(<span style="color:#800000;">"不明"</span>, <span style="color:red;">0</span>, <span style="color:#800000;">"改行コード"</span>, <span style="color:red;">0</span>);
+    <span style="color:blue;">break</span>;
+}
+</pre>
+
+<pre>
+<span style="color:green;">//sample.ppa</span>
+<span style="color:blue;">case S_GetLineCode of</span>
+<span style="color:red;">0</span>:
+    <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'CRLF'</span>, <span style="color:#800000;">'現在の改行コード'</span>, <span style="color:red;">0</span>);
+<span style="color:red;">1</span>:
+    <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'CR'</span>, <span style="color:#800000;">'現在の改行コード'</span>, <span style="color:red;">0</span>);
+<span style="color:red;">2</span>:
+    <span style="color:blue;">MessageBox</span>(<span style="color:#800000;">'LF'</span>, <span style="color:#800000;">'現在の改行コード'</span>, <span style="color:red;">0</span>);
+<span style="color:blue;">end</span>
+</pre>
+<hr>
+</body></html>

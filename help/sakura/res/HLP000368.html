@@ -1,0 +1,103 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>ファイルツリー</TITLE>
+<META NAME="MS-HKWD" CONTENT="ファイルツリー">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>ファイルツリー</h2>
+ファイルツリーを表示します。(sakura:2.2.0.0以降)<br>
+デフォルトでは、各ファイルのあるフォルダー以下のファイル一覧が表示されます。<br>
+各ファイルは、ダブルクリックでそのファイルを開くことができます。<br>
+設定は、アウトラインドッキングの「タイプ別継承」「共通継承」に連動しています。<br>
+[設定]ボタンを押すと、設定画面が表示されます。<br>
+<br>
+<hr>
+<strong>ファイルツリー設定</strong><br>
+<img alt="FileTree" src="images/FileTree.png" /><br>
+<div class="li200">
+<strong>設定元表示</strong><br>
+「設定: タイプ別設定」 : 現在の表示はタイプ別設定ごとになっています。<br>
+「設定: 共通設定」 : 現在の表示は全ウィンドウで共通設定になっています。<br>
+「設定: (タイプ別/共通)設定+ファイル」 : デフォルト設定ファイルを読み込んでいます。<br>
+「設定: ＜ファイル名＞」 : 各ディレクトリの_sakurafiletree.iniを読み込んでいます。<br>
+<strong>■各フォルダーの設定を読み込む</strong><br>
+開いているファイルの上位ディレクトリにある_sakurafiletree.iniを読み込むかどうか設定できます。<br>
+この項目はタイプ別・共通設定のみに保存され、iniには保存されません。<br>
+<strong>デフォルト設定ファイル名</strong><br>
+タイプ別・共通設定(sakura.iniに保存)のかわりに、指定のファイル名の設定ファイルを読み込みます。<br>
+パスは、絶対パスかsakura.iniからの相対パスで指定します。<br>
+タイプ別・共通設定では、設定できる項目数が20個までですが、ファイルを利用すると無制限になります。<br>
+この項目はタイプ別・共通設定のみに保存され、iniには保存されません。<br>
+<strong>[読み込み]</strong><br>
+今すぐ、デフォルト設定ファイルを読み込みます。<br>
+_sakurafiletree.iniが読み込まれている場合は無効です。<br>
+<br>
+<strong>種類</strong><br>
+追加するアイテムの種類を指定します。<br>
+・Grep<br>
+<div class="li200">
+指定フォルダー以下のファイル一覧をツリー形式で追加します。
+</div>
+・ファイル<br>
+<div class="li200">
+特定ファイルを1つ追加します。
+</div>
+・フォルダー<br>
+<div class="li200">
+ツリーの仮想サブフォルダーを1つ追加します。
+</div>
+<strong>パス</strong><br>
+アイテムのパスを指定します。Grepの場合はフォルダーのパスです。種類がファイルの場合はファイルのパスです。<br>
+「.」で現在開いているファイルからのカレントディレクトリを指定できます。<br>
+「&lt;iniroot&gt;」で、現在の設定ファイルのフォルダーを指定できます。<br>
+他には、<a href="HLP000272.html">メタ文字列</a>を指定可能です。<br>
+<strong>ラベル</strong><br>
+ツリーに表示する表示名を指定します。<br>
+省略した場合、フルパスが表示されます。<br>
+<strong>ファイル</strong><br>
+Grepタイプのときの、表示に追加するファイル・サブフォルダーを<a href="HLP000067.html">Grep</a>のファイル指定と同じ書式で指定します。<br>
+<strong>非表示属性</strong><br>
+隠しファイル・読み取り専用・システムファイルからチェックした属性を持つファイルをGrep結果から除外します。<br>
+<br>
+<strong>[削除]</strong><br>
+現在選択しているアイテムを削除します。<br>
+<strong>[上⇒]</strong><br>
+現在選択しているアイテムの上側に画面左側で設定したアイテムを追加します。<br>
+<strong>[下⇒]</strong><br>
+現在選択しているアイテムの下側に画面左側で設定したアイテムを追加します。<br>
+<strong>[&gt;&gt;]</strong><br>
+一番下に画面左側で設定したアイテムを追加します。<br>
+<strong>[更新]</strong><br>
+現在選択しているアイテムの内容を画面左側で設定したアイテムで更新します。フォルダーにGrep・ファイルは更新できません。<br>
+<strong>[ファイル挿入]</strong><br>
+複数ファイル一括してダイアログで選択して、現在選択しているアイテムの下側に追加します。<br>
+<strong>[パスの一括置換]</strong><br>
+全アイテムのパスを、指定した内容で置換します。<br>
+ファイル挿入で追加したアイテムはフルパス指定になっています。<br>
+「C:\Users\UserName\Document\SubDir」などを「&lt;iniroot&gt;」などで置き換えることで、ポータブルな利用ができます。<br>
+<strong>[↑][↓][→][←]</strong><br>
+アイテムを移動します。<br>
+<br>
+<strong>[インポート]</strong><br>
+設定をインポートします。<br>
+<strong>[エクスポート]</strong><br>
+設定をエクスポートします。<br>
+エクスポートしたファイルの形式は、_sakurafiletree.iniやデフォルト設定ファイルと同じです。<br>
+<br>
+<strong>[OK]</strong><br>
+変更内容を保存してウィンドウを閉じます。<br>
+保存先は、「設定元表示」に表示されている物に保存します。<br>
+<strong>[キャンセル]</strong><br>
+変更内容を保存せずにウィンドウを閉じます。<br>
+<strong>[ヘルプ]</strong><br>
+このヘルプを表示します。<br>
+</div>
+■<a href="HLP000204.html"><strong>マクロ構文</strong></a><br>
+マクロからは利用できません。
+</BODY></HTML>

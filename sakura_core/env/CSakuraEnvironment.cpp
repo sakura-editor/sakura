@@ -4,36 +4,16 @@
 	Copyright (C) 2012, Uchi
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "env/CSakuraEnvironment.h"
-
-#include "_main/CProcess.h"
-
+#include "CSakuraEnvironment.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFormatManager.h"
 #include "env/CFileNameManager.h"
 #include "_main/CAppMode.h"
+#include "_main/CCommandLine.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "print/CPrintPreview.h"
@@ -458,20 +438,15 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			break;
 		case L'h':	//	Apr. 4, 2003 genta
 			//	Grep Key文字列 MAX 32文字
+			//	中身はSetParentCaption()より移植
 			{
-				StaticString<WCHAR, 32 + 3 + 1> dest;
-				std::wstring_view grepKey = CAppMode::getInstance()->GetGrepKey();
-				const auto copyLen = std::min<size_t>(grepKey.size(), 32);
-				wcsncpy_s(dest.GetBufferPointer(), dest.GetBufferCount(), grepKey.data(), copyLen);
-				if (copyLen < grepKey.size()) {
-					wcscat_s(dest.GetBufferPointer(), dest.GetBufferCount(), L"...");
+				CNativeW	cmemDes;
+				// m_szGrepKey → cmemDes
+				LimitStringLengthW( CAppMode::getInstance()->m_szGrepKey, wcslen( CAppMode::getInstance()->m_szGrepKey ), (q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
+				if( (int)wcslen( CAppMode::getInstance()->m_szGrepKey ) > cmemDes.GetStringLength() ){
+					cmemDes.AppendString(L"...");
 				}
-				auto destLen = dest.Length();
-				if (q_max - q < destLen) {
-					wcscpy_s(&dest[q_max - q - 4], 4, L"...");
-					destLen = int(q_max - q);
-				}
-				q = wcs_pushW( q, q_max - q, dest.c_str(), destLen);
+				q = wcs_pushW( q, q_max - q, cmemDes.GetStringPtr(), cmemDes.GetStringLength());
 				++p;
 			}
 			break;
@@ -702,8 +677,8 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	switch( eLongParam ){
 	case EExpParamName_profile:
 		{
-			const auto profileName = CProcess::getInstance() ? CProcess::getInstance()->GetCCommandLine().GetProfileOpt() : std::nullopt;
-			q = wcs_pushW( q, q_max - q, profileName.value_or(L"") );
+			LPCWSTR pszProf = CCommandLine::getInstance()->GetProfileName();
+			q = wcs_pushW( q, q_max - q, pszProf );
 		}
 		break;
 	default:

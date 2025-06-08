@@ -445,6 +445,8 @@ void CViewCommander::Command_UNDO( void )
 					GetCaret().MoveCursor( ptCaretPos_After, false );
 				}
 				break;
+			default:
+				break;
 			}
 
 			if( bFastMode ){
@@ -452,7 +454,8 @@ void CViewCommander::Command_UNDO( void )
 					GetDocument()->m_cLayoutMgr._DoLayout(false);
 					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
+						// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+						GetDocument()->m_cLayoutMgr.CalculateTextWidth(FALSE);
 					}
 					GetDocument()->m_cLayoutMgr.LogicToLayout(
 						pcOpe->m_ptCaretPos_PHY_Before,
@@ -699,13 +702,16 @@ void CViewCommander::Command_REDO( void )
 				break;
 			case OPE_MOVECARET:
 				break;
+			default:
+				break;
 			}
 			if( bFastMode ){
 				if( i == nOpeBlkNum - 1	){
 					GetDocument()->m_cLayoutMgr._DoLayout(false);
 					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
+						// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+						GetDocument()->m_cLayoutMgr.CalculateTextWidth(FALSE);
 					}
 					GetDocument()->m_cLayoutMgr.LogicToLayout(
 						pcOpe->m_ptCaretPos_PHY_After, &ptCaretPos_After );

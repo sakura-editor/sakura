@@ -6,25 +6,7 @@
 	Copyright (C) 2009, syat
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_COUTLINEIFOBJ_F8D635A3_FB5F_4619_95B8_BE6A557A518C_H_
 #define SAKURA_COUTLINEIFOBJ_F8D635A3_FB5F_4619_95B8_BE6A557A518C_H_
@@ -46,7 +28,6 @@ class COutlineIfObj : public CWSHIfObj {
 		F_OL_ADDFUNCINFO4,						//アウトライン解析に追加する（深さ指定、ファイル名）
 		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST	//↓関数は以下に追加する
 	};
-	typedef std::string string;
 	typedef std::wstring wstring;
 
 	// コンストラクタ

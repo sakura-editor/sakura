@@ -31,6 +31,7 @@
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
 
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(L"::CSplitterWnd")
 , m_nAllSplitRows(1)					/* 分割行数 */
@@ -43,6 +44,9 @@ CSplitterWnd::CSplitterWnd()
 , m_nDragPosY(0)						/* ドラッグ位置Ｙ */
 , m_nActivePane(0)					/* アクティブなペイン 0-3 */
 {
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
+
 	m_hcurOld = NULL;						/* もとのマウスカーソル */
 
 	for( int v=0; v < MAXCOUNTOFVIEW; v++ ){
@@ -331,7 +335,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 //		if( NULL != pcViewArr[2] ) pcViewArr[2]->SplitBoxOnOff( FALSE, FALSE, FALSE );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 //		if( NULL != pcViewArr[3] ) pcViewArr[3]->SplitBoxOnOff( FALSE, FALSE, FALSE );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 
-		OnSize( 0, 0, 0, 0 );
+		OnSize( nullptr, 0, 0, 0 );
 
 		if( nAllSplitRowsOld == 1 && nAllSplitColsOld == 1 ){
 		}else
@@ -403,7 +407,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		if( NULL != pcViewArr[2] ) pcViewArr[2]->SplitBoxOnOff( FALSE, TRUE, bSizeBox );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 //		if( NULL != pcViewArr[3] ) pcViewArr[3]->SplitBoxOnOff( FALSE, FALSE, FALSE );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 
-		OnSize( 0, 0, 0, 0 );
+		OnSize( nullptr, 0, 0, 0 );
 
 		if( nAllSplitRowsOld == 1 && nAllSplitColsOld == 1 ){
 			/* 上下に分割したとき */
@@ -480,7 +484,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 //		if( NULL != pcViewArr[2] ) pcViewArr[2]->SplitBoxOnOff( FALSE, FALSE );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 //		if( NULL != pcViewArr[3] ) pcViewArr[3]->SplitBoxOnOff( FALSE, FALSE );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 
-		OnSize( 0, 0, 0, 0 );
+		OnSize( nullptr, 0, 0, 0 );
 
 		if( nAllSplitRowsOld == 1 && nAllSplitColsOld == 1 ){
 			/* ペインの表示状態を他のビューにコピー */
@@ -532,7 +536,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		if( NULL != pcViewArr[2] ){ pcViewArr[2]->SplitBoxOnOff( FALSE, FALSE, FALSE );}	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		if( NULL != pcViewArr[3] ){ pcViewArr[3]->SplitBoxOnOff( FALSE, FALSE, bSizeBox );}	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 
-		OnSize( 0, 0, 0, 0 );
+		OnSize( nullptr, 0, 0, 0 );
 
 		if( nAllSplitRowsOld == 1 && nAllSplitColsOld == 1 ){
 			/* ペインの表示状態を他のビューにコピー */
@@ -571,7 +575,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		}
 		nActivePane = m_nActivePane;
 	}
-	OnSize( 0, 0, 0, 0 );
+	OnSize( nullptr, 0, 0, 0 );
 
 	/* アクティブになったことをペインに通知 */
 	if( m_ChildWndArr[nActivePane] != NULL ){

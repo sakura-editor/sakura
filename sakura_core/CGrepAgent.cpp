@@ -2,25 +2,7 @@
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "CGrepAgent.h"
@@ -46,6 +28,9 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "debug/CRunningTimer.h"
+#include <iterator>
+#include <deque>
+#include <memory>
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
@@ -193,7 +178,6 @@ public:
 };
 
 CGrepAgent::CGrepAgent()
-	: CDocListenerEx(CEditDoc::getInstance())
 {
 }
 
@@ -216,7 +200,7 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	// 名前を付けて保存から再ロードが除去された分の不足処理を追加（ANSI版との差異）	// 2009.08.12 ryoji
 	m_bGrepMode = false;	// grepウィンドウは通常ウィンドウ化
-	CAppMode::getInstance()->SetGrepKey(L""sv);
+	CAppMode::getInstance()->m_szGrepKey[0] = L'\0';
 }
 
 /*!
@@ -486,7 +470,7 @@ DWORD CGrepAgent::DoGrep(
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
 	//	2011.12.10 Moca 表示の際に...に切り捨てられるので登録するように
-	CAppMode::getInstance()->SetGrepKey(pcmGrepKey->GetStringPtr());
+	wcsncpy_s( CAppMode::getInstance()->m_szGrepKey, _countof(CAppMode::getInstance()->m_szGrepKey), pcmGrepKey->GetStringPtr(), _TRUNCATE );
 	this->m_bGrepMode = true;
 
 	//	2007.07.22 genta
@@ -1734,7 +1718,6 @@ public:
 		:nHitCount(hit)
 		,fileName(name_)
 		,name(name_)
-		,code(code_)
 		,bBom(bBom_)
 		,bOldSave(bOldSave_)
 		,bufferSize(0)
@@ -1833,7 +1816,6 @@ private:
 	int& nHitCount;
 	LPCWSTR fileName;
 	std::wstring name;
-	ECodeType code;
 	bool bBom;
 	bool bOldSave;
 	size_t bufferSize;

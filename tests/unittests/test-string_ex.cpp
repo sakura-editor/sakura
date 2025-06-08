@@ -24,6 +24,16 @@
 */
 #include "pch.h"
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+
+#include <stdexcept>
+
+#include "basis/primitive.h"
 #include "util/string_ex.h"
 
 /*!
@@ -71,7 +81,7 @@ TEST(string_ex, auto_strchrW)
 /*!
 	@brief 旧コード互換用。使わないでください。
 
-	代替関数は snprintf_s か auto_sprintf_s です。
+	代替関数は snprintf_s か auto_snprintf_s です。
 	可能であれば 非Unicodeな文字列 を扱うコードを書かないでください。
  */
 TEST(string_ex, auto_sprintfA)
@@ -84,7 +94,7 @@ TEST(string_ex, auto_sprintfA)
 /*!
 	@brief 旧コード互換用。使わないでください。
 
-	代替関数は strprintf か _swnprintf_s か auto_sprintf_s です。
+	代替関数は strprintf か _swnprintf_s か auto_snprintf_s です。
  */
 TEST(string_ex, auto_sprintfW)
 {

@@ -16,33 +16,15 @@
 	Copyright (C) 2013, Moca, Uchi, aroka, novice, syat, ryoji
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
+#include <limits.h>
 #include "CTabWnd.h"
 #include "window/CEditWnd.h"
 #include "_main/global.h"
 #include "charset/charcode.h"
-#include "extmodule/CUxTheme.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "uiparts/CGraphics.h"
@@ -53,6 +35,7 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
+#include <windowsx.h>
 #include "config/system_constants.h"
 #include "String_define.h"
 
@@ -825,6 +808,9 @@ CTabWnd::CTabWnd()
 ,m_hwndSizeBox(NULL)
 ,m_bSizeBox(false)
 {
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
+
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
@@ -1347,10 +1333,9 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		if( !IsVisualStyle() ) {
 			::MyFillRect( gr, rcItem, COLOR_BTNFACE );
 		}else{
-			CUxTheme& uxTheme = *CUxTheme::getInstance();
 			int iPartId = TABP_TABITEM;
 			int iStateId = TIS_NORMAL;
-			HTHEME hTheme = uxTheme.OpenThemeData( m_hwndTab, L"TAB" );
+			HTHEME hTheme = ::OpenThemeData( m_hwndTab, L"TAB" );
 			if( hTheme ) {
 				if( !bSelected ){
 					::InflateRect( &rcFullItem, DpiScaleX(2), DpiScaleY(2) );
@@ -1393,10 +1378,10 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 					}
 				}
 
-				if( uxTheme.IsThemeBackgroundPartiallyTransparent(hTheme, iPartId, iStateId) ) {
-					uxTheme.DrawThemeParentBackground(m_hwndTab, hdc, &rcFullItem);
+				if( ::IsThemeBackgroundPartiallyTransparent(hTheme, iPartId, iStateId) ) {
+					::DrawThemeParentBackground(m_hwndTab, hdc, &rcFullItem);
 				}
-				uxTheme.DrawThemeBackground(hTheme, hdc, iPartId, iStateId, &rcBk, NULL);
+				::DrawThemeBackground(hTheme, hdc, iPartId, iStateId, &rcBk, NULL);
 			}
 		}
 
@@ -1726,7 +1711,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 
 			// 2005.09.01 ryoji スクロール位置調整
 			// （右端のほうのタブアイテムを削除したとき、スクロール可能なのに右に余白ができることへの対策）
-			hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
+			hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );	// タブ内の Up-Down コントロール
 			if( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 			{
 				nScrollPos = LOWORD( UpDown_GetPos( hwndUpDown ) );
@@ -1752,7 +1737,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 
 				// 自タブアイテムを強制的に可視位置にするために、
 				// 自タブアイテム選択前に一時的に画面左端のタブアイテムを選択する
-				hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
+				hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );	// タブ内の Up-Down コントロール
 				nScrollPos = ( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )? LOWORD( UpDown_GetPos( hwndUpDown ) ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 				TabCtrl_SetCurSel( m_hwndTab, nScrollPos );
 				TabCtrl_SetCurSel( m_hwndTab, nIndex );
@@ -2180,7 +2165,7 @@ void CTabWnd::ForceActiveWindow( HWND hwnd )
 	::AttachThreadInput( nId1, nId2, TRUE );
 
 	::SystemParametersInfo( SPI_GETFOREGROUNDLOCKTIMEOUT, 0, &dwTime, 0 );
-	::SystemParametersInfo( SPI_SETFOREGROUNDLOCKTIMEOUT, 0, (LPVOID)0, 0 );
+	::SystemParametersInfo( SPI_SETFOREGROUNDLOCKTIMEOUT, 0, nullptr, 0 );
 
 	//ウィンドウをフォアグラウンドにする
 	::SetForegroundWindow( hwnd );

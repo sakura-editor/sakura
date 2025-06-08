@@ -21,8 +21,16 @@
 */
 
 #include "StdAfx.h"
-#include "_main/CProcessFactory.h"
-
+#include <Ole2.h>
+#include <locale.h>
+#include "_main/CCommandLine.h"
+#include "CProcessFactory.h"
+#include "CProcess.h"
+#include "util/os.h"
+#include "util/module.h"
+#include "debug/CRunningTimer.h"
+#include "version.h"
+#include "util/std_macro.h"
 #include "env/DLLSHAREDATA.h"
 
 /*!
@@ -36,12 +44,12 @@
 		+----------+---------------------------+---------------------------+
 		|無        |エディタプロセスとなる     |CNormalProcessクラス       |
 		+----------+---------------------------+---------------------------+
- */
+*/
 int WINAPI wWinMain(
-	_In_ HINSTANCE	    hInstance,      //!< handle to current instance
-	_In_opt_ HINSTANCE  hPrevInstance,  //!< handle to previous instance
-	_In_ LPWSTR         lpCmdLine,      //!< pointer to command line
-	_In_ int            nCmdShow        //!< show state of window
+	HINSTANCE	hInstance,		//!< handle to current instance
+	HINSTANCE	hPrevInstance,	//!< handle to previous instance
+	LPWSTR		lpCmdLine,		//!< pointer to command line
+	int			nCmdShow		//!< show state of window
 )
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
@@ -49,37 +57,37 @@ int WINAPI wWinMain(
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
 
+	MY_RUNNINGTIMER(cRunningTimer, L"WinMain" );
 	{
 		// 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
 		::SetDllDirectory( L"" );
 		::SetSearchPathMode( BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT );
 
 		setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
+		::OleInitialize( NULL );	// 2009.01.07 ryoji 追加
 	}
-
-	//OleInitializeを呼び出す
-	if (const auto hr = OleInitialize(nullptr);
-		S_OK != hr)
-	{
-		return 1;
-	}
-
-	//終了時にOleUninitializeを呼び出すよう設定
-	const auto oleUninitialize = [](const int*) { OleUninitialize(); };
-	using oleUninitializer = std::unique_ptr<int, decltype(oleUninitialize)>;
-	auto dummyPointer = PINT(1);
-	oleUninitializer deinitializer(dummyPointer, oleUninitialize);
-
+	
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
 
-	//プロセスの生成
-	const auto process = CProcessFactory(hInstance, nCmdShow).CreateInstance(lpCmdLine);
-	if (!process) {
-		return 0;
+	//コマンドラインクラスのインスタンスを確保する
+	CCommandLine cCommandLine;
+
+	//プロセスの生成とメッセージループ
+	CProcessFactory aFactory;
+	CProcess *process = nullptr;
+	try{
+		process = aFactory.Create( hInstance, lpCmdLine );
+		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
+	}
+	catch(...){
+	}
+	if( nullptr != process ){
+		process->Run();
+		delete process;
 	}
 
-	//メッセージループ
-	return process->Run();
+	::OleUninitialize();	// 2009.01.07 ryoji 追加
+	return 0;
 }

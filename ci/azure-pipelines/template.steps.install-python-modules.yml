@@ -1,0 +1,12 @@
+#############################################################################################################
+#   必要な Python module をインストール手順の 'steps' を定義するテンプレート
+#
+#   parameters
+#       なし
+#############################################################################################################
+steps:
+- script: python -m pip install --upgrade pip
+  displayName: python -m pip install --upgrade pip
+
+- script: pip install openpyxl --user
+  displayName: install openpyxl --user

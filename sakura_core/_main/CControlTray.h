@@ -27,45 +27,42 @@
 #define SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_
 #pragma once
 
-#include "_main/CMainWindow.hpp"
-
+#include <Windows.h>
+#include "uiparts/CMenuDrawer.h"
+#include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
 
 struct SLoadInfo;
 struct EditInfo;
 struct DLLSHAREDATA;
+class CPropertyManager;
 
 //!	常駐部の管理
 /*!
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
- */
-class CControlTray : public CMainWindow {
-	using Me = CControlTray;
-
+	
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
+class CControlTray
+{
 public:
 	/*
 	||  Constructors
 	*/
-	explicit CControlTray() noexcept;
-	~CControlTray() override = default;
+	CControlTray();
+	~CControlTray();
 
 	/*
 	|| メンバ関数
 	*/
-	HWND    CreateMainWnd(int nCmdShow) override;	/* 作成 */
+	HWND Create(HINSTANCE hInstance);	/* 作成 */
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
-
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
-
-	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
-
-	void    MessageLoop(void) override;
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+	void MessageLoop( void );	/* メッセージループ */
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
-	void CreateAccelTbl( void ); // アクセラレータテーブル作成
-	void DeleteAccelTbl( void ); // アクセラレータテーブル破棄
 
 	//ウィンドウ管理
 	static bool OpenNewEditor(							//!< 新規編集ウィンドウの追加 ver 0
@@ -101,6 +98,7 @@ public:
 protected:
 	void	DoGrep();	//Stonee, 2001/03/21
 	BOOL TrayMessage(HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const WCHAR* pszTip);	/*!< タスクトレイのアイコンに関する処理 */
+	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);	/*!< WM_COMMANDメッセージ処理 */
 	void OnNewEditor(bool bNewWindow); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
 	static INT_PTR CALLBACK ExitingDlgProc(	/*!< 終了ダイアログ用プロシージャ */	// 2006.07.02 ryoji CControlProcess から移動
@@ -114,23 +112,21 @@ protected:
 	|| メンバ変数
 	*/
 private:
+	CMenuDrawer		m_cMenuDrawer;
+	CPropertyManager*	m_pcPropertyManager;
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
+	HINSTANCE		m_hInstance;
+	HWND			m_hWnd;
 	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
 
-	HWND            hwndHtmlHelp    = nullptr;
-	WORD            wHotKeyMods     = 0;
-	WORD            wHotKeyCode     = 0;
-
-	bool			bLDClick        = false;	/* 左ダブルクリックをしたか 03/02/20 ai */
-
+	DLLSHAREDATA*	m_pShareData;
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
 	int				m_nCurSearchKeySequence;
 
+	CImageListMgr	m_hIcons;
+
 	UINT			m_uCreateTaskBarMsg;	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 
-	SFilePath       m_szLanguageDll;
+	WCHAR			m_szLanguageDll[MAX_PATH];
 };
-
-WORD convertHotKeyMods(WORD wHotKeyMods);
-
 #endif /* SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_ */

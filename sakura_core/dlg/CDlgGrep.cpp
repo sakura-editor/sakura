@@ -17,6 +17,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <shellapi.h>
 #include "dlg/CDlgGrep.h"
 #include "CGrepAgent.h"
 #include "CGrepEnumKeys.h"
@@ -293,10 +294,6 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)NULL );
 }
 
-//	2007.02.09 bosagami
-LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam);
-WNDPROC g_pOnFolderProc;
-
 BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
@@ -322,6 +319,9 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), TRUE );
 
+	/* 入力補完を機能させる */
+	Combo_SHAutoComplete(GetItemHwnd( IDC_COMBO_FOLDER ), SHACF_FILESYS_DIRS|SHACF_AUTOAPPEND_FORCE_ON);
+
 	/* ダイアログのアイコン */
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
@@ -342,8 +342,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2007.02.09 bosagami
 	HWND hFolder = GetItemHwnd( IDC_COMBO_FOLDER );
 	DragAcceptFiles(hFolder, true);
-	g_pOnFolderProc = (WNDPROC)GetWindowLongPtr(hFolder, GWLP_WNDPROC);
-	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (LONG_PTR)OnFolderProc);
+	::SetWindowSubclass(hFolder, &OnFolderProc, 0, 0);
 
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_cRecentSearch);
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FILE), &m_cRecentGrepFile);
@@ -373,9 +372,11 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	@date 2007.02.09 bosagami 新規作成
 	@date 2007.09.02 genta ディレクトリチェックを強化
 */
-LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+LRESULT CALLBACK CDlgGrep::OnFolderProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR uIdSubclass, [[maybe_unused]] DWORD_PTR dwRefData)
 {
-	if(msg == WM_DROPFILES){
+	switch (msg) {
+	case WM_DROPFILES:
+	{
 		//	From Here 2007.09.02 genta 
 		SFilePath sPath;
 		if( DragQueryFile((HDROP)wparam, 0, NULL, 0 ) > _countof2(sPath) - 1 ){
@@ -400,8 +401,14 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		SetGrepFolder(hwnd, sPath);
 		return 0;
 	}
+	case WM_DESTROY:
+		::RemoveWindowSubclass(hwnd, &OnFolderProc, uIdSubclass);
+		return 0;
+	default:
+		break;
+	}
 
-	return  CallWindowProc(g_pOnFolderProc,hwnd,msg,wparam,lparam);
+	return ::DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
 BOOL CDlgGrep::OnDestroy()

@@ -23,8 +23,9 @@
 		   distribution.
 */
 #include "pch.h"
-
 #include "mem/CMemory.h"
+
+#include "_main/CNormalProcess.h"
 
 /*!
 	_SetRawLength(0) を呼び出して落ちないことを確認する
@@ -108,6 +109,10 @@ TEST(CMemory, OverHeapMaxReq)
 {
 	CMemory cmem;
 
+	// メモリ確保失敗時に表示するメッセージボックスで、
+	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
+	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
+
 	// _HEAP_MAXREQを越える値を指定すると、メモリは確保されない
 	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
@@ -130,6 +135,10 @@ TEST(CMemory, OverHeapMaxReq)
 TEST(CMemory, OverMaxSize)
 {
 	CMemory cmem;
+
+	// メモリ確保失敗時に表示するメッセージボックスで、
+	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
+	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
 
 	// INT_MAXを越える値を指定すると、メモリは確保されない
 	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);

@@ -1,32 +1,49 @@
-.nuget
-.sonar
-.scannerwork
-.vs
-build
-bw-output
-node_modules
-packages
-x64
-MinGW
-Win32
+﻿# Visual Studioの作業フォルダー
+.vs/
 
+# 中間成果物格納フォルダー
+build/
+
+# ビルド成果物格納フォルダー
+MinGW/
+Win32/
+x64/
+
+# ユニットテスト結果
+TestResults/
+LastCoverageResults.log
+*-googletest.xml
+*-coverage.xml
+
+# SONARQUBE/SONARCLOUD関連
+.sonar/
+.sonarqube/
+.scannerwork/
+bw-output/
+build-wrapper-win-x86*
+SONAR_TOKEN
+
+# 自動でaddさせない拡張子
 *.aps
 *.bak
 *.iobj
 *.ipdb
+*.log
+*.patch
 *.pyc
 *.vcxproj.user
-**/TestResults
-.sonarqube
-/*.patch
-/cppcheck-*.xml
-/cppcheck-install.log
-/help/sakura/sakura.hh
+
+# Visual Studioが生成する一時ファイル（定義しておく意義が微妙。）
 Backup
-build-wrapper-win-x86*
-doxygen*.log
+UpgradeLog.htm
+
+# NuGetパッケージフォルダー
+packages/
+
+# 過去の遺物（未整理）
+/cppcheck-*.xml
+/help/sakura/sakura.hh
 html
-iss-*-*.log
 msbuild-*.log
 msbuild-*.log.csv
 msbuild-*.log.xlsx
@@ -36,7 +53,3 @@ set_appveyor_env.bat
 sha256.txt
 tags
 testData_*.txt
-UpgradeLog.htm
-*coverage.xml
-*googletest.xml
-LastCoverageResults.log

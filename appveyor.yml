@@ -1,0 +1,54 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+
+configuration:
+  - Release
+
+platform:
+  - Win32
+  - x64
+
+# comment-out clone_depth to fetch entire repository.
+## set clone depth
+#clone_depth: 5
+
+# see "Skip commits" at https://www.appveyor.com/docs/how-to/filtering-commits/#commit-files-github-and-bitbucket-only
+skip_commits:
+  files:
+    - '**/*.md'
+    - .gitignore
+    - .editorconfig
+    - 'azure-pipelines*.yml'
+    - 'ci/azure-pipelines/template*.yml'
+    - '.github/workflows/*.yml'
+
+install:
+- cmd: |
+    cinst autohotkey.portable -Version 1.1.36.02 -y
+    cinst locale-emulator -Version 2.5.0.11 -y
+    cup vswhere
+    py.exe -m pip install openpyxl --user
+    cup innosetup
+    C:\ProgramData\chocolatey\tools\shimgen.exe --output=C:\ProgramData\chocolatey\bin\ISCC.exe --path="C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+
+# to run our custom scripts instead of automatic MSBuild
+build_script:
+  - cmd: build-all.bat %PLATFORM% %CONFIGURATION%
+
+# to run our custom scripts instead of automatic tests
+test_script:
+  - cmd: tests\run-tests.bat %PLATFORM% %CONFIGURATION%
+
+for:
+# run only for Release
+-
+  matrix:
+    only:
+      - platform: Win32
+        configuration: Release
+      - platform: x64
+        configuration: Release
+
+  artifacts:
+    - path: 'sakura-*$(platform)-$(configuration)*.zip*'
+    - path: 'sha256.txt'

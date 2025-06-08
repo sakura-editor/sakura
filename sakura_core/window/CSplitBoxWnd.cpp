@@ -15,39 +15,38 @@
 */
 #include "StdAfx.h"
 #include "window/CSplitBoxWnd.h"
-
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
 #include "config/system_constants.h"
 
-constexpr auto& CSplitBoxWnd_GetClassName(bool isVertical) {
-	return isVertical
-		? L"VSplitBoxWnd"
-		: L"HSplitBoxWnd";
+CSplitBoxWnd::CSplitBoxWnd()
+: CWnd(L"::CSplitBoxWnd")
+{
+	m_bVertical = TRUE;	/* 垂直分割ボックスか */
+	return;
 }
 
-constexpr auto CSplitBoxWnd_GetCursorName(bool isVertical) {
-	return isVertical
-		? IDC_SIZENS
-		: IDC_SIZEWE;
-}
-
-CSplitBoxWnd::CSplitBoxWnd(bool isVertical) noexcept
-	: CWnd(CSplitBoxWnd_GetClassName(isVertical))
-	, m_bVertical(isVertical)
+CSplitBoxWnd::~CSplitBoxWnd()
 {
 }
 
 HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 {
-	const auto& pszClassName = CSplitBoxWnd_GetClassName(m_bVertical);
-	const auto hCursor = LoadCursorW(nullptr, CSplitBoxWnd_GetCursorName(m_bVertical));
-
 	int			nCyHScroll;
 	int			nCxVScroll;
 	RECT		rc;
+	HCURSOR		hCursor;
+	LPCWSTR		pszClassName;
 
 	/* ウィンドウクラス作成 */
+	if( bVertical ){
+		pszClassName = L"VSplitBoxWnd";
+		hCursor = ::LoadCursor( NULL, IDC_SIZENS );
+	}
+	else{
+		pszClassName = L"HSplitBoxWnd";
+		hCursor = ::LoadCursor( NULL, IDC_SIZEWE );
+	}
 	RegisterWC(
 		hInstance,
 		NULL,	// Handle to the class icon.
@@ -58,6 +57,7 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
+	m_bVertical = bVertical;
 	/* システムマトリックスの取得 */
 	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* 垂直スクロールバーの幅 */

@@ -8,8 +8,6 @@ if "%OUT_DIR%" == "" (
 @rem replace '/' with '\'
 set OUT_DIR=%OUT_DIR:/=\%
 
-set GITHASH_H=%OUT_DIR%\githash.h
-
 @echo.
 @echo ---- Make githash.h ----
 call :set_git_variables
@@ -189,8 +187,32 @@ exit /b 0
 	exit /b 0
 
 :update_output_githash
-	call :output_githash > "%GITHASH_H%"
+	@rem update githash.h if necessary
+	set GITHASH_H=%OUT_DIR%\githash.h
+	set GITHASH_H_TMP=%GITHASH_H%.tmp
 
+	@rem set SKIP_CREATE_GITHASH=1 to disable creation of githash.h
+	@rem check if skip creation of %GITHASH_H%
+	set VALID_CREATE_GITHASH=1
+	if "%SKIP_CREATE_GITHASH%" == "1" (
+		set VALID_CREATE_GITHASH=0
+	)
+	if not exist "%GITHASH_H%" (
+		set VALID_CREATE_GITHASH=1
+	)
+
+	if "%VALID_CREATE_GITHASH%" == "0" (
+		@echo skip creation of %GITHASH_H%
+		exit /b 0
+	)
+
+	call :output_githash > "%GITHASH_H_TMP%"
+
+	fc "%GITHASH_H%" "%GITHASH_H_TMP%" 1>nul 2>&1
+	if not errorlevel 1 (
+		del "%GITHASH_H_TMP%"
+		@echo %GITHASH_H% was not updated.
+	) else (
 		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 		@echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
 		@echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
@@ -208,9 +230,17 @@ exit /b 0
 		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
 		@echo GITHUB_PR_HEAD_URL          : %GITHUB_PR_HEAD_URL%
 		@echo.
+		@echo APPVEYOR_URL          : %APPVEYOR_URL%
+		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
+		@echo.
 		@echo BUILD_ENV_NAME        : %BUILD_ENV_NAME%
 		@echo BUILD_VERSION         : %BUILD_VERSION%
 		@echo.
+
+		if exist "%GITHASH_H%" del "%GITHASH_H%"
+		move /y "%GITHASH_H_TMP%" "%GITHASH_H%"
+		@echo %GITHASH_H% was updated.
+	)
 
 	exit /b 0
 
@@ -309,6 +339,22 @@ exit /b 0
 	) else (
 		echo #define CI_BUILD_URL                  "%CI_BUILD_URL%"
 	)
+
+	echo // APPVEYOR specific variables
+
+	if "%APPVEYOR_URL%" == "" (
+		echo // APPVEYOR_URL is not defined
+	) else (
+		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
+	)
+
+	if "%APPVEYOR_PROJECT_SLUG%" == "" (
+		echo // APPVEYOR_PROJECT_SLUG is not defined
+	) else (
+		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
+	)
+	echo // APPVEYOR specific variables end
+	echo //
 
 	echo #define BUILD_ENV_NAME "%BUILD_ENV_NAME%"
 	echo #define BUILD_VERSION %BUILD_VERSION%

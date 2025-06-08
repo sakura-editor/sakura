@@ -20,6 +20,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <algorithm>
+#include <memory>
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
@@ -427,7 +429,7 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 		m_hWnd = hwndDlg;
 		return OnMove( wParam, lParam );
 	case WM_DRAWITEM:	return OnDrawItem( wParam, lParam );
-	case WM_TIMER:		return OnTimer( wParam );
+	case WM_TIMER:		return OnTimer( hwndDlg, uMsg, wParam, lParam );
 	case WM_KEYDOWN:	return OnKeyDown( wParam, lParam );
 	case WM_KILLFOCUS:	return OnKillFocus( wParam, lParam );
 	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
@@ -782,7 +784,7 @@ static int DeletePreviousWord(wchar_t* text, int length, int curPos)
 	return prevWordStartPos;
 }
 
-LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
 	HWND hwndCombo = GetParent(hwnd);
@@ -820,6 +822,11 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 			return 0;
 		}
 		break;
+	case WM_DESTROY:
+		::RemoveWindowSubclass(hwnd, &SubEditProc, uIdSubclass);
+		return 0;
+	default:
+		break;
 	}
 	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
@@ -831,5 +838,5 @@ void CDialog::SetComboBoxDeleter(HWND hwndCtl, CRecent* pRecent)
 	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
 	if (!::GetComboBoxInfo(hwndCtl, &info))
 		return;
-	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, (DWORD_PTR)pRecent);
+	::SetWindowSubclass(info.hwndItem, &SubEditProc, 0, (DWORD_PTR)pRecent);
 }

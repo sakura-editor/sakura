@@ -158,19 +158,7 @@ BEGIN
 		//  http://msdn.microsoft.com/en-us/library/dd318693.aspx
 
 	// CBregexp.cpp
-#ifdef _M_IA64
-	STR_BREGONIG_LOAD				"failed to load the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/IA64 ver) to work.\r\nPlease refer to the help for assistance."
-#elif defined(_M_AMD64)
-	STR_BREGONIG_LOAD				"failed to load the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/x64 ver) to work.\r\nPlease refer to the help for assistance."
-#else
 	STR_BREGONIG_LOAD				"failed to load the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde ver) to work.\r\nPlease refer to the help for assistance."
-#endif
-#ifdef _M_IA64
-	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/IA64 ver) to work.\r\nPlease refer to the help for assistance."
-#elif defined(_M_AMD64)
-	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/x64 ver) to work.\r\nPlease refer to the help for assistance."
-#else
 	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde ver) to work.\r\nPlease refer to the help for assistance."
-#endif
 	STR_GSTR_APPNAME				_GSTR_APPNAME
 END

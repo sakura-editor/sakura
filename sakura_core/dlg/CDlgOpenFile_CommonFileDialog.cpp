@@ -19,14 +19,13 @@
 */
 
 #include "StdAfx.h"
+#include <CdErr.h>
+#include <Dlgs.h>
+#include <CommDlg.h>
 #include "dlg/CDlgOpenFile.h"
-
-#include "env/SShareDataClientWithCache.hpp"
-
 #include "dlg/CDialog.h"
 #include "func/Funccode.h"	//Stonee, 2001/05/18
 #include "CFileExt.h"
-#include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "CEditApp.h"
@@ -63,7 +62,6 @@ static const DWORD p_helpids[] = {	//13100
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
 
 struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
-	, public SShareDataClientWithCache
 {
 	CDlgOpenFile_CommonFileDialog();
 
@@ -94,6 +92,8 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+
+	DLLSHAREDATA*	m_pShareData;
 
 	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
@@ -149,19 +149,16 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetProp( hwnd, s_pszOpenFileDataName );
 	WORD					wNotifyCode;
 	WORD					wID;
-	static DLLSHAREDATA*	pShareData;
 	switch( uMsg ){
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
-		pShareData = &GetDllShareData();
-		::GetWindowRect( hwnd, &pShareData->m_Common.m_sOthers.m_rcOpenDialog );
+		::GetWindowRect( hwnd, &GetDllShareData().m_Common.m_sOthers.m_rcOpenDialog );
 //		MYTRACE( L"WM_MOVE 1\n" );
 		break;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	// notification code
 		wID = LOWORD(wParam);			// item, control, or accelerator identifier
 		switch( wNotifyCode ){
-//			break;
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
@@ -184,7 +181,6 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 //		MYTRACE( L"pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
 		break;
 	}
-//	return ::CallWindowProc( (int (__stdcall *)( void ))(WNDPROC)m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
 
 	return ::CallWindowProc( pData->m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
 }
@@ -254,8 +250,8 @@ UINT_PTR CALLBACK OFNHookProc(
 			po.x = rc.left;
 			po.y = rc.top;
 			::ScreenToClient( hdlg, &po );
-			::SetWindowPos( pData->m_hwndComboMRU, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-			::SetWindowPos( pData->m_hwndComboOPENFOLDER, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			::SetWindowPos( pData->m_hwndComboMRU, nullptr, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			::SetWindowPos( pData->m_hwndComboOPENFOLDER, nullptr, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 			return 0;
 		}
 	case WM_INITDIALOG:
@@ -651,6 +647,9 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 
 	WCHAR	szFile[_MAX_PATH + 1];
 	WCHAR	szDrive[_MAX_DRIVE];
@@ -1163,7 +1162,7 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 			po.x = ( rc.right < rcBase.left )? nLeft: rc.left + nShift;
 			po.y = rc.top;
 			::ScreenToClient( hwndDlg, &po );
-			::SetWindowPos( hwndCtrl, 0, po.x, po.y, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			::SetWindowPos( hwndCtrl, nullptr, po.x, po.y, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		}
 		hwndCtrl = ::GetWindow( hwndCtrl, GW_HWNDNEXT );
 	}
@@ -1180,12 +1179,12 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 	// 標準コントロールプレースフォルダーの幅を変更する
 	hwndCtrl = ::GetDlgItem( hwndDlg, stc32 );
 	::GetWindowRect( hwndCtrl, &rc );
-	::SetWindowPos( hwndCtrl, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+	::SetWindowPos( hwndCtrl, nullptr, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 
 	// 子ダイアログの幅を変更する
 	// ※この SetWindowPos() の中で WM_SIZE が発生する
 	::GetWindowRect( hwndDlg, &rc );
-	::SetWindowPos( hwndDlg, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+	::SetWindowPos( hwndDlg, nullptr, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 }
 
 /*! リトライ機能付き GetOpenFileName

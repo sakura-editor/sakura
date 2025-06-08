@@ -24,7 +24,18 @@
 */
 #include "pch.h"
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+#include <Shlwapi.h>
+
 #include "CProfile.h"
+
+#include <cstdlib>
+#include <filesystem>
 
 #include "util/file.h"
 #include "CDataProfile.h"
@@ -249,6 +260,39 @@ TEST(profile_data, TryParse_StringBufferW)
 
 	ASSERT_TRUE(profile_data::TryParse(L"", value));
 	ASSERT_STREQ(L"", value.c_str());
+}
+
+/*!
+ * @brief ToString(KEYCODE)のテスト
+ */
+TEST(profile_data, ToString_KEYCODE)
+{
+	std::wstring str;
+	KEYCODE code;
+
+	code = 0x80;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"", str.c_str());
+
+	code = -1;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"", str.c_str());
+
+	code = 0;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"", str.c_str());
+
+	code = 1;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"\x01", str.c_str());
+
+	code = 0x61;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"a", str.c_str());
+
+	code = 0x7f;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"\x7f", str.c_str());
 }
 
 /*!

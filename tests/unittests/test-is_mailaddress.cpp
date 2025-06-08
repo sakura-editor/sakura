@@ -23,6 +23,16 @@
 		   distribution.
 */
 #include "pch.h"
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <wchar.h>
+#include <assert.h>
+#include <string>
+#include <Windows.h>
 #include "parse/CWordParse.h"
 
 // テスト対象関数のヘッダーファイル

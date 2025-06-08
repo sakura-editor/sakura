@@ -23,9 +23,11 @@
 		   distribution.
 */
 #include "pch.h"
-
 #include "parse/CWordParse.h"
 
+#include <cstring>
+#include <iostream>
+#include <string_view>
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"
 

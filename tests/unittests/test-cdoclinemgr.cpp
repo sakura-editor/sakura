@@ -21,9 +21,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "pch.h"
 
+#include "pch.h"
 #include "doc/logic/CDocLineMgr.h"
+
+#include <array>
 
 TEST(CDocLineMgr, ListManipulations)
 {

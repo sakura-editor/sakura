@@ -12,45 +12,27 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #ifndef SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
 #define SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
 #pragma once
 
-#include "env/SShareDataClientWithCache.hpp"
-
+#include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+#include <vector>
 #include "recent/CRecentFile.h"
 
 struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFile : private SShareDataClientWithCache {
+class CMRUFile {
 	using Me = CMRUFile;
 
 public:
 	//	コンストラクタ
-	CMRUFile() = default;
+	CMRUFile();
 	CMRUFile(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CMRUFile(Me&&) noexcept = delete;
@@ -73,8 +55,11 @@ public:
 	bool GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const;	//	ファイル名で指定したEditInfo（情報をまるごと）
 	void Add( EditInfo* pEditInfo );		//	*pEditInfoを追加する。
 
+protected:
+	//	共有メモリアクセス用。
+	struct DLLSHAREDATA*	m_pShareData;		//	共有メモリを参照するよ。
+
 private:
 	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
 };
-
 #endif /* SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_ */

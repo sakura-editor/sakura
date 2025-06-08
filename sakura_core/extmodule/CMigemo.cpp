@@ -16,6 +16,7 @@
 */
 
 #include "StdAfx.h"
+#include <io.h>
 #include "CMigemo.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -57,7 +58,7 @@ bool CMigemo::InitDllImp()
 		{ &m_migemo_setproc_int2char  ,"migemo_setproc_int2char"  },
 		{ &m_migemo_load              ,"migemo_load"              },
 		{ &m_migemo_is_enable         ,"migemo_is_enable"         },
-		{ NULL, 0                                                 }
+		{ nullptr, nullptr                                        }
 	};
 	
 	if( ! RegisterEntries(table) ){
@@ -75,7 +76,7 @@ bool CMigemo::InitDllImp()
 	m_migemo_load_s             = (Proc_migemo_load_s)            m_migemo_load;
 	m_migemo_is_enable_s        = (Proc_migemo_is_enable_s)       m_migemo_is_enable;
 
-	// IA64/x64は対応不要
+	// x64は対応不要
 #ifdef _WIN64
 #else
 	// ver 1.3 以降は stdcall

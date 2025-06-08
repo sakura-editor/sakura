@@ -1,0 +1,45 @@
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="GoogleTest">
+    <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest</GoogleTestSourceDir>
+    <GoogleTestBuildDir>$(SolutionDir)build\$(Platform)\$(Configuration)\gtest_build\</GoogleTestBuildDir>
+    <GoogleTestInstallDir>$(SolutionDir)build\$(Platform)\$(Configuration)\googletest\</GoogleTestInstallDir>
+    <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
+    <GoogleTestLibInstallDir Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
+    <GoogleTestLibInstallDir Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64</GoogleTestLibInstallDir>
+    <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
+    <GTestLibName>gtest.lib</GTestLibName>
+    <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>
+    <GMockLibName>gmock.lib</GMockLibName>
+    <GMockLibPath>$(GoogleTestLibInstallDir)\$(GMockLibName)</GMockLibPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Label="GoogleTest.Requirements">
+    <ClCompile>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="GoogleTest.Libs">
+    <Link>
+      <AdditionalDependencies>$(GTestLibName);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(GMockLibName);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Target Name="MakeGoogleTestBuildDir" Condition="!Exists('$(GoogleTestBuildDir)')">
+    <MakeDir Directories="$(GoogleTestBuildDir)" />
+  </Target>
+  <Target Name="MakeGoogleTestInstallDir" Condition="!Exists('$(GoogleTestInstallDir)')">
+    <MakeDir Directories="$(GoogleTestInstallDir)" />
+  </Target>
+  <Target Name="BuildGoogleTest" DependsOnTargets="MakeGoogleTestBuildDir;MakeGoogleTestInstallDir" BeforeTargets="ClCompile" Condition="!Exists('$(GTestLibPath)') Or !Exists('$(GMockLibPath)')">
+    <PropertyGroup>
+      <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
+    </PropertyGroup>
+    <SetEnv name="platform" value="$(Platform)" prefix="false" />
+    <SetEnv name="configuration" value="$(Configuration)" prefix="false" />
+    <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
+    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd &quot;$(GoogleTestBuildDir)&quot; &quot;$(GoogleTestInstallDir)&quot;" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="AppendCleanTargetsForGoogleTest" BeforeTargets="CoreClean">
+    <RemoveDir Directories="$(GoogleTestBuildDir)" />
+    <RemoveDir Directories="$(GoogleTestInstallDir)" />
+  </Target>
+</Project>

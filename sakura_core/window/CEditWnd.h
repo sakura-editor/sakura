@@ -19,32 +19,12 @@
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #ifndef SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
-
-#include "_main/CMainWindow.hpp"
 
 #include <shellapi.h>// HDROP
 #include "_main/global.h"
@@ -62,12 +42,11 @@
 #include "dlg/CDlgSetCharSet.h"
 #include "outline/CDlgFuncList.h"
 #include "CHokanMgr.h"
+#include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "uiparts/CMenuDrawer.h"
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
-
-#include "util/design_template.h"
 
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
@@ -76,9 +55,6 @@ class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
 class CPlug;
 class CEditDoc;
-class CColorStrategyPool;
-class CFigureManager;
-
 struct DLLSHAREDATA;
 
 //メインウィンドウ内コントロールID
@@ -101,37 +77,40 @@ struct STabGroupInfo{
 // 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
-class CEditWnd : public TSingleInstance<CEditWnd>, public CMainWindow, public CDocListenerEx
+class CEditWnd
+: public TSingleton<CEditWnd>
+, public CDocListenerEx
 {
-	using Me = CEditWnd;
-	using CColorStrategyPoolHolder = std::unique_ptr<CColorStrategyPool>;
-	using CFigureManagerHolder = std::unique_ptr<CFigureManager>;
+	friend class TSingleton<CEditWnd>;
+	CEditWnd();
+	~CEditWnd();
 
 public:
-	CEditWnd();
-	~CEditWnd() override;
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//	Mar. 7, 2002 genta 文書タイプ用引数追加
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
-	HWND    CreateMainWnd(int nCmdShow) override;
+	HWND Create(
+		CEditDoc*		pcEditDoc,
+		CImageListMgr*	pcIcons,
+		int				nGroup
+	);
 	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
 	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ウィンドウ生成用の矩形を取得
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
-	void    _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo) const;
+	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
 
 	void OpenDocumentWhenStart(
 		const SLoadInfo& sLoadInfo		//!< [in]
-	) const;
+	);
 
 	void SetDocumentTypeWhenCreate(
 		ECodeType		nCharCode,							//!< [in] 漢字コード
 		bool			bViewMode,							//!< [in] ビューモードで開くかどうか
 		CTypeConfig	nDocumentType = CTypeConfig(-1)	//!< [in] 文書タイプ．-1のとき強制指定無し．
-	) const;
+	);
 	void UpdateCaption();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //
@@ -140,13 +119,10 @@ public:
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	//管理
-	void    MessageLoop(void) override;
-
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
+	void MessageLoop( void );								/* メッセージループ */
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
 
 	//各種イベント
-	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
-
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
 	LRESULT OnSize(WPARAM wParam, LPARAM lParam);	/* WM_SIZE 処理 */
 	LRESULT OnSize2(WPARAM wParam, LPARAM lParam, bool bUpdateStatus);
@@ -157,7 +133,7 @@ public:
 	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// マウスホイール処理	// 2007.10.16 ryoji
 	LRESULT OnHScroll(WPARAM wParam, LPARAM lParam);
 	LRESULT OnVScroll(WPARAM wParam, LPARAM lParam);
-	int	OnClose(HWND hWndActive, bool bGrepNoConfirm) const;	/* 終了時の処理 */
+	int	OnClose(HWND hWndActive, bool bGrepNoConfirm);	/* 終了時の処理 */
 	void OnDropFiles(HDROP hDrop);	/* ファイルがドロップされた */
 	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
 	LRESULT OnTimer(WPARAM wParam, LPARAM lParam);	// WM_TIMER 処理	// 2007.04.03 ryoji
@@ -272,8 +248,10 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
-	CEditDoc*       GetDocument() const     { return CEditDoc::getInstance(); }
+	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
+	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
 
 	//ビュー
 	const CEditView&	GetActiveView() const { return *m_pcEditView; }
@@ -340,15 +318,19 @@ public:
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
 
-	const LOGFONT&      GetLogfont(bool bTempSetting = true) const;
-	int                 GetFontPointSize(bool bTempSetting = true) const;
-	ECharWidthCacheMode GetLogfontCacheMode() const;
-	double              GetFontZoom() const;
+	const LOGFONT&	GetLogfont(bool bTempSetting = true);
+	int			GetFontPointSize(bool bTempSetting = true);
+	ECharWidthCacheMode GetLogfontCacheMode();
+	double GetFontZoom();
 
 	void ClearViewCaretPosInfo();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+private:
+	//自ウィンドウ
+	HWND			m_hWnd;
+
 public:
 	//子ウィンドウ
 	CMainToolBar	m_cToolbar;			//!< ツールバー
@@ -382,6 +364,12 @@ private:
 	int				m_nEditViewCount;	//!< 有効なビューの数
 	const int		m_nEditViewMaxCount;//!< ビューの最大数=4
 
+	//共有データ
+	DLLSHAREDATA*	m_pShareData;
+
+	//ヘルパ
+	CMenuDrawer		m_cMenuDrawer;
+
 	//状態
 	bool			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPWSTR			m_pszLastCaption;
@@ -394,8 +382,7 @@ private:
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
 	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
 	BOOL			m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
-	HACCEL			m_hAccelWine;		//!< ウィンドウ毎のアクセラレータテーブルのハンドル(Wine用)	// 2009.08.15 nasukoji
-	HACCEL			m_hAccel;			//!< アクセラレータテーブル(共有 or ウィンドウ毎)
+	HACCEL			m_hAccel = nullptr;			//!< ウィンドウ毎のアクセラレータテーブルのハンドル
 
 	//フォント・イメージ
 	HFONT			m_hFontCaretPosInfo;		//!< キャレットの行桁位置表示用フォント
@@ -408,17 +395,13 @@ private:
 	CDropTarget*	m_pcDropTarget;
 
 	//その他フラグ
-	bool                m_bUIPI       = false;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
+	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	EIconClickStatus	m_IconClicked;
-
-	CColorStrategyPoolHolder    m_ColorStrategyPool = std::make_unique<CColorStrategyPool>();
-	CFigureManagerHolder        m_FigureManager = std::make_unique<CFigureManager>();
 
 public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
 };
 
 CEditWnd& GetEditWnd( void );
-int GetGroupId(int nGroup, bool bNewWindow);
 
 #endif /* SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_ */

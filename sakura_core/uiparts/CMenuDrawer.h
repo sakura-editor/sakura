@@ -20,8 +20,6 @@
 #define SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_
 #pragma once
 
-#include "env/SShareDataClientWithCache.hpp"
-
 #include "Funccode_enum.h"
 #include "mem/CNativeW.h"
 
@@ -44,9 +42,10 @@ struct DLLSHAREDATA;
 /*!
 	@brief メニュー表示＆管理
 
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 20050809 aroka クラス外部からアクセスされないメンバはprivateにした。
 */
-class CMenuDrawer : private SShareDataClientWithCache
+class CMenuDrawer
 {
 	using Me = CMenuDrawer;
 
@@ -97,6 +96,8 @@ private:
 	int ToolbarNoToIndex( int nToolbarNo ) const;
 
 private:
+	DLLSHAREDATA*	m_pShareData;
+
 	HINSTANCE		m_hInstance;
 	HWND			m_hWndOwner;
 
@@ -134,5 +135,4 @@ protected:
 						 BYTE fsState, BYTE fsStyle, DWORD_PTR dwData,
 						 INT_PTR iString ) const;	/* TBBUTTON構造体にデータをセット */
 };
-
 #endif /* SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_ */

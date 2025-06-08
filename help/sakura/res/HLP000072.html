@@ -1,0 +1,76 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>タイプ別設定一覧</TITLE>
+<META NAME="MS-HKWD" CONTENT="タイプ別設定一覧">
+<META NAME="MS-HKWD" CONTENT="TypeList">
+<META NAME="MS-HKWD" CONTENT="ChangeType">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>タイプ別設定一覧</h2>
+タイプ別設定一覧のダイアログが表示されます。<br>
+リストから<a href="HLP000300.html">ファイルタイプ</a>を選択し、<br>
+<br>
+<strong>[設定変更]</strong>ボタン<br>
+このボタンを押すと、選択したタイプの設定が変更できます（該当するタイプの<a href="HLP000073.html">タイプ別設定</a>ダイアログが表示される）。<br>
+<br>
+<strong>[一時適用]</strong>ボタン<br>
+このボタンを押すと、ウィンドウを閉じて、現在開いているファイルのタイプを、選択したタイプに一時的に変更します。<br>
+<br>
+または、リストのタイプを<strong>ダブルクリック</strong>しても同様の操作になります。<br>
+<br>
+<strong>[キャンセル]</strong>ボタン<br>
+このボタンを押すと、ウィンドウを閉じます。追加・削除・インポート・初期化などの変更は元に戻りません。<br>
+<br>
+<strong>[インポート]</strong>ボタン<br>
+このボタンを押すと、エクスポートした内容を読み込んで選択したタイプに設定することができます（ファイル選択ダイアログが表示される）。<br>
+<br>
+<strong>[エクスポート]</strong>ボタン<br>
+このボタンを押すと、選択したタイプの設定をファイルに書きだすことができます（ファイル選択ダイアログが表示される）。<br>
+<br>
+<strong>[初期化]</strong>ボタン<br>
+このボタンを押すと、選択したタイプの設定を初期状態に戻します。<br>
+<br>
+<strong>[複製]</strong>ボタン<br>
+このボタンを押すと、タイプ別設定を末尾に追加して選択したタイプ別設定を複製します。<br>
+<br>
+<strong>[↑]</strong>ボタン<br>
+このボタンを押すと、選択したタイプ別設定を一つ上に移動します。<br>
+<br>
+<strong>[↓]</strong>ボタン<br>
+このボタンを押すと、選択したタイプ別設定を一つ下に移動します。<br>
+<br>
+<strong>[追加]</strong>ボタン<br>
+このボタンを押すと、タイプ別設定を末尾に追加します。<br>
+タイプ別設定は、60個まで追加することができます。<br>
+<br>
+<strong>[削除]</strong>ボタン<br>
+このボタンを押すと、選択したタイプ別設定を削除します。<br>
+<br>
+<strong>[右クリックメニューに追加]</strong>チェックボックス<br>
+このボックスをチェックすると、タイプで指定した拡張子の右クリックメニューにサクラエディタを追加します。<br>
+<br>
+<strong>[ダブルクリックで開く]</strong>チェックボックス<br>
+このボックスをチェックすると、タイプで指定した拡張子の既定プログラムをサクラエディタに設定します。<br>
+<br>
+<img alt="TypeList" src="images/TypeList.png" /><br>
+<br>
+■<a href="HLP000204.html"><strong>マクロ構文</strong></a><br>
+・構文: TypeList( );<br>
+・記録:	×<br>
+・解説<br>
+タイプ別設定一覧ダイアログを表示します。<br>
+<br>
+・構文: ChangeType( int1 : Integer ); (sakura:2.1.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定番号<br>
+・記録:	×<br>
+・解説<br>
+タイプ別設定を一時適用します。<br>
+タイプ別設定番号は、1が「基本」です。それ以降は、タイプ別設定一覧ダイアログに表示される順で指定します。<br>
+<br>
+</BODY></HTML>

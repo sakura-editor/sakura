@@ -147,20 +147,8 @@ IDI_ICON_STD            ICON         "../resource/icon_std.ico"
 STRINGTABLE
 BEGIN
 	// CBregexp.cpp
-#ifdef _M_IA64
-	STR_BREGONIG_LOAD				"bregonig.dll のロードに失敗しました。\r\n正規表現を利用するには Unicode/IA64 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
-#elif defined(_M_AMD64)
-	STR_BREGONIG_LOAD				"bregonig.dll のロードに失敗しました。\r\n正規表現を利用するには Unicode/x64 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
-#else
 	STR_BREGONIG_LOAD				"bregonig.dll のロードに失敗しました。\r\n正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
-#endif
-#ifdef _M_IA64
-	STR_BREGONIG_INIT				"bregonig.dll の利用に失敗しました。\r\n正規表現を利用するには Unicode/IA64 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
-#elif defined(_M_AMD64)
-	STR_BREGONIG_INIT				"bregonig.dll の利用に失敗しました。\r\n正規表現を利用するには Unicode/x64 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
-#else
 	STR_BREGONIG_INIT				"bregonig.dll の利用に失敗しました。\r\n正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
-#endif
 	STR_GSTR_APPNAME				_GSTR_APPNAME
 
 	// Select Language

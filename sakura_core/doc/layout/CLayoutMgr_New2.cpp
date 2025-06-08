@@ -13,6 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <stdlib.h>
 #include "CLayoutMgr.h"
 #include "CLayout.h" // 2002/2/10 aroka
 #include "doc/logic/CDocLineMgr.h" // 2002/2/10 aroka

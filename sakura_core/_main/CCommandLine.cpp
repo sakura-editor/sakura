@@ -19,11 +19,11 @@
 */
 
 #include "StdAfx.h"
-#include "_main/CCommandLine.h"
-
-#include "_main/CProcess.h"
-
+#include "CCommandLine.h"
 #include "mem/CMemory.h"
+#include <tchar.h>
+#include <io.h>
+#include <string.h>
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "io/CTextStream.h"
@@ -175,15 +175,6 @@ int CCommandLine::CheckCommandLine(
 	return 0;	//	該当無し
 }
 
-[[nodiscard]]
-/* static */ CCommandLine* CCommandLine::getInstance()
-{
-	if (const auto process = CProcess::getInstance()) {
-		return &process->GetCCommandLine();
-	}
-	return nullptr;
-}
-
 /*! 
  * コンストラクタ
  *
@@ -194,11 +185,16 @@ CCommandLine::CCommandLine() noexcept
 	: m_bGrepMode(false)
 	, m_bGrepDlg(false)
 	, m_bDebugMode(false)
+	, m_bNoWindow(false)
 	, m_bProfileMgr(false)
+	, m_bSetProfile(false)
 	, m_fi()
 	, m_gi()
 	, m_bViewMode(false)
 	, m_nGroup(-1)
+	, m_cmMacro()
+	, m_cmMacroType()
+	, m_cmProfile(L"")
 	, m_vFiles()
 {
 }
@@ -290,7 +286,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
 		if( ( bParseOptDisabled ||
-			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
+			! (pszToken[0] == '-' || (pszToken[0] == '"' && pszToken[1] == '-')) )){
 
 			if( pszToken[0] == L'\"' ){
 				CNativeW cmWork;
@@ -510,13 +506,15 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat 追加
-				SetMacro(std::regex_replace(std::wstring(arg, nArgLen), std::wregex(L"\"\""), L"\""));
+				m_cmMacro.SetString( arg, nArgLen );
+				m_cmMacro.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
-				SetMacroType(std::wstring_view(arg, nArgLen));
+				m_cmMacroType.SetString( arg, nArgLen );
 				break;
 			case CMDLINEOPT_PROF:		// 2013.12.20 Moca 追加
-				SetProfileName(std::wstring_view(arg, nArgLen));
+				m_cmProfile.SetString( arg, nArgLen );
+				m_bSetProfile = true;
 				break;
 			case CMDLINEOPT_PROFMGR:
 				m_bProfileMgr = true;
@@ -541,15 +539,4 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	return;
-}
-
-std::wstring CCommandLine::ToCommandArgs() const {
-	std::wstring strCommandArgs;
-	if (IsNoWindow()) {
-		strCommandArgs += L" -NOWIN";
-	}
-	if (m_bSetProfile) {
-		strCommandArgs += fmt::format(LR"( -PROF="{}")", m_ProfileName);
-	}
-	return strCommandArgs;
 }

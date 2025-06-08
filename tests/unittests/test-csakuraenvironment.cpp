@@ -24,20 +24,28 @@
 */
 #include "pch.h"
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+#include <Shlwapi.h>
+
+#include "config/maxdata.h"
+#include "basis/primitive.h"
+#include "debug/Debug2.h"
+#include "basis/CMyString.h"
+#include "mem/CNativeW.h"
 #include "env/CSakuraEnvironment.h"
-
-#include "CEditorProcessInitTest.hpp"
-
-#include "_main/CNormalProcess.h"
-
+#include "_main/CCommandLine.h"
+#include "_main/CControlProcess.h"
 #include "util/file.h"
-
-struct CSakuraEnvironmentTest : public CEditorProcessInitTest {};
 
 /*!
  * @brief exeファイルパスの取得
  */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_ExeFileName)
+TEST(CSakuraEnvironment, ExpandParameter_ExeFileName)
 {
 	SFilePath szExeFile;
 	CSakuraEnvironment::ExpandParameter(L"$S", szExeFile, _countof2(szExeFile));
@@ -47,65 +55,9 @@ TEST_F(CSakuraEnvironmentTest, ExpandParameter_ExeFileName)
 /*!
  * @brief iniファイルパスの取得
  */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_IniFileName)
+TEST(CSakuraEnvironment, ExpandParameter_IniFileName)
 {
 	SFilePath szIniFile;
 	CSakuraEnvironment::ExpandParameter(L"$I", szIniFile, _countof2(szIniFile));
 	ASSERT_STREQ(GetIniFileName().c_str(), szIniFile.c_str());
-}
-
-/*!
- * @brief GREP検索キーの取得(32文字以内)
- */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_GetGrepKey001)
-{
-	constexpr auto& grepKey = L"1234567890ABCDEF1234567890abcdef";
-	SFilePath szBuff;
-	CAppMode::getInstance()->SetGrepKey(grepKey);
-	CSakuraEnvironment::ExpandParameter(L"$h", szBuff, _countof2(szBuff));
-	ASSERT_STREQ(grepKey, szBuff.c_str());
-}
-
-/*!
- * @brief GREP検索キーの取得(32文字超過)
- */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_GetGrepKey002)
-{
-	SFilePath szBuff;
-	CAppMode::getInstance()->SetGrepKey(L"1234567890ABCDEF1234567890abcdef0"sv);
-	CSakuraEnvironment::ExpandParameter(L"$h", szBuff, _countof2(szBuff));
-	ASSERT_STREQ(L"1234567890ABCDEF1234567890abcdef...", szBuff.c_str());
-}
-
-/*!
- * @brief GREP検索キーの取得(出力バッファサイズピッタリ)
- */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_GetGrepKey003)
-{
-	StaticString<WCHAR, 30 + 1> szBuff;
-	CAppMode::getInstance()->SetGrepKey(L"1234567890ABCDEF1234567890abcd"sv);
-	CSakuraEnvironment::ExpandParameter(L"$h", szBuff, _countof2(szBuff));
-	ASSERT_STREQ(L"1234567890ABCDEF1234567890abcd", szBuff.c_str());
-}
-
-/*!
- * @brief GREP検索キーの取得(出力バッファサイズが足りない)
- */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_GetGrepKey004)
-{
-	StaticString<WCHAR, 30 + 1> szBuff;
-	CAppMode::getInstance()->SetGrepKey(L"1234567890ABCDEF1234567890abcdef0"sv);
-	CSakuraEnvironment::ExpandParameter(L"$h", szBuff, _countof2(szBuff));
-	ASSERT_STREQ(L"1234567890ABCDEF1234567890a...", szBuff.c_str());
-}
-
-/*!
- * @brief GREP検索キーの取得(設定なし)
- */
-TEST_F(CSakuraEnvironmentTest, ExpandParameter_GetGrepKey005)
-{
-	SFilePath szBuff;
-	CAppMode::getInstance()->SetGrepKey(L""sv);
-	CSakuraEnvironment::ExpandParameter(L"$h", szBuff, _countof2(szBuff));
-	ASSERT_STREQ(L"", szBuff.c_str());
 }

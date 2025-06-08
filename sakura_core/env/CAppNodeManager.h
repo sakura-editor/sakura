@@ -3,25 +3,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CAPPNODEMANAGER_CAE7A323_DEA3_47E4_91DE_C99A88C32683_H_
 #define SAKURA_CAPPNODEMANAGER_CAE7A323_DEA3_47E4_91DE_C99A88C32683_H_
@@ -39,7 +21,7 @@ struct EditNode {
 	int				m_nGroup;					//!< グループID								//@@@ 2007.06.20 ryoji
 	HWND			m_hWnd;
 	int				m_nId;						//!< 無題Id
-	WIN_CHAR		m_szTabCaption[_MAX_PATH];	//!< タブウインドウ用：キャプション名		//@@@ 2003.05.31 MIK
+	WCHAR			m_szTabCaption[_MAX_PATH];	//!< タブウインドウ用：キャプション名		//@@@ 2003.05.31 MIK
 	SFilePath		m_szFilePath;				//!< タブウインドウ用：ファイル名			//@@@ 2006.01.28 ryoji
 	bool			m_bIsGrep;					//!< Grepのウィンドウか						//@@@ 2006.01.28 ryoji
 	UINT			m_showCmdRestore;			//!< 元のサイズに戻すときのサイズ種別		//@@@ 2007.06.20 ryoji
@@ -107,10 +89,11 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager : public TSingleInstance<CAppNodeManager> {
-public:
-	CAppNodeManager() = default;
+class CAppNodeManager : public TSingleton<CAppNodeManager>{
+	friend class TSingleton<CAppNodeManager>;
+	CAppNodeManager(){}
 
+public:
 	//グループ
 	void ResetGroupId();									/* グループをIDリセットする */
 

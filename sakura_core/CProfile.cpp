@@ -14,28 +14,16 @@
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "CProfile.h"
+
+#include <algorithm>
+#include <map>
+#include <string>
+#include <string_view>
+#include <vector>
 
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resource読み込みに使用
@@ -57,8 +45,6 @@ void EnsureDirectoryExist( const std::wstring& strProfileName )
 		}
 	}
 }
-
-using namespace std;
 
 /*! Profileを初期化
 	
@@ -175,10 +161,10 @@ bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vect
 	CNativeW cmLineW;
 	m_strProfileName = L"-Res-";
 
-	if (( hRsrc = ::FindResource( 0, pName, pType )) != NULL
-	 && ( hGlobal = ::LoadResource( 0, hRsrc )) != NULL
+	if (( hRsrc = ::FindResource( nullptr, pName, pType )) != nullptr
+	 && ( hGlobal = ::LoadResource( nullptr, hRsrc )) != nullptr
 	 && ( psMMres = (char *)::LockResource(hGlobal)) != NULL
-	 && ( nSize = (size_t)::SizeofResource( 0, hRsrc )) != 0) {
+	 && ( nSize = (size_t)::SizeofResource( nullptr, hRsrc )) != 0) {
 		p    = psMMres;
 		if (nSize >= sizeof(UTF8_BOM) && memcmp( p, UTF8_BOM, sizeof(UTF8_BOM) )==0) {
 			// Skip BOM
@@ -296,7 +282,7 @@ bool CProfile::WriteProfile(
 */
 bool CProfile::_WriteFile(
 	const wstring&			strFilename,	//!< [in]  ファイル名
-	const vector<wstring>&	vecLine			//!< [out] 文字列格納先
+	const std::vector<wstring>&	vecLine		//!< [out] 文字列格納先
 )
 {
 	CTextOutputStream out(strFilename.c_str());

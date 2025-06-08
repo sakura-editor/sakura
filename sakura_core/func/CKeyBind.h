@@ -18,10 +18,10 @@
 #pragma once
 
 #include <Windows.h>
+#include "Funccode_enum.h"
 
 class CFuncLookup;
 class CNativeW;
-enum EFunctionCode;
 
 //! キー情報を保持する
 struct KEYDATA {
@@ -97,5 +97,4 @@ protected:
 	static bool GetKeyStrSub(int& nKeyNameArrBegin, int nKeyNameArrEnd, KEYDATA* pKeyNameArr,
 			int nShiftState, CNativeW& cMemList, int nFuncId, BOOL bGetDefFuncCode );
 };
-
 #endif /* SAKURA_CKEYBIND_9B930CDD_DCA8_4096_B61C_37CED61C575A_H_ */

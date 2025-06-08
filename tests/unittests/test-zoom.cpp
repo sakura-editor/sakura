@@ -23,7 +23,7 @@
 		   distribution.
 */
 #include "pch.h"
-
+#include <algorithm>
 #include "util/zoom.h"
 
 /*!

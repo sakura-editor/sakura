@@ -128,7 +128,7 @@ protected:
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
 	BOOL OnDestroy(void) override; // 20060201 aroka
-	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
+	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID ) override;
 	BOOL OnContextMenu(WPARAM wParam, LPARAM lParam) override;
 	void SetData() override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */
@@ -175,7 +175,7 @@ protected:
 	INT_PTR OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	INT_PTR OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	INT_PTR OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	INT_PTR OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	BOOL OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;
 	void GetDockSpaceRect( LPRECT pRect );
 	void GetCaptionRect( LPRECT pRect );
 	bool GetCaptionButtonRect( int nButton, LPRECT pRect );

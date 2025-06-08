@@ -18,14 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{701e3407-ec27-49f7-adc7-520cf2b4b438}</ProjectGuid>
-    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
-    <WindowsTargetPlatformVersion Condition="$(VisualStudioVersion) == 15.0">10.0.17763.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformVersion Condition="$(VisualStudioVersion) &gt;= 16.0">10.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(ProjectDir)..\..\vcx-props\vcxcompat.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
@@ -41,17 +39,10 @@
     <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Label="Vcpkg">
-    <VcpkgConfiguration Condition="'$(Configuration)'=='Debug'">Debug</VcpkgConfiguration>
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
-    <VcpkgInstalledDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\..\build\vcpkg_installed\'))</VcpkgInstalledDir>
-    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
-    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
-    <VcpkgUseStatic>true</VcpkgUseStatic>
-  </PropertyGroup>
+  <Import Project="$(ProjectDir)..\googletest.targets" />
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;$(IntDir)../sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -65,14 +56,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalManifestDependencies>type=%27win32%27 name=%27Microsoft.Windows.Common-Controls%27 version=%276.0.0.0%27 processorArchitecture=%27*%27 publicKeyToken=%276595b64144ccf1df%27 language=%27*%27;%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Label="GoogleTest.Requirements">
-    <ClCompile>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
@@ -102,7 +87,6 @@
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalManifestDependencies>type=%27win32%27 name=%27Microsoft.Windows.Common-Controls%27 version=%276.0.0.0%27 processorArchitecture=%27x86%27 publicKeyToken=%276595b64144ccf1df%27 language=%27*%27;%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
@@ -110,9 +94,6 @@
     <ClCompile>
       <PreprocessorDefinitions>X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <Link>
-      <AdditionalManifestDependencies>type=%27win32%27 name=%27Microsoft.Windows.Common-Controls%27 version=%276.0.0.0%27 processorArchitecture=%27amd64%27 publicKeyToken=%276595b64144ccf1df%27 language=%27*%27;%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
   </ItemDefinitionGroup>
@@ -127,14 +108,12 @@
     <Link Include="$(SolutionDir)build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="code-main.cpp" />
-    <ClCompile Include="test-cautosaveagent.cpp" />
-    <ClCompile Include="test-ccontrolprocess.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
-    <ClCompile Include="test-ceditdoc.cpp" />
-    <ClCompile Include="test-ceditorprocess.cpp" />
-    <ClCompile Include="test-cimpexpmanager.cpp" />
     <ClCompile Include="test-codechecker.cpp" />
     <ClCompile Include="test-cppa.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />
@@ -183,19 +162,12 @@
     <ClCompile Include="test-window.cpp" />
     <ClCompile Include="test-zoom.cpp" />
     <ClCompile Include="test-winmain.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CControlProcessInitTest.hpp" />
-    <ClInclude Include="CEditorProcessInitTest.hpp" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="eval_outputs.hpp" />
     <ClInclude Include="TExtModule.hpp" />
     <ClInclude Include="tests1_rc.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="TMockMainWindow.hpp" />
-    <ClInclude Include="TMockProcess.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tests1_rc.rc" />
@@ -206,6 +178,7 @@
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
     <ClCompile Include="coverage.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

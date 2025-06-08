@@ -31,7 +31,7 @@
 #include "extmodule/CIcu4cI18n.h"
 #include "extmodule/CMigemo.h"
 #include "extmodule/CUchardet.h"
-#include "extmodule/CUxTheme.h"
+//#include "extmodule/CUxTheme.h"		//TSingletonなのでテストできない
 #include "macro/CPPA.h"
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
 
@@ -95,7 +95,6 @@ using ExtModuleImplementations = ::testing::Types<
 	CIcu4cI18n,
 	CMigemo,
 	CUchardet,
-	CUxTheme,
 	CPPA>;
 
 //! パラメータテストをインスタンス化する

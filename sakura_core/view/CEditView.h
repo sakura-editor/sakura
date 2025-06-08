@@ -18,25 +18,7 @@
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #ifndef SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_
@@ -46,8 +28,6 @@
 #include <Windows.h>
 #include <ObjIdl.h>  // LPDATAOBJECT
 #include <shellapi.h>  // HDROP
-
-#include <thread>
 
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
@@ -69,7 +49,6 @@
 #include "mfclike/CMyWnd.h"		// parent
 #include "doc/CDocListener.h"	// parent
 #include "basis/SakuraBasis.h"	// CLogicInt, CLayoutInt
-#include "extmodule/CMigemo.h"
 #include "util/container.h"		// vector_ex
 #include "util/design_template.h"
 
@@ -82,6 +61,7 @@ class CRegexKeyword;///
 class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
 class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
+class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
 struct CColor3Setting;
 class COutputAdapter;
@@ -123,14 +103,6 @@ class CEditView
 , public CMyWnd
 , public CDocListenerEx
 {
-	using CTextAreaHolder = std::unique_ptr<CTextArea>;
-	using CCaretHolder = std::unique_ptr<CCaret>;
-	using CRulerHolder = std::unique_ptr<CRuler>;
-
-	static constexpr auto IDT_ROLLMOUSE = 1;
-
-	std::thread m_threadUrlOpen;
-
 public:
 	const CEditDoc* GetDocument() const
 	{
@@ -149,7 +121,7 @@ public:
 	}
 
 public:
-	CEditView* GetEditView()
+	CEditView* GetEditView() override
 	{
 		return this;
 	}
@@ -164,8 +136,7 @@ public:
 public:
 	/* Constructors */
 	CEditView( void );
-	~CEditView() override;
-
+	~CEditView();
 	void Close();
 	/* 初期化系メンバ関数 */
 	BOOL Create(
@@ -197,12 +168,9 @@ public:
 public:
 	//ドキュメントイベント
 	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
-
 	/* メッセージディスパッチャ */
-	LRESULT DispatchEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-
-	bool    OnCreate(HWND hWnd, LPCREATESTRUCT lpCreateStruct) override;
-
+	LRESULT DispatchEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	//
 	void OnChangeSetting();										/* 設定変更を反映させる */
 	void OnPaint(HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp);			/* 通常の描画処理 */
 	void OnPaint2(HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp);			/* 通常の描画処理 */
@@ -357,8 +325,8 @@ public:
 	void AddToCmdArr(const WCHAR* szCmd);
 	BOOL ChangeCurRegexp(bool bRedrawIfChanged= true);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const WCHAR* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
-	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, bool bDocumentFeed = false);	/* 再変換用構造体を設定する 2002.04.09 minfu */
-	LRESULT SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool bUnicode);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
+	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFeed = false);	/* 再変換用構造体を設定する 2002.04.09 minfu */
+	LRESULT SetSelectionFromReonvert(const RECONVERTSTRING* pReconv);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           D&D                               //
@@ -571,9 +539,36 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//主要構成部品アクセス
-	CTextArea& GetTextArea() const { return *m_pcTextArea; }
-	CCaret&    GetCaret() const { return *m_pcCaret; }
-	CRuler&    GetRuler() const { return *m_pcRuler; }
+	CTextArea& GetTextArea()
+	{
+		assert(m_pcTextArea);
+		return *m_pcTextArea;
+	}
+	const CTextArea& GetTextArea() const
+	{
+		assert(m_pcTextArea);
+		return *m_pcTextArea;
+	}
+	CCaret& GetCaret()
+	{
+		assert(m_pcCaret);
+		return *m_pcCaret;
+	}
+	const CCaret& GetCaret() const
+	{
+		assert(m_pcCaret);
+		return *m_pcCaret;
+	}
+	CRuler& GetRuler()
+	{
+		assert(m_pcRuler);
+		return *m_pcRuler;
+	}
+	const CRuler& GetRuler() const
+	{
+		assert(m_pcRuler);
+		return *m_pcRuler;
+	}
 
 	//主要属性アクセス
 	CTextMetrics& GetTextMetrics(){ return m_cTextMetrics; }
@@ -607,9 +602,9 @@ public:
 	const STypeConfig*	m_pTypeData;
 
 	//主要構成部品
-	CTextAreaHolder	m_pcTextArea    = std::make_unique<CTextArea>(this);
-	CCaretHolder    m_pcCaret       = std::make_unique<CCaret>(this, CEditDoc::getInstance());
-	CRulerHolder    m_pcRuler       = std::make_unique<CRuler>(this, CEditDoc::getInstance());
+	CTextArea*		m_pcTextArea;
+	CCaret*			m_pcCaret;
+	CRuler*			m_pcRuler;
 
 	//主要属性
 	CTextMetrics	m_cTextMetrics;
@@ -625,6 +620,7 @@ public:
 
 public:
 	//ウィンドウ
+	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
 	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
 	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
@@ -731,8 +727,8 @@ public:
 	// その他
 	CAutoMarkMgr*	m_cHistory;	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
-	int				m_nMyIndex      = 0;
-	CMigemo*		m_pcmigemo      = CMigemo::getInstance();
+	int				m_nMyIndex;	/* 分割状態 */
+	CMigemo*		m_pcmigemo;
 	bool			m_bMiniMap;
 	bool			m_bMiniMapMouseDown;
 	CLayoutInt		m_nPageViewTop;

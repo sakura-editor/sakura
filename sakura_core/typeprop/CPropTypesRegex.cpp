@@ -18,6 +18,7 @@
 //@@@ 2001.11.17 add start MIK
 
 #include "StdAfx.h"
+#include <memory>
 #include "CPropTypes.h"
 #include "env/CShareData.h"
 #include "CRegexKeyword.h"
@@ -29,8 +30,6 @@
 #include "sakura.hh"
 #include "config/app_constants.h"
 #include "String_define.h"
-
-using namespace std;
 
 static const DWORD p_helpids[] = {	//11600
 	IDC_BUTTON_REGEX_IMPORT,	HIDC_BUTTON_REGEX_IMPORT,	//インポート

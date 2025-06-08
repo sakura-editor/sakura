@@ -13,25 +13,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_SYSTEM_CONSTANTS_DACC287C_DAC4_4FC7_8AEC_8DB5BE6BFB8B_H_
 #define SAKURA_SYSTEM_CONSTANTS_DACC287C_DAC4_4FC7_8AEC_8DB5BE6BFB8B_H_
@@ -556,12 +538,18 @@
 	Version 179:
 	STypeConfig::m_nVertLineIdxの要素数を変更した為、DLLSHAREDATA のメモリレイアウトが変更
 
+	Version 180:
+	CommonSetting_Window::m_nRulerType、CommonSetting_Edit::m_bJumpSingleClickURL、CommonSetting_Helper::m_bHokanKey_SPACE削除
+
+	Version 181:
+	m_hAccel削除
+
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		179
+#define N_SHAREDATA_VERSION		181
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(L"SakuraShareData" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 

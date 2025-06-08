@@ -3,37 +3,15 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_
 #define SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_
 #pragma once
 
 // 要先行定義
-// #include "view/CEditView.h"
 #include "EColorIndexType.h"
 #include "uiparts/CGraphics.h"
-#include "view/DispPos.h"
-
-#include "util/design_template.h"
 
 class	CEditView;
 class CStringRef;
@@ -79,6 +57,7 @@ const WCHAR* GetColorNameByIndex( int index );
 
 struct DispPos;
 class CColorStrategy;
+#include "view/DispPos.h"
 
 class CColor_Found;
 class CColor_Select;
@@ -91,17 +70,10 @@ struct CColor3Setting {
 };
 
 struct SColorStrategyInfo{
-	SColorStrategyInfo(HDC hDC = NULL)
-		: m_sDispPosBegin(0,0)
-		, m_pStrategy(NULL)
-		, m_pStrategyFound(NULL)
-		, m_pStrategySelect(NULL)
-		, m_colorIdxBackLine(COLORIDX_TEXT)
-		, m_gr(hDC)
+	explicit SColorStrategyInfo(HDC hDC = nullptr)
+		: m_gr(hDC)
+		, m_sDispPosBegin(0,0)
 	{
-		m_cIndex.eColorIndex = COLORIDX_TEXT;
-		m_cIndex.eColorIndex2 = COLORIDX_TEXT;
-		m_cIndex.eColorIndexBg = COLORIDX_TEXT;
 	}
 
 	//参照
@@ -117,11 +89,11 @@ struct SColorStrategyInfo{
 	DispPos			m_sDispPosBegin;
 
 	//色変え
-	CColorStrategy*		m_pStrategy;
-	CColor_Found*		m_pStrategyFound;
-	CColor_Select*		m_pStrategySelect;
-	EColorIndexType		m_colorIdxBackLine;
-	CColor3Setting		m_cIndex;
+	CColorStrategy*		m_pStrategy = nullptr;
+	CColor_Found*		m_pStrategyFound = nullptr;
+	CColor_Select*		m_pStrategySelect = nullptr;
+	EColorIndexType		m_colorIdxBackLine = COLORIDX_TEXT;
+	CColor3Setting		m_cIndex = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
 
 	//! 色の切り替え
 	bool CheckChangeColor(const CStringRef& cLineStr);
@@ -192,6 +164,8 @@ protected:
 	const STypeConfig* m_pTypeData;
 };
 
+#include "util/design_template.h"
+#include <vector>
 class CColor_LineComment;
 class CColor_BlockComment;
 class CColor_BlockComment;
@@ -199,14 +173,12 @@ class CColor_SingleQuote;
 class CColor_DoubleQuote;
 class CColor_Heredoc;
 
-class CColorStrategyPool : public TSingleInstance<CColorStrategyPool>{
-	using Me = CColorStrategyPool;
+class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
+	friend class TSingleton<CColorStrategyPool>;
+	CColorStrategyPool();
+	virtual ~CColorStrategyPool();
 
 public:
-	CColorStrategyPool();
-	CColorStrategyPool(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	~CColorStrategyPool() override;
 
 	//取得
 	CColorStrategy*	GetStrategy(int nIndex) const{ return m_vStrategiesDisp[nIndex]; }
@@ -235,12 +207,17 @@ public:
 	CEditView* GetCurrentView(void) const{ return m_pcView; }
 	void SetCurrentView(CEditView* pcView) { m_pcView = pcView; }
 
+	//範囲を持つ色分けがあるかどうか
+	bool HasRangeBasedColorStrategies() const noexcept;
+
 private:
 	std::vector<CColorStrategy*>	m_vStrategies;
 	std::vector<CColorStrategy*>	m_vStrategiesDisp;	//!< 色分け表示対象
 	CColor_Found*					m_pcFoundStrategy;
 	CColor_Select*					m_pcSelectStrategy;
 
+	// 範囲を持つ色分け
+	// 追加/削除した時はHasRangeBasedColorStrategiesをメンテして下さい
 	CColor_LineComment*				m_pcLineComment;
 	CColor_BlockComment*			m_pcBlockComment1;
 	CColor_BlockComment*			m_pcBlockComment2;
@@ -253,5 +230,4 @@ private:
 	bool	m_bSkipBeforeLayoutGeneral;
 	bool	m_bSkipBeforeLayoutFound;
 };
-
 #endif /* SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_ */

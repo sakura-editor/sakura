@@ -34,12 +34,32 @@
 #define TIMER_TIMEOUT 100
 #define TIMER_CHECKFUNCENABLE 300
 
+/****
+LRESULT CALLBACK CFuncKeyWndProc(
+	HWND	hwnd,	// handle of window
+	UINT	uMsg,	// message identifier
+	WPARAM	wParam,	// first message parameter
+	LPARAM	lParam 	// second message parameter
+)
+{
+	CFuncKeyWnd*	pCFuncKeyWnd;
+	pCFuncKeyWnd = ( CFuncKeyWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
+	if( NULL != pCFuncKeyWnd ){
+		return pCFuncKeyWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
+	}
+	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+}
+***/
+
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CFuncKeyWnd::CFuncKeyWnd()
 : CWnd(L"::CFuncKeyWnd")
 {
 	int		i;
 	LOGFONT	lf;
 	m_pcEditDoc = NULL;
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 	m_nCurrentKeyState = -1;
 	for( i = 0; i < _countof(m_szFuncNameArr); ++i ){
 		m_szFuncNameArr[i][0] = LTEXT('\0');

@@ -19,6 +19,11 @@
 #include "StdAfx.h"
 #include "CImageListMgr.h"
 
+#include <cmath>
+#include <array>
+#include <list>
+#include <functional>
+
 #include "env/CommonSetting.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
@@ -417,7 +422,7 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	bmih.biYPelsPerMeter = 0;
 	bmih.biClrUsed = 0;
 	bmih.biClrImportant = 0;
-	HBITMAP bmpWork = ::CreateDIBSection((HDC)0, &bmi, DIB_RGB_COLORS, (void**)&pBits, NULL, 0);
+	HBITMAP bmpWork = ::CreateDIBSection(nullptr, &bmi, DIB_RGB_COLORS, (void**)&pBits, nullptr, 0);
 	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
 	// 作業DCに転送
@@ -639,7 +644,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	const int cy = cx;
 
 	// 仮想DCを作成
-	HDC hdcSrc = ::CreateCompatibleDC( 0 );	//	転送元用
+	HDC hdcSrc = ::CreateCompatibleDC( nullptr );	//	転送元用
 	if( hdcSrc == NULL ){
 
 		// 変換前Bmpを削除する
@@ -743,7 +748,7 @@ void CImageListMgr::Extend(bool bExtend)
 	if( curY < MAX_Y )
 		curY = MAX_Y;
 
-	HDC hSrcDC = ::CreateCompatibleDC( 0 );
+	HDC hSrcDC = ::CreateCompatibleDC( nullptr );
 	HBITMAP hSrcBmpOld = (HBITMAP)::SelectObject( hSrcDC, m_hIconBitmap );
 
 	//1行拡張したビットマップを作成

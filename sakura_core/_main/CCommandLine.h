@@ -21,10 +21,14 @@
 #define SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_
 #pragma once
 
-#include "_main/global.h"
+#include <vector>
+
+#include "global.h"
+#include "charset/charcode.h"
 #include "mem/CNativeW.h"
 #include "EditInfo.h"
 #include "GrepInfo.h"
+#include "util/design_template.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -33,10 +37,8 @@
 /*!
  * @brief コマンドラインパーサ クラス
  */
-class CCommandLine {
+class CCommandLine : public TInstanceHolder<CCommandLine> {
 public:
-	[[nodiscard]] static CCommandLine* getInstance();
-
 	CCommandLine() noexcept;
 
 private:
@@ -63,16 +65,18 @@ public:
 	bool IsDebugMode() const noexcept { return m_bDebugMode; }
 	bool IsViewMode() const noexcept { return m_bViewMode; }
 	bool GetEditInfo(EditInfo* fi) const noexcept { *fi = m_fi; return true; }
+	const EditInfo& GetEditInfoRef() const noexcept { return m_fi; }
 	bool GetGrepInfo(GrepInfo* gi) const noexcept { *gi = m_gi; return true; }
+	const GrepInfo& GetGrepInfoRef() const noexcept { return m_gi; }
 	int GetGroupId() const noexcept { return m_nGroup; }	// 2007.06.26 ryoji
-	std::optional<LPCWSTR> GetMacro() const noexcept { return m_Macro.size() ? std::optional<LPCWSTR>(m_Macro.c_str()) : std::nullopt; }
-	std::optional<LPCWSTR> GetMacroType() const noexcept {
-		constexpr auto defaultMacroType = L"file"sv;
-		return 0 != _wcsnicmp(m_MacroType.c_str(), defaultMacroType.data(), defaultMacroType.size()) && m_MacroType.size() ? std::optional<LPCWSTR>(m_MacroType.c_str()) : std::nullopt;
-	}
+	LPCWSTR GetMacro() const noexcept { return m_cmMacro.GetStringPtr(); }
+	LPCWSTR GetMacroType() const noexcept { return m_cmMacroType.GetStringPtr(); }
+	LPCWSTR GetProfileName() const noexcept { return m_cmProfile.GetStringPtr(); }
 	bool IsSetProfile() const noexcept { return m_bSetProfile; }
-	std::optional<LPCWSTR> GetProfileOpt() const noexcept { return m_bSetProfile ? std::optional<LPCWSTR>(m_ProfileName.c_str()) : std::nullopt; }
-	LPCWSTR GetProfileName() const noexcept { return GetProfileOpt().value_or(nullptr); }
+	void SetProfileName(LPCWSTR s){
+		m_bSetProfile = true;
+		m_cmProfile.SetString(s);
+	}
 	bool IsProfileMgr() const noexcept { return m_bProfileMgr; }
 	const CLogicPoint& GetCaretLocation() const noexcept { return m_fi.m_ptCursor; }
 	CLayoutPoint GetViewLocation() const noexcept { return { m_fi.m_nViewLeftCol,  m_fi.m_nViewTopLine }; }
@@ -84,39 +88,24 @@ public:
 	void ClearFile(void) noexcept { m_vFiles.clear(); }
 	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
 	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
-
-	std::wstring ToCommandArgs() const;
-
 	void ParseKanjiCodeFromFileName( LPWSTR pszExeFileName, int cchExeFileName );
 	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
-
-	void SetNoWindow(bool noWindow) { m_bNoWindow = noWindow; }
-	void SetMacro(std::wstring_view macro) { m_Macro = macro; }
-	void SetMacroType(std::wstring_view macroType) { m_MacroType = macroType; }
-	void SetProfileName(std::wstring_view profileName) {
-		m_ProfileName = profileName;
-		m_bSetProfile = true;
-	}
 
 // member valiables
 private:
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		
-	bool		m_bNoWindow = false;		//! [out] TRUE: 編集Windowを開かない
+	bool		m_bNoWindow;		//! [out] TRUE: 編集Windowを開かない
 	bool		m_bProfileMgr;
+	bool		m_bSetProfile;
 	EditInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!
 	bool		m_bViewMode;		//! [out] TRUE: Read Only
 	int			m_nGroup;			//! グループID	// 2007.06.26 ryoji
-
-	std::wstring	m_Macro;                //!< マクロファイル名／マクロ文
-	std::wstring	m_MacroType;            //!< マクロ種別
-
-	bool			m_bSetProfile = false;  //!< プロファイル名が指定された
-	std::wstring	m_ProfileName;          //!< プロファイル名
-
+	CNativeW	m_cmMacro;			//! [out] マクロファイル名／マクロ文
+	CNativeW	m_cmMacroType;		//! [out] マクロ種別
+	CNativeW	m_cmProfile;		//! プロファイル名
 	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
 };
-
 #endif /* SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_ */

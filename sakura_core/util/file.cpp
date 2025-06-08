@@ -1,32 +1,21 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2002, SUI
 	Copyright (C) 2003, MIK
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
+#include <io.h>
 #include "file.h"
+
+#include <Shlwapi.h>
+
+#include <regex>
+#include <string_view>
 
 #include "charset/codechecker.h"
 #include "util/module.h"
@@ -351,14 +340,7 @@ void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* ps
 		*out++ = *in++;
 	}
 	//円記号を付加
-#if UNICODE
 	if( *(out-1) != '\\' ){ *out++ = '\\'; }
-#else
-	if( *(out-1) != '\\' ||
-		(1 == out - CNativeW::GetCharPrev( pszDir, out - pszDir, out )) ){
-			*out++ = '\\';
-	}
-#endif
 	//ファイル名をコピー
 	for( in=pszTitle; *in != '\0'; ){
 		*out++ = *in++;
@@ -419,9 +401,9 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 bool _IS_REL_PATH(const WCHAR* path)
 {
 	bool ret = true;
-	if( ( L'A' <= path[0] && path[0] <= L'Z' || L'a' <= path[0] && path[0] <= L'z' )
-		&& path[1] == L':' && path[2] == L'\\'
-		|| path[0] == L'\\' && path[1] == L'\\'
+	if( (((L'A' <= path[0] && path[0] <= L'Z') || (L'a' <= path[0] && path[0] <= L'z'))
+		&& path[1] == L':' && path[2] == L'\\')
+		|| (path[0] == L'\\' && path[1] == L'\\')
 		 ){
 		ret = false;
 	}
@@ -526,102 +508,14 @@ void GetExedir(
 }
 
 /*!
-	@brief マルチユーザー用のiniファイルパスを取得する
- */
-std::filesystem::path GetExeIniPath() noexcept
-{
-	// マルチユーザー用のiniファイルパス
-	//		exeと同じフォルダーに置かれたマルチユーザー構成設定ファイル（sakura.exe.ini）の内容
-	//		に従ってマルチユーザー用のiniファイルパスを決める
-	return GetExeFileName().concat(L".ini");
-}
-
-/*!
-	@brief iniファイルパスを取得する
- */
-bool IsMultiUserSettings() noexcept
-{
-	const auto exeIniPath = GetExeIniPath();
-	return GetPrivateProfileIntW(L"Settings", L"MultiUser", 0, exeIniPath.c_str());
-}
-
-/*!
-	@brief マルチユーザー用のiniファイルパスを取得する
- */
-std::filesystem::path GetPrivateIniFileName(
-	const std::filesystem::path& exeIniPath,
-	const std::wstring&          filename
-) noexcept
-{
-	const auto nFolder = GetPrivateProfileIntW(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str());
-	KNOWNFOLDERID refFolderId;
-	switch (nFolder) {
-	case 1:
-	case 3:
-		refFolderId = FOLDERID_Profile;			// ユーザーのルートフォルダー
-		break;
-	case 2:
-		refFolderId = FOLDERID_Documents;		// ユーザーのドキュメントフォルダー
-		break;
-
-	default:
-		refFolderId = FOLDERID_RoamingAppData;	// ユーザーのアプリケーションデータフォルダー
-		break;
-	}
-
-	PWSTR pFolderPath = nullptr;
-	SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT_PATH, NULL, &pFolderPath);
-	std::filesystem::path privateIniPath(pFolderPath);
-	CoTaskMemFree(pFolderPath);
-
-	std::wstring subFolder(_MAX_DIR, L'\0');
-	GetPrivateProfileStringW(L"Settings", L"UserSubFolder", L"sakura", subFolder.data(), DWORD(subFolder.capacity()), exeIniPath.c_str());
-	subFolder.assign(subFolder.data());
-	if (subFolder.empty())
-	{
-		subFolder = L"sakura";
-	}
-	if (nFolder == 3) {
-		privateIniPath.append(L"Desktop");
-	}
-	privateIniPath.append(subFolder);
-
-	if (const auto process = CProcess::getInstance())
-	{
-		if (const auto profileName = process->GetCCommandLine().GetProfileOpt();
-			profileName.has_value() && *profileName.value())
-		{
-			privateIniPath.append(profileName.value());
-		}
-	}
-
-	return privateIniPath.append(filename);
-}
-
-/*!
 	@brief iniファイルパスを取得する
  */
 std::filesystem::path GetIniFileName()
 {
-	// exe基準のiniファイルパスを得る
-	auto iniPath = GetExeFileName().replace_extension(L".ini");
-
-	if (IsMultiUserSettings()) {
-		const auto exeIniPath = GetExeIniPath();
-		return GetPrivateIniFileName(exeIniPath, iniPath.filename());
+	if (const auto pProcess = CProcess::getInstance(); pProcess != nullptr) {
+		return pProcess->GetIniFileName();
 	}
-
-
-	const auto filename = iniPath.filename();
-	iniPath.remove_filename();
-
-	if (const auto process = CProcess::getInstance()) {
-		if (const auto profileName = process->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
-			iniPath.append(profileName.value());
-		}
-	}
-
-	return iniPath.append(filename.c_str());
+	return GetExeFileName().replace_extension(L".ini");
 }
 
 /*!
@@ -681,8 +575,7 @@ void GetInidirOrExedir(
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	GetExedir( szExedir, szFile ); 
-	if( fexist(szExedir) ){
+	if( GetExedir( szExedir, szFile ); fexist(szExedir) ){
 		::wcsncpy_s( pDir, _MAX_PATH - 1, szExedir, _TRUNCATE );
 		return;
 	}

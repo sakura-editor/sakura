@@ -3,32 +3,13 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #define SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #pragma once
 
-#include "basis/SakuraBasis.h"
-
+#include "debug/Debug2.h"
 #include "config/maxdata.h"
 
 #include "env/CAppNodeManager.h"	//SShare_Nodes
@@ -53,9 +34,31 @@
 struct DLLSHAREDATA;
 
 //DLLSHAREDATAへの簡易アクセサ
-DLLSHAREDATA& GetDllShareData();
+inline DLLSHAREDATA& GetDllShareData()
+{
+	extern DLLSHAREDATA* g_theDLLSHAREDATA;
 
-DLLSHAREDATA& GetDllShareData(bool bNullCheck);
+	assert(g_theDLLSHAREDATA);
+	return *g_theDLLSHAREDATA;
+}
+
+inline DLLSHAREDATA& GetDllShareData(bool bNullCheck)
+{
+	extern DLLSHAREDATA* g_theDLLSHAREDATA;
+
+	if( bNullCheck ){
+		assert(g_theDLLSHAREDATA);
+	}
+	return *g_theDLLSHAREDATA;
+}
+
+//DLLSHAREDATAを確保したら、まずこれを呼ぶ。破棄する前にも呼ぶ。
+inline void SetDllShareData(DLLSHAREDATA* pShareData)
+{
+	extern DLLSHAREDATA* g_theDLLSHAREDATA;
+
+	g_theDLLSHAREDATA = pShareData;
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    共有メモリ構成要素                       //
@@ -97,7 +100,6 @@ public:
 struct SShare_Handles{
 	HWND				m_hwndTray;
 	HWND				m_hwndDebug;
-	HACCEL				m_hAccel;
 };
 
 //! EXE情報

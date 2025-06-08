@@ -6,32 +6,13 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
-#include "env/CFileNameManager.h"
 
-#include "_main/CProcess.h"
-
+#include "DLLSHAREDATA.h"
+#include "CFileNameManager.h"
 #include "charset/CCodePage.h"
 #include "util/module.h"
 #include "util/os.h"
@@ -39,6 +20,8 @@
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/window.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //
@@ -47,7 +30,7 @@
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名
 	@param pszDest  [out] 変換後のファイル名の格納先
-	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ _MAX_PATH まで
+	@param nDestLen [in]  終端のNULLを含むpszDestのWCHAR単位の長さ _MAX_PATH まで
 	@date 2003.01.27 Moca 新規作成
 	@note 連続して呼び出す場合のため、展開済みメタ文字列をキャッシュして高速化している。
 */
@@ -148,7 +131,7 @@ LPCWSTR CFileNameManager::GetFilePathFormat( std::wstring_view strSrc, LPWSTR ps
 
 	@param pszSrc  [in]  変換前文字列
 	@param pszDes  [out] 変換後文字列
-	@param nDesLen [in]  pszDesのNULLを含むTCHAR単位の長さ
+	@param nDesLen [in]  pszDesのNULLを含むWCHAR単位の長さ
 	@retval true  正常に変換できた
 	@retval false バッファが足りなかった，またはエラー。pszDesは不定
 	@date 2002.11.27 Moca 作成開始

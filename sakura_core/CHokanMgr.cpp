@@ -17,6 +17,7 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <memory>
 #include "CHokanMgr.h"
 #include "env/CShareData.h"
 #include "view/CEditView.h"
@@ -120,6 +121,9 @@ int CHokanMgr::Search(
 )
 {
 	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 
 	/*
 	||  補完キーワードの検索
@@ -347,7 +351,7 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 	// 念のため IME 関連のメッセージが来るようならビューに処理させる
 	// 何かの環境依存（常駐ソフト？）によるものかもしれないが、
 	// フォーカスが無くても IME 関連メッセージがこっちに来るケースがあったので、その対策
-	if(wMsg >= WM_IME_STARTCOMPOSITION && wMsg <= WM_IME_KEYLAST || wMsg >= WM_IME_SETCONTEXT && wMsg <= WM_IME_KEYUP){
+	if((wMsg >= WM_IME_STARTCOMPOSITION && wMsg <= WM_IME_KEYLAST) || (wMsg >= WM_IME_SETCONTEXT && wMsg <= WM_IME_KEYUP)){
 		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->DispatchEvent( pcEditView->GetHwnd(), wMsg, wParam, lParam );
 		return TRUE;

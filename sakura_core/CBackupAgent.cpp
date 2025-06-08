@@ -3,39 +3,17 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
+#include <time.h>
+#include <io.h>	// _access
 #include "CBackupAgent.h"
-
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat
 #include "CSelectLang.h"
 #include "String_define.h"
-
-CBackupAgent::CBackupAgent(CEditDoc* pcDoc)
-	: CDocListenerEx(pcDoc)
-{
-}
 
 /*! セーブ前おまけ処理
 	@param pSaveInfo [in] 保存ファイル情報
@@ -417,7 +395,7 @@ bool CBackupAgent::FormatBackUpPath(
 				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wSecond);
 				}
-				if( -1 == auto_sprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
+				if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
 					return false;
 				}
 			}
@@ -477,7 +455,7 @@ bool CBackupAgent::FormatBackUpPath(
 				//	Jan. 9, 2006 genta VC6対策
 				int idx;
 				for( idx=0; idx<10; ++idx ){
-					folders[idx] = 0;
+					folders[idx] = nullptr;
 				}
 				folders[0] = szFname;
 

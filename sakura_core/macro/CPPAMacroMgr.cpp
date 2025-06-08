@@ -16,10 +16,9 @@
 #include "CPPAMacroMgr.h"
 #include "mem/CNativeW.h"
 #include "CMacroFactory.h"
+#include <string.h>
 #include "io/CTextStream.h"
 #include "util/tchar_convert.h"
-
-using namespace std;
 
 CPPA CPPAMacroMgr::m_cPPA;
 
@@ -58,7 +57,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 
 	// バッファ（cmemWork）にファイル内容を読み込み、m_cPPAに渡す。
 	while( in ){
-		wstring szLine = in.ReadLineW();
+		std::wstring szLine = in.ReadLineW();
 		szLine += L"\n";
 		cmemWork.AppendString(szLine.c_str());
 	}

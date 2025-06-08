@@ -4,22 +4,11 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura", "sakura\sakura.vcxproj", "{AF03508C-515E-4A0E-87BE-67ED1E254BD0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeaderMake", "HeaderMake\HeaderMake.vcxproj", "{0F2918B0-23E3-42E8-A1A8-8739F726A23E}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura_lang_en_US", "sakura_lang_en_US\sakura_lang_en_US.vcxproj", "{7A6D0F29-E560-4985-835B-5F92A08EB242}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests1", "tests\unittests\tests1.vcxproj", "{701E3407-EC27-49F7-ADC7-520CF2B4B438}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DD14BD9B-2E0F-4C53-8F16-EA9969FDEA45}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		.vsconfig = .vsconfig
-		sakura_core\Funccode_x.hsrc = sakura_core\Funccode_x.hsrc
-		LICENSE = LICENSE
-		requirements.txt = requirements.txt
-		sakura\sakura.natvis = sakura\sakura.natvis
-		sonar-project.properties = sonar-project.properties
-		vcpkg-configuration.json = vcpkg-configuration.json
-		vcpkg.json = vcpkg.json
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +26,14 @@ Global
 		{AF03508C-515E-4A0E-87BE-67ED1E254BD0}.Release|Win32.Build.0 = Release|Win32
 		{AF03508C-515E-4A0E-87BE-67ED1E254BD0}.Release|x64.ActiveCfg = Release|x64
 		{AF03508C-515E-4A0E-87BE-67ED1E254BD0}.Release|x64.Build.0 = Release|x64
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Debug|Win32.Build.0 = Debug|Win32
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Debug|x64.ActiveCfg = Debug|Win32
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Debug|x64.Build.0 = Debug|Win32
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Release|Win32.ActiveCfg = Release|Win32
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Release|Win32.Build.0 = Release|Win32
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Release|x64.ActiveCfg = Release|Win32
+		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Release|x64.Build.0 = Release|Win32
 		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|Win32.Build.0 = Debug|Win32
 		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|x64.ActiveCfg = Debug|x64

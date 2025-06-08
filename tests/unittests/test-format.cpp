@@ -23,7 +23,7 @@
 		   distribution.
 */
 #include "pch.h"
-
+#include <Windows.h>
 #include "util/format.h"
 
 /*!

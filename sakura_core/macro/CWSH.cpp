@@ -12,31 +12,14 @@
 	Copyright (C) 2009, syat
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
-#ifdef __MINGW32__
-#define INITGUID 1
-#endif
+#include <process.h> // _beginthreadex
+#include <ObjBase.h>
+#include <InitGuid.h>
+#include <ShlDisp.h>
 #include "macro/CWSH.h"
 #include "macro/CIfObj.h"
 #include "window/CEditWnd.h"
@@ -69,7 +52,6 @@ class CWSHSite: public IActiveScriptSite, public IActiveScriptSiteWindow
 {
 private:
 	CWSHClient *m_Client;
-	ITypeInfo *m_TypeInfo;
 	ULONG m_RefCount;
 public:
 	CWSHSite(CWSHClient *AClient): m_Client(AClient), m_RefCount(0)
@@ -252,7 +234,7 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 			ClassID = CLSID_JSScript9;
 		}
 #endif
-		if(CoCreateInstance(ClassID, 0, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
+		if(CoCreateInstance(ClassID, nullptr, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
 			Error(LS(STR_ERR_CWSH02));
 		else
 		{
@@ -392,7 +374,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 					Error(LS(STR_ERR_CWSH07));
 				else
 				{
-					HRESULT hr = Parser->ParseScriptText(AScript, 0, 0, 0, 0, 0, SCRIPTTEXT_ISVISIBLE, 0, 0);
+					HRESULT hr = Parser->ParseScriptText(AScript, nullptr, nullptr, nullptr, 0, 0, SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 					if (hr == SCRIPT_E_REPORTED) {
 					/*
 						IActiveScriptSite->OnScriptErrorに通知済み。

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="目次">
+		<param name="Local" value="Text/index.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="はじめに">
+		<param name="Local" value="Text/beginning.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="概要">
+		<param name="Local" value="Text/overview.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="現時点の実装仕様">
+		<param name="Local" value="Text/implementation01.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="エディタでの実装">
+		<param name="Local" value="Text/renovation.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="参考">
+		<param name="Local" value="Text/reference.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="このヘルプファイルについて">
+		<param name="Local" value="Text/HLP_LISENCE.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="プラグイン開発ガイド更新履歴">
+		<param name="Local" value="Text/history.html">
+		</OBJECT>
+</UL>
+</BODY></HTML>

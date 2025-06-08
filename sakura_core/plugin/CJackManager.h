@@ -6,34 +6,14 @@
 	Copyright (C) 2009, syat
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_
 #define SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_
 #pragma once
 
-#include "env/SShareDataClientWithCache.hpp"
-
 #include "plugin/CPlugin.h"
-
+#include <list>
 #include "util/design_template.h"
 
 #define PP_COMMAND_STR	L"Command"
@@ -76,13 +56,14 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : public TSingleInstance<CJackManager>, private SShareDataClientWithCache {
-public:
+class CJackManager final : public TSingleton<CJackManager>{
+	friend class TSingleton<CJackManager>;
 	CJackManager();
 
 	typedef std::wstring wstring;
 
 	//操作
+public:
 	ERegisterPlugResult RegisterPlug( wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
 	bool UnRegisterPlug( wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
 	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する
@@ -102,7 +83,7 @@ public:
 
 	//メンバ変数
 private:
-	std::vector<JackDef> m_Jacks = {};	//ジャック定義の一覧
+	DLLSHAREDATA* m_pShareData;
+	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
-
 #endif /* SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_ */

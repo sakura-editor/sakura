@@ -1,0 +1,68 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<title>S_SetFontSize</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_SetFontSize</h2>
+
+<dl>
+	<dt>機能</dt>
+		<dd>フォントサイズ設定</dd>
+	<dt>構文</dt>
+		<dd><em>void  S_SetFontSize ( i1 ， i2 ， i3 )</em>
+		<br><br>
+		<table border="1" cellspacing="0" cellpadding="3" width="85%">
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto">引数</th><th scope="auto">型</th><th scope="auto">内容</th></tr>
+			<tr><td>i1</td><td>整数数値</td><td>フォントサイズ(1/10ポイント単位)</td></tr>
+			<tr><td>i2</td><td>整数数値</td><td>フォントサイズを拡大or縮小するための変更量(i1=0のとき有効)</td></tr>
+			<tr><td>i3</td><td>整数数値</td><td>変更範囲(省略可能)</td></tr>
+		</table>
+		</dd>
+	<dt>説明</dt>
+		<dd>
+		絶対指定または相対指定によりフォントサイズを設定します。</br>
+		使用中のフォントがTrueTypeのみサイズを変更できます。</br>
+		絶対指定・相対指定どちらの場合も設定後のフォントサイズは1pt～72ptの範囲に制限されます。</br>
+		</br>
+		■絶対指定</br>
+		i1に1/10ポイント単位のフォントサイズを設定します。</br>
+		例えば10.5ptを設定したい時には「SetFontSize(105, 0);」とします。</br>
+		</br>
+		■相対指定</br>
+		i1に0を設定し、i2に正数(拡大)または負数(縮小)の変更量を設定します。</br>
+		設定可能な変更量とそれに対応して適用される倍率を一部示します。</br>
+		<table border="1" cellspacing="0" cellpadding="3">
+			<caption style="display: none">無題</caption>
+			<tr><th scope="auto">i2</th><th scope="auto">倍率</th></tr>
+			<tr><td>-36</td><td>1%</td></tr>
+			<tr><td>...</td><td>...</td></tr>
+			<tr><td>-3</td><td>70%</td></tr>
+			<tr><td>-2</td><td>80%</td></tr>
+			<tr><td>-1</td><td>90%</td></tr>
+			<tr><td>1</td><td>110%</td></tr>
+			<tr><td>2</td><td>125%</td></tr>
+			<tr><td>3</td><td>150%</td></tr>
+			<tr><td>...</td><td>...</td></tr>
+			<tr><td>35</td><td>9000%</td></tr>
+		</table>
+		例えば現在のフォントサイズが10のときに「SetFontSize(0,1);」を設定するとフォントサイズが11になり、</br>
+		現在のフォントサイズが10のときに「SetFontSize(0,-1);」を設定するとフォントサイズが9になります。</br>
+		</br>
+		絶対指定・相対指定どちらの場合もi3で変更範囲の指定ができます。</br>
+		<table border="1" cellspacing="0" cellpadding="3">
+			<caption style="display: none">無題</caption>
+			<tr><th scope="auto">i3</th><th scope="auto">変更範囲</th></tr>
+			<tr><td>0</td><td>共通設定(省略時既定)</td></tr>
+			<tr><td>1</td><td>タイプ別設定(タイプ別設定がない場合はi3=0と同じ)</td></tr>
+			<tr><td>2</td><td>現在のウィンドウまたはタブのみ一時的に変更</td></tr>
+		</table>
+		</dd>
+</dl>
+<hr>
+</body></html>

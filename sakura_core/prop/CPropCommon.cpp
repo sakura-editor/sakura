@@ -17,25 +17,7 @@
 	Copyright (C) 2013, Uchi
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
@@ -131,25 +113,28 @@ INT_PTR CPropCommon::DlgProc2(
 CPropCommon::CPropCommon()
 {
 	{
-		assert( sizeof(CPropGeneral)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropWin)       - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropMainMenu)  - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropToolbar)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropTab)       - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropStatusbar) - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropEdit)      - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropFile)      - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropFileName)  - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropBackup)    - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropFormat)    - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropGrep)      - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropKeybind)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropCustmenu)  - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropKeyword)   - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropHelper)    - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropMacro)     - sizeof(CPropCommon) == 0 );
-		assert( sizeof(CPropPlugin)    - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropGeneral)   - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropWin)       - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropMainMenu)  - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropToolbar)   - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropTab)       - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropStatusbar) - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropEdit)      - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropFile)      - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropFileName)  - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropBackup)    - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropFormat)    - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropGrep)      - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropKeybind)   - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropCustmenu)  - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropKeyword)   - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropHelper)    - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropMacro)     - sizeof(CPropCommon) == 0 );
+		static_assert( sizeof(CPropPlugin)    - sizeof(CPropCommon) == 0 );
 	}
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
 
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */

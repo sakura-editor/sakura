@@ -14,31 +14,14 @@
 	Copyright (C) 2007, ryoji, maru, genta
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
+#include <Shlwapi.h>
 #include "_main/CControlTray.h"
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"
@@ -450,10 +433,28 @@ void CViewCommander::Command_BROWSE( void )
 		ErrorBeep();
 		return;
 	}
+//	char	szURL[MAX_PATH + 64];
+//	auto_sprintf( szURL, L"%ls", GetDocument()->m_cDocFile.GetFilePath() );
+	/* URLを開く */
+//	::ShellExecuteEx( NULL, L"open", szURL, NULL, NULL, SW_SHOW );
 
-	std::wstring_view path(GetDocument()->m_cDocFile.GetFilePath());
-	std::wstring url(strprintf(L"file:///%s", path.data()));
-	OpenWithBrowser(m_pCommanderView->GetHwnd(), url);
+    SHELLEXECUTEINFO info; 
+    info.cbSize =sizeof(info);
+    info.fMask = 0;
+    info.hwnd = NULL;
+    info.lpVerb = NULL;
+    info.lpFile = GetDocument()->m_cDocFile.GetFilePath();
+    info.lpParameters = NULL;
+    info.lpDirectory = NULL;
+    info.nShow = SW_SHOWNORMAL;
+    info.hInstApp = nullptr;
+    info.lpIDList = NULL;
+    info.lpClass = NULL;
+    info.hkeyClass = nullptr;
+    info.dwHotKey = 0;
+    info.hIcon = nullptr;
+
+	::ShellExecuteEx(&info);
 
 	return;
 }
@@ -522,9 +523,17 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 		return;
 	}
 
-	// ドキュメントパスを変数に入れてWindowsエクスプローラーで開く
-	if (std::filesystem::path docPath = GetDocument()->m_cDocFile.GetFilePath();
-		!OpenWithExplorer(GetMainWindow(), docPath)) {
+	// ドキュメントパスを変数に入れる
+	LPCWSTR pszDocPath = GetDocument()->m_cDocFile.GetFilePath();
+
+	// Windows Explorerの引数を作る
+	CNativeW explorerCommand;
+	explorerCommand.AppendStringF(L"/select,\"%s\"", pszDocPath);
+	LPCWSTR pszExplorerCommand = explorerCommand.GetStringPtr();
+
+	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, NULL, SW_SHOWNORMAL);
+	// If the function succeeds, it returns a value greater than 32. 
+	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
 		return;
 	}

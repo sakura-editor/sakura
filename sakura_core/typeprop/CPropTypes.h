@@ -23,8 +23,6 @@
 #define SAKURA_CPROPTYPES_2A255D3D_78BC_4B7A_85F7_7BA7ABBF3DF2_H_
 #pragma once
 
-#include "env/SShareDataClientWithCache.hpp"
-
 #include "types/CType.h" // STypeConfig
 
 class CPropTypes;
@@ -70,8 +68,10 @@ enum PropTypeSheetOrder {
 -----------------------------------------------------------------------*/
 /*!
 	@brief タイプ別設定ダイアログボックス
- */
-class CPropTypes : public SShareDataClientWithCache {
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
+class CPropTypes{
 
 public:
 	//生成と破棄
@@ -99,6 +99,7 @@ protected:
 
 	//ダイアログデータ
 	PropTypeSheetOrder	m_nPageNum;
+	DLLSHAREDATA*		m_pShareData;
 	STypeConfig			m_Types;
 
 	// スクリーン用データ	2010/5/10 CPropTypes_P1_Screen.cppから移動
@@ -190,6 +191,7 @@ protected:
 	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
 	bool Import(HWND hwndDlg);											//!< インポート
 	bool Export(HWND hwndDlg);											//!< エクスポート
+	static LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
 
 protected:
 	void DrawColorListItem( DRAWITEMSTRUCT* );				//!< 色種別リスト オーナー描画
@@ -198,7 +200,6 @@ protected:
 	void DrawColorButton(DRAWITEMSTRUCT* pDis, COLORREF cColor);		//!< 色ボタンの描画
 public:
 	static BOOL SelectColor(HWND hwndParent, COLORREF* pColor, DWORD* pCustColors);	//!< 色選択ダイアログ
-private:
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -257,5 +258,4 @@ void InitTypeNameId2( std::vector<TYPE_NAME_ID2<T> >& vec, TYPE_NAME_ID<T>* arr,
 		vec.push_back( item );
 	}
 }
-
 #endif /* SAKURA_CPROPTYPES_2A255D3D_78BC_4B7A_85F7_7BA7ABBF3DF2_H_ */

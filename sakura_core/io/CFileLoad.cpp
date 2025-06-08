@@ -11,28 +11,13 @@
 	Copyright (C) 2006, rastiv
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
 #include "_main/global.h"
 #include "mem/CMemory.h"
 #include "CEol.h"
@@ -48,15 +33,7 @@
 
 /*
 	@note Win32APIで実装
-		2GB以上のファイルは開けない
 */
-
-/*! ロード用バッファサイズの初期値 */
-const int CFileLoad::gm_nBufSizeDef = 32768;
-//(最適値がマシンによって違うのでとりあえず32KB確保する)
-
-// /*! ロード用バッファサイズの設定可能な最低値 */
-// const int gm_nBufSizeMin = 1024;
 
 bool CFileLoad::IsLoadableSize(ULONGLONG size, bool ignoreLimit)
 {
@@ -94,7 +71,7 @@ std::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
 
 	// https://stackoverflow.com/questions/7276826/c-format-number-with-commas
 	// コンマ区切り文字列
-	int insertPosition = str.length() - 3;
+	int insertPosition = (int)str.length() - 3;
 	while (insertPosition > 0) {
 		str.insert(insertPosition, L",");
 		insertPosition -= 3;
@@ -117,29 +94,43 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 	m_encodingTrait = ENCODING_TRAIT_ASCII;
 	m_bBomExist		= false;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
-	m_nReadLength	= 0;
 	m_eMode			= FLMODE_CLOSE;	// Jun. 08, 2003 Moca
 
 	m_nLineIndex	= -1;
-
-	m_pReadBuf = NULL;
-	m_nReadDataLen    = 0;
-	m_nReadBufSize    = 0;
-	m_nReadBufOffSet  = 0;
 }
 
 /*! デストラクタ */
 CFileLoad::~CFileLoad( void )
 {
-	if( NULL != m_hFile ){
-		FileClose();
-	}
-	if( NULL != m_pReadBuf ){
-		free( m_pReadBuf );
-	}
-	if( NULL != m_pCodeBase ){
-		delete m_pCodeBase;
-	}
+	FileClose();
+}
+
+void CFileLoad::Prepare( const CFileLoad& other, size_t nReadBufOffsetBegin, size_t nReadBufOffsetEnd )
+{
+	m_pEencoding	= other.m_pEencoding;
+
+	// ファイルハンドルの所有権なし
+	m_hFile			= NULL;
+	m_hFileMapping	= NULL;
+
+	m_nFileSize		= other.m_nFileSize;
+	m_CharCode		= other.m_CharCode;
+	m_pCodeBase		= other.m_pCodeBase;
+	m_encodingTrait = other.m_encodingTrait;
+	m_bBomExist		= other.m_bBomExist;
+	m_nFlag 		= other.m_nFlag;
+	m_bEolEx		= other.m_bEolEx;
+	m_nMaxEolLen	= other.m_nMaxEolLen;
+	m_cLineTemp		= other.m_cLineTemp;
+
+	m_nLineIndex	= -1;
+	m_eMode			= FLMODE_READY;
+	m_nTempResult	= RESULT_FAILURE;
+
+	m_pReadBufTop			= other.m_pReadBufTop;
+	m_nReadBufOffsetCurrent = nReadBufOffsetBegin;
+	m_nReadBufOffsetBegin	= nReadBufOffsetBegin;
+	m_nReadBufOffsetEnd		= nReadBufOffsetEnd;
 }
 
 /*!
@@ -182,7 +173,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 
 	// GetFileSizeEx は Win2K以上
 	fileSize.LowPart = ::GetFileSize( hFile, &fileSize.HighPart );
-	if( 0xFFFFFFFF == fileSize.LowPart ){
+	if( 0xFFFFFFFFU == fileSize.LowPart ){
 		DWORD lastError = ::GetLastError();
 		if( NO_ERROR != lastError ){
 			FileClose();
@@ -197,13 +188,22 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_nFileSize = fileSize.QuadPart;
 //	m_eMode = FLMODE_OPEN;
 
-	// From Here Jun. 08, 2003 Moca 文字コード判定
-	// データ読み込み
-	Buffering();
+	m_pReadBufTop = NULL;
+	if( 0 < m_nFileSize ){
+		m_hFileMapping = CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
+		if( m_hFileMapping != NULL ){
+			m_pReadBufTop = (const char*)MapViewOfFile( m_hFileMapping, FILE_MAP_READ, 0, 0, 0 );
+		}
+		if( m_pReadBufTop == NULL ){
+			FileClose();
+			throw CError_FileOpen();
+		}
+	}
 
 	if( CharCode == CODE_AUTODETECT ){
 		CCodeMediator mediator(*m_pEencoding);
-		CharCode = mediator.CheckKanjiCode(m_pReadBuf, m_nReadDataLen);
+		const size_t nKanjiCheckLen = (size_t)(std::min)(m_nFileSize, m_nAutoDetectReadLen);
+		CharCode = mediator.CheckKanjiCode(m_pReadBufTop, nKanjiCheckLen);
 	}
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定
@@ -215,10 +215,11 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_encodingTrait = CCodePage::GetEncodingTrait(m_CharCode);
 	m_nFlag = nFlag;
 
-	m_nFileDataLen = m_nFileSize;
+	m_nFileDataLen = m_nReadBufOffsetEnd = (size_t)m_nFileSize;
 	bool bBom = false;
-	if( 0 < m_nReadDataLen ){
-		CMemory headData(m_pReadBuf, t_min(m_nReadDataLen, 10));
+	if( 0 < m_nFileSize ){
+		const int nBomCheckLen = (int)(std::min)(m_nFileSize, 10LL);
+		CMemory headData(m_pReadBufTop, nBomCheckLen);
 		CNativeW headUni;
 		CIoBridge::FileToImpl(headData, &headUni, m_pCodeBase, m_nFlag);
 		if( 1 <= headUni.GetStringLength() && headUni.GetStringPtr()[0] == 0xfeff ){
@@ -237,7 +238,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 			*pbBomExist = false;
 		}
 	}
-	
+
 	// To Here Jun. 13, 2003 Moca BOMの除去
 	m_eMode = FLMODE_READY;
 //	m_cmemLine.AllocBuffer( 256 );
@@ -270,21 +271,32 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 */
 void CFileLoad::FileClose( void )
 {
-	ReadBufEmpty();
-	if( NULL != m_hFile ){
-		::CloseHandle( m_hFile );
-		m_hFile = NULL;
+	if( m_hFile != NULL ){
+		if( m_pReadBufTop != NULL ){
+			(void)UnmapViewOfFile( m_pReadBufTop );
+			m_pReadBufTop = NULL;
+		}
+		if( m_hFileMapping != NULL ){
+			CloseHandle( m_hFileMapping );
+			m_hFileMapping = NULL;
+		}
+		if( NULL != m_hFile ){
+			::CloseHandle( m_hFile );
+			m_hFile = NULL;
+		}
+		if( NULL != m_pCodeBase ){
+			delete m_pCodeBase;
+			m_pCodeBase = NULL;
+		}
 	}
-	if( NULL != m_pCodeBase ){
-		delete m_pCodeBase;
-		m_pCodeBase = NULL;
-	}
+	m_nReadBufOffsetCurrent = 0;
+	m_nReadBufOffsetBegin	= 0;
+	m_nReadBufOffsetEnd		= 0;
 	m_nFileSize		=  0;
 	m_nFileDataLen	=  0;
 	m_CharCode		= CODE_DEFAULT;
 	m_bBomExist		= false; // From Here Jun. 08, 2003
 	m_nFlag 		=  0;
-	m_nReadLength	=  0;
 	m_eMode			= FLMODE_CLOSE;
 	m_nLineIndex	= -1;
 }
@@ -354,46 +366,22 @@ EConvertResult CFileLoad::ReadLine_core(
 
 	// 1行取り出し ReadBuf -> m_memLine
 	//	Oct. 19, 2002 genta while条件を整理
-	int			nBufLineLen;
-	int			nEolLen;
-	int			nBufferNext;
-	for (;;) {
-		const char* pLine = GetNextLineCharCode(
-			m_pReadBuf,
-			m_nReadDataLen,    //[in] バッファの有効データサイズ
-			&nBufLineLen,      //[out]改行を含まない長さ
-			&m_nReadBufOffSet, //[i/o]オフセット
-			pcEol,
-			&nEolLen,
-			&nBufferNext
-		);
-		if(pLine==NULL)break;
-
-		// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
-		if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_READY == m_eMode ){// From Here Jun. 13, 2003 Moca
-			int n = 128;
-			int nMinAllocSize = m_cLineBuffer.GetRawLength() + nEolLen - nBufferNext + 100;
-			while( n < nMinAllocSize ){
-				n *= 2;
-			}
-			m_cLineBuffer.AllocBuffer( n );
-			m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen - nBufferNext );
-			m_nReadBufOffSet -= nBufferNext;
-			// バッファロード   File -> ReadBuf
-			Buffering();
-			if( 0 == nBufferNext && 0 < nEolLen ){
-				// ぴったり行出力
-				break;
-			}
-		}else{
-			m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen );
-			break;
-		}
+	size_t		nBufLineLen;
+	size_t		nEolLen;
+	const char* pLine = GetNextLineCharCode(
+		m_pReadBufTop,
+		m_nReadBufOffsetEnd,
+		&nBufLineLen,
+		&m_nReadBufOffsetCurrent,
+		pcEol,
+		&nEolLen
+	);
+	if( pLine != NULL ){
+		m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen );
 	}
-	m_nReadLength += m_cLineBuffer.GetRawLength();
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
-	EConvertResult eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
+	EConvertResult eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer, pUnicodeBuffer, m_pCodeBase,m_nFlag);
 	if(eConvertResult==RESULT_LOSESOME){
 		eRet = RESULT_LOSESOME;
 	}
@@ -417,75 +405,45 @@ EConvertResult CFileLoad::ReadLine_core(
 }
 
 /*!
-	バッファにデータを読み込む
-	@note エラー時は throw する
-*/
-void CFileLoad::Buffering( void )
-{
-	DWORD	ReadSize;
-
-	// メモリ確保
-	if( NULL == m_pReadBuf ){
-		int nBufSize;
-		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( static_cast<int>(m_nFileSize) ):( gm_nBufSizeDef );
-		//	Borland C++では0バイトのmallocを獲得失敗と見なすため
-		//	最低1バイトは取得することで0バイトのファイルを開けるようにする
-		if( 0 >= nBufSize ){
-			nBufSize = 1; // Jun. 08, 2003  BCCのmalloc(0)がNULLを返す仕様に対処
-		}
-
-		m_pReadBuf = (char *)malloc( nBufSize );
-		if( NULL == m_pReadBuf ){
-			throw CError_FileRead(); // メモリ確保に失敗
-		}
-		m_nReadDataLen = 0;
-		m_nReadBufSize = nBufSize;
-		m_nReadBufOffSet = 0;
-	}
-	// ReadBuf内にデータが残っている
-	else if( m_nReadBufOffSet < m_nReadDataLen ){
-		m_nReadDataLen -= m_nReadBufOffSet;
-		memmove( m_pReadBuf, &m_pReadBuf[m_nReadBufOffSet], m_nReadDataLen );
-		m_nReadBufOffSet = 0;
-	}
-	else{
-		m_nReadBufOffSet = 0;
-		m_nReadDataLen = 0;
-	}
-	// ファイルの読み込み
-	ReadSize = Read( &m_pReadBuf[m_nReadDataLen], m_nReadBufSize - m_nReadDataLen );
-	if( 0 == ReadSize ){
-		m_eMode = FLMODE_READBUFEND;	// ファイルなどの終わりに達したらしい
-	}
-	m_nReadDataLen += ReadSize;
-}
-
-/*!
-	バッファクリア
-*/
-void CFileLoad::ReadBufEmpty( void )
-{
-	if ( NULL != m_pReadBuf ){
-		free( m_pReadBuf );
-		m_pReadBuf = NULL;
-	}
-	m_nReadDataLen    = 0;
-	m_nReadBufSize    = 0;
-	m_nReadBufOffSet  = 0;
-}
-
-/*!
 	 現在の進行率を取得する
 	 @return 0% - 100%  若干誤差が出る
 */
 int CFileLoad::GetPercent( void ){
 	int nRet;
-	if( 0 == m_nFileDataLen || m_nReadLength > m_nFileDataLen ){
+	const size_t nSize = (m_nReadBufOffsetEnd - m_nReadBufOffsetBegin);
+	if( 0 == nSize || m_nReadBufOffsetEnd <= m_nReadBufOffsetCurrent ){
 		nRet = 100;
 	}else{
-		nRet = static_cast<int>(m_nReadLength * 100 / m_nFileDataLen);
+		nRet = static_cast<int>((m_nReadBufOffsetCurrent - m_nReadBufOffsetBegin) * 100.0 / nSize);
 	}
 	return nRet;
+}
+
+/*!
+	指定オフセットを含む行の次行の先頭オフセットを取得する (ただし指定オフセットが行頭を指す場合はその位置をそのまま返す)
+	@param[in]	nOffset	指定オフセット (ファイル先頭を基準とするバイト単位)
+	@returns	次行の先頭オフセット (ファイル先頭を基準とするバイト単位)
+*/
+size_t CFileLoad::GetNextLineOffset( size_t nOffset )
+{
+	// 探し始めるオフセットが半端にならぬよう調整
+	const size_t nAlignBytes =
+		((m_encodingTrait == ENCODING_TRAIT_UTF32LE) || (m_encodingTrait == ENCODING_TRAIT_UTF32BE)) ? 4 :
+		((m_encodingTrait == ENCODING_TRAIT_UTF16LE) || (m_encodingTrait == ENCODING_TRAIT_UTF16BE)) ? 2 :
+		1;
+	size_t nOffsetBegin = (std::min)(nOffset, (size_t)m_nFileSize);
+	nOffsetBegin = nOffsetBegin - (nOffsetBegin % nAlignBytes);
+	if( nOffsetBegin < nAlignBytes ){
+		return 0;
+	}
+	nOffsetBegin -= nAlignBytes;
+
+	size_t nLineLenDummy = 0;
+	CEol cEolDummy;
+	size_t nEolLenDummy = 0;
+	(void)GetNextLineCharCode( m_pReadBufTop, (size_t)m_nFileSize, &nLineLenDummy, &nOffsetBegin, &cEolDummy, &nEolLenDummy );
+
+	return nOffsetBegin;
 }
 
 /*!
@@ -493,18 +451,16 @@ int CFileLoad::GetPercent( void ){
 */
 const char* CFileLoad::GetNextLineCharCode(
 	const char*	pData,		//!< [in]	検索文字列
-	int			nDataLen,	//!< [in]	検索文字列のバイト数
-	int*		pnLineLen,	//!< [out]	1行のバイト数を返すただしEOLは含まない
-	int*		pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
+	size_t		nDataLen,	//!< [in]	検索文字列のバイト数
+	size_t*		pnLineLen,	//!< [out]	1行のバイト数を返すただしEOLは含まない
+	size_t*		pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
 	CEol*		pcEol,		//!< [i/o]	EOL
-	int*		pnEolLen,	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
-	int*		pnBufferNext	//!< [out]	次回持越しバッファ長(EOLの断片)
+	size_t*		pnEolLen	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
 ){
-	int nbgn = *pnBgn;
-	int i;
+	const size_t nbgn = *pnBgn;
+	size_t i;
 
 	pcEol->SetType( EEolType::none );
-	*pnBufferNext = 0;
 
 	if( nDataLen <= nbgn ){
 		*pnLineLen = 0;
@@ -513,8 +469,8 @@ const char* CFileLoad::GetNextLineCharCode(
 	}
 	const unsigned char* pUData = (const unsigned char*)pData; // signedだと符号拡張でNELがおかしくなるので
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-	int nLen = nDataLen;
-	int neollen = 0;
+	size_t nLen = nDataLen;
+	size_t neollen = 0;
 	switch( m_encodingTrait ){
 	case ENCODING_TRAIT_ERROR://
 	case ENCODING_TRAIT_ASCII:
@@ -528,7 +484,7 @@ const char* CFileLoad::GetNextLineCharCode(
 			for( i = nbgn; i < nDataLen; ++i ){
 				if( pData[i] == '\r' || pData[i] == '\n' ){
 					pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
-					neollen = pcEol->GetLen();
+					neollen = (size_t)pcEol->GetLen();
 					break;
 				}
 				if( m_bEolEx ){
@@ -537,7 +493,7 @@ const char* CFileLoad::GetNextLineCharCode(
 						if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
 								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
 							pcEol->SetType(eEolEx[k]);
-							neollen = m_memEols[k].GetRawLength();
+							neollen = (size_t)m_memEols[k].GetRawLength();
 							break;
 						}
 					}
@@ -545,24 +501,6 @@ const char* CFileLoad::GetNextLineCharCode(
 						break;
 					}
 				}
-			}
-			// UTF-8のNEL,PS,LS断片の検出
-			if( i == nDataLen && m_bEolEx ){
-				for( i = t_max(0, nDataLen - m_nMaxEolLen - 1); i < nDataLen; i++ ){
-					int k;
-					bool bSet = false;
-					for( k = 0; k < (int)_countof(eEolEx); k++ ){
-						int nCompLen = t_min(nDataLen - i, m_memEols[k].GetRawLength());
-						if( 0 != nCompLen && 0 == memcmp(m_memEols[k].GetRawPtr(), pData + i, nCompLen) ){
-							*pnBufferNext = t_max(*pnBufferNext, nCompLen);
-							bSet = true;
-						}
-					}
-					if( bSet ){
-						break;
-					}
-				}
-				i = nDataLen;
 			}
 		}
 		break;
@@ -572,7 +510,7 @@ const char* CFileLoad::GetNextLineCharCode(
 			wchar_t c = static_cast<wchar_t>((pUData[i + 1] << 8) | pUData[i]);
 			if( WCODE::IsLineDelimiter(c, bExtEol) ){
 				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
-				neollen = (Int)pcEol->GetLen() * sizeof(wchar_t);
+				neollen = (size_t)pcEol->GetLen() * sizeof(wchar_t);
 				break;
 			}
 		}
@@ -583,7 +521,7 @@ const char* CFileLoad::GetNextLineCharCode(
 			wchar_t c = static_cast<wchar_t>((pUData[i] << 8) | pUData[i + 1]);
 			if( WCODE::IsLineDelimiter(c, bExtEol) ){
 				pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
-				neollen = (Int)pcEol->GetLen() * sizeof(wchar_t);
+				neollen = (size_t)pcEol->GetLen() * sizeof(wchar_t);
 				break;
 			}
 		}
@@ -604,7 +542,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				}
 				wchar_t pDataTmp[2] = {c, c2};
 				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
-				neollen = (Int)pcEol->GetLen() * 4;
+				neollen = (size_t)pcEol->GetLen() * 4U;
 				break;
 			}
 		}
@@ -625,7 +563,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				}
 				wchar_t pDataTmp[2] = {c, c2};
 				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
-				neollen = (Int)pcEol->GetLen() * 4;
+				neollen = (size_t)pcEol->GetLen() * 4U;
 				break;
 			}
 		}
@@ -637,7 +575,7 @@ const char* CFileLoad::GetNextLineCharCode(
 			if( m_encodingTrait == ENCODING_TRAIT_EBCDIC && bExtEol ){
 				if( pData[i] == '\x15' ){
 					pcEol->SetType(EEolType::next_line);
-					neollen = 1;
+					neollen = 1U;
 					break;
 				}
 			}
@@ -649,23 +587,18 @@ const char* CFileLoad::GetNextLineCharCode(
 							(i + 1 < nDataLen ? pData[i+1] : 0))),
 					0
 				};
-				pcEol->SetTypeByStringForFile( szEof, t_min(nDataLen - i,2) );
-				neollen = (Int)pcEol->GetLen();
+				pcEol->SetTypeByStringForFile( szEof, t_min(nDataLen - i, (size_t)2) );
+				neollen = (size_t)pcEol->GetLen();
 				break;
 			}
 		}
 		break;
 	}
 
-	if( neollen < 1 ){
+	if( neollen < 1U ){
 		// EOLがなかった場合
 		if( i != nDataLen ){
 			i = nDataLen;		// 最後の半端なバイトを落とさないように
-		}
-	}else{
-		// CRの場合は、CRLFかもしれないので次のバッファへ送る
-		if( *pcEol == EEolType::carriage_return ){
-			*pnBufferNext = neollen;
 		}
 	}
 

@@ -8,37 +8,13 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 
 */
 #include "StdAfx.h"
 #include "CAutoSaveAgent.h"
-
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
-
-CAutoSaveAgent::CAutoSaveAgent(CEditDoc* pcDoc)
-	: CDocListenerEx(pcDoc)
-{
-}
 
 //	From Here Aug. 21, 2000 genta
 //
@@ -70,9 +46,8 @@ void CAutoSaveAgent::CheckAutoSave()
 //
 void CAutoSaveAgent::ReloadAutoSaveParam()
 {
-	const auto& sBackup = GetShareData().m_Common.m_sBackup;
-	m_cPassiveTimer.SetInterval(sBackup.GetAutoBackupInterval());
-	m_cPassiveTimer.Enable(sBackup.IsAutoBackupEnabled());
+	m_cPassiveTimer.SetInterval( GetDllShareData().m_Common.m_sBackup.GetAutoBackupInterval() );
+	m_cPassiveTimer.Enable( GetDllShareData().m_Common.m_sBackup.IsAutoBackupEnabled() );
 }
 
 //----------------------------------------------------------
@@ -82,15 +57,14 @@ void CAutoSaveAgent::ReloadAutoSaveParam()
 /*!
 	時間間隔の設定
 	@param m 間隔(min)
-	間隔を0以下に設定したときは1秒とみなす。設定可能な最大間隔は35792分。
+	間隔を0以下に設定したときは1秒とみなす。設定可能な最大間隔は35791分。
 */
 void CPassiveTimer::SetInterval(int m)
 {
-	if( m <= 0 )
-		m = 1;
-	else if( m >= 35792 )	//	35792分以上だと int で表現できなくなる
-		m = 35792;
+	constexpr int nMaxInterval = INT_MAX / MSec2Min;
+	static_assert(nMaxInterval == 35791);
 
+	m = std::clamp(m, 1, nMaxInterval);
 	nInterval = m * MSec2Min;
 }
 /*!
@@ -120,8 +94,12 @@ bool CPassiveTimer::CheckAction(void)
 		return false;
 
 	//	時刻比較
-	if (const auto diff = GetTickCount64() - nLastTick;
-		diff < nInterval)	//	規定時間に達していない
+	DWORD now = ::GetTickCount();
+	int diff;
+
+	diff = now - nLastTick;	//	TickCountが一回りしてもこれでうまくいくはず...
+
+	if( diff < nInterval )	//	規定時間に達していない
 		return false;
 
 	Reset();

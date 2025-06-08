@@ -15,25 +15,7 @@
 	Copyright (C) 2007, ryoji, genta
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #ifndef SAKURA_FUNCCODE_071442E9_78EF_47B8_ABB5_CBB12C3EC84B_H_
@@ -161,9 +143,8 @@
 を参照
 */
 
-class CEditDoc;
-struct DLLSHAREDATA;
-enum EFunctionCode;
+//2007.09.30 kobake 機能番号定数を列挙型に変更。(デバッグをしやすくするため)
+#include "Funccode_enum.h"
 
 // 機能一覧に関するデータ宣言
 namespace nsFuncCode{
@@ -180,8 +161,10 @@ namespace nsFuncCode{
 /*機能番号に対応したヘルプトピックIDを返す*/
 int FuncID_To_HelpContextID( EFunctionCode nFuncID );	//Stonee, 2001/02/23
 
+class CEditDoc;
+struct DLLSHAREDATA;
+
 //2007.10.30 kobake 機能チェックをCEditWndからここへ移動
 bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能が利用可能か調べる */
 bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能がチェック状態か調べる */
-
 #endif /* SAKURA_FUNCCODE_071442E9_78EF_47B8_ABB5_CBB12C3EC84B_H_ */

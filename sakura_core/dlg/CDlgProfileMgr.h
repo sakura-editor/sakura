@@ -8,25 +8,7 @@
 	Copyright (C) 2013, Moca
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_
 #define SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_
@@ -51,7 +33,7 @@ class CDlgProfileMgr final : public CDialog
 {
 public:
 	//! コマンドラインだけでプロファイルが確定するか調べる
-	static bool TrySelectProfile(std::wstring& strProfileName, bool hasProfileName = false, bool showProfileMgr = false) noexcept;
+	static bool TrySelectProfile( CCommandLine* pcCommandLine ) noexcept;
 
 	/*
 	||  Constructors

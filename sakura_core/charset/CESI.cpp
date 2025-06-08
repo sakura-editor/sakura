@@ -10,29 +10,13 @@
 	Copyright (C) 2007
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
 
+#include <limits.h>
+#include <stdio.h>
 #include "charset/codechecker.h"
 #include "charset/CESI.h"
 #include "charset/CCodePage.h"
@@ -266,19 +250,19 @@ void CESI::GetEncodingInfo_jis( const char* pS, const int nLen )
 	do{
 		switch( emyjisesc ){
 		case MYJISESC_ASCII7:
-			nlen = CheckJisAscii7Part( pr, int(pr_end - pr), &pr_next, &emyjisesc, &nerror );
+			nlen = CheckJisAscii7Part( pr, pr_end-pr, &pr_next, &emyjisesc, &nerror );
 			break;
 		case MYJISESC_HANKATA:
 			nlen = CheckJisHankataPart( pr, pr_end-pr, &pr_next, &emyjisesc, &nerror );
 			break;
 		case MYJISESC_ZENKAKU:
-			nlen = CheckJisZenkakuPart( pr, int(pr_end - pr), &pr_next, &emyjisesc, &nerror );
+			nlen = CheckJisZenkakuPart( pr, pr_end-pr, &pr_next, &emyjisesc, &nerror );
 			break;
 		//case MYJISESC_UNKNOWN:
 		default:
 			nlen = CheckJisUnknownPart( pr, pr_end-pr, &pr_next, &emyjisesc, &nerror );
 		}
-		nescbytes += int(pr_next - pr + nlen);
+		nescbytes += pr_next-(pr+nlen);
 		nillbytes += nerror;
 		pr = pr_next;
 	}while( pr_next < pr_end );
@@ -439,7 +423,7 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 	pr = pS;
 	pr_end = pS + nLen;
 
-	for( ; 0 != (nret = CheckUtf8Char(pr, int(pr_end - pr), &echarset, true, 0)); pr += nret ){
+	for( ; 0 != (nret = CheckUtf8Char(pr, pr_end-pr, &echarset, true, 0)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
 				num_of_utf8_encoded_bytes += nret;
@@ -477,7 +461,7 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 	pr = pS;
 	pr_end = pS + nLen;
 
-	for( ; 0 != (nret = CheckCesu8Char(pr, int(pr_end - pr), &echarset, 0)); pr += nret ){
+	for( ; 0 != (nret = CheckCesu8Char(pr, pr_end-pr, &echarset, 0)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
 				num_of_cesu8_encoded_bytes += nret;
@@ -587,8 +571,8 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 
 	for( ; ; ){
 
-		nret1 = CheckUtf16leChar( LPCWSTR(pr1), int(pr_end - pr1)/sizeof(wchar_t), &echarset1, 0 );
-		nret2 = CheckUtf16beChar( LPCWSTR(pr2), int(pr_end - pr2)/sizeof(wchar_t), &echarset2, 0 );
+		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1, 0 );
+		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2, 0 );
 		if( nret1 == 0 && nret2 == 0 ){
 			// LE BE 両方共のチェックが終了した。
 			break;
@@ -1260,7 +1244,7 @@ ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 		DetectMBCode(), DetectUnicode() 内で
 		cesi.m_dwStatus に記録する。
 	*/
-	SetInformation(pBuf, int(nBufLen));
+	SetInformation(pBuf, nBufLen);
 
 	if( GetMetaName() != CODE_NONE ){
 		return GetMetaName();

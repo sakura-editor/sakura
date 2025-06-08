@@ -1,25 +1,8 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #ifndef SAKURA_CPOOLRESOURCE_4DEA6BEC_4D80_408F_9AEE_67AAF95BFE90_H_
@@ -65,6 +48,8 @@ protected:
  	void* do_allocate([[maybe_unused]] std::size_t bytes,
  					  [[maybe_unused]] std::size_t alignment) override
 	{
+		std::lock_guard lock(m_mtx);
+
 		// メモリ確保時には未割当領域から使用していく
 		if (m_unassignedNode) {
 			T* ret = reinterpret_cast<T*>(m_unassignedNode);
@@ -91,6 +76,8 @@ protected:
 					   [[maybe_unused]] std::size_t alignment) override
 	{
 		if (p) {
+			std::lock_guard lock(m_mtx);
+
 			// メモリ解放した領域を未割当領域として自己参照共用体の片方向連結リストで繋げる
 			// 次回のメモリ確保時にその領域を再利用する
 			Node* next = m_unassignedNode;
@@ -140,5 +127,7 @@ private:
 	Node* m_unassignedNode = nullptr; // 未割当領域の先頭
 	Node* m_currentBlock = nullptr; // 現在のブロック
 	Node* m_currentNode = nullptr; // 要素確保処理時に現在のブロックの中から切り出すNodeを指すポインタ、メモリ確保時に未割当領域が無い場合はここを使う
+
+	std::mutex m_mtx;
 };
 #endif /* SAKURA_CPOOLRESOURCE_4DEA6BEC_4D80_408F_9AEE_67AAF95BFE90_H_ */

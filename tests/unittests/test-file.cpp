@@ -24,11 +24,27 @@
 */
 #include "pch.h"
 
-#include "util/file.h"
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
 
-#include "_main/CProcessFactory.h"
+#include <tchar.h>
+#include <Windows.h>
+#include <Shlwapi.h>
 
+#include <cstdlib>
+#include <fstream>
+
+#include "config/maxdata.h"
+#include "basis/primitive.h"
+#include "debug/Debug2.h"
+#include "basis/CMyString.h"
+#include "mem/CNativeW.h"
+#include "env/DLLSHAREDATA.h"
+#include "_main/CCommandLine.h"
+#include "_main/CControlProcess.h"
 #include "CDataProfile.h"
+#include "util/file.h"
 
 /*!
  * @brief パスがファイル名に使えない文字を含んでいるかチェックする
@@ -161,6 +177,14 @@ TEST(file, GetIniFileName_OutOfProcess)
  */
 TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 {
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
 	// exeファイルの拡張子をiniに変えたパスが返る
 	auto path = GetExeFileName().replace_extension(L".ini");
 	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
@@ -171,10 +195,13 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
  */
 TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 {
-	ASSERT_FALSE(CProcess::getInstance());
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
-	const auto dummy = CProcessFactory().CreateInstance(LR"(-PROF="profile1")");
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	// exeファイルの拡張子をiniに変えたパスの最後のフォルダーにプロファイル名を加えたパスが返る
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
@@ -224,10 +251,13 @@ protected:
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
 {
-	ASSERT_FALSE(CProcess::getInstance());
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
-	const auto dummy = CProcessFactory().CreateInstance(LR"(-PROF="profile1")");
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
@@ -252,6 +282,14 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
 {
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
 	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"3", exeIniPath.c_str());
@@ -275,6 +313,14 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
 {
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
 	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"1", exeIniPath.c_str());
@@ -298,6 +344,14 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateDocument)
 {
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
 	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"2", exeIniPath.c_str());
@@ -353,10 +407,13 @@ void EnsureDirectoryExist(const std::wstring& strProfileName);
  */
 TEST(file, GetInidirOrExedir)
 {
-	ASSERT_FALSE(CProcess::getInstance());
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
-	const auto dummy = CProcessFactory().CreateInstance(LR"(-PROF="profile1")");
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
 	std::wstring buf(_MAX_PATH, L'\0');
 

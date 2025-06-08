@@ -17,6 +17,7 @@
 */
 
 #include "StdAfx.h"
+#include <stdio.h>
 #include "CDicMgr.h"
 #include "mem/CMemory.h" // 2002/2/10 aroka ヘッダー整理
 #include "mem/CNativeW.h"
@@ -24,8 +25,6 @@
 #include "io/CTextStream.h"
 #include "util/string_ex.h"
 #include "config/system_constants.h"
-
-using namespace std;
 
 CDicMgr::CDicMgr()
 {
@@ -73,7 +72,7 @@ BOOL CDicMgr::Search(
 	for(int line=1 ; in; line++ ){	// 2006.04.10 fon
 		//1行読み込み
 		{
-			wstring tmp = in.ReadLineW(); //NULL != fgetws( szLine, _countof(szLine), pFile );
+			std::wstring tmp = in.ReadLineW();
 			wcsncpy_s(szLine,_countof(szLine),tmp.c_str(), _TRUNCATE);
 			// auto_strlcpy(szLine,tmp.c_str(), _countof(szLine));
 		}
@@ -139,7 +138,7 @@ int CDicMgr::HokanSearch(
 		return 0;
 	}
 	nKeyLen = wcslen( pszKey );
-	wstring szLine;
+	std::wstring szLine;
 	while( in ){
 		szLine = in.ReadLineW();
 		if( nKeyLen > (int)szLine.length() ){

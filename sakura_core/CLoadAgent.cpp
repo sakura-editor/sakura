@@ -3,29 +3,10 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "CLoadAgent.h"
-
 #include "CReadManager.h"
 #include "_main/CAppMode.h"
 #include "_main/CControlTray.h"
@@ -41,11 +22,6 @@
 #include "apiwrap/StdApi.h"
 #include "config/app_constants.h"
 #include "String_define.h"
-
-CLoadAgent::CLoadAgent()
-	: CDocListenerEx(CEditDoc::getInstance())
-{
-}
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
@@ -263,12 +239,21 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
 		nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
 
+	// テキストの折り返し方法
+	// CLayoutMgr::CreateLayoutで参照されるのでここで設定
+	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
+
+	// ファイルを読んだらタブ位置を再計算
+	// この後のSetLayoutInfoの中でもCTsvModeInfo::CalcTabLengthを呼ぶ所があるが
+	// TsvModeの変化がない場合にはそこでは呼ばれないので必要な場合はここでやっておく
+	if (ref.m_nTsvMode != TSV_MODE_NONE) {
+		pcDoc->m_cLayoutMgr.m_tsvInfo.CalcTabLength(pcDoc->m_cLayoutMgr.m_pcDocLineMgr);
+		pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode = ref.m_nTsvMode;
+	}
+
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
 	pcDoc->m_cLayoutMgr.SetLayoutInfo( true, true, ref, ref.m_nTabSpace, ref.m_nTsvMode, nMaxLineKetas, CLayoutXInt(-1), &GetEditWnd().GetLogfont() );
 	GetEditWnd().ClearViewCaretPosInfo();
-	if (pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode != TSV_MODE_NONE) {
-		pcDoc->m_cLayoutMgr.m_tsvInfo.CalcTabLength(pcDoc->m_cLayoutMgr.m_pcDocLineMgr);
-	}
 	
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
@@ -293,7 +278,8 @@ void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
-		pcDoc->m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+		// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+		pcDoc->m_cLayoutMgr.CalculateTextWidth(FALSE);	// テキスト最大幅を算出する
 	else
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
 }

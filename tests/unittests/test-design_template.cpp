@@ -24,7 +24,16 @@
 */
 #include "pch.h"
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+#include <Shlwapi.h>
+
 #include "util/design_template.h"
+
 
 /*!
  * TSingleInstanceの挙動を検証するためのクラス

@@ -30,6 +30,7 @@
 #include "CPropertyManager.h"
 #include "util/window.h"
 #include "util/zoom.h"
+#include <array>
 #include "config/system_constants.h"
 #include "config/app_constants.h"
 
@@ -470,7 +471,9 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-		pcDoc->m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+		// CEditWnd::ChangeLayoutParam->CLayoutMgr::ChangeLayoutParam->
+		// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+		pcDoc->m_cLayoutMgr.CalculateTextWidth(FALSE);		// テキスト最大幅を算出する
 		GetEditWindow()->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
 	}else{
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする

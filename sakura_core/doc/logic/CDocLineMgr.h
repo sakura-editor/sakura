@@ -24,14 +24,12 @@
 
 #include <Windows.h>
 #include <memory_resource>
+#include <memory>
 #include "_main/global.h" // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
 #include "COpe.h"
 #include "CDocLine.h"
-
-#include "docplus/CDiffManager.h"
-#include "docplus/CModifyManager.h"
 
 class CBregexp; // 2002/2/10 aroka
 
@@ -51,9 +49,6 @@ struct DocLineReplaceArg {
 -----------------------------------------------------------------------*/
 //2007.09.30 kobake WhereCurrentWord_2 を CWordParse に移動
 class CDocLineMgr{
-	using CDiffManagerHolder = std::unique_ptr<CDiffManager>;
-	using CModifyManagerHolder = std::unique_ptr<CModifyManager>;
-
 public:
 	//コンストラクタ・デストラクタ
 	CDocLineMgr();
@@ -77,12 +72,14 @@ public:
 	CDocLine* AddNewLine();						//!< 最下部に新しい行を挿入
 	void DeleteAllLine();						//!< 全ての行を削除する
 	void DeleteLine( CDocLine* );				//!< 行の削除
+	void AppendAsMove( CDocLineMgr& other );	//!< 他のCDocLineMgrの内容を末尾に追加する
+
+	// メモリリソースのアクセス
+	std::shared_ptr<std::pmr::memory_resource> GetMemoryResource() const { return m_docLineMemRes; }
+	void SetMemoryResource(std::shared_ptr<std::pmr::memory_resource> memoryResource) { m_docLineMemRes = memoryResource; }
 
 	//デバッグ
 	void DUMP();
-
-	CDiffManager*   GetDiffManager() const { return m_DiffManager.get(); }
-	CModifyManager* GetModifyManager() const { return m_ModifyManager.get(); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //
@@ -101,13 +98,9 @@ private:
 	CDocLine*	m_pDocLineTop;		//!< 最初の行
 	CDocLine*	m_pDocLineBot;		//!< 最後の行(※1行しかない場合はm_pDocLineTopと等しくなる)
 	CLogicInt	m_nLines;			//!< 全行数
-	std::unique_ptr<std::pmr::memory_resource> m_docLineMemRes;
-
-	CDiffManagerHolder      m_DiffManager = std::make_unique<CDiffManager>();
+	std::shared_ptr<std::pmr::memory_resource> m_docLineMemRes;
 
 public:
-	CModifyManagerHolder    m_ModifyManager = nullptr;
-
 	//$$ kobake注: 以下、絶対に切り離したい（最低切り離せなくても、変数の意味をコメントで明確に記すべき）変数群
 	mutable CDocLine*	m_pDocLineCurrent;	//!< 順アクセス時の現在位置
 	mutable CLogicInt	m_nPrevReferLine;
@@ -115,5 +108,4 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(CDocLineMgr);
 };
-
 #endif /* SAKURA_CDOCLINEMGR_2896A92E_87D2_4BA6_A745_95A5C157E59D_H_ */

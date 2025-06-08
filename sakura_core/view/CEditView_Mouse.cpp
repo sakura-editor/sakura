@@ -22,8 +22,9 @@
 */
 
 #include "StdAfx.h"
+#include <process.h> // _beginthreadex
+#include <limits.h>
 #include "CEditView.h"
-
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h" // use CEditApp.h
@@ -1530,6 +1531,15 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	return;
 }
 
+/* ShellExecuteを呼び出すプロシージャ */
+static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
+{
+	LPWSTR pszFile = (LPWSTR)lpParameter;
+	::ShellExecute( NULL, L"open", pszFile, NULL, NULL, SW_SHOW );
+	free( pszFile );
+	return 0;
+}
+
 // マウス左ボタンダブルクリック
 // 2007.01.18 kobake IsCurrentPositionURL仕様変更に伴い、処理の書き換え
 void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
@@ -1573,31 +1583,20 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化
 				CWaitCursor cWaitCursor( GetHwnd() );	// カーソルを砂時計にする
 
-				// 前回分の「URLを開く」処理の完了をチェックして必要があれば待機する
-				if (m_threadUrlOpen.joinable()) {
-					m_threadUrlOpen.join();
+				unsigned int nThreadId;
+				LPCWSTR szUrl = strOPEN.c_str();
+				LPWSTR szUrlDup = _wcsdup( szUrl );
+				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
+				if( hThread != INVALID_HANDLE_VALUE ){
+					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
+					// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep を使用（ex.存在しないパスの起動）
+					// 【補足】いずれの API でも待ちを長め（2～3秒）にするとなぜか Web ブラウザ未起動からの起動が重くなる模様（PCタイプ, XP/Vista, IE/FireFox に関係なく）
+					::Sleep(200);
+					::CloseHandle(hThread);
+				}else{
+					//スレッド作成失敗
+					free( szUrlDup );
 				}
-
-				// 新規スレッドで「URLを開く」を実行する
-				// ※初期化完了するまではメインスレッドの実行がブロックされることに注意。
-				std::mutex mtx;
-				std::condition_variable cv;
-				bool initialized = false;
-				m_threadUrlOpen = std::thread( [this, strOPEN, &mtx, &cv, &initialized] {
-					// 初期化
-					std::wstring url(strOPEN);
-					if (!initialized)
-					{
-						std::unique_lock lock( mtx );
-						initialized = true;
-						cv.notify_one();
-					}
-
-					// 本処理
-					OpenWithBrowser( GetHwnd(), url );
-				});
-				std::unique_lock lock( mtx );
-				cv.wait(lock, [&initialized] { return initialized; });
 			}
 			return;
 		}

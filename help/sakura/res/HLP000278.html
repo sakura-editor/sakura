@@ -1,0 +1,74 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>ダイレクトタグジャンプの使い方</TITLE>
+<META NAME="MS-HKWD" CONTENT="ダイレクトタグジャンプの使い方">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>ダイレクトタグジャンプの使い方</h2>
+<strong>[インストール]</strong><br>
+
+<strong>ver 2.4.0.0 以降の場合</strong><br>
+
+<div class="li200"><a href="https://github.com/universal-ctags/ctags-win32/releases" target="_blank" rel="noopener">Universal Ctags</a> がインストーラパッケージおよび appveyor の成果物に同梱されています。<br>
+同梱されているバージョンと異なるバージョンを使いたい場合以外何もする必要はありません。
+</div><br>
+
+<strong>ver 2.4.0.0 以前の場合</strong><br>
+
+<div class="li200">
+以下のいずれかの ctags をダウンロードして ctags.exeを sakura.exe と同一フォルダーに置きます。<br>
+
+<ul>
+<li><a href="https://github.com/universal-ctags/ctags-win32/releases" target="_blank" rel="noopener">Universal Ctags</a> (現在積極的に開発されている)</li>
+<li><a href="http://hp.vector.co.jp/authors/VA025040/" target="_blank" rel="noopener">Exuberant Ctags 日本語対応版</a> (現在更新が止まっている)</li>
+</ul>
+
+Universal Ctags には x86版 (32bit)と x64版(64bit) があります。sakura.exe と同じタイプ(x86版 or x64版)をダウンロードします。<br>
+Exuberant Ctags の場合 Win32版をダウンロードします。<br>
+<br>
+アーカイブに含まれている ctags.exe を sakura.exeと同一フォルダーに置きます。<br>
+</div>
+<br>
+</div><br>
+<strong>[準備]</strong><br>
+<div class="li200">あらかじめctagsを使ってタグファイル"tags"を作る必要があります。<br>
+サクラエディタを起動し，メニューの検索→タグファイルの作成を選択します。<br>
+ダイアログボックスでタグファイルの作成位置とオプションを指定してOKを押すとtagsファイルが生成されます。<br>
+<br>
+サブディレクトリを含むダイレクトタグジャンプを使う場合は，対象とするディレクトリすべてを配下に含むディレクトリをtags作成先に指定してください。<br>
+また作成時に「サブフォルダーも対象にする」オプションにチェックを入れてください。<br>
+そのディレクトリ配下のファイル間でダイレクトタグジャンプができるようになります。<br>
+<br>
+tagsファイルにはキーワードと行番号の対応が保存されています。<br>
+そのためジャンプ先ファイルを編集した場合にはtagsファイルを再生成してください。<br>
+これを忘れると正しい箇所にジャンプできません。<br>
+<br>
+ダイレクトタグジャンプでは対象ファイルからディレクトリを1つずつ上に上りながらtagsファイルを探し，最初に見つかったファイルを利用します。<br>
+ですので，サブディレクトリ全体を対象とする場合にはサブディレクトリの中に部分的なtagsファイルを置かないようにしてください。<br>
+</div><br>
+<strong>[ジャンプ]</strong><br>
+<div class="li200">タグジャンプコマンド(デフォルト: F12)を実行すると，タグジャンプできなかった場合に自動的にダイレクトタグジャンプを試みます。<br>
+ダイレクトタグジャンプのみを行わせたい場合にはダイレクトタグジャンプコマンドを使ってください。<br>
+</div><br>
+<img alt="note" src="images/note.png" /><strong>注意</strong><br>
+<div class="li200">ダイレクトタグジャンプでは編集中ファイルのパスを起点としてtagsファイルを探します。<br>
+そのため保存されていない(名前が無題となっている)場合には利用できません。<br>
+<br>
+サブディレクトリを含むダイレクトタグジャンプを使う場合は，対象とするディレクトリすべてを配下に含むディレクトリにtagsファイルを生成してください。<br>
+そのディレクトリ配下のファイル間でダイレクトタグジャンプができるようになります。<br>
+ダイレクトタグジャンプでは対象ファイルからディレクトリを1つずつ上に上りながらtagsファイルを探し，最初に見つかったファイルを利用します。<br>
+ですので，サブディレクトリ全体を対象とする場合にはサブディレクトリの中に部分的なtagsファイルを置かないようにしてください。<br>
+</div><br>
+<br>
+<strong>参照</strong><br>
+<a href="HLP000280.html">タグファイルの作成</a>	<a href="HLP000281.html">ダイレクトタグジャンプ</a><br>
+<br>
+(sakura:1.3.9.0以降)<br>
+(sakura:1.3.9.1よりサブディレクトリに対応しました)<br>
+</BODY></HTML>

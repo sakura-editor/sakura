@@ -8,33 +8,15 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CAUTOSAVEAGENT_AB1DD112_42B8_4A93_8E04_C2889F16DC53_H_
 #define SAKURA_CAUTOSAVEAGENT_AB1DD112_42B8_4A93_8E04_C2889F16DC53_H_
 #pragma once
 
+#include <Windows.h>
+#include "_main/global.h"
 #include "doc/CDocListener.h"
-
-#include "env/SShareDataClient.hpp"
 
 //! 分→ミリ秒に変換するための係数
 const int MSec2Min = 1000 * 60;
@@ -50,13 +32,13 @@ class CPassiveTimer {
 public:
 	/*!
 		初期値は間隔1msecでタイマーは無効。
-	 */
-	CPassiveTimer() = default;
+	*/
+	CPassiveTimer() : nInterval(1), bEnabled(false){ Reset(); }
 
 	//時間間隔
 	void SetInterval(int m);	//!	時間間隔の設定
 	int GetInterval(void) const {return nInterval / MSec2Min; }	//!< 時間間隔の取得
-	void Reset(void) { nLastTick = ::GetTickCount64(); }			//!< 基準時刻のリセット
+	void Reset(void){ nLastTick = ::GetTickCount(); }			//!< 基準時刻のリセット
 
 	//有効／無効
 	void Enable(bool flag);							//!< 有効／無効の設定
@@ -66,20 +48,17 @@ public:
 	bool CheckAction(void);
 
 private:
-	ULONGLONG   nLastTick   = ::GetTickCount64();   //!< 最後にチェックしたときの時刻 (GetTickCount()で取得したもの)
-	int         nInterval   = 1;                    //!< Action間隔 (分)
-	bool        bEnabled    = false;                //!< 有効かどうか
+	DWORD	nLastTick;	//!< 最後にチェックしたときの時刻 (GetTickCount()で取得したもの)
+	int		nInterval;	//!< Action間隔 (分)
+	bool	bEnabled;	//!< 有効かどうか
 };
 
-class CAutoSaveAgent : public CDocListenerEx,  public SShareDataClient {
+class CAutoSaveAgent : public CDocListenerEx{
 public:
-	explicit CAutoSaveAgent(CEditDoc* pcDoc);
-
 	void CheckAutoSave();
 	void ReloadAutoSaveParam();	//!< 設定をSharedAreaから読み出す
 
 private:
 	CPassiveTimer m_cPassiveTimer;
 };
-
 #endif /* SAKURA_CAUTOSAVEAGENT_AB1DD112_42B8_4A93_8E04_C2889F16DC53_H_ */

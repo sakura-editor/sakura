@@ -16,6 +16,7 @@
 #define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
+#include <windows.h>
 #include <vector>
 
 #define MAX_SELLANG_NAME_STR	128		// メッセージリソースの言語名の最大文字列長（サイズは適当）
@@ -62,7 +63,7 @@ public:
 
 	static HINSTANCE InitializeLanguageEnvironment(void);		// 言語環境を初期化する
 	static HINSTANCE LoadLangRsrcLibrary( SSelLangInfo& lang );	// メッセージ用リソースDLLをロードする
-	static void ChangeLang( WCHAR* pszDllName );	// 言語を変更する
+	static void ChangeLang( const WCHAR* pszDllName );	// 言語を変更する
 
 protected:
 	/*
@@ -79,7 +80,7 @@ private:
 	@date 2011.06.01 nasukoji	新規作成
 */
 
-#define LOADSTR_ADD_SIZE		256			// 文字列リソース用バッファの初期または追加サイズ（TCHAR単位）
+#define LOADSTR_ADD_SIZE		256			// 文字列リソース用バッファの初期または追加サイズ（WCHAR単位）
 
 class CLoadString
 {
@@ -105,15 +106,15 @@ protected:
 		}
 
 		/*virtual*/ LPCWSTR GetStringPtr() const { return m_pszString; }	// 読み込んだ文字列のポインタを返す
-		/*virtual*/ int GetBufferSize() const { return m_nBufferSize; }		// 読み込みバッファのサイズ（TCHAR単位）を返す
-		/*virtual*/ int GetStringLength() const { return m_nLength; }		// 読み込んだ文字数（TCHAR単位）を返す
+		/*virtual*/ int GetBufferSize() const { return m_nBufferSize; }		// 読み込みバッファのサイズ（WCHAR単位）を返す
+		/*virtual*/ int GetStringLength() const { return m_nLength; }		// 読み込んだ文字数（WCHAR単位）を返す
 
 		/*virtual*/ int LoadString( UINT uid );								// 文字列リソースを読み込む（読み込み実行部）
 
 	protected:
 		LPWSTR m_pszString;						// 文字列読み込みバッファのポインタ
-		int m_nBufferSize;						// 取得配列個数（TCHAR単位）
-		int m_nLength;							// 取得文字数（TCHAR単位）
+		int m_nBufferSize;						// 取得配列個数（WCHAR単位）
+		int m_nLength;							// 取得文字数（WCHAR単位）
 		WCHAR m_szString[LOADSTR_ADD_SIZE];		// 文字列読み込みバッファ（バッファ拡張後は使用されない）
 
 	private:
@@ -137,8 +138,8 @@ public:
 	||  Attributes & Operations
 	*/
 	/*virtual*/ LPCWSTR GetStringPtr() const { return m_cLoadStrBuffer.GetStringPtr(); }	// 読み込んだ文字列のポインタを返す
-//	/*virtual*/ int GetBufferSize() const { return m_cLoadStrBuffer.GetBufferSize(); }		// 読み込みバッファのサイズ（TCHAR単位）を返す
-	/*virtual*/ int GetStringLength() const { return m_cLoadStrBuffer.GetStringLength(); }	// 読み込んだ文字数（TCHAR単位）を返す
+//	/*virtual*/ int GetBufferSize() const { return m_cLoadStrBuffer.GetBufferSize(); }		// 読み込みバッファのサイズ（WCHAR単位）を返す
+	/*virtual*/ int GetStringLength() const { return m_cLoadStrBuffer.GetStringLength(); }	// 読み込んだ文字数（WCHAR単位）を返す
 
 	static LPCWSTR LoadStringSt( UINT uid );			// 静的バッファに文字列リソースを読み込む（各国語メッセージリソース対応）
 	/*virtual*/ LPCWSTR LoadString( UINT uid );			// 文字列リソースを読み込む（各国語メッセージリソース対応）

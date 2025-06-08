@@ -23,6 +23,9 @@
 
 #include "StdAfx.h"
 // Oct 6, 2000 ao
+#include <stdio.h>
+#include <io.h>
+#include <list>
 #include "CDocLineMgr.h"
 #include "CDocLine.h"// 2002/2/10 aroka ヘッダー整理
 #include "charset/charcode.h"
@@ -129,6 +132,30 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 		// データがなくなった
 		_Init();
 	}
+}
+
+//! 他のCDocLineMgrの内容を末尾に追加する
+//! 元のCDocLineMgrの内容は空になる
+void CDocLineMgr::AppendAsMove( CDocLineMgr& other )
+{
+	if( other.GetDocLineTop() == nullptr ){ return; }
+
+	// 双方向リンクをつなぐ
+	other.GetDocLineTop()->m_pPrev = m_pDocLineBot;
+	if( m_pDocLineBot != nullptr ){
+		m_pDocLineBot->m_pNext = other.GetDocLineTop();
+	}
+
+	// 先頭/末尾を更新
+	if( m_pDocLineTop == nullptr ){
+		m_pDocLineTop = other.GetDocLineTop();
+	}
+	m_pDocLineBot = other.GetDocLineBottom();
+
+	m_nLines += other.GetLineCount();
+
+	// 所有権が移ったので空っぽにしておく
+	other._Init();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -241,7 +268,7 @@ void CDocLineMgr::_Init()
 	m_nPrevReferLine = CLogicInt(0);
 	m_pCodePrevRefer = NULL;
 	m_pDocLineCurrent = NULL;
-	m_DiffManager->SetDiffUse(false);	/* DIFF使用中 */	//@@@ 2002.05.25 MIK     //##後でCDocListener::OnClear (OnAfterClose) を作成し、そこに移動
+	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFF使用中 */	//@@@ 2002.05.25 MIK     //##後でCDocListener::OnClear (OnAfterClose) を作成し、そこに移動
 }
 
 // -- -- チェーン関数 -- -- // 2007.10.11 kobake 作成

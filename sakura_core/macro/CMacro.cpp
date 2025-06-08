@@ -18,25 +18,7 @@
 	Copyright (C) 2011, syat
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
@@ -493,8 +475,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				cmemWork.Replace( L"\n", L"\\n" );
 				cmemWork.Replace( L"\t", L"\\t" );
 				cmemWork.Replace( L"\0", 1, L"\\u0000", 6 );
-				const wchar_t u0085[] = {0x85, 0};
-				cmemWork.Replace( u0085, L"\\u0085" );
+				cmemWork.Replace( L"\u0085", L"\\u0085" );
 				cmemWork.Replace( L"\u2028", L"\\u2028" );
 				cmemWork.Replace( L"\u2029", L"\\u2029" );
 				for( int c = 1; c < 0x20; c++ ){
@@ -512,11 +493,12 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 						}
 					}
 				}
-				const wchar_t u007f[] = {0x7f, 0};
-				cmemWork.Replace( u007f, L"\\u007f" );
+				cmemWork.Replace( L"\u007f", L"\\u007f" );
 				out.WriteString( L"'" );
 				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
 				out.WriteString( L"'" );
+				break;
+			default:
 				break;
 			}
 			pParam = pParam->m_pNext;
@@ -1590,8 +1572,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 				// 2009.08.28 nasukoji	「折り返さない」選択時にTAB幅が変更されたらテキスト最大幅の再算出が必要
 				if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-					// 最大幅の再算出時に各行のレイアウト長の計算も行う
-					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
+					// CEditWnd::ChangeLayoutParam->CLayoutMgr::ChangeLayoutParam->
+					// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
+					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth(FALSE);
 				}
 				GetEditWnd().RedrawAllViews( NULL );		// TAB幅が変わったので再描画が必要
 			}

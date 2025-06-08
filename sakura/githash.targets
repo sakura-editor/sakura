@@ -1,28 +1,17 @@
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="GitHash">
-    <GitHashBat>$(MSBuildThisFileDirectory)githash.bat</GitHashBat>
-    <GitHead>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\.git\HEAD'))</GitHead>
-    <GeneratedGitHash>$(IntDir)githash.h</GeneratedGitHash>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="GeneratedGitHash">
+    <GeneratedGitHash>..\sakura_core\githash.h</GeneratedGitHash>
   </PropertyGroup>
-  <ItemGroup>
-    <GitHash Include="$(GitHashBat)" />
-    <GitHash Include="$(GitHead)" Condition="Exists('$(GitHead)')" />
-  </ItemGroup>
-  <Target Name="GitHash"
-      Inputs="@(GitHash);$(MSBuildThisFilePath)"
+  <Target Name="GenerateGitHash"
+      Condition="!Exists('$(GeneratedGitHash)')"
       Outputs="$(GeneratedGitHash)"
+      AfterTargets="SelectClCompile"
       BeforeTargets="ClCompile">
     <PropertyGroup>
-      <VsVersion>$([System.Double]::Parse('$(VisualStudioVersion)'))</VsVersion>
+      <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
     </PropertyGroup>
-    <SetEnv prefix="false" name="NUM_VSVERSION" value="$(VsVersion)" />
-    <Exec Command="$(GitHashBat) $([System.IO.Path]::GetDirectoryName('$(GeneratedGitHash)'))" />
-  </Target>
-  <Target Name="CleanGitHash" BeforeTargets="CoreClean">
-    <!-- Add files to @Clean just before running CoreClean. -->
-    <ItemGroup>
-      <Clean Include="$(GeneratedGitHash)" />
-    </ItemGroup>
+    <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
+    <Exec Command="..\sakura\githash.bat ..\sakura_core $(GeneratedGitHash)" />
   </Target>
   <Target Name="CleanGitHash" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->

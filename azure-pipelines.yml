@@ -1,0 +1,99 @@
+###############################################################################################################################
+#   ビルドトリガー (branch)
+#
+#   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
+###############################################################################################################################
+trigger:
+  paths:
+    exclude:
+      - '**/*.md'
+      - '.github/*'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+
+###############################################################################################################################
+#   ビルドトリガー (Pull Request)
+#
+#   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&tabs=yaml#pull-request-validation
+###############################################################################################################################
+pr:
+  paths:
+    exclude:
+      - '**/*.md'
+      - '.github/*'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+
+###############################################################################################################################
+#   jobs/job 定義
+#
+#   https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml
+###############################################################################################################################
+jobs:
+
+# サクラエディタのビルドを行う JOB (VS2019)
+# * サクラエディタ本体
+# * HTML Help
+# * Installer
+# * 単体テスト
+# https://devblogs.microsoft.com/devops/hosted-pipelines-announcements-vs-2019-mojave-and-more/
+#
+- template: ci/azure-pipelines/template.job.build-unittest.yml
+  parameters:
+    name: VS2019
+    vmImage: 'windows-2019'
+    displayName: VS2019
+
+# サクラエディタのビルドを行う JOB (VS2022)
+- template: ci/azure-pipelines/template.job.build-unittest.yml
+  parameters:
+    name: VS2022
+    vmImage: 'windows-2022'
+    displayName: VS2022
+
+# サクラエディタのビルドを行う JOB(MinGW)
+# * サクラエディタ本体
+# * 単体テスト
+- template: ci/azure-pipelines/template.job.build-on-msys2.yml
+  parameters:
+    name: MinGW
+    vmImage: 'windows-latest'
+    displayName: MinGW
+
+# SonarQube で解析を行う JOB
+- template: ci/azure-pipelines/template.job.SonarQube.yml
+  parameters:
+    name: SonarQube
+    vmImage: 'windows-latest'
+    displayName: SonarQube
+
+# Cppcheck を行う JOB
+- template: ci/azure-pipelines/template.job.cppcheck.yml
+  parameters:
+    name: cppcheck
+    vmImage: 'windows-latest'
+    displayName: cppcheck
+
+# doxygen を行う JOB
+- template: ci/azure-pipelines/template.job.doxygen.yml
+  parameters:
+    name: doxygen
+    vmImage: 'windows-latest'
+    displayName: doxygen
+
+# 文字コードのチェックを行う JOB
+- template: ci/azure-pipelines/template.job.checkEncoding.yml
+  parameters:
+    name: checkEncoding
+    vmImage: 'windows-latest'
+
+#############################################################################################################
+#   Python スクリプトのコンパイル確認を行う job
+#############################################################################################################
+- template: ci/azure-pipelines/template.job.python-check.yml
+  parameters:
+    name: script_check
+    vmImage: 'windows-latest'
+    displayName: script_check

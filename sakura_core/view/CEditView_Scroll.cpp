@@ -29,6 +29,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
+#include <limits.h>
 #include "config/app_constants.h"
 
 /*! スクロールバー作成
@@ -520,8 +521,8 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 
 	// 背景は画面に対して固定か
 	bool bBackImgFixed = IsBkBitmap() &&
-		(0 != nScrollRowNum && !m_pTypeData->m_backImgScrollY ||
-		 0 != nScrollColNum && !m_pTypeData->m_backImgScrollX);
+		((0 != nScrollRowNum && !m_pTypeData->m_backImgScrollY) ||
+		 (0 != nScrollColNum && !m_pTypeData->m_backImgScrollX));
 	if( bBackImgFixed ){
 		CMyRect rcBody = area.GetAreaRect();
 		rcBody.left = 0; // 行番号も移動
@@ -549,7 +550,7 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 
 		if( 0 < area.GetTopYohaku() &&
 		  IsBkBitmap() &&
-		  (0 != nScrollRowNum && m_pTypeData->m_backImgScrollY || 0 != nScrollColNum && m_pTypeData->m_backImgScrollX) ){
+		  ((0 != nScrollRowNum && m_pTypeData->m_backImgScrollY) || (0 != nScrollColNum && m_pTypeData->m_backImgScrollX)) ){
 			// Scrollのときにルーラー余白更新
 			CMyRect rcTopYohaku;
 			if( CTypeSupport(this, COLORIDX_TEXT).GetBackColor() == CTypeSupport(this, COLORIDX_GYOU).GetBackColor() ){

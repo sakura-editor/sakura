@@ -24,13 +24,21 @@
 */
 #include "pch.h"
 
-#include "io/CZipFile.h"
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
 
-#include "util/file.h"
+#include <tchar.h>
+#include <Windows.h>
+#include <Shlwapi.h>
+
+#include "io/CZipFile.h"
 
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <locale>
+#include <string>
 
 #include "tests1_rc.h"
 
@@ -151,9 +159,9 @@ std::filesystem::path GetTempFilePath(std::wstring_view prefix, std::wstring_vie
 }
 
 /*!
- * @brief CZipFileのテスト
+ * @brief CZipFIleのテスト
  */
-TEST(CZipFile, IsNG)
+TEST(CZipFIle, IsNG)
 {
 	// IShellDispatchを使うためにOLEを初期化する必要がある
 	// このテストでは初期化を忘れた場合の挙動を確認する
@@ -164,23 +172,15 @@ TEST(CZipFile, IsNG)
 }
 
 /*!
- * @brief CZipFileのテスト
+ * @brief CZipFIleのテスト
  */
-TEST(CZipFile, CZipFile)
+TEST(CZipFIle, CZipFIle)
 {
 	// IShellDispatchを使うためにOLEを初期化する
 	if (FAILED(::OleInitialize(nullptr))) {
 		FAIL();
 	}
-
-	//終了時にOleUninitializeを呼び出すよう設定
-	const auto oleUninitialize = [](const int*) { OleUninitialize(); };
-	using oleUninitializer = std::unique_ptr<int, decltype(oleUninitialize)>;
-	auto dummyPointer = PINT(1);
-	oleUninitializer deinitializer(dummyPointer, oleUninitialize);
-
-	if (deinitializer)
-	{
+	else {
 		// インスタンス作成時にOLEが初期化されていればIsOkはtrueを返す
 		CZipFile cZipFile;
 		ASSERT_TRUE(cZipFile.IsOk());
@@ -221,4 +221,7 @@ TEST(CZipFile, CZipFile)
 		// 作成した一時ファイルを削除する
 		std::filesystem::remove(tempPath);
 	}
+
+	// OLEをシャットダウンする
+	::OleUninitialize();
 }

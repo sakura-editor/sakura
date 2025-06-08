@@ -1,0 +1,118 @@
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&viewFallbackFrom=vsts#passing-parameters
+parameters:
+  name: ''
+  vmImage: ''
+  displayName: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+
+  strategy:
+    maxParallel: 4
+    matrix:
+      Win32_Debug:
+        BuildPlatform: 'Win32'
+        Configuration: 'Debug'
+      Win32_Release:
+        BuildPlatform: 'Win32'
+        Configuration: 'Release'
+      Win64_Debug:
+        BuildPlatform: 'x64'
+        Configuration: 'Debug'
+      Win64_Release:
+        BuildPlatform: 'x64'
+        Configuration: 'Release'
+
+  steps:
+  # show environmental variables for debug.
+  - script: set
+    displayName: Show environmental variables for debug
+
+  - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
+
+  # Build solution
+  - script: build-sln.bat       $(BuildPlatform) $(Configuration)
+    displayName: Build solution
+
+  # Unit tests
+  - pwsh: .\tests1.exe --gtest_output=xml:$(build.sourcesDirectory)\tests1.exe-googletest-$(BuildPlatform)-$(Configuration).xml
+    workingDirectory: $(build.sourcesDirectory)\$(BuildPlatform)\$(Configuration)
+    displayName: Unit test
+
+  # Toolbar Bitmap Split/Mux
+  - script: build-bmp-tools.bat $(Configuration)
+    displayName: Bitmap Split/Mux
+
+  # Install Locale Emulator
+  - pwsh: |
+      choco install autohotkey.install --confirm
+      $LEExpandDir = "$(Build.SourcesDirectory)\tools\locale-emulator"
+      $LEInitScript = "$(Build.SourcesDirectory)\ci\init-locale-emulator.ahk"
+      New-Item "${LEExpandDir}" -ItemType Directory
+      Invoke-WebRequest `
+        "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
+        -OutFile "${LEExpandDir}\locale-emulator.zip"
+      Expand-Archive "${LEExpandDir}\locale-emulator.zip" "${LEExpandDir}"
+      Start-Process "AutoHotKey" "${LEInitScript}"
+      Start-Process "${LEExpandDir}\LEInstaller.exe"
+      echo "##vso[task.prependpath]${LEExpandDir}"
+    displayName: Install Locale Emulator
+
+  # Build HTML Help
+  - script: build-chm.bat
+    displayName: Build HTML Help
+
+  # Update/Install Inno Setup
+  - pwsh: choco upgrade innosetup --confirm
+    displayName: Update/Install Inno Setup
+
+  # Build installer with Inno Setup
+  - script: build-installer.bat $(BuildPlatform) $(Configuration)
+    displayName: Build installer with Inno Setup
+
+  # zip files for artifacts
+  - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
+    condition: eq(variables['Configuration'], 'Release')
+    displayName: Zip files for artifacts
+
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
+  #
+  # "condition:" に関しては以下を参照
+  #     https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml
+  #
+  # "succeededOrFailed()" に関しては以下を参照
+  #     https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml#job-status-functions
+  #
+  - task: CopyFiles@1
+    condition: and(eq(variables['Configuration'], 'Release'), succeededOrFailed())
+    displayName: Copy to ArtifactStagingDirectory
+    inputs:
+      contents: |
+       **.zip
+       **.zip.md5
+      targetFolder: $(Build.ArtifactStagingDirectory)
+
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
+  - task: PublishBuildArtifacts@1
+    condition: and(eq(variables['Configuration'], 'Release'), succeededOrFailed())
+    displayName: Publish ArtifactStagingDirectory
+    inputs:
+       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+       artifactName: $(BuildPlatform)_$(Configuration)
+
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/*-googletest-*.xml'
+      #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+      #mergeTestResults: false # Optional
+      #failTaskOnFailedTests: false # Optional
+      #testRunTitle: # Optional
+      #buildPlatform: # Optional
+      #buildConfiguration: # Optional
+      #publishRunAttachments: true # Optional

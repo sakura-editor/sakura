@@ -2,27 +2,10 @@
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
+#include <limits.h>
 #include "CViewSelect.h"
 #include "CEditView.h"
 #include "doc/CEditDoc.h"
@@ -301,7 +284,7 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 	HBRUSH      hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 	int         nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-	HBRUSH		hBrushCompatOld = 0;
+	HBRUSH		hBrushCompatOld = nullptr;
 	int			nROPCompatOld = 0;
 	bool bCompatBMP = pView->m_hbmpCompatBMP && hdc != pView->m_hdcCompatDC;
 	if( bCompatBMP ){
@@ -593,8 +576,8 @@ void CViewSelect::GetSelectAreaLineFromRange(
 ) const
 {
 	const CEditView& view = *GetEditView();
-	if( nLineNum >= sRange.GetFrom().y && nLineNum <= sRange.GetTo().y ||
-		nLineNum >= sRange.GetTo().y && nLineNum <= sRange.GetFrom().y ){
+	if( (nLineNum >= sRange.GetFrom().y && nLineNum <= sRange.GetTo().y) ||
+		(nLineNum >= sRange.GetTo().y && nLineNum <= sRange.GetFrom().y) ){
 		CLayoutInt	nSelectFrom = sRange.GetFrom().GetX2();
 		CLayoutInt	nSelectTo   = sRange.GetTo().GetX2();
 		if( IsBoxSelecting() ){		/* 矩形範囲選択中 */

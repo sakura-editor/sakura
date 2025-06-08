@@ -1,0 +1,342 @@
+﻿===============================================================================
+PPA.DLL のヘルプより抜粋
+
+★ 文
+begin /// [PPA.DLL]\nend と対で複文を表す。（ C言語の { } に相当する。）\n\nif ～ then 文 else 文 ；\nwhile ～ do 文 ；\nfor ～ to ～ do 文 ；\ncase ～ of   ～： 文；   ～： 文；   end；\nなどでは、文（コマンド）は１個しか記述できない。\n\nこのような場所で複数の文（コマンド）文1～文n を実行したい時、\n「 begin  文1 ；  文2 ；  ... 文n ； end 」\nのようにして１個の 文 にまとめてから if ～ then や while ～ do の\n文 の箇所に記述することによって、複数のコマンドを実行させること\nが可能となる。\n- - - - - - - -\nif  ～  then\n  begin\n      文1；\n      文2；\n      ... ；\n  end\nelse\n  begin\n      文1；\n      ... ；\n  end\n；\n- - - - - - - -
+end /// [PPA.DLL]\nbegin または case の終わり。\n詳細は begin ， case を参照。
+
+★ 変数
+var /// var      [PPA.DLL]\n変数を宣言（用意）する。\n\nvar  // ↓変数を宣言（用意）する\n    str1，str2 ： String ；    // 文字列型 str1，str2 を用意\n    num1，num2 ： Real ；    // 実数型 num1，num2 を用意\n    inum1，inum2 ： Integer ； // 整数型 inum1，inum2 を用意\nbegin  // ↓以下、処理内容\n    コマンド；\n    コマンド；\nend
+Integer /// 変数名 ： Integer ；      [PPA.DLL]\n整数の数値変数を用意する。\n\nvar  // ↓変数を宣言（用意）する\n    inum1，inum2 ： Integer ； // 整数型 inum1，inum2 を用意\nbegin  // ↓以下、処理内容\n    コマンド；\n    コマンド；\nend.
+Real /// 変数名 ： Real ；      [PPA.DLL]\n実数の数値変数を用意する。\n\nvar  // ↓変数を宣言（用意）する\n    num1，num2 ： Real ；      // 実数型 num1，num2 を用意\nbegin  // ↓以下、処理内容\n    コマンド；\n    コマンド；\nend.
+String /// 変数名 ： String ；      [PPA.DLL]\n文字列変数を用意する。\n\nvar  // ↓変数を宣言（用意）する\n    str1，str2 ： String ；    // 文字列型 str1，str2 を用意\nbegin  // ↓以下、処理内容\n    コマンド；\n    コマンド；\nend.
+
+★ 定数
+True /// [PPA.DLL]\n定数。常に True = -1 ；
+False /// [PPA.DLL]\n定数。常に False = 0 ；
+nil /// [PPA.DLL]\n定数。常に nil = '' ； （空文字列）
+
+★ 制御構文
+if,then,else /// - - - - - - - -      [PPA.DLL]\nif 式 then 文1 ；\nif 式 then 文1 else 文2 ；\n- - - - - - - -\n式 の評価結果の整数値が True(-1)（条件が成立した）の場合のみ 文1 を実行し、\nそれ以外の場合は 文2 を実行する。\n- - - - - - - -\nif 式 then\n    文1\nelse\n    文2 ；\n- - - - - - - -\nif 式 then\nbegin\n    文1-1 ；\n    文1-2 ；\n    ... ；\nend\nelse\nbegin\n    文2-1 ；\n    文2-2 ；\n    ... ；\nend ；\n- - - - - - - -
+repeat,until /// - - - - - - - -      [PPA.DLL]\nrepeat\n    文1 ；\n    ... ；\n    文n ；\nuntil 式 ；\n- - - - - - - -\n式 の評価結果の整数値が True(-1) ではない限り 文1～文n を\n実行する。True(-1)（条件が成立） になるとループを終了する。\n\n式 は 文1～文n が終了後に評価されるので、最低でも１回は\n文1～文n が処理される。
+while,do /// - - - - - - - -      [PPA.DLL]\nwhile 式 do 文 ；\n- - - - - - - -\n式 の評価結果の整数値が True(-1) である（条件が成立している）限り\n文 を実行する。\n\n文の実行前に 式 が評価されるので、最初から条件が成立しない場合は\n１回も文は実行されない。\n- - - - - - - -\nwhile 式 do\nbegin\n    文1 ；\n    文2 ；\n    ... ；\nend ；\n- - - - - - - -
+for,to,downto,do /// - - - - - - - -      [PPA.DLL]\nfor カウンタ ：= 初期値 to	終値 do 文 ；\nfor カウンタ ：= 初期値 downto	終値 do 文 ；\n- - - - - - - -\nカウンタ（整数数値変数）に初期値を代入してから 文 を実行後、カウンタをそれぞれ\n・for ～ to	の場合：インクリメント(1加算)\n・for ～ downto	の場合：デクリメント(1減算)\nしながら、カウンタが終値と同じ値になるまで文を繰り返し実行します。\n\nカウンタが終値と同じ値になると、*もう一度 文 を実行後*、ループを終了します。\n最初から初期値と終値が同じ場合は１回だけ 文 が実行されます。\nループ終了後、カウンタの値は終値になっています。\n\nfor ～ to	で ( 初期値 > 終値 ) の場合、または\nfor ～ downto	で ( 初期値 < 終値 ) の場合、\n文は一度も実行されず、カウンタの値は未定義になります。\n\n初期値と終値の評価（初期値・終値が計算式などの場合、それらの値を求める処理）は、\nループ開始時に１回だけ実行されます。\n従って、初期値や終値に複雑な計算式を指定しても、ループ中の実行速度は遅くなりま\nせん。また、ループ内で終値式の計算結果が変わるような処理をしてもループ回数は\n変わりません。\n- - - - - - - -\nfor cnt ：= 0 to 3 do\nbegin\n	文1 ；\n	文2 ；\n	... ；\nend ；\n- - - - - - - -
+case,of /// - - - - - - - -      [PPA.DLL]\ncase セレクタ式 of\n    ケースリスト1：  文1；\n    ケースリスト2：  文2；\n    ．．．\n    ケースリストn：  文n；\nend ；\n- - - - - - - -\nセレクタ式 の評価結果の整数値が ケースリスト1～n のいずれかに該当する時に\nその ケースリスト に対応した 文 を実行する。\n\nケースリストには整数式を使用する事が出来る。\n- - - - - - - -\ncase   i   of\n    0：		文1；	// i が 0 なら 文1 を実行する。\n    2，4，6，8：	文2；	// i が 2，4，6，8 のいずれかなら 文2 を実行する。\n    1．．5 ， 9：	文3；	// i が 1～5 か、または 9 なら 文3 を実行する。\nend ；\n// ※ ↑この場合、i が 6 なら 文2 だけが、i が 2 なら 文2，文3 の両方が実行される。\n// ※ i や 1．．5 ， 9 などの各々の数値部分には数式も使用可能。\n- - - - - - - -
+
+★ 演算子
+not /// not 整数 ；      [PPA.DLL]\n\n演算子。否定（ビット反転）。（C言語の ~ 相当）\n\n例： a  ：=  not  i ；   // C言語 a = ~ i ； 相当\ni のビット反転値を a へ代入する。
+div /// 整数 div 整数 ；      [PPA.DLL]\n\n演算子。整数除算。整数の計算式で除算をおこなう時に使用する。\n実数の計算式では / を使用すること。\n\n・整数の計算式で / を使うことはできない。\n・実数の計算式で div を使うことはできない。\n例：実数 R1，R2 ，整数 i1，i2 がある場合\n○：i1 div i2 ；\n×：i1  /  i2 ；\n×：R1 div R2 ；\n○：R1  /  R2 ；\n×：R1 div i1 ；\n○：R1  /  i1 ；\n×：i1 div R1 ；  ←エラー\n×：i1  /  R1 ；\n\n※ 他の四則演算(和，差，積)では 整数，実数 共、演算子は同じ(+，-，*)である。\n　 除算のみ整数と実数で演算子が異なる。
+mod /// 整数 mod 整数 ；      [PPA.DLL]\n\n演算子。剰余。（C言語の % 相当）\n\n例： a  ：=  i  mod  j ；   // C言語 a = i % j ； 相当\ni を j で整数除算時の余りを a へ代入する。
+and /// 整数 and 整数 ；      [PPA.DLL]\n\n演算子。論理積。（C言語の && 相当）\n\n例： a  ：=  i  and  j ；   // C言語 a = i && j ； 相当\ni と j の論理積を a へ代入する。
+shl /// 整数 shl 整数 ；      [PPA.DLL]\n\n演算子。論理左シフト。（C言語の << 相当）\n\n例： a  ：=  i  shl  j ；   // C言語 a = i << j ； 相当\ni を j bit 左へシフトした値を a へ代入する。
+shr /// 整数 shr 整数 ；      [PPA.DLL]\n\n演算子。論理右シフト。（C言語の >> 相当）\n\n例： a  ：=  i  shr  j ；   // C言語 a = i >> j ； 相当\ni を j bit 右へシフトした値を a へ代入する。
+or /// 整数 or 整数 ；      [PPA.DLL]\n\n演算子。論理和。（C言語の | 相当）\n\n例： a  ：=  i  or  j ；   // C言語 a = i | j ； 相当\ni と j の論理和を a へ代入する。
+xor /// 整数 xor 整数 ；      [PPA.DLL]\n\n演算子。排他的論理和。（C言語の ^ 相当）\n\n例： a  ：=  i  xor  j ；   // C言語 a = i ^ j ； 相当\ni と j の排他的論理和を a へ代入する。
+
+★ =-=-= PPA ビルトイン手続き/関数 =-=-= ★
+
+★ 文字列処理ルーチン
+CompareStr /// CompareStr (S1， S2) ；      [PPA.DLL]\nS1，S2 ： 文字列(式)\n\n2 つの文字列 S1，S2 を比較します。\n英大小文字は区別されます。\n\n　条件　　　戻り値\nS1 > S2 　　 > 0\nS1 < S2 　　 < 0\nS1 = S2 　　 = 0
+Copy /// Copy ( S ， i1 ， i2 ) ；      [PPA.DLL]\nS ： 文字列(式)\ni1，i2 ： 整数数値(式)\n\n文字列 S の i1 バイト目から i2 バイトの文字を取り出して返す。\n（ Delete の逆の処理。）\ni1 は先頭位置の文字を 1 とする。\ni1 に 0 を指示した場合は i1 に 1 を指示した場合と同じ結果となる。\n\n・S の文字長よりも i1 の指示が大きい場合、空文字列が返る。\n・i2 の指示が S から取り出せる文字数よりも大きい場合、\n　i1 バイト目から S の終わりまでの文字列が返る。
+Delete /// Delete ( S ， i1 ， i2 ) ；      [PPA.DLL]\nS ： 文字列(式)\ni1，i2 ： 整数数値(式)\n\n文字列 S の i1 バイト目から i2 バイトを削除した文字列を返す。\n（ Copy の逆の処理。）\ni1 は先頭位置の文字を 1 とする。\ni1 に 0 を指示すると何も削除されず S がそのまま返る。\n\n・S の文字長よりも i1 の指示が大きい場合、何も削除されず\n　S がそのまま返る。\n・i2 の指示が S から削除される文字数よりも大きい場合、\n　i1 バイト目から S の終わりまでを削除した文字列が返る。
+Insert /// Insert ( S1 ， S2 ， i ) ；      [PPA.DLL]\nS1，S2 ： 文字列(式)\ni ： 整数数値(式)\n\nS1 を S2 の i バイト目の位置に挿入した文字列を返す。\nS2 の先頭に S1 を挿入する場合は i の指示を 1 とする。\ni に 0 を指示した場合は i に 1 を指示した場合と同じ結果となる。
+Length /// Length ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n文字列 S の文字数（バイト数）を返す。
+LowerCase /// LowerCase ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n文字列 S 中のアルファベット類を小文字に変換する。\n（ UpperCase の逆の処理。）\n\n半角文字の A～Z → a～z だけではなく、\n・全角文字のアルファベット Ａ～Ｚ → ａ～ｚ \n・全角文字のギリシャ文字 Α～Ω → α～ω\n・全角文字のロシア文字 А～Я → а～я\n・全角文字の数字 Ⅰ～Ⅹ → ⅰ～ⅹ\nなども処理対象になっている。
+Pos /// Pos ( S1 ， S2 ) ；      [PPA.DLL]\nS1，S2 ： 文字列(式)\n\n文字列 S2 から部分文字列 S1 を探し、見つかった位置（先頭から何バイト目）を返す。\n文字列の先頭位置なら 1、文字列が見つからなかった場合 0 が返る。\n\n・検索では英大小文字は区別される。\n・日本語文字(全角文字)に完全に対応している。例えば pos('\','表'); なら 0 が返る。
+Trim /// Trim ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n文字列 S から 先頭および末尾の 空白と制御文字 を取り除いた文字列を返す。
+TrimLeft /// TrimLeft ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n文字列 S から 先頭の 空白と制御文字 を取り除いた文字列を返す。
+TrimRight /// TrimRight ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n文字列 S から 末尾の 空白と制御文字 を取り除いた文字列を返す。
+UpperCase /// UpperCase ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n文字列 S 中のアルファベット類を大文字に変換する。\n（ LowerCase の逆の処理。）\n\n半角文字の a～z → A～Z だけではなく、\n・全角文字のアルファベット ａ～ｚ → Ａ～Ｚ \n・全角文字のギリシャ文字 α～ω → Α～Ω\n・全角文字のロシア文字 а～я → А～Я\n・全角文字の数字 ⅰ～ⅹ → Ⅰ～Ⅹ\nなども処理対象になっている。
+
+★ 数値処理ルーチン
+FloatToStr /// FloatToStr ( f ) ；      [PPA.DLL]\nf ： 実数数値(式)\n\n実数 f を 10進数表現の文字列に変換した物を返す。
+IntToStr /// IntToStr ( i ) ；      [PPA.DLL]\ni ： 整数数値(式)\n\n整数 i を 10進数表現の文字列に変換した物を返す。
+StrToFloat /// StrToFloat ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n10進数または 指数表記の実数数値を表す文字列 S を実数数値に変換した物を返す。\n文字列 S が実数数値として有効ではない場合は 0.0 を返す。\n\n※「先頭の数値として有効な部分のみ取り扱われる」というわけ *ではない* 事に注意。\n　文字列中に実数数値としてふさわしくない文字（アルファベット等）が１文字でも\n　どこかに含まれていると、返値は 0.0 になってしまう。
+StrToInt /// StrToInt ( S ) ；      [PPA.DLL]\nS ： 文字列(式)\n\n10進数または 16進数表記( '0x01' ， '$01' )の整数数値を表す文字列 S を整数数値に\n変換した物を返す。\n文字列 S が整数数値として有効ではない場合は 0を返す。\n\n※「先頭の数値として有効な部分のみ取り扱われる」というわけ *ではない* 事に注意。\n　文字列中に整数数値としてふさわしくない文字（小数点やアルファベット等）が\n　１文字でも どこかに含まれていると、返値は 0 になってしまう。
+
+★ 計算ルーチン
+Frac /// Frac ( f ) ；      [PPA.DLL]\nf ： 実数数値(式)\n\nf の小数部を返す。\nFrac ( 5．3 ) ； なら 0．3 が返る。\nFrac ( -5．3 ) ； なら -0．3 が返る。
+Int /// Int ( f ) ；      [PPA.DLL]\nf ： 実数数値(式)\n\nf の整数部を 実数型 で返す。\nInt ( 5．9 ) ； なら 5 (Real) が返る。\nInt ( -5．9 ) ； なら -5 (Real) が返る。
+Round /// Round ( f ) ；      [PPA.DLL]\nf ： 実数数値(式)\n\nf を丸め、最も近い整数値を 整数型 で返す。\n小数部が 0．5 の場合は最も近い偶数の整数になる。\nRound ( 2．5   )； なら 2 が返る。\nRound ( 2．501 )； なら 3 が返る。\nRound ( 3．5   )； なら 4 が返る。
+Trunc /// Trunc ( f ) ；      [PPA.DLL]\nf ： 実数数値(式)\n\nf の小数部を切り捨てた整数値を 整数型 で返す。\nTrunc ( 5．9 ) ； なら 5 (Integer) が返る。\nTrunc ( -5．9 ) ； なら -5 (Integer) が返る。
+
+★ ダイアログおよびメッセージルーチン
+InputBox /// InputBox ( S1 ， S2 ， S3 ) ；      [PPA.DLL]\nS1，S2，S3 ： 文字列(式)\n\n文字列を入力する入力ダイアログボックスを表示し、入力された文字列を返す。\nS1 がタイトル， S2 がメッセージ文， S3 は入力部のデフォルト値。
+MessageBox /// MessageBox ( S1 ， S2 ， i ) ；      [PPA.DLL]\nS1，S2 ： 文字列(式)\ni ： 整数数値(式)\n\nタイトル S2 ，メッセージ文 S1 のダイアログを表示し、押されたボタンに応じた整数数値を返す。\ni に指定する主な数値は下記。(合計値で指定する)詳細は Win32API MessageBox関数参照。\n- - - - - - - - - - - - - - - - - - - - - - - - - \n★ ボタンの種類 			/ ↓返値\n$0：[OK]				/ 常に 1 が返る\n$1：[OK] [キャンセル]			/ OK：1 ， キャンセル：2\n$2：[中止(A)] [再試行(R)] [無視(I)]	/ 中止：3 ， 再試行：4 ， 無視：5\n$3：[はい(Y)] [いいえ(N)] [キャンセル]	/ はい：6 ， いいえ：7 ， キャンセル：2\n$4：[はい(Y)] [いいえ(N)]		/ はい：6 ， いいえ：7\n$5：[再試行(R)] [キャンセル]		/ 再試行：4 ， キャンセル：2\n- - - - - - - - - - - - - - - - - - - - - - - - - \n★ 表示するアイコンの種類\n$00：アイコン無し\n$10：赤い ○	 の中に 白い ×\n$20：白い吹き出しの中に 青い ？\n$30：黄色い △	 の中に 黒い ！\n$40：白い吹き出しの中に 青い ｉ\n- - - - - - - - - - - - - - - - - - - - - - - - - \n★ デフォルトボタン：[Enter] やスペースバーで押されるボタン\n$000：一番左のボタン\n$100：左から2個目のボタン\n$200：左から3個目のボタン\n- - - - - - - - - - - - - - - - - - - - - - - - - \n例：MessageBox( 'ほんまにえぇんか？' ， 'ちょい確認や ' ， $134 )； の場合\n表示されるボタンは [はい(Y)] [いいえ(N)] で [はい(Y)] が押されれば 6 が、\n[いいえ(N)] が押されれば 7 が返る。「黄色い△の中に黒い！」のアイコン。\n左から２個目の [いいえ(N)] がデフォルトボタン。
+
+★ システムルーチン
+Exec /// Exec ( S1 ， S2 ， i ) ；      [PPA.DLL]\nS1，S2 ： 文字列(式)\ni ： 整数数値(式)\n\n実行可能ファイル S1 を、オプションパラメータ S2 を付けて実行する。\ni に True(-1) を指定するとプログラムが終了するまで待つ。\ni に False(0) を指定するとプログラムの終了待ちをおこなわない。\n\n正常終了した場合\n├> 終了待ち ( i = True )：プログラムの戻り値が返る。\n└> 終了を待たない ( i = False )：True(-1) が返る。\n異常終了した場合：False(0) が返る。
+ProcessMessages /// ProcessMessages；      [PPA.DLL]\n\nWindowsシステムがメッセージキュー中のメッセージの\n処理をおこなう事を許可します。\nメッセージループが空になると戻ってきます。
+Shell /// Shell ( S1 ， S2 ) ；      [PPA.DLL]\nS1，S2 ： 文字列(式)\n\nファイル S1 を関連付け実行(open)する。\nS1 に実行可能ファイルを指定した場合は S2 にオプションパラメータを\n指定する事ができる。\n\n正常終了時は、実行アプリケーションのインスタンスハンドルが返る。\n異常時は32以下のエラー値が返る。\nエラー値の詳細は Win32API ShellExecute関数参照。
+Sleep /// Sleep ( i ) ；      [PPA.DLL]\ni ： 整数数値(式)\n\n処理を i (ms) 中断する。  ※ ms ミリ秒 = 1/1000 秒\ni に 0 を指定すると、タイムスライスの残りを他に譲る。
+
+★ フロー制御ルーチン
+Break /// Break；      [PPA.DLL]\nfor，while，repeat のループを終了します。
+Continue /// Continue；      [PPA.DLL]\nfor，while，repeat の次の繰り返しをおこないます。
+Exit /// Exit；      [PPA.DLL]\nマクロを終了します。
+
+★ PPAルーチン
+IsDefine /// アプリケーション識別情報が登録されているかを判別します。\n- - - - - - - -\nif not IsDefine('TEAD') then\nbegin\n    Messagebox('TEAD専用のマクロです'，'エラー'，0) ；\n    Exit ；\nend ；\n- - - - - - - -\n\n...えっとサクラエディタの場合、'TEAD' の部分は．．． ...(((( (;^^
+Pause /// ※ 使っちゃ駄目よ。(はぁと)    マクロの実行を一時中断します。\n\nサクラエディタではエディタの終了以外の操作を受け付けない状態になり、\n復帰できません。
+
+===============================================================================
+以下は CSMacroMgr.cpp から抜き出しました。
+
+S_GetFilename /// string  S_GetFilename ( ) ；\nファイル名を返す
+
+★ ファイル操作系
+S_FileNew /// void  S_FileNew ( ) ；\n新規作成
+S_FileOpen /// void  S_FileOpen ( S1 ) ；\n開く\n\nS1：文字列：開くファイル名\n\n例：S_FileOpen ( ’C：\AUTOEXEC．BAT’ ) ；
+S_FileSave /// void  S_FileSave ( ) ；\n上書き保存
+S_FileSaveAs /// void  S_FileSaveAs ( S1 ， i1 ， i2 ) ；\n名前を付けて保存\n\nS1：文字列：保存するファイル名\n\ni1：整数数値：文字コードセット {\n    0：Shift_JIS\n    1：JIS\n    2：EUC\n    3：Unicode\n    4：UTF-8\n    5：UTF-7\n    6：UnicodeBE\n}\n\ni2：整数数値：改行コード {\n    0：変更しない\n    1：CRLF\n    2：LF\n    3：CR\n}
+S_FileClose /// void  S_FileClose ( ) ；\n閉じて(無題)
+S_FileCloseOpen /// void  S_FileCloseOpen ( ) ；\n閉じて開く
+S_FileReopenSJIS /// void  S_FileReopenSJIS ( ) ；\nSJISで開き直す
+S_FileReopenJIS /// void  S_FileReopenJIS ( ) ；\nJISで開き直す
+S_FileReopenEUC /// void  S_FileReopenEUC ( ) ；\nEUCで開き直す
+S_FileReopenUNICODE /// void  S_FileReopenUNICODE ( ) ；\nUnicodeで開き直す
+S_FileReopenUNICODEBE /// void  S_FileReopenUNICODEBE ( ) ；\nUnicodeBEで開き直す
+S_FileReopenUTF8 /// void  S_FileReopenUTF8 ( ) ；\nUTF-8で開き直す
+S_FileReopenUTF7 /// void  S_FileReopenUTF7 ( ) ；\nUTF-7で開き直す
+S_Print /// void  S_Print ( ) ；\n印刷
+S_PrintPreview /// void  S_PrintPreview ( ) ；\n印刷プレビュー
+S_PrintPageSetup /// void  S_PrintPageSetup ( ) ；\n印刷ページ設定
+S_OpenHfromtoC /// void  S_OpenHfromtoC ( ) ；\n同名のC/C++ヘッダー(ソース)を開く
+S_OpenHHpp /// void  S_OpenHHpp ( ) ；\n同名のC/C++ヘッダーファイルを開く
+S_OpenCCpp /// void  S_OpenCCpp ( ) ；\n同名のC/C++ソースファイルを開く
+S_ActivateSQLPLUS /// void  S_ActivateSQLPLUS ( ) ；\nOracle SQL*Plusをアクティブ表示
+S_ExecSQLPLUS /// void  S_ExecSQLPLUS ( ) ；\nOracle SQL*Plusで実行
+S_Browse /// void  S_Browse ( ) ；\nブラウズ
+S_ReadOnly /// void  S_ReadOnly ( ) ；\n読み取り専用
+S_PropertyFile /// void  S_PropertyFile ( ) ；\nファイルのプロパティ
+S_ExitAll /// void  S_ExitAll ( ) ；\nサクラエディタの全終了
+
+★ 編集系
+S_Char /// void  S_Char ( i1 ) ；\n文字入力\n\ni1：整数数値：入力したい文字を10進数の ASCIIコードで指定する。\n\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n\nこの関数では半角文字の入力しかできない。\n全角文字の入力には S_InsText ( ) を使用する。と言うよりも、\n通常の文字入力には S_InsText ( ) を使う方が分かり易いし楽。
+S_CharIme /// void  S_CharIme ( ) ；\n全角文字入力\n\n動作しない。無くても困らない。\n→ S_InsText ( ) を使えや。\n\n※「S_Char ( ) では半角文字しか入力できないので、全角文字を\n入力するために作られた物」っぽいのだか、型宣言部では「引数なし」\nと定義されており、実際の内部プログラムでは「引数必須」になって\nいるため、動作しないらしい。
+S_Undo /// void  S_Undo ( ) ；\n元に戻す(Undo)
+S_Redo /// void  S_Redo ( ) ；\nやり直し(Redo)
+S_Delete /// void  S_Delete ( ) ；\n削除
+S_DeleteBack /// void  S_DeleteBack ( ) ；\nカーソル前を削除
+S_WordDeleteToStart /// void  S_WordDeleteToStart ( ) ；\n単語の左端まで削除
+S_WordDeleteToEnd /// void  S_WordDeleteToEnd ( ) ；\n単語の右端まで削除
+S_WordCut /// void  S_WordCut ( ) ；\n単語切り取り
+S_WordDelete /// void  S_WordDelete ( ) ；\n単語削除
+S_LineCutToStart /// void  S_LineCutToStart ( ) ；\n行頭まで切り取り(改行単位)
+S_LineCutToEnd /// void  S_LineCutToEnd ( ) ；\n行末まで切り取り(改行単位)
+S_LineDeleteToStart /// void  S_LineDeleteToStart ( ) ；\n行頭まで削除(改行単位)
+S_LineDeleteToEnd /// void  S_LineDeleteToEnd ( ) ；\n行末まで削除(改行単位)
+S_CutLine /// void  S_CutLine ( ) ；\n行切り取り(折り返し単位)
+S_DeleteLine /// void  S_DeleteLine ( ) ；\n行削除(折り返し単位)
+S_DuplicateLine /// void  S_DuplicateLine ( ) ；\n行の二重化(折り返し単位)
+S_IndentTab /// void  S_IndentTab ( ) ；\nTABインデント
+S_UnindentTab /// void  S_UnindentTab ( ) ；\n逆TABインデント
+S_IndentSpace /// void  S_IndentSpace ( ) ；\nSPACEインデント
+S_UnindentSpace /// void  S_UnindentSpace ( ) ；\n逆SPACEインデント
+S_LTrim /// void  S_LTrim ( ) ；\n左(先頭)の空白を削除
+S_RTrim /// void  S_RTrim ( ) ；\n右(末尾)の空白を削除
+S_SortAsc /// void  S_SortAsc ( ) ；\n選択行の昇順ソート
+S_SortDesc /// void  S_SortDesc ( ) ；\n選択行の降順ソート
+S_Merge /// void  S_Merge ( ) ；\n選択行のマージ
+
+★ カーソル移動系
+S_Up /// void  S_Up ( ) ；\nカーソル上移動
+S_Down /// void  S_Down ( ) ；\nカーソル下移動
+S_Left /// void  S_Left ( ) ；\nカーソル左移動
+S_Right /// void  S_Right ( ) ；\nカーソル右移動
+S_Up2 /// void  S_Up2 ( ) ；\nカーソル上移動(２行ごと)
+S_Down2 /// void  S_Down2 ( ) ；\nカーソル下移動(２行ごと)
+S_WordLeft /// void  S_WordLeft ( ) ；\n単語の左端に移動
+S_WordRight /// void  S_WordRight ( ) ；\n単語の右端に移動
+S_GoLineTop /// void  S_GoLineTop ( i1 ) ；\n行頭に移動(折り返し単位)\n\ni1：整数数値： {\n    bit0：1=行頭のスペースを無視する\n    bit1：- No Use -\n    bit2：0=非選択状態で移動 / 1=選択状態で移動\n    bit3：0=折り返し単位で移動 / 1=改行単位で移動\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_GoLineEnd /// void  S_GoLineEnd ( ) ；\n行末に移動(折り返し単位)
+S_HalfPageUp /// void  S_HalfPageUp ( ) ；\n半ページアップ
+S_HalfPageDown /// void  S_HalfPageDown ( ) ；\n半ページダウン
+S_1PageUp /// void  S_1PageUp ( ) ；\n１ページアップ
+S_1PageDown /// void  S_1PageDown ( ) ；\n１ページダウン
+S_GoFileTop /// void  S_GoFileTop ( ) ；\nファイルの先頭に移動
+S_GoFileEnd /// void  S_GoFileEnd ( ) ；\nファイルの最後に移動
+S_CurLineCenter /// void  S_CurLineCenter ( ) ；\nカーソル行をウィンドウ中央へ
+S_MoveHistPrev /// void  S_MoveHistPrev ( ) ；\n移動履歴: 前へ
+S_MoveHistNext /// void  S_MoveHistNext ( ) ；\n移動履歴: 次へ
+S_MoveHistSet /// void  S_MoveHistSet ( ) ；\n現在位置を移動履歴に登録
+S_F_WndScrollDown /// void  S_F_WndScrollDown ( ) ；\nテキストを１行下へスクロール
+S_F_WndScrollUp /// void  S_F_WndScrollUp ( ) ；\nテキストを１行上へスクロール
+S_GoNextParagraph /// void  S_GoNextParagraph ( ) ；\n次の段落へ移動
+S_GoPrevParagraph /// void  S_GoPrevParagraph ( ) ；\n前の段落へ移動
+
+★ 選択系
+S_SelectWord /// void  S_SelectWord ( ) ；\n現在位置の単語選択
+S_SelectAll /// void  S_SelectAll ( ) ；\nすべて選択
+S_BeginSelect /// void  S_BeginSelect ( ) ；\n範囲選択開始
+S_Up_Sel /// void  S_Up_Sel ( ) ；\n(範囲選択)カーソル上移動
+S_Down_Sel /// void  S_Down_Sel ( ) ；\n(範囲選択)カーソル下移動
+S_Left_Sel /// void  S_Left_Sel ( ) ；\n(範囲選択)カーソル左移動
+S_Right_Sel /// void  S_Right_Sel ( ) ；\n(範囲選択)カーソル右移動
+S_Up2_Sel /// void  S_Up2_Sel ( ) ；\n(範囲選択)カーソル上移動(２行ごと)
+S_Down2_Sel /// void  S_Down2_Sel ( ) ；\n(範囲選択)カーソル下移動(２行ごと)
+S_WordLeft_Sel /// void  S_WordLeft_Sel ( ) ；\n(範囲選択)単語の左端に移動
+S_WordRight_Sel /// void  S_WordRight_Sel ( ) ；\n(範囲選択)単語の右端に移動
+S_GoLineTop_Sel /// void  S_GoLineTop_Sel ( ) ；\n(範囲選択)行頭に移動(折り返し単位)
+S_GoLineEnd_Sel /// void  S_GoLineEnd_Sel ( ) ；\n(範囲選択)行末に移動(折り返し単位)
+S_HalfPageUp_Sel /// void  S_HalfPageUp_Sel ( ) ；\n(範囲選択)半ページアップ
+S_HalfPageDown_Sel /// void  S_HalfPageDown_Sel ( ) ；\n(範囲選択)半ページダウン
+S_1PageUp_Sel /// void  S_1PageUp_Sel ( ) ；\n(範囲選択)１ページアップ
+S_1PageDown_Sel /// void  S_1PageDown_Sel ( ) ；\n(範囲選択)１ページダウン
+S_GoFileTop_Sel /// void  S_GoFileTop_Sel ( ) ；\n(範囲選択)ファイルの先頭に移動
+S_GoFileEnd_Sel /// void  S_GoFileEnd_Sel ( ) ；\n(範囲選択)ファイルの最後に移動
+S_GoNextParagraph_Sel /// void  S_GoNextParagraph_Sel ( ) ；\n次の段落へ移動
+S_GoPrevParagraph_Sel /// void  S_GoPrevParagraph_Sel ( ) ；\n前の段落へ移動
+
+★ 矩形選択系
+S_BeginBoxSelect /// void  S_BeginBoxSelect ( ) ；\n矩形範囲選択開始
+
+★ クリップボード系
+S_Cut /// void  S_Cut ( ) ；\n切り取り(選択範囲をクリップボードにコピーして削除)
+S_Copy /// void  S_Copy ( ) ；\nコピー(選択範囲をクリップボードにコピー)
+S_Paste /// void  S_Paste ( ) ；\n貼り付け(クリップボードから貼り付け)
+S_CopyAddCRLF /// void  S_CopyAddCRLF ( ) ；\n折り返し位置に改行をつけてコピー
+S_CopyCRLF /// void  S_CopyCRLF ( ) ；\nCRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
+S_PasteBox /// void  S_PasteBox ( ) ；\n矩形貼り付け(クリップボードから矩形貼り付け)
+S_InsText /// void  S_InsText ( S1 ) ；\nテキストを貼り付け\n\nS1：文字列：入力したい文字列を指定する。\n\n改行の入力には S_Char ( 13 )； を使用する。\n- - - - - - - -\nS_InsText ( ’この文字列を書き込みます。’ ) ；\nS_Char ( 13 ) ；   // ← 改行を書き込む\n- - - - - - - -
+S_AddTail /// void  S_AddTail ( S1 ) ；\n最後にテキストを追加 - ファイル末尾へ飛んで行き、\nそこに指定された文字列を書き込む。\n\nS1：文字列：ファイル末尾に追記する文字列
+S_CopyLines /// void  S_CopyLines ( ) ；\n選択範囲内全行コピー
+S_CopyLinesAsPassage /// void  S_CopyLinesAsPassage ( ) ；\n選択範囲内全行引用符付きコピー
+S_CopyLinesWithLineNumber /// void  S_CopyLinesWithLineNumber ( ) ；\n選択範囲内全行行番号付きコピー
+S_CopyPath /// void  S_CopyPath ( ) ；\nこのファイルのパス名をクリップボードにコピー
+S_CopyFilename /// void  S_CopyFilename ( ) ；\nこのファイル名をクリップボードにコピー
+S_CopyTag /// void  S_CopyTag ( ) ；\nこのファイルのパス名とカーソル位置をコピー
+S_CopyKeyBindList /// void  S_CopyKeyBindList ( ) ；\nキー割り当て一覧をコピー
+
+★ 挿入系
+S_InsertDate /// void  S_InsertDate ( ) ；\n日付挿入
+S_InsertTime /// void  S_InsertTime ( ) ；\n時刻挿入
+S_CtrlCodeDialog /// void  S_CtrlCodeDialog ( ) ；\nコントロールコードの入力(ダイアログ)
+
+★ 変換系
+S_ToLower /// void  S_ToLower ( ) ；\n英大文字→英小文字
+S_ToUpper /// void  S_ToUpper ( ) ；\n英小文字→英大文字
+S_ToHankaku /// void  S_ToHankaku ( ) ；\n全角→半角
+S_ToHankata /// void  S_ToHankata ( ) ；\n全角カタカナ→半角カタカナ
+S_ToZenEi /// void  S_ToZenEi ( ) ；\n半角英数→全角英数
+S_ToHanEi /// void  S_ToHanEi ( ) ；\n全角英数→半角英数
+S_ToZenKata /// void  S_ToZenKata ( ) ；\n半角＋全ひら→全角・カタカナ
+S_ToZenHira /// void  S_ToZenHira ( ) ；\n半角＋全カタ→全角・ひらがな
+S_HanKataToZenKata /// void  S_HanKataToZenKata ( ) ；\n半角カタカナ→全角カタカナ
+S_HanKataToZenHira /// void  S_HanKataToZenHira ( ) ；\n半角カタカナ→全角ひらがな
+S_TABToSPACE /// void  S_TABToSPACE ( ) ；\nTAB→空白
+S_SPACEToTAB /// void  S_SPACEToTAB ( ) ；\n空白→TAB
+S_AutoToSJIS /// void  S_AutoToSJIS ( ) ；\n自動判別→SJISコード変換
+S_JIStoSJIS /// void  S_JIStoSJIS ( ) ；\nE-Mail(JIS→SJIS)コード変換
+S_EUCtoSJIS /// void  S_EUCtoSJIS ( ) ；\nEUC→SJISコード変換
+S_CodeCnvUNICODEtoSJIS /// void  S_CodeCnvUNICODEtoSJIS ( ) ；\nUnicode→SJISコード変換
+S_CodeCnvUNICODEBEtoSJIS /// void  S_CodeCnvUNICODEBEtoSJIS ( ) ；\nUnicodeBE→SJISコード変換
+S_UTF8toSJIS /// void  S_UTF8toSJIS ( ) ；\nUTF-8→SJISコード変換
+S_UTF7toSJIS /// void  S_UTF7toSJIS ( ) ；\nUTF-7→SJISコード変換
+S_SJIStoJIS /// void  S_SJIStoJIS ( ) ；\nSJIS→JISコード変換
+S_SJIStoEUC /// void  S_SJIStoEUC ( ) ；\nSJIS→EUCコード変換
+S_SJIStoUTF8 /// void  S_SJIStoUTF8 ( ) ；\nSJIS→UTF-8コード変換
+S_SJIStoUTF7 /// void  S_SJIStoUTF7 ( ) ；\nSJIS→UTF-7コード変換
+S_Base64Decode /// void  S_Base64Decode ( ) ；\nBase64デコードして保存
+S_Uudecode /// void  S_Uudecode ( ) ；\nuudecodeして保存
+
+★ 検索系
+S_SearchDialog /// void  S_SearchDialog ( ) ；\n検索(単語検索ダイアログ)
+S_SearchNext /// void  S_SearchNext ( S1 ， i1 ) ；\n次を検索↓\n※ 検索ダイアログで [下検索(&D)] ボタンを押した時の動作。\n・[上検索(&U)] ボタンを押した時の動作 → S_SearchPrev ( ) ；\n・[該当行マーク(&B)] ボタンを押した時の動作 → S_BookmarkPattern ( ) ；\n\nS1：文字列：↓方向に探す文字列。\n    空文字列 (’’) を指定すると、現在検索対象になっている文字列を探す。\n\ni1：整数数値：検索ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：単語単位で探す\n    bit1：英大文字と小文字を区別する\n    bit2：正規表現\n    bit3：見つからないときにメッセージを表示\n    bit4：検索ダイアログを自動的に閉じる\n    bit5：先頭（末尾）から再検索する\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_SearchPrev /// void  S_SearchPrev ( S1 ， i1 ) ；\n前を検索↑\n※ 検索ダイアログで [上検索(&U)] ボタンを押した時の動作。\n・[下検索(&D)] ボタンを押した時の動作 → S_SearchNext ( ) ；\n・[該当行マーク(&B)] ボタンを押した時の動作 → S_BookmarkPattern ( ) ；\n\nS1：文字列：↑方向に探す文字列。\n    空文字列 (’’) を指定すると、現在検索対象になっている文字列を探す。\n\ni1：整数数値：検索ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：単語単位で探す\n    bit1：英大文字と小文字を区別する\n    bit2：正規表現\n    bit3：見つからないときにメッセージを表示\n    bit4：検索ダイアログを自動的に閉じる\n    bit5：先頭（末尾）から再検索する\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_ReplaceDialog /// void  S_ReplaceDialog ( ) ；\n置換(置換ダイアログ)
+S_Replace /// void  S_Replace ( S1 ， S2 ， i1 ) ；\n置換(実行)\n※ 置換ダイアログで [置換(&R)] ボタンを押した時の動作。\n・[すべて置換(&A)] ボタンを押した時の動作 → S_ReplaceAll ( ) ；\n・[上検索(&U)] ボタンを押した時の動作 → S_SearchPrev ( ) ；\n・[下検索(&D)] ボタンを押した時の動作 → S_SearchNext ( ) ；\n・[該当行マーク(&B)] ボタンを押した時の動作 → S_BookmarkPattern ( ) ；\n\nS1：文字列：置換前の文字列。※空文字列 (’’) は受け付けない。\nS2：文字列：置換後の文字列。\n\ni1：整数数値：置換ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：単語単位で探す\n    bit1：英大文字と小文字を区別する\n    bit2：正規表現\n    bit3：見つからないときにメッセージを表示\n    bit4：置換ダイアログを自動的に閉じる\n    bit5：先頭（末尾）から再検索する\n    bit6：クリップボードから貼り付ける\n\n    bit7：0=ファイル全体 / 1=選択範囲\n    bit9,8：00=選択文字 / 01=選択始点挿入 / 10=選択終点追加\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_ReplaceAll /// void  S_ReplaceAll ( S1 ， S2 ， i1 ) ；\nすべて置換(実行)\n※ 置換ダイアログで [すべて置換(&A)] ボタンを押した時の動作。\n・[置換(&R)] ボタンを押した時の動作 → S_Replace ( ) ；\n・[上検索(&U)] ボタンを押した時の動作 → S_SearchPrev ( ) ；\n・[下検索(&D)] ボタンを押した時の動作 → S_SearchNext ( ) ；\n・[該当行マーク(&B)] ボタンを押した時の動作 → S_BookmarkPattern ( ) ；\n\nS1：文字列：置換前の文字列。※空文字列 (’’) は受け付けない。\nS2：文字列：置換後の文字列。\n\ni1：整数数値：置換ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：単語単位で探す\n    bit1：英大文字と小文字を区別する\n    bit2：正規表現\n    bit3：見つからないときにメッセージを表示\n    bit4：置換ダイアログを自動的に閉じる\n    bit5：先頭（末尾）から再検索する\n    bit6：クリップボードから貼り付ける\n\n    bit7：0=ファイル全体 / 1=選択範囲\n    bit9,8：00=選択文字 / 01=選択始点挿入 / 10=選択終点追加\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_SearchClearMark /// void  S_SearchClearMark ( ) ；\n検索マークのクリア
+S_SearchStartPos /// void  S_SearchStartPos ( ) ；\n検索開始位置へ戻る
+S_Grep /// void  S_Grep ( S1 ， S2 ， S3 ， i1 ) ；\nGrep\n\nS1：文字列：検索文字列\nS2：文字列：検索対象ファイル\nS3：文字列：検索対象フォルダー\n\ni1：整数数値：Grep ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：サブフォルダーからも検索する\n    bit1：- No Use -\n    bit2：英大文字と小文字を区別する\n    bit3：正規表現\n    bit4：文字コードセット自動判別\n\n    bit5：0=該当行 / 1=該当部分\n    bit6：0=ノーマル / 1=ファイル毎\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_Jump /// void  S_Jump ( i1 ， i2 ) ；\n指定行ヘジャンプ\n\ni1：整数数値：ジャンプ先の行番号を10進数数値で指定する。\n\ni2：整数数値：指定行へジャンプ ダイアログの状態を10進数数値で指定する。\n{\n    bit0：0=折り返し単位の行番号 / 1=改行単位の行番号\n    bit1：PL/SQLコンパイルエラー行を処理する - 0=OFF / 1=ON\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+S_Outline /// void  S_Outline ( ) ；\nアウトライン解析
+S_TagJump /// void  S_TagJump ( ) ；\nタグジャンプ機能
+S_TagJumpBack /// void  S_TagJumpBack ( ) ；\nタグジャンプバック機能
+S_Compare /// void  S_Compare ( ) ；\nファイル内容比較
+S_DiffDialog /// void  S_DiffDialog ( ) ；\nDIFF差分表示(ダイアログ)
+S_Diff /// void  S_Diff ( ) ；\nDIFF差分表示
+S_DiffNext /// void  S_DiffNext ( ) ；\nDIFF差分表示(次へ)
+S_DiffPrev /// void  S_DiffPrev ( ) ；\nDIFF差分表示(前へ)
+S_DiffReset /// void  S_DiffReset ( ) ；\nDIFF差分表示(全解除)
+S_BracketPair /// void  S_BracketPair ( ) ；\n対括弧の検索
+S_BookmarkSet /// void  S_BookmarkSet ( ) ；\nブックマーク設定・解除
+S_BookmarkNext /// void  S_BookmarkNext ( ) ；\n次のブックマークへ
+S_BookmarkPrev /// void  S_BookmarkPrev ( ) ；\n前のブックマークへ
+S_BookmarkReset /// void  S_BookmarkReset ( ) ；\nブックマークの全解除
+S_BookmarkView /// void  S_BookmarkView ( ) ；\nブックマークの一覧
+S_BookmarkPattern /// void  S_BookmarkPattern ( S1 ， i1 ) ；\n指定パターンに一致する行をマーク\n※ 検索ダイアログで [該当行マーク(&B)] ボタンを押した時の動作。\n・[上検索(&U)] ボタンを押した時の動作 → S_SearchPrev ( ) ；\n・[下検索(&D)] ボタンを押した時の動作 → S_SearchNext ( ) ；\n\nS1：文字列：探す文字列。\n    空文字列 (’’) を指定すると、現在検索対象になっている文字列を探す。\n\ni1：整数数値：検索ダイアログの状態を10進数数値で指定する。\n{\n    それぞれの bit が 0=チェックOFF / 1=チェックON\n    bit0：単語単位で探す\n    bit1：英大文字と小文字を区別する\n    bit2：正規表現\n    bit3：見つからないときにメッセージを表示\n    bit4：検索ダイアログを自動的に閉じる\n    bit5：先頭（末尾）から再検索する\n}\n※PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の\n　 使用も可能だが、MACのマクロ中では 65 などの 10進数の定数\n　 表記しか受け付けない。\n※bitでの指定方法が分からない場合は、文字列「bit」のキーワード\n　 ヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+
+★ モード切り替え系
+S_ChgmodINS /// void  S_ChgmodINS ( ) ；\n挿入／上書きモード切り替え
+S_CancelMode /// void  S_CancelMode ( ) ；\n各種モードの取り消し
+
+★ 設定系
+S_ShowToolbar /// void  S_ShowToolbar ( ) ；\nツールバーの表示
+S_ShowFunckey /// void  S_ShowFunckey ( ) ；\nファンクションキーの表示
+S_ShowStatusbar /// void  S_ShowStatusbar ( ) ；\nステータスバーの表示
+S_TypeList /// void  S_TypeList ( ) ；\nタイプ別設定一覧
+S_OptionType /// void  S_OptionType ( ) ；\nタイプ別設定
+S_OptionCommon /// void  S_OptionCommon ( ) ；\n共通設定
+S_SelectFont /// void  S_SelectFont ( ) ；\nフォント設定
+S_WrapWindowWidth /// void  S_WrapWindowWidth ( ) ；\n現在のウィンドウ幅で折り返し
+S_ExecCommand /// void  S_ExecCommand ( S1 ， i1 ) ；\n外部コマンド実行\n\nS1：文字列：実行するコマンド文字列\ni1：整数数値：標準出力を得る { 0=チェックOFF / 1=チェックON }
+
+★ カスタムメニュー
+S_RMenu /// void  S_RMenu ( ) ；\n右クリックメニュー
+S_CustMenu1 /// void  S_CustMenu1 ( ) ；\nカスタムメニュー1
+S_CustMenu2 /// void  S_CustMenu2 ( ) ；\nカスタムメニュー2
+S_CustMenu3 /// void  S_CustMenu3 ( ) ；\nカスタムメニュー3
+S_CustMenu4 /// void  S_CustMenu4 ( ) ；\nカスタムメニュー4
+S_CustMenu5 /// void  S_CustMenu5 ( ) ；\nカスタムメニュー5
+S_CustMenu6 /// void  S_CustMenu6 ( ) ；\nカスタムメニュー6
+S_CustMenu7 /// void  S_CustMenu7 ( ) ；\nカスタムメニュー7
+S_CustMenu8 /// void  S_CustMenu8 ( ) ；\nカスタムメニュー8
+S_CustMenu9 /// void  S_CustMenu9 ( ) ；\nカスタムメニュー9
+S_CustMenu10 /// void  S_CustMenu10 ( ) ；\nカスタムメニュー10
+S_CustMenu11 /// void  S_CustMenu11 ( ) ；\nカスタムメニュー11
+S_CustMenu12 /// void  S_CustMenu12 ( ) ；\nカスタムメニュー12
+S_CustMenu13 /// void  S_CustMenu13 ( ) ；\nカスタムメニュー13
+S_CustMenu14 /// void  S_CustMenu14 ( ) ；\nカスタムメニュー14
+S_CustMenu15 /// void  S_CustMenu15 ( ) ；\nカスタムメニュー15
+S_CustMenu16 /// void  S_CustMenu16 ( ) ；\nカスタムメニュー16
+S_CustMenu17 /// void  S_CustMenu17 ( ) ；\nカスタムメニュー17
+S_CustMenu18 /// void  S_CustMenu18 ( ) ；\nカスタムメニュー18
+S_CustMenu19 /// void  S_CustMenu19 ( ) ；\nカスタムメニュー19
+S_CustMenu20 /// void  S_CustMenu20 ( ) ；\nカスタムメニュー20
+S_CustMenu21 /// void  S_CustMenu21 ( ) ；\nカスタムメニュー21
+S_CustMenu22 /// void  S_CustMenu22 ( ) ；\nカスタムメニュー22
+S_CustMenu23 /// void  S_CustMenu23 ( ) ；\nカスタムメニュー23
+S_CustMenu24 /// void  S_CustMenu24 ( ) ；\nカスタムメニュー24
+
+★ ウィンドウ系
+S_SplitWinV /// void  S_SplitWinV ( ) ；\n上下に分割
+S_SplitWinH /// void  S_SplitWinH ( ) ；\n左右に分割
+S_SplitWinVH /// void  S_SplitWinVH ( ) ；\n縦横に分割
+S_WinClose /// void  S_WinClose ( ) ；\nウィンドウを閉じる
+S_WinCloseAll /// void  S_WinCloseAll ( ) ；\nすべてのウィンドウを閉じる
+S_CascadeWin /// void  S_CascadeWin ( ) ；\n重ねて表示
+S_TileWinV /// void  S_TileWinV ( ) ；\n上下に並べて表示
+S_TileWinH /// void  S_TileWinH ( ) ；\n左右に並べて表示
+S_NextWindow /// void  S_NextWindow ( ) ；\n次のウィンドウ
+S_PrevWindow /// void  S_PrevWindow ( ) ；\n前のウィンドウ
+S_MaximizeV /// void  S_MaximizeV ( ) ；\n縦方向に最大化
+S_MaximizeH /// void  S_MaximizeH ( ) ；\n横方向に最大化
+S_MinimizeAll /// void  S_MinimizeAll ( ) ；\nすべて最小化
+S_ReDraw /// void  S_ReDraw ( ) ；\n再描画
+S_ActivateWinOutput /// void  S_ActivateWinOutput ( ) ；\nアウトプットウィンドウ表示
+
+★ 支援
+S_Complete /// void  S_Complete ( ) ；\n入力補完
+S_HelpContents /// void  S_HelpContents ( ) ；\nヘルプ目次
+S_HelpSearch /// void  S_HelpSearch ( ) ；\nヘルプキーワード検索
+S_CommandList /// void  S_CommandList ( ) ；\nコマンド一覧
+S_ExtHelp1 /// void  S_ExtHelp1 ( ) ；\n外部ヘルプ１
+S_ExtHtmlHelp /// void  S_ExtHtmlHelp ( S1 ， S2 ) ；\n外部HTMLヘルプ\n\nS1：文字列：HTMLヘルプファイル名\nS2：文字列：表示させたいキーワード
+S_About /// void  S_About ( ) ；\nバージョン情報
+
+bit ///               ----- bit での数値指定方法 -----\n関数によってはオプションを bit で数値指定する必要があります。\nその指定方法を記述しておきます。\n\n例：S_GoLineTop ( i1 )； （行頭に移動）を、行頭のスペースを無視し、\n非選択状態で、改行単位で行頭に移動する場合。\n> S_GoLineTop ( i1 )→ i1：整数数値： {\n>     bit0：1=行頭のスペースを無視する\n>     bit1：- No Use -\n>     bit2：0=非選択状態で移動 / 1=選択状態で移動\n>     bit3：0=折り返し単位で移動 / 1=改行単位で移動\n> }\nよって↓\n・bit0 = 1 (行頭のスペースを無視)\n・bit1 = 0 (← 何も機能か無いので、0でも1でも良い)\n・bit2 = 0 (非選択状態)\n・bit3 = 1 (改行単位)\n↑これらを bit の大きい順 ( bit 3,2,1,0 ) に並べると  = 1001 となる。\nこの 1001 が 2進数数値で、これを 10進数に変換して使用します。\n- - - - - - - - < 2進数→10進数変換方法 > - - - - - - - - \n1.[スタート] → プログラム → アクセサリ → 電卓\n  で電卓を起動する。\n\n2.電卓のメニュー操作 [電卓の種類(V)] → [関数電卓(S)]\n  で、関数電卓にする。\n\n3.[2進] 選択状態で 1001 と 2進数数値を入力後、[10進] を選択すると、\n  入力した数値 1001(2進数)が 9(10進数)に変換されて表示される。\n※逆に [10進] 選択状態で 10進数数値を入力後、[2進] を選択して、\n　10進数 → 2進数の変換をおこなうこともできます。\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - \nよって S_GoLineTop ( 9 ) ； とすれば良い。
+
+end of file
+

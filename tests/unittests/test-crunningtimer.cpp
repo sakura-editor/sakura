@@ -23,7 +23,6 @@
 		   distribution.
 */
 #include "pch.h"
-
 #include "debug/CRunningTimer.h"
 
 /*!

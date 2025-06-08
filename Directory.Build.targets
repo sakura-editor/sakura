@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="$(MSBuildThisFileDirectory)tools\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" />
-</Project>

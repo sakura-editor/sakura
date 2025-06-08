@@ -17,25 +17,7 @@
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 //	Sept. 14, 2000 Jepro note: functions & commands list
@@ -45,11 +27,8 @@
 //	sakura_rc.rcファイルの下のほうにあるString Tableも参照のこと
 
 #include "StdAfx.h"
+#include <Shlwapi.h>
 #include "func/Funccode.h"
-
-//2007.09.30 kobake 機能番号定数を列挙型に変更。(デバッグをしやすくするため)
-#include "Funccode_enum.h"
-
 #include "config/maxdata.h" //MAX_MRU
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -1270,6 +1249,8 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji 追加
 	case F_FILENEW_NEWWINDOW:	// 2011.11.15 syat 追加
 		return ( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin );
+	default:
+		break;
 	}
 	return true;
 }
@@ -1336,6 +1317,8 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	case F_OUTLINE_TOGGLE: // 20060201 aroka アウトラインウィンドウ
 		// ToDo:ブックマークリストが出ているときもへこんでしまう。
 		return GetEditWnd().m_cDlgFuncList.GetHwnd() != NULL;
+	default:
+		break;
 	}
 	//End 2004.07.14 Kazika
 

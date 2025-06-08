@@ -22,7 +22,6 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "pch.h"
 
 /*!
 	Parameterized Test のサンプルコード
@@ -32,6 +31,8 @@
 	http://d.hatena.ne.jp/nobu-q/20110103
 	http://tatsyblog.sakura.ne.jp/wordpress/ci/1190/
 */
+#include "pch.h"
+#include <stdio.h>
 
 
 typedef std::tuple<int, int>                  Parameters2; /* Parameterized Test のパラメータ */

@@ -23,7 +23,16 @@
 		   distribution.
 */
 #include "pch.h"
-
+#ifndef STRICT
+#define STRICT 1
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+#include <vector>
+#include <tchar.h>
+#include <Windows.h>
+#include "util/design_template.h"
 #include "dlg/CDlgOpenFile.h"
 
 extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog();

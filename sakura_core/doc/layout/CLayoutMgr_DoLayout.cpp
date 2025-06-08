@@ -2,25 +2,7 @@
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "doc/CEditDoc.h" /// 2003/07/20 genta
@@ -33,6 +15,8 @@
 #include "view/colors/CColorStrategy.h"
 #include "util/window.h"
 #include "debug/CRunningTimer.h"
+#include <atomic>
+#include <thread>
 
 //2008.07.27 kobake
 static bool _GetKeywordLength(
@@ -244,20 +228,6 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	}
 }
 
-//折り返す場合はtrueを返す
-bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
-{
-	//	Sep. 23, 2002 genta せっかく作ったので関数を使う
-	CLayoutInt nCharKetas = GetActualTabSpace( pWork->nPosX );
-	if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
-		(this->*pfOnLine)(pWork);
-		return true;
-	}
-	pWork->nPosX += nCharKetas;
-	pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
-	return false;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          準処理                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -274,13 +244,18 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	if(pWork->pcColorStrategy)pWork->pcColorStrategy->InitStrategyStatus();
 	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
 
+	const bool bCheckColorEnabled = color.HasRangeBasedColorStrategies();
+	const bool bKinsokuEnabled = m_pTypeConfig->m_bWordWrap
+		|| m_pTypeConfig->m_bKinsokuKuto
+		|| m_pTypeConfig->m_bKinsokuHead
+		|| m_pTypeConfig->m_bKinsokuTail;
+
 	//1ロジック行を消化するまでループ
 	while( pWork->nPos < nLength ){
 		// インデント幅は_OnLineで計算済みなのでここからは削除
 
-		//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-		if(_DoKinsokuSkip(pWork, pfOnLine)){ }
-		else{
+		// 禁則関係の設定がONかつ現在禁則処理中でなければ次の禁則の開始をチェック
+		if( bKinsokuEnabled && !_DoKinsokuSkip(pWork, pfOnLine) ){
 			// 英文ワードラップをする
 			if( m_pTypeConfig->m_bWordWrap ){
 				_DoWordWrap(pWork, pfOnLine);
@@ -302,34 +277,31 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 			}
 		}
 
-		//@@@ 2002.09.22 YAZAKI
-		color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
-
-		if( pWork->cLineStr[pWork->nPos] == WCODE::TAB ){
-			if(_DoTab(pWork, pfOnLine)){
-				continue;
-			}
+		if( bCheckColorEnabled ){
+			// 範囲を持つ色分けの開始終了チェック
+			color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 		}
-		else{
-			if( pWork->nPos >= pWork->cLineStr.GetLength() ){
-				break;
-			}
-			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
-			CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 
-			if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
-				if( pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+		const auto& ch = pWork->cLineStr[pWork->nPos];
+		CLayoutInt nCharKetas {0};
+		if( ch == WCODE::TAB || (ch == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) ){
+			nCharKetas = GetActualTsvSpace( pWork->nPosX, ch );
+		}else{
+			nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+		}
+
+		if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
+			if( pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+			{
+				if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 				{
-					if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-					{
-						(this->*pfOnLine)(pWork);
-						continue;
-					}
+					(this->*pfOnLine)(pWork);
+					continue;
 				}
 			}
-			pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
-			pWork->nPosX += nCharKetas;
 		}
+		pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
+		pWork->nPosX += nCharKetas;
 	}
 }
 
@@ -359,22 +331,96 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::_DoLayout" );
 
-	/*	表示上のX位置
-		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-	*/
-	const int nAllLineNum = m_pcDocLineMgr->GetLineCount();
+	_Empty();
+	Init();
+
+	const CLogicInt nAllLineCount = m_pcDocLineMgr->GetLineCount();
+
+	int nWorkerThreadCount = 0;
+	if (nAllLineCount < 1000) {
+		// 行数が多くなければマルチスレッド処理するまでもない
+		nWorkerThreadCount = 0;
+	} else if (CColorStrategyPool::getInstance()->HasRangeBasedColorStrategies()) {
+		// 行をまたぐ可能性のある色分けが有効の場合、途中で処理単位が分割されて
+		// しまうと色分けがおかしくなってしまうためやむなくマルチスレッド処理の対象外とする
+		nWorkerThreadCount = 0;
+	} else {
+		nWorkerThreadCount = (std::max)(1, (int)std::thread::hardware_concurrency()) - 1;
+	}
+
+	// 末尾側の行から順番にワーカースレッドに割り当てていき最後 (先頭行～) はメインスレッドで実行
+	// nWorkerThreadCount = 0 の場合は全行をメインスレッドが実行
+	//
+	// 1000行のテキストを10スレッドで処理する場合のイメージ：
+	// 行番号
+	//    1 ┐
+	//  ... ├ メインスレッドで処理 (i = 0)
+	//  100 ┘
+	//  101 ┐
+	//  ... ├ ワーカースレッド1で処理 (i = 1)
+	//  200 ┘
+	//  ... ...
+	//  901 ┐
+	//  ... ├ ワーカースレッド9で処理 (i = 9) ↑こっちからループ
+	// 1000 ┘
+
+	std::vector<std::thread> vecWorkerThreads;
+	std::vector<CLayoutMgr> vecWorkerLayoutMgrs(nWorkerThreadCount);
+
+	std::atomic<bool> bCanceled = false;
+	auto pbCanceled = bBlockingHook ? &bCanceled : nullptr;
+
+	int nLineIndexEnd = nAllLineCount;
+	const CDocLine* pDocLineEnd = nullptr;
+	for (int i = nWorkerThreadCount; i >= 0; i--) {
+		const auto nLineIndexBegin = (int)((double)nAllLineCount / (nWorkerThreadCount + 1) * i);
+		const int nLineCount = nLineIndexEnd - nLineIndexBegin;
+		CDocLine* pDocLineBegin = m_pcDocLineMgr->GetLine(CLogicInt(nLineIndexBegin));
+
+		if (i == 0) {
+			// 最後はメインスレッドで処理
+			_DoLayoutSub(pDocLineBegin, pDocLineEnd, nLineIndexBegin, nLineCount, pbCanceled);
+		} else {
+			// ワーカースレッドを起こして処理
+			auto pcLayoutMgr = &vecWorkerLayoutMgrs[nWorkerThreadCount - i];
+			pcLayoutMgr->_Prepare(*this);
+			vecWorkerThreads.emplace_back([pcLayoutMgr, pDocLineBegin, pDocLineEnd, nLineIndexBegin, nLineCount, pbCanceled]{
+				pcLayoutMgr->_DoLayoutSub(pDocLineBegin, pDocLineEnd, nLineIndexBegin, nLineCount, pbCanceled);
+			});
+		}
+		nLineIndexEnd = nLineIndexBegin;
+		pDocLineEnd = pDocLineBegin;
+	}
+
+	// 各々の結果をまとめる
+	// 処理が途中で中断されていた場合でもワーカースレッドのjoinは必要なのでここはやる
+	for (int i = (nWorkerThreadCount - 1); i >= 0; i--) {
+		vecWorkerThreads[i].join();
+		_AppendAsMove(vecWorkerLayoutMgrs[i]);
+	}
+}
+
+/*!
+	@brief 指定された行範囲をレイアウトします
+*/
+void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineEnd, int nLineIndex, int nLineCount, std::atomic<bool>* pbCanceled)
+{
 	const int nListenerCount = GetListenerCount();
 
 	if( nListenerCount != 0 ){
-		NotifyProgress(0);
-		/* 処理中のユーザー操作を可能にする */
-		if( bBlockingHook ){
-			if( !::BlockingHook( NULL ) )return;
+		if( nLineIndex == 0 ){
+			// メインスレッドは進捗更新とユーザー操作受け付け
+			NotifyProgress(0);
+			if( pbCanceled != nullptr && !::BlockingHook( NULL )){
+				// 中断された
+				pbCanceled->store(true);
+				return;
+			}
+		}else{
+			// ワーカースレッドは中断検知のみ
+			if( pbCanceled != nullptr && pbCanceled->load() ){ return; }
 		}
 	}
-
-	_Empty();
-	Init();
 
 	//	Nov. 16, 2002 genta
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
@@ -386,16 +432,16 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 
 	SLayoutWork	_sWork;
 	SLayoutWork* pWork = &_sWork;
-	pWork->pcDocLine				= m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
+	pWork->pcDocLine				= pDocLineBegin;
 	pWork->pLayout					= NULL;
 	pWork->pcColorStrategy			= NULL;
 	pWork->colorPrev				= COLORIDX_DEFAULT;
-	pWork->nCurLine					= CLogicInt(0);
+	pWork->nCurLine					= CLogicInt( nLineIndex );
 
 	constexpr DWORD userInterfaceInterval = 33;
-	DWORD prevTime = GetTickCount() + userInterfaceInterval;
+	ULONGLONG prevTime = GetTickCount64() + userInterfaceInterval;
 
-	while( NULL != pWork->pcDocLine ){
+	while( pWork->pcDocLine != pDocLineEnd ){
 		pWork->cLineStr		= pWork->pcDocLine->GetStringRefWithEOL();
 		pWork->eKinsokuType	= KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 		pWork->nBgn			= CLogicInt(0);
@@ -419,15 +465,20 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		pWork->pcDocLine = pWork->pcDocLine->GetNextLine();
 
 		// 処理中のユーザー操作を可能にする
-		if( nListenerCount !=0 && 0 < nAllLineNum) {
-			DWORD currTime = GetTickCount();
-			DWORD diffTime = currTime - prevTime;
-			if( diffTime >= userInterfaceInterval ){
-				prevTime = currTime;
-				NotifyProgress(::MulDiv( pWork->nCurLine, 100 , nAllLineNum ) );
-				if( bBlockingHook ){
-					if( !::BlockingHook( NULL ) )return;
+		if( nListenerCount != 0 && 0 < nLineCount ) {
+			if( nLineIndex == 0 ){
+				const ULONGLONG currTime = GetTickCount64();
+				const ULONGLONG diffTime = currTime - prevTime;
+				if( diffTime >= userInterfaceInterval ){
+					prevTime = currTime;
+					NotifyProgress( ::MulDiv( pWork->nCurLine, 100, nLineCount ) );
+					if( pbCanceled != nullptr && !::BlockingHook( NULL ) ){
+						pbCanceled->store( true );
+						return;
+					}
 				}
+			}else{
+				if( pbCanceled != nullptr && pbCanceled->load() ){ return; }
 			}
 		}
 
@@ -441,11 +492,15 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	m_nPrevReferLine = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
 
-	if( nListenerCount !=0 ){
-		NotifyProgress(0);
-		/* 処理中のユーザー操作を可能にする */
-		if( bBlockingHook ){
-			if( !::BlockingHook( NULL ) )return;
+	if( nListenerCount != 0 ){
+		if( nLineIndex == 0 ){
+			NotifyProgress(0);
+			if( pbCanceled != nullptr && !::BlockingHook( NULL ) ){
+				pbCanceled->store(true);
+				return;
+			}
+		}else{
+			if( pbCanceled != nullptr && pbCanceled->load() ){ return; }
 		}
 	}
 }
@@ -666,4 +721,64 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 			CalculateTextWidth( FALSE, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
 #endif
 	}
+}
+
+/*!
+	@brief otherの内容を元にレイアウト処理の準備をする
+
+	@note _DoLayoutのマルチスレッド対応のために作成 (それ以外の用途での使用は想定していない)
+*/
+void CLayoutMgr::_Prepare( const CLayoutMgr& other )
+{
+	_Empty();
+	Init();
+
+	m_pcDocLineMgr			= other.m_pcDocLineMgr;
+	m_tsvInfo				= other.m_tsvInfo;
+	m_pcEditDoc				= other.m_pcEditDoc;
+
+	// 設定関係
+	m_pTypeConfig			= other.m_pTypeConfig;
+	m_nMaxLineKetas			= other.m_nMaxLineKetas;
+	m_nTabSpace				= other.m_nTabSpace;
+	m_nCharLayoutXPerKeta	= other.m_nCharLayoutXPerKeta;
+	m_nSpacing				= other.m_nSpacing;
+	m_pszKinsokuHead_1		= other.m_pszKinsokuHead_1;
+	m_pszKinsokuTail_1		= other.m_pszKinsokuTail_1;
+	m_pszKinsokuKuto_1		= other.m_pszKinsokuKuto_1;
+	m_getIndentOffset		= other.m_getIndentOffset;
+
+	// メモリプールは共用する
+	m_layoutMemRes			= other.m_layoutMemRes;
+
+	// Initで初期化されないので念のため
+	m_nTextWidth			= CLayoutInt(0);
+	m_nTextWidthMaxLine		= CLayoutInt(0);
+}
+
+/*!
+	@brief otherの内容を末尾に連結する (連結後はotherの内容は空になる)
+
+	@note _DoLayoutのマルチスレッド対応のために作成 (それ以外の用途での使用は想定していない)
+*/
+void CLayoutMgr::_AppendAsMove( CLayoutMgr& other )
+{
+	if (other.GetTopLayout() == nullptr) { return; }
+
+	// 双方向リンクをつなぐ
+	other.GetTopLayout()->m_pPrev = m_pLayoutBot;
+	if (m_pLayoutBot != nullptr) {
+		m_pLayoutBot->m_pNext = other.GetTopLayout();
+	}
+
+	// 先頭/末尾を更新
+	if (m_pLayoutTop == nullptr) {
+		m_pLayoutTop = other.GetTopLayout();
+	}
+	m_pLayoutBot = other.GetBottomLayout();
+
+	m_nLines += other.GetLineCount();
+
+	// 所有権が移ったので空っぽにしておく
+	other.Init();
 }

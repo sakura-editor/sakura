@@ -34,8 +34,6 @@
 #include "CSelectLang.h"
 #include "String_define.h"
 
-using namespace std; // 2002/2/3 aroka to here
-
 /* インデント ver1 */
 void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
 {
@@ -198,7 +196,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 					} sortedKetas[] = {
 						{ rcSel.GetFrom().x, &nIdxFrom, &xLayoutFrom },
 						{ rcSel.GetTo().x, &nIdxTo, &xLayoutTo },
-						{ CLayoutInt(-1), 0, 0 }
+						{ CLayoutInt(-1), nullptr, nullptr }
 					};
 					CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 					for( int i = 0; 0 <= sortedKetas[i].keta; ++i ) {
@@ -955,14 +953,11 @@ void CViewCommander::Command_MERGE(void)
 */
 void CViewCommander::Command_Reconvert(void)
 {
-	const int ATRECONVERTSTRING_SET = 1;
-
 	//サイズを取得
-	int nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL);
+	LRESULT nSize = m_pCommanderView->SetReconvertStruct(nullptr);
 	if( 0 == nSize )  // サイズ０の時は何もしない
 		return ;
 
-	bool bUseUnicodeATOK = false;
 	{
 		//現在のIMEが対応しているかどうか
 		//IMEのプロパティ
@@ -984,15 +979,15 @@ void CViewCommander::Command_Reconvert(void)
 	
 	//構造体設定
 	// Sizeはバッファ確保側が設定
-	pReconv->dwSize = nSize;
+	pReconv->dwSize = static_cast<DWORD>(nSize);
 	pReconv->dwVersion = 0;
-	m_pCommanderView->SetReconvertStruct( pReconv, UNICODE_BOOL || bUseUnicodeATOK);
+	m_pCommanderView->SetReconvertStruct( pReconv);
 	
 	//変換範囲の調整
 	::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 
 	//調整した変換範囲を選択する
-	m_pCommanderView->SetSelectionFromReonvert(pReconv, UNICODE_BOOL || bUseUnicodeATOK);
+	m_pCommanderView->SetSelectionFromReonvert(pReconv);
 	
 	//再変換実行
 	::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);

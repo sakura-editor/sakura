@@ -3,25 +3,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
 #define SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
@@ -140,12 +122,16 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 //転送系
 inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        ::memcpy (dest,src,count); return dest; }
 inline WCHAR* auto_memcpy(WCHAR* dest, const WCHAR* src, size_t count){ return ::wmemcpy(dest,src,count);              }
-inline errno_t auto_strncpy_s(ACHAR* dst, size_t nDstCount, const ACHAR* src, size_t count) { return strncpy_s(dst, nDstCount, src, count); }
-inline errno_t auto_strncpy_s(WCHAR* dst, size_t nDstCount, const WCHAR* src, size_t count) { return wcsncpy_s(dst, nDstCount, src, count); }
-inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, const ACHAR* src) { return auto_strncpy_s(dst, nDstCount, src, _TRUNCATE); }
-inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, const WCHAR* src) { return auto_strncpy_s(dst, nDstCount, src, _TRUNCATE); }
+inline ACHAR* auto_strcpy(ACHAR* dst, const ACHAR* src){ return strcpy(dst,src); }
+inline WCHAR* auto_strcpy(WCHAR* dst, const WCHAR* src){ return wcscpy(dst,src); }
+inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcpy_s(dst,nDstCount,src); }
+inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscpy_s(dst,nDstCount,src); }
+inline ACHAR* auto_strncpy(ACHAR* dst,const ACHAR* src,size_t count){ return strncpy(dst,src,count); }
+inline WCHAR* auto_strncpy(WCHAR* dst,const WCHAR* src,size_t count){ return wcsncpy(dst,src,count); }
 inline ACHAR* auto_memset(ACHAR* dest, ACHAR c, size_t count){        memset (dest,c,count); return dest; }
 inline WCHAR* auto_memset(WCHAR* dest, WCHAR c, size_t count){ return wmemset(dest,c,count);              }
+inline ACHAR* auto_strcat(ACHAR* dst, const ACHAR* src){ return strcat(dst,src); }
+inline WCHAR* auto_strcat(WCHAR* dst, const WCHAR* src){ return wcscat(dst,src); }
 inline errno_t auto_strcat_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcat_s(dst,nDstCount,src); }
 inline errno_t auto_strcat_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscat_s(dst,nDstCount,src); }
 
@@ -192,23 +178,14 @@ WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
 WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
-inline int auto_vsnprintf_s(ACHAR* buf, size_t nBufCount, size_t nMaxCount, const ACHAR* format, va_list& v) { return ::_vsnprintf_s (buf, nBufCount, nMaxCount, format, v); }
-inline int auto_vsnprintf_s(WCHAR* buf, size_t nBufCount, size_t nMaxCount, const WCHAR* format, va_list& v) { return ::_vsnwprintf_s(buf, nBufCount, nMaxCount, format, v); }
-inline int auto_snprintf_s(ACHAR* buf, size_t nBufCount, size_t nMaxCount, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsnprintf_s(buf, nBufCount, nMaxCount, format, args); va_end(args); return n; }
-inline int auto_snprintf_s(WCHAR* buf, size_t nBufCount, size_t nMaxCount, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsnprintf_s(buf, nBufCount, nMaxCount, format, args); va_end(args); return n; }
-inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v) { return auto_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
-inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v) { return auto_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
-inline int auto_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf_s(buf, nBufCount, format, args); va_end(args); return n; }
-inline int auto_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf_s(buf, nBufCount, format, args); va_end(args); return n; }
-
-inline int auto_snprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, args); va_end(args); return n; }
-inline int auto_snprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, args); va_end(args); return n; }
-
 inline int auto_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v) { return ::vsprintf(buf, format, v); }
 inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v) { return ::_vswprintf(buf, format, v); }
 inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
 inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
 
+inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v) { return ::_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
+inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v) { return ::_vsnwprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
+#define auto_snprintf_s(buf, nBufCount, format, ...)	::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 
 std::wstring& eos(std::wstring& strOut, size_t cchOut);
 std::string& eos(std::string& strOut, size_t cchOut);
@@ -261,26 +238,25 @@ std::string wcstou8s(std::wstring_view strInput);
 
 //wcsncmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int wcsncmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
+inline int wcsncmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
 	return ::wcsncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //strncmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int strncmp_literal(const char* strData1, const char (&literalData2)[Size]) {
+inline int strncmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	return ::strncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //_wcsnicmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int wcsnicmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
+inline int wcsnicmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
 	return ::_wcsnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //_strnicmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
+inline int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
-
 #endif /* SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_ */

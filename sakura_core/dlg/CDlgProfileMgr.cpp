@@ -8,39 +8,21 @@
 	Copyright (C) 2013, Moca
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "dlg/CDlgProfileMgr.h"
-
-#include "_main/CProcess.h"
-
 #include "dlg/CDlgInput1.h"
 #include "CDataProfile.h"
 #include "util/file.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "func/Funccode.h"
+#include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_LIST_PROFILE,				HIDC_LIST_PROFILE,				//プロファイル一覧
@@ -57,21 +39,21 @@ const DWORD p_helpids[] = {
 };
 
 //! コマンドラインだけでプロファイルが確定するか調べる
-bool CDlgProfileMgr::TrySelectProfile(std::wstring& strProfileName, bool hasProfileName, bool showProfileMgr) noexcept
+bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
 {
 	SProfileSettings settings;
 	bool bSettingLoaded = ReadProfSettings( settings );
 
 	bool bDialog;
-	if (showProfileMgr) {		// コマンドラインでプロファイルマネージャの表示が指定されている
+	if( pcCommandLine->IsProfileMgr() ){		// コマンドラインでプロファイルマネージャの表示が指定されている
 		bDialog = true;
-	} else if (hasProfileName) {	// コマンドラインでプロファイル名が指定されている
+	}else if( pcCommandLine->IsSetProfile() ){	// コマンドラインでプロファイル名が指定されている
 		bDialog = false;
 	}else if( !bSettingLoaded ){				// プロファイル設定がなかった
 		bDialog = false;
 	}else if( 0 < settings.m_nDefaultIndex && settings.m_nDefaultIndex <= static_cast<int>(settings.m_vProfList.size()) ){
 		// プロファイル設定のデフォルトインデックス値から該当のプロファイル名が指定されたものとして動作する
-		strProfileName = settings.m_vProfList[settings.m_nDefaultIndex - 1];
+		pcCommandLine->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
 		bDialog = false;
 	}else{
 		// プロファイル設定のデフォルトインデックス値が不正なのでプロファイルマネージャを表示して設定更新を促す
@@ -104,11 +86,9 @@ int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam
 std::filesystem::path GetProfileMgrFileName()
 {
 	auto privateIniPath = GetIniFileName();
-	if (const auto process = CProcess::getInstance()) {
-		if (const auto profileName = process->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
-			auto filename = privateIniPath.filename();
-			privateIniPath = privateIniPath.parent_path().parent_path().append(filename.c_str());
-		}
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		auto filename = privateIniPath.filename();
+		privateIniPath = privateIniPath.parent_path().parent_path().append(filename.c_str());
 	}
 	return privateIniPath.replace_extension().concat(L"_prof.ini");
 }
@@ -119,10 +99,8 @@ std::filesystem::path GetProfileMgrFileName()
 std::filesystem::path GetProfileDirectory(const std::wstring& name)
 {
 	auto privateIniDir = GetIniFileName().parent_path();
-	if (const auto process = CProcess::getInstance()) {
-		if (const auto profileName = process->GetCCommandLine().GetProfileOpt(); profileName.has_value() && *profileName.value()) {
-			privateIniDir = privateIniDir.parent_path();
-		}
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		privateIniDir = privateIniDir.parent_path();
 	}
 	return privateIniDir.append(name).append(L"a.txt").remove_filename();
 }

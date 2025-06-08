@@ -3,29 +3,12 @@
 	Copyright (C) 2007, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
 #include "charset/charcode.h"
+#include <array>
 #include "env/DLLSHAREDATA.h"
 
 /*! キーワードキャラクタ */
@@ -66,8 +49,8 @@ namespace WCODE
 		if(wc>=0x007F && wc<=0x00A0)return true;	// Control Code ISO/IEC 6429
 
 		// 漢字はすべて同一幅とみなす	// 2013.04.07 aroka
-		if ( wc>=0x4E00 && wc<=0x9FBB		// Unified Ideographs, CJK
-		  || wc>=0x3400 && wc<=0x4DB5		// Unified Ideographs Extension A, CJK
+		if ( (wc>=0x4E00 && wc<=0x9FBB)		// Unified Ideographs, CJK
+		  || (wc>=0x3400 && wc<=0x4DB5)		// Unified Ideographs Extension A, CJK
 		){
 			wc = 0x4E00; // '一'(0x4E00)の幅で代用
 		}
@@ -143,6 +126,7 @@ void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
 		// KB145994
 		// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
 		SIZE sz;
+		std::lock_guard lock(m_mtx);
 		GetTextExtentPoint32(hdcArr[i], L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
 		sz.cx = (sz.cx / 26 + 1) / 2;
 		if( m_han_size.cx < sz.cx ){
@@ -156,7 +140,7 @@ void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
 
 void CCharWidthCache::Clear()
 {
-	assert(m_pCache!=0);
+	assert(m_pCache!=nullptr);
 	// キャッシュのクリア
 	memcpy(m_pCache->m_lfFaceName.data(), m_lf.lfFaceName, sizeof(m_lf.lfFaceName));
 	memcpy(m_pCache->m_lfFaceName2.data(), m_lf2.lfFaceName, sizeof(m_lf2.lfFaceName));
@@ -172,6 +156,7 @@ bool CCharWidthCache::CalcHankakuByFont(wchar_t c)
 int CCharWidthCache::QueryPixelWidth(wchar_t c) const
 {
 	SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
+	std::lock_guard lock(m_mtx);
 	// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
 	if (WCODE::IsControlCode(c)) {
 		GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
@@ -199,6 +184,7 @@ int CCharWidthCache::CalcPxWidthByFont(wchar_t c) {
 int CCharWidthCache::CalcPxWidthByFont2(const wchar_t* pc2) const
 {
 	SIZE size={m_han_size.cx*2,0};
+	std::lock_guard lock(m_mtx);
 	// サロゲートは全角フォント
 	GetTextExtentPoint32(m_hdcFull?m_hdcFull:m_hdc,pc2,2,&size);
 	return t_max<int>(1,size.cx);

@@ -1,0 +1,170 @@
+name: build sakura
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+      - 'azure-pipelines*.yml'
+      - 'ci/azure-pipelines/template*.yml'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+      - 'azure-pipelines*.yml'
+      - 'ci/azure-pipelines/template*.yml'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    name: MSBuild
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        config:
+          - Debug
+          - Release
+        platform:
+          - Win32
+          - x64
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    ## see https://github.com/actions/checkout
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    ## see https://github.com/microsoft/setup-msbuild
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup environment variables
+      run: |
+        echo "CI_ACCOUNT_NAME=${{github.actor}}" >> $env:GITHUB_ENV
+        echo "CI_REPO_NAME=${{github.repository}}" >> $env:GITHUB_ENV
+        echo "CI_BUILD_VERSION=${{github.run_id}}" >> $env:GITHUB_ENV
+        echo "CI_BUILD_NUMBER=${{github.run_number}}" >> $env:GITHUB_ENV
+
+        echo("CI_BUILD_URL=" `
+          + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
+          + "actions/runs/${{github.run_id}}") >> $env:GITHUB_ENV
+
+        echo("GITHUB_COMMIT_URL=" `
+          + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
+          + "commit/${{github.sha}}") >> $env:GITHUB_ENV
+
+        if ('pull_request' -eq '${{github.event_name}}') {
+          echo("GITHUB_PR_NUMBER=" `
+            + "${{github.event.pull_request.number}}") >> $env:GITHUB_ENV
+          echo("GITHUB_PR_HEAD_SHORT_COMMIT=" `
+            + "${{github.event.pull_request.head.sha}}".SubString(0, 8)) >> $env:GITHUB_ENV
+          echo("GITHUB_PR_HEAD_COMMIT=" `
+            + "${{github.event.pull_request.head.sha}}") >> $env:GITHUB_ENV
+          echo("GITHUB_PR_HEAD_URL=" `
+            + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
+            + "pull/${{github.event.pull_request.number}}/" `
+            + "commits/${{github.event.pull_request.head.sha}}") >> $env:GITHUB_ENV
+        }
+      shell: pwsh
+
+    - name: MSBuild
+      run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+
+    - name: Run unit tests
+      run: .\tests1.exe --gtest_output=xml:${{github.workspace}}\tests1.exe-googletest-${{matrix.platform}}-${{matrix.config}}.xml
+      working-directory: ${{github.workspace}}\${{matrix.platform}}\${{matrix.config}}
+      shell: pwsh
+
+    - name: Install Locale Emulator
+      run: |
+        choco install autohotkey.install --confirm
+        $LEExpandDir = "${{github.workspace}}\tools\locale-emulator"
+        $LEInitScript = "${{github.workspace}}\ci\init-locale-emulator.ahk"
+        New-Item "${LEExpandDir}" -ItemType Directory
+        Invoke-WebRequest `
+          "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
+          -OutFile "${LEExpandDir}\locale-emulator.zip"
+        Expand-Archive "${LEExpandDir}\locale-emulator.zip" "${LEExpandDir}"
+        Start-Process "AutoHotKey" "${LEInitScript}"
+        Start-Process "${LEExpandDir}\LEInstaller.exe"
+        echo "${LEExpandDir}" >> $env:GITHUB_PATH
+      shell: pwsh
+
+    - name: Build HTML Help
+      run: build-chm.bat
+      shell: cmd
+
+    - name: Update/Install Inno Setup
+      run: choco upgrade innosetup --confirm
+      shell: pwsh
+
+    - name: Build installer with Inno Setup
+      run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+
+    - name: zipArtifacts
+      run: zipArtifacts.bat ${{ matrix.platform }} ${{ matrix.config }}
+      if: ${{ matrix.config == 'Release' }}
+      shell: cmd
+
+    ## see https://github.com/actions/upload-artifact
+    - name: Upload Installer
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.config == 'Release' }}
+      with:
+        name: Installer ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Installer.zip'
+
+    - name: Upload Installer MD5
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.config == 'Release' }}
+      with:
+        name: Installer MD5 ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Installer.zip.md5'
+
+    - name: Upload Exe
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.config == 'Release' }}
+      with:
+        name: Exe ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Exe.zip'
+
+    - name: Upload Exe MD5
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.config == 'Release' }}
+      with:
+        name: Exe MD5 ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Exe.zip.md5'
+
+    - name: Upload Log
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.config == 'Release' }}
+      with:
+        name: Log ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Log.zip'
+
+    - name: Upload Asm
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.config == 'Release' }}
+      with:
+        name: Asm ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Asm.zip'
+
+    - name: Upload Dev
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.config == 'Release' }}
+      with:
+        name: Dev ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Dev.zip'

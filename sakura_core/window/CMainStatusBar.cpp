@@ -2,36 +2,16 @@
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "window/CMainStatusBar.h"
-
+#include "CMainStatusBar.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "apiwrap/CommonControl.h"
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
-	: CDocListenerEx(CEditDoc::getInstance())
-	, m_pOwner(pOwner)
+: m_pOwner(pOwner)
 , m_hwndStatusBar( NULL )
 , m_hwndProgressBar( NULL )
 {
@@ -69,8 +49,15 @@ void CMainStatusBar::CreateStatusBar()
 		m_hwndStatusBar,
 		NULL,
 		CEditApp::getInstance()->GetAppInstance(),
-		0
+		nullptr
 	);
+
+	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
+		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( FALSE );
+	}
+
+	//スプリッターの、サイズボックスの位置を変更
+	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1);
 }
 
 /* ステータスバー破棄 */
@@ -82,6 +69,24 @@ void CMainStatusBar::DestroyStatusBar()
 	}
 	::DestroyWindow( m_hwndStatusBar );
 	m_hwndStatusBar = NULL;
+
+	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
+		bool bSizeBox;
+		if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
+			/* サイズボックスの表示／非表示切り替え */
+			bSizeBox = false;
+		}
+		else{
+			bSizeBox = true;
+			/* ステータスパーを表示している場合はサイズボックスを表示しない */
+			if( NULL != m_hwndStatusBar ){
+				bSizeBox = false;
+			}
+		}
+		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
+	}
+	//スプリッターの、サイズボックスの位置を変更
+	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1 );
 }
 
 /*!

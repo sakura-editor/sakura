@@ -21,10 +21,6 @@
 #define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
-#include "Funccode_enum.h"
-
-class CDialog;
-
 struct DLLSHAREDATA;
 class CRecent;
 
@@ -95,7 +91,7 @@ public:
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ){return TRUE;}
-	virtual BOOL OnTimer( WPARAM wParam ){return TRUE;}
+	virtual BOOL OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
@@ -125,6 +121,7 @@ public:
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
 
+	static LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 	//! @brief コンボボックスに履歴削除・単語削除の機能を追加する
 	//!
 	//! @param hwndCtl コンボボックスのハンドル。CBS_DROPDOWNLISTスタイルのコンボボックスには対応していません。

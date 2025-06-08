@@ -8,28 +8,11 @@
 	Copyright (C) 2010, Uchi, Moca
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
+#include <memory>
 #include "CImpExpManager.h"
 #include "typeprop/CDlgTypeAscertain.h"
 
@@ -118,7 +101,7 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 		// ファイル名に使えない文字を ／ に置き換える
 		*p++ = L'／';
 	}
-	auto_sprintf_s(res, _MAX_PATH, L"%ls.%ls", conv, ext);
+	auto_snprintf_s(res, _MAX_PATH, L"%ls.%ls", conv, ext);
 
 	return res;
 }
@@ -1033,7 +1016,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 	cProfile.SetWritingMode();
 
 	// ヘッダー
-	StaticString<wchar_t,256> szKeydataHead = WSTR_KEYBIND_HEAD4;
+	StaticString<256> szKeydataHead = WSTR_KEYBIND_HEAD4;
 	cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
 	cProfile.IOProfileData(szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
