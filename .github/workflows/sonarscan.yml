@@ -74,3 +74,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         LC_ALL: ja_JP.UTF-8
       if: env.SONAR_TOKEN
+      with:
+        args: >
+          -D"sonar.organization=${{ github.repository_owner }}"
+          -D"sonar.projectKey=$('${{ github.repository }}' -replace '${{ github.repository_owner }}/', '')"
