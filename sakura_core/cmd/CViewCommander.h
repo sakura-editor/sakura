@@ -206,7 +206,7 @@ public:
 	void Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize );
 	//>> 2002/03/29 Azumaiya
 	void Command_INSBOXTEXT(const wchar_t *pszPaste, int nPasteSize); // 矩形貼り付け
-	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, CLogicInt nTextLen, bool bNoWaitCursor,
+	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, ptrdiff_t nTextLen, bool bNoWaitCursor,
 		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = NULL ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
@@ -397,7 +397,7 @@ private:
 	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	bool Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:
-	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
+	ptrdiff_t ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen, wchar_t* pszConvertedText);
 	void Sub_BoxSelectLock( int flags );
 };
 #endif /* SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_ */

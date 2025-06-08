@@ -51,7 +51,7 @@ void CClipboard::Close()
 
 bool CClipboard::SetText(
 	const wchar_t*	pData,			//!< コピーするUNICODE文字列
-	int				nDataLen,		//!< pDataの長さ（文字単位）
+	size_t			nDataLen,		//!< pDataの長さ（文字単位）
 	bool			bColumnSelect,
 	bool			bLineSelect,
 	UINT			uFormat
@@ -100,7 +100,7 @@ bool CClipboard::SetText(
 	//	1回しか通らない. breakでここまで飛ぶ
 
 	// バイナリ形式のデータ
-	//	(int) 「データ」の長さ
+	//	(size_t) 「データ」の長さ
 	//	「データ」
 	HGLOBAL hgClipSakura = NULL;
 	//サクラエディタ専用フォーマットを取得
@@ -112,13 +112,13 @@ bool CClipboard::SetText(
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			sizeof(int) + (nDataLen + 1) * sizeof(wchar_t)
+			sizeof(size_t) + (nDataLen + 1) * sizeof(wchar_t)
 		);
 		if( !hgClipSakura )break;
 
 		//確保した領域にデータをコピー
 		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
-		*((int*)pClip) = nDataLen; pClip += sizeof(int);								//データの長さ
+		*((size_t*)pClip) = nDataLen; pClip += sizeof(nDataLen);						//データの長さ
 		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
 		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
 		::GlobalUnlock( hgClipSakura );
@@ -243,7 +243,7 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 	@param [in] cEol HDROP形式のときの改行コード
 	@param [in] uGetFormat クリップボード形式
 */
-bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat)
+bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat)
 {
 	if( !m_bOpenResult ){
 		return false;
@@ -285,9 +285,9 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
 		if (hSakura != NULL) {
 			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
-			size_t nLength        = *((int*)pData);
-			const wchar_t* szData = (const wchar_t*)(pData + sizeof(int));
-			cmemBuf->SetString( szData, nLength );
+			size_t nLength        = *((size_t*)pData);
+			const wchar_t* szData = (const wchar_t*)(pData + sizeof(size_t));
+			cmemBuf->Append( szData, nLength );
 			::GlobalUnlock(hSakura);
 			return true;
 		}
@@ -300,9 +300,8 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		hUnicode = GetClipboardData( CF_UNICODETEXT );
 	}
 	if( hUnicode != NULL ){
-		//DWORD nLen = GlobalSize(hUnicode);
 		wchar_t* szData = static_cast<wchar_t*>(::GlobalLock(hUnicode));
-		cmemBuf->SetString( szData );
+		cmemBuf->Append( szData, GlobalSize(hUnicode)/2);
 		::GlobalUnlock(hUnicode);
 		return true;
 	}
@@ -322,7 +321,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		cmemSjis.Reset();
 		// '\0'までを取得
 		cmemUni._SetStringLength(wcslen(cmemUni.GetStringPtr()));
-		cmemUni.swap(*cmemBuf);
+		cmemBuf->Append(cmemUni.GetStringPtr(), (size_t)cmemUni.GetStringLength());
 		::GlobalUnlock(hText);
 		return true;
 	}
@@ -339,9 +338,9 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
 				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
 				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
-				cmemBuf->AppendString(sTmpPath);
+				cmemBuf->Append(sTmpPath, wcslen(sTmpPath));
 				if(nMaxCnt > 1){
-					cmemBuf->AppendString( cEol.GetValue2() );
+					cmemBuf->Append( cEol.GetValue2(), cEol.GetLen() );
 				}
 			}
 			return true;
@@ -349,6 +348,18 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	}
 
 	return false;
+}
+
+bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat)
+{
+	CNativeWBuffer buff(cmemBuf);
+	return GetText(&buff, pbColumnSelect, pbLineSelect, cEol, uGetFormat);
+}
+
+bool CClipboard::GetText(std::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat)
+{
+	StdWStringBuffer buff(cmemBuf);
+	return GetText(&buff, pbColumnSelect, pbLineSelect, cEol, uGetFormat);
 }
 
 struct SSystemClipFormatNames

@@ -220,7 +220,7 @@ protected:
 	static constexpr std::wstring_view sakuraText = L"SAKURAClipW";
 	static constexpr std::string_view oemText = "CF_OEMTEXT";
 	GlobalMemory unicodeMemory{ GMEM_MOVEABLE, (unicodeText.size() + 1) * sizeof(wchar_t) };
-	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(int) + (sakuraText.size() + 1) * sizeof(wchar_t) };
+	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(size_t) + (sakuraText.size() + 1) * sizeof(wchar_t) };
 	GlobalMemory oemMemory{ GMEM_MOVEABLE, oemText.size() + 1 };
 
 	CClipboardGetText() {
@@ -229,7 +229,7 @@ protected:
 		});
 		sakuraMemory.Lock<unsigned char>([=](unsigned char* p) {
 			*(int*)p = sakuraText.size();
-			std::wcscpy((wchar_t*)(p + sizeof(int)), sakuraText.data());
+			std::wcscpy((wchar_t*)(p + sizeof(size_t)), sakuraText.data());
 		});
 		oemMemory.Lock<char>([=](char* p) {
 			std::strcpy(p, oemText.data());

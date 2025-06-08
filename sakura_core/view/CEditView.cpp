@@ -1787,7 +1787,7 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 	正常時はTRUE,範囲未選択の場合はFALSEを返す
 */
 bool CEditView::GetSelectedData(
-	CNativeW*		cmemBuf,
+	IWBuffer*		buffer,
 	BOOL			bLineOnly,
 	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
@@ -1795,6 +1795,7 @@ bool CEditView::GetSelectedData(
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
 )
 {
+	const size_t quoteLen = (NULL != pszQuote) ? wcslen(pszQuote) : 0;
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 	CLayoutInt		nLineNum;
@@ -1829,7 +1830,7 @@ bool CEditView::GetSelectedData(
 			GetSelectionInfo().m_sSelect.GetFrom(),	// 範囲選択開始
 			GetSelectionInfo().m_sSelect.GetTo()		// 範囲選択終了
 		);
-		cmemBuf->SetString(L"");
+		buffer->Clear();
 
 		//<< 2002/04/18 Azumaiya
 		// サイズ分だけ要領をとっておく。
@@ -1859,11 +1860,11 @@ bool CEditView::GetSelectedData(
 		}
 
 		// 大まかに見た容量を元にサイズをあらかじめ確保しておく。
-		cmemBuf->AllocStringBuffer(nBufSize);
+		buffer->Reserve(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
 		// メモリ確保に失敗したら抜ける
-		if( 0 == cmemBuf->capacity() ){
+		if( 0 == buffer->Capacity() ){
 			return false;
 		}
 
@@ -1879,14 +1880,14 @@ bool CEditView::GetSelectedData(
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
 					if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1], bExtEol) ){
-						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
+						buffer->Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
 					}else{
-						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+						buffer->Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 					}
 				}
 			}
 			++nRowNum;
-			cmemBuf->AppendString( WCODE::CRLF );
+			buffer->Append( WCODE::CRLF, 2 );
 			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
 				break;
 			}
@@ -1894,7 +1895,7 @@ bool CEditView::GetSelectedData(
 	}
 	else{
 		CEol appendEol(neweol);
-		cmemBuf->Clear();
+		buffer->Clear();
 
 		//<< 2002/04/18 Azumaiya
 		//  これから貼り付けに使う領域の大まかなサイズを取得する。
@@ -1911,7 +1912,7 @@ bool CEditView::GetSelectedData(
 		// 先頭に引用符を付けるとき。
 		if ( NULL != pszQuote )
 		{
-			nBufSize += wcslen(pszQuote);
+			nBufSize += quoteLen;
 		}
 
 		// 行番号を付ける。
@@ -1943,11 +1944,11 @@ bool CEditView::GetSelectedData(
 		}
 
 		// 調べた長さ分だけバッファを取っておく。
-		cmemBuf->AllocStringBuffer(nBufSize);
+		buffer->Reserve(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
 		// メモリ確保に失敗したら抜ける
-		if( 0 == cmemBuf->capacity() ){
+		if( 0 == buffer->Capacity() ){
 			return false;
 		}
 
@@ -1973,36 +1974,39 @@ bool CEditView::GetSelectedData(
 			}
 
 			if( NULL != pszQuote && pszQuote[0] != L'\0' ){	/* 先頭に付ける引用符 */
-				cmemBuf->AppendString( pszQuote );
+				buffer->Append( pszQuote, quoteLen );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
-				auto_sprintf( pszLineNum, L" %d:" , nLineNum + 1 );
-				cmemBuf->AppendString( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
-				cmemBuf->AppendString( pszLineNum );
+				auto lineNumLen = auto_sprintf( pszLineNum, L" %d:" , nLineNum + 1 );
+				buffer->Append( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
+				buffer->Append( pszLineNum, (size_t)lineNumLen );
 			}
 
 			if( pcLayout->GetLayoutEol().IsValid() ){
 				if( nIdxTo >= nLineLen ){
-					cmemBuf->AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
+					buffer->Append( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
 					//	Jul. 25, 2000 genta
-					cmemBuf->AppendString( ( neweol == EEolType::none ) ?
-						(pcLayout->GetLayoutEol()).GetValue2() :	//	コード保存
-						appendEol.GetValue2() );			//	新規改行コード
+					//	新規改行コード
+					const CEol& eol = (neweol == EEolType::none)
+						? pcLayout->GetLayoutEol()	//	コード保存
+						: appendEol;				//	新規改行コード
+					buffer->Append(eol.GetValue2(), (size_t)eol.GetLen());
 				}
 				else {
-					cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+					buffer->Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				}
 			}else{
-				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+				buffer->Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				if( nIdxTo >= nLineLen ){
 					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
 						NULL != pszQuote || /* 先頭に付ける引用符 */
 						bWithLineNumber 	/* 行番号を付与する */
 					){
 						//	Jul. 25, 2000 genta
-						cmemBuf->AppendString(( neweol == EEolType::none ) ?
-							m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2() :	//	コード保存
-							appendEol.GetValue2() );		//	新規改行コード
+						const CEol& eol = (neweol == EEolType::none)
+							? m_pcEditDoc->m_cDocEditor.GetNewLineCode()	//	コード保存
+							: appendEol;	//	新規改行コード
+						buffer->Append(eol.GetValue2(), (size_t)eol.GetLen());
 					}
 				}
 			}
@@ -2012,6 +2016,32 @@ bool CEditView::GetSelectedData(
 		}
 	}
 	return true;
+}
+
+bool CEditView::GetSelectedData(
+	CNativeW*		cmemBuf,
+	BOOL			bLineOnly,
+	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
+	BOOL			bWithLineNumber,	/* 行番号を付与する */
+	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
+	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
+)
+{
+	CNativeWBuffer buff(cmemBuf);
+	return GetSelectedData(&buff, bLineOnly, pszQuote, bWithLineNumber, bAddCRLFWhenCopy, neweol);
+}
+
+bool CEditView::GetSelectedData(
+	std::wstring*	wstr,
+	BOOL			bLineOnly,
+	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
+	BOOL			bWithLineNumber,	/* 行番号を付与する */
+	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
+	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
+)
+{
+	StdWStringBuffer buff(wstr);
+	return GetSelectedData(&buff, bLineOnly, pszQuote, bWithLineNumber, bAddCRLFWhenCopy, neweol);
 }
 
 /* 選択範囲内の１行の選択
@@ -2208,8 +2238,6 @@ void CEditView::CopySelectedAllLines(
 	BOOL			bWithLineNumber	//!< 行番号を付与する
 )
 {
-	CNativeW	cmemBuf;
-
 	if( !GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
@@ -2241,8 +2269,9 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
+	std::wstring wstr;
 	if( !GetSelectedData(
-		&cmemBuf,
+		&wstr,
 		FALSE,
 		pszQuote, /* 引用符 */
 		bWithLineNumber, /* 行番号を付与する */
@@ -2252,7 +2281,7 @@ void CEditView::CopySelectedAllLines(
 		return;
 	}
 	/* クリップボードにデータを設定 */
-	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), false );
+	MySetClipboardData(wstr.data(), wstr.size(), false);
 }
 
 /*! クリップボードからデータを取得
@@ -2283,10 +2312,33 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, boo
 	return true;
 }
 
+bool CEditView::MyGetClipboardData(std::wstring& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect /*= NULL*/)
+{
+	if (pbColumnSelect)
+		*pbColumnSelect = false;
+
+	if (pbLineSelect)
+		*pbLineSelect = false;
+
+	if (!CClipboard::HasValidData())
+		return false;
+
+	CClipboard cClipboard(GetHwnd());
+	if (!cClipboard)
+		return false;
+
+	CEol cEol = m_pcEditDoc->m_cDocEditor.GetNewLineCode();
+	if (!cClipboard.GetText(&cmemBuf, pbColumnSelect, pbLineSelect, cEol)) {
+		return false;
+	}
+
+	return true;
+}
+
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
  */
-bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
+bool CEditView::MySetClipboardData( const WCHAR* pszText, size_t nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
 {
 	/* Windowsクリップボードにコピー */
 	CClipboard cClipboard(GetHwnd());

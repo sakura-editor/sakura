@@ -3695,7 +3695,7 @@ END
 
 STRINGTABLE
 BEGIN
-    STR_ERR_DLGMEM1         "CMemory::AllocBuffer(nNewDataLen==%d)\n内存分配错误\n"
+    STR_ERR_DLGMEM1         "CMemory::AllocBuffer(nNewDataLen==%zu)\n内存分配错误\n"
     STR_ERR_DLGNRMPROC1     "CreateMutex() 失败。\n正在退出程序。"
     STR_ERR_DLGNRMPROC2     "编辑器或系统正忙。\n请稍候..."
     STR_ERR_DLGPPA1         "执行PPA时无法调用其他PPA宏。"
