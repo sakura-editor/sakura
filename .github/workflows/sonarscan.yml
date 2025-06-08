@@ -49,9 +49,9 @@ jobs:
         cache: 'pip' # caching pip dependencies
     - run: pip install -r requirements.txt
 
-    - name: Install sonar-scanner and build-wrapper
-      uses: SonarSource/sonarcloud-github-c-cpp@v3
-
+    - name: Install Build Wrapper
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
+      
     - name: Install OpenCppCoverage with XmlExporter
       working-directory: ${{ runner.temp }}
       run: |
@@ -67,13 +67,10 @@ jobs:
     - name: Run Tests
       run: .\tools\Run-Tests.ps1
 
-    - name: Run sonar-scanner
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v5
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        LC_ALL: ja_JP.UTF-8
       if: env.SONAR_TOKEN
-      run: |
-        .\.sonar\scanner\bin\sonar-scanner.bat `
-          -D"sonar.organization=${{ github.repository_owner }}" `
-          -D"sonar.projectKey=$('${{ github.repository }}' -replace '${{ github.repository_owner }}/', '')" `
-          -D"sonar.host.url=https://sonarcloud.io"
