@@ -3,25 +3,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
@@ -49,14 +31,14 @@ FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 		// 未合成で一度に描画しても安全そうな文字一覧(その範囲の文字が合成用文字ではないもの)
 		// 合成は未サポート
 		if((0x20 <= code && code <= 0x7f) // ASCII
-			|| 0x2E80 <= code && code <= 0x2FDF // 漢字部首
-			|| 0x3041 <= code && code <= 0x3096 // ひらがな
-			|| 0x30A1 <= code && code <= 0x30FA // カタカナ(合成用濁点などを除く)
-			|| 0x3400 <= code && code <= 0x4DBF // CJK統合漢字拡張A
-			|| 0x4E00 <= code && code <= 0x9FFF // CJK統合漢字
-			|| 0xF900 <= code && code <= 0xFAFF // CJK互換漢字
-			|| 0xFF01 <= code && code <= 0xFF5E // 全角ASCII
-			|| 0xFF61 <= code && code <= 0xFF9F // 半角カナ
+			|| (0x2E80 <= code && code <= 0x2FDF) // 漢字部首
+			|| (0x3041 <= code && code <= 0x3096) // ひらがな
+			|| (0x30A1 <= code && code <= 0x30FA) // カタカナ(合成用濁点などを除く)
+			|| (0x3400 <= code && code <= 0x4DBF) // CJK統合漢字拡張A
+			|| (0x4E00 <= code && code <= 0x9FFF) // CJK統合漢字
+			|| (0xF900 <= code && code <= 0xFAFF) // CJK互換漢字
+			|| (0xFF01 <= code && code <= 0xFF5E) // 全角ASCII
+			|| (0xFF61 <= code && code <= 0xFF9F) // 半角カナ
 		){
 			nType = 1;
 		}

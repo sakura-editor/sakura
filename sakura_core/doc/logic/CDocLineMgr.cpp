@@ -134,6 +134,30 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 	}
 }
 
+//! 他のCDocLineMgrの内容を末尾に追加する
+//! 元のCDocLineMgrの内容は空になる
+void CDocLineMgr::AppendAsMove( CDocLineMgr& other )
+{
+	if( other.GetDocLineTop() == nullptr ){ return; }
+
+	// 双方向リンクをつなぐ
+	other.GetDocLineTop()->m_pPrev = m_pDocLineBot;
+	if( m_pDocLineBot != nullptr ){
+		m_pDocLineBot->m_pNext = other.GetDocLineTop();
+	}
+
+	// 先頭/末尾を更新
+	if( m_pDocLineTop == nullptr ){
+		m_pDocLineTop = other.GetDocLineTop();
+	}
+	m_pDocLineBot = other.GetDocLineBottom();
+
+	m_nLines += other.GetLineCount();
+
+	// 所有権が移ったので空っぽにしておく
+	other._Init();
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   行データへのアクセス                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -206,9 +206,6 @@ CControlTray::CControlTray()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	// アクセラレータテーブル作成
-	CreateAccelTbl();
-
 	m_bUseTrayMenu = false;
 
 	return;
@@ -642,14 +639,6 @@ LRESULT CControlTray::DispatchEvent(
 				);
 			}
 
-//@@		/* 共有データの保存 */
-//@@		m_cShareData.SaveShareData();
-
-			/* アクセラレータテーブルの再作成 */
-			// アクセラレータテーブル破棄
-			DeleteAccelTbl();
-			// アクセラレータテーブル作成
-			CreateAccelTbl();
 			break;
 		default:
 			break;
@@ -1302,7 +1291,7 @@ bool CControlTray::OpenNewEditor(
 		for( i = 0; i < 200; i++ ){
 			MSG msg;
 			DWORD dwExitCode;
-			if( ::PeekMessage( &msg, 0, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
+			if( ::PeekMessage( &msg, nullptr, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
 				if( msg.message == WM_QUIT ){	// 指定範囲外でも WM_QUIT は取り出される
 					::PostQuitMessage( msg.wParam );
 					break;
@@ -1701,42 +1690,13 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	return nId;
 }
 
-/*! アクセラレータテーブル作成
-	@date 2013.04.20 novice 共通処理を関数化
-*/
-void CControlTray::CreateAccelTbl( void )
-{
-	m_pShareData->m_sHandles.m_hAccel = CKeyBind::CreateAccerelator(
-		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
-	);
-
-	if( NULL == m_pShareData->m_sHandles.m_hAccel ){
-		ErrorMessage(
-			NULL,
-			LS(STR_TRAY_ACCELTABLE)
-		);
-	}
-}
-
-/*! アクセラレータテーブル破棄
-	@date 2013.04.20 novice 共通処理を関数化
-*/
-void CControlTray::DeleteAccelTbl( void )
-{
-	if( m_pShareData->m_sHandles.m_hAccel ){
-		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
-		m_pShareData->m_sHandles.m_hAccel = NULL;
-	}
-}
-
 /*!
 	@brief WM_DESTROY 処理
 	@date 2006.07.09 ryoji 新規作成
 */
 void CControlTray::OnDestroy()
 {
-	HWND hwndExitingDlg = 0;
+	HWND hwndExitingDlg = nullptr;
 
 	if (GetTrayHwnd() == NULL)
 		return;	// 既に破棄されている
@@ -1775,9 +1735,6 @@ void CControlTray::OnDestroy()
 	if( m_bCreatedTrayIcon ){	/* トレイにアイコンを作った */
 		TrayMessage( GetTrayHwnd(), NIM_DELETE, 0, NULL, NULL );
 	}
-
-	// アクセラレータテーブルの削除
-	DeleteAccelTbl();
 
 	m_hWnd = NULL;
 }

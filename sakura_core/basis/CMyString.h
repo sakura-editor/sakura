@@ -3,25 +3,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_
 #define SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_
@@ -33,11 +15,11 @@
 #include "config/maxdata.h"
 
 //共通型
-typedef StaticString<WCHAR,_MAX_PATH> SFilePath;
-typedef StaticString<WCHAR, MAX_GREP_PATH> SFilePathLong;
-class CFilePath : public StaticString<WCHAR,_MAX_PATH>{
+using SFilePath = StaticString<_MAX_PATH>;
+using SFilePathLong = StaticString<MAX_GREP_PATH>;
+class CFilePath : public StaticString<_MAX_PATH>{
 private:
-	typedef StaticString<WCHAR,_MAX_PATH> Super;
+	using Super = StaticString<_MAX_PATH>;
 public:
 	CFilePath() = default;
 	CFilePath(const WCHAR* rhs) : Super(rhs) { }

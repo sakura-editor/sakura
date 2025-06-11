@@ -58,7 +58,7 @@ bool CMigemo::InitDllImp()
 		{ &m_migemo_setproc_int2char  ,"migemo_setproc_int2char"  },
 		{ &m_migemo_load              ,"migemo_load"              },
 		{ &m_migemo_is_enable         ,"migemo_is_enable"         },
-		{ NULL, 0                                                 }
+		{ nullptr, nullptr                                        }
 	};
 	
 	if( ! RegisterEntries(table) ){

@@ -2,26 +2,9 @@
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
+
 // stdafx.h : 標準のシステム インクルード ファイル、
 //				または参照回数が多く、かつあまり変更されない
 //				プロジェクト専用のインクルード ファイルを記述します。
@@ -42,6 +25,47 @@
 
 // MS Cランタイムの非セキュア関数の使用を容認します
 #define _CRT_SECURE_NO_WARNINGS
+
+// 標準C++ヘッダー（追加するときは昇順で。）
+#include <algorithm>
+#include <array>
+#include <atomic>
+#include <cassert>
+#include <climits>
+#include <clocale>
+#include <cmath>
+#include <condition_variable>
+#include <cstdarg>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <cwchar>
+#include <deque>
+#include <exception>
+#include <filesystem>
+#include <functional>
+#include <initializer_list>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <list>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <new>
+#include <numeric>
+#include <optional>
+#include <regex>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <thread>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 #ifdef _MSC_VER
 
@@ -73,33 +97,22 @@
 #include <time.h>
 #include <wchar.h>
 
-#include <algorithm>
-#include <array>
-#include <exception>
-#include <functional>
-#include <initializer_list>
-#include <list>
-#include <map>
-#include <unordered_map>
-#include <memory>
-#include <optional>
-#include <string>
-#include <string_view>
-#include <utility>
-#include <vector>
-
+// Windowsヘッダー(他のSDKヘッダーとは別格。)
 #include <Windows.h>
+
+// windowsx.h (他のSDKヘッダーとは別格。)
 #include <windowsx.h>
+
+// その他のWindows SDK ヘッダー（ファイル名は最新に合わせる。追加するときは昇順で。）
 #include <CommCtrl.h>
 #include <HtmlHelp.h>
-#include <ImageHlp.h>
 #include <imm.h>
-#include <ObjIdl.h>
+#include <oaidl.h>
 #include <shellapi.h>
 #include <ShlObj.h>
-#include <wrl.h>
-#include <uxtheme.h>
+#include <Uxtheme.h>
 #include <vsstyle.h>
+#include <wrl.h>
 
 // Windows SDKのマクロ定数「NULL」を訂正する。
 // マクロ定数「NULL」は、省略可能なポインタ型パラメータに「省略」を指定するために使う。

@@ -263,6 +263,39 @@ TEST(profile_data, TryParse_StringBufferW)
 }
 
 /*!
+ * @brief ToString(KEYCODE)のテスト
+ */
+TEST(profile_data, ToString_KEYCODE)
+{
+	std::wstring str;
+	KEYCODE code;
+
+	code = 0x80;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"", str.c_str());
+
+	code = -1;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"", str.c_str());
+
+	code = 0;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"", str.c_str());
+
+	code = 1;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"\x01", str.c_str());
+
+	code = 0x61;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"a", str.c_str());
+
+	code = 0x7f;
+	str = profile_data::ToString(code);
+	ASSERT_STREQ(L"\x7f", str.c_str());
+}
+
+/*!
  * @brief IOProfileDataのテスト
  */
 TEST(CDataProfile, IOProfileData)

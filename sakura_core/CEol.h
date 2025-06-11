@@ -9,25 +9,7 @@
 	Copyright (C) 2002, frozen, Moca
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #ifndef SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_
@@ -64,10 +46,10 @@ struct SEolDefinition{
 	const WCHAR*	m_szName;
 	const WCHAR*	m_szDataW;
 	const ACHAR*	m_szDataA;
-	int				m_nLen;
+	size_t			m_nLen;
 
-	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==memcmp(pData,m_szDataA,m_nLen); }
+	bool StartsWith(const WCHAR* pData, size_t nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
+	bool StartsWith(const ACHAR* pData, size_t nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==memcmp(pData,m_szDataA,m_nLen); }
 };
 
 constexpr auto EOL_TYPE_NUM = static_cast<size_t>(EEolType::code_max); // 8
@@ -140,13 +122,13 @@ public:
 	CEol& operator = ( EEolType t ) noexcept { SetType( t ); return *this; }
 
 	//文字列内の行終端子を解析
-	void SetTypeByString( const wchar_t* pszData, int nDataLen );
-	void SetTypeByString( const char* pszData, int nDataLen );
+	void SetTypeByString( const wchar_t* pszData, size_t nDataLen );
+	void SetTypeByString( const char* pszData, size_t nDataLen );
 
 	//設定（ファイル読み込み時に使用）
-	void SetTypeByStringForFile( const char* pszData, int nDataLen ){ SetTypeByString( pszData, nDataLen ); }
-	void SetTypeByStringForFile_uni( const char* pszData, int nDataLen );
-	void SetTypeByStringForFile_unibe( const char* pszData, int nDataLen );
+	void SetTypeByStringForFile( const char* pszData, size_t nDataLen ){ SetTypeByString( pszData, nDataLen ); }
+	void SetTypeByStringForFile_uni( const char* pszData, size_t nDataLen );
+	void SetTypeByStringForFile_unibe( const char* pszData, size_t nDataLen );
 };
 
 // グローバル演算子

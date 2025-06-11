@@ -286,7 +286,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
 		if( ( bParseOptDisabled ||
-			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
+			! (pszToken[0] == '-' || (pszToken[0] == '"' && pszToken[1] == '-')) )){
 
 			if( pszToken[0] == L'\"' ){
 				CNativeW cmWork;
