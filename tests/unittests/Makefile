@@ -132,6 +132,7 @@ LIBS= \
  -lcomdlg32 \
  -lgtest \
  -lgmock \
+ -municode \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/tests1.exe
