@@ -20,25 +20,7 @@
 	Copyright (C) 2013, Uchi
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
@@ -227,8 +209,6 @@ CEditWnd::CEditWnd()
 , m_pszMenubarMessage( new WCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 , m_posSaveAry( NULL )
 , m_nCurrentFocus( 0 )
-, m_hAccelWine( NULL )
-, m_hAccel( NULL )
 , m_bDragMode( false )
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
@@ -262,7 +242,7 @@ CEditWnd::~CEditWnd()
 	delete m_pcDropTarget;	// 2008.06.20 ryoji
 	m_pcDropTarget = NULL;
 
-	// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+	// ウィンドウ毎に作成したアクセラレータテーブルを破棄する
 	DeleteAccelTbl();
 
 	m_hWnd = NULL;
@@ -562,7 +542,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	else
 	{
 		::SetWindowPos(
-			GetHwnd(), 0,
+			GetHwnd(), nullptr,
 			rcOrg.left, rcOrg.top,
 			rcOrg.right - rcOrg.left, rcOrg.bottom - rcOrg.top,
 			SWP_NOOWNERZORDER | SWP_NOZORDER
@@ -630,7 +610,7 @@ HWND CEditWnd::Create(
 	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
 	ClearMouseState();
 
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	// ウィンドウ毎にアクセラレータテーブルを作成する
 	CreateAccelTbl();
 
 	//ウィンドウ数制限
@@ -1529,7 +1509,7 @@ LRESULT CEditWnd::DispatchEvent(
 			{
 				int	nId;
 				nId = CreateFileDropDownMenu( pnmh->hwndFrom );
-				if( nId != 0 ) OnCommand( (WORD)0 /*メニュー*/, (WORD)nId, (HWND)0 );
+				if( nId != 0 ) OnCommand( (WORD)0 /*メニュー*/, (WORD)nId, nullptr );
 			}
 			return FALSE;
 		//	From Here Jul. 21, 2003 genta
@@ -1724,10 +1704,10 @@ LRESULT CEditWnd::DispatchEvent(
 			// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 			EndLayoutBars();
 
-			// アクセラレータテーブルを再作成する(Wine用)
-			// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+			// アクセラレータテーブルを再作成する
+			// ウィンドウ毎に作成したアクセラレータテーブルを破棄する
 			DeleteAccelTbl();
-			// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+			// ウィンドウ毎にアクセラレータテーブルを作成する
 			CreateAccelTbl();
 
 			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
@@ -2418,7 +2398,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 	/* メニューラベルの作成 */
 	// カスタムメニュー
 	if (eFunc == F_MENU_RBUTTON
-	  || eFunc >= F_CUSTMENU_1 && eFunc <= F_CUSTMENU_24) {
+	  || (eFunc >= F_CUSTMENU_1 && eFunc <= F_CUSTMENU_24)) {
 		int j;
 		//	右クリックメニュー
 		if (eFunc == F_MENU_RBUTTON) {
@@ -2637,7 +2617,7 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 		{
 			const CJackManager* pcJackManager = CJackManager::getInstance();
 			const CPlugin* prevPlugin = NULL;
-			HMENU hMenuPlugin = 0;
+			HMENU hMenuPlugin = nullptr;
 
 			CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
 			for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ){
@@ -3441,15 +3421,15 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 					SHGetMalloc(&Malloc);
 					SHGetDesktopFolder(&Desktop);
 					DWORD Eaten, Attribs;
-					if(SUCCEEDED(Desktop->ParseDisplayName(0, NULL, cmemDir.GetStringPtr(), &Eaten, &PathID, &Attribs)))
+					if(SUCCEEDED(Desktop->ParseDisplayName(nullptr, nullptr, cmemDir.GetStringPtr(), &Eaten, &PathID, &Attribs)))
 					{
 						Desktop->BindToObject(PathID, NULL, IID_IShellFolder, (void**)&Folder);
 						Malloc->Free(PathID);
-						if(SUCCEEDED(Folder->ParseDisplayName(0, NULL, cmemTitle.GetStringPtr(), &Eaten, &ItemID, &Attribs)))
+						if(SUCCEEDED(Folder->ParseDisplayName(nullptr, nullptr, cmemTitle.GetStringPtr(), &Eaten, &ItemID, &Attribs)))
 						{
 							LPCITEMIDLIST List[1];
 							List[0] = ItemID;
-							Folder->GetUIObjectOf(0, 1, List, IID_IDataObject, NULL, (void**)&DataObject);
+							Folder->GetUIObjectOf(nullptr, 1, List, IID_IDataObject, nullptr, (void**)&DataObject);
 							Malloc->Free(ItemID);
 #define DDASTEXT
 #ifdef  DDASTEXT
@@ -4778,7 +4758,7 @@ void CEditWnd::ClearMouseState( void )
 	SetHScrollByWheel( FALSE );			// ホイール操作による横スクロール有無
 }
 
-/*! ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+/*! ウィンドウ毎にアクセラレータテーブルを作成する
 	@date 2009.08.15 Hidetaka Sakai, nasukoji
 	@date 2013.10.19 novice 共有メモリの代わりにWine実行判定処理を呼び出す
 
@@ -4788,21 +4768,17 @@ void CEditWnd::ClearMouseState( void )
 */
 void CEditWnd::CreateAccelTbl( void )
 {
-	{
-		m_hAccelWine = CKeyBind::CreateAccerelator(
-			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
+	m_hAccel = CKeyBind::CreateAccerelator(
+		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
+	);
+
+	if( nullptr == m_hAccel ){
+		ErrorMessage(
+			NULL,
+			LS(STR_ERR_DLGEDITWND01)
 		);
-
-		if( NULL == m_hAccelWine ){
-			ErrorMessage(
-				NULL,
-				LS(STR_ERR_DLGEDITWND01)
-			);
-		}
 	}
-
-	m_hAccel = m_hAccelWine;
 }
 
 /*! ウィンドウ毎に作成したアクセラレータテーブルを破棄する
@@ -4810,11 +4786,9 @@ void CEditWnd::CreateAccelTbl( void )
 */
 void CEditWnd::DeleteAccelTbl( void )
 {
-	m_hAccel = NULL;
-
-	if( m_hAccelWine ){
-		::DestroyAcceleratorTable( m_hAccelWine );
-		m_hAccelWine = NULL;
+	if( m_hAccel ){
+		::DestroyAcceleratorTable( m_hAccel );
+		m_hAccel = nullptr;
 	}
 }
 

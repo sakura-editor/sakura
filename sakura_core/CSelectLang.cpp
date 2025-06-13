@@ -23,7 +23,7 @@
 
 #include <new>
 
-CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = NULL;	// メッセージリソース用構造体
+CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = nullptr;	// メッセージリソース用構造体
 CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 
 /*!
@@ -35,6 +35,8 @@ CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 */
 CSelectLang::~CSelectLang( void )
 {
+	m_psLangInfo = nullptr;
+
 	for (auto it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
 		if( (*it)->hInstance ){
 			FreeLibrary( (*it)->hInstance );
@@ -76,7 +78,7 @@ LPCWSTR CSelectLang::getDefaultLangString( void )
 // 言語IDを返す
 WORD CSelectLang::getDefaultLangId(void)
 {
-	if (m_psLangInfo == NULL){
+	if (m_psLangInfo == nullptr){
 		return ::GetUserDefaultLangID();
 	}
 	return m_psLangInfo->wLangId;
@@ -121,11 +123,11 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		m_psLangInfoList.push_back( psLangInfo );
 	}
 
-	if( m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
+	if( m_psLangInfo != nullptr && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
 		// 読み込み済みのDLLを解放する
 		::FreeLibrary( m_psLangInfo->hInstance );
 		m_psLangInfo->hInstance = NULL;
-		m_psLangInfo = NULL;
+		m_psLangInfo = nullptr;
 	}
 
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。

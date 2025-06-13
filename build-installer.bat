@@ -57,7 +57,7 @@ if "%PLATFORM%" == "x64" (
 ) else if "%PLATFORM%" == "Win32" (
 	set CTAGS_PREFIX=x86
 )
-set CTAGS_ZIP=installer\externals\universal-ctags\ctags-2020-01-12_feffe43a-%CTAGS_PREFIX%.zip
+set CTAGS_ZIP=installer\externals\universal-ctags\ctags-v6.1.0-%CTAGS_PREFIX%.zip
 7z x %CTAGS_ZIP% -o%INSTALLER_RESOURCES_CTAGS% -y license
 7z e %CTAGS_ZIP% -o%platform%\%configuration% -y %CTAGS_EXE%
 

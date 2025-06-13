@@ -353,9 +353,9 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 
 			// キャレットの移動先を決める。
 			if( nextline_exists
-				&& ( on_x_max == MOVE_NEXTLINE_IMMEDIATELY && x_max <= to_x
-					|| on_x_max == MOVE_NEXTLINE_NEXTTIME && x_max < to_x
-					|| on_x_max == MOVE_NEXTLINE_NEXTTIME_AND_MOVE_RIGHT && x_max < to_x
+				&& ( (on_x_max == MOVE_NEXTLINE_IMMEDIATELY && x_max <= to_x)
+					|| (on_x_max == MOVE_NEXTLINE_NEXTTIME && x_max < to_x)
+					|| (on_x_max == MOVE_NEXTLINE_NEXTTIME_AND_MOVE_RIGHT && x_max < to_x)
 				)
 			) {
 				ptTo.y = ptCaret.y + 1;

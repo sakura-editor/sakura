@@ -100,18 +100,6 @@ const DWORD p_helpids[] = {	//12900
 
 #define TSTR_TARGET_MODE _T(TARGET_STRING_MODEL) _T(TARGET_DEBUG_MODE)
 
-#ifdef _WIN32_WINDOWS
-	#define MY_WIN32_WINDOWS _WIN32_WINDOWS
-#else
-	#define MY_WIN32_WINDOWS 0
-#endif
-
-#ifdef _WIN32_WINNT
-	#define MY_WIN32_WINNT _WIN32_WINNT
-#else
-	#define MY_WIN32_WINNT 0
-#endif
-
 #if defined(CI_BUILD_URL)
 #pragma message("CI_BUILD_URL: " CI_BUILD_URL)
 #endif
@@ -173,8 +161,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//サクラエディタ開発版(64bitデバッグ) Ver. 2.4.1.1234 GHA (xxxxxxxx)
 	//(GitURL https://github.com/sakura/sakura-editor.git)
 	//
-	//      Share Ver: 96
-	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
+	//      Compile Info: V 1400  WR WIN600/I601/N600
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeW cmemMsg;
@@ -205,8 +192,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// コンパイル情報
 	cmemMsg.AppendStringF(
-		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
-		COMPILER_VER, WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
+		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/N%03x\r\n",
+		COMPILER_VER, WINVER, _WIN32_IE, _WIN32_WINNT
 	);
 
 	// 更新日情報

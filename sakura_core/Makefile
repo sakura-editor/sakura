@@ -92,7 +92,6 @@ LIBS= \
  -lcomctl32 \
  -limm32 \
  -lmpr \
- -limagehlp \
  -lshlwapi \
  -ldwmapi \
  -lwinmm \
@@ -136,7 +135,7 @@ $(exe): $(OBJS) sakura_rc.o
 $(bregonig): ../installer/externals/bregonig/bron420.zip
 	$(P7Z) e $< -o$(@D) -y x64/$(@F)
 
-$(ctags): ../installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip
+$(ctags): ../installer/externals/universal-ctags/ctags-v6.1.0-x64.zip
 	$(P7Z) e $< -o$(@D) -y $(@F)
 
 Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)

@@ -351,7 +351,7 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 	// 念のため IME 関連のメッセージが来るようならビューに処理させる
 	// 何かの環境依存（常駐ソフト？）によるものかもしれないが、
 	// フォーカスが無くても IME 関連メッセージがこっちに来るケースがあったので、その対策
-	if(wMsg >= WM_IME_STARTCOMPOSITION && wMsg <= WM_IME_KEYLAST || wMsg >= WM_IME_SETCONTEXT && wMsg <= WM_IME_KEYUP){
+	if((wMsg >= WM_IME_STARTCOMPOSITION && wMsg <= WM_IME_KEYLAST) || (wMsg >= WM_IME_SETCONTEXT && wMsg <= WM_IME_KEYUP)){
 		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->DispatchEvent( pcEditView->GetHwnd(), wMsg, wParam, lParam );
 		return TRUE;

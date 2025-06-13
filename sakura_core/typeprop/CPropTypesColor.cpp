@@ -41,12 +41,9 @@
 #include "config/app_constants.h"
 #include "String_define.h"
 
-using namespace std;
-
 namespace {
 //! カスタムカラー用の識別文字列
 const WCHAR* TSTR_PTRCUSTOMCOLORS = L"ptrCustomColors";
-WNDPROC m_wpColorListProc;
 int m_bgColorSampleLeft;
 int m_bgColorSampleRight;
 int m_fgColorSampleLeft;
@@ -147,7 +144,7 @@ bool CPropTypesColor::Export( HWND hwndDlg )
 	return cImpExpColors.ExportUI(m_hInstance, hwndDlg);
 }
 
-LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, [[maybe_unused]] DWORD_PTR dwRefData )
 {
 	int			xPos = 0;
 	int			yPos;
@@ -266,9 +263,12 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( ::GetProp( hwnd, TSTR_PTRCUSTOMCOLORS ) ){
 			::RemoveProp( hwnd, TSTR_PTRCUSTOMCOLORS );
 		}
+		::RemoveWindowSubclass(hwnd, &ColorList_SubclassProc, uIdSubclass);
+		return 0;
+	default:
 		break;
 	}
-	return CallWindowProc( m_wpColorListProc, hwnd, uMsg, wParam, lParam );
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
 // IMEのオープン状態復帰用
@@ -317,8 +317,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		SetData( hwndDlg );
 
 		/* 色リストをフック */
-		// Modified by KEITA for WIN64 2003.9.6
-		m_wpColorListProc = (WNDPROC) ::SetWindowLongPtr( hwndListColor, GWLP_WNDPROC, (LONG_PTR)ColorList_SubclassProc );
+		::SetWindowSubclass(hwndListColor, &ColorList_SubclassProc, 0, 0);
 		// 2005.11.30 Moca カスタム色を保持
 		::SetProp( hwndListColor, TSTR_PTRCUSTOMCOLORS, m_dwCustColors );
 

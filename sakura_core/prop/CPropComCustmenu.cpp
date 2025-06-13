@@ -30,8 +30,6 @@
 #include "sakura.hh"
 #include "String_define.h"
 
-using namespace std;
-
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

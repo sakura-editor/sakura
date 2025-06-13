@@ -36,8 +36,6 @@
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "debug/CRunningTimer.h"
 
-using namespace std; // 2002/2/3 aroka
-
 static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpeLineData& lineData, int opeSeq)
 {
 	int nBegin = 0;
