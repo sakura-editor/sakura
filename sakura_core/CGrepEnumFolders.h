@@ -27,7 +27,7 @@ public:
 	virtual ~CGrepEnumFolders(){
 	}
 
-	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL ){
+	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = nullptr ) override{
 		if( ( w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
 		 && ( 0 != wcscmp( w32fd.cFileName, L"." ) )
 		 && ( 0 != wcscmp( w32fd.cFileName, L".." ) ) ){

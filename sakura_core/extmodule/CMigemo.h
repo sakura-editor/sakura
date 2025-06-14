@@ -117,9 +117,9 @@ protected:
 #endif
 	bool	m_bUtf8;
 
-	LPCWSTR GetDllNameImp(int nIndex);
-	bool InitDllImp();
-	bool DeinitDllImp(void);
+	LPCWSTR GetDllNameImp(int nIndex) override;
+	bool InitDllImp() override;
+	bool DeinitDllImp(void) override;
 
 public:
 	long migemo_open(char* dict);

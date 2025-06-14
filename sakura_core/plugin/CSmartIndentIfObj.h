@@ -41,7 +41,7 @@ public:
 	// 実装
 public:
 	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const{
+	MacroFuncInfoArray GetMacroCommandInfo() const override{
 		static MacroFuncInfo macroFuncInfoArr[] = {
 			//	終端
 			{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
@@ -49,7 +49,7 @@ public:
 		return macroFuncInfoArr;
 	}
 	//関数情報を取得する
-	MacroFuncInfoArray GetMacroFuncInfo() const{
+	MacroFuncInfoArray GetMacroFuncInfo() const override{
 		static MacroFuncInfo macroFuncInfoNotCommandArr[] = {
 			//ID									関数名							引数										戻り値の型	m_pszData
 			{EFunctionCode(F_SI_GETCHAR),			LTEXT("GetChar"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //押下したキーを取得する
@@ -59,7 +59,7 @@ public:
 		return macroFuncInfoNotCommandArr;
 	}
 	//関数を処理する
-	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override
 	{
 		switch ( LOWORD(ID) ) 
 		{
@@ -75,7 +75,7 @@ public:
 		return false;
 	}
 	//コマンドを処理する
-	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
+	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize) override
 	{
 		return false;
 	}

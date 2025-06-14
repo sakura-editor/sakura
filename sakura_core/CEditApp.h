@@ -78,6 +78,6 @@ public:
 //WM_QUIT検出例外
 class CAppExitException : public std::exception{
 public:
-	const char* what() const throw(){ return "CAppExitException"; }
+	const char* what() const throw() override{ return "CAppExitException"; }
 };
 #endif /* SAKURA_CEDITAPP_421797BC_DD8E_4209_AAF7_6BDC4D1CAAE9_H_ */
