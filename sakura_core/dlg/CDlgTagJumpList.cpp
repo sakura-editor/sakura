@@ -738,7 +738,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 		const WCHAR	*p = fileName;
 		if( p[0] == L'\\' ){
 			wcscpy( dirFileName, p );
-		}else if( _istalpha( p[0] ) && p[1] == L':' ){
+		}else if( iswalpha( p[0] ) && p[1] == L':' ){
 			wcscpy( dirFileName, p );
 		}else{
 			// 相対パス：連結する
@@ -1617,7 +1617,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	const WCHAR	*p = fileName;
 	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
 		wcscpy( pszOutput, p );	//何も加工しない。
-	}else if( _istalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
+	}else if( iswalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
 		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){

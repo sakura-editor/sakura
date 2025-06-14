@@ -118,7 +118,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		DWORD mH, mL, lH, lL;
 		mH = mL = lH = lL = 0;	// ※ 古～い ini だと "szVersion" は無い
 		if( cProfile.IOProfileData(LTEXT("Other"), L"szVersion", StringBufferW(iniVer)) )
-			_stscanf( iniVer, L"%u.%u.%u.%u", &mH, &mL, &lH, &lL );
+			swscanf( iniVer, L"%u.%u.%u.%u", &mH, &mL, &lH, &lL );
 		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
 		DWORD dwLS = (DWORD)MAKELONG(lL, lH);
 		DLLSHAREDATA* pShareData = &GetDllShareData();

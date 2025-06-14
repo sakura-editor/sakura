@@ -36,7 +36,7 @@ std::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
 	}
 	
 	std::wstring key = ext;
-	std::transform( key.begin(), key.end(), key.begin(), _totlower);
+	std::transform( key.begin(), key.end(), key.begin(), towlower);
 
 	return key;
 }
