@@ -497,7 +497,7 @@ void CViewCommander::Command_INSTEXT(
 					break;
 				}
 			}
-			Command_INDENT( pszText, i );
+			Command_INDENT( pszText, (CLogicInt)i );
 			goto end_of_func;
 		}
 		else{
