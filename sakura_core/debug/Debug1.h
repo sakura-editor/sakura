@@ -20,7 +20,6 @@
 #include <vadefs.h>
 
 #include <Windows.h>
-#include <tchar.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //

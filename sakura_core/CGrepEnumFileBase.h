@@ -18,7 +18,6 @@
 #include <vector>
 #include <windows.h>
 #include <string.h>
-#include <tchar.h>
 #include <Shlwapi.h>
 #include "CGrepEnumKeys.h"
 #include "util/string_ex.h"
