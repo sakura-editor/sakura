@@ -2205,7 +2205,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if( 1 <= ArgSize ){
 				if( !VariantToBStr(varCopy, Arguments[0]) ) return false;
 				CClipboard cClipboard(View->GetHwnd());
-				bool bret = cClipboard.IsIncludeClipboradFormat(varCopy.Data.bstrVal);
+				bool bret = cClipboard.IsIncludeClipboardFormat(varCopy.Data.bstrVal);
 				Wrap( &Result )->Receive( bret ? 1 : 0 );
 				return true;
 			}
@@ -2225,7 +2225,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				CClipboard cClipboard(View->GetHwnd());
 				CNativeW mem;
 				CEol cEol = View->m_pcEditDoc->m_cDocEditor.GetNewLineCode();
-				cClipboard.GetClipboradByFormat(mem, varCopy.Data.bstrVal, varCopy2.Data.lVal, varCopy3.Data.lVal, cEol);
+				cClipboard.GetClipboardByFormat(mem, varCopy.Data.bstrVal, varCopy2.Data.lVal, varCopy3.Data.lVal, cEol);
 				SysString ret = SysString(mem.GetStringPtr(), mem.GetStringLength());
 				Wrap( &Result )->Receive( ret );
 				return true;
@@ -2246,7 +2246,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				}
 				CClipboard cClipboard(View->GetHwnd());
 				CStringRef cstr(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
-				bool bret = cClipboard.SetClipboradByFormat(cstr, varCopy2.Data.bstrVal, varCopy3.Data.lVal, varCopy4.Data.lVal);
+				bool bret = cClipboard.SetClipboardByFormat(cstr, varCopy2.Data.bstrVal, varCopy3.Data.lVal, varCopy4.Data.lVal);
 				Wrap( &Result )->Receive( bret ? 1 : 0 );
 				return true;
 			}

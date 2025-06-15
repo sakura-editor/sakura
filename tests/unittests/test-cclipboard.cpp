@@ -429,7 +429,7 @@ TEST_F(CClipboardGetText, LineSelectIsTrue2) {
 TEST_F(CClipboardGetText, GetClipboardByFormatSuccess) {
 	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
+	EXPECT_TRUE(clipboard.GetClipboardByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
 }
 
@@ -438,7 +438,7 @@ TEST_F(CClipboardGetText, GetClipboardByFormatFailure1) {
 	buffer.SetString(L"dummy");
 	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(_)).WillByDefault(Return(nullptr));
-	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
+	EXPECT_FALSE(clipboard.GetClipboardByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
 
@@ -446,7 +446,7 @@ TEST_F(CClipboardGetText, GetClipboardByFormatFailure1) {
 TEST_F(CClipboardGetText, GetClipboardByFormatFailure2) {
 	buffer.SetString(L"dummy");
 	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_UNICODETEXT)).WillByDefault(Return(FALSE));
-	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
+	EXPECT_FALSE(clipboard.GetClipboardByFormat(buffer, L"CF_UNICODETEXT", -2, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
 
@@ -492,7 +492,7 @@ TEST(CClipboard, IsIncludeClipboardFormat1) {
 	for (auto format : KNOWN_FORMATS) {
 		MockCClipboard clipboard;
 		ON_CALL(clipboard, IsClipboardFormatAvailable(format.id)).WillByDefault(Return(TRUE));
-		EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(format.name));
+		EXPECT_TRUE(clipboard.IsIncludeClipboardFormat(format.name));
 	}
 }
 
@@ -500,7 +500,7 @@ TEST(CClipboard, IsIncludeClipboardFormat1) {
 TEST(CClipboard, IsIncludeClipboardFormat2) {
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
-	EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(L"12345"));
+	EXPECT_TRUE(clipboard.IsIncludeClipboardFormat(L"12345"));
 }
 
 // 標準フォーマット以外の文字列を指定した場合
@@ -509,32 +509,32 @@ TEST(CClipboard, IsIncludeClipboardFormat3) {
 
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, IsClipboardFormatAvailable(format)).WillByDefault(Return(TRUE));
-	EXPECT_TRUE(clipboard.IsIncludeClipboradFormat(UNITTEST_FORMAT_NAME));
+	EXPECT_TRUE(clipboard.IsIncludeClipboardFormat(UNITTEST_FORMAT_NAME));
 }
 
 // 対象フォーマットのデータが存在しなかった場合に失敗することを確認するテスト
 TEST(CClipboard, IsIncludeClipboardFormat4) {
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(FALSE));
-	EXPECT_FALSE(clipboard.IsIncludeClipboradFormat(L"12345"));
+	EXPECT_FALSE(clipboard.IsIncludeClipboardFormat(L"12345"));
 }
 
 // フォーマット文字列が空だった場合は失敗する。
 TEST(CClipboard, IsIncludeClipboardFormat5) {
 	MockCClipboard clipboard;
-	EXPECT_FALSE(clipboard.IsIncludeClipboradFormat(L""));
+	EXPECT_FALSE(clipboard.IsIncludeClipboardFormat(L""));
 }
 
 // 不明なモード値を指定すると失敗する。
 TEST(CClipboard, SetClipboardByFormat1) {
 	MockCClipboard clipboard;
-	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 99999, 1));
+	EXPECT_FALSE(clipboard.SetClipboardByFormat({L"テスト", 3}, L"12345", 99999, 1));
 }
 
 // フォーマット名が空文字列だと失敗する。
 TEST(CClipboard, SetClipboardByFormat2) {
 	MockCClipboard clipboard;
-	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"", 99999, 1));
+	EXPECT_FALSE(clipboard.SetClipboardByFormat({L"テスト", 3}, L"", 99999, 1));
 }
 
 // モード-1（バイナリデータ）のテスト。
@@ -544,7 +544,7 @@ TEST(CClipboard, SetClipboardByFormat3) {
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
 	EXPECT_CALL(clipboard, SetClipboardData(12345, BytesInGlobalMemory("\x00\x01\xfe\xff", 4)));
-	EXPECT_TRUE(clipboard.SetClipboradByFormat({L"\x00\x01\xfe\xff", 4}, L"12345", -1, 0));
+	EXPECT_TRUE(clipboard.SetClipboardByFormat({L"\x00\x01\xfe\xff", 4}, L"12345", -1, 0));
 }
 
 // モード-1（バイナリデータ）のテスト。
@@ -552,7 +552,7 @@ TEST(CClipboard, SetClipboardByFormat3) {
 TEST(CClipboard, SetClipboardByFormat4) {
 	MockCClipboard clipboard;
 	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
-	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"\x100", 1}, L"12345", -1, 0));
+	EXPECT_FALSE(clipboard.SetClipboardByFormat({L"\x100", 1}, L"12345", -1, 0));
 }
 
 // モード3（UTF-16）のテスト。コード変換を行わないパターン。
@@ -561,7 +561,7 @@ TEST(CClipboard, SetClipboardByFormat5) {
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
 	EXPECT_CALL(clipboard, SetClipboardData(12345, WideStringInGlobalMemory(L"テスト")));
-	EXPECT_TRUE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 3, -1));
+	EXPECT_TRUE(clipboard.SetClipboardByFormat({L"テスト", 3}, L"12345", 3, -1));
 }
 
 // モード4（UTF-8）のテスト。コード変換を行う。
@@ -571,7 +571,7 @@ TEST(CClipboard, SetClipboardByFormat5) {
 TEST(CClipboard, DISABLED_SetClipboardByFormat6) {
 	MockCClipboard clipboard;
 	EXPECT_CALL(clipboard, SetClipboardData(12345, AnsiStringInGlobalMemory("テスト")));
-	EXPECT_TRUE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 4, -1));
+	EXPECT_TRUE(clipboard.SetClipboardByFormat({L"テスト", 3}, L"12345", 4, -1));
 }
 
 // モード-2のテスト。SetTextと同じ処理を行う。
@@ -581,15 +581,15 @@ TEST(CClipboard, SetClipboardByFormat7) {
 	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
 
 	// 既存のコードに実装ミスがあり、成功してもfalseを返してしまう…。
-//	EXPECT_TRUE(clipboard.SetClipboradByFormat({text.data(), text.size()}, L"CF_UNICODETEXT", -2, 0));
-	EXPECT_FALSE(clipboard.SetClipboradByFormat({text.data(), text.size()}, L"CF_UNICODETEXT", -2, 0));
+//	EXPECT_TRUE(clipboard.SetClipboardByFormat({text.data(), text.size()}, L"CF_UNICODETEXT", -2, 0));
+	EXPECT_FALSE(clipboard.SetClipboardByFormat({text.data(), text.size()}, L"CF_UNICODETEXT", -2, 0));
 }
 
 // モード-2以外でGlobalAllocが失敗した場合。
 TEST(CClipboard, SetClipboardByFormat8) {
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Return(nullptr));
-	EXPECT_FALSE(clipboard.SetClipboradByFormat({L"テスト", 3}, L"12345", 3, -1));
+	EXPECT_FALSE(clipboard.SetClipboardByFormat({L"テスト", 3}, L"12345", 3, -1));
 }
 
 // フォーマット名が空文字列だった場合は即失敗する。
@@ -597,7 +597,7 @@ TEST(CClipboard, GetClipboardByFormat1) {
 	MockCClipboard clipboard;
 	CNativeW buffer(L"dummy");
 	CEol eol(EEolType::cr_and_lf);
-	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"", -1, 0, eol));
+	EXPECT_FALSE(clipboard.GetClipboardByFormat(buffer, L"", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
 
@@ -607,7 +607,7 @@ TEST(CClipboard, GetClipboardByFormat2) {
 	CNativeW buffer(L"dummy");
 	CEol eol(EEolType::cr_and_lf);
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(FALSE));
-	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
+	EXPECT_FALSE(clipboard.GetClipboardByFormat(buffer, L"12345", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
 
@@ -618,7 +618,7 @@ TEST(CClipboard, GetClipboardByFormat3) {
 	CEol eol(EEolType::cr_and_lf);
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(nullptr));
-	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
+	EXPECT_FALSE(clipboard.GetClipboardByFormat(buffer, L"12345", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
 
@@ -630,7 +630,7 @@ TEST(CClipboard, GetClipboardByFormat4) {
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return((HANDLE)67890));
 	ON_CALL(clipboard, GlobalLock((HANDLE)67890)).WillByDefault(Return(nullptr));
-	EXPECT_FALSE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
+	EXPECT_FALSE(clipboard.GetClipboardByFormat(buffer, L"12345", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"");
 }
 
@@ -648,7 +648,7 @@ TEST(CClipboard, GetClipboardByFormat5) {
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
 	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(Invoke(::GlobalLock));
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", -1, 0, eol));
+	EXPECT_TRUE(clipboard.GetClipboardByFormat(buffer, L"12345", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"\x00\xff");
 }
 
@@ -665,7 +665,7 @@ TEST(CClipboard, GetClipboardByFormat6) {
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
 	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(Invoke(::GlobalLock));
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", 3, 2, eol));
+	EXPECT_TRUE(clipboard.GetClipboardByFormat(buffer, L"12345", 3, 2, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
 }
 
@@ -683,6 +683,6 @@ TEST(CClipboard, DISABLED_GetClipboardByFormat7) {
 	CEol eol(EEolType::cr_and_lf);
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
-	EXPECT_TRUE(clipboard.GetClipboradByFormat(buffer, L"12345", 4, 1, eol));
+	EXPECT_TRUE(clipboard.GetClipboardByFormat(buffer, L"12345", 4, 1, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
 }
