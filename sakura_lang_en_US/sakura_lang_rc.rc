@@ -3705,7 +3705,7 @@ END
 
 STRINGTABLE
 BEGIN
-    STR_ERR_DLGMEM1         "CMemory::AllocBuffer(nNewDataLen==%d)\nMemory reservation error\n"
+    STR_ERR_DLGMEM1         "CMemory::AllocBuffer(nNewDataLen==%zu)\nMemory reservation error\n"
     STR_ERR_DLGNRMPROC1     "CreateMutex() failed. \nExiting app."
     STR_ERR_DLGNRMPROC2     "Editor or System is busy.\nPlease wait for a while..."
     STR_ERR_DLGPPA1         "Whilst executing PPA its impossible to call another PPA macro."

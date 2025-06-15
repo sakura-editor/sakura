@@ -54,8 +54,8 @@ MATCHER_P(AnsiStringInGlobalMemory, expected_string, "") {
 MATCHER_P(SakuraFormatInGlobalMemory, expected_string, "") {
 	char* p = (char*)::GlobalLock(arg);
 	if (!p) return false;
-	int length = *(int*)p;
-	p += sizeof(int);
+	int length = *(size_t*)p;
+	p += sizeof(size_t);
 	std::wstring_view actual((const wchar_t*)p);
 	bool match = actual.size() == length && actual == expected_string;
 	::GlobalUnlock(arg);
@@ -220,7 +220,7 @@ protected:
 	static constexpr std::wstring_view sakuraText = L"SAKURAClipW";
 	static constexpr std::string_view oemText = "CF_OEMTEXT";
 	GlobalMemory unicodeMemory{ GMEM_MOVEABLE, (unicodeText.size() + 1) * sizeof(wchar_t) };
-	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(int) + (sakuraText.size() + 1) * sizeof(wchar_t) };
+	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(size_t) + (sakuraText.size() + 1) * sizeof(wchar_t) };
 	GlobalMemory oemMemory{ GMEM_MOVEABLE, oemText.size() + 1 };
 
 	CClipboardGetText() {
@@ -228,8 +228,8 @@ protected:
 			std::wcscpy(p, unicodeText.data());
 		});
 		sakuraMemory.Lock<unsigned char>([=](unsigned char* p) {
-			*(int*)p = sakuraText.size();
-			std::wcscpy((wchar_t*)(p + sizeof(int)), sakuraText.data());
+			*(size_t*)p = sakuraText.size();
+			std::wcscpy((wchar_t*)(p + sizeof(size_t)), sakuraText.data());
 		});
 		oemMemory.Lock<char>([=](char* p) {
 			std::strcpy(p, oemText.data());

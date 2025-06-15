@@ -427,7 +427,7 @@ DWORD CGrepAgent::DoGrep(
 			if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
 				CLogicInt len = cmemReplace.GetStringLength();
 				wchar_t	*pszConvertedText = new wchar_t[len * 2]; // 全文字\n→\r\n変換で最大の２倍になる
-				CLogicInt nConvertedTextLen = pcViewDst->m_cCommander.ConvertEol(cmemReplace.GetStringPtr(), len, pszConvertedText);
+				auto nConvertedTextLen = pcViewDst->m_cCommander.ConvertEol(cmemReplace.GetStringPtr(), len, pszConvertedText);
 				cmemReplace.SetString(pszConvertedText, nConvertedTextLen);
 				delete [] pszConvertedText;
 			}
