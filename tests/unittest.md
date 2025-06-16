@@ -44,6 +44,7 @@ GUI でステップ実行することができます。
     - build (ビルド時に生成されるフォルダー。git には登録しない)
         - Win32 (Win32 用のプロジェクトを格納するフォルダー)
         - x64   (x64 用のプロジェクトを格納するフォルダー)
+        - arm64 (arm64 用のプロジェクトを格納するフォルダー)
 
 ## 単体テスト関連のバッチファイル
 
@@ -75,10 +76,10 @@ GUI でステップ実行することができます。
 
 | バッチファイル | 第一引数 | 第二引数 |
 ----|----|----
-|[tests\build-and-test.bat](build-and-test.bat) | platform ("Win32" または "x64" または "MinGW") | configuration ("Debug" または "Release")  |
-|[tests\create-project.bat](create-project.bat) | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\build-project.bat](build-project.bat) | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\run-tests.bat](run-tests.bat) | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|[tests\build-and-test.bat](build-and-test.bat) | platform ("Win32" または "x64" または "arm64" または "MinGW") | configuration ("Debug" または "Release")  |
+|[tests\create-project.bat](create-project.bat) | platform ("Win32" または "x64" または "arm64") | configuration ("Debug" または "Release")  |
+|[tests\build-project.bat](build-project.bat) | platform ("Win32" または "x64" または "arm64") | configuration ("Debug" または "Release")  |
+|[tests\run-tests.bat](run-tests.bat) | platform ("Win32" または "x64" または "arm64") | configuration ("Debug" または "Release")  |
 
 ## インクルードディレクトリ
 
