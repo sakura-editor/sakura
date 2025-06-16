@@ -404,7 +404,7 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 	return uFormat;
 }
 
-bool CClipboard::IsIncludeClipboradFormat(const wchar_t* pFormatName)
+bool CClipboard::IsIncludeClipboardFormat(const wchar_t* pFormatName)
 {
 	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
 	if( IsClipboardFormatAvailable(uFormat) ){
@@ -433,7 +433,7 @@ static int GetEndModeByMode(int nMode, int nEndMode)
 	return nEndMode;
 }
 
-bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode)
+bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode)
 {
 	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
 	if( uFormat == (CLIPFORMAT)-1 ){
@@ -538,7 +538,7 @@ static int GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, int 
 	@param nEndMode -1:文字コードに依存 0:GlobalSize 1:strlen 2:wcslen 4:wchar32_tの文字列
 	@date 2013.06.12 Moca 新規作成
 */
-bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol)
+bool CClipboard::GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol)
 {
 	mem.SetString(L"");
 	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
