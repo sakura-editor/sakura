@@ -5,5 +5,12 @@
 #       なし
 #############################################################################################################
 steps:
+  - task: Cache@2
+    inputs:
+      path: C:\msys64
+      key: 'mingw | $(vmImage) | $(Build.SourceVersion)'
+      restoreKeys: |
+        mingw | $(vmImage)
+        mingw
   - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
     displayName: Install MinGW-w64 build tools via Pacman
