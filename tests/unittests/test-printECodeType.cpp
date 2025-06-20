@@ -18,17 +18,17 @@
 std::ostream& operator << (std::ostream& os, const ECodeType& eCodeType)
 {
 	switch(eCodeType){
-	case CODE_SJIS:			return os << u8"SJIS";
-	case CODE_JIS:			return os << u8"JIS";
-	case CODE_EUC:			return os << u8"EUC";
-	case CODE_UTF8:			return os << u8"UTF8";
-	case CODE_UNICODE:		return os << u8"UTF16LE";
-	case CODE_UNICODEBE:	return os << u8"UTF16BE";
-	case (ECodeType)12000:	return os << u8"UTF32LE";
-	case (ECodeType)12001:	return os << u8"UTF32BE";
-	case CODE_UTF7:			return os << u8"UTF7";
-	case CODE_CESU8:		return os << u8"CESU8";
-	case CODE_LATIN1:		return os << u8"LATIN1";
+	case CODE_SJIS:			return os << "SJIS";
+	case CODE_JIS:			return os << "JIS";
+	case CODE_EUC:			return os << "EUC";
+	case CODE_UTF8:			return os << "UTF8";
+	case CODE_UNICODE:		return os << "UTF16LE";
+	case CODE_UNICODEBE:	return os << "UTF16BE";
+	case (ECodeType)12000:	return os << "UTF32LE";
+	case (ECodeType)12001:	return os << "UTF32BE";
+	case CODE_UTF7:			return os << "UTF7";
+	case CODE_CESU8:		return os << "CESU8";
+	case CODE_LATIN1:		return os << "LATIN1";
 	default:
 		throw std::invalid_argument("unknown ECodeType");
 	}

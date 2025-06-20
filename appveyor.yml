@@ -1,5 +1,5 @@
 version: 1.0.{build}
-image: Visual Studio 2017
+image: Visual Studio 2022
 
 configuration:
   - Release
@@ -24,11 +24,11 @@ skip_commits:
 
 install:
 - cmd: |
-    cinst autohotkey.portable -Version 1.1.36.02 -y
-    cinst locale-emulator -Version 2.5.0.11 -y
-    cup vswhere
+    choco install autohotkey.portable -Version 1.1.36.02 -y
+    choco install locale-emulator -Version 2.5.0.11 -y
+    choco upgrade vswhere
     py.exe -m pip install openpyxl --user
-    cup innosetup
+    choco upgrade innosetup
     C:\ProgramData\chocolatey\tools\shimgen.exe --output=C:\ProgramData\chocolatey\bin\ISCC.exe --path="C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
 # to run our custom scripts instead of automatic MSBuild
