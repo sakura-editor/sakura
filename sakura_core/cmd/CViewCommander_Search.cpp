@@ -913,7 +913,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		cmemClip.SetString( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
 	}
 
-	CLogicInt nREPLACEKEY = cmemClip.GetStringLength();
+	ptrdiff_t nREPLACEKEY = cmemClip.GetStringLength();
 	const wchar_t* szREPLACEKEY = cmemClip.GetStringPtr();
 
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
@@ -927,7 +927,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 
 	if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
-		CLogicInt nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, NULL);
+		auto nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, NULL);
 		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
 		ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
 		cmemClip.SetString(pszConvertedText, nConvertedTextLen);

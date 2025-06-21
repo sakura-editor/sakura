@@ -39,7 +39,6 @@ void CViewCommander::Command_CUT( void )
 		return;
 	}
 
-	CNativeW	cmemBuf;
 	bool	bBeginBoxSelect;
 	/* 範囲選択がされていない */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
@@ -59,16 +58,17 @@ void CViewCommander::Command_CUT( void )
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	std::wstring wstr;
+	if( !m_pCommanderView->GetSelectedData( &wstr, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
 	/* クリップボードにデータを設定 */
-	if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect ) ){
+	if( !m_pCommanderView->MySetClipboardData(wstr.data(), wstr.size(), bBeginBoxSelect ) ){
 		ErrorBeep();
 		return;
 	}
-	cmemBuf.Clear();
+	wstr = std::wstring();
 
 	/* カーソル位置または選択エリアを削除 */
 	m_pCommanderView->DeleteData( true );
@@ -85,7 +85,6 @@ void CViewCommander::Command_COPY(
 	EEolType	neweol					//!< [in] コピーするときのEOL。
 )
 {
-	CNativeW	cmemBuf;
 	bool		bBeginBoxSelect = false;
 
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
@@ -103,23 +102,23 @@ void CViewCommander::Command_COPY(
 	else{
 		/* テキストが選択されているときは、選択範囲のデータを取得 */
 
+		std::wstring wstr;
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			bBeginBoxSelect = TRUE;
 		}
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, bAddCRLFWhenCopy, neweol ) ){
+		if( !m_pCommanderView->GetSelectedData( &wstr, FALSE, NULL, FALSE, bAddCRLFWhenCopy, neweol ) ){
 			ErrorBeep();
 			return;
 		}
 
 		/* クリップボードにデータcmemBufの内容を設定 */
-		if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect, FALSE ) ){
+		if( !m_pCommanderView->MySetClipboardData(wstr.data(), wstr.size(), bBeginBoxSelect, FALSE ) ){
 			ErrorBeep();
 			return;
 		}
 	}
-	cmemBuf.Clear();
 
 	/* 選択範囲の後片付け */
 	if( !bIgnoreLockAndDisable ){
@@ -160,8 +159,8 @@ void CViewCommander::Command_PASTE( int option )
 		return;
 	}
 
-	// クリップボードからデータを取得 -> cmemClip, bColumnSelect
-	CNativeW	cmemClip;
+	// クリップボードからデータを取得 -> clipData, bColumnSelect
+	std::wstring	clipData;
 	bool		bColumnSelect;
 	bool		bLineSelect = false;
 	bool		bLineSelectOption = 
@@ -169,14 +168,14 @@ void CViewCommander::Command_PASTE( int option )
 		((option & 0x08) == 0x08) ? false :
 		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste;
 
-	if( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColumnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
+	if( !m_pCommanderView->MyGetClipboardData( clipData, &bColumnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
 		ErrorBeep();
 		return;
 	}
 
 	// クリップボードデータ取得 -> pszText, nTextLen
-	CLogicInt nTextLen = cmemClip.GetStringLength();
-	const wchar_t*	pszText = cmemClip.GetStringPtr();
+	size_t nTextLen = clipData.size();
+	const wchar_t*	pszText = clipData.data();
 
 	bool bConvertEol = 
 		((option & 0x01) == 0x01) ? true :
@@ -211,14 +210,14 @@ void CViewCommander::Command_PASTE( int option )
 	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
 	if( bLineSelect ){
 		if( !WCODE::IsLineDelimiter(pszText[nTextLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
-			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
-			nTextLen = cmemClip.GetStringLength();
-			pszText = cmemClip.GetStringPtr();
+			clipData.append(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
+			nTextLen = clipData.size();
+			pszText = clipData.data();
 		}
 	}
 
 	if( bConvertEol ){
-		CLogicInt nConvertedTextLen = ConvertEol( pszText, nTextLen, NULL );
+		auto nConvertedTextLen = ConvertEol( pszText, (ptrdiff_t)nTextLen, NULL );
 		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
 		ConvertEol( pszText, nTextLen, pszConvertedText );
 		// テキストを貼り付け
@@ -465,7 +464,7 @@ void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize
 void CViewCommander::Command_INSTEXT(
 	bool			bRedraw,		//!< 
 	const wchar_t*	pszText,		//!< [in] 貼り付ける文字列。
-	CLogicInt		nTextLen,		//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
+	ptrdiff_t		nTextLen,		//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
 	bool			bNoWaitCursor,	//!< 
 	bool			bLinePaste,		//!< [in] ラインモード貼り付け
 	bool			bFastMode,		//!< [in] 高速モード(レイアウト座標は無視する)
@@ -491,14 +490,14 @@ void CViewCommander::Command_INSTEXT(
 		// 矩形範囲選択中か
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			//改行までを抜き出す
-			CLogicInt i;
+			ptrdiff_t i;
 			bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-			for( i = CLogicInt(0); i < nTextLen; i++ ){
+			for( i = 0; i < nTextLen; i++ ){
 				if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 					break;
 				}
 			}
-			Command_INDENT( pszText, i );
+			Command_INDENT( pszText, (CLogicInt)i );
 			goto end_of_func;
 		}
 		else{
@@ -527,7 +526,7 @@ void CViewCommander::Command_INSTEXT(
 				m_pCommanderView->ReplaceData_CEditView(
 					GetSelect(),				// 選択範囲
 					bLinePaste? L"": pszText,	// 挿入するデータ
-					bLinePaste? CLogicInt(0): nTextLen,	// 挿入するデータの長さ
+					bLinePaste? CLogicInt(0): CLogicInt(nTextLen),	// 挿入するデータの長さ
 					bRedraw,
 					m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk(),
 					bFastMode,

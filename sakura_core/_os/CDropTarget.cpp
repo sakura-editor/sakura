@@ -183,7 +183,7 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 
 	@date 2008.03.26 ryoji 複数フォーマット対応
 */
-void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect )
+void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	int i;
@@ -214,10 +214,10 @@ void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect )
 
 		i++;
 		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
-		m_pData[i].size = sizeof(int) + nTextLen * sizeof( wchar_t );
+		m_pData[i].size = sizeof(size_t) + nTextLen * sizeof( wchar_t );
 		m_pData[i].data = new BYTE[m_pData[i].size];
-		*(int*)m_pData[i].data = nTextLen;
-		memcpy_raw( m_pData[i].data + sizeof(int), lpszText, nTextLen * sizeof( wchar_t ) );
+		*(size_t*)m_pData[i].data = nTextLen;
+		memcpy_raw( m_pData[i].data + sizeof(size_t), lpszText, nTextLen * sizeof( wchar_t ) );
 
 		i++;
 		if( bColumnSelect ){
