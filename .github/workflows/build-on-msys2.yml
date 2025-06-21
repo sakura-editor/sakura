@@ -1,0 +1,67 @@
+name: MinGW Build and Test
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  workflow_dispatch:
+
+jobs:
+  mingw:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    env:
+      BuildPlatform: MinGW
+      Configuration: ${{ matrix.configuration }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-make
+
+      - name: Show environment variables for debug
+        run: set
+        shell: cmd
+
+      - name: Build with MinGW-w64-gcc
+        shell: msys2 {0}
+        run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+
+      - name: Run unit tests
+        shell: msys2 {0}
+        run: ./tests1.exe --gtest_output=xml:${{ github.workspace }}/tests1.exe-googletest-${{ env.BuildPlatform }}-${{ env.Configuration }}.xml
+        working-directory: ${{ github.workspace }}/${{ env.BuildPlatform }}/${{ env.Configuration }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: msys2${{ env.BuildPlatform }}_${{ env.Configuration }}
+          path: |
+            **/*.zip
+            **/*.zip.md5
+
+      - name: Publish test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: msys2test-results-${{ env.BuildPlatform }}-${{ env.Configuration }}
+          path: |
+            **/*-googletest-*.xml
