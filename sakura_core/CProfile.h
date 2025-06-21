@@ -32,13 +32,10 @@
 */
 class CProfile
 {
-	//文字列型
-	typedef std::wstring wstring;
-
-	typedef std::map< wstring, wstring > MAP_STR_STR;
+	typedef std::map< std::wstring, std::wstring > MAP_STR_STR;
 	struct Section
 	{
-		wstring     strSectionName;
+		std::wstring strSectionName;
 		MAP_STR_STR mapEntries;
 	};
 
@@ -58,12 +55,12 @@ public:
 	void DUMP( void );
 
 protected:
-	void ReadOneline( const wstring& line );
-	bool _WriteFile( const wstring& strFilename, const std::vector< wstring >& vecLine);
+	void ReadOneline( const std::wstring& line );
+	bool _WriteFile( const std::wstring& strFilename, const std::vector< std::wstring >& vecLine);
 
 protected:
 	// メンバ変数
-	wstring					m_strProfileName;	//!< 最後に読み書きしたファイル名
+	std::wstring			m_strProfileName;	//!< 最後に読み書きしたファイル名
 	std::vector< Section >	m_ProfileData;
 	bool					m_bRead;			//!< モード(true=読み込み/false=書き出し)
 };

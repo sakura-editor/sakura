@@ -24,7 +24,7 @@ class CWSHPlug final :
 	using Me = CWSHPlug;
 
 public:
-	CWSHPlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel ) :
+	CWSHPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) :
 		CPlug( plugin, id, sJack, sHandler, sLabel )
 	{
 		m_Wsh = NULL;
@@ -49,7 +49,7 @@ class CWSHPlugin final :
 
 	//コンストラクタ
 public:
-	CWSHPlugin( const wstring& sBaseDir ) : CPlugin( sBaseDir ) {
+	CWSHPlugin( const std::wstring& sBaseDir ) : CPlugin( sBaseDir ) {
 		m_bUseCache = false;
 	}
 	CWSHPlugin(const Me&) = delete;
@@ -63,7 +63,7 @@ public:
 
 	//操作
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
-	CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel ) override
+	CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) override
 	{
 		return new CWSHPlug( plugin, id, sJack, sHandler, sLabel );
 	}

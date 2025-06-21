@@ -120,9 +120,9 @@ void CDlgPluginOption::SetData( void )
 		lvi.lParam   = cOpt->GetIndex();
 		ListView_InsertItem( hwndList, &lvi );
 
-		wstring sSection;
-		wstring sKey;
-		wstring sValue;
+		std::wstring sSection;
+		std::wstring sKey;
+		std::wstring sValue;
 
 		cOpt->GetKey(&sSection, &sKey);
 		if( sSection.empty() || sKey.empty() ) {
@@ -150,9 +150,9 @@ void CDlgPluginOption::SetData( void )
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
 			// 値から表示へ
-			wstring	sView;
-			wstring	sTrg;
-			std::vector<wstring>	selects;
+			std::wstring	sView;
+			std::wstring	sTrg;
+			std::vector<std::wstring>	selects;
 			selects = cOpt->GetSelects();
 
 			buf[0] = L'\0';
@@ -235,11 +235,11 @@ int CDlgPluginOption::GetData( void )
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
 			// 表示から値へ
-			wstring	sView;
-			wstring	sTrg;
-			std::vector<wstring>	selects;
+			std::wstring	sView;
+			std::wstring	sTrg;
+			std::vector<std::wstring>	selects;
 			selects = cOpt->GetSelects();
-			wstring sWbuf = buf;
+			std::wstring sWbuf = buf;
 
 			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sTrg);
@@ -250,9 +250,9 @@ int CDlgPluginOption::GetData( void )
 			}
 		}
 
-		wstring sSection;
-		wstring sKey;
-		wstring sValue;
+		std::wstring sSection;
+		std::wstring sKey;
+		std::wstring sValue;
 
 		cOpt->GetKey(&sSection, &sKey);
 		if( sSection.empty() || sKey.empty() ) {
@@ -501,7 +501,7 @@ void CDlgPluginOption::MoveFocusToEdit( void )
 {
 	//	現在のFocus取得
 	int		iLine = ListView_GetNextItem( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS ), -1, LVNI_SELECTED);
-	wstring	sType;
+	std::wstring	sType;
 	HWND	hwndCtrl;
 
 	if (iLine >= 0) {
@@ -538,7 +538,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 
 	WCHAR	buf[MAX_LENGTH_VALUE+1];
 	LVITEM	lvi;
-	wstring	sType;
+	std::wstring	sType;
 
 	if (iLine >= 0) {
 		::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
@@ -567,7 +567,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 		}
 		else if (sType == OPTION_TYPE_SEL) {
 			// CONBO 設定
-			std::vector<wstring>	selects;
+			std::vector<std::wstring>	selects;
 			selects = m_cPlugin->m_options[iLine]->GetSelects();
 
 			HWND	hwndCombo;
@@ -577,9 +577,9 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			int		nSelIdx;
 			int		i;
 			int		nItemIdx;
-			wstring	sView;
-			wstring	sValue;
-			wstring	sWbuf = buf;
+			std::wstring	sView;
+			std::wstring	sValue;
+			std::wstring	sWbuf = buf;
 			nSelIdx = -1;		// 選択
 			i = 0;
 			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
@@ -630,7 +630,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 	WCHAR	buf[MAX_LENGTH_VALUE+1];
 	int		nVal;
 	LVITEM	lvi;
-	wstring	sType;
+	std::wstring	sType;
 
 	if (iLine >= 0) {
 		sType = m_cPlugin->m_options[iLine]->GetType();
@@ -671,7 +671,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 }
 
 // 選択用文字列分解
-void CDlgPluginOption::SepSelect( wstring sTrg, wstring* spView, wstring* spValue )
+void CDlgPluginOption::SepSelect(std::wstring sTrg, std::wstring* spView, std::wstring* spValue )
 {
 	int		ix;
 	ix = sTrg.find(L':');

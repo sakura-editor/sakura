@@ -28,13 +28,11 @@ class CPropPlugin;
 // 編集最大長
 #define MAX_LENGTH_VALUE	1024
 
-typedef std::wstring wstring;
-
 // 型 
-static const wstring	OPTION_TYPE_BOOL = wstring( L"bool" );
-static const wstring	OPTION_TYPE_INT  = wstring( L"int" );
-static const wstring	OPTION_TYPE_SEL  = wstring( L"sel" );
-static const wstring	OPTION_TYPE_DIR  = wstring( L"dir" );
+static const std::wstring	OPTION_TYPE_BOOL = std::wstring( L"bool" );
+static const std::wstring	OPTION_TYPE_INT  = std::wstring( L"int" );
+static const std::wstring	OPTION_TYPE_SEL  = std::wstring( L"sel" );
+static const std::wstring	OPTION_TYPE_DIR  = std::wstring( L"dir" );
 
 class CDlgPluginOption final : public CDialog
 {
@@ -70,7 +68,7 @@ protected:
 	void	SetToEdit(int iLine);
 	void	SetFromEdit(int iLine);
 	void	SelectEdit(int IDCenable);							// 編集領域の切り替え
-	void	SepSelect(wstring sTrg, wstring* spView, wstring* spValue);	// 選択用文字列分解
+	void	SepSelect(std::wstring sTrg, std::wstring* spView, std::wstring* spValue);	// 選択用文字列分解
 	void	SelectDirectory( int iLine );				// ディレクトリを選択する
 
 private:

@@ -25,7 +25,7 @@ CDllPlugin::~CDllPlugin(void)
 
 // プラグの生成
 // CPlugの代わりにCDllPlugを作成する
-CPlug* CDllPlugin::CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
+CPlug* CDllPlugin::CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
 {
 	CDllPlug *newPlug =  new CDllPlug( plugin, id, sJack, sHandler, sLabel );
 	return newPlug;
@@ -57,7 +57,7 @@ bool CDllPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMl
 // プラグ実行
 bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& params )
 {
-	wstring dllPath = GetFilePath( m_sDllName );
+	std::wstring dllPath = GetFilePath( m_sDllName );
 	EDllResult resInit = InitDll( dllPath.c_str() );
 	if( resInit != DLL_SUCCESS ){
 		::MYMESSAGEBOX( view->m_hwndParent, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR1), dllPath.c_str(), m_sName.c_str() );

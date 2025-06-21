@@ -28,7 +28,6 @@ class COutlineIfObj : public CWSHIfObj {
 		F_OL_ADDFUNCINFO4,						//アウトライン解析に追加する（深さ指定、ファイル名）
 		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST	//↓関数は以下に追加する
 	};
-	typedef std::wstring wstring;
 
 	// コンストラクタ
 public:
@@ -117,7 +116,7 @@ public:
 
 	// メンバ変数
 public:
-	wstring m_sOutlineTitle;
+	std::wstring m_sOutlineTitle;
 	EOutlineType m_nListType;
 private:
 	CFuncInfoArr& m_cFuncInfoArr;

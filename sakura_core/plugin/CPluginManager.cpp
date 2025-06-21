@@ -97,7 +97,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 }
 
 //新規プラグインを追加する(下請け)
-bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel )
+bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const std::wstring& sSearchDir, bool& bCancel )
 {
 	DEBUG_TRACE(L"Enter SearchNewPluginDir\n");
 
@@ -155,7 +155,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 }
 
 //新規プラグインを追加する(下請け)Zip File
-bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel )
+bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const std::wstring& sSearchDir, bool& bCancel )
 {
 	DEBUG_TRACE(L"Enter SearchNewPluginZip\n");
 
@@ -188,7 +188,7 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 }
 
 //Zipプラグインを導入する
-bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const wstring& sZipFile, bool bInSearch )
+bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const std::wstring& sZipFile, bool bInSearch )
 {
 	DEBUG_TRACE(L"Entry InstZipPlugin\n");
 
@@ -227,7 +227,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 }
 
 //Zipプラグインを導入する(下請け)
-bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const wstring& sZipFile, const wstring& sDispName, bool bInSearch, bool& bCancel )
+bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const std::wstring& sZipFile, const std::wstring& sDispName, bool bInSearch, bool& bCancel )
 {
 	PluginRec*		plugin_table = common.m_sPlugin.m_PluginTable;
 	CZipFile		cZipFile;
@@ -400,7 +400,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 	// コマンド数の設定	2010/7/11 Uchi
 	int			i;
 	WCHAR		szPlugKey[10];
-	wstring		sPlugCmd;
+	std::wstring		sPlugCmd;
 
 	plugin_table[nEmpty].m_nCmdNum = 0;
 	for (i = 1; i < MAX_PLUG_CMD; i++) {
@@ -516,9 +516,9 @@ CPlugin* CPluginManager::LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* psz
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_PLUGTYPE, sPlugType );
 
 	if( _wcsicmp( sPlugType.c_str(), L"wsh" ) == 0 ){
-		plugin = new CWSHPlugin( wstring(pszBasePath) );
+		plugin = new CWSHPlugin( std::wstring(pszBasePath) );
 	}else if( _wcsicmp( sPlugType.c_str(), L"dll" ) == 0 ){
-		plugin = new CDllPlugin( wstring(pszBasePath) );
+		plugin = new CDllPlugin( std::wstring(pszBasePath) );
 	}else{
 		return NULL;
 	}

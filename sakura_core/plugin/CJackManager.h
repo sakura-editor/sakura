@@ -60,16 +60,14 @@ class CJackManager final : public TSingleton<CJackManager>{
 	friend class TSingleton<CJackManager>;
 	CJackManager();
 
-	typedef std::wstring wstring;
-
 	//操作
 public:
-	ERegisterPlugResult RegisterPlug( wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
-	bool UnRegisterPlug( wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
+	ERegisterPlugResult RegisterPlug( std::wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
+	bool UnRegisterPlug( std::wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
 	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する
 	void InvokePlugins( EJack jack, CEditView* view );		//プラグインを列挙して呼び出し
 private:
-	EJack GetJackFromName( wstring sName );	//ジャック名をジャック番号に変換する
+	EJack GetJackFromName( std::wstring sName );	//ジャック名をジャック番号に変換する
 
 	//属性
 public:

@@ -66,7 +66,7 @@ void CProfile::Init( void )
 	@param line [in] 読み込んだ行
 */
 void CProfile::ReadOneline(
-	const wstring& line
+	const std::wstring& line
 )
 {
 	//	空行を読み飛ばす
@@ -88,7 +88,7 @@ void CProfile::ReadOneline(
 	}
 	// エントリ取得
 	else if( !m_ProfileData.empty() ) {	//最初のセクション以前の行のエントリは無視
-		wstring::size_type idx = line.find( LTEXT('=') );
+		std::wstring::size_type idx = line.find( L'=' );
 		if( line.npos != idx ) {
 			m_ProfileData.back().mapEntries.emplace( line.substr(0,idx), line.substr(idx+1) );
 		}
@@ -120,7 +120,7 @@ bool CProfile::ReadProfile( const WCHAR* pszProfileName )
 	try{
 		while( in ){
 			//1行読込
-			wstring line=in.ReadLineW();
+			std::wstring line=in.ReadLineW();
 
 			//解析
 			ReadOneline(line);
@@ -156,7 +156,7 @@ bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vect
 	char		sLine[300+1];
 	char*		pn;
 	size_t		lnsz;
-	wstring		line;
+	std::wstring line;
 	CMemory cmLine;
 	CNativeW cmLineW;
 	m_strProfileName = L"-Res-";
@@ -225,9 +225,9 @@ bool CProfile::WriteProfile(
 		EnsureDirectoryExist( m_strProfileName );
 	}
     
-	std::vector< wstring > vecLine;
+	std::vector< std::wstring > vecLine;
 	if( NULL != pszComment ) {
-		vecLine.emplace_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
+		vecLine.emplace_back( L";" + std::wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
 	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {
@@ -281,8 +281,8 @@ bool CProfile::WriteProfile(
 	@date 2004-01-29 genta stream使用をやめてCライブラリ使用に．
 */
 bool CProfile::_WriteFile(
-	const wstring&			strFilename,	//!< [in]  ファイル名
-	const std::vector<wstring>&	vecLine		//!< [out] 文字列格納先
+	const std::wstring&					strFilename,	//!< [in]  ファイル名
+	const std::vector<std::wstring>&	vecLine			//!< [out] 文字列格納先
 )
 {
 	CTextOutputStream out(strFilename.c_str());

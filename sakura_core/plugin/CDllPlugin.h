@@ -23,7 +23,7 @@ class CDllPlug final
 	: public CPlug
 {
 public:
-	CDllPlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
+	CDllPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
 		: CPlug( plugin, id, sJack, sHandler, sLabel )
 		, m_handler( NULL )
 	{
@@ -37,7 +37,7 @@ class CDllPlugin final
 {
 	//コンストラクタ
 public:
-	CDllPlugin( const wstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
+	CDllPlugin( const std::wstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
 	}
 
 	//デストラクタ
@@ -50,7 +50,7 @@ public:
 	bool ReadPluginOption( CDataProfile *cProfile ) override{
 		return true;
 	}
-	CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel ) override;
+	CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) override;
 	CPlug::Array GetPlugs() const override{
 		return m_plugs;
 	}
@@ -65,6 +65,6 @@ public:
 
 	//メンバ変数
 private:
-	wstring m_sDllName;
+	std::wstring m_sDllName;
 };
 #endif /* SAKURA_CDLLPLUGIN_7F8E705E_8E61_4B89_BA48_936CD5429E1D_H_ */

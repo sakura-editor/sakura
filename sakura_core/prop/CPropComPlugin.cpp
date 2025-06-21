@@ -207,7 +207,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
 						// 2010.08.21 プラグイン名(フォルダー名)の同一性の確認
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
-						wstring sDirName = plugin->GetFolderName();
+						std::wstring sDirName = plugin->GetFolderName();
 						if( plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
 							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, this, sel );
@@ -332,7 +332,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 	ListView_DeleteAllItems( hListView );
 
 	for( index = 0; index < MAX_PLUGIN; ++index ){
-		std::basic_string<WCHAR> sDirName;	//CPlugin.GetDirName()の結果保持変数
+		std::wstring sDirName;	//CPlugin.GetDirName()の結果保持変数
 		CPlugin* plugin = CPluginManager::getInstance()->GetPlugin( index );
 
 		//番号

@@ -23,8 +23,6 @@
 #include "config/app_constants.h"
 #include "String_define.h"
 
-using std::wstring;
-
 // TreeView 表示固定初期値
 
 static const DWORD p_helpids[] = {
@@ -53,7 +51,7 @@ static const DWORD p_helpids[] = {
 // 内部使用変数
 // 機能格納(Work)
 struct SMainMenuWork {
-	wstring			m_sName;		// 名前
+	std::wstring	m_sName;		// 名前
 	EFunctionCode	m_nFunc;		// Function
 	WCHAR			m_sKey[2];		// アクセスキー
 	bool			m_bDupErr;		// アクセスキー重複エラー
@@ -754,7 +752,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 				case IDC_BUTTON_CHECK:		// メニューの検査
 					{
-						wstring sErrMsg;
+						std::wstring sErrMsg;
 						if (Check_MainMenu( hwndTreeRes, sErrMsg )) {
 							InfoMessage( hwndDlg, LS(STR_PROPCOMMAINMENU_OK));
 						}
@@ -810,10 +808,10 @@ INT_PTR CPropMainMenu::DispatchEvent(
 }
 
 // & の補完
-static wstring	SupplementAmpersand( wstring sLavel)
+static std::wstring	SupplementAmpersand( std::wstring sLavel)
 {
 	size_t	nPos =0;
-	while ((nPos = sLavel.find( L'&', nPos)) != wstring::npos) {
+	while ((nPos = sLavel.find( L'&', nPos)) != std::wstring::npos) {
 		if (sLavel[nPos+1] != L'&') {
 			// &&でない
 			sLavel.replace( nPos, 1, L"&&");
@@ -824,10 +822,10 @@ static wstring	SupplementAmpersand( wstring sLavel)
 }
 
 // & の削除
-static wstring	RemoveAmpersand( wstring sLavel)
+static std::wstring	RemoveAmpersand( std::wstring sLavel)
 {
 	size_t	nPos =0;
-	while ((nPos = sLavel.find( L'&', nPos)) != wstring::npos) {
+	while ((nPos = sLavel.find( L'&', nPos)) != std::wstring::npos) {
 		if (sLavel[nPos+1] == L'&') {
 			// &&
 			sLavel.replace( nPos, 1, L"");
@@ -1181,7 +1179,7 @@ static const WCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 // メニューの検査
 bool CPropMainMenu::Check_MainMenu( 
 	HWND	hwndTree,		// handle to TreeView
-	wstring&	sErrMsg			// エラーメッセージ
+	std::wstring&	sErrMsg			// エラーメッセージ
 )
 {
 	HTREEITEM		htiItem;
@@ -1199,7 +1197,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 	HWND		hwndTree,		// handle to dialog box
 	HTREEITEM 	htiTrg,			// ターゲット
 	int 		nLevel,
-	wstring&	sErrMsg )
+	std::wstring&	sErrMsg )
 {
 	// 検査用
 	static	bool		bOptionOk;		// 「共通設定」
