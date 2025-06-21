@@ -40,6 +40,9 @@ jobs:
             
       - run: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
         shell: cmd
+            
+      - run: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm p7zip"
+        shell: cmd
 
       - name: Show environment variables for debug
         run: set
