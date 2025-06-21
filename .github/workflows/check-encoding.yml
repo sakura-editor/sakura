@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 過去の履歴も含めて全て取得 (checkEncoding.py で origin/master にアクセスするため)
 
       - name: Show environment variables for debug
         run: set
