@@ -1,0 +1,54 @@
+name: Cppcheck
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - '.github/*'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '.github/*'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  workflow_dispatch:
+
+jobs:
+  cppcheck:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        BuildPlatform: [Win32, x64]
+        Configuration: [Release]
+    env:
+      BuildPlatform: ${{ matrix.BuildPlatform }}
+      Configuration: ${{ matrix.Configuration }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show environment variables for debug
+        run: set
+        shell: cmd
+
+      - name: Install cppcheck
+        run: msiexec /i externals\cppcheck\cppcheck-1.84-x64-Setup.msi /quiet /qn /norestart /log cppcheck-install.log
+        shell: cmd
+
+      - name: Run cppcheck
+        run: run-cppcheck.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+        shell: cmd
+
+      - name: Zip files for artifacts
+        run: zipArtifacts.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+        shell: cmd
+
+      - name: Upload cppcheck log artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cppcheck_${{ env.BuildPlatform }}_${{ env.Configuration }}
+          path: '**Log.zip'
