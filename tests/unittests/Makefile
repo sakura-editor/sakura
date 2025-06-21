@@ -120,6 +120,7 @@ LIBS= \
  -L$(GOOGLETEST_INSTALL_DIR)/lib \
  -lgtest \
  -lgmock \
+ -municode \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/tests1.exe
