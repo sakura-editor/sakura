@@ -40,5 +40,5 @@ jobs:
         shell: cmd
 
       - name: Check encoding
-        run: checkEncoding.bat
+        run: python checkEncoding.py
         shell: cmd
