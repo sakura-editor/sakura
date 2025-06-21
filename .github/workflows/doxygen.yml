@@ -1,0 +1,52 @@
+name: Doxygen
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  workflow_dispatch:
+
+jobs:
+  doxygen:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        BuildPlatform: [Win32, x64]
+        Configuration: [Release]
+    env:
+      BuildPlatform: ${{ matrix.BuildPlatform }}
+      Configuration: ${{ matrix.Configuration }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show environment variables for debug
+        run: set
+        shell: cmd
+
+      - name: Install doxygen
+        run: externals\doxygen\doxygen-1.8.14-setup.exe /silent /suppressmsgboxes
+        shell: cmd
+
+      - name: Run doxygen
+        run: run-doxygen.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+        shell: cmd
+
+      - name: Zip files for artifacts
+        run: zipArtifacts.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+        shell: cmd
+
+      - name: Upload doxygen artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doxygen_${{ env.BuildPlatform }}_${{ env.Configuration }}
+          path: '**Dev.zip'
