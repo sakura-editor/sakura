@@ -38,12 +38,6 @@ jobs:
         run: python -m compileall -f .
         shell: cmd
 
-      # 必要な場合は requirements.txt などでパッケージをインストール
-      - name: Install Python modules
-        run: |
-          if exist requirements.txt pip install -r requirements.txt
-        shell: cmd
-
       - name: Python compile check after install
         run: python -m compileall -f .
         shell: cmd
