@@ -28,13 +28,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Restore MSYS2 package cache
-        uses: actions/cache@v3
-        with:
-          path: C:\msys64
-          key: msys2-${{ runner.os }}-${{ hashFiles('**/*.yml') }}
-          restore-keys: |
-            msys2-${{ runner.os }}-
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
         with:
