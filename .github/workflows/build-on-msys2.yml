@@ -31,7 +31,7 @@ jobs:
       - name: Restore MSYS2 package cache
         uses: actions/cache@v3
         with:
-          path: C:\msys64\var\cache\pacman\pkg
+          path: C:\msys64
           key: msys2-${{ runner.os }}-${{ hashFiles('**/*.yml') }}
           restore-keys: |
             msys2-${{ runner.os }}-
