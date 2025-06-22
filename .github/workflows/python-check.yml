@@ -38,6 +38,3 @@ jobs:
         run: python -m compileall -f .
         shell: cmd
 
-      - name: Python compile check after install
-        run: python -m compileall -f .
-        shell: cmd
