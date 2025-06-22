@@ -25,6 +25,7 @@ jobs:
     env:
       BuildPlatform: ${{ matrix.BuildPlatform }}
       Configuration: ${{ matrix.Configuration }}
+      DOXYGEN_VERSION: "1.8.14"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,7 +35,7 @@ jobs:
         shell: cmd
 
       - name: Install doxygen
-        run: externals\doxygen\doxygen-1.8.14-setup.exe /silent /suppressmsgboxes
+        run: externals\doxygen\doxygen-${{ env.DOXYGEN_VERSION }}-setup.exe /silent /suppressmsgboxes
         shell: cmd
 
       - name: Run doxygen
