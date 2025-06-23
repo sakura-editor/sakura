@@ -87,6 +87,11 @@ jobs:
       working-directory: ${{github.workspace}}\${{matrix.platform}}\${{matrix.config}}
       shell: pwsh
 
+      # Toolbar Bitmap Split/Mux
+    - run: build-bmp-tools.bat ${{matrix.config}}
+      name: Bitmap Split/Mux
+      shell: cmd
+
     - name: Install Locale Emulator
       run: |
         choco install autohotkey.install --confirm
