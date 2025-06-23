@@ -7,6 +7,8 @@ if "%platform%" == "Win32" (
 	@rem OK
 ) else if "%platform%" == "x64" (
 	@rem OK
+) else if "%platform%" == "arm64" (
+	@rem OK
 ) else (
 	call :showhelp %0
 	exit /b 1
@@ -47,12 +49,18 @@ set BRON_ZIP=installer\externals\bregonig\bron420.zip
 7z e %BRON_ZIP% -o%INSTALLER_RESOURCES_BRON% -y *.txt
 if "%platform%" == "x64" (
 	7z e %BRON_ZIP% -o%platform%\%configuration% -y x64/%BREGONIG_DLL%
+) else if "%platform%" == "arm64" (
+	@rem provisional
+	7z e %BRON_ZIP% -o%platform%\%configuration% -y x64/%BREGONIG_DLL%
 ) else (
 	7z e %BRON_ZIP% -o%platform%\%configuration% -y %BREGONIG_DLL%
 )
 
 set CTAGS_EXE=ctags.exe
 if "%PLATFORM%" == "x64" (
+	set CTAGS_PREFIX=x64
+) else if "%PLATFORM%" == "arm64" (
+	@rem provisional
 	set CTAGS_PREFIX=x64
 ) else if "%PLATFORM%" == "Win32" (
 	set CTAGS_PREFIX=x86
@@ -91,7 +99,7 @@ exit /b 0
 @echo    %~nx1 platform configuration
 @echo.
 @echo parameter
-@echo    platform      : Win32   or x64
+@echo    platform      : Win32   or x64   or arm64
 @echo    configuration : Release or Debug
 @echo.
 @echo example
@@ -99,4 +107,6 @@ exit /b 0
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
 @echo    %~nx1 x64   Debug
+@echo    %~nx1 arm64 Release
+@echo    %~nx1 arm64 Debug
 exit /b 0

@@ -48,6 +48,8 @@ for:
         configuration: Release
       - platform: x64
         configuration: Release
+      - platform: arm64
+        configuration: Release
 
   artifacts:
     - path: 'sakura-*$(platform)-$(configuration)*.zip*'

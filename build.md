@@ -150,6 +150,8 @@ build-sln.bat Win32 Release
 build-sln.bat Win32 Debug
 build-sln.bat x64   Release
 build-sln.bat x64   Debug
+build-sln.bat arm64 Release
+build-sln.bat arm64 Debug
 ```
 
 
@@ -175,6 +177,8 @@ build-sln.bat Win32 Release
 build-sln.bat Win32 Debug
 build-sln.bat x64   Release
 build-sln.bat x64   Debug
+build-sln.bat arm64 Release
+build-sln.bat arm64 Debug
 ```
 
 ### CI でのビルドをスキップする方法

@@ -6,6 +6,7 @@
     <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
     <GoogleTestLibInstallDir Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
     <GoogleTestLibInstallDir Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64</GoogleTestLibInstallDir>
+    <GoogleTestLibInstallDir Condition="'$(Platform)' == 'arm64'">$(GoogleTestInstallDir)lib64</GoogleTestLibInstallDir>
     <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
     <GTestLibName>gtest.lib</GTestLibName>
     <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>
