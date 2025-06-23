@@ -1,15 +1,17 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="FuncCode">
-    <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
-    <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
-    <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
+    <ExecutablePath Condition="'$(VcpkgRoot)'!=''">$(VcpkgRoot);$(ExecutablePath)</ExecutablePath>
+    <HeaderMake>$(VcpkgInstalledDir)x64-windows\tools\header-make\HeaderMake.exe</HeaderMake>
+    <FuncCodeDefine>$([MSBuild]::NormalizePath('$(IntDir)', '..\sakura_core\Funccode_define.h'))</FuncCodeDefine>
+    <FuncCodeEnum>$([MSBuild]::NormalizePath('$(IntDir)', '..\sakura_core\Funccode_enum.h'))</FuncCodeEnum>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HeaderMake\HeaderMake.vcxproj">
-      <Project>{0f2918b0-23e3-42e8-a1a8-8739f726a23e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
+  <Target Name="InstallHeaderMake"
+      Condition="!Exists('$(HeaderMake)')"
+      AfterTargets="GenerateGitHash"
+      BeforeTargets="FuncCodeDefine;FuncCodeEnum">
+    <Exec Command="chcp 65001 &gt;NUL &amp;&amp; bootstrap-vcpkg.bat" Condition="!Exists('$(VcpkgRoot)\vcpkg.exe')" StdOutEncoding="UTF-8" StdErrEncoding="UTF-8" WorkingDirectory="$(VcpkgRoot)" />
+    <Exec Command="chcp 65001 &gt;NUL &amp;&amp; vcpkg.exe install --x-wait-for-lock --triplet &quot;$(VcpkgTriplet)&quot; &quot;--x-manifest-root=$(VcpkgManifestDirectory.TrimEnd('\'))&quot; &quot;--x-install-root=$(VcpkgInstalledDir.TrimEnd('\'))&quot;" StdOutEncoding="UTF-8" StdErrEncoding="UTF-8" WorkingDirectory="$(MSBuildThisFileDirectory).." />
+  </Target>
   <Target Name="_WriteFuncCodeDefineRcTlogs"
       Condition="'@(FuncCodeRes)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
