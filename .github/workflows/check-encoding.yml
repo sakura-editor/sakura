@@ -1,0 +1,46 @@
+name: Check Encoding
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  workflow_dispatch:
+
+jobs:
+  check-encoding:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 過去の履歴も含めて全て取得 (checkEncoding.py で origin/master にアクセスするため)
+
+      - name: Show environment variables for debug
+        run: set
+        shell: cmd
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Python version check
+        run: python --version
+        shell: cmd
+
+      - name: Install chardet
+        run: pip install chardet --user
+        shell: cmd
+
+      - name: Check encoding
+        run: python checkEncoding.py
+        shell: cmd
