@@ -1,0 +1,40 @@
+name: Python Compile Check
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'appveyor.yml'
+  workflow_dispatch:
+
+jobs:
+  python-compile-check:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ['3.x']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Python version check
+        run: python --version
+        shell: cmd
+
+      - name: Python compile check before install
+        run: python -m compileall -f .
+        shell: cmd
+
