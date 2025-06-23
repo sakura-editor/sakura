@@ -228,10 +228,10 @@ TEST(string_ex, strprintfA_small_output)
 TEST(string_ex, wcstou8s)
 {
 	// wcs→u8変換ができること
-	ASSERT_STREQ(wcstou8s(L"This is 運命").data(), u8"This is 運命");
+	ASSERT_STREQ(wcstou8s(L"This is 運命").data(), (LPCSTR)u8"This is 運命");
 
 	// 空文字列も問題なく変換できること
-	ASSERT_STREQ(wcstou8s(L"").data(), u8"");
+	ASSERT_STREQ(wcstou8s(L"").data(), (LPCSTR)u8"");
 }
 
 /*!
@@ -240,10 +240,10 @@ TEST(string_ex, wcstou8s)
 TEST(string_ex, u8stowcs)
 {
 	// u8→wcs変換ができること
-	ASSERT_STREQ(u8stowcs(u8"This is 運命").data(), L"This is 運命");
+	ASSERT_STREQ(u8stowcs((LPCSTR)u8"This is 運命").data(), L"This is 運命");
 
 	// 空文字列も問題なく変換できること
-	ASSERT_STREQ(u8stowcs(u8"").data(), L"");
+	ASSERT_STREQ(u8stowcs((LPCSTR)u8"").data(), L"");
 }
 
 /*!
