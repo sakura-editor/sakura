@@ -2,17 +2,7 @@ name: MinGW Build and Test
 
 on:
   push:
-    paths-ignore:
-      - '**/*.md'
-      - '.gitignore'
-      - '.editorconfig'
-      - 'appveyor.yml'
   pull_request:
-    paths-ignore:
-      - '**/*.md'
-      - '.gitignore'
-      - '.editorconfig'
-      - 'appveyor.yml'
   workflow_dispatch:
 
 jobs:
