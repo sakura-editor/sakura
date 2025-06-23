@@ -111,33 +111,32 @@ enum EFuncListCol {
 /*! ソート比較用プロシージャ */
 int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
 {
-	CFuncInfo*		pcFuncInfo1;
-	CFuncInfo*		pcFuncInfo2;
 	CDlgFuncList*	pcDlgFuncList;
 	pcDlgFuncList = (CDlgFuncList*)lParamSort;
 
-	pcFuncInfo1 = pcDlgFuncList->m_pcFuncInfoArr->GetAt( lParam1 );
-	if( NULL == pcFuncInfo1 ){
+	int num = pcDlgFuncList->m_pcFuncInfoArr->GetNum();
+	if (lParam1 < 0 || lParam1 >= num) {
 		return -1;
 	}
-	pcFuncInfo2 = pcDlgFuncList->m_pcFuncInfoArr->GetAt( lParam2 );
-	if( NULL == pcFuncInfo2 ){
+	if (lParam2 < 0 || lParam2 >= num) {
 		return -1;
 	}
+	CFuncInfo& cFuncInfo1 = pcDlgFuncList->m_pcFuncInfoArr->GetAt(lParam1);
+	CFuncInfo& cFuncInfo2 = pcDlgFuncList->m_pcFuncInfoArr->GetAt(lParam2);
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_NAME == pcDlgFuncList->m_nSortCol){	/* 名前でソート */
-		return wmemicmp( pcFuncInfo1->m_cmemFuncName.GetStringPtr(), pcFuncInfo2->m_cmemFuncName.GetStringPtr() );
+		return wmemicmp( cFuncInfo1.m_strFuncName.c_str(), cFuncInfo2.m_strFuncName.c_str() );
 	}
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_ROW == pcDlgFuncList->m_nSortCol){	/* 行（＋桁）でソート */
-		if( pcFuncInfo1->m_nFuncLineCRLF < pcFuncInfo2->m_nFuncLineCRLF ){
+		if( cFuncInfo1.m_nFuncLineCRLF < cFuncInfo2.m_nFuncLineCRLF ){
 			return -1;
 		}else
-		if( pcFuncInfo1->m_nFuncLineCRLF == pcFuncInfo2->m_nFuncLineCRLF ){
-			if( pcFuncInfo1->m_nFuncColCRLF < pcFuncInfo2->m_nFuncColCRLF ){
+		if( cFuncInfo1.m_nFuncLineCRLF == cFuncInfo2.m_nFuncLineCRLF ){
+			if( cFuncInfo1.m_nFuncColCRLF < cFuncInfo2.m_nFuncColCRLF ){
 				return -1;
 			}else
-			if( pcFuncInfo1->m_nFuncColCRLF == pcFuncInfo2->m_nFuncColCRLF ){
+			if( cFuncInfo1.m_nFuncColCRLF == cFuncInfo2.m_nFuncColCRLF ){
 				return 0;
 			}else{
 				return 1;
@@ -147,10 +146,10 @@ int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPAR
 		}
 	}
 	if( FL_COL_COL == pcDlgFuncList->m_nSortCol){	/* 桁でソート */
-		if( pcFuncInfo1->m_nFuncColCRLF < pcFuncInfo2->m_nFuncColCRLF ){
+		if( cFuncInfo1.m_nFuncColCRLF < cFuncInfo2.m_nFuncColCRLF ){
 			return -1;
 		}else
-		if( pcFuncInfo1->m_nFuncColCRLF == pcFuncInfo2->m_nFuncColCRLF ){
+		if( cFuncInfo1.m_nFuncColCRLF == cFuncInfo2.m_nFuncColCRLF ){
 			return 0;
 		}else{
 			return 1;
@@ -158,10 +157,10 @@ int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPAR
 	}
 	// From Here 2001.12.07 hor
 	if( FL_COL_REMARK == pcDlgFuncList->m_nSortCol){	/* 備考でソート */
-		if( pcFuncInfo1->m_nInfo < pcFuncInfo2->m_nInfo ){
+		if( cFuncInfo1.m_nInfo < cFuncInfo2.m_nInfo ){
 			return -1;
 		}else
-		if( pcFuncInfo1->m_nInfo == pcFuncInfo2->m_nInfo ){
+		if( cFuncInfo1.m_nInfo == cFuncInfo2.m_nInfo ){
 			return 0;
 		}else{
 			return 1;
@@ -547,17 +546,16 @@ void CDlgFuncList::SetData()
 //		::ShowWindow( hwndTree, SW_HIDE );
 		int				i;
 		WCHAR			szText[2048];
-		const CFuncInfo*	pcFuncInfo;
 		LV_ITEM			item;
 
 		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
 		{
 			const int nBuffLenTag = 13 + wcslen(m_pcFuncInfoArr->m_szFilePath);
 			const int nNum = m_pcFuncInfoArr->GetNum();
-			int nBuffLen = 0;
-			for(int i = 0; i < nNum; ++i ){
-				const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+			size_t nBuffLen = 0;
+			for( int i = 0; i < nNum; ++i ){
+				const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
+				nBuffLen += cFuncInfo.m_strFuncName.size();
 			}
 			m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 		}
@@ -566,14 +564,14 @@ void CDlgFuncList::SetData()
 
 		for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 			/* 現在の解析結果要素 */
-			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+			const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
+				auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncLineCRLF );
 			}else{
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
+				auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncLineLAYOUT );
 			}
 			item.mask = LVIF_TEXT | LVIF_PARAM;
 			item.pszText = szText;
@@ -585,9 +583,9 @@ void CDlgFuncList::SetData()
 			// 2010.03.17 syat 桁追加
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
+				auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncColCRLF );
 			}else{
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
+				auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncColLAYOUT );
 			}
 			item.mask = LVIF_TEXT;
 			item.pszText = szText;
@@ -596,23 +594,23 @@ void CDlgFuncList::SetData()
 			ListView_SetItem( hwndList, &item);
 
 			item.mask = LVIF_TEXT;
-			item.pszText = const_cast<WCHAR*>(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+			item.pszText = const_cast<WCHAR*>(cFuncInfo.m_strFuncName.c_str());
 			item.iItem = i;
 			item.iSubItem = FL_COL_NAME;
 			ListView_SetItem( hwndList, &item);
 			//	To Here Apr. 23, 2005 genta 行番号を左端へ
 
 			item.mask = LVIF_TEXT;
-			if(  1 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK01));}else
-			if( 10 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK02));}else
-			if( 20 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK03));}else
-			if( 11 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK04));}else
-			if( 21 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK05));}else
-			if( 31 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK06));}else
-			if( 41 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK07));}else
-			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK08));}else
-			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK09));}else
-			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK10));}else{
+			if(  1 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK01));}else
+			if( 10 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK02));}else
+			if( 20 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK03));}else
+			if( 11 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK04));}else
+			if( 21 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK05));}else
+			if( 31 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK06));}else
+			if( 41 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK07));}else
+			if( 50 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK08));}else
+			if( 51 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK09));}else
+			if( 52 == cFuncInfo.m_nInfo ){item.pszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_REMARK10));}else{
 				// Jul 10, 2003  little YOSHI
 				// ここにあったVB関係の処理はSetListVB()メソッドに移動しました。
 
@@ -629,12 +627,12 @@ void CDlgFuncList::SetData()
 					szText,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+					cFuncInfo.m_nFuncLineCRLF,		/* 検出行番号 */
+					cFuncInfo.m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				// "%s(%s)\r\n"
-				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+				m_cmemClipText.AppendString(cFuncInfo.m_strFuncName);
 				m_cmemClipText.AppendString(L"(");
 				m_cmemClipText.AppendString(item.pszText);
 				m_cmemClipText.AppendString(L")\r\n");
@@ -644,11 +642,11 @@ void CDlgFuncList::SetData()
 					szText,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+					cFuncInfo.m_nFuncLineCRLF,		/* 検出行番号 */
+					cFuncInfo.m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
-				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+				m_cmemClipText.AppendString(cFuncInfo.m_strFuncName);
 				m_cmemClipText.AppendString(L"\r\n");
 			}
 		}
@@ -771,7 +769,7 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 		TreeView_GetItem( hwndTree, &tvItem );
 		if( ((-tvItem.lParam) % 10) == 3 ){
 			*pnItem = (-tvItem.lParam) / 10;
-			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr();
+			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem).m_strFileName;
 			path += L"\\";
 			path += *pPath;
 			*pPath = std::move(path);
@@ -839,7 +837,7 @@ int CDlgFuncList::GetData( void )
 		item.iItem = nItem;
 		item.iSubItem = 0;
 		ListView_GetItem( hwndList, &item );
-		m_cFuncInfo = m_pcFuncInfoArr->GetAt( item.lParam );
+		m_cFuncInfo = &m_pcFuncInfoArr->GetAt( item.lParam );
 	}else{
 		hwndTree = GetItemHwnd( IDC_TREE_FL );
 		if( NULL != hwndTree ){
@@ -860,7 +858,7 @@ int CDlgFuncList::GetData( void )
 						nIndex = tvi.lParam;
 					}
 					if( 0 <= nIndex ){
-						m_cFuncInfo = m_pcFuncInfoArr->GetAt(nIndex);
+						m_cFuncInfo = &m_pcFuncInfoArr->GetAt(nIndex);
 					}
 				}else{
 					if( m_nListType == OUTLINE_FILETREE ){
@@ -892,7 +890,6 @@ int CDlgFuncList::GetData( void )
 void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass )
 {
 	int				i;
-	const CFuncInfo*	pcFuncInfo;
 	HWND			hwndTree;
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
@@ -923,8 +920,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+			const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			nBuffLen += cFuncInfo.m_strFuncName.size();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
@@ -942,8 +939,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 	nFuncColOld = CLayoutInt(-1);
 	bSelected = FALSE;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
-		const WCHAR* pWork = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+		const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		const WCHAR* pWork = cFuncInfo.m_strFuncName.c_str();
 		int m = 0;
 		vStrClasses.clear();
 		nClassNest = 0;
@@ -1050,7 +1047,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 					
 					if( bAddClass )
 					{
-						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
+						if( cFuncInfo.m_nInfo == FL_OBJ_NAMESPACE )
 						{
 							//wcscat( pClassName, L" 名前空間" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE);
@@ -1086,7 +1083,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 			// 2002/10/27 frozen ここから
 			// 2007.05.26 genta "__interface" をクラスに類する扱いにする
 			// 2011.09.25 syat プラグインで追加された要素をクラスに類する扱いにする
-			if( FL_OBJ_CLASS <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= FL_OBJ_ELEMENT_MAX )
+			if( FL_OBJ_CLASS <= cFuncInfo.m_nInfo  && cFuncInfo.m_nInfo <= FL_OBJ_ELEMENT_MAX )
 				htiClass = TVI_ROOT;
 			else
 			{
@@ -1112,14 +1109,14 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 		std::wstring strFuncName = pWork;
 
 		// 2002/10/27 frozen 追加文字列の種類を増やした
-		switch(pcFuncInfo->m_nInfo)
+		switch(cFuncInfo.m_nInfo)
 		{
 		case FL_OBJ_DEFINITION:		//「定義位置」に追加文字列は不要なため除外
 		case FL_OBJ_NAMESPACE:		//「名前空間」は別の場所で処理してるので除外
 		case FL_OBJ_GLOBAL:			//「グローバル」は別の場所で処理してるので除外
 			break;
 		default:
-			strFuncName += m_pcFuncInfoArr->GetAppendText(pcFuncInfo->m_nInfo);
+			strFuncName += m_pcFuncInfoArr->GetAppendText(cFuncInfo.m_nInfo);
 		}
 
 /* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
@@ -1137,13 +1134,13 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 			szText,
 			L"%s(%d,%d): ",
 			m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-			pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-			pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+			cFuncInfo.m_nFuncLineCRLF,		/* 検出行番号 */
+			cFuncInfo.m_nFuncColCRLF		/* 検出桁番号 */
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%s%ls\r\n"
-		m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : L"" ); 	//	Jan. 04, 2001 genta C++で使用
+		m_cmemClipText.AppendString(cFuncInfo.m_strFuncName);
+		m_cmemClipText.AppendString(FL_OBJ_DECLARE == cFuncInfo.m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : L"" ); 	//	Jan. 04, 2001 genta C++で使用
 		m_cmemClipText.AppendString(L"\r\n");
 
 		//	Jan. 04, 2001 genta
@@ -1175,7 +1172,6 @@ void CDlgFuncList::SetListVB (void)
 	int				i;
 	WCHAR			szType[64];
 	WCHAR			szOption[64];
-	const CFuncInfo*	pcFuncInfo;
 	LV_ITEM			item;
 	HWND			hwndList;
 
@@ -1189,8 +1185,8 @@ void CDlgFuncList::SetListVB (void)
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+			const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			nBuffLen += cFuncInfo.m_strFuncName.size();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
@@ -1198,14 +1194,14 @@ void CDlgFuncList::SetListVB (void)
 	WCHAR			szText[2048];
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		/* 現在の解析結果要素 */
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
+			auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncLineCRLF );
 		}else{
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
+			auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncLineLAYOUT );
 		}
 		item.mask = LVIF_TEXT | LVIF_PARAM;
 		item.pszText = szText;
@@ -1217,9 +1213,9 @@ void CDlgFuncList::SetListVB (void)
 		// 2010.03.17 syat 桁追加
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
+			auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncColCRLF );
 		}else{
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
+			auto_sprintf( szText, L"%d", cFuncInfo.m_nFuncColLAYOUT );
 		}
 		item.mask = LVIF_TEXT;
 		item.pszText = szText;
@@ -1228,7 +1224,7 @@ void CDlgFuncList::SetListVB (void)
 		ListView_SetItem( hwndList, &item);
 
 		item.mask = LVIF_TEXT;
-		item.pszText = const_cast<WCHAR*>(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+		item.pszText = const_cast<WCHAR*>(cFuncInfo.m_strFuncName.c_str());
 		item.iItem = i;
 		item.iSubItem = FL_COL_NAME;
 		ListView_SetItem( hwndList, &item);
@@ -1241,12 +1237,12 @@ void CDlgFuncList::SetListVB (void)
 		wmemset(szText, L'\0', _countof(szText));
 		wmemset(szType, L'\0', _countof(szType));
 		wmemset(szOption, L'\0', _countof(szOption));
-		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
+		if( 1 == ((cFuncInfo.m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
 			wcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
 		}
-		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
+		switch ((cFuncInfo.m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
 				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
@@ -1258,7 +1254,7 @@ void CDlgFuncList::SetListVB (void)
 			default :	// パブリック(Public)
 				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
-		int nInfo = pcFuncInfo->m_nInfo;
+		int nInfo = cFuncInfo.m_nInfo;
 		switch (nInfo & 0x0f) {
 			case 1:		// 関数(Function)
 				wcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
@@ -1327,12 +1323,12 @@ void CDlgFuncList::SetListVB (void)
 				szText,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+				cFuncInfo.m_nFuncLineCRLF,		/* 検出行番号 */
+				cFuncInfo.m_nFuncColCRLF		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s(%s)\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+			m_cmemClipText.AppendString(cFuncInfo.m_strFuncName);
 			m_cmemClipText.AppendString(L"(");
 			m_cmemClipText.AppendString(item.pszText);
 			m_cmemClipText.AppendString(L")\r\n");
@@ -1342,12 +1338,12 @@ void CDlgFuncList::SetListVB (void)
 				szText,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+				cFuncInfo.m_nFuncLineCRLF,		/* 検出行番号 */
+				cFuncInfo.m_nFuncColCRLF		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+			m_cmemClipText.AppendString(cFuncInfo.m_strFuncName);
 			m_cmemClipText.AppendString(L"\r\n");
 		}
 	}
@@ -1399,9 +1395,9 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 			nBuffLenTag = 10 + wcslen(m_pcFuncInfoArr->m_szFilePath);
 		}
 		for( int i = 0; i < nFuncInfoArrNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-			if( pcFuncInfo->IsAddClipText() ){
-				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength() + pcFuncInfo->m_nDepth * 2;
+			const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			if( cFuncInfo.IsAddClipText() ){
+				nBuffLen += cFuncInfo.m_strFuncName.size() + cFuncInfo.m_nDepth * 2;
 				nCount++;
 			}
 		}
@@ -1409,7 +1405,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 	}
 
 	for (i = 0; i < nFuncInfoArrNum; i++){
-		CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
 
 		/*	新しいアイテムを作成
 			現在の親の下にぶら下げる形で、最後に追加する。
@@ -1419,19 +1415,19 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 		cTVInsertStruct.hParent = phParentStack[ nStackPointer ];
 		cTVInsertStruct.hInsertAfter = hInsertAfter;
 		cTVInsertStruct.item.mask = TVIF_TEXT | TVIF_PARAM;
-		cTVInsertStruct.item.pszText = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+		cTVInsertStruct.item.pszText = const_cast<WCHAR*>(cFuncInfo.m_strFuncName.c_str());
 		cTVInsertStruct.item.lParam = i;	//	あとでこの数値（＝m_pcFuncInfoArrの何番目のアイテムか）を見て、目的地にジャンプするぜ!!。
 
 		/*	親子関係をチェック
 		*/
-		if (nStackPointer != pcFuncInfo->m_nDepth){
+		if (nStackPointer != cFuncInfo.m_nDepth){
 			//	レベルが変わりました!!
 			//	※が、2段階深くなることは考慮していないので注意。
 			//	　もちろん、2段階以上浅くなることは考慮済み。
 
 			// 2002.11.10 Moca 追加 確保したサイズでは足りなくなった。再確保
-			if( nStackDepth <= pcFuncInfo->m_nDepth + 1 ){
-				nStackDepth = pcFuncInfo->m_nDepth + 4; // 多めに確保しておく
+			if( nStackDepth <= cFuncInfo.m_nDepth + 1 ){
+				nStackDepth = cFuncInfo.m_nDepth + 4; // 多めに確保しておく
 				HTREEITEM* phTi;
 				phTi = (HTREEITEM*)realloc( phParentStack, nStackDepth * sizeof( HTREEITEM ) );
 				if( NULL != phTi ){
@@ -1440,7 +1436,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 					goto end_of_func;
 				}
 			}
-			nStackPointer = pcFuncInfo->m_nDepth;
+			nStackPointer = cFuncInfo.m_nDepth;
 			cTVInsertStruct.hParent = phParentStack[ nStackPointer ];
 		}
 		hItem = TreeView_InsertItem( hwndTree, &cTVInsertStruct );
@@ -1448,15 +1444,15 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 
 		/* クリップボードコピー用テキストを作成する */
 		//	2003.06.22 Moca dummy要素はツリーに入れるがTAGJUMPには加えない
-		if( pcFuncInfo->IsAddClipText() ){
+		if( cFuncInfo.IsAddClipText() ){
 			CNativeW text;
 			if( tagjump ){
-				const WCHAR* pszFileName = pcFuncInfo->m_cmemFileName.GetStringPtr();
-				if( pszFileName == NULL ){
+				const WCHAR* pszFileName = cFuncInfo.m_strFileName.c_str();
+				if( cFuncInfo.m_strFileName.empty() ){
 					pszFileName = m_pcFuncInfoArr->m_szFilePath;
 				}
 				text.AllocStringBuffer(
-					  pcFuncInfo->m_cmemFuncName.GetStringLength()
+					  cFuncInfo.m_strFuncName.size()
 					+ nStackPointer * 2 + 1
 					+ wcslen( pszFileName )
 					+ 20
@@ -1464,11 +1460,11 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				//	2007.03.04 genta タグジャンプできる形式で書き込む
 				text.AppendString( pszFileName );
 				
-				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
+				if( 0 < cFuncInfo.m_nFuncLineCRLF ){
 					WCHAR linenum[32];
 					int len = auto_sprintf( linenum, L"(%d,%d): ",
-						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
+						cFuncInfo.m_nFuncLineCRLF,				/* 検出行番号 */
+						cFuncInfo.m_nFuncColCRLF					/* 検出桁番号 */
 					);
 					text.AppendString( linenum );
 				}
@@ -1480,7 +1476,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				}
 				text.AppendString(L" ");
 				
-				text.AppendNativeData( pcFuncInfo->m_cmemFuncName );
+				text.AppendString( cFuncInfo.m_strFuncName );
 			}
 			text.AppendString( L"\r\n" );
 			m_cmemClipText.AppendNativeData( text );	/* クリップボードコピー用テキスト */
@@ -1506,12 +1502,11 @@ void CDlgFuncList::SetDocLineFuncList()
 	CDocLineMgr* pcDocLineMgr = &pcEditView->GetDocument()->m_cDocLineMgr;
 	
 	CFuncListManager().ResetAllFucListMark(pcDocLineMgr, false);
-	int i;
 	int num = m_pcFuncInfoArr->GetNum();
-	for( i = 0; i < num; ++i ){
-		const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-		if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
-			CDocLine* pcDocLine = pcDocLineMgr->GetLine( pcFuncInfo->m_nFuncLineCRLF - 1 );
+	for( int i = 0; i < num; ++i ){
+		const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		if( 0 < cFuncInfo.m_nFuncLineCRLF ){
+			CDocLine* pcDocLine = pcDocLineMgr->GetLine( cFuncInfo.m_nFuncLineCRLF - 1 );
 			if( pcDocLine ){
 				CFuncListManager().SetLineFuncList( pcDocLine, true );
 			}
@@ -2410,14 +2405,13 @@ void CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
 	SortTree_Sub(hWndTree, htiParent, data, m_nSortType);
 }
 
-bool CDlgFuncList::TagJumpTimer( const WCHAR* pFile, CMyPoint point, bool bCheckAutoClose )
+bool CDlgFuncList::TagJumpTimer( std::wstring_view strFile, CMyPoint point, bool bCheckAutoClose )
 {
 	CEditView* pcView = reinterpret_cast<CEditView*>(m_lParam);
 
 	// ファイルを開いていない場合は自分で開く
 	if( pcView->GetDocument()->IsAcceptLoad() ){
-		std::wstring strFile = pFile;
-		pcView->GetCommander().Command_FILEOPEN( strFile.c_str(), CODE_AUTODETECT, CAppMode::getInstance()->IsViewMode(), NULL );
+		pcView->GetCommander().Command_FILEOPEN( strFile.data(), CODE_AUTODETECT, CAppMode::getInstance()->IsViewMode(), NULL );
 		if( point.y != -1 ){
 			if( pcView->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				CLogicPoint pt;
@@ -2431,7 +2425,7 @@ bool CDlgFuncList::TagJumpTimer( const WCHAR* pFile, CMyPoint point, bool bCheck
 		}
 		return true;
 	}
-	m_pszTimerJumpFile = pFile;
+	m_pszTimerJumpFile = strFile.data();
 	m_pointTimerJump = point;
 	m_bTimerJumpAutoClose = bCheckAutoClose;
 	::SetTimer( GetHwnd(), 2, 200, NULL ); // id == 2
@@ -2459,10 +2453,10 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 					CMyPoint poCaret;
 					poCaret.x = -1;
 					poCaret.y = -1;
-					bFileJumpSelf = TagJumpTimer(m_sJumpFile.c_str(), poCaret, bCheckAutoClose);
+					bFileJumpSelf = TagJumpTimer(m_sJumpFile, poCaret, bCheckAutoClose);
 				}
 			}else
-			if( m_cFuncInfo != NULL && 0 < m_cFuncInfo->m_cmemFileName.GetStringLength() ){
+			if( m_cFuncInfo != NULL && 0 < m_cFuncInfo->m_strFileName.size() ){
 				if( bFileJump ){
 					nLineTo = m_cFuncInfo->m_nFuncLineCRLF;
 					nColTo = m_cFuncInfo->m_nFuncColCRLF;
@@ -2470,7 +2464,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 					CMyPoint poCaret; // TagJumpSubも1開始
 					poCaret.x = nColTo;
 					poCaret.y = nLineTo;
-					bFileJumpSelf = TagJumpTimer(m_cFuncInfo->m_cmemFileName.GetStringPtr(), poCaret, bCheckAutoClose);
+					bFileJumpSelf = TagJumpTimer(m_cFuncInfo->m_strFileName, poCaret, bCheckAutoClose);
 				}
 			}else{
 				nLineTo = m_cFuncInfo->m_nFuncLineCRLF;
@@ -3298,9 +3292,9 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 			item.iItem = nItem;
 			item.iSubItem = 0;
 			ListView_GetItem(hwndList, &item);
-			const CFuncInfo* pFuncInfo = m_pcFuncInfoArr->GetAt(item.lParam);
+			const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(item.lParam);
 			// FIXME: 行番号があってるとは限らない
-			CDocLine* pCDocLine = pcEditView->GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
+			CDocLine* pCDocLine = pcEditView->GetDocument()->m_cDocLineMgr.GetLine(cFuncInfo.m_nFuncLineCRLF - 1);
 			if( pCDocLine ){
 				CBookmarkSetter cBookmark(pCDocLine);
 				cBookmark.SetBookmark(false);
@@ -4102,7 +4096,6 @@ void CDlgFuncList::SetItemSelectionForListView( HWND hwndList, int nFuncInfoInde
 */
 bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pnIndexOut )
 {
-	const CFuncInfo* pcFuncInfo = NULL;
 	CLayoutInt nFuncLineOld(-1);
 	CLayoutInt nFuncColOld(-1);
 	CLayoutInt nFuncLineTop(INT_MAX);
@@ -4117,28 +4110,28 @@ bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, in
 	// SetTree,SetTreeJava,SetListVB,SetDataにあった処理を持ってきました
 
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
-		if( (pcFuncInfo->m_cmemFileName.GetStringPtr() && m_pcFuncInfoArr->m_szFilePath[0]) ){
-			if( 0 != wmemicmp( pcFuncInfo->m_cmemFileName.GetStringPtr(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
+		if( (!cFuncInfo.m_strFileName.empty() && m_pcFuncInfoArr->m_szFilePath[0]) ){
+			if( 0 != wmemicmp( cFuncInfo.m_strFileName.c_str(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
 				continue;
 			}
 		}
 
 		if( nFoundIndex == -1 ){
-			if( pcFuncInfo->m_nFuncLineLAYOUT < nFuncLineTop
-				|| (pcFuncInfo->m_nFuncLineLAYOUT == nFuncLineTop && pcFuncInfo->m_nFuncColLAYOUT <= nFuncColTop) ){
-				nFuncLineTop = pcFuncInfo->m_nFuncLineLAYOUT;
-				nFuncColTop = pcFuncInfo->m_nFuncColLAYOUT;
+			if( cFuncInfo.m_nFuncLineLAYOUT < nFuncLineTop
+				|| (cFuncInfo.m_nFuncLineLAYOUT == nFuncLineTop && cFuncInfo.m_nFuncColLAYOUT <= nFuncColTop) ){
+				nFuncLineTop = cFuncInfo.m_nFuncLineLAYOUT;
+				nFuncColTop = cFuncInfo.m_nFuncColLAYOUT;
 				nFoundIndex = i;
 			}
 		}else{
-			if( (nFuncLineOld < pcFuncInfo->m_nFuncLineLAYOUT
-				|| (nFuncLineOld == pcFuncInfo->m_nFuncLineLAYOUT && nFuncColOld <= pcFuncInfo->m_nFuncColLAYOUT))
-			  && (pcFuncInfo->m_nFuncLineLAYOUT < m_nCurLine
-				|| (pcFuncInfo->m_nFuncLineLAYOUT == m_nCurLine && pcFuncInfo->m_nFuncColLAYOUT <= m_nCurCol)) ){
-				nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
-				nFuncColOld = pcFuncInfo->m_nFuncColLAYOUT;
+			if( (nFuncLineOld < cFuncInfo.m_nFuncLineLAYOUT
+				|| (nFuncLineOld == cFuncInfo.m_nFuncLineLAYOUT && nFuncColOld <= cFuncInfo.m_nFuncColLAYOUT))
+			  && (cFuncInfo.m_nFuncLineLAYOUT < m_nCurLine
+				|| (cFuncInfo.m_nFuncLineLAYOUT == m_nCurLine && cFuncInfo.m_nFuncColLAYOUT <= m_nCurCol)) ){
+				nFuncLineOld = cFuncInfo.m_nFuncLineLAYOUT;
+				nFuncColOld = cFuncInfo.m_nFuncColLAYOUT;
 				nFoundIndex = i;
 			}
 		}

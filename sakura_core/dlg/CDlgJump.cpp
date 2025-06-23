@@ -252,46 +252,47 @@ void CDlgJump::SetData( void )
 	nIndex = 0;
 	nPLSQLBlockNum = 0;
 	for( i = 0; i < cFuncInfoArr.GetNum(); ++i ){
-		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
+		auto& cFuncInfo = cFuncInfoArr.GetAt(i);
+		if( 31 == cFuncInfo.m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
-					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfo.m_nFuncLineCRLF,
+					cFuncInfo.m_strFuncName.c_str()
 				);
 			}else{
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
-					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfo.m_nFuncLineLAYOUT,
+					cFuncInfo.m_strFuncName.c_str()
 				);
 			}
 			nIndex = Combo_AddString( hwndCtrl, szText );
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfo.m_nFuncLineCRLF );
 			}
 			else{
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfo.m_nFuncLineLAYOUT );
 			}
 			nPLSQLBlockNum++;
 		}
-		if( 41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
+		if( 41 == cFuncInfo.m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
-					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfo.m_nFuncLineCRLF,
+					cFuncInfo.m_strFuncName.c_str()
 				);
 			}else{
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
-					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfo.m_nFuncLineLAYOUT,
+					cFuncInfo.m_strFuncName.c_str()
 				);
 			}
 			nIndexCurSel = nIndex = Combo_AddString( hwndCtrl, szText );
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				nWorkLine = (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF;
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
+				nWorkLine = (Int)cFuncInfo.m_nFuncLineCRLF;
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfo.m_nFuncLineCRLF );
 			}else{
-				nWorkLine = (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT;
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
+				nWorkLine = (Int)cFuncInfo.m_nFuncLineLAYOUT;
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfo.m_nFuncLineLAYOUT );
 			}
 			++nPLSQLBlockNum;
 		}
