@@ -1,0 +1,48 @@
+name: MinGW Build and Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  mingw:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    env:
+      BuildPlatform: MinGW
+      Configuration: ${{ matrix.configuration }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-make
+            
+      - run: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
+        shell: cmd
+            
+      - run: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm p7zip"
+        shell: cmd
+
+      - name: Show environment variables for debug
+        run: set
+        shell: cmd
+
+      - name: Build with MinGW-w64-gcc
+        shell: msys2 {0}
+        run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+
+      - name: Run unit tests
+        shell: cmd
+        run: tests1.exe --gtest_output=xml:${{ github.workspace }}/tests1.exe-googletest-${{ env.BuildPlatform }}-${{ env.Configuration }}.xml
+        working-directory: ${{ github.workspace }}/${{ env.BuildPlatform }}/${{ env.Configuration }}
