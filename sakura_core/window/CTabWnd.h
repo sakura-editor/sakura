@@ -170,7 +170,6 @@ private:
 	int			m_iIconApp;				//!< アプリケーションアイコンのインデックス
 	int			m_iIconGrep;			//!< Grepアイコンのインデックス
 
-	BOOL		m_bVisualStyle;			//!< ビジュアルスタイルかどうか	// 2007.04.01 ryoji
 	BOOL		m_bHovering;
 	BOOL		m_bListBtnHilighted;
 	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji

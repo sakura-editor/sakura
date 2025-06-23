@@ -28,7 +28,7 @@
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "uiparts/CGraphics.h"
-#include "util/os.h" //WM_THEMECHANGED
+#include "util/os.h"
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
@@ -152,11 +152,8 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		::InvalidateRect( GetHwnd(), NULL, TRUE );	// アクティブタブの位置が変わるのでトップバンドを更新する	// 2006.03.27 ryoji
 		break;
 
-	case WM_THEMECHANGED:
-		m_bVisualStyle = ::IsVisualStyle();
+	default:
 		break;
-
-	//default:
 	}
 
 	return 1L;	//デフォルトのディスパッチにまわす
@@ -796,7 +793,6 @@ CTabWnd::CTabWnd()
 : CWnd(L"::CTabWnd")
 , m_eTabPosition( TabPosition_None )
 , m_eDragState( DRAG_NONE )
-, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
 , m_bHovering( FALSE )	//	2006.02.01 ryoji
 , m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
 , m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
@@ -835,7 +831,6 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
 	m_hwndToolTip = NULL;
-	m_bVisualStyle = ::IsVisualStyle();	// 2007.04.01 ryoji
 	m_eDragState = DRAG_NONE;	//	2005.09.29 ryoji
 	m_bHovering = FALSE;			// 2006.02.01 ryoji
 	m_bListBtnHilighted = FALSE;	// 2006.02.01 ryoji
