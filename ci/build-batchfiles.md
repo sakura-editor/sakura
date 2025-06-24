@@ -32,7 +32,6 @@
 |[tests\googletest.build.cmd](../tests/googletest.build.cmd) | Google Test をビルドする |
 |[tests\compiletests.run.cmd](../tests/compiletests.run.cmd) | コンパイルテストを実行する |
 |[build-sonar-qube-finish.bat](../build-sonar-qube-finish.bat) | SonarQube の解析結果をアップロードする |
-|[parse-buildlog.bat](../parse-buildlog.bat) | ビルドログを解析する |
 |[build-chm.bat](../build-chm.bat) | compiled HTML ファイルをビルドする |
 |[build-installer.bat](../build-installer.bat) | インストーラをビルドする |
 |[zipArtifacts.bat](../zipArtifacts.bat) | 成果物を zip ファイルにまとめる |
@@ -65,10 +64,6 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
                 - cmake.exe
         - [build-sonar-qube-finish.bat](../build-sonar-qube-finish.bat)
             - [build-sonar-qube-env.bat](../build-sonar-qube-env.bat)
-        - [parse-buildlog.bat](../parse-buildlog.bat)
-            - [appveyor_env.py](../appveyor_env.py) : AppVeyor の環境変数を再現できる `set_appveyor_env.bat` を生成する。(成果物に含まれる)
-            - [parse-buildlog.py](../parse-buildlog.py)
-                - [appveyor_env.py](../appveyor_env.py)
     - [build-gnu.bat](../build-gnu.bat)
         - mingw32-make.exe sakura_core
             - [sakura\githash.bat](../sakura/githash.bat)
@@ -98,7 +93,6 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
 |build-gnu.bat       | platform ("MinGW") | configuration ("Debug" または "Release")  |
 |sakura\preBuild.bat | HeaderMake.exe の実行ファイルのフォルダーパス | なし |
 |sakura\postBuild.bat| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|parse-buildlog.bat  | msbuild のビルドログパス | なし |
 |build-chm.bat       | なし | なし |
 |build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |zipArtifacts.bat    | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |

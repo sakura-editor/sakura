@@ -63,12 +63,6 @@ if errorlevel 1 (
 	exit /b 1
 )
 
-@echo call parse-buildlog.bat %LOG_FILE%
-      call parse-buildlog.bat %LOG_FILE%
-if errorlevel 1 (
-	echo ERROR in parse-buildlog.bat errorlevel %errorlevel%
-	exit /b 1
-)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
