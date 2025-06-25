@@ -94,32 +94,17 @@ exit /b 0
 
 	if defined APPVEYOR_ACCOUNT_NAME (
 		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
-	) else if defined BUILD_DEFINITIONNAME (
-		set CI_ACCOUNT_NAME=%BUILD_DEFINITIONNAME%
 	)
 
-	@rem ----------------------------------------------------------------------------------------------------------
-	@rem Be aware the following rules.
-	@rem BUILD_BUILDID     (at azure pipeline) is the counterpart of APPVEYOR_BUILD_NUMBER  (at appveyor).
-	@rem BUILD_BUILDNUMBER (at azure pipeline) is the counterpart of APPVEYOR_BUILD_VERSION (at appveyor).
-	@rem ----------------------------------------------------------------------------------------------------------
-	@rem This is super confusing.
-	@rem BUILD_BUILDNUMBER (at azure pipeline) and APPVEYOR_BUILD_NUMBER (at appveyor) are different information.
 	@rem ----------------------------------------------------------------------------------------------------------
 	if defined APPVEYOR_BUILD_NUMBER (
 		@rem APPVEYOR_BUILD_NUMBER=1624
 		set CI_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
-	) else if defined BUILD_BUILDID (
-		@rem example BUILD_BUILDID=672
-		set CI_BUILD_NUMBER=%BUILD_BUILDID%
 	)
 
 	if defined APPVEYOR_BUILD_VERSION (
 		@rem APPVEYOR_BUILD_VERSION=1.0.1624
 		set CI_BUILD_VERSION=%APPVEYOR_BUILD_VERSION%
-	) else if defined BUILD_BUILDNUMBER (
-		@rem example BUILD_BUILDNUMBER=20200205.4
-		set CI_BUILD_VERSION=%BUILD_BUILDNUMBER%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_NUMBER (
@@ -158,7 +143,6 @@ exit /b 0
 
 :set_ci_build_url
 	call :set_ci_build_url_for_appveyor
-	call :set_ci_build_url_for_azurepipelines
 	call :set_ci_build_url_for_githubactions
 	exit /b 0
 
@@ -170,14 +154,6 @@ exit /b 0
 	if not defined APPVEYOR_BUILD_VERSION exit /b 0
 	set BUILD_ENV_NAME=Appveyor
 	set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
-	exit /b 0
-
-:set_ci_build_url_for_azurepipelines
-	if not defined SYSTEM_TEAMFOUNDATIONSERVERURI exit /b 0
-	if not defined SYSTEM_TEAMPROJECT             exit /b 0
-	if not defined BUILD_BUILDID                  exit /b 0
-	set BUILD_ENV_NAME=AZP
-	set CI_BUILD_URL=%SYSTEM_TEAMFOUNDATIONSERVERURI%%SYSTEM_TEAMPROJECT%/_build/results?buildId=%BUILD_BUILDID%
 	exit /b 0
 
 :set_ci_build_url_for_githubactions
