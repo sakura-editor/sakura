@@ -42,20 +42,6 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
     - 成果物に含まれる `set_appveyor_env.bat` を使用して設定することもできます。
 * 上記の環境変数がどんな値になるのかは、過去の appveyor ビルドでのログを見ることによって確認できます。
 
-### Azure Pipelines
-
-|環境変数|説明|
-|--|--|
-|SYSTEM_TEAMFOUNDATIONSERVERURI | `https://dev.azure.com/sakuraeditor/` |
-|BUILD_DEFINITIONNAME | Azure Pipeline のアカウント名 |
-|SYSTEM_TEAMPROJECT | Azure Pipelines のプロジェクト名 |
-|BUILD_REPOSITORY_PROVIDER | Pipeline が参照するリポジトリの種別 (GitHubの場合 "GitHub") |
-|BUILD_REPOSITORY_NAME|リポジトリ名 (owner-name/repo-name)|
-|BUILD_BUILDNUMBER|ビルドバージョン (文字列)|
-|BUILD_BUILDID|ビルド番号 (数値)|
-|SYSTEM_PULLREQUEST_PULLREQUESTNUMBER|Pull Request 番号|
-|SYSTEM_PULLREQUEST_SOURCECOMMITID|Pull Request の Head commit Hash|
-
 ## githash.h で生成するマクロ
 
 |生成するマクロ名|元にする環境変数|型|
