@@ -134,10 +134,6 @@ vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 
 [こちら](ci/build-envvars.md) を参照してください。
 
-## PR(Pull Request) を簡単にローカルに取得する方法
-
-- [PR(Pull Request) を簡単にローカルに取得する方法](get-PR.md)
-
 ## CI Build (Azure Pipelines)
 
 ### ビルドの仕組み (Azure Pipelines)
