@@ -140,7 +140,7 @@ jobs:
           $env:GITHUB_SHA = $(git show -s --format=%H)
           $env:GITHUB_REF = 'refs/pull/${{ github.event.number }}/merge'
         }
-        .\.sonar\scanner\bin\sonar-scanner.bat `
+        .\.sonar\scanner\bin\sonar-scanner.bat -X `
         -D"sonar.organization=${{ github.repository_owner }}" `
         -D"sonar.projectKey=$('${{ github.repository }}' -replace '/', '_')" `
         -D"sonar.host.url=https://sonarcloud.io" `
