@@ -69,7 +69,6 @@ GUI でステップ実行することができます。
         - cmake.exe
     - [tests\run-tests.bat](run-tests.bat)
         - tests\tests*.exe : 単体テストを実行する
-        - [tests\test_result_filter_tell_AppVeyor.bat](test_result_filter_tell_AppVeyor.bat) : AppVeyor のテストタブにテスト結果を出力する
 
 ### 使用するバッチファイルの引数
 
