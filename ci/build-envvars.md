@@ -21,27 +21,6 @@
 
 ## 入力として使用する環境変数
 
-### Appveyor
-
-| 環境変数 | 説明 |
-----|---- 
-|APPVEYOR                           | バッチが appveyor で実行されているかどうか  |
-|APPVEYOR_URL                       | https://ci.appveyor.com |
-|APPVEYOR_ACCOUNT_NAME              | AppVeyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
-|APPVEYOR_PROJECT_SLUG              | AppVeyor のプロジェクト名 |
-|APPVEYOR_REPO_PROVIDER             | AppVeyor が参照するリポジトリの種別 (GitHub の場合 "gitHub") |
-|APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
-|APPVEYOR_BUILD_VERSION             | ビルドバージョン (文字列) |
-|APPVEYOR_BUILD_NUMBER              | ビルド番号 (数値) |
-|APPVEYOR_PULL_REQUEST_NUMBER       | Pull Request 番号 |
-|APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
-
-APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使うようにしました。[#876](https://github.com/sakura-editor/sakura/pull/876)
-
-* 上記環境変数をローカル環境で set コマンドで設定することにより appveyor でビルドしなくてもローカルでテストできます。
-    - 成果物に含まれる `set_appveyor_env.bat` を使用して設定することもできます。
-* 上記の環境変数がどんな値になるのかは、過去の appveyor ビルドでのログを見ることによって確認できます。
-
 ## githash.h で生成するマクロ
 
 |生成するマクロ名|元にする環境変数|型|
