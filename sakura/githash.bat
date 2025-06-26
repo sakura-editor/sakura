@@ -117,7 +117,8 @@ exit /b 0
 	if "%APPVEYOR_REPO_PROVIDER%"=="gitHub" (
 		set GITHUB_ON=1
 	)
-        set PREFIX_GITHUB=https://github.com
+
+	set PREFIX_GITHUB=https://github.com
 	if "%GITHUB_ON%" == "1" (
 		set "GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/commit/%GIT_COMMIT_HASH%"
 		@rem Not Pull Request
