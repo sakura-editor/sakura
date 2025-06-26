@@ -2,22 +2,22 @@
 
 ## githash.bat で設定する環境変数
 
-|||ローカルビルド|Appveyor|gitbash.h への出力|
-|--|--|--|--|--|
-|GIT_COMMIT_HASH|git の commit Hash|◎|◎|◎|
-|GIT_SHORT_COMMIT_HASH|git の commit Hash 短縮形|◎|◎|◎|
-|GIT_REMOTE_ORIGIN_URL|git remote origin URL|◎|◎|◎|
-|GIT_TAG_NAME|git の tag|◎|◎|◎|
-|CI_ACCOUNT_NAME|CI のアカウント名|×|◎|◎|
-|CI_REPO_NAME|リポジトリ名|×|◎|◎|
-|CI_BUILD_VERSION|CI のビルドバージョン (文字列)|×|◎|◎|
-|CI_BUILD_NUMBER|CI のビルド番号 (数値)|×|◎|◎|
-|CI_BUILD_URL|CI のビルドURL|×|◎|◎|
-|GITHUB_COMMIT_URL|GitHub の Commit URL|×|◎|◎|
-|GITHUB_PR_NUMBER|GitHub の PR 番号|×|○ (PRのみ)|○ (PRのみ)|
-|GITHUB_PR_HEAD_COMMIT | GitHub の PR の Head commit Hash | × |○ (PRのみ) |○ (PRのみ) |
-|GITHUB_PR_HEAD_SHORT_COMMIT | GitHub の PR の Head commit Hash 短縮形 | × |○ (PRのみ) |○ (PRのみ) |
-|GITHUB_PR_HEAD_URL | GitHub の PR の Head commit の URL | × |○ (PRのみ) |○ (PRのみ) |
+|||ローカルビルド|gitbash.h への出力|
+|--|--|--|--|
+|GIT_COMMIT_HASH|git の commit Hash|◎|◎|
+|GIT_SHORT_COMMIT_HASH|git の commit Hash 短縮形|◎|◎|
+|GIT_REMOTE_ORIGIN_URL|git remote origin URL|◎|◎|
+|GIT_TAG_NAME|git の tag|◎|◎|
+|CI_ACCOUNT_NAME|CI のアカウント名|×|◎|
+|CI_REPO_NAME|リポジトリ名|×|◎|
+|CI_BUILD_VERSION|CI のビルドバージョン (文字列)|×|◎|
+|CI_BUILD_NUMBER|CI のビルド番号 (数値)|×|◎|
+|CI_BUILD_URL|CI のビルドURL|×|◎|
+|GITHUB_COMMIT_URL|GitHub の Commit URL|×|◎|
+|GITHUB_PR_NUMBER|GitHub の PR 番号|×|○ (PRのみ)|
+|GITHUB_PR_HEAD_COMMIT | GitHub の PR の Head commit Hash | × |○ (PRのみ) |
+|GITHUB_PR_HEAD_SHORT_COMMIT | GitHub の PR の Head commit Hash 短縮形 | × |○ (PRのみ) |
+|GITHUB_PR_HEAD_URL | GitHub の PR の Head commit の URL | × |○ (PRのみ) |
 
 ## 入力として使用する環境変数
 
