@@ -37,7 +37,7 @@ struct StdWStringBuffer : public IWBuffer {
 		try {
 			wstr->reserve(nDataLen);
 		}
-		catch (std::bad_alloc& exp) {
+		catch (std::bad_alloc&) {
 			;
 		}
 	}
