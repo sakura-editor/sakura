@@ -142,9 +142,6 @@ vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 
 ## CI Build (AppVeyor)
 
-### ビルドの仕組み (AppVeyor)
-
-AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行っています。
 ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
 ### ビルド成果物を利用する上での注意事項
