@@ -84,7 +84,7 @@ static void InvokeWinMainIfNeeded(std::wstring_view commandLine)
 /*!
  * テストモジュールのエントリポイント
  */
-int main(int argc, char **argv) {
+int wmain(int argc, wchar_t **argv) {
 	// コマンドラインに -PROF 指定がある場合、wWinMainを起動して終了する。
 	InvokeWinMainIfNeeded(::GetCommandLineW());
 
