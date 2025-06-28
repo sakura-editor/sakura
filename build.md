@@ -114,9 +114,6 @@ build-all.bat Win32 Release
 
 ## ビルドの仕組み
 
-### appveyor でのビルドの仕組み
-
-AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行っています。
 ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
 ### Azure Pipelines でのビルドの仕組み
