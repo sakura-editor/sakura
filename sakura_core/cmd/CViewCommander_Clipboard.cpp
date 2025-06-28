@@ -477,7 +477,7 @@ void CViewCommander::Command_INSTEXT(
 	}
 
 	if( nTextLen < 0 ){
-		nTextLen = CLogicInt(wcslen( pszText ));
+		nTextLen = wcslen( pszText );
 	}
 
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(),
