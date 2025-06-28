@@ -15,7 +15,6 @@
 #include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "dlg/CDlgOpenFile.h"
-#include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
 #include "view/colors/EColorIndexType.h"
 #include "charset/CCodePage.h"

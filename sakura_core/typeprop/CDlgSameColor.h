@@ -40,14 +40,11 @@ protected:
 	BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ) override;	//!< WM_DRAWITEM 処理
 	BOOL OnSelChangeListColors( HWND hwndCtl );					//!< 色選択リストの LBN_SELCHANGE 処理
 
-	static LRESULT CALLBACK ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	//!< サブクラス化された指定色スタティックのウィンドウプロシージャ
-	static LRESULT CALLBACK ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	//!< サブクラス化された色選択リストのウィンドウプロシージャ
+	static LRESULT CALLBACK ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );	//!< サブクラス化された指定色スタティックのウィンドウプロシージャ
+	static LRESULT CALLBACK ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );	//!< サブクラス化された色選択リストのウィンドウプロシージャ
 
-	WNDPROC m_wpColorStaticProc;	//!< サブクラス化以前の指定色スタティックのウィンドウプロシージャ
-	WNDPROC m_wpColorListProc;		//!< サブクラス化以前の色選択リストのウィンドウプロシージャ
-
-	WORD m_wID;			//!< タイプ別設定ダイアログ（親ダイアログ）で押されたボタンID
-	STypeConfig* m_pTypes;	//!< タイプ別設定データ
-	COLORREF m_cr;		//!< 指定色
+	WORD m_wID = 0;			//!< タイプ別設定ダイアログ（親ダイアログ）で押されたボタンID
+	STypeConfig* m_pTypes = nullptr;	//!< タイプ別設定データ
+	COLORREF m_cr = 0;		//!< 指定色
 };
 #endif /* SAKURA_CDLGSAMECOLOR_181C0F46_A420_4A62_A543_FE2B88C20FBE_H_ */
