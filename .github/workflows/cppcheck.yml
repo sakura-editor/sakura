@@ -4,17 +4,13 @@ on:
   push:
     paths-ignore:
       - '**/*.md'
-      - '.github/*'
       - '.gitignore'
       - '.editorconfig'
-      - 'appveyor.yml'
   pull_request:
     paths-ignore:
       - '**/*.md'
-      - '.github/*'
       - '.gitignore'
       - '.editorconfig'
-      - 'appveyor.yml'
   workflow_dispatch:
 
 jobs:

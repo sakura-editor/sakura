@@ -7,20 +7,14 @@ on:
   push:
     paths-ignore:
       - '**/*.md'
-      - 'ci/**/*'
       - .gitignore
       - .editorconfig
-      - appveyor.yml
-      - azure-pipelines.yml
   pull_request_target:
     types: [opened, synchronize]
     paths-ignore:
       - '**/*.md'
-      - 'ci/**/*'
       - .gitignore
       - .editorconfig
-      - appveyor.yml
-      - azure-pipelines.yml
   schedule:
     - cron:  '45 7 * * FRI'
 
