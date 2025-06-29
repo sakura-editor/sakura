@@ -4,7 +4,7 @@ on:
   push:
     paths-ignore:
       - '**/*.md'
-      - '.github/*'
+      - '.gitignore'
       - '.editorconfig'
   pull_request:
     paths-ignore:
