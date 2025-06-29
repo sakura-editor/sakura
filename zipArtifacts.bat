@@ -129,7 +129,6 @@ if not "%RELEASE_PHASE%" == "" (
 
 @rem ---------------------- BASENAME ---------------------------------
 @rem "sakura"
-@rem BUILD_ACCOUNT: (option) APPVEYOR_ACCOUNT_NAME
 @rem TAG_NAME     : (option) tag Name
 @rem PR_NAME      : (option) PRxxx (xxx is a PR number)
 @rem BUILD_NUMBER : (option) buildYYY or "buildLocal" (YYY is build number)
@@ -243,10 +242,6 @@ if exist "cppcheck-%platform%-%configuration%.log" (
 )
 if exist "doxygen-%platform%-%configuration%.log" (
 	copy /Y "doxygen-%platform%-%configuration%.log" %WORKDIR_LOG%\
-)
-
-if exist "set_appveyor_env.bat" (
-	copy /Y "set_appveyor_env.bat" %WORKDIR_LOG%\
 )
 
 set HASHFILE=sha256.txt

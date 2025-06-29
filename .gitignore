@@ -27,7 +27,6 @@ msbuild-*.log.csv
 msbuild-*.log.xlsx
 sakura-*.zip
 sakura-*.zip.md5
-set_appveyor_env.bat
 sha256.txt
 tags
 testData_*.txt

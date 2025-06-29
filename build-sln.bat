@@ -29,12 +29,7 @@ set SLN_FILE=sakura.sln
 
 @rem https://www.appveyor.com/docs/environment-variables/
 
-if "%APPVEYOR%"=="True" (
-    set EXTRA_CMD=/verbosity:minimal /logger:"%ProgramFiles%\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-) else (
-    set EXTRA_CMD=
-)
-
+set EXTRA_CMD=
 set LOG_FILE=msbuild-%platform%-%configuration%.log
 @rem https://msdn.microsoft.com/ja-jp/library/ms171470.aspx
 set LOG_OPTION=/flp:logfile=%LOG_FILE%

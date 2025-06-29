@@ -11,7 +11,6 @@ set OUT_DIR=%OUT_DIR:/=\%
 @echo.
 @echo ---- Make githash.h ----
 call :set_git_variables
-call :set_repo_and_pr_variables
 call :set_ci_build_url
 call :update_output_githash
 exit /b 0
@@ -85,65 +84,8 @@ exit /b 0
 	)
 	exit /b 0
 
-:set_repo_and_pr_variables
-	if defined APPVEYOR_REPO_NAME (
-		set CI_REPO_NAME=%APPVEYOR_REPO_NAME%
-	)
-
-	if defined APPVEYOR_ACCOUNT_NAME (
-		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
-	)
-
-	@rem ----------------------------------------------------------------------------------------------------------
-	if defined APPVEYOR_BUILD_NUMBER (
-		@rem APPVEYOR_BUILD_NUMBER=1624
-		set CI_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
-	)
-
-	if defined APPVEYOR_BUILD_VERSION (
-		@rem APPVEYOR_BUILD_VERSION=1.0.1624
-		set CI_BUILD_VERSION=%APPVEYOR_BUILD_VERSION%
-	)
-
-	if defined APPVEYOR_PULL_REQUEST_NUMBER (
-		set GITHUB_PR_NUMBER=%APPVEYOR_PULL_REQUEST_NUMBER%
-	)
-
-	if defined APPVEYOR_PULL_REQUEST_HEAD_COMMIT (
-		set GITHUB_PR_HEAD_SHORT_COMMIT=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT:~0,8%
-		set GITHUB_PR_HEAD_COMMIT=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
-	)
-
-	if "%APPVEYOR_REPO_PROVIDER%"=="gitHub" (
-		set GITHUB_ON=1
-	)
-
-	set PREFIX_GITHUB=https://github.com
-	if "%GITHUB_ON%" == "1" (
-		set "GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/commit/%GIT_COMMIT_HASH%"
-		@rem Not Pull Request
-		if "%GITHUB_PR_NUMBER%" == "" (
-			@rem No PR
-		) else (
-			@rem PR URL
-			set "GITHUB_PR_HEAD_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/pull/%GITHUB_PR_NUMBER%/commits/%GITHUB_PR_HEAD_COMMIT%"
-		)
-	)
-	exit /b 0
-
 :set_ci_build_url
-	call :set_ci_build_url_for_appveyor
 	call :set_ci_build_url_for_githubactions
-	exit /b 0
-
-:set_ci_build_url_for_appveyor
-	if not defined APPVEYOR               exit /b 0
-	if not defined APPVEYOR_URL           exit /b 0
-	if not defined APPVEYOR_ACCOUNT_NAME  exit /b 0
-	if not defined APPVEYOR_PROJECT_SLUG  exit /b 0
-	if not defined APPVEYOR_BUILD_VERSION exit /b 0
-	set BUILD_ENV_NAME=Appveyor
-	set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
 	exit /b 0
 
 :set_ci_build_url_for_githubactions
@@ -195,9 +137,6 @@ exit /b 0
 		@echo GITHUB_PR_HEAD_SHORT_COMMIT : %GITHUB_PR_HEAD_SHORT_COMMIT%
 		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
 		@echo GITHUB_PR_HEAD_URL          : %GITHUB_PR_HEAD_URL%
-		@echo.
-		@echo APPVEYOR_URL          : %APPVEYOR_URL%
-		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 		@echo.
 		@echo BUILD_ENV_NAME        : %BUILD_ENV_NAME%
 		@echo BUILD_VERSION         : %BUILD_VERSION%
@@ -305,22 +244,6 @@ exit /b 0
 	) else (
 		echo #define CI_BUILD_URL                  "%CI_BUILD_URL%"
 	)
-
-	echo // APPVEYOR specific variables
-
-	if "%APPVEYOR_URL%" == "" (
-		echo // APPVEYOR_URL is not defined
-	) else (
-		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
-	)
-
-	if "%APPVEYOR_PROJECT_SLUG%" == "" (
-		echo // APPVEYOR_PROJECT_SLUG is not defined
-	) else (
-		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
-	)
-	echo // APPVEYOR specific variables end
-	echo //
 
 	echo #define BUILD_ENV_NAME "%BUILD_ENV_NAME%"
 	echo #define BUILD_VERSION %BUILD_VERSION%
