@@ -10,15 +10,6 @@
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
-// NULL定義補正
-// 詳細はStdAfx.hを参照
-#ifdef __cplusplus
-# pragma warning( push )
-# pragma warning( disable : 4005 )
-# define NULL nullptr
-# pragma warning( pop )
-#endif // end of #ifdef __cplusplus
-
 /*!
 	CStringRefのテスト
  */
@@ -259,7 +250,7 @@ TEST(CNativeW, AssignString)
 TEST(CNativeW, AssignStringNullPointer)
 {
 	CNativeW value(L"test");
-	value = NULL;
+	value = nullptr;	// NULLではなくnullptrを使うよう修正
 	EXPECT_EQ(0, value.GetStringLength());
 	EXPECT_EQ(NULL, value.GetStringPtr());
 }
@@ -272,7 +263,7 @@ TEST(CNativeW, AssignStringNullPointer)
 TEST(CNativeW, AssignStringNullLiteral)
 {
 	CNativeW value(L"test");
-	value = NULL;
+	value = nullptr;	// NULLではなくnullptrを使うよう修正
 	ASSERT_EQ(NULL, value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
 }
@@ -319,7 +310,7 @@ TEST(CNativeW, AppendStringNullPointer)
 {
 	CNativeW org(L"orz");
 	CNativeW value(org);
-	value += NULL;
+	value += nullptr;	// NULLではなくnullptrを使うよう修正
 	EXPECT_EQ(value.GetStringLength(), org.GetStringLength());
 	EXPECT_EQ(org, value);
 }
@@ -352,7 +343,7 @@ TEST(CNativeW, AppendStringWithFormatting)
 	ASSERT_EQ(L"いちご25%", value);
 
 	// 未確保状態からの書式化をテストする
-	value = NULL; //テスト前の初期値(未確保
+	value = nullptr; //テスト前の初期値(未確保
 	value.AppendStringF( L"KEY[%03d]", 12 );
 	ASSERT_EQ( L"KEY[012]", value );
 
@@ -367,7 +358,7 @@ TEST(CNativeW, AppendStringWithFormatting)
 	// フォーマット出力長2047字を超える条件をテストする
 	{
 		std::wstring longText( 2048, L'=' );
-		value = NULL; //テスト前の初期値(未確保
+		value = nullptr; //テスト前の初期値(未確保
 		value.AppendStringF( L"%s", longText.c_str() );
 		ASSERT_EQ( longText.c_str(), value );
 	}
@@ -390,7 +381,7 @@ TEST(CNativeW, operatorEqualNull)
 TEST(CNativeW, operatorEqualNullptr)
 {
 	CNativeW value;
-	ASSERT_EQ(value, NULL);
+	ASSERT_EQ(value, nullptr);	// NULLではなくnullptrを使うよう修正
 }
 
 /*!
@@ -533,7 +524,7 @@ TEST(CNativeW, operatorNotEqualNullptr)
 {
 	constexpr const wchar_t text[] = L"おっす！オラ(ry";
 	CNativeW value(text);
-	ASSERT_NE(value, NULL);
+	ASSERT_NE(value, nullptr);	// NULLではなくnullptrを使うよう修正
 }
 
 /*!
