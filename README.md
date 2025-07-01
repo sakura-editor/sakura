@@ -132,14 +132,6 @@ vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 
 [こちら](ci/build-envvars.md) を参照してください。
 
-## CI Build (Azure Pipelines)
-
-### ビルドの仕組み (Azure Pipelines)
-
-[azure-pipelines.md](ci/azure-pipelines/azure-pipelines.md) でビルドの仕組みを説明しています。
-
-## CI Build (AppVeyor)
-
 ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
 ### ビルド成果物を利用する上での注意事項
