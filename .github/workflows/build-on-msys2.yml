@@ -2,7 +2,15 @@ name: MinGW Build and Test
 
 on:
   push:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
   workflow_dispatch:
 
 jobs:
