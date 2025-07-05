@@ -85,8 +85,8 @@ public:
 	INT_PTR DoPropertySheet(int nPageNum, bool bTrayProc);	/* プロパティシートの作成 */
 
 	// 2002.12.11 Moca 追加
-	void InitData(const int* tempTypeKeywordSet = NULL, const WCHAR* name = NULL, const WCHAR* exts = NULL );	//!< DLLSHAREDATAから一時データ領域に設定を複製する
-	void ApplyData(int* tempTypeKeywordSet = NULL );	//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
+	void InitData(const int* tempTypeKeywordSet = nullptr, const WCHAR* name = nullptr, const WCHAR* exts = nullptr );	//!< DLLSHAREDATAから一時データ領域に設定を複製する
+	void ApplyData(int* tempTypeKeywordSet = nullptr );	//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
 	int GetPageNum(){ return m_nPageNum; }
 
 	//

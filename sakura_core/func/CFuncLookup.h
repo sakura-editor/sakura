@@ -48,7 +48,7 @@ public:
 	// 2007.11.02 ryoji 引数変更（CSMacroMgr->MacroRec）
 //	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom )
 //		: m_pMacroRec( pMacroRec ), m_pCommon( pCom ) {}
-	CFuncLookup() : m_pMacroRec( NULL ){}
+	CFuncLookup() : m_pMacroRec( nullptr ){}
 
 	void Init( MacroRec* pMacroRec, CommonSetting* pCom ){
 		m_pMacroRec = pMacroRec;

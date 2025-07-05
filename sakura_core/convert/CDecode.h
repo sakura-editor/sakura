@@ -25,7 +25,7 @@ public:
 	{
 		bool bRet=DoDecode(pcData, pDest);
 		if(!bRet){
-			ErrorMessage(NULL,LS(STR_CONVERT_ERR));
+			ErrorMessage(nullptr,LS(STR_CONVERT_ERR));
 			pDest->SetRawData( "", 0 );
 			return false;
 		}

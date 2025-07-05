@@ -141,7 +141,7 @@ const wchar_t* wcsistr( const wchar_t* s1, const wchar_t* s2 )
 		if(wmemicmp(p,s2,len2)==0)return p;
 		p++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 const char* stristr(const char* s1, const char* s2)
@@ -154,7 +154,7 @@ const char* stristr(const char* s1, const char* s2)
 		if(amemicmp(p,s2,len2)==0)return p;
 		p++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!
@@ -170,7 +170,7 @@ const char* strichr_j( const char* s1, char c2 )
 		if( my_toupper( *p1 ) == C2 ) return p1;
 		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!
@@ -185,7 +185,7 @@ const char* strchr_j(const char* str, char c)
 		if( *p1 == c ) return p1;
 		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!
@@ -201,7 +201,7 @@ const char* strstr_j(const char* s1, const char* s2)
 		if( strncmp( p1, s2, n ) == 0 ) return p1;
 		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!
@@ -221,7 +221,7 @@ const char* stristr_j( const char* s1, const char* s2 )
 		if( my_strnicmp( p1, s2, n ) == 0 ) return p1;
 		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!
@@ -486,7 +486,7 @@ size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
 //SJIS→UNICODE。戻り値はnew[]で確保して返す。
 wchar_t* mbstowcs_new(const char* src)
 {
-	size_t new_length=mbstowcs(NULL,src,0);
+	size_t new_length=mbstowcs(nullptr,src,0);
 	wchar_t* ret=new wchar_t[new_length+1];
 	mbstowcs(ret,src,new_length);
 	ret[new_length]=L'\0';
@@ -500,7 +500,7 @@ wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
 		0,
 		pSrc,
 		nSrcLen,
-		NULL,
+		nullptr,
 		0
 	);
 	
@@ -537,10 +537,10 @@ char* wcstombs_new(const wchar_t* pSrc,int nSrcLen)
 		0,
 		pSrc,
 		nSrcLen,
-		NULL,
+		nullptr,
 		0,
-		NULL,
-		NULL
+		nullptr,
+		nullptr
 	);
 
 	//確保
@@ -554,8 +554,8 @@ char* wcstombs_new(const wchar_t* pSrc,int nSrcLen)
 		nSrcLen,
 		pNew,
 		nNewLength,
-		NULL,
-		NULL
+		nullptr,
+		nullptr
 	);
 	pNew[nNewLength] = '\0';
 
@@ -577,7 +577,7 @@ void mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret)
 		0,
 		pSrc,
 		nSrcLen,
-		NULL,
+		nullptr,
 		0
 	);
 
@@ -609,10 +609,10 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 		0,
 		pSrc,
 		nSrcLen,
-		NULL,
+		nullptr,
 		0,
-		NULL,
-		NULL
+		nullptr,
+		nullptr
 	);
 
 	//確保
@@ -626,8 +626,8 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 		nSrcLen,
 		&(*ret)[0],
 		nNewLen,
-		NULL,
-		NULL
+		nullptr,
+		nullptr
 	);
 	(*ret)[nNewLen]='\0';
 }
@@ -810,7 +810,7 @@ CHAR_TYPE* my_strtok(
 
 	do {
 		bool bFlag = false;	//ダブルコーテーションの中か？
-		if( i >= nLen ) return NULL;
+		if( i >= nLen ) return nullptr;
 		p = &pBuffer[i];
 		for( ; i < nLen; i++ )
 		{

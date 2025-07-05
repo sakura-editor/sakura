@@ -20,9 +20,9 @@ CRecentReplace::CRecentReplace()
 		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr(),
 		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef(),
-		NULL,
+		nullptr,
 		MAX_REPLACEKEY,
-		NULL
+		nullptr
 	);
 }
 

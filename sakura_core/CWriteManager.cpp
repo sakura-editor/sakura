@@ -104,7 +104,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				prevTime = currTime;
 				NotifyProgress(nLineNumber * 100 / pcDocLineMgr.GetLineCount());
 				// 処理中のユーザー操作を可能にする
-				if( !::BlockingHook( NULL ) ){
+				if( !::BlockingHook( nullptr ) ){
 					throw CAppExitException(); //中断検出
 				}
 			}

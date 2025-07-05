@@ -1312,7 +1312,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	CLogicRange sRangeA;
 	sRangeA.Clear(-1);
 
-	wchar_t*	pszData = NULL;
+	wchar_t*	pszData = nullptr;
 	CLogicInt	nDataLen;
 
 	int			nWork = 0;
@@ -1325,7 +1325,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 
 	CLogicPoint	ptCP;
 
-	if(wcChar==WCODE::CR || wcschr(L":{}()",wcChar)!=NULL){
+	if(wcChar==WCODE::CR || wcschr(L":{}()",wcChar)!=nullptr){
 		//次へ進む
 	}else return;
 
@@ -1341,7 +1341,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		nCaretPosX_PHY = GetCaret().GetCaretLogicPos().x;
 
 		pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2())->GetDocLineStrWithEOL(&nLineLen);
-		if( NULL == pLine ){
+		if( nullptr == pLine ){
 			if( WCODE::CR != wcChar ){
 				return;
 			}
@@ -1411,7 +1411,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			pLine2 = m_pcEditDoc->m_cDocLineMgr.GetLine(j)->GetDocLineStrWithEOL(&nLineLen2);
 			if( j == GetCaret().GetCaretLogicPos().y ){
 				// 2005.10.11 ryoji EOF のみの行もスマートインデントの対象にする
-				if( NULL == pLine2 ){
+				if( nullptr == pLine2 ){
 					if( GetCaret().GetCaretLogicPos().y == m_pcEditDoc->m_cDocLineMgr.GetLineCount() )
 						continue;	// EOF のみの行
 					break;
@@ -1419,7 +1419,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				nCharChars = CLogicInt(&pLine2[nWork] - CNativeW::GetCharPrev( pLine2, nLineLen2, &pLine2[nWork] ));
 				k = nWork - nCharChars;
 			}else{
-				if( NULL == pLine2 )
+				if( nullptr == pLine2 )
 					break;
 				nCharChars = CLogicInt(&pLine2[nLineLen2] - CNativeW::GetCharPrev( pLine2, nLineLen2, &pLine2[nLineLen2] ));
 				k = nLineLen2 - nCharChars;
@@ -1435,7 +1435,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				CLayoutPoint pointLayout;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(pointLogic, &pointLayout);
 				const CLayout* layout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pointLayout.GetY() );
-				if( layout == NULL ){
+				if( layout == nullptr ){
 					nMode = 0;
 				}else{
 					EColorIndexType eColorIndex = layout->GetColorTypePrev();
@@ -1652,7 +1652,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			delete [] pszData;
 			return;
 		}
-		if( NULL == pLine ){
+		if( nullptr == pLine ){
 			pszSrc[0] = L'\0';
 		}else{
 			wmemcpy( pszSrc, &pLine[sRangeA.GetFrom().x], nSrcLen );
@@ -1672,7 +1672,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			if( m_pTypeData->m_bIndentCppUndoSep ){
 				//キー入力とインデントを別のアンドゥバッファにする
 				SetUndoBuffer();
-				if( m_cCommander.GetOpeBlk() == NULL ){
+				if( m_cCommander.GetOpeBlk() == nullptr ){
 					m_cCommander.SetOpeBlk(new COpeBlk);
 				}
 				m_cCommander.GetOpeBlk()->AddRef();
@@ -1684,7 +1684,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				pszData,	/* 挿入するデータ */
 				nDataLen,	/* 挿入するデータの長さ */
 				true,
-				m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
+				m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk()
 			);
 		}
 
@@ -1706,9 +1706,9 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		}
 		break;
 	}
-	if( NULL != pszData ){
+	if( nullptr != pszData ){
 		delete [] pszData;
-		pszData = NULL;
+		pszData = nullptr;
 	}
 }
 

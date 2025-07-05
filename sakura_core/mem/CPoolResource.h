@@ -109,7 +109,7 @@ private:
 	// ブロックの先頭(head)にはブロックの連結用のポインタが配置され、残る領域（body）には要素が記録される
 	void AllocateBlock()
 	{
-		char* buff = reinterpret_cast<char*>(VirtualAlloc(NULL, BlockSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
+		char* buff = reinterpret_cast<char*>(VirtualAlloc(nullptr, BlockSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
 		if (!buff) throw std::bad_alloc();
 		Node* next = m_currentBlock;
 		// ブロック領域の先頭（head）はNodeのポインタとして扱い、以前に作成したブロックに連結する

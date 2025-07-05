@@ -38,7 +38,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	nBgn = 0;
 	nPosDes = 0;
 	/* 変換後に必要なバイト数を調べる */
-	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory変更
+	while( nullptr != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory変更
 		if( 0 < nLineLen ){
 			nPosDes += nLineLen;
 		}
@@ -52,7 +52,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	nPosDes = 0;
 	// LTRIM
 	if( m_bLeft ){
-		while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory変更
+		while( nullptr != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				for( i = 0; i <= nLineLen; ++i ){
 					if( WCODE::IsBlank(pLine[i]) ){
@@ -72,7 +72,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	}
 	// RTRIM
 	else{
-		while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory変更
+		while( nullptr != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				// 2005.10.11 ryoji 右から遡るのではなく左から探すように修正（"ａ@" の右２バイトが全角空白と判定される問題の対処）
 				i = j = 0;
@@ -96,6 +96,6 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 
 	pcData->SetString( pDes, nPosDes );
 	delete [] pDes;
-	pDes = NULL;
+	pDes = nullptr;
 	return true;
 }

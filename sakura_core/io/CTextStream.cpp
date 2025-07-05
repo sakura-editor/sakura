@@ -126,7 +126,7 @@ void CTextOutputStream::WriteString(
 		}
 		const wchar_t* lf;
 		if(q<pEnd)lf = q;
-		else lf = NULL;
+		else lf = nullptr;
 
 		if(lf){
 			//\nの前まで(p～lf)出力

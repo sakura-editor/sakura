@@ -20,7 +20,7 @@
 #include "String_define.h"
 
 //GetDllShareData用グローバル変数
-DLLSHAREDATA* g_theDLLSHAREDATA = NULL;
+DLLSHAREDATA* g_theDLLSHAREDATA = nullptr;
 
 static CMutex g_cKeywordMutex( FALSE, GSTR_MUTEX_SAKURA_KEYWORD );
 
@@ -92,22 +92,22 @@ void CShareDataLockCounter::WaitLock( HWND hwndParent, CShareDataLockCounter** p
 	if( 0 < GetCountIf0Lock(ppLock) ){
 		DWORD dwTime = ::GetTickCount();
 		CWaitCursor cWaitCursor(hwndParent);
-		CLockCancel* pDlg = NULL;
-		HWND hwndCancel = NULL;
+		CLockCancel* pDlg = nullptr;
+		HWND hwndCancel = nullptr;
 		::EnableWindow(hwndParent, FALSE);
 		while( 0 < GetCountIf0Lock(ppLock) ){
-			DWORD dwResult = MsgWaitForMultipleObjects(0, NULL, FALSE, 100, QS_ALLEVENTS);
+			DWORD dwResult = MsgWaitForMultipleObjects(0, nullptr, FALSE, 100, QS_ALLEVENTS);
 			if( dwResult == 0xFFFFFFFF ){
 				break;
 			}
 			if( !BlockingHook( hwndCancel ) ){
 				break;
 			}
-			if( NULL == pDlg ){
+			if( nullptr == pDlg ){
 				DWORD dwTimeNow = ::GetTickCount();
 				if( 2000 < dwTimeNow - dwTime ){
 					pDlg = new CLockCancel();
-					hwndCancel = pDlg->DoModeless(::GetModuleHandle( NULL ), hwndParent, IDD_OPERATIONRUNNING);
+					hwndCancel = pDlg->DoModeless(::GetModuleHandle( nullptr ), hwndParent, IDD_OPERATIONRUNNING);
 				}
 			}
 		}

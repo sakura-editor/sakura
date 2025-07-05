@@ -225,7 +225,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 		case IDC_SPIN_REPEATEDSCROLLLINENUM:
 			/* キーリピート時のスクロール行数 */
 //			MYTRACE( L"IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -243,7 +243,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 		case IDC_SPIN_MAX_MRU_FILE:
 			/* ファイルの履歴MAX */
 //			MYTRACE( L"IDC_SPIN_MAX_MRU_FILE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -261,7 +261,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 		case IDC_SPIN_MAX_MRU_FOLDER:
 			/* フォルダーの履歴MAX */
 //			MYTRACE( L"IDC_SPIN_MAX_MRU_FOLDER\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -444,7 +444,7 @@ int CPropGeneral::GetData( HWND hwndDlg )
 	m_Common.m_sGeneral.m_bExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXITCONFIRM );
 
 	/* キーリピート時のスクロール行数 */
-	m_Common.m_sGeneral.m_nRepeatedScrollLineNum = (CLayoutInt)::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
+	m_Common.m_sGeneral.m_nRepeatedScrollLineNum = (CLayoutInt)::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nullptr, FALSE );
 	if( m_Common.m_sGeneral.m_nRepeatedScrollLineNum < CLayoutInt(1) ){
 		m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(1);
 	}
@@ -473,7 +473,7 @@ int CPropGeneral::GetData( HWND hwndDlg )
 	m_Common.m_sGeneral.m_nHorizontalScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;	// 横スクロールとする組み合わせ操作
 
 	/* ファイルの履歴MAX */
-	m_Common.m_sGeneral.m_nMRUArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
+	m_Common.m_sGeneral.m_nMRUArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, nullptr, FALSE );
 	if( m_Common.m_sGeneral.m_nMRUArrNum_MAX < 0 ){
 		m_Common.m_sGeneral.m_nMRUArrNum_MAX = 0;
 	}
@@ -488,7 +488,7 @@ int CPropGeneral::GetData( HWND hwndDlg )
 	}
 
 	/* フォルダーの履歴MAX */
-	m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
+	m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, nullptr, FALSE );
 	if( m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX < 0 ){
 		m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = 0;
 	}

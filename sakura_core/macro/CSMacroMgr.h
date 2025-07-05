@@ -94,14 +94,14 @@ public:
 	const WCHAR* GetTitle(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
-		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].GetTitle() : nullptr;	// 2007.11.02 ryoji
 	}
 	
 	//!	表示名の取得
 	const WCHAR* GetName(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
-		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szName : NULL;
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szName : nullptr;
 	}
 	
 	/*!	@brief ファイル名の取得
@@ -113,7 +113,7 @@ public:
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szFile : 
 		( (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) && m_sMacroPath.length() ) ?
-		m_sMacroPath.c_str() : NULL;
+		m_sMacroPath.c_str() : nullptr;
 	}
 
 	/*! キーボードマクロの読み込み */

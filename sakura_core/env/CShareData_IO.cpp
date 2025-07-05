@@ -164,7 +164,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Other( cProfile );
 
 	delete pcMenuDrawer;					// 2010/7/4 Uchi
-	pcMenuDrawer = NULL;
+	pcMenuDrawer = nullptr;
 
 	if( !bRead ){
 		// 2014.12.08 sakura.iniの読み取り専用
@@ -769,10 +769,10 @@ EFunctionCode GetPlugCmdInfoByName(
 	int			nId;
 	int			nNo;
 
-	if (pszFuncName == NULL) {
+	if (pszFuncName == nullptr) {
 		return F_INVALID;
 	}
-	if ((psCmdName = wcschr(pszFuncName, L'/')) == NULL) {
+	if ((psCmdName = wcschr(pszFuncName, L'/')) == nullptr) {
 		return F_INVALID;
 	}
 	nLen = MAX_PLUGIN_ID < (psCmdName - pszFuncName) ? MAX_PLUGIN_ID : (psCmdName - pszFuncName);
@@ -827,9 +827,9 @@ bool GetPlugCmdInfoByFuncCode(
 static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 {
 	EFunctionCode n;
-	if (pszFuncName == NULL) {
+	if (pszFuncName == nullptr) {
 		n = F_DEFAULT;
-	}else if (wcschr(pszFuncName, L'/') != NULL) {
+	}else if (wcschr(pszFuncName, L'/') != nullptr) {
 		// Plugin名
 		n = GetPlugCmdInfoByName(pszFuncName);
 	}else if (WCODE::Is09(pszFuncName[0]) 
@@ -875,7 +875,7 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 		if( cProfile.IsReadingMode() ){
 			//読み込み
 			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szText));
-			if (wcschr(szText, L'/') == NULL) {
+			if (wcschr(szText, L'/') == nullptr) {
 				// 番号
 				toolbar.m_nToolBarButtonIdxArr[i] = _wtoi( szText );
 			}
@@ -973,9 +973,9 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 							G_AppInstance(),
 							menu.m_nCustMenuItemFuncArr[i][j],
 							szFuncName,
-							NULL
+							nullptr
 						);
-						if ( p == NULL ) {
+						if ( p == nullptr ) {
 							auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
 						}
 						cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szFuncName));
@@ -1087,7 +1087,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					// keycode取得
 					int keycode;
 					pn = wcschr(p,',');
-					if (pn == NULL)	continue;
+					if (pn == nullptr)	continue;
 					*pn = 0;
 					nRes = scan_ints(p, L"%04x", &keycode);
 					if (nRes!=1)	continue;
@@ -1100,7 +1100,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						//機能名を数値に置き換える。(数値の機能名もあるかも)
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 						pn = wcschr(p,',');
-						if (pn == NULL)	break;
+						if (pn == nullptr)	break;
 						*pn = 0;
 						n = GetFunctionStrToFunctionCode(p);
 						tmpKeydata.m_nFuncCodeArr[j] = n;
@@ -1168,7 +1168,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 							nullptr,
 							keydata.m_nFuncCodeArr[j],
 							szFuncName,
-							NULL
+							nullptr
 						);
 						if( p ) {
 							auto_sprintf(szWork, L",%ls", p);
@@ -1345,7 +1345,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 	std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
 	for( i = GetDllShareData().m_nTypesCount; i < nCountOld; i++ ){
 		delete types[i];
-		types[i] = NULL;
+		types[i] = nullptr;
 	}
 	types.resize(pShare->m_nTypesCount);
 	for( i = nCountOld; i < pShare->m_nTypesCount; i++ ){
@@ -1760,11 +1760,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				types.m_KeyHelpArr[j].m_szPath[0] = L'\0';
 				if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
 					pH = szKeyData;
-					if( NULL != (pT=wcschr(pH, L',')) ){
+					if( nullptr != (pT=wcschr(pH, L',')) ){
 						*pT = L'\0';
 						types.m_KeyHelpArr[j].m_bUse = (_wtoi( pH )!=0);
 						pH = pT+1;
-						if( NULL != (pT=wcschr(pH, L',')) ){
+						if( nullptr != (pT=wcschr(pH, L',')) ){
 							*pT = L'\0';
 							wcsncpy_s( types.m_KeyHelpArr[j].m_szAbout, pH, _TRUNCATE );
 							pH = pT+1;
@@ -2117,7 +2117,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 	EFunctionCode n;
 	int		nIdx;
 	WCHAR	szLine[1024];
-	WCHAR*	p = NULL;
+	WCHAR*	p = nullptr;
 	WCHAR*	pn;
 	std::vector<std::wstring>& data = *pData;
 	int dataNum = 0;
@@ -2175,28 +2175,28 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			// レベル
 			p = szLine;
 			pn = wcschr( p, L',' );
-			if (pn != NULL)		*pn++ = L'\0';
+			if (pn != nullptr)		*pn++ = L'\0';
 			pcMenu->m_nLevel = _wtol( p );
-			if (pn == NULL) {
+			if (pn == nullptr) {
 				continue;
 			}
 
 			// 種類
 			p = pn;
 			pn = wcschr( p, L',' );
-			if (pn != NULL)		*pn++ = L'\0';
+			if (pn != nullptr)		*pn++ = L'\0';
 			pcMenu->m_nType = (EMainMenuType)_wtol( p );
-			if (pn == NULL) {
+			if (pn == nullptr) {
 				continue;
 			}
 			
 			// 機能(マクロ名対応)
 			p = pn;
 			pn = wcschr( p, L',' );
-			if (pn != NULL)		*pn++ = L'\0';
+			if (pn != nullptr)		*pn++ = L'\0';
 			n = GetFunctionStrToFunctionCode(p);
 			pcMenu->m_nFunc = n;
-			if (pn == NULL) {
+			if (pn == nullptr) {
 				continue;
 			}
 
@@ -2231,10 +2231,10 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 						G_AppInstance(),
 						pcMenu->m_nFunc,
 						szFuncName,
-						NULL
+						nullptr
 					);
 				}
-				if ( !bOutCmdName || p == NULL ) {
+				if ( !bOutCmdName || p == nullptr ) {
 					auto_sprintf( szFuncName, L"%d", pcMenu->m_nFunc );
 				}
 			}

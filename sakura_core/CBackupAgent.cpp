@@ -231,7 +231,7 @@ int CBackupAgent::MakeBackUp(
 	hFind = ::FindFirstFile( szPath2, &fData );
 	if( hFind == INVALID_HANDLE_VALUE ){
 		//	検索に失敗した == ファイルは存在しない
-		::CreateDirectory( szPath2, NULL );
+		::CreateDirectory( szPath2, nullptr );
 	}
 	::FindClose( hFind );
 
@@ -245,11 +245,11 @@ int CBackupAgent::MakeBackUp(
 			fos.hwnd   = CEditWnd::getInstance()->GetHwnd();
 			fos.wFunc  = FO_DELETE;
 			fos.pFrom  = szDustPath;
-			fos.pTo    = NULL;
+			fos.pTo    = nullptr;
 			fos.fFlags = FOF_ALLOWUNDO | FOF_SIMPLEPROGRESS | FOF_NOCONFIRMATION;	//ダイアログなし
 			fos.fAnyOperationsAborted = true; //false;
-			fos.hNameMappings = NULL;
-			fos.lpszProgressTitle = NULL; //"バックアップファイルをごみ箱に移動しています...";
+			fos.hNameMappings = nullptr;
+			fos.lpszProgressTitle = nullptr; //"バックアップファイルをごみ箱に移動しています...";
 			if( ::SHFileOperation(&fos) == 0 ){
 				/* 正常終了 */
 			}else{
@@ -461,7 +461,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 				for( idx=1; idx<10; ++idx ){
 					WCHAR *cp = wcsrchr(keybuff, L'\\');
-					if( cp != NULL ){
+					if( cp != nullptr ){
 						folders[idx] = cp+1;
 						*cp = L'\0';
 					}
@@ -518,7 +518,7 @@ bool CBackupAgent::FormatBackUpPath(
 			//	??はバックアップ連番にしたいところではあるが，
 			//	連番処理は末尾の2桁にしか対応していないので
 			//	使用できない文字?を_に変換してお茶を濁す
-			while(( cp = wcschr( szNewPath, L'?' ) ) != NULL){
+			while(( cp = wcschr( szNewPath, L'?' ) ) != nullptr){
 				*cp = L'_';
 			}
 		}

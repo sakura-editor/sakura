@@ -58,7 +58,7 @@ inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char
 			nret = 1;
 		} else {
 			// ISO 8859-1以外
-			nret = ::WideCharToMultiByte( 1252, 0, reinterpret_cast<const wchar_t*>(pSrc), 1, reinterpret_cast<char*>(pDst), 4, NULL, &blost );
+			nret = ::WideCharToMultiByte( 1252, 0, reinterpret_cast<const wchar_t*>(pSrc), 1, reinterpret_cast<char*>(pDst), 4, nullptr, &blost );
 			if( blost != FALSE ){
 				// Uni -> CLatin1 変換に失敗
 				berror = true;

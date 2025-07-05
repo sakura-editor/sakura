@@ -1281,11 +1281,11 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 		}else{
 			return false;
 		}
-	case F_SHOWTOOLBAR:			return pCEditWnd->m_cToolbar.GetToolbarHwnd() != NULL;
-	case F_SHOWFUNCKEY:			return pCEditWnd->m_cFuncKeyWnd.GetHwnd() != NULL;
-	case F_SHOWTAB:				return pCEditWnd->m_cTabWnd.GetHwnd() != NULL;	//@@@ 2003.06.10 MIK
-	case F_SHOWSTATUSBAR:		return pCEditWnd->m_cStatusBar.GetStatusHwnd() != NULL;
-	case F_SHOWMINIMAP:			return pCEditWnd->GetMiniMap().GetHwnd() != NULL;
+	case F_SHOWTOOLBAR:			return pCEditWnd->m_cToolbar.GetToolbarHwnd() != nullptr;
+	case F_SHOWFUNCKEY:			return pCEditWnd->m_cFuncKeyWnd.GetHwnd() != nullptr;
+	case F_SHOWTAB:				return pCEditWnd->m_cTabWnd.GetHwnd() != nullptr;	//@@@ 2003.06.10 MIK
+	case F_SHOWSTATUSBAR:		return pCEditWnd->m_cStatusBar.GetStatusHwnd() != nullptr;
+	case F_SHOWMINIMAP:			return pCEditWnd->GetMiniMap().GetHwnd() != nullptr;
 	// 2008.05.30 nasukoji	テキストの折り返し方法
 	case F_TMPWRAPNOWRAP:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP );		// 折り返さない
 	case F_TMPWRAPSETTING:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_SETTING_WIDTH );		// 指定桁で折り返す
@@ -1316,7 +1316,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 		return GetEditWnd().GetActiveView().IsISearchEnabled( nId );
 	case F_OUTLINE_TOGGLE: // 20060201 aroka アウトラインウィンドウ
 		// ToDo:ブックマークリストが出ているときもへこんでしまう。
-		return GetEditWnd().m_cDlgFuncList.GetHwnd() != NULL;
+		return GetEditWnd().m_cDlgFuncList.GetHwnd() != nullptr;
 	default:
 		break;
 	}

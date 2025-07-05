@@ -54,7 +54,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 					G_AppInstance(),
 					CEditWnd::getInstance()->GetHwnd(),
 					sFilesLoadInfo,
-					NULL,
+					nullptr,
 					true
 				);
 			}
@@ -301,7 +301,7 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	bool bDraw = CEditWnd::getInstance()->GetActiveView().GetDrawSwitch();
 	if( bDraw ){
 		CEditWnd::getInstance()->Views_RedrawAll(); //ビュー再描画
-		InvalidateRect( CEditWnd::getInstance()->GetHwnd(), NULL, TRUE );
+		InvalidateRect( CEditWnd::getInstance()->GetHwnd(), nullptr, TRUE );
 	}
 	CCaret& cCaret = CEditWnd::getInstance()->GetActiveView().GetCaret();
 	cCaret.MoveCursor(cCaret.GetCaretLayoutPos(),true);

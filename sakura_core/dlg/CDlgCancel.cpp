@@ -59,24 +59,24 @@ void CDlgCancel::DeleteAsync( void )
 int CDlgCancel::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )
 {
 	m_bCANCEL = FALSE;	/* IDCANCELボタンが押された */
-	return (int)CDialog::DoModal( hInstance, hwndParent, nDlgTemplete, (LPARAM)NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, nDlgTemplete, (LPARAM)nullptr );
 }
 /* モードレスダイアログの表示 */
 HWND CDlgCancel::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )
 {
 	m_bCANCEL = FALSE;	/* IDCANCELボタンが押された */
-	return CDialog::DoModeless( hInstance, hwndParent, nDlgTemplete, (LPARAM)NULL, SW_SHOW );
+	return CDialog::DoModeless( hInstance, hwndParent, nDlgTemplete, (LPARAM)nullptr, SW_SHOW );
 }
 
 BOOL CDlgCancel::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 	HICON	hIcon;
-	hIcon = ::LoadIcon( NULL, IDI_ASTERISK );
+	hIcon = ::LoadIcon( nullptr, IDI_ASTERISK );
 //	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)NULL );
+	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)nullptr );
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
-	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)NULL );
+	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)nullptr );
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
 	/* 基底クラスメンバ */

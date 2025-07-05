@@ -41,14 +41,14 @@ CMenuDrawer::CMenuDrawer()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	m_hInstance = NULL;
-	m_hWndOwner = NULL;
+	m_hInstance = nullptr;
+	m_hWndOwner = nullptr;
 	m_nMenuHeight = 0;
 	m_nMenuFontHeight = 0;
-	m_hFontMenu = NULL;
-	m_pcIcons = NULL;
-	m_hCompBitmap = NULL;
-	m_hCompDC = NULL;
+	m_hFontMenu = nullptr;
+	m_pcIcons = nullptr;
+	m_hCompBitmap = nullptr;
+	m_hCompDC = nullptr;
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。	/* ツールバーのボタン TBBUTTON構造体 */
 	/* ツールバーのボタン TBBUTTON構造体 */
@@ -713,9 +713,9 @@ CMenuDrawer::CMenuDrawer()
 
 CMenuDrawer::~CMenuDrawer()
 {
-	if( NULL != m_hFontMenu ){
+	if( nullptr != m_hFontMenu ){
 		::DeleteObject( m_hFontMenu );
-		m_hFontMenu = NULL;
+		m_hFontMenu = nullptr;
 	}
 	DeleteCompDC();
 	return;
@@ -742,9 +742,9 @@ void CMenuDrawer::ResetContents( void )
 	ncm.cbSize = CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont );
 	::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, ncm.cbSize, (PVOID)&ncm, 0 );
 
-	if( NULL != m_hFontMenu ){
+	if( nullptr != m_hFontMenu ){
 		::DeleteObject( m_hFontMenu );
-		m_hFontMenu = NULL;
+		m_hFontMenu = nullptr;
 	}
 	lf = ncm.lfMenuFont;
 	m_hFontMenu = ::CreateFontIndirect( &lf );
@@ -790,7 +790,7 @@ void CMenuDrawer::MyAppendMenu(
 	if( nForceIconId == -1 ) nForceIconId = nFuncId;	//お気に入り	//@@@ 2003.04.08 MIK
 
 	szLabel[0] = L'\0';
-	if( NULL != pszLabel ){
+	if( nullptr != pszLabel ){
 		wcsncpy( szLabel, pszLabel, _countof( szLabel ) - 1 );
 		szLabel[ _countof( szLabel ) - 1 ] = L'\0';
 	}
@@ -851,9 +851,9 @@ void CMenuDrawer::MyAppendMenu(
 	if( MF_CHECKED		& ( nFlag | nFlagAdd ) ) mii.fState |= MFS_CHECKED;
 
 	mii.wID = nFuncId;
-	mii.hSubMenu = (nFlag&MF_POPUP)?((HMENU)nFuncId):NULL;
-	mii.hbmpChecked = NULL;
-	mii.hbmpUnchecked = NULL;
+	mii.hSubMenu = (nFlag&MF_POPUP)?((HMENU)nFuncId):nullptr;
+	mii.hbmpChecked = nullptr;
+	mii.hbmpUnchecked = nullptr;
 	mii.dwItemData = (ULONG_PTR)this;
 	mii.dwTypeData = szLabel;
 	mii.cch = 0;
@@ -917,7 +917,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 		// セパレータ。フォントの方の通常項目の半分の高さ
 		*pnItemHeight = m_nMenuFontHeight / 2;
 		return 30; // ダミーの幅
-	}else if( NULL == ( pszLabel = GetLabel( nFuncID ) ) ){
+	}else if( nullptr == ( pszLabel = GetLabel( nFuncID ) ) ){
 		*pnItemHeight = m_nMenuHeight;
 		return 0;
 	}
@@ -986,8 +986,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	const bool bBackSurface = bMenuIconDraw;
 	const int nTargetWidth  = lpdis->rcItem.right - lpdis->rcItem.left;
 	const int nTargetHeight = lpdis->rcItem.bottom - lpdis->rcItem.top;
-	HDC hdcOrg = NULL;
-	HDC hdc = NULL;
+	HDC hdcOrg = nullptr;
+	HDC hdc = nullptr;
 	if( bBackSurface ){
 		hdcOrg = lpdis->hDC;
 		if( m_hCompDC && nTargetWidth <= m_nCompBitmapWidth && nTargetHeight <= m_nCompBitmapHeight ){
@@ -1002,7 +1002,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			m_nCompBitmapWidth  = nTargetWidth + 20;
 			m_nCompBitmapHeight = nTargetHeight + 4;
 		}
-		::SetWindowOrgEx( hdc, lpdis->rcItem.left, lpdis->rcItem.top, NULL );
+		::SetWindowOrgEx( hdc, lpdis->rcItem.left, lpdis->rcItem.top, nullptr );
 	}else{
 		hdc = lpdis->hDC;
 	}
@@ -1080,7 +1080,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 		HPEN hPen = ::CreatePen( PS_SOLID, cxBorder, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.top, NULL );
+		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.top, nullptr );
 		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.bottom );
 		::SelectObject( hdc, hPenOld );
 		::DeleteObject( hPen );
@@ -1093,7 +1093,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, NULL );
+		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, nullptr );
 		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
 		::SelectObject( hdc, hPenOld );
 		::DeleteObject( hPen );
@@ -1126,7 +1126,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
 	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_SUBMENU;
 	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, &mii )
-	 && NULL == mii.hSubMenu
+	 && nullptr == mii.hSubMenu
 	 && 0 == ::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
 	){
 		//@@@ 2001.12.21 YAZAKI
@@ -1240,8 +1240,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				// だいたい中心座標
 				int nX = rcItem.left + rcIcon.Height() / 2;
 				int nY = rcIcon.top + rcIcon.Height() /2;
-				HPEN hPen   = NULL;
-				HPEN hPenOld = NULL;
+				HPEN hPen   = nullptr;
+				HPEN hPenOld = nullptr;
 				// 2010.05.31 チェックの色を黒(未指定)からテキスト色に変更
 				hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(COLOR_MENUTEXT) );
 				hPenOld = (HPEN)::SelectObject( hdc, hPen );
@@ -1255,7 +1255,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				// 16dot幅しかないので 1.0倍から2.1倍までスケールする(10-23)
 				const int nScale = t_max(100, t_min(210, int((lpdis->rcItem.bottom - lpdis->rcItem.top - 2) * 100) / (16-2) ));
 				for( int nBold = 1; nBold <= (281*nScale)/nBASE; nBold++ ){
-					::MoveToEx( hdc, nX - (187*nScale)/nBASE, nY - (187*nScale)/nBASE, NULL );
+					::MoveToEx( hdc, nX - (187*nScale)/nBASE, nY - (187*nScale)/nBASE, nullptr );
 					::LineTo(   hdc, nX -   (0*nScale)/nBASE, nY -   (0*nScale)/nBASE );
 					::LineTo(   hdc, nX + (468*nScale)/nBASE, nY - (468*nScale)/nBASE );
 					nY++;
@@ -1267,7 +1267,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}else{
 				// OSにアイコン作画をしてもらう(黒背景等対応)
 				HDC hdcMem = ::CreateCompatibleDC( hdc );
-				HBITMAP hBmpMono = ::CreateBitmap( nCxCheck, nCyCheck, 1, 1, NULL );
+				HBITMAP hBmpMono = ::CreateBitmap( nCxCheck, nCyCheck, 1, 1, nullptr );
 				HBITMAP hOld = (HBITMAP)::SelectObject( hdcMem, hBmpMono );
 				RECT rcCheck = {0,0, nCxCheck, nCyCheck};
 				::DrawFrameControl( hdcMem, &rcCheck, DFC_MENU, DFCS_MENUCHECK );
@@ -1310,9 +1310,9 @@ void CMenuDrawer::DeleteCompDC()
 		::DeleteObject( m_hCompBitmap );
 		::DeleteObject( m_hCompDC );
 //		DEBUG_TRACE( L"CMenuDrawer::DeleteCompDC %x\n", m_hCompDC );
-		m_hCompDC = NULL;
-		m_hCompBitmap = NULL;
-		m_hCompBitmapOld = NULL;
+		m_hCompDC = nullptr;
+		m_hCompBitmap = nullptr;
+		m_hCompBitmapOld = nullptr;
 	}
 }
 
@@ -1410,7 +1410,7 @@ const WCHAR* CMenuDrawer::GetLabel( int nFuncID )
 {
 	int i;
 	if( -1 == ( i = Find( nFuncID ) ) ){
-		return NULL;
+		return nullptr;
 	}
 	return m_menuItems[i].m_cmemLabel.GetStringPtr();
 }
@@ -1471,7 +1471,7 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			continue;
 		}
 		const WCHAR* pszLabel;
-		if( NULL == ( pszLabel = GetLabel( mii.wID ) ) ){
+		if( nullptr == ( pszLabel = GetLabel( mii.wID ) ) ){
 			continue;
 		}
 		if( chUser == GetAccelCharFromLabel( pszLabel ) ){

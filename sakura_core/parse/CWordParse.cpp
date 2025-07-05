@@ -33,7 +33,7 @@ bool CWordParse::WhereCurrentWord_2(
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
 
-	if( NULL == pLine ){
+	if( nullptr == pLine ){
 		return false;
 	}
 	if( nIdx >= nLineLen ){
@@ -66,7 +66,7 @@ bool CWordParse::WhereCurrentWord_2(
 	}
 	*pnIdxFrom = nIdxNext;
 
-	if( NULL != pcmcmWordLeft ){
+	if( nullptr != pcmcmWordLeft ){
 		pcmcmWordLeft->SetString( &pLine[*pnIdxFrom], nIdx - *pnIdxFrom );
 	}
 
@@ -86,7 +86,7 @@ bool CWordParse::WhereCurrentWord_2(
 	}
 	*pnIdxTo = nIdxNext;
 
-	if( NULL != pcmcmWord ){
+	if( nullptr != pcmcmWord ){
 		pcmcmWord->SetString( &pLine[*pnIdxFrom], *pnIdxTo - *pnIdxFrom );
 	}
 	return true;
@@ -491,7 +491,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddre
 	struct {
 		bool operator()(const wchar_t ch)
 		{
-			return 0x21 <= ch && ch <= 0x7E && NULL == wcschr(L"\"(),:;<>@[\\]", ch);
+			return 0x21 <= ch && ch <= 0x7E && nullptr == wcschr(L"\"(),:;<>@[\\]", ch);
 		}
 	} IsValidChar;
 
@@ -559,7 +559,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddre
 			j++;
 		}
 	}
-	if( NULL != pnAddressLength){
+	if( nullptr != pnAddressLength){
 		*pnAddressLength = j;
 	}
 	return TRUE;

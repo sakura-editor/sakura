@@ -102,7 +102,7 @@ COpeBlk* COpeBuf::DoUndo( bool* pbModified )
 {
 	/* Undo可能な状態か */
 	if( !IsEnableUndo() ){
-		return NULL;
+		return nullptr;
 	}
 	m_nCurrentPointer--;
 	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* 無変更な状態になった位置 */
@@ -119,7 +119,7 @@ COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 	COpeBlk*	pcOpeBlk;
 	/* Redo可能な状態か */
 	if( !IsEnableRedo() ){
-		return NULL;
+		return nullptr;
 	}
 	pcOpeBlk = m_vCOpeBlkArr[m_nCurrentPointer];
 	m_nCurrentPointer++;

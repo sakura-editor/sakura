@@ -31,7 +31,7 @@ CPluginManager::CPluginManager()
 	WCHAR	szFolder[_MAX_PATH];
 	WCHAR	szFname[_MAX_PATH];
 
-	::GetModuleFileName( NULL, szPath, _countof(szPath)	);
+	::GetModuleFileName( nullptr, szPath, _countof(szPath)	);
 	SplitPath_FolderAndFile(szPath, szFolder, szFname);
 	Concat_FolderAndFile(szFolder, L"plugins\\", szPluginPath);
 
@@ -66,7 +66,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	hFind = FindFirstFile( (m_sBaseDir + L"*").c_str(), &wf );
 	if (hFind == INVALID_HANDLE_VALUE) {
 		//プラグインフォルダーが存在しない
-		if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
+		if (!CreateDirectory(m_sBaseDir.c_str(), nullptr)) {
 			InfoMessage( hWndOwner, L"%s", LS(STR_PLGMGR_FOLDER));
 			return true;
 		}
@@ -213,7 +213,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 			return false;
 		}
 		else {
-			if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
+			if (!CreateDirectory(m_sBaseDir.c_str(), nullptr)) {
 				WarningMessage( hWndOwner, LS(STR_PLGMGR_ERR_CREATEDIR) );
 				::FindClose(hFind);
 				return false;
@@ -451,7 +451,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		if( plugin_table[iNo].m_szName[0] == '\0' ) continue;
 		// 2010.08.04 削除状態を見る(今のところ保険)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
-		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
+		if( nullptr != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
 		std::wstring name = plugin_table[iNo].m_szName;
 		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str(), szLangName.c_str() );
 		if( !plugin ){
@@ -483,7 +483,7 @@ CPlugin* CPluginManager::LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* psz
 	CDataProfile cProfDefMLang;			//プラグイン定義ファイル(L10N)
 	CDataProfile* pcProfDefMLang = &cProfDefMLang; 
 	CDataProfile cProfOption;			//オプションファイル
-	CPlugin* plugin = NULL;
+	CPlugin* plugin = nullptr;
 
 	DEBUG_TRACE(L"Load Plugin %s\n",  pszPluginName );
 
@@ -493,7 +493,7 @@ CPlugin* CPluginManager::LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* psz
 	cProfDef.SetReadingMode();
 	if( !cProfDef.ReadProfile( pszPath ) ){
 		//プラグイン定義ファイルが存在しない
-		return NULL;
+		return nullptr;
 	}
 	DEBUG_TRACE(L"  定義ファイル読込 %s\n",  pszPath );
 
@@ -506,7 +506,7 @@ CPlugin* CPluginManager::LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* psz
 	cProfDefMLang.SetReadingMode();
 	if( !cProfDefMLang.ReadProfile( strMlang.c_str() ) ){
 		//プラグイン定義ファイルが存在しない
-		pcProfDefMLang = NULL;
+		pcProfDefMLang = nullptr;
 		DEBUG_TRACE(L"  L10N定義ファイル読込 %s Not Found\n",  strMlang.c_str() );
 	}else{
 		DEBUG_TRACE(L"  L10N定義ファイル読込 %s\n",  strMlang.c_str() );
@@ -520,7 +520,7 @@ CPlugin* CPluginManager::LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* psz
 	}else if( _wcsicmp( sPlugType.c_str(), L"dll" ) == 0 ){
 		plugin = new CDllPlugin( std::wstring(pszBasePath) );
 	}else{
-		return NULL;
+		return nullptr;
 	}
 	plugin->m_sOptionDir = m_sBaseDir + pszPluginName;
 	plugin->m_sLangName = pszLangName;
@@ -570,7 +570,7 @@ CPlugin* CPluginManager::GetPlugin( int id )
 	for( CPlugin::ListIter plugin = m_plugins.begin() ; plugin != m_plugins.end(); plugin++ ){
 		if( (*plugin)->m_id == id ) return *plugin;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //プラグインを削除する

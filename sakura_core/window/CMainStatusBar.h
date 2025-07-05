@@ -29,7 +29,7 @@ public:
 	*/
 	bool SendStatusMessage2IsEffective() const
 	{
-		return NULL != m_hwndStatusBar;
+		return nullptr != m_hwndStatusBar;
 	}
 
 	//取得

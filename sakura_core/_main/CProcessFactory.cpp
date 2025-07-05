@@ -89,7 +89,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
 	WCHAR szExeFileName[MAX_PATH];
-	const int cchExeFileName = ::GetModuleFileName(NULL, szExeFileName, _countof(szExeFileName));
+	const int cchExeFileName = ::GetModuleFileName(nullptr, szExeFileName, _countof(szExeFileName));
 	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
 
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
@@ -98,7 +98,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	bool profileSelected = CDlgProfileMgr::TrySelectProfile( CCommandLine::getInstance() );
 	if( !profileSelected ){
 		CDlgProfileMgr dlgProf;
-		if( dlgProf.DoModal( hInstance, NULL, 0 ) ){
+		if( dlgProf.DoModal( hInstance, nullptr, 0 ) ){
 			CCommandLine::getInstance()->SetProfileName( dlgProf.m_strProfileName.c_str() );
 		}else{
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
@@ -148,7 +148,7 @@ bool CProcessFactory::IsExistControlProcess()
 	strMutexSakuraCp += pszProfileName;
  	HANDLE hMutexCP;
 	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, strMutexSakuraCp.c_str() );	// 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
-	if( NULL != hMutexCP ){
+	if( nullptr != hMutexCP ){
 		::CloseHandle( hMutexCP );
 		return true;	// コントロールプロセスが見つかった
 	}
@@ -176,18 +176,18 @@ bool CProcessFactory::StartControlProcess()
 	STARTUPINFO s;
 
 	s.cb          = sizeof( s );
-	s.lpReserved  = NULL;
-	s.lpDesktop   = NULL;
+	s.lpReserved  = nullptr;
+	s.lpDesktop   = nullptr;
 	s.lpTitle     = const_cast<WCHAR*>(L"sakura control process"); //2007.09.21 kobake デバッグしやすいように、名前を付ける
 	s.dwFlags     = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
 	s.cbReserved2 = 0;
-	s.lpReserved2 = NULL;
+	s.lpReserved2 = nullptr;
 
 	WCHAR szCmdLineBuf[1024];	//	コマンドライン
 	WCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 
-	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
+	::GetModuleFileName( nullptr, szEXE, _countof( szEXE ));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
 			szEXE, CCommandLine::getInstance()->GetProfileName() );
@@ -203,12 +203,12 @@ bool CProcessFactory::StartControlProcess()
 	BOOL bCreateResult = ::CreateProcess(
 		szEXE,				// 実行可能モジュールの名前
 		szCmdLineBuf,		// コマンドラインの文字列
-		NULL,				// セキュリティ記述子
-		NULL,				// セキュリティ記述子
+		nullptr,				// セキュリティ記述子
+		nullptr,				// セキュリティ記述子
 		FALSE,				// ハンドルの継承オプション
 		dwCreationFlag,		// 作成のフラグ
-		NULL,				// 新しい環境ブロック
-		NULL,				// カレントディレクトリの名前
+		nullptr,				// 新しい環境ブロック
+		nullptr,				// カレントディレクトリの名前
 		&s,					// スタートアップ情報
 		&p					// プロセス情報
 	);
@@ -218,14 +218,14 @@ bool CProcessFactory::StartControlProcess()
 		::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
 						FORMAT_MESSAGE_IGNORE_INSERTS |
 						FORMAT_MESSAGE_FROM_SYSTEM,
-						NULL,
+						nullptr,
 						::GetLastError(),
 						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 						(LPWSTR)&pMsg,
 						0,
-						NULL
+						nullptr
 		);
-		ErrorMessage( NULL, L"\'%s\'\nプロセスの起動に失敗しました。\n%s", szEXE, pMsg );
+		ErrorMessage( nullptr, L"\'%s\'\nプロセスの起動に失敗しました。\n%s", szEXE, pMsg );
 		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
 		return false;
 	}
@@ -254,16 +254,16 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
 	HANDLE hEvent;
-	hEvent = ::CreateEventW( NULL, TRUE, FALSE, strInitEvent.c_str() );
-	if( NULL == hEvent ){
-		TopErrorMessage( NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
+	hEvent = ::CreateEventW( nullptr, TRUE, FALSE, strInitEvent.c_str() );
+	if( nullptr == hEvent ){
+		TopErrorMessage( nullptr, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
 		return false;
 	}
 	DWORD dwRet;
 	dwRet = ::WaitForSingleObject( hEvent, 30000 );
 	if( WAIT_TIMEOUT == dwRet ){	// コントロールプロセスの初期化が終了しない
 		::CloseHandle( hEvent );
-		TopErrorMessage( NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
+		TopErrorMessage( nullptr, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
 		return false;
 	}
 	::CloseHandle( hEvent );

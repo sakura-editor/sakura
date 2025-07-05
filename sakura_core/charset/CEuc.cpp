@@ -86,7 +86,7 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 
 	// 変換先バッファサイズとその確保
 	wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 
@@ -171,7 +171,7 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 
 	// 必要なバッファサイズを調べてメモリを確保
 	char* pDst = new (std::nothrow) char[nSrcLen * 2];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 

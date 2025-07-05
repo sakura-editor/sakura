@@ -63,7 +63,7 @@ public:
 	{
 		m_current=0;
 		for(int i=0;i<_countof(m_buf);i++){
-			m_buf[i]=NULL;
+			m_buf[i]=nullptr;
 		}
 	}
 	CRecycledBufferDynamic(const Me&) = delete;

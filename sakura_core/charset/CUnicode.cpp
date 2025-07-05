@@ -23,7 +23,7 @@ EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pD
 		// 不足分の最終1バイトとして 0x00 を補う。
 		pDstMem2->AllocBuffer( nSrcLen + 1 );
 		unsigned char* pDst  = reinterpret_cast<unsigned char*>( pDstMem2->GetRawPtr() );
-		if( pDstMem2->GetRawPtr() != NULL ){
+		if( pDstMem2->GetRawPtr() != nullptr ){
 			if( &cSrc != pDstMem2 ){
 				pDstMem2->SetRawDataHoldBuffer(pSrc, nSrcLen);
 				bCopy = true;

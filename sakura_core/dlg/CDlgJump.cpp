@@ -81,7 +81,7 @@ BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
 	switch( idCtrl ){
 	case IDC_SPIN_LINENUM:
 	/* ジャンプしたい行番号の指定 */
-		nData = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, NULL, FALSE );
+		nData = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, nullptr, FALSE );
 		if( pMNUD->iDelta < 0 ){
 			++nData;
 		}else
@@ -94,7 +94,7 @@ BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, nData, FALSE );
 		break;
 	case IDC_SPIN_PLSQL_E1:
-		nData = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, NULL, FALSE );
+		nData = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, nullptr, FALSE );
 		if( pMNUD->iDelta < 0 ){
 			++nData;
 		}else

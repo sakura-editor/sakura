@@ -141,11 +141,11 @@ private:
 public:
 	CDataObject (LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect ):
 		m_nFormat(0),
-		m_pData(NULL)
+		m_pData(nullptr)
 	{
 		SetText( lpszText, nTextLen, bColumnSelect );
 	}
-	~CDataObject(){SetText( NULL, 0, FALSE );}
+	~CDataObject(){SetText( nullptr, 0, FALSE );}
 	void	SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect );
 	DWORD	DragDrop( BOOL bLeft, DWORD dwEffects );
 

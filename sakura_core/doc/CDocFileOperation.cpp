@@ -256,7 +256,7 @@ bool CDocFileOperation::SaveFileDialog(
 		::GetLocalTime( &localTime );
 		auto dateTimeString = GetDateTimeFormat( L"_%Y%m%d_%H%M%S", localTime );
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWnd().GetHwnd() );
-		const int nId = (node != NULL && 0 < node->m_nId) ? node->m_nId : 0;
+		const int nId = (node != nullptr && 0 < node->m_nId) ? node->m_nId : 0;
 		auto_snprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), L"%s%.0d%s", LS(STR_NO_TITLE2), nId, dateTimeString.c_str() );
 	}
 
@@ -486,7 +486,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
 		std::vector<std::wstring> files;
-		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), NULL, &sLoadInfo, files ) ){
+		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), nullptr, &sLoadInfo, files ) ){
 			return;
 		}
 		sLoadInfo.cFilePath = files[0].c_str();
@@ -499,7 +499,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 				G_AppInstance(),
 				CEditWnd::getInstance()->GetHwnd(),
 				sFilesLoadInfo,
-				NULL,
+				nullptr,
 				true
 			);
 		}

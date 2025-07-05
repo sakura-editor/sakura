@@ -44,7 +44,7 @@ protected:
 
 	高速化のため、インライン化
 */
-inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex = NULL )
+inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex = nullptr )
 {
 	int nret;
 	unsigned char czenkaku[2];

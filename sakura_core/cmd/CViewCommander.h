@@ -71,10 +71,10 @@ public:
 	// Oct. 2, 2001 genta マクロ用に機能拡張
 	// Mar. 30, 2003 genta 引数追加
 	void Command_FILEOPEN(
-		const WCHAR*	filename		= NULL,
+		const WCHAR*	filename		= nullptr,
 		ECodeType		nCharCode		= CODE_AUTODETECT,
 		bool			bViewMode	= false,
-		const WCHAR*	defaultName		= NULL
+		const WCHAR*	defaultName		= nullptr
 	);
 
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
@@ -85,7 +85,7 @@ public:
 	void Command_FILECLOSE( void );						/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	/* 閉じて開く*/
 	// Mar. 30, 2003 genta 引数追加
-	void Command_FILECLOSE_OPEN( LPCWSTR filename = NULL,
+	void Command_FILECLOSE_OPEN( LPCWSTR filename = nullptr,
 		ECodeType nCharCode = CODE_AUTODETECT, bool bViewMode = false );
 
 	void Command_FILE_REOPEN( ECodeType nCharCode, bool bNoConfirm );		/* 再オープン */	//Dec. 4, 2002 genta 引数追加
@@ -186,7 +186,7 @@ public:
 	void Command_MODIFYLINE_PREV( bool bSelect );	// 前の変更行へ
 
 	/* 選択系 */
-	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = NULL );		/* 現在位置の単語選択 */
+	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = nullptr );		/* 現在位置の単語選択 */
 	void Command_SELECTALL( void );			/* すべて選択 */
 	void Command_SELECTLINE( int lparam );	/* 1行選択 */	// 2007.10.13 nasukoji
 	void Command_BEGIN_SELECT( void );		/* 範囲選択開始 */
@@ -207,7 +207,7 @@ public:
 	//>> 2002/03/29 Azumaiya
 	void Command_INSBOXTEXT(const wchar_t *pszPaste, int nPasteSize); // 矩形貼り付け
 	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, ptrdiff_t nTextLen, bool bNoWaitCursor,
-		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = NULL ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
+		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = nullptr ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
@@ -258,7 +258,7 @@ public:
 	/* 検索系 */
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
-	void Command_SEARCH_NEXT(bool bChangeCurRegexp, bool bRedraw, bool bReplaceAll, HWND hwndParent, const WCHAR* pszNotFoundMessage, CLogicRange*	pcSelectLogic = NULL); /* 次を検索 */
+	void Command_SEARCH_NEXT(bool bChangeCurRegexp, bool bRedraw, bool bReplaceAll, HWND hwndParent, const WCHAR* pszNotFoundMessage, CLogicRange*	pcSelectLogic = nullptr); /* 次を検索 */
 	void Command_SEARCH_PREV(bool bReDraw, HWND hwndParent);		/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
@@ -386,7 +386,7 @@ public:
 	void Command_MENU_ALLFUNC( void );	/* コマンド一覧 */
 	void Command_EXTHELP1( void );		/* 外部ヘルプ１ */
 	//	Jul. 5, 2002 genta
-	void Command_EXTHTMLHELP( const WCHAR* helpfile = NULL, const WCHAR* kwd = NULL );	/* 外部HTMLヘルプ */
+	void Command_EXTHTMLHELP( const WCHAR* helpfile = nullptr, const WCHAR* kwd = nullptr );	/* 外部HTMLヘルプ */
 	void Command_ABOUT( void );			/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */

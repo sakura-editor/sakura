@@ -98,7 +98,7 @@ int CDlgSameColor::DoModal( HINSTANCE hInstance, HWND hwndParent, WORD wID, STyp
 	m_pTypes = pTypes;
 	m_cr = cr;
 
-	(void)CDialog::DoModal( hInstance, hwndParent, IDD_SAMECOLOR, (LPARAM)NULL );
+	(void)CDialog::DoModal( hInstance, hwndParent, IDD_SAMECOLOR, (LPARAM)nullptr );
 
 	return TRUE;
 }
@@ -192,7 +192,7 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 		for( i = 0; i < nItemNum; ++i ){
 			List_SetItemData( hwndList, i, bCheck );
 		}
-		::InvalidateRect( hwndList, NULL, TRUE );
+		::InvalidateRect( hwndList, nullptr, TRUE );
 		break;
 
 	case IDOK:
@@ -452,7 +452,7 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 			if( LB_ERR != i ){
 				bCheck = !(BOOL)List_GetItemData( hwnd, i );
 				List_SetItemData( hwnd, i, bCheck );
-				::InvalidateRect( hwnd, NULL, TRUE );
+				::InvalidateRect( hwnd, nullptr, TRUE );
 			}
 		}
 		break;

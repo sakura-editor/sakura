@@ -117,7 +117,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 			GetWindowRect( hwndDlg, &rc );
 			auto dlgWidth = rc.right - rc.left;
 			auto dlgHeight = btnRect.bottom - rc.top + DpiScaleY(15);
-			SetWindowPos( hwndDlg, NULL, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
+			SetWindowPos( hwndDlg, nullptr, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
 			std::wstring title = LS(STR_PROPCOMMON);
 			title += L" - ";
 			title += LS(STR_PROPCOMMON_KEYWORD);
@@ -145,7 +145,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 		::SetWindowLongPtr( hwndLIST_KEYWORD, GWL_STYLE, lStyle | LVS_SHOWSELALWAYS );
 
 		/* コントロール更新のタイミング用のタイマーを起動 */
-		::SetTimer( hwndDlg, 1, 300, NULL );
+		::SetTimer( hwndDlg, 1, 300, nullptr );
 
 		return TRUE;
 
@@ -189,7 +189,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				if (plvi->mask & LVIF_IMAGE)	MYTRACE( L"	plvi->iImage=[%d]\n", plvi->iImage );
 				if (plvi->mask & LVIF_PARAM)	MYTRACE( L"	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
 #endif
-				if( NULL == plvi->pszText ){
+				if( nullptr == plvi->pszText ){
 					return TRUE;
 				}
 				if( plvi->pszText[0] != L'\0' ){
@@ -312,7 +312,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 										exts = m_tempTypeExts;
 										bAdd = true;
 									}else{
-										const STypeConfigMini* type = NULL;
+										const STypeConfigMini* type = nullptr;
 										CTypeConfig typeConfig = CDocTypeManager().GetDocumentTypeOfId( m_Types_nKeyWordSetIdx[i].typeId );
 										if( CDocTypeManager().GetTypeConfigMini( typeConfig, &type ) ){
 											name = type->m_szTypeName;
@@ -676,7 +676,7 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	DispKeywordCount( hwndDlg );
 
 	::SendMessage( hwndDlg, WM_SETREDRAW, TRUE, 0 );
-	InvalidateRect(hwndDlg, NULL, FALSE);
+	InvalidateRect(hwndDlg, nullptr, FALSE);
 
 	return;
 }

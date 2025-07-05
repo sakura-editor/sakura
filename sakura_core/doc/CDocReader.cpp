@@ -24,21 +24,21 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 
 	pDocLine = m_pcDocLineMgr->GetDocLineTop();
 	nDataLen = 0;
-	while( NULL != pDocLine ){
+	while( nullptr != pDocLine ){
 		//	Oct. 7, 2002 YAZAKI
 		nDataLen += pDocLine->GetLengthWithoutEOL() + 2;	//	\r\nを追加して返すため+2する。
 		pDocLine = pDocLine->GetNextLine();
 	}
 
 	wchar_t* pData = (wchar_t*)malloc( (nDataLen + 1) * sizeof(wchar_t) );
-	if( NULL == pData ){
-		TopErrorMessage( NULL, LS(STR_ERR_DLGDOCLM6), nDataLen + 1 );
-		return NULL;
+	if( nullptr == pData ){
+		TopErrorMessage( nullptr, LS(STR_ERR_DLGDOCLM6), nDataLen + 1 );
+		return nullptr;
 	}
 	pDocLine = m_pcDocLineMgr->GetDocLineTop();
 
 	nDataLen = 0;
-	while( NULL != pDocLine ){
+	while( nullptr != pDocLine ){
 		//	Oct. 7, 2002 YAZAKI
 		nLineLen = pDocLine->GetLengthWithoutEOL();
 		if( 0 < nLineLen ){
@@ -58,9 +58,9 @@ const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 {
 	const CDocLine* pDocLine;
 	pDocLine = m_pcDocLineMgr->GetLine( nLine );
-	if( NULL == pDocLine ){
+	if( nullptr == pDocLine ){
 		*pnLineLen = CLogicInt(0);
-		return NULL;
+		return nullptr;
 	}
 	// 2002/2/10 aroka CMemory のメンバ変数に直接アクセスしない(inline化されているので速度的な問題はない)
 	return pDocLine->GetDocLineStrWithEOL( pnLineLen );
@@ -75,9 +75,9 @@ const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen )
 {
 	const CDocLine* pDocLine = m_pcDocLineMgr->GetLine( nLine );
-	if( NULL == pDocLine ){
+	if( nullptr == pDocLine ){
 		*pnLineLen = 0;
-		return NULL;
+		return nullptr;
 	}
 	*pnLineLen = pDocLine->GetLengthWithoutEOL();
 	return pDocLine->GetPtr();
@@ -94,7 +94,7 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 {
 	const wchar_t* pszLine;
 	if( CLogicInt(0) == m_pcDocLineMgr->GetLineCount() ){
-		pszLine = NULL;
+		pszLine = nullptr;
 		*pnLineLen = 0;
 	}else{
 		pszLine = m_pcDocLineMgr->GetDocLineTop()->GetDocLineStrWithEOL( pnLineLen );
@@ -115,8 +115,8 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 const wchar_t* CDocReader::GetNextLinrStr( int* pnLineLen )
 {
 	const wchar_t* pszLine;
-	if( NULL == m_pcDocLineMgr->m_pDocLineCurrent ){
-		pszLine = NULL;
+	if( nullptr == m_pcDocLineMgr->m_pDocLineCurrent ){
+		pszLine = nullptr;
 		*pnLineLen = 0;
 	}
 	else{

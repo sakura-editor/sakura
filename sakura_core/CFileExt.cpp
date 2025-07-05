@@ -28,8 +28,8 @@ bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 
 bool CFileExt::AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt )
 {
-	if( NULL == pszName || pszName[0] == L'\0' ) return false;
-	if( NULL == pszExt  || pszExt[0] == L'\0' ) return false;
+	if( nullptr == pszName || pszName[0] == L'\0' ) return false;
+	if( nullptr == pszExt  || pszExt[0] == L'\0' ) return false;
 
 	SFileExtInfo info;
 	info.m_sTypeName = pszName;

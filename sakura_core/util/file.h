@@ -49,9 +49,9 @@ std::filesystem::path GetExeFileName();
 std::filesystem::path GetIniFileName();
 
 //※サクラ依存
-void GetExedir( LPWSTR pDir, LPCWSTR szFile = NULL );
-void GetInidir( LPWSTR pDir, LPCWSTR szFile = NULL ); // 2007.05.19 ryoji
-void GetInidirOrExedir( LPWSTR pDir, LPCWSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
+void GetExedir( LPWSTR pDir, LPCWSTR szFile = nullptr );
+void GetInidir( LPWSTR pDir, LPCWSTR szFile = nullptr ); // 2007.05.19 ryoji
+void GetInidirOrExedir( LPWSTR pDir, LPCWSTR szFile = nullptr, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
 
 LPCWSTR GetRelPath( LPCWSTR pszPath );
 

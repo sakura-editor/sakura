@@ -24,7 +24,7 @@ class CFile{
 
 public:
 	//コンストラクタ・デストラクタ
-	CFile(LPCWSTR pszPath = NULL);
+	CFile(LPCWSTR pszPath = nullptr);
 	CFile(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CFile(Me&&) noexcept = delete;

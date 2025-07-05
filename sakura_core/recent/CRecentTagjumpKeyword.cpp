@@ -20,9 +20,9 @@ CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 		GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr(),
 		GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sTagJump.m_aTagJumpKeywords._GetSizeRef(),
-		NULL,
+		nullptr,
 		MAX_TAGJUMP_KEYWORD,
-		NULL
+		nullptr
 	);
 }
 

@@ -117,7 +117,7 @@ int CDlgPrintSetting::DoModal(
 	}
 	m_nLineNumberColumns = nLineNumberColumns;
 
-	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, (LPARAM)NULL );
+	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, (LPARAM)nullptr );
 	if( FALSE != nRet ){
 		*pnCurrentPrintSetting = m_nCurrentPrintSetting;
 		for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
@@ -368,7 +368,7 @@ BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 {
 	switch( wID ){
 	case IDC_EDIT_FONTHEIGHT:	// フォント幅の最小値が非０のため'12'と入力すると'1'のところで蹴られてしまう 2013.5.5 aroka
-		if( ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE ) >=10 ){	// 二桁以上の場合は領域チェック 2013.5.20 aroka
+		if( ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, nullptr, FALSE ) >=10 ){	// 二桁以上の場合は領域チェック 2013.5.20 aroka
 			UpdatePrintableLineAndColumn();
 		}
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
@@ -461,7 +461,7 @@ void CDlgPrintSetting::SetData( void )
 	Combo_ResetContent( hwndComboFont );
 	::EnumFontFamilies(
 		hdc,
-		NULL,
+		nullptr,
 		(FONTENUMPROC)SetData_EnumFontFamProc,
 		(LPARAM)this
 	);
@@ -516,10 +516,10 @@ int CDlgPrintSetting::GetData( void )
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen
 	);
 
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE );
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINESPACE, NULL, FALSE );
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSUU, NULL, FALSE );
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, NULL, FALSE ) * 10;
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, nullptr, FALSE );
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINESPACE, nullptr, FALSE );
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSUU, nullptr, FALSE );
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, nullptr, FALSE ) * 10;
 
 	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	nWork = DataCheckAndCorrect( IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight );
@@ -559,10 +559,10 @@ int CDlgPrintSetting::GetData( void )
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = DMORIENT_LANDSCAPE;
 	}
 
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINTY, NULL, FALSE ) * 10;
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINBY, NULL, FALSE ) * 10;
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINLX, NULL, FALSE ) * 10;
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINRX, NULL, FALSE ) * 10;
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINTY, nullptr, FALSE ) * 10;
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINBY, nullptr, FALSE ) * 10;
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINLX, nullptr, FALSE ) * 10;
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINRX, nullptr, FALSE ) * 10;
 
 	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	nWork = DataCheckAndCorrect( IDC_EDIT_MARGINTY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10 );
@@ -762,7 +762,7 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 	}
 	if( nIdx >= 0 ){
 		nCtrlIdEDIT = sDataRange[nIdx].ctrlid;
- 		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
+ 		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nullptr, FALSE );
  		if( bDown ){
 			nData -= nDiff;
  		}else{

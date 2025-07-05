@@ -174,7 +174,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		/* キー選択時の処理 */
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_FUNCKIND );
 
-		::SetTimer( hwndDlg, 1, 300, NULL );
+		::SetTimer( hwndDlg, 1, 300, nullptr );
 		SetDlgItemsEnableState( hwndDlg, hwndCOMBO_MENU, hwndLIST_RES, hwndCOMBO_FUNCKIND, hwndLIST_FUNC, m_cLookup, m_Common );
 
 		return TRUE;
@@ -702,7 +702,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_SUBMENU, m_Common.m_sCustomMenu.m_bCustMenuPopupArr[nIdx] );
 	::SendMessage( hwndDlg, WM_SETREDRAW, TRUE, 0 );
-	::InvalidateRect( hwndDlg, NULL, FALSE );
+	::InvalidateRect( hwndDlg, nullptr, FALSE );
 	return;
 }
 

@@ -19,7 +19,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 
 	//アンドゥ記録開始
 	if(!pcView->m_bDoing_UndoRedo){
-		if(pcView->m_cCommander.GetOpeBlk() == NULL){
+		if(pcView->m_cCommander.GetOpeBlk() == nullptr){
 			pcView->m_cCommander.SetOpeBlk(new COpeBlk());
 		}
 		pcView->m_cCommander.GetOpeBlk()->AddRef();
@@ -36,7 +36,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	//改行コードを統一する
 	if(cEol.IsValid()){
 		CLogicInt	nLine = CLogicInt(0);
-		COpeBlk* pcOpeBlk = pcView->m_bDoing_UndoRedo ? NULL : pcView->m_cCommander.GetOpeBlk();
+		COpeBlk* pcOpeBlk = pcView->m_bDoing_UndoRedo ? nullptr : pcView->m_cCommander.GetOpeBlk();
 		for (;;) {
 			CDocLine* pcDocLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLine); //#######非効率
 			if(!pcDocLine)break;

@@ -57,7 +57,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 {
 	int		i;
 	LOGFONT	lf;
-	m_pcEditDoc = NULL;
+	m_pcEditDoc = nullptr;
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 	m_nCurrentKeyState = -1;
@@ -68,7 +68,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 //	m_nButtonGroupNum = 4;
 
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){
-		m_hwndButtonArr[i] = NULL;
+		m_hwndButtonArr[i] = nullptr;
 	}
 
 	/* 表示用フォント */
@@ -91,7 +91,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	m_hFont = ::CreateFontIndirect( &lf );
 
 	m_bSizeBox = false;
-	m_hwndSizeBox = NULL;
+	m_hwndSizeBox = nullptr;
 	m_nTimerCount = 0;
 
 	return;
@@ -111,7 +111,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 
 	m_pcEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
-	m_hwndSizeBox = NULL;
+	m_hwndSizeBox = nullptr;
 	m_nCurrentKeyState = -1;
 
 	// 2002.11.04 Moca 変更できるように
@@ -123,11 +123,11 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	/* ウィンドウクラス作成 */
 	RegisterWC(
 		hInstance,
-		NULL,// Handle to the class icon.
-		NULL,	//Handle to a small icon
-		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor.
+		nullptr,// Handle to the class icon.
+		nullptr,	//Handle to a small icon
+		::LoadCursor( nullptr, IDC_ARROW ),// Handle to the class cursor.
 		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+		nullptr/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
@@ -142,24 +142,24 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		0, // vertical position of window
 		0, // window width	// 2007.02.05 ryoji 100->0（半端なサイズで一瞬表示されるより見えないほうがいい）
 		::GetSystemMetrics( SM_CYMENU ), // window height
-		NULL // handle to menu, or child-window identifier
+		nullptr // handle to menu, or child-window identifier
 	);
 
-	m_hwndSizeBox = NULL;
+	m_hwndSizeBox = nullptr;
 	if( m_bSizeBox ){
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
 			WC_SCROLLBAR,				/* scroll bar control class		*/
-			NULL,						/* text for window title bar	*/
+			nullptr,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/
 			0,							/* vertical position			*/
 			200,						/* width of the scroll bar		*/
 			CW_USEDEFAULT,				/* default height				*/
 			GetHwnd(), 					/* handle of main window		*/
-			(HMENU) NULL,				/* no menu for a scroll bar 	*/
+			(HMENU) nullptr,				/* no menu for a scroll bar 	*/
 			GetAppInstance(),				/* instance owning this window	*/
-			(LPVOID) NULL				/* pointer not needed			*/
+			(LPVOID) nullptr				/* pointer not needed			*/
 		);
 	}
 
@@ -194,7 +194,7 @@ LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 	int			nButtonNum;
 	RECT		rcParent;
 
-	if( NULL == GetHwnd() ){
+	if( nullptr == GetHwnd() ){
 		return 0L;
 	}
 
@@ -214,7 +214,7 @@ LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		::MoveWindow( m_hwndButtonArr[i], nX, 1, nButtonWidth, nButtonHeight, TRUE );
 		nX += nButtonWidth + 1;
 	}
-	::InvalidateRect( GetHwnd(), NULL, TRUE );	//再描画してね。	//@@@ 2003.06.11 MIK
+	::InvalidateRect( GetHwnd(), nullptr, TRUE );	//再描画してね。	//@@@ 2003.06.11 MIK
 	return 0L;
 }
 
@@ -278,7 +278,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //	DWORD dwTime 	// current system time
 
 	//	return;
-	if( NULL == GetHwnd() ){
+	if( nullptr == GetHwnd() ){
 		return 0;
 	}
 
@@ -349,19 +349,19 @@ LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 	/* ボタンを削除 */
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){
-		if( NULL != m_hwndButtonArr[i] ){
+		if( nullptr != m_hwndButtonArr[i] ){
 			::DestroyWindow( m_hwndButtonArr[i]	);
-			m_hwndButtonArr[i] = NULL;
+			m_hwndButtonArr[i] = nullptr;
 		}
 	}
 
 	/* サイズボックスを削除 */
-	if( NULL != m_hwndSizeBox ){
+	if( nullptr != m_hwndSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );
-		m_hwndSizeBox = NULL;
+		m_hwndSizeBox = nullptr;
 	}
 
-	_SetHwnd(NULL);
+	_SetHwnd(nullptr);
 
 	return 0L;
 }
@@ -377,7 +377,7 @@ int CFuncKeyWnd::CalcButtonSize( void )
 
 	nButtonNum = _countof( m_hwndButtonArr );
 
-	if( NULL == m_hwndSizeBox ){
+	if( nullptr == m_hwndSizeBox ){
 //		return ( rc.right - rc.left - nButtonNum - ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
 		nCxVScroll = 0;
 	}else{
@@ -420,9 +420,9 @@ void CFuncKeyWnd::CreateButtons( void )
 			0,					// button width
 			nButtonHeight,		// button height
 			GetHwnd(),				// parent window
-			NULL,				// No menu
+			nullptr,				// No menu
 			(HINSTANCE) GetWindowLongPtr(GetHwnd(), GWLP_HINSTANCE),	// Modified by KEITA for WIN64 2003.9.6
-			NULL				// pointer not needed
+			nullptr				// pointer not needed
 		);
 		/* フォント変更 */
 		::SendMessageAny( m_hwndButtonArr[i], WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
@@ -441,27 +441,27 @@ void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 	}
 	if( m_bSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );
-		m_hwndSizeBox = NULL;
+		m_hwndSizeBox = nullptr;
 		m_bSizeBox = false;
-		OnSize( NULL, 0, 0, 0 );
+		OnSize( nullptr, 0, 0, 0 );
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
 			WC_SCROLLBAR,				/* scroll bar control class		*/
-			NULL,						/* text for window title bar	*/
+			nullptr,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/
 			0,							/* vertical position			*/
 			200,						/* width of the scroll bar		*/
 			CW_USEDEFAULT,				/* default height				*/
 			GetHwnd(), 				/* handle of main window		*/
-			(HMENU) NULL,				/* no menu for a scroll bar 	*/
+			(HMENU) nullptr,				/* no menu for a scroll bar 	*/
 			GetAppInstance(),				/* instance owning this window	*/
-			(LPVOID) NULL			/* pointer not needed				*/
+			(LPVOID) nullptr			/* pointer not needed				*/
 		);
 		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 		m_bSizeBox = true;
-		OnSize( NULL, 0, 0, 0 );
+		OnSize( nullptr, 0, 0, 0 );
 	}
 	return;
 }
@@ -472,10 +472,10 @@ void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 //	呼び出してもらうことにより、余計な負荷を停止したい。
 void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 {
-	if( NULL != GetHwnd() ){
+	if( nullptr != GetHwnd() ){
 		if( bStart ){
 			/* タイマーを起動 */
-			if( 0 == ::SetTimer( GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, NULL ) ){
+			if( 0 == ::SetTimer( GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, nullptr ) ){
 				WarningMessage(	GetHwnd(), LS(STR_ERR_DLGFUNCKEYWN1) );
 			}
 		} else {

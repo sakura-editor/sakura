@@ -147,7 +147,7 @@ INT_PTR CPropWin::DispatchEvent(
 			break;
 		case IDC_SPIN_nRulerHeight:
 			/* ルーラ－の高さ */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -164,7 +164,7 @@ INT_PTR CPropWin::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_nRulerBottomSpace:
 			/* ルーラーとテキストの隙間 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -181,7 +181,7 @@ INT_PTR CPropWin::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_nLineNumberRightSpace:
 			/* ルーラーとテキストの隙間 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -197,7 +197,7 @@ INT_PTR CPropWin::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, nVal, FALSE );
 			return TRUE;
 		case IDC_SPIN_FUNCKEYWND_GROUPNUM:
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -240,7 +240,7 @@ INT_PTR CPropWin::DispatchEvent(
 					rc.top    = m_Common.m_sWindow.m_nWinPosX;
 					rc.left   = m_Common.m_sWindow.m_nWinPosY;
 					cDlgWinSize.DoModal(
-						::GetModuleHandle(NULL),
+						::GetModuleHandle(nullptr),
 						hwndDlg,
 						m_Common.m_sWindow.m_eSaveWindowSize,
 						m_Common.m_sWindow.m_eSaveWindowPos,
@@ -384,7 +384,7 @@ int CPropWin::GetData( HWND hwndDlg )
 	}
 
 	// 2002/11/04 Moca ファンクションキーのグループボタン数
-	m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum = ::GetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, NULL, FALSE );
+	m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum = ::GetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, nullptr, FALSE );
 	if( m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum < 1 ){
 		m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum = 1;
 	}
@@ -400,7 +400,7 @@ int CPropWin::GetData( HWND hwndDlg )
 	m_Common.m_sWindow.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );
 
 	/* ルーラー高さ */
-	m_Common.m_sWindow.m_nRulerHeight = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE );
+	m_Common.m_sWindow.m_nRulerHeight = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, nullptr, FALSE );
 	if( m_Common.m_sWindow.m_nRulerHeight < IDC_SPIN_nRulerHeight_MIN ){
 		m_Common.m_sWindow.m_nRulerHeight = IDC_SPIN_nRulerHeight_MIN;
 	}
@@ -408,7 +408,7 @@ int CPropWin::GetData( HWND hwndDlg )
 		m_Common.m_sWindow.m_nRulerHeight = IDC_SPIN_nRulerHeight_MAX;
 	}
 	/* ルーラーとテキストの隙間 */
-	m_Common.m_sWindow.m_nRulerBottomSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, NULL, FALSE );
+	m_Common.m_sWindow.m_nRulerBottomSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, nullptr, FALSE );
 	if( m_Common.m_sWindow.m_nRulerBottomSpace < 0 ){
 		m_Common.m_sWindow.m_nRulerBottomSpace = 0;
 	}
@@ -417,7 +417,7 @@ int CPropWin::GetData( HWND hwndDlg )
 	}
 
 	//	Sep. 18. 2002 genta 行番号とテキストの隙間
-	m_Common.m_sWindow.m_nLineNumRightSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, NULL, FALSE );
+	m_Common.m_sWindow.m_nLineNumRightSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, nullptr, FALSE );
 	if( m_Common.m_sWindow.m_nLineNumRightSpace < 0 ){
 		m_Common.m_sWindow.m_nLineNumRightSpace = 0;
 	}

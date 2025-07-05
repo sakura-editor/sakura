@@ -194,7 +194,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
 			if(wID == IDC_EDIT_BACKIMG_TRANSPARENCY){
-				int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE );
+				int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nullptr, FALSE );
 				if(nVal < 0) nVal = 0;
 				if(nVal > 255) nVal = 255;
 				TrackBarCtl_SetPos( ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ), TRUE, nVal );
@@ -227,7 +227,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		case IDC_SPIN_LINENUMWIDTH:
 			/* 行番号の最小桁数 */
 //			MYTRACE( L"IDC_SPIN_LINENUMWIDTH\n" );
-			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE );
+			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -245,7 +245,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		}
 		switch( (int)wParam ) {
 		case IDC_UPDOWN_BACKIMG_TRANSPARENCY:
-			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE );
+			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				if( nVal < 0xFF ){
 					++nVal;
@@ -544,9 +544,9 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 	m_Types.m_backImgRepeatY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_REP_Y);
 	m_Types.m_backImgScrollX = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_X);
 	m_Types.m_backImgScrollY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y);
-	m_Types.m_backImgPosOffset.x = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, NULL, TRUE);
-	m_Types.m_backImgPosOffset.y = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, NULL, TRUE);
-	m_Types.m_backImgOpacity = 255 - (BYTE)std::min(255U, GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE));
+	m_Types.m_backImgPosOffset.x = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, nullptr, TRUE);
+	m_Types.m_backImgPosOffset.y = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, nullptr, TRUE);
+	m_Types.m_backImgOpacity = 255 - (BYTE)std::min(255U, GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nullptr, FALSE));
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE0 ) ){
@@ -565,7 +565,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 	m_Types.m_cLineTermChar = szLineTermChar[0];
 
 	/* 行番号の最小桁数 */	// 追加 2014.08.02 katze
-	m_Types.m_nLineNumWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE );
+	m_Types.m_nLineNumWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nullptr, FALSE );
 	if( m_Types.m_nLineNumWidth < LINENUMWIDTH_MIN ){
 		m_Types.m_nLineNumWidth = LINENUMWIDTH_MIN;
 	}

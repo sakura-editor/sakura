@@ -33,7 +33,7 @@ public:
 		m_pTypes = &pEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 		m_pColorInfoArr = &m_pTypes->m_ColorInfoArr[m_nColorIdx];
 
-		m_gr = NULL;
+		m_gr = nullptr;
 	}
 	CTypeSupport(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
@@ -123,7 +123,7 @@ public:
 			gr.PopTextBackColor();
 			gr.PopTextForeColor();
 			gr.PopMyFont();
-			m_gr = NULL;
+			m_gr = nullptr;
 		}
 	}
 

@@ -33,8 +33,8 @@
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
-	m_pTop = NULL;
-	m_pBot = NULL;
+	m_pTop = nullptr;
+	m_pBot = nullptr;
 //	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
 	//	Apr. 29, 2002 genta
 	//	m_nReadyはCMacroManagerBaseへ
@@ -59,8 +59,8 @@ void CKeyMacroMgr::ClearAll( void )
 		delete del_p;
 	}
 //	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
-	m_pTop = NULL;
-	m_pBot = NULL;
+	m_pTop = nullptr;
+	m_pBot = nullptr;
 	return;
 }
 
@@ -160,7 +160,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 	EFunctionCode	nFuncID;
 	int		i;
 	int		nBgn, nEnd;
-	CMacro* macro = NULL;
+	CMacro* macro = nullptr;
 
 	//	Jun. 16, 2002 genta
 	m_nReady = true;	//	エラーがあればfalseになる
@@ -221,7 +221,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 				// Jun. 16, 2002 genta プロトタイプチェック
 				if( nArgs >= nArgSizeMax ){
 					::MYMESSAGEBOX(
-						NULL,
+						nullptr,
 						MB_OK | MB_ICONSTOP | MB_TOPMOST,
 						MACRO_ERROR_TITLE,
 						LS(STR_ERR_DLGKEYMACMGR3),
@@ -251,7 +251,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 					if( type != VT_BSTR && 
 						type != VT_EMPTY ){
 						::MYMESSAGEBOX(
-							NULL,
+							nullptr,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							MACRO_ERROR_TITLE,
 							LS(STR_ERR_DLGKEYMACMGR4),
@@ -279,7 +279,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 						}
 						if( i == nLineLen ){	//	行末に来てしまった
 							::MYMESSAGEBOX(
-								NULL,
+								nullptr,
 								MB_OK | MB_ICONSTOP | MB_TOPMOST,
 								MACRO_ERROR_TITLE,
 								LS(STR_ERR_DLGKEYMACMGR5),
@@ -329,7 +329,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 									wchar_t hex[5];
 									wcsncpy( hex, &p[n+2], k - n - 2 );
 									hex[k - n - 2] = L'\0';
-									wchar_t* pEnd = NULL;
+									wchar_t* pEnd = nullptr;
 									wchar_t c = static_cast<wchar_t>(wcstol(hex, &pEnd, 16));
 									cmemTemp.AppendString( &c, 1 );
 								}
@@ -352,7 +352,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 					if( type != VT_I4 &&
 						type != VT_EMPTY){
 						::MYMESSAGEBOX(
-							NULL,
+							nullptr,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							MACRO_ERROR_TITLE,
 							LS(STR_ERR_DLGKEYMACMGR6),
@@ -395,7 +395,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 					//	Parse Error:文法エラーっぽい。
 					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
-					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+					::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
 						LS(STR_ERR_DLGKEYMACMGR7), line, i + 1 );
 					m_nReady = false;
 					break;
@@ -421,7 +421,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 			Append( macro );
 		}
 		else {
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
 				LS(STR_ERR_DLGKEYMACMGR8), line, szFuncName );
 			//	Jun. 16, 2002 genta
 			m_nReady = false;
@@ -470,7 +470,7 @@ CMacroManagerBase* CKeyMacroMgr::Creator(const WCHAR* ext)
 	if( wcscmp( ext, L"mac" ) == 0 ){
 		return new CKeyMacroMgr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!	CKeyMacroManagerの登録

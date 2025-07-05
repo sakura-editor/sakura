@@ -62,7 +62,7 @@ public:
 	static void IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName);
 	static void IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName);		// 2012.11.22 aroka
 	static void IO_MainMenu( CDataProfile& c, CommonSetting_MainMenu& s, bool b ){		// 2010/5/15 Uchi
-		IO_MainMenu(c, NULL, s, b);
+		IO_MainMenu(c, nullptr, s, b);
 	}
 	static void IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData,
 		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);

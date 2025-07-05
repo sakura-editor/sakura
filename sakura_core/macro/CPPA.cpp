@@ -34,7 +34,7 @@
 #define omSet (1)
 
 //	2007.07.26 genta
-CPPA::PpaExecInfo* CPPA::m_CurInstance = NULL;
+CPPA::PpaExecInfo* CPPA::m_CurInstance = nullptr;
 bool			CPPA::m_bIsRunning = false;
 
 CPPA::CPPA()
@@ -168,7 +168,7 @@ bool CPPA::InitDllImp()
 	//	Jun. 16, 2003 genta 一時作業エリア
 	char buf[1024];
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++) {
+	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != nullptr; i++) {
 		//	2003.06.08 Moca メモリリークの修正
 		//	2003.06.16 genta バッファを外から与えるように
 		//	関数登録用文字列を作成する
@@ -177,7 +177,7 @@ bool CPPA::InitDllImp()
 	}
 
 	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; i++) {
+	for (i=0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_pszFuncName != nullptr; i++) {
 		//	2003.06.08 Moca メモリリークの修正
 		//	2003.06.16 genta バッファを外から与えるように
 		//	関数登録用文字列を作成する
@@ -399,7 +399,7 @@ void __stdcall CPPA::stdProc(
 			tmpArgLengths[i]=wcslen(tmpArguments2[i]);
 		}
 		else{
-			tmpArguments2[i]=NULL;
+			tmpArguments2[i]=nullptr;
 			tmpArgLengths[i]=0;
 		}
 	}

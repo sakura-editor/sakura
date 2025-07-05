@@ -51,7 +51,7 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 					++ArgCount;
 			}
 		}
-		VARTYPE* varArgTmp = NULL;
+		VARTYPE* varArgTmp = nullptr;
 		VARTYPE* varArg = Info->m_varArguments;
 		if( 4 < ArgCount ){
 			varArgTmp = varArg = new VARTYPE[ArgCount];
@@ -121,10 +121,10 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 		auto StrArgs = std::make_unique<LPWSTR[]>(argCountMin);
 		auto strLengths = std::make_unique<int[]>(argCountMin);
 		for(I = ArgCount; I < argCountMin; I++ ){
-			StrArgs[I] = NULL;
+			StrArgs[I] = nullptr;
 			strLengths[I] = 0;
 		}
-		WCHAR *S = NULL;								// 初期化必須
+		WCHAR *S = nullptr;								// 初期化必須
 		Variant varCopy;							// VT_BYREFだと困るのでコピー用
 		int Len;
 		for(I = 0; I < ArgCount; ++I)

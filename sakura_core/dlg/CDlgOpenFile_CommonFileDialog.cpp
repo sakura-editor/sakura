@@ -131,7 +131,7 @@ public:
 	HWND			m_hwndCheckBOM;	//	Jul. 26, 2003 ryoji BOMチェックボックス
 
 	CDlgOpenFileData():
-		m_pcDlgOpenFile(NULL)
+		m_pcDlgOpenFile(nullptr)
 		,m_nHelpTopicID(0)
 	{}
 };
@@ -405,7 +405,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						::lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
 					}
 					else{
-						_wsplitpath( pData->m_pOf->lpstrFile, NULL, NULL, NULL, szDefExt );
+						_wsplitpath( pData->m_pOf->lpstrFile, nullptr, nullptr, nullptr, szDefExt );
 						if( szDefExt[0] == L'.' /* && szDefExt[1] != L'\0' */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
 							// .のみの場合にも拡張子付きとみなす。
 							lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
@@ -489,7 +489,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			{
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
 				if( pData->m_ofn.Flags & OFN_ALLOWMULTISELECT ){
-					DWORD nLength = CommDlg_OpenSave_GetSpec( pData->m_hwndOpenDlg, NULL, 0 );
+					DWORD nLength = CommDlg_OpenSave_GetSpec( pData->m_hwndOpenDlg, nullptr, 0 );
 					nLength += _MAX_PATH + 2;
 					if( pData->m_ofn.nMaxFile < nLength ){
 						delete [] pData->m_ofn.lpstrFile;
@@ -645,8 +645,8 @@ int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
 */
 CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 {
-	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
+	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -655,10 +655,10 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	WCHAR	szDrive[_MAX_DRIVE];
 	WCHAR	szDir[_MAX_DIR];
 	::GetModuleFileName(
-		NULL,
+		nullptr,
 		szFile, _countof( szFile )
 	);
-	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
+	_wsplitpath( szFile, szDrive, szDir, nullptr, nullptr );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
@@ -679,7 +679,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 	m_hwndParent = hwndParent;
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
-	if( NULL != pszUserWildCard ){
+	if( nullptr != pszUserWildCard ){
 		m_strDefaultWildCard = pszUserWildCard;
 	}
 
@@ -688,7 +688,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
-		my_splitpath_t( pszDefaultPath, szDrive, szDir, NULL, NULL );
+		my_splitpath_t( pszDefaultPath, szDrive, szDir, nullptr, nullptr );
 		// 2010.08.28 相対パス解決
 		WCHAR szRelPath[_MAX_PATH];
 		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
@@ -864,14 +864,14 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	auto pData = std::make_unique<CDlgOpenFileData>();
 	pData->m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
-	bool bMultiSelect = pFileNames != NULL;
+	bool bMultiSelect = pFileNames != nullptr;
 
 	// ファイルの種類	2003.05.12 MIK
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	for( int i = 0; i < GetDllShareData().m_nTypesCount; i++ ){
-		const STypeConfigMini* type = NULL;
+		const STypeConfigMini* type = nullptr;
 		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig( i ), &type ) ){
 			continue;
 		}
@@ -998,7 +998,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 
 // 2005/02/20 novice 拡張子を省略したら補完する
 //	pData->m_ofn.lpstrDefExt = L"";
-	pData->m_ofn.lpstrDefExt = (pData->m_ofn.Flags & OFN_ENABLEHOOK)? NULL: L"";	// 2006.11.10 ryoji フックを使うときは自前で拡張子を補完する
+	pData->m_ofn.lpstrDefExt = (pData->m_ofn.Flags & OFN_ENABLEHOOK)? nullptr: L"";	// 2006.11.10 ryoji フックを使うときは自前で拡張子を補完する
 
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;

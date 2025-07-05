@@ -60,7 +60,7 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 		GetEditWindow()->m_cDlgFind.m_strText = cmemCurText.GetStringPtr();
 	}
 	/* 検索ダイアログの表示 */
-	if( NULL == GetEditWindow()->m_cDlgFind.GetHwnd() ){
+	if( nullptr == GetEditWindow()->m_cDlgFind.GetHwnd() ){
 		GetEditWindow()->m_cDlgFind.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWindow()->GetActiveView() );
 	}
 	else{
@@ -127,7 +127,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 
 	// 検索開始位置を調整
 	bFlag1 = false;
-	if( NULL == pcSelectLogic && m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+	if( nullptr == pcSelectLogic && m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 矩形範囲選択中でない & 選択状態のロック */
 		if( !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
 			bSelecting = true;
@@ -167,7 +167,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 			bDisableSelect = true;
 		}
 	}
-	if( NULL == pcSelectLogic ){
+	if( nullptr == pcSelectLogic ){
 		nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
 		CLogicInt nLineLen = CLogicInt(0); // 2004.03.17 Moca NULL == pLineのとき、nLineLenが未設定になり落ちるバグ対策
 		const CLayout*	pcLayout;
@@ -198,7 +198,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 re_do:;
 	 /* 現在位置より後ろの位置を検索する */
 	// 2004.05.30 Moca 引数をGetShareData()からメンバ変数に変更。他のプロセス/スレッドに書き換えられてしまわないように。
-	if( NULL == pcSelectLogic ){
+	if( nullptr == pcSelectLogic ){
 		nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
 			nLineNum,						// 検索開始レイアウト行
 			nIdx,							// 検索開始データ位置
@@ -232,7 +232,7 @@ re_do:;
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( sRangeA.GetTo() );
 			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
-		}else if( NULL == pcSelectLogic ){
+		}else if( nullptr == pcSelectLogic ){
 			/* 選択範囲の変更 */
 			//	2005.06.24 Moca
 			m_pCommanderView->GetSelectionInfo().SetSelectArea( sRangeA );
@@ -246,7 +246,7 @@ re_do:;
 		/* カーソル移動 */
 		//	Sep. 8, 2000 genta
 		if ( !bReplaceAll ) m_pCommanderView->AddCurrentLineToHistory();	// 2002.02.16 hor すべて置換のときは不要
-		if( NULL == pcSelectLogic ){
+		if( nullptr == pcSelectLogic ){
 			GetCaret().MoveCursor( sRangeA.GetFrom(), bRedraw );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}else{
@@ -298,7 +298,7 @@ end_of_func:;
 	}
 
 	if(bFound){
-		if(NULL == pcSelectLogic && ((nLineNumOld > nLineNum)||(nLineNumOld == nLineNum && nIdxOld > nIdx)))
+		if(nullptr == pcSelectLogic && ((nLineNumOld > nLineNum)||(nLineNumOld == nLineNum && nIdxOld > nIdx)))
 			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
 	}
 	else{
@@ -310,7 +310,7 @@ end_of_func:;
 // To Here 2002.01.26 hor
 
 		/* 検索／置換  見つからないときメッセージを表示 */
-		if( NULL == pszNotFoundMessage ){
+		if( nullptr == pszNotFoundMessage ){
 			CNativeW KeyName;
 			LimitStringLengthW(m_pCommanderView->m_strCurSearchKey.c_str(), m_pCommanderView->m_strCurSearchKey.size(),
 				_MAX_PATH, KeyName);
@@ -340,7 +340,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	bool		bDisableSelect = false;
 	CLayoutInt	nLineNumOld(0);
 	CLogicInt	nIdxOld(0);
-	const CLayout* pcLayout = NULL;
+	const CLayout* pcLayout = nullptr;
 	CLayoutInt	nLineNum(0);
 	CLogicInt	nIdx(0);
 
@@ -379,7 +379,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		// pcLayoutはNULLとなるのは、[EOF]から前検索した場合
 		// １行前に移動する処理
 		nLineNum--;
@@ -387,7 +387,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 			goto end_of_func;
 		}
 		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-		if( NULL == pcLayout ){
+		if( nullptr == pcLayout ){
 			goto end_of_func;
 		}
 		// カーソル左移動はやめて nIdxは行の長さとしないと[EOF]から改行を前検索した時に最後の改行を検索できない 2003.05.04 かろと
@@ -540,7 +540,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		return;
 	}
 
-	if ( hwndParent == NULL ){	//	親ウィンドウが指定されていなければ、CEditViewが親。
+	if ( hwndParent == nullptr ){	//	親ウィンドウが指定されていなければ、CEditViewが親。
 		hwndParent = m_pCommanderView->GetHwnd();
 	}
 	//2002.02.10 hor
@@ -586,7 +586,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	const CNativeW	cMemRepKey( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
 
 	/* 次を検索 */
-	Command_SEARCH_NEXT( true, true, false, hwndParent, NULL );
+	Command_SEARCH_NEXT( true, true, false, hwndParent, nullptr );
 
 	BOOL	bRegularExp = m_pCommanderView->m_sCurSearchOption.bRegularExp;
 	int 	nFlag       = m_pCommanderView->m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
@@ -866,7 +866,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	if( nPaste != 0 )
 	{
 		// クリップボードからデータを取得。
-		if ( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColumnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
+		if ( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColumnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: nullptr ) )
 		{
 			ErrorBeep();
 			m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
@@ -927,7 +927,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 
 	if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
-		auto nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, NULL);
+		auto nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, nullptr);
 		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
 		ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
 		cmemClip.SetString(pszConvertedText, nConvertedTextLen);
@@ -1243,7 +1243,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			++nReplaceNum;
 		}
 		else if( nReplaceTarget == 3 ){
-			Command_INSTEXT( false, L"", CLogicInt(0), true, false, bFastMode, bFastMode ? &cSelectLogic : NULL );
+			Command_INSTEXT( false, L"", CLogicInt(0), true, false, bFastMode, bFastMode ? &cSelectLogic : nullptr );
 			++nReplaceNum;
 		}
 		// 2002/01/19 novice 正規表現による文字列置換
@@ -1337,7 +1337,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				}
 
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
-				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - exTail, true, false, bFastMode, bFastMode ? &cSelectLogic : NULL );
+				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - exTail, true, false, bFastMode, bFastMode ? &cSelectLogic : nullptr );
 				// To Here Jun. 6, 2005 かろと
 			}
 		}
@@ -1346,7 +1346,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
 			** →m_nSelectXXXが-1の時に m_pCommanderView->ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18 かろと
 			*/
-			Command_INSTEXT( false, szREPLACEKEY, nREPLACEKEY, true, false, bFastMode, bFastMode ? &cSelectLogic : NULL );
+			Command_INSTEXT( false, szREPLACEKEY, nREPLACEKEY, true, false, bFastMode, bFastMode ? &cSelectLogic : nullptr );
 			++nReplaceNum;
 		}
 

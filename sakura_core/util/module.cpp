@@ -20,7 +20,7 @@ void ChangeCurrentDirectoryToExeDir()
 {
 	WCHAR szExeDir[_MAX_PATH];
 	szExeDir[0] = L'\0';
-	GetExedir( szExeDir, NULL );
+	GetExedir( szExeDir, nullptr );
 	if( szExeDir[0] ){
 		::SetCurrentDirectory( szExeDir );
 	}else{
@@ -123,14 +123,14 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSma
 	GetInidirOrExedir( szPath, szFile );
 
 	hIcon = (HICON)::LoadImage(
-		NULL,
+		nullptr,
 		szPath,
 		IMAGE_ICON,
 		size,
 		size,
 		LR_SHARED | LR_LOADFROMFILE
 	);
-	if( hIcon != NULL ){
+	if( hIcon != nullptr ){
 		return hIcon;
 	}
 
@@ -174,18 +174,18 @@ void GetAppVersionInfo(
 	static bool bLoad = false;
 	static DWORD dwVersionMS = 0;
 	static DWORD dwVersionLS = 0;
-	if( hInstance == NULL && bLoad ){
+	if( hInstance == nullptr && bLoad ){
 		*pdwProductVersionMS = dwVersionMS;
 		*pdwProductVersionLS = dwVersionLS;
 		return;
 	}
-	if( NULL != ( hRSRC = ::FindResource( hInstance, MAKEINTRESOURCE(nVersionResourceID), RT_VERSION ) )
-	 && NULL != ( hgRSRC = ::LoadResource( hInstance, hRSRC ) )
-	 && NULL != ( pVVIH = (VS_VERSION_INFO_HEAD*)::LockResource( hgRSRC ) )
+	if( nullptr != ( hRSRC = ::FindResource( hInstance, MAKEINTRESOURCE(nVersionResourceID), RT_VERSION ) )
+	 && nullptr != ( hgRSRC = ::LoadResource( hInstance, hRSRC ) )
+	 && nullptr != ( pVVIH = (VS_VERSION_INFO_HEAD*)::LockResource( hgRSRC ) )
 	){
 		*pdwProductVersionMS = pVVIH->Value.dwProductVersionMS;
 		*pdwProductVersionLS = pVVIH->Value.dwProductVersionLS;
-		if( hInstance == NULL ){
+		if( hInstance == nullptr ){
 			dwVersionMS = pVVIH->Value.dwProductVersionMS;
 			dwVersionLS = pVVIH->Value.dwProductVersionLS;
 			bLoad = true;

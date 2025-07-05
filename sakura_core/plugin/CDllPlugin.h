@@ -25,7 +25,7 @@ class CDllPlug final
 public:
 	CDllPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
 		: CPlug( plugin, id, sJack, sHandler, sLabel )
-		, m_handler( NULL )
+		, m_handler( nullptr )
 	{
 	}
 public:

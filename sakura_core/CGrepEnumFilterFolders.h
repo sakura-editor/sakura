@@ -30,7 +30,7 @@ public:
 	virtual ~CGrepEnumFilterFolders(){
 	}
 
-	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL ) override{
+	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = nullptr ) override{
 		if( CGrepEnumFolders::IsValid( w32fd, pFile ) ){
 			if( m_cGrepEnumExceptFolders.IsValid( w32fd, pFile ) ){
 				return TRUE;
@@ -40,7 +40,7 @@ public:
 	}
 
 	int Enumerates( LPCWSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFolders& except ){
-		m_cGrepEnumExceptFolders.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFolderKeys, option, NULL );
+		m_cGrepEnumExceptFolders.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFolderKeys, option, nullptr );
 		return CGrepEnumFolders::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFolderKeys, option, &except );
 	}
 };

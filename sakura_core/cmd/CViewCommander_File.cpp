@@ -57,7 +57,7 @@ void CViewCommander::Command_FILENEW( void )
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
-	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, NULL, false, curDir.c_str(), false );
+	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
 	return;
 }
 
@@ -71,7 +71,7 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
-		NULL,
+		nullptr,
 		false,
 		curDir.c_str(),
 		true
@@ -115,7 +115,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
-			defName.length()==0 ? NULL : defName.c_str(),	//[in]  フォルダー
+			defName.length()==0 ? nullptr : defName.c_str(),	//[in]  フォルダー
 			&sLoadInfo,							//[out] ロード情報受け取り
 			files								//[out] ファイル名
 		);
@@ -141,7 +141,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 				G_AppInstance(),
 				CEditWnd::getInstance()->GetHwnd(),
 				sFilesLoadInfo,
-				NULL,
+				nullptr,
 				true
 			);
 		}
@@ -215,7 +215,7 @@ BOOL CViewCommander::Command_FILESAVEALL( void )
 		WM_COMMAND,
 		MAKELONG( F_FILESAVE_QUIET, 0 ),
 		0,
-		NULL
+		nullptr
 	);
 	return TRUE;
 }
@@ -334,7 +334,7 @@ void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 {
 	HWND		hwndSQLPLUS;
 	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
-	if( NULL == hwndSQLPLUS ){
+	if( nullptr == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_ACTV_BUT_NOT_RUN ) );	//"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
 	}
@@ -356,7 +356,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	BOOL		bResult;
 
 	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
-	if( NULL == hwndSQLPLUS ){
+	if( nullptr == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_EXEC_BUT_NOT_RUN ) );	//"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
 	}
@@ -376,7 +376,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 				nBool = Command_FILESAVE();
 			}else{
 				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, true, 0, 0, 0, 0 );
-				nBool = Command_FILESAVEAS_DIALOG(NULL, CODE_NONE, EEolType::none);
+				nBool = Command_FILESAVEAS_DIALOG(nullptr, CODE_NONE, EEolType::none);
 			}
 			if( !nBool ){
 				return;
@@ -441,15 +441,15 @@ void CViewCommander::Command_BROWSE( void )
     SHELLEXECUTEINFO info; 
     info.cbSize =sizeof(info);
     info.fMask = 0;
-    info.hwnd = NULL;
-    info.lpVerb = NULL;
+    info.hwnd = nullptr;
+    info.lpVerb = nullptr;
     info.lpFile = GetDocument()->m_cDocFile.GetFilePath();
-    info.lpParameters = NULL;
-    info.lpDirectory = NULL;
+    info.lpParameters = nullptr;
+    info.lpDirectory = nullptr;
     info.nShow = SW_SHOWNORMAL;
     info.hInstApp = nullptr;
-    info.lpIDList = NULL;
-    info.lpClass = NULL;
+    info.lpIDList = nullptr;
+    info.lpClass = nullptr;
     info.hkeyClass = nullptr;
     info.dwHotKey = 0;
     info.hIcon = nullptr;
@@ -490,7 +490,7 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );
 //		MYTRACE( L"全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 		free( pDataAll );
-		pDataAll = NULL;
+		pDataAll = nullptr;
 //		MYTRACE( L"全データ取得のメモリ解放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 	}
 #endif
@@ -511,7 +511,7 @@ void CViewCommander::Command_PROFILEMGR( void )
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;
 		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, NULL, false );
+		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
 	}
 }
 
@@ -531,7 +531,7 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 	explorerCommand.AppendStringF(L"/select,\"%s\"", pszDocPath);
 	LPCWSTR pszExplorerCommand = explorerCommand.GetStringPtr();
 
-	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, NULL, SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, nullptr, SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
@@ -593,7 +593,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 	*/
 	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
-	auto hInstance = ::ShellExecuteW(NULL, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecuteW(nullptr, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
@@ -637,7 +637,7 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 	*/
 	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
-	auto hInstance = ::ShellExecuteW(NULL, pVerb, L"powershell.exe", pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecuteW(nullptr, pVerb, L"powershell.exe", pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
@@ -733,7 +733,7 @@ BOOL CViewCommander::Command_PUTFILE(
 		catch(const CError_FileOpen&)
 		{
 			WarningMessage(
-				NULL,
+				nullptr,
 				LS(STR_SAVEAGENT_OTHER_APP),
 				filename
 			);
@@ -742,7 +742,7 @@ BOOL CViewCommander::Command_PUTFILE(
 		catch(const CError_FileWrite&)
 		{
 			WarningMessage(
-				NULL,
+				nullptr,
 				LS(STR_ERR_DLGEDITVWCMDNW11)
 			);
 			bResult = FALSE;
@@ -752,12 +752,12 @@ BOOL CViewCommander::Command_PUTFILE(
 		HWND		hwndProgress;
 		CEditWnd*	pCEditWnd = GetEditWindow();
 
-		if( NULL != pCEditWnd ){
+		if( nullptr != pCEditWnd ){
 			hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
 		}else{
-			hwndProgress = NULL;
+			hwndProgress = nullptr;
 		}
-		if( NULL != hwndProgress ){
+		if( nullptr != hwndProgress ){
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
 
@@ -800,9 +800,9 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	CEol cEol;
 	int			nLineNum = 0;
 
-	CDlgCancel*	pcDlgCancel = NULL;
-	HWND		hwndCancel = NULL;
-	HWND		hwndProgress = NULL;
+	CDlgCancel*	pcDlgCancel = nullptr;
+	HWND		hwndCancel = nullptr;
+	HWND		hwndProgress = nullptr;
 	int			nOldPercent = -1;
 	BOOL		bResult = TRUE;
 
@@ -847,7 +847,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {
 			pcDlgCancel = new CDlgCancel;
-			if( NULL != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
+			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( nullptr ), nullptr, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
 				Progress_SetRange( hwndProgress, 0, 101 );
 				Progress_SetPos( hwndProgress, 0);
@@ -866,7 +866,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			Command_INSTEXT( false, pLine, CLogicInt(nLineLen), true);
 
 			/* 進捗ダイアログ有無 */
-			if( NULL == pcDlgCancel ){
+			if( nullptr == pcDlgCancel ){
 				continue;
 			}
 			/* 処理中のユーザー操作を可能にする */
@@ -890,11 +890,11 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		cfl.FileClose();
 	} // try
 	catch( const CError_FileOpen& ){
-		WarningMessage( NULL, LS(STR_GREP_ERR_FILEOPEN), filename );
+		WarningMessage( nullptr, LS(STR_GREP_ERR_FILEOPEN), filename );
 		bResult = FALSE;
 	}
 	catch( const CError_FileRead& ){
-		WarningMessage( NULL, LS(STR_ERR_DLGEDITVWCMDNW12) );
+		WarningMessage( nullptr, LS(STR_ERR_DLGEDITVWCMDNW12) );
 		bResult = FALSE;
 	} // 例外処理終わり
 

@@ -69,9 +69,9 @@ public:
 		HINSTANCE			hInstance,					//!< [in] インスタンスID (実は未使用)
 		HWND				hWndParent,					//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
 		const SLoadInfo&	sLoadInfo,					//!< [in]
-		const WCHAR*		szCmdLineOption	= NULL,		//!< [in] 追加のコマンドラインオプション
+		const WCHAR*		szCmdLineOption	= nullptr,		//!< [in] 追加のコマンドラインオプション
 		bool				sync			= false,	//!< [in] trueなら新規エディタの起動まで待機する
-		const WCHAR*		pszCurDir		= NULL,		//!< [in] 新規エディタのカレントディレクトリ
+		const WCHAR*		pszCurDir		= nullptr,		//!< [in] 新規エディタのカレントディレクトリ
 		bool				bNewWindow		= false		//!< [in] 新規エディタをウインドウで開く
 	);
 	static bool OpenNewEditor2(						//!< 新規編集ウィンドウの追加 ver 1

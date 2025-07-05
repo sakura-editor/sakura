@@ -36,14 +36,14 @@ struct CMacroParam{
 	int				m_nDataLen;
 	EMacroParamType m_eType;
 
-	CMacroParam():m_pData(NULL), m_pNext(NULL), m_nDataLen(0), m_eType(EMacroParamTypeNull){}
+	CMacroParam():m_pData(nullptr), m_pNext(nullptr), m_nDataLen(0), m_eType(EMacroParamTypeNull){}
 	CMacroParam( const CMacroParam& obj ){
 		if( obj.m_pData ){
 			m_pData = new WCHAR[obj.m_nDataLen + 1];
 		}else{
-			m_pData = NULL;
+			m_pData = nullptr;
 		}
-		m_pNext = NULL;
+		m_pNext = nullptr;
 		m_nDataLen = obj.m_nDataLen;
 		m_eType = obj.m_eType;
 	}
@@ -55,7 +55,7 @@ struct CMacroParam{
 	}
 	void Clear(){
 		delete[] m_pData;
-		m_pData = NULL;
+		m_pData = nullptr;
 		m_nDataLen = 0;
 		m_eType = EMacroParamTypeNull;
 	}

@@ -43,7 +43,7 @@ bool CEditView::TagJumpSub(
 	bool*			pbJumpToSelf	//!< [out] オプションNULL可。自分にジャンプしたか
 )
 {
-	HWND	hwndOwner = NULL;
+	HWND	hwndOwner = nullptr;
 	POINT	poCaret;
 	// 2004/06/21 novice タグジャンプ機能追加
 	TagJump	tagJump;
@@ -236,7 +236,7 @@ open_c:;
 			G_AppInstance(),
 			this->GetHwnd(),
 			sLoadInfo,
-			NULL,
+			nullptr,
 			true
 		);
 		/* ファイルを開いているか */
@@ -422,7 +422,7 @@ void CEditView::CopyCurLine(
 	}
 
 	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().y );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		return;
 	}
 
@@ -466,7 +466,7 @@ void CEditView::DrawBracketCursorLine(bool bDraw)
 HWND CEditView::StartProgress()
 {
 	HWND hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
-	if( NULL != hwndProgress ){
+	if( nullptr != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_SHOW );
 		Progress_SetRange( hwndProgress, 0, 101 );
 		Progress_SetPos( hwndProgress, 0 );

@@ -63,8 +63,8 @@ private:
 
 CStream::CStream(const WCHAR* pszPath, const WCHAR* pszMode, bool bExceptionMode)
 {
-	m_fp = NULL;
-	m_pcFileAttribute = NULL;
+	m_fp = nullptr;
+	m_pcFileAttribute = nullptr;
 	m_bExceptionMode = bExceptionMode;
 	Open(pszPath,pszMode);
 }
@@ -112,7 +112,7 @@ void CStream::Close()
 	//クローズ
 	if(m_fp){
 		fclose(m_fp);
-		m_fp=NULL;
+		m_fp=nullptr;
 	}
 
 	//属性復元

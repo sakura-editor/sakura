@@ -96,8 +96,8 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 
 		DispPos sPos(*pInfo->m_pDispPos);	// 現在位置を覚えておく
 
-		if (crText != m_clrPen || m_hPen == NULL) {
-			if (m_hPen != NULL) {
+		if (crText != m_clrPen || m_hPen == nullptr) {
+			if (m_hPen != nullptr) {
 				::DeleteObject(m_hPen);
 			}
 			m_hPen = CreatePen(PS_SOLID, 1, crText);

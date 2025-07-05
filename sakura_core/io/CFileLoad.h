@@ -44,7 +44,7 @@ public:
 	void Prepare( const CFileLoad& other, size_t nOffsetBegin, size_t nOffsetEnd );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	ECodeType FileOpen( LPCWSTR, bool bBigFile, ECodeType, int, bool* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
+	ECodeType FileOpen( LPCWSTR, bool bBigFile, ECodeType, int, bool* pbBomExist = nullptr );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	//! 1行データをロードする 順アクセス用

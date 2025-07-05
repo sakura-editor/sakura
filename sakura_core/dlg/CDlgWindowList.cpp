@@ -260,7 +260,7 @@ BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 	for (int i = 0; i < _countof(anchorList); i++) {
 		ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor);
 	}
-	::InvalidateRect(GetHwnd(), NULL, TRUE);
+	::InvalidateRect(GetHwnd(), nullptr, TRUE);
 	return TRUE;
 }
 

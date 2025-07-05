@@ -80,7 +80,7 @@ CRegexKeyword::CRegexKeyword(LPCWSTR regexp_dll )
 	InitDll( regexp_dll );	// 2007.08.12 genta 引数追加
 	MYDBGMSG("CRegexKeyword")
 
-	m_pTypes    = NULL;
+	m_pTypes    = nullptr;
 	m_nTypeIndex = -1;
 	m_nTypeId = -1;
 
@@ -102,13 +102,13 @@ CRegexKeyword::~CRegexKeyword()
 	{
 		if( m_sInfo[i].pBregexp && IsAvailable() )
 			BRegfree(m_sInfo[i].pBregexp);
-		m_sInfo[i].pBregexp = NULL;
+		m_sInfo[i].pBregexp = nullptr;
 	}
 
 	RegexKeyInit();
 
 	m_nTypeIndex = -1;
-	m_pTypes     = NULL;
+	m_pTypes     = nullptr;
 }
 
 //!	正規表現キーワード初期化処理
@@ -130,7 +130,7 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 	m_nRegexKeyCount = 0;
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		m_sInfo[i].pBregexp = NULL;
+		m_sInfo[i].pBregexp = nullptr;
 	}
 
 	return TRUE;
@@ -151,9 +151,9 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 {
 	MYDBGMSG("RegexKeySetTypes")
-	if( pTypesPtr == NULL ) 
+	if( pTypesPtr == nullptr ) 
 	{
-		m_pTypes = NULL;
+		m_pTypes = nullptr;
 		m_bUseRegexKeyword = false;
 		return FALSE;
 	}
@@ -163,7 +163,7 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 		//OFFになったのにまだONならOFFにする。
 		if( m_bUseRegexKeyword )
 		{
-			m_pTypes = NULL;
+			m_pTypes = nullptr;
 			m_bUseRegexKeyword = false;
 		}
 		return FALSE;
@@ -171,7 +171,7 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 
 	if( m_nTypeId              == pTypesPtr->m_id
 	 && m_nCompiledMagicNumber == pTypesPtr->m_nRegexKeyMagicNumber
-	 && m_pTypes != NULL  // 2014.07.02 条件追加
+	 && m_pTypes != nullptr  // 2014.07.02 条件追加
 	){
 		return TRUE;
 	}
@@ -207,7 +207,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 	{
 		if( m_sInfo[i].pBregexp && IsAvailable() )
 			BRegfree(m_sInfo[i].pBregexp);
-		m_sInfo[i].pBregexp = NULL;
+		m_sInfo[i].pBregexp = nullptr;
 	}
 
 	//コンパイルパターンを内部変数に移す。
@@ -318,7 +318,7 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 	MYDBGMSG("RegexKeyLineStart")
 
 	//動作に必要なチェックをする。
-	if( !m_bUseRegexKeyword || !IsAvailable() || m_pTypes==NULL )
+	if( !m_bUseRegexKeyword || !IsAvailable() || m_pTypes==nullptr )
 	{
 		return FALSE;
 	}
@@ -359,7 +359,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 	//動作に必要なチェックをする。
 	if( !m_bUseRegexKeyword
 		|| !IsAvailable()
-		|| m_pTypes == NULL )
+		|| m_pTypes == nullptr )
 	{
 		return FALSE;
 	}
@@ -385,8 +385,8 @@ BOOL CRegexKeyword::RegexIsKeyword(
 				const auto endp = begp + cStr.GetLength();	//!< 行末位置
 				const auto startp = begp + nPos;			//!< 検索開始位置
 				int matched = ExistBMatchEx()
-					? BMatchEx(NULL, begp, startp, endp, &pBregexp, m_szMsg)
-					: BMatch(NULL,         startp, endp, &pBregexp, m_szMsg);
+					? BMatchEx(nullptr, begp, startp, endp, &pBregexp, m_szMsg)
+					: BMatch(nullptr,         startp, endp, &pBregexp, m_szMsg);
 				if( 0 < matched
 					&& pBregexp->endp[0] - pBregexp->startp[0] > 0 )
 				{
@@ -434,12 +434,12 @@ BOOL CRegexKeyword::RegexKeyCheckSyntax(const wchar_t *s)
 		L"/",  L"/ki",
 		L"m/", L"/ki",
 		L"m#", L"#ki",
-		NULL, NULL,
+		nullptr, nullptr,
 	};
 
 	length = wcslen(s);
 
-	for(i = 0; kakomi[i] != NULL; i += 2)
+	for(i = 0; kakomi[i] != nullptr; i += 2)
 	{
 		//文字長を確かめる
 		if( length > (int)wcslen(kakomi[i]) + (int)wcslen(kakomi[i+1]) )

@@ -213,7 +213,7 @@ void CGrepAgent::CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>&
 
 	WCHAR* token;
 	int nPathPos = 0;
-	while( NULL != (token = my_strtok<WCHAR>( strPath.data(), nPathLen, &nPathPos, L";")) ){
+	while( nullptr != (token = my_strtok<WCHAR>( strPath.data(), nPathLen, &nPathPos, L";")) ){
 		std::wstring strTemp( token );
 		// パスに含まれる '"' を削除する
 		strTemp.erase( std::remove( strTemp.begin(), strTemp.end(), L'"' ), strTemp.end() );
@@ -264,7 +264,7 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 					pcEditView->GetDocument()->GetDocumentEncoding(), 0) );
 			pcCodeBase->UnicodeToCode( cmem, &cmemOut );
 			DWORD dwWrite = 0;
-			::WriteFile(out, cmemOut.GetRawPtr(), cmemOut.GetRawLength(), &dwWrite, NULL);
+			::WriteFile(out, cmemOut.GetRawPtr(), cmemOut.GetRawLength(), &dwWrite, nullptr);
 		}
 	}else{
 		pcEditView->GetCommander().Command_ADDTAIL( cmem.GetStringPtr(), cmem.GetStringLength() );
@@ -304,7 +304,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 			pszTagName = szGrep;
 			wcsncpy_s(pszTagName, _countof(szGrep), L"(Grep)", _TRUNCATE);
 		}
-		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, _countof(szTitle), editInfo, node->m_nId, -1, NULL );
+		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, _countof(szTitle), editInfo, node->m_nId, -1, nullptr );
 #ifdef _WIN64
 		auto_sprintf(pszWindowName, L":HWND:[%016I64x]%s", hWndTarget, pszTagName);
 #else
@@ -388,7 +388,7 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->m_bDoing_UndoRedo		= true;
 
 	/* アンドゥバッファの処理 */
-	if( NULL != pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk ){	/* 操作ブロック */
+	if( nullptr != pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk ){	/* 操作ブロック */
 //@@@2002.2.2 YAZAKI NULLじゃないと進まないので、とりあえずコメント。＆NULLのときは、new COpeBlkする。
 //		while( NULL != m_pcOpeBlk ){}
 //		delete m_pcOpeBlk;
@@ -412,7 +412,7 @@ DWORD CGrepAgent::DoGrep(
 			// 矩形・ラインモード貼り付けは未サポート
 			bool bColmnSelect;
 			bool bLineSelect = false;
-			if( !pcViewDst->MyGetClipboardData( cmemReplace, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
+			if( !pcViewDst->MyGetClipboardData( cmemReplace, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: nullptr ) ){
 				this->m_bGrepRunning = false;
 				pcViewDst->m_bDoing_UndoRedo = false;
 				ErrorMessage( pcViewDst->m_hwndParent, LS(STR_DLGREPLC_CLIPBOARD) );
@@ -578,7 +578,7 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
-	HWND hWndTarget = NULL;
+	HWND hWndTarget = nullptr;
 	WCHAR szWindowName[_MAX_PATH];
 	WCHAR szWindowPath[_MAX_PATH];
 	{
@@ -700,7 +700,7 @@ DWORD CGrepAgent::DoGrep(
 		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 	}
 	cmemMessage._SetStringLength(0);
-	pszWork = NULL;
+	pszWork = nullptr;
 	
 	//	2007.07.22 genta バージョンを取得するために，
 	//	正規表現の初期化を上へ移動
@@ -722,7 +722,7 @@ DWORD CGrepAgent::DoGrep(
 	int nGrepTreeResult = 0;
 
 	if( hWndTarget ){
-		for( HWND hwnd = hWndTarget; NULL != hwnd; hwnd = NULL ){
+		for( HWND hwnd = hWndTarget; nullptr != hwnd; hwnd = nullptr ){
 			bool bOutputBaseFolder = false;
 			bool bOutputFolderName = false;
 			// 複数ウィンドウループ予約
@@ -847,7 +847,7 @@ DWORD CGrepAgent::DoGrep(
 
 	/* 再描画 */
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-		pCEditWnd->RedrawAllViews( NULL );
+		pCEditWnd->RedrawAllViews( nullptr );
 
 	if( !bGrepCurFolder ){
 		// 現行フォルダーを検索したフォルダーに変更
@@ -965,7 +965,7 @@ int CGrepAgent::DoGrepTree(
 			nRet = DoGrepFile(
 				pcViewDst,
 				pcDlgCancel,
-				NULL,
+				nullptr,
 				pszKey,
 				lpFileName,
 				sSearchOption,
@@ -1314,7 +1314,7 @@ int CGrepAgent::DoGrepFile(
 	bOutFileName = FALSE;
 	CEol	cEol;
 	int		nEolCodeLen;
-	const STypeConfigMini* type = NULL;
+	const STypeConfigMini* type = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
 		return -1;
 	}
@@ -1579,7 +1579,7 @@ int CGrepAgent::DoGrepFile(
 				int nMatchLen;
 				int nIdx = 0;
 				// Jun. 26, 2003 genta 無駄なwhileは削除
-				while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != NULL ){
+				while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != nullptr ){
 					nIdx = pszRes - pLine + nMatchLen;
 					++nHitCount;
 					++(*pnHitCount);
@@ -1721,7 +1721,7 @@ public:
 		,bBom(bBom_)
 		,bOldSave(bOldSave_)
 		,bufferSize(0)
-		,out(NULL)
+		,out(nullptr)
 		,pcCodeBase(CCodeFactory::CreateCodeBase(code_,0))
 		,memMessage(message)
 	{
@@ -1772,7 +1772,7 @@ public:
 		if( nHitCount && out ){
 			out->Close();
 			delete out;
-			out = NULL;
+			out = nullptr;
 			if( bOldSave ){
 				std::wstring oldFile = fileName;
 				oldFile += L".skrold";
@@ -1808,7 +1808,7 @@ public:
 		if( out ){
 			out->Close();
 			delete out;
-			out = NULL;
+			out = nullptr;
 			::DeleteFile( name.c_str() );
 		}
 	}
@@ -1860,7 +1860,7 @@ int CGrepAgent::DoGrepReplaceFile(
 	int	nKeyLen = wcslen( pszKey );
 	const WCHAR*	pszCodeName = L"";
 
-	const STypeConfigMini* type = NULL;
+	const STypeConfigMini* type = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
 		return -1;
 	}

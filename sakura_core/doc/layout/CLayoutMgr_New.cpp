@@ -93,7 +93,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_Normal( CLayout* )
 CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 {
 	//	前の行が無いときは、インデント不要。
-	if ( pLayoutPrev == NULL ) return CLayoutInt(0);
+	if ( pLayoutPrev == nullptr ) return CLayoutInt(0);
 
 	CLayoutInt nIpos = pLayoutPrev->GetIndent();
 
@@ -130,7 +130,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 {
 	//	前の行が無いときは、インデント不要。
-	if ( pLayoutPrev == NULL ) return CLayoutInt(0);
+	if ( pLayoutPrev == nullptr ) return CLayoutInt(0);
 
 	//	インデントの計算
 	CLayoutInt nIpos = pLayoutPrev->GetIndent();
@@ -157,7 +157,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 			wchar_t buf[3]; // 文字の長さは1 or 2
 			wmemcpy( buf, it.getCurrentPos(), it.getIndexDelta() );
 			buf[ it.getIndexDelta() ] = L'\0';
-			if( NULL != wcsstr( szSpecialIndentChar, buf )){
+			if( nullptr != wcsstr( szSpecialIndentChar, buf )){
 				//	インデントのカウントを継続する
 			}
 			else {

@@ -117,7 +117,7 @@ void CEditView::ViewDiffInfo(
 
 	WCHAR	cmdline[1024];
 	GetExedir( cmdline, L"diff.exe" );
-	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
+	SplitPath_FolderAndFile( cmdline, szExeFolder, nullptr );
 
 	//	From Here Dec. 28, 2002 MIK
 	//	diff.exeの存在チェック
@@ -169,7 +169,7 @@ void CEditView::ViewDiffInfo(
 		}
 		nFlgOpt |= 0x40;  // 拡張情報出力無効
 		COutputAdapterDiff oa(this, nFlgFile12);
-		bool ret = ExecCmd( cmdline, nFlgOpt, NULL, &oa );
+		bool ret = ExecCmd( cmdline, nFlgOpt, nullptr, &oa );
 
 		if( ret ){
 			if( oa.bDiffInfo == true && oa.nDiffLen > 0 )
@@ -207,7 +207,7 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 		bFirst = false;
 		if( strncmp_literal( pBuf, "Binary files " ) == 0 )
 		{
-			WarningMessage( NULL, LS(STR_ERR_DLGEDITVWDIFF4) );
+			WarningMessage( nullptr, LS(STR_ERR_DLGEDITVWDIFF4) );
 			return false;
 		}
 	}
@@ -387,7 +387,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 			CLogicInt		nLineLen;
 			pLineData = docMgr.GetLine(y)->GetDocLineStrWithEOL(&nLineLen);
 			// 正常終了
-			if( 0 == nLineLen || NULL == pLineData ) break;
+			if( 0 == nLineLen || nullptr == pLineData ) break;
 			if( bBom ){
 				CNativeW cLine2(L"\ufeff");
 				cLine2.AppendString(pLineData, nLineLen);
@@ -445,9 +445,9 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, bool bBom )
 {
 	//一時
-	WCHAR* pszTmpName = _wtempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
-	if( NULL == pszTmpName ){
-		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
+	WCHAR* pszTmpName = _wtempnam( nullptr, SAKURA_DIFF_TEMP_PREFIX );
+	if( nullptr == pszTmpName ){
+		WarningMessage( nullptr, LS(STR_DIFF_FAILED) );
 		return FALSE;
 	}
 
@@ -455,7 +455,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 	free( pszTmpName );
 
 	//自分か？
-	if( NULL == hWnd )
+	if( nullptr == hWnd )
 	{
 		EConvertResult eWriteResult = CWriteManager().WriteFile_From_CDocLineMgr(
 			m_pcEditDoc->m_cDocLineMgr,
@@ -471,7 +471,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 
 	CTextOutputStream out(filename, code, true, false);
 	if(!out){
-		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
+		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
 	}
 
@@ -487,7 +487,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 	if( bError ){
 		out.Close();
 		_wunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
+		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 	}
 
 	return TRUE;
@@ -498,9 +498,9 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode )
 {
 	//一時
-	WCHAR* pszTmpName = _wtempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
-	if( NULL == pszTmpName ){
-		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
+	WCHAR* pszTmpName = _wtempnam( nullptr, SAKURA_DIFF_TEMP_PREFIX );
+	if( nullptr == pszTmpName ){
+		WarningMessage( nullptr, LS(STR_DIFF_FAILED) );
 		return FALSE;
 	}
 
@@ -508,14 +508,14 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 	free( pszTmpName );
 
 	bool bBom = false;
-	const STypeConfigMini* typeMini = NULL;
+	const STypeConfigMini* typeMini = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( orgName ), &typeMini ) ){
 		return FALSE;
 	}
 	CFileLoad	cfl( typeMini->m_encoding );
 	CTextOutputStream out(tmpName, saveCode, true, false);
 	if(!out){
-		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
+		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
 	}
 	try{
@@ -531,7 +531,7 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol ) ) {
 			const CLogicInt nLineLen = cLine.GetStringLength();
 			const wchar_t* pLineData= cLine.GetStringPtr();
-			if( 0 == nLineLen || NULL == pLineData ) break;
+			if( 0 == nLineLen || nullptr == pLineData ) break;
 			if( bBom ){
 				CNativeW cLine2(L"\ufeff");
 				cLine2.AppendString(pLineData, nLineLen);
@@ -548,7 +548,7 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 	catch(...){
 		out.Close();
 		_wunlink( tmpName );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。
-		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
+		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
 	}
 

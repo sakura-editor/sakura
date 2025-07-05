@@ -81,7 +81,7 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	}
 
 	PWSTR pFolderPath = nullptr;
-	::SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT_PATH, NULL, &pFolderPath);
+	::SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT_PATH, nullptr, &pFolderPath);
 	std::filesystem::path privateIniPath(pFolderPath);
 	::CoTaskMemFree(pFolderPath);
 
@@ -121,10 +121,10 @@ bool CControlProcess::InitializeProcess()
 	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
 	// アプリケーション実行検出用(インストーラで使用)
-	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
-	if( NULL == m_hMutex ){
+	m_hMutex = ::CreateMutex( nullptr, FALSE, GSTR_MUTEX_SAKURA );
+	if( nullptr == m_hMutex ){
 		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
+		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
 		return false;
 	}
 
@@ -133,21 +133,21 @@ bool CControlProcess::InitializeProcess()
 	// 初期化完了イベントを作成する
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
-	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, strInitEvent.c_str() );
-	if( NULL == m_hEventCPInitialized )
+	m_hEventCPInitialized = ::CreateEvent( nullptr, TRUE, FALSE, strInitEvent.c_str() );
+	if( nullptr == m_hEventCPInitialized )
 	{
 		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateEvent()失敗。\n終了します。" );
+		TopErrorMessage( nullptr, L"CreateEvent()失敗。\n終了します。" );
 		return false;
 	}
 
 	/* コントロールプロセスの目印 */
 	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += pszProfileName;
-	m_hMutexCP = ::CreateMutex( NULL, TRUE, strCtrlProcEvent.c_str() );
-	if( NULL == m_hMutexCP ){
+	m_hMutexCP = ::CreateMutex( nullptr, TRUE, strCtrlProcEvent.c_str() );
+	if( nullptr == m_hMutexCP ){
 		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
+		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
 		return false;
 	}
 	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
@@ -184,7 +184,7 @@ bool CControlProcess::InitializeProcess()
 	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
 	if( !hwnd ){
 		ErrorBeep();
-		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX3) );
+		TopErrorMessage( nullptr, LS(STR_ERR_CTRLMTX3) );
 		return false;
 	}
 	SetMainWindow(hwnd);
@@ -193,7 +193,7 @@ bool CControlProcess::InitializeProcess()
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
 		ErrorBeep();
-		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX4) );
+		TopErrorMessage( nullptr, LS(STR_ERR_CTRLMTX4) );
 		return false;
 	}
 
@@ -224,7 +224,7 @@ bool CControlProcess::MainLoop()
 */
 void CControlProcess::OnExitProcess()
 {
-	GetDllShareData().m_sHandles.m_hwndTray = NULL;
+	GetDllShareData().m_sHandles.m_hwndTray = nullptr;
 }
 
 CControlProcess::~CControlProcess()

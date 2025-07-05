@@ -47,7 +47,7 @@ INT_PTR CALLBACK MyDialogProc(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pCDialog = ( CDialog* )lParam;
-		if( NULL != pCDialog ){
+		if( nullptr != pCDialog ){
 			return pCDialog->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
 		}else{
 			return FALSE;
@@ -55,7 +55,7 @@ INT_PTR CALLBACK MyDialogProc(
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCDialog = ( CDialog* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCDialog ){
+		if( nullptr != pCDialog ){
 			return pCDialog->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
 		}else{
 			return FALSE;
@@ -73,12 +73,12 @@ CDialog::CDialog(bool bSizable, bool bCheckShareData)
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData(bCheckShareData);
 
-	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-	m_hWnd  = NULL;			/* このダイアログのハンドル */
-	m_hwndSizeBox = NULL;
+	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
+	m_hWnd  = nullptr;			/* このダイアログのハンドル */
+	m_hwndSizeBox = nullptr;
 	m_bSizable = bSizable;
-	m_lParam = (LPARAM)NULL;
+	m_lParam = (LPARAM)nullptr;
 	m_nShowCmd = SW_SHOW;
 	m_xPos = -1;
 	m_yPos = -1;
@@ -140,7 +140,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 		MyDialogProc,
 		(LPARAM)this
 	);
-	if( NULL != m_hWnd ){
+	if( nullptr != m_hWnd ){
 		::ShowWindow( m_hWnd, nCmdShow );
 	}
 	return m_hWnd;
@@ -160,7 +160,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 		MyDialogProc,
 		(LPARAM)this
 	);
-	if( NULL != m_hWnd ){
+	if( nullptr != m_hWnd ){
 		::ShowWindow( m_hWnd, nCmdShow );
 	}
 	return m_hWnd;
@@ -168,13 +168,13 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 
 void CDialog::CloseDialog( INT_PTR nModalRetVal )
 {
-	if( NULL != m_hWnd ){
+	if( nullptr != m_hWnd ){
 		if( m_bModal ){
 			::EndDialog( m_hWnd, nModalRetVal );
 		}else{
 			::DestroyWindow( m_hWnd );
 		}
-		m_hWnd = NULL;
+		m_hWnd = nullptr;
 	}
 	return;
 }
@@ -325,11 +325,11 @@ BOOL CDialog::OnDestroy( void )
 		m_nHeight = -1;
 	}
 	/* 破棄 */
-	if( NULL != m_hwndSizeBox ){
+	if( nullptr != m_hwndSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );
-		m_hwndSizeBox = NULL;
+		m_hwndSizeBox = nullptr;
 	}
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 	return TRUE;
 }
 
@@ -355,7 +355,7 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	::GetWindowRect( m_hWnd, &rc );
 
 	/* サイズボックスの移動 */
-	if( NULL != m_hwndSizeBox ){
+	if( nullptr != m_hwndSizeBox ){
 		::GetClientRect( m_hWnd, &rc );
 //		::SetWindowPos( m_hwndSizeBox, NULL,
 //	Sept. 17, 2000 JEPRO_16thdot アイコンの16dot目が表示されるように次行を変更する必要ある？
@@ -369,7 +369,7 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 
 //	Jan. 12, 2001 Stonee (suggested by genta)
 //		"13"という固定値ではなくシステムから取得したスクロールバーサイズを使うように修正
-		::SetWindowPos( m_hwndSizeBox, NULL,
+		::SetWindowPos( m_hwndSizeBox, nullptr,
 		rc.right - rc.left - GetSystemMetrics(SM_CXVSCROLL), //<-- stonee
 		rc.bottom - rc.top - GetSystemMetrics(SM_CYHSCROLL), //<-- stonee
 		GetSystemMetrics(SM_CXVSCROLL), //<-- stonee
@@ -383,7 +383,7 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 		}else{
 			::ShowWindow( m_hwndSizeBox, SW_SHOW );
 		}
-		::InvalidateRect( m_hwndSizeBox, NULL, TRUE );
+		::InvalidateRect( m_hwndSizeBox, nullptr, TRUE );
 	}
 	return FALSE;
 }
@@ -399,16 +399,16 @@ void CDialog::CreateSizeBox( void )
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT,								/* no extended styles */
 		WC_SCROLLBAR,										/* scroll bar control class */
-		NULL,												/* text for window title bar */
+		nullptr,												/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 		0,													/* horizontal position */
 		0,													/* vertical position */
 		0,													/* width of the scroll bar */
 		0,													/* default height */
 		m_hWnd/*hdlg*/, 									/* handle of main window */
-		(HMENU) NULL,										/* no menu for a scroll bar */
+		(HMENU) nullptr,										/* no menu for a scroll bar */
 		CSelectLang::getLangRsrcInstance(),					/* instance owning this window */
-		(LPVOID) NULL										/* pointer not needed */
+		(LPVOID) nullptr										/* pointer not needed */
 	);
 	::ShowWindow( m_hwndSizeBox, SW_SHOW );
 }
@@ -575,9 +575,9 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 	int nScrollWidth = scrollBar ? ::GetSystemMetrics( SM_CXVSCROLL ) + 2 : 2;
 
 	hDC = ::GetDC( hwndCtl );
-	if( NULL == hDC )
+	if( nullptr == hDC )
 		return FALSE;
-	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, (LPARAM)NULL );
+	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, (LPARAM)nullptr );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
 	nItem = Combo_GetCount( hwndCtl );
 	::GetWindowRect( hwndCtl, &rc );
@@ -624,7 +624,7 @@ bool CDialog::DirectoryUp( WCHAR* szDir )
 // コントロールに画面のフォントを設定	2012/11/27 Uchi
 HFONT CDialog::SetMainFont( HWND hTarget )
 {
-	if (hTarget == NULL)	return NULL;
+	if (hTarget == nullptr)	return nullptr;
 
 	HFONT	hFont;
 	LOGFONT	lf;
@@ -699,10 +699,10 @@ void CDialog::ResizeItem( HWND hTarget, const POINT& ptDlgDefault, const POINT& 
 		height = ptDlgNew.y - rcItemDefault.top - (ptDlgDefault.y - rcItemDefault.bottom);
 	}
 //	::MoveWindow( hTarget, pt.x, pt.y, width, height, FALSE );
-	::SetWindowPos( hTarget, NULL, pt.x, pt.y, width, height,
+	::SetWindowPos( hTarget, nullptr, pt.x, pt.y, width, height,
 				SWP_NOOWNERZORDER | SWP_NOZORDER );
 	if( bUpdate ){
-		::InvalidateRect( hTarget, NULL, TRUE );
+		::InvalidateRect( hTarget, nullptr, TRUE );
 	}
 }
 

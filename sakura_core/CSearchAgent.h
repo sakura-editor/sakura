@@ -28,7 +28,7 @@ public:
 	~CSearchStringPattern();
 	void Reset();
 	bool SetPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp){
-		return SetPattern(hwnd, pszPattern, nPatternLen, NULL, sSearchOption, pRegexp, false);
+		return SetPattern(hwnd, pszPattern, nPatternLen, nullptr, sSearchOption, pRegexp, false);
 	}
 	bool SetPattern(HWND, const wchar_t* pszPattern, int nPatternLen, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* pRegexp, bool bGlobal);
 	const wchar_t* GetKey() const{ return m_pszKey; }

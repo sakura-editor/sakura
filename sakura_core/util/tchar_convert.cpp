@@ -14,14 +14,14 @@ static CRecycledBufferDynamic g_bufBig;
 
 const WCHAR* to_wchar(const ACHAR* src)
 {
-	if(src==NULL)return NULL;
+	if(src==nullptr)return nullptr;
 
 	return to_wchar(src,strlen(src));
 }
 
 const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
 {
-	if(pSrc==NULL)return NULL;
+	if(pSrc==nullptr)return nullptr;
 
 	//必要なサイズを計算
 	int nDstLen = MultiByteToWideChar(
@@ -29,7 +29,7 @@ const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
 		0,
 		pSrc,
 		nSrcLength,
-		NULL,
+		nullptr,
 		0
 	);
 	size_t nDstCnt = (size_t)nDstLen + 1;
@@ -59,14 +59,14 @@ const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
 
 const ACHAR* to_achar(const WCHAR* src)
 {
-	if(src==NULL)return NULL;
+	if(src==nullptr)return nullptr;
 
 	return to_achar(src,wcslen(src));
 }
 
 const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 {
-	if(pSrc==NULL)return NULL;
+	if(pSrc==nullptr)return nullptr;
 
 	//必要なサイズを計算
 	int nDstLen = WideCharToMultiByte(
@@ -74,10 +74,10 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 		0,
 		pSrc,
 		nSrcLength,
-		NULL,
+		nullptr,
 		0,
-		NULL,
-		NULL
+		nullptr,
+		nullptr
 	);
 	size_t nDstCnt = (size_t)nDstLen + 1;
 
@@ -98,8 +98,8 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 		nSrcLength,
 		pDst,
 		nDstLen,
-		NULL,
-		NULL
+		nullptr,
+		nullptr
 	);
 	pDst[nDstLen] = '\0';
 

@@ -36,7 +36,7 @@ LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 namespace CWindowCreationHook
 {
 	int		g_nCnt  = 0; //参照カウンタ
-	HHOOK	g_hHook = NULL;
+	HHOOK	g_hHook = nullptr;
 
 	//!フック用コールバック
 	static LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -63,26 +63,26 @@ next:
 	//!フック開始
 	void Use()
 	{
-		if(++g_nCnt>=1 && g_hHook==NULL){
-			g_hHook = ::SetWindowsHookEx(WH_CBT, CBTProc, NULL, GetCurrentThreadId());
+		if(++g_nCnt>=1 && g_hHook==nullptr){
+			g_hHook = ::SetWindowsHookEx(WH_CBT, CBTProc, nullptr, GetCurrentThreadId());
 		}
 	}
 
 	//!フック終了
 	void Unuse()
 	{
-		if(--g_nCnt<=0 && g_hHook!=NULL){
+		if(--g_nCnt<=0 && g_hHook!=nullptr){
 			::UnhookWindowsHookEx(g_hHook);
-			g_hHook=NULL;
+			g_hHook=nullptr;
 		}
 	}
 } //namespace CWindowCreationHook
 
 CWnd::CWnd(const WCHAR* pszInheritanceAppend)
 {
-	m_hInstance = NULL;	/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-	m_hWnd = NULL;			/* このウィンドウのハンドル */
+	m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
+	m_hWnd = nullptr;			/* このウィンドウのハンドル */
 #ifdef _DEBUG
 	wcscpy( m_szClassInheritances, L"CWnd" );
 	wcscat( m_szClassInheritances, pszInheritanceAppend );
@@ -94,10 +94,10 @@ CWnd::~CWnd()
 	if( ::IsWindow( m_hWnd ) ){
 		/* クラスオブジェクトのポインタをNULLにして拡張ウィンドウメモリに格納しておく */
 		// Modified by KEITA for WIN64 2003.9.6
-		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)NULL );
+		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)nullptr );
 		::DestroyWindow( m_hWnd );
 	}
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 	return;
 }
 
@@ -175,9 +175,9 @@ HWND CWnd::Create(
 	//Windowsフック解除
 	CWindowCreationHook::Unuse();
 
-	if( NULL == m_hWnd ){
+	if( nullptr == m_hWnd ){
 		::MessageBox( m_hwndParent, L"CWnd::Create()\n\n::CreateWindowEx failed.", L"error", MB_OK );
-		return NULL;
+		return nullptr;
 	}
 
 	return m_hWnd;
@@ -232,6 +232,6 @@ void CWnd::DestroyWindow()
 {
 	if(m_hWnd){
 		::DestroyWindow( m_hWnd );
-		m_hWnd = NULL;
+		m_hWnd = nullptr;
 	}
 }

@@ -142,7 +142,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			case IDC_CHECK_REGEX:	/* 正規表現キーワードを使う */
 				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
 				{
-					if( CheckRegexpVersion( NULL, 0, false ) == false )
+					if( CheckRegexpVersion( nullptr, 0, false ) == false )
 					{
 						nRet = ::MYMESSAGEBOX(
 								hwndDlg,
@@ -160,7 +160,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				}
 				else
 				{
-					if( CheckRegexpVersion( NULL, 0, false ) == false )
+					if( CheckRegexpVersion( nullptr, 0, false ) == false )
 					{
 						//Disableにする。
 						EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );

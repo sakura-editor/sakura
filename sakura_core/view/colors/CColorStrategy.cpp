@@ -42,7 +42,7 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 	//選択範囲色終了
 	if(m_pStrategySelect){
 		if(m_pStrategySelect->EndColor(cLineStr,this->GetPosInLogic())){
-			m_pStrategySelect = NULL;
+			m_pStrategySelect = nullptr;
 			bChange = true;
 		}
 	}
@@ -57,7 +57,7 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 	//検索色終了
 	if(m_pStrategyFound){
 		if(m_pStrategyFound->EndColor(cLineStr,this->GetPosInLogic())){
-			m_pStrategyFound = NULL;
+			m_pStrategyFound = nullptr;
 			bChange = true;
 		}
 	}
@@ -73,7 +73,7 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 	//色終了
 	if(m_pStrategy){
 		if(m_pStrategy->EndColor(cLineStr,this->GetPosInLogic())){
-			m_pStrategy = NULL;
+			m_pStrategy = nullptr;
 			bChange = true;
 		}
 	}
@@ -216,7 +216,7 @@ CColorStrategy*	CColorStrategyPool::GetStrategyByColor(EColorIndexType eColor) c
 			return m_vStrategiesDisp[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void CColorStrategyPool::NotifyOnStartScanLogic()
@@ -239,7 +239,7 @@ void CColorStrategyPool::CheckColorMODE(
 	//色終了
 	if(*ppcColorStrategy){
 		if((*ppcColorStrategy)->EndColor(cLineStr,nPos)){
-			*ppcColorStrategy = NULL;
+			*ppcColorStrategy = nullptr;
 		}
 	}
 

@@ -428,7 +428,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 
 	const CLayout* pcLayout;
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		bool bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル左移動 */
@@ -452,7 +452,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 		/* 行が変わった */
 		if( ptLayoutNew.y != GetCaret().GetCaretLayoutPos().GetY2() ){
 			pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptLayoutNew.GetY2() );
-			if( NULL == pcLayout ){
+			if( nullptr == pcLayout ){
 				return;
 			}
 			bUnderlineDoNotOFF = false;
@@ -509,7 +509,7 @@ try_again:;
 	nCurLine = GetCaret().GetCaretLayoutPos().GetY2();
 	const CLayout* pcLayout;
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nCurLine );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		return;
 	}
 	if( bTryAgain ){
@@ -533,7 +533,7 @@ try_again:;
 		/* 行が変わった */
 		if( ptLayoutNew.y != nCurLine ){
 			pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptLayoutNew.GetY2() );
-			if( NULL == pcLayout ){
+			if( nullptr == pcLayout ){
 				return;
 			}
 			bUnderlineDoNotOFF = false;
@@ -900,7 +900,7 @@ void CViewCommander::Command_JUMPHIST_PREV( void )
 
 	if( m_pCommanderView->m_cHistory->CheckPrev() ){
 		if( ! m_pCommanderView->m_cHistory->PrevValid() ){
-			::MessageBox( NULL, L"Inconsistent Implementation", L"PrevValid", MB_OK );
+			::MessageBox( nullptr, L"Inconsistent Implementation", L"PrevValid", MB_OK );
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -917,7 +917,7 @@ void CViewCommander::Command_JUMPHIST_NEXT( void )
 {
 	if( m_pCommanderView->m_cHistory->CheckNext() ){
 		if( ! m_pCommanderView->m_cHistory->NextValid() ){
-			::MessageBox( NULL, L"Inconsistent Implementation", L"NextValid", MB_OK );
+			::MessageBox( nullptr, L"Inconsistent Implementation", L"NextValid", MB_OK );
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -1027,7 +1027,7 @@ void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 	
 	bool nFirstLineIsEmptyLine = false;
 	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
-	if ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ) {
+	if ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != nullptr ) {
 		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
 		nCaretPointer++;
 	}
@@ -1037,7 +1037,7 @@ void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 	}
 
 	/* 次に、nFirstLineIsEmptyLineと異なるところまで読み飛ばす */
-	while ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ) {
+	while ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != nullptr ) {
 		if ( pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine ){
 			nCaretPointer++;
 		}
@@ -1058,7 +1058,7 @@ void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 		}
 		else {
 			/* 仕上げに、空行じゃないところまで進む */
-			while ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ) {
+			while ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != nullptr ) {
 				if ( pcDocLine->IsEmptyLine() ){
 					nCaretPointer++;
 				}
@@ -1103,7 +1103,7 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 
 	bool nFirstLineIsEmptyLine = false;
 	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
-	if ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ){
+	if ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != nullptr ){
 		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
 		nCaretPointer--;
 	}
@@ -1113,7 +1113,7 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 	}
 
 	/* 次に、nFirstLineIsEmptyLineと異なるところまで読み飛ばす */
-	while ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ) {
+	while ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != nullptr ) {
 		if ( pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine ){
 			nCaretPointer--;
 		}
@@ -1132,7 +1132,7 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 		}
 		else {
 			/* 仕上げに、空行じゃないところまで進む */
-			while ( (pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ) {
+			while ( (pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != nullptr ) {
 				if ( pcDocLine->IsEmptyLine() ){
 					break;
 				}
@@ -1286,7 +1286,7 @@ void CViewCommander::Command_MODIFYLINE_NEXT( bool bSelect )
 			const CDocLine* pcDocLineLast = GetDocument()->m_cDocLineMgr.GetDocLineBottom();
 			bool bSkip = false;
 			CLogicPoint pos;
-			if( pcDocLineLast != NULL ){
+			if( pcDocLineLast != nullptr ){
 				if( pcDocLineLast->GetEol().IsNone() ){
 					// ぶら下がり[EOF]
 					pos.x = pcDocLineLast->GetLengthWithoutEOL();
@@ -1334,10 +1334,10 @@ void CViewCommander::Command_MODIFYLINE_PREV( bool bSelect )
 	const int nSaveSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq();
 	bool bModified = false;
 	bool bLast = false;
-	if( pcDocLine == NULL ){
+	if( pcDocLine == nullptr ){
 		// [EOF]
 		const CDocLine* pcDocLineLast = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2() - 1);
-		if( NULL == pcDocLineLast ){
+		if( nullptr == pcDocLineLast ){
 			// 1行もない
 			return;
 		}
@@ -1348,7 +1348,7 @@ void CViewCommander::Command_MODIFYLINE_PREV( bool bSelect )
 	}
 	if( !bLast ){
 		const CDocLine* pcDocLineLast = GetDocument()->m_cDocLineMgr.GetDocLineBottom();
-		if( pcDocLineLast != NULL && pcDocLineLast->GetEol().IsNone() ){
+		if( pcDocLineLast != nullptr && pcDocLineLast->GetEol().IsNone() ){
 			CLogicPoint pos;
 			pos.x = pcDocLine->GetLengthWithoutEOL();
 			pos.y = GetDocument()->m_cDocLineMgr.GetLineCount() - 1;

@@ -29,7 +29,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 
 	/* 置換先頭位置のレイアウト情報 */
 	EColorIndexType	nCurrentLineType = COLORIDX_DEFAULT;
-	CLayoutColorInfo*	colorInfo = NULL;
+	CLayoutColorInfo*	colorInfo = nullptr;
 	CLayoutInt		nLineWork = pArg->sDelRange.GetFrom().GetY2();
 
 	CLayout*		pLayoutWork = SearchLineByLayoutY( pArg->sDelRange.GetFrom().GetY2() );
@@ -105,15 +105,15 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLogicInt	nRowNum;
-	if( NULL == pLayoutPrev ){
-		if( NULL == m_pLayoutTop ){
+	if( nullptr == pLayoutPrev ){
+		if( nullptr == m_pLayoutTop ){
 			nRowNum = m_pcDocLineMgr->GetLineCount();
 		}else{
 			nRowNum = m_pLayoutTop->GetLogicLineNo();
 		}
 	}
 	else{
-		if( NULL == pLayoutPrev->GetNextLayout() ){
+		if( nullptr == pLayoutPrev->GetNextLayout() ){
 			nRowNum =
 				m_pcDocLineMgr->GetLineCount() -
 				pLayoutPrev->GetLogicLineNo() - CLogicInt(1);

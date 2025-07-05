@@ -135,7 +135,7 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 						m_Common.m_sTabBar.m_nPointSize = nPointSize;
 						// タブ フォント表示	// 2013/4/24 Uchi
 						HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_TABFONT, m_Common.m_sTabBar.m_lf, m_Common.m_sTabBar.m_nPointSize);
-						if (m_hTabFont != NULL){
+						if (m_hTabFont != nullptr){
 							::DeleteObject( m_hTabFont );
 						}
 						m_hTabFont = hFont;
@@ -165,9 +165,9 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 
 	case WM_DESTROY:
 		// タブ フォント破棄	// 2013/4/24 Uchi
-		if (m_hTabFont != NULL) {
+		if (m_hTabFont != nullptr) {
 			::DeleteObject( m_hTabFont );
-			m_hTabFont = NULL;
+			m_hTabFont = nullptr;
 		}
 		return TRUE;
 	}

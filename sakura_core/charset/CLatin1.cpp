@@ -86,7 +86,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 
 	// 変換先バッファサイズを設定してメモリ領域確保
 	wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 
@@ -179,7 +179,7 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 
 	// 変換先バッファサイズを設定してバッファを確保
 	char* pDst = new (std::nothrow) char[ nSrcLen * 2 ];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 

@@ -27,7 +27,7 @@ struct SysString
 {
 	BSTR Data;
 
-	SysString()                         { Data = NULL; }
+	SysString()                         { Data = nullptr; }
 	SysString(const SysString &Source)  { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); }
 	SysString(BSTR &Source)             { Data = ::SysAllocStringLen(Source, SysStringLen(Source)); }
 	SysString(const wchar_t *S, int L)  { Data = ::SysAllocStringLen(S, L); }
@@ -45,7 +45,7 @@ struct SysString
 	{
 		int Len = ::SysStringLen(Data);
 		*S = new char[Len * 2 + 1];
-		*L = ::WideCharToMultiByte(CP_ACP, 0, Data, Len, *S, Len * 2, NULL, NULL);
+		*L = ::WideCharToMultiByte(CP_ACP, 0, Data, Len, *S, Len * 2, nullptr, nullptr);
 		(*S)[*L] = 0;
 	}
 	void GetW(wchar_t **S, int *L)
@@ -92,7 +92,7 @@ struct Variant
 		::VariantClear(&Data); 
 		Data.vt = VT_BSTR; 
 		Data.bstrVal = Source.Data; 
-		Source.Data = NULL; 
+		Source.Data = nullptr; 
 	}
 
 	// 2003.06.25 Moca

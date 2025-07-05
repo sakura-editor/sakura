@@ -17,11 +17,11 @@
 
 class CMyWnd{
 public:
-	CMyWnd() : m_hWnd(NULL) { }
+	CMyWnd() : m_hWnd(nullptr) { }
 
 	void SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 	HWND GetHwnd() const{ return m_hWnd; }
-	static HWND GetSafeHwnd(const CMyWnd* wnd) { return wnd ? wnd->m_hWnd : NULL; }
+	static HWND GetSafeHwnd(const CMyWnd* wnd) { return wnd ? wnd->m_hWnd : nullptr; }
 	void InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE){ ::InvalidateRect(m_hWnd, lpRect, bErase); }
 	int ScrollWindowEx(int dx, int dy, const RECT* prcScroll, const RECT* prcClip, HRGN hrgnUpdate, RECT* prcUpdate, UINT uFlags)
 	{

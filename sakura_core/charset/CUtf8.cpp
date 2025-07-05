@@ -75,7 +75,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	{
 		// 必要なバッファサイズを調べて確保する
 		wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
-		if( pDst == NULL ){
+		if( pDst == nullptr ){
 			return RESULT_FAILURE;
 		}
 
@@ -170,7 +170,7 @@ EConvertResult CUtf8::_UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bo
 
 	// 必要なバッファサイズを調べてメモリを確保
 	char* pDst = new (std::nothrow) char[nSrcLen * 3];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 

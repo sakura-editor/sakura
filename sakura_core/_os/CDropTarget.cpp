@@ -48,7 +48,7 @@ HRESULT CYbInterfaceBase::QueryInterfaceImpl(
 		*ppvObj = pThis;
 		return S_OK;
 	}
-	*ppvObj = NULL;
+	*ppvObj = nullptr;
 	return E_NOINTERFACE;
 }
 
@@ -93,16 +93,16 @@ DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
 {
 	m_pcEditWnd = pCEditWnd;	// 2008.06.20 ryoji
-	m_pcEditView = NULL;
-	m_hWnd_DropTarget = NULL;
+	m_pcEditView = nullptr;
+	m_hWnd_DropTarget = nullptr;
 	return;
 }
 
 CDropTarget::CDropTarget( CEditView* pCEditView )
 {
-	m_pcEditWnd = NULL;	// 2008.06.20 ryoji
+	m_pcEditWnd = nullptr;	// 2008.06.20 ryoji
 	m_pcEditView = pCEditView;
-	m_hWnd_DropTarget = NULL;
+	m_hWnd_DropTarget = nullptr;
 	return;
 }
 
@@ -125,9 +125,9 @@ BOOL CDropTarget::Register_DropTarget( HWND hWnd )
 BOOL CDropTarget::Revoke_DropTarget( void )
 {
 	BOOL bResult = TRUE;
-	if( m_hWnd_DropTarget != NULL ){
+	if( m_hWnd_DropTarget != nullptr ){
 		bResult = SUCCEEDED( ::RevokeDragDrop( m_hWnd_DropTarget ) );
-		m_hWnd_DropTarget = NULL;
+		m_hWnd_DropTarget = nullptr;
 	}
 	return bResult;
 }
@@ -187,15 +187,15 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	int i;
-	if( m_pData != NULL )
+	if( m_pData != nullptr )
 	{
 		for( i = 0; i < m_nFormat; i++ )
 			delete [](m_pData[i].data);
 		delete []m_pData;
-		m_pData = NULL;
+		m_pData = nullptr;
 		m_nFormat = 0;
 	}
-	if( lpszText != NULL ){
+	if( lpszText != nullptr ){
 		m_nFormat = bColumnSelect? 4: 3;	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
 
@@ -208,9 +208,9 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 
 		i++;
 		m_pData[i].cfFormat = CF_TEXT;
-		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), NULL, 0, NULL, NULL );
+		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), nullptr, 0, nullptr, nullptr );
 		m_pData[i].data = new BYTE[m_pData[i].size];
-		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[i].data, m_pData[i].size, NULL, NULL );
+		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[i].data, m_pData[i].size, nullptr, nullptr );
 
 		i++;
 		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
@@ -244,9 +244,9 @@ DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
 STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	if( lpfe == NULL || lpsm == NULL )
+	if( lpfe == nullptr || lpsm == nullptr )
 		return E_INVALIDARG;
-	if( m_pData == NULL )
+	if( m_pData == nullptr )
 		return OLE_E_NOTRUNNING;
 	if( lpfe->lindex != -1 )
 		return DV_E_LINDEX;
@@ -271,7 +271,7 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, m_pData[i].size );
 	memcpy_raw( ::GlobalLock( lpsm->hGlobal ), m_pData[i].data, m_pData[i].size );
 	::GlobalUnlock( lpsm->hGlobal );
-	lpsm->pUnkForRelease = NULL;
+	lpsm->pUnkForRelease = nullptr;
 
 	return S_OK;
 }
@@ -282,9 +282,9 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	if( lpfe == NULL || lpsm == NULL || lpsm->hGlobal == NULL )
+	if( lpfe == nullptr || lpsm == nullptr || lpsm->hGlobal == nullptr )
 		return E_INVALIDARG;
-	if( m_pData == NULL )
+	if( m_pData == nullptr )
 		return OLE_E_NOTRUNNING;
 
 	if( lpfe->lindex != -1 )
@@ -316,13 +316,13 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 */
 STDMETHODIMP CDataObject::QueryGetData( LPFORMATETC lpfe )
 {
-	if( lpfe == NULL )
+	if( lpfe == nullptr )
 		return E_INVALIDARG;
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	if( m_pData == NULL )
+	if( m_pData == nullptr )
 		return OLE_E_NOTRUNNING;
 
-	if( lpfe->ptd != NULL
+	if( lpfe->ptd != nullptr
 		|| lpfe->dwAspect != DVASPECT_CONTENT
 		|| lpfe->lindex != -1
 		|| !(lpfe->tymed & TYMED_HGLOBAL) )
@@ -379,15 +379,15 @@ STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 */
 STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched)
 {
-	if( celt <= 0 || rgelt == NULL || m_nIndex >= m_pcDataObject->m_nFormat )
+	if( celt <= 0 || rgelt == nullptr || m_nIndex >= m_pcDataObject->m_nFormat )
 		return S_FALSE;
-	if( celt != 1 && pceltFetched == NULL )
+	if( celt != 1 && pceltFetched == nullptr )
 		return S_FALSE;
 
 	ULONG i = celt;
 	while( m_nIndex < m_pcDataObject->m_nFormat && i > 0 ){
 		(*rgelt).cfFormat = m_pcDataObject->m_pData[m_nIndex].cfFormat;
-		(*rgelt).ptd = NULL;
+		(*rgelt).ptd = nullptr;
 		(*rgelt).dwAspect = DVASPECT_CONTENT;
 		(*rgelt).lindex = -1;
 		(*rgelt).tymed = TYMED_HGLOBAL;
@@ -395,7 +395,7 @@ STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetc
 		m_nIndex++;
 		i--;
 	}
-	if( pceltFetched != NULL )
+	if( pceltFetched != nullptr )
 		*pceltFetched = celt - i;
 
 	return (i == 0)? S_OK : S_FALSE;

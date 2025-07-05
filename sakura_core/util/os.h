@@ -20,10 +20,10 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer, unsigned BufferCount);
 
 //	May 01, 2004 genta マルチモニタ対応のデスクトップ領域取得
-bool GetMonitorWorkRect(HWND     hWnd, LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji パラメータ prcMonitor を追加
-bool GetMonitorWorkRect(LPCRECT  prc,  LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
-bool GetMonitorWorkRect(POINT    pt,   LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
-bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
+bool GetMonitorWorkRect(HWND     hWnd, LPRECT prcWork, LPRECT prcMonitor = nullptr);	// 2006.04.21 ryoji パラメータ prcMonitor を追加
+bool GetMonitorWorkRect(LPCRECT  prc,  LPRECT prcWork, LPRECT prcMonitor = nullptr);	// 2006.04.21 ryoji
+bool GetMonitorWorkRect(POINT    pt,   LPRECT prcWork, LPRECT prcMonitor = nullptr);	// 2006.04.21 ryoji
+bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor = nullptr);	// 2006.04.21 ryoji
 
 // 2006.06.17 ryoji
 #define PACKVERSION( major, minor ) MAKELONG( minor, major )

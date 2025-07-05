@@ -69,7 +69,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 		}
 	}
 
-	if( NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
+	if( nullptr != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
 		switch(nAction ){
 		case SHOW_NORMAL: // アクティブにする
 			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
@@ -166,7 +166,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 
 	/* アウトライン ダイアログの表示 */
 	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
-	if( NULL == GetEditWindow()->m_cDlgFuncList.GetHwnd() ){
+	if( nullptr == GetEditWindow()->m_cDlgFuncList.GetHwnd() ){
 		GetEditWindow()->m_cDlgFuncList.DoModeless(
 			G_AppInstance(),
 			m_pCommanderView->GetHwnd(),

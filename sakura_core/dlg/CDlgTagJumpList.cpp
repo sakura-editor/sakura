@@ -107,7 +107,7 @@ static const WCHAR *p_extentions[] = {
 	/*vim*/			L"vim",									L"f=function,v=variable",
 	/*yacc*/		L"y",									L"l=label",
 //	/*vb*/			L"bas,cls,ctl,dob,dsr,frm,pag",			L"a=attribute,c=class,f=function,l=label,s=procedure,v=variable",
-					NULL,									NULL
+					nullptr,									nullptr
 };
 
 inline bool CDlgTagJumpList::IsDirectTagJump(){
@@ -124,17 +124,17 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	: CDialog(true),
 	  m_bDirectTagJump(bDirectTagJump),
 	  m_nIndex( -1 ),
-	  m_pszFileName( NULL ),
-	  m_pszKeyword( NULL ),
+	  m_pszFileName( nullptr ),
+	  m_pszKeyword( nullptr ),
 	  m_nLoop( -1 ),
-	  m_pcList( NULL ),
+	  m_pcList( nullptr ),
 	  m_nTimerId( 0 ),
 	  m_bTagJumpICase( FALSE ),
 	  m_bTagJumpPartialMatch( FALSE ),
 	  m_nTop( 0 ),
 	  m_bNextItem( false ),
-	  m_psFindPrev( NULL ),
-	  m_psFind0Match( NULL ),
+	  m_psFindPrev( nullptr ),
+	  m_psFind0Match( nullptr ),
 	  m_strOldKeyword( L"" )
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
@@ -154,9 +154,9 @@ CDlgTagJumpList::~CDlgTagJumpList()
 	Empty();
 
 	if( m_pszFileName ) free( m_pszFileName );
-	m_pszFileName = NULL;
+	m_pszFileName = nullptr;
 	if( m_pszKeyword ) free( m_pszKeyword );
-	m_pszKeyword = NULL;
+	m_pszKeyword = nullptr;
 
 	StopTimer();
 	SAFE_DELETE( m_pcList );
@@ -190,7 +190,7 @@ void CDlgTagJumpList::StopTimer( void )
 void CDlgTagJumpList::StartTimer( int nDelay = TAGJUMP_TIMER_DELAY )
 {
 	StopTimer();
-	m_nTimerId = ::SetTimer( GetHwnd(), 12345, nDelay, NULL );
+	m_nTimerId = ::SetTimer( GetHwnd(), 12345, nDelay, nullptr );
 }
 
 /*!
@@ -231,7 +231,7 @@ void CDlgTagJumpList::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, BST_UNCHECKED );
 		m_bTagJumpExactMatch = TRUE;
 
-		if( m_pszKeyword != NULL ){
+		if( m_pszKeyword != nullptr ){
 			::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
 		}
 	}
@@ -250,7 +250,7 @@ void CDlgTagJumpList::SetData( void )
 		for( int i = 0; i < cRecentTagJump.GetItemCount(); i++ ){
 			Combo_AddString( hwndKey, cRecentTagJump.GetItemText(i) );
 		}
-		if( m_pszKeyword != NULL ){
+		if( m_pszKeyword != nullptr ){
 			::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
 		}
 		else if( cRecentTagJump.GetItemCount() > 0 ){
@@ -292,7 +292,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 	{
 		CSortedTagJumpList::TagJumpInfo* item;
 		item = m_pcList->GetPtr( nIndex );
-		if( NULL == item ) break;
+		if( nullptr == item ) break;
 
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = nIndex;
@@ -321,7 +321,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		ListView_SetItemState( hwndList, nIndex, 0, LVIS_SELECTED | LVIS_FOCUSED );
 	}
 
-	const WCHAR* pszMsgText = NULL;
+	const WCHAR* pszMsgText = nullptr;
 
 	//	数が多すぎる場合は切り捨てた旨を末尾に挿入
 //	if( m_pcList->IsOverflow() ){
@@ -603,7 +603,7 @@ BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 	for( int i = 0 ; i < _countof(anchorList); i++ ){
 		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
-	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	::InvalidateRect( GetHwnd(), nullptr, TRUE );
 	return TRUE;
 }
 
@@ -724,10 +724,10 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 	WCHAR fileName[1024];
 	WCHAR dirFileName[1024];
 	int tempDepth = 0;
-	SplitPath_FolderAndFile( GetFilePath(), path, NULL );
+	SplitPath_FolderAndFile( GetFilePath(), path, nullptr );
 	AddLastYenFromDirectoryPath( path );
 	
-	m_pcList->GetParam( index, NULL, fileName, lineNum, NULL, NULL, &tempDepth, dirFileName );
+	m_pcList->GetParam( index, nullptr, fileName, lineNum, nullptr, nullptr, &tempDepth, dirFileName );
 	if( depth ){
 		*depth = tempDepth;
 	}
@@ -748,7 +748,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 	}else{
 		fileNamePath = fileName;
 	}
-	bool ret = NULL != GetFullPathFromDepth( fullPath, count, path, fileNamePath, tempDepth );
+	bool ret = nullptr != GetFullPathFromDepth( fullPath, count, path, fileNamePath, tempDepth );
 	if(ret){
 		DEBUG_TRACE( L"jump to: %s\n", static_cast<const WCHAR*>(fullPath) );
 	}else{
@@ -789,13 +789,13 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 						return _wcsdup( &token[2] );
 					}
 
-					token = _wcstok( NULL, L"," );
+					token = _wcstok( nullptr, L"," );
 				}
 
 				return _wcsdup( L"" );
 			}
 
-			token = _wcstok( NULL, L"," );
+			token = _wcstok( nullptr, L"," );
 		}
 	}
 
@@ -808,7 +808,7 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 void CDlgTagJumpList::SetFileName( const WCHAR *pszFileName )
 {
 	assert_warning( pszFileName );
-	if( NULL == pszFileName ) return;
+	if( nullptr == pszFileName ) return;
 
 	if( m_pszFileName ) free( m_pszFileName );
 
@@ -823,7 +823,7 @@ void CDlgTagJumpList::SetFileName( const WCHAR *pszFileName )
 */
 void CDlgTagJumpList::SetKeyword( const wchar_t *pszKeyword )
 {
-	if( NULL == pszKeyword ) return;
+	if( nullptr == pszKeyword ) return;
 
 	if( m_pszKeyword ) free( m_pszKeyword );
 
@@ -863,7 +863,7 @@ typedef struct tagTagPathInfo {
 int CDlgTagJumpList::SearchBestTag( void )
 {
 	if( m_pcList->GetCount() <= 0 ) return -1;	//選べません。
-	if( NULL == m_pszFileName ) return 0;
+	if( nullptr == m_pszFileName ) return 0;
 
 	auto mem_lpPathInfo = std::make_unique<TagPathInfo>();
 	TagPathInfo* lpPathInfo= mem_lpPathInfo.get();
@@ -895,7 +895,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 		lpPathInfo->szFileNameDst[0] = L'\0';
 		{
 			WCHAR szPath[_MAX_PATH];
-			GetFullPathAndLine( i, szPath, _countof(szPath), NULL, NULL );
+			GetFullPathAndLine( i, szPath, _countof(szPath), nullptr, nullptr );
 			if( FALSE == GetLongFileName( szPath, lpPathInfo->szFileNameDst ) ){
 				wcscpy( lpPathInfo->szFileNameDst, szPath );
 			}
@@ -1523,9 +1523,9 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 		int  cmp;
 		if( rule->bTagJumpPartialMatch ){
 			if( rule->bTagJumpICase ){
-				cmp = stristr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
+				cmp = stristr_j( s[0], paszKeyword ) != nullptr ? 0 : -1;
 			}else{
-				cmp = strstr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
+				cmp = strstr_j( s[0], paszKeyword ) != nullptr ? 0 : -1;
 			}
 		}else{
 			if( rule->bTagJumpExactMatch ){
@@ -1625,7 +1625,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 			DirUp( basePath );
 		}
 		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){
-			return NULL;
+			return nullptr;
 		}
 	}
 	return pszOutput;

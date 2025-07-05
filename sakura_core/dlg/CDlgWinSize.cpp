@@ -65,7 +65,7 @@ int CDlgWinSize::DoModal(
 	m_eSaveWinPos  = eSaveWinPos;
 	m_nWinSizeType = nWinSizeType;
 	m_rc = rc;
-	(void)CDialog::DoModal( hInstance, hwndParent, IDD_WINPOSSIZE, (LPARAM)NULL );
+	(void)CDialog::DoModal( hInstance, hwndParent, IDD_WINPOSSIZE, (LPARAM)nullptr );
 	eSaveWinSize = m_eSaveWinSize;
 	eSaveWinPos  = m_eSaveWinPos;
 	nWinSizeType = m_nWinSizeType;
@@ -225,10 +225,10 @@ int CDlgWinSize::GetData( void )
 	default:
 		m_nWinSizeType = SIZE_RESTORED;
 	}
-	m_rc.right  = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_SX, NULL, TRUE );
-	m_rc.bottom = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_SY, NULL, TRUE );
-	m_rc.top    = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_WX, NULL, TRUE );
-	m_rc.left   = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_WY, NULL, TRUE );
+	m_rc.right  = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_SX, nullptr, TRUE );
+	m_rc.bottom = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_SY, nullptr, TRUE );
+	m_rc.top    = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_WX, nullptr, TRUE );
+	m_rc.left   = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_WY, nullptr, TRUE );
 	return TRUE;
 }
 

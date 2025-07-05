@@ -39,9 +39,9 @@ public:
 	CControlProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine ) : 
 		CProcess( hInstance, lpCmdLine ),
 		// 2006.04.10 ryoji 同期オブジェクトのハンドルを初期化
-		m_hMutex( NULL ),
-		m_hMutexCP( NULL ),
-		m_hEventCPInitialized( NULL ),
+		m_hMutex( nullptr ),
+		m_hMutexCP( nullptr ),
+		m_hEventCPInitialized( nullptr ),
 		m_pcTray( nullptr )
 	{}
 

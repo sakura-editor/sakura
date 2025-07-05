@@ -42,7 +42,7 @@ COpeBlk::~COpeBlk()
 bool COpeBlk::AppendOpe( COpe* pcOpe )
 {
 	if(pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative()){
-		TopErrorMessage( NULL,
+		TopErrorMessage( nullptr,
 			L"COpeBlk::AppendOpe() error.\n"
 			L"Bug.\n"
 			L"pcOpe->m_ptCaretPos_PHY_Before = %d,%d\n"
@@ -63,7 +63,7 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 COpe* COpeBlk::GetOpe( int nIndex )
 {
 	if( GetNum() <= nIndex ){
-		return NULL;
+		return nullptr;
 	}
 	return m_ppCOpeArr[nIndex];
 }

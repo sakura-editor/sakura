@@ -20,10 +20,10 @@ class CDPI{
 	{
 		if( !bInitialized )
 		{
-			HDC hDC = GetDC(NULL);
+			HDC hDC = GetDC(nullptr);
 			nDpiX = GetDeviceCaps(hDC, LOGPIXELSX);
 			nDpiY = GetDeviceCaps(hDC, LOGPIXELSY);
-			ReleaseDC(NULL, hDC);
+			ReleaseDC(nullptr, hDC);
 			bInitialized = true;
 		}
 	}
@@ -168,7 +168,7 @@ class CDCFont
 	using Me = CDCFont;
 
 public:
-	CDCFont(LOGFONT& font, HWND hwnd = NULL){
+	CDCFont(LOGFONT& font, HWND hwnd = nullptr){
 		m_hwnd = hwnd;
 		m_hDC = ::GetDC(hwnd);
 		m_hFont = ::CreateFontIndirect(&font);
@@ -182,9 +182,9 @@ public:
 		if( m_hDC ){
 			::SelectObject(m_hDC, m_hFontOld);
 			::ReleaseDC(m_hwnd, m_hDC);
-			m_hDC = NULL;
+			m_hDC = nullptr;
 			::DeleteObject(m_hFont);
-			m_hFont = NULL;
+			m_hFont = nullptr;
 		}
 	}
 	HDC GetHDC(){ return m_hDC; }

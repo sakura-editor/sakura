@@ -25,7 +25,7 @@ class CMutex
 	using Me = CMutex;
 
 public:
-	CMutex( BOOL bInitialOwner, LPCWSTR pszName, LPSECURITY_ATTRIBUTES psa = NULL )
+	CMutex( BOOL bInitialOwner, LPCWSTR pszName, LPSECURITY_ATTRIBUTES psa = nullptr )
 	{
 		m_hObj = ::CreateMutex( psa, bInitialOwner, pszName );
 	}
@@ -35,10 +35,10 @@ public:
 	Me& operator = (Me&&) noexcept = delete;
 	~CMutex()
 	{
-		if( NULL != m_hObj )
+		if( nullptr != m_hObj )
 		{
 			::CloseHandle( m_hObj );
-			m_hObj = NULL;
+			m_hObj = nullptr;
 		}
 	}
 	BOOL Lock( DWORD dwTimeout = INFINITE )

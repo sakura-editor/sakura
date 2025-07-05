@@ -146,7 +146,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 			int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 										( pt.x > rc.left )? pt.x: rc.left,
 										( pt.y < rc.bottom )? pt.y: rc.bottom,
-										0, hwnd, NULL );
+										0, hwnd, nullptr );
 			::DestroyMenu( hMenu );
 
 			// 選択されたメニューの処理
@@ -166,7 +166,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
 						LPITEMIDLIST pIDL;
 						WCHAR* pszDisplayName = szPath;
-						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL)) ){
+						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(nullptr, nullptr, pszDisplayName, nullptr, &pIDL, nullptr)) ){
 							SHELLEXECUTEINFO si;
 							::ZeroMemory( &si, sizeof(si) );
 							si.cbSize   = sizeof(si);
@@ -225,8 +225,8 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, [[maybe_unused]] LPA
 		if( CShareData::getInstance()->IsPrivateSettings() ){
 			// 個人設定フォルダーを使用するときは「設定フォルダー」ボタンを追加する
 			::SetWindowSubclass(hwndDlg, &PropSheetWndProc, 0, 0);
-			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
-			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
+			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( nullptr );
+			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, nullptr );
 			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
 			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 		}
@@ -335,7 +335,7 @@ HWND OpenHtmlHelp(
 			MB_OK | MB_ICONEXCLAMATION
 		);
 	}
-	return NULL;
+	return nullptr;
 }
 
 //	To Here Jun. 26, 2001 genta
@@ -351,8 +351,8 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 	IPersistFile*	pIPersistFile;
 	WIN32_FIND_DATA	wfd;
 	/* 初期化 */
-	pIShellLink = NULL;
-	pIPersistFile = NULL;
+	pIShellLink = nullptr;
+	pIPersistFile = nullptr;
 	*lpszPath = 0; // assume failure
 	bRes = FALSE;
 
@@ -369,7 +369,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 
-	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
+	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
 		// Get a pointer to the IPersistFile interface.
 		if( SUCCEEDED(hRes = pIShellLink->QueryInterface( IID_IPersistFile, (void**)&pIPersistFile ) ) ){
 			// Load the shortcut.
@@ -395,14 +395,14 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 		}
 	}
 	// Release the pointer to the IPersistFile interface.
-	if( NULL != pIPersistFile ){
+	if( nullptr != pIPersistFile ){
 		pIPersistFile->Release();
-		pIPersistFile = NULL;
+		pIPersistFile = nullptr;
 	}
 	// Release the pointer to the IShellLink interface.
-	if( NULL != pIShellLink ){
+	if( nullptr != pIShellLink ){
 		pIShellLink->Release();
-		pIShellLink = NULL;
+		pIShellLink = nullptr;
 	}
 // 2009.01.08 ryoji CoUninitializeを削除（WinMainにOleUninitialize追加）
 	return bRes;
@@ -517,7 +517,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 	if( IsFileExists( lpszHelp, true ) ){
 		// HTML ヘルプを呼び出す
 		HWND hWnd = OpenHtmlHelp( hwndCaller, lpszHelp, uCommand, dwData );
-		if (bDesktop && hWnd != NULL){
+		if (bDesktop && hWnd != nullptr){
 			::SetForegroundWindow( hWnd );	// ヘルプ画面を手前に出す
 		}
 	}
@@ -531,7 +531,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 		WCHAR buf[256];
 		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
-		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+		ShellExecute( ::GetActiveWindow(), nullptr, buf, nullptr, nullptr, SW_SHOWNORMAL );
 	}
 
 	return TRUE;
@@ -552,7 +552,7 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	::ZeroMemory( &cf, sizeof( cf ) );
 	cf.lStructSize = sizeof( cf );
 	cf.hwndOwner = hwndDlgOwner;
-	cf.hDC = NULL;
+	cf.hDC = nullptr;
 	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
 	if( FixedFontOnly ){
 		//FIXEDフォント

@@ -56,17 +56,17 @@ bool CWSHPlugin::ReadPluginOption( CDataProfile *cProfile )
 bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params )
 {
 	CWSHPlug& wshPlug = static_cast<CWSHPlug&>( plug );
-	CWSHMacroManager* pWsh = NULL;
+	CWSHMacroManager* pWsh = nullptr;
 
-	if( !m_bUseCache || wshPlug.m_Wsh == NULL ){
+	if( !m_bUseCache || wshPlug.m_Wsh == nullptr ){
 		CFilePath path( plug.m_cPlugin.GetFilePath( plug.m_sHandler ).c_str() );
 
 		pWsh = (CWSHMacroManager*)CWSHMacroManager::Creator( path.GetExt( true ) );
-		if( pWsh == NULL ){ return false; }
+		if( pWsh == nullptr ){ return false; }
 
 		BOOL bLoadResult = pWsh->LoadKeyMacro( G_AppInstance(), path );
 		if ( !bLoadResult ){
-			ErrorMessage( NULL, LS(STR_WSHPLUG_LOADMACRO), static_cast<const WCHAR*>(path) );
+			ErrorMessage( nullptr, LS(STR_WSHPLUG_LOADMACRO), static_cast<const WCHAR*>(path) );
 			delete pWsh;
 			return false;
 		}

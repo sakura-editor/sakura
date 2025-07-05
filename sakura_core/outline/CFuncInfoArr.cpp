@@ -22,7 +22,7 @@
 CFuncInfoArr::CFuncInfoArr()
 {
 	m_nFuncInfoArrNum = 0;	/* 配列要素数 */
-	m_ppcFuncInfoArr = NULL;	/* 配列 */
+	m_ppcFuncInfoArr = nullptr;	/* 配列 */
 	m_nAppendTextLenMax = 0;
 	return;
 }
@@ -37,14 +37,14 @@ CFuncInfoArr::~CFuncInfoArr()
 void CFuncInfoArr::Empty( void )
 {
 	int i;
-	if( m_nFuncInfoArrNum > 0 && NULL != m_ppcFuncInfoArr ){
+	if( m_nFuncInfoArrNum > 0 && nullptr != m_ppcFuncInfoArr ){
 		for( i = 0; i < m_nFuncInfoArrNum; ++i ){
 			delete m_ppcFuncInfoArr[i];
-			m_ppcFuncInfoArr[i] = NULL;
+			m_ppcFuncInfoArr[i] = nullptr;
 		}
 		m_nFuncInfoArrNum = 0;
 		free( m_ppcFuncInfoArr );
-		m_ppcFuncInfoArr = NULL;
+		m_ppcFuncInfoArr = nullptr;
 	}
 	m_AppendTextArr.clear();
 	m_nAppendTextLenMax = 0;
@@ -56,7 +56,7 @@ void CFuncInfoArr::Empty( void )
 CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
 {
 	if( nIdx >= m_nFuncInfoArrNum ){
-		return NULL;
+		return nullptr;
 	}
 	return m_ppcFuncInfoArr[nIdx];
 }
@@ -104,7 +104,7 @@ void CFuncInfoArr::AppendData(
 	int				nDepth				//!< 深さ
 )
 {
-	AppendData(nFuncLineCRLF,CLogicInt(1),nFuncLineLAYOUT,CLayoutInt(1),pszFuncName,NULL,nInfo,nDepth);
+	AppendData(nFuncLineCRLF,CLogicInt(1),nFuncLineLAYOUT,CLayoutInt(1),pszFuncName,nullptr,nInfo,nDepth);
 	return;
 }
 

@@ -40,7 +40,7 @@ void CAppMode::SetDebugModeOFF()
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 	if( pShare->m_sHandles.m_hwndDebug == CEditWnd::getInstance()->GetHwnd() ){
-		pShare->m_sHandles.m_hwndDebug = NULL;
+		pShare->m_sHandles.m_hwndDebug = nullptr;
 		this->_SetDebugMode(false);
 		CEditWnd::getInstance()->UpdateCaption();
 	}

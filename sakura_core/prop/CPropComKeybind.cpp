@@ -145,7 +145,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 //	To Here Oct. 14, 2000
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 
-		::SetTimer( hwndDlg, 1, 300, NULL );	// 2007.11.02 ryoji
+		::SetTimer( hwndDlg, 1, 300, nullptr );	// 2007.11.02 ryoji
 
 		return TRUE;
 

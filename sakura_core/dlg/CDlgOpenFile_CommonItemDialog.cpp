@@ -401,8 +401,8 @@ enum CtrlId {
 
 CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 {
-	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
+	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -411,10 +411,10 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	WCHAR	szDrive[_MAX_DRIVE];
 	WCHAR	szDir[_MAX_DIR];
 	::GetModuleFileName(
-		NULL,
+		nullptr,
 		szFile, _countof( szFile )
 	);
-	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
+	_wsplitpath( szFile, szDrive, szDir, nullptr, nullptr );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
@@ -435,7 +435,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 	m_hwndParent = hwndParent;
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
-	if( NULL != pszUserWildCard ){
+	if( nullptr != pszUserWildCard ){
 		m_strDefaultWildCard = pszUserWildCard;
 	}
 
@@ -444,7 +444,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
-		my_splitpath_t( pszDefaultPath, szDrive, szDir, NULL, NULL );
+		my_splitpath_t( pszDefaultPath, szDrive, szDir, nullptr, nullptr );
 		// 2010.08.28 相対パス解決
 		WCHAR szRelPath[_MAX_PATH];
 		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
@@ -622,7 +622,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 
 	using namespace Microsoft::WRL;
 	ComPtr<IShellItem> psiFolder;
-	SHCreateItemFromParsingName(m_szInitialDir, NULL, IID_PPV_ARGS(&psiFolder));
+	SHCreateItemFromParsingName(m_szInitialDir, nullptr, IID_PPV_ARGS(&psiFolder));
 	hr = pFileOpenDialog->SetFolder(psiFolder.Get()); RETURN_IF_FAILED
 
 	m_pFileDialog = pFileOpenDialog;
@@ -663,7 +663,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return false; }
 	hr = CoCreateInstance(
 		CLSID_FileOpenDialog,
-		NULL,
+		nullptr,
 		CLSCTX_ALL,
 		IID_IFileOpenDialog,
 		&pFileDialog); RETURN_IF_FAILED
@@ -704,7 +704,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	CDocTypeManager docTypeMgr;
 	std::wstring worksString;
 	for( int i = 0; i < nTypesCount; i++ ){
-		const STypeConfigMini* type = NULL;
+		const STypeConfigMini* type = nullptr;
 		if( !docTypeMgr.GetTypeConfigMini( CTypeConfig(i), &type ) ){
 			continue;
 		}
@@ -759,10 +759,10 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	hr = pFileSaveDialog->SetDefaultExtension(L"txt"); RETURN_IF_FAILED
 	hr = pFileSaveDialog->SetFileTypes(specs.size(), &specs[0]); RETURN_IF_FAILED
 	ComPtr<IShellItem> psiFolder;
-	SHCreateItemFromParsingName(m_szInitialDir, NULL, IID_PPV_ARGS(&psiFolder));
+	SHCreateItemFromParsingName(m_szInitialDir, nullptr, IID_PPV_ARGS(&psiFolder));
 	hr = pFileSaveDialog->SetFolder(psiFolder.Get()); RETURN_IF_FAILED
 	WCHAR szFileName[_MAX_FNAME];
-	SplitPath_FolderAndFile(pszPath, NULL, szFileName);
+	SplitPath_FolderAndFile(pszPath, nullptr, szFileName);
 	hr = pFileSaveDialog->SetFileName(szFileName); RETURN_IF_FAILED
 
 	if (m_customizeSetting.bCustomize) {
@@ -792,7 +792,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0( WCHAR* pszPath )
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return false; }
 	hr = CoCreateInstance(
 		CLSID_FileSaveDialog,
-		NULL,
+		nullptr,
 		CLSCTX_ALL,
 		IID_IFileSaveDialog,
 		&pFileDialog); RETURN_IF_FAILED
@@ -887,7 +887,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 		if (dwIDItem != 0) {
 			using namespace Microsoft::WRL;
 			ComPtr<IShellItem> psiFolder;
-			SHCreateItemFromParsingName(m_vOPENFOLDER[dwIDItem - 1], NULL, IID_PPV_ARGS(&psiFolder));
+			SHCreateItemFromParsingName(m_vOPENFOLDER[dwIDItem - 1], nullptr, IID_PPV_ARGS(&psiFolder));
 			m_pFileDialog->SetFolder(psiFolder.Get());
 		}
 		break;

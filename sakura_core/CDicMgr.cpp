@@ -78,14 +78,14 @@ BOOL CDicMgr::Search(
 		}
 
 		pszWork = wcsstr( szLine, pszDelimit );
-		if( NULL != pszWork && szLine[0] != L';' ){
+		if( nullptr != pszWork && szLine[0] != L';' ){
 			*pszWork = L'\0';
 			pszWork += cchDelimit;
 
 			/* 最初のトークンを取得します。 */
-			wchar_t *context = NULL;
+			wchar_t *context = nullptr;
 			pszToken = wcstok_s( szLine, pszKeySeps, &context );
-			while( NULL != pszToken ){
+			while( nullptr != pszToken ){
 				nRes = _wcsnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
 					int nLen = (int)wcslen(pszWork);
@@ -105,7 +105,7 @@ BOOL CDicMgr::Search(
 					*pLine = line;	// 2006.04.10 fon
 					return TRUE;
 				}
-				pszToken = wcstok_s( NULL, pszKeySeps, &context );
+				pszToken = wcstok_s( nullptr, pszKeySeps, &context );
 			}
 		}
 	}

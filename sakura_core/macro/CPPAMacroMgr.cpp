@@ -95,7 +95,7 @@ CMacroManagerBase* CPPAMacroMgr::Creator(const WCHAR* ext)
 	if( wcscmp( ext, L"ppa" ) == 0 ){
 		return new CPPAMacroMgr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!	CPPAMacroManagerの登録

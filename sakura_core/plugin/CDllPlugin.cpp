@@ -73,7 +73,7 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 		};
 		if( ! RegisterEntries( imp ) ){
 //			DWORD err = GetLastError();
-			::MYMESSAGEBOX( NULL, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR2) );
+			::MYMESSAGEBOX( nullptr, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR2) );
 			return false;
 		}
 	}

@@ -70,22 +70,22 @@ bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, COLORR
 		switch( type )
 		{
 		case MARK_DIFF_APPEND:	//追加
-			::MoveToEx( gr, 3, cy, NULL );
+			::MoveToEx( gr, 3, cy, nullptr );
 			::LineTo  ( gr, 6, cy );
-			::MoveToEx( gr, 4, cy - 2, NULL );
+			::MoveToEx( gr, 4, cy - 2, nullptr );
 			::LineTo  ( gr, 4, cy + 3 );
 			break;
 
 		case MARK_DIFF_CHANGE:	//変更
-			::MoveToEx( gr, 3, cy - 4, NULL );
+			::MoveToEx( gr, 3, cy - 4, nullptr );
 			::LineTo  ( gr, 3, cy );
-			::MoveToEx( gr, 3, cy + 2, NULL );
+			::MoveToEx( gr, 3, cy + 2, nullptr );
 			::LineTo  ( gr, 3, cy + 3 );
 			break;
 
 		case MARK_DIFF_DELETE:	//削除
 			cy -= 3;
-			::MoveToEx( gr, 3, cy, NULL );
+			::MoveToEx( gr, 3, cy, nullptr );
 			::LineTo  ( gr, 5, cy );
 			::LineTo  ( gr, 3, cy + 2 );
 			::LineTo  ( gr, 3, cy );
@@ -94,7 +94,7 @@ bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, COLORR
 		
 		case MARK_DIFF_DEL_EX:	//削除(EOF)
 			cy += 3;
-			::MoveToEx( gr, 3, cy, NULL );
+			::MoveToEx( gr, 3, cy, nullptr );
 			::LineTo  ( gr, 5, cy );
 			::LineTo  ( gr, 3, cy - 2 );
 			::LineTo  ( gr, 3, cy );

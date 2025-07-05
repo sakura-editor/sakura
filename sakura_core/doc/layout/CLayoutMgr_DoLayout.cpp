@@ -411,7 +411,7 @@ void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineE
 		if( nLineIndex == 0 ){
 			// メインスレッドは進捗更新とユーザー操作受け付け
 			NotifyProgress(0);
-			if( pbCanceled != nullptr && !::BlockingHook( NULL )){
+			if( pbCanceled != nullptr && !::BlockingHook( nullptr )){
 				// 中断された
 				pbCanceled->store(true);
 				return;
@@ -433,8 +433,8 @@ void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineE
 	SLayoutWork	_sWork;
 	SLayoutWork* pWork = &_sWork;
 	pWork->pcDocLine				= pDocLineBegin;
-	pWork->pLayout					= NULL;
-	pWork->pcColorStrategy			= NULL;
+	pWork->pLayout					= nullptr;
+	pWork->pcColorStrategy			= nullptr;
 	pWork->colorPrev				= COLORIDX_DEFAULT;
 	pWork->nCurLine					= CLogicInt( nLineIndex );
 
@@ -472,7 +472,7 @@ void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineE
 				if( diffTime >= userInterfaceInterval ){
 					prevTime = currTime;
 					NotifyProgress( ::MulDiv( pWork->nCurLine, 100, nLineCount ) );
-					if( pbCanceled != nullptr && !::BlockingHook( NULL ) ){
+					if( pbCanceled != nullptr && !::BlockingHook( nullptr ) ){
 						pbCanceled->store( true );
 						return;
 					}
@@ -490,12 +490,12 @@ void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineE
 	m_cLayoutExInfoBot.SetColorInfo(CColorStrategy::GetStrategyColorInfoSafe(pWork->pcColorStrategy));
 
 	m_nPrevReferLine = CLayoutInt(0);
-	m_pLayoutPrevRefer = NULL;
+	m_pLayoutPrevRefer = nullptr;
 
 	if( nListenerCount != 0 ){
 		if( nLineIndex == 0 ){
 			NotifyProgress(0);
-			if( pbCanceled != nullptr && !::BlockingHook( NULL ) ){
+			if( pbCanceled != nullptr && !::BlockingHook( nullptr ) ){
 				pbCanceled->store(true);
 				return;
 			}
@@ -574,7 +574,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	pWork->colorPrev				= nCurrentLineType;
 	pWork->exInfoPrev.SetColorInfo(colorInfo);
 	pWork->bNeedChangeCOMMENTMODE	= false;
-	if( NULL == pWork->pLayout ){
+	if( nullptr == pWork->pLayout ){
 		pWork->nCurLine = CLogicInt(0);
 	}else{
 		pWork->nCurLine = pWork->pLayout->GetLogicLineNo() + CLogicInt(1);
@@ -590,7 +590,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 		pWork->pcColorStrategy->SetStrategyColorInfo(colorInfo);
 	}
 
-	while( NULL != pWork->pcDocLine ){
+	while( nullptr != pWork->pcDocLine ){
 		pWork->cLineStr		= pWork->pcDocLine->GetStringRefWithEOL();
 		pWork->eKinsokuType	= KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 		pWork->nBgn			= CLogicInt(0);
@@ -621,9 +621,9 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				}else if( pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo()
 				 && !pWork->exInfoPrev.GetColorInfo()->IsEqual(pWork->pLayout->GetNextLayout()->GetColorInfo()) ){
 					pWork->bNeedChangeCOMMENTMODE = true;
-				}else if( pWork->exInfoPrev.GetColorInfo() && NULL == pWork->pLayout->GetNextLayout()->GetColorInfo() ){
+				}else if( pWork->exInfoPrev.GetColorInfo() && nullptr == pWork->pLayout->GetNextLayout()->GetColorInfo() ){
 					pWork->bNeedChangeCOMMENTMODE = true;
-				}else if( NULL == pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo() ){
+				}else if( nullptr == pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo() ){
 					pWork->bNeedChangeCOMMENTMODE = true;
 				}else{
 					break;

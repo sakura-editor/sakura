@@ -48,7 +48,7 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayPro
 		BOOL bGroup = (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin);
 
 		// 印刷中にキーワードを上書きしないように
-		CShareDataLockCounter* pLock = NULL;
+		CShareDataLockCounter* pLock = nullptr;
 		CShareDataLockCounter::WaitLock( pcPropCommon->m_hwndParent, &pLock );
 
 		pcPropCommon->ApplyData();
@@ -105,7 +105,7 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 	/* プロパティシートの作成 */
 	if( pcPropTypes->DoPropertySheet( m_nPropTypePageNum ) ){
 		// 2013.06.10 Moca 印刷終了まで待機する
-		CShareDataLockCounter* pLock = NULL;
+		CShareDataLockCounter* pLock = nullptr;
 		CShareDataLockCounter::WaitLock( pcPropTypes->GetHwndParent(), &pLock );
 
 		pcPropTypes->GetTypeData(*pType);

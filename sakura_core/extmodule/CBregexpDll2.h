@@ -84,8 +84,8 @@ public:
 	}
 
 	// 関数があるかどうか
-	bool ExistBMatchEx() const{ return m_BMatchEx!=NULL; }
-	bool ExistBSubstEx() const{ return m_BSubstEx!=NULL; }
+	bool ExistBMatchEx() const{ return m_BMatchEx!=nullptr; }
+	bool ExistBSubstEx() const{ return m_BSubstEx!=nullptr; }
 
 private:
 	//DLL内関数ポインタ

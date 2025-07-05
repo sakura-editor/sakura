@@ -40,7 +40,7 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	char* pbuf = new (std::nothrow) char[nSrcLen];
-	if (pbuf == NULL) {
+	if (pbuf == nullptr) {
 		if( pbError ){
 			*pbError = true;
 		}
@@ -133,7 +133,7 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 
 	// 必要なバッファサイズを調べて確保
 	wchar_t* pDst = new (std::nothrow) wchar_t[nDataLen + 1];
-	if( pDst == NULL ){
+	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 
@@ -176,7 +176,7 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	}
 
 	wchar_t* psrc = new (std::nothrow) wchar_t[nSrcLen];
-	if( psrc == NULL ){
+	if( psrc == nullptr ){
 		return 0;
 	}
 

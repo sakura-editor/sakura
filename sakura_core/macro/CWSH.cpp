@@ -75,7 +75,7 @@ public:
 	    /* [in] */ REFIID iid,
 	    /* [out] */ void ** ppvObject) override
 	{
-		*ppvObject = NULL;
+		*ppvObject = nullptr;
 
 		if(iid == IID_IActiveScriptSiteWindow){
 			*ppvObject = static_cast<IActiveScriptSiteWindow*>(this);
@@ -165,7 +165,7 @@ public:
 			DWORD Context;
 			ULONG Line;
 			LONG Pos;
-			if(Info.bstrDescription == NULL) {
+			if(Info.bstrDescription == nullptr) {
 				Info.bstrDescription = SysAllocString(LS(STR_ERR_CWSH09));
 			}
 			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
@@ -218,7 +218,7 @@ public:
 //implementation
 
 CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
-				m_OnError(AErrorHandler), m_Data(AData), m_Valid(false), m_Engine(NULL)
+				m_OnError(AErrorHandler), m_Data(AData), m_Valid(false), m_Engine(nullptr)
 { 
 	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダーに移動する
 	CCurrentDirectoryBackupPoint dirBack;
@@ -259,7 +259,7 @@ CWSHClient::~CWSHClient()
 		(*it)->Release();
 	}
 	
-	if(m_Engine != NULL) 
+	if(m_Engine != nullptr) 
 		m_Engine->Release();
 }
 
@@ -283,7 +283,7 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 
 		MSG msg;
 		CDlgCancel cDlgCancel;
-		HWND hwndDlg = cDlgCancel.DoModeless(G_AppInstance(), NULL, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
+		HWND hwndDlg = cDlgCancel.DoModeless(G_AppInstance(), nullptr, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
 		// ダイアログタイトルとファイル名を設定
 		::SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)GSTR_APPNAME);
 		::SendMessage(GetDlgItem(hwndDlg, IDC_STATIC_CMD),
@@ -295,8 +295,8 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 			if(dwResult == WAIT_OBJECT_0){
 				::SendMessage( cDlgCancel.GetHwnd(), WM_CLOSE, 0, 0 );
 			}else if(dwResult == WAIT_OBJECT_0+1){
-				while(::PeekMessage(&msg , NULL , 0 , 0, PM_REMOVE )){
-					if(cDlgCancel.GetHwnd() != NULL && ::IsDialogMessage(cDlgCancel.GetHwnd(), &msg)){
+				while(::PeekMessage(&msg , nullptr , 0 , 0, PM_REMOVE )){
+					if(cDlgCancel.GetHwnd() != nullptr && ::IsDialogMessage(cDlgCancel.GetHwnd(), &msg)){
 					}else{
 						::TranslateMessage(&msg);
 						::DispatchMessage(&msg);
@@ -311,14 +311,14 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 				bCanceled = true;
 				cDlgCancel.CloseDialog( 0 );
 			}
-			if(cDlgCancel.GetHwnd() == NULL){
+			if(cDlgCancel.GetHwnd() == nullptr){
 				DEBUG_TRACE(L"Close\n");
 				break;
 			}
 		}
 
 		DEBUG_TRACE(L"AbortMacro: Try Interrupt\n");
-		pParam->pEngine->InterruptScriptThread(SCRIPTTHREADID_BASE, NULL, 0);
+		pParam->pEngine->InterruptScriptThread(SCRIPTTHREADID_BASE, nullptr, 0);
 		DEBUG_TRACE(L"AbortMacro: Done\n");
 	}
 
@@ -361,11 +361,11 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 				sThreadParam.nCancelTimer = GetDllShareData().m_Common.m_sMacro.m_nMacroCancelTimer;
 				sThreadParam.view = (CEditView*)m_Data;
 
-				HANDLE hThread = NULL;
+				HANDLE hThread = nullptr;
 				unsigned int nThreadId = 0;
 				if( 0 < sThreadParam.nCancelTimer ){
-					sThreadParam.hEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-					hThread = (HANDLE)_beginthreadex( NULL, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
+					sThreadParam.hEvent = ::CreateEvent(nullptr, TRUE, FALSE, nullptr);
+					hThread = (HANDLE)_beginthreadex( nullptr, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
 					DEBUG_TRACE(L"Start AbortMacroProc 0x%08x\n", nThreadId);
 				}
 
@@ -406,7 +406,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 
 void CWSHClient::Error(BSTR Description, BSTR Source)
 {
-	if(m_OnError != NULL)
+	if(m_OnError != nullptr)
 		m_OnError(Description, Source, m_Data);
 }
 

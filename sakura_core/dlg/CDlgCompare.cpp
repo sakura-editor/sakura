@@ -148,7 +148,7 @@ void CDlgCompare::SetData( void )
 		CTextWidthCalc calc(hwndList);
 		int score = 0;
 		WCHAR		szFile1[_MAX_PATH];
-		SplitPath_FolderAndFile(m_pszPath, NULL, szFile1);
+		SplitPath_FolderAndFile(m_pszPath, nullptr, szFile1);
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessageAny( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
@@ -172,7 +172,7 @@ void CDlgCompare::SetData( void )
 
 			// ファイル名一致のスコアを計算する
 			WCHAR szFile2[_MAX_PATH];
-			SplitPath_FolderAndFile( pfi->m_szPath, NULL, szFile2 );
+			SplitPath_FolderAndFile( pfi->m_szPath, nullptr, szFile2 );
 			int scoreTemp = FileMatchScoreSepExt( szFile1, szFile2 );
 			if( score < scoreTemp ){
 				// スコアのいいものを選択
@@ -290,7 +290,7 @@ BOOL CDlgCompare::OnSize( WPARAM wParam, LPARAM lParam )
 	for( int i = 0 ; i < _countof(anchorList); i++ ){
 		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
-	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	::InvalidateRect( GetHwnd(), nullptr, TRUE );
 	return TRUE;
 }
 

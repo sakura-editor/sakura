@@ -19,7 +19,7 @@ CSubject::~CSubject()
 {
 	//リスナを解除
 	for(int i=0;i<(int)m_vListenersRef.size();i++){
-		m_vListenersRef[i]->Listen(NULL);
+		m_vListenersRef[i]->Listen(nullptr);
 	}
 	m_vListenersRef.clear();
 }
@@ -52,13 +52,13 @@ void CSubject::_RemoveListener(CListener* pcListener)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CListener::CListener()
-: m_pcSubjectRef(NULL)
+: m_pcSubjectRef(nullptr)
 {
 }
 
 CListener::~CListener()
 {
-	Listen(NULL);
+	Listen(nullptr);
 }
 
 CSubject* CListener::Listen(CSubject* pcSubject)
@@ -68,7 +68,7 @@ CSubject* CListener::Listen(CSubject* pcSubject)
 	//古いサブジェクトを解除
 	if(m_pcSubjectRef){
 		m_pcSubjectRef->_RemoveListener(this);
-		m_pcSubjectRef = NULL;
+		m_pcSubjectRef = nullptr;
 	}
 
 	//新しく設定

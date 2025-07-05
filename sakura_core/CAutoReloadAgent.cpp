@@ -67,7 +67,7 @@ bool CAutoReloadAgent::_ToDoChecking() const
 	if(m_eWatchUpdate==WU_NONE)return false;
 	if(setting.m_nFileShareMode!=SHAREMODE_NOT_EXCLUSIVE)return false; // ファイルの排他制御モード
 	HWND hwndActive = ::GetActiveWindow();
-	if(hwndActive==NULL)return false;	/* アクティブ？ */
+	if(hwndActive==nullptr)return false;	/* アクティブ？ */
 	if(hwndActive!=CEditWnd::getInstance()->GetHwnd())return false;
 	if(!GetListeningDoc()->m_cDocFile.GetFilePathClass().IsValidPath())return false;
 	if(GetListeningDoc()->m_cDocFile.IsFileTimeZero()) return false;	/* 現在編集中のファイルのタイムスタンプ */

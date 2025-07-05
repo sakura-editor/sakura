@@ -80,7 +80,7 @@ void CViewCommander::Command_GREP( void )
 		// 2011.01.23 Grepタイプ別適用
 		if( !GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0 ){
 			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( L"grepout" );
-			const STypeConfigMini* pConfig = NULL;
+			const STypeConfigMini* pConfig = nullptr;
 			if( !CDocTypeManager().GetTypeConfigMini( cTypeGrep, &pConfig ) ){
 				return;
 			}
@@ -260,7 +260,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, cCmdLine.GetStringPtr(),
-			false, NULL, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
+			false, nullptr, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 	}
 	return;
 }

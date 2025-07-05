@@ -12,8 +12,8 @@
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
-, m_hwndStatusBar( NULL )
-, m_hwndProgressBar( NULL )
+, m_hwndStatusBar( nullptr )
+, m_hwndProgressBar( nullptr )
 {
 }
 
@@ -40,19 +40,19 @@ void CMainStatusBar::CreateStatusBar()
 	m_hwndProgressBar = ::CreateWindowEx(
 		WS_EX_TOOLWINDOW,
 		PROGRESS_CLASS,
-		NULL,
+		nullptr,
 		WS_CHILD /*|  WS_VISIBLE*/,
 		3,
 		5,
 		150,
 		13,
 		m_hwndStatusBar,
-		NULL,
+		nullptr,
 		CEditApp::getInstance()->GetAppInstance(),
 		nullptr
 	);
 
-	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
+	if( nullptr != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
 		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( FALSE );
 	}
 
@@ -63,14 +63,14 @@ void CMainStatusBar::CreateStatusBar()
 /* ステータスバー破棄 */
 void CMainStatusBar::DestroyStatusBar()
 {
-	if( NULL != m_hwndProgressBar ){
+	if( nullptr != m_hwndProgressBar ){
 		::DestroyWindow( m_hwndProgressBar );
-		m_hwndProgressBar = NULL;
+		m_hwndProgressBar = nullptr;
 	}
 	::DestroyWindow( m_hwndStatusBar );
-	m_hwndStatusBar = NULL;
+	m_hwndStatusBar = nullptr;
 
-	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
+	if( nullptr != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
 		bool bSizeBox;
 		if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 			/* サイズボックスの表示／非表示切り替え */
@@ -79,7 +79,7 @@ void CMainStatusBar::DestroyStatusBar()
 		else{
 			bSizeBox = true;
 			/* ステータスパーを表示している場合はサイズボックスを表示しない */
-			if( NULL != m_hwndStatusBar ){
+			if( nullptr != m_hwndStatusBar ){
 				bSizeBox = false;
 			}
 		}
@@ -105,7 +105,7 @@ void CMainStatusBar::DestroyStatusBar()
 */
 void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 {
-	if( NULL != m_hwndStatusBar ){
+	if( nullptr != m_hwndStatusBar ){
 		SetStatusText(0, SBT_NOBORDERS, msg);
 	}
 }
@@ -121,7 +121,7 @@ void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
 	if( !m_hwndStatusBar ){
-		assert(m_hwndStatusBar != NULL);
+		assert(m_hwndStatusBar != nullptr);
 		return false;
 	}
 	// StatusBar_SetText 関数を呼びだすかどうかを判定する
@@ -137,7 +137,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		// オーナードローではない場合で NULLの場合は空文字に置き換える
 		// NULL を渡しても問題が無いのかどうか公式ドキュメントに記載されていない
 		// NULL のままでも問題は発生しないようだが念の為に対策を追加
-		if( pszText == NULL ){
+		if( pszText == nullptr ){
 			static const wchar_t emptyStr[] = L"";
 			pszText = emptyStr;
 			textLen = 0;

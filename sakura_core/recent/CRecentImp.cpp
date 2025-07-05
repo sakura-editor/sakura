@@ -50,8 +50,8 @@ bool CRecentImp<T, S>::Create(
 	Terminate();
 
 	//パラメータチェック
-	if( NULL == pszItemArray ) return false;
-	if( NULL == pnItemCount ) return false;
+	if( nullptr == pszItemArray ) return false;
+	if( nullptr == pnItemCount ) return false;
 	if( nArrayCount <= 0 ) return false;
 	if( pnViewCount && (*pnViewCount < 0 || nArrayCount < *pnViewCount) ) return false;
 
@@ -78,10 +78,10 @@ void CRecentImp<T, S>::Terminate()
 {
 	m_bCreate = false;
 
-	m_puUserItemData     = NULL;
-	m_pnUserItemCount    = NULL;
-	m_pnUserViewCount    = NULL;
-	m_pbUserItemFavorite = NULL;
+	m_puUserItemData     = nullptr;
+	m_pnUserItemCount    = nullptr;
+	m_pnUserViewCount    = nullptr;
+	m_pbUserItemFavorite = nullptr;
 
 	m_nArrayCount  = 0;
 }
@@ -129,7 +129,7 @@ bool CRecentImp<T, S>::SetFavorite( int nIndex, bool bFavorite )
 {
 	if( ! IsAvailable() ) return false;
 	if( nIndex < 0 || nIndex >= *m_pnUserItemCount ) return false;
-	if( NULL == m_pbUserItemFavorite ) return false;
+	if( nullptr == m_pbUserItemFavorite ) return false;
 
 	m_pbUserItemFavorite[nIndex] = bFavorite;
 
@@ -161,7 +161,7 @@ bool CRecentImp<T, S>::IsFavorite( int nIndex ) const
 {
 	if( ! IsAvailable() ) return false;
 	if( nIndex < 0 || nIndex >= *m_pnUserItemCount ) return false;
-	if( NULL == m_pbUserItemFavorite ) return false;
+	if( nullptr == m_pbUserItemFavorite ) return false;
 
 	return m_pbUserItemFavorite[nIndex];
 }
@@ -424,14 +424,14 @@ bool CRecentImp<T, S>::CopyItem( int nSrcIndex, int nDstIndex )
 template <class T, class S>
 const T* CRecentImp<T, S>::GetItem( int nIndex ) const
 {
-	if(!IsAvailable() || nIndex<0 || nIndex>=*m_pnUserItemCount)return NULL;
+	if(!IsAvailable() || nIndex<0 || nIndex>=*m_pnUserItemCount)return nullptr;
 	return &m_puUserItemData[nIndex];
 }
 
 template <class T, class S>
 const T* CRecentImp<T, S>::GetItemPointer(int nIndex) const
 {
-	if(!IsAvailable() || nIndex<0 || nIndex>=m_nArrayCount)return NULL;
+	if(!IsAvailable() || nIndex<0 || nIndex>=m_nArrayCount)return nullptr;
 	return &m_puUserItemData[nIndex];
 }
 

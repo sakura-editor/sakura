@@ -95,7 +95,7 @@ BOOL CDlgOpenFile::SelectFile(
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		::GetModuleHandle(NULL),
+		::GetModuleHandle(nullptr),
 		parent,
 		filter,
 		szPath

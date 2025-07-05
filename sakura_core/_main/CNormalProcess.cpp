@@ -46,7 +46,7 @@
 
 CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 : CProcess( hInstance, lpCmdLine )
-, m_pcEditApp( NULL )
+, m_pcEditApp( nullptr )
 {
 }
 
@@ -77,7 +77,7 @@ bool CNormalProcess::InitializeProcess()
 
 	/* プロセス初期化の目印 */
 	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
-	if( NULL == hMutex ){
+	if( nullptr == hMutex ){
 		return false;
 	}
 
@@ -157,7 +157,7 @@ bool CNormalProcess::InitializeProcess()
 	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
-	if( NULL == pEditWnd->GetHwnd() ){
+	if( nullptr == pEditWnd->GetHwnd() ){
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
@@ -262,7 +262,7 @@ bool CNormalProcess::InitializeProcess()
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			hMutex = NULL;
+			hMutex = nullptr;
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
@@ -276,7 +276,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
-			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
+			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  nullptr);
 			if( FALSE != nRet ){
 				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}else{
@@ -294,7 +294,7 @@ bool CNormalProcess::InitializeProcess()
 
 		if( !bGrepDlg && gi.bGrepStdout ){
 			// 即時終了
-			PostMessageCmd( pEditWnd->GetHwnd(), MYWM_CLOSE, PM_CLOSE_GREPNOCONFIRM | PM_CLOSE_EXIT, (LPARAM)NULL );
+			PostMessageCmd( pEditWnd->GetHwnd(), MYWM_CLOSE, PM_CLOSE_GREPNOCONFIRM | PM_CLOSE_EXIT, (LPARAM)nullptr );
 		}
 
 		return true; // 2003.06.23 Moca
@@ -401,7 +401,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	//再描画
-	::InvalidateRect( pEditWnd->GetHwnd(), NULL, TRUE );
+	::InvalidateRect( pEditWnd->GetHwnd(), nullptr, TRUE );
 
 	if( hMutex ){
 		::ReleaseMutex( hMutex );
@@ -419,8 +419,8 @@ bool CNormalProcess::InitializeProcess()
 	LPCWSTR pszMacro = CCommandLine::getInstance()->GetMacro();
 	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){
 		LPCWSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
-		if( pszMacroType == NULL || pszMacroType[0] == L'\0' || _wcsicmp(pszMacroType, L"file") == 0 ){
-			pszMacroType = NULL;
+		if( pszMacroType == nullptr || pszMacroType[0] == L'\0' || _wcsicmp(pszMacroType, L"file") == 0 ){
+			pszMacroType = nullptr;
 		}
 		CEditView& view = pEditWnd->GetActiveView();
 		view.GetCommander().HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
@@ -483,18 +483,18 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
 	strMutexInitName += pszProfileName;
-	hMutex = ::CreateMutex( NULL, TRUE, strMutexInitName.c_str() );
-	if( NULL == hMutex ){
+	hMutex = ::CreateMutex( nullptr, TRUE, strMutexInitName.c_str() );
+	if( nullptr == hMutex ){
 		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
-		return NULL;
+		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
+		return nullptr;
 	}
 	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
 		DWORD dwRet = ::WaitForSingleObject( hMutex, 15000 );	// 2002/2/8 aroka 少し長くした
 		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
-			TopErrorMessage( NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
+			TopErrorMessage( nullptr, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
 			::CloseHandle( hMutex );
-			return NULL;
+			return nullptr;
 		}
 	}
 	return hMutex;

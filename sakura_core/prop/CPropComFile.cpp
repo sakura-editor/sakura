@@ -157,7 +157,7 @@ INT_PTR CPropFile::DispatchEvent(
 			break;
 		case IDC_SPIN_AUTOLOAD_DELAY:
 			// 自動読込時遅延
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -171,7 +171,7 @@ INT_PTR CPropFile::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_nDropFileNumMax:
 			/* 一度にドロップ可能なファイル数 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -191,7 +191,7 @@ INT_PTR CPropFile::DispatchEvent(
 //			break;
 		case IDC_SPIN_AUTOBACKUP_INTERVAL:
 			/* バックアップ間隔 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -208,7 +208,7 @@ INT_PTR CPropFile::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_ALERT_FILESIZE:
 			/* ファイルの警告サイズ */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else 
@@ -381,7 +381,7 @@ int CPropFile::GetData( HWND hwndDlg )
 	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
 
 	// 自動読込時遅延
-	m_Common.m_sFile.m_nAutoloadDelay = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, NULL, FALSE );
+	m_Common.m_sFile.m_nAutoloadDelay = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, nullptr, FALSE );
 
 	/* 上書き禁止検出時は編集禁止にする */
 	m_Common.m_sFile.m_bUneditableIfUnwritable = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bUneditableIfUnwritable );
@@ -392,7 +392,7 @@ int CPropFile::GetData( HWND hwndDlg )
 	/* ファイルをドロップしたときは閉じて開く */
 	m_Common.m_sFile.m_bDropFileAndClose = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bDropFileAndClose );
 	/* 一度にドロップ可能なファイル数 */
-	m_Common.m_sFile.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
+	m_Common.m_sFile.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, nullptr, FALSE );
 	if( 1 > m_Common.m_sFile.m_nDropFileNumMax ){
 		m_Common.m_sFile.m_nDropFileNumMax = 1;
 	}
@@ -436,7 +436,7 @@ int CPropFile::GetData( HWND hwndDlg )
 	m_Common.m_sFile.SetAlertIfFileNotExist( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) );
 	// 開こうとしたファイルが大きい場合に警告する
 	m_Common.m_sFile.m_bAlertIfLargeFile = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE );
-	m_Common.m_sFile.m_nAlertFileSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
+	m_Common.m_sFile.m_nAlertFileSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, nullptr, FALSE );
 	if( m_Common.m_sFile.m_nAlertFileSize < 1 ){
 		m_Common.m_sFile.m_nAlertFileSize = 1;
 	}

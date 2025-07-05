@@ -21,7 +21,7 @@ public:
 class CLayoutExInfo
 {
 public:
-	CLayoutExInfo() : m_colorInfo(NULL){}
+	CLayoutExInfo() : m_colorInfo(nullptr){}
 	~CLayoutExInfo(){
 		delete m_colorInfo;
 	}
@@ -36,7 +36,7 @@ public:
 	}
 	CLayoutColorInfo* DetachColorInfo(){
 		CLayoutColorInfo* p = m_colorInfo;
-		m_colorInfo = NULL;
+		m_colorInfo = nullptr;
 		return p;
 	}
 private:

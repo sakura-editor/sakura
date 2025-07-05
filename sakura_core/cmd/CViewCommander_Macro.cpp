@@ -39,7 +39,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 {
 	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
-		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;							/* キーボードマクロを記録中のウィンドウ */
 		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダーに「RecKey.mac」という名で保存
 		WCHAR szInitDir[MAX_PATH];
 		int nRet;
@@ -81,7 +81,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 void CViewCommander::Command_SAVEKEYMACRO( void )
 {
 	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
-	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
 
 	//	Jun. 16, 2002 genta
 	if( !m_pcSMacroMgr->IsSaveOk() ){
@@ -130,7 +130,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 void CViewCommander::Command_LOADKEYMACRO( void )
 {
 	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
-	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
 
 	CDlgOpenFile	cDlgOpenFile;
 	WCHAR			szPath[_MAX_PATH + 1];
@@ -173,7 +173,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 		Command_RECKEYMACRO();
 	}
 	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
-	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
 
 	/* キーボードマクロの実行 */
 	//@@@ 2002.1.24 YAZAKI
@@ -184,7 +184,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 			STAND_KEYMACRO,
 			G_AppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName,
-			NULL
+			nullptr
 		);
 		if ( !bLoadResult ){
 			ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD28), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
@@ -210,7 +210,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 	WCHAR			szPath[_MAX_PATH + 1];
 	WCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダー
 	const WCHAR*	pszFolder;					//マクロフォルダー
-	HWND			hwndRecordingKeyMacro = NULL;
+	HWND			hwndRecordingKeyMacro = nullptr;
 
 	if ( !pszPath ) {
 		// ファイルが指定されていない場合、ダイアログを表示する
@@ -233,7 +233,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 			return;
 		}
 		pszPath = szPath;
-		pszType = NULL;
+		pszType = nullptr;
 	}
 
 	//キーマクロ記録中の場合、追加する
@@ -246,11 +246,11 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 		//キーマクロの記録を一時停止する
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
 		hwndRecordingKeyMacro = GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro;
-		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
 	}
 
 	//古い一時マクロの退避
-	CMacroManagerBase* oldMacro = m_pcSMacroMgr->SetTempMacro( NULL );
+	CMacroManagerBase* oldMacro = m_pcSMacroMgr->SetTempMacro( nullptr );
 
 	BOOL bLoadResult = m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
@@ -267,12 +267,12 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 
 	// 終わったら解放
 	m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
-	if ( oldMacro != NULL ) {
+	if ( oldMacro != nullptr ) {
 		m_pcSMacroMgr->SetTempMacro( oldMacro );
 	}
 
 	// キーマクロ記録中だった場合は再開する
-	if ( hwndRecordingKeyMacro != NULL ) {
+	if ( hwndRecordingKeyMacro != nullptr ) {
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = TRUE;
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
 	}
@@ -296,7 +296,7 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	const WCHAR* curDir = cDlgExec.m_szCurDir;
 	const WCHAR* pszDir = curDir;
 	if( curDir[0] == L'\0' ){
-		pszDir = NULL;
+		pszDir = nullptr;
 	}else{
 		CRecentCurDir cRecentCurDir;
 		cRecentCurDir.AppendItem( cDlgExec.m_szCurDir );
@@ -326,7 +326,7 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt,
 	if( pszCurDir ){
 		buf3 = pszCurDir;
 	}
-	m_pCommanderView->ExecCmd( buf2.c_str(), nFlgOpt, (pszCurDir ? buf3.c_str() : NULL) );
+	m_pCommanderView->ExecCmd( buf2.c_str(), nFlgOpt, (pszCurDir ? buf3.c_str() : nullptr) );
 	//	To Here Aug. 21, 2001 genta
 	return;
 }
