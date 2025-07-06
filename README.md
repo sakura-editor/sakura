@@ -1,11 +1,9 @@
 # Sakura Editor
-[![Build status](https://ci.appveyor.com/api/projects/status/xlsp22h1q91mh96j/branch/master?svg=true)](https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master)
-[![Github Releases All](https://img.shields.io/github/downloads/sakura-editor/sakura/total.svg)](https://github.com/sakura-editor/sakura/releases "All Releases")
 [![License: Zlib](https://img.shields.io/badge/License-Zlib-lightgrey.svg)](https://opensource.org/licenses/Zlib)
-[![CodeFactor](https://www.codefactor.io/repository/github/sakura-editor/sakura/badge)](https://www.codefactor.io/repository/github/sakura-editor/sakura)
-[![Build Status](https://dev.azure.com/sakuraeditor/sakura/_apis/build/status/sakura-editor.sakura?branchName=master)](https://dev.azure.com/sakuraeditor/sakura/_build/latest?definitionId=3&branchName=master)
 [![build sakura](https://github.com/sakura-editor/sakura/workflows/build%20sakura/badge.svg)](https://github.com/sakura-editor/sakura/actions?query=workflow%3A%22build+sakura%22)
+[![CodeFactor](https://www.codefactor.io/repository/github/sakura-editor/sakura/badge)](https://www.codefactor.io/repository/github/sakura-editor/sakura)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sakura-editor_sakura&metric=alert_status)](https://sonarcloud.io/dashboard?id=sakura-editor_sakura)
+[![Github Releases All](https://img.shields.io/github/downloads/sakura-editor/sakura/total.svg)](https://github.com/sakura-editor/sakura/releases "All Releases")
 [![Star History](https://img.shields.io/badge/star-histroy-yellow.svg)](https://star-history.t9t.io/#sakura-editor/sakura)
 
 <!-- 以下は Markdownの参照形式によるリンク の定義です。 -->
@@ -134,17 +132,6 @@ vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 
 [こちら](ci/build-envvars.md) を参照してください。
 
-## CI Build (Azure Pipelines)
-
-### ビルドの仕組み (Azure Pipelines)
-
-[azure-pipelines.md](ci/azure-pipelines/azure-pipelines.md) でビルドの仕組みを説明しています。
-
-## CI Build (AppVeyor)
-
-### ビルドの仕組み (AppVeyor)
-
-AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行っています。
 ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
 ### ビルド成果物を利用する上での注意事項
@@ -158,11 +145,10 @@ AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行
 
 #### master の 最新
 
-1. https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master にアクセスする
+1. https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml?query=branch%3Amaster にアクセスする
 2. 右端にある `Jobs` をクリックします。
-3. 自分がダウンロードしたいビルド構成 (例: `Configuration: Release; Platform: Win32`) をクリックします。
-4. 右端にある `ARTIFACTS` をクリックします。
-5. 自分がダウンロードしたいものをクリックしてダウンロードします。
+3. `ARTIFACTS` をクリックします。
+4. 自分がダウンロードしたいものをクリックしてダウンロードします。
    - (ユーザー用) 末尾に `Exe` がついてるのが実行ファイルのセットです。
    - (ユーザー用) 末尾に `Installer` がついてるのがインストーラのセットです。
    - ~~(すべて欲しい人向け) `All` がついてるのがバイナリ、インストーラ、ビルドログ、アセンブラ出力のフルセットです。~~ ([#514](https://github.com/sakura-editor/sakura/issues/514) の軽減のため無効化中) 
@@ -172,7 +158,7 @@ AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行
 #### master の 最新以外
 
 以下から取得したいビルドを選択後、同様にしてダウンロードできます。  
-https://ci.appveyor.com/project/sakuraeditor/sakura/history
+https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml
 
 ## 開発情報
 
