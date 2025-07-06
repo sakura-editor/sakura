@@ -84,6 +84,6 @@ for /f "usebackq delims=" %%a in (`where cl.exe`) do (
 goto :EOF
 
 :find_gcc_compilers
-set C_COMPILER=C:/msys64/mingw64/bin/gcc.exe
-set CXX_COMPILER=C:/msys64/mingw64/bin/g++.exe
+set C_COMPILER=gcc.exe
+set CXX_COMPILER=g++.exe
 goto :EOF

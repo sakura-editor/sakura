@@ -21,7 +21,7 @@
 
 | ファイル名 | 説明 |
 ----|---- 
-|[build-all.bat](../build-all.bat)| appveyor.yml から呼ばれるバッチファイル  |
+|[build-all.bat](../build-all.bat)| すべてをビルドできるバッチファイル  |
 |[build-sln.bat](../build-sln.bat) | solution をビルドする |
 |[build-gnu.bat](../build-gnu.bat) | Makefile をビルドする |
 |[build-sonar-qube-start.bat](../build-sonar-qube-start.bat) | SonarQube の準備を行う |
