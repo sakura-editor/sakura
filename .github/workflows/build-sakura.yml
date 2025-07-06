@@ -9,17 +9,11 @@ on:
       - '**/*.md'
       - .gitignore
       - .editorconfig
-      - appveyor.yml
-      - 'azure-pipelines*.yml'
-      - 'ci/azure-pipelines/template*.yml'
   pull_request:
     paths-ignore:
       - '**/*.md'
       - .gitignore
       - .editorconfig
-      - appveyor.yml
-      - 'azure-pipelines*.yml'
-      - 'ci/azure-pipelines/template*.yml'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
