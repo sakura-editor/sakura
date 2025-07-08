@@ -59,9 +59,9 @@ const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
 CShareData::CShareData()
 {
-	m_hFileMap   = NULL;
-	m_pShareData = NULL;
-	m_pvTypeSettings = NULL;
+	m_hFileMap       = nullptr;
+	m_pShareData     = nullptr;
+	m_pvTypeSettings = nullptr;
 }
 
 /*!
@@ -72,9 +72,9 @@ CShareData::~CShareData()
 {
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
-		SetDllShareData( NULL );
+		SetDllShareData(nullptr);
 		::UnmapViewOfFile( m_pShareData );
-		m_pShareData = NULL;
+		m_pShareData = nullptr;
 	}
 	if( m_hFileMap ){
 		CloseHandle( m_hFileMap );
@@ -82,10 +82,10 @@ CShareData::~CShareData()
 	if( m_pvTypeSettings ){
 		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
 			delete (*m_pvTypeSettings)[i];
-			(*m_pvTypeSettings)[i] = NULL;
+			(*m_pvTypeSettings)[i] = nullptr;
 		}
 		delete m_pvTypeSettings;
-		m_pvTypeSettings = NULL;
+		m_pvTypeSettings = nullptr;
 	}
 }
 
@@ -112,7 +112,7 @@ bool CShareData::InitShareData()
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"CShareData::InitShareData" );
 
-	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
+	m_hwndTraceOutSource = nullptr;	// 2006.06.26 ryoji
 
 	/* ファイルマッピングオブジェクト */
 	{
@@ -121,16 +121,16 @@ bool CShareData::InitShareData()
 		strShareDataName += pszProfileName;
 		m_hFileMap = ::CreateFileMapping(
 			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
-			NULL,
+			nullptr,
 			PAGE_READWRITE | SEC_COMMIT,
 			0,
 			sizeof( DLLSHAREDATA ),
 			strShareDataName.c_str()
 		);
 	}
-	if( NULL == m_hFileMap ){
+	if( nullptr == m_hFileMap ){
 		::MessageBox(
-			NULL,
+			nullptr,
 			L"CreateFileMapping()に失敗しました",
 			L"予期せぬエラー",
 			MB_OK | MB_APPLMODAL | MB_ICONSTOP
@@ -155,20 +155,20 @@ bool CShareData::InitShareData()
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
 
 		// 2004.05.13 Moca リソースから製品バージョンの取得
-		GetAppVersionInfo( NULL, VS_VERSION_INFO,
+		GetAppVersionInfo( nullptr, VS_VERSION_INFO,
 			&m_pShareData->m_sVersion.m_dwProductVersionMS, &m_pShareData->m_sVersion.m_dwProductVersionLS );
 
 		m_pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 		m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
-		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
 
 		m_pShareData->m_sNodes.m_nSequences = 0;					/* ウィンドウ連番 */
 		m_pShareData->m_sNodes.m_nNonameSequences = 0;
 		m_pShareData->m_sNodes.m_nGroupSequences = 0;			/* タブグループ連番 */	// 2007.06.20 ryoji
 		m_pShareData->m_sNodes.m_nEditArrNum = 0;
 
-		m_pShareData->m_sHandles.m_hwndTray = NULL;
-		m_pShareData->m_sHandles.m_hwndDebug = NULL;
+		m_pShareData->m_sHandles.m_hwndTray = nullptr;
+		m_pShareData->m_sHandles.m_hwndDebug = nullptr;
 
 		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
@@ -744,9 +744,9 @@ bool CShareData::InitShareData()
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
-			SetDllShareData( NULL );
+			SetDllShareData( nullptr );
 			::UnmapViewOfFile( m_pShareData );
-			m_pShareData = NULL;
+			m_pShareData = nullptr;
 			return false;
 		}
 		//	To Here Oct. 27, 2000 genta
@@ -837,7 +837,7 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 			break;
 		}
 	}
-	assert( m_pvTypeSettings != NULL );
+	assert( m_pvTypeSettings != nullptr );
 	indexBackup = index;
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
 	for( i = 0; i < (int)GetTypeSettings().size(); i++ ){
@@ -873,7 +873,7 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 BOOL CShareData::IsPathOpened( const WCHAR* pszPath, HWND* phwndOwner )
 {
 	EditInfo*	pfi;
-	*phwndOwner = NULL;
+	*phwndOwner = nullptr;
 
 	//	2007.10.01 genta 相対パスを絶対パスに変換
 	//	変換しないとIsPathOpenedで正しい結果が得られず，
@@ -1035,7 +1035,7 @@ void CShareData::TraceOutString( const wchar_t* pStr, int len )
 bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 {
 	bool ret = true;
-	if( NULL == m_pShareData->m_sHandles.m_hwndDebug
+	if( nullptr == m_pShareData->m_sHandles.m_hwndDebug
 	|| !IsSakuraMainWindow( m_pShareData->m_sHandles.m_hwndDebug )
 	){
 		// 2007.06.26 ryoji
@@ -1049,7 +1049,7 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 		// CODE_UNICODE->CODE_NONE	2010.05.11 Moca デフォルト文字コードで設定できるように無指定に変更
 		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
-		ret = CControlTray::OpenNewEditor( NULL, hwnd, sLoadInfo, L"-DEBUGMODE", true );
+		ret = CControlTray::OpenNewEditor( nullptr, hwnd, sLoadInfo, L"-DEBUGMODE", true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
@@ -1112,7 +1112,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		pszFile = m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szFile;
 	}
 	if( pszFile[0] == L'\0' ){	//	ファイル名が無い
-		if( pszPath != NULL ){
+		if( pszPath != nullptr ){
 			pszPath[0] = L'\0';
 		}
 		return 0;
@@ -1122,7 +1122,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
 		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == L'\0' ){	//	フォルダー指定なし
-		if( pszPath == NULL || nBufLen <= nLen ){
+		if( pszPath == nullptr || nBufLen <= nLen ){
 			return -nLen;
 		}
 		wcscpy( pszPath, pszFile );
@@ -1146,7 +1146,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 
 		int nDirLen = wcslen( pszDir );
 		nAllLen = nDirLen + nLen + ( -1 == nFolderSep ? 1 : 0 );
-		if( pszPath == NULL || nBufLen <= nAllLen ){
+		if( pszPath == nullptr || nBufLen <= nAllLen ){
 			return -nAllLen;
 		}
 
@@ -1453,7 +1453,7 @@ void CShareData::RefreshString()
 
 void CShareData::CreateTypeSettings()
 {
-	if( NULL == m_pvTypeSettings ){
+	if( nullptr == m_pvTypeSettings ){
 		m_pvTypeSettings = new std::vector<STypeConfig*>();
 	}
 }
