@@ -62,12 +62,12 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 					return false;
 				}
 				// どっちも最終行(EOF)に到達。同一と判定
-				if( pLineSrc == NULL && 0 == nLineLenDes ){
+				if( pLineSrc == nullptr && 0 == nLineLenDes ){
 					bDifferent = false;
 					return true;
 				}
 				// どちらかだけが、最終行に到達
-				if( pLineSrc == NULL || 0 == nLineLenDes ){
+				if( pLineSrc == nullptr || 0 == nLineLenDes ){
 					return true;
 				}
 				int nDstEndPos = std::min( nLineLenDes, max_size ) + nLineOffset;
@@ -111,7 +111,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 /* ファイル内容比較 */
 void CViewCommander::Command_COMPARE( void )
 {
-	HWND		hwndCompareWnd = NULL;
+	HWND		hwndCompareWnd = nullptr;
 	CDlgCompare	cDlgCompare;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
@@ -225,7 +225,7 @@ void CViewCommander::Command_COMPARE( void )
 
 static ECodeType GetFileCharCode( LPCWSTR pszFile )
 {
-	const STypeConfigMini* typeMini = NULL;
+	const STypeConfigMini* typeMini = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &typeMini ) ){
 		return CODE_ERROR;
 	}
@@ -276,7 +276,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 		|| saveCode != code
 		|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/アウトプットも対象にする
 	){
-		if( !m_pCommanderView->MakeDiffTmpFile(szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist()) ){
+		if( !m_pCommanderView->MakeDiffTmpFile(szTmpFile1, nullptr, saveCode, GetDocument()->GetDocumentBomExist()) ){
 			return;
 		}
 		bTmpFile1 = true;
@@ -355,7 +355,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 			|| code != saveCode
 			|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/アウトプットも対象にする
 	){
-		if( !m_pCommanderView->MakeDiffTmpFile( szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist() ) ){ return; }
+		if( !m_pCommanderView->MakeDiffTmpFile( szTmpFile1, nullptr, saveCode, GetDocument()->GetDocumentBomExist() ) ){ return; }
 		bTmpFile1 = true;
 	}else{
 		wcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );

@@ -92,12 +92,12 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 	wcscpy( conv, trg );
 
 	p = conv;
-	while ( (p = wcspbrk( p, L"\t\\:*?\"<>|" )) != NULL ) {
+	while ( (p = wcspbrk( p, L"\t\\:*?\"<>|" )) != nullptr ) {
 		// ファイル名に使えない文字を _ に置き換える
 		*p++ = L'_';
 	}
 	p = conv;
-	while ( (p = wcspbrk( p, L"/" )) != NULL ) {
+	while ( (p = wcspbrk( p, L"/" )) != nullptr ) {
 		// ファイル名に使えない文字を ／ に置き換える
 		*p++ = L'／';
 	}
@@ -750,12 +750,12 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		if( p2 = wcschr(p1, L',') ){
 			*p2 = LTEXT('\0');
 			p2 += 1;				//カンマの次が、次の要素
-			if( NULL != (p3=wcschr(p2,LTEXT(','))) ){
+			if( nullptr != (p3=wcschr(p2,LTEXT(','))) ){
 				*p3 = LTEXT('\0');
 				p3 += 1;			//カンマの次が、次の要素
 			}
 		}/* 結果の確認 */
-		if( (p3==NULL) ||			//カンマが1個足りない
+		if( (p3==nullptr) ||			//カンマが1個足りない
 			(p3==p1) //||			//カンマが2個足りない
 			//	2007.02.03 genta ファイル名にカンマがあるかもしれない
 			//(NULL!=wcsstr(p3,","))	//カンマが多すぎる
@@ -774,7 +774,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		//Path
 		FILE* fp2;
 		const WCHAR* p4 = p2;
-		if( (fp2=_wfopen_absini(p3,L"r")) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+		if( (fp2=_wfopen_absini(p3,L"r")) == nullptr ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
 			p4 = LS(STR_IMPEXP_DIC_NOTFOUND);
 			b_enable_flag = 0;
@@ -934,7 +934,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 					//機能名を数値に置き換える。(数値の機能名もあるかも)
 					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-					EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, NULL);
+					EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, nullptr);
 					if( n == F_INVALID )
 					{
 						if( WCODE::Is09(*p) )

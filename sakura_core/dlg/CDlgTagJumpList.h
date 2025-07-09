@@ -102,7 +102,7 @@ private:
 	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
 	//	@@ 2005.03.31 MIK
 	const WCHAR *GetFileName( void );
-	const WCHAR *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : L""; }
+	const WCHAR *GetFilePath( void ){ return m_pszFileName != nullptr ? m_pszFileName : L""; }
 	void Empty( void );
 	void SetTextDir();
 	void FindNext(bool bNewFind);

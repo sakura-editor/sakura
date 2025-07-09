@@ -640,14 +640,14 @@ static WCHAR* strcnv(WCHAR *str)
 {
 	WCHAR* p=str;
 	/* 改行コードの削除 */
-	if( NULL != (p=wcschr(p,L'\n')) )
+	if( nullptr != (p=wcschr(p,L'\n')) )
 		*p=L'\0';
 	p=str;
-	if( NULL != (p=wcschr(p,L'\r')) )
+	if( nullptr != (p=wcschr(p,L'\r')) )
 		*p=L'\0';
 	/* カンマの置換 */
 	p=str;
-	for(; (p=wcschr(p,L',')) != NULL; ){
+	for(; (p=wcschr(p,L',')) != nullptr; ){
 		*p=L'.';
 	}
 	return str;

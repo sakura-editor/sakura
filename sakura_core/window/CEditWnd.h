@@ -69,8 +69,8 @@ struct STabGroupInfo{
 	HWND			hwndTop;
 	WINDOWPLACEMENT	wpTop;
 
-	STabGroupInfo() : hwndTop(NULL) { }
-	bool IsValid() const{ return hwndTop!=NULL; }
+	STabGroupInfo() : hwndTop(nullptr) { }
+	bool IsValid() const{ return hwndTop!=nullptr; }
 };
 
 //! 編集ウィンドウ（外枠）管理クラス
@@ -204,7 +204,7 @@ public:
 	//!印刷プレビュー中かどうか
 	bool IsInPreviewMode()
 	{
-		return m_pPrintPreview!=NULL;
+		return m_pPrintPreview!=nullptr;
 	}
 
 	BOOL IsPageScrollByWheel() const { return m_bPageScrollByWheel; }		// ホイール操作によるページスクロール有無	// 2009.01.17 nasukoji

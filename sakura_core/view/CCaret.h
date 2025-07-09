@@ -123,7 +123,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//設定
-	CLayoutInt MoveCursorToClientPoint( const POINT& ptClientPos, bool = false, CLayoutPoint* = NULL );		//!< マウス等による座標指定によるカーソル移動
+	CLayoutInt MoveCursorToClientPoint( const POINT& ptClientPos, bool = false, CLayoutPoint* = nullptr );		//!< マウス等による座標指定によるカーソル移動
 	CLayoutInt Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect );	//!< カーソル上下移動処理
 	CLayoutInt MoveCursor(												//!< 行桁指定によるカーソル移動
 		CLayoutPoint	ptWk_CaretPos,									//!< [in] 移動先レイアウト位置
@@ -135,7 +135,7 @@ public:
 	CLayoutInt MoveCursorFastMode(
 		const CLogicPoint&	pptWk_CaretPosLogic							//!< [in] 移動先ロジック位置
 	);
-	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, bool = false, CLayoutPoint* = NULL, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
+	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, bool = false, CLayoutPoint* = nullptr, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 
 	//$ 設計思想的に微妙
 	void SetCaretLayoutPos(const CLayoutPoint& pt){ m_ptCaretPos_Layout = pt; }	//!< キャレット位置(レイアウト)を設定

@@ -52,7 +52,7 @@ void CViewSelect::BeginSelectArea( const CLayoutPoint* po )
 {
 	const CEditView* pView=GetEditView();
 	CLayoutPoint temp;
-	if( NULL == po ){
+	if( nullptr == po ){
 		temp = pView->GetCaret().GetCaretLayoutPos();
 		po = &temp;
 	}
@@ -402,13 +402,13 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 		// デバッグ用 リージョン矩形のダンプ
 //@@		TraceRgn( hrgnDraw );
 
-		if( NULL != hrgnDraw ){
+		if( nullptr != hrgnDraw ){
 			::DeleteObject( hrgnDraw );
 		}
-		if( NULL != hrgnNew ){
+		if( nullptr != hrgnNew ){
 			::DeleteObject( hrgnNew );
 		}
-		if( NULL != hrgnOld ){
+		if( nullptr != hrgnOld ){
 			::DeleteObject( hrgnOld );
 		}
 	}else{

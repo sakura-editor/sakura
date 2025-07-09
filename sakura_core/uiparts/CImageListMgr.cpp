@@ -40,7 +40,7 @@ const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
 CImageListMgr::CImageListMgr()
 	: m_cx( 16 ), m_cy( 16 )
 	, m_cTrans( RGB( 0, 0, 0 ))
-	, m_hIconBitmap( NULL )
+	, m_hIconBitmap( nullptr )
 	, m_nIconCount( MAX_TOOLBAR_ICON_COUNT )
 {
 }
@@ -57,7 +57,7 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	RECT rect;
 	::SetBkColor( hdc, clr );
 	::SetRect( &rect, x, y, x + cx, y + cy );
-	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
+	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, nullptr, 0, nullptr );
 }
 
 /*! リソースに埋め込まれたmytool.bmpを読み込む
@@ -82,7 +82,7 @@ HBITMAP LoadMyToolFromModule( HINSTANCE hInstance )
 CImageListMgr::~CImageListMgr()
 {
 	//	2003.07.21 Image Listの代わりに描画用bitmapを解放
-	if( m_hIconBitmap != NULL ){
+	if( m_hIconBitmap != nullptr ){
 		DeleteObject( m_hIconBitmap );
 	}
 }
@@ -109,16 +109,16 @@ HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc)
 	bmi.bmiHeader.biYPelsPerMeter = 0;
 	bmi.bmiHeader.biClrUsed = 0;
 	bmi.bmiHeader.biClrImportant = 0;
-	HBITMAP hdib = CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, NULL, NULL, 0);
-	if (hdib == NULL) {
+	HBITMAP hdib = CreateDIBSection(nullptr, &bmi, DIB_RGB_COLORS, nullptr, nullptr, 0);
+	if (hdib == nullptr) {
 		return hbmpSrc;
 	}
-	HDC hdcSrc = CreateCompatibleDC(NULL);
+	HDC hdcSrc = CreateCompatibleDC(nullptr);
 	if (!hdcSrc) {
 		DeleteObject(hdib);
 		return hbmpSrc;
 	}
-	HDC hdcDst = CreateCompatibleDC(NULL);
+	HDC hdcDst = CreateCompatibleDC(nullptr);
 	if (!hdcDst) {
 		DeleteDC(hdcSrc);
 		DeleteObject(hdib);
@@ -149,7 +149,7 @@ HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc)
 bool CImageListMgr::Create(HINSTANCE hInstance)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CImageListMgr::Create" );
-	if( m_hIconBitmap != NULL ){	//	既に構築済みなら無視する
+	if( m_hIconBitmap != nullptr ){	//	既に構築済みなら無視する
 		return true;
 	}
 
@@ -160,14 +160,14 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	// 2007.05.19 ryoji 設定ファイル優先に変更
 	WCHAR szPath[_MAX_PATH];
 	GetInidirOrExedir( szPath, FN_TOOL_BMP );
-	hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
+	hRscbmp = (HBITMAP)::LoadImage( nullptr, szPath, IMAGE_BITMAP, 0, 0,
 		LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
 
-	if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
+	if( hRscbmp == nullptr ) {	// ローカルファイルの読み込み失敗時はリソースから取得
 		//	リソースからBitmapを読み込む
 		//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
 		hRscbmp = LoadMyToolFromModule( hInstance );
-		if( hRscbmp == NULL ){
+		if( hRscbmp == nullptr ){
 			return false;
 		}
 	}
@@ -198,10 +198,10 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 	// アイコンサイズが異なる場合、拡大縮小する
 	hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
-	if( hRscbmp == NULL ){
+	if( hRscbmp == nullptr ){
 		//	リソースからBitmapを読み込む
 		hRscbmp = LoadMyToolFromModule( hInstance );
-		if( hRscbmp == NULL ){
+		if( hRscbmp == nullptr ){
 			return false;
 		}
 
@@ -209,7 +209,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 		// アイコンサイズが異なる場合、拡大縮小する
 		hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
-		if( hRscbmp == NULL ){
+		if( hRscbmp == nullptr ){
 			return false;
 		}
 	}
@@ -516,7 +516,7 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 bool CImageListMgr::DrawToolIcon( HDC drawdc, LONG x, LONG y,
 	int imageNo, DWORD fStyle, LONG cx, LONG cy ) const
 {
-	if ( m_hIconBitmap == NULL )
+	if ( m_hIconBitmap == nullptr )
 		return false;
 	if ( imageNo < 0 || m_nIconCount < imageNo )
 		return false;
@@ -551,17 +551,17 @@ int CImageListMgr::Add( const WCHAR* szPath )
 	}
 
 	//アイコンを読み込む
-	HBITMAP bmpSrc = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
+	HBITMAP bmpSrc = (HBITMAP)::LoadImage( nullptr, szPath, IMAGE_BITMAP, 0, 0,
 		LR_LOADFROMFILE | LR_CREATEDIBSECTION );
 
-	if( bmpSrc == NULL ) {
+	if( bmpSrc == nullptr ) {
 		return -1;
 	}
 
 	int imageNo = m_nIconCount++;
 
 	// 仮想DCを生成して読込んだビットマップを展開する
-	HDC hdcSrc = ::CreateCompatibleDC( NULL );
+	HDC hdcSrc = ::CreateCompatibleDC( nullptr );
 	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmpSrc );
 
 	//取得した画像の(0,0)の色を背景色として使う
@@ -592,7 +592,7 @@ int CImageListMgr::Add( const WCHAR* szPath )
 	}
 
 	// 作業DCの内容を出力DCに転送
-	HDC hdcDst = ::CreateCompatibleDC( NULL );
+	HDC hdcDst = ::CreateCompatibleDC( nullptr );
 	HGDIOBJ hbmDstOld = ::SelectObject( hdcDst, m_hIconBitmap );
 	::TransparentBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(),
 		hdcSrc, 0, 0, nWidth, nHeight, cTransParent );
@@ -615,9 +615,9 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 ) const noexcept
 {
 	// 引数チェック
-	if( bmpSrc == NULL ){
+	if( bmpSrc == nullptr ){
 		DEBUG_TRACE( L"tool bitmap is required." );
-		return NULL;
+		return nullptr;
 	}
 
 	// DIBセクションを取得する
@@ -628,7 +628,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		// 変換前Bmpを削除する
 		::DeleteObject( bmpSrc );
 
-		return NULL;
+		return nullptr;
 	}
 
 	// DIBセクションからサイズを取得する
@@ -645,12 +645,12 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 
 	// 仮想DCを作成
 	HDC hdcSrc = ::CreateCompatibleDC( nullptr );	//	転送元用
-	if( hdcSrc == NULL ){
+	if( hdcSrc == nullptr ){
 
 		// 変換前Bmpを削除する
 		::DeleteObject( bmpSrc );
 
-		return NULL;
+		return nullptr;
 	}
 
 	//	まずbitmapをdcにmapする
@@ -660,7 +660,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	//	スクリーンのDCに対してCreateCompatibleBitmapを
 	//	使うとモノクロBitmapになる．
 	HGDIOBJ hFOldbmp = ::SelectObject( hdcSrc, bmpSrc );
-	if( hFOldbmp == NULL ){
+	if( hFOldbmp == nullptr ){
 		DEBUG_TRACE( L"SelectObject() failed." );
 
 		// 変換前Bmpを削除する
@@ -669,7 +669,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		// 仮想DCを削除する
 		::DeleteDC( hdcSrc );
 
-		return NULL;
+		return nullptr;
 	}
 
 	//	仮想DC(=変換前Bmp)の(0,0)の色を背景色として使う

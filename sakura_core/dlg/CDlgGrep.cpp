@@ -291,7 +291,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)nullptr );
 }
 
 BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
@@ -379,7 +379,7 @@ LRESULT CALLBACK CDlgGrep::OnFolderProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 	{
 		//	From Here 2007.09.02 genta 
 		SFilePath sPath;
-		if( DragQueryFile((HDROP)wparam, 0, NULL, 0 ) > _countof2(sPath) - 1 ){
+		if( DragQueryFile((HDROP)wparam, 0, nullptr, 0 ) > _countof2(sPath) - 1 ){
 			// skip if the length of the path exceeds buffer capacity
 			::DragFinish((HDROP)wparam);
 			return 0;
@@ -394,7 +394,7 @@ LRESULT CALLBACK CDlgGrep::OnFolderProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 		//	フォルダーの場合は最後が失われるのでsplitしてはいけない．
 		if( IsFileExists( sPath, true )){	//	第2引数がtrueだとディレクトリは対象外
 			SFilePath szWork;
-			SplitPath_FolderAndFile( sPath, szWork, NULL );
+			SplitPath_FolderAndFile( sPath, szWork, nullptr );
 			wcscpy( sPath, szWork );
 		}
 

@@ -466,5 +466,5 @@ int CheckUtf8Char2( const char*, const int, ECharSet*, const bool bAllow4byteCod
 int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char* pS, size_t nLen, const char **ppNextChar, bool *pbError );
-int CheckUtf7BPart( const char* pS, size_t nLen, const char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = NULL );
+int CheckUtf7BPart( const char* pS, size_t nLen, const char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = nullptr );
 #endif /* SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_ */

@@ -263,7 +263,7 @@ static const KAKKO_T g_aKakkos[] = {
 	{ L"“", L"”", },
 	{ L"〝", L"〟", },
 	//終端
-	{ NULL, NULL, },
+	{ nullptr, nullptr, },
 };
 
 //	Jun. 16, 2000 genta
@@ -306,13 +306,13 @@ bool CEditView::SearchBracket(
 	const wchar_t *cline = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2()), &len);
 
 	//	Jun. 19, 2000 genta
-	if( cline == NULL )	//	最後の行に本文がない場合
+	if( cline == nullptr )	//	最後の行に本文がない場合
 		return false;
 
 	// 括弧処理 2007.10.16 kobake
 	{
 		const KAKKO_T* p;
-		for( p = g_aKakkos; p->sStr != NULL;  p++ )
+		for( p = g_aKakkos; p->sStr != nullptr;  p++ )
 		{
 			if( *(p->sStr) == cline[ptPos.x] )
 			{
@@ -345,7 +345,7 @@ bool CEditView::SearchBracket(
 	if(nCharSize==1){
 		const KAKKO_T* p;
 		ptPos.x = bPos - cline;
-		for( p = g_aKakkos; p->sStr != NULL; p++ )
+		for( p = g_aKakkos; p->sStr != nullptr; p++ )
 		{
 			if( *(p->sStr) == cline[ptPos.x] )
 			{
@@ -443,13 +443,13 @@ bool CEditView::SearchBracketForward(
 		//	次の行へ
 		ptPos.y++;
 		ci = ci->GetNextLine();	//	次のアイテム
-		if( ci == NULL )
+		if( ci == nullptr )
 			break;	//	終わりに達した
 
 		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline;
 		lineend = cline + len;
-	}while( cline != NULL );
+	}while( cline != nullptr );
 
 	return false;
 }
@@ -534,12 +534,12 @@ bool CEditView::SearchBracketBackward(
 		//	次の行へ
 		ptPos.y--;
 		ci = ci->GetPrevLine();	//	次のアイテム
-		if( ci == NULL )
+		if( ci == nullptr )
 			break;	//	終わりに達した
 
 		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline + len;
-	}while( cline != NULL );
+	}while( cline != nullptr );
 
 	return false;
 }
@@ -562,7 +562,7 @@ bool CEditView::IsBracket( const wchar_t *pLine, CLogicInt x, CLogicInt size )
 	// 括弧処理 2007.10.16 kobake
 	if( size == 1 ){
 		const KAKKO_T *p;
-		for( p = g_aKakkos; p->sStr != NULL; p++ )
+		for( p = g_aKakkos; p->sStr != nullptr; p++ )
 		{
 			if( *(p->sStr) == pLine[x] )
 			{

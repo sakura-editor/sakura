@@ -58,7 +58,7 @@ static const char *p_date_form[] = {
 	"yyyy/MM/dd' ('ddd')'",
 	"yyyy/M/d' ('ddd')'",
 	"yyyy/M/d' ('ddd')'",
-	NULL
+	nullptr
 };
 
 static const char *p_time_form[] = {
@@ -68,7 +68,7 @@ static const char *p_time_form[] = {
 	"HH:mm:ss",
 	"tt h:mm:ss",
 	"tt hh:mm:ss",
-	NULL
+	nullptr
 };
 //@@@ 2002.01.12 add end
 

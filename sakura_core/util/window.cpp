@@ -39,7 +39,7 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 	HWND hwndWk;
 
 	if( hWnd == hwndDesktop )
-		return NULL;
+		return nullptr;
 
 	switch( gaFlags )
 	{
@@ -58,7 +58,7 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 		do{
 			hwndAncestor = hwndWk;
 			hwndWk = ::GetParent( hwndAncestor );
-		}while( hwndWk != NULL );
+		}while( hwndWk != nullptr );
 		break;
 
 	case GA_ROOTOWNER2:	// 所有関係をGetWindow()で遡って所有されていないトップレベルウィンドウを返す
@@ -66,13 +66,13 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 		do{
 			hwndAncestor = hwndWk;
 			hwndWk = ::GetParent( hwndAncestor );
-			if( hwndWk == NULL )
+			if( hwndWk == nullptr )
 				hwndWk = ::GetWindow( hwndAncestor, GW_OWNER );
-		}while( hwndWk != NULL );
+		}while( hwndWk != nullptr );
 		break;
 
 	default:
-		hwndAncestor = NULL;
+		hwndAncestor = nullptr;
 		break;
 	}
 
@@ -90,11 +90,11 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 	MSG		msg;
 	BOOL	ret;
 	//	Jun. 04, 2003 genta メッセージをあるだけ処理するように
-	while(( ret = (BOOL)::PeekMessage( &msg, NULL, 0, 0, PM_REMOVE )) != 0 ){
+	while(( ret = (BOOL)::PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE )) != 0 ){
 		if ( msg.message == WM_QUIT ){
 			return FALSE;
 		}
-		if( NULL != hwndDlgCancel && IsDialogMessage( hwndDlgCancel, &msg ) ){
+		if( nullptr != hwndDlgCancel && IsDialogMessage( hwndDlgCancel, &msg ) ){
 		}else{
 			::TranslateMessage( &msg );
 			::DispatchMessage( &msg );
@@ -123,7 +123,7 @@ void ActivateFrameWindow( HWND hwnd )
 				hwnd,
 				MYWM_TAB_WINDOW_NOTIFY,
 				TWNT_WNDPL_ADJUST,
-				(LPARAM)NULL,
+				(LPARAM)nullptr,
 				SMTO_ABORTIFHUNG | SMTO_BLOCK,
 				10000,
 				&dwResult
@@ -185,9 +185,9 @@ CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
 CTextWidthCalc::CTextWidthCalc(HFONT font)
 {
 	hwnd = nullptr;
-	HDC hDCTemp = ::GetDC( NULL ); // Desktop
+	HDC hDCTemp = ::GetDC( nullptr ); // Desktop
 	hDC = ::CreateCompatibleDC( hDCTemp );
-	::ReleaseDC( NULL, hDCTemp );
+	::ReleaseDC( nullptr, hDCTemp );
 	assert(hDC);
 	hFont = font;
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
@@ -342,7 +342,7 @@ HFONT GetSystemBasedFont( LONG nLogicalHeight )
 
 	NONCLIENTMETRICS metrics = { CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont ) };
 	if( !SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 ) ) {
-		return NULL;
+		return nullptr;
 	}
 	LOGFONT lfFont = metrics.lfMessageFont;
 	lfFont.lfHeight = nLogicalHeight;
@@ -368,7 +368,7 @@ HFONT GetSystemBasedFont( LONG nLogicalHeight )
 	}
 
 	HFONT hFont = CreateFontIndirect( &lfFont );
-	if( hFont != NULL ) {
+	if( hFont != nullptr ) {
 		fontStock[key.str()] = hFont;
 	}
 
@@ -406,7 +406,7 @@ void SetFontRecursive( HWND hwnd, HFONT hFont )
 */
 HFONT UpdateDialogFont( HWND hwnd, BOOL force )
 {
-	HFONT hFontDialog = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
+	HFONT hFontDialog = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)nullptr );
 
 	if( !force && wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese") ) != 0 ){
 		return hFontDialog;
@@ -416,7 +416,7 @@ HFONT UpdateDialogFont( HWND hwnd, BOOL force )
 	LOGFONT lfDialog = {};
 	GetObject( hFontDialog, sizeof( lfDialog ), &lfDialog );
 	HFONT hFontSystemBased = GetSystemBasedFont( lfDialog.lfHeight );
-	if( hFontSystemBased != NULL ){
+	if( hFontSystemBased != nullptr ){
 		SetFontRecursive( hwnd, hFontSystemBased );
 		hFontDialog = hFontSystemBased;
 	}

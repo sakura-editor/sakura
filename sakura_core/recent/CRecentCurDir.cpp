@@ -20,9 +20,9 @@ CRecentCurDir::CRecentCurDir()
 		GetShareData()->m_sHistory.m_aCurDirs.dataPtr(),
 		GetShareData()->m_sHistory.m_aCurDirs.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sHistory.m_aCurDirs._GetSizeRef(),
-		NULL,
+		nullptr,
 		MAX_CMDARR,
-		NULL
+		nullptr
 	);
 }
 

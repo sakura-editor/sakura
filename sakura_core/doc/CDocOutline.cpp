@@ -86,7 +86,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 	while( file.Good() && nCount < nMaxCount ){
 		strLine = file.ReadLineW();
 		pszWork = wcsstr( strLine.c_str(), pszDelimit );
-		if( NULL != pszWork && 0 < strLine.length() && strLine[0] != cComment ){
+		if( nullptr != pszWork && 0 < strLine.length() && strLine[0] != cComment ){
 			int nLen = pszWork - strLine.c_str();
 			if( nLen < LINEREADBUFSIZE ){
 				// szLine == 「key1,key2」
@@ -110,7 +110,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				if( szLine[0] == L'\0' ){
 					if( 0 < nCount ){
 						// 空のKey は無視
-						pszToken = NULL;
+						pszToken = nullptr;
 					}else{
 						// 最初の要素が空のKeyだったらダミー要素
 						bTopDummy = true;
@@ -118,7 +118,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				}
 				if( bRegexReplace && pszToken ){
 					const wchar_t* pszGroupDel = wcsstr( pszWork, pszDelimit );
-					if( NULL != pszGroupDel && 0 < pszWork[0] != L'\0' ){
+					if( nullptr != pszGroupDel && 0 < pszWork[0] != L'\0' ){
 						// pszWork = 「titleRep /// group」
 						// pszGroupDel = 「 /// group」
 						int nTitleLen = pszGroupDel - pszWork; // Len == 0 OK
@@ -134,7 +134,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				}
 			}else{
 				pszToken = wcstok_s( szLine, pszKeySeps, &context );
-				if( nCount == 0 && pszToken == NULL ){
+				if( nCount == 0 && pszToken == nullptr ){
 					pszToken = szLine;
 					bTopDummy = true;
 				}
@@ -144,7 +144,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 			if( p ){
 				nLv = _wtoi( p + 4 );
 			}
-			while( NULL != pszToken ){
+			while( nullptr != pszToken ){
 				wcsncpy( pcOneRule[nCount].szMatch, pszToken, 255 );
 				wcsncpy_s( pcOneRule[nCount].szText, _countof(pcOneRule[0].szText), pszTextReplace, _TRUNCATE );
 				wcsncpy( pcOneRule[nCount].szGroupName, pszWork, 255 );
@@ -156,9 +156,9 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				pcOneRule[nCount].nRegexMode = bRegexRep2 ? 1 : 0; // 文字列が正しい時だけReplaceMode
 				nCount++;
 				if( bTopDummy || bRegex ){
-					pszToken = NULL;
+					pszToken = nullptr;
 				}else{
-					pszToken = wcstok_s( NULL, pszKeySeps, &context );
+					pszToken = wcstok_s( nullptr, pszKeySeps, &context );
 				}
 			}
 		}else{
@@ -237,14 +237,14 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 	wchar_t		pszStack[nMaxStack][256];
 	wchar_t		nLvStack[nMaxStack];
 	wchar_t		szTitle[256];			//	一時領域
-	CBregexp*	pRegex = NULL;
+	CBregexp*	pRegex = nullptr;
 	if( bRegex ){
 		pRegex = new CBregexp[nCount];
 		for( int i = 0; i < nCount; i++ ){
 			if( 0 == test[i].nLength ){
 				continue;
 			}
-			if( !InitRegexp( NULL, pRegex[i], true ) ){
+			if( !InitRegexp( nullptr, pRegex[i], true ) ){
 				delete [] pRegex;
 				return;
 			}
@@ -253,7 +253,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 					std::wstring str = test[i].szMatch;
 					str += L"\n";
 					str += test[i].szText;
-					ErrorMessage( NULL, LS(STR_DOCOUTLINE_REGEX),
+					ErrorMessage( nullptr, LS(STR_DOCOUTLINE_REGEX),
 						str.c_str(),
 						pRegex[i].GetLastMessage()
 					);
@@ -261,7 +261,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 					return;
 				}
 			}else if( !pRegex[i].Compile(test[i].szMatch, test[i].nRegexOption) ){
-				ErrorMessage( NULL, LS(STR_DOCOUTLINE_REGEX),
+				ErrorMessage( nullptr, LS(STR_DOCOUTLINE_REGEX),
 					test[i].szMatch,
 					pRegex[i].GetLastMessage()
 				);
@@ -278,7 +278,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		nLvStack[0] = test[0].nLv;
 		const wchar_t *p = wcschr(g, L',');
 		int len;
-		if( p != NULL ){
+		if( p != nullptr ){
 			len = p - g;
 		}else{
 			len = wcslen(g);
@@ -293,7 +293,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		//行取得
 		CLogicInt		nLineLen;
 		const wchar_t*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
-		if( NULL == pLine ){
+		if( nullptr == pLine ){
 			break;
 		}
 
@@ -312,7 +312,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		}
 
 		//先頭文字が見出し記号のいずれかであれば、次へ進む
-		const wchar_t*		pszText = NULL;
+		const wchar_t*		pszText = nullptr;
 		std::wstring strText;
 		int		j;
 		for( j = 0; j < nCount; j++ ){
@@ -357,7 +357,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 
 		//行文字列から改行を取り除く pLine -> pszText
 		// 正規表現置換のときは設定済み
-		if( NULL == pszText ){
+		if( nullptr == pszText ){
 			pszText = &pLine[i];
 			nLineLen -= i;
 			const bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
@@ -447,7 +447,7 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	for( nLineCount = CLogicInt(0); nLineCount <  nLineLast; ++nLineCount ){
 		if(!CBookmarkGetter(m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)).IsBookmarked())continue;
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
-		if( NULL == pLine ){
+		if( nullptr == pLine ){
 			break;
 		}
 		// Jan, 16, 2002 hor

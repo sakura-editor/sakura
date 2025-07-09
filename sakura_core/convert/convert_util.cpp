@@ -88,7 +88,7 @@ bool wcschr_idx(const wchar_t* str, wchar_t c, int* idx)
 {
 	const wchar_t* p=wcschr(str,c);
 	if(p)*idx=(int)(p-str);
-	return p!=NULL;
+	return p!=nullptr;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

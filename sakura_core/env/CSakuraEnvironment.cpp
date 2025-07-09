@@ -50,7 +50,7 @@ struct SExpParamName
 };
 static SExpParamName SExpParamNameTable[] = {
 	{L"profile", 7},
-	{NULL, 0}
+	{nullptr, 0}
 };
 wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam );
 
@@ -231,13 +231,13 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				WCHAR*	p;
 
 				wcscpy_s( buff, _MAX_PATH, pcDoc->m_cDocFile.GetFilePath() );
-				pEnd = NULL;
+				pEnd = nullptr;
 				for ( p = buff; *p != '\0'; p++) {
 					if (*p == L'\\') {
 						pEnd = p;
 					}
 				}
-				if (pEnd != NULL) {
+				if (pEnd != nullptr) {
 					// 最後の\の後で終端
 					*(pEnd+1) = '\0';
 				}
@@ -423,7 +423,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				wchar_t buf[28]; // 6(符号含むWORDの最大長) * 4 + 4(固定部分)
 				//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
 				DWORD dwVersionMS, dwVersionLS;
-				GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
+				GetAppVersionInfo( nullptr, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 				int len = auto_sprintf( buf, L"%d.%d.%d.%d",
 					HIWORD( dwVersionMS ),
 					LOWORD( dwVersionMS ),
@@ -759,7 +759,7 @@ void CSakuraEnvironment::ResolvePath(WCHAR* pszPath)
 
 	// ショートカット(.lnk)の解決: pSrc -> szBuf -> pSrc
 	WCHAR szBuf[_MAX_PATH];
-	if( ResolveShortcutLink( NULL, pSrc, szBuf ) ){
+	if( ResolveShortcutLink( nullptr, pSrc, szBuf ) ){
 		pSrc = szBuf;
 	}
 
@@ -783,7 +783,7 @@ void CSakuraEnvironment::ResolvePath(WCHAR* pszPath)
 BOOL IsSakuraMainWindow( HWND hWnd )
 {
 	WCHAR	szClassName[64];
-	if( hWnd == NULL ){	// 2007.06.20 ryoji 条件追加
+	if( hWnd == nullptr ){	// 2007.06.20 ryoji 条件追加
 		return FALSE;
 	}
 	if( !::IsWindow( hWnd ) ){

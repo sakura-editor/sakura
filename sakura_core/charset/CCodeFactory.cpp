@@ -45,5 +45,5 @@ CCodeBase* CCodeFactory::CreateCodeBase(
 		}
 		assert_warning(0);
 	}
-	return NULL;
+	return nullptr;
 }

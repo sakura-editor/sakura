@@ -41,19 +41,19 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	/* ウィンドウクラス作成 */
 	if( bVertical ){
 		pszClassName = L"VSplitBoxWnd";
-		hCursor = ::LoadCursor( NULL, IDC_SIZENS );
+		hCursor = ::LoadCursor( nullptr, IDC_SIZENS );
 	}
 	else{
 		pszClassName = L"HSplitBoxWnd";
-		hCursor = ::LoadCursor( NULL, IDC_SIZEWE );
+		hCursor = ::LoadCursor( nullptr, IDC_SIZEWE );
 	}
 	RegisterWC(
 		hInstance,
-		NULL,	// Handle to the class icon.
-		NULL,	// Handle to a small icon
+		nullptr,	// Handle to the class icon.
+		nullptr,	// Handle to a small icon
 		hCursor,// Handle to the class cursor.
 		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+		nullptr/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
@@ -76,7 +76,7 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 		bVertical ? ( 0 ):( rc.bottom - nCyHScroll ), // vertical position of window
 		bVertical ? ( nCxVScroll ):( 7 ), // window width
 		bVertical ? ( 7 ):( nCyHScroll ), // window height
-		NULL // handle to menu, or child-window identifier
+		nullptr // handle to menu, or child-window identifier
 	);
 }
 
@@ -102,7 +102,7 @@ void CSplitBoxWnd::FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORRE
 	RECT	rc;
 	::SetBkColor( hdc, clr );
 	::SetRect( &rc, x, y, x + cx, y + cy );
-	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, nullptr, 0, nullptr );
 	return;
 }
 

@@ -163,7 +163,7 @@ bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vect
 
 	if (( hRsrc = ::FindResource( nullptr, pName, pType )) != nullptr
 	 && ( hGlobal = ::LoadResource( nullptr, hRsrc )) != nullptr
-	 && ( psMMres = (char *)::LockResource(hGlobal)) != NULL
+	 && ( psMMres = (char *)::LockResource(hGlobal)) != nullptr
 	 && ( nSize = (size_t)::SizeofResource( nullptr, hRsrc )) != 0) {
 		p    = psMMres;
 		if (nSize >= sizeof(UTF8_BOM) && memcmp( p, UTF8_BOM, sizeof(UTF8_BOM) )==0) {
@@ -173,7 +173,7 @@ bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vect
 		for (; p < psMMres + nSize ; p = pn) {
 			// 1行切り取り（長すぎた場合切捨て）
 			pn = strpbrk(p, "\n");
-			if (pn == NULL) {
+			if (pn == nullptr) {
 				// 最終行
 				pn = psMMres + nSize;
 			}
@@ -219,14 +219,14 @@ bool CProfile::WriteProfile(
 	const WCHAR* pszComment
 )
 {
-	if( pszProfileName!=NULL ) {
+	if( pszProfileName!=nullptr ) {
 		m_strProfileName = pszProfileName;
 
 		EnsureDirectoryExist( m_strProfileName );
 	}
     
 	std::vector< std::wstring > vecLine;
-	if( NULL != pszComment ) {
+	if( nullptr != pszComment ) {
 		vecLine.emplace_back( L";" + std::wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
@@ -257,7 +257,7 @@ bool CProfile::WriteProfile(
 		return false;
 
 	if( szMirrorFile[0] ){
-		if (!::ReplaceFile(m_strProfileName.c_str(), szMirrorFile, NULL, 0, NULL, NULL)) {
+		if (!::ReplaceFile(m_strProfileName.c_str(), szMirrorFile, nullptr, 0, nullptr, nullptr)) {
 			if (fexist(m_strProfileName.c_str())) {
 				if (!::DeleteFile(m_strProfileName.c_str())) {
 					return false;

@@ -48,8 +48,8 @@
 CMacro::CMacro( EFunctionCode nFuncID )
 {
 	m_nFuncID = nFuncID;
-	m_pNext = NULL;
-	m_pParamTop = m_pParamBot = NULL;
+	m_pNext = nullptr;
+	m_pParamTop = m_pParamBot = nullptr;
 }
 
 CMacro::~CMacro( void )
@@ -66,8 +66,8 @@ void CMacro::ClearMacroParam()
 		p = p->m_pNext;
 		delete del_p;
 	}
-	m_pParamTop = NULL;
-	m_pParamBot = NULL;
+	m_pParamTop = nullptr;
+	m_pParamBot = nullptr;
 	return;
 }
 
@@ -212,7 +212,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			CDlgGrepReplace* pcDlgGrepRep;
 			if( F_GREP == m_nFuncID ){
 				pcDlgGrep = &GetEditWnd().m_cDlgGrep;
-				pcDlgGrepRep = NULL;
+				pcDlgGrepRep = nullptr;
 				AddStringParam( pcDlgGrep->m_strText.c_str() );
 			}else{
 				pcDlgGrep = pcDlgGrepRep = &GetEditWnd().m_cDlgGrepReplace;
@@ -385,7 +385,7 @@ void CMacro::AddIntParam( const int nParam )
 bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 {
 	const int maxArg = 8;
-	const WCHAR* paramArr[maxArg] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+	const WCHAR* paramArr[maxArg] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 	int paramLenArr[maxArg] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 	CMacroParam* p = m_pParamTop;
@@ -404,14 +404,14 @@ WCHAR* CMacro::GetParamAt(CMacroParam* p, int index)
 	CMacroParam* x = p;
 	int i = 0;
 	while(i < index){
-		if( x == NULL ){
-			return NULL;
+		if( x == nullptr ){
+			return nullptr;
 		}
 		x = x->m_pNext;
 		i++;
 	}
-	if( x == NULL ){
-		return NULL;
+	if( x == nullptr ){
+		return nullptr;
 	}
 	return x->m_pData;
 }
@@ -429,12 +429,12 @@ int CMacro::GetParamCount() const
 
 static inline int wtoi_def( const WCHAR* arg, int def_val )
 {
-	return (arg == NULL ? def_val: _wtoi(arg));
+	return (arg == nullptr ? def_val: _wtoi(arg));
 }
 
 static inline const WCHAR* wtow_def( const WCHAR* arg, const WCHAR* def_val )
 {
-	return (arg == NULL ? def_val: arg);
+	return (arg == nullptr ? def_val: arg);
 }
 
 /*	CMacroを再現するための情報をhFileに書き出します。
@@ -539,9 +539,9 @@ bool CMacro::HandleCommand(
 	case F_IME_CHAR:	//	日本語入力
 	case F_CTRL_CODE:
 		//	Jun. 16, 2002 genta
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO03)
@@ -576,7 +576,7 @@ bool CMacro::HandleCommand(
 	case F_1PageDown:
 	case F_1PageUp_Sel:
 	case F_1PageDown_Sel:
-		pcEditView->GetCommander().HandleCommand( Index, true, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
+		pcEditView->GetCommander().HandleCommand( Index, true, (Argument[0] != nullptr ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;
 	case F_UP_BOX:
 	case F_DOWN_BOX:
@@ -611,9 +611,9 @@ bool CMacro::HandleCommand(
 		break;
 	case F_CHGMOD_EOL:	//	入力改行コード指定。EEolTypeの数値を指定。2003.06.23 Moca
 		//	Jun. 16, 2002 genta
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO03_1)
@@ -623,7 +623,7 @@ bool CMacro::HandleCommand(
 		{
 			// マクロ引数値をEOLタイプ値に変換する	// 2009.08.18 ryoji
 			EEolType nEol;
-			switch( Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ){
+			switch( Argument[0] != nullptr ? _wtoi(Argument[0]) : 0 ){
 			case 1:		nEol = EEolType::cr_and_lf; break;
 			case 3:		nEol = EEolType::line_feed; break;
 			case 4:		nEol = EEolType::carriage_return; break;
@@ -639,9 +639,9 @@ bool CMacro::HandleCommand(
 		break;
 	case F_SET_QUOTESTRING:	// Jan. 29, 2005 genta 追加 テキスト引数1つを取るマクロはここに統合していこう．
 		{
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO04)
@@ -657,9 +657,9 @@ bool CMacro::HandleCommand(
 	case F_ADDTAIL_W:		//	この操作はキーボード操作では存在しないので保存することができない？
 	case F_INSBOXTEXT:
 		//	一つ目の引数が文字列。
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO04)
@@ -674,8 +674,8 @@ bool CMacro::HandleCommand(
 	/* 一つ目、二つ目とも引数は数値 */
 	case F_CHG_CHARSET:
 		{
-			int		nCharSet = ( Argument[0] == NULL || Argument[0][0] == '\0' ) ? CODE_NONE : _wtoi(Argument[0]);
-			BOOL	bBOM = ( Argument[1] == NULL ) ? FALSE : (_wtoi(Argument[1]) != 0);
+			int		nCharSet = ( Argument[0] == nullptr || Argument[0][0] == '\0' ) ? CODE_NONE : _wtoi(Argument[0]);
+			BOOL	bBOM = ( Argument[1] == nullptr ) ? FALSE : (_wtoi(Argument[1]) != 0);
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)nCharSet, (LPARAM)bBOM, 0, 0 );
 		}
 		break;
@@ -688,9 +688,9 @@ bool CMacro::HandleCommand(
 		//		0x02	PL/SQLコンパイルエラー行を処理する
 		//		未定義	テキストの□行目をブロックの1行目とする
 		//		未定義	検出されたPL/SQLパッケージのブロックから選択
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO05)
@@ -699,7 +699,7 @@ bool CMacro::HandleCommand(
 		}
 		{
 			GetEditWnd().m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ジャンプ先
-			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 1; // デフォルト1
+			LPARAM lFlag = Argument[1] != nullptr ? _wtoi(Argument[1]) : 1; // デフォルト1
 			GetDllShareData().m_bLineNumIsCRLF_ForJump = ((lFlag & 0x01)!=0);
 			GetEditWnd().m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	標準
@@ -707,9 +707,9 @@ bool CMacro::HandleCommand(
 		break;
 	/*	一つ目の引数は文字列、二つ目の引数は数値	*/
 	case F_BOOKMARK_PATTERN:	//2002.02.08 hor
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO06)
@@ -730,7 +730,7 @@ bool CMacro::HandleCommand(
 		//		0x800	(マクロ専用)検索キーを履歴に登録しない
 		//		0x1000	(マクロ専用)検索オプションを元に戻す
 		{
-			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
+			LPARAM lFlag = Argument[1] != nullptr ? _wtoi(Argument[1]) : 0;
 			SSearchOption sSearchOption;
 			sSearchOption.bWordOnly			= (0 != (lFlag & 0x01));
 			sSearchOption.bLoHiCase			= (0 != (lFlag & 0x02));
@@ -755,7 +755,7 @@ bool CMacro::HandleCommand(
 			if( 0 < nLen ){
 				/* 正規表現 */
 				if( lFlag & 0x04
-					&& !CheckRegexpSyntax( Argument[0], NULL, true )
+					&& !CheckRegexpSyntax( Argument[0], nullptr, true )
 				)
 				{
 					break;
@@ -815,9 +815,9 @@ bool CMacro::HandleCommand(
 		//		0x02	標準出力をキャレット位置に	//	2007.01.02 maru 引数の拡張
 		//		0x04	編集中ファイルを標準入力へ	//	2007.01.02 maru 引数の拡張
 		//	Argument[2]:カレントディレクトリ
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO07)
@@ -826,7 +826,7 @@ bool CMacro::HandleCommand(
 		}
 		{
 			int nOpt = wtoi_def(Argument[1], 0);
-			const wchar_t* pDir = wtow_def(Argument[2], NULL);
+			const wchar_t* pDir = wtow_def(Argument[2], nullptr);
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], nOpt, (LPARAM)pDir, 0 );
 		}
 		break;
@@ -837,9 +837,9 @@ bool CMacro::HandleCommand(
 		//		次の数値の和。
 		//		0x01	ExpandParameterによる文字列展開を行う
 		//		0x02	テキスト末尾に改行コードを付加しない
-		if( Argument[0] == NULL ){
+		if( Argument[0] == nullptr ){
 			::MYMESSAGEBOX(
-				NULL,
+				nullptr,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO07)
@@ -847,7 +847,7 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], ArgLengths[0], (LPARAM)(Argument[1] != NULL ? _wtoi(Argument[1]) : 0 ), 0);
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], ArgLengths[0], (LPARAM)(Argument[1] != nullptr ? _wtoi(Argument[1]) : 0 ), 0);
 		}
 		break;
 
@@ -863,8 +863,8 @@ bool CMacro::HandleCommand(
 		//	Argument[0]に出力。Argument[1]に文字コード。オプションはArgument[2]に。
 		//	Argument[2]:
 		//		現在は特になし
-		if( Argument[0] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+		if( Argument[0] == nullptr ){
+			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO08));
 			return false;
 		}
@@ -873,8 +873,8 @@ bool CMacro::HandleCommand(
 				Index,
 				true,
 				(LPARAM)Argument[0], 
-				(LPARAM)(Argument[1] != NULL ? _wtoi(Argument[1]) : 0 ),
-				(LPARAM)(Argument[2] != NULL ? _wtoi(Argument[2]) : 0 ),
+				(LPARAM)(Argument[1] != nullptr ? _wtoi(Argument[1]) : 0 ),
+				(LPARAM)(Argument[2] != nullptr ? _wtoi(Argument[2]) : 0 ),
 				0
 			);
 		}
@@ -905,19 +905,19 @@ bool CMacro::HandleCommand(
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
 		//		0x800	(マクロ専用)検索キーを履歴に登録しない
 		//		0x1000	(マクロ専用)検索オプションを元に戻す
-		if( Argument[0] == NULL || Argument[0][0] == L'\0' ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+		if( Argument[0] == nullptr || Argument[0][0] == L'\0' ){
+			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO09));
 			return false;
 		}
-		if( Argument[1] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+		if( Argument[1] == nullptr ){
+			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO10));
 			return false;
 		}
 		{
 			CDlgReplace& cDlgReplace = GetEditWnd().m_cDlgReplace;
-			LPARAM lFlag = Argument[2] != NULL ? _wtoi(Argument[2]) : 0;
+			LPARAM lFlag = Argument[2] != nullptr ? _wtoi(Argument[2]) : 0;
 			SSearchOption sSearchOption;
 			sSearchOption.bWordOnly			= (0 != (lFlag & 0x01));
 			sSearchOption.bLoHiCase			= (0 != (lFlag & 0x02));
@@ -941,7 +941,7 @@ bool CMacro::HandleCommand(
 			}
 			/* 正規表現 */
 			if( lFlag & 0x04
-				&& !CheckRegexpSyntax( Argument[0], NULL, true )
+				&& !CheckRegexpSyntax( Argument[0], nullptr, true )
 			)
 			{
 				break;
@@ -1029,8 +1029,8 @@ bool CMacro::HandleCommand(
 		//		0x040000	ベースフォルダー表示
 		//		0x080000	フォルダー毎に表示
 		{
-			if( Argument[0] == NULL ){
-				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+			if( Argument[0] == nullptr ){
+				::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 					LS(STR_ERR_DLGMACRO11));
 				return false;
 			}
@@ -1038,24 +1038,24 @@ bool CMacro::HandleCommand(
 			bool bGrepReplace = LOWORD(Index) == F_GREP_REPLACE;
 			if( bGrepReplace ){
 				if( ArgLengths[0] == 0 ){
-					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+					::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 						LS(STR_ERR_DLGMACRO11));
 					return false;
 				}
 				ArgIndex = 1;
-				if( Argument[1] == NULL ){
-					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				if( Argument[1] == nullptr ){
+					::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 						LS(STR_ERR_DLGMACRO17));
 					return false;
 				}
 			}
-			if( Argument[ArgIndex+1] == NULL ){
-				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+			if( Argument[ArgIndex+1] == nullptr ){
+				::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 					LS(STR_ERR_DLGMACRO12));
 				return false;
 			}
-			if( Argument[ArgIndex+2] == NULL ){
-				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+			if( Argument[ArgIndex+2] == nullptr ){
+				::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 					LS(STR_ERR_DLGMACRO13));
 				return false;
 			}
@@ -1147,8 +1147,8 @@ bool CMacro::HandleCommand(
 		break;
 	case F_FILEOPEN2:
 		//	Argument[0]を開く。
-		if( Argument[0] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+		if( Argument[0] == nullptr ){
+			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO14));
 			return false;
 		}
@@ -1162,9 +1162,9 @@ bool CMacro::HandleCommand(
 	case F_FILESAVEAS_DIALOG:
 	case F_FILESAVEAS:
 		//	Argument[0]を別名で保存。
-		if( LOWORD(Index) == F_FILESAVEAS && (Argument[0] == NULL ||  L'\0' == Argument[0][0]) ){
+		if( LOWORD(Index) == F_FILESAVEAS && (Argument[0] == nullptr ||  L'\0' == Argument[0][0]) ){
 			// F_FILESAVEAS_DIALOGの場合は空文字列を許容
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO15));
 			return false;
 		}
@@ -1172,7 +1172,7 @@ bool CMacro::HandleCommand(
 			// 文字コードセット
 			//	Sep. 11, 2004 genta 文字コード設定の範囲チェック
 			ECodeType nCharCode = CODE_NONE;	//デフォルト値
-			if (Argument[1] != NULL){
+			if (Argument[1] != nullptr){
 				nCharCode = (ECodeType)_wtoi( Argument[1] );
 			}
 			if (LOWORD(Index) == F_FILESAVEAS && IsValidCodeOrCPType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
@@ -1183,7 +1183,7 @@ bool CMacro::HandleCommand(
 
 			// 改行コード
 			int nSaveLineCode = 0;	//デフォルト値	//Sep. 11, 2004 genta 初期値を「変更しない」に
-			if (Argument[2] != NULL){
+			if (Argument[2] != nullptr){
 				nSaveLineCode = _wtoi( Argument[2] );
 			}
 			EEolType eEol;
@@ -1215,7 +1215,7 @@ bool CMacro::HandleCommand(
 	case F_FILE_REOPEN_UTF7			://UTF-7で開き直す
 		{
 			int noconfirm = 0;
-			if (Argument[0] != NULL){
+			if (Argument[0] != nullptr){
 				noconfirm = ( _wtoi( Argument[0] ) != 0 );
 			}
 			pcEditView->GetCommander().HandleCommand( Index, true, noconfirm, 0, 0, 0 );
@@ -1225,7 +1225,7 @@ bool CMacro::HandleCommand(
 	case F_TOPMOST:
 		{
 			int lparam1;
-			if( Argument[0] != NULL ){
+			if( Argument[0] != nullptr ){
 				lparam1 = _wtoi( Argument[0] );
 				pcEditView->GetCommander().HandleCommand( Index, true, lparam1, 0, 0, 0 );
 			}
@@ -1250,7 +1250,7 @@ bool CMacro::HandleCommand(
 		{
 			VARIANT vArg[2];			// HandleFunctionに渡す引数
 			VARIANT vResult;			// HandleFunctionから返る値
-			if( Argument[0] == NULL ){
+			if( Argument[0] == nullptr ){
 				break;
 			}
 			SysString S( Argument[0], wcslen(Argument[0]) );
@@ -1259,7 +1259,7 @@ bool CMacro::HandleCommand(
 			//	2つ目の引数が数値。
 			if( F_MESSAGEBOX == LOWORD(Index) ){
 				vArg[1].vt = VT_I4;
-				vArg[1].intVal = (Argument[1] != NULL ? _wtoi(Argument[1]) : 0 );
+				vArg[1].intVal = (Argument[1] != nullptr ? _wtoi(Argument[1]) : 0 );
 				nArgSize = 2;
 			}
 			return HandleFunction( pcEditView, Index, vArg, nArgSize, vResult );
@@ -1267,13 +1267,13 @@ bool CMacro::HandleCommand(
 	case F_MOVECURSORLAYOUT:
 	case F_MOVECURSOR:
 		{
-			if( Argument[0] != NULL && Argument[1] != NULL && Argument[2] != NULL ){
+			if( Argument[0] != nullptr && Argument[1] != nullptr && Argument[2] != nullptr ){
 				int lparam1 = _wtoi( Argument[0] ) - 1;
 				int lparam2 = _wtoi( Argument[1] ) - 1;
 				int lparam3 = _wtoi( Argument[2] );
 				pcEditView->GetCommander().HandleCommand( Index, true, lparam1, lparam2, lparam3, 0);
 			}else{
-				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO16));
 				return false;
 			}
@@ -1289,30 +1289,30 @@ bool CMacro::HandleCommand(
 			VARIANT vResult;			// HandleFunctionから返る値
 			//	一つ目の引数が数値。
 			vArg[0].vt = VT_I4;
-			vArg[0].intVal = (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 );
+			vArg[0].intVal = (Argument[0] != nullptr ? _wtoi(Argument[0]) : 0 );
 			return HandleFunction( pcEditView, Index, vArg, 1, vResult );
 		}
 	case F_SETFONTSIZE:
 		{
-			int val0 = Argument[0] != NULL ? _wtoi(Argument[0]) : 0;
-			int val1 = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
-			int val2 = Argument[2] != NULL ? _wtoi(Argument[2]) : 0;
+			int val0 = Argument[0] != nullptr ? _wtoi(Argument[0]) : 0;
+			int val1 = Argument[1] != nullptr ? _wtoi(Argument[1]) : 0;
+			int val2 = Argument[2] != nullptr ? _wtoi(Argument[2]) : 0;
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)val0, (LPARAM)val1, (LPARAM)val2, 0 );
 		}
 		break;
 	case F_STATUSMSG:
 		{
-			if( Argument[0] == NULL ){
-				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+			if( Argument[0] == nullptr ){
+				::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 					LS(STR_ERR_DLGMACRO07) );
 				return false;
 			}
 			std::wstring val0 = Argument[0];
-			int val1 = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
+			int val1 = Argument[1] != nullptr ? _wtoi(Argument[1]) : 0;
 			if( (val1 & 0x03) == 0 ){
 				pcEditView->SendStatusMessage( val0.c_str() );
 			}else if( (val1 & 0x03) == 1 ){
-				if( NULL != GetEditWnd().m_cStatusBar.GetStatusHwnd() ){
+				if( nullptr != GetEditWnd().m_cStatusBar.GetStatusHwnd() ){
 					pcEditView->SendStatusMessage( val0.c_str() );
 				}else{
 					InfoMessage( pcEditView->GetHwnd(), L"%s", val0.c_str() );
@@ -1324,7 +1324,7 @@ bool CMacro::HandleCommand(
 		break;
 	case F_MSGBEEP:
 		{
-			int val0 = Argument[0] != NULL ? _wtoi(Argument[0]) : 0;
+			int val0 = Argument[0] != nullptr ? _wtoi(Argument[0]) : 0;
 			switch( val0 ){
 			case -1: break;
 			case 0: val0 = MB_OK; break;
@@ -1344,7 +1344,7 @@ bool CMacro::HandleCommand(
 				int nCount = opeBlk->GetRefCount();
 				opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 				pcEditView->SetUndoBuffer();
-				if( pcEditView->m_cCommander.GetOpeBlk() == NULL && 0 < nCount ){
+				if( pcEditView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
 					pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
 					pcEditView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
 				}
@@ -1354,7 +1354,7 @@ bool CMacro::HandleCommand(
 	case F_ADDREFUNDOBUFFER:
 		{
 			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk == NULL ){
+			if( opeBlk == nullptr ){
 				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
 			}
 			pcEditView->m_cCommander.GetOpeBlk()->AddRef();
@@ -1368,7 +1368,7 @@ bool CMacro::HandleCommand(
 	case F_APPENDUNDOBUFFERCURSOR:
 		{
 			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk == NULL ){
+			if( opeBlk == nullptr ){
 				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
 			}
 			opeBlk = pcEditView->m_cCommander.GetOpeBlk();
@@ -1527,7 +1527,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 					nLine = CLogicInt(varCopy.Data.lVal - 1);
 				}
 				Buffer = View->m_pcEditDoc->m_cDocLineMgr.GetLine(nLine)->GetDocLineStrWithEOL(&nLength);
-				if( Buffer != NULL ){
+				if( Buffer != nullptr ){
 					SysString S( Buffer, nLength );
 					Wrap( &Result )->Receive( S );
 				}else{
@@ -1576,7 +1576,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 					// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
 					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth(FALSE);
 				}
-				GetEditWnd().RedrawAllViews( NULL );		// TAB幅が変わったので再描画が必要
+				GetEditWnd().RedrawAllViews( nullptr );		// TAB幅が変わったので再描画が必要
 			}
 		}
 		return true;
@@ -1986,7 +1986,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				ret = (Int)View->m_pcEditDoc->m_cDocLineMgr.GetLineCount() + 1;
 			}else{
 				const CLayout* pcLayout = View->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(nLineNum);
-				if( pcLayout != NULL ){
+				if( pcLayout != nullptr ){
 					ret = pcLayout->GetLogicLineNo() + 1;
 				}else{
 					return false;
@@ -2129,7 +2129,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 		}
 	case F_ISSHOWNSTATUS:
 		{
-			int ret = (NULL != GetEditWnd().m_cStatusBar.GetStatusHwnd() ? 1: 0);
+			int ret = (nullptr != GetEditWnd().m_cStatusBar.GetStatusHwnd() ? 1: 0);
 			Wrap( &Result )->Receive( ret );
 			return true;
 		}
@@ -2186,7 +2186,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 					CLogicXInt(tmpLenWithEol1),
 					COLORIDX_TEXT,
 					offset,
-					NULL
+					nullptr
 				);
 				CLayoutXInt width = View->LineIndexToColumn(&tmpLayout, tmpDocLine.GetLengthWithEOL()) - offset;
 				Wrap( &Result )->Receive( (Int)width );
@@ -2270,7 +2270,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				nLine = CLogicInt(nLineNum - 1); // nLineNumは1開始
 			}
 			const CDocLine* pcDocLine = View->GetDocument()->m_cDocLineMgr.GetLine(nLine);
-			if( pcDocLine == NULL ){
+			if( pcDocLine == nullptr ){
 				return false;
 			}
 			int nRet;
@@ -2393,7 +2393,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 						hMenuCurrent = vHmenu.back();
 					}else if( bSpecial ){
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, 0, NULL );
+						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, 0, nullptr );
 					}else{
 						nFlags |= nFlagBreak;
 						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, i, r );
@@ -2429,7 +2429,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 											( pt.x > rcWork.left )? pt.x: rcWork.left,
 											( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
-											0, View->GetHwnd(), NULL);
+											0, View->GetHwnd(), nullptr);
 				::DestroyMenu( hMenu );
 				Wrap( &Result )->Receive( nId );
 				return true;

@@ -74,8 +74,8 @@ const int CPrint::m_nPaperInfoArrNum = _countof( m_paperInfoArr );
 
 CPrint::CPrint( void )
 {
-	m_hDevMode	= NULL;
-	m_hDevNames	= NULL;
+	m_hDevMode	= nullptr;
+	m_hDevNames	= nullptr;
 	return;
 }
 
@@ -83,14 +83,14 @@ CPrint::~CPrint( void )
 {
 	// メモリ割り当て済みならば、解放する
 	// 2003.05.18 かろと
-	if ( m_hDevMode != NULL ) {
+	if ( m_hDevMode != nullptr ) {
 		::GlobalFree( m_hDevMode );
 	}
-	if ( m_hDevNames != NULL ) {
+	if ( m_hDevNames != nullptr ) {
 		::GlobalFree( m_hDevNames );
 	}
-	m_hDevMode	= NULL;
-	m_hDevNames	= NULL;
+	m_hDevMode	= nullptr;
+	m_hDevNames	= nullptr;
 	return;
 }
 
@@ -108,7 +108,7 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	DEVNAMES*	pDEVNAMES;		/* プリンター設定 DEVNAMES用*/
 
 	// デフォルトプリンターが選択されていなければ、選択する
-	if ( m_hDevMode == NULL ) {
+	if ( m_hDevMode == nullptr ) {
 		if ( !GetDefaultPrinter( pMYDEVMODE ) ) {
 			return FALSE;
 		}
@@ -197,7 +197,7 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	//}
 
 	// DEVMODEを取得済みでない場合、取得する
-	if( m_hDevMode == NULL ){
+	if( m_hDevMode == nullptr ){
 		//
 		// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
 		// PrintDlg()でデフォルトプリンターのデバイス名などを取得する
@@ -269,13 +269,13 @@ HDC CPrint::CreateDC(
 	WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
-	HDC			hdc = NULL;
-	HANDLE		hPrinter = NULL;
+	HDC			hdc = nullptr;
+	HANDLE		hPrinter = nullptr;
 	DEVMODE*	pDEVMODE;
 
 	// プリンターが選択されていなければ、NULLを返す
-	if ( m_hDevMode == NULL ) {
-		return NULL;
+	if ( m_hDevMode == nullptr ) {
+		return nullptr;
 	}
 
 	//
@@ -284,7 +284,7 @@ HDC CPrint::CreateDC(
 	if( !::OpenPrinter(
 		pMYDEVMODE->m_szPrinterDeviceName,		/* プリンターデバイス名 */
 		&hPrinter,					/* プリンターハンドルのポインタ */
-		NULL
+		nullptr
 	) ){
 		auto_sprintf(
 			pszErrMsg,
@@ -304,7 +304,7 @@ HDC CPrint::CreateDC(
 	//DocumentProperties()でアプリケーション独自のプリンター設定に変更する
 	//
 	::DocumentProperties(
-		NULL,
+		nullptr,
 		hPrinter,
 		pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */,
 		pDEVMODE,
@@ -331,7 +331,7 @@ HDC CPrint::CreateDC(
 	::GlobalUnlock( m_hDevMode );
 
 end_of_func:;
-	if (hPrinter != NULL) {
+	if (hPrinter != nullptr) {
 		::ClosePrinter( hPrinter );
 	}
 
@@ -361,7 +361,7 @@ BOOL CPrint::GetPrintMetrics(
 	}
 
 	// pMYDEVMODEを使って、hdcを取得
-	if ( NULL == (hdc = CreateDC( pMYDEVMODE, pszErrMsg )) ){
+	if ( nullptr == (hdc = CreateDC( pMYDEVMODE, pszErrMsg )) ){
 		return FALSE;
 	}
 
@@ -376,7 +376,7 @@ BOOL CPrint::GetPrintMetrics(
 
 	/* 最小左マージンと最小上マージンを取得(1mm単位) */
 	POINT	po;
-	if( 0 < ::Escape( hdc, GETPRINTINGOFFSET, 0, NULL, (LPPOINT)&po ) ){
+	if( 0 < ::Escape( hdc, GETPRINTINGOFFSET, 0, nullptr, (LPPOINT)&po ) ){
 		::DPtoLP( hdc, &po, 1 );
 		*pnPaperOffsetLeft = (short)abs( po.x );	/* 用紙余白左端 */
 		*pnPaperOffsetTop  = (short)abs( po.y );	/* 用紙余白上端 */
@@ -409,7 +409,7 @@ BOOL CPrint::GetPaperSize(
 	if( pDEVMODE->dmFields &  DM_PAPERSIZE ){
 		// 2006.08.14 Moca swich/caseテーブルを廃止して 用紙情報を統合
 		const PAPER_INFO* pi = FindPaperInfo( pDEVMODE->dmPaperSize );
-		if( NULL != pi ){
+		if( nullptr != pi ){
 			*pnPaperAllWidth = pi->m_nAllWidth;
 			*pnPaperAllHeight = pi->m_nAllHeight;
 		}else{
@@ -456,7 +456,7 @@ BOOL CPrint::PrintOpen(
 	// 
 	// hdcを取得
 	//
-	if ( NULL == (hdc = CreateDC( pMYDEVMODE, pszErrMsg )) ){
+	if ( nullptr == (hdc = CreateDC( pMYDEVMODE, pszErrMsg )) ){
 		bRet = FALSE;
 		goto end_of_func;
 	}
@@ -470,8 +470,8 @@ BOOL CPrint::PrintOpen(
 	memset_raw( &di, 0, sizeof( di ) );
 	di.cbSize = sizeof(di);
 	di.lpszDocName = pszJobName;
-	di.lpszOutput  = NULL;
-	di.lpszDatatype = NULL;
+	di.lpszOutput  = nullptr;
+	di.lpszDatatype = nullptr;
 	di.fwType = 0;
 	if( 0 >= ::StartDoc( hdc, &di ) ){
 		auto_sprintf(
@@ -514,7 +514,7 @@ WCHAR* CPrint::GetPaperName( int nPaperSize, WCHAR* pszPaperName )
 {
 	// 2006.08.14 Moca 用紙情報の統合
 	const PAPER_INFO* paperInfo = FindPaperInfo( nPaperSize );
-	if( NULL != paperInfo ){
+	if( nullptr != paperInfo ){
 		wcscpy( pszPaperName, paperInfo->m_pszName );
 	}else{
 		wcscpy( pszPaperName, LS(STR_ERR_CPRINT03) );
@@ -533,7 +533,7 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 			return &(m_paperInfoArr[i]);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!	@brief PRINTSETTINGの初期化

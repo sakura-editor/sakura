@@ -55,7 +55,7 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const int sysColor ) noex
 	if ( !hDC ) return false;
 
 	HBRUSH hBrush = ::GetSysColorBrush( sysColor );
-	if ( hBrush == NULL ) return false;
+	if ( hBrush == nullptr ) return false;
 
 	bool retMyFillRect = MyFillRect( hDC, rc, hBrush );
 
@@ -76,7 +76,7 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const COLORREF color ) no
 	if ( !hDC ) return false;
 
 	HBRUSH hBrush = ::CreateSolidBrush( color );
-	if ( hBrush == NULL ) return false;
+	if ( hBrush == nullptr ) return false;
 
 	bool retMyFillRect = MyFillRect( hDC, rc, hBrush );
 	::DeleteObject( hBrush );
@@ -129,7 +129,7 @@ struct SFONT {
 class CGraphics{
 public:
 	CGraphics(const CGraphics& rhs){ Init(rhs.m_hdc); }
-	CGraphics(HDC hdc = NULL){ Init(hdc); }
+	CGraphics(HDC hdc = nullptr){ Init(hdc); }
 	~CGraphics();
 	void Init(HDC hdc);
 
@@ -249,14 +249,14 @@ public:
 		ClearBrush();
 		PushBrushColor(color);
 	}
-	HBRUSH GetCurrentBrush() const{ return m_vBrushes.size()?m_vBrushes.back():NULL; }
+	HBRUSH GetCurrentBrush() const{ return m_vBrushes.size()?m_vBrushes.back():nullptr; }
 
 	//描画
 public:
 	//! 直線
 	void DrawLine(int x1, int y1, int x2, int y2)
 	{
-		::MoveToEx(m_hdc,x1,y1,NULL);
+		::MoveToEx(m_hdc,x1,y1,nullptr);
 		::LineTo(m_hdc,x2,y2);
 	}
 	void DrawDotLine(int x1, int y1, int x2, int y2);	//点線
@@ -278,7 +278,7 @@ public:
 	//! 矩形塗り潰し
 	void FillMyRectTextBackColor(const RECT& rc)
 	{
-		::ExtTextOut(m_hdc, rc.left, rc.top, ETO_OPAQUE|ETO_CLIPPED, &rc, L"", 0, NULL);
+		::ExtTextOut(m_hdc, rc.left, rc.top, ETO_OPAQUE|ETO_CLIPPED, &rc, L"", 0, nullptr);
 	}
 
 	static void DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast);	// ドロップ先の矩形を描画する

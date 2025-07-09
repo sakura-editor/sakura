@@ -38,7 +38,7 @@ CTipWnd::CTipWnd()
 : CWnd(L"::CTipWnd")
 , m_bAlignLeft(false)
 {
-	m_hFont = NULL;
+	m_hFont = nullptr;
 	m_KeyWasHit = FALSE;	/* キーがヒットしたか */
 	return;
 }
@@ -46,9 +46,9 @@ CTipWnd::CTipWnd()
 /* CTipWndクラス デストラクタ */
 CTipWnd::~CTipWnd()
 {
-	if( NULL != m_hFont ){
+	if( nullptr != m_hFont ){
 		::DeleteObject( m_hFont );
-		m_hFont = NULL;
+		m_hFont = nullptr;
 	}
 	return;
 }
@@ -62,11 +62,11 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	RegisterWC(
 		hInstance,
 		/* WNDCLASS用 */
-		NULL,// Handle to the class icon.
-		NULL,	//Handle to a small icon
-		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor.
+		nullptr,// Handle to the class icon.
+		nullptr,	//Handle to a small icon
+		::LoadCursor( nullptr, IDC_ARROW ),// Handle to the class cursor.
 		(HBRUSH)/*NULL*/(COLOR_INFOBK + 1),// Handle to the class background brush.
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+		nullptr/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
@@ -83,12 +83,12 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 		0, // vertical position of window
 		CW_USEDEFAULT, // window width
 		0, // window height
-		NULL // handle to menu, or child-window identifier
+		nullptr // handle to menu, or child-window identifier
 	);
 
-	if( NULL != m_hFont ){
+	if( nullptr != m_hFont ){
 		::DeleteObject( m_hFont );
-		m_hFont = NULL;
+		m_hFont = nullptr;
 	}
 
 	m_hFont = ::CreateFontIndirect( &(GetDllShareData().m_Common.m_sHelper.m_lf) );
@@ -104,7 +104,7 @@ void CTipWnd::Show( int nX, int nY, RECT* pRect )
 	hdc = ::GetDC( GetHwnd() );
 
 	// サイズを計算済み	2001/06/19 asa-o
-	if(pRect != NULL)
+	if(pRect != nullptr)
 	{
 		rc = *pRect;
 	}
@@ -123,7 +123,7 @@ void CTipWnd::Show( int nX, int nY, RECT* pRect )
 		// 左側固定で表示(通常)
 		::MoveWindow( GetHwnd(), nX, nY, rc.right + 8, rc.bottom + 8/*nHeight*/, TRUE );
 	}
-	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	::InvalidateRect( GetHwnd(), nullptr, TRUE );
 	::ShowWindow( GetHwnd(), SW_SHOWNA );
 	return;
 }
@@ -134,9 +134,9 @@ void CTipWnd::ComputeWindowSize(
 	RECT*			prcResult
 )
 {
-	assert( m_hFont != NULL );
-	assert( hdc != NULL );
-	assert( prcResult != NULL );
+	assert( m_hFont != nullptr );
+	assert( hdc != nullptr );
+	assert( prcResult != nullptr );
 
 	// システム設定値を取得
 	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
@@ -216,8 +216,8 @@ void CTipWnd::DrawTipText(
 	const RECT&		rcPaint
 )
 {
-	assert( m_hFont != NULL );
-	assert( hdc != NULL );
+	assert( m_hFont != nullptr );
+	assert( hdc != nullptr );
 
 	// 余白の設計値をHighDPI対応の値にする
 	const int cx4 = DpiScaleX( 4 );
@@ -305,7 +305,7 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 {
 	// CEditView::ShowKeywordHelpから呼ばれる
 	// 当面、pRectがNULLになることはないが、安全のため入れておく。
-	if ( pRect == NULL ) {
+	if ( pRect == nullptr ) {
 		return;
 	}
 

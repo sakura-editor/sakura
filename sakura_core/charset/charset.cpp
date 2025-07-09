@@ -88,7 +88,7 @@ extern bool IsValidCodeType(int code)
 LPCWSTR CCodeTypeName::Normal() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		return NULL;
+		return nullptr;
 	}
 	return msCodeSet[m_eCodeType].m_sNormal;
 }
@@ -96,7 +96,7 @@ LPCWSTR CCodeTypeName::Normal() const
 LPCWSTR CCodeTypeName::Short() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		return NULL;
+		return nullptr;
 	}
 	return msCodeSet[m_eCodeType].m_sShort;
 }
@@ -104,7 +104,7 @@ LPCWSTR CCodeTypeName::Short() const
 LPCWSTR CCodeTypeName::Bracket() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		return NULL;
+		return nullptr;
 	}
 
 //	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";

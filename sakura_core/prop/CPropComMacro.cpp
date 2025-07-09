@@ -384,7 +384,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 
 	//	ListViewの初期化
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
-	if( hListView == NULL ){
+	if( hListView == nullptr ){
 		PleaseReportToAuthor( hwndDlg, L"PropComMacro::InitDlg::NoListView" );
 		return;	//	よくわからんけど失敗した	
 	}

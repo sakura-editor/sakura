@@ -241,7 +241,7 @@ LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, 
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, TSTR_PTRCUSTOMCOLORS );
 			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_sColorAttr.m_cTEXT, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
-				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
+				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), nullptr, TRUE );
 			}
 		}else
 		/* 背景色見本 矩形 */
@@ -254,7 +254,7 @@ LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, 
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, TSTR_PTRCUSTOMCOLORS );
 			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_sColorAttr.m_cBACK, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
-				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
+				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), nullptr, TRUE );
 			}
 		}
 		break;
@@ -363,8 +363,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				/* 下線を表示 */
 				::CheckDlgButtonBool( hwndDlg, IDC_CHECK_UNDERLINE, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sFontAttr.m_bUnderLine );
 
-				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
-				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
+				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), nullptr, TRUE );
+				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), nullptr, TRUE );
 				return TRUE;
 			}
 		}
@@ -377,9 +377,9 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
 					CDlgSameColor cDlgSameColor;
 					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT;
-					cDlgSameColor.DoModal( ::GetModuleHandle(NULL), hwndDlg, wID, &m_Types, cr );
+					cDlgSameColor.DoModal( ::GetModuleHandle(nullptr), hwndDlg, wID, &m_Types, cr );
 				}
-				::InvalidateRect( hwndListColor, NULL, TRUE );
+				::InvalidateRect( hwndListColor, nullptr, TRUE );
 				return TRUE;
 
 			case IDC_BUTTON_SAMEBKCOLOR:	/* 背景色統一 */
@@ -387,15 +387,15 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
 					CDlgSameColor cDlgSameColor;
 					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cBACK;
-					cDlgSameColor.DoModal( ::GetModuleHandle(NULL), hwndDlg, wID, &m_Types, cr );
+					cDlgSameColor.DoModal( ::GetModuleHandle(nullptr), hwndDlg, wID, &m_Types, cr );
 				}
-				::InvalidateRect( hwndListColor, NULL, TRUE );
+				::InvalidateRect( hwndListColor, nullptr, TRUE );
 				return TRUE;
 
 			case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
 				/* 色選択ダイアログ */
 				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT, m_dwCustColors ) ){
-					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
+					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), nullptr, TRUE );
 				}
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
@@ -403,7 +403,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 			case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
 				/* 色選択ダイアログ */
 				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cBACK, m_dwCustColors ) ){
-					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
+					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), nullptr, TRUE );
 				}
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
@@ -456,7 +456,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					}else{
 						m_nSet[ 0 ] = nIdx - 1;
 					}
-					cDlgKeywordSelect.DoModal( ::GetModuleHandle(NULL), hwndDlg, m_nSet );
+					cDlgKeywordSelect.DoModal( ::GetModuleHandle(nullptr), hwndDlg, m_nSet );
 					RearrangeKeywordSet( hwndDlg );	//	Jan. 23, 2005 genta キーワードセット再配置
 					//強調キーワード1を反映する。
 					if( -1 == m_nSet[ 0 ] ){
@@ -518,7 +518,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		//	From Here May 21, 2001 genta activate spin control
 		case IDC_SPIN_LCColNum:
 			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -535,7 +535,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_LCColNum2:
 			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -555,7 +555,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
 		case IDC_SPIN_LCColNum3:
 			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -936,17 +936,17 @@ void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 	if( pDis->itemState & ODS_SELECTED ){
 
 		gr.SetPen(cBtnDkShadow);
-		::MoveToEx( gr, 0, pDis->rcItem.bottom - 2, NULL );
+		::MoveToEx( gr, 0, pDis->rcItem.bottom - 2, nullptr );
 		::LineTo( gr, 0, 0 );
 		::LineTo( gr, pDis->rcItem.right - 1, 0 );
 
 		gr.SetPen(cBtnShadow);
-		::MoveToEx( gr, 1, pDis->rcItem.bottom - 3, NULL );
+		::MoveToEx( gr, 1, pDis->rcItem.bottom - 3, nullptr );
 		::LineTo( gr, 1, 1 );
 		::LineTo( gr, pDis->rcItem.right - 2, 1 );
 
 		gr.SetPen(cBtnHiLight);
-		::MoveToEx( gr, 0, pDis->rcItem.bottom - 1, NULL );
+		::MoveToEx( gr, 0, pDis->rcItem.bottom - 1, nullptr );
 		::LineTo( gr, pDis->rcItem.right - 1, pDis->rcItem.bottom - 1 );
 		::LineTo( gr, pDis->rcItem.right - 1, -1 );
 
@@ -962,17 +962,17 @@ void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 	}
 	else{
 		gr.SetPen(cBtnHiLight);
-		::MoveToEx( gr, 0, pDis->rcItem.bottom - 2, NULL );
+		::MoveToEx( gr, 0, pDis->rcItem.bottom - 2, nullptr );
 		::LineTo( gr, 0, 0 );
 		::LineTo( gr, pDis->rcItem.right - 1, 0 );
 
 		gr.SetPen(cBtnShadow);
-		::MoveToEx( gr, 1, pDis->rcItem.bottom - 2, NULL );
+		::MoveToEx( gr, 1, pDis->rcItem.bottom - 2, nullptr );
 		::LineTo( gr, pDis->rcItem.right - 2, pDis->rcItem.bottom - 2 );
 		::LineTo( gr, pDis->rcItem.right - 2, 0 );
 
 		gr.SetPen(cBtnDkShadow);
-		::MoveToEx( gr, 0, pDis->rcItem.bottom - 1, NULL );
+		::MoveToEx( gr, 0, pDis->rcItem.bottom - 1, nullptr );
 		::LineTo( gr, pDis->rcItem.right - 1, pDis->rcItem.bottom - 1 );
 		::LineTo( gr, pDis->rcItem.right - 1, -1 );
 	}
@@ -1083,9 +1083,9 @@ void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 	}
 	
 	//	リストボックス及び色設定ボタンを再描画
-	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
-	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
-	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_LIST_COLORS ), NULL, TRUE );
+	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), nullptr, TRUE );
+	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), nullptr, TRUE );
+	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_LIST_COLORS ), nullptr, TRUE );
 }
 
 /* 色種別リスト オーナー描画 */
@@ -1096,7 +1096,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	RECT		rc1;
 	COLORREF	cRim = (COLORREF)::GetSysColor( COLOR_3DSHADOW );
 
-	if( pDis == NULL || pDis->itemData == 0 ) return;
+	if( pDis == nullptr || pDis->itemData == 0 ) return;
 
 	//描画対象
 	CGraphics gr(pDis->hDC);
@@ -1161,7 +1161,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		};
 		const int nrep = DpiScaleY(3); // 線幅1の直線を座標を縦にずらして複数回描画して太線描画
 		for (int i = 0; i < nrep; ++i) {
-			::MoveToEx( gr, pts[0].x, pts[0].y + i, NULL );
+			::MoveToEx( gr, pts[0].x, pts[0].y + i, nullptr );
 			::LineTo( gr, pts[1].x, pts[1].y + i );
 			::LineTo( gr, pts[2].x, pts[2].y + i );
 		}
@@ -1211,13 +1211,13 @@ BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCu
 	CHOOSECOLOR		cc;
 	cc.lStructSize = sizeof_raw( cc );
 	cc.hwndOwner = hwndParent;
-	cc.hInstance = NULL;
+	cc.hInstance = nullptr;
 	cc.rgbResult = *pColor;
 	cc.lpCustColors = pCustColors;
 	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
 	cc.lCustData = 0;
-	cc.lpfnHook = NULL;
-	cc.lpTemplateName = NULL;
+	cc.lpfnHook = nullptr;
+	cc.lpTemplateName = nullptr;
 	if( !::ChooseColor( &cc ) ){
 		return FALSE;
 	}

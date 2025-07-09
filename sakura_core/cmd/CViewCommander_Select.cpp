@@ -28,16 +28,16 @@ bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 		/* 現在の選択範囲を非選択状態に戻す */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 	}
-	CLayoutPoint ptCaretPos = (NULL == pptCaretPos ? GetCaret().GetCaretLayoutPos() : *pptCaretPos);
+	CLayoutPoint ptCaretPos = (nullptr == pptCaretPos ? GetCaret().GetCaretLayoutPos() : *pptCaretPos);
 	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretPos.GetY2() );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		return false;	//	単語選択に失敗
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 	nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, ptCaretPos.GetX2() );
 
 	/* 現在位置の単語の範囲を調べる */
-	if( GetDocument()->m_cLayoutMgr.WhereCurrentWord(	ptCaretPos.GetY2(), nIdx, &sRange, NULL, NULL ) ){
+	if( GetDocument()->m_cLayoutMgr.WhereCurrentWord(	ptCaretPos.GetY2(), nIdx, &sRange, nullptr, nullptr ) ){
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要

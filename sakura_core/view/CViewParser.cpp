@@ -29,20 +29,20 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 
 	nCurLine = m_pEditView->GetCaret().GetCaretLayoutPos().GetY2();
 	pLine = m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCurLine, &nLineLen, &pcLayout );
-	if( NULL == pLine ){
+	if( nullptr == pLine ){
 //		return 0;
 		nIdxTo = CLogicInt(0);
 	}else{
 		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
 		nIdxTo = m_pEditView->LineColumnToIndex( pcLayout, m_pEditView->GetCaret().GetCaretLayoutPos().GetX2() );
 	}
-	if( 0 == nIdxTo || NULL == pLine ){
+	if( 0 == nIdxTo || nullptr == pLine ){
 		if( nCurLine <= 0 ){
 			return 0;
 		}
 		nCurLine--;
 		pLine = m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCurLine, &nLineLen );
-		if( NULL == pLine ){
+		if( nullptr == pLine ){
 			return 0;
 		}
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
@@ -103,7 +103,7 @@ bool CViewParser::GetCurrentWord(
 ) const
 {
 	const CLayout*	pcLayout = m_pEditView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_pEditView->GetCaret().GetCaretLayoutPos().GetY2() );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		return false;	/* 単語選択に失敗 */
 	}
 
@@ -117,7 +117,7 @@ bool CViewParser::GetCurrentWord(
 		nIdx,
 		&sRange,
 		pcmemWord,
-		NULL
+		nullptr
 	);
 
 	return bResult;

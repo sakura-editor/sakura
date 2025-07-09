@@ -134,7 +134,7 @@ namespace ApiWrap{
 
 		// アイテムのハンドルを取得する
 		HWND hWnd = ::GetDlgItem( hDlg, nIDDlgItem );
-		if( hWnd == NULL ){
+		if( hWnd == nullptr ){
 			return false;
 		}
 
@@ -173,9 +173,9 @@ namespace ApiWrap{
 		::SendMessageAny(hwndTree, WM_SETREDRAW, (WPARAM)FALSE, 0);
 
 		htiCur = htiItem = TreeView_GetSelection( hwndTree );
-		if (!bExpand && htiCur != NULL) {
+		if (!bExpand && htiCur != nullptr) {
 			// 閉じる時はトップに変更
-			for (htiNext = htiCur; htiNext !=  NULL; ) {
+			for (htiNext = htiCur; htiNext !=  nullptr; ) {
 				htiItem = htiNext;
 				htiNext = TreeView_GetParent( hwndTree, htiItem );
 			}
@@ -187,8 +187,8 @@ namespace ApiWrap{
 
 		std::vector<HTREEITEM> tree;
 		HTREEITEM item = TreeView_GetRoot(hwndTree);
-		while( 0 < tree.size() || item != NULL ){
-			while(item != NULL && (int)tree.size() < nMaxDepth ){
+		while( 0 < tree.size() || item != nullptr ){
+			while(item != nullptr && (int)tree.size() < nMaxDepth ){
 				// 先に展開してからGetChildしないと、ファイルツリーのサブアイテムが展開されない
 				TreeView_Expand(hwndTree, item, bExpand ? TVE_EXPAND : TVE_COLLAPSE);
 				tree.push_back(item);
@@ -200,12 +200,12 @@ namespace ApiWrap{
 		}
 
 		// 選択位置を戻す
-		if (htiCur == NULL) {
+		if (htiCur == nullptr) {
 			if (bExpand ) {
 				htiItem = TreeView_GetRoot( hwndTree );
 				TreeView_SelectSetFirstVisible( hwndTree, htiItem );
 			}
-			TreeView_SelectItem( hwndTree, NULL );
+			TreeView_SelectItem( hwndTree, nullptr );
 		}
 		else {
 			TreeView_SelectSetFirstVisible( hwndTree, htiCur );

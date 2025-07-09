@@ -20,7 +20,7 @@ public:
 			return false;
 		}
 		const CLayoutColorQuoteInfo* info = dynamic_cast<const CLayoutColorQuoteInfo*>(p);
-		if( info == NULL ){
+		if( info == nullptr ){
 			return false;
 		}
 		return info->m_tag == this->m_tag;
@@ -42,9 +42,9 @@ void CColor_Quote::Update(void)
 	m_nEscapeType = nEspaceTypeList[m_nStringType];
 	bool* pbEscapeEndList[] = {
 		&m_bEscapeEnd,
-		NULL,
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
+		nullptr,
 		&m_bEscapeEnd,
 	};
 	m_pbEscapeEnd = pbEscapeEndList[m_nStringType];
@@ -54,7 +54,7 @@ void CColor_Quote::SetStrategyColorInfo(const CLayoutColorInfo* colorInfo)
 {
 	if( colorInfo ){
 		const CLayoutColorQuoteInfo* info = dynamic_cast<const CLayoutColorQuoteInfo*>(colorInfo);
-		if( info == NULL ){
+		if( info == nullptr ){
 			return;
 		}
 		m_tag = info->m_tag;
@@ -72,7 +72,7 @@ CLayoutColorInfo* CColor_Quote::GetStrategyColorInfo() const
 		info->m_nColorTypeIndex = m_nColorTypeIndex;
 		return info;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // nPos "の位置
@@ -93,7 +93,7 @@ bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
 		}
 		const wchar_t* pszSep = L" \t!\"#$%&'()=@{};:<>?,.*/-+[]";
 		if( (c1 == 'u' || c1 == 'U' || c1 == 'L') ){
-			if( NULL != wcschr(pszSep, c2) ){
+			if( nullptr != wcschr(pszSep, c2) ){
 				return true;
 			}
 		}else if( c1 == '8' && c2 == 'u' ){
@@ -101,10 +101,10 @@ bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
 			if( 4 <= nPos ){
 				c3 = cStr[nPos-4];
 			}
-			if( NULL != wcschr(pszSep, c3) ){
+			if( nullptr != wcschr(pszSep, c3) ){
 				return true;
 			}
-		}else if( NULL != wcschr(pszSep, c1) ){
+		}else if( nullptr != wcschr(pszSep, c1) ){
 			return true;
 		}
 	}

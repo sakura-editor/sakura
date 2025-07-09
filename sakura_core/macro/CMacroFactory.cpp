@@ -31,7 +31,7 @@ CMacroFactory::CMacroFactory() = default;
 */
 std::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
 {
-	if( ext == NULL ){
+	if( ext == nullptr ){
 		ext = NULSTR;
 	}
 	
@@ -55,7 +55,7 @@ std::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
 */
 bool CMacroFactory::RegisterCreator( Creator f )
 {
-	if( f == NULL ){
+	if( f == nullptr ){
 		return false;
 	}
 
@@ -106,11 +106,11 @@ CMacroManagerBase* CMacroFactory::Create(const WCHAR* ext)
 	for( auto c_it = m_mMacroCreators.begin();
 		c_it != m_mMacroCreators.end(); ++ c_it ){
 		CMacroManagerBase* pobj = (*c_it)(key.c_str());
-		if( pobj != NULL ){
+		if( pobj != nullptr ){
 			DEBUG_TRACE( L"CMacroFactory::Create/ Answered for (%s)\n", key.c_str() );
 			return pobj;
 		}
 	}
 	
-	return NULL;
+	return nullptr;
 }

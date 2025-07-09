@@ -59,7 +59,7 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 
 	default:
 		/* コマンドコードによる処理振り分け */
-		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ),  (LPARAM)NULL );
+		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ),  (LPARAM)nullptr );
 		break;
 	}
 	return;
@@ -81,5 +81,5 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 		return 0;
 	}
 	hMenu = ::CreatePopupMenu();
-	return m_pCommanderView->CreatePopUpMenuSub( hMenu, nMenuIdx, NULL, KEYHELP_RMENU_NONE );
+	return m_pCommanderView->CreatePopUpMenuSub( hMenu, nMenuIdx, nullptr, KEYHELP_RMENU_NONE );
 }

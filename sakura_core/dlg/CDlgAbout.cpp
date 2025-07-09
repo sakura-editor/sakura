@@ -133,7 +133,7 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 /* モーダルダイアログの表示 */
 int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 {
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)nullptr );
 }
 
 /*! 初期化処理
@@ -148,7 +148,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	WCHAR			szFile[_MAX_PATH];
 
 	/* この実行ファイルの情報 */
-	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
+	::GetModuleFileName( nullptr, szFile, _countof( szFile ) );
 	
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
@@ -169,7 +169,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// 1行目
 	// バージョン情報
 	DWORD dwVersionMS, dwVersionLS;
-	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
+	GetAppVersionInfo( nullptr, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
 	cmemMsg.AppendStringF(
 		L"%s Ver. %d.%d.%d.%d " LTEXT(BUILD_ENV_NAME) LTEXT(VERSION_HASH) L"\r\n",
@@ -238,7 +238,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
 	HWND hIconWnd = GetItemHwnd( IDC_STATIC_MYICON );
 	
-	if( hIconWnd != NULL && hIcon != NULL ){
+	if( hIconWnd != nullptr && hIcon != nullptr ){
 		StCtl_SetIcon( hIconWnd, hIcon );
 	}
 	//	To Here Dec. 2, 2002 genta
@@ -300,26 +300,26 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 		{
 			WCHAR buf[512];
 			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
-			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+			::ShellExecute( GetHwnd(), nullptr, buf, nullptr, nullptr, SW_SHOWNORMAL );
 			return TRUE;
 		}
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
+			::ShellExecute(GetHwnd(), nullptr, _T(CI_BUILD_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
+			::ShellExecute(GetHwnd(), nullptr, _T(GIT_REMOTE_ORIGIN_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_COMMIT_URL), NULL, NULL, SW_SHOWNORMAL);
+		::ShellExecute(GetHwnd(), nullptr, _T(GITHUB_COMMIT_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_PR_HEAD_URL), NULL, NULL, SW_SHOWNORMAL);
+		::ShellExecute(GetHwnd(), nullptr, _T(GITHUB_PR_HEAD_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	}
@@ -337,7 +337,7 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 {
 	// STATICウィンドウをサブクラス化する
 	// 元のSTATICは WS_TABSTOP, SS_NOTIFY スタイルのものを使用すること
-	if( GetHwnd() != NULL )
+	if( GetHwnd() != nullptr )
 		return FALSE;
 	if( !IsWindow( hWnd ) )
 		return FALSE;
@@ -349,7 +349,7 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 	if( lptr == 0 && GetLastError() != 0 )
 		return FALSE;
 	m_pOldProc = (WNDPROC)SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)UrlWndProc );
-	if( m_pOldProc == NULL )
+	if( m_pOldProc == nullptr )
 		return FALSE;
 	m_hWnd = hWnd;
 
@@ -360,7 +360,7 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 	GetObject( hFont, sizeof(lf), &lf );
 	lf.lfUnderline = TRUE;
 	m_hFont = CreateFontIndirect( &lf );
-	if(m_hFont != NULL)
+	if(m_hFont != nullptr)
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
 	// 設定されているテキストを取得する
@@ -394,7 +394,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	case WM_SETFOCUS:
 	case WM_KILLFOCUS:
 		// 再描画
-		InvalidateRect( hWnd, NULL, TRUE );
+		InvalidateRect( hWnd, nullptr, TRUE );
 		UpdateWindow( hWnd );
 		break;
 	case WM_GETDLGCODE:
@@ -412,9 +412,9 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		bHilighted = PtInRect( &rc, pt );
 		if( bHilighted != pUrlWnd->m_bHilighted ){
 			pUrlWnd->m_bHilighted = bHilighted;
-			InvalidateRect( hWnd, NULL, TRUE );
+			InvalidateRect( hWnd, nullptr, TRUE );
 			if( pUrlWnd->m_bHilighted )
-				SetTimer( hWnd, 1, 200, NULL );
+				SetTimer( hWnd, 1, 200, nullptr );
 			else
 				KillTimer( hWnd, 1 );
 		}
@@ -480,12 +480,12 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		// 後始末
 		KillTimer( hWnd, 1 );
 		SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)pUrlWnd->m_pOldProc );
-		if( pUrlWnd->m_hFont != NULL )
+		if( pUrlWnd->m_hFont != nullptr )
 			DeleteObject( pUrlWnd->m_hFont );
-		pUrlWnd->m_hWnd = NULL;
-		pUrlWnd->m_hFont = NULL;
+		pUrlWnd->m_hWnd = nullptr;
+		pUrlWnd->m_hFont = nullptr;
 		pUrlWnd->m_bHilighted = FALSE;
-		pUrlWnd->m_pOldProc = NULL;
+		pUrlWnd->m_pOldProc = nullptr;
 		return (LRESULT)0;
 	case WM_SETTEXT:
 		return pUrlWnd->OnSetText( (LPCWSTR)lParam ) ? TRUE : FALSE;
@@ -534,7 +534,7 @@ bool CUrlWnd::OnSetText( _In_opt_z_ LPCWSTR pchText, _In_opt_ size_t cchText ) c
 	size.cy = cyEdge + rcText.Height() + cyEdge;
 
 	// マージン込みのサイズをウインドウに反映する
-	auto retSetPos = ::SetWindowPos( GetHwnd(), NULL, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
+	auto retSetPos = ::SetWindowPos( GetHwnd(), nullptr, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
 
 	return retSetPos != FALSE;
 }

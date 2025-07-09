@@ -49,10 +49,10 @@ void CGraphics::Init(HDC hdc)
 {
 	m_hdc = hdc;
 	//ペン
-	m_hpnOrg = NULL;
+	m_hpnOrg = nullptr;
 	//ブラシ
-	m_hbrOrg = NULL;
-	m_hbrCurrent = NULL;
+	m_hbrOrg = nullptr;
+	m_hbrCurrent = nullptr;
 	m_bDynamicBrush = false;
 }
 
@@ -78,7 +78,7 @@ void CGraphics::_InitClipping()
 		int nRet = ::GetClipRgn(m_hdc,hrgnOrg);
 		if(nRet!=1){
 			::DeleteObject(hrgnOrg);
-			hrgnOrg = NULL;
+			hrgnOrg = nullptr;
 		}
 		//保存
 		m_vClippingRgns.push_back(hrgnOrg);
@@ -247,7 +247,7 @@ void CGraphics::PushPen(COLORREF color, int nPenWidth, int nStyle)
 void CGraphics::PopPen()
 {
 	//選択する候補
-	HPEN hpnNew = NULL;
+	HPEN hpnNew = nullptr;
 	if(m_vPens.size()>=2){
 		hpnNew = m_vPens[m_vPens.size()-2];
 	}
@@ -268,7 +268,7 @@ void CGraphics::PopPen()
 
 	//オリジナル
 	if(m_vPens.empty()){
-		m_hpnOrg = NULL;
+		m_hpnOrg = nullptr;
 	}
 }
 
@@ -276,7 +276,7 @@ void CGraphics::ClearPen()
 {
 	if(m_hpnOrg){
 		SelectObject(m_hdc,m_hpnOrg);
-		m_hpnOrg = NULL;
+		m_hpnOrg = nullptr;
 	}
 	int nSize = (int)m_vPens.size();
 	for(int i=0;i<nSize;i++){
@@ -399,7 +399,7 @@ static HRGN CreateDropRectRgn(LPCRECT lpRect, SIZE size)
 // ドロップ先矩形描画用のブラシを取得する
 static HBRUSH GetDropRectBrush()
 {
-	static HBRUSH s_hBrush = NULL;
+	static HBRUSH s_hBrush = nullptr;
 	if(!s_hBrush){
 		WORD wBits[8] = {0x5555, 0xAAAA, 0x5555, 0xAAAA, 0x5555, 0xAAAA, 0x5555, 0xAAAA};
 		HBITMAP hBitmap = ::CreateBitmap(8, 8, 1, 1, wBits);
@@ -419,10 +419,10 @@ void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast
 		return;
 
 	HWND hwndDt = ::GetDesktopWindow();
-	HDC hdc = ::GetDCEx(hwndDt, NULL, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+	HDC hdc = ::GetDCEx(hwndDt, nullptr, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
 
-	HRGN hRgnNew = NULL;
-	HRGN hRgnUpdate = NULL;
+	HRGN hRgnNew = nullptr;
+	HRGN hRgnUpdate = nullptr;
 	if(lpRectNew){
 		hRgnNew = CreateDropRectRgn(lpRectNew, sizeNew);
 	}
@@ -447,7 +447,7 @@ void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast
 	::PatBlt(hdc, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATINVERT);
 
 	::SelectObject(hdc, hBrushOld);
-	::SelectClipRgn(hdc, NULL);
+	::SelectClipRgn(hdc, nullptr);
 
 	if(hRgnNew) ::DeleteObject(hRgnNew);
 	if(hRgnUpdate) ::DeleteObject(hRgnUpdate);
@@ -459,7 +459,7 @@ void CGraphics::DrawRect(int x1, int y1, int x2, int y2)
 {
 	--x2;
 	--y2;
-	::MoveToEx(m_hdc, x1, y1, NULL);
+	::MoveToEx(m_hdc, x1, y1, nullptr);
 	::LineTo(m_hdc, x2, y1);
 	::LineTo(m_hdc, x2, y2);
 	::LineTo(m_hdc, x1, y2);

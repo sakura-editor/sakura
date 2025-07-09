@@ -22,7 +22,7 @@ class CPluginManager final : public TSingleton<CPluginManager>{
 
 	// 操作
 public:
-	bool LoadAllPlugin(CommonSetting* common = NULL);				//全プラグインを読み込む
+	bool LoadAllPlugin(CommonSetting* common = nullptr);				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
 	int InstallPlugin( CommonSetting& common, const WCHAR* pszPluginName, HWND hWndOwner, std::wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする

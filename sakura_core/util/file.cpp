@@ -117,7 +117,7 @@ bool IsFilePath(
 		if( ( i == nLineLen    ||
 			  // 2002.01.08 YAZAKI タブ文字も。
 			  // 2013.05.27 Moca 文字種追加
-			  wcschr(L" \t(\")'`[]{};#!@&%$", pLine[i]) != NULL
+			  wcschr(L" \t(\")'`[]{};#!@&%$", pLine[i]) != nullptr
 			) &&
 			szJumpToFile[0] != L'\0'
 		){
@@ -307,7 +307,7 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	int		nFolderLen;
 	int		nCharChars;
 	_wsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
-	if( NULL != pszFolder ){
+	if( nullptr != pszFolder ){
 		wcscpy( pszFolder, szDrive );
 		wcscat( pszFolder, szDir );
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
@@ -319,7 +319,7 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 			}
 		}
 	}
-	if( NULL != pszFile ){
+	if( nullptr != pszFile ){
 		wcscpy( pszFile, szFname );
 		wcscat( pszFile, szExt );
 	}
@@ -382,7 +382,7 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 {
 	WCHAR	szExt[_MAX_EXT];
 	WCHAR*	pszWork;
-	_wsplitpath( pszPath, NULL, NULL, NULL, szExt );
+	_wsplitpath( pszPath, nullptr, nullptr, nullptr, szExt );
 	pszWork = szExt;
 	if( pszWork[0] == L'.' ){
 		pszWork++;
@@ -491,7 +491,7 @@ void GetExedir(
 	LPCWSTR	szFile	//!< [in]  ディレクトリ名に結合するファイル名．
 )
 {
-	if( pDir == NULL )
+	if( pDir == nullptr )
 		return;
 
 	std::wstring partialPath;
@@ -529,7 +529,7 @@ void GetInidir(
 	LPCWSTR szFile	/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
 )
 {
-	if( pDir == NULL )
+	if( pDir == nullptr )
 		return;
 	
 	std::wstring partialPath;
@@ -562,7 +562,7 @@ void GetInidirOrExedir(
 	WCHAR	szExedir[_MAX_PATH];
 
 	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
-	if( bRetExedirIfFileEmpty && (szFile == NULL || szFile[0] == L'\0') ){
+	if( bRetExedirIfFileEmpty && (szFile == nullptr || szFile[0] == L'\0') ){
 		GetExedir( pDir );
 		return;
 	}
@@ -703,14 +703,14 @@ bool GetLastWriteTimestamp(
 	// ファイル自体にはアクセスせずにメタデータの読み取りが可能
 	// https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
 	// If this parameter is zero, the application can query certain metadata such as file, directory, or device attributes without accessing that file or device, even if GENERIC_READ access would have been denied.
-	HANDLE hFile = ::CreateFile(pszFileName, 0, 0, NULL, OPEN_EXISTING, 0, NULL);
+	HANDLE hFile = ::CreateFile(pszFileName, 0, 0, nullptr, OPEN_EXISTING, 0, nullptr);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		pcFileTime->ClearFILETIME();
 		return false;
 	}
 	FILETIME ftLastWrite;
-	BOOL ret = ::GetFileTime(hFile, NULL, NULL, &ftLastWrite);
+	BOOL ret = ::GetFileTime(hFile, nullptr, nullptr, &ftLastWrite);
 	::CloseHandle(hFile);
 	if (ret == 0)
 	{
@@ -783,7 +783,7 @@ CommandLine に文字列として D:\Test.ext が与えられた場合、
 / # 文字 c が見つかったら、その位置を返す。
 / # 文字 c が見つからない場合は NULL を返す。 */
 char *sjis_strrchr2( const char *pt , const char ch1 , const char ch2 ){
-	const char *pf = NULL;
+	const char *pf = nullptr;
 	while( *pt != '\0' ){	/* 文字列の終端まで調べる。 */
 		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = 検索文字の位置 */
 		if( _IS_SJIS_1(*pt) )	pt++;	/* Shift_JIS の1文字目なら、次の1文字をスキップ */
@@ -792,7 +792,7 @@ char *sjis_strrchr2( const char *pt , const char ch1 , const char ch2 ){
 	return	(char *)pf;
 }
 wchar_t* wcsrchr2( const wchar_t *pt , const wchar_t ch1 , const wchar_t ch2 ){
-	const wchar_t *pf = NULL;
+	const wchar_t *pf = nullptr;
 	while( *pt != L'\0' ){	/* 文字列の終端まで調べる。 */
 		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = 検索文字の位置 */
 		if( *pt != '\0' )		pt++;	/* 次の文字へ */
@@ -853,7 +853,7 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 		/* ↓文字列最後尾の \ または ' ' を探し出し、そこを文字列終端にする。*/
 
 		pw = wcsrchr2(ps,'\\',' ');	/* 最末尾の \ か ' ' を探す。 */
-		if ( pw == NULL ){	/* 文字列中に '\\' も ' ' も無かった */
+		if ( pw == nullptr ){	/* 文字列中に '\\' も ' ' も無かった */
 			/* 例えば "C:testdir" という文字列が来た時に、"C:testdir" が実在
 			　 しなくとも C:ドライブが有効なら "C:" という文字列だけでも返し
 			　 たい。以下↓は、そのための処理。 */
@@ -898,10 +898,10 @@ void my_splitpath_w (
 	DWORD	attr;
 	int		a_dir;
 
-	if( drv != NULL )	*drv = L'\0';
-	if( dir != NULL )	*dir = L'\0';
-	if( fnm != NULL )	*fnm = L'\0';
-	if( ext != NULL )	*ext = L'\0';
+	if( drv != nullptr )	*drv = L'\0';
+	if( dir != nullptr )	*dir = L'\0';
+	if( fnm != nullptr )	*fnm = L'\0';
+	if( ext != nullptr )	*ext = L'\0';
 	if( *comln == L'\0' )	return;
 
 	/* コマンドライン先頭部分の実在するパス名を ppp に書き出す。 */
@@ -921,25 +921,25 @@ void my_splitpath_w (
 
 		if( ! a_dir ){	/* 見つけた物がファイルだった場合。 */
 			pf = wcsrchr(ppp,L'\\');	/* 最末尾の \ を探す。 */
-			if(pf != NULL)	pf++;		/* 見つかった→  pf=\の次の文字の位置*/
+			if(pf != nullptr)	pf++;		/* 見つかった→  pf=\の次の文字の位置*/
 			else			pf = pd;	/* 見つからない→pf=パス名の先頭位置 */
 			/* ここまでで pf = ファイル名の先頭位置 */
 			pe = wcsrchr(pf,L'.');		/* 最末尾の '.' を探す。 */
-			if( pe != NULL ){					/* 見つかった(pe = L'.'の位置)*/
-				if( ext != NULL ){	/* 拡張子を返値として書き込む。 */
+			if( pe != nullptr ){					/* 見つかった(pe = L'.'の位置)*/
+				if( ext != nullptr ){	/* 拡張子を返値として書き込む。 */
 					wcsncpy(ext,pe,_MAX_EXT-1);
 					ext[_MAX_EXT -1] = L'\0';
 				}
 				*pe = L'\0';	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
 			}
-			if( fnm != NULL ){	/* ファイル名を返値として書き込む。 */
+			if( fnm != nullptr ){	/* ファイル名を返値として書き込む。 */
 				wcsncpy(fnm,pf,_MAX_FNAME-1);
 				fnm[_MAX_FNAME -1] = L'\0';
 			}
 			*pf = L'\0';	/* ファイル名の先頭位置を文字列終端にする。 */
 		}
 		/* ここまでで文字列 ppp はドライブレター＋ディレクトリ名のみになっている */
-		if( dir != NULL ){
+		if( dir != nullptr ){
 			/* ディレクトリ名の最後の文字が \ ではない場合、\ にする。 */
 
 			/* ↓最後の文字を ch に得る。(ディレクトリ文字列が空の場合 ch=L'\\' となる) */
@@ -956,7 +956,7 @@ void my_splitpath_w (
 			dir[_MAX_DIR -1] = L'\0';
 		}
 		*pd = L'\0';		/* ディレクトリ名の先頭位置を文字列終端にする。 */
-		if( drv != NULL ){	/* ドライブレターを返値として書き込む。 */
+		if( drv != nullptr ){	/* ドライブレターを返値として書き込む。 */
 			wcsncpy(drv,ppp,_MAX_DRIVE -1);
 			drv[_MAX_DRIVE -1] = L'\0';
 		}
