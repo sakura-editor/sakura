@@ -250,14 +250,14 @@ CIfObj::CIfObj(const wchar_t* name, bool isGlobal)
 //デストラクタ
 CIfObj::~CIfObj()
 {
-	if(m_TypeInfo != NULL)
+	if(m_TypeInfo != nullptr)
 		m_TypeInfo->Release();
 }
 	
 //IUnknown実装
 HRESULT STDMETHODCALLTYPE CIfObj::QueryInterface(REFIID iid, void ** ppvObject) 
 {
-	if(ppvObject == NULL) 
+	if(ppvObject == nullptr) 
 		return E_POINTER;
 	else if(IsEqualIID(iid, IID_IUnknown) || IsEqualIID(iid, IID_IDispatch))
 	{
@@ -291,7 +291,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetTypeInfo(
 				/* [in] */ LCID lcid,
 				/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo)
 {
-	if(m_TypeInfo == NULL)
+	if(m_TypeInfo == nullptr)
 	{
 		m_TypeInfo = new CIfObjTypeInfo(this->m_Methods, this->m_sName);
 		m_TypeInfo->AddRef();

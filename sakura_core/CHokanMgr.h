@@ -48,7 +48,7 @@ public:
 		bool			bHokanByFile,			// 編集中データから候補を探す。 2003.06.23 Moca
 		int				nHokanType,
 		bool			bHokanByKeyword,
-		CNativeW*		pcmemHokanWord = NULL	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
+		CNativeW*		pcmemHokanWord = nullptr	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
 	);
 	void HokanSearchByKeyword(
 		const wchar_t*	pszCurWord,

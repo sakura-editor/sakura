@@ -42,7 +42,7 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
-	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
+	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((nullptr == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
 	pCEditWnd->LayoutToolBar();
 	pCEditWnd->EndLayoutBars();
 
@@ -63,7 +63,7 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
-	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_cFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
+	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((nullptr == pCEditWnd->m_cFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
 	pCEditWnd->LayoutFuncKey();
 	pCEditWnd->EndLayoutBars();
 
@@ -87,7 +87,7 @@ void CViewCommander::Command_SHOWTAB( void )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
-	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
+	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = ((nullptr == pCEditWnd->m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
 	pCEditWnd->LayoutTabBar();
 	pCEditWnd->EndLayoutBars();
 
@@ -117,7 +117,7 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
-	GetDllShareData().m_Common.m_sWindow.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
+	GetDllShareData().m_Common.m_sWindow.m_bDispSTATUSBAR = ((nullptr == pCEditWnd->m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
 	pCEditWnd->LayoutStatusBar();
 	pCEditWnd->EndLayoutBars();
 
@@ -138,7 +138,7 @@ void CViewCommander::Command_SHOWMINIMAP( void )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
-	GetDllShareData().m_Common.m_sWindow.m_bDispMiniMap = ((NULL == pCEditWnd->GetMiniMap().GetHwnd())? true: false);
+	GetDllShareData().m_Common.m_sWindow.m_bDispMiniMap = ((nullptr == pCEditWnd->GetMiniMap().GetHwnd())? true: false);
 	pCEditWnd->LayoutMiniMap();
 	pCEditWnd->EndLayoutBars();
 
@@ -180,7 +180,7 @@ void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
 		type = GetDocument()->m_cDocType.GetDocumentType();
 	}
 	if( type.IsValidType() && type.GetIndex() < GetDllShareData().m_nTypesCount ){
-		const STypeConfigMini* pConfig = NULL;
+		const STypeConfigMini* pConfig = nullptr;
 		if( !CDocTypeManager().GetTypeConfigMini( type, &pConfig ) ){
 			return;
 		}
@@ -474,7 +474,7 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 		// CEditWnd::ChangeLayoutParam->CLayoutMgr::ChangeLayoutParam->
 		// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
 		pcDoc->m_cLayoutMgr.CalculateTextWidth(FALSE);		// テキスト最大幅を算出する
-		GetEditWindow()->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+		GetEditWindow()->RedrawAllViews( nullptr );		// スクロールバーの更新が必要なので再表示を実行する
 	}else{
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
 	}
@@ -517,7 +517,7 @@ void CViewCommander::Command_SELECT_COUNT_MODE( int nMode )
 */
 void CViewCommander::Command_SET_QUOTESTRING( const wchar_t* quotestr )
 {
-	if( quotestr == NULL )
+	if( quotestr == nullptr )
 		return;
 
 	wcsncpy( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou, quotestr,

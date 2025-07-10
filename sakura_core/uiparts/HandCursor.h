@@ -17,6 +17,6 @@
 
 inline void SetHandCursor ()
 {
-	SetCursor( LoadCursor( NULL, IDC_HAND ) );
+	SetCursor( LoadCursor( nullptr, IDC_HAND ) );
 }
 #endif /* SAKURA_HANDCURSOR_096969CA_716E_4F14_9CE4_1C1CAED014EA_H_ */

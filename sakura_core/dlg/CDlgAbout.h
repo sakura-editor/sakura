@@ -29,7 +29,7 @@
 class CUrlWnd
 {
 public:
-	CUrlWnd() { m_hWnd = NULL; m_hFont = NULL; m_bHilighted = FALSE; m_pOldProc = NULL; }
+	CUrlWnd() { m_hWnd = nullptr; m_hFont = nullptr; m_bHilighted = FALSE; m_pOldProc = nullptr; }
 	BOOL SetSubclassWindow( HWND hWnd );
 	HWND GetHwnd() const{ return m_hWnd; }
 protected:

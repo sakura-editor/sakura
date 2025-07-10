@@ -77,7 +77,7 @@ public:
 	static HWND GetPrintPreviewBarHANDLE_Safe(const CPrintPreview *preview) {
 		if (preview)
 			return preview->m_hwndPrintPreviewBar;
-		return NULL;
+		return nullptr;
 	}
 
 	//	PrintPreviewバーのメッセージ処理。
@@ -116,8 +116,8 @@ protected:
 		int				nLineStart,
 		int				nLineLen,
 		CLayoutInt		nIndent,	//!< 折り返しインデント桁数 // 2006.08.14 Moca
-		const CLayout*	pcLayout = NULL,	//!< 色付用Layout
-		CColorStrategy*	pStrategyStart = NULL
+		const CLayout*	pcLayout = nullptr,	//!< 色付用Layout
+		CColorStrategy*	pStrategyStart = nullptr
 	);
 
 	// 印刷／プレビュー ブロック描画

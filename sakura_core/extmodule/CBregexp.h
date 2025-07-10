@@ -84,7 +84,7 @@ public:
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
 	bool Compile(const wchar_t *szPattern, int nOption = 0) {
-		return Compile(szPattern, NULL, nOption);
+		return Compile(szPattern, nullptr, nOption);
 	}
 	bool Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption = 0, bool bKakomi = false);	//!< Replace用
 	bool Match(const wchar_t *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
@@ -132,7 +132,7 @@ public:
 		//	置換後文字列が0幅の場合にoutpがNULLでもoutendpがNULLでない場合があるので，
 		//	outpのNULLチェックが必要
 
-		if (m_pRegExp->outp == NULL) {
+		if (m_pRegExp->outp == nullptr) {
 			return CLogicInt(0);
 		} else {
 			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
@@ -182,7 +182,7 @@ protected:
 	void ReleaseCompileBuffer(void){
 		if( m_pRegExp ){
 			BRegfree( m_pRegExp );
-			m_pRegExp = NULL;
+			m_pRegExp = nullptr;
 		}
 		m_ePatType = PAT_UNKNOWN;
 	}

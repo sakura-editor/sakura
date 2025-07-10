@@ -118,9 +118,9 @@ bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NUL
 	::ZeroMemory( &mi, sizeof( mi ));
 	mi.cbSize = sizeof( mi );
 	::GetMonitorInfo( hMon, &mi );
-	if( NULL != prcWork )
+	if( nullptr != prcWork )
 		*prcWork = mi.rcWork;		// work area rectangle of the display monitor
-	if( NULL != prcMonitor )
+	if( nullptr != prcMonitor )
 		*prcMonitor = mi.rcMonitor;	// display monitor rectangle
 	return ( mi.dwFlags == MONITORINFOF_PRIMARY ) ? true : false;
 }
@@ -153,7 +153,7 @@ bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer
 		DWORD dwType = REG_SZ;
 		DWORD dwDataLen = (BufferCount - 1) * sizeof(WCHAR); //※バイト単位！
 		
-		Result = (RegQueryValueEx(Key, Item, NULL, &dwType, reinterpret_cast<LPBYTE>(Buffer), &dwDataLen) == ERROR_SUCCESS);
+		Result = (RegQueryValueEx(Key, Item, nullptr, &dwType, reinterpret_cast<LPBYTE>(Buffer), &dwDataLen) == ERROR_SUCCESS);
 		
 		RegCloseKey(Key);
 	}
@@ -183,11 +183,11 @@ bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
 	T*		pszClip;
 
 	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, (nLength + 1) * sizeof(T) );
-	if( NULL == hgClip ){
+	if( nullptr == hgClip ){
 		return false;
 	}
 	pszClip = (T*)::GlobalLock( hgClip );
-	if( NULL == pszClip ){
+	if( nullptr == pszClip ){
 		::GlobalFree( hgClip );
 		return false;
 	}
@@ -229,7 +229,7 @@ BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
 	//  tymed = TYMED_HGLOBALを指定すれば問題ない
 	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
+	fe.ptd = nullptr;
 	fe.dwAspect = DVASPECT_CONTENT;
 	fe.lindex = -1;
 	fe.tymed = TYMED_HGLOBAL;
@@ -241,24 +241,24 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 {
 	FORMATETC fe;
 	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
+	fe.ptd = nullptr;
 	fe.dwAspect = DVASPECT_CONTENT;
 	fe.lindex = -1;
 	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
 	fe.tymed = TYMED_HGLOBAL;
 
-	HGLOBAL hDest = NULL;
+	HGLOBAL hDest = nullptr;
 	STGMEDIUM stgMedium;
 	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
 	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
-		if( stgMedium.pUnkForRelease == NULL ){
+		if( stgMedium.pUnkForRelease == nullptr ){
 			if( stgMedium.tymed == TYMED_HGLOBAL )
 				hDest = stgMedium.hGlobal;
 		}else{
 			if( stgMedium.tymed == TYMED_HGLOBAL ){
 				DWORD nSize = ::GlobalSize( stgMedium.hGlobal );
 				hDest = ::GlobalAlloc( GMEM_SHARE|GMEM_MOVEABLE, nSize );
-				if( hDest != NULL ){
+				if( hDest != nullptr ){
 					// copy the bits
 					LPVOID lpSource = ::GlobalLock( stgMedium.hGlobal );
 					LPVOID lpDest = ::GlobalLock( hDest );
@@ -314,7 +314,7 @@ CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
 
 CDisableWow64FsRedirect::CDisableWow64FsRedirect(BOOL isOn)
 :	m_isSuccess(FALSE)
-,	m_OldValue(NULL)
+,	m_OldValue(nullptr)
 {
 	if (isOn && IsWow64()) {
 		m_isSuccess = Wow64DisableWow64FsRedirection(&m_OldValue);
@@ -342,17 +342,17 @@ BOOL IsPowerShellAvailable(void)
 #endif
 
 	WCHAR szFileBuff[MAX_PATH];
-	LPWSTR lpFilePart = NULL;
+	LPWSTR lpFilePart = nullptr;
 
 	DWORD ret = ::SearchPath(
-		NULL,					// 検索パス
+		nullptr,					// 検索パス
 		L"powershell.exe",	// ファイル名
-		NULL,					// ファイルの拡張子
+		nullptr,					// ファイルの拡張子
 		MAX_PATH,				// バッファのサイズ
 		szFileBuff,				// 見つかったファイル名を格納するバッファ
 		&lpFilePart				// ファイルコンポーネント
 	);
-	if( ret != 0 && lpFilePart != NULL)
+	if( ret != 0 && lpFilePart != nullptr)
 	{
 		return TRUE;
 	}

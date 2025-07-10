@@ -77,12 +77,12 @@ int CDlgPluginOption::DoModal(
 	m_cPlugin = CPluginManager::getInstance()->GetPlugin( m_ID );
 	m_cPropPlugin = cPropPlugin;
 
-	if( m_cPlugin == NULL ){
+	if( m_cPlugin == nullptr ){
 		::ErrorMessage( hwndParent, LS(STR_DLGPLUGINOPT_LOAD) );
 		return 0;
 	}
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PLUGIN_OPTION, (LPARAM)NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PLUGIN_OPTION, (LPARAM)nullptr );
 }
 
 /* ダイアログデータの設定 */
@@ -342,7 +342,7 @@ BOOL CDlgPluginOption::OnNotify(NMHDR* pNMHDR)
 		
 		pMNUD  = (NM_UPDOWN*)pNMHDR;
 
-		nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, NULL, TRUE );
+		nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nullptr, TRUE );
 		if( pMNUD->iDelta < 0 ){
 			if (nVal < INT_MAX)		++nVal;
 		}else
@@ -649,7 +649,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 			ListView_SetItem( hwndList, &lvi );
 		}
 		else if (sType == OPTION_TYPE_INT) {
-			nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, NULL, TRUE );
+			nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nullptr, TRUE );
 			auto_sprintf( buf, L"%d", nVal);
 		}
 		else if (sType == OPTION_TYPE_SEL) {

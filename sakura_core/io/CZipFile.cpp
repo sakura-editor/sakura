@@ -17,20 +17,20 @@
 CZipFile::CZipFile() {
 	HRESULT		hr;
 
-	hr = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_IShellDispatch, reinterpret_cast<void **>(&psd));
+	hr = CoCreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER, IID_IShellDispatch, reinterpret_cast<void **>(&psd));
 	if (FAILED(hr)) {
-		psd = NULL;
+		psd = nullptr;
 	}
-	pZipFile = NULL;
+	pZipFile = nullptr;
 }
 
 // デストラクタ
 CZipFile::~CZipFile() {
-	if (pZipFile != NULL) {
+	if (pZipFile != nullptr) {
 		pZipFile->Release();
-		pZipFile = NULL;
+		pZipFile = nullptr;
 	}
-	psd = NULL;
+	psd = nullptr;
 }
 
 // Zip File名 設定
@@ -39,9 +39,9 @@ bool CZipFile::SetZip(const std::wstring& sZipPath)
 	HRESULT			hr;
 	VARIANT			var;
 
-	if (pZipFile != NULL) {
+	if (pZipFile != nullptr) {
 		pZipFile->Release();
-		pZipFile = NULL;
+		pZipFile = nullptr;
 	}
 
 	// ZIP Folder設定
@@ -50,7 +50,7 @@ bool CZipFile::SetZip(const std::wstring& sZipPath)
 	var.bstrVal = SysAllocString(sZipPath.c_str());
 	hr = psd->NameSpace(var, &pZipFile);
 	if (hr != S_OK) {
-		pZipFile = NULL;
+		pZipFile = nullptr;
 		return false;
 	}
 

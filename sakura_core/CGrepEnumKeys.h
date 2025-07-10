@@ -165,7 +165,7 @@ public:
 
 		int nPos = 0;
 		WCHAR*	token;
-		while (NULL != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
+		while (nullptr != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
 			// "を取り除いて左に詰める
 			WCHAR* p;
 			WCHAR* q;

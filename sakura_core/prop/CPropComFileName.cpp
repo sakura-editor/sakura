@@ -349,7 +349,7 @@ int CPropFileName::GetData( HWND hwndDlg )
 	int nCount;
 
 	m_Common.m_sFileName.m_bTransformShortPath = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_SHORTPATH );
-	m_Common.m_sFileName.m_nTransformShortMaxWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_SHORTMAXWIDTH, NULL, FALSE );
+	m_Common.m_sFileName.m_nTransformShortMaxWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_SHORTMAXWIDTH, nullptr, FALSE );
 
 	// ファイル名置換リスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );

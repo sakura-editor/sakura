@@ -98,9 +98,9 @@ bool CFuncLookup::Pos2FuncName(
 */
 bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 {
-	LPCWSTR pszStr = NULL;
+	LPCWSTR pszStr = nullptr;
 
-	assert( ptr != NULL );
+	assert( ptr != nullptr );
 	assert( bufsize >= 1 );
 
 	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
@@ -165,7 +165,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 const WCHAR* CFuncLookup::Category2Name( int category ) const
 {
 	if( category < 0 )
-		return NULL;
+		return nullptr;
 
 	if( category < nsFuncCode::nFuncKindNum ){
 		return LS( nsFuncCode::ppszFuncKind[category] );
@@ -179,7 +179,7 @@ const WCHAR* CFuncLookup::Category2Name( int category ) const
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN ){
 		return LS( STR_ERR_DLGFUNCLKUP19 );
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*!	@brief ComboBoxに利用可能な機能分類一覧を登録する
@@ -268,7 +268,7 @@ int CFuncLookup::GetItemCount(int category) const
 const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) const
 {
 	if( index < 0 || CUSTMENU_INDEX_FOR_TABWND < index )
-		return NULL;
+		return nullptr;
 
 	// 共通設定で名称を設定していればそれを返す
 	if ( m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ][0] != '\0' ) {
@@ -290,5 +290,5 @@ const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) c
 		return buf;
 	}
 
-	return NULL;
+	return nullptr;
 }

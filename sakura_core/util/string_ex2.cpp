@@ -109,7 +109,7 @@ const char* GetNextLine(
 	//	May 15, 2000 genta
 	pcEol->SetType( EEolType::none );
 	if( *pnBgn >= nDataLen ){
-		return NULL;
+		return nullptr;
 	}
 	for( i = *pnBgn; i < nDataLen; ++i ){
 		/* 改行コードがあった */
@@ -144,7 +144,7 @@ const wchar_t* GetNextLineW(
 
 	pcEol->SetType( EEolType::none );
 	if( *pnBgn >= nDataLen ){
-		return NULL;
+		return nullptr;
 	}
 	for( i = *pnBgn; i < nDataLen; ++i ){
 		// 改行コードがあった

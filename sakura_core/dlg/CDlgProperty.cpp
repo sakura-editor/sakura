@@ -227,7 +227,7 @@ void CDlgProperty::SetData( void )
 	int						nBufLen;
 	CNativeW				ctext;
 	/* メモリ確保 & ファイル読み込み */
-	hgData = NULL;
+	hgData = nullptr;
 	CBinaryInputStream in(pCEditDoc->m_cDocFile.GetFilePath());
 	if(!in){
 		goto end_of_CodeTest;
@@ -237,7 +237,7 @@ void CDlgProperty::SetData( void )
 		nBufLen = CheckKanjiCode_MAXREADLENGTH;
 	}
 	hgData = ::GlobalAlloc( GHND, nBufLen + 1 );
-	if( NULL == hgData ){
+	if( nullptr == hgData ){
 		in.Close();
 		goto end_of_CodeTest;
 	}
@@ -249,10 +249,10 @@ void CDlgProperty::SetData( void )
 	CESI::GetDebugInfo(pBuf,nBufLen,&ctext);
 	cmemProp.AppendNativeData(ctext);
 
-	if( NULL != hgData ){
+	if( nullptr != hgData ){
 		::GlobalUnlock( hgData );
 		::GlobalFree( hgData );
-		hgData = NULL;
+		hgData = nullptr;
 	}
 end_of_CodeTest:;
 #endif //ifdef _DEBUG/////////////////////////////////////////////////////

@@ -34,8 +34,8 @@ const DWORD p_helpids[] = {
 
 CDlgSetCharSet::CDlgSetCharSet()
 {
-	m_pnCharSet = NULL;			// 文字コードセット
-	m_pbBom = NULL;				// 文字コードセット
+	m_pnCharSet = nullptr;			// 文字コードセット
+	m_pbBom = nullptr;				// 文字コードセット
 }
 
 /* モーダルダイアログの表示 */
@@ -44,7 +44,7 @@ int CDlgSetCharSet::DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pn
 	m_pnCharSet = pnCharSet;	// 文字コードセット
 	m_pbBom = pbBom;			// BOM
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_SETCHARSET, (LPARAM)NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_SETCHARSET, (LPARAM)nullptr );
 }
 
 BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )

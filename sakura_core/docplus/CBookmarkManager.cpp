@@ -57,7 +57,7 @@ bool CBookmarkManager::SearchBookMark(
 	else{
 		nLinePos++;
 		pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-		while( NULL != pDocLine ){
+		while( nullptr != pDocLine ){
 			if(CBookmarkGetter(pDocLine).IsBookmarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
 				return true;
@@ -127,8 +127,8 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 	}else{
 		// 旧形式 行番号,区切り
 		wchar_t *context{ nullptr };
-		while(wcstok_s(p, delim, &context) != NULL) {
-			while(wcschr(delim, *p) != NULL)p++;
+		while(wcstok_s(p, delim, &context) != nullptr) {
+			while(wcschr(delim, *p) != nullptr)p++;
 			pCDocLine=m_pcDocLineMgr->GetLine( CLogicInt(_wtol(p)) );
 			if(pCDocLine)CBookmarkSetter(pCDocLine).SetBookmark(true);
 			p += wcslen(p) + 1;
@@ -254,7 +254,7 @@ void CBookmarkManager::MarkSearchWord(
 	else{
 		/* 検索条件の情報 */
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
-		while( NULL != pDocLine ){
+		while( nullptr != pDocLine ){
 			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
 				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
 				if( CSearchAgent::SearchString(

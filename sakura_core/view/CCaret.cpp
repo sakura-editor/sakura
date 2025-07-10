@@ -91,7 +91,7 @@ CCaret::CCaret(CEditView* pEditView, const CEditDoc* pEditDoc)
 	m_nCaretPosX_Prev = CLayoutInt(0);		/* ビュー左端からのカーソル桁直前の位置(０オリジン) */
 
 	m_crCaret = -1;				/* キャレットの色 */			// 2006.12.16 ryoji
-	m_hbmpCaret = NULL;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
+	m_hbmpCaret = nullptr;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
 	m_bClearStatus = true;
 	ClearCaretPosInfoCache();
 }
@@ -99,7 +99,7 @@ CCaret::CCaret(CEditView* pEditView, const CEditDoc* pEditDoc)
 CCaret::~CCaret()
 {
 	// キャレット用ビットマップ	// 2006.11.28 ryoji
-	if( m_hbmpCaret != NULL )
+	if( m_hbmpCaret != nullptr )
 		DeleteObject( m_hbmpCaret );
 }
 
@@ -311,7 +311,7 @@ CLayoutInt CCaret::MoveCursor(
 			t_abs( nScrollRowNum ) >= m_pEditView->GetTextArea().m_nViewRowNum ){
 			m_pEditView->GetTextArea().OffsetViewTopLine(-nScrollRowNum);
 			if( m_pEditView->GetDrawSwitch() ){
-				m_pEditView->InvalidateRect( NULL );
+				m_pEditView->InvalidateRect( nullptr );
 				m_pEditView->UpdateWindow();
 				if( GetEditWnd().GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(true);
@@ -565,12 +565,12 @@ void CCaret::ShowEditCaret()
 		else{
 			nCaretWidth = GetHankakuDx();
 
-			const wchar_t*	pLine = NULL;
+			const wchar_t*	pLine = nullptr;
 			CLogicInt		nLineLen = CLogicInt(0);
-			const CLayout*	pcLayout = NULL;
+			const CLayout*	pcLayout = nullptr;
 			pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
-			if( NULL != pLine ){
+			if( nullptr != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
 				nIdxFrom = GetCaretLogicPos().GetX() - pcLayout->GetLogicOffset();
 				if( nIdxFrom >= nLineLen ||
@@ -597,12 +597,12 @@ void CCaret::ShowEditCaret()
 		}
 		nCaretWidth = GetHankakuDx();
 
-		const wchar_t*	pLine = NULL;
+		const wchar_t*	pLine = nullptr;
 		CLogicInt		nLineLen = CLogicInt(0);
-		const CLayout*	pcLayout = NULL;
+		const CLayout*	pcLayout = nullptr;
 		pLine= pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
-		if( NULL != pLine ){
+		if( nullptr != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
 			nIdxFrom = GetCaretLogicPos().GetX() - pcLayout->GetLogicOffset();
 			if( nIdxFrom >= nLineLen ||
@@ -1037,7 +1037,7 @@ void CCaret::CreateEditCaret( COLORREF crCaret, COLORREF crBack, int nWidth, int
 	m_pEditView->ReleaseDC( hdc );
 
 	// 以前のビットマップを破棄する
-	if( m_hbmpCaret != NULL )
+	if( m_hbmpCaret != nullptr )
 		::DeleteObject( m_hbmpCaret );
 	m_hbmpCaret = hbmpCaret;
 
@@ -1131,7 +1131,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 	if( ptNewXY.y >= m_pEditDoc->m_cLayoutMgr.GetLineCount()
 	 && (m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting()) ){
 		const CLayout* layoutEnd = m_pEditDoc->m_cLayoutMgr.GetBottomLayout();
-		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol().IsValid()) || NULL == layoutEnd;
+		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol().IsValid()) || nullptr == layoutEnd;
 	 	// 2012.01.09 ぴったり[EOF]位置にある場合は位置を維持(1つ上の行にしない)
 	 	if( bEofOnly && ptNewXY.y == m_pEditDoc->m_cLayoutMgr.GetLineCount() && ptNewXY.x == 0 ){
 	 	}else{

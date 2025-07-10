@@ -18,9 +18,9 @@ CRecentExcludeFolder::CRecentExcludeFolder()
 		GetShareData()->m_sSearchKeywords.m_aExcludeFolders.dataPtr(),
 		GetShareData()->m_sSearchKeywords.m_aExcludeFolders.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sSearchKeywords.m_aExcludeFolders._GetSizeRef(),
-		NULL,
+		nullptr,
 		MAX_EXCLUDEFOLDER,
-		NULL
+		nullptr
 	);
 }
 

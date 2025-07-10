@@ -73,7 +73,7 @@ struct ctrl_info_t {
 	{ 0x007f, 0x00bf, L"DEL", L""	}, //DELETE 削除
 
 	//internal data
-	{ 0x001f, 0x00df, L"US",  NULL }	//PC98 "_"  //unit separator (US)
+	{ 0x001f, 0x00df, L"US",  nullptr }	//PC98 "_"  //unit separator (US)
 };
 // Feb. 12, 2003 MIK longが抜けていた
 
@@ -117,7 +117,7 @@ void CDlgCtrlCode::SetData( void )
 	count = 0;
 	for( i = 0; i < _countof(p_ctrl_list); i++ )
 	{
-		if( p_ctrl_list[i].jname == NULL ) continue;
+		if( p_ctrl_list[i].jname == nullptr ) continue;
 		
 		// 2011.06.01 nasukoji	元のjnameがNULLのものはそのまま残す
 		if( p_ctrl_list[i].jname ){

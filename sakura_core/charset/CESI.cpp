@@ -185,7 +185,7 @@ void CESI::GetEncodingInfo_sjis( const char* pS, const int nLen )
 	int nret;
 	ECharSet echarset;
 
-	if( nLen < 1 || pS == NULL ){
+	if( nLen < 1 || pS == nullptr ){
 		SetEvaluation( CODE_SJIS, 0, 0 );
 		m_nMbcSjisHankata = 0;
 		return;
@@ -236,7 +236,7 @@ void CESI::GetEncodingInfo_jis( const char* pS, const int nLen )
 	int nlen, nerror;
 	EMyJisEscseq emyjisesc;
 
-	if( nLen < 1 || pS == NULL ){
+	if( nLen < 1 || pS == nullptr ){
 		SetEvaluation( CODE_JIS, 0, 0 );
 		return;
 	}
@@ -287,7 +287,7 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 	int nret;
 	ECharSet echarset;
 
-	if( nLen < 1 || pS == NULL ){
+	if( nLen < 1 || pS == nullptr ){
 		SetEvaluation( CODE_EUC, 0, 0 );
 		m_nMbcEucZenHirakata = 0;
 		m_nMbcEucZen = 0;
@@ -312,7 +312,7 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 				}else{
 					bool bRet;
 					unsigned short wc[4];
-					CEuc::_EucjpToUni_char(reinterpret_cast<const unsigned char*>(pr), wc, echarset, NULL, &bRet);
+					CEuc::_EucjpToUni_char(reinterpret_cast<const unsigned char*>(pr), wc, echarset, nullptr, &bRet);
 					if( bRet ){
 						nillbytes += nret;
 					}
@@ -347,7 +347,7 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 	int npoints, nlen_setb;
 	bool berror;
 
-	if( nLen < 1 || pS == NULL ){
+	if( nLen < 1 || pS == nullptr ){
 		SetEvaluation( CODE_UTF7, 0, 0 );
 		return;
 	}
@@ -413,7 +413,7 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 	int nret;
 	ECharSet echarset;
 
-	if( nLen < 1 || pS == NULL ){
+	if( nLen < 1 || pS == nullptr ){
 		SetEvaluation( CODE_UTF8, 0, 0 );
 		return;
 	}
@@ -451,7 +451,7 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 	int nret;
 	ECharSet echarset;
 
-	if( nLen < 1 || pS == NULL ){
+	if( nLen < 1 || pS == nullptr ){
 		SetEvaluation( CODE_CESU8, 0, 0 );
 		return;
 	}
@@ -551,7 +551,7 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 	int nret1, nret2;
 	ECharSet echarset1, echarset2;
 
-	if( nLen < 1 || pS == NULL ){
+	if( nLen < 1 || pS == nullptr ){
 		SetEvaluation( CODE_UNICODE, 0, 0 );
 		SetEvaluation( CODE_UNICODEBE, 0, 0 );
 		return;

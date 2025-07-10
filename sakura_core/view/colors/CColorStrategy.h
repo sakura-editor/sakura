@@ -114,7 +114,7 @@ struct SColorStrategyInfo{
 		if (layout) {
 			return layout->GetDocLineRef();
 		}
-		return NULL;
+		return nullptr;
 	}
 	const CLayout* GetLayout() const
 	{
@@ -128,11 +128,11 @@ public:
 	//! 色定義
 	virtual EColorIndexType GetStrategyColor() const = 0;
 	virtual CLayoutColorInfo* GetStrategyColorInfo() const{
-		return NULL;
+		return nullptr;
 	}
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
 	virtual void InitStrategyStatus() = 0;
-	virtual void SetStrategyColorInfo(const CLayoutColorInfo* = NULL){};
+	virtual void SetStrategyColorInfo(const CLayoutColorInfo* = nullptr){};
 	virtual bool BeginColor(const CStringRef& cStr, int nPos){ return false; }
 	virtual bool EndColor(const CStringRef& cStr, int nPos){ return true; }
 	virtual bool Disp() const = 0;
@@ -157,7 +157,7 @@ public:
 		if (strategy) {
 			return strategy->GetStrategyColorInfo();
 		}
-		return NULL;
+		return nullptr;
 	}
 
 protected:

@@ -155,7 +155,7 @@ public:
 //Listenerは1つのSubjectを観察する
 class CDocListener : public CListenerT<CDocSubject>{
 public:
-	CDocListener(CDocSubject* pcDoc = NULL);
+	CDocListener(CDocSubject* pcDoc = nullptr);
 	virtual ~CDocListener();
 
 	// -- -- 属性 -- -- //
@@ -187,7 +187,7 @@ public:
 class CEditDoc;
 class CDocListenerEx : public CDocListener{
 public:
-	CDocListenerEx(CDocSubject* pcDoc = NULL) : CDocListener(pcDoc) { }
+	CDocListenerEx(CDocSubject* pcDoc = nullptr) : CDocListener(pcDoc) { }
 	CEditDoc* GetListeningDoc() const;
 };
 

@@ -128,7 +128,7 @@ void CViewCommander::Command_LineCutToStart( void )
 		return;
 	}
 	pCLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
-	if( NULL == pCLayout ){
+	if( nullptr == pCLayout ){
 		ErrorBeep();
 		return;
 	}
@@ -159,7 +159,7 @@ void CViewCommander::Command_LineCutToEnd( void )
 		return;
 	}
 	pCLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
-	if( NULL == pCLayout ){
+	if( nullptr == pCLayout ){
 		ErrorBeep();
 		return;
 	}
@@ -208,7 +208,7 @@ void CViewCommander::Command_LineDeleteToStart( void )
 		return;
 	}
 	pCLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
-	if( NULL == pCLayout ){
+	if( nullptr == pCLayout ){
 		ErrorBeep();
 		return;
 	}
@@ -239,7 +239,7 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 		return;
 	}
 	pCLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
-	if( NULL == pCLayout ){
+	if( nullptr == pCLayout ){
 		ErrorBeep();
 		return;
 	}
@@ -292,7 +292,7 @@ void CViewCommander::Command_CUT_LINE( void )
 	}
 
 	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().y );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		ErrorBeep();
 		return;
 	}
@@ -321,7 +321,7 @@ void CViewCommander::Command_DELETE_LINE( void )
 		return;
 	}
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		ErrorBeep();
 		return;
 	}
@@ -332,7 +332,7 @@ void CViewCommander::Command_DELETE_LINE( void )
 
 	Command_DELETE();
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-	if( NULL != pcLayout ){
+	if( nullptr != pcLayout ){
 		// 2003-04-30 かろと
 		// 行削除した後、フリーカーソルでないのにカーソル位置が行端より右になる不具合対応
 		// フリーカーソルモードでない場合は、カーソル位置を調整する
@@ -378,7 +378,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 	}
 
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-	if( NULL == pcLayout ){
+	if( nullptr == pcLayout ){
 		ErrorBeep();
 		return;
 	}

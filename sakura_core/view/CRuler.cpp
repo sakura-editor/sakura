@@ -15,7 +15,7 @@
 CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)
 : m_pEditView(pEditView)
 , m_pEditDoc(pEditDoc)
-, m_hFont(NULL)
+, m_hFont(nullptr)
 , m_nRulerHeight(0)
 {
 	m_nOldRulerDrawX = 0;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK
@@ -101,9 +101,9 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	// フォント設定 (ルーラー上の数字用)
 	if (m_hFont && m_nRulerHeight != pCommon->m_sWindow.m_nRulerHeight) {
 		::DeleteObject( m_hFont );
-		m_hFont = NULL;
+		m_hFont = nullptr;
 	}
-	if (m_hFont == NULL) {
+	if (m_hFont == nullptr) {
 		LOGFONT	lf = {0};
 		lf.lfHeight			= DpiScaleY(1 - pCommon->m_sWindow.m_nRulerHeight);	//	2002/05/13 ai
 		lf.lfWidth			= 0;
@@ -122,7 +122,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		m_hFont = ::CreateFontIndirect( &lf );
 		m_nRulerHeight = pCommon->m_sWindow.m_nRulerHeight;
 	}
-	assert(m_hFont != NULL);
+	assert(m_hFont != nullptr);
 	HFONT hFontOld = (HFONT)::SelectObject( gr, m_hFont );
 	::SetBkMode( gr, TRANSPARENT );
 

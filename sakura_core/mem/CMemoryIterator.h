@@ -37,7 +37,7 @@ class CMemoryIterator
 public:
 	//CDocLine用コンストラクタ
 	CMemoryIterator( const CDocLine* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
-	: m_pLine( pcT ? pcT->GetPtr() : NULL )
+	: m_pLine( pcT ? pcT->GetPtr() : nullptr )
 	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
 	, m_nTabSpace( nTabSpace )
 	, m_tsvInfo( tsvInfo )
@@ -51,7 +51,7 @@ public:
 
 	//CLayout用コンストラクタ
 	CMemoryIterator( const CLayout* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
-	: m_pLine( pcT ? pcT->GetPtr() : NULL )
+	: m_pLine( pcT ? pcT->GetPtr() : nullptr )
 	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
 	, m_nTabSpace( nTabSpace )
 	, m_tsvInfo( tsvInfo )

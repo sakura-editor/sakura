@@ -86,11 +86,11 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 {
 	m_pEencoding = &encode;
 
-	m_hFile			= NULL;
+	m_hFile			= nullptr;
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
 	m_CharCode		= CODE_DEFAULT;
-	m_pCodeBase		= NULL;////
+	m_pCodeBase		= nullptr;////
 	m_encodingTrait = ENCODING_TRAIT_ASCII;
 	m_bBomExist		= false;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
@@ -110,8 +110,8 @@ void CFileLoad::Prepare( const CFileLoad& other, size_t nReadBufOffsetBegin, siz
 	m_pEencoding	= other.m_pEencoding;
 
 	// ファイルハンドルの所有権なし
-	m_hFile			= NULL;
-	m_hFileMapping	= NULL;
+	m_hFile			= nullptr;
+	m_hFileMapping	= nullptr;
 
 	m_nFileSize		= other.m_nFileSize;
 	m_CharCode		= other.m_CharCode;
@@ -149,9 +149,9 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	ULARGE_INTEGER	fileSize;
 
 	// FileCloseを呼んでからにしてください
-	if( NULL != m_hFile ){
+	if( nullptr != m_hFile ){
 #ifdef _DEBUG
-		::MessageBox( NULL, L"CFileLoad::FileOpen\nFileCloseを呼んでからにしてください" , NULL, MB_OK );
+		::MessageBox( nullptr, L"CFileLoad::FileOpen\nFileCloseを呼んでからにしてください" , nullptr, MB_OK );
 #endif
 		throw CError_FileOpen();
 	}
@@ -161,10 +161,10 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 		//	Oct. 18, 2002 genta FILE_SHARE_WRITE 追加
 		//	他プロセスが書き込み中のファイルを開けるように
 		FILE_SHARE_READ | FILE_SHARE_WRITE,	// 共有
-		NULL,						// セキュリティ記述子
+		nullptr,						// セキュリティ記述子
 		OPEN_EXISTING,				// 作成方法
 		FILE_FLAG_SEQUENTIAL_SCAN,	// ファイル属性
-		NULL						// テンプレートファイルのハンドル
+		nullptr						// テンプレートファイルのハンドル
 	);
 	if( hFile == INVALID_HANDLE_VALUE ){
 		throw CError_FileOpen();
@@ -188,13 +188,13 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_nFileSize = fileSize.QuadPart;
 //	m_eMode = FLMODE_OPEN;
 
-	m_pReadBufTop = NULL;
+	m_pReadBufTop = nullptr;
 	if( 0 < m_nFileSize ){
-		m_hFileMapping = CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
-		if( m_hFileMapping != NULL ){
+		m_hFileMapping = CreateFileMapping( hFile, nullptr, PAGE_READONLY, 0, 0, nullptr );
+		if( m_hFileMapping != nullptr ){
 			m_pReadBufTop = (const char*)MapViewOfFile( m_hFileMapping, FILE_MAP_READ, 0, 0, 0 );
 		}
-		if( m_pReadBufTop == NULL ){
+		if( m_pReadBufTop == nullptr ){
 			FileClose();
 			throw CError_FileOpen();
 		}
@@ -229,12 +229,12 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	if( bBom ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		m_bBomExist = true;
-		if( pbBomExist != NULL ){
+		if( pbBomExist != nullptr ){
 			*pbBomExist = true;
 		}
 	}else{
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
-		if( pbBomExist != NULL ){
+		if( pbBomExist != nullptr ){
 			*pbBomExist = false;
 		}
 	}
@@ -271,22 +271,22 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 */
 void CFileLoad::FileClose( void )
 {
-	if( m_hFile != NULL ){
-		if( m_pReadBufTop != NULL ){
+	if( m_hFile != nullptr ){
+		if( m_pReadBufTop != nullptr ){
 			(void)UnmapViewOfFile( m_pReadBufTop );
-			m_pReadBufTop = NULL;
+			m_pReadBufTop = nullptr;
 		}
-		if( m_hFileMapping != NULL ){
+		if( m_hFileMapping != nullptr ){
 			CloseHandle( m_hFileMapping );
-			m_hFileMapping = NULL;
+			m_hFileMapping = nullptr;
 		}
-		if( NULL != m_hFile ){
+		if( nullptr != m_hFile ){
 			::CloseHandle( m_hFile );
-			m_hFile = NULL;
+			m_hFile = nullptr;
 		}
-		if( NULL != m_pCodeBase ){
+		if( nullptr != m_pCodeBase ){
 			delete m_pCodeBase;
-			m_pCodeBase = NULL;
+			m_pCodeBase = nullptr;
 		}
 	}
 	m_nReadBufOffsetCurrent = 0;
@@ -376,7 +376,7 @@ EConvertResult CFileLoad::ReadLine_core(
 		pcEol,
 		&nEolLen
 	);
-	if( pLine != NULL ){
+	if( pLine != nullptr ){
 		m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen );
 	}
 
@@ -465,7 +465,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	if( nDataLen <= nbgn ){
 		*pnLineLen = 0;
 		*pnEolLen = 0;
-		return NULL;
+		return nullptr;
 	}
 	const unsigned char* pUData = (const unsigned char*)pData; // signedだと符号拡張でNELがおかしくなるので
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;

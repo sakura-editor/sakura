@@ -36,7 +36,7 @@ const DWORD p_helpids[] = {
 
 //  Constructors
 CDlgTypeAscertain::CDlgTypeAscertain()
-	: m_psi(NULL)
+	: m_psi(nullptr)
 {
 }
 
@@ -47,7 +47,7 @@ int CDlgTypeAscertain::DoModal( HINSTANCE hInstance, HWND hwndParent, SAscertain
 
 	m_psi->nColorType = -1;
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPE_ASCERTAIN, (LPARAM)NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPE_ASCERTAIN, (LPARAM)nullptr );
 }
 
 // ボタンクリック
@@ -102,7 +102,7 @@ void CDlgTypeAscertain::SetData( void )
 
 	// エディタ内の設定
 	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {
-		const STypeConfigMini* type = NULL;
+		const STypeConfigMini* type = nullptr;
 		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig(nIdx), &type ) ){
 			continue;
 		}
@@ -125,7 +125,7 @@ void CDlgTypeAscertain::SetData( void )
 	BOOL	bFind;
 	WCHAR	sTrgCol[_MAX_PATH + 1];
 
-	::SplitPath_FolderAndFile( m_psi->sImportFile.c_str(), sTrgCol, NULL );
+	::SplitPath_FolderAndFile( m_psi->sImportFile.c_str(), sTrgCol, nullptr );
 	wcscat( sTrgCol, L"\\*.col" );
 	for (bFind = ( ( hFind = FindFirstFile( sTrgCol, &wf ) ) != INVALID_HANDLE_VALUE );
 		bFind;

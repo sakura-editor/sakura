@@ -82,7 +82,7 @@ void CViewCommander::Command_TAB_CLOSEOTHER( void )
 
 	for( int i = 0; i < nCount; i++ ){
 		if( pEditNode[i].m_hWnd == GetMainWindow() ){
-			pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
+			pEditNode[i].m_hWnd = nullptr;		//自分自身は閉じない
 			nGroup = pEditNode[i].m_nGroup;
 		}
 	}
@@ -441,7 +441,7 @@ void CViewCommander::Command_GROUPCLOSE( void )
 void CViewCommander::Command_NEXTGROUP( void )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
-	if( pcTabWnd->GetHwnd() == NULL )
+	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->NextGroup();
 }
@@ -450,7 +450,7 @@ void CViewCommander::Command_NEXTGROUP( void )
 void CViewCommander::Command_PREVGROUP( void )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
-	if( pcTabWnd->GetHwnd() == NULL )
+	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->PrevGroup();
 }
@@ -459,7 +459,7 @@ void CViewCommander::Command_PREVGROUP( void )
 void CViewCommander::Command_TAB_MOVERIGHT( void )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
-	if( pcTabWnd->GetHwnd() == NULL )
+	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->MoveRight();
 }
@@ -468,7 +468,7 @@ void CViewCommander::Command_TAB_MOVERIGHT( void )
 void CViewCommander::Command_TAB_MOVELEFT( void )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
-	if( pcTabWnd->GetHwnd() == NULL )
+	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->MoveLeft();
 }
@@ -477,7 +477,7 @@ void CViewCommander::Command_TAB_MOVELEFT( void )
 void CViewCommander::Command_TAB_SEPARATE( void )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
-	if( pcTabWnd->GetHwnd() == NULL )
+	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->Separate();
 }
@@ -486,7 +486,7 @@ void CViewCommander::Command_TAB_SEPARATE( void )
 void CViewCommander::Command_TAB_JOINTNEXT( void )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
-	if( pcTabWnd->GetHwnd() == NULL )
+	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->JoinNext();
 }
@@ -495,7 +495,7 @@ void CViewCommander::Command_TAB_JOINTNEXT( void )
 void CViewCommander::Command_TAB_JOINTPREV( void )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
-	if( pcTabWnd->GetHwnd() == NULL )
+	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->JoinPrev();
 }
@@ -514,11 +514,11 @@ void CViewCommander::Command_TAB_CLOSELEFT( void )
 
 		for( int i = 0; i < nCount; i++ ){
 			if( pEditNode[i].m_hWnd == GetMainWindow() ){
-				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
+				pEditNode[i].m_hWnd = nullptr;		//自分自身は閉じない
 				nGroup = pEditNode[i].m_nGroup;
 				bSelfFound = TRUE;
 			}else if( bSelfFound ){
-				pEditNode[i].m_hWnd = NULL;		//右は閉じない
+				pEditNode[i].m_hWnd = nullptr;		//右は閉じない
 			}
 		}
 
@@ -543,11 +543,11 @@ void CViewCommander::Command_TAB_CLOSERIGHT( void )
 
 		for( int i = 0; i < nCount; i++ ){
 			if( pEditNode[i].m_hWnd == GetMainWindow() ){
-				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
+				pEditNode[i].m_hWnd = nullptr;		//自分自身は閉じない
 				nGroup = pEditNode[i].m_nGroup;
 				bSelfFound = TRUE;
 			}else if( !bSelfFound ){
-				pEditNode[i].m_hWnd = NULL;		//左は閉じない
+				pEditNode[i].m_hWnd = nullptr;		//左は閉じない
 			}
 		}
 
@@ -648,7 +648,7 @@ void CViewCommander::Command_WIN_OUTPUT( void )
 */
 void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nLen, int nFlgOpt )
 {
-	if( outputstr == NULL )
+	if( outputstr == nullptr )
 		return;
 
 	// 0x01 ExpandParameterによる文字列展開有無

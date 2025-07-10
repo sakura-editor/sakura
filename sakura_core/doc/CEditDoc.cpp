@@ -154,7 +154,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 , m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
-, m_hBackImg(NULL)
+, m_hBackImg(nullptr)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::CEditDoc" );
 
@@ -170,7 +170,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH ){
 		nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
 	}
-	m_cLayoutMgr.SetLayoutInfo( true, false, ref, ref.m_nTabSpace, ref.m_nTsvMode, nMaxLineKetas, CLayoutXInt(1), NULL );
+	m_cLayoutMgr.SetLayoutInfo( true, false, ref, ref.m_nTabSpace, ref.m_nTsvMode, nMaxLineKetas, CLayoutXInt(1), nullptr );
 
 	//	自動保存の設定	//	Aug, 21, 2000 genta
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
@@ -296,7 +296,7 @@ void CEditDoc::SetBackgroundImage()
 	CFilePath path = m_cDocType.GetDocumentAttribute().m_szBackImgPath.c_str();
 	if( m_hBackImg ){
 		::DeleteObject( m_hBackImg );
-		m_hBackImg = NULL;
+		m_hBackImg = nullptr;
 	}
 	if( 0 == path[0] ){
 		return;
@@ -312,14 +312,14 @@ void CEditDoc::SetBackgroundImage()
 	HRESULT hr;
 	hr = CoCreateInstance(
 		CLSID_WICImagingFactory,
-		NULL,
+		nullptr,
 		CLSCTX_INPROC_SERVER,
 		IID_PPV_ARGS(&pIWICFactory));
 	if( FAILED(hr) ) return;
 	ComPtr<IWICBitmapDecoder> pDecoder;
 	hr = pIWICFactory->CreateDecoderFromFilename(
 		path.c_str(),
-		NULL,
+		nullptr,
 		GENERIC_READ,
 		WICDecodeMetadataCacheOnLoad,
 		&pDecoder);
@@ -337,7 +337,7 @@ void CEditDoc::SetBackgroundImage()
 		pFrame.Get(),
 		GUID_WICPixelFormat32bppPBGRA,
 		WICBitmapDitherTypeNone,
-		NULL,
+		nullptr,
 		0.f,
 		WICBitmapPaletteTypeCustom);
 	if( FAILED(hr) ) return;
@@ -352,21 +352,21 @@ void CEditDoc::SetBackgroundImage()
 	bmih.biPlanes = 1;
 	bmih.biBitCount = 32;
 	bmih.biCompression = BI_RGB;
-	HDC hdcScreen = GetDC(NULL);
+	HDC hdcScreen = GetDC(nullptr);
 	if( !hdcScreen ) return;
-	void *pvImageBits = NULL;
-	m_hBackImg = CreateDIBSection(hdcScreen, &bminfo, DIB_RGB_COLORS, &pvImageBits, NULL, 0);
-	ReleaseDC(NULL, hdcScreen);
+	void *pvImageBits = nullptr;
+	m_hBackImg = CreateDIBSection(hdcScreen, &bminfo, DIB_RGB_COLORS, &pvImageBits, nullptr, 0);
+	ReleaseDC(nullptr, hdcScreen);
 	if( !m_hBackImg ) return;
 	UINT lineStride = 4 * width;
 	hr = pConverter->CopyPixels(
-		NULL,
+		nullptr,
 		lineStride,
 		lineStride * height, 
 		(BYTE*)pvImageBits);
 	if( FAILED(hr) ){
 		::DeleteObject(m_hBackImg);
-		m_hBackImg = NULL;
+		m_hBackImg = nullptr;
 	}
 	m_nBackImgWidth = (int)width;
 	m_nBackImgHeight = (int)height;
@@ -643,11 +643,11 @@ void CEditDoc::OnChangeSetting(
 )
 {
 	int			i;
-	HWND		hwndProgress = NULL;
+	HWND		hwndProgress = nullptr;
 
 	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
 
-	if( NULL != pCEditWnd ){
+	if( nullptr != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
 		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
 	}
@@ -678,12 +678,12 @@ void CEditDoc::OnChangeSetting(
 		CFileNameManager::getInstance()->TransformFileName_MakeCache();
 	}
 
-	CLogicPointEx* posSaveAry = NULL;
+	CLogicPointEx* posSaveAry = nullptr;
 
 	if( GetEditWnd().m_posSaveAry ){
 		if( bDoLayout ){
 			posSaveAry = GetEditWnd().m_posSaveAry;
-			GetEditWnd().m_posSaveAry = NULL;
+			GetEditWnd().m_posSaveAry = nullptr;
 		}
 	}else{
 		if( GetEditWnd().m_pPrintPreview ){
@@ -866,7 +866,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 
 	// -- -- 保存確認 -- -- //
 	WCHAR szGrepTitle[90];
-	LPCWSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : NULL;
+	LPCWSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : nullptr;
 	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
 		LPCWSTR		pszGrepKey = CAppMode::getInstance()->m_szGrepKey;
 		int			nLen = (int)wcslen( pszGrepKey );
@@ -878,7 +878,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		);
 		pszTitle = szGrepTitle;
 	}
-	if( NULL == pszTitle ){
+	if( nullptr == pszTitle ){
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
 		auto_sprintf( szGrepTitle, L"%s%d", LS(STR_NO_TITLE1), node->m_nId );	//(無題)
 		pszTitle = szGrepTitle;
@@ -960,7 +960,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 {
 	// 開ファイル／タイプ変更時はアウトラインを再解析する
-	if( pszSaveFilePath == NULL ){
+	if( pszSaveFilePath == nullptr ){
 		GetEditWnd().m_cDlgFuncList.Refresh();
 	}
 
@@ -971,7 +971,7 @@ void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 	bRunning = true;
 	if( CEditApp::getInstance()->m_pcSMacroMgr->IsEnabled(idx) ){
 		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
-			if( NULL != pszSaveFilePath )
+			if( nullptr != pszSaveFilePath )
 				m_cDocFile.SetSaveFilePath(pszSaveFilePath);
 			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
 			HandleCommand((EFunctionCode)(( F_USERMACRO_0 + idx ) | FA_NONRECORD) );
@@ -990,7 +990,7 @@ void CEditDoc::SetCurDirNotitle()
 	}
 	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
 	WCHAR szSelDir[_MAX_PATH];
-	const WCHAR* pszDir = NULL;
+	const WCHAR* pszDir = nullptr;
 	if( eOpenDialogDir == OPENDIALOGDIR_MRU ){
 		const CMRUFolder cMRU;
 		std::vector<LPCWSTR> vMRU = cMRU.GetPathList();
@@ -1006,7 +1006,7 @@ void CEditDoc::SetCurDirNotitle()
 		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, _countof(szSelDir) );
 		pszDir = szSelDir;
 	}
-	if( pszDir != NULL ){
+	if( pszDir != nullptr ){
 		::SetCurrentDirectory( pszDir );
 	}
 }

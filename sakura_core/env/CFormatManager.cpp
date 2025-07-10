@@ -47,7 +47,7 @@ const WCHAR* CFormatManager::MyGetDateFormat(
 	DWORD dwFlags;
 	if( 0 == nDateFormatType ){
 		dwFlags = DATE_LONGDATE;
-		pszForm = NULL;
+		pszForm = nullptr;
 	}else{
 		dwFlags = 0;
 		pszForm = szDateFormat;
@@ -81,7 +81,7 @@ const WCHAR* CFormatManager::MyGetTimeFormat(
 	DWORD dwFlags;
 	if( 0 == nTimeFormatType ){
 		dwFlags = 0;
-		pszForm = NULL;
+		pszForm = nullptr;
 	}else{
 		dwFlags = 0;
 		pszForm = szTimeFormat;

@@ -14,7 +14,7 @@
 CAutoScrollWnd::CAutoScrollWnd()
 : CWnd(L"::CAutoScrollWnd")
 {
-	m_hCenterImg = NULL;
+	m_hCenterImg = nullptr;
 	return;
 }
 
@@ -44,16 +44,16 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 		pszClassName = L"SakuraAutoScrollHWnd";
 	}
 	m_hCenterImg = (HBITMAP)::LoadImage(hInstance, MAKEINTRESOURCE(idb), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-	HCURSOR hCursor = ::LoadCursor(GetModuleHandle(NULL), MAKEINTRESOURCE(idc));
+	HCURSOR hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(idc));
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
 		hInstance,
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		hCursor,
 		(HBRUSH)(COLOR_3DFACE + 1),
-		NULL,
+		nullptr,
 		pszClassName
 	);
 
@@ -69,7 +69,7 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 		point.y-16, // vertical position of window
 		32, // window width
 		32, // window height
-		NULL // handle to menu, or child-window identifier
+		nullptr // handle to menu, or child-window identifier
 	);
 }
 
@@ -79,7 +79,7 @@ void CAutoScrollWnd::Close()
 
 	if( m_hCenterImg ){
 		::DeleteObject( m_hCenterImg );
-		m_hCenterImg = NULL;
+		m_hCenterImg = nullptr;
 	}
 }
 

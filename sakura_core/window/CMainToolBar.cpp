@@ -22,11 +22,11 @@
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
-, m_hwndToolBar(NULL)
-, m_hwndReBar(NULL)
-, m_hwndSearchBox(NULL)
-, m_hFontSearchBox(NULL)
-, m_pcIcons(NULL)
+, m_hwndToolBar(nullptr)
+, m_hwndReBar(nullptr)
+, m_hwndSearchBox(nullptr)
+, m_hFontSearchBox(nullptr)
+, m_pcIcons(nullptr)
 {
 }
 
@@ -125,17 +125,17 @@ void CMainToolBar::CreateToolBar( void )
 		m_hwndReBar = ::CreateWindowEx(
 			WS_EX_TOOLWINDOW,
 			REBARCLASSNAME, //レバーコントロール
-			NULL,
+			nullptr,
 			WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |	// 2007.03.08 ryoji WS_VISIBLE 除去
 			RBS_BANDBORDERS | CCS_NODIVIDER,
 			0, 0, 0, 0,
 			m_pOwner->GetHwnd(),
-			NULL,
+			nullptr,
 			CEditApp::getInstance()->GetAppInstance(),
-			NULL
+			nullptr
 		);
 
-		if( NULL == m_hwndReBar ){
+		if( nullptr == m_hwndReBar ){
 			TopWarningMessage( m_pOwner->GetHwnd(), LS(STR_ERR_DLGEDITWND04) );
 			return;
 		}
@@ -155,7 +155,7 @@ void CMainToolBar::CreateToolBar( void )
 	m_hwndToolBar = ::CreateWindowEx(
 		0,
 		TOOLBARCLASSNAME,
-		NULL,
+		nullptr,
 		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN | /*WS_BORDER | */	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加	// 2007.03.08 ryoji WS_VISIBLE 除去
 /*		WS_EX_WINDOWEDGE| */
 		TBSTYLE_TOOLTIPS |
@@ -168,9 +168,9 @@ void CMainToolBar::CreateToolBar( void )
 		m_pOwner->GetHwnd(),
 		(HMENU)ID_TOOLBAR,
 		CEditApp::getInstance()->GetAppInstance(),
-		NULL
+		nullptr
 	);
-	if( NULL == m_hwndToolBar ){
+	if( nullptr == m_hwndToolBar ){
 		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat = FALSE;
 		}
@@ -284,7 +284,7 @@ void CMainToolBar::CreateToolBar( void )
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
-								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, CEditApp::getInstance()->GetAppInstance(), NULL );
+								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, CEditApp::getInstance()->GetAppInstance(), nullptr );
 						if( m_hwndSearchBox )
 						{
 							m_pOwner->SetCurrentFocus(0);
@@ -322,7 +322,7 @@ void CMainToolBar::CreateToolBar( void )
 							// コンボボックスの垂直位置を調整する
 							CMyRect rcCombo;
 							::GetWindowRect( m_hwndSearchBox, &rcCombo );
-							::SetWindowPos( m_hwndSearchBox, NULL,
+							::SetWindowPos( m_hwndSearchBox, nullptr,
 								rc.left,	//作ったときと同じ値を指定
 								rc.top + (rc.bottom - rc.top - rcCombo.Height()) / 2,
 								0,			//rcCombo.Width()のまま変えない
@@ -350,7 +350,7 @@ void CMainToolBar::CreateToolBar( void )
 			lToolType = ::GetWindowLongPtr(m_hwndToolBar, GWL_STYLE);
 			lToolType |= (TBSTYLE_FLAT);
 			::SetWindowLongPtr(m_hwndToolBar, GWL_STYLE, lToolType);
-			::InvalidateRect(m_hwndToolBar, NULL, TRUE);
+			::InvalidateRect(m_hwndToolBar, nullptr, TRUE);
 		}
 		delete []pTbbArr;// 2005/8/29 aroka
 	}
@@ -389,17 +389,17 @@ void CMainToolBar::DestroyToolBar( void )
 			if( m_hFontSearchBox )
 			{
 				::DeleteObject( m_hFontSearchBox );
-				m_hFontSearchBox = NULL;
+				m_hFontSearchBox = nullptr;
 			}
 
 			::DestroyWindow( m_hwndSearchBox );
-			m_hwndSearchBox = NULL;
+			m_hwndSearchBox = nullptr;
 
 			m_pOwner->SetCurrentFocus(0);
 		}
 
 		::DestroyWindow( m_hwndToolBar );
-		m_hwndToolBar = NULL;
+		m_hwndToolBar = nullptr;
 
 		//if( m_cTabWnd.m_pOwner->GetHwnd() ) ::UpdateWindow( m_cTabWnd.m_pOwner->GetHwnd() );
 	}
@@ -408,7 +408,7 @@ void CMainToolBar::DestroyToolBar( void )
 	if( m_hwndReBar )
 	{
 		::DestroyWindow( m_hwndReBar );
-		m_hwndReBar = NULL;
+		m_hwndReBar = nullptr;
 	}
 
 	return;

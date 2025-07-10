@@ -602,7 +602,7 @@ BOOL CDlgReplace::OnActivate( WPARAM wParam, LPARAM lParam )
 	CEditView*	pcEditView = (CEditView*)m_lParam;
 	CLayoutRange cRangeSel = pcEditView->GetSelectionInfo().m_sSelect;
 	if( cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne() )
-		pcEditView->InvalidateRect(NULL);	// アクティブ化／非アクティブ化が完了してから再描画
+		pcEditView->InvalidateRect(nullptr);	// アクティブ化／非アクティブ化が完了してから再描画
 
 	return CDialog::OnActivate(wParam, lParam);
 }

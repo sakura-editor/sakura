@@ -77,7 +77,7 @@ void CEditView_Paint::Call_OnPaint(
 */
 void CEditView::RedrawAll()
 {
-	if( NULL == GetHwnd() ){
+	if( nullptr == GetHwnd() ){
 		return;
 	}
 
@@ -109,7 +109,7 @@ void CEditView::RedrawAll()
 // 2001/06/21 Start by asa-o 再描画
 void CEditView::Redraw()
 {
-	if( NULL == GetHwnd() ){
+	if( nullptr == GetHwnd() ){
 		return;
 	}
 	if( !GetDrawSwitch() ){
@@ -131,7 +131,7 @@ void CEditView::Redraw()
 
 void CEditView::RedrawLines( CLayoutYInt top, CLayoutYInt bottom )
 {
-	if( NULL == GetHwnd() ){
+	if( nullptr == GetHwnd() ){
 		return;
 	}
 	if( !GetDrawSwitch() ){
@@ -161,7 +161,7 @@ void CEditView::RedrawLines( CLayoutYInt top, CLayoutYInt bottom )
 
 void MyFillRect(HDC hdc, RECT& re)
 {
-	::ExtTextOut(hdc, re.left, re.top, ETO_OPAQUE|ETO_CLIPPED, &re, L"", 0, NULL);
+	::ExtTextOut(hdc, re.left, re.top, ETO_OPAQUE|ETO_CLIPPED, &re, L"", 0, nullptr);
 }
 
 void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
@@ -575,7 +575,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	CGraphics gr(_hdc);
 
 	// 2004.01.28 Moca デスクトップに作画しないように
-	if( NULL == GetHwnd() || NULL == _hdc )return;
+	if( nullptr == GetHwnd() || nullptr == _hdc )return;
 
 	if( !GetDrawSwitch() )return;
 	//@@@
@@ -644,7 +644,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	HDC hdcOld = nullptr;
 	// 2007.09.09 Moca bUseMemoryDCを有効化。
 	// bUseMemoryDC = FALSE;
-	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);
+	BOOL bUseMemoryDC = (m_hdcCompatDC != nullptr);
 	assert_warning(gr != m_hdcCompatDC);
 	bool bClipping = false;
 	if( bUseMemoryDC ){
@@ -901,7 +901,7 @@ bool CEditView::DrawLogicLine(
 		const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef();
 		if( bSkipBeforeLayout ){
 			EColorIndexType eRet = COLORIDX_TEXT;
-			const CLayoutColorInfo* colorInfo = NULL;
+			const CLayoutColorInfo* colorInfo = nullptr;
 			if( pcLayout ){
 				eRet = pcLayout->GetColorTypePrev(); // COLORIDX_TEXTのはず
 				colorInfo = pcLayout->GetColorInfo();
@@ -971,7 +971,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		pInfo->m_pLineOfLogic = pcLayout->GetDocLineRef()->GetPtr();
 	}
 	else{
-		pInfo->m_pLineOfLogic = NULL;
+		pInfo->m_pLineOfLogic = nullptr;
 	}
 
 	//文字列参照
@@ -1057,7 +1057,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	bool bSkipRight = false; // 続きを描画しなくていい場合はスキップする
 	if(pcLayout){
 		const CLayout* pcLayoutNext = pcLayout->GetNextLayout();
-		if( NULL == pcLayoutNext ){
+		if( nullptr == pcLayoutNext ){
 			bSkipRight = true;
 		}else if( pcLayoutNext->GetLogicOffset() == 0 ){
 			bSkipRight = true; // 次の行は別のロジック行なのでスキップ可能
@@ -1136,7 +1136,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	// 必要ならEOF描画
 	void _DispEOF( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
-	if(pcLayout && pcLayout->GetNextLayout()==NULL && pcLayout->GetLayoutEol().GetLen()==0){
+	if(pcLayout && pcLayout->GetNextLayout()==nullptr && pcLayout->GetLayoutEol().GetLen()==0){
 		// 有文字行のEOF
 		_DispEOF(pInfo->m_gr,pInfo->m_pDispPos,this);
 		bDispEOF = true;
@@ -1144,14 +1144,14 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	else if(!pcLayout && pInfo->m_pDispPos->GetLayoutLineRef()==m_pcEditDoc->m_cLayoutMgr.GetLineCount()){
 		// 空行のEOF
 		const CLayout* pBottom = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
-		if(pBottom==NULL || (pBottom && pBottom->GetLayoutEol().GetLen())){
+		if(pBottom==nullptr || (pBottom && pBottom->GetLayoutEol().GetLen())){
 			_DispEOF(pInfo->m_gr,pInfo->m_pDispPos,this);
 			bDispEOF = true;
 		}
 	}
 
 	// 必要なら折り返し記号描画
-	if(pcLayout && pcLayout->GetLayoutEol().GetLen()==0 && pcLayout->GetNextLayout()!=NULL){
+	if(pcLayout && pcLayout->GetLayoutEol().GetLen()==0 && pcLayout->GetNextLayout()!=nullptr){
 		_DispWrap(pInfo->m_gr,pInfo->m_pDispPos,this,pInfo->m_pDispPos->GetLayoutLineRef());
 	}
 
@@ -1359,7 +1359,7 @@ void CEditView::DispTextSelected(
 */
 bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 {
-	if( NULL == m_hdcCompatDC ){
+	if( nullptr == m_hdcCompatDC ){
 		return false;
 	}
 	// サイズを64の倍数で整列
@@ -1370,7 +1370,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 	MYTRACE( L"CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n", cx, cy );
 #endif
 		HDC	hdc = ::GetDC( GetHwnd() );
-		HBITMAP hBitmapNew = NULL;
+		HBITMAP hBitmapNew = nullptr;
 		if( m_hbmpCompatBMP ){
 			// BMPの更新
 			HDC hdcTemp = ::CreateCompatibleDC( hdc );
@@ -1405,7 +1405,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 		}
 		::ReleaseDC( GetHwnd(), hdc );
 	}
-	return NULL != m_hbmpCompatBMP;
+	return nullptr != m_hbmpCompatBMP;
 }
 
 /*!
@@ -1420,8 +1420,8 @@ void CEditView::DeleteCompatibleBitmap()
 	if( m_hbmpCompatBMP ){
 		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
 		::DeleteObject( m_hbmpCompatBMP );
-		m_hbmpCompatBMP = NULL;
-		m_hbmpCompatBMPOld = NULL;
+		m_hbmpCompatBMP = nullptr;
+		m_hbmpCompatBMPOld = nullptr;
 		m_nCompatBMPWidth = -1;
 		m_nCompatBMPHeight = -1;
 	}
@@ -1437,7 +1437,7 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 {
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	if( fCache ){
-		if( m_hdcCompatDC == NULL ){
+		if( m_hdcCompatDC == nullptr ){
 			HDC			hdc;
 			hdc = ::GetDC( GetHwnd() );
 			m_hdcCompatDC = ::CreateCompatibleDC( hdc );
@@ -1451,10 +1451,10 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 	else {
 		//	CompatibleBitmapが残っているかもしれないので最初に削除
 		DeleteCompatibleBitmap();
-		if( m_hdcCompatDC != NULL ){
+		if( m_hdcCompatDC != nullptr ){
 			::DeleteDC( m_hdcCompatDC );
 			DEBUG_TRACE(L"CEditView::UseCompatibleDC: Deleted.\n");
-			m_hdcCompatDC = NULL;
+			m_hdcCompatDC = nullptr;
 		}
 	}
 }

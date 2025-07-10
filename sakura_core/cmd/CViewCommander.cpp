@@ -165,7 +165,7 @@ BOOL CViewCommander::HandleCommand(
 	//	ここより前ではUndoバッファの準備ができていないので
 	//	文書の操作を行ってはいけない
 	//@@@ 2002.2.2 YAZAKI HandleCommand内でHandleCommandを呼び出せない問題に対処（何か副作用がある？）
-	if( NULL == GetOpeBlk() ){	/* 操作ブロック */
+	if( nullptr == GetOpeBlk() ){	/* 操作ブロック */
 		SetOpeBlk(new COpeBlk);
 	}
 	GetOpeBlk()->AddRef();	//参照カウンタ増加
@@ -579,7 +579,7 @@ BOOL CViewCommander::HandleCommand(
 		if( 0 != nFuncID ){
 			/* コマンドコードによる処理振り分け */
 //			HandleCommand( nFuncID, true, 0, 0, 0, 0 );
-			::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nFuncID, 0 ), (LPARAM)NULL );
+			::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nFuncID, 0 ), (LPARAM)nullptr );
 		}
 		return bRet;
 
@@ -689,7 +689,7 @@ ptrdiff_t CViewCommander::ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen,
 
 	nConvertedTextLen = 0;
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-	if( pszConvertedText == NULL ){
+	if( pszConvertedText == nullptr ){
 		for( ptrdiff_t i = 0; i < nTextLen; i++ ){
 			if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 				if( pszText[i] == WCODE::CR ){
@@ -730,7 +730,7 @@ void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, 
 	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
 		&& !bReplaceAll
 	){
-		if( NULL == hwnd ){
+		if( nullptr == hwnd ){
 			hwnd = m_pCommanderView->GetHwnd();
 		}
 		//InfoMessage(hwnd, format, __VA_ARGS__);

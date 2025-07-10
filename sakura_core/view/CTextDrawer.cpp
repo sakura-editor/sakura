@@ -239,21 +239,21 @@ void CTextDrawer::DispVerticalLines(
 					}
 					for( ; y < nBottom; y += 2 ){
 						if( nPosX < nPosXRight ){
-							::MoveToEx( gr, nPosX, y, NULL );
+							::MoveToEx( gr, nPosX, y, nullptr );
 							::LineTo( gr, nPosX, y + 1 );
 						}
 						if( bBold && nPosXLeft <= nPosXBold ){
-							::MoveToEx( gr, nPosXBold, y, NULL );
+							::MoveToEx( gr, nPosXBold, y, nullptr );
 							::LineTo( gr, nPosXBold, y + 1 );
 						}
 					}
 				}else{
 					if( nPosX < nPosXRight ){
-						::MoveToEx( gr, nPosX, nTop, NULL );
+						::MoveToEx( gr, nPosX, nTop, nullptr );
 						::LineTo( gr, nPosX, nBottom );
 					}
 					if( bBold && nPosXLeft <= nPosXBold ){
-						::MoveToEx( gr, nPosXBold, nTop, NULL );
+						::MoveToEx( gr, nPosXBold, nTop, nullptr );
 						::LineTo( gr, nPosXBold, nBottom );
 					}
 				}
@@ -290,7 +290,7 @@ void CTextDrawer::DispNoteLine(
 		int y = ((nTop - offset) / nLineHeight * nLineHeight) + offsetMod;
 		for( ; y < nBottom; y += nLineHeight ){
 			if( nTop <= y ){
-				::MoveToEx( gr, left, y, NULL );
+				::MoveToEx( gr, left, y, nullptr );
 				::LineTo( gr, right, y );
 			}
 		}
@@ -322,7 +322,7 @@ void CTextDrawer::DispWrapLine(
 		/// 折り返し記号の色のペンを設定
 		gr.PushPen(cWrapType.GetTextColor(), 0);
 
-		::MoveToEx( gr, nXPos, nTop, NULL );
+		::MoveToEx( gr, nXPos, nTop, nullptr );
 		::LineTo( gr, nXPos, nBottom );
 
 		gr.PopPen();
@@ -365,7 +365,7 @@ void CTextDrawer::DispLineNumber(
 	//                     nColorIndexを決定                       //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	EColorIndexType nColorIndex = COLORIDX_GYOU;	/* 行番号 */
-	const CDocLine*	pCDocLine = NULL;
+	const CDocLine*	pCDocLine = nullptr;
 	bool bGyouMod = false;
 	if( pcLayout ){
 		pCDocLine = pcLayout->GetDocLineRef();
@@ -464,7 +464,7 @@ void CTextDrawer::DispLineNumber(
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if( pTypes->m_bLineNumIsCRLF ){
 				/* 論理行番号表示モード */
-				if( NULL == pcLayout || 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
+				if( nullptr == pcLayout || 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
 					wcscpy( szLineNum, L" " );
 				}else{
 					_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
@@ -529,7 +529,7 @@ void CTextDrawer::DispLineNumber(
 		if(CBookmarkGetter(pCDocLine).IsBookmarked() && !cMarkType.IsDisp() )
 		{
 			gr.PushPen(cColorType.GetTextColor(),2);
-			::MoveToEx( gr, 1, y, NULL );
+			::MoveToEx( gr, 1, y, nullptr );
 			::LineTo( gr, 1, y + nLineHeight );
 			gr.PopPen();
 		}

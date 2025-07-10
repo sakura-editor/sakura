@@ -120,7 +120,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				if( ! WCODE::IsBlank(pLine[i]) &&
 					! WCODE::IsLineDelimiter(pLine[i], bExtEol) &&
 					! WCODE::IsControlCode(pLine[i]) &&
-					wcschr( szJavaKigou, pLine[i] ) == NULL
+					wcschr( szJavaKigou, pLine[i] ) == nullptr
 					){
 					if( nWordIdx + nCharChars >= nMaxWordLeng ){
 						nMode = FL_JAVA_MODE_TOO_LONG_WORD;
@@ -349,7 +349,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						k = 0;
 						++nLineCount2;
 						pLine2 = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount2)->GetDocLineStrWithEOL(&nLineLen2);
-						if( NULL != pLine2 ){
+						if( nullptr != pLine2 ){
 							goto loop_is_func;
 						}
 						if( 0 < nClassNestArrNum ){
@@ -416,7 +416,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					if( ! WCODE::IsBlank(pLine[i]) &&
 						! WCODE::IsLineDelimiter(pLine[i], bExtEol) &&
 						! WCODE::IsControlCode(pLine[i]) &&
-						wcschr( szJavaKigou, pLine[i] ) == NULL
+						wcschr( szJavaKigou, pLine[i] ) == nullptr
 						){
 						wcscpy( szWordPrev, szWord );
 						nWordIdx = 0;

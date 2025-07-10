@@ -64,7 +64,7 @@ INT_PTR CPropCommon::DlgProc(
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
-		if( NULL != pCPropCommon ){
+		if( nullptr != pCPropCommon ){
 			UpdateDialogFont( hwndDlg );
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
@@ -73,7 +73,7 @@ INT_PTR CPropCommon::DlgProc(
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropCommon = ( CPropCommon* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCPropCommon ){
+		if( nullptr != pCPropCommon ){
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, lParam );
 		}else{
 			return FALSE;
@@ -92,7 +92,7 @@ INT_PTR CPropCommon::DlgProc2(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pCPropCommon = ( CPropCommon* )(lParam);
-		if( NULL != pCPropCommon ){
+		if( nullptr != pCPropCommon ){
 			UpdateDialogFont( hwndDlg );
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
 		}else{
@@ -101,7 +101,7 @@ INT_PTR CPropCommon::DlgProc2(
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropCommon = ( CPropCommon* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCPropCommon ){
+		if( nullptr != pCPropCommon ){
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, lParam );
 		}else{
 			return FALSE;
@@ -136,8 +136,8 @@ CPropCommon::CPropCommon()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-	m_hwndThis  = NULL;		/* このダイアログのハンドル */
+	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
+	m_hwndThis  = nullptr;		/* このダイアログのハンドル */
 	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;
 	m_nKeywordSet1 = -1;
 
@@ -224,11 +224,11 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
 		p->hInstance   = CSelectLang::getLangRsrcInstance();
 		p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[nIdx].resId );
-		p->pszIcon     = NULL;
+		p->pszIcon     = nullptr;
 		p->pfnDlgProc  = ComPropSheetInfoList[nIdx].DProc;
 		p->pszTitle    = sTabname[nIdx].c_str();
 		p->lParam      = (LPARAM)this;
-		p->pfnCallback = NULL;
+		p->pfnCallback = nullptr;
 	}
 	//	To Here Jun. 2, 2001 genta
 
@@ -237,7 +237,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE | PSH_USEPAGELANG;
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
-	psh.pszIcon    = NULL;
+	psh.pszIcon    = nullptr;
 	psh.pszCaption = LS( STR_PROPCOMMON );	//L"共通設定";
 	psh.nPages     = nIdx;
 
@@ -255,7 +255,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 	}
 
 	psh.ppsp = psp;
-	psh.pfnCallback = NULL;
+	psh.pfnCallback = nullptr;
 
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 	if( -1 == nRet ){
@@ -264,15 +264,15 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 			FORMAT_MESSAGE_ALLOCATE_BUFFER |
 			FORMAT_MESSAGE_FROM_SYSTEM |
 			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
+			nullptr,
 			::GetLastError(),
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),	// デフォルト言語
 			(LPWSTR)&pszMsgBuf,
 			0,
-			NULL
+			nullptr
 		);
 		PleaseReportToAuthor(
-			NULL,
+			nullptr,
 			LS(STR_ERR_DLGPROPCOMMON24),
 			psh.nStartPage,
 			pszMsgBuf

@@ -64,7 +64,7 @@ bool CProcess::InitializeProcess()
 	/* 共有データ構造体のアドレスを返す */
 	if( !GetShareData().InitShareData() ){
 		//	適切なデータを得られなかった
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
+		::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONERROR,
 			GSTR_APPNAME, L"異なるバージョンのエディタを同時に起動することはできません。" );
 		return false;
 	}

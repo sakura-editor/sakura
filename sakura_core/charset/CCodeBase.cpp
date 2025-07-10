@@ -74,7 +74,7 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 	// ソースを取得
 	pcMem->AllocBuffer( nSrcLen );
 	char* pdst = reinterpret_cast<char*>( pcMem->GetRawPtr() );
-	if( pdst == NULL ){
+	if( pdst == nullptr ){
 		pcMem->SetRawData( "", 0 );
 		return false;
 	}

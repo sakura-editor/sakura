@@ -20,7 +20,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CDllImp::CDllImp()
-	: m_hInstance( NULL )
+	: m_hInstance( nullptr )
 {
 }
 
@@ -46,12 +46,12 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 	}
 
 	//名前候補を順次検証し、有効なものを採用する
-	LPCWSTR pszLastName  = NULL;
+	LPCWSTR pszLastName  = nullptr;
 	bool bInitImpFailure = false;
 	for(int i = -1; ;i++)
 	{
 		//名前候補
-		LPCWSTR pszName = NULL;
+		LPCWSTR pszName = nullptr;
 		if(i==-1){ //まずは引数で指定された名前から。
 			pszName = pszSpecifiedDllName;
 		}
@@ -82,7 +82,7 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 		if(!ret){
 			bInitImpFailure = true;
 			::FreeLibrary( m_hInstance );
-			m_hInstance = NULL;
+			m_hInstance = nullptr;
 			continue;
 		}
 
@@ -109,7 +109,7 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 
 bool CDllImp::DeinitDll(bool force) noexcept
 {
-	if( m_hInstance == NULL || (!IsAvailable()) ){
+	if( m_hInstance == nullptr || (!IsAvailable()) ){
 		//	DLLが読み込まれていなければ何もしない
 		return true;
 	}
@@ -124,7 +124,7 @@ bool CDllImp::DeinitDll(bool force) noexcept
 
 		//DLL解放
 		::FreeLibrary( m_hInstance );
-		m_hInstance = NULL;
+		m_hInstance = nullptr;
 
 		return true;
 	}
@@ -170,10 +170,10 @@ bool CDllImp::RegisterEntries(const ImportTable table[])
 {
 	if(!IsAvailable())return false;
 
-	for(int i = 0; table[i].proc!=NULL; i++)
+	for(int i = 0; table[i].proc!=nullptr; i++)
 	{
 		FARPROC proc;
-		if ((proc = ::GetProcAddress(GetInstance(), table[i].name)) == NULL) 
+		if ((proc = ::GetProcAddress(GetInstance(), table[i].name)) == nullptr) 
 		{
 			return false;
 		}

@@ -53,11 +53,11 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 
 		//1行取得する。
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
-		if( pLine == NULL ) break;
+		if( pLine == nullptr ) break;
 
 		//作業用にコピーを作成する。バイナリがあったらその後ろは知らない。
 		pTmpLine = _wcsdup( pLine );
-		if( pTmpLine == NULL ) break;
+		if( pTmpLine == nullptr ) break;
 		if( wcslen( pTmpLine ) >= (unsigned int)nLineLen ){	//バイナリを含んでいたら短くなるので...
 			pTmpLine[ nLineLen ] = L'\0';	//指定長で切り詰め
 		}
@@ -70,22 +70,22 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		offset = 0;
 
 		//トークンに分割
-		for( j = 0; j < MAX_ASM_TOKEN; j++ ) token[ j ] = NULL;
+		for( j = 0; j < MAX_ASM_TOKEN; j++ ) token[ j ] = nullptr;
 		for( j = 0; j < MAX_ASM_TOKEN; j++ ){
 			token[ j ] = my_strtok<WCHAR>( pTmpLine, length, &offset, L" \t\r\n" );
-			if( token[ j ] == NULL ) break;
+			if( token[ j ] == nullptr ) break;
 			//トークンに含まれるべき文字でないか？
-			if( wcschr( token[ j ], L'\"') != NULL
-			 || wcschr( token[ j ], L'\\') != NULL
-			 || wcschr( token[ j ], L'\'' ) != NULL ){
-				token[ j ] = NULL;
+			if( wcschr( token[ j ], L'\"') != nullptr
+			 || wcschr( token[ j ], L'\\') != nullptr
+			 || wcschr( token[ j ], L'\'' ) != nullptr ){
+				token[ j ] = nullptr;
 				break;
 			}
 		}
 
-		if( token[ 0 ] != NULL ){	//トークンが1個以上ある
+		if( token[ 0 ] != nullptr ){	//トークンが1個以上ある
 			int nFuncId = -1;
-			WCHAR* entry_token = NULL;
+			WCHAR* entry_token = nullptr;
 
 			length = wcslen( token[ 0 ] );
 			if( length >= 2
@@ -94,7 +94,7 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 				nFuncId = 51;
 				entry_token = token[ 0 ];
 			}
-			else if( token[ 1 ] != NULL ){	//トークンが2個以上ある
+			else if( token[ 1 ] != nullptr ){	//トークンが2個以上ある
 				if( _wcsicmp( token[ 1 ], L"proc" ) == 0 ){	//関数
 					nFuncId = 50;
 					entry_token = token[ 0 ];

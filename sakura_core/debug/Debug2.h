@@ -27,15 +27,15 @@
 
 	#define assert(exp) \
 		if(!(exp)){ \
-			TRACE( "!assert: " #exp, NULL ); \
-			ErrorMessage( NULL, L"!assert\n%hs(%d):\n%hs", __FILE__, __LINE__, #exp ); \
+			TRACE( "!assert: " #exp, nullptr ); \
+			ErrorMessage( nullptr, L"!assert\n%hs(%d):\n%hs", __FILE__, __LINE__, #exp ); \
 			debug_exit(); \
 		} \
 		((void)0)
 
 	#define assert_warning(exp) \
 		if(!(exp)){ \
-			TRACE( "!warning: " #exp, NULL ); \
+			TRACE( "!warning: " #exp, nullptr ); \
 			warning_point(); \
 		} \
 		((void)0)

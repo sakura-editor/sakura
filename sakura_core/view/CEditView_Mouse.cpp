@@ -153,7 +153,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					return;
 				}
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedData( &cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
 					DWORD dwEffectsSrc = ( !m_pcEditDoc->IsEditable() )?
 											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
@@ -161,14 +161,14 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					GetEditWnd().SetDragSourceView( this );
 					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting() );
 					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
-					GetEditWnd().SetDragSourceView( NULL );
+					GetEditWnd().SetDragSourceView( nullptr );
 					if( m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
 						GetEditWnd().SetActivePane( m_nMyIndex );
 						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 							// →ドロップ先は外部のウィンドウである
-							if( NULL == m_cCommander.GetOpeBlk() ){
+							if( nullptr == m_cCommander.GetOpeBlk() ){
 								m_cCommander.SetOpeBlk(new COpeBlk);
 							}
 							m_cCommander.GetOpeBlk()->AddRef();
@@ -269,7 +269,7 @@ normal_action:;
 
 			// コマンドコードによる処理振り分け
 			// マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
-			::SendMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ), (LPARAM)NULL );
+			::SendMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ), (LPARAM)nullptr );
 
 			// 1行選択でない場合はここで抜ける（他の選択コマンドの時問題となるかも）
 			if(F_SELECTLINE != nFuncID)
@@ -370,15 +370,15 @@ normal_action:;
 					&nLineLen,
 					&pcLayout
 				);
-				if( NULL != pLine ){
+				if( nullptr != pLine ){
 					nIdx = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
 					/* 現在位置の単語の範囲を調べる */
 					bool bWhareResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						GetSelectionInfo().m_sSelect.GetFrom().GetY2(),
 						nIdx,
 						&sRange,
-						NULL,
-						NULL
+						nullptr,
+						nullptr
 					);
 					if( bWhareResult ){
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる。
@@ -402,11 +402,11 @@ normal_action:;
 					}
 				}
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetSelectionInfo().m_sSelect.GetTo().GetY2(), &nLineLen, &pcLayout );
-				if( NULL != pLine ){
+				if( nullptr != pLine ){
 					nIdx = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetTo().GetX2() );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-						GetSelectionInfo().m_sSelect.GetTo().GetY2(), nIdx, &sRange, NULL, NULL )
+						GetSelectionInfo().m_sSelect.GetTo().GetY2(), nIdx, &sRange, nullptr, nullptr )
 					){
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる
 						// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
@@ -488,7 +488,7 @@ normal_action:;
 				bool bIsUrl = IsCurrentPositionURL(
 					ptNewCaret,	// カーソル位置
 					&cUrlRange,						// URL範囲
-					NULL							// URL受け取り先
+					nullptr							// URL受け取り先
 				);
 				if( bIsUrl ){
 					/* 現在の選択範囲を非選択状態に戻す */
@@ -622,7 +622,7 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
-		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
+		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)nullptr );
 	}
 //	/* 右クリックメニュー */
 //	GetCommander().Command_MENU_RBUTTON();
@@ -702,7 +702,7 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
-		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
+		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)nullptr );
 	}
 	if( m_nAutoScrollMode ){
 		AutoScrollExit();
@@ -713,7 +713,7 @@ void CALLBACK AutoScrollTimerProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD
 {
 	CEditView*	pCEditView;
 	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-	if( NULL != pCEditView ){
+	if( nullptr != pCEditView ){
 		pCEditView->AutoScrollOnTimer();
 	}
 }
@@ -734,7 +734,7 @@ void CEditView::AutoScrollEnter()
 	m_cAutoScrollWnd.Create(G_AppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
 	::SetTimer(GetHwnd(), 2, 200, AutoScrollTimerProc);
 	HCURSOR hCursor;
-	hCursor = ::LoadCursor(GetModuleHandle(NULL), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
+	hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
 	::SetCursor(hCursor);
 }
 
@@ -780,7 +780,7 @@ void CEditView::AutoScrollMove( CMyPoint& point )
 			cursor = IDC_CURSOR_AUTOSCROLL_VERTICAL;
 		}
 	}
-	const HCURSOR hCursor = ::LoadCursor(GetModuleHandle(NULL), MAKEINTRESOURCE(cursor));
+	const HCURSOR hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(cursor));
 	::SetCursor(hCursor);
 }
 
@@ -865,7 +865,7 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
-		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
+		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)nullptr );
 	}
 
 	return;
@@ -927,7 +927,7 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
-		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
+		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)nullptr );
 	}
 
 	return;
@@ -1024,7 +1024,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			view.GetCaret().MoveCursor( ptNew, true );
 			view.GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
-		::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+		::SetCursor( ::LoadCursor( nullptr, IDC_ARROW ) );
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse; // マウス範囲選択前回位置(XY座標)
 		return;
 	}
@@ -1066,7 +1066,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				if( ptMouse.y >= GetTextArea().GetAreaTop() )
 					::SetCursor( ::LoadCursor( G_AppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
 				else
-					::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+					::SetCursor( ::LoadCursor( nullptr, IDC_ARROW ) );
 			}
 			else if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
 			 && GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DropSource /* OLEによるドラッグ元にするか */
@@ -1075,14 +1075,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				)
 			){
 				/* 矢印カーソル */
-				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+				::SetCursor( ::LoadCursor( nullptr, IDC_ARROW ) );
 			}
 			/* カーソル位置にURLが有る場合 */
 			else if(
 				IsCurrentPositionURL(
 					ptNew,			// カーソル位置
 					&cUrlRange,		// URL範囲
-					NULL			// URL受け取り先
+					nullptr			// URL受け取り先
 				)
 			){
 				/* 手カーソル */
@@ -1098,7 +1098,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				}else
 				/* アイビーム */
 				if( 0 <= m_nMousePause ){
-					::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
+					::SetCursor( ::LoadCursor( nullptr, IDC_IBEAM ) );
 				}
 			}
 		}
@@ -1107,7 +1107,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 	// 以下、マウスでの選択中(ドラッグ中)
 
 	if( 0 <= m_nMousePause ){
-		::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
+		::SetCursor( ::LoadCursor( nullptr, IDC_IBEAM ) );
 	}
 
 	// 2010.07.15 Moca ドラッグ開始位置から移動していない場合はMOVEとみなさない
@@ -1212,8 +1212,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 						ptNewCursor.y,
 						LineColumnToIndex( pLayout, ptNewCursor.x ),
 						&sWord,
-						NULL,
-						NULL
+						nullptr,
+						nullptr
 					);
 				}
 
@@ -1409,7 +1409,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 			if( nFuncID != F_0 ){
 				// スクロール変化量分コマンド実行(zDeltaが120あたりで1回)
 				for( int i = 0; i < nRollNum; i++ ){
-					::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
+					::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)nullptr );
 				}
 			}
 			return bHorizontalMsg ? TRUE: 0;
@@ -1535,7 +1535,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 {
 	LPWSTR pszFile = (LPWSTR)lpParameter;
-	::ShellExecute( NULL, L"open", pszFile, NULL, NULL, SW_SHOW );
+	::ShellExecute( nullptr, L"open", pszFile, nullptr, nullptr, SW_SHOW );
 	free( pszFile );
 	return 0;
 }
@@ -1564,7 +1564,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 			// URLを開く
 		 	// 現在位置がメールアドレスならば、NULL以外と、その長さを返す
-			if( IsMailAddress( strURL.c_str(), strURL.length(), NULL ) ){
+			if( IsMailAddress( strURL.c_str(), strURL.length(), nullptr ) ){
 				strOPEN = pszMailTo + strURL;
 			}
 			else{
@@ -1586,7 +1586,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				unsigned int nThreadId;
 				LPCWSTR szUrl = strOPEN.c_str();
 				LPWSTR szUrlDup = _wcsdup( szUrl );
-				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
+				HANDLE hThread = (HANDLE)_beginthreadex( nullptr, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
 				if( hThread != INVALID_HANDLE_VALUE ){
 					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
 					// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep を使用（ex.存在しないパスの起動）
@@ -1639,7 +1639,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
-		::SendMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
+		::SendMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)nullptr );
 	}
 
 	// 2007.10.06 nasukoji	クアドラプルクリック時もここで抜ける
@@ -1699,7 +1699,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	//編集禁止の場合はドロップを受け付けない
 	if(!m_pcEditDoc->IsEditable())return E_UNEXPECTED;
 
-	if( pDataObject == NULL || pdwEffect == NULL )
+	if( pDataObject == nullptr || pdwEffect == nullptr )
 		return E_INVALIDARG;
 
 	m_cfDragData = GetAvailableClipFormat( pDataObject );
@@ -1736,7 +1736,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	::ScreenToClient( GetHwnd(), (LPPOINT)&pt );
 	OnMOUSEMOVE( dwKeyState, pt.x , pt.y );
 
-	if ( pdwEffect == NULL )
+	if ( pdwEffect == nullptr )
 		return E_INVALIDARG;
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
@@ -1767,7 +1767,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 	RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
 
 	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
-	if( ::GetActiveWindow() == NULL )
+	if( ::GetActiveWindow() == nullptr )
 		OnKillFocus();
 
 	return S_OK;
@@ -1790,10 +1790,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	_SetDragMode( FALSE );
 
 	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
-	if( ::GetActiveWindow() == NULL )
+	if( ::GetActiveWindow() == nullptr )
 		OnKillFocus();
 
-	if( pDataObject == NULL || pdwEffect == NULL )
+	if( pDataObject == nullptr || pdwEffect == nullptr )
 		return E_INVALIDARG;
 
 	CLIPFORMAT cf;
@@ -1830,7 +1830,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 	// ドロップデータの取得
 	HGLOBAL hData = GetGlobalData( pDataObject, cf );
-	if (hData == NULL)
+	if (hData == nullptr)
 		return E_INVALIDARG;
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
@@ -1849,7 +1849,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 
 	// アンドゥバッファの準備
-	if( NULL == m_cCommander.GetOpeBlk() ){
+	if( nullptr == m_cCommander.GetOpeBlk() ){
 		m_cCommander.SetOpeBlk(new COpeBlk);
 	}
 	m_cCommander.GetOpeBlk()->AddRef();
@@ -2058,7 +2058,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 STDMETHODIMP CEditView::PostMyDropFiles( LPDATAOBJECT pDataObject )
 {
 	HGLOBAL hData = GetGlobalData( pDataObject, CF_HDROP );
-	if( hData == NULL )
+	if( hData == nullptr )
 		return E_INVALIDARG;
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
@@ -2088,12 +2088,12 @@ STDMETHODIMP CEditView::PostMyDropFiles( LPDATAOBJECT pDataObject )
 void CEditView::OnMyDropFiles( HDROP hDrop )
 {
 	// 普通にメニュー操作ができるように入力状態をフォアグランドウィンドウにアタッチする
-	int nTid2 = ::GetWindowThreadProcessId( ::GetForegroundWindow(), NULL );
+	int nTid2 = ::GetWindowThreadProcessId( ::GetForegroundWindow(), nullptr );
 	int nTid1 = ::GetCurrentThreadId();
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
+	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, G_AppInstance(), nullptr );
 	::SetFocus(hwnd);
 
 	// メニューを作成する
@@ -2104,14 +2104,14 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	HMENU hMenu = ::CreatePopupMenu();
 	::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, LS(STR_VIEW_MOUSE_MENU_PATH) );
 	::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, LS(STR_VIEW_MOUSE_MENU_FILE) );
-	::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
+	::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, nullptr);	// セパレータ
 	::InsertMenu( hMenu, 3, MF_BYPOSITION | MF_STRING, 110, LS(STR_VIEW_MOUSE_MENU_OPEN) );
-	::InsertMenu( hMenu, 4, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
+	::InsertMenu( hMenu, 4, MF_BYPOSITION | MF_SEPARATOR, 0, nullptr);	// セパレータ
 	::InsertMenu( hMenu, 5, MF_BYPOSITION | MF_STRING, IDCANCEL, LS(STR_VIEW_MOUSE_MENU_CANCEL) );
 	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 									( pt.x > rcWork.left )? pt.x: rcWork.left,
 									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
-								0, hwnd, NULL);
+								0, hwnd, nullptr);
 	::DestroyMenu( hMenu );
 
 	::DestroyWindow( hwnd );
@@ -2134,7 +2134,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		WCHAR szExt[_MAX_EXT];
 		WCHAR szWork[_MAX_PATH];
 
-		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0 );
+		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, nullptr, 0 );
 		for( UINT i = 0; i < nFiles; i++ ){
 			::DragQueryFile( hDrop, i, szPath, _countof(szPath) );
 			if( !::GetLongFileName( szPath, szWork ) )
@@ -2142,7 +2142,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			if( nId == 100 ){	// パス名
 				::lstrcpy( szPath, szWork );
 			}else if( nId == 101 ){	// ファイル名
-				_wsplitpath( szWork, NULL, NULL, szPath, szExt );
+				_wsplitpath( szWork, nullptr, nullptr, szPath, szExt );
 				::lstrcat( szPath, szExt );
 			}
 			cmemBuf.AppendString( szPath );

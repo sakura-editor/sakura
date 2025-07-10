@@ -43,7 +43,7 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const WCHAR* pszFilePath )
 	}
 
 	for (i = 0; i < m_pShareData->m_nTypesCount; ++i){
-		const STypeConfigMini* mini = NULL;
+		const STypeConfigMini* mini = nullptr;
 		if( GetTypeConfigMini( CTypeConfig(i), &mini )
 			&& IsFileNameMatch(mini->m_szTypeExts, pszFileName)) {
 			return CTypeConfig(i);	//	番号
@@ -73,7 +73,7 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfId( int id )
 	int		i;
 
 	for( i = 0; i < m_pShareData->m_nTypesCount; ++i ){
-		const STypeConfigMini* mini = NULL;
+		const STypeConfigMini* mini = nullptr;
 		if( GetTypeConfigMini( CTypeConfig(i), &mini )
 			&& mini->m_id == id ){
 			return CTypeConfig(i);
@@ -156,12 +156,12 @@ bool CDocTypeManager::IsFileNameMatch(const WCHAR* pszTypeExts, const WCHAR* psz
 	szWork[_countof(szWork) - 1] = '\0';
 	WCHAR* token = _wcstok(szWork, m_typeExtSeps);
 	while (token) {
-		if (wcspbrk(token, m_typeExtWildcards) == NULL) {
+		if (wcspbrk(token, m_typeExtWildcards) == nullptr) {
 			if (_wcsicmp(token, pszFileName) == 0) {
 				return true;
 			}
 			const WCHAR* pszExt = wcsrchr(pszFileName, L'.');
-			if (pszExt != NULL && _wcsicmp(token, pszExt + 1) == 0) {
+			if (pszExt != nullptr && _wcsicmp(token, pszExt + 1) == 0) {
 				return true;
 			}
 		} else {
@@ -169,7 +169,7 @@ bool CDocTypeManager::IsFileNameMatch(const WCHAR* pszTypeExts, const WCHAR* psz
 				return true;
 			}
 		}
-		token = _wcstok(NULL, m_typeExtSeps);
+		token = _wcstok(nullptr, m_typeExtSeps);
 	}
 	return false;
 }
@@ -189,7 +189,7 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 	szWork[_countof(szWork) - 1] = '\0';
 	WCHAR* token = _wcstok(szWork, m_typeExtSeps);
 	while (token) {
-		if (wcspbrk(token, m_typeExtWildcards) == NULL) {
+		if (wcspbrk(token, m_typeExtWildcards) == nullptr) {
 			wcsncpy(szFirstExt, token, nBuffSize);
 			szFirstExt[nBuffSize - 1] = L'\0';
 			return;
@@ -212,7 +212,7 @@ std::wstring CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, co
 	if (pszSrcExt == nullptr) return L"";
 
 	std::wstring destExt;
-	if (szExt != NULL && szExt[0] != L'\0') {
+	if (szExt != nullptr && szExt[0] != L'\0') {
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
 		destExt.assign(L"*");
 		destExt.append(szExt);
@@ -223,12 +223,12 @@ std::wstring CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, co
 	WCHAR* token = wcstok_s(strSrcTokens.data(), m_typeExtSeps, &context);
 	while( token )
 	{
-		if (szExt == NULL || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
+		if (szExt == nullptr || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
 			if (0 < destExt.length()) {
 				destExt.append(L";");
 			}
 			// 拡張子指定なし、またはマッチした拡張子でない
-			if (wcspbrk(token, m_typeExtWildcards) == NULL) {
+			if (wcspbrk(token, m_typeExtWildcards) == nullptr) {
 				if (L'.' == *token) {
 					destExt.append(L"*");
 				}

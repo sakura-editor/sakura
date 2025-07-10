@@ -30,7 +30,7 @@ public:
 		WCHAR	szDirPath[_MAX_PATH];
 		WCHAR	szDrive[_MAX_DRIVE];
 		WCHAR	szDir[_MAX_DIR];
-		_wsplitpath( this->c_str(), szDrive, szDir, NULL, NULL );
+		_wsplitpath( this->c_str(), szDrive, szDir, nullptr, nullptr );
 		wcscpy( szDirPath, szDrive);
 		wcscat( szDirPath, szDir );
 		return szDirPath;

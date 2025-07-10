@@ -49,7 +49,7 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropTypes = reinterpret_cast<CPropTypes*>(pPsp->lParam);
-		if( NULL != pCPropTypes ){
+		if( nullptr != pCPropTypes ){
 			UpdateDialogFont( hwndDlg );
 			return (pCPropTypes->*pDispatch)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
@@ -58,7 +58,7 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCPropTypes ){
+		if( nullptr != pCPropTypes ){
 			return (pCPropTypes->*pDispatch)( hwndDlg, uMsg, wParam, lParam );
 		}else{
 			return FALSE;
@@ -101,9 +101,9 @@ CPropTypes::CPropTypes()
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
 	m_pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
-	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-	m_hwndThis  = NULL;		/* このダイアログのハンドル */
+	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
+	m_hwndThis  = nullptr;		/* このダイアログのハンドル */
 	m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 
 	(static_cast<CPropTypesScreen*>(this))->CPropTypes_Screen();
@@ -162,11 +162,11 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
 		p->hInstance   = CSelectLang::getLangRsrcInstance();
 		p->pszTemplate = MAKEINTRESOURCE( TypePropSheetInfoList[nIdx].resId );
-		p->pszIcon     = NULL;
+		p->pszIcon     = nullptr;
 		p->pfnDlgProc  = TypePropSheetInfoList[nIdx].DProc;
 		p->pszTitle    = sTabname[nIdx].c_str();
 		p->lParam      = (LPARAM)this;
-		p->pfnCallback = NULL;
+		p->pfnCallback = nullptr;
 	}
 
 	PROPSHEETHEADER psh = { PROPSHEETHEADER_V2_SIZE };
@@ -174,7 +174,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE | PSH_USEPAGELANG;
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
-	psh.pszIcon    = NULL;
+	psh.pszIcon    = nullptr;
 	psh.pszCaption = LS( STR_PROPTYPE );	//L"タイプ別設定";	// Sept. 8, 2000 jepro 単なる「設定」から変更
 	psh.nPages     = nIdx;
 
@@ -193,7 +193,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 		psh.nStartPage = psh.nPages - 1;
 	}
 	psh.ppsp = psp;
-	psh.pfnCallback = NULL;
+	psh.pfnCallback = nullptr;
 
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 
@@ -203,15 +203,15 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 			FORMAT_MESSAGE_ALLOCATE_BUFFER |
 			FORMAT_MESSAGE_FROM_SYSTEM |
 			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
+			nullptr,
 			::GetLastError(),
 			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), // デフォルト言語
 			(LPWSTR)&pszMsgBuf,
 			0,
-			NULL
+			nullptr
 		);
 		PleaseReportToAuthor(
-			NULL,
+			nullptr,
 			LS(STR_PROPTYPE_ERR),
 			psh.nStartPage,
 			pszMsgBuf
@@ -294,7 +294,7 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 		::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 	}
 	else {
-		hFont = NULL;
+		hFont = nullptr;
 		::DlgItem_SetText( hwndDlg, idc_static, L"" );
 	}
 

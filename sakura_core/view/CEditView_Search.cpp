@@ -55,7 +55,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		) )	goto end_of_search;
 		break;
 	default:
-		PleaseReportToAuthor( NULL, L"CEditView::KeyWordHelpSearchDict\nnID=%d", (int)nID );
+		PleaseReportToAuthor( nullptr, L"CEditView::KeyWordHelpSearchDict\nnID=%d", (int)nID );
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
 	if( GetSelectedDataOne( cmemCurText, STRNCMP_MAX + 1 ) ){
@@ -131,7 +131,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					{
 						WCHAR szFile[MAX_PATH];
 						// 2013.05.08 表示するのはファイル名(拡張子なし)のみにする
-						_wsplitpath( m_pTypeData->m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
+						_wsplitpath( m_pTypeData->m_KeyHelpArr[i].m_szPath, nullptr, nullptr, szFile, nullptr );
 						m_cTipWnd.m_cInfo.AppendString( szFile );
 					}
 					m_cTipWnd.m_cInfo.AppendString( L"\n" );
@@ -220,7 +220,7 @@ bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
 	CLayoutYInt nTipBeginLine = ptNew.y;
 	CLayoutYInt nTipEndLine = ptNew.y + CLayoutYInt(4);
 	for( CLayoutYInt nCurLine = nTipBeginLine; nCurLine < nTipEndLine; nCurLine++ ){
-		const CLayout* pcLayout = NULL;
+		const CLayout* pcLayout = nullptr;
 		if( 0 <= nCurLine ){
 			pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nCurLine );
 		}
@@ -299,7 +299,7 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 	}else{
 		const CLayout*	pcLayout;
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
-		if( NULL != pLine ){
+		if( nullptr != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
 			nIdx = LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 
@@ -308,8 +308,8 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 				GetCaret().GetCaretLayoutPos().GetY2(),
 				nIdx,
 				&sRange,
-				NULL,
-				NULL
+				nullptr,
+				nullptr
 			);
 			if( bWhere ){
 				/* 選択範囲の変更 */
@@ -449,7 +449,7 @@ int CEditView::IsSearchString(
 	else if( m_sCurSearchOption.bWordOnly ) { // 単語検索
 		/* 指定位置の単語の範囲を調べる */
 		CLogicInt posWordHead, posWordEnd;
-		if( ! CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &posWordHead, &posWordEnd, NULL, NULL ) ) {
+		if( ! CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &posWordHead, &posWordEnd, nullptr, nullptr ) ) {
 			return 0; // 指定位置に単語が見つからなかった。
  		}
 		if( nPos != posWordHead ) {
@@ -466,7 +466,7 @@ int CEditView::IsSearchString(
 		const wchar_t* const searchKeyEnd = m_strCurSearchKey.data() + m_strCurSearchKey.size();
 		for( const wchar_t* p = m_strCurSearchKey.data(); p < searchKeyEnd; ) {
 			CLogicInt begin, end; // 検索語に含まれる単語?の位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
-			if( CWordParse::WhereCurrentWord_2( p, CLogicInt(searchKeyEnd - p), CLogicInt(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, NULL, NULL )
+			if( CWordParse::WhereCurrentWord_2( p, CLogicInt(searchKeyEnd - p), CLogicInt(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, nullptr, nullptr )
 				&& begin == 0 && begin < end
 			) {
 				if( ! WCODE::IsWordDelimiter( *p ) ) {

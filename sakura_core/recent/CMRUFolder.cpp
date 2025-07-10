@@ -121,7 +121,7 @@ void CMRUFolder::ClearAll()
 */
 void CMRUFolder::Add( const WCHAR* pszFolder )
 {
-	if( NULL == pszFolder
+	if( nullptr == pszFolder
 	 || pszFolder[0] == L'\0' )
 	{	//	長さが0なら排除。
 		return;
@@ -133,7 +133,7 @@ void CMRUFolder::Add( const WCHAR* pszFolder )
 		for( int i = 0 ; i < nSize; i++ ){
 			WCHAR szExceptMRU[_MAX_PATH];
 			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
-			if( NULL != wcsistr( pszFolder, szExceptMRU ) ){
+			if( nullptr != wcsistr( pszFolder, szExceptMRU ) ){
 				return;
 			}
 		}
