@@ -351,36 +351,6 @@ void CGraphics::ClearBrush()
 	m_vBrushes.resize(t_min(1,(int)m_vBrushes.size()));
 }
 
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           直線                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//$$note:高速化
-void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
-{
-	COLORREF c = GetPenColor();
-	int my = t_unit(y2 - y1) * 2;
-	int mx = t_unit(x2 - x1) * 2;
-	if(!mx && !my)return;
-	int x = x1;
-	int y = y1;
-	if(!mx && !my)return;
-	for (;;) {
-		//点描画
-		ApiWrap::SetPixelSurely(m_hdc,x,y,c);
-
-		//進める
-		x+=mx;
-		y+=my;
-
-		//条件判定
-		if(mx>0 && x>=x2)break;
-		if(mx<0 && x<=x2)break;
-		if(my>0 && y>=y2)break;
-		if(my<0 && y<=y2)break;
-	}
-}
-
 // ドロップ先矩形描画用のリージョンを作成する
 static HRGN CreateDropRectRgn(LPCRECT lpRect, SIZE size)
 {
