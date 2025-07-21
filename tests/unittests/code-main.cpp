@@ -6,20 +6,6 @@
 */
 #include "pch.h"
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif /* #ifndef NOMINMAX */
-
-#include <tchar.h>
-#include <Windows.h>
-
-#include <algorithm>
-#include <cstdio>
-#include <iostream>
-#include <regex>
-#include <string>
-#include <string_view>
-
 #include "basis/primitive.h"
 #include "util/string_ex.h"
 #include "StartEditorProcessForTest.h"
@@ -85,8 +71,21 @@ static void InvokeWinMainIfNeeded(std::wstring_view commandLine)
  * テストモジュールのエントリポイント
  */
 int wmain(int argc, wchar_t **argv) {
+
+	// テスト実行時のロケールは日本語に固定する
+	const auto langId = MAKELANGID(LANG_JAPANESE, SUBLANG_DEFAULT);
+	const auto lcid = MAKELCID(langId, SORT_DEFAULT);
+	SetThreadUILanguage(lcid);	// スレッドのUI言語を変更
+
 	// コマンドラインに -PROF 指定がある場合、wWinMainを起動して終了する。
 	InvokeWinMainIfNeeded(::GetCommandLineW());
+
+	// LCIDからロケール名を取得（"ja-JP"が取れる）
+	StaticString<LOCALE_NAME_MAX_LENGTH> szLocaleName;
+	LCIDToLocaleName(lcid, szLocaleName, szLocaleName.Length(), NULL);
+
+	// Cロケールも変更
+	_wsetlocale(LC_ALL, szLocaleName);
 
 	// WinMainを起動しない場合、標準のgmock_main同様の処理を実行する。
 	// InitGoogleMock は Google Test の初期化も行うため、InitGoogleTest を別に呼ぶ必要はない。

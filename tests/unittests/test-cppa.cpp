@@ -27,8 +27,6 @@ TEST(CPPA, GetDllNameImp)
  */
 TEST(CPPA, GetDeclarations)
 {
-	setlocale(LC_ALL, "Japanese");
-
 	CPPA cPpa;
 
 	// バッファ

@@ -148,7 +148,7 @@ $(exe): $(OBJS) $(SAKURA_OBJS)
 
 $(OBJS):
 
-tests1_rc.o: tests1_rc.rc.utf8 $(sakura_rc) resources.ja-JP.zip resources.en-US.zip
+tests1_rc.o: tests1_rc.rc.utf8 $(sakura_rc) resources.ja-JP.zip
 	$(RC) -c utf-8 -I. -I$(SRCDIR) $(DEFINES) $< -o $@
 
 tests1_rc.rc.utf8: tests1_rc.rc
