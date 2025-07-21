@@ -82,7 +82,7 @@ int wmain(int argc, wchar_t **argv) {
 
 	// LCIDからロケール名を取得（"ja-JP"が取れる）
 	StaticString<LOCALE_NAME_MAX_LENGTH> szLocaleName;
-	LCIDToLocaleName(lcid, szLocaleName, szLocaleName.Length(), NULL);
+	LCIDToLocaleName(lcid, szLocaleName, szLocaleName.Length(), 0);
 
 	// Cロケールも変更
 	_wsetlocale(LC_ALL, szLocaleName);
