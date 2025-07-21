@@ -50,119 +50,6 @@ CStringRef::CStringRef( const CNativeW& cmem ) noexcept
 	return 0;
 }
 
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               コンストラクタ・デストラクタ                  //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//! nDataLenは文字単位。
-CNativeW::CNativeW( const wchar_t* pData, size_t nDataLen )
-{
-	SetString( pData, nDataLen );
-}
-
-CNativeW::CNativeW( const wchar_t* pData )
-{
-	SetString(pData);
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ネイティブ設定インターフェース                 //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-// バッファの内容を置き換える
-void CNativeW::SetString( const wchar_t* pData, size_t nDataLen )
-{
-	SetRawData( pData,nDataLen * sizeof(wchar_t) );
-}
-
-// バッファの内容を置き換える
-void CNativeW::SetString( const wchar_t* pszData )
-{
-	if( pszData != nullptr ){
-		std::wstring_view data(pszData);
-		SetString( data.data(), data.length() );
-	}else{
-		Reset();
-	}
-}
-
-void CNativeW::SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen )
-{
-	SetRawDataHoldBuffer( pData, nDataLen * sizeof(wchar_t) );
-}
-
-// バッファの内容を置き換える
-void CNativeW::SetNativeData( const CNativeW& cNative )
-{
-	SetRawData( cNative );
-}
-
-//! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
-void CNativeW::AllocStringBuffer( size_t nDataLen )
-{
-	AllocBuffer( nDataLen * sizeof(wchar_t) );
-}
-
-//! バッファの最後にデータを追加する。nLengthは文字単位。
-void CNativeW::AppendString( const wchar_t* pszData, size_t nDataLen )
-{
-	AppendRawData( pszData, nDataLen * sizeof(wchar_t) );
-}
-
-//! バッファの最後にデータを追加する
-void CNativeW::AppendString( std::wstring_view data )
-{
-	AppendString( data.data(), data.length() );
-}
-
-/*!
- * バッファの最後にデータを追加する (フォーマット機能付き)
- *
- * @param format フォーマット書式文字列
- * @param va_args C-style の可変長引数
- * @throws std::invalid_argument formatが無効値
- * @throws std::bad_alloc メモリ確保に失敗
- * @remark 不正なフォーマットを指定すると無効なパラメータ例外で即死します。
- */
-void CNativeW::AppendStringF( std::wstring_view format, ... )
-{
-	// _vscwprintf に NULL を渡してはならないので除外する
-	if( format.empty() ){
-		throw std::invalid_argument( "format can't be empty" );
-	}
-
-	// 可変長引数のポインタを取得
-	va_list v;
-	va_start( v, format );
-
-	// 整形によって追加される文字数をカウント
-	const int additional = ::_vscwprintf( format.data(), v );
-
-	// 現在の文字列長を取得
-	const auto currentLength = GetStringLength();
-
-	// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
-	const auto newCapacity = currentLength + additional;
-	AllocStringBuffer( newCapacity );
-
-	int added = 0;
-	if( additional > 0 ){
-		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-		added = ::_vsnwprintf_s( &GetStringPtr()[currentLength], static_cast<unsigned>(additional) + 1, _TRUNCATE, format.data(), v );
-	}
-
-	// 可変長引数のポインタを解放
-	va_end( v );
-
-	// 文字列終端を再設定する
-	_SetStringLength( currentLength + added );
-}
-
-//! バッファの最後にデータを追加する
-void CNativeW::AppendNativeData( const CNativeW& cmemData )
-{
-	AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
-}
-
 /*!
  * 指定した文字列を連結した文字列バッファを作成する
  *
@@ -189,21 +76,8 @@ CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false)
 CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
 {
 	CNativeW tmp(lhs);
-	return tmp + rhs;
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ネイティブ取得インターフェース                 //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-// GetAt()と同機能
-[[nodiscard]] wchar_t CNativeW::operator[]( size_t nIndex ) const
-{
-	if( nIndex < static_cast<size_t>(GetStringLength()) ){
-		return GetStringPtr()[nIndex];
-	}else{
-		return 0;
-	}
+	tmp += rhs;
+	return tmp;
 }
 
 /*!

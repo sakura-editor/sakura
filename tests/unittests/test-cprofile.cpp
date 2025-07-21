@@ -312,10 +312,11 @@ TEST(StringBufferW, init001)
 
 	// ASSERT
 	EXPECT_THAT(szText.c_str(), lf.lfFaceName);
-	EXPECT_THAT(szText.capacity(), std::size(lf.lfFaceName));
-
-	// ASSERT
-	EXPECT_THAT(szText.c_str(), StrEq(L"初期値"));
+	EXPECT_THAT(szText.size(), std::size(lf.lfFaceName));
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(LPWSTR(szText), StrEq(L"初期値"));
+	EXPECT_THAT(LPCWSTR(szText), StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
 }
 
 /*!
@@ -332,7 +333,7 @@ TEST(StringBufferW, init002)
 
 	// ASSERT
 	EXPECT_THAT(szText.c_str(), lf.lfFaceName);
-	EXPECT_THAT(szText.capacity(), std::size(lf.lfFaceName));
+	EXPECT_THAT(szText.size(), std::size(lf.lfFaceName));
 }
 
 /*!
@@ -360,7 +361,556 @@ TEST(StringBufferW, assign001)
 	buf = L"ＭＳ ゴシック";
 
 	// ASSERT
-	EXPECT_THAT(buf.c_str(), StrEq(L"ＭＳ ゴシック"));
+	EXPECT_THAT(buf, StrEq(L"ＭＳ ゴシック"));
+}
+
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列ポインタを代入する
+ */
+TEST(StringBufferW, assign002)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText = L"test";
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"test"));
+	EXPECT_THAT(szText.length(), 4);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列を代入する
+ */
+TEST(StringBufferW, assign003)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText = L"test"s;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"test"));
+	EXPECT_THAT(szText.length(), 4);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列参照を代入する
+ */
+TEST(StringBufferW, assign004)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText = L"test"sv;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"test"));
+	EXPECT_THAT(szText.length(), 4);
+
+	// ACT
+	szText = std::wstring_view(szText, 1);
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"t"));
+	EXPECT_THAT(szText.length(), 1);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 1文字を代入する
+ */
+TEST(StringBufferW, assign005)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText = L'a';
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"a"));
+	EXPECT_THAT(szText.length(), 1);
+	EXPECT_THAT(szText[0], L'a');
+	EXPECT_THAT(szText[1], L'\0');
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列を代入する
+ */
+TEST(StringBufferW, assign006)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+	SString<4> szAlt = L"設定値";
+
+	// ACT
+	szText = szAlt;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(std::wstring(szAlt)));
+	EXPECT_THAT(szText.length(), szAlt.length());
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * nullptrを代入する
+ */
+TEST(StringBufferW, assign101)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText = nullptr;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L""));
+	EXPECT_THAT(szText.length(), 0);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列ポインタを代入する(値がnullptr)
+ */
+TEST(StringBufferW, assign102)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+	LPCWSTR pszNull = nullptr;
+
+	// ACT
+	szText = pszNull;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L""));
+	EXPECT_THAT(szText.length(), 0);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列参照を代入する(サイズオーバー)
+ */
+TEST(StringBufferW, assign104)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+
+	// ACT
+	szText = L"設定値1"sv;
+	
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"設定値"));
+	EXPECT_THAT(szText.length(), 3);
+
+	// ACT2
+	EXPECT_EQ(STRUNCATE, szText.assign(L"設定値1"sv));
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"設定値"));
+	EXPECT_THAT(szText.length(), 3);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列ポインタを追加する
+ */
+TEST(StringBufferW, append002)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText += L"よん♪";
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値よん♪"));
+	EXPECT_THAT(szText.length(), 6);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列を追加する
+ */
+TEST(StringBufferW, append003)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText += L"よん♪"s;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値よん♪"));
+	EXPECT_THAT(szText.length(), 6);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列参照タを追加する
+ */
+TEST(StringBufferW, append004)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText += L"よん♪"sv;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値よん♪"));
+	EXPECT_THAT(szText.length(), 6);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に1文字を追加する
+ */
+TEST(StringBufferW, append005)
+{
+	// ARRANGE
+	LOGFONT lf{};
+	wcscpy_s(lf.lfFaceName, L"初期値");
+	auto szText = StringBufferW(lf.lfFaceName);
+
+	// ACT
+	szText += L't';
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値t"));
+	EXPECT_THAT(szText.length(), 4);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾にnullptrを追加する
+ */
+TEST(StringBufferW, append101)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+
+	// ACT
+	szText += nullptr;	// SALによりコンパイラ警告が発生する
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+
+	// ACT & ASSERT
+	EXPECT_THAT(szText.append(nullptr), EINVAL);
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列ポインタを追加する(値がnullptr)
+ */
+TEST(StringBufferW, append102)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+	LPCWSTR pszNull = nullptr;
+
+	// ACT
+	szText += pszNull;	// SALによりコンパイラ警告が発生する
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+
+	// ACT & ASSERT
+	EXPECT_THAT(szText.append(pszNull), EINVAL);
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列を追加する(値が空文字)
+ */
+TEST(StringBufferW, append103)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+
+	// ACT
+	szText += L""s;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+
+	// ACT & ASSERT
+	EXPECT_THAT(szText.append(L""s), EINVAL);
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列参照を追加する(サイズオーバー)
+ */
+TEST(StringBufferW, append203)
+{
+	// ARRANGE
+	SString<4> szBase = L"ザクⅡ";
+	auto szText = StringBufferW(szBase);
+
+	// ACT & ASSERT
+	EXPECT_THAT(szText.append(L"Ⅱ MS-06F"s), STRUNCATE);
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"ザクⅡ"));
+	EXPECT_THAT(szText.length(), 3);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列ポインタを追加する(途中にNULを含む)
+ */
+TEST(StringBufferW, append202)
+{
+	 // ARRANGE
+	 SString<4> szBase = L"t";
+	 auto szText = StringBufferW(szBase);
+
+	// ACT
+	szText += L"e\0t";
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"te"));
+	EXPECT_THAT(szText.length(), 2);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 末尾に文字列参照を追加する(途中にNULを含む)
+ */
+TEST(StringBufferW, append204)
+{
+	 // ARRANGE
+	 SString<4> szBase = L"t";
+	 auto szText = StringBufferW(szBase);
+
+	// ACT
+	szText += L"e\0t"sv;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"te"));
+	EXPECT_THAT(szText.length(), 2);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列長を計算する
+ */
+TEST(StringBufferW, length)
+{
+	 // ARRANGE
+	 SString<4> szBase = L"初期値";
+	 auto szText = StringBufferW(szBase);
+	 const wchar_t dummy = 0x2025;
+
+	 // ASSERT
+	 EXPECT_EQ(szText.data()[3], 0);
+	 EXPECT_EQ(szText.length(), 3);
+
+	 // ACT(領域全体にゴミ投入)
+	 auto_memset(szText.data(), dummy, int(std::size(szText)));
+
+	 // ASSERT
+	 EXPECT_EQ(szText.data()[3], dummy);
+	 EXPECT_EQ(szText.length(), 0);
+
+	 // ACT(NUL終端する)
+	 szText[2] = 0;
+
+	 // ASSERT
+	 EXPECT_EQ(szText.length(), 2);
+	 EXPECT_EQ(szText.data()[3], dummy);
+
+	 // ACT
+	 szText = dummy;
+
+	 // ASSERT
+	 EXPECT_EQ(szText.length(), 1);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 文字列が空かどうか判定する
+ */
+TEST(StringBufferW, empty)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+
+	// ASSERT
+	EXPECT_FALSE(szText.empty());
+
+	// ACT
+	szText = nullptr;
+
+	// ASSERT
+	EXPECT_TRUE(szText.empty());
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ */
+TEST(StringBufferW, constAt)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	const auto szText = StringBufferW(szBase);
+
+	// ASSERT
+	EXPECT_THAT(szText.at(0), L'初');
+	EXPECT_THAT(szText.at(1), L'期');
+	EXPECT_THAT(szText.at(2), L'値');
+	EXPECT_THAT(szText.at(3), '\0');
+
+	EXPECT_THROW({ szText.at(4); }, std::out_of_range);
+	EXPECT_THROW({ szText.at(5); }, std::out_of_range);
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 添え字演算子
+ */
+TEST(StringBufferW, subscriptOperator001)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+
+	// ASSERT
+	EXPECT_THAT(szText[0], L'初');
+	EXPECT_THAT(szText[1], L'期');
+	EXPECT_THAT(szText[2], L'値');
+	EXPECT_THAT(szText[3], '\0');
+	EXPECT_THAT(szText[4], '\0');
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ * 
+ * 添え字演算子
+ */
+TEST(StringBufferW, constSubscriptOperator001)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	const auto szText = StringBufferW(szBase);
+
+	// ASSERT
+	EXPECT_THAT(szText[0], L'初');
+	EXPECT_THAT(szText[1], L'期');
+	EXPECT_THAT(szText[2], L'値');
+	EXPECT_THAT(szText[3], '\0');
+	EXPECT_THAT(szText[4], '\0');
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ *
+ * 文字列参照型に変換する
+ */
+TEST(StringBufferW, toStringView)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+
+	// ASSERT
+	EXPECT_THAT(std::wstring_view(szText), StrEq(L"初期値"));
+}
+
+/*!
+ * @brief StringBufferWのテスト
+ *
+ * ファイルパス型に変換する
+ */
+TEST(StringBufferW, toFilePath)
+{
+	// ARRANGE
+	SString<4> szBase = L"初期値";
+	auto szText = StringBufferW(szBase);
+
+	// ACT
+	auto path = std::filesystem::path(szText);
+
+	// ASSERT
+	EXPECT_FALSE(path.empty());
+
+	// ACT
+	szText = nullptr;
+	path = std::filesystem::path(szText);
+
+	// ASSERT
+	EXPECT_TRUE(path.empty());
 }
 
 } // namespace mystring

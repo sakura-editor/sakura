@@ -10,6 +10,8 @@
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
+#include "mem/CNativeA.h"
+
 namespace mystring {
 
 /*!
@@ -331,8 +333,8 @@ TEST(CNativeW, AppendStringWithFormatting)
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
 
 	// フォーマットに NULL を渡したケースをテストする
-	ASSERT_THROW(value.AppendStringF(std::wstring_view(NULL, 0)), std::invalid_argument);
-	ASSERT_THROW(value.AppendStringF(std::wstring_view(L"ダミー", 0)), std::invalid_argument);
+	EXPECT_THROW(value.AppendStringF(nullptr, 100), std::invalid_argument);
+	EXPECT_THROW(value.AppendStringF(L"", 100), std::invalid_argument);
 
 	// 文字列長を0にして、追加確保が行われないケースをテストする
 	value = L"いちご100%"; //テスト前の初期値(念のため再代入しておく
@@ -938,6 +940,828 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 
 	// 対処方法 関数コメントにある仕様通りに修正する。
 	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 引数なしで初期化する
+ */
+TEST(CNativeW, init001)
+{
+	// ACT
+	CNativeW buf;
+
+	// ASSERT
+	EXPECT_THAT(buf.data(), nullptr);
+	EXPECT_THAT(buf.c_str(), nullptr);
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+	EXPECT_THAT(buf.Length(), 0);
+	EXPECT_THAT(buf.GetStringLength(), 0);
+	EXPECT_THAT(buf.empty(), IsTrue());
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列ポインタで初期化する
+ */
+TEST(CNativeW, init002)
+{
+	// ARRANGE
+	constexpr auto& initialValue = L"初期値";
+
+	// ACT
+	CNativeW buf(initialValue);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"初期値"));
+	EXPECT_THAT(buf.data(), StrEq(L"初期値"));
+	EXPECT_THAT(buf.c_str(), StrEq(L"初期値"));
+	EXPECT_THAT(buf.GetStringPtr(), StrEq(L"初期値"));
+	EXPECT_THAT(buf.length(), 3);
+	EXPECT_THAT(buf.Length(), 3);
+	EXPECT_THAT(buf.GetStringLength(), 3);
+	EXPECT_THAT(buf.empty(), IsFalse());
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列で初期化する
+ */
+TEST(CNativeW, init003)
+{
+	// ACT
+	CNativeW buf(L"初期値"s);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"初期値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列参照で初期化する
+ */
+TEST(CNativeW, init004)
+{
+	// ACT
+	CNativeW buf(L"初期値"sv);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"初期値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列ポインタで初期化する(値がnullptr)
+ */
+TEST(CNativeW, init101)
+{
+	// ACT
+	CNativeW buf = nullptr;
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列ポインタで初期化する
+ */
+TEST(CNativeW, init102)
+{
+	// ACT
+	CNativeW buf(nullptr);
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ */
+TEST(CNativeW, SetString001)
+{
+	// ARRANGE
+	constexpr auto& initialValue = L"初期値";
+	CNativeW buf(initialValue);
+
+	// ACT
+	buf = L"設定値";
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"設定値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列ポインタを代入する
+ */
+TEST(CNativeW, SetString002)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+
+	// ACT
+	buf = L"設定値";
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"設定値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列を代入する
+ */
+TEST(CNativeW, SetString003)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+
+	// ACT
+	buf = L"設定値"s;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"設定値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列参照を代入する
+ */
+TEST(CNativeW, SetString004)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+
+	// ACT
+	buf = L"設定値"sv;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"設定値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 1文字を代入する
+ */
+TEST(CNativeW, SetString005)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+
+	// ACT
+	buf = L'a';
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"a"));
+	EXPECT_THAT(buf.length(), 1);
+	EXPECT_EQ(buf[0], L'a');
+	EXPECT_EQ(buf[1], L'\0');
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * ネイティブデータ(?)を代入する
+ */
+TEST(CNativeW, SetString006)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+	CNativeW rhs = L"設定値";
+
+	// ACT
+	buf = rhs;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"設定値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * nullptrを代入する
+ */
+TEST(CNativeW, SetString101)
+{
+	// ARRANGE
+	constexpr auto& initialValue = L"初期値";
+	CNativeW buf(initialValue);
+
+	// ACT
+	buf = nullptr;
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列ポインタを代入する(値がnullptr)
+ */
+TEST(CNativeW, SetString102)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+	LPCWSTR pszNull = nullptr;
+
+	// ACT
+	buf = pszNull;
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 末尾に文字列ポインタを追加する
+ */
+TEST(CNativeW, AppendString002)
+{
+	// ARRANGE
+	CNativeW buf = L"te";
+
+	// ACT
+	buf += L"st";
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 末尾に文字列を追加する
+ */
+TEST(CNativeW, AppendString003)
+{
+	// ARRANGE
+	CNativeW buf = L"te";
+
+	// ACT
+	buf += L"st"s;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 末尾に文字列参照タを追加する
+ */
+TEST(CNativeW, AppendString004)
+{
+	// ARRANGE
+	CNativeW buf = L"te";
+
+	// ACT
+	buf += L"st"sv;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 末尾に1文字を追加する
+ */
+TEST(CNativeW, AppendString005)
+{
+	// ARRANGE
+	CNativeW buf = L"tes";
+
+	// ACT
+	buf += L't';
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 末尾にnullptrを追加する
+ */
+TEST(CNativeW, AppendString101)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+
+	// ACT
+	buf += nullptr;	// SALによりコンパイラ警告が発生する
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"初期値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 末尾に文字列ポインタを追加する(値がnullptr)
+ */
+TEST(CNativeW, AppendString102)
+{
+	// ARRANGE
+	CNativeW buf = L"初期値";
+	LPCWSTR pszNull = nullptr;
+
+	// ACT
+	buf += pszNull;	// SALによりコンパイラ警告が発生する
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq(L"初期値"));
+	EXPECT_THAT(buf.length(), 3);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 末尾に文字列参照を追加する(途中にNULを含む)
+ */
+TEST(CNativeW, AppendString204)
+{
+	// ARRANGE
+	CNativeW buf(L"\0t"sv);
+
+	// ASSERT
+	EXPECT_THAT(std::wstring_view(buf), Eq(L"\0t"sv));
+	EXPECT_THAT(buf.length(), 2);
+
+	// ACT
+	buf += L"\0e"sv;
+
+	// ASSERT
+	EXPECT_THAT(std::wstring_view(buf), Eq(L"\0t\0e"sv));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeWのテスト
+ *
+ * 文字列が空かどうか判定する
+ */
+TEST(CNativeW, empty)
+{
+	// ARRANGE
+	CNativeW buf = L"test";
+
+	// ASSERT
+	EXPECT_FALSE(buf.empty());
+
+	// ACT
+	buf = nullptr;
+
+	// ASSERT
+	EXPECT_TRUE(buf.empty());
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 引数なしで初期化する
+ */
+TEST(CNativeA, init001)
+{
+	// ACT
+	CNativeA buf;
+
+	// ASSERT
+	EXPECT_THAT(buf.data(), nullptr);
+	EXPECT_THAT(buf.c_str(), nullptr);
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+	EXPECT_THAT(buf.Length(), 0);
+	EXPECT_THAT(buf.GetStringLength(), 0);
+	EXPECT_THAT(buf.empty(), IsTrue());
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列ポインタで初期化する
+ */
+TEST(CNativeA, init002)
+{
+	// ARRANGE
+	constexpr auto& initialValue = "初期値";
+
+	// ACT
+	CNativeA buf(initialValue);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("初期値"));
+	EXPECT_THAT(buf.data(), StrEq("初期値"));
+	EXPECT_THAT(buf.c_str(), StrEq("初期値"));
+	EXPECT_THAT(buf.GetStringPtr(), StrEq("初期値"));
+	EXPECT_THAT(buf.length(), 6);
+	EXPECT_THAT(buf.Length(), 6);
+	EXPECT_THAT(buf.GetStringLength(), 6);
+	EXPECT_THAT(buf.empty(), IsFalse());
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列で初期化する
+ */
+TEST(CNativeA, init003)
+{
+	// ACT
+	CNativeA buf("初期値"s);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("初期値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列参照で初期化する
+ */
+TEST(CNativeA, init004)
+{
+	// ACT
+	CNativeA buf("初期値"sv);
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("初期値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列ポインタで初期化する(値がnullptr)
+ */
+TEST(CNativeA, init101)
+{
+	// ACT
+	CNativeA buf = nullptr;
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列ポインタで初期化する
+ */
+TEST(CNativeA, init102)
+{
+	// ACT
+	CNativeA buf(nullptr);
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ */
+TEST(CNativeA, SetString001)
+{
+	// ARRANGE
+	constexpr auto& initialValue = "初期値";
+	CNativeA buf(initialValue);
+
+	// ACT
+	buf = "設定値";
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("設定値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列ポインタを代入する
+ */
+TEST(CNativeA, SetString002)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+
+	// ACT
+	buf = "設定値";
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("設定値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列を代入する
+ */
+TEST(CNativeA, SetString003)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+
+	// ACT
+	buf = "設定値"s;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("設定値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列参照を代入する
+ */
+TEST(CNativeA, SetString004)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+
+	// ACT
+	buf = "設定値"sv;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("設定値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 1文字を代入する
+ */
+TEST(CNativeA, SetString005)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+
+	// ACT
+	buf = 'a';
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("a"));
+	EXPECT_THAT(buf.length(), 1);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * ネイティブデータ(?)を代入する
+ */
+TEST(CNativeA, SetString006)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+	CNativeA rhs = "設定値";
+
+	// ACT
+	buf = rhs;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("設定値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * nullptrを代入する
+ */
+TEST(CNativeA, SetString101)
+{
+	// ARRANGE
+	constexpr auto& initialValue = "初期値";
+	CNativeA buf(initialValue);
+
+	// ACT
+	buf = nullptr;
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列ポインタを代入する(値がnullptr)
+ */
+TEST(CNativeA, SetString102)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+	LPCSTR pszNull = nullptr;
+
+	// ACT
+	buf = pszNull;
+
+	// ASSERT
+	EXPECT_THAT(buf.GetStringPtr(), nullptr);
+	EXPECT_THAT(buf.length(), 0);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾に文字列ポインタを追加する
+ */
+TEST(CNativeA, AppendString002)
+{
+	// ARRANGE
+	CNativeA buf = "te";
+
+	// ACT
+	buf += "st";
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾に文字列を追加する
+ */
+TEST(CNativeA, AppendString003)
+{
+	// ARRANGE
+	CNativeA buf = "te";
+
+	// ACT
+	buf += "st"s;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾に文字列参照タを追加する
+ */
+TEST(CNativeA, AppendString004)
+{
+	// ARRANGE
+	CNativeA buf = "te";
+
+	// ACT
+	buf += "st"sv;
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾に1文字を追加する
+ */
+TEST(CNativeA, AppendString005)
+{
+	// ARRANGE
+	CNativeA buf = "tes";
+
+	// ACT
+	buf += 't';
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("test"));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾にnullptrを追加する
+ */
+TEST(CNativeA, AppendString101)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+
+	// ACT
+	buf += nullptr;	// SALによりコンパイラ警告が発生する
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("初期値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾に文字列ポインタを追加する(値がnullptr)
+ */
+TEST(CNativeA, AppendString102)
+{
+	// ARRANGE
+	CNativeA buf = "初期値";
+	LPCSTR pszNull = nullptr;
+
+	// ACT
+	buf += pszNull;	// SALによりコンパイラ警告が発生する
+
+	// ASSERT
+	EXPECT_THAT(buf, StrEq("初期値"));
+	EXPECT_THAT(buf.length(), 6);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾に文字列参照を追加する(途中にNULを含む)
+ */
+TEST(CNativeA, AppendString204)
+{
+	// ARRANGE
+	CNativeA buf("\0t"sv);
+
+	// ASSERT
+	EXPECT_THAT(std::string_view(buf), Eq("\0t"sv));
+	EXPECT_THAT(buf.length(), 2);
+
+	// ACT
+	buf += "\0e"sv;
+
+	// ASSERT
+	EXPECT_THAT(std::string_view(buf), Eq("\0t\0e"sv));
+	EXPECT_THAT(buf.length(), 4);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 末尾に文字列を追加する(フォーマット付き)
+ */
+TEST(CNativeA, AppendStringF001)
+{
+	CNativeA value;
+	value.AppendStringF("いちご%d%%", 100);
+	EXPECT_THAT(value.GetStringPtr(), StrEq("いちご100%"));
+
+	// フォーマットに NULL を渡したケースをテストする
+	EXPECT_THROW(value.AppendStringF(nullptr, 100), std::invalid_argument);
+	EXPECT_THROW(value.AppendStringF("", 100), std::invalid_argument);
+}
+
+/*!
+ * @brief CNativeAのテスト
+ *
+ * 文字列が空かどうか判定する
+ */
+TEST(CNativeA, empty)
+{
+	// ARRANGE
+	CNativeA buf = "test";
+
+	// ASSERT
+	EXPECT_FALSE(buf.empty());
+
+	// ACT
+	buf = nullptr;
+
+	// ASSERT
+	EXPECT_TRUE(buf.empty());
 }
 
 } // namespace mystring
