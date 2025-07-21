@@ -10,6 +10,8 @@
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
+namespace mystring {
+
 /*!
 	CStringRefのテスト
  */
@@ -937,3 +939,5 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 	// 対処方法 関数コメントにある仕様通りに修正する。
 	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
 }
+
+} // namespace mystring
