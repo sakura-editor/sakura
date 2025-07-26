@@ -247,7 +247,6 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 			strcpy( szArguments[i], "u0: Unknown" );
 		}
 	}
-	std::filesystem::path funcName(cMacroFuncInfo.m_pszFuncName);
 	if ( i > 0 ){	//	引数があったとき
 		int j;
 		char szArgument[8*20];
@@ -257,18 +256,18 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 			strcat( szArgument, "; " );
 			strcat( szArgument, szArguments[j] );
 		}
-		auto_sprintf( szBuffer, "%hs S_%hs(%hs)%hs; index %d;",
+		auto_sprintf( szBuffer, "%hs S_%ls(%hs)%hs; index %d;",
 			szType,
-			funcName.string().c_str(),
+			cMacroFuncInfo.m_pszFuncName,
 			szArgument,
 			szReturn,
 			cMacroFuncInfo.m_nFuncID
 		);
 	}
 	else {
-		auto_sprintf( szBuffer, "%hs S_%hs%hs; index %d;",
+		auto_sprintf( szBuffer, "%hs S_%ls%hs; index %d;",
 			szType,
-			funcName.string().c_str(),
+			cMacroFuncInfo.m_pszFuncName,
 			szReturn,
 			cMacroFuncInfo.m_nFuncID
 		);
