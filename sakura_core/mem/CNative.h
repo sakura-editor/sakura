@@ -14,7 +14,7 @@
 #include "util/string_ex.h"
 
 /*!
- * 文字列バッファ管理クラス
+ * 文字列バッファ管理クラステンプレート
  *
  * ヒープメモリにバッファ領域を確保する
  * ※CMemoryをprotect継承することにより、あまり自由にCMemoryを使えないようにしておく
@@ -33,42 +33,101 @@ public:
 	using string_type = std::basic_string<char_type>;
 	using string_view_type = std::basic_string_view<char_type>;
 
+	/*!
+	 * デフォルトコンストラクタ
+	 *
+	 * メモリを確保せずに構築。
+	 */
 	CNative() noexcept = default;
 
+	/*!
+	 * 文字列ポインタとサイズを指定して構築。
+	 */
 	CNative(
 		_In_reads_(cchData)
-		const char_type* pData,
-		size_t cchData)
+		const char_type*	pData,	//!< [in] 文字列ポインタ
+		size_t				cchData	//!< [in] 文字数
+	)
 	{
+		// CMemory派生クラスにはメンバー追加禁止
+		static_assert(sizeof(Me) == sizeof(CMemory));
+
 		SetString(pData, cchData);
 	}
 
+	//! 文字列参照を指定して構築。
 	explicit CNative(string_view_type rhs) { SetString(rhs.data(), rhs.length()); }
 
+	/*!
+	 * 文字列ポインタを指定して構築。
+	 *
+	 * 以下のような記述をできるようにexplicitは付けない。
+	 * CNativeW buf = L"value";
+	 */
 	/* implicit */ CNative(_In_opt_z_ const char_type* pszData) { SetString(pszData); }
-	/* implicit */ CNative(const string_type& rhs) { SetString(rhs.data(), rhs.length()); }
-
-	CMemory*       _GetMemory()       { return static_cast<CMemory*>(this); }       //<! CMemoryのポインタを取得（旧コード互換用）
-	const CMemory* _GetMemory() const { return static_cast<const CMemory*>(this); } //<! CMemoryのポインタを取得（旧コード互換用）
-
-	void _SetStringLength(size_t nLength) { _SetRawLength(nLength * sizeof(char_type)); }
 
 	/*!
-	 * (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
+	 * 文字列を指定して構築。
+	 *
+	 * 以下のような記述をできるようにexplicitは付けない。
+	 * CNativeW buf = L"value"s;
+	 * 
+	 * if (std::wsmatch m; std::regex_match(buf, m, std::wregex(LR"(^(val).*$)"))) {
+	 * 	CNativeW matched = m[1];
+	 * }
 	 */
-	void AllocStringBuffer(size_t nDataLen) {
-		AllocBuffer((nDataLen + 1) * sizeof(char_type));
+	/* implicit */ CNative(const string_type& rhs) { SetString(rhs.data(), rhs.length()); }
+
+	CMemory*       _GetMemory()       { return static_cast<CMemory*>(this); }       //<! CMemoryのポインタを取得（旧コード互換用、使用すべきでない）
+	const CMemory* _GetMemory() const { return static_cast<const CMemory*>(this); } //<! CMemoryのポインタを取得（旧コード互換用、使用すべきでない）
+
+	/*!
+	 * 文字列サイズを変更する。
+	 *
+	 * 指定した位置にNUL終端を書き込み、文字列サイズを変更する。
+	 * このメソッドはバッファサイズを変更しない。
+	 */
+	void _SetStringLength(
+		size_t newLength
+	)
+	{
+		_SetRawLength(newLength * sizeof(char_type));
 	}
 
-	void AppendString( _In_reads_( nDataLen ) const char_type* pData, size_t nDataLen ) { Base::AppendRawData( pData, nDataLen * sizeof( char_type ) ); }	//!< バッファの最後にデータを追加する。nLengthは文字単位。
+	/*!
+	 * バッファサイズの調整。
+	 *
+	 * 要求サイズに満たない場合バッファを拡張する。
+	 */
+	void AllocStringBuffer(
+		size_t required	//!< [in] 要求文字数
+	)
+	{
+		AllocBuffer((required + 1) * sizeof(char_type));
+	}
 
-	//! バッファの最後にデータを追加する
+	//! バッファの最後にデータを追加する。
+	void AppendString(
+		_In_reads_(cchData)
+		const char_type*	pData,	//!< [in] 文字列ポインタ
+		size_t				cchData	//!< [in] 文字数
+	)
+	{
+		Base::AppendRawData(pData, cchData * sizeof(char_type));
+	}
+
+	//! バッファの最後にデータを追加する。
 	void AppendString(_In_z_ const char_type* pszData) {
 		if (pszData) {
 			AppendString(pszData, auto_strlen(pszData));
 		}
 	}
 
+	/*!
+	 * バッファの最後に書式化したデータを追加する。
+	 *
+	 * 旧コードとの互換性のため残しておく。
+	 */
 	void AppendStringF(_In_z_ _Printf_format_string_ const char_type* pszFormat, ...)          //!< バッファの最後にデータを追加する (フォーマット機能付き)
 	{
 		// auto_vscprintf に NULL を渡してはならないので除外する
@@ -88,8 +147,11 @@ public:
 		// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
 		AllocStringBuffer(currentLength + additional);
 
-		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-		auto_vsprintf_s(data() + currentLength, additional + 1, pszFormat, v);
+		// バッファが有効な場合のみ、フォーマットを行う
+		if (data()) {
+			// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
+			auto_vsprintf_s(data() + currentLength, additional + 1, pszFormat, v);
+		}
 
 		va_end(v);
 
@@ -114,17 +176,17 @@ public:
 	size_t  length() const noexcept { return Base::length<char_type>(); }
 	int     Length() const noexcept { return int(length()); }
 
-	//! バッファの内容を置き換える。nDataLenは文字単位。
+	//! バッファの内容を置き換える。
 	void SetString(
-		_In_reads_(nDataLen)
-		const char_type* pData,
-		size_t nDataLen
+		_In_reads_(cchData)
+		const char_type*	pData,	//!< [in] 文字列ポインタ
+		size_t				cchData	//!< [in] 文字数
 	)
 	{
-		Base::SetRawData(pData, nDataLen * sizeof(char_type));
+		Base::SetRawData(pData, cchData * sizeof(char_type));
 	}
 
-	//! バッファの内容を置き換える
+	//! バッファの内容を置き換える。
 	void SetString(_In_opt_z_ const char_type* pszData) {
 		if (!pszData) {
 			Base::Reset();

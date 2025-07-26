@@ -66,13 +66,14 @@ public:
 	using Base::operator=;
 	using Base::operator+=;
 
-	void AppendNativeData(const Me& cNative) { AppendRawData(cNative.GetRawPtr(), cNative.GetRawLength()); }      //!< バッファの最後にデータを追加する
-
 	/*! メモリ確保済みかどうか */
 	[[nodiscard]] bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
 
-	void SetStringHoldBuffer(_In_reads_(nDataLen) const char_type* pData, size_t nDataLen) { Base::SetRawDataHoldBuffer(pData, nDataLen * sizeof(char_type)); }
-	void SetNativeData(const Me& cNative) { SetString(cNative.data(), cNative.length()); }	//!< バッファの内容を置き換える
+	void SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen );
+
+	//CNativeW
+	void SetNativeData( const CNativeW& cNative );						//!< バッファの内容を置き換える
+	void AppendNativeData( const CNativeW& cNative );					//!< バッファの最後にデータを追加する
 
 	//演算子
 	Me& operator += (const Me& rhs)			{ AppendNativeData(rhs); return *this; }
@@ -149,8 +150,5 @@ public:
 	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, int nIdx, bool bEnableExtEol )
 		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx, bEnableExtEol); }
 };
-
-// CMemory派生クラスにはメンバー追加禁止
-static_assert(sizeof(CNativeW) == sizeof(CMemory), "size check");
 
 #endif /* SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_ */

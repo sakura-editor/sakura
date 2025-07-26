@@ -50,6 +50,27 @@ CStringRef::CStringRef( const CNativeW& cmem ) noexcept
 	return 0;
 }
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//              ネイティブ設定インターフェース                 //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+void CNativeW::SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen )
+{
+	SetRawDataHoldBuffer( pData, nDataLen * sizeof(wchar_t) );
+}
+
+// バッファの内容を置き換える
+void CNativeW::SetNativeData( const CNativeW& cNative )
+{
+	SetRawData( cNative );
+}
+
+//! バッファの最後にデータを追加する
+void CNativeW::AppendNativeData( const CNativeW& cmemData )
+{
+	AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
+}
+
 /*!
  * 指定した文字列を連結した文字列バッファを作成する
  *

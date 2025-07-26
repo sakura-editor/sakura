@@ -70,7 +70,7 @@ public:
 	 * 配列拡張型からの暗黙変換を許容する。
 	 */
 	template <size_t N>
-	/* implicit */ TCharBuffer(SString<N, char_type>& buffer) noexcept
+	explicit TCharBuffer(SString<N, char_type>& buffer) noexcept
 		: m_Data(buffer)
 		, m_Size(std::size(buffer))
 	{
@@ -80,15 +80,13 @@ public:
 	 * 配列ラップ用コンストラクタ
 	 */
 	template <size_t N>
-	/* implicit */ TCharBuffer(char_type (&buffer)[N]) noexcept
+	explicit TCharBuffer(char_type (&buffer)[N]) noexcept
 		: m_Data(buffer)
 		, m_Size(std::size(buffer))
 	{
 	}
 
-	/*!
-	 * 末尾に文字列を追加する
-	 */
+	//! 文字列ポインタと文字数を指定して内容を拡張する。
 	errno_t append(
 		_In_reads_(count)
 		const char_type* text,      //!< [in] 文字列(NUL終端不要)
@@ -101,18 +99,23 @@ public:
 		return Me(data() + currentLength, size() - currentLength).assign(text, count);
 	}
 
+	//! 文字列ポインタを指定して内容を拡張する。
 	errno_t append(_In_z_ const char_type* rhs) {
 		if (!rhs) return EINVAL;
 		return append(rhs, auto_strlen(rhs));
 	}
 
+	//! 文字列を指定して内容を拡張する。
 	errno_t append(const string_type& rhs) noexcept {
 		return append(rhs.data(), rhs.length());
 	}
 
-	/*!
-	 * 文字列を割り当てる
-	 */
+	//! 文字列参照を指定して内容を拡張する。
+	errno_t append(string_view_type rhs) noexcept {
+		return append(rhs.data(), rhs.length());
+	}
+
+	//! 文字列ポインタと文字数を指定して内容を置き換える。
 	errno_t assign(
 		_In_reads_opt_(count)
 		const char_type* text,      //!< [in] 文字列(NUL終端不要、途中にNUL文字があってもOK)
@@ -139,6 +142,7 @@ public:
 		return setLength < count ? STRUNCATE : 0;
 	}
 
+	//! 文字列ポインタを指定して内容を置き換える。
 	errno_t assign(_In_opt_z_ const char_type* rhs) {
 		if (!rhs) {
 			return assign(nullptr, 0);
@@ -147,10 +151,17 @@ public:
 		}
 	}
 
+	//! 文字列を指定して内容を置き換える。
 	errno_t assign(const string_type& rhs) noexcept {
 		return assign(rhs.data(), rhs.length());
 	}
 
+	//! 文字列参照を指定して内容を置き換える。
+	errno_t assign(string_view_type rhs) noexcept {
+		return assign(rhs.data(), rhs.length());
+	}
+
+	//! ファイルパスを指定して内容を置き換える。
 	errno_t assign(const std::filesystem::path& rhs) {
 		if constexpr (std::is_same_v<char_type, wchar_t>) {
 			return assign(rhs.wstring());
@@ -167,27 +178,32 @@ public:
 
 	}
 
-	auto& at(_In_range_(0, INT_MAX) size_t index) const {
-		if (size() <= index) {
-			throw std::out_of_range("index is out of range.");
-		}
-		return operator[](int(index));
-	}
-
 	const char_type* c_str() const noexcept { return data(); }
 	char_type*       data()        noexcept { return m_Data; }
 	const char_type* data()  const noexcept { return m_Data; }
 
-	bool    empty()  const noexcept { return !length(); }
+	//! 文字列が空かどうかを判定する
+	bool empty()  const noexcept { return 0 == length(); }
 
+	/*!
+	 * 文字列の長さを取得する
+	 *
+	 * Cランタイム関数や添え字アクセスで全域にゴミを詰めた場合、0を返す。
+	 */
 	size_t length() const noexcept {
-		const auto len = auto_strnlen(data(), size());
-		return len < size() ? len : 0;
+		if (0 == data()[0]) {
+			// バッファの先頭がNULなら長さはゼロ
+			return 0;
+		} else {
+			// バッファの先頭がNUL以外ならstrnlenで先頭からNULを検索する
+			const auto len = auto_strnlen(data(), size());
+			return len < size() ? len : 0;
+		}
 	}
-	
+
 	size_t size() const noexcept { return m_Size; }
 
-	Me& operator = (string_view_type rhs) { assign(rhs.data(), rhs.length()); return *this; }
+	Me& operator = (string_view_type rhs) { assign(rhs); return *this; }
 	Me& operator = (_In_opt_z_ const char_type* rhs) { assign(rhs); return *this; }
 	Me& operator = (const string_type& rhs) { assign(rhs); return *this; }
 	Me& operator = (const char_type ch) { assign(&ch, 1); return *this; }
@@ -196,7 +212,7 @@ public:
 	template <size_t N>
 	Me& operator = (const SString<N, char_type>& rhs ) { assign(rhs, rhs.length()); return *this; }
 
-	Me& operator += (string_view_type rhs) { append(rhs.data(), rhs.length()); return *this; }
+	Me& operator += (string_view_type rhs) { append(rhs); return *this; }
 	Me& operator += (_In_z_ const char_type* rhs) { append(rhs); return *this; }
 	Me& operator += (const string_type& rhs) { append(rhs); return *this; }
 	Me& operator += (const char_type ch) { append(&ch, 1); return *this; }
@@ -204,13 +220,21 @@ public:
 	template <size_t N>
 	Me& operator += (const SString<N, char_type>& rhs ) { append(rhs, rhs.length()); return *this; }
 
-	constexpr       char_type& operator [] (int index)       { return 0 <= index && size_t(index) < size() ? data()[index] : data()[size() - 1]; }
-	constexpr const char_type& operator [] (int index) const { return 0 <= index && size_t(index) < size() ? data()[index] : data()[size() - 1]; }
-
 	explicit operator string_view_type() const noexcept { return string_view_type(data(), length()); }
 	explicit operator std::filesystem::path() const noexcept { return std::filesystem::path(string_view_type(*this)); }
 
-	/* implicit */ operator char_type*()             noexcept { return data(); }
+	/*!
+	 * 文字列ポインタに変換する。
+	 *
+	 * Windows API関数に渡すときキャスト不要になるよう暗黙キャストを許容する。
+	 */
+	/* implicit */ operator       char_type*()       noexcept { return data(); }
+
+	/*!
+	 * 文字列ポインタに変換する。
+	 *
+	 * Windows API関数に渡すときキャスト不要になるよう暗黙キャストを許容する。
+	 */
 	/* implicit */ operator const char_type*() const noexcept { return c_str(); }
 };
 
@@ -239,12 +263,45 @@ public:
 
 	static constexpr size_t size() noexcept { return N; }
 
+	/*!
+	 * デフォルトコンストラクタ
+	 *
+	 * コンテンツを指定せずに構築。
+	 */
 	SString() = default;
 
+	//! 文字列参照を指定して構築。
+	explicit SString(string_view_type rhs) noexcept { assign(rhs); }
+
+	/*!
+	 * 文字列ポインタを指定して構築。
+	 *
+	 * 以下のような記述をできるようにexplicitは付けない。
+	 * SString<_MAX_PATH> buf = L"value";
+	 */
 	/* implicit */ SString(_In_opt_z_ const char_type* rhs) noexcept { assign(rhs); }
+
+	/*!
+	 * 文字列を指定して構築。
+	 *
+	 * 以下のような記述をできるようにexplicitは付けない。
+	 * SString<_MAX_PATH> buf = L"value"s;
+	 *
+	 * if (std::wsmatch m; std::regex_match(buf, m, std::wregex(LR"(^(val).*$)"))) {
+	 * 	CNativeW matched = m[1];
+	 * }
+	 */
 	/* implicit */ SString(const string_type& rhs) noexcept { assign(rhs); }
+
+	/*!
+	 * ファイルパスを指定して構築。
+	 *
+	 * 以下のような記述をできるようにexplicitは付けない。
+	 * SString<_MAX_PATH> buf = std::filesystem::path(L"sakura.ini");
+	 */
 	/* implicit */ SString(const std::filesystem::path& rhs) noexcept { assign(rhs); }
 
+	//! 文字列ポインタと文字数を指定して内容を拡張する。
 	errno_t append(
 		_In_reads_(count)
 		const char_type* text,
@@ -252,20 +309,39 @@ public:
 		size_t           count
 	)
 	{
-		if (count < 1) return EINVAL;
 		const auto currentLength = length();
 		return buffer_type(data() + currentLength, size() - currentLength).assign(text, count);
 	}
 
+	//! 文字列ポインタを指定して内容を拡張する。
 	errno_t append(_In_z_ const char_type* rhs) {
 		if (!rhs) return EINVAL;
-		return append(rhs, auto_strlen(rhs));
+		const auto currentLength = length();
+		return buffer_type(data() + currentLength, size() - currentLength).assign(rhs);
 	}
 
+	//! 文字列を指定して内容を拡張する。
 	errno_t append(const string_type& rhs) {
-		return append(rhs.data(), rhs.length());
+		if (rhs.empty()) return EINVAL;
+		const auto currentLength = length();
+		return buffer_type(data() + currentLength, size() - currentLength).assign(rhs);
 	}
 
+	//! 文字列参照を指定して内容を拡張する。
+	errno_t append(string_view_type rhs) {
+		if (rhs.empty()) return EINVAL;
+		const auto currentLength = length();
+		return buffer_type(data() + currentLength, size() - currentLength).assign(rhs);
+	}
+
+	//! ファイルパスを指定して内容を拡張する。
+	errno_t append(const std::filesystem::path& rhs) {
+		if (rhs.empty()) return EINVAL;
+		const auto currentLength = length();
+		return buffer_type(data() + currentLength, size() - currentLength).assign(rhs);
+	}
+
+	//! 文字列ポインタと文字数を指定して内容を置き換える。
 	errno_t assign(
 		_In_reads_opt_(count)
 		const char_type* text,
@@ -276,58 +352,82 @@ public:
 		return buffer_type(data(), size()).assign(text, count);
 	}
 
+	//! 文字列ポインタを指定して内容を置き換える。
 	errno_t assign(_In_opt_z_ const char_type* rhs) {
 		return buffer_type(data(), size()).assign(rhs);
 	}
 
+	//! 文字列を指定して内容を置き換える。
 	errno_t assign(const string_type& rhs) {
 		return buffer_type(data(), size()).assign(rhs);
 	}
 
-	errno_t assign(const std::filesystem::path& rhs) {
+	//! 文字列参照を指定して内容を置き換える。
+	errno_t assign(string_view_type rhs) {
 		return buffer_type(data(), size()).assign(rhs);
 	}
 
-	auto& at(_In_range_(0, N - 1) size_t index) const {
-		return buffer_type(const_cast<char_type*>(data()), size()).at(index);
+	//! ファイルパスを指定して内容を置き換える。
+	errno_t assign(const std::filesystem::path& rhs) {
+		return buffer_type(data(), size()).assign(rhs);
 	}
 
 	const char_type* c_str() const noexcept { return data(); }
 	char_type*       data()        noexcept { return m_szData.data(); }
 	const char_type* data()  const noexcept { return m_szData.data(); }
 
-	bool    empty()  const noexcept { return !length(); }
+	//! 文字列が空かどうかを判定する
+	bool empty()  const noexcept { return 0 == length(); }
 
+	/*!
+	 * 文字列の長さを取得する
+	 *
+	 * Cランタイム関数や添え字アクセスで全域にゴミを詰めた場合、0を返す。
+	 */
 	size_t length() const noexcept {
-		const auto len = auto_strnlen(data(), size());
-		return len < size() ? len : 0;
+		if (0 == data()[0]) {
+			// バッファの先頭がNULなら長さはゼロ
+			return 0;
+		} else {
+			// バッファの先頭がNUL以外ならstrnlenで先頭からNULを検索する
+			const auto len = auto_strnlen(data(), size());
+			return len < size() ? len : 0;
+		}
 	}
 
 	/*!
 	 * 文字列の長さを取得する
 	 *
-	 * 旧コードとの互換性のため戻り値をintにキャストする
+	 * 旧コードとの互換性のため戻り値をintにキャストするバージョンを残す。
 	 */
 	int Length() const noexcept { return int(length()); }
 
-	Me& operator = (string_view_type rhs) { assign(rhs.data(), rhs.length()); return *this; }
+	Me& operator = (string_view_type rhs) { assign(rhs); return *this; }
 	Me& operator = (_In_opt_z_ const char_type* rhs) { assign(rhs); return *this; }
 	Me& operator = (const string_type& rhs) { assign(rhs); return *this; }
 	Me& operator = (const char_type ch) { assign(&ch, 1); return *this; }
 	Me& operator = (const std::filesystem::path& rhs) { assign(rhs); return *this; }
 
-	Me& operator += (string_view_type rhs) { append(rhs.data(), rhs.length()); return *this; }
+	Me& operator += (string_view_type rhs) { append(rhs); return *this; }
 	Me& operator += (_In_z_ const char_type* rhs) { append(rhs); return *this; }
 	Me& operator += (const string_type& rhs) { append(rhs); return *this; }
 	Me& operator += (const char_type ch) { append(&ch, 1); return *this; }
 
-	constexpr       char_type& operator [] (int index)       { return 0 <= index && size_t(index) < size() ? m_szData[index] : m_szData.back(); }
-	constexpr const char_type& operator [] (int index) const { return 0 <= index && size_t(index) < size() ? m_szData[index] : m_szData.back(); }
-
 	explicit operator string_view_type() const noexcept { return string_view_type(data(), length()); }
 	explicit operator std::filesystem::path() const noexcept { return std::filesystem::path(string_view_type(*this)); }
 
-	/* implicit */ operator char_type*()             noexcept { return data(); }
+	/*!
+	 * 文字列ポインタに変換する。
+	 *
+	 * Windows API関数に渡すときキャスト不要になるよう暗黙キャストを許容する。
+	 */
+	/* implicit */ operator       char_type*()       noexcept { return data(); }
+
+	/*!
+	 * 文字列ポインタに変換する。
+	 *
+	 * Windows API関数に渡すときキャスト不要になるよう暗黙キャストを許容する。
+	 */
 	/* implicit */ operator const char_type*() const noexcept { return c_str(); }
 };
 
@@ -401,9 +501,9 @@ private:
 /*!
  * ヒープを用いない文字列クラス
  *
- * ヒープとは、newで確保するメモリ領域のこと。
+ * ヒープとはnewで確保するメモリ領域のこと。
  * std::wstringは文字列バッファを動的に確保するが、
- * このクラスのインスタンスは固定サイズの文字列バッファを使う。
+ * StaticStringはスタックに固定サイズのバッファを確保する。
  * 
  * @date 2007/09/23 kobake 作成。
  */
@@ -454,7 +554,14 @@ public:
 	 *
 	 * 旧コードとの互換性のため stdcpp と振る舞いの異なるバージョンを残しておく
 	 */
-	char_type At(int nIndex) const noexcept { return Base::operator[] (nIndex); }
+	char_type At(int nIndex) const noexcept
+	{
+		if (nIndex < Base::Length()) {
+			return Base::data()[nIndex];
+		} else {
+			return 0;
+		}
+	}
 
 	/*!
 	 * 簡易コピー

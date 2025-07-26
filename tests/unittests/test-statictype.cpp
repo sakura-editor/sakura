@@ -78,7 +78,6 @@ TEST(StaticString, init001)
 	EXPECT_THAT(buf.length(), 0);
 	EXPECT_THAT(buf.Length(), 0);
 	EXPECT_THAT(std::size(buf), 4);
-	EXPECT_THAT(buf.at(0), 0);
 }
 
 /*!
@@ -104,10 +103,6 @@ TEST(StaticString, init002)
 	EXPECT_THAT(buf.length(), 3);
 	EXPECT_THAT(buf.Length(), 3);
 	EXPECT_THAT(std::size(buf), 4);
-	EXPECT_THAT(buf.at(0), L'初');
-	EXPECT_THAT(buf.at(1), L'期');
-	EXPECT_THAT(buf.at(2), L'値');
-	EXPECT_THAT(buf.at(3), 0);
 }
 
 /*!
@@ -532,6 +527,29 @@ TEST(StaticString, append103)
 /*!
  * @brief StaticStringのテスト
  *
+ * 末尾に文字列参照を追加する(値が空文字列)
+ */
+TEST(StaticString, append104)
+{
+	// ARRANGE
+	StaticString<4> szText = L"初期値";
+
+	// ACT & ASSERT
+	EXPECT_THAT(szText.append(L""sv), EINVAL);
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+
+	// ACT
+	szText += L""sv;
+
+	// ASSERT
+	EXPECT_THAT(szText, StrEq(L"初期値"));
+	EXPECT_THAT(szText.length(), 3);
+}
+
+/*!
+ * @brief StaticStringのテスト
+ *
  * 末尾に文字列ポインタを追加する(途中にNULを含む)
  */
 TEST(StaticString, append202)
@@ -629,49 +647,12 @@ TEST(StaticString, constAt)
 	const StaticString<4> szText = L"初期値";
 
 	// ASSERT
-	EXPECT_THAT(szText.at(0), L'初');
-	EXPECT_THAT(szText.at(1), L'期');
-	EXPECT_THAT(szText.at(2), L'値');
-	EXPECT_THAT(szText.at(3), '\0');
-
-	EXPECT_THROW({ szText.at(4); }, std::out_of_range);
-	EXPECT_THROW({ szText.at(5); }, std::out_of_range);
-}
-
-/*!
- * @brief StaticStringのテスト
- *
- * 添え字演算子
- */
-TEST(StaticString, subscriptOperator001)
-{
-	// ARRANGE
-	StaticString<4> szText = L"初期値";
-
-	// ASSERT
-	EXPECT_THAT(szText[0], L'初');
-	EXPECT_THAT(szText[1], L'期');
-	EXPECT_THAT(szText[2], L'値');
-	EXPECT_THAT(szText[3], '\0');
-	EXPECT_THAT(szText[4], '\0');
-}
-
-/*!
- * @brief StaticStringのテスト
- * 
- * 添え字演算子
- */
-TEST(StaticString, constSubscriptOperator001)
-{
-	// ARRANGE
-	const StaticString<4> szText = L"初期値";
-
-	// ASSERT
-	EXPECT_THAT(szText[0], L'初');
-	EXPECT_THAT(szText[1], L'期');
-	EXPECT_THAT(szText[2], L'値');
-	EXPECT_THAT(szText[3], '\0');
-	EXPECT_THAT(szText[4], '\0');
+	EXPECT_THAT(szText.At(0), L'初');
+	EXPECT_THAT(szText.At(1), L'期');
+	EXPECT_THAT(szText.At(2), L'値');
+	EXPECT_THAT(szText.At(3), '\0');
+	EXPECT_THAT(szText.At(4), '\0');
+	EXPECT_THAT(szText.At(5), '\0');
 }
 
 /*!

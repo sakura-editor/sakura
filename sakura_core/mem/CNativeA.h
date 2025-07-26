@@ -20,7 +20,4 @@
  */
 using CNativeA = CNative<CHAR>;
 
-// CMemory派生クラスにはメンバー追加禁止
-static_assert(sizeof(CNativeA) == sizeof(CMemory), "size check");
-
 #endif /* SAKURA_CNATIVEA_03C02187_A42C_4403_9D24_8B4CA20EEA81_H_ */

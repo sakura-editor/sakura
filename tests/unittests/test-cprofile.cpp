@@ -818,63 +818,6 @@ TEST(StringBufferW, empty)
 
 /*!
  * @brief StringBufferWのテスト
- */
-TEST(StringBufferW, constAt)
-{
-	// ARRANGE
-	SString<4> szBase = L"初期値";
-	const auto szText = StringBufferW(szBase);
-
-	// ASSERT
-	EXPECT_THAT(szText.at(0), L'初');
-	EXPECT_THAT(szText.at(1), L'期');
-	EXPECT_THAT(szText.at(2), L'値');
-	EXPECT_THAT(szText.at(3), '\0');
-
-	EXPECT_THROW({ szText.at(4); }, std::out_of_range);
-	EXPECT_THROW({ szText.at(5); }, std::out_of_range);
-}
-
-/*!
- * @brief StringBufferWのテスト
- * 
- * 添え字演算子
- */
-TEST(StringBufferW, subscriptOperator001)
-{
-	// ARRANGE
-	SString<4> szBase = L"初期値";
-	auto szText = StringBufferW(szBase);
-
-	// ASSERT
-	EXPECT_THAT(szText[0], L'初');
-	EXPECT_THAT(szText[1], L'期');
-	EXPECT_THAT(szText[2], L'値');
-	EXPECT_THAT(szText[3], '\0');
-	EXPECT_THAT(szText[4], '\0');
-}
-
-/*!
- * @brief StringBufferWのテスト
- * 
- * 添え字演算子
- */
-TEST(StringBufferW, constSubscriptOperator001)
-{
-	// ARRANGE
-	SString<4> szBase = L"初期値";
-	const auto szText = StringBufferW(szBase);
-
-	// ASSERT
-	EXPECT_THAT(szText[0], L'初');
-	EXPECT_THAT(szText[1], L'期');
-	EXPECT_THAT(szText[2], L'値');
-	EXPECT_THAT(szText[3], '\0');
-	EXPECT_THAT(szText[4], '\0');
-}
-
-/*!
- * @brief StringBufferWのテスト
  *
  * 文字列参照型に変換する
  */
