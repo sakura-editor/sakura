@@ -18,12 +18,6 @@ namespace ApiWrap
 	BOOL MakeSureDirectoryPathExistsW(LPCWSTR pszDirPath);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                    描画API 不具合ラップ                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//VistaでSetPixelが動かないため、代替関数を用意。
-	void SetPixelSurely(HDC hdc,int x,int y,COLORREF c);
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      よく使う引数値                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
