@@ -606,9 +606,9 @@ public:
 	const STypeConfig*	m_pTypeData;
 
 	//主要構成部品
-	CTextArea*		m_pcTextArea;
-	CCaret*			m_pcCaret;
-	CRuler*			m_pcRuler;
+	CTextArea*		m_pcTextArea = nullptr;
+	CCaret*			m_pcCaret = nullptr;
+	CRuler*			m_pcRuler = nullptr;
 
 	//主要属性
 	CTextMetrics	m_cTextMetrics;
@@ -625,9 +625,9 @@ public:
 public:
 	//ウィンドウ
 	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
-	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
+	HWND			m_hwndVScrollBar = nullptr;	/* 垂直スクロールバーウィンドウハンドル */
 	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
-	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
+	HWND			m_hwndHScrollBar = nullptr;	/* 水平スクロールバーウィンドウハンドル */
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	HWND			m_hwndSizeBoxPlaceholder;	/* サイズボックス代替スタティックウィンドウハンドル */
 	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
@@ -657,7 +657,7 @@ public:
 
 public:
 	//D&D
-	CDropTarget*	m_pcDropTarget;
+	CDropTarget*	m_pcDropTarget = nullptr;
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
 	CLIPFORMAT		m_cfDragData;	/* ドラッグデータのクリップ形式 */	// 2008.06.20 ryoji
 	BOOL			m_bDragBoxData;	/* ドラッグデータは矩形か */
@@ -670,16 +670,16 @@ public:
 	BOOL			m_bDrawBracketPairFlag;		/* 対括弧の強調表示を行なうか */						// 03/02/18 ai
 
 	//マウス
-	bool			m_bActivateByMouse;		//!< マウスによるアクティベート	//2007.10.02 nasukoji
+	bool			m_bActivateByMouse = false;		//!< マウスによるアクティベート	//2007.10.02 nasukoji
 	DWORD			m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
 	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
-	int				m_nWheelDelta;	//!< ホイール変化量
-	EFunctionCode	m_eWheelScroll; //!< スクロールの種類
-	int				m_nMousePause;	// マウス停止時間
+	int				m_nWheelDelta = 0;	//!< ホイール変化量
+	EFunctionCode	m_eWheelScroll = F_0; //!< スクロールの種類
+	int				m_nMousePause = 0;	// マウス停止時間
 	CMyPoint		m_cMousePausePos;	// マウスの停止位置
 	bool			m_bHideMouse;
 
-	int				m_nAutoScrollMode;			//!< オートスクロールモード
+	int				m_nAutoScrollMode = 0;		//!< オートスクロールモード
 	bool			m_bAutoScrollDragMode;		//!< ドラッグモード
 	CMyPoint		m_cAutoScrollMousePos;		//!< オートスクロールのマウス基準位置
 	bool			m_bAutoScrollVertical;		//!< 垂直スクロール可
@@ -729,8 +729,8 @@ private:
 
 public:
 	// その他
-	CAutoMarkMgr*	m_cHistory;	//	Jump履歴
-	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
+	CAutoMarkMgr*	m_cHistory = nullptr;	//	Jump履歴
+	CRegexKeyword*	m_cRegexKeyword = nullptr;	//@@@ 2001.11.17 add MIK
 	int				m_nMyIndex;	/* 分割状態 */
 	CMigemo*		m_pcmigemo;
 	bool			m_bMiniMap;

@@ -120,23 +120,10 @@ VOID CALLBACK EditViewTimerProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditView::CEditView( void )
 : CViewCalc(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_pcTextArea(nullptr)
-, m_pcCaret(nullptr)
-, m_pcRuler(nullptr)
 , m_cViewSelect(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cParser(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cTextDrawer(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cCommander(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_hwndVScrollBar(nullptr)
-, m_hwndHScrollBar(nullptr)
-, m_pcDropTarget(nullptr)
-, m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
-, m_nWheelDelta(0)
-, m_eWheelScroll(F_0)
-, m_nMousePause(0)
-, m_nAutoScrollMode(0)
-, m_cHistory(nullptr)
-, m_cRegexKeyword(nullptr)
 {
 }
 
