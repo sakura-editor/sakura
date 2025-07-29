@@ -22,11 +22,6 @@
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
-, m_hwndToolBar(nullptr)
-, m_hwndReBar(nullptr)
-, m_hwndSearchBox(nullptr)
-, m_hFontSearchBox(nullptr)
-, m_pcIcons(nullptr)
 {
 }
 
