@@ -247,8 +247,8 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// この後のSetLayoutInfoの中でもCTsvModeInfo::CalcTabLengthを呼ぶ所があるが
 	// TsvModeの変化がない場合にはそこでは呼ばれないので必要な場合はここでやっておく
 	if (ref.m_nTsvMode != TSV_MODE_NONE) {
-		pcDoc->m_cLayoutMgr.m_tsvInfo.CalcTabLength(pcDoc->m_cLayoutMgr.m_pcDocLineMgr);
 		pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode = ref.m_nTsvMode;
+		pcDoc->m_cLayoutMgr.m_tsvInfo.CalcTabLength(pcDoc->m_cLayoutMgr.m_pcDocLineMgr);
 	}
 
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
