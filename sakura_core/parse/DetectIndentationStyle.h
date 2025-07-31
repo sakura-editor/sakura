@@ -6,6 +6,8 @@
 */
 #pragma once
 
+class CEditDoc;
+
 struct IndentationStyle
 {
 	enum class Character {
