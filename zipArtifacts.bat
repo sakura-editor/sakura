@@ -231,9 +231,6 @@ if exist "%ISS_LOG_FILE%" (
 )
 
 copy /Y sakura_core\githash.h                      %WORKDIR_LOG%\
-if exist "cppcheck-install.log" (
-	copy /Y "cppcheck-install.log" %WORKDIR_LOG%\
-)
 if exist "cppcheck-%platform%-%configuration%.xml" (
 	copy /Y "cppcheck-%platform%-%configuration%.xml" %WORKDIR_LOG%\
 )
