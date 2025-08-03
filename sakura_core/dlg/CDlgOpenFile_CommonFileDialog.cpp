@@ -405,7 +405,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						::lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
 					}
 					else{
-						_wsplitpath( pData->m_pOf->lpstrFile, nullptr, nullptr, nullptr, szDefExt );
+						_wsplitpath_s( pData->m_pOf->lpstrFile, nullptr, 0, nullptr, 0, nullptr, 0, szDefExt, std::size(szDefExt) );
 						if( szDefExt[0] == L'.' /* && szDefExt[1] != L'\0' */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
 							// .のみの場合にも拡張子付きとみなす。
 							lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
@@ -655,7 +655,7 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 		nullptr,
 		szFile, int(std::size(szFile))
 	);
-	_wsplitpath( szFile, szDrive, szDir, nullptr, nullptr );
+	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 

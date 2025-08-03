@@ -312,7 +312,7 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	WCHAR	szExt[_MAX_EXT];
 	int		nFolderLen;
 	int		nCharChars;
-	_wsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
+	_wsplitpath_s( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( nullptr != pszFolder ){
 		wcscpy( pszFolder, szDrive );
 		wcscat( pszFolder, szDir );
@@ -388,7 +388,7 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 {
 	WCHAR	szExt[_MAX_EXT];
 	WCHAR*	pszWork;
-	_wsplitpath( pszPath, nullptr, nullptr, nullptr, szExt );
+	_wsplitpath_s( pszPath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, std::size(szExt) );
 	pszWork = szExt;
 	if( pszWork[0] == L'.' ){
 		pszWork++;

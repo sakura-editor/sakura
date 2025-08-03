@@ -219,7 +219,7 @@ int CBackupAgent::MakeBackUp(
 	WCHAR	szDir[_MAX_DIR];
 	WCHAR	szFname[_MAX_FNAME];
 	WCHAR	szExt[_MAX_EXT];
-	_wsplitpath( szPath, szDrive, szDir, szFname, szExt );
+	_wsplitpath_s( szPath, szDrive, szDir, szFname, szExt );
 	WCHAR	szPath2[MAX_PATH];
 	auto_sprintf( szPath2, L"%s%s", szDrive, szDir );
 
@@ -296,7 +296,7 @@ bool CBackupAgent::FormatBackUpPath(
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
 	/* パスの分解 */
-	_wsplitpath( target_file, szDrive, szDir, szFname, szExt );
+	_wsplitpath_s( target_file, szDrive, szDir, szFname, szExt );
 
 	if( bup_setting.m_bBackUpFolder
 	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダーにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi

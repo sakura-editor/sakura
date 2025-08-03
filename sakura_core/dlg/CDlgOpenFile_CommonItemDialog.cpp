@@ -386,7 +386,7 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 		nullptr,
 		szFile, int(std::size(szFile))
 	);
-	_wsplitpath( szFile, szDrive, szDir, nullptr, nullptr );
+	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 

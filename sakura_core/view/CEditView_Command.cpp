@@ -204,7 +204,7 @@ open_c:;
 	WCHAR	szExt[_MAX_EXT];
 	HWND	hwndOwner;
 
-	_wsplitpath( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
+	_wsplitpath_s( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
 
 	for( i = 0; i < open_extno; i++ ){
 		_wmakepath( szPath, szDrive, szDir, szFname, open_ext[i] );

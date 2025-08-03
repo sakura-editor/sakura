@@ -867,7 +867,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 	lpPathInfo->szPathSrc[0] = L'\0';
 	lpPathInfo->szFileSrc[0] = L'\0';
 	lpPathInfo->szExtSrc[0] = L'\0';
-	_wsplitpath( m_pszFileName, lpPathInfo->szDriveSrc, lpPathInfo->szPathSrc, lpPathInfo->szFileSrc, lpPathInfo->szExtSrc );
+	_wsplitpath_s( m_pszFileName, lpPathInfo->szDriveSrc, lpPathInfo->szPathSrc, lpPathInfo->szFileSrc, lpPathInfo->szExtSrc );
 	lpPathInfo->nDriveSrc = wcslen(lpPathInfo->szDriveSrc);
 	lpPathInfo->nPathSrc = wcslen(lpPathInfo->szPathSrc);
 	lpPathInfo->nFileSrc = wcslen(lpPathInfo->szFileSrc);
@@ -891,7 +891,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 		lpPathInfo->szPathDst[0] = L'\0';
 		lpPathInfo->szFileDst[0] = L'\0';
 		lpPathInfo->szExtDst[0] = L'\0';
-		_wsplitpath( lpPathInfo->szFileNameDst, lpPathInfo->szDriveDst, lpPathInfo->szPathDst, lpPathInfo->szFileDst, lpPathInfo->szExtDst );
+		_wsplitpath_s( lpPathInfo->szFileNameDst, lpPathInfo->szDriveDst, lpPathInfo->szPathDst, lpPathInfo->szFileDst, lpPathInfo->szExtDst );
 		lpPathInfo->nDriveDst = wcslen(lpPathInfo->szDriveDst);
 		lpPathInfo->nPathDst = wcslen(lpPathInfo->szPathDst);
 		lpPathInfo->nFileDst = wcslen(lpPathInfo->szFileDst);
