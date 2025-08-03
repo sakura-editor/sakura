@@ -7,7 +7,6 @@
 #include "StdAfx.h"
 #include "io/CFile.h"
 #include "window/CEditWnd.h" // 変更予定
-#include <io.h>
 #include "CSelectLang.h"
 #include "String_define.h"
 

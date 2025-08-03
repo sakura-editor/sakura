@@ -16,7 +16,6 @@
 */
 
 #include "StdAfx.h"
-#include <io.h>
 #include "CMigemo.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"

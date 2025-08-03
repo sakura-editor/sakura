@@ -9,7 +9,6 @@
 */
 
 #include "StdAfx.h"
-#include <io.h>
 #include "file.h"
 
 #include <Shlwapi.h>
