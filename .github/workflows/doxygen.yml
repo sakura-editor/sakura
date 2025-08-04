@@ -23,22 +23,25 @@ jobs:
     env:
       BuildPlatform: ${{ matrix.BuildPlatform }}
       Configuration: ${{ matrix.Configuration }}
-      DOXYGEN_VERSION: "1.8.14"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            doxygen
 
       - name: Show environment variables for debug
         run: set
         shell: cmd
 
-      - name: Install doxygen
-        run: externals\doxygen\doxygen-${{ env.DOXYGEN_VERSION }}-setup.exe /silent /suppressmsgboxes
-        shell: cmd
-
       - name: Run doxygen
-        run: run-doxygen.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
-        shell: cmd
+        run: ./run-doxygen.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+        shell: msys2 {0}
 
       - name: Zip files for artifacts
         run: zipArtifacts.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
