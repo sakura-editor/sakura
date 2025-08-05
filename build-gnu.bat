@@ -87,12 +87,6 @@ if errorlevel 1 (
 	popd
 	exit /b 1
 )
-mingw32-make -f "%~dp0tests\unittests\resources\en-US\Makefile" -C "%~dp0tests\unittests\resources\en-US" OUTDIR="%TESTS1_BUILD_DIR%"
-if errorlevel 1 (
-	echo error 2 errorlevel %errorlevel%
-	popd
-	exit /b 1
-)
 mingw32-make -f "%TESTS1_MAKEFILE%" MYDEFINES="%MYDEFINES%" SAKURA_CORE=../sakura_core OUTDIR=%OUTDIR% -j4
 if errorlevel 1 (
 	echo error 2 errorlevel %errorlevel%
