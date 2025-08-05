@@ -46,7 +46,6 @@
 
 CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 : CProcess( hInstance, lpCmdLine )
-, m_pcEditApp( nullptr )
 {
 }
 
