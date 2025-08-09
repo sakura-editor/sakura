@@ -35,9 +35,7 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
-            
-      - run: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm p7zip"
-        shell: cmd
+            mingw-w64-x86_64-7zip
 
       - name: Show environment variables for debug
         run: set
