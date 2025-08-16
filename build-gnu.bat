@@ -24,10 +24,7 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
-@rem https://www.appveyor.com/docs/environment-variables/
-@rem path=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%path%
-path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
-path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
+if not defined MSYSTEM call :setmsys64path
 
 :: find generic tools
 if not defined CMD_NINJA call %~dp0tools\find-tools.bat
@@ -103,6 +100,10 @@ popd
 
 exit /b 0
 
+:setmsys64path
+path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
+path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
+exit /b 0
 
 @rem ------------------------------------------------------------------------------
 @rem show help
