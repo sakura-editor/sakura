@@ -24,37 +24,37 @@
  */
 struct EditInfo {
 	//ファイル
-	WCHAR		m_szPath[_MAX_PATH];					//!< ファイル名
-	ECodeType	m_nCharCode;							//!< 文字コード種別
-	bool		m_bBom;									//!< BOM(GetFileInfo)
-	WCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< 文書タイプ
-	int 		m_nTypeId;								//!< 文書タイプ(MRU)
+	WCHAR		m_szPath[_MAX_PATH] = {};				//!< ファイル名
+	ECodeType	m_nCharCode = CODE_AUTODETECT;			//!< 文字コード種別
+	bool		m_bBom = false;							//!< BOM(GetFileInfo)
+	WCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1] = {};	//!< 文書タイプ
+	int 		m_nTypeId = -1;							//!< 文書タイプ(MRU)
 
 	//表示域
-	CLayoutInt	m_nViewTopLine;							//!< 表示域の一番上の行(0開始)
-	CLayoutInt	m_nViewLeftCol;							//!< 表示域の一番左の桁(0開始)
+	CLayoutInt	m_nViewTopLine = CLayoutInt(-1);		//!< 表示域の一番上の行(0開始)
+	CLayoutInt	m_nViewLeftCol = CLayoutInt(-1);		//!< 表示域の一番左の桁(0開始)
 
 	//キャレット
-	CLogicPoint m_ptCursor;								//!< キャレット位置
+	CLogicPoint m_ptCursor = {-1, -1};					//!< キャレット位置
 
 	//各種状態
-	bool		m_bIsModified;							//!< 変更フラグ
+	bool		m_bIsModified = false;					//!< 変更フラグ
 
 	//GREPモード
-	bool		m_bIsGrep;								//!< Grepのウィンドウか
-	wchar_t		m_szGrepKey[1024];
+	bool		m_bIsGrep = false;						//!< Grepのウィンドウか
+	wchar_t		m_szGrepKey[1024] = {};
 
 	//デバッグモニタ (アウトプットウィンドウ) モード
-	bool		m_bIsDebug;								//!< デバッグモニタモード (アウトプットウィンドウ) か
+	bool		m_bIsDebug = false;						//!< デバッグモニタモード (アウトプットウィンドウ) か
 
 	//ブックマーク情報
-	wchar_t		m_szMarkLines[MAX_MARKLINES_LEN + 1];	//!< ブックマークの物理行リスト
+	wchar_t		m_szMarkLines[MAX_MARKLINES_LEN + 1] = {};	//!< ブックマークの物理行リスト
 
 	//ウィンドウ
-	int			m_nWindowSizeX;							//!< ウィンドウ  幅(ピクセル数)
-	int			m_nWindowSizeY;							//!< ウィンドウ  高さ(ピクセル数)
-	int			m_nWindowOriginX;						//!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
-	int			m_nWindowOriginY;						//!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
+	int			m_nWindowSizeX = -1;					//!< ウィンドウ  幅(ピクセル数)
+	int			m_nWindowSizeY = -1;					//!< ウィンドウ  高さ(ピクセル数)
+	int			m_nWindowOriginX = CW_USEDEFAULT;		//!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
+	int			m_nWindowOriginY = CW_USEDEFAULT;		//!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
 
 	// コンストラクタ
 	EditInfo() noexcept;
