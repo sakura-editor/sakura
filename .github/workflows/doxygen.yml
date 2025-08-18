@@ -26,7 +26,7 @@ jobs:
       DOXYGEN_VERSION: "1.8.14"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Show environment variables for debug
         run: set
