@@ -2974,8 +2974,6 @@ END
 
 STRINGTABLE
 BEGIN
-    STR_SHELL_HHCTRL        "HHCTRL.OCX could not be found\r\nHTML help requires HHCTRL.OCX.\r\n"
-    STR_SHELL_INFO          "Information"
     STR_SHELL_MENU_OPEN     "&Open ..."
     STR_SHELL_MENU_IMPEXP   "Import/Export Location &Reset "
     STR_SHELL_IMPEXPDIR     "Reset Import/Export default folder path to\nSettings-Folder path."

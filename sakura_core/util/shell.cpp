@@ -19,7 +19,6 @@
 #include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
 #include "String_define.h"
 #include <wrl.h>
@@ -300,15 +299,6 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 	return dwRet;
 }
 
-//	From Here Jun. 26, 2001 genta
-/*!
-	HTML Helpコンポーネントのアクセスを提供する。
-	内部で保持すべきデータは特になく、至る所から使われるのでGlobal変数にするが、
-	直接のアクセスはOpenHtmlHelp()関数のみから行う。
-	他のファイルからはCHtmlHelpクラスは隠されている。
-*/
-CHtmlHelp g_cHtmlHelp;
-
 /*!
 	HTML Helpを開く
 	HTML Helpが利用可能であれば引数をそのまま渡し、そうでなければメッセージを表示する。
@@ -321,21 +311,10 @@ HWND OpenHtmlHelp(
 	LPCWSTR		szFile,	//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
 	UINT		uCmd,	//!< [in] HTML Help に渡すコマンド
 	DWORD_PTR	data,	//!< [in] コマンドに応じたデータ
-	bool		msgflag	//!< [in] エラーメッセージを表示するか。省略時はtrue。
+	[[maybe_unused]] bool		msgflag	//!< [in] エラーメッセージを表示するか。省略時はtrue。
 )
 {
-	if( DLL_SUCCESS == g_cHtmlHelp.InitDll() ){
-		return g_cHtmlHelp.HtmlHelp( hWnd, szFile, uCmd, data );
-	}
-	if( msgflag ){
-		::MessageBox(
-			hWnd,
-			LS(STR_SHELL_HHCTRL),
-			LS(STR_SHELL_INFO),
-			MB_OK | MB_ICONEXCLAMATION
-		);
-	}
-	return nullptr;
+	return HtmlHelp( hWnd, szFile, uCmd, data );
 }
 
 //	To Here Jun. 26, 2001 genta

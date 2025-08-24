@@ -94,6 +94,7 @@ LIBS= \
  -lmpr \
  -lshlwapi \
  -ldwmapi \
+ -lhtmlhelp \
  -lwinmm \
  -lwindowscodecs \
  -lmsimg32 \
