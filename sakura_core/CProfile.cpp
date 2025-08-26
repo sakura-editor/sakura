@@ -230,12 +230,12 @@ bool CProfile::WriteProfile(
 		vecLine.emplace_back( L";" + std::wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
-	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {
+	for(const auto& iter : m_ProfileData) {
 		//セクション名を書き込む
-		vecLine.push_back( LTEXT("[") + iter->strSectionName + LTEXT("]") );
-		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.cend(); mapiter++ ) {
+		vecLine.emplace_back( L"[" + iter.strSectionName + L"]" );
+		for(const auto& mapiter : iter.mapEntries) {
 			//エントリを書き込む
-			vecLine.push_back( mapiter->first + LTEXT("=") + mapiter->second );
+			vecLine.emplace_back( mapiter.first + L"=" + mapiter.second );
 		}
 		vecLine.push_back( LTEXT("") );
 	}
@@ -354,10 +354,10 @@ void CProfile::DUMP( void )
 #ifdef _DEBUG
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
 	MYTRACE( L"\n\nCProfile::DUMP()======================" );
-	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {
-		MYTRACE( L"\n■strSectionName=%ls", iter->strSectionName.c_str() );
-		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.cend(); mapiter++ ) {
-			MYTRACE( L"\"%ls\" = \"%ls\"\n", mapiter->first.c_str(), mapiter->second.c_str() );
+	for(const auto& iter : m_ProfileData) {
+		MYTRACE( L"\n■strSectionName=%ls", iter.strSectionName.c_str() );
+		for(const auto& mapiter : iter.mapEntries) {
+			MYTRACE( L"\"%ls\" = \"%ls\"\n", mapiter.first.c_str(), mapiter.second.c_str() );
 		}
 	}
 	MYTRACE( L"========================================\n" );
