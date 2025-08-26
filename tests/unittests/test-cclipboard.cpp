@@ -686,3 +686,12 @@ TEST(CClipboard, DISABLED_GetClipboardByFormat7) {
 	EXPECT_TRUE(clipboard.GetClipboardByFormat(buffer, L"12345", 4, 1, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
 }
+
+// Test that clipboard retry constants are properly defined
+TEST(CClipboard, ClipboardRetryConstants) {
+	// Verify retry constants are sensible values
+	EXPECT_GT(CClipboard::CLIPBOARD_RETRY_COUNT, 1);
+	EXPECT_GE(CClipboard::CLIPBOARD_RETRY_DELAY_MS, 0);
+	EXPECT_LE(CClipboard::CLIPBOARD_RETRY_COUNT, 100);  // Should not be excessive
+	EXPECT_LE(CClipboard::CLIPBOARD_RETRY_DELAY_MS, 1000);  // Should not be too long
+}
