@@ -32,6 +32,7 @@
 #include "version.h"
 #include "util/std_macro.h"
 #include "env/DLLSHAREDATA.h"
+#include "DarkModeSubclass.h"
 
 /*!
 	Windows Entry point
@@ -70,6 +71,10 @@ int WINAPI wWinMain(
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
+
+	DarkMode::initDarkMode();
+	DarkMode::setDarkModeConfig(static_cast<UINT>(DarkMode::DarkModeType::dark));
+	DarkMode::setDefaultColors(true);
 
 	//コマンドラインクラスのインスタンスを確保する
 	CCommandLine cCommandLine;

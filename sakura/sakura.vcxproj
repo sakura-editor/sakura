@@ -54,7 +54,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="sakura.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\sakura_core;..\externals\darkmodelib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINNT=_WIN32_WINNT_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -142,6 +142,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\externals\darkmodelib\include\DarkModeSubclass.h" />
+    <ClInclude Include="..\externals\darkmodelib\src\DarkMode.h" />
+    <ClInclude Include="..\externals\darkmodelib\src\IatHook.h" />
+    <ClInclude Include="..\externals\darkmodelib\src\StdAfx.h" />
+    <ClInclude Include="..\externals\darkmodelib\src\UAHMenuBar.h" />
+    <ClInclude Include="..\externals\darkmodelib\src\Version.h" />
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
@@ -500,6 +506,8 @@
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\externals\darkmodelib\src\DarkMode.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DarkModeSubclass.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />

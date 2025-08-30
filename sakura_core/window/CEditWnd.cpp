@@ -61,6 +61,7 @@
 #include "recent/CRecentEditNode.h"
 #include "recent/CRecentFile.h"
 #include "recent/CRecentFolder.h"
+#include "DarkModeSubclass.h"
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
@@ -628,6 +629,8 @@ HWND CEditWnd::Create(
 	if(!hWnd)return nullptr;
 	m_hWnd = hWnd;
 
+	DarkMode::setDarkTitleBarEx(hWnd, true);
+
 	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
 	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
 	// ※起動元での起動先アイドリング検出については CControlTray::OpenNewEditor を参照
@@ -698,6 +701,9 @@ HWND CEditWnd::Create(
 
 	/* バーの配置終了 */
 	EndLayoutBars( FALSE );
+
+	DarkMode::setChildCtrlsTheme(hWnd);
+	DarkMode::setWindowMenuBarSubclass(hWnd);
 
 	// -- -- -- -- その他調整など -- -- -- -- //
 
@@ -923,6 +929,7 @@ void CEditWnd::LayoutMainMenu()
 		DestroyMenu( hMenuOld );
 	}
 
+	DarkMode::setWindowMenuBarSubclass(hWnd);
 	DrawMenuBar( hWnd );
 }
 
@@ -1067,6 +1074,10 @@ void CEditWnd::MessageLoop( void )
 {
 	MSG	msg;
 	int ret;
+
+	auto hWnd = GetHwnd();
+	DarkMode::setDarkTitleBarEx(hWnd, true);
+	DarkMode::setChildCtrlsTheme(hWnd);
 
 	while(GetHwnd())
 	{

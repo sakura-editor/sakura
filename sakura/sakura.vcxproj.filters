@@ -119,6 +119,9 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\darkmodelib">
+      <UniqueIdentifier>{57c87b7d-0c3b-4adb-9840-ce2292af594e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -1111,6 +1114,24 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\parse\DetectIndentationStyle.h">
       <Filter>Cpp Source Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\darkmodelib\include\DarkModeSubclass.h">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\darkmodelib\src\DarkMode.h">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\darkmodelib\src\IatHook.h">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\darkmodelib\src\StdAfx.h">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\darkmodelib\src\UAHMenuBar.h">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\darkmodelib\src\Version.h">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2308,6 +2329,12 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp">
       <Filter>Cpp Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DarkMode.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DarkModeSubclass.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
