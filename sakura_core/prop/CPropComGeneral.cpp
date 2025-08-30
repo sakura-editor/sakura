@@ -28,6 +28,7 @@
 #include "String_define.h"
 #include "recent/CRecentFile.h"
 #include "recent/CRecentFolder.h"
+#include "DarkModeSubclass.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 TYPE_NAME_ID<int> SpecialScrollModeArr[] = {
@@ -123,7 +124,6 @@ INT_PTR CPropGeneral::DispatchEvent(
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
-
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 
 		return TRUE;

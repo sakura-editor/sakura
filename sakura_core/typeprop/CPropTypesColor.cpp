@@ -40,6 +40,7 @@
 #include "apiwrap/StdControl.h"
 #include "config/app_constants.h"
 #include "String_define.h"
+#include "DarkModeSubclass.h"
 
 namespace {
 //! カスタムカラー用の識別文字列
@@ -1208,16 +1209,14 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 /* 色選択ダイアログ */
 BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
 {
-	CHOOSECOLOR		cc;
+	CHOOSECOLOR		cc{};
 	cc.lStructSize = sizeof_raw( cc );
 	cc.hwndOwner = hwndParent;
 	cc.hInstance = nullptr;
 	cc.rgbResult = *pColor;
 	cc.lpCustColors = pCustColors;
-	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-	cc.lCustData = 0;
-	cc.lpfnHook = nullptr;
-	cc.lpTemplateName = nullptr;
+	cc.Flags = CC_FULLOPEN | CC_RGBINIT | CF_ENABLEHOOK;
+	cc.lpfnHook = static_cast<LPCCHOOKPROC>(DarkMode::HookDlgProc);
 	if( !::ChooseColor( &cc ) ){
 		return FALSE;
 	}

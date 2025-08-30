@@ -31,6 +31,7 @@
 #include "types/CTypeSupport.h"
 #include <limits.h>
 #include "config/app_constants.h"
+#include "DarkModeSubclass.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -100,6 +101,9 @@ BOOL CEditView::CreateScrollBar()
 		::ShowWindow( m_hwndSizeBox, SW_HIDE );
 		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_SHOW );
 	}
+
+	DarkMode::setChildCtrlsTheme(GetHwnd());
+
 	return TRUE;
 }
 
