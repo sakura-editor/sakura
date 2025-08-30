@@ -11,6 +11,7 @@
 #include <ShlObj.h>
 #include <shellapi.h>
 #include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
+#include <wrl.h>
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
@@ -22,8 +23,7 @@
 #include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
 #include "String_define.h"
-#include <wrl.h>
-
+#include "DarkModeSubclass.h"
 
 /* フォルダー選択ダイアログ */
 BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
@@ -123,6 +123,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 			pt.y = rcOk.top;
 			::ScreenToClient( hwnd, &pt );
 			::MoveWindow( hwndBtn, pt.x, pt.y, DpiScaleX(140), rcOk.bottom - rcOk.top, FALSE );
+
 		}
 		break;
 
@@ -230,6 +231,8 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, [[maybe_unused]] LPA
 			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
 			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 		}
+
+		DarkMode::setDarkWndSafe(hwndDlg);
 	}
 	return 0;
 }
@@ -553,12 +556,14 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	cf.lStructSize = sizeof( cf );
 	cf.hwndOwner = hwndDlgOwner;
 	cf.hDC = nullptr;
-	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT | CF_EFFECTS | CF_ENABLEHOOK;
 	if( FixedFontOnly ){
 		//FIXEDフォント
 		cf.Flags |= CF_FIXEDPITCHONLY;
 	}
 	cf.lpLogFont = plf;
+	cf.lpfnHook = static_cast<LPCFHOOKPROC>(DarkMode::HookDlgProc);
+	cf.hInstance = GetModuleHandleW(nullptr);
 	if( !ChooseFont( &cf ) ){
 #ifdef _DEBUG
 		DWORD nErr;

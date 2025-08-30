@@ -13,6 +13,7 @@
 #include "apiwrap/StdApi.h"
 #include <memory>
 #include "config/system_constants.h"
+#include "DarkModeSubclass.h"
 
 void CPropertyManager::Create( HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* pMenuDrawer )
 {

@@ -390,30 +390,7 @@ LRESULT CControlTray::DispatchEvent(
 	case WM_MENUCHAR:
 		/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 		return m_cMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
-	case WM_DRAWITEM:
-		lpdis = (DRAWITEMSTRUCT*) lParam;	/* 項目描画情報 */
-		switch( lpdis->CtlType ){
-		case ODT_MENU:	/* オーナー描画メニュー */
-			/* メニューアイテム描画 */
-			m_cMenuDrawer.DrawItem( lpdis );
-			return TRUE;
-		}
-		return FALSE;
-	case WM_MEASUREITEM:
-		lpmis = (MEASUREITEMSTRUCT*) lParam;	// item-size information
-		switch( lpmis->CtlType ){
-		case ODT_MENU:	/* オーナー描画メニュー */
-			/* メニューアイテムの描画サイズを計算 */
-			nItemWidth = m_cMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
-			if( 0 < nItemWidth ){
-				lpmis->itemWidth = nItemWidth;
-				lpmis->itemHeight = nItemHeight;
-			}
-			return TRUE;
-		}
-		return FALSE;
 	case WM_EXITMENULOOP:
-		m_cMenuDrawer.EndDrawMenu();
 		break;
 
 	/* タスクトレイ左クリックメニューへのショートカットキー登録 */

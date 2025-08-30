@@ -34,6 +34,7 @@
 #include "util/window.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
+#include "DarkModeSubclass.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(
@@ -186,6 +187,14 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
 
 	m_hFontDialog = UpdateDialogFont( hwndDlg );
+
+	// --- Dark Mode ---
+	auto hWnd = m_hWnd;
+	DarkMode::setColorizeTitleBarConfig(true);
+	DarkMode::setDarkWndNotifySafeEx(hWnd, true, true);
+	DarkMode::setWindowEraseBgSubclass(hWnd);
+	DarkMode::setWindowMenuBarSubclass(hWnd);
+	DarkMode::setWindowExStyle(hWnd, false, WS_EX_COMPOSITED);
 
 	/* ダイアログデータの設定 */
 	SetData();
