@@ -30,7 +30,7 @@ if (BUILD_SHARED_LIBS)
 endif (BUILD_SHARED_LIBS)
 
 # Hacks to reuse compiled editor objects.
-target_compile_definitions(${project_name} PRIVATE WIN32 _WIN32_WINNT=_WIN32_WINNT_WIN7)
+target_compile_definitions(${project_name} PRIVATE WIN32 _WIN32_WINNT=_WIN32_WINNT_WIN10)
 if (MSVC)
 	target_compile_options (${project_name} PRIVATE $<$<CONFIG:Release>:/GL> /MT$<$<CONFIG:Debug>:d> /GF /FD /EHsc /Zi /TP /source-charset:utf-8 /execution-charset:shift_jis)
 	target_link_libraries  (${project_name} PRIVATE $<$<CONFIG:Release>:-LTCG> "${CMAKE_CURRENT_LIST_DIR}/../../sakura/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>/*.obj" "${CMAKE_CURRENT_LIST_DIR}/../../sakura/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>/*.res")
