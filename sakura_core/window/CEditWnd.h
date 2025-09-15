@@ -329,7 +329,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
 	//自ウィンドウ
-	HWND			m_hWnd;
+	HWND			m_hWnd = nullptr;
 
 public:
 	//子ウィンドウ
@@ -337,10 +337,10 @@ public:
 	CTabWnd			m_cTabWnd;			//!< タブウインドウ	//@@@ 2003.05.31 MIK
 	CFuncKeyWnd		m_cFuncKeyWnd;		//!< ファンクションバー
 	CMainStatusBar	m_cStatusBar;		//!< ステータスバー
-	CPrintPreview*	m_pPrintPreview;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
+	CPrintPreview*	m_pPrintPreview = nullptr;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
-	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
+	CEditView*		m_pcDragSourceView = nullptr;	//!< ドラッグ元のビュー
 	CViewFont*		m_pcViewFont;		//!< フォント
 	CViewFont*		m_pcViewFontMiniMap;		//!< フォント
 
@@ -360,9 +360,9 @@ private:
 	CEditView*		m_pcEditViewArr[4];	//!< ビュー
 	CEditView*		m_pcEditView;		//!< 有効なビュー
 	CMiniMapView	m_cMiniMapView;		//!< ミニマップ
-	int				m_nActivePaneIndex;	//!< 有効なビューのindex
-	int				m_nEditViewCount;	//!< 有効なビューの数
-	const int		m_nEditViewMaxCount;//!< ビューの最大数=4
+	int				m_nActivePaneIndex = 0;	//!< 有効なビューのindex
+	int				m_nEditViewCount = 1;	//!< 有効なビューの数
+	const int		m_nEditViewMaxCount = _countof(m_pcEditViewArr);//!< ビューの最大数=4
 
 	//共有データ
 	DLLSHAREDATA*	m_pShareData;
@@ -371,14 +371,14 @@ private:
 	CMenuDrawer		m_cMenuDrawer;
 
 	//状態
-	bool			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
-	LPWSTR			m_pszLastCaption;
+	bool			m_bIsActiveApp = false;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
+	LPWSTR			m_pszLastCaption = nullptr;
 	LPWSTR			m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
 public:
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
-	CLogicPointEx*	m_posSaveAry;		//!< フォント変更前の座標
+	CLogicPointEx*	m_posSaveAry = nullptr;		//!< フォント変更前の座標
 private:
-	int				m_nCurrentFocus;	//!< 現在のフォーカス情報
+	int				m_nCurrentFocus = 0;	//!< 現在のフォーカス情報
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
 	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
 	BOOL			m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
@@ -390,16 +390,16 @@ private:
 	int				m_nCaretPosInfoCharHeight;	//!< キャレットの行桁位置表示用フォントの高さ
 
 	//D&Dフラグ
-	bool			m_bDragMode;
+	bool			m_bDragMode = false;
 	CMyPoint		m_ptDragPosOrg;
 	CDropTarget*	m_pcDropTarget;
 
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
-	EIconClickStatus	m_IconClicked;
+	EIconClickStatus	m_IconClicked = icNone;
 
 public:
-	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
+	ESelectCountMode	m_nSelectCountMode = SELECT_COUNT_TOGGLE; // 選択文字カウント方法
 };
 
 CEditWnd& GetEditWnd( void );
