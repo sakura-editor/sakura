@@ -128,24 +128,24 @@ public:
 private:
 	bool	m_bDirectTagJump;
 
-	int		m_nIndex;		//!< 選択された要素番号
-	WCHAR	*m_pszFileName;	//!< 編集中のファイル名
-	wchar_t	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
-	int		m_nLoop;		//!< さかのぼれる階層数
-	CSortedTagJumpList*	m_pcList;	//!< タグジャンプ情報
-	UINT_PTR	m_nTimerId;		//!< タイマ番号
-	BOOL	m_bTagJumpICase;	//!< 大文字小文字を同一視
-	BOOL	m_bTagJumpPartialMatch;	//!< 文字列の途中にマッチ
+	int		m_nIndex = -1;		//!< 選択された要素番号
+	WCHAR	*m_pszFileName = nullptr;	//!< 編集中のファイル名
+	wchar_t	*m_pszKeyword = nullptr;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
+	int		m_nLoop = -1;		//!< さかのぼれる階層数
+	CSortedTagJumpList*	m_pcList = nullptr;	//!< タグジャンプ情報
+	UINT_PTR	m_nTimerId = 0;		//!< タイマ番号
+	BOOL	m_bTagJumpICase = FALSE;	//!< 大文字小文字を同一視
+	BOOL	m_bTagJumpPartialMatch = FALSE;	//!< 文字列の途中にマッチ
 	BOOL	m_bTagJumpExactMatch; //!< 完全一致(画面無し)
 
-	int 	m_nTop;			//!< ページめくりの表示の先頭(0開始)
-	bool	m_bNextItem;	//!< まだ次にヒットするものがある
+	int 	m_nTop = 0;			//!< ページめくりの表示の先頭(0開始)
+	bool	m_bNextItem = false;	//!< まだ次にヒットするものがある
 
 	// 絞り込み検索用
-	STagFindState* m_psFindPrev; //!< 前回の最後に検索した状態
-	STagFindState* m_psFind0Match; //!< 前回の1つもHitしなかった最後のtags
+	STagFindState* m_psFindPrev = nullptr; //!< 前回の最後に検索した状態
+	STagFindState* m_psFind0Match = nullptr; //!< 前回の1つもHitしなかった最後のtags
 
-	CNativeW	m_strOldKeyword;	//!< 前回のキーワード
+	CNativeW	m_strOldKeyword = { L"" };	//!< 前回のキーワード
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
 	BOOL	m_bOldTagJumpPartialMatch;	//!< 前回の文字列の途中にマッチ
 
