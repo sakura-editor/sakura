@@ -113,15 +113,15 @@ protected:
 	*/
 private:
 	CMenuDrawer		m_cMenuDrawer;
-	CPropertyManager*	m_pcPropertyManager;
-	bool			m_bUseTrayMenu;			//トレイメニュー表示中
-	HINSTANCE		m_hInstance;
-	HWND			m_hWnd;
-	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
+	CPropertyManager*	m_pcPropertyManager = nullptr;
+	bool			m_bUseTrayMenu = false;			//トレイメニュー表示中
+	HINSTANCE		m_hInstance = nullptr;
+	HWND			m_hWnd = nullptr;
+	BOOL			m_bCreatedTrayIcon = FALSE;		//!< トレイにアイコンを作った
 
 	DLLSHAREDATA*	m_pShareData;
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
-	int				m_nCurSearchKeySequence;
+	int				m_nCurSearchKeySequence = -1;
 
 	CImageListMgr	m_hIcons;
 
