@@ -519,7 +519,7 @@ bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFo
 	return true;
 }
 
-static int GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, int nEndMode)
+static size_t GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, int nEndMode)
 {
 	size_t nMemLength = ::GlobalSize(hClipData);
 	nEndMode = GetEndModeByMode(nMode, nEndMode);
