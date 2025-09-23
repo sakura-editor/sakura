@@ -24,7 +24,7 @@
 CClipboard::CClipboard(HWND hwnd)
 {
 	m_hwnd = hwnd;
-	m_bOpenResult = ::OpenClipboard(hwnd);
+	m_bOpenResult = OpenClipboardWithRetry(hwnd);
 }
 
 CClipboard::~CClipboard()
@@ -47,6 +47,23 @@ void CClipboard::Close()
 		::CloseClipboard();
 		m_bOpenResult=FALSE;
 	}
+}
+
+BOOL CClipboard::OpenClipboardWithRetry(HWND hwnd)
+{
+	for (int attempt = 0; attempt < CLIPBOARD_RETRY_COUNT; ++attempt) {
+		BOOL result = ::OpenClipboard(hwnd);
+		if (result) {
+			return result;
+		}
+		
+		// If this is not the last attempt, sleep briefly before retrying
+		if (attempt < CLIPBOARD_RETRY_COUNT - 1) {
+			::Sleep(CLIPBOARD_RETRY_DELAY_MS);
+		}
+	}
+	
+	return FALSE;
 }
 
 bool CClipboard::SetText(
