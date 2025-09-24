@@ -17,8 +17,6 @@
         - [具体例 (Win32 の Release)](#具体例-win32-の-release)
       - [Visual Studio 2019 を使用してコマンドラインでビルド](#visual-studio-2019-を使用してコマンドラインでビルド)
   - [ビルドの仕組み](#ビルドの仕組み)
-    - [appveyor でのビルドの仕組み](#appveyor-でのビルドの仕組み)
-    - [Azure Pipelines でのビルドの仕組み](#azure-pipelines-でのビルドの仕組み)
     - [インストーラの仕組み](#インストーラの仕組み)
   - [開発者向けの情報](#開発者向けの情報)
     - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
@@ -115,10 +113,6 @@ build-all.bat Win32 Release
 
 ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
-### Azure Pipelines でのビルドの仕組み
-
-[こちら](ci/azure-pipelines/azure-pipelines.md) で [Azure Pipelines](https://azure.microsoft.com/ja-jp/services/devops/pipelines/) 上でのビルドの仕組みを説明しています。
-
 ### インストーラの仕組み
 
 [こちら](installer/readme.md) でビルドの仕組みを説明しています。
@@ -182,8 +176,6 @@ build-sln.bat x64   Debug
 #### 参考情報
 
 - https://qiita.com/vmmhypervisor/items/f10c77a375c2a663b300
-- https://www.appveyor.com/docs/how-to/filtering-commits/#skip-directive-in-commit-message
-- https://docs.microsoft.com/ja-jp/azure/devops/pipelines/repos/azure-repos-git?view=azure-devops&tabs=yaml#skipping-ci-for-individual-commits
 - https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
 
 ### MinGW w64 ビルド
