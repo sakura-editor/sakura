@@ -302,7 +302,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	if( hUnicode != nullptr ){
 		wchar_t* szData = static_cast<wchar_t*>(::GlobalLock(hUnicode));
 		if (szData) {
-			cmemBuf->Append( szData, wcslen(szData) );
+			cmemBuf->Append( szData, wcsnlen(szData, GlobalSize(hUnicode) / 2) );
 		}
 		::GlobalUnlock(hUnicode);
 		return true;
