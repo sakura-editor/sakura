@@ -2918,8 +2918,6 @@ END
 
 STRINGTABLE
 BEGIN
-    STR_SHELL_HHCTRL        "HHCTRL.OCXが見つかりません。\r\nHTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n"
-    STR_SHELL_INFO          "情報"
     STR_SHELL_MENU_OPEN     "開く(&O)..."
     STR_SHELL_MENU_IMPEXP   "インポート／エクスポートの起点リセット(&R)"
     STR_SHELL_IMPEXPDIR     "各種設定のインポート／エクスポート用ファイル選択画面の\n初期表示フォルダーを設定フォルダーに戻します。"

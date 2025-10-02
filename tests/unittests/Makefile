@@ -110,6 +110,7 @@ LIBS= \
  -limagehlp \
  -lshlwapi \
  -ldwmapi \
+ -lhtmlhelp \
  -lwinmm \
  -lwindowscodecs \
  -lmsimg32 \
