@@ -20,7 +20,6 @@
 #include <vadefs.h>
 
 #include <Windows.h>
-#include <tchar.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
@@ -58,7 +57,7 @@ void DebugOutW( LPCWSTR lpFmt, ...);
 
 //トレース出力（トレース箇所のファイルパスと行番号を出力してエラー解析を容易にする目的）
 #ifdef _DEBUG
-	#define TRACE( format, ... )	DEBUG_TRACE( _T("%hs(%d): ") _T(format) _T("\n"), __FILE__, __LINE__, __VA_ARGS__ )
+	#define TRACE( format, ... )	DEBUG_TRACE( L"%hs(%d): " TEXT(format) L"\n", __FILE__, __LINE__, __VA_ARGS__ )
 #else
 	#define TRACE( ... )
 #endif

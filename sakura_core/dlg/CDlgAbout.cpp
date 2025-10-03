@@ -52,53 +52,53 @@ const DWORD p_helpids[] = {	//12900
 // 2006.01.17 Moca COMPILER_VERを追加
 // 2010.04.15 Moca icc/dmcを追加しCPUを分離
 #if defined(_M_AMD64)
-#  define TARGET_M_SUFFIX "_A64"
+#  define TARGET_M_SUFFIX L"_A64"
 #else
-#  define TARGET_M_SUFFIX ""
+#  define TARGET_M_SUFFIX L""
 #endif
 
 #if defined(__BORLANDC__)
 // borland c++
 // http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros
 // http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros#C.2B.2B_Compiler_Versions_in_Predefined_Macros
-#  define COMPILER_TYPE "B"
+#  define COMPILER_TYPE L"B"
 #  define COMPILER_VER  __BORLANDC__ 
 #elif defined(__GNUG__)
 // __GNUG__ = (__GNUC__ && __cplusplus)
 // GNU C++
 // https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
-#  define COMPILER_TYPE "G"
+#  define COMPILER_TYPE L"G"
 #  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
 #elif defined(__INTEL_COMPILER)
 // Intel Compiler
 // https://software.intel.com/en-us/cpp-compiler-developer-guide-and-reference-additional-predefined-macros
-#  define COMPILER_TYPE "I"
+#  define COMPILER_TYPE L"I"
 #  define COMPILER_VER __INTEL_COMPILER
 #elif defined(__DMC__)
 // Digital Mars C/C++
 // https://digitalmars.com/ctg/predefined.html
-#  define COMPILER_TYPE "D"
+#  define COMPILER_TYPE L"D"
 #  define COMPILER_VER __DMC__
 #elif defined(_MSC_VER)
 // https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=vs-2019
-#  define COMPILER_TYPE "V"
+#  define COMPILER_TYPE L"V"
 #  define COMPILER_VER _MSC_VER
 #else
 // unknown
-#  define COMPILER_TYPE "U"
+#  define COMPILER_TYPE L"U"
 #  define COMPILER_VER 0
 #endif
 //	To Here Feb. 7, 2002 genta
 
-#define TARGET_STRING_MODEL "WP"
+#define TARGET_STRING_MODEL L"WP"
 
 #ifdef _DEBUG
-	#define TARGET_DEBUG_MODE "D"
+	#define TARGET_DEBUG_MODE L"D"
 #else
-	#define TARGET_DEBUG_MODE "R"
+	#define TARGET_DEBUG_MODE L"R"
 #endif
 
-#define TSTR_TARGET_MODE _T(TARGET_STRING_MODEL) _T(TARGET_DEBUG_MODE)
+#define TSTR_TARGET_MODE TARGET_STRING_MODEL TARGET_DEBUG_MODE
 
 #if defined(CI_BUILD_URL)
 #pragma message("CI_BUILD_URL: " CI_BUILD_URL)
@@ -179,12 +179,12 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// 2行目
 #ifdef GIT_COMMIT_HASH
-	cmemMsg.AppendString( L"(GitHash " _T(GIT_COMMIT_HASH) L")\r\n" );
+	cmemMsg.AppendString( L"(GitHash " TEXT(GIT_COMMIT_HASH) L")\r\n" );
 #endif
 
 	// 3行目
 #ifdef GIT_REMOTE_ORIGIN_URL
-	cmemMsg.AppendString( L"(GitURL " _T(GIT_REMOTE_ORIGIN_URL) L")\r\n");
+	cmemMsg.AppendString( L"(GitURL " TEXT(GIT_REMOTE_ORIGIN_URL) L")\r\n");
 #endif
 
 	// 段落区切り
@@ -192,7 +192,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// コンパイル情報
 	cmemMsg.AppendStringF(
-		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/N%03x\r\n",
+		L"      Compile Info: " COMPILER_TYPE TARGET_M_SUFFIX L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/N%03x\r\n",
 		COMPILER_VER, WINVER, _WIN32_IE, _WIN32_WINNT
 	);
 
@@ -306,20 +306,20 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			::ShellExecute(GetHwnd(), nullptr, _T(CI_BUILD_URL), nullptr, nullptr, SW_SHOWNORMAL);
+			::ShellExecute(GetHwnd(), nullptr, TEXT(CI_BUILD_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			::ShellExecute(GetHwnd(), nullptr, _T(GIT_REMOTE_ORIGIN_URL), nullptr, nullptr, SW_SHOWNORMAL);
+			::ShellExecute(GetHwnd(), nullptr, TEXT(GIT_REMOTE_ORIGIN_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		::ShellExecute(GetHwnd(), nullptr, _T(GITHUB_COMMIT_URL), nullptr, nullptr, SW_SHOWNORMAL);
+		::ShellExecute(GetHwnd(), nullptr, TEXT(GITHUB_COMMIT_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		::ShellExecute(GetHwnd(), nullptr, _T(GITHUB_PR_HEAD_URL), nullptr, nullptr, SW_SHOWNORMAL);
+		::ShellExecute(GetHwnd(), nullptr, TEXT(GITHUB_PR_HEAD_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	}

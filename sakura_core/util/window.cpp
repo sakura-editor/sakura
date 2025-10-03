@@ -408,7 +408,7 @@ HFONT UpdateDialogFont( HWND hwnd, BOOL force )
 {
 	HFONT hFontDialog = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)nullptr );
 
-	if( !force && wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese") ) != 0 ){
+	if( !force && wcsncmp_literal( CSelectLang::getDefaultLangString(), L"Japanese" ) != 0 ){
 		return hFontDialog;
 	}
 
