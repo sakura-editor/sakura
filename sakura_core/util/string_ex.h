@@ -126,6 +126,16 @@ inline ACHAR* auto_strcpy(ACHAR* dst, const ACHAR* src){ return strcpy(dst,src);
 inline WCHAR* auto_strcpy(WCHAR* dst, const WCHAR* src){ return wcscpy(dst,src); }
 inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcpy_s(dst,nDstCount,src); }
 inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscpy_s(dst,nDstCount,src); }
+
+template<typename value_type>
+errno_t auto_strncpy_s(_Out_writes_(nDstCount) value_type* dst, size_t nDstCount, _In_reads_(count) const value_type* src, size_t count) {
+	if constexpr (std::is_same_v<value_type, WCHAR>) {
+		return wcsncpy_s(dst, nDstCount, src, count);
+	} else {
+		return strncpy_s(dst, nDstCount, src, count);
+	}
+}
+
 inline ACHAR* auto_strncpy(ACHAR* dst,const ACHAR* src,size_t count){ return strncpy(dst,src,count); }
 inline WCHAR* auto_strncpy(WCHAR* dst,const WCHAR* src,size_t count){ return wcsncpy(dst,src,count); }
 inline ACHAR* auto_memset(ACHAR* dest, ACHAR c, size_t count){        memset (dest,c,count); return dest; }
@@ -178,6 +188,8 @@ WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
 WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
+inline int auto_vscprintf(const ACHAR* format, va_list& v) { return ::_vscprintf (format, v); }
+inline int auto_vscprintf(const WCHAR* format, va_list& v) { return ::_vscwprintf(format, v); }
 inline int auto_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v) { return ::vsprintf(buf, format, v); }
 inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v) { return ::_vswprintf(buf, format, v); }
 inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
