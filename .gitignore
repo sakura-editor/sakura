@@ -25,7 +25,6 @@ msbuild-*.log
 msbuild-*.log.csv
 msbuild-*.log.xlsx
 sakura-*.zip
-sakura-*.zip.md5
 sha256.txt
 tags
 testData_*.txt
