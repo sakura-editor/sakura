@@ -119,9 +119,9 @@ public:
 	void DestroyWindow();
 
 private: // 2002/2/10 aroka アクセス権変更
-	HINSTANCE	m_hInstance;	// アプリケーションインスタンスのハンドル
-	HWND		m_hwndParent;	// オーナーウィンドウのハンドル
-	HWND		m_hWnd;			// このダイアログのハンドル
+	HINSTANCE	m_hInstance = nullptr;	// アプリケーションインスタンスのハンドル
+	HWND		m_hwndParent = nullptr;	// オーナーウィンドウのハンドル
+	HWND		m_hWnd = nullptr;		// このダイアログのハンドル
 #ifdef _DEBUG
 	WCHAR		m_szClassInheritances[1024];
 #endif
