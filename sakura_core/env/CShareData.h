@@ -114,9 +114,9 @@ public:
 
 private:
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-	HANDLE			m_hFileMap;
-	DLLSHAREDATA*	m_pShareData;
-	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
+	HANDLE			m_hFileMap = nullptr;
+	DLLSHAREDATA*	m_pShareData = nullptr;
+	std::vector<STypeConfig*>* 	m_pvTypeSettings = nullptr;	//	(コントロールプロセスのみ)
 	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 };
 #endif /* SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_ */
