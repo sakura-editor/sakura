@@ -279,8 +279,6 @@ CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
 }
 
 CDisableWow64FsRedirect::CDisableWow64FsRedirect(BOOL isOn)
-:	m_isSuccess(FALSE)
-,	m_OldValue(nullptr)
 {
 	if (isOn && IsWow64()) {
 		m_isSuccess = Wow64DisableWow64FsRedirection(&m_OldValue);
