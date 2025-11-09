@@ -17,7 +17,7 @@
 
 // 文字コードセット種別
 //2007.08.14 kobake CODE_ERROR, CODE_DEFAULT 追加
-enum ECodeType {
+enum ECodeType : int {
 	CODE_SJIS,						//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
 	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS)ではない)
 	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)ではない)
@@ -66,19 +66,6 @@ inline bool IsValidCodeTypeExceptSJIS(int code)
 	return IsValidCodeType(code) && code!=CODE_SJIS;
 }
 
-// 2010/6/21 Uchi 削除
-//2007.08.14 kobake 追加
-//!ECodeType型で表せる値ならtrue
-//inline bool IsInECodeType(int code)
-//{
-//	return (code>=0 && code<CODE_CODEMAX) || code==CODE_ERROR || code==CODE_AUTODETECT;
-//}
-
-// 2010/6/21 Uchi 削除
-//inline bool IsConcreteCodeType(ECodeType eCodeType)
-//{
-//	return IsValidCodeType(eCodeType) && eCodeType != CODE_AUTODETECT;
-//}
 inline bool IsValidCodePageEx(int code)
 {
 	return 12000 == code
