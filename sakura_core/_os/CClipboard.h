@@ -76,9 +76,16 @@ public:
 
 	int GetDataType() const; //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 
+	// OpenClipboard retry constants (public for testing)
+	static constexpr int CLIPBOARD_RETRY_COUNT = 10;
+	static constexpr int CLIPBOARD_RETRY_DELAY_MS = 10;
+
 private:
 	HWND m_hwnd;
 	BOOL m_bOpenResult;
+
+	// Helper method for OpenClipboard with retry
+	BOOL OpenClipboardWithRetry(HWND hwnd);
 
 	// -- -- staticインターフェース -- -- //
 public:
