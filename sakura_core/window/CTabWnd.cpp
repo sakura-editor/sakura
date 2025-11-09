@@ -38,6 +38,7 @@
 #include <windowsx.h>
 #include "config/system_constants.h"
 #include "String_define.h"
+#include "DarkModeSubclass.h"
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 // 2009.10.01 ryoji 高DPI対応スケーリング
@@ -945,6 +946,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 			GetAppInstance(),
 			nullptr
 			);
+		DarkMode::setDarkTooltips(m_hwndToolTip, static_cast<int>(DarkMode::ToolTipsType::tooltip));
 
 		// ツールチップをマルチライン可能にする（SHRT_MAX: Win95でINT_MAXだと表示されない）	// 2007.03.03 ryoji
 		Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
@@ -1059,6 +1061,12 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		ImageList_Destroy( m_hIml );
 		m_hIml = nullptr;
 	}
+
+	for (auto [key, value] : m_bmpMap)
+	{
+		::DeleteObject(value);
+	}
+	m_bmpMap.clear();
 
 	::KillTimer( hwnd, 1 );	//	2006.02.01 ryoji
 
@@ -1244,67 +1252,8 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
-	if( lpdis->CtlType == ODT_MENU )
-	{
-		// タブ一覧メニューを描画する
-		TABMENU_DATA* pData = (TABMENU_DATA*)lpdis->itemData;
-
-		//描画対象
-		HDC hdc = lpdis->hDC;
-		CGraphics gr(hdc);
-		RECT rcItem = lpdis->rcItem;
-
-		// 状態に従ってテキストと背景色を決める
-		COLORREF clrText;
-		int nSysClrBk;
-		if (lpdis->itemState & ODS_SELECTED)
-		{
-			clrText = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
-			nSysClrBk = COLOR_HIGHLIGHT;
-		}
-		else
-		{
-			clrText = ::GetSysColor( COLOR_MENUTEXT );
-			nSysClrBk = COLOR_MENU;
-		}
-
-		// 背景描画
-		::MyFillRect( gr, rcItem, nSysClrBk );
-
-		// アイコン描画
-		int cxIcon = CX_SMICON;
-		int cyIcon = CY_SMICON;
-		if( nullptr != m_hIml )
-		{
-			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
-			if( 0 <= pData->iImage )
-			{
-				int top = rcItem.top + ( rcItem.bottom - rcItem.top - cyIcon ) / 2;
-				ImageList_Draw( m_hIml, pData->iImage, lpdis->hDC, rcItem.left + DpiScaleX(2), top, ILD_TRANSPARENT );
-			}
-		}
-
-		// テキスト描画
-		gr.PushTextForeColor( clrText );
-		gr.SetTextBackTransparent(true);
-		HFONT hFont = CreateMenuFont();
-		gr.PushMyFont(hFont);
-		RECT rcText = rcItem;
-		rcText.left += (cxIcon + DpiScaleX(8));
-
-		::DrawText( gr, pData->szText, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
-
-		gr.PopTextForeColor();
-		gr.PopMyFont();
-		::DeleteObject( hFont );
-
-		// チェック状態なら外枠描画
-		if( lpdis->itemState & ODS_CHECKED )
-		{
-			gr.SetPen( ::GetSysColor(COLOR_HIGHLIGHT) );
-			gr.SetBrushColor(-1); //NULL_BRUSH
-			::Rectangle( gr, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom );
-		}
+	if( lpdis->CtlType == ODT_MENU ) {
+		assert(0);
 	}
 	else if( lpdis->CtlType == ODT_TAB ) {
 		// タブを描画する
@@ -1335,7 +1284,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		}else{
 			int iPartId = TABP_TABITEM;
 			int iStateId = TIS_NORMAL;
-			HTHEME hTheme = ::OpenThemeData( m_hwndTab, L"TAB" );
+			HTHEME hTheme = ::OpenThemeData( m_hwndTab, L"Explorer" );
 			if( hTheme ) {
 				if( !bSelected ){
 					::InflateRect( &rcFullItem, DpiScaleX(2), DpiScaleY(2) );
@@ -1404,7 +1353,8 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		// テキスト描画
 		COLORREF clrText;
-		clrText = ::GetSysColor(COLOR_MENUTEXT);
+		//clrText = ::GetSysColor(COLOR_MENUTEXT);
+		clrText = DarkMode::getTextColor();
 		gr.PushTextForeColor( clrText );
 		gr.SetTextBackTransparent(true);
 		RECT rcText = rcItem;
@@ -1574,14 +1524,19 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	// 背景を描画する
 	::GetClientRect( hwnd, &rc );
-	::MyFillRect( gr, rc, COLOR_3DFACE );
+	::MyFillRect( gr, rc, DarkMode::getBackgroundColor() );
 
 	// ボタンを描画する
 	DrawListBtn( gr, &rc );
 	DrawCloseBtn( gr, &rc );	// 2006.10.21 ryoji 追加
 
 	// 上側に境界線を描画する
-	::DrawEdge(gr, &rc, EDGE_ETCHED, BF_TOP);
+	// Sunken outer edge.
+	gr.SetPen(RGB(60, 60, 60));
+	gr.DrawLine(0, 0, rc.right, 0);
+	// Raised inner edge.
+	gr.SetPen(RGB(100, 100, 100));
+	gr.DrawLine(0, 1, rc.right, 1);
 
 	// トップバンドを描画する
 	if( auto nCurSel = TabCtrl_GetCurSel( m_hwndTab ); 0 <= nCurSel ){
@@ -2351,6 +2306,17 @@ void CTabWnd::LayoutTab( void )
 	}
 }
 
+static HBITMAP getIconBmp(HICON hIcon)
+{
+	ICONINFOEX ii;
+	ii.cbSize = sizeof(ii);
+	::GetIconInfoEx(hIcon, &ii);
+	auto ret = (HBITMAP)CopyImage(ii.hbmColor, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+	::DeleteObject(ii.hbmColor);
+	::DeleteObject(ii.hbmMask);
+	return ret;
+}
+
 /*! イメージリストの初期化処理
 	@date 2006.02.22 ryoji 新規作成
 */
@@ -2401,9 +2367,15 @@ HIMAGELIST CTabWnd::InitImageList( void )
 		// （利用しないアイコンと差し替える）
 		m_hIconApp = GetAppIcon( GetAppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
 		ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
+		if (m_bmpMap.count(m_iIconApp) == 0) {
+			m_bmpMap[m_iIconApp] = getIconBmp(m_hIconApp);
+		}
 		if( m_iIconApp != m_iIconGrep ){
 			m_hIconGrep = GetAppIcon( GetAppInstance(), ICON_DEFAULT_GREP, FN_GREP_ICON, true );
 			ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+			if (m_bmpMap.count(m_iIconGrep) == 0) {
+				m_bmpMap[m_iIconGrep] = getIconBmp(m_hIconGrep);
+			}
 		}
 	}
 
@@ -2415,6 +2387,7 @@ l_end:
 	if( nullptr != m_hIml )
 		ImageList_Destroy( m_hIml );
 	m_hIml = hImlNew;
+	auto cnt = ImageList_GetImageCount(m_hIml);
 
 	return m_hIml;	// 新しいイメージリストを返す
 }
@@ -2443,6 +2416,14 @@ int CTabWnd::GetImageIndex( EditNode* pNode )
 			hImlSys = (HIMAGELIST)::SHGetFileInfo( szExt, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
 			if( nullptr == hImlSys )
 				return -1;
+			if (m_bmpMap.count(sfi.iIcon) == 0)
+			{
+				HICON hIcon = ::ImageList_GetIcon(hImlSys, sfi.iIcon, ILD_TRANSPARENT);
+				if (hIcon != nullptr)
+				{
+					m_bmpMap[sfi.iIcon] = getIconBmp(hIcon);
+				}
+			}
 			if( ImageList_GetImageCount( m_hIml ) > sfi.iIcon )
 				return sfi.iIcon;	// インデックスを返す
 
@@ -2529,8 +2510,9 @@ void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 	if( bBtnHilighted )
 	{
 		CGraphics gr(hdc);
-		gr.SetPen( ::GetSysColor(COLOR_HIGHLIGHT) );
-		gr.SetBrushColor( ::GetSysColor(COLOR_MENU) );
+		auto color = DarkMode::getHotBackgroundColor();
+		gr.SetPen(color);
+		gr.SetBrushColor(color);
 		::Rectangle( gr, lprcBtn->left, lprcBtn->top, lprcBtn->right, lprcBtn->bottom );
 	}
 }
@@ -2555,9 +2537,10 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
-	gr.SetPen( ::GetSysColor( nIndex ) );
-	gr.SetBrushColor( ::GetSysColor( nIndex ) ); //$$ GetSysColorBrushを用いた実装のほうが効率は良い
+	//auto color = ::GetSysColor(m_bListBtnHilighted ? COLOR_MENUTEXT : COLOR_BTNTEXT);
+	auto color = DarkMode::getTextColor();
+	gr.SetPen( color );
+	gr.SetBrushColor( color ); //$$ GetSysColorBrushを用いた実装のほうが効率は良い
 	for( int i = 0; i < _countof(ptBase); i++ )
 	{
 		pt[i].x = ptBase[i].x + rcBtn.left;
@@ -2621,7 +2604,8 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	GetCloseBtnRect( lprcClient, &rcBtn );
 
 	// ボタンの左側にセパレータを描画する	// 2007.02.27 ryoji
-	gr.SetPen( ::GetSysColor( COLOR_3DSHADOW ) );
+	gr.SetPen( DarkMode::getDlgBackgroundColor() );
+	//gr.SetPen( ::GetSysColor( COLOR_3DSHADOW ) );
 	::MoveToEx( gr, rcBtn.left - DpiScaleX(4), rcBtn.top + 1, nullptr );
 	::LineTo( gr, rcBtn.left - DpiScaleX(4), rcBtn.bottom - 1 );
 
@@ -2633,9 +2617,10 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
-	gr.SetPen( ::GetSysColor(nIndex) );
-	gr.SetBrushColor( ::GetSysColor(nIndex) );
+	//auto color = ::GetSysColor(m_bCloseBtnHilighted ? COLOR_MENUTEXT : COLOR_BTNTEXT);
+	auto color = DarkMode::getTextColor();
+	gr.SetPen( color );
+	gr.SetBrushColor( color );
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
 		!m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
 		!m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加（ウィンドウの閉じるボタンは全部閉じる）
@@ -2673,9 +2658,10 @@ void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool sele
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	int nIndex = COLOR_BTNTEXT;
-	gr.SetPen( ::GetSysColor(nIndex) );
-	gr.SetBrushColor( ::GetSysColor(nIndex) );
+	//auto color = ::GetSysColor(COLOR_BTNTEXT);
+	auto color = DarkMode::getTextColor();
+	gr.SetPen( color );
+	gr.SetBrushColor( color );
 	DrawCloseFigure( gr, rcBtn );
 }
 
@@ -2907,20 +2893,26 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 
 		// メニューを作成する
 		// 2007.02.28 ryoji 表示切替をメニューに追加
-		int iMenuSel = -1;
-		UINT uFlags = MF_BYPOSITION | (m_hIml? MF_OWNERDRAW: MF_STRING);
+		UINT fMask = MIIM_STATE | MIIM_ID | MIIM_DATA | MIIM_STRING | (m_hIml ? MIIM_BITMAP : 0);
 		HMENU hMenu = ::CreatePopupMenu();
+		MENUITEMINFO mii{};
+		mii.cbSize = sizeof(mii);
+		mii.fMask = fMask;
+		mii.fType = 0;
+		IMAGEINFO ii;
 		for( i = 0; i < nSelfTab; i++ )
 		{
-			::InsertMenu( hMenu, i, uFlags, IDM_SELWINDOW + i, m_hIml? (LPCWSTR)&pData[i]: pData[i].szText );
-			if( pData[i].hwnd == GetParentHwnd() )
-				iMenuSel = i;
-		}
-
-		// 自ウィンドウに対応するメニューをチェック状態にする
-		if( iMenuSel >= 0 )
-		{
-			::CheckMenuRadioItem( hMenu, 0, nSelfTab - 1, iMenuSel, MF_BYPOSITION );
+			mii.wID = IDM_SELWINDOW + i;
+			mii.dwTypeData = pData[i].szText;
+			mii.dwItemData = (ULONG_PTR)pData[i].hwnd;
+			mii.cch = wcslen(pData[i].szText);
+			if (m_hIml)
+			{
+				auto it = m_bmpMap.find(pData[i].iImage);
+				mii.hbmpItem = it == m_bmpMap.end() ? nullptr : it->second;
+			}
+			mii.fState = (pData[i].hwnd == GetParentHwnd()) ? (MFS_HILITE|MFS_DEFAULT) : MF_UNHILITE;
+			auto ret = ::InsertMenuItem( hMenu, i, TRUE, &mii );
 		}
 
 		// 他グループのウィンドウ一覧を追加する
@@ -2930,7 +2922,17 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 			{
 				for( i = nSelfTab; i < nTab; i++ )
 				{
-					::InsertMenu( hMenu, i, uFlags, IDM_SELWINDOW + i, m_hIml? (LPCWSTR)&pData[i]: pData[i].szText );
+					mii.wID = IDM_SELWINDOW + i;
+					mii.dwTypeData = pData[i].szText;
+					mii.dwItemData = (ULONG_PTR)pData[i].hwnd;
+					mii.cch = wcslen(pData[i].szText);
+					if (m_hIml)
+					{
+						auto it = m_bmpMap.find(pData[i].iImage);
+						mii.hbmpItem = it == m_bmpMap.end() ? nullptr : it->second;
+					}
+					mii.fState = MF_UNHILITE;
+					::InsertMenuItem(hMenu, i, TRUE, &mii);
 				}
 			}
 			else
@@ -3260,6 +3262,7 @@ void CTabWnd::SizeBox_ONOFF( bool bSizeBox )
 			GetAppInstance(),				/* instance owning this window	*/
 			(LPVOID) nullptr			/* pointer not needed				*/
 		);
+		DarkMode::setDarkWndSafe(GetHwnd());
 		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 		m_bSizeBox = true;
 		OnSize();

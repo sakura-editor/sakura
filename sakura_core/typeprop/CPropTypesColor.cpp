@@ -40,6 +40,7 @@
 #include "apiwrap/StdControl.h"
 #include "config/app_constants.h"
 #include "String_define.h"
+#include "DarkModeSubclass.h"
 
 namespace {
 //! カスタムカラー用の識別文字列
@@ -1094,7 +1095,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	ColorInfo*	pColorInfo;
 //	RECT		rc0,rc1,rc2;
 	RECT		rc1;
-	COLORREF	cRim = (COLORREF)::GetSysColor( COLOR_3DSHADOW );
+	COLORREF	cRim = (COLORREF)DarkMode::getEdgeColor();
 
 	if( pDis == nullptr || pDis->itemData == 0 ) return;
 
@@ -1109,27 +1110,27 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	pColorInfo = (ColorInfo*)pDis->itemData;
 
 	/* アイテム矩形塗りつぶし */
-	gr.SetBrushColor( ::GetSysColor( COLOR_WINDOW ) );
+	gr.SetBrushColor( DarkMode::getCtrlBackgroundColor() );
 	gr.FillMyRect( pDis->rcItem );
 	
 	/* アイテムが選択されている */
 	if( pDis->itemState & ODS_SELECTED ){
-		gr.SetBrushColor( ::GetSysColor( COLOR_HIGHLIGHT ) );
-		gr.SetTextForeColor( ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );
+		gr.SetBrushColor(::GetSysColor(COLOR_HIGHLIGHT));
+		gr.SetTextForeColor( DarkMode::getTextColor() );
 	}else{
-		gr.SetBrushColor( ::GetSysColor( COLOR_WINDOW ) );
-		gr.SetTextForeColor( ::GetSysColor( COLOR_WINDOWTEXT ) );
+		gr.SetBrushColor(DarkMode::getCtrlBackgroundColor());
+		gr.SetTextForeColor(DarkMode::getTextColor());
 	}
 
 	const int xOffset = ::MulDiv(m_uFocusBorderWidth, 2, 3);
 	const int yOffset = ::MulDiv(m_uFocusBorderHeight, 2, 3); // 少し重ならせる
 	const int colorSampleWidth = DpiScaleX(12);
-	rc1.left += xOffset + DpiScaleX(16);
 	rc1.top += yOffset;
 	rc1.right -= 2 * (colorSampleWidth + xOffset) + DpiScaleX(2);
 	rc1.bottom -= yOffset;
 	/* 選択ハイライト矩形 */
 	gr.FillMyRect(rc1);
+	rc1.left += xOffset + DpiScaleX(16);
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
 	SFontAttr sFontAttr;
@@ -1152,7 +1153,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	rc1.bottom = rc1.top + DpiScaleY(12);
 	if( pColorInfo->m_bDisp ){	/* 色分け/表示する */
 		// 2006.04.26 ryoji テキスト色を使う（「ハイコントラスト黒」のような設定でも見えるように）
-		gr.SetPen( ::GetSysColor( COLOR_WINDOWTEXT ) );
+		gr.SetPen( DarkMode::getTextColor() );
 		// チェックマークを2本の直線で描画する際に使用する3点の座標
 		const POINT pts[3] = {
 			{ rc1.left + DpiScaleX(2), rc1.top + DpiScaleY(3) }, // 左
@@ -1208,16 +1209,13 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 /* 色選択ダイアログ */
 BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
 {
-	CHOOSECOLOR		cc;
-	cc.lStructSize = sizeof_raw( cc );
+	CHOOSECOLOR		cc = {sizeof(cc)};
 	cc.hwndOwner = hwndParent;
 	cc.hInstance = nullptr;
 	cc.rgbResult = *pColor;
 	cc.lpCustColors = pCustColors;
-	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-	cc.lCustData = 0;
-	cc.lpfnHook = nullptr;
-	cc.lpTemplateName = nullptr;
+	cc.Flags = CC_FULLOPEN | CC_RGBINIT | CC_ENABLEHOOK;
+	cc.lpfnHook = static_cast<LPCCHOOKPROC>(DarkMode::HookDlgProc);
 	if( !::ChooseColor( &cc ) ){
 		return FALSE;
 	}
