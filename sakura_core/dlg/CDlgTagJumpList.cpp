@@ -122,20 +122,7 @@ inline void CDlgTagJumpList::ClearPrevFindInfo(){
 
 CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	: CDialog(true),
-	  m_bDirectTagJump(bDirectTagJump),
-	  m_nIndex( -1 ),
-	  m_pszFileName( nullptr ),
-	  m_pszKeyword( nullptr ),
-	  m_nLoop( -1 ),
-	  m_pcList( nullptr ),
-	  m_nTimerId( 0 ),
-	  m_bTagJumpICase( FALSE ),
-	  m_bTagJumpPartialMatch( FALSE ),
-	  m_nTop( 0 ),
-	  m_bNextItem( false ),
-	  m_psFindPrev( nullptr ),
-	  m_psFind0Match( nullptr ),
-	  m_strOldKeyword( L"" )
+	  m_bDirectTagJump(bDirectTagJump)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	static_assert( _countof(anchorList) == _countof(m_rcItems) );
