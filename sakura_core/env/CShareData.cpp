@@ -59,9 +59,6 @@ const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
 CShareData::CShareData()
 {
-	m_hFileMap   = nullptr;
-	m_pShareData = nullptr;
-	m_pvTypeSettings = nullptr;
 }
 
 /*!
