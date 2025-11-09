@@ -36,10 +36,7 @@ const WCHAR* UnEscapeInfoText( CNativeW& cInfo )
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
 : CWnd(L"::CTipWnd")
-, m_bAlignLeft(false)
 {
-	m_hFont = nullptr;
-	m_KeyWasHit = FALSE;	/* キーがヒットしたか */
 	return;
 }
 
