@@ -9,7 +9,6 @@
 #define SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_
 #pragma once
 
-#include "dlg/CDialog.h"
 #include "recent/CRecentSearch.h"
 
 class CEditWnd;
@@ -52,16 +51,16 @@ private:
 	static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
 
 	CEditWnd*	m_pOwner;
-    HWND		m_hwndToolBar;
+	HWND		m_hwndToolBar = nullptr;
 
 	//子ウィンドウ
-    HWND		m_hwndReBar;		//!< Rebar ウィンドウ	//@@@ 2006.06.17 ryoji
-	HWND		m_hwndSearchBox;	//!< 検索コンボボックス
+	HWND		m_hwndReBar = nullptr;		//!< Rebar ウィンドウ	//@@@ 2006.06.17 ryoji
+	HWND		m_hwndSearchBox = nullptr;	//!< 検索コンボボックス
 
 	//フォント
-	HFONT		m_hFontSearchBox;	//!< 検索コンボボックスのフォント
+	HFONT		m_hFontSearchBox = nullptr;	//!< 検索コンボボックスのフォント
 
 	CRecentSearch			m_cRecentSearch;
-	CImageListMgr*			m_pcIcons;
+	CImageListMgr*			m_pcIcons = nullptr;
 };
 #endif /* SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_ */
