@@ -4001,27 +4001,20 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 {
 	const WCHAR* pszFilePath = _pszFilePath;
 
-	EditNode	*p;
-	int		nIndex;
-
 	if( nullptr == pszTabCaption ) pszTabCaption = L"";	//ガード
 	if( nullptr == pszFilePath ) pszFilePath = L"";		//ガード 2006.01.28 ryoji
 
 	CRecentEditNode	cRecentEditNode;
-	nIndex = cRecentEditNode.FindItemByHwnd( GetHwnd() );
+	int nIndex = cRecentEditNode.FindItemByHwnd( GetHwnd() );
 	if( -1 != nIndex )
 	{
-		p = cRecentEditNode.GetItem( nIndex );
+		EditNode *p = cRecentEditNode.GetItem( nIndex );
 		if( p )
 		{
-			int	size = _countof( p->m_szTabCaption ) - 1;
-			wcsncpy( p->m_szTabCaption, pszTabCaption, size );
-			p->m_szTabCaption[ size ] = L'\0';
+			wcsncpy_s( p->m_szTabCaption, _countof(p->m_szTabCaption), pszTabCaption, _TRUNCATE );
 
 			// 2006.01.28 ryoji ファイル名、Grepモード追加
-			size = _countof2( p->m_szFilePath ) - 1;
-			wcsncpy( p->m_szFilePath, pszFilePath, size );
-			p->m_szFilePath[ size ] = L'\0';
+			wcsncpy_s( p->m_szFilePath, _countof2(p->m_szFilePath), pszFilePath, _TRUNCATE );
 
 			p->m_bIsGrep = bIsGrep;
 		}
