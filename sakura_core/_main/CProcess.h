@@ -60,7 +60,7 @@ public:
 
 private:
 	HINSTANCE	m_hInstance;
-	HWND		m_hWnd;
+	HWND		m_hWnd = nullptr;
 	CShareData		m_cShareData;
 	std::wstring	m_strAppName;
 };
