@@ -12,8 +12,6 @@
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
-, m_hwndStatusBar( nullptr )
-, m_hwndProgressBar( nullptr )
 {
 }
 

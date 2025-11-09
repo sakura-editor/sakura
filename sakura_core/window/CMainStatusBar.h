@@ -41,7 +41,7 @@ public:
 	void ShowProgressBar(bool bShow) const;
 private:
 	CEditWnd*	m_pOwner;
-	HWND		m_hwndStatusBar;
-	HWND		m_hwndProgressBar;
+	HWND		m_hwndStatusBar = nullptr;
+	HWND		m_hwndProgressBar = nullptr;
 };
 #endif /* SAKURA_CMAINSTATUSBAR_E2FC11D7_4513_4F96_BDCC_E9B278ED0718_H_ */
