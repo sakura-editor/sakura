@@ -13,20 +13,16 @@
 
 #include "StdAfx.h"
 #include "CSortedTagJumpList.h"
-
 #include "util/tchar_convert.h"
 
 /*!
 	@date 2005.04.23 genta 管理数の最大値を指定する引数追加
 */
 CSortedTagJumpList::CSortedTagJumpList(int max)
-	: m_pTagjump( nullptr ),
-	  m_nCount( 0 ),
-	  m_bOverflow( false ),
-	  m_MAX_TAGJUMPLIST( max )
+	: m_MAX_TAGJUMPLIST( max )
 {
 	// id==0 を 空文字列にする
-	m_baseDirArr.push_back(L"");
+	m_baseDirArr.emplace_back(L"");
 }
 
 CSortedTagJumpList::~CSortedTagJumpList()
