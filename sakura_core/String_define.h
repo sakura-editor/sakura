@@ -592,8 +592,6 @@
 
 // CHokanMgr.cpp
 
-// CHtmlHelp.cpp
-
 // CImageListMgr.cpp
 
 // CKeyBind.cpp
@@ -1005,8 +1003,8 @@
 #define STR_ERR_ETCUTY01				34749
 #define STR_ERR_ETCUTY02				34750
 #define STR_ERR_ETCUTY03				34751
-#define STR_SHELL_HHCTRL				34752
-#define STR_SHELL_INFO					34753
+// #define STR_SHELL_HHCTRL				34752
+// #define STR_SHELL_INFO					34753
 #define STR_SHELL_MENU_OPEN				34754
 #define STR_SHELL_MENU_IMPEXP			34755
 #define STR_SHELL_IMPEXPDIR				34756
