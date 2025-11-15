@@ -49,6 +49,15 @@ const DWORD p_helpids[] = {	//11800
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
+static const SAnchorList anchorList[] = {
+	IDC_BUTTON_SEARCHPREV,				ANCHOR_RIGHT,
+	IDC_BUTTON_SEARCHNEXT,				ANCHOR_RIGHT,
+	IDC_BUTTON_SETMARK,					ANCHOR_RIGHT,
+	IDCANCEL,							ANCHOR_RIGHT,
+	IDC_BUTTON_HELP,					ANCHOR_RIGHT,
+	IDC_COMBO_TEXT,						ANCHOR_LEFT_RIGHT,
+};
+
 CDlgFind::CDlgFind()
 {
 	m_sSearchOption.Reset();
@@ -101,6 +110,21 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
 	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
+
+	RECT rc;
+	::GetClientRect(hwnd, &rc);
+	m_ptDefaultSizeClient.x = rc.right;
+	m_ptDefaultSizeClient.y = rc.bottom;
+
+	::GetWindowRect(hwnd, &rc);
+	m_ptDefaultSizeScreen.x = rc.right - rc.left;
+	m_ptDefaultSizeScreen.y = rc.bottom - rc.top;
+
+	m_rcItems.resize(_countof(anchorList));
+	for (int i = 0; i < _countof(anchorList); i++) {
+		GetItemClientRect(anchorList[i].id, m_rcItems[i]);
+	}
+
 	return bRet;
 }
 
@@ -395,6 +419,75 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 		pcEditView->InvalidateRect(nullptr);	// アクティブ化／非アクティブ化が完了してから再描画
 
 	return CDialog::OnActivate(wParam, lParam);
+}
+
+BOOL CDlgFind::OnSize(WPARAM wParam, LPARAM lParam)
+{
+	CDialog::OnSize(wParam, lParam);
+
+	POINT ptNew;
+	ptNew.x = LOWORD(lParam);
+	ptNew.y = HIWORD(lParam);
+
+	for (int i = 0; i < _countof(anchorList); i++) {
+		ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSizeClient, ptNew, m_rcItems[i], anchorList[i].anchor);
+	}
+	return TRUE;
+}
+
+BOOL CDlgFind::OnSizing(WPARAM wParam, LPARAM lParam)
+{
+	RECT& rc = *(RECT*)lParam;
+
+	switch (wParam) {
+	case WMSZ_BOTTOMRIGHT:
+	case WMSZ_RIGHT:
+	case WMSZ_TOPRIGHT:
+		if (rc.right - rc.left < m_ptDefaultSizeScreen.x) {
+			rc.right = rc.left + m_ptDefaultSizeScreen.x;
+		}
+		break;
+	case WMSZ_BOTTOMLEFT:
+	case WMSZ_LEFT:
+	case WMSZ_TOPLEFT:
+		if (rc.right - rc.left < m_ptDefaultSizeScreen.x) {
+			rc.left = rc.right - m_ptDefaultSizeScreen.x;
+		}
+		break;
+	}
+
+	switch (wParam) {
+	case WMSZ_BOTTOM:
+	case WMSZ_BOTTOMLEFT:
+	case WMSZ_BOTTOMRIGHT:
+		rc.bottom = rc.top + m_ptDefaultSizeScreen.y;
+		break;
+	case WMSZ_TOP:
+	case WMSZ_TOPLEFT:
+	case WMSZ_TOPRIGHT:
+		rc.top = rc.bottom - m_ptDefaultSizeScreen.y;
+		break;
+	}
+
+	return TRUE;
+}
+
+int CDlgFind::OnNcHitTest(WPARAM wParam, LPARAM lParam)
+{
+	int ret = CDialog::OnNcHitTest(wParam, lParam);
+	switch (ret) {
+	case HTTOPLEFT:
+	case HTBOTTOMLEFT:
+		return HTLEFT;
+	case HTTOPRIGHT:
+	case HTBOTTOMRIGHT:
+		return HTRIGHT;
+	case HTBOTTOM:
+	case HTTOP:
+		return HTBORDER;
+	default:
+		return ret;
+	}
 }
 
 //@@@ 2002.01.18 add start
