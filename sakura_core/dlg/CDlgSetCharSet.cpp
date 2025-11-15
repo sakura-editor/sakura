@@ -34,8 +34,6 @@ const DWORD p_helpids[] = {
 
 CDlgSetCharSet::CDlgSetCharSet()
 {
-	m_pnCharSet = nullptr;			// 文字コードセット
-	m_pbBom = nullptr;				// 文字コードセット
 }
 
 /* モーダルダイアログの表示 */

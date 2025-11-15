@@ -33,8 +33,8 @@ public:
 	*/
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pnCharSet, bool* pbBom );	/* モーダルダイアログの表示 */
 
-	ECodeType*	m_pnCharSet;			// 文字コードセット
-	bool*		m_pbBom;				// BOM
+	ECodeType*	m_pnCharSet = nullptr;			// 文字コードセット
+	bool*		m_pbBom = nullptr;				// BOM
 
 	HWND		m_hwndCharSet;
 	HWND		m_hwndCheckBOM;
