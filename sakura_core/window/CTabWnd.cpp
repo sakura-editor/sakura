@@ -20,7 +20,6 @@
 */
 
 #include "StdAfx.h"
-#include <limits.h>
 #include "CTabWnd.h"
 #include "window/CEditWnd.h"
 #include "_main/global.h"
@@ -35,7 +34,6 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
-#include <windowsx.h>
 #include "config/system_constants.h"
 #include "String_define.h"
 
@@ -794,28 +792,11 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 
 CTabWnd::CTabWnd()
 : CWnd(L"::CTabWnd")
-, m_eTabPosition( TabPosition_None )
-, m_eDragState( DRAG_NONE )
-, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
-, m_bHovering( FALSE )	//	2006.02.01 ryoji
-, m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
-, m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
-, m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
-, m_nTabBorderArray( nullptr )		//  2012.04.22 syat
-, m_nTabHover( -1 )
-, m_bTabCloseHover( false )
-, m_nTabCloseCapture( -1 )
-,m_hwndSizeBox(nullptr)
-,m_bSizeBox(false)
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	m_hwndTab    = nullptr;
-	m_hFont      = nullptr;
 	gm_pOldWndProc = nullptr;
-	m_hwndToolTip = nullptr;
-	m_hIml = nullptr;
 
 	return;
 }
