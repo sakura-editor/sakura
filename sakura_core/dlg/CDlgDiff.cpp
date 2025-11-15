@@ -86,18 +86,10 @@ static const SAnchorList anchorList[] = {
 
 CDlgDiff::CDlgDiff()
 	: CDialog(true)
-	, m_nIndexSave( 0 )
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	static_assert( _countof(anchorList) == _countof(m_rcItems) );
 
-	m_nDiffFlgOpt    = 0;
-	m_bIsModifiedDst = false;
-	m_nCodeTypeDst = CODE_ERROR;
-	m_bBomDst = false;
-	m_hWnd_Dst       = nullptr;
-	m_ptDefaultSize.x = -1;
-	m_ptDefaultSize.y = -1;
 	return;
 }
 
