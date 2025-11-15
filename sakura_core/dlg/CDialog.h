@@ -137,27 +137,26 @@ public:
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
 public:
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
+	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 private:
-	HWND			m_hWnd;			/* このダイアログのハンドル */
+	HWND			m_hWnd = nullptr;			/* このダイアログのハンドル */
 	HFONT			m_hFontDialog;	// ダイアログに設定されているフォント(破棄禁止)
 public:
-	HWND			m_hwndSizeBox;
-	LPARAM			m_lParam;
+	HWND			m_hwndSizeBox = nullptr;
+	LPARAM			m_lParam = (LPARAM)nullptr;
 	BOOL			m_bModal;		/* モーダル ダイアログか */
 	bool			m_bSizable;		// 可変ダイアログかどうか
-	int				m_nShowCmd;		//	最大化/最小化
-//	void*			m_pcEditView;
+	int				m_nShowCmd = SW_SHOW;		//	最大化/最小化
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 	HINSTANCE		m_hLangRsrcInstance;		// メッセージリソースDLLのインスタンスハンドル	// 2011.04.10 nasukoji
 
 protected:
-	int				m_nWidth;
-	int				m_nHeight;
-	int				m_xPos;
-	int				m_yPos;
+	int				m_nWidth = -1;
+	int				m_nHeight = -1;
+	int				m_xPos = -1;
+	int				m_yPos = -1;
 	void CreateSizeBox( void );
 	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
