@@ -4006,29 +4006,42 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 
 	CRecentEditNode	cRecentEditNode;
 	int nIndex = cRecentEditNode.FindItemByHwnd( GetHwnd() );
+	bool changed = false;
 	if( -1 != nIndex )
 	{
 		EditNode *p = cRecentEditNode.GetItem( nIndex );
 		if( p )
 		{
-			wcsncpy_s( p->m_szTabCaption, _countof(p->m_szTabCaption), pszTabCaption, _TRUNCATE );
+			decltype(p->m_szTabCaption) caption;
+			wcsncpy_s(caption, _countof(caption), pszTabCaption, _TRUNCATE);
+			if (wcscmp(caption, p->m_szTabCaption) != 0) {
+				wcscpy_s(p->m_szTabCaption, caption);
+				changed = true;
+			}
 
 			// 2006.01.28 ryoji ファイル名、Grepモード追加
-			wcsncpy_s( p->m_szFilePath, _countof2(p->m_szFilePath), pszFilePath, _TRUNCATE );
+			decltype(p->m_szFilePath) filePath;
+			wcsncpy_s(filePath, _countof2(filePath), pszFilePath, _TRUNCATE );
+			if (wcscmp(filePath, p->m_szFilePath) != 0) {
+				p->m_szFilePath = filePath;
+				changed = true;
+			}
 
 			p->m_bIsGrep = bIsGrep;
 		}
 	}
 	cRecentEditNode.Terminate();
 
-	//ファイル名変更通知をブロードキャストする。
-	int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->GetGroup();
-	CAppNodeGroupHandle(nGroup).PostMessageToAllEditors(
-		MYWM_TAB_WINDOW_NOTIFY,
-		(WPARAM)TWNT_FILE,
-		(LPARAM)GetHwnd(),
-		GetHwnd()
-	);
+	if (changed) {
+		//ファイル名変更通知をブロードキャストする。
+		int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->GetGroup();
+		CAppNodeGroupHandle(nGroup).PostMessageToAllEditors(
+			MYWM_TAB_WINDOW_NOTIFY,
+			(WPARAM)TWNT_FILE,
+			(LPARAM)GetHwnd(),
+			GetHwnd()
+		);
+	}
 
 	return;
 }
