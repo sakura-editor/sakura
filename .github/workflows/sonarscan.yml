@@ -27,69 +27,54 @@ jobs:
     env:
       BUILD_PLATFORM: x64
       BUILD_CONFIGURATION: Debug
-      SONAR_QUBE_VERSION: '4.7.0.2747'
 
     steps:
     - name: Checkout
       uses: actions/checkout@v5
       with:
         ref: '${{ github.event.pull_request.head.sha }}'
-        fetch-depth: 0
 
     - name: Setup environment variables
+      id: setup-env
       run: |
-        echo "SONAR_USER_HOME=${{ github.workspace }}" >> $env:GITHUB_ENV
-        if ('${{ env.GITHUB_BASE_REF }}' -ne '')
-        {
-          echo "BASE_SHA=$(git show -s --format=%H ${{ env.GITHUB_BASE_REF }})" >> $env:GITHUB_ENV
-        }
-        New-Item -Path .sonar -ItemType Directory
-
-    - name: Cache Sonar Analysis
-      uses: actions/cache@v4
-      with:
-        path: |
-          .sonar\cache
-        key:
-          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ github.sha }}
-        restore-keys:
-          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ env.BASE_SHA }}
-
+        $projectKey = $('${{ github.repository }}' -replace '/', '_')
+        echo "project-key=$projectKey" >> $env:GITHUB_OUTPUT
+        echo "output-directory=${{ github.workspace }}\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}" >> $env:GITHUB_OUTPUT
+ 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
     - name: Run the normal MSBuild process
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN
       run: build-sln.bat ${{ env.BUILD_PLATFORM }} ${{ env.BUILD_CONFIGURATION }}
       shell: cmd
 
-    - name: Fetch Build-Wrapper
-      working-directory: ${{ github.workspace }}\.sonar
-      run: |
-        Invoke-WebRequest -OutFile build-wrapper-win-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
-        7z rn build-wrapper-win-x86.zip build-wrapper-win-x86 build-wrapper
-        7z x build-wrapper-win-x86.zip
+    - name: Install Build Wrapper
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v6.0.0
 
     - name: Build with Build-Wrapper
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       if: env.SONAR_TOKEN
-      run: .sonar\build-wrapper\build-wrapper-win-x86-64.exe
+      run: build-wrapper-win-x86-64.exe
         --out-dir bw-output
         MsBuild.exe
         /p:Platform=${{ env.BUILD_PLATFORM }}
         /p:Configuration=${{ env.BUILD_CONFIGURATION }}
         /t:ReBuild
 
-    - name: Install OpenCppCoverage with XmlExporter
+    - name: Install OpenCppCoverage
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       if: env.SONAR_TOKEN
       working-directory: ${{ runner.temp }}
       run: |
         choco install OpenCppCoverage -y
-        Invoke-WebRequest -OutFile XmlExporter-x64.zip https://github.com/berryzplus/XmlExporter/releases/download/v1.0.0/XmlExporter-x64.zip
-        7z e XmlExporter-x64.zip
-        Move-Item -Path XmlExporter.dll -Destination "C:\Program Files\OpenCppCoverage\Plugins\Exporter\xml.dll"
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Run Tests
@@ -99,42 +84,46 @@ jobs:
       run: |
         $env:CMD_TESTS1 = $(Get-ChildItem -Recurse tests1.exe)[0].FullName
         OpenCppCoverage.exe `
-        --export_type xml:tests1-coverage.xml `
-        --modules $env:CMD_TESTS1  `
-        --sources ${{ github.workspace }} `
-        --excluded_sources ${{ github.workspace }}\tests\googletest `
-        --working_dir .\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }} `
-        --cover_children `
-        -- `
-        $env:CMD_TESTS1 `
-        --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
+          --export_type cobertura:tests1-coverage.xml `
+          --modules $env:CMD_TESTS1  `
+          --sources ${{ github.workspace }} `
+          --working_dir ${{ steps.setup-env.outputs.output-directory }} `
+          --cover_children `
+          -- `
+          $env:CMD_TESTS1 `
+          --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v5
+    - name: Upload test result
+      uses: EnricoMi/publish-unit-test-result-action/windows@v2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN
       with:
-        java-version: 17
-        distribution: zulu
+        files: |
+          *-googletest.xml
 
-    - name: Fetch SonarScanner
-      working-directory: ${{ github.workspace }}\.sonar
-      run: |
-        Invoke-WebRequest -OutFile sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_QUBE_VERSION }}.zip
-        7z rn sonar-scanner.zip sonar-scanner-${{ env.SONAR_QUBE_VERSION }} scanner
-        7z x sonar-scanner.zip
-
-    - name: Analyze with SonarScanner
+    - name: Analyze with SonarQube Scan action
+      uses: SonarSource/sonarqube-scan-action@v6.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        LC_ALL: ja_JP.UTF-8
       if: env.SONAR_TOKEN
-      run: |
-        if ('${{ github.event_name }}' -eq 'pull_request_target')
-        {
-          $env:GITHUB_EVENT_NAME = 'pull_request'
-          $env:GITHUB_SHA = $(git show -s --format=%H)
-          $env:GITHUB_REF = 'refs/pull/${{ github.event.number }}/merge'
-        }
-        .\.sonar\scanner\bin\sonar-scanner.bat `
-        -D"sonar.organization=${{ github.repository_owner }}" `
-        -D"sonar.projectKey=$('${{ github.repository }}' -replace '/', '_')" `
-        -D"sonar.host.url=https://sonarcloud.io"
+      with:
+        args: >
+          "-Dsonar.organization=${{ github.repository_owner }}"
+          "-Dsonar.projectKey=${{ steps.setup-env.outputs.project-key }}"
+          "-Dsonar.host.url=https://sonarcloud.io"
+          "-Dsonar.cfamily.compile-commands=bw-output/compile_commands.json"
+          "-Dsonar.cfamily.cppunit.reportPath=*-googletest.xml"
+          "-Dsonar.cfamily.cobertura.reportPaths=tests1-coverage.xml"
+          "-Dsonar.verbose=true"
+
+    - name: Upload Sonar CFamily failure reproducer (if present)
+      if: ${{ always() && hashFiles('sonar-cfamily-reproducer.tar.xz') != '' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: sonar-cfamily-reproducer-${{ runner.os }}-${{ github.run_id }}
+        path: sonar-cfamily-reproducer.tar.xz
+        if-no-files-found: ignore
+        retention-days: 14
