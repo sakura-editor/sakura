@@ -17,7 +17,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <shellapi.h>
 #include "dlg/CDlgGrep.h"
 #include "agent/CGrepAgent.h"
 #include "grep/CGrepEnumKeys.h"
@@ -142,9 +141,8 @@ static LPCWSTR GetEscapePattern(const std::wstring& pattern)
 static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFolder)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
-	for (auto iter = patterns.cbegin(); iter != patterns.cend(); ++iter)
+	for (const auto& pattern : patterns)
 	{
-		const auto & pattern = (*iter);
 		LPCWSTR escapeStr = GetEscapePattern(pattern);
 		cFilePattern.AppendStringF(L";%s#%s%s", escapeStr, pattern.c_str(), escapeStr);
 	}
@@ -159,9 +157,8 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
-	for (auto iter = patterns.cbegin(); iter != patterns.cend(); ++iter)
+	for (const auto& pattern : patterns)
 	{
-		const auto & pattern = (*iter);
 		LPCWSTR escapeStr = GetEscapePattern(pattern);
 		cFilePattern.AppendStringF(L";%s!%s%s", escapeStr, pattern.c_str(), escapeStr);
 	}
