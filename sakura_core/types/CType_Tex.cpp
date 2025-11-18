@@ -42,29 +42,26 @@ void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 */
 
 /** アウトライン解析の補助クラス */
-template<int HierarchyCount>
+template<size_t HierarchyCount>
 class TagProcessor
 {
 	// 環境
 	CFuncInfoArr &refFuncInfoArr;
 	CLayoutMgr   &refLayoutMgr;
 	// 定数
-	const wchar_t* (&TagHierarchy)[HierarchyCount]; // 大きい構造から順に並べたタグの配列。\ マークは抜き。
+	std::array<LPCWSTR, HierarchyCount> TagHierarchy; // 大きい構造から順に並べたタグの配列。\ マークは抜き。
 	// 状態
-	int tagDepth;      // 直前のタグの深さ。TagHierarchy[tagDepth] == 直前のタグ;
-	int treeDepth;     // 直前のタグの「ツリーにおける」深さ。
-	int serials[HierarchyCount]; // タグの各深さで割り振ったトピック番号の最大値を記憶しておく。
+	int tagDepth = 0;      // 直前のタグの深さ。TagHierarchy[tagDepth] == 直前のタグ;
+	int treeDepth = -1;     // 直前のタグの「ツリーにおける」深さ。
+	std::array<int, HierarchyCount> serials{}; // タグの各深さで割り振ったトピック番号の最大値を記憶しておく。
 	// 作業場
-	wchar_t szTopic[256];   // トピック番号 + トピックタイトル; (タグが * で終わっている場合はトピック番号を省略する)
+	StaticString<256> szTopic;   // トピック番号 + トピックタイトル; (タグが * で終わっている場合はトピック番号を省略する)
 
 public:
-	TagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[HierarchyCount])
+	TagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const std::array<LPCWSTR, HierarchyCount>& tagHierarchy)
 	: refFuncInfoArr(fia)
 	, refLayoutMgr(lmgr)
 	, TagHierarchy(tagHierarchy)
-	, tagDepth(0)
-	, treeDepth(-1)
-	, serials()
 	{
 	}
 
@@ -131,7 +128,7 @@ public:
 			treeDepth の増加幅を１に抑えた結果としてトピックアイテムが
 			本来の位置(tagDepth)より浅い位置に置かれていることがある。その補正。
 		*/
-			if (i < _countof(serials) && 0 == serials[i]) {
+			if (i < int(std::size(serials)) && 0 == serials[i]) {
 				treeDepth += 1;
 			}
 		}
@@ -142,7 +139,7 @@ public:
 
 		// 2. トピック番号を更新する。
 		serials[depth] += 1; // インクリメント
-		for (int i = depth + 1; i <= tagDepth && i < _countof(serials); ++i) {
+		for (int i = depth + 1; i <= tagDepth && i < int(std::size(serials)); ++i) {
 			serials[i] = 0; // リセット
 		}
 
@@ -155,22 +152,22 @@ public:
 
 		// トピック文字列を作成する(1)。トビック番号をバッファに埋め込む。
 		if (bAddNumber) {
-			assert(4 * HierarchyCount + 2 <= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
+			assert(4 * HierarchyCount + 2 <= _countof2(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
 			int i = 0;
 			while (i <= tagDepth && serials[i] == 0) {
 				i += 1; // "0." プリフィックスを表示しないようにスキップする。
 			}
-			for (; i <= tagDepth && i < _countof(serials); ++i) {
+			for (; i <= tagDepth && i < int(std::size(serials)); ++i) {
 				// "1.", "2.", "3.",..., "10.",..., "100.",...,"999.", "000.", "001.",...
 				pTopicEnd += auto_sprintf(pTopicEnd, serials[i]/1000 ? L"%03d." : L"%d.", serials[i]%1000);
 			}
 			*pTopicEnd++ = L' ';
 			*pTopicEnd   = L'\0';
 		}
-		assert(pTopicEnd < szTopic + _countof(szTopic));
+		assert(pTopicEnd < szTopic + _countof2(szTopic));
 
 		// トピック文字列を作成する(2)。タイトルをバッファに埋め込む。
-		const ptrdiff_t copyLen = t_min(szTopic + _countof(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
+		const auto copyLen = std::min<ptrdiff_t>(szTopic + _countof2(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
 		wmemcpy(pTopicEnd, pTitle, copyLen);
 		pTopicEnd += copyLen;
 		*pTopicEnd = L'\0';
@@ -178,7 +175,7 @@ public:
 		// トピックツリーにトピックを追加する。
 		CLayoutPoint ptPos;
 		refLayoutMgr.LogicToLayout(
-			CLogicPoint(pTag - pLine, nLineNumber),
+			CLogicPoint(int(pTag - pLine), nLineNumber),
 			&ptPos
 		);
 		refFuncInfoArr.AppendData(nLineNumber + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1), szTopic, 0, treeDepth);
@@ -187,9 +184,9 @@ public:
 		return pTitleEnd;
 	}
 };
-template<int HierarchyCount> inline
+template<size_t HierarchyCount> inline
 TagProcessor<HierarchyCount>
-MakeTagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[HierarchyCount])
+MakeTagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const std::array<LPCWSTR, HierarchyCount>& tagHierarchy)
 {
 	return TagProcessor<HierarchyCount>(fia, lmgr, tagHierarchy);
 }
@@ -200,12 +197,12 @@ class TagIterator
 	const CDocLineMgr& refDocLineMgr;
 
 public:
-	TagIterator(const CDocLineMgr& dlmgr)
+	explicit TagIterator(const CDocLineMgr& dlmgr)
 	: refDocLineMgr(dlmgr)
 	{}
 
 	/** ドキュメント全体を先頭からスキャンして、見つけた \tag{title} を TagProcessor に渡す。 */
-	template<int HierarchyCount>
+	template<size_t HierarchyCount>
 	void each(TagProcessor<HierarchyCount>&& process)
 	{
 		const CLogicInt nLineCount = refDocLineMgr.GetLineCount();
@@ -251,7 +248,7 @@ public:
 
 void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 {
-	const wchar_t* TagHierarchy[] = {
+	const std::array TagHierarchy = {
 		L"chapter",
 		L"section",
 		L"subsection",
@@ -794,7 +791,8 @@ const wchar_t* g_ppszKeywordsTEX[] = {
 //			"\\}",
 //			"\\~",
 };
-int g_nKeywordsTEX = _countof(g_ppszKeywordsTEX);
+
+int g_nKeywordsTEX = int(std::size(g_ppszKeywordsTEX));
 
 //Jan. 19, 2001 JEPRO	TeX のキーワード2として新規追加 & 一部復活 --環境コマンドとオプション名が中心
 const wchar_t* g_ppszKeywordsTEX2[] = {
@@ -918,4 +916,5 @@ const wchar_t* g_ppszKeywordsTEX2[] = {
 //		"zh",
 //		"zw"
 };
-int g_nKeywordsTEX2 = _countof(g_ppszKeywordsTEX2);
+
+int g_nKeywordsTEX2 = int(std::size(g_ppszKeywordsTEX2));
