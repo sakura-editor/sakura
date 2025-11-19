@@ -53,9 +53,6 @@ jobs:
       shell: cmd
 
     - name: Install Build Wrapper
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      if: env.SONAR_TOKEN
       uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v6.0.0
 
     - name: Build with Build-Wrapper
