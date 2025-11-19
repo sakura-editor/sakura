@@ -791,8 +791,7 @@ const wchar_t* g_ppszKeywordsTEX[] = {
 //			"\\}",
 //			"\\~",
 };
-
-int g_nKeywordsTEX = int(std::size(g_ppszKeywordsTEX));
+int g_nKeywordsTEX = _countof(g_ppszKeywordsTEX);
 
 //Jan. 19, 2001 JEPRO	TeX のキーワード2として新規追加 & 一部復活 --環境コマンドとオプション名が中心
 const wchar_t* g_ppszKeywordsTEX2[] = {
@@ -916,5 +915,4 @@ const wchar_t* g_ppszKeywordsTEX2[] = {
 //		"zh",
 //		"zw"
 };
-
-int g_nKeywordsTEX2 = int(std::size(g_ppszKeywordsTEX2));
+int g_nKeywordsTEX2 = _countof(g_ppszKeywordsTEX2);
