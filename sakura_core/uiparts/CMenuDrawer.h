@@ -70,9 +70,6 @@ public:
 	{
 		MyAppendMenu(hMenu,nFlag,nFuncId,pszLabel,L"",bAddKeyStr,nForceIconId);
 	}
-	int MeasureItem( int nFuncID, int* pnItemHeight );	/* メニューアイテムの描画サイズを計算 */
-	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
-	void EndDrawMenu();
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
 	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true )const; // ツールバーNoの取得
 	int GetIconIdByFuncId( int nIndex ) const;
@@ -122,6 +119,11 @@ private:
 	HDC				m_hCompDC;
 	int				m_nCompBitmapHeight;
 	int				m_nCompBitmapWidth;
+	struct DIB {
+		HBITMAP hBMP;
+		void* pvBits;
+	};
+	std::vector<DIB> m_dibs;
 
 public:
 	// 2010.01.30 syat アイコンイメージリストをprivate->public

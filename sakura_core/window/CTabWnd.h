@@ -169,6 +169,7 @@ private:
 	HICON		m_hIconGrep;			//!< Grepアイコン
 	int			m_iIconApp;				//!< アプリケーションアイコンのインデックス
 	int			m_iIconGrep;			//!< Grepアイコンのインデックス
+	std::map<int, HBITMAP> m_bmpMap;
 
 	BOOL		m_bVisualStyle;			//!< ビジュアルスタイルかどうか	// 2007.04.01 ryoji
 	BOOL		m_bHovering;

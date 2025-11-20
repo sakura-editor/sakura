@@ -119,6 +119,9 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\darkmodelib">
+      <UniqueIdentifier>{57c87b7d-0c3b-4adb-9840-ce2292af594e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -2308,6 +2311,36 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp">
       <Filter>Cpp Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DarkModeSubclass.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibColor.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibDpi.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibHook.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibIni.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibPaintHelper.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibSubclass.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibSubclassControl.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibSubclassWindow.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibWinApi.cpp">
+      <Filter>Cpp Source Files\darkmodelib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

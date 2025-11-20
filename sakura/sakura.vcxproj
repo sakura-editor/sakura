@@ -54,7 +54,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="sakura.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\sakura_core;..\externals\darkmodelib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINNT=_WIN32_WINNT_WIN10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -500,6 +500,16 @@
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\externals\darkmodelib\src\DarkModeSubclass.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibColor.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibDpi.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibHook.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibIni.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibPaintHelper.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibSubclass.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibSubclassControl.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibSubclassWindow.cpp" />
+    <ClCompile Include="..\externals\darkmodelib\src\DmlibWinApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />
