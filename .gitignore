@@ -30,3 +30,18 @@ sha256.txt
 tags
 testData_*.txt
 UpgradeLog.htm
+
+# SonarScanローカル実行用(解析ツールをダウンロードするフォルダ)
+.sonar
+
+# SonarScanローカル実行用(SonarScannerのワークフォルダ)
+.scannerwork
+
+# SonarScanローカル実行用SONAR_TOKEN
+SONAR_TOKEN
+
+# SonarScanローカル実行用したときに生成されるテスト結果ファイル
+tests1-googletest.xml
+
+# SonarScanローカル実行の失敗再現用アーカイブ
+sonar-cfamily-reproducer.tar.xz
