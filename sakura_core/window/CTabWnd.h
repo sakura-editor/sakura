@@ -152,41 +152,41 @@ protected:
 	*/
 public:
 	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
-	HFONT			m_hFont;		/*!< 表示用フォント */
-	HWND			m_hwndTab;		/*!< タブコントロール */
-	HWND			m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
+	HFONT			m_hFont = nullptr;		/*!< 表示用フォント */
+	HWND			m_hwndTab = nullptr;		/*!< タブコントロール */
+	HWND			m_hwndToolTip = nullptr;	/*!< ツールチップ（ボタン用） */
 	WCHAR			m_szTextTip[1024];	/*!< ツールチップのテキスト（タブ用） */
-	ETabPosition	m_eTabPosition;	//!< タブ表示位置
+	ETabPosition	m_eTabPosition = TabPosition_None;	//!< タブ表示位置
 
 private:
-	DragState	m_eDragState;			//!< ドラッグ状態
+	DragState	m_eDragState = DRAG_NONE;			//!< ドラッグ状態
 	int			m_nSrcTab;				//!< 移動元タブ
 	POINT		m_ptSrcCursor;			//!< ドラッグ開始カーソル位置
 	HCURSOR		m_hDefaultCursor;		//!< ドラッグ開始時のカーソル
 
-	HIMAGELIST	m_hIml;					//!< イメージリスト
+	HIMAGELIST	m_hIml = nullptr;					//!< イメージリスト
 	HICON		m_hIconApp;				//!< アプリケーションアイコン
 	HICON		m_hIconGrep;			//!< Grepアイコン
 	int			m_iIconApp;				//!< アプリケーションアイコンのインデックス
 	int			m_iIconGrep;			//!< Grepアイコンのインデックス
 
-	BOOL		m_bVisualStyle;			//!< ビジュアルスタイルかどうか	// 2007.04.01 ryoji
-	BOOL		m_bHovering;
-	BOOL		m_bListBtnHilighted;
-	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
-	CaptureSrc	m_eCaptureSrc;			//!< キャプチャ元
+	BOOL		m_bVisualStyle = FALSE;			//!< ビジュアルスタイルかどうか	// 2007.04.01 ryoji
+	BOOL		m_bHovering = FALSE;
+	BOOL		m_bListBtnHilighted = FALSE;
+	BOOL		m_bCloseBtnHilighted = FALSE;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
+	CaptureSrc	m_eCaptureSrc = CAPT_NONE;			//!< キャプチャ元
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
-	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
+	LONG*		m_nTabBorderArray = nullptr;		//!< ドラッグ前のタブ境界位置配列
 	LOGFONT		m_lf;					//!< 表示フォントの特性情報
 	bool		m_bMultiLine;			//!< 複数行
 
 	// タブ内の閉じるボタン用変数
-	int			m_nTabHover;			//!< マウスカーソル下のタブ（無いときは-1）
-	bool		m_bTabCloseHover;		//!< マウスカーソル下にタブ内の閉じるボタンがあるか
-	int			m_nTabCloseCapture;		//!< 閉じるボタンがマウス押下されているタブ（無いときは-1）
+	int			m_nTabHover = -1;			//!< マウスカーソル下のタブ（無いときは-1）
+	bool		m_bTabCloseHover = false;		//!< マウスカーソル下にタブ内の閉じるボタンがあるか
+	int			m_nTabCloseCapture = -1;		//!< 閉じるボタンがマウス押下されているタブ（無いときは-1）
 
-	HWND		m_hwndSizeBox;
-	bool		m_bSizeBox;
+	HWND		m_hwndSizeBox = nullptr;
+	bool		m_bSizeBox = false;
 
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
