@@ -21,6 +21,7 @@ Visual Studio の各バージョンごとにデフォルトの PlatformToolset (
 |Visual Studio 2017|v141|
 |Visual Studio 2019|v142|
 |Visual Studio 2022|v143|
+|Visual Studio 2026|v145|
 
 ## 異なる Visual Studio のバージョンで開いたときの動作
 
