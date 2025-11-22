@@ -20,7 +20,6 @@
 #include "window/CSplitBoxWnd.h"
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"
-#include "outline/CDlgFuncList.h"
 #include "env/DLLSHAREDATA.h"
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
@@ -34,20 +33,9 @@ constexpr auto SPLITTER_MARGIN = 2;
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(L"::CSplitterWnd")
-, m_nAllSplitRows(1)					/* 分割行数 */
-, m_nAllSplitCols(1)					/* 分割桁数 */
-, m_nVSplitPos(0)					/* 垂直分割位置 */
-, m_nHSplitPos(0)					/* 水平分割位置 */
-, m_nChildWndCount(0)
-, m_bDragging(0)						/* 分割バーをドラッグ中か */
-, m_nDragPosX(0)						/* ドラッグ位置Ｘ */
-, m_nDragPosY(0)						/* ドラッグ位置Ｙ */
-, m_nActivePane(0)					/* アクティブなペイン 0-3 */
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
-
-	m_hcurOld = nullptr;						/* もとのマウスカーソル */
 
 	for( int v=0; v < MAXCOUNTOFVIEW; v++ ){
 		m_ChildWndArr[v] = nullptr;				/* 子ウィンドウ配列 */

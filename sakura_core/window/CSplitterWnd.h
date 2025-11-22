@@ -47,17 +47,17 @@ private: // 2002/2/3 aroka
 	*/
 	DLLSHAREDATA*	m_pShareData;
 
-	int				m_nAllSplitRows;		/* 分割行数 */
-	int				m_nAllSplitCols;		/* 分割桁数 */
-	int				m_nVSplitPos;			/* 垂直分割位置 */
-	int				m_nHSplitPos;			/* 水平分割位置 */
+	int				m_nAllSplitRows = 1;		/* 分割行数 */
+	int				m_nAllSplitCols = 1;		/* 分割桁数 */
+	int				m_nVSplitPos = 0;			/* 垂直分割位置 */
+	int				m_nHSplitPos = 0;			/* 水平分割位置 */
 	HWND			m_ChildWndArr[MAXCOUNTOFVIEW];		/* 子ウィンドウ配列 */
-	int				m_nChildWndCount;		/*!< 有効な子ウィンドウ配列の数 */
-	HCURSOR			m_hcurOld;				/* もとのマウスカーソル */
-	int				m_bDragging;			/* 分割バーをドラッグ中か */
-	int				m_nDragPosX;			/* ドラッグ位置Ｘ */
-	int				m_nDragPosY;			/* ドラッグ位置Ｙ */
-	int				m_nActivePane;			/* アクティブなペイン */
+	int				m_nChildWndCount = 0;		/*!< 有効な子ウィンドウ配列の数 */
+	HCURSOR			m_hcurOld = nullptr;		/* もとのマウスカーソル */
+	int				m_bDragging = 0;			/* 分割バーをドラッグ中か */
+	int				m_nDragPosX = 0;			/* ドラッグ位置Ｘ */
+	int				m_nDragPosY = 0;			/* ドラッグ位置Ｙ */
+	int				m_nActivePane = 0;			/* アクティブなペイン */
 public: // 2002/2/3 aroka
 	HWND Create( HWND hwndParent );	/* 初期化 */
 	void SetChildWndArr(HWND* hwndEditViewArr);	/* 子ウィンドウの設定 */
