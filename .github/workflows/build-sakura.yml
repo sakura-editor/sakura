@@ -126,26 +126,12 @@ jobs:
         name: Installer ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Installer.zip'
 
-    - name: Upload Installer MD5
-      uses: actions/upload-artifact@v5
-      if: ${{ matrix.config == 'Release' }}
-      with:
-        name: Installer MD5 ${{ matrix.platform }} ${{ matrix.config }}
-        path: 'sakura-*-Installer.zip.md5'
-
     - name: Upload Exe
       uses: actions/upload-artifact@v5
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Exe ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip'
-
-    - name: Upload Exe MD5
-      uses: actions/upload-artifact@v5
-      if: ${{ matrix.config == 'Release' }}
-      with:
-        name: Exe MD5 ${{ matrix.platform }} ${{ matrix.config }}
-        path: 'sakura-*-Exe.zip.md5'
 
     - name: Upload Log
       uses: actions/upload-artifact@v5

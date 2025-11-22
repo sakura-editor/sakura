@@ -286,13 +286,6 @@ if exist "%WORKDIR_ASM%" (
 )
 
 
-@echo start generate MD5 hash
-set CMD_FIND=%SystemRoot%\System32\find.exe
-certutil -hashfile %OUTFILE_EXE% MD5  | %CMD_FIND% /v "MD5" | %CMD_FIND% /v "CertUtil" > %OUTFILE_EXE%.md5
-certutil -hashfile %OUTFILE_INST% MD5 | %CMD_FIND% /v "MD5" | %CMD_FIND% /v "CertUtil" > %OUTFILE_INST%.md5
-@echo end generate MD5 hash
-
-
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
