@@ -46,6 +46,20 @@ class CPropertyManager;
 */
 class CControlTray
 {
+private:
+	/*!
+	 * トレイアイコン再登録要求のメッセージID。
+	 *
+	 * Windows エクスプローラーが再起動したときに送出される。
+	 *
+	 * 独自メッセージは、システムグローバルな領域に登録される。
+	 * 同じ名前に対しては、同じメッセージIDが返される仕様なので
+	 * init only のグローバル定数とみなすことができる。
+	 *
+	 * @date 2001/04/24 genta
+	 */
+	static inline const UINT gm_uMsgTaskbarCreated = ::RegisterWindowMessageW(L"TaskbarCreated");
+
 public:
 	/*
 	||  Constructors
@@ -124,8 +138,6 @@ private:
 	int				m_nCurSearchKeySequence = -1;
 
 	CImageListMgr	m_hIcons;
-
-	UINT			m_uCreateTaskBarMsg = ::RegisterWindowMessageW(L"TaskbarCreated");	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 
 	SFilePath		m_szLanguageDll = nullptr;
 };

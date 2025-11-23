@@ -369,6 +369,8 @@ LRESULT CControlTray::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	const auto hWnd = hwnd;
+
 	int				nId;
 	HWND			hwndWork;
 	LPHELPINFO		lphi;
@@ -1030,18 +1032,18 @@ LRESULT CControlTray::DispatchEvent(
 	case MYWM_ALLOWACTIVATE:
 		::AllowSetForegroundWindow(wParam);
 		return 0L;
+
 	default:
-// << 20010412 by aroka
-//	Apr. 24, 2001 genta RegisterWindowMessageを使うように修正
-		if( uMsg == m_uCreateTaskBarMsg ){
-			/* TaskTray Iconの再登録を要求するメッセージ．
-				Explorerが再起動したときに送出される．*/
-			CreateTrayIcon( GetTrayHwnd() ) ;
+		// タスクバーが再作成されたときは、トレイアイコンを再登録する
+		if (gm_uMsgTaskbarCreated == uMsg) {
+			CreateTrayIcon(hWnd);
+			break;	//あとはデフォルトに任せる
 		}
 		break;	/* default */
-// >> by aroka
 	}
-	return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
+	//あとはデフォルトに任せる
+	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 /* WM_COMMANDメッセージ処理 */
