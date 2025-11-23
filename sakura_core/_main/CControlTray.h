@@ -125,8 +125,9 @@ private:
 
 	CImageListMgr	m_hIcons;
 
-	UINT			m_uCreateTaskBarMsg;	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
+	UINT			m_uCreateTaskBarMsg = ::RegisterWindowMessageW(L"TaskbarCreated");	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 
-	WCHAR			m_szLanguageDll[MAX_PATH];
+	SFilePath		m_szLanguageDll = nullptr;
 };
+
 #endif /* SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_ */
