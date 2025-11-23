@@ -45,6 +45,9 @@ public:
 protected:
 	CRecentReplace			m_cRecentReplace;
 	CFontAutoDeleter		m_cFontText2;
+	POINT m_ptDefaultSizeScreen;
+	POINT m_ptDefaultSizeClient;
+	std::vector<RECT> m_rcItems;
 
 	/*
 	||  実装ヘルパ関数
@@ -53,6 +56,9 @@ protected:
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
+	BOOL OnSize(WPARAM wParam, LPARAM lParam) override;
+	BOOL OnSizing(WPARAM wParam, LPARAM lParam) override;
+	int OnNcHitTest(WPARAM wParam, LPARAM lParam) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 
 	void SetData( void ) override;	/* ダイアログデータの設定 */

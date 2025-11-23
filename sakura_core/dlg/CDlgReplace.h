@@ -73,10 +73,17 @@ protected:
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam ) override;	// 2009.11.29 ryoji
+	BOOL OnSize(WPARAM wParam, LPARAM lParam) override;
+	BOOL OnSizing(WPARAM wParam, LPARAM lParam) override;
+	int OnNcHitTest(WPARAM wParam, LPARAM lParam) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 
 	void SetData( void ) override;		/* ダイアログデータの設定 */
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 	int GetData( void ) override;		/* ダイアログデータの取得 */
+
+	POINT m_ptDefaultSizeScreen;
+	POINT m_ptDefaultSizeClient;
+	std::vector<RECT> m_rcItems;
 };
 #endif /* SAKURA_CDLGREPLACE_37D62C07_5DAB_4CAC_A8B2_83C75329F8B7_H_ */
