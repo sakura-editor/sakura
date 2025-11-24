@@ -58,17 +58,17 @@ protected:
 	int		GetData( void ) override;	/* ダイアログデータの取得 */
 
 private:
-	int			m_nIndexSave;		// 最後に選択されていた番号
-	POINT		m_ptDefaultSize;
+	int			m_nIndexSave = 0;		// 最後に選択されていた番号
+	POINT		m_ptDefaultSize = {-1, -1};
 	RECT		m_rcItems[22];
 
 public:
 	SFilePath	m_szFile1;			// 自ファイル
 	SFilePath	m_szFile2;			// 相手ファイル
-	bool		m_bIsModifiedDst;	// 相手ファイル更新中
-	ECodeType	m_nCodeTypeDst;		// 相手ファイルの文字コード
-	bool		m_bBomDst;			// 相手ファイルのBOM
-	int			m_nDiffFlgOpt;		// DIFFオプション
-	HWND		m_hWnd_Dst;			// 相手ウインドウハンドル
+	bool		m_bIsModifiedDst = false;	// 相手ファイル更新中
+	ECodeType	m_nCodeTypeDst = CODE_ERROR;		// 相手ファイルの文字コード
+	bool		m_bBomDst = false;	// 相手ファイルのBOM
+	int			m_nDiffFlgOpt = 0;	// DIFFオプション
+	HWND		m_hWnd_Dst = nullptr;		// 相手ウインドウハンドル
 };
 #endif /* SAKURA_CDLGDIFF_57739DBD_0797_4F83_9DB0_F4D51A54157F_H_ */
