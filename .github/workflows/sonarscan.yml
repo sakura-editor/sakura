@@ -40,8 +40,17 @@ jobs:
       run: |
         $projectKey = $('${{ github.repository }}' -replace '/', '_')
         echo "project-key=$projectKey" >> $env:GITHUB_OUTPUT
+        $branch_name = "-Dsonar.branch.name=${{ github.ref_name }}"
+        if ('pull-request' -eq '${{ github.event_name }}') {
+          $branch_name = "-Dsonar.pullrequest.branch=${{ github.head_ref }}"
+          if ('${{ github.ref_name }}' -match "^(\d+)/merge$") {
+            $pull_request_number = "-Dsonar.pullrequest.key=$('{0:D5}' -f [int]$matches[1])"
+            echo "pull-request-key=$pull_request_number" >> $env:GITHUB_OUTPUT
+          }
+        }
+        echo "branch-name=$branch_name" >> $env:GITHUB_OUTPUT
         echo "output-directory=${{ github.workspace }}\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}" >> $env:GITHUB_OUTPUT
- 
+
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
@@ -112,7 +121,8 @@ jobs:
           "-Dsonar.organization=${{ github.repository_owner }}"
           "-Dsonar.projectKey=${{ steps.setup-env.outputs.project-key }}"
           "-Dsonar.host.url=https://sonarcloud.io"
-          "-Dsonar.branch.name=${{ github.head_ref || github.ref_name }}"
+          ${{ steps.setup-env.outputs.pull-request-key }}
+          ${{ steps.setup-env.outputs.branch-name }}
           "-Dsonar.cfamily.compile-commands=bw-output/compile_commands.json"
           "-Dsonar.cfamily.cppunit.reportPath=*-googletest.xml"
           "-Dsonar.cfamily.cobertura.reportPaths=tests1-coverage.xml"
