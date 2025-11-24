@@ -230,6 +230,8 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
@@ -578,6 +580,8 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		}
 		CloseDialog( FALSE );
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */

@@ -42,6 +42,8 @@ INT_PTR CDlgCancel::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM l
 			return TRUE;
 		}
 		break;
+	default:
+		break;
 	}
 	return result;
 }
@@ -91,6 +93,8 @@ BOOL CDlgCancel::OnBnClicked( int wID )
 		m_bCANCEL = TRUE;	/* IDCANCELボタンが押された */
 //		CloseDialog( 0 );
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

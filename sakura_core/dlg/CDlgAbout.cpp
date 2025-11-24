@@ -123,6 +123,8 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 			::SetTextColor( (HDC)wParam, RGB( 0, 0, 0 ) );
         }
 		return (INT_PTR)GetStockObject( WHITE_BRUSH );
+	default:
+		break;
 	}
 	return result;
 }
@@ -282,6 +284,8 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 	 		ApiWrap::EditCtl_SetSel( hwndEditVer, -1, 0); 
  		}
 		return TRUE;
+	default:
+		break;
 	}
 	return CDialog::OnBnClicked( wID );
 }
@@ -319,6 +323,8 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 		::ShellExecute(GetHwnd(), nullptr, _T(GITHUB_PR_HEAD_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 		return TRUE;
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnStnClicked( wID );
@@ -486,6 +492,8 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		return (LRESULT)0;
 	case WM_SETTEXT:
 		return pUrlWnd->OnSetText( (LPCWSTR)lParam ) ? TRUE : FALSE;
+	default:
+		break;
 	}
 
 	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );

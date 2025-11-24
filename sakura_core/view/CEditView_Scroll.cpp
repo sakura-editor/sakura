@@ -241,6 +241,8 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 		nScrollVal = ScrollAtH( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() - GetTextArea().m_nViewColNum );
 		break;
+	default:
+		break;
 	}
 	return nScrollVal;
 }

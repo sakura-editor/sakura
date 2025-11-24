@@ -132,8 +132,12 @@ INT_PTR CDlgInput1::DispatchEvent(
 			case IDCANCEL:
 				::EndDialog( hwndDlg, FALSE );
 				return TRUE;
+			default:
+				break;
 			}
 			break;	//@@@ 2002.01.07 add
+		default:
+			break;
 		}
 		break;	//@@@ 2002.01.07 add
 	//@@@ 2002.01.07 add start
@@ -149,6 +153,8 @@ INT_PTR CDlgInput1::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	//@@@ 2002.01.07 add end
+	default:
+		break;
 	}
 	return FALSE;
 }

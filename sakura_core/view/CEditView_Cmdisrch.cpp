@@ -133,6 +133,8 @@ bool CEditView::ProcessCommand_isearch(
 		case F_ISEARCH_MIGEMO_PREV:
 			ISearchEnter(SEARCH_MIGEMO, SEARCH_BACKWARD);	//後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 			return true;
+		default:
+			break;
 	}
 	return false;
 }
@@ -289,6 +291,8 @@ void CEditView::ISearchExec(DWORD wChar)
 			return;
 		//case '\t':
 		//	break;
+		default:
+			break;
 	}
 	
 	if (m_bISearchFirst){
@@ -387,6 +391,8 @@ void CEditView::ISearchExec(bool bNext)
 				//選択範囲の後ろから
 				nLine = GetSelectionInfo().m_sSelect.GetTo().GetY2();
 				nIdx1 = GetSelectionInfo().m_sSelect.GetTo().GetX2();
+				break;
+			default:
 				break;
 		}
 	}else{
@@ -587,6 +593,8 @@ bool CEditView::IsISearchEnabled(int nCommand) const
 		return (m_nISearchMode == SEARCH_MIGEMO) && (m_nISearchDirection == SEARCH_FORWARD);
 	case F_ISEARCH_MIGEMO_PREV:
 		return (m_nISearchMode == SEARCH_MIGEMO) && (m_nISearchDirection == SEARCH_BACKWARD);
+	default:
+		break;
 	}
 	return false;
 }

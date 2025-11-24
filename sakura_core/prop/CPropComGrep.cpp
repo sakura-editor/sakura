@@ -94,6 +94,8 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_GREP;
 				return TRUE;
+			default:
+				break;
 			}
 //			break;	/* default */
 //		}
@@ -122,6 +124,8 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

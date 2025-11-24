@@ -558,6 +558,8 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 		StopTimer();
 		FindNext( false );
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */
@@ -620,6 +622,8 @@ BOOL CDlgTagJumpList::OnNotify(NMHDR* pNMHDR)
 			StopTimer();
 			::EndDialog( GetHwnd(), GetData() );
 			return TRUE;
+		default:
+			break;
 		}
 	}
 

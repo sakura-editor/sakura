@@ -1234,6 +1234,8 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 
 	/* その他 */
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

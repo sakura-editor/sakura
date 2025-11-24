@@ -167,6 +167,8 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 				return true;
 			}
 			break;
+		default:
+			break;
 		}
 		m_bEscapeEnd = false;
 		if( bPreString ){
@@ -219,6 +221,8 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 			break;
 		case 3:
 			m_nCOMMENTEND = Match_QuoteStr( m_szQuote, 3, nPos, cStr, true );
+			break;
+		default:
 			break;
 		}
 		// -1でEndColorが呼び出されるのは行を超えてきたからなので行内チェックは不要

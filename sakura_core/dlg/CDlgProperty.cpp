@@ -62,6 +62,8 @@ BOOL CDlgProperty::OnBnClicked( int wID )
 //	case IDCANCEL:							// 未使用 del 2008/7/4 Uchi
 //		::EndDialog( GetHwnd(), FALSE );
 //		return TRUE;
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );

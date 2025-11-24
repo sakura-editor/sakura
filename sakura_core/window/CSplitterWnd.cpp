@@ -664,6 +664,8 @@ int CSplitterWnd::GetPrevPane( void )
 		case 2:
 			nPane = 0;
 			break;
+		default:
+			break;
 		}
 	}else
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 2 ){
@@ -673,6 +675,8 @@ int CSplitterWnd::GetPrevPane( void )
 			break;
 		case 1:
 			nPane = 0;
+			break;
+		default:
 			break;
 		}
 	}else{
@@ -688,6 +692,8 @@ int CSplitterWnd::GetPrevPane( void )
 			break;
 		case 3:
 			nPane = 2;
+			break;
+		default:
 			break;
 		}
 	}
@@ -710,6 +716,8 @@ int CSplitterWnd::GetNextPane( void )
 		case 2:
 			nPane = -1;
 			break;
+		default:
+			break;
 		}
 	}else
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 2 ){
@@ -719,6 +727,8 @@ int CSplitterWnd::GetNextPane( void )
 			break;
 		case 1:
 			nPane = -1;
+			break;
+		default:
 			break;
 		}
 	}else{
@@ -734,6 +744,8 @@ int CSplitterWnd::GetNextPane( void )
 			break;
 		case 3:
 			nPane = -1;
+			break;
+		default:
 			break;
 		}
 	}
@@ -910,6 +922,8 @@ LRESULT CSplitterWnd::OnMouseMove( [[maybe_unused]] HWND hwnd, [[maybe_unused]] 
 	case 3:
 		::SetCursor( ::LoadCursor( nullptr, IDC_SIZEALL ) );
 		break;
+	default:
+		break;
 	}
 	if( 0 != m_bDragging ){		/* 分割バーをドラッグ中か */
 		::GetClientRect( GetHwnd(), &rc );
@@ -1055,6 +1069,8 @@ LRESULT CSplitterWnd::DispatchEvent_WM_APP( [[maybe_unused]] HWND hwnd, UINT uMs
 		break;
 	case MYWM_SETACTIVEPANE:
 		SetActivePane( (int)wParam );
+		break;
+	default:
 		break;
 	}
 	return 0L;

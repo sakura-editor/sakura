@@ -186,6 +186,8 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 	case IDC_RADIO_DIFF_FILE2:
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_FILE1, FALSE );
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */

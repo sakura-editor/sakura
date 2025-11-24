@@ -97,6 +97,8 @@ BOOL CDlgKeywordSelect::OnBnClicked( int wID )
 		break;
 	case IDCANCEL:
 		break;
+	default:
+		break;
 	}
 	return CDialog::OnBnClicked( wID );
 }

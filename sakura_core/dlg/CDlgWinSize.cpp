@@ -108,6 +108,8 @@ BOOL CDlgWinSize::OnBnClicked( int wID )
 	case IDOK:
 	case IDCANCEL:
 		GetData();
+	default:
+		break;
 	}
 	return CDialog::OnBnClicked( wID );
 }

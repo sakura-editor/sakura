@@ -188,6 +188,8 @@ BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
 		OnSpin( idCtrl, bSpinDown );
 		UpdatePrintableLineAndColumn();
 		break;
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -205,6 +207,8 @@ BOOL CDlgPrintSetting::OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, int wID )
 	case IDC_COMBO_PAPER:
 		UpdatePrintableLineAndColumn();
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -339,6 +343,8 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 	case IDC_CHECK_LINENUMBER:
 		UpdatePrintableLineAndColumn();
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
@@ -356,6 +362,8 @@ BOOL CDlgPrintSetting::OnStnClicked( int wID )
 			CalcPrintableLineAndColumn();
 		}
 		return TRUE;
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnStnClicked( wID );
@@ -378,6 +386,8 @@ BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 	case IDC_EDIT_MARGINRX:
 		UpdatePrintableLineAndColumn();
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnEnChange( hwndCtl, wID );
@@ -430,6 +440,8 @@ BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 	case IDC_EDIT_FOOT3:
 		UpdatePrintableLineAndColumn();
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
+	default:
+		break;
 	}
 
 	if (isImeUndesirable(wID))
@@ -756,6 +768,8 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 	case IDC_SPIN_MARGINBY:		nIdx = 5;				break;
 	case IDC_SPIN_MARGINLX:		nIdx = 6;				break;
 	case IDC_SPIN_MARGINRX:		nIdx = 7;				break;
+	default:
+		break;
 	}
 	if( nIdx >= 0 ){
 		nCtrlIdEDIT = sDataRange[nIdx].ctrlid;
@@ -784,6 +798,8 @@ int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 	case IDC_EDIT_MARGINBY:		nIdx = 5;		break;
 	case IDC_EDIT_MARGINLX:		nIdx = 6;		break;
 	case IDC_EDIT_MARGINRX:		nIdx = 7;		break;
+	default:
+		break;
 	}
 	if( nIdx >= 0 ){
 		if( nData <= sDataRange[nIdx].minval ){

@@ -101,6 +101,8 @@ BOOL CDlgTypeList::OnLbnDblclk( int wID )
 			| PROP_TEMPCHANGE_FLAG
 		);
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -153,6 +155,8 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	case IDC_BUTTON_DEL_TYPE:
 		DelType();
 		return TRUE;
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
@@ -230,6 +234,8 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					ApiWrap::BtnCtl_SetCheck( hwndDblClick, m_bExtDblClick[ nIdx ] );
 				}
 				return TRUE;
+			default:
+				break;
 			}
 		}
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_RMENU && HIWORD(wParam) == BN_CLICKED )
@@ -300,6 +306,8 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			return TRUE;
 		}
 		}
+	default:
+		break;
 	}
 	return result;
 }

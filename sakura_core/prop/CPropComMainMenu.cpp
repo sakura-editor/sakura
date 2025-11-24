@@ -143,6 +143,8 @@ LRESULT CALLBACK CPropMainMenu::TreeViewProc(
 				TreeView_EditLabel( hwndTree, htiItem );
 			}
 			return 0;
+		default:
+			break;
 		}
 		break;
 	case WM_CHAR:
@@ -167,6 +169,8 @@ static LRESULT CALLBACK WindowProcEdit(
 	switch (uMsg) {
 	case WM_GETDLGCODE:
 		return DLGC_WANTALLKEYS;
+	default:
+		break;
 	}
 	return CallWindowProc( m_wpEdit, hwndEdit, uMsg, wParam, lParam );
 }
@@ -393,6 +397,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				}
 			}
 			break;
+		default:
+			break;
 		}
 		break;
 
@@ -421,6 +427,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				::SendMessage( hwndListFunk, WM_SETREDRAW, TRUE, 0 );
 
 				return TRUE;
+			default:
+				break;
 			}
 		}
 		else{
@@ -646,6 +654,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_ADD:				// 追加
 						ApiWrap::List_SetCurSel( hwndListFunk, nIdxFunc+1 );
 						break;
+					default:
+						break;
 					}
 					break;
 
@@ -774,8 +784,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				case IDC_BUTTON_COLLAPSE:	// ツリー全閉
 					ApiWrap::TreeView_ExpandAll( hwndTreeRes, false );
 					break;
+				default:
+					break;
 				}
 
+				break;
+			default:
 				break;
 			}
 		}
@@ -804,6 +818,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

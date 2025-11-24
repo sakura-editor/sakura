@@ -70,6 +70,8 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
@@ -381,6 +383,8 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	case IDCANCEL:
 		CloseDialog( 0 );
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

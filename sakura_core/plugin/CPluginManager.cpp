@@ -295,6 +295,8 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 				bOk = false;
 				bSkip = true;
 				break;
+			default:
+				break;
 			}
 		}
 	}

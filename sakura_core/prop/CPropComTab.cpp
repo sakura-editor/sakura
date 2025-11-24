@@ -110,6 +110,8 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_TAB;
 				return TRUE;
+			default:
+				break;
 			}
 //			break;	/* default */
 //		}
@@ -126,6 +128,7 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 					EnableTabPropInput( hwndDlg );
 					break;
 				case IDC_BUTTON_TABFONT:
+				{
 					LOGFONT   lf = m_Common.m_sTabBar.m_lf;
 					INT nPointSize = m_Common.m_sTabBar.m_nPointSize;
 
@@ -139,6 +142,9 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 						}
 						m_hTabFont = hFont;
 					}
+					break;
+				}
+				default:
 					break;
 				}
 			}
@@ -169,6 +175,8 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 			m_hTabFont = nullptr;
 		}
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

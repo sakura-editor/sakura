@@ -178,6 +178,8 @@ INT_PTR CPropGeneral::DispatchEvent(
 				}
 				InfoMessage( hwndDlg, LS(STR_PROPCOMGEN_DIR2) );
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
 		// 2009.01.12 nasukoji	コンボボックスのリストの項目が選択された
@@ -204,6 +206,8 @@ INT_PTR CPropGeneral::DispatchEvent(
 					ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 				}
 				return TRUE;
+			default:
+				break;
 			}
 			break;	// CBN_SELENDOK
 		case EN_SETFOCUS:
@@ -213,6 +217,8 @@ INT_PTR CPropGeneral::DispatchEvent(
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
+		default:
 			break;
 		}
 		break;	/* WM_COMMAND */
@@ -289,6 +295,8 @@ INT_PTR CPropGeneral::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
 				return TRUE;
+			default:
+				break;
 			}
 			break;
 		}
@@ -317,6 +325,8 @@ INT_PTR CPropGeneral::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

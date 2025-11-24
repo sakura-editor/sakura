@@ -233,6 +233,8 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 
 	case IDCANCEL:
 		break;
+	default:
+		break;
 	}
 	return CDialog::OnBnClicked( wID );
 }

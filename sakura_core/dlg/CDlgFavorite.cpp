@@ -577,6 +577,8 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			AddItem();
 		}
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */
@@ -597,6 +599,8 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 			TabSelectChange(false);
 			return TRUE;
 			//break;
+		default:
+			break;
 		}
 	}else{
 		hwndList = m_aListViewInfo[m_nCurrentTab].hListView;
@@ -627,6 +631,7 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 			
 			// ListViewでDeleteキーが押された:削除
 			case LVN_KEYDOWN:
+			{
 				switch( ((NMLVKEYDOWN*)pNMHDR)->wVKey )
 				{
 				case VK_DELETE:
@@ -643,6 +648,8 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 						RightMenu( po );
 					}
 					return TRUE;
+				default:
+					break;
 				}
 				int nIdx = getCtrlKeyState();
 				WORD wKey = ((NMLVKEYDOWN*)pNMHDR)->wVKey;
@@ -663,6 +670,9 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 					TabSelectChange(true);
 					return FALSE;
 				}
+			}
+			default:
+				break;
 			}
 		}
 	}
@@ -1062,6 +1072,8 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 		break;
 	case MENU_DELETE_SELECTED:
 		OnBnClicked( IDC_BUTTON_DELETE_SELECTED );
+		break;
+	default:
 		break;
 	}
 }

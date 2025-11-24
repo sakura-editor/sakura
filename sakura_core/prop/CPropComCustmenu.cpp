@@ -211,6 +211,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				}
 			}
 			return TRUE;
+		default:
+			break;
 		}
 		break;
 
@@ -247,8 +249,12 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				// 削除すると選択が解除されるので，元に戻す
 				ApiWrap::Combo_SetCurSel( hwndCOMBO_MENU, nIdx1 );
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
+		default:
+			break;
 		}
 
 		if( hwndCOMBO_MENU == hwndCtl ){
@@ -260,6 +266,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				}
 				SetDataMenuList( hwndDlg, nIdx1 );
 				break;	/* CBN_SELCHANGE */
+			default:
+				break;
 			}
 		}else
 		if( hwndLIST_RES == hwndCtl ){
@@ -340,6 +348,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				}else{
 				}
 				break;	/* LBN_SELCHANGE */
+			default:
+				break;
 			}
 		}
 		else if( hwndCOMBO_FUNCKIND == hwndCtl ){
@@ -360,6 +370,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					m_cLookup.SetListItem( hwndLIST_FUNC, nIdx3 );
 				}
 				return TRUE;
+			default:
+				break;
 			}
 		}else{
 			EFunctionCode	eFuncCode = F_0;
@@ -600,8 +612,12 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 					m_Common.m_sCustomMenu.m_bCustMenuPopupArr[nIdx1] = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_SUBMENU );
 					break;
+				default:
+					break;
 				}
 
+				break;
+			default:
 				break;
 			}
 		}
@@ -631,6 +647,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

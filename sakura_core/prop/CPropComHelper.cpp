@@ -157,8 +157,12 @@ INT_PTR CPropHelper::DispatchEvent(
 					}
 				}
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
+		default:
+			break;
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
@@ -180,6 +184,8 @@ INT_PTR CPropHelper::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_HELPER;
 				return TRUE;
+			default:
+				break;
 			}
 //			break;	/* default */
 //		}
@@ -216,6 +222,8 @@ INT_PTR CPropHelper::DispatchEvent(
 			m_hKeywordHelpFont = nullptr;
 		}
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

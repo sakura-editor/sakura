@@ -156,6 +156,8 @@ BOOL CDlgGrepReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return CDlgGrep::OnCbnDropDown( hwndCtl, wID );
 }
@@ -188,6 +190,8 @@ BOOL CDlgGrepReplace::OnBnClicked( int wID )
 				return TRUE;
 			}
 		}
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDlgGrep::OnBnClicked( wID );

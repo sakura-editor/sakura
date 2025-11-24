@@ -593,6 +593,8 @@ const wchar_t* CSakuraEnvironment::_ExParam_SkipCond(const wchar_t* pszSource, i
 					next = false;
 				}
 				break;
+			default:
+				break;
 			}
 		}
 	}

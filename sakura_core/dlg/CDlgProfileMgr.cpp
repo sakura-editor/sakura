@@ -252,6 +252,8 @@ BOOL CDlgProfileMgr::OnBnClicked( int wID )
 		GetData(false);
 		CloseDialog( 0 );
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -266,14 +268,20 @@ INT_PTR CDlgProfileMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPAR
 			if( LOWORD(wParam) == IDC_LIST_PROFILE ){
 				switch( HIWORD(wParam) ){
 				case LBN_SELCHANGE:
+				{
 					HWND hwndList = (HWND)lParam;
 					int nIdx = ApiWrap::List_GetCurSel( hwndList );
 					DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_DELETE, nIdx != 0 );
 					DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_RENAME, nIdx != 0 );
 					return TRUE;
 				}
+				default:
+					break;
+				}
 			}
 		}
+	default:
+		break;
 	}
 	return result;
 }

@@ -272,6 +272,8 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 		case omSet:
 			m_CurInstance->m_cMemDebug.SetString(*Value);
 			break;
+		default:
+			break;
 		}
 		break;
 	default:

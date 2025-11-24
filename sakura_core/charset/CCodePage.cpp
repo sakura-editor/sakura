@@ -47,6 +47,8 @@ DWORD GetMultiByteFlgas(UINT codepage){
 	case 65001:
 	case 54936:
 		return 0;
+	default:
+		break;
 	}
 	return nToMultiByteFlags;
 }
@@ -294,6 +296,8 @@ EEncodingTrait CCodePage::GetEncodingTrait(int charcodeEx)
 	case CODE_AUTODETECT:
 	case CODE_ERROR:
 		return ENCODING_TRAIT_ERROR;
+	default:
+		break;
 	}
 
 	UINT codepage = CodePageExToMSCP(charcodeEx);
@@ -307,6 +311,8 @@ EEncodingTrait CCodePage::GetEncodingTrait(int charcodeEx)
 		return ENCODING_TRAIT_UTF32LE;
 	case 12001:
 		return ENCODING_TRAIT_UTF32BE;
+	default:
+		break;
 	}
 	CHAR testCrlf[10];
 	int nRet = ::WideCharToMultiByte(codepage, 0, L"\r\n", 2, testCrlf, sizeof(testCrlf), nullptr, nullptr);

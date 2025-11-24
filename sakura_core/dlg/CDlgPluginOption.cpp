@@ -332,6 +332,8 @@ BOOL CDlgPluginOption::OnNotify(NMHDR* pNMHDR)
 			// リストビューへのダブルクリックで編集領域へ移動	2013/5/23 Uchi
 			MoveFocusToEdit();
 			break;
+		default:
+			break;
 		}
 		return TRUE;
 
@@ -354,6 +356,8 @@ BOOL CDlgPluginOption::OnNotify(NMHDR* pNMHDR)
 		// 編集中のデータの戻し
 		SetFromEdit( m_Line );
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */
@@ -402,6 +406,8 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */
@@ -416,6 +422,8 @@ BOOL CDlgPluginOption::OnCbnSelChange( HWND hwndCtl, int wID )
 		SetFromEdit( m_Line );
 
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */
@@ -432,6 +440,8 @@ BOOL CDlgPluginOption::OnEnChange( HWND hwndCtl, int wID )
 		SetFromEdit( m_Line );
 
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */

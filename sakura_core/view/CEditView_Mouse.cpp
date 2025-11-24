@@ -2127,6 +2127,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 
 	case 100:	// パス名を貼り付ける
 	case 101:	// ファイル名を貼り付ける
+	{
 		CNativeW cmemBuf;
 		UINT nFiles;
 		WCHAR szPath[_MAX_PATH];
@@ -2184,6 +2185,9 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		);
 		GetSelectionInfo().SetSelectArea( CLayoutRange(ptSelectFrom, GetCaret().GetCaretLayoutPos()) );	// 2009.07.25 ryoji
 		GetSelectionInfo().DrawSelectArea();
+		break;
+	}
+	default:
 		break;
 	}
 

@@ -53,6 +53,8 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			}
 		}
 		return 0;	// 本来のウィンドウプロシージャは呼ばない（アクティブ化しない）
+	default:
+		break;
 	}
 	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
 }
@@ -418,6 +420,8 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 							rc.bottom += pt.y - ptStart.y;
 							rc.right += pt.x - ptStart.x;
 							break;
+						default:
+							break;
 						}
 						::MoveWindow( GetHwnd(), rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE );
 					}
@@ -445,6 +449,8 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 		pmmi = (MINMAXINFO*)lParam;
 		pmmi->ptMinTrackSize.x = ::GetSystemMetrics(SM_CXVSCROLL) * 4;
 		pmmi->ptMinTrackSize.y = ::GetSystemMetrics(SM_CYHSCROLL) * 4;
+		break;
+	default:
 		break;
 	}
 	return result;
@@ -641,6 +647,8 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	case VK_ESCAPE:
 	case VK_LEFT:
 		return -2;
+	default:
+		break;
 	}
 	return -2;
 }

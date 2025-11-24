@@ -332,6 +332,8 @@ BOOL CDialog::OnBnClicked( int wID )
 	case IDOK:
 		CloseDialog( wID );
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -429,6 +431,8 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
 	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
 	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -456,21 +460,29 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 			switch( wNotifyCode ){
 			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED:	return OnBnClicked( wID );
+			default:
+				break;
 			}
 		}else if( ::lstrcmpi(szClass, L"Static") == 0 ){
 			switch( wNotifyCode ){
 			case STN_CLICKED:	return OnStnClicked( wID );
+			default:
+				break;
 			}
 		}else if( ::lstrcmpi(szClass, L"Edit") == 0 ){
 			switch( wNotifyCode ){
 			case EN_CHANGE:		return OnEnChange( hwndCtl, wID );
 			case EN_SETFOCUS:	return OnEnSetFocus( hwndCtl, wID );
 			case EN_KILLFOCUS:	return OnEnKillFocus( hwndCtl, wID );
+			default:
+				break;
 			}
 		}else if( ::lstrcmpi(szClass, L"ListBox") == 0 ){
 			switch( wNotifyCode ){
 			case LBN_SELCHANGE:	return OnLbnSelChange( hwndCtl, wID );
 			case LBN_DBLCLK:	return OnLbnDblclk( wID );
+			default:
+				break;
 			}
 		}else if( ::lstrcmpi(szClass, L"ComboBox") == 0 ){
 			switch( wNotifyCode ){
@@ -481,6 +493,8 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 			case CBN_DROPDOWN:	return OnCbnDropDown( hwndCtl, wID );
 		//	case CBN_CLOSEUP:	return OnCbnCloseUp( hwndCtl, wID );
 			case CBN_SELENDOK:	return OnCbnSelEndOk( hwndCtl, wID );
+			default:
+				break;
 			}
 		}
 	}

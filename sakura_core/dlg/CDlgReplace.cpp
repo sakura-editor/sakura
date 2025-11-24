@@ -94,6 +94,8 @@ BOOL CDlgReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
@@ -589,6 +591,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 //	case IDCANCEL:
 //		::EndDialog( hwndDlg, 0 );
 //		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */

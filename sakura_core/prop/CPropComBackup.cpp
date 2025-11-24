@@ -121,6 +121,8 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_BACKUP;
 				return TRUE;
+			default:
+				break;
 			}
 			break;
 
@@ -195,8 +197,12 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder, std::size(m_Common.m_sBackup.m_szBackUpFolder) - 1 );
 				UpdateBackupFile( hwndDlg );
 				break;
+			default:
+				break;
 			}
 			break;	/* EN_CHANGE */
+		default:
+			break;
 		}
 		break;	/* WM_COMMAND */
 
@@ -217,6 +223,8 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

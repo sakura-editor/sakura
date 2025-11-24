@@ -127,7 +127,11 @@ INT_PTR CPropEdit::DispatchEvent(
 					}
 				}
 				return TRUE;
+			default:
+				break;
 			}
+			break;
+		default:
 			break;
 		}
 		break;
@@ -148,6 +152,8 @@ INT_PTR CPropEdit::DispatchEvent(
 		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			m_nPageNum = ID_PROPCOM_PAGENUM_EDIT;
 			return TRUE;
+		default:
+			break;
 		}
 		break;	/* WM_NOTIFY */
 
@@ -168,6 +174,8 @@ INT_PTR CPropEdit::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

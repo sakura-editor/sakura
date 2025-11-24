@@ -172,6 +172,8 @@ void CDocEditor::SetImeMode( int mode )
 		case 4: //	Non-Conversion
 			conv |= IME_CMODE_NOCONVERSION;
 			break;
+		default:
+			break;
 		}
 		ImmSetConversionStatus( hIme, conv, sent );
 	}

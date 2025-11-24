@@ -155,6 +155,8 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		case IDYES:		pSaveInfo->cEol = pcDoc->m_cDocEditor.GetNewLineCode(); break; //統一
 		case IDNO:		break; //続行
 		case IDCANCEL:	return CALLBACK_INTERRUPT; //中断
+		default:
+			break;
 		}
 	}
 
@@ -201,6 +203,8 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 				GetEditWnd().GetActiveView().GetCommander().Command_MOVECURSOR(pt, 0);
 			}
 			return CALLBACK_INTERRUPT; //中断
+		default:
+			break;
 		}
 	}
 	return CALLBACK_CONTINUE;

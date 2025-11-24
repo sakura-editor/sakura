@@ -165,6 +165,8 @@ LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, 
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	switch( uMsg ){
 	case WM_RBUTTONDOWN:
@@ -351,6 +353,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), nullptr, TRUE );
 				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), nullptr, TRUE );
 				return TRUE;
+			default:
+				break;
 			}
 		}
 		switch( wNotifyCode ){
@@ -483,6 +487,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 						::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_STRINGLINEONLY ) );
 					return TRUE;
 				}
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
 		case EN_SETFOCUS:
@@ -492,6 +498,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
+		default:
 			break;
 		}
 		break;	/* WM_COMMAND */
@@ -572,6 +580,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPTYPE_PAGENUM_COLOR;
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* default */
 		}
@@ -590,6 +600,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		case IDC_LIST_COLORS:		/* 色種別リスト */
 			DrawColorListItem( pDis );
 			return TRUE;
+		default:
+			break;
 		}
 		break;
 
@@ -610,6 +622,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids2 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
+	default:
+		break;
 	}
 	return FALSE;
 }
