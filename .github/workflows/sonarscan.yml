@@ -42,11 +42,14 @@ jobs:
         echo "project-key=$projectKey" >> $env:GITHUB_OUTPUT
         $branch_name = "-Dsonar.branch.name=${{ github.ref_name }}"
         if ('pull_request' -eq '${{ github.event_name }}' -or 'pull_request_target' -eq '${{ github.event_name }}') {
-          $branch_name = "-Dsonar.pullrequest.branch=${{ github.head_ref }}"
-          if ('${{ github.ref_name }}' -match "^(\d+)/merge$") {
-            $pull_request_number = "-Dsonar.pullrequest.key=$('{0:D5}' -f [int]$matches[1])"
-            echo "pull-request-key=$pull_request_number" >> $env:GITHUB_OUTPUT
-          }
+          $pull_request_number = '${{ github.event.pull_request.number }}'
+          $pull_request_key = "-Dsonar.pullrequest.key=$pull_request_number"
+          echo "pull-request-key=$pull_request_key" >> $env:GITHUB_OUTPUT
+          $pull_request_branch = "${{ github.event.pull_request.head.ref }}"
+          $branch_name = "-Dsonar.pullrequest.branch=$pull_request_branch"
+          $pull_request_base = "${{ github.event.pull_request.base.ref }}"
+          $branch_base = "-Dsonar.pullrequest.base=$pull_request_base"
+          echo "branch-base=$branch_base" >> $env:GITHUB_OUTPUT
         }
         echo "branch-name=$branch_name" >> $env:GITHUB_OUTPUT
         echo "output-directory=${{ github.workspace }}\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}" >> $env:GITHUB_OUTPUT
@@ -123,6 +126,7 @@ jobs:
           "-Dsonar.host.url=https://sonarcloud.io"
           ${{ steps.setup-env.outputs.pull-request-key }}
           ${{ steps.setup-env.outputs.branch-name }}
+          ${{ steps.setup-env.outputs.branch-base }}
           "-Dsonar.cfamily.compile-commands=bw-output/compile_commands.json"
           "-Dsonar.cfamily.cppunit.reportPath=*-googletest.xml"
           "-Dsonar.cfamily.cobertura.reportPaths=tests1-coverage.xml"
