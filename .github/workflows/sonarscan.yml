@@ -41,7 +41,7 @@ jobs:
         $projectKey = $('${{ github.repository }}' -replace '/', '_')
         echo "project-key=$projectKey" >> $env:GITHUB_OUTPUT
         $branch_name = "-Dsonar.branch.name=${{ github.ref_name }}"
-        if ('pull-request' -eq '${{ github.event_name }}') {
+        if ('pull_request' -eq '${{ github.event_name }}' -or 'pull_request_target' -eq '${{ github.event_name }}') {
           $branch_name = "-Dsonar.pullrequest.branch=${{ github.head_ref }}"
           if ('${{ github.ref_name }}' -match "^(\d+)/merge$") {
             $pull_request_number = "-Dsonar.pullrequest.key=$('{0:D5}' -f [int]$matches[1])"
