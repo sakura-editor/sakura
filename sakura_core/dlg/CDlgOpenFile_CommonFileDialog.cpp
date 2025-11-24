@@ -90,8 +90,8 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 	//! リトライ機能付き GetOpenFileName
 	bool GetSaveFileNameRecover( OPENFILENAME* ofn );
 
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
+	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 
@@ -645,9 +645,6 @@ int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
 */
 CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 {
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
