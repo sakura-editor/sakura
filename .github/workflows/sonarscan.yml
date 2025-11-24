@@ -130,7 +130,7 @@ jobs:
 
     - name: Upload Sonar CFamily failure reproducer (if present)
       if: ${{ always() && hashFiles('sonar-cfamily-reproducer.tar.xz') != '' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: sonar-cfamily-reproducer-${{ runner.os }}-${{ github.run_id }}
         path: sonar-cfamily-reproducer.tar.xz
