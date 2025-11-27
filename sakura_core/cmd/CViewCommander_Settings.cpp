@@ -33,6 +33,7 @@
 #include <array>
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "DarkModeSubclass.h"
 
 /*! ツールバーの表示/非表示
 
@@ -66,6 +67,10 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((nullptr == pCEditWnd->m_cFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
 	pCEditWnd->LayoutFuncKey();
 	pCEditWnd->EndLayoutBars();
+
+	auto hWnd = pCEditWnd->GetHwnd();
+	DarkMode::setChildCtrlsTheme(hWnd);
+	DarkMode::setWindowMenuBarSubclass(hWnd);
 
 	//全ウインドウに変更を通知する。
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(

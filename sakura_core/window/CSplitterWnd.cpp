@@ -27,6 +27,7 @@
 #include "CSelectLang.h"
 #include "config/system_constants.h"
 #include "String_define.h"
+#include "DarkModeSubclass.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
@@ -83,7 +84,7 @@ HWND CSplitterWnd::Create( HWND hwndParent )
 	}
 
 	/* 基底クラスメンバ呼び出し */
-	return CWnd::Create(
+	HWND hWnd = CWnd::Create(
 		hwndParent,
 		0, // extended window style
 		pszClassName,	// Pointer to a null-terminated string or is an atom.
@@ -95,6 +96,8 @@ HWND CSplitterWnd::Create( HWND hwndParent )
 		0, // window height
 		nullptr // handle to menu, or child-window identifier
 	);
+	DarkMode::setDarkWndSafe(hWnd);
+	return hWnd;
 }
 
 /* 子ウィンドウの設定
@@ -116,20 +119,6 @@ void CSplitterWnd::SetChildWndArr( HWND* hwndEditViewArr )
 	/* ウィンドウの分割 */
 //	DoSplit( m_nHSplitPos, m_nVSplitPos );
 //	DoSplit( 0, 0 );
-	return;
-}
-
-/* 分割フレーム描画 */
-void CSplitterWnd::DrawFrame( HDC hdc, RECT* prc )
-{
-	CSplitBoxWnd::Draw3dRect( hdc, prc->left, prc->top, prc->right, prc->bottom,
-		::GetSysColor( COLOR_3DSHADOW ),
-		::GetSysColor( COLOR_3DHILIGHT )
-	);
-	CSplitBoxWnd::Draw3dRect( hdc, prc->left + 1, prc->top + 1, prc->right - 2, prc->bottom - 2,
-		RGB( 0, 0, 0 ),
-		::GetSysColor( COLOR_3DFACE )
-	);
 	return;
 }
 
@@ -787,13 +776,14 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
 	hdc = ::BeginPaint( hwnd, &ps );
 	::GetClientRect( GetHwnd(), &rc );
+	auto color = DarkMode::getViewBackgroundColor();
 	if( m_nAllSplitRows > 1 ){
 		::SetRect( &rcFrame, rc.left, m_nVSplitPos, rc.right, m_nVSplitPos + nFrameWidth );
-		::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
+		::MyFillRect( hdc, rcFrame, color );
 	}
 	if( m_nAllSplitCols > 1 ){
 		::SetRect( &rcFrame, m_nHSplitPos, rc.top, m_nHSplitPos + nFrameWidth, rc.bottom );
-		::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
+		::MyFillRect( hdc, rcFrame, color );
 	}
 	::EndPaint(hwnd, &ps);
 	return 0L;

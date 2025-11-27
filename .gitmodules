@@ -1,3 +1,6 @@
 [submodule "tests/googletest"]
 	path = tests/googletest
 	url = https://github.com/google/googletest.git
+[submodule "externals/darkmodelib"]
+	path = externals/darkmodelib
+	url = https://github.com/ozone10/darkmodelib.git

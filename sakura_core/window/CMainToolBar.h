@@ -32,9 +32,6 @@ public:
 	void OnToolbarTimer( void );	//!< タイマーの処理 20060128 aroka
 	void UpdateToolbar( void );		//!< ツールバーの表示を更新する		// 2008.09.23 nasukoji
 
-	//描画
-	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
-
 	//共有データとの同期
 	void AcceptSharedSearchKey();
 
@@ -62,5 +59,7 @@ private:
 
 	CRecentSearch			m_cRecentSearch;
 	CImageListMgr*			m_pcIcons = nullptr;
+	HIMAGELIST				m_hImageList = nullptr;
+	HIMAGELIST				m_hDisabledImageList = nullptr;
 };
 #endif /* SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_ */

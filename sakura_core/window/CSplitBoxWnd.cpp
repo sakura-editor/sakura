@@ -52,7 +52,7 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 		nullptr,	// Handle to the class icon.
 		nullptr,	// Handle to a small icon
 		hCursor,// Handle to the class cursor.
-		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
+		(HBRUSH)(COLOR_3DSHADOW + 1),// Handle to the class background brush.
 		nullptr/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
@@ -74,8 +74,8 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 		WS_CHILD | WS_VISIBLE, // window style
 		bVertical ? ( rc.right - nCxVScroll ):( 0 ), // horizontal position of window
 		bVertical ? ( 0 ):( rc.bottom - nCyHScroll ), // vertical position of window
-		bVertical ? ( nCxVScroll ):( 7 ), // window width
-		bVertical ? ( 7 ):( nCyHScroll ), // window height
+		bVertical ? ( nCxVScroll ):( 37 ), // window width
+		bVertical ? ( 37 ):( nCyHScroll ), // window height
 		nullptr // handle to menu, or child-window identifier
 	);
 }
@@ -124,23 +124,26 @@ LRESULT CSplitBoxWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	nVSplitHeight = 7;	/* 垂直分割ボックスの高さ */
 	nHSplitWidth = 7;	/* 水平分割ボックスの幅 */
 
+#if 1
+	COLORREF cTL0 = RGB(136, 136, 136);
+	COLORREF cBR0 = RGB(63, 63, 63);
+	COLORREF cTL1 = RGB(153, 153, 153);
+	COLORREF cBR1 = RGB(96, 96, 96);
+#else
+	COLORREF cTL0 = ::GetSysColor(COLOR_3DLIGHT);
+	COLORREF cBR0 = ::GetSysColor(COLOR_3DDKSHADOW);
+	COLORREF cTL1 = ::GetSysColor(COLOR_3DHILIGHT);
+	COLORREF cBR1 = ::GetSysColor(COLOR_3DSHADOW);
+#endif
+
 	if( m_bVertical ){
 		/* 垂直分割ボックスの描画 */
-		Draw3dRect( hdc, 0, 0, nCxVScroll, nVSplitHeight,
-			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-		 );
-		Draw3dRect( hdc, 1, 1, nCxVScroll - 2, nVSplitHeight - 2,
-			::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-		 );
+		Draw3dRect(hdc, 0, 0, nCxVScroll, nVSplitHeight, cTL0, cBR0);
+		Draw3dRect(hdc, 1, 1, nCxVScroll - 2, nVSplitHeight - 2, cTL1, cBR1);
 	}else{
 		/* 水平分割ボックスの描画 */
-		Draw3dRect( hdc, 0, 0, nHSplitWidth, nCyHScroll,
-			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-		 );
-
-		Draw3dRect( hdc, 1, 1, nHSplitWidth - 2, nCyHScroll - 2,
-			::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-		 );
+		Draw3dRect(hdc, 0, 0, nHSplitWidth, nCyHScroll, cTL0, cBR0);
+		Draw3dRect(hdc, 1, 1, nHSplitWidth - 2, nCyHScroll - 2, cTL1, cBR1);
 	}
 
 	::EndPaint(hwnd, &ps);

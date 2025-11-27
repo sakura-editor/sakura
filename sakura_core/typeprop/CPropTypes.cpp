@@ -33,6 +33,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
 #include "String_define.h"
+#include "DarkModeSubclass.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //
@@ -49,6 +50,7 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropTypes = reinterpret_cast<CPropTypes*>(pPsp->lParam);
+		DarkMode::setDarkWndSafe(hwndDlg);
 		if( nullptr != pCPropTypes ){
 			UpdateDialogFont( hwndDlg );
 			return (pCPropTypes->*pDispatch)( hwndDlg, uMsg, wParam, pPsp->lParam );

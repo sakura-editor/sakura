@@ -28,6 +28,7 @@
 #include "plugin/COutlineIfObj.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
+#include "DarkModeSubclass.h"
 
 /*!	アウトライン解析
 
@@ -167,7 +168,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	/* アウトライン ダイアログの表示 */
 	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
 	if( nullptr == GetEditWindow()->m_cDlgFuncList.GetHwnd() ){
-		GetEditWindow()->m_cDlgFuncList.DoModeless(
+		HWND hWnd = GetEditWindow()->m_cDlgFuncList.DoModeless(
 			G_AppInstance(),
 			m_pCommanderView->GetHwnd(),
 			(LPARAM)m_pCommanderView,
@@ -178,6 +179,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 			nListType,
 			m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		);
+		DarkMode::setDarkWndSafe(hWnd);
 	}else{
 		/* アクティブにする */
 		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, nListType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );

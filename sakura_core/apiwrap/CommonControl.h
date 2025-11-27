@@ -77,6 +77,13 @@ namespace ApiWrap
 	inline DWORD Toolbar_SetExtendedStyle(HWND hwndCtl, DWORD styles)				{ return (DWORD)::SendMessage(hwndCtl, TB_SETEXTENDEDSTYLE, 0L, (LPARAM)styles); }
 	inline int Toolbar_GetState(HWND hwndCtl, int index)							{ return (int)::SendMessage(hwndCtl, TB_GETSTATE, (WPARAM)index, 0L); }
 	inline BOOL Toolbar_SetState(HWND hwndCtl, int index, WORD state)				{ return (BOOL)::SendMessage(hwndCtl, TB_SETSTATE, (WPARAM)index, state); }
+	inline HIMAGELIST Toolbar_SetImageList(HWND hwndCtl, int index, HIMAGELIST hImageList) { return (HIMAGELIST)::SendMessage(hwndCtl, TB_SETIMAGELIST, (WPARAM)index, (LPARAM)hImageList); }
+	inline HIMAGELIST Toolbar_SetDisabledImageList(HWND hwndCtl, int index, HIMAGELIST hImageList) { return (HIMAGELIST)::SendMessage(hwndCtl, TB_SETDISABLEDIMAGELIST, (WPARAM)index, (LPARAM)hImageList); }
+	inline int Toolbar_LoadImages(HWND hwndCtl, int id) { return (int)::SendMessage(hwndCtl, TB_LOADIMAGES, (WPARAM)id, (LPARAM)HINST_COMMCTRL); }
+	inline void Toolbar_AutoSize(HWND hwndCtl) { ::SendMessage(hwndCtl, TB_AUTOSIZE, 0, 0); }
+	inline BOOL Toolbar_SetBitmapSize(HWND hwndCtl, int width, int height) {
+		return (BOOL)::SendMessage(hwndCtl, TB_SETBITMAPSIZE, 0, MAKELPARAM(width, height));
+	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      Tooltip コントロール                   //
