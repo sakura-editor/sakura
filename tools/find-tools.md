@@ -49,6 +49,7 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 | 15             | Visual Studio 2017                     |
 | 16             | Visual Studio 2019                     |
 | 17             | Visual Studio 2022                     |
+| 18             | Visual Studio 2026                     |
 
 ### 検索ロジック
 
