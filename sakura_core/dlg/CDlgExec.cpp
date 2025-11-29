@@ -241,9 +241,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		{
 			CDlgOpenFile	cDlgOpenFile;
 			WCHAR			szPath[_MAX_PATH + 1];
-			constexpr auto size = int(std::size(szPath)) - 1;
-			wcsncpy( szPath, m_szCommand, size);
-			szPath[size] = L'\0';
+			wcsncpy_s(szPath, m_szCommand, _TRUNCATE);
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
 				m_hInstance,
@@ -275,6 +273,8 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDCANCEL:
 		CloseDialog( 0 );
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }
