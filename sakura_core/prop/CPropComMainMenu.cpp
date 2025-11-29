@@ -68,7 +68,6 @@ static const WCHAR * MakeDispLabel( SMainMenuWork* );
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 
 //  TreeViewキー入力時のメッセージ処理用
-static WNDPROC	m_wpTreeView = nullptr;
 static HWND		m_hwndDlg;
 
 // TreeViewラベル編集時のメッセージ処理用
@@ -87,15 +86,17 @@ INT_PTR CALLBACK CPropMainMenu::DlgProc_page(
 }
 
 // TreeViewキー入力時のメッセージ処理
-static LRESULT CALLBACK TreeViewProc(
+LRESULT CALLBACK CPropMainMenu::TreeViewProc(
 	HWND	hwndTree,		// handle to dialog box
 	UINT	uMsg,			// message
 	WPARAM	wParam,			// first message parameter
-	LPARAM	lParam 			// second message parameter
+	LPARAM	lParam,			// second message parameter
+	UINT_PTR uIdSubclass,
+	[[maybe_unused]] DWORD_PTR dwRefData
 )
 {
 	HTREEITEM		htiItem;
-	TV_ITEM			tvi;		// 取得用
+	TV_ITEM			tvi = {};	// 取得用
 	WCHAR			cKey;
 	SMainMenuWork*	pFuncWk;	// 機能
 
@@ -147,8 +148,13 @@ static LRESULT CALLBACK TreeViewProc(
 		break;
 	case WM_CHAR:
 		return 0;
+	case WM_DESTROY:
+		RemoveWindowSubclass(hwndTree, &TreeViewProc, uIdSubclass);
+		return 0;
+	default:
+		break;
 	}
-	return  CallWindowProc( m_wpTreeView, hwndTree, uMsg, wParam, lParam);
+	return ::DefSubclassProc(hwndTree, uMsg, wParam, lParam);
 }
 
 // TreeViewラベル編集時のメッセージ処理
@@ -261,7 +267,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 		// TreeViewのメッセージ処理（アクセスキー入力用）
 		m_hwndDlg = hwndDlg;
-		m_wpTreeView = (WNDPROC)SetWindowLongPtr( hwndTreeRes, GWLP_WNDPROC, (LONG_PTR)TreeViewProc );
+		::SetWindowSubclass(hwndTreeRes, &TreeViewProc, 0, 0);
 
 		::SetTimer( hwndDlg, 1, 300, nullptr );
 
@@ -781,10 +787,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		break;
 	case WM_DESTROY:
 		::KillTimer( hwndDlg, 1 );
-
-		// 編集時のメッセージ処理を戻す
-		SetWindowLongPtr( hwndTreeRes, GWLP_WNDPROC, (LONG_PTR)m_wpTreeView );
-		m_wpTreeView = nullptr;
 
 		// ワークのクリア
 		msMenu.clear();
