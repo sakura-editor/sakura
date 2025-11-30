@@ -71,9 +71,11 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
             - HeaderMake.exe
     - [build-chm.bat](../build-chm.bat)
         - [help\remove-comment.py](../help/remove-comment.py) : [sakura_core\sakura.hh](../sakura_core/sakura.hh) に記述された日本語を含む行コメントを削除する
-        - ChmSourceConverter.exe : ヘルプファイルの文字コードを UTF-8 から Shift_JIS に変換する
-        - [help\CompileChm.ps1](../help/CompileChm.ps1)
-            - hhc.exe (Visual Studio に同梱) : compiled HTML をビルドするコンパイラ。かなり古いツールであり、日本語 HTML をビルドするためには Windows のシステムロケールを日本語に変更する必要がある。
+        - cmake.exe
+          - ChmSourceConverter.exe : ヘルプファイルの文字コードを UTF-8 から Shift_JIS に変換する
+          - pwsh.exe
+            - [help\CompileChm.ps1](../help/CompileChm.ps1)
+              - hhc.exe (Visual Studio に同梱) : compiled HTML をビルドするコンパイラ。かなり古いツールであり、日本語 HTML をビルドするためには Windows のシステムロケールを日本語に変更する必要がある。
     - [build-installer.bat](../build-installer.bat)
         - ISCC.exe : [InnoSetup](https://www.jrsoftware.org/isinfo.php) でインストーラをビルドする
     - [zipArtifacts.bat](../zipArtifacts.bat)
