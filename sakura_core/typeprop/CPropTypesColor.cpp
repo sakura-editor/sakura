@@ -41,15 +41,6 @@
 #include "config/app_constants.h"
 #include "String_define.h"
 
-namespace {
-//! カスタムカラー用の識別文字列
-const WCHAR* TSTR_PTRCUSTOMCOLORS = L"ptrCustomColors";
-int m_bgColorSampleLeft;
-int m_bgColorSampleRight;
-int m_fgColorSampleLeft;
-int m_fgColorSampleRight;
-}
-
 static const DWORD p_helpids2[] = {	//11400
 	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定
 	IDC_CHECK_DISP,					HIDC_CHECK_DISP,				//色分け表示
@@ -144,16 +135,16 @@ bool CPropTypesColor::Export( HWND hwndDlg )
 	return cImpExpColors.ExportUI(m_hInstance, hwndDlg);
 }
 
-LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, [[maybe_unused]] DWORD_PTR dwRefData )
+LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData )
 {
 	int			xPos = 0;
 	int			yPos;
 	int			nIndex = -1;
 	int			nItemNum;
 	RECT		rcItem = {0,0,0,0};
-	int			i;
 	POINT		poMouse;
 	ColorInfo*	pColorInfo;
+	const auto pCPropTypesColor = (CPropTypesColor *)dwRefData;
 
 	switch( uMsg ){
 	case WM_RBUTTONDOWN:
@@ -165,7 +156,7 @@ LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, 
 		poMouse.x = xPos;
 		poMouse.y = yPos;
 		nItemNum = List_GetCount( hwnd );
-		for( i = 0; i < nItemNum; ++i ){
+		for( int i = 0; i < nItemNum; ++i ){
 			List_GetItemRect( hwnd, i, &rcItem );
 			if( ::PtInRect( &rcItem, poMouse ) ){
 //				MYTRACE( L"hit at i==%d\n", i );
@@ -233,25 +224,25 @@ LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, 
 			::InvalidateRect( hwnd, &rcItem, TRUE );
 		}else
 		/* 前景色見本 矩形 */
-		if( m_fgColorSampleLeft <= xPos && xPos <= m_fgColorSampleRight
+		if( pCPropTypesColor->m_fgColorSampleLeft <= xPos && xPos <= pCPropTypesColor->m_fgColorSampleRight
 			&& ( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_TEXT) ) )
 		{
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
-			DWORD* pColors = (DWORD*)::GetProp( hwnd, TSTR_PTRCUSTOMCOLORS );
+			DWORD* pColors = pCPropTypesColor->m_dwCustColors;
 			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_sColorAttr.m_cTEXT, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), nullptr, TRUE );
 			}
 		}else
 		/* 背景色見本 矩形 */
-		if( m_bgColorSampleLeft <= xPos && xPos <= m_bgColorSampleRight
+		if( pCPropTypesColor->m_bgColorSampleLeft <= xPos && xPos <= pCPropTypesColor->m_bgColorSampleRight
 			&& ( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			)
 		{
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
-			DWORD* pColors = (DWORD*)::GetProp( hwnd, TSTR_PTRCUSTOMCOLORS );
+			DWORD* pColors = pCPropTypesColor->m_dwCustColors;
 			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_sColorAttr.m_cBACK, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), nullptr, TRUE );
@@ -260,9 +251,6 @@ LRESULT APIENTRY CPropTypesColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, 
 		break;
 	// 2005.11.30 Moca カスタム色保持
 	case WM_DESTROY:
-		if( ::GetProp( hwnd, TSTR_PTRCUSTOMCOLORS ) ){
-			::RemoveProp( hwnd, TSTR_PTRCUSTOMCOLORS );
-		}
 		::RemoveWindowSubclass(hwnd, &ColorList_SubclassProc, uIdSubclass);
 		return 0;
 	default:
@@ -317,9 +305,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		SetData( hwndDlg );
 
 		/* 色リストをフック */
-		::SetWindowSubclass(hwndListColor, &ColorList_SubclassProc, 0, 0);
-		// 2005.11.30 Moca カスタム色を保持
-		::SetProp( hwndListColor, TSTR_PTRCUSTOMCOLORS, m_dwCustColors );
+		::SetWindowSubclass(hwndListColor, &ColorList_SubclassProc, 0, (DWORD_PTR)this);
 
 		{
 			LOGFONT	lf = {};

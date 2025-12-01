@@ -112,6 +112,10 @@ protected:
 	int				m_nCurrentColorType;					//!< 現在選択されている色タイプ
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;						//!< メモリ削減のためポインタに  Mar. 31, 2003 genta
 	bool			m_bChangeKeyWordSet;
+	int 			m_bgColorSampleLeft;
+	int 			m_bgColorSampleRight;
+	int 			m_fgColorSampleLeft;
+	int 			m_fgColorSampleRight;
 
 	// フォント表示用データ
 	HFONT			m_hTypeFont;							//!< タイプ別フォント表示ハンドル
