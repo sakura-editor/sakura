@@ -252,21 +252,24 @@ private:
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
+public:
 	//	2007.07.26 genta : PPAのネストを許容するために，別データ構造とする．
 	
 	struct PpaExecInfo {
-		CNativeA		m_cMemRet;		//!< コールバックからDLLに渡す文字列を保持
-		CEditView*		m_pcEditView;	//	2003.06.01 Moca
-		DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
-		bool			m_bError;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-		CNativeA		m_cMemDebug;	//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
+		CNativeA		m_cMemRet = "";			//!< コールバックからDLLに渡す文字列を保持
+		CEditView*		m_pcEditView = nullptr;	//	2003.06.01 Moca
+		DLLSHAREDATA*	m_pShareData = nullptr;	//	2003.06.01 Moca
+		bool			m_bError = false;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
+		CNativeA		m_cMemDebug = "";		//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
 		/** オプションフラグ
 		
 			CEditView::HandleCommand()にコマンドと一緒に渡すことで
 			コマンドの素性を教える．
 		*/
-		int				m_commandflags;	//!< 
+		int				m_commandflags = 0;
 	};
+
+private:
 	//	2007.07.26 genta : 現在実行中のインスタンス
 	static PpaExecInfo* m_CurInstance;
 	//PPAの多重起動禁止 2008.10.22 syat
@@ -276,5 +279,9 @@ private:
 	static struct MacroFuncInfo	S_Table[];
 	static int					m_nFuncNum;	//	SAKURAエディタ用関数の数
 */
+
+public:
+	static void CallErrorProc(PpaExecInfo& info, int Err_CD, _In_opt_z_ LPCSTR Err_Mes);
 };
+
 #endif /* SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_ */

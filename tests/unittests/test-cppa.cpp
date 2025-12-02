@@ -8,6 +8,13 @@
 
 #include "macro/CPPA.h"
 
+#include "doc/CEditDoc.h"
+#include "env/CShareData.h"
+#include "macro/CSMacroMgr.h"
+#include "view/CEditView.h"
+
+#include "eval_outputs.hpp"
+
 /*!
 	CPPA::GetDllNameImpのテスト
  */
@@ -75,4 +82,74 @@ TEST(CPPA, GetDeclarations)
 	MacroFuncInfo funcInfo8 = { 8, L"Func4", { VT_I4, VT_BSTR, VT_I4, VT_BSTR }, VT_BSTR, &funcInfoEx8 };
 	cPpa.GetDeclarations(funcInfo8, buffer.data());
 	EXPECT_STREQ("function S_Func4(i0: Integer; s1: string; i2: Integer; s3: string; i4: Integer; s5: string; i6: Integer; s7: string): string; index 8;", buffer.data());
+}
+
+/*!
+ * CPPAエラー情報コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST(CPPA, ppaErrorProc)
+{
+	// 共有メモリのインスタンスを生成する
+	const auto pcShareData = std::make_unique<CShareData>();
+
+	// 共有メモリを初期化する
+	pcShareData->InitShareData();
+
+	// ドキュメントの初期化前に文字幅キャッシュの生成が必要
+	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
+	InitCharWidthCache(GetDllShareData().m_Common.m_sView.m_lf);
+
+	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
+	const auto pcEditDoc = std::make_unique<CEditDoc>(nullptr);
+
+	// CEditViewを用意する
+	const auto pcEditView = std::make_unique<CEditView>();
+
+	// SMacroMgrを用意する
+	const auto pcSMacroMgr = std::make_unique<CSMacroMgr>();
+
+	// PPA実行情報を用意する
+	CPPA::PpaExecInfo info{};
+	info.m_pShareData = &GetDllShareData();
+	info.m_pcEditView = pcEditView.get();
+
+	// 既にエラーフラグが立っていたらメッセージは出さない
+	info.m_bError = true;
+	CPPA::CallErrorProc(info, int(F_FILENEW) + 1, nullptr);
+
+	// コマンドエラー
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, int(F_FILENEW) + 1, nullptr), L"関数の実行エラー\nprocedure S_FileNew; index 30101;");
+
+	// 関数エラー
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, int(F_GETFILENAME) + 1, nullptr), L"関数の実行エラー\nfunction S_GetFilename: string; index 40001;");
+
+	// 不明な関数エラー
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, 1 + 1, nullptr), L"不明な関数の実行エラー(バグです)\nFunc_ID=1");
+
+	// エラー情報が不正
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正");
+
+	// 詳細不明のPPAエラー
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, ""), L"詳細不明のエラー");
+
+	// 詳細ありのPPAエラー
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, "test"), L"test");
+
+	// 未定義のエラー
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, -1, "test"), L"未定義のエラー\nError_CD=-1\ntest");
+
+	// デバッグ情報付きのエラー
+	info.m_cMemDebug = "debug";
+	info.m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正\ndebug");
 }
