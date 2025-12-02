@@ -113,7 +113,7 @@ bool CShareData::InitShareData()
 
 	/* ファイルマッピングオブジェクト */
 	{
-		const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+		const auto pszProfileName = GetProfileName();
 		std::wstring strShareDataName = GSTR_SHAREDATA;
 		strShareDataName += pszProfileName;
 		m_hFileMap = ::CreateFileMapping(

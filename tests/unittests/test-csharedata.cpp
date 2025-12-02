@@ -5,41 +5,27 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include <tchar.h>
-#include <Windows.h>
-#include <windowsx.h>
-#include <Shlwapi.h>
-
-#include <memory>
-
 #include "env/CShareData.h"
 
-#include "_main/CCommandLine.h"
-#include "_main/CNormalProcess.h"
-
 /*!
- * @brief CShareDataのテスト
+ * @brief CShareData初期化と言語切替のテスト
  */
-TEST( CShareData, test )
+TEST(CShareData, initShareData001)
 {
-	// 共有メモリをインスタンス化するにはプロセスのインスタンスが必要。
-	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
+	// 共有メモリのインスタンスを生成する
+	const auto pcShareData = std::make_unique<CShareData>();
+	ASSERT_NE(nullptr, pcShareData);
 
-	// 共有メモリのインスタンスを取得する
-	auto pShareData = CShareData::getInstance();
-	ASSERT_NE(nullptr, pShareData);
-
-	// 共有メモリを初期化するにはコマンドラインのインスタンスが必要
-	CCommandLine cCommandLine;
-	cCommandLine.ParseCommandLine(L"", false);
-
-	// 共有メモリのインスタンスを初期化する
-	ASSERT_TRUE(pShareData->InitShareData());
+	// 共有メモリを初期化する
+	ASSERT_TRUE(pcShareData->InitShareData());
 
 	// 言語切り替えのテストを実施する
 	std::vector<std::wstring> values;
-	pShareData->ConvertLangValues(values, true);
+	pcShareData->ConvertLangValues(values, true);
 	CSelectLang::ChangeLang(L"sakura_lang_en_US.dll");
-	pShareData->ConvertLangValues(values, false);
-	pShareData->RefreshString();
+	pcShareData->ConvertLangValues(values, false);
+	pcShareData->RefreshString();
+
+	// 言語を元に戻す
+	CSelectLang::ChangeLang(L"");
 }
