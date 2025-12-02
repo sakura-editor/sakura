@@ -36,7 +36,7 @@ public:
 public:
 	//管理用
 	void _AddListener(CListener* pcListener);
-	void _RemoveListener(CListener* pcListener);
+	void _RemoveListener(CListener* pcListener) noexcept;
 
 private:
 	std::vector<CListener*> m_vListenersRef;
@@ -58,8 +58,11 @@ public:
 	CSubject* Listen(CSubject* pcSubject); //!< 直前にウォッチしていたサブジェクトを返す
 	CSubject* GetListeningSubject() const{ return m_pcSubjectRef; }
 
+	//管理用
+	void		_EndListen() noexcept;
+
 private:
-	CSubject* m_pcSubjectRef;
+	CSubject* m_pcSubjectRef = nullptr;
 };
 
 template <class LISTENER> class CSubjectT : public CSubject{
