@@ -200,6 +200,26 @@ CEditWnd::CEditWnd()
 , m_cStatusBar(this)		// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_pszMenubarMessage( new WCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 {
+	m_pShareData = &GetDllShareData();
+
+	m_pcEditDoc = CEditDoc::getInstance();
+
+	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
+		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
+		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
+
+	for (auto& pcEditView : m_pcEditViewArr) {
+		pcEditView = nullptr;
+	}
+	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
+	m_pcEditViewArr[0] = new CEditView();
+	m_pcEditView = m_pcEditViewArr[0];
+
+	m_pcViewFont = new CViewFont(&GetLogfont());
+
+	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
+
+	m_pcDropTarget = new CDropTarget(this);	// 右ボタンドロップ用
 }
 
 CEditWnd::~CEditWnd()
@@ -567,32 +587,12 @@ HWND CEditWnd::Create(
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
-	m_pcEditDoc = pcEditDoc;
-
-	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
-		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
-		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
-
-	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
-		m_pcEditViewArr[i] = nullptr;
-	}
-	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView();
-	m_pcEditView = m_pcEditViewArr[0];
-
-	m_pcViewFont = new CViewFont(&GetLogfont());
-
-	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
+	UNREFERENCED_PARAMETER(pcEditDoc);
 
 	wmemset( m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
 	//	Dec. 4, 2002 genta
 	InitMenubarMessageFont();
-
-	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
 
 	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
 	ClearMouseState();

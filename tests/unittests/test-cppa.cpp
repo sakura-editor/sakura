@@ -109,16 +109,13 @@ TEST(CPPA, ppaErrorProc)
 	// CEditWndを用意する
 	const auto pcEditWnd = std::make_unique<CEditWnd>();
 
-	// CEditViewを用意する
-	const auto pcEditView = std::make_unique<CEditView>();
-
 	// SMacroMgrを用意する
 	const auto pcSMacroMgr = std::make_unique<CSMacroMgr>();
 
 	// PPA実行情報を用意する
 	CPPA::PpaExecInfo info{};
 	info.m_pShareData = &GetDllShareData();
-	info.m_pcEditView = pcEditView.get();
+	info.m_pcEditView = &pcEditWnd->GetActiveView();
 
 	// 既にエラーフラグが立っていたらメッセージは出さない
 	info.m_bError = true;
