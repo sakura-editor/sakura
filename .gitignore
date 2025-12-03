@@ -10,7 +10,6 @@
 /*.patch
 /.vs
 /cppcheck-*.xml
-/help/sakura/sakura.hh
 /build
 /MinGW
 /Win32

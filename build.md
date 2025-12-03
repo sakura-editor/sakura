@@ -52,6 +52,10 @@
 ![vsi](https://user-images.githubusercontent.com/39618965/44622575-012dcc80-a8f6-11e8-906a-14d8cd6dfac9.PNG)
    - [.vsconfig](.vsconfig) を使用してインストールした場合は自動的にインストールされます。
    - ヘルプファイルを編集する場合 HTML Help Workshop 等の編集ソフトも別途必要になります。
+- CMake (cmake.exe)
+  - Visual Studio同梱のもので構いません。
+- PowerShell Core (pwsh.exe)
+  - Microsoft Storeなどで検索してインストールしてください。
 
 ### インストーラのビルドに必要なもの
 
