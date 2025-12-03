@@ -299,6 +299,24 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 	}
 }
 
+/*!
+ * CPPAエラー情報コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ void CPPA::CallErrorProc(PpaExecInfo& info, int Err_CD, _In_opt_z_ LPCSTR Err_Mes)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAエラー情報コールバックを呼び出す
+	stdError(Err_CD, Err_Mes);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+}
+
 /*! ユーザー定義関数のエラーメッセージの作成
 
 	stdProc, stdIntFunc, stdStrFunc がエラーコードを返した場合、PPAから呼び出される。
@@ -346,9 +364,8 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA3), FuncID );
 		}
 	}else{
-		//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
-		//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
-		if( IsBadStringPtrA( Err_Mes, 256 )){
+		if( !Err_Mes ){
+			// "エラー情報が不正"
 			pszErr = LS(STR_ERR_DLGPPA6);
 		}else{
 			switch( Err_CD ){
