@@ -12,6 +12,7 @@
 #include "env/CShareData.h"
 #include "macro/CSMacroMgr.h"
 #include "view/CEditView.h"
+#include "window/CEditWnd.h"
 
 #include "eval_outputs.hpp"
 
@@ -104,6 +105,9 @@ TEST(CPPA, ppaErrorProc)
 
 	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
 	const auto pcEditDoc = std::make_unique<CEditDoc>(nullptr);
+
+	// CEditWndを用意する
+	const auto pcEditWnd = std::make_unique<CEditWnd>();
 
 	// CEditViewを用意する
 	const auto pcEditView = std::make_unique<CEditView>();
