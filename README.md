@@ -30,7 +30,7 @@
     - [Visual Studio Install options required](#visual-studio-install-options-required)
     - [Visual Studio 2019 以降の対応に関して](#visual-studio-2019-以降の対応に関して)
     - [.vsconfig に関して](#vsconfig-に関して)
-      - [全対応バージョン共通](#visual-studio-2017-以降共通)
+      - [全対応バージョン共通](#全対応バージョン共通)
       - [Visual Studio 2019 以降のみ](#visual-studio-2019-以降のみ)
       - [参照](#参照)
   - [How to build](#how-to-build)
@@ -85,7 +85,7 @@ Sakura Editor は、[Open Source Initiative (OSI) 認定ライセンスである
 
 [2022対応コミット]: https://github.com/sakura-editor/sakura/pull/1872/commits/93cf3f3eacfed6a4d0a2c30d5445b53b2599db3c
 
-[仕組みに関してはこちらを参照](vcx-props/project-PlatformToolset.md)
+[仕組みに関してはこちらを参照](tools/vcx-props/project-PlatformToolset.md)
 
 ### .vsconfig に関して
 
