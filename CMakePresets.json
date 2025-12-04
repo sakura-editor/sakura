@@ -1,0 +1,24 @@
+﻿{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24
+  },
+  "configurePresets": [
+    {
+      "name": "CMakeTools",
+      "displayName": "CMakeTools Build",
+      "binaryDir": "${sourceDir}/build/$env{BUILD_PLATFORM}/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+        "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/$env{BUILD_PLATFORM}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "CMakeTools",
+      "configurePreset": "CMakeTools"
+    }
+  ]
+}
