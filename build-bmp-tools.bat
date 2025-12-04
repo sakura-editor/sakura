@@ -22,14 +22,14 @@ if errorlevel 1 (echo error && exit /b 1)
 set MUXER=%~dp0tools\ToolBarTools\ToolBarImageMuxer\bin\%configuration%\ToolBarImageMuxer.exe
 set SPLITTER=%~dp0tools\ToolBarTools\ToolBarImageSplitter\bin\%configuration%\ToolBarImageSplitter.exe
 
-set SRC_BMP1=%~dp0resource\mytool.bmp
-set SRC_BMP2=%~dp0resource\my_icons.bmp
+set SRC_BMP1=%~dp0src\main\resources\images\mytool.bmp
+set SRC_BMP2=%~dp0src\main\resources\images\my_icons.bmp
 
-set DST_DIR1=%~dp0resource\mytool
-set DST_DIR2=%~dp0resource\my_icons
+set DST_DIR1=%~dp0src\main\resources\images\mytool
+set DST_DIR2=%~dp0src\main\resources\images\my_icons
 
-set OUT_BMP1=%~dp0resource\out-mytool.bmp
-set OUT_BMP2=%~dp0resource\out-my_icons.bmp
+set OUT_BMP1=%~dp0src\main\resources\images\out-mytool.bmp
+set OUT_BMP2=%~dp0src\main\resources\images\out-my_icons.bmp
 
 if exist %DST_DIR1% rmdir /s /q %DST_DIR1%
 if exist %DST_DIR2% rmdir /s /q %DST_DIR2%
