@@ -20,8 +20,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <algorithm>
-#include <memory>
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
@@ -73,17 +71,7 @@ CDialog::CDialog(bool bSizable, bool bCheckShareData)
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData(bCheckShareData);
 
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-	m_hWnd  = nullptr;			/* このダイアログのハンドル */
-	m_hwndSizeBox = nullptr;
 	m_bSizable = bSizable;
-	m_lParam = (LPARAM)nullptr;
-	m_nShowCmd = SW_SHOW;
-	m_xPos = -1;
-	m_yPos = -1;
-	m_nWidth = -1;
-	m_nHeight = -1;
 
 	return;
 }
