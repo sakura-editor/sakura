@@ -101,11 +101,6 @@ CPropTypes::CPropTypes()
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
 	m_pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-	m_hwndThis  = nullptr;		/* このダイアログのハンドル */
-	m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
-
 	(static_cast<CPropTypesScreen*>(this))->CPropTypes_Screen();
 }
 
