@@ -1027,9 +1027,6 @@
     <ClInclude Include="..\sakura_core\extmodule\CDllHandler.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CHtmlHelp.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\extmodule\CMigemo.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
@@ -2226,9 +2223,6 @@
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\extmodule\CDllHandler.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CHtmlHelp.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\extmodule\CMigemo.cpp">
