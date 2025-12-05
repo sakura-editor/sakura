@@ -43,3 +43,6 @@ tests1-googletest.xml
 
 # SonarScanローカル実行の失敗再現用アーカイブ
 sonar-cfamily-reproducer.tar.xz
+
+# 旧resource格納フォルダ、bmptoolの出力フォルダになってるので除外する
+/resource
