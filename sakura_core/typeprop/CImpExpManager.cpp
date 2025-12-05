@@ -260,7 +260,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const s
 
 	// パラメータの設定
 	sAscertainInfo.sImportFile = sPath;
-	List_GetText( m_hwndList, m_nIdx, szLabel );
+	ApiWrap::List_GetText( m_hwndList, m_nIdx, szLabel );
 	sAscertainInfo.sTypeNameTo = szLabel;
 	szLabel[0] = L'\0';
 	m_cProfile.IOProfileData(szSecTypes, L"szTypeName", StringBufferW(szLabel));

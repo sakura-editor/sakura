@@ -185,7 +185,7 @@ void CDlgPluginOption::SetData( void )
 		::EnableWindow( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS    ), FALSE );
 		::EnableWindow( GetItemHwnd( IDOK                       ), FALSE );
 	
-		::DlgItem_SetText( GetHwnd(), IDC_STATIC_MSG, LS(STR_DLGPLUGINOPT_OPTION) );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_MSG, LS(STR_DLGPLUGINOPT_OPTION) );
 	}
 
 	// ReadMe Button
@@ -310,9 +310,9 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	CtrlShow( hwndDlg, IDC_COMBO_PLUGIN_OPTION,     FALSE );
 
 	// 桁数制限
-	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION     ), MAX_LENGTH_VALUE );
-	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_DIR ), _MAX_PATH );
-	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_NUM ), 11 );
+	ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION     ), MAX_LENGTH_VALUE );
+	ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_DIR ), _MAX_PATH );
+	ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_NUM ), 11 );
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
@@ -494,7 +494,7 @@ void CDlgPluginOption::ChangeListPosition( void )
 	lvi.cchTextMax = MAX_LENGTH_VALUE+1;
 
 	ListView_GetItem( hwndList, &lvi );
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf );
 }
 
 void CDlgPluginOption::MoveFocusToEdit( void )
@@ -541,7 +541,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 	std::wstring	sType;
 
 	if (iLine >= 0) {
-		::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
 		memset_raw( &lvi, 0, sizeof( lvi ));
 		lvi.mask       = LVIF_TEXT;
 		lvi.iItem      = iLine;
@@ -554,13 +554,13 @@ void CDlgPluginOption::SetToEdit( int iLine )
 		transform( sType.begin(), sType.end(), sType.begin(), my_towlower2 );
 		if (sType == OPTION_TYPE_BOOL) {
 			::CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, wcscmp(buf,  BOOL_DISP_FALSE) != 0 );
-			::DlgItem_SetText( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, m_cPlugin->m_options[iLine]->GetLabel().c_str() );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, m_cPlugin->m_options[iLine]->GetLabel().c_str() );
 
 			// 編集領域の切り替え
 			SelectEdit(IDC_CHECK_PLUGIN_OPTION);
 		}
 		else if (sType == OPTION_TYPE_INT) {
-			::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, buf );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, buf );
 
 			// 編集領域の切り替え
 			SelectEdit(IDC_EDIT_PLUGIN_OPTION_NUM);
@@ -572,7 +572,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 
 			HWND	hwndCombo;
 			hwndCombo = GetItemHwnd( IDC_COMBO_PLUGIN_OPTION );
-			Combo_ResetContent( hwndCombo );
+			ApiWrap::Combo_ResetContent( hwndCombo );
 
 			int		nSelIdx;
 			int		i;
@@ -584,25 +584,25 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			i = 0;
 			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sValue);
-				nItemIdx = Combo_AddString( hwndCombo, sView.c_str() );
+				nItemIdx = ApiWrap::Combo_AddString( hwndCombo, sView.c_str() );
 				if (sView == sWbuf) {
 					nSelIdx = i;
 				}
-				Combo_SetItemData( hwndCombo, nItemIdx, i++ );
+				ApiWrap::Combo_SetItemData( hwndCombo, nItemIdx, i++ );
 			}
-			Combo_SetCurSel( hwndCombo, nSelIdx );
+			ApiWrap::Combo_SetCurSel( hwndCombo, nSelIdx );
 
 			// 編集領域の切り替え
 			SelectEdit(IDC_COMBO_PLUGIN_OPTION);
 		}
 		else if (sType == OPTION_TYPE_DIR) {
-			::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, buf );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, buf );
 
 			// 編集領域の切り替え
 			SelectEdit(IDC_EDIT_PLUGIN_OPTION_DIR);
 		}
 		else {
-			::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf );
 
 			// 編集領域の切り替え
 			SelectEdit(IDC_EDIT_PLUGIN_OPTION);
@@ -653,13 +653,13 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 			auto_sprintf( buf, L"%d", nVal);
 		}
 		else if (sType == OPTION_TYPE_SEL) {
-			::DlgItem_GetText( GetHwnd(), IDC_COMBO_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
 		}
 		else if (sType == OPTION_TYPE_DIR) {
-			::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, buf, MAX_LENGTH_VALUE+1);
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, buf, MAX_LENGTH_VALUE+1);
 		}
 		else {
-			::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
 		}
 		memset_raw( &lvi, 0, sizeof( lvi ));
 		lvi.mask     = LVIF_TEXT;
@@ -694,7 +694,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	WCHAR	szDir[_MAX_PATH+1];
 
 	/* 検索フォルダー */
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
 
 	if (_IS_REL_PATH( szDir )) {
 		WCHAR	folder[_MAX_PATH];
@@ -719,6 +719,6 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir )) {
 		//	末尾に\マークを追加する．
 		AddLastChar( szDir, _countof(szDir), L'\\' );
-		::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir );
 	}
 }

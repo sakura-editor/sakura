@@ -297,15 +297,15 @@ void CPropFile::SetData( HWND hwndDlg )
 	/*--- File ---*/
 	/* ファイルの排他制御モード */
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	int		nSelPos = 0;
 	for( int i = 0; i < _countof( ShareModeArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, LS( ShareModeArr[i].nNameId ) );
+		ApiWrap::Combo_InsertString( hwndCombo, i, LS( ShareModeArr[i].nNameId ) );
 		if( ShareModeArr[i].nMethod == m_Common.m_sFile.m_nFileShareMode ){
 			nSelPos = i;
 		}
 	}
-	Combo_SetCurSel( hwndCombo, nSelPos );
+	ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 	/* 更新の監視 */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
@@ -336,7 +336,7 @@ void CPropFile::SetData( HWND hwndDlg )
 	nN = nN > 35791 ? 35791 : nN;
 
 	auto_sprintf( buf, L"%d", nN);
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
 	//	To Here Aug. 21, 2000 genta
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
@@ -374,7 +374,7 @@ int CPropFile::GetData( HWND hwndDlg )
 {
 	/* ファイルの排他制御モード */
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
-	int		nSelPos = Combo_GetCurSel( hwndCombo );
+	int		nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 	m_Common.m_sFile.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
 
 	/* 更新の監視 */
@@ -409,7 +409,7 @@ int CPropFile::GetData( HWND hwndDlg )
 	int	 nN;
 	WCHAR *pDigit;
 
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6 );	//@@@ 2001.03.21 by MIK
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6 );	//@@@ 2001.03.21 by MIK
 
 	for( nN = 0, pDigit = szNumBuf; *pDigit != L'\0'; pDigit++ ){
 		if( L'0' <= *pDigit && *pDigit <= L'9' ){
@@ -473,7 +473,7 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 	}
 
 	//	排他するかどうか
-	int nSelPos = Combo_GetCurSel( ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE ) );
+	int nSelPos = ApiWrap::Combo_GetCurSel( ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE ) );
 	if( ShareModeArr[nSelPos].nMethod == SHAREMODE_NOT_EXCLUSIVE ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), TRUE );
 		if( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ) ) {

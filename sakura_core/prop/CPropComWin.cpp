@@ -118,9 +118,9 @@ INT_PTR CPropWin::DispatchEvent(
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* ルーラー高さ */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerHeight ), 2 );
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerHeight ), 2 );
 		/* ルーラーとテキストの隙間 */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerBottomSpace ), 2 );
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerBottomSpace ), 2 );
 
 		return TRUE;
 
@@ -339,10 +339,10 @@ void CPropWin::SetData( HWND hwndDlg )
 	//	2001/06/20 End
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
-	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), _countof( m_Common.m_sWindow.m_szWindowCaptionActive   ) - 1 );	//@@@ 2003.06.13 MIK
-	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), _countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) - 1 );	//@@@ 2003.06.13 MIK
-	::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_sWindow.m_szWindowCaptionActive );
-	::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive );
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), _countof( m_Common.m_sWindow.m_szWindowCaptionActive   ) - 1 );	//@@@ 2003.06.13 MIK
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), _countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) - 1 );	//@@@ 2003.06.13 MIK
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_sWindow.m_szWindowCaptionActive );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive );
 
 	//	Fronm Here Sept. 9, 2000 JEPRO
 	//	ファンクションキーを表示する時だけその位置指定をEnableに設定
@@ -351,17 +351,17 @@ void CPropWin::SetData( HWND hwndDlg )
 
 	// 言語選択
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_LANGUAGE );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	int nSelPos = 0;
 	UINT uiIndex = 0;
 	for( uiIndex = 0; uiIndex < CSelectLang::m_psLangInfoList.size(); uiIndex++ ){
 		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( uiIndex );
-		Combo_InsertString( hwndCombo, uiIndex, psLangInfo->szLangName );
+		ApiWrap::Combo_InsertString( hwndCombo, uiIndex, psLangInfo->szLangName );
 		if ( wcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) == 0 ) {
 			nSelPos = uiIndex;
 		}
 	}
-	Combo_SetCurSel( hwndCombo, nSelPos );
+	ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 	return;
 }
@@ -437,14 +437,14 @@ int CPropWin::GetData( HWND hwndDlg )
 	//	2001/06/20 End
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
-	::DlgItem_GetText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_sWindow.m_szWindowCaptionActive,
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_sWindow.m_szWindowCaptionActive,
 		_countof( m_Common.m_sWindow.m_szWindowCaptionActive ) );
-	::DlgItem_GetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive,
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive,
 		_countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) );
 
 	// 言語選択
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_LANGUAGE );
-	int nSelPos = Combo_GetCurSel( hwndCombo );
+	int nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 	CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at( nSelPos );
 	if ( wcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) != 0 ) {
 		wcsncpy( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, _countof(m_Common.m_sWindow.m_szLanguageDll) );

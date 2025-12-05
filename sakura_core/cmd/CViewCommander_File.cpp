@@ -849,8 +849,8 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			pcDlgCancel = new CDlgCancel;
 			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( nullptr ), nullptr, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
-				Progress_SetRange( hwndProgress, 0, 101 );
-				Progress_SetPos( hwndProgress, 0);
+				ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
+				ApiWrap::Progress_SetPos( hwndProgress, 0);
 			}
 		}
 
@@ -879,8 +879,8 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			}
 			if( 0 == ( nLineNum & 0xFF ) ){
 				if( nOldPercent != cfl.GetPercent() ){
-					Progress_SetPos( hwndProgress, cfl.GetPercent() + 1 );
-					Progress_SetPos( hwndProgress, cfl.GetPercent() );
+					ApiWrap::Progress_SetPos( hwndProgress, cfl.GetPercent() + 1 );
+					ApiWrap::Progress_SetPos( hwndProgress, cfl.GetPercent() );
 					nOldPercent = cfl.GetPercent();
 				}
 				m_pCommanderView->Redraw();

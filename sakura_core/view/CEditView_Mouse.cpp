@@ -189,7 +189,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 normal_action:;
 
 	// ALTキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
-	if( GetKeyState_Alt() &&( ! tripleClickMode)){
+	if( ApiWrap::GetKeyState_Alt() &&( ! tripleClickMode)){
 		if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			GetSelectionInfo().DisableSelectArea( true );
@@ -287,7 +287,7 @@ normal_action:;
 		}else
 		/* 選択開始処理 */
 		/* SHIFTキーが押されていたか */
-		if(GetKeyState_Shift()){
+		if(ApiWrap::GetKeyState_Shift()){
 			if( GetSelectionInfo().IsTextSelected() ){		/* テキストが選択されているか */
 				if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
 					/* 現在の選択範囲を非選択状態に戻す */
@@ -350,7 +350,7 @@ normal_action:;
 
 		bool bSelectWord = false;
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
-		if( GetKeyState_Control() &&( ! tripleClickMode)){
+		if( ApiWrap::GetKeyState_Control() &&( ! tripleClickMode)){
 			GetSelectionInfo().m_bBeginWordSelect = true;		/* 単語単位選択中 */
 			if( !GetSelectionInfo().IsTextSelected() ){
 				/* 現在位置の単語選択 */
@@ -436,7 +436,7 @@ normal_action:;
 		}
 		// 行番号エリアをクリックした
 		// 2008.05.22 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
-		if( ptMouse.x < GetTextArea().GetAreaLeft() && !GetKeyState_Shift() ){
+		if( ptMouse.x < GetTextArea().GetAreaLeft() && !ApiWrap::GetKeyState_Shift() ){
 			/* 現在のカーソル位置から選択を開始する */
 			GetSelectionInfo().m_bBeginLineSelect = true;
 
@@ -1006,7 +1006,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			view.GetCaret().GetAdjustCursorPos( &ptNew );
 			GetDocument()->m_cLayoutMgr.LayoutToLogic( ptNew, &ptNewLogic );
 			GetDocument()->m_cLayoutMgr.LogicToLayout( ptNewLogic, &ptNew, ptNew.y );
-			if( GetKeyState_Shift() ){
+			if( ApiWrap::GetKeyState_Shift() ){
 				if( view.GetSelectionInfo().IsTextSelected() ){
 					if( view.GetSelectionInfo().IsBoxSelecting() ){
 						view.GetSelectionInfo().DisableSelectArea( true );
@@ -1487,11 +1487,11 @@ bool CEditView::IsSpecialScrollMode( int nSelect )
 		break;
 
 	case VK_CONTROL:	// Controlキー
-		bSpecialScrollMode = GetKeyState_Control();
+		bSpecialScrollMode = ApiWrap::GetKeyState_Control();
 		break;
 
 	case VK_SHIFT:		// Shiftキー
-		bSpecialScrollMode = GetKeyState_Shift();
+		bSpecialScrollMode = ApiWrap::GetKeyState_Shift();
 		break;
 
 	default:	// 上記以外（ここには来ない）
@@ -1668,7 +1668,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 	if( GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		/* ALTキーが押されていたか */
-		if( GetKeyState_Alt() ){
+		if( ApiWrap::GetKeyState_Alt() ){
 			GetSelectionInfo().SetBoxSelect(true);	/* 矩形範囲選択中 */
 		}
 	}

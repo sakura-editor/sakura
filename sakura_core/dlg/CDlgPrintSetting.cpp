@@ -95,8 +95,8 @@ int CALLBACK SetData_EnumFontFamProc(
 	hwndComboFontZen = ::GetDlgItem( pCDlgPrintSetting->GetHwnd(), IDC_COMBO_FONT_ZEN );
 
 	/* LOGFONT */
-	Combo_AddString( hwndComboFontHan, pelf->elfLogFont.lfFaceName );
-	Combo_AddString( hwndComboFontZen, pelf->elfLogFont.lfFaceName );
+	ApiWrap::Combo_AddString( hwndComboFontHan, pelf->elfLogFont.lfFaceName );
+	ApiWrap::Combo_AddString( hwndComboFontZen, pelf->elfLogFont.lfFaceName );
 	return 1;
 }
 
@@ -132,10 +132,10 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	_SetHwnd( hwndDlg );
 
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_SETTINGNAME ), TRUE );
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_HAN ), TRUE );
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_ZEN ), TRUE );
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_PAPER ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_SETTINGNAME ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_HAN ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_ZEN ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_PAPER ), TRUE );
 
 	// タイマーでの更新をやめて、能動的に更新要求する 2013.5.5 aroka
 	// CDialog::OnInitDialogの奥でOnChangeSettingTypeが呼ばれるのでここでは更新要求しない
@@ -242,22 +242,22 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
 			/* 印刷設定名一覧 */
 			hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
-			Combo_ResetContent( hwndComboSettingName );
+			ApiWrap::Combo_ResetContent( hwndComboSettingName );
 			int		nSelectIdx;
 			int		i;
 			int		nItemIdx;
 			nSelectIdx = 0;
 			for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
-				nItemIdx = Combo_AddString( 
+				nItemIdx = ApiWrap::Combo_AddString( 
 					hwndComboSettingName,
 					m_PrintSettingArr[i].m_szPrintSettingName
 				);
-				Combo_SetItemData( hwndComboSettingName, nItemIdx, i );
+				ApiWrap::Combo_SetItemData( hwndComboSettingName, nItemIdx, i );
 				if( i == m_nCurrentPrintSetting ){
 					nSelectIdx = nItemIdx;
 				}
 			}
-			Combo_SetCurSel( hwndComboSettingName, nSelectIdx );
+			ApiWrap::Combo_SetCurSel( hwndComboSettingName, nSelectIdx );
 		}
 		return TRUE;
 	case IDC_BUTTON_FONT_HEAD:
@@ -456,9 +456,9 @@ void CDlgPrintSetting::SetData( void )
 	/* フォント一覧 */
 	hdc = ::GetDC( m_hwndParent );
 	hwndComboFont = GetItemHwnd( IDC_COMBO_FONT_HAN );
-	Combo_ResetContent( hwndComboFont );
+	ApiWrap::Combo_ResetContent( hwndComboFont );
 	hwndComboFont = GetItemHwnd( IDC_COMBO_FONT_ZEN );
-	Combo_ResetContent( hwndComboFont );
+	ApiWrap::Combo_ResetContent( hwndComboFont );
 	::EnumFontFamilies(
 		hdc,
 		nullptr,
@@ -469,25 +469,25 @@ void CDlgPrintSetting::SetData( void )
 
 	/* 用紙サイズ一覧 */
 	hwndComboPaper = GetItemHwnd( IDC_COMBO_PAPER );
-	Combo_ResetContent( hwndComboPaper );
+	ApiWrap::Combo_ResetContent( hwndComboPaper );
 	// 2006.08.14 Moca 用紙名一覧の重複削除
 	for( i = 0; i < CPrint::m_nPaperInfoArrNum; ++i ){
-		nItemIdx = Combo_AddString( hwndComboPaper, CPrint::m_paperInfoArr[i].m_pszName );
-		Combo_SetItemData( hwndComboPaper, nItemIdx, CPrint::m_paperInfoArr[i].m_nId );
+		nItemIdx = ApiWrap::Combo_AddString( hwndComboPaper, CPrint::m_paperInfoArr[i].m_pszName );
+		ApiWrap::Combo_SetItemData( hwndComboPaper, nItemIdx, CPrint::m_paperInfoArr[i].m_nId );
 	}
 
 	/* 印刷設定名一覧 */
 	hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
-	Combo_ResetContent( hwndComboSettingName );
+	ApiWrap::Combo_ResetContent( hwndComboSettingName );
 	nSelectIdx = 0;
 	for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
-		nItemIdx = Combo_AddString( hwndComboSettingName, m_PrintSettingArr[i].m_szPrintSettingName );
-		Combo_SetItemData( hwndComboSettingName, nItemIdx, i );
+		nItemIdx = ApiWrap::Combo_AddString( hwndComboSettingName, m_PrintSettingArr[i].m_szPrintSettingName );
+		ApiWrap::Combo_SetItemData( hwndComboSettingName, nItemIdx, i );
 		if( i == m_nCurrentPrintSetting ){
 			nSelectIdx = nItemIdx;
 		}
 	}
-	Combo_SetCurSel( hwndComboSettingName, nSelectIdx );
+	ApiWrap::Combo_SetCurSel( hwndComboSettingName, nSelectIdx );
 
 	/* 設定のタイプが変わった */
 	OnChangeSettingType( FALSE );
@@ -505,14 +505,14 @@ int CDlgPrintSetting::GetData( void )
 
 	/* フォント一覧 */
 	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_HAN );
-	nIdx1 = Combo_GetCurSel( hwndCtrl );
-	Combo_GetLBText( hwndCtrl, nIdx1,
+	nIdx1 = ApiWrap::Combo_GetCurSel( hwndCtrl );
+	ApiWrap::Combo_GetLBText( hwndCtrl, nIdx1,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan
 	);
 	/* フォント一覧 */
 	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_ZEN );
-	nIdx1 = Combo_GetCurSel( hwndCtrl );
-	Combo_GetLBText( hwndCtrl, nIdx1,
+	nIdx1 = ApiWrap::Combo_GetCurSel( hwndCtrl );
+	ApiWrap::Combo_GetLBText( hwndCtrl, nIdx1,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen
 	);
 
@@ -547,9 +547,9 @@ int CDlgPrintSetting::GetData( void )
 
 	/* 用紙サイズ一覧 */
 	hwndCtrl = GetItemHwnd( IDC_COMBO_PAPER );
-	nIdx1 = Combo_GetCurSel( hwndCtrl );
+	nIdx1 = ApiWrap::Combo_GetCurSel( hwndCtrl );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
-		(short)Combo_GetItemData( hwndCtrl, nIdx1 );
+		(short)ApiWrap::Combo_GetItemData( hwndCtrl, nIdx1 );
 
 	// 用紙の向き
 	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
@@ -606,14 +606,14 @@ int CDlgPrintSetting::GetData( void )
 
 	//@@@ 2002.2.4 YAZAKI
 	/* ヘッダー */
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0], HEADER_MAX );	//	100文字で制限しないと。。。
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0], HEADER_MAX );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
 	/* フッター */
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0], HEADER_MAX );	//	100文字で制限しないと。。。
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0], HEADER_MAX );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
 	// ヘッダーフォント
 	if (!IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_USE_FONT_HEAD )) {
@@ -642,21 +642,21 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	}
 
 	hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
-	nIdx1 = Combo_GetCurSel( hwndComboSettingName );
+	nIdx1 = ApiWrap::Combo_GetCurSel( hwndComboSettingName );
 	if( CB_ERR == nIdx1 ){
 		return;
 	}
-	m_nCurrentPrintSetting = Combo_GetItemData( hwndComboSettingName, nIdx1 );
+	m_nCurrentPrintSetting = ApiWrap::Combo_GetItemData( hwndComboSettingName, nIdx1 );
 
 	/* フォント一覧 */
 	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_HAN );
-	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
-	Combo_SetCurSel( hwndCtrl, nIdx1 );
+	nIdx1 = ApiWrap::Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
+	ApiWrap::Combo_SetCurSel( hwndCtrl, nIdx1 );
 
 	/* フォント一覧 */
 	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_ZEN );
-	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
-	Combo_SetCurSel( hwndCtrl, nIdx1 );
+	nIdx1 = ApiWrap::Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
+	ApiWrap::Combo_SetCurSel( hwndCtrl, nIdx1 );
 
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINESPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing, FALSE );
@@ -665,11 +665,11 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 
 	/* 用紙サイズ一覧 */
 	hwndCtrl = GetItemHwnd( IDC_COMBO_PAPER );
-	nItemNum = Combo_GetCount( hwndCtrl );
+	nItemNum = ApiWrap::Combo_GetCount( hwndCtrl );
 	for( i = 0; i < nItemNum; ++i ){
-		nItemData = Combo_GetItemData( hwndCtrl, i );
+		nItemData = ApiWrap::Combo_GetItemData( hwndCtrl, i );
 		if( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize == nItemData ){
-			Combo_SetCurSel( hwndCtrl, i );
+			ApiWrap::Combo_SetCurSel( hwndCtrl, i );
 			break;
 		}
 	}
@@ -706,14 +706,14 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_bColorPrint ? BST_CHECKED : BST_UNCHECKED);
 
 	/* ヘッダー */
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT] );	//	100文字で制限しないと。。。
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_CENTER] );	//	100文字で制限しないと。。。
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_RIGHT] );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT] );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_CENTER] );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_RIGHT] );	//	100文字で制限しないと。。。
 
 	/* フッター */
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_LEFT] );	//	100文字で制限しないと。。。
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100文字で制限しないと。。。
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_LEFT] );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100文字で制限しないと。。。
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100文字で制限しないと。。。
 
 	// ヘッダーフォント
 	SetFontName( IDC_STATIC_FONT_HEAD, IDC_CHECK_USE_FONT_HEAD,
@@ -844,7 +844,7 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	int		nFontPoints = pPS->m_nPrintFontHeight * 720 / 254;
 	WCHAR	szFontPoints[20];
 	auto_snprintf_s( szFontPoints, _countof(szFontPoints), L"%d.%dpt", nFontPoints/10, nFontPoints%10 );
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
 
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
 	if( nEnableColumns == 0 || nEnableLines == 0 ){
@@ -910,5 +910,5 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 	else {
 		szName[0] = L'\0';
 	}
-	::DlgItem_SetText( GetHwnd(), idTxt, szName );
+	ApiWrap::DlgItem_SetText( GetHwnd(), idTxt, szName );
 }

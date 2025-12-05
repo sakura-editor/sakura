@@ -186,30 +186,30 @@ void CPropTab::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SortTabList, m_Common.m_sTabBar.m_bSortTabList );			//@@@ 2006.03.23 fon
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_TAB_MULTILINE, m_Common.m_sTabBar.m_bTabMultiLine );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWndMultiWin, ! m_Common.m_sTabBar.m_bDispTabWndMultiWin ); //@@@ 2003.05.31 MIK
-	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), _countof( m_Common.m_sTabBar.m_szTabWndCaption ) - 1 );
-	::DlgItem_SetText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption );
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), _countof( m_Common.m_sTabBar.m_szTabWndCaption ) - 1 );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption );
 
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabClose );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	int nSelPos = 0;
 	for( int i = 0; i < _countof( DispTabCloseArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, LS(DispTabCloseArr[i].nNameId) );
+		ApiWrap::Combo_InsertString( hwndCombo, i, LS(DispTabCloseArr[i].nNameId) );
 		if( DispTabCloseArr[i].nMethod == m_Common.m_sTabBar.m_bDispTabClose ){
 			nSelPos = i;
 		}
 	}
-	Combo_SetCurSel( hwndCombo, nSelPos );
+	ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TAB_POSITION );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	nSelPos = 0;
 	for( int i = 0; i < _countof( TabPosArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, LS(TabPosArr[i].nNameId) );
+		ApiWrap::Combo_InsertString( hwndCombo, i, LS(TabPosArr[i].nNameId) );
 		if( TabPosArr[i].nMethod == m_Common.m_sTabBar.m_eTabPosition ){
 			nSelPos = i;
 		}
 	}
-	Combo_SetCurSel( hwndCombo, nSelPos );
+	ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 	//	Feb. 11, 2007 genta 新規作成
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RetainEmptyWindow, m_Common.m_sTabBar.m_bTab_RetainEmptyWin );
@@ -237,14 +237,14 @@ int CPropTab::GetData( HWND hwndDlg )
 	m_Common.m_sTabBar.m_bTabMultiLine = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_TAB_MULTILINE );
 	m_Common.m_sTabBar.m_bDispTabWndMultiWin =
 		( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin ) == BST_CHECKED ) ? FALSE : TRUE;
-	::DlgItem_GetText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption, _countof( m_Common.m_sTabBar.m_szTabWndCaption ) );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption, _countof( m_Common.m_sTabBar.m_szTabWndCaption ) );
 
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabClose );
-	int nSelPos = Combo_GetCurSel( hwndCombo );
+	int nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 	m_Common.m_sTabBar.m_bDispTabClose = DispTabCloseArr[nSelPos].nMethod;
 
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TAB_POSITION );
-	nSelPos = Combo_GetCurSel( hwndCombo );
+	nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 	m_Common.m_sTabBar.m_eTabPosition = TabPosArr[nSelPos].nMethod;
 
 	//	Feb. 11, 2007 genta 新規作成

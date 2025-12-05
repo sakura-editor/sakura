@@ -219,7 +219,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #endif
 	cmemMsg.AppendString( L"\r\n");
 
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_VER, cmemMsg.GetStringPtr() );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_VER, cmemMsg.GetStringPtr() );
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
@@ -229,7 +229,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if( pszDesc[0] != '\0' ) {
 		wcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
 		szMsg[_countof(szMsg) - 1] = 0;
-		::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
 	}
 	//	To Here Jun. 8, 2001 genta
 
@@ -239,7 +239,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	HWND hIconWnd = GetItemHwnd( IDC_STATIC_MYICON );
 	
 	if( hIconWnd != nullptr && hIcon != nullptr ){
-		StCtl_SetIcon( hIconWnd, hIcon );
+		ApiWrap::StCtl_SetIcon( hIconWnd, hIcon );
 	}
 	//	To Here Dec. 2, 2002 genta
 
@@ -280,9 +280,9 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 	case IDC_BUTTON_COPY:
 		{
 			HWND hwndEditVer = GetItemHwnd( IDC_EDIT_VER );
-	 		EditCtl_SetSel( hwndEditVer, 0, -1); 
+			ApiWrap::EditCtl_SetSel( hwndEditVer, 0, -1); 
 	 		SendMessage( hwndEditVer, WM_COPY, 0, 0 );
-	 		EditCtl_SetSel( hwndEditVer, -1, 0); 
+	 		ApiWrap::EditCtl_SetSel( hwndEditVer, -1, 0); 
  		}
 		return TRUE;
 	}

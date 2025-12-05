@@ -251,7 +251,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 		if( hwndCOMBO_SET == hwndCtl){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIndex1 = Combo_GetCurSel( hwndCOMBO_SET );
+				nIndex1 = ApiWrap::Combo_GetCurSel( hwndCOMBO_SET );
 				/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 				SetKeyWordSet( hwndDlg, nIndex1 );
 				return TRUE;
@@ -292,7 +292,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					return TRUE;
 				case IDC_BUTTON_DELSET:	/* セット削除 */
 					{
-						nIndex1 = Combo_GetCurSel( hwndCOMBO_SET );
+						nIndex1 = ApiWrap::Combo_GetCurSel( hwndCOMBO_SET );
 						if( CB_ERR == nIndex1 ){
 							return TRUE;
 						}
@@ -593,13 +593,13 @@ void CPropKeyword::SetData( HWND hwndDlg )
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-	Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
+	ApiWrap::Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
 	if( 0 < m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
 		for( i = 0; i < m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-			Combo_AddString( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( i ) );
+			ApiWrap::Combo_AddString( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( i ) );
 		}
 		/* セット名コンボボックスのデフォルト選択 */
-		Combo_SetCurSel( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+		ApiWrap::Combo_SetCurSel( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 		SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );

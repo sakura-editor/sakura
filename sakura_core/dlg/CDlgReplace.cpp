@@ -83,7 +83,7 @@ BOOL CDlgReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
 			for (int i = 0; i < nSize; ++i) {
-				Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
+				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 			}
 		}
 		break;
@@ -91,7 +91,7 @@ BOOL CDlgReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			int nSize = m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size();
 			for (int i = 0; i < nSize; ++i) {
-				Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
+				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
 			}
 		}
 		break;
@@ -196,22 +196,22 @@ void CDlgReplace::SetCombosList( void )
 
 	/* 検索文字列 */
 	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT );
-	while (Combo_GetCount(hwndCombo) > 0) {
-		Combo_DeleteString( hwndCombo, 0);
+	while (ApiWrap::Combo_GetCount(hwndCombo) > 0) {
+		ApiWrap::Combo_DeleteString( hwndCombo, 0);
 	}
 	std::wstring strText;
 	if( !ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, strText ) || strText != m_strText ) {
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}
 
 	/* 置換後文字列 */
 	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT2 );
-	while (Combo_GetCount(hwndCombo) > 0) {
-		Combo_DeleteString( hwndCombo, 0);
+	while (ApiWrap::Combo_GetCount(hwndCombo) > 0) {
+		ApiWrap::Combo_DeleteString( hwndCombo, 0);
 	}
 	std::wstring strText2;
 	if( !ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, strText2 ) || strText2 != m_strText2 ) {
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
 	}
 }
 
@@ -332,8 +332,8 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT2 ), _MAX_PATH - 1 );
 
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
 
 	/* テキスト選択中か */
 	if( m_bSelected ){

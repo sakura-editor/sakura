@@ -127,7 +127,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		SetData( hwndDlg );	/* ダイアログデータの設定 正規表現キーワード */
 		if( CheckRegexpVersion( hwndDlg, IDC_LABEL_REGEX_VERSION, false ) == false )	//@@@ 2001.11.17 add MIK
 		{
-			::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEX_VERSION, LS(STR_PROPTYPEREGEX_NOUSE) );
+			ApiWrap::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEX_VERSION, LS(STR_PROPTYPEREGEX_NOUSE) );
 			EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 		}
 		return TRUE;
@@ -196,7 +196,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				
 				//挿入するキー情報を取得する。
 				wmemset(szColorIndex, 0, _countof(szColorIndex));
-				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
+				ApiWrap::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キー情報を挿入する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = strKeyWord.data();
@@ -235,7 +235,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				}
 				//追加するキー情報を取得する。
 				wmemset(szColorIndex, 0, _countof(szColorIndex));
-				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
+				ApiWrap::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = strKeyWord.data();
@@ -273,7 +273,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				}
 				//追加するキー情報を取得する。
 				wmemset(szColorIndex, 0, _countof(szColorIndex));
-				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
+				ApiWrap::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを更新する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = strKeyWord.data();
@@ -461,7 +461,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				if( -1 == nIndex )
 				{
 					/* 初期値を設定する */
-					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, L"//k" );	/* 正規表現 */
+					ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, L"//k" );	/* 正規表現 */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for( i = 0, j = 0; i < COLORIDX_LAST; i++ )
 					{
@@ -470,7 +470,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 						{
 							if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
 							{
-								Combo_SetCurSel( hwndCombo, j );	/* コンボボックスのデフォルト選択 */
+								ApiWrap::Combo_SetCurSel( hwndCombo, j );	/* コンボボックスのデフォルト選択 */
 								break;
 							}
 							j++;
@@ -483,7 +483,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					WCHAR szKeyWord[MAX_REGEX_KEYWORDLEN]{ 0 };
 					ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
 					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
-					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
+					ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 					{
@@ -492,7 +492,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 						{
 							if(wcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
 							{
-								Combo_SetCurSel(hwndCombo, j);
+								ApiWrap::Combo_SetCurSel(hwndCombo, j);
 								break;
 							}
 							j++;
@@ -529,21 +529,21 @@ void CPropTypesRegex::SetData( HWND hwndDlg )
 	int			i, j;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), MAX_REGEX_KEYWORDLEN - 1 );
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, L"//k" );	/* 正規表現 */
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), MAX_REGEX_KEYWORDLEN - 1 );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, L"//k" );	/* 正規表現 */
 
 	/* 色種類のリスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
-	Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
+	ApiWrap::Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
 		GetDefaultColorInfoName( &m_Types.m_ColorInfoArr[i], i );
 		if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) &&
 			0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 		{
-			j = Combo_AddString( hwndWork, m_Types.m_ColorInfoArr[i].m_szName );
+			j = ApiWrap::Combo_AddString( hwndWork, m_Types.m_ColorInfoArr[i].m_szName );
 			if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
-				Combo_SetCurSel( hwndWork, j );	/* コンボボックスのデフォルト選択 */
+				ApiWrap::Combo_SetCurSel( hwndWork, j );	/* コンボボックスのデフォルト選択 */
 		}
 	}
 

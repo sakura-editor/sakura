@@ -249,7 +249,7 @@ void CDlgFavorite::SetData( void )
 		SetDataOne( nTab, 0 );
 	}
 
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
 
 	UpdateUIState();
 
@@ -504,7 +504,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	//すべて削除
 	case IDC_BUTTON_CLEAR:
 		{
-			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
 			CRecent	*pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
@@ -521,7 +521,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	//お気に入り以外削除
 	case IDC_BUTTON_DELETE_NOFAVORATE:
 		{
-			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite ){
 				int const nRet = ConfirmMessage( GetHwnd(), 
 					LS( STR_DLGFAV_CONF_DEL_NOTFAV ),	// "最近使った%sの履歴のお気に入り以外を削除します。\nよろしいですか？"
@@ -540,7 +540,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	// 存在しない項目 を削除
 	case IDC_BUTTON_DELETE_NOTFOUND:
 		{
-			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bFilePath ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
 					LS( STR_DLGFAV_CONF_DEL_PATH ),	// "最近使った%sの存在しないパスを削除します。\nよろしいですか？"
@@ -674,7 +674,7 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 
 void CDlgFavorite::TabSelectChange(bool bSetFocus)
 {
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
 	HWND hwndTab = GetItemHwnd( IDC_TAB_FAVORITE );
 	int nIndex = TabCtrl_GetCurSel( hwndTab );
 	if( -1 != nIndex )
@@ -706,7 +706,7 @@ BOOL CDlgFavorite::OnActivate( WPARAM wParam, LPARAM lParam )
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
 		RefreshList();
-		::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, m_szMsg );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, m_szMsg );
 		return TRUE;
 		//break;
 
@@ -831,7 +831,7 @@ void CDlgFavorite::GetFavorite( int nIndex )
 */
 int CDlgFavorite::DeleteSelected()
 {
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
 	int     nDelItemCount = 0;
 	CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 	if( pRecent ){
@@ -1024,7 +1024,7 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 		break;
 	case MENU_ADD_EXCEPT:
 		{
-			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
 			CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				HWND hwndList = m_aListViewInfo[m_nCurrentTab].hListView;

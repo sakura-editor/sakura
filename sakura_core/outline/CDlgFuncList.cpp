@@ -680,7 +680,7 @@ void CDlgFuncList::SetData()
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	::CheckDlgButton( GetHwnd(), IDC_BUTTON_WINSIZE, m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos );
 	// ボタンが押されているかはっきりさせる 2008/6/5 Uchi
-	::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE, 
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE,
 		m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? L"■" : L"□" );
 
 	/* ダイアログを自動的に閉じるならフォーカス移動オプションは関係ない */
@@ -719,12 +719,12 @@ void CDlgFuncList::SetData()
 			::EnableWindow( hWnd_Combo_Sort , TRUE );
 		}
 		::ShowWindow( hWnd_Combo_Sort , SW_SHOW );
-		Combo_ResetContent( hWnd_Combo_Sort ); // 2002.11.10 Moca 追加
-		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1));	// SORTTYPE_DEFAULT
-		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1_2));	// SORTTYPE_DEFAULT_DESC
-		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2));    // SORTTYPE_ATOZ
-		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2_2));  // SORTTYPE_ZTOA
-		Combo_SetCurSel( hWnd_Combo_Sort , m_nSortType );
+		ApiWrap::Combo_ResetContent( hWnd_Combo_Sort ); // 2002.11.10 Moca 追加
+		ApiWrap::Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1));	// SORTTYPE_DEFAULT
+		ApiWrap::Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1_2));	// SORTTYPE_DEFAULT_DESC
+		ApiWrap::Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2));    // SORTTYPE_ATOZ
+		ApiWrap::Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2_2));  // SORTTYPE_ZTOA
+		ApiWrap::Combo_SetCurSel( hWnd_Combo_Sort , m_nSortType );
 		::ShowWindow( GetItemHwnd( IDC_STATIC_nSortType ), SW_SHOW );
 		if (m_nSortType != SORTTYPE_DEFAULT && m_nSortType != SORTTYPE_DEFAULT_DESC)
 			SortTree(hwndTree, TVI_ROOT);
@@ -1027,7 +1027,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 					tvi.hItem = htiClass;
 
 					std::vector<WCHAR> vecStr;
-					if( TreeView_GetItemTextVector(hwndTree, tvi, vecStr) ){
+					if( ApiWrap::TreeView_GetItemTextVector(hwndTree, tvi, vecStr) ){
 						const WCHAR* pszLabel = &vecStr[0];
 						if( 0 == wcsncmp(vStrClasses[k].c_str(), pszLabel, nClassNameLen) ){
 							if( bAddClass ){
@@ -1823,7 +1823,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 			);
 
 		// ツールチップをマルチライン可能にする（SHRT_MAX: Win95でINT_MAXだと表示されない）
-		Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
+		ApiWrap::Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
 
 		// アウトラインにツールチップを追加する
 		TOOLINFO	ti;
@@ -1837,7 +1837,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		ti.rect.top    = 0;
 		ti.rect.right  = 0;
 		ti.rect.bottom = 0;
-		Tooltip_AddTool( m_hwndToolTip, &ti );
+		ApiWrap::Tooltip_AddTool( m_hwndToolTip, &ti );
 
 		// 不要なコントロールを隠す
 		HWND hwndPrev;
@@ -1921,7 +1921,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 			m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos = ::IsDlgButtonChecked( GetHwnd(), IDC_BUTTON_WINSIZE );
 		}
 		// ボタンが押されているかはっきりさせる 2008/6/5 Uchi
-		::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE,
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE,
 			m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? L"■" : L"□" );
 		return TRUE;
 	//2002.02.08 オプション切替後List/Treeにフォーカス移動
@@ -2330,7 +2330,7 @@ BOOL CDlgFuncList::OnDestroy( void )
 */
 BOOL CDlgFuncList::OnCbnSelEndOk( HWND hwndCtl, int wID )
 {
-	int nSelect = Combo_GetCurSel( hwndCtl );
+	int nSelect = ApiWrap::Combo_GetCurSel( hwndCtl );
 	switch(wID)
 	{
 	case IDC_COMBO_nSortType:
@@ -2360,7 +2360,7 @@ static void SortTree_Sub(HWND hWndTree,HTREEITEM htiParent, STreeViewSortData& d
 			item.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
 			item.hItem = htiItem;
 			std::vector<WCHAR> vecStr;
-			if( TreeView_GetItemTextVector(hWndTree, item, vecStr) ){
+			if( ApiWrap::TreeView_GetItemTextVector(hWndTree, item, vecStr) ){
 				data.m_vecText[item.lParam].assign(&vecStr[0]);
 			}
 		}
@@ -2827,11 +2827,11 @@ BOOL CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	}else if( wParam == 3 ){
 		::KillTimer(hwnd, 3);
 		HWND hwndTree = ::GetDlgItem(hwnd, IDC_TREE_FL);
-		TreeView_ExpandAll(hwndTree, true, 64);
+		ApiWrap::TreeView_ExpandAll(hwndTree, true, 64);
 	}else  if( wParam == 4 ){
 		::KillTimer(hwnd, 4);
 		HWND hwndTree = ::GetDlgItem(hwnd, IDC_TREE_FL);
-		TreeView_ExpandAll(hwndTree, false, 64);
+		ApiWrap::TreeView_ExpandAll(hwndTree, false, 64);
 	}
 
 	if( !IsDocking() )
@@ -2897,7 +2897,7 @@ INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		case 2: ti.lpszText = const_cast<WCHAR*>(LS(STR_DLGFNCLST_TIP_UPDATE)); break;
 		default: ti.lpszText = nullptr;	// 消す
 		}
-		Tooltip_UpdateTipText( m_hwndToolTip, &ti );
+		ApiWrap::Tooltip_UpdateTipText( m_hwndToolTip, &ti );
 	}
 
 	return 0L;
@@ -3777,7 +3777,7 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 			}
 			if( bDragging ){	// ドラッグ中
 				// ドロップ先矩形を描画する
-				EDockSide eDockSide = GetDropRect( ptDrag, pt, &rc, GetKeyState_Control() );
+				EDockSide eDockSide = GetDropRect( ptDrag, pt, &rc, ApiWrap::GetKeyState_Control() );
 				SIZE sizeNew = (eDockSide <= DOCKSIDE_FLOAT)? sizeFull: sizeHalf;
 				CGraphics::DrawDropRect( &rc, sizeNew, bStart? nullptr: &rcDragLast, sizeLast );
 				rcDragLast = rc;
@@ -3791,7 +3791,7 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 			::ReleaseCapture();
 			if( bDragging ){
 				// ドッキング配置を変更する
-				EDockSide eDockSide = GetDropRect( ptDrag, pt, &rc, GetKeyState_Control() );
+				EDockSide eDockSide = GetDropRect( ptDrag, pt, &rc, ApiWrap::GetKeyState_Control() );
 				CGraphics::DrawDropRect( nullptr, sizeClear, &rcDragLast, sizeLast );
 
 				bool bType = (ProfDockSet() != 0);

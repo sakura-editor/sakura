@@ -87,5 +87,4 @@ namespace ApiWrap
 	inline void Tooltip_Activate(HWND hwndCtl, BOOL enable)				{ ::SendMessage(hwndCtl, TTM_ACTIVATE, (WPARAM)enable, (LPARAM)0); }
 }
 
-using namespace ApiWrap;
 #endif /* SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_ */

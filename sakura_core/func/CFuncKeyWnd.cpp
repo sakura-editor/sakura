@@ -317,7 +317,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 						_countof(m_szFuncNameArr[i]) - 1
 					);
 				}
-				Wnd_SetText( m_hwndButtonArr[i], m_szFuncNameArr[i] );
+				ApiWrap::Wnd_SetText( m_hwndButtonArr[i], m_szFuncNameArr[i] );
 			}
 		}
 	}

@@ -524,11 +524,11 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	sBuf[nLength] = L'\0';
 
 	//リストを非表示にする
-	Combo_ShowDropdown( hwndCtl, FALSE );
+	ApiWrap::Combo_ShowDropdown( hwndCtl, FALSE );
 
 	//文字列を復元・全選択
 	::SetWindowText( hwndCtl, sBuf );
-	Combo_SetEditSel( hwndCtl, 0, -1 );
+	ApiWrap::Combo_SetEditSel( hwndCtl, 0, -1 );
 	delete[] sBuf;
 
 	return TRUE;
@@ -567,14 +567,14 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 		return FALSE;
 	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, (LPARAM)nullptr );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = Combo_GetCount( hwndCtl );
+	nItem = ApiWrap::Combo_GetCount( hwndCtl );
 	::GetWindowRect( hwndCtl, &rc );
 	nWidth = rc.right - rc.left - nMargin + nScrollWidth;
 	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = Combo_GetLBTextLen( hwndCtl, iItem );
+		nTextLen = ApiWrap::Combo_GetLBTextLen( hwndCtl, iItem );
 		if( 0 < nTextLen ) {
 			WCHAR* pszText = new WCHAR[nTextLen + 1];
-			Combo_GetLBText( hwndCtl, iItem, pszText );
+			ApiWrap::Combo_GetLBText( hwndCtl, iItem, pszText );
 			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
 				if ( nWidth < sizeText.cx + nScrollWidth )
 					nWidth = sizeText.cx + nScrollWidth;
@@ -582,7 +582,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 			delete []pszText;
 		}
 	}
-	Combo_SetDroppedWidth( hwndCtl, nWidth + nMargin );
+	ApiWrap::Combo_SetDroppedWidth( hwndCtl, nWidth + nMargin );
 	::SelectObject( hDC, hFont );
 	::ReleaseDC( hwndCtl, hDC );
 	return TRUE;
@@ -725,15 +725,15 @@ static void DeleteRecentItem(
 
 	// ドロップダウンリスト内の選択されたテキストを取得
 	CNativeW cItemText;
-	if( Combo_GetLBText( hwndCombo, nIndex, cItemText ) ){
+	if( ApiWrap::Combo_GetLBText( hwndCombo, nIndex, cItemText ) ){
 		// エディットテキストを取得(失敗しても構わないのでエラー処理なし)
 		CNativeW cEditText;
-		Wnd_GetText( hwndCombo, cEditText );
+		ApiWrap::Wnd_GetText( hwndCombo, cEditText );
 
 		// コンボボックスのキャレット位置を取得
 		DWORD dwSelStart = 0;
 		DWORD dwSelEnd = 0;
-		Combo_GetEditSel( hwndCombo, dwSelStart, dwSelEnd );
+		ApiWrap::Combo_GetEditSel( hwndCombo, dwSelStart, dwSelEnd );
 
 		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
 		if ( cItemText != cEditText
@@ -746,7 +746,7 @@ static void DeleteRecentItem(
 		}
 
 		// コンボボックスのリストアイテム削除
-		Combo_DeleteString( hwndCombo, nIndex );
+		ApiWrap::Combo_DeleteString( hwndCombo, nIndex );
 
 		// 履歴項目を削除
 		int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
@@ -779,8 +779,8 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 	switch( uMsg ){
 	case WM_KEYDOWN:
 		if( wParam == VK_DELETE ){
-			BOOL bShow = Combo_GetDroppedState(hwndCombo);
-			int nIndex = Combo_GetCurSel(hwndCombo);
+			BOOL bShow = ApiWrap::Combo_GetDroppedState(hwndCombo);
+			int nIndex = ApiWrap::Combo_GetCurSel(hwndCombo);
 			if( bShow && 0 <= nIndex ){
 				DeleteRecentItem(hwndCombo, nIndex, (CRecent*)dwRefData);
 			}
@@ -790,7 +790,7 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		// ASCII 削除文字。Ctrl + Backspace が入力された。
 		if (wParam == 0x7f) {
 			DWORD selStart, selEnd;
-			Combo_GetEditSel(hwndCombo, selStart, selEnd);
+			ApiWrap::Combo_GetEditSel(hwndCombo, selStart, selEnd);
 			if (selStart != selEnd) {
 				// テキストが選択されているため、通常の削除動作を行う。
 				// Edit に Backspace を流して処理してもらう。
@@ -806,7 +806,7 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 			const int pos = DeletePreviousWord(text.get(), length, selStart);
 
 			::SetWindowText(hwndCombo, text.get());
-			Combo_SetEditSel(hwndCombo, pos, pos);
+			ApiWrap::Combo_SetEditSel(hwndCombo, pos, pos);
 			return 0;
 		}
 		break;

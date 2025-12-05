@@ -45,7 +45,7 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			LRESULT lResult = ::SendMessageAny( hwnd, LB_ITEMFROMPOINT, 0, lParam );
 			if( HIWORD(lResult) == 0 ){	// クライアントエリア内
 				if( uMsg == WM_LBUTTONDOWN ){
-					List_SetCurSel( hwnd, LOWORD(lResult) );
+					ApiWrap::List_SetCurSel( hwnd, LOWORD(lResult) );
 					pCHokanMgr->OnLbnSelChange( hwnd, IDC_LIST_WORDS );
 				}
 				else if( uMsg == WM_LBUTTONDBLCLK ){
@@ -219,14 +219,14 @@ int CHokanMgr::Search(
 
 	HWND hwndList;
 	hwndList = GetItemHwnd( IDC_LIST_WORDS );
-	List_ResetContent( hwndList );
+	ApiWrap::List_ResetContent( hwndList );
 	{
 		size_t kouhoNum = m_vKouho.size();
 		for( size_t i = 0; i < kouhoNum; ++i ){
-			::List_AddString( hwndList, m_vKouho[i].c_str() );
+			ApiWrap::List_AddString( hwndList, m_vKouho[i].c_str() );
 		}
 	}
-	List_SetCurSel( hwndList, 0 );
+	ApiWrap::List_SetCurSel( hwndList, 0 );
 
 //@@	::EnableWindow( ::GetParent( ::GetParent( m_hwndParent ) ), FALSE );
 
@@ -547,7 +547,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
 
 	HWND hList = GetItemHwnd( IDC_LIST_WORDS );
-	const int nItem = List_GetCurSel( hList );
+	const int nItem = ApiWrap::List_GetCurSel( hList );
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}
@@ -659,7 +659,7 @@ void CHokanMgr::ShowTip()
 
 	hwndCtrl = GetItemHwnd( IDC_LIST_WORDS );
 
-	nItem = List_GetCurSel( hwndCtrl );
+	nItem = ApiWrap::List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;
 
 	std::wstring strLabel;
@@ -676,8 +676,8 @@ void CHokanMgr::ShowTip()
 	}
 
 	// 表示する位置を決定
-	nTopItem = List_GetTopIndex( hwndCtrl );
-	nItemHeight = List_GetItemHeight( hwndCtrl, 0 );
+	nTopItem = ApiWrap::List_GetTopIndex( hwndCtrl );
+	nItemHeight = ApiWrap::List_GetItemHeight( hwndCtrl, 0 );
 	point.x = m_poWin.x + m_nWidth;
 	point.y = m_poWin.y + 4 + (nItem - nTopItem) * nItemHeight;
 	// 2001/06/19 asa-o 選択中の単語が補完ウィンドウに表示されているなら辞書Tipを表示

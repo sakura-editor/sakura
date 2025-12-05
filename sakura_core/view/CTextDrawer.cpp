@@ -123,7 +123,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 			hdc,
 			nDrawX,					//X
 			y + marginy,			//Y
-			ExtTextOutOption() & ~(bTransparent? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTransparent? ETO_OPAQUE: 0),
 			&rcClip,
 			pDrawData,				//文字列
 			nDrawLength,			//文字列長
@@ -492,7 +492,7 @@ void CTextDrawer::DispLineNumber(
 		::ExtTextOut( gr,
 			drawNumTop,
 			y + nHeightMargin,
-			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcLineNum,
 			szLineNum,
 			nLineCols,

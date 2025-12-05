@@ -59,7 +59,7 @@ void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y + nHeightMargin,
-			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rc,
 			pZenSp,
 			1,

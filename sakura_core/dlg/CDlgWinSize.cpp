@@ -79,15 +79,15 @@ BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_NORMAL ) );	//L"普通"
-	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MAXIMIZE ) );	//L"最大化"
-	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MINIMIZE ) );	//L"(最小化)"
+	ApiWrap::Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_NORMAL ) );	//L"普通"
+	ApiWrap::Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MAXIMIZE ) );	//L"最大化"
+	ApiWrap::Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MINIMIZE ) );	//L"(最小化)"
 
-	UpDown_SetRange( GetItemHwnd( IDC_SPIN_SX ), 30000, 0 );
-	UpDown_SetRange( GetItemHwnd( IDC_SPIN_SY ), 30000, 0 );
+	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_SX ), 30000, 0 );
+	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_SY ), 30000, 0 );
 	// ウィンドウの座標は、マイナス値も有効。
-	UpDown_SetRange( GetItemHwnd( IDC_SPIN_WX ), 30000, -30000 );
-	UpDown_SetRange( GetItemHwnd( IDC_SPIN_WY ), 30000, -30000 );
+	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_WX ), 30000, -30000 );
+	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_WY ), 30000, -30000 );
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
@@ -181,7 +181,7 @@ void CDlgWinSize::SetData( void )
 	default:
 		nCurIdx = 0;
 	}
-	Combo_SetCurSel( GetItemHwnd( IDC_COMBO_WINTYPE ), nCurIdx );
+	ApiWrap::Combo_SetCurSel( GetItemHwnd( IDC_COMBO_WINTYPE ), nCurIdx );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_SX, m_rc.right,  TRUE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_SY, m_rc.bottom, TRUE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_WX, m_rc.top,  TRUE );
@@ -214,7 +214,7 @@ int CDlgWinSize::GetData( void )
 	}
 
 	int nCurIdx;
-	nCurIdx = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_WINTYPE ) );
+	nCurIdx = ApiWrap::Combo_GetCurSel( GetItemHwnd( IDC_COMBO_WINTYPE ) );
 	switch( nCurIdx ){
 	case 2:
 		m_nWinSizeType = SIZE_MINIMIZED;

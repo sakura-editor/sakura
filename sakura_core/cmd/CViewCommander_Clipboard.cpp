@@ -374,8 +374,8 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 			int newPos = ::MulDiv(nPos, 100, nPasteSize);
 			if( newPos != nProgressPos ){
 				nProgressPos = newPos;
-				Progress_SetPos( hwndProgress, newPos + 1 );
-				Progress_SetPos( hwndProgress, newPos );
+				ApiWrap::Progress_SetPos( hwndProgress, newPos + 1 );
+				ApiWrap::Progress_SetPos( hwndProgress, newPos );
 			}
 		}
 	}

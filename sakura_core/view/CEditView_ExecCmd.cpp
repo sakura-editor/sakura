@@ -302,7 +302,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		if( oa.IsEnableRunningDlg() ){
 			cDlgCancel.DoModeless( G_AppInstance(), m_hwndParent, IDD_EXECRUNNING );
 			// ダイアログにコマンドを表示
-			::DlgItem_SetText( cDlgCancel.GetHwnd(), IDC_STATIC_CMD, pszCmd );
+			ApiWrap::DlgItem_SetText( cDlgCancel.GetHwnd(), IDC_STATIC_CMD, pszCmd );
 		}
 		//実行したコマンドラインを表示
 		// 2004.09.20 naoh 多少は見やすく・・・

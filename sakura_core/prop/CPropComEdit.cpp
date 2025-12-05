@@ -86,7 +86,7 @@ INT_PTR CPropEdit::DispatchEvent(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), _MAX_PATH - 1 );
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), _MAX_PATH - 1 );
 		/* ダイアログデータの設定 Edit */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
@@ -119,12 +119,12 @@ INT_PTR CPropEdit::DispatchEvent(
 				{
 					WCHAR szMetaPath[_MAX_PATH];
 					WCHAR szPath[_MAX_PATH];
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath) );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath) );
 					CFileNameManager::ExpandMetaToFolder( szMetaPath, szPath, _countof(szPath) );
 					if( SelectDir( hwndDlg, LS(STR_PROPEDIT_SELECT_DIR), szPath, szPath ) ){
 						CNativeW cmem(szPath);
 						cmem.Replace(L"%", L"%%");
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, cmem.GetStringPtr() );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, cmem.GetStringPtr() );
 					}
 				}
 				return TRUE;
@@ -225,7 +225,7 @@ void CPropEdit::SetData( HWND hwndDlg )
 	if( m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_SEL ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_SELDIR, TRUE );
 	}
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir );
 
 	// 改行コードNEL,PS,LSを有効にする
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL, m_Common.m_sEdit.m_bEnableExtEol );
@@ -281,7 +281,7 @@ int CPropEdit::GetData( HWND hwndDlg )
 	if( ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_SELDIR) ){
 		m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_SEL;
 	}
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir, _countof2(m_Common.m_sEdit.m_OpenDialogSelDir) );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir, _countof2(m_Common.m_sEdit.m_OpenDialogSelDir) );
 
 	// 改行コードNEL,PS,LSを有効にする
 	m_Common.m_sEdit.m_bEnableExtEol = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL );

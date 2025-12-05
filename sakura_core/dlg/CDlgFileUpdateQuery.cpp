@@ -22,8 +22,8 @@
 
 BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam )
 {
-	::DlgItem_SetText( hWnd, IDC_UPDATEDFILENAME, m_pFilename );
-	::DlgItem_SetText( hWnd, IDC_QUERYRELOADMSG, m_bModified ?
+	ApiWrap::DlgItem_SetText( hWnd, IDC_UPDATEDFILENAME, m_pFilename );
+	ApiWrap::DlgItem_SetText( hWnd, IDC_QUERYRELOADMSG, m_bModified ?
 		LS(STR_ERR_DLGUPQRY1):LS(STR_ERR_DLGUPQRY2) );
 
 	return CDialog::OnInitDialog( hWnd, wParam, lParam );

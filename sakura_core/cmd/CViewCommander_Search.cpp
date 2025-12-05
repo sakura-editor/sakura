@@ -66,7 +66,7 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 	else{
 		/* アクティブにする */
 		ActivateFrameWindow( GetEditWindow()->m_cDlgFind.GetHwnd() );
-		::DlgItem_SetText( GetEditWindow()->m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
+		ApiWrap::DlgItem_SetText( GetEditWindow()->m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	return;
 }
@@ -521,7 +521,7 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 	else {
 		/* アクティブにする */
 		ActivateFrameWindow( GetEditWindow()->m_cDlgReplace.GetHwnd() );
-		::DlgItem_SetText( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
+		ApiWrap::DlgItem_SetText( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	//	To Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	return;
@@ -800,10 +800,10 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	/* プログレスバー初期化 */
 	HWND		hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS_REPLACE );
-	Progress_SetRange( hwndProgress, 0, nAllLineNum + 1 );
+	ApiWrap::Progress_SetRange( hwndProgress, 0, nAllLineNum + 1 );
 	int			nNewPos = 0;
 	int			nOldPos = -1;
-	Progress_SetPos( hwndProgress, nNewPos);
+	ApiWrap::Progress_SetPos( hwndProgress, nNewPos);
 
 	/* 置換個数初期化 */
 	int			nReplaceNum = 0;
@@ -1029,8 +1029,8 @@ void CViewCommander::Command_REPLACE_ALL()
 				}
 			}
 			if( nOldPos != nNewPos ){
-				Progress_SetPos( hwndProgress, nNewPos +1 );
-				Progress_SetPos( hwndProgress, nNewPos );
+				ApiWrap::Progress_SetPos( hwndProgress, nNewPos +1 );
+				ApiWrap::Progress_SetPos( hwndProgress, nNewPos );
 				nOldPos = nNewPos;
 			}
 			_itow( nReplaceNum, szLabel, 10 );
@@ -1376,15 +1376,15 @@ void CViewCommander::Command_REPLACE_ALL()
 			for( nShiftCount = 0; 300 < nAllLineNum; nShiftCount++ ){
 				nAllLineNum/=2;
 			}
-			Progress_SetRange( hwndProgress, 0, nAllLineNum + 1 );
+			ApiWrap::Progress_SetRange( hwndProgress, 0, nAllLineNum + 1 );
 			int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
 			if( 0 <= nDiff ){
 				nNewPos = (nDiff + (Int)cSelectLogic.GetFrom().GetY2()) >> nShiftCount;
 			}else{
 				nNewPos = ::MulDiv((Int)cSelectLogic.GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cDocLineMgr.GetLineCount());
 			}
-			Progress_SetPos( hwndProgress, nNewPos +1 );
-			Progress_SetPos( hwndProgress, nNewPos );
+			ApiWrap::Progress_SetPos( hwndProgress, nNewPos +1 );
+			ApiWrap::Progress_SetPos( hwndProgress, nNewPos );
 		}
 		// 最後に置換した位置を記憶
 		if( bFastMode ){
@@ -1454,8 +1454,8 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	if( !cDlgCancel.IsCanceled() ){
 		nNewPos = nAllLineNum;
-		Progress_SetPos( hwndProgress, nNewPos + 1 );
-		Progress_SetPos( hwndProgress, nNewPos);
+		ApiWrap::Progress_SetPos( hwndProgress, nNewPos + 1 );
+		ApiWrap::Progress_SetPos( hwndProgress, nNewPos);
 	}
 	cDlgCancel.CloseDialog( 0 );
 	::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );

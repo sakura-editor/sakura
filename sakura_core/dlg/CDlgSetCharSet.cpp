@@ -55,15 +55,15 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_hwndCheckBOM = GetItemHwnd( IDC_CHECK_BOM );		// BOMチェックボックス
 
 	// コンボボックスのユーザー インターフェースを拡張インターフェースにする
-	Combo_SetExtendedUI( m_hwndCharSet, TRUE );
+	ApiWrap::Combo_SetExtendedUI( m_hwndCharSet, TRUE );
 
 	// 文字コードセット選択コンボボックス初期化
 	int i;
 	CCodeTypesForCombobox cCodeTypes;
-	Combo_ResetContent( m_hwndCharSet );
+	ApiWrap::Combo_ResetContent( m_hwndCharSet );
 	for (i = 1; i < cCodeTypes.GetCount(); ++i) {
-		int idx = Combo_AddString( m_hwndCharSet, cCodeTypes.GetName(i) );
-		Combo_SetItemData( m_hwndCharSet, idx, cCodeTypes.GetCode(i) );
+		int idx = ApiWrap::Combo_AddString( m_hwndCharSet, cCodeTypes.GetName(i) );
+		ApiWrap::Combo_SetItemData( m_hwndCharSet, idx, cCodeTypes.GetCode(i) );
 	}
 
 	/* 基底クラスメンバ */
@@ -104,8 +104,8 @@ void CDlgSetCharSet::SetBOM( void )
 	LRESULT		lRes;
 	int			fCheck;
 
-	nIdx = Combo_GetCurSel( m_hwndCharSet );
-	lRes = Combo_GetItemData( m_hwndCharSet, nIdx );
+	nIdx = ApiWrap::Combo_GetCurSel( m_hwndCharSet );
+	lRes = ApiWrap::Combo_GetItemData( m_hwndCharSet, nIdx );
 	CCodeTypeName	cCodeTypeName( lRes );
 	if (cCodeTypeName.UseBom()) {
 		::EnableWindow( m_hwndCheckBOM, TRUE );
@@ -120,7 +120,7 @@ void CDlgSetCharSet::SetBOM( void )
 		::EnableWindow( m_hwndCheckBOM, FALSE );
 		fCheck = BST_UNCHECKED;
 	}
-	BtnCtl_SetCheck( m_hwndCheckBOM, fCheck );
+	ApiWrap::BtnCtl_SetCheck( m_hwndCheckBOM, fCheck );
 }
 
 // 文字コード選択時の処理
@@ -134,8 +134,8 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 	//	文字コードの変更をBOMチェックボックスに反映
 	case IDC_COMBO_CHARSET:
 		SetBOM();
-		nIdx = Combo_GetCurSel( hwndCtl );
-		lRes = Combo_GetItemData( hwndCtl, nIdx );
+		nIdx = ApiWrap::Combo_GetCurSel( hwndCtl );
+		lRes = ApiWrap::Combo_GetItemData( hwndCtl, nIdx );
 		CCodeTypeName	cCodeTypeName( lRes );
 		if (cCodeTypeName.UseBom()) {
 			::EnableWindow( m_hwndCheckBOM, TRUE );
@@ -150,7 +150,7 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 			::EnableWindow( m_hwndCheckBOM, FALSE );
 			fCheck = BST_UNCHECKED;
 		}
-		BtnCtl_SetCheck( m_hwndCheckBOM, fCheck );
+		ApiWrap::BtnCtl_SetCheck( m_hwndCheckBOM, fCheck );
 		break;
 	}
 	return TRUE;
@@ -169,10 +169,10 @@ void CDlgSetCharSet::SetData( void )
 	ECodeType nCharSet;
 	CCodeTypesForCombobox cCodeTypes;
 
-	nIdxOld = Combo_GetCurSel( m_hwndCharSet );
+	nIdxOld = ApiWrap::Combo_GetCurSel( m_hwndCharSet );
 	nCurIdx = -1;
-	for (nIdx = 0; nIdx < Combo_GetCount( m_hwndCharSet ); nIdx++) {
-		nCharSet = (ECodeType)Combo_GetItemData( m_hwndCharSet, nIdx );
+	for (nIdx = 0; nIdx < ApiWrap::Combo_GetCount( m_hwndCharSet ); nIdx++) {
+		nCharSet = (ECodeType)ApiWrap::Combo_GetItemData( m_hwndCharSet, nIdx );
 		if (nCharSet == *m_pnCharSet) {
 			nCurIdx = nIdx;
 		}
@@ -185,7 +185,7 @@ void CDlgSetCharSet::SetData( void )
 			nCurIdx = nIdxOld;
 		}
 	}
-	Combo_SetCurSel( m_hwndCharSet, nCurIdx );
+	ApiWrap::Combo_SetCurSel( m_hwndCharSet, nCurIdx );
 
 	// BOMを設定
 	SetBOM();
@@ -197,11 +197,11 @@ int CDlgSetCharSet::GetData( void )
 {
 	// 文字コードセット
 	int		nIdx;
-	nIdx = Combo_GetCurSel( m_hwndCharSet );
-	*m_pnCharSet = (ECodeType)Combo_GetItemData( m_hwndCharSet, nIdx );
+	nIdx = ApiWrap::Combo_GetCurSel( m_hwndCharSet );
+	*m_pnCharSet = (ECodeType)ApiWrap::Combo_GetItemData( m_hwndCharSet, nIdx );
 
 	// BOM
-	*m_pbBom = ( BtnCtl_GetCheck( m_hwndCheckBOM ) == BST_CHECKED );
+	*m_pbBom = ( ApiWrap::BtnCtl_GetCheck( m_hwndCheckBOM ) == BST_CHECKED );
 
 	return TRUE;
 }
