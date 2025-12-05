@@ -78,14 +78,13 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-: public TSingleton<CEditWnd>
+	: public TSingleInstance<CEditWnd>
 , public CDocListenerEx
 {
-	friend class TSingleton<CEditWnd>;
-	CEditWnd();
-	~CEditWnd();
-
 public:
+	CEditWnd();
+	~CEditWnd() override;
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -50,7 +50,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_pcEditDoc->Create();
 
 	//ウィンドウの作成
-	m_pcEditWnd = CEditWnd::getInstance();
+	m_pcEditWnd = new CEditWnd();
 	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
 
 	//MRU管理
@@ -74,6 +74,7 @@ CEditApp::~CEditApp()
 	delete m_pcVisualProgress;
 	delete m_pcSaveAgent;
 	delete m_pcLoadAgent;
+	delete m_pcEditWnd;
 	delete m_pcEditDoc;
 }
 

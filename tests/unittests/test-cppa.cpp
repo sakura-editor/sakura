@@ -12,6 +12,7 @@
 #include "env/CShareData.h"
 #include "macro/CSMacroMgr.h"
 #include "view/CEditView.h"
+#include "window/CEditWnd.h"
 
 #include "eval_outputs.hpp"
 
@@ -105,8 +106,8 @@ TEST(CPPA, ppaErrorProc)
 	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
 	const auto pcEditDoc = std::make_unique<CEditDoc>(nullptr);
 
-	// CEditViewを用意する
-	const auto pcEditView = std::make_unique<CEditView>();
+	// CEditWndを用意する
+	const auto pcEditWnd = std::make_unique<CEditWnd>();
 
 	// SMacroMgrを用意する
 	const auto pcSMacroMgr = std::make_unique<CSMacroMgr>();
@@ -114,7 +115,7 @@ TEST(CPPA, ppaErrorProc)
 	// PPA実行情報を用意する
 	CPPA::PpaExecInfo info{};
 	info.m_pShareData = &GetDllShareData();
-	info.m_pcEditView = pcEditView.get();
+	info.m_pcEditView = &pcEditWnd->GetActiveView();
 
 	// 既にエラーフラグが立っていたらメッセージは出さない
 	info.m_bError = true;
