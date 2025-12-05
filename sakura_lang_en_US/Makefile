@@ -102,7 +102,7 @@ endif
 	$(MAKE) -f $< -C $(@D) $(@F)
 
 sakura_lang_rc.o: sakura_lang_rc.rc.utf8 sakura_lang_rc.rc2.utf8 $(sakura_rc)
-	$(RC) -c utf-8 --language=0409 $(DEFINES) -I$(SAKURA_CORE) -I$(SRCDIR)/../sakura_core $< -o $@
+	$(RC) -c utf-8 --language=0409 $(DEFINES) -I$(SRCDIR)/../src/main/resources -I$(SAKURA_CORE) -I$(SRCDIR)/../sakura_core $< -o $@
 
 sakura_lang_rc.rc.utf8 sakura_lang_rc.rc2.utf8: sakura_lang_rc.rc sakura_lang_rc.rc2
 	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' -e '/#include/s/.rc2\b/.rc2.utf8/' > $@

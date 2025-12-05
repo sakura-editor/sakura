@@ -2159,13 +2159,13 @@ END
 // Bitmap
 //
 
-IDB_MYTOOL              BITMAP                  "../resource/mytool.bmp"
+IDB_MYTOOL              BITMAP                  "images/mytool.bmp"
 
-IDB_SCROLL_CENTER       BITMAP                  "../resource/auto_scroll_center.bmp"
+IDB_SCROLL_CENTER       BITMAP                  "images/auto_scroll_center.bmp"
 
-IDB_SCROLL_VERTICAL     BITMAP                  "../resource/auto_scroll_vertical.bmp"
+IDB_SCROLL_VERTICAL     BITMAP                  "images/auto_scroll_vertical.bmp"
 
-IDB_SCROLL_HORIZONTAL   BITMAP                  "../resource/auto_scroll_horizontal.bmp"
+IDB_SCROLL_HORIZONTAL   BITMAP                  "images/auto_scroll_horizontal.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2175,9 +2175,9 @@ IDB_SCROLL_HORIZONTAL   BITMAP                  "../resource/auto_scroll_horizon
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON_GREP           ICON                    "../resource/icon_grep.ico"
+IDI_ICON_GREP           ICON                    "images/icon_grep.ico"
 
-IDI_PRINTER             ICON                    "../resource/printer.ico"
+IDI_PRINTER             ICON                    "images/printer.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2185,41 +2185,41 @@ IDI_PRINTER             ICON                    "../resource/printer.ico"
 // Cursor
 //
 
-IDC_CURSOR_COPYARROW    CURSOR                  "../resource/cursor_copy.cur"
+IDC_CURSOR_COPYARROW    CURSOR                  "images/cursor_copy.cur"
 
-IDC_CURSOR_MOVEARROW    CURSOR                  "../resource/cursor_move.cur"
+IDC_CURSOR_MOVEARROW    CURSOR                  "images/cursor_move.cur"
 
-IDC_CURSOR_RVARROW      CURSOR                  "../resource/cursor_rvarrow.cur"
+IDC_CURSOR_RVARROW      CURSOR                  "images/cursor_rvarrow.cur"
 
-IDC_CURSOR_ISEARCH_F    CURSOR                  "../resource/cursor_isf.cur"
+IDC_CURSOR_ISEARCH_F    CURSOR                  "images/cursor_isf.cur"
 
-IDC_CURSOR_ISEARCH_B    CURSOR                  "../resource/cursor_isb.cur"
+IDC_CURSOR_ISEARCH_B    CURSOR                  "images/cursor_isb.cur"
 
-IDC_CURSOR_TAB_SEPARATE CURSOR                  "../resource/cursor_tab_separate.cur"
+IDC_CURSOR_TAB_SEPARATE CURSOR                  "images/cursor_tab_separate.cur"
 
-IDC_CURSOR_TAB_JOIN     CURSOR                  "../resource/cursor_tab_join.cur"
+IDC_CURSOR_TAB_JOIN     CURSOR                  "images/cursor_tab_join.cur"
 
-IDC_CURSOR_AUTOSCROLL_CENTER CURSOR                  "../resource/auto_scroll_center.cur"
+IDC_CURSOR_AUTOSCROLL_CENTER CURSOR             "images/auto_scroll_center.cur"
 
-IDC_CURSOR_AUTOSCROLL_HORIZONTAL CURSOR                  "../resource/auto_scroll_horizontal.cur"
+IDC_CURSOR_AUTOSCROLL_HORIZONTAL CURSOR         "images/auto_scroll_horizontal.cur"
 
-IDC_CURSOR_AUTOSCROLL_VERTICAL CURSOR                  "../resource/auto_scroll_vertical.cur"
+IDC_CURSOR_AUTOSCROLL_VERTICAL CURSOR           "images/auto_scroll_vertical.cur"
 
-IDC_CURSOR_AUTOSCROLL_UP CURSOR                  "../resource/auto_scroll_up.cur"
+IDC_CURSOR_AUTOSCROLL_UP CURSOR                 "images/auto_scroll_up.cur"
 
-IDC_CURSOR_AUTOSCROLL_DOWN CURSOR                  "../resource/auto_scroll_down.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN CURSOR               "images/auto_scroll_down.cur"
 
-IDC_CURSOR_AUTOSCROLL_LEFT CURSOR                  "../resource/auto_scroll_left.cur"
+IDC_CURSOR_AUTOSCROLL_LEFT CURSOR               "images/auto_scroll_left.cur"
 
-IDC_CURSOR_AUTOSCROLL_RIGHT CURSOR                  "../resource/auto_scroll_right.cur"
+IDC_CURSOR_AUTOSCROLL_RIGHT CURSOR              "images/auto_scroll_right.cur"
 
-IDC_CURSOR_AUTOSCROLL_UP_LEFT CURSOR                  "../resource/auto_scroll_up_left.cur"
+IDC_CURSOR_AUTOSCROLL_UP_LEFT CURSOR            "images/auto_scroll_up_left.cur"
 
-IDC_CURSOR_AUTOSCROLL_UP_RIGHT CURSOR                  "../resource/auto_scroll_up_right.cur"
+IDC_CURSOR_AUTOSCROLL_UP_RIGHT CURSOR           "images/auto_scroll_up_right.cur"
 
-IDC_CURSOR_AUTOSCROLL_DOWN_LEFT CURSOR                  "../resource/auto_scroll_down_left.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN_LEFT CURSOR          "images/auto_scroll_down_left.cur"
 
-IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR                  "../resource/auto_scroll_down_right.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR         "images/auto_scroll_down_right.cur"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2227,7 +2227,7 @@ IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR                  "../resource/auto_scrol
 // 100
 //
 
-IDR_MENU1               100                     "../resource/MainMenu.ini"
+IDR_MENU1               100                     "MainMenu.ini"
 
 
 /////////////////////////////////////////////////////////////////////////////

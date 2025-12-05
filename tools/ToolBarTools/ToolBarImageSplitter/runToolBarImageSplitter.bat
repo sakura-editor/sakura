@@ -21,7 +21,7 @@ if not exist "%~dp0bin\Debug\ToolBarImageSplitter.exe" (
 
 :: ツール実行
 pushd "%~dp0../"
-"%~dp0bin\Debug\ToolBarImageSplitter.exe" ..\..\resource\%IMAGE_NAME%.bmp .\%IMAGE_NAME%
+"%~dp0bin\Debug\ToolBarImageSplitter.exe" ..\..\src\main\resources\images\%IMAGE_NAME%.bmp .\%IMAGE_NAME%
 
 :: 実行結果を表示するため一時停止
 pause

@@ -52,7 +52,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="Common Settings">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\sakura_core;$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\main\resources;..\sakura_core;$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0804</Culture>
     </ResourceCompile>
     <Link>
@@ -101,33 +101,33 @@
     <ResourceCompile Include="sakura_lang_rc.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\resource\auto_scroll_center.bmp" />
-    <Image Include="..\resource\auto_scroll_horizontal.bmp" />
-    <Image Include="..\resource\auto_scroll_vertical.bmp" />
-    <Image Include="..\resource\icon_grep.ico" />
-    <Image Include="..\resource\mytool.bmp" />
-    <Image Include="..\resource\printer.ico" />
+    <Image Include="..\src\main\resources\images\auto_scroll_center.bmp" />
+    <Image Include="..\src\main\resources\images\auto_scroll_horizontal.bmp" />
+    <Image Include="..\src\main\resources\images\auto_scroll_vertical.bmp" />
+    <Image Include="..\src\main\resources\images\icon_grep.ico" />
+    <Image Include="..\src\main\resources\images\mytool.bmp" />
+    <Image Include="..\src\main\resources\images\printer.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resource\auto_scroll_center.cur" />
-    <None Include="..\resource\auto_scroll_down.cur" />
-    <None Include="..\resource\auto_scroll_down_left.cur" />
-    <None Include="..\resource\auto_scroll_down_right.cur" />
-    <None Include="..\resource\auto_scroll_horizontal.cur" />
-    <None Include="..\resource\auto_scroll_left.cur" />
-    <None Include="..\resource\auto_scroll_right.cur" />
-    <None Include="..\resource\auto_scroll_up.cur" />
-    <None Include="..\resource\auto_scroll_up_left.cur" />
-    <None Include="..\resource\auto_scroll_up_right.cur" />
-    <None Include="..\resource\auto_scroll_vertical.cur" />
-    <None Include="..\resource\cursor_copy.cur" />
-    <None Include="..\resource\cursor_isb.cur" />
-    <None Include="..\resource\cursor_isf.cur" />
-    <None Include="..\resource\cursor_move.cur" />
-    <None Include="..\resource\cursor_rvarrow.cur" />
-    <None Include="..\resource\cursor_tab_join.cur" />
-    <None Include="..\resource\cursor_tab_separate.cur" />
-    <None Include="..\resource\MainMenu.ini" />
+    <None Include="..\src\main\resources\images\auto_scroll_center.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_down.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_down_left.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_down_right.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_horizontal.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_left.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_right.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_up.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_up_left.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_up_right.cur" />
+    <None Include="..\src\main\resources\images\auto_scroll_vertical.cur" />
+    <None Include="..\src\main\resources\images\cursor_copy.cur" />
+    <None Include="..\src\main\resources\images\cursor_isb.cur" />
+    <None Include="..\src\main\resources\images\cursor_isf.cur" />
+    <None Include="..\src\main\resources\images\cursor_move.cur" />
+    <None Include="..\src\main\resources\images\cursor_rvarrow.cur" />
+    <None Include="..\src\main\resources\images\cursor_tab_join.cur" />
+    <None Include="..\src\main\resources\images\cursor_tab_separate.cur" />
+    <None Include="..\src\main\resources\MainMenu.ini" />
     <None Include="sakura_lang_rc.rc2" />
   </ItemGroup>
   <ItemGroup>

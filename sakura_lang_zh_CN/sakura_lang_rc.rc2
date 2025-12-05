@@ -136,9 +136,9 @@ END
 //最低ID值的图标放在首位，以确保应用程序图标
 //在所有系统上保持一致。
 #ifdef _DEBUG
-IDI_ICON_STD            ICON         "../resource/icon_debug.ico"
+IDI_ICON_STD            ICON         "images/icon_debug.ico"
 #else
-IDI_ICON_STD            ICON         "../resource/icon_std.ico"
+IDI_ICON_STD            ICON         "images/icon_std.ico"
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
