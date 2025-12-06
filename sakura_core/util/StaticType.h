@@ -83,7 +83,10 @@ class StaticString{
 private:
 	using Me = StaticString<N_BUFFER_COUNT>;
 public:
-	static const int BUFFER_COUNT = N_BUFFER_COUNT;
+	static constexpr auto BUFFER_COUNT = N_BUFFER_COUNT;
+
+	static constexpr auto size() noexcept { return BUFFER_COUNT; }
+
 public:
 	//コンストラクタ・デストラクタ
 	StaticString(){ m_szData[0]=0; }
