@@ -113,7 +113,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
 		nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf));
 		assert(nCount == _countof(szBuf) - 1);
-		szBuf[_countof(szBuf) - 1] = L'\0';
+		szBuf[std::size(szBuf) - 1] = L'\0';
 
 		psLangInfo->wLangId = (WORD)wcstoul(szBuf, nullptr, 16);		// 言語IDを数値化
 		assert(0 < psLangInfo->wLangId);
@@ -207,7 +207,7 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 			// 言語IDを取得
 			WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
 			nCount = ::LoadString( hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf) );
-			szBuf[_countof(szBuf) - 1] = L'\0';
+			szBuf[std::size(szBuf) - 1] = L'\0';
 
 			if( nCount > 0 ){
 				lang.wLangId = (WORD)wcstoul( szBuf, nullptr, 16 );		// 言語IDを数値化

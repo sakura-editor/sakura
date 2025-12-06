@@ -3080,7 +3080,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		// ※pszLabel[3]: ステータスバー文字コード表示領域は大きめにとっておく
 		const WCHAR* pszLabel[] = { L"", L"99999 行 9999 列", L"CRLF", L"AAAAAAAAAAAA", L"UTF-16 BOM付", L"REC", L"上書", L"9999 %" };	//Oct. 30, 2000 JEPRO 千万行も要らん	文字コード枠を広げる 2008/6/21	Uchi
 		const size_t nStArrNum = _countof(pszLabel);
-		int nStArr[_countof(pszLabel)] = {};
+		int nStArr[std::size(pszLabel)] = {};
 		//	To Here
 		int			nAllWidth = rc.right - rc.left;
 		int			nSbxWidth = ::GetSystemMetrics(SM_CXVSCROLL) + ::GetSystemMetrics(SM_CXEDGE); // サイズボックスの幅

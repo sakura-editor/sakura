@@ -274,7 +274,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				// 2007.11.02 ryoji F_DISABLEなら未割当
 				if( nFuncCode == F_DISABLE ){
 					wcsncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1 );
-					pszLabel[_countof(pszLabel) - 1] = L'\0';
+					pszLabel[std::size(pszLabel) - 1] = L'\0';
 				}else{
 					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );
 				}

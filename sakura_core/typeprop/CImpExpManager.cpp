@@ -283,7 +283,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 {
 	std::wstring	files = L"";
 	std::wstring TmpMsg;
-	ColorInfo	colorInfoArr[_countof(m_Types.m_ColorInfoArr)];				// 色設定配列(バックアップ)
+	ColorInfo	colorInfoArr[std::size(m_Types.m_ColorInfoArr)];				// 色設定配列(バックアップ)
 	int		i;
 
 	// 色の変更
@@ -915,7 +915,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				//値 -> szData
 				wchar_t szData[1024];
 				wcsncpy(szData, in.ReadLineW().c_str(), _countof(szData) - 1);
-				szData[_countof(szData) - 1] = L'\0';
+				szData[std::size(szData) - 1] = L'\0';
 
 				//解析開始
 				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",

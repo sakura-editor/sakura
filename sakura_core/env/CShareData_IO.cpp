@@ -125,7 +125,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		if( pShareData->m_sVersion.m_dwProductVersionMS > dwMS
 			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
 		{
-			WCHAR szBkFileName[_countof(szIniFileName) + 4];
+			WCHAR szBkFileName[std::size(szIniFileName) + 4];
 			::lstrcpy(szBkFileName, szIniFileName);
 			::lstrcat(szBkFileName, L".bak");
 			::CopyFile(szIniFileName, szBkFileName, FALSE);
@@ -1108,7 +1108,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					}
 					// KeyName
 					wcsncpy(tmpKeydata.m_szKeyName, p, _countof(tmpKeydata.m_szKeyName)-1);
-					tmpKeydata.m_szKeyName[_countof(tmpKeydata.m_szKeyName)-1] = '\0';
+					tmpKeydata.m_szKeyName[std::size(tmpKeydata.m_szKeyName)-1] = '\0';
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
 						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。

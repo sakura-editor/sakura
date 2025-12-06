@@ -78,7 +78,7 @@ struct ctrl_info_t {
 // Feb. 12, 2003 MIK longが抜けていた
 
 // LMP: Added, nasukoji changed
-static CLoadString cLabel_jname[ _countof(p_ctrl_list) ];
+static CLoadString cLabel_jname[std::size(p_ctrl_list) ];
 
 CDlgCtrlCode::CDlgCtrlCode()
 {

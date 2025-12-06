@@ -500,12 +500,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						eFuncCode = F_NODE;
 						bIsNode = true;
 						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_EDIT), _countof(szLabel) - 1 );
-						szLabel[_countof(szLabel) - 1] = L'\0';
+						szLabel[std::size(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERTSEPARATOR:	// 区切線挿入
 						eFuncCode = F_SEPARATOR;
 						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_SEP), _countof(szLabel) - 1 );
-						szLabel[_countof(szLabel) - 1] = L'\0';
+						szLabel[std::size(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERT:				// 挿入
 					case IDC_BUTTON_INSERT_A:			// 挿入
