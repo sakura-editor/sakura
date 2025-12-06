@@ -504,7 +504,7 @@ const wchar_t* g_ppszKeywordsVB[] = {
 	//Short
 	//Structure
 };
-int g_nKeywordsVB = _countof(g_ppszKeywordsVB);
+int g_nKeywordsVB = int(std::size(g_ppszKeywordsVB));
 
 //Jul. 10, 2001 JEPRO 追加
 const wchar_t* g_ppszKeywordsVB2[] = {
@@ -704,4 +704,4 @@ const wchar_t* g_ppszKeywordsVB2[] = {
 	L"VarPrtArray",
 	L"VarPtrStringArray"
 };
-int g_nKeywordsVB2 = _countof(g_ppszKeywordsVB2);
+int g_nKeywordsVB2 = int(std::size(g_ppszKeywordsVB2));

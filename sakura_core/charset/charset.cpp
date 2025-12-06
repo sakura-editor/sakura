@@ -62,7 +62,7 @@ void InitCodeSet()
 {
 	if (msCodeSet.empty()) {
 		int 	i;
-		for (i = 0; i < _countof(ASCodeSet); i++) {
+		for (i = 0; i < int(std::size(ASCodeSet)); i++) {
 			vDispIdx.push_back( ASCodeSet[i].m_eCodeSet );
 			if (i > 0) {
 				msCodeSet[ASCodeSet[i].m_eCodeSet] = ASCodeSet[i];

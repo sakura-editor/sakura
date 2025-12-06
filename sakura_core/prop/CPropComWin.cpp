@@ -339,8 +339,8 @@ void CPropWin::SetData( HWND hwndDlg )
 	//	2001/06/20 End
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
-	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), _countof( m_Common.m_sWindow.m_szWindowCaptionActive   ) - 1 );	//@@@ 2003.06.13 MIK
-	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), _countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) - 1 );	//@@@ 2003.06.13 MIK
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), int(std::size(m_Common.m_sWindow.m_szWindowCaptionActive)) - 1 );	//@@@ 2003.06.13 MIK
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), int(std::size(m_Common.m_sWindow.m_szWindowCaptionInactive)) - 1 );	//@@@ 2003.06.13 MIK
 	ApiWrap::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_sWindow.m_szWindowCaptionActive );
 	ApiWrap::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive );
 
@@ -438,16 +438,16 @@ int CPropWin::GetData( HWND hwndDlg )
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
 	ApiWrap::DlgItem_GetText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_sWindow.m_szWindowCaptionActive,
-		_countof( m_Common.m_sWindow.m_szWindowCaptionActive ) );
+		int(std::size(m_Common.m_sWindow.m_szWindowCaptionActive)) );
 	ApiWrap::DlgItem_GetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive,
-		_countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) );
+		int(std::size(m_Common.m_sWindow.m_szWindowCaptionInactive)) );
 
 	// 言語選択
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_LANGUAGE );
 	int nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 	CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at( nSelPos );
 	if ( wcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) != 0 ) {
-		wcsncpy( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, _countof(m_Common.m_sWindow.m_szLanguageDll) );
+		wcsncpy( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, int(std::size(m_Common.m_sWindow.m_szLanguageDll)) );
 	}
 
 	return TRUE;

@@ -394,7 +394,7 @@ const wchar_t* g_ppszKeywordsPERL[] = {
 	L"warn",
 	L"write"
 };
-int g_nKeywordsPERL = _countof(g_ppszKeywordsPERL);
+int g_nKeywordsPERL = int(std::size(g_ppszKeywordsPERL));
 
 //Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
 // 2008/05/05 novice 重複文字列削除
@@ -501,4 +501,4 @@ const wchar_t* g_ppszKeywordsPERL2[] = {
 	L"$ENV",
 	L"$SIG"
 };
-int g_nKeywordsPERL2 = _countof(g_ppszKeywordsPERL2);
+int g_nKeywordsPERL2 = int(std::size(g_ppszKeywordsPERL2));

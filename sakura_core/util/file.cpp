@@ -74,7 +74,7 @@ bool IsFilePath(
 )
 {
 	wchar_t	szJumpToFile[_MAX_PATH];
-	wmemset( szJumpToFile, 0, _countof( szJumpToFile ) );
+	wmemset( szJumpToFile, 0, int(std::size(szJumpToFile)) );
 
 	size_t	nLineLen = wcslen( pLine );
 
@@ -106,7 +106,7 @@ bool IsFilePath(
 	*pnBgn = i;
 	size_t cur_pos = 0;
 	size_t tmp_end = 0;
-	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
+	for( ; i <= nLineLen && cur_pos + 1 < int(std::size(szJumpToFile)); ++i ){
 		//ファイル名終端を検知する
 		if( WCODE::IsLineDelimiterExt(pLine[i]) || pLine[i] == L'\0' ){
 			break;
@@ -620,7 +620,7 @@ bool IsValidPathAvailableChar(std::wstring_view path)
 		return true;
 	}
 	constexpr auto& dos_device_path = LR"(\\?\)";
-	constexpr size_t len = _countof(dos_device_path) - 1;
+	constexpr auto len = std::size(dos_device_path) - 1;
 	size_t pos = 0;
 	if (wcsncmp(path.data(), dos_device_path, len) == 0) {
 		pos = len;

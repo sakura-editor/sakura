@@ -160,7 +160,7 @@ void CTextOutputStream::WriteF(const wchar_t* format, ...)
 	static wchar_t buf[16*1024]; //$$ 確保しすぎかも？
 	va_list v;
 	va_start(v,format);
-	auto_vsprintf_s(buf,_countof(buf),format,v);
+	auto_vsprintf_s(buf, std::size(buf),format,v);
 	va_end(v);
 
 	//出力

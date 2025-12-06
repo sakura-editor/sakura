@@ -106,14 +106,14 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		psLangInfo->hInstance = GetModuleHandle(nullptr);
 		
 		// 言語情報ダイアログで "System default" に表示する文字列を作成する
-		auto nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
+		auto nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_NAME, psLangInfo->szLangName, int(std::size(psLangInfo->szLangName)) );
 		assert(0 < nCount);
 
 		// 言語IDを取得
 		WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
-		nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf));
-		assert(nCount == _countof(szBuf) - 1);
-		szBuf[_countof(szBuf) - 1] = L'\0';
+		nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_LANGID, szBuf, int(std::size(szBuf)));
+		assert(nCount == int(std::size(szBuf)) - 1);
+		szBuf[std::size(szBuf) - 1] = L'\0';
 
 		psLangInfo->wLangId = (WORD)wcstoul(szBuf, nullptr, 16);		// 言語IDを数値化
 		assert(0 < psLangInfo->wLangId);
@@ -201,13 +201,13 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 
 	if( hInstance ){
 		// 言語名を取得
-		nCount = ::LoadString( hInstance, STR_SELLANG_NAME, lang.szLangName, _countof(lang.szLangName) );
+		nCount = ::LoadString( hInstance, STR_SELLANG_NAME, lang.szLangName, int(std::size(lang.szLangName)) );
 
 		if( nCount > 0 ){
 			// 言語IDを取得
 			WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
-			nCount = ::LoadString( hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf) );
-			szBuf[_countof(szBuf) - 1] = L'\0';
+			nCount = ::LoadString( hInstance, STR_SELLANG_LANGID, szBuf, int(std::size(szBuf)) );
+			szBuf[std::size(szBuf) - 1] = L'\0';
 
 			if( nCount > 0 ){
 				lang.wLangId = (WORD)wcstoul( szBuf, nullptr, 16 );		// 言語IDを数値化
@@ -247,7 +247,7 @@ int CLoadString::m_nDataTempArrayIndex = 0;							// 最後に使用したバッ
 LPCWSTR CLoadString::LoadStringSt( UINT uid )
 {
 	// 使用するバッファの現在位置を進める
-	m_nDataTempArrayIndex = (m_nDataTempArrayIndex + 1) % _countof(m_acLoadStrBufferTemp);
+	m_nDataTempArrayIndex = (m_nDataTempArrayIndex + 1) % int(std::size(m_acLoadStrBufferTemp));
 
 	m_acLoadStrBufferTemp[m_nDataTempArrayIndex].LoadString( uid );
 
@@ -303,7 +303,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 	if( !m_pszString ){
 		// バッファポインタが設定されていない場合初期化する（普通はあり得ない）
 		m_pszString = m_szString;					// 変数内に準備したバッファを接続
-		m_nBufferSize = _countof(m_szString);		// 配列個数
+		m_nBufferSize = int(std::size(m_szString));		// 配列個数
 		m_szString[m_nBufferSize - 1] = 0;
 		m_nLength = wcslen(m_szString);			// 文字数
 	}

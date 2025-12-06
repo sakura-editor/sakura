@@ -1566,7 +1566,7 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus,
 			}
 			if( !bMenuLoop ){
 				WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
-				LPCWSTR p = GetDocument()->m_cFuncLookup.Custmenu2Name( nCustIdx, buf, _countof(buf) );
+				LPCWSTR p = GetDocument()->m_cFuncLookup.Custmenu2Name( nCustIdx, buf, int(std::size(buf)) );
 				wchar_t keys[2];
 				keys[0] = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i];
 				keys[1] = 0;

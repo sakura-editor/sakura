@@ -209,7 +209,7 @@ int main_impl(
 next:
 	// プリプロセス済みストリームオープン
 	char in_file2[_MAX_PATH];
-	sprintf_s(in_file2,_countof(in_file2),PREPROCESSOR,in_file);
+	sprintf_s(in_file2, std::size(in_file2),PREPROCESSOR,in_file);
 	FILE* in = _popen(in_file2, "rt");
 	if (!in) { printf("Error: Failed to open process[%s]\n", in_file2); return 1; }
 	
@@ -242,7 +242,7 @@ next:
 		GetFileTitlePointer(in_file)
 	);
 	if(mode==MODE_ENUM)fprintf(out,"enum %s{\n",enum_name); //enum開始
-	while(NULL!=fgets(line,_countof(line),in))
+	while(NULL!=fgets(line,int(std::size(line)),in))
 	{
 		// #無視(for MinGW)
 		if('#' == line[0]){
@@ -264,7 +264,7 @@ next:
 		while(*p && !is_token(*p))p++;
 		q=p;
 		while(*q && is_token(*q))q++;
-		strncpy_s(id,_countof(id),p,q-p);
+		strncpy_s(id, std::size(id),p,q-p);
 		id[q-p]='\0';
 		p=q;
 
@@ -273,7 +273,7 @@ next:
 		while(*p && !is_token(*p))p++;
 		q=p;
 		while(*q && is_token(*q))q++;
-		strncpy_s(value,_countof(value),p,q-p);
+		strncpy_s(value, std::size(value),p,q-p);
 		value[q-p]='\0';
 		p=q;
 

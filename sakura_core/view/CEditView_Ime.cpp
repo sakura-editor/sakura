@@ -260,8 +260,8 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 			if( !hIMC ){
 				return 0;
 			}
-			wmemset(m_szComposition, L'\0', _countof(m_szComposition));
-			LONG immRet = ::ImmGetCompositionString(hIMC, GCS_COMPSTR, m_szComposition, _countof(m_szComposition));
+			wmemset(m_szComposition, L'\0', int(std::size(m_szComposition)));
+			LONG immRet = ::ImmGetCompositionString(hIMC, GCS_COMPSTR, m_szComposition, int(std::size(m_szComposition)));
 			if( immRet == IMM_ERROR_NODATA || immRet == IMM_ERROR_GENERAL ){
 				m_szComposition[0] = L'\0';
 			}

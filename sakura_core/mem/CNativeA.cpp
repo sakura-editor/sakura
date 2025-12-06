@@ -65,7 +65,7 @@ void CNativeA::AppendStringF(const char* pszData, ...)
 	// 整形
 	va_list v;
 	va_start(v, pszData);
-	int len = _vsnprintf_s(buf, _countof(buf), _TRUNCATE, pszData, v);
+	int len = _vsnprintf_s(buf, std::size(buf), _TRUNCATE, pszData, v);
 	int e = errno;
 	va_end(v);
 

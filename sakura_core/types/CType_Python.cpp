@@ -482,8 +482,8 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			int len = w_end - col;
 			
 			if( len > 0 ){
-				if( len > _countof( szWord ) - 1){
-					len = _countof( szWord ) - 1;
+				if( len > int(std::size(szWord)) - 1){
+					len = int(std::size(szWord)) - 1;
 				}
 				wcsncpy( szWord, pLine + col, len );
 				szWord[ len ] = L'\0';
@@ -493,9 +493,9 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){
-				if( _countof( szWord ) - 8  < len ){
+				if( int(std::size(szWord)) - 8  < len ){
 					//	後ろを削って入れる
-					len = _countof( szWord ) - 8;
+					len = int(std::size(szWord)) - 8;
 				}
 				// class
 				wcscpy( szWord + len, LS(STR_OUTLINE_PYTHON_CLASS) );
@@ -563,4 +563,4 @@ const wchar_t* g_ppszKeywordsPython[] = {
 	L"yield",
 	L"self",
 };
-int g_nKeywordsPython = _countof(g_ppszKeywordsPython);
+int g_nKeywordsPython = int(std::size(g_ppszKeywordsPython));

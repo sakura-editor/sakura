@@ -438,4 +438,4 @@ const wchar_t* g_ppszKeywordsPLSQL[] = {
 	L"OTHERS",
 	L"SQLCODE"
 };
-int g_nKeywordsPLSQL = _countof(g_ppszKeywordsPLSQL);
+int g_nKeywordsPLSQL = int(std::size(g_ppszKeywordsPLSQL));

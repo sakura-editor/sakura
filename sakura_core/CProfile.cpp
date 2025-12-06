@@ -245,9 +245,9 @@ bool CProfile::WriteProfile(
 	szMirrorFile[0] = L'\0';
 	WCHAR szPath[_MAX_PATH];
 	LPWSTR lpszName;
-	DWORD nLen = ::GetFullPathName(m_strProfileName.c_str(), _countof(szPath), szPath, &lpszName);
-	if( 0 < nLen && nLen < _countof(szPath)
-		&& (lpszName - szPath + 11) < _countof(szMirrorFile) )	// path\preuuuu.TMP
+	DWORD nLen = ::GetFullPathName(m_strProfileName.c_str(), int(std::size(szPath)), szPath, &lpszName);
+	if( 0 < nLen && nLen < int(std::size(szPath))
+		&& (lpszName - szPath + 11) < int(std::size(szMirrorFile)) )	// path\preuuuu.TMP
 	{
 		*lpszName = L'\0';
 		::GetTempFileName(szPath, L"sak", 0, szMirrorFile);

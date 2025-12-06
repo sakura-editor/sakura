@@ -98,4 +98,4 @@ const wchar_t* g_ppszKeywordsBAT[] = {
 	L"SETLOCAL",
 	L"ENDLOCAL"
 };
-int g_nKeywordsBAT = _countof(g_ppszKeywordsBAT);
+int g_nKeywordsBAT = int(std::size(g_ppszKeywordsBAT));

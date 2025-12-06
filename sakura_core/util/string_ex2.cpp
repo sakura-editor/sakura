@@ -195,12 +195,12 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 			break;
 		}
 	}
-	wmemset( szNumber, 0, _countof( szNumber ) );
+	wmemset( szNumber, 0, int(std::size(szNumber)) );
 	if( i >= nLineLen ){
 	}else{
 		/* 行位置 改行単位行番号(1起点)の抽出 */
 		j = 0;
-		for( ; i < nLineLen && j + 1 < _countof( szNumber ); ){
+		for( ; i < nLineLen && j + 1 < int(std::size(szNumber)); ){
 			szNumber[j] = pLine[i];
 			j++;
 			++i;
@@ -214,10 +214,10 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 
 		/* 桁位置 改行単位行先頭からのバイト数(1起点)の抽出 */
 		if( i < nLineLen && pLine[i] == ',' ){
-			wmemset( szNumber, 0, _countof( szNumber ) );
+			wmemset( szNumber, 0, int(std::size(szNumber)) );
 			j = 0;
 			++i;
-			for( ; i < nLineLen && j + 1 < _countof( szNumber ); ){
+			for( ; i < nLineLen && j + 1 < int(std::size(szNumber)); ){
 				szNumber[j] = pLine[i];
 				j++;
 				++i;

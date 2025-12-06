@@ -306,7 +306,7 @@ void CColorStrategyPool::OnChangeSetting(void)
 	m_bSkipBeforeLayoutGeneral = true;
 	int nKeyword1;
 	int bUnuseKeyword = false;
-	for(int n = 0; n < _countof(bSkipColorTypeTable); n++ ){
+	for (int n = 0; n < std::ssize(bSkipColorTypeTable); ++n) {
 		if( COLORIDX_KEYWORD1 == bSkipColorTypeTable[n] ){
 			nKeyword1 = n;
 		}

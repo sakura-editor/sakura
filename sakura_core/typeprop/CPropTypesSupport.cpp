@@ -221,7 +221,7 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	m_Types.m_bUseHokanByKeyword = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_HOKANBYKEYWORD );
 
 	/* 入力補完 単語ファイル */
-	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _countof2( m_Types.m_szHokanFile ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, std::size( m_Types.m_szHokanFile ));
 
 	// 入力補完種別
 	{
@@ -235,8 +235,8 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	}
 
 	//@@@ 2002.2.2 YAZAKI
-	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _countof2( m_Types.m_szExtHelp ));
-	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, std::size( m_Types.m_szExtHelp ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, std::size( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE ) != 0;
 
 	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi

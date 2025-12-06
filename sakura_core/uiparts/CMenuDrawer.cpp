@@ -629,7 +629,7 @@ CMenuDrawer::CMenuDrawer()
 
 /* 481 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 	};
-	int tbd_num = _countof( tbd );
+	constexpr auto tbd_num = int(std::size(tbd));
 
 	// m_tbMyButton[0]にはセパレータが入っているため、アイコン番号とボタン番号は１つずれる
 	const int INDEX_GAP = 1;
@@ -791,8 +791,8 @@ void CMenuDrawer::MyAppendMenu(
 
 	szLabel[0] = L'\0';
 	if( nullptr != pszLabel ){
-		wcsncpy( szLabel, pszLabel, _countof( szLabel ) - 1 );
-		szLabel[ _countof( szLabel ) - 1 ] = L'\0';
+		wcsncpy( szLabel, pszLabel, int(std::size(szLabel)) - 1 );
+		szLabel[std::size(szLabel) - 1 ] = L'\0';
 	}
 	wcscpy( szKey, pszKey); 
 	if( nFuncId != 0 ){
@@ -805,7 +805,7 @@ void CMenuDrawer::MyAppendMenu(
 			szLabel,
 			szKey,
 			bAddKeyStr,
-			_countof(szLabel)
+			int(std::size(szLabel))
 		 );
 
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
@@ -1466,7 +1466,7 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		mii.fType = MFT_STRING;
 		wcscpy( szText, L"--unknown--" );
 		mii.dwTypeData = szText;
-		mii.cch = _countof( szText ) - 1;
+		mii.cch = int(std::size(szText)) - 1;
 		if( 0 == ::GetMenuItemInfo( hmenu, i, TRUE, &mii ) ){
 			continue;
 		}

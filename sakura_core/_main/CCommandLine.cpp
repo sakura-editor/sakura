@@ -250,7 +250,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	int		nPos;
 	int		i = 0;
 	if( pszCmdLineSrc[0] != L'-' ){
-		for( i = 0; i < _countof( szPath ); ++i ){
+		for( i = 0; i < int(std::size(szPath)); ++i ){
 			if( pszCmdLineSrc[i] == L' ' || pszCmdLineSrc[i] == L'\0' ){
 				/* ファイルの存在をチェック */
 				szPath[i] = L'\0';	// 終端文字

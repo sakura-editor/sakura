@@ -83,7 +83,10 @@ class StaticString{
 private:
 	using Me = StaticString<N_BUFFER_COUNT>;
 public:
-	static const int BUFFER_COUNT = N_BUFFER_COUNT;
+	static constexpr auto BUFFER_COUNT = N_BUFFER_COUNT;
+
+	static constexpr auto size() noexcept { return BUFFER_COUNT; }
+
 public:
 	//コンストラクタ・デストラクタ
 	StaticString(){ m_szData[0]=0; }
@@ -103,7 +106,7 @@ public:
 	WCHAR At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const WCHAR* src){ if(!src) m_szData[0]=0; else wcscpy_s(m_szData,_countof(m_szData),src); }
+	void Assign(const WCHAR* src){ if(!src) m_szData[0]=0; else wcscpy_s(m_szData, std::size(m_szData),src); }
 	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
 
 	//各種メソッド
@@ -113,5 +116,4 @@ private:
 	WCHAR m_szData[N_BUFFER_COUNT];
 };
 
-#define _countof2(s) s.BUFFER_COUNT
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */

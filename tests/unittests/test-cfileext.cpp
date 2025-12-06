@@ -35,7 +35,7 @@ TEST(CFileExt, CreateFilter)
 
 	const wchar_t* filter = cFileExt.GetExtFilter();
 	size_t length = GetFilterLength(filter);
-	std::wstring expected = {result, _countof(result)};
+	std::wstring expected = {result, int(std::size(result))};
 	std::wstring actual = {filter, length};
 	EXPECT_EQ(expected, actual);
 }

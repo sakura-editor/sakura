@@ -148,7 +148,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		size_t prevTextLen = LOWORD(res);
 		WCHAR prev[1024];
 		// 設定済みの文字列長が長過ぎて取得できない場合は、SB_SETTEXT メッセージを発行
-		if( prevTextLen >= _countof(prev) ){
+		if( prevTextLen >= int(std::size(prev)) ){
 			break;
 		}
 		// 設定する文字列長パラメータが SIZE_MAX（引数のデフォルト値）な場合は文字列長を取得

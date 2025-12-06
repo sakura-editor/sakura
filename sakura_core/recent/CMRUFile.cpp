@@ -96,7 +96,7 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 		const EditInfo	*p = m_cRecentFile.GetItem( i );
 		bFavorite = m_cRecentFile.IsFavorite( i );
 		bool bFavoriteLabel = bFavorite && !bMenuIcon;
-		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i, dcFont.GetHDC() );
+		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, int(std::size(szMenu)), p, -1, bFavoriteLabel, i, dcFont.GetHDC() );
 
 		//	メニューに追加。
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, L"", TRUE,
@@ -203,7 +203,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 		int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
 		for( int i = 0 ; i < nSize; i++ ){
 			WCHAR szExceptMRU[_MAX_PATH];
-			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
+			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, int(std::size(szExceptMRU)) );
 			if( nullptr != wcsistr( pEditInfo->m_szPath,  szExceptMRU) ){
 				return;
 			}

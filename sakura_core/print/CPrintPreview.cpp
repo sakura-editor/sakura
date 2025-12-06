@@ -874,7 +874,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 		m_hwndPrintPreviewBar, 
 		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
-		_countof(szPageNum) - 1,
+		int(std::size(szPageNum)) - 1,
 		szPageNum
 	);
 	if( FALSE != bDlgInputPageResult ){
@@ -1034,7 +1034,7 @@ void CPrintPreview::OnPrint( void )
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
 		_wsplitpath( m_pParentWnd->GetDocument()->m_cDocFile.GetFilePath(), nullptr, nullptr, szFileName, szExt );
-		auto_snprintf_s( szJobName, _countof(szJobName), L"%s%s", szFileName, szExt );
+		auto_snprintf_s(szJobName, std::size(szJobName), L"%s%s", szFileName, szExt );
 	}
 
 	/* 印刷範囲を指定できるプリンターダイアログを作成 */

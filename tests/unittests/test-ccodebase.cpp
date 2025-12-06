@@ -64,7 +64,7 @@ TEST(CCodeBase, codeSJis)
 	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
 
 	bool bComplete1_1 = false;
-	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), _countof(mbsAscii) ), &bComplete1_1 );
+	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), int(std::size(mbsAscii)) ), &bComplete1_1 );
 	EXPECT_STREQ( wcsAscii, encoded1.GetStringPtr() );
 	EXPECT_TRUE( bComplete1_1 );
 
@@ -78,7 +78,7 @@ TEST(CCodeBase, codeSJis)
 	constexpr const auto& mbsKanaKanji = "\xB6\xC5\x82\xA9\x82\xC8\x83\x4A\x83\x69\x8A\xBF\x8E\x9A";
 
 	bool bComplete2_1 = false;
-	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), _countof(mbsKanaKanji) ), &bComplete2_1 );
+	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), int(std::size(mbsKanaKanji)) ), &bComplete2_1 );
 	ASSERT_STREQ( wcsKanaKanji, encoded2.GetStringPtr() );
 	ASSERT_TRUE( bComplete2_1 );
 
@@ -108,7 +108,7 @@ TEST(CCodeBase, codeSJis)
 		;
 
 	bool bComplete3_1 = true;
-	auto encoded3 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsCantConvSJis), _countof(mbsCantConvSJis) ), &bComplete3_1 );
+	auto encoded3 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsCantConvSJis), int(std::size(mbsCantConvSJis)) ), &bComplete3_1 );
 	ASSERT_STREQ( wcsCantConvSJis, encoded3.GetStringPtr() );
 	ASSERT_TRUE( bComplete3_1 );	//👈 仕様バグ。変換できないので false が返るべき。
 
@@ -135,7 +135,7 @@ TEST(CCodeBase, codeEucJp)
 	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
 
 	bool bComplete1_1 = false;
-	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), _countof(mbsAscii) ), &bComplete1_1 );
+	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), int(std::size(mbsAscii)) ), &bComplete1_1 );
 	EXPECT_STREQ( wcsAscii, encoded1.GetStringPtr() );
 	EXPECT_TRUE( bComplete1_1 );
 
@@ -149,7 +149,7 @@ TEST(CCodeBase, codeEucJp)
 	constexpr const auto& mbsKanaKanji = "\x8E\xB6\x8E\xC5\xA4\xAB\xA4\xCA\xA5\xAB\xA5\xCA\xB4\xC1\xBB\xFA";
 
 	bool bComplete2_1 = false;
-	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), _countof(mbsKanaKanji) ), &bComplete2_1 );
+	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), int(std::size(mbsKanaKanji)) ), &bComplete2_1 );
 	ASSERT_STREQ( wcsKanaKanji, encoded2.GetStringPtr() );
 	ASSERT_TRUE( bComplete2_1 );
 
@@ -170,7 +170,7 @@ TEST(CCodeBase, codeEucJp)
 		;
 
 	bool bComplete3_1 = true;
-	auto encoded3 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsCantConvEucJp), _countof(mbsCantConvEucJp) ), &bComplete3_1 );
+	auto encoded3 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsCantConvEucJp), int(std::size(mbsCantConvEucJp)) ), &bComplete3_1 );
 	//ASSERT_STREQ( wcsCantConvEucJp, encoded3.GetStringPtr() );
 	//ASSERT_FALSE( bComplete3_1 );
 
@@ -201,7 +201,7 @@ TEST(CCodeBase, codeLatin1)
 	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
 
 	bool bComplete1_1 = false;
-	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), _countof(mbsAscii) ), &bComplete1_1 );
+	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), int(std::size(mbsAscii)) ), &bComplete1_1 );
 	EXPECT_STREQ( wcsAscii, encoded1.GetStringPtr() );
 	EXPECT_TRUE( bComplete1_1 );
 
@@ -234,7 +234,7 @@ TEST(CCodeBase, codeLatin1)
 		;
 
 	bool bComplete2_1 = false;
-	auto encoded2 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsLatin1ExtChars), _countof(mbsLatin1ExtChars)), &bComplete2_1);
+	auto encoded2 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsLatin1ExtChars), int(std::size(mbsLatin1ExtChars))), &bComplete2_1);
 	ASSERT_STREQ(wcsLatin1ExtChars, encoded2.GetStringPtr());
 	ASSERT_TRUE(bComplete2_1);
 
@@ -268,7 +268,7 @@ TEST(CCodeBase, codeUtf8)
 	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
 
 	bool bComplete1_1 = false;
-	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), _countof(mbsAscii) ), &bComplete1_1 );
+	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), int(std::size(mbsAscii)) ), &bComplete1_1 );
 	EXPECT_STREQ( wcsAscii, encoded1.GetStringPtr() );
 	EXPECT_TRUE( bComplete1_1 );
 
@@ -282,7 +282,7 @@ TEST(CCodeBase, codeUtf8)
 	constexpr const auto& mbsKanaKanji = u8"ｶﾅかなカナ漢字";
 
 	bool bComplete2_1 = false;
-	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), _countof(mbsKanaKanji) ), &bComplete2_1 );
+	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), int(std::size(mbsKanaKanji)) ), &bComplete2_1 );
 	ASSERT_STREQ( wcsKanaKanji, encoded2.GetStringPtr() );
 	ASSERT_TRUE( bComplete2_1 );
 
@@ -305,7 +305,7 @@ TEST(CCodeBase, codeUtf8_OracleImplementation)
 	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
 
 	bool bComplete1_1 = false;
-	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), _countof(mbsAscii) ), &bComplete1_1 );
+	auto encoded1 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsAscii), int(std::size(mbsAscii)) ), &bComplete1_1 );
 	EXPECT_STREQ( wcsAscii, encoded1.GetStringPtr() );
 	EXPECT_TRUE( bComplete1_1 );
 
@@ -319,7 +319,7 @@ TEST(CCodeBase, codeUtf8_OracleImplementation)
 	constexpr const auto& mbsKanaKanji = u8"ｶﾅかなカナ漢字";
 
 	bool bComplete2_1 = false;
-	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), _countof(mbsKanaKanji) ), &bComplete2_1 );
+	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(mbsKanaKanji), int(std::size(mbsKanaKanji)) ), &bComplete2_1 );
 	ASSERT_STREQ( wcsKanaKanji, encoded2.GetStringPtr() );
 	ASSERT_TRUE( bComplete2_1 );
 
@@ -342,7 +342,7 @@ TEST(CCodeBase, codeUtf7)
 	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
 
 	bool bComplete1_1 = false;
-	auto encoded1 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsAscii), _countof(mbsAscii)), &bComplete1_1);
+	auto encoded1 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsAscii), int(std::size(mbsAscii))), &bComplete1_1);
 	EXPECT_STREQ(wcsAscii, encoded1.GetStringPtr());
 	EXPECT_TRUE(bComplete1_1);
 
@@ -356,7 +356,7 @@ TEST(CCodeBase, codeUtf7)
 	constexpr const auto& mbsKanaKanji = "+/3b/hTBLMGowqzDKbyJbVw-";
 
 	bool bComplete2_1 = false;
-	auto encoded2 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsKanaKanji), _countof(mbsKanaKanji)), &bComplete2_1);
+	auto encoded2 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsKanaKanji), int(std::size(mbsKanaKanji))), &bComplete2_1);
 	ASSERT_STREQ(wcsKanaKanji, encoded2.GetStringPtr());
 	ASSERT_TRUE(bComplete2_1);
 
@@ -370,7 +370,7 @@ TEST(CCodeBase, codeUtf7)
 	constexpr const auto& mbsPlusPlus = "C+-+-";
 
 	bool bComplete5_1 = false;
-	auto encoded5 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsPlusPlus), _countof(mbsPlusPlus)), &bComplete5_1);
+	auto encoded5 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsPlusPlus), int(std::size(mbsPlusPlus))), &bComplete5_1);
 	ASSERT_STREQ(wcsPlusPlus, encoded5.GetStringPtr());
 	ASSERT_TRUE(bComplete5_1);
 
