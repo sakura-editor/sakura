@@ -116,5 +116,4 @@ private:
 	WCHAR m_szData[N_BUFFER_COUNT];
 };
 
-#define _countof2(s) s.BUFFER_COUNT
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */

@@ -217,7 +217,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS        ), int(std::size(m_Types.m_szTypeExts)) - 1 );
 		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_INDENTCHARS     ), int(std::size(m_Types.m_szIndentChars)) - 1 );
 		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING   ), int(std::size(m_Types.m_szTabViewString)) - 1 );
-		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), _countof2( m_Types.m_szOutlineRuleFilename ) - 1 );	//	Oct. 5, 2002 genta 画面上でも入力制限
+		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), std::size( m_Types.m_szOutlineRuleFilename ) - 1 );	//	Oct. 5, 2002 genta 画面上でも入力制限
 
 		if( 0 == m_Types.m_nIdx ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), FALSE );	//設定の名前
@@ -754,7 +754,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		}
 
 		//ルールファイル	//2003.06.23 Moca ルールを使っていなくてもファイル名を保持
-		ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, _countof2( m_Types.m_szOutlineRuleFilename ));
+		ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, std::size( m_Types.m_szOutlineRuleFilename ));
 	}
 
 	//フォント

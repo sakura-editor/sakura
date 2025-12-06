@@ -102,7 +102,7 @@ void CDlgExec::SetData( void )
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), int(std::size(m_szCommand)) - 1 );
-	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), std::size( m_szCurDir ) - 1 );
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_m_szCommand ), TRUE );
 
@@ -182,7 +182,7 @@ int CDlgExec::GetData( void )
 {
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, int(std::size(m_szCommand)));
 	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_CUR_DIR ) ){
-		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2( m_szCurDir ));
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], std::size( m_szCurDir ));
 	}else{
 		m_szCurDir[0] = L'\0';
 	}

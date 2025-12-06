@@ -361,7 +361,7 @@ int CDlgDiff::GetData( void )
 	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
 	{
-		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, _countof2(m_szFile2) );
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, std::size(m_szFile2) );
 		//	2004.05.19 MIK 外部ファイルが指定されていない場合はキャンセル
 		//相手ファイルが指定されてなければキャンセル
 		if( m_szFile2[0] == '\0' ) ret = FALSE;
