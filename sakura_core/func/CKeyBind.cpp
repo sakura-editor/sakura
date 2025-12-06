@@ -783,7 +783,7 @@ const WCHAR* jpVKEXNames[] = {
 	L"ホイール左",
 	L"ホイール右"
 };
-constexpr auto jpVKEXNamesLen = int(std::size(jpVKEXNames));
+const int jpVKEXNamesLen = int(std::size(jpVKEXNames));
 
 /*!	@brief 共有メモリ初期化/キー割り当て
 
@@ -797,8 +797,8 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/********************/
 	/* 共通設定の規定値 */
 	/********************/
-	constexpr auto nKeyDataInitNum = int(std::size(KeyDataInit));
-	constexpr auto KEYNAME_SIZE = int(std::size(pShareData->m_Common.m_sKeyBind.m_pKeyNameArr)) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	const auto nKeyDataInitNum = int(std::size(KeyDataInit));
+	const auto KEYNAME_SIZE = int(std::size(pShareData->m_Common.m_sKeyBind.m_pKeyNameArr)) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
 	assert( !(nKeyDataInitNum > KEYNAME_SIZE) );
 //	if( nKeyDataInitNum > KEYNAME_SIZE ) {

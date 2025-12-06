@@ -1039,7 +1039,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 //	int		nSize = m_pShareData->m_nKeyNameArrNum;
 	WCHAR	szWork[MAX_PLUGIN_ID+20+4];
 	bool	bOldVer = false;
-	constexpr auto KEYNAME_SIZE = int(std::size(sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	const auto KEYNAME_SIZE = int(std::size(sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 
 	if( cProfile.IsReadingMode() ){ 
