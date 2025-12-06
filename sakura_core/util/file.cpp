@@ -620,7 +620,7 @@ bool IsValidPathAvailableChar(std::wstring_view path)
 		return true;
 	}
 	constexpr auto& dos_device_path = LR"(\\?\)";
-	constexpr size_t len = _countof(dos_device_path) - 1;
+	constexpr auto len = std::size(dos_device_path) - 1;
 	size_t pos = 0;
 	if (wcsncmp(path.data(), dos_device_path, len) == 0) {
 		pos = len;

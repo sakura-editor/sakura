@@ -214,7 +214,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef SKR_PATCH_INFO
 	cmemMsg.AppendString( L"      " );
 	const WCHAR szPatchInfo[] = SKR_PATCH_INFO;
-	size_t patchInfoLen = _countof(szPatchInfo) - 1;
+	constexpr auto patchInfoLen = std::size(szPatchInfo) - 1;
 	cmemMsg.AppendString( szPatchInfo, t_min(80, patchInfoLen) );
 #endif
 	cmemMsg.AppendString( L"\r\n");

@@ -16,7 +16,7 @@
 TEST(CStringRef, CStringRef)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 
 	CStringRef v1;
 	EXPECT_EQ(NULL, v1.GetPtr());
@@ -69,7 +69,7 @@ TEST(CNativeW, ConstructWithoutParam)
 TEST(CNativeW, ConstructWithStringWithLength)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -85,7 +85,7 @@ TEST(CNativeW, ConstructWithStringWithLength)
 TEST(CNativeW, ConstructWithString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -147,7 +147,7 @@ TEST(CNativeW, ConstructFromOtherByCopy)
 TEST(CNativeW, ConstructFromOtherByMove)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW other(sz);
 	CNativeW value(std::move(other));
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -170,7 +170,7 @@ TEST(CNativeW, ConstructFromOtherByMove)
 TEST(CNativeW, CopyFromOther)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	CNativeW other(sz);
 	value = other;
@@ -192,7 +192,7 @@ TEST(CNativeW, CopyFromOther)
 TEST(CNativeW, MoveFromOther)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	CNativeW other(sz);
 	value = std::move(other);
@@ -215,7 +215,7 @@ TEST(CNativeW, MoveFromOther)
 TEST(CNativeW, GetCharAtIndex)
 {
 	constexpr const wchar_t sz[] = L"森鷗外";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
 	EXPECT_EQ(cch, value.GetStringLength());
 	for (size_t index = 0; index < cch; ++index) {
@@ -234,7 +234,7 @@ TEST(CNativeW, GetCharAtIndex)
 TEST(CNativeW, AssignString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value = sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -277,7 +277,7 @@ TEST(CNativeW, AssignStringNullLiteral)
 TEST(CNativeW, AppendChar)
 {
 	constexpr const wchar_t sz[] = L"X";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value += sz[0];
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -294,7 +294,7 @@ TEST(CNativeW, AppendChar)
 TEST(CNativeW, AppendString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value += sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());

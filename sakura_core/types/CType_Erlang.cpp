@@ -199,7 +199,7 @@ const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 {
 	assert( m_state == STATE_FUNC_ARGS );
 
-	const size_t parptr_max = _countof( m_parenthesis );
+	constexpr auto parptr_max = std::size(m_parenthesis);
 	wchar_t quote = L'\0'; // 先頭位置を保存
 	for(const wchar_t* head = p ; p < end ; p++ ){
 		if( quote ){
