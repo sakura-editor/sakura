@@ -55,11 +55,18 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
+/*!
+ * 共有データのアドレスを取得する
+ */
+DLLSHAREDATA* GetDllShareDataPtr() noexcept
+{
+	const auto pcShareData = CShareData::getInstance();
+	return pcShareData ? pcShareData->GetDllShareDataPtr() : nullptr;
+}
+
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
-CShareData::CShareData()
-{
-}
+CShareData::CShareData() = default;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -69,7 +76,6 @@ CShareData::~CShareData()
 {
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
-		SetDllShareData( nullptr );
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = nullptr;
 	}
@@ -146,7 +152,6 @@ bool CShareData::InitShareData()
 			0
 		);
 		CreateTypeSettings();
-		SetDllShareData( m_pShareData );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -730,7 +735,6 @@ bool CShareData::InitShareData()
 			0,
 			0
 		);
-		SetDllShareData( m_pShareData );
 
 		SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_SHARE );
 		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
@@ -741,7 +745,6 @@ bool CShareData::InitShareData()
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
-			SetDllShareData( nullptr );
 			::UnmapViewOfFile( m_pShareData );
 			m_pShareData = nullptr;
 			return false;
