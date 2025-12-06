@@ -167,7 +167,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sHandles.m_hwndTray = nullptr;
 		m_pShareData->m_sHandles.m_hwndDebug = nullptr;
 
-		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
+		for( int i = 0; i < int(std::size(m_pShareData->m_dwCustColors)); i++ ){
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
 		}
 
@@ -773,8 +773,8 @@ static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, s
 	index++;
 }
 
-#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, true)
-#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, false)
+#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, int(std::size(buf)), id, values, index, bSetValues, true)
+#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, int(std::size(buf)), id, values, index, bSetValues, false)
 
 /*!
 	国際化対応のための文字列を変更する
@@ -1228,7 +1228,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 	);
 
 	/* ツールバーボタンの数 */
-	pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum = _countof(DEFAULT_TOOL_BUTTONS);
+	pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum = int(std::size(DEFAULT_TOOL_BUTTONS));
 	pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
 }
 
@@ -1463,7 +1463,7 @@ std::vector<STypeConfig*>& CShareData::GetTypeSettings()
 void CShareData::InitFileTree( SFileTree* setting )
 {
 	setting->m_bProject = true;
-	for(int i = 0; i < (int)_countof(setting->m_aItems); i++){
+	for(int i = 0; i < (int)int(std::size(setting->m_aItems)); i++){
 		SFileTreeItem& item = setting->m_aItems[i];
 		item.m_eFileTreeItemType = EFileTreeItemType_Grep;
 		item.m_szTargetPath = L"";

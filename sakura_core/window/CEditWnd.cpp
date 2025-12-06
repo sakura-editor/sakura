@@ -284,11 +284,11 @@ void CEditWnd::UpdateCaption()
 	wchar_t	pszCap[1024];
 
 	//キャプション更新
-	CSakuraEnvironment::ExpandParameter( pszWindowCaptionFormat, pszCap, _countof( pszCap ) );
+	CSakuraEnvironment::ExpandParameter( pszWindowCaptionFormat, pszCap, int(std::size(pszCap)) );
 	::SetWindowText( GetHwnd(), pszCap );
 
 	//タブウインドウのファイル名を通知
-	CSakuraEnvironment::ExpandParameter( pszTabCaptionFormat, pszCap, _countof( pszCap ) );
+	CSakuraEnvironment::ExpandParameter( pszTabCaptionFormat, pszCap, int(std::size(pszCap)) );
 	ChangeFileNameNotify( pszCap,
 		GetListeningDoc()->m_cDocFile.GetFilePath(),
 		CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ); // 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
@@ -827,7 +827,7 @@ void CEditWnd::LayoutMainMenu()
 		case T_LEAF:
 			/* メニューラベルの作成 */
 			// 2014.05.04 Moca プラグイン/マクロ等を置けるようにFunccode2Nameを使うように
-			GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabel, _countof(szLabel) );
+			GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabel, int(std::size(szLabel)) );
 			wcscpy( szKey, cMainMenu->m_sKey );
 			if (CKeyBind::GetMenuLabel(
 				G_AppInstance(),
@@ -837,7 +837,7 @@ void CEditWnd::LayoutMainMenu()
 				szLabel,
 				cMainMenu->m_sKey,
 				FALSE,
-				_countof(szLabel)) == nullptr) {
+				int(std::size(szLabel))) == nullptr) {
 				wcscpy( szLabel, L"?" );
 			}
 			::AppendMenu( hMenu, MF_STRING, cMainMenu->m_nFunc, szLabel );
@@ -1487,7 +1487,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 				//ツールチップテキスト取得、設定
 				LPTOOLTIPTEXT lptip = (LPTOOLTIPTEXT)pnmh;
-				GetTooltipText(szText, _countof(szText), lptip->hdr.idFrom);
+				GetTooltipText(szText, int(std::size(szText)), lptip->hdr.idFrom);
 				lptip->lpszText = szText;
 			}
 			break;
@@ -2401,7 +2401,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 		}
 		WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 		m_cMenuDrawer.MyAppendMenu( hMenu, nFlag,
-			eFunc, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, _countof(buf) ), pszKey );
+			eFunc, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, int(std::size(buf)) ), pszKey );
 	}
 	// マクロ
 	else if (eFunc >= F_USERMACRO_0 && eFunc < F_USERMACRO_0+MAX_CUSTMACRO) {
@@ -2420,7 +2420,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 	// プラグインコマンド
 	else if (eFunc >= F_PLUGCOMMAND_FIRST && eFunc < F_PLUGCOMMAND_LAST) {
 		WCHAR szLabel[256];
-		if( 0 < CJackManager::getInstance()->GetCommandName( eFunc, szLabel, _countof(szLabel) ) ){
+		if( 0 < CJackManager::getInstance()->GetCommandName( eFunc, szLabel, int(std::size(szLabel)) ) ){
 			m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
 				eFunc, szLabel, pszKey,
 				TRUE, eFunc );
@@ -2573,14 +2573,14 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 		//	右クリックメニュー
 		if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[0] > 0 ){
 			 m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-				 F_MENU_RBUTTON, GetDocument()->m_cFuncLookup.Custmenu2Name( 0, buf, _countof(buf) ), L"" );
+				 F_MENU_RBUTTON, GetDocument()->m_cFuncLookup.Custmenu2Name( 0, buf, int(std::size(buf)) ), L"" );
 			bInList = true;
 		}
 		//	カスタムメニュー
 		for( j = 1; j < MAX_CUSTOM_MENU; ++j ){
 			if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
 				 m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-			 		F_CUSTMENU_BASE + j, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, _countof(buf) ), L""  );
+			 		F_CUSTMENU_BASE + j, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, int(std::size(buf)) ), L""  );
 				bInList = true;
 			}
 		}
@@ -2675,7 +2675,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 {
 	int				i;
 	const WCHAR*	sName = L"";
-	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
+	for (i = 0; i < int(std::size(sFuncMenuName)) ;i++) {
 		if (sFuncMenuName[i].eFunc == nFunc) {
 			sName = flag ? LS( sFuncMenuName[i].nNameId[0] ) : LS( sFuncMenuName[i].nNameId[1] );
 		}
@@ -2756,7 +2756,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 	for( i = 0; i < cFiles; i++ ) {
 		//ファイルパス取得、解決。
 		WCHAR		szFile[_MAX_PATH + 1];
-		::DragQueryFile( hDrop, i, szFile, _countof(szFile) );
+		::DragQueryFile( hDrop, i, szFile, int(std::size(szFile)) );
 		CSakuraEnvironment::ResolvePath(szFile);
 
 		/* 指定ファイルが開かれているか調べる */
@@ -3842,7 +3842,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 		// (.で始まる)拡張子の取得
 		_wsplitpath( szFile, nullptr, nullptr, nullptr, szExt );
 
-		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, nullptr, FileType, _countof(FileType) - 13)){
+		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, nullptr, FileType, int(std::size(FileType)) - 13)){
 			wcscat( FileType, L"\\DefaultIcon" );
 			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, nullptr, nullptr, 0)){
 				// 関連づけられたアイコンを取得する
@@ -3957,7 +3957,7 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
 		results.lpDx = vDx;
 		results.lpGlyphs = vGlyphs;
-		results.nGlyphs = _countof(vGlyphs);
+		results.nGlyphs = int(std::size(vGlyphs));
 		results.nMaxFit = cchText;
 		auto placement = ::GetCharacterPlacement(hdc, pchText, cchText, nMaxExtent, &results, dwFlags);
 
@@ -4185,7 +4185,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 			::SendMessage( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 ////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
-			CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i, dcFont.GetHDC() );
+			CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, int(std::size(szMenu)), pfi, pEditNodeArr[i].m_nId, i, dcFont.GetHDC() );
 			m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMenu, L"" );
 			if( GetHwnd() == pEditNodeArr[i].GetHwnd() ){
 				::CheckMenuItem( hMenu, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, MF_BYCOMMAND | MF_CHECKED );

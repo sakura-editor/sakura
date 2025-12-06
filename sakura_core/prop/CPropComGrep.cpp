@@ -153,7 +153,7 @@ void CPropGrep::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_sSearch.m_bGTJW_LDBLCLK );
 
 	//	2007.08.12 genta 正規表現DLL
-	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ), _countof(m_Common.m_sSearch.m_szRegexpLib ) - 1 );
+	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ), int(std::size(m_Common.m_sSearch.m_szRegexpLib)) - 1 );
 	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
 
@@ -166,7 +166,7 @@ void CPropGrep::SetData( HWND hwndDlg )
 	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);
 	ApiWrap::Combo_ResetContent(hwndCombo);
 	int nSelPos = 0;
-	for(int i = 0; i < _countof(TagJumpMode1Arr); ++i){
+	for(int i = 0; i < int(std::size(TagJumpMode1Arr)); ++i){
 		ApiWrap::Combo_InsertString(hwndCombo, i, LS(TagJumpMode1Arr[i].m_nNameID));
 		ApiWrap::Combo_SetItemData(hwndCombo, i, TagJumpMode1Arr[i].m_nMethod);
 		if(TagJumpMode1Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpMode ){
@@ -184,7 +184,7 @@ void CPropGrep::SetData( HWND hwndDlg )
 	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_KEYWORD_TAGJUMP);
 	ApiWrap::Combo_ResetContent(hwndCombo);
 	nSelPos = 0;
-	for(int i = 0; i < _countof(TagJumpMode2Arr); ++i){
+	for(int i = 0; i < int(std::size(TagJumpMode2Arr)); ++i){
 		ApiWrap::Combo_InsertString(hwndCombo, i, LS(TagJumpMode2Arr[i].m_nNameID));
 		ApiWrap::Combo_SetItemData(hwndCombo, i, TagJumpMode2Arr[i].m_nMethod);
 		if(TagJumpMode2Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpModeKeyword ){
@@ -217,7 +217,7 @@ int CPropGrep::GetData( HWND hwndDlg )
 	m_Common.m_sSearch.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
 
 	//	2007.08.12 genta 正規表現DLL
-	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, _countof( m_Common.m_sSearch.m_szRegexpLib ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, int(std::size(m_Common.m_sSearch.m_szRegexpLib)));
 
 	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);
 	int nSelPos = ApiWrap::Combo_GetCurSel(hwndCombo);
@@ -234,7 +234,7 @@ void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 {
 	WCHAR regexp_dll[_MAX_PATH];
 	
-	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, _countof( regexp_dll ));
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, int(std::size(regexp_dll)));
 	CBregexp breg;
 	if( DLL_SUCCESS != breg.InitDll( regexp_dll ) ){
 		ApiWrap::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, LS(STR_PROPCOMGREP_DLL) );

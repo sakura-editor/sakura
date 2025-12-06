@@ -299,7 +299,7 @@ void CPropFile::SetData( HWND hwndDlg )
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	int		nSelPos = 0;
-	for( int i = 0; i < _countof( ShareModeArr ); ++i ){
+	for( int i = 0; i < int(std::size(ShareModeArr)); ++i ){
 		ApiWrap::Combo_InsertString( hwndCombo, i, LS( ShareModeArr[i].nNameId ) );
 		if( ShareModeArr[i].nMethod == m_Common.m_sFile.m_nFileShareMode ){
 			nSelPos = i;

@@ -244,7 +244,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				//	Combo Boxも変更 削除＆再登録
 				ApiWrap::Combo_DeleteString( hwndCOMBO_MENU, nIdx1 );
 				ApiWrap::Combo_InsertString( hwndCOMBO_MENU, nIdx1,
-					m_cLookup.Custmenu2Name( nIdx1, buf, _countof(buf) ) );
+					m_cLookup.Custmenu2Name( nIdx1, buf, int(std::size(buf)) ) );
 				// 削除すると選択が解除されるので，元に戻す
 				ApiWrap::Combo_SetCurSel( hwndCOMBO_MENU, nIdx1 );
 				return TRUE;
@@ -654,7 +654,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	/* メニュー一覧に文字列をセット（コンボボックス）*/
 	hwndCOMBO_MENU = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
-		ApiWrap::Combo_AddString( hwndCOMBO_MENU, m_cLookup.Custmenu2Name( i, buf, _countof( buf ) ) );
+		ApiWrap::Combo_AddString( hwndCOMBO_MENU, m_cLookup.Custmenu2Name( i, buf, int(std::size(buf)) ) );
 	}
 	/* メニュー一覧の先頭の項目を選択（コンボボックス）*/
 	ApiWrap::Combo_SetCurSel( hwndCOMBO_MENU, 0 );
@@ -678,7 +678,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	ApiWrap::List_ResetContent( hwndLIST_RES );
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
-			wcsncpy( szLabel, LS(STR_PROPCOMCUSTMENU_SEP), _countof(szLabel) - 1 );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			wcsncpy( szLabel, LS(STR_PROPCOMCUSTMENU_SEP), int(std::size(szLabel)) - 1 );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 			szLabel[std::size(szLabel) - 1] = L'\0';
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];

@@ -377,7 +377,7 @@ TEST(CCommandLine, ParseDocCode)
 
 	// 実行ファイル名に1(=JIS)を含む場合の例
 	wchar_t szExeFileName[MAX_PATH] = L"sakura1.exe";
-	const int cchExeFileName = ::wcsnlen(szExeFileName, _countof(szExeFileName));
+	const int cchExeFileName = ::wcsnlen(szExeFileName, int(std::size(szExeFileName)));
 	cCommandLine.ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
 	cCommandLine.ParseCommandLine(L"", false);
 	EXPECT_EQ(CODE_JIS, cCommandLine.GetDocCode());

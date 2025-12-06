@@ -42,33 +42,33 @@ BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLength);
 TEST(testIsMailAddress, CheckBlank)
 {
 	wchar_t szTest[] = L""; //空文字
-	ASSERT_SAME(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(FALSE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 TEST(testIsMailAddress, CheckExample)
 {
 	wchar_t szTest[] = L"test@example.com"; //標準的なサンプルメールアドレス
-	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(TRUE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 TEST(testIsMailAddress, CheckExampleCoJp)
 {
 	wchar_t szTest[] = L"test@example.co.jp"; //標準的なサンプルメールアドレス
-	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(TRUE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 TEST(testIsMailAddress, CheckTrailingSpace)
 {
 	wchar_t szTest[] = L"test@example.co.jp "; //標準的なサンプルメールアドレス
 	int mailboxLength;
-	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, &mailboxLength);
-	ASSERT_EQ(_countof(szTest) - 2, mailboxLength);
+	ASSERT_SAME(TRUE, szTest, int(std::size(szTest)) - 1, &mailboxLength);
+	ASSERT_EQ(int(std::size(szTest)) - 2, mailboxLength);
 }
 
 TEST(testIsMailAddress, CheckPunctuation)
 {
 	wchar_t szTest[] = L"test!#$%&'*+-/=?^_`{|}~@example.com"; //記号類を含む
-	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(TRUE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 TEST(testIsMailAddress, CheckMaxLocalPart)
@@ -85,7 +85,7 @@ TEST(testIsMailAddress, CheckExceedMaxLocalPart)
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
 	::swprintf_s(szTest, std::size(szTest), L"%s%s%s%s0@example.com", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字 + 1
-	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_CHANGE(FALSE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 TEST(testIsMailAddress, CheckMaxMailbox)
@@ -96,7 +96,7 @@ TEST(testIsMailAddress, CheckMaxMailbox)
 	::swprintf_s(szSeed64, std::size(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
 	::swprintf_s(szTest, std::size(szTest), L"%s@%.63s.%.63s.%.58s.com", szSeed64, szSeed64, szSeed64, szSeed64); //最大255文字のチェック
 	int mailboxLength;
-	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, &mailboxLength);
+	ASSERT_SAME(TRUE, szTest, int(std::size(szTest)) - 1, &mailboxLength);
 	ASSERT_EQ(255, mailboxLength);
 }
 
@@ -108,7 +108,7 @@ TEST(testIsMailAddress, CheckMaxExceedMailbox)
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
 	::swprintf_s(szSeed64, std::size(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
 	::swprintf_s(szTest, std::size(szTest), L"%s@%.63s.%.63s.%.58s0.com", szSeed64, szSeed64, szSeed64, szSeed64); //最大255文字オーバーのチェック
-	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_CHANGE(FALSE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
@@ -126,14 +126,14 @@ TEST(testIsMailAddress, CheckTooLongDomain)
 TEST(testIsMailAddress, CheckTooShortDomain)
 {
 	wchar_t szTest[] = L"yajim@my.me"; //ドメイン部は3文字以上
-	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_CHANGE(FALSE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
 TEST(testIsMailAddress, CheckTooShortCCTLD)
 {
 	wchar_t szTest[] = L"test@test.c.bak"; //CCTLD部は2文字以上
-	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_CHANGE(FALSE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
@@ -141,7 +141,7 @@ TEST(testIsMailAddress, CheckDomainIncludesUnderScore)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::swprintf(szTest, _countof(szTest), L"%s@test_domain.com", szSeed); //_を含むドメイン
+	::swprintf(szTest, int(std::size(szTest)), L"%s@test_domain.com", szSeed); //_を含むドメイン
 	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
 }
 
@@ -166,20 +166,20 @@ TEST(testIsMailAddress, CheckDomainIncludesDoubleHyphen)
 TEST(testIsMailAddress, CheckQuotedLocalPart)
 {
 	wchar_t szTest[] = L"\"test\\@c\"@test.com";
-	ASSERT_CHANGE(TRUE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_CHANGE(TRUE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 TEST(testIsMailAddress, CheckBadQuotedLocalPart)
 {
 	wchar_t szTest[] = L"\"test@test.com";
-	ASSERT_SAME(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(FALSE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 // レビューコメントにより追試。動作変えていない部分だが、誤って動作が変わっていた。
 TEST(testIsMailAddress, CheckAwithAtmark)
 {
 	wchar_t szTest[] = L"a@";
-	ASSERT_SAME(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(FALSE, szTest, int(std::size(szTest)) - 1, NULL);
 }
 
 TEST(testIsMailAddress, OffsetParameter)

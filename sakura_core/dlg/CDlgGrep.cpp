@@ -356,8 +356,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// フォント設定	2012/11/27 Uchi
 	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
-	m_cFontDeleters.resize( _countof( nItemIds ) );
-	for( size_t i = 0; i < _countof( nItemIds ); ++i ){
+	m_cFontDeleters.resize( int(std::size(nItemIds)) );
+	for( size_t i = 0; i < int(std::size(nItemIds)); ++i ){
 		HWND hwndItem = GetItemHwnd( nItemIds[i] );
 		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
 		HFONT hFont = SetMainFont( hwndItem );
@@ -442,7 +442,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		else{
 			/* 現在のプロセスのカレントディレクトリを取得します */
 			WCHAR	szWorkFolder[MAX_PATH];
-			::GetCurrentDirectory( _countof( szWorkFolder ) - 1, szWorkFolder );
+			::GetCurrentDirectory( int(std::size(szWorkFolder)) - 1, szWorkFolder );
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 		}
 		return TRUE;
@@ -451,7 +451,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
 			const int nMaxPath = MAX_GREP_PATH;
 			WCHAR szFolder[nMaxPath];
-			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
+			::GetWindowText( hwnd, szFolder, int(std::size(szFolder)) );
 			std::vector<std::wstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){

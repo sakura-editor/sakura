@@ -64,7 +64,7 @@ constexpr size_t int2dec_destBufferSufficientLength();
 template <>
 constexpr size_t int2dec_destBufferSufficientLength<int32_t>()
 {
-	return _countof(L"-2147483648");
+	return int(std::size(L"-2147483648"));
 }
 
 /*!
@@ -74,7 +74,7 @@ constexpr size_t int2dec_destBufferSufficientLength<int32_t>()
 template <>
 constexpr size_t int2dec_destBufferSufficientLength<int64_t>()
 {
-	return _countof(L"-9223372036854775808");
+	return int(std::size(L"-9223372036854775808"));
 }
 
 /*! @brief 整数を10進数の文字列に変換

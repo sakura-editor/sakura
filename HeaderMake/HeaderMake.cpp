@@ -242,7 +242,7 @@ next:
 		GetFileTitlePointer(in_file)
 	);
 	if(mode==MODE_ENUM)fprintf(out,"enum %s{\n",enum_name); //enum開始
-	while(NULL!=fgets(line,_countof(line),in))
+	while(NULL!=fgets(line,int(std::size(line)),in))
 	{
 		// #無視(for MinGW)
 		if('#' == line[0]){

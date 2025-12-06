@@ -195,7 +195,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 		szFuncName[0]='\0';// 初期化
 		for( ; i < nLineLen; ++i ){
 			//# バッファオーバーランチェック
-			if( szLine[i] == LTEXT('(') && (i - nBgn)< _countof(szFuncName) ){
+			if( szLine[i] == LTEXT('(') && (i - nBgn)< int(std::size(szFuncName)) ){
 				wmemcpy( szFuncName, &szLine[nBgn], i - nBgn );
 				szFuncName[i - nBgn] = L'\0';
 				++i;
@@ -213,7 +213,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 			// Jun. 16, 2002 genta プロトタイプチェック用に追加
 			int nArgs;
 			const MacroFuncInfo* mInfo= CSMacroMgr::GetFuncInfoByID( nFuncID );
-			int nArgSizeMax = _countof( mInfo->m_varArguments );
+			int nArgSizeMax = int(std::size(mInfo->m_varArguments));
 			if( mInfo->m_pData  ){
 				nArgSizeMax = mInfo->m_pData->m_nArgMaxSize;
 			}

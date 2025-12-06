@@ -223,7 +223,7 @@ void _DispEOF(
 
 	//定数
 	static const wchar_t	szEof[] = L"[EOF]";
-	const int		nEofLen = _countof(szEof) - 1;
+	const int		nEofLen = int(std::size(szEof)) - 1;
 
 	cEofType.SetGraphicsState_WhileThisObj(gr);
 	int fontNo = WCODE::GetFontNo('E');
@@ -338,7 +338,7 @@ void _DrawEOL(
 			pt[4].y = sy;
 			pt[5].x = sx + rcEol.Height() / 4;	//	先頭から上へ
 			pt[5].y = sy - rcEol.Height() / 4;
-			::PolyPolyline( gr, pt, pp, _countof(pp));
+			::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 
 			if ( bBold ) {
 				pt[0].x += 1;	//	上へ（右へずらす）
@@ -353,7 +353,7 @@ void _DrawEOL(
 				pt[4].y += 1;
 				pt[5].x += 0;	//	先頭から上へ
 				pt[5].y += 1;
-				::PolyPolyline( gr, pt, pp, _countof(pp));
+				::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 			}
 		}
 		break;
@@ -373,7 +373,7 @@ void _DrawEOL(
 			pt[3].y = sy;
 			pt[4].x = sx + rcEol.Height() / 4;	//	先頭から上へ
 			pt[4].y = sy - rcEol.Height() / 4;
-			::PolyPolyline( gr, pt, pp, _countof(pp));
+			::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 
 			if ( bBold ) {
 				pt[0].x += 0;	//	右へ
@@ -386,7 +386,7 @@ void _DrawEOL(
 				pt[3].y += 1;
 				pt[4].x += 0;	//	先頭から上へ
 				pt[4].y += 1;
-				::PolyPolyline( gr, pt, pp, _countof(pp));
+				::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 			}
 		}
 		break;
@@ -407,7 +407,7 @@ void _DrawEOL(
 			pt[3].y = sy;
 			pt[4].x = sx + rcEol.Height() / 4;	//	そして右上へ
 			pt[4].y = sy - rcEol.Height() / 4;
-			::PolyPolyline( gr, pt, pp, _countof(pp));
+			::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 
 			if( bBold ){
 				pt[0].x += 1;	//	上へ
@@ -420,7 +420,7 @@ void _DrawEOL(
 				pt[3].y += 0;
 				pt[4].x += 1;	//	そして右上へ
 				pt[4].y += 0;
-				::PolyPolyline( gr, pt, pp, _countof(pp));
+				::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 			}
 		}
 		break;
@@ -444,7 +444,7 @@ void _DrawEOL(
 			pt[3].y = sy;
 			pt[4].x = sx;	//	先頭から上へ
 			pt[4].y = sy - nWidth;
-			::PolyPolyline( gr, pt, pp, _countof(pp));
+			::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 
 			if ( bBold ) {
 				pt[0].x += 0;	//	右上から
@@ -457,7 +457,7 @@ void _DrawEOL(
 				pt[3].y -= 1;
 				pt[4].x += 1;	//	先頭から上へ
 				pt[4].y += 0;
-				::PolyPolyline( gr, pt, pp, _countof(pp));
+				::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 			}
 		}
 		break;

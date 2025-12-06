@@ -874,7 +874,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 		m_hwndPrintPreviewBar, 
 		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
-		_countof(szPageNum) - 1,
+		int(std::size(szPageNum)) - 1,
 		szPageNum
 	);
 	if( FALSE != bDlgInputPageResult ){

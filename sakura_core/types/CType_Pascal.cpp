@@ -100,4 +100,4 @@ const wchar_t* g_ppszKeywordsPASCAL[] = {
 	L"protected",
 	L"override"
 };
-int g_nKeywordsPASCAL = _countof(g_ppszKeywordsPASCAL);
+int g_nKeywordsPASCAL = int(std::size(g_ppszKeywordsPASCAL));

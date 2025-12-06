@@ -125,7 +125,7 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	  m_bDirectTagJump(bDirectTagJump)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	// 2010.07.22 Moca ページング採用で 最大値を100→50に減らす
 	m_pcList = new CSortedTagJumpList(50);
@@ -375,7 +375,7 @@ int CDlgTagJumpList::GetData( void )
 		}
 		wchar_t	tmp[MAX_TAG_STRING_LENGTH];
 		tmp[0] = L'\0';
-		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, _countof( tmp ) );
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, int(std::size(tmp)) );
 		SetKeyword( tmp );
 
 		//設定を保存
@@ -411,7 +411,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
 
-	for( int i = 0; i < _countof(anchorList); i++ ){
+	for( int i = 0; i < int(std::size(anchorList)); i++ ){
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
@@ -587,7 +587,7 @@ BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for( int i = 0 ; i < _countof(anchorList); i++ ){
+	for( int i = 0 ; i < int(std::size(anchorList)); i++ ){
 		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
 	::InvalidateRect( GetHwnd(), nullptr, TRUE );
@@ -882,7 +882,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 		lpPathInfo->szFileNameDst[0] = L'\0';
 		{
 			WCHAR szPath[_MAX_PATH];
-			GetFullPathAndLine( i, szPath, _countof(szPath), nullptr, nullptr );
+			GetFullPathAndLine( i, szPath, int(std::size(szPath)), nullptr, nullptr );
 			if( FALSE == GetLongFileName( szPath, lpPathInfo->szFileNameDst ) ){
 				wcscpy( lpPathInfo->szFileNameDst, szPath );
 			}
@@ -973,7 +973,7 @@ void CDlgTagJumpList::FindNext( bool bNewFind )
 {
 	wchar_t	szKey[ MAX_TAG_STRING_LENGTH ];
 	szKey[0] = L'\0';
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, _countof( szKey ) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, int(std::size(szKey)) );
 	if( bNewFind ){
 		// 前回のキーワードからの絞込検索のときで、tagsをスキップできるときはスキップ
 		if( -1 < m_psFind0Match->m_nDepth
@@ -1226,10 +1226,10 @@ bool CDlgTagJumpList::ReadTagsParameter(
 	fpos_t old_offset = 0;
 
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
-	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
+	const int nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
-	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
+	while( fgets( szLineData, int(std::size(szLineData)), fp ) ) {
 		nLines++;
 		// fgetsが行すべてを読み込めていない場合の考慮
 		if( '\0' != szLineData[nLINEDATA_LAST_CHAR] && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
@@ -1375,7 +1375,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 	SearchState eSearchState = STATE_BINARY;
 	
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
-	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
+	const int nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
 	// 初期設定 tagsファイルの中央のキーまでシーク
@@ -1387,9 +1387,9 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 	curr_offset = low_offset + ((high_offset - low_offset) / 2);
 	fsetpos(fp, &curr_offset);
 	// 改行コードまでを捨てる
-	fgets(szLineData, _countof(szLineData), fp);
+	fgets(szLineData, int(std::size(szLineData)), fp);
 
-	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
+	while( fgets( szLineData, int(std::size(szLineData)), fp ) ) {
 		// fgetsが行すべてを読み込めていない場合の考慮
 		if( '\0' != szLineData[nLINEDATA_LAST_CHAR] && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
 			SkipLine(fp);
@@ -1455,7 +1455,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 			}
 			curr_offset = temp;
 			fsetpos(fp, &curr_offset);
-			fgets(szLineData, _countof(szLineData), fp);
+			fgets(szLineData, int(std::size(szLineData)), fp);
 		}
 		else if (eSearchState == STATE_SKIP_BACK) {
 			curr_offset -= 1024 * 2;
@@ -1464,7 +1464,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 				eSearchState = STATE_STEP_FORWARD;
 			}
 			fsetpos(fp, &curr_offset);
-			fgets(szLineData, _countof(szLineData), fp);
+			fgets(szLineData, int(std::size(szLineData)), fp);
 		}
 
 next_line:
@@ -1493,10 +1493,10 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 	int		n2;
 	
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
-	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
+	const int nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
-	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
+	while( fgets( szLineData, int(std::size(szLineData)), fp ) ) {
 		// fgetsが行すべてを読み込めていない場合の考慮
 		if( '\0' != szLineData[nLINEDATA_LAST_CHAR] && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
 			SkipLine(fp);

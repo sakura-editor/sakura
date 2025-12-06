@@ -115,7 +115,7 @@ void CDlgCtrlCode::SetData( void )
 	/* データ表示 */
 	WCHAR	tmp[10];
 	count = 0;
-	for( i = 0; i < _countof(p_ctrl_list); i++ )
+	for( i = 0; i < int(std::size(p_ctrl_list)); i++ )
 	{
 		if( p_ctrl_list[i].jname == nullptr ) continue;
 		
@@ -267,12 +267,12 @@ BOOL CDlgCtrlCode::OnNotify( NMHDR* pNMHDR )
 				NMKEY	*p = (NMKEY*)pNMHDR;
 				int		i, j;
 				unsigned int	c;
-				for( i = 0; i < _countof(p_ctrl_list); i++ )
+				for( i = 0; i < int(std::size(p_ctrl_list)); i++ )
 				{
 					c = p_ctrl_list[i].vKey;
 					if( c == (p->nVKey & 0xffff) )
 					{
-						for( j = 0; j < _countof(p_ctrl_list); j++ )
+						for( j = 0; j < int(std::size(p_ctrl_list)); j++ )
 						{
 							if( p_ctrl_list[i].code == p_ctrl_list[j].code )
 							{

@@ -249,7 +249,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 						if( (nRet = RegistExt( ext, true )) != 0 )
 						{
 							WCHAR buf[BUFFER_SIZE] = {0};
-							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, _countof(buf), nullptr );
+							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, int(std::size(buf)), nullptr );
 							::MessageBox( GetHwnd(), (std::wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 							break;
 						}
@@ -257,7 +257,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 						if( (nRet = UnregistExt( ext )) != 0 )
 						{
 							WCHAR buf[BUFFER_SIZE] = {0};
-							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, _countof(buf), nullptr );
+							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, int(std::size(buf)), nullptr );
 							::MessageBox( GetHwnd(), (std::wstring(LS(STR_DLGTYPELIST_ERR2)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 							break;
 						}
@@ -287,7 +287,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					if( (nRet = RegistExt( ext, checked )) != 0 )
 					{
 						WCHAR buf[BUFFER_SIZE] = {0};
-						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, _countof(buf), nullptr );
+						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, int(std::size(buf)), nullptr );
 						::MessageBox( GetHwnd(), (std::wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 						break;
 					}
@@ -597,7 +597,7 @@ bool CDlgTypeList::CopyType()
 			int nTempLen = wcslen( szTemp );
 			CNativeW cmem;
 			// バッファをはみ出さないように
-			LimitStringLengthW( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );
+			LimitStringLengthW( szTemp, nTempLen, int(std::size(type.m_szTypeName)) - nLen - 1, cmem );
 			wcscpy( type.m_szTypeName, cmem.GetStringPtr() );
 			wcscat( type.m_szTypeName, szNum );
 			bUpdate = false;
@@ -732,7 +732,7 @@ int CopyRegistry(HKEY srcRoot, const std::wstring& srcPath, HKEY destRoot, const
 		DWORD dwDataLen;
 		DWORD dwType;
 
-		errorCode = keySrc.EnumValue(index, szValue, _countof(szValue), &dwType, data, _countof(data), &dwDataLen );
+		errorCode = keySrc.EnumValue(index, szValue, int(std::size(szValue)), &dwType, data, int(std::size(data)), &dwDataLen );
 		if( errorCode == ERROR_NO_MORE_ITEMS ){
 			errorCode = 0;
 			break;
@@ -749,7 +749,7 @@ int CopyRegistry(HKEY srcRoot, const std::wstring& srcPath, HKEY destRoot, const
 	WCHAR szSubKey[ BUFFER_SIZE ] = {0};
 	for (;;)
 	{
-		errorCode = keySrc.EnumKey(index, szSubKey, _countof(szSubKey));
+		errorCode = keySrc.EnumKey(index, szSubKey, int(std::size(szSubKey)));
 		if( errorCode == ERROR_NO_MORE_ITEMS ){
 			errorCode = 0;
 			break;
@@ -776,7 +776,7 @@ int DeleteRegistry(HKEY root, const std::wstring& path)
 	WCHAR szSubKey[ BUFFER_SIZE ] = {0};
 	for (;;)
 	{
-		errorCode = keySrc.EnumKey(index, szSubKey, _countof(szSubKey));
+		errorCode = keySrc.EnumKey(index, szSubKey, int(std::size(szSubKey)));
 		if( errorCode == ERROR_NO_MORE_ITEMS ){
 			errorCode = 0;
 			break;
@@ -839,7 +839,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	WCHAR szProgID_HKLM[ BUFFER_SIZE ] = {0};
 	if( ( errorCode = keyExt_HKLM.Open(HKEY_LOCAL_MACHINE, sDotExt.c_str(), KEY_READ) ) == 0 )
 	{
-		keyExt_HKLM.GetValue(nullptr, szProgID_HKLM, _countof(szProgID_HKLM));
+		keyExt_HKLM.GetValue(nullptr, szProgID_HKLM, int(std::size(szProgID_HKLM)));
 	}
 
 	CRegKey keyExt;
@@ -849,7 +849,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	}
 
 	WCHAR szProgID[ BUFFER_SIZE ] = {0};
-	keyExt.GetValue(nullptr, szProgID, _countof(szProgID));
+	keyExt.GetValue(nullptr, szProgID, int(std::size(szProgID)));
 
 	if(wcscmp( sGenProgID.c_str(), szProgID ) != 0) {
 		if( szProgID[0] != L'\0' )
@@ -880,7 +880,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	}
 
 	WCHAR sExePath[_MAX_PATH] = {0};
-	::GetModuleFileName( nullptr, sExePath, _countof(sExePath) );
+	::GetModuleFileName( nullptr, sExePath, int(std::size(sExePath)) );
 	std::wstring sCommandPathArg = std::wstring() + L"\"" + sExePath + L"\" \"%1\"";
 	if( (errorCode = keyShellActionCommand.SetValue(nullptr, sCommandPathArg.c_str())) != 0 ){ return errorCode; }
 
@@ -891,7 +891,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	CRegKey keyShell;
 	if( (errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0 ){ return errorCode; }
 	WCHAR szShellValue[ BUFFER_SIZE ] = {0};
-	keyShell.GetValue(nullptr, szShellValue, _countof(szShellValue));
+	keyShell.GetValue(nullptr, szShellValue, int(std::size(szShellValue)));
 	if(bDefProg)
 	{
 		if( wcscmp(szShellValue, ACTION_NAME) != 0 )
@@ -918,7 +918,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 		else
 		{
 			WCHAR sBackupValue[ BUFFER_SIZE ] = {0};
-			keyBackup.GetValue(nullptr, sBackupValue, _countof(sBackupValue));
+			keyBackup.GetValue(nullptr, sBackupValue, int(std::size(sBackupValue)));
 			keyShell.SetValue(nullptr, sBackupValue);
 		}
 	}
@@ -961,7 +961,7 @@ int UnregistExt(LPCWSTR sExt)
 	}
 
 	WCHAR szProgID[ BUFFER_SIZE ] = {0};
-	keyExt.GetValue(nullptr, szProgID, _countof(szProgID));
+	keyExt.GetValue(nullptr, szProgID, int(std::size(szProgID)));
 
 	if( szProgID[0] == L'\0' )
 	{
@@ -989,7 +989,7 @@ int UnregistExt(LPCWSTR sExt)
 	else
 	{
 		WCHAR szBackupValue[ BUFFER_SIZE ] = {0};
-		keyBackup.GetValue(nullptr, szBackupValue, _countof(szBackupValue));
+		keyBackup.GetValue(nullptr, szBackupValue, int(std::size(szBackupValue)));
 		keyShell.SetValue(nullptr, szBackupValue);
 	}
 
@@ -1000,7 +1000,7 @@ int UnregistExt(LPCWSTR sExt)
 		if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sProgIDPath)) != 0 ){ return errorCode; }
 
 		WCHAR szBackupValue[ BUFFER_SIZE ] = {0};
-		keyExt.GetValue(PROGID_BACKUP_NAME, szBackupValue, _countof(szBackupValue));
+		keyExt.GetValue(PROGID_BACKUP_NAME, szBackupValue, int(std::size(szBackupValue)));
 		if( szBackupValue[0] != L'\0' ){
 			keyExt.SetValue(nullptr, szBackupValue);
 		}else{
@@ -1051,7 +1051,7 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	}
 
 	WCHAR szProgID[ BUFFER_SIZE ] = {0};
-	keyExt.GetValue(nullptr, szProgID, _countof(szProgID));
+	keyExt.GetValue(nullptr, szProgID, int(std::size(szProgID)));
 
 	if(szProgID[0] == L'\0')
 	{
@@ -1069,7 +1069,7 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	CRegKey keyShell;
 	if( (errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ)) != 0 ){ return errorCode; }
 	WCHAR szShellValue[ BUFFER_SIZE ] = {0};
-	keyShell.GetValue(nullptr, szShellValue, _countof(szShellValue));
+	keyShell.GetValue(nullptr, szShellValue, int(std::size(szShellValue)));
 	if( wcscmp( szShellValue, ACTION_NAME ) == 0 )
 	{
 		*pbDblClick = true;

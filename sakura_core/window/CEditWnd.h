@@ -361,7 +361,7 @@ private:
 	CMiniMapView	m_cMiniMapView;		//!< ミニマップ
 	int				m_nActivePaneIndex = 0;	//!< 有効なビューのindex
 	int				m_nEditViewCount = 1;	//!< 有効なビューの数
-	const int		m_nEditViewMaxCount = _countof(m_pcEditViewArr);//!< ビューの最大数=4
+	const int		m_nEditViewMaxCount = int(std::size(m_pcEditViewArr));//!< ビューの最大数=4
 
 	//共有データ
 	DLLSHAREDATA*	m_pShareData;

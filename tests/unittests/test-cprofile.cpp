@@ -24,7 +24,7 @@ TEST( CProfile, WriteProfileMakesSubDirectories )
 {
 	// サブディレクトリを含むパスを作成する
 	WCHAR szIniName[_MAX_PATH]{ 0 };
-	::_wfullpath( szIniName, L"test1\\test2\\test.ini", _countof(szIniName) );
+	::_wfullpath( szIniName, L"test1\\test2\\test.ini", int(std::size(szIniName)) );
 
 	// プロファイルを書き出す
 	CProfile cProfile;
@@ -130,7 +130,7 @@ TEST(CProfile, GetProfileData_NewEntry)
 TEST(StringBufferW, ctor)
 {
 	WCHAR szBuf[12]{ 0 };
-	StringBufferW buf1(szBuf, _countof(szBuf));
+	StringBufferW buf1(szBuf, int(std::size(szBuf)));
 	StringBufferW buf2(szBuf);
 
 	ASSERT_THROW({ StringBufferW buf3(nullptr, 1); }, std::invalid_argument);

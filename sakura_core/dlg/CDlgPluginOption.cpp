@@ -694,7 +694,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	WCHAR	szDir[_MAX_PATH+1];
 
 	/* 検索フォルダー */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, int(std::size(szDir)) );
 
 	if (_IS_REL_PATH( szDir )) {
 		WCHAR	folder[_MAX_PATH];
@@ -718,7 +718,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
 	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir )) {
 		//	末尾に\マークを追加する．
-		AddLastChar( szDir, _countof(szDir), L'\\' );
+		AddLastChar( szDir, int(std::size(szDir)), L'\\' );
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir );
 	}
 }

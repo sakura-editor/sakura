@@ -245,7 +245,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 
 		// 2010.08.27 Moca システムディレクトリ付加
 		WCHAR szCmdDir[_MAX_PATH];
-		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
+		::GetSystemDirectory(szCmdDir, int(std::size(szCmdDir)));
 
 		//コマンドライン文字列作成
 		auto_sprintf(
@@ -312,8 +312,8 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 			WCHAR szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime( &systime );
-			CFormatManager().MyGetDateFormat( systime, szTextDate, _countof( szTextDate ) - 1 );
-			CFormatManager().MyGetTimeFormat( systime, szTextTime, _countof( szTextTime ) - 1 );
+			CFormatManager().MyGetDateFormat( systime, szTextDate, int(std::size(szTextDate)) - 1 );
+			CFormatManager().MyGetTimeFormat( systime, szTextTime, int(std::size(szTextTime)) - 1 );
 			WCHAR szOutTemp[1024*2+100];
 			oa.OutputW( L"\r\n" );
 			oa.OutputW( L"#============================================================\r\n" );

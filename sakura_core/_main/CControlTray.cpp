@@ -350,7 +350,7 @@ BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIco
 	tnd.uCallbackMessage	= MYWM_NOTIFYICON;
 	tnd.hIcon				= hIcon;
 	if( pszTip ){
-		lstrcpyn( tnd.szTip, pszTip, _countof( tnd.szTip ) );
+		lstrcpyn( tnd.szTip, pszTip, int(std::size(tnd.szTip)) );
 	}else{
 		tnd.szTip[0] = L'\0';
 	}
@@ -427,8 +427,8 @@ LRESULT CControlTray::DispatchEvent(
 
 			hwndWork = ::GetForegroundWindow();
 			szClassName[0] = L'\0';
-			::GetClassName( hwndWork, szClassName, _countof( szClassName ) - 1 );
-			::GetWindowText( hwndWork, szText, _countof( szText ) - 1 );
+			::GetClassName( hwndWork, szClassName, int(std::size(szClassName)) - 1 );
+			::GetWindowText( hwndWork, szText, int(std::size(szText)) - 1 );
 			if( 0 == wcscmp( szText, LS(STR_PROPCOMMON) ) ){
 				return -1;
 			}
@@ -1113,7 +1113,7 @@ bool CControlTray::OpenNewEditor(
 
 	//アプリケーションパス
 	WCHAR szEXE[MAX_PATH + 1];
-	::GetModuleFileName( nullptr, szEXE, _countof( szEXE ) );
+	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)) );
 	cCmdLineBuf.AppendF( L"\"%s\"", szEXE );
 
 	// ファイル名
@@ -1563,7 +1563,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				// メニューラベル。1からアクセスキーを振る
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, int(std::size(szMenu)), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
 				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, L"", FALSE );
 				++j;
 			}

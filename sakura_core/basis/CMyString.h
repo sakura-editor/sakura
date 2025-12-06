@@ -83,7 +83,7 @@ public:
 	}
 	size_t max_size() const
 	{
-		return _countof(m_szCmdLine) - 1;
+		return int(std::size(m_szCmdLine)) - 1;
 	}
 private:
 	WCHAR	m_szCmdLine[1024];

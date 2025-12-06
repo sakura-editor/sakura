@@ -55,7 +55,7 @@ CDlgCompare::CDlgCompare()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */
 
@@ -157,12 +157,12 @@ void CDlgCompare::SetData( void )
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
 			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()){
 				// 2010.07.30 自分の名前もここから設定する
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, -1, calc.GetDC() );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, int(std::size(szMenu)), pfi, pEditNodeArr[i].m_nId, -1, calc.GetDC() );
 				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szMenu );
 				continue;
 			}
 			// 番号は ウィンドウリストと同じになるようにする
-			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i, calc.GetDC() );
+			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, int(std::size(szMenu)), pfi, pEditNodeArr[i].m_nId, i, calc.GetDC() );
 
 			nItem = ApiWrap::List_AddString( hwndList, szMenu );
 			ApiWrap::List_SetItemData( hwndList, nItem, pEditNodeArr[i].GetHwnd() );
@@ -249,7 +249,7 @@ BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
 
-	for( int i = 0; i < _countof(anchorList); i++ ){
+	for( int i = 0; i < int(std::size(anchorList)); i++ ){
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
@@ -287,7 +287,7 @@ BOOL CDlgCompare::OnSize( WPARAM wParam, LPARAM lParam )
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for( int i = 0 ; i < _countof(anchorList); i++ ){
+	for( int i = 0 ; i < int(std::size(anchorList)); i++ ){
 		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
 	::InvalidateRect( GetHwnd(), nullptr, TRUE );

@@ -464,7 +464,7 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 	::GetWindowRect( hListView, &rc );
 	int width = rc.right - rc.left;
 	
-	for( pos = 0; pos < _countof( ColumnList ); ++pos ){
+	for( pos = 0; pos < int(std::size(ColumnList)); ++pos ){
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
@@ -547,7 +547,7 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 
 	//アプリケーションパス
 	WCHAR szExePath[MAX_PATH + 1];
-	::GetModuleFileName( nullptr, szExePath, _countof( szExePath ) );
+	::GetModuleFileName( nullptr, szExePath, int(std::size(szExePath)) );
 	cCmdLineBuf.AppendF( L"\"%s\"", szExePath );
 
 	// ファイル名

@@ -499,12 +499,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_INSERT_NODE:		// ノード挿入
 						eFuncCode = F_NODE;
 						bIsNode = true;
-						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_EDIT), _countof(szLabel) - 1 );
+						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_EDIT), int(std::size(szLabel)) - 1 );
 						szLabel[std::size(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERTSEPARATOR:	// 区切線挿入
 						eFuncCode = F_SEPARATOR;
-						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_SEP), _countof(szLabel) - 1 );
+						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_SEP), int(std::size(szLabel)) - 1 );
 						szLabel[std::size(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERT:				// 挿入

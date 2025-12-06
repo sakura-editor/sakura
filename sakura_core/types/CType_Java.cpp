@@ -488,4 +488,4 @@ const wchar_t* g_ppszKeywordsJAVA[] = {
 	L"volatile",
 	L"while"
 };
-int g_nKeywordsJAVA = _countof(g_ppszKeywordsJAVA);
+int g_nKeywordsJAVA = int(std::size(g_ppszKeywordsJAVA));
