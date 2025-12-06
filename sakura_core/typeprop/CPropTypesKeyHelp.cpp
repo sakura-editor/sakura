@@ -512,7 +512,7 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 
 	HWND hwndCombo = GetDlgItem(hwndDlg, IDC_COMBO_MENU);
 	ApiWrap::Combo_ResetContent(hwndCombo);
-	for( i = 0; i < (int)int(std::size(nKeyHelpRMenuType)); i++ ){
+	for( i = 0; i < int(std::size(nKeyHelpRMenuType)); i++ ){
 		ApiWrap::Combo_AddString(hwndCombo, LS(nKeyHelpRMenuType[i]));
 	}
 	ApiWrap::Combo_SetCurSel(hwndCombo, m_Types.m_eKeyHelpRMenuShowType);

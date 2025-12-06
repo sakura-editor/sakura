@@ -227,7 +227,7 @@ UINT_PTR CALLBACK OFNHookProc(
 		L"LF (UNIX)",
 		L"CR (Mac)",
 	};
-	int nEolNameArrNum = (int)int(std::size(pEolNameArr));
+	int nEolNameArrNum = int(std::size(pEolNameArr));
 
 //	To Here	Feb. 9, 2001 genta
 	int	nRightMargin = 24;

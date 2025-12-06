@@ -502,7 +502,7 @@ const EFunctionCode nsFuncCode::pnFuncList_Special[] = {
 	F_USERMACRO_LIST,
 	F_PLUGIN_LIST,
 };
-const int nsFuncCode::nFuncList_Special_Num = (int)int(std::size(nsFuncCode::pnFuncList_Special));
+const int nsFuncCode::nFuncList_Special_Num = int(std::size(nsFuncCode::pnFuncList_Special));
 
 const int nsFuncCode::pnFuncListNumArr[] = {
 //	nFincList_Undef_Num,	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)

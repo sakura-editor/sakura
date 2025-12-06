@@ -247,7 +247,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[2], EEolType::paragraph_separator );
 	bool bEolEx = false;
 	int  nMaxEolLen = 0;
-	for( int k = 0; k < (int)int(std::size(m_memEols)); k++ ){
+	for( int k = 0; k < int(std::size(m_memEols)); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
 			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());
@@ -489,7 +489,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				}
 				if( m_bEolEx ){
 					int k;
-					for( k = 0; k < (int)int(std::size(eEolEx)); k++ ){
+					for( k = 0; k < int(std::size(eEolEx)); k++ ){
 						if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
 								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
 							pcEol->SetType(eEolEx[k]);
@@ -497,7 +497,7 @@ const char* CFileLoad::GetNextLineCharCode(
 							break;
 						}
 					}
-					if( k != (int)int(std::size(eEolEx)) ){
+					if( k != int(std::size(eEolEx)) ){
 						break;
 					}
 				}
