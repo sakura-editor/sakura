@@ -125,7 +125,7 @@ void CDlgFileTree::SetData()
 	TreeView_DeleteAllItems(hwndTree);
 	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
 	for( int i = 0; i < (int)m_fileTreeSetting.m_aItems.size(); i++ ){
-		int nMaxCount = int(std::size(GetDllShareData()).m_Common.m_sOutline.m_sFileTree.m_aItems);
+		int nMaxCount = int(std::size(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems));
 		if( bSaveShareData && nMaxCount < i + 1 ){
 			::InfoMessage(GetHwnd(), LS(STR_FILETREE_MAXCOUNT), nMaxCount);
 		}
@@ -215,7 +215,7 @@ void CDlgFileTree::ChangeEnableAddInsert()
 	if( bSaveShareData ){
 		int nCount = TreeView_GetCount(GetItemHwnd(IDC_TREE_FL));
 		bool bEnable = true;
-		int nMaxCount = int(std::size(GetDllShareData()).m_Common.m_sOutline.m_sFileTree.m_aItems);
+		int nMaxCount = int(std::size(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems));
 		if( nMaxCount < nCount ){
 			bEnable = false;
 		}

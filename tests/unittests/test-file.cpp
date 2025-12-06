@@ -505,73 +505,73 @@ TEST(file, FileMatchScoreSepExt)
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\test.txt)",
 		LR"(C:\TEMP\TEST.TXT)");
-	ASSERT_EQ(int(std::size(LR"(test.txt))") - 1, result);
+	ASSERT_EQ(std::size(LR"(test.txt)") - 1, result);
 
 	// FileNameSepExtのテストパターン（パスにフォルダーが含まれない）
 	result = FileMatchScoreSepExt(
 		LR"(TEST.TXT)",
 		LR"(test.txt)");
-	ASSERT_EQ(int(std::size(LR"(test.txt))") - 1, result);
+	ASSERT_EQ(std::size(LR"(test.txt)") - 1, result);
 
 	// FileNameSepExtのテストパターン（ファイル名がない）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\.txt)",
 		LR"(C:\TEMP\.txt)");
-	ASSERT_EQ(int(std::size(LR"(.txt))") - 1, result);
+	ASSERT_EQ(std::size(LR"(.txt)") - 1, result);
 
 	// FileNameSepExtのテストパターン（拡張子がない）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\test)",
 		LR"(C:\TEMP\test)");
-	ASSERT_EQ(int(std::size(LR"(test))") - 1, result);
+	ASSERT_EQ(std::size(LR"(test)") - 1, result);
 
 	// 全く同じパス同士の比較（ファイル名＋拡張子が完全一致）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\test.txt)",
 		LR"(C:\TEMP\TEST.TXT)");
-	ASSERT_EQ(int(std::size(LR"(test.txt))") - 1, result);
+	ASSERT_EQ(std::size(LR"(test.txt)") - 1, result);
 
 	// 異なるパスでファイル名＋拡張子が同じ（ファイル名＋拡張子が完全一致）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP1\TEST.TXT)",
 		LR"(C:\TEMP2\test.txt)");
-	ASSERT_EQ(int(std::size(LR"(test.txt))") - 1, result);
+	ASSERT_EQ(std::size(LR"(test.txt)") - 1, result);
 
 	// ファイル名が異なる1（最長一致を取得）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\test.txt)",
 		LR"(C:\TEMP\TEST1.TST)");
-	ASSERT_EQ(int(std::size(LR"(test))") - 1 + int(std::size(LR"(.t))") - 1, result);
+	ASSERT_EQ(std::size(LR"(test)") - 1 + std::size(LR"(.t)") - 1, result);
 
 	// ファイル名が異なる2（最長一致を取得）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\test1.tst)",
 		LR"(C:\TEMP\TEST.TXT)");
-	ASSERT_EQ(int(std::size(LR"(test))") - 1 + int(std::size(LR"(.t))") - 1, result);
+	ASSERT_EQ(std::size(LR"(test)") - 1 + std::size(LR"(.t)") - 1, result);
 
 	// 拡張子が異なる1（最長一致を取得）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\test.txt)",
 		LR"(C:\TEMP\TEXT.TXTX)");
-	ASSERT_EQ(int(std::size(LR"(te))") - 1 + int(std::size(LR"(.txt))") - 1, result);
+	ASSERT_EQ(std::size(LR"(te)") - 1 + std::size(LR"(.txt)") - 1, result);
 
 	// 拡張子が異なる2（最長一致を取得）
 	result = FileMatchScoreSepExt(
 		LR"(C:\TEMP\text.txtx)",
 		LR"(C:\TEMP\TEST.TXT)");
-	ASSERT_EQ(int(std::size(LR"(te))") - 1 + int(std::size(LR"(.txt))") - 1, result);
+	ASSERT_EQ(std::size(LR"(te)") - 1 + std::size(LR"(.txt)") - 1, result);
 
 	// サロゲート文字を含む1
 	result = FileMatchScoreSepExt(
 		L"C:\\TEMP\\test\xD83D\xDC49\xD83D\xDC46.TST",
 		L"C:\\TEMP\\TEST\xD83D\xDC49\xD83D\xDC47.txt");
-	ASSERT_EQ(int(std::size(LR"(testXX))") - 1 + int(std::size(LR"(.t))") - 1, result);
+	ASSERT_EQ(std::size(LR"(testXX)") - 1 + std::size(LR"(.t)") - 1, result);
 
 	// サロゲート文字を含む2
 	result = FileMatchScoreSepExt(
 		L"C:\\TEMP\\TEST\xD83D\xDC49\xD83D\xDC47.txt",
 		L"C:\\TEMP\\test\xD83D\xDC49\xD83D\xDC46.TST");
-	ASSERT_EQ(int(std::size(LR"(testXX))") - 1 + int(std::size(LR"(.t))") - 1, result);
+	ASSERT_EQ(std::size(LR"(testXX)") - 1 + std::size(LR"(.t)") - 1, result);
 }
 
 /*!

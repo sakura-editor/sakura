@@ -28,7 +28,7 @@ CRecentFile::CRecentFile()
 {
 	Create(
 		GetShareData()->m_sHistory.m_fiMRUArr,
-		int(std::size(GetShareData())->m_sHistory.m_fiMRUArr[0].m_szPath),
+		int(std::size(GetShareData()->m_sHistory.m_fiMRUArr[0].m_szPath)),
 		&GetShareData()->m_sHistory.m_nMRUArrNum,
 		GetShareData()->m_sHistory.m_bMRUArrFavorite,
 		MAX_MRU,
