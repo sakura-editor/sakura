@@ -629,7 +629,7 @@ CMenuDrawer::CMenuDrawer()
 
 /* 481 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 	};
-	int tbd_num = int(std::size(tbd));
+	constexpr auto tbd_num = int(std::size(tbd));
 
 	// m_tbMyButton[0]にはセパレータが入っているため、アイコン番号とボタン番号は１つずれる
 	const int INDEX_GAP = 1;

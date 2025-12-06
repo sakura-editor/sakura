@@ -223,7 +223,7 @@ void _DispEOF(
 
 	//定数
 	static const wchar_t	szEof[] = L"[EOF]";
-	const int		nEofLen = int(std::size(szEof)) - 1;
+	constexpr auto nEofLen = int(std::size(szEof)) - 1;
 
 	cEofType.SetGraphicsState_WhileThisObj(gr);
 	int fontNo = WCODE::GetFontNo('E');

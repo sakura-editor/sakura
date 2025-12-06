@@ -1226,7 +1226,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 	fpos_t old_offset = 0;
 
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
-	const int nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
+	constexpr auto nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
 	while( fgets( szLineData, int(std::size(szLineData)), fp ) ) {
@@ -1375,7 +1375,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 	SearchState eSearchState = STATE_BINARY;
 	
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
-	const int nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
+	constexpr auto nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
 	// 初期設定 tagsファイルの中央のキーまでシーク
@@ -1493,7 +1493,7 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 	int		n2;
 	
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
-	const int nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
+	constexpr auto nLINEDATA_LAST_CHAR = int(std::size(szLineData)) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
 	while( fgets( szLineData, int(std::size(szLineData)), fp ) ) {

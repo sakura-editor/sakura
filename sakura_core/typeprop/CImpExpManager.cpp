@@ -850,7 +850,7 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
-	const int KEYNAME_SIZE = int(std::size(m_Common.m_sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	constexpr auto KEYNAME_SIZE = int(std::size(m_Common.m_sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	CommonSetting_KeyBind sKeyBind = m_Common.m_sKeyBind;
 
 	//オープン

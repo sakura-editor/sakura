@@ -435,7 +435,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 			STR_IMAGE_POS9,
 		};
 		/*BGIMAGE_TOP_LEFT .. */
-		int nCount = int(std::size(posNameId));
+		constexpr auto nCount = int(std::size(posNameId));
 		SetCombobox( ::GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS), posNameId, nCount, m_Types.m_backImgPos);
 	}
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X, m_Types.m_backImgRepeatX);

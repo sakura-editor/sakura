@@ -1039,7 +1039,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 //	int		nSize = m_pShareData->m_nKeyNameArrNum;
 	WCHAR	szWork[MAX_PLUGIN_ID+20+4];
 	bool	bOldVer = false;
-	const int KEYNAME_SIZE = int(std::size(sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	constexpr auto KEYNAME_SIZE = int(std::size(sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 
 	if( cProfile.IsReadingMode() ){ 
@@ -1681,7 +1681,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseRegexKeyword"), types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
 		wchar_t* pKeyword = types.m_RegexKeywordList;
 		int nPos = 0;
-		int nKeywordSize = int(std::size(types.m_RegexKeywordList));
+		constexpr auto nKeywordSize = int(std::size(types.m_RegexKeywordList));
 		for(j = 0; j < int(std::size(types.m_RegexKeywordArr)); j++)
 		{
 			auto_sprintf( szKeyName, LTEXT("RxKey[%03d]"), j );

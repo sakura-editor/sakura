@@ -242,7 +242,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		{
 			CDlgOpenFile	cDlgOpenFile;
 			WCHAR			szPath[_MAX_PATH + 1];
-			int				size = int(std::size(szPath)) - 1;
+			constexpr auto size = int(std::size(szPath)) - 1;
 			wcsncpy( szPath, m_szCommand, size);
 			szPath[size] = L'\0';
 			/* ファイルオープンダイアログの初期化 */
