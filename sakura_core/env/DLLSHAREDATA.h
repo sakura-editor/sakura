@@ -25,41 +25,6 @@
 #include "recent/SShare_History.h"	//SShare_History
 #include "charset/charcode.h"
 
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         アクセサ                            //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//! どこからでもアクセスできる、共有データアクセサ。2007.10.30 kobake
-struct DLLSHAREDATA;
-
-//DLLSHAREDATAへの簡易アクセサ
-inline DLLSHAREDATA& GetDllShareData()
-{
-	extern DLLSHAREDATA* g_theDLLSHAREDATA;
-
-	assert(g_theDLLSHAREDATA);
-	return *g_theDLLSHAREDATA;
-}
-
-inline DLLSHAREDATA& GetDllShareData(bool bNullCheck)
-{
-	extern DLLSHAREDATA* g_theDLLSHAREDATA;
-
-	if( bNullCheck ){
-		assert(g_theDLLSHAREDATA);
-	}
-	return *g_theDLLSHAREDATA;
-}
-
-//DLLSHAREDATAを確保したら、まずこれを呼ぶ。破棄する前にも呼ぶ。
-inline void SetDllShareData(DLLSHAREDATA* pShareData)
-{
-	extern DLLSHAREDATA* g_theDLLSHAREDATA;
-
-	g_theDLLSHAREDATA = pShareData;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    共有メモリ構成要素                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -179,6 +144,9 @@ public:
 
 	static int GetLockCounter();
 	static void WaitLock( HWND hwndParent, CShareDataLockCounter** ppLock = nullptr );
-private:
 };
+
+DLLSHAREDATA* GetDllShareDataPtr() noexcept;
+DLLSHAREDATA& GetDllShareData();
+
 #endif /* SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_ */

@@ -64,7 +64,7 @@ class CShareData : public TSingleInstance<CShareData>
 {
 public:
 	CShareData();
-	~CShareData();
+	~CShareData() override;
 
 	/*
 	||  Attributes & Operations
@@ -96,6 +96,8 @@ public:
 
 	static CMutex& GetMutexShareWork();
 
+	DLLSHAREDATA*	GetDllShareDataPtr() noexcept { return m_pShareData; }
+
 protected:
 	/*
 	||  実装ヘルパ関数
@@ -117,6 +119,7 @@ private:
 	HANDLE			m_hFileMap = nullptr;
 	DLLSHAREDATA*	m_pShareData = nullptr;
 	std::vector<STypeConfig*>* 	m_pvTypeSettings = nullptr;	//	(コントロールプロセスのみ)
-	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
+	HWND			m_hwndTraceOutSource = nullptr;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 };
+
 #endif /* SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_ */

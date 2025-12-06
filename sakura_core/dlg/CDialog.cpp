@@ -69,12 +69,16 @@ CDialog::CDialog(bool bSizable, bool bCheckShareData)
 {
 //	MYTRACE( L"CDialog::CDialog()\n" );
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData(bCheckShareData);
+	m_pShareData = GetDllShareDataPtr();
 
 	m_bSizable = bSizable;
 
-	return;
+	// 共有データが取得できなかったら異常
+	if (bCheckShareData) {
+		GetDllShareData();
+	}
 }
+
 CDialog::~CDialog()
 {
 //	MYTRACE( L"CDialog::~CDialog()\n" );
