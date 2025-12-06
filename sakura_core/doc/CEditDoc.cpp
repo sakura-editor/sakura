@@ -506,7 +506,7 @@ bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand ) const
 	//	編集禁止の場合(バイナリサーチ)
 	{
 		int lbound = 0;
-		constexpr auto ubound = int(std::size(EIsModificationForbidden)) - 1;
+		auto ubound = int(std::size(EIsModificationForbidden)) - 1;
 
 		while( lbound <= ubound ){
 			int mid = ( lbound + ubound ) / 2;

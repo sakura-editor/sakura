@@ -213,7 +213,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 			// Jun. 16, 2002 genta プロトタイプチェック用に追加
 			int nArgs;
 			const MacroFuncInfo* mInfo= CSMacroMgr::GetFuncInfoByID( nFuncID );
-			constexpr auto nArgSizeMax = int(std::size(mInfo->m_varArguments));
+			auto nArgSizeMax = int(std::size(mInfo->m_varArguments));
 			if( mInfo->m_pData  ){
 				nArgSizeMax = mInfo->m_pData->m_nArgMaxSize;
 			}
