@@ -112,7 +112,7 @@ void CDlgPluginOption::SetData( void )
 	for( i=0, it = m_cPlugin->m_options.cbegin(); it != m_cPlugin->m_options.cend(); i++, it++ ){
 		cOpt = *it;
 
-		auto_snprintf_s( buf, _countof(buf), L"%ls", cOpt->GetLabel().c_str());
+		auto_snprintf_s(buf, std::size(buf), L"%ls", cOpt->GetLabel().c_str());
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = buf;
 		lvi.iItem    = i;
@@ -159,13 +159,13 @@ void CDlgPluginOption::SetData( void )
 			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sValue == sTrg) {
-					auto_snprintf_s( buf, _countof(buf), L"%ls", sView.c_str());
+					auto_snprintf_s(buf, std::size(buf), L"%ls", sView.c_str());
 					break;
 				}
 			}
 		}
 		else {
-			auto_snprintf_s( buf, _countof(buf), L"%ls", sValue.c_str());
+			auto_snprintf_s(buf, std::size(buf), L"%ls", sValue.c_str());
 		}
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;

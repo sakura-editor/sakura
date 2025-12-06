@@ -288,7 +288,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 		ListView_InsertItem( hwndList, &lvi );
 
 		const WCHAR	*p = pRecent->GetItemText( i );
-		auto_snprintf_s( tmp, _countof(tmp), L"%s", p ? p : L"" );
+		auto_snprintf_s(tmp, std::size(tmp), L"%s", p ? p : L"" );
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
 		lvi.iSubItem = 1;
@@ -752,7 +752,7 @@ bool CDlgFavorite::RefreshList( void )
 
 	if( ret_val )
 	{
-		auto_snprintf_s( m_szMsg, _countof(m_szMsg),
+		auto_snprintf_s(m_szMsg, std::size(m_szMsg),
 			LS( STR_DLGFAV_FAV_REFRESH ),	// "履歴(%s)が更新されたため編集中情報を破棄し再表示しました。"
 			msg );
 	}

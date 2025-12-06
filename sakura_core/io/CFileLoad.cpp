@@ -66,7 +66,7 @@ std::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
 
 	// to string
 	wchar_t buf[32];
-	swprintf_s(buf, _countof(buf), L"%I64u", megabytes);
+	swprintf_s(buf, std::size(buf), L"%I64u", megabytes);
 	std::wstring str = buf;
 
 	// https://stackoverflow.com/questions/7276826/c-format-number-with-commas

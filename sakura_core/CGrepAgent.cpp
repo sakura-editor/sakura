@@ -302,7 +302,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 		if( editInfo->m_bIsGrep ){
 			// Grepは検索キーとタグがぶつかることがあるので単に(Grep)と表示
 			pszTagName = szGrep;
-			wcsncpy_s(pszTagName, _countof(szGrep), L"(Grep)", _TRUNCATE);
+			wcsncpy_s(pszTagName, std::size(szGrep), L"(Grep)", _TRUNCATE);
 		}
 		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, _countof(szTitle), editInfo, node->m_nId, -1, nullptr );
 #ifdef _WIN64
@@ -726,7 +726,7 @@ DWORD CGrepAgent::DoGrep(
 			bool bOutputBaseFolder = false;
 			bool bOutputFolderName = false;
 			// 複数ウィンドウループ予約
-			auto nPathLen = wcsnlen_s(szWindowPath, _countof(szWindowPath));
+			auto nPathLen = wcsnlen_s(szWindowPath, std::size(szWindowPath));
 			std::wstring currentFile = szWindowPath;
 			if( currentFile.size() ){
 				currentFile += L'\\';

@@ -2303,7 +2303,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = ::CreatePopupMenu();
 				if (cMainMenu->m_nFunc != 0 && cMainMenu->m_sName[0] == L'\0') {
 					// ストリングテーブルから読み込み
-					wcsncpy_s(tmpMenuName, _countof(tmpMenuName), LS( cMainMenu->m_nFunc ), _TRUNCATE);
+					wcsncpy_s(tmpMenuName, std::size(tmpMenuName), LS( cMainMenu->m_nFunc ), _TRUNCATE);
 					pMenuName = tmpMenuName;
 				}else{
 					pMenuName = cMainMenu->m_sName;
@@ -4013,7 +4013,7 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 		if( p )
 		{
 			decltype(p->m_szTabCaption) caption;
-			wcsncpy_s(caption, _countof(caption), pszTabCaption, _TRUNCATE);
+			wcsncpy_s(caption, std::size(caption), pszTabCaption, _TRUNCATE);
 			if (wcscmp(caption, p->m_szTabCaption) != 0) {
 				wcscpy_s(p->m_szTabCaption, caption);
 				changed = true;

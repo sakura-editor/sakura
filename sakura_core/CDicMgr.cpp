@@ -73,7 +73,7 @@ BOOL CDicMgr::Search(
 		//1行読み込み
 		{
 			std::wstring tmp = in.ReadLineW();
-			wcsncpy_s(szLine,_countof(szLine),tmp.c_str(), _TRUNCATE);
+			wcsncpy_s(szLine, std::size(szLine),tmp.c_str(), _TRUNCATE);
 			// auto_strlcpy(szLine,tmp.c_str(), _countof(szLine));
 		}
 
