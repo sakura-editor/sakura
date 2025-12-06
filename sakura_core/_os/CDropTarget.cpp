@@ -93,16 +93,12 @@ DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
 {
 	m_pcEditWnd = pCEditWnd;	// 2008.06.20 ryoji
-	m_pcEditView = nullptr;
-	m_hWnd_DropTarget = nullptr;
 	return;
 }
 
 CDropTarget::CDropTarget( CEditView* pCEditView )
 {
-	m_pcEditWnd = nullptr;	// 2008.06.20 ryoji
 	m_pcEditView = pCEditView;
-	m_hWnd_DropTarget = nullptr;
 	return;
 }
 
