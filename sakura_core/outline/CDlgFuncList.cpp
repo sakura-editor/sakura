@@ -1867,7 +1867,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_ptDefaultSizeClient.x = rc.right;
 	m_ptDefaultSizeClient.y = rc.bottom;
 
-	for( int i = 0; i < int(std::size(anchorList)); i++ ){
+	for (int i = 0; i < std::ssize(anchorList); ++i) {
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 		// ドッキング中はウィンドウ幅いっぱいまで伸ばす
 		if( IsDocking() ){
@@ -2200,7 +2200,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	ptNew.x = rcDlg.right - rcDlg.left;
 	ptNew.y = rcDlg.bottom - rcDlg.top;
 
-	for( int i = 0 ; i < int(std::size(anchorList)); i++ ){
+	for (int i = 0 ; i < std::ssize(anchorList); ++i) {
 		HWND hwndCtrl = GetItemHwnd(anchorList[i].id);
 		ResizeItem( hwndCtrl, m_ptDefaultSizeClient, ptNew, m_rcItems[i], anchorList[i].anchor, (anchorList[i].anchor != ANCHOR_ALL));
 //	2013.2.6 aroka ちらつき防止用の試行錯誤

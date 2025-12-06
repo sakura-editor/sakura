@@ -367,7 +367,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
 
-	for( int i = 0; i < int(std::size(anchorList)); i++ ){
+	for (int i = 0; i < std::ssize(anchorList); ++i) {
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
@@ -1188,7 +1188,7 @@ BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for( int i = 0 ; i < int(std::size(anchorList)); i++ ){
+	for (int i = 0 ; i < std::ssize(anchorList); ++i) {
 		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
 

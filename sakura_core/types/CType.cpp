@@ -71,7 +71,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConf
 	};
 	types.clear();
 	static_assert( int(std::size(table)) <= MAX_TYPES );
-	for(int i = 0; i < int(std::size(table)) && i < MAX_TYPES; i++){
+	for (int i = 0; i < std::ssize(table) && i < MAX_TYPES; ++i) {
 		STypeConfig* type = new STypeConfig;
 		types.push_back(type);
 		table[i]->InitTypeConfig(i, *type);

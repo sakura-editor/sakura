@@ -413,7 +413,7 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 	if( pFormatName[0] == L'\0' ){
 		return uFormat;
 	}
-	for(int i = 0; i < int(std::size(sClipFormatNames)); i++){
+	for (int i = 0; i < std::ssize(sClipFormatNames); ++i) {
 		if( 0 == _wcsicmp(pFormatName, sClipFormatNames[i].m_pszName) ){
 			uFormat = sClipFormatNames[i].m_nClipFormat;
 		}

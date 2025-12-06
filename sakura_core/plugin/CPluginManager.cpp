@@ -348,7 +348,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 	//2010.08.04 ID使用不可の文字を確認
 	//  後々ファイル名やiniで使うことを考えていくつか拒否する
 	static const WCHAR szReservedChars[] = L"/\\,[]*?<>&|;:=\" \t";
-	for( int x = 0; x < int(std::size(szReservedChars)); ++x ){
+	for (int x = 0; x < std::ssize(szReservedChars); ++x) {
 		if( sId.npos != sId.find(szReservedChars[x]) ){
 			errorMsg = LS(STR_PLGMGR_INST_RESERVE1);
 			errorMsg += szReservedChars;

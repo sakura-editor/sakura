@@ -2030,7 +2030,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 			{1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', false, false}, 	// (選択)前の変更行へ
 			{2, F_DLGWINLIST, F_WIN_OUTPUT, L'D', false, false}, 	// ウインドウ一覧表示
 		};
-		for( int i = 0; i < int(std::size(addInfos)); i++ ){
+		for (int i = 0; i < std::ssize(addInfos); ++i) {
 			SMainMenuAddItemInfo& item = addInfos[i];
 			if( item.m_nVer <= nVersion ){
 				continue;

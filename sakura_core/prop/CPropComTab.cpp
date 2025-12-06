@@ -192,7 +192,7 @@ void CPropTab::SetData( HWND hwndDlg )
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabClose );
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	int nSelPos = 0;
-	for( int i = 0; i < int(std::size(DispTabCloseArr)); ++i ){
+	for (int i = 0; i < std::ssize(DispTabCloseArr); ++i) {
 		ApiWrap::Combo_InsertString( hwndCombo, i, LS(DispTabCloseArr[i].nNameId) );
 		if( DispTabCloseArr[i].nMethod == m_Common.m_sTabBar.m_bDispTabClose ){
 			nSelPos = i;
@@ -203,7 +203,7 @@ void CPropTab::SetData( HWND hwndDlg )
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TAB_POSITION );
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	nSelPos = 0;
-	for( int i = 0; i < int(std::size(TabPosArr)); ++i ){
+	for (int i = 0; i < std::ssize(TabPosArr); ++i) {
 		ApiWrap::Combo_InsertString( hwndCombo, i, LS(TabPosArr[i].nNameId) );
 		if( TabPosArr[i].nMethod == m_Common.m_sTabBar.m_eTabPosition ){
 			nSelPos = i;

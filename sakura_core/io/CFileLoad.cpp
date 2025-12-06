@@ -247,7 +247,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[2], EEolType::paragraph_separator );
 	bool bEolEx = false;
 	int  nMaxEolLen = 0;
-	for( int k = 0; k < int(std::size(m_memEols)); k++ ){
+	for (int k = 0; k < std::ssize(m_memEols); ++k) {
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
 			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());

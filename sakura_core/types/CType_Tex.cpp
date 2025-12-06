@@ -139,7 +139,7 @@ public:
 
 		// 2. トピック番号を更新する。
 		serials[depth] += 1; // インクリメント
-		for (int i = depth + 1; i <= tagDepth && i < int(std::size(serials)); ++i) {
+		for (int i = depth + 1; i <= tagDepth && i < std::ssize(serials); ++i) {
 			serials[i] = 0; // リセット
 		}
 

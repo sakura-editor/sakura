@@ -914,7 +914,7 @@ static bool IsXMLWhiteSpace( int c )
 */
 static ECodeType MatchEncoding(const char* pBuf, int nSize)
 {
-	for(int k = 0; k < int(std::size(encodingNameToCode)); k++ ){
+	for (int k = 0; k < std::ssize(encodingNameToCode); ++k) {
 		const int nLen = encodingNameToCode[k].nLen;
 		if( nLen == nSize && 0 == _memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
 			return static_cast<ECodeType>(encodingNameToCode[k].nCode);

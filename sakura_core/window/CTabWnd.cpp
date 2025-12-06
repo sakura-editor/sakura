@@ -718,7 +718,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 
 	// 再表示メッセージをブロードキャストする。
 	//	2007.07.07 genta 2回ループに
-	for( int group = 0; group < int(std::size(notifygroups)); group++ ){
+	for (int group = 0; group < std::ssize(notifygroups); ++group) {
 		CAppNodeGroupHandle(notifygroups[group]).PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,
 			(WPARAM)TWNT_REFRESH,
@@ -2539,8 +2539,7 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	gr.SetPen( ::GetSysColor( nIndex ) );
 	gr.SetBrushColor( ::GetSysColor( nIndex ) ); //$$ GetSysColorBrushを用いた実装のほうが効率は良い
-	for( int i = 0; i < int(std::size(ptBase)); i++ )
-	{
+	for (int i = 0; i < std::ssize(ptBase); ++i) {
 		pt[i].x = ptBase[i].x + rcBtn.left;
 		pt[i].y = ptBase[i].y + rcBtn.top;
 	}

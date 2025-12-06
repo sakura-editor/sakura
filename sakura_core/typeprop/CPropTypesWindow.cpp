@@ -321,7 +321,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState & 3;
 		int		nSelPos = 0;
-		for( int i = 0; i < int(std::size(ImeSwitchArr)); ++i ){
+		for (int i = 0; i < std::ssize(ImeSwitchArr); ++i) {
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS(ImeSwitchArr[i].nNameId) );
 			if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;
@@ -334,7 +334,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState >> 2;
 		nSelPos = 0;
-		for( int i = 0; i < int(std::size(ImeStateArr)); ++i ){
+		for (int i = 0; i < std::ssize(ImeStateArr); ++i) {
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS(ImeStateArr[i].nNameId) );
 			if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;

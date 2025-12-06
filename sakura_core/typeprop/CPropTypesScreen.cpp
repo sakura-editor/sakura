@@ -484,7 +484,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WRAPMETHOD );
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
-		for( int i = 0; i < int(std::size(WrapMethodArr)); ++i ){
+		for (int i = 0; i < std::ssize(WrapMethodArr); ++i) {
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS( WrapMethodArr[i].nNameId ) );
 			if( WrapMethodArr[i].nMethod == m_Types.m_nTextWrapMethod ){		// テキストの折り返し方法
 				nSelPos = i;
@@ -503,7 +503,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_TAB_ARROW );
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
-		for( int i = 0; i < int(std::size(TabArrowArr)); ++i ){
+		for (int i = 0; i < std::ssize(TabArrowArr); ++i) {
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS( TabArrowArr[i].nNameId ) );
 			if( TabArrowArr[i].nMethod == m_Types.m_bTabArrow ){
 				nSelPos = i;
@@ -517,7 +517,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TSV_MODE );
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
-		for( int i = 0; i < int(std::size(TsvModeArr)); ++i ){
+		for (int i = 0; i < std::ssize(TsvModeArr); ++i) {
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS( TsvModeArr[i].nNameId ) );
 			if( TsvModeArr[i].nMethod == m_Types.m_nTsvMode ){
 				nSelPos = i;
@@ -558,7 +558,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
-		for( int i = 0; i < int(std::size(IndentTypeArr)); ++i ){
+		for (int i = 0; i < std::ssize(IndentTypeArr); ++i) {
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS( IndentTypeArr[i].nNameId ) );
 			if( IndentTypeArr[i].nMethod == m_Types.m_nIndentLayout ){	/* 折り返しインデント種別 */
 				nSelPos = i;
