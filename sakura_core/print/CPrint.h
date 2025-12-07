@@ -60,8 +60,6 @@ struct PAPER_INFO {
 	const WCHAR*	m_pszName;		//!< 用紙名称
 };
 
-struct PRINTSETTING;
-
 //! 印刷設定
 #define POS_LEFT	0
 #define POS_CENTER	1
@@ -190,7 +188,7 @@ private:
 	/*
 	||  メンバ変数
 	*/
-	HGLOBAL	m_hDevMode;							//!< 現在プリンターのDEVMODEへのメモリハンドル
-	HGLOBAL	m_hDevNames;						//!< 現在プリンターのDEVNAMESへのメモリハンドル
+	HGLOBAL	m_hDevMode = nullptr;				//!< 現在プリンターのDEVMODEへのメモリハンドル
+	HGLOBAL	m_hDevNames = nullptr;				//!< 現在プリンターのDEVNAMESへのメモリハンドル
 };
 #endif /* SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_ */
