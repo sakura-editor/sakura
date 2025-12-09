@@ -881,7 +881,7 @@
     <ClCompile Include="..\sakura_core\_os\CDropTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="sakura.natvis" />
+    <Natvis Include="..\src\main\resources\sakura.natvis" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\src\main\resources\images\auto_scroll_center.bmp" />
