@@ -26,7 +26,6 @@
 #include "mem/CNativeW.h"
 
 #if 0
-#include <stdio.h>
 #define	MYDBGMSG(s) \
 {\
 	FILE	*fp;\
@@ -79,10 +78,6 @@ CRegexKeyword::CRegexKeyword(LPCWSTR regexp_dll )
 {
 	InitDll( regexp_dll );	// 2007.08.12 genta 引数追加
 	MYDBGMSG("CRegexKeyword")
-
-	m_pTypes    = nullptr;
-	m_nTypeIndex = -1;
-	m_nTypeId = -1;
 
 	RegexKeyInit();
 }
