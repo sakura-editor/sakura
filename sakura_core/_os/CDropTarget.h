@@ -97,10 +97,9 @@ public:
 	||  Attributes & Operations
 	*/
 private: // 2002/2/10 aroka アクセス権変更
-	CEditWnd*		m_pcEditWnd;	// 2008.06.20 ryoji
-	HWND			m_hWnd_DropTarget;
-	CEditView*		m_pcEditView;
-	//	static REFIID	m_owniid;
+	CEditWnd*		m_pcEditWnd = nullptr;	// 2008.06.20 ryoji
+	HWND			m_hWnd_DropTarget = nullptr;
+	CEditView*		m_pcEditView = nullptr;
 public:
 	BOOL			Register_DropTarget(HWND hWnd);
 	BOOL			Revoke_DropTarget( void );
@@ -135,13 +134,11 @@ private:
 		unsigned int	size;	//データサイズ。バイト単位。
 	} DATA, *PDATA;
 
-	int m_nFormat;
-	PDATA m_pData;
+	int m_nFormat = 0;
+	PDATA m_pData = nullptr;
 
 public:
-	CDataObject (LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect ):
-		m_nFormat(0),
-		m_pData(nullptr)
+	CDataObject (LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect )
 	{
 		SetText( lpszText, nTextLen, bColumnSelect );
 	}
@@ -166,11 +163,11 @@ public:
 //	2008.03.26 ryoji 新規作成
 class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC> {
 private:
-	LONG m_lRef;
-	int m_nIndex;
+	LONG m_lRef = 1;
+	int m_nIndex = 0;
 	CDataObject* m_pcDataObject;
 public:
-	CEnumFORMATETC(CDataObject* pcDataObject) : m_lRef(1), m_nIndex(0), m_pcDataObject(pcDataObject) {}
+	CEnumFORMATETC(CDataObject* pcDataObject) : m_pcDataObject(pcDataObject) {}
 	STDMETHOD_( ULONG, AddRef )( void )
 	{return ::InterlockedIncrement(&m_lRef);}
 	STDMETHOD_( ULONG, Release )( void )
