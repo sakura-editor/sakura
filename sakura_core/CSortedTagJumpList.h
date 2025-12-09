@@ -55,10 +55,10 @@ public:
 	int GetCapacity(void) const { return m_MAX_TAGJUMPLIST; }
 
 private:
-	TagJumpInfo*	m_pTagjump;	//!< タグジャンプ情報
+	TagJumpInfo*	m_pTagjump = nullptr;	//!< タグジャンプ情報
 	std::vector<std::wstring> m_baseDirArr;	//!< ベースディレクトリ情報
-	int				m_nCount;	//!< 個数
-	bool			m_bOverflow;	//!< オーバーフロー
+	int				m_nCount = 0;	//!< 個数
+	bool			m_bOverflow = false;	//!< オーバーフロー
 	
 	//	2005.04.22 genta 最大値を可変に
 	const int		m_MAX_TAGJUMPLIST;	//!< 管理する情報の最大数
