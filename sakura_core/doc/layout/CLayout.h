@@ -69,7 +69,7 @@ public:
 	CLayoutInt GetIndent() const {	return m_nIndent;	}	//!< このレイアウト行のインデントサイズを取得。単位は半角文字。	CMemoryIterator用
 
 	//取得インターフェース
-	CLogicInt GetLogicLineNo() const{ if(this)return m_ptLogicPos.GetY2(); else return CLogicInt(-1); } //$$$高速化 // TODO: Remove "this" check
+	CLogicInt GetLogicLineNo() const{ return m_ptLogicPos.GetY2(); }
 	static CLogicInt GetLogicLineNo_Safe(const CLayout* layout) {
 		if (layout)
 			return layout->m_ptLogicPos.GetY2();
@@ -106,7 +106,7 @@ public:
 	void _SetNextLayout(CLayout* pcLayout){ m_pNext = pcLayout; }
 
 	//実データ参照
-	const CDocLine* GetDocLineRef() const{ if(this)return m_pCDocLine; else return nullptr; } //$$note:高速化 // TODO: Remove "this" check
+	const CDocLine* GetDocLineRef() const{ return m_pCDocLine; }
 
 	//その他属性参照
 	const CEol& GetLayoutEol() const{ return m_cEol; }

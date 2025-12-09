@@ -537,31 +537,6 @@ bool CKeyWordSetMgr::CanAddKeyWord( int nIdx )
 	return false;
 }
 
-#if 0
-/*!	新しいキーワードセットのキーワード領域を確保する
-	m_nKeyWordSetNumは、呼び出し側が、呼び出した後に+1する
-*/
-bool CKeyWordSetMgr::KeyWordAlloc( int nSize )
-{
-	// assert( m_nKeyWordSetNum < MAX_SETNUM );
-	// assert( 0 <= nSize );
-
-	// ブロックのサイズで整列
-	int nAllocSize = GetAlignmentSize( nSize );
-
-	if( GetFreeSize() < nAllocSize ){
-		// メモリ不足
-		return false;
-	}
-	m_nStartIdx[m_nKeyWordSetNum + 1] = m_nStartIdx[m_nKeyWordSetNum] + nAllocSize;
-	int i;
-	for( i = m_nKeyWordSetNum + 1; i < MAX_SETNUM; i++ ){
-		m_nStartIdx[i + 1] = m_nStartIdx[i];
-	}
-	return true;
-}
-#endif
-
 /*!	初期化済みのキーワードセットのキーワード領域の再割り当て、解放を行う
 
 	@param nIdx [in] キーワードセット番号

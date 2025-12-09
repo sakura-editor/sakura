@@ -132,24 +132,22 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 					if( i == CODE_SJIS || i == CODE_JIS || i == CODE_EUC || i == CODE_LATIN1 || i == CODE_UNICODE || i == CODE_UTF8 || i == CODE_CESU8 ){
 						//auto_sprintf( szCaretChar, L"%04x", );
 						//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
-						CCodeBase* pCode = CCodeFactory::CreateCodeBase((ECodeType)i, false);
+						std::unique_ptr<CCodeBase> pCode(CCodeFactory::CreateCodeBase((ECodeType)i, false));
 						EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCode[i], &sStatusbar);
-						delete pCode;
 						if (ret != RESULT_COMPLETE) {
 							// うまくコードが取れなかった
-							wcscpy(szCode[i], L"-");
+							wcscpy_s(szCode[i], _countof(szCode[i]), L"-");
 						}
 					}
 				}
 				// コードポイント部（サロゲートペアも）
 				WCHAR szCodeCP[32];
 				sStatusbar.m_bDispSPCodepoint = true;
-				CCodeBase* pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCodeCP, &sStatusbar);
-				delete pCode;
+				std::unique_ptr<CCodeBase> pCode2(CCodeFactory::CreateCodeBase(CODE_UNICODE, false));
+				EConvertResult ret = pCode2->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCodeCP, &sStatusbar);
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった
-					wcscpy(szCodeCP, L"-");
+					wcscpy_s(szCodeCP, _countof(szCodeCP), L"-");
 				}
 
 				// メッセージボックス表示
