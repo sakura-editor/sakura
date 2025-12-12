@@ -566,7 +566,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				// operator "" _userliteral
 				if( nMode2 == M2_OPERATOR_WORD ){
 					int nLen = wcslen(szWordPrev);
-					if( nLen + 1 < _countof(szWordPrev) ){
+					if( nLen + 1 < int(std::size(szWordPrev)) ){
 						szWordPrev[nLen] = pLine[i];
 						szWordPrev[nLen + 1] = L'\0';
 					}
@@ -791,7 +791,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					int nLen = (int)wcslen(szWordPrev);
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
 						// 演算子のオペレータだった operator ""i
-						if( nLen + 1 < _countof(szWordPrev) ){
+						if( nLen + 1 < int(std::size(szWordPrev)) ){
 							const wchar_t szOperator[] = { pLine[i], 0 };
 							::wcscat_s( szWordPrev, szOperator );
 						}
@@ -808,7 +808,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							for( int k = i + 1; k < nLineLen; k++ ){
 								if( pLine[k] == L'(' ){
 									// i = 1, k = 5, len = 5-1-1=3
-									CLogicInt tagLen = t_min(k - i - 1, CLogicInt(_countof(szRawStringTag) - 1));
+									CLogicInt tagLen = t_min(k - i - 1, CLogicInt(int(std::size(szRawStringTag)) - 1));
 									nRawStringTagLen = tagLen + 1;
 									szRawStringTag[0] = L')';
 									wcsncpy( szRawStringTag + 1, &pLine[i+1], tagLen );
@@ -950,7 +950,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							for( k++; k < nLineLen && C_IsSpace(pLine[k], bExtEol); k++){}
 							if( k < nLineLen && (pLine[k] == L'<' || pLine[k] == L'(' ) ){
 								// オペレータだった operator()( / operator()<;
-								if( nLen + 1 < _countof(szWordPrev) ){
+								if( nLen + 1 < int(std::size(szWordPrev)) ){
 									szWordPrev[nLen] = pLine[i];
 									szWordPrev[nLen + 1] = L'\0';
 								}
@@ -1028,7 +1028,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					//  2002/10/27 frozen ここまで
 					if( nMode2 == M2_OPERATOR_WORD ){
 						int nLen = wcslen(szWordPrev);
-						if( nLen + 1 < _countof(szWordPrev) ){
+						if( nLen + 1 < int(std::size(szWordPrev)) ){
 							szWordPrev[nLen] = pLine[i];
 							szWordPrev[nLen + 1] = L'\0';
 						}
@@ -1046,7 +1046,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					int nLen = (int)wcslen(szWordPrev);
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
 						// 演算子のオペレータだった operator []
-						if( nLen + 1 < _countof(szWordPrev) ){
+						if( nLen + 1 < int(std::size(szWordPrev)) ){
 							const wchar_t szOperator[] = { pLine[i], 0 };
 							::wcscat_s( szWordPrev, szOperator );
 						}
@@ -1069,7 +1069,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					if( nMode2 == M2_OPERATOR_WORD ){
 						int nLen = wcslen(szWordPrev);
-						if( nLen + 1 < _countof(szWordPrev) ){
+						if( nLen + 1 < int(std::size(szWordPrev)) ){
 							szWordPrev[nLen] = pLine[i];
 							szWordPrev[nLen + 1] = L'\0';
 						}
@@ -1647,7 +1647,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		ptCP.y = GetCaret().GetCaretLogicPos().y;
 
 		nSrcLen = sRangeA.GetTo().x - sRangeA.GetFrom().x;
-		if( nSrcLen >= _countof( pszSrc ) - 1 ){
+		if( nSrcLen >= int(std::size(pszSrc)) - 1 ){
 			//	Sep. 18, 2002 genta メモリリーク対策
 			delete [] pszData;
 			return;
@@ -1863,4 +1863,4 @@ const wchar_t* g_ppszKeywordsCPP[] = {
 	L"xor",
 	L"xor_eq",
 };
-int g_nKeywordsCPP = _countof(g_ppszKeywordsCPP);
+int g_nKeywordsCPP = int(std::size(g_ppszKeywordsCPP));

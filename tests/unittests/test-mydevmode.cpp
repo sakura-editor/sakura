@@ -160,7 +160,7 @@ TEST(MYDEVMODETest, operatorNotEqualAntiLazyCode)
 	EXPECT_EQ(other, value);
 
 	// 文字列メンバをNUL終端する
-	value.m_szPrinterDriverName[_countof(value.m_szPrinterDriverName) - 1] = 0;
+	value.m_szPrinterDriverName[std::size(value.m_szPrinterDriverName) - 1] = 0;
 
 	// NUL終端された文字列 != NUL終端されてない文字列、となるはず。
 	EXPECT_FALSE(value == other);

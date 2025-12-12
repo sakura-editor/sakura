@@ -119,8 +119,8 @@ INT_PTR CPropEdit::DispatchEvent(
 				{
 					WCHAR szMetaPath[_MAX_PATH];
 					WCHAR szPath[_MAX_PATH];
-					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath) );
-					CFileNameManager::ExpandMetaToFolder( szMetaPath, szPath, _countof(szPath) );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, int(std::size(szMetaPath)) );
+					CFileNameManager::ExpandMetaToFolder( szMetaPath, szPath, int(std::size(szPath)) );
 					if( SelectDir( hwndDlg, LS(STR_PROPEDIT_SELECT_DIR), szPath, szPath ) ){
 						CNativeW cmem(szPath);
 						cmem.Replace(L"%", L"%%");
@@ -281,7 +281,7 @@ int CPropEdit::GetData( HWND hwndDlg )
 	if( ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_SELDIR) ){
 		m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_SEL;
 	}
-	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir, _countof2(m_Common.m_sEdit.m_OpenDialogSelDir) );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir, std::size(m_Common.m_sEdit.m_OpenDialogSelDir) );
 
 	// 改行コードNEL,PS,LSを有効にする
 	m_Common.m_sEdit.m_bEnableExtEol = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL );

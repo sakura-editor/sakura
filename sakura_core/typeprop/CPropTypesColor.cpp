@@ -675,7 +675,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_STRINGLITERAL );
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	int		nSelPos = 0;
-	for( i = 0; i < _countof( StringLitteralArr ); ++i ){
+	for( i = 0; i < int(std::size(StringLitteralArr)); ++i ){
 		ApiWrap::Combo_InsertString( hwndCombo, i, LS(StringLitteralArr[i].nNameId) );
 		if( StringLitteralArr[i].nMethod == m_Types.m_nStringType ){		// テキストの折り返し方法
 			nSelPos = i;

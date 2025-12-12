@@ -401,27 +401,27 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
 			  && (((p = wcschr( sName, sKey[0])) != nullptr) || ((p = wcschr( sName, _totlower(sKey[0]))) != nullptr)) ){
 			// 欧文風、使用している文字をアクセスキーに
-			wcscpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s(sLabel, std::size(sLabel), sName );
 			sLabel[p-sName] = L'&';
-			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+			wcscpy_s( sLabel + (p-sName) + 1, int(std::size(sLabel)), p );
 		}
 		else if( (p = wcschr( sName, L'(' )) != nullptr
 			  && (p = wcschr( p, sKey[0] )) != nullptr) {
 			// (付その後にアクセスキー
-			wcscpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s(sLabel, std::size(sLabel), sName );
 			sLabel[p-sName] = L'&';
-			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+			wcscpy_s( sLabel + (p-sName) + 1, int(std::size(sLabel)), p );
 		}
 		else if (wcscmp( sName + wcslen(sName) - 3, L"..." ) == 0) {
 			// 末尾...
-			wcscpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s(sLabel, std::size(sLabel), sName );
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る
 			wcscat_s( sLabel, L"(&" );
 			wcscat_s( sLabel, sKey );
 			wcscat_s( sLabel, L")..." );
 		}
 		else {
-			auto_snprintf_s( sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey );
+			auto_snprintf_s(sLabel, std::size(sLabel), L"%s(&%s)", sName, sKey );
 		}
 
 		return sLabel;
@@ -783,7 +783,7 @@ const WCHAR* jpVKEXNames[] = {
 	L"ホイール左",
 	L"ホイール右"
 };
-const int jpVKEXNamesLen = _countof( jpVKEXNames );
+const int jpVKEXNamesLen = int(std::size(jpVKEXNames));
 
 /*!	@brief 共有メモリ初期化/キー割り当て
 
@@ -797,8 +797,8 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/********************/
 	/* 共通設定の規定値 */
 	/********************/
-	const int	nKeyDataInitNum = _countof( KeyDataInit );
-	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	const auto nKeyDataInitNum = int(std::size(KeyDataInit));
+	const auto KEYNAME_SIZE = int(std::size(pShareData->m_Common.m_sKeyBind.m_pKeyNameArr)) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
 	assert( !(nKeyDataInitNum > KEYNAME_SIZE) );
 //	if( nKeyDataInitNum > KEYNAME_SIZE ) {
@@ -815,7 +815,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	// インデックス用ダミー作成
 	SetKeyNameArrVal( pShareData, KEYNAME_SIZE, &dummy[0] );
 	// インデックス作成 重複した場合は先頭にあるものを優先
-	for( int ii = 0; ii< _countof(pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr); ii++ ){
+	for( int ii = 0; ii< int(std::size(pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr)); ii++ ){
 		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[ii] = KEYNAME_SIZE;
 	}
 	for( int i=nKeyDataInitNum-1; i>=0; i-- ){
@@ -832,7 +832,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 /*!	@brief 言語選択後の文字列更新処理 */
 void CShareData::RefreshKeyAssignString(DLLSHAREDATA* pShareData)
 {
-	const int	nKeyDataInitNum = _countof( KeyDataInit );
+	constexpr auto nKeyDataInitNum = int(std::size(KeyDataInit));
 
 	for( int i = 0; i < nKeyDataInitNum; ++i ){
 		KEYDATA* pKeydata = &pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i];

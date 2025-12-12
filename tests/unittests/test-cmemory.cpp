@@ -50,10 +50,10 @@ TEST(CMemory, StaticIsEqual)
 	constexpr auto& v2 = u8"これはテストですか？";
 	constexpr auto& v3 = u8"これはテストです？";
 
-	CMemory m1(v1, _countof(v1));
-	CMemory m2(v2, _countof(v2));
-	CMemory m3(v3, _countof(v3));
-	CMemory m4(v1, _countof(v1));
+	CMemory m1(v1, int(std::size(v1)));
+	CMemory m2(v2, int(std::size(v2)));
+	CMemory m3(v3, int(std::size(v3)));
+	CMemory m4(v1, int(std::size(v1)));
 
 	// 長さが違う場合、false
 	ASSERT_FALSE(CMemory::IsEqual(m1, m2));
@@ -74,7 +74,7 @@ TEST(CMemory, SwapHLByte)
 	constexpr auto& source = "B+saci-";
 	constexpr auto& expected = "+Basic-";
 
-	CMemory cmem1(source, _countof(source) - 1);
+	CMemory cmem1(source, int(std::size(source)) - 1);
 	cmem1.SwapHLByte();
 	ASSERT_TRUE(0 == memcmp(expected, cmem1.GetRawPtr(), cmem1.GetRawLength()));
 
@@ -101,9 +101,9 @@ TEST(CMemory, OverHeapMaxReq)
 
 	// 検証用のデータを入れる
 	constexpr auto& data = L"テストデータ";
-	cmem.SetRawData(data, (_countof(data) - 1) * sizeof(wchar_t));
+	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(wchar_t));
 	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((_countof(data) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
 	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
@@ -128,9 +128,9 @@ TEST(CMemory, OverMaxSize)
 
 	// 検証用のデータを入れる
 	constexpr auto& data = L"テストデータ";
-	cmem.SetRawData(data, (_countof(data) - 1) * sizeof(wchar_t));
+	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(wchar_t));
 	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((_countof(data) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
 	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);

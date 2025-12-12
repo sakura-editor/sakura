@@ -16,7 +16,7 @@
 TEST(CStringRef, CStringRef)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 
 	CStringRef v1;
 	EXPECT_EQ(NULL, v1.GetPtr());
@@ -69,7 +69,7 @@ TEST(CNativeW, ConstructWithoutParam)
 TEST(CNativeW, ConstructWithStringWithLength)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -85,7 +85,7 @@ TEST(CNativeW, ConstructWithStringWithLength)
 TEST(CNativeW, ConstructWithString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -147,7 +147,7 @@ TEST(CNativeW, ConstructFromOtherByCopy)
 TEST(CNativeW, ConstructFromOtherByMove)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW other(sz);
 	CNativeW value(std::move(other));
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -170,7 +170,7 @@ TEST(CNativeW, ConstructFromOtherByMove)
 TEST(CNativeW, CopyFromOther)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	CNativeW other(sz);
 	value = other;
@@ -192,7 +192,7 @@ TEST(CNativeW, CopyFromOther)
 TEST(CNativeW, MoveFromOther)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	CNativeW other(sz);
 	value = std::move(other);
@@ -215,7 +215,7 @@ TEST(CNativeW, MoveFromOther)
 TEST(CNativeW, GetCharAtIndex)
 {
 	constexpr const wchar_t sz[] = L"森鷗外";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
 	EXPECT_EQ(cch, value.GetStringLength());
 	for (size_t index = 0; index < cch; ++index) {
@@ -234,7 +234,7 @@ TEST(CNativeW, GetCharAtIndex)
 TEST(CNativeW, AssignString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value = sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -277,7 +277,7 @@ TEST(CNativeW, AssignStringNullLiteral)
 TEST(CNativeW, AppendChar)
 {
 	constexpr const wchar_t sz[] = L"X";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value += sz[0];
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -294,7 +294,7 @@ TEST(CNativeW, AppendChar)
 TEST(CNativeW, AppendString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
+	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value += sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -672,11 +672,11 @@ TEST(CNativeW, CompareWithCNativeW)
 
 	// 値なしの変数と文字列定数に対応するCNativeWのインスタンスを用意する
 	CNativeW cN0, cN1
-		, cS0(szS0, _countof(szS0))
-		, cM0(szM0, _countof(szM0))
-		, cM1(szM1, _countof(szM1))
-		, cM2(szM2, _countof(szM2))
-		, cL0(szL0, _countof(szL0));
+		, cS0(szS0, int(std::size(szS0)))
+		, cM0(szM0, int(std::size(szM0)))
+		, cM1(szM1, int(std::size(szM1)))
+		, cM2(szM2, int(std::size(szM2)))
+		, cL0(szL0, int(std::size(szL0)));
 
 	// 比較
 	// ASSERT_GTの判定仕様は v1 > v2
@@ -768,21 +768,21 @@ TEST(CNativeW, GetSizeOfChar)
 TEST(CNativeW, GetSizeOfChar_Empty)
 {
 	const auto& s = L"";
-	EXPECT_EQ(0, CNativeW::GetSizeOfChar(s, _countof(s) - 1, 0));
+	EXPECT_EQ(0, CNativeW::GetSizeOfChar(s, int(std::size(s)) - 1, 0));
 }
 
 TEST(CNativeW, GetSizeOfChar_SurrogatePair)
 {
 	// 絵文字　男性のシンボル
 	const auto& s = L"\U0001f6b9";
-	EXPECT_EQ(2, CNativeW::GetSizeOfChar(s, _countof(s) - 1, 0));
+	EXPECT_EQ(2, CNativeW::GetSizeOfChar(s, int(std::size(s)) - 1, 0));
 }
 
 TEST(CNativeW, GetSizeOfChar_IVS)
 {
 	// 葛󠄀城市(先頭の文字が異体字)
 	const auto& s = L"葛󠄀城市";
-	EXPECT_EQ(3, CNativeW::GetSizeOfChar(s, _countof(s) - 1, 0));
+	EXPECT_EQ(3, CNativeW::GetSizeOfChar(s, int(std::size(s)) - 1, 0));
 }
 
 /*!
@@ -923,10 +923,10 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 	// text[3] = L'x'
 
 	// textのような配列であれば問題はない
-	EXPECT_EQ(&text[0], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 1));
-	EXPECT_EQ(&text[1], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 2));
-	EXPECT_EQ(&text[1], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 3));
-	EXPECT_EQ(&text[3], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 4));
+	EXPECT_EQ(&text[0], CNativeW::GetCharPrev(text, int(std::size(text)) - 1, text + 1));
+	EXPECT_EQ(&text[1], CNativeW::GetCharPrev(text, int(std::size(text)) - 1, text + 2));
+	EXPECT_EQ(&text[1], CNativeW::GetCharPrev(text, int(std::size(text)) - 1, text + 3));
+	EXPECT_EQ(&text[3], CNativeW::GetCharPrev(text, int(std::size(text)) - 1, text + 4));
 
 	// 配列の一部を参照した、ないし、異常データを扱う場合に問題がある。
 	const auto *pText = &text[2];

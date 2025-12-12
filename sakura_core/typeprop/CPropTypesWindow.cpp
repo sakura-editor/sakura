@@ -321,7 +321,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState & 3;
 		int		nSelPos = 0;
-		for( int i = 0; i < _countof( ImeSwitchArr ); ++i ){
+		for( int i = 0; i < int(std::size(ImeSwitchArr)); ++i ){
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS(ImeSwitchArr[i].nNameId) );
 			if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;
@@ -334,7 +334,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState >> 2;
 		nSelPos = 0;
-		for( int i = 0; i < _countof( ImeStateArr ); ++i ){
+		for( int i = 0; i < int(std::size(ImeStateArr)); ++i ){
 			ApiWrap::Combo_InsertString( hwndCombo, i, LS(ImeStateArr[i].nNameId) );
 			if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;
@@ -387,15 +387,15 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 
 		// デフォルト改行タイプのコンボボックス設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
-		for( i = 0; i < _countof(aszEolStr); ++i ){
+		for( i = 0; i < int(std::size(aszEolStr)); ++i ){
 			ApiWrap::Combo_AddString( hCombo, aszEolStr[i] );
 		}
-		for( i = 0; i < _countof(aeEolType); ++i ){
+		for( i = 0; i < int(std::size(aeEolType)); ++i ){
 			if( m_Types.m_encoding.m_eDefaultEoltype == aeEolType[i] ){
 				break;
 			}
 		}
-		if( i == _countof(aeEolType) ){
+		if( i == int(std::size(aeEolType)) ){
 			i = 0;
 		}
 		ApiWrap::Combo_SetCurSel( hCombo, i );
@@ -416,7 +416,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	}
 
 	// 背景画像
-	ApiWrap::EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH), _countof2(m_Types.m_szBackImgPath));
+	ApiWrap::EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH), std::size(m_Types.m_szBackImgPath));
 	ApiWrap::EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X), 5);
 	ApiWrap::EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y), 5);
 	ApiWrap::EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY), 3);
@@ -435,7 +435,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 			STR_IMAGE_POS9,
 		};
 		/*BGIMAGE_TOP_LEFT .. */
-		int nCount = _countof(posNameId);
+		constexpr auto nCount = int(std::size(posNameId));
 		SetCombobox( ::GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS), posNameId, nCount, m_Types.m_backImgPos);
 	}
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X, m_Types.m_backImgRepeatX);
@@ -538,7 +538,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 		m_Types.m_bLineNumIsCRLF = true;
 	}
 
-	ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath, _countof2(m_Types.m_szBackImgPath));
+	ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath, std::size(m_Types.m_szBackImgPath));
 	m_Types.m_backImgPos = static_cast<EBackgroundImagePos>(ApiWrap::Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS)));
 	m_Types.m_backImgRepeatX = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X);
 	m_Types.m_backImgRepeatY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_REP_Y);

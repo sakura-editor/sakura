@@ -307,10 +307,10 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
-	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
-	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), _countof2(m_szExcludeFile) - 1);
-	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), _countof2(m_szExcludeFolder) - 1);
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_FILE ), std::size(m_szFile) - 1 );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_FOLDER ), std::size(m_szFolder) - 1 );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), std::size(m_szExcludeFile) - 1);
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), std::size(m_szExcludeFolder) - 1);
 
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
@@ -356,8 +356,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// フォント設定	2012/11/27 Uchi
 	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
-	m_cFontDeleters.resize( _countof( nItemIds ) );
-	for( size_t i = 0; i < _countof( nItemIds ); ++i ){
+	m_cFontDeleters.resize( int(std::size(nItemIds)) );
+	for( size_t i = 0; i < int(std::size(nItemIds)); ++i ){
 		HWND hwndItem = GetItemHwnd( nItemIds[i] );
 		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
 		HFONT hFont = SetMainFont( hwndItem );
@@ -379,12 +379,12 @@ LRESULT CALLBACK CDlgGrep::OnFolderProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 	{
 		//	From Here 2007.09.02 genta 
 		SFilePath sPath;
-		if( DragQueryFile((HDROP)wparam, 0, nullptr, 0 ) > _countof2(sPath) - 1 ){
+		if( DragQueryFile((HDROP)wparam, 0, nullptr, 0 ) > std::size(sPath) - 1 ){
 			// skip if the length of the path exceeds buffer capacity
 			::DragFinish((HDROP)wparam);
 			return 0;
 		}
-		DragQueryFile((HDROP)wparam, 0, sPath, _countof2(sPath) - 1);
+		DragQueryFile((HDROP)wparam, 0, sPath, std::size(sPath) - 1);
 		::DragFinish((HDROP)wparam);
 
 		//ファイルパスの解決
@@ -442,7 +442,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		else{
 			/* 現在のプロセスのカレントディレクトリを取得します */
 			WCHAR	szWorkFolder[MAX_PATH];
-			::GetCurrentDirectory( _countof( szWorkFolder ) - 1, szWorkFolder );
+			::GetCurrentDirectory( int(std::size(szWorkFolder)) - 1, szWorkFolder );
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 		}
 		return TRUE;
@@ -451,7 +451,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
 			const int nMaxPath = MAX_GREP_PATH;
 			WCHAR szFolder[nMaxPath];
-			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
+			::GetWindowText( hwnd, szFolder, int(std::size(szFolder)) );
 			std::vector<std::wstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
@@ -574,16 +574,16 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //		::EndDialog( hwndDlg, FALSE );
 		if (m_bSelectOnceThisText) {
 			if (m_pShareData->m_sSearchKeywords.m_aGrepFiles.size()) {
-				wcsncpy_s(m_szFile, _countof2(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
+				wcsncpy_s(m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aGrepFolders.size()) {
-				wcsncpy_s(m_szFolder, _countof2(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
+				wcsncpy_s(m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-				wcsncpy_s(m_szExcludeFile, _countof2(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
+				wcsncpy_s(m_szExcludeFile, std::size(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-				wcsncpy_s(m_szExcludeFolder, _countof2(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
+				wcsncpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
 			}
 		}
 		CloseDialog( FALSE );
@@ -728,10 +728,10 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 {
 	BOOL bEnableControls = TRUE;
 	if( bChecked ){
-		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile));
-		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder));
-		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, _countof2(m_szExcludeFile));
-		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, _countof2(m_szExcludeFolder));
+		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_FILE, m_szFile, std::size(m_szFile));
+		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, std::size(m_szFolder));
+		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, std::size(m_szExcludeFile));
+		ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
 
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, LS(STR_DLGGREP_THISDOC) );
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), LS(STR_DLGGREP_THISDOC) );
@@ -741,7 +741,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	}else{
 		std::wstring strFile(m_szFile);
 		if (strFile.substr(0, 6) == L":HWND:") {
-			wcsncpy_s(m_szFile, _countof2(m_szFile), L"*.*", _TRUNCATE);
+			wcsncpy_s(m_szFile, std::size(m_szFile), L"*.*", _TRUNCATE);
 		}
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);
@@ -822,7 +822,7 @@ int CDlgGrep::GetData( void )
 	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );;
 
 	/* 検索ファイル */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, std::size(m_szFile) );
 	bool bFromThisText = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_FROMTHISTEXT);
 	if( bFromThisText ){
 		WCHAR szHwnd[_MAX_PATH];
@@ -840,11 +840,11 @@ int CDlgGrep::GetData( void )
 		}
 	}
 	/* 検索フォルダー */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, std::size(m_szFolder) );
 	/* 除外ファイル */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, _countof2(m_szExcludeFile));
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, std::size(m_szExcludeFile));
 	/* 除外フォルダー */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, _countof2(m_szExcludeFolder));
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
 
 	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力

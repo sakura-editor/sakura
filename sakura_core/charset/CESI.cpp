@@ -35,7 +35,7 @@
 	name: エンコーディング名
 	code: 文字コードセット種別、もしくはコードページ番号
 */
-#define ENCODING_NAME( name, code ) { name, (int)( _countof( name ) - 1 ), (int)( code ) }
+#define ENCODING_NAME( name, code ) { name, (int)( int(std::size(name)) - 1 ), (int)( code ) }
 
 /*!
 	マルチバイト文字コードの優先順位表（既定値）
@@ -89,7 +89,7 @@ int CESI::GetIndexById( const ECodeType eCodeType ) const
 		nret = 0;
 	}else if( CODE_UNICODEBE == eCodeType ){
 		nret = 1;
-	}else if( 0 <= eCodeType && eCodeType < _countof(gm_aMbcPriority) ){
+	}else if( 0 <= eCodeType && eCodeType < int(std::size(gm_aMbcPriority)) ){
 		nret = gm_aMbcPriority[eCodeType]; // 優先順位表の優先度数をそのまま m_aMbcInfo の添え字として使う。
 	}else{
 		assert(0);
@@ -914,7 +914,7 @@ static bool IsXMLWhiteSpace( int c )
 */
 static ECodeType MatchEncoding(const char* pBuf, int nSize)
 {
-	for(int k = 0; k < _countof(encodingNameToCode); k++ ){
+	for(int k = 0; k < int(std::size(encodingNameToCode)); k++ ){
 		const int nLen = encodingNameToCode[k].nLen;
 		if( nLen == nSize && 0 == _memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
 			return static_cast<ECodeType>(encodingNameToCode[k].nCode);

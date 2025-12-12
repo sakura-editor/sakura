@@ -48,4 +48,4 @@ const wchar_t* g_ppszKeywordsCORBA_IDL[] = {
 	L"wchar_t",
 	L"wstring"
 };
-int g_nKeywordsCORBA_IDL = _countof(g_ppszKeywordsCORBA_IDL);
+int g_nKeywordsCORBA_IDL = int(std::size(g_ppszKeywordsCORBA_IDL));

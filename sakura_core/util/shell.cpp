@@ -194,7 +194,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				{
 					DLLSHAREDATA *pShareData = &GetDllShareData();
 					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
-					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, _countof2(pShareData->m_sHistory.m_szIMPORTFOLDER), L'\\' );
+					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, std::size(pShareData->m_sHistory.m_szIMPORTFOLDER), L'\\' );
 				}
 				break;
 			}
@@ -530,7 +530,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			dwData = 1;	// 目次ページ
 
 		WCHAR buf[256];
-		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
+		swprintf( buf, int(std::size(buf)), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
 		ShellExecute( ::GetActiveWindow(), nullptr, buf, nullptr, nullptr, SW_SHOWNORMAL );
 	}
 

@@ -51,7 +51,7 @@ BOOL CDicMgr::Search(
 #endif
 	long	i;
 	constexpr auto& pszDelimit = L" /// ";
-	constexpr auto cchDelimit = _countof(pszDelimit) - 1;
+	constexpr auto cchDelimit = int(std::size(pszDelimit)) - 1;
 	wchar_t*	pszWork;
 	int		nRes;
 	wchar_t*	pszToken;
@@ -73,8 +73,8 @@ BOOL CDicMgr::Search(
 		//1行読み込み
 		{
 			std::wstring tmp = in.ReadLineW();
-			wcsncpy_s(szLine,_countof(szLine),tmp.c_str(), _TRUNCATE);
-			// auto_strlcpy(szLine,tmp.c_str(), _countof(szLine));
+			wcsncpy_s(szLine, std::size(szLine),tmp.c_str(), _TRUNCATE);
+			// auto_strlcpy(szLine,tmp.c_str(), int(std::size(szLine)));
 		}
 
 		pszWork = wcsstr( szLine, pszDelimit );

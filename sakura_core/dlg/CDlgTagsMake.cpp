@@ -77,7 +77,7 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 		{
 			WCHAR szDir[_MAX_PATH];
 			HWND hwnd = GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER );
-			::GetWindowText( hwnd, szDir, _countof(szDir) );
+			::GetWindowText( hwnd, szDir, int(std::size(szDir)) );
 			if( DirectoryUp( szDir ) ){
 				::SetWindowText( hwnd, szDir );
 			}
@@ -123,7 +123,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 void CDlgTagsMake::SetData( void )
 {
 	//作成フォルダー
-	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), _countof( m_szPath ) );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), int(std::size(m_szPath)) );
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
 
 	//オプション
@@ -131,7 +131,7 @@ void CDlgTagsMake::SetData( void )
 	if( m_nTagsOpt & 0x0001 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_TAG_MAKE_RECURSE, TRUE );
 
 	//コマンドライン
-	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), _countof( m_pShareData->m_szTagsCmdLine ) );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), int(std::size(m_pShareData->m_szTagsCmdLine)) );
 	wcscpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
 
@@ -143,7 +143,7 @@ void CDlgTagsMake::SetData( void )
 int CDlgTagsMake::GetData( void )
 {
 	//フォルダー
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof( m_szPath ) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, int(std::size(m_szPath)) );
 	int length = wcslen( m_szPath );
 	if( length > 0 )
 	{
@@ -156,7 +156,7 @@ int CDlgTagsMake::GetData( void )
 	m_pShareData->m_nTagsOpt = m_nTagsOpt;
 
 	//コマンドライン
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, _countof( m_szTagsCmdLine ) );
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, int(std::size(m_szTagsCmdLine)) );
 	wcscpy( m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine );
 
 	return TRUE;

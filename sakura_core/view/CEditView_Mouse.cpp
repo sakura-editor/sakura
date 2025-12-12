@@ -1337,7 +1337,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 		// 2006.06.03 Moca ReadRegistry に書き換え
 		unsigned int uDataLen;	// size of value data
 		WCHAR szValStr[256];
-		uDataLen = _countof(szValStr) - 1;
+		uDataLen = int(std::size(szValStr)) - 1;
 		if( !bExecCmd ){
 			bool bGetParam = false;
 			if( bHorizontal ){
@@ -2136,7 +2136,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 
 		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, nullptr, 0 );
 		for( UINT i = 0; i < nFiles; i++ ){
-			::DragQueryFile( hDrop, i, szPath, _countof(szPath) );
+			::DragQueryFile( hDrop, i, szPath, int(std::size(szPath)) );
 			if( !::GetLongFileName( szPath, szWork ) )
 				continue;
 			if( nId == 100 ){	// パス名

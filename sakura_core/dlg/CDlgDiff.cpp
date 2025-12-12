@@ -88,7 +88,7 @@ CDlgDiff::CDlgDiff()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	return;
 }
@@ -268,13 +268,13 @@ void CDlgDiff::SetData( void )
 				if ( pEditNode[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() )
 				{
 					// 同じ形式にしておく。ただしアクセスキー番号はなし
-					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, -1, calc.GetDC() );
+					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, int(std::size(szName)), pFileInfo, pEditNode[i].m_nId, -1, calc.GetDC() );
 					ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_DIFF_SRC, szName );
 					continue;
 				}
 
 				// 番号はウィンドウ一覧と同じ番号を使う
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, i, calc.GetDC() );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, int(std::size(szName)), pFileInfo, pEditNode[i].m_nId, i, calc.GetDC() );
 
 				/* リストに登録する */
 				nItem = ApiWrap::List_AddString( hwndList, szName );
@@ -361,7 +361,7 @@ int CDlgDiff::GetData( void )
 	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
 	{
-		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, _countof2(m_szFile2) );
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, std::size(m_szFile2) );
 		//	2004.05.19 MIK 外部ファイルが指定されていない場合はキャンセル
 		//相手ファイルが指定されてなければキャンセル
 		if( m_szFile2[0] == '\0' ) ret = FALSE;
@@ -493,7 +493,7 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
 
-	for( int i = 0; i < _countof(anchorList); i++){
+	for( int i = 0; i < int(std::size(anchorList)); i++){
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
@@ -531,7 +531,7 @@ BOOL CDlgDiff::OnSize( WPARAM wParam, LPARAM lParam )
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for( int i = 0; i < _countof(anchorList); i++){
+	for( int i = 0; i < int(std::size(anchorList)); i++){
 		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
 	::InvalidateRect( GetHwnd(), nullptr, TRUE );

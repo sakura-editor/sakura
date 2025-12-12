@@ -718,7 +718,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 
 	// 再表示メッセージをブロードキャストする。
 	//	2007.07.07 genta 2回ループに
-	for( int group = 0; group < _countof( notifygroups ); group++ ){
+	for( int group = 0; group < int(std::size(notifygroups)); group++ ){
 		CAppNodeGroupHandle(notifygroups[group]).PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,
 			(WPARAM)TWNT_REFRESH,
@@ -1299,7 +1299,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		item.mask = TCIF_TEXT | TCIF_PARAM | TCIF_IMAGE;
 		item.pszText = szBuf;
-		item.cchTextMax = _countof(szBuf);
+		item.cchTextMax = int(std::size(szBuf));
 		TabCtrl_GetItem(hwndItem, nTabIndex, &item);
 
 		//描画対象
@@ -1604,7 +1604,7 @@ LRESULT CTabWnd::OnNotify( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 			{
 				EditNode* pEditNode;
 				pEditNode = CAppNodeManager::getInstance()->GetEditNode( (HWND)tcitem.lParam );
-				GetTabName( pEditNode, TRUE, FALSE, m_szTextTip, _countof(m_szTextTip) );
+				GetTabName( pEditNode, TRUE, FALSE, m_szTextTip, int(std::size(m_szTextTip)) );
 				((NMTTDISPINFO*)pnmh)->lpszText = m_szTextTip;	// NMTTDISPINFO::szText[80]では短い
 				((NMTTDISPINFO*)pnmh)->hinst = nullptr;
 			}
@@ -1745,12 +1745,12 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			//	Jun. 19, 2004 genta
 			EditNode	*p;
 			p = CAppNodeManager::getInstance()->GetEditNode( (HWND)lParam );
-			GetTabName( p, FALSE, TRUE, szName, _countof(szName) );
+			GetTabName( p, FALSE, TRUE, szName, int(std::size(szName)) );
 
 			tcitem.mask    = TCIF_TEXT | TCIF_IMAGE;
 			WCHAR	szNameOld[1024];
 			tcitem.pszText = szNameOld;
-			tcitem.cchTextMax = _countof(szNameOld);
+			tcitem.cchTextMax = int(std::size(szNameOld));
 			TabCtrl_GetItem( m_hwndTab, nIndex, &tcitem );
 			if( 0 != wcscmp( szNameOld, szName )
 				|| tcitem.iImage != GetImageIndex( p ) ){
@@ -1962,7 +1962,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 			if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 				continue;
 
-			GetTabName( &pEditNode[i], FALSE, TRUE, szName, _countof(szName) );
+			GetTabName( &pEditNode[i], FALSE, TRUE, szName, int(std::size(szName)) );
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 			tcitem.pszText = szName;
@@ -2539,12 +2539,12 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	gr.SetPen( ::GetSysColor( nIndex ) );
 	gr.SetBrushColor( ::GetSysColor( nIndex ) ); //$$ GetSysColorBrushを用いた実装のほうが効率は良い
-	for( int i = 0; i < _countof(ptBase); i++ )
+	for( int i = 0; i < int(std::size(ptBase)); i++ )
 	{
 		pt[i].x = ptBase[i].x + rcBtn.left;
 		pt[i].y = ptBase[i].y + rcBtn.top;
 	}
-	::Polygon( gr, pt, _countof(pt) );
+	::Polygon( gr, pt, int(std::size(pt)) );
 }
 
 /*! 閉じるマーク描画処理 */
@@ -2563,7 +2563,7 @@ void CTabWnd::DrawCloseFigure( CGraphics& gr, const RECT& rcBtn )
 	int i;
 
 	// [x]を描画（直線6本）
-	for( i = 0; i < _countof(ptBase1); i++ )
+	for( i = 0; i < int(std::size(ptBase1)); i++ )
 	{
 		pt[0].x = ptBase1[i][0].x + rcBtn.left;
 		pt[0].y = ptBase1[i][0].y + rcBtn.top;
@@ -2627,7 +2627,7 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	else
 	{
 		 // [xx]を描画（矩形10個）
-		for( i = 0; i < _countof(ptBase2); i++ )
+		for( i = 0; i < int(std::size(ptBase2)); i++ )
 		{
 			pt[0].x = ptBase2[i][0].x + rcBtn.left;
 			pt[0].y = ptBase2[i][0].y + rcBtn.top;

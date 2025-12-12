@@ -312,7 +312,7 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, source_ext, header_ext,
-		_countof(source_ext), _countof(header_ext),
+		int(std::size(source_ext)), int(std::size(header_ext)),
 		LS(STR_ERR_CEDITVIEW_CMD08) );
 }
 
@@ -325,7 +325,7 @@ BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, header_ext, source_ext,
-		_countof(header_ext), _countof(source_ext),
+		int(std::size(header_ext)), int(std::size(source_ext)),
 		LS(STR_ERR_CEDITVIEW_CMD09));
 }
 
@@ -572,7 +572,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
 	WCHAR szCmdExePathBuf[MAX_PATH];
-	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0) {
+	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, int(std::size(szCmdExePathBuf))) == 0) {
 		ErrorBeep();
 		return;
 	}
