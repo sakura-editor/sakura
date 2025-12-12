@@ -93,11 +93,49 @@ TEST(CPPA, GetDeclarations)
  */
 TEST(CPPA, ppaErrorProc)
 {
+	// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
+
+#pragma region CanBeMove
+	// 共有データがなくてもエラーにならない
+	EXPECT_THAT(GetDllShareDataPtr(), IsNull());
+
+	// 共有データがないのでエラー
+	EXPECT_ANY_THROW(GetDllShareData());
+
+#pragma endregion CanBeMove
+
 	// 共有メモリのインスタンスを生成する
 	const auto pcShareData = std::make_unique<CShareData>();
 
+#pragma region CanBeMove
+	// 共有データがなくてもエラーにならない
+	EXPECT_THAT(GetDllShareDataPtr(), IsNull());
+
+	// 共有データがないのでエラー
+	EXPECT_ANY_THROW(GetDllShareData());
+
+	// 共有データがないのでエラー
+	EXPECT_ANY_THROW(CDialog(false, true));	//2つ目の引数がtrueなら共有データ必須
+
+	// 共有データがなくてもエラーにならない
+	EXPECT_NO_THROW([] { CDialog(false, false).GetHwnd(); });
+
+#pragma endregion CanBeMove
+
 	// 共有メモリを初期化する
 	pcShareData->InitShareData();
+
+#pragma region CanBeMove
+	// 共有データがあるので値を返す
+	EXPECT_THAT(GetDllShareDataPtr(), pcShareData->GetDllShareDataPtr());
+
+	// 共有データがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetDllShareData(); });
+
+	// 共有データがあるのでエラーにならない
+	EXPECT_NO_THROW([] { CDialog(false, true).GetHwnd(); });
+
+#pragma endregion CanBeMove
 
 	// ドキュメントの初期化前に文字幅キャッシュの生成が必要
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);

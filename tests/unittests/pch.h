@@ -17,6 +17,7 @@ using ::testing::Gt;
 using ::testing::Invoke;
 using ::testing::IsEmpty;
 using ::testing::IsFalse;
+using ::testing::IsNull;
 using ::testing::IsTrue;
 using ::testing::Le;
 using ::testing::Lt;
