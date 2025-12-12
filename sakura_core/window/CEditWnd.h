@@ -65,12 +65,13 @@ struct DLLSHAREDATA;
 #define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
-struct STabGroupInfo{
-	HWND			hwndTop;
-	WINDOWPLACEMENT	wpTop;
+struct STabGroupInfo {
+	HWND			hwndTop = nullptr;
+	WINDOWPLACEMENT	wpTop = {};
 
-	STabGroupInfo() : hwndTop(nullptr) { }
-	bool IsValid() const{ return hwndTop!=nullptr; }
+	STabGroupInfo() = default;
+
+	bool IsValid() const noexcept { return hwndTop != nullptr; }
 };
 
 //! 編集ウィンドウ（外枠）管理クラス
@@ -81,6 +82,10 @@ class CEditWnd
 	: public TSingleInstance<CEditWnd>
 , public CDocListenerEx
 {
+private:
+	using CEditViewsArray = std::array<CEditView*, 4>;
+	using SMenubarMessage = StaticString<MENUBAR_MESSAGE_MAX_LEN>;
+
 public:
 	CEditWnd();
 	~CEditWnd() override;
@@ -327,21 +332,27 @@ public:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
+	//共有データ
+	DLLSHAREDATA*	m_pShareData = &GetDllShareData();
+
+	//ドキュメント
+	CEditDoc* 		m_pcEditDoc = &GetEditDoc();
+
 	//自ウィンドウ
 	HWND			m_hWnd = nullptr;
 
 public:
 	//子ウィンドウ
-	CMainToolBar	m_cToolbar;			//!< ツールバー
+	CMainToolBar	m_cToolbar{ this };			//!< ツールバー
 	CTabWnd			m_cTabWnd;			//!< タブウインドウ	//@@@ 2003.05.31 MIK
 	CFuncKeyWnd		m_cFuncKeyWnd;		//!< ファンクションバー
-	CMainStatusBar	m_cStatusBar;		//!< ステータスバー
+	CMainStatusBar	m_cStatusBar{ this };		//!< ステータスバー
 	CPrintPreview*	m_pPrintPreview = nullptr;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CEditView*		m_pcDragSourceView = nullptr;	//!< ドラッグ元のビュー
-	CViewFont*		m_pcViewFont;		//!< フォント
-	CViewFont*		m_pcViewFontMiniMap;		//!< フォント
+	CViewFont*		m_pcViewFont = new CViewFont(&GetLogfont());		//!< フォント
+	CViewFont*		m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);		//!< フォント
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
@@ -355,16 +366,12 @@ public:
 
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
-	CEditDoc* 		m_pcEditDoc;
-	CEditView*		m_pcEditViewArr[4];	//!< ビュー
+	CEditViewsArray	m_pcEditViewArr{};	//!< ビュー
 	CEditView*		m_pcEditView;		//!< 有効なビュー
 	CMiniMapView	m_cMiniMapView;		//!< ミニマップ
 	int				m_nActivePaneIndex = 0;	//!< 有効なビューのindex
 	int				m_nEditViewCount = 1;	//!< 有効なビューの数
 	const int		m_nEditViewMaxCount = int(std::size(m_pcEditViewArr));//!< ビューの最大数=4
-
-	//共有データ
-	DLLSHAREDATA*	m_pShareData;
 
 	//ヘルパ
 	CMenuDrawer		m_cMenuDrawer;
@@ -372,7 +379,7 @@ private:
 	//状態
 	bool			m_bIsActiveApp = false;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPWSTR			m_pszLastCaption = nullptr;
-	LPWSTR			m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
+	SMenubarMessage m_pszMenubarMessage = nullptr;	//!< メニューバー右端に表示するメッセージ
 public:
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
 	CLogicPointEx*	m_posSaveAry = nullptr;		//!< フォント変更前の座標
