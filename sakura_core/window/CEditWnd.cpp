@@ -162,17 +162,26 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 }
 
 /*!
- * 編集ウインドウのインスタンスを取得します。
+ * 編集ウインドウのアドレスを取得します。
+ */
+CEditWnd* GetEditWndPtr() noexcept
+{
+	return CEditWnd::getInstance();
+}
+
+/*!
+ * 編集ウインドウの参照を取得します。
  *
  * 編集ウインドウの生存期間ははエディタプロセスと同じなので、
  * ほとんどの場合、このグローバル関数を使ってアクセスできます。
+ *
+ * @throws CEditWndが生成されていない
  */
-CEditWnd& GetEditWnd( void )
+CEditWnd& GetEditWnd()
 {
-	auto pcEditWnd = CEditWnd::getInstance();
-	if( !pcEditWnd )
-	{
-		::_com_raise_error(E_FAIL, MakeMsgError(L"Any CEditWnd has been instantiated."));
+	auto pcEditWnd = GetEditWndPtr();
+	if (!pcEditWnd) {
+		throw std::domain_error("CEditWnd is not initialized");
 	}
 	return *pcEditWnd;
 }

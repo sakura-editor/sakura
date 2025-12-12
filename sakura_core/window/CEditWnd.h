@@ -401,6 +401,7 @@ public:
 	ESelectCountMode	m_nSelectCountMode = SELECT_COUNT_TOGGLE; // 選択文字カウント方法
 };
 
-CEditWnd& GetEditWnd( void );
+CEditWnd* GetEditWndPtr() noexcept;
+CEditWnd& GetEditWnd();
 
 #endif /* SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_ */
