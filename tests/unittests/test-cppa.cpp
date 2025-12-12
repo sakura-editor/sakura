@@ -141,8 +141,28 @@ TEST(CPPA, ppaErrorProc)
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
 	InitCharWidthCache(GetDllShareData().m_Common.m_sView.m_lf);
 
+#pragma region CanBeMove
+	// ドキュメントがなくてもエラーにならない
+	EXPECT_THAT(GetDocument(), IsNull());
+
+	// ドキュメントがないのでエラー
+	EXPECT_ANY_THROW(GetEditDoc());
+
+#pragma endregion CanBeMove
+
 	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
 	const auto pcEditDoc = std::make_unique<CEditDoc>(nullptr);
+
+#pragma region CanBeMove
+	// ドキュメントがあるので値を返す
+	EXPECT_THAT(GetDocument(), pcEditDoc.get());
+
+	// ドキュメントがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetEditDoc(); });
+
+	EXPECT_THAT(&GetEditDoc(), GetDocument());
+
+#pragma endregion CanBeMove
 
 	// CEditWndを用意する
 	const auto pcEditWnd = std::make_unique<CEditWnd>();
