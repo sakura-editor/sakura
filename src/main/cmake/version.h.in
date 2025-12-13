@@ -1,0 +1,51 @@
+/*! @file */
+/*
+	Copyright (C) 2018-2025, Sakura Editor Organization
+
+	SPDX-License-Identifier: Zlib
+*/
+#ifndef SAKURA_VERSION_F8EBA970_BB7A_43D9_B89A_04FB0B586A8A_H_
+#define SAKURA_VERSION_F8EBA970_BB7A_43D9_B89A_04FB0B586A8A_H_
+#pragma once
+
+#define BUILD_ENV_NAME "@BUILD_ENV_NAME@"
+#define BUILD_VERSION @BUILD_VERSION@
+
+/* enable 'dev version' macro which will be disabled on release branches */
+#define DEV_VERSION
+
+// バージョン定義 //
+#define VER_A	@SAKURA_MAJOR_VERSION@	// メジャーバージョン(2固定)
+#define VER_B	@SAKURA_MINOR_VERSION@	// マイナーバージョン(4以降はGitHub版)
+#define VER_C	@SAKURA_PATCH_VERSION@	// 連番(マージの通し番号)
+#define VER_D	BUILD_VERSION			// Gitの累積コミット数
+
+@GIT_SHORT_COMMIT_HASH_DEFINE@
+@GIT_COMMIT_HASH_DEFINE@
+@GIT_REMOTE_ORIGIN_URL_DEFINE@
+@GIT_TAG_NAME_DEFINE@
+@CI_REPO_NAME_DEFINE@
+
+@CI_BUILD_NUMBER_DEFINE@
+@GITHUB_PR_NUMBER_DEFINE@
+@GITHUB_COMMIT_URL_DEFINE@
+@GITHUB_PR_HEAD_URL_DEFINE@
+@GITHUB_PR_HEAD_COMMIT_DEFINE@
+@GITHUB_PR_HEAD_SHORT_COMMIT_DEFINE@
+@CI_BUILD_URL_DEFINE@
+
+#define TO_STR(arg)                            #arg
+#define _MAKE_VERSION(a, b, c, d)              a, b, c, d
+#define _MAKE_VERSION_STR(a, b, c, d, sep)     TO_STR(a) sep TO_STR(b) sep TO_STR(c) sep TO_STR(d)
+
+#define PRODUCT_VERSION _MAKE_VERSION(VER_A, VER_B, VER_C, VER_D)
+#define FILE_VERSION    _MAKE_VERSION(VER_A, VER_B, VER_C, VER_D)
+#define VERSION_STR     _MAKE_VERSION_STR(VER_A, VER_B, VER_C, VER_D, ".")
+
+#ifdef GIT_SHORT_COMMIT_HASH
+#define VERSION_HASH " (" GIT_SHORT_COMMIT_HASH ")"
+#else
+#define VERSION_HASH " (Undefined)"
+#endif
+
+#endif /* SAKURA_VERSION_F8EBA970_BB7A_43D9_B89A_04FB0B586A8A_H_ */

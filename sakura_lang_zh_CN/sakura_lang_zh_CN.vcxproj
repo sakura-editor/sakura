@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -36,11 +36,8 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup>
-    <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
+    <IntDir>..\build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>..\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
@@ -52,7 +49,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="Common Settings">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\src\main\resources;..\sakura_core;$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0804</Culture>
     </ResourceCompile>
     <Link>
@@ -86,6 +83,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
+  <Import Project="..\src\main\msbuild\cmake.props" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -95,10 +93,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="sakura_lang_rc.rc" />
+    <ClInclude Include="..\sakura_core\sakura_rc.h" />
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_define.h" />
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\src\main\resources\images\auto_scroll_center.bmp" />
@@ -131,11 +128,12 @@
     <None Include="sakura_lang_rc.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\sakura_core\sakura_rc.h" />
+    <ResourceCompile Include="sakura_lang_rc.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Import Project="..\sakura\githash.targets" />
-  <Import Project="..\sakura\funccode.targets" />
+  <Import Project="..\src\main\msbuild\cmake.targets" />
+  <Target Name="PreGenerateLang_zh_CN" DependsOnTargets="GenerateVersionHeader;GenerateFuncCodeDefine" BeforeTargets="ResourceCompile">
+  </Target>
 </Project>

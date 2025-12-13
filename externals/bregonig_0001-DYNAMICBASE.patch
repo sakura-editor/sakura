@@ -1,0 +1,25 @@
+From 96c93b6dfd3f22832067be2077885e73a1b13751 Mon Sep 17 00:00:00 2001
+From: berryzplus <berryzplus@gmail.com>
+Date: Sun, 30 Nov 2025 13:57:28 +0900
+Subject: [PATCH] DYNAMICBASE
+
+---
+ src/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Makefile b/src/Makefile
+index 0df4752..563edd9 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -58,7 +58,7 @@ CPPFLAGS = $(CPPFLAGS) /DUSE_VTAB /DPERL_5_8_COMPAT /DNAMEGROUP_RIGHTMOST
+ CPPFLAGS = $(CPPFLAGS) /DUSE_ONIGMO_6
+ !endif
+ LD = link
+-LDFLAGS = /DLL /nologo /MAP /BASE:$(BASEADDR) /merge:.rdata=.text
++LDFLAGS = /DLL /nologo /MAP /DYNAMICBASE /merge:.rdata=.text
+ 
+ !ifdef USE_MSVCRT
+ CPPFLAGS = $(CPPFLAGS) /MD
+-- 
+2.41.0.windows.1
+

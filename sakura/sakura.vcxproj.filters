@@ -8,6 +8,9 @@
       <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
+    <Filter Include="Resource Files\images">
+      <UniqueIdentifier>{7740d8e5-2c5b-43b3-8180-f2cefab85f70}</UniqueIdentifier>
+    </Filter>
     <Filter Include="C Source Files">
       <UniqueIdentifier>{6a236fae-9c81-4376-87fc-725f282ca48a}</UniqueIdentifier>
     </Filter>
@@ -119,22 +122,31 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pre-compiled Header">
+      <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{b50fc2d7-a5f2-4b9f-af30-bf04dda44839}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\sakura_core\Funccode_define.h">
-      <Filter>Other Files</Filter>
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\Funccode_enum.h">
-      <Filter>Other Files</Filter>
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_define.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_enum.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\sakura.hh">
       <Filter>Other Files</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\sakura_rc.h">
-      <Filter>Other Files</Filter>
+      <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\StdAfx.h">
-      <Filter>Other Files</Filter>
+      <Filter>Pre-compiled Header</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\String_define.h">
       <Filter>Other Files</Filter>
@@ -1060,10 +1072,6 @@
     <ClInclude Include="..\sakura_core\uiparts\HandCursor.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\githash.h" />
-    <ClInclude Include="..\sakura_core\version.h">
-      <Filter>Other Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\recent\CRecentExcludeFile.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
@@ -1115,74 +1123,74 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\main\resources\images\auto_scroll_center.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_down.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_down_left.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_down_right.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_horizontal.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_left.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_right.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_up.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_up_left.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_up_right.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_vertical.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\cursor_copy.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\cursor_isb.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\cursor_isf.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\cursor_move.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\cursor_rvarrow.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\cursor_tab_join.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\cursor_tab_separate.cur">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\MainMenu.ini">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\sakura_core\sakura_rc.rc2">
-      <Filter>Other Files</Filter>
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc">
-      <Filter>Other Files</Filter>
+      <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sakura_core\StdAfx.cpp">
-      <Filter>Other Files</Filter>
+      <Filter>Pre-compiled Header</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\CAutoReloadAgent.cpp">
       <Filter>Cpp Source Files</Filter>
@@ -2312,28 +2320,28 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\src\main\resources\images\auto_scroll_center.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
     <Image Include="..\src\main\resources\images\auto_scroll_horizontal.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
     <Image Include="..\src\main\resources\images\auto_scroll_vertical.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
     <Image Include="..\src\main\resources\images\icon_debug.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
     <Image Include="..\src\main\resources\images\icon_grep.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
     <Image Include="..\src\main\resources\images\icon_std.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
     <Image Include="..\src\main\resources\images\mytool.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
     <Image Include="..\src\main\resources\images\printer.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\images</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

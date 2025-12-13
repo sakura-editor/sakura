@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="CMakeTools">
+    <CMakeExe>$(VsInstallDir)Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe</CMakeExe>
+    <CMakeToolsSourceDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\..\..\'))</CMakeToolsSourceDir>
+    <CMakeToolsBuildDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\..\..\build\$(Platform)\CMakeTools\'))</CMakeToolsBuildDir>
+    <CMakeToolsPath>$([MSBuild]::NormalizePath('$(CMakeToolsBuildDir)', '.'))</CMakeToolsPath>
+    <HeaderMakeBuildDir>$([MSBuild]::NormalizePath('$(CMakeToolsBuildDir)', '.\HeaderMake\'))</HeaderMakeBuildDir>
+    <HeaderMakeBuildPath>$([MSBuild]::NormalizePath('$(HeaderMakeBuildDir)', '.'))</HeaderMakeBuildPath>
+    <HeaderMakeExe>$([MSBuild]::NormalizePath('$(CMakeToolsPath)', '.\bin\HeaderMake.exe'))</HeaderMakeExe>
+    <VersionHeader>$(CMakeToolsBuildDir)version.h</VersionHeader>
+    <FuncCodeDefine>$(CMakeToolsBuildDir)Funccode_define.h</FuncCodeDefine>
+    <FuncCodeEnum>$(CMakeToolsBuildDir)Funccode_enum.h</FuncCodeEnum>
+  </PropertyGroup>
+  <ItemDefinitionGroup Label="CMakeTools">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(CMakeToolsBuildDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(CMakeToolsBuildDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+</Project>

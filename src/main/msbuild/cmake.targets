@@ -1,0 +1,29 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <RcInclude Include="..\sakura_core\sakura_rc.h" />
+    <RcInclude Include="..\sakura_core\String_define.h" />
+  </ItemGroup>
+  <Target Name="ConfigureCMakeTools" Condition="!Exists('$(CMakeToolsBuildDir)CMakeCache.txt')">
+    <SetEnv name="VisualStudioVersion" value="$(VisualStudioVersion)" prefix="false" />
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' -A $(Platform) -B '$(CMakeToolsPath)' -S '$([MSBuild]::NormalizePath('$(CMakeToolsSourceDir)', '.'))' -DCMAKE_CONFIGURATION_TYPES='Debug;Release'&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="GenerateVersionHeader" Inputs="..\src\main\cmake\version.h.in" Outputs="$(VersionHeader)" DependsOnTargets="ConfigureCMakeTools" BeforeTargets="ResourceCompile;ClCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_version_header -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="ConfigureHeaderMake" Condition="!Exists('$(HeaderMakeBuildDir)CMakeCache.txt')" DependsOnTargets="GenerateVersionHeader">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target configure_header_make -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="GenerateHeaderMake" Condition="!Exists('$(HeaderMakeExe)')" DependsOnTargets="ConfigureHeaderMake">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(HeaderMakeBuildPath)' --config $(Configuration) -- /nologo &amp;&amp; &amp; '$(CMakeExe)' --install '$(HeaderMakeBuildPath)' --config $(Configuration)&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;&amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_header_make -- /nologo &gt; $null&quot;" />
+  </Target>
+  <Target Name="GenerateFuncCodeDefine" Inputs="@(FuncCodeRes)" Outputs="$(FuncCodeDefine)" DependsOnTargets="GenerateHeaderMake" BeforeTargets="ResourceCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_funccode_define -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="GenerateFuncCodeEnum" Inputs="@(FuncCodeRes)" Outputs="$(FuncCodeEnum)" DependsOnTargets="GenerateHeaderMake" BeforeTargets="ClCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_funccode_enum -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="AppendCMakeToolsCleanTargetsForCMakeTools" BeforeTargets="CoreClean">
+    <RemoveDir Directories="$(CMakeToolsBuildDir)" />
+  </Target>
+</Project>
