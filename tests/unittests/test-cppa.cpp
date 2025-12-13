@@ -141,14 +141,49 @@ TEST(CPPA, ppaErrorProc)
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
 	InitCharWidthCache(GetDllShareData().m_Common.m_sView.m_lf);
 
+#pragma region CanBeMove
+	// ドキュメントがなくてもエラーにならない
+	EXPECT_THAT(GetDocument(), IsNull());
+
+	// ドキュメントがないのでエラー
+	EXPECT_ANY_THROW(GetEditDoc());
+
+#pragma endregion CanBeMove
+
 	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
 	const auto pcEditDoc = std::make_unique<CEditDoc>(nullptr);
+
+#pragma region CanBeMove
+	// ドキュメントがあるので値を返す
+	EXPECT_THAT(GetDocument(), pcEditDoc.get());
+
+	// ドキュメントがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetEditDoc(); });
+
+	EXPECT_THAT(&GetEditDoc(), GetDocument());
+
+	// 編集ウインドウがなくてもエラーにならない
+	EXPECT_THAT(GetEditWndPtr(), IsNull());
+
+	// 編集ウインドウがないのでエラー
+	EXPECT_ANY_THROW(GetEditWnd());
+
+#pragma endregion CanBeMove
 
 	// CEditWndを用意する
 	const auto pcEditWnd = std::make_unique<CEditWnd>();
 
 	// SMacroMgrを用意する
 	const auto pcSMacroMgr = std::make_unique<CSMacroMgr>();
+
+#pragma region CanBeMove
+	// 編集ウインドウがあるので値を返す
+	EXPECT_THAT(GetEditWndPtr(), pcEditWnd.get());
+
+	// 編集ウインドウがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetEditWnd(); });
+
+#pragma endregion CanBeMove
 
 	// PPA実行情報を用意する
 	CPPA::PpaExecInfo info{};
