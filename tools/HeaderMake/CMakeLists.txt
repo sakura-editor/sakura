@@ -4,7 +4,7 @@
 project (HeaderMake)
 
 # add test executable
-add_executable(${PROJECT_NAME} ../../HeaderMake/HeaderMake.cpp)
+add_executable(${PROJECT_NAME} HeaderMake.cpp)
 
 # add definitions
 target_compile_definitions(${PROJECT_NAME} PUBLIC _CONSOLE UNICODE _UNICODE)
