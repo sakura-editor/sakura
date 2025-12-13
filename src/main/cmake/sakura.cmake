@@ -21,13 +21,44 @@ endif()
 
 set(OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-# ホストツールのプラットフォームを決める
+# ビルド対象のCPUアーキテクチャを決める
+if(CMAKE_GENERATOR MATCHES "^Visual Studio")
+  # VSジェネレーターは -A の値で判定する
+  if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
+    set(ARCH "x64")
+  elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
+    set(ARCH "arm64")
+  elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
+    set(ARCH "x86")
+  endif()
+
+  # CMakeジェネレーターに渡すパラメーターを作る
+  set(GENERATOR_ARGS "-A ${CMAKE_GENERATOR_PLATFORM} -DCMAKE_CONFIGURATION_TYPES=\"Debug\;Release\"")
+
+else()
+  # CMakeが持ってる値を整形する
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64|x86_64")
+    set(ARCH "x64")
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64")
+    set(ARCH "arm64")
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86|i686")
+    set(ARCH "x86")
+  endif()
+
+  # CMakeジェネレーターに渡すパラメータを作る
+  set(GENERATOR_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
+endif()
+
+# ホストツールのプラットフォームとCPUを決める
 if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64|x86_64")
   set(HOST_PLATFORM "x64")
+  set(HOST_ARCH "x64")
 elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64")
   set(HOST_PLATFORM "ARM64")
+  set(HOST_ARCH "arm64")
 else()
   set(HOST_PLATFORM "Win32")
+  set(HOST_ARCH "x86")
 endif()
 
 # ホストツールのCMakeジェネレーターに渡すパラメーターを作る
@@ -36,6 +67,52 @@ if(CMAKE_GENERATOR MATCHES "^Visual Studio")
 else()
   set(GENERATOR_ARGS_FOR_HOST_TOOLS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
+
+# vswhereを探す。（なくてもOK）
+find_program(CMD_VSWHERE vswhere.exe
+  PATHS
+    "$ENV{ChocolateyInstall}"
+    "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
+  PATH_SUFFIXES
+    "bin"
+  DOC "Visual Studio Locator"
+)
+
+if(CMD_VSWHERE)
+  message(STATUS "Found vswhere: ${CMD_VSWHERE}")
+endif()
+
+# 環境変数とvswhereを使ってVSバージョンを取得する
+if($ENV{VisualStudioVersion})
+  set(VISUAL_STUDIO_VERSION "$ENV{VisualStudioVersion}")
+elseif(CMD_VSWHERE)
+  # Use vswhere to get Visual Studio version
+  execute_process(
+    COMMAND ${CMD_VSWHERE} -latest -property installationVersion
+    OUTPUT_VARIABLE VISUAL_STUDIO_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+endif()
+
+# VSバージョンが取れた場合VsDevCmdを探す
+if(VISUAL_STUDIO_VERSION)
+  # extract major version
+  string(REGEX REPLACE "([0-9]+)\\..+" "\\1" VS_VERSION "${VISUAL_STUDIO_VERSION}")
+
+  # Use vswhere to find VsDevCmd.bat
+  execute_process(
+    COMMAND ${CMD_VSWHERE} -find "Common7\\Tools\\VsDevCmd.bat" -version "${VS_VERSION}"
+    OUTPUT_VARIABLE CMD_VS_DEV
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+  # Convert backslashes to forward slashes
+  string(REPLACE "\\" "/" CMD_VS_DEV "${CMD_VS_DEV}")
+
+  if(CMD_VS_DEV)
+    message(STATUS "Found VsDevCmd: ${CMD_VS_DEV}")
+  endif()
+endif(VISUAL_STUDIO_VERSION)
 
 # Find Git with additional search paths
 find_program(GIT_EXECUTABLE git
@@ -51,6 +128,32 @@ if(NOT GIT_EXECUTABLE)
 endif()
 
 message(STATUS "Found Git: ${GIT_EXECUTABLE}")
+
+# Find patch.exe from Git installation
+find_program(PATCH_EXECUTABLE patch
+  PATHS
+    "$ENV{ProgramFiles}/Git/usr/bin"
+  NO_DEFAULT_PATH
+  DOC "patch.exe command from Git"
+)
+
+if(NOT PATCH_EXECUTABLE)
+  message(FATAL_ERROR "patch.exe was not found. Please install Git.")
+endif()
+
+message(STATUS "Found patch.exe: ${PATCH_EXECUTABLE}")
+
+# Find 7zip for archive extraction
+find_program(7ZIP_EXECUTABLE 7z
+  PATHS
+    "$ENV{ChocolateyInstall}"
+)
+
+if(NOT 7ZIP_EXECUTABLE)
+  message(FATAL_ERROR "7z.exe not found")
+endif()
+
+message(STATUS "Found 7z: ${7ZIP_EXECUTABLE}")
 
 # Create a custom command for version.h generation
 add_custom_command(
@@ -86,6 +189,24 @@ add_custom_command(
 add_custom_target(generate_funccode_define
   DEPENDS
     "${CMAKE_BINARY_DIR}/Funccode_define.h"
+)
+
+# Create a custom command for funccode_enum generation
+add_custom_command(
+  OUTPUT "${CMAKE_BINARY_DIR}/Funccode_enum.h"
+  COMMAND ${HEADER_MAKE_EXECUTABLE}
+    -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
+    -out=${CMAKE_BINARY_DIR}/Funccode_enum.h
+    -mode=enum
+    -enum=EFunctionCode
+  DEPENDS generate_header_make
+  COMMENT "Generating Funccode_enum.h"
+)
+
+# Create a custom target that depends on the generated file
+add_custom_target(generate_funccode_enum
+  DEPENDS
+    "${CMAKE_BINARY_DIR}/Funccode_enum.h"
 )
 
 if(MINGW)
@@ -218,3 +339,4 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src/main/resources
   ${CMAKE_SOURCE_DIR}/sakura_core
 )
+

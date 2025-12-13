@@ -12,3 +12,8 @@ include(${CMAKE_SOURCE_DIR}/src/main/cmake/sakura.cmake)
 create_language_dll(en-US 1033)
 create_language_dll(zh-CN 2052)
 
+# Include bregonig.cmake for bregonig.dll
+include(${CMAKE_SOURCE_DIR}/src/main/cmake/bregonig.cmake)
+
+# Include ctags.cmake for ctags command
+include(${CMAKE_SOURCE_DIR}/src/main/cmake/ctags.cmake)
