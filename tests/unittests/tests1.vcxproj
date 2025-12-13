@@ -39,7 +39,6 @@
     <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <Import Project="$(ProjectDir)..\googletest.targets" />
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -96,6 +95,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(ProjectDir)..\..\src\main\msbuild\cmake.props" />
+  <Import Project="$(ProjectDir)..\..\src\test\msbuild\googletest.props" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -194,17 +194,15 @@
   <ItemGroup>
     <TestResource Include="test-plugin\plugin.def" />
   </ItemGroup>
-  <Target Name="MakeTestResource" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\ja-JP\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.ja-JP.zip">
-    <Exec Command="7z u &quot;$(IntDir)resources.ja-JP.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\ja-JP" />
-  </Target>
-  <Target Name="MakeTestResourceEnUS" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\en-US\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.en-US.zip">
-    <Exec Command="7z u &quot;$(IntDir)resources.en-US.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\en-US" />
+  <Import Project="$(ProjectDir)..\..\src\test\msbuild\googletest.targets" />
+  <Target Name="MakeTestResource" Condition="!Exists('$(CMakeToolsBuildDir)resources.ja-JP.zip')" BeforeTargets="ResourceCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_resource_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
-      <Clean Include="$(IntDir)resources.ja-JP.zip" />
-      <Clean Include="$(IntDir)resources.en-US.zip" />
+      <Clean Include="$(IntDir)..\..\CMakeTools\resources.ja-JP.zip" />
+      <Clean Include="$(IntDir)..\..\CMakeTools\resources.en-US.zip" />
     </ItemGroup>
   </Target>
 </Project>

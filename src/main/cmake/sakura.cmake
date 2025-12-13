@@ -155,6 +155,17 @@ endif()
 
 message(STATUS "Found 7z: ${7ZIP_EXECUTABLE}")
 
+# Create a custom command for banner generation
+add_custom_target(show_dev_banner ALL
+  COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan "-------------------------------------------------------------------------------------"
+  COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan "---  This is a Dev version and under development. Be careful to use this version. ---"
+  COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan "-------------------------------------------------------------------------------------"
+  VERBATIM
+)
+
+# Include compiletests.cmake
+include(${CMAKE_SOURCE_DIR}/src/test/cmake/compiletests.cmake)
+
 # Create a custom command for version.h generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/version.h"
@@ -329,6 +340,7 @@ endfunction(create_language_dll)
 add_compile_definitions(
   UNICODE
   _UNICODE
+  _WIN32_WINNT=_WIN32_WINNT_WIN10
   $<$<CONFIG:Debug>:_DEBUG>
   $<$<CONFIG:Release>:NDEBUG>
 )
@@ -336,7 +348,151 @@ add_compile_definitions(
 # add include directories
 include_directories(
   ${CMAKE_BINARY_DIR} 
+  ${CMAKE_SOURCE_DIR}/src/main/cpp
   ${CMAKE_SOURCE_DIR}/src/main/resources
   ${CMAKE_SOURCE_DIR}/sakura_core
 )
 
+if(MSVC)
+  # VCランタイムを指定する（/MTd, /MTにする）
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+  # 静的リンクするライブラリの構築に使うパラメーターを作る
+  set(GENERATOR_ARGS_FOR_STATIC_LIBRARY "\"-DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}\"")
+
+  add_compile_options(
+    /source-charset:utf-8
+    /execution-charset:shift_jis
+    /w44996
+  )
+endif(MSVC)
+
+if(MINGW)
+  add_compile_options(
+    $<$<CONFIG:Debug>:-g>
+    $<$<CONFIG:Debug>:-O0>
+    $<$<CONFIG:Release>:-O2>
+    -MMD
+    -finput-charset=utf-8
+    -fexec-charset=cp932
+    -Wdeprecated-declarations
+  )
+endif(MINGW)
+
+# define header files of sakura-editor
+file(GLOB_RECURSE HEADERS
+  ${CMAKE_SOURCE_DIR}/src/main/cpp/*.hpp
+  ${CMAKE_SOURCE_DIR}/src/main/cpp/*.h
+  ${CMAKE_SOURCE_DIR}/sakura_core/*.hpp
+  ${CMAKE_SOURCE_DIR}/sakura_core/*.h
+)
+
+# define source files of sakura_core
+file(GLOB_RECURSE SOURCES
+  ${CMAKE_SOURCE_DIR}/src/main/cpp/*.cpp
+  ${CMAKE_SOURCE_DIR}/sakura_core/*.cpp
+)
+
+set(RESOURCE_SCRIPTS
+  ${CMAKE_SOURCE_DIR}/sakura_core/sakura_rc.rc
+  ${CMAKE_SOURCE_DIR}/sakura_core/sakura_rc.rc2
+)
+
+set(NATVIS_FILES
+  ${CMAKE_SOURCE_DIR}/src/main/resources/sakura.natvis
+)
+
+# define precompiled headers
+set(PCH_HEADER ${CMAKE_SOURCE_DIR}/sakura_core/StdAfx.h)
+
+if(MINGW)
+  # Convert RC files to UTF-8 for MinGW
+  convert_rc_files_to_utf8(RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
+endif(MINGW)
+
+# Create sakura_core object library
+add_library(sakura_core OBJECT ${PCH_HEADER} ${SOURCES} ${RESOURCE_SCRIPTS} ${HEADERS})
+
+# Enable precompiled headers for sakura_core
+target_precompile_headers(sakura_core PRIVATE ${PCH_HEADER})
+
+# Set C++ standard for sakura_core
+target_compile_features(sakura_core PUBLIC cxx_std_17)
+
+# Add include directories for sakura_core
+target_include_directories(sakura_core
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+)
+
+# Add link directories for sakura_core
+target_link_directories(sakura_core
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/lib$<$<CONFIG:Debug>:/Debug>>"
+)
+
+# link libraries
+target_link_libraries(sakura_core
+  PUBLIC
+    comctl32
+    dwmapi
+    htmlhelp
+    imm32
+    mpr
+    msimg32
+    ole32
+    oleaut32
+    shlwapi
+    uuid
+    uxtheme
+    windowscodecs
+    winmm
+    winspool
+)
+
+# Add dependencies for sakura_core
+add_dependencies(sakura_core
+  generate_version_header
+  generate_funccode_define
+  generate_funccode_enum
+)
+
+if(MSVC)
+  target_sources(sakura_core
+    PUBLIC
+      ${NATVIS_FILES}
+  )
+  set_target_properties(sakura_core
+    PROPERTIES
+      VS_DEBUGGER_VISUALIZER "${NATVIS_FILES}"
+  )
+  # add definitions for sakura_core
+  target_compile_definitions(sakura_core
+    PUBLIC
+      NOMINMAX
+  )
+  # add compile options for sakura_core
+  target_compile_options(sakura_core
+    PRIVATE
+      /FAsu
+      /Fa"${CMAKE_BINARY_DIR}"
+  )
+endif(MSVC)
+
+if(MINGW)
+  # Set RC flags for MinGW (windres uses decimal)
+  set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -c 65001 -l 1041 --use-temp-file")
+
+  # Add include directories for sakura_core
+  target_include_directories(sakura_core
+    PRIVATE
+      "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/sakura_rc_ja-JP>"
+  )
+
+  target_link_options(sakura_core
+    PUBLIC
+      -municode
+      -static
+      $<$<CONFIG:Release>:-s>
+  )
+endif(MINGW)

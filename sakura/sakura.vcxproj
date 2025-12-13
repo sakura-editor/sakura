@@ -905,7 +905,9 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Import Project="..\src\main\msbuild\cmake.targets" />
-  <Import Project="..\tests\compiletests.targets" />
+  <Target Name="RunCompileTests" Condition="!Exists('..\build\$(Platform)\CMakeTools\compiletests\CMakeCache.txt')" DependsOnTargets="GenerateVersionHeader" BeforeTargets="ClCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' -A $(Platform) -B '$(CMakeToolsPath)/compiletests' -S '$([MSBuild]::NormalizePath('$(CMakeToolsSourceDir)', '.\src\test\resources\compiletests'))' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' &amp;&amp; &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target run_compiletests -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
   <Target Name="GenerateBregonig" Condition="!Exists('$(OutDir)bregonig.dll')" DependsOnTargets="GenerateVersionHeader" AfterTargets="Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_bregonig -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
