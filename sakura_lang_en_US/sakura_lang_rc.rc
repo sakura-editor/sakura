@@ -93,7 +93,7 @@ CAPTION "Jump to Line"
 FONT 9, "Tahoma", 0, 0, 0x1
 BEGIN
     LTEXT           "Line &Number",IDC_STATIC,5,6,34,8
-    EDITTEXT        IDC_EDIT_LINENUM,34,4,54,12, ES_NUMBER
+    EDITTEXT        IDC_EDIT_LINENUM,34,4,54,12,ES_NUMBER
     CONTROL         "Spin1",IDC_SPIN_LINENUM,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,82,4,9,12
     CONTROL         "Use Layout(&R)",IDC_RADIO_LINENUM_LAYOUT,"Button",BS_AUTORADIOBUTTON | WS_GROUP,94,5,97,10
     CONTROL         "Use CRLF(&W)",IDC_RADIO_LINENUM_CRLF,"Button",BS_AUTORADIOBUTTON,94,20,87,10
@@ -880,7 +880,8 @@ BEGIN
     CONTROL         "When Undo, separate from editing(&U)",IDC_CHECK_INDENTCPPUNDO,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,183,146,10
     GROUPBOX        "C/C++　Indent Settings",IDC_STATIC,3,159,295,40,WS_GROUP
-    CONTROL         "Detect an indentation style when a file is loaded(&T)",IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,205,240,10
+    CONTROL         "Detect an indentation style when a file is loaded(&T)",IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,205,240,10
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244
@@ -2159,13 +2160,13 @@ END
 // Bitmap
 //
 
-IDB_MYTOOL              BITMAP                  "images/mytool.bmp"
+IDB_MYTOOL              BITMAP                  "../src/main/resources/images/mytool.bmp"
 
-IDB_SCROLL_CENTER       BITMAP                  "images/auto_scroll_center.bmp"
+IDB_SCROLL_CENTER       BITMAP                  "../src/main/resources/images/auto_scroll_center.bmp"
 
-IDB_SCROLL_VERTICAL     BITMAP                  "images/auto_scroll_vertical.bmp"
+IDB_SCROLL_VERTICAL     BITMAP                  "../src/main/resources/images/auto_scroll_vertical.bmp"
 
-IDB_SCROLL_HORIZONTAL   BITMAP                  "images/auto_scroll_horizontal.bmp"
+IDB_SCROLL_HORIZONTAL   BITMAP                  "../src/main/resources/images/auto_scroll_horizontal.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2175,9 +2176,9 @@ IDB_SCROLL_HORIZONTAL   BITMAP                  "images/auto_scroll_horizontal.b
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON_GREP           ICON                    "images/icon_grep.ico"
+IDI_ICON_GREP           ICON                    "../src/main/resources/images/icon_grep.ico"
 
-IDI_PRINTER             ICON                    "images/printer.ico"
+IDI_PRINTER             ICON                    "../src/main/resources/images/printer.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2185,41 +2186,41 @@ IDI_PRINTER             ICON                    "images/printer.ico"
 // Cursor
 //
 
-IDC_CURSOR_COPYARROW    CURSOR                  "images/cursor_copy.cur"
+IDC_CURSOR_COPYARROW    CURSOR                  "../src/main/resources/images/cursor_copy.cur"
 
-IDC_CURSOR_MOVEARROW    CURSOR                  "images/cursor_move.cur"
+IDC_CURSOR_MOVEARROW    CURSOR                  "../src/main/resources/images/cursor_move.cur"
 
-IDC_CURSOR_RVARROW      CURSOR                  "images/cursor_rvarrow.cur"
+IDC_CURSOR_RVARROW      CURSOR                  "../src/main/resources/images/cursor_rvarrow.cur"
 
-IDC_CURSOR_ISEARCH_F    CURSOR                  "images/cursor_isf.cur"
+IDC_CURSOR_ISEARCH_F    CURSOR                  "../src/main/resources/images/cursor_isf.cur"
 
-IDC_CURSOR_ISEARCH_B    CURSOR                  "images/cursor_isb.cur"
+IDC_CURSOR_ISEARCH_B    CURSOR                  "../src/main/resources/images/cursor_isb.cur"
 
-IDC_CURSOR_TAB_SEPARATE CURSOR                  "images/cursor_tab_separate.cur"
+IDC_CURSOR_TAB_SEPARATE CURSOR                  "../src/main/resources/images/cursor_tab_separate.cur"
 
-IDC_CURSOR_TAB_JOIN     CURSOR                  "images/cursor_tab_join.cur"
+IDC_CURSOR_TAB_JOIN     CURSOR                  "../src/main/resources/images/cursor_tab_join.cur"
 
-IDC_CURSOR_AUTOSCROLL_CENTER CURSOR             "images/auto_scroll_center.cur"
+IDC_CURSOR_AUTOSCROLL_CENTER CURSOR                  "../src/main/resources/images/auto_scroll_center.cur"
 
-IDC_CURSOR_AUTOSCROLL_HORIZONTAL CURSOR         "images/auto_scroll_horizontal.cur"
+IDC_CURSOR_AUTOSCROLL_HORIZONTAL CURSOR                  "../src/main/resources/images/auto_scroll_horizontal.cur"
 
-IDC_CURSOR_AUTOSCROLL_VERTICAL CURSOR           "images/auto_scroll_vertical.cur"
+IDC_CURSOR_AUTOSCROLL_VERTICAL CURSOR                  "../src/main/resources/images/auto_scroll_vertical.cur"
 
-IDC_CURSOR_AUTOSCROLL_UP CURSOR                 "images/auto_scroll_up.cur"
+IDC_CURSOR_AUTOSCROLL_UP CURSOR                  "../src/main/resources/images/auto_scroll_up.cur"
 
-IDC_CURSOR_AUTOSCROLL_DOWN CURSOR               "images/auto_scroll_down.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN CURSOR                  "../src/main/resources/images/auto_scroll_down.cur"
 
-IDC_CURSOR_AUTOSCROLL_LEFT CURSOR               "images/auto_scroll_left.cur"
+IDC_CURSOR_AUTOSCROLL_LEFT CURSOR                  "../src/main/resources/images/auto_scroll_left.cur"
 
-IDC_CURSOR_AUTOSCROLL_RIGHT CURSOR              "images/auto_scroll_right.cur"
+IDC_CURSOR_AUTOSCROLL_RIGHT CURSOR                  "../src/main/resources/images/auto_scroll_right.cur"
 
-IDC_CURSOR_AUTOSCROLL_UP_LEFT CURSOR            "images/auto_scroll_up_left.cur"
+IDC_CURSOR_AUTOSCROLL_UP_LEFT CURSOR                  "../src/main/resources/images/auto_scroll_up_left.cur"
 
-IDC_CURSOR_AUTOSCROLL_UP_RIGHT CURSOR           "images/auto_scroll_up_right.cur"
+IDC_CURSOR_AUTOSCROLL_UP_RIGHT CURSOR                  "../src/main/resources/images/auto_scroll_up_right.cur"
 
-IDC_CURSOR_AUTOSCROLL_DOWN_LEFT CURSOR          "images/auto_scroll_down_left.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN_LEFT CURSOR                  "../src/main/resources/images/auto_scroll_down_left.cur"
 
-IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR         "images/auto_scroll_down_right.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR                  "../src/main/resources/images/auto_scroll_down_right.cur"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2227,7 +2228,7 @@ IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR         "images/auto_scroll_down_right.c
 // 100
 //
 
-IDR_MENU1               100                     "MainMenu.ini"
+IDR_MENU1               100                     "../src/main/resources/MainMenu.ini"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2349,7 +2350,7 @@ BEGIN
     F_EXITALL               "Exit Sakura completely"
     F_OPEN_FOLDER_IN_EXPLORER "Open Containing Folder"
     F_OPEN_COMMAND_PROMPT   "Open Command Prompt"
-	F_OPEN_COMMAND_PROMPT_AS_ADMIN "Open Command Prompt As Admin"
+    F_OPEN_COMMAND_PROMPT_AS_ADMIN "Open Command Prompt As Admin"
     F_WCHAR                 "Character Input"
     F_IME_CHAR              "Hlf-Width Character Input"
 END
@@ -3199,7 +3200,6 @@ BEGIN
     STR_DLGFNCLST_UNIFY     "現在の画面のドッキング配置情報をすべての共通設定・タイプ別設定にコピーして統一します。\n（現在開いている他画面の状態も統一します。）\n"
     STR_BREGONIG_ERROR      "Failed to load bregonig.dll."
     STR_BREGONIG_TITLE      "Regular Expression Error"
-    STR_REGEX_COMPILE_ERR_PREAMBLE "The given regular expression is incorrect.\nDetails: "
     STR_ERR_CWSH09          "Aborted execute macro."
     STR_ERR_DLGMACRO03_1    "Line Break Code is not defined."
     STR_ERR_DLGMACRO16      "Number is not defined."
@@ -3212,10 +3212,21 @@ END
 
 STRINGTABLE
 BEGIN
+    STR_FILEDIALOG_MRU      "Recent &File:"
+    STR_FILEDIALOG_OPENFOLDER "Recent Fol&der:"
+    STR_IMPEXP_REGEX4       "keyword truncated because too long."
+    STR_STATUS_FONTZOOM_0   "%4.0f %%"
+    STR_STATUS_FONTZOOM_1   "%4.1f %%"
+    STR_DLGGREP_THISDOC     "(Current document)"
+    STR_REGEX_COMPILE_ERR_PREAMBLE 
+                            "The given regular expression is incorrect.\nDetails: "
+END
+
+STRINGTABLE
+BEGIN
     STR_DLGGREP4            "Please define the target search folder."
     STR_DLGGREP5            "Target folder is not correct."
     STR_DLGGREP6            "Target folder is too long"
-    STR_DLGGREP_THISDOC     "(Current document)"
     STR_DLGJUMP1            "Please input correct line number"
     STR_DLGJUMP_PSLQL       "%d Ln  %s  Package Specification"
     STR_DLGOPNFL1           "as is"
@@ -3489,15 +3500,6 @@ BEGIN
     STR_GREP_SUBFOLDER_YES  "    (search sub-folders = Yes)\r\n"
     STR_GREP_SUBFOLDER_NO   "    (search sub-folders = No)\r\n"
     STR_GREP_COMPLETE_WORD  "    (Match Whole Word)\r\n"
-END
-
-STRINGTABLE
-BEGIN
-    STR_FILEDIALOG_MRU      "Recent &File:"
-    STR_FILEDIALOG_OPENFOLDER "Recent Fol&der:"
-    STR_IMPEXP_REGEX4       "keyword truncated because too long."
-    STR_STATUS_FONTZOOM_0   "%4.0f %%"
-    STR_STATUS_FONTZOOM_1   "%4.1f %%"
 END
 
 STRINGTABLE
