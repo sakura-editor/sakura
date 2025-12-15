@@ -41,7 +41,6 @@ BEGIN
     "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "\r\n"
     "#include ""Funccode_define.h""\r\n"
-    "#include ""String_define.h""\r\n"
     "#include ""version.h""\r\n"
     "\0"
 END
