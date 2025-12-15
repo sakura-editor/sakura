@@ -1,3 +1,12 @@
-[submodule "tests/googletest"]
-	path = tests/googletest
+[submodule "externals/Onigmo"]
+	path = externals/Onigmo
+	url = https://github.com/k-takata/Onigmo.git
+[submodule "externals/bregonig"]
+	path = externals/bregonig
+	url = https://github.com/k-takata/bregonig.git
+[submodule "externals/ctags"]
+	path = externals/ctags
+	url = https://github.com/universal-ctags/ctags.git
+[submodule "externals/googletest"]
+	path = externals/googletest
 	url = https://github.com/google/googletest.git

@@ -10,7 +10,6 @@
   - [バッチファイルの仕組み](#バッチファイルの仕組み)
     - [githash.bat の構造](#githashbat-の構造)
       - [処理の流れ](#処理の流れ)
-    - [postBuild.bat の構造](#postbuildbat-の構造)
       - [処理の流れ](#処理の流れ-1)
     - [zipArtifacts.bat の構造](#zipartifactsbat-の構造)
       - [処理の流れ](#処理の流れ-2)
@@ -26,11 +25,7 @@
 |[build-gnu.bat](../build-gnu.bat) | Makefile をビルドする |
 |[build-sonar-qube-start.bat](../build-sonar-qube-start.bat) | SonarQube の準備を行う |
 |[build-sonar-qube-env.bat](../build-sonar-qube-env.bat) | SonarQube の実行に必要な環境変数の設定を行う |
-|[sakura\preBuild.bat](../sakura/preBuild.bat) | 特に何もしない |
 |[sakura\githash.bat](../sakura/githash.bat) | Git や CI の環境変数から githash.h を生成する |
-|[sakura\postBuild.bat](../sakura/postBuild.bat) | bregonig.dll と ctags.exe を展開しコピーする |
-|[tests\googletest.build.cmd](../tests/googletest.build.cmd) | Google Test をビルドする |
-|[tests\compiletests.run.cmd](../tests/compiletests.run.cmd) | コンパイルテストを実行する |
 |[build-sonar-qube-finish.bat](../build-sonar-qube-finish.bat) | SonarQube の解析結果をアップロードする |
 |[build-chm.bat](../build-chm.bat) | compiled HTML ファイルをビルドする |
 |[build-installer.bat](../build-installer.bat) | インストーラをビルドする |
@@ -54,21 +49,14 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
             - HeaderMake.exe : Funccode_define.h, Funccode_enum.h を生成する
             - [sakura\githash.bat](../sakura/githash.bat)
                 - git.exe
-            - [sakura\postBuild.bat](../sakura/postBuild.bat)
-                - [tools\zip\unzip.bat](../tools/zip/unzip.bat)
-                    - 7z.exe または [tools\zip\unzip.ps1](../tools/zip/unzip.ps1)
-            - [tests\googletest.build.cmd](../tests/googletest.build.cmd)
-                - git.exe
-                - cmake.exe
-            - [tests\compiletests.run.cmd](../tests/compiletests.run.cmd)
-                - cmake.exe
         - [build-sonar-qube-finish.bat](../build-sonar-qube-finish.bat)
             - [build-sonar-qube-env.bat](../build-sonar-qube-env.bat)
     - [build-gnu.bat](../build-gnu.bat)
-        - mingw32-make.exe sakura_core
-            - [sakura\githash.bat](../sakura/githash.bat)
-                - git.exe
-            - HeaderMake.exe
+        - cmake -S . -B build/MinGW -DCMAKE_BUILD_TYPE=Debug -DBUILD_PLATFORM=MinGW
+        - cmake --build build/MinGW --config Debug --target sakura
+        - cmake --build build/MinGW --config Debug --target sakura_lang_en_US
+        - cmake --build build/MinGW --config Debug --target tests1
+        - ctest --test-dir build/MinGW --build-config Debug --output-on-failure
     - [build-chm.bat](../build-chm.bat)
         - [help\remove-comment.py](../help/remove-comment.py) : [sakura_core\sakura.hh](../sakura_core/sakura.hh) に記述された日本語を含む行コメントを削除する
         - cmake.exe
@@ -94,7 +82,6 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
 |build-sln.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |build-gnu.bat       | platform ("MinGW") | configuration ("Debug" または "Release")  |
 |sakura\preBuild.bat | HeaderMake.exe の実行ファイルのフォルダーパス | なし |
-|sakura\postBuild.bat| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |build-chm.bat       | なし | なし |
 |build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |zipArtifacts.bat    | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
@@ -108,8 +95,6 @@ SonarQube に関しては [こちら](../SonarQube.md) も参照してくださ�
 
 - Git や CI の環境変数を元に githash.h を生成する
     - 設定される環境変数については [こちら](build-envvars.md) を参照してください。
-
-### postBuild.bat の構造
 
 #### 処理の流れ
 

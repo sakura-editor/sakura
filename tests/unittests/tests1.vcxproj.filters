@@ -10,8 +10,12 @@
     <Filter Include="Other Files">
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pre-copiled Header">
+    <Filter Include="Pre-compiled Header">
       <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -21,7 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
-      <Filter>Pre-copiled Header</Filter>
+      <Filter>Pre-compiled Header</Filter>
     </ClCompile>
     <ClCompile Include="coverage.cpp" />
     <ClCompile Include="test-cmemory.cpp">
@@ -180,7 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>Pre-copiled Header</Filter>
+      <Filter>Pre-compiled Header</Filter>
     </ClInclude>
     <ClInclude Include="StartEditorProcessForTest.h">
       <Filter>Other Files</Filter>
@@ -194,10 +198,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tests1_rc.h">
-      <Filter>Other Files</Filter>
+      <Filter>Resource Files</Filter>
     </ClInclude>
     <ResourceCompile Include="tests1_rc.rc">
-      <Filter>Other Files</Filter>
+      <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>
