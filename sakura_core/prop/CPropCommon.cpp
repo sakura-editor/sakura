@@ -30,7 +30,6 @@
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
-#include "String_define.h"
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {

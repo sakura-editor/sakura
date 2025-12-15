@@ -14,7 +14,6 @@
 #include "outline/CFuncInfoArr.h"
 #include "view/colors/EColorIndexType.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 /* Java */
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)

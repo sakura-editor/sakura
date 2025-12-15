@@ -12,7 +12,6 @@
 #include "dlg/CDlgFileUpdateQuery.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

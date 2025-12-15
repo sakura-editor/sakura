@@ -9,7 +9,6 @@
 #include <Windows.h>
 
 #include "CSelectLang.h"
-#include "String_define.h"
 
 /*!
  * @brief リソース文字列の読込テスト

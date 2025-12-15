@@ -9,7 +9,6 @@
 #include "CDocFile.h"
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

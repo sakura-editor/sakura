@@ -22,7 +22,6 @@
 #include <vector>
 #include <map>
 #include "CSelectLang.h"
-#include "String_define.h"
 
 struct SCodeSet {
 	ECodeType		m_eCodeSet;

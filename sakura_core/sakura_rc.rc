@@ -12,7 +12,6 @@
 #undef APSTUDIO_HIDDEN_SYMBOLS
 
 #include "Funccode_define.h"
-#include "String_define.h"
 #include "version.h"
 
 /////////////////////////////////////////////////////////////////////////////

@@ -25,7 +25,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_DOCICON,				HIDC_CHECK_DOCICON,				//文書アイコンを使う	// 2006.08.06 ryoji

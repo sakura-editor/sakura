@@ -47,7 +47,6 @@
 #include "config/system_constants.h"
 
 #include "CSelectLang.h"
-#include "String_define.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );

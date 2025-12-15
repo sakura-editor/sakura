@@ -33,7 +33,6 @@
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
 #include "apiwrap/CommonControl.h"
-#include "String_define.h"
 
 #define SCROLLMARGIN_LEFT 4
 #define SCROLLMARGIN_RIGHT 4

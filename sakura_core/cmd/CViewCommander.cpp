@@ -37,7 +37,6 @@
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {
