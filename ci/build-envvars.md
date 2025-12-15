@@ -71,4 +71,3 @@
 | OUTFILE_DEV   | 開発者向け成果物の zip ファイル名                  | 常に有効                               |
 | OUTFILE_INST  | インストーラの成果物の zip ファイル名              | 常に有効                               |
 | OUTFILE_ASM   | アセンブラ出力の成果物の zip ファイル名            | 常に有効                               |
-| HASHFILE      | sha256 のハッシュ値のファイル名                    | 常に有効                               |
