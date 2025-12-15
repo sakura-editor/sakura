@@ -29,7 +29,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 static const DWORD p_helpids[] = {	//11600
 	IDC_BUTTON_REGEX_IMPORT,	HIDC_BUTTON_REGEX_IMPORT,	//インポート

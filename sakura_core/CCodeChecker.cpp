@@ -17,7 +17,6 @@
 #include "util/string_ex.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     セーブ時チェック                        //

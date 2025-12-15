@@ -16,8 +16,7 @@
 #define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
-#include <windows.h>
-#include <vector>
+#include "sakura_rc.h"
 
 #define MAX_SELLANG_NAME_STR	128		// メッセージリソースの言語名の最大文字列長（サイズは適当）
 

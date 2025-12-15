@@ -21,7 +21,6 @@
 #include "extmodule/CMigemo.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
-#include "String_define.h"
 
 /*!
 	コマンドコードの変換(ISearch時)及び

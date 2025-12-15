@@ -8,7 +8,6 @@
 #include "io/CFile.h"
 #include "window/CEditWnd.h" // 変更予定
 #include "CSelectLang.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

@@ -26,7 +26,6 @@
 #include "CMarkMgr.h"/// 2002/2/3 aroka 追加
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "CSelectLang.h"
-#include "String_define.h"
 
 void CViewCommander::Command_MOVECURSOR(CLogicPoint pos, int option)
 {

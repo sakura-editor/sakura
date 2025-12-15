@@ -39,7 +39,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 //! "までを切り取る
 // sizeは切り出し文字列のNULL終端を含む長さ(wstring::length()+1の値)

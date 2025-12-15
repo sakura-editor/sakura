@@ -32,7 +32,6 @@
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "apiwrap/CommonControl.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 /* インデント ver1 */
 void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )

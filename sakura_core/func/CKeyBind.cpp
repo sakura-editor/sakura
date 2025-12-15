@@ -23,7 +23,6 @@
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "mem/CNativeW.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 //! KEYDATAとほぼ同じ
 struct KEYDATAINIT {

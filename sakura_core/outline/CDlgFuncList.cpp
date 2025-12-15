@@ -54,7 +54,6 @@
 #include "sakura.hh"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 // 画面ドッキング用の定義	// 2010.06.05 ryoji
 #define DEFINE_SYNCCOLOR

@@ -13,7 +13,6 @@
 #pragma once
 
 #include "CSelectLang.h"
-#include "String_define.h"
 #include "mem/CNativeW.h"
 
 class CDecode {

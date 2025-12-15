@@ -28,7 +28,6 @@
 #include "util/MessageBoxF.h"
 #include "debug/Debug2.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

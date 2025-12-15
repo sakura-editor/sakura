@@ -25,7 +25,6 @@
 #include "plugin/CJackManager.h"
 #include "util/format.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ロック                             //

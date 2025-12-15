@@ -23,7 +23,6 @@
 #include "charset/CCodeMediator.h"
 #include "charset/CEuc.h"
 #include "charset/codeutil.h"
-#include "String_define.h"
 
 // 非依存推奨
 #include "window/CEditWnd.h"

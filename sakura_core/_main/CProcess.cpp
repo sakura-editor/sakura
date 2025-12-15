@@ -23,7 +23,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "config/app_constants.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 /*!
 	@brief プロセス基底クラス

@@ -25,7 +25,6 @@
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDC_CHECK_KEYHELP,				HIDC_CHECK_KEYHELP,				//キーワードヘルプ機能を使う

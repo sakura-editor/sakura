@@ -57,7 +57,6 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 #include "recent/CRecentEditNode.h"
 #include "recent/CRecentFile.h"
 #include "recent/CRecentFolder.h"

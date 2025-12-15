@@ -28,7 +28,6 @@
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 

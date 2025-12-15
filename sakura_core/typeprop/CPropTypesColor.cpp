@@ -39,7 +39,6 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 namespace {
 //! カスタムカラー用の識別文字列

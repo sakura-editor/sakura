@@ -23,7 +23,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 static const DWORD p_helpids[] = {	//13400
 	IDC_CHECK_SHORTPATH,	HIDC_CHECK_FNAME_SHORTPATH,

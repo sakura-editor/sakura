@@ -36,7 +36,6 @@
 #include "apiwrap/StdControl.h"
 #include "mem/CNativeA.h"
 #include "sakura_rc.h" // IDD_EXECRUNNING
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //

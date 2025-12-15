@@ -33,7 +33,6 @@
 #include "sakura.hh"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 #define BUFFER_SIZE 1024
 #define ACTION_NAME	(L"SakuraEditor")

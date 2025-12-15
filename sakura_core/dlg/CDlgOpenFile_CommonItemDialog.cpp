@@ -34,7 +34,6 @@
 #include "util/module.h"
 #include "CFileExt.h"
 #include "env/DLLSHAREDATA.h"
-#include "String_define.h"
 
 struct CDlgOpenFile_CommonItemDialog final
 	:

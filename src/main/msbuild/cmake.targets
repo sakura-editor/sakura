@@ -1,7 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <RcInclude Include="..\sakura_core\sakura_rc.h" />
-    <RcInclude Include="..\sakura_core\String_define.h" />
   </ItemGroup>
   <Target Name="ConfigureCMakeTools" Condition="!Exists('$(CMakeToolsBuildDir)CMakeCache.txt')">
     <SetEnv name="VisualStudioVersion" value="$(VisualStudioVersion)" prefix="false" />
