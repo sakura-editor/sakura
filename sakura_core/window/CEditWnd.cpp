@@ -161,17 +161,26 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 }
 
 /*!
- * 編集ウインドウのインスタンスを取得します。
+ * 編集ウインドウのアドレスを取得します。
+ */
+CEditWnd* GetEditWndPtr() noexcept
+{
+	return CEditWnd::getInstance();
+}
+
+/*!
+ * 編集ウインドウの参照を取得します。
  *
  * 編集ウインドウの生存期間ははエディタプロセスと同じなので、
  * ほとんどの場合、このグローバル関数を使ってアクセスできます。
+ *
+ * @throws CEditWndが生成されていない
  */
-CEditWnd& GetEditWnd( void )
+CEditWnd& GetEditWnd()
 {
-	auto pcEditWnd = CEditWnd::getInstance();
-	if( !pcEditWnd )
-	{
-		::_com_raise_error(E_FAIL, MakeMsgError(L"Any CEditWnd has been instantiated."));
+	auto pcEditWnd = GetEditWndPtr();
+	if (!pcEditWnd) {
+		throw std::domain_error("CEditWnd is not initialized");
 	}
 	return *pcEditWnd;
 }
@@ -193,30 +202,17 @@ LRESULT CALLBACK CEditWndProc(
 	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd()
-: m_cToolbar(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cStatusBar(this)		// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_pszMenubarMessage( new WCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 {
-	m_pShareData = &GetDllShareData();
+	const auto& cTypeConfig = GetEditDoc().m_cDocType.GetDocumentAttribute();
+	auto& cLayoutMgr = GetEditDoc().m_cLayoutMgr;
+	cLayoutMgr.SetLayoutInfo( true, false, cTypeConfig,
+		cLayoutMgr.GetTabSpaceKetas(), cLayoutMgr.m_tsvInfo.m_nTsvMode,
+		cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
 
-	m_pcEditDoc = CEditDoc::getInstance();
-
-	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
-		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
-		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
-
-	for (auto& pcEditView : m_pcEditViewArr) {
-		pcEditView = nullptr;
-	}
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView();
 	m_pcEditView = m_pcEditViewArr[0];
-
-	m_pcViewFont = new CViewFont(&GetLogfont());
-
-	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
 
 	m_pcDropTarget = new CDropTarget(this);	// 右ボタンドロップ用
 }
@@ -238,7 +234,6 @@ CEditWnd::~CEditWnd()
 	delete m_pcViewFontMiniMap;
 	m_pcViewFontMiniMap = nullptr;
 
-	delete[] m_pszMenubarMessage;
 	delete[] m_pszLastCaption;
 
 	//	Dec. 4, 2002 genta
