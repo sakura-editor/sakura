@@ -47,8 +47,22 @@
 // #define STRICT 1
 // #endif
 
-// Windows SDKのmin/maxマクロは使いません
-#define NOMINMAX
+// NOMINMAXシンボルについての蘊蓄
+//   Windows SDKは、C++標準規格(1998年制定)より前から存在するため、
+//   標準ライブラリの std::min / std::max と同名のマクロ min/max を定義している。
+//
+//   これらのマクロは、テンプレート関数 std::min<T> / std::max<T> の
+//   呼び出しを妨げ、コンパイルエラーを引き起こす問題がある。
+//   例: std::min(a, b) がマクロ展開されてしまい、構文エラーになる
+//
+//   この問題を回避するには、Windows.h をインクルードする前に
+//   NOMINMAX を定義してマクロを無効化する必要がある。
+//
+//   サクラエディタでは、以前はこのファイルで #define NOMINMAX していたが、
+//   MinGW GCCでコンパイル時に大量の警告が発生する問題があったため、
+//   現在はビルド設定(CMake/MSBuild)でグローバルに定義する方式に変更した。
+//
+// #define NOMINMAX
 
 // MS Cランタイムの非セキュア関数の使用を容認します
 #define _CRT_SECURE_NO_WARNINGS
