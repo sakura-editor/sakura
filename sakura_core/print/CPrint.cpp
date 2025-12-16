@@ -16,7 +16,6 @@
 */
 
 #include "StdAfx.h"
-#include <stdlib.h>
 #include <WinSpool.h>
 #include "CPrint.h"
 #include "_main/global.h"
@@ -73,8 +72,6 @@ const int CPrint::m_nPaperInfoArrNum = int(std::size(m_paperInfoArr));
 
 CPrint::CPrint( void )
 {
-	m_hDevMode	= nullptr;
-	m_hDevNames	= nullptr;
 	return;
 }
 
