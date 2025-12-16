@@ -25,9 +25,27 @@
 
 // この位置にヘッダーを挿入してください
 // #define WIN32_LEAN_AND_MEAN		// Windows ヘッダーから殆ど使用されないスタッフを除外します
-#ifndef STRICT
-#define STRICT 1
-#endif
+
+// STRICTシンボルについての蘊蓄
+//   Windows SDKには、HWND(ウィンドウハンドル)やHDC(デバイスコンテキストハンドル)など、
+//   多数のハンドル型が定義されている。これらはOSが管理するデータへのポインタだが、
+//   内部構造は非公開のため、通常は void* 型で定義される。
+//
+//   しかし、すべてのハンドルを void* 型にすると、異なる種類のハンドルを
+//   誤って混在させてもコンパイラが検出できない問題が発生する。
+//   例: HWND が必要な関数に HDC を渡してもエラーにならない
+//
+//   この問題を解決するために導入されたのが STRICT モードである。
+//   STRICTを定義すると、各ハンドル型が個別の型として認識され、
+//   型の不一致をコンパイル時に検出できるようになる。
+//
+//   現在のWindows SDKでは、NO_STRICTを明示的に定義しない限り、
+//   STRICTがデフォルトで有効になっているため、以下のコードは実質的に不要。
+//   参考: https://learn.microsoft.com/ja-jp/windows/win32/winprog/disabling-strict
+//
+// #ifndef STRICT
+// #define STRICT 1
+// #endif
 
 // Windows SDKのmin/maxマクロは使いません
 #define NOMINMAX
