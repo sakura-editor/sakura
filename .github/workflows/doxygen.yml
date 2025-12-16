@@ -48,7 +48,7 @@ jobs:
         shell: cmd
 
       - name: Upload doxygen artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: doxygen_${{ env.BuildPlatform }}_${{ env.Configuration }}
           path: '**Dev.zip'
