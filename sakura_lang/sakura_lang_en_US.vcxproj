@@ -127,13 +127,14 @@
     <None Include="..\src\main\resources\MainMenu.ini" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="sakura_lang_rc.rc" />
-    <Text Include="sakura_lang_rc.rc2" />
+    <ResourceCompile Include="sakura_rc_en-US.rc" />
+    <Text Include="sakura_rc_en-US.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Import Project="..\src\main\msbuild\cmake.targets" />
-  <Target Name="PreGenerateLang_en_US" DependsOnTargets="GenerateVersionHeader;GenerateFuncCodeDefine" BeforeTargets="ResourceCompile">
+  <Target Name="PreGenerateLang_en_US" DependsOnTargets="GenerateVersionHeader" BeforeTargets="ResourceCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_funccode_define -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
 </Project>

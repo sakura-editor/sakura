@@ -125,15 +125,16 @@
     <None Include="..\src\main\resources\images\cursor_tab_join.cur" />
     <None Include="..\src\main\resources\images\cursor_tab_separate.cur" />
     <None Include="..\src\main\resources\MainMenu.ini" />
-    <None Include="sakura_lang_rc.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="sakura_lang_rc.rc" />
+    <ResourceCompile Include="sakura_rc_zh-CN.rc" />
+    <Text Include="sakura_rc_zh-CN.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Import Project="..\src\main\msbuild\cmake.targets" />
-  <Target Name="PreGenerateLang_zh_CN" DependsOnTargets="GenerateVersionHeader;GenerateFuncCodeDefine" BeforeTargets="ResourceCompile">
+  <Target Name="PreGenerateLang_zh_CN" DependsOnTargets="GenerateVersionHeader" BeforeTargets="ResourceCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_funccode_define -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
 </Project>
