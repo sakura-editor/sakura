@@ -64,8 +64,18 @@
 //
 // #define NOMINMAX
 
-// MS Cランタイムの非セキュア関数の使用を容認します
-#define _CRT_SECURE_NO_WARNINGS
+// _CRT_SECURE_NO_WARNINGSシンボルについての蘊蓄
+//   Visual C++ 2005(VS2005)以降、Microsoftは標準Cランタイム関数の一部を
+//   「セキュリティ上の問題がある」として非推奨にした。
+//   例: strcpy → strcpy_s、sprintf → sprintf_s など
+//
+//   これらの非推奨関数を使用すると、コンパイル時に警告(C4996)が発生する。
+//   _CRT_SECURE_NO_WARNINGS を定義すると、この警告を抑制できる。
+//
+//   サクラエディタでは、以前はこのシンボルを定義して警告を全面的に抑制していたが、
+//   現在はビルド設定で警告レベルを調整する方式に変更した。(/w44996)
+//
+// #define _CRT_SECURE_NO_WARNINGS
 
 // 標準C++ヘッダー（追加するときは昇順で。）
 #include <algorithm>

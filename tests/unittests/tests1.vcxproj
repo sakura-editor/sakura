@@ -47,7 +47,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis /w44996 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
