@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ResourceCompile Include="sakura_lang_rc.rc" />
+    <ResourceCompile Include="..\sakura_lang\sakura_rc_en-US.rc" />
+    <Text Include="..\sakura_lang\sakura_rc_en-US.rc2" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files">

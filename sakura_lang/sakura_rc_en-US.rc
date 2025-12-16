@@ -47,7 +47,7 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "#include ""sakura_lang_rc.rc2""\r\n"
+    "#include ""sakura_rc_en-US.rc2""\r\n"
     "\0"
 END
 
@@ -4151,7 +4151,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-#include "sakura_lang_rc.rc2"
+#include "sakura_rc_en-US.rc2"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

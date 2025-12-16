@@ -265,11 +265,11 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
   string(REPLACE "-" "_" LOCALE_NAME_UNDERSCORE "${LOCALE_NAME}")
   set(SAKURA_LANG sakura_lang_${LOCALE_NAME_UNDERSCORE})
   
-  set(RC_FOLDER ${CMAKE_SOURCE_DIR}/${SAKURA_LANG})
+  set(RC_FOLDER ${CMAKE_SOURCE_DIR}/sakura_lang)
 
   set(RESOURCE_SCRIPTS
-    ${RC_FOLDER}/sakura_lang_rc.rc
-    ${RC_FOLDER}/sakura_lang_rc.rc2)
+    ${RC_FOLDER}/sakura_rc_${LOCALE_NAME}.rc
+    ${RC_FOLDER}/sakura_rc_${LOCALE_NAME}.rc2)
   
   if(MINGW)
     # Convert RC files to UTF-8 for MinGW
@@ -315,12 +315,6 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
   
   # MinGW specific settings
   if(MINGW)
-    # Add include directories for sakura_lang
-    target_include_directories(${SAKURA_LANG}
-      PRIVATE
-        "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/${RC_NAME}_${LOCALE_NAME}>"
-    )
-
     # Set RC flags for MinGW (windres uses decimal)
     target_compile_options(${SAKURA_LANG}
       PRIVATE
