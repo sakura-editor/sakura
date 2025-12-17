@@ -86,16 +86,14 @@ jobs:
       name: Bitmap Split/Mux
       shell: cmd
 
+    - name: Install AutoHotKey
+      run: choco install autohotkey.install --confirm
+
     - name: Install Locale Emulator
       run: |
-        choco install autohotkey.install --confirm
-        $LEExpandDir = "${{github.workspace}}\tools\locale-emulator"
-        $LEInitScript = "${{github.workspace}}\ci\init-locale-emulator.ahk"
-        New-Item "${LEExpandDir}" -ItemType Directory
-        Invoke-WebRequest `
-          "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
-          -OutFile "${LEExpandDir}\locale-emulator.zip"
-        Expand-Archive "${LEExpandDir}\locale-emulator.zip" "${LEExpandDir}"
+        $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
+        $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
+        Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
         Start-Process "AutoHotKey" "${LEInitScript}"
         Start-Process "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
