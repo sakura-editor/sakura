@@ -9,32 +9,35 @@
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake)
 
 # define precompiled headers
-set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/tests/unittests/pch.h)
+set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 
 # define header files of tests1
 file(GLOB_RECURSE TESTS1_HEADERS
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.hpp
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.h
+  ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/*.hpp
+  ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/*.h
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.h
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.h
-  ${CMAKE_SOURCE_DIR}/tests/unittests/*.hpp
-  ${CMAKE_SOURCE_DIR}/tests/unittests/*.h
 )
 
 # define source files of tests1
 file(GLOB_RECURSE TESTS1_SOURCES
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.cpp
+  ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.cpp
-  ${CMAKE_SOURCE_DIR}/tests/unittests/*.cpp
 )
 
 if(MINGW)
   # coverage.cppをリストから削除
-  list(REMOVE_ITEM TESTS1_SOURCES ${CMAKE_SOURCE_DIR}/tests/unittests/coverage.cpp)
+  list(REMOVE_ITEM TESTS1_SOURCES ${CMAKE_SOURCE_DIR}/src/test/resources/coverage.cpp)
 endif(MINGW)
 
 # define resource files of tests1
-set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/tests/unittests/tests1_rc.rc)
+set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 
 if(MINGW)
   # Convert RC files to UTF-8 for MinGW
@@ -46,12 +49,7 @@ add_custom_target(test_resource_zip
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
     ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
-    ${CMAKE_SOURCE_DIR}/tests/unittests/resources/ja-JP/test-plugin
-    > NUL
-  COMMAND ${7ZIP_EXECUTABLE}
-    u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/resources.en-US.zip
-    ${CMAKE_SOURCE_DIR}/tests/unittests/resources/en-US/test-plugin
+    ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin
     > NUL
   BYPRODUCTS ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
   COMMENT "Generating resources.ja-JP.zip"
@@ -78,9 +76,10 @@ target_compile_definitions(tests1
 # add include directories for project
 target_include_directories(tests1
   PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1
+    ${CMAKE_SOURCE_DIR}/src/test/resources/tests1
     ${CMAKE_SOURCE_DIR}/src/test/cpp
     ${CMAKE_SOURCE_DIR}/src/test/resources
-    ${CMAKE_SOURCE_DIR}/tests/unittests
 )
 
 # link libraries

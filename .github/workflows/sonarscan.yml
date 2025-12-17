@@ -36,26 +36,58 @@ jobs:
         fetch-depth: 0
 
     - name: Setup environment variables
-      id: setup-env
+      id: setup-base-env
       run: |
         $projectKey = $('${{ github.repository }}' -replace '/', '_')
         echo "project-key=$projectKey" >> $env:GITHUB_OUTPUT
-        $branch_name = "-Dsonar.branch.name=${{ github.ref_name }}"
-        if ('pull_request' -eq '${{ github.event_name }}' -or 'pull_request_target' -eq '${{ github.event_name }}') {
-          $pull_request_number = '${{ github.event.pull_request.number }}'
-          $pull_request_key = "-Dsonar.pullrequest.key=$pull_request_number"
-          echo "pull-request-key=$pull_request_key" >> $env:GITHUB_OUTPUT
-          $pull_request_branch = "${{ github.event.pull_request.head.ref }}"
-          $branch_name = "-Dsonar.pullrequest.branch=$pull_request_branch"
-          $pull_request_base = "${{ github.event.pull_request.base.ref }}"
-          $branch_base = "-Dsonar.pullrequest.base=$pull_request_base"
-          echo "branch-base=$branch_base" >> $env:GITHUB_OUTPUT
-        }
-        echo "branch-name=$branch_name" >> $env:GITHUB_OUTPUT
+        echo "branch-name=-Dsonar.branch.name=${{ github.ref_name }}" >> $env:GITHUB_OUTPUT
         echo "output-directory=${{ github.workspace }}\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}" >> $env:GITHUB_OUTPUT
+
+    - name: Setup PR environment variables
+      id: setup-pr-env
+      env:
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+      if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+      run: |
+        echo "project-key=${{ steps.setup-base-env.outputs.project-key }}" >> $env:GITHUB_OUTPUT
+        echo "pull-request-key=-Dsonar.pullrequest.key=${{ github.event.pull_request.number }}" >> $env:GITHUB_OUTPUT
+        echo "branch-name=-Dsonar.pullrequest.branch=$env:PR_HEAD_REF" >> $env:GITHUB_OUTPUT
+        echo "branch-base=-Dsonar.pullrequest.base=$env:PR_BASE_REF" >> $env:GITHUB_OUTPUT
+        echo "output-directory=${{ steps.setup-base-env.outputs.output-directory }}" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    - name: Merge environment variables
+      id: setup-env
+      run: |
+        if ('${{ github.event_name }}' -eq 'pull_request' -or '${{ github.event_name }}' -eq 'pull_request_target') {
+          echo "project-key=${{ steps.setup-pr-env.outputs.project-key }}" >> $env:GITHUB_OUTPUT
+          echo "pull-request-key=${{ steps.setup-pr-env.outputs.pull-request-key }}" >> $env:GITHUB_OUTPUT
+          echo "branch-name=${{ steps.setup-pr-env.outputs.branch-name }}" >> $env:GITHUB_OUTPUT
+          echo "branch-base=${{ steps.setup-pr-env.outputs.branch-base }}" >> $env:GITHUB_OUTPUT
+          echo "output-directory=${{ steps.setup-pr-env.outputs.output-directory }}" >> $env:GITHUB_OUTPUT
+        } else {
+          echo "project-key=${{ steps.setup-base-env.outputs.project-key }}" >> $env:GITHUB_OUTPUT
+          echo "branch-name=${{ steps.setup-base-env.outputs.branch-name }}" >> $env:GITHUB_OUTPUT
+          echo "output-directory=${{ steps.setup-base-env.outputs.output-directory }}" >> $env:GITHUB_OUTPUT
+        }
+      shell: pwsh
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
+
+    - name: Install AutoHotKey
+      run: choco install autohotkey.install --confirm
+
+    - name: Install Locale Emulator
+      run: |
+        $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
+        $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
+        Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
+        Start-Process "AutoHotKey" "${LEInitScript}"
+        Start-Process "${LEExpandDir}\LEInstaller.exe"
+        echo "${LEExpandDir}" >> $env:GITHUB_PATH
+      shell: pwsh
 
     - name: Run the normal MSBuild process
       env:

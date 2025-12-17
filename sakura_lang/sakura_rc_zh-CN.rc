@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "..\sakura_core\sakura_rc.h"
+#include "sakura_rc.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 
 1 TEXTINCLUDE 
 BEGIN
-    "..\\sakura_core\\sakura_rc.h\0"
+    "sakura_rc.h\0"
 END
 
 2 TEXTINCLUDE 
