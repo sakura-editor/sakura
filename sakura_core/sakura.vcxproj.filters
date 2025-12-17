@@ -139,10 +139,10 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_enum.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\sakura.hh">
+    <ClInclude Include="..\src\main\resources\sakura.hh">
       <Filter>Other Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\sakura_rc.h">
+    <ClInclude Include="..\src\main\resources\sakura_rc.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\StdAfx.h">
