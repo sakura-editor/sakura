@@ -10,7 +10,7 @@ set DOXYGEN_LOG=doxygen-%platform%-%configuration%.log
 if "%CMD_DOXYGEN%" == "" (
 	echo doxygen was not found
 ) else if exist "%CMD_DOXYGEN%" (
-	"%CMD_DOXYGEN%" doxygen.conf > %DOXYGEN_LOG%
+	"%CMD_DOXYGEN%" "%~dp0tools\Doxygen\doxygen.conf" > %DOXYGEN_LOG%
 ) else (
 	echo doxygen was not found
 )
