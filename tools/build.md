@@ -3,240 +3,232 @@
 <!-- TOC -->
 
 - [ビルド方法](#ビルド方法)
-  - [必要なもの](#必要なもの)
-    - [実行ファイルのビルドに必要なもの](#実行ファイルのビルドに必要なもの)
-    - [HTML ヘルプのビルドに必要なもの](#html-ヘルプのビルドに必要なもの)
-    - [インストーラのビルドに必要なもの](#インストーラのビルドに必要なもの)
-    - [(オプション) ログの解析等に必要なもの](#オプション-ログの解析等に必要なもの)
-  - [ビルド方法](#ビルド方法-1)
-    - [実行ファイルだけをビルドする場合](#実行ファイルだけをビルドする場合)
-      - [方法1 (GUI)](#方法1-gui)
-      - [方法2 (コマンドライン)](#方法2-コマンドライン)
-        - [具体例 (x64 の Release)](#具体例-x64-の-release)
-    - [すべてビルドする場合](#すべてビルドする場合)
-        - [具体例 (Win32 の Release)](#具体例-win32-の-release)
-      - [Visual Studio 2019 を使用してコマンドラインでビルド](#visual-studio-2019-を使用してコマンドラインでビルド)
-  - [ビルドの仕組み](#ビルドの仕組み)
-    - [インストーラの仕組み](#インストーラの仕組み)
-  - [開発者向けの情報](#開発者向けの情報)
-    - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
-    - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
-    - [CI でのビルドをスキップする方法](#ci-でのビルドをスキップする方法)
-      - [参考情報](#参考情報)
-    - [MinGW w64 ビルド](#mingw-w64-ビルド)
-    - [MinGW w64 インストール方法](#mingw-w64-インストール方法)
-    - [Msys2 コンソールを開く方法](#msys2-コンソールを開く方法)
-    - [Msys2 インストール方法](#msys2-インストール方法)
-    - [PowerShell の管理者コンソールを開く方法](#powershell-の管理者コンソールを開く方法)
-    - [Chocolatey のインストール方法](#chocolatey-のインストール方法)
+  - [必要なツール](#必要なツール)
+    - [サクラエディタ本体のビルド](#サクラエディタ本体のビルド)
+    - [インストーラのビルド](#インストーラのビルド)
+  - [ビルド手順](#ビルド手順)
+    - [実行ファイルのみ](#実行ファイルのみ)
+      - [GUI でビルド](#gui-でビルド)
+      - [コマンドラインでビルド](#コマンドラインでビルド)
+    - [すべてビルド](#すべてビルド)
+  - [開発者向け情報](#開発者向け情報)
+    - [ビルドで使用する環境変数](#ビルドで使用する環境変数)
+    - [ビルドに使用されるバッチファイル](#ビルドに使用されるバッチファイル)
+    - [デバッグ方法](#デバッグ方法)
+    - [githash.h の更新をスキップ](#githashh-の更新をスキップ)
+    - [PowerShellによるZIPファイル処理の強制](#powershellによるzipファイル処理の強制)
+    - [CIビルドのスキップ](#ciビルドのスキップ)
+  - [MinGWビルド (実験的)](#mingwビルド-実験的)
+    - [MinGWでのビルド方法](#mingwでのビルド方法)
+  - [参考情報](#参考情報)
+    - [Chocolatey関連](#chocolatey関連)
+      - [Chocolateyのインストール](#chocolateyのインストール)
+    - [Msys2関連](#msys2関連)
+      - [Msys2のインストール](#msys2のインストール)
+      - [Msys2コンソールを開く方法](#msys2コンソールを開く方法)
+    - [MinGW w64関連](#mingw-w64関連)
+      - [MinGW w64のインストール](#mingw-w64のインストール)
 
 <!-- /TOC -->
 
-## 必要なもの
+## 必要なツール
 
-### 実行ファイルのビルドに必要なもの
+### サクラエディタ本体のビルド
 
-- (オプション) [7-Zip](https://7-zip.opensource.jp/) (外部依存ファイルの解凍に使用)
-- Community または Professional エディション以上の Visual Studio 2017 または Visual Studio 2019
-   - Windows 10 SDK のインストールも必要です。
+C++20をサポートするC++コンパイラーが必要です。
 
-### HTML ヘルプのビルドに必要なもの
+- [最新のVisual Studio][Visual Studio 最新版] (推奨)
+- [以前のバージョンのVisual Studio][Visual Studio 以前のバージョン]
+  - Visual Studio 2019 以降
+- MinGW64 GCCコンパイラー
 
-- HTML ヘルプコンパイラ (hhc.exe)
-   - Visual Studio のインストールにて以下のオプションを有効にすることにより導入されます。
-      - 「C++ によるデスクトップ開発」を有効にする
-      - 右のペインで 「C++ によるデスクトップ開発」を選ぶ
-      - Visual Studio 2017 の場合は「x86用とx64用のVisual C++ MFC」を、Visual Studio 2019 の場合は「最新 v142 ビルド ツールの C++ MFC (x86 & x64)」をチェックする
-      - 変更を確定する
-   - VSインストール後でもVisual Studio Installerを起動して導入可能です。 
-![vsi](https://user-images.githubusercontent.com/39618965/44622575-012dcc80-a8f6-11e8-906a-14d8cd6dfac9.PNG)
-   - [.vsconfig](.vsconfig) を使用してインストールした場合は自動的にインストールされます。
-   - ヘルプファイルを編集する場合 HTML Help Workshop 等の編集ソフトも別途必要になります。
-- CMake (cmake.exe)
-  - Visual Studio同梱のもので構いません。
-- PowerShell Core (pwsh.exe)
-  - Microsoft Storeなどで検索してインストールしてください。
+**補助ツールとして以下が必須です。**
+|ツール名|exe名|説明|
+|--|--|--|
+|HTML Help Workshop|hhc.exe|Visual Studio同梱のもの|
+|CMake|cmake.exe|Visual Studio同梱のもので可|
+|PowerShell Core|pwsh.exe|Microsoft Storeなどからインストール|
+|[7-Zip](https://7-zip.opensource.jp/)|7z.exe|外部依存ファイルの解凍に使用します。|
+|Locale Emulator|LEProc.exe|日本語環境以外でHTMLヘルプをビルドする場合に利用します。|
+|Auto HotKey|AutoHotKey.exe|日本語環境以外でHTMLヘルプをビルドする場合にソースに腹持ちしたLocale Emulatorを展開する際に利用します。|
 
-### インストーラのビルドに必要なもの
+### インストーラのビルド
 
-インストーラビルドの仕組みは [こちら](installer/readme.md) を参照
+インストーラをビルドする場合のみ必要です。
 
 - [Inno Setup](https://jrsoftware.org/isdl.php) (ISCC.exe)
-    - [innosetup-6.4.0.exe](https://files.jrsoftware.org/is/6/)
+  - 推奨バージョン: [innosetup-6.4.0.exe](https://files.jrsoftware.org/is/6/)
 
-### (オプション) ログの解析等に必要なもの
-
-- [Python](https://www.python.org/) の 2.7 系、3.x 系のどちらでも OK (のはず)
-
-## ビルド方法
-
-### 実行ファイルだけをビルドする場合
-
-#### 方法1 (GUI)
-
-Visual Studio で `sakura.sln` をダブルクリックして開いてビルドします。
-
-#### 方法2 (コマンドライン)
-
+```pwsh
+choco install InnoSetup -y
 ```
+
+詳細は [インストーラビルドの仕組み](../installer/readme.md) を参照してください。
+
+## ビルド手順
+
+### 実行ファイルのみ
+
+#### GUI でビルド
+
+Visual Studio で `sakura.sln` を開いてビルドします。
+
+#### コマンドラインでビルド
+
+```cmd
 build-sln.bat <Platform> <Configuration>
 ```
 
-##### 具体例 (x64 の Release)
-
-```
+**例: x64 の Release ビルド**
+```cmd
 build-sln.bat x64 Release
 ```
 
-
-### すべてビルドする場合
-
+**Visual Studio 2019を指定してビルド**
+```cmd
+set ARG_VSVERSION=16
+build-sln.bat Win32 Release
 ```
+
+参考: [MSBuildの検索について](./find-tools.md#MSBuild) で `ARG_VSVERSION` の詳細を説明しています。
+
+### すべてビルド
+
+実行ファイル、ヘルプファイル、インストーラをすべてビルドします。
+
+```cmd
 build-all.bat <Platform> <Configuration>
 ```
 
-##### 具体例 (Win32 の Release)
-
-```
+**例: Win32 の Release ビルド**
+```cmd
 build-all.bat Win32 Release
 ```
 
-#### Visual Studio 2019 を使用してコマンドラインでビルド
+## 開発者向け情報
 
-```
-set ARG_VSVERSION=16
-build-all.bat Win32 Release
-```
+### ビルドで使用する環境変数
 
-参考
+[ビルドで使用する環境変数](./build-envvars.md) を参照してください。
 
-[こちら](tools/find-tools.md#MSBuild) で ```ARG_VSVERSION``` に関して説明しています。
+### ビルドに使用されるバッチファイル
 
+[ビルドに使用されるバッチファイル](./build-batchfiles.md) を参照してください。
 
-## ビルドの仕組み
+### デバッグ方法
 
-ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
+- [タスクトレイのメニュー項目をデバッグする方法](./debug-tasktray-menu.md)
+- [大きなファイルの作成方法](./create-big-file.md)
 
-### インストーラの仕組み
+### githash.h の更新をスキップ
 
-[こちら](installer/readme.md) でビルドの仕組みを説明しています。
+ビルド時に git の commit hash を `githash.h` に出力します。これによりバイナリが commit hash から特定できますが、バイナリが変化しないリファクタリングでもバイナリが異なってしまいます。
 
-## 開発者向けの情報
+検証を容易にするため、環境変数 `SKIP_CREATE_GITHASH` を `1` に設定することで commit hash の更新をスキップできます。
 
-### githash.h の更新のスキップ
+**注意:** `githash.h` が存在しない場合は、この環境変数に関係なく生成されます。
 
-sakura editor ではビルド時に git の commit hash 等の情報を githash.h というファイルに出力します。
-ビルド時に commit hash 等を生成することでビルド済みのバイナリがどの commit hash を元にビルドされたか
-簡単に判断できて便利なのですが、
-
-バイナリが変化しないリファクタリングをしたときでも、commit hash 等の変更が原因でバイナリ一致しなくなります。
-これだと検証が面倒になるので、ローカルビルドで githash.h が変化しない手段を提供します。
-
-コマンドラインで環境変数 ```SKIP_CREATE_GITHASH``` を 1 に設定することにより commit hash の
-更新処理をスキップすることができます。githash.h が存在しない場合には、この環境変数が設定されていても
-githash.h を生成します。
-
-コマンド実行例
-
-```
+**実行例:**
+```cmd
 set SKIP_CREATE_GITHASH=1
 build-sln.bat Win32 Release
 build-sln.bat Win32 Debug
-build-sln.bat x64   Release
-build-sln.bat x64   Debug
+build-sln.bat x64 Release
+build-sln.bat x64 Debug
 ```
 
+### PowerShellによるZIPファイル処理の強制
 
-### Powershell によるZIPファイルの圧縮、解凍、内容確認の強制
+通常、`7z.exe` が利用可能な場合は自動的に使用されます（高速）。デバッグ目的で [PowerShellスクリプト](./zip/readme.md) を強制的に使用する場合:
 
-`7z.exe` へのパスが通っている場合または `C:\Program Files\7-Zip\7z.exe` が存在している場合は
-`7z.exe` を、ZIP ファイルの解凍、圧縮、内容確認に使用します。
-
-上記以外の場合は [powershell によるスクリプト](tools/zip/readme.md) により処理を行います。
-
-`7z.exe` のほうがはるかに処理速度が速いので `7z.exe` が利用可能なら [powershell によるスクリプト](tools/zip/readme.md) を
-使う理由は殆どないのですが、デバッグ目的で強制的に [powershell によるスクリプト](tools/zip/readme.md) を使用する手段を
-提供します。
-
-コマンドラインでビルドするときに事前に FORCE_POWERSHELL_ZIP を 1 に設定することにより
-強制的に [powershell によるスクリプト](tools/zip/readme.md) を使用します。
-
-コマンド実行例
-
-```
+```cmd
 set FORCE_POWERSHELL_ZIP=1
 build-sln.bat Win32 Release
-build-sln.bat Win32 Debug
-build-sln.bat x64   Release
-build-sln.bat x64   Debug
 ```
 
-### CI でのビルドをスキップする方法
+### CIビルドのスキップ
 
-ビルドに関係ない修正 (ドキュメントの修正など) を行った場合に、
-コミットメッセージの中に `[ci skip]` または `[skip ci]` というキーワードを含めることで、 CI ビルドを行わないようにすることができます。  
-ただし PR をマージするときは実行されます。
+ドキュメント修正など、ビルドが不要な変更の場合、コミットメッセージに `[ci skip]` または `[skip ci]` を含めることでCIビルドをスキップできます。
 
-#### 参考情報
+**注意:** PRマージ時は実行されます。
 
+**参考:**
 - https://qiita.com/vmmhypervisor/items/f10c77a375c2a663b300
 - https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
 
-### MinGW w64 ビルド
+## MinGWビルド (実験的)
 
-生成されるバイナリは正しく動作しないが、MinGWでのビルドも可能。
+**警告:** 生成されるバイナリは正しく動作しません。
 
-コマンド実行例（[MinGW w64](#mingw-w64-インストール方法) のインストールが必要。）
+### MinGWでのビルド方法
 
+[MinGW w64のインストール](#mingw-w64のインストール) を完了後、以下の方法でビルドできます。
+
+MINGW64コンソールで以下を実行。
+```bash
+cmake -S . -B build/MinGW -DCMAKE_BUILD_TYPE=Debug -DBUILD_PLATFORM=MinGW
+cmake --build build/MinGW
+ctest --test-dir build/MinGW --output-on-failure
+```
+
+または、コマンドプロンプトで以下を実行。
 ```cmd
 build-gnu.bat MinGW Debug
 build-gnu.bat MinGW Release
 ```
 
-### MinGW w64 インストール方法
+## 参考情報
 
-[Msys2 コンソール](#msys2-コンソールを開く方法) で以下のコマンドを入力し `pacman` パッケージ を最新化します。
+### Chocolatey関連
 
-```bash
-pacman -Syuu
-```
+#### Chocolateyのインストール
 
-[Msys2 コンソール](#msys2-コンソールを開く方法) で以下のコマンドを入力し `MinGW-w64` をインストールします。  
+1. PowerShell管理者コンソールを開く:
+   - Windowsタスクバーの検索窓に `powershell` と入力
+   - `Windows PowerShell` を右クリックして「管理者として実行」
 
-```bash
-pacman -S --noconfirm mingw-w64-x86_64-toolchain
-```
+2. 以下のコマンドを実行:
+   ```powershell
+   Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+   ```
 
-### Msys2 コンソールを開く方法
+3. インストール確認:
+   ```powershell
+   choco
+   ```
 
-`C:\msys64\msys2.exe` を実行します。（[Msys2](#msys2-インストール方法) のインストールが必要。）
+詳細: [Chocolatey公式サイト](https://chocolatey.org/install)
 
-### Msys2 インストール方法
+### Msys2関連
 
-[PowerShell の管理者コンソール](#powershell-の管理者コンソールを開く方法)で以下のコマンドを入力し `msys2` をインストールします。（[Chocolatey](#chocolatey-のインストール方法) のインストールが必要。）
+#### Msys2のインストール
+
+[Chocolatey](#chocolateyのインストール) をインストール後、PowerShell管理者コンソールで実行:
 
 ```powershell
 choco install msys2 --params "/InstallDir:C:\msys64"
 ```
 
-### PowerShell の管理者コンソールを開く方法
+#### Msys2コンソールを開く方法
 
-Windowsタスクバーの検索窓に `powershell` と入力します。
+`C:\msys64\msys2.exe` を実行します。
 
-検索結果に `Windows PowerShell (x86)` が表示されるので `管理者として実行` をクリックします。
+### MinGW w64関連
 
-### Chocolatey のインストール方法
+#### MinGW w64のインストール
 
-[PowerShell の管理者コンソール](#powershell-の管理者コンソールを開く方法) で以下のコマンドを実行します。
+1. [Chocolatey](#chocolateyのインストール) をインストール
+2. [Msys2](#msys2のインストール) をインストール
+3. [Msys2コンソール](#msys2コンソールを開く方法) を開く
+4. pacmanパッケージを最新化:
+   ```bash
+   pacman -Syuu
+   ```
+5. MinGW-w64をインストール:
+   ```bash
+   pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake mingw-w64-x86_64-make mingw-w64-x86_64-7zip
+   ```
 
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-```
-
-詳細な手順は [Chocolateyの公式サイト](https://chocolatey.org/install) で確認してください。
-
-[PowerShell の管理者コンソール](#powershell-の管理者コンソールを開く方法) で以下のコマンドを実行し `Chocolatey` のバージョンが表示されたらインストールできています。
-
-```powershell
-choco
-```
+<!-- リンク定義 -->
+[Visual Studio 以前のバージョン]: https://visualstudio.microsoft.com/ja/vs/older-downloads/ "Visual Studio 以前のバージョン"
+[Visual Studio 最新版]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio 最新版"
