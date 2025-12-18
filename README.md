@@ -1,6 +1,6 @@
-# Sakura Editor
+﻿# Sakura Editor
 
-A free text editor for Windows.
+A free text editor for Windows.  
 [![License: Zlib](https://img.shields.io/badge/License-Zlib-lightgrey.svg)](https://opensource.org/licenses/Zlib)
 [![build sakura](https://github.com/sakura-editor/sakura/workflows/build%20sakura/badge.svg)](https://github.com/sakura-editor/sakura/actions?query=workflow%3A%22build+sakura%22)
 [![CodeFactor](https://www.codefactor.io/repository/github/sakura-editor/sakura/badge)](https://www.codefactor.io/repository/github/sakura-editor/sakura)
@@ -25,111 +25,37 @@ A free text editor for Windows.
 <!-- TOC -->
 
 - [Sakura Editor](#sakura-editor)
-  - [Web Site](#web-site)
   - [ダウンロード](#ダウンロード)
-    - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
-    - [開発中 の 最新](#開発中-の-最新)
   - [開発情報](#開発情報)
-    - [Build Requirements](#build-requirements)
     - [How to build](#how-to-build)
-    - [Details of build](#details-of-build)
-      - [env for build](#env-for-build)
-      - [batch for build](#batch-for-build)
-      - [Visual Studio Install options required](#visual-studio-install-options-required)
-        - [Reference of .vsconfig](#reference-of-vsconfig)
-    - [How to debug](#how-to-debug)
     - [Static code analysis](#static-code-analysis)
-    - [マクロのサンプル](#マクロのサンプル)
-    - [開発参加ポリシー](#開発参加ポリシー)
   - [変更履歴](#変更履歴)
 
 <!-- /TOC -->
 
-## Web Site
-
-- [Sakura Editor Portal](https://sakura-editor.github.io/)
-
 ## ダウンロード
 
-リリース版は上記のポータルから取得してください。
+リリース版は [Sakura Editor Portal](https://sakura-editor.github.io/) に置いてあります。
 
-### ビルド成果物を利用する上での注意事項
-
-[`x64 版は alpha 版`](installer/warning-alpha.txt)です。  
-対応中のため予期せぬ不具合がある可能性があります。 
-
-### 開発中 の 最新
-
-1. [GitHub Actionsのビルドページ](https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml?query=branch%3Amaster) にアクセスします。
-2. 右端にある `Jobs` をクリックします。
-3. `ARTIFACTS` をクリックします。
-4. 末尾 `Exe` が実行ファイルです。
+GitHubで公開しているので [GitHub Actionsのビルドページ](https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml?query=branch%3Amaster) より開発中の最新版をダウンロードすることもできます。
 
 ## 開発情報
 
-### Build Requirements
-
-Sakura Editor のビルドには、C++17以降をサポートするWindows向けC++コンパイラーが必要です。
-
-- [最新のVisual Studio][Visual Studio 最新版]
-- [以前のバージョンのVisual Studio][Visual Studio 以前のバージョン]
-- MinGW64 GCC(msys2経由でインストールした最新場のみ)
-
 ### How to build
 
-- `sakura.sln` を Visual Studio で 開いてビルドします。
-
-### Details of build
-
-詳しくは [こちら](./tools/build.md) を参照
-
-#### env for build
-
-[ビルドで使用する環境変数](./tools/build-envvars.md) を参照してください。
-
-#### batch for build
-
-[ビルドに使用されるバッチファイル](./tools/build-batchfiles.md) を参照してください。
-
-#### Visual Studio Install options required
-
-Sakura Editor のコンパイルに必要なコンポーネントは、[.vsconfig](.vsconfig) ファイルで定義されています。
-
-Visual Studio 2019 以降で `sakura.sln` を開くと、[.vsconfig](.vsconfig) から必要なコンポーネントが自動的に読み込まれます。不足しているコンポーネントがある場合は、インストールボタンが表示されるので、クリックすれば自動的にインストールされます。
-
-> **Note**: [.vsconfig](.vsconfig) は [#1162](https://github.com/sakura-editor/sakura/pull/1162) で追加されました。
-
-##### Reference of .vsconfig
-
-- [How to extract currently installed Visual Studio component IDs?][How to extract currently installed Visual Studio component IDs?]
-- [Configure Visual Studio across your organization with .vsconfig][Configure Visual Studio across your organization with .vsconfig]
-- [インストール構成をインポートまたはエクスポートする][インストール構成をインポートまたはエクスポートする]
-- [コマンド ライン パラメーターを使用して Visual Studio をインストールする][コマンド ライン パラメーターを使用して Visual Studio をインストールする]
-- [不足しているコンポーネントを自動的にインストールする][不足しているコンポーネントを自動的にインストールする]
-
-### How to debug
-
-- [タスクトレイのメニュー項目をデバッグする方法](tools/debug-tasktray-menu.md) を参照
-- [大きなファイルの作成方法](tools/create-big-file.md)
+`sakura.sln`を開いてビルドできます。  
+詳細は [ビルド方法](./tools/build.md) を参照。
 
 ### Static code analysis
 
-- CodeFactor を利用しています。
-    - [cpplint.py](CPPLINT.md) で cpp のスタイルのチェックを行っています。
-    - [CodeFactorのサイト](https://www.codefactor.io/repository/github/sakura-editor/sakura)で解析結果を確認できます。
-- SonarQube を利用しています。
-    - [SonarQube Cloudのサイト](https://sonarcloud.io/summary/overall?id=sakura-editor_sakura&branch=master)で解析結果を確認できます。
+サクラエディタプロジェクトではいくつかの静的解析サービスを利用しています。
 
-### マクロのサンプル
+| サービス | 説明 |
+|---------|------|
+| [CodeFactor](https://www.codefactor.io/repository/github/sakura-editor/sakura) |  C++ のスタイルチェック。[cpplint.py](./tools/CodeFactor/README.md)による字句解析。 |
+| [SonarQube](https://sonarcloud.io/summary/new_code?id=sakura-editor_sakura&branch=master) | 多言語対応の静的解析。Build Wrapper + SonarScannerによるコード品質解析。 |
 
-[こちら](tools/macro)でマクロのサンプルを提供してます。  
-もしサンプルを作ってもいいよ～という方がおられましたら PR の作成お願いします。
-
-### 開発参加ポリシー
-
-開発ポリシーを以下にまとめていきます。開発にご参加いただける方はこちらご参照ください。  
-
-- [Wiki](https://github.com/sakura-editor/sakura/wiki)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sakura-editor_sakura)](https://sonarcloud.io/summary/overall?id=sakura-editor_sakura)
 
 ## 変更履歴
 

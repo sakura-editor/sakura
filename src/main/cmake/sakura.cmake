@@ -411,7 +411,7 @@ add_library(sakura_core OBJECT ${PCH_HEADER} ${SOURCES} ${RESOURCE_SCRIPTS} ${HE
 target_precompile_headers(sakura_core PRIVATE ${PCH_HEADER})
 
 # Set C++ standard for sakura_core
-target_compile_features(sakura_core PUBLIC cxx_std_17)
+target_compile_features(sakura_core PUBLIC cxx_std_20)
 
 # Add include directories for sakura_core
 target_include_directories(sakura_core
