@@ -16,7 +16,7 @@
 
 #include "mem/CNativeW.h"
 #include "charset/charset.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 
 //定数
 enum EConvertResult{

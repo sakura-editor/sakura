@@ -13,7 +13,7 @@
 */
 #include "StdAfx.h"
 #include <stdlib.h>
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

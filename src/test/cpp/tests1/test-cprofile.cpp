@@ -9,13 +9,13 @@
 #include <Windows.h>
 #include <Shlwapi.h>
 
-#include "CProfile.h"
+#include "env/CProfile.h"
 
 #include <cstdlib>
 #include <filesystem>
 
 #include "util/file.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 
 /*!
  * @brief WriteProfileは指定されたパスに含まれるサブディレクトリを作成する

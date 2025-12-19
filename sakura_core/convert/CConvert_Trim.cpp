@@ -7,7 +7,7 @@
 #include "StdAfx.h"
 #include "CConvert_Trim.h"
 #include "convert_util.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "charset/charcode.h"
 #include "util/string_ex2.h"
 #include "mem/CNativeW.h"

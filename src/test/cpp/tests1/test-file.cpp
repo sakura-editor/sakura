@@ -20,7 +20,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "util/file.h"
 
 /*!

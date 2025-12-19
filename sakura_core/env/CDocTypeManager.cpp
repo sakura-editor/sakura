@@ -12,7 +12,7 @@
 #include "StdAfx.h"
 #include "CDocTypeManager.h"
 #include "_main/CMutex.h"
-#include "CFileExt.h"
+#include "basis/CFileExt.h"
 #include <Shlwapi.h>	// PathMatchSpec
 #include "apiwrap/StdApi.h"
 #include "env/DLLSHAREDATA.h"

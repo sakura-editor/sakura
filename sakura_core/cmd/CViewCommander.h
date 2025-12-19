@@ -9,7 +9,7 @@
 #define SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
 #pragma once
 
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "types/CType.h"
 
 class CEditView;

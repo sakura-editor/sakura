@@ -27,11 +27,11 @@
 #include "CEditView.h"
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h" // use CEditApp.h
+#include "agent/CGrepAgent.h" // use CEditApp.h
 #include "window/CEditWnd.h"
 #include "_os/CDropTarget.h" // CDataObject
 #include "_os/CClipboard.h"
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 #include "doc/layout/CLayout.h"
 #include "cmd/CViewCommander_inline.h"
 #include "uiparts/CWaitCursor.h"

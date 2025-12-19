@@ -12,7 +12,7 @@
 
 */
 #include "StdAfx.h"
-#include "CAutoSaveAgent.h"
+#include "agent/CAutoSaveAgent.h"
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
 

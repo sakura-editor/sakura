@@ -34,7 +34,7 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "env/CSakuraEnvironment.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"

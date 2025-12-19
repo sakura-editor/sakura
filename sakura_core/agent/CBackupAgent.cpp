@@ -8,7 +8,7 @@
 
 #include "StdAfx.h"
 #include <time.h>
-#include "CBackupAgent.h"
+#include "agent/CBackupAgent.h"
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat
 #include "CSelectLang.h"

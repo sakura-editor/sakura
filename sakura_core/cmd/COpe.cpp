@@ -13,7 +13,7 @@
 */
 
 #include "StdAfx.h"
-#include "COpe.h"
+#include "cmd/COpe.h"
 #include "mem/CMemory.h"// 2002/2/10 aroka
 
 // COpeクラス構築

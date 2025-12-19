@@ -15,7 +15,7 @@
 #define SAKURA_CGREPENUMFOLDERS_78931E72_6F22_4576_B760_34E2F6C87786_H_
 #pragma once
 
-#include "CGrepEnumFileBase.h"
+#include "grep/CGrepEnumFileBase.h"
 
 class CGrepEnumFolders : public CGrepEnumFileBase {
 private:

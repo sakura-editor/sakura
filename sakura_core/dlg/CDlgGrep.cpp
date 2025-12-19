@@ -19,8 +19,8 @@
 #include "StdAfx.h"
 #include <shellapi.h>
 #include "dlg/CDlgGrep.h"
-#include "CGrepAgent.h"
-#include "CGrepEnumKeys.h"
+#include "agent/CGrepAgent.h"
+#include "grep/CGrepEnumKeys.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "charset/CCodePage.h"
 #include "util/module.h"

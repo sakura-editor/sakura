@@ -41,7 +41,7 @@
 #include "dlg/CDlgGrepReplace.h"
 #include "dlg/CDlgSetCharSet.h"
 #include "outline/CDlgFuncList.h"
-#include "CHokanMgr.h"
+#include "env/CHokanMgr.h"
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "uiparts/CMenuDrawer.h"

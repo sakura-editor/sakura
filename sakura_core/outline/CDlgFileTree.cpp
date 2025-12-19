@@ -19,7 +19,7 @@
 #include "dlg/CDlgInput1.h"
 #include "env/CDocTypeManager.h"
 #include "typeprop/CImpExpManager.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"

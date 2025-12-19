@@ -27,7 +27,7 @@
 #include "CViewCommander_inline.h"
 
 #include "dlg/CDlgCancel.h"// 2002/2/8 hor
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
 #include <limits.h>

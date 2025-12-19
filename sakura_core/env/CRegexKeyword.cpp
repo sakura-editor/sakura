@@ -19,7 +19,7 @@
 //@@@ 2001.11.17 add start MIK
 
 #include "StdAfx.h"
-#include "CRegexKeyword.h"
+#include "env/CRegexKeyword.h"
 #include "extmodule/CBregexp.h"
 #include "types/CType.h"
 #include "view/colors/EColorIndexType.h"

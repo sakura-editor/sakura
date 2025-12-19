@@ -9,7 +9,7 @@
 #define SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_
 #pragma once
 
-#include "CProfile.h"
+#include "env/CProfile.h"
 
 #include "basis/SakuraBasis.h"
 #include "util/StaticType.h"

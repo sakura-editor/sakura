@@ -7,7 +7,7 @@
 */
 
 #include "StdAfx.h"
-#include "CPropertyManager.h"
+#include "env/CPropertyManager.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
 #include "apiwrap/StdApi.h"

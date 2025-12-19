@@ -31,7 +31,7 @@
 #include "print/CPrintPreview.h"
 #include "io/CBinaryStream.h"
 #include "io/CFileLoad.h"
-#include "CWriteManager.h"
+#include "env/CWriteManager.h"
 #include "CEditApp.h"
 #include "recent/CMRUFile.h"
 #include "util/shell.h"

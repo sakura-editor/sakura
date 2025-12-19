@@ -17,7 +17,7 @@
 #include <CommCtrl.h>
 #include <ShlObj.h>
 
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "mem/CNativeW.h"
 #include "_os/CClipboard.h"
 

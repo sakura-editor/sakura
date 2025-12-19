@@ -28,7 +28,7 @@
 #include "_main/global.h" // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
-#include "COpe.h"
+#include "cmd/COpe.h"
 #include "CDocLine.h"
 
 class CBregexp; // 2002/2/10 aroka

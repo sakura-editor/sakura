@@ -18,7 +18,7 @@
 
 class COpeBlk;
 
-#include "COpe.h"
+#include "cmd/COpe.h"
 #include <vector>
 
 /*-----------------------------------------------------------------------

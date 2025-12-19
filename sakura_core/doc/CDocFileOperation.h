@@ -10,7 +10,7 @@
 #pragma once
 
 #include "doc/CDocListener.h" // SLoadInfo
-#include "CEol.h"
+#include "basis/CEol.h"
 
 class CEditDoc;
 

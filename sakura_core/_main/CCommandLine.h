@@ -26,8 +26,8 @@
 #include "global.h"
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"
-#include "EditInfo.h"
-#include "GrepInfo.h"
+#include "basis/EditInfo.h"
+#include "basis/GrepInfo.h"
 #include "util/design_template.h"
 
 /*-----------------------------------------------------------------------

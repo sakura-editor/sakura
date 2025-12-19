@@ -17,7 +17,7 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CProfile.h"
+#include "env/CProfile.h"
 
 #include <algorithm>
 #include <map>
@@ -27,7 +27,7 @@
 
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resource読み込みに使用
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "util/file.h"
 #include "apiwrap/StdApi.h"
 

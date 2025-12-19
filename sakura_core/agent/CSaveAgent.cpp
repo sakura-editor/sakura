@@ -6,13 +6,13 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CSaveAgent.h"
+#include "agent/CSaveAgent.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocVisitor.h"
 #include "window/CEditWnd.h"
 #include "uiparts/CVisualProgress.h"
 #include "uiparts/CWaitCursor.h"
-#include "CWriteManager.h"
+#include "env/CWriteManager.h"
 #include "io/CBinaryStream.h"
 #include "CEditApp.h"
 #include "_main/CAppMode.h"

@@ -21,11 +21,11 @@
 */
 #include "StdAfx.h"
 #include "view/CEditView.h"
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 #include "uiparts/CWaitCursor.h"
 #include "charset/charcode.h"
-#include "COpe.h" ///	2002/2/3 aroka from here
-#include "COpeBlk.h" ///
+#include "cmd/COpe.h" ///	2002/2/3 aroka from here
+#include "cmd/COpeBlk.h" ///
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダー整理
 #include "doc/CDocReader.h"
 #include "doc/layout/CLayout.h"

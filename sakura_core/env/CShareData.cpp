@@ -42,7 +42,7 @@
 #include "util/string_ex2.h"
 #include "util/window.h"
 #include "util/os.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"

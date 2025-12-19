@@ -10,7 +10,7 @@
 #include "charset/CCodeFactory.h"
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "env/CommonSetting.h"
 
 /*!

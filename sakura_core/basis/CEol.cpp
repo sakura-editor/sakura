@@ -12,7 +12,7 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 
 //-----------------------------------------------
 //	固定データ

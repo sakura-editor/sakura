@@ -18,7 +18,7 @@
 */
 #include "StdAfx.h"
 #include <memory>
-#include "CHokanMgr.h"
+#include "env/CHokanMgr.h"
 #include "env/CShareData.h"
 #include "view/CEditView.h"
 #include "plugin/CJackManager.h"

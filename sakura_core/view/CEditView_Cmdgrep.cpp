@@ -21,7 +21,7 @@
 #include "_main/CControlTray.h"
 #include "charset/charcode.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 

@@ -6,7 +6,7 @@
 */
 
 #include "StdAfx.h"
-#include "GrepInfo.h"
+#include "basis/GrepInfo.h"
 
 /*!
  * コンストラクタ

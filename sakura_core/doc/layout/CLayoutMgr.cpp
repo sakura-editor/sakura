@@ -30,7 +30,7 @@
 #include "view/CViewFont.h"
 #include "view/CTextMetrics.h"
 #include "basis/SakuraBasis.h"
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"
 #include "config/app_constants.h"

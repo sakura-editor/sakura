@@ -6,7 +6,7 @@
 */
 
 #include "StdAfx.h"
-#include "EditInfo.h"
+#include "basis/EditInfo.h"
 
 /*!
  * コンストラクタ

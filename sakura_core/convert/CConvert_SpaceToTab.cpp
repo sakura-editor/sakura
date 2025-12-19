@@ -7,7 +7,7 @@
 #include "StdAfx.h"
 #include "CConvert_SpaceToTab.h"
 #include "charset/charcode.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "util/string_ex2.h"
 #include "mem/CNativeW.h"
 

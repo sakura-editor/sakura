@@ -30,11 +30,11 @@
 #include "uiparts/CWaitCursor.h"
 #include "window/CEditWnd.h"
 #include "window/CSplitBoxWnd.h"///
-#include "COpeBlk.h"///
+#include "cmd/COpeBlk.h"///
 #include "cmd/CViewCommander_inline.h"
 #include "_os/CDropTarget.h"///
 #include "_os/CClipboard.h"
-#include "CMarkMgr.h"///
+#include "env/CMarkMgr.h"///
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
 #include "util/MessageBoxF.h"

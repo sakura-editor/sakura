@@ -9,7 +9,7 @@
 #include "StdAfx.h"
 #include "CUtf8.h"
 #include "charset/codechecker.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "env/CommonSetting.h"
 
 /*!

@@ -5,7 +5,7 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CCodeChecker.h"
+#include "env/CCodeChecker.h"
 #include "charset/CCodePage.h"
 #include "io/CIoBridge.h"
 #include "charset/CCodeFactory.h" ////

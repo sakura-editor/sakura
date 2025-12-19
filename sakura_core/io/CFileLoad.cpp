@@ -20,7 +20,7 @@
 #include <algorithm>
 #include "_main/global.h"
 #include "mem/CMemory.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "io/CFileLoad.h"
 #include "charset/charcode.h"
 #include "io/CIoBridge.h"

@@ -35,11 +35,11 @@
 #include "doc/CEditDoc.h"
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "macro/CSMacroMgr.h"
 #include "window/CEditWnd.h"
 #include "docplus/CDiffManager.h"
-#include "CMarkMgr.h"	// CAutoMarkMgr
+#include "env/CMarkMgr.h"	// CAutoMarkMgr
 #include "util/os.h"
 #include "sakura.hh"
 

@@ -37,7 +37,7 @@
 #include "window/CEditWnd.h"
 #include "io/CTextStream.h"
 #include "io/CFileLoad.h"
-#include "CWriteManager.h"
+#include "env/CWriteManager.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"

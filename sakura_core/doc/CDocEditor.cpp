@@ -13,7 +13,7 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "env/DLLSHAREDATA.h"
 #include "_main/CAppMode.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
 #include "_os/CClipboard.h"

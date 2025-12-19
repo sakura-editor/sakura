@@ -6,8 +6,8 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CLoadAgent.h"
-#include "CReadManager.h"
+#include "agent/CLoadAgent.h"
+#include "env/CReadManager.h"
 #include "_main/CAppMode.h"
 #include "_main/CControlTray.h"
 #include "CEditApp.h"

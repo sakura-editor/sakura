@@ -37,14 +37,14 @@
 #include "CEditView_Paint.h"	// parent
 #include "CViewParser.h"
 #include "CViewSelect.h"
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 #include "view/colors/EColorIndexType.h"
 #include "window/CTipWnd.h"
 #include "window/CAutoScrollWnd.h"
-#include "CDicMgr.h"
+#include "env/CDicMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "extmodule/CBregexp.h"
-#include "CEol.h"				// EEolType
+#include "basis/CEol.h"				// EEolType
 #include "cmd/CViewCommander.h"
 #include "mfclike/CMyWnd.h"		// parent
 #include "doc/CDocListener.h"	// parent

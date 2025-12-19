@@ -5,7 +5,7 @@
 */
 
 #include "pch.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 
 /*!
 	CEolのテスト

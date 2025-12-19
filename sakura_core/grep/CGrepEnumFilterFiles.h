@@ -15,7 +15,7 @@
 #define SAKURA_CGREPENUMFILTERFILES_48762BD9_D3E4_4D32_8C3A_502A7A6AE85A_H_
 #pragma once
 
-#include "CGrepEnumFiles.h"
+#include "grep/CGrepEnumFiles.h"
 
 class CGrepEnumFilterFiles final : public CGrepEnumFiles {
 private:

@@ -20,7 +20,7 @@
 #include <string.h>
 #include <tchar.h>
 #include <Shlwapi.h>
-#include "CGrepEnumKeys.h"
+#include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
 typedef std::pair< LPWSTR, DWORD > PairGrepEnumItem;
