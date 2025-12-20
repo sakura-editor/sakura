@@ -27,10 +27,9 @@ EFunctionCode CPlug::GetFunctionCode() const{
 // CPlugin メンバ関数
 
 //コンストラクタ
-CPlugin::CPlugin( const std::wstring& sBaseDir )
-	: m_sBaseDir( sBaseDir )
+CPlugin::CPlugin(std::wstring_view baseDir)
+	: m_sBaseDir(baseDir)
 {
-	m_nCommandCount = 0;
 }
 
 //デストラクタ
