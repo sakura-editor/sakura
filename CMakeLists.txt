@@ -27,6 +27,9 @@ include(${CMAKE_SOURCE_DIR}/src/main/cmake/bregonig.cmake)
 # Include ctags.cmake for ctags command
 include(${CMAKE_SOURCE_DIR}/src/main/cmake/ctags.cmake)
 
+# Include diffutils.cmake for diff command
+include(${CMAKE_SOURCE_DIR}/src/main/cmake/diffutils.cmake)
+
 # Enable ctest command
 enable_testing()
 
