@@ -152,8 +152,7 @@ bool CDocTypeManager::IsFileNameMatch(const WCHAR* pszTypeExts, const WCHAR* psz
 {
 	WCHAR szWork[MAX_TYPES_EXTS];
 
-	wcsncpy(szWork, pszTypeExts, int(std::size(szWork)));
-	szWork[std::size(szWork) - 1] = '\0';
+	wcsncpy_s(szWork, pszTypeExts, _TRUNCATE);
 	WCHAR* token = _wcstok(szWork, m_typeExtSeps);
 	while (token) {
 		if (wcspbrk(token, m_typeExtWildcards) == nullptr) {
@@ -185,13 +184,11 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 {
 	WCHAR szWork[MAX_TYPES_EXTS];
 
-	wcsncpy(szWork, pszTypeExts, int(std::size(szWork)));
-	szWork[std::size(szWork) - 1] = '\0';
+	wcsncpy_s(szWork, pszTypeExts, _TRUNCATE);
 	WCHAR* token = _wcstok(szWork, m_typeExtSeps);
 	while (token) {
 		if (wcspbrk(token, m_typeExtWildcards) == nullptr) {
-			wcsncpy(szFirstExt, token, nBuffSize);
-			szFirstExt[nBuffSize - 1] = L'\0';
+			wcsncpy_s(szFirstExt, nBuffSize, token, _TRUNCATE);
 			return;
 		}
 	}
