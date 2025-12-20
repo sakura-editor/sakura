@@ -12,7 +12,7 @@
 #include "CTextMetrics.h"
 #include "CTextArea.h"
 #include "CViewFont.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "types/CTypeSupport.h"

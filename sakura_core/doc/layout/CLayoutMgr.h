@@ -36,7 +36,7 @@
 #include "mem/CMemoryIterator.h"
 #include "CTsvModeInfo.h"
 #include "view/colors/EColorIndexType.h"
-#include "COpe.h"
+#include "cmd/COpe.h"
 #include "util/container.h"
 #include "util/design_template.h"
 #include "charset/charcode.h"

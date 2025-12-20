@@ -22,7 +22,7 @@
 class CDocListener;
 #include "basis/CMyString.h"
 #include "charset/charset.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "types/CType.h"
 #include "util/relation_tool.h"
 

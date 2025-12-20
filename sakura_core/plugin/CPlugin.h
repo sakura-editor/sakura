@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include "macro/CWSHIfObj.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "util/string_ex.h"
 
 //! プラグインの管理番号index

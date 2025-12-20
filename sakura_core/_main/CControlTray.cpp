@@ -28,7 +28,7 @@
 #include "StdAfx.h"
 #include <HtmlHelp.h>
 #include "CControlTray.h"
-#include "CPropertyManager.h"
+#include "env/CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
 #include "debug/CRunningTimer.h"
 #include "dlg/CDlgOpenFile.h"
@@ -50,7 +50,7 @@
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "_main/CCommandLine.h"
-#include "CGrepEnumKeys.h"
+#include "grep/CGrepEnumKeys.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"

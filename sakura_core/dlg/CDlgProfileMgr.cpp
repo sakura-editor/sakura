@@ -13,7 +13,7 @@
 #include "StdAfx.h"
 #include "dlg/CDlgProfileMgr.h"
 #include "dlg/CDlgInput1.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "util/file.h"
 #include "util/shell.h"
 #include "util/window.h"

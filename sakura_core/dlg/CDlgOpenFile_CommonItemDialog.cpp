@@ -32,7 +32,7 @@
 #include "util/file.h"
 #include "util/os.h"
 #include "util/module.h"
-#include "CFileExt.h"
+#include "basis/CFileExt.h"
 #include "env/DLLSHAREDATA.h"
 
 struct CDlgOpenFile_CommonItemDialog final

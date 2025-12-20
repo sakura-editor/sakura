@@ -19,7 +19,7 @@
 #include "print/CPrintPreview.h"
 #include "macro/CSMacroMgr.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "util/string_ex2.h"

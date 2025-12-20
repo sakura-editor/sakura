@@ -14,7 +14,7 @@
 #include "CMacroManagerBase.h"
 #include "view/CEditView.h"
 #include "cmd/CViewCommander_inline.h"
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 
 // CMacroBeforeAfter
 

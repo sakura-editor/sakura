@@ -11,7 +11,7 @@
 #include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"
 #include "outline/CFuncInfoArr.h"
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 #include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h"
 #include "view/colors/EColorIndexType.h"

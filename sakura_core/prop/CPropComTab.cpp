@@ -21,7 +21,7 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "CPropertyManager.h"
+#include "env/CPropertyManager.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "apiwrap/StdControl.h"

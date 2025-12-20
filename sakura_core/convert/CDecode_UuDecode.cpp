@@ -9,7 +9,7 @@
 #include "charset/charcode.h"
 #include "convert/convert_util2.h"
 #include "util/string_ex2.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "mem/CNativeW.h"
 
 /* Uudecode (デコード）*/

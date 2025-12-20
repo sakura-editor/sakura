@@ -9,13 +9,13 @@
 #define SAKURA_CTYPE_B057F55F_C082_47DB_9CB4_E8B1BBA5BF77_H_
 #pragma once
 
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "env/CommonSetting.h"
 #include "doc/CDocTypeSetting.h"
 #include "doc/CLineComment.h"
 #include "doc/CBlockComment.h"
 #include "charset/charset.h"  // ECodeType
-#include "CRegexKeyword.h"	// RegexKeywordInfo
+#include "env/CRegexKeyword.h"	// RegexKeywordInfo
 #include "charset/charcode.h"
 
 //! タブ表示方法

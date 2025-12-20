@@ -8,7 +8,7 @@
 #include "docplus/CBookmarkManager.h"
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 #include "extmodule/CBregexp.h"
 
 bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_cBookmarked; }

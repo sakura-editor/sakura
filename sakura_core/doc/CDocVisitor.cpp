@@ -10,7 +10,7 @@
 #include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 
 //! 改行コードを統一する
 void CDocVisitor::SetAllEol(CEol cEol)

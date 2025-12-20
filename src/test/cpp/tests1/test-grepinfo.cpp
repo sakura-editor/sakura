@@ -8,7 +8,7 @@
 #include <tchar.h>
 #include <Windows.h>
 
-#include "GrepInfo.h"
+#include "basis/GrepInfo.h"
 
 /*!
  * 同型との等価比較

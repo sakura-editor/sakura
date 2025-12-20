@@ -19,7 +19,7 @@
 #include "env/CTagJumpManager.h"		//SShare_TagJump
 #include "env/CFileNameManager.h"		//SShare_FileNameManagement
 
-#include "EditInfo.h"
+#include "basis/EditInfo.h"
 #include "types/CType.h" // STypeConfig
 #include "print/CPrint.h" //PRINTSETTING
 #include "recent/SShare_History.h"	//SShare_History

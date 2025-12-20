@@ -8,7 +8,7 @@
 #include <tchar.h>
 #include <Windows.h>
 
-#include "EditInfo.h"
+#include "basis/EditInfo.h"
 
 /*!
  * 同型との等価比較

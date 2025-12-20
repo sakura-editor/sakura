@@ -15,7 +15,7 @@ class CDocLine;
 class CDocLineMgr;
 class CBregexp;
 
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 
 //! 行に付加するブックマーク情報
 class CLineBookmarked{

@@ -36,7 +36,7 @@
 #include "_main/global.h"
 
 //	May 15, 2000 genta
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "mem/CMemory.h"// 2002/2/10 aroka
 #include "mem/CPoolResource.h"
 

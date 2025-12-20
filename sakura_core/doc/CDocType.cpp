@@ -11,7 +11,7 @@
 #include "CEditDoc.h"
 #include "CEditApp.h"
 #include "window/CEditWnd.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "view/colors/CColorStrategy.h"
 #include "view/figures/CFigureManager.h"
 #include "env/DLLSHAREDATA.h"

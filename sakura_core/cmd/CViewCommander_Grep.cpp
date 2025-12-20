@@ -18,7 +18,7 @@
 
 #include "_main/CControlTray.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "plugin/CPlugin.h"
 #include "plugin/CJackManager.h"
 #include "CSelectLang.h"

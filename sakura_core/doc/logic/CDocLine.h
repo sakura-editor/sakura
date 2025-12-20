@@ -21,7 +21,7 @@
 #pragma once
 
 #include "util/design_template.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
 

@@ -25,7 +25,7 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-#include "CPropertyManager.h"
+#include "env/CPropertyManager.h"
 #include "CEditApp.h"
 #include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO 追加
 #include "env/CHelpManager.h"

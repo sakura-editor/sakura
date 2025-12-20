@@ -11,7 +11,7 @@
 
 #include <string_view>
 
-#include "CEol.h"
+#include "basis/CEol.h"
 
 /*!
 	コンストラクタ

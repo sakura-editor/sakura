@@ -21,7 +21,7 @@
 #include <memory>
 #include "CPropTypes.h"
 #include "env/CShareData.h"
-#include "CRegexKeyword.h"
+#include "env/CRegexKeyword.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "util/shell.h"
 #include "view/colors/EColorIndexType.h"
