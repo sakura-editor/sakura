@@ -65,12 +65,18 @@ private:
 	};
 public:
 	//コンストラクタ・デストラクタ
-	CStrictInteger(){ m_value=0; }
-	CStrictInteger(const Me& rhs){ m_value=rhs.m_value; }
+	CStrictInteger() = default;
+
+	CStrictInteger(const Me&) = default;
+	Me& operator = (const Me&) = default;
+
 	~CStrictInteger() noexcept = default;
 
 	//intからの変換は、「明示的に指定したときのみ」可能
-	explicit CStrictInteger(int value){ m_value=value; }
+	explicit CStrictInteger(int value) noexcept
+		: m_value(value)
+	{
+	}
 
 	//算術演算子 (加算、減算は同クラス同士でしか許さない)
 	Me& operator += (const Me& rhs)	{ m_value += rhs.m_value; return *this; }
@@ -96,9 +102,6 @@ public:
 
 	//算術演算子４
 	Me operator - () const{ return Me(-m_value); }
-
-	//代入演算子
-	Me& operator = (const Me& rhs){ m_value=rhs.m_value; return *this; }
 
 	//比較演算子
 	bool operator <  (const Me& rhs) const{ return m_value <  rhs.m_value; }
@@ -192,7 +195,7 @@ private:
 
 	// -- -- -- -- メンバ変数 -- -- -- -- //
 private:
-	int m_value;
+	int		m_value = 0;
 };
 
 //左辺がint等の場合の演算子
