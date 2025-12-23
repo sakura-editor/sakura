@@ -1254,8 +1254,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			nY,
 			0,
 			nullptr,
-			szWork,
-			wcslen( szWork ),
+			PSZ_ARGS(szWork),
 			nullptr
 		);
 

@@ -184,8 +184,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 			pDispPos->GetDrawPos().y + nHeightMargin,
 			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClip2,
-			szText,
-			wcslen(szText),
+			PSZ_ARGS(szText),
 			nDx
 		);
 		if( bChangeColor ){

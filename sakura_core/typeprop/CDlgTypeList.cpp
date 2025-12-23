@@ -347,8 +347,7 @@ void CDlgTypeList::SetData( int selIdx )
 		m_bExtRMenu[ nIdx ] = FALSE;
 		m_bExtDblClick[ nIdx ] = FALSE;
 
-		SIZE sizeExtent;
-		if( ::GetTextExtentPoint32( hDC, szText, wcslen(szText), &sizeExtent) && sizeExtent.cx > nExtent ){
+		if (SIZE sizeExtent; ::GetTextExtentPoint32W(hDC, PSZ_ARGS(szText), &sizeExtent) && sizeExtent.cx > nExtent) {
 			nExtent = sizeExtent.cx;
 		}
 	}

@@ -1192,9 +1192,9 @@ LRESULT CEditWnd::DispatchEvent(
 				TEXTMETRIC tm;
 				::GetTextMetrics( lpdis->hDC, &tm );
 				int y = ( lpdis->rcItem.bottom - lpdis->rcItem.top - tm.tmHeight + 1 ) / 2 + lpdis->rcItem.top;
-				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, L"REC", wcslen( L"REC" ) );
+				::TextOutW(lpdis->hDC, lpdis->rcItem.left, y, PSZ_ARGS(L"REC"));
 				if( COLOR_BTNTEXT == nColor ){
-					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, L"REC", wcslen( L"REC" ) );
+					::TextOutW(lpdis->hDC, lpdis->rcItem.left + 1, y, PSZ_ARGS(L"REC"));
 				}
 			}
 			return 0;
@@ -3095,7 +3095,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			nStArr[nStArrNum - 1] -= nSbxWidth;
 		}
 		for( i = nStArrNum - 1; i > 0; i-- ){
-			::GetTextExtentPoint32( hdc, pszLabel[i], wcslen( pszLabel[i] ), &sz );
+			::GetTextExtentPoint32W(hdc, PSZ_ARGS(pszLabel[i]), &sz);
 			nStArr[i - 1] = nStArr[i] - ( sz.cx + nBdrWidth );
 		}
 
