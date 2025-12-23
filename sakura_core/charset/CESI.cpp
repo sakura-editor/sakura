@@ -261,7 +261,7 @@ void CESI::GetEncodingInfo_jis( const char* pS, const int nLen )
 		default:
 			nlen = CheckJisUnknownPart( pr, pr_end-pr, &pr_next, &emyjisesc, &nerror );
 		}
-		nescbytes += pr_next-(pr+nlen);
+		nescbytes += int(pr_next-(pr+nlen));
 		nillbytes += nerror;
 		pr = pr_next;
 	}while( pr_next < pr_end );

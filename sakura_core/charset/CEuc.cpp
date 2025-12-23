@@ -70,7 +70,7 @@ int CEuc::EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned short*>(pDst);
+	return int(pw - reinterpret_cast<unsigned short*>(pDst));
 }
 
 /* EUC→Unicodeコード変換 */
@@ -158,7 +158,7 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned char*>(pDst);
+	return int(pw - reinterpret_cast<unsigned char*>(pDst));
 }
 
 EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)

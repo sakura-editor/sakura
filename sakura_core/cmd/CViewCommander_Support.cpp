@@ -307,7 +307,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		}else{
 			wcscpy( pWork, filename ); //	Jul. 5, 2002 genta
 		}
-		nLen = wcslen( pWork );
+		nLen = (int)wcslen( pWork );
 		wcscpy( &pWork[nLen + 1], cmemCurText.GetStringPtr() );
 		hwndHtmlHelp = (HWND)::SendMessageAny(
 			GetDllShareData().m_sHandles.m_hwndTray,

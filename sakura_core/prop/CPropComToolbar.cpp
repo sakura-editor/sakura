@@ -115,9 +115,11 @@ int Listbox_INSERTDATA(
 */
 int Listbox_ADDDATA(
 	HWND hWnd,              //!< handle to destination window 
-	int value
+	LPARAM lParam
 )
 {
+	auto value = int(lParam);
+
 	int nIndex1 = ApiWrap::List_AddItemData( hWnd, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 		TopErrorMessage( nullptr, LS(STR_PROPCOMTOOL_ERR03), nIndex1 );
@@ -361,7 +363,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					if( LB_ERR == nIndex2 ){
 						break;
 					}
-					i = ApiWrap::List_GetItemData( hwndFuncList, nIndex2 );
+					i = (int)ApiWrap::List_GetItemData( hwndFuncList, nIndex2 );
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
@@ -380,7 +382,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					if( LB_ERR == nIndex2 ){
 						break;
 					}
-					i = ApiWrap::List_GetItemData( hwndFuncList, nIndex2 );
+					i = (int)ApiWrap::List_GetItemData( hwndFuncList, nIndex2 );
 					//	From Here Apr. 13, 2002 genta
 					//	ここでは i != 0 だとは思うけど、一応保険です。
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
@@ -400,7 +402,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					if( LB_ERR == nIndex1 || 0 >= nIndex1 ){
 						break;
 					}
-					i = ApiWrap::List_GetItemData( hwndResList, nIndex1 );
+					i = (int)ApiWrap::List_GetItemData( hwndResList, nIndex1 );
 
 					j = ApiWrap::List_DeleteString( hwndResList, nIndex1 );
 					if( j == LB_ERR ){
@@ -422,7 +424,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					if( LB_ERR == nIndex1 || nIndex1 + 1 >= i ){
 						break;
 					}
-					i = ApiWrap::List_GetItemData( hwndResList, nIndex1 );
+					i = (int)ApiWrap::List_GetItemData( hwndResList, nIndex1 );
 
 					j = ApiWrap::List_DeleteString( hwndResList, nIndex1 );
 					if( j == LB_ERR ){
@@ -535,7 +537,7 @@ int CPropToolbar::GetData( HWND hwndDlg )
 	/* ツールバーボタンの情報を取得 */
 	k = 0;
 	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
-		j = ApiWrap::List_GetItemData( hwndResList, i );
+		j = (int)ApiWrap::List_GetItemData( hwndResList, i );
 		if( LB_ERR != j ){
 			m_Common.m_sToolBar.m_nToolBarButtonIdxArr[k] = j;
 			k++;
@@ -593,7 +595,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	COLORREF textColorOld = ::SetTextColor( pDis->hDC, ::GetSysColor( textColor ) );
 
 	// itemDataに紐づくボタン情報を取得する
-	TBBUTTON tbb = m_pcMenuDrawer->getButton(pDis->itemData);
+	TBBUTTON tbb = m_pcMenuDrawer->getButton((int)pDis->itemData);
 
 	// ボタンとセパレータとで処理を分ける	2007.11.02 ryoji
 	WCHAR	szLabel[256];

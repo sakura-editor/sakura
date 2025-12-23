@@ -16,7 +16,7 @@ const WCHAR* to_wchar(const ACHAR* src)
 {
 	if(src==nullptr)return nullptr;
 
-	return to_wchar(src,strlen(src));
+	return to_wchar(src, (int)strlen(src));
 }
 
 const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
@@ -61,7 +61,7 @@ const ACHAR* to_achar(const WCHAR* src)
 {
 	if(src==nullptr)return nullptr;
 
-	return to_achar(src,wcslen(src));
+	return to_achar(src, (int)wcslen(src));
 }
 
 const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)

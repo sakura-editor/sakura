@@ -197,7 +197,7 @@ void Convert_ZenkataToHankata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 		src++;
 	}
 	*dst=L'\0';
-	*nDstLength = dst - pDst;
+	*nDstLength = int(dst - pDst);
 }
 
 /*!
@@ -238,7 +238,7 @@ void Convert_ToHankaku(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* 
 		src++;
 	}
 	*dst=L'\0';
-	*nDstLength = dst - pDst;
+	*nDstLength = int(dst - pDst);
 }
 
 /*!
@@ -269,7 +269,7 @@ void Convert_HankataToZenkata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 		src++;
 	}
 	*dst=L'\0';
-	*nDstLength = dst - pDst;
+	*nDstLength = int(dst - pDst);
 }
 
 /*!
@@ -304,5 +304,5 @@ void Convert_HankataToZenhira(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 		src++;
 	}
 	*dst=L'\0';
-	*nDstLength = dst - pDst;
+	*nDstLength = int(dst - pDst);
 }

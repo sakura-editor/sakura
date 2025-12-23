@@ -126,9 +126,9 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			}
 			int nParamOption;
 			if( nOption == 1 ){
-				nParamOption = lParams[1];
+				nParamOption = (int)lParams[1];
 			}else{
-				nParamOption = lParam;
+				nParamOption = (int)lParam;
 			}
 			if( nParamOption == 0 ){
 				if( GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock ){
@@ -309,7 +309,7 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 	Clear();
 	int nLen;
 	if( nLength == -1 ){
-		nLen = wcslen( szParam );
+		nLen = (int)wcslen( szParam );
 	}else{
 		nLen = nLength;
 	}
@@ -325,7 +325,7 @@ void CMacroParam::SetIntParam( const int nParam )
 	Clear();
 	m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
 	_itow(nParam, m_pData, 10);
-	m_nDataLen = wcslen(m_pData);
+	m_nDataLen = (int)wcslen(m_pData);
 	m_eType = EMacroParamTypeInt;
 }
 
@@ -392,7 +392,7 @@ bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 	for (i = 0; i < maxArg; i++) {
 		if (!p) break;	//	pが無ければbreak;
 		paramArr[i] = p->m_pData;
-		paramLenArr[i] = wcslen(paramArr[i]);
+		paramLenArr[i] = (int)wcslen(paramArr[i]);
 		p = p->m_pNext;
 	}
 	return CMacro::HandleCommand(pcEditView, (EFunctionCode)(m_nFuncID | flags), paramArr, paramLenArr, i);

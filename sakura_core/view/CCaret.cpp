@@ -793,7 +793,7 @@ void CCaret::ShowCaretPosInfo()
 		WCHAR	szRight[64];
 		int		nLen;
 		{	// メッセージの左側文字列（「行:列」を除いた表示）
-			nLen = wcslen(pszCodeName) + wcslen(szEolMode) + wcslen(szCaretChar);
+			nLen = int(wcslen(pszCodeName) + wcslen(szEolMode) + wcslen(szCaretChar));
 			// これは %s(%s)%6s%s%s 等になる。%6ts表記は使えないので注意
 			auto_sprintf(
 				szFormat,
@@ -811,7 +811,7 @@ void CCaret::ShowCaretPosInfo()
 			);
 		}
 		szRight[0] = L'\0';
-		nLen = MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft);	// 右側に残っている文字長
+		nLen = int(MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft));	// 右側に残っている文字長
 		if( nLen > 0 ){	// メッセージの右側文字列（「行:列」表示）
 			WCHAR szRowCol[32];
 			auto_sprintf(

@@ -432,12 +432,12 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		}else{
 			// "sakura_lang_*.dll"
 			int nStartPos = 0;
-			int nEndPos = szDllName.length();
+			auto nEndPos = int(szDllName.length());
 			if( szDllName.substr( 0, 12 ) == L"sakura_lang_" ){
 				nStartPos = 12;
 			}
 			if( 4 < szDllName.length() && szDllName.substr( szDllName.length() - 4, 4 ) == L".dll" ){
-				nEndPos = szDllName.length() - 4;
+				nEndPos = int(szDllName.length() - 4);
 			}
 			szLangName = szDllName.substr( nStartPos, nEndPos - nStartPos );
 		}

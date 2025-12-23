@@ -749,7 +749,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									nMode2 = nMode2Old;
 									if( nMode2 == M2_OPERATOR_WORD ){
 										wcscpy(szWord, szTemplateName);
-										nWordIdx = wcslen(szWord) - 1;
+										nWordIdx = (int)wcslen(szWord) - 1;
 										szTemplateName[0] = L'\0';
 									}
 								}
@@ -812,7 +812,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									szRawStringTag[0] = L')';
 									wcsncpy( szRawStringTag + 1, &pLine[i+1], tagLen );
 									szRawStringTag[nRawStringTagLen] = L'\0';
-									nRawStringTagCompLen = wcslen(szRawStringTag);
+									nRawStringTagCompLen = (int)wcslen(szRawStringTag);
 									break;
 								}
 							}
@@ -836,7 +836,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					else if(
 							(nMode2 & M2_AFTER_ITEM) != 0  &&
 							nNestLevel_global < nNamespaceNestMax &&
-							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + nLenDefPos + 1) < nNamespaceLenMax &&
+							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = (int)wcslen(szItemName)) + nLenDefPos + 1) < nNamespaceLenMax &&
 							(nItemLine > 0) )
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
@@ -1152,7 +1152,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 										wcscpy( szWord, szWordPrev );
 									}
 								}
-								nWordIdx = wcslen( szWord );
+								nWordIdx = (int)wcslen( szWord );
 							}
 							//	From Here Apr. 1, 2001 genta
 							//	operator new/delete 演算子の対応
@@ -1163,7 +1163,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									szWordPrev[pos + 3] = L'\0';
 								}
 								wcscpy( szWord, szWordPrev );
-								nWordIdx = wcslen( szWord );
+								nWordIdx = (int)wcslen( szWord );
 								nMode2 = M2_OPERATOR_WORD;
 							}else if( nMode2 == M2_OPERATOR_WORD ){
 								// operator 継続中
@@ -1173,7 +1173,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									szWordPrev[pos + 3] = L'\0';
 								}
 								wcscpy( szWord, szWordPrev );
-								nWordIdx = wcslen( szWord );
+								nWordIdx = (int)wcslen( szWord );
 							}
 							//	To Here Apr. 1, 2001 genta
 							else{

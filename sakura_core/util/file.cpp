@@ -249,9 +249,9 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		int	nFolderLen;
 		int	nCharChars;
-		nFolderLen = wcslen( pszFolder );
+		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
+			nCharChars = int(&pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] ));
 			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
 				pszFolder[nFolderLen - 1] = L'\0';
 			}
@@ -270,7 +270,7 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 	}else{
 		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 		int	nFolderLen;
-		nFolderLen = wcslen( pszFolder );
+		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
 			}else{
@@ -310,9 +310,9 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		wcscpy( pszFolder, szDrive );
 		wcscat( pszFolder, szDir );
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
-		nFolderLen = wcslen( pszFolder );
+		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
+			nCharChars = int(&pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] ));
 			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
 				pszFolder[nFolderLen - 1] = L'\0';
 			}
@@ -599,7 +599,7 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 		pszFileName = pszPath + nLen;
 	}else{
 		GetExedir( szPath, L"" );
-		nLen = wcslen( szPath );
+		nLen = (int)wcslen( szPath );
 		if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 			pszFileName = pszPath + nLen;
 		}

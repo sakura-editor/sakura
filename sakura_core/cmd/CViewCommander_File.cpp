@@ -405,7 +405,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 
 		/* Oracle SQL*Plusにペーストのコマンドを送る */
 		DWORD_PTR	dwResult;
-		bResult = ::SendMessageTimeout(
+		bResult = (BOOL)::SendMessageTimeoutW(
 			hwndSQLPLUS,
 			WM_COMMAND,
 			MAKELONG( 201, 0 ),

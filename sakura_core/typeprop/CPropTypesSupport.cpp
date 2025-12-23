@@ -261,11 +261,9 @@ void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
 
 void CPropTypesSupport::RemoveHokanMethod(int nMethod, const WCHAR* szName)
 {
-	int nSize = GetHokanMethodList()->size();
-	for(int i = 0; i < nSize; i++ ){
-		if( (*GetHokanMethodList())[i].nMethod == (EOutlineType)nMethod ){
-			GetHokanMethodList()->erase( GetHokanMethodList()->begin() + i );
-			break;
-		}
+	auto& list = *GetHokanMethodList();
+
+	if (const auto found = std::ranges::find_if(list, [nMethod](const SHokanMethod& hokanMethod) { return hokanMethod.nMethod == nMethod; }); found != list.end()) {
+		list.erase(found);
 	}
 }

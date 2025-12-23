@@ -66,7 +66,7 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		p = wcschr( pTmpLine, L';' );
 		if( p ) *p = L'\0';
 
-		length = wcslen( pTmpLine );
+		length = (int)wcslen( pTmpLine );
 		offset = 0;
 
 		//トークンに分割
@@ -87,7 +87,7 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 			int nFuncId = -1;
 			WCHAR* entry_token = nullptr;
 
-			length = wcslen( token[ 0 ] );
+			length = (int)wcslen( token[ 0 ] );
 			if( length >= 2
 			 && token[ 0 ][ length - 1 ] == L':' ){	//ラベル
 				token[ 0 ][ length - 1 ] = L'\0';

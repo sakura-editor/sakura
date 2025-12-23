@@ -285,7 +285,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						nNestLevel2Arr.pop_back();
 						nClassNestArrNum--;
 						int k;
-						for( k = wcslen( szClass ) - 1; k >= 0; k-- ){
+						for( k = int(wcslen( szClass ) - 1); k >= 0; k-- ){
 							if( L'\\' == szClass[k] ){
 								break;
 							}

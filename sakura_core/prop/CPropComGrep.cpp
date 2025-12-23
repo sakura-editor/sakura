@@ -220,11 +220,11 @@ int CPropGrep::GetData( HWND hwndDlg )
 
 	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);
 	int nSelPos = ApiWrap::Combo_GetCurSel(hwndCombo);
-	m_Common.m_sSearch.m_nTagJumpMode = ApiWrap::Combo_GetItemData(hwndCombo, nSelPos);
+	m_Common.m_sSearch.m_nTagJumpMode = (int)ApiWrap::Combo_GetItemData(hwndCombo, nSelPos);
 	
 	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_KEYWORD_TAGJUMP);
 	nSelPos = ApiWrap::Combo_GetCurSel(hwndCombo);
-	m_Common.m_sSearch.m_nTagJumpModeKeyword = ApiWrap::Combo_GetItemData(hwndCombo, nSelPos);
+	m_Common.m_sSearch.m_nTagJumpModeKeyword = (int)ApiWrap::Combo_GetItemData(hwndCombo, nSelPos);
 
 	return TRUE;
 }

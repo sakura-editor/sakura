@@ -672,9 +672,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 // 選択用文字列分解
 void CDlgPluginOption::SepSelect(std::wstring sTrg, std::wstring* spView, std::wstring* spValue )
 {
-	int		ix;
-	ix = sTrg.find(L':');
-	if ((std::wstring::size_type)ix == std::wstring::npos) {
+	if (const auto ix = sTrg.find(L':'); ix == std::wstring::npos) {
 		*spView = *spValue = sTrg;
 	}
 	else {

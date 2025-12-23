@@ -385,8 +385,8 @@ BOOL CRegexKeyword::RegexIsKeyword(
 				if( 0 < matched
 					&& pBregexp->endp[0] - pBregexp->startp[0] > 0 )
 				{
-					info.nOffset = pBregexp->startp[0] - begp;
-					info.nLength = pBregexp->endp[0] - pBregexp->startp[0];
+					info.nOffset = int(pBregexp->startp[0] - begp);
+					info.nLength = int(pBregexp->endp[0] - pBregexp->startp[0]);
 					info.nMatch  = RK_MATCH;
 				
 					/* 指定の開始位置でマッチした */
@@ -432,7 +432,7 @@ BOOL CRegexKeyword::RegexKeyCheckSyntax(const wchar_t *s)
 		nullptr, nullptr,
 	};
 
-	length = wcslen(s);
+	length = (int)wcslen(s);
 
 	for(i = 0; kakomi[i] != nullptr; i += 2)
 	{

@@ -56,7 +56,7 @@ int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith)
 		*out = *org;
 	}
 	*out = L'\0';
-	return out - buf;
+	return int(out - buf);
 }
 
 /*!	文字列が指定された文字で終わっていなかった場合には
@@ -187,7 +187,7 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 	int		j;
 	int		nLineLen;
 	wchar_t	szNumber[32];
-	nLineLen = wcslen( pLine );
+	nLineLen = (int)wcslen( pLine );
 	i = 0;
 	for( ; i < nLineLen; ++i ){
 		if( pLine[i] >= L'0' &&

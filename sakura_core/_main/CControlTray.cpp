@@ -1029,7 +1029,7 @@ LRESULT CControlTray::DispatchEvent(
 		::PostQuitMessage( 0 );
 		return 0L;
 	case MYWM_ALLOWACTIVATE:
-		::AllowSetForegroundWindow(wParam);
+		::AllowSetForegroundWindow(DWORD(wParam));
 		return 0L;
 
 	default:
@@ -1285,7 +1285,7 @@ bool CControlTray::OpenNewEditor(
 			DWORD dwExitCode;
 			if( ::PeekMessage( &msg, nullptr, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
 				if( msg.message == WM_QUIT ){	// 指定範囲外でも WM_QUIT は取り出される
-					::PostQuitMessage( msg.wParam );
+					::PostQuitMessage( int(msg.wParam) );
 					break;
 				}
 				// 監視対象プロセスからのメッセージなら抜ける

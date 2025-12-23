@@ -475,7 +475,7 @@ void CTextDrawer::DispLineNumber(
 				/* 物理行（レイアウト行）番号表示モード */
 				_itow( (Int)nLineNum + 1, szLineNum, 10 );
 			}
-			nLineCols = wcslen( szLineNum );
+			nLineCols = int(wcslen( szLineNum ));
 			nLineNumCols = nLineCols; // 2010.08.17 Moca 位置決定に行番号区切りは含めない
 
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */

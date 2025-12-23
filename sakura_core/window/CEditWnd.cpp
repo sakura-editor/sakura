@@ -1616,7 +1616,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return nRet;
 	case MYWM_ALLOWACTIVATE:
-		::AllowSetForegroundWindow(wParam);
+		::AllowSetForegroundWindow((DWORD)wParam);
 		return 0L;
 
 	case MYWM_GETFILEINFO:
@@ -3008,7 +3008,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowSize ){		/* ウィンドウサイズ継承をするか */
 			if( wParam == SIZE_MAXIMIZED ){					/* 最大化はサイズを記録しない */
 				if( m_pShareData->m_Common.m_sWindow.m_nWinSizeType != (int)wParam ){
-					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = wParam;
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = (int)wParam;
 				}
 			}else{
 				// Aero Snapの縦方向最大化状態で終了して次回起動するときは元のサイズにする必要があるので、
@@ -3025,7 +3025,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCX != rcWin.right - rcWin.left ||
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCY != rcWin.bottom - rcWin.top
 				){
-					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = wParam;
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = (int)wParam;
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCX = rcWin.right - rcWin.left;
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCY = rcWin.bottom - rcWin.top;
 				}
@@ -3039,7 +3039,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		}
 	}
 
-	m_nWinSizeType = wParam;	/* サイズ変更のタイプ */
+	m_nWinSizeType = (int)wParam;	/* サイズ変更のタイプ */
 
 	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
 	hwndToolBar = (nullptr != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();

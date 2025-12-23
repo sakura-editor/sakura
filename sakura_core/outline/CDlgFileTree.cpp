@@ -388,7 +388,7 @@ HTREEITEM CDlgFileTree::InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent,
 {
 	int nlParam;
 	if( m_aItemRemoveList.empty() ){
-		nlParam = m_fileTreeSetting.m_aItems.size();
+		nlParam = (int)m_fileTreeSetting.m_aItems.size();
 		m_fileTreeSetting.m_aItems.push_back(item);
 	}else{
 		// 削除リストから復活させる
@@ -940,7 +940,7 @@ BOOL CDlgFileTree::OnNotify(NMHDR* pNMHDR)
 			tvi.hItem = htiItem;
 			if( TreeView_GetItem( hwndTree, &tvi) ){
 				// リストから削除する代わりに番号を覚えて後で再利用
-				m_aItemRemoveList.push_back(tvi.lParam);
+				m_aItemRemoveList.push_back((int)tvi.lParam);
 			}
 		}
 		break;

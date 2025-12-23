@@ -99,7 +99,7 @@ public:
 
 		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, 4096 - 1) : 0; // FIXME: パス長の上限は暫定値。
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
-			int baseLen = cchBaseFolder;
+			const auto baseLen = cchBaseFolder;
 			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
 			if( nullptr == lpPath ) break;
 			wcscpy( lpPath, lpBaseFolder );
@@ -118,7 +118,7 @@ public:
 			}else{
 				keyDir = keyDirYen;
 			}
-			int nKeyDirLen = keyDir ? keyDir - vecKeys[ i ] + 1 : 0;
+			const auto nKeyDirLen = keyDir ? keyDir - vecKeys[ i ] + 1 : 0;
 
 			WIN32_FIND_DATA w32fd;
 			HANDLE handle = ::FindFirstFile( lpPath, &w32fd );

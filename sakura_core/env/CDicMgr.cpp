@@ -137,7 +137,7 @@ int CDicMgr::HokanSearch(
 	if(!in){
 		return 0;
 	}
-	nKeyLen = wcslen( pszKey );
+	nKeyLen = (int)wcslen( pszKey );
 	std::wstring szLine;
 	while( in ){
 		szLine = in.ReadLineW();

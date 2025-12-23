@@ -394,7 +394,7 @@ int _CheckJisAnyPart(
 		pr = pr_end;
 	}
 
-	return pr - pS;
+	return int(pr - pS);
 }
 
 /*

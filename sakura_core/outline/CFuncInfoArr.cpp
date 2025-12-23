@@ -133,7 +133,7 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 		std::pair<int, std::wstring> pair(info, s);
 		m_AppendTextArr.insert( pair );
 		if( m_nAppendTextLenMax < (int)s.length() ){
-			m_nAppendTextLenMax = s.length();
+			m_nAppendTextLenMax = (int)s.length();
 		}
 	}else{
 		// キーが存在する場合、値を書き換える

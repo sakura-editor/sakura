@@ -111,7 +111,7 @@ void CTextOutputStream::WriteString(
 	//$$メモ: 文字変換時にいちいちコピーを作ってるので効率が悪い。後々効率改善予定。
 
 	int nDataLen = nLen;
-	if(nDataLen<0)nDataLen = wcslen(szData);
+	if(nDataLen<0)nDataLen = (int)wcslen(szData);
 	const wchar_t* pData = szData;
 	const wchar_t* pEnd = szData + nDataLen;
 

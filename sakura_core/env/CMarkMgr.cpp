@@ -155,13 +155,14 @@ void CAutoMarkMgr::Add(const CMark& m)
 */
 void CAutoMarkMgr::Expire(void)
 {
-	int range = m_cMarkChain.size() - GetMax();
-
-	if( range <= 0 )	return;
+	if (std::ssize(m_cMarkChain) <= m_nMaxitem) {
+		return;
+	}
 
 	//	最大値を超えている場合
+	const auto range = m_cMarkChain.size() - m_nMaxitem;
 	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.begin() + range );
-	m_nCurpos -= range;
+	m_nCurpos -= int(range);
 	if( m_nCurpos < 0 )
 		m_nCurpos = 0;
 }

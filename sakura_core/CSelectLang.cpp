@@ -304,7 +304,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 		m_pszString = m_szString;					// 変数内に準備したバッファを接続
 		m_nBufferSize = int(std::size(m_szString));		// 配列個数
 		m_szString[m_nBufferSize - 1] = 0;
-		m_nLength = wcslen(m_szString);			// 文字数
+		m_nLength = (int)wcslen(m_szString);			// 文字数
 	}
 
 	HINSTANCE hRsrc = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
@@ -350,7 +350,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 				m_nBufferSize = nTemp;
 			}else{
 				// メモリ取得に失敗した場合は直前の内容で諦める
-				nRet = wcslen( m_pszString );
+				nRet = (int)wcslen( m_pszString );
 				break;
 			}
 		}else{

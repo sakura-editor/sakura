@@ -983,7 +983,7 @@ void CShareData::TraceOutString( const wchar_t* pStr, int len )
 		return;
 	}
 	if( -1 == len ){
-		len = wcslen(pStr);
+		len = (int)wcslen(pStr);
 	}
 	// m_sWorkBufferぎりぎりでも問題ないけれど、念のため\0終端にするために余裕をとる
 	// -1 より 8,4バイト境界のほうがコピーが早いはずなので、-4にする

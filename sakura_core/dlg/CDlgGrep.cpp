@@ -911,7 +911,7 @@ int CDlgGrep::GetData( void )
 				wcscat( szFolder, L";" );
 			}
 			wcscat( szFolder, szFolderItem );
-			nFolderLen = wcslen( szFolder );
+			nFolderLen = (int)wcslen( szFolder );
 		}
 		wcscpy( m_szFolder, szFolder );
 	}

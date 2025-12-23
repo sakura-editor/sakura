@@ -551,7 +551,7 @@ void CDlgFuncList::SetData()
 
 		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
 		{
-			const int nBuffLenTag = 13 + wcslen(m_pcFuncInfoArr->m_szFilePath);
+			const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 			const int nNum = m_pcFuncInfoArr->GetNum();
 			int nBuffLen = 0;
 			for(int i = 0; i < nNum; ++i ){
@@ -769,7 +769,7 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 		tvItem.hItem = target;
 		TreeView_GetItem( hwndTree, &tvItem );
 		if( ((-tvItem.lParam) % 10) == 3 ){
-			*pnItem = (-tvItem.lParam) / 10;
+			*pnItem = int((-tvItem.lParam) / 10);
 			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr();
 			path += L"\\";
 			path += *pPath;
@@ -811,7 +811,7 @@ static int TreeDummylParamToFuncInfoIndex(std::vector<int>& vec, LPARAM lParam)
 			break;
 		}
 	}
-	return lParam - nDiff;
+	return int(lParam - nDiff);
 }
 
 /* ダイアログデータの取得 */
@@ -856,7 +856,7 @@ int CDlgFuncList::GetData( void )
 						// ダミー要素を排除:SetTreeJava
 						nIndex = TreeDummylParamToFuncInfoIndex(m_vecDummylParams, tvi.lParam);
 					}else{
-						nIndex = tvi.lParam;
+						nIndex = (int)tvi.lParam;
 					}
 					if( 0 <= nIndex ){
 						m_cFuncInfo = m_pcFuncInfoArr->GetAt(nIndex);
@@ -918,7 +918,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 
 	m_cmemClipText.SetString( L"" );
 	{
-		const int nBuffLenTag = 13 + wcslen(m_pcFuncInfoArr->m_szFilePath);
+		const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
@@ -954,7 +954,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 			int	nWorkLen;
 			int	nCharChars;
 			int	nNestTemplate = 0;
-			nWorkLen = wcslen( pWork );
+			nWorkLen = (int)wcslen( pWork );
 			for( k = 0; k < nWorkLen; ++k ){
 				//2009.9.21 syat ネストが深すぎる際のBOF対策
 				if( nClassNest == MAX_JAVA_TREE_NEST ){
@@ -1184,7 +1184,7 @@ void CDlgFuncList::SetListVB (void)
 
 	m_cmemClipText.SetString( L"" );
 	{
-		const int nBuffLenTag = 17 + wcslen(m_pcFuncInfoArr->m_szFilePath);
+		const int nBuffLenTag = int(17 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
@@ -1395,7 +1395,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 		int nBuffLen = 0;
 		int nBuffLenTag = 3; // " \r\n"
 		if( tagjump ){
-			nBuffLenTag = 10 + wcslen(m_pcFuncInfoArr->m_szFilePath);
+			nBuffLenTag = int(10 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		}
 		for( int i = 0; i < nFuncInfoArrNum; i++ ){
 			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);

@@ -331,7 +331,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
 			//	Nov. 10, 2003 FILE Win9Xでは、[lstrcmpiW]が無効のため、[_wcsicmp]に修正
 			if(_wcsicmp(rgszNames[i], m_Methods[j].Name) == 0)
 			{
-				rgdispid[i] = j;
+				rgdispid[i] = (int)j;
 				goto Found;
 			}
 		}
