@@ -82,7 +82,6 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 {
 	/* 補完対象ワードリストを調べる */
 	CNativeW	cmemHokanWord;
-	int			nKouhoNum;
 	POINT		poWin;
 	/* 補完ウィンドウの表示位置を算出 */
 	CLayoutXInt nX = GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol();
@@ -129,7 +128,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 			(LPARAM)this
 		);
 	}
-	nKouhoNum = GetEditWnd().m_cHokanMgr.CHokanMgr::Search(
+	const auto nKouhoNum = GetEditWnd().m_cHokanMgr.CHokanMgr::Search(
 		&poWin,
 		GetTextMetrics().GetHankakuHeight(),
 		GetTextMetrics().GetHankakuDx(),
@@ -180,11 +179,11 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	@date 2008.10.11 syat 日本語の補完
 	@date 2010.06.16 Moca ひらがなで続行する場合、直前を漢字に制限
 */
-int CEditView::HokanSearchByFile(
+size_t CEditView::HokanSearchByFile(
 	const wchar_t*	pszKey,			//!< [in]
 	bool			bHokanLoHiCase,	//!< [in] 英大文字小文字を同一視する
 	vector_ex<std::wstring>& 	vKouho,	//!< [in,out] 候補
-	int				nMaxKouho		//!< [in] Max候補数(0==無制限)
+	size_t			nMaxKouho		//!< [in] Max候補数(0==無制限)
 ){
 	const auto nKeyLen = int(wcslen(pszKey));
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
@@ -290,7 +289,7 @@ int CEditView::HokanSearchByFile(
 				std::wstring strWord(word, nWordLen);
 				CHokanMgr::AddKouhoUnique(vKouho, strWord);
 			}
-			if( 0 != nMaxKouho && nMaxKouho <= (int)vKouho.size() ){
+			if( 0 != nMaxKouho && nMaxKouho <= vKouho.size() ){
 				return vKouho.size();
 			}
 		}

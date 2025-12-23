@@ -70,10 +70,11 @@ BOOL CDlgInput1::DoModal(
 	HWND			hwndParent,
 	const WCHAR*	pszTitle,
 	const WCHAR*	pszMessage,
-	int				nMaxTextLen,
+	size_t			bufferSize,
 	WCHAR*			pszText
 )
 {
+	const auto nMaxTextLen = int(bufferSize);
 	BOOL bRet;
 	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */

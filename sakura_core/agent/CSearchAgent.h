@@ -27,10 +27,10 @@ public:
 	CSearchStringPattern();
 	~CSearchStringPattern();
 	void Reset();
-	bool SetPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp){
+	bool SetPattern(HWND hwnd, const wchar_t* pszPattern, size_t nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp){
 		return SetPattern(hwnd, pszPattern, nPatternLen, nullptr, sSearchOption, pRegexp, false);
 	}
-	bool SetPattern(HWND, const wchar_t* pszPattern, int nPatternLen, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* pRegexp, bool bGlobal);
+	bool SetPattern(HWND, const wchar_t* pszPattern, size_t cchPattern, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* pRegexp, bool bGlobal);
 	const wchar_t* GetKey() const{ return m_pszKey; }
 	const wchar_t* GetCaseKey() const{ return m_pszCaseKeyRef; }
 	int GetLen() const{ return m_nPatternLen; }

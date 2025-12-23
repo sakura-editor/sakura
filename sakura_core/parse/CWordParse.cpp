@@ -19,8 +19,8 @@
 */
 bool CWordParse::WhereCurrentWord_2(
 	const wchar_t*	pLine,			//!< [in]  調べるメモリ全体の先頭アドレス
-	CLogicInt		nLineLen,		//!< [in]  調べるメモリ全体の有効長
-	CLogicInt		nIdx,			//!< [in]  調査開始地点:pLineからの相対的な位置
+	size_t			cchLine,		//!< [in]  調べるメモリ全体の有効長
+	size_t			index,			//!< [in]  調査開始地点:pLineからの相対的な位置
 	bool			bEnableExtEol,	//!< [in]  Unicode改行文字を改行とみなすかどうか
 	CLogicInt*		pnIdxFrom,		//!< [out] 単語が見つかった場合は、単語の先頭インデックスを返す。
 	CLogicInt*		pnIdxTo,		//!< [out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
@@ -29,6 +29,9 @@ bool CWordParse::WhereCurrentWord_2(
 )
 {
 	using namespace WCODE;
+
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
 
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
@@ -116,11 +119,14 @@ inline bool isCSymbolZen(wchar_t c)
 //! 現在位置の文字の種類を調べる
 ECharKind CWordParse::WhatKindOfChar(
 	const wchar_t*	pData,
-	int				pDataLen,
-	int				nIdx
+	size_t			cchData,
+	size_t			index
 )
 {
 	using namespace WCODE;
+
+	auto pDataLen = int(cchData);
+	auto nIdx = int(index);
 
 	ECharKind ret = CK_NULL;
 	if(const auto nCharChars = CNativeW::GetSizeOfChar(pData, pDataLen, nIdx);
@@ -235,12 +241,15 @@ ECharKind CWordParse::WhatKindOfTwoChars4KW( ECharKind kindPre, ECharKind kindCu
 */
 bool CWordParse::SearchNextWordPosition(
 	const wchar_t*	pLine,
-	CLogicInt		nLineLen,
-	CLogicInt		nIdx,		//	桁数
+	size_t			cchLine,
+	size_t			index,			//	桁数
 	CLogicInt*		pnColumnNew,	//	見つかった位置
 	BOOL			bStopsBothEnds	//	単語の両端で止まる
 )
 {
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
+
 	// 文字種類が変わるまで後方へサーチ
 	// 空白とタブは無視する
 
@@ -281,12 +290,15 @@ bool CWordParse::SearchNextWordPosition(
 */
 bool CWordParse::SearchNextWordPosition4KW(
 	const wchar_t*	pLine,
-	CLogicInt		nLineLen,
-	CLogicInt		nIdx,		//	桁数
+	size_t			cchLine,
+	size_t			index,			//	桁数
 	CLogicInt*		pnColumnNew,	//	見つかった位置
 	BOOL			bStopsBothEnds	//	単語の両端で止まる
 )
 {
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
+
 	// 文字種類が変わるまで後方へサーチ
 	// 空白とタブは無視する
 
@@ -321,9 +333,17 @@ bool CWordParse::SearchNextWordPosition4KW(
 	return false;
 }
 
-bool CWordParse::SearchPrevWordPosition(const wchar_t* pLine,
-	CLogicInt nLineLen, CLogicInt nIdx, CLogicInt* pnColumnNew, BOOL bStopsBothEnds)
+bool CWordParse::SearchPrevWordPosition(
+	const wchar_t* pLine,
+	size_t cchLine,
+	size_t index,
+	CLogicInt* pnColumnNew,
+	BOOL bStopsBothEnds
+)
 {
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
+
 	/* 現在位置の文字の種類を調べる */
 	ECharKind	nCharKind = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdx );
 	if( nIdx == 0 ){
@@ -400,11 +420,13 @@ uchar_t wc_to_c(wchar_t wc)
 */
 BOOL IsURL(
 	const wchar_t*	pszLine,	//!< [in]  文字列
-	int				offset,	//!< [in]  検査を開始する位置。
-	int				nLineLen,	//!< [in]  文字列の長さ
+	int				offset,		//!< [in]  検査を開始する位置。
+	size_t			cchLine,	//!< [in]  文字列の長さ
 	int*			pnMatchLen	//!< [out] URLの長さ。offset からの距離。
 )
 {
+	const auto nLineLen = int(cchLine);
+
 	struct _url_table_t {
 		wchar_t	name[12];
 		int		length;
@@ -486,8 +508,10 @@ BOOL IsURL(
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength )
+BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t cchBuf, int* pnAddressLength )
 {
+	auto nBufLen = int(cchBuf);
+
 	struct {
 		bool operator()(const wchar_t ch)
 		{

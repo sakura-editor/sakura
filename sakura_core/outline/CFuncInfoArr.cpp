@@ -53,9 +53,9 @@ void CFuncInfoArr::Empty( void )
 
 /* 0<=の指定番号のデータを返す */
 /* データがない場合はNULLを返す */
-CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
+CFuncInfo* CFuncInfoArr::GetAt(size_t nIdx) noexcept
 {
-	if( nIdx >= m_nFuncInfoArrNum ){
+	if (m_nFuncInfoArrNum <= nIdx) {
 		return nullptr;
 	}
 	return m_ppcFuncInfoArr[nIdx];

@@ -4191,8 +4191,10 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 
 //2007.09.08 kobake 追加
 //!ツールチップのテキストを取得
-void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, int nID) const
+void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, UINT_PTR idFrom) const
 {
+	const auto nID = int(idFrom);
+
 	// 機能文字列の取得 -> pszBuf
 	GetDocument()->m_cFuncLookup.Funccode2Name( nID, pszBuf, nBufCount );
 	size_t nLen = wcsnlen( pszBuf, nBufCount );

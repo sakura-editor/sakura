@@ -67,7 +67,7 @@ static const int gm_aMbcPriority[] =
 /*!
 	デフォルトコンストラクタ
 */
-void CESI::SetInformation( const char *pS, const int nLen )
+void CESI::SetInformation( const char *pS, size_t nLen )
 {
 	// 文字情報を収集
 	ScanCode( pS, nLen );
@@ -635,8 +635,10 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 
 	@return 入力データがない時に false
 */
-void CESI::ScanCode( const char* pS, const int nLen )
+void CESI::ScanCode( const char* pS, size_t cchS )
 {
+	const auto nLen = int(cchS);
+
 	// 対象となったデータ長を記録。
 	SetDataLen( nLen );
 
@@ -911,9 +913,9 @@ static bool IsXMLWhiteSpace( int c )
 
 	@return 文字コード
 */
-static ECodeType MatchEncoding(const char* pBuf, int nSize)
+static ECodeType MatchEncoding(const char* pBuf, size_t nSize)
 {
-	for(int k = 0; k < int(std::size(encodingNameToCode)); k++ ){
+	for (size_t k = 0; k < std::size(encodingNameToCode); ++k) {
 		const int nLen = encodingNameToCode[k].nLen;
 		if( nLen == nSize && 0 == _memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
 			return static_cast<ECodeType>(encodingNameToCode[k].nCode);

@@ -49,8 +49,8 @@ public:
 	inline UCharsetDetector* ucsdet_open(UErrorCode *status) const {
 		return _ucsdet_open(status);
 	}
-	inline void ucsdet_setText(UCharsetDetector *ucsd, const char *textIn, int32_t len, UErrorCode *status) const {
-		return _ucsdet_setText(ucsd, textIn, len, status);
+	inline void ucsdet_setText(UCharsetDetector *ucsd, const char *textIn, size_t len, UErrorCode *status) const {
+		return _ucsdet_setText(ucsd, textIn, int32_t(len), status);
 	}
 	inline const UCharsetMatch* ucsdet_detect(UCharsetDetector *ucsd, UErrorCode *status) const {
 		return _ucsdet_detect(ucsd, status);

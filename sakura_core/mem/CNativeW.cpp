@@ -365,8 +365,11 @@ void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 指定した位置の文字がwchar_t何個分かを返す
-CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx )
+CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t index )
 {
+	const auto nDataLen = int(cchData);
+	const auto nIdx = int(index);
+
 	if( nIdx >= nDataLen )
 		return CLogicInt(0);
 
@@ -388,8 +391,11 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 }
 
 //! 指定した位置の文字が半角何個分かを返す
-CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx, CCharWidthCache& cache)
+CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, size_t cchData, size_t index, CCharWidthCache& cache)
 {
+	const auto nDataLen = int(cchData);
+	const auto nIdx = int(index);
+
 	//文字列範囲外なら 0
 	if( nIdx >= nDataLen )
 		return CKetaXInt(0);
@@ -421,9 +427,12 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
 }
 
 //! 指定した位置の文字の文字幅を返す
-CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
+CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, size_t cchData, size_t index,
 	bool bEnableExtEol, CCharWidthCache& cache )
 {
+	const auto nDataLen = int(cchData);
+	const auto nIdx = int(index);
+
 	//文字列範囲外なら 0
 	if( nIdx >= nDataLen ){
 		return CHabaXInt(0);
@@ -445,7 +454,7 @@ CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
 
 /* ポインタで示した文字の次にある文字の位置を返します */
 /* 次にある文字がバッファの最後の位置を越える場合は&pData[nDataLen]を返します */
-const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent )
+const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent )
 {
 	const wchar_t* pNext = pDataCurrent + 1;
 

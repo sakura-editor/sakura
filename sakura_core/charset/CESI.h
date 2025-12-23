@@ -90,7 +90,7 @@ protected:
 	ECodeType DetectUnicodeBom(const char* pS, size_t nLen) noexcept;
 
 	//! 調査結果の情報を格納
-	void SetInformation( const char *pS, const int nLen );
+	void SetInformation( const char *pS, size_t nLen );
 
 	//! 添え字に使われる優先順位表を作成
 	void InitPriorityTable( void );
@@ -118,7 +118,7 @@ public:
 
 	// m_nTargetDataLen のセッター／ゲッター
 protected:
-	void SetDataLen( const int n ){ if( n < 1 ){ m_nTargetDataLen = 0; }else{ m_nTargetDataLen = n; } }
+	void SetDataLen(const size_t n) noexcept { if( n < 1 ){ m_nTargetDataLen = 0; }else{ m_nTargetDataLen = static_cast<int>(n); } }
 public:
 	int GetDataLen( void ) const { return m_nTargetDataLen; }
 
@@ -126,7 +126,7 @@ protected:
 	/*
 		文字列の文字コード情報を収集する
 	*/
-	void ScanCode( const char* pS, const int nLen );
+	void ScanCode( const char* pS, size_t cchS );
 
 	void GetEncodingInfo_sjis( const char* pS, const int nLen );
 	void GetEncodingInfo_jis( const char* pS, const int nLen );

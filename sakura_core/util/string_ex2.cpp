@@ -160,17 +160,17 @@ const wchar_t* GetNextLineW(
 }
 
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
-int LimitStringLengthW(
-	const wchar_t*	pszData,		//!< [in]
-	int				nDataLength,	//!< [in]
-	int				nLimitLength,	//!< [in]
+size_t LimitStringLengthW(
+	LPCWSTR			pszData,		//!< [in]
+	size_t			nDataLength,	//!< [in]
+	size_t			nLimitLength,	//!< [in]
 	CNativeW&		cmemDes			//!< [out]
 )
 {
-	int n=nDataLength;
+	size_t n = nDataLength;
 	if(n>nLimitLength){
-		int i = 0;
-		int charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
+		size_t i = 0;
+		size_t charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
 		for(; i + charSize <= nLimitLength;){
 			i += charSize;
 			charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);

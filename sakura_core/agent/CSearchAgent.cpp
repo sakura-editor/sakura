@@ -62,8 +62,17 @@ void CSearchStringPattern::Reset(){
 #endif
 }
 
-bool CSearchStringPattern::SetPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* regexp, bool bGlobal)
+bool CSearchStringPattern::SetPattern(
+	HWND hwnd,
+	const wchar_t* pszPattern,
+	size_t cchPattern,
+	const wchar_t* pszPattern2,
+	const SSearchOption& sSearchOption,
+	CBregexp* regexp,
+	bool bGlobal
+)
 {
+	auto nPatternLen = int(cchPattern);
 	Reset();
 	m_pszCaseKeyRef = m_pszKey = pszPattern;
 	m_nPatternLen = nPatternLen;
@@ -1032,7 +1041,7 @@ prev_line:;
 	/* 挿入データを行終端で区切った行数カウンタ */
 	pCDocLine = m_pcDocLineMgr->GetLine( pArg->sDelRange.GetFrom().GetY2() );
 
-	int nInsSize = pArg->pInsData->size();
+	auto nInsSize = (int)pArg->pInsData->size();
 	bool bInsertLineMode = false;
 	bool bLastInsert = false;
 	{

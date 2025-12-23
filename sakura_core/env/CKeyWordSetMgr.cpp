@@ -166,11 +166,12 @@ int CKeyWordSetMgr::GetKeyWordNum( int nIdx )
 	@param nIdx [in] キーワードセット番号
 	@param nIdx2 [in] キーワード番号
 */
-const wchar_t* CKeyWordSetMgr::GetKeyWord( int nIdx, int nIdx2 )
+const wchar_t* CKeyWordSetMgr::GetKeyWord( int nIdx, LPARAM lParam )
 {
 	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
 		return nullptr;
 	}
+	auto nIdx2 = int(lParam);
 	if( nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2 ){
 		return nullptr;
 	}
@@ -180,7 +181,7 @@ const wchar_t* CKeyWordSetMgr::GetKeyWord( int nIdx, int nIdx2 )
 //! ｎ番目のセットのｍ番目のキーワードを編集
 const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 	int				nIdx,		//!< [in] キーワードセット番号
-	int				nIdx2,		//!< [in] キーワード番号
+	LPARAM			lParam,		//!< [in] キーワード番号
 	const WCHAR*	pszKeyWord	//!< [in] 設定するキーワード
 )
 {
@@ -188,6 +189,7 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
 		return nullptr;
 	}
+	auto nIdx2 = int(lParam);
 	if( nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2 ){
 		return nullptr;
 	}
@@ -258,11 +260,12 @@ int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
 	@param nIdx [in] キーワードセット番号
 	@param nIdx2 [in] キーワード番号
 */
-int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
+int CKeyWordSetMgr::DelKeyWord( int nIdx, LPARAM lParam )
 {
 	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
 		return 1;
 	}
+	auto nIdx2 = int(lParam);
 	if( nIdx2 < 0 ||  m_nKeyWordNumArr[nIdx] <= nIdx2 ){
 		return 2;
 	}

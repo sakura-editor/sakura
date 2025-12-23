@@ -23,9 +23,9 @@ int CBinaryInputStream::GetLength()
 }
 
 //! データを無変換で読み込む。戻り値は読み込んだバイト数。
-int CBinaryInputStream::Read(void* pBuffer, int nSizeInBytes)
+int CBinaryInputStream::Read(void* pBuffer, size_t nSizeInBytes)
 {
-	return fread(pBuffer,1,nSizeInBytes,GetFp());
+	return int(fread(pBuffer,1,int(nSizeInBytes),GetFp()));
 }
 
 CBinaryOutputStream::CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode)

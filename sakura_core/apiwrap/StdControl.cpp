@@ -109,14 +109,21 @@ namespace ApiWrap{
 		return true;
 	}
 
-	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText)
+	int List_GetText(HWND hwndList, size_t nIndex, std::span<WCHAR> buffer) noexcept
 	{
-		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
-		if( nCount == LB_ERR )
+		const auto nCount = ListBox_GetTextLen(hwndList, nIndex);
+		if (nCount < 0) {
 			return LB_ERR;
-		if( cchText <= (size_t) nCount )
+		}
+		if (std::ssize(buffer) <= nCount) {
 			return LB_ERRSPACE;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, LPARAM(pszText) );
+		}
+		return ListBox_GetText(hwndList, nIndex, std::data(buffer));
+	}
+
+	int List_GetText(HWND hwndList, size_t nIndex, WCHAR* pszText, size_t cchText) noexcept
+	{
+		return List_GetText(hwndList, nIndex, std::span(pszText, cchText));
 	}
 
 	/*!
@@ -141,9 +148,9 @@ namespace ApiWrap{
 		return Wnd_GetText( hWnd, strText );
 	}
 
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount)
+	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, size_t nMaxCount) noexcept
 	{
-		return GetDlgItemText(hwndDlg, nIDDlgItem, pszText, nMaxCount);
+		return ::GetDlgItemTextW(hwndDlg, nIDDlgItem, pszText, int(nMaxCount));
 	}
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr)

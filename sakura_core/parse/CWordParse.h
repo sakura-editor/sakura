@@ -54,8 +54,8 @@ public:
 	*/
 	static bool WhereCurrentWord_2(
 		const wchar_t*	pLine,			//[in]  調べるメモリ全体の先頭アドレス
-		CLogicInt		nLineLen,		//[in]  調べるメモリ全体の有効長
-		CLogicInt		nIdx,			//[in]  調査開始地点:pLineからの相対的な位置
+		size_t			cchLine,		//[in]  調べるメモリ全体の有効長
+		size_t			index,			//[in]  調査開始地点:pLineからの相対的な位置
 		bool			bEnableExtEol,	//[in]  Unicode改行文字を改行とみなすかどうか
 		CLogicInt*		pnIdxFrom,		//[out] 単語が見つかった場合は、単語の先頭インデックスを返す。
 		CLogicInt*		pnIdxTo,		//[out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
@@ -66,8 +66,8 @@ public:
 	//! 現在位置の文字の種類を調べる
 	static ECharKind WhatKindOfChar(
 		const wchar_t*	pData,
-		int				pDataLen,
-		int				nIdx
+		size_t			cchData,
+		size_t			index
 	);
 
 	//! 二つの文字を結合したものの種類を調べる
@@ -85,8 +85,8 @@ public:
 	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。
 	static bool SearchNextWordPosition(
 		const wchar_t*	pLine,
-		CLogicInt		nLineLen,
-		CLogicInt		nIdx,		//	桁数
+		size_t			cchLine,
+		size_t			index,			//	桁数
 		CLogicInt*		pnColumnNew,	//	見つかった位置
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
@@ -94,17 +94,22 @@ public:
 	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。 for 強調キーワード
 	static bool SearchNextWordPosition4KW(
 		const wchar_t*	pLine,
-		CLogicInt		nLineLen,
-		CLogicInt		nIdx,		//	桁数
+		size_t			cchLine,
+		size_t			index,			//	桁数
 		CLogicInt*		pnColumnNew,	//	見つかった位置
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
 
-	static bool SearchPrevWordPosition(const wchar_t* pLine,
-		CLogicInt nLineLen, CLogicInt nIdx, CLogicInt* pnColumnNew, BOOL bStopsBothEnds);
+	static bool SearchPrevWordPosition(
+		const wchar_t* pLine,
+		size_t cchLine,
+		size_t index,
+		CLogicInt* pnColumnNew,
+		BOOL bStopsBothEnds
+	);
 
 	template< class CHAR_TYPE >
-	static int GetWord( const CHAR_TYPE* pS, const int nLen, const CHAR_TYPE *pszSplitCharList,
+	static int GetWord( const CHAR_TYPE* pS, size_t nLen, const CHAR_TYPE *pszSplitCharList,
 		CHAR_TYPE **ppWordStart, int *pnWordLen );
 
 protected:
@@ -121,12 +126,12 @@ protected:
 
     境界判定はメールアドレスの先頭でのみ行われ、URL の先頭ではこれまで通り行われません。
 */
-BOOL IsURL( const wchar_t* pszLine, int offset, int nLineLen, int* pnMatchLen);
+BOOL IsURL( const wchar_t* pszLine, int offset, size_t nLineLen, int* pnMatchLen);
 
 /** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
 */
 inline
-BOOL IsURL( const wchar_t* pszLine, int nLineLen, int* pnMatchLen)
+BOOL IsURL( const wchar_t* pszLine, size_t nLineLen, int* pnMatchLen)
 {
 	return IsURL(pszLine, 0, nLineLen, pnMatchLen);
 }
@@ -141,12 +146,12 @@ BOOL IsURL( const wchar_t* pszLine, int nLineLen, int* pnMatchLen)
     途中から切り出したメールアドレスの一部をメールアドレスであると誤って判定しないために
     pszBuf を固定し offset を０以上の範囲で変化させるのが望ましい使用方法です。
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength);
+BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t nBufLen, int* pnAddressLength);
 
 /** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
 */
 inline
-BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength)
+BOOL IsMailAddress( const wchar_t* pszBuf, size_t nBufLen, int* pnAddressLength)
 {
 	return IsMailAddress(pszBuf, 0, nBufLen, pnAddressLength);
 }
@@ -178,9 +183,11 @@ inline bool CWordParse::_match_charlist( const WCHAR c, const WCHAR *pszList )
 	@return 読んだデータの長さ。
 */
 template< class CHAR_TYPE >
-int CWordParse::GetWord( const CHAR_TYPE *pS, const int nLen, const CHAR_TYPE *pszSplitCharList,
+int CWordParse::GetWord( const CHAR_TYPE *pS, size_t cchS, const CHAR_TYPE *pszSplitCharList,
 	CHAR_TYPE **ppWordStart, int *pnWordLen )
 {
+	const auto nLen = int(cchS);
+
 	const CHAR_TYPE *pr = pS;
 	CHAR_TYPE *pwordstart;
 	int nwordlen;
@@ -207,7 +214,7 @@ int CWordParse::GetWord( const CHAR_TYPE *pS, const int nLen, const CHAR_TYPE *p
 			break;
 		}
 	}
-	nwordlen = pr - pwordstart;  // 単語の長さを記録
+	nwordlen = int(pr - pwordstart);  // 単語の長さを記録
 
 end_func:
 	if( ppWordStart ){
@@ -216,6 +223,7 @@ end_func:
 	if( pnWordLen ){
 		*pnWordLen = nwordlen;
 	}
-	return pr - pS;
+	return int(pr - pS);
 }
+
 #endif /* SAKURA_CWORDPARSE_C025B28F_9FBB_464A_9831_5E9DDAAEAA35_H_ */

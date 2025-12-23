@@ -214,9 +214,9 @@ int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 }
 
 //プラグインコマンドの数を返す
-int CJackManager::GetCommandCount() const
+int CJackManager::GetCommandCount() const noexcept
 {
-	return m_Jacks[ PP_COMMAND ].plugs.size();
+	return int(m_Jacks[ PP_COMMAND ].plugs.size());
 }
 
 //IDに合致するコマンドプラグを返す

@@ -13,18 +13,18 @@
 
 class CBinaryInputStream final : public CStream{
 public:
-	CBinaryInputStream(LPCWSTR pszFilePath);
+	explicit CBinaryInputStream(LPCWSTR pszFilePath);
 
-public:
 	//! ストリームの「残り」サイズを取得
 	int GetLength();
 
 	//! データを無変換で読み込む。戻り値は読み込んだバイト数。
-	int Read(void* pBuffer, int nSizeInBytes);
+	int Read(void* pBuffer, size_t nSizeInBytes);
 };
 
 class CBinaryOutputStream final : public COutputStream{
 public:
 	CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
 };
+
 #endif /* SAKURA_CBINARYSTREAM_856F71C1_27E0_4075_BA32_245D18E142BA_H_ */

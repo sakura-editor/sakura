@@ -350,11 +350,11 @@ void CMacro::AddStringParam( const WCHAR* szParam, int nLength )
 
 /*	引数に数値を追加。
 */
-void CMacro::AddIntParam( const int nParam )
+void CMacro::AddIntParam( const LPARAM lParam )
 {
 	CMacroParam* param = new CMacroParam();
 
-	param->SetIntParam( nParam );
+	param->SetIntParam( int(lParam) );
 
 	//	リストの整合性を保つ
 	if (m_pParamTop){
