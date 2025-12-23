@@ -377,8 +377,6 @@ TEST(file, Deprecated_GetInidir)
 	ASSERT_STREQ(iniBasePath.c_str(), szBuf);
 }
 
-void EnsureDirectoryExist(const std::wstring& strProfileName);
-
 /*!
  * @brief INIファイルまたはEXEファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す（INIを優先）
  */

@@ -52,8 +52,8 @@ namespace profile_data {
  * @retval false 設定値を読み込めなかった
  */
 bool CDataProfile::IOProfileData(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		entryKey,		//!< [in] エントリ名
+	const std::wstring&		sectionName,	//!< [in] セクション名
+	const std::wstring&		entryKey,		//!< [in] エントリ名
 	StringBufferW&&			refEntryValue	//!< [in,out] エントリ値
 )
 {
