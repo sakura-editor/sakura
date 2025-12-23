@@ -282,7 +282,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 	if( 0 != wcsncmp(pszFile, szTargetPrefix, cchTargetPrefix) ){
 		return 0; // ハンドルGrepではない
 	}
-	if( 0 >= ::swscanf_s(pszFile + cchTargetPrefix, L"%x", (size_t*)&hWndTarget) || !IsSakuraMainWindow(hWndTarget) ){
+	if( 0 >= ::swscanf_s(pszFile + cchTargetPrefix, L"%zx", (size_t*)&hWndTarget) || !IsSakuraMainWindow(hWndTarget) ){
 		return -1; // ハンドルを読み取れなかった、または、対象ウインドウハンドルが存在しない
 	}
 	if( pmemTitle ){
