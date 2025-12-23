@@ -69,7 +69,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 	const wchar_t*	pszKeySeps = L",\0";
 	const wchar_t*	pszWork;
 	wchar_t	cComment = L';';
-	int nDelimitLen = wcslen( pszDelimit );
+	auto nDelimitLen = int(wcslen(pszDelimit));
 	int nCount = 0;
 	bRegex = false;
 	bool bRegexReplace = false;

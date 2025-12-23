@@ -750,7 +750,7 @@ bool CMacro::HandleCommand(
 				bAddHistory = false;
 			}
 			const WCHAR* pszSearchKey = wtow_def(Argument[0], L"");
-			int nLen = wcslen( pszSearchKey );
+			auto nLen = int(wcslen(pszSearchKey));
 			if( 0 < nLen ){
 				/* 正規表現 */
 				if( lFlag & 0x04

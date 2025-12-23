@@ -186,7 +186,7 @@ int CEditView::HokanSearchByFile(
 	vector_ex<std::wstring>& 	vKouho,	//!< [in,out] 候補
 	int				nMaxKouho		//!< [in] Max候補数(0==無制限)
 ){
-	const int nKeyLen = wcslen( pszKey );
+	const auto nKeyLen = int(wcslen(pszKey));
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	int j, nWordLen, nLineLen, nRet, nCharSize, nWordBegin, nWordLenStop;
 

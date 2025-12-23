@@ -902,7 +902,7 @@ int CDlgGrep::GetData( void )
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
 				wcscat(szFolderItem, L"\"");
 			}
-			int nFolderItemLen = wcslen( szFolderItem );
+			auto nFolderItemLen = int(wcslen(szFolderItem));
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;

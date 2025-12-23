@@ -1117,7 +1117,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		return 0;
 	}
 	ptr = pszFile;
-	int nLen = wcslen( ptr ); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
+	auto nLen = int(wcslen(ptr)); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
 		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == L'\0' ){	//	フォルダー指定なし
@@ -1143,7 +1143,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			pszDir = m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER;
 		}
 
-		int nDirLen = wcslen( pszDir );
+		auto nDirLen = int(wcslen(pszDir));
 		nAllLen = nDirLen + nLen + ( -1 == nFolderSep ? 1 : 0 );
 		if( pszPath == nullptr || nBufLen <= nAllLen ){
 			return -nAllLen;

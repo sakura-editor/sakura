@@ -78,7 +78,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 
 	//見出し記号
 	const wchar_t*	pszStarts = GetDllShareData().m_Common.m_sFormat.m_szMidashiKigou;
-	int				nStartsLen = wcslen( pszStarts );
+	auto nStartsLen = int(wcslen(pszStarts));
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダーは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）

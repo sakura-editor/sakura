@@ -143,7 +143,7 @@ int CDlgTagsMake::GetData( void )
 {
 	//フォルダー
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, int(std::size(m_szPath)) );
-	int length = wcslen( m_szPath );
+	auto length = int(wcslen(m_szPath));
 	if( length > 0 )
 	{
 		if( m_szPath[ length - 1 ] != L'\\' ) wcscat( m_szPath, L"\\" );

@@ -1824,7 +1824,7 @@ bool CEditView::GetSelectedData(
 		CLayoutInt i = rcSel.bottom - rcSel.top + 1; // 2013.05.06 「+1」
 
 		// 最初に行数分の改行量を計算してしまう。
-		int nBufSize = wcslen(WCODE::CRLF) * (Int)i;
+		auto nBufSize = int(wcslen(WCODE::CRLF)) * (Int)i;
 
 		// 実際の文字量。
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );

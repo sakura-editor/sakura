@@ -878,7 +878,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	);
 	if( FALSE != bDlgInputPageResult ){
 		int i;
-		int nPageNumLen = wcslen( szPageNum );
+		auto nPageNumLen = int(wcslen(szPageNum));
 		for( i = 0; i < nPageNumLen;  i++ ){
 			if( !(L'0' <= szPageNum[i] &&  szPageNum[i] <= L'9') ){
 				return;
@@ -1494,7 +1494,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				}
 
 				//文字列長
-				const int nLineCols = wcslen( szLineNum );
+				const auto nLineCols = int(wcslen(szLineNum));
 
 				//文字間隔配列を生成
 				std::vector<int> vDxArray;

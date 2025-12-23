@@ -3425,7 +3425,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 								STGMEDIUM M;
 								const wchar_t* pFilePath = GetDocument()->m_cDocFile.GetFilePath();
-								int Len = wcslen(pFilePath);
+								auto Len = int(wcslen(pFilePath));
 								M.tymed          = TYMED_HGLOBAL;
 								M.pUnkForRelease = nullptr;
 								M.hGlobal        = GlobalAlloc(GMEM_MOVEABLE, (Len+1)*sizeof(wchar_t));
@@ -3917,7 +3917,7 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 
 	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
 	if( msg ){
-		int len = wcslen( msg );
+		auto len = int(wcslen(msg));
 		wcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
 		if( len < MENUBAR_MESSAGE_MAX_LEN ){
 			wmemset( m_pszMenubarMessage + len, L' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
@@ -4211,7 +4211,7 @@ void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, int nID) const
 	if( 0 < nAssignedKeyNum ){
 		for( int j = 0; j < nAssignedKeyNum; ++j ){
 			const WCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
-			int nKeyLen = wcslen(pszKey);
+			auto nKeyLen = int(wcslen(pszKey));
 			if ( nLen + 9 + nKeyLen < nBufCount ){
 				wcscat_s( pszBuf, nBufCount, L"\n        " );
 				wcscat_s( pszBuf, nBufCount, pszKey );

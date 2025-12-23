@@ -71,7 +71,7 @@ int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith)
 	@date 2003.06.24 Moca 新規作成
 */
 int AddLastChar( WCHAR* pszPath, int nMaxLen, WCHAR c ){
-	int pos = wcslen( pszPath );
+	auto pos = int(wcslen(pszPath));
 	// 何もないときは\を付加
 	if( 0 == pos ){
 		if( nMaxLen <= pos + 1 ){

@@ -35,7 +35,7 @@ void CBlockComment::SetBlockCommentRule(
 	const wchar_t*	pszTo		//!< [in] コメント終了文字列
 )
 {
-	int nStrLen = wcslen( pszFrom );
+	auto nStrLen = int(wcslen(pszFrom));
 	if( 0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE ){
 		wcscpy( m_szBlockCommentFrom, pszFrom );
 		m_nBlockFromLen = nStrLen;

@@ -590,10 +590,10 @@ bool CDlgTypeList::CopyType()
 			}
 			WCHAR szNum[12];
 			auto_sprintf( szNum, L"%d", n );
-			int nLen = wcslen( szNum );
+			auto nLen = int(wcslen(szNum));
 			WCHAR szTemp[std::size(type.m_szTypeName) + 12];
 			wcscpy( szTemp, type.m_szTypeName );
-			int nTempLen = wcslen( szTemp );
+			auto nTempLen = int(wcslen(szTemp));
 			CNativeW cmem;
 			// バッファをはみ出さないように
 			LimitStringLengthW( szTemp, nTempLen, int(std::size(type.m_szTypeName)) - nLen - 1, cmem );

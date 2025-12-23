@@ -893,7 +893,7 @@ int CGrepAgent::DoGrepTree(
 	int			nWork = 0;
 	int			nHitCountOld = -100;
 	bool		bOutputFolderName = false;
-	int			nBasePathLen = wcslen(pszBasePath);
+	auto nBasePathLen = int(wcslen(pszBasePath));
 	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
 	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
@@ -1320,7 +1320,7 @@ int CGrepAgent::DoGrepFile(
 	CFileLoadOrWnd	cfl( type->m_encoding, hWndTarget );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	int		nOldPercent = 0;
 
-	int	nKeyLen = wcslen( pszKey );
+	auto nKeyLen = int(wcslen(pszKey));
 	// ファイル名表示
 	const WCHAR* pszDispFilePath = ( sGrepOption.bGrepSeparateFolder || sGrepOption.bGrepOutputBaseFolder ) ? pszRelPath : pszFullPath;
 
@@ -1856,7 +1856,7 @@ int CGrepAgent::DoGrepReplaceFile(
 	CEol	cEol;
 	int		nEolCodeLen;
 	int		nOldPercent = 0;
-	int	nKeyLen = wcslen( pszKey );
+	auto nKeyLen = int(wcslen(pszKey));
 	const WCHAR*	pszCodeName = L"";
 
 	const STypeConfigMini* type = nullptr;
