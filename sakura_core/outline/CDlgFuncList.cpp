@@ -3261,7 +3261,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_UNDOCKABLE, LS(STR_DLGFNCLST_MENU_NODOCK) );
 	int iTo = iPosRef - 1;
 	for( int i = iFrom; i <= iTo; i++ ){
-		if( ::GetMenuItemID( hMenuRef, i ) == (100 + eDockSide) ){
+		if( static_cast<EDockSide>(::GetMenuItemID(hMenuRef, i)) == (100 + eDockSide) ){
 			::CheckMenuRadioItem( hMenuRef, iFrom, iTo, i, MF_BYPOSITION );
 			break;
 		}

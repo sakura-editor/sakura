@@ -83,7 +83,7 @@ public:
 		// 現在のタグの深さ(depth)を求める。
 		int depth; // Tag Depth
 		for (depth = HierarchyCount - 1; 0 <= depth; --depth) {
-			if (wcslen(TagHierarchy[depth]) == pTagEnd - pTag
+			if (ptrdiff_t(::wcslen(TagHierarchy[depth])) == pTagEnd - pTag
 			    && 0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag)
 			) {
 				break;

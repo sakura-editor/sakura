@@ -880,7 +880,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 			bool bChecked;
 			if (cCodeTypeName.UseBom()) {
 				state = CDCS_ENABLEDVISIBLE;
-				bChecked = (dwIDItem == m_nCharCode) ? m_bBom : cCodeTypeName.IsBomDefOn();
+				bChecked = (static_cast<ECodeType>(dwIDItem) == m_nCharCode) ? m_bBom : cCodeTypeName.IsBomDefOn();
 			}
 			else {
 				state = CDCS_VISIBLE;

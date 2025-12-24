@@ -481,7 +481,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 							checklen = CheckUtf8Char2(work + j , read_cnt - j, &echarset, true, 0);
 							if( echarset == CHARSET_BINARY2 ){
 								break;
-							}else if( read_cnt - 1 == j && work[j] == _T2(PIPE_CHAR,'\r') ){
+							}else if( int(read_cnt - 1) == j && work[j] == _T2(PIPE_CHAR,'\r') ){
 								// CRLFの一部ではない改行が末尾にある
 								// 次の読み込みで、CRLFの一部になる可能性がある
 								break;
