@@ -108,7 +108,7 @@ public:
 	virtual ~CTextWidthCalc();
 	void Reset(){ nCx = 0; nExt = 0; }
 	void SetCx(int cx = 0){ nCx = cx; }
-	void SetDefaultExtend(int extCx = 0){ nExt = 0; }
+	void SetDefaultExtend(int extCx = 0){ nExt = extCx; }
 	bool SetWidthIfMax(int width);
 	bool SetWidthIfMax(int width, int extCx);
 	bool SetTextWidthIfMax(LPCWSTR pszText);
