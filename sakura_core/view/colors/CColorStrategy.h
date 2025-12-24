@@ -13,7 +13,20 @@
 #include "EColorIndexType.h"
 #include "uiparts/CGraphics.h"
 
-class	CEditView;
+#include "view/DispPos.h"
+#include "util/design_template.h"
+
+struct DispPos;
+
+class CColorStrategy;
+class CColor_Found;
+class CColor_Select;
+class CColor_LineComment;
+class CColor_BlockComment;
+class CColor_SingleQuote;
+class CColor_DoubleQuote;
+class CColor_Heredoc;
+class CEditView;
 class CStringRef;
 
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
@@ -55,13 +68,6 @@ const WCHAR* GetColorNameByIndex( int index );
 //                           基底                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-struct DispPos;
-class CColorStrategy;
-#include "view/DispPos.h"
-
-class CColor_Found;
-class CColor_Select;
-
 //! 色設定
 struct CColor3Setting {
 	EColorIndexType eColorIndex;    //!< 選択を含む現在の色
@@ -72,21 +78,20 @@ struct CColor3Setting {
 struct SColorStrategyInfo{
 	explicit SColorStrategyInfo(HDC hDC = nullptr)
 		: m_gr(hDC)
-		, m_sDispPosBegin(0,0)
 	{
 	}
 
 	//参照
-	CEditView*	m_pcView;
-	CGraphics	m_gr;	//(SColorInfoでは未使用)
+	CEditView*	m_pcView = nullptr;
+	CGraphics	m_gr = nullptr;	//(SColorInfoでは未使用)
 
 	//スキャン位置
 	LPCWSTR			m_pLineOfLogic;
 	CLogicInt		m_nPosInLogic;
 
 	//描画位置
-	DispPos*		m_pDispPos;
-	DispPos			m_sDispPosBegin;
+	DispPos*		m_pDispPos = nullptr;
+	DispPos			m_sDispPosBegin{ 0, 0 };
 
 	//色変え
 	CColorStrategy*		m_pStrategy = nullptr;
@@ -98,25 +103,24 @@ struct SColorStrategyInfo{
 	//! 色の切り替え
 	bool CheckChangeColor(const CStringRef& cLineStr);
 	void DoChangeColor(CColor3Setting *pcColor);
-	EColorIndexType GetCurrentColor() const { return m_cIndex.eColorIndex; }
-	EColorIndexType GetCurrentColor2() const { return m_cIndex.eColorIndex2; }
-	EColorIndexType GetCurrentColorBg() const{ return m_cIndex.eColorIndexBg; }
+
+	EColorIndexType GetCurrentColor()   const noexcept { return m_cIndex.eColorIndex; }
+	EColorIndexType GetCurrentColor2()  const noexcept { return m_cIndex.eColorIndex2; }
+	EColorIndexType GetCurrentColorBg() const noexcept { return m_cIndex.eColorIndexBg; }
 
 	//! 現在のスキャン位置
-	CLogicInt GetPosInLogic() const
+	CLogicInt GetPosInLogic() const noexcept
 	{
 		return m_nPosInLogic;
 	}
-	const CDocLine* GetDocLine() const
+	const CDocLine* GetDocLine() const noexcept
 	{
-		const CLayout* layout = m_pDispPos->GetLayoutRef();
-
-		if (layout) {
+		if (const auto layout = m_pDispPos->GetLayoutRef()) {
 			return layout->GetDocLineRef();
 		}
 		return nullptr;
 	}
-	const CLayout* GetLayout() const
+	const CLayout* GetLayout() const noexcept
 	{
 		return m_pDispPos->GetLayoutRef();
 	}
@@ -124,7 +128,8 @@ struct SColorStrategyInfo{
 
 class CColorStrategy{
 public:
-	virtual ~CColorStrategy(){}
+	virtual ~CColorStrategy() = default;
+
 	//! 色定義
 	virtual EColorIndexType GetStrategyColor() const = 0;
 	virtual CLayoutColorInfo* GetStrategyColorInfo() const{
@@ -161,17 +166,8 @@ public:
 	}
 
 protected:
-	const STypeConfig* m_pTypeData;
+	const STypeConfig* m_pTypeData = nullptr;
 };
-
-#include "util/design_template.h"
-#include <vector>
-class CColor_LineComment;
-class CColor_BlockComment;
-class CColor_BlockComment;
-class CColor_SingleQuote;
-class CColor_DoubleQuote;
-class CColor_Heredoc;
 
 class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
 	friend class TSingleton<CColorStrategyPool>;
@@ -181,13 +177,13 @@ class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
 public:
 
 	//取得
-	CColorStrategy*	GetStrategy(int nIndex) const{ return m_vStrategiesDisp[nIndex]; }
-	int				GetStrategyCount() const{ return (int)m_vStrategiesDisp.size(); }
+	CColorStrategy*	GetStrategy(int nIndex) const noexcept { return m_vStrategiesDisp[nIndex]; }
+	int				GetStrategyCount() const noexcept { return (int)m_vStrategiesDisp.size(); }
 	CColorStrategy*	GetStrategyByColor(EColorIndexType eColor) const;
 
 	//特定取得
-	CColor_Found*   GetFoundStrategy() const{ return m_pcFoundStrategy; }
-	CColor_Select*  GetSelectStrategy() const{ return m_pcSelectStrategy; }
+	CColor_Found*   GetFoundStrategy()  const noexcept { return m_pcFoundStrategy; }
+	CColor_Select*  GetSelectStrategy() const noexcept { return m_pcSelectStrategy; }
 
 	//イベント
 	void NotifyOnStartScanLogic();
@@ -204,7 +200,7 @@ public:
 	void OnChangeSetting(void);
 
 	//ビューの設定・取得
-	CEditView* GetCurrentView(void) const{ return m_pcView; }
+	CEditView* GetCurrentView(void) const noexcept { return m_pcView; }
 	void SetCurrentView(CEditView* pcView) { m_pcView = pcView; }
 
 	//範囲を持つ色分けがあるかどうか
@@ -213,21 +209,22 @@ public:
 private:
 	std::vector<CColorStrategy*>	m_vStrategies;
 	std::vector<CColorStrategy*>	m_vStrategiesDisp;	//!< 色分け表示対象
-	CColor_Found*					m_pcFoundStrategy;
-	CColor_Select*					m_pcSelectStrategy;
+	CColor_Found*					m_pcFoundStrategy = nullptr;
+	CColor_Select*					m_pcSelectStrategy = nullptr;
 
 	// 範囲を持つ色分け
 	// 追加/削除した時はHasRangeBasedColorStrategiesをメンテして下さい
-	CColor_LineComment*				m_pcLineComment;
-	CColor_BlockComment*			m_pcBlockComment1;
-	CColor_BlockComment*			m_pcBlockComment2;
-	CColor_SingleQuote*				m_pcSingleQuote;
-	CColor_DoubleQuote*				m_pcDoubleQuote;
-	CColor_Heredoc*					m_pcHeredoc;
+	CColor_LineComment*				m_pcLineComment = nullptr;
+	CColor_BlockComment*			m_pcBlockComment1 = nullptr;
+	CColor_BlockComment*			m_pcBlockComment2 = nullptr;
+	CColor_SingleQuote*				m_pcSingleQuote = nullptr;
+	CColor_DoubleQuote*				m_pcDoubleQuote = nullptr;
+	CColor_Heredoc*					m_pcHeredoc = nullptr;
 
-	CEditView*						m_pcView;
+	CEditView*						m_pcView = nullptr;
 
-	bool	m_bSkipBeforeLayoutGeneral;
-	bool	m_bSkipBeforeLayoutFound;
+	bool	m_bSkipBeforeLayoutGeneral = false;
+	bool	m_bSkipBeforeLayoutFound = false;
 };
+
 #endif /* SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_ */
