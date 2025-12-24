@@ -31,7 +31,7 @@ bool CEditorIfObj::HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Ar
 }
 
 //コマンドを処理する
-bool CEditorIfObj::HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
+bool CEditorIfObj::HandleCommand(CEditView* View, EFunctionCode ID, LPCWSTR* Arguments, const int* ArgLengths, const int ArgSize)
 {
 	return CMacro::HandleCommand( View, ID, Arguments, ArgLengths, ArgSize );
 }

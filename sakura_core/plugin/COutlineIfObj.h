@@ -48,13 +48,9 @@ public:
 	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
 	//関数情報を取得する
 	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; }
-	//関数を処理する
-	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
-	{
-		return false;
-	}
+
 	//コマンドを処理する
-	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
+	bool HandleCommand(CEditView* View, EFunctionCode ID, LPCWSTR* Arguments, const int* ArgLengths, const int ArgSize) override
 	{
 		switch ( LOWORD(ID) ) 
 		{
@@ -108,8 +104,9 @@ public:
 				m_cFuncInfoArr.SetAppendText( _wtol(Arguments[0]), sLabel, true );
 			}
 			break;
+
 		default:
-			return false;
+			return CWSHIfObj::HandleCommand(View, ID, Arguments, ArgLengths, ArgSize);
 		}
 		return true;
 	}
