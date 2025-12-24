@@ -27,18 +27,16 @@ class CSmartIndentIfObj final : public CWSHIfObj
 
 	// コンストラクタ
 public:
-	CSmartIndentIfObj( wchar_t ch )
+	explicit CSmartIndentIfObj(wchar_t ch)
 		: CWSHIfObj( L"Indent", false )
-		, m_wcChar( ch )
+		, m_wcChar(ch)
 	{
 	}
 
 	// デストラクタ
-public:
-	~CSmartIndentIfObj(){}
+	~CSmartIndentIfObj() override = default;
 
 	// 実装
-public:
 	//コマンド情報を取得する
 	MacroFuncInfoArray GetMacroCommandInfo() const override{
 		static MacroFuncInfo macroFuncInfoArr[] = {
@@ -60,6 +58,10 @@ public:
 	//関数を処理する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override
 	{
+		UNREFERENCED_PARAMETER(View);
+		UNREFERENCED_PARAMETER(Arguments);
+		UNREFERENCED_PARAMETER(ArgSize);
+
 		switch ( LOWORD(ID) ) 
 		{
 		case F_SI_GETCHAR:						//押下したキーを取得する
@@ -76,11 +78,17 @@ public:
 	//コマンドを処理する
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize) override
 	{
+		UNREFERENCED_PARAMETER(View);
+		UNREFERENCED_PARAMETER(ID);
+		UNREFERENCED_PARAMETER(Arguments);
+		UNREFERENCED_PARAMETER(ArgLengths);
+		UNREFERENCED_PARAMETER(ArgSize);
+
 		return false;
 	}
 
 	// メンバ変数
-public:
 	wchar_t m_wcChar;
 };
+
 #endif /* SAKURA_CSMARTINDENTIFOBJ_7F0A25BE_E50A_45C4_B20E_C9683FD04BB8_H_ */
