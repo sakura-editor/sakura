@@ -542,6 +542,7 @@ void CPropKeyword::Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 /* リスト中のキーワードをインポートする */
 void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
+	UNREFERENCED_PARAMETER(hwndLIST_KEYWORD);
 	bool	bCase = false;
 	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase( nIdx, bCase );
@@ -561,6 +562,7 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 /* リスト中のキーワードをエクスポートする */
 void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
+	UNREFERENCED_PARAMETER(hwndLIST_KEYWORD);
 	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 	SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
@@ -577,6 +579,7 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //! キーワードを整頓する
 void CPropKeyword::Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
+	UNREFERENCED_PARAMETER(hwndLIST_KEYWORD);
 	if( IDYES == ::MessageBox( hwndDlg, LS(STR_PROPCOMKEYWORD_DEL),
 			GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) ){	// 2009.03.26 ryoji MB_ICONSTOP->MB_ICONQUESTION
 		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CleanKeyWords( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
@@ -683,12 +686,15 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 /* ダイアログデータの取得 Keyword */
 int CPropKeyword::GetData( HWND hwndDlg )
 {
+	UNREFERENCED_PARAMETER(hwndDlg);
 	return TRUE;
 }
 
 /* ダイアログデータの取得 Keyword 指定キーワードセットの取得 */
 void CPropKeyword::GetKeyWordSet( HWND hwndDlg, int nIdx )
 {
+	UNREFERENCED_PARAMETER(hwndDlg);
+	UNREFERENCED_PARAMETER(nIdx);
 }
 
 //キーワード数を表示する。

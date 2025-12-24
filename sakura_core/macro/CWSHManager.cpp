@@ -73,6 +73,8 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 */
 BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	//ソース読み込み -> m_Source
 	m_Source.clear();
 	
@@ -94,6 +96,8 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 */
 BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode)
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	//ソース読み込み -> m_Source
 	m_Source = pszCode;
 	return TRUE;

@@ -224,6 +224,7 @@ CTextWidthCalc::~CTextWidthCalc()
 
 bool CTextWidthCalc::SetWidthIfMax(int width)
 {
+	UNREFERENCED_PARAMETER(width);
 	return SetWidthIfMax(0, INT_MIN);
 }
 

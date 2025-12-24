@@ -43,6 +43,7 @@ void CDocLocker::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 void CDocLocker::OnBeforeSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// ファイルの排他ロック解除
@@ -51,6 +52,7 @@ void CDocLocker::OnBeforeSave(const SSaveInfo& sSaveInfo)
 
 void CDocLocker::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// 書き込めるか検査

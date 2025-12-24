@@ -26,6 +26,7 @@ CHtmlHelp::CHtmlHelp(void) noexcept
 */
 LPCWSTR CHtmlHelp::GetDllNameImp(int nIndex)
 {
+	UNREFERENCED_PARAMETER(nIndex);
 	return L"HHCTRL.OCX";
 }
 

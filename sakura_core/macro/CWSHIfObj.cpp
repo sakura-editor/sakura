@@ -87,6 +87,7 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 */
 HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
 {
+	UNREFERENCED_PARAMETER(Data);
 	int I;
 	int ArgCount = Arguments->cArgs;
 

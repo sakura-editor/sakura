@@ -708,6 +708,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 /* ダイアログデータの取得 Custom menu */
 int CPropCustmenu::GetData( HWND hwndDlg )
 {
+	UNREFERENCED_PARAMETER(hwndDlg);
 	return TRUE;
 }
 

@@ -475,6 +475,7 @@ void CViewCommander::Command_INSTEXT(
 	const CLogicRange*	pcSelectLogic	//!< [in] オプション。高速モードのときの削除範囲ロジック単位
 )
 {
+	UNREFERENCED_PARAMETER(bNoWaitCursor);
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
 		return;

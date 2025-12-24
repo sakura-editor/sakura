@@ -117,6 +117,9 @@ LRESULT CPrintPreview::OnPaint(
 	LPARAM			lParam 	// second message parameter
 )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	PAINTSTRUCT		ps;
 	HDC				hdcOld = ::BeginPaint( hwnd, &ps );
 	HDC				hdc = m_hdcCompatDC;	//	親ウィンドウのComatibleDCに描く
@@ -569,6 +572,7 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 
 LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(wParam);
 	/* 手カーソル */
 	SetHandCursor();		// Hand Cursorを設定 2013/1/29 Uchi
 	if( !m_pParentWnd->GetDragMode() ){
@@ -646,6 +650,7 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 LRESULT CPrintPreview::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
 //	WORD	fwKeys = LOWORD(wParam);			// key flags
 	short	zDelta = (short) HIWORD(wParam);	// wheel rotation
 //	short	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
@@ -1794,6 +1799,7 @@ void CPrintPreview::Print_DrawBlock(
 	const int*		pDxArray
 )
 {
+	UNREFERENCED_PARAMETER(nDx);
 	if (nKind == 2 && pcLayout == nullptr) {
 		// TABはカラーで無ければ印字不要
 		return;
@@ -1907,6 +1913,8 @@ int CALLBACK CPrintPreview::MyEnumFontFamProc(
 	LPARAM			lParam 		// address of application-defined data
 )
 {
+	UNREFERENCED_PARAMETER(nFontType);
+	UNREFERENCED_PARAMETER(pntm);
 	CPrintPreview* pCPrintPreview = reinterpret_cast<CPrintPreview*>(lParam);
 	if( 0 == wcscmp( pelf->elfLogFont.lfFaceName, pCPrintPreview->m_pPrintSetting->m_szPrintFontFaceHan ) ){
 		pCPrintPreview->SetPreviewFontHan(&pelf->elfLogFont);
@@ -2084,6 +2092,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	LPARAM				lParam 		// second message parameter
 )
 {
+	UNREFERENCED_PARAMETER(lParam);
 	WORD				wNotifyCode;
 	WORD				wID;
 

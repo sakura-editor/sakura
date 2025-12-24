@@ -641,6 +641,8 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+
 	int nIdx = getCtrlKeyState();
 	if( F_AUTOSCROLL == GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx] ){
 		if( m_nAutoScrollMode ){
@@ -665,6 +667,10 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	int		nIdx;
 	int		nFuncID;
 
@@ -710,6 +716,9 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 void CALLBACK AutoScrollTimerProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
 {
+	UNREFERENCED_PARAMETER(dwTime);
+	UNREFERENCED_PARAMETER(idEvent);
+	UNREFERENCED_PARAMETER(uMsg);
 	CEditView*	pCEditView;
 	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( nullptr != pCEditView ){
@@ -822,6 +831,10 @@ void CEditView::AutoScrollOnTimer()
 */
 void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	if( m_nAutoScrollMode ){
 		AutoScrollExit();
 	}
@@ -838,6 +851,10 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	int		nIdx;
 	int		nFuncID;
 
@@ -882,6 +899,10 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	if( m_nAutoScrollMode ){
 		AutoScrollExit();
 	}
@@ -898,6 +919,10 @@ void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	int		nIdx;
 	int		nFuncID;
 
@@ -935,6 +960,8 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 /* マウス移動のメッセージ処理 */
 void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+
 	CMyPoint ptMouse(xPos_, yPos_);
 
 	if( m_cMousePausePos != ptMouse ){
@@ -1245,6 +1272,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 */
 LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontalMsg, EFunctionCode nCmdFuncID )
 {
+	UNREFERENCED_PARAMETER(lParam);
+
 //	WORD	fwKeys;
 	short	zDelta;
 //	short	xPos;
@@ -1504,6 +1533,10 @@ bool CEditView::IsSpecialScrollMode( int nSelect )
 /* マウス左ボタン開放のメッセージ処理 */
 void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 //	MYTRACE( L"OnLBUTTONUP()\n" );
 
 	/* 範囲選択終了 & マウスキャプチャおわり */
@@ -2210,6 +2243,7 @@ CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
 
 DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect )
 {
+	UNREFERENCED_PARAMETER(pt);
 	if( cf == CF_HDROP )	// 2008.06.20 ryoji
 		return DROPEFFECT_LINK;
 

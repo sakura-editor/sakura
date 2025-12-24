@@ -321,22 +321,27 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	HRESULT STDMETHODCALLTYPE OnFileOk(
 		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
+		UNREFERENCED_PARAMETER(pfd);
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnFolderChanging(
 		/* [in] */ __RPC__in_opt IFileDialog *pfd,
 		/* [in] */ __RPC__in_opt IShellItem *psiFolder) override {
+		UNREFERENCED_PARAMETER(pfd);
+		UNREFERENCED_PARAMETER(psiFolder);
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnFolderChange(
 		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
+		UNREFERENCED_PARAMETER(pfd);
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnSelectionChange(
 		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
+		UNREFERENCED_PARAMETER(pfd);
 		return E_NOTIMPL;
 	}
 		
@@ -344,11 +349,15 @@ struct CDlgOpenFile_CommonItemDialog final
 		/* [in] */ __RPC__in_opt IFileDialog *pfd,
 		/* [in] */ __RPC__in_opt IShellItem *psi,
 		/* [out] */ __RPC__out FDE_SHAREVIOLATION_RESPONSE *pResponse) override {
+		UNREFERENCED_PARAMETER(pResponse);
+		UNREFERENCED_PARAMETER(pfd);
+		UNREFERENCED_PARAMETER(psi);
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnTypeChange(
 		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
+		UNREFERENCED_PARAMETER(pfd);
 		return E_NOTIMPL;
 	}
 		
@@ -356,6 +365,9 @@ struct CDlgOpenFile_CommonItemDialog final
 		/* [in] */ __RPC__in_opt IFileDialog *pfd,
 		/* [in] */ __RPC__in_opt IShellItem *psi,
 		/* [out] */ __RPC__out FDE_OVERWRITE_RESPONSE *pResponse) override {
+		UNREFERENCED_PARAMETER(pResponse);
+		UNREFERENCED_PARAMETER(pfd);
+		UNREFERENCED_PARAMETER(psi);
 		return E_NOTIMPL;
 	}
 
@@ -369,6 +381,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	HRESULT STDMETHODCALLTYPE OnButtonClicked(
 		/* [in] */ __RPC__in_opt IFileDialogCustomize *pfdc,
 		/* [in] */ DWORD dwIDCtl) override {
+		UNREFERENCED_PARAMETER(dwIDCtl);
+		UNREFERENCED_PARAMETER(pfdc);
 		return E_NOTIMPL;
 	}
 	
@@ -380,6 +394,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	HRESULT STDMETHODCALLTYPE OnControlActivating(
 		/* [in] */ __RPC__in_opt IFileDialogCustomize *pfdc,
 		/* [in] */ DWORD dwIDCtl) override {
+		UNREFERENCED_PARAMETER(dwIDCtl);
+		UNREFERENCED_PARAMETER(pfdc);
 		return E_NOTIMPL;
 	}
 };
@@ -855,6 +871,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 	/* [in] */ DWORD dwIDCtl,
 	/* [in] */ DWORD dwIDItem)
 {
+	UNREFERENCED_PARAMETER(pfdc);
 	switch (dwIDCtl) {
 	case CtrlId::COMBO_CODE:
 		{
@@ -899,6 +916,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnCheckButtonToggled(
 	/* [in] */ DWORD dwIDCtl,
 	/* [in] */ BOOL bChecked)
 {
+	UNREFERENCED_PARAMETER(pfdc);
 	switch (dwIDCtl) {
 	case CtrlId::CHECK_READONLY:
 		m_bViewMode = bChecked ? true : false;

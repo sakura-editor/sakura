@@ -78,6 +78,7 @@ void CDocLine::SetDocLineStringMove(CNativeW* pcDataFrom, bool bEnableExtEol)
 
 void CDocLine::SetEol(const CEol& cEol, COpeBlk* pcOpeBlk)
 {
+	UNREFERENCED_PARAMETER(pcOpeBlk);
 	//改行コードを削除
 	for(int i=0;i<(Int)m_cEol.GetLen();i++){
 		m_cLine.Chop();

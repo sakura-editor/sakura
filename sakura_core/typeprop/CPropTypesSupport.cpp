@@ -261,6 +261,7 @@ void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
 
 void CPropTypesSupport::RemoveHokanMethod(int nMethod, const WCHAR* szName)
 {
+	UNREFERENCED_PARAMETER(szName);
 	auto& list = *GetHokanMethodList();
 
 	if (const auto found = std::ranges::find_if(list, [nMethod](const SHokanMethod& hokanMethod) { return hokanMethod.nMethod == nMethod; }); found != list.end()) {

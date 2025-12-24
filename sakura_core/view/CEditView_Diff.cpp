@@ -58,7 +58,7 @@ public:
 	}
 	~COutputAdapterDiff(){};
 
-	bool OutputW(const WCHAR* pBuf, int size = -1) override{ return true; };
+	bool OutputW(const WCHAR* pBuf, int size = -1) override { UNREFERENCED_PARAMETER(pBuf); UNREFERENCED_PARAMETER(size); return true; };
 	bool OutputA(const ACHAR* pBuf, int size = -1) override;
 	bool IsEnableRunningDlg() override{ return false; }
 	bool IsActiveDebugWindow() override{ return false; }

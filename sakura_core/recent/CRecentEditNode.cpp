@@ -36,6 +36,7 @@ CRecentEditNode::CRecentEditNode()
 */
 const WCHAR* CRecentEditNode::GetItemText( int nIndex ) const
 {
+	UNREFERENCED_PARAMETER(nIndex);
 	return L"WIN"; //※テキスト情報は無い (GetWindowTextしてあげても良いけど、この関数は実行されないので、意味は無い)
 }
 
@@ -47,6 +48,8 @@ bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* s
 
 bool CRecentEditNode::TextToDataType( EditNode* dst, LPCWSTR pszText ) const
 {
+	UNREFERENCED_PARAMETER(dst);
+	UNREFERENCED_PARAMETER(pszText);
 	return false;
 }
 

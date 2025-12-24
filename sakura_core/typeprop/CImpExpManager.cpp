@@ -195,6 +195,11 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 // インポート確認
 bool CImpExpManager::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+	UNREFERENCED_PARAMETER(hwndParent);
+	UNREFERENCED_PARAMETER(sFileName);
+	UNREFERENCED_PARAMETER(sErrMsg);
+
 	return true;
 }
 
@@ -1274,6 +1279,7 @@ bool CImpExpMainMenu::Export( const std::wstring& sFileName, std::wstring& sErrM
 // インポート
 bool CImpExpFileTree::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 {
+	UNREFERENCED_PARAMETER(sErrMsg);
 	const auto& strPath = sFileName;
 
 	CDataProfile cProfile;

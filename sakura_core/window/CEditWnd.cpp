@@ -253,6 +253,7 @@ CEditWnd::~CEditWnd()
 // 2008.02.02 kobake
 void CEditWnd::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
 	//ビュー再描画
 	this->Views_RedrawAll();
 
@@ -291,6 +292,7 @@ void CEditWnd::UpdateCaption()
 //!< ウィンドウ生成用の矩形を取得
 void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
+	UNREFERENCED_PARAMETER(nGroup);
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
 	//	2004.05.13 Moca m_Common.m_eSaveWindowSizeをBOOLからenumに変えたため
@@ -2681,6 +2683,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 
 STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
+	UNREFERENCED_PARAMETER(pt);
 	if( pDataObject == nullptr || pdwEffect == nullptr ){
 		return E_INVALIDARG;
 	}
@@ -2703,6 +2706,8 @@ STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 STDMETHODIMP CEditWnd::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
+	UNREFERENCED_PARAMETER(dwKeyState);
+	UNREFERENCED_PARAMETER(pt);
 	if( pdwEffect == nullptr )
 		return E_INVALIDARG;
 
@@ -2717,6 +2722,8 @@ STDMETHODIMP CEditWnd::DragLeave( void )
 
 STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
+	UNREFERENCED_PARAMETER(dwKeyState);
+	UNREFERENCED_PARAMETER(pt);
 	if( pDataObject == nullptr || pdwEffect == nullptr )
 		return E_INVALIDARG;
 
@@ -2810,6 +2817,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 */
 LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
 	// タイマー ID で処理を振り分ける
 	switch( wParam )
 	{
@@ -3336,6 +3344,7 @@ LRESULT CEditWnd::OnHScroll( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(wParam);
 	//by 鬼(2) キャプチャして押されたら非クライアントでもこっちに来る
 	if(m_IconClicked != icNone)
 		return 0;
@@ -3350,6 +3359,8 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(wParam);
 	//by 鬼 2002/04/18
 	if(m_IconClicked != icNone)
 	{
@@ -4163,6 +4174,8 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 */
 LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
 {
+	UNREFERENCED_PARAMETER(bFull);
+
 	int			i;
 	WCHAR		szMenu[_MAX_PATH * 2 + 3];
 	const EditInfo*	pfi;
@@ -4472,6 +4485,8 @@ void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
 
 void CEditWnd::Views_DisableSelectArea(bool bRedraw)
 {
+	UNREFERENCED_PARAMETER(bRedraw);
+
 	for( int i = 0; i < GetAllViewCount(); ++i ){
 		if( GetView(i).GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */

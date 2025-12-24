@@ -813,6 +813,8 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 	WCHAR*		pszFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
 )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
 	if( MacroInfo != nullptr ){
 		if( pszFuncName != nullptr ){
@@ -852,6 +854,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	WCHAR*			pszFuncNameJapanese		//!< [out] 機能名日本語．この先には256バイトのメモリが必要．
 )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	//	Jun. 16, 2002 genta
 	const WCHAR* normalizedFuncName;
 	

@@ -1257,6 +1257,10 @@ VOID CEditView::OnTimer(
 	DWORD dwTime 	// current system time
 	)
 {
+	UNREFERENCED_PARAMETER(dwTime);
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(idEvent);
+	UNREFERENCED_PARAMETER(uMsg);
 	POINT		po;
 	RECT		rc;
 
@@ -2611,6 +2615,8 @@ void CEditView::SetInsMode(bool mode)
 
 void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	if( nullptr == GetHwnd() ){
 		// MiniMap 非表示
 		return;
@@ -2648,6 +2654,8 @@ void CEditView::AddCurrentLineToHistory( void )
 //	2001/06/18 Start by asa-o: 補完ウィンドウ用のキーワードヘルプ表示
 bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 {
+	UNREFERENCED_PARAMETER(prcHokanWin);
+
 	CNativeW	cmemCurText;
 	RECT		rcTipWin,
 				rcDesktop;
@@ -2767,6 +2775,8 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 /*! アンドゥバッファの処理 */
 void CEditView::SetUndoBuffer(bool bPaintLineNumber)
 {
+	UNREFERENCED_PARAMETER(bPaintLineNumber);
+
 	if( nullptr != m_cCommander.GetOpeBlk() && m_cCommander.GetOpeBlk()->Release() == 0 ){
 		if( 0 < m_cCommander.GetOpeBlk()->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */

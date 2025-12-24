@@ -173,6 +173,7 @@ next:
 
 void CLoadAgent::OnBeforeLoad(SLoadInfo* pLoadInfo)
 {
+	UNREFERENCED_PARAMETER(pLoadInfo);
 }
 
 ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
@@ -261,6 +262,8 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 
 void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	/* 親ウィンドウのタイトルを更新 */

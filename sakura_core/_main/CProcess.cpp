@@ -36,6 +36,7 @@ CProcess::CProcess(
 )
 : m_hInstance( hInstance )
 {
+	UNREFERENCED_PARAMETER(lpCmdLine);
 	// アプリ名をリソースから読み込む
 	m_strAppName = LS(STR_GSTR_APPNAME);
 }

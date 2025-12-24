@@ -638,6 +638,7 @@ EndFunc:
 */
 int CheckUtf8Char2( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
 {
+	UNREFERENCED_PARAMETER(nOption);
 	unsigned char c0, c1, c2;
 	int ncwidth;
 	ECharSet echarset;

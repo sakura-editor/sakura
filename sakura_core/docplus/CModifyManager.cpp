@@ -12,6 +12,7 @@
 
 void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// 行変更状態をすべてリセット

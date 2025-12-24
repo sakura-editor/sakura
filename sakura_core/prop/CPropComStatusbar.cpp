@@ -55,6 +55,7 @@ INT_PTR CPropStatusbar::DispatchEvent(
     LPARAM		lParam 		// second message parameter
 )
 {
+	UNREFERENCED_PARAMETER(wParam);
 	NMHDR*		pNMHDR;
 
 	switch( uMsg ){

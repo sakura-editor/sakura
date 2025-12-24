@@ -114,6 +114,8 @@ BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
 
 BOOL CDlgJump::OnCbnSelChange( HWND hwndCtl, int wID )
 {
+	UNREFERENCED_PARAMETER(hwndCtl);
+
 	int	nIndex;
 	int	nWorkLine;
 	switch( wID ){
