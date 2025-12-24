@@ -20,7 +20,6 @@
 */
 
 #include "StdAfx.h"
-#include <shellapi.h>
 #include "dlg/CDlgAbout.h"
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
@@ -226,8 +225,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	LPCWSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
 	WCHAR szMsg[2048];
 	if( pszDesc[0] != '\0' ) {
-		wcsncpy( szMsg, pszDesc, int(std::size(szMsg)) - 1 );
-		szMsg[std::size(szMsg) - 1] = 0;
+		wcsncpy_s(szMsg, pszDesc, _TRUNCATE);
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
 	}
 	//	To Here Jun. 8, 2001 genta
