@@ -34,7 +34,8 @@ public:
 	#pragma argsused
 	#endif
 	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject) override
-	{ 
+	{
+		UNREFERENCED_PARAMETER(iid); UNREFERENCED_PARAMETER(ppvObject);
 		return E_NOINTERFACE; 
 	}
 	ULONG STDMETHODCALLTYPE AddRef() override { ++ m_RefCount; return m_RefCount; }
