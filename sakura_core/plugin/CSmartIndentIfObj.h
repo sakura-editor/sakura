@@ -58,10 +58,6 @@ public:
 	//関数を処理する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override
 	{
-		UNREFERENCED_PARAMETER(View);
-		UNREFERENCED_PARAMETER(Arguments);
-		UNREFERENCED_PARAMETER(ArgSize);
-
 		switch ( LOWORD(ID) ) 
 		{
 		case F_SI_GETCHAR:						//押下したキーを取得する
@@ -73,18 +69,7 @@ public:
 			}
 			return true;
 		}
-		return false;
-	}
-	//コマンドを処理する
-	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize) override
-	{
-		UNREFERENCED_PARAMETER(View);
-		UNREFERENCED_PARAMETER(ID);
-		UNREFERENCED_PARAMETER(Arguments);
-		UNREFERENCED_PARAMETER(ArgLengths);
-		UNREFERENCED_PARAMETER(ArgSize);
-
-		return false;
+		return CWSHIfObj::HandleFunction(View, ID, Arguments, ArgSize, Result);
 	}
 
 	// メンバ変数
