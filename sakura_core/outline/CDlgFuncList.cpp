@@ -245,7 +245,6 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		// セッション内全体での最近アクティブウィンドウがアクティブになってしまう．
 		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
 		if( (BOOL)wParam ){
-			CEditView* pcEditView = (CEditView*)m_lParam;
 			if( ::GetActiveWindow() == GetHwnd() ){
 				::SetActiveWindow( GetEditWnd().GetHwnd() );
 				BlockingHook( nullptr );	// キュー内に溜まっているメッセージを処理
@@ -904,8 +903,6 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 	HTREEITEM		htiGlobal = nullptr;	// Jan. 04, 2001 genta C++と統合
 	HTREEITEM		htiClass;
 	HTREEITEM		htiItem;
-	HTREEITEM		htiSelectedTop = nullptr;
-	HTREEITEM		htiSelected = nullptr;
 	TV_ITEM			tvi;
 	int				nClassNest;
 	std::vector<std::wstring> vStrClasses;
@@ -1466,7 +1463,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				
 				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
 					WCHAR linenum[32];
-					int len = auto_sprintf( linenum, L"(%d,%d): ",
+					auto_sprintf( linenum, L"(%d,%d): ",
 						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
 					);
@@ -2280,7 +2277,6 @@ BOOL CDlgFuncList::OnDestroy( void )
 
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
-	CEditView* pcEditView=(CEditView*)m_lParam;
 	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 		/* 親のウィンドウ位置・サイズを記憶 */
@@ -3331,7 +3327,6 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		}
 		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
 	}else if( nId == 511 ){	// ブックマークすべて削除
-		HWND hwndList = GetItemHwnd(IDC_LIST_FL);
 		pcEditView->GetCommander().HandleCommand(F_BOOKMARK_RESET, TRUE, 0, 0, 0, 0);
 		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
 	}
@@ -3586,7 +3581,6 @@ bool CDlgFuncList::ChangeLayout( int nId )
 */
 void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 {
-	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
 		if( (HWND)lParam == GetEditWnd().GetHwnd() )

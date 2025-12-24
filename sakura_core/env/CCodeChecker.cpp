@@ -62,7 +62,7 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 		);
 		if( bCodePageMode ){
 			// コードページはRESULT_LOSESOMEを返さないので、自分で文字列比較する
-			EConvertResult e2 = CIoBridge::FileToImpl(
+			CIoBridge::FileToImpl(
 				cmemTmp,
 				&cmemTmp2,
 				pCodeBase,

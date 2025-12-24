@@ -92,9 +92,6 @@ EConvertResult CCodePage::CPToUni(const char* pSrc, const int nSrcLen, wchar_t* 
 */
 EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int codepageEx)
 {
-	// エラー状態
-	bool bError = false;
-
 	// ソース取得
 	int nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );

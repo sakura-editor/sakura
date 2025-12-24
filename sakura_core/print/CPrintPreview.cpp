@@ -1663,7 +1663,6 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	CLayoutXInt nTabSpace = m_pLayoutMgr_Print->GetTabSpace();	// docから自分のLayoutMgrに変更
 
 	CLayoutInt tabPadding = CLayoutInt(m_pLayoutMgr_Print->GetWidthPerKeta() - 1); //LayoutInt == 1描画単位
-	const int charWidth = 1; // 1 LayoutIntあたりの幅
 
 	//文字間隔配列を生成
 	std::vector<int> vDxArray;

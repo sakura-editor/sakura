@@ -925,7 +925,6 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 
 BOOL CDlgFileTree::OnNotify(NMHDR* pNMHDR)
 {
-	TV_DISPINFO* ptdi = (TV_DISPINFO*)pNMHDR;
 	HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
 	HTREEITEM htiItem;
 

@@ -216,10 +216,6 @@ void _DispEOF(
 	CTypeSupport cTextType(pcView,COLORIDX_TEXT);
 	bool bTrans = pcView->IsBkBitmap() && cEofType.GetBackColor() == cTextType.GetBackColor();
 
-	//必要なインターフェースを取得
-	const CTextMetrics* pMetrics=&pcView->GetTextMetrics();
-	const CTextArea* pArea=&pcView->GetTextArea();
-
 	//定数
 	static const wchar_t	szEof[] = L"[EOF]";
 	constexpr auto nEofLen = int(std::size(szEof)) - 1;

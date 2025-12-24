@@ -129,12 +129,6 @@ next:
 		nFileSize.HighPart = wfd.nFileSizeHigh;
 		nFileSize.LowPart = wfd.nFileSizeLow;
 
-		// システム的に開けない場合にはエラーダイアログを出してオープン処理中断
-#ifdef _WIN64
-		bool bBigFile = true;
-#else
-		bool bBigFile = false;
-#endif
 		if (!CFileLoad::IsLoadableSize(nFileSize.QuadPart)) {
 			// ファイルサイズがシステム的に大きすぎるため、エラーとしてファイルロードを中断する。
 			// ※32bit 版の場合は 2GB あたりを上限とする。

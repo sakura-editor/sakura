@@ -935,7 +935,6 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 		if( !IsXMLWhiteSpace( pBuf[5] ) ){
 			return CODE_NONE;
 		}
-		char quoteXML = '\0';
 		int i;
 		// xml規格ではencodingはverionに続いて現れる以外は許されない。ここではいいにする
 		for( i = 5; i < nSize - 12; i++ ){

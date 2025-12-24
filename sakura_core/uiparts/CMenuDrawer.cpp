@@ -891,11 +891,8 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 {
 	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
 	const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
-	const int cyBorder = ::GetSystemMetrics(SM_CYBORDER);
 	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
 	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
-	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
-	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
 	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 
@@ -951,11 +948,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
 	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
 	const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
-	const int cyBorder = ::GetSystemMetrics(SM_CYBORDER);
 	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
 	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
-	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
-	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
 	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 

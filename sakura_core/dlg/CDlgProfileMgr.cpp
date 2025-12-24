@@ -121,7 +121,6 @@ void CDlgProfileMgr::SetData()
 
 void CDlgProfileMgr::SetData( int nSelIndex )
 {
-	int		nExtent = 0;
 	HWND	hwndList = GetItemHwnd( IDC_LIST_PROFILE );
 
 	ApiWrap::List_ResetContent( hwndList );

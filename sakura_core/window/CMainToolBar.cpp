@@ -454,7 +454,6 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			int offset = ( rc.Height() - m_pcIcons->cy() ) / 2;
 
 			const int cxEdge = DpiScaleX( 1 );
-			const int cyEdge = DpiScaleY( 1 );
 			const int cxSmIcon = DpiScaleX( 16 );
 			const int cySmIcon = DpiScaleY( 16 );
 

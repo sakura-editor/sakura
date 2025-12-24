@@ -564,7 +564,6 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
 	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
 	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
-	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
 	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 
