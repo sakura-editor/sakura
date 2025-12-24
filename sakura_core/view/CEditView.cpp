@@ -182,8 +182,8 @@ BOOL CEditView::Create(
 	m_bDrawBracketPairFlag = FALSE;	/* 03/02/18 ai */
 	GetSelectionInfo().m_bDrawSelectArea = false;	/* 選択範囲を描画したか */	// 02/12/13 ai
 
-	m_crBack = -1;				/* テキストの背景色 */			// 2006.12.16 ryoji
-	m_crBack2 = -1;
+	m_crBack  = COLORREF(-1);				/* テキストの背景色 */			// 2006.12.16 ryoji
+	m_crBack2 = COLORREF(-1);
 
 	m_szComposition[0] = L'\0';
 

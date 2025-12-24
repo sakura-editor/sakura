@@ -2388,14 +2388,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 					if( bSubMenu ){
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION | MF_POPUP, (UINT_PTR)vHmenu.back(), r );
+						::InsertMenuW(hMenuCurrent, UINT(-1), nFlags | MF_BYPOSITION | MF_POPUP, UINT_PTR(vHmenu.back()), r);
 						hMenuCurrent = vHmenu.back();
 					}else if( bSpecial ){
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, 0, nullptr );
+						::InsertMenuW(hMenuCurrent, UINT(-1), nFlags | MF_BYPOSITION, 0, nullptr);
 					}else{
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, i, r );
+						::InsertMenuW(hMenuCurrent, UINT(-1), nFlags | MF_BYPOSITION, i, r);
 						if( bRadio ){
 							::CheckMenuRadioItem( hMenuCurrent, i, i, i, MF_BYCOMMAND );
 						}
