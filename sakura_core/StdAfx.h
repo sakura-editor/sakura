@@ -172,6 +172,13 @@
 #include <vsstyle.h>
 #include <wrl.h>
 
+#ifdef __MINGW32__
+#ifdef UNREFERENCED_PARAMETER
+#undef UNREFERENCED_PARAMETER
+#endif
+#define UNREFERENCED_PARAMETER(P) (void)(P)
+#endif
+
 // プロジェクト内のファイルだがプリコンパイル対象とする。
 // プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"
