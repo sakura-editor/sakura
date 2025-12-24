@@ -274,7 +274,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 	if( test[0].nLength == 0 ){
 		const wchar_t* g = test[0].szGroupName;
 		wcscpy(pszStack[0], g);
-		nLvStack[0] = int(test[0].nLv);
+		nLvStack[0] = wchar_t(test[0].nLv);
 		const wchar_t *p = wcschr(g, L',');
 		int len;
 		if( p != nullptr ){
@@ -408,7 +408,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 				k = 0;
 			}
 			wcscpy(pszStack[k], szTitle);
-			nLvStack[k] = test[j].nLv;
+			nLvStack[k] = wchar_t(test[j].nLv);
 			nDepth = k;
 		}else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する

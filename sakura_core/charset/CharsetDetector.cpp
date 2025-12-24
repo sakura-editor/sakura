@@ -228,7 +228,7 @@ ECodeType CharsetDetector::Detect(const std::string_view& bytes)
 		_uchardet.uchardet_data_end(_ud);
 		std::string_view name = _uchardet.uchardet_get_charset(_ud);
 		std::string str(name);
-		std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+		std::ranges::transform(str, str.begin(), [] (const auto& c) { return (char)::toupper(c); });
 		auto it = map_charsetToCodePage.find(str);
 		if (it == map_charsetToCodePage.end()) {
 			return CODE_ERROR;

@@ -484,7 +484,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 						if( p[i] == c ){
 							wchar_t from[2];
 							wchar_t to[7];
-							from[0] = c;
+							from[0] = wchar_t(c);
 							from[1] = L'\0';
 							auto_sprintf( to, L"\\u%04x", c );
 							cmemWork.Replace( from, to );

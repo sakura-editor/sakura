@@ -24,8 +24,8 @@ void CViewFont::CreateFonts( const LOGFONT *plf )
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
-		lf.lfQuality = quality;
-		lf.lfOutPrecision = outPrec;
+		lf.lfQuality = BYTE(quality);
+		lf.lfOutPrecision = BYTE(outPrec);
 	}
 	m_hFont_HAN = CreateFontIndirect( &lf );
 	m_LogFont = lf;
@@ -34,8 +34,8 @@ void CViewFont::CreateFonts( const LOGFONT *plf )
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
-		lf.lfQuality = quality;
-		lf.lfOutPrecision = outPrec;
+		lf.lfQuality = BYTE(quality);
+		lf.lfOutPrecision = BYTE(outPrec);
 	}
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
@@ -47,8 +47,8 @@ void CViewFont::CreateFonts( const LOGFONT *plf )
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
-		lf.lfQuality = quality;
-		lf.lfOutPrecision = outPrec;
+		lf.lfQuality = BYTE(quality);
+		lf.lfOutPrecision = BYTE(outPrec);
 	}
 	
 	lf.lfUnderline = TRUE;
@@ -58,8 +58,8 @@ void CViewFont::CreateFonts( const LOGFONT *plf )
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
-		lf.lfQuality = quality;
-		lf.lfOutPrecision = outPrec;
+		lf.lfQuality = BYTE(quality);
+		lf.lfOutPrecision = BYTE(outPrec);
 	}
 	lf.lfUnderline = TRUE;
 	lf.lfWeight += 300;
