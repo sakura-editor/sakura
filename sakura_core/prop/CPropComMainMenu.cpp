@@ -112,7 +112,7 @@ LRESULT CALLBACK CPropMainMenu::TreeViewProc(
 		return DLGC_WANTALLKEYS;
 	case WM_KEYDOWN:
 		htiItem = TreeView_GetSelection( hwndTree );
-		cKey = (WCHAR)MapVirtualKey( wParam, 2 );
+		cKey = (WCHAR)MapVirtualKey(UINT(wParam), MAPVK_VK_TO_CHAR);
 		if (cKey > ' ') {
 			// アクセスキー設定
 			tvi.mask = TVIF_HANDLE | TVIF_PARAM;
@@ -120,7 +120,7 @@ LRESULT CALLBACK CPropMainMenu::TreeViewProc(
 			if (!TreeView_GetItem( hwndTree, &tvi )) {
 				break;
 			}
-			pFuncWk = &msMenu[tvi.lParam];
+			pFuncWk = &msMenu[(int)tvi.lParam];
 			if (pFuncWk->m_nFunc == F_SEPARATOR) {
 				return 0;
 			}
@@ -304,9 +304,9 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		case TVN_BEGINLABELEDIT:	//	アイテムの編集開始
 			if (pNMHDR->hwndFrom == hwndTreeRes) { 
 				HWND hEdit = TreeView_GetEditControl( hwndTreeRes );
-				if (msMenu[ptdi->item.lParam].m_bIsNode) {
+				if (msMenu[(int)ptdi->item.lParam].m_bIsNode) {
 					// ノードのみ有効
-					SetWindowText( hEdit, msMenu[ptdi->item.lParam].m_sName.c_str() ) ;
+					SetWindowText( hEdit, msMenu[(int)ptdi->item.lParam].m_sName.c_str() ) ;
 					ApiWrap::EditCtl_LimitText( hEdit, MAX_MAIN_MENU_NAME_LEN );
 					// 編集時のメッセージ処理
 					m_wpEdit = (WNDPROC)SetWindowLongPtr( hEdit, GWLP_WNDPROC, (LONG_PTR)WindowProcEdit );
@@ -319,9 +319,9 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			return TRUE;
 		case TVN_ENDLABELEDIT:		//	アイテムの編集が終了
  			if (pNMHDR->hwndFrom == hwndTreeRes 
-			  && msMenu[ ptdi->item.lParam ].m_bIsNode) {
+			  && msMenu[ (int)ptdi->item.lParam ].m_bIsNode) {
 				// ノード有効
-				pFuncWk = &msMenu[ptdi->item.lParam];
+				pFuncWk = &msMenu[(int)ptdi->item.lParam];
 				std::wstring strNameOld = pFuncWk->m_sName;
 				if (ptdi->item.pszText == nullptr) {
 					// Esc
@@ -354,7 +354,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 				tvi.hItem = htiItem;
 				if (TreeView_GetItem( hwndTreeRes, &tvi )) {
-					msMenu.erase( tvi.lParam );
+					msMenu.erase( (int)tvi.lParam );
 				}
 				return 0;
 			}
@@ -371,7 +371,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				if (!TreeView_GetItem( hwndTreeRes, &tvi )) {
 					break;
 				}
-				pFuncWk = &msMenu[tvi.lParam];
+				pFuncWk = &msMenu[(int)tvi.lParam];
 				if (pFuncWk->m_nFunc != F_SEPARATOR) {
 					auto_sprintf( szKey, L"%ls", pFuncWk->m_sKey);
 
@@ -550,7 +550,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 								htiTemp = TVI_LAST;
 							}
 							else {
-								if (msMenu[tvi.lParam].m_bIsNode) {
+								if (msMenu[(int)tvi.lParam].m_bIsNode) {
 									// ノード
 									htiParent = htiTemp;
 									htiTemp = TVI_LAST;
@@ -578,7 +578,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 								tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 								tvi.hItem = htiTemp;
 								if (TreeView_GetItem( hwndTreeRes, &tvi )) {
-									if (msMenu[tvi.lParam].m_bIsNode) {
+									if (msMenu[(int)tvi.lParam].m_bIsNode) {
 										// ノード
 										htiParent = htiTemp;
 										htiTemp = TVI_FIRST;
@@ -986,7 +986,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			// Error
 			return false;
 		}
-		pFuncWk = &msMenu[tvi.lParam];
+		pFuncWk = &msMenu[(int)tvi.lParam];
 
 		if (nLevel == 0) {
 			if (nTopCount >= MAX_MAINMENU_TOP) {
@@ -1236,7 +1236,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 			sErrMsg = LS(STR_PROPCOMMAINMENU_ERR1);
 			return false;
 		}
-		pFuncWk = &msMenu[tvi.lParam];
+		pFuncWk = &msMenu[(int)tvi.lParam];
 		switch (pFuncWk->m_nFunc) {
 		case F_NODE:
 			nType = T_NODE;
@@ -1309,10 +1309,10 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 					sErrMsg = LS(STR_PROPCOMMAINMENU_ERR1);
 					return false;
 				}
-				if (!msMenu[tvi.lParam].m_bDupErr) {
-					msMenu[tvi.lParam].m_bDupErr = true;
+				if (!msMenu[(int)tvi.lParam].m_bDupErr) {
+					msMenu[(int)tvi.lParam].m_bDupErr = true;
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
-					tvi.pszText = const_cast<WCHAR*>( MakeDispLabel( &msMenu[tvi.lParam] ) );
+					tvi.pszText = const_cast<WCHAR*>( MakeDispLabel( &msMenu[(int)tvi.lParam] ) );
 					TreeView_SetItem( hwndTree , &tvi );		//	キー設定結果を反映
 				}
 			}

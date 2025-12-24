@@ -134,7 +134,7 @@ public:
 				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
 				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 				{
-					nLineLen = ::SendMessageAny(m_hWnd, MYWM_GETLINEDATA, m_nLineCurrent, nLineOffset);
+					nLineLen = (int)::SendMessageAny(m_hWnd, MYWM_GETLINEDATA, m_nLineCurrent, nLineOffset);
 					if( nLineLen == 0 ){ return RESULT_FAILURE; } // EOF => 正常終了
 					if( nLineLen < 0 ){ return RESULT_FAILURE; } // 何かエラー
 					buffer->AllocStringBuffer(max_size);
@@ -282,7 +282,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 	if( 0 != wcsncmp(pszFile, szTargetPrefix, cchTargetPrefix) ){
 		return 0; // ハンドルGrepではない
 	}
-	if( 0 >= ::swscanf_s(pszFile + cchTargetPrefix, L"%x", (size_t*)&hWndTarget) || !IsSakuraMainWindow(hWndTarget) ){
+	if( 0 >= ::swscanf_s(pszFile + cchTargetPrefix, L"%zx", (size_t*)&hWndTarget) || !IsSakuraMainWindow(hWndTarget) ){
 		return -1; // ハンドルを読み取れなかった、または、対象ウインドウハンドルが存在しない
 	}
 	if( pmemTitle ){
@@ -893,7 +893,7 @@ int CGrepAgent::DoGrepTree(
 	int			nWork = 0;
 	int			nHitCountOld = -100;
 	bool		bOutputFolderName = false;
-	int			nBasePathLen = wcslen(pszBasePath);
+	auto nBasePathLen = int(wcslen(pszBasePath));
 	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
 	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
@@ -1320,7 +1320,7 @@ int CGrepAgent::DoGrepFile(
 	CFileLoadOrWnd	cfl( type->m_encoding, hWndTarget );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	int		nOldPercent = 0;
 
-	int	nKeyLen = wcslen( pszKey );
+	auto nKeyLen = int(wcslen(pszKey));
 	// ファイル名表示
 	const WCHAR* pszDispFilePath = ( sGrepOption.bGrepSeparateFolder || sGrepOption.bGrepOutputBaseFolder ) ? pszRelPath : pszFullPath;
 
@@ -1579,7 +1579,7 @@ int CGrepAgent::DoGrepFile(
 				int nIdx = 0;
 				// Jun. 26, 2003 genta 無駄なwhileは削除
 				while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != nullptr ){
-					nIdx = pszRes - pLine + nMatchLen;
+					nIdx = int(pszRes - pLine + nMatchLen);
 					++nHitCount;
 					++(*pnHitCount);
 					if( sGrepOption.nGrepOutputLineType != 2 ){
@@ -1592,7 +1592,7 @@ int CGrepAgent::DoGrepFile(
 							cmemMessage, pszDispFilePath, pszCodeName,
 							//	Jun. 25, 2002 genta
 							//	桁位置は1始まりなので1を足す必要がある
-							nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
+							nLine, int(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
 							pszRes, nMatchLen, sGrepOption
 						);
 					}
@@ -1619,7 +1619,7 @@ int CGrepAgent::DoGrepFile(
 					);
 					if(!pszRes)break;
 
-					nColumn = pszRes - pCompareData + 1;
+					nColumn = int(pszRes - pCompareData + 1);
 
 					++nHitCount;
 					++(*pnHitCount);
@@ -1856,7 +1856,7 @@ int CGrepAgent::DoGrepReplaceFile(
 	CEol	cEol;
 	int		nEolCodeLen;
 	int		nOldPercent = 0;
-	int	nKeyLen = wcslen( pszKey );
+	auto nKeyLen = int(wcslen(pszKey));
 	const WCHAR*	pszCodeName = L"";
 
 	const STypeConfigMini* type = nullptr;
@@ -2029,7 +2029,7 @@ int CGrepAgent::DoGrepReplaceFile(
 				int nOutputPos = 0;
 				// Jun. 26, 2003 genta 無駄なwhileは削除
 				while( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
-					nIdx = pszRes - pLine + nMatchLen;
+					nIdx = int(pszRes - pLine + nMatchLen);
 					if( bOutput ){
 						OutputPathInfo(
 							cmemMessage, sGrepOption,
@@ -2041,7 +2041,7 @@ int CGrepAgent::DoGrepReplaceFile(
 							cmemMessage, pszDispFilePath, pszCodeName,
 							//	Jun. 25, 2002 genta
 							//	桁位置は1始まりなので1を足す必要がある
-							nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
+							nLine, int(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
 							pszRes, nMatchLen,
 							sGrepOption
 						);
@@ -2056,7 +2056,7 @@ int CGrepAgent::DoGrepReplaceFile(
 						cOutBuffer.AppendString( &pLine[nOutputPos], pszRes - pLine - nOutputPos );
 					}
 					cOutBuffer.AppendNativeData( cmGrepReplace );
-					nOutputPos = pszRes - pLine + nMatchLen;
+					nOutputPos = int(pszRes - pLine + nMatchLen);
 				}
 				cOutBuffer.AppendString( &pLine[nOutputPos], nLineLen - nOutputPos );
 			}
@@ -2073,7 +2073,7 @@ int CGrepAgent::DoGrepReplaceFile(
 					const wchar_t* pszRes = CSearchAgent::SearchString( pCompareData, nCompareLen, 0, pattern );
 					if(!pszRes)break;
 
-					int	nColumn = pszRes - pCompareData;
+					auto nColumn = int(pszRes - pCompareData);
 					if( bOutput ){
 						OutputPathInfo(
 							cmemMessage, sGrepOption,

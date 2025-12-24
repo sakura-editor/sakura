@@ -197,7 +197,7 @@ void CEditView::ViewDiffInfo(
 bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 {
 	if( size == -1 ){
-		size = strlen(pBuf);
+		size = (int)strlen(pBuf);
 	}
 	//@@@ 2003.05.31 MIK
 	//	先頭がBinary filesならバイナリファイルのため意味のある差分が取られなかった
@@ -407,7 +407,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
 				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 				{
-					nLineLen = ::SendMessageAny( hwnd, MYWM_GETLINEDATA, y, nLineOffset );
+					nLineLen = (int)::SendMessageW( hwnd, MYWM_GETLINEDATA, y, nLineOffset );
 					if( nLineLen == 0 ){ return true; } // EOF => 正常終了
 					if( nLineLen < 0 ){ return false; } // 何かエラー
 					if( bBom ){

@@ -67,10 +67,10 @@ void CSortedTagJumpList::Empty( void )
 	基準フォルダーを登録し、基準フォルダーIDを取得
 	@date 2010.07.23 Moca 新規追加
 */
-int CSortedTagJumpList::AddBaseDir( const WCHAR* baseDir )
+int CSortedTagJumpList::AddBaseDir(std::wstring_view baseDir)
 {
-	m_baseDirArr.push_back( baseDir );
-	return m_baseDirArr.size() -1;
+	m_baseDirArr.emplace_back(baseDir);
+	return int(m_baseDirArr.size() - 1);
 }
 
 /*

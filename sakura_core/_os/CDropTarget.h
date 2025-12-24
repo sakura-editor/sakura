@@ -127,12 +127,15 @@ class CDataObject : public CYbInterfaceImpl<IDataObject> {
 private:
 	friend class CEnumFORMATETC;	// 2008.03.26 ryoji
 
-	typedef struct {
-		CLIPFORMAT cfFormat;
-		//Feb. 26, 2001, fixed by yebisuya sugoroku
-		LPBYTE			data;	//データ
-		unsigned int	size;	//データサイズ。バイト単位。
-	} DATA, *PDATA;
+	struct DATA;
+	using PDATA = DATA*;
+
+	//Feb. 26, 2001, fixed by yebisuya sugoroku
+	struct DATA {
+		CLIPFORMAT	cfFormat = CF_UNICODETEXT;	//!< クリップボードフォーマット
+		LPBYTE		data = nullptr;				//!< データ
+		SIZE_T		size = 0ULL;				//!< データサイズ。バイト単位。
+	};
 
 	int m_nFormat = 0;
 	PDATA m_pData = nullptr;

@@ -577,13 +577,13 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 	hr = StartVisualGroup(CtrlId::LABEL_MRU, LS(STR_FILEDIALOG_MRU)); RETURN_IF_FAILED
 	hr = AddComboBox(CtrlId::COMBO_MRU); RETURN_IF_FAILED
 	for (size_t i = 0; i < m_vMRU.size(); ++i) {
-		hr = AddControlItem(CtrlId::COMBO_MRU, (DWORD)1+i, m_vMRU[i]); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_MRU, DWORD(i + 1), m_vMRU[i]); RETURN_IF_FAILED
 	}
 	hr = EndVisualGroup(); RETURN_IF_FAILED
 	hr = StartVisualGroup(CtrlId::LABEL_OPENFOLDER, LS(STR_FILEDIALOG_OPENFOLDER)); RETURN_IF_FAILED
 	hr = AddComboBox(CtrlId::COMBO_OPENFOLDER); RETURN_IF_FAILED
 	for (size_t i = 0; i < m_vOPENFOLDER.size(); ++i) {
-		hr = AddControlItem(CtrlId::COMBO_OPENFOLDER, (DWORD)1+i, m_vOPENFOLDER[i]); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_OPENFOLDER, DWORD(i + 1), m_vOPENFOLDER[i]); RETURN_IF_FAILED
 	}
 	hr = EndVisualGroup(); RETURN_IF_FAILED
 #undef RETURN_IF_FAILED
@@ -616,7 +616,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 	}
 
 	hr = pFileOpenDialog->SetOptions(options); RETURN_IF_FAILED
-	hr = pFileOpenDialog->SetFileTypes(specs.size(), &specs[0]); RETURN_IF_FAILED
+	hr = pFileOpenDialog->SetFileTypes(UINT(specs.size()), &specs[0]); RETURN_IF_FAILED
 	hr = pFileOpenDialog->SetFileName(fileName); RETURN_IF_FAILED
 
 	using namespace Microsoft::WRL;
@@ -756,7 +756,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	specs[2].pszSpec = L"*.*";
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return hr; }
 	hr = pFileSaveDialog->SetDefaultExtension(L"txt"); RETURN_IF_FAILED
-	hr = pFileSaveDialog->SetFileTypes(specs.size(), &specs[0]); RETURN_IF_FAILED
+	hr = pFileSaveDialog->SetFileTypes(UINT(specs.size()), &specs[0]); RETURN_IF_FAILED
 	ComPtr<IShellItem> psiFolder;
 	SHCreateItemFromParsingName(m_szInitialDir, nullptr, IID_PPV_ARGS(&psiFolder));
 	hr = pFileSaveDialog->SetFolder(psiFolder.Get()); RETURN_IF_FAILED

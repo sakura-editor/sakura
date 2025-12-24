@@ -156,7 +156,7 @@ public:
 		std::vector< std::wstring > patterns;
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
-		int nWildCardLen = wcslen(lpKeys);
+		auto nWildCardLen = int(wcslen(lpKeys));
 		WCHAR* pWildCard = new WCHAR[nWildCardLen + 1];
 		if (!pWildCard) {
 			return patterns;

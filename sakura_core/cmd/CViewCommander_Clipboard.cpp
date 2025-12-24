@@ -250,8 +250,10 @@ void CViewCommander::Command_PASTE( int option )
 //  なお、これらを呼び出し側に期待するわけは、「すべて置換」のような何回も連続で呼び出す
 // ときに、最初に一回チェックすればよいものを何回もチェックするのは無駄と判断したためです。
 // @note 2004.06.30 現在、すべて置換では使用していない
-void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
+void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, size_t cchPaste )
 {
+	auto nPasteSize = int(cchPaste);
+
 	/* これらの動作は残しておきたいのだが、呼び出し側で責任を持ってやってもらうことに変更。
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// マウスによる範囲選択中
 	{
@@ -408,8 +410,10 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 	@date 2004.06.29 Moca 未使用だったものを有効にする
 	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
 */
-void CViewCommander::Command_PASTEBOX( int option )
+void CViewCommander::Command_PASTEBOX( LPARAM option )
 {
+	UNREFERENCED_PARAMETER(option);
+
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// マウスによる範囲選択中
 	{
 		ErrorBeep();
@@ -565,7 +569,7 @@ void CViewCommander::Command_INSTEXT(
 		m_pCommanderView->InsertData_CEditView(
 			GetCaret().GetCaretLayoutPos(),
 			pszText,
-			nTextLen,
+			(int)nTextLen,
 			&ptLayoutNew,
 			bRedraw
 		);
@@ -610,7 +614,7 @@ void CViewCommander::Command_ADDTAIL(
 )
 {
 	//テキスト長自動計算
-	if(nDataLen==-1 && pszData!=nullptr)nDataLen=wcslen(pszData);
+	if(nDataLen==-1 && pszData!=nullptr)nDataLen = (int)wcslen(pszData);
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 

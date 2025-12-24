@@ -1121,8 +1121,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 		col.cchTextMax = int(std::size(szHeader));
 		col.iSubItem = 0;
 		ListView_GetColumn( info.hListView, info.nSortColumn, &col );
-		int nLen = (int)wcslen(szHeader) - wcslen(L"▼");
-		if( 0 <= nLen ){
+		if (const auto nLen = int(wcslen(szHeader) - wcslen(L"▼")); 0 <= nLen) {
 			szHeader[nLen] = L'\0';
 		}
 		col.mask = LVCF_TEXT;
@@ -1157,7 +1156,7 @@ static int CALLBACK CompareListViewFunc( LPARAM lParamItem1, LPARAM lParamItem2,
 	CompareListViewLParam* pCompInfo = reinterpret_cast<CompareListViewLParam*>(lParamSort);
 	int nRet = 0;
 	if(0 == pCompInfo->nSortColumn){
-		nRet = lParamItem1 - lParamItem2;
+		nRet = int(lParamItem1 - lParamItem2);
 	}else{
 		const CRecent* p = pCompInfo->pRecent;
 		nRet = wmemicmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));

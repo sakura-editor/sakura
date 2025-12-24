@@ -222,7 +222,7 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 				hDest = stgMedium.hGlobal;
 		}else{
 			if( stgMedium.tymed == TYMED_HGLOBAL ){
-				DWORD nSize = ::GlobalSize( stgMedium.hGlobal );
+				const auto nSize = ::GlobalSize( stgMedium.hGlobal );
 				hDest = ::GlobalAlloc( GMEM_SHARE|GMEM_MOVEABLE, nSize );
 				if( hDest != nullptr ){
 					// copy the bits

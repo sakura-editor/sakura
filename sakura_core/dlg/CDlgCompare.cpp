@@ -75,7 +75,7 @@ int CDlgCompare::DoModal(
 {
 	m_pszPath = pszPath;
 	m_phwndCompareWnd = phwndCompareWnd;
-	return CDialog::DoModal( hInstance, hwndParent, IDD_COMPARE, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_COMPARE, lParam );
 }
 
 BOOL CDlgCompare::OnBnClicked( int wID )

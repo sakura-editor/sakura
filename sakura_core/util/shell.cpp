@@ -23,11 +23,23 @@
 #include "config/app_constants.h"
 #include <wrl.h>
 
+BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
+{
+	return SelectDir(hWnd, title, initialDirectory, std::span(strFolderName, nMaxCount));
+}
 
 /* フォルダー選択ダイアログ */
-BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
+BOOL SelectDir(
+	HWND hWnd,
+	const std::wstring& title,
+	const std::filesystem::path& initialDirectory,
+	std::span<WCHAR> buffer
+)
 {
-	if ( nullptr == strFolderName ) {
+	auto strFolderName = buffer.data();
+	auto nMaxCount = buffer.size();
+
+	if (!strFolderName || !nMaxCount) {
 		return FALSE;
 	}
 
@@ -56,13 +68,13 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 
 	// 初期フォルダーを設定
 	ComPtr<IShellItem> psiFolder;
-	hres = SHCreateItemFromParsingName( pszInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
+	hres = SHCreateItemFromParsingName(initialDirectory.c_str(), nullptr, IID_PPV_ARGS(&psiFolder));
 	if ( SUCCEEDED(hres) ) {
 		pDialog->SetFolder( psiFolder.Get() );
 	}
 
 	// タイトル文字列を設定
-	hres = pDialog->SetTitle( pszTitle );
+	hres = pDialog->SetTitle( title.c_str() );
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}

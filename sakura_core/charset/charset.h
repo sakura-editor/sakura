@@ -89,8 +89,9 @@ inline bool IsValidCodeOrCPTypeExceptSJIS(int code)
 
 class CCodeTypeName{
 public:
-	CCodeTypeName(ECodeType eCodeType) : m_eCodeType(eCodeType) { InitCodeSet(); }
-	CCodeTypeName(int eCodeType) : m_eCodeType((ECodeType)eCodeType) { InitCodeSet(); }
+	explicit CCodeTypeName(ECodeType eCodeType);
+	explicit CCodeTypeName(size_t nCodeType);
+
 	ECodeType GetCode() const { return m_eCodeType; }
 	LPCWSTR	Normal() const;
 	LPCWSTR	Short() const;
@@ -106,11 +107,13 @@ private:
 //                      コンボボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CCodeTypesForCombobox{
+class CCodeTypesForCombobox {
 public:
-	CCodeTypesForCombobox() { InitCodeSet(); }
-	int			GetCount() const;
-	ECodeType	GetCode(int nIndex) const;
-	LPCWSTR		GetName(int nIndex) const;
+	CCodeTypesForCombobox();
+
+	size_t		GetCount() const noexcept;
+	ECodeType	GetCode(size_t nIndex) const;
+	LPCWSTR		GetName(size_t nIndex) const;
 };
+
 #endif /* SAKURA_CHARSET_CD85F6F9_5224_44A2_9BC4_5F631B467701_H_ */

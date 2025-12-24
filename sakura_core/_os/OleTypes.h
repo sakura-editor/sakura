@@ -30,11 +30,11 @@ struct SysString
 	SysString()                         { Data = nullptr; }
 	SysString(const SysString &Source)  { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); }
 	SysString(BSTR &Source)             { Data = ::SysAllocStringLen(Source, SysStringLen(Source)); }
-	SysString(const wchar_t *S, int L)  { Data = ::SysAllocStringLen(S, L); }
-	SysString(const char *S, int L)
+	SysString(const wchar_t *S, size_t L)  { Data = ::SysAllocStringLen(S, UINT(L)); }
+	SysString(const char *S, size_t L)
 	{ 
 		wchar_t *buf = new wchar_t[L + 1];
-		int L2 = ::MultiByteToWideChar(CP_ACP, 0, S, L, buf, L);
+		int L2 = ::MultiByteToWideChar(CP_ACP, 0, S, int(L), buf, int(L));
 		Data = ::SysAllocStringLen(buf, L2); 
 		delete[] buf;
 	}

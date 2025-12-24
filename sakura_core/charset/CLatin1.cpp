@@ -71,7 +71,7 @@ int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 		}
 	}
 
-	return pw - reinterpret_cast<unsigned short*>(pDst);
+	return int(pw - reinterpret_cast<unsigned short*>(pDst));
 }
 
 /* コード変換 Latin1→Unicode */
@@ -164,7 +164,7 @@ int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned char*>(pDst);
+	return int(pw - reinterpret_cast<unsigned char*>(pDst));
 }
 
 /* コード変換 Unicode→Latin1 */

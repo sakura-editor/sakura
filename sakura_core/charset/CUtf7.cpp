@@ -31,7 +31,7 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 		}
 		++pw;
 	}
-	return pw - pDst;
+	return int(pw - pDst);
 }
 
 /*!
@@ -117,7 +117,7 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 		*pbError = berror;
 	}
 
-	return pw - pDst;
+	return int(pw - pDst);
 }
 
 //! UTF-7→Unicodeコード変換
@@ -194,7 +194,7 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 
 	delete [] psrc;
 
-	return pw - pDst;
+	return int(pw - pDst);
 }
 
 int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstLen )
@@ -214,7 +214,7 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nD
 				break;
 			}
 		}
-		pw += _UniToUtf7SetD_block( pr_base, pr-pr_base, pw );
+		pw += _UniToUtf7SetD_block( pr_base, int(pr - pr_base), pw );
 		pr_base = pr;
 
 		if( *pr == L'+' ){
@@ -231,12 +231,12 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nD
 					break;
 				}
 			}
-			pw += _UniToUtf7SetB_block( pr_base, pr-pr_base, pw );
+			pw += _UniToUtf7SetB_block( pr_base, int(pr - pr_base), pw );
 		}
 		pr_base = pr;
 	}while( pr_base < pr_end );
 
-	return pw - pDst;
+	return int(pw - pDst);
 }
 
 /*! コード変換 Unicode→UTF-7

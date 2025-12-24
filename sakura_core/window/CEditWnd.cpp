@@ -1192,9 +1192,9 @@ LRESULT CEditWnd::DispatchEvent(
 				TEXTMETRIC tm;
 				::GetTextMetrics( lpdis->hDC, &tm );
 				int y = ( lpdis->rcItem.bottom - lpdis->rcItem.top - tm.tmHeight + 1 ) / 2 + lpdis->rcItem.top;
-				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, L"REC", wcslen( L"REC" ) );
+				::TextOutW(lpdis->hDC, lpdis->rcItem.left, y, PSZ_ARGS(L"REC"));
 				if( COLOR_BTNTEXT == nColor ){
-					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, L"REC", wcslen( L"REC" ) );
+					::TextOutW(lpdis->hDC, lpdis->rcItem.left + 1, y, PSZ_ARGS(L"REC"));
 				}
 			}
 			return 0;
@@ -1616,7 +1616,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return nRet;
 	case MYWM_ALLOWACTIVATE:
-		::AllowSetForegroundWindow(wParam);
+		::AllowSetForegroundWindow((DWORD)wParam);
 		return 0L;
 
 	case MYWM_GETFILEINFO:
@@ -3008,7 +3008,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowSize ){		/* ウィンドウサイズ継承をするか */
 			if( wParam == SIZE_MAXIMIZED ){					/* 最大化はサイズを記録しない */
 				if( m_pShareData->m_Common.m_sWindow.m_nWinSizeType != (int)wParam ){
-					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = wParam;
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = (int)wParam;
 				}
 			}else{
 				// Aero Snapの縦方向最大化状態で終了して次回起動するときは元のサイズにする必要があるので、
@@ -3025,7 +3025,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCX != rcWin.right - rcWin.left ||
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCY != rcWin.bottom - rcWin.top
 				){
-					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = wParam;
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = (int)wParam;
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCX = rcWin.right - rcWin.left;
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCY = rcWin.bottom - rcWin.top;
 				}
@@ -3039,7 +3039,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		}
 	}
 
-	m_nWinSizeType = wParam;	/* サイズ変更のタイプ */
+	m_nWinSizeType = (int)wParam;	/* サイズ変更のタイプ */
 
 	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
 	hwndToolBar = (nullptr != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();
@@ -3095,7 +3095,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			nStArr[nStArrNum - 1] -= nSbxWidth;
 		}
 		for( i = nStArrNum - 1; i > 0; i-- ){
-			::GetTextExtentPoint32( hdc, pszLabel[i], wcslen( pszLabel[i] ), &sz );
+			::GetTextExtentPoint32W(hdc, PSZ_ARGS(pszLabel[i]), &sz);
 			nStArr[i - 1] = nStArr[i] - ( sz.cx + nBdrWidth );
 		}
 
@@ -3425,7 +3425,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 								STGMEDIUM M;
 								const wchar_t* pFilePath = GetDocument()->m_cDocFile.GetFilePath();
-								int Len = wcslen(pFilePath);
+								auto Len = int(wcslen(pFilePath));
 								M.tymed          = TYMED_HGLOBAL;
 								M.pUnkForRelease = nullptr;
 								M.hGlobal        = GlobalAlloc(GMEM_MOVEABLE, (Len+1)*sizeof(wchar_t));
@@ -3917,7 +3917,7 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 
 	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
 	if( msg ){
-		int len = wcslen( msg );
+		auto len = int(wcslen(msg));
 		wcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
 		if( len < MENUBAR_MESSAGE_MAX_LEN ){
 			wmemset( m_pszMenubarMessage + len, L' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
@@ -4191,8 +4191,10 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 
 //2007.09.08 kobake 追加
 //!ツールチップのテキストを取得
-void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, int nID) const
+void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, UINT_PTR idFrom) const
 {
+	const auto nID = int(idFrom);
+
 	// 機能文字列の取得 -> pszBuf
 	GetDocument()->m_cFuncLookup.Funccode2Name( nID, pszBuf, nBufCount );
 	size_t nLen = wcsnlen( pszBuf, nBufCount );
@@ -4211,7 +4213,7 @@ void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, int nID) const
 	if( 0 < nAssignedKeyNum ){
 		for( int j = 0; j < nAssignedKeyNum; ++j ){
 			const WCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
-			int nKeyLen = wcslen(pszKey);
+			auto nKeyLen = int(wcslen(pszKey));
 			if ( nLen + 9 + nKeyLen < nBufCount ){
 				wcscat_s( pszBuf, nBufCount, L"\n        " );
 				wcscat_s( pszBuf, nBufCount, pszKey );

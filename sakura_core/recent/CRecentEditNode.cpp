@@ -52,7 +52,7 @@ bool CRecentEditNode::TextToDataType( EditNode* dst, LPCWSTR pszText ) const
 
 int CRecentEditNode::CompareItem( const EditNode* p1, const EditNode* p2 ) const
 {
-	return p1->m_hWnd - p2->m_hWnd;
+	return int(p1->m_hWnd - p2->m_hWnd);
 }
 
 void CRecentEditNode::CopyItem( EditNode* dst, const EditNode* src ) const

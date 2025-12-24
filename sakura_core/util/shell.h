@@ -16,13 +16,9 @@
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 /* Shell Interface系(?) */
-BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount );	/* フォルダー選択ダイアログ */
+BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, std::span<WCHAR> buffer);	/* フォルダー選択ダイアログ */
 
-template <size_t nMaxCount>
-BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR(&strFolderName)[nMaxCount])
-{
-	return SelectDir( hWnd, pszTitle, pszInitFolder, strFolderName, nMaxCount );
-}
+BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount);
 
 BOOL ResolveShortcutLink(HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath);/* ショートカット(.lnk)の解決 */
 

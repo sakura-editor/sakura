@@ -250,8 +250,8 @@ public:
 	  */
 	template<class T, std::enable_if_t<profile_data::is_supported_v<T>, std::nullptr_t> = nullptr>
 	[[nodiscard]] bool GetProfileData(
-		std::wstring_view		sectionName,	//!< [in] セクション名
-		std::wstring_view		entryKey,		//!< [in] エントリ名
+		const std::wstring&		sectionName,	//!< [in] セクション名
+		const std::wstring&		entryKey,		//!< [in] エントリ名
 		T&						tEntryValue		//!< [out] エントリ値
 	) const
 	{
@@ -266,8 +266,8 @@ public:
 	 */
 	template<class T, std::enable_if_t<profile_data::is_supported_v<T>, std::nullptr_t> = nullptr>
 	void SetProfileData(
-		std::wstring_view		sectionName,	//!< [in] セクション名
-		std::wstring_view		entryKey,		//!< [in] エントリ名
+		const std::wstring&		sectionName,	//!< [in] セクション名
+		const std::wstring&		entryKey,		//!< [in] エントリ名
 		const T					tEntryValue		//!< [in] エントリ値
 	)
 	{
@@ -285,8 +285,8 @@ public:
 	 */
 	template <class T> //T=={int, bool, WCHAR, KEYCODE, StringBufferW}
 	bool IOProfileData(
-		std::wstring_view		sectionName,	//!< [in] セクション名
-		std::wstring_view		entryKey,		//!< [in] エントリ名
+		const std::wstring&		sectionName,	//!< [in] セクション名
+		const std::wstring&		entryKey,		//!< [in] エントリ名
 		T&						tEntryValue		//!< [in,out] エントリ値
 	)
 	{
@@ -308,8 +308,8 @@ public:
 	 */
 	template <int N>
 	bool IOProfileData(
-		std::wstring_view		sectionName,	//!< [in] セクション名
-		std::wstring_view		entryKey,		//!< [in] エントリ名
+		const std::wstring&		sectionName,	//!< [in] セクション名
+		const std::wstring&		entryKey,		//!< [in] エントリ名
 		StaticString<N>&		szEntryValue	//!< [in,out] エントリ値
 	)
 	{
@@ -324,8 +324,8 @@ public:
 	 * @retval false 設定値を読み込めなかった
 	 */
 	bool IOProfileData(
-		std::wstring_view		sectionName,	//!< [in] セクション名
-		std::wstring_view		entryKey,		//!< [in] エントリ名
+		const std::wstring&		sectionName,	//!< [in] セクション名
+		const std::wstring&		entryKey,		//!< [in] エントリ名
 		StringBufferW&&			refEntryValue	//!< [in,out] エントリ値
 	);
 };

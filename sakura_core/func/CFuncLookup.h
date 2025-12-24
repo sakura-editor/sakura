@@ -56,10 +56,10 @@ public:
 	}
 
 	EFunctionCode Pos2FuncCode( int category, int position, bool bGetUnavailable = true ) const;	// 2007.10.31 ryoji bGetUnavailableパラメータ追加
-	bool Pos2FuncName( int category, int position, WCHAR* ptr, int bufsize ) const;
-	bool Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const ;
+	bool Pos2FuncName( int category, int position, WCHAR* ptr, size_t size ) const;
+	bool Funccode2Name( int funccode, WCHAR* ptr, size_t size ) const ;
 	const WCHAR* Category2Name( int category ) const;
-	const WCHAR* Custmenu2Name( int index, WCHAR buf[], int bufSize ) const;
+	const WCHAR* Custmenu2Name( int index, LPWSTR buf, size_t size ) const;
 
 	void SetCategory2Combo( HWND hComboBox ) const ;
 	void SetListItem( HWND hListBox, int category ) const;

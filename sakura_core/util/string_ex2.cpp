@@ -56,7 +56,7 @@ int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith)
 		*out = *org;
 	}
 	*out = L'\0';
-	return out - buf;
+	return int(out - buf);
 }
 
 /*!	文字列が指定された文字で終わっていなかった場合には
@@ -71,7 +71,7 @@ int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith)
 	@date 2003.06.24 Moca 新規作成
 */
 int AddLastChar( WCHAR* pszPath, int nMaxLen, WCHAR c ){
-	int pos = wcslen( pszPath );
+	auto pos = int(wcslen(pszPath));
 	// 何もないときは\を付加
 	if( 0 == pos ){
 		if( nMaxLen <= pos + 1 ){
@@ -160,17 +160,17 @@ const wchar_t* GetNextLineW(
 }
 
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
-int LimitStringLengthW(
-	const wchar_t*	pszData,		//!< [in]
-	int				nDataLength,	//!< [in]
-	int				nLimitLength,	//!< [in]
+size_t LimitStringLengthW(
+	LPCWSTR			pszData,		//!< [in]
+	size_t			nDataLength,	//!< [in]
+	size_t			nLimitLength,	//!< [in]
 	CNativeW&		cmemDes			//!< [out]
 )
 {
-	int n=nDataLength;
+	size_t n = nDataLength;
 	if(n>nLimitLength){
-		int i = 0;
-		int charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
+		size_t i = 0;
+		size_t charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
 		for(; i + charSize <= nLimitLength;){
 			i += charSize;
 			charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
@@ -187,7 +187,7 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 	int		j;
 	int		nLineLen;
 	wchar_t	szNumber[32];
-	nLineLen = wcslen( pLine );
+	nLineLen = (int)wcslen( pLine );
 	i = 0;
 	for( ; i < nLineLen; ++i ){
 		if( pLine[i] >= L'0' &&

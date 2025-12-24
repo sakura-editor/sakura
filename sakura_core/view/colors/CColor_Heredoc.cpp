@@ -33,7 +33,7 @@ void CColor_Heredoc::SetStrategyColorInfo(const CLayoutColorInfo* colorInfo)
 			return;
 		}
 		m_pszId = info->m_id.c_str();
-		m_nSize = (int)info->m_id.size();
+		m_nSize = info->m_id.size();
 	}
 }
 
@@ -102,31 +102,31 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 
 bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 {
-	if( 0 == this->m_nCOMMENTEND ){
+	if (!m_nCOMMENTEND) {
 		if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
 		 && nPos == 0 && m_nSize <= cStr.GetLength()
 		 && wmemcmp(cStr.GetPtr(), m_pszId, m_nSize) == 0 ){
 			if( m_nSize== cStr.GetLength() ){
-				this->m_nCOMMENTEND = m_nSize;
+				m_nCOMMENTEND = m_nSize;
 				return false;
 			}else{
-				int i = m_nSize;
+				size_t i = m_nSize;
 				if( i + 1 < cStr.GetLength() && cStr[i] == L';' && WCODE::IsLineDelimiter(cStr[i+1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID;
-					this->m_nCOMMENTEND = i;
+					m_nCOMMENTEND = i;
 					return false;
 				}else if( m_nSize < cStr.GetLength() && WCODE::IsLineDelimiter(cStr[m_nSize], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID
-					this->m_nCOMMENTEND = m_nSize;
+					m_nCOMMENTEND = m_nSize;
 					return false;
 				}
 			}
-			this->m_nCOMMENTEND = cStr.GetLength();
+			m_nCOMMENTEND = cStr.GetLength();
 		}else{
-			this->m_nCOMMENTEND = cStr.GetLength();
+			m_nCOMMENTEND = cStr.GetLength();
 		}
 	}
-	else if( nPos == this->m_nCOMMENTEND ){
+	else if (nPos == m_nCOMMENTEND) {
 		return true;
 	}
 	return false;

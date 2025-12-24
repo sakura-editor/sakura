@@ -78,7 +78,7 @@ static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
 	// グループ比較が行われなかったときはウィンドウ比較する
 	if( s_bSort )
 		return ( ((EditNodeEx*)e1)->p->m_nIndex - ((EditNodeEx*)e2)->p->m_nIndex );	// ウィンドウ番号比較
-	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
+	return int( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -633,7 +633,7 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 
 		//インデックスを付ける。
 		//このインデックスは m_pEditArr の配列番号です。
-		(*ppEditNode)[i].m_nIndex = pNode[i].p - pShare->m_sNodes.m_pEditArr;	// ポインタ減算＝配列番号
+		(*ppEditNode)[i].m_nIndex = int(pNode[i].p - pShare->m_sNodes.m_pEditArr);	// ポインタ減算＝配列番号
 	}
 
 	delete []pNode;

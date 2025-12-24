@@ -107,7 +107,7 @@ void CHokanMgr::Hide( void )
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-int CHokanMgr::Search(
+size_t CHokanMgr::Search(
 	POINT*			ppoWin,
 	int				nWinHeight,
 	int				nColumnWidth,
@@ -306,7 +306,7 @@ int CHokanMgr::Search(
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 
 //	2003.06.25 Moca 他のメソッドで使っていないので、とりあえず削除しておく
-	int kouhoNum = m_vKouho.size();
+	const auto kouhoNum = m_vKouho.size();
 	m_vKouho.clear();
 	return kouhoNum;
 }
@@ -319,7 +319,7 @@ void CHokanMgr::HokanSearchByKeyword(
 	const CEditView* pcEditView = reinterpret_cast<const CEditView*>(m_lParam);
 	const STypeConfig& type = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute();
 	CKeyWordSetMgr& keywordMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
-	const int nKeyLen = wcslen(pszCurWord);
+	const auto nKeyLen = int(wcslen(pszCurWord));
 	for( int n = 0; n < MAX_KEYWORDSET_PER_TYPE; n++ ){
 		int kwdset = type.m_nKeyWordSetIdx[n];
 		if( kwdset == -1 ){

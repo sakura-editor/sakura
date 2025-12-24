@@ -53,9 +53,9 @@ void CFuncInfoArr::Empty( void )
 
 /* 0<=の指定番号のデータを返す */
 /* データがない場合はNULLを返す */
-CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
+CFuncInfo* CFuncInfoArr::GetAt(size_t nIdx) noexcept
 {
-	if( nIdx >= m_nFuncInfoArrNum ){
+	if (m_nFuncInfoArrNum <= nIdx) {
 		return nullptr;
 	}
 	return m_ppcFuncInfoArr[nIdx];
@@ -133,7 +133,7 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 		std::pair<int, std::wstring> pair(info, s);
 		m_AppendTextArr.insert( pair );
 		if( m_nAppendTextLenMax < (int)s.length() ){
-			m_nAppendTextLenMax = s.length();
+			m_nAppendTextLenMax = (int)s.length();
 		}
 	}else{
 		// キーが存在する場合、値を書き換える

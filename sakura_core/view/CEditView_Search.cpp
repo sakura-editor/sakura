@@ -103,7 +103,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	}
 	/* 途中まで一致を使う場合 */
 	if(m_pTypeData->m_bUseKeyHelpPrefix)
-		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
+		nCmpLen = (int)wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
 	for(int i =0 ; i < m_pTypeData->m_nKeyHelpNum; i++){	//最大数：MAX_KEYHELP_FILE
 		if( m_pTypeData->m_KeyHelpArr[i].m_bUse ){

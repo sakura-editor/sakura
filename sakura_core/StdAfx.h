@@ -85,6 +85,7 @@
 #include <climits>
 #include <clocale>
 #include <cmath>
+#include <concepts>
 #include <condition_variable>
 #include <cstdarg>
 #include <cstdint>

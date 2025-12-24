@@ -69,7 +69,7 @@ int CBregexp::CheckPattern(const wchar_t* szPattern)
 	const wchar_t *szPatternEnd;				//!< 検索パターンの終端
 
 	m_ePatType = PAT_NORMAL;	//!<　ノーマルは確定
-	nLen = wcslen( szPattern );
+	nLen = (int)wcslen( szPattern );
 	szPatternEnd = szPattern + nLen;
 	// パターン種別の設定
 	if( BMatch( TOP_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
@@ -134,7 +134,7 @@ wchar_t* CBregexp::MakePatternSub(
 	wchar_t *szNPattern;		//!< ライブラリ渡し用の検索パターン文字列
 	wchar_t *pPat;				//!< パターン文字列操作用のポインタ
 
-	nLen = wcslen(szPattern);
+	nLen = (int)wcslen(szPattern);
 	if (szPattern2 == nullptr) {
 		// 検索(BMatch)時
 		szNPattern = new wchar_t[ nLen + 15 ];	//	15：「s///option」が余裕ではいるように。
@@ -143,7 +143,7 @@ wchar_t* CBregexp::MakePatternSub(
 	}
 	else {
 		// 置換(BSubst)時
-		nLen2 = wcslen(szPattern2) + wcslen(szAdd2);
+		nLen2 = int(wcslen(szPattern2) + wcslen(szAdd2));
 		szNPattern = new wchar_t[ nLen + nLen2 + 15 ];
 		pPat = szNPattern;
 		*pPat++ = L's';

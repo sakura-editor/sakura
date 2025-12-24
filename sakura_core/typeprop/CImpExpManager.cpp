@@ -378,7 +378,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	//  アウトライン解析方法
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szKeyData))) {
-		nDataLen = wcslen( szKeyData );
+		nDataLen = (int)wcslen( szKeyData );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
@@ -399,7 +399,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	}
 	//  スマートインデント
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szKeyData))) {
-		nDataLen = wcslen( szKeyData );
+		nDataLen = (int)wcslen( szKeyData );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {

@@ -55,12 +55,12 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
 		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""で挟まれた C:\～, \\～ にマッチするパターン
 		int(std::size(pType->m_RegexKeywordList)) - 1 );
-	keywordPos += wcslen(&pKeyword[keywordPos]) + 1;
+	keywordPos += int(wcslen(&pKeyword[keywordPos]) + 1);
 	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
 	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
 		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\～, \\～ にマッチするパターン
 		int(std::size(pType->m_RegexKeywordList)) - keywordPos - 1 );
-	keywordPos += wcslen(&pKeyword[keywordPos]) + 1;
+	keywordPos += int(wcslen(&pKeyword[keywordPos]) + 1);
 	pKeyword[keywordPos] = L'\0';
 }
 
@@ -78,7 +78,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 
 	//見出し記号
 	const wchar_t*	pszStarts = GetDllShareData().m_Common.m_sFormat.m_szMidashiKigou;
-	int				nStartsLen = wcslen( pszStarts );
+	auto nStartsLen = int(wcslen(pszStarts));
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダーは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）
@@ -260,7 +260,7 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 				&ptPos
 			);
 			
-			int level = pPos - pLine;
+			int level = int(pPos - pLine);
 
 			// 2003.06.27 Moca 階層が2段位上深くなるときは、無題の要素を追加
 			if( levelPrev < level && level != levelPrev + 1  ){

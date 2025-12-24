@@ -172,7 +172,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 		const WCHAR* szLine = strLine.c_str(); // '\0'終端文字列を取得
 		using namespace WCODE;
 
-		int nLineLen = strLine.length();
+		auto nLineLen = (int)strLine.length();
 		// 先行する空白をスキップ
 		for( i = 0; i < nLineLen; ++i ){
 			if( szLine[i] != SPACE && szLine[i] != TAB ){

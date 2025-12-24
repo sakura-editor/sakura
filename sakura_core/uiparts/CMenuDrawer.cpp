@@ -681,12 +681,12 @@ CMenuDrawer::CMenuDrawer()
 		);
 	}
 
-	m_nMyButtonFixSize = m_tbMyButton.size();
+	m_nMyButtonFixSize = (int)m_tbMyButton.size();
 	
 	// 2010.06.25 Moca 専用アイコンのない外部マクロがあれば、同じアイコンを共有して登録
 	if( MAX_CUSTMACRO_ICO < MAX_CUSTMACRO ){
-		const int nAddFuncs = MAX_CUSTMACRO - MAX_CUSTMACRO_ICO;
-		const int nBaseIndex = m_tbMyButton.size();
+		const auto nAddFuncs = int(MAX_CUSTMACRO - MAX_CUSTMACRO_ICO);
+		const auto nBaseIndex = (int)m_tbMyButton.size();
 		m_tbMyButton.resize( m_tbMyButton.size() + nAddFuncs );
 		for( int k = 0; k < nAddFuncs; k++ ){
 			const int macroFuncCode = F_USERMACRO_0 + MAX_CUSTMACRO_ICO + k;
@@ -698,7 +698,7 @@ CMenuDrawer::CMenuDrawer()
 		}
 	}
 	
-	m_nMyButtonNum = m_tbMyButton.size();
+	m_nMyButtonNum = (int)m_tbMyButton.size();
 	return;
 }
 
@@ -778,7 +778,7 @@ void CMenuDrawer::MyAppendMenu(
 	WCHAR		szKey[10];
 	int			nFlagAdd = 0;
 
-	if( nForceIconId == -1 ) nForceIconId = nFuncId;	//お気に入り	//@@@ 2003.04.08 MIK
+	if( nForceIconId == -1 ) nForceIconId = int(nFuncId);	//お気に入り	//@@@ 2003.04.08 MIK
 
 	szLabel[0] = L'\0';
 	if( nullptr != pszLabel ){
@@ -792,7 +792,7 @@ void CMenuDrawer::MyAppendMenu(
 			m_hInstance,
 			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
-			nFuncId,
+			int(nFuncId),
 			szLabel,
 			szKey,
 			bAddKeyStr,
@@ -803,7 +803,7 @@ void CMenuDrawer::MyAppendMenu(
 		{
 			MyMenuItemInfo item;
 			item.m_nBitmapIdx = -1;
-			item.m_nFuncId = nFuncId;
+			item.m_nFuncId = int(nFuncId);
 			item.m_cmemLabel.SetString( szLabel );
 			// メニュー項目をオーナー描画にして、アイコンを表示する
 			// 2010.03.29 アクセスキーの分を詰めるためいつもオーナードローにする。ただしVista未満限定
@@ -841,7 +841,7 @@ void CMenuDrawer::MyAppendMenu(
 	if( MF_GRAYED		& ( nFlag | nFlagAdd ) ) mii.fState |= MFS_GRAYED;
 	if( MF_CHECKED		& ( nFlag | nFlagAdd ) ) mii.fState |= MFS_CHECKED;
 
-	mii.wID = nFuncId;
+	mii.wID = UINT(nFuncId);
 	mii.hSubMenu = (nFlag&MF_POPUP)?((HMENU)nFuncId):nullptr;
 	mii.hbmpChecked = nullptr;
 	mii.hbmpUnchecked = nullptr;
@@ -1546,7 +1546,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 				// このウィンドウで未登録
 				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb,TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
-				for (i = m_tbMyButton.size(); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
+				for (i = (int)m_tbMyButton.size(); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
 				}
@@ -1568,7 +1568,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			if (m_tbMyButton.size() < (size_t)m_pShareData->m_maxTBNum) {
 				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb, TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
-				for (i = m_tbMyButton.size(); i < m_pShareData->m_maxTBNum; i++) {
+				for (i = (int)m_tbMyButton.size(); i < m_pShareData->m_maxTBNum; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
 				}

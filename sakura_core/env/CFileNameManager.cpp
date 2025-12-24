@@ -206,7 +206,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			}
 			// メタ文字列っぽい
 			else if( nullptr != (pStr = wcschr( ps, L'%' ) )){
-				nMetaLen = pStr - ps;
+				nMetaLen = int(pStr - ps);
 				if( nMetaLen < _MAX_PATH ){
 					wmemcpy( szMeta, ps, nMetaLen );
 					szMeta[nMetaLen] = L'\0';
@@ -241,7 +241,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 					pStr = _wgetenv( szMeta );
 					// 環境変数
 					if( nullptr != pStr ){
-						nPathLen = wcslen( pStr );
+						nPathLen = (int)wcslen( pStr );
 						if( nPathLen < _MAX_PATH ){
 							wcscpy( szPath, pStr );
 						}else{
@@ -271,7 +271,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			}
 
 			// ロングファイル名にする
-			nPathLen = wcslen( szPath );
+			nPathLen = (int)wcslen( szPath );
 			LPWSTR pStr2 = szPath;
 			if( nPathLen < _MAX_PATH && 0 != nPathLen ){
 				if( FALSE != GetLongFileName( szPath, szMeta ) ){
@@ -361,7 +361,7 @@ bool CFileNameManager::GetMenuFullLabel(
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
 		//pfi->m_szGrepKeyShort → cmemDes
 		CNativeW	cmemDes;
-		int nGrepKeyLen = wcslen(pfi->m_szGrepKey);
+		auto nGrepKeyLen = int(wcslen(pfi->m_szGrepKey));
 		const int GREPKEY_LIMIT_LEN = 64;
 		// CSakuraEnvironment::ExpandParameter では 32文字制限
 		// メニューは 64文字制限

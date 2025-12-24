@@ -539,10 +539,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	if( !cProfile.IsReadingMode() ){
 		int	nDummy;
 		int	nCharChars;
-		nDummy = wcslen( common.m_sBackup.m_szBackUpFolder );
+		nDummy = (int)wcslen( common.m_sBackup.m_szBackUpFolder );
 		/* フォルダーの最後が「半角かつ'\\'」でない場合は、付加する */
-		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
-			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
+		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ));
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
 			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
@@ -552,10 +551,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	if( cProfile.IsReadingMode() ){
 		int	nDummy;
 		int	nCharChars;
-		nDummy = wcslen( common.m_sBackup.m_szBackUpFolder );
+		nDummy = (int)wcslen( common.m_sBackup.m_szBackUpFolder );
 		/* フォルダーの最後が「半角かつ'\\'」でない場合は、付加する */
-		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
-			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
+		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ) );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
 			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
@@ -1706,7 +1704,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
 						}
 						if( pKeyword[nPos] ){
-							nPos += wcslen(&pKeyword[nPos]) + 1;
+							nPos += int(wcslen(&pKeyword[nPos]) + 1);
 						}
 					}
 				}else{
@@ -1721,7 +1719,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
 					&pKeyword[nPos]);
 				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-				nPos += wcslen(&pKeyword[nPos]) + 1;
+				nPos += (int)wcslen(&pKeyword[nPos]) + 1;
 			}
 		}
 		if( cProfile.IsReadingMode() ){

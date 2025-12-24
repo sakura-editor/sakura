@@ -82,8 +82,10 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 /////////////////////////////////// 以下はコマンド群 (Oct. 17, 2000 jepro note) ///////////////////////////////////////////
 
 /*! カーソル上移動 */
-int CViewCommander::Command_UP( bool bSelect, bool bRepeat, int lines )
+int CViewCommander::Command_UP( bool bSelect, bool bRepeat, LPARAM lparam1 )
 {
+	const auto lines = int(lparam1);
+
 	//	From Here Oct. 24, 2001 genta
 	if( lines != 0 ){
 		GetCaret().Cursor_UPDOWN( CLayoutInt(lines), FALSE );
@@ -574,7 +576,7 @@ try_again:;
 */
 void CViewCommander::Command_GOLINETOP(
 	bool	bSelect,	//!< [in] 選択の有無。true: 選択しながら移動。false: 選択しないで移動。
-	int		lparam		/*!< [in] マクロから使用する拡張フラグ
+	LPARAM	lparam		/*!< [in] マクロから使用する拡張フラグ
 								  @li 0: キー操作と同一(default)
 								  @li 1: カーソル位置に関係なく行頭に移動(合成可)
 								  @li 4: 選択して移動(合成可)
@@ -655,8 +657,10 @@ void CViewCommander::Command_GOLINETOP(
 /*! 行末に移動(折り返し単位)
 	@praram nOption	0x08 改行単位(合成可)
 */
-void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection, int nOption )
+void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection, LPARAM lParam )
 {
+	auto nOption = int(lParam);
+
 	if( nOption & 4 ){
 		bSelect = true;
 	}
@@ -1183,65 +1187,65 @@ void CViewCommander::Command_AUTOSCROLL()
 	}
 }
 
-void CViewCommander::Command_WHEELUP(int zDelta)
+void CViewCommander::Command_WHEELUP(LPARAM zDelta)
 {
-	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELUP );
 }
 
-void CViewCommander::Command_WHEELDOWN(int zDelta)
+void CViewCommander::Command_WHEELDOWN(LPARAM zDelta)
 {
-	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = -1 * (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELDOWN );
 }
 
-void CViewCommander::Command_WHEELLEFT(int zDelta)
+void CViewCommander::Command_WHEELLEFT(LPARAM zDelta)
 {
-	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = -1 * (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELLEFT );
 }
 
-void CViewCommander::Command_WHEELRIGHT(int zDelta)
+void CViewCommander::Command_WHEELRIGHT(LPARAM zDelta)
 {
-	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELRIGHT );
 }
 
-void CViewCommander::Command_WHEELPAGEUP(int zDelta)
+void CViewCommander::Command_WHEELPAGEUP(LPARAM zDelta)
 {
-	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELPAGEUP );
 }
 
-void CViewCommander::Command_WHEELPAGEDOWN(int zDelta)
+void CViewCommander::Command_WHEELPAGEDOWN(LPARAM zDelta)
 {
-	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = -1 * (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELPAGEDOWN );
 }
 
-void CViewCommander::Command_WHEELPAGELEFT(int zDelta)
+void CViewCommander::Command_WHEELPAGELEFT(LPARAM zDelta)
 {
-	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = -1 * (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELPAGELEFT );
 }
 
-void CViewCommander::Command_WHEELPAGERIGHT(int zDelta)
+void CViewCommander::Command_WHEELPAGERIGHT(LPARAM zDelta)
 {
-	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	int zDelta2 = (zDelta == 0 ? 120 : int(zDelta));
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELPAGERIGHT );

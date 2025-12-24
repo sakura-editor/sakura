@@ -29,7 +29,7 @@ class CDlgInput1
 {
 public:
 	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const WCHAR* pszTitle,
-				  const WCHAR* pszMessage, int nMaxTextLen, WCHAR* pszText );	/* モードレスダイアログの表示 */
+				  const WCHAR* pszMessage, size_t bufferSize, WCHAR* pszText );
 
 	/*
 	||  Attributes & Operations

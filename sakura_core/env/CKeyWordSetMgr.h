@@ -83,10 +83,10 @@ public:
 	//@{
 	///	@name キーワード操作
 	int GetKeyWordNum(int nIdx);	/* ｎ番目のセットのキーワードの数を返す */
-	const wchar_t* GetKeyWord(int nIdx, int nIdx2);	/* ｎ番目のセットのｍ番目のキーワードを返す */
-	const wchar_t* UpdateKeyWord( int nIdx, int nIdx2, const WCHAR* pszKeyWord);	/* ｎ番目のセットのｍ番目のキーワードを編集 */
+	const wchar_t* GetKeyWord(int nIdx, LPARAM nIdx2);	/* ｎ番目のセットのｍ番目のキーワードを返す */
+	const wchar_t* UpdateKeyWord( int nIdx, LPARAM nIdx2, const WCHAR* pszKeyWord);	/* ｎ番目のセットのｍ番目のキーワードを編集 */
 	int AddKeyWord( int nIdx, const wchar_t* pszKeyWord);	/* ｎ番目のセットにキーワードを追加 */
-	int DelKeyWord( int nIdx, int nIdx2);			/* ｎ番目のセットのｍ番目のキーワードを削除 */
+	int DelKeyWord( int nIdx, LPARAM nIdx2);			/* ｎ番目のセットのｍ番目のキーワードを削除 */
 	bool CanAddKeyWord(int nIdx);	//!< キーワードが追加可能か
 	//@}
 	

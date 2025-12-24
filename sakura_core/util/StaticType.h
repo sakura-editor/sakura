@@ -17,24 +17,41 @@
 //! ヒープを用いないvector
 //2007.09.23 kobake 作成。
 template <class ELEMENT_TYPE, int MAX_SIZE, class SET_TYPE = const ELEMENT_TYPE&>
-class StaticVector{
+class StaticVector {
 public:
 	//型
-	typedef ELEMENT_TYPE ElementType;
+	using ElementType = ELEMENT_TYPE;
+
+private:
+	using ArrayType = std::array<ElementType, MAX_SIZE>;
 
 public:
+	static int max_size() noexcept { return MAX_SIZE; }
+
+	StaticVector() = default;
+
+	explicit StaticVector(std::span<ELEMENT_TYPE> source) noexcept
+		: m_nCount(static_cast<int>(std::size(source)))
+		, m_aElements(source)
+	{
+	}
+
 	//属性
-	int size() const{ return m_nCount; }
-	int max_size() const{ return MAX_SIZE; }
+	int size() const noexcept { return m_nCount; }
+
+	auto begin() noexcept { return m_aElements.begin(); }
+	auto end() noexcept { return m_aElements.begin() + m_nCount; }
+	auto begin() const noexcept { return m_aElements.begin(); }
+	auto end() const noexcept { return m_aElements.begin() + m_nCount; }
 
 	//要素アクセス
-	ElementType&       operator[](int nIndex)
+	ElementType& operator[](size_t nIndex) noexcept
 	{
 		assert(nIndex<MAX_SIZE);
 		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
-	const ElementType& operator[](int nIndex) const
+	const ElementType& operator[](size_t nIndex) const noexcept
 	{
 		assert(nIndex<MAX_SIZE);
 		assert_warning(nIndex<m_nCount);
@@ -42,7 +59,15 @@ public:
 	}
 
 	//操作
-	void clear(){ m_nCount=0; }
+	void clear() noexcept { m_nCount=0; }
+	template<typename ... Args>
+	void emplace_back(Args ...args)
+	{
+		if (MAX_SIZE <= m_nCount) {
+			throw std::out_of_range("m_nCount is out of range.");
+		}
+		m_aElements[m_nCount++] = ElementType(args...);
+	}
 	void push_back(SET_TYPE e)
 	{
 		assert(m_nCount<MAX_SIZE);
@@ -51,15 +76,16 @@ public:
 		}
 		m_aElements[m_nCount++] = e;
 	}
-	void resize(int nNewSize)
+	void resize(size_t nNewSize)
 	{
-		assert(0 <= nNewSize);
-		assert(nNewSize <= MAX_SIZE);
-		m_nCount = nNewSize;
+		if (size_t(MAX_SIZE) <= nNewSize) {
+			throw std::out_of_range("nNewSize is out of range.");
+		}
+		m_nCount = static_cast<int>(nNewSize);
 	}
 	
 	//! 要素数が0でも要素へのポインタを取得
-	ElementType*  dataPtr(){ return m_aElements;}
+	ElementType* dataPtr() noexcept { return &m_aElements.front();}
 
 	//特殊
 	int& _GetSizeRef(){ return m_nCount; }
@@ -72,8 +98,8 @@ public:
 	}
 
 private:
-	int         m_nCount;
-	ElementType m_aElements[MAX_SIZE];
+	int         m_nCount = 0;
+	ArrayType	m_aElements{};
 };
 
 //! ヒープを用いない文字列クラス

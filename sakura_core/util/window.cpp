@@ -246,8 +246,7 @@ bool CTextWidthCalc::SetTextWidthIfMax(LPCWSTR pszText)
 
 bool CTextWidthCalc::SetTextWidthIfMax(LPCWSTR pszText, int extCx)
 {
-	SIZE size;
-	if( ::GetTextExtentPoint32( hDC, pszText, wcslen(pszText), &size ) ){
+	if (SIZE size; ::GetTextExtentPoint32W(hDC, PSZ_ARGS(pszText), &size)) {
 		return SetWidthIfMax(size.cx, extCx);
 	}
 	return false;
@@ -255,8 +254,7 @@ bool CTextWidthCalc::SetTextWidthIfMax(LPCWSTR pszText, int extCx)
 
 int CTextWidthCalc::GetTextWidth(LPCWSTR pszText) const
 {
-	SIZE size;
-	if( ::GetTextExtentPoint32( hDC, pszText, wcslen(pszText), &size ) ){
+	if (SIZE size; ::GetTextExtentPoint32W(hDC, PSZ_ARGS(pszText), &size)) {
 		return size.cx;
 	}
 	return 0;

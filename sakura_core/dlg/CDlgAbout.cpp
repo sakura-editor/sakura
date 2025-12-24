@@ -442,7 +442,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
-		TextOut( hdc, ::DpiScaleX( 2 ), 0, szText, wcslen( szText ) );
+		::TextOutW(hdc, ::DpiScaleX(2), 0, PSZ_ARGS(szText));
 		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
 		// フォーカス枠描画

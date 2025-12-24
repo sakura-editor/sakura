@@ -37,7 +37,7 @@ private:
 	int		GetData() override;
 
 	void	SetDataInit();
-	void	SetDataItem(int nItemIndex);
+	void	SetDataItem(LPARAM nItemIndex);
 	void	ChangeEnableItemType();
 	void	ChangeEnableAddInsert();
 	int		GetDataItem(SFileTreeItem& item);

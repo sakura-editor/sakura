@@ -412,7 +412,7 @@ void __stdcall CPPA::stdProc(
 	for(int i=0;i<ArgSize;i++){
 		if(Argument[i]){
 			tmpArguments2[i]=mbstowcs_new(Argument[i]);
-			tmpArgLengths[i]=wcslen(tmpArguments2[i]);
+			tmpArgLengths[i]=(int)wcslen(tmpArguments2[i]);
 		}
 		else{
 			tmpArguments2[i]=nullptr;

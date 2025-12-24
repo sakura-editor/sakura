@@ -1197,7 +1197,7 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFont );
 
 		SIZE size;
-		::GetTextExtentPoint32( hdc, pData->szText, ::wcslen(pData->szText), &size );
+		::GetTextExtentPoint32W(hdc, PSZ_ARGS(pData->szText), &size);
 
 		int cxIcon = CX_SMICON;
 		int cyIcon = CY_SMICON;

@@ -354,7 +354,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		else{
 			if( *pszToken == '"' ){
 				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
-				int tokenlen = wcslen( pszToken );
+				auto tokenlen = int(wcslen(pszToken));
 				if( pszToken[ tokenlen-1 ] == '"' ){	// 2009.06.14 syat 末尾の"を取り除く
 					pszToken[ tokenlen-1 ] = '\0';
 				}

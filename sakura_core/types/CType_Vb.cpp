@@ -69,7 +69,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 	// 調べるファイルがクラスモジュールのときはType、Constの挙動が異なるのでフラグを立てる
 	bClass	= false;
-	int filelen = wcslen(m_pcDocRef->m_cDocFile.GetFilePath());
+	auto filelen = int(wcslen(m_pcDocRef->m_cDocFile.GetFilePath()));
 	if ( 4 < filelen ) {
 		if ( 0 == _wcsicmp((m_pcDocRef->m_cDocFile.GetFilePath() + filelen - 4), L".cls") ) {
 			bClass	= true;

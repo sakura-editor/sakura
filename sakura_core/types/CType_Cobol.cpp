@@ -87,7 +87,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 //			MYTRACE( L"szLabel=[%ls]\n", szLabel );
 
 			pszKeyWord = L"division";
-			nKeyWordLen = wcslen( pszKeyWord );
+			nKeyWordLen = (int)wcslen( pszKeyWord );
 			bDivision = FALSE;
 			int nLen = (int)wcslen( szLabel ) - nKeyWordLen;
 			for( i = 0; i <= nLen ; ++i ){

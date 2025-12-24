@@ -75,7 +75,7 @@ static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = nul
 	if( 0 == wcsncmp(pLine, L":HWND:[", 7) ){
 		const wchar_t* pFileEnd = wcschr( pLine, L']' );
 		if( pFileEnd ){
-			const int nLen = pFileEnd - pLine + 1;
+			const int nLen = int(pFileEnd - pLine + 1);
 			int i = 7;
 			for( ; i < nLen; i++ ){
 				if( !(WCODE::Is09(pLine[i]) || (L'a' <= pLine[i] && L'f' <= pLine[i])) ){
@@ -103,7 +103,7 @@ static int GetLineColumnPos(const wchar_t* pLine)
 		// filename(1234,56)  [SJIS]: str
 		pTagEnd = wcsstr( pLine, L"]: " );
 		if( pTagEnd ){
-			int fileEnd = pTagEnd - pLine - 1;
+			int fileEnd = int(pTagEnd - pLine - 1);
 			for( ; 1 < fileEnd; fileEnd-- ){
 				if( L'[' == pLine[fileEnd] ){
 					fileEnd--;
@@ -119,7 +119,7 @@ static int GetLineColumnPos(const wchar_t* pLine)
 		}
 	}
 	if( pTagEnd ){
-		int fileEnd = pTagEnd - pLine - 1;
+		int fileEnd = int(pTagEnd - pLine - 1);
 		for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
 		if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
 		for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}

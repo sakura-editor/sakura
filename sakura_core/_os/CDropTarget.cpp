@@ -203,9 +203,9 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 
 		i++;
 		m_pData[i].cfFormat = CF_TEXT;
-		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), nullptr, 0, nullptr, nullptr );
+		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), nullptr, 0, nullptr, nullptr );
 		m_pData[i].data = new BYTE[m_pData[i].size];
-		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[i].data, m_pData[i].size, nullptr, nullptr );
+		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), (LPSTR)m_pData[i].data, int(m_pData[i].size), nullptr, nullptr );
 
 		i++;
 		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
@@ -264,7 +264,7 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 
 	lpsm->tymed = TYMED_HGLOBAL;
 	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, m_pData[i].size );
-	memcpy_raw( ::GlobalLock( lpsm->hGlobal ), m_pData[i].data, m_pData[i].size );
+	memcpy_s( ::GlobalLock( lpsm->hGlobal ), m_pData[i].size, m_pData[i].data, m_pData[i].size );
 	::GlobalUnlock( lpsm->hGlobal );
 	lpsm->pUnkForRelease = nullptr;
 
@@ -300,7 +300,7 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	if( m_pData[i].size > ::GlobalSize( lpsm->hGlobal ) )
 		return STG_E_MEDIUMFULL;
 
-	memcpy_raw( ::GlobalLock( lpsm->hGlobal ), m_pData[i].data, m_pData[i].size );
+	memcpy_s( ::GlobalLock( lpsm->hGlobal ), m_pData[i].size, m_pData[i].data, m_pData[i].size );
 	::GlobalUnlock( lpsm->hGlobal );
 
 	return S_OK;

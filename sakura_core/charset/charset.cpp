@@ -80,6 +80,17 @@ extern bool IsValidCodeType(int code)
 	return (msCodeSet.find( code ) != msCodeSet.end());
 }
 
+CCodeTypeName::CCodeTypeName(ECodeType eCodeType)
+	: m_eCodeType(eCodeType)
+{
+	InitCodeSet();
+}
+
+CCodeTypeName::CCodeTypeName(size_t nCodeType)
+	: CCodeTypeName(static_cast<ECodeType>(static_cast<int>(nCodeType)))
+{
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -155,17 +166,22 @@ bool CCodeTypeName::CanDefault()
 //                      コンボボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-int CCodeTypesForCombobox::GetCount() const
+CCodeTypesForCombobox::CCodeTypesForCombobox()
+{
+	InitCodeSet();
+}
+
+size_t CCodeTypesForCombobox::GetCount() const noexcept
 {
 	return vDispIdx.size();
 }
 
-ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const
+ECodeType CCodeTypesForCombobox::GetCode(size_t nIndex) const
 {
 	return vDispIdx[nIndex];
 }
 
-LPCWSTR CCodeTypesForCombobox::GetName(int nIndex) const
+LPCWSTR CCodeTypesForCombobox::GetName(size_t nIndex) const
 {
 	if (nIndex == 0) {
 		return LS(STR_ERR_GLOBAL01);

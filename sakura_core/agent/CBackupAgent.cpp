@@ -320,10 +320,8 @@ bool CBackupAgent::FormatBackUpPath(
 		wchar_t	szTime[64];
 		wchar_t	szForm[64];
 
-		WCHAR*	pBase;
-		int     nBaseCount;
-		pBase = szNewPath + wcslen( szNewPath );
-		nBaseCount = newPathCount - wcslen( szNewPath );
+		auto pBase = szNewPath + wcslen( szNewPath );
+		const auto nBaseCount = newPathCount - wcslen( szNewPath );
 
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		switch( bup_setting.GetBackupType() ){

@@ -63,7 +63,7 @@ bool CEditView::TagJumpSub(
 	constexpr auto& szTargetPrefix = L":HWND:[";
 	constexpr auto cchTargetPrefix = int(std::size(szTargetPrefix)) - 1;
 	if( 0 == wcsncmp(pszFileName, szTargetPrefix, cchTargetPrefix) ){
-		if( 0 >= ::swscanf_s(pszFileName + cchTargetPrefix, L"%x", (size_t*)&hwndTarget) || !IsSakuraMainWindow(hwndTarget) ){
+		if( 0 >= ::swscanf_s(pszFileName + cchTargetPrefix, L"%zx", (size_t*)&hwndTarget) || !IsSakuraMainWindow(hwndTarget) ){
 			return false;
 		}
 	}else{

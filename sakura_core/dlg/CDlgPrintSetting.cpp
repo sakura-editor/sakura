@@ -645,7 +645,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	if( CB_ERR == nIdx1 ){
 		return;
 	}
-	m_nCurrentPrintSetting = ApiWrap::Combo_GetItemData( hwndComboSettingName, nIdx1 );
+	m_nCurrentPrintSetting = (int)ApiWrap::Combo_GetItemData( hwndComboSettingName, nIdx1 );
 
 	/* フォント一覧 */
 	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_HAN );
@@ -666,7 +666,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	hwndCtrl = GetItemHwnd( IDC_COMBO_PAPER );
 	nItemNum = ApiWrap::Combo_GetCount( hwndCtrl );
 	for( i = 0; i < nItemNum; ++i ){
-		nItemData = ApiWrap::Combo_GetItemData( hwndCtrl, i );
+		nItemData = (int)ApiWrap::Combo_GetItemData( hwndCtrl, i );
 		if( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize == nItemData ){
 			ApiWrap::Combo_SetCurSel( hwndCtrl, i );
 			break;

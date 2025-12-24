@@ -249,9 +249,9 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		int	nFolderLen;
 		int	nCharChars;
-		nFolderLen = wcslen( pszFolder );
+		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
+			nCharChars = int(&pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] ));
 			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
 				pszFolder[nFolderLen - 1] = L'\0';
 			}
@@ -270,7 +270,7 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 	}else{
 		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 		int	nFolderLen;
-		nFolderLen = wcslen( pszFolder );
+		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
 			}else{
@@ -310,9 +310,9 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		wcscpy( pszFolder, szDrive );
 		wcscat( pszFolder, szDir );
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
-		nFolderLen = wcslen( pszFolder );
+		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
+			nCharChars = int(&pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] ));
 			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
 				pszFolder[nFolderLen - 1] = L'\0';
 			}
@@ -594,12 +594,12 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 	LPCWSTR pszFileName = pszPath;
 
 	GetInidir( szPath, L"" );
-	int nLen = wcslen( szPath );
+	auto nLen = int(wcslen(szPath));
 	if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 		pszFileName = pszPath + nLen;
 	}else{
 		GetExedir( szPath, L"" );
-		nLen = wcslen( szPath );
+		nLen = (int)wcslen( szPath );
 		if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 			pszFileName = pszPath + nLen;
 		}
@@ -1011,8 +1011,8 @@ int FileMatchScoreSepExt( std::wstring_view file1, std::wstring_view file2 )
 int FileMatchScore( const WCHAR *file1, const WCHAR *file2 )
 {
 	int score = 0;
-	int len1 = wcslen(file1);
-	int len2 = wcslen(file2);
+	auto len1 = int(wcslen(file1));
+	auto len2 = int(wcslen(file2));
 	if( len1 < len2 ){
 		const WCHAR * tmp = file1;
 		file1 = file2;
@@ -1064,7 +1064,7 @@ void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, in
 {
 	// できるだけ左側から表示
 	// \\server\dir...
-	const int nPathLen = wcslen(path);
+	const auto nPathLen = int(wcslen(path));
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
 		wcsncpy_s(dest, nSize, path, _TRUNCATE);
@@ -1099,7 +1099,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 {
 	int nLeft = 0; // 左側固定表示部分
 	int nSkipLevel = 1;
-	const int nPathLen = wcslen(path);
+	const auto nPathLen = int(wcslen(path));
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
 		// 全部表示可能
