@@ -132,9 +132,9 @@ public:
 	}
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
 	virtual void InitStrategyStatus() = 0;
-	virtual void SetStrategyColorInfo(const CLayoutColorInfo* = nullptr){};
-	virtual bool BeginColor(const CStringRef& cStr, int nPos){ return false; }
-	virtual bool EndColor(const CStringRef& cStr, int nPos){ return true; }
+	virtual void SetStrategyColorInfo(const CLayoutColorInfo* info = nullptr) { UNREFERENCED_PARAMETER(info); }
+	virtual bool BeginColor(const CStringRef& cStr, int nPos) { UNREFERENCED_PARAMETER(cStr); UNREFERENCED_PARAMETER(nPos); return false; }
+	virtual bool EndColor  (const CStringRef& cStr, int nPos) { UNREFERENCED_PARAMETER(cStr); UNREFERENCED_PARAMETER(nPos); return true; }
 	virtual bool Disp() const = 0;
 	//イベント
 	virtual void OnStartScanLogic(){}
