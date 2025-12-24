@@ -41,15 +41,6 @@ CMenuDrawer::CMenuDrawer()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	m_hInstance = nullptr;
-	m_hWndOwner = nullptr;
-	m_nMenuHeight = 0;
-	m_nMenuFontHeight = 0;
-	m_hFontMenu = nullptr;
-	m_pcIcons = nullptr;
-	m_hCompBitmap = nullptr;
-	m_hCompDC = nullptr;
-
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。	/* ツールバーのボタン TBBUTTON構造体 */
 	/* ツールバーのボタン TBBUTTON構造体 */
 	/*
