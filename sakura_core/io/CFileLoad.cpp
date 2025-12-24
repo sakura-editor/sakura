@@ -458,7 +458,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	size_t*		pnEolLen	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
 ){
 	const size_t nbgn = *pnBgn;
-	size_t i;
+	size_t i = 0;
 
 	pcEol->SetType( EEolType::none );
 

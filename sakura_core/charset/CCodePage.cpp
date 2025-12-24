@@ -686,7 +686,7 @@ int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 	}
 	int nDstUseLen = 0;
 	int nDstUseCharLen;
-	int nBinaryPos;
+	int nBinaryPos = 0;
 	int nBinaryLen = 0;
 	int i = 0;
 	const unsigned short* pSrcShort = reinterpret_cast<const unsigned short*>(pSrc);
@@ -800,7 +800,7 @@ int CCodePage::S_UnicodeToUTF32BE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 	}
 	int nDstUseLen = 0;
 	int nDstUseCharLen;
-	int nBinaryPos;
+	int nBinaryPos = 0;
 	int nBinaryLen = 0;
 	int i = 0;
 	const unsigned short* pSrcShort = reinterpret_cast<const unsigned short*>(pSrc);

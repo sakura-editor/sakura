@@ -669,7 +669,7 @@ void CViewCommander::Sub_BoxSelectLock(LPARAM lParam) noexcept
 {
 	auto flags = int(lParam);
 
-	bool bSelLock;
+	bool bSelLock = false;
 	if( flags == 0x00 ){
 		bSelLock = GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock;
 	}else if( flags == 0x01 ){

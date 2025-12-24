@@ -739,8 +739,8 @@ bool CMacro::HandleCommand(
 			CommonSetting_Search backupFlags;
 			SSearchOption backupLocalFlags;
 			std::wstring backupStr;
-			bool backupKeyMark;
-			int nBackupSearchKeySequence;
+			bool backupKeyMark = false;
+			int nBackupSearchKeySequence = 0;
 			if( bBackupFlag ){
 				backupFlags = GetDllShareData().m_Common.m_sSearch;
 				backupLocalFlags = pcEditView->m_sCurSearchOption;
@@ -927,8 +927,8 @@ bool CMacro::HandleCommand(
 			SSearchOption backupLocalFlags;
 			std::wstring backupStr;
 			std::wstring backupStrRep;
-			int nBackupSearchKeySequence;
-			bool backupKeyMark;
+			int nBackupSearchKeySequence = 0;
+			bool backupKeyMark = 0;
 			if( bBackupFlag ){
 				backupFlags = GetDllShareData().m_Common.m_sSearch;
 				backupLocalFlags = pcEditView->m_sCurSearchOption;

@@ -361,7 +361,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 			if( !bAddNamedItemError )
 			{
 				//マクロ停止スレッドの起動
-				SAbortMacroParam sThreadParam;
+				SAbortMacroParam sThreadParam{};
 				sThreadParam.pEngine = m_Engine;
 				sThreadParam.nCancelTimer = GetDllShareData().m_Common.m_sMacro.m_nMacroCancelTimer;
 				sThreadParam.view = (CEditView*)m_Data;

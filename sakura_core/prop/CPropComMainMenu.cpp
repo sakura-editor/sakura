@@ -230,7 +230,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	int			i;
 
 	int			nIdxFIdx;
-	int			nIdxFunc;
+	int			nIdxFunc = 0;
 	WCHAR		szLabel[256+10];
 
 	EFunctionCode	eFuncCode;
