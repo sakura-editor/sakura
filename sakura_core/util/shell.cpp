@@ -48,7 +48,7 @@ BOOL SelectDir(
 	HRESULT hres;
 
 	// インスタンスを作成
-	hres = CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog) );
+	hres = pDialog.CreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER);
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}

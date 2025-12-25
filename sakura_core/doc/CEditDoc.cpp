@@ -321,11 +321,11 @@ void CEditDoc::SetBackgroundImage()
 
 	cxx::com_pointer<IWICImagingFactory> pIWICFactory;
 	HRESULT hr;
-	hr = CoCreateInstance(
+	hr = pIWICFactory.CreateInstance(
 		CLSID_WICImagingFactory,
 		nullptr,
-		CLSCTX_INPROC_SERVER,
-		IID_PPV_ARGS(&pIWICFactory));
+		CLSCTX_INPROC_SERVER
+	);
 	if( FAILED(hr) ) return;
 	cxx::com_pointer<IWICBitmapDecoder> pDecoder;
 	hr = pIWICFactory->CreateDecoderFromFilename(

@@ -41,7 +41,6 @@ const GUID CLSID_JSScript9 =
 #endif
 
 /* 2009.10.29 syat インターフェースオブジェクト部分をCWSHIfObj.hに分離
-class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
  */
 
 //IActiveScriptSite, IActiveScriptSiteWindow
@@ -49,42 +48,26 @@ class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
 	@date Sep. 15, 2005 FILE IActiveScriptSiteWindow実装．
 		マクロでMsgBoxを使用可能にする．
 */
-class CWSHSite: public IActiveScriptSite, public IActiveScriptSiteWindow
+class CWSHSite : public cxx::TComImpl<IActiveScriptSite, IActiveScriptSiteWindow>
 {
 private:
+	using Base = cxx::TComImpl<IActiveScriptSite, IActiveScriptSiteWindow>;
+	using Me = CWSHSite;
+
 	CWSHClient *m_Client;
-	ULONG m_RefCount;
+
 public:
-	CWSHSite(CWSHClient *AClient): m_Client(AClient), m_RefCount(0)
+	// 生成関数
+	template<typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<CWSHSite, Args...>
 	{
+		return Base::template make_instance<CWSHSite>(std::forward<Args>(args)...);
 	}
 
-	ULONG STDMETHODCALLTYPE AddRef() override {
-		return ++m_RefCount;
-	}
-
-	ULONG STDMETHODCALLTYPE Release() override {
-		if(--m_RefCount == 0)
-		{
-			delete this;
-			return 0;
-		}
-		return m_RefCount;
-	}
-
-	HRESULT STDMETHODCALLTYPE QueryInterface(
-	    /* [in] */ REFIID iid,
-	    /* [out] */ void ** ppvObject) override
+	explicit CWSHSite(CWSHClient *AClient)
+		: m_Client(AClient)
 	{
-		*ppvObject = nullptr;
-
-		if(iid == IID_IActiveScriptSiteWindow){
-			*ppvObject = static_cast<IActiveScriptSiteWindow*>(this);
-			++m_RefCount;
-			return S_OK;
-		}
-
-		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE GetLCID(
@@ -224,9 +207,14 @@ public:
 
 //implementation
 
-CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
-				m_OnError(AErrorHandler), m_Data(AData), m_Valid(false), m_Engine(nullptr)
-{ 
+CWSHClient::CWSHClient(
+	LPCWSTR AEngine,
+	ScriptErrorHandler AErrorHandler,
+	void *AData
+)
+	: m_OnError(AErrorHandler)
+	, m_Data(AData)
+{
 	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダーに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
@@ -241,11 +229,11 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 			ClassID = CLSID_JSScript9;
 		}
 #endif
-		if(CoCreateInstance(ClassID, nullptr, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
+		if (FAILED(m_Engine.CreateInstance(ClassID, nullptr, CLSCTX_INPROC_SERVER)))
 			Error(LS(STR_ERR_CWSH02));
 		else
 		{
-			cxx::com_pointer<IActiveScriptSite> Site = new CWSHSite( this );
+			auto Site = CWSHSite::make_instance(this);
 			if(m_Engine->SetScriptSite(Site) != S_OK)
 			{
 				Error(LS(STR_ERR_CWSH03));
@@ -264,9 +252,6 @@ CWSHClient::~CWSHClient()
 	for( ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ ){
 		(*it)->Release();
 	}
-	
-	if(m_Engine != nullptr) 
-		m_Engine->Release();
 }
 
 // AbortMacroProcのパラメータ構造体
@@ -332,11 +317,11 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 	return 0;
 }
 
-bool CWSHClient::Execute(const wchar_t *AScript)
+bool CWSHClient::Execute(const std::wstring& WScript)
 {
 	bool bRet = false;
-	IActiveScriptParse *Parser;
-	if(m_Engine->QueryInterface(IID_IActiveScriptParse, reinterpret_cast<void **>(&Parser)) != S_OK)
+	cxx::com_pointer<IActiveScriptParse> Parser = nullptr;
+	if (FAILED(m_Engine->QueryInterface(&Parser)))
 		Error(LS(STR_ERR_CWSH04));
 	else 
 	{
@@ -380,7 +365,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 					Error(LS(STR_ERR_CWSH07));
 				else
 				{
-					HRESULT hr = Parser->ParseScriptText(AScript, nullptr, nullptr, nullptr, 0, 0, SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
+					HRESULT hr = Parser->ParseScriptText(WScript.c_str(), nullptr, nullptr, nullptr, 0, 0, SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 					if (hr == SCRIPT_E_REPORTED) {
 					/*
 						IActiveScriptSite->OnScriptErrorに通知済み。
@@ -404,7 +389,6 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 				}
 			}
 		}
-		Parser->Release();
 	}
 	m_Engine->Close();
 	return bRet;
