@@ -106,7 +106,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, size_t size ) const
 	assert( ptr != nullptr );
 	assert( bufsize >= 1 );
 
-	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
+	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
 		if( m_pMacroRec[position].IsEnabled() ){
 			const WCHAR *p = m_pMacroRec[position].GetTitle();

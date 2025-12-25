@@ -43,6 +43,10 @@ FA_FROMKEYBOARD		 = 0x00010000,	//!< キーボードアクセラレータから�
 FA_FROMMACRO		 = 0x00020000,	//!< マクロからのコマンド実行
 FA_NONRECORD		 = 0x00040000,	//!< マクロへの記録を抑制する
 
+IDM_SELWINDOW				= 10000,
+IDM_SELMRU					= 11000,
+IDM_SELOPENFOLDER			= 12000,
+
 F_PLUGCOMMAND_FIRST			= 20000,
 F_PLUGCOMMAND_LAST			= 21999,
 

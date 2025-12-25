@@ -2400,7 +2400,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 			eFunc, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, int(std::size(buf)) ), pszKey );
 	}
 	// マクロ
-	else if (eFunc >= F_USERMACRO_0 && eFunc < F_USERMACRO_0+MAX_CUSTMACRO) {
+	else if (eFunc >= F_USERMACRO_0 && eFunc < F_USERMACRO_0 + (int)MAX_CUSTMACRO) {
 		MacroRec *mp = &m_pShareData->m_Common.m_sMacro.m_MacroTable[eFunc - F_USERMACRO_0];
 		if (mp->IsEnabled()) {
 			psName = mp->m_szName[0] ? mp->m_szName : mp->m_szFile;

@@ -948,13 +948,13 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 
 	default:
 		// From Here 2003.09.23 Moca
-		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + MAX_MRU ){
+		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + (int)MAX_MRU ){
 			return HLP000029;	//最近使ったファイル
-		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + MAX_OPENFOLDER ){
+		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + (int)MAX_OPENFOLDER ){
 			return HLP000023;	//最近使ったフォルダー
-		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
+		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + (int)MAX_EDITWINDOWS ){
 			return HLP000097;	//ウィンドウリスト
-		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + MAX_CUSTMACRO ){
+		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
 			return HLP000202;	//登録済みマクロ	// 2006.10.08 ryoji
 		}
 		// To Here 2003.09.23 Moca

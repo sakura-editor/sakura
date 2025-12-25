@@ -689,11 +689,11 @@ CMenuDrawer::CMenuDrawer()
 	
 	// 2010.06.25 Moca 専用アイコンのない外部マクロがあれば、同じアイコンを共有して登録
 	{
-		const auto nAddFuncs = int(MAX_CUSTMACRO - MAX_CUSTMACRO_ICO);
+		const auto nAddFuncs = int(MAX_CUSTMACRO - (int)MAX_CUSTMACRO_ICO);
 		const auto nBaseIndex = (int)m_tbMyButton.size();
 		m_tbMyButton.resize( m_tbMyButton.size() + nAddFuncs );
 		for( int k = 0; k < nAddFuncs; k++ ){
-			const int macroFuncCode = F_USERMACRO_0 + MAX_CUSTMACRO_ICO + k;
+			const int macroFuncCode = F_USERMACRO_0 + (int)MAX_CUSTMACRO_ICO + k;
 			SetTBBUTTONVal(
 				&m_tbMyButton[k + nBaseIndex],
 				TOOLBAR_ICON_MACRO_INTERNAL - INDEX_GAP,
