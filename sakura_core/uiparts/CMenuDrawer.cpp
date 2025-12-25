@@ -625,12 +625,16 @@ CMenuDrawer::CMenuDrawer()
 	// m_tbMyButton[0]にはセパレータが入っているため、アイコン番号とボタン番号は１つずれる
 	const int INDEX_GAP = 1;
 	const int myButtonEnd = tbd_num + INDEX_GAP;
+
 	// 定数の整合性確認
 	// アイコン番号
 	assert_warning( tbd[TOOLBAR_ICON_MACRO_INTERNAL      - INDEX_GAP] == F_MACRO_EXTRA );
 	assert_warning( tbd[TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - INDEX_GAP] == F_PLUGCOMMAND );
 	// コマンド番号
 	assert_warning( tbd[TOOLBAR_BUTTON_F_TOOLBARWRAP     - INDEX_GAP] == F_TOOLBARWRAP );
+
+	static_assert(MAX_CUSTMACRO <= MAX_CUSTMACRO_ICO);
+
 	m_tbMyButton.resize( tbd_num + INDEX_GAP );
 	SetTBBUTTONVal( &m_tbMyButton[0], -1, F_SEPARATOR, 0, TBSTYLE_SEP, 0, 0 );	//セパレータ	// 2007.11.02 ryoji アイコンの未定義化(-1)
 
@@ -684,7 +688,7 @@ CMenuDrawer::CMenuDrawer()
 	m_nMyButtonFixSize = (int)m_tbMyButton.size();
 	
 	// 2010.06.25 Moca 専用アイコンのない外部マクロがあれば、同じアイコンを共有して登録
-	if( MAX_CUSTMACRO_ICO < MAX_CUSTMACRO ){
+	{
 		const auto nAddFuncs = int(MAX_CUSTMACRO - MAX_CUSTMACRO_ICO);
 		const auto nBaseIndex = (int)m_tbMyButton.size();
 		m_tbMyButton.resize( m_tbMyButton.size() + nAddFuncs );

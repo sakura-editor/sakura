@@ -702,10 +702,6 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 			}
 			// 長さには\0も含む
 			nKeywordLen += int(wcsnlen(szKeyWord, int(std::size(szKeyWord))) + 1);
-			if( int(std::size(m_Types.m_RegexKeywordList)) - 1 < int(std::size(szKeyWord)) ){
-				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_FULL) );
-				return false;
-			}
 		}
 	}
 	return true;
