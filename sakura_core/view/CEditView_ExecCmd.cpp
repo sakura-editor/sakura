@@ -179,7 +179,6 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	if(bSendStdin){	/* 現在編集中のファイルを子プロセスの標準入力へ */
 		WCHAR		szPathName[MAX_PATH];
 		WCHAR		szTempFileName[MAX_PATH];
-		int			nFlgOpt;
 
 		GetTempPath( MAX_PATH, szPathName );
 		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
@@ -236,7 +235,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 
 	//コマンドライン実行
 	WCHAR	cmdline[1024];
-	wcscpy( cmdline, pszCmd );
+	wcscpy_s( cmdline, pszCmd );
 	if( CreateProcess( nullptr, cmdline, nullptr, nullptr, TRUE,
 				CREATE_NEW_CONSOLE, nullptr, bCurDir ? pszCurDir : nullptr, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
