@@ -22,6 +22,7 @@
 #include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
 #include "cxx/com_pointer.hpp"
+#include "cxx/ResourceHolder.hpp"
 
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
 {
@@ -97,13 +98,14 @@ BOOL SelectDir(
 		return FALSE;
 	}
 
+	using CoTaskMemHolder = cxx::ResourceHolder<&::CoTaskMemFree>;
+	CoTaskMemHolder taskMem = pszResult;
+
 	BOOL bRet = TRUE;
 	if ( 0 != wcsncpy_s( strFolderName, nMaxCount, pszResult, _TRUNCATE ) ) {
 		wcsncpy_s( strFolderName, nMaxCount, L"", _TRUNCATE );
 		bRet = FALSE;
 	}
-
-	CoTaskMemFree( pszResult );
 
 	return bRet;
 }
