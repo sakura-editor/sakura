@@ -1132,6 +1132,12 @@
     <ClInclude Include="..\src\main\cpp\cxx\com_pointer.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\first_derived.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\TComImpl.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\main\resources\images\auto_scroll_center.cur">
