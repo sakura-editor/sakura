@@ -493,5 +493,4 @@ int CEditView::IsSearchString(
 		}
 		return 0; // この行はヒットしなかった
 	}
-	return 0;
 }

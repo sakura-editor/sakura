@@ -294,6 +294,4 @@ const WCHAR* CFuncLookup::Custmenu2Name( int index, LPWSTR buf, size_t size ) co
 		_swprintf( buf, LS( STR_CUSTMENU_CUSTOM ), index );
 		return buf;
 	}
-
-	return nullptr;
 }
