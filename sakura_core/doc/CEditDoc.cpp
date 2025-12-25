@@ -24,11 +24,10 @@
 */
 
 #include "StdAfx.h"
-#include <OleCtl.h>
 #include <wincodec.h>
-#pragma comment(lib, "windowscodecs.lib")
-#include <wrl.h>
 #include "doc/CEditDoc.h"
+
+#include "cxx/TComPtr.hpp"
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
 #include "docplus/CModifyManager.h"
@@ -60,6 +59,8 @@
 #include "util/window.h"
 #include "sakura_rc.h"
 #include "config/app_constants.h"
+
+#pragma comment(lib, "windowscodecs.lib")
 
 #define IDT_ROLLMOUSE	1
 
@@ -318,8 +319,7 @@ void CEditDoc::SetBackgroundImage()
 		path = fullPath;
 	}
 
-	using namespace Microsoft::WRL;
-	ComPtr<IWICImagingFactory> pIWICFactory;
+	cxx::TComPtr<IWICImagingFactory> pIWICFactory;
 	HRESULT hr;
 	hr = CoCreateInstance(
 		CLSID_WICImagingFactory,
@@ -327,7 +327,7 @@ void CEditDoc::SetBackgroundImage()
 		CLSCTX_INPROC_SERVER,
 		IID_PPV_ARGS(&pIWICFactory));
 	if( FAILED(hr) ) return;
-	ComPtr<IWICBitmapDecoder> pDecoder;
+	cxx::TComPtr<IWICBitmapDecoder> pDecoder;
 	hr = pIWICFactory->CreateDecoderFromFilename(
 		path.c_str(),
 		nullptr,
@@ -335,17 +335,17 @@ void CEditDoc::SetBackgroundImage()
 		WICDecodeMetadataCacheOnLoad,
 		&pDecoder);
 	if( FAILED(hr) ) return;
-	ComPtr<IWICBitmapFrameDecode> pFrame;
+	cxx::TComPtr<IWICBitmapFrameDecode> pFrame;
 	hr = pDecoder->GetFrame(0, &pFrame);
 	if( FAILED(hr) ) return;
 	//WICPixelFormatGUID pixelFormat;
 	//hr = pFrame->GetPixelFormat(&pixelFormat);
 	//if( FAILED(hr) ) return;
-	ComPtr<IWICFormatConverter> pConverter;
+	cxx::TComPtr<IWICFormatConverter> pConverter;
 	pIWICFactory->CreateFormatConverter(&pConverter);
 	if( FAILED(hr) ) return;
 	hr = pConverter->Initialize(
-		pFrame.Get(),
+		pFrame,
 		GUID_WICPixelFormat32bppPBGRA,
 		WICBitmapDitherTypeNone,
 		nullptr,

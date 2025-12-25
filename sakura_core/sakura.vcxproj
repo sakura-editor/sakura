@@ -382,6 +382,7 @@
     <ClInclude Include="..\sakura_core\recent\CRecentSearch.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentTagjumpKeyword.h" />
     <ClInclude Include="..\sakura_core\recent\SShare_History.h" />
+    <ClInclude Include="..\src\main\cpp\cxx\TComPtr.hpp" />
     <ClInclude Include="..\src\main\resources\sakura.hh" />
     <ClInclude Include="..\src\main\resources\sakura_rc.h" />
     <ClInclude Include="..\sakura_core\StdAfx.h" />

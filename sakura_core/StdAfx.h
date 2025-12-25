@@ -162,6 +162,7 @@
 #include <windowsx.h>
 
 // その他のWindows SDK ヘッダー（ファイル名は最新に合わせる。追加するときは昇順で。）
+#include <comdef.h>
 #include <CommCtrl.h>
 #include <HtmlHelp.h>
 #include <imm.h>
@@ -171,6 +172,7 @@
 #include <Uxtheme.h>
 #include <vsstyle.h>
 #include <wrl.h>
+#include <wrl/client.h>
 
 #ifdef __MINGW32__
 #ifdef UNREFERENCED_PARAMETER
