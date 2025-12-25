@@ -168,7 +168,7 @@ void CPropGrep::SetData( HWND hwndDlg )
 	for(int i = 0; i < int(std::size(TagJumpMode1Arr)); ++i){
 		ApiWrap::Combo_InsertString(hwndCombo, i, LS(TagJumpMode1Arr[i].m_nNameID));
 		ApiWrap::Combo_SetItemData(hwndCombo, i, TagJumpMode1Arr[i].m_nMethod);
-		if(TagJumpMode1Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpMode ){
+		if(int(TagJumpMode1Arr[i].m_nMethod) == m_Common.m_sSearch.m_nTagJumpMode ){
 			nSelPos = i;
 		}
 	}
@@ -186,7 +186,7 @@ void CPropGrep::SetData( HWND hwndDlg )
 	for(int i = 0; i < int(std::size(TagJumpMode2Arr)); ++i){
 		ApiWrap::Combo_InsertString(hwndCombo, i, LS(TagJumpMode2Arr[i].m_nNameID));
 		ApiWrap::Combo_SetItemData(hwndCombo, i, TagJumpMode2Arr[i].m_nMethod);
-		if(TagJumpMode2Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpModeKeyword ){
+		if (int(TagJumpMode2Arr[i].m_nMethod) == m_Common.m_sSearch.m_nTagJumpModeKeyword ){
 			nSelPos = i;
 		}
 	}

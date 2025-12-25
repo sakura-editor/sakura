@@ -34,7 +34,6 @@ WNDPROC			gm_wpHokanListProc;
 LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	// Modified by KEITA for WIN64 2003.9.6
-	CDialog* pCDialog = ( CDialog* )::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
 	CHokanMgr* pCHokanMgr = (CHokanMgr*)::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
 
 	switch( uMsg ){
@@ -531,6 +530,9 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 
 BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
 {
+	UNREFERENCED_PARAMETER(hwndCtl);
+	UNREFERENCED_PARAMETER(wID);
+
 //	2001/06/18 asa-o:
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 	return TRUE;

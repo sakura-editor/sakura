@@ -37,6 +37,10 @@ void CEditView::TranslateCommand_grep(
 	LPARAM&			lparam4
 )
 {
+	UNREFERENCED_PARAMETER(bRedraw);
+	UNREFERENCED_PARAMETER(lparam2);
+	UNREFERENCED_PARAMETER(lparam3);
+	UNREFERENCED_PARAMETER(lparam4);
 	if( ! CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode )
 		return;
 

@@ -166,8 +166,9 @@ void CDlgFileTree::SetDataItem(LPARAM nItemIndex)
 	const SFileTreeItem& item = (bDummy ? itemDummy : m_fileTreeSetting.m_aItems[nItemIndex]);
 	itemDummy.m_szTargetFile = L"*.*";
 	int nIDs[] ={IDC_RADIO_GREP, IDC_RADIO_FILE, IDC_RADIO_FOLDER};
-	int nID1;
-	int nID2, nID3;
+	int nID1 = 0;
+	int nID2 = 0;
+	int nID3 = 0;
 	switch( item.m_eFileTreeItemType ){
 	case EFileTreeItemType_Grep:   nID1 = 0; nID2 = 1; nID3 = 2; break;
 	case EFileTreeItemType_File:   nID1 = 1; nID2 = 0; nID3 = 2; break;
@@ -925,7 +926,6 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 
 BOOL CDlgFileTree::OnNotify(NMHDR* pNMHDR)
 {
-	TV_DISPINFO* ptdi = (TV_DISPINFO*)pNMHDR;
 	HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
 	HTREEITEM htiItem;
 

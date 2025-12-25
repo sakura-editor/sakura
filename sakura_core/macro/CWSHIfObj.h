@@ -15,12 +15,13 @@
 #define SAKURA_CWSHIFOBJ_7C4DEA59_C6E2_4814_9209_8818D90096DE_H_
 #pragma once
 
-#include <list>
-#include <ActivScp.h>
 #include "_os/OleTypes.h"
 #include "macro/CIfObj.h"
 #include "macro/CWSH.h" // CWSHClient::List, ListIter
 #include "macro/CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
+
+#include <ActivScp.h>
+
 class CEditView;
 
 /* CWSHIfObj - プラグインやマクロに公開するオブジェクト
@@ -36,13 +37,11 @@ class CWSHIfObj
 {
 public:
 	// 型定義
-	typedef std::list<CWSHIfObj*> List;
-	typedef List::const_iterator ListIter;
+	using List = std::list<CWSHIfObj*>;
+	using ListIter = List::const_iterator;
 
-	// コンストラクタ
-	CWSHIfObj(const wchar_t* name, bool isGlobal)
-	: CIfObj(name, isGlobal)
-	{}
+	// コンストラクタは流用する
+	using CIfObj::CIfObj;
 
 	virtual void ReadyMethods( CEditView* pView, int flags );
 
@@ -51,14 +50,38 @@ protected:
 	//	2007.07.20 genta : flags追加
 	//  2009.09.05 syat CWSHManagerから移動
 	void ReadyCommands(MacroFuncInfo *Info, int flags);
+
 	HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 
 	// 非実装提供
-	virtual bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) = 0;	//関数を処理する
-	virtual bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize) = 0;	//コマンドを処理する
 	virtual MacroFuncInfoArray GetMacroCommandInfo() const = 0;	//コマンド情報を取得する
 	virtual MacroFuncInfoArray GetMacroFuncInfo() const = 0;	//関数情報を取得する
 
-	CEditView* m_pView;
+	//関数を処理する
+	virtual bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+	{
+		UNREFERENCED_PARAMETER(View);
+		UNREFERENCED_PARAMETER(ID);
+		UNREFERENCED_PARAMETER(Arguments);
+		UNREFERENCED_PARAMETER(ArgSize);
+		UNREFERENCED_PARAMETER(Result);
+
+		return false;
+	}
+
+	//コマンドを処理する
+	virtual bool HandleCommand(CEditView* View, EFunctionCode ID, LPCWSTR* Arguments, const int* ArgLengths, const int ArgSize)
+	{
+		UNREFERENCED_PARAMETER(View);
+		UNREFERENCED_PARAMETER(ID);
+		UNREFERENCED_PARAMETER(Arguments);
+		UNREFERENCED_PARAMETER(ArgLengths);
+		UNREFERENCED_PARAMETER(ArgSize);
+
+		return false;
+	}
+
+	CEditView* m_pView = nullptr;
 };
+
 #endif /* SAKURA_CWSHIFOBJ_7C4DEA59_C6E2_4814_9209_8818D90096DE_H_ */

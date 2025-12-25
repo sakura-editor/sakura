@@ -357,7 +357,7 @@ if(MSVC)
   add_compile_options(
     /source-charset:utf-8
     /execution-charset:shift_jis
-    /w44996
+    /wd4996
   )
 endif(MSVC)
 

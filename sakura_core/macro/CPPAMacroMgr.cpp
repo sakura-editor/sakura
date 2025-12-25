@@ -47,6 +47,8 @@ bool CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 */
 BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	CTextInputStream in( pszPath );
 	if(!in){
 		m_nReady = false;
@@ -74,6 +76,8 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 */
 BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	m_cBuffer.SetString( pszCode );	//	m_cBufferにコピー
 
 	m_nReady = true;

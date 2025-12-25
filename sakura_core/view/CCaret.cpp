@@ -89,7 +89,7 @@ CCaret::CCaret(CEditView* pEditView, const CEditDoc* pEditDoc)
 {
 	m_nCaretPosX_Prev = CLayoutInt(0);		/* ビュー左端からのカーソル桁直前の位置(０オリジン) */
 
-	m_crCaret = -1;				/* キャレットの色 */			// 2006.12.16 ryoji
+	m_crCaret = COLORREF(-1);				/* キャレットの色 */			// 2006.12.16 ryoji
 	m_hbmpCaret = nullptr;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
 	m_bClearStatus = true;
 	ClearCaretPosInfoCache();

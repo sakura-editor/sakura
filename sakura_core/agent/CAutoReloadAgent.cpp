@@ -29,6 +29,8 @@ CAutoReloadAgent::CAutoReloadAgent()
 
 void CAutoReloadAgent::OnBeforeSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
+
 	//	Sep. 7, 2003 genta
 	//	保存が完了するまではファイル更新の通知を抑制する
 	PauseWatching();
@@ -36,6 +38,8 @@ void CAutoReloadAgent::OnBeforeSave(const SSaveInfo& sSaveInfo)
 
 void CAutoReloadAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
+
 	//	Sep. 7, 2003 genta
 	//	ファイル更新の通知を元に戻す
 	ResumeWatching();
@@ -52,6 +56,8 @@ void CAutoReloadAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 
 void CAutoReloadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	//pcDoc->m_cDocFile.m_sFileInfo.cFileTime.SetFILETIME(ftime); //#####既に設定済みのはず
 }
 

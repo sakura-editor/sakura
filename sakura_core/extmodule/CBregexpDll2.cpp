@@ -25,6 +25,7 @@ CBregexpDll2::~CBregexpDll2()
 */
 LPCWSTR CBregexpDll2::GetDllNameImp( int index )
 {
+	UNREFERENCED_PARAMETER(index);
 	return L"bregonig.dll";
 }
 

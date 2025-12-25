@@ -306,6 +306,8 @@ int CKeyBind::GetKeyStr(
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	int		i;
 	int		j;
 	cMemList.SetString(L"");
@@ -343,6 +345,8 @@ int CKeyBind::GetKeyStrList(
 	BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	int		i;
 	int		j;
 	int		nAssignedKeysNum;

@@ -48,6 +48,7 @@ public:
 public:
 	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) override;
 	bool ReadPluginOption( CDataProfile *cProfile ) override{
+		UNREFERENCED_PARAMETER(cProfile);
 		return true;
 	}
 	CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) override;
@@ -60,6 +61,7 @@ public:
 		return true;
 	}
 	LPCWSTR GetDllNameImp(int nIndex) override {
+		UNREFERENCED_PARAMETER(nIndex);
 		return L"";
 	}
 

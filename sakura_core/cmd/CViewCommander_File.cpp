@@ -795,6 +795,7 @@ BOOL CViewCommander::Command_PUTFILE(
 */
 BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int nFlgOpt )
 {
+	UNREFERENCED_PARAMETER(nFlgOpt);
 	CFileLoad	cfl(m_pCommanderView->m_pTypeData->m_encoding);
 	CEol cEol;
 	int			nLineNum = 0;

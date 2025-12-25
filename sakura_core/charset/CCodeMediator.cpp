@@ -76,7 +76,7 @@ ECodeType CCodeMediator::CheckKanjiCodeOfFile(const WCHAR* pszFile)
 		buff = std::make_unique<char[]>(size);
 
 		// 読み込み
-		auto ret = in.Read(buff.get(), size);
+		in.Read(buff.get(), size);
 	}
 
 	// クローズ

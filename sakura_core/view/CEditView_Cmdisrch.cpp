@@ -44,6 +44,11 @@ void CEditView::TranslateCommand_isearch(
 	LPARAM&			lparam4
 )
 {
+	UNREFERENCED_PARAMETER(bRedraw);
+	UNREFERENCED_PARAMETER(lparam2);
+	UNREFERENCED_PARAMETER(lparam3);
+	UNREFERENCED_PARAMETER(lparam4);
+
 	if (m_nISearchMode <= SEARCH_NONE )
 		return;
 
@@ -100,6 +105,11 @@ bool CEditView::ProcessCommand_isearch(
 	LPARAM	lparam4
 )
 {
+	UNREFERENCED_PARAMETER(lparam2);
+	UNREFERENCED_PARAMETER(lparam3);
+	UNREFERENCED_PARAMETER(lparam4);
+	UNREFERENCED_PARAMETER(bRedraw);
+
 	switch( nCommand ){
 		//	検索文字列の変更操作
 		case F_ISEARCH_ADD_CHAR:

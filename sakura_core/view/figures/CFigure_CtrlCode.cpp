@@ -16,6 +16,7 @@
 
 bool CFigure_CtrlCode::Match(const wchar_t* pText, int nTextLen) const
 {
+	UNREFERENCED_PARAMETER(nTextLen);
 	//当面はASCII制御文字（C0 Controls, IsHankaku()で半角扱い）だけを制御文字表示にする
 	//そうしないと IsHankaku(0x0600)==false なのに iswcntrl(0x0600)!=0 のようなケースで表示桁がずれる
 	//U+0600: ARABIC NUMBER SIGN

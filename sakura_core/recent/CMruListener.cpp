@@ -23,6 +23,7 @@
 
 void CMruListener::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
 	_HoldBookmarks_And_AddToMRU();
 }
 
@@ -127,6 +128,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 
 void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	CMRUFile		cMRU;

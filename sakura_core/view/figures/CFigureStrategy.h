@@ -51,6 +51,8 @@ public:
 	bool DrawImp(SColorStrategyInfo* pInfo) override;
 	bool Match(const wchar_t* pText, int nTextLen) const override
 	{
+		UNREFERENCED_PARAMETER(pText);
+		UNREFERENCED_PARAMETER(nTextLen);
 		return true;
 	}
 

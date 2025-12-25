@@ -486,7 +486,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			memset(&hp, 0, sizeof(hp));	// 構造体をゼロクリア
 			hp.cbStruct = sizeof(hp);
 			hp.pszFont = L"ＭＳ Ｐゴシック, 9";
-			hp.clrForeground = hp.clrBackground = -1;
+			hp.clrForeground = hp.clrBackground = COLORREF(-1);
 			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
 			if( uCommandOrg == HELP_CONTEXTMENU ){
 				// マウスカーソル位置から対象コントロールと表示位置を求める

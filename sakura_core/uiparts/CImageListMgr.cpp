@@ -631,10 +631,6 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		return nullptr;
 	}
 
-	// DIBセクションからサイズを取得する
-	const auto bmWidth = di.dsBm.bmWidth;
-	const auto bmHeight = di.dsBm.bmHeight;
-
 	// 内部ビットマップの列数/段数は固定。
 	const int cols = MAX_X;
 	const int rows = MAX_Y;

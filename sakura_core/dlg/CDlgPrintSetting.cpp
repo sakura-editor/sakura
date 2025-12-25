@@ -86,6 +86,8 @@ int CALLBACK SetData_EnumFontFamProc(
 	LPARAM			lParam 	// address of application-defined data
 )
 {
+	UNREFERENCED_PARAMETER(nFontType);
+	UNREFERENCED_PARAMETER(pntm);
 	CDlgPrintSetting*	pCDlgPrintSetting;
 	HWND				hwndComboFontHan;
 	HWND				hwndComboFontZen;
@@ -194,6 +196,8 @@ BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
 
 BOOL CDlgPrintSetting::OnCbnSelChange( HWND hwndCtl, int wID )
 {
+	UNREFERENCED_PARAMETER(hwndCtl);
+
 //	if( GetItemHwnd( IDC_COMBO_SETTINGNAME ) == hwndCtl ){
 	switch( wID ){
 	case IDC_COMBO_SETTINGNAME:

@@ -1242,6 +1242,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 */
 void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 {
+	UNREFERENCED_PARAMETER(pShareData);
 	/* カスタムメニュー 規定値 */
 	
 	CommonSetting_CustomMenu& rMenu = m_pShareData->m_Common.m_sCustomMenu;

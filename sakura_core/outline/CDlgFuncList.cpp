@@ -245,7 +245,6 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		// セッション内全体での最近アクティブウィンドウがアクティブになってしまう．
 		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
 		if( (BOOL)wParam ){
-			CEditView* pcEditView = (CEditView*)m_lParam;
 			if( ::GetActiveWindow() == GetHwnd() ){
 				::SetActiveWindow( GetEditWnd().GetHwnd() );
 				BlockingHook( nullptr );	// キュー内に溜まっているメッセージを処理
@@ -890,6 +889,7 @@ int CDlgFuncList::GetData( void )
 */
 void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass )
 {
+	UNREFERENCED_PARAMETER(hwndDlg);
 	int				i;
 	const CFuncInfo*	pcFuncInfo;
 	HWND			hwndTree;
@@ -903,8 +903,6 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 	HTREEITEM		htiGlobal = nullptr;	// Jan. 04, 2001 genta C++と統合
 	HTREEITEM		htiClass;
 	HTREEITEM		htiItem;
-	HTREEITEM		htiSelectedTop = nullptr;
-	HTREEITEM		htiSelected = nullptr;
 	TV_ITEM			tvi;
 	int				nClassNest;
 	std::vector<std::wstring> vStrClasses;
@@ -1465,7 +1463,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				
 				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
 					WCHAR linenum[32];
-					int len = auto_sprintf( linenum, L"(%d,%d): ",
+					auto_sprintf( linenum, L"(%d,%d): ",
 						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
 					);
@@ -2237,6 +2235,7 @@ BOOL CDlgFuncList::OnMinMaxInfo( LPARAM lParam )
 }
 static inline int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
+	UNREFERENCED_PARAMETER(lParamSort);
 	if( lParam1< lParam2 )
 		return -1;
 	if( lParam1 > lParam2 )
@@ -2278,7 +2277,6 @@ BOOL CDlgFuncList::OnDestroy( void )
 
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
-	CEditView* pcEditView=(CEditView*)m_lParam;
 	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 		/* 親のウィンドウ位置・サイズを記憶 */
@@ -2744,6 +2742,9 @@ int CDlgFuncList::HitTestCaptionButton( int xPos, int yPos )
 */
 INT_PTR CDlgFuncList::OnNcCalcSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -2767,6 +2768,9 @@ INT_PTR CDlgFuncList::OnNcCalcSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 */
 INT_PTR CDlgFuncList::OnNcHitTest( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -2798,6 +2802,8 @@ INT_PTR CDlgFuncList::OnNcHitTest( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 */
 BOOL CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
 	if( wParam == 2 ){
 		CEditView* pcView = reinterpret_cast<CEditView*>(m_lParam);
 		if( m_pszTimerJumpFile ){
@@ -2855,6 +2861,8 @@ BOOL CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 */
 INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -2907,6 +2915,9 @@ INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 */
 INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -2995,6 +3006,8 @@ INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 */
 INT_PTR CDlgFuncList::OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
 	POINT pt;
 	pt.x = MAKEPOINTS(lParam).x;
 	pt.y = MAKEPOINTS(lParam).y;
@@ -3045,6 +3058,9 @@ INT_PTR CDlgFuncList::OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 */
 INT_PTR CDlgFuncList::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -3088,6 +3104,9 @@ INT_PTR CDlgFuncList::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 */
 INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -3242,7 +3261,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_UNDOCKABLE, LS(STR_DLGFNCLST_MENU_NODOCK) );
 	int iTo = iPosRef - 1;
 	for( int i = iFrom; i <= iTo; i++ ){
-		if( ::GetMenuItemID( hMenuRef, i ) == (100 + eDockSide) ){
+		if( static_cast<EDockSide>(::GetMenuItemID(hMenuRef, i)) == (100 + eDockSide) ){
 			::CheckMenuRadioItem( hMenuRef, iFrom, iTo, i, MF_BYPOSITION );
 			break;
 		}
@@ -3308,7 +3327,6 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		}
 		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
 	}else if( nId == 511 ){	// ブックマークすべて削除
-		HWND hwndList = GetItemHwnd(IDC_LIST_FL);
 		pcEditView->GetCommander().HandleCommand(F_BOOKMARK_RESET, TRUE, 0, 0, 0, 0);
 		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
 	}
@@ -3563,7 +3581,6 @@ bool CDlgFuncList::ChangeLayout( int nId )
 */
 void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 {
-	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
 		if( (HWND)lParam == GetEditWnd().GetHwnd() )
@@ -4101,6 +4118,8 @@ void CDlgFuncList::SetItemSelectionForListView( HWND hwndList, int nFuncInfoInde
 */
 bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pnIndexOut )
 {
+	UNREFERENCED_PARAMETER(nCurCol);
+	UNREFERENCED_PARAMETER(nCurLine);
 	const CFuncInfo* pcFuncInfo = nullptr;
 	CLayoutInt nFuncLineOld(-1);
 	CLayoutInt nFuncColOld(-1);

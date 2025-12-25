@@ -41,6 +41,7 @@ public:
 	HRESULT STDMETHODCALLTYPE GetTypeAttr(
 					/* [out] */ TYPEATTR __RPC_FAR *__RPC_FAR *ppTypeAttr) override
 	{
+		UNREFERENCED_PARAMETER(ppTypeAttr);
 #ifdef TEST
 		DEBUG_TRACE( L"GetTypeAttr\n" );
 #endif
@@ -51,6 +52,7 @@ public:
 	HRESULT STDMETHODCALLTYPE GetTypeComp(
 					/* [out] */ ITypeComp __RPC_FAR *__RPC_FAR *ppTComp) override
 	{
+		UNREFERENCED_PARAMETER(ppTComp);
 #ifdef TEST
 		DEBUG_TRACE( L"GetTypeComp\n" );
 #endif
@@ -65,6 +67,8 @@ public:
 	    /* [in] */ UINT index,
 	    /* [out] */ VARDESC __RPC_FAR *__RPC_FAR *ppVarDesc) override
 	{
+		UNREFERENCED_PARAMETER(index);
+		UNREFERENCED_PARAMETER(ppVarDesc);
 		return E_NOTIMPL;
 	}
 
@@ -78,6 +82,8 @@ public:
 	    /* [in] */ UINT index,
 	    /* [out] */ HREFTYPE __RPC_FAR *pRefType) override
 	{
+		UNREFERENCED_PARAMETER(index);
+		UNREFERENCED_PARAMETER(pRefType);
 		return E_NOTIMPL;
 	}
 
@@ -85,6 +91,8 @@ public:
 	    /* [in] */ UINT index,
 	    /* [out] */ INT __RPC_FAR *pImplTypeFlags) override
 	{
+		UNREFERENCED_PARAMETER(index);
+		UNREFERENCED_PARAMETER(pImplTypeFlags);
 		return E_NOTIMPL;
 	}
 
@@ -93,6 +101,9 @@ public:
 	    /* [in] */ UINT cNames,
 	    /* [size_is][out] */ MEMBERID __RPC_FAR *pMemId) override
 	{
+		UNREFERENCED_PARAMETER(rgszNames);
+		UNREFERENCED_PARAMETER(cNames);
+		UNREFERENCED_PARAMETER(pMemId);
 		return E_NOTIMPL;
 	}
 
@@ -105,6 +116,13 @@ public:
 	    /* [out] */ EXCEPINFO __RPC_FAR *pExcepInfo,
 	    /* [out] */ UINT __RPC_FAR *puArgErr) override
 	{
+		UNREFERENCED_PARAMETER(pvInstance);
+		UNREFERENCED_PARAMETER(memid);
+		UNREFERENCED_PARAMETER(wFlags);
+		UNREFERENCED_PARAMETER(pDispParams);
+		UNREFERENCED_PARAMETER(pVarResult);
+		UNREFERENCED_PARAMETER(pExcepInfo);
+		UNREFERENCED_PARAMETER(puArgErr);
 		return E_NOTIMPL;
 	}
 
@@ -148,6 +166,11 @@ public:
 	    /* [out] */ BSTR __RPC_FAR *pBstrName,
 	    /* [out] */ WORD __RPC_FAR *pwOrdinal) override
 	{
+		UNREFERENCED_PARAMETER(memid);
+		UNREFERENCED_PARAMETER(invKind);
+		UNREFERENCED_PARAMETER(pBstrDllName);
+		UNREFERENCED_PARAMETER(pBstrName);
+		UNREFERENCED_PARAMETER(pwOrdinal);
 		return E_NOTIMPL;
 	}
 
@@ -155,6 +178,8 @@ public:
 	    /* [in] */ HREFTYPE hRefType,
 	    /* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo) override
 	{
+		UNREFERENCED_PARAMETER(hRefType);
+		UNREFERENCED_PARAMETER(ppTInfo);
 		return E_NOTIMPL;
 	}
 
@@ -163,6 +188,9 @@ public:
 	    /* [in] */ INVOKEKIND invKind,
 	    /* [out] */ PVOID __RPC_FAR *ppv) override
 	{
+		UNREFERENCED_PARAMETER(memid);
+		UNREFERENCED_PARAMETER(invKind);
+		UNREFERENCED_PARAMETER(ppv);
 		return E_NOTIMPL;
 	}
 
@@ -171,6 +199,9 @@ public:
 	    /* [in] */ REFIID riid,
 	    /* [iid_is][out] */ PVOID __RPC_FAR *ppvObj) override
 	{
+		UNREFERENCED_PARAMETER(pUnkOuter);
+		UNREFERENCED_PARAMETER(riid);
+		UNREFERENCED_PARAMETER(ppvObj);
 		return E_NOTIMPL;
 	}
 
@@ -178,6 +209,8 @@ public:
 	    /* [in] */ MEMBERID memid,
 	    /* [out] */ BSTR __RPC_FAR *pBstrMops) override
 	{
+		UNREFERENCED_PARAMETER(memid);
+		UNREFERENCED_PARAMETER(pBstrMops);
 		return E_NOTIMPL;
 	}
 
@@ -185,22 +218,27 @@ public:
 	    /* [out] */ ITypeLib __RPC_FAR *__RPC_FAR *ppTLib,
 	    /* [out] */ UINT __RPC_FAR *pIndex) override
 	{
+		UNREFERENCED_PARAMETER(ppTLib);
+		UNREFERENCED_PARAMETER(pIndex);
 		return E_NOTIMPL;
 	}
 
 	/* [local] */ void STDMETHODCALLTYPE ReleaseTypeAttr(
 					/* [in] */ TYPEATTR __RPC_FAR *pTypeAttr) override
 	{
+		UNREFERENCED_PARAMETER(pTypeAttr);
 	}
 
 	/* [local] */ void STDMETHODCALLTYPE ReleaseFuncDesc(
 					/* [in] */ FUNCDESC __RPC_FAR *pFuncDesc) override
 	{
+		UNREFERENCED_PARAMETER(pFuncDesc);
 	}
 
 	/* [local] */ void STDMETHODCALLTYPE ReleaseVarDesc(
 				/* [in] */ VARDESC __RPC_FAR *pVarDesc) override
 	{
+		UNREFERENCED_PARAMETER(pVarDesc);
 	}
 };
 
@@ -280,6 +318,11 @@ HRESULT STDMETHODCALLTYPE CIfObj::Invoke(
 				EXCEPINFO FAR* pexcepinfo,
 				UINT FAR* puArgErr)
 {
+	UNREFERENCED_PARAMETER(lcid);
+	UNREFERENCED_PARAMETER(pexcepinfo);
+	UNREFERENCED_PARAMETER(puArgErr);
+	UNREFERENCED_PARAMETER(riid);
+	UNREFERENCED_PARAMETER(wFlags);
 	if((unsigned)dispidMember < m_Methods.size())
 		return (this->* (m_Methods[dispidMember].Method))( m_Methods[dispidMember].ID, pdispparams, pvarResult, m_Owner->GetData() );
 	else
@@ -291,6 +334,8 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetTypeInfo(
 				/* [in] */ LCID lcid,
 				/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo)
 {
+	UNREFERENCED_PARAMETER(iTInfo);
+	UNREFERENCED_PARAMETER(lcid);
 	if(m_TypeInfo == nullptr)
 	{
 		m_TypeInfo = new CIfObjTypeInfo(this->m_Methods, this->m_sName);
@@ -319,6 +364,8 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
   LCID lcid,
   DISPID FAR* rgdispid)
 {
+	UNREFERENCED_PARAMETER(lcid);
+	UNREFERENCED_PARAMETER(riid);
 	for(unsigned i = 0; i < cNames; ++i)
 	{
 #ifdef TEST

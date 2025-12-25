@@ -31,6 +31,7 @@
 */
 int CLatin1::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 {
+	UNREFERENCED_PARAMETER(pData);
 	if( nIdx >= nDataLen ){
 		return 0;
 	}

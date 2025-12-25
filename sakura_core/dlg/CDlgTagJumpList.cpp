@@ -634,6 +634,11 @@ BOOL CDlgTagJumpList::OnNotify(NMHDR* pNMHDR)
 */
 BOOL CDlgTagJumpList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
+	UNREFERENCED_PARAMETER(hwnd);
+
 	StopTimer();
 
 	FindNext( true );

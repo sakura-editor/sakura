@@ -32,11 +32,15 @@ CVisualProgress::~CVisualProgress()
 
 void CVisualProgress::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	_Begin();
 }
 
 void CVisualProgress::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	_End();
 }
 
@@ -46,11 +50,15 @@ void CVisualProgress::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 void CVisualProgress::OnBeforeSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
+
 	_Begin();
 }
 
 void CVisualProgress::OnFinalSave(ESaveResult eSaveResult)
 {
+	UNREFERENCED_PARAMETER(eSaveResult);
+
 	_End();
 }
 

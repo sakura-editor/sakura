@@ -19,6 +19,7 @@ void Draw_ZenSpace( CGraphics& gr, const CMyRect& rc );
 
 bool CFigure_ZenSpace::Match(const wchar_t* pText, int nTextLen) const
 {
+	UNREFERENCED_PARAMETER(nTextLen);
 	if( pText[0] == L'　' ){
 		return true;
 	}

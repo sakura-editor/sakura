@@ -180,6 +180,7 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 	const WCHAR*	errmes			//!< [in] ファイルを開けなかった場合に表示するエラーメッセージ
 )
 {
+	UNREFERENCED_PARAMETER(errmes);
 //From Here Feb. 7, 2001 JEPRO 追加
 	int		i;
 //To Here Feb. 7, 2001

@@ -486,6 +486,7 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 */
 void CESI::GetEncodingInfo_latin1( const char* pS, const int nLen )
 {
+	UNREFERENCED_PARAMETER(pS);
 	SetEvaluation( CODE_LATIN1, 0, - nLen );
 	return;
 }
@@ -934,7 +935,6 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 		if( !IsXMLWhiteSpace( pBuf[5] ) ){
 			return CODE_NONE;
 		}
-		char quoteXML = '\0';
 		int i;
 		// xml規格ではencodingはverionに続いて現れる以外は許されない。ここではいいにする
 		for( i = 5; i < nSize - 12; i++ ){

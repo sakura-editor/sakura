@@ -17,6 +17,7 @@
 */
 int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 {
+	UNREFERENCED_PARAMETER(nMaxWordLen);
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nIdx;

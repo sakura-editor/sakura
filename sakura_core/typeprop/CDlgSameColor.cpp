@@ -242,6 +242,7 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 */
 BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(wParam);
 	LPDRAWITEMSTRUCT pDis = (LPDRAWITEMSTRUCT)lParam;	// 項目描画情報
 	if( IDC_LIST_COLORS != pDis->CtlID )	// オーナー描画にしているのは色選択リストだけ
 		return TRUE;
