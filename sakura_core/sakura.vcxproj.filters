@@ -1129,6 +1129,9 @@
     <ClInclude Include="..\src\main\cpp\cxx\TComPtr.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\com_pointer.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\main\resources\images\auto_scroll_center.cur">

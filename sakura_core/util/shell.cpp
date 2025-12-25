@@ -21,7 +21,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
-#include "cxx/TComPtr.hpp"
+#include "cxx/com_pointer.hpp"
 
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
 {
@@ -43,7 +43,7 @@ BOOL SelectDir(
 		return FALSE;
 	}
 
-	cxx::TComPtr<IFileDialog> pDialog;
+	cxx::com_pointer<IFileDialog> pDialog;
 	HRESULT hres;
 
 	// インスタンスを作成
@@ -66,7 +66,7 @@ BOOL SelectDir(
 	}
 
 	// 初期フォルダーを設定
-	cxx::TComPtr<IShellItem> psiFolder;
+	cxx::com_pointer<IShellItem> psiFolder;
 	hres = SHCreateItemFromParsingName(initialDirectory.c_str(), nullptr, IID_PPV_ARGS(&psiFolder));
 	if ( SUCCEEDED(hres) ) {
 		pDialog->SetFolder(psiFolder);
@@ -85,7 +85,7 @@ BOOL SelectDir(
 	}
 
 	// 選択結果を取得
-	cxx::TComPtr<IShellItem> psiResult;
+	cxx::com_pointer<IShellItem> psiResult;
 	hres = pDialog->GetResult( &psiResult );
 	if ( FAILED(hres) ) {
 		return FALSE;

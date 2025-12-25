@@ -27,7 +27,7 @@
 #include <wincodec.h>
 #include "doc/CEditDoc.h"
 
-#include "cxx/TComPtr.hpp"
+#include "cxx/com_pointer.hpp"
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
 #include "docplus/CModifyManager.h"
@@ -319,7 +319,7 @@ void CEditDoc::SetBackgroundImage()
 		path = fullPath;
 	}
 
-	cxx::TComPtr<IWICImagingFactory> pIWICFactory;
+	cxx::com_pointer<IWICImagingFactory> pIWICFactory;
 	HRESULT hr;
 	hr = CoCreateInstance(
 		CLSID_WICImagingFactory,
@@ -327,7 +327,7 @@ void CEditDoc::SetBackgroundImage()
 		CLSCTX_INPROC_SERVER,
 		IID_PPV_ARGS(&pIWICFactory));
 	if( FAILED(hr) ) return;
-	cxx::TComPtr<IWICBitmapDecoder> pDecoder;
+	cxx::com_pointer<IWICBitmapDecoder> pDecoder;
 	hr = pIWICFactory->CreateDecoderFromFilename(
 		path.c_str(),
 		nullptr,
@@ -335,13 +335,13 @@ void CEditDoc::SetBackgroundImage()
 		WICDecodeMetadataCacheOnLoad,
 		&pDecoder);
 	if( FAILED(hr) ) return;
-	cxx::TComPtr<IWICBitmapFrameDecode> pFrame;
+	cxx::com_pointer<IWICBitmapFrameDecode> pFrame;
 	hr = pDecoder->GetFrame(0, &pFrame);
 	if( FAILED(hr) ) return;
 	//WICPixelFormatGUID pixelFormat;
 	//hr = pFrame->GetPixelFormat(&pixelFormat);
 	//if( FAILED(hr) ) return;
-	cxx::TComPtr<IWICFormatConverter> pConverter;
+	cxx::com_pointer<IWICFormatConverter> pConverter;
 	pIWICFactory->CreateFormatConverter(&pConverter);
 	if( FAILED(hr) ) return;
 	hr = pConverter->Initialize(
