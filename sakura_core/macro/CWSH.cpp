@@ -21,6 +21,8 @@
 #include <InitGuid.h>
 #include <ShlDisp.h>
 #include "macro/CWSH.h"
+
+#include "cxx/com_pointer.hpp"
 #include "macro/CIfObj.h"
 #include "window/CEditWnd.h"
 #include "util/os.h"
@@ -243,10 +245,9 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 			Error(LS(STR_ERR_CWSH02));
 		else
 		{
-			IActiveScriptSite *Site = new CWSHSite(this);
+			cxx::com_pointer<IActiveScriptSite> Site = new CWSHSite( this );
 			if(m_Engine->SetScriptSite(Site) != S_OK)
 			{
-				delete Site;
 				Error(LS(STR_ERR_CWSH03));
 			}
 			else
