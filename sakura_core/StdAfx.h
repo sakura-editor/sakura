@@ -88,6 +88,7 @@
 #include <concepts>
 #include <condition_variable>
 #include <cstdarg>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -121,6 +122,7 @@
 #include <string>
 #include <string_view>
 #include <thread>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -162,6 +164,7 @@
 #include <windowsx.h>
 
 // その他のWindows SDK ヘッダー（ファイル名は最新に合わせる。追加するときは昇順で。）
+#include <comdef.h>
 #include <CommCtrl.h>
 #include <HtmlHelp.h>
 #include <imm.h>
@@ -171,6 +174,7 @@
 #include <Uxtheme.h>
 #include <vsstyle.h>
 #include <wrl.h>
+#include <wrl/client.h>
 
 #ifdef __MINGW32__
 #ifdef UNREFERENCED_PARAMETER

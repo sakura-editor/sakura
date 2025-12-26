@@ -21,7 +21,8 @@
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
-#include <wrl.h>
+#include "cxx/com_pointer.hpp"
+#include "cxx/ResourceHolder.hpp"
 
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
 {
@@ -43,12 +44,11 @@ BOOL SelectDir(
 		return FALSE;
 	}
 
-	using namespace Microsoft::WRL;
-	ComPtr<IFileDialog> pDialog;
+	cxx::com_pointer<IFileDialog> pDialog;
 	HRESULT hres;
 
 	// インスタンスを作成
-	hres = CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog) );
+	hres = pDialog.CreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER);
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}
@@ -67,10 +67,10 @@ BOOL SelectDir(
 	}
 
 	// 初期フォルダーを設定
-	ComPtr<IShellItem> psiFolder;
+	cxx::com_pointer<IShellItem> psiFolder;
 	hres = SHCreateItemFromParsingName(initialDirectory.c_str(), nullptr, IID_PPV_ARGS(&psiFolder));
 	if ( SUCCEEDED(hres) ) {
-		pDialog->SetFolder( psiFolder.Get() );
+		pDialog->SetFolder(psiFolder);
 	}
 
 	// タイトル文字列を設定
@@ -86,7 +86,7 @@ BOOL SelectDir(
 	}
 
 	// 選択結果を取得
-	ComPtr<IShellItem> psiResult;
+	cxx::com_pointer<IShellItem> psiResult;
 	hres = pDialog->GetResult( &psiResult );
 	if ( FAILED(hres) ) {
 		return FALSE;
@@ -98,13 +98,14 @@ BOOL SelectDir(
 		return FALSE;
 	}
 
+	using CoTaskMemHolder = cxx::ResourceHolder<&::CoTaskMemFree>;
+	CoTaskMemHolder taskMem = pszResult;
+
 	BOOL bRet = TRUE;
 	if ( 0 != wcsncpy_s( strFolderName, nMaxCount, pszResult, _TRUNCATE ) ) {
 		wcsncpy_s( strFolderName, nMaxCount, L"", _TRUNCATE );
 		bRet = FALSE;
 	}
-
-	CoTaskMemFree( pszResult );
 
 	return bRet;
 }

@@ -1,15 +1,10 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021-2022, Sakura Editor Organization
+	Copyright (C) 2021-2025, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include <tchar.h>
-#include <Windows.h>
-
-#include <wrl.h>
-
 #include "basis/CErrorInfo.h"
 
 /*!
@@ -18,13 +13,13 @@
 TEST(TComImpl, AddRef_Release)
 {
 	// IErrorInfoを生成する
-	IErrorInfo* pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(L"test")));
+	auto pErrorInfo = MakeMsgError(L"test");
 
-	// 初期値は0なので、AddRefすると1が返る
-	ASSERT_EQ(1, pErrorInfo->AddRef());
+	// 初期値は1なので、AddRefすると2が返る
+	EXPECT_THAT(pErrorInfo->AddRef(), 2);
 
-	// 内部カウンタは1なので、Releaseすると0になる
-	ASSERT_EQ(0, pErrorInfo->Release());
+	// 内部カウンタは2なので、Releaseすると1になる
+	ASSERT_THAT(pErrorInfo->Release(), 1);
 }
 
 /*!
@@ -33,16 +28,10 @@ TEST(TComImpl, AddRef_Release)
 TEST(TComImpl, QueryInterface_BadPointer)
 {
 	// IErrorInfoを生成する
-	IErrorInfo* pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(L"test")));
-
-	// 初期値は0なので、AddRefすると1が返る
-	ASSERT_EQ(1, pErrorInfo->AddRef());
+	auto pErrorInfo = MakeMsgError(L"test");
 
 	// QueryInterfaceのOutポインタにnullptrを指定するとポインタエラーになる
-	ASSERT_EQ(E_POINTER, pErrorInfo->QueryInterface(GUID_NULL, nullptr));
-
-	// 内部カウンタは1なので、Releaseすると0になる
-	ASSERT_EQ(0, pErrorInfo->Release());
+	EXPECT_THAT(pErrorInfo->QueryInterface(GUID_NULL, nullptr), E_POINTER);
 }
 
 /*!
@@ -50,23 +39,21 @@ TEST(TComImpl, QueryInterface_BadPointer)
  */
 TEST(TComImpl, QueryInterface_IUnknown)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
-	IErrorInfo* pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(L"test")));
+	auto pErrorInfo = MakeMsgError(L"test");
 
-	// 初期値は0なので、AddRefすると1が返る
-	ASSERT_EQ(1, pErrorInfo->AddRef());
+	// IUnknownを取得する（内部カウンタは2になる）
+	cxx::com_pointer<IUnknown> pUnknown;
+	EXPECT_THAT(pErrorInfo->QueryInterface(&pUnknown), S_OK);
 
-	// IUnknownを取得する
-	ComPtr<IUnknown> pUnknown;
-	ASSERT_TRUE(SUCCEEDED(pErrorInfo->QueryInterface(pUnknown.GetAddressOf())));
+	EXPECT_THAT(pUnknown, NotNull());
 
 	//pUnknownを解放する
 	pUnknown = nullptr;
 
-	// 内部カウンタは1に戻っているはずなので、Releaseすると0になる
-	ASSERT_EQ(0, pErrorInfo->Release());
+	EXPECT_THAT(pUnknown, IsNull());
+
+	// 内部カウンタは1に戻っているので、Releaseしない
 }
 
 /*!
@@ -74,23 +61,21 @@ TEST(TComImpl, QueryInterface_IUnknown)
  */
 TEST(TComImpl, QueryInterface_Implemented)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
-	IErrorInfo* pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(L"test")));
+	auto pErrorInfo = MakeMsgError(L"test");
 
-	// 初期値は0なので、AddRefすると1が返る
-	ASSERT_EQ(1, pErrorInfo->AddRef());
+	// IErrorInfoを取得する（内部カウンタは2になる）
+	cxx::com_pointer<IErrorInfo> pOther;
+	EXPECT_THAT(pErrorInfo->QueryInterface(&pOther), S_OK);
 
-	// IErrorInfoを取得する
-	ComPtr<IErrorInfo> pOther;
-	ASSERT_TRUE(SUCCEEDED(pErrorInfo->QueryInterface(pOther.GetAddressOf())));
+	EXPECT_THAT(pOther, NotNull());
 
 	//pOtherを解放する
 	pOther = nullptr;
 
-	// 内部カウンタは1に戻っているはずなので、Releaseすると0になる
-	ASSERT_EQ(0, pErrorInfo->Release());
+	EXPECT_THAT(pOther, IsNull());
+
+	// 内部カウンタは1に戻っているので、Releaseしない
 }
 
 /*!
@@ -98,20 +83,14 @@ TEST(TComImpl, QueryInterface_Implemented)
  */
 TEST(TComImpl, QueryInterface_NotImplemented)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
-	IErrorInfo* pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(L"test")));
-
-	// 初期値は0なので、AddRefすると1が返る
-	ASSERT_EQ(1, pErrorInfo->AddRef());
+	auto pErrorInfo = MakeMsgError(L"test");
 
 	// ICreateErrorInfo(実装されていないインターフェース)の取得を試みる
-	ComPtr<ICreateErrorInfo> pCreateErrorInfo;
-	ASSERT_EQ(E_NOINTERFACE, pErrorInfo->QueryInterface(pCreateErrorInfo.GetAddressOf()));
+	cxx::com_pointer<ICreateErrorInfo> pCreateErrorInfo;
+	EXPECT_THAT(pErrorInfo->QueryInterface(&pCreateErrorInfo), E_NOINTERFACE);
 
-	// 内部カウンタは1なので、Releaseすると0になる
-	ASSERT_EQ(0, pErrorInfo->Release());
+	// 内部カウンタは1なので、Releaseしない
 }
 
 /*!
@@ -119,14 +98,12 @@ TEST(TComImpl, QueryInterface_NotImplemented)
  */
 TEST(CErrorInfo, GetGUID_BadPointer)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// GUIDを取得する
-	ASSERT_EQ(E_POINTER, pErrorInfo->GetGUID(nullptr));
+	EXPECT_THAT(pErrorInfo->GetGUID(nullptr), E_POINTER);
 }
 
 /*!
@@ -134,11 +111,9 @@ TEST(CErrorInfo, GetGUID_BadPointer)
  */
 TEST(CErrorInfo, GetGUID)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// guidを取得する
 	GUID guid = GUID_NULL;
@@ -151,11 +126,9 @@ TEST(CErrorInfo, GetGUID)
  */
 TEST(CErrorInfo, GetSource_BadPointer)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// ソース情報を取得する
 	ASSERT_EQ(E_POINTER, pErrorInfo->GetSource(nullptr));
@@ -166,11 +139,9 @@ TEST(CErrorInfo, GetSource_BadPointer)
  */
 TEST(CErrorInfo, GetSource)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// ソース情報を取得する
 	_bstr_t bstrSource;
@@ -183,11 +154,9 @@ TEST(CErrorInfo, GetSource)
  */
 TEST(CErrorInfo, GetDescription_BadPointer)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// 説明を取得する
 	ASSERT_EQ(E_POINTER, pErrorInfo->GetDescription(nullptr));
@@ -198,11 +167,9 @@ TEST(CErrorInfo, GetDescription_BadPointer)
  */
 TEST(CErrorInfo, GetDescription)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// 説明を取得する
 	_bstr_t bstrDescription;
@@ -215,11 +182,9 @@ TEST(CErrorInfo, GetDescription)
  */
 TEST(CErrorInfo, GetHelpFile_BadPointer)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// ヘルプファイルのパスを取得する
 	ASSERT_EQ(E_POINTER, pErrorInfo->GetHelpFile(nullptr));
@@ -230,11 +195,9 @@ TEST(CErrorInfo, GetHelpFile_BadPointer)
  */
 TEST(CErrorInfo, GetHelpFile)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// ヘルプファイルのパスを取得する
 	_bstr_t bstrHelpFile;
@@ -247,11 +210,9 @@ TEST(CErrorInfo, GetHelpFile)
  */
 TEST(CErrorInfo, GetHelpContext_BadPointer)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// ヘルプコンテキストを取得する
 	ASSERT_EQ(E_POINTER, pErrorInfo->GetHelpContext(nullptr));
@@ -262,11 +223,9 @@ TEST(CErrorInfo, GetHelpContext_BadPointer)
  */
 TEST(CErrorInfo, GetHelpContext)
 {
-	using namespace Microsoft::WRL;
-
 	// IErrorInfoを生成する
 	constexpr const wchar_t msg[] = L"test";
-	ComPtr<IErrorInfo> pErrorInfo(reinterpret_cast<IErrorInfo*>(MakeMsgError(msg)));
+	auto pErrorInfo = MakeMsgError(msg);
 
 	// ヘルプコンテキストを取得する
 	DWORD dwHelpContext;
@@ -284,13 +243,13 @@ TEST(CErrorInfo, StandardUsageTest)
 
 	try {
 		// エラー情報を生成して例外を投げる
-		::_com_raise_error(E_FAIL, MakeMsgError(message));
+		::_com_raise_error(E_FAIL, MakeMsgError(message).Detach());
 
 		// 例外を投げたあとのコードは実行されない
 		FAIL();
 	}
 	catch (const _com_error& ce) {
 		// 投げられた例外メッセージを取得できること
-		ASSERT_STREQ(message, (const wchar_t*)ce.Description());
+		EXPECT_THAT(LPCWSTR(ce.Description()), StrEq(message));
 	}
 }

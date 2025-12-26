@@ -45,8 +45,7 @@ CWSHMacroManager::~CWSHMacroManager()
 */
 bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 {
-	CWSHClient* Engine;
-	Engine = new CWSHClient(m_EngineName.c_str(), MacroError, EditView);
+	auto Engine = std::make_unique<CWSHClient>(m_EngineName.c_str(), MacroError, EditView);
 	bool bRet = false;
 	if(Engine->m_Valid)
 	{
@@ -59,9 +58,8 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 			Engine->AddInterfaceObject(*it);
 		}
 
-		bRet = Engine->Execute(m_Source.c_str());
+		bRet = Engine->Execute(m_Source);
 	}
-	delete Engine;
 	return bRet;
 }
 

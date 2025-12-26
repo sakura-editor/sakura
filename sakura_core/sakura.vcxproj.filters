@@ -134,6 +134,9 @@
     <Filter Include="Generated Files">
       <UniqueIdentifier>{b50fc2d7-a5f2-4b9f-af30-bf04dda44839}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\cxx">
+      <UniqueIdentifier>{83db0c05-0f12-4241-8ff8-1f4cec6ff190}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h">
@@ -1122,6 +1125,24 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\parse\DetectIndentationStyle.h">
       <Filter>Cpp Source Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\TComPtr.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\com_pointer.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\first_derived.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\TComImpl.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\ResourceHolder.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_arg.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -800,10 +800,10 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/********************/
 	/* 共通設定の規定値 */
 	/********************/
-	const auto nKeyDataInitNum = int(std::size(KeyDataInit));
-	const auto KEYNAME_SIZE = int(std::size(pShareData->m_Common.m_sKeyBind.m_pKeyNameArr)) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	constexpr auto nKeyDataInitNum = int(std::size(KeyDataInit));
+	constexpr auto KEYNAME_SIZE = _countof(pShareData->m_Common.m_sKeyBind.m_pKeyNameArr) - 1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
-	assert( !(nKeyDataInitNum > KEYNAME_SIZE) );
+	static_assert(nKeyDataInitNum <= KEYNAME_SIZE);
 //	if( nKeyDataInitNum > KEYNAME_SIZE ) {
 //		PleaseReportToAuthor( NULL, L"キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています" );
 //		return false;

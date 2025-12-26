@@ -22,6 +22,7 @@ using ::testing::IsTrue;
 using ::testing::Le;
 using ::testing::Lt;
 using ::testing::Ne;
+using ::testing::NotNull;
 using ::testing::Return;
 using ::testing::StrCaseEq;
 using ::testing::StrCaseNe;

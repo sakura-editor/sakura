@@ -13,7 +13,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="CMakeTools">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(CMakeToolsBuildDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CMakeToolsBuildDir);$(CMakeToolsBuildDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(CMakeToolsBuildDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

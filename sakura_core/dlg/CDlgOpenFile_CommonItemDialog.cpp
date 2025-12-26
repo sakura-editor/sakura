@@ -19,12 +19,10 @@
 */
 
 #include "StdAfx.h"
-#include <array>
-#include <wrl.h>
-#include <shlwapi.h>
 #include <shobjidl.h>
 #include "charset/CCodePage.h"
 #include "dlg/CDlgOpenFile.h"
+
 #include "env/CShareData.h"
 #include "env/CDocTypeManager.h"
 #include "doc/CDocListener.h"
@@ -33,13 +31,13 @@
 #include "util/os.h"
 #include "util/module.h"
 #include "basis/CFileExt.h"
+#include "cxx/TComImpl.hpp"
 #include "env/DLLSHAREDATA.h"
 
 struct CDlgOpenFile_CommonItemDialog final
 	:
 	public IDlgOpenFile,
-	private IFileDialogEvents,
-	private IFileDialogControlEvents
+	private cxx::TComImpl<IFileDialogEvents, IFileDialogControlEvents>
 {
 	CDlgOpenFile_CommonItemDialog();
 
@@ -103,31 +101,6 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	IFileDialog* m_pFileDialog = nullptr;
 	IFileDialogCustomize* m_pFileDialogCustomize = nullptr;
-
-	// IUnknown
-	int m_RefCount = 0;
-
-	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject) override {
-		static const QITAB qit[] = {
-			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogEvents),
-			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogControlEvents),
-			{ },
-		};
-		return QISearch(this, qit, iid, ppvObject);
-	}
-
-	ULONG STDMETHODCALLTYPE AddRef() override {
-		++m_RefCount;
-		return m_RefCount;
-	}
-
-	ULONG STDMETHODCALLTYPE Release() override {
-		--m_RefCount;
-		int R = m_RefCount;
-		//if(m_RefCount == 0)
-		//	delete this;
-		return R;
-	}
 
 	// IFileDialogCustomize
 
@@ -635,10 +608,9 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 	hr = pFileOpenDialog->SetFileTypes(UINT(specs.size()), &specs[0]); RETURN_IF_FAILED
 	hr = pFileOpenDialog->SetFileName(fileName); RETURN_IF_FAILED
 
-	using namespace Microsoft::WRL;
-	ComPtr<IShellItem> psiFolder;
+	cxx::com_pointer<IShellItem> psiFolder;
 	SHCreateItemFromParsingName(m_szInitialDir, nullptr, IID_PPV_ARGS(&psiFolder));
-	hr = pFileOpenDialog->SetFolder(psiFolder.Get()); RETURN_IF_FAILED
+	hr = pFileOpenDialog->SetFolder(psiFolder); RETURN_IF_FAILED
 
 	m_pFileDialog = pFileOpenDialog;
 	// カスタマイズ
@@ -649,13 +621,13 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 	m_pFileDialog = nullptr;
 	RETURN_IF_FAILED
 
-	ComPtr<IShellItemArray> pShellItems;
+	cxx::com_pointer<IShellItemArray> pShellItems;
 	hr = pFileOpenDialog->GetResults(&pShellItems); RETURN_IF_FAILED
 	DWORD numItems;
 	hr = pShellItems->GetCount(&numItems); RETURN_IF_FAILED
 	pFileNames->resize(numItems);
 	for (DWORD i = 0; i < numItems; ++i) {
-		ComPtr<IShellItem> pShellItem;
+		cxx::com_pointer<IShellItem> pShellItem;
 		hr = pShellItems->GetItemAt(i, &pShellItem); RETURN_IF_FAILED
 		PWSTR pszFilePath;
 		hr = pShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath); RETURN_IF_FAILED
@@ -672,25 +644,23 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 	LPCWSTR fileName,
 	const std::vector<COMDLG_FILTERSPEC>& specs)
 {
-	using namespace Microsoft::WRL;
-	ComPtr<IFileOpenDialog> pFileDialog;
+	cxx::com_pointer<IFileOpenDialog> pFileDialog;
 	HRESULT hr;
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return false; }
-	hr = CoCreateInstance(
+	hr = pFileDialog.CreateInstance(
 		CLSID_FileOpenDialog,
 		nullptr,
-		CLSCTX_ALL,
-		IID_IFileOpenDialog,
-		&pFileDialog); RETURN_IF_FAILED
+		CLSCTX_ALL
+	); RETURN_IF_FAILED
 	DWORD dwCookie;
 	hr = pFileDialog->Advise(this, &dwCookie); RETURN_IF_FAILED
-	ComPtr<IFileDialogCustomize> pFileDialogCustomize;
+	cxx::com_pointer<IFileDialogCustomize> pFileDialogCustomize;
 	if (m_customizeSetting.bCustomize) {
-		hr = pFileDialog.Get()->QueryInterface(IID_PPV_ARGS(&pFileDialogCustomize)); RETURN_IF_FAILED
-		m_pFileDialogCustomize = pFileDialogCustomize.Get();
+		hr = pFileDialog->QueryInterface(&pFileDialogCustomize); RETURN_IF_FAILED
+		m_pFileDialogCustomize = pFileDialogCustomize;
 	}
-	m_pFileDialog = pFileDialog.Get();
-	hr = DoModalOpenDlgImpl1(pFileDialog.Get(), bAllowMultiSelect, pFileNames, fileName, specs);
+	m_pFileDialog = pFileDialog;
+	hr = DoModalOpenDlgImpl1(pFileDialog, bAllowMultiSelect, pFileNames, fileName, specs);
 	pFileDialog->Unadvise(dwCookie);
 	m_pFileDialog = nullptr;
 	m_pFileDialogCustomize = nullptr;
@@ -757,7 +727,6 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	// 2010.08.28 Moca DLLが読み込まれるので移動
 	ChangeCurrentDirectoryToExeDir();
 
-	using namespace Microsoft::WRL;
 	HRESULT hr;
 	std::array<COMDLG_FILTERSPEC, 3> specs;
 	std::array<std::wstring, 3> strs;
@@ -773,9 +742,9 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return hr; }
 	hr = pFileSaveDialog->SetDefaultExtension(L"txt"); RETURN_IF_FAILED
 	hr = pFileSaveDialog->SetFileTypes(UINT(specs.size()), &specs[0]); RETURN_IF_FAILED
-	ComPtr<IShellItem> psiFolder;
+	cxx::com_pointer<IShellItem> psiFolder;
 	SHCreateItemFromParsingName(m_szInitialDir, nullptr, IID_PPV_ARGS(&psiFolder));
-	hr = pFileSaveDialog->SetFolder(psiFolder.Get()); RETURN_IF_FAILED
+	hr = pFileSaveDialog->SetFolder(psiFolder); RETURN_IF_FAILED
 	WCHAR szFileName[_MAX_FNAME];
 	SplitPath_FolderAndFile(pszPath, nullptr, szFileName);
 	hr = pFileSaveDialog->SetFileName(szFileName); RETURN_IF_FAILED
@@ -786,7 +755,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	hr = pFileSaveDialog->Show(m_hwndParent); RETURN_IF_FAILED
 
 	if (SUCCEEDED(hr)) {
-		ComPtr<IShellItem> pShellItem;
+		cxx::com_pointer<IShellItem> pShellItem;
 		hr = pFileSaveDialog->GetResult(&pShellItem); RETURN_IF_FAILED
 		PWSTR pszFilePath;
 		hr = pShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath); RETURN_IF_FAILED
@@ -801,29 +770,27 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 
 bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0( WCHAR* pszPath )
 {
-	using namespace Microsoft::WRL;
-	ComPtr<IFileSaveDialog> pFileDialog;
+	cxx::com_pointer<IFileSaveDialog> pFileDialog;
 	HRESULT hr;
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return false; }
-	hr = CoCreateInstance(
+	hr = pFileDialog.CreateInstance(
 		CLSID_FileSaveDialog,
 		nullptr,
-		CLSCTX_ALL,
-		IID_IFileSaveDialog,
-		&pFileDialog); RETURN_IF_FAILED
-	m_pFileDialog = pFileDialog.Get();
+		CLSCTX_ALL
+	); RETURN_IF_FAILED
+	m_pFileDialog = pFileDialog;
 	DWORD dwCookie;
-	ComPtr<IFileDialogCustomize> pFileDialogCustomize;
+	cxx::com_pointer<IFileDialogCustomize> pFileDialogCustomize;
 	if (m_customizeSetting.bCustomize) {
-		hr = pFileDialog.Get()->QueryInterface(IID_PPV_ARGS(&pFileDialogCustomize)); RETURN_IF_FAILED
-		m_pFileDialogCustomize = pFileDialogCustomize.Get();
+		hr = pFileDialog->QueryInterface(&pFileDialogCustomize); RETURN_IF_FAILED
+		m_pFileDialogCustomize = pFileDialogCustomize;
 		hr = pFileDialog->Advise(this, &dwCookie); RETURN_IF_FAILED
-		hr = DoModalSaveDlgImpl1(pFileDialog.Get(), pszPath);
+		hr = DoModalSaveDlgImpl1(pFileDialog, pszPath);
 		pFileDialog->Unadvise(dwCookie);
 		m_pFileDialogCustomize = nullptr;
 	}
 	else {
-		hr = DoModalSaveDlgImpl1(pFileDialog.Get(), pszPath);
+		hr = DoModalSaveDlgImpl1(pFileDialog, pszPath);
 	}
 	m_pFileDialog = nullptr;
 	RETURN_IF_FAILED
@@ -901,10 +868,9 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 		break;
 	case CtrlId::COMBO_OPENFOLDER:
 		if (dwIDItem != 0) {
-			using namespace Microsoft::WRL;
-			ComPtr<IShellItem> psiFolder;
+			cxx::com_pointer<IShellItem> psiFolder;
 			SHCreateItemFromParsingName(m_vOPENFOLDER[dwIDItem - 1], nullptr, IID_PPV_ARGS(&psiFolder));
-			m_pFileDialog->SetFolder(psiFolder.Get());
+			m_pFileDialog->SetFolder(psiFolder);
 		}
 		break;
 	}

@@ -31,10 +31,6 @@
 /* ウィンドウのID */
 #define IDW_STATUSBAR 123
 
-#define IDM_SELWINDOW		10000
-#define IDM_SELMRU			11000
-#define IDM_SELOPENFOLDER	12000
-
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
 enum enumShowDlg {
 	SHOW_NORMAL			= 0,

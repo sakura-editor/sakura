@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\resources\;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\resources\;..\src\main\cpp;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
