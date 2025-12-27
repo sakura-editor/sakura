@@ -217,13 +217,6 @@ CEditWnd::~CEditWnd()
 {
 	delete[] m_pszLastCaption;
 
-	//	Dec. 4, 2002 genta
-	/* キャレットの行桁位置表示用フォント */
-	::DeleteObject( m_hFontCaretPosInfo );
-
-	// ウィンドウ毎に作成したアクセラレータテーブルを破棄する
-	DeleteAccelTbl();
-
 	m_hWnd = nullptr;
 }
 
@@ -3854,8 +3847,6 @@ void CEditWnd::InitMenubarMessageFont(void)
 {
 	TEXTMETRIC	tm;
 	LOGFONT		lf;
-	HDC			hdc;
-	HFONT		hFontOld;
 
 	/* LOGFONTの初期化 */
 	memset_raw( &lf, 0, sizeof( lf ) );
@@ -3875,13 +3866,12 @@ void CEditWnd::InitMenubarMessageFont(void)
 	wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
 
-	hdc = ::GetDC( ::GetDesktopWindow() );
-	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
+	MemDcHolder hdc = ::CreateCompatibleDC(nullptr);
+	SelectionHolder hFontOld{ hdc };
+	hFontOld = ::SelectObject( hdc, m_hFontCaretPosInfo );
 	::GetTextMetrics( hdc, &tm );
 	m_nCaretPosInfoCharWidth = tm.tmAveCharWidth;
 	m_nCaretPosInfoCharHeight = tm.tmHeight;
-	::SelectObject( hdc, hFontOld );
-	::ReleaseDC( ::GetDesktopWindow(), hdc );
 }
 
 /*
@@ -3895,12 +3885,13 @@ void CEditWnd::InitMenubarMessageFont(void)
 */
 void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 {
+	const auto hWnd = GetHwnd();
+
 	if( nullptr == ::GetMenu( GetHwnd() ) )	// 2007.03.08 ryoji 追加
 		return;
 
 	POINT	po,poFrame;
 	RECT	rc,rcFrame;
-	HFONT	hFontOld;
 	int		nStrLen;
 
 	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
@@ -3912,15 +3903,16 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 		}
 	}
 
-	HDC		hdc;
-	hdc = ::GetWindowDC( GetHwnd() );
+	WindowDcHolder hdc{ hWnd };
+	hdc = ::GetWindowDC(hWnd);
+	SelectionHolder hFontOld{ hdc };
 	poFrame.x = 0;
 	poFrame.y = 0;
 	::ClientToScreen( GetHwnd(), &poFrame );
 	::GetWindowRect( GetHwnd(), &rcFrame );
 	po.x = rcFrame.right - rcFrame.left;
 	po.y = poFrame.y - rcFrame.top;
-	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
+	hFontOld = ::SelectObject( hdc, m_hFontCaretPosInfo );
 	nStrLen = MENUBAR_MESSAGE_MAX_LEN;
 	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - ( ::GetSystemMetrics( SM_CXSIZEFRAME ) + 2 );
 	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth + 2;
@@ -3947,8 +3939,6 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 			::ExtTextOut(hdc, rc.left, rc.top, ETO_CLIPPED | ETO_OPAQUE, &rc, m_pszMenubarMessage, nStrLen, vDx);
 		}
 	}
-	::SelectObject( hdc, hFontOld );
-	::ReleaseDC( GetHwnd(), hdc );
 }
 
 /*!
@@ -4768,7 +4758,6 @@ void CEditWnd::CreateAccelTbl( void )
 void CEditWnd::DeleteAccelTbl( void )
 {
 	if( m_hAccel ){
-		::DestroyAcceleratorTable( m_hAccel );
 		m_hAccel = nullptr;
 	}
 }

@@ -11,17 +11,22 @@
 
 namespace cxx {
 
+template<auto Deleter>
+using deleter_resource_t = type_of_last_arg<decltype(Deleter)>;
+
 /*!
  * リソースハンドルを保持するスマートポインタ
  */
-template<auto Deleter>
+template<auto Deleter, typename T = deleter_resource_t<Deleter>>
+	requires std::is_convertible_v<T, deleter_resource_t<Deleter>>
 struct ResourceHolder
 {
 	using FuncDecl = decltype(Deleter);
 	static_assert(size_of_args<FuncDecl> >= 1, "Deleter must have at least 1 argument.");
+	static_assert(std::is_pointer_v<deleter_resource_t<Deleter>>, "Deleter's last argument must be a pointer type.");
 
 	// resource は「最後の引数」
-	using resource_type = type_of_last_arg<FuncDecl>;
+	using resource_type = T;
 	static_assert(std::is_pointer_v<resource_type>, "Resource must be a pointer type.");
 
 	// bound は「最後以外」。今回の用途的には 0 or 1 が主だが、一般化して tuple で持つ。
@@ -49,7 +54,7 @@ struct ResourceHolder
 	using holder_type = std::unique_ptr<std::remove_pointer_t<resource_type>, Releaser>;
 	holder_type m_Holder;
 
-	using Me = ResourceHolder<Deleter>;
+	using Me = ResourceHolder<Deleter, T>;
 
 	using pointer = resource_type;
 	using element_type = std::remove_pointer_t<pointer>;

@@ -85,12 +85,17 @@ class CEditWnd
 , public CDocListenerEx
 {
 private:
+	using AccelHolder = cxx::ResourceHolder<&::DestroyAcceleratorTable>;
 	using CDropTargetHolder = std::unique_ptr<CDropTarget>;
 	using CEditViewHolder = std::unique_ptr<CEditView>;
 	using CEditViewsArray = std::array<CEditViewHolder, 4>;
 	using CPrintPreviewHolder = std::unique_ptr<CPrintPreview>;
 	using CViewFontHolder = std::unique_ptr<CViewFont>;
+	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
 	using SMenubarMessage = StaticString<MENUBAR_MESSAGE_MAX_LEN>;
+	using WindowDcHolder = cxx::ResourceHolder<&::ReleaseDC>;
 
 public:
 	CEditWnd();
@@ -400,10 +405,10 @@ private:
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
 	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
 	BOOL			m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
-	HACCEL			m_hAccel = nullptr;			//!< ウィンドウ毎のアクセラレータテーブルのハンドル
+	AccelHolder		m_hAccel = nullptr;			//!< ウィンドウ毎のアクセラレータテーブルのハンドル
 
 	//フォント・イメージ
-	HFONT			m_hFontCaretPosInfo;		//!< キャレットの行桁位置表示用フォント
+	FontHolder		m_hFontCaretPosInfo = nullptr;	//!< キャレットの行桁位置表示用フォント
 	int				m_nCaretPosInfoCharWidth;	//!< キャレットの行桁位置表示用フォントの幅
 	int				m_nCaretPosInfoCharHeight;	//!< キャレットの行桁位置表示用フォントの高さ
 
