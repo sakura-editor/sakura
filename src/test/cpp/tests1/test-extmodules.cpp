@@ -9,7 +9,6 @@
 #include "TExtModule.hpp"
 
 #include "extmodule/CBregexpDll2.h"
-#include "extmodule/CIcu4cI18n.h"
 #include "extmodule/CMigemo.h"
 #include "extmodule/CUchardet.h"
 //#include "extmodule/CUxTheme.h"		//TSingletonなのでテストできない
@@ -72,7 +71,6 @@ REGISTER_TYPED_TEST_SUITE_P(
  */
 using ExtModuleImplementations = ::testing::Types<
 	CBregexpDll2,
-	CIcu4cI18n,
 	CMigemo,
 	CUchardet,
 	CPPA>;

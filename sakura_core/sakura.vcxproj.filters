@@ -1084,9 +1084,6 @@
     <ClInclude Include="..\sakura_core\mem\CPoolResource.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CIcu4cI18n.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\basis\GrepInfo.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
@@ -2298,9 +2295,6 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonItemDialog.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CIcu4cI18n.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\basis\EditInfo.cpp">
       <Filter>Cpp Source Files\basis</Filter>
