@@ -2030,7 +2030,7 @@ int CGrepAgent::DoGrepReplaceFile(
 				int nIdx = 0;
 				int nOutputPos = 0;
 				// Jun. 26, 2003 genta 無駄なwhileは削除
-				while( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
+				while ((pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen))) {
 					nIdx = int(pszRes - pLine + nMatchLen);
 					if( bOutput ){
 						OutputPathInfo(
