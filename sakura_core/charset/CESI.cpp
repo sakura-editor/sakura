@@ -484,9 +484,8 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 	@note
 	　必ずFalse。
 */
-void CESI::GetEncodingInfo_latin1( const char* pS, const int nLen )
+void CESI::GetEncodingInfo_latin1( [[maybe_unused]] const char* pS, const int nLen )
 {
-	UNREFERENCED_PARAMETER(pS);
 	SetEvaluation( CODE_LATIN1, 0, - nLen );
 	return;
 }

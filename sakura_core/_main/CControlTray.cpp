@@ -282,9 +282,8 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 }
 
 //! タスクトレイにアイコンを登録する
-bool CControlTray::CreateTrayIcon( HWND hWnd )
+bool CControlTray::CreateTrayIcon( [[maybe_unused]] HWND hWnd )
 {
-	UNREFERENCED_PARAMETER(hWnd);
 	// タスクトレイのアイコンを作る
 	if( m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
 		//	Dec. 02, 2002 genta
@@ -1047,11 +1046,8 @@ LRESULT CControlTray::DispatchEvent(
 }
 
 /* WM_COMMANDメッセージ処理 */
-void CControlTray::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
+void CControlTray::OnCommand( WORD wNotifyCode, [[maybe_unused]] WORD wID , [[maybe_unused]] HWND hwndCtl )
 {
-	UNREFERENCED_PARAMETER(wID);
-	UNREFERENCED_PARAMETER(hwndCtl);
-
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
 	case 0:
@@ -1094,7 +1090,7 @@ void CControlTray::OnNewEditor( bool bNewWindow )
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 bool CControlTray::OpenNewEditor(
-	HINSTANCE			hInstance,			//!< [in] インスタンスID (実は未使用)
+	[[maybe_unused]] HINSTANCE			hInstance,			//!< [in] インスタンスID (実は未使用)
 	HWND				hWndParent,			//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
 	const SLoadInfo&	sLoadInfo,			//!< [in]
 	const WCHAR*		szCmdLineOption,	//!< [in] 追加のコマンドラインオプション
@@ -1103,8 +1099,6 @@ bool CControlTray::OpenNewEditor(
 	bool				bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
-	UNREFERENCED_PARAMETER(hInstance);
-
 	/* 共有データ構造体のアドレスを返す */
 	DLLSHAREDATA*	pShareData = &GetDllShareData();
 
@@ -1742,15 +1736,12 @@ void CControlTray::OnDestroy()
 	@date 2006.07.02 ryoji CControlProcess から移動
 */
 INT_PTR CALLBACK CControlTray::ExitingDlgProc(
-	HWND	hwndDlg,	// handle to dialog box
+	[[maybe_unused]] HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
-	WPARAM	wParam,		// first message parameter
-	LPARAM	lParam		// second message parameter
+	[[maybe_unused]] WPARAM	wParam,		// first message parameter
+	[[maybe_unused]] LPARAM	lParam		// second message parameter
 )
 {
-	UNREFERENCED_PARAMETER(hwndDlg);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wParam);
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		return TRUE;

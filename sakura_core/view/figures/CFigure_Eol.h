@@ -36,12 +36,8 @@ public:
 
 	//action
 	bool DrawImp(SColorStrategyInfo* pInfo) override;
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const  override
+	void DispSpace([[maybe_unused]] CGraphics& gr, [[maybe_unused]] DispPos* pDispPos, [[maybe_unused]] CEditView* pcView, [[maybe_unused]] bool bTrans) const  override
 	{
-		UNREFERENCED_PARAMETER(gr);
-		UNREFERENCED_PARAMETER(pDispPos);
-		UNREFERENCED_PARAMETER(pcView);
-		UNREFERENCED_PARAMETER(bTrans);
 	}
 	EColorIndexType GetColorIdx(void) const override { return COLORIDX_EOL; }
 

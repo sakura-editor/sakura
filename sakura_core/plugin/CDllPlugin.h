@@ -47,8 +47,7 @@ public:
 	//実装
 public:
 	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) override;
-	bool ReadPluginOption( CDataProfile *cProfile ) override{
-		UNREFERENCED_PARAMETER(cProfile);
+	bool ReadPluginOption( [[maybe_unused]] CDataProfile *cProfile ) override{
 		return true;
 	}
 	CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) override;
@@ -60,8 +59,7 @@ public:
 	bool InitDllImp() override {
 		return true;
 	}
-	LPCWSTR GetDllNameImp(int nIndex) override {
-		UNREFERENCED_PARAMETER(nIndex);
+	LPCWSTR GetDllNameImp([[maybe_unused]] int nIndex) override {
 		return L"";
 	}
 

@@ -288,11 +288,8 @@ void CTipWnd::Hide( void )
 }
 
 /* 描画処理 */
-LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
+LRESULT CTipWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM l_Param )
 {
-	UNREFERENCED_PARAMETER(l_Param);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	PAINTSTRUCT	ps;
 	HDC			hdc = ::BeginPaint(	hwnd, &ps );
 

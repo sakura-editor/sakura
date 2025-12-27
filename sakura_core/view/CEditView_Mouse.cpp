@@ -639,10 +639,8 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	@date 2008.10.06 nasukoji	マウス中ボタン押下中のホイール操作対応
 	@date 2009.01.17 nasukoji	ボタンUPでコマンドを起動するように変更
 */
-void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnMBUTTONDOWN( [[maybe_unused]] WPARAM fwKeys, int xPos , int yPos )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-
 	int nIdx = getCtrlKeyState();
 	if( F_AUTOSCROLL == GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx] ){
 		if( m_nAutoScrollMode ){
@@ -665,12 +663,8 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	
 	@date 2009.01.17 nasukoji	新規作成（ボタンUPでコマンドを起動するように変更）
 */
-void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnMBUTTONUP( [[maybe_unused]] WPARAM fwKeys, [[maybe_unused]] int xPos , [[maybe_unused]] int yPos )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-	UNREFERENCED_PARAMETER(xPos);
-	UNREFERENCED_PARAMETER(yPos);
-
 	int		nIdx;
 	int		nFuncID;
 
@@ -714,11 +708,8 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	}
 }
 
-void CALLBACK AutoScrollTimerProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
+void CALLBACK AutoScrollTimerProc( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] UINT_PTR idEvent, [[maybe_unused]] DWORD dwTime )
 {
-	UNREFERENCED_PARAMETER(dwTime);
-	UNREFERENCED_PARAMETER(idEvent);
-	UNREFERENCED_PARAMETER(uMsg);
 	CEditView*	pCEditView;
 	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( nullptr != pCEditView ){
@@ -829,12 +820,8 @@ void CEditView::AutoScrollOnTimer()
 	@date 2004.10.11 novice マウス中ボタン対応のため変更
 	@date 2009.01.17 nasukoji	ボタンUPでコマンドを起動するように変更
 */
-void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnXLBUTTONDOWN( [[maybe_unused]] WPARAM fwKeys, [[maybe_unused]] int xPos , [[maybe_unused]] int yPos )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-	UNREFERENCED_PARAMETER(xPos);
-	UNREFERENCED_PARAMETER(yPos);
-
 	if( m_nAutoScrollMode ){
 		AutoScrollExit();
 	}
@@ -849,12 +836,8 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 	@date 2009.01.17 nasukoji	新規作成（ボタンUPでコマンドを起動するように変更）
 */
-void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnXLBUTTONUP( [[maybe_unused]] WPARAM fwKeys, [[maybe_unused]] int xPos , [[maybe_unused]] int yPos )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-	UNREFERENCED_PARAMETER(xPos);
-	UNREFERENCED_PARAMETER(yPos);
-
 	int		nIdx;
 	int		nFuncID;
 
@@ -897,12 +880,8 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	@date 2004.10.11 novice マウス中ボタン対応のため変更
 	@date 2009.01.17 nasukoji	ボタンUPでコマンドを起動するように変更
 */
-void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnXRBUTTONDOWN( [[maybe_unused]] WPARAM fwKeys, [[maybe_unused]] int xPos , [[maybe_unused]] int yPos )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-	UNREFERENCED_PARAMETER(xPos);
-	UNREFERENCED_PARAMETER(yPos);
-
 	if( m_nAutoScrollMode ){
 		AutoScrollExit();
 	}
@@ -917,12 +896,8 @@ void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 	@date 2009.01.17 nasukoji	新規作成（ボタンUPでコマンドを起動するように変更）
 */
-void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnXRBUTTONUP( [[maybe_unused]] WPARAM fwKeys, [[maybe_unused]] int xPos , [[maybe_unused]] int yPos )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-	UNREFERENCED_PARAMETER(xPos);
-	UNREFERENCED_PARAMETER(yPos);
-
 	int		nIdx;
 	int		nFuncID;
 
@@ -958,10 +933,8 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 }
 
 /* マウス移動のメッセージ処理 */
-void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
+void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos_ )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-
 	CMyPoint ptMouse(xPos_, yPos_);
 
 	if( m_cMousePausePos != ptMouse ){
@@ -1270,10 +1243,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 	2011.11.16 Moca スクロール変化量への対応
 	2013.09.10 Moca スペシャルスクロールの不具合の修正
 */
-LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontalMsg, EFunctionCode nCmdFuncID )
+LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, [[maybe_unused]] LPARAM lParam, bool bHorizontalMsg, EFunctionCode nCmdFuncID )
 {
-	UNREFERENCED_PARAMETER(lParam);
-
 //	WORD	fwKeys;
 	short	zDelta;
 //	short	xPos;
@@ -1531,12 +1502,8 @@ bool CEditView::IsSpecialScrollMode( int nSelect )
 }
 
 /* マウス左ボタン開放のメッセージ処理 */
-void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnLBUTTONUP( [[maybe_unused]] WPARAM fwKeys, [[maybe_unused]] int xPos, [[maybe_unused]] int yPos )
 {
-	UNREFERENCED_PARAMETER(fwKeys);
-	UNREFERENCED_PARAMETER(xPos);
-	UNREFERENCED_PARAMETER(yPos);
-
 //	MYTRACE( L"OnLBUTTONUP()\n" );
 
 	/* 範囲選択終了 & マウスキャプチャおわり */
@@ -2241,9 +2208,8 @@ CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
 	return cf;
 }
 
-DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect )
+DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_unused]] POINTL pt, DWORD dwEffect )
 {
-	UNREFERENCED_PARAMETER(pt);
 	if( cf == CF_HDROP )	// 2008.06.20 ryoji
 		return DROPEFFECT_LINK;
 

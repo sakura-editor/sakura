@@ -85,9 +85,8 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 	@date 2005.06.27 zenryaku 戻り値の受け取りが無くてもエラーにせずに関数を実行する
 	@date 2013.06.07 Moca 5つ以上の引数の時ずれるのを修正。NULを含む文字列対応
 */
-HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
+HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Result, [[maybe_unused]] void *Data)
 {
-	UNREFERENCED_PARAMETER(Data);
 	int I;
 	int ArgCount = Arguments->cArgs;
 

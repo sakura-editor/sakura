@@ -51,11 +51,10 @@ INT_PTR CALLBACK CPropStatusbar::DlgProc_page(
 INT_PTR CPropStatusbar::DispatchEvent(
     HWND		hwndDlg,	// handle to dialog box
     UINT		uMsg,		// message
-    WPARAM		wParam,		// first message parameter
+    [[maybe_unused]] WPARAM		wParam,		// first message parameter
     LPARAM		lParam 		// second message parameter
 )
 {
-	UNREFERENCED_PARAMETER(wParam);
 	NMHDR*		pNMHDR;
 
 	switch( uMsg ){

@@ -83,36 +83,24 @@ void CAutoScrollWnd::Close()
 	}
 }
 
-LRESULT CAutoScrollWnd::OnLButtonDown( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
+LRESULT CAutoScrollWnd::OnLButtonDown( [[maybe_unused]] HWND hWnd, [[maybe_unused]] UINT Msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(Msg);
-	UNREFERENCED_PARAMETER(hWnd);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wParam);
 	if( m_cView->m_nAutoScrollMode ){
 		m_cView->AutoScrollExit();
 	}
 	return 0;
 }
 
-LRESULT CAutoScrollWnd::OnRButtonDown( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
+LRESULT CAutoScrollWnd::OnRButtonDown( [[maybe_unused]] HWND hWnd, [[maybe_unused]] UINT Msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(Msg);
-	UNREFERENCED_PARAMETER(hWnd);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wParam);
 	if( m_cView->m_nAutoScrollMode ){
 		m_cView->AutoScrollExit();
 	}
 	return 0;
 }
 
-LRESULT CAutoScrollWnd::OnMButtonDown( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
+LRESULT CAutoScrollWnd::OnMButtonDown( [[maybe_unused]] HWND hWnd, [[maybe_unused]] UINT Msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(Msg);
-	UNREFERENCED_PARAMETER(hWnd);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wParam);
 	if( m_cView->m_nAutoScrollMode ){
 		m_cView->AutoScrollExit();
 	}

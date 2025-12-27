@@ -81,13 +81,11 @@ const DWORD p_helpids[] = {	//12500
 
 int CALLBACK SetData_EnumFontFamProc(
 	ENUMLOGFONT*	pelf,	// pointer to logical-font data
-	NEWTEXTMETRIC*	pntm,	// pointer to physical-font data
-	int				nFontType,	// type of font
+	[[maybe_unused]] NEWTEXTMETRIC*	pntm,	// pointer to physical-font data
+	[[maybe_unused]] int				nFontType,	// type of font
 	LPARAM			lParam 	// address of application-defined data
 )
 {
-	UNREFERENCED_PARAMETER(nFontType);
-	UNREFERENCED_PARAMETER(pntm);
 	CDlgPrintSetting*	pCDlgPrintSetting;
 	HWND				hwndComboFontHan;
 	HWND				hwndComboFontZen;
@@ -194,10 +192,8 @@ BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
 	return TRUE;
 }
 
-BOOL CDlgPrintSetting::OnCbnSelChange( HWND hwndCtl, int wID )
+BOOL CDlgPrintSetting::OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, int wID )
 {
-	UNREFERENCED_PARAMETER(hwndCtl);
-
 //	if( GetItemHwnd( IDC_COMBO_SETTINGNAME ) == hwndCtl ){
 	switch( wID ){
 	case IDC_COMBO_SETTINGNAME:

@@ -34,9 +34,8 @@ CRecentEditNode::CRecentEditNode()
 
 	@note	取得後のポインタはユーザー管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentEditNode::GetItemText( int nIndex ) const
+const WCHAR* CRecentEditNode::GetItemText( [[maybe_unused]] int nIndex ) const
 {
-	UNREFERENCED_PARAMETER(nIndex);
 	return L"WIN"; //※テキスト情報は無い (GetWindowTextしてあげても良いけど、この関数は実行されないので、意味は無い)
 }
 
@@ -46,10 +45,8 @@ bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* s
 	return true;
 }
 
-bool CRecentEditNode::TextToDataType( EditNode* dst, LPCWSTR pszText ) const
+bool CRecentEditNode::TextToDataType( [[maybe_unused]] EditNode* dst, [[maybe_unused]] LPCWSTR pszText ) const
 {
-	UNREFERENCED_PARAMETER(dst);
-	UNREFERENCED_PARAMETER(pszText);
 	return false;
 }
 

@@ -632,13 +632,8 @@ BOOL CDlgTagJumpList::OnNotify(NMHDR* pNMHDR)
 
 	タイマーを停止し，候補リストを更新する
 */
-BOOL CDlgTagJumpList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+BOOL CDlgTagJumpList::OnTimer( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
-	UNREFERENCED_PARAMETER(hwnd);
-
 	StopTimer();
 
 	FindNext( true );

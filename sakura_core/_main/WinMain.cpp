@@ -47,14 +47,11 @@
 */
 int WINAPI wWinMain(
 	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
+	[[maybe_unused]] HINSTANCE	hPrevInstance,	//!< handle to previous instance
 	LPWSTR		lpCmdLine,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
+	[[maybe_unused]] int			nCmdShow		//!< show state of window
 )
 {
-	UNREFERENCED_PARAMETER(nCmdShow);
-	UNREFERENCED_PARAMETER(hPrevInstance);
-
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	// 2009.9.10 syat メモリリークチェックを追加
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);

@@ -171,9 +171,8 @@ void CDialog::CloseDialog( INT_PTR nModalRetVal )
 	return;
 }
 
-BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
+BOOL CDialog::OnInitDialog( HWND hwndDlg, [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(wParam);
 	m_hWnd = hwndDlg;
 	// Modified by KEITA for WIN64 2003.9.6
 	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
@@ -342,9 +341,8 @@ BOOL CDialog::OnSize()
 	return CDialog::OnSize( 0, 0 );
 }
 
-BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
+BOOL CDialog::OnSize( WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
 	RECT	rc;
 	::GetWindowRect( m_hWnd, &rc );
 
@@ -382,10 +380,8 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
-BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
+BOOL CDialog::OnMove( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wParam);
 	return TRUE;
 }
 
@@ -493,18 +489,15 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 }
 
 //@@@ 2002.01.18 add start
-BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
+BOOL CDialog::OnPopupHelp( [[maybe_unused]] WPARAM wPara, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(wPara);
 	HELPINFO *p = (HELPINFO *)lParam;
 	MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
 }
 
-BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )
+BOOL CDialog::OnContextMenu( [[maybe_unused]] WPARAM wPara, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wPara);
 	MyWinHelp( m_hWnd, HELP_CONTEXTMENU, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
 }
@@ -519,9 +512,8 @@ LPVOID CDialog::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
-BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
+BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, [[maybe_unused]] int wID )
 {
-	UNREFERENCED_PARAMETER(wID);
 	//コンボボックスのリストを表示したまま文字列を編集し、Enterキーを
 	//押すと文字列が消える現象の対策。
 	//Enterキーを押してこの関数に入ったら、リストを非表示にしてしまう。
@@ -546,9 +538,8 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	return TRUE;
 }
 
-BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
+BOOL CDialog::OnCbnDropDown( HWND hwndCtl, [[maybe_unused]] int wID )
 {
-	UNREFERENCED_PARAMETER(wID);
 	return OnCbnDropDown( hwndCtl, false );
 }
 /** コンボボックスのドロップダウン時処理

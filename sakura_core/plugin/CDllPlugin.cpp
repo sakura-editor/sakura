@@ -54,9 +54,8 @@ bool CDllPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMl
 }
 
 // プラグ実行
-bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& params )
+bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, [[maybe_unused]] CWSHIfObj::List& params )
 {
-	UNREFERENCED_PARAMETER(params);
 	std::wstring dllPath = GetFilePath( m_sDllName );
 	EDllResult resInit = InitDll( dllPath.c_str() );
 	if( resInit != DLL_SUCCESS ){

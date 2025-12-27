@@ -112,10 +112,8 @@ BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
 }
 // To Here Oct. 6, 2000
 
-BOOL CDlgJump::OnCbnSelChange( HWND hwndCtl, int wID )
+BOOL CDlgJump::OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, int wID )
 {
-	UNREFERENCED_PARAMETER(hwndCtl);
-
 	int	nIndex;
 	int	nWorkLine;
 	switch( wID ){
