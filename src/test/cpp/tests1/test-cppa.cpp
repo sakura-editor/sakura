@@ -225,3 +225,37 @@ TEST(CPPA, ppaErrorProc)
 	info.m_bError = false;
 	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正\ndebug");
 }
+
+namespace macro {
+
+TEST(CSMacroMgr, GetFuncInfoByID001)
+{
+	EXPECT_THAT(CSMacroMgr::GetFuncInfoByID(F_FILENEW), NotNull());
+}
+
+TEST(CSMacroMgr, GetFuncInfoByID101)
+{
+	EXPECT_THAT(CSMacroMgr::GetFuncInfoByID(F_INVALID), IsNull());
+}
+
+TEST(CSMacroMgr, GetFuncInfoByID102)
+{
+	EXPECT_THAT(CSMacroMgr::GetFuncInfoByID(F_0), IsNull());
+}
+
+TEST(CSMacroMgr, GetFuncInfoByName001)
+{
+	EXPECT_THAT(CSMacroMgr::GetFuncInfoByName(nullptr, L"S_FileNew", nullptr), F_FILENEW);
+}
+
+TEST(CSMacroMgr, GetFuncInfoByName002)
+{
+	EXPECT_THAT(CSMacroMgr::GetFuncInfoByName(nullptr, L"ChangeInsertSpace", nullptr), F_CHGINSSPACE);
+}
+
+TEST(CSMacroMgr, GetFuncInfoByName101)
+{
+	EXPECT_THAT(CSMacroMgr::GetFuncInfoByName(nullptr, nullptr, nullptr), F_INVALID);
+}
+
+} // namespace macro

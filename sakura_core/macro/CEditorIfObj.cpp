@@ -16,12 +16,12 @@
 //コマンド情報を取得する
 MacroFuncInfoArray CEditorIfObj::GetMacroCommandInfo() const
 {
-	return CSMacroMgr::m_MacroFuncInfoCommandArr;
+	return CSMacroMgr::GetCommandInfo().data();
 }
 //関数情報を取得する
 MacroFuncInfoArray CEditorIfObj::GetMacroFuncInfo() const
 {
-	return CSMacroMgr::m_MacroFuncInfoArr;
+	return CSMacroMgr::GetFuncInfo().data();
 }
 
 //関数を処理する

@@ -163,25 +163,21 @@ bool CPPA::InitDllImp()
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
 	AddStrObj( "UserErrorMes", "", FALSE, 2 ); // 2003.06.01 デバッグ用文字列変数を用意
 
-	int i;
-	
 	//	Jun. 16, 2003 genta 一時作業エリア
 	char buf[1024];
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != nullptr; i++) {
-		//	2003.06.08 Moca メモリリークの修正
+	for (const auto& funcInfo : CSMacroMgr::GetFuncInfo()) {
 		//	2003.06.16 genta バッファを外から与えるように
 		//	関数登録用文字列を作成する
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], buf );
+		GetDeclarations( funcInfo, buf );
 		SetDefProc( buf );
 	}
 
 	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_pszFuncName != nullptr; i++) {
-		//	2003.06.08 Moca メモリリークの修正
+	for (const auto& funcInfo : CSMacroMgr::GetCommandInfo()) {
 		//	2003.06.16 genta バッファを外から与えるように
 		//	関数登録用文字列を作成する
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], buf );
+		GetDeclarations( funcInfo, buf );
 		SetDefProc( buf );
 	}
 	return true; 
@@ -340,23 +336,11 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	WCHAR szMes[2048]; // 2048あれば足りるかと
 	const WCHAR* pszErr = szMes;
 	if( 0 < Err_CD ){
-		int i, FuncID;
-		FuncID = Err_CD - 1;
+		int FuncID = Err_CD - 1;
 		char szFuncDec[1024];
 		szFuncDec[0] = '\0';
-		for( i = 0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID != -1; i++ ){
-			if( CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID == FuncID ){
-				GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], szFuncDec );
-				break;
-			}
-		}
-		if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1 ){
-			for( i = 0; CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1; i++ ){
-				if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID == FuncID ){
-					GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], szFuncDec );
-					break;
-				}
-			}
+		if (const auto pFuncInfo = CSMacroMgr::GetFuncInfoByID(FuncID)) {
+			GetDeclarations(*pFuncInfo, szFuncDec);
 		}
 		if( szFuncDec[0] != '\0' ){
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), szFuncDec );
