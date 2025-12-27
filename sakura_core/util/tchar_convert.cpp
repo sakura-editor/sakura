@@ -105,3 +105,28 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 
 	return pDst;
 }
+
+namespace cxx {
+
+/*!
+ * ワイド文字列をナロー文字列に変換します。
+ */
+std::string to_string(std::wstring_view source) {
+	// 変換に必要な出力バッファサイズを求める
+	size_t required = 0;
+	if (const auto ret = ::wcstombs_s(&required, nullptr, 0, std::data(source), 0); EILSEQ == ret) {
+		throw std::invalid_argument("Invalid wide character sequence.");
+	}
+
+	// 変換に必要な出力バッファを確保する
+	std::string buffer(required, '\0');
+
+	size_t converted = 0;
+	::wcstombs_s(&converted, std::data(buffer), required, std::data(source), _TRUNCATE);
+
+	buffer.resize(converted - 1); // wcstombs_sの戻り値は終端NULを含むので -1 する
+
+	return buffer;
+}
+
+} // namespace cxx

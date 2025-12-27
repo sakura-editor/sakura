@@ -163,22 +163,18 @@ bool CPPA::InitDllImp()
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
 	AddStrObj( "UserErrorMes", "", FALSE, 2 ); // 2003.06.01 デバッグ用文字列変数を用意
 
-	//	Jun. 16, 2003 genta 一時作業エリア
-	char buf[1024];
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
 	for (const auto& funcInfo : CSMacroMgr::GetFuncInfo()) {
-		//	2003.06.16 genta バッファを外から与えるように
 		//	関数登録用文字列を作成する
-		GetDeclarations( funcInfo, buf );
-		SetDefProc( buf );
+		const auto buf = GetDeclarations(funcInfo);
+		SetDefProc( buf.c_str() );
 	}
 
 	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
 	for (const auto& funcInfo : CSMacroMgr::GetCommandInfo()) {
-		//	2003.06.16 genta バッファを外から与えるように
 		//	関数登録用文字列を作成する
-		GetDeclarations( funcInfo, buf );
-		SetDefProc( buf );
+		const auto buf = GetDeclarations(funcInfo);
+		SetDefProc( buf.c_str() );
 	}
 	return true; 
 }
@@ -196,80 +192,69 @@ bool CPPA::InitDllImp()
 
 	@date 2003.06.16 genta 無駄なnew/deleteを避けるためバッファを外から与えるように
 */
-char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer )
+std::string CPPA::GetDeclarations(const MacroFuncInfo& cMacroFuncInfo)
 {
-	char szType[20];			//	procedure/function用バッファ
-	char szReturn[20];			//	戻り値型用バッファ
-	if (cMacroFuncInfo.m_varResult == VT_EMPTY){
-		strcpy( szType, "procedure" );
-		szReturn[0] = '\0';
+	//	procedure/function用バッファ
+	std::string declType = "function";
+
+	//	戻り値型用バッファ
+	std::string retType;
+
+	switch (cMacroFuncInfo.m_varResult) {
+	case VT_EMPTY: declType = "procedure"; break;
+	case VT_BSTR:  retType = ": string"; break;
+	case VT_I4:    retType = ": Integer"; break;
+	default: break;
 	}
-	else {
-		strcpy( szType, "function" );
-		if (cMacroFuncInfo.m_varResult == VT_BSTR){
-			strcpy( szReturn, ": string" );
-		}
-		else if ( cMacroFuncInfo.m_varResult == VT_I4 ){
-			strcpy( szReturn, ": Integer" );
-		}
-		else {
-			szReturn[0] = '\0';
-		}
-	}
-	
-	char szArguments[8][20];	//	引数用バッファ
-	int i;
-	for (i=0; i<8; i++){
-		VARTYPE type = VT_EMPTY;
+
+	//	引数用バッファ
+	std::vector<std::string> args{};
+	args.reserve(8);
+
+	for (int i = 0; i < 8; ++i) {
+		VARTYPE vt = VT_EMPTY;
 		if( i < 4 ){
-			type = cMacroFuncInfo.m_varArguments[i];
+			vt = cMacroFuncInfo.m_varArguments[i];
 		}else{
 			if( cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize ){
-				type = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
+				vt = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
 			}
 		}
-		if ( type == VT_EMPTY ){
+		if ( vt == VT_EMPTY ){
 			break;
 		}
-		if ( type == VT_BSTR ){
-			strcpy( szArguments[i], "s0: string" );
-			szArguments[i][1] = '0' + (char)i;
+
+		std::string_view type_name = "";
+		char type_char = 0;
+		switch (vt) {
+		case VT_BSTR:	type_char = 's'; type_name = "string";  break;
+		case VT_I4:		type_char = 'i'; type_name = "Integer"; break;
+		default:		type_char = 'u'; type_name = "Unknown"; break;
 		}
-		else if ( type == VT_I4 ){
-			strcpy( szArguments[i], "i0: Integer" );
-			szArguments[i][1] = '0' + (char)i;
-		}
-		else {
-			strcpy( szArguments[i], "u0: Unknown" );
-		}
+		args.emplace_back(std::format("{:c}{:d}: {:s}", type_char, i, type_name));
 	}
-	if ( i > 0 ){	//	引数があったとき
-		int j;
-		char szArgument[8*20];
-		// 2002.12.06 Moca 原因不明だが，strcatがVC6Proでうまく動かなかったため，strcpyにしてみたら動いた
-		strcpy( szArgument, szArguments[0] );
-		for ( j=1; j<i; j++){
-			strcat( szArgument, "; " );
-			strcat( szArgument, szArguments[j] );
+
+	if (!args.empty()) {
+		auto szArgument(args.front());
+		if (1 < args.size()) {
+			szArgument = std::accumulate(args.cbegin() + 1, args.cend(), szArgument, [](const std::string& a, std::string_view b) { return std::format("{}; {}", a, b); });
 		}
-		auto_sprintf( szBuffer, "%hs S_%ls(%hs)%hs; index %d;",
-			szType,
-			cMacroFuncInfo.m_pszFuncName,
+
+		return std::format("{} S_{}({}){}; index {};",
+			declType,
+			cxx::to_string(cMacroFuncInfo.m_pszFuncName),
 			szArgument,
-			szReturn,
+			retType,
+			cMacroFuncInfo.m_nFuncID
+		);
+	} else {
+		return std::format("{} S_{}{}; index {};",
+			declType,
+			cxx::to_string(cMacroFuncInfo.m_pszFuncName),
+			retType,
 			cMacroFuncInfo.m_nFuncID
 		);
 	}
-	else {
-		auto_sprintf( szBuffer, "%hs S_%ls%hs; index %d;",
-			szType,
-			cMacroFuncInfo.m_pszFuncName,
-			szReturn,
-			cMacroFuncInfo.m_nFuncID
-		);
-	}
-	//	Jun. 01, 2003 Moca / Jun. 16, 2003 genta
-	return szBuffer;
 }
 
 /*! ユーザー定義文字列型オブジェクト
@@ -337,13 +322,13 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	const WCHAR* pszErr = szMes;
 	if( 0 < Err_CD ){
 		int FuncID = Err_CD - 1;
-		char szFuncDec[1024];
-		szFuncDec[0] = '\0';
+		std::string funcDesc;
+		funcDesc.reserve(1024);
 		if (const auto pFuncInfo = CSMacroMgr::GetFuncInfoByID(FuncID)) {
-			GetDeclarations(*pFuncInfo, szFuncDec);
+			funcDesc = GetDeclarations(*pFuncInfo);
 		}
-		if( szFuncDec[0] != '\0' ){
-			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), szFuncDec );
+		if (!funcDesc.empty()) {
+			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), funcDesc.c_str() );
 		}else{
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA3), FuncID );
 		}
