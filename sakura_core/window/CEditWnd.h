@@ -275,6 +275,12 @@ public:
 	CEditView*			GetDragSourceView() const					{ return m_pcDragSourceView; }
 	void				SetDragSourceView( CEditView* pcDragSourceView )	{ m_pcDragSourceView = pcDragSourceView; }
 
+	CViewFont* GetViewFont(bool isMiniMap) const noexcept {
+		return isMiniMap
+			? m_pcViewFontMiniMap.get()
+			: m_pcViewFont.get();
+	}
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

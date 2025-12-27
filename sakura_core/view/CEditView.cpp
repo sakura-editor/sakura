@@ -139,11 +139,7 @@ BOOL CEditView::Create(
 	m_pcTextArea = new CTextArea(this);
 	m_pcCaret = new CCaret(this, pcEditDoc);
 	m_pcRuler = new CRuler(this, pcEditDoc);
-	if( m_bMiniMap ){
-		m_pcViewFont = GetEditWnd().m_pcViewFontMiniMap.get();
-	}else{
-		m_pcViewFont = GetEditWnd().m_pcViewFont.get();
-	}
+	m_pcViewFont = GetEditWnd().GetViewFont(m_bMiniMap);
 
 	m_cHistory = new CAutoMarkMgr;
 	m_cRegexKeyword = nullptr;				// 2007.04.08 ryoji
