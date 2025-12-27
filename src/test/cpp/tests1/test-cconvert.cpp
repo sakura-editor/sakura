@@ -26,6 +26,8 @@
 
 #include "_main/CNormalProcess.h"
 
+#include "util/tchar_convert.h"
+
 TEST(CConvert, ZenkataToHankata)
 {
 	CNativeW actual;
@@ -446,3 +448,21 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestConv
 		ConvTestParamType{ F_CODECNV_SJIS2UTF7,			L"化けラッタ!!",				L"+UxYwUTDpMMMwvwAhACE-" }
 	)
 );
+
+namespace cxx {
+
+TEST(to_string, test001)
+{
+	setlocale(LC_ALL, "Japanese");
+
+	// 日本語を含む文字列
+	EXPECT_THAT(cxx::to_string(L"ABCabc123あいう愛生"), StrEq("ABCabc123あいう愛生"));
+}
+
+TEST(to_string, test101)
+{
+	// カラー絵文字「男性のシンボル」（サロゲートペアはSJISに変換できない）
+	EXPECT_ANY_THROW(cxx::to_string(L"\U0001F6B9"));
+}
+
+} // namespace cxx
