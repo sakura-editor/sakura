@@ -187,10 +187,8 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 }
 
 //Zipプラグインを導入する
-bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const std::wstring& sZipFile, bool bInSearch )
+bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const std::wstring& sZipFile, [[maybe_unused]] bool bInSearch )
 {
-	UNREFERENCED_PARAMETER(bInSearch);
-
 	DEBUG_TRACE(L"Entry InstZipPlugin\n");
 
 	CZipFile		cZipFile;

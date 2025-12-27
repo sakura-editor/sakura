@@ -636,9 +636,8 @@ EndFunc:
 
 	@date 2015.12.30 novice  第１バイトが11110abbのとき、nLenより大きい値を返すのを修正
 */
-int CheckUtf8Char2( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
+int CheckUtf8Char2( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, [[maybe_unused]] const int nOption )
 {
-	UNREFERENCED_PARAMETER(nOption);
 	unsigned char c0, c1, c2;
 	int ncwidth;
 	ECharSet echarset;

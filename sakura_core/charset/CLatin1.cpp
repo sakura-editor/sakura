@@ -29,9 +29,8 @@
 
 	エラーでなければ1を返す
 */
-int CLatin1::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
+int CLatin1::GetSizeOfChar( [[maybe_unused]] const char* pData, int nDataLen, int nIdx )
 {
-	UNREFERENCED_PARAMETER(pData);
 	if( nIdx >= nDataLen ){
 		return 0;
 	}

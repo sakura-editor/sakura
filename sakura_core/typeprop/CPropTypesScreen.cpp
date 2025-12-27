@@ -802,9 +802,8 @@ void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* pszName)
 	m_OlmArr.push_back(method);
 }
 
-void CPropTypesScreen::RemoveOutlineMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::RemoveOutlineMethod(int nMethod, [[maybe_unused]] const WCHAR* szName)
 {
-	UNREFERENCED_PARAMETER(szName);
 	int nSize = (int)m_OlmArr.size();
 	for(int i = 0; i < nSize; i++ ){
 		if( m_OlmArr[i].nMethod == (EOutlineType)nMethod ){
@@ -828,9 +827,8 @@ void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* pszName)
 	m_SIndentArr.push_back(method);
 }
 
-void CPropTypesScreen::RemoveSIndentMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::RemoveSIndentMethod(int nMethod, [[maybe_unused]] const WCHAR* szName)
 {
-	UNREFERENCED_PARAMETER(szName);
 	int nSize = (int)m_SIndentArr.size();
 	for(int i = 0; i < nSize; i++ ){
 		if( m_SIndentArr[i].nMethod == (ESmartIndentType)nMethod ){

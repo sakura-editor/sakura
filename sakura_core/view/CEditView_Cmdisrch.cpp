@@ -37,18 +37,13 @@
 */
 void CEditView::TranslateCommand_isearch(
 	EFunctionCode&	nCommand,
-	bool&			bRedraw,
+	[[maybe_unused]] bool&			bRedraw,
 	LPARAM&			lparam1,
-	LPARAM&			lparam2,
-	LPARAM&			lparam3,
-	LPARAM&			lparam4
+	[[maybe_unused]] LPARAM&			lparam2,
+	[[maybe_unused]] LPARAM&			lparam3,
+	[[maybe_unused]] LPARAM&			lparam4
 )
 {
-	UNREFERENCED_PARAMETER(bRedraw);
-	UNREFERENCED_PARAMETER(lparam2);
-	UNREFERENCED_PARAMETER(lparam3);
-	UNREFERENCED_PARAMETER(lparam4);
-
 	if (m_nISearchMode <= SEARCH_NONE )
 		return;
 
@@ -98,18 +93,13 @@ void CEditView::TranslateCommand_isearch(
 */
 bool CEditView::ProcessCommand_isearch(
 	int	nCommand,
-	bool	bRedraw,
+	[[maybe_unused]] bool	bRedraw,
 	LPARAM	lparam1,
-	LPARAM	lparam2,
-	LPARAM	lparam3,
-	LPARAM	lparam4
+	[[maybe_unused]] LPARAM	lparam2,
+	[[maybe_unused]] LPARAM	lparam3,
+	[[maybe_unused]] LPARAM	lparam4
 )
 {
-	UNREFERENCED_PARAMETER(lparam2);
-	UNREFERENCED_PARAMETER(lparam3);
-	UNREFERENCED_PARAMETER(lparam4);
-	UNREFERENCED_PARAMETER(bRedraw);
-
 	switch( nCommand ){
 		//	検索文字列の変更操作
 		case F_ISEARCH_ADD_CHAR:

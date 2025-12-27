@@ -45,10 +45,8 @@ bool CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 /*! キーボードマクロの読み込み（ファイルから）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
+BOOL CPPAMacroMgr::LoadKeyMacro( [[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszPath )
 {
-	UNREFERENCED_PARAMETER(hInstance);
-
 	CTextInputStream in( pszPath );
 	if(!in){
 		m_nReady = false;
@@ -74,10 +72,8 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 /*! キーボードマクロの読み込み（文字列から）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
+BOOL CPPAMacroMgr::LoadKeyMacroStr( [[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszCode )
 {
-	UNREFERENCED_PARAMETER(hInstance);
-
 	m_cBuffer.SetString( pszCode );	//	m_cBufferにコピー
 
 	m_nReady = true;

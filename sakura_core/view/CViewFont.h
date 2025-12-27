@@ -42,9 +42,8 @@ public:
 		return m_hFont_HAN;
 	}
 
-	const LOGFONT& GetLogfont(int FontNo = 0) const
+	const LOGFONT& GetLogfont([[maybe_unused]] int FontNo = 0) const
 	{
-		UNREFERENCED_PARAMETER(FontNo);
 		return m_LogFont;
 	}
 

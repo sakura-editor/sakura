@@ -32,11 +32,10 @@
 */
 CProcess::CProcess(
 	HINSTANCE	hInstance,		//!< handle to process instance
-	LPCWSTR		lpCmdLine		//!< pointer to command line
+	[[maybe_unused]] LPCWSTR		lpCmdLine		//!< pointer to command line
 )
 : m_hInstance( hInstance )
 {
-	UNREFERENCED_PARAMETER(lpCmdLine);
 	// アプリ名をリソースから読み込む
 	m_strAppName = LS(STR_GSTR_APPNAME);
 }

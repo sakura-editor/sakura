@@ -49,10 +49,8 @@ public:
 	static int FowardChars(SColorStrategyInfo* pInfo);
 
 	bool DrawImp(SColorStrategyInfo* pInfo) override;
-	bool Match(const wchar_t* pText, int nTextLen) const override
+	bool Match([[maybe_unused]] const wchar_t* pText, [[maybe_unused]] int nTextLen) const override
 	{
-		UNREFERENCED_PARAMETER(pText);
-		UNREFERENCED_PARAMETER(nTextLen);
 		return true;
 	}
 

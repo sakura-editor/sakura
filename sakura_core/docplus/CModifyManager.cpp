@@ -10,9 +10,8 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
 
-void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
+void CModifyManager::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 {
-	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// 行変更状態をすべてリセット

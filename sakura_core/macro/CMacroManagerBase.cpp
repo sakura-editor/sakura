@@ -18,10 +18,8 @@
 
 // CMacroBeforeAfter
 
-void CMacroBeforeAfter::ExecKeyMacroBefore( class CEditView* pcEditView, int flags )
+void CMacroBeforeAfter::ExecKeyMacroBefore( [[maybe_unused]] class CEditView* pcEditView, [[maybe_unused]] int flags )
 {
-	UNREFERENCED_PARAMETER(flags);
-
 	COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
 	if( opeBlk ){
 		m_nOpeBlkCount = opeBlk->GetRefCount();
@@ -31,11 +29,8 @@ void CMacroBeforeAfter::ExecKeyMacroBefore( class CEditView* pcEditView, int fla
 	m_bDrawSwitchOld = pcEditView->GetDrawSwitch();
 }
 
-void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flags, bool bRet )
+void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, [[maybe_unused]] int flags, [[maybe_unused]] bool bRet )
 {
-	UNREFERENCED_PARAMETER(bRet);
-	UNREFERENCED_PARAMETER(flags);
-
 	if( 0 < m_nOpeBlkCount ){
 		COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
 		if( opeBlk == nullptr ){

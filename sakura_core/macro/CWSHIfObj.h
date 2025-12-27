@@ -58,26 +58,14 @@ protected:
 	virtual MacroFuncInfoArray GetMacroFuncInfo() const = 0;	//関数情報を取得する
 
 	//関数を処理する
-	virtual bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+	virtual bool HandleFunction([[maybe_unused]] CEditView* View, [[maybe_unused]] EFunctionCode ID, [[maybe_unused]] VARIANT *Arguments, [[maybe_unused]] const int ArgSize, [[maybe_unused]] VARIANT &Result)
 	{
-		UNREFERENCED_PARAMETER(View);
-		UNREFERENCED_PARAMETER(ID);
-		UNREFERENCED_PARAMETER(Arguments);
-		UNREFERENCED_PARAMETER(ArgSize);
-		UNREFERENCED_PARAMETER(Result);
-
 		return false;
 	}
 
 	//コマンドを処理する
-	virtual bool HandleCommand(CEditView* View, EFunctionCode ID, LPCWSTR* Arguments, const int* ArgLengths, const int ArgSize)
+	virtual bool HandleCommand([[maybe_unused]] CEditView* View, [[maybe_unused]] EFunctionCode ID, [[maybe_unused]] LPCWSTR* Arguments, [[maybe_unused]] const int* ArgLengths, [[maybe_unused]] const int ArgSize)
 	{
-		UNREFERENCED_PARAMETER(View);
-		UNREFERENCED_PARAMETER(ID);
-		UNREFERENCED_PARAMETER(Arguments);
-		UNREFERENCED_PARAMETER(ArgLengths);
-		UNREFERENCED_PARAMETER(ArgSize);
-
 		return false;
 	}
 

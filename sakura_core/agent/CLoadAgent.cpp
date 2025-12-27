@@ -165,9 +165,8 @@ next:
 	return CALLBACK_CONTINUE;
 }
 
-void CLoadAgent::OnBeforeLoad(SLoadInfo* pLoadInfo)
+void CLoadAgent::OnBeforeLoad([[maybe_unused]] SLoadInfo* pLoadInfo)
 {
-	UNREFERENCED_PARAMETER(pLoadInfo);
 }
 
 ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
@@ -254,10 +253,8 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	return eRet;
 }
 
-void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
+void CLoadAgent::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 {
-	UNREFERENCED_PARAMETER(sLoadInfo);
-
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	/* 親ウィンドウのタイトルを更新 */

@@ -130,9 +130,8 @@ LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 	}
 }
 
-long CMigemo::migemo_open(char* dict)
+long CMigemo::migemo_open([[maybe_unused]] char* dict)
 {	
-	UNREFERENCED_PARAMETER(dict);
 	if (!IsAvailable())
 		return 0;
 	if( m_bStdcall ){

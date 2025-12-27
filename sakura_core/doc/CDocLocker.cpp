@@ -41,18 +41,16 @@ void CDocLocker::OnAfterLoad(const SLoadInfo& sLoadInfo)
 //                        セーブ前後                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CDocLocker::OnBeforeSave(const SSaveInfo& sSaveInfo)
+void CDocLocker::OnBeforeSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 {
-	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// ファイルの排他ロック解除
 	pcDoc->m_cDocFileOperation.DoFileUnlock();
 }
 
-void CDocLocker::OnAfterSave(const SSaveInfo& sSaveInfo)
+void CDocLocker::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 {
-	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// 書き込めるか検査
