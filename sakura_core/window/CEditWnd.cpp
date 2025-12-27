@@ -30,13 +30,11 @@
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"	/// 2003/1/26 aroka
 #include "_main/CAppMode.h"
-#include "_os/CDropTarget.h"
 #include "basis/CErrorInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
-#include "print/CPrintPreview.h"	/// 2002/2/3 aroka
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "CEditApp.h"
@@ -211,40 +209,13 @@ CEditWnd::CEditWnd()
 		cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
 
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView();
-	m_pcEditView = m_pcEditViewArr[0];
-
-	m_pcDropTarget = new CDropTarget(this);	// 右ボタンドロップ用
+	m_pcEditViewArr[0] = std::make_unique<CEditView>();
+	m_pcEditView = m_pcEditViewArr[0].get();
 }
 
 CEditWnd::~CEditWnd()
 {
-	delete m_pPrintPreview;
-	m_pPrintPreview = nullptr;
-
-	for( int i = 0; i < m_nEditViewMaxCount; i++ ){
-		delete m_pcEditViewArr[i];
-		m_pcEditViewArr[i] = nullptr;
-	}
-	m_pcEditView = nullptr;
-
-	delete m_pcViewFont;
-	m_pcViewFont = nullptr;
-
-	delete m_pcViewFontMiniMap;
-	m_pcViewFontMiniMap = nullptr;
-
 	delete[] m_pszLastCaption;
-
-	//	Dec. 4, 2002 genta
-	/* キャレットの行桁位置表示用フォント */
-	::DeleteObject( m_hFontCaretPosInfo );
-
-	delete m_pcDropTarget;	// 2008.06.20 ryoji
-	m_pcDropTarget = nullptr;
-
-	// ウィンドウ毎に作成したアクセラレータテーブルを破棄する
-	DeleteAccelTbl();
 
 	m_hWnd = nullptr;
 }
@@ -576,7 +547,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
-	CEditDoc*		pcEditDoc,
+	const CEditDoc* pcEditDoc,
 	CImageListMgr*	pcIcons,	//!< [in] Image List
 	int				nGroup		//!< [in] グループID
 )
@@ -1059,7 +1030,7 @@ void CEditWnd::MessageLoop( void )
 		if(ret==-1)break; //GetMessage失敗
 
 		//ダイアログメッセージ
-		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview),	&msg ) ){}	//!< 印刷プレビュー 操作バー
+		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview.get()),	&msg ) ){}	//!< 印刷プレビュー 操作バー
 		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
@@ -2906,7 +2877,6 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 	if( m_pPrintPreview ){
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		/*	印刷プレビューモードを解除します。	*/
-		delete m_pPrintPreview;	//	削除。
 		m_pPrintPreview = nullptr;	//	NULLか否かで、プリントプレビューモードか判断するため。
 
 		/*	通常モードに戻す	*/
@@ -2960,7 +2930,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::ShowWindow( m_cDlgGrep.GetHwnd(), SW_HIDE );
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-		m_pPrintPreview = new CPrintPreview( this );
+		m_pPrintPreview = std::make_unique<CPrintPreview>(this);
 		/* 現在の印刷設定 */
 		m_pPrintPreview->SetPrintSetting(
 			&m_pShareData->m_PrintSettingArr[
@@ -3877,8 +3847,6 @@ void CEditWnd::InitMenubarMessageFont(void)
 {
 	TEXTMETRIC	tm;
 	LOGFONT		lf;
-	HDC			hdc;
-	HFONT		hFontOld;
 
 	/* LOGFONTの初期化 */
 	memset_raw( &lf, 0, sizeof( lf ) );
@@ -3898,13 +3866,12 @@ void CEditWnd::InitMenubarMessageFont(void)
 	wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
 
-	hdc = ::GetDC( ::GetDesktopWindow() );
-	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
+	MemDcHolder hdc = ::CreateCompatibleDC(nullptr);
+	SelectionHolder hFontOld{ hdc };
+	hFontOld = ::SelectObject( hdc, m_hFontCaretPosInfo );
 	::GetTextMetrics( hdc, &tm );
 	m_nCaretPosInfoCharWidth = tm.tmAveCharWidth;
 	m_nCaretPosInfoCharHeight = tm.tmHeight;
-	::SelectObject( hdc, hFontOld );
-	::ReleaseDC( ::GetDesktopWindow(), hdc );
 }
 
 /*
@@ -3918,12 +3885,13 @@ void CEditWnd::InitMenubarMessageFont(void)
 */
 void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 {
+	const auto hWnd = GetHwnd();
+
 	if( nullptr == ::GetMenu( GetHwnd() ) )	// 2007.03.08 ryoji 追加
 		return;
 
 	POINT	po,poFrame;
 	RECT	rc,rcFrame;
-	HFONT	hFontOld;
 	int		nStrLen;
 
 	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
@@ -3935,15 +3903,16 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 		}
 	}
 
-	HDC		hdc;
-	hdc = ::GetWindowDC( GetHwnd() );
+	WindowDcHolder hdc{ hWnd };
+	hdc = ::GetWindowDC(hWnd);
+	SelectionHolder hFontOld{ hdc };
 	poFrame.x = 0;
 	poFrame.y = 0;
 	::ClientToScreen( GetHwnd(), &poFrame );
 	::GetWindowRect( GetHwnd(), &rcFrame );
 	po.x = rcFrame.right - rcFrame.left;
 	po.y = poFrame.y - rcFrame.top;
-	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
+	hFontOld = ::SelectObject( hdc, m_hFontCaretPosInfo );
 	nStrLen = MENUBAR_MESSAGE_MAX_LEN;
 	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - ( ::GetSystemMetrics( SM_CXSIZEFRAME ) + 2 );
 	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth + 2;
@@ -3970,8 +3939,6 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 			::ExtTextOut(hdc, rc.left, rc.top, ETO_CLIPPED | ETO_OPAQUE, &rc, m_pszMenubarMessage, nStrLen, vDx);
 		}
 	}
-	::SelectObject( hdc, hFontOld );
-	::ReleaseDC( GetHwnd(), hdc );
 }
 
 /*!
@@ -4317,7 +4284,7 @@ bool CEditWnd::CreateEditViewBySplit(int nViewCount )
 	if( GetAllViewCount() < nViewCount ){
 		for( int i = GetAllViewCount(); i < nViewCount; i++ ){
 			assert( nullptr == m_pcEditViewArr[i] );
-			m_pcEditViewArr[i] = new CEditView();
+			m_pcEditViewArr[i] = std::make_unique<CEditView>();
 			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), GetDocument(), i, FALSE, false );
 		}
 		m_nEditViewCount = nViewCount;
@@ -4390,7 +4357,7 @@ void  CEditWnd::SetActivePane( int nIndex )
 	/* アクティブなビューを切り替える */
 	int nOldIndex = m_nActivePaneIndex;
 	m_nActivePaneIndex = nIndex;
-	m_pcEditView = m_pcEditViewArr[m_nActivePaneIndex];
+	m_pcEditView = m_pcEditViewArr[m_nActivePaneIndex].get();
 
 	// フォーカスを移動する	// 2007.10.16 ryoji
 	GetView(nOldIndex).GetCaret().m_cUnderLine.CaretUnderLineOFF( true );	//	2002/05/11 YAZAKI
@@ -4791,7 +4758,6 @@ void CEditWnd::CreateAccelTbl( void )
 void CEditWnd::DeleteAccelTbl( void )
 {
 	if( m_hAccel ){
-		::DestroyAcceleratorTable( m_hAccel );
 		m_hAccel = nullptr;
 	}
 }

@@ -88,11 +88,8 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const COLORREF color ) no
 template <class T>
 class TOriginalHolder{
 public:
-	TOriginalHolder<T>()
-	{
-		m_data = 0;
-		m_hold = false;
-	}
+	TOriginalHolder() = default;
+
 	void Clear()
 	{
 		m_data = 0;
@@ -113,9 +110,10 @@ public:
 	{
 		return m_hold;
 	}
-private:
-	T		m_data;
-	bool	m_hold;
+
+	private:
+	T		m_data = 0;
+	bool	m_hold = false;
 };
 
 //! フォント情報管理
