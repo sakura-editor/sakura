@@ -140,9 +140,9 @@ BOOL CEditView::Create(
 	m_pcCaret = new CCaret(this, pcEditDoc);
 	m_pcRuler = new CRuler(this, pcEditDoc);
 	if( m_bMiniMap ){
-		m_pcViewFont = GetEditWnd().m_pcViewFontMiniMap;
+		m_pcViewFont = GetEditWnd().m_pcViewFontMiniMap.get();
 	}else{
-		m_pcViewFont = GetEditWnd().m_pcViewFont;
+		m_pcViewFont = GetEditWnd().m_pcViewFont.get();
 	}
 
 	m_cHistory = new CAutoMarkMgr;

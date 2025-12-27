@@ -28,6 +28,7 @@
 
 #include <shellapi.h>// HDROP
 #include "_main/global.h"
+#include "_os/CDropTarget.h"
 #include "CMainToolBar.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
 #include "func/CFuncKeyWnd.h"
@@ -48,11 +49,12 @@
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
 
+#include "cxx/ResourceHolder.hpp"
+
+#include "print/CPrintPreview.h"
+
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-class CPrintPreview;// 2002/2/10 aroka
-class CDropTarget;
 class CPlug;
 class CEditDoc;
 struct DLLSHAREDATA;
@@ -83,7 +85,11 @@ class CEditWnd
 , public CDocListenerEx
 {
 private:
-	using CEditViewsArray = std::array<CEditView*, 4>;
+	using CDropTargetHolder = std::unique_ptr<CDropTarget>;
+	using CEditViewHolder = std::unique_ptr<CEditView>;
+	using CEditViewsArray = std::array<CEditViewHolder, 4>;
+	using CPrintPreviewHolder = std::unique_ptr<CPrintPreview>;
+	using CViewFontHolder = std::unique_ptr<CViewFont>;
 	using SMenubarMessage = StaticString<MENUBAR_MESSAGE_MAX_LEN>;
 
 public:
@@ -97,7 +103,7 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
-		CEditDoc*		pcEditDoc,
+		const CEditDoc*	pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
@@ -347,12 +353,12 @@ public:
 	CTabWnd			m_cTabWnd;			//!< タブウインドウ	//@@@ 2003.05.31 MIK
 	CFuncKeyWnd		m_cFuncKeyWnd;		//!< ファンクションバー
 	CMainStatusBar	m_cStatusBar{ this };		//!< ステータスバー
-	CPrintPreview*	m_pPrintPreview = nullptr;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
+	CPrintPreviewHolder	m_pPrintPreview = nullptr;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CEditView*		m_pcDragSourceView = nullptr;	//!< ドラッグ元のビュー
-	CViewFont*		m_pcViewFont = new CViewFont(&GetLogfont());		//!< フォント
-	CViewFont*		m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);		//!< フォント
+	CViewFontHolder		m_pcViewFont = std::make_unique<CViewFont>(&GetLogfont());		//!< フォント
+	CViewFontHolder		m_pcViewFontMiniMap = std::make_unique<CViewFont>(&GetLogfont(), true);		//!< フォント
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
@@ -398,7 +404,7 @@ private:
 	//D&Dフラグ
 	bool			m_bDragMode = false;
 	CMyPoint		m_ptDragPosOrg;
-	CDropTarget*	m_pcDropTarget;
+	CDropTargetHolder	m_pcDropTarget = std::make_unique<CDropTarget>(this);	//!< 右ボタンドロップ用
 
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
