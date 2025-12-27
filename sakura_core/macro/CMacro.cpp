@@ -2337,7 +2337,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				int nPos = 0;
 				wchar_t* p;
 				int i = 1;
-				while( p = my_strtok( &vStrMenu[0], nLen, &nPos, L"," ) ){
+				while ((p = my_strtok(&vStrMenu[0], nLen, &nPos, L","))) {
 					wchar_t* r = p;
 					int nFlags = MF_STRING;
 					int nFlagBreak = 0;
