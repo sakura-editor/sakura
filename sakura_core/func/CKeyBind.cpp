@@ -298,7 +298,7 @@ bool CKeyBind::GetKeyStrSub(
 	@date 2007.11.04 genta 共通機能のサブルーチン化
 */
 int CKeyBind::GetKeyStr(
-		HINSTANCE	hInstance,
+		[[maybe_unused]] HINSTANCE	hInstance,
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr,
 		CNativeW&	cMemList,
@@ -306,8 +306,6 @@ int CKeyBind::GetKeyStr(
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	UNREFERENCED_PARAMETER(hInstance);
-
 	int		i;
 	int		j;
 	cMemList.SetString(L"");
@@ -337,7 +335,7 @@ int CKeyBind::GetKeyStr(
 	@date 2007.11.04 genta 共通機能のサブルーチン化
 */
 int CKeyBind::GetKeyStrList(
-	HINSTANCE	hInstance,
+	[[maybe_unused]] HINSTANCE	hInstance,
 	int			nKeyNameArrNum,
 	KEYDATA*	pKeyNameArr,
 	CNativeW***	pppcMemList,
@@ -345,8 +343,6 @@ int CKeyBind::GetKeyStrList(
 	BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	UNREFERENCED_PARAMETER(hInstance);
-
 	int		i;
 	int		j;
 	int		nAssignedKeysNum;

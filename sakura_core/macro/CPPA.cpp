@@ -76,9 +76,8 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 	return !info.m_bError;
 }
 
-LPCWSTR CPPA::GetDllNameImp(int nIndex)
+LPCWSTR CPPA::GetDllNameImp([[maybe_unused]] int nIndex)
 {
-	UNREFERENCED_PARAMETER(nIndex);
 	return L"PPA.DLL";
 }
 

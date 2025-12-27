@@ -21,12 +21,8 @@ public:
 	bool DrawImp(SColorStrategyInfo* pInfo) override;
 	virtual void DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans, int width) const;
 	virtual wchar_t GetAlternateChar() const{ return L'･'; }
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const override
+	void DispSpace([[maybe_unused]] CGraphics& gr, [[maybe_unused]] DispPos* pDispPos, [[maybe_unused]] CEditView* pcView, [[maybe_unused]] bool bTrans) const override
 	{
-		UNREFERENCED_PARAMETER(gr);
-		UNREFERENCED_PARAMETER(pDispPos);
-		UNREFERENCED_PARAMETER(pcView);
-		UNREFERENCED_PARAMETER(bTrans);
 		assert(0);
 	}
 	EColorIndexType GetColorIdx(void) const override { return COLORIDX_CTRLCODE; }

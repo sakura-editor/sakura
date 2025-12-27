@@ -551,9 +551,8 @@ BOOL CDlgDiff::OnMinMaxInfo( LPARAM lParam )
 	return 0;
 }
 
-BOOL CDlgDiff::OnLbnDblclk( int wID )
+BOOL CDlgDiff::OnLbnDblclk( [[maybe_unused]] int wID )
 {
-	UNREFERENCED_PARAMETER(wID);
 	HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 	if( ApiWrap::List_GetCurSel( hwndList ) == LB_ERR ) return FALSE;
 	return OnBnClicked(IDOK);

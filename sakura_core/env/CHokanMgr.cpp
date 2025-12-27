@@ -528,11 +528,8 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	return TRUE;
 }
 
-BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
+BOOL CHokanMgr::OnLbnSelChange( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID )
 {
-	UNREFERENCED_PARAMETER(hwndCtl);
-	UNREFERENCED_PARAMETER(wID);
-
 //	2001/06/18 asa-o:
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 	return TRUE;

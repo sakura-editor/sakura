@@ -69,10 +69,8 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	@param hInstance [in] インスタンスハンドル(未使用)
 	@param pszPath   [in] ファイルのパス
 */
-BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
+BOOL CWSHMacroManager::LoadKeyMacro([[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszPath)
 {
-	UNREFERENCED_PARAMETER(hInstance);
-
 	//ソース読み込み -> m_Source
 	m_Source.clear();
 	
@@ -92,10 +90,8 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 	@param hInstance [in] インスタンスハンドル(未使用)
 	@param pszCode   [in] マクロコード
 */
-BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode)
+BOOL CWSHMacroManager::LoadKeyMacroStr([[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszCode)
 {
-	UNREFERENCED_PARAMETER(hInstance);
-
 	//ソース読み込み -> m_Source
 	m_Source = pszCode;
 	return TRUE;

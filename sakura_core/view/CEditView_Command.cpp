@@ -177,10 +177,9 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 	const WCHAR*	open_ext[],		//!< [in] 開く対象とする拡張子
 	int				file_extno,		//!< [in] 処理対象拡張子リストの要素数
 	int				open_extno,		//!< [in] 開く対象拡張子リストの要素数
-	const WCHAR*	errmes			//!< [in] ファイルを開けなかった場合に表示するエラーメッセージ
+	[[maybe_unused]] const WCHAR*	errmes			//!< [in] ファイルを開けなかった場合に表示するエラーメッセージ
 )
 {
-	UNREFERENCED_PARAMETER(errmes);
 //From Here Feb. 7, 2001 JEPRO 追加
 	int		i;
 //To Here Feb. 7, 2001

@@ -52,10 +52,8 @@ void CDocEditor::SetModified( bool flag, bool redraw)
 		GetEditWnd().UpdateCaption();
 }
 
-void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
+void CDocEditor::OnBeforeLoad([[maybe_unused]] SLoadInfo* sLoadInfo)
 {
-	UNREFERENCED_PARAMETER(sLoadInfo);
-
 	//ビューのテキスト選択解除
 	GetEditWnd().Views_DisableSelectArea(true);
 }
@@ -115,9 +113,8 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	CAppMode::getInstance()->SetViewMode(sLoadInfo.bViewMode);		// ビューモード	##ここも、アリかな
 }
 
-void CDocEditor::OnAfterSave(const SSaveInfo& sSaveInfo)
+void CDocEditor::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 {
-	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	this->SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア

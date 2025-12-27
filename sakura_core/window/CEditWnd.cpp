@@ -222,9 +222,8 @@ CEditWnd::~CEditWnd()
 
 //! ドキュメントリスナ：セーブ後
 // 2008.02.02 kobake
-void CEditWnd::OnAfterSave(const SSaveInfo& sSaveInfo)
+void CEditWnd::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 {
-	UNREFERENCED_PARAMETER(sSaveInfo);
 	//ビュー再描画
 	this->Views_RedrawAll();
 
@@ -261,9 +260,8 @@ void CEditWnd::UpdateCaption()
 }
 
 //!< ウィンドウ生成用の矩形を取得
-void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo)
+void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, [[maybe_unused]] int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
-	UNREFERENCED_PARAMETER(nGroup);
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
 	//	2004.05.13 Moca m_Common.m_eSaveWindowSizeをBOOLからenumに変えたため
@@ -547,14 +545,12 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
-	const CEditDoc* pcEditDoc,
+	[[maybe_unused]] const CEditDoc* pcEditDoc,
 	CImageListMgr*	pcIcons,	//!< [in] Image List
 	int				nGroup		//!< [in] グループID
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
-
-	UNREFERENCED_PARAMETER(pcEditDoc);
 
 	wmemset( m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
@@ -2652,9 +2648,8 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
-STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
 {
-	UNREFERENCED_PARAMETER(pt);
 	if( pDataObject == nullptr || pdwEffect == nullptr ){
 		return E_INVALIDARG;
 	}
@@ -2675,10 +2670,8 @@ STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::DragOver( [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
 {
-	UNREFERENCED_PARAMETER(dwKeyState);
-	UNREFERENCED_PARAMETER(pt);
 	if( pdwEffect == nullptr )
 		return E_INVALIDARG;
 
@@ -2691,10 +2684,8 @@ STDMETHODIMP CEditWnd::DragLeave( void )
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
 {
-	UNREFERENCED_PARAMETER(dwKeyState);
-	UNREFERENCED_PARAMETER(pt);
 	if( pDataObject == nullptr || pdwEffect == nullptr )
 		return E_INVALIDARG;
 
@@ -2786,9 +2777,8 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 	@date 2008.04.19 ryoji IDT_FIRST_IDLE での MYWM_FIRST_IDLE ポスト処理を追加
 	@date 2013.06.09 novice コントロールプロセスへの MYWM_FIRST_IDLE ポスト処理を追加
 */
-LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
+LRESULT CEditWnd::OnTimer( WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
 	// タイマー ID で処理を振り分ける
 	switch( wParam )
 	{
@@ -3312,9 +3302,8 @@ LRESULT CEditWnd::OnHScroll( WPARAM wParam, LPARAM lParam )
 	return m_pPrintPreview->OnHScroll( wParam, lParam );
 }
 
-LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
+LRESULT CEditWnd::OnLButtonDown( [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(wParam);
 	//by 鬼(2) キャプチャして押されたら非クライアントでもこっちに来る
 	if(m_IconClicked != icNone)
 		return 0;
@@ -3327,10 +3316,8 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
+LRESULT CEditWnd::OnLButtonUp( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wParam);
 	//by 鬼 2002/04/18
 	if(m_IconClicked != icNone)
 	{
@@ -4139,10 +4126,8 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 	@date  2006.03.23 fon CEditWnd::InitMenuから移動。////が元からあるコメント。//>は追加コメントアウト。
 	@date 2009.06.02 ryoji アイテム数が多いときはアクセスキーを 1-9,A-Z の範囲で再使用する（従来は36個未満を仮定）
 */
-LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
+LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, [[maybe_unused]] BOOL bFull )
 {
-	UNREFERENCED_PARAMETER(bFull);
-
 	int			i;
 	WCHAR		szMenu[_MAX_PATH * 2 + 3];
 	const EditInfo*	pfi;
@@ -4450,10 +4435,8 @@ void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
 	m_cMiniMapView.AdjustScrollBars();
 }
 
-void CEditWnd::Views_DisableSelectArea(bool bRedraw)
+void CEditWnd::Views_DisableSelectArea([[maybe_unused]] bool bRedraw)
 {
-	UNREFERENCED_PARAMETER(bRedraw);
-
 	for( int i = 0; i < GetAllViewCount(); ++i ){
 		if( GetView(i).GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */

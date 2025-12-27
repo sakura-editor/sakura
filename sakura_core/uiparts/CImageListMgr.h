@@ -86,7 +86,7 @@ public:
 		@date 2003.07.21 genta ここでは何も行わないが，受け皿だけ残しておく
 		@date 2003.07.21 genta 戻り型をvoidに変更
 	*/
-	void  SetToolBarImages(HWND hToolBar, int id = 0) const { UNREFERENCED_PARAMETER(hToolBar); UNREFERENCED_PARAMETER(id); }
+	void  SetToolBarImages([[maybe_unused]] HWND hToolBar, [[maybe_unused]] int id = 0) const { }
 
 protected:
 	int m_cx;			//!<	width of icon

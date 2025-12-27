@@ -1426,10 +1426,8 @@ struct WorkData{
 };
 
 /*! メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
-LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CMenuDrawer::OnMenuChar( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(uMsg);
 	WCHAR				chUser;
 	HMENU				hmenu;
 	int i;

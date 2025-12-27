@@ -46,9 +46,8 @@ bool CWSHPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMl
 }
 
 //オプションファイルを読み込む
-bool CWSHPlugin::ReadPluginOption( CDataProfile *cProfile )
+bool CWSHPlugin::ReadPluginOption( [[maybe_unused]] CDataProfile *cProfile )
 {
-	UNREFERENCED_PARAMETER(cProfile);
 	return true;
 }
 

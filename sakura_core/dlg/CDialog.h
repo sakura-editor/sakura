@@ -86,33 +86,33 @@ public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
-	virtual BOOL OnNotify(NMHDR* pNMHDR) { UNREFERENCED_PARAMETER(pNMHDR); return FALSE; }
+	virtual BOOL OnNotify([[maybe_unused]] NMHDR* pNMHDR) { return FALSE; }
 	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
-	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
-	virtual BOOL OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(hwnd); UNREFERENCED_PARAMETER(uMsg); UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
-	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
-	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
+	virtual BOOL OnDrawItem( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return TRUE; }
+	virtual BOOL OnTimer( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return TRUE; }
+	virtual BOOL OnKeyDown( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return TRUE; }
+	virtual BOOL OnDeviceChange( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return TRUE; }
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
-	virtual BOOL OnStnClicked( int wID ) { UNREFERENCED_PARAMETER(wID); return FALSE; }
-	virtual BOOL OnEnChange( HWND hwndCtl, int wID )     { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
-	virtual BOOL OnEnSetFocus( HWND hwndCtl, int wID )   { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
-	virtual BOOL OnEnKillFocus( HWND hwndCtl, int wID )  { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
-	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ) { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
-	virtual BOOL OnLbnDblclk( int wID ) { UNREFERENCED_PARAMETER(wID); return FALSE; }
-	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ) { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
-	virtual BOOL OnCbnEditChange( HWND hwndCtl, int wID ) { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; } // @@2005.03.31 MIK タグジャンプDialog
+	virtual BOOL OnStnClicked( [[maybe_unused]] int wID ) { return FALSE; }
+	virtual BOOL OnEnChange( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID )     { return FALSE; }
+	virtual BOOL OnEnSetFocus( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID )   { return FALSE; }
+	virtual BOOL OnEnKillFocus( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID )  { return FALSE; }
+	virtual BOOL OnLbnSelChange( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID ) {  return FALSE; }
+	virtual BOOL OnLbnDblclk( [[maybe_unused]] int wID ) { return FALSE; }
+	virtual BOOL OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID ) { return FALSE; }
+	virtual BOOL OnCbnEditChange( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID ) { return FALSE; } // @@2005.03.31 MIK タグジャンプDialog
 	virtual BOOL OnCbnDropDown( HWND hwndCtl, int wID );
 	static BOOL OnCbnDropDown( HWND hwndCtl, bool scrollBar );
 	virtual BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
 
-	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam )  { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return FALSE; }
-	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam )   { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return FALSE; }	//@@@ 2003.04.08 MIK
-	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam )     { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return -1; }
-	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return -1; }
+	virtual BOOL OnKillFocus( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )  { return FALSE; }
+	virtual BOOL OnActivate( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )   { return FALSE; }	//@@@ 2003.04.08 MIK
+	virtual int OnVKeyToItem( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )     { return -1; }
+	virtual LRESULT OnCharToItem( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return -1; }
 	virtual BOOL OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual BOOL OnContextMenu(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add

@@ -128,7 +128,6 @@ void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	}
 }
 
-void CSaveAgent::OnFinalSave(ESaveResult eSaveResult)
+void CSaveAgent::OnFinalSave([[maybe_unused]] ESaveResult eSaveResult)
 {
-	UNREFERENCED_PARAMETER(eSaveResult);
 }

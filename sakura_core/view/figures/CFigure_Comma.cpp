@@ -14,9 +14,8 @@
 //                        CFigure_Comma                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_Comma::Match(const wchar_t* pText, int nTextLen) const
+bool CFigure_Comma::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) const
 {
-	UNREFERENCED_PARAMETER(nTextLen);
 	if ( pText[0] == L',' ) {
 		return true;
 	}

@@ -18,10 +18,8 @@ void CColor_Select::OnStartScanLogic()
 	m_nSelectEnd	= CLogicInt(-1);
 }
 
-bool CColor_Select::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Select::BeginColor([[maybe_unused]] const CStringRef& cStr, [[maybe_unused]] int nPos)
 {
-	UNREFERENCED_PARAMETER(cStr);
-	UNREFERENCED_PARAMETER(nPos);
 	assert(0);
 	return false;
 }
@@ -61,9 +59,8 @@ bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nL
 	return false;
 }
 
-bool CColor_Select::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Select::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
 {
-	UNREFERENCED_PARAMETER(cStr);
 	//マッチ文字列終了検出
 	if( m_nSelectEnd <= nPos ){
 		// -- -- マッチ文字列を描画 -- -- //
@@ -119,9 +116,8 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Found::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Found::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
 {
-	UNREFERENCED_PARAMETER(cStr);
 	//マッチ文字列終了検出
 	if( m_nSearchEnd <= nPos ){ //+ == では行頭文字の場合、m_nSearchEndも０であるために文字色の解除ができないバグを修正 2003.05.03 かろと
 		// -- -- マッチ文字列を描画 -- -- //
