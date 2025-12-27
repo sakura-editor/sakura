@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2025, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,10 +19,11 @@
 #include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
 #include "cxx/com_pointer.hpp"
 #include "cxx/ResourceHolder.hpp"
+
+#pragma comment(lib, "htmlhelp.lib") 
 
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
 {
@@ -312,22 +313,22 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 	return dwRet;
 }
 
-//	From Here Jun. 26, 2001 genta
 /*!
-	HTML Helpコンポーネントのアクセスを提供する。
-	内部で保持すべきデータは特になく、至る所から使われるのでGlobal変数にするが、
-	直接のアクセスはOpenHtmlHelp()関数のみから行う。
-	他のファイルからはCHtmlHelpクラスは隠されている。
-*/
-CHtmlHelp g_cHtmlHelp;
-
-/*!
-	HTML Helpを開く
-	HTML Helpが利用可能であれば引数をそのまま渡し、そうでなければメッセージを表示する。
-
-	@return 開いたヘルプウィンドウのウィンドウハンドル。開けなかったときはNULL。
-*/
-
+ * HTML Helpを開く
+ *
+ * @param[in, opt] hWnd 呼び出し元ウィンドウのハンドル（省略可）
+ * @param[in] szFile HTML Helpのファイル名。不等号(>)に続けてウィンドウタイプ名を指定可能
+ * @param[in] uCmd HtmlHelpに渡すコマンド
+ * @param[in] data コマンドに応じたデータ（省略可）
+ *
+ * @return 開いたヘルプウィンドウのハンドル。失敗時は nullptr
+ *
+ * @note Windows95以前ではHHCtrl.ocxが標準で入っていないバージョンが存在した。
+ *       過去にはHHCtrl.ocx未検出時にエラーメッセージを表示していたが、
+ *       現在はHHCtrl.ocxを静的リンクする方式に変更したため、チェック処理は削除した。
+ *
+ * @date 2001/06/26 genta 新規作成
+ */
 HWND OpenHtmlHelp(
 	HWND		hWnd,	//!< [in] 呼び出し元ウィンドウのウィンドウハンドル
 	LPCWSTR		szFile,	//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
@@ -336,21 +337,10 @@ HWND OpenHtmlHelp(
 	bool		msgflag	//!< [in] エラーメッセージを表示するか。省略時はtrue。
 )
 {
-	if( DLL_SUCCESS == g_cHtmlHelp.InitDll() ){
-		return g_cHtmlHelp.HtmlHelp( hWnd, szFile, uCmd, data );
-	}
-	if( msgflag ){
-		::MessageBox(
-			hWnd,
-			LS(STR_SHELL_HHCTRL),
-			LS(STR_SHELL_INFO),
-			MB_OK | MB_ICONEXCLAMATION
-		);
-	}
-	return nullptr;
-}
+	UNREFERENCED_PARAMETER(msgflag);
 
-//	To Here Jun. 26, 2001 genta
+	return ::HtmlHelpW( hWnd, szFile, uCmd, data );
+}
 
 /*! ショートカット(.lnk)の解決
 	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
