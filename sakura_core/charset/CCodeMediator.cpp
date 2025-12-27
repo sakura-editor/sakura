@@ -30,7 +30,6 @@ ECodeType CCodeMediator::CheckKanjiCode(const char* buff, size_t size) noexcept
 		return m_sEncodingConfig.m_eDefaultCodetype;
 	}
 
-	// ICU4CのDLL群が利用できる場合、ICU4Cによる判定を試みる
 	CharsetDetector csd;
 	if (csd.IsAvailable()) {
 		auto code = csd.Detect(std::string_view(buff, size));
