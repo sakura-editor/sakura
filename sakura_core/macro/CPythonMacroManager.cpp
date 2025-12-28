@@ -29,6 +29,7 @@
 #include <vector>
 #include <string>
 #include <io.h>
+#include <shlwapi.h>
 #include "CPythonMacroManager.h"
 
 #include "macro/CSMacroMgr.h"
@@ -825,7 +826,9 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 	bool ret = CMacro::HandleCommand(
 		&GetEditWnd().GetActiveView(),
 		(EFunctionCode)info->m_nFuncID, arguments, argLengths, (int)nArgs);
-
+	if (!ret) {
+		DEBUG_TRACE(L"CMacro::HandleCommand failed, EFunctionCode: %d\n", info->m_nFuncID);
+	}
 	PyObject* none = Py_BuildValue("");
 	Py_IncRef(none);
 	return none;
@@ -884,6 +887,9 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 		bool ret = CMacro::HandleFunction(
 			&GetEditWnd().GetActiveView(),
 			(EFunctionCode)info->m_nFuncID, vtArgs, (int)nArgs, vtResult);
+		if (!ret) {
+			DEBUG_TRACE(L"CMacro::HandleFunction failed, EFunctionCode: %d\n", info->m_nFuncID);
+		}
 		std::wstring str;
 		switch (vtResult.vt) {
 		case VT_I4:
@@ -966,8 +972,8 @@ struct PyObjectPtr final {
 	PyObjectPtr(const PyObjectPtr&) = delete;
 	PyObjectPtr& operator = (const PyObjectPtr&) = delete;
 
-	PyObject* operator = (PyObject* op) {
-		this->op = op;
+	PyObject* operator = (PyObject* param_op) {
+		this->op = param_op;
 	}
 	operator PyObject* () {
 		return op;
@@ -975,11 +981,19 @@ struct PyObjectPtr final {
 	PyObject* op;
 };
 
-bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
+bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_unused]] ) const
 {
 	static HMODULE s_hModule;
 	if (!s_hModule) {
 		const wchar_t* dllname = L"python3.dll";
+		std::wstring path = dllname;
+		auto dir = GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory.c_str();
+		if (::PathIsDirectoryW(dir)) {
+			std::wstring path2 = std::format(L"{}/{}", dir, dllname);
+			if (IsFileExists(path2.c_str())) {
+				path = path2;
+			}
+		}
 		s_hModule = LoadLibraryExedir(dllname);
 		if (!s_hModule) {
 			WCHAR* pMsg;
@@ -1091,7 +1105,7 @@ bool wide2utf8(std::string& utf8, const WCHAR* psz)
 	return true;
 }
 
-BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
+BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance [[maybe_unused]], const WCHAR* pszPath)
 {
 	FILE* f = _wfopen(pszPath, L"rb");
 	if (!f) {
@@ -1111,7 +1125,7 @@ BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath
 	return TRUE;
 }
 
-BOOL CPythonMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode)
+BOOL CPythonMacroManager::LoadKeyMacroStr(HINSTANCE hInstance [[maybe_unused]], const WCHAR* pszCode)
 {
 	m_strPath.clear();
 	m_wstrPath.clear();

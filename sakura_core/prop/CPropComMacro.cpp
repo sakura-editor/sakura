@@ -37,7 +37,9 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_MACROPATH,		HIDC_MACROPATH,		//File
 	IDC_MACRONAME,		HIDC_MACRONAME,		//マクロ名
 	IDC_MACROLIST,		HIDC_MACROLIST,		//マクロリスト
-	IDC_MACRODIR,		HIDC_MACRODIR,		//マクロ一覧
+	IDC_MACRODIR,		HIDC_MACRODIR,		//マクロフォルダ
+	IDC_PYTHONDIR,		HIDC_PYTHONDIR,		//Pythonディレクトリ
+	IDC_PYTHONDIRREF,	HIDC_PYTHONDIRREF,	//Pythonディレクトリ参照
 	IDC_CHECK_RELOADWHENEXECUTE,	HIDC_CHECK_RELOADWHENEXECUTE,	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
 	IDC_CHECK_MacroOnOpened,		HIDC_CHECK_MacroOnOpened,		//オープン後自動実行マクロ	// 2006.09.01 ryoji
 	IDC_CHECK_MacroOnTypeChanged,	HIDC_CHECK_MacroOnTypeChanged,	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
@@ -146,6 +148,9 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			switch( wID ){
 			case IDC_MACRODIRREF:	// マクロディレクトリ参照
 				SelectBaseDir_Macro( hwndDlg );
+				break;
+			case IDC_PYTHONDIRREF:	// Pythonディレクトリ参照
+				SelectDir_Python(hwndDlg);
 				break;
 			case IDC_MACRO_REG:		// マクロ設定
 				SetMacro2List_Macro( hwndDlg );
@@ -259,6 +264,9 @@ void CPropMacro::SetData( HWND hwndDlg )
 	//	マクロディレクトリ
 	ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_Common.m_sMacro.m_szMACROFOLDER );
 
+	//	Pythonディレクトリ
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_PYTHONDIR, /*m_pShareData->*/m_Common.m_sMacro.m_szPythonDirectory);
+
 	nLastPos_Macro = -1;
 	
 	//	リストビューの行選択を可能にする．
@@ -355,6 +363,8 @@ int CPropMacro::GetData( HWND hwndDlg )
 	//	マクロディレクトリ
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACRODIR, m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH );
+	//	Pythonディレクトリ
+	ApiWrap::DlgItem_GetText(hwndDlg, IDC_PYTHONDIR, m_Common.m_sMacro.m_szPythonDirectory, _MAX_PATH);
 	// 2003.06.23 Moca マクロフォルダーの最後の\がなければ付ける
 	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, L'\\' );
 	
@@ -569,6 +579,22 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 		//	末尾に\\マークを追加する．
 		AddLastChar( szDir, int(std::size(szDir)), L'\\' );
 		ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRODIR, GetRelPath(szDir) ); // 2015.03.03 可能なら相対パスにする
+	}
+}
+
+void CPropMacro::SelectDir_Python(HWND hwndDlg)
+{
+	WCHAR szDir[_MAX_PATH];
+	ApiWrap::DlgItem_GetText(hwndDlg, IDC_PYTHONDIR, szDir, int(std::size(szDir)));
+	if (_IS_REL_PATH(szDir)) {
+		WCHAR folder[_MAX_PATH];
+		wcscpy(folder, szDir);
+		GetInidirOrExedir(szDir, folder);
+	}
+	if (SelectDir(hwndDlg, LS(STR_PROPCOMMACR_SEL_PYTHONDIR), szDir, szDir)) {
+		// 末尾に\\マークを追加する．
+		AddLastChar(szDir, int(std::size(szDir)), L'\\');
+		ApiWrap::DlgItem_SetText(hwndDlg, IDC_PYTHONDIR, GetRelPath(szDir)); // 可能なら相対パスにする
 	}
 }
 
