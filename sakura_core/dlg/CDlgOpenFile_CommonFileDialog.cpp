@@ -719,10 +719,11 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 		break;
 	case EFITER_MACRO:
-		cFileExt.AppendExtRaw( L"Macros", L"*.js;*.vbs;*.ppa;*.mac" );
+		cFileExt.AppendExtRaw( L"Macros", L"*.js;*.vbs;*.ppa;*.py;*.mac" );
 		cFileExt.AppendExtRaw( L"JScript", L"*.js" );
 		cFileExt.AppendExtRaw( L"VBScript", L"*.vbs" );
 		cFileExt.AppendExtRaw( L"Pascal", L"*.ppa" );
+		cFileExt.AppendExtRaw( L"Python", L"*.py" );
 		cFileExt.AppendExtRaw( L"Key Macro", L"*.mac" );
 		break;
 	case EFITER_NONE:

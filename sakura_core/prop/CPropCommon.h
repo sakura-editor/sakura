@@ -442,6 +442,7 @@ private:
 	//	To Here Jun. 2, 2001 genta
 	void SetMacro2List_Macro( HWND hwndDlg );//!< Macroデータの設定
 	void SelectBaseDir_Macro( HWND hwndDlg );//!< Macroディレクトリの選択
+	void SelectDir_Python(HWND hwndDlg);//!< Pythonディレクトリの選択
 	void OnFileDropdown_Macro( HWND hwndDlg );//!< ファイルドロップダウンが開かれるとき
 	void CheckListPosition_Macro( HWND hwndDlg );//!< リストビューのFocus位置確認
 	static int CALLBACK DirCallback_Macro( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData );

@@ -739,7 +739,7 @@
 #define HIDC_MACROPATH				11731	//File
 #define HIDC_MACRONAME				11740	//マクロ名
 #define HIDC_MACROLIST				11741	//マクロリスト
-#define HIDC_MACRODIR				11750	//マクロ一覧
+#define HIDC_MACRODIR				11750	//マクロディレクトリ
 #define HIDC_CHECK_RELOADWHENEXECUTE	11751	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
 #define HIDC_CHECK_MEMDC			11752	//画面キャッシュを使う
 #define HIDC_CHECK_MacroOnOpened		11753	//オープン後自動実行マクロ	// 2006.09.01 ryoji
@@ -760,6 +760,8 @@
 #define HIDC_PLUGIN_INST_ZIP		11768	//Zipプラグインを追加			// 2011/11/2 Uchi
 #define HIDC_EDIT_LINENUMWIDTH		11769	//行番号の最小桁数				// 2014.08.02 katze
 #define HIDC_PLUGIN_URL				11770	//プラグイン配布元				// 2015.01.02 syat
+#define HIDC_PYTHONDIR				11771	//Pythonディレクトリ
+#define HIDC_PYTHONDIRREF			11772	//Pythonディレクトリ参照
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索
