@@ -16,7 +16,7 @@
 //                           URL                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Url::BeginColor(std::wstring_view cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
@@ -31,7 +31,7 @@ bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Url::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Url::EndColor(std::wstring_view cStr, int nPos)
 {
 	UNREFERENCED_PARAMETER(cStr);
 	if( nPos == this->m_nCOMMENTEND ){

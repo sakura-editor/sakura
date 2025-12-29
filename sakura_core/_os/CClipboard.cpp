@@ -463,7 +463,7 @@ static int GetEndModeByMode(int nMode, int nEndMode)
 	return nEndMode;
 }
 
-bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode)
+bool CClipboard::SetClipboardByFormat(std::wstring_view cstr, const wchar_t* pFormatName, int nMode, int nEndMode)
 {
 	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
 	if( uFormat == (CLIPFORMAT)-1 ){

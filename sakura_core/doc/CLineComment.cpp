@@ -47,7 +47,7 @@ void CLineComment::CopyTo( const int n, const wchar_t* buffer, int nCommentPos )
 	}
 }
 
-bool CLineComment::Match( int nPos, const CStringRef& cStr ) const
+bool CLineComment::Match( int nPos, std::wstring_view cStr ) const
 {
 	int i;
 	for ( i=0; i<COMMENT_DELIMITER_NUM; i++ ){

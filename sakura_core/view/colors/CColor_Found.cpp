@@ -18,7 +18,7 @@ void CColor_Select::OnStartScanLogic()
 	m_nSelectEnd	= CLogicInt(-1);
 }
 
-bool CColor_Select::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Select::BeginColor(std::wstring_view cStr, int nPos)
 {
 	UNREFERENCED_PARAMETER(cStr);
 	UNREFERENCED_PARAMETER(nPos);
@@ -26,7 +26,7 @@ bool CColor_Select::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nLineNum, const CLayout* pcLayout)
+bool CColor_Select::BeginColorEx(std::wstring_view cStr, int nPos, CLayoutInt nLineNum, const CLayout* pcLayout)
 {
 	if(!cStr.IsValid())return false;
 
@@ -61,7 +61,7 @@ bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nL
 	return false;
 }
 
-bool CColor_Select::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Select::EndColor(std::wstring_view cStr, int nPos)
 {
 	UNREFERENCED_PARAMETER(cStr);
 	//マッチ文字列終了検出
@@ -92,7 +92,7 @@ void CColor_Found::OnStartScanLogic()
 	}
 }
 
-bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Found::BeginColor(std::wstring_view cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 	const CEditView* pcView = CColorStrategyPool::getInstance()->GetCurrentView();
@@ -119,7 +119,7 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Found::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Found::EndColor(std::wstring_view cStr, int nPos)
 {
 	UNREFERENCED_PARAMETER(cStr);
 	//マッチ文字列終了検出
