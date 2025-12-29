@@ -282,7 +282,7 @@ public:
 			GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) + nSpace;
 	}
 	CLayoutXInt GetLayoutXOfChar( std::wstring_view str, int i ) const {
-		return GetLayoutXOfChar(str.GetPtr(), str.GetLength(), i);
+		return GetLayoutXOfChar(str.data(), str.length(), i);
 	}
 	CPixelXInt GetWidthPerKeta() const { return Int(m_nCharLayoutXPerKeta); }
 	CPixelXInt GetCharSpacing() const { return m_nSpacing; }

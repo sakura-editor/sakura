@@ -20,7 +20,7 @@ static int IsNumber( std::wstring_view cStr, int offset );/* 数値ならその�
 
 bool CColor_Numeric::BeginColor(std::wstring_view cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	int	nnn;
 
@@ -80,8 +80,8 @@ static int IsNumber(std::wstring_view cStr,/*const wchar_t *buf,*/ int offset/*,
 	int d = 0;
 	int f = 0;
 
-	p = cStr.GetPtr() + offset;
-	q = cStr.GetPtr() + cStr.GetLength();
+	p = cStr.data() + offset;
+	q = cStr.data() + cStr.length();
 
 	if( *p == L'0' )  /* 10進数,Cの16進数 */
 	{

@@ -130,24 +130,24 @@ TEST(CDocLine, GetStringRefWithEOL)
 		CDocLine line;
 		line.SetDocLineString(L"もじれつ", 4, false);
 		std::wstring_view ref = line.GetStringRefWithEOL();
-		EXPECT_EQ(ref.GetPtr(), line.GetPtr());
-		EXPECT_EQ(ref.GetLength(), line.GetLengthWithEOL());
+		EXPECT_EQ(ref.data(), line.GetPtr());
+		EXPECT_EQ(ref.length(), line.GetLengthWithEOL());
 
 		ref = CDocLine::GetStringRefWithEOL_Safe(&line);
-		EXPECT_EQ(ref.GetPtr(), line.GetPtr());
-		EXPECT_EQ(ref.GetLength(), line.GetLengthWithEOL());
+		EXPECT_EQ(ref.data(), line.GetPtr());
+		EXPECT_EQ(ref.length(), line.GetLengthWithEOL());
 	}
 	{
 		CLogicInt n(123);
 		std::wstring_view ref = CDocLine::GetStringRefWithEOL_Safe(nullptr);
-		EXPECT_EQ(ref.GetPtr(), nullptr);
-		EXPECT_EQ(ref.GetLength(), 0);
+		EXPECT_EQ(ref.data(), nullptr);
+		EXPECT_EQ(ref.length(), 0);
 
 #ifdef _MSC_VER
 		CDocLine* p = reinterpret_cast<CDocLine*>(0);
 		ref = p->GetStringRefWithEOL();
-		EXPECT_EQ(ref.GetPtr(), nullptr);
-		EXPECT_EQ(ref.GetLength(), 0);
+		EXPECT_EQ(ref.data(), nullptr);
+		EXPECT_EQ(ref.length(), 0);
 #endif
 	}
 }

@@ -15,7 +15,7 @@
 
 bool CColor_LineComment::BeginColor(std::wstring_view cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	// 行コメント
 	if( m_pTypeData->m_cLineComment.Match( nPos, cStr )	//@@@ 2002.09.22 YAZAKI
@@ -28,7 +28,7 @@ bool CColor_LineComment::BeginColor(std::wstring_view cStr, int nPos)
 bool CColor_LineComment::EndColor(std::wstring_view cStr, int nPos)
 {
 	//文字列終端
-	if( nPos >= cStr.GetLength() ){
+	if( nPos >= cStr.length() ){
 		return true;
 	}
 
@@ -46,7 +46,7 @@ bool CColor_LineComment::EndColor(std::wstring_view cStr, int nPos)
 
 bool CColor_BlockComment::BeginColor(std::wstring_view cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	// ブロックコメント
 	if( m_pcBlockComment->Match_CommentFrom( nPos, cStr )	//@@@ 2002.09.22 YAZAKI

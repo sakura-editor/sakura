@@ -79,8 +79,8 @@ CLayoutColorInfo* CColor_Quote::GetStrategyColorInfo() const
 //staic
 bool CColor_Quote::IsCppRawString(std::wstring_view cStr, int nPos)
 {
-	if( 0 < nPos && cStr.At(nPos-1) == 'R' && cStr.At(nPos) == '"'
-		&& nPos + 1 < cStr.GetLength() ){
+	if( 0 < nPos && cStr[nPos-1] == 'R' && cStr[nPos] == '"'
+		&& nPos + 1 < cStr.length() ){
 		// \b(u8|u|U|L|)R"[^(]*\(
 		// \b = ^|[\s!"#$%&'()=@{};:<>?,.*/\-\+\[\]\]
 		wchar_t c1 = L' ';
@@ -113,9 +113,9 @@ bool CColor_Quote::IsCppRawString(std::wstring_view cStr, int nPos)
 
 bool CColor_Quote::BeginColor(std::wstring_view cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
-	if( cStr.At(nPos) == m_cQuote ){
+	if( cStr[nPos] == m_cQuote ){
 		m_nCOMMENTEND = -1;
 		int nStringType = m_pTypeData->m_nStringType;
 		bool bPreString = true;
@@ -123,11 +123,11 @@ bool CColor_Quote::BeginColor(std::wstring_view cStr, int nPos)
 		switch( nStringType ){
 		case STRING_LITERAL_CPP:
 			if( IsCppRawString(cStr, nPos) ){
-				for( int i = nPos + 1; i < cStr.GetLength(); i++ ){
+				for( int i = nPos + 1; i < cStr.length(); i++ ){
 					if( cStr[i] == '(' ){
 						if( nPos + 1 < i ){
 							m_tag = L')';
-							m_tag.append( cStr.GetPtr()+nPos+1, i - (nPos + 1) );
+							m_tag.append( cStr.data()+nPos+1, i - (nPos + 1) );
 							m_tag += L'"';
 						}else{
 							m_tag.assign(L")\"", 2);
@@ -143,24 +143,24 @@ bool CColor_Quote::BeginColor(std::wstring_view cStr, int nPos)
 			{
 				int i;
 				for(i = nPos - 1; 0 <= i; i--){
-					if( cStr.At(i) != L' ' && cStr.At(i) != L'\t' ){
+					if( cStr[i] != L' ' && cStr[i] != L'\t' ){
 						break;
 					}
 				}
-				if( !(0 <= i && cStr.At(i) == L'=') ){
+				if( !(0 <= i && cStr[i] == L'=') ){
 					bPreString = false;
 				}
 			}
 			break;
 		case STRING_LITERAL_CSHARP:
-			if( 0 < nPos && cStr.At(nPos - 1) == L'@' && m_cQuote == L'"' ){
+			if( 0 < nPos && cStr[nPos - 1] == L'@' && m_cQuote == L'"' ){
 				m_nCOMMENTEND = Match_Quote( m_cQuote, nPos + 1, cStr, STRING_LITERAL_PLSQL );
 				m_nColorTypeIndex = 2;
 				return true;
 			}
 			break;
 		case STRING_LITERAL_PYTHON:
-			if( nPos + 2 < cStr.GetLength()
+			if( nPos + 2 < cStr.length()
 			 && cStr[nPos+1] == m_cQuote && cStr[nPos+2] == m_cQuote ){
 				m_nCOMMENTEND = Match_QuoteStr( m_szQuote, 3, nPos + 3, cStr, true );
 				m_nColorTypeIndex = 3;
@@ -176,16 +176,16 @@ bool CColor_Quote::BeginColor(std::wstring_view cStr, int nPos)
 
 		// 「文字列は行内のみ」(C++ Raw String、Pythonのlong string、@""は特別)
 		if( m_pTypeData->m_bStringLineOnly && !m_bEscapeEnd
-				&& m_nCOMMENTEND == cStr.GetLength() + 1 ){
+				&& m_nCOMMENTEND == cStr.length() + 1 ){
 			// 終了文字列がない場合は行末までを色分け
 			if( m_pTypeData->m_bStringEndLine ){
 				// 改行コードを除く
-				if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr[cStr.GetLength()-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
-					if( 1 < cStr.GetLength() && cStr[cStr.GetLength()-2] == WCODE::CR
-							&& cStr[cStr.GetLength()-1] == WCODE::LF ){
-						m_nCOMMENTEND = cStr.GetLength() - 2;
+				if( 0 < cStr.length() && WCODE::IsLineDelimiter(cStr[cStr.length()-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+					if( 1 < cStr.length() && cStr[cStr.length()-2] == WCODE::CR
+							&& cStr[cStr.length()-1] == WCODE::LF ){
+						m_nCOMMENTEND = cStr.length() - 2;
 					}else{
-						m_nCOMMENTEND = cStr.GetLength() - 1;
+						m_nCOMMENTEND = cStr.length() - 1;
 					}
 				}
 				return true;
@@ -233,14 +233,14 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, std::wstring_view cLin
 {
 	int nCharChars;
 	int i;
-	for( i = nPos; i < cLineStr.GetLength(); ++i ){
+	for( i = nPos; i < cLineStr.length(); ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( cLineStr.GetPtr(), cLineStr.GetLength(), i ));
+		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( cLineStr.data(), cLineStr.length(), i ));
 		if( escapeType == STRING_LITERAL_CPP ){
 			// エスケープ \"
 			if( 1 == nCharChars && cLineStr[i] == L'\\' ){
 				++i;
-				if( i < cLineStr.GetLength() && WCODE::IsLineDelimiter(cLineStr[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+				if( i < cLineStr.length() && WCODE::IsLineDelimiter(cLineStr[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					if( pbEscapeEnd ){
 						*pbEscapeEnd = true;
 					}
@@ -252,7 +252,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, std::wstring_view cLin
 		}else if( escapeType == STRING_LITERAL_PLSQL ){
 			// エスケープ ""
 			if( 1 == nCharChars && cLineStr[i] == wcQuote ){
-				if( i + 1 < cLineStr.GetLength() && cLineStr[i + 1] == wcQuote ){
+				if( i + 1 < cLineStr.length() && cLineStr[i + 1] == wcQuote ){
 					++i;
 				}else{
 					return i + 1;
@@ -268,24 +268,24 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, std::wstring_view cLin
 			++i;
 		}
 	}
-	return cLineStr.GetLength() + 1; // 終端なしはLength + 1
+	return cLineStr.length() + 1; // 終端なしはLength + 1
 }
 
 int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nPos, std::wstring_view cLineStr, bool bEscape )
 {
 	int nCharChars;
 	int i;
-	const int nCompLen = cLineStr.GetLength() - nQuoteLen + 1;
+	const int nCompLen = cLineStr.length() - nQuoteLen + 1;
 	const WCHAR quote1 = pszQuote[0];
-	const WCHAR* pLine = cLineStr.GetPtr();
+	const WCHAR* pLine = cLineStr.data();
 	for( i = nPos; i < nCompLen; i += nCharChars ){
 		if( quote1 == pLine[i] && wmemcmp( pszQuote + 1, pLine + i + 1, nQuoteLen - 1 ) == 0 ){
 			return i + nQuoteLen;
 		}
-		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( pLine, cLineStr.GetLength(), i ));
+		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( pLine, cLineStr.length(), i ));
 		if( bEscape && pLine[i] == L'\\' ){
-			i += (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( pLine, cLineStr.GetLength(), i + nCharChars ));
+			i += (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( pLine, cLineStr.length(), i + nCharChars ));
 		}
 	}
-	return cLineStr.GetLength();
+	return cLineStr.length();
 }
