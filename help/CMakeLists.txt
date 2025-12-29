@@ -107,8 +107,8 @@ add_custom_target(build_chm_converter
 set(SRC_HELP ${CMAKE_CURRENT_SOURCE_DIR})
 set(SJIS_HELP ${CMAKE_BINARY_DIR}/converted_help_source)
 
-# Create sakura.hh from sakura_core/sakura.hh
-set(HH_INPUT ${SRC_HELP}/../sakura_core/sakura.hh)
+# Create sakura.hh from src/main/resources/sakura.hh
+set(HH_INPUT ${SRC_HELP}/../src/main/resources/sakura.hh)
 set(HH_OUTPUT ${SJIS_HELP}/sakura/sakura.hh)
 
 # Copy help files to build directory
