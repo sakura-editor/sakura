@@ -386,7 +386,10 @@
     <ClInclude Include="..\src\main\cpp\cxx\ResourceHolder.hpp" />
     <ClInclude Include="..\src\main\cpp\cxx\TComImpl.hpp" />
     <ClInclude Include="..\src\main\cpp\cxx\TComPtr.hpp" />
+    <ClInclude Include="..\src\main\cpp\cxx\load_string.hpp" />
+    <ClInclude Include="..\src\main\cpp\cxx\lock_resource.hpp" />
     <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_arg.hpp" />
+    <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_lambda_arg.hpp" />
     <ClInclude Include="..\src\main\resources\sakura.hh" />
     <ClInclude Include="..\src\main\resources\sakura_rc.h" />
     <ClInclude Include="..\sakura_core\StdAfx.h" />
@@ -881,6 +884,7 @@
     <ClCompile Include="..\sakura_core\_main\WinMain.cpp" />
     <ClCompile Include="..\sakura_core\_os\CClipboard.cpp" />
     <ClCompile Include="..\sakura_core\_os\CDropTarget.cpp" />
+    <ClCompile Include="..\src\main\cpp\cxx\load_string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\src\main\resources\sakura.natvis" />

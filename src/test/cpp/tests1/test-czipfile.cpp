@@ -1,21 +1,19 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021-2022, Sakura Editor Organization
+	Copyright (C) 2021-2025, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include <tchar.h>
-#include <Windows.h>
-#include <Shlwapi.h>
-
 #include "io/CZipFile.h"
 
+#include "cxx/lock_resource.hpp"
 #include <iostream>
 #include <filesystem>
 #include <fstream>
 #include <locale>
 #include <string>
+
 
 #include "tests1_rc.h"
 
@@ -25,39 +23,6 @@ using BinarySequence = std::basic_string<std::byte>;
 using BinarySequenceView = std::basic_string_view<std::byte>;
 
 /*!
-	リソースに埋め込まれたデータを取得する
- */
-BinarySequence CopyBinaryFromResource(uint16_t nResourceId, LPCWSTR resource_type)
-{
-	const auto hInst = static_cast<HMODULE>(nullptr);
-
-	const auto hRsrc = ::FindResourceW(hInst, MAKEINTRESOURCE(nResourceId), resource_type);
-	if (!hRsrc) {
-		throw std::runtime_error("missing resource!");
-	}
-
-	// 見つかったリソースを読み込む
-	if (const auto hGlobal = ::LoadResource(hInst, hRsrc)) {
-		if (uint32_t cbSize = ::SizeofResource(hInst, hRsrc)) {
-			// リソースのデータポインタを取得する
-			const auto data = static_cast<std::byte*>(::LockResource(hGlobal));
-
-			// リソースデータをコピーする
-			BinarySequence ret(data, cbSize);
-
-			// リソースポインタを解放する
-			// ※注意：現代のWindows SDKにおいて、UnlockResourceマクロの実装はnop。
-			//   この実装では、あえて古代の慣習に従いロック開放をコーディングしてある。
-			UnlockResource(hGlobal);
-
-			return ret;
-		}
-	}
-
-	return {};
-}
-
-/*!
 	バイナリデータをファイルに書き込む
 
 	@param [in] bin バイナリデータ
@@ -65,22 +30,27 @@ BinarySequence CopyBinaryFromResource(uint16_t nResourceId, LPCWSTR resource_typ
  */
 bool WriteBinaryToFile(BinarySequenceView bin, std::filesystem::path path)
 {
-	if (bin.length()) {
-		using std::ios;
+	if (bin.empty()) {
+		return false;
+	}
 
+	try {
 		// 内部的なストリームインスタンスを用意する
 		// std::byteでパラメータ化したstd::basic_ofstreamだとMinGWビルドが動作しないので、
 		// あえて標準の1バイト実装を使う
-		std::ofstream os;
-		os.open(path.c_str(), ios::binary | ios::trunc);
+		std::ofstream os{ path, std::ios::binary | std::ios::trunc };
 
-		if (os) {
-			os.write(reinterpret_cast<const char*>(bin.data()), bin.length());
-			return true;
+		if (!os) {
+			return false;
 		}
+
+		os.write(std::bit_cast<const char*>(bin.data()), bin.length());
+	}
+	catch (...) {
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 /*!
@@ -127,7 +97,7 @@ std::filesystem::path GetTempFilePath(std::wstring_view prefix, std::wstring_vie
 
 		tempPath.replace_extension(extension.data());
 
-		if (std::error_code ec; !std::filesystem::exists(tempPath, ec)); {
+		if (std::error_code ec; !std::filesystem::exists(tempPath, ec)) {
 			return tempPath;
 		}
 	}
@@ -167,7 +137,13 @@ TEST(CZipFIle, CZipFIle)
 		auto tempPath = GetTempFilePath(L"tes", L"zip");
 
 		// リソースからzipファイルデータを抽出して一時ファイルに書き込む
-		const auto bin = CopyBinaryFromResource(IDR_ZIPRES1, RT_ZIPRES);
+		const auto bin = cxx::lock_resource<std::byte>(
+			IDR_ZIPRES1,
+			[] (std::span<const std::byte> resData) {
+				return BinarySequence(resData.begin(), resData.end());
+			},
+			RT_ZIPRES
+		);
 		ASSERT_FALSE(bin.empty());
 		ASSERT_TRUE(WriteBinaryToFile(bin, tempPath));
 		ASSERT_TRUE(std::filesystem::exists(tempPath));

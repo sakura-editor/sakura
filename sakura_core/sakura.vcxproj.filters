@@ -1141,6 +1141,15 @@
     <ClInclude Include="..\sakura_core\macro\CPythonMacroManager.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\load_string.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\lock_resource.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_lambda_arg.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\main\resources\images\auto_scroll_center.cur">
@@ -2334,6 +2343,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\macro\CPythonMacroManager.cpp">
       <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\cxx\load_string.cpp">
+      <Filter>Cpp Source Files\cxx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
