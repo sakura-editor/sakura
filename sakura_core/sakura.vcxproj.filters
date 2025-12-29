@@ -1138,6 +1138,9 @@
     <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_arg.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\macro\CPythonMacroManager.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\main\resources\images\auto_scroll_center.cur">
@@ -2328,6 +2331,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp">
       <Filter>Cpp Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\macro\CPythonMacroManager.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
