@@ -1403,7 +1403,7 @@ CColorStrategy* CPrintPreview::DrawPageTextFirst(int nPageNum)
 				pStrategy->SetStrategyColorInfo(pcPageTopLayout->GetColorInfo());
 			}
 			if (nPageTopOff) {
-				CStringRef	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
+				std::wstring_view	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
 				CLogicInt	iLogic;
 				for ( iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
 					bool bChange;
@@ -1685,7 +1685,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	int nKindLast = 2; //直前のnKind状態
 
 	// 色設定	2012-03-07 ossan
-	CStringRef cStringLine( pLine, nDocLineLen );
+	std::wstring_view cStringLine( pLine, nDocLineLen );
 	CColorStrategy* pStrategy = pStrategyStart;
 	// 2014.12.30 色はGetColorStrategyで次の色になる前に取得する必要がある
 	int nColorIdx = ToColorInfoArrIndex( pStrategy ? pStrategy->GetStrategyColor() : COLORIDX_TEXT );
