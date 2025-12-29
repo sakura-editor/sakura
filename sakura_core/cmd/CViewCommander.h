@@ -22,7 +22,6 @@ class CEditWnd;
 class CColorStrategy;
 class CColorStrategyPool;
 class CSMacroMgr;
-class CStringRef;
 
 class CViewCommander{
 public:

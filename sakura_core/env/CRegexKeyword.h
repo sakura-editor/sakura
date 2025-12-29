@@ -44,7 +44,6 @@ typedef struct RegexInfo_t {
 	int    nFlag;           //色指定のチェックが入っているか？ YES=RK_EMPTY, NO=RK_NOMATCH
 } REGEX_INFO;
 
-class CStringRef;
 
 //!	正規表現キーワードクラス
 /*!
