@@ -50,4 +50,17 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 	);
 }
 
+/*!
+ * リソース文字列をナロー文字列に変換する
+ *
+ * @param [in] id リソースID
+ * @param [in, opt] optModule リソースDLLのハンドル（省略時はアプリリソースから取得）
+ * @throw std::out_of_range 指定されたリソース見付からなかった場合
+ * @throw std::invalid_argument ワイド文字列からナロー文字列への変換に失敗した場合
+ */
+std::string load_string_as_acp(UINT id, const std::optional<HMODULE>& optModule)
+{
+	return cxx::to_string(load_string(id, optModule));
+}
+
 } // namespace cxx

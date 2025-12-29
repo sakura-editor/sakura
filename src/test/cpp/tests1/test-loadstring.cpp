@@ -62,6 +62,16 @@ TEST(LoadStringW, LoadStringResource001)
 	EXPECT_THAT(LS(STR_SELLANG_NAME), StrEq(L"Japanese"));
 }
 
+TEST(LoadStringW, LoadStringResource002)
+{
+	// ロケールを設定
+	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+
+	EXPECT_THAT(cxx::load_string_as_acp(STR_SELLANG_LANGID), StrEq("0x0411"));
+	EXPECT_THAT(cxx::load_string_as_acp(STR_SELLANG_NAME), StrEq("Japanese"));
+	EXPECT_THAT(cxx::load_string_as_acp(F_FILENEW), StrEq("新規作成"));
+}
+
 TEST(LoadStringW, LoadStringResource100)
 {
 	// ID範囲を越える値を指定した場合は例外が発生する
