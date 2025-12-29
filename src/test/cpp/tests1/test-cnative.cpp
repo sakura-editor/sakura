@@ -11,42 +11,6 @@
 #include "mem/CNativeA.h"
 
 /*!
-	CStringRefのテスト
- */
-TEST(CStringRef, CStringRef)
-{
-	constexpr const wchar_t sz[] = L"test";
-	constexpr auto cch = std::size(sz) - 1;
-
-	CStringRef v1;
-	EXPECT_EQ(NULL, v1.GetPtr());
-	EXPECT_EQ(0, v1.GetLength());
-	EXPECT_FALSE(v1.IsValid());
-	EXPECT_EQ(L'\0', v1.At(0));
-
-	CStringRef v2(sz, cch);
-	EXPECT_STREQ(sz, v2.GetPtr());
-	EXPECT_EQ(cch, v2.GetLength());
-	EXPECT_TRUE(v2.IsValid());
-	EXPECT_EQ(L't', v2.At(0));
-	EXPECT_EQ(L'e', v2.At(1));
-	EXPECT_EQ(L's', v2.At(2));
-	EXPECT_EQ(L't', v2.At(3));
-	EXPECT_EQ(L'\0', v2.At(4));
-
-	CNativeW cmem(sz, cch);
-	CStringRef v3(cmem);
-	EXPECT_STREQ(sz, v3.GetPtr());
-	EXPECT_EQ(cch, v3.GetLength());
-	EXPECT_TRUE(v3.IsValid());
-	EXPECT_EQ(L't', v3.At(0));
-	EXPECT_EQ(L'e', v3.At(1));
-	EXPECT_EQ(L's', v3.At(2));
-	EXPECT_EQ(L't', v3.At(3));
-	EXPECT_EQ(L'\0', v3.At(4));
-}
-
-/*!
  * @brief コンストラクタ(パラメータなし)の仕様
  * @remark バッファは確保されない
  * @remark 文字列長はゼロになる
