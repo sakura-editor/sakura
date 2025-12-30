@@ -453,7 +453,9 @@ namespace cxx {
 
 TEST(to_string, test001)
 {
-	setlocale(LC_ALL, "Japanese");
+	// ロケールを設定
+	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+
 
 	// 日本語を含む文字列
 	EXPECT_THAT(cxx::to_string(L"ABCabc123あいう愛生"), StrEq("ABCabc123あいう愛生"));
@@ -461,6 +463,9 @@ TEST(to_string, test001)
 
 TEST(to_string, test101)
 {
+	// ロケールを設定
+	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+
 	// カラー絵文字「男性のシンボル」（サロゲートペアはSJISに変換できない）
 	EXPECT_ANY_THROW(cxx::to_string(L"\U0001F6B9"));
 }

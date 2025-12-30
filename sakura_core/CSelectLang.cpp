@@ -16,34 +16,57 @@
 #include "CSelectLang.h"
 
 #include "_main/CProcess.h"
-#include "util/os.h"
-#include "util/module.h"
-#include "debug/Debug2.h"
 
-#include <new>
+//! メッセージリソース用コンストラクタ
+CSelectLang::SSelLangInfo::SSelLangInfo(const std::filesystem::path& path)
+	: m_Path(path)
+{
+}
 
-CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = nullptr;	// メッセージリソース用構造体
-CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
+CSelectLang::SSelLangInfo::~SSelLangInfo() noexcept = default;
 
 /*!
-	@brief デストラクタ
-
-	@note 読み込んだメッセージリソースDLLを解放する
-
-	@date 2011.04.10 nasukoji	新規作成
-*/
-CSelectLang::~CSelectLang( void )
+ * リソースDLLを読み込む
+ *
+ * @retval true 成功
+ * @retval false 失敗
+ * @throw std::out_of_range リソースDLLが使えなかった場合
+ */
+bool CSelectLang::SSelLangInfo::Load()
 {
-	m_psLangInfo = nullptr;
-
-	for (auto it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
-		if( (*it)->hInstance ){
-			FreeLibrary( (*it)->hInstance );
-			(*it)->hInstance = nullptr;
-		}
-		delete *it;
+	if (m_Path.empty()) {
+		return true;
 	}
-	m_psLangInfoList.clear();
+
+	const auto hModule = ::LoadLibraryExW(m_Path.c_str(), nullptr, LOAD_LIBRARY_AS_DATAFILE | LOAD_LIBRARY_AS_IMAGE_RESOURCE);
+	if( !hModule ){
+		return false;
+	}
+
+	// 言語名を取得
+	m_LangName = cxx::load_string(STR_SELLANG_NAME, hModule);
+	if (m_LangName.empty()) {
+		throw std::out_of_range("missing language name!");
+	}
+
+	// 言語IDを取得 "0x" + 4桁
+	std::wstring langIdStr{ cxx::load_string(STR_SELLANG_LANGID, hModule) };
+	if (langIdStr.empty()) {
+		throw std::out_of_range("missing language id!");
+	}
+
+	if (const auto langId = static_cast<WORD>(std::stoi(langIdStr, nullptr, 16)); langId != m_LangId) {
+		throw std::out_of_range(std::format("unexpected language id: {}, expected: {}", langId, m_LangId));
+	}
+
+	m_Module = hModule;
+
+	return true;
+}
+
+void CSelectLang::SSelLangInfo::Unload() noexcept
+{
+	m_Module = nullptr;
 }
 
 /*!
@@ -55,9 +78,9 @@ CSelectLang::~CSelectLang( void )
 
 	@date 2011.04.10 nasukoji	新規作成
 */
-HINSTANCE CSelectLang::getLangRsrcInstance( void )
+/* static */ HMODULE CSelectLang::getLangRsrcInstance() noexcept
 {
-	return m_psLangInfo ? m_psLangInfo->hInstance : GetModuleHandle(nullptr);
+	return !gm_Langs.empty() && gm_Selected ? HMODULE(gm_Langs[gm_Selected]->m_Module) : ::GetModuleHandleW(nullptr);
 }
 
 /*!
@@ -69,18 +92,15 @@ HINSTANCE CSelectLang::getLangRsrcInstance( void )
 
 	@date 2011.04.10 nasukoji	新規作成
 */
-LPCWSTR CSelectLang::getDefaultLangString( void )
+/* static */ LPCWSTR CSelectLang::getDefaultLangString() noexcept
 {
-	return m_psLangInfo->szLangName;
+	return !gm_Langs.empty() && gm_Selected ? gm_Langs[gm_Selected]->m_LangName.c_str() : LS(STR_SELLANG_NAME);
 }
 
 // 言語IDを返す
-WORD CSelectLang::getDefaultLangId(void)
+/* static */ WORD CSelectLang::getDefaultLangId() noexcept
 {
-	if (m_psLangInfo == nullptr){
-		return ::GetUserDefaultLangID();
-	}
-	return m_psLangInfo->wLangId;
+	return !gm_Langs.empty() && gm_Selected ? gm_Langs[gm_Selected]->m_LangId : MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN);
 }
 
 /*!
@@ -95,134 +115,144 @@ WORD CSelectLang::getDefaultLangId(void)
 
 	@date 2011.04.10 nasukoji	新規作成
 */
-HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
+/* static */ HMODULE CSelectLang::InitializeLanguageEnvironment()
 {
-	SSelLangInfo *psLangInfo;
+	// 言語情報をクリアする
+	gm_Langs.clear();
 
-	if ( m_psLangInfoList.size() == 0 ) {
-		// デフォルト情報を作成する
-		psLangInfo = new SSelLangInfo();
-		psLangInfo->hInstance = GetModuleHandle(nullptr);
-		
-		// 言語情報ダイアログで "System default" に表示する文字列を作成する
-		auto nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_NAME, psLangInfo->szLangName, int(std::size(psLangInfo->szLangName)) );
-		assert(0 < nCount);
+	// デフォルト情報を作成する
+	gm_Langs.emplace_back(std::make_unique<SSelLangInfo>());
+	gm_Langs.back()->m_LangId = MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN);
+	gm_Langs.back()->m_LangName = cxx::load_string(STR_SELLANG_NAME);
 
-		// 言語IDを取得
-		WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
-		nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_LANGID, szBuf, int(std::size(szBuf)));
-		assert(nCount == int(std::size(szBuf)) - 1);
-		szBuf[std::size(szBuf) - 1] = L'\0';
+	// 言語DLLの検索パターンを生成する
+	const auto searchPattern = GetExeFileName().replace_filename(L"sakura_lang_*.dll");
 
-		psLangInfo->wLangId = (WORD)wcstoul(szBuf, nullptr, 16);		// 言語IDを数値化
-		assert(0 < psLangInfo->wLangId);
+	// 言語DLLの検索を開始する
+	WIN32_FIND_DATA w32fd{};
+	HANDLE hFindFile = ::FindFirstFileW(searchPattern.c_str(), &w32fd);
 
-		psLangInfo->bValid = TRUE;		// メッセージリソースDLLとして有効
-
-		m_psLangInfoList.push_back( psLangInfo );
+	// 検索を開始できなかった場合
+	if (INVALID_HANDLE_VALUE == hFindFile) {
+		return getLangRsrcInstance();
 	}
 
-	if( m_psLangInfo != nullptr && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(nullptr) ){
-		// 読み込み済みのDLLを解放する
-		::FreeLibrary( m_psLangInfo->hInstance );
-		m_psLangInfo->hInstance = nullptr;
-		m_psLangInfo = nullptr;
-	}
+	// 検索ハンドルをスマートポインタに入れる
+	using FindFileHolder = cxx::ResourceHolder<&::FindClose>;
+	FindFileHolder hFindFileHolder{ hFindFile };
 
-	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
-	CCurrentDirectoryBackupPoint cCurDirBackup;
-	ChangeCurrentDirectoryToExeDir();
-// ★iniまたはexeフォルダーとなるように改造が必要
-
-	WIN32_FIND_DATA w32fd;
-	WCHAR szPath[] = L"sakura_lang_*.dll";			// サーチするメッセージリソースDLL
-	HANDLE handle = FindFirstFile( szPath, &w32fd );
-	BOOL result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
-
-	while( result ){
-		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//フォルダーでない
-			// バッファに登録する。
-			psLangInfo = new SSelLangInfo();
-			wcscpy( psLangInfo->szDllName, w32fd.cFileName );
-			psLangInfo->hInstance = CSelectLang::LoadLangRsrcLibrary( *psLangInfo );
-
-			if( psLangInfo->hInstance ){
-				if ( !psLangInfo->bValid ){
-					// メッセージリソースDLLとしては無効
-					::FreeLibrary( psLangInfo->hInstance );
-					psLangInfo->hInstance = nullptr;
-					delete psLangInfo;
-				} else {
-					// 有効なメッセージリソースDLL
-					// 一旦DLLを解放し、後でChangeLangで再読み込みする
-					m_psLangInfoList.push_back( psLangInfo );
-					::FreeLibrary( psLangInfo->hInstance );
-					psLangInfo->hInstance = nullptr;
-				}
-			}
+	do {
+		// ディレクトリーはスキップ
+		if (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+			continue;
 		}
 
-		result = FindNextFile( handle, &w32fd );
-	}
+		// 言語タグを取得
+		LCID lcid;
+		if (std::wcmatch m; std::regex_match(w32fd.cFileName, m, std::wregex(LR"(^sakura_lang_([a-z]{2,3})[_\-]([A-Z]{2})\.dll$)"))) {
+			// ロケール名を抽出して LCID を得る
+			const std::wstring localeName = std::wstring(m[1]) + L'-' + std::wstring(m[2]);
+			lcid = LocaleNameToLCID(localeName.c_str(), 0);
+		}
+		else {
+			// ファイル名が不正ならスキップ
+			continue;
+		}
 
-	if( INVALID_HANDLE_VALUE != handle ){
-		FindClose( handle );
-		handle = INVALID_HANDLE_VALUE;
+		// バッファに登録する。
+		gm_Langs.emplace_back(std::make_unique<SSelLangInfo>(w32fd.cFileName));
+
+		// 言語IDを設定
+		gm_Langs.back()->m_LangId = LANGIDFROMLCID(lcid);
+
+		try {
+			// リソースDLLを読み込む
+			if (!gm_Langs.back()->Load()) {
+				// ロードできなかったらスキップ
+				gm_Langs.pop_back();
+				continue;
+			}
+		}
+		catch (const std::out_of_range&) {
+			// 必要なリソースを読めなかったらスキップ
+			gm_Langs.pop_back();
+			continue;
+		}
+
+		// ここでは読み込みチェックだけなので、アンロードしておく。
+		gm_Langs.back()->Unload();
 	}
+	while (::FindNextFileW(hFindFile, &w32fd));
 
 	// この時点ではexeのインスタンスハンドルで起動し、共有メモリ初期化後にChangeLangする
-	m_psLangInfo = *m_psLangInfoList.begin();
 
-	return m_psLangInfo->hInstance;
+	return getLangRsrcInstance();
 }
 
-/*!
-	@brief メッセージリソースDLLをロードする
-	
-	@retval メッセージリソースDLLのインスタンスハンドル
-
-	@note メッセージリソースDLLが未指定、または読み込みエラー発生の時はNULLが返る
-
-	@date 2011.04.10 nasukoji	新規作成
-*/
-HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
+//! 言語を変更する
+/* static */ void CSelectLang::ChangeLang(const std::filesystem::path& dllName)
 {
-	if( lang.szDllName[0] == L'\0' )
-		return nullptr;		// DLLが指定されていなければNULLを返す
+	size_t index;
 
-	int nCount;
-
-	lang.bValid  = FALSE;
-	lang.szLangName[0] = L'\0';
-	lang.wLangId = 0;
-
-	HINSTANCE hInstance = LoadLibraryExedir( lang.szDllName );
-
-	if( hInstance ){
-		// 言語名を取得
-		nCount = ::LoadString( hInstance, STR_SELLANG_NAME, lang.szLangName, int(std::size(lang.szLangName)) );
-
-		if( nCount > 0 ){
-			// 言語IDを取得
-			WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
-			nCount = ::LoadString( hInstance, STR_SELLANG_LANGID, szBuf, int(std::size(szBuf)) );
-			szBuf[std::size(szBuf) - 1] = L'\0';
-
-			if( nCount > 0 ){
-				lang.wLangId = (WORD)wcstoul( szBuf, nullptr, 16 );		// 言語IDを数値化
-
-				if( lang.wLangId > 0 )
-					lang.bValid = TRUE;		// メッセージリソースDLLとして有効
-			}
+	if (dllName.empty()) {
+		// デフォルト言語に戻す
+		index = 0;
+	}
+	else if(const auto found = std::ranges::find_if(
+		gm_Langs,
+		[&dllName](const auto& langInfo) {
+			return langInfo->m_Path == dllName;
 		}
+	); found != gm_Langs.end()) {
+		// 言語を選択する
+		index = std::distance(gm_Langs.begin(), found);
+	}
+	else {
+		// 指定されたリソースDLLがリストになかった場合
+		return;
 	}
 
-	return hInstance;
+	ChangeLang(index);
 }
 
-// 文字列リソース読み込み用グローバル
-CLoadString::CLoadStrBuffer CLoadString::m_acLoadStrBufferTemp[];	// 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
-int CLoadString::m_nDataTempArrayIndex = 0;							// 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
+//! 言語を変更する
+/* static */ void CSelectLang::ChangeLang(size_t nIndex)
+{
+	// 現在選択されている言語を保存
+	const auto oldSelected = gm_Selected;
+
+	// 変更がない、または、インデックスが範囲外なら何もせず抜ける
+	if (nIndex == oldSelected || std::size(gm_Langs) <= nIndex) {
+		return;
+	}
+
+	// 新しい言語がリソースDLLの場合、リソースDLLを読み込む
+	if (nIndex) {
+		gm_Langs[nIndex]->Load();
+	}
+
+	// 選択中の言語を更新
+	gm_Selected = nIndex;
+
+	// アプリ名をリソースから読み込む
+	if (auto pcProcess = CProcess::getInstance()) {
+		pcProcess->UpdateAppName(LoadStringW(STR_GSTR_APPNAME));
+	}
+
+	// ロケールを設定
+	::SetThreadUILanguage(getDefaultLangId());
+
+	// 変更前言語がリソースDLLの場合、リソースDLLをアンロードする
+	if (oldSelected) {
+		gm_Langs[oldSelected]->Unload();
+	}
+}
+
+/* static */ std::wstring_view CSelectLang::LoadStringW(UINT id)
+{
+	const auto optModule = gm_Selected ? std::optional<HMODULE>(HMODULE(gm_Langs[gm_Selected]->m_Module)) : std::nullopt;
+	return cxx::load_string(id, optModule);
+}
 
 /*!
 	@brief 静的バッファに文字列リソースを読み込む（各国語メッセージリソース対応）
@@ -243,14 +273,20 @@ int CLoadString::m_nDataTempArrayIndex = 0;							// 最後に使用したバッ
 
 	@date 2011.06.01 nasukoji	新規作成
 */
-LPCWSTR CLoadString::LoadStringSt( UINT uid )
+LPCWSTR CLoadString::LoadStringSt(UINT uid)
 {
 	// 使用するバッファの現在位置を進める
-	m_nDataTempArrayIndex = (m_nDataTempArrayIndex + 1) % int(std::size(m_acLoadStrBufferTemp));
+	++gm_LastUsedIndex;
 
-	m_acLoadStrBufferTemp[m_nDataTempArrayIndex].LoadString( uid );
+	if (std::size(gm_Buffers) <= gm_LastUsedIndex) {
+		gm_LastUsedIndex = 0;
+	}
 
-	return /* CLoadString:: */ m_acLoadStrBufferTemp[m_nDataTempArrayIndex].GetStringPtr();
+	auto& workString = gm_Buffers[gm_LastUsedIndex];
+
+	workString.LoadStringW(uid);
+
+	return workString.GetStringPtr();
 }
 
 /*!
@@ -272,11 +308,11 @@ LPCWSTR CLoadString::LoadStringSt( UINT uid )
 
 	@date 2011.06.01 nasukoji	新規作成
 */
-LPCWSTR CLoadString::LoadString( UINT uid )
+LPCWSTR CLoadString::LoadStringW(UINT uid)
 {
-	m_cLoadStrBuffer.LoadString( uid );
+	m_Buffer.LoadStringW(uid);
 
-	return /* this-> */ m_cLoadStrBuffer.GetStringPtr();
+	return m_Buffer.GetStringPtr();
 }
 
 /*!
@@ -297,116 +333,24 @@ LPCWSTR CLoadString::LoadString( UINT uid )
 
 	@date 2011.06.01 nasukoji	新規作成
 */
-int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
+size_t CLoadString::CLoadStrBuffer::LoadStringW(UINT uid)
 {
-	if( !m_pszString ){
-		// バッファポインタが設定されていない場合初期化する（普通はあり得ない）
-		m_pszString = m_szString;					// 変数内に準備したバッファを接続
-		m_nBufferSize = int(std::size(m_szString));		// 配列個数
-		m_szString[m_nBufferSize - 1] = 0;
-		m_nLength = (int)wcslen(m_szString);			// 文字数
+	// バッファをクリア
+	if (!m_String.empty()) {
+		m_String.clear();
+		m_ResString = L"";
 	}
 
-	HINSTANCE hRsrc = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
-
-	if( !hRsrc ){
-		// メッセージリソースDLL読込処理前は内部リソースを使う
-		hRsrc = ::GetModuleHandle(nullptr);
+	try {
+		// 選択されたリソースDLLからの取得を試みる
+		m_ResString = CSelectLang::LoadStringW(uid);
+	}
+	catch(const std::out_of_range&){
+		// 存在しない場合はアプリリソースから取得する
+		m_ResString = cxx::load_string(uid);
 	}
 
-	int nRet = 0;
+	m_String = m_ResString;
 
-	while(1){
-		nRet = ::LoadString( hRsrc, uid, m_pszString, m_nBufferSize );
-
-		// リソースが無い
-		if( nRet == 0 ){
-			if( hRsrc != ::GetModuleHandle(nullptr) ){
-				hRsrc = ::GetModuleHandle(nullptr);	// 内部リソースを使う
-			}else{
-				// 内部リソースからも読めなかったら諦める（普通はあり得ない）
-				m_pszString[0] = L'\0';
-				break;
-			}
-		}else if( nRet >= m_nBufferSize - 1 ){
-			// 読みきれなかった場合、バッファを拡張して読み直す
-			int nTemp = m_nBufferSize + LOADSTR_ADD_SIZE;		// 拡張したサイズ
-			LPWSTR pTemp;
-
-			try{
-				pTemp = new WCHAR[nTemp];
-			}
-			catch(const std::bad_alloc&){
-				// メモリ割り当て例外（例外の発生する環境の場合でも旧来の処理にする）
-				pTemp = nullptr;
-			}
-
-			if( pTemp ){
-				if( m_pszString != m_szString ){
-					delete[] m_pszString;
-				}
-
-				m_pszString = pTemp;
-				m_nBufferSize = nTemp;
-			}else{
-				// メモリ取得に失敗した場合は直前の内容で諦める
-				nRet = (int)wcslen( m_pszString );
-				break;
-			}
-		}else{
-			break;		// 文字列リソースが正常に取得できた
-		}
-	}
-
-	m_nLength = nRet;	// 読み込んだ文字数
-
-	return nRet;
-}
-
-void CSelectLang::ChangeLang( const WCHAR* pszDllName )
-{
-	/* 言語を選択する */
-	for ( UINT unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
-		const CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
-		if ( wcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
-			CSelectLang::ChangeLang( unIndex );
-			break;
-		}
-	}
-}
-
-HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
-{
-	if ( m_psLangInfoList.size() <= nIndex || m_psLangInfoList.at( nIndex ) == m_psLangInfo ) {
-		return m_psLangInfo->hInstance;
-	}
-
-	SSelLangInfo *psLangInfo = m_psLangInfoList.at( nIndex );
-	if ( psLangInfo->hInstance != GetModuleHandle(nullptr) ) {
-		psLangInfo->hInstance = LoadLangRsrcLibrary( *psLangInfo );
-		if ( psLangInfo->hInstance == nullptr ) {
-			return m_psLangInfo->hInstance;
-		} else if ( !psLangInfo->bValid ) {
-			::FreeLibrary( psLangInfo->hInstance );
-			psLangInfo->hInstance = nullptr;
-			return m_psLangInfo->hInstance;
-		}
-	}
-
-	if ( m_psLangInfo->hInstance != GetModuleHandle(nullptr) ) {
-		::FreeLibrary( m_psLangInfo->hInstance );
-		m_psLangInfo->hInstance = nullptr;
-	}
-	m_psLangInfo = psLangInfo;
-
-	// ロケールを設定
-	::SetThreadUILanguage( m_psLangInfo->wLangId );
-
-	// アプリ名をリソースから読み込む
-	if( auto pcProcess = CProcess::getInstance() )
-	{
-		pcProcess->UpdateAppName(LS(STR_GSTR_APPNAME));
-	}
-
-	return m_psLangInfo->hInstance;
+	return m_String.length();
 }

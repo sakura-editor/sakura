@@ -9,6 +9,8 @@
 #include "mem/CRecycledBuffer.h"
 #include "charset/charcode.h"
 
+#include <cstdlib>
+
 static CRecycledBuffer        g_bufSmall;
 static CRecycledBufferDynamic g_bufBig;
 
@@ -112,19 +114,53 @@ namespace cxx {
  * ワイド文字列をナロー文字列に変換します。
  */
 std::string to_string(std::wstring_view source) {
+	const auto langId = ::GetThreadUILanguage();
+	const auto lcid = MAKELCID(langId, SORT_DEFAULT);
+
+	std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
+	LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
+
+	UINT codePage;
+	if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
+		codePage = CP_SJIS;
+	}
+
+	// 変換エラーを受け取るフラグ
+	BOOL bUsedDefaultChar = FALSE;
+
 	// 変換に必要な出力バッファサイズを求める
-	size_t required = 0;
-	if (const auto ret = ::wcstombs_s(&required, nullptr, 0, std::data(source), 0); EILSEQ == ret) {
+	const auto required = ::WideCharToMultiByte(
+		codePage,
+		0,
+		std::data(source),
+		int(std::size(source)),
+		LPSTR(nullptr),
+		0,
+		nullptr,
+		&bUsedDefaultChar
+	);
+
+	// 変換エラーがあったら例外を投げる
+	if (bUsedDefaultChar) {
 		throw std::invalid_argument("Invalid wide character sequence.");
 	}
 
 	// 変換に必要な出力バッファを確保する
 	std::string buffer(required, '\0');
 
-	size_t converted = 0;
-	::wcstombs_s(&converted, std::data(buffer), required, std::data(source), _TRUNCATE);
+	// 変換を実行する
+	const auto converted = ::WideCharToMultiByte(
+		codePage,
+		0,
+		std::data(source),
+		int(std::size(source)),
+		std::data(buffer),
+		int(std::size(buffer)),
+		nullptr,
+		nullptr
+	);
 
-	buffer.resize(converted - 1); // wcstombs_sの戻り値は終端NULを含むので -1 する
+	buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
 
 	return buffer;
 }
