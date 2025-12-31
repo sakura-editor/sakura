@@ -14,7 +14,12 @@ if(CMD_VS_DEV)
   add_custom_command(
     OUTPUT
       "${CMAKE_SOURCE_DIR}/externals/Onigmo/.git"
-    COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --depth 1 --recommend-shallow externals/Onigmo
+    COMMAND ${CMAKE_COMMAND}
+      -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
+      -DREPO_ROOT:PATH=${CMAKE_SOURCE_DIR}
+      -DSUBMODULE_PATH:STRING=externals/Onigmo
+      -DLOCK_PATH:FILEPATH=${CMAKE_BINARY_DIR}/cmake-submodule-update.lock
+      -P ${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Fetching Onigmo's source files"
   )

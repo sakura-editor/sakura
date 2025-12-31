@@ -13,7 +13,12 @@ set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
 
 add_custom_command(
   OUTPUT "${MINIZ_SOURCE_DIR}/.git"
-  COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --depth 1 --recommend-shallow externals/miniz-cpp
+  COMMAND ${CMAKE_COMMAND}
+    -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
+    -DREPO_ROOT:PATH=${CMAKE_SOURCE_DIR}
+    -DSUBMODULE_PATH:STRING=externals/miniz-cpp
+    -DLOCK_PATH:FILEPATH=${CMAKE_BINARY_DIR}/cmake-submodule-update.lock
+    -P ${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   COMMENT "Fetching miniz-cpp's source files"
 )

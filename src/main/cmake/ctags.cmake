@@ -23,7 +23,12 @@ if(CMAKE_GENERATOR MATCHES "^Visual Studio" AND NOT CMAKE_GENERATOR_PLATFORM STR
   add_custom_command(
     OUTPUT
       "${CMAKE_SOURCE_DIR}/externals/ctags/.git"
-    COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --depth 1 --recommend-shallow externals/ctags
+    COMMAND ${CMAKE_COMMAND}
+      -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
+      -DREPO_ROOT:PATH=${CMAKE_SOURCE_DIR}
+      -DSUBMODULE_PATH:STRING=externals/ctags
+      -DLOCK_PATH:FILEPATH=${CMAKE_BINARY_DIR}/cmake-submodule-update.lock
+      -P ${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Fetching ctag's source files"
   )
