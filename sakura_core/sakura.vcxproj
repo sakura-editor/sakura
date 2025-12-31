@@ -915,6 +915,9 @@
   <Target Name="GenerateBregonig" Condition="!Exists('$(OutDir)bregonig.dll')" DependsOnTargets="GenerateVersionHeader" BeforeTargets="ClCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_bregonig -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
+  <Target Name="GenerateMigemo" Condition="!Exists('$(OutDir)migemo.dll')" DependsOnTargets="GenerateVersionHeader" BeforeTargets="ClCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_cmigemo -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
   <Target Name="GenerateCTags" Condition="!Exists('$(OutDir)ctags.exe')" DependsOnTargets="GenerateVersionHeader" AfterTargets="Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_ctags -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" WorkingDirectory="..\" />
   </Target>
@@ -936,6 +939,7 @@
       <Clean Include="$(OutDir)sakura_lang_zh_CN.dll" />
       <Clean Include="$(OutDir)sakura_lang_zh_CN.pdb" />
       <Clean Include="$(OutDir)bregonig.dll" />
+      <Clean Include="$(OutDir)migemo.dll" />
       <Clean Include="$(OutDir)ctags.exe" />
     </ItemGroup>
   </Target>
