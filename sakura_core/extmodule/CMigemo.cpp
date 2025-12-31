@@ -65,10 +65,12 @@ bool CMigemo::InitDllImp()
 
 	m_bUtf8 = false;
 
-	if( ! migemo_open(nullptr) )
-		return false;
-	
-	return true;
+	assert(IsAvailable());
+
+	// 引数なしで migemo_open を呼び出す
+	m_migemo = (*m_migemo_open)(nullptr);
+
+	return m_migemo != nullptr;
 }
 
 bool CMigemo::DeinitDllImp(void)
@@ -101,20 +103,6 @@ LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 	else{
 		return nullptr;
 	}
-}
-
-long CMigemo::migemo_open(char* dict)
-{	
-	UNREFERENCED_PARAMETER(dict);
-	if (!IsAvailable())
-		return 0;
-
-	m_migemo = (*m_migemo_open)(nullptr);
-
-	if (m_migemo == nullptr)
-		return 0;
-	
-	return 1;
 }
 
 void CMigemo::migemo_close()
