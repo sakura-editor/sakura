@@ -64,8 +64,6 @@ public:
 	unsigned char* migemo_query(unsigned char* query);
 	std::wstring migemo_query_w(const wchar_t* query);
 	void migemo_release( unsigned char* str);
-	void migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc);
-	void migemo_setproc_int2char(MIGEMO_PROC_INT2CHAR proc);
 	int migemo_load_a(int dict_id, const char* dict_file);
 	int migemo_load_w(int dict_id, const wchar_t* dict_file);
 	#define migemo_load_t migemo_load_w

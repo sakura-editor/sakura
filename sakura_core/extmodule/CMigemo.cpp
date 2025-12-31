@@ -143,22 +143,6 @@ void CMigemo::migemo_release( unsigned char* str)
 	(*m_migemo_release)(m_migemo, str);
 }
 
-void CMigemo::migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc)
-{
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return ;
-	
-	(*m_migemo_setproc_char2int)(m_migemo,proc);
-}
-
-void CMigemo::migemo_setproc_int2char(MIGEMO_PROC_INT2CHAR proc)
-{
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return;
-
-	(*m_migemo_setproc_int2char)(m_migemo,proc);
-}
-
 int CMigemo::migemo_load_a(int dict_id, const char* dict_file)
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
@@ -231,11 +215,11 @@ int CMigemo::migemo_load_all()
 
 		// 2011.12.11 Moca 辞書登録後でないとmigemo内臓のものに変更されてしまう
 		if( m_bUtf8 ){
-			migemo_setproc_char2int(pcre_char2int_utf8);
-			migemo_setproc_int2char(pcre_int2char_utf8);
+			(*m_migemo_setproc_char2int)(m_migemo, pcre_char2int_utf8);
+			(*m_migemo_setproc_int2char)(m_migemo, pcre_int2char_utf8);
 		}else{
-			migemo_setproc_char2int(pcre_char2int_sjis);
-			migemo_setproc_int2char(pcre_int2char);	// 2009.04.30 miau
+			(*m_migemo_setproc_char2int)(m_migemo, pcre_char2int_sjis);
+			(*m_migemo_setproc_int2char)(m_migemo, pcre_int2char);	// 2009.04.30 miau
 		}
 	}
 	return 1;
