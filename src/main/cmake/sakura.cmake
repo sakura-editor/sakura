@@ -143,6 +143,20 @@ endif()
 
 message(STATUS "Found patch.exe: ${PATCH_EXECUTABLE}")
 
+# Find PowerShell Core(required)
+find_program(CMD_PWSH pwsh.exe
+  PATHS
+    "$ENV{LOCALAPPDATA}/Microsoft/WindowsApps"
+    "$ENV{ProgramFiles}/PowerShell/7"
+  DOC "PowerShell Core"
+)
+
+if(NOT CMD_PWSH)
+  message(FATAL_ERROR "pwsh.exe was not found.")
+endif()
+
+message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
+
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z
   PATHS
@@ -449,6 +463,7 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
+  generate_cmigemo
 )
 
 if(MSVC)
