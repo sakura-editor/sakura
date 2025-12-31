@@ -60,19 +60,8 @@ jobs:
         echo "GITHUB_PR_HEAD_SHORT_COMMIT=$('${{ github.event.pull_request.head.sha }}'.SubString(0, 8))" >> $env:GITHUB_ENV
       shell: pwsh
 
-    - name: MSBuild
-      run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
-      shell: cmd
-
-    - name: Run unit tests
-      run: .\tests1.exe --gtest_output=xml:${{github.workspace}}\tests1.exe-googletest-${{matrix.platform}}-${{matrix.config}}.xml
-      working-directory: ${{github.workspace}}\${{matrix.platform}}\${{matrix.config}}
-      shell: pwsh
-
-      # Toolbar Bitmap Split/Mux
-    - run: build-bmp-tools.bat ${{matrix.config}}
-      name: Bitmap Split/Mux
-      shell: cmd
+    - name: Install AutoHotKey
+      run: choco install autohotkey.install --confirm
 
     - name: Install AutoHotKey
       run: choco install autohotkey.install --confirm
@@ -86,6 +75,20 @@ jobs:
         Start-Process "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
       shell: pwsh
+
+    - name: MSBuild
+      run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+
+    - name: Run unit tests
+      run: .\tests1.exe --gtest_output=xml:${{github.workspace}}\tests1.exe-googletest-${{matrix.platform}}-${{matrix.config}}.xml
+      working-directory: ${{github.workspace}}\${{matrix.platform}}\${{matrix.config}}
+      shell: pwsh
+
+      # Toolbar Bitmap Split/Mux
+    - run: build-bmp-tools.bat ${{matrix.config}}
+      name: Bitmap Split/Mux
+      shell: cmd
 
     - name: Build HTML Help
       run: build-chm.bat

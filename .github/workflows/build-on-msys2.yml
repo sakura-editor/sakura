@@ -41,6 +41,19 @@ jobs:
         run: set
         shell: cmd
 
+      - name: Install AutoHotKey
+        run: choco install autohotkey.install --confirm
+
+      - name: Install Locale Emulator
+        run: |
+          $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
+          $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
+          Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
+          Start-Process "AutoHotKey" "${LEInitScript}"
+          Start-Process "${LEExpandDir}\LEInstaller.exe"
+          echo "${LEExpandDir}" >> $env:GITHUB_PATH
+        shell: pwsh
+
       - name: Build with MinGW-w64-gcc
         shell: msys2 {0}
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}

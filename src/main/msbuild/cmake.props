@@ -10,6 +10,9 @@
     <VersionHeader>$(CMakeToolsBuildDir)version.h</VersionHeader>
     <FuncCodeDefine>$(CMakeToolsBuildDir)Funccode_define.h</FuncCodeDefine>
     <FuncCodeEnum>$(CMakeToolsBuildDir)Funccode_enum.h</FuncCodeEnum>
+    <ChmSourceConverterBuildDir>$([MSBuild]::NormalizePath('$(CMakeToolsBuildDir)', '.\ChmSourceConverter\'))</ChmSourceConverterBuildDir>
+    <ChmSourceConverterBuildPath>$([MSBuild]::NormalizePath('$(ChmSourceConverterBuildDir)', '.'))</ChmSourceConverterBuildPath>
+    <ChmSourceConverterExe>$([MSBuild]::NormalizePath('$(CMakeToolsPath)', '.\bin\ChmSourceConverter.exe'))</ChmSourceConverterExe>
   </PropertyGroup>
   <ItemDefinitionGroup Label="CMakeTools">
     <ClCompile>

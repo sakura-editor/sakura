@@ -22,6 +22,13 @@
   <Target Name="GenerateFuncCodeEnum" Inputs="@(FuncCodeRes)" Outputs="$(FuncCodeEnum)" DependsOnTargets="GenerateHeaderMake" BeforeTargets="ClCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_funccode_enum -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
+  <Target Name="ConfigureChmSourceConverter" Condition="!Exists('$(ChmSourceConverterBuildDir)CMakeCache.txt')" DependsOnTargets="GenerateVersionHeader">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target configure_chm_source_converter -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="GenerateChmSourceConverter" Condition="!Exists('$(ChmSourceConverterExe)')" DependsOnTargets="ConfigureChmSourceConverter">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(ChmSourceConverterBuildPath)' --config $(Configuration) -- /nologo &amp;&amp; &amp; '$(CMakeExe)' --install '$(ChmSourceConverterBuildPath)' --config $(Configuration)&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;&amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_chm_source_converter -- /nologo &gt; $null&quot;" />
+  </Target>
   <Target Name="AppendCMakeToolsCleanTargetsForCMakeTools" BeforeTargets="CoreClean">
     <RemoveDir Directories="$(CMakeToolsBuildDir)" />
   </Target>

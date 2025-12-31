@@ -463,6 +463,7 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
+  generate_sakura_chm
   generate_cmigemo
 )
 
@@ -505,3 +506,18 @@ if(MINGW)
       $<$<CONFIG:Release>:-s>
   )
 endif(MINGW)
+
+# Include help.cmake for Compiled HTML Help
+include(${CMAKE_SOURCE_DIR}/src/main/cmake/help.cmake)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/sakura.chm"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SJIS_HELP}/sakura/sakura.chm" "${OUTPUT_DIRECTORY}/sakura.chm"
+  DEPENDS "${SJIS_HELP}/sakura/sakura.chm"
+  COMMENT "Copying sakura.chm to output directory"
+)
+
+add_custom_target(install_sakura_chm
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/sakura.chm"
+)
