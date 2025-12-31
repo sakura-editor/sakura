@@ -52,8 +52,6 @@ bool CMigemo::InitDllImp()
 		{ &m_migemo_close             ,"migemo_close"             },
 		{ &m_migemo_query             ,"migemo_query"             },
 		{ &m_migemo_release           ,"migemo_release"           },
-		{ &m_migemo_set_operator      ,"migemo_set_operator"      },
-		{ &m_migemo_get_operator      ,"migemo_get_operator"      },
 		{ &m_migemo_setproc_char2int  ,"migemo_setproc_char2int"  },
 		{ &m_migemo_setproc_int2char  ,"migemo_setproc_int2char"  },
 		{ &m_migemo_load              ,"migemo_load"              },
@@ -161,22 +159,6 @@ void CMigemo::migemo_release( unsigned char* str)
 		return;
 
 	(*m_migemo_release)(m_migemo, str);
-}
-
-int CMigemo::migemo_set_operator(int index, unsigned char* op)
-{
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return 0;
-	
-	return (*m_migemo_set_operator)(m_migemo, index, op);
-}
-
-const unsigned char* CMigemo::migemo_get_operator(int index)
-{
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return nullptr;
-	
-	return (*m_migemo_get_operator)(m_migemo,index);
 }
 
 void CMigemo::migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc)
