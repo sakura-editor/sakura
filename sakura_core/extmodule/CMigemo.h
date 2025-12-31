@@ -61,7 +61,6 @@ private:
 	bool DeinitDllImp(void) override;
 
 public:
-	void migemo_close();
 	unsigned char* migemo_query(unsigned char* query);
 	std::wstring migemo_query_w(const wchar_t* query);
 	void migemo_release( unsigned char* str);

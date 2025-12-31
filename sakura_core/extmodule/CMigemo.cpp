@@ -75,7 +75,9 @@ bool CMigemo::InitDllImp()
 
 bool CMigemo::DeinitDllImp(void)
 {
-	migemo_close();
+	if (IsAvailable() && m_migemo) {
+		(*m_migemo_close)(m_migemo);
+	}
 
 	return true;
 }
@@ -103,14 +105,6 @@ LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 	else{
 		return nullptr;
 	}
-}
-
-void CMigemo::migemo_close()
-{
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return;
-
-	(*m_migemo_close)(m_migemo);
 }
 
 unsigned char* CMigemo::migemo_query(unsigned char* query)
