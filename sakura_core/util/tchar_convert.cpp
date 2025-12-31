@@ -112,25 +112,17 @@ namespace cxx {
 
 /*!
  * ワイド文字列をナロー文字列に変換します。
- *
- * @param [in] source 変換元のワイド文字列
- * @param [in, opt] codePage 変換に使用するコードページ。
  */
-std::string to_string(std::wstring_view source, _In_opt_ UINT codePage) {
-	if (source.empty()) {
-		return "";
-	}
+std::string to_string(std::wstring_view source) {
+	const auto langId = ::GetThreadUILanguage();
+	const auto lcid = MAKELCID(langId, SORT_DEFAULT);
 
-	if (CP_ACP == codePage) {
-		const auto langId = ::GetThreadUILanguage();
-		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
+	std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
+	LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
 
-		std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
-		LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
-
-		if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
-			codePage = CP_SJIS;
-		}
+	UINT codePage;
+	if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
+		codePage = CP_SJIS;
 	}
 
 	// 変換エラーを受け取るフラグ
@@ -169,62 +161,6 @@ std::string to_string(std::wstring_view source, _In_opt_ UINT codePage) {
 	);
 
 	buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
-
-	return buffer;
-}
-
-/*!
- * ナロー文字列をワイド文字列に変換します。
- *
- * @param [in] source 変換元のナロー文字列
- * @param [in, opt] codePage 変換に使用するコードページ。
- */
-std::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
-	if (source.empty()) {
-		return L"";
-	}
-
-	if (CP_ACP == codePage) {
-		const auto langId = ::GetThreadUILanguage();
-		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
-
-		std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
-		LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
-
-		if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
-			codePage = CP_SJIS;
-		}
-	}
-
-	// 変換に必要な出力バッファサイズを求める
-	const auto required = ::MultiByteToWideChar(
-		codePage,
-		MB_ERR_INVALID_CHARS,
-		std::data(source),
-		int(std::size(source)),
-		LPWSTR(nullptr),
-		0
-	);
-
-	// 変換エラーがあったら例外を投げる
-	if (0 == required) {
-		throw std::invalid_argument("Invalid character sequence.");
-	}
-
-	// 変換に必要な出力バッファを確保する
-	std::wstring buffer(required, '\0');
-
-	// 変換を実行する
-	const auto converted = ::MultiByteToWideChar(
-		codePage,
-		0,
-		std::data(source),
-		int(std::size(source)),
-		std::data(buffer),
-		int(std::size(buffer))
-	);
-
-	buffer.resize(converted); // MultiByteToWideCharの戻り値は終端NULを含まない
 
 	return buffer;
 }

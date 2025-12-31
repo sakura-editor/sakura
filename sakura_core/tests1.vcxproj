@@ -168,7 +168,6 @@
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h" />
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp" />
-    <ClInclude Include="..\src\test\resources\rt_zipres.h" />
     <ClInclude Include="..\src\test\resources\TExtModule.hpp" />
     <ClInclude Include="..\src\test\resources\tests1_rc.h" />
   </ItemGroup>
@@ -197,9 +196,6 @@
     <TestResource Include="..\src\test\resources\tests1\test-plugin\plugin.def" />
   </ItemGroup>
   <Import Project="..\src\test\msbuild\googletest.targets" />
-  <Target Name="CopyMiniz" Condition="!Exists('$(CMakeToolsBuildDir)include\miniz-cpp\zip_file.hpp')" BeforeTargets="ClCompile">
-    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_miniz -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
-  </Target>
   <Target Name="MakeTestResource" Condition="!Exists('$(CMakeToolsBuildDir)resources.ja-JP.zip')" BeforeTargets="ResourceCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_resource_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
