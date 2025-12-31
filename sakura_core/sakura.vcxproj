@@ -943,6 +943,7 @@
       <Clean Include="$(OutDir)sakura_lang_zh_CN.dll" />
       <Clean Include="$(OutDir)sakura_lang_zh_CN.pdb" />
       <Clean Include="$(OutDir)bregonig.dll" />
+      <Clean Include="$(OutDir)migemo.dll" />
       <Clean Include="$(OutDir)ctags.exe" />
     </ItemGroup>
   </Target>
