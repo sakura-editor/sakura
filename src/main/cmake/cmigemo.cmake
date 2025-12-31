@@ -20,7 +20,12 @@ set(CMIGEMO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/cmigemo")
 add_custom_command(
   OUTPUT
     "${CMIGEMO_SOURCE_DIR}/.git"
-  COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --depth 1 --recommend-shallow externals/cmigemo
+  COMMAND ${CMAKE_COMMAND}
+    -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
+    -DREPO_ROOT:PATH=${CMAKE_SOURCE_DIR}
+    -DSUBMODULE_PATH:STRING=externals/cmigemo
+    -DLOCK_PATH:FILEPATH=${CMAKE_BINARY_DIR}/cmake-submodule-update.lock
+    -P ${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   COMMENT "Fetching cmigemo's source files"
 )
