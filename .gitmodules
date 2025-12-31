@@ -13,3 +13,6 @@
 [submodule "externals/miniz-cpp"]
 	path = externals/miniz-cpp
 	url = https://github.com/tfussell/miniz-cpp.git
+[submodule "externals/cmigemo"]
+	path = externals/cmigemo
+	url = https://github.com/koron/cmigemo.git

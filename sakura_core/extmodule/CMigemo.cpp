@@ -9,14 +9,15 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, miau
 	Copyright (C) 2012, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2025, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CMigemo.h"
+#include "extmodule/CMigemo.h"
+
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "charset/CUtf8.h"
@@ -64,32 +65,6 @@ bool CMigemo::InitDllImp()
 		return false;
 	}
 
-	m_migemo_open_s             = (Proc_migemo_open_s)            m_migemo_open;
-	m_migemo_close_s            = (Proc_migemo_close_s)           m_migemo_close;
-	m_migemo_query_s            = (Proc_migemo_query_s)           m_migemo_query;
-	m_migemo_release_s          = (Proc_migemo_release_s)         m_migemo_release;
-	m_migemo_set_operator_s     = (Proc_migemo_set_operator_s)    m_migemo_set_operator;
-	m_migemo_get_operator_s     = (Proc_migemo_get_operator_s)    m_migemo_get_operator;
-	m_migemo_setproc_char2int_s = (Proc_migemo_setproc_char2int_s)m_migemo_setproc_char2int;
-	m_migemo_setproc_int2char_s = (Proc_migemo_setproc_int2char_s)m_migemo_setproc_int2char;
-	m_migemo_load_s             = (Proc_migemo_load_s)            m_migemo_load;
-	m_migemo_is_enable_s        = (Proc_migemo_is_enable_s)       m_migemo_is_enable;
-
-	// x64は対応不要
-#ifdef _WIN64
-#else
-	// ver 1.3 以降は stdcall
-	DWORD dwVersionMS, dwVersionLS;
-	GetAppVersionInfo( GetInstance(), VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-	
-	DWORD dwver103 = (1 << 16) | 3;
-	if( dwver103 <= dwVersionMS ){
-		m_bStdcall = true;
-	}else{
-		m_bStdcall = false;
-	}
-#endif
-
 	m_bUtf8 = false;
 
 	if( ! migemo_open(nullptr) )
@@ -135,41 +110,29 @@ long CMigemo::migemo_open(char* dict)
 	UNREFERENCED_PARAMETER(dict);
 	if (!IsAvailable())
 		return 0;
-	if( m_bStdcall ){
-		m_migemo = (*m_migemo_open_s)(nullptr);
-	}else{
-		m_migemo = (*m_migemo_open)(nullptr);
-	}
+
+	m_migemo = (*m_migemo_open)(nullptr);
 
 	if (m_migemo == nullptr)
 		return 0;
 	
-	//if (!migemo_load(MIGEMO_DICTID_MIGEMO, path2))
-	//	return 0;
-	
 	return 1;
 }
+
 void CMigemo::migemo_close()
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return;
 
-	if( m_bStdcall ){
-		(*m_migemo_close_s)(m_migemo);
-	}else{
-		(*m_migemo_close)(m_migemo);
-	}
+	(*m_migemo_close)(m_migemo);
 }
+
 unsigned char* CMigemo::migemo_query(unsigned char* query)
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return nullptr;
 	
-	if( m_bStdcall ){
-		return (*m_migemo_query_s)(m_migemo, query);
-	}else{
-		return (*m_migemo_query)(m_migemo, query);
-	}
+	return (*m_migemo_query)(m_migemo, query);
 }
 
 std::wstring CMigemo::migemo_query_w(const wchar_t* query)
@@ -197,66 +160,47 @@ void CMigemo::migemo_release( unsigned char* str)
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return;
 
-	if( m_bStdcall ){
-		(*m_migemo_release_s)(m_migemo, str);
-	}else{
-		(*m_migemo_release)(m_migemo, str);
-	}
+	(*m_migemo_release)(m_migemo, str);
 }
+
 int CMigemo::migemo_set_operator(int index, unsigned char* op)
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return 0;
 	
-	if( m_bStdcall ){
-		return (*m_migemo_set_operator_s)(m_migemo, index, op);
-	}else{
-		return (*m_migemo_set_operator)(m_migemo, index, op);
-	}
+	return (*m_migemo_set_operator)(m_migemo, index, op);
 }
+
 const unsigned char* CMigemo::migemo_get_operator(int index)
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return nullptr;
 	
-	if( m_bStdcall ){
-		return (*m_migemo_get_operator_s)(m_migemo,index);
-	}else{
-		return (*m_migemo_get_operator)(m_migemo,index);
-	}
+	return (*m_migemo_get_operator)(m_migemo,index);
 }
+
 void CMigemo::migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc)
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return ;
 	
-	if( m_bStdcall ){
-		(*m_migemo_setproc_char2int_s)(m_migemo,proc);
-	}else{
-		(*m_migemo_setproc_char2int)(m_migemo,proc);
-	}
+	(*m_migemo_setproc_char2int)(m_migemo,proc);
 }
+
 void CMigemo::migemo_setproc_int2char(MIGEMO_PROC_INT2CHAR proc)
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return;
 
-	if( m_bStdcall ){
-		(*m_migemo_setproc_int2char_s)(m_migemo,proc);
-	}else{
-		(*m_migemo_setproc_int2char)(m_migemo,proc);
-	}
+	(*m_migemo_setproc_int2char)(m_migemo,proc);
 }
 
 int CMigemo::migemo_load_a(int dict_id, const char* dict_file)
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return 0;
-	if( m_bStdcall ){
-		return (*m_migemo_load_s)(m_migemo, dict_id, dict_file);
-	}else{
-		return (*m_migemo_load)(m_migemo, dict_id, dict_file);
-	}
+
+	return (*m_migemo_load)(m_migemo, dict_id, dict_file);
 }
 
 int CMigemo::migemo_load_w(int dict_id, const wchar_t* dict_file)
@@ -271,11 +215,7 @@ int CMigemo::migemo_is_enable()
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return 0;
 	
-	if( m_bStdcall ){
-		return (*m_migemo_is_enable_s)(m_migemo);
-	}else{
-		return (*m_migemo_is_enable)(m_migemo);
-	}
+	return (*m_migemo_is_enable)(m_migemo);
 }
 
 int CMigemo::migemo_load_all()
