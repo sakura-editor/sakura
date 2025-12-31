@@ -135,22 +135,14 @@ void CMigemo::_migemo_release(std::string_view found) noexcept
 	(*m_migemo_release)(m_migemo, LPBYTE(found.data()));
 }
 
-int CMigemo::migemo_load_a(int dict_id, const char* dict_file)
+int CMigemo::_migemo_load(int dict_id, const std::filesystem::path& dict_file) noexcept
 {
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return 0;
-
-	return (*m_migemo_load)(m_migemo, dict_id, dict_file);
+	assert(IsAvailable());
+	assert(m_migemo);
+	return (*m_migemo_load)(m_migemo, dict_id, dict_file.string().c_str());
 }
 
-int CMigemo::migemo_load_w(int dict_id, const wchar_t* dict_file)
-{
-	char szBuf[_MAX_PATH];
-	wcstombs2(szBuf,dict_file,int(std::size(szBuf)));
-	return migemo_load_a(dict_id,szBuf);
-}
-
-int CMigemo::migemo_is_enable()
+int CMigemo::migemo_is_enable() noexcept
 {
 	if (!IsAvailable() || (m_migemo == nullptr))
 		return 0;
@@ -158,52 +150,41 @@ int CMigemo::migemo_is_enable()
 	return (*m_migemo_is_enable)(m_migemo);
 }
 
-int CMigemo::migemo_load_all()
+int CMigemo::migemo_load_all() noexcept
 {
-	if( !migemo_is_enable()){
-		
-		WCHAR* szDict = GetDllShareData().m_Common.m_sHelper.m_szMigemoDict;
-		WCHAR path[MAX_PATH];
-		//char path2[MAX_PATH];
-		WCHAR *ppath;
-		
-		if (szDict[0] == L'\0'){
-			GetInidirOrExedir(path,L"dict");	// 2007.05.20 ryoji 相対パスは設定ファイルからのパスを優先
-		}
-		else{
-			if (_IS_REL_PATH(szDict)){
-				GetInidirOrExedir(path,szDict);	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-			}else{
-				wcscpy(path,szDict);
-			}
-		}
-		ppath = &path[wcslen(path)];
-		*(ppath++) = L'\\';
-		// ver1.3 utf8対応
-		wcscpy(ppath,L"utf-8\\migemo-dict");
-		if(fexist(path)){
-			wcscpy(ppath,L"utf-8\\");
-			ppath = &path[wcslen(path)];
-			m_bUtf8 = true;
-		}else{
-			wcscpy(ppath,L"cp932\\migemo-dict");
-			if(fexist(path)){
-				wcscpy(ppath,L"cp932\\");
-				ppath = &path[wcslen(path)];
-			}
-			m_bUtf8 = false;
-		}
-		wcscpy(ppath,L"migemo-dict");
+	// 利用できない場合0を返しておく
+	if (!IsAvailable() || !m_migemo) {
+		return 0;
+	}
 
-		migemo_load_t(MIGEMO_DICTID_MIGEMO,path);
-		wcscpy(ppath,L"han2zen.dat");
-		migemo_load_t(MIGEMO_DICTID_HAN2ZEN,path);
-		wcscpy(ppath,L"hira2kata.dat");
-		migemo_load_t(MIGEMO_DICTID_HIRA2KATA,path);
-		wcscpy(ppath,L"roma2hira.dat");
-		migemo_load_t(MIGEMO_DICTID_ROMA2HIRA,path);
-		wcscpy(ppath,L"zen2han.dat");
-		migemo_load_t(MIGEMO_DICTID_ZEN2HAN,path);
+	if (!migemo_is_enable()) {
+		std::filesystem::path dictPath = GetDllShareData().m_Common.m_sHelper.m_szMigemoDict;
+
+		std::filesystem::path path;
+		if (dictPath.empty()) {
+			path = GetIniFileName().parent_path() / L"dict";
+		} else if (dictPath.is_relative()){
+			path = GetIniFileName().parent_path() / dictPath;
+		} else {
+			path = dictPath;
+		}
+
+		// ver1.3 utf8対応
+		if (fexist(path / L"utf-8" / L"migemo-dict")) {
+			path /= L"utf-8";
+			m_bUtf8 = true;
+		} else if (fexist(path / L"cp932" / L"migemo-dict" )) {
+			path /= L"cp932";
+			m_bUtf8 = false;
+		} else {
+			return 0;
+		}
+
+		_migemo_load(MIGEMO_DICTID_MIGEMO,		path / L"migemo-dict");
+		_migemo_load(MIGEMO_DICTID_HAN2ZEN,		path / L"han2zen.dat");
+		_migemo_load(MIGEMO_DICTID_HIRA2KATA,	path / L"hira2kata.dat");
+		_migemo_load(MIGEMO_DICTID_ROMA2HIRA,	path / L"roma2hira.dat");
+		_migemo_load(MIGEMO_DICTID_ZEN2HAN,		path / L"zen2han.dat");
 
 		// 2011.12.11 Moca 辞書登録後でないとmigemo内臓のものに変更されてしまう
 		if( m_bUtf8 ){
@@ -214,6 +195,7 @@ int CMigemo::migemo_load_all()
 			(*m_migemo_setproc_int2char)(m_migemo, pcre_int2char);	// 2009.04.30 miau
 		}
 	}
+
 	return 1;
 }
 

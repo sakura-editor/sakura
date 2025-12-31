@@ -159,8 +159,8 @@ TEST_F(CMigemoTest, test001)
 	// 初期状態では利用不可
 	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsFalse());
 
-	// ロード前は辞書ロードも利用不可、共有メモリ初期化前は例外発生
-	EXPECT_ANY_THROW(pcMigemo->migemo_load_all());
+	// ロード前は辞書ロードも利用不可
+	EXPECT_THAT(pcMigemo->migemo_load_all(), IsFalse());
 
 	// 名前を指定しないロードは、共有メモリ初期化前にはできない
 	EXPECT_ANY_THROW(pcMigemo->InitDll());
@@ -180,7 +180,7 @@ TEST_F(CMigemoTest, test001)
 	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, L"", _TRUNCATE);
 
 	// ロードされたら辞書ロードも利用可能になるが辞書がないのでロードに失敗する
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsTrue()); // FIXME: 辞書が読めなくても1を返してしまう不具合
+	EXPECT_THAT(pcMigemo->migemo_load_all(), IsFalse());
 
 	// 辞書がないので結局利用不可
 	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsFalse());

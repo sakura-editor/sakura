@@ -62,15 +62,12 @@ private:
 
 	std::string_view _migemo_query(const std::string& query) noexcept;
 	void _migemo_release(std::string_view found) noexcept;
+	int _migemo_load(int dict_id, const std::filesystem::path& dict_file) noexcept;
 
 public:
+	int				migemo_load_all() noexcept;
+	int				migemo_is_enable() noexcept;
 	std::wstring	migemo_query_w(std::wstring_view query) noexcept;
-
-	int migemo_load_a(int dict_id, const char* dict_file);
-	int migemo_load_w(int dict_id, const wchar_t* dict_file);
-	#define migemo_load_t migemo_load_w
-	int migemo_is_enable();
-	int migemo_load_all();
 };
 
 #endif /* SAKURA_CMIGEMO_BEF7C3E9_DC35_4C9D_BC69_8B7F9EBB4463_H_ */
