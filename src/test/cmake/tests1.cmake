@@ -8,6 +8,29 @@
 # Include GoogleTest's targets
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake)
 
+set(MINIZ_SOURCE_DIR "${CMAKE_SOURCE_DIR}/externals/miniz-cpp")
+set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
+
+add_custom_command(
+  OUTPUT "${MINIZ_SOURCE_DIR}/.git"
+  COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --depth 1 --recommend-shallow externals/miniz-cpp
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  COMMENT "Fetching miniz-cpp's source files"
+)
+
+add_custom_command(
+  OUTPUT "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${MINIZ_INCLUDE_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MINIZ_SOURCE_DIR}/zip_file.hpp" "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
+  DEPENDS "${MINIZ_SOURCE_DIR}/.git"
+  COMMENT "Copying miniz-cpp/zip_file.hpp to include directory"
+)
+
+add_custom_target(generate_miniz ALL
+  DEPENDS
+    "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
+)
+
 # define precompiled headers
 set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 
@@ -113,4 +136,5 @@ endif(MINGW)
 add_dependencies(tests1
   test_resource_zip
   generate_gtest
+  generate_miniz
 )

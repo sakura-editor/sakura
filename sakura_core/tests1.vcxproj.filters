@@ -195,6 +195,9 @@
     <ClInclude Include="..\src\test\resources\TExtModule.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\test\resources\rt_zipres.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\tests1_rc.h">

@@ -8,6 +8,7 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #include <winres.h>
+#include "rt_zipres.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -32,6 +33,7 @@ END
 2 TEXTINCLUDE 
 BEGIN
     "#include <winres.h>\r\n"
+    "#include ""rt_zipres.h""\r\n"
     "\0"
 END
 
@@ -46,7 +48,7 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 101
+// RT_ZIPRES
 //
 IDR_ZIPRES1               101                     "resources.ja-JP.zip"
 
