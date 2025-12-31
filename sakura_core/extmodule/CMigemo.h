@@ -60,10 +60,12 @@ private:
 	bool InitDllImp() override;
 	bool DeinitDllImp(void) override;
 
+	std::string_view _migemo_query(const std::string& query) noexcept;
+	void _migemo_release(std::string_view found) noexcept;
+
 public:
-	unsigned char* migemo_query(unsigned char* query);
-	std::wstring migemo_query_w(const wchar_t* query);
-	void migemo_release( unsigned char* str);
+	std::wstring	migemo_query_w(std::wstring_view query) noexcept;
+
 	int migemo_load_a(int dict_id, const char* dict_file);
 	int migemo_load_w(int dict_id, const wchar_t* dict_file);
 	#define migemo_load_t migemo_load_w

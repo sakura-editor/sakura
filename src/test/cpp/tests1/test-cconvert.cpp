@@ -453,12 +453,30 @@ namespace cxx {
 
 TEST(to_string, test001)
 {
+	// 空文字列
+	EXPECT_THAT(cxx::to_string(L""), StrEq(""));
+}
+
+TEST(to_string, test002)
+{
 	// ロケールを設定
 	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
 
 
 	// 日本語を含む文字列
 	EXPECT_THAT(cxx::to_string(L"ABCabc123あいう愛生"), StrEq("ABCabc123あいう愛生"));
+}
+
+TEST(to_string, test003)
+{
+	// 日本語を含む文字列をUTF8に変換
+	EXPECT_THAT(cxx::to_string(L"ABCabc123あいう愛生", CP_UTF8), StrEq((LPCSTR)u8"ABCabc123あいう愛生"));
+}
+
+TEST(to_string, test004)
+{
+	// カラー絵文字「男性のシンボル」をUTF8に変換
+	EXPECT_THAT(cxx::to_string(L"\U0001F6B9", CP_UTF8), StrEq((LPCSTR)u8"\U0001F6B9"));
 }
 
 TEST(to_string, test101)
@@ -468,6 +486,52 @@ TEST(to_string, test101)
 
 	// カラー絵文字「男性のシンボル」（サロゲートペアはSJISに変換できない）
 	EXPECT_ANY_THROW(cxx::to_string(L"\U0001F6B9"));
+}
+
+TEST(to_wstring, test001)
+{
+	// 空文字列
+	EXPECT_THAT(cxx::to_wstring(""), StrEq(L""));
+}
+
+TEST(to_wstring, test002)
+{
+	// ロケールを設定
+	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+
+
+	// 日本語を含む文字列
+	EXPECT_THAT(cxx::to_wstring("ABCabc123あいう愛生"), StrEq(L"ABCabc123あいう愛生"));
+}
+
+TEST(to_wstring, test003)
+{
+	// 日本語を含む文字列をUTF8に変換
+	EXPECT_THAT(cxx::to_wstring((LPCSTR)u8"ABCabc123あいう愛生", CP_UTF8), StrEq(L"ABCabc123あいう愛生"));
+}
+
+TEST(to_wstring, test004)
+{
+	// カラー絵文字「男性のシンボル」をUTF8に変換
+	EXPECT_THAT(cxx::to_wstring((LPCSTR)u8"\U0001F6B9", CP_UTF8), StrEq(L"\U0001F6B9"));
+}
+
+TEST(to_wstring, test101)
+{
+	// ロケールを設定
+	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+
+	// SJIS仕様違反 先行バイトのみ
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81"));
+
+	// SJIS仕様違反 後続バイト値が不正
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81\x7F"));
+
+	// SJIS仕様違反 後続バイト値が範囲外1
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81\x3F"));
+
+	// SJIS仕様違反 後続バイト値が範囲外2
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81\xFD"));
 }
 
 } // namespace cxx

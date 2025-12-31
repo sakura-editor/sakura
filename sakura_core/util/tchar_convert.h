@@ -23,7 +23,8 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
 
 namespace cxx {
 
-std::string to_string(std::wstring_view source);
+std::string		to_string(std::wstring_view source, _In_opt_ UINT codePage = CP_ACP);
+std::wstring	to_wstring(std::string_view source, _In_opt_ UINT codePage = CP_ACP);
 
 } // namespace cxx
 
