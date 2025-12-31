@@ -107,40 +107,32 @@ LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 	}
 }
 
-unsigned char* CMigemo::migemo_query(unsigned char* query)
+std::string_view CMigemo::_migemo_query(const std::string& query) noexcept
 {
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return nullptr;
-	
-	return (*m_migemo_query)(m_migemo, query);
+	assert(IsAvailable());
+	assert(m_migemo);
+	return (LPCSTR)(*m_migemo_query)(m_migemo, LPBYTE(query.c_str()));
 }
 
-std::wstring CMigemo::migemo_query_w(const wchar_t* query)
+std::wstring CMigemo::migemo_query_w(std::wstring_view query) noexcept
 {
-	if( m_bUtf8 ){
-		CNativeW cnvStr;
-		CNativeA utf8Str;
-		cnvStr.SetString(query);
-		CUtf8::UnicodeToUTF8(cnvStr, utf8Str._GetMemory());
-		unsigned char* ret;
-		ret = migemo_query((unsigned char*)utf8Str.GetStringPtr());
-		utf8Str.SetString((const char*)ret);
-		CUtf8::UTF8ToUnicode(*(utf8Str._GetMemory()), &cnvStr);
-		migemo_release(ret);
-		return cnvStr.GetStringPtr();
+	try {
+		const UINT codePage = m_bUtf8 ? CP_UTF8 : CP_SJIS;
+		const auto found = _migemo_query(cxx::to_string(query, codePage));
+		const auto ret = cxx::to_wstring(found, codePage);
+		_migemo_release(found);
+		return ret;
+
+	} catch (const std::invalid_argument&) {
+		return std::wstring(query);
 	}
-	unsigned char* ret = migemo_query((unsigned char*)to_achar(query));
-	std::wstring retVal = to_wchar((const char*)ret);
-	migemo_release(ret);
-	return retVal;
 }
 
-void CMigemo::migemo_release( unsigned char* str)
+void CMigemo::_migemo_release(std::string_view found) noexcept
 {
-	if (!IsAvailable() || (m_migemo == nullptr))
-		return;
-
-	(*m_migemo_release)(m_migemo, str);
+	assert(IsAvailable());
+	assert(m_migemo);
+	(*m_migemo_release)(m_migemo, LPBYTE(found.data()));
 }
 
 int CMigemo::migemo_load_a(int dict_id, const char* dict_file)

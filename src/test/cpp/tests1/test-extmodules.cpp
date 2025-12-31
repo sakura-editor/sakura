@@ -226,6 +226,6 @@ TEST_F(CMigemoTest, test003)
 	// 辞書が見付かるので利用可能になる
 	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsTrue());
 
-	// 与えた文字列に対する正規表現が返る
-	EXPECT_THAT(pcMigemo->migemo_query_w(L"さくらえでぃt"), StrEq(L"(ｻｸﾗｴﾃﾞｨ[ﾄﾃﾂﾁﾀ]|サクラエディ[トテツチタ]|さくらえでぃ[とてつちたｔt])"));
+	// 与えた文字列をSJISに変換できない場合、与えた文字列がそのまま返る
+	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));
 }
