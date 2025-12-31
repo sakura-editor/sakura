@@ -8,7 +8,6 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #include <winres.h>
-#include "rt_zipres.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -33,7 +32,6 @@ END
 2 TEXTINCLUDE 
 BEGIN
     "#include <winres.h>\r\n"
-    "#include ""rt_zipres.h""\r\n"
     "\0"
 END
 
@@ -48,11 +46,9 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// RT_ZIPRES
+// 101
 //
 IDR_ZIPRES1               101                     "resources.ja-JP.zip"
-IDR_ZIPRES2               101                     "cmigemo-dict-utf-8.zip"
-IDR_ZIPRES3               101                     "cmigemo-dict-cp932.zip"
 
 #endif    // 日本語 (日本) resources
 /////////////////////////////////////////////////////////////////////////////
