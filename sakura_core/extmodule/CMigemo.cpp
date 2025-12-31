@@ -84,27 +84,24 @@ bool CMigemo::DeinitDllImp(void)
 
 LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 {
-	if(nIndex==0){
-		WCHAR* szDll;
-		static WCHAR szDllName[_MAX_PATH];
-		szDll = GetDllShareData().m_Common.m_sHelper.m_szMigemoDll;
+	UNREFERENCED_PARAMETER(nIndex); // ←CDllImplの再設計を推奨
 
-		if(szDll[0] == L'\0'){
-			GetInidir( szDllName, L"migemo.dll" );
-			return fexist(szDllName) ? szDllName : L"migemo.dll";
+	const auto& szMigemoDll = GetDllShareData().m_Common.m_sHelper.m_szMigemoDll;
+
+	if (std::filesystem::path dllPath{ szMigemoDll }; !dllPath.empty()) {
+		// 相対パスはiniファイル基準に変換
+		if(dllPath.is_relative()) {
+			dllPath = GetIniFileName().parent_path() / dllPath;
 		}
-		else{
-			if(_IS_REL_PATH(szDll)){
-				GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-				szDll = szDllName;
-			}
-			return szDll;
+
+		// 指定されたパスが存在する場合はそれを使う
+		if (fexist(dllPath)) {
+			return szMigemoDll;
 		}
-		//return "migemo.dll";
 	}
-	else{
-		return nullptr;
-	}
+
+	// デフォルトのDLL名を返す
+	return L"migemo.dll";
 }
 
 std::string_view CMigemo::_migemo_query(const std::string& query) noexcept

@@ -171,6 +171,12 @@ TEST_F(CMigemoTest, test001)
 	// ロードされたら利用可能になる
 	EXPECT_THAT(pcMigemo->IsAvailable(), IsTrue());
 
+	// テストクラスのインスタンスを破棄する
+	pcMigemo = nullptr;
+
+	// テストクラスをインスタンス化する
+	pcMigemo = std::make_unique<CMigemo>();
+
 	// 共有メモリを初期化する
 	pcShareData = std::make_unique<CShareData>();
 	EXPECT_THAT(pcShareData->InitShareData(), IsTrue());
@@ -178,6 +184,9 @@ TEST_F(CMigemoTest, test001)
 	// C/Migemo設定に値を入れる
 	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDll, L"", _TRUNCATE);
 	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, L"", _TRUNCATE);
+
+	// 名前を指定せずにロードする
+	pcMigemo->InitDll();
 
 	// ロードされたら辞書ロードも利用可能になるが辞書がないのでロードに失敗する
 	EXPECT_THAT(pcMigemo->migemo_load_all(), IsFalse());
