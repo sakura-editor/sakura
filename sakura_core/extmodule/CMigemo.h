@@ -41,8 +41,6 @@ private:
 	decltype(&::migemo_close)               m_migemo_close = nullptr;
 	decltype(&::migemo_query)               m_migemo_query = nullptr;
 	decltype(&::migemo_release)             m_migemo_release = nullptr;
-	decltype(&::migemo_set_operator)        m_migemo_set_operator = nullptr;
-	decltype(&::migemo_get_operator)        m_migemo_get_operator = nullptr;
 	decltype(&::migemo_setproc_char2int)    m_migemo_setproc_char2int = nullptr;
 	decltype(&::migemo_setproc_int2char)    m_migemo_setproc_int2char = nullptr;
 	decltype(&::migemo_load)                m_migemo_load = nullptr;
@@ -68,8 +66,6 @@ public:
 	unsigned char* migemo_query(unsigned char* query);
 	std::wstring migemo_query_w(const wchar_t* query);
 	void migemo_release( unsigned char* str);
-	int migemo_set_operator(int index, unsigned char* op);
-	const unsigned char* migemo_get_operator(int index);
 	void migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc);
 	void migemo_setproc_int2char(MIGEMO_PROC_INT2CHAR proc);
 	int migemo_load_a(int dict_id, const char* dict_file);
