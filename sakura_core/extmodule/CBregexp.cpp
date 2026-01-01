@@ -37,7 +37,6 @@ const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
 
 CBregexp::CBregexp()
 : m_pRegExp( nullptr )
-, m_ePatType( PAT_NORMAL )	//	Jul, 25, 2002 genta
 {
 	m_szMsg[0] = L'\0';
 }
@@ -46,68 +45,6 @@ CBregexp::~CBregexp()
 {
 	//コンパイルバッファを解放
 	ReleaseCompileBuffer();
-}
-
-/*! @brief 検索パターンが特定の検索パターンかチェックする
-**
-** @param[in] szPattern 検索パターン
-**
-** @retval 検索パターン文字列長
-** 
-** @date 2005.03.20 かろと 関数に切り出し
-*/
-int CBregexp::CheckPattern(const wchar_t* szPattern)
-{
-	static const wchar_t TOP_MATCH[] = L"/^\\(*\\^/k";							//!< 行頭パターンのチェック用パターン
-	static const wchar_t DOL_MATCH[] = L"/\\\\\\$$/k";							//!< \$(行末パターンでない)チェック用パターン
-	static const wchar_t BOT_MATCH[] = L"/\\$\\)*$/k";							//!< 行末パターンのチェック用パターン
-	static const wchar_t TAB_MATCH[] = L"/^\\(*\\^\\$\\)*$/k";					//!< "^$"パターンかをチェック用パターン
-	static const wchar_t LOOKAHEAD[] = L"/\\(\\?[=]/k";							//!< "(?=" 先読み の存在チェックパターン
-	BREGEXP_W*	sReg = nullptr;					//!< コンパイル構造体
-	wchar_t szMsg[80] = L"";					//!< エラーメッセージ
-	int nLen;									//!< 検索パターンの長さ
-	const wchar_t *szPatternEnd;				//!< 検索パターンの終端
-
-	m_ePatType = PAT_NORMAL;	//!<　ノーマルは確定
-	nLen = (int)wcslen( szPattern );
-	szPatternEnd = szPattern + nLen;
-	// パターン種別の設定
-	if( BMatch( TOP_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-		// 行頭パターンにマッチした
-		m_ePatType |= PAT_TOP;
-	}
-	BRegfree(sReg);
-	sReg = nullptr;
-	if( BMatch( TAB_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-		// 行頭行末パターンにマッチした
-		m_ePatType |= PAT_TAB;
-	}
-	BRegfree(sReg);
-	sReg = nullptr;
-	if( BMatch( DOL_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-		// 行末の\$ にマッチした
-		// PAT_NORMAL
-	} else {
-		BRegfree(sReg);
-		sReg = nullptr;
-		if( BMatch( BOT_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-			// 行末パターンにマッチした
-			m_ePatType |= PAT_BOTTOM;
-		} else {
-			// その他
-			// PAT_NORMAL
-		}
-	}
-	BRegfree(sReg);
-	sReg = nullptr;
-	
-	if( BMatch( LOOKAHEAD, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
-		// 先読みパターンにマッチした
-		m_ePatType |= PAT_LOOKAHEAD;
-	}
-	BRegfree(sReg);
-	sReg = nullptr;
-	return (nLen);
 }
 
 /*! @brief ライブラリに渡すための検索・置換パターンを作成する
@@ -200,8 +137,6 @@ wchar_t* CBregexp::MakePatternSub(
 */
 wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption )
 {
-	this->CheckPattern( szSearch );
-
 	static const wchar_t szDotAlternative[] = L"[^\\r\\n]";
 	static const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
 
@@ -569,3 +504,19 @@ bool CheckRegexpSyntax(
 	return true;
 }
 //	To Here Jun. 26, 2001 genta
+
+/*!
+ * コンパイルバッファを解放する
+ *
+ * m_pcRegをBRegfree()に渡して解放する．解放後はNULLにセットする．
+ * 元々NULLなら何もしない
+ *
+ * @note EPatFlagsをenum classに変更したのに伴い、cpp側に移動。
+ */
+void CBregexp::ReleaseCompileBuffer() noexcept
+{
+	if (m_pRegExp) {
+		BRegfreeW(m_pRegExp);
+		m_pRegExp = nullptr;
+	}
+}
