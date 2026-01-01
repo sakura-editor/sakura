@@ -30,7 +30,7 @@
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
 
-#include "StartEditorProcessForTest.h"
+#include "testing/StartEditorProcess.hpp"
 
 using namespace std::literals::string_literals;
 
@@ -332,7 +332,7 @@ TEST_P(WinMainTest, runEditorProcess)
 		strCommandLine += strprintf(LR"( -MTYPE=js -M="%s")", std::regex_replace( strStartupMacro, std::wregex( L"\"" ), L"\"\"" ).c_str());
 
 		// エディタプロセスを起動する
-		const int ret = StartEditorProcessForTest(strCommandLine);
+		const int ret = testing::StartEditorProcess(strCommandLine);
 
 		exit(ret);
 	};
