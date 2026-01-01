@@ -31,13 +31,15 @@ protected:
 
 public:
 	// UNICODEインターフェースを提供する
+	[[deprecated("use BMatchExW instead.")]]
 	int BMatchW(LPCWSTR str, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
 	{
-		return m_BMatch(LPWSTR(str), LPWSTR(target), LPWSTR(targetendp), rxp, std::data(msg));
+		return BMatchExW(str, target, target, targetendp, rxp, msg);
 	}
+	[[deprecated("use BSubstExW instead.")]]
 	int BSubstW(LPCWSTR str, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
 	{
-		return m_BSubst(LPWSTR(str), LPWSTR(target), LPWSTR(targetendp), rxp, std::data(msg));
+		return BSubstExW(str, target, target, targetendp, rxp, msg);
 	}
 
 	LPCWSTR BRegexpVersionW(void) const noexcept
@@ -58,14 +60,8 @@ public:
 		return m_BSubstEx(LPWSTR(str), LPWSTR(targetbeg), LPWSTR(target), LPWSTR(targetendp), rxp, std::data(msg));
 	}
 
-	// 関数があるかどうか
-	bool ExistBMatchEx() const noexcept { return m_BMatchEx!=nullptr; }
-	bool ExistBSubstEx() const noexcept { return m_BSubstEx!=nullptr; }
-
 private:
 	//DLL内関数ポインタ
-	decltype(&::BMatchW)		 m_BMatch = nullptr;
-	decltype(&::BSubstW)		 m_BSubst = nullptr;
 	decltype(&::BRegfreeW)       m_BRegfree = nullptr;
 	decltype(&::BRegexpVersionW) m_BRegexpVersion = nullptr;
 	decltype(&::BMatchExW)       m_BMatchEx = nullptr;

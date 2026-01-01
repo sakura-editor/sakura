@@ -38,8 +38,6 @@ bool CBregOnig::InitDllImp()
 {
 	//DLL内関数名リスト
 	const ImportTable table[] = {
-		{ &m_BMatch,			"BMatchW" },
-		{ &m_BSubst,			"BSubstW" },
 		{ &m_BRegfree,			"BRegfreeW" },
 		{ &m_BRegexpVersion,	"BRegexpVersionW" },
 		{ &m_BMatchEx,			"BMatchExW" },

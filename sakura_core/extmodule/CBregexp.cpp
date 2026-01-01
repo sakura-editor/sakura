@@ -464,21 +464,10 @@ bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 	}
 
 	m_szMsg[0] = '\0';		//!< エラー解除
-	// 拡張関数がない場合は、行の先頭("^")の検索時の特別処理 by かろと
-	if (!ExistBMatchEx()) {
-		/*
-		** 行頭(^)とマッチするのは、nStart=0の時だけなので、それ以外は false
-		*/
-		if( (m_ePatType & PAT_TOP) != 0 && nStart != 0 ) {
-			// nStart!=0でも、BMatch()にとっては行頭になるので、ここでfalseにする必要がある
-			return false;
-		}
-		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-		matched = BMatch( nullptr, target + nStart, target + len, &m_pRegExp, m_szMsg );
-	} else {
-		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-		matched = BMatchEx( nullptr, target, target + nStart, target + len, &m_pRegExp, m_szMsg );
-	}
+
+	//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+	matched = BMatchExW(nullptr, target, target + nStart, target + len, &m_pRegExp, m_szMsg);
+
 	m_szTarget = target;
 			
 	if ( matched < 0 || m_szMsg[0] ) {
@@ -531,11 +520,9 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 	//	To Here 2003.05.03 かろと
 
 	m_szMsg[0] = '\0';		//!< エラー解除
-	if (!ExistBSubstEx()) {
-		result = BSubst( nullptr, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg );
-	} else {
-		result = BSubstEx( nullptr, szTarget, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg );
-	}
+
+	result = BSubstExW(nullptr, szTarget, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg);
+
 	m_szTarget = szTarget;
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
