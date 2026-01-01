@@ -178,6 +178,21 @@
 #include <wrl.h>
 #include <wrl/client.h>
 
+/*!
+ * NORETURNマクロ
+ *
+ * 関数の制御が戻らないことを示す。
+ */
+#if defined(_MSC_VER)
+#  define NORETURN __declspec(noreturn)
+#elif defined(__GNUC__)
+#  define NORETURN __attribute__((noreturn))
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#  define NORETURN _Noreturn
+#else
+#  define NORETURN
+#endif
+
 #ifdef __MINGW32__
 #ifdef UNREFERENCED_PARAMETER
 #undef UNREFERENCED_PARAMETER
