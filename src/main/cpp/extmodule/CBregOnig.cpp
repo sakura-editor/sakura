@@ -40,8 +40,6 @@ bool CBregOnig::InitDllImp()
 	const ImportTable table[] = {
 		{ &m_BMatch,			"BMatchW" },
 		{ &m_BSubst,			"BSubstW" },
-		{ &m_BTrans,			"BTransW" },
-		{ &m_BSplit,			"BSplitW" },
 		{ &m_BRegfree,			"BRegfreeW" },
 		{ &m_BRegexpVersion,	"BRegexpVersionW" },
 		{ &m_BMatchEx,			"BMatchExW" },
