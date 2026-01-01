@@ -17,16 +17,14 @@
 	Copyright (C) 2005, かろと
 	Copyright (C) 2006, かろと
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
-#include <string>
-#include <stdio.h>
-#include <string.h>
-#include "CBregexp.h"
+#include "extmodule/CBregexp.h"
+
 #include "charset/charcode.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -246,14 +244,21 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	BREGEXP_W構造体の生成のみを行う．
 
 	@param[in] szPattern0	検索or置換パターン
-	@param[in] szPattern1	置換後文字列パターン(検索時はNULL)
+	@param[in] optPattern1	置換後文字列パターン(検索時はstd::nullopt)
 	@param[in] nOption		検索・置換オプション
 
 	@retval true 成功
 	@retval false 失敗
 */
-bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption, bool bKakomi )
+bool CBregexp::Compile(
+	const std::wstring& szPattern0,
+	int					nOption,
+	const std::optional<std::wstring>& optPattern1,
+	bool				bKakomi
+)
 {
+	using enum EPatFlags;
+
 	//	DLLが利用可能でないときはエラー終了
 	if( !IsAvailable() )
 		return false;
@@ -266,18 +271,23 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 	wchar_t *szNPattern = nullptr;
 	const wchar_t *pszNPattern = nullptr;
 	if( bKakomi ){
-		pszNPattern = szPattern0;
+		pszNPattern = std::data(szPattern0);
 	}else{
-		szNPattern = MakePatternAlternate( szPattern0, szPattern1, nOption );
+		szNPattern = MakePatternAlternate(std::data(szPattern0), optPattern1.has_value() ? std::data(optPattern1.value()) : nullptr, nOption );
 		pszNPattern = szNPattern;
 	}
+	auto targetbegp = LPWSTR(std::data(m_tmpBuf));
+	auto targetp = targetbegp + 0;
+	auto targetendp = targetbegp + std::size(m_tmpBuf) - 1;
+
 	m_szMsg[0] = L'\0';		//!< エラー解除
-	if (szPattern1 == nullptr) {
+
+	if (!optPattern1.has_value()) {
 		// 検索実行
-		BMatch( pszNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
+		BMatchExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
 	} else {
 		// 置換実行
-		BSubst( pszNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
+		BSubstExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
 	}
 	delete [] szNPattern;
 
@@ -519,4 +529,15 @@ void CBregexp::ReleaseCompileBuffer() noexcept
 		BRegfreeW(m_pRegExp);
 		m_pRegExp = nullptr;
 	}
+}
+
+CBregexp::CPattern::CPattern(
+	const CBregOnig& cDll,
+	BREGEXP* pRegExp,
+	const std::wstring& msg
+) noexcept
+	: m_cDll(&cDll)
+	, m_pRegExp(pRegExp)
+	, m_Msg(msg)
+{
 }

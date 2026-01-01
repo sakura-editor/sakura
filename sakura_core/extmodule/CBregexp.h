@@ -67,6 +67,19 @@ public:
 		optR = 0x80,					//!< CRLF(/R)
 	};
 
+	struct CPattern {
+		const CBregOnig*	m_cDll;						//!< BregOnigクラスへのポインタ
+		BREGEXP*			m_pRegExp = nullptr;		//!< コンパイル構造体
+		std::wstring_view	m_Target;					//!< 対象文字列へのポインタ
+		std::wstring		m_Msg{ 79, '\0' };			//!< bregonig.dllからのメッセージ
+
+		CPattern(
+			const CBregOnig& cDll,
+			BREGEXP* pRegExp,
+			const std::wstring& msg
+		) noexcept;
+	};
+
 	//! DLLのバージョン情報を取得
 	const WCHAR* GetVersionW() noexcept { return IsAvailable() ? BRegexpVersion() : L""; }
 
@@ -76,10 +89,23 @@ public:
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
-	bool Compile(const wchar_t *szPattern, int nOption = 0) {
-		return Compile(szPattern, nullptr, nOption);
+	bool Compile(
+		const std::wstring& pattern0,
+		int nOption = 0,
+		const std::optional<std::wstring>& optPattern1 = std::nullopt,
+		bool bKakomi = false
+	);
+
+	bool Compile(
+		const std::wstring& pattern0,
+		const std::wstring& pattern1,
+		int nOption = 0,
+		bool bKakomi = false
+	)
+	{
+		return Compile(pattern0, nOption, std::make_optional(pattern1), bKakomi);
 	}
-	bool Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption = 0, bool bKakomi = false);	//!< Replace用
+
 	bool Match(const wchar_t *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
 	int Replace(const wchar_t *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する	// 2007.01.16 ryoji 戻り値を置換個数に変更
 
