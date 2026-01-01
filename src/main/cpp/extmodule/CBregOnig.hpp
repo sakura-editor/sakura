@@ -11,19 +11,9 @@
 
 #include "extmodule/CDllHandler.h"
 
-typedef struct bregexp {
-	const WCHAR *outp;		/* result string start ptr  */
-	const WCHAR *outendp;	/* result string end ptr    */
-	const int   splitctr;	/* split result counter     */
-	const WCHAR **splitp;	/* split result pointer ptr     */
-	int rsv1;					/* reserved for external use    */
-	WCHAR *parap;				/* parameter start ptr ie. "s/xxxxx/yy/gi"  */
-	WCHAR *paraendp;			/* parameter end ptr     */
-	WCHAR *transtblp;			/* translate table ptr   */
-	WCHAR **startp;				/* match string start ptr   */
-	WCHAR **endp;				/* match string end ptr     */
-	int nparens;				/* number of parentheses */
-} BREGEXP_W;
+#include "bregonig/bregexp.h"
+
+using BREGEXP_W = BREGEXP;
 
 //!BREGONIG.DLLをラップしたもの。
 //2007.09.13 kobake 作成
@@ -39,54 +29,47 @@ protected:
 
 	bool	InitDllImp() override;
 
-protected:
-	// DLL関数の型
-	typedef int            (__cdecl *BREGEXP_BMatchW2)        (const wchar_t* str, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-	typedef int            (__cdecl *BREGEXP_BSubstW2)        (const wchar_t* str, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-	typedef void           (__cdecl *BREGEXP_BRegfreeW2)      (BREGEXP_W* rx);
-	typedef const wchar_t* (__cdecl *BREGEXP_BRegexpVersionW2)(void);
-	typedef int            (__cdecl *BREGEXP_BMatchExW2)      (const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-	typedef int            (__cdecl *BREGEXP_BSubstExW2)      (const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-
 public:
 	// UNICODEインターフェースを提供する
-	int BMatch(const wchar_t* str, const wchar_t* target,const wchar_t* targetendp,BREGEXP_W** rxp,wchar_t* msg)
+	int BMatchW(LPCWSTR str, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
 	{
-		return m_BMatch(str,target,targetendp,rxp,msg);
+		return m_BMatch(LPWSTR(str), LPWSTR(target), LPWSTR(targetendp), rxp, std::data(msg));
 	}
-	int BSubst(const wchar_t* str, const wchar_t* target,const wchar_t* targetendp,BREGEXP_W** rxp,wchar_t* msg)
+	int BSubstW(LPCWSTR str, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
 	{
-		return m_BSubst(str,target,targetendp,rxp,msg);
+		return m_BSubst(LPWSTR(str), LPWSTR(target), LPWSTR(targetendp), rxp, std::data(msg));
 	}
-	void BRegfree(BREGEXP_W* rx)
-	{
-		return m_BRegfree(rx);
-	}
-	const wchar_t* BRegexpVersion(void)
+
+	LPCWSTR BRegexpVersionW(void) const noexcept
 	{
 		return m_BRegexpVersion();
 	}
-	int BMatchEx(const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg)
+	void BRegfreeW(BREGEXP* rx) const noexcept
 	{
-		return m_BMatchEx(str,targetbeg,target,targetendp,rxp,msg);
+		return m_BRegfree(rx);
 	}
-	int BSubstEx(const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg)
+
+	int BMatchExW(LPCWSTR str, LPCWSTR targetbeg, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
 	{
-		return m_BSubstEx(str,targetbeg,target,targetendp,rxp,msg);
+		return m_BMatchEx(LPWSTR(str), LPWSTR(targetbeg), LPWSTR(target), LPWSTR(targetendp), rxp, std::data(msg));
+	}
+	int BSubstExW(LPCWSTR str, LPCWSTR targetbeg, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
+	{
+		return m_BSubstEx(LPWSTR(str), LPWSTR(targetbeg), LPWSTR(target), LPWSTR(targetendp), rxp, std::data(msg));
 	}
 
 	// 関数があるかどうか
-	bool ExistBMatchEx() const{ return m_BMatchEx!=nullptr; }
-	bool ExistBSubstEx() const{ return m_BSubstEx!=nullptr; }
+	bool ExistBMatchEx() const noexcept { return m_BMatchEx!=nullptr; }
+	bool ExistBSubstEx() const noexcept { return m_BSubstEx!=nullptr; }
 
 private:
 	//DLL内関数ポインタ
-	BREGEXP_BMatchW2         m_BMatch;
-	BREGEXP_BSubstW2         m_BSubst;
-	BREGEXP_BRegfreeW2       m_BRegfree;
-	BREGEXP_BRegexpVersionW2 m_BRegexpVersion;
-	BREGEXP_BMatchExW2       m_BMatchEx;
-	BREGEXP_BSubstExW2       m_BSubstEx;
+	decltype(&::BMatchW)		 m_BMatch = nullptr;
+	decltype(&::BSubstW)		 m_BSubst = nullptr;
+	decltype(&::BRegfreeW)       m_BRegfree = nullptr;
+	decltype(&::BRegexpVersionW) m_BRegexpVersion = nullptr;
+	decltype(&::BMatchExW)       m_BMatchEx = nullptr;
+	decltype(&::BSubstExW)       m_BSubstEx = nullptr;
 };
 
 #endif /* SAKURA_CBREGEXPDLL2_033C910A_6B78_47CB_9993_675C48A2AB64_H_ */
