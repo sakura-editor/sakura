@@ -36,7 +36,6 @@ const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
 CBregexp::CBregexp()
 : m_pRegExp( nullptr )
 {
-	m_szMsg[0] = L'\0';
 }
 
 CBregexp::~CBregexp() = default;
@@ -275,23 +274,22 @@ bool CBregexp::Compile(
 	auto targetp = targetbegp + 0;
 	auto targetendp = targetbegp + std::size(m_tmpBuf) - 1;
 
-	m_szMsg[0] = L'\0';		//!< エラー解除
+	std::wstring msg(80, L'\0');
 
 	if (!optPattern1.has_value()) {
 		// 検索実行
-		BMatchExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
+		BMatchExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, msg);
 	} else {
 		// 置換実行
-		BSubstExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
+		BSubstExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, msg);
 	}
 	delete [] szNPattern;
 
-	m_Pattern = std::make_unique<CPattern>(*this, m_pRegExp, m_szMsg);
+	m_Pattern = std::make_unique<CPattern>(*this, m_pRegExp, msg);
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
-	if( m_szMsg[0] ){
-		m_Pattern = nullptr;
+	if (msg[0]) {
 		return false;
 	}
 	

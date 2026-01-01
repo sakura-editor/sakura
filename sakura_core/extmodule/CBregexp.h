@@ -225,7 +225,6 @@ private:
 	//	メンバ変数
 	CPatternHolder		m_Pattern = nullptr;	//!< コンパイル済みパターン
 	BREGEXP_W*			m_pRegExp;			//!< コンパイル構造体
-	wchar_t				m_szMsg[80];		//!< BREGEXP_Wからのメッセージを保持する
 
 	// 静的メンバ変数
 	static const wchar_t	m_tmpBuf[2];	//!< ダミー文字列
