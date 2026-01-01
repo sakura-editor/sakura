@@ -259,6 +259,7 @@ bool CBregexp::Compile(
 
 	//	前回のコンパイル情報を破棄
 	m_Pattern = nullptr;
+	m_pRegExp = nullptr;
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
@@ -310,40 +311,44 @@ bool CBregexp::Compile(
 	@retval false No Match または エラー。エラーは GetLastMessage()により判定可能。
 
 */
-bool CBregexp::Match(std::wstring_view target, size_t offset)
+bool CBregexp::Match(std::wstring_view target, size_t offset) const noexcept
 {
-	int matched;		//!< 検索一致したか? >0:Match, 0:NoMatch, <0:Error
-
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
-	if( (!IsAvailable()) || m_pRegExp == nullptr ){
+	if (!IsAvailable() || !m_Pattern) {
 		return false;
 	}
 
-	m_szMsg[0] = '\0';		//!< エラー解除
+	return m_Pattern->Match(target, offset);
+}
+
+bool CBregexp::CPattern::Match(std::wstring_view target, size_t offset)
+{
+	// 構造体が未設定の時は即終了
+	if (!m_pRegExp) {
+		return false;
+	}
 
 	auto targetbegp = LPWSTR(std::data(target));
 	auto targetp = targetbegp + offset;
-	auto targetendp = targetbegp + std::size(target) - 1;
+	auto targetendp = targetbegp + std::size(target);
+
+	m_Msg.clear();		//!< エラー解除
 
 	//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-	matched = BMatchExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
+	const auto matched = m_cDll.BMatchExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_Msg);
 
-	m_szTarget = targetp;
-			
-	if ( matched < 0 || m_szMsg[0] ) {
+	m_Target = target;
+
+	if (matched < 0 || m_Msg[0]) {
 		// BMatchエラー
 		// エラー処理をしていなかったので、nStart>=lenのような場合に、マッチ扱いになり
 		// 無限置換等の不具合になっていた 2003.05.03 by かろと
 		return false;
-	} else if ( matched == 0 ) {
-		// 一致しなかった
-		return false;
 	}
 
-	return true;
+	return 0 < matched;
 }
 
-//<< 2002/03/27 Azumaiya
 /*!
 	正規表現による文字列置換
 	既にあるコンパイル構造体を利用して置換（1行）を
@@ -354,15 +359,14 @@ bool CBregexp::Match(std::wstring_view target, size_t offset)
 
 	@retval 置換個数
 
+	@date 2002/03/27 Azumaiya 追加
 	@date	2007.01.16 ryoji 戻り値を置換個数に変更
 */
-int CBregexp::Replace(std::wstring_view target, size_t offset)
+int CBregexp::Replace(std::wstring_view target, size_t offset) const noexcept
 {
-	int result;
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
-	if( !IsAvailable() || m_pRegExp == nullptr )
-	{
-		return false;
+	if (!IsAvailable() || !m_Pattern) {
+		return 0;
 	}
 
 	//	From Here 2003.05.03 かろと
@@ -378,33 +382,35 @@ int CBregexp::Replace(std::wstring_view target, size_t offset)
 	//}
 	//	To Here 2003.05.03 かろと
 
-	m_szMsg[0] = '\0';		//!< エラー解除
+	return m_Pattern->Replace(target, offset);
+}
+
+int CBregexp::CPattern::Replace(std::wstring_view target, size_t offset)
+{
+	// 構造体が未設定の時は即終了
+	if (!m_pRegExp) {
+		return false;
+	}
 
 	auto targetbegp = LPWSTR(std::data(target));
 	auto targetp = targetbegp + offset;
-	auto targetendp = targetbegp + std::size(target) - 1;
+	auto targetendp = targetbegp + std::size(target);
 
-	result = BSubstExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
+	m_Msg.clear();		//!< エラー解除
 
-	m_szTarget = targetp;
+	// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+	const auto result = m_cDll.BSubstExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_Msg);
+
+	m_Target = target;
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
-	if( m_szMsg[0] ) {
+	if (result < 0 || m_Msg[0]) {
+		// 置換するものがなかった、または、なんかエラー
 		return 0;
 	}
 
-	if( result < 0 ) {
-		// 置換するものがなかった
-		return 0;
-	}
 	return result;
-}
-//>> 2002/03/27 Azumaiya
-
-const WCHAR* CBregexp::GetLastMessage() const
-{
-	return m_szMsg;
 }
 
 //	From Here Jun. 26, 2001 genta

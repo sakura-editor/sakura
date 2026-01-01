@@ -79,6 +79,30 @@ public:
 			const std::wstring& msg
 		) noexcept;
 		~CPattern() noexcept;
+
+		bool	Match(std::wstring_view target, size_t offset = 0);		//!< 検索を実行する
+		int		Replace(std::wstring_view target, size_t offset = 0);	//!< 置換を実行する
+
+		auto starti() const noexcept {
+			return m_pRegExp->startp ? *m_pRegExp->startp - std::data(m_Target) : 0;
+		}
+		auto endi() const noexcept {
+			return m_pRegExp->endp ? *m_pRegExp->endp - std::data(m_Target) : 0;
+		}
+		auto matched() const noexcept {
+			const auto start = starti();
+			const auto end = endi();
+			if (m_Target.empty() || m_Target.length() <= start || m_Target.length() <= end) {
+				return std::wstring_view{};
+			}
+			return m_Target.substr(start, end - start);
+		}
+		auto replaced() const noexcept {
+			if (!m_pRegExp->outp) {
+				return std::wstring_view{};
+			}
+			return std::wstring_view{ m_pRegExp->outp, m_pRegExp->outendp };
+		}
 	};
 	using CPatternHolder = std::unique_ptr<CPattern>;
 
@@ -108,14 +132,23 @@ public:
 		return Compile(pattern0, nOption, std::make_optional(pattern1), bKakomi);
 	}
 
-	bool	Match(std::wstring_view target, size_t offset = 0);			//!< 検索を実行する
-	int		Replace(std::wstring_view target, size_t offset = 0);		//!< 置換を実行する
+	bool	Match(std::wstring_view target, size_t offset = 0) const noexcept;			//!< 検索を実行する
+	int		Replace(std::wstring_view target, size_t offset = 0) const noexcept;		//!< 置換を実行する
 
-	bool	Match(LPCWSTR pszTarget, size_t nLen, size_t nStart = 0) {
+	bool	Match(LPCWSTR pszTarget, size_t nLen, size_t nStart = 0) const noexcept {
 		return Match(std::wstring_view{ pszTarget, nLen }, nStart);
 	}
-	int		Replace(LPCWSTR pszTarget, size_t nLen, size_t nStart = 0) {
+	int		Replace(LPCWSTR pszTarget, size_t nLen, size_t nStart = 0) const noexcept {
 		return Replace(std::wstring_view{ pszTarget, nLen }, nStart);
+	}
+
+	std::wstring_view GetMatchedString() const noexcept
+	{
+		return m_Pattern ? m_Pattern->matched() : L"";
+	}
+	std::wstring_view GetReplacedString() const noexcept
+	{
+		return m_Pattern ? m_Pattern->replaced() : L"";
 	}
 
 	//-----------------------------------------
@@ -127,31 +160,32 @@ public:
 	    検索に一致した文字列の先頭位置を返す(文字列先頭なら0)
 		@retval 検索に一致した文字列の先頭位置
 	*/
-	CLogicInt GetIndex(void)
+	CLogicInt GetIndex() const noexcept
 	{
-		return CLogicInt(m_pRegExp->startp[0] - m_szTarget);
+		return CLogicInt(m_Pattern ? m_Pattern->starti() : 0);
 	}
 	/*!
 	    検索に一致した文字列の次の位置を返す
 		@retval 検索に一致した文字列の次の位置
 	*/
-	CLogicInt GetLastIndex(void)
+	CLogicInt GetLastIndex() const noexcept
 	{
-		return CLogicInt(m_pRegExp->endp[0] - m_szTarget);
+		return CLogicInt(m_Pattern ? m_Pattern->endi() : 0);
 	}
 	/*!
 		検索に一致した文字列の長さを返す
 		@retval 検索に一致した文字列の長さ
 	*/
-	CLogicInt GetMatchLen(void)
+	CLogicInt GetMatchLen() const noexcept
 	{
-		return CLogicInt(m_pRegExp->endp[0] - m_pRegExp->startp[0]);
+		return CLogicInt(GetMatchedString().length());
 	}
 	/*!
 		置換された文字列の長さを返す
 		@retval 置換された文字列の長さ
 	*/
-	CLogicInt GetStringLen(void) {
+	CLogicInt GetStringLen() const noexcept
+	{
 		// 置換後文字列が０幅なら outp、outendpもNULLになる
 		// NULLポインタの引き算は問題なく０になる。
 		// outendpは '\0'なので、文字列長は +1不要
@@ -160,19 +194,15 @@ public:
 		//	置換後文字列が0幅の場合にoutpがNULLでもoutendpがNULLでない場合があるので，
 		//	outpのNULLチェックが必要
 
-		if (m_pRegExp->outp == nullptr) {
-			return CLogicInt(0);
-		} else {
-			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
-		}
+		return CLogicInt(GetReplacedString().length());
 	}
 	/*!
 		置換された文字列を返す
 		@retval 置換された文字列へのポインタ
 	*/
-	const wchar_t *GetString(void)
+	LPCWSTR GetString() const noexcept
 	{
-		return m_pRegExp->outp;
+		return std::data(GetReplacedString());
 	}
 	/*! @} */
 	//-----------------------------------------
@@ -180,7 +210,10 @@ public:
 	/*! BREGEXPメッセージを取得する
 		@retval メッセージへのポインタ
 	*/
-	const WCHAR* GetLastMessage() const;// { return m_szMsg; }
+	LPCWSTR GetLastMessage() const noexcept
+	{
+		return m_Pattern ? std::data(m_Pattern->m_Msg) : L"";
+	}
 
 private:
 	//	内部関数
@@ -192,7 +225,6 @@ private:
 	//	メンバ変数
 	CPatternHolder		m_Pattern = nullptr;	//!< コンパイル済みパターン
 	BREGEXP_W*			m_pRegExp;			//!< コンパイル構造体
-	const wchar_t*		m_szTarget;			//!< 対象文字列へのポインタ
 	wchar_t				m_szMsg[80];		//!< BREGEXP_Wからのメッセージを保持する
 
 	// 静的メンバ変数
