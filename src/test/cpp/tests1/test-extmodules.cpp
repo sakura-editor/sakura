@@ -75,7 +75,7 @@ REGISTER_TYPED_TEST_SUITE_P(
 	CDllImp派生クラスである必要がある。
  */
 using ExtModuleImplementations = ::testing::Types<
-	CBregexpDll2,
+	CBregOnig,
 	CMigemo,
 	CUchardet,
 	CPPA>;

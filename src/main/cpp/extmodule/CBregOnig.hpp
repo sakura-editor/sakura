@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,7 +9,7 @@
 #define SAKURA_CBREGEXPDLL2_033C910A_6B78_47CB_9993_675C48A2AB64_H_
 #pragma once
 
-#include "CDllHandler.h"
+#include "extmodule/CDllHandler.h"
 
 typedef struct bregexp {
 	const WCHAR *outp;		/* result string start ptr  */
@@ -27,15 +27,17 @@ typedef struct bregexp {
 
 //!BREGONIG.DLLをラップしたもの。
 //2007.09.13 kobake 作成
-class CBregexpDll2 : public CDllImp{
+class CBregOnig : public CDllImp
+{
 public:
-	CBregexpDll2();
-	virtual ~CBregexpDll2();
+	CBregOnig();
+	~CBregOnig() override;
 
 protected:
 	// CDllImpインターフェース
-	virtual LPCWSTR GetDllNameImp(int nIndex); // Jul. 5, 2001 genta インターフェース変更に伴う引数追加
-	virtual bool InitDllImp();
+	LPCWSTR	GetDllNameImp(int nIndex) override;
+
+	bool	InitDllImp() override;
 
 protected:
 	// DLL関数の型
@@ -98,4 +100,5 @@ private:
 	BREGEXP_BMatchExW2       m_BMatchEx;
 	BREGEXP_BSubstExW2       m_BSubstEx;
 };
+
 #endif /* SAKURA_CBREGEXPDLL2_033C910A_6B78_47CB_9993_675C48A2AB64_H_ */

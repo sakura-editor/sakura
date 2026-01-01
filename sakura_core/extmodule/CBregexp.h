@@ -17,7 +17,7 @@
 	Copyright (C) 2005, かろと, aroka
 	Copyright (C) 2006, かろと
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -26,8 +26,9 @@
 #define SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_
 #pragma once
 
-#include "CBregexpDll2.h"
 #include "basis/SakuraBasis.h"
+
+#include "extmodule/CBregOnig.hpp"
 
 /*!
 	@brief Perl互換正規表現 BREGEXP.DLL をサポートするクラス
@@ -47,10 +48,11 @@
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
-class CBregexp : public CBregexpDll2{
+class CBregexp : public CBregOnig
+{
 public:
 	CBregexp();
-	virtual ~CBregexp();
+	~CBregexp() override;
 
 	// 2006.01.22 かろと オプション追加・名称変更
 	enum Option {
@@ -211,4 +213,5 @@ private:
 bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
 bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1, bool bKakomi = false );// 2002/2/1 hor追加
 bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
+
 #endif /* SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_ */
