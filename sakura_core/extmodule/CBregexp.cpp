@@ -303,15 +303,14 @@ bool CBregexp::Compile(
 	JRE32のエミュレーション関数．既にあるコンパイル構造体を利用して検索（1行）を
 	行う．
 
-	@param[in] target 検索対象領域先頭アドレス
-	@param[in] len 検索対象領域サイズ
-	@param[in] nStart 検索開始位置．(先頭は0)
+	@param[in] target 検索対象データ
+	@param[in] offset 検索開始位置．(先頭は0)
 
 	@retval true Match
 	@retval false No Match または エラー。エラーは GetLastMessage()により判定可能。
 
 */
-bool CBregexp::Match( const wchar_t* target, int len, int nStart )
+bool CBregexp::Match(std::wstring_view target, size_t offset)
 {
 	int matched;		//!< 検索一致したか? >0:Match, 0:NoMatch, <0:Error
 
@@ -322,10 +321,14 @@ bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 
 	m_szMsg[0] = '\0';		//!< エラー解除
 
-	//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-	matched = BMatchExW(nullptr, target, target + nStart, target + len, &m_pRegExp, m_szMsg);
+	auto targetbegp = LPWSTR(std::data(target));
+	auto targetp = targetbegp + offset;
+	auto targetendp = targetbegp + std::size(target) - 1;
 
-	m_szTarget = target;
+	//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+	matched = BMatchExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
+
+	m_szTarget = targetp;
 			
 	if ( matched < 0 || m_szMsg[0] ) {
 		// BMatchエラー
@@ -346,15 +349,14 @@ bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 	既にあるコンパイル構造体を利用して置換（1行）を
 	行う．
 
-	@param[in] szTarget 置換対象データ
-	@param[in] nLen 置換対象データ長
-	@param[in] nStart 置換開始位置(0からnLen未満)
+	@param[in] target 置換対象データ
+	@param[in] offset 置換開始位置(0からnLen未満)
 
 	@retval 置換個数
 
 	@date	2007.01.16 ryoji 戻り値を置換個数に変更
 */
-int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
+int CBregexp::Replace(std::wstring_view target, size_t offset)
 {
 	int result;
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
@@ -378,9 +380,13 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 
 	m_szMsg[0] = '\0';		//!< エラー解除
 
-	result = BSubstExW(nullptr, szTarget, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg);
+	auto targetbegp = LPWSTR(std::data(target));
+	auto targetp = targetbegp + offset;
+	auto targetendp = targetbegp + std::size(target) - 1;
 
-	m_szTarget = szTarget;
+	result = BSubstExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_szMsg);
+
+	m_szTarget = targetp;
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
