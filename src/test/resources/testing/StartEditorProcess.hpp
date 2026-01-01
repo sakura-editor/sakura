@@ -1,12 +1,12 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
-*/
+ */
 #pragma once
 
-#include <string_view>
+namespace testing {
 
 /*!
  * テストコード専用wWinMain呼出のラッパー関数
@@ -20,4 +20,6 @@
  * googletestでは、ASSERT_EXITで起動したプロセスの完全な終了を待機できないようです。
  * コントロールプロセスが終了する前に他のテストが実行されると期待した動作にならない場合があります。
  */
-int StartEditorProcessForTest(std::wstring_view commandLine);
+int StartEditorProcess(const std::wstring& commandLine);
+
+}

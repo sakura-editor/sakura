@@ -17,6 +17,9 @@
       <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
+    <Filter Include="Other Files\testing">
+      <UniqueIdentifier>{f5277b5c-1446-48f8-acf0-82a8159010f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake">
@@ -28,6 +31,12 @@
       <Filter>Pre-compiled Header</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\resources\coverage.cpp" />
+    <ClCompile Include="..\src\test\resources\code-main.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp">
+      <Filter>Other Files\testing</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -75,9 +84,6 @@
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cdlgprofilemgr.cpp">
       <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\test\resources\code-main.cpp">
-      <Filter>Other Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-winmain.cpp">
       <Filter>Test Files</Filter>
@@ -186,8 +192,8 @@
     <ClInclude Include="..\src\test\resources\pch.h">
       <Filter>Pre-compiled Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\test\resources\StartEditorProcessForTest.h">
-      <Filter>Other Files</Filter>
+    <ClInclude Include="..\src\test\resources\StartEditorProcess.hpp">
+      <Filter>Other Files\testing</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp">
       <Filter>Other Files</Filter>
@@ -195,12 +201,12 @@
     <ClInclude Include="..\src\test\resources\TExtModule.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\test\resources\rt_zipres.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\tests1_rc.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\rt_zipres.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ResourceCompile Include="..\sakura_core\tests1_rc.rc">
