@@ -39,11 +39,7 @@ CBregexp::CBregexp()
 	m_szMsg[0] = L'\0';
 }
 
-CBregexp::~CBregexp()
-{
-	//コンパイルバッファを解放
-	ReleaseCompileBuffer();
-}
+CBregexp::~CBregexp() = default;
 
 /*! @brief ライブラリに渡すための検索・置換パターンを作成する
 **
@@ -257,14 +253,12 @@ bool CBregexp::Compile(
 	bool				bKakomi
 )
 {
-	using enum EPatFlags;
-
 	//	DLLが利用可能でないときはエラー終了
 	if( !IsAvailable() )
 		return false;
 
-	//	BREGEXP_W構造体の解放
-	ReleaseCompileBuffer();
+	//	前回のコンパイル情報を破棄
+	m_Pattern = nullptr;
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
@@ -291,10 +285,12 @@ bool CBregexp::Compile(
 	}
 	delete [] szNPattern;
 
+	m_Pattern = std::make_unique<CPattern>(*this, m_pRegExp, m_szMsg);
+
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
 	if( m_szMsg[0] ){
-		ReleaseCompileBuffer();
+		m_Pattern = nullptr;
 		return false;
 	}
 	
@@ -515,29 +511,21 @@ bool CheckRegexpSyntax(
 }
 //	To Here Jun. 26, 2001 genta
 
-/*!
- * コンパイルバッファを解放する
- *
- * m_pcRegをBRegfree()に渡して解放する．解放後はNULLにセットする．
- * 元々NULLなら何もしない
- *
- * @note EPatFlagsをenum classに変更したのに伴い、cpp側に移動。
- */
-void CBregexp::ReleaseCompileBuffer() noexcept
-{
-	if (m_pRegExp) {
-		BRegfreeW(m_pRegExp);
-		m_pRegExp = nullptr;
-	}
-}
-
 CBregexp::CPattern::CPattern(
 	const CBregOnig& cDll,
 	BREGEXP* pRegExp,
 	const std::wstring& msg
 ) noexcept
-	: m_cDll(&cDll)
+	: m_cDll(cDll)
 	, m_pRegExp(pRegExp)
 	, m_Msg(msg)
 {
+}
+
+CBregexp::CPattern::~CPattern() noexcept
+{
+	if (m_pRegExp) {
+		m_cDll.BRegfreeW(m_pRegExp);
+		m_pRegExp = nullptr;
+	}
 }

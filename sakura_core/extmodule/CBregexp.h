@@ -68,7 +68,7 @@ public:
 	};
 
 	struct CPattern {
-		const CBregOnig*	m_cDll;						//!< BregOnigクラスへのポインタ
+		const CBregOnig&	m_cDll;						//!< BregOnigクラスへのポインタ
 		BREGEXP*			m_pRegExp = nullptr;		//!< コンパイル構造体
 		std::wstring_view	m_Target;					//!< 対象文字列へのポインタ
 		std::wstring		m_Msg{ 79, '\0' };			//!< bregonig.dllからのメッセージ
@@ -78,7 +78,9 @@ public:
 			BREGEXP* pRegExp,
 			const std::wstring& msg
 		) noexcept;
+		~CPattern() noexcept;
 	};
+	using CPatternHolder = std::unique_ptr<CPattern>;
 
 	//! DLLのバージョン情報を取得
 	const WCHAR* GetVersionW() noexcept { return IsAvailable() ? BRegexpVersion() : L""; }
@@ -173,9 +175,6 @@ public:
 	*/
 	const WCHAR* GetLastMessage() const;// { return m_szMsg; }
 
-protected:
-	void ReleaseCompileBuffer() noexcept;
-
 private:
 	//	内部関数
 
@@ -184,6 +183,7 @@ private:
 	wchar_t* MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption );
 
 	//	メンバ変数
+	CPatternHolder		m_Pattern = nullptr;	//!< コンパイル済みパターン
 	BREGEXP_W*			m_pRegExp;			//!< コンパイル構造体
 	const wchar_t*		m_szTarget;			//!< 対象文字列へのポインタ
 	wchar_t				m_szMsg[80];		//!< BREGEXP_Wからのメッセージを保持する
