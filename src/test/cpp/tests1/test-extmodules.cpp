@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2022, Sakura Editor Organization
+	Copyright (C) 2022-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -8,10 +8,9 @@
 
 #include "TExtModule.hpp"
 
-#include "extmodule/CBregexpDll2.h"
+#include "extmodule/CBregexp.h"
 #include "extmodule/CMigemo.h"
 #include "extmodule/CUchardet.h"
-//#include "extmodule/CUxTheme.h"		//TSingletonなのでテストできない
 #include "macro/CPPA.h"
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
 
@@ -86,6 +85,86 @@ INSTANTIATE_TYPED_TEST_SUITE_P(
 	ExtModule,
 	LoadTest,
 	ExtModuleImplementations);
+
+namespace extmodule {
+
+struct CBregexpTest : public ::testing::Test {
+	using CBregexpHolder = std::unique_ptr<CBregexp>;
+
+	CBregexpHolder pcBregexp = nullptr;
+
+	/*!
+	 * テストが起動される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override {
+		// テストクラスをインスタンス化する
+		pcBregexp = std::make_unique<CBregexp>();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		// テストクラスのインスタンスを破棄する
+		pcBregexp = nullptr;
+	}
+};
+
+TEST_F(CBregexpTest, test001)
+{
+	std::wstring_view target{ L"test123あいう" };
+
+	// 初期状態では利用不可
+	EXPECT_THAT(pcBregexp->IsAvailable(), IsFalse());
+
+	// ロード前はバージョン情報も取得できない
+	EXPECT_THAT(pcBregexp->GetVersionW(), StrEq(L""));
+
+	// ロード前は正規表現コンパイルできない
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+", L"$1d"), IsFalse());
+
+	// ロード前は検索できない
+	EXPECT_THAT(pcBregexp->Match(std::data(target), int(std::size(target))), IsFalse());
+
+	// ロード前は置換できない
+	EXPECT_THAT(pcBregexp->Replace(std::data(target), int(std::size(target))), IsFalse());
+
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// ロードされたら利用可能になる
+	EXPECT_THAT(pcBregexp->IsAvailable(), IsTrue());
+
+	// ロードされたらバージョン情報が取れる
+	EXPECT_THAT(pcBregexp->GetVersionW(), StrNe(L""));
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+"), IsTrue());
+
+	// 正規表現マッチが成功する
+	EXPECT_THAT(pcBregexp->Match(std::data(target), int(std::size(target))), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	EXPECT_THAT(pcBregexp->GetIndex(), 4);
+	EXPECT_THAT(pcBregexp->GetLastIndex(), 7);
+	EXPECT_THAT(pcBregexp->GetMatchLen(), 3);
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Match(L"a", 1), IsFalse());
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(L"([0-9]+)", L"{$1d}"), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(std::data(target), int(std::size(target))), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 置換結果を確認する
+	EXPECT_THAT(std::wstring_view(pcBregexp->GetString(), pcBregexp->GetStringLen()), StrEq(L"test{123d}あいう"));
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Replace(L"a", 1), IsFalse());
+}
 
 struct CMigemoTest : public ::testing::Test {
 	using CShareDataHolder = std::unique_ptr<CShareData>;
@@ -238,3 +317,5 @@ TEST_F(CMigemoTest, test003)
 	// 与えた文字列をSJISに変換できない場合、与えた文字列がそのまま返る
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));
 }
+
+} // namespace extmodule
