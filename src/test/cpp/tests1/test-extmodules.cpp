@@ -249,6 +249,114 @@ TEST_F(CBregexpTest, test003)
 	EXPECT_THAT(pcBregexp->GetMatchLen(), 0);
 }
 
+TEST_F(CBregexpTest, test004)
+{
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// xHH 形式
+	EXPECT_THAT(pcBregexp->Compile(LR"(\x2C(?=\w+))", L"{.}"), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(L"test,test"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 置換結果を確認する
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L"test{.}test"));
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Replace(L"test,"), IsFalse());
+
+	// エスケープ
+	EXPECT_THAT(pcBregexp->Compile(LR"(^\Q\x2C\E$)", L""), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(LR"(\x2C)"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L""));
+}
+
+TEST_F(CBregexpTest, test005)
+{
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(LR"(\x002C(?=\w+))", L"{.}"), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(L"test,test"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 置換結果を確認する
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L"test{.}test"));
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Replace(L"test,"), IsFalse());
+
+	// エスケープ
+	EXPECT_THAT(pcBregexp->Compile(LR"(^\Q\x002C\E$)", L""), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(LR"(\x002C)"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L""));
+}
+
+TEST_F(CBregexpTest, test006)
+{
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(LR"(\054(?=\w+))", L"{.}"), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(L"test,test"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 置換結果を確認する
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L"test{.}test"));
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Replace(L"test,"), IsFalse());
+
+	// エスケープ
+	EXPECT_THAT(pcBregexp->Compile(LR"(^\Q\054\E$)", L""), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(LR"(\054)"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L""));
+}
+
+TEST_F(CBregexpTest, test007)
+{
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(LR"(\o054(?=\w+))", L"{.}"), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(L"test,test"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 置換結果を確認する
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L"test{.}test"));
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Replace(L"test,"), IsFalse());
+
+	// エスケープ
+	EXPECT_THAT(pcBregexp->Compile(LR"(^\Q\o054\E$)", L""), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(LR"(\o054)"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L""));
+}
+
 TEST_F(CBregexpTest, CheckRegexpSyntax001)
 {
 	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", nullptr, false), IsTrue());

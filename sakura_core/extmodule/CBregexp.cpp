@@ -143,6 +143,9 @@ std::wstring CBregexp::_MakePattern(
 		}
 	}
 
+	// \xHH -> \x{HH}, \xHHHH -> \x{HHHH}, \0OO -> \o{0OO}, \oOOO -> \o{OOO} の展開分をざっくり上乗せする。
+	approximateSize += std::ranges::count(szSearch, L'\\') * 3;
+
 	// 代替パターンは動的に構築する
 	std::wstring alternateSearchPattern;
 	alternateSearchPattern.reserve(approximateSize);
@@ -195,6 +198,10 @@ std::wstring CBregexp::_MakePattern(
 		{ L']',  RBRCKT },
 		{ L'\\', ESCAPE },
 	};
+	const std::unordered_map<State, State> nextStates = {
+		{ D_E,  DEF },
+		{ C_E,  CHA },
+	};
 
 	State state = DEF;
 	int charsetLevel = 0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
@@ -204,6 +211,27 @@ std::wstring CBregexp::_MakePattern(
 		const auto ch = *right;
 		const CharClass charClass = wcharToClassMap.contains(ch) ? wcharToClassMap.at(ch) : OTHER;
 		auto nextState = state_transition_table[(int)state][(int)charClass];
+
+		if (state == D_E || state == C_E)
+		{
+			if (std::wcmatch m;
+				std::regex_search(right, m, std::wregex(L"^(x)((?:[0-9A-Fa-f]{2}){1,2})")) ||
+				std::regex_search(right, m, std::wregex(L"^(o)([0-7]{3})")))
+			{
+				alternateSearchPattern.append(left, right);
+				left = right + m.length();
+				alternateSearchPattern += std::format(L"{}{{{}}}", m[1].str(), m[2].str());
+				nextState = nextStates.at(state);
+			}
+			else if (std::regex_search(right, m, std::wregex(L"^(0[0-7]{2})")))
+			{
+				alternateSearchPattern.append(left, right);
+				left = right + m.length();
+				alternateSearchPattern += std::format(L"o{{{}}}", m[1].str());
+				nextState = nextStates.at(state);
+			}
+		}
+
 		if (int(DEF) <= int(nextState)) {
 			state = nextState;
 			continue;
