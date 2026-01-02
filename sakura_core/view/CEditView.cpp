@@ -266,25 +266,23 @@ BOOL CEditView::Create(
 	::RegisterClass( &wc );
 
 	/* エディタウィンドウの作成 */
-	SetHwnd(
-		::CreateWindowEx(
-			WS_EX_STATICEDGE,		// extended window style
-			GSTR_VIEWNAME,			// pointer to registered class name
-			GSTR_VIEWNAME,			// pointer to window name
-			0						// window style
-			| WS_VISIBLE
-			| WS_CHILD
-			| WS_CLIPCHILDREN
-			,
-			CW_USEDEFAULT,			// horizontal position of window
-			0,						// vertical position of window
-			CW_USEDEFAULT,			// window width
-			0,						// window height
-			hwndParent,				// handle to parent or owner window
-			nullptr,					// handle to menu or child-window identifier
-			G_AppInstance(),		// handle to application instance
-			(LPVOID)this			// pointer to window-creation data(lpCreateParams)
-		)
+	m_hWnd = ::CreateWindowEx(
+		WS_EX_STATICEDGE,		// extended window style
+		GSTR_VIEWNAME,			// pointer to registered class name
+		GSTR_VIEWNAME,			// pointer to window name
+		0						// window style
+		| WS_VISIBLE
+		| WS_CHILD
+		| WS_CLIPCHILDREN
+		,
+		CW_USEDEFAULT,			// horizontal position of window
+		0,						// vertical position of window
+		CW_USEDEFAULT,			// window width
+		0,						// window height
+		hwndParent,				// handle to parent or owner window
+		nullptr,					// handle to menu or child-window identifier
+		G_AppInstance(),		// handle to application instance
+		(LPVOID)this			// pointer to window-creation data(lpCreateParams)
 	);
 	if( nullptr == GetHwnd() ){
 		return FALSE;
@@ -757,7 +755,7 @@ LRESULT CEditView::DispatchEvent(
 		SAFE_DELETE(m_pcsbwVSplitBox);	/* 垂直分割ボックス */
 		SAFE_DELETE(m_pcsbwHSplitBox);	/* 水平分割ボックス */
 
-		SetHwnd(nullptr);
+		m_hWnd = nullptr;
 		return 0L;
 
 	case MYWM_DOSPLIT:

@@ -343,7 +343,6 @@
     <ClInclude Include="..\sakura_core\mem\CNativeW.h" />
     <ClInclude Include="..\sakura_core\mem\CPoolResource.h" />
     <ClInclude Include="..\sakura_core\mem\CRecycledBuffer.h" />
-    <ClInclude Include="..\sakura_core\mfclike\CMyWnd.h" />
     <ClInclude Include="..\sakura_core\outline\CDlgFileTree.h" />
     <ClInclude Include="..\sakura_core\outline\CDlgFuncList.h" />
     <ClInclude Include="..\sakura_core\outline\CFuncInfo.h" />
@@ -713,7 +712,6 @@
     <ClCompile Include="..\sakura_core\mem\CNativeA.cpp" />
     <ClCompile Include="..\sakura_core\mem\CNativeW.cpp" />
     <ClCompile Include="..\sakura_core\mem\CRecycledBuffer.cpp" />
-    <ClCompile Include="..\sakura_core\mfclike\CMyWnd.cpp" />
     <ClCompile Include="..\sakura_core\outline\CDlgFileTree.cpp" />
     <ClCompile Include="..\sakura_core\outline\CDlgFuncList.cpp" />
     <ClCompile Include="..\sakura_core\outline\CFuncInfo.cpp" />

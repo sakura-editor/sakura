@@ -46,7 +46,6 @@
 #include "extmodule/CBregexp.h"
 #include "basis/CEol.h"				// EEolType
 #include "cmd/CViewCommander.h"
-#include "mfclike/CMyWnd.h"		// parent
 #include "doc/CDocListener.h"	// parent
 #include "basis/SakuraBasis.h"	// CLogicInt, CLayoutInt
 #include "util/container.h"		// vector_ex
@@ -101,7 +100,6 @@ const int CMD_FROM_MOUSE = 2;
 class CEditView
 : public CViewCalc //$$ これが親クラスである必要は無いが、このクラスのメソッド呼び出しが多いので、暫定的に親クラスとする。
 , public CEditView_Paint
-, public CMyWnd
 , public CDocListenerEx
 {
 public:
@@ -148,6 +146,19 @@ public:
 		bool		bMiniMap
 	);
 	void CopyViewStatus( CEditView* ) const;					/* 自分の表示状態を他のビューにコピー */
+
+	HWND GetHwnd() const { return m_hWnd; }
+	void InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE) { ::InvalidateRect(m_hWnd, lpRect, bErase); }
+	int ScrollWindowEx(int dx, int dy, const RECT* prcScroll, const RECT* prcClip, HRGN hrgnUpdate, RECT* prcUpdate, UINT uFlags) {
+		return ::ScrollWindowEx(m_hWnd, dx, dy, prcScroll, prcClip, hrgnUpdate, prcUpdate, uFlags);
+	}
+	HDC GetDC() const { return ::GetDC(m_hWnd); }
+	int ReleaseDC(HDC hdc) const { return ::ReleaseDC(m_hWnd, hdc); }
+	BOOL CreateCaret(HBITMAP hBitmap, int nWidth, int nHeight) { return ::CreateCaret(m_hWnd, hBitmap, nWidth, nHeight); }
+	BOOL ClientToScreen(LPPOINT lpPoint) const { return ::ClientToScreen(m_hWnd, lpPoint); }
+	BOOL UpdateWindow() { return ::UpdateWindow(m_hWnd); }
+	HWND SetFocus() { return ::SetFocus(m_hWnd); }
+	BOOL GetClientRect(LPRECT lpRect) const { return ::GetClientRect(m_hWnd, lpRect); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      クリップボード                         //
@@ -724,6 +735,7 @@ public:
 
 	// IME
 private:
+	HWND			m_hWnd;
 	int				m_nLastReconvLine;             //2002.04.09 minfu 再変換情報保存用;
 	int				m_nLastReconvIndex;            //2002.04.09 minfu 再変換情報保存用;
 
