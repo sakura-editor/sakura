@@ -22,7 +22,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_SAMECOLOR,						// OK
@@ -131,9 +130,9 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 				continue;
 			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cTEXT ){
 				_ultow( m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cTEXT, szText, 10 );
-				if( LB_ERR == List_FindStringExact( hwndList, -1, szText ) ){
-					nItem = ::List_AddString( hwndList, szText );
-					List_SetItemData( hwndList, nItem, FALSE ); 
+				if( LB_ERR == ApiWrap::List_FindStringExact( hwndList, -1, szText ) ){
+					nItem = ApiWrap::List_AddString( hwndList, szText );
+					ApiWrap::List_SetItemData( hwndList, nItem, FALSE ); 
 				}
 			}
 		}
@@ -147,9 +146,9 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 				continue;
 			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cBACK ){
 				_ultow( m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cBACK, szText, 10 );
-				if( LB_ERR == List_FindStringExact( hwndList, -1, szText ) ){
-					nItem = ::List_AddString( hwndList, szText );
-					List_SetItemData( hwndList, nItem, FALSE ); 
+				if( LB_ERR == ApiWrap::List_FindStringExact( hwndList, -1, szText ) ){
+					nItem = ApiWrap::List_AddString( hwndList, szText );
+					ApiWrap::List_SetItemData( hwndList, nItem, FALSE ); 
 				}
 			}
 		}
@@ -160,8 +159,8 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		break;
 	}
 
-	if( 0 < List_GetCount( hwndList ) ){
-		List_SetCurSel( hwndList, 0 );
+	if( 0 < ApiWrap::List_GetCount( hwndList ) ){
+		ApiWrap::List_SetCurSel( hwndList, 0 );
 		OnSelChangeListColors( hwndList );
 	}
 
@@ -174,7 +173,7 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgSameColor::OnBnClicked( int wID )
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_COLORS );
-	int nItemNum = List_GetCount( hwndList );
+	int nItemNum = ApiWrap::List_GetCount( hwndList );
 	BOOL bCheck;
 	int i;
 	int j;
@@ -190,7 +189,7 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 		// 全選択／全解除の処理
 		bCheck = (wID == IDC_BUTTON_SELALL);
 		for( i = 0; i < nItemNum; ++i ){
-			List_SetItemData( hwndList, i, bCheck );
+			ApiWrap::List_SetItemData( hwndList, i, bCheck );
 		}
 		::InvalidateRect( hwndList, nullptr, TRUE );
 		break;
@@ -202,9 +201,9 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 		COLORREF cr;
 
 		for( i = 0; i < nItemNum; ++i ){
-			bCheck = (BOOL)List_GetItemData( hwndList, i );
+			bCheck = (BOOL)ApiWrap::List_GetItemData( hwndList, i );
 			if( bCheck ){
-				List_GetText( hwndList, i, szText );
+				ApiWrap::List_GetText( hwndList, i, szText );
 				cr = wcstoul( szText, &pszStop, 10 );
 
 				switch( m_wID )
@@ -243,6 +242,7 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 */
 BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(wParam);
 	LPDRAWITEMSTRUCT pDis = (LPDRAWITEMSTRUCT)lParam;	// 項目描画情報
 	if( IDC_LIST_COLORS != pDis->CtlID )	// オーナー描画にしているのは色選択リストだけ
 		return TRUE;
@@ -258,7 +258,7 @@ BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 	LPWSTR		pszStop;
 	COLORREF	cr;
 
-	List_GetText( pDis->hwndItem, pDis->itemID, szText );
+	ApiWrap::List_GetText( pDis->hwndItem, pDis->itemID, szText );
 	cr = wcstoul( szText, &pszStop, 10 );
 
 	rc = pDis->rcItem;
@@ -317,11 +317,11 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 	int j;
 
 	hwndListInfo = GetItemHwnd( IDC_LIST_ITEMINFO );
-	List_ResetContent( hwndListInfo );
+	ApiWrap::List_ResetContent( hwndListInfo );
 
-	i = List_GetCaretIndex( hwndCtl );
+	i = ApiWrap::List_GetCaretIndex( hwndCtl );
 	if( LB_ERR != i ){
-		List_GetText( hwndCtl, i, szText );
+		ApiWrap::List_GetText( hwndCtl, i, szText );
 		cr = wcstoul( szText, &pszStop, 10 );
 
 		switch( m_wID )
@@ -331,7 +331,7 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 				if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) )
 					continue;
 				if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT ){
-					::List_AddString( hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
+					ApiWrap::List_AddString( hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
 				}
 			}
 			break;
@@ -341,7 +341,7 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 				if( 0 != (g_ColorAttributeArr[j].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 					continue;
 				if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK ){
-					::List_AddString( hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
+					ApiWrap::List_AddString( hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
 				}
 			}
 			break;
@@ -426,9 +426,9 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 		// マウスボタン下にある項目の選択／選択解除をトグルする
 		po.x = LOWORD(lParam);	// horizontal position of cursor
 		po.y = HIWORD(lParam);	// vertical position of cursor
-		nItemNum = List_GetCount( hwnd );
+		nItemNum = ApiWrap::List_GetCount( hwnd );
 		for( i = 0; i < nItemNum; ++i ){
-			List_GetItemRect( hwnd, i, &rcItem );
+			ApiWrap::List_GetItemRect( hwnd, i, &rcItem );
 			rc = rcItem;
 			rc.top += 2;
 			rc.bottom -= 2;
@@ -436,8 +436,8 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 			rc.right = rc.left + (rc.bottom - rc.top);
 			if( ::PtInRect( &rc, po ) ){
 				BOOL bCheck;
-				bCheck = !(BOOL)List_GetItemData( hwnd, i );
-				List_SetItemData( hwnd, i, bCheck );
+				bCheck = !(BOOL)ApiWrap::List_GetItemData( hwnd, i );
+				ApiWrap::List_SetItemData( hwnd, i, bCheck );
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				break;
 			}
@@ -448,10 +448,10 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 		// フォーカス項目の選択／選択解除をトグルする
 		if( VK_SPACE == wParam ){
 			BOOL bCheck;
-			i = List_GetCaretIndex( hwnd );
+			i = ApiWrap::List_GetCaretIndex( hwnd );
 			if( LB_ERR != i ){
-				bCheck = !(BOOL)List_GetItemData( hwnd, i );
-				List_SetItemData( hwnd, i, bCheck );
+				bCheck = !(BOOL)ApiWrap::List_GetItemData( hwnd, i );
+				ApiWrap::List_SetItemData( hwnd, i, bCheck );
 				::InvalidateRect( hwnd, nullptr, TRUE );
 			}
 		}

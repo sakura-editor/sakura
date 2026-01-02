@@ -15,11 +15,7 @@
 CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)
 : m_pEditView(pEditView)
 , m_pEditDoc(pEditDoc)
-, m_hFont(nullptr)
-, m_nRulerHeight(0)
 {
-	m_nOldRulerDrawX = 0;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK
-	m_nOldRulerWidth = 0;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK
 }
 
 CRuler::~CRuler()
@@ -187,7 +183,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 			wchar_t szColumn[32];
 			apt[idx * 2 + 1] = POINT{nX, 0};
 			_itow( ((Int)keta) / 10, szColumn, 10 );
-			::TextOut( gr, nX + 2 + 0, -1 + 0, szColumn, wcslen( szColumn ) );
+			::TextOutW(gr, nX + 2 + 0, -1 + 0, PSZ_ARGS(szColumn));
 		}
 		//5目盛おきの区切り(中)
 		else if( 0 == keta % 5 ){

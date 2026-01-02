@@ -160,10 +160,14 @@ private:
 
 	std::wstring	m_sMacroPath;	// Loadしたマクロ名
 
-public:
 	static MacroFuncInfo	m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
 	static MacroFuncInfo	m_MacroFuncInfoArr[];		// 関数情報(戻り値あり)
 
+public:
+	static std::span<MacroFuncInfo> GetCommandInfo() noexcept;
+	static std::span<MacroFuncInfo> GetFuncInfo() noexcept;
+
 	DISALLOW_COPY_AND_ASSIGN(CSMacroMgr);
 };
+
 #endif /* SAKURA_CSMACROMGR_9F01D007_5F13_4963_887B_B37E861070DA_H_ */

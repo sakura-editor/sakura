@@ -11,38 +11,53 @@
 //                         CSubject                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CSubject::CSubject()
-{
-}
+CSubject::CSubject() = default;
 
 CSubject::~CSubject()
 {
 	//リスナを解除
-	for(int i=0;i<(int)m_vListenersRef.size();i++){
-		m_vListenersRef[i]->Listen(nullptr);
+	while (!m_vListenersRef.empty()) {
+		_RemoveListener(m_vListenersRef.back());
 	}
-	m_vListenersRef.clear();
 }
 
+/*!
+ * リスナーを追加する
+ */
 void CSubject::_AddListener(CListener* pcListener)
 {
+	//NULLは追加できない
+	assert(pcListener);
+
 	//既に追加済みなら何もしない
-	for(int i=0;i<(int)m_vListenersRef.size();i++){
-		if(m_vListenersRef[i]==pcListener){
-			return;
-		}
+	if (auto found = std::find(m_vListenersRef.cbegin(), m_vListenersRef.cend(), pcListener); found != m_vListenersRef.cend()) {
+		return;
 	}
+
 	//追加
 	m_vListenersRef.push_back(pcListener);
 }
 
-void CSubject::_RemoveListener(CListener* pcListener)
+/*!
+ * リスナーを削除する
+ */
+void CSubject::_RemoveListener(CListener* pcListener) noexcept
 {
+	//NULLは追加できないので、削除も想定しない
+	assert(pcListener);
+
+	//削除前のリスナー数を記録
+	const auto llisteners = m_vListenersRef.size();
+
 	//配列から削除
-	for(int i=0;i<(int)m_vListenersRef.size();i++){
-		if(m_vListenersRef[i]==pcListener){
-			m_vListenersRef.erase(m_vListenersRef.begin()+i);
-			break;
+	if (auto found = std::find(m_vListenersRef.begin(), m_vListenersRef.end(), pcListener); found != m_vListenersRef.end()) {
+		//確実に解除するため、リスナー側の終了メソッドを呼び出す
+		pcListener->_EndListen();
+
+		//リスナー数が代わってないときだけ削除に進む
+		if (llisteners == m_vListenersRef.size()) {
+			//リスナー配列から削除
+			m_vListenersRef.erase(found);
 		}
 	}
 }
@@ -51,31 +66,48 @@ void CSubject::_RemoveListener(CListener* pcListener)
 //                         CListener                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CListener::CListener()
-: m_pcSubjectRef(nullptr)
-{
-}
+CListener::CListener() = default;
 
 CListener::~CListener()
 {
-	Listen(nullptr);
+	_EndListen();
 }
 
-CSubject* CListener::Listen(CSubject* pcSubject)
+/*!
+ * 監視を開始する
+ */
+CSubject* CListener::Listen(
+	CSubject* pcSubject	//!< [in] 監視するサブジェクト。NULLで監視終了
+)
 {
-	CSubject* pOld = GetListeningSubject();
+	//操作前の参照を取得
+	auto pOld = GetListeningSubject();
 
-	//古いサブジェクトを解除
-	if(m_pcSubjectRef){
-		m_pcSubjectRef->_RemoveListener(this);
-		m_pcSubjectRef = nullptr;
-	}
+	//古いサブジェクトを解放
+	_EndListen();
 
 	//新しく設定
-	m_pcSubjectRef = pcSubject;
-	if(m_pcSubjectRef){
-		m_pcSubjectRef->_AddListener(this);
+	if (pcSubject) {
+		//サブジェクト側にリスナー追加を要求する
+		pcSubject->_AddListener(this);
+
+		//参照を保存
+		m_pcSubjectRef = pcSubject;
 	}
 
 	return pOld;
+}
+
+/*!
+ * 監視を終了する
+ */
+void CListener::_EndListen() noexcept
+{
+	if (auto pcSubject = m_pcSubjectRef) {
+		//構造的に再帰呼出なので、先に参照を消しておく
+		m_pcSubjectRef = nullptr;
+
+		//サブジェクト側にリスナー削除を要求する
+		pcSubject->_RemoveListener(this);
+	}
 }

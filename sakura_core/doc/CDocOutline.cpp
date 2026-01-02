@@ -31,7 +31,6 @@
 #include "extmodule/CBregexp.h"
 #include "CSelectLang.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 /*! ルールファイルの1行を管理する構造体
 
@@ -70,7 +69,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 	const wchar_t*	pszKeySeps = L",\0";
 	const wchar_t*	pszWork;
 	wchar_t	cComment = L';';
-	int nDelimitLen = wcslen( pszDelimit );
+	auto nDelimitLen = int(wcslen(pszDelimit));
 	int nCount = 0;
 	bRegex = false;
 	bool bRegexReplace = false;
@@ -87,7 +86,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 		strLine = file.ReadLineW();
 		pszWork = wcsstr( strLine.c_str(), pszDelimit );
 		if( nullptr != pszWork && 0 < strLine.length() && strLine[0] != cComment ){
-			int nLen = pszWork - strLine.c_str();
+			int nLen = int(pszWork - strLine.c_str());
 			if( nLen < LINEREADBUFSIZE ){
 				// szLine == 「key1,key2」
 				wmemcpy(szLine, strLine.c_str(), nLen);
@@ -121,11 +120,11 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 					if( nullptr != pszGroupDel && 0 < pszWork[0] != L'\0' ){
 						// pszWork = 「titleRep /// group」
 						// pszGroupDel = 「 /// group」
-						int nTitleLen = pszGroupDel - pszWork; // Len == 0 OK
-						if( nTitleLen < _countof(szText) ){
-							wcsncpy_s(szText, _countof(szText), pszWork, nTitleLen);
+						int nTitleLen = int(pszGroupDel - pszWork); // Len == 0 OK
+						if( nTitleLen < int(std::size(szText)) ){
+							wcsncpy_s(szText, std::size(szText), pszWork, nTitleLen);
 						}else{
-							wcsncpy_s(szText, _countof(szText), pszWork, _TRUNCATE);
+							wcsncpy_s(szText, std::size(szText), pszWork, _TRUNCATE);
 						}
 						pszTextReplace = szText;
 						bRegexRep2 = true;
@@ -151,7 +150,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				pcOneRule[nCount].szMatch[255] = L'\0';
 				pcOneRule[nCount].szGroupName[255] = L'\0';
 				pcOneRule[nCount].nLv = nLv;
-				pcOneRule[nCount].nLength = wcslen(pcOneRule[nCount].szMatch);
+				pcOneRule[nCount].nLength = (int)wcslen(pcOneRule[nCount].szMatch);
 				pcOneRule[nCount].nRegexOption = regexOption;
 				pcOneRule[nCount].nRegexMode = bRegexRep2 ? 1 : 0; // 文字列が正しい時だけReplaceMode
 				nCount++;
@@ -275,13 +274,13 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 	if( test[0].nLength == 0 ){
 		const wchar_t* g = test[0].szGroupName;
 		wcscpy(pszStack[0], g);
-		nLvStack[0] = test[0].nLv;
+		nLvStack[0] = wchar_t(test[0].nLv);
 		const wchar_t *p = wcschr(g, L',');
 		int len;
 		if( p != nullptr ){
-			len = p - g;
+			len = int(p - g);
 		}else{
-			len = wcslen(g);
+			len = (int)wcslen(g);
 		}
 		CNativeW mem;
 		mem.SetString(g, len);
@@ -409,7 +408,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 				k = 0;
 			}
 			wcscpy(pszStack[k], szTitle);
-			nLvStack[k] = test[j].nLv;
+			nLvStack[k] = wchar_t(test[j].nLv);
 			nDepth = k;
 		}else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する

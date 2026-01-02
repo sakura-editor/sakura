@@ -13,7 +13,6 @@
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 const int STRNCMP_MAX = 100;	/* MAXキーワード長：_strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
 
@@ -104,7 +103,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	}
 	/* 途中まで一致を使う場合 */
 	if(m_pTypeData->m_bUseKeyHelpPrefix)
-		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
+		nCmpLen = (int)wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
 	for(int i =0 ; i < m_pTypeData->m_nKeyHelpNum; i++){	//最大数：MAX_KEYHELP_FILE
 		if( m_pTypeData->m_KeyHelpArr[i].m_bUse ){
@@ -494,5 +493,4 @@ int CEditView::IsSearchString(
 		}
 		return 0; // この行はヒットしなかった
 	}
-	return 0;
 }

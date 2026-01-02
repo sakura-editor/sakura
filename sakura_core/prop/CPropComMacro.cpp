@@ -27,7 +27,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 //! Popup Help用ID
 //@@@ 2001.12.22 Start by MIK: Popup Help
@@ -38,7 +37,9 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_MACROPATH,		HIDC_MACROPATH,		//File
 	IDC_MACRONAME,		HIDC_MACRONAME,		//マクロ名
 	IDC_MACROLIST,		HIDC_MACROLIST,		//マクロリスト
-	IDC_MACRODIR,		HIDC_MACRODIR,		//マクロ一覧
+	IDC_MACRODIR,		HIDC_MACRODIR,		//マクロフォルダ
+	IDC_PYTHONDIR,		HIDC_PYTHONDIR,		//Pythonディレクトリ
+	IDC_PYTHONDIRREF,	HIDC_PYTHONDIRREF,	//Pythonディレクトリ参照
 	IDC_CHECK_RELOADWHENEXECUTE,	HIDC_CHECK_RELOADWHENEXECUTE,	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
 	IDC_CHECK_MacroOnOpened,		HIDC_CHECK_MacroOnOpened,		//オープン後自動実行マクロ	// 2006.09.01 ryoji
 	IDC_CHECK_MacroOnTypeChanged,	HIDC_CHECK_MacroOnTypeChanged,	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
@@ -100,11 +101,11 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRONAME ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1 );
-		Combo_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROPATH ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1 );
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRONAME ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1 );
+		ApiWrap::Combo_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROPATH ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1 );
 		// 2003.06.23 Moca
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRODIR ), _countof2( m_Common.m_sMacro.m_szMACROFOLDER ) - 1 );
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROCANCELTIMER ), 4 );
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRODIR ), std::size( m_Common.m_sMacro.m_szMACROFOLDER ) - 1 );
+		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROCANCELTIMER ), 4 );
 
 		return TRUE;
 	case WM_NOTIFY:
@@ -148,6 +149,9 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			case IDC_MACRODIRREF:	// マクロディレクトリ参照
 				SelectBaseDir_Macro( hwndDlg );
 				break;
+			case IDC_PYTHONDIRREF:	// Pythonディレクトリ参照
+				SelectDir_Python(hwndDlg);
+				break;
 			case IDC_MACRO_REG:		// マクロ設定
 				SetMacro2List_Macro( hwndDlg );
 				break;
@@ -172,9 +176,9 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			case IDC_MACRODIR:
 				{
 					WCHAR szDir[_MAX_PATH];
-					::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
+					ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
 					if( 1 == AddLastChar( szDir, _MAX_PATH, L'\\' ) ){
-						::DlgItem_SetText( hwndDlg, IDC_MACRODIR, szDir );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRODIR, szDir );
 					}
 				}
 				break;
@@ -258,7 +262,10 @@ void CPropMacro::SetData( HWND hwndDlg )
 	}
 	
 	//	マクロディレクトリ
-	::DlgItem_SetText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_Common.m_sMacro.m_szMACROFOLDER );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_Common.m_sMacro.m_szMACROFOLDER );
+
+	//	Pythonディレクトリ
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_PYTHONDIR, /*m_pShareData->*/m_Common.m_sMacro.m_szPythonDirectory);
 
 	nLastPos_Macro = -1;
 	
@@ -272,7 +279,7 @@ void CPropMacro::SetData( HWND hwndDlg )
 	
 	//	マクロ停止ダイアログ表示待ち時間
 	WCHAR szCancelTimer[16] = {0};
-	::DlgItem_SetText( hwndDlg, IDC_MACROCANCELTIMER, _itow(m_Common.m_sMacro.m_nMacroCancelTimer, szCancelTimer, 10) );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACROCANCELTIMER, _itow(m_Common.m_sMacro.m_nMacroCancelTimer, szCancelTimer, 10) );
 
 	return;
 }
@@ -337,7 +344,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 		sItem.iSubItem = 4;
 		WCHAR szText[8];
 		sItem.pszText = szText;
-		sItem.cchTextMax = _countof(szText);
+		sItem.cchTextMax = int(std::size(szText));
 		ListView_GetItem( hListView, &sItem );
 		int i;
 		int nLen;
@@ -355,13 +362,15 @@ int CPropMacro::GetData( HWND hwndDlg )
 
 	//	マクロディレクトリ
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACRODIR, m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH );
+	//	Pythonディレクトリ
+	ApiWrap::DlgItem_GetText(hwndDlg, IDC_PYTHONDIR, m_Common.m_sMacro.m_szPythonDirectory, _MAX_PATH);
 	// 2003.06.23 Moca マクロフォルダーの最後の\がなければ付ける
 	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, L'\\' );
 	
 	//	マクロ停止ダイアログ表示待ち時間
 	WCHAR szCancelTimer[16] = {0};
-	::DlgItem_GetText( hwndDlg, IDC_MACROCANCELTIMER, szCancelTimer, _countof(szCancelTimer) );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACROCANCELTIMER, szCancelTimer, int(std::size(szCancelTimer)) );
 	m_Common.m_sMacro.m_nMacroCancelTimer = _wtoi(szCancelTimer);
 
 	return TRUE;
@@ -395,7 +404,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	::GetWindowRect( hListView, &rc );
 	int width = rc.right - rc.left - ::GetSystemMetrics(SM_CXHSCROLL);
 	
-	for( pos = 0; pos < _countof( ColumnList ); ++pos ){
+	for( pos = 0; pos < int(std::size(ColumnList)); ++pos ){
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
@@ -433,7 +442,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	for( pos = 0; pos < MAX_CUSTMACRO ; ++pos ){
 		wchar_t buf[10];
 		auto_sprintf( buf, L"%d", pos );
-		int result = Combo_AddString( hNumCombo, buf );
+		int result = ApiWrap::Combo_AddString( hNumCombo, buf );
 		if( result == CB_ERR ){
 			PleaseReportToAuthor( hwndDlg, L"PropComMacro::InitDlg::AddMacroId" );
 			return;	//	よくわからんけど失敗した
@@ -443,7 +452,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 			return;	//	よくわからんけど失敗した
 		}
 	}
-	Combo_SetCurSel( hNumCombo, 0 );
+	ApiWrap::Combo_SetCurSel( hNumCombo, 0 );
 }
 
 void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
@@ -455,7 +464,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	HWND hNum = ::GetDlgItem( hwndDlg, IDC_COMBO_MACROID );
 
 	//	設定先取得
-	index = Combo_GetCurSel( hNum );
+	index = ApiWrap::Combo_GetCurSel( hNum );
 	if( index == CB_ERR ){
 		PleaseReportToAuthor( hwndDlg, L"PropComMacro::SetMacro2List::GetCurSel" );
 		return;	//	よくわからんけど失敗した
@@ -468,7 +477,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	sItem.iSubItem = 1;
 	
 	WCHAR buf[256];
-	::DlgItem_GetText( hwndDlg, IDC_MACRONAME, buf, MACRONAME_MAX );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACRONAME, buf, MACRONAME_MAX );
 	sItem.pszText = buf;
 	ListView_SetItem( hListView, &sItem );
 
@@ -478,7 +487,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	sItem.mask = LVIF_TEXT;
 	sItem.iSubItem = 2;
 
-	::DlgItem_GetText( hwndDlg, IDC_MACROPATH, buf, _MAX_PATH );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACROPATH, buf, _MAX_PATH );
 	sItem.pszText = buf;
 	ListView_SetItem( hListView, &sItem );
 
@@ -502,7 +511,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 4;
 		sItem.pszText = szText;
-		sItem.cchTextMax = _countof(szText);
+		sItem.cchTextMax = int(std::size(szText));
 		ListView_GetItem( hListView, &sItem );
 		int i;
 		int nLen;
@@ -556,7 +565,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 	WCHAR szDir[_MAX_PATH];
 
 	/* 検索フォルダー */
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _countof(szDir) );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, int(std::size(szDir)) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -568,8 +577,24 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 
 	if( SelectDir( hwndDlg, LS(STR_PROPCOMMACR_SEL_DIR), szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
-		AddLastChar( szDir, _countof(szDir), L'\\' );
-		::DlgItem_SetText( hwndDlg, IDC_MACRODIR, GetRelPath(szDir) ); // 2015.03.03 可能なら相対パスにする
+		AddLastChar( szDir, int(std::size(szDir)), L'\\' );
+		ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRODIR, GetRelPath(szDir) ); // 2015.03.03 可能なら相対パスにする
+	}
+}
+
+void CPropMacro::SelectDir_Python(HWND hwndDlg)
+{
+	WCHAR szDir[_MAX_PATH];
+	ApiWrap::DlgItem_GetText(hwndDlg, IDC_PYTHONDIR, szDir, int(std::size(szDir)));
+	if (_IS_REL_PATH(szDir)) {
+		WCHAR folder[_MAX_PATH];
+		wcscpy(folder, szDir);
+		GetInidirOrExedir(szDir, folder);
+	}
+	if (SelectDir(hwndDlg, LS(STR_PROPCOMMACR_SEL_PYTHONDIR), szDir, szDir)) {
+		// 末尾に\\マークを追加する．
+		AddLastChar(szDir, int(std::size(szDir)), L'\\');
+		ApiWrap::DlgItem_SetText(hwndDlg, IDC_PYTHONDIR, GetRelPath(szDir)); // 可能なら相対パスにする
 	}
 }
 
@@ -585,7 +610,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	HWND hCombo = ::GetDlgItem( hwndDlg, IDC_MACROPATH );
 
 	WCHAR path[_MAX_PATH * 2];
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, path, _countof(path) );
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACRODIR, path, int(std::size(path)) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -597,7 +622,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	wcscat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
-	Combo_ResetContent( hCombo );
+	ApiWrap::Combo_ResetContent( hCombo );
 
 	//	ファイルの検索
 	WIN32_FIND_DATA wf;
@@ -612,7 +637,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 		//	でも.と..は勘弁。
 		//if (wcscmp( wf.cFileName, L"." ) != 0 && wcscmp( wf.cFileName, L".." ) != 0){
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダーを除外
-			int result = Combo_AddString( hCombo, wf.cFileName );
+			int result = ApiWrap::Combo_AddString( hCombo, wf.cFileName );
 			if( result == CB_ERR || result == CB_ERRSPACE )
 				break;
 		}
@@ -635,7 +660,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	nLastPos_Macro = current;
 	
 	//	初期値の設定
-	Combo_SetCurSel( hNum, nLastPos_Macro );
+	ApiWrap::Combo_SetCurSel( hNum, nLastPos_Macro );
 	
 	WCHAR buf[MAX_PATH + MACRONAME_MAX];	// MAX_PATHとMACRONAME_MAXの両方より大きい値
 	LVITEM sItem;
@@ -648,7 +673,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.cchTextMax = MACRONAME_MAX;
 
 	ListView_GetItem( hListView, &sItem );
-	::DlgItem_SetText( hwndDlg, IDC_MACRONAME, buf );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRONAME, buf );
 
 	memset_raw( &sItem, 0, sizeof( sItem ));
 	sItem.iItem = current;
@@ -658,7 +683,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.cchTextMax = MAX_PATH;
 
 	ListView_GetItem( hListView, &sItem );
-	::DlgItem_SetText( hwndDlg, IDC_MACROPATH, buf );
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACROPATH, buf );
 
 	memset_raw( &sItem, 0, sizeof( sItem ));
 	sItem.iItem = current;
@@ -681,7 +706,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.iSubItem = 4;
 	WCHAR szText[8];
 	sItem.pszText = szText;
-	sItem.cchTextMax = _countof(szText);
+	sItem.cchTextMax = int(std::size(szText));
 	ListView_GetItem( hListView, &sItem );
 	int i;
 	int nLen;

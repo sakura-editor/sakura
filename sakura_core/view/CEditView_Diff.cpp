@@ -37,11 +37,10 @@
 #include "window/CEditWnd.h"
 #include "io/CTextStream.h"
 #include "io/CFileLoad.h"
-#include "CWriteManager.h"
+#include "env/CWriteManager.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	L"sakura_diff_"
 
@@ -59,7 +58,7 @@ public:
 	}
 	~COutputAdapterDiff(){};
 
-	bool OutputW(const WCHAR* pBuf, int size = -1) override{ return true; };
+	bool OutputW(const WCHAR* pBuf, int size = -1) override { UNREFERENCED_PARAMETER(pBuf); UNREFERENCED_PARAMETER(size); return true; };
 	bool OutputA(const ACHAR* pBuf, int size = -1) override;
 	bool IsEnableRunningDlg() override{ return false; }
 	bool IsActiveDebugWindow() override{ return false; }
@@ -135,12 +134,12 @@ void CEditView::ViewDiffInfo(
 
 	//オプションを作成する
 	WCHAR	szOption[16];	// "-cwbBt"
-	wcscpy( szOption, L"-" );
-	if( nFlgOpt & 0x0001 ) wcscat( szOption, L"i" );	//-i ignore-case         大文字小文字同一視
-	if( nFlgOpt & 0x0002 ) wcscat( szOption, L"w" );	//-w ignore-all-space    空白無視
-	if( nFlgOpt & 0x0004 ) wcscat( szOption, L"b" );	//-b ignore-space-change 空白変更無視
-	if( nFlgOpt & 0x0008 ) wcscat( szOption, L"B" );	//-B ignore-blank-lines  空行無視
-	if( nFlgOpt & 0x0010 ) wcscat( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
+	wcscpy_s( szOption, L"-" );
+	if( nFlgOpt & 0x0001 ) wcscat_s( szOption, L"i" );	//-i ignore-case         大文字小文字同一視
+	if( nFlgOpt & 0x0002 ) wcscat_s( szOption, L"w" );	//-w ignore-all-space    空白無視
+	if( nFlgOpt & 0x0004 ) wcscat_s( szOption, L"b" );	//-b ignore-space-change 空白変更無視
+	if( nFlgOpt & 0x0008 ) wcscat_s( szOption, L"B" );	//-B ignore-blank-lines  空行無視
+	if( nFlgOpt & 0x0010 ) wcscat_s( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
 	if( wcscmp( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
@@ -161,7 +160,7 @@ void CEditView::ViewDiffInfo(
 	}
 
 	{
-		int nFlgOpt = 0;
+		nFlgOpt = 0;
 		nFlgOpt |= 0x01;  // GetStdOut
 		if( bUTF8 ){
 			nFlgOpt |= 0x80;  // UTF-8 out (SJISと違ってASCIIセーフなので)
@@ -198,7 +197,7 @@ void CEditView::ViewDiffInfo(
 bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 {
 	if( size == -1 ){
-		size = strlen(pBuf);
+		size = (int)strlen(pBuf);
 	}
 	//@@@ 2003.05.31 MIK
 	//	先頭がBinary filesならバイナリファイルのため意味のある差分が取られなかった
@@ -408,7 +407,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
 				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 				{
-					nLineLen = ::SendMessageAny( hwnd, MYWM_GETLINEDATA, y, nLineOffset );
+					nLineLen = (int)::SendMessageW( hwnd, MYWM_GETLINEDATA, y, nLineOffset );
 					if( nLineLen == 0 ){ return true; } // EOF => 正常終了
 					if( nLineLen < 0 ){ return false; } // 何かエラー
 					if( bBom ){

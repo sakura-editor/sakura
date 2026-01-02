@@ -23,7 +23,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "config/app_constants.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 /*!
 	@brief プロセス基底クラス
@@ -37,6 +36,7 @@ CProcess::CProcess(
 )
 : m_hInstance( hInstance )
 {
+	UNREFERENCED_PARAMETER(lpCmdLine);
 	// アプリ名をリソースから読み込む
 	m_strAppName = LS(STR_GSTR_APPNAME);
 }

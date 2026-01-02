@@ -32,7 +32,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10800
@@ -251,7 +250,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 		if( hwndCOMBO_SET == hwndCtl){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIndex1 = Combo_GetCurSel( hwndCOMBO_SET );
+				nIndex1 = ApiWrap::Combo_GetCurSel( hwndCOMBO_SET );
 				/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 				SetKeyWordSet( hwndDlg, nIndex1 );
 				return TRUE;
@@ -292,7 +291,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					return TRUE;
 				case IDC_BUTTON_DELSET:	/* セット削除 */
 					{
-						nIndex1 = Combo_GetCurSel( hwndCOMBO_SET );
+						nIndex1 = ApiWrap::Combo_GetCurSel( hwndCOMBO_SET );
 						if( CB_ERR == nIndex1 ){
 							return TRUE;
 						}
@@ -543,6 +542,7 @@ void CPropKeyword::Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 /* リスト中のキーワードをインポートする */
 void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
+	UNREFERENCED_PARAMETER(hwndLIST_KEYWORD);
 	bool	bCase = false;
 	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase( nIdx, bCase );
@@ -562,6 +562,7 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 /* リスト中のキーワードをエクスポートする */
 void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
+	UNREFERENCED_PARAMETER(hwndLIST_KEYWORD);
 	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 	SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
@@ -578,6 +579,7 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //! キーワードを整頓する
 void CPropKeyword::Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
+	UNREFERENCED_PARAMETER(hwndLIST_KEYWORD);
 	if( IDYES == ::MessageBox( hwndDlg, LS(STR_PROPCOMKEYWORD_DEL),
 			GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) ){	// 2009.03.26 ryoji MB_ICONSTOP->MB_ICONQUESTION
 		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CleanKeyWords( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
@@ -593,13 +595,13 @@ void CPropKeyword::SetData( HWND hwndDlg )
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-	Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
+	ApiWrap::Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
 	if( 0 < m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
 		for( i = 0; i < m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-			Combo_AddString( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( i ) );
+			ApiWrap::Combo_AddString( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( i ) );
 		}
 		/* セット名コンボボックスのデフォルト選択 */
-		Combo_SetCurSel( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+		ApiWrap::Combo_SetCurSel( hwndWork, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 		SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
@@ -684,12 +686,15 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 /* ダイアログデータの取得 Keyword */
 int CPropKeyword::GetData( HWND hwndDlg )
 {
+	UNREFERENCED_PARAMETER(hwndDlg);
 	return TRUE;
 }
 
 /* ダイアログデータの取得 Keyword 指定キーワードセットの取得 */
 void CPropKeyword::GetKeyWordSet( HWND hwndDlg, int nIdx )
 {
+	UNREFERENCED_PARAMETER(hwndDlg);
+	UNREFERENCED_PARAMETER(nIdx);
 }
 
 //キーワード数を表示する。

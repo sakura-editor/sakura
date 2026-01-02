@@ -9,7 +9,7 @@
 #include "StdAfx.h"
 #include "CUtf8.h"
 #include "charset/codechecker.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "env/CommonSetting.h"
 
 /*!
@@ -57,7 +57,7 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 		}
 	}
 
-	return pw - reinterpret_cast<unsigned short*>(pDst);
+	return int(pw - reinterpret_cast<unsigned short*>(pDst));
 }
 
 //! UTF-8→Unicodeコード変換
@@ -155,7 +155,7 @@ int CUtf8::UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned char*>(pDst);
+	return int(pw - reinterpret_cast<unsigned char*>(pDst));
 }
 
 //! コード変換 Unicode→UTF-8

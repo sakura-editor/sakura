@@ -25,7 +25,7 @@
 #include "CCommandLine.h"
 #include "CControlTray.h"
 #include "window/CEditWnd.h" // 2002/2/3 aroka
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h" // 2003/03/28 MIK
 #include "debug/CRunningTimer.h"
@@ -247,7 +247,7 @@ bool CNormalProcess::InitializeProcess()
 				// 2013.05.21 指定なしの場合はカレントフォルダーにする
 				if( cmemGrepFolder.GetStringLength() == 0 ){
 					WCHAR szCurDir[_MAX_PATH];
-					::GetCurrentDirectory( _countof(szCurDir), szCurDir );
+					::GetCurrentDirectory( int(std::size(szCurDir)), szCurDir );
 					cmemGrepFolder.SetString( szCurDir );
 				}
 			}
@@ -267,10 +267,10 @@ bool CNormalProcess::InitializeProcess()
 			//	引数の設定がBOXに反映されない
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
-			int nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFile);
+			int nSize = std::size(pEditWnd->m_cDlgGrep.m_szFile);
 			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
 			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
-			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
+			nSize = std::size(pEditWnd->m_cDlgGrep.m_szFolder);
 			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダー */
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 

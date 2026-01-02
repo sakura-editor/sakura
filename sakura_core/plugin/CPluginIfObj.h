@@ -62,7 +62,7 @@ public:
 		return m_MacroFuncInfoArr;
 	}
 	//関数を処理する
-	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override
 	{
 		Variant varCopy;	// VT_BYREFだと困るのでコピー用
 
@@ -73,7 +73,8 @@ public:
 				SysString S(m_cPlugin.m_sBaseDir.c_str(), m_cPlugin.m_sBaseDir.size());
 				Wrap(&Result)->Receive(S);
 			}
-			return true;
+			break;
+
 		case F_PL_GETDEF:				//設定ファイルから値を読む
 		case F_PL_GETOPTION:			//オプションファイルから値を読む
 			{
@@ -108,12 +109,14 @@ public:
 				SysString S(sValue.c_str(), sValue.size());
 				Wrap(&Result)->Receive(S);
 			}
-			return true;
+			break;
+
 		case F_PL_GETCOMMANDNO:			//実行中プラグの番号を取得する
 			{
 				Wrap(&Result)->Receive(m_nPlugIndex);
 			}
-			return true;
+			break;
+
 		case F_PL_GETSTRING:
 			{
 				int num;
@@ -122,19 +125,21 @@ public:
 					std::wstring& str = m_cPlugin.m_aStrings[num];
 					SysString S(str.c_str(), str.size());
 					Wrap(&Result)->Receive(S);
-					return true;
 				}else if( 0 == num ){
 					std::wstring str = m_cPlugin.m_sLangName;
 					SysString S(str.c_str(), str.size());
 					Wrap(&Result)->Receive(S);
-					return true;
 				}
 			}
+			break;
+
+		default:
+			return CWSHIfObj::HandleFunction(View, ID, Arguments, ArgSize, Result);
 		}
-		return false;
+		return true;
 	}
 	//コマンドを処理する
-	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
+	bool HandleCommand(CEditView* View, EFunctionCode ID, LPCWSTR* Arguments, const int* ArgLengths, const int ArgSize) override
 	{
 		switch ( LOWORD(ID) ) 
 		{
@@ -158,6 +163,9 @@ public:
 				GetEditWnd().RegisterPluginCommand( id );
 			}
 			break;
+
+		default:
+			return CWSHIfObj::HandleCommand(View, ID, Arguments, ArgLengths, ArgSize);
 		}
 		return true;
 	}

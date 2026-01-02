@@ -21,6 +21,7 @@ void _DrawTabArrow( CGraphics& gr, int nPosX, int nPosY, int nWidth, int nHeight
 
 bool CFigure_Tab::Match(const wchar_t* pText, int nTextLen) const
 {
+	UNREFERENCED_PARAMETER(nTextLen);
 	if( pText[0] == WCODE::TAB ){
 		return true;
 	}
@@ -90,7 +91,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y + nHeightMargin,
-				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+				ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
 				szForeViewString.c_str(),
 				static_cast<UINT>(szForeViewString.length()),
@@ -106,7 +107,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,
-				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+				ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
 				szBackViewString.c_str(),
 				static_cast<UINT>(szBackViewString.length()),
@@ -185,7 +186,7 @@ void _DrawTabArrow(
 	pt[3].y = sy;
 	pt[4].x = sx - sa;
 	pt[4].y = sy - sa;
-	::PolyPolyline( gr, pt, pp, _countof(pp));
+	::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 
 	if( bBold ){
 		pt[0].x += 0;	//「─」左端から右端
@@ -198,7 +199,7 @@ void _DrawTabArrow(
 		pt[3].y += 1;
 		pt[4].x += 0;
 		pt[4].y += 1;
-		::PolyPolyline( gr, pt, pp, _countof(pp));
+		::PolyPolyline( gr, pt, pp, int(std::size(pp)));
 	}
 
 	gr.PopPen();

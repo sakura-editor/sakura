@@ -16,6 +16,7 @@
 
 bool CFigure_Comma::Match(const wchar_t* pText, int nTextLen) const
 {
+	UNREFERENCED_PARAMETER(nTextLen);
 	if ( pText[0] == L',' ) {
 		return true;
 	}
@@ -84,7 +85,7 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,
-				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+				ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
 				szViewString.c_str(),
 				static_cast<UINT>(szViewString.length()),

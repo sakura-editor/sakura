@@ -87,7 +87,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 //			MYTRACE( L"szLabel=[%ls]\n", szLabel );
 
 			pszKeyWord = L"division";
-			nKeyWordLen = wcslen( pszKeyWord );
+			nKeyWordLen = (int)wcslen( pszKeyWord );
 			bDivision = FALSE;
 			int nLen = (int)wcslen( szLabel ) - nKeyWordLen;
 			for( i = 0; i <= nLen ; ++i ){
@@ -225,4 +225,4 @@ const wchar_t* g_ppszKeywordsCOBOL[] = {
 	L"WRITTEN",
 	L"ZERO"
 };
-int g_nKeywordsCOBOL = _countof(g_ppszKeywordsCOBOL);
+int g_nKeywordsCOBOL = int(std::size(g_ppszKeywordsCOBOL));

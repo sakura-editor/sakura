@@ -31,7 +31,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_BUTTON_FOLDER,				HIDC_GREP_REP_BUTTON_FOLDER,			//フォルダー
@@ -132,7 +131,7 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	_SetHwnd( hwndDlg );
 
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
 
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT2), &m_cRecentReplace);
 
@@ -153,7 +152,7 @@ BOOL CDlgGrepReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			const auto& keys = m_pShareData->m_sSearchKeywords.m_aReplaceKeys;
 			for( int i = 0; i < keys.size(); ++i ){
-				Combo_AddString( hwndCtl, keys[i] );
+				ApiWrap::Combo_AddString( hwndCtl, keys[i] );
 			}
 		}
 		break;
@@ -198,7 +197,7 @@ BOOL CDlgGrepReplace::OnBnClicked( int wID )
 void CDlgGrepReplace::SetData( void )
 {
 	/* 置換後 */
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
 	
 	CheckDlgButtonBool( GetHwnd(), IDC_CHK_BACKUP, m_bBackup );
 

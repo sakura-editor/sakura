@@ -46,8 +46,9 @@ public:
 	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
 	//関数情報を取得する
 	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; };
+
 	//関数を処理する
-	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override
 	{
 		Variant varCopy;	// VT_BYREFだと困るのでコピー用
 
@@ -57,34 +58,34 @@ public:
 				SysString s( m_sCurrentWord.c_str(), m_sCurrentWord.length() );
 				Wrap( &Result )->Receive( s );
 			}
-			return true;
+			break;
+
 		case F_CM_GETOPTION:	//オプションを取得
 			{
 				Wrap( &Result )->Receive( m_nOption );
 			}
-			return true;
+			break;
+
 		case F_CM_ADDLIST:		//候補に追加する
 			{
 				std::wstring keyword;
 				if( variant_to_wstr( Arguments[0], keyword ) != true) return false;
 				const wchar_t* word = keyword.c_str();
-				int nWordLen = keyword.length();
+				const auto nWordLen = keyword.length();
 				if( nWordLen <= 0 ) return false;
 				std::wstring strWord(word, nWordLen);
 				if( CHokanMgr::AddKouhoUnique( m_pHokanMgr->m_vKouho, strWord ) ){
-					Wrap( &Result )->Receive( m_pHokanMgr->m_vKouho.size() );
+					Wrap( &Result )->Receive( (int)m_pHokanMgr->m_vKouho.size() );
 				}else{
 					Wrap( &Result )->Receive( -1 );
 				}
-				return true;
 			}
+			break;
+
+		default:
+			return CWSHIfObj::HandleFunction(View, ID, Arguments, ArgSize, Result);
 		}
-		return false;
-	}
-	//コマンドを処理する
-	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
-	{
-		return false;
+		return true;
 	}
 
 	// メンバ変数

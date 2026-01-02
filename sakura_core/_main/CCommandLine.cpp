@@ -31,7 +31,6 @@
 #include "env/CSakuraEnvironment.h"
 #include "CSelectLang.h"
 #include "util/string_ex.h"
-#include "String_define.h"
 
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002 //!< ビューモード
@@ -250,7 +249,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	int		nPos;
 	int		i = 0;
 	if( pszCmdLineSrc[0] != L'-' ){
-		for( i = 0; i < _countof( szPath ); ++i ){
+		for( i = 0; i < int(std::size(szPath)); ++i ){
 			if( pszCmdLineSrc[i] == L' ' || pszCmdLineSrc[i] == L'\0' ){
 				/* ファイルの存在をチェック */
 				szPath[i] = L'\0';	// 終端文字
@@ -355,7 +354,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		else{
 			if( *pszToken == '"' ){
 				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
-				int tokenlen = wcslen( pszToken );
+				auto tokenlen = int(wcslen(pszToken));
 				if( pszToken[ tokenlen-1 ] == '"' ){	// 2009.06.14 syat 末尾の"を取り除く
 					pszToken[ tokenlen-1 ] = '\0';
 				}

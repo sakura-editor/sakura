@@ -27,10 +27,9 @@ EFunctionCode CPlug::GetFunctionCode() const{
 // CPlugin メンバ関数
 
 //コンストラクタ
-CPlugin::CPlugin( const std::wstring& sBaseDir )
-	: m_sBaseDir( sBaseDir )
+CPlugin::CPlugin(std::wstring_view baseDir)
+	: m_sBaseDir(baseDir)
 {
-	m_nCommandCount = 0;
 }
 
 //デストラクタ
@@ -241,7 +240,7 @@ int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* 
 std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
 {
     std::vector<std::wstring>	splitVec;
-    int 	idx;
+    size_t idx = 0;
 
     while ((idx = sTrg.find( cSep )) != std::wstring::npos) {
         splitVec.push_back( sTrg.substr( 0, idx ) );

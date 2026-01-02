@@ -20,7 +20,6 @@
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize );
@@ -125,7 +124,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		if( pShareData->m_sVersion.m_dwProductVersionMS > dwMS
 			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
 		{
-			WCHAR szBkFileName[_countof(szIniFileName) + 4];
+			WCHAR szBkFileName[std::size(szIniFileName) + 4];
 			::lstrcpy(szBkFileName, szIniFileName);
 			::lstrcat(szBkFileName, L".bak");
 			::CopyFile(szIniFileName, szBkFileName, FALSE);
@@ -540,10 +539,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	if( !cProfile.IsReadingMode() ){
 		int	nDummy;
 		int	nCharChars;
-		nDummy = wcslen( common.m_sBackup.m_szBackUpFolder );
+		nDummy = (int)wcslen( common.m_sBackup.m_szBackUpFolder );
 		/* フォルダーの最後が「半角かつ'\\'」でない場合は、付加する */
-		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
-			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
+		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ));
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
 			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
@@ -553,10 +551,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	if( cProfile.IsReadingMode() ){
 		int	nDummy;
 		int	nCharChars;
-		nDummy = wcslen( common.m_sBackup.m_szBackUpFolder );
+		nDummy = (int)wcslen( common.m_sBackup.m_szBackUpFolder );
 		/* フォルダーの最後が「半角かつ'\\'」でない場合は、付加する */
-		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
-			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
+		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ) );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
 			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
@@ -1039,7 +1036,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 //	int		nSize = m_pShareData->m_nKeyNameArrNum;
 	WCHAR	szWork[MAX_PLUGIN_ID+20+4];
 	bool	bOldVer = false;
-	const int KEYNAME_SIZE = _countof(sKeyBind.m_pKeyNameArr)-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	const auto KEYNAME_SIZE = int(std::size(sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 
 	if( cProfile.IsReadingMode() ){ 
@@ -1107,8 +1104,8 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						p = pn+1;
 					}
 					// KeyName
-					wcsncpy(tmpKeydata.m_szKeyName, p, _countof(tmpKeydata.m_szKeyName)-1);
-					tmpKeydata.m_szKeyName[_countof(tmpKeydata.m_szKeyName)-1] = '\0';
+					wcsncpy(tmpKeydata.m_szKeyName, p, int(std::size(tmpKeydata.m_szKeyName))-1);
+					tmpKeydata.m_szKeyName[std::size(tmpKeydata.m_szKeyName)-1] = '\0';
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
 						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。
@@ -1681,8 +1678,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseRegexKeyword"), types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
 		wchar_t* pKeyword = types.m_RegexKeywordList;
 		int nPos = 0;
-		int nKeywordSize = _countof(types.m_RegexKeywordList);
-		for(j = 0; j < _countof(types.m_RegexKeywordArr); j++)
+		constexpr auto nKeywordSize = int(std::size(types.m_RegexKeywordList));
+		for(j = 0; j < int(std::size(types.m_RegexKeywordArr)); j++)
 		{
 			auto_sprintf( szKeyName, LTEXT("RxKey[%03d]"), j );
 			if( cProfile.IsReadingMode() )
@@ -1707,7 +1704,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
 						}
 						if( pKeyword[nPos] ){
-							nPos += wcslen(&pKeyword[nPos]) + 1;
+							nPos += int(wcslen(&pKeyword[nPos]) + 1);
 						}
 					}
 				}else{
@@ -1722,7 +1719,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
 					&pKeyword[nPos]);
 				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-				nPos += wcslen(&pKeyword[nPos]) + 1;
+				nPos += (int)wcslen(&pKeyword[nPos]) + 1;
 			}
 		}
 		if( cProfile.IsReadingMode() ){
@@ -1907,6 +1904,7 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnTypeChanged"), pShare->m_Common.m_sMacro.m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnSave"), pShare->m_Common.m_sMacro.m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 	cProfile.IOProfileData( pszSecName, LTEXT("nMacroCancelTimer"), pShare->m_Common.m_sMacro.m_nMacroCancelTimer );	// マクロ停止ダイアログ表示待ち時間	// 2011.08.04 syat
+	cProfile.IOProfileData(pszSecName, LTEXT("nMacroPythonDirectory"), pShare->m_Common.m_sMacro.m_szPythonDirectory);
 }
 
 /*!
@@ -2030,7 +2028,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 			{1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', false, false}, 	// (選択)前の変更行へ
 			{2, F_DLGWINLIST, F_WIN_OUTPUT, L'D', false, false}, 	// ウインドウ一覧表示
 		};
-		for( int i = 0; i < _countof(addInfos); i++ ){
+		for( int i = 0; i < int(std::size(addInfos)); i++ ){
 			SMainMenuAddItemInfo& item = addInfos[i];
 			if( item.m_nVer <= nVersion ){
 				continue;
@@ -2049,7 +2047,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 			if( item.m_bAddNextSeparete ){
 				nAddSep++;
 			}
-			if( k == mainmenu.m_nMainMenuNum && mainmenu.m_nMainMenuNum + nAddSep < _countof(mainmenu.m_cMainMenuTbl) ){
+			if( k == mainmenu.m_nMainMenuNum && mainmenu.m_nMainMenuNum + nAddSep < int(std::size(mainmenu.m_cMainMenuTbl)) ){
 				// メニュー内にまだ追加されていないので追加する
 				for( int r = 0; r < mainmenu.m_nMainMenuNum; r++ ){
 					if( pcMenuTlb[r].m_nFunc == item.m_nPrevFuncCode && 0 < pcMenuTlb[r].m_nLevel ){
@@ -2442,7 +2440,7 @@ void CShareData_IO::ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fi
 	cProfile.IOProfileData( pszSecName, L"bFileTreeProject", fileTree.m_bProject );
 	cProfile.IOProfileData( pszSecName, L"szFileTreeProjectIni", fileTree.m_szProjectIni );
 	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", fileTree.m_nItemCount );
-	SetValueLimit( fileTree.m_nItemCount, _countof(fileTree.m_aItems) );
+	SetValueLimit( fileTree.m_nItemCount, int(std::size(fileTree.m_aItems)) );
 	for( int i = 0;i < fileTree.m_nItemCount; i++ ){
 		ShareData_IO_FileTreeItem( cProfile, fileTree.m_aItems[i], pszSecName, i );
 	}

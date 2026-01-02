@@ -93,12 +93,12 @@ protected:
 
 protected:
 	//各種参照
-	HINSTANCE	m_hInstance;	//!< アプリケーションインスタンスのハンドル
-	HWND		m_hwndParent;	//!< オーナーウィンドウのハンドル
-	HWND		m_hwndThis;		//!< このダイアログのハンドル
+	HINSTANCE	m_hInstance = nullptr;	//!< アプリケーションインスタンスのハンドル
+	HWND		m_hwndParent = nullptr;	//!< オーナーウィンドウのハンドル
+	HWND		m_hwndThis = nullptr;		//!< このダイアログのハンドル
 
 	//ダイアログデータ
-	PropTypeSheetOrder	m_nPageNum;
+	PropTypeSheetOrder	m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 	DLLSHAREDATA*		m_pShareData;
 	STypeConfig			m_Types;
 

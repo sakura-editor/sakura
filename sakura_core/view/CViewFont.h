@@ -44,6 +44,7 @@ public:
 
 	const LOGFONT& GetLogfont(int FontNo = 0) const
 	{
+		UNREFERENCED_PARAMETER(FontNo);
 		return m_LogFont;
 	}
 

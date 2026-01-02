@@ -23,7 +23,6 @@
 #include "_main/CMutex.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -79,7 +78,7 @@ static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
 	// グループ比較が行われなかったときはウィンドウ比較する
 	if( s_bSort )
 		return ( ((EditNodeEx*)e1)->p->m_nIndex - ((EditNodeEx*)e2)->p->m_nIndex );	// ウィンドウ番号比較
-	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
+	return int( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -343,7 +342,7 @@ int CAppNodeGroupHandle::GetEditorWindowsNum( bool bExcludeClosing/* = true */ )
 	j = 0;
 	for( i = 0; i < pShare->m_sNodes.m_nEditArrNum; ++i ){
 		if( IsSakuraMainWindow( pShare->m_sNodes.m_pEditArr[i].m_hWnd ) ){
-			if( m_nGroup != 0 && m_nGroup != CAppNodeManager::getInstance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup() )
+			if( m_nGroup != 0 && m_nGroup != (int)CAppNodeManager::getInstance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup() )
 				continue;
 			if( bExcludeClosing && pShare->m_sNodes.m_pEditArr[i].m_bClosing )
 				continue;
@@ -634,7 +633,7 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 
 		//インデックスを付ける。
 		//このインデックスは m_pEditArr の配列番号です。
-		(*ppEditNode)[i].m_nIndex = pNode[i].p - pShare->m_sNodes.m_pEditArr;	// ポインタ減算＝配列番号
+		(*ppEditNode)[i].m_nIndex = int(pNode[i].p - pShare->m_sNodes.m_pEditArr);	// ポインタ減算＝配列番号
 	}
 
 	delete []pNode;

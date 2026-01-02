@@ -83,7 +83,7 @@ public:
 		// 現在のタグの深さ(depth)を求める。
 		int depth; // Tag Depth
 		for (depth = HierarchyCount - 1; 0 <= depth; --depth) {
-			if (wcslen(TagHierarchy[depth]) == pTagEnd - pTag
+			if (ptrdiff_t(::wcslen(TagHierarchy[depth])) == pTagEnd - pTag
 			    && 0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag)
 			) {
 				break;
@@ -152,7 +152,7 @@ public:
 
 		// トピック文字列を作成する(1)。トビック番号をバッファに埋め込む。
 		if (bAddNumber) {
-			assert(4 * HierarchyCount + 2 <= _countof2(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
+			assert(4 * HierarchyCount + 2 <= std::size(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
 			int i = 0;
 			while (i <= tagDepth && serials[i] == 0) {
 				i += 1; // "0." プリフィックスを表示しないようにスキップする。
@@ -164,10 +164,10 @@ public:
 			*pTopicEnd++ = L' ';
 			*pTopicEnd   = L'\0';
 		}
-		assert(pTopicEnd < szTopic + _countof2(szTopic));
+		assert(pTopicEnd < szTopic + std::size(szTopic));
 
 		// トピック文字列を作成する(2)。タイトルをバッファに埋め込む。
-		const auto copyLen = std::min<ptrdiff_t>(szTopic + _countof2(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
+		const auto copyLen = std::min<ptrdiff_t>(szTopic + std::size(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
 		wmemcpy(pTopicEnd, pTitle, copyLen);
 		pTopicEnd += copyLen;
 		*pTopicEnd = L'\0';
@@ -220,7 +220,7 @@ public:
 
 			const wchar_t Meta[] = { L'\\', L'%' };
 			const wchar_t* p = pLine;
-			while (pLineEnd != (p = std::find_first_of(p, pLineEnd, Meta, Meta + _countof(Meta)))) {
+			while (pLineEnd != (p = std::find_first_of(p, pLineEnd, Meta, Meta + int(std::size(Meta))))) {
 				if (*p == L'%') {
 					break; // コメントなので以降はいらない。
 				}
@@ -791,7 +791,7 @@ const wchar_t* g_ppszKeywordsTEX[] = {
 //			"\\}",
 //			"\\~",
 };
-int g_nKeywordsTEX = _countof(g_ppszKeywordsTEX);
+int g_nKeywordsTEX = int(std::size(g_ppszKeywordsTEX));
 
 //Jan. 19, 2001 JEPRO	TeX のキーワード2として新規追加 & 一部復活 --環境コマンドとオプション名が中心
 const wchar_t* g_ppszKeywordsTEX2[] = {
@@ -915,4 +915,4 @@ const wchar_t* g_ppszKeywordsTEX2[] = {
 //		"zh",
 //		"zw"
 };
-int g_nKeywordsTEX2 = _countof(g_ppszKeywordsTEX2);
+int g_nKeywordsTEX2 = int(std::size(g_ppszKeywordsTEX2));

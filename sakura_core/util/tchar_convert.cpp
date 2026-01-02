@@ -9,6 +9,8 @@
 #include "mem/CRecycledBuffer.h"
 #include "charset/charcode.h"
 
+#include <cstdlib>
+
 static CRecycledBuffer        g_bufSmall;
 static CRecycledBufferDynamic g_bufBig;
 
@@ -16,7 +18,7 @@ const WCHAR* to_wchar(const ACHAR* src)
 {
 	if(src==nullptr)return nullptr;
 
-	return to_wchar(src,strlen(src));
+	return to_wchar(src, (int)strlen(src));
 }
 
 const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
@@ -61,7 +63,7 @@ const ACHAR* to_achar(const WCHAR* src)
 {
 	if(src==nullptr)return nullptr;
 
-	return to_achar(src,wcslen(src));
+	return to_achar(src, (int)wcslen(src));
 }
 
 const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
@@ -105,3 +107,126 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 
 	return pDst;
 }
+
+namespace cxx {
+
+/*!
+ * ワイド文字列をナロー文字列に変換します。
+ *
+ * @param [in] source 変換元のワイド文字列
+ * @param [in, opt] codePage 変換に使用するコードページ。
+ */
+std::string to_string(std::wstring_view source, _In_opt_ UINT codePage) {
+	if (source.empty()) {
+		return "";
+	}
+
+	if (CP_ACP == codePage) {
+		const auto langId = ::GetThreadUILanguage();
+		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
+
+		std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
+		LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
+
+		if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
+			codePage = CP_SJIS;
+		}
+	}
+
+	// 変換エラーを受け取るフラグ
+	BOOL bUsedDefaultChar = FALSE;
+
+	// 変換に必要な出力バッファサイズを求める
+	const auto required = ::WideCharToMultiByte(
+		codePage,
+		0,
+		std::data(source),
+		int(std::size(source)),
+		LPSTR(nullptr),
+		0,
+		nullptr,
+		&bUsedDefaultChar
+	);
+
+	// 変換エラーがあったら例外を投げる
+	if (bUsedDefaultChar) {
+		throw std::invalid_argument("Invalid wide character sequence.");
+	}
+
+	// 変換に必要な出力バッファを確保する
+	std::string buffer(required, '\0');
+
+	// 変換を実行する
+	const auto converted = ::WideCharToMultiByte(
+		codePage,
+		0,
+		std::data(source),
+		int(std::size(source)),
+		std::data(buffer),
+		int(std::size(buffer)),
+		nullptr,
+		nullptr
+	);
+
+	buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
+
+	return buffer;
+}
+
+/*!
+ * ナロー文字列をワイド文字列に変換します。
+ *
+ * @param [in] source 変換元のナロー文字列
+ * @param [in, opt] codePage 変換に使用するコードページ。
+ */
+std::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
+	if (source.empty()) {
+		return L"";
+	}
+
+	if (CP_ACP == codePage) {
+		const auto langId = ::GetThreadUILanguage();
+		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
+
+		std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
+		LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
+
+		if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
+			codePage = CP_SJIS;
+		}
+	}
+
+	// 変換に必要な出力バッファサイズを求める
+	const auto required = ::MultiByteToWideChar(
+		codePage,
+		MB_ERR_INVALID_CHARS,
+		std::data(source),
+		int(std::size(source)),
+		LPWSTR(nullptr),
+		0
+	);
+
+	// 変換エラーがあったら例外を投げる
+	if (0 == required) {
+		throw std::invalid_argument("Invalid character sequence.");
+	}
+
+	// 変換に必要な出力バッファを確保する
+	std::wstring buffer(required, '\0');
+
+	// 変換を実行する
+	const auto converted = ::MultiByteToWideChar(
+		codePage,
+		0,
+		std::data(source),
+		int(std::size(source)),
+		std::data(buffer),
+		int(std::size(buffer))
+	);
+
+	buffer.resize(converted); // MultiByteToWideCharの戻り値は終端NULを含まない
+
+	return buffer;
+}
+
+} // namespace cxx

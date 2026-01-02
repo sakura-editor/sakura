@@ -34,11 +34,11 @@
 #include "CDocLocker.h"
 #include "layout/CLayoutMgr.h"
 #include "logic/CDocLineMgr.h"
-#include "CBackupAgent.h"
-#include "CAutoSaveAgent.h"
-#include "CAutoReloadAgent.h"
+#include "agent/CBackupAgent.h"
+#include "agent/CAutoSaveAgent.h"
+#include "agent/CAutoReloadAgent.h"
 #include "func/CFuncLookup.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "macro/CCookieManager.h"
 #include "util/design_template.h"
 
@@ -128,7 +128,7 @@ public:
 
 	//動的状態
 public:
-	int				m_nCommandExecNum;			//!< コマンド実行回数
+	int				m_nCommandExecNum = 0;			//!< コマンド実行回数
 
 	//環境情報
 public:
@@ -137,16 +137,20 @@ public:
 	//未整理変数
 public:
 	int				m_nTextWrapMethodCur;		// 折り返し方法					// 2008.05.30 nasukoji
-	bool			m_bTextWrapMethodCurTemp;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
+	bool			m_bTextWrapMethodCurTemp = false;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
 	LOGFONT			m_lfCur;					// 一時設定フォント
-	int				m_nPointSizeCur;			// 一時設定フォントサイズ
-	bool			m_blfCurTemp;				// フォント設定適用中
-	int				m_nPointSizeOrg;			// 元のフォントサイズ
+	int				m_nPointSizeCur = -1;		// 一時設定フォントサイズ
+	bool			m_blfCurTemp = false;		// フォント設定適用中
+	int				m_nPointSizeOrg = -1;		// 元のフォントサイズ
 	double			m_nCurrentZoom;				// 一時設定フォントのズーム倍率
-	bool			m_bTabSpaceCurTemp;			// タブ幅一時設定適用中			// 2013.05.30 Moca
+	bool			m_bTabSpaceCurTemp = false;	// タブ幅一時設定適用中			// 2013.05.30 Moca
 
-	HBITMAP			m_hBackImg;
+	HBITMAP			m_hBackImg = nullptr;
 	int				m_nBackImgWidth;
 	int				m_nBackImgHeight;
 };
+
+CEditDoc* GetDocument() noexcept;
+CEditDoc& GetEditDoc();
+
 #endif /* SAKURA_CEDITDOC_D845B5F3_FD71_4722_B115_63145B804253_H_ */

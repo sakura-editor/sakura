@@ -13,7 +13,7 @@
 #include "StdAfx.h"
 #include "dlg/CDlgProfileMgr.h"
 #include "dlg/CDlgInput1.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "util/file.h"
 #include "util/shell.h"
 #include "util/window.h"
@@ -22,7 +22,6 @@
 #include "func/Funccode.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_LIST_PROFILE,				HIDC_LIST_PROFILE,				//プロファイル一覧
@@ -122,17 +121,16 @@ void CDlgProfileMgr::SetData()
 
 void CDlgProfileMgr::SetData( int nSelIndex )
 {
-	int		nExtent = 0;
 	HWND	hwndList = GetItemHwnd( IDC_LIST_PROFILE );
 
-	List_ResetContent( hwndList );
+	ApiWrap::List_ResetContent( hwndList );
 	SProfileSettings settings;
 	ReadProfSettings( settings );
 	std::wstring strdef = L"(default)";
 	if( settings.m_nDefaultIndex == 0 ){
 		strdef += L"*";
 	}
-	List_AddString( hwndList, strdef.c_str() );
+	ApiWrap::List_AddString( hwndList, strdef.c_str() );
 	CTextWidthCalc calc( hwndList );
 	calc.SetDefaultExtend( CTextWidthCalc::WIDTH_MARGIN_SCROLLBER );
 	int count = (int)settings.m_vProfList.size();
@@ -141,17 +139,17 @@ void CDlgProfileMgr::SetData( int nSelIndex )
 		if( settings.m_nDefaultIndex == i + 1 ){
 			str += L"*";
 		}
-		List_AddString( hwndList, str.c_str() );
+		ApiWrap::List_AddString( hwndList, str.c_str() );
 		calc.SetTextWidthIfMax( str.c_str() );
 	}
-	List_SetHorizontalExtent( hwndList, calc.GetCx() );
+	ApiWrap::List_SetHorizontalExtent( hwndList, calc.GetCx() );
 	if( nSelIndex == -1 ){
 		nSelIndex = settings.m_nDefaultIndex;
 	}
 	if( nSelIndex < 0 ){
 		nSelIndex = 0;
 	}
-	List_SetCurSel( hwndList, nSelIndex );
+	ApiWrap::List_SetCurSel( hwndList, nSelIndex );
 	DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_DELETE, nSelIndex != 0 );
 	DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_RENAME, nSelIndex != 0 );
 
@@ -162,7 +160,7 @@ void CDlgProfileMgr::SetData( int nSelIndex )
 template <size_t cchText>
 static bool MyList_GetText(HWND hwndList, int index, WCHAR(&szText)[cchText])
 {
-	List_GetText( hwndList, index, szText );
+	ApiWrap::List_GetText( hwndList, index, szText );
 	WCHAR* pos = wcschr( szText, L'*' );
 	if( pos != nullptr ){
 		*pos = L'\0';
@@ -180,7 +178,7 @@ int CDlgProfileMgr::GetData()
 int CDlgProfileMgr::GetData(bool bStart)
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
-	int nCurIndex = List_GetCurSel(hwndList);
+	int nCurIndex = ApiWrap::List_GetCurSel(hwndList);
 	WCHAR szText[_MAX_PATH];
 	MyList_GetText( hwndList, nCurIndex, szText );
 	m_strProfileName = szText;
@@ -222,10 +220,10 @@ BOOL CDlgProfileMgr::OnBnClicked( int wID )
 	case IDC_BUTTON_PROF_DEFSET:
 		{
 			HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
-			int nSelIndex = List_GetCurSel( hwndList );
+			int nSelIndex = ApiWrap::List_GetCurSel( hwndList );
 			SetDefaultProf(nSelIndex);
 			UpdateIni();
-			List_SetCurSel( hwndList, nSelIndex );
+			ApiWrap::List_SetCurSel( hwndList, nSelIndex );
 			DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_DEFCLEAR, true );
 		}
 		break;
@@ -233,10 +231,10 @@ BOOL CDlgProfileMgr::OnBnClicked( int wID )
 	case IDC_BUTTON_PROF_DEFCLEAR:
 		{
 			HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
-			int nSelIndex = List_GetCurSel( hwndList );
+			int nSelIndex = ApiWrap::List_GetCurSel( hwndList );
 			ClearDefaultProf();
 			UpdateIni();
-			List_SetCurSel( hwndList, nSelIndex );
+			ApiWrap::List_SetCurSel( hwndList, nSelIndex );
 			DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_DEFCLEAR, false );
 		}
 		break;
@@ -269,7 +267,7 @@ INT_PTR CDlgProfileMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPAR
 				switch( HIWORD(wParam) ){
 				case LBN_SELCHANGE:
 					HWND hwndList = (HWND)lParam;
-					int nIdx = List_GetCurSel( hwndList );
+					int nIdx = ApiWrap::List_GetCurSel( hwndList );
 					DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_DELETE, nIdx != 0 );
 					DlgItem_Enable( GetHwnd(), IDC_BUTTON_PROF_RENAME, nIdx != 0 );
 					return TRUE;
@@ -285,7 +283,7 @@ void CDlgProfileMgr::UpdateIni()
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
 	SProfileSettings settings;
 	ReadProfSettings( settings );
-	int nCount = List_GetCount( hwndList );
+	int nCount = ApiWrap::List_GetCount( hwndList );
 	settings.m_vProfList.clear();
 	settings.m_nDefaultIndex = -1;
 	for( int i = 0; i < nCount; i++ ){
@@ -307,7 +305,7 @@ void CDlgProfileMgr::UpdateIni()
 
 static bool IsProfileDuplicate(HWND hwndList, LPCWSTR szProfName, int skipIndex)
 {
-	int nCount = List_GetCount( hwndList );
+	int nCount = ApiWrap::List_GetCount( hwndList );
 	for( int i = 0; i < nCount; i++ ){
 		if( skipIndex == i ){
 			continue;
@@ -337,7 +335,7 @@ void CDlgProfileMgr::CreateProf()
 	}
 	std::wstring strText = szText;
 	static const WCHAR szReservedChars[] = L"/\\*?<>&|:\"'\t";
-	for( int x = 0; x < _countof(szReservedChars); ++x ){
+	for( int x = 0; x < int(std::size(szReservedChars)); ++x ){
 		if( strText.npos != strText.find(szReservedChars[x]) ){
 			ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 			return;
@@ -358,8 +356,8 @@ void CDlgProfileMgr::CreateProf()
 		return;
 	}
 
-	List_AddString( hwndList, szText );
-	int sel = List_GetCurSel( hwndList );
+	ApiWrap::List_AddString( hwndList, szText );
+	int sel = ApiWrap::List_GetCurSel( hwndList );
 	UpdateIni();
 	SetData(sel);
 }
@@ -367,10 +365,10 @@ void CDlgProfileMgr::CreateProf()
 void CDlgProfileMgr::DeleteProf()
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
-	int nCurIndex = List_GetCurSel(hwndList);
-	List_DeleteString( hwndList, nCurIndex );
+	int nCurIndex = ApiWrap::List_GetCurSel(hwndList);
+	ApiWrap::List_DeleteString( hwndList, nCurIndex );
 	UpdateIni();
-	if( List_GetCount( hwndList ) <= nCurIndex ){
+	if( ApiWrap::List_GetCount( hwndList ) <= nCurIndex ){
 		nCurIndex--;
 	}
 	SetData(nCurIndex);
@@ -380,7 +378,7 @@ void CDlgProfileMgr::RenameProf()
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
 	CDlgInput1 cDlgInput1;
-	int nCurIndex = List_GetCurSel(hwndList);
+	int nCurIndex = ApiWrap::List_GetCurSel(hwndList);
 	WCHAR szText[_MAX_PATH];
 	bool bDefault = MyList_GetText( hwndList, nCurIndex, szText );
 	WCHAR szTextOld[_MAX_PATH];
@@ -399,7 +397,7 @@ void CDlgProfileMgr::RenameProf()
 	}
 	std::wstring strText = szText;
 	static const WCHAR szReservedChars[] = L"/\\*?<>&|:\"'\t";
-	for( int x = 0; x < _countof(szReservedChars); ++x ){
+	for( int x = 0; x < int(std::size(szReservedChars)); ++x ){
 		if( strText.npos != strText.find(szReservedChars[x]) ){
 			ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 			return;
@@ -433,8 +431,8 @@ void CDlgProfileMgr::RenameProf()
 	if( bDefault ){
 		wcscat(szText, L"*");
 	}
-	List_DeleteString( hwndList, nCurIndex );
-	List_InsertString( hwndList, nCurIndex, szText );
+	ApiWrap::List_DeleteString( hwndList, nCurIndex );
+	ApiWrap::List_InsertString( hwndList, nCurIndex, szText );
 	UpdateIni();
 	SetData(nCurIndex);
 }
@@ -445,20 +443,20 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
 	WCHAR szProfileName[_MAX_PATH];
 	MyList_GetText( hwndList, index, szProfileName );
-	List_DeleteString( hwndList, index );
+	ApiWrap::List_DeleteString( hwndList, index );
 	wcscat( szProfileName, L"*" );
-	List_InsertString( hwndList, index, szProfileName );
+	ApiWrap::List_InsertString( hwndList, index, szProfileName );
 }
 
 void CDlgProfileMgr::ClearDefaultProf()
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
-	int nCount = List_GetCount( hwndList );
+	int nCount = ApiWrap::List_GetCount( hwndList );
 	for( int i = 0; i < nCount; i++ ){
 		WCHAR szProfileName[_MAX_PATH];
 		if( MyList_GetText( hwndList, i, szProfileName ) ){
-			List_DeleteString( hwndList, i );
-			List_InsertString( hwndList, i, szProfileName );
+			ApiWrap::List_DeleteString( hwndList, i );
+			ApiWrap::List_InsertString( hwndList, i, szProfileName );
 		}
 	}
 }

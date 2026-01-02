@@ -35,14 +35,13 @@
 #include "doc/CEditDoc.h"
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "macro/CSMacroMgr.h"
 #include "window/CEditWnd.h"
 #include "docplus/CDiffManager.h"
-#include "CMarkMgr.h"	// CAutoMarkMgr
+#include "env/CMarkMgr.h"	// CAutoMarkMgr
 #include "util/os.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 //using namespace nsFuncCode;
 
@@ -67,7 +66,7 @@ const uint16_t nsFuncCode::ppszFuncKind[] = {
 	STR_ERR_DLGFUNCLKUP17,	//L"支援",
 	STR_ERR_DLGFUNCLKUP18	//L"その他"
 };
-const int nsFuncCode::nFuncKindNum = _countof(nsFuncCode::ppszFuncKind);
+const int nsFuncCode::nFuncKindNum = int(std::size(nsFuncCode::ppszFuncKind));
 
 /* ファイル操作系 */
 const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
@@ -112,7 +111,7 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_EXITALLEDITORS	,	//編集の全終了	// 2007.02.13 ryoji F_WIN_CLOSEALL→F_EXITALLEDITORS
 	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 };
-const int nFincList_File_Num = _countof( pnFuncList_File );	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
+constexpr auto nFincList_File_Num = int(std::size(pnFuncList_File));	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
 
 /* 編集系 */
 const EFunctionCode pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
@@ -143,7 +142,7 @@ const EFunctionCode pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_RECONVERT				//再変換 				2002.04.09 minfu
 //		F_WORDSREFERENCE		//単語リファレンス
 };
-const int nFincList_Edit_Num = _countof( pnFuncList_Edit );	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
+constexpr auto nFincList_Edit_Num = int(std::size(pnFuncList_Edit));	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
 
 /* カーソル移動系 */
 const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
@@ -189,7 +188,7 @@ const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_MODIFYLINE_NEXT	,	//次の変更行へ移動
 	F_MODIFYLINE_PREV	,	//前の変更行へ移動
 };
-const int nFincList_Move_Num = _countof( pnFuncList_Move );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
+constexpr auto nFincList_Move_Num = int(std::size(pnFuncList_Move));	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
 /* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 const EFunctionCode pnFuncList_Select[] = {
@@ -220,7 +219,7 @@ const EFunctionCode pnFuncList_Select[] = {
 	F_MODIFYLINE_NEXT_SEL	,	//(範囲選択)次の変更行へ移動
 	F_MODIFYLINE_PREV_SEL	,	//(範囲選択)前の変更行へ移動
 };
-const int nFincList_Select_Num = _countof( pnFuncList_Select );
+constexpr auto nFincList_Select_Num = int(std::size(pnFuncList_Select));
 
 /* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
 const EFunctionCode pnFuncList_Box[] = {
@@ -244,7 +243,7 @@ const EFunctionCode pnFuncList_Box[] = {
 	F_GOFILETOP_BOX		,	//(矩形選択)ファイルの先頭に移動
 	F_GOFILEEND_BOX			//(矩形選択)ファイルの最後に移動
 };
-const int nFincList_Box_Num = _countof( pnFuncList_Box );
+constexpr auto nFincList_Box_Num = int(std::size(pnFuncList_Box));
 
 /* クリップボード系 */
 const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
@@ -267,7 +266,7 @@ const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
-const int nFincList_Clip_Num = _countof( pnFuncList_Clip );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
+constexpr auto nFincList_Clip_Num = int(std::size(pnFuncList_Clip));	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
 /* 挿入系 */
 const EFunctionCode pnFuncList_Insert[] = {
@@ -277,7 +276,7 @@ const EFunctionCode pnFuncList_Insert[] = {
 	F_INS_FILE_USED_RECENTLY,	// 最近使ったファイル挿入
 	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダー挿入
 };
-const int nFincList_Insert_Num = _countof( pnFuncList_Insert );
+constexpr auto nFincList_Insert_Num = int(std::size(pnFuncList_Insert));
 
 /* 変換系 */
 const EFunctionCode pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
@@ -311,7 +310,7 @@ const EFunctionCode pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変�
 	//Sept. 30, 2000JEPRO コメントアウトされてあったのを復活させた(動作しないのかも？)
 	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 };
-const int nFincList_Convert_Num = _countof( pnFuncList_Convert );	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
+constexpr auto nFincList_Convert_Num = int(std::size(pnFuncList_Convert));	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
 
 /* 検索系 */
 const EFunctionCode pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
@@ -354,7 +353,7 @@ const EFunctionCode pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変�
 	F_FUNCLIST_NEXT		,	//次の関数リストマーク
 	F_FUNCLIST_PREV		,	//前の関数リストマーク
 };
-const int nFincList_Search_Num = _countof( pnFuncList_Search );	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
+constexpr auto nFincList_Search_Num = int(std::size(pnFuncList_Search));	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 
 /* モード切り替え系 */	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
 const EFunctionCode pnFuncList_Mode[] = {
@@ -365,7 +364,7 @@ const EFunctionCode pnFuncList_Mode[] = {
 	F_CHGMOD_EOL_CR		,	//入力改行コード指定(CR)	2003.06.23 Moca
 	F_CANCEL_MODE			//各種モードの取り消し
 };
-const int nFincList_Mode_Num = _countof( pnFuncList_Mode );	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
+constexpr auto nFincList_Mode_Num = int(std::size(pnFuncList_Mode));	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
 
 /* 設定系 */
 const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
@@ -388,7 +387,7 @@ const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(L
 	F_TMPWRAPWINDOW		,	//右端で折り返す（一時設定）		// 2008.05.30 nasukoji
 	F_SELECT_COUNT_MODE		//文字カウント設定	// 2009.07.06 syat
 };
-int		nFincList_Set_Num = _countof( pnFuncList_Set );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
+constexpr auto nFincList_Set_Num = int(std::size(pnFuncList_Set));	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 
 /* マクロ系 */
 const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
@@ -402,7 +401,7 @@ const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更
 	F_EXECMD_DIALOG		/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 };
-const int nFincList_Macro_Num = _countof( pnFuncList_Macro);	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
+constexpr auto nFincList_Macro_Num = int(std::size(pnFuncList_Macro));	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
 
 /* カスタムメニュー */	//Oct. 21, 2000 JEPRO 「その他」から分離独立化
 #if 0
@@ -435,7 +434,7 @@ const EFunctionCode pnFuncList_Menu[] = {
 	F_CUSTMENU_23				,	/* カスタムメニュー23 */
 	F_CUSTMENU_24				 	/* カスタムメニュー24 */
 };
-const int nFincList_Menu_Num = _countof( pnFuncList_Menu );	//Oct. 21, 2000 JEPRO 「その他」から分離独立化
+constexpr auto nFincList_Menu_Num = int(std::size(pnFuncList_Menu));	//Oct. 21, 2000 JEPRO 「その他」から分離独立化
 #endif
 
 /* ウィンドウ系 */
@@ -471,7 +470,7 @@ const EFunctionCode pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(L
 	F_REDRAW			,	//再描画
 	F_WIN_OUTPUT		,	//アウトプットウィンドウ表示
 };
-const int nFincList_Win_Num = _countof( pnFuncList_Win );	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
+constexpr auto nFincList_Win_Num = int(std::size(pnFuncList_Win));	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 
 /* 支援 */
 const EFunctionCode pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
@@ -485,13 +484,13 @@ const EFunctionCode pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変�
 	F_EXTHTMLHELP				,	/* 外部HTMLヘルプ */
 	F_ABOUT							/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 };
-const int nFincList_Support_Num = _countof( pnFuncList_Support );	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
+constexpr auto nFincList_Support_Num = int(std::size(pnFuncList_Support));	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 
 /* その他 */	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 const EFunctionCode pnFuncList_Others[] = {
 	F_DISABLE				//Oct. 21, 2000 JEPRO 何もないとエラーになってしまうのでダミーで[未定義]を入れておく
 };
-const int nFincList_Others_Num = _countof( pnFuncList_Others );	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
+constexpr auto nFincList_Others_Num = int(std::size(pnFuncList_Others));	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 
 // 特殊機能
 const EFunctionCode nsFuncCode::pnFuncList_Special[] = {
@@ -502,7 +501,7 @@ const EFunctionCode nsFuncCode::pnFuncList_Special[] = {
 	F_USERMACRO_LIST,
 	F_PLUGIN_LIST,
 };
-const int nsFuncCode::nFuncList_Special_Num = (int)_countof(nsFuncCode::pnFuncList_Special);
+const int nsFuncCode::nFuncList_Special_Num = int(std::size(nsFuncCode::pnFuncList_Special));
 
 const int nsFuncCode::pnFuncListNumArr[] = {
 //	nFincList_Undef_Num,	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)
@@ -544,7 +543,7 @@ const EFunctionCode* nsFuncCode::ppnFuncListArr[] = {
 	pnFuncList_Support,/* 支援 */				//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 	pnFuncList_Others	/* その他 */			//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 };
-const int nsFuncCode::nFincListNumArrNum = _countof( nsFuncCode::pnFuncListNumArr );
+const int nsFuncCode::nFincListNumArrNum = int(std::size(nsFuncCode::pnFuncListNumArr));
 
 //! 機能番号に応じてヘルプトピック番号を返す
 /*!
@@ -949,13 +948,13 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 
 	default:
 		// From Here 2003.09.23 Moca
-		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + MAX_MRU ){
+		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + (int)MAX_MRU ){
 			return HLP000029;	//最近使ったファイル
-		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + MAX_OPENFOLDER ){
+		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + (int)MAX_OPENFOLDER ){
 			return HLP000023;	//最近使ったフォルダー
-		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
+		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + (int)MAX_EDITWINDOWS ){
 			return HLP000097;	//ウィンドウリスト
-		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + MAX_CUSTMACRO ){
+		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
 			return HLP000202;	//登録済みマクロ	// 2006.10.08 ryoji
 		}
 		// To Here 2003.09.23 Moca

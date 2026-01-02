@@ -101,7 +101,7 @@ int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned short*>(pDst);
+	return int(pw - reinterpret_cast<unsigned short*>(pDst));
 }
 
 /* コード変換 SJIS→Unicode */
@@ -208,7 +208,7 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned char*>(pDst);
+	return int(pw - reinterpret_cast<unsigned char*>(pDst));
 }
 
 /* コード変換 Unicode→SJIS */

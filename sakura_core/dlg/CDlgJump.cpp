@@ -29,7 +29,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 // ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12800
@@ -65,7 +64,7 @@ int CDlgJump::DoModal(
 	LPARAM		lParam
 )
 {
-	return CDialog::DoModal( hInstance, hwndParent, IDD_JUMP, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_JUMP, lParam );
 }
 
 // From Here Oct. 6, 2000 JEPRO added 行番号入力ボックスにスピンコントロールを付けるため
@@ -115,12 +114,14 @@ BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
 
 BOOL CDlgJump::OnCbnSelChange( HWND hwndCtl, int wID )
 {
+	UNREFERENCED_PARAMETER(hwndCtl);
+
 	int	nIndex;
 	int	nWorkLine;
 	switch( wID ){
 	case IDC_COMBO_PLSQLBLOCKS:
-		nIndex = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ) );
-		nWorkLine = (int)Combo_GetItemData( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ), nIndex );
+		nIndex = ApiWrap::Combo_GetCurSel( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ) );
+		nWorkLine = (int)ApiWrap::Combo_GetItemData( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ), nIndex );
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, nWorkLine, FALSE );
 		return TRUE;
 	}
@@ -234,7 +235,7 @@ void CDlgJump::SetData( void )
 //From Here Oct. 7, 2000 JEPRO 前回入力した行番号を保持するように下行を変更
 //	::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, "" );	/* 行番号 */
 	if( 0 == m_nLineNum ){
-		::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, L"" );	/* 行番号 */
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, L"" );	/* 行番号 */
 	}else{
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, m_nLineNum, FALSE );	/* 前回の行番号 */
 	}
@@ -264,12 +265,12 @@ void CDlgJump::SetData( void )
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}
-			nIndex = Combo_AddString( hwndCtrl, szText );
+			nIndex = ApiWrap::Combo_AddString( hwndCtrl, szText );
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
+				ApiWrap::Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}
 			else{
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
+				ApiWrap::Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
 			}
 			nPLSQLBlockNum++;
 		}
@@ -285,18 +286,18 @@ void CDlgJump::SetData( void )
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}
-			nIndexCurSel = nIndex = Combo_AddString( hwndCtrl, szText );
+			nIndexCurSel = nIndex = ApiWrap::Combo_AddString( hwndCtrl, szText );
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				nWorkLine = (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF;
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
+				ApiWrap::Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}else{
 				nWorkLine = (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT;
-				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
+				ApiWrap::Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
 			}
 			++nPLSQLBlockNum;
 		}
 	}
-	Combo_SetCurSel( hwndCtrl, nIndexCurSel );
+	ApiWrap::Combo_SetCurSel( hwndCtrl, nIndexCurSel );
 
 	/* PL/SQLのパッケージ本体が検出された場合 */
 	if( -1 != nWorkLine ){

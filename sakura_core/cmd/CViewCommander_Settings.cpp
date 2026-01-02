@@ -22,15 +22,13 @@
 #include "StdAfx.h"
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
-
 #include "typeprop/CDlgTypeList.h"
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "CEditApp.h"
 #include "util/shell.h"
-#include "CPropertyManager.h"
+#include "env/CPropertyManager.h"
 #include "util/window.h"
 #include "util/zoom.h"
-#include <array>
 #include "config/system_constants.h"
 #include "config/app_constants.h"
 
@@ -520,8 +518,5 @@ void CViewCommander::Command_SET_QUOTESTRING( const wchar_t* quotestr )
 	if( quotestr == nullptr )
 		return;
 
-	wcsncpy( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou, quotestr,
-		_countof( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ));
-	
-	GetDllShareData().m_Common.m_sFormat.m_szInyouKigou[ _countof( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ) - 1 ] = L'\0';
+	wcsncpy_s( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou, quotestr, _TRUNCATE);
 }

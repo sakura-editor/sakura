@@ -28,7 +28,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 //検索 CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//11800
@@ -67,7 +66,7 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
 			for (int i = 0; i < nSize; ++i) {
-				Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
+				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 			}
 		}
 		break;
@@ -125,7 +124,7 @@ void CDlgFind::SetData( void )
 	// 2011.12.18 長さ制限撤廃
 	// Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 
 	/*****************************
 	*         データ設定         *
@@ -182,12 +181,12 @@ void CDlgFind::SetCombosList( void )
 
 	/* 検索文字列 */
 	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT );
-	while (Combo_GetCount(hwndCombo) > 0) {
-		Combo_DeleteString( hwndCombo, 0);
+	while (ApiWrap::Combo_GetCount(hwndCombo) > 0) {
+		ApiWrap::Combo_DeleteString( hwndCombo, 0);
 	}
 	std::wstring strText;
 	if( !ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, strText ) || strText != m_strText ) {
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}
 }
 

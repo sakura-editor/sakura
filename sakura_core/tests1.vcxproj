@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{701e3407-ec27-49f7-adc7-520cf2b4b438}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="..\tools\vcx-props\vcxcompat.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <IntDir>..\build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>..\$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Label="tests1.common">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\resources\;..\src\main\cpp;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis /w34996 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\src\test\resources\;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Culture>0x0411</Culture>
+    </ResourceCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="..\src\main\msbuild\cmake.props" />
+  <Import Project="..\src\test\msbuild\googletest.props" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Link Include="..\build\$(Platform)\$(Configuration)\sakura_core\*.obj" />
+    <Link Include="..\build\$(Platform)\$(Configuration)\sakura_core\*.res" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\test\resources\pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\test\resources\code-main.cpp" />
+    <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdocline.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdoclinemgr.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-codechecker.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cppa.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-csearchagent.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-crunningtimer.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-csharedata.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-czipfile.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-extmodules.cpp" />
+    <ClCompile Include="..\src\test\resources\printEFunctionCode.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cclipboard.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-ccodebase.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-ccommandline.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cconvert.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdecode.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdlgopenfile.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdlgprofilemgr.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdoctypemanager.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-ceol.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cerrorinfo.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cfileext.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-clayoutint.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cnative.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cprofile.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-csakuraenvironment.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-ctextmetrics.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cwordparse.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-design_template.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-editinfo.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-file.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-charcode.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-format.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grepinfo.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-int2dec.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-is_mailaddress.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-loadstring.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-messageboxf.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-mydevmode.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-parameterized.cpp" />
+    <ClCompile Include="..\src\test\resources\printECodeType.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-sample-disabled.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-sample.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-ssearchoption.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-statictype.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-StdControl.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-string_ex.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-window.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-zoom.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-winmain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\test\resources\pch.h" />
+    <ClInclude Include="..\src\test\resources\StartEditorProcess.hpp" />
+    <ClInclude Include="..\src\test\resources\eval_outputs.hpp" />
+    <ClInclude Include="..\src\test\resources\rt_zipres.h" />
+    <ClInclude Include="..\src\test\resources\TExtModule.hpp" />
+    <ClInclude Include="..\src\test\resources\tests1_rc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\sakura_core\tests1_rc.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\src\test\cmake\tests1.cmake" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
+    <ClCompile Include="..\src\test\resources\coverage.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sakura_core\sakura.vcxproj">
+      <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <TestResource Include="..\src\test\resources\tests1\test-plugin\plugin.def" />
+  </ItemGroup>
+  <Import Project="..\src\test\msbuild\googletest.targets" />
+  <Target Name="CopyMiniz" Condition="!Exists('$(CMakeToolsBuildDir)include\miniz-cpp\zip_file.hpp')" BeforeTargets="ClCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_miniz -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="MakeTestResource" Condition="!Exists('$(CMakeToolsBuildDir)resources.ja-JP.zip')" BeforeTargets="ResourceCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_resource_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(IntDir)..\..\CMakeTools\resources.ja-JP.zip" />
+    </ItemGroup>
+  </Target>
+</Project>

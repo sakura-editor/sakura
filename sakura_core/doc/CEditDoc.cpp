@@ -24,14 +24,10 @@
 */
 
 #include "StdAfx.h"
-#include <stdlib.h>
-#include <string.h>	// Apr. 03, 2003 genta
-#include <memory>
-#include <OleCtl.h>
 #include <wincodec.h>
-#pragma comment(lib, "windowscodecs.lib")
-#include <wrl.h>
 #include "doc/CEditDoc.h"
+
+#include "cxx/com_pointer.hpp"
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
 #include "docplus/CModifyManager.h"
@@ -41,9 +37,9 @@
 #include "_main/CNormalProcess.h"
 #include "window/CEditWnd.h"
 #include "_os/CClipboard.h"
-#include "CCodeChecker.h"
+#include "env/CCodeChecker.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "print/CPrintPreview.h"
 #include "uiparts/CVisualProgress.h"
 #include "charset/CCodeMediator.h"
@@ -63,7 +59,8 @@
 #include "util/window.h"
 #include "sakura_rc.h"
 #include "config/app_constants.h"
-#include "String_define.h"
+
+#pragma comment(lib, "windowscodecs.lib")
 
 #define IDT_ROLLMOUSE	1
 
@@ -135,6 +132,28 @@ static const EFunctionCode EIsModificationForbidden[] = {
 	F_HOKAN,
 };
 
+/*!
+ * ドキュメントのアドレスを取得する
+ */
+CEditDoc* GetDocument() noexcept
+{
+	return CEditDoc::getInstance();
+}
+
+/*!
+ * ドキュメントの参照を取得する
+ *
+ * @throws CEditDocが生成されていない
+ */
+CEditDoc& GetEditDoc()
+{
+	auto doc = GetDocument();
+	if (!doc) {
+		throw std::domain_error("CEditDoc is not initialized");
+	}
+	return *doc;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -153,9 +172,8 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 , m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_nCommandExecNum( 0 )			/* コマンド実行回数 */
-, m_hBackImg(nullptr)
 {
+	UNREFERENCED_PARAMETER(pcApp);
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::CEditDoc" );
 
 	// レイアウト管理情報の初期化
@@ -183,11 +201,6 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
-	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
-	m_blfCurTemp = false;
-	m_nPointSizeCur = -1;
-	m_nPointSizeOrg = -1;
-	m_bTabSpaceCurTemp = false;
 
 	// 文字コード種別を初期化
 	m_cDocFile.SetCodeSet( ref.m_encoding.m_eDefaultCodetype, ref.m_encoding.m_bDefaultBom );
@@ -199,8 +212,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 #ifdef _DEBUG
 	{
 		// 編集禁止コマンドの並びをチェック
-		int i;
-		for ( i = 0; i < _countof(EIsModificationForbidden) - 1; i++){
+		for (auto i = 0; i < int(std::size(EIsModificationForbidden)) - 1; i++){
 			assert( EIsModificationForbidden[i] <  EIsModificationForbidden[i+1] );
 		}
 	}
@@ -307,16 +319,15 @@ void CEditDoc::SetBackgroundImage()
 		path = fullPath;
 	}
 
-	using namespace Microsoft::WRL;
-	ComPtr<IWICImagingFactory> pIWICFactory;
+	cxx::com_pointer<IWICImagingFactory> pIWICFactory;
 	HRESULT hr;
-	hr = CoCreateInstance(
+	hr = pIWICFactory.CreateInstance(
 		CLSID_WICImagingFactory,
 		nullptr,
-		CLSCTX_INPROC_SERVER,
-		IID_PPV_ARGS(&pIWICFactory));
+		CLSCTX_INPROC_SERVER
+	);
 	if( FAILED(hr) ) return;
-	ComPtr<IWICBitmapDecoder> pDecoder;
+	cxx::com_pointer<IWICBitmapDecoder> pDecoder;
 	hr = pIWICFactory->CreateDecoderFromFilename(
 		path.c_str(),
 		nullptr,
@@ -324,17 +335,17 @@ void CEditDoc::SetBackgroundImage()
 		WICDecodeMetadataCacheOnLoad,
 		&pDecoder);
 	if( FAILED(hr) ) return;
-	ComPtr<IWICBitmapFrameDecode> pFrame;
+	cxx::com_pointer<IWICBitmapFrameDecode> pFrame;
 	hr = pDecoder->GetFrame(0, &pFrame);
 	if( FAILED(hr) ) return;
 	//WICPixelFormatGUID pixelFormat;
 	//hr = pFrame->GetPixelFormat(&pixelFormat);
 	//if( FAILED(hr) ) return;
-	ComPtr<IWICFormatConverter> pConverter;
+	cxx::com_pointer<IWICFormatConverter> pConverter;
 	pIWICFactory->CreateFormatConverter(&pConverter);
 	if( FAILED(hr) ) return;
 	hr = pConverter->Initialize(
-		pFrame.Get(),
+		pFrame,
 		GUID_WICPixelFormat32bppPBGRA,
 		WICBitmapDitherTypeNone,
 		nullptr,
@@ -517,7 +528,7 @@ bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand ) const
 	//	編集禁止の場合(バイナリサーチ)
 	{
 		int lbound = 0;
-		int ubound = _countof(EIsModificationForbidden) - 1;
+		auto ubound = int(std::size(EIsModificationForbidden)) - 1;
 
 		while( lbound <= ubound ){
 			int mid = ( lbound + ubound ) / 2;
@@ -1003,7 +1014,7 @@ void CEditDoc::SetCurDirNotitle()
 			}
 		}
 	}else if( eOpenDialogDir == OPENDIALOGDIR_SEL ){
-		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, _countof(szSelDir) );
+		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, int(std::size(szSelDir)) );
 		pszDir = szSelDir;
 	}
 	if( pszDir != nullptr ){

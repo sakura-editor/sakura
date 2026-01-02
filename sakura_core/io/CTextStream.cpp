@@ -9,7 +9,7 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h"	// move from CCodeMediator.h	2010/6/14 Uchi
 #include "charset/CUtf8.h"		// move from CCodeMediator.h	2010/6/14 Uchi
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "util/file.h"			// _IS_REL_PATH
 #include "util/module.h"
 
@@ -111,7 +111,7 @@ void CTextOutputStream::WriteString(
 	//$$メモ: 文字変換時にいちいちコピーを作ってるので効率が悪い。後々効率改善予定。
 
 	int nDataLen = nLen;
-	if(nDataLen<0)nDataLen = wcslen(szData);
+	if(nDataLen<0)nDataLen = (int)wcslen(szData);
 	const wchar_t* pData = szData;
 	const wchar_t* pEnd = szData + nDataLen;
 
@@ -160,7 +160,7 @@ void CTextOutputStream::WriteF(const wchar_t* format, ...)
 	static wchar_t buf[16*1024]; //$$ 確保しすぎかも？
 	va_list v;
 	va_start(v,format);
-	auto_vsprintf_s(buf,_countof(buf),format,v);
+	auto_vsprintf_s(buf, std::size(buf),format,v);
 	va_end(v);
 
 	//出力

@@ -21,7 +21,7 @@
 #include "_main/CControlTray.h"
 #include "charset/charcode.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
@@ -37,6 +37,10 @@ void CEditView::TranslateCommand_grep(
 	LPARAM&			lparam4
 )
 {
+	UNREFERENCED_PARAMETER(bRedraw);
+	UNREFERENCED_PARAMETER(lparam2);
+	UNREFERENCED_PARAMETER(lparam3);
+	UNREFERENCED_PARAMETER(lparam4);
 	if( ! CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode )
 		return;
 
@@ -45,7 +49,7 @@ void CEditView::TranslateCommand_grep(
 		if( WCODE::IsLineDelimiter((wchar_t)lparam1, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)
 				&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;
-			lparam1 = GetKeyState_Control()?1:0;
+			lparam1 = ApiWrap::GetKeyState_Control()?1:0;
 		}
 	}
 }

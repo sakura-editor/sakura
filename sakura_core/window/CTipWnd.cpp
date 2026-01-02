@@ -179,7 +179,7 @@ void CTipWnd::ComputeWindowSize(
 				}
 			}else{
 				// ダミー文字列を計測して必要な高さを取得する
-				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT | DT_EXTERNALLEADING );
+				::DrawText( hdc, szDummy, int(std::size(szDummy)) - 1, &rc, DT_CALCRECT | DT_EXTERNALLEADING );
 			}
 
 			// 計測した高さを加算する
@@ -251,7 +251,7 @@ void CTipWnd::DrawTipText(
 				);
 			}else{
 				// ダミー文字列の高さを取得する
-				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_EXTERNALLEADING );
+				nHeight = ::DrawText( hdc, szDummy, int(std::size(szDummy)) - 1, &rc, DT_EXTERNALLEADING );
 			}
 
 			// 描画領域の上端を1行分ずらす
@@ -290,6 +290,9 @@ void CTipWnd::Hide( void )
 /* 描画処理 */
 LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 {
+	UNREFERENCED_PARAMETER(l_Param);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	PAINTSTRUCT	ps;
 	HDC			hdc = ::BeginPaint(	hwnd, &ps );
 

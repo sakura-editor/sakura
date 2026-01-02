@@ -37,7 +37,6 @@
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {
@@ -137,7 +136,7 @@ BOOL CViewCommander::HandleCommand(
 	}
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
-	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
+	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
 		if( !m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
 			nCommandFrom & FA_NONRECORD )){
@@ -666,9 +665,11 @@ BOOL CViewCommander::HandleCommand(
 /*!
 	@date 2014.07.11 新規追加
 */
-void CViewCommander::Sub_BoxSelectLock( int flags )
+void CViewCommander::Sub_BoxSelectLock(LPARAM lParam) noexcept
 {
-	bool bSelLock;
+	auto flags = int(lParam);
+
+	bool bSelLock = false;
 	if( flags == 0x00 ){
 		bSelLock = GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock;
 	}else if( flags == 0x01 ){

@@ -36,7 +36,6 @@
 #include "doc/layout/CTsvModeInfo.h"
 #include "env/DLLSHAREDATA.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_TYPENAME,				HIDC_EDIT_TYPENAME,			//設定の名前
@@ -163,10 +162,10 @@ void CPropTypesScreen::CPropTypes_Screen()
 {
 	//プラグイン無効の場合、ここで静的メンバを初期化する。プラグイン有効の場合はAddXXXMethod内で初期化する。
 	if( m_OlmArr.empty() ){
-		InitTypeNameId2(m_OlmArr, OlmArr, _countof(OlmArr));	//アウトライン解析ルール
+		InitTypeNameId2(m_OlmArr, OlmArr, int(std::size(OlmArr)));	//アウトライン解析ルール
 	}
 	if( m_SIndentArr.empty() ){
-		InitTypeNameId2(m_SIndentArr, SmartIndentArr, _countof(SmartIndentArr));	//スマートインデントルール
+		InitTypeNameId2(m_SIndentArr, SmartIndentArr, int(std::size(SmartIndentArr)));	//スマートインデントルール
 	}
 }
 
@@ -213,17 +212,17 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		// エディットコントロールの入力文字数制限
-		EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME        ), _countof( m_Types.m_szTypeName      ) - 1 );
-		EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS        ), _countof( m_Types.m_szTypeExts      ) - 1 );
-		EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_INDENTCHARS     ), _countof( m_Types.m_szIndentChars   ) - 1 );
-		EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING   ), _countof( m_Types.m_szTabViewString ) - 1 );
-		EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), _countof2( m_Types.m_szOutlineRuleFilename ) - 1 );	//	Oct. 5, 2002 genta 画面上でも入力制限
+		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME        ), int(std::size(m_Types.m_szTypeName)) - 1 );
+		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS        ), int(std::size(m_Types.m_szTypeExts)) - 1 );
+		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_INDENTCHARS     ), int(std::size(m_Types.m_szIndentChars)) - 1 );
+		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING   ), int(std::size(m_Types.m_szTabViewString)) - 1 );
+		ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), std::size( m_Types.m_szOutlineRuleFilename ) - 1 );	//	Oct. 5, 2002 genta 画面上でも入力制限
 
 		if( 0 == m_Types.m_nIdx ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), FALSE );	//設定の名前
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS ), FALSE );	//ファイル拡張子
 		}
-		UpDown_SetRange(::GetDlgItem(hwndDlg, IDC_SPIN_LINESPACE), -LINESPACE_MAX, LINESPACE_MAX);
+		ApiWrap::UpDown_SetRange(::GetDlgItem(hwndDlg, IDC_SPIN_LINESPACE), -LINESPACE_MAX, LINESPACE_MAX);
 
 		return TRUE;
 	case WM_COMMAND:
@@ -237,7 +236,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				{
 					// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
 					HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_TAB_ARROW );
-					int nSelPos = Combo_GetCurSel( hwndCombo );
+					int nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 					if( TABARROW_STRING == TabArrowArr[nSelPos].nMethod ){
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), TRUE );
 					}
@@ -260,7 +259,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
 
-				Combo_SetCurSel( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), 0 );
+				ApiWrap::Combo_SetCurSel( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), 0 );
 
 				return TRUE;
 			case IDC_RADIO_OUTLINERULEFILE:	/* アウトライン解析→ルールファイル */
@@ -475,55 +474,55 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 /* ダイアログデータの設定 Screen */
 void CPropTypesScreen::SetData( HWND hwndDlg )
 {
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );	//設定の名前
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );	//ファイル拡張子
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );	//設定の名前
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );	//ファイル拡張子
 
 	//レイアウト
 	{
 		// 2008.05.30 nasukoji	テキストの折り返し方法
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WRAPMETHOD );
-		Combo_ResetContent( hwndCombo );
+		ApiWrap::Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
-		for( int i = 0; i < _countof( WrapMethodArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, LS( WrapMethodArr[i].nNameId ) );
+		for( int i = 0; i < int(std::size(WrapMethodArr)); ++i ){
+			ApiWrap::Combo_InsertString( hwndCombo, i, LS( WrapMethodArr[i].nNameId ) );
 			if( WrapMethodArr[i].nMethod == m_Types.m_nTextWrapMethod ){		// テキストの折り返し方法
 				nSelPos = i;
 			}
 		}
-		Combo_SetCurSel( hwndCombo, nSelPos );
+		ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, (Int)m_Types.m_nMaxLineKetas, FALSE );	// 折り返し文字数
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Types.m_nColumnSpace, FALSE );			// 文字の間隔
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Types.m_nLineSpace, TRUE );			// 行の間隔
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, (Int)m_Types.m_nTabSpace, FALSE );			// TAB幅	//	Sep. 22, 2002 genta
-		::DlgItem_SetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );		// TAB表示(8文字)
+		ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );		// TAB表示(8文字)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), m_Types.m_bTabArrow == TABARROW_STRING );	// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
 
 		// 矢印表示	//@@@ 2003.03.26 MIK
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_TAB_ARROW );
-		Combo_ResetContent( hwndCombo );
+		ApiWrap::Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
-		for( int i = 0; i < _countof( TabArrowArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, LS( TabArrowArr[i].nNameId ) );
+		for( int i = 0; i < int(std::size(TabArrowArr)); ++i ){
+			ApiWrap::Combo_InsertString( hwndCombo, i, LS( TabArrowArr[i].nNameId ) );
 			if( TabArrowArr[i].nMethod == m_Types.m_bTabArrow ){
 				nSelPos = i;
 			}
 		}
-		Combo_SetCurSel( hwndCombo, nSelPos );
+		ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );				// SPACEの挿入 [チェックボックス]	// From Here 2001.12.03 hor
 
 		// TSVモード
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TSV_MODE );
-		Combo_ResetContent( hwndCombo );
+		ApiWrap::Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
-		for( int i = 0; i < _countof( TsvModeArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, LS( TsvModeArr[i].nNameId ) );
+		for( int i = 0; i < int(std::size(TsvModeArr)); ++i ){
+			ApiWrap::Combo_InsertString( hwndCombo, i, LS( TsvModeArr[i].nNameId ) );
 			if( TsvModeArr[i].nMethod == m_Types.m_nTsvMode ){
 				nSelPos = i;
 			}
 		}
-		Combo_SetCurSel( hwndCombo, nSelPos );
+		ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 	}
 
 	//インデント
@@ -536,35 +535,35 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 
 		/* スマートインデント種別 */
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
-		Combo_ResetContent( hwndCombo );
+		ApiWrap::Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
 		int nSize = (int)m_SIndentArr.size();
 		for( int i = 0; i < nSize; ++i ){
 			if( m_SIndentArr[i].pszName == nullptr ){
-				Combo_InsertString( hwndCombo, i, LS(m_SIndentArr[i].nNameId) );
+				ApiWrap::Combo_InsertString( hwndCombo, i, LS(m_SIndentArr[i].nNameId) );
 			}else{
-				Combo_InsertString( hwndCombo, i, m_SIndentArr[i].pszName );
+				ApiWrap::Combo_InsertString( hwndCombo, i, m_SIndentArr[i].pszName );
 			}
 			if( m_SIndentArr[i].nMethod == m_Types.m_eSmartIndent ){	/* スマートインデント種別 */
 				nSelPos = i;
 			}
 		}
-		Combo_SetCurSel( hwndCombo, nSelPos );
+		ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 		// その他のインデント対象文字
-		::DlgItem_SetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars );
+		ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars );
 
 		//折り返し行インデント	//	Oct. 1, 2002 genta コンボボックスに変更
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
-		Combo_ResetContent( hwndCombo );
+		ApiWrap::Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
-		for( int i = 0; i < _countof( IndentTypeArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, LS( IndentTypeArr[i].nNameId ) );
+		for( int i = 0; i < int(std::size(IndentTypeArr)); ++i ){
+			ApiWrap::Combo_InsertString( hwndCombo, i, LS( IndentTypeArr[i].nNameId ) );
 			if( IndentTypeArr[i].nMethod == m_Types.m_nIndentLayout ){	/* 折り返しインデント種別 */
 				nSelPos = i;
 			}
 		}
-		Combo_SetCurSel( hwndCombo, nSelPos );
+		ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 
 		// 改行時に末尾の空白を削除	//2005.10.11 ryoji
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RTRIM_PREVLINE, m_Types.m_bRTrimPrevLine );
@@ -575,18 +574,18 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 	{
 		//標準ルールのコンボボックス初期化
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
-		Combo_ResetContent( hwndCombo );
+		ApiWrap::Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
 		int nSize = (int)m_OlmArr.size();
 		for( int i = 0; i < nSize; ++i ){
 			if( m_OlmArr[i].pszName == nullptr ){
 				if( m_OlmArr[i].nNameId < STR2_OUTLINE_MAX ){
-					Combo_InsertString( hwndCombo, i, pszOutlineNames[m_OlmArr[i].nNameId] );
+					ApiWrap::Combo_InsertString( hwndCombo, i, pszOutlineNames[m_OlmArr[i].nNameId] );
 				}else{
-					Combo_InsertString( hwndCombo, i, LS(m_OlmArr[i].nNameId) );
+					ApiWrap::Combo_InsertString( hwndCombo, i, LS(m_OlmArr[i].nNameId) );
 				}
 			}else{
-				Combo_InsertString( hwndCombo, i, m_OlmArr[i].pszName );
+				ApiWrap::Combo_InsertString( hwndCombo, i, m_OlmArr[i].pszName );
 			}
 			if( m_OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
 				nSelPos = i;
@@ -595,7 +594,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 
 		//ルールファイル	// 2003.06.23 Moca ルールファイル名は使わなくてもセットしておく
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
-		::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
+		ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
 
 		//標準ルール
 		if( m_Types.m_eDefaultOutline != OUTLINE_FILE ){
@@ -606,7 +605,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
 
-			Combo_SetCurSel( hwndCombo, nSelPos );
+			ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
 		}
 		//ルールファイル
 		else{
@@ -637,12 +636,12 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKURET,  m_Types.m_bKinsokuRet  );	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKUKUTO, m_Types.m_bKinsokuKuto );	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKUHIDE, m_Types.m_bKinsokuHide );	// ぶら下げを隠す			// 2011/11/30 Uchi
-			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), _countof(m_Types.m_szKinsokuHead) - 1 );
-			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), _countof(m_Types.m_szKinsokuTail) - 1 );
-			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUKUTO ), _countof(m_Types.m_szKinsokuKuto) - 1 );	// 2009.08.07 ryoji
-			::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead );
-			::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail );
-			::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto );	// 2009.08.07 ryoji
+			ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), int(std::size(m_Types.m_szKinsokuHead)) - 1 );
+			ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), int(std::size(m_Types.m_szKinsokuTail)) - 1 );
+			ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUKUTO ), int(std::size(m_Types.m_szKinsokuKuto)) - 1 );	// 2009.08.07 ryoji
+			ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead );
+			ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail );
+			ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto );	// 2009.08.07 ryoji
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KINSOKUHIDE ), ( m_Types.m_bKinsokuRet || m_Types.m_bKinsokuKuto ) ? TRUE : FALSE );	// ぶら下げを隠すの有効化	2012/11/30 Uchi
 		}	//@@@ 2002.04.08 MIK end
 	}
@@ -651,14 +650,14 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 Screen */
 int CPropTypesScreen::GetData( HWND hwndDlg )
 {
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, _countof( m_Types.m_szTypeName ) );	// 設定の名前
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, _countof( m_Types.m_szTypeExts ) );	// ファイル拡張子
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, int(std::size(m_Types.m_szTypeName)) );	// 設定の名前
+	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, int(std::size(m_Types.m_szTypeExts)) );	// ファイル拡張子
 
 	//レイアウト
 	{
 		// 2008.05.30 nasukoji	テキストの折り返し方法
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WRAPMETHOD );
-		int		nSelPos = Combo_GetCurSel( hwndCombo );
+		int		nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 		m_Types.m_nTextWrapMethod = WrapMethodArr[nSelPos].nMethod;		// テキストの折り返し方法
 
 		/* 折り返し桁数 */
@@ -689,7 +688,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		/* TAB表示文字列 */
 		WCHAR szTab[8+1]; /* +1. happy */
-		::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, _countof( szTab ) );
+		ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, int(std::size(szTab)) );
 		wcscpy( m_Types.m_szTabViewString, L"^       " );
 		for( int i = 0; i < 8; i++ ){
 			if( !WCODE::IsTabAvailableCode(szTab[i]) )break;
@@ -698,7 +697,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		// タブ矢印表示	//@@@ 2003.03.26 MIK
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_TAB_ARROW );
-		nSelPos = Combo_GetCurSel( hwndCombo );
+		nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 		m_Types.m_bTabArrow = TabArrowArr[nSelPos].nMethod;		// テキストの折り返し方法
 
 		// SPACEの挿入
@@ -706,7 +705,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		// TSVモード
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TSV_MODE );
-		nSelPos = Combo_GetCurSel( hwndCombo );
+		nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 		m_Types.m_nTsvMode = TsvModeArr[nSelPos].nMethod;
 	}
 
@@ -720,17 +719,17 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		/* スマートインデント種別 */
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
-		int		nSelPos = Combo_GetCurSel( hwndCombo );
+		int		nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 		if( nSelPos >= 0 ){
 			m_Types.m_eSmartIndent = m_SIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
 		}
 
 		/* その他のインデント対象文字 */
-		::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, _countof( m_Types.m_szIndentChars ) );
+		ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, int(std::size(m_Types.m_szIndentChars)) );
 
 		// 折り返し行インデント	//	Oct. 1, 2002 genta コンボボックスに変更
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
-		nSelPos = Combo_GetCurSel( hwndCombo );
+		nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 		m_Types.m_nIndentLayout = IndentTypeArr[nSelPos].nMethod;	/* 折り返し部インデント種別 */
 
 		// 改行時に末尾の空白を削除	//2005.10.11 ryoji
@@ -743,7 +742,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		//標準ルール
 		if ( !::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
 			HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
-			int		nSelPos = Combo_GetCurSel( hwndCombo );
+			int		nSelPos = ApiWrap::Combo_GetCurSel( hwndCombo );
 			if( nSelPos >= 0 ){
 				m_Types.m_eDefaultOutline = m_OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
 			}
@@ -754,7 +753,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		}
 
 		//ルールファイル	//2003.06.23 Moca ルールを使っていなくてもファイル名を保持
-		::DlgItem_GetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, _countof2( m_Types.m_szOutlineRuleFilename ));
+		ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, std::size( m_Types.m_szOutlineRuleFilename ));
 	}
 
 	//フォント
@@ -781,9 +780,9 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 			m_Types.m_bKinsokuRet  = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKURET  );	// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
 			m_Types.m_bKinsokuKuto = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKUKUTO );	// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
 			m_Types.m_bKinsokuHide = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKUHIDE );	// ぶら下げを隠す		// 2011/11/30 Uchi
-			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, _countof( m_Types.m_szKinsokuHead ) );
-			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, _countof( m_Types.m_szKinsokuTail ) );
-			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto, _countof( m_Types.m_szKinsokuKuto ) );	// 2009.08.07 ryoji
+			ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, int(std::size(m_Types.m_szKinsokuHead)) );
+			ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, int(std::size(m_Types.m_szKinsokuTail)) );
+			ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto, int(std::size(m_Types.m_szKinsokuKuto)) );	// 2009.08.07 ryoji
 		}	//@@@ 2002.04.08 MIK end
 	}
 
@@ -794,7 +793,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* pszName)
 {
 	if( m_OlmArr.empty() ){
-		InitTypeNameId2(m_OlmArr, OlmArr, _countof(OlmArr));	//アウトライン解析ルール
+		InitTypeNameId2(m_OlmArr, OlmArr, int(std::size(OlmArr)));	//アウトライン解析ルール
 	}
 	TYPE_NAME_ID2<EOutlineType> method;
 	method.nMethod = (EOutlineType)nMethod;
@@ -805,6 +804,7 @@ void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* pszName)
 
 void CPropTypesScreen::RemoveOutlineMethod(int nMethod, const WCHAR* szName)
 {
+	UNREFERENCED_PARAMETER(szName);
 	int nSize = (int)m_OlmArr.size();
 	for(int i = 0; i < nSize; i++ ){
 		if( m_OlmArr[i].nMethod == (EOutlineType)nMethod ){
@@ -819,7 +819,7 @@ void CPropTypesScreen::RemoveOutlineMethod(int nMethod, const WCHAR* szName)
 void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* pszName)
 {
 	if( m_SIndentArr.empty() ){
-		InitTypeNameId2(m_SIndentArr, SmartIndentArr, _countof(SmartIndentArr));	//スマートインデントルール
+		InitTypeNameId2(m_SIndentArr, SmartIndentArr, int(std::size(SmartIndentArr)));	//スマートインデントルール
 	}
 	TYPE_NAME_ID2<ESmartIndentType> method;
 	method.nMethod = (ESmartIndentType)nMethod;
@@ -830,6 +830,7 @@ void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* pszName)
 
 void CPropTypesScreen::RemoveSIndentMethod(int nMethod, const WCHAR* szName)
 {
+	UNREFERENCED_PARAMETER(szName);
 	int nSize = (int)m_SIndentArr.size();
 	for(int i = 0; i < nSize; i++ ){
 		if( m_SIndentArr[i].nMethod == (ESmartIndentType)nMethod ){

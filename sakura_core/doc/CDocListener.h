@@ -19,12 +19,13 @@
 #define SAKURA_CDOCLISTENER_BEF5B814_A5B8_4D07_9B2F_009A5CB29B2F_H_
 #pragma once
 
-class CDocListener;
 #include "basis/CMyString.h"
 #include "charset/charset.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "types/CType.h"
 #include "util/relation_tool.h"
+
+class CDocListener;
 
 //###
 enum ESaveResult{
@@ -56,35 +57,23 @@ struct SLoadInfo
 {
 	//入力
 	CFilePath	cFilePath;
-	ECodeType	eCharCode;
-	bool		bViewMode;
-	bool		bWritableNoMsg; //!< 書き込み禁止メッセージを表示しない
-	CTypeConfig	nType;
+	ECodeType	eCharCode = CODE_AUTODETECT;
+	bool		bViewMode = false;
+	bool		bWritableNoMsg = false; //!< 書き込み禁止メッセージを表示しない
+	CTypeConfig	nType{ -1 };
 
 	//モード
-	bool		bRequestReload;	//リロード要求
+	bool		bRequestReload = false;	//リロード要求
 
 	//出力
-	bool		bOpened;
+	bool		bOpened = false;
 
-	SLoadInfo()
-	: cFilePath(L"")
-	, eCharCode(CODE_AUTODETECT)
-	, bViewMode(false)
-	, bWritableNoMsg(false)
-	, nType(-1)
-	, bRequestReload(false)
-	, bOpened(false)
-	{
-	}
+	SLoadInfo() = default;
 	SLoadInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, bool _bReadOnly, CTypeConfig _nType = CTypeConfig(-1))
 	: cFilePath(_cFilePath)
 	, eCharCode(_eCodeType)
 	, bViewMode(_bReadOnly)
-	, bWritableNoMsg(false)
 	, nType(_nType)
-	, bRequestReload(false)
-	, bOpened(false)
 	{
 	}
 
@@ -93,18 +82,23 @@ struct SLoadInfo
 };
 
 struct SSaveInfo{
-	CFilePath	cFilePath;	//!< 保存ファイル名
-	ECodeType	eCharCode;	//!< 保存文字コードセット
-	bool		bBomExist;	//!< 保存時BOM付加
-	bool		bChgCodeSet;//!< 文字コードセット変更	2013/5/19 Uchi
-	CEol		cEol;		//!< 保存改行コード
+	CFilePath	cFilePath;						//!< 保存ファイル名
+	ECodeType	eCharCode = CODE_AUTODETECT;	//!< 保存文字コードセット
+	bool		bBomExist = false;				//!< 保存時BOM付加
+	bool		bChgCodeSet = false;			//!< 文字コードセット変更	2013/5/19 Uchi
+	CEol		cEol{ EEolType::none };			//!< 保存改行コード
 
 	//モード
-	bool		bOverwriteMode;	//!< 上書き要求
+	bool		bOverwriteMode = false;			//!< 上書き要求
 
-	SSaveInfo() : cFilePath(L""), eCharCode(CODE_AUTODETECT), bBomExist(false), bChgCodeSet(false), cEol(EEolType::none), bOverwriteMode(false) { }
+	SSaveInfo() = default;
 	SSaveInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, const CEol& _cEol, bool _bBomExist)
-		: cFilePath(_cFilePath), eCharCode(_eCodeType), bBomExist(_bBomExist), bChgCodeSet(false), cEol(_cEol), bOverwriteMode(false) { }
+		: cFilePath(_cFilePath)
+		, eCharCode(_eCodeType)
+		, bBomExist(_bBomExist)
+		, cEol(_cEol)
+	{
+	}
 
 	//! ファイルパスの比較
 	bool IsSamePath(LPCWSTR pszPath) const;
@@ -115,21 +109,23 @@ class CProgressListener;
 //! 複数のCProgressSubjectからウォッチされる
 class CProgressSubject : public CSubjectT<CProgressListener>{
 public:
-	virtual ~CProgressSubject(){}
+	~CProgressSubject() override = default;
+
 	void NotifyProgress(int nPer);
 };
 
 //! 1つのCProgressSubjectをウォッチする
 class CProgressListener : public CListenerT<CProgressSubject>{
 public:
-	virtual ~CProgressListener(){}
+	~CProgressListener() override = default;
+
 	virtual void OnProgress(int nPer)=0;
 };
 
 //Subjectは複数のListenerから観察される
 class CDocSubject : public CSubjectT<CDocListener>{
 public:
-	virtual ~CDocSubject();
+	~CDocSubject() override;
 
 	//ロード前後
 	ECallbackResult NotifyCheckLoad	(SLoadInfo* pLoadInfo);
@@ -155,39 +151,43 @@ public:
 //Listenerは1つのSubjectを観察する
 class CDocListener : public CListenerT<CDocSubject>{
 public:
-	CDocListener(CDocSubject* pcDoc = nullptr);
-	virtual ~CDocListener();
+	explicit CDocListener(CDocSubject* pcDoc = nullptr);
+	~CDocListener() override;
 
 	// -- -- 属性 -- -- //
-	CDocSubject* GetListeningDoc() const{ return GetListeningSubject(); }
+	CDocSubject* GetListeningDoc() const { return GetListeningSubject(); }
 
 	// -- -- 各種イベント -- -- //
 	//ロード前後
-	virtual ECallbackResult	OnCheckLoad	(SLoadInfo* pLoadInfo)		{ return CALLBACK_CONTINUE; }	//!< 本当にロードを行うかの判定を行う
-	virtual void			OnBeforeLoad(SLoadInfo* sLoadInfo){ return ; }	//!< ロード事前処理
-	virtual ELoadResult		OnLoad		(const SLoadInfo& sLoadInfo){ return LOADED_NOIMPLEMENT; }	//!< ロード処理
-	virtual void			OnLoading	(int nPer)					{ return ; }	//!< ロード処理の経過情報を受信
-	virtual void			OnAfterLoad	(const SLoadInfo& sLoadInfo){ return ; }	//!< ロード事後処理
-	virtual void			OnFinalLoad	(ELoadResult eLoadResult)	{ return ; }	//!< ロードフローの最後に必ず呼ばれる
+	virtual ECallbackResult	OnCheckLoad	(SLoadInfo* pLoadInfo)		 { UNREFERENCED_PARAMETER(pLoadInfo); return CALLBACK_CONTINUE; }	//!< 本当にロードを行うかの判定を行う
+	virtual void			OnBeforeLoad(SLoadInfo* sLoadInfo)       { UNREFERENCED_PARAMETER(sLoadInfo); return ; }					//!< ロード事前処理
+	virtual ELoadResult		OnLoad		(const SLoadInfo& sLoadInfo) { UNREFERENCED_PARAMETER(sLoadInfo); return LOADED_NOIMPLEMENT; }	//!< ロード処理
+	virtual void			OnLoading	(int nPer)					 { UNREFERENCED_PARAMETER(nPer); return ; }							//!< ロード処理の経過情報を受信
+	virtual void			OnAfterLoad	(const SLoadInfo& sLoadInfo) { UNREFERENCED_PARAMETER(sLoadInfo); return ; }					//!< ロード事後処理
+	virtual void			OnFinalLoad	(ELoadResult eLoadResult)	 { UNREFERENCED_PARAMETER(eLoadResult); return ; }					//!< ロードフローの最後に必ず呼ばれる
 
 	//セーブ前後
-	virtual ECallbackResult OnCheckSave	(SSaveInfo* pSaveInfo)		{ return CALLBACK_CONTINUE; }	//!< 本当にセーブを行うかの判定を行う
-	virtual ECallbackResult OnPreBeforeSave	(SSaveInfo* pSaveInfo)	{ return CALLBACK_CONTINUE; }	//!< セーブ事前おまけ処理 ($$ 仮)
-	virtual void			OnBeforeSave(const SSaveInfo& sSaveInfo){ return ; }	//!< セーブ事前処理
-	virtual void			OnSave		(const SSaveInfo& sSaveInfo){ return ; }	//!< セーブ処理
-	virtual void			OnSaving	(int nPer)					{ return ; }	//!< セーブ処理の経過情報を受信
-	virtual void			OnAfterSave	(const SSaveInfo& sSaveInfo){ return ; }	//!< セーブ事後処理
-	virtual void			OnFinalSave	(ESaveResult eSaveResult)	{ return ; }	//!< セーブフローの最後に必ず呼ばれる
+	virtual ECallbackResult OnCheckSave	(SSaveInfo* pSaveInfo)		 { UNREFERENCED_PARAMETER(pSaveInfo); return CALLBACK_CONTINUE; }	//!< 本当にセーブを行うかの判定を行う
+	virtual ECallbackResult OnPreBeforeSave	(SSaveInfo* pSaveInfo)	 { UNREFERENCED_PARAMETER(pSaveInfo); return CALLBACK_CONTINUE; }	//!< セーブ事前おまけ処理 ($$ 仮)
+	virtual void			OnBeforeSave(const SSaveInfo& sSaveInfo) { UNREFERENCED_PARAMETER(sSaveInfo); return ; }					//!< セーブ事前処理
+	virtual void			OnSave		(const SSaveInfo& sSaveInfo) { UNREFERENCED_PARAMETER(sSaveInfo); return ; }					//!< セーブ処理
+	virtual void			OnSaving	(int nPer)					 { UNREFERENCED_PARAMETER(nPer); return ; }							//!< セーブ処理の経過情報を受信
+	virtual void			OnAfterSave	(const SSaveInfo& sSaveInfo) { UNREFERENCED_PARAMETER(sSaveInfo); return ; }					//!< セーブ事後処理
+	virtual void			OnFinalSave	(ESaveResult eSaveResult)	 { UNREFERENCED_PARAMETER(eSaveResult); return ; }					//!< セーブフローの最後に必ず呼ばれる
 
 	//クローズ前後
-	virtual ECallbackResult OnBeforeClose()							{ return CALLBACK_CONTINUE; }
+	virtual ECallbackResult OnBeforeClose()							 { return CALLBACK_CONTINUE; }
 };
 
 //GetListeningDocの利便性をアップ
 class CEditDoc;
 class CDocListenerEx : public CDocListener{
 public:
-	CDocListenerEx(CDocSubject* pcDoc = nullptr) : CDocListener(pcDoc) { }
+	explicit CDocListenerEx(CDocSubject* pcDoc = nullptr)
+		: CDocListener(pcDoc)
+	{
+	}
+
 	CEditDoc* GetListeningDoc() const;
 };
 
@@ -196,4 +196,5 @@ class CFlowInterruption : public std::exception{
 public:
 	const char* what() const throw() override{ return "CFlowInterruption"; }
 };
+
 #endif /* SAKURA_CDOCLISTENER_BEF5B814_A5B8_4D07_9B2F_009A5CB29B2F_H_ */

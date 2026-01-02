@@ -37,7 +37,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 #define MIN_PREVIEW_ZOOM 10
 #define MAX_PREVIEW_ZOOM 400
@@ -118,6 +117,9 @@ LRESULT CPrintPreview::OnPaint(
 	LPARAM			lParam 	// second message parameter
 )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	PAINTSTRUCT		ps;
 	HDC				hdcOld = ::BeginPaint( hwnd, &ps );
 	HDC				hdc = m_hdcCompatDC;	//	親ウィンドウのComatibleDCに描く
@@ -145,7 +147,7 @@ LRESULT CPrintPreview::OnPaint(
 
 	// プリンター情報の表示 -> IDD_PRINTPREVIEWBAR右上のSTATICへ
 	WCHAR	szText[1024];
-	::DlgItem_SetText(
+	ApiWrap::DlgItem_SetText(
 		m_hwndPrintPreviewBar,
 		IDC_STATIC_PRNDEV,
 		m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName
@@ -160,7 +162,7 @@ LRESULT CPrintPreview::OnPaint(
 		szPaperName,
 		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? LS(STR_ERR_DLGPRNPRVW1) : LS(STR_ERR_DLGPRNPRVW2)
 	);
-	::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAPER, szText );
+	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAPER, szText );
 
 	// バックグラウンド モードを変更
 	::SetBkMode( hdc, TRANSPARENT );
@@ -570,6 +572,7 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 
 LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(wParam);
 	/* 手カーソル */
 	SetHandCursor();		// Hand Cursorを設定 2013/1/29 Uchi
 	if( !m_pParentWnd->GetDragMode() ){
@@ -647,6 +650,7 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 LRESULT CPrintPreview::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
 //	WORD	fwKeys = LOWORD(wParam);			// key flags
 	short	zDelta = (short) HIWORD(wParam);	// wheel rotation
 //	short	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
@@ -874,12 +878,12 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 		m_hwndPrintPreviewBar, 
 		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
-		_countof(szPageNum) - 1,
+		int(std::size(szPageNum)) - 1,
 		szPageNum
 	);
 	if( FALSE != bDlgInputPageResult ){
 		int i;
-		int nPageNumLen = wcslen( szPageNum );
+		auto nPageNumLen = int(wcslen(szPageNum));
 		for( i = 0; i < nPageNumLen;  i++ ){
 			if( !(L'0' <= szPageNum[i] &&  szPageNum[i] <= L'9') ){
 				return;
@@ -930,10 +934,10 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 	}
 	wchar_t	szEdit[1024];
 	auto_sprintf( szEdit, LS(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum );
-	::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
+	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
 
 	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
-	::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
+	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	::InvalidateRect( m_pParentWnd->GetHwnd(), nullptr, TRUE );
 	return;
@@ -982,7 +986,7 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 
 	wchar_t	szEdit[1024];
 	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
-	::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
+	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	/* WM_SIZE 処理 */
 	RECT		rc1;
@@ -1034,7 +1038,7 @@ void CPrintPreview::OnPrint( void )
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
 		_wsplitpath( m_pParentWnd->GetDocument()->m_cDocFile.GetFilePath(), nullptr, nullptr, szFileName, szExt );
-		auto_snprintf_s( szJobName, _countof(szJobName), L"%s%s", szFileName, szExt );
+		auto_snprintf_s(szJobName, std::size(szJobName), L"%s%s", szFileName, szExt );
 	}
 
 	/* 印刷範囲を指定できるプリンターダイアログを作成 */
@@ -1085,8 +1089,8 @@ void CPrintPreview::OnPrint( void )
 	/* 印刷過程を表示して、キャンセルするためのダイアログを作成 */
 	CDlgCancel	cDlgPrinting;
 	cDlgPrinting.DoModeless( CEditApp::getInstance()->GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
-	::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_JOBNAME, szJobName );
-	::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, L"" );	// XPS対応 2013/5/8 Uchi
+	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_JOBNAME, szJobName );
+	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, L"" );	// XPS対応 2013/5/8 Uchi
 
 	/* 親ウィンドウを無効化 */
 	::EnableWindow( m_pParentWnd->GetHwnd(), FALSE );
@@ -1125,7 +1129,7 @@ void CPrintPreview::OnPrint( void )
 		/* 印刷過程を表示 */
 		//	Jun. 18, 2001 genta ページ番号表示の計算ミス修正
 		auto_sprintf( szProgress, L"%d/%d", i + 1, nNum );
-		::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, szProgress );
+		ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, szProgress );
 
 		/* 印刷 ページ開始 */
 		m_cPrint.PrintStartPage( hdc );
@@ -1255,8 +1259,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			nY,
 			0,
 			nullptr,
-			szWork,
-			wcslen( szWork ),
+			PSZ_ARGS(szWork),
 			nullptr
 		);
 
@@ -1266,7 +1269,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			szWork, nWorkLen);
 		Tab2Space( szWork );
 		SIZE	Size;
-		nLen = wcslen(szWork);
+		nLen = (int)wcslen(szWork);
 		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
 		::ExtTextOut(
 			hdc,
@@ -1284,7 +1287,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
 			szWork, nWorkLen);
 		Tab2Space( szWork );
-		nLen = wcslen(szWork);
+		nLen = (int)wcslen(szWork);
 		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
 		::ExtTextOut(
 			hdc,
@@ -1314,7 +1317,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		CSakuraEnvironment::ExpandParameter(
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_LEFT] : m_pPrintSetting->m_szFooterForm[POS_LEFT],
 			szWork, nWorkLen);
-		nLen = wcslen( szWork );
+		nLen = (int)wcslen( szWork );
 		Print_DrawLine(
 			hdc,
 			CMyPoint(
@@ -1332,7 +1335,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		CSakuraEnvironment::ExpandParameter(
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_CENTER] : m_pPrintSetting->m_szFooterForm[POS_CENTER],
 			szWork, nWorkLen);
-		nLen = wcslen( szWork );
+		nLen = (int)wcslen( szWork );
 		std::vector<int> vDxArray;
 		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing, vDxArray); //テキスト幅
 		Print_DrawLine(
@@ -1352,7 +1355,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		CSakuraEnvironment::ExpandParameter(
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
 			szWork, nWorkLen);
-		nLen = wcslen( szWork );
+		nLen = (int)wcslen( szWork );
 		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing, vDxArray); //テキスト幅
 		Print_DrawLine(
 			hdc,
@@ -1495,7 +1498,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				}
 
 				//文字列長
-				const int nLineCols = wcslen( szLineNum );
+				const auto nLineCols = int(wcslen(szLineNum));
 
 				//文字間隔配列を生成
 				std::vector<int> vDxArray;
@@ -1660,7 +1663,6 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	CLayoutXInt nTabSpace = m_pLayoutMgr_Print->GetTabSpace();	// docから自分のLayoutMgrに変更
 
 	CLayoutInt tabPadding = CLayoutInt(m_pLayoutMgr_Print->GetWidthPerKeta() - 1); //LayoutInt == 1描画単位
-	const int charWidth = 1; // 1 LayoutIntあたりの幅
 
 	//文字間隔配列を生成
 	std::vector<int> vDxArray;
@@ -1796,6 +1798,7 @@ void CPrintPreview::Print_DrawBlock(
 	const int*		pDxArray
 )
 {
+	UNREFERENCED_PARAMETER(nDx);
 	if (nKind == 2 && pcLayout == nullptr) {
 		// TABはカラーで無ければ印字不要
 		return;
@@ -1909,6 +1912,8 @@ int CALLBACK CPrintPreview::MyEnumFontFamProc(
 	LPARAM			lParam 		// address of application-defined data
 )
 {
+	UNREFERENCED_PARAMETER(nFontType);
+	UNREFERENCED_PARAMETER(pntm);
 	CPrintPreview* pCPrintPreview = reinterpret_cast<CPrintPreview*>(lParam);
 	if( 0 == wcscmp( pelf->elfLogFont.lfFaceName, pCPrintPreview->m_pPrintSetting->m_szPrintFontFaceHan ) ){
 		pCPrintPreview->SetPreviewFontHan(&pelf->elfLogFont);
@@ -2086,6 +2091,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	LPARAM				lParam 		// second message parameter
 )
 {
+	UNREFERENCED_PARAMETER(lParam);
 	WORD				wNotifyCode;
 	WORD				wID;
 

@@ -19,7 +19,7 @@
 #pragma once
 
 #include "util/design_template.h"
-#include "CEol.h"// 2002/2/10 aroka
+#include "basis/CEol.h"// 2002/2/10 aroka
 #include "doc/logic/CDocLine.h"// 2002/4/21 YAZAKI
 #include "mem/CMemory.h"// 2002/4/21 YAZAKI
 #include "CLayoutExInfo.h"

@@ -9,7 +9,7 @@
 #define SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
 #pragma once
 
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "types/CType.h"
 
 class CEditView;
@@ -144,7 +144,7 @@ public:
 	//	Oct. 24, 2001 genta 機能拡張のため引数追加
 	void Command_MOVECURSOR(CLogicPoint pos, int option);
 	void Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option);
-	int Command_UP( bool bSelect, bool bRepeat, int line = 0 );			/* カーソル上移動 */
+	int Command_UP( bool bSelect, bool bRepeat, LPARAM lparam1 = 0 );			/* カーソル上移動 */
 	int Command_DOWN( bool bSelect, bool bRepeat );			/* カーソル下移動 */
 	int  Command_LEFT(bool bSelect, bool bRepeat);			/* カーソル左移動 */
 	void Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, bool bRepeat );	/* カーソル右移動 */
@@ -153,8 +153,8 @@ public:
 	void Command_WORDLEFT( bool bSelect );			/* 単語の左端に移動 */
 	void Command_WORDRIGHT( bool bSelect );			/* 単語の右端に移動 */
 	//	Oct. 29, 2001 genta マクロ向け機能拡張
-	void Command_GOLINETOP( bool bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
-	void Command_GOLINEEND(bool bSelect, int bIgnoreCurrentSelection, int nOption);		/* 行末に移動（折り返し単位） */
+	void Command_GOLINETOP( bool bSelect, LPARAM lparam );	/* 行頭に移動（折り返し単位） */
+	void Command_GOLINEEND(bool bSelect, int bIgnoreCurrentSelection, LPARAM nOption);		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */
 	void Command_HalfPageUp( bool bSelect, CLayoutYInt );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
@@ -174,21 +174,21 @@ public:
 	void Command_GONEXTPARAGRAPH( bool bSelect );	// 次の段落へ進む
 	void Command_GOPREVPARAGRAPH( bool bSelect );	// 前の段落へ戻る
 	void Command_AUTOSCROLL();		// オートスクロール
-	void Command_WHEELUP(int zDelta);
-	void Command_WHEELDOWN(int zDelta);
-	void Command_WHEELLEFT(int zDelta);
-	void Command_WHEELRIGHT(int zDelta);
-	void Command_WHEELPAGEUP(int zDelta);
-	void Command_WHEELPAGEDOWN(int zDelta);
-	void Command_WHEELPAGELEFT(int zDelta);
-	void Command_WHEELPAGERIGHT(int zDelta);
+	void Command_WHEELUP(LPARAM zDelta);
+	void Command_WHEELDOWN(LPARAM zDelta);
+	void Command_WHEELLEFT(LPARAM zDelta);
+	void Command_WHEELRIGHT(LPARAM zDelta);
+	void Command_WHEELPAGEUP(LPARAM zDelta);
+	void Command_WHEELPAGEDOWN(LPARAM zDelta);
+	void Command_WHEELPAGELEFT(LPARAM zDelta);
+	void Command_WHEELPAGERIGHT(LPARAM zDelta);
 	void Command_MODIFYLINE_NEXT( bool bSelect );	// 次の変更行へ
 	void Command_MODIFYLINE_PREV( bool bSelect );	// 前の変更行へ
 
 	/* 選択系 */
 	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = nullptr );		/* 現在位置の単語選択 */
 	void Command_SELECTALL( void );			/* すべて選択 */
-	void Command_SELECTLINE( int lparam );	/* 1行選択 */	// 2007.10.13 nasukoji
+	void Command_SELECTLINE(LPARAM lparam1);	/* 1行選択 */	// 2007.10.13 nasukoji
 	void Command_BEGIN_SELECT( void );		/* 範囲選択開始 */
 
 	/* 矩形選択系 */
@@ -200,10 +200,10 @@ public:
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
 	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );						/* 貼り付け（クリップボードから貼り付け）*/
-	void Command_PASTEBOX( int option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
+	void Command_PASTEBOX( LPARAM option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
-	void Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize );
+	void Command_PASTEBOX( const wchar_t *szPaste, size_t nPasteSize );
 	//>> 2002/03/29 Azumaiya
 	void Command_INSBOXTEXT(const wchar_t *pszPaste, int nPasteSize); // 矩形貼り付け
 	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, ptrdiff_t nTextLen, bool bNoWaitCursor,
@@ -398,6 +398,6 @@ private:
 	bool Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:
 	ptrdiff_t ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen, wchar_t* pszConvertedText);
-	void Sub_BoxSelectLock( int flags );
+	void Sub_BoxSelectLock(LPARAM flags) noexcept;
 };
 #endif /* SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_ */

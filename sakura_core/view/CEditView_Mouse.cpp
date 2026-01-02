@@ -27,11 +27,11 @@
 #include "CEditView.h"
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h" // use CEditApp.h
+#include "agent/CGrepAgent.h" // use CEditApp.h
 #include "window/CEditWnd.h"
 #include "_os/CDropTarget.h" // CDataObject
 #include "_os/CClipboard.h"
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 #include "doc/layout/CLayout.h"
 #include "cmd/CViewCommander_inline.h"
 #include "uiparts/CWaitCursor.h"
@@ -46,7 +46,6 @@
 #include "mem/CNativeA.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
@@ -189,7 +188,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 normal_action:;
 
 	// ALTキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
-	if( GetKeyState_Alt() &&( ! tripleClickMode)){
+	if( ApiWrap::GetKeyState_Alt() &&( ! tripleClickMode)){
 		if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			GetSelectionInfo().DisableSelectArea( true );
@@ -287,7 +286,7 @@ normal_action:;
 		}else
 		/* 選択開始処理 */
 		/* SHIFTキーが押されていたか */
-		if(GetKeyState_Shift()){
+		if(ApiWrap::GetKeyState_Shift()){
 			if( GetSelectionInfo().IsTextSelected() ){		/* テキストが選択されているか */
 				if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
 					/* 現在の選択範囲を非選択状態に戻す */
@@ -350,7 +349,7 @@ normal_action:;
 
 		bool bSelectWord = false;
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
-		if( GetKeyState_Control() &&( ! tripleClickMode)){
+		if( ApiWrap::GetKeyState_Control() &&( ! tripleClickMode)){
 			GetSelectionInfo().m_bBeginWordSelect = true;		/* 単語単位選択中 */
 			if( !GetSelectionInfo().IsTextSelected() ){
 				/* 現在位置の単語選択 */
@@ -436,7 +435,7 @@ normal_action:;
 		}
 		// 行番号エリアをクリックした
 		// 2008.05.22 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
-		if( ptMouse.x < GetTextArea().GetAreaLeft() && !GetKeyState_Shift() ){
+		if( ptMouse.x < GetTextArea().GetAreaLeft() && !ApiWrap::GetKeyState_Shift() ){
 			/* 現在のカーソル位置から選択を開始する */
 			GetSelectionInfo().m_bBeginLineSelect = true;
 
@@ -642,6 +641,8 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+
 	int nIdx = getCtrlKeyState();
 	if( F_AUTOSCROLL == GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx] ){
 		if( m_nAutoScrollMode ){
@@ -666,6 +667,10 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	int		nIdx;
 	int		nFuncID;
 
@@ -711,6 +716,9 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 void CALLBACK AutoScrollTimerProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
 {
+	UNREFERENCED_PARAMETER(dwTime);
+	UNREFERENCED_PARAMETER(idEvent);
+	UNREFERENCED_PARAMETER(uMsg);
 	CEditView*	pCEditView;
 	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( nullptr != pCEditView ){
@@ -823,6 +831,10 @@ void CEditView::AutoScrollOnTimer()
 */
 void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	if( m_nAutoScrollMode ){
 		AutoScrollExit();
 	}
@@ -839,6 +851,10 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	int		nIdx;
 	int		nFuncID;
 
@@ -883,6 +899,10 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	if( m_nAutoScrollMode ){
 		AutoScrollExit();
 	}
@@ -899,6 +919,10 @@ void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 	int		nIdx;
 	int		nFuncID;
 
@@ -936,6 +960,8 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 /* マウス移動のメッセージ処理 */
 void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+
 	CMyPoint ptMouse(xPos_, yPos_);
 
 	if( m_cMousePausePos != ptMouse ){
@@ -1006,7 +1032,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			view.GetCaret().GetAdjustCursorPos( &ptNew );
 			GetDocument()->m_cLayoutMgr.LayoutToLogic( ptNew, &ptNewLogic );
 			GetDocument()->m_cLayoutMgr.LogicToLayout( ptNewLogic, &ptNew, ptNew.y );
-			if( GetKeyState_Shift() ){
+			if( ApiWrap::GetKeyState_Shift() ){
 				if( view.GetSelectionInfo().IsTextSelected() ){
 					if( view.GetSelectionInfo().IsBoxSelecting() ){
 						view.GetSelectionInfo().DisableSelectArea( true );
@@ -1246,6 +1272,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 */
 LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontalMsg, EFunctionCode nCmdFuncID )
 {
+	UNREFERENCED_PARAMETER(lParam);
+
 //	WORD	fwKeys;
 	short	zDelta;
 //	short	xPos;
@@ -1337,7 +1365,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 		// 2006.06.03 Moca ReadRegistry に書き換え
 		unsigned int uDataLen;	// size of value data
 		WCHAR szValStr[256];
-		uDataLen = _countof(szValStr) - 1;
+		uDataLen = int(std::size(szValStr)) - 1;
 		if( !bExecCmd ){
 			bool bGetParam = false;
 			if( bHorizontal ){
@@ -1487,11 +1515,11 @@ bool CEditView::IsSpecialScrollMode( int nSelect )
 		break;
 
 	case VK_CONTROL:	// Controlキー
-		bSpecialScrollMode = GetKeyState_Control();
+		bSpecialScrollMode = ApiWrap::GetKeyState_Control();
 		break;
 
 	case VK_SHIFT:		// Shiftキー
-		bSpecialScrollMode = GetKeyState_Shift();
+		bSpecialScrollMode = ApiWrap::GetKeyState_Shift();
 		break;
 
 	default:	// 上記以外（ここには来ない）
@@ -1505,6 +1533,10 @@ bool CEditView::IsSpecialScrollMode( int nSelect )
 /* マウス左ボタン開放のメッセージ処理 */
 void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
+	UNREFERENCED_PARAMETER(fwKeys);
+	UNREFERENCED_PARAMETER(xPos);
+	UNREFERENCED_PARAMETER(yPos);
+
 //	MYTRACE( L"OnLBUTTONUP()\n" );
 
 	/* 範囲選択終了 & マウスキャプチャおわり */
@@ -1668,7 +1700,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 	if( GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		/* ALTキーが押されていたか */
-		if( GetKeyState_Alt() ){
+		if( ApiWrap::GetKeyState_Alt() ){
 			GetSelectionInfo().SetBoxSelect(true);	/* 矩形範囲選択中 */
 		}
 	}
@@ -2136,7 +2168,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 
 		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, nullptr, 0 );
 		for( UINT i = 0; i < nFiles; i++ ){
-			::DragQueryFile( hDrop, i, szPath, _countof(szPath) );
+			::DragQueryFile( hDrop, i, szPath, int(std::size(szPath)) );
 			if( !::GetLongFileName( szPath, szWork ) )
 				continue;
 			if( nId == 100 ){	// パス名
@@ -2211,6 +2243,7 @@ CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
 
 DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect )
 {
+	UNREFERENCED_PARAMETER(pt);
 	if( cf == CF_HDROP )	// 2008.06.20 ryoji
 		return DROPEFFECT_LINK;
 

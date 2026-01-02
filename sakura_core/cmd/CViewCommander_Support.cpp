@@ -25,7 +25,7 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-#include "CPropertyManager.h"
+#include "env/CPropertyManager.h"
 #include "CEditApp.h"
 #include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO 追加
 #include "env/CHelpManager.h"
@@ -35,7 +35,6 @@
 #include "CSelectLang.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。
@@ -308,7 +307,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		}else{
 			wcscpy( pWork, filename ); //	Jul. 5, 2002 genta
 		}
-		nLen = wcslen( pWork );
+		nLen = (int)wcslen( pWork );
 		wcscpy( &pWork[nLen + 1], cmemCurText.GetStringPtr() );
 		hwndHtmlHelp = (HWND)::SendMessageAny(
 			GetDllShareData().m_sHandles.m_hwndTray,

@@ -19,7 +19,7 @@
 #include "print/CPrintPreview.h"
 #include "macro/CSMacroMgr.h"
 #include "CEditApp.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "util/string_ex2.h"
@@ -28,7 +28,6 @@
 #include "util/window.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 CEditWnd* CSakuraEnvironment::GetMainWindow()
 {
@@ -98,11 +97,11 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 
 	// Apr. 03, 2003 genta 固定文字列をまとめる
 	const std::wstring	PRINT_PREVIEW_ONLY		= LS( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
-	const int			PRINT_PREVIEW_ONLY_LEN	= PRINT_PREVIEW_ONLY.length();
+	const auto			PRINT_PREVIEW_ONLY_LEN	= int(PRINT_PREVIEW_ONLY.length());
 	const std::wstring	NO_TITLE				= LS( STR_NO_TITLE1 );	//L"(無題)";
-	const int			NO_TITLE_LEN			= NO_TITLE.length();
+	const auto			NO_TITLE_LEN			= int(NO_TITLE.length());
 	const std::wstring	NOT_SAVED				= LS( STR_NOT_SAVED );	//L"(保存されていません)";
-	const int			NOT_SAVED_LEN			= NOT_SAVED.length();
+	const auto			NOT_SAVED_LEN			= int(NOT_SAVED.length());
 
 	const wchar_t *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
 	wchar_t *q, *q_max;
@@ -248,7 +247,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
 				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
-				CFileNameManager::getInstance()->GetTransformFileNameFast( buff, szText, _countof(szText)-1, dcFont.GetHDC(), true );
+				CFileNameManager::getInstance()->GetTransformFileNameFast( buff, szText, int(std::size(szText))-1, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 			}
 			++p;
@@ -340,7 +339,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				WCHAR szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
-				CFormatManager().MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
+				CFormatManager().MyGetDateFormat( systime, szText, int(std::size(szText)) - 1 );
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -350,7 +349,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				WCHAR szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
-				CFormatManager().MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );
+				CFormatManager().MyGetTimeFormat( systime, szText, int(std::size(szText)) - 1 );
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -391,7 +390,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				CFormatManager().MyGetDateFormat(
 					pcDoc->m_cDocFile.GetFileSysTime(),
 					szText,
-					_countof( szText ) - 1
+					int(std::size(szText)) - 1
 				);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
@@ -407,7 +406,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				CFormatManager().MyGetTimeFormat(
 					pcDoc->m_cDocFile.GetFileSysTime(),
 					szText,
-					_countof( szText ) - 1
+					int(std::size(szText)) - 1
 				);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
@@ -484,7 +483,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				default:
 					{
 						WCHAR szMacroFilePath[_MAX_PATH * 2];
-						int n = CShareData::getInstance()->GetMacroFilename( pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, _countof(szMacroFilePath) );
+						int n = CShareData::getInstance()->GetMacroFilename( pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, int(std::size(szMacroFilePath)) );
 						if ( 0 < n ){
 							q = wcs_pushW( q, q_max - q, szMacroFilePath );
 						}
@@ -708,7 +707,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 		{
 			// 2002.10.25 Moca
 			WCHAR szCurDir[_MAX_PATH];
-			int nCurDir = ::GetCurrentDirectory( _countof(szCurDir), szCurDir );
+			int nCurDir = ::GetCurrentDirectory( int(std::size(szCurDir)), szCurDir );
 			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
 				return L"";
 			}
@@ -730,7 +729,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 			}
 
 			WCHAR szCurDir[_MAX_PATH];
-			int nCurDir = ::GetCurrentDirectory( _countof(szCurDir), szCurDir );
+			int nCurDir = ::GetCurrentDirectory( int(std::size(szCurDir)), szCurDir );
 			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
 				return L"";
 			}
@@ -742,7 +741,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 	case OPENDIALOGDIR_SEL:
 		{
 			WCHAR szSelDir[_MAX_PATH];
-			CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, _countof(szSelDir) );
+			CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, int(std::size(szSelDir)) );
 			return szSelDir;
 		}
 		break;
@@ -789,7 +788,7 @@ BOOL IsSakuraMainWindow( HWND hWnd )
 	if( !::IsWindow( hWnd ) ){
 		return FALSE;
 	}
-	if( 0 == ::GetClassName( hWnd, szClassName, _countof(szClassName) - 1 ) ){
+	if( 0 == ::GetClassName( hWnd, szClassName, int(std::size(szClassName)) - 1 ) ){
 		return FALSE;
 	}
 	if(0 == wcscmp( GSTR_EDITWINDOWNAME, szClassName ) ){

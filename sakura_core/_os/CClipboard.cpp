@@ -14,7 +14,7 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h"
 #include "charset/CUtf8.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "mem/CNativeA.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -149,7 +149,7 @@ bool CClipboard::SetText(
 	// 矩形選択を示すダミーデータ
 	HGLOBAL hgClipMSDEVColumn = nullptr;
 	if( bColumnSelect ){
-		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVColumnSelect" );
+		uFormat = ::RegisterClipboardFormatW(L"MSDEVColumnSelect");
 		if( 0 != uFormat ){
 			hgClipMSDEVColumn = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -167,7 +167,7 @@ bool CClipboard::SetText(
 	/* 行選択を示すダミーデータ */
 	HGLOBAL hgClipMSDEVLine = nullptr;		// VS2008 以前の形式
 	if( bLineSelect ){
-		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVLineSelect" );
+		uFormat = ::RegisterClipboardFormatW(L"MSDEVLineSelect");
 		if( 0 != uFormat ){
 			hgClipMSDEVLine = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -183,7 +183,7 @@ bool CClipboard::SetText(
 	}
 	HGLOBAL hgClipMSDEVLine2 = nullptr;	// VS2010 形式
 	if( bLineSelect ){
-		UINT uFormat = ::RegisterClipboardFormat( L"VisualStudioEditorOperationsLineCutCopyClipboardTag" );
+		uFormat = ::RegisterClipboardFormatW(L"VisualStudioEditorOperationsLineCutCopyClipboardTag");
 		if( 0 != uFormat ){
 			hgClipMSDEVLine2 = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -278,7 +278,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		while( ( uFormat = EnumClipboardFormats( uFormat ) ) != 0 ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			WCHAR szFormatName[128];
-			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){
+			if( ::GetClipboardFormatName( uFormat, szFormatName, int(std::size(szFormatName)) - 1 ) ){
 				if( nullptr != pbColumnSelect && 0 == lstrcmpi( L"MSDEVColumnSelect", szFormatName ) ){
 					*pbColumnSelect = true;
 					break;
@@ -355,7 +355,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, nullptr, 0);
 
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
-				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
+				DragQueryFile(hDrop, nLoop, sTmpPath, int(std::size(sTmpPath)) - 1);
 				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
 				cmemBuf->Append(sTmpPath, wcslen(sTmpPath));
 				if(nMaxCnt > 1){
@@ -413,7 +413,7 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 	if( pFormatName[0] == L'\0' ){
 		return uFormat;
 	}
-	for(int i = 0; i < _countof(sClipFormatNames); i++){
+	for(int i = 0; i < int(std::size(sClipFormatNames)); i++){
 		if( 0 == _wcsicmp(pFormatName, sClipFormatNames[i].m_pszName) ){
 			uFormat = sClipFormatNames[i].m_nClipFormat;
 		}
@@ -426,9 +426,9 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 			}
 		}
 		if( bNumber ){
-			uFormat = _wtoi(pFormatName);
+			uFormat = (CLIPFORMAT)::_wtoi(pFormatName);
 		}else{
-			uFormat = ::RegisterClipboardFormat( pFormatName );
+			uFormat = (CLIPFORMAT)::RegisterClipboardFormatW(pFormatName);
 		}
 	}
 	return uFormat;

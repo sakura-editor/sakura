@@ -25,7 +25,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "_os/OleTypes.h"
 #include "util/tchar_convert.h"
-#include "String_define.h"
 
 #define NEVER_USED_PARAM(p) ((void)p)
 
@@ -79,6 +78,7 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 
 LPCWSTR CPPA::GetDllNameImp(int nIndex)
 {
+	UNREFERENCED_PARAMETER(nIndex);
 	return L"PPA.DLL";
 }
 
@@ -163,26 +163,18 @@ bool CPPA::InitDllImp()
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
 	AddStrObj( "UserErrorMes", "", FALSE, 2 ); // 2003.06.01 デバッグ用文字列変数を用意
 
-	int i;
-	
-	//	Jun. 16, 2003 genta 一時作業エリア
-	char buf[1024];
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != nullptr; i++) {
-		//	2003.06.08 Moca メモリリークの修正
-		//	2003.06.16 genta バッファを外から与えるように
+	for (const auto& funcInfo : CSMacroMgr::GetFuncInfo()) {
 		//	関数登録用文字列を作成する
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], buf );
-		SetDefProc( buf );
+		const auto buf = GetDeclarations(funcInfo);
+		SetDefProc( buf.c_str() );
 	}
 
 	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_pszFuncName != nullptr; i++) {
-		//	2003.06.08 Moca メモリリークの修正
-		//	2003.06.16 genta バッファを外から与えるように
+	for (const auto& funcInfo : CSMacroMgr::GetCommandInfo()) {
 		//	関数登録用文字列を作成する
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], buf );
-		SetDefProc( buf );
+		const auto buf = GetDeclarations(funcInfo);
+		SetDefProc( buf.c_str() );
 	}
 	return true; 
 }
@@ -200,80 +192,69 @@ bool CPPA::InitDllImp()
 
 	@date 2003.06.16 genta 無駄なnew/deleteを避けるためバッファを外から与えるように
 */
-char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer )
+std::string CPPA::GetDeclarations(const MacroFuncInfo& cMacroFuncInfo)
 {
-	char szType[20];			//	procedure/function用バッファ
-	char szReturn[20];			//	戻り値型用バッファ
-	if (cMacroFuncInfo.m_varResult == VT_EMPTY){
-		strcpy( szType, "procedure" );
-		szReturn[0] = '\0';
+	//	procedure/function用バッファ
+	std::string declType = "function";
+
+	//	戻り値型用バッファ
+	std::string retType;
+
+	switch (cMacroFuncInfo.m_varResult) {
+	case VT_EMPTY: declType = "procedure"; break;
+	case VT_BSTR:  retType = ": string"; break;
+	case VT_I4:    retType = ": Integer"; break;
+	default: break;
 	}
-	else {
-		strcpy( szType, "function" );
-		if (cMacroFuncInfo.m_varResult == VT_BSTR){
-			strcpy( szReturn, ": string" );
-		}
-		else if ( cMacroFuncInfo.m_varResult == VT_I4 ){
-			strcpy( szReturn, ": Integer" );
-		}
-		else {
-			szReturn[0] = '\0';
-		}
-	}
-	
-	char szArguments[8][20];	//	引数用バッファ
-	int i;
-	for (i=0; i<8; i++){
-		VARTYPE type = VT_EMPTY;
+
+	//	引数用バッファ
+	std::vector<std::string> args{};
+	args.reserve(8);
+
+	for (int i = 0; i < 8; ++i) {
+		VARTYPE vt = VT_EMPTY;
 		if( i < 4 ){
-			type = cMacroFuncInfo.m_varArguments[i];
+			vt = cMacroFuncInfo.m_varArguments[i];
 		}else{
 			if( cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize ){
-				type = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
+				vt = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
 			}
 		}
-		if ( type == VT_EMPTY ){
+		if ( vt == VT_EMPTY ){
 			break;
 		}
-		if ( type == VT_BSTR ){
-			strcpy( szArguments[i], "s0: string" );
-			szArguments[i][1] = '0' + (char)i;
+
+		std::string_view type_name = "";
+		char type_char = 0;
+		switch (vt) {
+		case VT_BSTR:	type_char = 's'; type_name = "string";  break;
+		case VT_I4:		type_char = 'i'; type_name = "Integer"; break;
+		default:		type_char = 'u'; type_name = "Unknown"; break;
 		}
-		else if ( type == VT_I4 ){
-			strcpy( szArguments[i], "i0: Integer" );
-			szArguments[i][1] = '0' + (char)i;
-		}
-		else {
-			strcpy( szArguments[i], "u0: Unknown" );
-		}
+		args.emplace_back(std::format("{:c}{:d}: {:s}", type_char, i, type_name));
 	}
-	if ( i > 0 ){	//	引数があったとき
-		int j;
-		char szArgument[8*20];
-		// 2002.12.06 Moca 原因不明だが，strcatがVC6Proでうまく動かなかったため，strcpyにしてみたら動いた
-		strcpy( szArgument, szArguments[0] );
-		for ( j=1; j<i; j++){
-			strcat( szArgument, "; " );
-			strcat( szArgument, szArguments[j] );
+
+	if (!args.empty()) {
+		auto szArgument(args.front());
+		if (1 < args.size()) {
+			szArgument = std::accumulate(args.cbegin() + 1, args.cend(), szArgument, [](const std::string& a, std::string_view b) { return std::format("{}; {}", a, b); });
 		}
-		auto_sprintf( szBuffer, "%hs S_%ls(%hs)%hs; index %d;",
-			szType,
-			cMacroFuncInfo.m_pszFuncName,
+
+		return std::format("{} S_{}({}){}; index {};",
+			declType,
+			cxx::to_string(cMacroFuncInfo.m_pszFuncName),
 			szArgument,
-			szReturn,
+			retType,
+			cMacroFuncInfo.m_nFuncID
+		);
+	} else {
+		return std::format("{} S_{}{}; index {};",
+			declType,
+			cxx::to_string(cMacroFuncInfo.m_pszFuncName),
+			retType,
 			cMacroFuncInfo.m_nFuncID
 		);
 	}
-	else {
-		auto_sprintf( szBuffer, "%hs S_%ls%hs; index %d;",
-			szType,
-			cMacroFuncInfo.m_pszFuncName,
-			szReturn,
-			cMacroFuncInfo.m_nFuncID
-		);
-	}
-	//	Jun. 01, 2003 Moca / Jun. 16, 2003 genta
-	return szBuffer;
 }
 
 /*! ユーザー定義文字列型オブジェクト
@@ -299,6 +280,24 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 	}
 }
 
+/*!
+ * CPPAエラー情報コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ void CPPA::CallErrorProc(PpaExecInfo& info, int Err_CD, _In_opt_z_ LPCSTR Err_Mes)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAエラー情報コールバックを呼び出す
+	stdError(Err_CD, Err_Mes);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+}
+
 /*! ユーザー定義関数のエラーメッセージの作成
 
 	stdProc, stdIntFunc, stdStrFunc がエラーコードを返した場合、PPAから呼び出される。
@@ -322,33 +321,20 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	WCHAR szMes[2048]; // 2048あれば足りるかと
 	const WCHAR* pszErr = szMes;
 	if( 0 < Err_CD ){
-		int i, FuncID;
-		FuncID = Err_CD - 1;
-		char szFuncDec[1024];
-		szFuncDec[0] = '\0';
-		for( i = 0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID != -1; i++ ){
-			if( CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID == FuncID ){
-				GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], szFuncDec );
-				break;
-			}
+		int FuncID = Err_CD - 1;
+		std::string funcDesc;
+		funcDesc.reserve(1024);
+		if (const auto pFuncInfo = CSMacroMgr::GetFuncInfoByID(FuncID)) {
+			funcDesc = GetDeclarations(*pFuncInfo);
 		}
-		if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1 ){
-			for( i = 0; CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1; i++ ){
-				if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID == FuncID ){
-					GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], szFuncDec );
-					break;
-				}
-			}
-		}
-		if( szFuncDec[0] != '\0' ){
-			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), szFuncDec );
+		if (!funcDesc.empty()) {
+			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), funcDesc.c_str() );
 		}else{
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA3), FuncID );
 		}
 	}else{
-		//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
-		//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
-		if( IsBadStringPtrA( Err_Mes, 256 )){
+		if( !Err_Mes ){
+			// "エラー情報が不正"
 			pszErr = LS(STR_ERR_DLGPPA6);
 		}else{
 			switch( Err_CD ){
@@ -396,7 +382,7 @@ void __stdcall CPPA::stdProc(
 	for(int i=0;i<ArgSize;i++){
 		if(Argument[i]){
 			tmpArguments2[i]=mbstowcs_new(Argument[i]);
-			tmpArgLengths[i]=wcslen(tmpArguments2[i]);
+			tmpArgLengths[i]=(int)wcslen(tmpArguments2[i]);
 		}
 		else{
 			tmpArguments2[i]=nullptr;

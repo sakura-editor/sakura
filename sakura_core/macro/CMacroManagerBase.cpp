@@ -14,12 +14,14 @@
 #include "CMacroManagerBase.h"
 #include "view/CEditView.h"
 #include "cmd/CViewCommander_inline.h"
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 
 // CMacroBeforeAfter
 
 void CMacroBeforeAfter::ExecKeyMacroBefore( class CEditView* pcEditView, int flags )
 {
+	UNREFERENCED_PARAMETER(flags);
+
 	COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
 	if( opeBlk ){
 		m_nOpeBlkCount = opeBlk->GetRefCount();
@@ -31,6 +33,9 @@ void CMacroBeforeAfter::ExecKeyMacroBefore( class CEditView* pcEditView, int fla
 
 void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flags, bool bRet )
 {
+	UNREFERENCED_PARAMETER(bRet);
+	UNREFERENCED_PARAMETER(flags);
+
 	if( 0 < m_nOpeBlkCount ){
 		COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
 		if( opeBlk == nullptr ){

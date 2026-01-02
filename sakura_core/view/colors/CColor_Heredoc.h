@@ -21,9 +21,10 @@ public:
 	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
 	bool EndColor(const CStringRef& cStr, int nPos) override;
 private:
-	std::wstring m_id;
-	int	     m_nSize;
-	const wchar_t* m_pszId;
-	int m_nCOMMENTEND;
+	std::wstring	m_id;
+	LPCWSTR			m_pszId = nullptr;
+	size_t			m_nSize = 0;
+	size_t			m_nCOMMENTEND = 0;
 };
+
 #endif /* SAKURA_CCOLOR_HEREDOC_88B5007B_1615_411C_AED2_73E7AF92C146_H_ */

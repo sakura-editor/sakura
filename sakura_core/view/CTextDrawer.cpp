@@ -12,7 +12,7 @@
 #include "CTextMetrics.h"
 #include "CTextArea.h"
 #include "CViewFont.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "types/CTypeSupport.h"
@@ -123,7 +123,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 			hdc,
 			nDrawX,					//X
 			y + marginy,			//Y
-			ExtTextOutOption() & ~(bTransparent? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTransparent? ETO_OPAQUE: 0),
 			&rcClip,
 			pDrawData,				//文字列
 			nDrawLength,			//文字列長
@@ -475,7 +475,7 @@ void CTextDrawer::DispLineNumber(
 				/* 物理行（レイアウト行）番号表示モード */
 				_itow( (Int)nLineNum + 1, szLineNum, 10 );
 			}
-			nLineCols = wcslen( szLineNum );
+			nLineCols = int(wcslen( szLineNum ));
 			nLineNumCols = nLineCols; // 2010.08.17 Moca 位置決定に行番号区切りは含めない
 
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */
@@ -492,7 +492,7 @@ void CTextDrawer::DispLineNumber(
 		::ExtTextOut( gr,
 			drawNumTop,
 			y + nHeightMargin,
-			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcLineNum,
 			szLineNum,
 			nLineCols,

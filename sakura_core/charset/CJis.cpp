@@ -161,7 +161,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 		*pbError = berror;
 	}
 
-	return pw - pDst;
+	return int(pw - pDst);
 }
 
 /*
@@ -232,7 +232,7 @@ int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pb
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned short*>(pDst);
+	return int(pw - reinterpret_cast<unsigned short*>(pDst));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -439,7 +439,7 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 		*pbError = berror;
 	}
 
-	return pw - reinterpret_cast<unsigned char*>(pDst);
+	return int(pw - reinterpret_cast<unsigned char*>(pDst));
 }
 
 EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)

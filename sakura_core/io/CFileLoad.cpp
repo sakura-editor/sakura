@@ -20,7 +20,7 @@
 #include <algorithm>
 #include "_main/global.h"
 #include "mem/CMemory.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "io/CFileLoad.h"
 #include "charset/charcode.h"
 #include "io/CIoBridge.h"
@@ -66,7 +66,7 @@ std::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
 
 	// to string
 	wchar_t buf[32];
-	swprintf_s(buf, _countof(buf), L"%I64u", megabytes);
+	swprintf_s(buf, std::size(buf), L"%I64u", megabytes);
 	std::wstring str = buf;
 
 	// https://stackoverflow.com/questions/7276826/c-format-number-with-commas
@@ -247,7 +247,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[2], EEolType::paragraph_separator );
 	bool bEolEx = false;
 	int  nMaxEolLen = 0;
-	for( int k = 0; k < (int)_countof(m_memEols); k++ ){
+	for( int k = 0; k < int(std::size(m_memEols)); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
 			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());
@@ -458,7 +458,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	size_t*		pnEolLen	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
 ){
 	const size_t nbgn = *pnBgn;
-	size_t i;
+	size_t i = 0;
 
 	pcEol->SetType( EEolType::none );
 
@@ -489,7 +489,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				}
 				if( m_bEolEx ){
 					int k;
-					for( k = 0; k < (int)_countof(eEolEx); k++ ){
+					for( k = 0; k < int(std::size(eEolEx)); k++ ){
 						if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
 								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
 							pcEol->SetType(eEolEx[k]);
@@ -497,7 +497,7 @@ const char* CFileLoad::GetNextLineCharCode(
 							break;
 						}
 					}
-					if( k != (int)_countof(eEolEx) ){
+					if( k != int(std::size(eEolEx)) ){
 						break;
 					}
 				}

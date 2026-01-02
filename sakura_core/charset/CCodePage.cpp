@@ -92,9 +92,6 @@ EConvertResult CCodePage::CPToUni(const char* pSrc, const int nSrcLen, wchar_t* 
 */
 EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int codepageEx)
 {
-	// エラー状態
-	bool bError = false;
-
 	// ソース取得
 	int nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
@@ -394,25 +391,27 @@ BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCWSTR pCodePageString )
 
 int CCodePage::AddComboCodePages(HWND hwnd, HWND combo, int nSelCode)
 {
+	UNREFERENCED_PARAMETER(hwnd);
+
 	int nSel = -1;
-	int nIdx = Combo_AddString( combo, L"CP_ACP" );
-	Combo_SetItemData( combo, nIdx, CODE_CPACP );
+	int nIdx = ApiWrap::Combo_AddString( combo, L"CP_ACP" );
+	ApiWrap::Combo_SetItemData( combo, nIdx, CODE_CPACP );
 	if( nSelCode == CODE_CPACP ){
-		Combo_SetCurSel(combo, nIdx);
+		ApiWrap::Combo_SetCurSel(combo, nIdx);
 		nSel = nIdx;
 	}
-	nIdx = Combo_AddString( combo, L"CP_OEM" );
+	nIdx = ApiWrap::Combo_AddString( combo, L"CP_OEM" );
 	if( nSelCode == CODE_CPOEM ){
-		Combo_SetCurSel(combo, nIdx);
+		ApiWrap::Combo_SetCurSel(combo, nIdx);
 		nSel = nIdx;
 	}
-	Combo_SetItemData( combo, nIdx, CODE_CPOEM );
+	ApiWrap::Combo_SetItemData( combo, nIdx, CODE_CPOEM );
 	CCodePage::CodePageList& cpList = CCodePage::GetCodePageList();
 	for( auto it = cpList.cbegin(); it != cpList.cend(); ++it ){
-		nIdx = Combo_AddString(combo, it->second.c_str());
-		Combo_SetItemData(combo, nIdx, it->first);
+		nIdx = ApiWrap::Combo_AddString(combo, it->second.c_str());
+		ApiWrap::Combo_SetItemData(combo, nIdx, it->first);
 		if( nSelCode == it->first ){
-			Combo_SetCurSel(combo, nIdx);
+			ApiWrap::Combo_SetCurSel(combo, nIdx);
 			nSel = nIdx;
 		}
 	}
@@ -636,7 +635,7 @@ static bool BinToUTF32( const unsigned short* pSrc, int Len, char* pDst, int nDs
 {
 	if( 4 <= nDstLen ){
 		for( int i = 0; i < Len; i++ ){
-			pDst[i] = CCodeBase::TextToBin(pSrc[i]);
+			pDst[i] = char(CCodeBase::TextToBin(pSrc[i]));
 		}
 		for( int k = Len; k < 4; k++ ){
 			pDst[k] = 0;
@@ -687,7 +686,7 @@ int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 	}
 	int nDstUseLen = 0;
 	int nDstUseCharLen;
-	int nBinaryPos;
+	int nBinaryPos = 0;
 	int nBinaryLen = 0;
 	int i = 0;
 	const unsigned short* pSrcShort = reinterpret_cast<const unsigned short*>(pSrc);
@@ -750,7 +749,7 @@ int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 	if( nBinaryLen != 0 ){
 		if( nDstUseLen + nBinaryLen <= nDstLen ){
 			for( int k = 0; k < nBinaryLen; k++ ){
-				pDstByte[nDstUseLen + k] = TextToBin(pSrcShort[nBinaryPos]);
+				pDstByte[nDstUseLen + k] = (BYTE)TextToBin(pSrcShort[nBinaryPos]);
 			}
 		}else{
 			return 0;
@@ -801,7 +800,7 @@ int CCodePage::S_UnicodeToUTF32BE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 	}
 	int nDstUseLen = 0;
 	int nDstUseCharLen;
-	int nBinaryPos;
+	int nBinaryPos = 0;
 	int nBinaryLen = 0;
 	int i = 0;
 	const unsigned short* pSrcShort = reinterpret_cast<const unsigned short*>(pSrc);
@@ -864,7 +863,7 @@ int CCodePage::S_UnicodeToUTF32BE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 	if( nBinaryLen != 0 ){
 		if( nDstUseLen + nBinaryLen <= nDstLen ){
 			for( int k = 0; k < nBinaryLen; k++ ){
-				pDstByte[nDstUseLen + k] = TextToBin(pSrcShort[nBinaryPos]);
+				pDstByte[nDstUseLen + k] = (BYTE)TextToBin(pSrcShort[nBinaryPos]);
 			}
 		}else{
 			return 0;

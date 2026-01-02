@@ -1,0 +1,5 @@
+﻿# 生成したCHMファイルはGit登録しない
+*.chm
+
+# コンパイルログもGit登録しない
+Compile.Log

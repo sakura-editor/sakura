@@ -62,8 +62,8 @@ inline int my_toupper( int c ){ return (((c) >= 'a') && ((c) <= 'z')) ? ((c) - '
 inline int my_tolower( int c ){ return (((c) >= 'A') && ((c) <= 'Z')) ? ((c) - 'A' + 'a') : (c); }
 inline int my_towupper( int c ){ return (((c) >= L'a') && ((c) <= L'z')) ? ((c) - L'a' + L'A') : (c); }
 inline int my_towlower( int c ){ return (((c) >= L'A') && ((c) <= L'Z')) ? ((c) - L'A' + L'a') : (c); }
-inline wchar_t my_towupper2( wchar_t c ){ return my_towupper(c); }
-inline wchar_t my_towlower2( wchar_t c ){ return my_towlower(c); }
+inline wchar_t my_towupper2(wchar_t c) { return (wchar_t)my_towupper(c); }
+inline wchar_t my_towlower2(wchar_t c) { return (wchar_t)my_towlower(c); }
 int skr_towupper( int c );
 int skr_towlower( int c );
 
@@ -215,14 +215,6 @@ size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count);
 //SJIS→UNICODE。
 wchar_t*	mbstowcs_new(const char* pszSrc);								//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
 wchar_t*	mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen);		//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
-void		mbstowcs_vector(const char* src, std::vector<wchar_t>* ret);	//戻り値はvectorとして返す。
-void		mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret);	//戻り値はvectorとして返す。
-
-//UNICODE→SJIS
-char*	wcstombs_new(const wchar_t* src); //戻り値はnew[]で確保して返す。
-char*	wcstombs_new(const wchar_t* pSrc,int nSrcLen); //戻り値はnew[]で確保して返す。
-void	wcstombs_vector(const wchar_t* pSrc, std::vector<char>* ret); //戻り値はvectorとして返す。
-void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); //戻り値はvectorとして返す。
 
 std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput);
 std::string wcstou8s(std::string& strOut, std::wstring_view strInput);

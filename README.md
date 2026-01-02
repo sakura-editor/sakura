@@ -1,4 +1,6 @@
-# Sakura Editor
+﻿# Sakura Editor
+
+A free text editor for Windows.  
 [![License: Zlib](https://img.shields.io/badge/License-Zlib-lightgrey.svg)](https://opensource.org/licenses/Zlib)
 [![build sakura](https://github.com/sakura-editor/sakura/workflows/build%20sakura/badge.svg)](https://github.com/sakura-editor/sakura/actions?query=workflow%3A%22build+sakura%22)
 [![CodeFactor](https://www.codefactor.io/repository/github/sakura-editor/sakura/badge)](https://www.codefactor.io/repository/github/sakura-editor/sakura)
@@ -23,148 +25,37 @@
 <!-- TOC -->
 
 - [Sakura Editor](#sakura-editor)
-  - [Hot topic](#hot-topic)
-  - [Web Site](#web-site)
-  - [開発参加ポリシー](#開発参加ポリシー)
-  - [Build Requirements](#build-requirements)
-    - [Visual Studio Install options required](#visual-studio-install-options-required)
-    - [Visual Studio 2019 以降の対応に関して](#visual-studio-2019-以降の対応に関して)
-    - [.vsconfig に関して](#vsconfig-に関して)
-      - [全対応バージョン共通](#visual-studio-2017-以降共通)
-      - [Visual Studio 2019 以降のみ](#visual-studio-2019-以降のみ)
-      - [参照](#参照)
-  - [How to build](#how-to-build)
-    - [詳細情報](#詳細情報)
-  - [CI Buildおよびローカルビルドの環境変数](#ci-buildおよびローカルビルドの環境変数)
-    - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
-    - [ビルド成果物のダウンロード(バイナリ、インストーラなど)](#ビルド成果物のダウンロードバイナリインストーラなど)
-      - [master の 最新](#master-の-最新)
-      - [master の 最新以外](#master-の-最新以外)
+  - [ダウンロード](#ダウンロード)
   - [開発情報](#開発情報)
-    - [単体テスト](#単体テスト)
-    - [デバッグ方法](#デバッグ方法)
+    - [How to build](#how-to-build)
+    - [Static code analysis](#static-code-analysis)
   - [変更履歴](#変更履歴)
-  - [マクロのサンプル](#マクロのサンプル)
-  - [静的コード解析](#静的コード解析)
 
 <!-- /TOC -->
 
-A free Japanese text editor for Windows
+## ダウンロード
 
-## Hot topic
-Project(カンバン)運用を始めます。
+リリース版は [Sakura Editor Portal](https://sakura-editor.github.io/) に置いてあります。
 
-- [Projects](https://github.com/orgs/sakura-editor/projects)
-- [カンバン運用](https://github.com/sakura-editor/sakura/wiki/ProjectOperation)
-
-## Web Site
-- [Sakura Editor Portal](https://sakura-editor.github.io/)
-
-## 開発参加ポリシー
-開発ポリシーを以下にまとめていきます。開発にご参加いただける方はこちらご参照ください。  
-https://github.com/sakura-editor/sakura/wiki
-
-## Build Requirements
-
-Sakura Editor をコンパイルするためには、 
-[最新のVisual Studio][Visual Studio 最新版] または [以前のバージョンのVisual Studio（Visual Studio 2017 以降。ただし Express 2017 for Windows Desktop は除く）][Visual Studio 以前のバージョン]が必要です。
-
-Sakura Editor は、[Open Source Initiative (OSI) 認定ライセンスである zlib ライセンス][ライセンスの OSI のページ][に基づいている](LICENSE)ため、[通常 Community エディションの対象外であるエンタープライズ組織でも、特例で Community エディションを利用しての開発・テストができます。][Visual Studio Community ライセンス]もちろん、Professional・Enterprise エディションも利用できます。
-
-正式バイナリは [Visual Studio Community 2017][Visual Studio 以前のバージョン] でビルドされます。
-
-### Visual Studio Install options required
-- Windows 10 SDK
-
-### Visual Studio 2019 以降の対応に関して
-
-| Visual Studioバージョン | 対応済みIssue/PR                                           |
-| ----------------------- | ---------------------------------------------------------- |
-| 2022                    | [#1872](https://github.com/sakura-editor/sakura/pull/1872)（[コミット][2022対応コミット]） |
-| 2017/2019同時           | [#866](https://github.com/sakura-editor/sakura/issues/866) |
-
-[2022対応コミット]: https://github.com/sakura-editor/sakura/pull/1872/commits/93cf3f3eacfed6a4d0a2c30d5445b53b2599db3c
-
-[仕組みに関してはこちらを参照](vcx-props/project-PlatformToolset.md)
-
-### .vsconfig に関して
-
-Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
-
-[#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
-
-#### 全対応バージョン共通
-
-`vs_community__XXXXX.exe` でインストールする際に、--config オプションをつけてインストールする。
-あるいは構成変更することにより、必要なコンポーネントを自動的にインストールします。
-
-```
-vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
-```
-
-#### Visual Studio 2019 以降のみ
-
-最新のVisual Studio(Visual Studio 2019 以降)で `sakura.sln` を開くと、同じディレクトリにある [.vsconfig](.vsconfig) から必要なコンポーネントのリストが読み込まれます。インストールされていないコンポーネントがある場合、インストールボタンが表示されます。インストールをクリックすると不足しているコンポーネントが自動的にインストールされます。
-
-#### 参照
-
-- [How to extract currently installed Visual Studio component IDs?][How to extract currently installed Visual Studio component IDs?]
-- [Configure Visual Studio across your organization with .vsconfig][Configure Visual Studio across your organization with .vsconfig]
-- [インストール構成をインポートまたはエクスポートする][インストール構成をインポートまたはエクスポートする]
-- [コマンド ライン パラメーターを使用して Visual Studio をインストールする][コマンド ライン パラメーターを使用して Visual Studio をインストールする]
-- [不足しているコンポーネントを自動的にインストールする][不足しているコンポーネントを自動的にインストールする]
-
-## How to build
-
-- [7-Zip](https://7-zip.opensource.jp/) をインストールして 7z.exe へのパスを通します。
-- Visual Studio で `sakura.sln` を開いてビルドします。
-
-### 詳細情報
-
-詳しくは [こちら](build.md) を参照
-
-## CI Buildおよびローカルビルドの環境変数
-
-[こちら](ci/build-envvars.md) を参照してください。
-
-ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
-
-### ビルド成果物を利用する上での注意事項
-
-[`これ`](installer/warning.txt) を読んでからご利用ください。
-
-[`x64 版は alpha 版`](installer/warning-alpha.txt)です。  
-対応中のため予期せぬ不具合がある可能性があります。 
-
-### ビルド成果物のダウンロード(バイナリ、インストーラなど)
-
-#### master の 最新
-
-1. https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml?query=branch%3Amaster にアクセスする
-2. 右端にある `Jobs` をクリックします。
-3. `ARTIFACTS` をクリックします。
-4. 自分がダウンロードしたいものをクリックしてダウンロードします。
-   - (ユーザー用) 末尾に `Exe` がついてるのが実行ファイルのセットです。
-   - (ユーザー用) 末尾に `Installer` がついてるのがインストーラのセットです。
-   - ~~(すべて欲しい人向け) `All` がついてるのがバイナリ、インストーラ、ビルドログ、アセンブラ出力のフルセットです。~~ ([#514](https://github.com/sakura-editor/sakura/issues/514) の軽減のため無効化中) 
-   - (開発者用) 末尾に `Log` がついてるのがビルドログのセットです。
-   - (開発者用) 末尾に `Asm` がついてるのがアセンブラ出力セットです。
-
-#### master の 最新以外
-
-以下から取得したいビルドを選択後、同様にしてダウンロードできます。  
-https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml
+GitHubで公開しているので [GitHub Actionsのビルドページ](https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml?query=branch%3Amaster) より開発中の最新版をダウンロードすることもできます。
 
 ## 開発情報
 
-### 単体テスト
+### How to build
 
-[こちら](tests/unittest.md) を参照してください。
+`sakura.sln`を開いてビルドできます。  
+詳細は [ビルド方法](./tools/build.md) を参照。
 
-### デバッグ方法
+### Static code analysis
 
-- [タスクトレイのメニュー項目をデバッグする方法](debug-tasktray-menu.md) を参照
-- [大きなファイルの作成方法](create-big-file.md)
+サクラエディタプロジェクトではいくつかの静的解析サービスを利用しています。
+
+| サービス | 説明 |
+|---------|------|
+| [CodeFactor](https://www.codefactor.io/repository/github/sakura-editor/sakura) |  C++ のスタイルチェック。[cpplint.py](./tools/CodeFactor/README.md)による字句解析。 |
+| [SonarQube](https://sonarcloud.io/summary/new_code?id=sakura-editor_sakura&branch=master) | 多言語対応の静的解析。Build Wrapper + SonarScannerによるコード品質解析。 |
+
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sakura-editor_sakura)](https://sonarcloud.io/summary/overall?id=sakura-editor_sakura)
 
 ## 変更履歴
 
@@ -174,15 +65,3 @@ https://github.com/sakura-editor/sakura/actions/workflows/build-sakura.yml
 - `CHANGELOG.md` は [PullRequest](https://github.com/sakura-editor/sakura/pulls) から自動的に生成しています。
   - 具体的には [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) というソフトを使用して [changelog-sakura](https://github.com/sakura-editor/changelog-sakura) のリポジトリで [appveyor](https://ci.appveyor.com/project/sakuraeditor/changelog-sakura) で生成しています。
   - 詳細は wiki の [CHANGELOG.mdについて](https://github.com/sakura-editor/sakura/wiki/CHANGELOG.md%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) をご覧ください。
-
-## マクロのサンプル
-
-[こちら](tools/macro)でマクロのサンプルを提供してます。  
-もしサンプルを作ってもいいよ～という方がおられましたら PR の作成お願いします。
-
-## 静的コード解析
-
-- CodeFactor を利用しています。
-    - [cpplint.py](CPPLINT.md) で cpp のスタイルのチェックを行っています。
-
-

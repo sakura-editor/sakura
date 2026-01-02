@@ -484,8 +484,8 @@ void CViewCommander::Command_UNDO( void )
 				int newPos = ::MulDiv(nOpeBlkNum - i, 100, nOpeBlkNum);
 				if( newPos != nProgressPos ){
 					nProgressPos = newPos;
-					Progress_SetPos( hwndProgress, newPos + 1 );
-					Progress_SetPos( hwndProgress, newPos );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos + 1 );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos );
 				}
 			}
 		}
@@ -734,8 +734,8 @@ void CViewCommander::Command_REDO( void )
 				int newPos = ::MulDiv(i + 1, 100, nOpeBlkNum);
 				if( newPos != nProgressPos ){
 					nProgressPos = newPos;
-					Progress_SetPos( hwndProgress, newPos + 1 );
-					Progress_SetPos( hwndProgress, newPos );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos + 1 );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos );
 				}
 			}
 		}

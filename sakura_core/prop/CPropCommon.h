@@ -442,6 +442,7 @@ private:
 	//	To Here Jun. 2, 2001 genta
 	void SetMacro2List_Macro( HWND hwndDlg );//!< Macroデータの設定
 	void SelectBaseDir_Macro( HWND hwndDlg );//!< Macroディレクトリの選択
+	void SelectDir_Python(HWND hwndDlg);//!< Pythonディレクトリの選択
 	void OnFileDropdown_Macro( HWND hwndDlg );//!< ファイルドロップダウンが開かれるとき
 	void CheckListPosition_Macro( HWND hwndDlg );//!< リストビューのFocus位置確認
 	static int CALLBACK DirCallback_Macro( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData );
@@ -525,5 +526,6 @@ private:
 
 	bool Check_MainMenu(HWND hwndTree, std::wstring& sErrMsg);						// メニューの検査
 	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, std::wstring& sErrMsg);	// メニューの検査
+	static LRESULT CALLBACK TreeViewProc(HWND hwndTree, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 };
 #endif /* SAKURA_CPROPCOMMON_82053028_AB71_4E4C_AE50_0E46E173828C_H_ */

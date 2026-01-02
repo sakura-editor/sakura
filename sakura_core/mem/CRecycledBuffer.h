@@ -62,7 +62,7 @@ public:
 	CRecycledBufferDynamic()
 	{
 		m_current=0;
-		for(int i=0;i<_countof(m_buf);i++){
+		for(int i=0;i<int(std::size(m_buf));i++){
 			m_buf[i]=nullptr;
 		}
 	}
@@ -72,7 +72,7 @@ public:
 	Me& operator = (Me&&) noexcept = delete;
 	~CRecycledBufferDynamic()
 	{
-		for(int i=0;i<_countof(m_buf);i++){
+		for(int i=0;i<int(std::size(m_buf));i++){
 			if(m_buf[i])delete[] m_buf[i];
 		}
 	}

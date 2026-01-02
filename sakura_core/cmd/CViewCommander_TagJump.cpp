@@ -34,12 +34,11 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "env/CSakuraEnvironment.h"
-#include "CGrepAgent.h"
+#include "agent/CGrepAgent.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 //! "までを切り取る
 // sizeは切り出し文字列のNULL終端を含む長さ(wstring::length()+1の値)
@@ -76,7 +75,7 @@ static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = nul
 	if( 0 == wcsncmp(pLine, L":HWND:[", 7) ){
 		const wchar_t* pFileEnd = wcschr( pLine, L']' );
 		if( pFileEnd ){
-			const int nLen = pFileEnd - pLine + 1;
+			const int nLen = int(pFileEnd - pLine + 1);
 			int i = 7;
 			for( ; i < nLen; i++ ){
 				if( !(WCODE::Is09(pLine[i]) || (L'a' <= pLine[i] && L'f' <= pLine[i])) ){
@@ -104,7 +103,7 @@ static int GetLineColumnPos(const wchar_t* pLine)
 		// filename(1234,56)  [SJIS]: str
 		pTagEnd = wcsstr( pLine, L"]: " );
 		if( pTagEnd ){
-			int fileEnd = pTagEnd - pLine - 1;
+			int fileEnd = int(pTagEnd - pLine - 1);
 			for( ; 1 < fileEnd; fileEnd-- ){
 				if( L'[' == pLine[fileEnd] ){
 					fileEnd--;
@@ -120,7 +119,7 @@ static int GetLineColumnPos(const wchar_t* pLine)
 		}
 	}
 	if( pTagEnd ){
-		int fileEnd = pTagEnd - pLine - 1;
+		int fileEnd = int(pTagEnd - pLine - 1);
 		for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
 		if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
 		for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
@@ -519,7 +518,7 @@ bool CViewCommander::Command_TagsMake( void )
 	else
 	{
 		// 20100722 Moca サクラのフォルダーからカレントディレクトリに変更
-		::GetCurrentDirectory( _countof(szTargetPath), szTargetPath );
+		::GetCurrentDirectory( int(std::size(szTargetPath)), szTargetPath );
 	}
 
 	//ダイアログを表示する
@@ -591,7 +590,7 @@ bool CViewCommander::Command_TagsMake( void )
 	{
 		// 2010.08.28 Moca システムディレクトリ付加
 		WCHAR szCmdDir[_MAX_PATH];
-		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
+		::GetSystemDirectory(szCmdDir, int(std::size(szCmdDir)));
 		//	2006.08.04 genta add /D to disable autorun
 		auto_sprintf( cmdline, L"\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\"",
 				szCmdDir,
@@ -659,9 +658,9 @@ bool CViewCommander::Command_TagsMake( void )
 			{
 				if( new_cnt > 0 )												//待機中のものがある
 				{
-					if( new_cnt >= _countof(work) - 2 )							//パイプから読み出す量を調整
+					if( new_cnt >= int(std::size(work)) - 2 )							//パイプから読み出す量を調整
 					{
-						new_cnt = _countof(work) - 2;
+						new_cnt = int(std::size(work)) - 2;
 					}
 					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, nullptr );	//パイプから読み出し
 					if( read_cnt == 0 )
@@ -736,7 +735,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 	}
 
 	WCHAR	szDirFile[1024];
-	if( false == Sub_PreProcTagJumpByTagsFile( szDirFile, _countof(szDirFile) ) ){
+	if( false == Sub_PreProcTagJumpByTagsFile( szDirFile, int(std::size(szDirFile)) ) ){
 		return false;
 	}
 	CDlgTagJumpList	cDlgTagJumpList(true);	//タグジャンプリスト
@@ -760,7 +759,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 		WCHAR fileName[1024];
 		int   fileLine;
 
-		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , nullptr ) ){
+		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, int(std::size(fileName)), &fileLine , nullptr ) ){
 			return false;
 		}
 		return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine), bClose );
@@ -783,7 +782,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	int		fileLine;	// 行番号
 	WCHAR	szCurrentPath[1024];
 
-	if( false == Sub_PreProcTagJumpByTagsFile( szCurrentPath, _countof(szCurrentPath) ) ){
+	if( false == Sub_PreProcTagJumpByTagsFile( szCurrentPath, int(std::size(szCurrentPath)) ) ){
 		return false;
 	}
 
@@ -796,7 +795,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	}
 
 	//タグジャンプする。
-	if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine, nullptr ) )
+	if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, int(std::size(fileName)), &fileLine, nullptr ) )
 	{
 		return false;
 	}
@@ -826,14 +825,14 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
 	}else{
-		if( 0 == ::GetCurrentDirectory( count - _countof(L"\\dmy") - MAX_TYPES_EXTS, szCurrentPath ) ){
+		if( 0 == ::GetCurrentDirectory( count - int(std::size(L"\\dmy")) - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;
 		}
 		// (無題)でもファイル名を要求してくるのでダミーをつける
 		// 現在のタイプ別の1番目の拡張子を拝借
 		WCHAR szExts[MAX_TYPES_EXTS];
-		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
-		auto nExtLen = wcsnlen_s( szExts, _countof(szExts) );
+		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, int(std::size(szExts)));
+		auto nExtLen = wcsnlen_s(szExts, std::size(szExts) );
 		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
 			wcscat( szCurrentPath, L"." );

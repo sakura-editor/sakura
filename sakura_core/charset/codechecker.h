@@ -392,10 +392,10 @@ inline int GuessEucjpCharsz( const char uc_ ){
 	文字長検査
 */
 /* --- ローカル文字コードチェック */
-int CheckSjisChar( const char*, const size_t, ECharSet* );
-int CheckEucjpChar( const char*, const size_t, ECharSet* );
-int DetectJisEscseq( const char*, const size_t, EMyJisEscseq* ); // JIS エスケープシーケンス検出器
-int _CheckJisAnyPart( const char*, const int, const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount, const int nType );
+int CheckSjisChar( const char* pS, size_t nLen, ECharSet* );
+int CheckEucjpChar( const char* pS, size_t nLen, ECharSet* );
+int DetectJisEscseq( const char* pS, size_t nLen, EMyJisEscseq* ); // JIS エスケープシーケンス検出器
+int _CheckJisAnyPart( const char* pS, size_t nLen, const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount, const int nType );
 enum EJisChecker{
 	JISCHECK_ASCII7,
 	JISCHECK_HANKATA,
@@ -403,16 +403,16 @@ enum EJisChecker{
 	JISCHECK_UNKNOWN = -1,
 };
 
-inline int CheckJisAscii7Part( const char *pS, const int nLen,
+inline int CheckJisAscii7Part( const char *pS, size_t nLen,
 		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_ASCII7 ); }
-inline int CheckJisHankataPart( const char *pS, const int nLen,
+inline int CheckJisHankataPart( const char *pS, size_t nLen,
 		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_HANKATA ); }
-inline int CheckJisZenkakuPart( const char *pS, const int nLen,
+inline int CheckJisZenkakuPart( const char *pS, size_t nLen,
 		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_ZENKAKU ); }
-inline int CheckJisUnknownPart( const char *pS, const int nLen,
+inline int CheckJisUnknownPart( const char *pS, size_t nLen,
 		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_UNKNOWN ); }
 
@@ -422,14 +422,15 @@ inline int CheckJisUnknownPart( const char *pS, const int nLen,
 #define UC_LOOSE 0x02
 
 /* --- Unicode 系コードチェック */
-int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );
-inline int CheckUtf16leChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, false ); }
-inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, true ); }
+int _CheckUtf16Char( const wchar_t* pS, size_t nLen, ECharSet*, const int nOption, const bool bBigEndian );
+inline int CheckUtf16leChar( const wchar_t* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, false ); }
+inline int CheckUtf16beChar( const wchar_t* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, true ); }
 
-int CheckUtf8Char( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
-int CheckUtf8Char2( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
-int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
+int CheckUtf8Char( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );
+int CheckUtf8Char2( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );
+int CheckCesu8Char( const char* pS, size_t nLen, ECharSet*, const int nOption );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char* pS, size_t nLen, const char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char* pS, size_t nLen, const char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = nullptr );
+
 #endif /* SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_ */

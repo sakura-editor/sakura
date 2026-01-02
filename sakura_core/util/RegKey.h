@@ -155,6 +155,8 @@ public:
 
 	int EnumValue(int &index, WCHAR* pNameBuffer, int nMaxChar, DWORD *lpType, BYTE *lpData, int nMaxData, DWORD* pDataLen) const
 	{
+		UNREFERENCED_PARAMETER(nMaxData);
+
 		if(index < 0)
 		{
 			return ERROR_NO_MORE_ITEMS;

@@ -144,13 +144,13 @@ namespace ApiWrap{
 	
 	inline int Combo_GetCount(HWND hwndCtl)								{ return (int)(DWORD)::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L); }
 	inline int Combo_GetCurSel(HWND hwndCtl)							{ return (int)(DWORD)::SendMessage(hwndCtl, CB_GETCURSEL, 0L, 0L); }
-	inline int Combo_SetCurSel(HWND hwndCtl, int index)					{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETCURSEL, (WPARAM)index, 0L); }
+	inline int Combo_SetCurSel(HWND hwndCtl, size_t index) noexcept		{ return ComboBox_SetCurSel(hwndCtl, index); }
 	inline LRESULT Combo_GetItemData(HWND hwndCtl, int index)			{ return ((LRESULT)(ULONG_PTR)::SendMessage(hwndCtl, CB_GETITEMDATA, (WPARAM)index, 0L)); }
 	inline int Combo_SetItemData(HWND hwndCtl, int index, int data)		{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETITEMDATA, (WPARAM)index, (LPARAM)data); }
 	inline int Combo_SetItemData(HWND hwndCtl, int index, void* data)	{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETITEMDATA, (WPARAM)index, (LPARAM)data); }
 	inline int Combo_GetLBTextLen(HWND hwndCtl, int index)				{ return (int)(DWORD)::SendMessage(hwndCtl, CB_GETLBTEXTLEN, (WPARAM)index, 0L); }
-	inline int Combo_InsertString(HWND hwndCtl, int index, const WCHAR* lpsz)	{ return (int)(DWORD)::SendMessage(hwndCtl, CB_INSERTSTRING, (WPARAM)index, LPARAM(lpsz) ); }
-	inline int Combo_LimitText(HWND hwndCtl, int cchLimit)				{ return (int)(DWORD)::SendMessage(hwndCtl, CB_LIMITTEXT, (WPARAM)cchLimit, 0L); }
+	inline int Combo_InsertString(HWND hwndCtl, size_t index, LPCWSTR lpsz) noexcept { return ComboBox_InsertString(hwndCtl, index, lpsz); }
+	inline int Combo_LimitText(HWND hwndCtl, size_t cchLimit) noexcept	{ return ComboBox_LimitText(hwndCtl, cchLimit); }
 	inline int Combo_ResetContent(HWND hwndCtl)							{ return (int)(DWORD)::SendMessage(hwndCtl, CB_RESETCONTENT, 0L, 0L); }
 	inline int Combo_SetEditSel(HWND hwndCtl, int ichStart, int ichEnd)	{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETEDITSEL, 0L, MAKELPARAM(ichStart, ichEnd)); }
 	inline int Combo_SetExtendedUI(HWND hwndCtl, UINT flags)			{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETEXTENDEDUI, (WPARAM)flags, 0L); }
@@ -216,14 +216,11 @@ namespace ApiWrap{
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	bool List_GetText( HWND hList, int nIndex, std::wstring& strText );
-	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText);
-	template <size_t cchText>
-	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR(&pszText)[cchText]) {
-		return List_GetText(hwndList, nIndex, pszText, cchText);
-	}
-	inline LRESULT List_AddString(HWND hwndList, const WCHAR* str)
+	int List_GetText(HWND hwndList, size_t nIndex, std::span<WCHAR> buffer) noexcept;
+	int List_GetText(HWND hwndList, size_t nIndex, WCHAR* pszText, size_t cchText) noexcept;
+	inline int List_AddString(HWND hwndList, _In_z_ LPCWSTR str) noexcept
 	{
-		return ::SendMessage( hwndList, LB_ADDSTRING, 0, LPARAM(str) );
+		return ListBox_AddString(hwndList, str);
 	}
 	inline int List_AddItemData(HWND hwndCtl, int data)					{ return (int)(DWORD)::SendMessage(hwndCtl, LB_ADDSTRING, 0L, (LPARAM)data); }
 	inline int List_AddItemData(HWND hwndCtl, void* data)				{ return (int)(DWORD)::SendMessage(hwndCtl, LB_ADDSTRING, 0L, (LPARAM)data); }
@@ -244,14 +241,14 @@ namespace ApiWrap{
 	inline int List_InsertString(HWND hwndCtl, int index, const WCHAR* lpsz)	{ return (int)(DWORD)::SendMessage(hwndCtl, LB_INSERTSTRING, (WPARAM)index, LPARAM(lpsz)); }
 	inline BOOL List_ResetContent(HWND hwndCtl)							{ return (BOOL)(DWORD)::SendMessage(hwndCtl, LB_RESETCONTENT, 0L, 0L); }
 	inline void List_SetHorizontalExtent(HWND hwndCtl, int cxExtent)	{ ::SendMessage(hwndCtl, LB_SETHORIZONTALEXTENT, (WPARAM)cxExtent, 0L); }
-	inline int List_GetItemHeight(HWND hwndCtl, int index)				{ return (int)(DWORD)::SendMessage(hwndCtl, LB_GETITEMHEIGHT, (WPARAM)index, 0L); }
-	inline int List_SetItemHeight(HWND hwndCtl, int index, int cy)		{ return (int)(DWORD)::SendMessage(hwndCtl, LB_SETITEMHEIGHT, (WPARAM)index, MAKELPARAM(cy, 0)); }
+	inline int List_GetItemHeight(HWND hwndCtl, size_t index) noexcept { return ListBox_GetItemHeight(hwndCtl, index); }
+	inline int List_SetItemHeight(HWND hwndCtl, size_t index, int cy) noexcept { return ListBox_SetItemHeight(hwndCtl, index, cy); }
 	inline int List_SetTopIndex(HWND hwndCtl, int indexTop)				{ return (int)(DWORD)::SendMessage(hwndCtl, LB_SETTOPINDEX, (WPARAM)indexTop, 0L); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      エディット コントロール                //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	inline void EditCtl_LimitText(HWND hwndCtl, int cchLimit)			{ ::SendMessage(hwndCtl, EM_LIMITTEXT, (WPARAM)(cchLimit), 0L); }
+	inline void EditCtl_LimitText(HWND hwndCtl, size_t cchLimit) noexcept	{ Edit_LimitText(hwndCtl, cchLimit); }
 	inline void EditCtl_SetSel(HWND hwndCtl, int ichStart, int ichEnd)	{ ::SendMessage(hwndCtl, EM_SETSEL, ichStart, ichEnd); }
 
 	inline void EditCtl_ReplaceSel(HWND hwndCtl, const WCHAR* lpsz)		{ ::SendMessage(hwndCtl, EM_REPLACESEL, 0, LPARAM(lpsz)); }
@@ -292,10 +289,9 @@ namespace ApiWrap{
 	}
 
 	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText );
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount);
+	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, size_t nMaxCount) noexcept;
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr);
 	void TreeView_ExpandAll( HWND, bool, int nMaxDepth = 100 );
 }
-using namespace ApiWrap;
 #endif /* SAKURA_STDCONTROL_57A7282D_B9F0_4642_ABFF_48B6D715CCA7_H_ */

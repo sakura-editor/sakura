@@ -13,7 +13,7 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "env/DLLSHAREDATA.h"
 #include "_main/CAppMode.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
 #include "_os/CClipboard.h"
@@ -54,6 +54,8 @@ void CDocEditor::SetModified( bool flag, bool redraw)
 
 void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	//ビューのテキスト選択解除
 	GetEditWnd().Views_DisableSelectArea(true);
 }
@@ -115,6 +117,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 void CDocEditor::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	this->SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア

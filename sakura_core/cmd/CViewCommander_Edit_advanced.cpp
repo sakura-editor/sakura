@@ -32,7 +32,6 @@
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "apiwrap/CommonControl.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 /* インデント ver1 */
 void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
@@ -274,8 +273,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 					int newPos = ::MulDiv((Int)nLineNum, 100, (Int)rcSel.GetTo().y);
 					if( newPos != nProgressPos ){
 						nProgressPos = newPos;
-						Progress_SetPos( hwndProgress, newPos + 1 );
-						Progress_SetPos( hwndProgress, newPos );
+						ApiWrap::Progress_SetPos( hwndProgress, newPos + 1 );
+						ApiWrap::Progress_SetPos( hwndProgress, newPos );
 					}
 				}
 			}
@@ -379,8 +378,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				int newPos = ::MulDiv((Int)i, 100, (Int)sSelectOld.GetTo().GetY());
 				if( newPos != nProgressPos ){
 					nProgressPos = newPos;
-					Progress_SetPos( hwndProgress, newPos + 1 );
-					Progress_SetPos( hwndProgress, newPos );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos + 1 );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos );
 				}
 			}
 		}
@@ -518,8 +517,8 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 				int newPos = ::MulDiv((Int)i, 100, (Int)sSelectOld.GetTo().GetY());
 				if( newPos != nProgressPos ){
 					nProgressPos = newPos;
-					Progress_SetPos( hwndProgress, newPos + 1 );
-					Progress_SetPos( hwndProgress, newPos );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos + 1 );
+					ApiWrap::Progress_SetPos( hwndProgress, newPos );
 				}
 			}
 		}

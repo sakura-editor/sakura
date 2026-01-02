@@ -30,7 +30,6 @@
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
-#include "String_define.h"
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {
@@ -213,9 +212,9 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 		{ STR_PROPCOMMON_PLUGIN,	IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
 	};
 
-	std::wstring		sTabname[_countof(ComPropSheetInfoList)];
-	PROPSHEETPAGE		psp[_countof(ComPropSheetInfoList)];
-	for( nIdx = 0; nIdx < _countof(ComPropSheetInfoList); nIdx++ ){
+	std::wstring		sTabname[std::size(ComPropSheetInfoList)];
+	PROPSHEETPAGE		psp[std::size(ComPropSheetInfoList)];
+	for( nIdx = 0; nIdx < int(std::size(ComPropSheetInfoList)); nIdx++ ){
 		sTabname[nIdx] = LS(ComPropSheetInfoList[nIdx].m_nTabNameId);
 
 		PROPSHEETPAGE *p = &psp[nIdx];
@@ -473,7 +472,7 @@ HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf
 	// フォント名の設定
 	auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
 		lf.lfFaceName, double(nps)/10 );
-	::DlgItem_SetText( hwndDlg, idc_static, szFontName );
+	ApiWrap::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 
 	return hFont;
 }

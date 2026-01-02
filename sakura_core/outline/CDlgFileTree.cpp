@@ -19,7 +19,7 @@
 #include "dlg/CDlgInput1.h"
 #include "env/CDocTypeManager.h"
 #include "typeprop/CImpExpManager.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
@@ -28,7 +28,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 const DWORD p_helpids[] = {	//13300
 	IDC_CHECK_LOADINI,      HIDC_CHECK_FILETREE_LOADINI,
@@ -125,7 +124,7 @@ void CDlgFileTree::SetData()
 	TreeView_DeleteAllItems(hwndTree);
 	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
 	for( int i = 0; i < (int)m_fileTreeSetting.m_aItems.size(); i++ ){
-		int nMaxCount = _countof(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems);
+		const auto nMaxCount = int(std::size(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems));
 		if( bSaveShareData && nMaxCount < i + 1 ){
 			::InfoMessage(GetHwnd(), LS(STR_FILETREE_MAXCOUNT), nMaxCount);
 		}
@@ -156,19 +155,20 @@ void CDlgFileTree::SetData()
 	return;
 }
 
-void CDlgFileTree::SetDataItem(int nItemIndex)
+void CDlgFileTree::SetDataItem(LPARAM nItemIndex)
 {
 	HWND hwndDlg = GetHwnd();
 	bool bDummy = false;
-	if( nItemIndex < 0 || (int)m_fileTreeSetting.m_aItems.size() <= nItemIndex ){
+	if (nItemIndex < 0 || std::ssize(m_fileTreeSetting.m_aItems) <= nItemIndex) {
 		bDummy = true;
 	}
 	SFileTreeItem itemDummy;
 	const SFileTreeItem& item = (bDummy ? itemDummy : m_fileTreeSetting.m_aItems[nItemIndex]);
 	itemDummy.m_szTargetFile = L"*.*";
 	int nIDs[] ={IDC_RADIO_GREP, IDC_RADIO_FILE, IDC_RADIO_FOLDER};
-	int nID1;
-	int nID2, nID3;
+	int nID1 = 0;
+	int nID2 = 0;
+	int nID3 = 0;
 	switch( item.m_eFileTreeItemType ){
 	case EFileTreeItemType_Grep:   nID1 = 0; nID2 = 1; nID3 = 2; break;
 	case EFileTreeItemType_File:   nID1 = 1; nID2 = 0; nID3 = 2; break;
@@ -177,9 +177,9 @@ void CDlgFileTree::SetDataItem(int nItemIndex)
 	::CheckDlgButton(hwndDlg, nIDs[nID1], TRUE);
 	::CheckDlgButton(hwndDlg, nIDs[nID2], FALSE);
 	::CheckDlgButton(hwndDlg, nIDs[nID3], FALSE);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile);
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath);
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName);
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile);
 	::CheckDlgButtonBool(hwndDlg, IDC_CHECK_HIDDEN, item.m_bIgnoreHidden);
 	::CheckDlgButtonBool(hwndDlg, IDC_CHECK_READONLY, item.m_bIgnoreReadOnly);
 	::CheckDlgButtonBool(hwndDlg, IDC_CHECK_SYSTEM, item.m_bIgnoreSystem);
@@ -215,7 +215,7 @@ void CDlgFileTree::ChangeEnableAddInsert()
 	if( bSaveShareData ){
 		int nCount = TreeView_GetCount(GetItemHwnd(IDC_TREE_FL));
 		bool bEnable = true;
-		int nMaxCount = _countof(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems);
+		const auto nMaxCount = int(std::size(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems));
 		if( nMaxCount < nCount ){
 			bEnable = false;
 		}
@@ -245,15 +245,15 @@ int CDlgFileTree::GetData()
 	}
 	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
 	std::vector<SFileTreeItem> items;
-	if( !GetDataTree(items, TreeView_GetRoot(GetItemHwnd(IDC_TREE_FL)), 0, (bSaveShareData ? _countof(pFileTree->m_aItems) : 0) ) ){
+	if( !GetDataTree(items, TreeView_GetRoot(GetItemHwnd(IDC_TREE_FL)), 0, (bSaveShareData ? int(std::size(pFileTree->m_aItems)) : 0) ) ){
 		InfoMessage(GetHwnd(), LS(STR_FILETREE_MAXCOUNT));
 	}
 	if( pFileTree ){
 		pFileTree->m_bProject = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_LOADINI);
-		DlgItem_GetText(hwndDlg, IDC_EDIT_DEFINI, pFileTree->m_szProjectIni, pFileTree->m_szProjectIni.GetBufferCount());
+		ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_DEFINI, pFileTree->m_szProjectIni, pFileTree->m_szProjectIni.GetBufferCount());
 		if( bSaveShareData ){
 			pFileTree->m_nItemCount = (int)items.size();
-			assert(pFileTree->m_nItemCount <= _countof(pFileTree->m_aItems));
+			assert(pFileTree->m_nItemCount <= int(std::size(pFileTree->m_aItems)));
 			for( int i = 0; i < pFileTree->m_nItemCount; i++ ){
 				pFileTree->m_aItems[i] = items[i];
 			}
@@ -318,11 +318,11 @@ int CDlgFileTree::GetDataItem( SFileTreeItem& item )
 		item.m_eFileTreeItemType = EFileTreeItemType_Folder;
 	}
 	if( bPathEnable ){
-		::DlgItem_GetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath, item.m_szTargetPath.GetBufferCount());
+		ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_PATH, item.m_szTargetPath, item.m_szTargetPath.GetBufferCount());
 	}
-	::DlgItem_GetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName, item.m_szLabelName.GetBufferCount());
+	ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_LABEL, item.m_szLabelName, item.m_szLabelName.GetBufferCount());
 	if( bGrepEnable ){
-		::DlgItem_GetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile, item.m_szTargetFile.GetBufferCount());
+		ApiWrap::DlgItem_GetText(hwndDlg, IDC_EDIT_FILE, item.m_szTargetFile, item.m_szTargetFile.GetBufferCount());
 		item.m_bIgnoreHidden = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_HIDDEN);
 		item.m_bIgnoreReadOnly = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_READONLY);
 		item.m_bIgnoreSystem = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_SYSTEM);	
@@ -335,10 +335,10 @@ BOOL CDlgFileTree::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	_SetHwnd(hwndDlg);
 	SFileTreeItem item;
 
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_DEFINI), m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() -1);
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_PATH), item.m_szTargetPath.GetBufferCount() -1);
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_LABEL), item.m_szLabelName.GetBufferCount() -1);
-	EditCtl_LimitText(GetItemHwnd(IDC_EDIT_FILE), item.m_szTargetFile.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_DEFINI), m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_PATH), item.m_szTargetPath.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_LABEL), item.m_szLabelName.GetBufferCount() -1);
+	ApiWrap::EditCtl_LimitText(GetItemHwnd(IDC_EDIT_FILE), item.m_szTargetFile.GetBufferCount() -1);
 
 	CFilePath path;
 	m_pcDlgFuncList->LoadFileTreeSetting(m_fileTreeSetting, path);
@@ -375,21 +375,21 @@ void CDlgFileTree::SetDataInit()
 		const int xWidth = calc.GetTextWidth(L"x");
 		const int ctrlWidth = rc.right - rc.left;
 		int nMaxCch = ctrlWidth / xWidth;
-		CFileNameManager::getInstance()->GetTransformFileNameFast(pFile, szFilePath, _countof(szFilePath), calc.GetDC(), true, nMaxCch);
+		CFileNameManager::getInstance()->GetTransformFileNameFast(pFile, szFilePath, int(std::size(szFilePath)), calc.GetDC(), true, nMaxCch);
 		wsprintf(szMsg, LS(STR_FILETREE_FROM_FILE), szFilePath);
 		::SetWindowText(GetItemHwnd(IDC_STATIC_SETTFING_FROM), szMsg);
 		bEnableDefIni = FALSE;
 	}
 	::EnableWindow(GetItemHwnd(IDC_BUTTON_LOAD), bEnableDefIni);
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_LOADINI, m_fileTreeSetting.m_bProject);
-	::DlgItem_SetText(hwndDlg, IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni); 
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni); 
 }
 
 HTREEITEM CDlgFileTree::InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent, HTREEITEM htiInsert )
 {
 	int nlParam;
 	if( m_aItemRemoveList.empty() ){
-		nlParam = m_fileTreeSetting.m_aItems.size();
+		nlParam = (int)m_fileTreeSetting.m_aItems.size();
 		m_fileTreeSetting.m_aItems.push_back(item);
 	}else{
 		// 削除リストから復活させる
@@ -424,7 +424,7 @@ static HTREEITEM FileTreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool
 		tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 		tvi.hItem = s;
 		tvi.pszText = szLabel;
-		tvi.cchTextMax = _countof(szLabel);
+		tvi.cchTextMax = int(std::size(szLabel));
 		if (!TreeView_GetItem( hwndTree, &tvi )) {
 			// Error
 			break;
@@ -472,7 +472,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_LOAD:
 		{
-			DlgItem_GetText( GetHwnd(), IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni, m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() );
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni, m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() );
 			if( m_fileTreeSetting.m_szDefaultProjectIni[0] != L'\0' ){
 				CDataProfile cProfile;
 				cProfile.SetReadingMode();
@@ -522,9 +522,9 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			if( IsDlgButtonCheckedBool(hwndDlg, IDC_RADIO_GREP) ){
 				// RADIO_GREP == folder
 				WCHAR szDir[MAX_PATH];
-				DlgItem_GetText(GetHwnd(), IDC_EDIT_PATH, szDir, _countof(szDir) );
+				ApiWrap::DlgItem_GetText(GetHwnd(), IDC_EDIT_PATH, szDir, int(std::size(szDir)) );
 				if( SelectDir(hwndDlg, LS(STR_DLGGREP1), szDir, szDir) ){
-					DlgItem_SetText(GetHwnd(), IDC_EDIT_PATH, szDir );
+					ApiWrap::DlgItem_SetText(GetHwnd(), IDC_EDIT_PATH, szDir );
 				}
 			}else{
 				// RADIO_FILE == file
@@ -537,7 +537,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				if( dlg.DoModal_GetOpenFileName(szFile) ){
 					CNativeW cmemFile = szFile;
 					cmemFile.Replace(L"%", L"%%");
-					DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
+					ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
 				}
 			}
 		}
@@ -578,7 +578,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				int index = nId - MENU_ROOT;
 				const WCHAR* pszPaths[] = { L"<iniroot>", L"%MYDOC%", L"%MYMUSIC%", L"%MYVIDEO%",
 					L"%DESKTOP%", L"%TEMP%", L"%SAKURA%", L"%SAKURADATA%" };
-				EditCtl_ReplaceSel(GetItemHwnd(IDC_EDIT_PATH), pszPaths[index]);
+				ApiWrap::EditCtl_ReplaceSel(GetItemHwnd(IDC_EDIT_PATH), pszPaths[index]);
 			}
 		}
 		return TRUE;
@@ -762,11 +762,11 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			std::wstring strTitle = LS(STR_DLGREPLC_STR);
 			WCHAR szPathFrom[_MAX_PATH];
 			szPathFrom[0] = L'\0';
-			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathFrom) - 1, szPathFrom) ){
+			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathFrom)) - 1, szPathFrom) ){
 				WCHAR szPathTo[_MAX_PATH];
 				szPathTo[0] = L'\0';
 				strMsg = LS(STR_FILETREE_REPLACE_PATH_TO);
-				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathTo) - 1, szPathTo) ){
+				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathTo)) - 1, szPathTo) ){
 					int nItemsCount = (int)m_fileTreeSetting.m_aItems.size();
 					for( int i = 0; i < nItemsCount; i++ ){
 						SFileTreeItem& item =  m_fileTreeSetting.m_aItems[i];
@@ -926,7 +926,6 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 
 BOOL CDlgFileTree::OnNotify(NMHDR* pNMHDR)
 {
-	TV_DISPINFO* ptdi = (TV_DISPINFO*)pNMHDR;
 	HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
 	HTREEITEM htiItem;
 
@@ -941,7 +940,7 @@ BOOL CDlgFileTree::OnNotify(NMHDR* pNMHDR)
 			tvi.hItem = htiItem;
 			if( TreeView_GetItem( hwndTree, &tvi) ){
 				// リストから削除する代わりに番号を覚えて後で再利用
-				m_aItemRemoveList.push_back(tvi.lParam);
+				m_aItemRemoveList.push_back((int)tvi.lParam);
 			}
 		}
 		break;

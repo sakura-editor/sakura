@@ -48,9 +48,11 @@ public:
 		return GetMenuFullLabel(pszOutput, nBuffSize, false, editInfo, id, false, index, false, hDC);
 	}
 	bool GetMenuFullLabel_File(WCHAR* pszOutput, int nBuffSize, const WCHAR* pszFile, int id, HDC hDC, bool bModified = false, ECodeType nCharCode = CODE_NONE){
+		UNREFERENCED_PARAMETER(bModified);
 		return GetMenuFullLabel(pszOutput, nBuffSize, true, pszFile, id, false, nCharCode, false, -1, false, hDC);
 	}
 	bool GetMenuFullLabel_FileNoEscape(WCHAR* pszOutput, int nBuffSize, const WCHAR* pszFile, int id, HDC hDC, bool bModified = false, ECodeType nCharCode = CODE_NONE){
+		UNREFERENCED_PARAMETER(bModified);
 		return GetMenuFullLabel(pszOutput, nBuffSize, false, pszFile, id, false, nCharCode, false, -1, false, hDC);
 	}
 

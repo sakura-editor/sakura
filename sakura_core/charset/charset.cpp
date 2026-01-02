@@ -22,7 +22,6 @@
 #include <vector>
 #include <map>
 #include "CSelectLang.h"
-#include "String_define.h"
 
 struct SCodeSet {
 	ECodeType		m_eCodeSet;
@@ -62,7 +61,7 @@ void InitCodeSet()
 {
 	if (msCodeSet.empty()) {
 		int 	i;
-		for (i = 0; i < _countof(ASCodeSet); i++) {
+		for (i = 0; i < int(std::size(ASCodeSet)); i++) {
 			vDispIdx.push_back( ASCodeSet[i].m_eCodeSet );
 			if (i > 0) {
 				msCodeSet[ASCodeSet[i].m_eCodeSet] = ASCodeSet[i];
@@ -79,6 +78,17 @@ extern bool IsValidCodeType(int code)
 	// 初期化
 	InitCodeSet();
 	return (msCodeSet.find( code ) != msCodeSet.end());
+}
+
+CCodeTypeName::CCodeTypeName(ECodeType eCodeType)
+	: m_eCodeType(eCodeType)
+{
+	InitCodeSet();
+}
+
+CCodeTypeName::CCodeTypeName(size_t nCodeType)
+	: CCodeTypeName(static_cast<ECodeType>(static_cast<int>(nCodeType)))
+{
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -156,17 +166,22 @@ bool CCodeTypeName::CanDefault()
 //                      コンボボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-int CCodeTypesForCombobox::GetCount() const
+CCodeTypesForCombobox::CCodeTypesForCombobox()
+{
+	InitCodeSet();
+}
+
+size_t CCodeTypesForCombobox::GetCount() const noexcept
 {
 	return vDispIdx.size();
 }
 
-ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const
+ECodeType CCodeTypesForCombobox::GetCode(size_t nIndex) const
 {
 	return vDispIdx[nIndex];
 }
 
-LPCWSTR CCodeTypesForCombobox::GetName(int nIndex) const
+LPCWSTR CCodeTypesForCombobox::GetName(size_t nIndex) const
 {
 	if (nIndex == 0) {
 		return LS(STR_ERR_GLOBAL01);

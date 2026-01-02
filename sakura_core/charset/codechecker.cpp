@@ -16,6 +16,7 @@
 
 #include "StdAfx.h"
 #include "charset/codechecker.h"
+
 #include "mem/CMemory.h"
 #include "convert/convert_util2.h"
 #include "charset/codeutil.h"
@@ -324,7 +325,7 @@ int DetectJisEscseq( const char* pS, const size_t nLen, EMyJisEscseq* peEscType 
 */
 int _CheckJisAnyPart(
 		const char *pS,			// [in]    チェック対象となるバッファポインタ
-		const int nLen,			// [in]    チェック対象となるバッファの長さ
+		size_t nLen,			// [in]    チェック対象となるバッファの長さ
 		const char **ppNextChar,		// [out]   次のエスケープシーケンス文字列の次の文字へのポインタ
 								//       つまり、次に検査を開始する文字列（先頭のエスケープシーケンスを含めない）へのポインタ
 		EMyJisEscseq *peNextEsc,// [out]   次のエスケープシーケンスの種類
@@ -393,7 +394,7 @@ int _CheckJisAnyPart(
 		pr = pr_end;
 	}
 
-	return pr - pS;
+	return int(pr - pS);
 }
 
 /*
@@ -422,7 +423,7 @@ int _CheckJisAnyPart(
 /*!
 	UTF-16 LE/BE 文字をチェック　(組み合わせ文字列考慮なし)
 */
-int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
+int _CheckUtf16Char( const wchar_t* pS, size_t nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
 {
 	wchar_t wc1, wc2 = 0;
 	int ncwidth;
@@ -524,7 +525,7 @@ UTF-8のエンコーディング
 
 	@date 2008/11/01 syat UTF8ファイルで欧米の特殊文字が読み込めない不具合を修正
 */
-int CheckUtf8Char( const char *pS, const int nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
+int CheckUtf8Char( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
 {
 	unsigned char c0, c1, c2, c3;
 	int ncwidth;
@@ -635,8 +636,9 @@ EndFunc:
 
 	@date 2015.12.30 novice  第１バイトが11110abbのとき、nLenより大きい値を返すのを修正
 */
-int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
+int CheckUtf8Char2( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
 {
+	UNREFERENCED_PARAMETER(nOption);
 	unsigned char c0, c1, c2;
 	int ncwidth;
 	ECharSet echarset;
@@ -695,7 +697,7 @@ int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const b
 			}
 			// 第2バイトが10bbcccc、第3バイトが10ddddee
 			if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 ){
-				ncwidth = nLen;  // ４バイトコードである
+				ncwidth = int(nLen);  // ４バイトコードである
 				echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 				// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
 				if( (c0 & 0x07) == 0 && (c1 & 0x30) == 0 ){
@@ -736,7 +738,7 @@ EndFunc:
 /*
 	CESU-8 文字のチェック　(組み合わせ文字列考慮なし)
 */
-int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const int nOption )
+int CheckCesu8Char( const char* pS, size_t nLen, ECharSet* peCharset, const int nOption )
 {
 	ECharSet echarset1, echarset2, eret_charset;
 	int nclen1, nclen2, nret_clen;

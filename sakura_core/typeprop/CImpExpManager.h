@@ -15,7 +15,7 @@
 #define SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
 #pragma once
 
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "env/DLLSHAREDATA.h"
 
 class CImpExpManager

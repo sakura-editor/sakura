@@ -33,7 +33,6 @@
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
 #include "apiwrap/CommonControl.h"
-#include "String_define.h"
 
 #define SCROLLMARGIN_LEFT 4
 #define SCROLLMARGIN_RIGHT 4
@@ -90,7 +89,7 @@ CCaret::CCaret(CEditView* pEditView, const CEditDoc* pEditDoc)
 {
 	m_nCaretPosX_Prev = CLayoutInt(0);		/* ビュー左端からのカーソル桁直前の位置(０オリジン) */
 
-	m_crCaret = -1;				/* キャレットの色 */			// 2006.12.16 ryoji
+	m_crCaret = COLORREF(-1);				/* キャレットの色 */			// 2006.12.16 ryoji
 	m_hbmpCaret = nullptr;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
 	m_bClearStatus = true;
 	ClearCaretPosInfoCache();
@@ -779,7 +778,7 @@ void CCaret::ShowCaretPosInfo()
 				}
 			}
 			else{
-				wcscpy_s(szCaretChar, _countof(szCaretChar), pcLayout->GetLayoutEol().GetName());
+				wcscpy_s(szCaretChar, std::size(szCaretChar), pcLayout->GetLayoutEol().GetName());
 			}
 		}
 	}
@@ -794,7 +793,7 @@ void CCaret::ShowCaretPosInfo()
 		WCHAR	szRight[64];
 		int		nLen;
 		{	// メッセージの左側文字列（「行:列」を除いた表示）
-			nLen = wcslen(pszCodeName) + wcslen(szEolMode) + wcslen(szCaretChar);
+			nLen = int(wcslen(pszCodeName) + wcslen(szEolMode) + wcslen(szCaretChar));
 			// これは %s(%s)%6s%s%s 等になる。%6ts表記は使えないので注意
 			auto_sprintf(
 				szFormat,
@@ -812,7 +811,7 @@ void CCaret::ShowCaretPosInfo()
 			);
 		}
 		szRight[0] = L'\0';
-		nLen = MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft);	// 右側に残っている文字長
+		nLen = int(MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft));	// 右側に残っている文字長
 		if( nLen > 0 ){	// メッセージの右側文字列（「行:列」表示）
 			WCHAR szRowCol[32];
 			auto_sprintf(
@@ -854,9 +853,9 @@ void CCaret::ShowCaretPosInfo()
 
 		WCHAR szFontSize[16];
 		if( const double nZoomPercentage = GetEditWnd().GetFontZoom() * 100.0; nZoomPercentage < 5.0 ){
-			auto_snprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
+			auto_snprintf_s(szFontSize, std::size(szFontSize), LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
 		}else{
-			auto_snprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
+			auto_snprintf_s(szFontSize, std::size(szFontSize), LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
 		}
 
 		auto& statusBar = GetEditWnd().m_cStatusBar;
@@ -868,7 +867,7 @@ void CCaret::ShowCaretPosInfo()
 			bool ret = statusBar.SetStatusText(nIndex, nOption, pszText);
 			if (ret) {
 				RECT partRect;
-				StatusBar_GetRect(hWnd, nIndex, &partRect);
+				ApiWrap::StatusBar_GetRect(hWnd, nIndex, &partRect);
 				::UnionRect(&updatedRect, &updatedRect, &partRect);
 			}
 		};

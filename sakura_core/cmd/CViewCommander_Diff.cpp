@@ -33,7 +33,6 @@
 #include "_main/CMutex.h"
 #include "apiwrap/StdApi.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 /*!
 	@return true:正常終了 / false:エラー終了
@@ -57,7 +56,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
 				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 				// 行(改行単位)データの要求
-				nLineLenDes = ::SendMessageAny( hwnd, MYWM_GETLINEDATA, poDes.y, nLineOffset );
+				nLineLenDes = (int)::SendMessageW( hwnd, MYWM_GETLINEDATA, poDes.y, nLineOffset );
 				if( nLineLenDes < 0 ){
 					return false;
 				}
@@ -104,8 +103,6 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 			nLineOffset = 0;
 		}
 	}
-	assert_warning(0);
-	return false;
 }
 
 /* ファイル内容比較 */

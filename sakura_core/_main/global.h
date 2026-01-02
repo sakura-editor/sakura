@@ -31,10 +31,6 @@
 /* ウィンドウのID */
 #define IDW_STATUSBAR 123
 
-#define IDM_SELWINDOW		10000
-#define IDM_SELMRU			11000
-#define IDM_SELOPENFOLDER	12000
-
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
 enum enumShowDlg {
 	SHOW_NORMAL			= 0,
@@ -170,4 +166,7 @@ struct SSearchOption{
 };
 
 HINSTANCE G_AppInstance();
+
+LPCWSTR		GetProfileName() noexcept;
+
 #endif /* SAKURA_GLOBAL_BD124BE7_A850_41F3_9F5D_8A4F0E45A4C9_H_ */

@@ -29,7 +29,6 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 //外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12100
@@ -76,12 +75,12 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	HWND hwndCombo;
 	int i;
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
-	for( i = 0; i < _countof(codes); ++i ){
-		Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
+	for( i = 0; i < int(std::size(codes)); ++i ){
+		ApiWrap::Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
 	}
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
-	for( i = 0; i < _countof(codes); ++i ){
-		Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
+	for( i = 0; i < int(std::size(codes)); ++i ){
+		ApiWrap::Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
 	}
 
 	BOOL bRet = CDialog::OnInitDialog(hwnd, wParam, lParam);
@@ -101,10 +100,10 @@ void CDlgExec::SetData( void )
 	*           初期             *
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
-	Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), int(std::size(m_szCommand)) - 1 );
+	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), std::size( m_szCurDir ) - 1 );
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_m_szCommand ), TRUE );
+	ApiWrap::Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_m_szCommand ), TRUE );
 
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
@@ -134,43 +133,43 @@ void CDlgExec::SetData( void )
 	*         データ設定         *
 	*****************************/
 	hwndCombo = GetItemHwnd( IDC_COMBO_m_szCommand );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	const int nCommandsCount = m_pShareData->m_sHistory.m_aCommands.size();
 	if( 0 < nCommandsCount ){
 		wcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
 		for( i = 0; i < nCommandsCount; ++i ){
-			Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
+			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
 		}
-		Combo_SetCurSel( hwndCombo, 0 );
+		ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 	}
 
 	hwndCombo = GetItemHwnd( IDC_COMBO_CUR_DIR );
-	Combo_ResetContent( hwndCombo );
+	ApiWrap::Combo_ResetContent( hwndCombo );
 	const int nCurDirsCount = m_pShareData->m_sHistory.m_aCurDirs.size();
 	if( 0 < nCurDirsCount ){
 		wcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
 		for( i = 0; i < nCurDirsCount; ++i ){
-			Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
+			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
 		}
-		Combo_SetCurSel( hwndCombo, 0 );
+		ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 	}
 	
 	int nOpt;
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x88;
-	for( i = 0; i < _countof(codeTable1); i++ ){
+	for( i = 0; i < int(std::size(codeTable1)); i++ ){
 		if( codeTable1[i] == nOpt ){
-			Combo_SetCurSel( hwndCombo, i );
+			ApiWrap::Combo_SetCurSel( hwndCombo, i );
 			break;
 		}
 	}
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x110;
-	for( i = 0; i < _countof(codeTable2); i++ ){
+	for( i = 0; i < int(std::size(codeTable2)); i++ ){
 		if( codeTable2[i] == nOpt ){
-			Combo_SetCurSel( hwndCombo, i );
+			ApiWrap::Combo_SetCurSel( hwndCombo, i );
 			break;
 		}
 	}
@@ -180,9 +179,9 @@ void CDlgExec::SetData( void )
 /* ダイアログデータの取得 */
 int CDlgExec::GetData( void )
 {
-	DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, _countof( m_szCommand ));
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, int(std::size(m_szCommand)));
 	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_CUR_DIR ) ){
-		DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2( m_szCurDir ));
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], std::size( m_szCurDir ));
 	}else{
 		m_szCurDir[0] = L'\0';
 	}
@@ -194,9 +193,9 @@ int CDlgExec::GetData( void )
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) ) ? 0x04 : 0;	// 編集中ファイルを標準入力へ
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CUR_DIR ) ) ? 0x200 : 0;	// カレントディレクトリ指定
 		int sel;
-		sel = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_GET ) );
+		sel = ApiWrap::Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_GET ) );
 		nFlgOpt |= codeTable1[sel];
-		sel = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_SEND ) );
+		sel = ApiWrap::Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_SEND ) );
 		nFlgOpt |= codeTable2[sel];
 		m_pShareData->m_nExecFlgOpt = nFlgOpt;
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
@@ -242,9 +241,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		{
 			CDlgOpenFile	cDlgOpenFile;
 			WCHAR			szPath[_MAX_PATH + 1];
-			int				size = _countof(szPath) - 1;
-			wcsncpy( szPath, m_szCommand, size);
-			szPath[size] = L'\0';
+			wcsncpy_s(szPath, m_szCommand, _TRUNCATE);
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
 				m_hInstance,
@@ -254,7 +251,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 				wcscpy( m_szCommand, szPath );
-				::DlgItem_SetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand );
+				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand );
 			}
 		}
 		return TRUE;
@@ -263,7 +260,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDC_BUTTON_REFERENCE2:
 		{
 			if( SelectDir( GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0], m_szCurDir.GetBufferCount() ) ){
-				::DlgItem_SetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0] );
+				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0] );
 			}
 		}
 		return TRUE;
@@ -276,6 +273,8 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDCANCEL:
 		CloseDialog( 0 );
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

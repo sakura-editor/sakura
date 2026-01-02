@@ -29,7 +29,6 @@
 #include "util/shell.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
-#include "String_define.h"
 
 // プロパティ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -256,7 +255,7 @@ void CDlgProperty::SetData( void )
 	}
 end_of_CodeTest:;
 #endif //ifdef _DEBUG/////////////////////////////////////////////////////
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_PROPERTY, cmemProp.GetStringPtr() );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PROPERTY, cmemProp.GetStringPtr() );
 
 	return;
 }

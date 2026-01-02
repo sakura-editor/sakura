@@ -17,7 +17,6 @@
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 /*!
 	関数に用いることができる文字かどうかの判定
@@ -482,8 +481,8 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			int len = w_end - col;
 			
 			if( len > 0 ){
-				if( len > _countof( szWord ) - 1){
-					len = _countof( szWord ) - 1;
+				if( len > int(std::size(szWord)) - 1){
+					len = int(std::size(szWord)) - 1;
 				}
 				wcsncpy( szWord, pLine + col, len );
 				szWord[ len ] = L'\0';
@@ -493,9 +492,9 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){
-				if( _countof( szWord ) - 8  < len ){
+				if( int(std::size(szWord)) - 8  < len ){
 					//	後ろを削って入れる
-					len = _countof( szWord ) - 8;
+					len = int(std::size(szWord)) - 8;
 				}
 				// class
 				wcscpy( szWord + len, LS(STR_OUTLINE_PYTHON_CLASS) );
@@ -526,15 +525,13 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 }
 
 const wchar_t* g_ppszKeywordsPython[] = {
-	L"False",
-	L"None",
-	L"True",
 	L"and",
 	L"as",
 	L"assert",
 	L"async",
 	L"await",
 	L"break",
+	L"case",
 	L"class",
 	L"continue",
 	L"def",
@@ -542,6 +539,7 @@ const wchar_t* g_ppszKeywordsPython[] = {
 	L"elif",
 	L"else",
 	L"except",
+	L"False",
 	L"finally",
 	L"for",
 	L"from",
@@ -551,16 +549,19 @@ const wchar_t* g_ppszKeywordsPython[] = {
 	L"in",
 	L"is",
 	L"lambda",
+	L"match",
+	L"None",
 	L"nonlocal",
 	L"not",
 	L"or",
 	L"pass",
 	L"raise",
 	L"return",
+	L"True",
 	L"try",
 	L"while",
 	L"with",
 	L"yield",
 	L"self",
 };
-int g_nKeywordsPython = _countof(g_ppszKeywordsPython);
+int g_nKeywordsPython = int(std::size(g_ppszKeywordsPython));

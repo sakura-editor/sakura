@@ -16,7 +16,6 @@
 #include "util/module.h"
 #include "io/CZipFile.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 //コンストラクタ
 CPluginManager::CPluginManager()
@@ -31,7 +30,7 @@ CPluginManager::CPluginManager()
 	WCHAR	szFolder[_MAX_PATH];
 	WCHAR	szFname[_MAX_PATH];
 
-	::GetModuleFileName( nullptr, szPath, _countof(szPath)	);
+	::GetModuleFileName( nullptr, szPath, int(std::size(szPath))	);
 	SplitPath_FolderAndFile(szPath, szFolder, szFname);
 	Concat_FolderAndFile(szFolder, L"plugins\\", szPluginPath);
 
@@ -190,6 +189,8 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 //Zipプラグインを導入する
 bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const std::wstring& sZipFile, bool bInSearch )
 {
+	UNREFERENCED_PARAMETER(bInSearch);
+
 	DEBUG_TRACE(L"Entry InstZipPlugin\n");
 
 	CZipFile		cZipFile;
@@ -197,7 +198,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 
 	// ZIPファイルが扱えるか
 	if (!cZipFile.IsOk()) {
-		wcsncpy_s( msg, _countof(msg), LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
+		wcsncpy_s(msg, std::size(msg), LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
 		InfoMessage( hWndOwner, L"%s", msg);
 		return false;
 	}
@@ -240,14 +241,14 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 
 	// Plugin フォルダー名の取得,定義ファイルの確認
 	if (bOk && !cZipFile.SetZip(sZipFile)) {
-		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ACCESS), sDispName.c_str() );
+		auto_snprintf_s(msg, std::size(msg), LS(STR_PLGMGR_INST_ZIP_ACCESS), sDispName.c_str() );
 		bOk = false;
 		bSkip = bInSearch;
 	}
 
 	// Plgin フォルダー名の取得,定義ファイルの確認
 	if (bOk && !cZipFile.ChkPluginDef(PII_FILENAME, sFolderName)) {
-		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_DEF), sDispName.c_str() );
+		auto_snprintf_s(msg, std::size(msg), LS(STR_PLGMGR_INST_ZIP_DEF), sDispName.c_str() );
 		bOk = false;
 		bSkip = bInSearch;
 	}
@@ -302,13 +303,13 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 
 	// Zip解凍
 	if (bOk && !cZipFile.Unzip(m_sBaseDir)) {
-		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_UNZIP), sDispName.c_str() );
+		auto_snprintf_s(msg, std::size(msg), LS(STR_PLGMGR_INST_ZIP_UNZIP), sDispName.c_str() );
 		bOk = false;
 	}
 	if (bOk) {
 		int pluginNo = InstallPlugin( common, sFolderName.c_str(), hWndOwner, errMsg, true );
 		if( pluginNo < 0 ){
-			auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ERR), sDispName.c_str(), errMsg.c_str() );
+			auto_snprintf_s(msg, std::size(msg), LS(STR_PLGMGR_INST_ZIP_ERR), sDispName.c_str(), errMsg.c_str() );
 			bOk = false;
 		}
 	}
@@ -348,7 +349,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 	//2010.08.04 ID使用不可の文字を確認
 	//  後々ファイル名やiniで使うことを考えていくつか拒否する
 	static const WCHAR szReservedChars[] = L"/\\,[]*?<>&|;:=\" \t";
-	for( int x = 0; x < _countof(szReservedChars); ++x ){
+	for( int x = 0; x < int(std::size(szReservedChars)); ++x ){
 		if( sId.npos != sId.find(szReservedChars[x]) ){
 			errorMsg = LS(STR_PLGMGR_INST_RESERVE1);
 			errorMsg += szReservedChars;
@@ -433,12 +434,12 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		}else{
 			// "sakura_lang_*.dll"
 			int nStartPos = 0;
-			int nEndPos = szDllName.length();
+			auto nEndPos = int(szDllName.length());
 			if( szDllName.substr( 0, 12 ) == L"sakura_lang_" ){
 				nStartPos = 12;
 			}
 			if( 4 < szDllName.length() && szDllName.substr( szDllName.length() - 4, 4 ) == L".dll" ){
-				nEndPos = szDllName.length() - 4;
+				nEndPos = int(szDllName.length() - 4);
 			}
 			szLangName = szDllName.substr( nStartPos, nEndPos - nStartPos );
 		}

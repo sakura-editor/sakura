@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2011, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2025, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,62 +16,95 @@
 #define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
-#include <windows.h>
-#include <vector>
+#include "cxx/ResourceHolder.hpp"
+#include "cxx/load_string.hpp"
 
-#define MAX_SELLANG_NAME_STR	128		// メッセージリソースの言語名の最大文字列長（サイズは適当）
+#include "sakura_rc.h"
 
+/*!
+ * 言語リリースDLL選択クラス
+ *
+ * 英語対応のために作成されたものと思われる
+ * 完全オリジナルな言語リソースDLLロード実装。
+ *
+ * @note Windows標準のMUIに移行するまでは削除できない。
+ */
 class CSelectLang
 {
-
-	using Me = CSelectLang;
+private:
+	using ResourceDllHolder = cxx::ResourceHolder<&::FreeLibrary>;
 
 public:
 	// メッセージリソース用構造体
 	struct SSelLangInfo {
-		WCHAR szDllName[MAX_PATH];		// メッセージリソースDLLのファイル名
-		WCHAR szLangName[MAX_SELLANG_NAME_STR];		// 言語名
-		HINSTANCE hInstance;			// 読み込んだリソースのインスタンスハンドル
-		WORD wLangId;					// 言語ID
-		BOOL bValid;					// メッセージリソースDLLとして有効
+		using Me = SSelLangInfo;
+
+		std::filesystem::path	m_Path;				//!< メッセージリソースDLLのファイル名
+		ResourceDllHolder		m_Module = nullptr;	//!< 読み込んだリソースのインスタンスハンドル
+		WORD					m_LangId = 0;		//!< 言語ID
+		std::wstring			m_LangName;			//!< 言語名
+
+		SSelLangInfo() = default;
+
+		explicit SSelLangInfo(const std::filesystem::path& path);
+
+		SSelLangInfo(const Me&) = delete;
+		Me& operator = (const Me&) = delete;
+
+		SSelLangInfo(Me&&) noexcept = default;
+		Me& operator = (Me&&) noexcept = default;
+
+		~SSelLangInfo() noexcept;
+
+		LPCWSTR	GetDllName() const noexcept { return m_Path.c_str(); }
+		LPCWSTR	GetLangName() const noexcept { return m_LangName.c_str(); }
+
+		bool	Load();
+		void	Unload() noexcept;
 	};
 
-protected:
-	//static LPWSTR m_szDefaultLang;					// メッセージリソースDLL未読み込み時のデフォルト言語
-	static SSelLangInfo* m_psLangInfo;				// メッセージリソースの情報
-public:
-	typedef std::vector<SSelLangInfo*> PSSelLangInfoList;
-	static PSSelLangInfoList m_psLangInfoList;
+private:
+	using LangInfoHolder = std::unique_ptr<SSelLangInfo>;
+
+	using Me = CSelectLang;
 
 public:
+	static inline size_t gm_Selected = 0;
+	static inline std::vector<LangInfoHolder> gm_Langs{};
+
+	static HMODULE	InitializeLanguageEnvironment();
+
+	static HMODULE	getLangRsrcInstance() noexcept;		// メッセージリソースDLLのインスタンスハンドルを返す
+	static LPCWSTR	getDefaultLangString() noexcept;	// メッセージリソースDLL未読み込み時のデフォルト言語（"(Japanese)" or "(English(United States))"）
+	static WORD		getDefaultLangId() noexcept;
+
+	static std::span<LangInfoHolder> GetLangInfo() noexcept { return gm_Langs; }
+
+	static const SSelLangInfo& GetLangInfo(size_t index) noexcept { return *gm_Langs[index].get(); }
+
 	/*
 	||  Constructors
 	*/
 	CSelectLang() noexcept = default;
+
 	CSelectLang(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
-	CSelectLang(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CSelectLang();
+
+	~CSelectLang() = default;
 
 	/*
 	||  Attributes & Operations
 	*/
-	static HINSTANCE getLangRsrcInstance( void );			// メッセージリソースDLLのインスタンスハンドルを返す
-	static LPCWSTR getDefaultLangString( void );			// メッセージリソースDLL未読み込み時のデフォルト言語（"(Japanese)" or "(English(United States))"）
-	static WORD getDefaultLangId(void);
+	static void		ChangeLang(const std::filesystem::path& dllName);
 
-	static HINSTANCE InitializeLanguageEnvironment(void);		// 言語環境を初期化する
-	static HINSTANCE LoadLangRsrcLibrary( SSelLangInfo& lang );	// メッセージ用リソースDLLをロードする
-	static void ChangeLang( const WCHAR* pszDllName );	// 言語を変更する
-
-protected:
+private:
 	/*
 	||  実装ヘルパ関数
 	*/
-	static HINSTANCE ChangeLang( UINT nSelIndex );	// 言語を変更する
+	static void		ChangeLang(size_t newSelection);
 
-private:
+public:
+	static std::wstring_view LoadStringW(UINT id);
 };
 
 /*!
@@ -79,78 +112,60 @@ private:
 
 	@date 2011.06.01 nasukoji	新規作成
 */
-
-#define LOADSTR_ADD_SIZE		256			// 文字列リソース用バッファの初期または追加サイズ（WCHAR単位）
-
 class CLoadString
 {
-protected:
+private:
 	// 文字列リソース読み込み用バッファクラス
 	class CLoadStrBuffer
 	{
+	private:
+		using Me = CLoadStrBuffer;
+
 	public:
-		CLoadStrBuffer()
-		{
-			m_pszString   = m_szString;				// 変数内に準備したバッファを接続
-			m_nBufferSize = _countof(m_szString);	// 配列個数
-			m_nLength     = 0;
-			m_szString[0] = L'\0';
-		}
+		CLoadStrBuffer() = default;
 
-		/*virtual*/ ~CLoadStrBuffer()
-		{
-			// バッファを取得していた場合は解放する。
-			if( m_pszString && m_pszString != m_szString ){
-				delete[] m_pszString;
-			}
-		}
+		CLoadStrBuffer(const Me&) = delete;		// コピー禁止とする
+		Me& operator = (const Me&) = delete;	// 代入禁止とする
 
-		/*virtual*/ LPCWSTR GetStringPtr() const { return m_pszString; }	// 読み込んだ文字列のポインタを返す
-		/*virtual*/ int GetBufferSize() const { return m_nBufferSize; }		// 読み込みバッファのサイズ（WCHAR単位）を返す
-		/*virtual*/ int GetStringLength() const { return m_nLength; }		// 読み込んだ文字数（WCHAR単位）を返す
+		~CLoadStrBuffer() = default;
 
-		/*virtual*/ int LoadString( UINT uid );								// 文字列リソースを読み込む（読み込み実行部）
+		LPCWSTR	GetStringPtr() const noexcept { return m_String.c_str(); }	// 読み込んだ文字列のポインタを返す
 
-	protected:
-		LPWSTR m_pszString;						// 文字列読み込みバッファのポインタ
-		int m_nBufferSize;						// 取得配列個数（WCHAR単位）
-		int m_nLength;							// 取得文字数（WCHAR単位）
-		WCHAR m_szString[LOADSTR_ADD_SIZE];		// 文字列読み込みバッファ（バッファ拡張後は使用されない）
+		size_t	LoadStringW(UINT uid);								// 文字列リソースを読み込む（読み込み実行部）
 
 	private:
-		CLoadStrBuffer( const CLoadStrBuffer& );					// コピー禁止とする
-		CLoadStrBuffer operator = ( const CLoadStrBuffer& );		// 代入禁止とする
+		std::wstring_view	m_ResString;	//!< リソース文字列ビュー
+		std::wstring		m_String;		//!< リソース文字列格納用バッファ
 	};
 
-	static CLoadStrBuffer m_acLoadStrBufferTemp[4];		// 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
-	static int m_nDataTempArrayIndex;					// 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
-	CLoadStrBuffer m_cLoadStrBuffer;					// 文字列読み込みバッファ（CLoadString::LoadString() が使用する）
+	static inline std::array<CLoadStrBuffer, 4> gm_Buffers{};		//!< 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
+	static inline size_t gm_LastUsedIndex = std::size(gm_Buffers);	//!< 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
+
+	using Me = CLoadString;
+
+	CLoadStrBuffer m_Buffer;				//!< 文字列読み込みバッファ（CLoadString::LoadString() が使用する）
 
 public:
+	static LPCWSTR LoadStringSt(UINT uid);	//!< 静的バッファに文字列リソースを読み込む（各国語メッセージリソース対応）
+
 	/*
 	||  Constructors
 	*/
 	CLoadString() = default;
-	CLoadString( UINT uid ){ LoadString( uid ); }		// 文字列読み込み付きコンストラクタ
-	/*virtual*/ ~CLoadString() = default;
+
+	CLoadString(const Me&) = delete;		//!< コピー禁止とする
+	Me& operator = (const Me&) = delete;	//!< 代入禁止とする
+
+	~CLoadString() = default;
 
 	/*
 	||  Attributes & Operations
 	*/
-	/*virtual*/ LPCWSTR GetStringPtr() const { return m_cLoadStrBuffer.GetStringPtr(); }	// 読み込んだ文字列のポインタを返す
-//	/*virtual*/ int GetBufferSize() const { return m_cLoadStrBuffer.GetBufferSize(); }		// 読み込みバッファのサイズ（WCHAR単位）を返す
-	/*virtual*/ int GetStringLength() const { return m_cLoadStrBuffer.GetStringLength(); }	// 読み込んだ文字数（WCHAR単位）を返す
-
-	static LPCWSTR LoadStringSt( UINT uid );			// 静的バッファに文字列リソースを読み込む（各国語メッセージリソース対応）
-	/*virtual*/ LPCWSTR LoadString( UINT uid );			// 文字列リソースを読み込む（各国語メッセージリソース対応）
-
-protected:
-
-private:
-	CLoadString( const CLoadString& );					// コピー禁止とする
-	CLoadString operator = ( const CLoadString& );		// 代入禁止とする
+	LPCWSTR	LoadStringW(UINT uid);			//!< 文字列リソースを読み込む（各国語メッセージリソース対応）
 };
 
-// 文字列ロード簡易化マクロ
-#define LS( id ) ( CLoadString::LoadStringSt( id ) )
+// 文字列ロード簡易化テンプレート
+template<typename T> requires (std::is_integral_v<T> || std::is_convertible_v<T, int>)
+inline LPCWSTR LS(T id) { return CLoadString::LoadStringSt(UINT(id)); }
+
 #endif /* SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_ */

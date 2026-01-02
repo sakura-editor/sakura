@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include "macro/CWSHIfObj.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "util/string_ex.h"
 
 //! プラグインの管理番号index
@@ -217,7 +217,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPlugin( const std::wstring& sBaseDir );
+	CPlugin(std::wstring_view baseDir);
 	CPlugin(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CPlugin(Me&&) noexcept = delete;
@@ -271,7 +271,7 @@ public:
 	std::vector<std::wstring> m_aStrings;	// 文字列
 protected:
 	CPlug::Array m_plugs;
-	int m_nCommandCount;
+	int m_nCommandCount = 0;
 
 	//非実装提供
 public:
@@ -279,4 +279,5 @@ public:
 	virtual bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) =0;		//プラグイン定義ファイルを読み込む
 	virtual bool ReadPluginOption( CDataProfile *cProfile ) =0;		//オプションファイルを読み込む
 };
+
 #endif /* SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_ */

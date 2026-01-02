@@ -10,7 +10,6 @@
 /*.patch
 /.vs
 /cppcheck-*.xml
-/help/sakura/sakura.hh
 /build
 /MinGW
 /Win32
@@ -25,8 +24,6 @@ msbuild-*.log
 msbuild-*.log.csv
 msbuild-*.log.xlsx
 sakura-*.zip
-sakura-*.zip.md5
-sha256.txt
 tags
 testData_*.txt
 UpgradeLog.htm
@@ -45,3 +42,6 @@ tests1-googletest.xml
 
 # SonarScanローカル実行の失敗再現用アーカイブ
 sonar-cfamily-reproducer.tar.xz
+
+# 旧resource格納フォルダ、bmptoolの出力フォルダになってるので除外する
+/resource

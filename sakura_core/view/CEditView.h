@@ -37,14 +37,14 @@
 #include "CEditView_Paint.h"	// parent
 #include "CViewParser.h"
 #include "CViewSelect.h"
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 #include "view/colors/EColorIndexType.h"
 #include "window/CTipWnd.h"
 #include "window/CAutoScrollWnd.h"
-#include "CDicMgr.h"
+#include "env/CDicMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "extmodule/CBregexp.h"
-#include "CEol.h"				// EEolType
+#include "basis/CEol.h"				// EEolType
 #include "cmd/CViewCommander.h"
 #include "mfclike/CMyWnd.h"		// parent
 #include "doc/CDocListener.h"	// parent
@@ -478,7 +478,7 @@ public:
 	// 補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided );
 
-	int HokanSearchByFile(const wchar_t* pszKey, bool bHokanLoHiCase, vector_ex<std::wstring>& vKouho, int nMaxKouho ); // 2003.06.25 Moca
+	size_t HokanSearchByFile(const wchar_t* pszKey, bool bHokanLoHiCase, vector_ex<std::wstring>& vKouho, size_t nMaxKouho ); // 2003.06.25 Moca
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         ジャンプ                            //

@@ -16,7 +16,6 @@
 #include "charset/CCodeMediator.h"
 #include "util/file.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //
@@ -24,6 +23,7 @@
 
 void CMruListener::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	UNREFERENCED_PARAMETER(sSaveInfo);
 	_HoldBookmarks_And_AddToMRU();
 }
 
@@ -128,6 +128,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 
 void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	CMRUFile		cMRU;

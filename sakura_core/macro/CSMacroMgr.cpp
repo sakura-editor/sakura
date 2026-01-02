@@ -27,6 +27,7 @@
 #include "macro/CSMacroMgr.h"
 #include "macro/CPPAMacroMgr.h"
 #include "macro/CWSHManager.h"
+#include "macro/CPythonMacroManager.h"
 #include "macro/CMacroFactory.h"
 #include "env/CShareData.h"
 #include "view/CEditView.h"
@@ -486,6 +487,16 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
 };
 
+/* static */ std::span<MacroFuncInfo> CSMacroMgr::GetCommandInfo() noexcept
+{
+	return std::span{ m_MacroFuncInfoCommandArr, std::size(m_MacroFuncInfoCommandArr) - 1 };
+}
+
+/* static */ std::span<MacroFuncInfo> CSMacroMgr::GetFuncInfo() noexcept
+{
+	return std::span{ m_MacroFuncInfoArr, std::size(m_MacroFuncInfoArr) - 1 };
+}
+
 /*!
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2002.04.29 genta オブジェクトの実体は実行時まで生成しない。
@@ -499,6 +510,7 @@ CSMacroMgr::CSMacroMgr()
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();
 	CWSHMacroManager::declare();
+	CPythonMacroManager::declare();
 	
 	int i;
 	for ( i = 0 ; i < MAX_CUSTMACRO ; i++ ){
@@ -616,7 +628,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 		//	Jun. 08, 2003 Moca 呼び出し側でパス名を用意
 		//	Jun. 16, 2003 genta 書式をちょっと変更
 		WCHAR ptr[_MAX_PATH * 2];
-		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, _countof(ptr) );
+		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, int(std::size(ptr)) );
 		if ( n <= 0 ){
 			return FALSE;
 		}
@@ -776,19 +788,20 @@ void CSMacroMgr::Clear( int idx )
 */
 const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 {
-	int i;
-	//	Jun. 27, 2002 genta
-	//	番人をコード0として拾ってしまうので，配列サイズによる判定をやめた．
-	for( i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != nullptr; ++i ){
-		if( m_MacroFuncInfoCommandArr[i].m_nFuncID == nFuncID ){
-			return &m_MacroFuncInfoCommandArr[i];
-		}
+	if (nFuncID <= 0) {
+		return nullptr;
 	}
-	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != nullptr; ++i ){
-		if( m_MacroFuncInfoArr[i].m_nFuncID == nFuncID ){
-			return &m_MacroFuncInfoArr[i];
-		}
+
+	const auto commands = GetCommandInfo();
+	if (const auto cmdFound = std::ranges::find_if(commands, [nFuncID](const auto& funcInfo) { return funcInfo.m_nFuncID == nFuncID; }); cmdFound != commands.end()) {
+		return std::to_address(cmdFound);
 	}
+
+	const auto functions = GetFuncInfo();
+	if (const auto funcFound = std::ranges::find_if(functions, [nFuncID](const auto& funcInfo) { return funcInfo.m_nFuncID == nFuncID; }); funcFound != functions.end()) {
+		return std::to_address(funcFound);
+	}
+
 	return nullptr;
 }
 
@@ -813,6 +826,8 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 	WCHAR*		pszFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
 )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
 	if( MacroInfo != nullptr ){
 		if( pszFuncName != nullptr ){
@@ -852,6 +867,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	WCHAR*			pszFuncNameJapanese		//!< [out] 機能名日本語．この先には256バイトのメモリが必要．
 )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	//	Jun. 16, 2002 genta
 	const WCHAR* normalizedFuncName;
 	
@@ -867,9 +884,9 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	}
 
 	// コマンド関数を検索
-	for( int i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != nullptr; ++i ){
-		if( 0 == wcscmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
-			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoCommandArr[i].m_nFuncID);
+	for (const auto& funcInfo : GetFuncInfo()) {
+		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
+			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
 				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
 				pszFuncNameJapanese[255] = L'\0';
@@ -878,9 +895,9 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		}
 	}
 	// 非コマンド関数を検索
-	for( int i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != nullptr; ++i ){
-		if( 0 == wcscmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
-			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoArr[i].m_nFuncID);
+	for (const auto& funcInfo : GetCommandInfo()) {
+		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
+			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
 				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
 				pszFuncNameJapanese[255] = L'\0';

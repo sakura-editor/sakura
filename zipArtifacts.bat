@@ -31,7 +31,7 @@ set ZIP_CMD=%~dp0tools\zip\zip.bat
 set LIST_ZIP_CMD=%~dp0tools\zip\listzip.bat
 
 @rem for GIT_TAG_NAME
-call %~dp0sakura\githash.bat %~dp0sakura_core
+call %~dp0tools\githash.bat %~dp0sakura_core
 
 @rem ----------------------------------------------------------------
 @rem prepare environment variable
@@ -241,21 +241,10 @@ if exist "doxygen-%platform%-%configuration%.log" (
 	copy /Y "doxygen-%platform%-%configuration%.log" %WORKDIR_LOG%\
 )
 
-set HASHFILE=sha256.txt
-if exist "%HASHFILE%" (
-	del %HASHFILE%
-)
-call calc-hash.bat %HASHFILE% %WORKDIR%\
-if exist "%HASHFILE%" (
-	copy /Y %HASHFILE%           %WORKDIR%\
-)
-
 copy /Y installer\warning.txt   %WORKDIR%\
 if "%ALPHA%" == "1" (
 	copy /Y installer\warning-alpha.txt   %WORKDIR%\
 )
-@rem temporally disable to zip all files to a file to workaround #514.
-@rem pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE%      .             && popd
 
 pushd %WORKDIR_LOG%  && call %ZIP_CMD%       %OUTFILE_LOG%  .  && popd
 
@@ -284,13 +273,6 @@ if exist "%WORKDIR%" (
 if exist "%WORKDIR_ASM%" (
 	rmdir /s /q "%WORKDIR_ASM%"
 )
-
-
-@echo start generate MD5 hash
-set CMD_FIND=%SystemRoot%\System32\find.exe
-certutil -hashfile %OUTFILE_EXE% MD5  | %CMD_FIND% /v "MD5" | %CMD_FIND% /v "CertUtil" > %OUTFILE_EXE%.md5
-certutil -hashfile %OUTFILE_INST% MD5 | %CMD_FIND% /v "MD5" | %CMD_FIND% /v "CertUtil" > %OUTFILE_INST%.md5
-@echo end generate MD5 hash
 
 
 exit /b 0

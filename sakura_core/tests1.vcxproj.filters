@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Test Files">
+      <UniqueIdentifier>{690c7184-b796-460a-8fed-595dfa1930f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Deprecated Codes">
+      <UniqueIdentifier>{594146a8-ae7c-401b-a064-af37dac4216e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files">
+      <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pre-compiled Header">
+      <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Other Files\testing">
+      <UniqueIdentifier>{f5277b5c-1446-48f8-acf0-82a8159010f9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\src\test\cmake\tests1.cmake">
+      <Filter>Other Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\test\resources\pch.cpp">
+      <Filter>Pre-compiled Header</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\resources\coverage.cpp" />
+    <ClCompile Include="..\src\test\resources\code-main.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp">
+      <Filter>Other Files\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cnative.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-int2dec.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-is_mailaddress.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-mydevmode.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-parameterized.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-sample.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-sample-disabled.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-StdControl.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-ccommandline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-editinfo.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-ssearchoption.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-grepinfo.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-loadstring.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-clayoutint.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdlgprofilemgr.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-winmain.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cprofile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-string_ex.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-file.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-format.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cwordparse.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-csakuraenvironment.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-charcode.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-zoom.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cerrorinfo.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-ctextmetrics.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cclipboard.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-design_template.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cconvert.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdecode.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-ccodebase.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdlgopenfile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cfileext.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdoctypemanager.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-ceol.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\resources\printECodeType.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\resources\printEFunctionCode.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdocline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdoclinemgr.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-csearchagent.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-crunningtimer.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-czipfile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-statictype.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-window.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-csharedata.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-messageboxf.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cppa.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-extmodules.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-codechecker.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\test\resources\pch.h">
+      <Filter>Pre-compiled Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\StartEditorProcess.hpp">
+      <Filter>Other Files\testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\eval_outputs.hpp">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\TExtModule.hpp">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\test\resources\tests1_rc.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\rt_zipres.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ResourceCompile Include="..\sakura_core\tests1_rc.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -17,6 +17,7 @@
 */
 int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 {
+	UNREFERENCED_PARAMETER(nMaxWordLen);
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nIdx;
@@ -50,7 +51,7 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 			return 0;
 		}
 
-		nCharChars = &pLine[nLineLen] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nLineLen] );
+		nCharChars = int(&pLine[nLineLen] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nLineLen] ));
 		if( 0 == nCharChars ){
 			return 0;
 		}
@@ -58,7 +59,7 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 		nIdx = nIdxTo - CLogicInt(nCharChars);
 	}
 	else{
-		nCharChars = &pLine[nIdxTo] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxTo] );
+		nCharChars = int(&pLine[nIdxTo] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxTo] ));
 		if( 0 == nCharChars ){
 			return 0;
 		}

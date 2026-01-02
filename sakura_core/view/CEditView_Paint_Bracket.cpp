@@ -340,7 +340,7 @@ bool CEditView::SearchBracket(
 	}
 
 	const wchar_t *bPos = CNativeW::GetCharPrev( cline, ptPos.x, cline + ptPos.x );
-	int nCharSize = cline + ptPos.x - bPos;
+	auto nCharSize = int(cline + ptPos.x - bPos);
 	// 括弧処理 2007.10.16 kobake
 	if(nCharSize==1){
 		const KAKKO_T* p;

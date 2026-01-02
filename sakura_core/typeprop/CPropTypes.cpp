@@ -32,7 +32,6 @@
 #include "CSelectLang.h"
 #include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
-#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //
@@ -101,11 +100,6 @@ CPropTypes::CPropTypes()
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
 	m_pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-	m_hwndThis  = nullptr;		/* このダイアログのハンドル */
-	m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
-
 	(static_cast<CPropTypesScreen*>(this))->CPropTypes_Screen();
 }
 
@@ -150,10 +144,10 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
-	std::wstring		sTabname[_countof(TypePropSheetInfoList)];
+	std::wstring		sTabname[std::size(TypePropSheetInfoList)];
 	m_bChangeKeyWordSet = false;
-	PROPSHEETPAGE		psp[_countof(TypePropSheetInfoList)];
-	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++ ){
+	PROPSHEETPAGE		psp[std::size(TypePropSheetInfoList)];
+	for( nIdx = 0; nIdx < int(std::size(TypePropSheetInfoList)); nIdx++ ){
 		sTabname[nIdx] = LS(TypePropSheetInfoList[nIdx].m_nTabNameId);
 
 		PROPSHEETPAGE *p = &psp[nIdx];
@@ -291,11 +285,11 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 		// フォント名の設定
 		auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
 			lf.lfFaceName, double(nps)/10 );
-		::DlgItem_SetText( hwndDlg, idc_static, szFontName );
+		ApiWrap::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 	}
 	else {
 		hFont = nullptr;
-		::DlgItem_SetText( hwndDlg, idc_static, L"" );
+		ApiWrap::DlgItem_SetText( hwndDlg, idc_static, L"" );
 	}
 
 	return hFont;

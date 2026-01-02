@@ -20,8 +20,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <algorithm>
-#include <memory>
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
@@ -71,22 +69,16 @@ CDialog::CDialog(bool bSizable, bool bCheckShareData)
 {
 //	MYTRACE( L"CDialog::CDialog()\n" );
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData(bCheckShareData);
+	m_pShareData = GetDllShareDataPtr();
 
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-	m_hWnd  = nullptr;			/* このダイアログのハンドル */
-	m_hwndSizeBox = nullptr;
 	m_bSizable = bSizable;
-	m_lParam = (LPARAM)nullptr;
-	m_nShowCmd = SW_SHOW;
-	m_xPos = -1;
-	m_yPos = -1;
-	m_nWidth = -1;
-	m_nHeight = -1;
 
-	return;
+	// 共有データが取得できなかったら異常
+	if (bCheckShareData) {
+		GetDllShareData();
+	}
 }
+
 CDialog::~CDialog()
 {
 //	MYTRACE( L"CDialog::~CDialog()\n" );
@@ -181,6 +173,7 @@ void CDialog::CloseDialog( INT_PTR nModalRetVal )
 
 BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(wParam);
 	m_hWnd = hwndDlg;
 	// Modified by KEITA for WIN64 2003.9.6
 	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
@@ -351,6 +344,7 @@ BOOL CDialog::OnSize()
 
 BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
 	RECT	rc;
 	::GetWindowRect( m_hWnd, &rc );
 
@@ -390,6 +384,8 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 
 BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(wParam);
 	return TRUE;
 }
 
@@ -459,7 +455,7 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 
 	// 通知元がコントロールだった場合の処理
 	if( hwndCtl ){
-		::GetClassName(hwndCtl, szClass, _countof(szClass));
+		::GetClassName(hwndCtl, szClass, int(std::size(szClass)));
 		if( ::lstrcmpi(szClass, L"Button") == 0 ){
 			switch( wNotifyCode ){
 			/* ボタン／チェックボックスがクリックされた */
@@ -499,6 +495,7 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 //@@@ 2002.01.18 add start
 BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(wPara);
 	HELPINFO *p = (HELPINFO *)lParam;
 	MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
@@ -506,6 +503,8 @@ BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
 
 BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(wPara);
 	MyWinHelp( m_hWnd, HELP_CONTEXTMENU, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
 }
@@ -522,6 +521,7 @@ LPVOID CDialog::GetHelpIdTable(void)
 
 BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 {
+	UNREFERENCED_PARAMETER(wID);
 	//コンボボックスのリストを表示したまま文字列を編集し、Enterキーを
 	//押すと文字列が消える現象の対策。
 	//Enterキーを押してこの関数に入ったら、リストを非表示にしてしまう。
@@ -536,11 +536,11 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	sBuf[nLength] = L'\0';
 
 	//リストを非表示にする
-	Combo_ShowDropdown( hwndCtl, FALSE );
+	ApiWrap::Combo_ShowDropdown( hwndCtl, FALSE );
 
 	//文字列を復元・全選択
 	::SetWindowText( hwndCtl, sBuf );
-	Combo_SetEditSel( hwndCtl, 0, -1 );
+	ApiWrap::Combo_SetEditSel( hwndCtl, 0, -1 );
 	delete[] sBuf;
 
 	return TRUE;
@@ -548,6 +548,7 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 
 BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 {
+	UNREFERENCED_PARAMETER(wID);
 	return OnCbnDropDown( hwndCtl, false );
 }
 /** コンボボックスのドロップダウン時処理
@@ -579,14 +580,14 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 		return FALSE;
 	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, (LPARAM)nullptr );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = Combo_GetCount( hwndCtl );
+	nItem = ApiWrap::Combo_GetCount( hwndCtl );
 	::GetWindowRect( hwndCtl, &rc );
 	nWidth = rc.right - rc.left - nMargin + nScrollWidth;
 	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = Combo_GetLBTextLen( hwndCtl, iItem );
+		nTextLen = ApiWrap::Combo_GetLBTextLen( hwndCtl, iItem );
 		if( 0 < nTextLen ) {
 			WCHAR* pszText = new WCHAR[nTextLen + 1];
-			Combo_GetLBText( hwndCtl, iItem, pszText );
+			ApiWrap::Combo_GetLBText( hwndCtl, iItem, pszText );
 			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
 				if ( nWidth < sizeText.cx + nScrollWidth )
 					nWidth = sizeText.cx + nScrollWidth;
@@ -594,7 +595,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 			delete []pszText;
 		}
 	}
-	Combo_SetDroppedWidth( hwndCtl, nWidth + nMargin );
+	ApiWrap::Combo_SetDroppedWidth( hwndCtl, nWidth + nMargin );
 	::SelectObject( hDC, hFont );
 	::ReleaseDC( hwndCtl, hDC );
 	return TRUE;
@@ -649,7 +650,7 @@ HFONT CDialog::SetMainFont( HWND hTarget )
 	//lf.lfClipPrecision	= lf.lfClipPrecision;
 	//lf.lfQuality		= lf.lfQuality;
 	//lf.lfPitchAndFamily	= lf.lfPitchAndFamily;
-	//wcsncpy( lf.lfFaceName, lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
+	//wcsncpy( lf.lfFaceName, lf.lfFaceName, int(std::size(lf.lfFaceName)));	// 画面のフォントに設定	2012/11/27 Uchi
 
 	// フォントを作成
 	hFont = ::CreateFontIndirect(&lf);
@@ -737,15 +738,15 @@ static void DeleteRecentItem(
 
 	// ドロップダウンリスト内の選択されたテキストを取得
 	CNativeW cItemText;
-	if( Combo_GetLBText( hwndCombo, nIndex, cItemText ) ){
+	if( ApiWrap::Combo_GetLBText( hwndCombo, nIndex, cItemText ) ){
 		// エディットテキストを取得(失敗しても構わないのでエラー処理なし)
 		CNativeW cEditText;
-		Wnd_GetText( hwndCombo, cEditText );
+		ApiWrap::Wnd_GetText( hwndCombo, cEditText );
 
 		// コンボボックスのキャレット位置を取得
 		DWORD dwSelStart = 0;
 		DWORD dwSelEnd = 0;
-		Combo_GetEditSel( hwndCombo, dwSelStart, dwSelEnd );
+		ApiWrap::Combo_GetEditSel( hwndCombo, dwSelStart, dwSelEnd );
 
 		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
 		if ( cItemText != cEditText
@@ -758,7 +759,7 @@ static void DeleteRecentItem(
 		}
 
 		// コンボボックスのリストアイテム削除
-		Combo_DeleteString( hwndCombo, nIndex );
+		ApiWrap::Combo_DeleteString( hwndCombo, nIndex );
 
 		// 履歴項目を削除
 		int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
@@ -791,8 +792,8 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 	switch( uMsg ){
 	case WM_KEYDOWN:
 		if( wParam == VK_DELETE ){
-			BOOL bShow = Combo_GetDroppedState(hwndCombo);
-			int nIndex = Combo_GetCurSel(hwndCombo);
+			BOOL bShow = ApiWrap::Combo_GetDroppedState(hwndCombo);
+			int nIndex = ApiWrap::Combo_GetCurSel(hwndCombo);
 			if( bShow && 0 <= nIndex ){
 				DeleteRecentItem(hwndCombo, nIndex, (CRecent*)dwRefData);
 			}
@@ -802,7 +803,7 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		// ASCII 削除文字。Ctrl + Backspace が入力された。
 		if (wParam == 0x7f) {
 			DWORD selStart, selEnd;
-			Combo_GetEditSel(hwndCombo, selStart, selEnd);
+			ApiWrap::Combo_GetEditSel(hwndCombo, selStart, selEnd);
 			if (selStart != selEnd) {
 				// テキストが選択されているため、通常の削除動作を行う。
 				// Edit に Backspace を流して処理してもらう。
@@ -818,7 +819,7 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 			const int pos = DeletePreviousWord(text.get(), length, selStart);
 
 			::SetWindowText(hwndCombo, text.get());
-			Combo_SetEditSel(hwndCombo, pos, pos);
+			ApiWrap::Combo_SetEditSel(hwndCombo, pos, pos);
 			return 0;
 		}
 		break;

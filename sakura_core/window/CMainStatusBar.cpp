@@ -140,7 +140,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 			pszText = emptyStr;
 			textLen = 0;
 		}
-		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
+		LRESULT res = ::ApiWrap::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
 		// 表示オペレーション値が変化する場合は SB_SETTEXT メッセージを発行
 		if( HIWORD(res) != nOption ){
 			break;
@@ -148,7 +148,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		size_t prevTextLen = LOWORD(res);
 		WCHAR prev[1024];
 		// 設定済みの文字列長が長過ぎて取得できない場合は、SB_SETTEXT メッセージを発行
-		if( prevTextLen >= _countof(prev) ){
+		if( prevTextLen >= int(std::size(prev)) ){
 			break;
 		}
 		// 設定する文字列長パラメータが SIZE_MAX（引数のデフォルト値）な場合は文字列長を取得
@@ -160,7 +160,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 			break;
 		}
 		if( prevTextLen > 0 ){
-			::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
+			ApiWrap::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
 			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
 			bDraw = wcscmp(prev, pszText) != 0;
 		}
@@ -170,7 +170,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		}
 	}while (false);
 	if (bDraw) {
-		StatusBar_SetText(m_hwndStatusBar, nIndex | nOption, pszText);
+		ApiWrap::StatusBar_SetText(m_hwndStatusBar, nIndex | nOption, pszText);
 	}
 	return bDraw;
 }

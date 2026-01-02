@@ -25,7 +25,6 @@
 #include "env/CShareData.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
 #include "config/system_constants.h"
-#include "String_define.h"
 
 //-------------------------------------------------
 
@@ -161,7 +160,7 @@ bool CControlProcess::InitializeProcess()
 
 	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
 	WCHAR szDir[_MAX_PATH];
-	::GetSystemDirectory( szDir, _countof(szDir) );
+	::GetSystemDirectory( szDir, int(std::size(szDir)) );
 	::SetCurrentDirectory( szDir );
 
 	/* 共有データのロード */

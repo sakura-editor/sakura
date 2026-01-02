@@ -42,11 +42,10 @@
 #include "util/string_ex2.h"
 #include "util/window.h"
 #include "util/os.h"
-#include "CDataProfile.h"
+#include "env/CDataProfile.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 struct ARRHEAD {
 	int		nLength;
@@ -55,11 +54,18 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
+/*!
+ * 共有データのアドレスを取得する
+ */
+DLLSHAREDATA* GetDllShareDataPtr() noexcept
+{
+	const auto pcShareData = CShareData::getInstance();
+	return pcShareData ? pcShareData->GetDllShareDataPtr() : nullptr;
+}
+
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
-CShareData::CShareData()
-{
-}
+CShareData::CShareData() = default;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -69,7 +75,6 @@ CShareData::~CShareData()
 {
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
-		SetDllShareData( nullptr );
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = nullptr;
 	}
@@ -113,7 +118,7 @@ bool CShareData::InitShareData()
 
 	/* ファイルマッピングオブジェクト */
 	{
-		const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+		const auto pszProfileName = GetProfileName();
 		std::wstring strShareDataName = GSTR_SHAREDATA;
 		strShareDataName += pszProfileName;
 		m_hFileMap = ::CreateFileMapping(
@@ -146,7 +151,6 @@ bool CShareData::InitShareData()
 			0
 		);
 		CreateTypeSettings();
-		SetDllShareData( m_pShareData );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -167,7 +171,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sHandles.m_hwndTray = nullptr;
 		m_pShareData->m_sHandles.m_hwndDebug = nullptr;
 
-		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
+		for( int i = 0; i < int(std::size(m_pShareData->m_dwCustColors)); i++ ){
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
 		}
 
@@ -730,7 +734,6 @@ bool CShareData::InitShareData()
 			0,
 			0
 		);
-		SetDllShareData( m_pShareData );
 
 		SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_SHARE );
 		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
@@ -741,7 +744,6 @@ bool CShareData::InitShareData()
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
-			SetDllShareData( nullptr );
 			::UnmapViewOfFile( m_pShareData );
 			m_pShareData = nullptr;
 			return false;
@@ -773,8 +775,8 @@ static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, s
 	index++;
 }
 
-#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, true)
-#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, false)
+#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, int(std::size(buf)), id, values, index, bSetValues, true)
+#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, int(std::size(buf)), id, values, index, bSetValues, false)
 
 /*!
 	国際化対応のための文字列を変更する
@@ -981,7 +983,7 @@ void CShareData::TraceOutString( const wchar_t* pStr, int len )
 		return;
 	}
 	if( -1 == len ){
-		len = wcslen(pStr);
+		len = (int)wcslen(pStr);
 	}
 	// m_sWorkBufferぎりぎりでも問題ないけれど、念のため\0終端にするために余裕をとる
 	// -1 より 8,4バイト境界のほうがコピーが早いはずなので、-4にする
@@ -1115,7 +1117,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		return 0;
 	}
 	ptr = pszFile;
-	int nLen = wcslen( ptr ); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
+	auto nLen = int(wcslen(ptr)); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
 		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == L'\0' ){	//	フォルダー指定なし
@@ -1127,10 +1129,10 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 	}
 	else {	//	フォルダー指定あり
 		//	相対パス→絶対パス
-		int nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, _countof2(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), L'\\' );
+		const auto nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, std::size(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), L'\\' );
 		int nAllLen;
 		WCHAR *pszDir;
-		WCHAR szDir[_MAX_PATH + _countof2( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER )];
+		WCHAR szDir[_MAX_PATH + SFilePath::size()];
 
 		 // 2003.06.24 Moca フォルダーも相対パスなら実行ファイルからのパス
 		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -1141,7 +1143,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			pszDir = m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER;
 		}
 
-		int nDirLen = wcslen( pszDir );
+		auto nDirLen = int(wcslen(pszDir));
 		nAllLen = nDirLen + nLen + ( -1 == nFolderSep ? 1 : 0 );
 		if( pszPath == nullptr || nBufLen <= nAllLen ){
 			return -nAllLen;
@@ -1218,7 +1220,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	//	ツールバーアイコン数の最大値を超えないためのおまじない
 	//	最大値を超えて定義しようとするとここでコンパイルエラーになります．
-	char dummy[ _countof(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
+	char dummy[std::size(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
 	dummy[0]=0;
 
 	memcpy_raw(
@@ -1228,7 +1230,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 	);
 
 	/* ツールバーボタンの数 */
-	pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum = _countof(DEFAULT_TOOL_BUTTONS);
+	pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum = int(std::size(DEFAULT_TOOL_BUTTONS));
 	pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
 }
 
@@ -1240,6 +1242,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 */
 void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 {
+	UNREFERENCED_PARAMETER(pShareData);
 	/* カスタムメニュー 規定値 */
 	
 	CommonSetting_CustomMenu& rMenu = m_pShareData->m_Common.m_sCustomMenu;
@@ -1463,7 +1466,7 @@ std::vector<STypeConfig*>& CShareData::GetTypeSettings()
 void CShareData::InitFileTree( SFileTree* setting )
 {
 	setting->m_bProject = true;
-	for(int i = 0; i < (int)_countof(setting->m_aItems); i++){
+	for(int i = 0; i < int(std::size(setting->m_aItems)); i++){
 		SFileTreeItem& item = setting->m_aItems[i];
 		item.m_eFileTreeItemType = EFileTreeItemType_Grep;
 		item.m_szTargetPath = L"";

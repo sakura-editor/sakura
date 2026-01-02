@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2025, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,25 +19,37 @@
 #include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
-#include "String_define.h"
-#include <wrl.h>
+#include "cxx/com_pointer.hpp"
+#include "cxx/ResourceHolder.hpp"
 
+#pragma comment(lib, "htmlhelp.lib") 
+
+BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
+{
+	return SelectDir(hWnd, title, initialDirectory, std::span(strFolderName, nMaxCount));
+}
 
 /* フォルダー選択ダイアログ */
-BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
+BOOL SelectDir(
+	HWND hWnd,
+	const std::wstring& title,
+	const std::filesystem::path& initialDirectory,
+	std::span<WCHAR> buffer
+)
 {
-	if ( nullptr == strFolderName ) {
+	auto strFolderName = buffer.data();
+	auto nMaxCount = buffer.size();
+
+	if (!strFolderName || !nMaxCount) {
 		return FALSE;
 	}
 
-	using namespace Microsoft::WRL;
-	ComPtr<IFileDialog> pDialog;
+	cxx::com_pointer<IFileDialog> pDialog;
 	HRESULT hres;
 
 	// インスタンスを作成
-	hres = CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog) );
+	hres = pDialog.CreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER);
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}
@@ -56,14 +68,14 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 	}
 
 	// 初期フォルダーを設定
-	ComPtr<IShellItem> psiFolder;
-	hres = SHCreateItemFromParsingName( pszInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
+	cxx::com_pointer<IShellItem> psiFolder;
+	hres = SHCreateItemFromParsingName(initialDirectory.c_str(), nullptr, IID_PPV_ARGS(&psiFolder));
 	if ( SUCCEEDED(hres) ) {
-		pDialog->SetFolder( psiFolder.Get() );
+		pDialog->SetFolder(psiFolder);
 	}
 
 	// タイトル文字列を設定
-	hres = pDialog->SetTitle( pszTitle );
+	hres = pDialog->SetTitle( title.c_str() );
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}
@@ -75,7 +87,7 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 	}
 
 	// 選択結果を取得
-	ComPtr<IShellItem> psiResult;
+	cxx::com_pointer<IShellItem> psiResult;
 	hres = pDialog->GetResult( &psiResult );
 	if ( FAILED(hres) ) {
 		return FALSE;
@@ -87,13 +99,14 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 		return FALSE;
 	}
 
+	using CoTaskMemHolder = cxx::ResourceHolder<&::CoTaskMemFree>;
+	CoTaskMemHolder taskMem = pszResult;
+
 	BOOL bRet = TRUE;
 	if ( 0 != wcsncpy_s( strFolderName, nMaxCount, pszResult, _TRUNCATE ) ) {
 		wcsncpy_s( strFolderName, nMaxCount, L"", _TRUNCATE );
 		bRet = FALSE;
 	}
-
-	CoTaskMemFree( pszResult );
 
 	return bRet;
 }
@@ -194,7 +207,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				{
 					DLLSHAREDATA *pShareData = &GetDllShareData();
 					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
-					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, _countof2(pShareData->m_sHistory.m_szIMPORTFOLDER), L'\\' );
+					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, std::size(pShareData->m_sHistory.m_szIMPORTFOLDER), L'\\' );
 				}
 				break;
 			}
@@ -300,22 +313,22 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 	return dwRet;
 }
 
-//	From Here Jun. 26, 2001 genta
 /*!
-	HTML Helpコンポーネントのアクセスを提供する。
-	内部で保持すべきデータは特になく、至る所から使われるのでGlobal変数にするが、
-	直接のアクセスはOpenHtmlHelp()関数のみから行う。
-	他のファイルからはCHtmlHelpクラスは隠されている。
-*/
-CHtmlHelp g_cHtmlHelp;
-
-/*!
-	HTML Helpを開く
-	HTML Helpが利用可能であれば引数をそのまま渡し、そうでなければメッセージを表示する。
-
-	@return 開いたヘルプウィンドウのウィンドウハンドル。開けなかったときはNULL。
-*/
-
+ * HTML Helpを開く
+ *
+ * @param[in, opt] hWnd 呼び出し元ウィンドウのハンドル（省略可）
+ * @param[in] szFile HTML Helpのファイル名。不等号(>)に続けてウィンドウタイプ名を指定可能
+ * @param[in] uCmd HtmlHelpに渡すコマンド
+ * @param[in] data コマンドに応じたデータ（省略可）
+ *
+ * @return 開いたヘルプウィンドウのハンドル。失敗時は nullptr
+ *
+ * @note Windows95以前ではHHCtrl.ocxが標準で入っていないバージョンが存在した。
+ *       過去にはHHCtrl.ocx未検出時にエラーメッセージを表示していたが、
+ *       現在はHHCtrl.ocxを静的リンクする方式に変更したため、チェック処理は削除した。
+ *
+ * @date 2001/06/26 genta 新規作成
+ */
 HWND OpenHtmlHelp(
 	HWND		hWnd,	//!< [in] 呼び出し元ウィンドウのウィンドウハンドル
 	LPCWSTR		szFile,	//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
@@ -324,21 +337,10 @@ HWND OpenHtmlHelp(
 	bool		msgflag	//!< [in] エラーメッセージを表示するか。省略時はtrue。
 )
 {
-	if( DLL_SUCCESS == g_cHtmlHelp.InitDll() ){
-		return g_cHtmlHelp.HtmlHelp( hWnd, szFile, uCmd, data );
-	}
-	if( msgflag ){
-		::MessageBox(
-			hWnd,
-			LS(STR_SHELL_HHCTRL),
-			LS(STR_SHELL_INFO),
-			MB_OK | MB_ICONEXCLAMATION
-		);
-	}
-	return nullptr;
-}
+	UNREFERENCED_PARAMETER(msgflag);
 
-//	To Here Jun. 26, 2001 genta
+	return ::HtmlHelpW( hWnd, szFile, uCmd, data );
+}
 
 /*! ショートカット(.lnk)の解決
 	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
@@ -475,7 +477,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			memset(&hp, 0, sizeof(hp));	// 構造体をゼロクリア
 			hp.cbStruct = sizeof(hp);
 			hp.pszFont = L"ＭＳ Ｐゴシック, 9";
-			hp.clrForeground = hp.clrBackground = -1;
+			hp.clrForeground = hp.clrBackground = COLORREF(-1);
 			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
 			if( uCommandOrg == HELP_CONTEXTMENU ){
 				// マウスカーソル位置から対象コントロールと表示位置を求める
@@ -530,7 +532,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			dwData = 1;	// 目次ページ
 
 		WCHAR buf[256];
-		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
+		swprintf( buf, int(std::size(buf)), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
 		ShellExecute( ::GetActiveWindow(), nullptr, buf, nullptr, nullptr, SW_SHOWNORMAL );
 	}
 

@@ -18,7 +18,6 @@
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -141,7 +140,7 @@ void CMainToolBar::CreateToolBar( void )
 
 		::ZeroMemory(&rbi, sizeof(rbi));
 		rbi.cbSize = sizeof(rbi);
-		Rebar_SetbarInfo(m_hwndReBar, &rbi);
+		ApiWrap::Rebar_SetbarInfo(m_hwndReBar, &rbi);
 
 		nFlag = CCS_NORESIZE | CCS_NODIVIDER | CCS_NOPARENTALIGN | TBSTYLE_FLAT;	// ツールバーへの追加スタイル
 	}
@@ -185,8 +184,8 @@ void CMainToolBar::CreateToolBar( void )
 		const int cySmIcon = DpiScaleY( 16 );
 		const int cxToolButton = cxBorder + cxEdge + cxSmIcon + cxEdge + cxBorder;	//22
 		const int cyToolButton = cyBorder + cyEdge + cySmIcon + cyEdge + cyBorder;	//22
-		Toolbar_SetButtonSize( m_hwndToolBar, cxToolButton, cyToolButton );	// 2009.10.01 ryoji 高DPI対応スケーリング
-		Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
+		ApiWrap::Toolbar_SetButtonSize( m_hwndToolBar, cxToolButton, cyToolButton );	// 2009.10.01 ryoji 高DPI対応スケーリング
+		ApiWrap::Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
 		m_pcIcons->SetToolBarImages( m_hwndToolBar );
@@ -227,8 +226,8 @@ void CMainToolBar::CreateToolBar( void )
 			{
 			case TBSTYLE_DROPDOWN:	//ドロップダウン
 				//拡張スタイルに設定
-				Toolbar_SetExtendedStyle( m_hwndToolBar, TBSTYLE_EX_DRAWDDARROWS );
-				Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
+				ApiWrap::Toolbar_SetExtendedStyle( m_hwndToolBar, TBSTYLE_EX_DRAWDDARROWS );
+				ApiWrap::Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
 				count++;
 				break;
 
@@ -254,18 +253,18 @@ void CMainToolBar::CreateToolBar( void )
 						if( tbb.fsState & TBSTATE_WRAP ){   //折り返し 2005/8/29 aroka
 							my_tbb.fsState |=  TBSTATE_WRAP;
 						}
-						Toolbar_AddButtons( m_hwndToolBar, 1, &my_tbb );
+						ApiWrap::Toolbar_AddButtons( m_hwndToolBar, 1, &my_tbb );
 						count++;
 
 						//サイズを設定する
 						tbi.cbSize = sizeof(tbi);
 						tbi.dwMask = TBIF_SIZE;
 						tbi.cx     = (WORD)DpiScaleX(160);	//ボックスの幅	// 2009.10.01 ryoji 高DPI対応スケーリング
-						Toolbar_SetButtonInfo( m_hwndToolBar, tbb.idCommand, &tbi );
+						ApiWrap::Toolbar_SetButtonInfo( m_hwndToolBar, tbb.idCommand, &tbi );
 
 						//位置とサイズを取得する
 						rc.right = rc.left = rc.top = rc.bottom = 0;
-						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
+						ApiWrap::Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 						// Social Distance
 						rc.left += cxBorder;
 						rc.right -= cxBorder;
@@ -295,7 +294,7 @@ void CMainToolBar::CreateToolBar( void )
 							//lf.lfClipPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfClipPrecision;
 							//lf.lfQuality		= GetDllShareData().m_Common.m_sView.m_lf.lfQuality;
 							//lf.lfPitchAndFamily	= GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily;
-							//wcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
+							//wcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, int(std::size(lf.lfFaceName)));	// 画面のフォントに設定	2012/11/27 Uchi
 							m_hFontSearchBox = ::CreateFontIndirect( &lf );
 							if( m_hFontSearchBox )
 							{
@@ -331,7 +330,7 @@ void CMainToolBar::CreateToolBar( void )
 			case TBSTYLE_BUTTON:	//ボタン
 			case TBSTYLE_SEP:		//セパレータ
 			default:
-				Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
+				ApiWrap::Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
 				count++;
 				break;
 			}
@@ -350,8 +349,8 @@ void CMainToolBar::CreateToolBar( void )
 	// ツールバーを Rebar に入れる
 	if( m_hwndReBar && m_hwndToolBar ){
 		// ツールバーの高さを取得する
-		DWORD dwBtnSize = Toolbar_GetButtonSize( m_hwndToolBar );
-		DWORD dwRows = Toolbar_GetRows( m_hwndToolBar );
+		DWORD dwBtnSize = ApiWrap::Toolbar_GetButtonSize( m_hwndToolBar );
+		DWORD dwRows = ApiWrap::Toolbar_GetRows( m_hwndToolBar );
 
 		// バンド情報を設定する
 		// 以前のプラットフォームに _WIN32_WINNT >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	// 2007.12.21 ryoji
@@ -364,7 +363,7 @@ void CMainToolBar::CreateToolBar( void )
 		rbBand.cx         = 250;
 
 		// バンドを追加する
-		Rebar_InsertBand( m_hwndReBar, -1, &rbBand );
+		ApiWrap::Rebar_InsertBand( m_hwndReBar, -1, &rbBand );
 		::ShowWindow( m_hwndToolBar, SW_SHOW );
 	}
 
@@ -448,14 +447,13 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 		{
 			//	描画
 			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
-			int nIconId = Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (WPARAM)pnmh->dwItemSpec );
+			int nIconId = ApiWrap::Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (int)pnmh->dwItemSpec );
 
 			// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
 			CMyRect rc( pnmh->rc );
 			int offset = ( rc.Height() - m_pcIcons->cy() ) / 2;
 
 			const int cxEdge = DpiScaleX( 1 );
-			const int cyEdge = DpiScaleY( 1 );
 			const int cxSmIcon = DpiScaleX( 16 );
 			const int cySmIcon = DpiScaleY( 16 );
 
@@ -514,7 +512,7 @@ void CMainToolBar::UpdateToolbar( void )
 			TBBUTTON tbb = m_pOwner->GetMenuDrawer().getButton(
 				GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i]
 			);
-			int state = Toolbar_GetState( m_hwndToolBar, tbb.idCommand );
+			int state = ApiWrap::Toolbar_GetState( m_hwndToolBar, tbb.idCommand );
 			if( state != -1 )
 			{
 				WORD stateToSet = state & ~(TBSTATE_ENABLED | TBSTATE_CHECKED);
@@ -530,7 +528,7 @@ void CMainToolBar::UpdateToolbar( void )
 				}
 				if( state != stateToSet )
 				{
-					Toolbar_SetState( m_hwndToolBar, tbb.idCommand, stateToSet );
+					ApiWrap::Toolbar_SetState( m_hwndToolBar, tbb.idCommand, stateToSet );
 				}
 			}
 		}
@@ -544,13 +542,13 @@ void CMainToolBar::AcceptSharedSearchKey()
 	{
 		int	i;
 		// 2013.05.28 Combo_ResetContentだとちらつくのでDeleteStringでリストだけ削除
-		while (Combo_GetCount(m_hwndSearchBox) > 0) {
-			Combo_DeleteString(m_hwndSearchBox, 0);
+		while (ApiWrap::Combo_GetCount(m_hwndSearchBox) > 0) {
+			ApiWrap::Combo_DeleteString(m_hwndSearchBox, 0);
 		}
 		int nSize = GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size();
 		for( i = 0; i < nSize; i++ )
 		{
-			Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
+			ApiWrap::Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
 		}
 		const wchar_t* pszText;
 		if( (GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
@@ -572,7 +570,7 @@ void CMainToolBar::AcceptSharedSearchKey()
 	}
 }
 
-int CMainToolBar::GetSearchKey(std::wstring& strText)
+size_t CMainToolBar::GetSearchKey(std::wstring& strText)
 {
 	if( m_hwndSearchBox ){
 		ApiWrap::Wnd_GetText( m_hwndSearchBox, strText );

@@ -18,7 +18,7 @@
 #include "CLayout.h" // 2002/2/10 aroka
 #include "doc/logic/CDocLineMgr.h" // 2002/2/10 aroka
 #include "charset/charcode.h"
-#include "CSearchAgent.h"
+#include "agent/CSearchAgent.h"
 
 /* 文字列置換 */
 void CLayoutMgr::ReplaceData_CLayoutMgr(

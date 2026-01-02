@@ -29,7 +29,6 @@
 #include "io/CTextStream.h"
 #include "CSelectLang.h"
 #include "mem/CNativeW.h"
-#include "String_define.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
@@ -173,7 +172,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 		const WCHAR* szLine = strLine.c_str(); // '\0'終端文字列を取得
 		using namespace WCODE;
 
-		int nLineLen = strLine.length();
+		auto nLineLen = (int)strLine.length();
 		// 先行する空白をスキップ
 		for( i = 0; i < nLineLen; ++i ){
 			if( szLine[i] != SPACE && szLine[i] != TAB ){
@@ -195,7 +194,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 		szFuncName[0]='\0';// 初期化
 		for( ; i < nLineLen; ++i ){
 			//# バッファオーバーランチェック
-			if( szLine[i] == LTEXT('(') && (i - nBgn)< _countof(szFuncName) ){
+			if( szLine[i] == LTEXT('(') && (i - nBgn)< int(std::size(szFuncName)) ){
 				wmemcpy( szFuncName, &szLine[nBgn], i - nBgn );
 				szFuncName[i - nBgn] = L'\0';
 				++i;
@@ -213,7 +212,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 			// Jun. 16, 2002 genta プロトタイプチェック用に追加
 			int nArgs;
 			const MacroFuncInfo* mInfo= CSMacroMgr::GetFuncInfoByID( nFuncID );
-			int nArgSizeMax = _countof( mInfo->m_varArguments );
+			auto nArgSizeMax = int(std::size(mInfo->m_varArguments));
 			if( mInfo->m_pData  ){
 				nArgSizeMax = mInfo->m_pData->m_nArgMaxSize;
 			}

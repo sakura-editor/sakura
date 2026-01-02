@@ -18,6 +18,7 @@
 #include "StdAfx.h"
 #include "_main/global.h"
 
+#include "_main/CCommandLine.h"
 #include "_main/CNormalProcess.h"
 #include "basis/CErrorInfo.h"
 #include "config/app_constants.h"
@@ -53,6 +54,15 @@ const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 HINSTANCE G_AppInstance()
 {
 	return CProcess::getInstance()->GetProcessInstance();
+}
+
+/*!
+ * 起動時に指定されたプロファイル名を取得する
+ */
+LPCWSTR GetProfileName() noexcept
+{
+	const auto cmdline = CCommandLine::getInstance();
+	return cmdline ? cmdline->GetProfileName() : L"";
 }
 
 /*!

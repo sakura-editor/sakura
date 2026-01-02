@@ -25,12 +25,12 @@
 #include "dlg/CDlgOpenFile.h"
 #include "dlg/CDialog.h"
 #include "func/Funccode.h"	//Stonee, 2001/05/18
-#include "CFileExt.h"
+#include "basis/CFileExt.h"
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "CEditApp.h"
-#include "CEol.h"
+#include "basis/CEol.h"
 #include "charset/CCodePage.h"
 #include "doc/CDocListener.h"
 #include "util/window.h"
@@ -44,7 +44,6 @@
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "String_define.h"
 
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
@@ -91,8 +90,8 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 	//! リトライ機能付き GetOpenFileName
 	bool GetSaveFileNameRecover( OPENFILENAME* ofn );
 
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
+	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 
@@ -227,7 +226,7 @@ UINT_PTR CALLBACK OFNHookProc(
 		L"LF (UNIX)",
 		L"CR (Mac)",
 	};
-	int nEolNameArrNum = (int)_countof(pEolNameArr);
+	int nEolNameArrNum = int(std::size(pEolNameArr));
 
 //	To Here	Feb. 9, 2001 genta
 	int	nRightMargin = 24;
@@ -280,10 +279,10 @@ UINT_PTR CALLBACK OFNHookProc(
 			CDlgOpenFile_CommonFileDialog::InitLayout( pData->m_hwndOpenDlg, hdlg, pData->m_hwndComboCODES );
 
 			/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
-			Combo_SetExtendedUI( pData->m_hwndComboCODES, TRUE );
-			Combo_SetExtendedUI( pData->m_hwndComboMRU, TRUE );
-			Combo_SetExtendedUI( pData->m_hwndComboOPENFOLDER, TRUE );
-			Combo_SetExtendedUI( pData->m_hwndComboEOL, TRUE );
+			ApiWrap::Combo_SetExtendedUI( pData->m_hwndComboCODES, TRUE );
+			ApiWrap::Combo_SetExtendedUI( pData->m_hwndComboMRU, TRUE );
+			ApiWrap::Combo_SetExtendedUI( pData->m_hwndComboOPENFOLDER, TRUE );
+			ApiWrap::Combo_SetExtendedUI( pData->m_hwndComboEOL, TRUE );
 
 			//	From Here Feb. 9, 2001 genta
 			//	改行コードの選択コンボボックス初期化
@@ -294,16 +293,16 @@ UINT_PTR CALLBACK OFNHookProc(
 				nIdxSel = 0;
 				for( i = 0; i < nEolNameArrNum; ++i ){
 					if( i == 0 ){
-						nIdx = Combo_AddString( pData->m_hwndComboEOL, LS(STR_DLGOPNFL1) );
+						nIdx = ApiWrap::Combo_AddString( pData->m_hwndComboEOL, LS(STR_DLGOPNFL1) );
 					}else{
-						nIdx = Combo_AddString( pData->m_hwndComboEOL, pEolNameArr[i] );
+						nIdx = ApiWrap::Combo_AddString( pData->m_hwndComboEOL, pEolNameArr[i] );
 					}
-					Combo_SetItemData( pData->m_hwndComboEOL, nIdx, nEolValueArr[i] );
+					ApiWrap::Combo_SetItemData( pData->m_hwndComboEOL, nIdx, nEolValueArr[i] );
 					if( nEolValueArr[i] == static_cast<int>(pData->m_cEol.GetType()) ){
 						nIdxSel = nIdx;
 					}
 				}
-				Combo_SetCurSel( pData->m_hwndComboEOL, nIdxSel );
+				ApiWrap::Combo_SetCurSel( pData->m_hwndComboEOL, nIdxSel );
 			}
 			else {
 				//	使わないときは隠す
@@ -323,7 +322,7 @@ UINT_PTR CALLBACK OFNHookProc(
 					::EnableWindow( pData->m_hwndCheckBOM, FALSE );
 					fCheck = BST_UNCHECKED;
 				}
-				BtnCtl_SetCheck( pData->m_hwndCheckBOM, fCheck );
+				ApiWrap::BtnCtl_SetCheck( pData->m_hwndCheckBOM, fCheck );
 			}
 			else {
 				//	使わないときは隠す
@@ -345,18 +344,18 @@ UINT_PTR CALLBACK OFNHookProc(
 			}
 			CCodeTypesForCombobox cCodeTypes;
 			for( /*i = 0*/; i < cCodeTypes.GetCount(); ++i ){
-				nIdx = Combo_AddString( pData->m_hwndComboCODES, cCodeTypes.GetName(i) );
-				Combo_SetItemData( pData->m_hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
+				nIdx = ApiWrap::Combo_AddString( pData->m_hwndComboCODES, cCodeTypes.GetName(i) );
+				ApiWrap::Combo_SetItemData( pData->m_hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
 				if( cCodeTypes.GetCode(i) == pData->m_nCharCode ){
 					nIdxSel = nIdx;
 				}
 			}
 			if( nIdxSel != -1 ){
-				Combo_SetCurSel( pData->m_hwndComboCODES, nIdxSel );
+				ApiWrap::Combo_SetCurSel( pData->m_hwndComboCODES, nIdxSel );
 			}else{
 				CheckDlgButtonBool( hdlg, IDC_CHECK_CP, true );
 				if( -1 == AddComboCodePages( hdlg, pData->m_hwndComboCODES, pData->m_nCharCode, pData->m_bInitCodePage ) ){
-					Combo_SetCurSel( pData->m_hwndComboCODES, 0 );
+					ApiWrap::Combo_SetCurSel( pData->m_hwndComboCODES, 0 );
 				}
 			}
 			if( !pData->m_bUseCharCode ){
@@ -454,19 +453,19 @@ UINT_PTR CALLBACK OFNHookProc(
 				}
 
 				/* 文字コード選択コンボボックス 値を取得 */
-				nIdx = Combo_GetCurSel( pData->m_hwndComboCODES );
-				lRes = Combo_GetItemData( pData->m_hwndComboCODES, nIdx );
+				nIdx = ApiWrap::Combo_GetCurSel( pData->m_hwndComboCODES );
+				lRes = ApiWrap::Combo_GetItemData( pData->m_hwndComboCODES, nIdx );
 				pData->m_nCharCode = (ECodeType)lRes;	/* 文字コード */
 				//	Feb. 9, 2001 genta
 				if( pData->m_bUseEol ){
-					nIdx = Combo_GetCurSel( pData->m_hwndComboEOL );
-					lRes = Combo_GetItemData( pData->m_hwndComboEOL, nIdx );
+					nIdx = ApiWrap::Combo_GetCurSel( pData->m_hwndComboEOL );
+					lRes = ApiWrap::Combo_GetItemData( pData->m_hwndComboEOL, nIdx );
 					pData->m_cEol = (EEolType)lRes;	/* 文字コード */
 				}
 				//	From Here Jul. 26, 2003 ryoji
 				//	BOMチェックボックスの状態を取得
 				if( pData->m_bUseBom ){
-					lRes = BtnCtl_GetCheck( pData->m_hwndCheckBOM );
+					lRes = ApiWrap::BtnCtl_GetCheck( pData->m_hwndCheckBOM );
 					pData->m_bBom = (lRes == BST_CHECKED);	/* BOM */
 				}
 				//	To Here Jul. 26, 2003 ryoji
@@ -481,7 +480,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			{
 				wchar_t szFolder[_MAX_PATH];
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-				lRes = CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, _countof( szFolder ) );
+				lRes = CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, int(std::size(szFolder)) );
 			}
 //			MYTRACE( L"\tlRes=%d\pszFolder=[%ls]\n", lRes, szFolder );
 
@@ -522,8 +521,8 @@ UINT_PTR CALLBACK OFNHookProc(
 			case IDC_COMBO_CODE:
 				{
 					CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-					nIdx = Combo_GetCurSel( (HWND) lParam );
-					lRes = Combo_GetItemData( (HWND) lParam, nIdx );
+					nIdx = ApiWrap::Combo_GetCurSel( (HWND) lParam );
+					lRes = ApiWrap::Combo_GetItemData( (HWND) lParam, nIdx );
 					CCodeTypeName	cCodeTypeName( lRes );
 					if (cCodeTypeName.UseBom()) {
 						::EnableWindow( pData->m_hwndCheckBOM, TRUE );
@@ -537,7 +536,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						::EnableWindow( pData->m_hwndCheckBOM, FALSE );
 						fCheck = BST_UNCHECKED;
 					}
-					BtnCtl_SetCheck( pData->m_hwndCheckBOM, fCheck );
+					ApiWrap::BtnCtl_SetCheck( pData->m_hwndCheckBOM, fCheck );
 				}
 				break;
 			//	To Here Jul. 26, 2003 ryoji
@@ -546,9 +545,9 @@ UINT_PTR CALLBACK OFNHookProc(
 				{
 					CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
 					WCHAR	szWork[_MAX_PATH + 1];
-					nIdx = Combo_GetCurSel( (HWND) lParam );
+					nIdx = ApiWrap::Combo_GetCurSel( (HWND) lParam );
 
-					if( CB_ERR != Combo_GetLBText( (HWND) lParam, nIdx, szWork ) ){
+					if( CB_ERR != ApiWrap::Combo_GetLBText( (HWND) lParam, nIdx, szWork ) ){
 						// 2005.11.02 ryoji ファイル名指定のコントロールを確認する
 						hwndFilebox = ::GetDlgItem( pData->m_hwndOpenDlg, cmb13 );		// ファイル名コンボ（Windows 2000タイプ）
 						if( !::IsWindow( hwndFilebox ) )
@@ -569,24 +568,24 @@ UINT_PTR CALLBACK OFNHookProc(
 
 				switch( wID ){
 				case IDC_COMBO_MRU:
-					if ( Combo_GetCount( pData->m_hwndComboMRU ) == 0) {
+					if ( ApiWrap::Combo_GetCount( pData->m_hwndComboMRU ) == 0) {
 						/* 最近開いたファイル コンボボックス初期値設定 */
 						//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
 						int nSize = (int)pData->m_pcDlgOpenFile->m_vMRU.size();
 						for( i = 0; i < nSize; i++ ){
-							Combo_AddString( pData->m_hwndComboMRU, pData->m_pcDlgOpenFile->m_vMRU[i] );
+							ApiWrap::Combo_AddString( pData->m_hwndComboMRU, pData->m_pcDlgOpenFile->m_vMRU[i] );
 						}
 					}
 					CDialog::OnCbnDropDown( hwndCtl, true );
 					break;
 
 				case IDC_COMBO_OPENFOLDER:
-					if ( Combo_GetCount( pData->m_hwndComboOPENFOLDER ) == 0) {
+					if ( ApiWrap::Combo_GetCount( pData->m_hwndComboOPENFOLDER ) == 0) {
 						/* 最近開いたフォルダー コンボボックス初期値設定 */
 						//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
 						int nSize = (int)pData->m_pcDlgOpenFile->m_vOPENFOLDER.size();
 						for( i = 0; i < nSize; i++ ){
-							Combo_AddString( pData->m_hwndComboOPENFOLDER, pData->m_pcDlgOpenFile->m_vOPENFOLDER[i] );
+							ApiWrap::Combo_AddString( pData->m_hwndComboOPENFOLDER, pData->m_pcDlgOpenFile->m_vOPENFOLDER[i] );
 						}
 					}
 					CDialog::OnCbnDropDown( hwndCtl, true );
@@ -646,9 +645,6 @@ int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
 */
 CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 {
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
@@ -657,7 +653,7 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	WCHAR	szDir[_MAX_DIR];
 	::GetModuleFileName(
 		nullptr,
-		szFile, _countof( szFile )
+		szFile, int(std::size(szFile))
 	);
 	_wsplitpath( szFile, szDrive, szDir, nullptr, nullptr );
 	wcscpy( m_szInitialDir, szDrive );
@@ -723,10 +719,11 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 		break;
 	case EFITER_MACRO:
-		cFileExt.AppendExtRaw( L"Macros", L"*.js;*.vbs;*.ppa;*.mac" );
+		cFileExt.AppendExtRaw( L"Macros", L"*.js;*.vbs;*.ppa;*.py;*.mac" );
 		cFileExt.AppendExtRaw( L"JScript", L"*.js" );
 		cFileExt.AppendExtRaw( L"VBScript", L"*.vbs" );
 		cFileExt.AppendExtRaw( L"Pascal", L"*.ppa" );
+		cFileExt.AppendExtRaw( L"Python", L"*.py" );
 		cFileExt.AppendExtRaw( L"Key Macro", L"*.mac" );
 		break;
 	case EFITER_NONE:

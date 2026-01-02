@@ -86,18 +86,10 @@ static const SAnchorList anchorList[] = {
 
 CDlgDiff::CDlgDiff()
 	: CDialog(true)
-	, m_nIndexSave( 0 )
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( _countof(anchorList) == _countof(m_rcItems) );
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
-	m_nDiffFlgOpt    = 0;
-	m_bIsModifiedDst = false;
-	m_nCodeTypeDst = CODE_ERROR;
-	m_bBomDst = false;
-	m_hWnd_Dst       = nullptr;
-	m_ptDefaultSize.x = -1;
-	m_ptDefaultSize.y = -1;
 	return;
 }
 
@@ -138,11 +130,11 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
 			{
 				wcscpy( m_szFile2, szPath );
-				::DlgItem_SetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2 );
+				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2 );
 				//外部ファイルを選択状態に
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
-				List_SetCurSel( GetItemHwnd(IDC_LIST_DIFF_FILES), -1 );
+				ApiWrap::List_SetCurSel( GetItemHwnd(IDC_LIST_DIFF_FILES), -1 );
 			}
 		}
 		return TRUE;
@@ -163,12 +155,12 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		//::EnableWindow( GetItemHwnd( IDC_LIST_DIFF_FILES ), FALSE );
 		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶
 		{
-			int n = List_GetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES ) );
+			int n = ApiWrap::List_GetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES ) );
 			if( n != LB_ERR ){
 				m_nIndexSave = n;
 			}
 		}
-		List_SetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES), -1 );
+		ApiWrap::List_SetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES), -1 );
 		return TRUE;
 
 	case IDC_RADIO_DIFF_DST2:
@@ -180,9 +172,9 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 			//	Aug. 9, 2003 genta
 			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
 			HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
-			if( List_GetCurSel( hwndList ) == LB_ERR )
+			if( ApiWrap::List_GetCurSel( hwndList ) == LB_ERR )
 			{
-				List_SetCurSel( hwndList, m_nIndexSave );
+				ApiWrap::List_SetCurSel( hwndList, m_nIndexSave );
 			}
 		}
 		return TRUE;
@@ -276,17 +268,17 @@ void CDlgDiff::SetData( void )
 				if ( pEditNode[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() )
 				{
 					// 同じ形式にしておく。ただしアクセスキー番号はなし
-					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, -1, calc.GetDC() );
-					::DlgItem_SetText( GetHwnd(), IDC_STATIC_DIFF_SRC, szName );
+					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, int(std::size(szName)), pFileInfo, pEditNode[i].m_nId, -1, calc.GetDC() );
+					ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_DIFF_SRC, szName );
 					continue;
 				}
 
 				// 番号はウィンドウ一覧と同じ番号を使う
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, i, calc.GetDC() );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, int(std::size(szName)), pFileInfo, pEditNode[i].m_nId, i, calc.GetDC() );
 
 				/* リストに登録する */
-				nItem = ::List_AddString( hwndList, szName );
-				List_SetItemData( hwndList, nItem, pEditNode[i].GetHwnd() );
+				nItem = ApiWrap::List_AddString( hwndList, szName );
+				ApiWrap::List_SetItemData( hwndList, nItem, pEditNode[i].GetHwnd() );
 				count++;
 
 				// 横幅を計算する
@@ -307,7 +299,7 @@ void CDlgDiff::SetData( void )
 
 			delete [] pEditNode;
 			// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
-			List_SetHorizontalExtent( hwndList, calc.GetCx() + 8 );
+			ApiWrap::List_SetHorizontalExtent( hwndList, calc.GetCx() + 8 );
 
 			/* 最初を選択 */
 			//List_SetCurSel( hwndList, 0 );
@@ -331,9 +323,9 @@ void CDlgDiff::SetData( void )
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, TRUE );
 			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
 			HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
-			if( List_GetCurSel( hwndList ) == LB_ERR )
+			if( ApiWrap::List_GetCurSel( hwndList ) == LB_ERR )
 			{
-			    List_SetCurSel( hwndList, selIndex );
+			    ApiWrap::List_SetCurSel( hwndList, selIndex );
 			}
 		}
 		//	To Here 2004.02.22 じゅうじ
@@ -369,7 +361,7 @@ int CDlgDiff::GetData( void )
 	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
 	{
-		::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, _countof2(m_szFile2) );
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, std::size(m_szFile2) );
 		//	2004.05.19 MIK 外部ファイルが指定されていない場合はキャンセル
 		//相手ファイルが指定されてなければキャンセル
 		if( m_szFile2[0] == '\0' ) ret = FALSE;
@@ -382,10 +374,10 @@ int CDlgDiff::GetData( void )
 
 		/* リストから相手のウインドウハンドルを取得 */
 		hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
-		nItem = List_GetCurSel( hwndList );
+		nItem = ApiWrap::List_GetCurSel( hwndList );
 		if( nItem != LB_ERR )
 		{
-			m_hWnd_Dst = (HWND)List_GetItemData( hwndList, nItem );
+			m_hWnd_Dst = (HWND)ApiWrap::List_GetItemData( hwndList, nItem );
 
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessageAny( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
@@ -453,11 +445,11 @@ BOOL CDlgDiff::OnEnChange( HWND hwndCtl, int wID )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
 		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶して選択解除
-		int n = List_GetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES ) );
+		int n = ApiWrap::List_GetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES ) );
 		if( n != LB_ERR ){
 			m_nIndexSave = n;
 		}
-		List_SetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES), -1 );
+		ApiWrap::List_SetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES), -1 );
 		return TRUE;
 	}
 
@@ -501,7 +493,7 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
 
-	for( int i = 0; i < _countof(anchorList); i++){
+	for( int i = 0; i < int(std::size(anchorList)); i++){
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
@@ -539,7 +531,7 @@ BOOL CDlgDiff::OnSize( WPARAM wParam, LPARAM lParam )
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for( int i = 0; i < _countof(anchorList); i++){
+	for( int i = 0; i < int(std::size(anchorList)); i++){
 		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
 	::InvalidateRect( GetHwnd(), nullptr, TRUE );
@@ -561,7 +553,8 @@ BOOL CDlgDiff::OnMinMaxInfo( LPARAM lParam )
 
 BOOL CDlgDiff::OnLbnDblclk( int wID )
 {
+	UNREFERENCED_PARAMETER(wID);
 	HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
-	if( List_GetCurSel( hwndList ) == LB_ERR ) return FALSE;
+	if( ApiWrap::List_GetCurSel( hwndList ) == LB_ERR ) return FALSE;
 	return OnBnClicked(IDOK);
 }

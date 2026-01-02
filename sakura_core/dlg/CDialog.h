@@ -86,34 +86,33 @@ public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
-	virtual BOOL OnNotify(NMHDR* pNMHDR){return FALSE;}
+	virtual BOOL OnNotify(NMHDR* pNMHDR) { UNREFERENCED_PARAMETER(pNMHDR); return FALSE; }
 	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
-	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ){return TRUE;}
-	virtual BOOL OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ){return TRUE;}
-	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ){return TRUE;}
-	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ){return TRUE;}
+	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
+	virtual BOOL OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(hwnd); UNREFERENCED_PARAMETER(uMsg); UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
+	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
+	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return TRUE; }
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
-	virtual BOOL OnStnClicked( int ){return FALSE;}
-	virtual BOOL OnEnChange( HWND hwndCtl, int wID ){return FALSE;}
-	virtual BOOL OnEnSetFocus( HWND hwndCtl, int wID ){return FALSE;}
-	virtual BOOL OnEnKillFocus( HWND hwndCtl, int wID ){return FALSE;}
-	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
-	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
-	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
-	virtual BOOL OnCbnEditChange( HWND hwndCtl, int wID ){return FALSE;} // @@2005.03.31 MIK タグジャンプDialog
+	virtual BOOL OnStnClicked( int wID ) { UNREFERENCED_PARAMETER(wID); return FALSE; }
+	virtual BOOL OnEnChange( HWND hwndCtl, int wID )     { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
+	virtual BOOL OnEnSetFocus( HWND hwndCtl, int wID )   { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
+	virtual BOOL OnEnKillFocus( HWND hwndCtl, int wID )  { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
+	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ) { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
+	virtual BOOL OnLbnDblclk( int wID ) { UNREFERENCED_PARAMETER(wID); return FALSE; }
+	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ) { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; }
+	virtual BOOL OnCbnEditChange( HWND hwndCtl, int wID ) { UNREFERENCED_PARAMETER(hwndCtl); UNREFERENCED_PARAMETER(wID); return FALSE; } // @@2005.03.31 MIK タグジャンプDialog
 	virtual BOOL OnCbnDropDown( HWND hwndCtl, int wID );
 	static BOOL OnCbnDropDown( HWND hwndCtl, bool scrollBar );
-//	virtual BOOL OnCbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
 
-	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
-	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
-	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
-	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
+	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam )  { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return FALSE; }
+	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam )   { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return FALSE; }	//@@@ 2003.04.08 MIK
+	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam )     { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return -1; }
+	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ) { UNREFERENCED_PARAMETER(wParam); UNREFERENCED_PARAMETER(lParam); return -1; }
 	virtual BOOL OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual BOOL OnContextMenu(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
@@ -137,27 +136,26 @@ public:
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
 public:
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
+	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 private:
-	HWND			m_hWnd;			/* このダイアログのハンドル */
+	HWND			m_hWnd = nullptr;			/* このダイアログのハンドル */
 	HFONT			m_hFontDialog;	// ダイアログに設定されているフォント(破棄禁止)
 public:
-	HWND			m_hwndSizeBox;
-	LPARAM			m_lParam;
+	HWND			m_hwndSizeBox = nullptr;
+	LPARAM			m_lParam = (LPARAM)nullptr;
 	BOOL			m_bModal;		/* モーダル ダイアログか */
 	bool			m_bSizable;		// 可変ダイアログかどうか
-	int				m_nShowCmd;		//	最大化/最小化
-//	void*			m_pcEditView;
+	int				m_nShowCmd = SW_SHOW;		//	最大化/最小化
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 	HINSTANCE		m_hLangRsrcInstance;		// メッセージリソースDLLのインスタンスハンドル	// 2011.04.10 nasukoji
 
 protected:
-	int				m_nWidth;
-	int				m_nHeight;
-	int				m_xPos;
-	int				m_yPos;
+	int				m_nWidth = -1;
+	int				m_nHeight = -1;
+	int				m_xPos = -1;
+	int				m_yPos = -1;
 	void CreateSizeBox( void );
 	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
@@ -168,4 +166,5 @@ protected:
 	// このダイアログに設定されているフォントを取得
 	HFONT GetDialogFont() { return m_hFontDialog; }
 };
+
 #endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */

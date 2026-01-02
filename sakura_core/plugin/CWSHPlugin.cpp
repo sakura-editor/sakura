@@ -13,7 +13,6 @@
 #include "plugin/CPluginIfObj.h"
 #include "macro/CWSHManager.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 // デストラクタ
 CWSHPlugin::~CWSHPlugin(void)
@@ -49,6 +48,7 @@ bool CWSHPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMl
 //オプションファイルを読み込む
 bool CWSHPlugin::ReadPluginOption( CDataProfile *cProfile )
 {
+	UNREFERENCED_PARAMETER(cProfile);
 	return true;
 }
 

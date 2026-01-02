@@ -42,7 +42,6 @@
 #include "uiparts/CWaitCursor.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 #include "_os/CClipboard.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
@@ -127,9 +126,9 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			}
 			int nParamOption;
 			if( nOption == 1 ){
-				nParamOption = lParams[1];
+				nParamOption = (int)lParams[1];
 			}else{
-				nParamOption = lParam;
+				nParamOption = (int)lParam;
 			}
 			if( nParamOption == 0 ){
 				if( GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock ){
@@ -310,7 +309,7 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 	Clear();
 	int nLen;
 	if( nLength == -1 ){
-		nLen = wcslen( szParam );
+		nLen = (int)wcslen( szParam );
 	}else{
 		nLen = nLength;
 	}
@@ -326,7 +325,7 @@ void CMacroParam::SetIntParam( const int nParam )
 	Clear();
 	m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
 	_itow(nParam, m_pData, 10);
-	m_nDataLen = wcslen(m_pData);
+	m_nDataLen = (int)wcslen(m_pData);
 	m_eType = EMacroParamTypeInt;
 }
 
@@ -351,11 +350,11 @@ void CMacro::AddStringParam( const WCHAR* szParam, int nLength )
 
 /*	引数に数値を追加。
 */
-void CMacro::AddIntParam( const int nParam )
+void CMacro::AddIntParam( const LPARAM lParam )
 {
 	CMacroParam* param = new CMacroParam();
 
-	param->SetIntParam( nParam );
+	param->SetIntParam( int(lParam) );
 
 	//	リストの整合性を保つ
 	if (m_pParamTop){
@@ -393,7 +392,7 @@ bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 	for (i = 0; i < maxArg; i++) {
 		if (!p) break;	//	pが無ければbreak;
 		paramArr[i] = p->m_pData;
-		paramLenArr[i] = wcslen(paramArr[i]);
+		paramLenArr[i] = (int)wcslen(paramArr[i]);
 		p = p->m_pNext;
 	}
 	return CMacro::HandleCommand(pcEditView, (EFunctionCode)(m_nFuncID | flags), paramArr, paramLenArr, i);
@@ -485,7 +484,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 						if( p[i] == c ){
 							wchar_t from[2];
 							wchar_t to[7];
-							from[0] = c;
+							from[0] = wchar_t(c);
 							from[1] = L'\0';
 							auto_sprintf( to, L"\\u%04x", c );
 							cmemWork.Replace( from, to );
@@ -740,8 +739,8 @@ bool CMacro::HandleCommand(
 			CommonSetting_Search backupFlags;
 			SSearchOption backupLocalFlags;
 			std::wstring backupStr;
-			bool backupKeyMark;
-			int nBackupSearchKeySequence;
+			bool backupKeyMark = false;
+			int nBackupSearchKeySequence = 0;
 			if( bBackupFlag ){
 				backupFlags = GetDllShareData().m_Common.m_sSearch;
 				backupLocalFlags = pcEditView->m_sCurSearchOption;
@@ -751,7 +750,7 @@ bool CMacro::HandleCommand(
 				bAddHistory = false;
 			}
 			const WCHAR* pszSearchKey = wtow_def(Argument[0], L"");
-			int nLen = wcslen( pszSearchKey );
+			auto nLen = int(wcslen(pszSearchKey));
 			if( 0 < nLen ){
 				/* 正規表現 */
 				if( lFlag & 0x04
@@ -928,8 +927,8 @@ bool CMacro::HandleCommand(
 			SSearchOption backupLocalFlags;
 			std::wstring backupStr;
 			std::wstring backupStrRep;
-			int nBackupSearchKeySequence;
-			bool backupKeyMark;
+			int nBackupSearchKeySequence = 0;
+			bool backupKeyMark = 0;
 			if( bBackupFlag ){
 				backupFlags = GetDllShareData().m_Common.m_sSearch;
 				backupLocalFlags = pcEditView->m_sCurSearchOption;
@@ -2338,7 +2337,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				int nPos = 0;
 				wchar_t* p;
 				int i = 1;
-				while( p = my_strtok( &vStrMenu[0], nLen, &nPos, L"," ) ){
+				while ((p = my_strtok(&vStrMenu[0], nLen, &nPos, L","))) {
 					wchar_t* r = p;
 					int nFlags = MF_STRING;
 					int nFlagBreak = 0;
@@ -2389,14 +2388,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 					if( bSubMenu ){
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION | MF_POPUP, (UINT_PTR)vHmenu.back(), r );
+						::InsertMenuW(hMenuCurrent, UINT(-1), nFlags | MF_BYPOSITION | MF_POPUP, UINT_PTR(vHmenu.back()), r);
 						hMenuCurrent = vHmenu.back();
 					}else if( bSpecial ){
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, 0, nullptr );
+						::InsertMenuW(hMenuCurrent, UINT(-1), nFlags | MF_BYPOSITION, 0, nullptr);
 					}else{
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, i, r );
+						::InsertMenuW(hMenuCurrent, UINT(-1), nFlags | MF_BYPOSITION, i, r);
 						if( bRadio ){
 							::CheckMenuRadioItem( hMenuCurrent, i, i, i, MF_BYCOMMAND );
 						}

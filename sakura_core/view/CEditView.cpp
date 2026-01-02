@@ -30,11 +30,11 @@
 #include "uiparts/CWaitCursor.h"
 #include "window/CEditWnd.h"
 #include "window/CSplitBoxWnd.h"///
-#include "COpeBlk.h"///
+#include "cmd/COpeBlk.h"///
 #include "cmd/CViewCommander_inline.h"
 #include "_os/CDropTarget.h"///
 #include "_os/CClipboard.h"
-#include "CMarkMgr.h"///
+#include "env/CMarkMgr.h"///
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
 #include "util/MessageBoxF.h"
@@ -47,7 +47,6 @@
 #include "config/system_constants.h"
 
 #include "CSelectLang.h"
-#include "String_define.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
@@ -140,11 +139,7 @@ BOOL CEditView::Create(
 	m_pcTextArea = new CTextArea(this);
 	m_pcCaret = new CCaret(this, pcEditDoc);
 	m_pcRuler = new CRuler(this, pcEditDoc);
-	if( m_bMiniMap ){
-		m_pcViewFont = GetEditWnd().m_pcViewFontMiniMap;
-	}else{
-		m_pcViewFont = GetEditWnd().m_pcViewFont;
-	}
+	m_pcViewFont = GetEditWnd().GetViewFont(m_bMiniMap);
 
 	m_cHistory = new CAutoMarkMgr;
 	m_cRegexKeyword = nullptr;				// 2007.04.08 ryoji
@@ -183,8 +178,8 @@ BOOL CEditView::Create(
 	m_bDrawBracketPairFlag = FALSE;	/* 03/02/18 ai */
 	GetSelectionInfo().m_bDrawSelectArea = false;	/* 選択範囲を描画したか */	// 02/12/13 ai
 
-	m_crBack = -1;				/* テキストの背景色 */			// 2006.12.16 ryoji
-	m_crBack2 = -1;
+	m_crBack  = COLORREF(-1);				/* テキストの背景色 */			// 2006.12.16 ryoji
+	m_crBack2 = COLORREF(-1);
 
 	m_szComposition[0] = L'\0';
 
@@ -681,7 +676,7 @@ LRESULT CEditView::DispatchEvent(
 			auto Scroll = OnVScroll(LOWORD(wParam), HIWORD(wParam) * m_nVScrollRate);
 
 			//	シフトキーが押されていないときだけ同期スクロール
-			if(!GetKeyState_Shift()){
+			if(!ApiWrap::GetKeyState_Shift()){
 				SyncScrollV( Scroll );
 			}
 		}
@@ -696,7 +691,7 @@ LRESULT CEditView::DispatchEvent(
 			auto Scroll = OnHScroll(LOWORD(wParam), HIWORD(wParam));
 
 			//	シフトキーが押されていないときだけ同期スクロール
-			if(!GetKeyState_Shift()){
+			if(!ApiWrap::GetKeyState_Shift()){
 				SyncScrollH( Scroll );
 			}
 		}
@@ -1258,6 +1253,10 @@ VOID CEditView::OnTimer(
 	DWORD dwTime 	// current system time
 	)
 {
+	UNREFERENCED_PARAMETER(dwTime);
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(idEvent);
+	UNREFERENCED_PARAMETER(uMsg);
 	POINT		po;
 	RECT		rc;
 
@@ -1566,7 +1565,7 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus,
 			}
 			if( !bMenuLoop ){
 				WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
-				LPCWSTR p = GetDocument()->m_cFuncLookup.Custmenu2Name( nCustIdx, buf, _countof(buf) );
+				LPCWSTR p = GetDocument()->m_cFuncLookup.Custmenu2Name( nCustIdx, buf, int(std::size(buf)) );
 				wchar_t keys[2];
 				keys[0] = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i];
 				keys[1] = 0;
@@ -1825,7 +1824,7 @@ bool CEditView::GetSelectedData(
 		CLayoutInt i = rcSel.bottom - rcSel.top + 1; // 2013.05.06 「+1」
 
 		// 最初に行数分の改行量を計算してしまう。
-		int nBufSize = wcslen(WCODE::CRLF) * (Int)i;
+		auto nBufSize = int(wcslen(WCODE::CRLF)) * (Int)i;
 
 		// 実際の文字量。
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
@@ -1892,7 +1891,7 @@ bool CEditView::GetSelectedData(
 		//  とはいえ、逆に小さく見積もることになってしまうと、かなり速度をとられる要因になってしまうので
 		// 困ってしまうところですが・・・。
 		m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetSelectionInfo().m_sSelect.GetFrom().GetY2(), &nLineLen, &pcLayout );
-		int nBufSize = 0;
+		size_t nBufSize = 0;
 
 		int i = (Int)(GetSelectionInfo().m_sSelect.GetTo().y - GetSelectionInfo().m_sSelect.GetFrom().y);
 
@@ -2128,7 +2127,7 @@ int CEditView::IsCurrentPositionSelected(
 		++rcSel.bottom;
 		po = ptCaretPos;
 		if( IsDragSource() ){
-			if( GetKeyState_Control() ){ /* Ctrlキーが押されていたか */
+			if( ApiWrap::GetKeyState_Control() ){ /* Ctrlキーが押されていたか */
 				++rcSel.left;
 			}else{
 				++rcSel.right;
@@ -2158,7 +2157,7 @@ int CEditView::IsCurrentPositionSelected(
 		}
 		if( GetSelectionInfo().m_sSelect.GetFrom().y == ptCaretPos.y ){
 			if( IsDragSource() ){
-				if( GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
+				if( ApiWrap::GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
 					if( GetSelectionInfo().m_sSelect.GetFrom().x >= ptCaretPos.x ){
 						return -1;
 					}
@@ -2174,7 +2173,7 @@ int CEditView::IsCurrentPositionSelected(
 		}
 		if( GetSelectionInfo().m_sSelect.GetTo().y == ptCaretPos.y ){
 			if( IsDragSource() ){
-				if( GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
+				if( ApiWrap::GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
 					if( GetSelectionInfo().m_sSelect.GetTo().x <= ptCaretPos.x ){
 						return 1;
 					}
@@ -2612,6 +2611,8 @@ void CEditView::SetInsMode(bool mode)
 
 void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
+	UNREFERENCED_PARAMETER(sLoadInfo);
+
 	if( nullptr == GetHwnd() ){
 		// MiniMap 非表示
 		return;
@@ -2649,6 +2650,8 @@ void CEditView::AddCurrentLineToHistory( void )
 //	2001/06/18 Start by asa-o: 補完ウィンドウ用のキーワードヘルプ表示
 bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 {
+	UNREFERENCED_PARAMETER(prcHokanWin);
+
 	CNativeW	cmemCurText;
 	RECT		rcTipWin,
 				rcDesktop;
@@ -2768,6 +2771,8 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 /*! アンドゥバッファの処理 */
 void CEditView::SetUndoBuffer(bool bPaintLineNumber)
 {
+	UNREFERENCED_PARAMETER(bPaintLineNumber);
+
 	if( nullptr != m_cCommander.GetOpeBlk() && m_cCommander.GetOpeBlk()->Release() == 0 ){
 		if( 0 < m_cCommander.GetOpeBlk()->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */

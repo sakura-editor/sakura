@@ -28,7 +28,7 @@
 #include "StdAfx.h"
 #include <HtmlHelp.h>
 #include "CControlTray.h"
-#include "CPropertyManager.h"
+#include "env/CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
 #include "debug/CRunningTimer.h"
 #include "dlg/CDlgOpenFile.h"
@@ -50,12 +50,11 @@
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "_main/CCommandLine.h"
-#include "CGrepEnumKeys.h"
+#include "grep/CGrepEnumKeys.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 #define ID_HOTKEY_TRAYMENU	0x1234
 
@@ -195,7 +194,6 @@ static LRESULT CALLBACK CControlTrayWndProc(
 // CControlTray
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CControlTray::CControlTray()
-: m_uCreateTaskBarMsg( ::RegisterWindowMessage( L"TaskbarCreated" ) )
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -286,6 +284,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 //! タスクトレイにアイコンを登録する
 bool CControlTray::CreateTrayIcon( HWND hWnd )
 {
+	UNREFERENCED_PARAMETER(hWnd);
 	// タスクトレイのアイコンを作る
 	if( m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
 		//	Dec. 02, 2002 genta
@@ -305,7 +304,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 			profname = L" ";
 			profname += CCommandLine::getInstance()->GetProfileName();
 		}
-		auto_snprintf_s( pszTips, _countof(pszTips), L"%s %d.%d.%d.%d%ls",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+		auto_snprintf_s(pszTips, std::size(pszTips), L"%s %d.%d.%d.%d%ls",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,
 			HIWORD( dwVersionMS ),
 			LOWORD( dwVersionMS ),
@@ -350,7 +349,7 @@ BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIco
 	tnd.uCallbackMessage	= MYWM_NOTIFYICON;
 	tnd.hIcon				= hIcon;
 	if( pszTip ){
-		lstrcpyn( tnd.szTip, pszTip, _countof( tnd.szTip ) );
+		lstrcpyn( tnd.szTip, pszTip, int(std::size(tnd.szTip)) );
 	}else{
 		tnd.szTip[0] = L'\0';
 	}
@@ -370,6 +369,8 @@ LRESULT CControlTray::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	const auto hWnd = hwnd;
+
 	int				nId;
 	HWND			hwndWork;
 	LPHELPINFO		lphi;
@@ -427,8 +428,8 @@ LRESULT CControlTray::DispatchEvent(
 
 			hwndWork = ::GetForegroundWindow();
 			szClassName[0] = L'\0';
-			::GetClassName( hwndWork, szClassName, _countof( szClassName ) - 1 );
-			::GetWindowText( hwndWork, szText, _countof( szText ) - 1 );
+			::GetClassName( hwndWork, szClassName, int(std::size(szClassName)) - 1 );
+			::GetWindowText( hwndWork, szText, int(std::size(szText)) - 1 );
 			if( 0 == wcscmp( szText, LS(STR_PROPCOMMON) ) ){
 				return -1;
 			}
@@ -1029,25 +1030,28 @@ LRESULT CControlTray::DispatchEvent(
 		::PostQuitMessage( 0 );
 		return 0L;
 	case MYWM_ALLOWACTIVATE:
-		::AllowSetForegroundWindow(wParam);
+		::AllowSetForegroundWindow(DWORD(wParam));
 		return 0L;
+
 	default:
-// << 20010412 by aroka
-//	Apr. 24, 2001 genta RegisterWindowMessageを使うように修正
-		if( uMsg == m_uCreateTaskBarMsg ){
-			/* TaskTray Iconの再登録を要求するメッセージ．
-				Explorerが再起動したときに送出される．*/
-			CreateTrayIcon( GetTrayHwnd() ) ;
+		// タスクバーが再作成されたときは、トレイアイコンを再登録する
+		if (gm_uMsgTaskbarCreated == uMsg) {
+			CreateTrayIcon(hWnd);
+			break;	//あとはデフォルトに任せる
 		}
 		break;	/* default */
-// >> by aroka
 	}
-	return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
+	//あとはデフォルトに任せる
+	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 /* WM_COMMANDメッセージ処理 */
 void CControlTray::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
+	UNREFERENCED_PARAMETER(wID);
+	UNREFERENCED_PARAMETER(hwndCtl);
+
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
 	case 0:
@@ -1099,6 +1103,8 @@ bool CControlTray::OpenNewEditor(
 	bool				bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+
 	/* 共有データ構造体のアドレスを返す */
 	DLLSHAREDATA*	pShareData = &GetDllShareData();
 
@@ -1113,7 +1119,7 @@ bool CControlTray::OpenNewEditor(
 
 	//アプリケーションパス
 	WCHAR szEXE[MAX_PATH + 1];
-	::GetModuleFileName( nullptr, szEXE, _countof( szEXE ) );
+	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)) );
 	cCmdLineBuf.AppendF( L"\"%s\"", szEXE );
 
 	// ファイル名
@@ -1217,7 +1223,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
+	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列
@@ -1285,7 +1291,7 @@ bool CControlTray::OpenNewEditor(
 			DWORD dwExitCode;
 			if( ::PeekMessage( &msg, nullptr, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
 				if( msg.message == WM_QUIT ){	// 指定範囲外でも WM_QUIT は取り出される
-					::PostQuitMessage( msg.wParam );
+					::PostQuitMessage( int(msg.wParam) );
 					break;
 				}
 				// 監視対象プロセスからのメッセージなら抜ける
@@ -1563,7 +1569,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				// メニューラベル。1からアクセスキーを振る
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, int(std::size(szMenu)), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
 				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, L"", FALSE );
 				++j;
 			}
@@ -1742,6 +1748,9 @@ INT_PTR CALLBACK CControlTray::ExitingDlgProc(
 	LPARAM	lParam		// second message parameter
 )
 {
+	UNREFERENCED_PARAMETER(hwndDlg);
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(wParam);
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		return TRUE;

@@ -20,7 +20,6 @@
 #include "plugin/CJackManager.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
-#include "String_define.h"
 
 //	オフセット値
 const int LUOFFSET_MACRO = 0;
@@ -78,9 +77,11 @@ bool CFuncLookup::Pos2FuncName(
 	int		category,	//!< [in]  分類番号 (0-)
 	int		position,	//!< [in]  分類中のindex (0-)
 	WCHAR*	ptr,		//!< [out] 文字列を格納するバッファの先頭
-	int		bufsize		//!< [in]  文字列を格納するバッファのサイズ
+	size_t	size		//!< [in]  文字列を格納するバッファのサイズ
 ) const
 {
+	const auto bufsize = int(size);
+
 	int funccode = Pos2FuncCode( category, position );
 	return Funccode2Name( funccode, ptr, bufsize );
 }
@@ -96,14 +97,16 @@ bool CFuncLookup::Pos2FuncName(
 
 	@date 2007.11.02 ryoji 未登録マクロも文字列を格納．戻り値の意味を変更（文字列は必ず格納）．
 */
-bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
+bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, size_t size ) const
 {
+	const auto bufsize = int(size);
+
 	LPCWSTR pszStr = nullptr;
 
 	assert( ptr != nullptr );
 	assert( bufsize >= 1 );
 
-	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
+	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
 		if( m_pMacroRec[position].IsEnabled() ){
 			const WCHAR *p = m_pMacroRec[position].GetTitle();
@@ -191,19 +194,19 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 	int i;
 
 	//	コンボボックスを初期化する
-	Combo_ResetContent( hComboBox );
+	ApiWrap::Combo_ResetContent( hComboBox );
 
 	//	固定機能リスト
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
-		Combo_AddString( hComboBox, LS( nsFuncCode::ppszFuncKind[i] ) );
+		ApiWrap::Combo_AddString( hComboBox, LS( nsFuncCode::ppszFuncKind[i] ) );
 	}
 
 	//	ユーザーマクロ
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP01 ) );
+	ApiWrap::Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP01 ) );
 	//	カスタムメニュー
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP02 ) );
+	ApiWrap::	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP02 ) );
 	//	プラグイン
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP19 ) );
+	ApiWrap::Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP19 ) );
 }
 
 /*!	@brief 指定された分類に属する機能リストをListBoxに登録する．
@@ -220,14 +223,14 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 	int i;
 
 	//	リストを初期化する
-	List_ResetContent( hListBox );
+	ApiWrap::List_ResetContent( hListBox );
 
 	n = GetItemCount( category );
 	for( i = 0; i < n; i++ ){
 		if( Pos2FuncCode( category, i ) == F_DISABLE )
 			continue;
-		Pos2FuncName( category, i, pszLabel, _countof(pszLabel) );
-		List_AddString( hListBox, pszLabel );
+		Pos2FuncName( category, i, pszLabel, int(std::size(pszLabel)) );
+		ApiWrap::List_AddString( hListBox, pszLabel );
 	}
 }
 
@@ -265,8 +268,10 @@ int CFuncLookup::GetItemCount(int category) const
 	
 	@return NULL 分類名称．取得に失敗したらNULL．
 */
-const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) const
+const WCHAR* CFuncLookup::Custmenu2Name( int index, LPWSTR buf, size_t size ) const
 {
+	const auto bufSize = int(size);
+
 	if( index < 0 || CUSTMENU_INDEX_FOR_TABWND < index )
 		return nullptr;
 
@@ -289,6 +294,4 @@ const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) c
 		_swprintf( buf, LS( STR_CUSTMENU_CUSTOM ), index );
 		return buf;
 	}
-
-	return nullptr;
 }

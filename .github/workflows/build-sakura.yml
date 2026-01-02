@@ -23,6 +23,14 @@ jobs:
     name: MSBuild
     runs-on: windows-latest
 
+    env:
+      CI_ACCOUNT_NAME: ${{ github.actor }}
+      CI_REPO_NAME: ${{ github.repository }}
+      CI_BUILD_VERSION: ${{ github.run_id }}
+      CI_BUILD_NUMBER: ${{ github.run_number }}
+      CI_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      GITHUB_COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+
     strategy:
       matrix:
         config:
@@ -35,7 +43,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
@@ -43,33 +51,13 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
 
-    - name: Setup environment variables
+    - name: Setup PR environment variables
+      if: github.event_name == 'pull_request'
       run: |
-        echo "CI_ACCOUNT_NAME=${{github.actor}}" >> $env:GITHUB_ENV
-        echo "CI_REPO_NAME=${{github.repository}}" >> $env:GITHUB_ENV
-        echo "CI_BUILD_VERSION=${{github.run_id}}" >> $env:GITHUB_ENV
-        echo "CI_BUILD_NUMBER=${{github.run_number}}" >> $env:GITHUB_ENV
-
-        echo("CI_BUILD_URL=" `
-          + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
-          + "actions/runs/${{github.run_id}}") >> $env:GITHUB_ENV
-
-        echo("GITHUB_COMMIT_URL=" `
-          + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
-          + "commit/${{github.sha}}") >> $env:GITHUB_ENV
-
-        if ('pull_request' -eq '${{github.event_name}}') {
-          echo("GITHUB_PR_NUMBER=" `
-            + "${{github.event.pull_request.number}}") >> $env:GITHUB_ENV
-          echo("GITHUB_PR_HEAD_SHORT_COMMIT=" `
-            + "${{github.event.pull_request.head.sha}}".SubString(0, 8)) >> $env:GITHUB_ENV
-          echo("GITHUB_PR_HEAD_COMMIT=" `
-            + "${{github.event.pull_request.head.sha}}") >> $env:GITHUB_ENV
-          echo("GITHUB_PR_HEAD_URL=" `
-            + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
-            + "pull/${{github.event.pull_request.number}}/" `
-            + "commits/${{github.event.pull_request.head.sha}}") >> $env:GITHUB_ENV
-        }
+        echo "GITHUB_PR_NUMBER=${{ github.event.pull_request.number }}" >> $env:GITHUB_ENV
+        echo "GITHUB_PR_HEAD_URL=${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}/commits/${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
+        echo "GITHUB_PR_HEAD_COMMIT=${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
+        echo "GITHUB_PR_HEAD_SHORT_COMMIT=$('${{ github.event.pull_request.head.sha }}'.SubString(0, 8))" >> $env:GITHUB_ENV
       shell: pwsh
 
     - name: MSBuild
@@ -86,16 +74,14 @@ jobs:
       name: Bitmap Split/Mux
       shell: cmd
 
+    - name: Install AutoHotKey
+      run: choco install autohotkey.install --confirm
+
     - name: Install Locale Emulator
       run: |
-        choco install autohotkey.install --confirm
-        $LEExpandDir = "${{github.workspace}}\tools\locale-emulator"
-        $LEInitScript = "${{github.workspace}}\ci\init-locale-emulator.ahk"
-        New-Item "${LEExpandDir}" -ItemType Directory
-        Invoke-WebRequest `
-          "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
-          -OutFile "${LEExpandDir}\locale-emulator.zip"
-        Expand-Archive "${LEExpandDir}\locale-emulator.zip" "${LEExpandDir}"
+        $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
+        $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
+        Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
         Start-Process "AutoHotKey" "${LEInitScript}"
         Start-Process "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
@@ -120,49 +106,35 @@ jobs:
 
     ## see https://github.com/actions/upload-artifact
     - name: Upload Installer
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Installer ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Installer.zip'
 
-    - name: Upload Installer MD5
-      uses: actions/upload-artifact@v5
-      if: ${{ matrix.config == 'Release' }}
-      with:
-        name: Installer MD5 ${{ matrix.platform }} ${{ matrix.config }}
-        path: 'sakura-*-Installer.zip.md5'
-
     - name: Upload Exe
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Exe ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip'
 
-    - name: Upload Exe MD5
-      uses: actions/upload-artifact@v5
-      if: ${{ matrix.config == 'Release' }}
-      with:
-        name: Exe MD5 ${{ matrix.platform }} ${{ matrix.config }}
-        path: 'sakura-*-Exe.zip.md5'
-
     - name: Upload Log
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Log ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Log.zip'
 
     - name: Upload Asm
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Asm ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Asm.zip'
 
     - name: Upload Dev
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Dev ${{ matrix.platform }} ${{ matrix.config }}

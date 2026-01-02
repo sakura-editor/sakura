@@ -17,12 +17,24 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
-#include "String_define.h"
-
-//GetDllShareData用グローバル変数
-DLLSHAREDATA* g_theDLLSHAREDATA = nullptr;
 
 static CMutex g_cKeywordMutex( FALSE, GSTR_MUTEX_SAKURA_KEYWORD );
+
+/*!
+ * 共有データの参照を取得する
+ *
+ * @throw CShareDataが初期化されていない
+ * 
+ * @date 2007/10/30 kobake どこからでもアクセスできる、共有データアクセサ。
+ */
+DLLSHAREDATA& GetDllShareData()
+{
+	auto pShareData = GetDllShareDataPtr();
+	if (!pShareData) {
+		throw std::domain_error("DLLSHAREDATA is not initialized");
+	}
+	return *pShareData;
+}
 
 CShareDataLockCounter::CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
@@ -66,7 +78,7 @@ public:
 			// スタイル変更+メッセージでないと機能しない
 			LONG_PTR style = ::GetWindowLongPtr(hwndProgress, GWL_STYLE);
 			::SetWindowLongPtr(hwndProgress, GWL_STYLE, style | PBS_MARQUEE);
-			Progress_SetMarquee(hwndProgress, TRUE, 100);
+			ApiWrap::Progress_SetMarquee(hwndProgress, TRUE, 100);
 		}else{
 			HWND hwndProgress = ::GetDlgItem(hwndCancel, IDC_PROGRESS);
 			::ShowWindow(hwndProgress, SW_HIDE);

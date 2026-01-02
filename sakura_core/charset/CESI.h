@@ -90,7 +90,7 @@ protected:
 	ECodeType DetectUnicodeBom(const char* pS, size_t nLen) noexcept;
 
 	//! 調査結果の情報を格納
-	void SetInformation( const char *pS, const int nLen );
+	void SetInformation( const char *pS, size_t nLen );
 
 	//! 添え字に使われる優先順位表を作成
 	void InitPriorityTable( void );
@@ -118,7 +118,7 @@ public:
 
 	// m_nTargetDataLen のセッター／ゲッター
 protected:
-	void SetDataLen( const int n ){ if( n < 1 ){ m_nTargetDataLen = 0; }else{ m_nTargetDataLen = n; } }
+	void SetDataLen(const size_t n) noexcept { if( n < 1 ){ m_nTargetDataLen = 0; }else{ m_nTargetDataLen = static_cast<int>(n); } }
 public:
 	int GetDataLen( void ) const { return m_nTargetDataLen; }
 
@@ -126,7 +126,7 @@ protected:
 	/*
 		文字列の文字コード情報を収集する
 	*/
-	void ScanCode( const char* pS, const int nLen );
+	void ScanCode( const char* pS, size_t cchS );
 
 	void GetEncodingInfo_sjis( const char* pS, const int nLen );
 	void GetEncodingInfo_jis( const char* pS, const int nLen );
@@ -231,19 +231,19 @@ ECodeType CESI::DetectUnicodeBom(const char* buff, size_t size) noexcept
 
 	// バイト列の先頭が \ufeff の utf8 表現と一致するか判定
 	constexpr const BYTE utf8BOM[]{ 0xef, 0xbb, 0xbf };
-	if (size >= _countof(utf8BOM) && 0 == ::memcmp(buff, utf8BOM, _countof(utf8BOM))) {
+	if (size >= int(std::size(utf8BOM)) && 0 == ::memcmp(buff, utf8BOM, int(std::size(utf8BOM)))) {
 		return CODE_UTF8;
 	}
 
 	// バイト列の先頭が \ufeff の utf16BE 表現と一致するか判定
 	constexpr const BYTE utf16BeBOM[]{ 0xfe, 0xff };
-	if (size >= _countof(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, _countof(utf16BeBOM))) {
+	if (size >= int(std::size(utf16BeBOM)) && 0 == ::memcmp(buff, utf16BeBOM, int(std::size(utf16BeBOM)))) {
 		return CODE_UNICODEBE;
 	}
 
 	// バイト列の先頭が \ufeff の utf16LE 表現と一致するか判定
 	constexpr const BYTE utf16LeBOM[]{ 0xff, 0xfe };
-	if (size >= _countof(utf16LeBOM) && 0 == ::memcmp(buff, utf16LeBOM, _countof(utf16LeBOM))) {
+	if (size >= int(std::size(utf16LeBOM)) && 0 == ::memcmp(buff, utf16LeBOM, int(std::size(utf16LeBOM)))) {
 		return CODE_UNICODE;
 	}
 

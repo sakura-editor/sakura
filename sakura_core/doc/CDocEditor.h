@@ -10,7 +10,7 @@
 #pragma once
 
 #include "doc/CDocListener.h"
-#include "COpeBuf.h"
+#include "cmd/COpeBuf.h"
 
 class CEditDoc;
 class CDocLineMgr;

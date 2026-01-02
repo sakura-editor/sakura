@@ -28,6 +28,7 @@
 
 #include <shellapi.h>// HDROP
 #include "_main/global.h"
+#include "_os/CDropTarget.h"
 #include "CMainToolBar.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
 #include "func/CFuncKeyWnd.h"
@@ -41,18 +42,19 @@
 #include "dlg/CDlgGrepReplace.h"
 #include "dlg/CDlgSetCharSet.h"
 #include "outline/CDlgFuncList.h"
-#include "CHokanMgr.h"
+#include "env/CHokanMgr.h"
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "uiparts/CMenuDrawer.h"
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
 
+#include "cxx/ResourceHolder.hpp"
+
+#include "print/CPrintPreview.h"
+
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-class CPrintPreview;// 2002/2/10 aroka
-class CDropTarget;
 class CPlug;
 class CEditDoc;
 struct DLLSHAREDATA;
@@ -65,12 +67,13 @@ struct DLLSHAREDATA;
 #define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
-struct STabGroupInfo{
-	HWND			hwndTop;
-	WINDOWPLACEMENT	wpTop;
+struct STabGroupInfo {
+	HWND			hwndTop = nullptr;
+	WINDOWPLACEMENT	wpTop = {};
 
-	STabGroupInfo() : hwndTop(nullptr) { }
-	bool IsValid() const{ return hwndTop!=nullptr; }
+	STabGroupInfo() = default;
+
+	bool IsValid() const noexcept { return hwndTop != nullptr; }
 };
 
 //! 編集ウィンドウ（外枠）管理クラス
@@ -78,14 +81,26 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
-: public TSingleton<CEditWnd>
+	: public TSingleInstance<CEditWnd>
 , public CDocListenerEx
 {
-	friend class TSingleton<CEditWnd>;
-	CEditWnd();
-	~CEditWnd();
+private:
+	using AccelHolder = cxx::ResourceHolder<&::DestroyAcceleratorTable>;
+	using CDropTargetHolder = std::unique_ptr<CDropTarget>;
+	using CEditViewHolder = std::unique_ptr<CEditView>;
+	using CEditViewsArray = std::array<CEditViewHolder, 4>;
+	using CPrintPreviewHolder = std::unique_ptr<CPrintPreview>;
+	using CViewFontHolder = std::unique_ptr<CViewFont>;
+	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
+	using SMenubarMessage = StaticString<MENUBAR_MESSAGE_MAX_LEN>;
+	using WindowDcHolder = cxx::ResourceHolder<&::ReleaseDC>;
 
 public:
+	CEditWnd();
+	~CEditWnd() override;
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -93,7 +108,7 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
-		CEditDoc*		pcEditDoc,
+		const CEditDoc*	pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
@@ -199,7 +214,7 @@ public:
 	bool IsActiveApp() const { return m_bIsActiveApp; }
 
 	//!ツールチップのテキストを取得。2007.09.08 kobake 追加
-	void GetTooltipText(WCHAR* pszBuf, size_t nBufCount, int nID) const;
+	void GetTooltipText(WCHAR* pszBuf, size_t nBufCount, UINT_PTR idFrom) const;
 
 	//!印刷プレビュー中かどうか
 	bool IsInPreviewMode()
@@ -265,6 +280,12 @@ public:
 	CEditView*			GetDragSourceView() const					{ return m_pcDragSourceView; }
 	void				SetDragSourceView( CEditView* pcDragSourceView )	{ m_pcDragSourceView = pcDragSourceView; }
 
+	CViewFont* GetViewFont(bool isMiniMap) const noexcept {
+		return isMiniMap
+			? m_pcViewFontMiniMap.get()
+			: m_pcViewFont.get();
+	}
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -328,21 +349,27 @@ public:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
+	//共有データ
+	DLLSHAREDATA*	m_pShareData = &GetDllShareData();
+
+	//ドキュメント
+	CEditDoc* 		m_pcEditDoc = &GetEditDoc();
+
 	//自ウィンドウ
 	HWND			m_hWnd = nullptr;
 
 public:
 	//子ウィンドウ
-	CMainToolBar	m_cToolbar;			//!< ツールバー
+	CMainToolBar	m_cToolbar{ this };			//!< ツールバー
 	CTabWnd			m_cTabWnd;			//!< タブウインドウ	//@@@ 2003.05.31 MIK
 	CFuncKeyWnd		m_cFuncKeyWnd;		//!< ファンクションバー
-	CMainStatusBar	m_cStatusBar;		//!< ステータスバー
-	CPrintPreview*	m_pPrintPreview = nullptr;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
+	CMainStatusBar	m_cStatusBar{ this };		//!< ステータスバー
+	CPrintPreviewHolder	m_pPrintPreview = nullptr;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CEditView*		m_pcDragSourceView = nullptr;	//!< ドラッグ元のビュー
-	CViewFont*		m_pcViewFont;		//!< フォント
-	CViewFont*		m_pcViewFontMiniMap;		//!< フォント
+	CViewFontHolder		m_pcViewFont = std::make_unique<CViewFont>(&GetLogfont());		//!< フォント
+	CViewFontHolder		m_pcViewFontMiniMap = std::make_unique<CViewFont>(&GetLogfont(), true);		//!< フォント
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
@@ -356,16 +383,12 @@ public:
 
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
-	CEditDoc* 		m_pcEditDoc;
-	CEditView*		m_pcEditViewArr[4];	//!< ビュー
+	CEditViewsArray	m_pcEditViewArr{};	//!< ビュー
 	CEditView*		m_pcEditView;		//!< 有効なビュー
 	CMiniMapView	m_cMiniMapView;		//!< ミニマップ
 	int				m_nActivePaneIndex = 0;	//!< 有効なビューのindex
 	int				m_nEditViewCount = 1;	//!< 有効なビューの数
-	const int		m_nEditViewMaxCount = _countof(m_pcEditViewArr);//!< ビューの最大数=4
-
-	//共有データ
-	DLLSHAREDATA*	m_pShareData;
+	const int		m_nEditViewMaxCount = int(std::size(m_pcEditViewArr));//!< ビューの最大数=4
 
 	//ヘルパ
 	CMenuDrawer		m_cMenuDrawer;
@@ -373,7 +396,7 @@ private:
 	//状態
 	bool			m_bIsActiveApp = false;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPWSTR			m_pszLastCaption = nullptr;
-	LPWSTR			m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
+	SMenubarMessage m_pszMenubarMessage = nullptr;	//!< メニューバー右端に表示するメッセージ
 public:
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
 	CLogicPointEx*	m_posSaveAry = nullptr;		//!< フォント変更前の座標
@@ -382,17 +405,17 @@ private:
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
 	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
 	BOOL			m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
-	HACCEL			m_hAccel = nullptr;			//!< ウィンドウ毎のアクセラレータテーブルのハンドル
+	AccelHolder		m_hAccel = nullptr;			//!< ウィンドウ毎のアクセラレータテーブルのハンドル
 
 	//フォント・イメージ
-	HFONT			m_hFontCaretPosInfo;		//!< キャレットの行桁位置表示用フォント
+	FontHolder		m_hFontCaretPosInfo = nullptr;	//!< キャレットの行桁位置表示用フォント
 	int				m_nCaretPosInfoCharWidth;	//!< キャレットの行桁位置表示用フォントの幅
 	int				m_nCaretPosInfoCharHeight;	//!< キャレットの行桁位置表示用フォントの高さ
 
 	//D&Dフラグ
 	bool			m_bDragMode = false;
 	CMyPoint		m_ptDragPosOrg;
-	CDropTarget*	m_pcDropTarget;
+	CDropTargetHolder	m_pcDropTarget = std::make_unique<CDropTarget>(this);	//!< 右ボタンドロップ用
 
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
@@ -402,6 +425,7 @@ public:
 	ESelectCountMode	m_nSelectCountMode = SELECT_COUNT_TOGGLE; // 選択文字カウント方法
 };
 
-CEditWnd& GetEditWnd( void );
+CEditWnd* GetEditWndPtr() noexcept;
+CEditWnd& GetEditWnd();
 
 #endif /* SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_ */

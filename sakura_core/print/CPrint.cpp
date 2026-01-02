@@ -16,13 +16,11 @@
 */
 
 #include "StdAfx.h"
-#include <stdlib.h>
 #include <WinSpool.h>
 #include "CPrint.h"
 #include "_main/global.h"
 #include "CSelectLang.h"
 #include "basis/CMyString.h"
-#include "String_define.h"
 
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {
@@ -70,12 +68,10 @@ const PAPER_INFO CPrint::m_paperInfoArr[] = {
 	{DMPAPER_FANFOLD_LGL_GERMAN,  2159,  3302, L"German Legal Fanfold (8 1/2 x 13 inch)"},
 };
 
-const int CPrint::m_nPaperInfoArrNum = _countof( m_paperInfoArr );
+const int CPrint::m_nPaperInfoArrNum = int(std::size(m_paperInfoArr));
 
 CPrint::CPrint( void )
 {
-	m_hDevMode	= nullptr;
-	m_hDevNames	= nullptr;
 	return;
 }
 
@@ -143,19 +139,19 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	// プリンタードライバー名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		_countof(pMYDEVMODE->m_szPrinterDriverName),
+		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンターデバイス名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		_countof(pMYDEVMODE->m_szPrinterDeviceName),
+		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンターポート名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		_countof(pMYDEVMODE->m_szPrinterOutputName),
+		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
@@ -224,19 +220,19 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	// プリンタードライバー名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		_countof(pMYDEVMODE->m_szPrinterDriverName),
+		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンターデバイス名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		_countof(pMYDEVMODE->m_szPrinterDeviceName),
+		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンターポート名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		_countof(pMYDEVMODE->m_szPrinterOutputName),
+		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 

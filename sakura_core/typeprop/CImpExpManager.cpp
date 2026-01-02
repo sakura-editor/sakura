@@ -25,7 +25,6 @@
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
-#include "String_define.h"
 
 /*-----------------------------------------------------------------------
 定数
@@ -196,6 +195,11 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 // インポート確認
 bool CImpExpManager::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg )
 {
+	UNREFERENCED_PARAMETER(hInstance);
+	UNREFERENCED_PARAMETER(hwndParent);
+	UNREFERENCED_PARAMETER(sFileName);
+	UNREFERENCED_PARAMETER(sErrMsg);
+
 	return true;
 }
 
@@ -260,7 +264,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const s
 
 	// パラメータの設定
 	sAscertainInfo.sImportFile = sPath;
-	List_GetText( m_hwndList, m_nIdx, szLabel );
+	ApiWrap::List_GetText( m_hwndList, m_nIdx, szLabel );
 	sAscertainInfo.sTypeNameTo = szLabel;
 	szLabel[0] = L'\0';
 	m_cProfile.IOProfileData(szSecTypes, L"szTypeName", StringBufferW(szLabel));
@@ -283,7 +287,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 {
 	std::wstring	files = L"";
 	std::wstring TmpMsg;
-	ColorInfo	colorInfoArr[_countof(m_Types.m_ColorInfoArr)];				// 色設定配列(バックアップ)
+	decltype(m_Types.m_ColorInfoArr)	colorInfoArr{};				// 色設定配列(バックアップ)
 	int		i;
 
 	// 色の変更
@@ -323,7 +327,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	// 色の設定
 	if (m_nColorType >= 0 ) {
 		// 色指定あり
-		for (i = 0; i < _countof(colorInfoArr); i++) {
+		for (i = 0; i < int(std::size(colorInfoArr)); i++) {
 			bool bDisp = m_Types.m_ColorInfoArr[i].m_bDisp;
 			m_Types.m_ColorInfoArr[i] = colorInfoArr[i];
 			m_Types.m_ColorInfoArr[i].m_bDisp = bDisp;		// 表示フラグはファイルのものを使用する
@@ -379,7 +383,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	//  アウトライン解析方法
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szKeyData))) {
-		nDataLen = wcslen( szKeyData );
+		nDataLen = (int)wcslen( szKeyData );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
@@ -400,7 +404,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	}
 	//  スマートインデント
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szKeyData))) {
-		nDataLen = wcslen( szKeyData );
+		nDataLen = (int)wcslen( szKeyData );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
@@ -483,7 +487,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	wchar_t szId[ MAX_PLUGIN_ID + 1 + 2 ];
 	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) >= 0) {
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineName, StringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
-		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, _countof(szId) );
+		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, int(std::size(szId)) );
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
@@ -494,7 +498,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	//  スマートインデント
 	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) >= 0) {
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentName, StringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
-		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, _countof(szId) );
+		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, int(std::size(szId)) );
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
@@ -744,10 +748,10 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 			continue;
 		}
 
-		WCHAR *p1, *p2, *p3;
-		p1 = &buff[9];
-		p3 = p1;					//結果確認用に初期化
-		if( p2 = wcschr(p1, L',') ){
+		auto p1 = &buff[9];
+		auto p2 = wcschr(p1, L',');
+		auto p3 = p1;					//結果確認用に初期化
+		if (p2) {
 			*p2 = LTEXT('\0');
 			p2 += 1;				//カンマの次が、次の要素
 			if( nullptr != (p3=wcschr(p2,LTEXT(','))) ){
@@ -799,7 +803,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 	in.Close();
 
 	// 空きがあるなら番兵を設定
-	if( i < _countof(m_Types.m_KeyHelpArr) ){
+	if( i < int(std::size(m_Types.m_KeyHelpArr)) ){
 		m_Types.m_KeyHelpArr[i].m_bUse = false;
 		m_Types.m_KeyHelpArr[i].m_szAbout[0] = L'\0';
 		m_Types.m_KeyHelpArr[i].m_szPath[0]  = L'\0';
@@ -850,7 +854,7 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
-	const int KEYNAME_SIZE = _countof(m_Common.m_sKeyBind.m_pKeyNameArr)-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	const auto KEYNAME_SIZE = int(std::size(m_Common.m_sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	CommonSetting_KeyBind sKeyBind = m_Common.m_sKeyBind;
 
 	//オープン
@@ -914,8 +918,8 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				int n, kc, nc;
 				//値 -> szData
 				wchar_t szData[1024];
-				wcsncpy(szData, in.ReadLineW().c_str(), _countof(szData) - 1);
-				szData[_countof(szData) - 1] = L'\0';
+				wcsncpy(szData, in.ReadLineW().c_str(), int(std::size(szData)) - 1);
+				szData[std::size(szData) - 1] = L'\0';
 
 				//解析開始
 				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
@@ -1275,6 +1279,7 @@ bool CImpExpMainMenu::Export( const std::wstring& sFileName, std::wstring& sErrM
 // インポート
 bool CImpExpFileTree::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 {
+	UNREFERENCED_PARAMETER(sErrMsg);
 	const auto& strPath = sFileName;
 
 	CDataProfile cProfile;

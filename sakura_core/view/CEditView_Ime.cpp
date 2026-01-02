@@ -230,7 +230,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	// 選択開始位置より前後200(or 50)文字ずつを考慮文字列にする
 	const int nReconvMaxLen = (bDocumentFeed ? 50 : 200); //$$マジックナンバー注意
 	while (ptSelect.x - nReconvIndex > nReconvMaxLen) {
-		nReconvIndex = t_max<int>(nReconvIndex+1, ::CharNext(pLine+nReconvIndex)-pLine);
+		nReconvIndex = t_max<int>(nReconvIndex+1, int(::CharNextW(pLine+nReconvIndex) - pLine));
 	}
 	
 	//再変換考慮文字列終了  //行の中で再変換のAPIにわたすとする文字列の長さ
@@ -241,7 +241,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 		while (p <= q) {
 			p = t_max(p+1, const_cast<const wchar_t*>(::CharNext(p)));
 		}
-		nReconvLen = p - pLine - nReconvIndex;
+		nReconvLen = int(p - pLine - nReconvIndex);
 	}
 	
 	//対象文字列の調整
@@ -252,7 +252,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	
 	if( bDocumentFeed ){
 		// IMR_DOCUMENTFEEDでは、再変換対象はIMEから取得した入力中文字列
-		nInsertCompLen = wcslen(m_szComposition);
+		nInsertCompLen = (int)wcslen(m_szComposition);
 		if( 0 == nInsertCompLen ){
 			// 2回呼ばれるので、m_szCompositionに覚えておく
 			HWND hwnd = GetHwnd();
@@ -260,13 +260,13 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 			if( !hIMC ){
 				return 0;
 			}
-			wmemset(m_szComposition, L'\0', _countof(m_szComposition));
-			LONG immRet = ::ImmGetCompositionString(hIMC, GCS_COMPSTR, m_szComposition, _countof(m_szComposition));
+			wmemset(m_szComposition, L'\0', int(std::size(m_szComposition)));
+			LONG immRet = ::ImmGetCompositionString(hIMC, GCS_COMPSTR, m_szComposition, int(std::size(m_szComposition)));
 			if( immRet == IMM_ERROR_NODATA || immRet == IMM_ERROR_GENERAL ){
 				m_szComposition[0] = L'\0';
 			}
 			::ImmReleaseContext( hwnd, hIMC );
-			nInsertCompLen = wcslen(m_szComposition);
+			nInsertCompLen = (int)wcslen(m_szComposition);
 		}
 	}
 
@@ -288,7 +288,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	int nCompInsStr   = 0;
 	if( nInsertCompLen ){
 		pszCompInsStr = m_szComposition;
-		nCompInsStr   = wcslen( pszCompInsStr );
+		nCompInsStr   = (int)wcslen( pszCompInsStr );
 	}
 	dwInsByteCount      = nCompInsStr * sizeof(wchar_t);
 	dwReconvTextLen     = nReconvLen;

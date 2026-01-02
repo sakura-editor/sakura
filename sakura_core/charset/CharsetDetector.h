@@ -10,7 +10,6 @@
 
 #include <string_view>
 
-#include "extmodule/CIcu4cI18n.h"
 #include "extmodule/CUchardet.h"
 
 /*!
@@ -18,9 +17,6 @@
  */
 class CharsetDetector final
 {
-	CIcu4cI18n _icuin;
-	UCharsetDetector* _csd;
-
 	CUchardet _uchardet;
 	uchardet_t _ud = nullptr;
 
@@ -29,7 +25,7 @@ public:
 	~CharsetDetector() noexcept;
 
 	bool IsAvailable() const noexcept {
-		return _icuin.IsAvailable() || _uchardet.IsAvailable();
+		return _uchardet.IsAvailable();
 	}
 
 	ECodeType Detect(const std::string_view& bytes);

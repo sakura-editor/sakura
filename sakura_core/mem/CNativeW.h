@@ -137,24 +137,21 @@ public:
 public:
 	// -- -- staticインターフェース -- -- //
 	//! 指定した位置の文字がwchar_t何個分かを返す
-	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx );
-	static CLogicInt GetSizeOfChar( const CStringRef& cStr, int nIdx )
-		{ return GetSizeOfChar( cStr.GetPtr(), cStr.GetLength(), nIdx ); }
+	static CLogicInt GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t index );
+	static CLogicInt GetSizeOfChar( const CStringRef& cStr, size_t index )
+		{ return GetSizeOfChar( cStr.GetPtr(), cStr.GetLength(), index ); }
 	//! 指定した位置の文字が半角何個分かを返す
-	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
-		CCharWidthCache& cache = GetCharWidthCache() );
-	static CKetaXInt GetKetaOfChar(const CStringRef& cStr, int nIdx, CCharWidthCache& cache = GetCharWidthCache())
-		{ return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx, cache); }
-	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します
+	static CKetaXInt GetKetaOfChar(const wchar_t* pData, size_t cchData, size_t index, CCharWidthCache& cache = GetCharWidthCache());
+	static CKetaXInt GetKetaOfChar(const CStringRef& cStr, size_t index, CCharWidthCache& cache = GetCharWidthCache())
+		{ return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), index, cache); }
+	static const wchar_t* GetCharNext(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の次にある文字の位置を返します
 	static const wchar_t* GetCharPrev(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の直前にある文字の位置を返します
 
-	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
-		bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
-	static CLayoutXInt GetColmOfChar( const wchar_t* pData,
-		int nDataLen, int nIdx, bool bEnableExtEol )
-		{ return GetHabaOfChar(pData,nDataLen,nIdx, bEnableExtEol); }
-	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, int nIdx, bool bEnableExtEol )
-		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx, bEnableExtEol); }
+	static CHabaXInt GetHabaOfChar( const wchar_t* pData, size_t cchData, size_t index, bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
+	static CLayoutXInt GetColmOfChar( const wchar_t* pData, size_t cchData, size_t index, bool bEnableExtEol )
+		{ return GetHabaOfChar(pData, cchData, index, bEnableExtEol); }
+	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, size_t index, bool bEnableExtEol )
+		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), index, bEnableExtEol); }
 };
 
 // 派生クラスでメンバー追加禁止

@@ -122,7 +122,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				pLine++; i++;
 				bEndTag = true;
 			}
-			for(j=0;i+j<nLineLen && j<_countof(szTitle)-1; )
+			for(j=0;i+j<nLineLen && j<int(std::size(szTitle))-1; )
 			{
 				// タグ名を切り出す
 				// スペース、タブ、「_:-.英数」以外の半角文字、１文字目の「-.数字」は認めない。
@@ -295,12 +295,12 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 								}
 							}
 						}
-						if (x < _countof(szTitle) - 3) {
+						if (x < int(std::size(szTitle)) - 3) {
 							if(!bEndTag)
 							{
 								szTitle[k++]	=	L' ';
 								bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-								for (; i+j < nLineLen && k < _countof(szTitle) -1 ; k++, j++) {
+								for (; i+j < nLineLen && k < int(std::size(szTitle)) -1 ; k++, j++) {
 									if (pLine[j]==L'<' || WCODE::IsLineDelimiter(pLine[j], bExtEol)){
 										j--;
 										break;
@@ -314,7 +314,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 					}
 					else
 					{
-						for(;i+j<nLineLen && j<_countof(szTitle)-1;j++)
+						for(;i+j<nLineLen && j<int(std::size(szTitle))-1;j++)
 						{
 							if(pLine[j]==L'>')
 							{
@@ -388,6 +388,9 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"all",
 	L"APPLET",
 	L"AREA",
+	L"ARTICLE",
+	L"ASIDE",
+	L"AUDIO",
 	L"AUTOPLAY",
 	L"AUTOSTART",
 	L"B",
@@ -395,6 +398,8 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"BASE",
 	L"BASEFONT",
 	L"baseline",
+	L"BDI",
+	L"BDO",
 	L"BEHAVIOR",
 	L"BELOW",
 	L"BGCOLOR",
@@ -411,6 +416,7 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"box",
 	L"BR",
 	L"BUTTON",
+	L"CANVAS",
 	L"CAPTION",
 	L"CELLPADDING",
 	L"CELLSPACING",
@@ -433,12 +439,15 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"COMMENT",
 	L"CONTROLS",
 	L"DATA",
+	L"DATALIST",
 	L"DD",
 	L"DECLARE",
 	L"DEFER",
 	L"DEL",
+	L"DETAILS",
 	L"DELAY",
 	L"DFN",
+	L"DIALOG",
 	L"DIR",
 	L"DIRECTION",
 	L"DISABLED",
@@ -451,8 +460,11 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"ENCTYPE",
 	L"FACE",
 	L"FIELDSET",
+	L"FIGCAPTION",
+	L"FIGURE",
 	L"file",
 	L"FONT",
+	L"FOOTER",
 	L"FOR",
 	L"FORM",
 	L"FRAME",
@@ -470,6 +482,8 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"H6",
 	L"H7",
 	L"HEAD",
+	L"HEADER",
+	L"HGROUP",
 	L"HEIGHT",
 	L"HIDDEN",
 	L"Hn",
@@ -503,7 +517,9 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"LINK",
 	L"LISTING",
 	L"LOOP",
+	L"MAIN",
 	L"MAP",
+	L"MARK",
 	L"MARQUEE",
 	L"MAXLENGTH",
 	L"MENU",
@@ -514,6 +530,7 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"MULTICOL",
 	L"MULTIPLE",
 	L"NAME",
+	L"NAV",
 	L"NEXT",
 	L"NEXTID",
 	L"NOBR",
@@ -537,7 +554,9 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"onReset",
 	L"onSelect",
 	L"onSubmit",
+	L"OPTGROUP",
 	L"OPTION",
+	L"OUTPUT",
 	L"P",
 	L"PAGEX",
 	L"PAGEY",
@@ -546,11 +565,13 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"PARAM",
 	L"PARENT",
 	L"password",
+	L"PICTURE",
 	L"PLAINTEXT",
 	L"PLUGINSPAGE",
 	L"POST",
 	L"PRE",
 	L"PREVIOUS",
+	L"PROGRESS",
 	L"Q",
 	L"radio",
 	L"REL",
@@ -561,6 +582,9 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"RIGHT",
 	L"rows",
 	L"ROWSPAN",
+	L"RP",
+	L"RT",
+	L"RUBY",
 	L"RULES",
 	L"S",
 	L"SAMP",
@@ -568,6 +592,8 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"SCRIPT",
 	L"SCROLLAMOUNT",
 	L"SCROLLDELAY",
+	L"SEARCH",
+	L"SECTION",
 	L"SELECT",
 	L"SELECTED",
 	L"SERVER",
@@ -575,6 +601,7 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"show",
 	L"SIZE",
 	L"SMALL",
+	L"SOURCE",
 	L"SONG",
 	L"SPACER",
 	L"SPAN",
@@ -587,11 +614,13 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"submit",
 	L"SUMMARY",
 	L"SUP",
+	L"SVG",
 	L"TABINDEX",
 	L"TABLE",
 	L"TARGET",
 	L"TBODY",
 	L"TD",
+	L"TEMPLATE",
 	L"TEXT",
 	L"TEXTAREA",
 	L"textbottom",
@@ -601,9 +630,11 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"TFOOT",
 	L"TH",
 	L"THEAD",
+	L"TIME",
 	L"TITLE",
 	L"TOP",
 	L"TR",
+	L"TRACK",
 	L"TT",
 	L"TXTCOLOR",
 	L"TYPE",
@@ -615,6 +646,7 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"VALUE",
 	L"VALUETYPE",
 	L"VAR",
+	L"VIDEO",
 	L"VISIBILITY",
 	L"void",
 	L"vsides",
@@ -624,4 +656,4 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"WRAP",
 	L"XMP"
 };
-int g_nKeywordsHTML = _countof(g_ppszKeywordsHTML);
+int g_nKeywordsHTML = int(std::size(g_ppszKeywordsHTML));

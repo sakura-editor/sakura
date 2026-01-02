@@ -38,21 +38,21 @@ std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& syst
 		if( inSpecifier ){
 			inSpecifier = false;
 			if( f == L'Y' ){
-				swprintf( str, _countof(str), L"%d", systime.wYear );
+				swprintf( str, int(std::size(str)), L"%d", systime.wYear );
 			}else if( f == L'y' ){
-				swprintf( str, _countof(str), L"%02d", systime.wYear % 100 );
+				swprintf( str, int(std::size(str)), L"%02d", systime.wYear % 100 );
 			}else if( f == L'm' ){
-				swprintf( str, _countof(str), L"%02d", systime.wMonth );
+				swprintf( str, int(std::size(str)), L"%02d", systime.wMonth );
 			}else if( f == L'd' ){
-				swprintf( str, _countof(str), L"%02d", systime.wDay );
+				swprintf( str, int(std::size(str)), L"%02d", systime.wDay );
 			}else if( f == L'H' ){
-				swprintf( str, _countof(str), L"%02d", systime.wHour );
+				swprintf( str, int(std::size(str)), L"%02d", systime.wHour );
 			}else if( f == L'M' ){
-				swprintf( str, _countof(str), L"%02d", systime.wMinute );
+				swprintf( str, int(std::size(str)), L"%02d", systime.wMinute );
 			}else if( f == L'S' ){
-				swprintf( str, _countof(str), L"%02d", systime.wSecond );
+				swprintf( str, int(std::size(str)), L"%02d", systime.wSecond );
 			}else{
-				swprintf( str, _countof(str), L"%c", f );
+				swprintf( str, int(std::size(str)), L"%c", f );
 			}
 			result.append( str );
 		}else if( f == L'%' ){

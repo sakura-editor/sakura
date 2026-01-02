@@ -17,6 +17,7 @@
 
 bool CFigure_HanSpace::Match(const wchar_t* pText, int nTextLen) const
 {
+	UNREFERENCED_PARAMETER(nTextLen);
 	if( pText[0] == L' ' ){
 		return true;
 	}
@@ -43,7 +44,7 @@ void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClipBottom,
 //FIXME:幅が違う
 			L"o",
@@ -58,7 +59,7 @@ void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
+			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClipTop,
 			L" ",
 			1,

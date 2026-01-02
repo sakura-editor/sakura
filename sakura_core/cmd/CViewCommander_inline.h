@@ -12,7 +12,7 @@
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
-#include "COpeBlk.h"
+#include "cmd/COpeBlk.h"
 
 //外部依存
 inline CEditDoc* CViewCommander::GetDocument()

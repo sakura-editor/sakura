@@ -23,7 +23,6 @@
 #include "charset/CCodeMediator.h"
 #include "charset/CEuc.h"
 #include "charset/codeutil.h"
-#include "String_define.h"
 
 // 非依存推奨
 #include "window/CEditWnd.h"
@@ -35,7 +34,7 @@
 	name: エンコーディング名
 	code: 文字コードセット種別、もしくはコードページ番号
 */
-#define ENCODING_NAME( name, code ) { name, (int)( _countof( name ) - 1 ), (int)( code ) }
+#define ENCODING_NAME( name, code ) { name, (int)( int(std::size(name)) - 1 ), (int)( code ) }
 
 /*!
 	マルチバイト文字コードの優先順位表（既定値）
@@ -68,7 +67,7 @@ static const int gm_aMbcPriority[] =
 /*!
 	デフォルトコンストラクタ
 */
-void CESI::SetInformation( const char *pS, const int nLen )
+void CESI::SetInformation( const char *pS, size_t nLen )
 {
 	// 文字情報を収集
 	ScanCode( pS, nLen );
@@ -89,7 +88,7 @@ int CESI::GetIndexById( const ECodeType eCodeType ) const
 		nret = 0;
 	}else if( CODE_UNICODEBE == eCodeType ){
 		nret = 1;
-	}else if( 0 <= eCodeType && eCodeType < _countof(gm_aMbcPriority) ){
+	}else if( 0 <= eCodeType && eCodeType < int(std::size(gm_aMbcPriority)) ){
 		nret = gm_aMbcPriority[eCodeType]; // 優先順位表の優先度数をそのまま m_aMbcInfo の添え字として使う。
 	}else{
 		assert(0);
@@ -262,7 +261,7 @@ void CESI::GetEncodingInfo_jis( const char* pS, const int nLen )
 		default:
 			nlen = CheckJisUnknownPart( pr, pr_end-pr, &pr_next, &emyjisesc, &nerror );
 		}
-		nescbytes += pr_next-(pr+nlen);
+		nescbytes += int(pr_next-(pr+nlen));
 		nillbytes += nerror;
 		pr = pr_next;
 	}while( pr_next < pr_end );
@@ -487,6 +486,7 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 */
 void CESI::GetEncodingInfo_latin1( const char* pS, const int nLen )
 {
+	UNREFERENCED_PARAMETER(pS);
 	SetEvaluation( CODE_LATIN1, 0, - nLen );
 	return;
 }
@@ -636,8 +636,10 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 
 	@return 入力データがない時に false
 */
-void CESI::ScanCode( const char* pS, const int nLen )
+void CESI::ScanCode( const char* pS, size_t cchS )
 {
+	const auto nLen = int(cchS);
+
 	// 対象となったデータ長を記録。
 	SetDataLen( nLen );
 
@@ -912,9 +914,9 @@ static bool IsXMLWhiteSpace( int c )
 
 	@return 文字コード
 */
-static ECodeType MatchEncoding(const char* pBuf, int nSize)
+static ECodeType MatchEncoding(const char* pBuf, size_t nSize)
 {
-	for(int k = 0; k < _countof(encodingNameToCode); k++ ){
+	for (size_t k = 0; k < std::size(encodingNameToCode); ++k) {
 		const int nLen = encodingNameToCode[k].nLen;
 		if( nLen == nSize && 0 == _memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
 			return static_cast<ECodeType>(encodingNameToCode[k].nCode);
@@ -933,7 +935,6 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 		if( !IsXMLWhiteSpace( pBuf[5] ) ){
 			return CODE_NONE;
 		}
-		char quoteXML = '\0';
 		int i;
 		// xml規格ではencodingはverionに続いて現れる以外は許されない。ここではいいにする
 		for( i = 5; i < nSize - 12; i++ ){

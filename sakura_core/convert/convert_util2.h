@@ -68,11 +68,11 @@ inline int _HexToInt( WCHAR c )
 }
 
 template< class CHAR_TYPE >
-int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
+size_t _DecodeQP( const CHAR_TYPE* pS, size_t nLen, char* pDst )
 {
 	const CHAR_TYPE *pr;
 	char *pw;
-	int ninc_len;
+	size_t ninc_len;
 
 	pr = pS;
 	pw = pDst;
@@ -191,12 +191,12 @@ bool CheckBase64Padbit( const CHAR_TYPE *pSrc, const int nSrcLen )
 	正しい BASE64 入力文字列を仮定している。
 */
 template< class CHAR_TYPE >
-int _DecodeBase64( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
+int _DecodeBase64( const CHAR_TYPE *pSrc, size_t nSrcLen, char *pDest )
 {
 	long lData;
-	int nDesLen;
-	int sMax;
-	int nsrclen = nSrcLen;
+	size_t nDesLen;
+	size_t sMax;
+	size_t nsrclen = nSrcLen;
 
 	// 文字列の最後のパッド文字 '=' を文字列長に含めないようにする処理
 	{
@@ -233,7 +233,7 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 		}
 		i+= 3;
 	}
-	return nDesLen;
+	return int(nDesLen);
 }
 
 /*!
@@ -574,16 +574,16 @@ enum EEncodingMethod {
 	@return  CMemory と置き換えられる入力文字列長 (nSkipLen)
 */
 template< class CHAR_TYPE >
-int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
+int _DecodeMimeHeader( const CHAR_TYPE* pSrc, size_t nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
 {
 	ECodeType ecode = CODE_NONE;
 	EEncodingMethod emethod = EM_NONE;
-	int nLen_part1, nLen_part2, nskipped_len;
-	int ncmpresult1, ncmpresult2, ncmpresult;
+	size_t nLen_part1, nLen_part2, nskipped_len;
+	size_t ncmpresult1, ncmpresult2, ncmpresult;
 
 	const CHAR_TYPE *pr, *pr_base;
 	char* pdst;
-	int ndecoded_len;
+	size_t ndecoded_len;
 
 	// MIME の該当部分を検出。----------------------------------------
 	//
@@ -680,7 +680,7 @@ finish_first_detect:;
 		return 0;
 	}
 
-	nskipped_len = pr - pSrc + 2;  // =? から ?= までの、全体の長さを記録
+	nskipped_len = int(pr - pSrc + 2);  // =? から ?= までの、全体の長さを記録
 
 	//   デコード ----------------------------------------------------
 	//
@@ -700,6 +700,7 @@ finish_first_detect:;
 
 	pcMem_alt->_SetRawLength( ndecoded_len );
 
-	return nskipped_len;
+	return int(nskipped_len);
 }
+
 #endif /* SAKURA_CONVERT_UTIL2_9F00219B_A2FC_4096_BB26_197A667DFD25_H_ */

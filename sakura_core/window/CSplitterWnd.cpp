@@ -20,13 +20,11 @@
 #include "window/CSplitBoxWnd.h"
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"
-#include "outline/CDlgFuncList.h"
 #include "env/DLLSHAREDATA.h"
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "config/system_constants.h"
-#include "String_define.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
@@ -34,20 +32,9 @@ constexpr auto SPLITTER_MARGIN = 2;
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(L"::CSplitterWnd")
-, m_nAllSplitRows(1)					/* 分割行数 */
-, m_nAllSplitCols(1)					/* 分割桁数 */
-, m_nVSplitPos(0)					/* 垂直分割位置 */
-, m_nHSplitPos(0)					/* 水平分割位置 */
-, m_nChildWndCount(0)
-, m_bDragging(0)						/* 分割バーをドラッグ中か */
-, m_nDragPosX(0)						/* ドラッグ位置Ｘ */
-, m_nDragPosY(0)						/* ドラッグ位置Ｙ */
-, m_nActivePane(0)					/* アクティブなペイン 0-3 */
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
-
-	m_hcurOld = nullptr;						/* もとのマウスカーソル */
 
 	for( int v=0; v < MAXCOUNTOFVIEW; v++ ){
 		m_ChildWndArr[v] = nullptr;				/* 子ウィンドウ配列 */
@@ -780,6 +767,9 @@ int CSplitterWnd::GetLastPane( void )
 /* 描画処理 */
 LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	HDC			hdc;
 	PAINTSTRUCT	ps;
 	RECT		rc;
@@ -802,6 +792,10 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 /* ウィンドウサイズの変更処理 */
 LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	CEditWnd*	pCEditWnd = &GetEditWnd();
 	CEditView*	pcViewArr[MAXCOUNTOFVIEW];
 	int					i;
@@ -904,6 +898,9 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 /* マウス移動時の処理 */
 LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	int		nHit;
 	RECT	rc;
 	int		xPos;
@@ -950,6 +947,9 @@ LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /* マウス左ボタン押下時の処理 */
 LRESULT CSplitterWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	int		nHit;
 	int		xPos;
 	int		yPos;
@@ -973,6 +973,10 @@ LRESULT CSplitterWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 /* マウス左ボタン解放時の処理 */
 LRESULT CSplitterWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	int bDraggingOld;
 	int nX;
 	int nY;
@@ -1013,6 +1017,9 @@ LRESULT CSplitterWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /* マウス左ボタンダブルクリック時の処理 */
 LRESULT CSplitterWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(uMsg);
+	UNREFERENCED_PARAMETER(wParam);
 	int nX;
 	int nY;
 	int	nHit;
@@ -1049,6 +1056,7 @@ LRESULT CSplitterWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 /* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 LRESULT CSplitterWnd::DispatchEvent_WM_APP( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	UNREFERENCED_PARAMETER(hwnd);
 	int nPosX;
 	int nPosY;
 	switch( uMsg ){

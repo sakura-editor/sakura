@@ -108,7 +108,7 @@ public:
 	virtual ~CTextWidthCalc();
 	void Reset(){ nCx = 0; nExt = 0; }
 	void SetCx(int cx = 0){ nCx = cx; }
-	void SetDefaultExtend(int extCx = 0){ nExt = 0; }
+	void SetDefaultExtend(int extCx = 0){ nExt = extCx; }
 	bool SetWidthIfMax(int width);
 	bool SetWidthIfMax(int width, int extCx);
 	bool SetTextWidthIfMax(LPCWSTR pszText);
@@ -198,5 +198,7 @@ private:
 HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
 
 bool GetSystemAccentColor( COLORREF* pColorOut );
+
+#define PSZ_ARGS(pszText) (pszText), int(pszText ? ::wcslen(pszText) : 0)
 
 #endif /* SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_ */
