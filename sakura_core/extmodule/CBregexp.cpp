@@ -121,53 +121,50 @@ std::wstring CBregexp::_QuoteRegex(
 	$ が行文字列末尾にマッチしないことは、一括置換での期待しない置換を防ぐために必要である。
 */
 std::wstring CBregexp::_MakePattern(
-	const std::wstring& szPattern0,
+	const std::wstring& szSearch,
 	int					nOption,
 	const std::optional<std::wstring>& optReplace
 ) const
 {
-	const auto szSearch = szPattern0.c_str();
+	// 代替パターンの文字列長を概算する
+	size_t approximateSize = std::size(szSearch);
 
-	static const wchar_t szDotAlternative[] = L"[^\\r\\n]";
-	static const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
+	using namespace std::string_view_literals;
 
-	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$) へ置換すると仮定して、strModifiedSearchの最大長を決定する。
-	std::wstring::size_type modifiedSearchSize = 0;
-	for( const wchar_t* p = szSearch; *p; ++p ) {
-		if( *p == L'.') {
-			modifiedSearchSize += (sizeof szDotAlternative) / (sizeof szDotAlternative[0]) - 1;
-		} else if( *p == L'$' ) {
-			modifiedSearchSize += (sizeof szDollarAlternative) / (sizeof szDollarAlternative[0]) - 1;
-		} else {
-			modifiedSearchSize += 1;
+	const auto alternateDotPattern = LR"([^\r\n])"sv;
+	const auto alternateDollarPattern = LR"((?<![\r\n])(?=\r|$))"sv;
+
+	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$) へ置換すると仮定して、最大長を概算する
+	for (const auto ch : szSearch) {
+		switch (ch) {
+		case L'.': approximateSize += std::size(alternateDotPattern);    break;
+		case L'$': approximateSize += std::size(alternateDollarPattern); break;
+		default: break;
 		}
 	}
-	++modifiedSearchSize; // '\0'
 
-	std::wstring strModifiedSearch;
-	strModifiedSearch.reserve( modifiedSearchSize );
+	// 代替パターンは動的に構築する
+	std::wstring alternateSearchPattern;
+	alternateSearchPattern.reserve(approximateSize);
 
-	// szSearchを strModifiedSearchへ、ところどころ置換しながら順次コピーしていく。
-	enum State {
-		DEF = 0, /* DEFULT 一番外側 */
-		D_E,     /* DEFAULT_ESCAPED 一番外側で \の次 */
-		D_C,     /* DEFAULT_SMALL_C 一番外側で \cの次 */
-		CHA,     /* CHARSET 文字クラスの中 */
-		C_E,     /* CHARSET_ESCAPED 文字クラスの中で \の次 */
-		C_C,     /* CHARSET_SMALL_C 文字クラスの中で \cの次 */
-		QEE,     /* QEESCAPE \Q...\Eの中 */
-		Q_E,     /* QEESCAPE_ESCAPED \Q...\Eの中で \の次 */
+	// szSearch を alternateSearchPattern へ、ところどころ置換しながら順次コピーしていく。
+	enum class State {
+		_DL = -4, // DOLLAR (特殊文字としての)ドルを置き換える
+		_DT,      // DOT (特殊文字としての)ドットを置き換える
+		_XC,      // EXIT CHARCLASS charsetLevelをデクリメントして CHAか DEFへ
+		_EC,      // ENTER CHARCLASS charsetLevelをインクリメントして CHAへ
+		DEF,      // DEFULT 一番外側
+		D_E,      // DEFAULT_ESCAPED 一番外側で \の次
+		CHA,      // CHARSET 文字クラスの中
+		C_E,      // CHARSET_ESCAPED 文字クラスの中で \の次
+		QEE,      // QEESCAPE \Q...\Eの中
+		Q_E,      // QEESCAPE_ESCAPED \Q...\Eの中で \の次
 		NUMBER_OF_STATE,
-		_EC = -1, /* ENTER CHARCLASS charsetLevelをインクリメントして CHAへ */
-		_XC = -2, /* EXIT CHARCLASS charsetLevelをデクリメントして CHAか DEFへ */
-		_DT = -3, /* DOT (特殊文字としての)ドットを置き換える */
-		_DL = -4, /* DOLLAR (特殊文字としての)ドルを置き換える */
 	};
-	enum CharClass {
+	enum class CharClass {
 		OTHER = 0,
 		DOT,    /* . */
 		DOLLAR, /* $ */
-		SMALLC, /* c */
 		LARGEQ, /* Q */
 		LARGEE, /* E */
 		LBRCKT, /* [ */
@@ -175,61 +172,73 @@ std::wstring CBregexp::_MakePattern(
 		ESCAPE, /* \ */
 		NUMBER_OF_CHARCLASS
 	};
-	static const State state_transition_table[NUMBER_OF_STATE][NUMBER_OF_CHARCLASS] = {
-	/*        OTHER   DOT  DOLLAR  SMALLC LARGEQ LARGEE LBRCKT RBRCKT ESCAPE*/
-	/* DEF */ {DEF,  _DT,   _DL,    DEF,   DEF,   DEF,   _EC,   DEF,   D_E},
-	/* D_E */ {DEF,  DEF,   DEF,    D_C,   QEE,   DEF,   DEF,   DEF,   DEF},
-	/* D_C */ {DEF,  DEF,   DEF,    DEF,   DEF,   DEF,   DEF,   DEF,   D_E},
-	/* CHA */ {CHA,  CHA,   CHA,    CHA,   CHA,   CHA,   _EC,   _XC,   C_E},
-	/* C_E */ {CHA,  CHA,   CHA,    C_C,   CHA,   CHA,   CHA,   CHA,   CHA},
-	/* C_C */ {CHA,  CHA,   CHA,    CHA,   CHA,   CHA,   CHA,   CHA,   C_E},
-	/* QEE */ {QEE,  QEE,   QEE,    QEE,   QEE,   QEE,   QEE,   QEE,   Q_E},
-	/* Q_E */ {QEE,  QEE,   QEE,    QEE,   QEE,   DEF,   QEE,   QEE,   Q_E}
+
+	using enum State;
+	using enum CharClass;
+
+	using States = std::array<State, (int)NUMBER_OF_CHARCLASS>;
+	const std::array<States, (int)NUMBER_OF_STATE> state_transition_table = {
+	/*                OTHER  DOT  DOLLAR  LARGEQ LARGEE LBRCKT RBRCKT ESCAPE*/
+	/* DEF */ States{ DEF,  _DT,   _DL,    DEF,   DEF,   _EC,   DEF,   D_E},
+	/* D_E */ States{ DEF,  DEF,   DEF,    QEE,   DEF,   DEF,   DEF,   DEF},
+	/* CHA */ States{ CHA,  CHA,   CHA,    CHA,   CHA,   _EC,   _XC,   C_E},
+	/* C_E */ States{ CHA,  CHA,   CHA,    CHA,   CHA,   CHA,   CHA,   CHA},
+	/* QEE */ States{ QEE,  QEE,   QEE,    QEE,   QEE,   QEE,   QEE,   Q_E},
+	/* Q_E */ States{ QEE,  QEE,   QEE,    QEE,   DEF,   QEE,   QEE,   Q_E}
 	};
+	const std::unordered_map<WCHAR, CharClass> wcharToClassMap = {
+		{ L'.',  DOT    },
+		{ L'$',  DOLLAR },
+		{ L'Q',  LARGEQ },
+		{ L'E',  LARGEE },
+		{ L'[',  LBRCKT },
+		{ L']',  RBRCKT },
+		{ L'\\', ESCAPE },
+	};
+
 	State state = DEF;
 	int charsetLevel = 0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
-	const wchar_t *left = szSearch, *right = szSearch;
-	for( ; *right; ++right ) { // CNativeW::GetSizeOfChar()は使わなくてもいいかな？
-		const wchar_t ch = *right;
-		const CharClass charClass =
-			ch == L'.'  ? DOT:
-			ch == L'$'  ? DOLLAR:
-			ch == L'c'  ? SMALLC:
-			ch == L'Q'  ? LARGEQ:
-			ch == L'E'  ? LARGEE:
-			ch == L'['  ? LBRCKT:
-			ch == L']'  ? RBRCKT:
-			ch == L'\\' ? ESCAPE:
-			OTHER;
-		const State nextState = state_transition_table[state][charClass];
-		if(0 <= nextState) {
+	auto left = std::data(szSearch);
+	auto right = std::data(szSearch);
+	for (; *right; ++right) {
+		const auto ch = *right;
+		const CharClass charClass = wcharToClassMap.contains(ch) ? wcharToClassMap.at(ch) : OTHER;
+		auto nextState = state_transition_table[(int)state][(int)charClass];
+		if (int(DEF) <= int(nextState)) {
 			state = nextState;
-		} else switch(nextState) {
-			case _EC: // ENTER CHARSET
-				charsetLevel += 1;
-				state = CHA;
+			continue;
+		}
+
+		switch (nextState) {
+		case _EC: // ENTER CHARSET
+			++charsetLevel;
+			state = CHA;
 			break;
-			case _XC: // EXIT CHARSET
-				charsetLevel -= 1;
-				state = 0 < charsetLevel ? CHA : DEF;
+
+		case _XC: // EXIT CHARSET
+			--charsetLevel;
+			state = 0 < charsetLevel ? CHA : DEF;
 			break;
-			case _DT: // DOT(match anything)
-				strModifiedSearch.append( left, right );
-				left = right + 1;
-				strModifiedSearch.append( szDotAlternative );
+
+		case _DT: // DOT(match anything)
+			alternateSearchPattern.append(left, right);
+			left = right + 1;
+			alternateSearchPattern += alternateDotPattern;
 			break;
-			case _DL: // DOLLAR(match end of line)
-				strModifiedSearch.append( left, right );
-				left = right + 1;
-				strModifiedSearch.append( szDollarAlternative );
+
+		case _DL: // DOLLAR(match end of line)
+			alternateSearchPattern.append(left, right);
+			left = right + 1;
+			alternateSearchPattern += alternateDollarPattern;
 			break;
-			default: // バグ。enum Stateに見逃しがある。
+
+		default: // ここには絶対こない
 			break;
 		}
 	}
-	strModifiedSearch.append( left, right + 1 ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
+	alternateSearchPattern.append(left, right + 1); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
 
-	return _QuoteRegex(strModifiedSearch, nOption, optReplace);
+	return _QuoteRegex(alternateSearchPattern, nOption, optReplace);
 }
 
 /*!
