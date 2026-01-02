@@ -424,14 +424,7 @@ bool InitRegexp(
 	bool		bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
 )
 {
-	//	From Here 2007.08.12 genta
-	DLLSHAREDATA* pShareData = &GetDllShareData();
-
-	LPCWSTR RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
-	//	To Here 2007.08.12 genta
-
-	EDllResult eDllResult = rRegexp.InitDll(RegexpDll);
-	if( DLL_SUCCESS != eDllResult ){
+	if (const auto eDllResult = rRegexp.InitDll(); DLL_SUCCESS != eDllResult) {
 		if( bShowMessage ){
 			LPCWSTR pszMsg = L"";
 			if(eDllResult==DLL_LOADFAILURE){

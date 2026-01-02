@@ -89,7 +89,27 @@ INSTANTIATE_TYPED_TEST_SUITE_P(
 namespace extmodule {
 
 struct CBregexpTest : public ::testing::Test {
+	using CShareDataHolder = std::unique_ptr<CShareData>;
 	using CBregexpHolder = std::unique_ptr<CBregexp>;
+
+	static inline CShareDataHolder pcShareData = nullptr;
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		pcShareData = std::make_unique<CShareData>();
+		EXPECT_THAT( pcShareData->InitShareData(), IsTrue() );
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		pcShareData = nullptr;
+	}
 
 	CBregexpHolder pcBregexp = nullptr;
 
@@ -112,8 +132,6 @@ struct CBregexpTest : public ::testing::Test {
 
 TEST_F(CBregexpTest, test001)
 {
-	std::wstring_view target{ L"test123あいう" };
-
 	// 初期状態では利用不可
 	EXPECT_THAT(pcBregexp->IsAvailable(), IsFalse());
 
@@ -123,11 +141,8 @@ TEST_F(CBregexpTest, test001)
 	// ロード前は正規表現コンパイルできない
 	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+", L"$1d"), IsFalse());
 
-	// ロード前は検索できない
-	EXPECT_THAT(pcBregexp->Match(std::data(target), int(std::size(target))), IsFalse());
-
-	// ロード前は置換できない
-	EXPECT_THAT(pcBregexp->Replace(std::data(target), int(std::size(target))), IsFalse());
+	// C/Migemo設定に値を入れる
+	::wcsncpy_s(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib, L"", _TRUNCATE);
 
 	// 名前を指定せずにロードする
 	pcBregexp->InitDll();
@@ -138,11 +153,60 @@ TEST_F(CBregexpTest, test001)
 	// ロードされたらバージョン情報が取れる
 	EXPECT_THAT(pcBregexp->GetVersionW(), StrNe(L""));
 
+	EXPECT_THAT(pcBregexp->GetIndex(), 0);
+	EXPECT_THAT(pcBregexp->GetLastIndex(), 0);
+	EXPECT_THAT(pcBregexp->GetMatchLen(), 0);
+	EXPECT_THAT(pcBregexp->GetStringLen(), 0);
+	EXPECT_THAT(pcBregexp->GetString(), StrEq(L""));
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(L".+"), IsTrue());
+	EXPECT_THAT(pcBregexp->Compile(L"^$"), IsTrue());
+
+	// オプションビットをすべて立てても失敗しない
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+", int(-1)), IsTrue());
+
+	// 構文エラーでコンパイルエラーを発生させる
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9"), IsFalse());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrNe(L""));
+
+	// 正規表現コンパイルを成功させる
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+"), IsTrue());
+
+	auto pattern = pcBregexp->GetPattern();
+	EXPECT_THAT(pattern, NotNull());
+	EXPECT_THAT(pcBregexp->GetPattern(), IsNull());
+
+	std::wstring msg(79, L'\0');
+	pattern = std::make_unique<CBregexp::CPattern>(*pcBregexp, nullptr, msg);
+
+	EXPECT_THAT(pattern->Match(L"test"), IsFalse());
+	EXPECT_THAT(pattern->Replace(L"test"), IsFalse());
+}
+
+TEST_F(CBregexpTest, test002)
+{
+	// ロード前は検索できない
+	EXPECT_THAT(pcBregexp->Match(L"test123あいう"), IsFalse());
+
+	// C/Migemo設定に値を入れる
+	::wcsncpy_s(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib, L"bregonig.dll", _TRUNCATE);
+
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// ロードされたら利用可能になる
+	EXPECT_THAT(pcBregexp->IsAvailable(), IsTrue());
+
 	// 正規表現コンパイルが成功する
 	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+"), IsTrue());
 
+	// マッチ実行前は0が返る
+	EXPECT_THAT(pcBregexp->GetMatchLen(), 0);
+
 	// 正規表現マッチが成功する
-	EXPECT_THAT(pcBregexp->Match(std::data(target), int(std::size(target))), IsTrue());
+	EXPECT_THAT(pcBregexp->Match(L"test123あいう"), IsTrue());
 	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
 
 	EXPECT_THAT(pcBregexp->GetIndex(), 4);
@@ -151,19 +215,38 @@ TEST_F(CBregexpTest, test001)
 
 	// マッチしないパターンの確認
 	EXPECT_THAT(pcBregexp->Match(L"a", 1), IsFalse());
+}
+
+TEST_F(CBregexpTest, test003)
+{
+	// ロード前は置換できない
+	EXPECT_THAT(pcBregexp->Replace(L"test123あいう"), IsFalse());
+
+	// C/Migemo設定に値を入れる
+	::wcsncpy_s(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib, GetIniFileName().replace_filename(L"bregonig.dll").c_str(), _TRUNCATE);
+
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// ロードされたら利用可能になる
+	EXPECT_THAT(pcBregexp->IsAvailable(), IsTrue());
 
 	// 正規表現コンパイルが成功する
 	EXPECT_THAT(pcBregexp->Compile(L"([0-9]+)", L"{$1d}"), IsTrue());
 
 	// 正規表現置換が成功する
-	EXPECT_THAT(pcBregexp->Replace(std::data(target), int(std::size(target))), IsTrue());
+	EXPECT_THAT(pcBregexp->Replace(L"test123あいう"), IsTrue());
 	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
 
 	// 置換結果を確認する
-	EXPECT_THAT(std::wstring_view(pcBregexp->GetString(), pcBregexp->GetStringLen()), StrEq(L"test{123d}あいう"));
+	constexpr auto& expected = L"test{123d}あいう";
+	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(expected));
+	EXPECT_THAT(pcBregexp->GetString(), StrEq(expected));
+	EXPECT_THAT(pcBregexp->GetStringLen(), std::size(expected) - 1);
 
 	// マッチしないパターンの確認
 	EXPECT_THAT(pcBregexp->Replace(L"a", 1), IsFalse());
+	EXPECT_THAT(pcBregexp->GetMatchLen(), 0);
 }
 
 struct CMigemoTest : public ::testing::Test {

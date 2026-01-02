@@ -8,6 +8,8 @@
 #include "StdAfx.h"
 #include "extmodule/CBregOnig.hpp"
 
+#include "env/DLLSHAREDATA.h"
+
 CBregOnig::CBregOnig() = default;
 
 CBregOnig::~CBregOnig() = default;
@@ -21,8 +23,23 @@ CBregOnig::~CBregOnig() = default;
 */
 LPCWSTR CBregOnig::GetDllNameImp(int index)
 {
-	UNREFERENCED_PARAMETER(index);
+	UNREFERENCED_PARAMETER(index); // ←CDllImplの再設計を推奨
 
+	const auto& szBregOnigDll = GetDllShareData().m_Common.m_sSearch.m_szRegexpLib;
+
+	if (std::filesystem::path dllPath{ szBregOnigDll }; !dllPath.empty()) {
+		// 相対パスはiniファイル基準に変換
+		if(dllPath.is_relative()) {
+			dllPath = GetIniFileName().parent_path() / dllPath;
+		}
+
+		// 指定されたパスが存在する場合はそれを使う
+		if (fexist(dllPath)) {
+			return szBregOnigDll;
+		}
+	}
+
+	// デフォルトのDLL名を返す
 	return L"bregonig.dll";
 }
 
