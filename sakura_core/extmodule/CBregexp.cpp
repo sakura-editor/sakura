@@ -33,10 +33,7 @@
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
 const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
 
-CBregexp::CBregexp()
-: m_pRegExp( nullptr )
-{
-}
+CBregexp::CBregexp() = default;
 
 CBregexp::~CBregexp() = default;
 
@@ -258,7 +255,6 @@ bool CBregexp::Compile(
 
 	//	前回のコンパイル情報を破棄
 	m_Pattern = nullptr;
-	m_pRegExp = nullptr;
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
@@ -274,18 +270,19 @@ bool CBregexp::Compile(
 	auto targetp = targetbegp + 0;
 	auto targetendp = targetbegp + std::size(m_tmpBuf) - 1;
 
+	BREGEXP* pRegExp = nullptr;
 	std::wstring msg(80, L'\0');
 
 	if (!optPattern1.has_value()) {
 		// 検索実行
-		BMatchExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, msg);
+		BMatchExW(pszNPattern, targetbegp, targetp, targetendp, &pRegExp, msg);
 	} else {
 		// 置換実行
-		BSubstExW(pszNPattern, targetbegp, targetp, targetendp, &m_pRegExp, msg);
+		BSubstExW(pszNPattern, targetbegp, targetp, targetendp, &pRegExp, msg);
 	}
 	delete [] szNPattern;
 
-	m_Pattern = std::make_unique<CPattern>(*this, m_pRegExp, msg);
+	m_Pattern = std::make_unique<CPattern>(*this, pRegExp, msg);
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照

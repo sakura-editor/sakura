@@ -142,6 +142,9 @@ public:
 		return Replace(std::wstring_view{ pszTarget, nLen }, nStart);
 	}
 
+	CPatternHolder GetPattern() {
+		return m_Pattern ? std::move(m_Pattern) : nullptr;
+	}
 	std::wstring_view GetMatchedString() const noexcept
 	{
 		return m_Pattern ? m_Pattern->matched() : L"";
@@ -224,7 +227,6 @@ private:
 
 	//	メンバ変数
 	CPatternHolder		m_Pattern = nullptr;	//!< コンパイル済みパターン
-	BREGEXP_W*			m_pRegExp;			//!< コンパイル構造体
 
 	// 静的メンバ変数
 	static const wchar_t	m_tmpBuf[2];	//!< ダミー文字列
