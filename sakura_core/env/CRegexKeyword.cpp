@@ -89,16 +89,7 @@ CRegexKeyword::CRegexKeyword(LPCWSTR regexp_dll )
 */
 CRegexKeyword::~CRegexKeyword()
 {
-	int	i;
-
 	MYDBGMSG("~CRegexKeyword")
-	//コンパイル済みのバッファを解放する。
-	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
-	{
-		if( m_sInfo[i].pBregexp && IsAvailable() )
-			BRegfree(m_sInfo[i].pBregexp);
-		m_sInfo[i].pBregexp = nullptr;
-	}
 
 	RegexKeyInit();
 
@@ -115,17 +106,15 @@ CRegexKeyword::~CRegexKeyword()
 */
 BOOL CRegexKeyword::RegexKeyInit( void )
 {
-	int	i;
-
 	MYDBGMSG("RegexKeyInit")
 	m_nTypeIndex = -1;
 	m_nTypeId = -1;
 	m_nCompiledMagicNumber = 1;
 	m_bUseRegexKeyword = false;
 	m_nRegexKeyCount = 0;
-	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
-	{
-		m_sInfo[i].pBregexp = nullptr;
+
+	for (int i = 0; i < MAX_REGEX_KEYWORD; ++i) {
+		m_sInfo[i].pPattern = nullptr;
 	}
 
 	return TRUE;
@@ -193,16 +182,13 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 BOOL CRegexKeyword::RegexKeyCompile( void )
 {
 	int	i;
-	static const wchar_t dummy[2] = L"\0";
 	const struct RegexKeywordInfo	*rp;
 
 	MYDBGMSG("RegexKeyCompile")
 	//コンパイル済みのバッファを解放する。
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		if( m_sInfo[i].pBregexp && IsAvailable() )
-			BRegfree(m_sInfo[i].pBregexp);
-		m_sInfo[i].pBregexp = nullptr;
+		m_sInfo[i].pPattern = nullptr;
 	}
 
 	//コンパイルパターンを内部変数に移す。
@@ -236,10 +222,10 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 
 		if( RegexKeyCheckSyntax( pKeyword ) != FALSE )
 		{
-			m_szMsg[0] = '\0';
-			BMatch(pKeyword, dummy, dummy+1, &m_sInfo[i].pBregexp, m_szMsg);
+			Compile(pKeyword);
+			m_sInfo[i].pPattern = GetPattern();
 
-			if( m_szMsg[0] == '\0' )	//エラーがないかチェックする
+			if (m_sInfo[i].pPattern)	//エラーがないかチェックする
 			{
 				//先頭以外は検索しなくてよい
 				if( wcsncmp_literal( pKeyword, RK_HEAD_STR1 ) == 0
@@ -363,7 +349,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 	{
 		const auto colorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 		auto &info = m_sInfo[i];
-		auto *pBregexp = info.pBregexp;
+		const auto &pPattern = info.pPattern;
 		if( info.nMatch != RK_NOMATCH )  /* この行にキーワードがないと分かっていない */
 		{
 			if( info.nOffset == nPos )  /* 以前検索した結果に一致する */
@@ -374,17 +360,14 @@ BOOL CRegexKeyword::RegexIsKeyword(
 			}
 
 			/* 以前の結果はもう古いので再検索する */
-			if( info.nOffset < nPos )
+			if( info.nOffset < nPos && pPattern )
 			{
 				const auto begp = cStr.GetPtr();			//!< 行頭位置
 				const auto endp = begp + cStr.GetLength();	//!< 行末位置
-				const auto startp = begp + nPos;			//!< 検索開始位置
-				int matched = BMatchExW(nullptr, begp, startp, endp, &pBregexp, m_szMsg);
-				if( 0 < matched
-					&& pBregexp->endp[0] - pBregexp->startp[0] > 0 )
+				if (pPattern->Match(std::wstring_view{ begp, endp}, nPos) && !pPattern->matched().empty())
 				{
-					info.nOffset = int(pBregexp->startp[0] - begp);
-					info.nLength = int(pBregexp->endp[0] - pBregexp->startp[0]);
+					info.nOffset = int(pPattern->starti());
+					info.nLength = int(pPattern->matched().length());
 					info.nMatch  = RK_MATCH;
 				
 					/* 指定の開始位置でマッチした */

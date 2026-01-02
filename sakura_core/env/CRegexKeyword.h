@@ -34,15 +34,19 @@ struct RegexKeywordInfo {
 //@@@ 2001.11.17 add end MIK
 
 //!	正規表現キーワード検索情報構造体
-typedef struct RegexInfo_t {
-	BREGEXP_W	*pBregexp;	//BREGEXP_W構造体
+struct RegexInfo_t {
+	using CPatternHolder = std::unique_ptr<CBregexp::CPattern>;
+
+	CPatternHolder pPattern = nullptr;	//コンパイル済みパターン
+
 	int    nStatus;		//状態(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
 	int    nMatch;		//このキーワードのマッチ状態(EMPTY,MATCH,NOMATCH)
 	int    nOffset;		//マッチした位置
 	int    nLength;		//マッチした長さ
 	int    nHead;		//先頭のみチェックするか？
 	int    nFlag;           //色指定のチェックが入っているか？ YES=RK_EMPTY, NO=RK_NOMATCH
-} REGEX_INFO;
+};
+using REGEX_INFO = RegexInfo_t;
 
 class CStringRef;
 
@@ -75,15 +79,14 @@ protected:
 
 public:
 	int				m_nTypeIndex = -1;			//!< 現在のタイプ設定番号
-	bool			m_bUseRegexKeyword;			//!< 正規表現キーワードを使用する・しない
+	bool			m_bUseRegexKeyword = false;	//!< 正規表現キーワードを使用する・しない
 
 private:
 	const STypeConfig*	m_pTypes = nullptr;		//!< タイプ設定へのポインタ(呼び出し側が持っているもの)
 	int				m_nTypeId = -1;				//!< タイプ設定ID
-	DWORD			m_nCompiledMagicNumber;		//!< コンパイル済みか？
+	DWORD			m_nCompiledMagicNumber = 1;	//!< コンパイル済みか？
 	int				m_nRegexKeyCount;			//!< 現在のキーワード数
 	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
-	wchar_t			m_szMsg[256];				//!< BREGEXP_Wからのメッセージを保持する
 };
 
 //@@@ 2001.11.17 add end MIK

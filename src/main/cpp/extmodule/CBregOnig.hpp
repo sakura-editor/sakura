@@ -13,8 +13,6 @@
 
 #include "bregonig/bregexp.h"
 
-using BREGEXP_W = BREGEXP;
-
 //!BREGONIG.DLLをラップしたもの。
 //2007.09.13 kobake 作成
 class CBregOnig : public CDllImp
@@ -31,17 +29,6 @@ protected:
 
 public:
 	// UNICODEインターフェースを提供する
-	[[deprecated("use BMatchExW instead.")]]
-	int BMatchW(LPCWSTR str, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
-	{
-		return BMatchExW(str, target, target, targetendp, rxp, msg);
-	}
-	[[deprecated("use BSubstExW instead.")]]
-	int BSubstW(LPCWSTR str, LPCWSTR target, LPCWSTR targetendp, BREGEXP** rxp, std::span<WCHAR> msg) const noexcept
-	{
-		return BSubstExW(str, target, target, targetendp, rxp, msg);
-	}
-
 	LPCWSTR BRegexpVersionW(void) const noexcept
 	{
 		return m_BRegexpVersion();
