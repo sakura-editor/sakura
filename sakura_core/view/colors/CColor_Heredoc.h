@@ -17,9 +17,9 @@ public:
 	CLayoutColorInfo* GetStrategyColorInfo() const override;
 	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; }
 	void SetStrategyColorInfo(const CLayoutColorInfo*) override;
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(std::wstring_view cStr, int nPos) override;
 	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool EndColor(std::wstring_view cStr, int nPos) override;
 private:
 	std::wstring	m_id;
 	LPCWSTR			m_pszId = nullptr;

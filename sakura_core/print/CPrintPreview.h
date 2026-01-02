@@ -28,7 +28,6 @@ class CDlgCancel;
 class CEditWnd;
 class CLayout;
 class CLayoutMgr;
-class CStringRef;
 
 class CPrintPreview {
 /* メンバ関数宣言 */
@@ -137,7 +136,7 @@ protected:
 
 	// 指定ロジック位置のCColorStrategyを取得
 	CColorStrategy* GetColorStrategy(
-		const CStringRef&	cStringLine,
+		std::wstring_view cStringLine,
 		int					iLogic,
 		CColorStrategy*		pStrategy,
 		bool&				bChange

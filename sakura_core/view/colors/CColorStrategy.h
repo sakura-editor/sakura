@@ -27,9 +27,8 @@ class CColor_SingleQuote;
 class CColor_DoubleQuote;
 class CColor_Heredoc;
 class CEditView;
-class CStringRef;
 
-bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
+bool _IsPosKeywordHead(std::wstring_view cStr, int nPos);
 
 //! 正規表現キーワードのEColorIndexType値を作る関数
 inline EColorIndexType ToColorIndexType_RegularExpression(const int nRegexColorIndex)
@@ -101,7 +100,7 @@ struct SColorStrategyInfo{
 	CColor3Setting		m_cIndex = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
 
 	//! 色の切り替え
-	bool CheckChangeColor(const CStringRef& cLineStr);
+	bool CheckChangeColor(std::wstring_view cLineStr);
 	void DoChangeColor(CColor3Setting *pcColor);
 
 	EColorIndexType GetCurrentColor()   const noexcept { return m_cIndex.eColorIndex; }
@@ -138,8 +137,8 @@ public:
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
 	virtual void InitStrategyStatus() = 0;
 	virtual void SetStrategyColorInfo(const CLayoutColorInfo* info = nullptr) { UNREFERENCED_PARAMETER(info); }
-	virtual bool BeginColor(const CStringRef& cStr, int nPos) { UNREFERENCED_PARAMETER(cStr); UNREFERENCED_PARAMETER(nPos); return false; }
-	virtual bool EndColor  (const CStringRef& cStr, int nPos) { UNREFERENCED_PARAMETER(cStr); UNREFERENCED_PARAMETER(nPos); return true; }
+	virtual bool BeginColor(std::wstring_view cStr, int nPos) { UNREFERENCED_PARAMETER(cStr); UNREFERENCED_PARAMETER(nPos); return false; }
+	virtual bool EndColor  (std::wstring_view cStr, int nPos) { UNREFERENCED_PARAMETER(cStr); UNREFERENCED_PARAMETER(nPos); return true; }
 	virtual bool Disp() const = 0;
 	//イベント
 	virtual void OnStartScanLogic(){}
@@ -193,7 +192,7 @@ public:
 	*/
 	//@@@ 2002.09.22 YAZAKI
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	void CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
+	void CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, std::wstring_view cLineStr );
 	bool IsSkipBeforeLayout();	// レイアウトが行頭からチェックしなくていいか判定
 
 	//設定変更
