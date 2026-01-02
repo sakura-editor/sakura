@@ -50,74 +50,63 @@ std::wstring CBregexp::_QuoteRegex(
 	const std::optional<std::wstring>& optPattern1	//!< 置換パターン(検索時はstd::nullopt)
 ) const
 {
-	auto szPattern = std::data(szPattern0);
-	auto szPattern2 = optPattern1.has_value() ? optPattern1.value().c_str() : nullptr;
-
-	LPCWSTR szAdd2 = L"";
-
-	static const wchar_t DELIMITER = WCODE::BREGEXP_DELIMITER;	//!< デリミタ
-	int nLen;									//!< szPatternの長さ
-	int nLen2;									//!< szPattern2 + szAdd2 の長さ
+	constexpr auto DELIMITER = WCODE::BREGEXP_DELIMITER;
+	constexpr auto OPT_SIZE = 15;	//	15：「s///option」が余裕ではいるように。
 
 	// 検索パターン作成
-	wchar_t *szNPattern;		//!< ライブラリ渡し用の検索パターン文字列
-	wchar_t *pPat;				//!< パターン文字列操作用のポインタ
+	std::wstring outPattern;		//!< ライブラリ渡し用の検索パターン文字列
 
-	nLen = (int)wcslen(szPattern);
-	if (szPattern2 == nullptr) {
+	if (!optPattern1.has_value()) {
 		// 検索(BMatch)時
-		szNPattern = new wchar_t[ nLen + 15 ];	//	15：「s///option」が余裕ではいるように。
-		pPat = szNPattern;
-		*pPat++ = L'm';
+		outPattern.reserve(szPattern0.size() + OPT_SIZE);
+		outPattern = L'm';
 	}
 	else {
 		// 置換(BSubst)時
-		nLen2 = int(wcslen(szPattern2) + wcslen(szAdd2));
-		szNPattern = new wchar_t[ nLen + nLen2 + 15 ];
-		pPat = szNPattern;
-		*pPat++ = L's';
+		outPattern.reserve(szPattern0.size() + OPT_SIZE + optPattern1->size());
+		outPattern = L's';
 	}
-	*pPat++ = DELIMITER;
-	while (*szPattern != L'\0') { *pPat++ = *szPattern++; }
-	*pPat++ = DELIMITER;
-	if (szPattern2 != nullptr) {
-		while (*szPattern2 != L'\0') { *pPat++ = *szPattern2++; }
-		while (*szAdd2 != L'\0') { *pPat++ = *szAdd2++; }
-		*pPat++ = DELIMITER;
+
+	outPattern += DELIMITER;
+
+	outPattern += std::data(szPattern0);
+
+	if (optPattern1.has_value()) {
+		outPattern += DELIMITER;
+		outPattern += std::data(*optPattern1);
 	}
-	*pPat++ = L'k';			// 漢字対応
-	*pPat++ = L'm';			// 複数行対応(但し、呼び出し側が複数行対応でない)
+
+	outPattern += DELIMITER;
+
+	outPattern += L'k';			// 漢字対応
+	outPattern += L'm';			// 複数行対応(但し、呼び出し側が複数行対応でない)
+
 	// 2006.01.22 かろと 論理逆なので bIgnoreCase -> optCaseSensitiveに変更
 	if( !(nOption & optCaseSensitive) ) {		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
-		*pPat++ = L'i';		// 大文字小文字を同一視(無視)する
+		outPattern += L'i';		// 大文字小文字を同一視(無視)する
 	}
 	// 2006.01.22 かろと 行単位置換のために、全域オプション追加
-	if( (nOption & optGlobal) ) {
-		*pPat++ = L'g';			// 全域(global)オプション、行単位の置換をする時に使用する
+	if (nOption & optGlobal) {
+		outPattern += L'g';			// 全域(global)オプション、行単位の置換をする時に使用する
 	}
-	if( (nOption & optExtend) ) {
-		*pPat++ = L'x';
+	if (nOption & optExtend) {
+		outPattern += L'x';
 	}
-	if( (nOption & optASCII ) ){
-		*pPat++ = L'a';
+	if (nOption & optASCII) {
+		outPattern += L'a';
 	}
-	if( (nOption & optUnicode ) ){
-		*pPat++ = L'u';
+	if (nOption & optUnicode) {
+		outPattern += L'u';
 	}
-	if( (nOption & optDefault ) ){
-		*pPat++ = L'd';
+	if (nOption & optDefault) {
+		outPattern += L'd';
 	}
-	if( (nOption & optLocale ) ){
-		*pPat++ = L'l';
+	if (nOption & optLocale) {
+		outPattern += L'l';
 	}
-	if( (nOption & optR ) ){
-		*pPat++ = L'R';
+	if (nOption & optR) {
+		outPattern += L'R';
 	}
-
-	*pPat = L'\0';
-
-	std::wstring outPattern(szNPattern);
-	delete[] szNPattern;
 
 	return outPattern;
 }
