@@ -118,18 +118,16 @@ public:
 	bool Compile(
 		const std::wstring& pattern0,
 		int nOption = 0,
-		const std::optional<std::wstring>& optPattern1 = std::nullopt,
-		bool bKakomi = false
+		const std::optional<std::wstring>& optPattern1 = std::nullopt
 	);
 
 	bool Compile(
 		const std::wstring& pattern0,
 		const std::wstring& pattern1,
-		int nOption = 0,
-		bool bKakomi = false
+		int nOption = 0
 	)
 	{
-		return Compile(pattern0, nOption, std::make_optional(pattern1), bKakomi);
+		return Compile(pattern0, nOption, std::make_optional(pattern1));
 	}
 
 	bool	Match(std::wstring_view target, size_t offset = 0) const noexcept;			//!< 検索を実行する

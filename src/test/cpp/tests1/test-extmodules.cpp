@@ -249,6 +249,21 @@ TEST_F(CBregexpTest, test003)
 	EXPECT_THAT(pcBregexp->GetMatchLen(), 0);
 }
 
+TEST_F(CBregexpTest, CheckRegexpSyntax001)
+{
+	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", nullptr, false), IsTrue());
+}
+
+TEST_F(CBregexpTest, CheckRegexpSyntax002)
+{
+	EXPECT_THAT(::CheckRegexpSyntax(L"m|([0-9]+)|", nullptr, false, -1, true), IsTrue());
+}
+
+TEST_F(CBregexpTest, CheckRegexpSyntax101)
+{
+	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", nullptr, false, -1, true), IsFalse());
+}
+
 struct CMigemoTest : public ::testing::Test {
 	using CShareDataHolder = std::unique_ptr<CShareData>;
 	using CMigemoHolder = std::unique_ptr<CMigemo>;

@@ -257,8 +257,7 @@ std::wstring CBregexp::_MakePattern(
 bool CBregexp::Compile(
 	const std::wstring& szPattern0,
 	int					nOption,
-	const std::optional<std::wstring>& optPattern1,
-	bool				bKakomi
+	const std::optional<std::wstring>& optPattern1
 )
 {
 	//	DLLが利用可能でないときはエラー終了
@@ -270,12 +269,7 @@ bool CBregexp::Compile(
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	std::wstring quotedRegexPattern;
-	if (bKakomi) {
-		quotedRegexPattern = szPattern0;
-	} else {
-		quotedRegexPattern = _MakePattern(szPattern0, nOption, optPattern1);
-	}
+	const auto quotedRegexPattern = _MakePattern(szPattern0, nOption, optPattern1);
 
 	auto targetbegp = LPWSTR(std::data(m_tmpBuf));
 	auto targetp = targetbegp + 0;
@@ -508,7 +502,17 @@ bool CheckRegexpSyntax(
 	if( nOption == -1 ){
 		nOption = CBregexp::optCaseSensitive;
 	}
-	if( !cRegexp.Compile( szPattern, nullptr, nOption, bKakomi ) ){	// 2002/2/1 hor追加
+	std::wstring pattern;
+	if (bKakomi) {
+		if (std::wcmatch m; std::regex_match(szPattern, m, std::wregex(LR"(^m(.)(.+)\1[kmigxaudlR]*$)"))) {
+			pattern = m[2];
+		} else {
+			return false;
+		}
+	} else {
+		pattern = szPattern;
+	}
+	if (!cRegexp.Compile(pattern, nOption)) {
 		if( bShowMessage ){
 			std::wstring message(LS(STR_REGEX_COMPILE_ERR_PREAMBLE));
 			message += cRegexp.GetLastMessage();
