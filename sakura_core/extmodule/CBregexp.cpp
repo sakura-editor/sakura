@@ -37,22 +37,24 @@ CBregexp::CBregexp() = default;
 
 CBregexp::~CBregexp() = default;
 
-/*! @brief ライブラリに渡すための検索・置換パターンを作成する
-**
-** @note szPattern2: == NULL:検索 != NULL:置換
-**
-** @retval ライブラリに渡す検索パターンへのポインタを返す
-** @note 返すポインタは、呼び出し側で delete すること
-** 
-** @date 2003.05.03 かろと 関数に切り出し
-*/
-wchar_t* CBregexp::MakePatternSub(
-	const wchar_t*	szPattern,	//!< 検索パターン
-	const wchar_t*	szPattern2,	//!< 置換パターン(NULLなら検索)
-	const wchar_t*	szAdd2,		//!< 置換パターンの後ろに付け加えるパターン($1など) 
-	int				nOption		//!< 検索オプション
-) 
+/*!
+ * @brief ライブラリに渡すための検索・置換パターンを作成する
+ *
+ * @retval ライブラリに渡す検索パターン文字列
+ * 
+ * @date 2003.05.03 かろと 関数に切り出し
+ */
+std::wstring CBregexp::_QuoteRegex(
+	std::wstring_view   szPattern0,					//!< 検索パターン
+	int					nOption,					//!< 検索オプション
+	const std::optional<std::wstring>& optPattern1	//!< 置換パターン(検索時はstd::nullopt)
+) const
 {
+	auto szPattern = std::data(szPattern0);
+	auto szPattern2 = optPattern1.has_value() ? optPattern1.value().c_str() : nullptr;
+
+	LPCWSTR szAdd2 = L"";
+
 	static const wchar_t DELIMITER = WCODE::BREGEXP_DELIMITER;	//!< デリミタ
 	int nLen;									//!< szPatternの長さ
 	int nLen2;									//!< szPattern2 + szAdd2 の長さ
@@ -113,7 +115,11 @@ wchar_t* CBregexp::MakePatternSub(
 	}
 
 	*pPat = L'\0';
-	return szNPattern;
+
+	std::wstring outPattern(szNPattern);
+	delete[] szNPattern;
+
+	return outPattern;
 }
 
 /*!
@@ -125,8 +131,14 @@ wchar_t* CBregexp::MakePatternSub(
 	正規表現DLLに与えられる文字列の末尾は文書末とはいえず、$ がマッチする必要はないだろう。
 	$ が行文字列末尾にマッチしないことは、一括置換での期待しない置換を防ぐために必要である。
 */
-wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption )
+std::wstring CBregexp::_MakePattern(
+	const std::wstring& szPattern0,
+	int					nOption,
+	const std::optional<std::wstring>& optReplace
+) const
 {
+	const auto szSearch = szPattern0.c_str();
+
 	static const wchar_t szDotAlternative[] = L"[^\\r\\n]";
 	static const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
 
@@ -228,7 +240,7 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	}
 	strModifiedSearch.append( left, right + 1 ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
 
-	return this->MakePatternSub( strModifiedSearch.data(), szReplace, L"", nOption );
+	return _QuoteRegex(strModifiedSearch, nOption, optReplace);
 }
 
 /*!
@@ -258,14 +270,13 @@ bool CBregexp::Compile(
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	wchar_t *szNPattern = nullptr;
-	const wchar_t *pszNPattern = nullptr;
-	if( bKakomi ){
-		pszNPattern = std::data(szPattern0);
-	}else{
-		szNPattern = MakePatternAlternate(std::data(szPattern0), optPattern1.has_value() ? std::data(optPattern1.value()) : nullptr, nOption );
-		pszNPattern = szNPattern;
+	std::wstring quotedRegexPattern;
+	if (bKakomi) {
+		quotedRegexPattern = szPattern0;
+	} else {
+		quotedRegexPattern = _MakePattern(szPattern0, nOption, optPattern1);
 	}
+
 	auto targetbegp = LPWSTR(std::data(m_tmpBuf));
 	auto targetp = targetbegp + 0;
 	auto targetendp = targetbegp + std::size(m_tmpBuf) - 1;
@@ -275,12 +286,11 @@ bool CBregexp::Compile(
 
 	if (!optPattern1.has_value()) {
 		// 検索実行
-		BMatchExW(pszNPattern, targetbegp, targetp, targetendp, &pRegExp, msg);
+		BMatchExW(quotedRegexPattern.c_str(), targetbegp, targetp, targetendp, &pRegExp, msg);
 	} else {
 		// 置換実行
-		BSubstExW(pszNPattern, targetbegp, targetp, targetendp, &pRegExp, msg);
+		BSubstExW(quotedRegexPattern.c_str(), targetbegp, targetp, targetendp, &pRegExp, msg);
 	}
-	delete [] szNPattern;
 
 	m_Pattern = std::make_unique<CPattern>(*this, pRegExp, msg);
 

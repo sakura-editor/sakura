@@ -222,8 +222,8 @@ private:
 	//	内部関数
 
 	//! 検索パターン作成
-	wchar_t* MakePatternSub( const wchar_t* szPattern, const wchar_t* szPattern2, const wchar_t* szAdd2, int nOption );
-	wchar_t* MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption );
+	std::wstring	_MakePattern(const std::wstring& szSearch, int nOption, const std::optional<std::wstring>& optReplace) const;
+	std::wstring	_QuoteRegex(std::wstring_view szPattern0, int nOption, const std::optional<std::wstring>& optPattern1 = std::nullopt) const;
 
 	//	メンバ変数
 	CPatternHolder		m_Pattern = nullptr;	//!< コンパイル済みパターン
