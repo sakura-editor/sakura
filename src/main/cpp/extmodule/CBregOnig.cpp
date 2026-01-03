@@ -10,9 +10,10 @@
 
 #include "env/DLLSHAREDATA.h"
 
-CBregOnig::CBregOnig() = default;
-
-CBregOnig::~CBregOnig() = default;
+/*!
+ * Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
+ */
+std::wstring_view CBregOnig::gm_DummyStr(L"\0", 1);
 
 /*!
 	@date 2001.07.05 genta 引数追加。ただし、ここでは使わない。
@@ -54,17 +55,96 @@ LPCWSTR CBregOnig::GetDllNameImp(int index)
 bool CBregOnig::InitDllImp()
 {
 	//DLL内関数名リスト
-	const ImportTable table[] = {
-		{ &m_BRegfree,			"BRegfreeW" },
-		{ &m_BRegexpVersion,	"BRegexpVersionW" },
-		{ &m_BMatchEx,			"BMatchExW" },
-		{ &m_BSubstEx,			"BSubstExW" },
-		{ nullptr, nullptr }
+	const std::array table = {
+		ImportTable{ &m_BMatchEx,			"BMatchExW" },
+		ImportTable{ &m_BSubstEx,			"BSubstExW" },
+		ImportTable{ &m_BRegexpVersion,		"BRegexpVersionW" },
+		ImportTable{ &m_BRegfree,			"BRegfreeW" },
+		ImportTable{ nullptr, nullptr }
 	};
-	
-	if( ! RegisterEntries( table )){
-		return false;
+	return RegisterEntries(std::data(table));
+}
+
+int CBregOnig::BMatchExW(BREGEXP** rxp, std::span<WCHAR> msg, std::wstring_view target, size_t offset, const std::optional<std::wstring>& optQuotedRegex) const noexcept
+{
+	auto targetbegp = std::data(target);
+	auto targetp = targetbegp + offset;
+	auto targetendp = targetbegp + std::size(target);
+	return m_BMatchEx(
+		// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+		LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
+		LPWSTR(targetbegp),
+		LPWSTR(targetp),
+		LPWSTR(targetendp),
+		rxp,
+		std::data(msg)
+	);
+}
+
+int CBregOnig::BSubstExW(BREGEXP** rxp, std::span<WCHAR> msg, std::wstring_view target, size_t offset, const std::optional<std::wstring>& optQuotedRegex) const noexcept
+{
+	auto targetbegp = std::data(target);
+	auto targetp = targetbegp + offset;
+	auto targetendp = targetbegp + std::size(target);
+	return m_BSubstEx(
+		// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+		LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
+		LPWSTR(targetbegp),
+		LPWSTR(targetp),
+		LPWSTR(targetendp),
+		rxp,
+		std::data(msg)
+	);
+}
+
+CBregOnig::CPattern::CPattern(
+	const CBregOnig& cDll,
+	BREGEXP* pRegExp,
+	const std::wstring& msg
+) noexcept
+	: m_cDll(cDll)
+	, m_pRegExp(pRegExp)
+	, m_Msg(msg)
+{
+}
+
+CBregOnig::CPattern::CPattern(Me&& other) noexcept
+	: m_cDll(other.m_cDll)
+	, m_Msg(other.m_Msg)
+{
+	std::swap(m_pRegExp, other.m_pRegExp);
+}
+
+CBregOnig::CPattern::~CPattern() noexcept
+{
+	if (m_pRegExp) {
+		m_cDll.BRegfreeW(m_pRegExp);
+		m_pRegExp = nullptr;
 	}
-	
-	return true;
+}
+
+bool CBregOnig::CPattern::Match(std::wstring_view target, size_t offset)
+{
+	if (m_pRegExp) {
+		m_Target = L"";		//!< 対象文字列クリア
+		m_Msg.clear();		//!< エラー解除
+		if (const auto matched = m_cDll.BMatchExW(&m_pRegExp, m_Msg, target, offset); 0 <= matched && !m_Msg[0]) {
+			m_Target = target;
+			return 0 < matched;
+		}
+	}
+	return false;
+}
+
+int CBregOnig::CPattern::Replace(std::wstring_view target, size_t offset)
+{
+	if (m_pRegExp) {
+		m_Target = L"";		//!< 対象文字列クリア
+		m_Msg.clear();		//!< エラー解除
+		if (const auto result = m_cDll.BSubstExW(&m_pRegExp, m_Msg, target, offset); 0 <= result && !m_Msg[0]) {
+			m_Target = target;
+			return result;
+		}
+	}
+	return 0;
 }

@@ -30,13 +30,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "apiwrap/StdControl.h"
 
-// Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
-const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
-
-CBregexp::CBregexp() = default;
-
-CBregexp::~CBregexp() = default;
-
 /*!
  * @brief ライブラリに渡すための検索・置換パターンを作成する
  *
@@ -297,19 +290,15 @@ bool CBregexp::Compile(
 	// 別関数で共通処理に変更 2003.05.03 by かろと
 	const auto quotedRegexPattern = _MakePattern(szPattern0, nOption, optPattern1);
 
-	auto targetbegp = LPWSTR(std::data(m_tmpBuf));
-	auto targetp = targetbegp + 0;
-	auto targetendp = targetbegp + std::size(m_tmpBuf) - 1;
-
 	BREGEXP* pRegExp = nullptr;
 	std::wstring msg(80, L'\0');
 
 	if (!optPattern1.has_value()) {
 		// 検索実行
-		BMatchExW(quotedRegexPattern.c_str(), targetbegp, targetp, targetendp, &pRegExp, msg);
+		BMatchExW(&pRegExp, msg, gm_DummyStr, 0, quotedRegexPattern);
 	} else {
 		// 置換実行
-		BSubstExW(quotedRegexPattern.c_str(), targetbegp, targetp, targetendp, &pRegExp, msg);
+		BSubstExW(&pRegExp, msg, gm_DummyStr, 0, quotedRegexPattern);
 	}
 
 	m_Pattern = std::make_unique<CPattern>(*this, pRegExp, msg);
@@ -346,34 +335,6 @@ bool CBregexp::Match(std::wstring_view target, size_t offset) const noexcept
 	return m_Pattern->Match(target, offset);
 }
 
-bool CBregexp::CPattern::Match(std::wstring_view target, size_t offset)
-{
-	// 構造体が未設定の時は即終了
-	if (!m_pRegExp) {
-		return false;
-	}
-
-	auto targetbegp = LPWSTR(std::data(target));
-	auto targetp = targetbegp + offset;
-	auto targetendp = targetbegp + std::size(target);
-
-	m_Msg.clear();		//!< エラー解除
-
-	//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-	const auto matched = m_cDll.BMatchExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_Msg);
-
-	m_Target = target;
-
-	if (matched < 0 || m_Msg[0]) {
-		// BMatchエラー
-		// エラー処理をしていなかったので、nStart>=lenのような場合に、マッチ扱いになり
-		// 無限置換等の不具合になっていた 2003.05.03 by かろと
-		return false;
-	}
-
-	return 0 < matched;
-}
-
 /*!
 	正規表現による文字列置換
 	既にあるコンパイル構造体を利用して置換（1行）を
@@ -402,40 +363,12 @@ int CBregexp::Replace(std::wstring_view target, size_t offset) const noexcept
 	// 置換に失敗するのはnLenが０に限らず nLen = nStart のとき（行頭マッチだけ対策しても．．．）
 	//
 	//if( nLen == 0 ) {
-	//	szTarget = m_tmpBuf;
+	//	szTarget = gm_DummyStr;
 	//	nLen = 1;
 	//}
 	//	To Here 2003.05.03 かろと
 
 	return m_Pattern->Replace(target, offset);
-}
-
-int CBregexp::CPattern::Replace(std::wstring_view target, size_t offset)
-{
-	// 構造体が未設定の時は即終了
-	if (!m_pRegExp) {
-		return false;
-	}
-
-	auto targetbegp = LPWSTR(std::data(target));
-	auto targetp = targetbegp + offset;
-	auto targetendp = targetbegp + std::size(target);
-
-	m_Msg.clear();		//!< エラー解除
-
-	// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-	const auto result = m_cDll.BSubstExW(nullptr, targetbegp, targetp, targetendp, &m_pRegExp, m_Msg);
-
-	m_Target = target;
-
-	//	メッセージが空文字列でなければ何らかのエラー発生。
-	//	サンプルソース参照
-	if (result < 0 || m_Msg[0]) {
-		// 置換するものがなかった、または、なんかエラー
-		return 0;
-	}
-
-	return result;
 }
 
 //	From Here Jun. 26, 2001 genta
@@ -551,21 +484,3 @@ bool CheckRegexpSyntax(
 }
 //	To Here Jun. 26, 2001 genta
 
-CBregexp::CPattern::CPattern(
-	const CBregOnig& cDll,
-	BREGEXP* pRegExp,
-	const std::wstring& msg
-) noexcept
-	: m_cDll(cDll)
-	, m_pRegExp(pRegExp)
-	, m_Msg(msg)
-{
-}
-
-CBregexp::CPattern::~CPattern() noexcept
-{
-	if (m_pRegExp) {
-		m_cDll.BRegfreeW(m_pRegExp);
-		m_pRegExp = nullptr;
-	}
-}

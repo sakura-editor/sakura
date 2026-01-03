@@ -179,10 +179,15 @@ TEST_F(CBregexpTest, test001)
 	EXPECT_THAT(pcBregexp->GetPattern(), IsNull());
 
 	std::wstring msg(79, L'\0');
-	pattern = std::make_unique<CBregexp::CPattern>(*pcBregexp, nullptr, msg);
+	pattern = std::make_unique<CBregOnig::CPattern>(*pcBregexp, nullptr, msg);
 
 	EXPECT_THAT(pattern->Match(L"test"), IsFalse());
 	EXPECT_THAT(pattern->Replace(L"test"), IsFalse());
+
+	auto cPattern = std::move(*pattern.release());
+
+	EXPECT_THAT(cPattern.Match(L"test"), IsFalse());
+	EXPECT_THAT(cPattern.Replace(L"test"), IsFalse());
 }
 
 TEST_F(CBregexpTest, test002)
@@ -215,6 +220,7 @@ TEST_F(CBregexpTest, test002)
 
 	// マッチしないパターンの確認
 	EXPECT_THAT(pcBregexp->Match(L"a", 1), IsFalse());
+	EXPECT_THAT(pcBregexp->GetMatchLen(), 0);
 }
 
 TEST_F(CBregexpTest, test003)

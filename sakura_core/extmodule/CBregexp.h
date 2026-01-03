@@ -51,9 +51,6 @@
 class CBregexp : public CBregOnig
 {
 public:
-	CBregexp();
-	~CBregexp() override;
-
 	// 2006.01.22 かろと オプション追加・名称変更
 	enum Option {
 		optNothing = 0,					//!< オプションなし
@@ -67,47 +64,8 @@ public:
 		optR = 0x80,					//!< CRLF(/R)
 	};
 
-	struct CPattern {
-		const CBregOnig&	m_cDll;						//!< BregOnigクラスへのポインタ
-		BREGEXP*			m_pRegExp = nullptr;		//!< コンパイル構造体
-		std::wstring_view	m_Target;					//!< 対象文字列へのポインタ
-		std::wstring		m_Msg{ 79, '\0' };			//!< bregonig.dllからのメッセージ
-
-		CPattern(
-			const CBregOnig& cDll,
-			BREGEXP* pRegExp,
-			const std::wstring& msg
-		) noexcept;
-		~CPattern() noexcept;
-
-		bool	Match(std::wstring_view target, size_t offset = 0);		//!< 検索を実行する
-		int		Replace(std::wstring_view target, size_t offset = 0);	//!< 置換を実行する
-
-		auto starti() const noexcept {
-			return m_pRegExp->startp ? *m_pRegExp->startp - std::data(m_Target) : 0;
-		}
-		auto endi() const noexcept {
-			return m_pRegExp->endp ? *m_pRegExp->endp - std::data(m_Target) : 0;
-		}
-		auto matched() const noexcept {
-			const auto start = starti();
-			const auto end = endi();
-			if (m_Target.empty() || m_Target.length() <= start || m_Target.length() <= end) {
-				return std::wstring_view{};
-			}
-			return m_Target.substr(start, end - start);
-		}
-		auto replaced() const noexcept {
-			if (!m_pRegExp->outp) {
-				return std::wstring_view{};
-			}
-			return std::wstring_view{ m_pRegExp->outp, m_pRegExp->outendp };
-		}
-	};
-	using CPatternHolder = std::unique_ptr<CPattern>;
-
 	//! DLLのバージョン情報を取得
-	const WCHAR* GetVersionW() noexcept { return IsAvailable() ? BRegexpVersion() : L""; }
+	LPCWSTR		GetVersionW() const noexcept { return IsAvailable() ? std::data(BRegexpVersionW()) : L""; }
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
@@ -225,9 +183,6 @@ private:
 
 	//	メンバ変数
 	CPatternHolder		m_Pattern = nullptr;	//!< コンパイル済みパターン
-
-	// 静的メンバ変数
-	static const wchar_t	m_tmpBuf[2];	//!< ダミー文字列
 };
 
 //	Jun. 26, 2001 genta
