@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2001, MIK
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -33,20 +33,35 @@ struct RegexKeywordInfo {
 };
 //@@@ 2001.11.17 add end MIK
 
+enum class ERkStatus {
+	RK_EMPTY   = 0,	//初期状態
+	RK_CLOSE   = 1,	//BREGEXPクローズ
+	RK_OPEN    = 2,	//BREGEXPオープン
+	RK_ACTIVE  = 3,	//コンパイル済み
+	RK_ERROR   = 9,	//コンパイルエラー
+};
+
+enum class ERkMStatus {
+	RK_EMPTY   = 0,	//初期状態
+	RK_MATCH   = 4,	//マッチする
+	RK_NOMATCH = 5,	//この行ではマッチしない
+};
+
 //!	正規表現キーワード検索情報構造体
 struct RegexInfo_t {
 	using CPatternHolder = std::unique_ptr<CBregexp::CPattern>;
 
 	CPatternHolder pPattern = nullptr;	//コンパイル済みパターン
 
-	int    nStatus;		//状態(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
-	int    nMatch;		//このキーワードのマッチ状態(EMPTY,MATCH,NOMATCH)
-	int    nOffset;		//マッチした位置
-	int    nLength;		//マッチした長さ
-	int    nHead;		//先頭のみチェックするか？
-	int    nFlag;           //色指定のチェックが入っているか？ YES=RK_EMPTY, NO=RK_NOMATCH
+	ERkStatus	nStatus;	//!< 状態(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
+	ERkMStatus	nMatch;		//!< このキーワードのマッチ状態(EMPTY,MATCH,NOMATCH)
+	int			nOffset;	//!< マッチした位置
+	int			nLength;	//!< マッチした長さ
+	int			nHead;		//!< 先頭のみチェックするか？
+	ERkMStatus	nFlag;		//!< 色指定のチェックが入っているか？ YES=RK_EMPTY, NO=RK_NOMATCH
 };
 using REGEX_INFO = RegexInfo_t;
+using REGEX_INFO_ARR = std::array<REGEX_INFO, MAX_REGEX_KEYWORD>;
 
 class CStringRef;
 
@@ -56,13 +71,13 @@ class CStringRef;
 */
 class CRegexKeyword : public CBregexp {
 public:
-	CRegexKeyword(LPCWSTR);
-	~CRegexKeyword();
+	explicit CRegexKeyword(const std::filesystem::path& bregonigPath);
+	~CRegexKeyword() override;
 
 	//! 行検索開始
 	BOOL RegexKeyLineStart( void );
 	//! 行検索
-	BOOL RegexIsKeyword( const CStringRef& cStr, int nPos, int *nMatchLen, int *nMatchColor );
+	BOOL RegexIsKeyword(std::wstring_view text, int nPos, int *nMatchLen, int *nMatchColor);
 	//! タイプ設定
 	BOOL RegexKeySetTypes( const STypeConfig *pTypesPtr );
 
@@ -86,7 +101,7 @@ private:
 	int				m_nTypeId = -1;				//!< タイプ設定ID
 	DWORD			m_nCompiledMagicNumber = 1;	//!< コンパイル済みか？
 	int				m_nRegexKeyCount;			//!< 現在のキーワード数
-	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
+	REGEX_INFO_ARR	m_sInfo{};					//!< キーワード一覧(BREGEXPコンパイル対象)
 };
 
 //@@@ 2001.11.17 add end MIK

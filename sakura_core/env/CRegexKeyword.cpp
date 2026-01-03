@@ -10,7 +10,7 @@
 /*
 	Copyright (C) 2001, MIK
 	Copyright (C) 2002, YAZAKI
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -37,34 +37,9 @@
 #define	MYDBGMSG(a)
 #endif
 
-/*
- * パラメータ宣言
- */
-#define RK_EMPTY          0      //初期状態
-#define RK_CLOSE          1      //BREGEXPクローズ
-#define RK_OPEN           2      //BREGEXPオープン
-#define RK_ACTIVE         3      //コンパイル済み
-#define RK_ERROR          9      //コンパイルエラー
-
-#define RK_MATCH          4      //マッチする
-#define RK_NOMATCH        5      //この行ではマッチしない
-
-#define RK_SIZE           100    //最大登録可能数
-
-//#define RK_HEAD_CHAR      '^'    //行先頭の正規表現
-#define RK_HEAD_STR1      L"/^"   //BREGEXP
-#define RK_HEAD_STR2      L"m#^"  //BREGEXP
-#define RK_HEAD_STR3      L"m/^"  //BREGEXP
-//#define RK_HEAD_STR4      "#^"   //BREGEXP
-
-#define RK_KAKOMI_1_START "/"
-#define RK_KAKOMI_1_END   "/k"
-#define RK_KAKOMI_2_START "m#"
-#define RK_KAKOMI_2_END   "#k"
-#define RK_KAKOMI_3_START "m/"
-#define RK_KAKOMI_3_END   "/k"
-//#define RK_KAKOMI_4_START "#"
-//#define RK_KAKOMI_4_END   "#k"
+constexpr auto& RK_HEAD_STR1 = L"/^";
+constexpr auto& RK_HEAD_STR2 = L"m#^";
+constexpr auto& RK_HEAD_STR3 = L"m/^";
 
 //!	コンストラクタ
 /*!	@brief コンストラクタ
@@ -74,9 +49,9 @@
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2007.08.12 genta 正規表現DLL指定のため引数追加
 */
-CRegexKeyword::CRegexKeyword(LPCWSTR regexp_dll )
+CRegexKeyword::CRegexKeyword(const std::filesystem::path& bregonigPath)
 {
-	InitDll( regexp_dll );	// 2007.08.12 genta 引数追加
+	InitDll(bregonigPath.c_str());	// 2007.08.12 genta 引数追加
 	MYDBGMSG("CRegexKeyword")
 
 	RegexKeyInit();
@@ -181,6 +156,8 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 */
 BOOL CRegexKeyword::RegexKeyCompile( void )
 {
+	using enum ERkMStatus;
+
 	int	i;
 	const struct RegexKeywordInfo	*rp;
 
@@ -294,8 +271,6 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 */
 BOOL CRegexKeyword::RegexKeyLineStart( void )
 {
-	int	i;
-
 	MYDBGMSG("RegexKeyLineStart")
 
 	//動作に必要なチェックをする。
@@ -305,12 +280,11 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 	}
 
 	//検索開始のためにオフセット情報等をクリアする。
-	for(i = 0; i < m_nRegexKeyCount; i++)
+	for(int i = 0; i < m_nRegexKeyCount; ++i)
 	{
 		m_sInfo[i].nOffset = -1;
-		//m_sInfo[i].nMatch  = RK_EMPTY;
 		m_sInfo[i].nMatch  = m_sInfo[i].nFlag;
-		m_sInfo[i].nStatus = RK_EMPTY;
+		m_sInfo[i].nStatus = ERkStatus::RK_EMPTY;
 	}
 
 	return TRUE;
@@ -327,14 +301,14 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 	@note RegexKeyLineStart関数によって初期化されていること。
 */
 BOOL CRegexKeyword::RegexIsKeyword(
-	const CStringRef&	cStr,		//!< [in] 検索対象文字列
-//	const wchar_t*		pLine,		//!< [in] １行のデータ
+	std::wstring_view	text,		//!< [in] 検索対象文字列
 	int					nPos,		//!< [in] 検索開始オフセット
-//	int					nLineLen,	//!< [in] １行の長さ
 	int*				nMatchLen,	//!< [out] マッチした長さ
 	int*				nMatchColor	//!< [out] マッチした色番号
 )
 {
+	using enum ERkMStatus;
+
 	MYDBGMSG("RegexIsKeyword")
 
 	//動作に必要なチェックをする。
@@ -349,50 +323,47 @@ BOOL CRegexKeyword::RegexIsKeyword(
 	{
 		const auto colorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 		auto &info = m_sInfo[i];
-		const auto &pPattern = info.pPattern;
-		if( info.nMatch != RK_NOMATCH )  /* この行にキーワードがないと分かっていない */
+		if (info.nMatch == RK_NOMATCH) { // この行にキーワードはない
+			continue;
+		}
+
+		if (info.nOffset == nPos)  /* 以前検索した結果に一致する */
 		{
-			if( info.nOffset == nPos )  /* 以前検索した結果に一致する */
-			{
-				*nMatchLen   = info.nLength;
-				*nMatchColor = colorIndex;
-				return TRUE;  /* マッチした */
-			}
+			*nMatchLen   = info.nLength;
+			*nMatchColor = colorIndex;
+			return TRUE;  /* マッチした */
+		}
 
-			/* 以前の結果はもう古いので再検索する */
-			if( info.nOffset < nPos && pPattern )
-			{
-				const auto begp = cStr.GetPtr();			//!< 行頭位置
-				const auto endp = begp + cStr.GetLength();	//!< 行末位置
-				if (pPattern->Match(std::wstring_view{ begp, endp}, nPos) && !pPattern->matched().empty())
-				{
-					info.nOffset = int(pPattern->starti());
-					info.nLength = int(pPattern->matched().length());
-					info.nMatch  = RK_MATCH;
+		assert(info.nOffset < nPos);
+
+		const auto &pPattern = info.pPattern;
+		if (!pPattern) {
+			continue;
+		}
+
+		/* 以前の結果はもう古いので再検索する */
+		if (!pPattern->Match(text, nPos) && !pPattern->matched().empty())
+		{
+			info.nMatch = RK_NOMATCH;	//この行にこのキーワードはない
+			break;
+		}
+
+		info.nOffset = int(pPattern->starti());
+		info.nLength = int(pPattern->matched().length());
+		info.nMatch  = RK_MATCH;
 				
-					/* 指定の開始位置でマッチした */
-					if( info.nOffset == nPos )
-					{
-						if( info.nHead != 1 || nPos == 0 )
-						{
-							*nMatchLen   = info.nLength;
-							*nMatchColor = colorIndex;
-							return TRUE;  /* マッチした */
-						}
-					}
+		/* 指定の開始位置でマッチした */
+		if (info.nOffset == nPos && (info.nHead != 1 || nPos == 0))
+		{
+			*nMatchLen   = info.nLength;
+			*nMatchColor = colorIndex;
+			return TRUE;  /* マッチした */
+		}
 
-					/* 行先頭を要求する正規表現では次回から無視する */
-					if( info.nHead == 1 )
-					{
-						info.nMatch = RK_NOMATCH;
-					}
-				}
-				else
-				{
-					/* この行にこのキーワードはない */
-					info.nMatch = RK_NOMATCH;
-				}
-			}
+		/* 行先頭を要求する正規表現では次回から無視する */
+		if (info.nHead == 1)
+		{
+			info.nMatch = RK_NOMATCH;
 		}
 	}  /* for */
 
