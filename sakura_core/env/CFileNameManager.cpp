@@ -110,9 +110,9 @@ LPCWSTR CFileNameManager::GetFilePathFormat( std::wstring_view strSrc, LPWSTR ps
 	while( it < strSrc.cend() && pDest + 1 < pEnd ){
 		if( strFrom.length() <= static_cast<size_t>(strSrc.cend() - it) && 0 == ::_wcsnicmp( &*it, strFrom.data(), strFrom.length() ) ){
 			if( strTo.length() < static_cast<size_t>(pEnd - pDest) ){
-				::wcsncpy_s( pDest, pEnd - pDest, strTo.data(), strTo.length() );
+				::wcsncpy_s( pDest, pEnd - pDest, std::data(strTo), strTo.length() );
 			}else{
-				::wcsncpy_s( pDest, pEnd - pDest, strTo.data(), _TRUNCATE );
+				::wcsncpy_s( pDest, pEnd - pDest, std::data(strTo), _TRUNCATE );
 				return pszDest;
 			}
 			pDest += ::wcsnlen( pDest, pEnd - pDest );

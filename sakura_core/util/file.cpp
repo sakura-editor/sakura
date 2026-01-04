@@ -25,6 +25,9 @@
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
 
+//! ファイル名に使えない文字(ADSを使えるように':'は除外する)
+static constexpr auto& g_InvalidChars = LR"(*?"<>|)";
+
 bool fexist(LPCWSTR pszPath)
 {
 	return _waccess(pszPath,0)!=-1;
@@ -38,20 +41,19 @@ bool fexist(const std::filesystem::path& path) noexcept
 
 /*!
  * パスがファイル名に使えない文字を含んでいるかチェックする
- * @param[in] strPath チェック対象のパス
+ * @param[in] path チェック対象のパス
  * @retval true  パスはファイル名に使えない文字を含んでいる
  * retuval false パスはファイル名に使えない文字を含んでいない
  */
-bool IsInvalidFilenameChars( const std::wstring_view& strPath )
+bool IsInvalidFilenameChars(const std::filesystem::path& path) noexcept
 {
-	// ファイル名に使えない文字(ADSを使えるように':'は除外する)
-	constexpr const wchar_t invalidFilenameChars[] = L"*?\"<>|";
-
 	// 文字列中のファイル名を抽出する
-	std::wstring_view strFilename = ::PathFindFileNameW( strPath.data() );
+	if (!path.has_filename()) {
+		return false;
+	}
 
 	// ファイル名に使えない文字が含まれる場合、trueを返す
-	return ::wcscspn( strFilename.data(), invalidFilenameChars ) < strFilename.length();
+	return path.filename().wstring().find_first_of(g_InvalidChars) != std::wstring::npos;
 }
 
 /*!	ファイル名の切り出し
@@ -618,24 +620,20 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 // しかし「\\?\C:\Program files\」の形式では?が3文字目にあるので除外
 // ストリーム名とのセパレータにはfilename.ext:streamの形式でコロンが使われる
 // コロンは除外文字に入っていない
-bool IsValidPathAvailableChar(std::wstring_view path)
+bool IsValidPathAvailableChar(const std::filesystem::path& path) noexcept
 {
 	if (path.empty()) {
 		// 空文字列セーフ
 		return true;
 	}
 	constexpr auto& dos_device_path = LR"(\\?\)";
-	constexpr auto len = std::size(dos_device_path) - 1;
+	std::wstring_view pathStr{ path.native() };
 	size_t pos = 0;
-	if (wcsncmp(path.data(), dos_device_path, len) == 0) {
-		pos = len;
+	if (pathStr.starts_with(dos_device_path)) {
+		pos = std::size(dos_device_path) - 1;
 	}
-	for (size_t i = pos; i < path.size(); ++i) {
-		if (!WCODE::IsValidFilenameChar(path[i])) {
-			return false;
-		}
-	}
-	return true;
+	// ファイル名に使えない文字が含まれない場合、trueを返す
+	return pathStr.find_first_of(g_InvalidChars, pos) == std::wstring::npos;
 }
 
 /**	ファイルの存在チェック
@@ -978,23 +976,20 @@ int FileMatchScore( const WCHAR *file1, const WCHAR *file2 );
 
 // フルパスからファイル名と拡張子（ファイル名の.以降）を分離する
 // @date 2014/06/15 moca_skr フォルダー名に.が含まれた場合、フォルダーが分離されたのを修正した対応で新規作成
-static void FileNameSepExt( std::wstring_view file, std::wstring& szFile, std::wstring& szExt )
+static void FileNameSepExt(const std::filesystem::path& path, std::wstring& outFile, std::wstring& outExt)
 {
-	const WCHAR* folderPos;
-	folderPos = ::wcsrchr(file.data(), L'\\');
-	if( folderPos ){
-		folderPos++;
-	}else{
-		folderPos = file.data();
-	}
-
-	if (const auto p = ::wcschr(folderPos, L'.'))
-	{
-		szFile.assign(folderPos, p - folderPos);
-		szExt.assign(p);
-	}else{
-		szFile.assign(folderPos);
-		szExt.clear();
+	if (path.has_filename()) {
+		if (path.has_extension()) {
+			outExt = path.extension();
+			outFile = path.filename();
+			outFile = outFile.substr(0, outFile.length() - outExt.length());
+		} else {
+			outExt.clear();
+			outFile = path.filename();
+		}
+	} else {
+		outFile.clear();
+		outExt.clear();
 	}
 }
 
@@ -1006,8 +1001,8 @@ int FileMatchScoreSepExt( std::wstring_view file1, std::wstring_view file2 )
 	std::wstring szFileExt2;
 	FileNameSepExt(file1, szFile1, szFileExt1);
 	FileNameSepExt(file2, szFile2, szFileExt2);
-	int score = FileMatchScore(szFile1.data(), szFile2.data());
-	score += FileMatchScore(szFileExt1.data(), szFileExt2.data());
+	int score = FileMatchScore(szFile1.c_str(), szFile2.c_str());
+	score += FileMatchScore(szFileExt1.c_str(), szFileExt2.c_str());
 	return score;
 }
 

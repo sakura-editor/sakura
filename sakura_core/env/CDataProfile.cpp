@@ -30,7 +30,7 @@ StringBufferW::StringBufferW(WCHAR* pData, size_t maxCount)
  */
 StringBufferW& StringBufferW::operator = (std::wstring_view rhs)
 {
-	::wcsncpy_s(pszData_, cchDataSize_, rhs.data(), _TRUNCATE);
+	::wcsncpy_s(pszData_, cchDataSize_, std::data(rhs), _TRUNCATE);
 
 	return *this;
 }
