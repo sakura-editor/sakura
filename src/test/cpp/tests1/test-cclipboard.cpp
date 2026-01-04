@@ -142,7 +142,7 @@ TEST(CClipboard, SetText1) {
 TEST(CClipboard, SetText2) {
 	constexpr std::wstring_view text = L"てすと";
 	MockCClipboard clipboard;
-	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(::GlobalAlloc);
 	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
 	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"MSDEVColumnSelect"), ByteValueInGlobalMemory(0)));
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), true, false, CF_UNICODETEXT));
@@ -153,7 +153,7 @@ TEST(CClipboard, SetText3) {
 	constexpr std::wstring_view text = L"てすと";
 	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
 	MockCClipboard clipboard;
-	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(::GlobalAlloc);
 	EXPECT_CALL(clipboard, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text)));
 	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"MSDEVLineSelect"), ByteValueInGlobalMemory(1)));
 	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"VisualStudioEditorOperationsLineCutCopyClipboardTag"), ByteValueInGlobalMemory(1)));
@@ -537,7 +537,7 @@ TEST(CClipboard, SetClipboardByFormat2) {
 // 終端モード0では文字列中の \0 をバイナリとして扱う（終端として認識しない）。
 TEST(CClipboard, SetClipboardByFormat3) {
 	MockCClipboard clipboard;
-	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(::GlobalAlloc);
 	EXPECT_CALL(clipboard, SetClipboardData(12345, BytesInGlobalMemory("\x00\x01\xfe\xff", 4)));
 	EXPECT_TRUE(clipboard.SetClipboardByFormat({L"\x00\x01\xfe\xff", 4}, L"12345", -1, 0));
 }
@@ -554,7 +554,7 @@ TEST(CClipboard, SetClipboardByFormat4) {
 // 終端モードの自動判定を要求する。期待されるモードは2（2バイトの0値で終端する）。
 TEST(CClipboard, SetClipboardByFormat5) {
 	MockCClipboard clipboard;
-	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(::GlobalAlloc));
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(::GlobalAlloc);
 	EXPECT_CALL(clipboard, SetClipboardData(12345, WideStringInGlobalMemory(L"テスト")));
 	EXPECT_TRUE(clipboard.SetClipboardByFormat({L"テスト", 3}, L"12345", 3, -1));
 }
@@ -642,7 +642,7 @@ TEST(CClipboard, GetClipboardByFormat5) {
 	CEol eol(EEolType::cr_and_lf);
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
-	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(Invoke(::GlobalLock));
+	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(::GlobalLock);
 	EXPECT_TRUE(clipboard.GetClipboardByFormat(buffer, L"12345", -1, 0, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"\x00\xff");
 }
@@ -659,7 +659,7 @@ TEST(CClipboard, GetClipboardByFormat6) {
 	CEol eol(EEolType::cr_and_lf);
 	ON_CALL(clipboard, IsClipboardFormatAvailable(12345)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(12345)).WillByDefault(Return(memory.Get()));
-	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(Invoke(::GlobalLock));
+	ON_CALL(clipboard, GlobalLock(_)).WillByDefault(::GlobalLock);
 	EXPECT_TRUE(clipboard.GetClipboardByFormat(buffer, L"12345", 3, 2, eol));
 	EXPECT_STREQ(buffer.GetStringPtr(), L"テスト");
 }
