@@ -25,6 +25,9 @@
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
 
+//! ファイル名に使えない文字(ADSを使えるように':'は除外する)
+static constexpr auto& g_InvalidChars = LR"(*?"<>|)";
+
 bool fexist(LPCWSTR pszPath)
 {
 	return _waccess(pszPath,0)!=-1;
@@ -38,20 +41,19 @@ bool fexist(const std::filesystem::path& path) noexcept
 
 /*!
  * パスがファイル名に使えない文字を含んでいるかチェックする
- * @param[in] strPath チェック対象のパス
+ * @param[in] path チェック対象のパス
  * @retval true  パスはファイル名に使えない文字を含んでいる
  * retuval false パスはファイル名に使えない文字を含んでいない
  */
-bool IsInvalidFilenameChars( const std::wstring_view& strPath )
+bool IsInvalidFilenameChars(const std::filesystem::path& path) noexcept
 {
-	// ファイル名に使えない文字(ADSを使えるように':'は除外する)
-	constexpr const wchar_t invalidFilenameChars[] = L"*?\"<>|";
-
 	// 文字列中のファイル名を抽出する
-	std::wstring_view strFilename = ::PathFindFileNameW( strPath.data() );
+	if (!path.has_filename()) {
+		return false;
+	}
 
 	// ファイル名に使えない文字が含まれる場合、trueを返す
-	return ::wcscspn( strFilename.data(), invalidFilenameChars ) < strFilename.length();
+	return path.filename().wstring().find_first_of(g_InvalidChars) != std::wstring::npos;
 }
 
 /*!	ファイル名の切り出し
