@@ -69,8 +69,8 @@ public:
 };
 
 std::filesystem::path GetProfileMgrFileName();
-std::filesystem::path GetProfileDirectory(const std::wstring& name);
+std::filesystem::path GetProfileDirectory(std::wstring_view name);
 
-[[nodiscard]] std::wstring GetProfileMgrFileName(const std::wstring_view& name);
+[[nodiscard]] std::wstring GetProfileMgrFileName(std::wstring_view name);
 
 #endif /* SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_ */

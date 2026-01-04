@@ -95,10 +95,10 @@ std::filesystem::path GetProfileMgrFileName()
 /*!
 	指定したプロファイルの設定保存先ディレクトリを取得する
  */
-std::filesystem::path GetProfileDirectory(const std::wstring& name)
+std::filesystem::path GetProfileDirectory(std::wstring_view name)
 {
 	auto privateIniDir = GetIniFileName().parent_path();
-	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+	if (const auto profileName = GetProfileName(); *profileName) {
 		privateIniDir = privateIniDir.parent_path();
 	}
 	return privateIniDir.append(name).append(L"a.txt").remove_filename();
@@ -108,9 +108,9 @@ std::filesystem::path GetProfileDirectory(const std::wstring& name)
 	既存コード互換用関数
 	指定したプロファイルの設定保存先ディレクトリを返す。
  */
-[[nodiscard]] std::wstring GetProfileMgrFileName(const std::wstring_view& name)
+[[nodiscard]] std::wstring GetProfileMgrFileName(std::wstring_view name)
 {
-	return GetProfileDirectory(name.data());
+	return GetProfileDirectory(name);
 }
 
 /*! ダイアログデータの設定 */
