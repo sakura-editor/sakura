@@ -464,6 +464,7 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
+  generate_bregonig
   generate_cmigemo
 )
 
