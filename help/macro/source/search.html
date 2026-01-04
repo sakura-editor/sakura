@@ -63,8 +63,8 @@ li
 <body topMargin="0" leftMargin="0" onload="getparent();">
 
 <div class="top">
-	<form name="funcSearch" style="text-align: center;" onKeyup="grep(this.pattern.value); return false;">関数名検索&nbsp;
-	<input type="text" name="pattern" />
+	<form name="funcSearch" style="text-align: center;">関数名検索&nbsp;
+	<input type="text" name="pattern" onKeyup="grep(this.value); return false;" />
 	</form>
 </div>
 
