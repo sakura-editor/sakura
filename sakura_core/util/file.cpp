@@ -620,24 +620,20 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 // しかし「\\?\C:\Program files\」の形式では?が3文字目にあるので除外
 // ストリーム名とのセパレータにはfilename.ext:streamの形式でコロンが使われる
 // コロンは除外文字に入っていない
-bool IsValidPathAvailableChar(std::wstring_view path)
+bool IsValidPathAvailableChar(const std::filesystem::path& path) noexcept
 {
 	if (path.empty()) {
 		// 空文字列セーフ
 		return true;
 	}
 	constexpr auto& dos_device_path = LR"(\\?\)";
-	constexpr auto len = std::size(dos_device_path) - 1;
+	std::wstring_view pathStr{ path.native() };
 	size_t pos = 0;
-	if (wcsncmp(path.data(), dos_device_path, len) == 0) {
-		pos = len;
+	if (pathStr.starts_with(dos_device_path)) {
+		pos = std::size(dos_device_path) - 1;
 	}
-	for (size_t i = pos; i < path.size(); ++i) {
-		if (!WCODE::IsValidFilenameChar(path[i])) {
-			return false;
-		}
-	}
-	return true;
+	// ファイル名に使えない文字が含まれない場合、trueを返す
+	return pathStr.find_first_of(g_InvalidChars, pos) == std::wstring::npos;
 }
 
 /**	ファイルの存在チェック
