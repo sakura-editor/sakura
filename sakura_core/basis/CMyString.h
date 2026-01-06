@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -27,13 +27,8 @@ public:
 	[[nodiscard]] bool IsValidPath() const{ return At(0)!=L'\0'; }
 	[[nodiscard]] std::wstring GetDirPath() const
 	{
-		WCHAR	szDirPath[_MAX_PATH];
-		WCHAR	szDrive[_MAX_DRIVE];
-		WCHAR	szDir[_MAX_DIR];
-		_wsplitpath( this->c_str(), szDrive, szDir, nullptr, nullptr );
-		wcscpy( szDirPath, szDrive);
-		wcscat( szDirPath, szDir );
-		return szDirPath;
+		std::filesystem::path path{ c_str() };
+		return path.remove_filename();
 	}
 
 	//拡張子を取得する
