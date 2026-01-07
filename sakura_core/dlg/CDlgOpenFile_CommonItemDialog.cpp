@@ -293,54 +293,42 @@ struct CDlgOpenFile_CommonItemDialog final
 	// IFileDialogEvents
 
 	HRESULT STDMETHODCALLTYPE OnFileOk(
-		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
-		UNREFERENCED_PARAMETER(pfd);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnFolderChanging(
-		/* [in] */ __RPC__in_opt IFileDialog *pfd,
-		/* [in] */ __RPC__in_opt IShellItem *psiFolder) override {
-		UNREFERENCED_PARAMETER(pfd);
-		UNREFERENCED_PARAMETER(psiFolder);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd,
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IShellItem *psiFolder) override {
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnFolderChange(
-		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
-		UNREFERENCED_PARAMETER(pfd);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnSelectionChange(
-		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
-		UNREFERENCED_PARAMETER(pfd);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnShareViolation(
-		/* [in] */ __RPC__in_opt IFileDialog *pfd,
-		/* [in] */ __RPC__in_opt IShellItem *psi,
-		/* [out] */ __RPC__out FDE_SHAREVIOLATION_RESPONSE *pResponse) override {
-		UNREFERENCED_PARAMETER(pResponse);
-		UNREFERENCED_PARAMETER(pfd);
-		UNREFERENCED_PARAMETER(psi);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd,
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IShellItem *psi,
+		/* [out] */ [[maybe_unused]] __RPC__out FDE_SHAREVIOLATION_RESPONSE *pResponse) override {
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnTypeChange(
-		/* [in] */ __RPC__in_opt IFileDialog *pfd) override {
-		UNREFERENCED_PARAMETER(pfd);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
 		return E_NOTIMPL;
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnOverwrite(
-		/* [in] */ __RPC__in_opt IFileDialog *pfd,
-		/* [in] */ __RPC__in_opt IShellItem *psi,
-		/* [out] */ __RPC__out FDE_OVERWRITE_RESPONSE *pResponse) override {
-		UNREFERENCED_PARAMETER(pResponse);
-		UNREFERENCED_PARAMETER(pfd);
-		UNREFERENCED_PARAMETER(psi);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd,
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IShellItem *psi,
+		/* [out] */ [[maybe_unused]] __RPC__out FDE_OVERWRITE_RESPONSE *pResponse) override {
 		return E_NOTIMPL;
 	}
 
@@ -352,10 +340,8 @@ struct CDlgOpenFile_CommonItemDialog final
 		/* [in] */ DWORD dwIDItem) override;
 		
 	HRESULT STDMETHODCALLTYPE OnButtonClicked(
-		/* [in] */ __RPC__in_opt IFileDialogCustomize *pfdc,
-		/* [in] */ DWORD dwIDCtl) override {
-		UNREFERENCED_PARAMETER(dwIDCtl);
-		UNREFERENCED_PARAMETER(pfdc);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialogCustomize *pfdc,
+		/* [in] */ [[maybe_unused]] DWORD dwIDCtl) override {
 		return E_NOTIMPL;
 	}
 	
@@ -365,10 +351,8 @@ struct CDlgOpenFile_CommonItemDialog final
 		/* [in] */ BOOL bChecked) override;
 	
 	HRESULT STDMETHODCALLTYPE OnControlActivating(
-		/* [in] */ __RPC__in_opt IFileDialogCustomize *pfdc,
-		/* [in] */ DWORD dwIDCtl) override {
-		UNREFERENCED_PARAMETER(dwIDCtl);
-		UNREFERENCED_PARAMETER(pfdc);
+		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialogCustomize *pfdc,
+		/* [in] */ [[maybe_unused]] DWORD dwIDCtl) override {
 		return E_NOTIMPL;
 	}
 };
@@ -835,11 +819,10 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg( SSaveInfo* pSaveInfo, bool b
 }
 
 HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
-	/* [in] */ __RPC__in_opt IFileDialogCustomize *pfdc,
+	/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialogCustomize *pfdc,
 	/* [in] */ DWORD dwIDCtl,
 	/* [in] */ DWORD dwIDItem)
 {
-	UNREFERENCED_PARAMETER(pfdc);
 	switch (dwIDCtl) {
 	case CtrlId::COMBO_CODE:
 		{
@@ -879,11 +862,10 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 }
 
 HRESULT CDlgOpenFile_CommonItemDialog::OnCheckButtonToggled(
-	/* [in] */ __RPC__in_opt IFileDialogCustomize *pfdc,
+	/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialogCustomize *pfdc,
 	/* [in] */ DWORD dwIDCtl,
 	/* [in] */ BOOL bChecked)
 {
-	UNREFERENCED_PARAMETER(pfdc);
 	switch (dwIDCtl) {
 	case CtrlId::CHECK_READONLY:
 		m_bViewMode = bChecked ? true : false;

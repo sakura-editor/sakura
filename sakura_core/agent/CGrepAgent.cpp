@@ -195,10 +195,8 @@ ECallbackResult CGrepAgent::OnBeforeClose()
 	return CALLBACK_CONTINUE;
 }
 
-void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
+void CGrepAgent::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 {
-	UNREFERENCED_PARAMETER(sSaveInfo);
-
 	// 名前を付けて保存から再ロードが除去された分の不足処理を追加（ANSI版との差異）	// 2009.08.12 ryoji
 	m_bGrepMode = false;	// grepウィンドウは通常ウィンドウ化
 	CAppMode::getInstance()->m_szGrepKey[0] = L'\0';

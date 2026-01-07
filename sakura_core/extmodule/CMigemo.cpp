@@ -82,10 +82,8 @@ bool CMigemo::DeinitDllImp(void)
 	return true;
 }
 
-LPCWSTR CMigemo::GetDllNameImp(int nIndex)
+LPCWSTR CMigemo::GetDllNameImp([[maybe_unused]] int nIndex)
 {
-	UNREFERENCED_PARAMETER(nIndex); // ←CDllImplの再設計を推奨
-
 	const auto& szMigemoDll = GetDllShareData().m_Common.m_sHelper.m_szMigemoDll;
 
 	if (std::filesystem::path dllPath{ szMigemoDll }; !dllPath.empty()) {

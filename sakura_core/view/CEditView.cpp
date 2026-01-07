@@ -1245,16 +1245,12 @@ bool CEditView::IsCurrentPositionURL(
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 VOID CEditView::OnTimer(
-	HWND hwnd,		// handle of window for timer messages
-	UINT uMsg,		// WM_TIMER message
-	UINT_PTR idEvent,	// timer identifier
-	DWORD dwTime 	// current system time
+	[[maybe_unused]] HWND hwnd,		// handle of window for timer messages
+	[[maybe_unused]] UINT uMsg,		// WM_TIMER message
+	[[maybe_unused]] UINT_PTR idEvent,	// timer identifier
+	[[maybe_unused]] DWORD dwTime 	// current system time
 	)
 {
-	UNREFERENCED_PARAMETER(dwTime);
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(idEvent);
-	UNREFERENCED_PARAMETER(uMsg);
 	POINT		po;
 	RECT		rc;
 
@@ -2607,10 +2603,8 @@ void CEditView::SetInsMode(bool mode)
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
+void CEditView::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 {
-	UNREFERENCED_PARAMETER(sLoadInfo);
-
 	if( nullptr == GetHwnd() ){
 		// MiniMap 非表示
 		return;
@@ -2646,10 +2640,8 @@ void CEditView::AddCurrentLineToHistory( void )
 }
 
 //	2001/06/18 Start by asa-o: 補完ウィンドウ用のキーワードヘルプ表示
-bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
+bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, [[maybe_unused]] LPRECT prcHokanWin)
 {
-	UNREFERENCED_PARAMETER(prcHokanWin);
-
 	CNativeW	cmemCurText;
 	RECT		rcTipWin,
 				rcDesktop;
@@ -2767,10 +2759,8 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 }
 
 /*! アンドゥバッファの処理 */
-void CEditView::SetUndoBuffer(bool bPaintLineNumber)
+void CEditView::SetUndoBuffer([[maybe_unused]] bool bPaintLineNumber)
 {
-	UNREFERENCED_PARAMETER(bPaintLineNumber);
-
 	if( nullptr != m_cCommander.GetOpeBlk() && m_cCommander.GetOpeBlk()->Release() == 0 ){
 		if( 0 < m_cCommander.GetOpeBlk()->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */

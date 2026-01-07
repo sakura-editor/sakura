@@ -1240,9 +1240,8 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	@date 2005.01.30 genta CShareData::Init()から分離．
 */
-void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
+void CShareData::InitPopupMenu([[maybe_unused]] DLLSHAREDATA* pShareData)
 {
-	UNREFERENCED_PARAMETER(pShareData);
 	/* カスタムメニュー 規定値 */
 	
 	CommonSetting_CustomMenu& rMenu = m_pShareData->m_Common.m_sCustomMenu;

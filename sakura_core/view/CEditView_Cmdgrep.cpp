@@ -30,17 +30,13 @@
 */
 void CEditView::TranslateCommand_grep(
 	EFunctionCode&	nCommand,
-	bool&			bRedraw,
+	[[maybe_unused]] bool&			bRedraw,
 	LPARAM&			lparam1,
-	LPARAM&			lparam2,
-	LPARAM&			lparam3,
-	LPARAM&			lparam4
+	[[maybe_unused]] LPARAM&			lparam2,
+	[[maybe_unused]] LPARAM&			lparam3,
+	[[maybe_unused]] LPARAM&			lparam4
 )
 {
-	UNREFERENCED_PARAMETER(bRedraw);
-	UNREFERENCED_PARAMETER(lparam2);
-	UNREFERENCED_PARAMETER(lparam3);
-	UNREFERENCED_PARAMETER(lparam4);
 	if( ! CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode )
 		return;
 

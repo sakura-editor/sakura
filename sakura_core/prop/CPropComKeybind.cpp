@@ -72,11 +72,8 @@ INT_PTR CALLBACK CPropKeybind::DlgProc_page(
 
 /* From Here Oct. 13, 2000 Studio CでMr.コーヒー氏に教わったやり方ですがうまくいってません */
 // ウィンドウプロシージャの中で・・・
-LRESULT CALLBACK CPropComKeybindWndProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK CPropComKeybindWndProc( [[maybe_unused]] HWND hwndDlg, UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwndDlg);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(wParam);
 	switch( uMsg ) {
 	// WM_CTLCOLORSTATIC メッセージに対して
 	case WM_CTLCOLORSTATIC:
@@ -437,9 +434,8 @@ void CPropKeybind::SetData( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 Keybind */
-int CPropKeybind::GetData( HWND hwndDlg )
+int CPropKeybind::GetData( [[maybe_unused]] HWND hwndDlg )
 {
-	UNREFERENCED_PARAMETER(hwndDlg);
 	return TRUE;
 }
 	

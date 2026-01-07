@@ -21,9 +21,8 @@
 //                        セーブ前後                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CMruListener::OnAfterSave(const SSaveInfo& sSaveInfo)
+void CMruListener::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 {
-	UNREFERENCED_PARAMETER(sSaveInfo);
 	_HoldBookmarks_And_AddToMRU();
 }
 
@@ -126,10 +125,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	}
 }
 
-void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
+void CMruListener::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 {
-	UNREFERENCED_PARAMETER(sLoadInfo);
-
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	CMRUFile		cMRU;

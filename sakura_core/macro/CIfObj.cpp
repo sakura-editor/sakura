@@ -51,9 +51,8 @@ public:
 	CIfObjTypeInfo(const CIfObj::CMethodInfoList& methods, std::wstring_view sName);
 
 	HRESULT STDMETHODCALLTYPE GetTypeAttr(
-					/* [out] */ TYPEATTR __RPC_FAR *__RPC_FAR *ppTypeAttr) override
+					/* [out] */ [[maybe_unused]] TYPEATTR __RPC_FAR *__RPC_FAR *ppTypeAttr) override
 	{
-		UNREFERENCED_PARAMETER(ppTypeAttr);
 #ifdef TEST
 		DEBUG_TRACE( L"GetTypeAttr\n" );
 #endif
@@ -62,9 +61,8 @@ public:
 	}
         
 	HRESULT STDMETHODCALLTYPE GetTypeComp(
-					/* [out] */ ITypeComp __RPC_FAR *__RPC_FAR *ppTComp) override
+					/* [out] */ [[maybe_unused]] ITypeComp __RPC_FAR *__RPC_FAR *ppTComp) override
 	{
-		UNREFERENCED_PARAMETER(ppTComp);
 #ifdef TEST
 		DEBUG_TRACE( L"GetTypeComp\n" );
 #endif
@@ -76,11 +74,9 @@ public:
 				/* [out] */ FUNCDESC __RPC_FAR *__RPC_FAR *ppFuncDesc) override;
 
 	/* [local] */ HRESULT STDMETHODCALLTYPE GetVarDesc(
-	    /* [in] */ UINT index,
-	    /* [out] */ VARDESC __RPC_FAR *__RPC_FAR *ppVarDesc) override
+	    /* [in] */ [[maybe_unused]] UINT index,
+	    /* [out] */ [[maybe_unused]] VARDESC __RPC_FAR *__RPC_FAR *ppVarDesc) override
 	{
-		UNREFERENCED_PARAMETER(index);
-		UNREFERENCED_PARAMETER(ppVarDesc);
 		return E_NOTIMPL;
 	}
 
@@ -91,50 +87,36 @@ public:
 	    /* [out] */ UINT __RPC_FAR *pcNames) override;
 
 	HRESULT STDMETHODCALLTYPE GetRefTypeOfImplType(
-	    /* [in] */ UINT index,
-	    /* [out] */ HREFTYPE __RPC_FAR *pRefType) override
+	    /* [in] */ [[maybe_unused]] UINT index,
+	    /* [out] */ [[maybe_unused]] HREFTYPE __RPC_FAR *pRefType) override
 	{
-		UNREFERENCED_PARAMETER(index);
-		UNREFERENCED_PARAMETER(pRefType);
 		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE GetImplTypeFlags(
-	    /* [in] */ UINT index,
-	    /* [out] */ INT __RPC_FAR *pImplTypeFlags) override
+	    /* [in] */ [[maybe_unused]] UINT index,
+	    /* [out] */ [[maybe_unused]] INT __RPC_FAR *pImplTypeFlags) override
 	{
-		UNREFERENCED_PARAMETER(index);
-		UNREFERENCED_PARAMETER(pImplTypeFlags);
 		return E_NOTIMPL;
 	}
 
 	/* [local] */ HRESULT STDMETHODCALLTYPE GetIDsOfNames(
-	    /* [size_is][in] */ LPOLESTR __RPC_FAR *rgszNames,
-	    /* [in] */ UINT cNames,
-	    /* [size_is][out] */ MEMBERID __RPC_FAR *pMemId) override
+	    /* [size_is][in] */ [[maybe_unused]] LPOLESTR __RPC_FAR *rgszNames,
+	    /* [in] */ [[maybe_unused]] UINT cNames,
+	    /* [size_is][out] */ [[maybe_unused]] MEMBERID __RPC_FAR *pMemId) override
 	{
-		UNREFERENCED_PARAMETER(rgszNames);
-		UNREFERENCED_PARAMETER(cNames);
-		UNREFERENCED_PARAMETER(pMemId);
 		return E_NOTIMPL;
 	}
 
 	/* [local] */ HRESULT STDMETHODCALLTYPE Invoke(
-	    /* [in] */ PVOID pvInstance,
-	    /* [in] */ MEMBERID memid,
-	    /* [in] */ WORD wFlags,
-	    /* [out][in] */ DISPPARAMS __RPC_FAR *pDispParams,
-	    /* [out] */ VARIANT __RPC_FAR *pVarResult,
-	    /* [out] */ EXCEPINFO __RPC_FAR *pExcepInfo,
-	    /* [out] */ UINT __RPC_FAR *puArgErr) override
+	    /* [in] */ [[maybe_unused]] PVOID pvInstance,
+	    /* [in] */ [[maybe_unused]] MEMBERID memid,
+	    /* [in] */ [[maybe_unused]] WORD wFlags,
+	    /* [out][in] */ [[maybe_unused]] DISPPARAMS __RPC_FAR *pDispParams,
+	    /* [out] */ [[maybe_unused]] VARIANT __RPC_FAR *pVarResult,
+	    /* [out] */ [[maybe_unused]] EXCEPINFO __RPC_FAR *pExcepInfo,
+	    /* [out] */ [[maybe_unused]] UINT __RPC_FAR *puArgErr) override
 	{
-		UNREFERENCED_PARAMETER(pvInstance);
-		UNREFERENCED_PARAMETER(memid);
-		UNREFERENCED_PARAMETER(wFlags);
-		UNREFERENCED_PARAMETER(pDispParams);
-		UNREFERENCED_PARAMETER(pVarResult);
-		UNREFERENCED_PARAMETER(pExcepInfo);
-		UNREFERENCED_PARAMETER(puArgErr);
 		return E_NOTIMPL;
 	}
 
@@ -172,85 +154,65 @@ public:
 	}
 
 	/* [local] */ HRESULT STDMETHODCALLTYPE GetDllEntry(
-	    /* [in] */ MEMBERID memid,
-	    /* [in] */ INVOKEKIND invKind,
-	    /* [out] */ BSTR __RPC_FAR *pBstrDllName,
-	    /* [out] */ BSTR __RPC_FAR *pBstrName,
-	    /* [out] */ WORD __RPC_FAR *pwOrdinal) override
+	    /* [in] */ [[maybe_unused]] MEMBERID memid,
+	    /* [in] */ [[maybe_unused]] INVOKEKIND invKind,
+	    /* [out] */ [[maybe_unused]] BSTR __RPC_FAR *pBstrDllName,
+	    /* [out] */ [[maybe_unused]] BSTR __RPC_FAR *pBstrName,
+	    /* [out] */ [[maybe_unused]] WORD __RPC_FAR *pwOrdinal) override
 	{
-		UNREFERENCED_PARAMETER(memid);
-		UNREFERENCED_PARAMETER(invKind);
-		UNREFERENCED_PARAMETER(pBstrDllName);
-		UNREFERENCED_PARAMETER(pBstrName);
-		UNREFERENCED_PARAMETER(pwOrdinal);
 		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE GetRefTypeInfo(
-	    /* [in] */ HREFTYPE hRefType,
-	    /* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo) override
+	    /* [in] */ [[maybe_unused]] HREFTYPE hRefType,
+	    /* [out] */ [[maybe_unused]] ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo) override
 	{
-		UNREFERENCED_PARAMETER(hRefType);
-		UNREFERENCED_PARAMETER(ppTInfo);
 		return E_NOTIMPL;
 	}
 
 	/* [local] */ HRESULT STDMETHODCALLTYPE AddressOfMember(
-	    /* [in] */ MEMBERID memid,
-	    /* [in] */ INVOKEKIND invKind,
-	    /* [out] */ PVOID __RPC_FAR *ppv) override
+	    /* [in] */ [[maybe_unused]] MEMBERID memid,
+	    /* [in] */ [[maybe_unused]] INVOKEKIND invKind,
+	    /* [out] */ [[maybe_unused]] PVOID __RPC_FAR *ppv) override
 	{
-		UNREFERENCED_PARAMETER(memid);
-		UNREFERENCED_PARAMETER(invKind);
-		UNREFERENCED_PARAMETER(ppv);
 		return E_NOTIMPL;
 	}
 
 	/* [local] */ HRESULT STDMETHODCALLTYPE CreateInstance(
-	    /* [in] */ IUnknown __RPC_FAR *pUnkOuter,
-	    /* [in] */ REFIID riid,
-	    /* [iid_is][out] */ PVOID __RPC_FAR *ppvObj) override
+	    /* [in] */ [[maybe_unused]] IUnknown __RPC_FAR *pUnkOuter,
+	    /* [in] */ [[maybe_unused]] REFIID riid,
+	    /* [iid_is][out] */ [[maybe_unused]] PVOID __RPC_FAR *ppvObj) override
 	{
-		UNREFERENCED_PARAMETER(pUnkOuter);
-		UNREFERENCED_PARAMETER(riid);
-		UNREFERENCED_PARAMETER(ppvObj);
 		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE GetMops(
-	    /* [in] */ MEMBERID memid,
-	    /* [out] */ BSTR __RPC_FAR *pBstrMops) override
+	    /* [in] */ [[maybe_unused]] MEMBERID memid,
+	    /* [out] */ [[maybe_unused]] BSTR __RPC_FAR *pBstrMops) override
 	{
-		UNREFERENCED_PARAMETER(memid);
-		UNREFERENCED_PARAMETER(pBstrMops);
 		return E_NOTIMPL;
 	}
 
 	/* [local] */ HRESULT STDMETHODCALLTYPE GetContainingTypeLib(
-	    /* [out] */ ITypeLib __RPC_FAR *__RPC_FAR *ppTLib,
-	    /* [out] */ UINT __RPC_FAR *pIndex) override
+	    /* [out] */ [[maybe_unused]] ITypeLib __RPC_FAR *__RPC_FAR *ppTLib,
+	    /* [out] */ [[maybe_unused]] UINT __RPC_FAR *pIndex) override
 	{
-		UNREFERENCED_PARAMETER(ppTLib);
-		UNREFERENCED_PARAMETER(pIndex);
 		return E_NOTIMPL;
 	}
 
 	/* [local] */ void STDMETHODCALLTYPE ReleaseTypeAttr(
-					/* [in] */ TYPEATTR __RPC_FAR *pTypeAttr) override
+					/* [in] */ [[maybe_unused]] TYPEATTR __RPC_FAR *pTypeAttr) override
 	{
-		UNREFERENCED_PARAMETER(pTypeAttr);
 	}
 
 	/* [local] */ void STDMETHODCALLTYPE ReleaseFuncDesc(
-					/* [in] */ FUNCDESC __RPC_FAR *pFuncDesc) override
+					/* [in] */ [[maybe_unused]] FUNCDESC __RPC_FAR *pFuncDesc) override
 	{
-		UNREFERENCED_PARAMETER(pFuncDesc);
 	}
 
 	/* [local] */ void STDMETHODCALLTYPE ReleaseVarDesc(
-				/* [in] */ VARDESC __RPC_FAR *pVarDesc) override
+				/* [in] */ [[maybe_unused]] VARDESC __RPC_FAR *pVarDesc) override
 	{
-		UNREFERENCED_PARAMETER(pVarDesc);
 	}
 };
 
@@ -304,19 +266,14 @@ CIfObj::~CIfObj() = default;
 //IDispatch実装
 HRESULT STDMETHODCALLTYPE CIfObj::Invoke(
 				DISPID dispidMember,
-				REFIID riid,
-				LCID lcid,
-				WORD wFlags,
+				[[maybe_unused]] REFIID riid,
+				[[maybe_unused]] LCID lcid,
+				[[maybe_unused]] WORD wFlags,
 				DISPPARAMS FAR* pdispparams,
 				VARIANT FAR* pvarResult,
-				EXCEPINFO FAR* pexcepinfo,
-				UINT FAR* puArgErr)
+				[[maybe_unused]] EXCEPINFO FAR* pexcepinfo,
+				[[maybe_unused]] UINT FAR* puArgErr)
 {
-	UNREFERENCED_PARAMETER(lcid);
-	UNREFERENCED_PARAMETER(pexcepinfo);
-	UNREFERENCED_PARAMETER(puArgErr);
-	UNREFERENCED_PARAMETER(riid);
-	UNREFERENCED_PARAMETER(wFlags);
 	if((unsigned)dispidMember < m_Methods.size())
 		return (this->* (m_Methods[dispidMember].Method))( m_Methods[dispidMember].ID, pdispparams, pvarResult, m_Owner->GetData() );
 	else
@@ -324,13 +281,10 @@ HRESULT STDMETHODCALLTYPE CIfObj::Invoke(
 }
 
 HRESULT STDMETHODCALLTYPE CIfObj::GetTypeInfo( 
-				/* [in] */ UINT iTInfo,
-				/* [in] */ LCID lcid,
+				/* [in] */ [[maybe_unused]] UINT iTInfo,
+				/* [in] */ [[maybe_unused]] LCID lcid,
 				/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo)
 {
-	UNREFERENCED_PARAMETER(iTInfo);
-	UNREFERENCED_PARAMETER(lcid);
-
 	if (!m_TypeInfo) {
 		m_TypeInfo = CIfObjTypeInfo::make_instance(m_Methods, m_sName);
 	}
@@ -351,14 +305,12 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetTypeInfoCount(
 #pragma argsused
 #endif
 HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
-  REFIID riid,
+  [[maybe_unused]] REFIID riid,
   OLECHAR FAR* FAR* rgszNames,
   UINT cNames,
-  LCID lcid,
+  [[maybe_unused]] LCID lcid,
   DISPID FAR* rgdispid)
 {
-	UNREFERENCED_PARAMETER(lcid);
-	UNREFERENCED_PARAMETER(riid);
 	for(unsigned i = 0; i < cNames; ++i)
 	{
 #ifdef TEST

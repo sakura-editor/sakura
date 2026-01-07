@@ -166,9 +166,8 @@ STDMETHODIMP CDropSource::QueryContinueDrag( BOOL bEscapePressed, DWORD dwKeySta
 	return S_OK;
 }
 
-STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
+STDMETHODIMP CDropSource::GiveFeedback( [[maybe_unused]] DWORD dropEffect )
 {
-	UNREFERENCED_PARAMETER(dropEffect);
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }
 
@@ -422,8 +421,7 @@ STDMETHODIMP CEnumFORMATETC::Reset(void)
 /** IEnumFORMATETC::Clone
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Clone(IEnumFORMATETC** ppenum)
+STDMETHODIMP CEnumFORMATETC::Clone([[maybe_unused]] IEnumFORMATETC** ppenum)
 {
-	UNREFERENCED_PARAMETER(ppenum);
 	return E_NOTIMPL;
 }

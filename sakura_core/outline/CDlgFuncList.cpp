@@ -887,9 +887,8 @@ int CDlgFuncList::GetData( void )
 	@date 2002.01.04 genta C++ツリーを統合
 	@date 2020.09.12 選択処理をGetFuncInfoIndex,SetItemSelectionへ移動
 */
-void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass )
+void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass )
 {
-	UNREFERENCED_PARAMETER(hwndDlg);
 	int				i;
 	const CFuncInfo*	pcFuncInfo;
 	HWND			hwndTree;
@@ -2233,9 +2232,8 @@ BOOL CDlgFuncList::OnMinMaxInfo( LPARAM lParam )
 	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*2;
 	return 0;
 }
-static inline int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+static inline int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, [[maybe_unused]] LPARAM lParamSort)
 {
-	UNREFERENCED_PARAMETER(lParamSort);
 	if( lParam1< lParam2 )
 		return -1;
 	if( lParam1 > lParam2 )
@@ -2740,11 +2738,8 @@ int CDlgFuncList::HitTestCaptionButton( int xPos, int yPos )
 /** WM_NCCALCSIZE 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnNcCalcSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgFuncList::OnNcCalcSize( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -2766,11 +2761,8 @@ INT_PTR CDlgFuncList::OnNcCalcSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 /** WM_NCHITTEST 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnNcHitTest( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgFuncList::OnNcHitTest( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -2800,10 +2792,8 @@ INT_PTR CDlgFuncList::OnNcHitTest( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /** WM_TIMER 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-BOOL CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+BOOL CDlgFuncList::OnTimer( HWND hwnd, [[maybe_unused]] UINT uMsg, WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(uMsg);
 	if( wParam == 2 ){
 		CEditView* pcView = reinterpret_cast<CEditView*>(m_lParam);
 		if( m_pszTimerJumpFile ){
@@ -2859,10 +2849,8 @@ BOOL CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 /** WM_NCMOUSEMOVE 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -2913,11 +2901,8 @@ INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 /** WM_MOUSEMOVE 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgFuncList::OnMouseMove( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -3004,10 +2989,8 @@ INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /** WM_NCLBUTTONDOWN 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgFuncList::OnNcLButtonDown( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(uMsg);
 	POINT pt;
 	pt.x = MAKEPOINTS(lParam).x;
 	pt.y = MAKEPOINTS(lParam).y;
@@ -3056,11 +3039,8 @@ INT_PTR CDlgFuncList::OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 /** WM_LBUTTONUP 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgFuncList::OnLButtonUp( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -3102,11 +3082,8 @@ INT_PTR CDlgFuncList::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /** WM_NCPAINT 処理
 	@date 2010.06.05 ryoji 新規作成
 */
-INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	if( !IsDocking() )
 		return 0L;
 
@@ -4116,10 +4093,8 @@ void CDlgFuncList::SetItemSelectionForListView( HWND hwndList, int nFuncInfoInde
 	@retval		true		該当あり
 	@retval		false		該当なし(出力引数には何も設定せず)
 */
-bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pnIndexOut )
+bool CDlgFuncList::GetFuncInfoIndex( [[maybe_unused]] CLayoutInt nCurLine, [[maybe_unused]] CLayoutInt nCurCol, int* pnIndexOut )
 {
-	UNREFERENCED_PARAMETER(nCurCol);
-	UNREFERENCED_PARAMETER(nCurLine);
 	const CFuncInfo* pcFuncInfo = nullptr;
 	CLayoutInt nFuncLineOld(-1);
 	CLayoutInt nFuncColOld(-1);

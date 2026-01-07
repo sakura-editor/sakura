@@ -94,9 +94,8 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_KeywordSet::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_KeywordSet::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
 {
-	UNREFERENCED_PARAMETER(cStr);
 	return nPos == this->m_nCOMMENTEND;
 }
 

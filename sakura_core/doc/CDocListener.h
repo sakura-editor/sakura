@@ -159,21 +159,21 @@ public:
 
 	// -- -- 各種イベント -- -- //
 	//ロード前後
-	virtual ECallbackResult	OnCheckLoad	(SLoadInfo* pLoadInfo)		 { UNREFERENCED_PARAMETER(pLoadInfo); return CALLBACK_CONTINUE; }	//!< 本当にロードを行うかの判定を行う
-	virtual void			OnBeforeLoad(SLoadInfo* sLoadInfo)       { UNREFERENCED_PARAMETER(sLoadInfo); return ; }					//!< ロード事前処理
-	virtual ELoadResult		OnLoad		(const SLoadInfo& sLoadInfo) { UNREFERENCED_PARAMETER(sLoadInfo); return LOADED_NOIMPLEMENT; }	//!< ロード処理
-	virtual void			OnLoading	(int nPer)					 { UNREFERENCED_PARAMETER(nPer); return ; }							//!< ロード処理の経過情報を受信
-	virtual void			OnAfterLoad	(const SLoadInfo& sLoadInfo) { UNREFERENCED_PARAMETER(sLoadInfo); return ; }					//!< ロード事後処理
-	virtual void			OnFinalLoad	(ELoadResult eLoadResult)	 { UNREFERENCED_PARAMETER(eLoadResult); return ; }					//!< ロードフローの最後に必ず呼ばれる
+	virtual ECallbackResult	OnCheckLoad	([[maybe_unused]] SLoadInfo* pLoadInfo)		 { return CALLBACK_CONTINUE; }	//!< 本当にロードを行うかの判定を行う
+	virtual void			OnBeforeLoad([[maybe_unused]] SLoadInfo* sLoadInfo)       { return ; }					//!< ロード事前処理
+	virtual ELoadResult		OnLoad		([[maybe_unused]] const SLoadInfo& sLoadInfo) { return LOADED_NOIMPLEMENT; }	//!< ロード処理
+	virtual void			OnLoading	([[maybe_unused]] int nPer)					 { return ; }							//!< ロード処理の経過情報を受信
+	virtual void			OnAfterLoad	([[maybe_unused]] const SLoadInfo& sLoadInfo) { return ; }					//!< ロード事後処理
+	virtual void			OnFinalLoad	([[maybe_unused]] ELoadResult eLoadResult)	 { return ; }					//!< ロードフローの最後に必ず呼ばれる
 
 	//セーブ前後
-	virtual ECallbackResult OnCheckSave	(SSaveInfo* pSaveInfo)		 { UNREFERENCED_PARAMETER(pSaveInfo); return CALLBACK_CONTINUE; }	//!< 本当にセーブを行うかの判定を行う
-	virtual ECallbackResult OnPreBeforeSave	(SSaveInfo* pSaveInfo)	 { UNREFERENCED_PARAMETER(pSaveInfo); return CALLBACK_CONTINUE; }	//!< セーブ事前おまけ処理 ($$ 仮)
-	virtual void			OnBeforeSave(const SSaveInfo& sSaveInfo) { UNREFERENCED_PARAMETER(sSaveInfo); return ; }					//!< セーブ事前処理
-	virtual void			OnSave		(const SSaveInfo& sSaveInfo) { UNREFERENCED_PARAMETER(sSaveInfo); return ; }					//!< セーブ処理
-	virtual void			OnSaving	(int nPer)					 { UNREFERENCED_PARAMETER(nPer); return ; }							//!< セーブ処理の経過情報を受信
-	virtual void			OnAfterSave	(const SSaveInfo& sSaveInfo) { UNREFERENCED_PARAMETER(sSaveInfo); return ; }					//!< セーブ事後処理
-	virtual void			OnFinalSave	(ESaveResult eSaveResult)	 { UNREFERENCED_PARAMETER(eSaveResult); return ; }					//!< セーブフローの最後に必ず呼ばれる
+	virtual ECallbackResult OnCheckSave	([[maybe_unused]] SSaveInfo* pSaveInfo)		 { return CALLBACK_CONTINUE; }	//!< 本当にセーブを行うかの判定を行う
+	virtual ECallbackResult OnPreBeforeSave	([[maybe_unused]] SSaveInfo* pSaveInfo)	 { return CALLBACK_CONTINUE; }	//!< セーブ事前おまけ処理 ($$ 仮)
+	virtual void			OnBeforeSave([[maybe_unused]] const SSaveInfo& sSaveInfo) { return ; }					//!< セーブ事前処理
+	virtual void			OnSave		([[maybe_unused]] const SSaveInfo& sSaveInfo) { return ; }					//!< セーブ処理
+	virtual void			OnSaving	([[maybe_unused]] int nPer)					 { return ; }							//!< セーブ処理の経過情報を受信
+	virtual void			OnAfterSave	([[maybe_unused]] const SSaveInfo& sSaveInfo) { return ; }					//!< セーブ事後処理
+	virtual void			OnFinalSave	([[maybe_unused]] ESaveResult eSaveResult)	 { return ; }					//!< セーブフローの最後に必ず呼ばれる
 
 	//クローズ前後
 	virtual ECallbackResult OnBeforeClose()							 { return CALLBACK_CONTINUE; }

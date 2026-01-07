@@ -193,13 +193,8 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 }
 
 // インポート確認
-bool CImpExpManager::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpManager::ImportAscertain( [[maybe_unused]] HINSTANCE hInstance, [[maybe_unused]] HWND hwndParent, [[maybe_unused]] const std::wstring& sFileName, [[maybe_unused]] std::wstring& sErrMsg )
 {
-	UNREFERENCED_PARAMETER(hInstance);
-	UNREFERENCED_PARAMETER(hwndParent);
-	UNREFERENCED_PARAMETER(sFileName);
-	UNREFERENCED_PARAMETER(sErrMsg);
-
 	return true;
 }
 
@@ -1277,9 +1272,8 @@ bool CImpExpMainMenu::Export( const std::wstring& sFileName, std::wstring& sErrM
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	2014.06.07 Moca
 // インポート
-bool CImpExpFileTree::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpFileTree::Import( [[maybe_unused]] const std::wstring& sFileName, [[maybe_unused]] std::wstring& sErrMsg )
 {
-	UNREFERENCED_PARAMETER(sErrMsg);
 	const auto& strPath = sFileName;
 
 	CDataProfile cProfile;

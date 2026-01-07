@@ -34,9 +34,8 @@ bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Numeric::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Numeric::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
 {
-	UNREFERENCED_PARAMETER(cStr);
 	if( nPos == this->m_nCOMMENTEND ){
 		return true;
 	}

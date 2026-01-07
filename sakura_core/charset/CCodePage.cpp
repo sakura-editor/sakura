@@ -389,10 +389,8 @@ BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCWSTR pCodePageString )
 	return TRUE;
 }
 
-int CCodePage::AddComboCodePages(HWND hwnd, HWND combo, int nSelCode)
+int CCodePage::AddComboCodePages([[maybe_unused]] HWND hwnd, HWND combo, int nSelCode)
 {
-	UNREFERENCED_PARAMETER(hwnd);
-
 	int nSel = -1;
 	int nIdx = ApiWrap::Combo_AddString( combo, L"CP_ACP" );
 	ApiWrap::Combo_SetItemData( combo, nIdx, CODE_CPACP );

@@ -183,12 +183,8 @@ void CFuncKeyWnd::Close( void )
 //	LPARAM	lParam 	// second message parameter
 
 // WM_SIZE処理
-LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CFuncKeyWnd::OnSize( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	int			nButtonWidth;
 	int			nButtonHeight;
 	int			i;
@@ -250,10 +246,8 @@ LRESULT CFuncKeyWnd::DispatchEvent(
 }
 #endif//////////////////////////////////////////////////////////////
 
-LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam )
+LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(msg);
-	UNREFERENCED_PARAMETER(wParam);
 	int		i;
 	HWND	hwndCtl;
 
@@ -275,12 +269,8 @@ LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 
 // WM_TIMERタイマーの処理
-LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CFuncKeyWnd::OnTimer( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 // 	HWND hwnd,	// handle of window for timer messages
 //	UINT uMsg,	// WM_TIMER message
 //	UINT idEvent,	// timer identifier
@@ -349,12 +339,8 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 // WM_DESTROY処理
-LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CFuncKeyWnd::OnDestroy( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	int i;
 
 	/* タイマーを削除 */

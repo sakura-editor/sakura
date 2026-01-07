@@ -15,9 +15,8 @@
 //                     CFigure_HanSpace                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_HanSpace::Match(const wchar_t* pText, int nTextLen) const
+bool CFigure_HanSpace::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) const
 {
-	UNREFERENCED_PARAMETER(nTextLen);
 	if( pText[0] == L' ' ){
 		return true;
 	}

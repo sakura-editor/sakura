@@ -112,14 +112,11 @@ CPrintPreview::~CPrintPreview()
 */
 LRESULT CPrintPreview::OnPaint(
 	HWND			hwnd,	// handle of window
-	UINT			uMsg,	// message identifier
-	WPARAM			wParam,	// first message parameter
-	LPARAM			lParam 	// second message parameter
+	[[maybe_unused]] UINT			uMsg,	// message identifier
+	[[maybe_unused]] WPARAM			wParam,	// first message parameter
+	[[maybe_unused]] LPARAM			lParam 	// second message parameter
 )
 {
-	UNREFERENCED_PARAMETER(lParam);
-	UNREFERENCED_PARAMETER(uMsg);
-	UNREFERENCED_PARAMETER(wParam);
 	PAINTSTRUCT		ps;
 	HDC				hdcOld = ::BeginPaint( hwnd, &ps );
 	HDC				hdc = m_hdcCompatDC;	//	親ウィンドウのComatibleDCに描く
@@ -570,9 +567,8 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
+LRESULT CPrintPreview::OnMouseMove( [[maybe_unused]] WPARAM wParam, LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(wParam);
 	/* 手カーソル */
 	SetHandCursor();		// Hand Cursorを設定 2013/1/29 Uchi
 	if( !m_pParentWnd->GetDragMode() ){
@@ -648,9 +644,8 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-LRESULT CPrintPreview::OnMouseWheel( WPARAM wParam, LPARAM lParam )
+LRESULT CPrintPreview::OnMouseWheel( WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	UNREFERENCED_PARAMETER(lParam);
 //	WORD	fwKeys = LOWORD(wParam);			// key flags
 	short	zDelta = (short) HIWORD(wParam);	// wheel rotation
 //	short	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
@@ -1794,11 +1789,10 @@ void CPrintPreview::Print_DrawBlock(
 	int				nColorIdx,
 	int				nBgnPhysical,	// nBgnLogic - nLineStart
 	CLayoutInt		nLayoutX,
-	int				nDx,
+	[[maybe_unused]] int				nDx,
 	const int*		pDxArray
 )
 {
-	UNREFERENCED_PARAMETER(nDx);
 	if (nKind == 2 && pcLayout == nullptr) {
 		// TABはカラーで無ければ印字不要
 		return;
@@ -1907,13 +1901,11 @@ void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
 
 int CALLBACK CPrintPreview::MyEnumFontFamProc(
 	ENUMLOGFONT*	pelf,		// pointer to logical-font data
-	NEWTEXTMETRIC*	pntm,		// pointer to physical-font data
-	int				nFontType,	// type of font
+	[[maybe_unused]] NEWTEXTMETRIC*	pntm,		// pointer to physical-font data
+	[[maybe_unused]] int				nFontType,	// type of font
 	LPARAM			lParam 		// address of application-defined data
 )
 {
-	UNREFERENCED_PARAMETER(nFontType);
-	UNREFERENCED_PARAMETER(pntm);
 	CPrintPreview* pCPrintPreview = reinterpret_cast<CPrintPreview*>(lParam);
 	if( 0 == wcscmp( pelf->elfLogFont.lfFaceName, pCPrintPreview->m_pPrintSetting->m_szPrintFontFaceHan ) ){
 		pCPrintPreview->SetPreviewFontHan(&pelf->elfLogFont);
@@ -2088,10 +2080,9 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
 	WPARAM				wParam,		// first message parameter
-	LPARAM				lParam 		// second message parameter
+	[[maybe_unused]] LPARAM				lParam 		// second message parameter
 )
 {
-	UNREFERENCED_PARAMETER(lParam);
 	WORD				wNotifyCode;
 	WORD				wID;
 
