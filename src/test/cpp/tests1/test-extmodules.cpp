@@ -112,9 +112,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(
 
 namespace extmodule {
 
-struct CBregexpTest : public ::testing::Test, public env::ShareDataTestSuite {
-	using CBregexpHolder = std::unique_ptr<CBregexp>;
-
+struct ExtModuleTest : public ::testing::Test, public env::ShareDataTestSuite {
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
@@ -130,6 +128,10 @@ struct CBregexpTest : public ::testing::Test, public env::ShareDataTestSuite {
 	{
 		TearDownShareData();
 	}
+};
+
+struct CBregexpTest : public ExtModuleTest {
+	using CBregexpHolder = std::unique_ptr<CBregexp>;
 
 	CBregexpHolder pcBregexp = nullptr;
 
@@ -426,24 +428,8 @@ TEST_F(CBregexpTest, CheckRegexpSyntax101)
 	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", nullptr, false, -1, true), IsFalse());
 }
 
-struct CMigemoTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct CMigemoTest : public ExtModuleTest {
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
-
-	/*!
-	 * テストスイートの開始前に1回だけ呼ばれる関数
-	 */
-	static void SetUpTestSuite()
-	{
-		SetUpShareData();
-	}
-
-	/*!
-	 * テストスイートの終了後に1回だけ呼ばれる関数
-	 */
-	static void TearDownTestSuite()
-	{
-		TearDownShareData();
-	}
 
 	CMigemoHolder pcMigemo = nullptr;
 
@@ -574,24 +560,8 @@ TEST_F(CMigemoTest, test003)
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));
 }
 
-struct CRegexKeywordTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct CRegexKeywordTest : public ExtModuleTest {
 	using CRegexKeywordHolder = std::unique_ptr<CRegexKeyword>;
-
-	/*!
-	 * テストスイートの開始前に1回だけ呼ばれる関数
-	 */
-	static void SetUpTestSuite()
-	{
-		SetUpShareData();
-	}
-
-	/*!
-	 * テストスイートの終了後に1回だけ呼ばれる関数
-	 */
-	static void TearDownTestSuite()
-	{
-		TearDownShareData();
-	}
 
 	CRegexKeywordHolder pcRegexKeyword = nullptr;
 
