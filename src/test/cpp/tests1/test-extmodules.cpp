@@ -14,7 +14,7 @@
 #include "macro/CPPA.h"
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
 
-#include "env/CShareData.h"
+#include "env/ShareDataTestSuite.hpp"
 
 #include "view/colors/EColorIndexType.h"
 
@@ -112,19 +112,15 @@ INSTANTIATE_TYPED_TEST_SUITE_P(
 
 namespace extmodule {
 
-struct CBregexpTest : public ::testing::Test {
-	using CShareDataHolder = std::unique_ptr<CShareData>;
+struct CBregexpTest : public ::testing::Test, public env::ShareDataTestSuite {
 	using CBregexpHolder = std::unique_ptr<CBregexp>;
-
-	static inline CShareDataHolder pcShareData = nullptr;
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
-		pcShareData = std::make_unique<CShareData>();
-		EXPECT_THAT( pcShareData->InitShareData(), IsTrue() );
+		SetUpShareData();
 	}
 
 	/*!
@@ -132,7 +128,7 @@ struct CBregexpTest : public ::testing::Test {
 	 */
 	static void TearDownTestSuite()
 	{
-		pcShareData = nullptr;
+		TearDownShareData();
 	}
 
 	CBregexpHolder pcBregexp = nullptr;
@@ -430,19 +426,15 @@ TEST_F(CBregexpTest, CheckRegexpSyntax101)
 	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", nullptr, false, -1, true), IsFalse());
 }
 
-struct CMigemoTest : public ::testing::Test {
-	using CShareDataHolder = std::unique_ptr<CShareData>;
+struct CMigemoTest : public ::testing::Test, public env::ShareDataTestSuite {
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
-
-	static inline CShareDataHolder pcShareData = nullptr;
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
-		pcShareData = std::make_unique<CShareData>();
-		EXPECT_THAT( pcShareData->InitShareData(), IsTrue() );
+		SetUpShareData();
 	}
 
 	/*!
@@ -450,7 +442,7 @@ struct CMigemoTest : public ::testing::Test {
 	 */
 	static void TearDownTestSuite()
 	{
-		pcShareData = nullptr;
+		TearDownShareData();
 	}
 
 	CMigemoHolder pcMigemo = nullptr;
@@ -582,19 +574,15 @@ TEST_F(CMigemoTest, test003)
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));
 }
 
-struct CRegexKeywordTest : public ::testing::Test {
-	using CShareDataHolder = std::unique_ptr<CShareData>;
+struct CRegexKeywordTest : public ::testing::Test, public env::ShareDataTestSuite {
 	using CRegexKeywordHolder = std::unique_ptr<CRegexKeyword>;
-
-	static inline CShareDataHolder pcShareData = nullptr;
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
-		pcShareData = std::make_unique<CShareData>();
-		EXPECT_THAT( pcShareData->InitShareData(), IsTrue() );
+		SetUpShareData();
 	}
 
 	/*!
@@ -602,7 +590,7 @@ struct CRegexKeywordTest : public ::testing::Test {
 	 */
 	static void TearDownTestSuite()
 	{
-		pcShareData = nullptr;
+		TearDownShareData();
 	}
 
 	CRegexKeywordHolder pcRegexKeyword = nullptr;
