@@ -101,6 +101,8 @@ private:
 	decltype(&::BSubstExW)       m_BSubstEx = nullptr;
 	decltype(&::BRegexpVersionW) m_BRegexpVersion = nullptr;
 	decltype(&::BRegfreeW)       m_BRegfree = nullptr;
+	decltype(&::BMatchW)         m_BMatch = nullptr;
+	decltype(&::BSubstW)         m_BSubst = nullptr;
 };
 
 #endif /* SAKURA_CBREGEXPDLL2_033C910A_6B78_47CB_9993_675C48A2AB64_H_ */

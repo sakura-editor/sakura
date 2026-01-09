@@ -202,7 +202,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 			Compile(pKeyword);
 			m_sInfo[i].pPattern = GetPattern();
 
-			if (m_sInfo[i].pPattern)	//エラーがないかチェックする
+			if (m_sInfo[i].pPattern && !m_sInfo[i].pPattern->m_Msg[0])	//エラーがないかチェックする
 			{
 				//先頭以外は検索しなくてよい
 				if( wcsncmp_literal( pKeyword, RK_HEAD_STR1 ) == 0
@@ -337,7 +337,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 		assert(info.nOffset < nPos);
 
 		const auto &pPattern = info.pPattern;
-		if (!pPattern) {
+		if (!pPattern || pPattern->m_Msg[0]) {
 			continue;
 		}
 
