@@ -671,7 +671,7 @@ LRESULT CControlTray::DispatchEvent(
 		{
 			int nInsert = (int)wParam;
 			// "共通"の前には入れない
-			if( 0 < nInsert && nInsert <= m_pShareData->m_nTypesCount && m_pShareData->m_nTypesCount < MAX_TYPES ){
+			if( 0 < nInsert && nInsert <= m_pShareData->m_nTypesCount && m_pShareData->m_nTypesCount + 1 < MAX_TYPES ){
 				std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
 				STypeConfig* type = new STypeConfig();
 				*type = *types[0]; // 基本をコピー

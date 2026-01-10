@@ -116,7 +116,7 @@ TEST_F(TrayWndTest, OnAddTypeSetting102)
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount + 1, NULL), IsFalse());
 }
 
-TEST_F(TrayWndTest, DISABLED_OnAddTypeSetting103)
+TEST_F(TrayWndTest, OnAddTypeSetting103)
 {
 	// 元の数をバックアップして最大数にする
 	const auto defaultCount = GetDllShareData().m_nTypesCount;
