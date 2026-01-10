@@ -637,99 +637,6 @@ LRESULT CControlTray::DispatchEvent(
 		}
 		return 0L;
 
-	case MYWM_SET_TYPESETTING:
-		{
-			int nIdx = (int)wParam;
-			STypeConfig& type = m_pShareData->m_sWorkBuffer.m_TypeConfig;
-			if( 0 <= nIdx && nIdx < m_pShareData->m_nTypesCount ){
-				if( 0 == nIdx ){
-					m_pShareData->m_TypeBasis = type;
-					m_pShareData->m_TypeBasis.m_nIdx = 0;
-				}
-				*(CShareData::getInstance()->GetTypeSettings()[nIdx]) = type;
-				CShareData::getInstance()->GetTypeSettings()[nIdx]->m_nIdx = nIdx;
-				wcscpy(m_pShareData->m_TypeMini[nIdx].m_szTypeName, type.m_szTypeName);
-				wcscpy(m_pShareData->m_TypeMini[nIdx].m_szTypeExts, type.m_szTypeExts);
-				m_pShareData->m_TypeMini[nIdx].m_id = type.m_id;
-				m_pShareData->m_TypeMini[nIdx].m_encoding = type.m_encoding;
-			}else{
-				return FALSE;
-			}
-		}
-		return TRUE;
-	case MYWM_GET_TYPESETTING:
-		{
-			int nIdx = (int)wParam;
-			if( 0 <= nIdx && nIdx < m_pShareData->m_nTypesCount ){
-				m_pShareData->m_sWorkBuffer.m_TypeConfig = *(CShareData::getInstance()->GetTypeSettings()[nIdx]);
-			}else{
-				return FALSE;
-			}
-		}
-		return TRUE;
-	case MYWM_ADD_TYPESETTING:
-		{
-			int nInsert = (int)wParam;
-			// "共通"の前には入れない
-			if( 0 < nInsert && nInsert <= m_pShareData->m_nTypesCount && m_pShareData->m_nTypesCount + 1 < MAX_TYPES ){
-				std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
-				STypeConfig* type = new STypeConfig();
-				*type = *types[0]; // 基本をコピー
-				type->m_nIdx = nInsert;
-				type->m_id = (::GetTickCount() & 0x3fffffff) + nInsert * 0x10000;
-				// 同じ名前のものがあったらその次にする
-				int nAddNameNum = nInsert + 1;
-				auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
-				for(int k = 1; k < m_pShareData->m_nTypesCount; k++){
-					if( wcscmp(types[k]->m_szTypeName, type->m_szTypeName) == 0 ){
-						nAddNameNum++;
-						auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
-						k = 0;
-					}
-				}
-				type->m_szTypeExts[0] = L'\0';
-				type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
-				types.resize( m_pShareData->m_nTypesCount + 1 );
-				int nTypeSizeOld = m_pShareData->m_nTypesCount;
-				m_pShareData->m_nTypesCount++;
-				for( int i = nTypeSizeOld; nInsert < i; i-- ){
-					types[i] = types[i-1];
-					types[i]->m_nIdx = i;
-					m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i-1];
-				}
-				types[nInsert] = type;
-				wcscpy(m_pShareData->m_TypeMini[nInsert].m_szTypeName, type->m_szTypeName);
-				wcscpy(m_pShareData->m_TypeMini[nInsert].m_szTypeExts, type->m_szTypeExts);
-				m_pShareData->m_TypeMini[nInsert].m_id = type->m_id;
-				m_pShareData->m_TypeMini[nInsert].m_encoding = type->m_encoding;
-			}else{
-				return FALSE;
-			}
-		}
-		return TRUE;
-	case MYWM_DEL_TYPESETTING:
-		{
-			int nDelPos = (int)wParam;
-			if( 0 < nDelPos && nDelPos < m_pShareData->m_nTypesCount && 1 < m_pShareData->m_nTypesCount ){
-				int nTypeSizeOld = m_pShareData->m_nTypesCount;
-				std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
-				delete types[nDelPos];
-				for(int i = nDelPos; i < nTypeSizeOld - 1; i++ ){
-					types[i] = types[i+1];
-					types[i]->m_nIdx = i;
-					m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i+1];
-				}
-				types.resize( m_pShareData->m_nTypesCount - 1 );
-				m_pShareData->m_nTypesCount--;
-				m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeName[0] = L'\0';
-				m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeExts[0] = L'\0';
-				m_pShareData->m_TypeMini[nTypeSizeOld-1].m_id = 0;
-			}else{
-				return FALSE;
-			}
-		}
-		return TRUE;
-
 	case MYWM_NOTIFYICON:
 //		MYTRACE( L"MYWM_NOTIFYICON\n" );
 		switch (lParam){
@@ -1032,6 +939,18 @@ LRESULT CControlTray::DispatchEvent(
 		::AllowSetForegroundWindow(DWORD(wParam));
 		return 0L;
 
+	case MYWM_SET_TYPESETTING:
+		return OnSetTypeSetting(wParam);
+
+	case MYWM_GET_TYPESETTING:
+		return OnGetTypeSetting(wParam);
+
+	case MYWM_ADD_TYPESETTING:
+		return OnAddTypeSetting(wParam);
+
+	case MYWM_DEL_TYPESETTING:
+		return OnDelTypeSetting(wParam);
+
 	default:
 		// タスクバーが再作成されたときは、トレイアイコンを再登録する
 		if (gm_uMsgTaskbarCreated == uMsg) {
@@ -1054,6 +973,117 @@ void CControlTray::OnCommand( WORD wNotifyCode, [[maybe_unused]] WORD wID , [[ma
 		break;
 	}
 	return;
+}
+
+bool CControlTray::OnSetTypeSetting(size_t index)
+{
+	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
+		return false;
+	}
+
+	const auto& type = m_pShareData->m_sWorkBuffer.m_TypeConfig;
+	if (0 == index) {
+		m_pShareData->m_TypeBasis = type;
+		m_pShareData->m_TypeBasis.m_nIdx = 0;
+	}
+
+	auto types = CShareData::getInstance()->GetTypeSettings();
+	*types[index] = type;
+	types[index]->m_nIdx = int(index);
+
+	auto& typeMini = m_pShareData->m_TypeMini[index];
+	::wcscpy_s(typeMini.m_szTypeName, type.m_szTypeName);
+	::wcscpy_s(typeMini.m_szTypeExts, type.m_szTypeExts);
+	typeMini.m_id = type.m_id;
+	typeMini.m_encoding = type.m_encoding;
+
+	return true;
+}
+
+bool CControlTray::OnGetTypeSetting(size_t index)
+{
+	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
+		return false;
+	}
+
+	m_pShareData->m_sWorkBuffer.m_TypeConfig = *(CShareData::getInstance()->GetTypeSettings()[index]);
+
+	return true;
+}
+
+bool CControlTray::OnAddTypeSetting(size_t index)
+{
+	if (m_pShareData->m_nTypesCount < 0 || int(MAX_TYPES) <= m_pShareData->m_nTypesCount || m_pShareData->m_nTypesCount < index) {
+		return false;
+	}
+
+	// 0:"共通" の前には入れない
+	if (0 == index) {
+		return false;
+	}
+
+	const auto nInsert = (int)index;
+	auto& types = CShareData::getInstance()->GetTypeSettings();
+	auto type = new STypeConfig(*types[0]);	// 基本をコピー
+	type->m_id = (::GetTickCount64() & 0x3fffffff) + nInsert * 0x10000;
+
+	// 同じ名前のものがあったらその次にする
+	auto nAddNameNum = nInsert + 1;
+	::swprintf_s(type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum);
+	for (auto k = 1; k < m_pShareData->m_nTypesCount; ++k) {
+		if (0 == wcscmp(types[k]->m_szTypeName, type->m_szTypeName)) {
+			nAddNameNum++;
+			::swprintf_s(type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum);
+			k = 0;
+		}
+	}
+	type->m_szTypeExts[0] = L'\0';
+	type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
+	types.resize(m_pShareData->m_nTypesCount + 1);
+
+	const auto nTypeSizeOld = m_pShareData->m_nTypesCount;
+	++m_pShareData->m_nTypesCount;
+	for (auto i = nTypeSizeOld; nInsert < i; --i) {
+		types[i] = types[i - 1];
+		types[i]->m_nIdx = i;
+		m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i - 1];
+	}
+
+	types[nInsert] = type;
+
+	return true;
+}
+
+bool CControlTray::OnDelTypeSetting(size_t index)
+{
+	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
+		return false;
+	}
+
+	const auto nDelPos = (int)index;
+	if (nDelPos <= 0) {
+		return false;
+	}
+
+	const auto nTypeSizeOld = m_pShareData->m_nTypesCount;
+	auto& types = CShareData::getInstance()->GetTypeSettings();
+
+	delete types[nDelPos];
+
+	for (auto i = nDelPos; i < nTypeSizeOld - 1; ++i) {
+		types[i] = types[i + 1];
+		types[i]->m_nIdx = i;
+		m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i + 1];
+	}
+	types.resize(m_pShareData->m_nTypesCount - 1);
+	m_pShareData->m_nTypesCount--;
+
+	auto& typeMini = m_pShareData->m_TypeMini[nTypeSizeOld - 1];
+	typeMini.m_szTypeName[0] = L'\0';
+	typeMini.m_szTypeExts[0] = L'\0';
+	typeMini.m_id = 0;
+
+	return true;
 }
 
 /*!
