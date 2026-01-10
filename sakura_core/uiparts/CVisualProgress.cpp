@@ -7,7 +7,6 @@
 #include "StdAfx.h"
 #include "CVisualProgress.h"
 #include "CWaitCursor.h"
-
 #include "window/CEditWnd.h"
 #include "apiwrap/CommonControl.h"
 
@@ -16,8 +15,6 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CVisualProgress::CVisualProgress()
-: m_pcWaitCursor(nullptr)
-, nOldValue(-1)
 {
 }
 
