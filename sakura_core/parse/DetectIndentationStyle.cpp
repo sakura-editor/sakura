@@ -57,6 +57,9 @@ struct EditorConfigParser {
 		uint8_t buff[3];
 		constexpr uint8_t bom[3] = {0xEF, 0xBB, 0xBF};
 		file.read((char*)buff, 3);
+		if (file.gcount() < 3) {
+			return false;
+		}
 		if (0 != memcmp(buff, bom, 3)) {
 			file.seekg(0);
 		}
