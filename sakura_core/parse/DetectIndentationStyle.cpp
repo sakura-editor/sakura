@@ -40,9 +40,17 @@ struct EditorConfig {
 
 const std::regex rePropLine{ R"(^\s*(\w+)\s*=\s*(\w+)\s*$)" };
 
+constexpr std::string_view trim(std::string_view s) noexcept {
+	constexpr std::string_view trim_chars = " \t";
+	const auto first = s.find_first_not_of(trim_chars);
+	if (first == std::string_view::npos) return {};
+	const auto last = s.find_last_not_of(trim_chars);
+	return s.substr(first, (last - first + 1));
+}
+
 struct EditorConfigParser {
 	bool Parse(const fs::path& configPath, EditorConfig& config) {
-		std::ifstream file(configPath, std::ios::binary);
+		std::ifstream file(configPath, std::ios::in);
 		if (!file) {
 			return false;
 		}
@@ -52,11 +60,11 @@ struct EditorConfigParser {
 		if (0 != memcmp(buff, bom, 3)) {
 			file.seekg(0);
 		}
-		bool ret = true;
 		std::string line;
 		std::smatch matches;
 		EditorConfig::Section* section = nullptr;
 		while (std::getline(file, line)) {
+			line = trim(line);
 			if (line.starts_with('[') && line.ends_with(']')) {
 				config.sections.resize(config.sections.size() + 1);
 				section = &config.sections.back();
@@ -66,8 +74,8 @@ struct EditorConfigParser {
 				// comment
 			}
 			else if (std::regex_match(line, matches, rePropLine) && matches.size() == 3) {
-				const auto& key = matches[1];
-				const auto& value = matches[2];
+				const std::string_view key(&(*matches[1].first), matches[1].length());
+				const std::string_view value(&(*matches[2].first), matches[2].length());
 				if (section) {
 					if (key == "indent_style") {
 						if (value == "tab") {
@@ -78,10 +86,18 @@ struct EditorConfigParser {
 						}
 					}
 					else if (key == "indent_size") {
-						section->indent_size = atoi(value.str().c_str());
+						int indent_size;
+						if (std::errc() != std::from_chars(value.data(), value.data() + value.size(), indent_size).ec) {
+							return false;
+						}
+						section->indent_size = indent_size;
 					}
 					else if (key == "tab_width") {
-						section->tab_width = atoi(value.str().c_str());
+						int tab_width;
+						if (std::errc() != std::from_chars(key.data(), key.data() + key.size(), tab_width).ec) {
+							return false;
+						}
+						section->tab_width = tab_width;
 					}
 				}
 				else {
@@ -91,7 +107,7 @@ struct EditorConfigParser {
 				}
 			}
 		}
-		return ret;
+		return true;
 	}
 };
 
@@ -99,10 +115,10 @@ bool glob_matches_extension(std::string_view glob, std::string_view extension)
 {
 	std::string g = std::string(glob);
 	std::string e = std::string(extension);
-	for (char& c : g) c = std::tolower(c);
-	for (char& c : e) c = std::tolower(c);
+	for (char& c : g) c = (char)std::tolower(c);
+	for (char& c : e) c = (char)std::tolower(c);
 	// *.ext
-	if (g.starts_with("*.") && g.substr(2) == e) {
+	if (g.starts_with("*" + e)) {
 		return true;
 	}
 	// *.{h,cpp,ts}
