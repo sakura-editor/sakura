@@ -66,7 +66,7 @@ TEST_F(TrayWndTest, OnGetTypeSetting001)
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_nIdx, Eq(index));
 }
 
-TEST_F(TrayWndTest, DISABLED_OnGetTypeSetting102)
+TEST_F(TrayWndTest, OnGetTypeSetting102)
 {
 	// 取得の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;
@@ -102,14 +102,14 @@ TEST_F(TrayWndTest, OnAddTypeSetting002)
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(typeName));
 }
 
-TEST_F(TrayWndTest, DISABLED_OnAddTypeSetting101)
+TEST_F(TrayWndTest, OnAddTypeSetting101)
 {
 	// 追加の空振り(基本の前には入れない)
 	HWND hWndTray = nullptr;
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 0, NULL), IsFalse());
 }
 
-TEST_F(TrayWndTest, DISABLED_OnAddTypeSetting102)
+TEST_F(TrayWndTest, OnAddTypeSetting102)
 {
 	// 追加の空振り(上限値オーバー、「指定したインデックスの前」なので他と上限が違う)
 	HWND hWndTray = nullptr;
@@ -164,7 +164,7 @@ TEST_F(TrayWndTest, OnSetTypeSetting002)
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(L"テスト"));
 }
 
-TEST_F(TrayWndTest, DISABLED_OnSetTypeSetting102)
+TEST_F(TrayWndTest, OnSetTypeSetting102)
 {
 	// 更新の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;

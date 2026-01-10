@@ -641,7 +641,7 @@ LRESULT CControlTray::DispatchEvent(
 		{
 			int nIdx = (int)wParam;
 			STypeConfig& type = m_pShareData->m_sWorkBuffer.m_TypeConfig;
-			if( 0 <= nIdx && m_pShareData->m_nTypesCount ){
+			if( 0 <= nIdx && nIdx < m_pShareData->m_nTypesCount ){
 				if( 0 == nIdx ){
 					m_pShareData->m_TypeBasis = type;
 					m_pShareData->m_TypeBasis.m_nIdx = 0;
@@ -660,7 +660,7 @@ LRESULT CControlTray::DispatchEvent(
 	case MYWM_GET_TYPESETTING:
 		{
 			int nIdx = (int)wParam;
-			if( 0 <= nIdx && m_pShareData->m_nTypesCount ){
+			if( 0 <= nIdx && nIdx < m_pShareData->m_nTypesCount ){
 				m_pShareData->m_sWorkBuffer.m_TypeConfig = *(CShareData::getInstance()->GetTypeSettings()[nIdx]);
 			}else{
 				return FALSE;
@@ -671,7 +671,7 @@ LRESULT CControlTray::DispatchEvent(
 		{
 			int nInsert = (int)wParam;
 			// "共通"の前には入れない
-			if( 0 < nInsert && nInsert <= m_pShareData->m_nTypesCount && nInsert < MAX_TYPES ){
+			if( 0 < nInsert && nInsert <= m_pShareData->m_nTypesCount && m_pShareData->m_nTypesCount < MAX_TYPES ){
 				std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
 				STypeConfig* type = new STypeConfig();
 				*type = *types[0]; // 基本をコピー
