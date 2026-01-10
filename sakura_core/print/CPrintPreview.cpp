@@ -1763,9 +1763,9 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 
 	//色を元に戻す	2012-03-07 ossan
 	if (pcLayout) {
-		int nColorIdx = ToColorInfoArrIndex(COLORIDX_TEXT);
-		if (-1 != nColorIdx) {
-			const ColorInfo& info = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
+		int textColorIndex = ToColorInfoArrIndex(COLORIDX_TEXT);
+		if (-1 != textColorIndex) {
+			const ColorInfo& info = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[textColorIndex];
 			::SetTextColor(hdc, info.m_sColorAttr.m_cTEXT);
 //			::SetBkColor(hdc, info.m_colBACK);
 		}

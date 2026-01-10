@@ -893,8 +893,8 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 					nIdxTo   = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.right);
 					// 改行は除く
 					if( nIdxTo - nIdxFrom > 0 ){
-						const WCHAR* pLine = pcLayout->GetPtr();
-						if( pLine[nIdxTo - 1] == L'\n' || pLine[nIdxTo - 1] == L'\r' ){
+						const WCHAR* pLine2 = pcLayout->GetPtr();
+						if( pLine2[nIdxTo - 1] == L'\n' || pLine2[nIdxTo - 1] == L'\r' ){
 							--nIdxTo;
 						}
 					}
