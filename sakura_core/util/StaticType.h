@@ -111,6 +111,7 @@ private:
 	static constexpr auto N = N_BUFFER_COUNT;
 
 	using ArrayType = std::array<WCHAR, N>;
+	using Traits = std::char_traits<WCHAR>;
 
 	using Me = StaticString<N>;
 
@@ -121,7 +122,7 @@ public:
 
 	//コンストラクタ・デストラクタ
 	StaticString() = default;
-	explicit StaticString(std::wstring_view src) { assign(src); }
+	constexpr explicit StaticString(std::wstring_view src) { assign(src); }
 
 	/*!
 	 * 文字列を代入する
@@ -129,17 +130,21 @@ public:
 	 * @retval 0 成功
 	 * @retval STRUNCATE 切り詰め発生
 	 */
-	errno_t assign(std::wstring_view src) noexcept
+	constexpr errno_t assign(std::wstring_view src) noexcept
 	{
-		return auto_strcpy_s(m_szData, src);
+		const auto count = std::min<size_t>(std::size(src), size() - 1);
+		Traits::move(data(), std::data(src), count);
+		Traits::assign(data()[count], L'\0');
+		return count < std::size(src) ? STRUNCATE : 0;
 	}
 
 	/*!
 	 * 文字列長を取得する
 	 */
-	size_t length() const noexcept
+	constexpr size_t length() const noexcept
 	{
-		return auto_strnlen(data(), size());
+		const auto pos = Traits::find(data(), size(), L'\0');
+		return pos ? static_cast<size_t>(pos - data()) : size();
 	}
 
 	constexpr bool empty() const noexcept { return 0 == m_szData[0]; }
@@ -149,13 +154,13 @@ public:
 	constexpr const WCHAR* c_str() const noexcept { return data(); }
 
 	constexpr operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
-	operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
+	constexpr operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
 
 	explicit operator std::filesystem::path() const & noexcept { return static_cast<std::wstring_view>(*this); }
 
-	Me& operator = (std::wstring_view rhs) noexcept { assign(rhs); return *this; }
-	Me& operator = (const std::wstring& rhs) noexcept { assign(rhs); return *this; }
-	Me& operator = (const std::filesystem::path& path) noexcept { assign(path.wstring()); return *this; }
+	constexpr Me& operator = (std::wstring_view rhs) noexcept { assign(rhs); return *this; }
+	constexpr Me& operator = (const std::wstring& rhs) noexcept { assign(rhs); return *this; }
+	constexpr Me& operator = (const std::filesystem::path& path) noexcept { assign(path.wstring()); return *this; }
 
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
