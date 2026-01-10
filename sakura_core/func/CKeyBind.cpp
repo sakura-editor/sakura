@@ -161,16 +161,16 @@ int CKeyBind::CreateKeyBindList(
 	WCHAR	szFuncNameJapanese[256];
 
 	nValidKeys = 0;
-	cMemList.SetString(LTEXT(""));
-	const WCHAR*	pszSHIFT = LTEXT("Shift+");
-	const WCHAR*	pszCTRL  = LTEXT("Ctrl+");
-	const WCHAR*	pszALT   = LTEXT("Alt+");
-	const WCHAR*	pszTAB   = LTEXT("\t");
-	const WCHAR*	pszCR    = LTEXT("\r\n");	//\r=0x0d=CRを追加
+	cMemList.SetString(L"");
+	const WCHAR*	pszSHIFT = L"Shift+";
+	const WCHAR*	pszCTRL  = L"Ctrl+";
+	const WCHAR*	pszALT   = L"Alt+";
+	const WCHAR*	pszTAB   = L"\t";
+	const WCHAR*	pszCR    = L"\r\n";	//\r=0x0d=CRを追加
 
 	cMemList.AppendString( LS(STR_ERR_DLGKEYBIND1) );
 	cMemList.AppendString( pszCR );
-	cMemList.AppendString( LTEXT("-----\t-----\t-----\t-----\t-----") );
+	cMemList.AppendString( L"-----\t-----\t-----\t-----\t-----" );
 	cMemList.AppendString( pszCR );
 
 	for( j = 0; j < 8; ++j ){
@@ -195,7 +195,7 @@ int CKeyBind::CreateKeyBindList(
 					szFuncNameJapanese, 255 )){
 					wcscpy( szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2) );
 				}
-				szFuncName[0] = LTEXT('\0'); /*"---unknown()--"*/
+				szFuncName[0] = L'\0'; /*"---unknown()--"*/
 
 //				/* 機能名日本語 */
 //				::LoadString(
@@ -221,16 +221,16 @@ int CKeyBind::CreateKeyBindList(
 
 				/* 機能番号 */
 				cMemList.AppendString( pszTAB );
-				auto_sprintf( pszStr, LTEXT("%d"), iFunc );
+				auto_sprintf( pszStr, L"%d", iFunc );
 				cMemList.AppendString( pszStr );
 
 				/* キーマクロに記録可能な機能かどうかを調べる */
 				cMemList.AppendString( pszTAB );
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 				if( CSMacroMgr::CanFuncIsKeyMacro( iFunc ) ){
-					cMemList.AppendString( LTEXT("○") );
+					cMemList.AppendString( L"○" );
 				}else{
-					cMemList.AppendString( LTEXT("×") );
+					cMemList.AppendString( L"×" );
 				}
 
 				cMemList.AppendString( pszCR );

@@ -315,7 +315,7 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 	}
 	m_pData = new WCHAR[nLen + 1];
 	wmemcpy( m_pData, szParam, nLen );
-	m_pData[nLen] = LTEXT('\0');
+	m_pData[nLen] = L'\0';
 	m_nDataLen = nLen;
 	m_eType = EMacroParamTypeStr;
 }

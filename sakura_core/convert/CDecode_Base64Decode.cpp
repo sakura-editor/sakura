@@ -46,7 +46,7 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 			if( IsLineDelimiterBasic(c) || c == TAB || c == SPACE ){
 				continue;
 			}
-			if( j == _BUFSIZE || c == LTEXT('=') ){
+			if( j == _BUFSIZE || c == L'=' ){
 				break;
 			}
 			if( !IsBase64(c) ){
@@ -56,7 +56,7 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 			++j;
 		}
 		pw += _DecodeBase64( &buffer[0], j, pw );
-	}while( i < nSrcLen && c != LTEXT('=') );
+	}while( i < nSrcLen && c != L'=' );
 
 	//if( CheckBase64Padbit(&buffer[0], j) == false ){
 	//	return false;

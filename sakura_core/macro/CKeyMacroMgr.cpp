@@ -181,12 +181,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 		}
 		nBgn = i;
 		//	Jun. 16, 2002 genta 空行を無視する
-		if( nBgn == nLineLen || szLine[nBgn] == LTEXT('\0') ){
+		if( nBgn == nLineLen || szLine[nBgn] == L'\0' ){
 			continue;
 		}
 		// コメント行の検出
 		//# パフォーマンス：'/'のときだけ２文字目をテスト
-		if( szLine[nBgn] == LTEXT('/') && nBgn + 1 < nLineLen && szLine[nBgn + 1] == LTEXT('/') ){
+		if( szLine[nBgn] == L'/' && nBgn + 1 < nLineLen && szLine[nBgn + 1] == L'/' ){
 			continue;
 		}
 
@@ -194,7 +194,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 		szFuncName[0]='\0';// 初期化
 		for( ; i < nLineLen; ++i ){
 			//# バッファオーバーランチェック
-			if( szLine[i] == LTEXT('(') && (i - nBgn)< int(std::size(szFuncName)) ){
+			if( szLine[i] == L'(' && (i - nBgn)< int(std::size(szFuncName)) ){
 				wmemcpy( szFuncName, &szLine[nBgn], i - nBgn );
 				szFuncName[i - nBgn] = L'\0';
 				++i;
@@ -239,12 +239,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 				}
 
 				//	Skip Space
-				while( szLine[i] == LTEXT(' ') || szLine[i] == LTEXT('\t') )
+				while( szLine[i] == L' ' || szLine[i] == L'\t' )
 					i++;
 
 				//@@@ 2002.2.2 YAZAKI PPA.DLLマクロにあわせて仕様変更。文字列は''で囲む。
 				//	Jun. 16, 2002 genta double quotationも許容する
-				if( LTEXT('\'') == szLine[i] || LTEXT('\"') == szLine[i]  ){	//	'で始まったら文字列だよきっと。
+				if( L'\'' == szLine[i] || L'\"' == szLine[i]  ){	//	'で始まったら文字列だよきっと。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( type != VT_BSTR && 
@@ -268,7 +268,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 					//	Jun. 16, 2002 genta
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
-						if( szLine[i] == LTEXT('\\') ){	// エスケープのスキップ
+						if( szLine[i] == L'\\' ){	// エスケープのスキップ
 							++i;
 							continue;
 						}
@@ -301,10 +301,10 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 					cmemWork.SetString( strLine.c_str() + nBgn, nEnd - nBgn );
 					// 2014.01.28 「"\\'"」のような場合の不具合を修正
 					cmemWork.Replace( L"\\\\", L"\\\1" ); // 一時置換(最初に必要)
-					cmemWork.Replace( LTEXT("\\\'"), LTEXT("\'") );
+					cmemWork.Replace( L"\\\'", L"\'" );
 
 					//	Jun. 16, 2002 genta double quotationもエスケープ解除
-					cmemWork.Replace( LTEXT("\\\""), LTEXT("\"") );
+					cmemWork.Replace( L"\\\"", L"\"" );
 					cmemWork.Replace( L"\\r", L"\r" );
 					cmemWork.Replace( L"\\n", L"\n" );
 					cmemWork.Replace( L"\\t", L"\t" );
@@ -386,7 +386,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 					macro->AddIntParam( _wtoi(cmemWork.GetStringPtr()) );	//	引数を数字として追加
 				}
 				//	Jun. 16, 2002 genta
-				else if( szLine[i] == LTEXT(')') ){
+				else if( szLine[i] == L')' ){
 					//	引数無し
 					break;
 				}
@@ -401,12 +401,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 				}
 
 				for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
-					if( szLine[i] == LTEXT(')') || szLine[i] == LTEXT(',') ){	//	,もしくは)を読み飛ばす
+					if( szLine[i] == L')' || szLine[i] == L',' ){	//	,もしくは)を読み飛ばす
 						i++;
 						break;
 					}
 				}
-				if (szLine[i-1] == LTEXT(')')){
+				if (szLine[i-1] == L')'){
 					break;
 				}
 			}
