@@ -545,7 +545,6 @@ void CDlgFuncList::SetData()
 //		::ShowWindow( hwndTree, SW_HIDE );
 		int				i;
 		WCHAR			szText[2048];
-		const CFuncInfo*	pcFuncInfo;
 		LV_ITEM			item;
 
 		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
@@ -554,7 +553,7 @@ void CDlgFuncList::SetData()
 			const int nNum = m_pcFuncInfoArr->GetNum();
 			int nBuffLen = 0;
 			for(int i = 0; i < nNum; ++i ){
-				const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+				const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
 				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 			}
 			m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -564,7 +563,7 @@ void CDlgFuncList::SetData()
 
 		for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 			/* 現在の解析結果要素 */
-			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
@@ -890,7 +889,6 @@ int CDlgFuncList::GetData( void )
 void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass )
 {
 	int				i;
-	const CFuncInfo*	pcFuncInfo;
 	HWND			hwndTree;
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
@@ -919,7 +917,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
 			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -938,7 +936,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 	nFuncColOld = CLayoutInt(-1);
 	bSelected = FALSE;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 		const WCHAR* pWork = pcFuncInfo->m_cmemFuncName.GetStringPtr();
 		int m = 0;
 		vStrClasses.clear();
@@ -1171,7 +1169,6 @@ void CDlgFuncList::SetListVB (void)
 	int				i;
 	WCHAR			szType[64];
 	WCHAR			szOption[64];
-	const CFuncInfo*	pcFuncInfo;
 	LV_ITEM			item;
 	HWND			hwndList;
 
@@ -1185,7 +1182,7 @@ void CDlgFuncList::SetListVB (void)
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
 			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -1194,7 +1191,7 @@ void CDlgFuncList::SetListVB (void)
 	WCHAR			szText[2048];
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		/* 現在の解析結果要素 */
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
