@@ -14,16 +14,12 @@
 */
 
 #include "StdAfx.h"
-#include <stdlib.h>
 #include "outline/CFuncInfoArr.h"
 #include "outline/CFuncInfo.h"
 
 /* CFuncInfoArrクラス構築 */
 CFuncInfoArr::CFuncInfoArr()
 {
-	m_nFuncInfoArrNum = 0;	/* 配列要素数 */
-	m_ppcFuncInfoArr = nullptr;	/* 配列 */
-	m_nAppendTextLenMax = 0;
 	return;
 }
 
