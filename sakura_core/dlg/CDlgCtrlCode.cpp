@@ -262,7 +262,6 @@ BOOL CDlgCtrlCode::OnNotify( NMHDR* pNMHDR )
 
 		case LVN_KEYDOWN:
 			{
-				HWND	hwndList;
 				NMKEY	*p = (NMKEY*)pNMHDR;
 				int		i, j;
 				unsigned int	c;

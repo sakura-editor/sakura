@@ -545,7 +545,6 @@ void CDlgFuncList::SetData()
 //		::ShowWindow( hwndTree, SW_HIDE );
 		int				i;
 		WCHAR			szText[2048];
-		const CFuncInfo*	pcFuncInfo;
 		LV_ITEM			item;
 
 		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
@@ -553,8 +552,8 @@ void CDlgFuncList::SetData()
 			const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 			const int nNum = m_pcFuncInfoArr->GetNum();
 			int nBuffLen = 0;
-			for(int i = 0; i < nNum; ++i ){
-				const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			for(int i2 = 0; i2 < nNum; ++i2 ){
+				const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 			}
 			m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -564,7 +563,7 @@ void CDlgFuncList::SetData()
 
 		for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 			/* 現在の解析結果要素 */
-			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
@@ -863,8 +862,8 @@ int CDlgFuncList::GetData( void )
 				}else{
 					if( m_nListType == OUTLINE_FILETREE ){
 						if( tvi.lParam == -1 ){
-							int nItem;
-							if( !GetTreeFileFullName( hwndTree, htiItem, &m_sJumpFile, &nItem ) ){
+							int nItem2;
+							if( !GetTreeFileFullName( hwndTree, htiItem, &m_sJumpFile, &nItem2 ) ){
 								m_sJumpFile.clear(); // error
 							}
 						}
@@ -890,7 +889,6 @@ int CDlgFuncList::GetData( void )
 void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass )
 {
 	int				i;
-	const CFuncInfo*	pcFuncInfo;
 	HWND			hwndTree;
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
@@ -918,8 +916,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 		const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
-		for( int i = 0; i < nNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		for( int i2 = 0; i2 < nNum; i2++ ){
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -938,7 +936,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 	nFuncColOld = CLayoutInt(-1);
 	bSelected = FALSE;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 		const WCHAR* pWork = pcFuncInfo->m_cmemFuncName.GetStringPtr();
 		int m = 0;
 		vStrClasses.clear();
@@ -1171,7 +1169,6 @@ void CDlgFuncList::SetListVB (void)
 	int				i;
 	WCHAR			szType[64];
 	WCHAR			szOption[64];
-	const CFuncInfo*	pcFuncInfo;
 	LV_ITEM			item;
 	HWND			hwndList;
 
@@ -1184,8 +1181,8 @@ void CDlgFuncList::SetListVB (void)
 		const int nBuffLenTag = int(17 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
-		for( int i = 0; i < nNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		for( int i2 = 0; i2 < nNum; i2++ ){
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -1194,7 +1191,7 @@ void CDlgFuncList::SetListVB (void)
 	WCHAR			szText[2048];
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		/* 現在の解析結果要素 */
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
@@ -1394,8 +1391,8 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 		if( tagjump ){
 			nBuffLenTag = int(10 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		}
-		for( int i = 0; i < nFuncInfoArrNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		for( int i2 = 0; i2 < nFuncInfoArrNum; i2++ ){
+			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 			if( pcFuncInfo->IsAddClipText() ){
 				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength() + pcFuncInfo->m_nDepth * 2;
 				nCount++;
@@ -3271,7 +3268,6 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( nId == 450 ){	// 更新
-		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
 	else if( nId == 451 ){	// コピー

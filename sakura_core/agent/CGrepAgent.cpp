@@ -732,7 +732,7 @@ DWORD CGrepAgent::DoGrep(
 				nPathLen += 1;
 			}
 			currentFile += szWindowName;
-			int nHitCount = nGrepTreeResult;
+			nHitCount = nGrepTreeResult;
 			int nTreeRet = DoGrepFile(
 				pcViewDst,
 				&cDlgCancel,
@@ -1473,7 +1473,7 @@ int CGrepAgent::DoGrepFile(
 			/* 処理中のユーザー操作を可能にする */
 			// 2010.08.31 間隔を1/32にする
 			if( 0 == nLine % 32 ) {
-				DWORD dwNow = ::GetTickCount();
+				dwNow = ::GetTickCount();
 				if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
 					m_dwTickUICheck = dwNow;
 					if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {

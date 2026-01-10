@@ -1616,8 +1616,8 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						i += nCharChars;
 					}
 					nCharChars = (Int)m_pcEditDoc->m_cLayoutMgr.GetActualTabSpaceKetas(m);
-					for( int i = 0; i < nCharChars; i++ )
-						pszData[nDataLen + i] = WCODE::SPACE;
+					for( int i2 = 0; i2 < nCharChars; i2++ )
+						pszData[nDataLen + i2] = WCODE::SPACE;
 					pszData[nDataLen + nCharChars] = L'\0';
 					nDataLen += CLogicInt(nCharChars);
 				}else{

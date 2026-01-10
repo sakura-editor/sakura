@@ -1031,7 +1031,6 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 				if( 0 < nSelectedCount ){
 					int nLvItem = -1;
 					bool bAddFalse = false;
-					CRecent& exceptMRU = *m_aFavoriteInfo[m_nExceptTab].m_pRecent;
 					while( (nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED)) != -1 ) {
 						int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
 						if( exceptMRU.GetArrayCount() <= exceptMRU.GetItemCount() ){

@@ -1582,11 +1582,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	{
 		const WCHAR* pszKeyName = L"xyOutlineDock";
 		const WCHAR* pszForm = L"%d,%d,%d,%d";
-		WCHAR		szKeyData[1024];
+		WCHAR		szKeyData2[1024];
 		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData)) ){
+			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData2)) ){
 				int buf[4];
-				scan_ints( szKeyData, pszForm, buf );
+				scan_ints( szKeyData2, pszForm, buf );
 				types.m_cxOutlineDockLeft	= buf[0];
 				types.m_cyOutlineDockTop	= buf[1];
 				types.m_cxOutlineDockRight	= buf[2];
@@ -1594,14 +1594,14 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			}
 		}else{
 			auto_sprintf(
-				szKeyData,
+				szKeyData2,
 				pszForm,
 				types.m_cxOutlineDockLeft,
 				types.m_cyOutlineDockTop,
 				types.m_cxOutlineDockRight,
 				types.m_cyOutlineDockBottom
 			);
-			cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
+			cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData2));
 		}
 	}
 	cProfile.IOProfileData(pszSecName, L"nDockOutline", types.m_nDockOutline );/* アウトライン解析方法 */

@@ -155,8 +155,8 @@ void CDlgPluginOption::SetData( void )
 			selects = cOpt->GetSelects();
 
 			buf[0] = L'\0';
-			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
-				SepSelect(*it, &sView, &sTrg);
+			for (auto it2 = selects.cbegin(); it2 != selects.cend(); it2++) {
+				SepSelect(*it2, &sView, &sTrg);
 				if (sValue == sTrg) {
 					auto_snprintf_s(buf, std::size(buf), L"%ls", sView.c_str());
 					break;
@@ -240,8 +240,8 @@ int CDlgPluginOption::GetData( void )
 			selects = cOpt->GetSelects();
 			std::wstring sWbuf = buf;
 
-			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
-				SepSelect(*it, &sView, &sTrg);
+			for (auto it2 = selects.cbegin(); it2 != selects.cend(); it2++) {
+				SepSelect(*it2, &sView, &sTrg);
 				if (sView == sWbuf) {
 					auto_sprintf( buf, L"%ls", sTrg.c_str());
 					break;

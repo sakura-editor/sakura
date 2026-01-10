@@ -475,21 +475,21 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 				}
 				else{
 					//削り取る半角スペース数 (1～タブ幅分) -> nDelLen
-					CLogicInt i;
+					CLogicInt i2;
 					CLogicInt nTabSpaces = CLogicInt((Int)GetDocument()->m_cLayoutMgr.GetTabSpaceKetas());
-					for( i = CLogicInt(0); i < nLineLen; i++ ){
-						if( WCODE::SPACE != pLine[i] ){
+					for( i2 = CLogicInt(0); i2 < nLineLen; i2++ ){
+						if( WCODE::SPACE != pLine[i2] ){
 							break;
 						}
 						//	Sep. 23, 2002 genta LayoutMgrの値を使う
-						if( i >= nTabSpaces ){
+						if( i2 >= nTabSpaces ){
 							break;
 						}
 					}
-					if( 0 == i ){
+					if( 0 == i2 ){
 						continue;
 					}
-					nDelLen = i;
+					nDelLen = i2;
 				}
 			}
 			else{

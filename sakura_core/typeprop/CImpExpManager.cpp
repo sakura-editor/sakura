@@ -884,21 +884,21 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 	if (!bVer3 && !bVer4) {
 		// 新バージョンでない
-		CTextInputStream in(strPath.c_str());
-		if (!in) {
+		CTextInputStream in2(strPath.c_str());
+		if (!in2) {
 			sErrMsg = LS(STR_IMPEXP_ERR_FILEOPEN);
 			sErrMsg += sFileName;
 			return false;
 		}
 		// ヘッダーチェック
-		std::wstring	szLine = in.ReadLineW();
+		std::wstring	szLine = in2.ReadLineW();
 		bVer2 = true;
 		if ( wcscmp(szLine.c_str(), WSTR_KEYBIND_HEAD2) != 0)	bVer2 = false;
 		// カウントチェック
 		int	i, cnt;
 		if ( bVer2 ) {
 			int	an;
-			szLine = in.ReadLineW();
+			szLine = in2.ReadLineW();
 			cnt = swscanf(szLine.c_str(), L"Count=%d", &an);
 			if ( cnt != 1 || an < 0 || an > KEYNAME_SIZE ) {
 				bVer2 = false;
@@ -913,7 +913,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				int n, kc, nc;
 				//値 -> szData
 				wchar_t szData[1024];
-				wcsncpy(szData, in.ReadLineW().c_str(), int(std::size(szData)) - 1);
+				wcsncpy(szData, in2.ReadLineW().c_str(), int(std::size(szData)) - 1);
 				szData[std::size(szData) - 1] = L'\0';
 
 				//解析開始
@@ -933,19 +933,19 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 					//機能名を数値に置き換える。(数値の機能名もあるかも)
 					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-					EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, nullptr);
-					if( n == F_INVALID )
+					EFunctionCode n2 = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, nullptr);
+					if( n2 == F_INVALID )
 					{
 						if( WCODE::Is09(*p) )
 						{
-							n = (EFunctionCode)_wtol(p);
+							n2 = (EFunctionCode)_wtol(p);
 						}
 						else
 						{
-							n = F_DEFAULT;
+							n2 = F_DEFAULT;
 						}
 					}
-					sKeyBind.m_pKeyNameArr[i].m_nFuncCodeArr[j] = n;
+					sKeyBind.m_pKeyNameArr[i].m_nFuncCodeArr[j] = n2;
 					p = q + 1;
 				}
 

@@ -802,9 +802,9 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 				if(bTransText){
 					HDC hdcBgImg = CreateCompatibleDC(gr);
 					HBITMAP hOldBmp = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
-					RECT rc = pPs->rcPaint;
-					rc.top = nBackImageTop;
-					DrawBackImage(gr, rc, hdcBgImg);
+					RECT rc2 = pPs->rcPaint;
+					rc2.top = nBackImageTop;
+					DrawBackImage(gr, rc2, hdcBgImg);
 					SelectObject(hdcBgImg, hOldBmp);
 					DeleteObject(hdcBgImg);
 				}

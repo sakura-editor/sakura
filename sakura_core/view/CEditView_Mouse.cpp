@@ -1407,7 +1407,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, [[maybe_unused]] LPARAM lParam,
 		if( bExecCmd ){
 			if( nFuncID != F_0 ){
 				// スクロール変化量分コマンド実行(zDeltaが120あたりで1回)
-				for( int i = 0; i < nRollNum; i++ ){
+				for( int i2 = 0; i2 < nRollNum; i2++ ){
 					::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)nullptr );
 				}
 			}

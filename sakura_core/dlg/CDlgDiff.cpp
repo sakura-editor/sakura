@@ -322,7 +322,6 @@ void CDlgDiff::SetData( void )
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, FALSE );
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, TRUE );
 			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
-			HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 			if( ApiWrap::List_GetCurSel( hwndList ) == LB_ERR )
 			{
 			    ApiWrap::List_SetCurSel( hwndList, selIndex );
