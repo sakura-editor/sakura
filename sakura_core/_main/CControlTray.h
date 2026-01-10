@@ -122,10 +122,15 @@ protected:
 		LPARAM	lParam		// second message parameter
 	);
 
+private:
+	bool	OnSetTypeSetting(size_t index);
+	bool	OnGetTypeSetting(size_t index);
+	bool	OnAddTypeSetting(size_t index);
+	bool	OnDelTypeSetting(size_t index);
+
 	/*
 	|| メンバ変数
 	*/
-private:
 	CMenuDrawer		m_cMenuDrawer;
 	CPropertyManager*	m_pcPropertyManager = nullptr;
 	bool			m_bUseTrayMenu = false;			//トレイメニュー表示中
