@@ -5,7 +5,7 @@
 */
 
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,10 +16,12 @@
 #include "convert/CDecode.h"
 
 class CDecode_UuDecode final : public CDecode{
+private:
+	SFilePath m_aFilename;
 
-	WCHAR m_aFilename[_MAX_PATH];
 public:
 	bool DoDecode(const CNativeW& cData, CMemory* pDst) override;
-	void CopyFilename( WCHAR *pcDst ) const { wcscpy( pcDst, m_aFilename ); }
+	void CopyFilename(std::span<WCHAR> dst) const { ::wcsncpy_s(std::data(dst), std::size(dst), m_aFilename, _TRUNCATE); }
 };
+
 #endif /* SAKURA_CDECODE_UUDECODE_E299AA83_2825_45E6_866A_A08D73F8F47F_H_ */
