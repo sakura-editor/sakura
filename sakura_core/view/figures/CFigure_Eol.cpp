@@ -137,7 +137,6 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 	if(pcView->GetTextArea().GenerateClipRect(&rcClip2, *pDispPos, width))
 	{
 		//サポートクラス
-		CTypeSupport cWrapType(pcView,COLORIDX_WRAP);
 		CTypeSupport cTextType(pcView,COLORIDX_TEXT);
 		CTypeSupport cBgLineType(pcView,COLORIDX_CARETLINEBG);
 		CTypeSupport cEvenBgLineType(pcView,COLORIDX_EVENLINEBG);

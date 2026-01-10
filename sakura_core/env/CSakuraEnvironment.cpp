@@ -259,7 +259,6 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			else {
 				const WCHAR*	pStr;
 				const WCHAR*	pEnd;
-				const WCHAR*	p;
 
 				pStr = pcDoc->m_cDocFile.GetFilePath();
 				pEnd = pStr - wcslen(pStr) - 1;

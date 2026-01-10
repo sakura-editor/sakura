@@ -715,7 +715,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					}
 					if (tvi.cChildren) {
 						// 直前がノード
-						HTREEITEM		htiTemp2;
+
 						// コピー
 						bInMove = true;
 						htiTemp2 = TreeCopy(hwndTreeRes, htiTemp, htiItem, true, true);
