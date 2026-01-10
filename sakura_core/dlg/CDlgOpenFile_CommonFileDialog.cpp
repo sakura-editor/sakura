@@ -395,7 +395,7 @@ UINT_PTR CALLBACK OFNHookProc(
 					WCHAR szDefExt[_MAX_EXT];	// 補完する拡張子
 					WCHAR szBuf[_MAX_PATH + _MAX_EXT];	// ワーク
 					LPWSTR pszCur, pszNext;
-					int i;
+					int i2;
 
 					CommDlg_OpenSave_GetSpec(pData->m_hwndOpenDlg, szBuf, _MAX_PATH);	// ファイル名入力ボックス内の文字列
 					pszCur = szBuf;
@@ -416,13 +416,13 @@ UINT_PTR CALLBACK OFNHookProc(
 								pszCur = pData->m_pcDlgOpenFile->m_strDefaultWildCard.data();
 								while( *pszCur != L'.' && *pszCur != L'\0' )	// '.'まで読み飛ばす
 									pszCur = ::CharNext(pszCur);
-								i = 0;
+								i2 = 0;
 								while( *pszCur != L';' && *pszCur != L'\0' ){	// ';'までコピーする
 									pszNext = ::CharNext(pszCur);
 									while( pszCur < pszNext )
-										szDefExt[i++] = *pszCur++;
+										szDefExt[i2++] = *pszCur++;
 								}
-								szDefExt[i] = L'\0';
+								szDefExt[i2] = L'\0';
 								if( ::wcslen(szDefExt) < 2 || szDefExt[1] == L'*' )	// 無効な拡張子?
 									szDefExt[0] = L'\0';
 								break;

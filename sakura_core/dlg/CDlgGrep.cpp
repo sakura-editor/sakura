@@ -353,11 +353,11 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// フォント設定	2012/11/27 Uchi
 	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
 	m_cFontDeleters.resize( int(std::size(nItemIds)) );
-	for( size_t i = 0; i < int(std::size(nItemIds)); ++i ){
-		HWND hwndItem = GetItemHwnd( nItemIds[i] );
+	for( size_t i2 = 0; i2 < int(std::size(nItemIds)); ++i2 ){
+		HWND hwndItem = GetItemHwnd( nItemIds[i2] );
 		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
 		HFONT hFont = SetMainFont( hwndItem );
-		m_cFontDeleters[i].SetFont( hFontOld, hFont, hwndItem );
+		m_cFontDeleters[i2].SetFont( hFontOld, hFont, hwndItem );
 	}
 
 	return bRet;

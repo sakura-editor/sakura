@@ -552,8 +552,8 @@ void CDlgFuncList::SetData()
 			const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 			const int nNum = m_pcFuncInfoArr->GetNum();
 			int nBuffLen = 0;
-			for(int i = 0; i < nNum; ++i ){
-				const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			for(int i2 = 0; i2 < nNum; ++i2 ){
+				const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 			}
 			m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -862,8 +862,8 @@ int CDlgFuncList::GetData( void )
 				}else{
 					if( m_nListType == OUTLINE_FILETREE ){
 						if( tvi.lParam == -1 ){
-							int nItem;
-							if( !GetTreeFileFullName( hwndTree, htiItem, &m_sJumpFile, &nItem ) ){
+							int nItem2;
+							if( !GetTreeFileFullName( hwndTree, htiItem, &m_sJumpFile, &nItem2 ) ){
 								m_sJumpFile.clear(); // error
 							}
 						}
@@ -916,8 +916,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 		const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
-		for( int i = 0; i < nNum; i++ ){
-			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		for( int i2 = 0; i2 < nNum; i2++ ){
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -1181,8 +1181,8 @@ void CDlgFuncList::SetListVB (void)
 		const int nBuffLenTag = int(17 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
-		for( int i = 0; i < nNum; i++ ){
-			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		for( int i2 = 0; i2 < nNum; i2++ ){
+			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
@@ -1391,8 +1391,8 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 		if( tagjump ){
 			nBuffLenTag = int(10 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		}
-		for( int i = 0; i < nFuncInfoArrNum; i++ ){
-			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		for( int i2 = 0; i2 < nFuncInfoArrNum; i2++ ){
+			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
 			if( pcFuncInfo->IsAddClipText() ){
 				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength() + pcFuncInfo->m_nDepth * 2;
 				nCount++;

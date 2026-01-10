@@ -1150,11 +1150,11 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		}
 
 		wcscpy( pszPath, pszDir );
-		WCHAR *ptr = pszPath + nDirLen;
+		WCHAR *ptr2 = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
-			*ptr++ = L'\\';
+			*ptr2++ = L'\\';
 		}
-		wcscpy( ptr, pszFile );
+		wcscpy( ptr2, pszFile );
 		return nAllLen;
 	}
 }
