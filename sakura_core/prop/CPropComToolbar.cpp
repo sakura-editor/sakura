@@ -601,15 +601,12 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	if( tbb.fsStyle & TBSTYLE_SEP ){
 		// テキストだけ表示する
 		if( tbb.idCommand == F_SEPARATOR ){
-			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM1), int(std::size(szLabel)) - 1 );	// nLength 未使用 2003/01/09 Moca
-			szLabel[std::size(szLabel) - 1] = L'\0';
+			wcsncpy_s(szLabel, LS(STR_PROPCOMTOOL_ITEM1), _TRUNCATE); // nLength 未使用 2003/01/09 Moca
 		}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
 			// ツールバー折返
-			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM2), int(std::size(szLabel)) - 1 );
-			szLabel[std::size(szLabel) - 1] = L'\0';
+			wcsncpy_s(szLabel, LS(STR_PROPCOMTOOL_ITEM2), _TRUNCATE);
 		}else{
-			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM3), int(std::size(szLabel)) - 1 );
-			szLabel[std::size(szLabel) - 1] = L'\0';
+			wcsncpy_s(szLabel, LS(STR_PROPCOMTOOL_ITEM3), _TRUNCATE);
 		}
 	}else{
 		// アイコンとテキストを表示する
