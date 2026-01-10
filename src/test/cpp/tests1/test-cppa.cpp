@@ -16,10 +16,32 @@
 
 #include "eval_outputs.hpp"
 
+#include "env/ShareDataTestSuite.hpp"
+
+namespace macro {
+
+struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		SetUpShareData();
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		TearDownShareData();
+	}
+};
+
 /*!
 	CPPA::GetDllNameImpのテスト
  */
-TEST(CPPA, GetDllNameImp)
+TEST_F(CPpaTest, GetDllNameImp)
 {
 	CPPA cPpa;
 	EXPECT_STREQ(L"PPA.DLL", cPpa.GetDllNameImp(0));
@@ -33,7 +55,7 @@ TEST(CPPA, GetDllNameImp)
 	対応する型はintとstringのみ。（PPA1.2は実数型にも対応しているが未対応）
 	引数は最大8個まで指定できる。(PPAは32個まで対応しているが未対応）
  */
-TEST(CPPA, GetDeclarations)
+TEST_F(CPpaTest, GetDeclarations)
 {
 	setlocale(LC_ALL, "Japanese");
 
@@ -78,51 +100,9 @@ TEST(CPPA, GetDeclarations)
  * 実装が想定するメッセージを出力できるかチェックする
  * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
  */
-TEST(CPPA, ppaErrorProc)
+TEST_F(CPpaTest, ppaErrorProc)
 {
 	// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
-
-#pragma region CanBeMove
-	// 共有データがなくてもエラーにならない
-	EXPECT_THAT(GetDllShareDataPtr(), IsNull());
-
-	// 共有データがないのでエラー
-	EXPECT_ANY_THROW(GetDllShareData());
-
-#pragma endregion CanBeMove
-
-	// 共有メモリのインスタンスを生成する
-	const auto pcShareData = std::make_unique<CShareData>();
-
-#pragma region CanBeMove
-	// 共有データがなくてもエラーにならない
-	EXPECT_THAT(GetDllShareDataPtr(), IsNull());
-
-	// 共有データがないのでエラー
-	EXPECT_ANY_THROW(GetDllShareData());
-
-	// 共有データがないのでエラー
-	EXPECT_ANY_THROW(CDialog(false, true));	//2つ目の引数がtrueなら共有データ必須
-
-	// 共有データがなくてもエラーにならない
-	EXPECT_NO_THROW([] { CDialog(false, false).GetHwnd(); });
-
-#pragma endregion CanBeMove
-
-	// 共有メモリを初期化する
-	pcShareData->InitShareData();
-
-#pragma region CanBeMove
-	// 共有データがあるので値を返す
-	EXPECT_THAT(GetDllShareDataPtr(), pcShareData->GetDllShareDataPtr());
-
-	// 共有データがあるのでエラーにならない
-	EXPECT_NO_THROW([] { GetDllShareData(); });
-
-	// 共有データがあるのでエラーにならない
-	EXPECT_NO_THROW([] { CDialog(false, true).GetHwnd(); });
-
-#pragma endregion CanBeMove
 
 	// ドキュメントの初期化前に文字幅キャッシュの生成が必要
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
@@ -214,8 +194,6 @@ TEST(CPPA, ppaErrorProc)
 	info.m_bError = false;
 	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正\ndebug");
 }
-
-namespace macro {
 
 TEST(CSMacroMgr, GetFuncInfoByID001)
 {

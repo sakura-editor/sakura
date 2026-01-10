@@ -10,15 +10,18 @@
     <Filter Include="Other Files">
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Other Files\env">
+      <UniqueIdentifier>{17f8cd59-3000-4cc7-9d41-b34770ba8333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\testing">
+      <UniqueIdentifier>{f5277b5c-1446-48f8-acf0-82a8159010f9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Pre-compiled Header">
       <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
-    </Filter>
-    <Filter Include="Other Files\testing">
-      <UniqueIdentifier>{f5277b5c-1446-48f8-acf0-82a8159010f9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +36,9 @@
     <ClCompile Include="..\src\test\resources\coverage.cpp" />
     <ClCompile Include="..\src\test\resources\code-main.cpp">
       <Filter>Other Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp">
+      <Filter>Other Files\env</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp">
       <Filter>Other Files\testing</Filter>
@@ -191,6 +197,9 @@
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h">
       <Filter>Pre-compiled Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp">
+      <Filter>Other Files\env</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\StartEditorProcess.hpp">
       <Filter>Other Files\testing</Filter>
