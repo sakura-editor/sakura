@@ -3268,7 +3268,6 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( nId == 450 ){	// 更新
-		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
 	else if( nId == 451 ){	// コピー
