@@ -639,13 +639,13 @@ void CEditView::DeleteData(
 	if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() > 0 ){
 		if( GetCaret().GetCaretLayoutPos().GetY() > m_pcEditDoc->m_cLayoutMgr.GetLineCount()	- 1	){
 			/* 現在行のデータを取得 */
-			const CLayout*	pcLayout;
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - CLayoutInt(1), &nLineLen, &pcLayout );
+			const CLayout*	pcLayout2;
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - CLayoutInt(1), &nLineLen, &pcLayout2 );
 			if( nullptr == pLine ){
 				goto end_of_func;
 			}
 			/* 改行で終わっているか */
-			if( pcLayout->GetLayoutEol().IsValid() ){
+			if( pcLayout2->GetLayoutEol().IsValid() ){
 				goto end_of_func;
 			}
 			/*ファイルの最後に移動 */

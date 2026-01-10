@@ -378,14 +378,14 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 					//	Jan. 24, 2004 genta nLastLenは物理桁なので変換必要
 					//	最終行にTABが入っていると反転範囲が不足する．
 					//	2006.10.01 Moca GetEndLayoutPosで処理するためColumnToIndexは不要に。
-					RECT rcNew2;
-					rcNew2.left   = pView->GetTextArea().GetAreaLeft() + (Int)(pView->GetTextArea().GetViewLeftCol() + ptLast.x) * nCharWidth;
-					rcNew2.right  = pView->GetTextArea().GetAreaRight();
-					rcNew2.top    = pView->GetTextArea().GenerateYPx( ptLast.y );
-					rcNew2.bottom = rcNew2.top + nCharHeight;
+					RECT rcRgn;
+					rcRgn.left   = pView->GetTextArea().GetAreaLeft() + (Int)(pView->GetTextArea().GetViewLeftCol() + ptLast.x) * nCharWidth;
+					rcRgn.right  = pView->GetTextArea().GetAreaRight();
+					rcRgn.top    = pView->GetTextArea().GenerateYPx( ptLast.y );
+					rcRgn.bottom = rcRgn.top + nCharHeight;
 					
 					// 2006.10.01 Moca GDI(リージョン)リソースリーク修正
-					HRGN hrgnEOFNew = ::CreateRectRgnIndirect( &rcNew2 );
+					HRGN hrgnEOFNew = ::CreateRectRgnIndirect( &rcRgn );
 					::CombineRgn( hrgnDraw, hrgnDraw, hrgnEOFNew, RGN_DIFF );
 					::DeleteObject( hrgnEOFNew );
 				}

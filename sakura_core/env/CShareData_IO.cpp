@@ -1581,12 +1581,12 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData(pszSecName, L"eOutlineDockSide", types.m_eOutlineDockSide );/* アウトライン解析ドッキング配置 */
 	{
 		const WCHAR* pszKeyName = L"xyOutlineDock";
-		const WCHAR* pszForm = L"%d,%d,%d,%d";
+		const WCHAR* pszForm2 = L"%d,%d,%d,%d";
 		WCHAR		szKeyData2[1024];
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData2)) ){
 				int buf[4];
-				scan_ints( szKeyData2, pszForm, buf );
+				scan_ints( szKeyData2, pszForm2, buf );
 				types.m_cxOutlineDockLeft	= buf[0];
 				types.m_cyOutlineDockTop	= buf[1];
 				types.m_cxOutlineDockRight	= buf[2];
@@ -1595,7 +1595,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		}else{
 			auto_sprintf(
 				szKeyData2,
-				pszForm,
+				pszForm2,
 				types.m_cxOutlineDockLeft,
 				types.m_cyOutlineDockTop,
 				types.m_cxOutlineDockRight,
