@@ -17,7 +17,7 @@
 	Copyright (C) 2005, かろと, aroka
 	Copyright (C) 2006, かろと
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2026, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -26,9 +26,8 @@
 #define SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_
 #pragma once
 
+#include "CBregexpDll2.h"
 #include "basis/SakuraBasis.h"
-
-#include "extmodule/CBregOnig.hpp"
 
 /*!
 	@brief Perl互換正規表現 BREGEXP.DLL をサポートするクラス
@@ -48,9 +47,11 @@
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
-class CBregexp : public CBregOnig
-{
+class CBregexp : public CBregexpDll2{
 public:
+	CBregexp();
+	virtual ~CBregexp();
+
 	// 2006.01.22 かろと オプション追加・名称変更
 	enum Option {
 		optNothing = 0,					//!< オプションなし
@@ -63,9 +64,18 @@ public:
 		optLocale = 0x40,				//!< Locale(/l)
 		optR = 0x80,					//!< CRLF(/R)
 	};
+	//! 検索パターン定義
+	enum Pattern {
+		PAT_UNKNOWN = 0,		//!< 不明（初期値)
+		PAT_NORMAL = 1,			//!< 通常
+		PAT_TOP = 2,			//!< 行頭"^"
+		PAT_BOTTOM = 4,			//!< 行末"$"
+		PAT_TAB = 8,			//!< 行頭行末"^$"
+		PAT_LOOKAHEAD = 16		//!< 先読み"(?[=]"
+	};
 
 	//! DLLのバージョン情報を取得
-	LPCWSTR		GetVersionW() const noexcept { return IsAvailable() ? std::data(BRegexpVersionW()) : L""; }
+	const WCHAR* GetVersionW() noexcept { return IsAvailable() ? BRegexpVersion() : L""; }
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
@@ -73,42 +83,12 @@ public:
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
-	bool Compile(
-		const std::wstring& pattern0,
-		int nOption = 0,
-		const std::optional<std::wstring>& optPattern1 = std::nullopt
-	);
-
-	bool Compile(
-		const std::wstring& pattern0,
-		const std::wstring& pattern1,
-		int nOption = 0
-	)
-	{
-		return Compile(pattern0, nOption, std::make_optional(pattern1));
+	bool Compile(const wchar_t *szPattern, int nOption = 0) {
+		return Compile(szPattern, nullptr, nOption);
 	}
-
-	bool	Match(std::wstring_view target, size_t offset = 0) const noexcept;			//!< 検索を実行する
-	int		Replace(std::wstring_view target, size_t offset = 0) const noexcept;		//!< 置換を実行する
-
-	bool	Match(LPCWSTR pszTarget, size_t nLen, size_t nStart = 0) const noexcept {
-		return Match(std::wstring_view{ pszTarget, nLen }, nStart);
-	}
-	int		Replace(LPCWSTR pszTarget, size_t nLen, size_t nStart = 0) const noexcept {
-		return Replace(std::wstring_view{ pszTarget, nLen }, nStart);
-	}
-
-	CPatternHolder GetPattern() {
-		return m_Pattern ? std::move(m_Pattern) : nullptr;
-	}
-	std::wstring_view GetMatchedString() const noexcept
-	{
-		return m_Pattern ? m_Pattern->matched() : L"";
-	}
-	std::wstring_view GetReplacedString() const noexcept
-	{
-		return m_Pattern ? m_Pattern->replaced() : L"";
-	}
+	bool Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption = 0, bool bKakomi = false);	//!< Replace用
+	bool Match(const wchar_t *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
+	int Replace(const wchar_t *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する	// 2007.01.16 ryoji 戻り値を置換個数に変更
 
 	//-----------------------------------------
 	// 2005.03.19 かろと クラス内部を隠蔽
@@ -119,32 +99,31 @@ public:
 	    検索に一致した文字列の先頭位置を返す(文字列先頭なら0)
 		@retval 検索に一致した文字列の先頭位置
 	*/
-	CLogicInt GetIndex() const noexcept
+	CLogicInt GetIndex(void)
 	{
-		return CLogicInt(m_Pattern ? m_Pattern->starti() : 0);
+		return CLogicInt(m_pRegExp->startp[0] - m_szTarget);
 	}
 	/*!
 	    検索に一致した文字列の次の位置を返す
 		@retval 検索に一致した文字列の次の位置
 	*/
-	CLogicInt GetLastIndex() const noexcept
+	CLogicInt GetLastIndex(void)
 	{
-		return CLogicInt(m_Pattern ? m_Pattern->endi() : 0);
+		return CLogicInt(m_pRegExp->endp[0] - m_szTarget);
 	}
 	/*!
 		検索に一致した文字列の長さを返す
 		@retval 検索に一致した文字列の長さ
 	*/
-	CLogicInt GetMatchLen() const noexcept
+	CLogicInt GetMatchLen(void)
 	{
-		return CLogicInt(GetMatchedString().length());
+		return CLogicInt(m_pRegExp->endp[0] - m_pRegExp->startp[0]);
 	}
 	/*!
 		置換された文字列の長さを返す
 		@retval 置換された文字列の長さ
 	*/
-	CLogicInt GetStringLen() const noexcept
-	{
+	CLogicInt GetStringLen(void) {
 		// 置換後文字列が０幅なら outp、outendpもNULLになる
 		// NULLポインタの引き算は問題なく０になる。
 		// outendpは '\0'なので、文字列長は +1不要
@@ -153,15 +132,19 @@ public:
 		//	置換後文字列が0幅の場合にoutpがNULLでもoutendpがNULLでない場合があるので，
 		//	outpのNULLチェックが必要
 
-		return CLogicInt(GetReplacedString().length());
+		if (m_pRegExp->outp == nullptr) {
+			return CLogicInt(0);
+		} else {
+			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
+		}
 	}
 	/*!
 		置換された文字列を返す
 		@retval 置換された文字列へのポインタ
 	*/
-	LPCWSTR GetString() const noexcept
+	const wchar_t *GetString(void)
 	{
-		return std::data(GetReplacedString());
+		return m_pRegExp->outp;
 	}
 	/*! @} */
 	//-----------------------------------------
@@ -169,20 +152,58 @@ public:
 	/*! BREGEXPメッセージを取得する
 		@retval メッセージへのポインタ
 	*/
-	LPCWSTR GetLastMessage() const noexcept
-	{
-		return m_Pattern ? std::data(m_Pattern->m_Msg) : L"";
+	const WCHAR* GetLastMessage() const;// { return m_szMsg; }
+
+	/*!	先読みパターンが存在するかを返す
+		この関数は、コンパイル後であることが前提なので、コンパイル前はfalse
+		@retval true 先読みがある
+		@retval false 先読みがない 又は コンパイル前
+	*/
+	bool IsLookAhead(void) {
+		return m_ePatType & PAT_LOOKAHEAD ? true : false;
+	}
+	/*!	検索パターンに先読みが含まれるか？（コンパイル前でも判別可能）
+		@param[in] pattern 検索パターン
+		@retval true 先読みがある
+		@retval false 先読みがない
+	*/
+	bool IsLookAhead(const wchar_t *pattern) {
+		CheckPattern(pattern);
+		return IsLookAhead();
+	}
+
+protected:
+
+	//!	コンパイルバッファを解放する
+	/*!
+		m_pcRegをBRegfree()に渡して解放する．解放後はNULLにセットする．
+		元々NULLなら何もしない
+	*/
+	void ReleaseCompileBuffer(void){
+		if( m_pRegExp ){
+			BRegfree( m_pRegExp );
+			m_pRegExp = nullptr;
+		}
+		m_ePatType = PAT_UNKNOWN;
 	}
 
 private:
 	//	内部関数
 
 	//! 検索パターン作成
-	std::wstring	_MakePattern(const std::wstring& szSearch, int nOption, const std::optional<std::wstring>& optReplace) const;
-	std::wstring	_QuoteRegex(std::wstring_view szPattern0, int nOption, const std::optional<std::wstring>& optPattern1 = std::nullopt) const;
+	int CheckPattern( const wchar_t* szPattern );
+	wchar_t* MakePatternSub( const wchar_t* szPattern, const wchar_t* szPattern2, const wchar_t* szAdd2, int nOption );
+	wchar_t* MakePattern( const wchar_t* szPattern, const wchar_t* szPattern2, int nOption );
+	wchar_t* MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption );
 
 	//	メンバ変数
-	CPatternHolder		m_Pattern = nullptr;	//!< コンパイル済みパターン
+	BREGEXP_W*			m_pRegExp;			//!< コンパイル構造体
+	int					m_ePatType;			//!< 検索文字列パターン種別
+	const wchar_t*		m_szTarget;			//!< 対象文字列へのポインタ
+	wchar_t				m_szMsg[80];		//!< BREGEXP_Wからのメッセージを保持する
+
+	// 静的メンバ変数
+	static const wchar_t	m_tmpBuf[2];	//!< ダミー文字列
 };
 
 //	Jun. 26, 2001 genta
@@ -190,5 +211,4 @@ private:
 bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
 bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1, bool bKakomi = false );// 2002/2/1 hor追加
 bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
-
 #endif /* SAKURA_CBREGEXP_7B193CCD_1EE7_48A7_8004_6E59B0F4F161_H_ */
