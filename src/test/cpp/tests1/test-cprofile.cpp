@@ -281,24 +281,24 @@ TEST(CDataProfile, IOProfileData)
 	cProfile.SetReadingMode();
 
 	std::wstring value;
-	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", value));
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"szTest", value), IsFalse());
 
 	cProfile.SetProfileData(L"Test", L"szTest", L"value");
 
-	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"szTest", value));
-	ASSERT_STREQ(L"value", value.data());
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"szTest", value), IsTrue());
+	EXPECT_THAT(value, StrEq(L"value"));
 
-	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"nTest", value), IsFalse());
 
 	cProfile.SetProfileData(L"Test", L"nTest", L"109");
 
-	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	ASSERT_STREQ(L"109", value.data());
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"nTest", value), IsTrue());
+	EXPECT_THAT(value, StrEq(L"109"));
 
 	int nValue = 0;
-	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", nValue));
-	ASSERT_EQ(109, nValue);
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"nTest", nValue), IsTrue());
+	EXPECT_THAT(nValue, 109);
 
-	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", nValue));
-	ASSERT_EQ(109, nValue);
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"szTest", nValue), IsFalse());
+	EXPECT_THAT(nValue, 109);
 }
