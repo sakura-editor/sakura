@@ -419,9 +419,9 @@ bool CFileNameManager::GetMenuFullLabel(
 		}
 	}else{
 		if( nId == -1 ){
-			wsprintf( szFileName, LS( STR_NO_TITLE1 ));
+			::swprintf_s(szFileName, LS(STR_NO_TITLE1));
 		}else{
-			wsprintf( szFileName, L"%s%d", LS( STR_NO_TITLE1 ), nId);
+			::swprintf_s(szFileName, L"%s%d", LS(STR_NO_TITLE1), nId);
 		}
 		pszName = szFileName;
 	}
