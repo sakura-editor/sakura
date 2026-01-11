@@ -125,6 +125,21 @@ public:
 	constexpr explicit StaticString(std::wstring_view src) { assign(src); }
 
 	/*!
+	 * 文字列を末尾に追加する
+	 *
+	 * @retval 0 成功
+	 * @retval STRUNCATE 切り詰め発生
+	 */
+	constexpr errno_t append(std::wstring_view src) noexcept
+	{
+		const auto len = length();
+		const auto count = std::min<size_t>(std::size(src), size() - len - 1);
+		Traits::move(data() + len, std::data(src), count);
+		Traits::assign(data()[len + count], L'\0');
+		return count < std::size(src) ? STRUNCATE : 0;
+	}
+
+	/*!
 	 * 文字列を代入する
 	 *
 	 * @retval 0 成功
@@ -162,6 +177,9 @@ public:
 	constexpr Me& operator = (const std::wstring& rhs) noexcept { assign(rhs); return *this; }
 	constexpr Me& operator = (const std::filesystem::path& path) noexcept { assign(path.wstring()); return *this; }
 
+	constexpr Me& operator += (std::wstring_view rhs) noexcept { append(rhs); return *this; }
+	constexpr Me& operator += (const std::wstring& rhs) noexcept { append(rhs); return *this; }
+
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
 
@@ -187,5 +205,6 @@ private:
 };
 
 template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }
+template<int N> inline errno_t wcscat_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.append(src); }
 
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */
