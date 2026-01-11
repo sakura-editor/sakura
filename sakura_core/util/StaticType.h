@@ -132,7 +132,7 @@ public:
 	WCHAR At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const WCHAR* src){ if(!src) m_szData[0]=0; else wcscpy_s(m_szData, std::size(m_szData),src); }
+	void Assign(const WCHAR* src){ if(!src) m_szData[0]=0; else ::wcsncpy_s(m_szData, std::size(m_szData), src, _TRUNCATE); }
 	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
 
 	//各種メソッド
