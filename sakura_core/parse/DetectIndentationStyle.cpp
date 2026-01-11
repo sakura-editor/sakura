@@ -30,7 +30,7 @@ struct EditorConfig {
 	struct Section {
 		std::string name;
 		std::optional<IndentStyle> indent_style;
-		std::optional<int> indent_size;
+		std::optional<int> indent_size; // -1 : use tab_width if specified
 		std::optional<int> tab_width;
 		//std::optional<bool> trim_trailing_whitespace;
 		//std::optional<bool> insert_final_newline;
@@ -48,6 +48,14 @@ constexpr std::string_view trim(std::string_view s) noexcept {
 	return s.substr(first, (last - first + 1));
 }
 
+inline bool strieq(std::string_view lhs, std::string_view rhs) {
+	return 0 == _strnicmp(lhs.data(), rhs.data(), std::min(lhs.size(), rhs.size()));
+}
+
+inline void tolower(std::string& s) {
+	for (char& c : s) c = (char)std::tolower(c);
+}
+
 struct EditorConfigParser {
 	bool Parse(const fs::path& configPath, EditorConfig& config) {
 		std::ifstream file(configPath, std::ios::in);
@@ -63,11 +71,11 @@ struct EditorConfigParser {
 		if (0 != memcmp(buff, bom, 3)) {
 			file.seekg(0);
 		}
-		std::string line;
-		std::smatch matches;
+		std::string rawLine;
+		std::match_results<std::string_view::const_iterator> matches;
 		EditorConfig::Section* section = nullptr;
-		while (std::getline(file, line)) {
-			line = trim(line);
+		while (std::getline(file, rawLine)) {
+			std::string_view line = trim(rawLine);
 			if (line.starts_with('[') && line.ends_with(']')) {
 				config.sections.resize(config.sections.size() + 1);
 				section = &config.sections.back();
@@ -76,24 +84,30 @@ struct EditorConfigParser {
 			else if (line.starts_with('#') || line.starts_with(';')) {
 				// comment
 			}
-			else if (std::regex_match(line, matches, rePropLine) && matches.size() == 3) {
-				const std::string_view key(&(*matches[1].first), matches[1].length());
+			else if (std::regex_match(line.cbegin(), line.cend(), matches, rePropLine) && matches.size() == 3) {
+				std::string key = matches[1].str();
+				tolower(key);
 				const std::string_view value(&(*matches[2].first), matches[2].length());
 				if (section) {
 					if (key == "indent_style") {
-						if (value == "tab") {
+						if (strieq(value, "tab")) {
 							section->indent_style = EditorConfig::IndentStyle::Tab;
 						}
-						else if (value == "space") {
+						else if (strieq(value, "space")) {
 							section->indent_style = EditorConfig::IndentStyle::Space;
 						}
 					}
 					else if (key == "indent_size") {
-						int indent_size;
-						if (std::errc() != std::from_chars(value.data(), value.data() + value.size(), indent_size).ec) {
-							return false;
+						if (strieq(value, "tab")) {
+							section->indent_size = -1;
 						}
-						section->indent_size = indent_size;
+						else {
+							int indent_size;
+							if (std::errc() != std::from_chars(value.data(), value.data() + value.size(), indent_size).ec) {
+								return false;
+							}
+							section->indent_size = indent_size;
+						}
 					}
 					else if (key == "tab_width") {
 						int tab_width;
@@ -105,7 +119,7 @@ struct EditorConfigParser {
 				}
 				else {
 					if (key == "root") {
-						config.root = value == "true";
+						config.root = strieq(value, "true");
 					}
 				}
 			}
@@ -118,8 +132,8 @@ bool glob_matches_extension(std::string_view glob, std::string_view extension)
 {
 	std::string g = std::string(glob);
 	std::string e = std::string(extension);
-	for (char& c : g) c = (char)std::tolower(c);
-	for (char& c : e) c = (char)std::tolower(c);
+	tolower(g);
+	tolower(e);
 	// *.ext
 	if (g.starts_with("*" + e)) {
 		return true;
@@ -164,19 +178,22 @@ bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 						if (section.indent_style) {
 							if (section.indent_style == EditorConfig::IndentStyle::Tab) {
 								style.character = IndentationStyle::Character::Tabs;
-								if (section.tab_width) {
-									style.tabSpace = *section.tab_width;
+								if (section.tab_width.has_value()) {
+									style.tabSpace = section.tab_width.value();
 									return true;
 								}
-								else if (section.indent_size) {
-									style.tabSpace = *section.indent_size;
+								else if (section.indent_size.has_value()) {
+									style.tabSpace = section.indent_size.value();
 									return true;
 								}
 							}
 							else if (section.indent_style == EditorConfig::IndentStyle::Space) {
 								style.character = IndentationStyle::Character::Spaces;
-								if (section.indent_size) {
+								if (section.indent_size.has_value()) {
 									style.tabSpace = *section.indent_size;
+									if (style.tabSpace == -1 && section.tab_width.has_value()) {
+										style.tabSpace = section.tab_width.value();
+									}
 									return true;
 								}
 							}
