@@ -1365,8 +1365,8 @@ bool CControlTray::OpenNewEditor2(
 	// 追加のコマンドラインオプション
 	CCommandLineString cCmdLine;
 	if( pfi != nullptr ){
-		if( pfi->m_ptCursor.x >= 0					)cCmdLine.AppendF( L" -X=%d", pfi->m_ptCursor.x +1 );
-		if( pfi->m_ptCursor.y >= 0					)cCmdLine.AppendF( L" -Y=%d", pfi->m_ptCursor.y +1 );
+		if( pfi->m_ptCursor.x >= 0					)cCmdLine.AppendF( L" -X=%d", int(pfi->m_ptCursor.x) + 1 );
+		if( pfi->m_ptCursor.y >= 0					)cCmdLine.AppendF( L" -Y=%d", int(pfi->m_ptCursor.y) + 1 );
 		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VX=%d", (Int)pfi->m_nViewLeftCol + 1 );
 		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VY=%d", (Int)pfi->m_nViewTopLine + 1 );
 	}
