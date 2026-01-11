@@ -124,8 +124,10 @@ inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        :
 inline WCHAR* auto_memcpy(WCHAR* dest, const WCHAR* src, size_t count){ return ::wmemcpy(dest,src,count);              }
 inline ACHAR* auto_strcpy(ACHAR* dst, const ACHAR* src){ return strcpy(dst,src); }
 inline WCHAR* auto_strcpy(WCHAR* dst, const WCHAR* src){ return wcscpy(dst,src); }
-inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcpy_s(dst,nDstCount,src); }
-inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscpy_s(dst,nDstCount,src); }
+inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, std::string_view  src) noexcept { return ::strncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
+inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, std::wstring_view src) noexcept { return ::wcsncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
+inline errno_t auto_strcpy_s(std::span<ACHAR> dst, std::string_view  src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
+inline errno_t auto_strcpy_s(std::span<WCHAR> dst, std::wstring_view src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
 inline ACHAR* auto_strncpy(ACHAR* dst,const ACHAR* src,size_t count){ return strncpy(dst,src,count); }
 inline WCHAR* auto_strncpy(WCHAR* dst,const WCHAR* src,size_t count){ return wcsncpy(dst,src,count); }
 inline ACHAR* auto_memset(ACHAR* dest, ACHAR c, size_t count){        memset (dest,c,count); return dest; }

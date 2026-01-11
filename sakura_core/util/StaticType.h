@@ -118,6 +118,17 @@ public:
 	StaticString(){ m_szData[0]=0; }
 	StaticString(const WCHAR* src) { Assign(src); }
 
+	/*!
+	 * 文字列を代入する
+	 *
+	 * @retval 0 成功
+	 * @retval STRUNCATE 切り詰め発生
+	 */
+	errno_t assign(std::wstring_view src) noexcept
+	{
+		return auto_strcpy_s(m_szData, src);
+	}
+
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
 
@@ -132,7 +143,7 @@ public:
 	WCHAR At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const WCHAR* src){ if(!src) m_szData[0]=0; else ::wcsncpy_s(m_szData, std::size(m_szData), src, _TRUNCATE); }
+	void Assign(const WCHAR* src) noexcept { assign(std::wstring_view{ src ? src : L"" }); }
 	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
 
 	//各種メソッド
@@ -141,5 +152,7 @@ public:
 private:
 	WCHAR m_szData[N_BUFFER_COUNT];
 };
+
+template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }
 
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */
