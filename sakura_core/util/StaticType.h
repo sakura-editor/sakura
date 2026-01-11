@@ -116,7 +116,7 @@ public:
 public:
 	//コンストラクタ・デストラクタ
 	StaticString(){ m_szData[0]=0; }
-	StaticString(const WCHAR* rhs){ if(!rhs) m_szData[0]=0; else wcscpy(m_szData,rhs); }
+	StaticString(const WCHAR* src) { Assign(src); }
 
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
