@@ -189,24 +189,24 @@ private:
 	const CEditDoc*			m_pEditDoc;
 
 	//キャレット位置
-	CLayoutPoint	m_ptCaretPos_Layout;	// ビュー左上端からのカーソル位置。レイアウト単位。
-	CLogicPoint		m_ptCaretPos_Logic;		// カーソル位置。ロジック単位。データ内文字単位。
+	CLayoutPoint	m_ptCaretPos_Layout = {0, 0};	// ビュー左上端からのカーソル位置。レイアウト単位。
+	CLogicPoint		m_ptCaretPos_Logic = {0, 0};	// カーソル位置。ロジック単位。データ内文字単位。
 
 public:
-	CLayoutInt		m_nCaretPosX_Prev;	// 直前のX座標記憶用。レイアウト単位。このソースの下部に詳細説明があります。
+	CLayoutInt		m_nCaretPosX_Prev = CLayoutInt(0);	// 直前のX座標記憶用。レイアウト単位。このソースの下部に詳細説明があります。
 
 	//キャレット見た目
 private:
-	CMySize			m_sizeCaret;		// キャレットのサイズ。ピクセル単位。
-	COLORREF		m_crCaret;			// キャレットの色				// 2006.12.07 ryoji
-	HBITMAP			m_hbmpCaret;		// キャレットのビットマップ		// 2006.11.28 ryoji
+	CMySize			m_sizeCaret = {0, 0};		// キャレットのサイズ。ピクセル単位。
+	COLORREF		m_crCaret = COLORREF(-1);	// キャレットの色				// 2006.12.07 ryoji
+	HBITMAP			m_hbmpCaret = nullptr;		// キャレットのビットマップ		// 2006.11.28 ryoji
 	bool			m_bCaretShowFlag;
 
 	//アンダーライン
 public:
 	mutable CCaretUnderLine m_cUnderLine;
 	
-	bool			m_bClearStatus;
+	bool			m_bClearStatus = true;
 };
 
 /*!	@brief CCaret::m_nCaretPosX_Prev
