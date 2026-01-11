@@ -71,12 +71,6 @@ int skr_towlower( int c );
 //                           拡張・独自実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//文字数の上限付きコピー
-LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength); //iMaxLengthは文字単位。
-
-//	Apr. 03, 2003 genta
-char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
-
 //大文字小文字を区別せずに文字列を検索
 const WCHAR* wcsistr( const WCHAR* s1, const WCHAR* s2 );
 const ACHAR* stristr( const ACHAR* s1, const ACHAR* s2 );

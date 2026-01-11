@@ -1696,7 +1696,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 							types.m_RegexKeywordArr[j].m_nColorIndex = _wtoi(szKeyData);
 						p++;
 						if( 0 < nKeywordSize - nPos - 1 ){
-							wcscpyn(&pKeyword[nPos], p, nKeywordSize - nPos - 1 );
+							::wcsncpy_s(&pKeyword[nPos], nKeywordSize - nPos, p, _TRUNCATE);
 						}
 						if( types.m_RegexKeywordArr[j].m_nColorIndex < 0
 						 || types.m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST )
