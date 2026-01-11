@@ -956,6 +956,7 @@ struct PyObjectPtr final {
 
 	PyObject* operator = (PyObject* param_op) {
 		this->op = param_op;
+		return this->op;
 	}
 	operator PyObject* () {
 		return op;
