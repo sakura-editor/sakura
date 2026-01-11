@@ -16,33 +16,9 @@
 
 #include "env/ShareDataTestSuite.hpp"
 
-#include "view/colors/EColorIndexType.h"
-
 #include "tests1_rc.h"
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
-
-namespace cxx {
-
-//! CスタイルのNUL区切り配列を作成する
-void make_cstyle_array(
-	std::span<WCHAR> buffer,
-	std::span<LPCWSTR> items
-)
-{
-	// 各要素をNUL区切りで連結した文字列を作成する
-	auto strItems = std::accumulate(items.begin(), items.end(), std::wstring(),
-		[](const std::wstring& a, std::wstring_view b) { return a + L'\0' + std::data(b); }
-	);
-
-	// 末尾にもう一つNULを付ける
-	strItems += L'\0';
-
-	// バッファにコピーする
-	::wmemcpy_s(std::data(buffer), std::size(buffer), std::data(strItems) + 1, std::size(strItems) - 1);
-}
-
-} // namespace cxx
 
 /*!
 	外部DLLの読み込みテスト
@@ -163,7 +139,7 @@ TEST_F(CBregexpTest, test001)
 	// ロード前は正規表現コンパイルできない
 	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+", L"$1d"), IsFalse());
 
-	// 正規表現設定に値を入れる
+	// C/Migemo設定に値を入れる
 	::wcsncpy_s(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib, L"", _TRUNCATE);
 
 	// 名前を指定せずにロードする
@@ -217,7 +193,7 @@ TEST_F(CBregexpTest, test002)
 	// ロード前は検索できない
 	EXPECT_THAT(pcBregexp->Match(L"test123あいう"), IsFalse());
 
-	// 正規表現設定に値を入れる
+	// C/Migemo設定に値を入れる
 	::wcsncpy_s(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib, L"bregonig.dll", _TRUNCATE);
 
 	// 名前を指定せずにロードする
@@ -250,7 +226,7 @@ TEST_F(CBregexpTest, test003)
 	// ロード前は置換できない
 	EXPECT_THAT(pcBregexp->Replace(L"test123あいう"), IsFalse());
 
-	// 正規表現設定に値を入れる
+	// C/Migemo設定に値を入れる
 	::wcsncpy_s(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib, GetIniFileName().replace_filename(L"bregonig.dll").c_str(), _TRUNCATE);
 
 	// 名前を指定せずにロードする
@@ -383,34 +359,6 @@ TEST_F(CBregexpTest, test007)
 	EXPECT_THAT(pcBregexp->Replace(LR"(\o054)"), IsTrue());
 	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
 	EXPECT_THAT(pcBregexp->GetReplacedString(), StrEq(L""));
-}
-
-// 無効化済みテスト: BMatchExWが存在しないDLLを用意するのが困難であるため
-TEST_F(CBregexpTest, DISABLED_test008)
-{
-	using std::string_view_literals::operator""sv;
-
-	// 名前を指定してロードする
-	pcBregexp->InitDll(L"bregexp.dll");
-
-	// ロードされたら利用可能になる
-	EXPECT_THAT(pcBregexp->IsAvailable(), IsTrue());
-
-	// 正規表現コンパイルを成功させる
-	EXPECT_THAT(pcBregexp->Compile(L"^[0-9]+"), IsTrue());
-	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
-
-	EXPECT_THAT(pcBregexp->Match(L"123"), IsTrue());
-	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
-
-	EXPECT_THAT(pcBregexp->Match(L"123"sv, 1), IsFalse());
-	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
-
-	EXPECT_THAT(pcBregexp->Compile(L"^[0-9]+", L""), IsTrue());
-	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
-
-	EXPECT_THAT(pcBregexp->Replace(L"123"), IsTrue());
-	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
 }
 
 TEST_F(CBregexpTest, CheckRegexpSyntax001)
@@ -558,213 +506,6 @@ TEST_F(CMigemoTest, test003)
 
 	// 与えた文字列をSJISに変換できない場合、与えた文字列がそのまま返る
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));
-}
-
-struct CRegexKeywordTest : public ExtModuleTest {
-	using CRegexKeywordHolder = std::unique_ptr<CRegexKeyword>;
-
-	CRegexKeywordHolder pcRegexKeyword = nullptr;
-
-	/*!
-	 * テストが起動される直前に毎回呼ばれる関数
-	 */
-	void SetUp() override {
-		// テストクラスをインスタンス化する
-		pcRegexKeyword = std::make_unique<CRegexKeyword>(L"bregonig.dll");
-	}
-
-	/*!
-	 * テストが実行された直後に毎回呼ばれる関数
-	 */
-	void TearDown() override {
-		// テストクラスのインスタンスを破棄する
-		pcRegexKeyword = nullptr;
-	}
-};
-
-TEST_F(CRegexKeywordTest, RegexKeySetTypes101)
-{
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(nullptr), IsFalse());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeySetTypes102)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = false;
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsFalse());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeySetTypes001)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-
-	pTypeConfig->m_bUseRegexKeyword = false;
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsFalse());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyCompile001)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/^#/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyCompile002)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/#/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyCompile003)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/^#/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_KEYWORD1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyCompile004)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/#/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = false;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyCompile005)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/[...)/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyCompile101)
-{
-	pcRegexKeyword->DeinitDll();
-
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyLineStart001)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/^#/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeyLineStart(), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexKeyLineStart101)
-{
-	pcRegexKeyword->DeinitDll();
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeyLineStart(), IsFalse());
-}
-
-TEST_F(CRegexKeywordTest, RegexIsKeyword001)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/^#/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeyLineStart(), IsTrue());
-
-	int nMatchLen = -1;
-	int nMatchColor = COLORIDX_DEFAULT;
-	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(L"##test", 0, &nMatchLen, &nMatchColor), IsTrue());
-	EXPECT_THAT(nMatchLen, 0);
-	EXPECT_THAT(nMatchColor, COLORIDX_REGEX1);
-
-	nMatchLen = -1;
-	nMatchColor = COLORIDX_DEFAULT;
-	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(L"##test", 0, &nMatchLen, &nMatchColor), IsTrue());
-	EXPECT_THAT(nMatchLen, 0);
-	EXPECT_THAT(nMatchColor, COLORIDX_REGEX1);
-
-	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(L"##test", 1, &nMatchLen, &nMatchColor), IsFalse());
-
-	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(L"##test", 2, &nMatchLen, &nMatchColor), IsFalse());
-}
-
-TEST_F(CRegexKeywordTest, RegexIsKeyword002)
-{
-	auto pTypeConfig = std::make_unique<STypeConfig>();
-	pTypeConfig->m_bUseRegexKeyword = true;
-
-	std::array regexKeywords = { L"m/^#/k" };
-	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
-	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
-	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
-
-	EXPECT_THAT(pcRegexKeyword->RegexKeyLineStart(), IsTrue());
-
-	int nMatchLen = -1;
-	int nMatchColor = COLORIDX_DEFAULT;
-	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(L"//test", 0, &nMatchLen, &nMatchColor), IsTrue());
-}
-
-TEST_F(CRegexKeywordTest, RegexIsKeyword101)
-{
-	pcRegexKeyword->DeinitDll();
-
-	int nMatchLen = -1;
-	int nMatchColor = COLORIDX_DEFAULT;
-	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(L"##test", 0, &nMatchLen, &nMatchColor), IsFalse());
-}
-
-TEST_F(CRegexKeywordTest, GetNewMagicNumber101)
-{
-	// 呼ぶだけ
-	CRegexKeyword::GetNewMagicNumber();
 }
 
 } // namespace extmodule

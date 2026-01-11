@@ -54,18 +54,15 @@ LPCWSTR CBregOnig::GetDllNameImp(int index)
 */
 bool CBregOnig::InitDllImp()
 {
-	//DLL内関数名リスト（記述順でアドレス取得を試み、失敗した時点で抜ける）
+	//DLL内関数名リスト
 	const std::array table = {
-		ImportTable{ &m_BMatch,				"BMatchW" },
-		ImportTable{ &m_BSubst,				"BSubstW" },
-		ImportTable{ &m_BRegexpVersion,		"BRegexpVersionW" },
-		ImportTable{ &m_BRegfree,			"BRegfreeW" },
 		ImportTable{ &m_BMatchEx,			"BMatchExW" },
 		ImportTable{ &m_BSubstEx,			"BSubstExW" },
+		ImportTable{ &m_BRegexpVersion,		"BRegexpVersionW" },
+		ImportTable{ &m_BRegfree,			"BRegfreeW" },
 		ImportTable{ nullptr, nullptr }
 	};
-	// 全部とれなくてもBRegfreeまで取れてるなら成功とする
-	return RegisterEntries(std::data(table)) || m_BRegfree;
+	return RegisterEntries(std::data(table));
 }
 
 int CBregOnig::BMatchExW(BREGEXP** rxp, std::span<WCHAR> msg, std::wstring_view target, size_t offset, const std::optional<std::wstring>& optQuotedRegex) const noexcept
@@ -73,35 +70,15 @@ int CBregOnig::BMatchExW(BREGEXP** rxp, std::span<WCHAR> msg, std::wstring_view 
 	auto targetbegp = std::data(target);
 	auto targetp = targetbegp + offset;
 	auto targetendp = targetbegp + std::size(target);
-
-	int ret;
-	if (m_BMatchEx) {
-		ret = m_BMatchEx(
-			// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-			LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
-			LPWSTR(targetbegp),
-			LPWSTR(targetp),
-			LPWSTR(targetendp),
-			rxp,
-			std::data(msg)
-		);
-	} else {
-		/*
-		 * 行頭(^)とマッチするのは、offset=0の時だけなので、それ以外は false
-		 */
-		if (0 < offset && std::regex_search((*rxp)->parap, (*rxp)->paraendp, std::wregex(LR"(^m.\^)"))) {
-			return false;
-		}
-		ret = m_BMatch(
-			// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-			LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
-			LPWSTR(targetp),
-			LPWSTR(targetendp),
-			rxp,
-			std::data(msg)
-		);
-	}
-	return ret;
+	return m_BMatchEx(
+		// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+		LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
+		LPWSTR(targetbegp),
+		LPWSTR(targetp),
+		LPWSTR(targetendp),
+		rxp,
+		std::data(msg)
+	);
 }
 
 int CBregOnig::BSubstExW(BREGEXP** rxp, std::span<WCHAR> msg, std::wstring_view target, size_t offset, const std::optional<std::wstring>& optQuotedRegex) const noexcept
@@ -109,29 +86,15 @@ int CBregOnig::BSubstExW(BREGEXP** rxp, std::span<WCHAR> msg, std::wstring_view 
 	auto targetbegp = std::data(target);
 	auto targetp = targetbegp + offset;
 	auto targetendp = targetbegp + std::size(target);
-
-	int ret;
-	if (m_BSubstEx) {
-		ret = m_BSubstEx(
-			// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-			LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
-			LPWSTR(targetbegp),
-			LPWSTR(targetp),
-			LPWSTR(targetendp),
-			rxp,
-			std::data(msg)
-		);
-	} else {
-		ret = m_BSubst(
-			// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-			LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
-			LPWSTR(targetp),
-			LPWSTR(targetendp),
-			rxp,
-			std::data(msg)
-		);
-	}
-	return ret;
+	return m_BSubstEx(
+		// 検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+		LPWSTR(optQuotedRegex.has_value() ? std::data(optQuotedRegex.value()) : nullptr),
+		LPWSTR(targetbegp),
+		LPWSTR(targetp),
+		LPWSTR(targetendp),
+		rxp,
+		std::data(msg)
+	);
 }
 
 CBregOnig::CPattern::CPattern(
