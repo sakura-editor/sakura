@@ -121,7 +121,7 @@ public:
 
 	//コンストラクタ・デストラクタ
 	StaticString() = default;
-	StaticString(const WCHAR* src) { Assign(src); }
+	explicit StaticString(std::wstring_view src) { assign(src); }
 
 	/*!
 	 * 文字列を代入する

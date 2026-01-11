@@ -1015,7 +1015,7 @@ bool CImpExpKeybind::Export( const std::wstring& sFileName, std::wstring& sErrMs
 	cProfile.SetWritingMode();
 
 	// ヘッダー
-	StaticString<256> szKeydataHead = WSTR_KEYBIND_HEAD4;
+	StaticString<256> szKeydataHead{ WSTR_KEYBIND_HEAD4 };
 	cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
 	cProfile.IOProfileData(szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
