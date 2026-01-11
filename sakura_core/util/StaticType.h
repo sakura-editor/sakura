@@ -107,15 +107,20 @@ private:
 template <int N_BUFFER_COUNT>
 class StaticString{
 private:
-	using Me = StaticString<N_BUFFER_COUNT>;
+	//テンプレート定数名が長過ぎて不便なので、エイリアスを切る
+	static constexpr auto N = N_BUFFER_COUNT;
+
+	using ArrayType = std::array<WCHAR, N>;
+
+	using Me = StaticString<N>;
+
 public:
 	static constexpr auto BUFFER_COUNT = N_BUFFER_COUNT;
 
 	static constexpr auto size() noexcept { return BUFFER_COUNT; }
 
-public:
 	//コンストラクタ・デストラクタ
-	StaticString(){ m_szData[0]=0; }
+	StaticString() = default;
 	StaticString(const WCHAR* src) { Assign(src); }
 
 	/*!
@@ -129,17 +134,40 @@ public:
 		return auto_strcpy_s(m_szData, src);
 	}
 
+	/*!
+	 * 文字列長を取得する
+	 */
+	size_t length() const noexcept
+	{
+		return auto_strnlen(data(), size());
+	}
+
+	constexpr bool empty() const noexcept { return 0 == m_szData[0]; }
+
+	constexpr       WCHAR* data()        noexcept { return std::data(m_szData); }
+	constexpr const WCHAR* data()  const noexcept { return std::data(m_szData); }
+	constexpr const WCHAR* c_str() const noexcept { return data(); }
+
+	constexpr operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
+	operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
+
+	explicit operator std::filesystem::path() const & noexcept { return static_cast<std::wstring_view>(*this); }
+
+	Me& operator = (std::wstring_view rhs) noexcept { assign(rhs); return *this; }
+	Me& operator = (const std::wstring& rhs) noexcept { assign(rhs); return *this; }
+	Me& operator = (const std::filesystem::path& path) noexcept { assign(path.wstring()); return *this; }
+
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
 
 	//データアクセス
-	WCHAR*       GetBufferPointer()      { return m_szData; }
-	const WCHAR* GetBufferPointer() const{ return m_szData; }
-	const WCHAR* c_str()            const{ return m_szData; } //std::string風
+	WCHAR*       GetBufferPointer()      { return data(); }
+	const WCHAR* GetBufferPointer() const{ return data(); }
 
 	//簡易データアクセス
-	operator       WCHAR*()      { return m_szData; }
-	operator const WCHAR*() const{ return m_szData; }
+	constexpr operator       WCHAR*()       & noexcept { return data(); }
+	constexpr operator const WCHAR*() const & noexcept { return data(); }
+
 	WCHAR At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
@@ -147,10 +175,10 @@ public:
 	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
 
 	//各種メソッド
-	int Length() const { return static_cast<int>(auto_strnlen(m_szData, BUFFER_COUNT)); }
+	int Length() const noexcept { return static_cast<int>(length()); }
 
 private:
-	WCHAR m_szData[N_BUFFER_COUNT];
+	ArrayType	m_szData{};
 };
 
 template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }

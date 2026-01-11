@@ -24,10 +24,10 @@ public:
 	CFilePath() = default;
 	CFilePath(const WCHAR* rhs) : Super(rhs) { }
 
-	[[nodiscard]] bool IsValidPath() const{ return At(0)!=L'\0'; }
+	[[nodiscard]] bool IsValidPath() const noexcept { return !empty(); }
 	[[nodiscard]] std::wstring GetDirPath() const
 	{
-		std::filesystem::path path{ c_str() };
+		std::filesystem::path path{ *this };
 		return path.remove_filename();
 	}
 
