@@ -107,39 +107,114 @@ private:
 template <int N_BUFFER_COUNT>
 class StaticString{
 private:
-	using Me = StaticString<N_BUFFER_COUNT>;
+	//テンプレート定数名が長過ぎて不便なので、エイリアスを切る
+	static constexpr auto N = N_BUFFER_COUNT;
+
+	using ArrayType = std::array<WCHAR, N>;
+	using Traits = std::char_traits<WCHAR>;
+
+	using Me = StaticString<N>;
+
 public:
 	static constexpr auto BUFFER_COUNT = N_BUFFER_COUNT;
 
 	static constexpr auto size() noexcept { return BUFFER_COUNT; }
 
-public:
 	//コンストラクタ・デストラクタ
-	StaticString(){ m_szData[0]=0; }
-	StaticString(const WCHAR* rhs){ if(!rhs) m_szData[0]=0; else wcscpy(m_szData,rhs); }
+	StaticString() = default;
+	constexpr explicit StaticString(std::wstring_view src) { assign(src); }
+
+	/*!
+	 * 文字列を末尾に追加する
+	 *
+	 * @retval 0 成功
+	 * @retval STRUNCATE 切り詰め発生
+	 */
+	constexpr errno_t append(std::wstring_view src) noexcept
+	{
+		const auto len = length();
+		const auto count = std::min<size_t>(std::size(src), size() - len - 1);
+		Traits::move(data() + len, std::data(src), count);
+		Traits::assign(data()[len + count], L'\0');
+		return count < std::size(src) ? STRUNCATE : 0;
+	}
+
+	/*!
+	 * 文字列を代入する
+	 *
+	 * @retval 0 成功
+	 * @retval STRUNCATE 切り詰め発生
+	 */
+	constexpr errno_t assign(std::wstring_view src) noexcept
+	{
+		const auto count = std::min<size_t>(std::size(src), size() - 1);
+		Traits::move(data(), std::data(src), count);
+		Traits::assign(data()[count], L'\0');
+		return count < std::size(src) ? STRUNCATE : 0;
+	}
+
+	/*!
+	 * 文字列長を取得する
+	 */
+	constexpr size_t length() const noexcept
+	{
+		const auto pos = Traits::find(data(), size(), L'\0');
+		return pos ? static_cast<size_t>(pos - data()) : size();
+	}
+
+	constexpr bool empty() const noexcept { return 0 == m_szData[0]; }
+
+	constexpr       WCHAR* data()        noexcept { return std::data(m_szData); }
+	constexpr const WCHAR* data()  const noexcept { return std::data(m_szData); }
+	constexpr const WCHAR* c_str() const noexcept { return data(); }
+
+	constexpr operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
+	constexpr operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
+
+	explicit operator std::filesystem::path() const & noexcept { return static_cast<std::wstring_view>(*this); }
+
+	constexpr Me& operator = (std::wstring_view rhs) noexcept { assign(rhs); return *this; }
+	constexpr Me& operator = (const std::wstring& rhs) noexcept { assign(rhs); return *this; }
+	constexpr Me& operator = (const std::filesystem::path& path) noexcept { assign(path.wstring()); return *this; }
+
+	constexpr Me& operator += (std::wstring_view rhs) noexcept { append(rhs); return *this; }
+	constexpr Me& operator += (const std::wstring& rhs) noexcept { append(rhs); return *this; }
 
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
 
 	//データアクセス
-	WCHAR*       GetBufferPointer()      { return m_szData; }
-	const WCHAR* GetBufferPointer() const{ return m_szData; }
-	const WCHAR* c_str()            const{ return m_szData; } //std::string風
+	WCHAR*       GetBufferPointer()      { return data(); }
+	const WCHAR* GetBufferPointer() const{ return data(); }
 
 	//簡易データアクセス
-	operator       WCHAR*()      { return m_szData; }
-	operator const WCHAR*() const{ return m_szData; }
+	constexpr operator       WCHAR*()       & noexcept { return data(); }
+	constexpr operator const WCHAR*() const & noexcept { return data(); }
+
 	WCHAR At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const WCHAR* src){ if(!src) m_szData[0]=0; else wcscpy_s(m_szData, std::size(m_szData),src); }
+	void Assign(const WCHAR* src) noexcept { assign(std::wstring_view{ src ? src : L"" }); }
 	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
 
 	//各種メソッド
-	int Length() const { return static_cast<int>(auto_strnlen(m_szData, BUFFER_COUNT)); }
+	int Length() const noexcept { return static_cast<int>(length()); }
 
 private:
-	WCHAR m_szData[N_BUFFER_COUNT];
+	ArrayType	m_szData{};
 };
+
+template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }
+template<int N> inline errno_t wcscat_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.append(src); }
+
+template<int N>
+inline int vswprintf_s(StaticString<N>& buf, const WCHAR* format, va_list& v) noexcept {
+	return ::_vsnwprintf_s(std::data(buf), std::size(buf), _TRUNCATE, format, v);
+}
+
+template<int N, typename... Params>
+inline int swprintf_s(StaticString<N>& buf, const WCHAR* format, Params&&... params) noexcept {
+	return ::_snwprintf_s(std::data(buf), _TRUNCATE, std::size(buf), format, std::forward<Params>(params)...);
+}
 
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */
