@@ -1214,7 +1214,7 @@ bool CEditView::IsCurrentPositionURL(
 	//nLineLen = CLogicInt(__min(nLineLen, ptXY.GetX2() + _MAX_PATH));
 	while( i <= ptXY.GetX2() && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword
-					&& m_cRegexKeyword->RegexIsKeyword( std::wstring_view(pLine, nLineLen), i, &nUrlLen, &nMatchColor )
+					&& m_cRegexKeyword->RegexIsKeyword( CStringRef(pLine, nLineLen), i, &nUrlLen, &nMatchColor )
 					&& nMatchColor == COLORIDX_URL );
 		if( !bMatch ){
 			bMatch = ( bDispUrl

@@ -83,8 +83,6 @@ else()
     OUTPUT "${BREGONIG_DLL}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
     COMMAND ${7ZIP_EXECUTABLE} e "${BREGONIG_ZIP_FILE}" -o"${OUTPUT_DIRECTORY}" -y "${BREGONIG_EXTRACT_TARGET}" > NUL
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/include/bregonig"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${BREGONIG_SOURCE_DIR}/src/bregexp.h" "${CMAKE_BINARY_DIR}/include/bregonig/bregexp.h"
     COMMENT "Extracting bregonig.dll from ${BREGONIG_ZIP_FILE}"
   )
 endif()

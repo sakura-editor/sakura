@@ -14,14 +14,13 @@ bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
-	std::wstring_view text{ cStr.GetPtr(), (size_t)cStr.GetLength() };
-
 	int		nMatchLen;
 	int		nMatchColor;
 
+	const CEditView* pcView = CColorStrategyPool::getInstance()->GetCurrentView();
+
 	//正規表現キーワード
-	if (const auto pcView = CColorStrategyPool::getInstance()->GetCurrentView();
-		pcView->m_cRegexKeyword->RegexIsKeyword(text, nPos, & nMatchLen, & nMatchColor)
+	if( pcView->m_cRegexKeyword->RegexIsKeyword( cStr, nPos, &nMatchLen, &nMatchColor )
 	){
 		this->m_nCOMMENTEND = nPos + nMatchLen;  /* キーワード文字列の終端をセットする */
 		this->m_nCOMMENTMODE = ToColorIndexType_RegularExpression(nMatchColor);
