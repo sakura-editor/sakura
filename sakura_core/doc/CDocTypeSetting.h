@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -43,7 +43,7 @@ struct ColorInfo : public ColorInfoBase{
 //デフォルト色設定
 void	GetDefaultColorInfo(ColorInfo* pColorInfo, size_t index) noexcept;
 void	GetDefaultColorInfoName(ColorInfo* pColorInfo, size_t nIndex) noexcept;
-int GetDefaultColorInfoCount();
+int		GetDefaultColorInfoCount() noexcept;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           辞書                              //
