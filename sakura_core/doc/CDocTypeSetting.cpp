@@ -94,15 +94,17 @@ void GetDefaultColorInfo(ColorInfo* pColorInfo, size_t nIndex) noexcept
 
 	ColorInfoBase* p = pColorInfo;
 	*p = ColorInfo_DEFAULT[nIndex].m_sColorInfo; //ColorInfoBase
-	GetDefaultColorInfoName( pColorInfo, nIndex );
+	GetDefaultColorInfoName(pColorInfo, nIndex);
 	pColorInfo->m_nColorIdx = int(nIndex);
 }
 
-void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex )
+void GetDefaultColorInfoName(ColorInfo* pColorInfo, size_t nIndex) noexcept
 {
+	static_assert(std::size(ColorInfo_DEFAULT) == size_t(COLORIDX_LAST));
+
 	assert( nIndex < int(std::size(ColorInfo_DEFAULT)) );
 
-	wcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
+	::wcscpy_s(pColorInfo->m_szName, LS(ColorInfo_DEFAULT[nIndex].m_nNameId));
 }
 
 int GetDefaultColorInfoCount()
