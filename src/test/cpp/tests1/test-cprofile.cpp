@@ -125,20 +125,6 @@ TEST(CProfile, GetProfileData_NewEntry)
 }
 
 /*!
- * @brief StringBufferWのテスト
- */
-TEST(StringBufferW, ctor)
-{
-	WCHAR szBuf[12]{ 0 };
-	StringBufferW buf1(szBuf, int(std::size(szBuf)));
-	StringBufferW buf2(szBuf);
-
-	ASSERT_THROW({ StringBufferW buf3(nullptr, 1); }, std::invalid_argument);
-
-	ASSERT_THROW({ StringBufferW buf4(szBuf, 0); }, std::invalid_argument);
-}
-
-/*!
  * @brief TryParseのテスト
  */
 TEST(profile_data, TryParse_int)
@@ -223,23 +209,6 @@ TEST(profile_data, TryParse_KEYCODE)
 }
 
 /*!
- * @brief TryParseのテスト
- */
-TEST(profile_data, TryParse_StringBufferW)
-{
-	WCHAR buffer[5]{ 0 };
-	StringBufferW value(buffer);
-	ASSERT_TRUE(profile_data::TryParse(L"test", value));
-	ASSERT_STREQ(L"test", value.c_str());
-
-	ASSERT_FALSE(profile_data::TryParse(L"overflow", value));
-	ASSERT_STREQ(L"test", value.c_str());
-
-	ASSERT_TRUE(profile_data::TryParse(L"", value));
-	ASSERT_STREQ(L"", value.c_str());
-}
-
-/*!
  * @brief ToString(KEYCODE)のテスト
  */
 TEST(profile_data, ToString_KEYCODE)
@@ -281,24 +250,24 @@ TEST(CDataProfile, IOProfileData)
 	cProfile.SetReadingMode();
 
 	std::wstring value;
-	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", value));
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"szTest", value), IsFalse());
 
 	cProfile.SetProfileData(L"Test", L"szTest", L"value");
 
-	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"szTest", value));
-	ASSERT_STREQ(L"value", value.data());
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"szTest", value), IsTrue());
+	EXPECT_THAT(value, StrEq(L"value"));
 
-	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"nTest", value), IsFalse());
 
 	cProfile.SetProfileData(L"Test", L"nTest", L"109");
 
-	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
-	ASSERT_STREQ(L"109", value.data());
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"nTest", value), IsTrue());
+	EXPECT_THAT(value, StrEq(L"109"));
 
 	int nValue = 0;
-	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", nValue));
-	ASSERT_EQ(109, nValue);
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"nTest", nValue), IsTrue());
+	EXPECT_THAT(nValue, 109);
 
-	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", nValue));
-	ASSERT_EQ(109, nValue);
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"szTest", nValue), IsFalse());
+	EXPECT_THAT(nValue, 109);
 }

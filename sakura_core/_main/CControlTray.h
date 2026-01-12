@@ -144,7 +144,7 @@ private:
 
 	CImageListMgr	m_hIcons;
 
-	SFilePath		m_szLanguageDll = nullptr;
+	SFilePath		m_szLanguageDll;
 };
 
 #endif /* SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_ */

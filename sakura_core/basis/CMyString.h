@@ -22,12 +22,12 @@ private:
 	using Super = StaticString<_MAX_PATH>;
 public:
 	CFilePath() = default;
-	CFilePath(const WCHAR* rhs) : Super(rhs) { }
+	CFilePath(const WCHAR* rhs) : Super(std::wstring_view{ rhs ? rhs : L"" }) {}
 
-	[[nodiscard]] bool IsValidPath() const{ return At(0)!=L'\0'; }
+	[[nodiscard]] bool IsValidPath() const noexcept { return !empty(); }
 	[[nodiscard]] std::wstring GetDirPath() const
 	{
-		std::filesystem::path path{ c_str() };
+		std::filesystem::path path{ *this };
 		return path.remove_filename();
 	}
 

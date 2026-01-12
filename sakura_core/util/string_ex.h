@@ -124,8 +124,10 @@ inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        :
 inline WCHAR* auto_memcpy(WCHAR* dest, const WCHAR* src, size_t count){ return ::wmemcpy(dest,src,count);              }
 inline ACHAR* auto_strcpy(ACHAR* dst, const ACHAR* src){ return strcpy(dst,src); }
 inline WCHAR* auto_strcpy(WCHAR* dst, const WCHAR* src){ return wcscpy(dst,src); }
-inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcpy_s(dst,nDstCount,src); }
-inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscpy_s(dst,nDstCount,src); }
+inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, std::string_view  src) noexcept { return ::strncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
+inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, std::wstring_view src) noexcept { return ::wcsncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
+inline errno_t auto_strcpy_s(std::span<ACHAR> dst, std::string_view  src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
+inline errno_t auto_strcpy_s(std::span<WCHAR> dst, std::wstring_view src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
 inline ACHAR* auto_strncpy(ACHAR* dst,const ACHAR* src,size_t count){ return strncpy(dst,src,count); }
 inline WCHAR* auto_strncpy(WCHAR* dst,const WCHAR* src,size_t count){ return wcsncpy(dst,src,count); }
 inline ACHAR* auto_memset(ACHAR* dest, ACHAR c, size_t count){        memset (dest,c,count); return dest; }
@@ -183,8 +185,16 @@ inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v) { return :
 inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
 inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
 
-inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v) { return ::_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
-inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v) { return ::_vsnwprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
+inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v) noexcept { return ::_vsnprintf_s (buf, nBufCount, _TRUNCATE, format, v); }
+inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v) noexcept { return ::_vsnwprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
+inline int auto_vsprintf_s(std::span<ACHAR> buf, const ACHAR* format, va_list& v)         noexcept { return auto_vsprintf_s(std::data(buf), std::size(buf), format, v); }
+inline int auto_vsprintf_s(std::span<WCHAR> buf, const WCHAR* format, va_list& v)         noexcept { return auto_vsprintf_s(std::data(buf), std::size(buf), format, v); }
+
+template<typename... Params> inline int auto_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, Params&&... params) noexcept { return ::_snprintf_s(buf, nBufCount, _TRUNCATE, format, std::forward<Params>(params)...); }
+template<typename... Params> inline int auto_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, Params&&... params) noexcept { return ::_snwprintf_s(buf, nBufCount, _TRUNCATE, format, std::forward<Params>(params)...); }
+template<typename... Params> inline int auto_sprintf_s(std::span<ACHAR> buf, const ACHAR* format, Params&&... params)         noexcept { return auto_sprintf_s(std::data(buf), std::size(buf), format, std::forward<Params>(params)...); }
+template<typename... Params> inline int auto_sprintf_s(std::span<WCHAR> buf, const WCHAR* format, Params&&... params)         noexcept { return auto_sprintf_s(std::data(buf), std::size(buf), format, std::forward<Params>(params)...); }
+
 #define auto_snprintf_s(buf, nBufCount, format, ...)	::_snwprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 
 std::wstring& eos(std::wstring& strOut, size_t cchOut);
