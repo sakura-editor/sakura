@@ -83,7 +83,7 @@ void CESI::SetInformation( const char *pS, size_t nLen )
 */
 int CESI::GetIndexById( const ECodeType eCodeType ) const
 {
-	int nret;
+	int nret = 0;
 	if( CODE_UNICODE == eCodeType ){
 		nret = 0;
 	}else if( CODE_UNICODEBE == eCodeType ){
@@ -91,9 +91,10 @@ int CESI::GetIndexById( const ECodeType eCodeType ) const
 	}else if( 0 <= eCodeType && eCodeType < int(std::size(gm_aMbcPriority)) ){
 		nret = gm_aMbcPriority[eCodeType]; // 優先順位表の優先度数をそのまま m_aMbcInfo の添え字として使う。
 	}else{
-		assert(0);
-		nret = -1;
+		// 仕様変更しない限り、ここには来ない
+		throw std::out_of_range("CESI::GetIndexById: eCodeType out of range");
 	}
+	assert(0 <= nret && nret < std::size(m_aMbcInfo));
 	return nret;
 }
 
