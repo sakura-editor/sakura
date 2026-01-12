@@ -14,6 +14,9 @@
 
 #include "StdAfx.h"
 #include "CDocTypeSetting.h"
+
+#include "view/colors/EColorIndexType.h"
+
 #include "CSelectLang.h"
 
 //! 色設定(保存用)
@@ -83,14 +86,16 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_PAGEVIEW,					{ TRUE ,	{ FALSE,	FALSE },	{ RGB( 255, 251, 240 ),	RGB( 190, 230, 255 ) } } },
 };
 
-void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex )
+void GetDefaultColorInfo(ColorInfo* pColorInfo, size_t nIndex) noexcept
 {
+	static_assert(std::size(ColorInfo_DEFAULT) == size_t(COLORIDX_LAST));
+
 	assert( nIndex < int(std::size(ColorInfo_DEFAULT)) );
 
 	ColorInfoBase* p = pColorInfo;
 	*p = ColorInfo_DEFAULT[nIndex].m_sColorInfo; //ColorInfoBase
 	GetDefaultColorInfoName( pColorInfo, nIndex );
-	pColorInfo->m_nColorIdx = nIndex;
+	pColorInfo->m_nColorIdx = int(nIndex);
 }
 
 void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex )

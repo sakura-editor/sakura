@@ -41,7 +41,7 @@ struct ColorInfo : public ColorInfoBase{
 };
 
 //デフォルト色設定
-void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex );
+void	GetDefaultColorInfo(ColorInfo* pColorInfo, size_t index) noexcept;
 void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex );
 int GetDefaultColorInfoCount();
 
