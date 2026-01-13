@@ -2141,7 +2141,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			if( nId == 100 ){	// パス名
 				::lstrcpy( szPath, szWork );
 			}else if( nId == 101 ){	// ファイル名
-				_wsplitpath( szWork, nullptr, nullptr, szPath, szExt );
+				_wsplitpath_s( szWork, nullptr, 0, nullptr, 0, szPath, std::size(szPath), szExt, std::size(szExt) );
 				::lstrcat( szPath, szExt );
 			}
 			cmemBuf.AppendString( szPath );
