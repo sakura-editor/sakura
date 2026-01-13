@@ -546,9 +546,9 @@ void GetInidir(
 	@date 2007.05.22 新規作成
 */
 void GetInidirOrExedir(
-	std::span<WCHAR> szIniOrExeDir,				//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
-												//         予め_MAX_PATHのバッファを用意しておくこと．
-	LPCWSTR	szFile					/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
+	std::span<WCHAR> szIniOrExeDir,						//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
+														//         予め_MAX_PATHのバッファを用意しておくこと．
+	const std::optional<std::wstring_view>& optFileName	//!< [in] ディレクトリ名に結合するファイル名．
 )
 {
 	assert(_MAX_PATH <= std::size(szIniOrExeDir));
@@ -557,14 +557,14 @@ void GetInidirOrExedir(
 	SFilePath szExedir;
 
 	// INI基準のフルパスが実在すればそのパスを返す
-	GetInidir(szInidir, szFile ? std::make_optional<std::filesystem::path>(szFile) : std::nullopt);
+	GetInidir(szInidir, optFileName);
 	if (fexist(szInidir)) {
 		::wcsncpy_s(std::data(szIniOrExeDir), std::size(szIniOrExeDir), szInidir, _TRUNCATE);
 		return;
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	GetExedir(szExedir, szFile ? std::make_optional<std::filesystem::path>(szFile) : std::nullopt);
+	GetExedir(szExedir, optFileName);
 	if (fexist(szExedir)) {
 		::wcsncpy_s(std::data(szIniOrExeDir), std::size(szIniOrExeDir), szExedir, _TRUNCATE);
 		return;

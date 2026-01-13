@@ -120,7 +120,7 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSma
 	HICON hIcon;
 
 	// ファイルからの読み込みをまず試みる
-	GetInidirOrExedir( szPath, szFile );
+	GetInidirOrExedir( szPath, szFile  ? std::make_optional<std::wstring_view>(szFile) : std::nullopt);
 
 	hIcon = (HICON)::LoadImage(
 		nullptr,
