@@ -525,24 +525,18 @@ std::filesystem::path GetIniFileName()
 	@date 2007.05.19 新規作成（GetExedirベース）
 */
 void GetInidir(
-	LPWSTR	pDir,				//!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	LPCWSTR szFile	/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
+	std::span<WCHAR> szIniDir,								//!< [out]		INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	const std::optional<std::filesystem::path>& optFileName	//!< [in, opt]	ディレクトリ名に結合するファイル名．
 )
 {
-	if( pDir == nullptr )
-		return;
-	
-	std::wstring partialPath;
-	if (szFile != nullptr) {
-		partialPath = szFile;
-	}
-	if (partialPath.empty() || partialPath[0] != L'\\') {
-		partialPath.insert(partialPath.cbegin(), L'\\');
-	}
-
 	// 設定フォルダーのフルパス、またはini基準のファイルパスを取得
-	auto path = GetIniFileName().parent_path().concat(partialPath);
-	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
+	auto iniPath = GetIniFileName().remove_filename();
+	if (optFileName.has_value()) {
+		if (const auto& fileName = optFileName.value(); !fileName.empty()) {
+			iniPath /= fileName;
+		}
+	}
+	::wcsncpy_s(std::data(szIniDir), std::size(szIniDir), iniPath.c_str(), _TRUNCATE);
 }
 
 /*!
@@ -570,8 +564,8 @@ void GetInidirOrExedir(
 	}
 
 	// INI基準のフルパスが実在すればそのパスを返す
-	GetInidir( szInidir, szFile );
-	if( fexist(szInidir) ){
+	GetInidir(szInidir, szFile ? std::make_optional<std::filesystem::path>(szFile) : std::nullopt);
+	if (fexist(szInidir)) {
 		::wcsncpy_s(std::data(szIniOrExeDir), std::size(szIniOrExeDir), szInidir, _TRUNCATE);
 		return;
 	}

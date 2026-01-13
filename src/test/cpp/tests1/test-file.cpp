@@ -362,9 +362,6 @@ TEST(file, Deprecated_GetInidir)
 	// 戻り値取得用のバッファ
 	WCHAR szBuf[_MAX_PATH];
 
-	// 戻り値取得用のバッファを指定しない場合、何も起きない
-	GetInidir(nullptr);
-
 	// iniフォルダーの取得
 	GetInidir(szBuf);
 	::wcscat_s(szBuf, filename);
