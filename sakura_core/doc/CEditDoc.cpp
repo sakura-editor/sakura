@@ -314,7 +314,7 @@ void CEditDoc::SetBackgroundImage()
 	}
 	if( _IS_REL_PATH(path.c_str()) ){
 		CFilePath fullPath;
-		GetInidirOrExedir( &fullPath[0], &path[0] );
+		GetInidirOrExedir(std::span<WCHAR, std::size(fullPath)>{ fullPath }, path);
 		path = fullPath;
 	}
 

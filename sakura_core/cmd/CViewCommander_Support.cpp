@@ -303,7 +303,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 		WCHAR* pWork=GetDllShareData().m_sWorkBuffer.GetWorkBuffer<WCHAR>();
 		if( _IS_REL_PATH( filename ) ){
-			GetInidirOrExedir( pWork, filename );
+			GetInidirOrExedir( std::span{ pWork, GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<WCHAR>() }, filename );
 		}else{
 			wcscpy( pWork, filename ); //	Jul. 5, 2002 genta
 		}
