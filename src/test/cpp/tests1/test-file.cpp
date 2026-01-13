@@ -390,9 +390,6 @@ TEST(file, GetInidirOrExedir)
 
 	std::wstring buf(_MAX_PATH, L'\0');
 
-	GetInidirOrExedir(buf, L"", true);
-	ASSERT_STREQ(GetExeFileName().replace_filename(L"").c_str(), buf.data());
-
 	constexpr auto filename = L"test.txt";
 	auto exeBasePath = GetExeFileName().parent_path().append(filename);
 	auto iniBasePath = GetIniFileName().parent_path().append(filename);
@@ -404,7 +401,7 @@ TEST(file, GetInidirOrExedir)
 	CProfile().WriteProfile(iniBasePath.c_str(), L"file, GetInidirOrExedirのテスト");
 
 	// 両方あるときはINI基準のパスが変える
-	GetInidirOrExedir(buf, filename, true);
+	GetInidirOrExedir(buf, filename);
 	ASSERT_STREQ(iniBasePath.c_str(), buf.data());
 
 	// INI基準パスのファイルを削除する
@@ -412,7 +409,7 @@ TEST(file, GetInidirOrExedir)
 	ASSERT_FALSE(fexist(iniBasePath.c_str()));
 
 	// EXE基準のみ存在するときはEXE基準のパスが変える
-	GetInidirOrExedir(buf, filename, true);
+	GetInidirOrExedir(buf, filename);
 	ASSERT_STREQ(exeBasePath.c_str(), buf.data());
 
 	// EXE基準パスのファイルを削除する
@@ -420,7 +417,7 @@ TEST(file, GetInidirOrExedir)
 	ASSERT_FALSE(fexist(exeBasePath.c_str()));
 
 	// 両方ないときはINI基準のパスが変える
-	GetInidirOrExedir(buf, filename, true);
+	GetInidirOrExedir(buf, filename);
 	ASSERT_STREQ(iniBasePath.c_str(), buf.data());
 }
 

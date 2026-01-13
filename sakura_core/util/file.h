@@ -52,7 +52,7 @@ std::filesystem::path GetIniFileName();
 //※サクラ依存
 void	GetExedir(std::span<WCHAR> szExeDir, const std::optional<std::filesystem::path>& optFileName = std::nullopt);
 void	GetInidir(std::span<WCHAR> szIniDir, const std::optional<std::filesystem::path>& optFileName = std::nullopt);
-void	GetInidirOrExedir(std::span<WCHAR> szIniOrExeDir, LPCWSTR szFile = nullptr, BOOL bRetExedirIfFileEmpty = FALSE);
+void	GetInidirOrExedir(std::span<WCHAR> szIniOrExeDir, LPCWSTR szFile = nullptr);
 
 LPCWSTR GetRelPath( LPCWSTR pszPath );
 

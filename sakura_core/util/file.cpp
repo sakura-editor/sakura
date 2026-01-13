@@ -548,20 +548,13 @@ void GetInidir(
 void GetInidirOrExedir(
 	std::span<WCHAR> szIniOrExeDir,				//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
 												//         予め_MAX_PATHのバッファを用意しておくこと．
-	LPCWSTR	szFile					/*=NULL*/,	//!< [in] ディレクトリ名に結合するファイル名．
-	BOOL	bRetExedirIfFileEmpty	/*=FALSE*/	//!< [in] ファイル名の指定が空の場合はEXEファイルのフルパスを返す．
+	LPCWSTR	szFile					/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
 )
 {
 	assert(_MAX_PATH <= std::size(szIniOrExeDir));
 
 	SFilePath szInidir;
 	SFilePath szExedir;
-
-	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
-	if( bRetExedirIfFileEmpty && (szFile == nullptr || szFile[0] == L'\0') ){
-		GetExedir(szIniOrExeDir);
-		return;
-	}
 
 	// INI基準のフルパスが実在すればそのパスを返す
 	GetInidir(szInidir, szFile ? std::make_optional<std::filesystem::path>(szFile) : std::nullopt);
