@@ -125,7 +125,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
 		{
 			WCHAR szBkFileName[std::size(szIniFileName) + 4];
-			::lstrcpy(szBkFileName, szIniFileName);
+			::wcsncpy_s(szBkFileName, szIniFileName, _TRUNCATE);
 			::lstrcat(szBkFileName, L".bak");
 			::CopyFile(szIniFileName, szBkFileName, FALSE);
 		}

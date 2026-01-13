@@ -576,7 +576,7 @@ void GetInidirOrExedir(
 	// INI基準のフルパスが実在すればそのパスを返す
 	GetInidir( szInidir, szFile );
 	if( fexist(szInidir) ){
-		::lstrcpy( pDir, szInidir );
+		::wcsncpy_s(pDir, szInidir, _TRUNCATE);
 		return;
 	}
 
@@ -587,7 +587,7 @@ void GetInidirOrExedir(
 	}
 
 	// どちらにも実在しなければINI基準のフルパスを返す
-	::lstrcpy( pDir, szInidir );
+	::wcsncpy_s(pDir, szInidir, _TRUNCATE);
 }
 
 /*!
