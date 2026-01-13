@@ -52,14 +52,18 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	wchar_t* pKeyword = pType->m_RegexKeywordList;
 	pType->m_bUseRegexKeyword = true;							// 正規表現キーワードを使うか
 	pType->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
+	::wcsncpy_s(&pKeyword[keywordPos],			// 正規表現キーワード
+		std::size(pType->m_RegexKeywordList) - keywordPos,
 		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""で挟まれた C:\～, \\～ にマッチするパターン
-		int(std::size(pType->m_RegexKeywordList)) - 1 );
+		_TRUNCATE
+	);
 	keywordPos += int(wcslen(&pKeyword[keywordPos]) + 1);
 	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
+	::wcsncpy_s(&pKeyword[keywordPos],			// 正規表現キーワード
+		std::size(pType->m_RegexKeywordList) - keywordPos,
 		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\～, \\～ にマッチするパターン
-		int(std::size(pType->m_RegexKeywordList)) - keywordPos - 1 );
+		_TRUNCATE
+	);
 	keywordPos += int(wcslen(&pKeyword[keywordPos]) + 1);
 	pKeyword[keywordPos] = L'\0';
 }
