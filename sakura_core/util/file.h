@@ -50,7 +50,7 @@ std::filesystem::path GetExeFileName();
 std::filesystem::path GetIniFileName();
 
 //※サクラ依存
-void GetExedir( LPWSTR pDir, LPCWSTR szFile = nullptr );
+void	GetExedir(std::span<WCHAR> szExeDir, const std::optional<std::filesystem::path>& optFileName = std::nullopt);
 void GetInidir( LPWSTR pDir, LPCWSTR szFile = nullptr ); // 2007.05.19 ryoji
 void	GetInidirOrExedir(std::span<WCHAR> szIniOrExeDir, LPCWSTR szFile = nullptr, BOOL bRetExedirIfFileEmpty = FALSE);
 

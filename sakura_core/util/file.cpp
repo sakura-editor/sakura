@@ -493,24 +493,18 @@ std::filesystem::path GetExeFileName()
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 void GetExedir(
-	LPWSTR	pDir,	//!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	LPCWSTR	szFile	//!< [in]  ディレクトリ名に結合するファイル名．
+	std::span<WCHAR>							szExeDir,	//!< [out]		EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	const std::optional<std::filesystem::path>& optFileName	//!< [in, opt]	ディレクトリ名に結合するファイル名．
 )
 {
-	if( pDir == nullptr )
-		return;
-
-	std::wstring partialPath;
-	if (szFile != nullptr) {
-		partialPath = szFile;
-	}
-	if (partialPath.empty() || partialPath[0] != L'\\') {
-		partialPath.insert(partialPath.cbegin(), L'\\');
-	}
-
 	// exeフォルダーのフルパス、またはexe基準のファイルパスを取得
-	auto path = GetExeFileName().parent_path().concat(partialPath);
-	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
+	auto exePath = GetExeFileName().remove_filename();
+	if (optFileName.has_value()) {
+		if (const auto& fileName = optFileName.value(); !fileName.empty()) {
+			exePath /= fileName;
+		}
+	}
+	::wcsncpy_s(std::data(szExeDir), std::size(szExeDir), exePath.c_str(), _TRUNCATE);
 }
 
 /*!
@@ -571,7 +565,7 @@ void GetInidirOrExedir(
 
 	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
 	if( bRetExedirIfFileEmpty && (szFile == nullptr || szFile[0] == L'\0') ){
-		GetExedir(std::data(szIniOrExeDir));
+		GetExedir(szIniOrExeDir);
 		return;
 	}
 
@@ -583,7 +577,8 @@ void GetInidirOrExedir(
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	if( GetExedir( szExedir, szFile ); fexist(szExedir) ){
+	GetExedir(szExedir, szFile ? std::make_optional<std::filesystem::path>(szFile) : std::nullopt);
+	if (fexist(szExedir)) {
 		::wcsncpy_s(std::data(szIniOrExeDir), std::size(szIniOrExeDir), szExedir, _TRUNCATE);
 		return;
 	}
