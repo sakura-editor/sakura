@@ -277,17 +277,17 @@ const WCHAR* CFuncLookup::Custmenu2Name( int index, LPWSTR buf, size_t size ) co
 
 	// 共通設定で名称を設定していればそれを返す
 	if ( m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ][0] != '\0' ) {
-		wcscpyn( buf, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ], bufSize );
+		::wcsncpy_s(buf, size, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ], _TRUNCATE);
 		return m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ];
 	}
 
 	// 共通設定で未設定の場合、リソースのデフォルト名を返す
 	if( index == 0 ){
-		wcscpyn( buf, LS( STR_CUSTMENU_RIGHT_CLICK ), bufSize );
+		::wcsncpy_s(buf, size, LS(STR_CUSTMENU_RIGHT_CLICK), _TRUNCATE);
 		return buf;
 	}
 	else if( index == CUSTMENU_INDEX_FOR_TABWND ){
-		wcscpyn( buf, LS( STR_CUSTMENU_TAB ), bufSize );
+		::wcsncpy_s(buf, size, LS(STR_CUSTMENU_TAB), _TRUNCATE);
 		return buf;
 	}
 	else {

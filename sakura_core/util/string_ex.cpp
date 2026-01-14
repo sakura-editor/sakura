@@ -54,15 +54,6 @@ int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n )
 	return my_internal_icmp( s1, s2, (unsigned int)n, 1, true );
 }
 
-LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
-{
-	size_t len2=wcslen(lpString2);
-	if((int)len2>iMaxLength-1)len2=iMaxLength-1;
-	wmemcpy(lpString1,lpString2,len2);
-	lpString1[len2]=L'\0';
-	return lpString1;
-}
-
 /*
 	WCHAR と WCHAR または ACHAR の変換関数
 */
@@ -105,31 +96,6 @@ WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count )
 		++pw;
 	}
 	return pw;
-}
-
-/*! 文字数制限機能付きstrncpy
-
-	コピー先のバッファサイズから溢れないようにstrncpyする。
-	バッファが不足する場合には2バイト文字の切断もあり得る。
-	末尾の\0は付与されないが、コピーはコピー先バッファサイズ-1までにしておく。
-
-	@param dst [in] コピー先領域へのポインタ
-	@param dst_count [in] コピー先領域のサイズ
-	@param src [in] コピー元
-	@param src_count [in] コピーする文字列の末尾
-
-	@retval 実際にコピーされたコピー先領域の1つ後を指すポインタ
-
-	@author genta
-	@date 2003.04.03 genta
-*/
-char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
-{
-	if( src_count >= dst_count ){
-		src_count = dst_count - 1;
-	}
-	memcpy( dst, src, src_count );
-	return dst + src_count;
 }
 
 const wchar_t* wcsistr( const wchar_t* s1, const wchar_t* s2 )
