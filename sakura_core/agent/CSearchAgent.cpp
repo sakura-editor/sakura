@@ -700,7 +700,7 @@ end_of_func:;
 	clockEnd = clock();
 	WCHAR buf[100];
 	memset(buf, 0x00, sizeof(buf));
-	wsprintf( buf, L"%d", clockEnd - clockStart);
+	::swprintf_s(buf, L"%d", clockEnd - clockStart);
 	::MessageBox( NULL, buf, GSTR_APPNAME, MB_OK );
 #endif
 
