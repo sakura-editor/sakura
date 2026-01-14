@@ -159,7 +159,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		else if( IsInRange(pLine[i], L'\u32d0', L'\u32fe') ) ::wcsncpy_s(szTitle, L"\u32d0", _TRUNCATE); // ○ア-○ヲ
 		else if( wcschr(L"〇一二三四五六七八九十百零壱弐参伍", pLine[i]) ) ::wcsncpy_s(szTitle, L"一", _TRUNCATE); //漢数字
 		else{
-			wcsncpy( szTitle, &pLine[i], nCharChars );	//	先頭文字をszTitleに保持。
+			::wcsncpy_s(szTitle, nCharChars, &pLine[i], _TRUNCATE);	//	先頭文字をszTitleに保持。
 			szTitle[nCharChars] = L'\0';
 		}
 

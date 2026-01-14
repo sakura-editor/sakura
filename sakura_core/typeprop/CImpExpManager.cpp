@@ -913,7 +913,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				int n, kc, nc;
 				//値 -> szData
 				wchar_t szData[1024];
-				wcsncpy(szData, in2.ReadLineW().c_str(), int(std::size(szData)) - 1);
+				::wcsncpy_s(szData, int(std::size(szData)), in2.ReadLineW().c_str(), _TRUNCATE);
 				szData[std::size(szData) - 1] = L'\0';
 
 				//解析開始

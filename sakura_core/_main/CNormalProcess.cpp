@@ -268,10 +268,10 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
 			int nSize = std::size(pEditWnd->m_cDlgGrep.m_szFile);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
+			::wcsncpy_s(pEditWnd->m_cDlgGrep.m_szFile, nSize, gi.cmGrepFile.GetStringPtr(), _TRUNCATE);	/* 検索ファイル */
 			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
 			nSize = std::size(pEditWnd->m_cDlgGrep.m_szFolder);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダー */
+			::wcsncpy_s(pEditWnd->m_cDlgGrep.m_szFolder, nSize, cmemGrepFolder.GetStringPtr(), _TRUNCATE);	/* 検索フォルダー */
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった

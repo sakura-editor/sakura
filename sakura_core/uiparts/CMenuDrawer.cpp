@@ -786,7 +786,7 @@ void CMenuDrawer::MyAppendMenu(
 
 	szLabel[0] = L'\0';
 	if( nullptr != pszLabel ){
-		wcsncpy( szLabel, pszLabel, int(std::size(szLabel)) - 1 );
+		::wcsncpy_s(szLabel, int(std::size(szLabel)), pszLabel, _TRUNCATE);
 		szLabel[std::size(szLabel) - 1 ] = L'\0';
 	}
 	::wcsncpy_s(szKey, pszKey, _TRUNCATE); 

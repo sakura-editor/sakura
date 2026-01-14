@@ -609,7 +609,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								}
 								else if( nMode2 == M2_TEMPLATE_SAVE)
 								{
-									wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) - 1 );
+									::wcsncat_s(szTemplateName, nItemNameLenMax - wcslen(szTemplateName), szWord, _TRUNCATE);
 									nMode2 = M2_NAMESPACE_END;
 								}
 							}
@@ -639,7 +639,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									nLen++;
 								}
 							}
-							wcsncat( szTemplateName, szWord, nItemNameLenMax - nLen - 1 );
+							::wcsncat_s(szTemplateName, nItemNameLenMax - nLen, szWord, _TRUNCATE);
 						}
 					}
 					else if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_FUNC_NAME_END) )	// 2010.07.08 ryoji 関数型マクロ呼出しを関数と誤認することがある問題対策として nMode2 == M2_FUNC_NAME_END 条件を追加し、補正がかかるようにした。
@@ -732,7 +732,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							// operator< <T>() / operator<<<T>() / operator+<T>()
 							nMode2Old = nMode2;
 							nMode2 = M2_TEMPLATE_WORD;
-							wcsncpy( szTemplateName, szWord, nItemNameLenMax );
+							::wcsncpy_s(szTemplateName, nItemNameLenMax, szWord, _TRUNCATE);
 							szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
 						}
 					}
@@ -1192,7 +1192,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							}
 							else if( nMode2 == M2_TEMPLATE_SAVE)
 							{
-								wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) - 1 );
+								::wcsncat_s(szTemplateName, nItemNameLenMax - wcslen(szTemplateName), szWord, _TRUNCATE);
 								nMode2 = M2_NAMESPACE_END;
 							}
 							else if( nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC )
@@ -1226,7 +1226,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									// int func <int>();
 									nMode2Old = nMode2;
 									nMode2 = M2_TEMPLATE_WORD;
-									wcsncpy( szTemplateName, szWordPrev, nItemNameLenMax );
+									::wcsncpy_s(szTemplateName, nItemNameLenMax, szWordPrev, _TRUNCATE);
 									szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
 								}
 							}else{
