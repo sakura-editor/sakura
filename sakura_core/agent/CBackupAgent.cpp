@@ -304,7 +304,7 @@ bool CBackupAgent::FormatBackUpPath(
 		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, int(std::size(selDir)) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
-			::wcsncpy_s(szNewPath, selDir, _TRUNCATE);
+			::wcsncpy_s(szNewPath, newPathCount, selDir, _TRUNCATE);
 		}
 		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szNewPath );
