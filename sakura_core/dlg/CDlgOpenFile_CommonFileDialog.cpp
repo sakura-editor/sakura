@@ -402,13 +402,13 @@ UINT_PTR CALLBACK OFNHookProc(
 					while( *pszCur == L' ' )	// 空白を読み飛ばす
 						pszCur = ::CharNext(pszCur);
 					if( *pszCur == L'\"' ){	// 二重引用部で始まっている
-						::lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
+						::wcsncpy_s(pData->m_szPath, pData->m_pOf->lpstrFile, _TRUNCATE);
 					}
 					else{
 						_wsplitpath_s( pData->m_pOf->lpstrFile, nullptr, 0, nullptr, 0, nullptr, 0, szDefExt, std::size(szDefExt) );
 						if( szDefExt[0] == L'.' /* && szDefExt[1] != L'\0' */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
 							// .のみの場合にも拡張子付きとみなす。
-							lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
+							::wcsncpy_s(pData->m_szPath, pData->m_pOf->lpstrFile, _TRUNCATE);
 						}
 						else{
 							switch( pData->m_pOf->nFilterIndex ){	// 選択されているファイルの種類
@@ -434,16 +434,16 @@ UINT_PTR CALLBACK OFNHookProc(
 								szDefExt[0] = L'\0';
 								break;
 							}
-							lstrcpyn(szBuf, pData->m_pOf->lpstrFile, _MAX_PATH + 1);
+							::wcsncpy_s(szBuf, pData->m_pOf->lpstrFile, _TRUNCATE);
 							::wcscat(szBuf, szDefExt);
-							lstrcpyn(pData->m_szPath, szBuf, _MAX_PATH);
+							::wcsncpy_s(pData->m_szPath, szBuf, _TRUNCATE);
 						}
 					}
 
 					// ファイルの上書き確認を自前で行う	// 2006.11.10 ryoji
 					if( IsFileExists(pData->m_szPath, true) ){
 						WCHAR szText[_MAX_PATH + 100];
-						lstrcpyn(szText, pData->m_szPath, _MAX_PATH);
+						::wcsncpy_s(szText, pData->m_szPath, _TRUNCATE);
 						::wcscat(szText, LS(STR_DLGOPNFL2));
 						if( IDYES != ::MessageBox( pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
 							::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
@@ -976,7 +976,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 
 	// ファイル名の初期設定	// 2006.11.10 ryoji
 	if( pSaveInfo->cFilePath[0] == L'\0' )
-		lstrcpyn(pSaveInfo->cFilePath, LS(STR_NO_TITLE2), _MAX_PATH);	// 無題
+		::wcsncpy_s(pSaveInfo->cFilePath, LS(STR_NO_TITLE2), _TRUNCATE);	// 無題
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji
@@ -1031,7 +1031,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 	if( GetSaveFileNameRecover( &pData->m_ofn ) ){
 		pSaveInfo->cFilePath = pData->m_ofn.lpstrFile;
 		if( pData->m_ofn.Flags & OFN_ENABLEHOOK )
-			lstrcpyn(pSaveInfo->cFilePath, pData->m_szPath, _MAX_PATH);	// 自前で拡張子の補完を行ったときのファイルパス	// 2006.11.10 ryoji
+			::wcsncpy_s(pSaveInfo->cFilePath, pData->m_szPath, _TRUNCATE);	// 自前で拡張子の補完を行ったときのファイルパス	// 2006.11.10 ryoji
 
 		pSaveInfo->eCharCode = pData->m_nCharCode;
 

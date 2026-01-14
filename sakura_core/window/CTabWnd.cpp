@@ -2756,17 +2756,17 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPWSTR 
 
 	if( pEditNode == nullptr )
 	{
-		::lstrcpyn( pszText, LS(STR_NO_TITLE1), nLen );
+		::wcsncpy_s(pszText, nLen, LS(STR_NO_TITLE1), _TRUNCATE);
 	}
 	else if( !bFull || pEditNode->m_szFilePath[0] == '\0' )
 	{
 		if( pEditNode->m_szTabCaption[0] )
 		{
-			::lstrcpyn( pszText, pEditNode->m_szTabCaption, nLen );
+			::wcsncpy_s(pszText, nLen, pEditNode->m_szTabCaption, _TRUNCATE);
 		}
 		else
 		{
-			::lstrcpyn( pszText, LS(STR_NO_TITLE1), nLen );
+			::wcsncpy_s(pszText, nLen, LS(STR_NO_TITLE1), _TRUNCATE);
 		}
 	}
 	else
@@ -2784,12 +2784,12 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPWSTR 
 		// &を&&に置き換える
 		LPWSTR pszText_amp = new WCHAR[nLen * 2];
 		dupamp( pszText, pszText_amp );
-		::lstrcpyn( pszName, pszText_amp, nLen );
+		::wcsncpy_s(pszName, nLen, pszText_amp, _TRUNCATE);
 		delete []pszText_amp;
 	}
 	else
 	{
-		::lstrcpyn( pszName, pszText, nLen );
+		::wcsncpy_s(pszName, nLen, pszText, _TRUNCATE);
 	}
 
 	delete []pszText;

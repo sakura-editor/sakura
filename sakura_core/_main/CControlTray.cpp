@@ -348,7 +348,7 @@ BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIco
 	tnd.uCallbackMessage	= MYWM_NOTIFYICON;
 	tnd.hIcon				= hIcon;
 	if( pszTip ){
-		lstrcpyn( tnd.szTip, pszTip, int(std::size(tnd.szTip)) );
+		::wcsncpy_s(tnd.szTip, pszTip, _TRUNCATE);
 	}else{
 		tnd.szTip[0] = L'\0';
 	}
