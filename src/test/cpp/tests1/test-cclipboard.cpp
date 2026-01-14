@@ -220,11 +220,11 @@ protected:
 
 	CClipboardGetText() {
 		unicodeMemory.Lock<wchar_t>([=](wchar_t* p) {
-			std::wcscpy(p, unicodeText.data());
+			std::wcsncpy_s(p, unicodeText.data(), _TRUNCATE);
 		});
 		sakuraMemory.Lock<unsigned char>([=](unsigned char* p) {
 			*(size_t*)p = sakuraText.size();
-			std::wcscpy((wchar_t*)(p + sizeof(size_t)), sakuraText.data());
+			std::wcsncpy_s((wchar_t*)(p + sizeof(size_t)), sakuraText.data(), _TRUNCATE);
 		});
 		oemMemory.Lock<char>([=](char* p) {
 			std::strcpy(p, oemText.data());

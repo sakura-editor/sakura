@@ -450,7 +450,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 		return FALSE;
 	}
 
-	wcscpy( filename, pszTmpName );
+	::wcsncpy_s(filename, pszTmpName, _TRUNCATE);
 	free( pszTmpName );
 
 	//自分か？
@@ -503,7 +503,7 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		return FALSE;
 	}
 
-	wcscpy( tmpName, pszTmpName );
+	::wcsncpy_s(tmpName, pszTmpName, _TRUNCATE);
 	free( pszTmpName );
 
 	bool bBom = false;

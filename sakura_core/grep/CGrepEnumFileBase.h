@@ -102,9 +102,9 @@ public:
 			const auto baseLen = cchBaseFolder;
 			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
 			if( nullptr == lpPath ) break;
-			wcscpy( lpPath, lpBaseFolder );
-			wcscpy( lpPath + baseLen, L"\\" );
-			wcscpy( lpPath + baseLen + 1, vecKeys[ i ] );
+			::wcsncpy_s(lpPath, lpBaseFolder, _TRUNCATE);
+			::wcsncpy_s(lpPath + baseLen, L"\\", _TRUNCATE);
+			::wcsncpy_s(lpPath + baseLen + 1, vecKeys[ i ], _TRUNCATE);
 			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
 			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
 			const WCHAR* keyDirSlash = wcsrchr( vecKeys[ i ], L'/' );

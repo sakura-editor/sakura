@@ -137,18 +137,18 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 
 	//GOPTオプション
 	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)wcscat( pOpt, L"W" );	// 単語単位で探す
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
-	if( 3 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
-	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
-	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
-	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
+	if( cDlgGrep.m_bSubFolder					)::wcsncat_s(pOpt, L"S", _TRUNCATE);	// サブフォルダーからも検索する
+	if( cDlgGrep.m_sSearchOption.bLoHiCase		)::wcsncat_s(pOpt, L"L", _TRUNCATE);	// 英大文字と英小文字を区別する
+	if( cDlgGrep.m_sSearchOption.bRegularExp	)::wcsncat_s(pOpt, L"R", _TRUNCATE);	// 正規表現
+	if( cDlgGrep.m_nGrepOutputLineType == 1     )::wcsncat_s(pOpt, L"P", _TRUNCATE);	// 行を出力する
+	if( cDlgGrep.m_nGrepOutputLineType == 2     )::wcsncat_s(pOpt, L"N", _TRUNCATE);	// 否ヒット行を出力する 2014.09.23
+	if( cDlgGrep.m_sSearchOption.bWordOnly		)::wcsncat_s(pOpt, L"W", _TRUNCATE);	// 単語単位で探す
+	if( 1 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"1", _TRUNCATE);	// Grep: 出力形式
+	if( 2 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"2", _TRUNCATE);	// Grep: 出力形式
+	if( 3 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"3", _TRUNCATE);
+	if( cDlgGrep.m_bGrepOutputFileOnly		)::wcsncat_s(pOpt, L"F", _TRUNCATE);
+	if( cDlgGrep.m_bGrepOutputBaseFolder		)::wcsncat_s(pOpt, L"B", _TRUNCATE);
+	if( cDlgGrep.m_bGrepSeparateFolder		)::wcsncat_s(pOpt, L"D", _TRUNCATE);
 	if( pOpt[0] != L'\0' ){
 		cCmdLine.AppendString( L" -GOPT=" );
 		cCmdLine.AppendString( pOpt );

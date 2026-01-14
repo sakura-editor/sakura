@@ -723,12 +723,12 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 		AddLastYenFromDirectoryPath( dirFileName );
 		const WCHAR	*p = fileName;
 		if( p[0] == L'\\' ){
-			wcscpy( dirFileName, p );
+			::wcsncpy_s(dirFileName, p, _TRUNCATE);
 		}else if( iswalpha( p[0] ) && p[1] == L':' ){
-			wcscpy( dirFileName, p );
+			::wcsncpy_s(dirFileName, p, _TRUNCATE);
 		}else{
 			// 相対パス：連結する
-			wcscat( dirFileName, p );
+			::wcsncat_s(dirFileName, p, _TRUNCATE);
 		}
 		fileNamePath = dirFileName;
 	}else{
@@ -760,13 +760,13 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 
 	for( i = 0; p_extentions[i]; i += 2 )
 	{
-		wcscpy( tmp, p_extentions[i] );
+		::wcsncpy_s(tmp, p_extentions[i], _TRUNCATE);
 		token = _wcstok( tmp, L"," );
 		while( token )
 		{
 			if( _wcsicmp( p, token ) == 0 )
 			{
-				wcscpy( tmp, p_extentions[i+1] );
+				::wcsncpy_s(tmp, p_extentions[i+1], _TRUNCATE);
 				token = _wcstok( tmp, L"," );
 				while( token )
 				{
@@ -1294,7 +1294,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}
 					else {
-						wcscpy(baseWork, to_wchar(s[1]));
+						::wcsncpy_s(baseWork, to_wchar(s[1]), _TRUNCATE);
 						AddLastYenFromDirectoryPath(baseWork);
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}
@@ -1602,12 +1602,12 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	//完全パス名を作成する。
 	const WCHAR	*p = fileName;
 	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
-		wcscpy( pszOutput, p );	//何も加工しない。
+		::wcsncpy_s(pszOutput, p, _TRUNCATE);	//何も加工しない。
 	}else if( iswalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
-		wcscpy( pszOutput, p );	//何も加工しない。
+		::wcsncpy_s(pszOutput, p, _TRUNCATE);	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
-			//wcscat( basePath, L"..\\" );
+			//::wcsncat_s(basePath, L"..\\", _TRUNCATE);
 			DirUp( basePath );
 		}
 		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){
@@ -1623,11 +1623,11 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHAR* base )
 {
 	if( _IS_REL_PATH( target ) ){
-		wcscpy( dest, base );
+		::wcsncpy_s(dest, base, _TRUNCATE);
 		AddLastYenFromDirectoryPath( dest );
-		wcscat( dest, target );
+		::wcsncat_s(dest, target, _TRUNCATE);
 	}else{
-		wcscpy( dest, target );
+		::wcsncpy_s(dest, target, _TRUNCATE);
 	}
 	AddLastYenFromDirectoryPath( dest );
 	return dest;

@@ -519,41 +519,41 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 
 		switch( m_Common.m_sBackup.GetBackupType() ){
 		case 1: // .bak
-			wcscat( temp, L"$0.bak" );
+			::wcsncat_s(temp, L"$0.bak", _TRUNCATE);
 			break;
 		case 5: // .*.bak
-			wcscat( temp, L"$0.*.bak" );
+			::wcsncat_s(temp, L"$0.*.bak", _TRUNCATE);
 			break;
 		case 3: // .b??
-			wcscat( temp, L"$0.b??" );
+			::wcsncat_s(temp, L"$0.b??", _TRUNCATE);
 			break;
 		case 6: // .*.b??
-			wcscat( temp, L"$0.*.b??" );
+			::wcsncat_s(temp, L"$0.*.b??", _TRUNCATE);
 			break;
 		case 2:	//	日付，時刻
 		case 4:	//	日付，時刻
-			wcscat( temp, L"$0_" );
+			::wcsncat_s(temp, L"$0_", _TRUNCATE);
 
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-				wcscat( temp, L"%Y" );
+				::wcsncat_s(temp, L"%Y", _TRUNCATE);
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-				wcscat( temp, L"%m" );
+				::wcsncat_s(temp, L"%m", _TRUNCATE);
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-				wcscat( temp, L"%d" );
+				::wcsncat_s(temp, L"%d", _TRUNCATE);
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-				wcscat( temp, L"%H" );
+				::wcsncat_s(temp, L"%H", _TRUNCATE);
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-				wcscat( temp, L"%M" );
+				::wcsncat_s(temp, L"%M", _TRUNCATE);
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-				wcscat( temp, L"%S" );
+				::wcsncat_s(temp, L"%S", _TRUNCATE);
 			}
 
-			wcscat( temp, L".*" );
+			::wcsncat_s(temp, L".*", _TRUNCATE);
 			break;
 		default:
 			break;

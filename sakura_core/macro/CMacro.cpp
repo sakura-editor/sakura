@@ -1108,21 +1108,21 @@ bool CMacro::HandleCommand(
 
 			//GOPTオプション
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダーからも検索する */
-			if( lFlag & 0x04 )wcscat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
-			if( lFlag & 0x08 )wcscat( pOpt, L"R" );	/* 正規表現 */
-			if(          0x20 == (lFlag & 0x400020) )wcscat( pOpt, L"P" );	// 行を出力する
-			else if( 0x400000 == (lFlag & 0x400020) )wcscat( pOpt, L"N" );	// 否ヒット行を出力する
-			if(      0x40 == (lFlag & 0xC0) )wcscat( pOpt, L"2" );	/* Grep: 出力形式 */
-			else if( 0x80 == (lFlag & 0xC0) )wcscat( pOpt, L"3" );
-			else wcscat( pOpt, L"1" );
-			if( lFlag & 0x10000 )wcscat( pOpt, L"W" );
-			if( lFlag & 0x20000 )wcscat( pOpt, L"F" );
-			if( lFlag & 0x40000 )wcscat( pOpt, L"B" );
-			if( lFlag & 0x80000 )wcscat( pOpt, L"D" );
+			if( lFlag & 0x01 )::wcsncat_s(pOpt, L"S", _TRUNCATE);	/* サブフォルダーからも検索する */
+			if( lFlag & 0x04 )::wcsncat_s(pOpt, L"L", _TRUNCATE);	/* 英大文字と英小文字を区別する */
+			if( lFlag & 0x08 )::wcsncat_s(pOpt, L"R", _TRUNCATE);	/* 正規表現 */
+			if(          0x20 == (lFlag & 0x400020) )::wcsncat_s(pOpt, L"P", _TRUNCATE);	// 行を出力する
+			else if( 0x400000 == (lFlag & 0x400020) )::wcsncat_s(pOpt, L"N", _TRUNCATE);	// 否ヒット行を出力する
+			if(      0x40 == (lFlag & 0xC0) )::wcsncat_s(pOpt, L"2", _TRUNCATE);	/* Grep: 出力形式 */
+			else if( 0x80 == (lFlag & 0xC0) )::wcsncat_s(pOpt, L"3", _TRUNCATE);
+			else ::wcsncat_s(pOpt, L"1", _TRUNCATE);
+			if( lFlag & 0x10000 )::wcsncat_s(pOpt, L"W", _TRUNCATE);
+			if( lFlag & 0x20000 )::wcsncat_s(pOpt, L"F", _TRUNCATE);
+			if( lFlag & 0x40000 )::wcsncat_s(pOpt, L"B", _TRUNCATE);
+			if( lFlag & 0x80000 )::wcsncat_s(pOpt, L"D", _TRUNCATE);
 			if( bGrepReplace ){
-				if( lFlag & 0x100000 )wcscat( pOpt, L"C" );
-				if( lFlag & 0x200000 )wcscat( pOpt, L"O" );
+				if( lFlag & 0x100000 )::wcsncat_s(pOpt, L"C", _TRUNCATE);
+				if( lFlag & 0x200000 )::wcsncat_s(pOpt, L"O", _TRUNCATE);
 			}
 			if( pOpt[0] != L'\0' ){
 				auto_sprintf( szTemp, L" -GOPT=%s", pOpt );
@@ -2329,7 +2329,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				std::vector<wchar_t> vStrMenu;
 				int nLen = (int)wcslen(varCopy2.Data.bstrVal);
 				vStrMenu.assign( nLen + 1, L'\0' );
-				wcscpy(&vStrMenu[0], varCopy2.Data.bstrVal);
+				::wcsncpy_s(&vStrMenu[0], varCopy2.Data.bstrVal, _TRUNCATE);
 				HMENU hMenu = ::CreatePopupMenu();
 				std::vector<HMENU> vHmenu;
 				vHmenu.push_back( hMenu );

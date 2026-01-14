@@ -829,7 +829,7 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
 	if( MacroInfo != nullptr ){
 		if( pszFuncName != nullptr ){
-			wcscpy( pszFuncName, MacroInfo->m_pszFuncName );
+			::wcsncpy_s(pszFuncName, MacroInfo->m_pszFuncName, _TRUNCATE);
 			WCHAR *p = pszFuncName;
 			while (*p){
 				if (*p == L'('){

@@ -314,8 +314,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	int		nCharChars;
 	_wsplitpath_s( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( nullptr != pszFolder ){
-		wcscpy( pszFolder, szDrive );
-		wcscat( pszFolder, szDir );
+		::wcsncpy_s(pszFolder, szDrive, _TRUNCATE);
+		::wcsncat_s(pszFolder, szDir, _TRUNCATE);
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
@@ -326,8 +326,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		}
 	}
 	if( nullptr != pszFile ){
-		wcscpy( pszFile, szFname );
-		wcscat( pszFile, szExt );
+		::wcsncpy_s(pszFile, szFname, _TRUNCATE);
+		::wcsncat_s(pszFile, szExt, _TRUNCATE);
 	}
 	return;
 }
@@ -378,7 +378,7 @@ BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes )
 	}
 	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
 	if( len <= 0 || _MAX_PATH < len ){
-		wcscpy( pszFilePathDes, szBuf );
+		::wcsncpy_s(pszFilePathDes, szBuf, _TRUNCATE);
 	}
 	return TRUE;
 }

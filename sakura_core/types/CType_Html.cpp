@@ -267,7 +267,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 
 					if( nLabelType!=LT_EMPTY ){
 						// 終了タグなしを除く全てのタグらしきものを判定
-						wcscpy(pszStack[nDepth],szTitle);
+						::wcsncpy_s(pszStack[nDepth], szTitle, _TRUNCATE);
 						k	=	j;
 						int x = j;
 						// 2014.12.25 32文字以上のとき,別の行のときにも「/>」bEndTagに対応

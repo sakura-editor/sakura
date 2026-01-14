@@ -468,7 +468,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 	std::vector<std::wstring> fileNames;
 	bool ret = DoModalOpenDlgImpl0(false, &fileNames, L"", specs);
 	if (ret) {
-		wcscpy(pszPath, fileNames[0].c_str());
+		::wcsncpy_s(pszPath, fileNames[0].c_str(), _TRUNCATE);
 	}
 	return ret;
 }
@@ -484,7 +484,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 		const WCHAR* pOrg = pszPath;
 		if( ::GetLongFileName( pOrg, szFullPath ) ){
 			// 成功。書き戻す
-			wcscpy( pszPath , szFullPath );
+			::wcsncpy_s(pszPath , szFullPath, _TRUNCATE);
 		}
 	}
 
@@ -744,7 +744,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 		hr = pFileSaveDialog->GetResult(&pShellItem); RETURN_IF_FAILED
 		PWSTR pszFilePath;
 		hr = pShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath); RETURN_IF_FAILED
-		wcscpy(pszPath, pszFilePath);
+		::wcsncpy_s(pszPath, pszFilePath, _TRUNCATE);
 		CoTaskMemFree(pszFilePath);
 	}
 

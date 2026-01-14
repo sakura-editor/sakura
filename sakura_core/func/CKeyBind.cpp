@@ -450,7 +450,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 		::wcsncpy_s(pszLabel, LABEL_MAX, LS(nFuncId), _TRUNCATE);
 	}
 	if( L'\0' == pszLabel[0] ){
-		wcscpy( pszLabel, L"-- undefined name --" );
+		::wcsncpy_s(pszLabel, L"-- undefined name --", _TRUNCATE);
 	}
 	// アクセスキーの追加	2010/5/17 Uchi
 	wcsncpy_s( pszLabel, LABEL_MAX, MakeMenuLabel( pszLabel, pszKey ), _TRUNCATE );
@@ -464,8 +464,8 @@ WCHAR* CKeyBind::GetMenuLabel(
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
 			// バッファが足りないときは入れない
 			if( wcslen( pszLabel ) + (Int)cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
-				wcscat( pszLabel, L"\t" );
-				wcscat( pszLabel, cMemAccessKey.GetStringPtr() );
+				::wcsncat_s(pszLabel, L"\t", _TRUNCATE);
+				::wcsncat_s(pszLabel, cMemAccessKey.GetStringPtr(), _TRUNCATE);
 			}
 		}
 	}

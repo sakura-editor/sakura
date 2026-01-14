@@ -1046,11 +1046,11 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 					{
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
-							//wcscat( pClassName, L" 名前空間" );
+							//::wcsncat_s(pClassName, L" 名前空間", _TRUNCATE);
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE);
 						}
 						else
-							//wcscat( pClassName, L" クラス" );
+							//::wcsncat_s(pClassName, L" クラス", _TRUNCATE);
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS);
 					}
 					tvis.hParent = htiParent;

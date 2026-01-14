@@ -88,7 +88,7 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 	wchar_t		conv[_MAX_PATH+1];
 	wchar_t*	p;
 
-	wcscpy( conv, trg );
+	::wcsncpy_s(conv, trg, _TRUNCATE);
 
 	p = conv;
 	while ( (p = wcspbrk( p, L"\t\\:*?\"<>|" )) != nullptr ) {
@@ -451,7 +451,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		if (m_Types.m_nKeyWordSetIdx[i] >= 0) {
 			nIdx = m_Types.m_nKeyWordSetIdx[i];
 			auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
-			wcscpy( buff, cKeyWordSetMgr.GetTypeName( nIdx ));
+			::wcsncpy_s(buff, cKeyWordSetMgr.GetTypeName( nIdx ), _TRUNCATE);
 			cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(buff));
 
 			// 大文字小文字区別
@@ -791,8 +791,8 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
-		wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p4);
-		wcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  p3);
+		::wcsncpy_s(m_Types.m_KeyHelpArr[i].m_szAbout, p4, _TRUNCATE);
+		::wcsncpy_s(m_Types.m_KeyHelpArr[i].m_szPath, p3, _TRUNCATE);
 		i++;
 	}
 	in.Close();

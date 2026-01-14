@@ -208,7 +208,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		else if( nMaxStack > k ){
 			//	いままでに同じ見出しが存在しなかった。
 			//	ので、pszStackにコピーしてAppendData.
-			wcscpy(pszStack[nDepth], szTitle);
+			::wcsncpy_s(pszStack[nDepth], szTitle, _TRUNCATE);
 		}
 		else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーラン

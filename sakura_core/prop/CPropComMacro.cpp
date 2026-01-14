@@ -571,7 +571,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( szDir ) ){
 		WCHAR folder[_MAX_PATH];
-		wcscpy( folder, szDir );
+		::wcsncpy_s(folder, szDir, _TRUNCATE);
 		GetInidirOrExedir( szDir, folder );
 	}
 
@@ -588,7 +588,7 @@ void CPropMacro::SelectDir_Python(HWND hwndDlg)
 	ApiWrap::DlgItem_GetText(hwndDlg, IDC_PYTHONDIR, szDir, int(std::size(szDir)));
 	if (_IS_REL_PATH(szDir)) {
 		WCHAR folder[_MAX_PATH];
-		wcscpy(folder, szDir);
+		::wcsncpy_s(folder, szDir, _TRUNCATE);
 		GetInidirOrExedir(szDir, folder);
 	}
 	if (SelectDir(hwndDlg, LS(STR_PROPCOMMACR_SEL_PYTHONDIR), szDir, szDir)) {
@@ -616,10 +616,10 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( path ) ){
 		WCHAR folder[_MAX_PATH * 2];
-		wcscpy( folder, path );
+		::wcsncpy_s(folder, path, _TRUNCATE);
 		GetInidirOrExedir( path, folder );
 	}
-	wcscat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
+	::wcsncat_s(path, L"*.*", _TRUNCATE);	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	ApiWrap::Combo_ResetContent( hCombo );

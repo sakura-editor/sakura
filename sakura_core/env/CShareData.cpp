@@ -212,7 +212,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
+		::wcsncpy_s(lf.lfFaceName, L"ＭＳ ゴシック", _TRUNCATE);
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -361,7 +361,7 @@ bool CShareData::InitShareData()
 
 			sEdit.m_bOverWriteBoxDelete = false;
 			sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
-			wcscpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
+			::wcsncpy_s(sEdit.m_OpenDialogSelDir, L"%Personal%\\", _TRUNCATE);
 			sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		}
 
@@ -600,20 +600,20 @@ bool CShareData::InitShareData()
 				sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
 				sFileName.m_szTransformFileNameTo[i][0] = L'\0';
 			}
-			wcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
-			wcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
+			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameTo[0], L"デスクトップ\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameTo[1], L"マイドキュメント\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameTo[2], L"IEキャッシュ\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameTo[3], L"TEMP\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameTo[4], L"共有デスクトップ\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameTo[5], L"共有ドキュメント\\", _TRUNCATE);
+			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\", _TRUNCATE);	// 2007.05.19 ryoji 追加
+			::wcsncpy_s(sFileName.m_szTransformFileNameTo[6], L"アプリデータ\\", _TRUNCATE);	// 2007.05.19 ryoji 追加
 			sFileName.m_nTransformFileNameArrNum = 7;
 		}
 
@@ -1123,7 +1123,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		if( pszPath == nullptr || nBufLen <= nLen ){
 			return -nLen;
 		}
-		wcscpy( pszPath, pszFile );
+		::wcsncpy_s(pszPath, pszFile, _TRUNCATE);
 		return nLen;
 	}
 	else {	//	フォルダー指定あり
@@ -1148,12 +1148,12 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			return -nAllLen;
 		}
 
-		wcscpy( pszPath, pszDir );
+		::wcsncpy_s(pszPath, pszDir, _TRUNCATE);
 		WCHAR *ptr2 = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
 			*ptr2++ = L'\\';
 		}
-		wcscpy( ptr2, pszFile );
+		::wcsncpy_s(ptr2, pszFile, _TRUNCATE);
 		return nAllLen;
 	}
 }

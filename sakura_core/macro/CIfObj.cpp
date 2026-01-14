@@ -355,7 +355,7 @@ void CIfObj::AddMethod(
 	Info->Desc.lprgelemdescParam = Info->Arguments;
 	//	Nov. 10, 2003 FILE Win9Xでは、[lstrcpyW]が無効のため、[wcscpy]に修正
 	assert( wcslen(Name)<int(std::size(Info->Name)) );
-	wcscpy(Info->Name, Name);
+	::wcsncpy_s(Info->Name, Name, _TRUNCATE);
 	Info->Method = Method;
 	Info->ID = ID;
 	for(int i = 0; i < ArgumentCount; ++i)

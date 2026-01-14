@@ -391,7 +391,7 @@ LRESULT CALLBACK CDlgGrep::OnFolderProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 		if( IsFileExists( sPath, true )){	//	第2引数がtrueだとディレクトリは対象外
 			SFilePath szWork;
 			SplitPath_FolderAndFile( sPath, szWork, nullptr );
-			wcscpy( sPath, szWork );
+			::wcsncpy_s(sPath, szWork, _TRUNCATE);
 		}
 
 		SetGrepFolder(hwnd, sPath);

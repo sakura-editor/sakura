@@ -161,7 +161,7 @@ public:
 		if (!pWildCard) {
 			return patterns;
 		}
-		wcscpy(pWildCard, lpKeys);
+		::wcsncpy_s(pWildCard, lpKeys, _TRUNCATE);
 
 		int nPos = 0;
 		WCHAR*	token;
@@ -206,7 +206,7 @@ private:
 	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
 			WCHAR* newKey = new WCHAR[ wcslen( addKey ) + 1 ];
-			wcscpy( newKey, addKey );
+			::wcsncpy_s(newKey, addKey, _TRUNCATE);
 			keys.push_back( newKey );
 		}
 	}

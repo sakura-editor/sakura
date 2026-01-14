@@ -245,7 +245,7 @@ int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
 		wmemcpy( m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord, MAX_KEYWORDLEN );
 		m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]][MAX_KEYWORDLEN] = L'\0';
 	}else{
-		wcscpy( m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord );
+		::wcsncpy_s(m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord, _TRUNCATE);
 	}
 	m_nKeyWordNumArr[nIdx]++;
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
@@ -273,7 +273,7 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, LPARAM lParam )
 	int  i;
 	int  endPos = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
 	for( i = m_nStartIdx[nIdx] + nIdx2; i < endPos; ++i ){
-		wcscpy( m_szKeyWordArr[i], m_szKeyWordArr[i + 1] );
+		::wcsncpy_s(m_szKeyWordArr[i], m_szKeyWordArr[i + 1], _TRUNCATE);
 	}
 	m_nKeyWordNumArr[nIdx]--;
 
@@ -462,7 +462,7 @@ int CKeyWordSetMgr::SetKeyWordArr(
 	}
 	int cnt, i;
 	for( cnt = 0, i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + nSize; cnt++, i++ ){
-		wcscpy( m_szKeyWordArr[i], ppszKeyWordArr[cnt] );
+		::wcsncpy_s(m_szKeyWordArr[i], ppszKeyWordArr[cnt], _TRUNCATE);
 	}
 	m_nKeyWordNumArr[nIdx] = nSize;
 	return nSize;

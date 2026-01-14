@@ -511,9 +511,9 @@ WCHAR* CPrint::GetPaperName( int nPaperSize, WCHAR* pszPaperName )
 	// 2006.08.14 Moca 用紙情報の統合
 	const PAPER_INFO* paperInfo = FindPaperInfo( nPaperSize );
 	if( nullptr != paperInfo ){
-		wcscpy( pszPaperName, paperInfo->m_pszName );
+		::wcsncpy_s(pszPaperName, paperInfo->m_pszName, _TRUNCATE);
 	}else{
-		wcscpy( pszPaperName, LS(STR_ERR_CPRINT03) );
+		::wcsncpy_s(pszPaperName, LS(STR_ERR_CPRINT03), _TRUNCATE);
 	}
 	return pszPaperName;
 }
@@ -568,14 +568,14 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settin
 	pPrintSetting.m_bHeaderUse[0] = TRUE;
 	pPrintSetting.m_bHeaderUse[1] = FALSE;
 	pPrintSetting.m_bHeaderUse[2] = FALSE;
-	wcscpy( pPrintSetting.m_szHeaderForm[0], L"$f" );
+	::wcsncpy_s(pPrintSetting.m_szHeaderForm[0], L"$f", _TRUNCATE);
 	pPrintSetting.m_szHeaderForm[1][0] = L'\0';
 	pPrintSetting.m_szHeaderForm[2][0] = L'\0';
 	pPrintSetting.m_bFooterUse[0] = TRUE;
 	pPrintSetting.m_bFooterUse[1] = FALSE;
 	pPrintSetting.m_bFooterUse[2] = FALSE;
 	pPrintSetting.m_szFooterForm[0][0] = L'\0';
-	wcscpy( pPrintSetting.m_szFooterForm[1], L"- $p -" );
+	::wcsncpy_s(pPrintSetting.m_szFooterForm[1], L"- $p -", _TRUNCATE);
 	pPrintSetting.m_szFooterForm[2][0] = L'\0';
 }
 

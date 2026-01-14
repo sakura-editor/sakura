@@ -443,7 +443,7 @@ bool CBackupAgent::FormatBackUpPath(
 			// make keys
 			// $0-$9に対応するフォルダー名を切り出し
 			WCHAR keybuff[1024];
-			wcscpy( keybuff, szDir );
+			::wcsncpy_s(keybuff, szDir, _TRUNCATE);
 			CutLastYenFromDirectoryPath( keybuff );
 
 			WCHAR *folders[10];
@@ -504,7 +504,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 			// * を拡張子にする
 			while( wcschr( szNewPath, L'*' ) ){
-				wcscpy( temp, szNewPath );
+				::wcsncpy_s(temp, szNewPath, _TRUNCATE);
 				cp = wcschr( temp, L'*' );
 				*cp = 0;
 				if( -1 == auto_snprintf_s( szNewPath, newPathCount, L"%s%s%s", temp, ep, cp+1 ) ){

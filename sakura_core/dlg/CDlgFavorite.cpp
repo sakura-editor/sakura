@@ -744,8 +744,8 @@ bool CDlgFavorite::RefreshList( void )
 		{
 			ret_val = true;
 		
-			if( msg[0] != L'\0' ) wcscat( msg, LS( STR_DLGFAV_DELIMITER ) );
-			wcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
+			if( msg[0] != L'\0' ) ::wcsncat_s(msg, LS( STR_DLGFAV_DELIMITER ), _TRUNCATE);
+			::wcsncat_s(msg, m_aFavoriteInfo[nTab].m_pszCaption, _TRUNCATE);
 		}
 	}
 

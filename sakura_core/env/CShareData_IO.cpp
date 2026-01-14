@@ -1302,9 +1302,9 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
-			wcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
-			wcscpy( printsetting.m_szFooterForm[0], _EDITL("") );
-			wcscpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
+			::wcsncpy_s(printsetting.m_szHeaderForm[0], _EDITL("$f"), _TRUNCATE);
+			::wcsncpy_s(printsetting.m_szFooterForm[0], _EDITL(""), _TRUNCATE);
+			::wcsncpy_s(printsetting.m_szFooterForm[1], _EDITL("- $p -"), _TRUNCATE);
 		}
 
 		//禁則	//@@@ 2002.04.09 MIK
@@ -1360,8 +1360,8 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 			if( i == 0 ){
 				pShare->m_TypeBasis = type;
 			}
-			wcscpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
-			wcscpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
+			::wcsncpy_s(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts, _TRUNCATE);
+			::wcsncpy_s(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName, _TRUNCATE);
 			pShare->m_TypeMini[i].m_id = type.m_id;
 			pShare->m_TypeMini[i].m_encoding = type.m_encoding;
 		}

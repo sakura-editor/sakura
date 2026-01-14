@@ -165,15 +165,15 @@ BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, i
 	p = GetPtr( index );
 	if( nullptr != p )
 	{
-		if( keyword  ) wcscpy( keyword, p->keyword );
-		if( filename ) wcscpy( filename, p->filename );
+		if( keyword  ) ::wcsncpy_s(keyword, p->keyword, _TRUNCATE);
+		if( filename ) ::wcsncpy_s(filename, p->filename, _TRUNCATE);
 		if( no       ) *no    = p->no;
 		if( type     ) *type  = p->type;
-		if( note     ) wcscpy( note, p->note );
+		if( note     ) ::wcsncpy_s(note, p->note, _TRUNCATE);
 		if( depth    ) *depth = p->depth;
 		if( baseDir ){
 			if( 0 <= p->baseDirId && (size_t)p->baseDirId < m_baseDirArr.size() ){
-				wcscpy( baseDir, m_baseDirArr[p->baseDirId].c_str() );
+				::wcsncpy_s(baseDir, m_baseDirArr[p->baseDirId].c_str(), _TRUNCATE);
 			}
 		}
 		return TRUE;
