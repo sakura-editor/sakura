@@ -145,7 +145,7 @@ EFunctionCode CKeyBind::GetFuncCode(
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 */
 int CKeyBind::CreateKeyBindList(
-	HINSTANCE		hInstance,		//!< [in] インスタンスハンドル
+	[[maybe_unused]] HINSTANCE	hInstance,		//!< [in] インスタンスハンドル
 	int				nKeyNameArrNum,	//!< [in]
 	KEYDATA*		pKeyNameArr,	//!< [out]
 	CNativeW&		cMemList,		//!<
@@ -208,12 +208,7 @@ int CKeyBind::CreateKeyBindList(
 
 				/* 機能ID→関数名，機能名日本語 */
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-				CSMacroMgr::GetFuncInfoByID(
-					hInstance,
-					iFunc,
-					szFuncName,
-					szFuncNameJapanese
-				);
+				CSMacroMgr::GetFuncInfoByID(iFunc, szFuncName, szFuncNameJapanese);
 
 				/* 関数名 */
 				cMemList.AppendString( pszTAB );
@@ -432,44 +427,42 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 	2010/5/17	アクセスキーの追加
 	@date 2014.05.04 Moca LABEL_MAX=256 => nLabelSize
 */
-WCHAR* CKeyBind::GetMenuLabel(
-		HINSTANCE	hInstance,
-		int			nKeyNameArrNum,
-		KEYDATA*	pKeyNameArr,
-		int			nFuncId,
-		WCHAR*      pszLabel,   //!< [in,out] バッファは256以上と仮定
-		const WCHAR*	pszKey,
-		BOOL		bKeyStr,
-		int			nLabelSize,
-		BOOL		bGetDefFuncCode /* = TRUE */
+LPWSTR CKeyBind::GetMenuLabel(
+	std::span<WCHAR>	szLabel,		//!< [out] ラベル格納先
+	int					nFuncId,		//!< [in] 機能コード
+	std::wstring_view	accessKey,		//!< [in] アクセスキー
+	bool				bAddShortcutKey	//!< [in] 機能に対応するキー名を追加するか
 )
 {
-	const unsigned int LABEL_MAX = nLabelSize;
-
-	if( L'\0' == pszLabel[0] ){
-		::wcsncpy_s(pszLabel, LABEL_MAX, LS(nFuncId), _TRUNCATE);
+	if( L'\0' == szLabel[0] ){
+		::wcsncpy_s(std::data(szLabel), std::size(szLabel), LS(nFuncId), _TRUNCATE);
 	}
-	if( L'\0' == pszLabel[0] ){
-		::wcsncpy_s(pszLabel, L"-- undefined name --", _TRUNCATE);
+	if( L'\0' == szLabel[0] ){
+		::wcsncpy_s(std::data(szLabel), std::size(szLabel), L"-- undefined name --", _TRUNCATE);
 	}
 	// アクセスキーの追加	2010/5/17 Uchi
-	wcsncpy_s( pszLabel, LABEL_MAX, MakeMenuLabel( pszLabel, pszKey ), _TRUNCATE );
+	wcsncpy_s(std::data(szLabel), std::size(szLabel), MakeMenuLabel(std::data(szLabel), std::data(accessKey)), _TRUNCATE);
 
 	/* 機能に対応するキー名を追加するか */
-	if( bKeyStr ){
+	if (bAddShortcutKey) {
+		const auto cchLabelUsed = std::wstring_view{ std::data(szLabel) }.length();
+
+		// グローバル関数で取得できるものを引数で指定させるのはやめた。
+		const auto hInstance = G_AppInstance();
+		const auto nKeyNameArrNum = GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum;
+		const auto pKeyNameArr = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr;
+
 		CNativeW    cMemAccessKey;
+		constexpr auto bGetDefFuncCode = true;
 		// 2010.07.11 Moca メニューラベルの「\t」の付加条件変更
 		// [ファイル/フォルダー/ウィンドウ一覧以外]から[アクセスキーがあるときのみ]に付加するように変更
 		/* 機能に対応するキー名の取得 */
-		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
-			// バッファが足りないときは入れない
-			if( wcslen( pszLabel ) + (Int)cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
-				::wcsncat_s(pszLabel, L"\t", _TRUNCATE);
-				::wcsncat_s(pszLabel, cMemAccessKey.GetStringPtr(), _TRUNCATE);
-			}
+		if (GetKeyStr(hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode) && cchLabelUsed + (Int)cMemAccessKey.GetStringLength() + 1 < std::size(szLabel)) {
+			::wcsncat_s(std::data(szLabel), std::size(szLabel), L"\t", _TRUNCATE);
+			::wcsncat_s(std::data(szLabel), std::size(szLabel), cMemAccessKey.GetStringPtr(), _TRUNCATE);
 		}
 	}
-	return pszLabel;
+	return std::data(szLabel);
 }
 
 /*! キーのデフォルト機能を取得する
@@ -483,25 +476,23 @@ WCHAR* CKeyBind::GetMenuLabel(
 */
 EFunctionCode CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 {
-	DLLSHAREDATA* pShareData = &GetDllShareData();
-	if( pShareData == nullptr )
+	const auto pShareData = GetDllShareDataPtr();
+	if (!pShareData) {
 		return F_DEFAULT;
+	}
 
 	EFunctionCode nDefFuncCode = F_DEFAULT;
 	if( nKeyCode == VK_F4 ){
+		const auto& sTabBar = pShareData->m_Common.m_sTabBar;
 		if( nState == _CTRL ){
-			nDefFuncCode = F_FILECLOSE;	// 閉じて(無題)
-			if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-				nDefFuncCode = F_WINCLOSE;	// 閉じる
-			}
+			nDefFuncCode = sTabBar.m_bDispTabWnd && !sTabBar.m_bDispTabWndMultiWin
+				? F_WINCLOSE	// 閉じる
+				: F_FILECLOSE;	// 閉じて(無題)
 		}
 		else if( nState == _ALT ){
-			nDefFuncCode = F_WINCLOSE;	// 閉じる
-			if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-				if( !pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin ){
-					nDefFuncCode = F_GROUPCLOSE;	// グループを閉じる	// 2007.06.20 ryoji
-				}
-			}
+			nDefFuncCode = sTabBar.m_bDispTabWnd && !sTabBar.m_bDispTabWndMultiWin && !sTabBar.m_bTab_CloseOneWin
+				? F_GROUPCLOSE	// グループを閉じる
+				: F_WINCLOSE;	// 閉じる
 		}
 	}
 	return nDefFuncCode;

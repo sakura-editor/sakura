@@ -713,7 +713,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 	SplitPath_FolderAndFile( GetFilePath(), path, nullptr );
 	AddLastYenFromDirectoryPath( path );
 	
-	m_pcList->GetParam( index, nullptr, fileName, lineNum, nullptr, nullptr, &tempDepth, dirFileName );
+	m_pcList->GetParam(index, fileName, lineNum, &tempDepth, dirFileName);
 	if( depth ){
 		*depth = tempDepth;
 	}
@@ -1278,7 +1278,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 							WCHAR baseWork[1024];
 							CopyDirDir(baseWork, to_wchar(s[2]), state->m_szCurPath);
 							szNextPath[0] = 0;
-							if (!GetLongFileName(baseWork, std::data(szNextPath))) {
+							if (!GetLongFileName(baseWork, szNextPath)) {
 								// エラーなら変換前を適用
 								::wcsncpy_s(std::data(szNextPath), std::size(szNextPath), baseWork, _TRUNCATE);
 							}
@@ -1602,9 +1602,9 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	//完全パス名を作成する。
 	const WCHAR	*p = fileName;
 	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
-		::wcsncpy_s(pszOutput, p, _TRUNCATE);	//何も加工しない。
+		::wcsncpy_s(pszOutput, count, p, _TRUNCATE);	//何も加工しない。
 	}else if( iswalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
-		::wcsncpy_s(pszOutput, p, _TRUNCATE);	//何も加工しない。
+		::wcsncpy_s(pszOutput, count, p, _TRUNCATE);	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
 			//::wcsncat_s(basePath, L"..\\", _TRUNCATE);
@@ -1620,17 +1620,17 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 /*!
 	ディレクトリとディレクトリを連結する
 */
-WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHAR* base )
+WCHAR* CDlgTagJumpList::CopyDirDir(std::span<WCHAR> dest, const WCHAR* target, const WCHAR* base)
 {
 	if( _IS_REL_PATH( target ) ){
-		::wcsncpy_s(dest, base, _TRUNCATE);
-		AddLastYenFromDirectoryPath( dest );
-		::wcsncat_s(dest, target, _TRUNCATE);
+		::wcsncpy_s(std::data(dest), std::size(dest), base, _TRUNCATE);
+		AddLastYenFromDirectoryPath(std::data(dest));
+		::wcsncat_s(std::data(dest), std::size(dest), target, _TRUNCATE);
 	}else{
-		::wcsncpy_s(dest, target, _TRUNCATE);
+		::wcsncpy_s(std::data(dest), std::size(dest), target, _TRUNCATE);
 	}
-	AddLastYenFromDirectoryPath( dest );
-	return dest;
+	AddLastYenFromDirectoryPath(std::data(dest));
+	return std::data(dest);
 }
 
 /*

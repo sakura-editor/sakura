@@ -792,15 +792,7 @@ void CEditWnd::LayoutMainMenu()
 			// 2014.05.04 Moca プラグイン/マクロ等を置けるようにFunccode2Nameを使うように
 			GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabel, int(std::size(szLabel)) );
 			::wcsncpy_s(szKey, cMainMenu->m_sKey, _TRUNCATE);
-			if (CKeyBind::GetMenuLabel(
-				G_AppInstance(),
-				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
-				cMainMenu->m_nFunc,
-				szLabel,
-				cMainMenu->m_sKey,
-				FALSE,
-				int(std::size(szLabel))) == nullptr) {
+			if (!CKeyBind::GetMenuLabel(szLabel, cMainMenu->m_nFunc, cMainMenu->m_sKey)) {
 				::wcsncpy_s(szLabel, L"?", _TRUNCATE);
 			}
 			::AppendMenu( hMenu, MF_STRING, cMainMenu->m_nFunc, szLabel );
@@ -1993,10 +1985,10 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_SETTEXT:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（２）	// 2007.04.03 ryoji
 		// タイマーを使用してタイトルの変更を遅延する
-		if( m_pShareData->m_sFlags.m_bEditWndChanging ){
+		if( m_pShareData->m_sFlags.m_bEditWndChanging && lParam){
 			delete[] m_pszLastCaption;
 			m_pszLastCaption = new WCHAR[ ::wcslen((LPCWSTR)lParam) + 1 ];
-			::wcsncpy_s(m_pszLastCaption, (LPCWSTR)lParam, _TRUNCATE);	// 変更後のタイトルを記憶しておく
+			::wcsncpy_s(m_pszLastCaption, MENUBAR_MESSAGE_MAX_LEN, (LPCWSTR)lParam, _TRUNCATE);	// 変更後のタイトルを記憶しておく
 			::SetTimer( GetHwnd(), IDT_CAPTION, 50, nullptr );
 			return 0L;
 		}

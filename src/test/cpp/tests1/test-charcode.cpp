@@ -16,13 +16,13 @@ protected:
 	void SetUp() override {
 		lf1 = LOGFONT();
 		lf1.lfCharSet = DEFAULT_CHARSET;
-		std::wcsncpy_s(lf1.lfFaceName, L"MS Gothic", _TRUNCATE);
+		::wcsncpy_s(lf1.lfFaceName, L"MS Gothic", _TRUNCATE);
 		lf2 = LOGFONT();
 		lf2.lfCharSet = DEFAULT_CHARSET;
-		std::wcsncpy_s(lf2.lfFaceName, L"Meiryo", _TRUNCATE);
+		::wcsncpy_s(lf2.lfFaceName, L"Meiryo", _TRUNCATE);
 		lf3 = LOGFONT();
 		lf3.lfCharSet = DEFAULT_CHARSET;
-		std::wcsncpy_s(lf3.lfFaceName, L"MS Gothic", _TRUNCATE); // UD デジタル 教科書体 N-B
+		::wcsncpy_s(lf3.lfFaceName, L"MS Gothic", _TRUNCATE); // UD デジタル 教科書体 N-B
 		lf3.lfPitchAndFamily = FIXED_PITCH;
 		lf3.lfHeight = 10;
 		lf3.lfWeight = FW_BOLD;

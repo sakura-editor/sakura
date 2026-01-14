@@ -840,7 +840,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					// +nLenDefPosは追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
 					// +1は終端NUL文字
 					{
-						::wcsncpy_s(&szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName, _TRUNCATE);
+						::wcsncpy_s(&szNamespace[nNamespaceLen[nNestLevel_global]], std::size(szNamespace) - nNamespaceLen[nNestLevel_global], szItemName, _TRUNCATE);
 						szItemName[0] = L'\0';
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
 						//	関数の後ろにconst, throw または初期化子があると
@@ -854,7 +854,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
 							if( nItemFuncId == FL_OBJ_NAMESPACE )
-								::wcsncpy_s(&szNamespace[nNamespaceLen[nNestLevel_global]], LS(STR_OUTLINE_CPP_DEFPOS), _TRUNCATE);
+								::wcsncpy_s(&szNamespace[nNamespaceLen[nNestLevel_global]], std::size(szNamespace) - nNamespaceLen[nNestLevel_global], LS(STR_OUTLINE_CPP_DEFPOS), _TRUNCATE);
 							else
 							{
 								szNamespace[nNamespaceLen[nNestLevel_global]] = L'\0';
@@ -1094,7 +1094,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
 					{
-						::wcsncpy_s(&szNamespace[nNamespaceLen[ nNestLevel_global]] , szItemName, _TRUNCATE);
+						::wcsncpy_s(&szNamespace[nNamespaceLen[ nNestLevel_global]], std::size(szNamespace) - nNamespaceLen[nNestLevel_global], szItemName, _TRUNCATE);
 
 						nItemFuncId = FL_OBJ_DECLARE;
 						/*

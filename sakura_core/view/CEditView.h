@@ -513,8 +513,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	void AnalyzeDiffInfo( const char* pszDiffInfo, int nFlgFile12);	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-	BOOL MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, bool bBom);	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
-	BOOL MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode);
+	BOOL MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType code, bool bBom);	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
+	BOOL MakeDiffTmpFile2(std::span<WCHAR> tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode);
 	void ViewDiffInfo( const WCHAR* pszFile1, const WCHAR* pszFile2, int nFlgOpt, bool bUTF8);		/* DIFF差分表示 */		//2005.10.29 maru
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

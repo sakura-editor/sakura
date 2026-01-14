@@ -819,33 +819,36 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 	@date 2002.06.16 genta 新設のGetFuncInfoById(int)を内部で使うように．
 	@date 2011.04.10 nasukoji 各国語メッセージリソース対応
 */
-WCHAR* CSMacroMgr::GetFuncInfoByID(
-	[[maybe_unused]] HINSTANCE	hInstance,			//!< [in] リソース取得のためのInstance Handle
-	int			nFuncID,			//!< [in] 機能番号
-	WCHAR*		pszFuncName,		//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
-	WCHAR*		pszFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
+LPWSTR CSMacroMgr::GetFuncInfoByID(
+	int					nFuncID,			//!< [in] 機能番号
+	std::span<WCHAR>	szFuncName,			//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
+	const std::optional<std::span<WCHAR>>& optFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
 )
 {
-	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
-	if( MacroInfo != nullptr ){
-		if( pszFuncName != nullptr ){
-			::wcsncpy_s(pszFuncName, MacroInfo->m_pszFuncName, _TRUNCATE);
-			WCHAR *p = pszFuncName;
-			while (*p){
-				if (*p == L'('){
-					*p = L'\0';
-					break;
-				}
-				p++;
-			}
-		}
-		//	Jun. 16, 2002 genta NULLのときは何もしない．
-		if( pszFuncNameJapanese != nullptr ){
-			::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
-		}
-		return pszFuncName;
+	const auto MacroInfo = GetFuncInfoByID(nFuncID);
+	if (!MacroInfo) {
+		return nullptr;	//見付からなかった
 	}
-	return nullptr;
+
+	// 見付かった機能名をコピー
+	::wcsncpy_s(std::data(szFuncName), std::size(szFuncName), MacroInfo->m_pszFuncName, _TRUNCATE);
+
+	// 機能名を含む場合、丸括弧の手前までに切り詰める
+	WCHAR *p = std::data(szFuncName);
+	while (*p){
+		if (*p == L'('){
+			*p = L'\0';
+			break;
+		}
+		p++;
+	}
+
+	//	Jun. 16, 2002 genta NULLのときは何もしない．
+	if (optFuncNameJapanese.has_value()) {
+		auto& szFuncNameJapanese = optFuncNameJapanese.value();
+		::wcsncpy_s(std::data(szFuncNameJapanese), std::size(szFuncNameJapanese), LS(nFuncID), _TRUNCATE);
+	}
+	return std::data(szFuncName);
 }
 
 /*!

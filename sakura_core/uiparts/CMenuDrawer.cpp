@@ -791,16 +791,7 @@ void CMenuDrawer::MyAppendMenu(
 	::wcsncpy_s(szKey, pszKey, _TRUNCATE); 
 	if( nFuncId != 0 ){
 		/* メニューラベルの作成 */
-		CKeyBind::GetMenuLabel(
-			m_hInstance,
-			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
-			int(nFuncId),
-			szLabel,
-			szKey,
-			bAddKeyStr,
-			int(std::size(szLabel))
-		 );
+		CKeyBind::GetMenuLabel(szLabel, int(nFuncId), szKey, bAddKeyStr);
 
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
 		{

@@ -274,8 +274,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	CNativeW cmResponseFile = L"";
-	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
-	::wcsncpy_s(pszCmdLineWork, pszCmdLineSrc, _TRUNCATE);
+	LPWSTR pszCmdLineWork = ::_wcsdup(pszCmdLineSrc);
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != nullptr )

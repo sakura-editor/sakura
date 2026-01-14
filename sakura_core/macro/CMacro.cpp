@@ -442,7 +442,7 @@ static inline const WCHAR* wtow_def( const WCHAR* arg, const WCHAR* def_val )
 	のように。
 	AddLParam以外にCKeyMacroMgr::LoadKeyMacroによってもCMacroが作成される点に注意
 */
-void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
+void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) const
 {
 	WCHAR			szFuncName[1024];
 	WCHAR			szFuncNameJapanese[500];
@@ -452,7 +452,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	int nFuncID = m_nFuncID;
 
 	/* 2002.2.2 YAZAKI CSMacroMgrに頼む */
-	if (CSMacroMgr::GetFuncInfoByID( hInstance, nFuncID, szFuncName, szFuncNameJapanese)){
+	if (CSMacroMgr::GetFuncInfoByID(nFuncID, szFuncName, szFuncNameJapanese)) {
 		// 2014.01.24 Moca マクロ書き出しをm_eTypeを追加して統合
 		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"を削除
 		CMacroParam* pParam = m_pParamTop;
@@ -2329,7 +2329,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				std::vector<wchar_t> vStrMenu;
 				int nLen = (int)wcslen(varCopy2.Data.bstrVal);
 				vStrMenu.assign( nLen + 1, L'\0' );
-				::wcsncpy_s(&vStrMenu[0], varCopy2.Data.bstrVal, _TRUNCATE);
+				::wcsncpy_s(&vStrMenu[0], std::size(vStrMenu), varCopy2.Data.bstrVal, _TRUNCATE);
 				HMENU hMenu = ::CreatePopupMenu();
 				std::vector<HMENU> vHmenu;
 				vHmenu.push_back( hMenu );

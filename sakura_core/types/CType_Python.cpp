@@ -493,7 +493,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					len = int(std::size(szWord)) - 8;
 				}
 				// class
-				::wcsncpy_s(szWord + len, LS(STR_OUTLINE_PYTHON_CLASS), _TRUNCATE);
+				::wcsncat_s(szWord, LS(STR_OUTLINE_PYTHON_CLASS), _TRUNCATE);
 			}
 			
 			/*

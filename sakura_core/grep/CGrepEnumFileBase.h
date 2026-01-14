@@ -100,11 +100,8 @@ public:
 		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, 4096 - 1) : 0; // FIXME: パス長の上限は暫定値。
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
 			const auto baseLen = cchBaseFolder;
-			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
-			if( nullptr == lpPath ) break;
-			::wcsncpy_s(lpPath, lpBaseFolder, _TRUNCATE);
-			::wcsncpy_s(lpPath + baseLen, L"\\", _TRUNCATE);
-			::wcsncpy_s(lpPath + baseLen + 1, vecKeys[ i ], _TRUNCATE);
+			std::filesystem::path fileNamePattern{ lpBaseFolder };
+			fileNamePattern /= vecKeys[i];
 			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
 			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
 			const WCHAR* keyDirSlash = wcsrchr( vecKeys[ i ], L'/' );
@@ -121,7 +118,7 @@ public:
 			const auto nKeyDirLen = keyDir ? keyDir - vecKeys[ i ] + 1 : 0;
 
 			WIN32_FIND_DATA w32fd;
-			HANDLE handle = ::FindFirstFile( lpPath, &w32fd );
+			HANDLE handle = ::FindFirstFileW(fileNamePattern.c_str(), &w32fd);
 			if( INVALID_HANDLE_VALUE != handle ){
 				do{
 					if( !::PathMatchSpec(w32fd.cFileName, vecKeys[ i ] + nKeyDirLen) ){
@@ -164,7 +161,6 @@ public:
 				}while( ::FindNextFile( handle, &w32fd ) );
 				::FindClose( handle );
 			}
-			delete [] lpPath;
 		}
 		return found;
 	}

@@ -1123,7 +1123,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		if( pszPath == nullptr || nBufLen <= nLen ){
 			return -nLen;
 		}
-		::wcsncpy_s(pszPath, pszFile, _TRUNCATE);
+		::wcsncpy_s(pszPath, nBufLen, pszFile, _TRUNCATE);
 		return nLen;
 	}
 	else {	//	フォルダー指定あり
@@ -1148,12 +1148,12 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			return -nAllLen;
 		}
 
-		::wcsncpy_s(pszPath, pszDir, _TRUNCATE);
+		::wcsncpy_s(pszPath, nBufLen, pszDir, _TRUNCATE);
 		WCHAR *ptr2 = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
 			*ptr2++ = L'\\';
 		}
-		::wcsncpy_s(ptr2, pszFile, _TRUNCATE);
+		::wcsncpy_s(ptr2, nBufLen, pszFile, _TRUNCATE);
 		return nAllLen;
 	}
 }

@@ -151,30 +151,23 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 
 	@note 不要な情報の場合は引数に NULL を指定する。
 */
-BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir )
+BOOL CSortedTagJumpList::GetParam(int index, std::span<WCHAR> filename, int* no, int* depth, std::span<WCHAR> baseDir)
 {
-	if( keyword  ) keyword[0] = L'\0';
-	if( filename ) filename[0] = L'\0';
-	if( no       ) *no    = 0;
-	if( type     ) *type  = 0;
-	if( note     ) note[0] = L'\0';
-	if( depth    ) *depth = 0;
-	if( baseDir  ) baseDir[0] = L'\0';
+	filename[0] = L'\0';
+	baseDir[0] = L'\0';
 
-	CSortedTagJumpList::TagJumpInfo* p;
-	p = GetPtr( index );
-	if( nullptr != p )
+	if( no       ) *no    = 0;
+	if( depth    ) *depth = 0;
+
+	if (const auto p = GetPtr(index))
 	{
-		if( keyword  ) ::wcsncpy_s(keyword, p->keyword, _TRUNCATE);
-		if( filename ) ::wcsncpy_s(filename, p->filename, _TRUNCATE);
+		::wcsncpy_s(std::data(filename), std::size(filename), p->filename, _TRUNCATE);
+
 		if( no       ) *no    = p->no;
-		if( type     ) *type  = p->type;
-		if( note     ) ::wcsncpy_s(note, p->note, _TRUNCATE);
 		if( depth    ) *depth = p->depth;
-		if( baseDir ){
-			if( 0 <= p->baseDirId && (size_t)p->baseDirId < m_baseDirArr.size() ){
-				::wcsncpy_s(baseDir, m_baseDirArr[p->baseDirId].c_str(), _TRUNCATE);
-			}
+
+		if( 0 <= p->baseDirId && (size_t)p->baseDirId < m_baseDirArr.size() ){
+			::wcsncpy_s(std::data(baseDir), std::size(baseDir), m_baseDirArr[p->baseDirId].c_str(), _TRUNCATE);
 		}
 		return TRUE;
 	}

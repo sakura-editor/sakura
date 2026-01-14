@@ -314,8 +314,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	int		nCharChars;
 	_wsplitpath_s( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( nullptr != pszFolder ){
-		::wcsncpy_s(pszFolder, szDrive, _TRUNCATE);
-		::wcsncat_s(pszFolder, szDir, _TRUNCATE);
+		::wcsncpy_s(pszFolder, _MAX_PATH, szDrive, _TRUNCATE);
+		::wcsncat_s(pszFolder, _MAX_PATH, szDir, _TRUNCATE);
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
@@ -326,8 +326,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		}
 	}
 	if( nullptr != pszFile ){
-		::wcsncpy_s(pszFile, szFname, _TRUNCATE);
-		::wcsncat_s(pszFile, szExt, _TRUNCATE);
+		::wcsncpy_s(pszFile, _MAX_PATH, szFname, _TRUNCATE);
+		::wcsncat_s(pszFile, _MAX_PATH, szExt, _TRUNCATE);
 	}
 	return;
 }
@@ -364,21 +364,21 @@ void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* ps
 	@date Oct. 4, 2005 genta 相対パスが絶対パスに直されなかった
 	@date Oct. 5, 2005 Moca  相対パスを絶対パスに変換するように
 */
-BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes )
+BOOL GetLongFileName(const std::filesystem::path& srcPath, std::span<WCHAR> szDestPath)
 {
 	WCHAR* name;
-	WCHAR szBuf[_MAX_PATH + 1];
-	int len = ::GetFullPathName( pszFilePathSrc, _MAX_PATH, szBuf, &name );
+	SFilePath szBuf;
+	int len = ::GetFullPathNameW(srcPath.c_str(), DWORD(std::size(szBuf)), szBuf, &name);
 	if( len <= 0 || _MAX_PATH <= len ){
-		len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
+		len = ::GetLongPathNameW(srcPath.c_str(), std::data(szDestPath), int(std::size(szDestPath)));
 		if( len <= 0 || _MAX_PATH < len ){
 			return FALSE;
 		}
 		return TRUE;
 	}
-	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
+	len = ::GetLongPathNameW(szBuf, std::data(szDestPath), int(std::size(szDestPath)));
 	if( len <= 0 || _MAX_PATH < len ){
-		::wcsncpy_s(pszFilePathDes, szBuf, _TRUNCATE);
+		::wcsncpy_s(std::data(szDestPath), std::size(szDestPath), szBuf, _TRUNCATE);
 	}
 	return TRUE;
 }

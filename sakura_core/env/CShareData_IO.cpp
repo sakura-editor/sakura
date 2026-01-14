@@ -965,13 +965,7 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 				}
 				else {
 					if (bOutCmdName) {
-						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-							G_AppInstance(),
-							menu.m_nCustMenuItemFuncArr[i][j],
-							szFuncName,
-							nullptr
-						);
-						if ( p == nullptr ) {
+						if (!CSMacroMgr::GetFuncInfoByID(menu.m_nCustMenuItemFuncArr[i][j], szFuncName)) {
 							auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
 						}
 						cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szFuncName));
@@ -1159,16 +1153,9 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					if (bOutCmdName) {
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 						// 2010.06.30 Moca 日本語名を取得しないように
-						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-							nullptr,
-							keydata.m_nFuncCodeArr[j],
-							szFuncName,
-							nullptr
-						);
-						if( p ) {
+						if (const auto p = CSMacroMgr::GetFuncInfoByID(keydata.m_nFuncCodeArr[j], szFuncName)) {
 							auto_sprintf(szWork, L",%ls", p);
-						}
-						else {
+						} else {
 							auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 						}
 					}
@@ -2223,12 +2210,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			else {
 				if (bOutCmdName) {
 					// マクロ名対応
-					p = CSMacroMgr::GetFuncInfoByID(
-						G_AppInstance(),
-						pcMenu->m_nFunc,
-						szFuncName,
-						nullptr
-					);
+					p = CSMacroMgr::GetFuncInfoByID(pcMenu->m_nFunc, szFuncName);
 				}
 				if ( !bOutCmdName || p == nullptr ) {
 					auto_sprintf( szFuncName, L"%d", pcMenu->m_nFunc );
