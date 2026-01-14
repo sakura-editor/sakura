@@ -69,19 +69,27 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		IndentationStyle indentStyle{};
 		DetectIndentationStyle(pcDoc, 256, indentStyle);
 		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
+		auto setTemporaryTabSpaceKetas = [&]() {
+			// タブ幅を一時的に設定
+			pcDoc->m_bTabSpaceCurTemp = true;
+			auto& layoutMgr = pcDoc->m_cLayoutMgr;
+			layoutMgr.SetTabSpaceKetas(CKetaXInt(indentStyle.tabSpace));
+		};
 		if (indentStyle.character == IndentationStyle::Character::Spaces) { // 半角空白でインデント
 			if (indentStyle.tabSpace > 0) { // インデント幅が検出できた場合のみ設定
 				// スペースの挿入設定を有効化
 				bInsSpace = true;
-				// タブ幅を一時的に設定
-				pcDoc->m_bTabSpaceCurTemp = true;
-				auto& layoutMgr = pcDoc->m_cLayoutMgr;
-				layoutMgr.SetTabSpaceKetas(CKetaXInt(indentStyle.tabSpace));
+				setTemporaryTabSpaceKetas();
 			}
 		}else if (indentStyle.character == IndentationStyle::Character::Tabs) { // タブ文字でインデント
 			// スペースの挿入設定を無効化
 			bInsSpace = false;
-			// タブ幅は元のままで変更しない
+			if (indentStyle.tabSpace == -1) {
+				// タブ幅は元のままで変更しない
+			}
+			else {
+				setTemporaryTabSpaceKetas();
+			}
 		}else {
 			// 検出出来なかったので何も設定しない
 		}
