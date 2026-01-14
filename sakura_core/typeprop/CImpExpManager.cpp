@@ -119,7 +119,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 	WCHAR	szPath[_MAX_PATH + 1];
 	szPath[0] = L'\0';
 	if( !GetFileName().empty() ){
-		wcscpy( szPath, GetFullPath().c_str());
+		::wcsncpy_s(szPath, GetFullPath().c_str(), _TRUNCATE);
 	}
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return false;
@@ -166,7 +166,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 	WCHAR			szPath[_MAX_PATH + 1];
 	szPath[0] = L'\0';
 	if( !GetFileName().empty() ){
-		wcscpy( szPath, GetFullPath().c_str());
+		::wcsncpy_s(szPath, GetFullPath().c_str(), _TRUNCATE);
 	}
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return false;
@@ -311,7 +311,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	m_nIdx = m_Types.m_nIdx;
 	if (m_nIdx == 0) {
 		// 基本の場合の名前と拡張子を初期化
-		wcscpy( m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS) );
+		::wcsncpy_s(m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS), _TRUNCATE);
 		m_Types.m_szTypeExts[0] = L'\0';
 		m_Types.m_id = 0;
 	}else{
@@ -462,7 +462,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 			cImpExpKeyWord.SetBaseName( common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( nIdx ));
 
 			if ( cImpExpKeyWord.Export( cImpExpKeyWord.GetFullPath(), sTmpMsg ) ) {
-				wcscpy( szFileName, cImpExpKeyWord.GetFileName().c_str());
+				::wcsncpy_s(szFileName, cImpExpKeyWord.GetFileName().c_str(), _TRUNCATE);
 				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
 				if (cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
 					files += std::wstring( L"\n" ) + cImpExpKeyWord.GetFileName();
@@ -486,7 +486,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
-			wcscat( szId, szPlug );
+			::wcsncat_s(szId, szPlug, _TRUNCATE);
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szId));
 	}
@@ -497,7 +497,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
-			wcscat( szId, szPlug );
+			::wcsncat_s(szId, szPlug, _TRUNCATE);
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szId));
 	}

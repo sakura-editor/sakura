@@ -427,7 +427,7 @@ UINT_PTR CALLBACK OFNHookProc(
 									szDefExt[0] = L'\0';
 								break;
 							case 2:		// *.txt
-								::wcscpy(szDefExt, L".txt");
+								::wcsncpy_s(szDefExt, L".txt", _TRUNCATE);
 								break;
 							case 3:		// *.*
 							default:	// 不明
@@ -435,7 +435,7 @@ UINT_PTR CALLBACK OFNHookProc(
 								break;
 							}
 							::wcsncpy_s(szBuf, pData->m_pOf->lpstrFile, _TRUNCATE);
-							::wcscat(szBuf, szDefExt);
+							::wcsncat_s(szBuf, szDefExt, _TRUNCATE);
 							::wcsncpy_s(pData->m_szPath, szBuf, _TRUNCATE);
 						}
 					}
@@ -444,7 +444,7 @@ UINT_PTR CALLBACK OFNHookProc(
 					if( IsFileExists(pData->m_szPath, true) ){
 						WCHAR szText[_MAX_PATH + 100];
 						::wcsncpy_s(szText, pData->m_szPath, _TRUNCATE);
-						::wcscat(szText, LS(STR_DLGOPNFL2));
+						::wcsncat_s(szText, LS(STR_DLGOPNFL2), _TRUNCATE);
 						if( IDYES != ::MessageBox( pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
 							::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
 							return TRUE;
@@ -656,8 +656,8 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 		szFile, int(std::size(szFile))
 	);
 	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
-	wcscpy( m_szInitialDir, szDrive );
-	wcscat( m_szInitialDir, szDir );
+	::wcsncpy_s(m_szInitialDir, szDrive, _TRUNCATE);
+	::wcsncat_s(m_szInitialDir, szDir, _TRUNCATE);
 
 	return;
 }
@@ -691,7 +691,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
-			wcscpy(m_szInitialDir, p );
+			::wcsncpy_s(m_szInitialDir, p, _TRUNCATE);
 		}
 	}
 	m_vMRU = vMRU;

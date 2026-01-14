@@ -512,7 +512,7 @@ bool CViewCommander::Command_TagsMake( void )
 	WCHAR	szTargetPath[1024 /*_MAX_PATH+1*/ ];
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() )
 	{
-		wcscpy( szTargetPath, GetDocument()->m_cDocFile.GetFilePath() );
+		::wcsncpy_s(szTargetPath, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
 		szTargetPath[ wcslen( szTargetPath ) - wcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = L'\0';
 	}
 	else
@@ -823,7 +823,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 
 	// 基準ファイル名の設定
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
+		::wcsncpy_s(szCurrentPath, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
 	}else{
 		if( 0 == ::GetCurrentDirectory( count - int(std::size(L"\\dmy")) - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;
@@ -833,10 +833,10 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, int(std::size(szExts)));
 		auto nExtLen = wcsnlen_s(szExts, std::size(szExts) );
-		wcscat( szCurrentPath, L"\\dmy" );
+		::wcsncat_s(szCurrentPath, L"\\dmy", _TRUNCATE);
 		if( nExtLen ){
-			wcscat( szCurrentPath, L"." );
-			wcscat( szCurrentPath, szExts );
+			::wcsncat_s(szCurrentPath, L".", _TRUNCATE);
+			::wcsncat_s(szCurrentPath, szExts, _TRUNCATE);
 		}
 	}
 	return true;

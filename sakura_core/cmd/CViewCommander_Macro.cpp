@@ -97,7 +97,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
 		GetInidirOrExedir( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );
 	}else{
-		wcscpy( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );	/* マクロ用フォルダー */
+		::wcsncpy_s(szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, _TRUNCATE);	/* マクロ用フォルダー */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -142,7 +142,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	if( _IS_REL_PATH( pszFolder ) ){
 		GetInidirOrExedir( szInitDir, pszFolder );
 	}else{
-		wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダー */
+		::wcsncpy_s(szInitDir, pszFolder, _TRUNCATE);	/* マクロ用フォルダー */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -218,7 +218,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 		if( _IS_REL_PATH( pszFolder ) ){
 			GetInidirOrExedir( szInitDir, pszFolder );
 		}else{
-			wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダー */
+			::wcsncpy_s(szInitDir, pszFolder, _TRUNCATE);	/* マクロ用フォルダー */
 		}
 		/* ファイルオープンダイアログの初期化 */
 		cDlgOpenFile.Create(

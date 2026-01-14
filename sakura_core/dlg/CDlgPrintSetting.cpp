@@ -221,7 +221,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_BUTTON_EDITSETTINGNAME:
-		wcscpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
+		::wcsncpy_s(szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, _TRUNCATE);
 		{
 			BOOL bDlgInputResult=cDlgInput1.DoModal(
 				m_hInstance,

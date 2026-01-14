@@ -151,7 +151,7 @@ LPCWSTR CBookmarkManager::GetBookMarks()
 	CLogicInt	nLinePosOld=CLogicInt(-1);
 	int			nTextLen = 2;
 	pCDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-	wcscpy( szText, L":0" );
+	::wcsncpy_s(szText, L":0", _TRUNCATE);
 	while( pCDocLine ){
 		if(CBookmarkGetter(pCDocLine).IsBookmarked()){
 			CLogicInt nDiff = nLinePos - nLinePosOld - CLogicInt(1);

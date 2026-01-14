@@ -101,7 +101,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			WCHAR szName[_MAX_FNAME];
 			WCHAR szExt  [_MAX_EXT];
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
-			wcscat(szPath, szDir);
+			::wcsncat_s(szPath, szDir, _TRUNCATE);
 			if( 0 == wmemicmp(defName.c_str(), szPath) ){
 				// defNameはフォルダー名だった
 			}else{

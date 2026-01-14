@@ -516,7 +516,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能
-							wcscpy( szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
+							::wcsncpy_s(szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]), _TRUNCATE);
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdxFunc];
 						}
 						else if (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) != 0) {
@@ -524,7 +524,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							eFuncCode = m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc );
 						}
 						else {
-							wcscpy( szLabel, L"?" );
+							::wcsncpy_s(szLabel, L"?", _TRUNCATE);
 							eFuncCode = F_SEPARATOR;
 						}
 						break;

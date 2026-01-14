@@ -387,8 +387,8 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 		szFile, int(std::size(szFile))
 	);
 	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
-	wcscpy( m_szInitialDir, szDrive );
-	wcscat( m_szInitialDir, szDir );
+	::wcsncpy_s(m_szInitialDir, szDrive, _TRUNCATE);
+	::wcsncat_s(m_szInitialDir, szDir, _TRUNCATE);
 
 
 	return;
@@ -422,7 +422,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
-			wcscpy(m_szInitialDir, p );
+			::wcsncpy_s(m_szInitialDir, p, _TRUNCATE);
 		}
 	}
 	m_vMRU = vMRU;

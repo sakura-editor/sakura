@@ -1237,7 +1237,7 @@ void CDlgFuncList::SetListVB (void)
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			wcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
+			::wcsncpy_s(szOption, LS(STR_DLGFNCLST_VB_STATIC), _TRUNCATE);
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
@@ -1254,40 +1254,40 @@ void CDlgFuncList::SetListVB (void)
 		int nInfo = pcFuncInfo->m_nInfo;
 		switch (nInfo & 0x0f) {
 			case 1:		// 関数(Function)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_FUNCTION), _TRUNCATE);
 				break;
 
 			// 2006.12.12 Moca ステータス→プロシージャに変更
 			case 2:		// プロシージャ(Sub)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROC));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROC), _TRUNCATE);
 				break;
 
 			case 3:		// プロパティ 取得(Property Get)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPGET));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPGET), _TRUNCATE);
 				break;
 
 			case 4:		// プロパティ 設定(Property Let)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPLET));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPLET), _TRUNCATE);
 				break;
 
 			case 5:		// プロパティ 参照(Property Set)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPSET));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPSET), _TRUNCATE);
 				break;
 
 			case 6:		// 定数(Const)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_CONST));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_CONST), _TRUNCATE);
 				break;
 
 			case 7:		// 列挙型(Enum)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_ENUM));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_ENUM), _TRUNCATE);
 				break;
 
 			case 8:		// ユーザ定義型(Type)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_TYPE));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_TYPE), _TRUNCATE);
 				break;
 
 			case 9:		// イベント(Event)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_EVENT));
+				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_EVENT), _TRUNCATE);
 				break;
 
 			default:	// 未定義なのでクリア
@@ -1545,13 +1545,13 @@ void CDlgFuncList::SetTreeFile()
 				wcscpy_s(szPath2, std::size(szPath), strTemp.GetStringPtr());
 			}
 		}else{
-			wcscpy(szPath2, pszFrom);
+			::wcsncpy_s(szPath2, pszFrom, _TRUNCATE);
 		}
 		// szPath2 => szPath 「.」やショートパス等の展開
 		pszFrom = szPath2;
 		if( ::GetLongFileName(pszFrom, szPath) ){
 		}else{
-			wcscpy(szPath, pszFrom);
+			::wcsncpy_s(szPath, pszFrom, _TRUNCATE);
 		}
 		while( item.m_nDepth < (int)hParentTree.size() - 1 ){
 			hParentTree.resize(hParentTree.size() - 1);
@@ -3880,7 +3880,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 		// 各フォルダーのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
 		::GetLongFileName( L".", szPath );
-		wcscat( szPath, L"\\" );
+		::wcsncat_s(szPath, L"\\", _TRUNCATE);
 		int maxDir = CDlgTagJumpList::CalcMaxUpDirectory( szPath );
 		for( int i = 0; i <= maxDir; i++ ){
 			CDataProfile cProfile;

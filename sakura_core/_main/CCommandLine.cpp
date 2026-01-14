@@ -266,7 +266,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 	if( bFind ){
 		CSakuraEnvironment::ResolvePath(szPath);
-		wcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
+		::wcsncpy_s(m_fi.m_szPath, szPath, _TRUNCATE);	/* ファイル名 */
 		nPos = i + 1;
 	}else{
 		m_fi.m_szPath[0] = L'\0';
@@ -329,7 +329,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
 			if (wcsncmp_literal(szPath, L"file:///")==0) {
-				wcscpy(szPath, &(szPath[8]));
+				::wcsncpy_s(szPath, &(szPath[8]), _TRUNCATE);
 			}
 
 			if ( IsInvalidFilenameChars( szPath ) ){
@@ -344,7 +344,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			if (szPath[0] != L'\0') {
 				CSakuraEnvironment::ResolvePath(szPath);
 				if (m_fi.m_szPath[0] == L'\0') {
-					wcscpy(m_fi.m_szPath, szPath );
+					::wcsncpy_s(m_fi.m_szPath, szPath, _TRUNCATE);
 				}
 				else {
 					m_vFiles.push_back( szPath );

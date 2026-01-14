@@ -837,9 +837,9 @@ void CCaret::ShowCaretPosInfo()
 
 		WCHAR szInsMode[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			wcscpy( szInsMode, LS( STR_INS_MODE_INS ) );	// "挿入"
+			::wcsncpy_s(szInsMode, LS( STR_INS_MODE_INS ), _TRUNCATE);	// "挿入"
 		}else{
-			wcscpy( szInsMode, LS( STR_INS_MODE_OVR ) );	// "上書"
+			::wcsncpy_s(szInsMode, LS( STR_INS_MODE_OVR ), _TRUNCATE);	// "上書"
 		}
 
 		WCHAR szFontSize[16];

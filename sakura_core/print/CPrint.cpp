@@ -541,9 +541,9 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 */
 void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settingName )
 {
-	wcscpy( pPrintSetting.m_szPrintSettingName, settingName );			/* 印刷設定の名前 */
-	wcscpy( pPrintSetting.m_szPrintFontFaceHan, L"ＭＳ 明朝" );		/* 印刷フォント */
-	wcscpy( pPrintSetting.m_szPrintFontFaceZen, L"ＭＳ 明朝" );		/* 印刷フォント */
+	::wcsncpy_s(pPrintSetting.m_szPrintSettingName, settingName, _TRUNCATE);			/* 印刷設定の名前 */
+	::wcsncpy_s(pPrintSetting.m_szPrintFontFaceHan, L"ＭＳ 明朝", _TRUNCATE);		/* 印刷フォント */
+	::wcsncpy_s(pPrintSetting.m_szPrintFontFaceZen, L"ＭＳ 明朝", _TRUNCATE);		/* 印刷フォント */
 	pPrintSetting.m_bColorPrint = false;		// カラー印刷			// 2013/4/26 Uchi
 	pPrintSetting.m_nPrintFontWidth = 12;		// 印刷フォント幅(1/10mm単位)
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */

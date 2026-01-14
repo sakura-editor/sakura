@@ -193,7 +193,7 @@ int CKeyBind::CreateKeyBindList(
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
 					szFuncNameJapanese, 255 )){
-					wcscpy( szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2) );
+					::wcsncpy_s(szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2), _TRUNCATE);
 				}
 				szFuncName[0] = L'\0'; /*"---unknown()--"*/
 
@@ -837,7 +837,7 @@ void CShareData::RefreshKeyAssignString(DLLSHAREDATA* pShareData)
 		KEYDATA* pKeydata = &pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i];
 
 		if ( KeyDataInit[i].m_nKeyNameId <= 0xFFFF ) {
-			wcscpy( pKeydata->m_szKeyName, LS( KeyDataInit[i].m_nKeyNameId ) );
+			::wcsncpy_s(pKeydata->m_szKeyName, LS( KeyDataInit[i].m_nKeyNameId ), _TRUNCATE);
 		}
 	}
 }
@@ -857,7 +857,7 @@ static void SetKeyNameArrVal(
 
 	pKeydata->m_nKeyCode = pKeydataInit->m_nKeyCode;
 	if ( 0xFFFF < pKeydataInit->m_nKeyNameId ) {
-		wcscpy( pKeydata->m_szKeyName, pKeydataInit->m_pszKeyName );
+		::wcsncpy_s(pKeydata->m_szKeyName, pKeydataInit->m_pszKeyName, _TRUNCATE);
 	}
 	static_assert( sizeof(pKeydata->m_nFuncCodeArr) == sizeof(pKeydataInit->m_nFuncCodeArr) );
 	memcpy_raw( pKeydata->m_nFuncCodeArr, pKeydataInit->m_nFuncCodeArr, sizeof(pKeydataInit->m_nFuncCodeArr) );

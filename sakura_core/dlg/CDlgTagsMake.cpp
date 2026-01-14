@@ -54,7 +54,7 @@ int CDlgTagsMake::DoModal(
 	const WCHAR*	pszPath		//パス
 )
 {
-	wcscpy( m_szPath, pszPath );
+	::wcsncpy_s(m_szPath, pszPath, _TRUNCATE);
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TAG_MAKE, lParam );
 }
@@ -131,7 +131,7 @@ void CDlgTagsMake::SetData( void )
 
 	//コマンドライン
 	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), int(std::size(m_pShareData->m_szTagsCmdLine)) );
-	wcscpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
+	::wcsncpy_s(m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine, _TRUNCATE);
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
 
 	return;
@@ -146,7 +146,7 @@ int CDlgTagsMake::GetData( void )
 	auto length = int(wcslen(m_szPath));
 	if( length > 0 )
 	{
-		if( m_szPath[ length - 1 ] != L'\\' ) wcscat( m_szPath, L"\\" );
+		if( m_szPath[ length - 1 ] != L'\\' ) ::wcsncat_s(m_szPath, L"\\", _TRUNCATE);
 	}
 
 	//CTAGSオプション
@@ -156,7 +156,7 @@ int CDlgTagsMake::GetData( void )
 
 	//コマンドライン
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, int(std::size(m_szTagsCmdLine)) );
-	wcscpy( m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine );
+	::wcsncpy_s(m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine, _TRUNCATE);
 
 	return TRUE;
 }

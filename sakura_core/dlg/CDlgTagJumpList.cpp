@@ -883,7 +883,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 			WCHAR szPath[_MAX_PATH];
 			GetFullPathAndLine( i, szPath, int(std::size(szPath)), nullptr, nullptr );
 			if( FALSE == GetLongFileName( szPath, lpPathInfo->szFileNameDst ) ){
-				wcscpy( lpPathInfo->szFileNameDst, szPath );
+				::wcsncpy_s(lpPathInfo->szFileNameDst, szPath, _TRUNCATE);
 			}
 		}
 
@@ -1094,7 +1094,7 @@ int CDlgTagJumpList::find_key_core(
 		// 初回or使えないときはクリア
 		ClearPrevFindInfo();
 		// ファイル名をコピーしたあと、ディレクトリ(最後\)のみにする
-		wcscpy( state.m_szCurPath, GetFilePath() );
+		::wcsncpy_s(state.m_szCurPath, GetFilePath(), _TRUNCATE);
 		state.m_szCurPath[ GetFileName() - GetFilePath() ] = L'\0';
 		state.m_nLoop = m_nLoop;
 	}
@@ -1169,14 +1169,14 @@ int CDlgTagJumpList::find_key_core(
 		
 		if( szNextPath[0] ){
 			state.m_bJumpPath = true;
-			wcscpy( state.m_szCurPath, szNextPath );
+			::wcsncpy_s(state.m_szCurPath, szNextPath, _TRUNCATE);
 			std::wstring path = state.m_szCurPath;
 			path += L"\\dummy";
 			state.m_nLoop = CalcMaxUpDirectory( path.c_str() );
 			state.m_nDepth = 0;
 			szNextPath[0] = 0;
 		}else{
-//			wcscat( state.m_szCurPath, L"..\\" );
+//			::wcsncat_s(state.m_szCurPath, L"..\\", _TRUNCATE);
 			//カレントパスを1階層上へ。
 			DirUp( state.m_szCurPath );
 		}
@@ -1280,7 +1280,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 							szNextPath[0] = 0;
 							if (!GetLongFileName(baseWork, szNextPath)) {
 								// エラーなら変換前を適用
-								wcscpy(szNextPath, baseWork);
+								::wcsncpy_s(szNextPath, baseWork, _TRUNCATE);
 							}
 						}
 					}

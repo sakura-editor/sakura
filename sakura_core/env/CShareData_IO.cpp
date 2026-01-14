@@ -101,7 +101,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
 			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
 				DLLSHAREDATA* pShareData = &GetDllShareData();
-				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
+				::wcsncpy_s(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll", _TRUNCATE);
 				cProfile.IOProfileData(L"Common", L"szLanguageDll", StringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
 				std::vector<std::wstring> values;
 				pcShare->ConvertLangValues( values, true );
@@ -250,7 +250,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, L"MRUFOLDER[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_szOPENFOLDERArr[i] );
 		//お気に入り	//@@@ 2003.04.08 MIK
-		wcscat( szKeyName, L".bFavorite" );
+		::wcsncat_s(szKeyName, L".bFavorite", _TRUNCATE);
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] );
 	}
 	//読み込み時は残りを初期化
@@ -544,7 +544,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ));
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
+			::wcsncat_s(common.m_sBackup.m_szBackUpFolder, L"\\", _TRUNCATE);
 		}
 	}
 	cProfile.IOProfileData( pszSecName, L"szBackUpFolder", common.m_sBackup.m_szBackUpFolder );
@@ -556,7 +556,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ) );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
+			::wcsncat_s(common.m_sBackup.m_szBackUpFolder, L"\\", _TRUNCATE);
 		}
 	}
 	
@@ -1111,7 +1111,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。
 						for( int im=0; im< jpVKEXNamesLen; im++ ){
 							if( wcscmp( tmpKeydata.m_szKeyName, jpVKEXNames[im] ) == 0 ){
-								wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName );
+								::wcsncpy_s(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName, _TRUNCATE);
 								sKeyBind.m_pKeyNameArr[im + 0x0100] = tmpKeydata;
 							}
 						}
@@ -1120,12 +1120,12 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						// 割り当て済みキーコードは上書き
 						int idx = sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode];
 						if( idx != KEYNAME_SIZE ){
-							wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName );
+							::wcsncpy_s(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName, _TRUNCATE);
 							sKeyBind.m_pKeyNameArr[idx] = tmpKeydata;
 						}else{// 未割り当てキーコードは末尾に追加
 							if( nKeyNameArrUsed >= KEYNAME_SIZE ){}
 							else{
-								wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName );
+								::wcsncpy_s(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName, _TRUNCATE);
 								sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = tmpKeydata;
 								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 							}
@@ -1178,7 +1178,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 					}
 				}
-				wcscat(szKeyData, szWork);
+				::wcsncat_s(szKeyData, szWork, _TRUNCATE);
 			}
 
 			if( 0x0100 <= keydata.m_nKeyCode ){
@@ -1186,7 +1186,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 			}else{
 				auto_sprintf(szWork, L",%s", keydata.m_szKeyName);
 			}
-			wcscat(szKeyData, szWork);
+			::wcsncat_s(szKeyData, szWork, _TRUNCATE);
 			cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData));
 //
 		}
@@ -1475,7 +1475,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	// 2005.04.07 D.S.Koba
 	static const WCHAR* pszForm = L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";	//MIK
-	wcscpy( szKeyName, L"nInts" );
+	::wcsncpy_s(szKeyName, L"nInts", _TRUNCATE);
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
 			int buf[12];
@@ -2165,7 +2165,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 
 			// 読み出し
 			if( pData ){
-				wcscpy(szLine, data[dataNum++].c_str());
+				::wcsncpy_s(szLine, data[dataNum++].c_str(), _TRUNCATE);
 			}else{
 				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szLine));
 			}

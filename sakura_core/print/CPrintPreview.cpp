@@ -1028,7 +1028,7 @@ void CPrintPreview::OnPrint( void )
 
 	/* プリンターに渡すジョブ名を生成 */
 	if( ! m_pParentWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
-		wcscpy( szJobName, LS(STR_NO_TITLE2) );
+		::wcsncpy_s(szJobName, LS(STR_NO_TITLE2), _TRUNCATE);
 	}else{
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
@@ -1471,7 +1471,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				if( m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-						wcscpy( szLineNum, L" " );
+						::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
 					}else{
 						_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 					}
@@ -1486,10 +1486,10 @@ CColorStrategy* CPrintPreview::DrawPageText(
 					wchar_t szLineTerm[2];
 					szLineTerm[0] = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
 					szLineTerm[1] = L'\0';
-					wcscat( szLineNum, szLineTerm );
+					::wcsncat_s(szLineNum, szLineTerm, _TRUNCATE);
 				}
 				else{
-					wcscat( szLineNum, L" " );
+					::wcsncat_s(szLineNum, L" ", _TRUNCATE);
 				}
 
 				//文字列長

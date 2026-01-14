@@ -177,7 +177,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, int(std::size(szFolder)));
 
 					if( SelectDir( hwndDlg, LS(STR_PROPCOMBK_SEL_FOLDER), szFolder, szFolder ) ){
-						wcscpy( m_Common.m_sBackup.m_szBackUpFolder, szFolder );
+						::wcsncpy_s(m_Common.m_sBackup.m_szBackUpFolder, szFolder, _TRUNCATE);
 						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder );
 					}
 					UpdateBackupFile( hwndDlg );

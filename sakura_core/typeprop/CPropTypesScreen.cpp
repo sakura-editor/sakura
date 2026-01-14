@@ -689,7 +689,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		/* TAB表示文字列 */
 		WCHAR szTab[8+1]; /* +1. happy */
 		ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, int(std::size(szTab)) );
-		wcscpy( m_Types.m_szTabViewString, L"^       " );
+		::wcsncpy_s(m_Types.m_szTabViewString, L"^       ", _TRUNCATE);
 		for( int i = 0; i < 8; i++ ){
 			if( !WCODE::IsTabAvailableCode(szTab[i]) )break;
 			m_Types.m_szTabViewString[i] = szTab[i];

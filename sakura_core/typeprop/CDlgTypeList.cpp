@@ -591,13 +591,13 @@ bool CDlgTypeList::CopyType()
 			auto_sprintf( szNum, L"%d", n );
 			auto nLen = int(wcslen(szNum));
 			WCHAR szTemp[std::size(type.m_szTypeName) + 12];
-			wcscpy( szTemp, type.m_szTypeName );
+			::wcsncpy_s(szTemp, type.m_szTypeName, _TRUNCATE);
 			auto nTempLen = int(wcslen(szTemp));
 			CNativeW cmem;
 			// バッファをはみ出さないように
 			LimitStringLengthW( szTemp, nTempLen, int(std::size(type.m_szTypeName)) - nLen - 1, cmem );
-			wcscpy( type.m_szTypeName, cmem.GetStringPtr() );
-			wcscat( type.m_szTypeName, szNum );
+			::wcsncpy_s(type.m_szTypeName, cmem.GetStringPtr(), _TRUNCATE);
+			::wcsncat_s(type.m_szTypeName, szNum, _TRUNCATE);
 			bUpdate = false;
 		}
 		const STypeConfigMini* typeMini = nullptr;

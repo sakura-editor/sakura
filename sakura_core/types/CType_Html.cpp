@@ -21,8 +21,8 @@
 //2012.01.03 シングルクォートの色分けをする
 void CType_Html::InitTypeConfigImp(STypeConfig* pType)
 {
-	wcscpy( pType->m_szTypeName, L"HTML" );
-	wcscpy( pType->m_szTypeExts, L"html,htm,shtml,plg" );
+	::wcsncpy_s(pType->m_szTypeName, L"HTML", _TRUNCATE);
+	::wcsncpy_s(pType->m_szTypeExts, L"html,htm,shtml,plg", _TRUNCATE);
 
 	//設定
 	pType->m_cBlockComments[0].SetBlockCommentRule( L"<!--", L"-->" );	/* ブロックコメントデリミタ */
@@ -159,7 +159,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				都度比較するのはコストが高いので、最初に分類しておく。 2008.08.15 aroka
 				比較の回数が多いため、小文字に変換しておいてstrcmpを使う。
 			*/
-			wcscpy( szTag, szTitle );
+			::wcsncpy_s(szTag, szTitle, _TRUNCATE);
 			if( !bXml ){
 				_wcslwr( szTag );
 			}

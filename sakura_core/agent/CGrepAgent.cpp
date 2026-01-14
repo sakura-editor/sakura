@@ -1400,7 +1400,7 @@ int CGrepAgent::DoGrepFile(
 					if( pszFolder[0] ){
 						auto_sprintf( szWork0, L"■\"%s\"\r\n", pszFolder );	// (C), (D)
 					}else{
-						wcscpy( szWork0, L"■\r\n" );
+						::wcsncpy_s(szWork0, L"■\r\n", _TRUNCATE);
 					}
 					cmemMessage.AppendString( szWork0 );
 					bOutputFolderName = true;
@@ -1429,7 +1429,7 @@ int CGrepAgent::DoGrepFile(
 		{
 			if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 				if( IsValidCodeType(nCharCode) ){
-					wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
+					::wcsncpy_s(szCpName, CCodeTypeName(nCharCode).Bracket(), _TRUNCATE);
 					pszCodeName = szCpName;
 				}else{
 					CCodePage::GetNameBracket(szCpName, nCharCode);
@@ -1878,7 +1878,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		{
 			if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 				if( IsValidCodeType(nCharCode) ){
-					wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
+					::wcsncpy_s(szCpName, CCodeTypeName(nCharCode).Bracket(), _TRUNCATE);
 					pszCodeName = szCpName;
 				}else{
 					CCodePage::GetNameBracket(szCpName, nCharCode);

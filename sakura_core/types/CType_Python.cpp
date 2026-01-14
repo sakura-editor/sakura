@@ -88,8 +88,8 @@ struct COutlinePython {
 void CType_Python::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Python" );
-	wcscpy( pType->m_szTypeExts, L"py" );
+	::wcsncpy_s(pType->m_szTypeName, L"Python", _TRUNCATE);
+	::wcsncpy_s(pType->m_szTypeExts, L"py", _TRUNCATE);
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */
@@ -488,7 +488,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				szWord[ len ] = L'\0';
 			}
 			else {
-				wcscpy( szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED) );
+				::wcsncpy_s(szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED), _TRUNCATE);
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){

@@ -1871,7 +1871,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			);
 			bool bRet;
 			WCHAR szPath[ _MAX_PATH ];
-			wcscpy( szPath, sDefault.c_str() );
+			::wcsncpy_s(szPath, sDefault.c_str(), _TRUNCATE);
 			if( LOWORD(ID) == F_FILEOPENDIALOG ){
 				bRet = cDlgOpenFile.DoModal_GetOpenFileName( szPath );
 			}else{

@@ -553,7 +553,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 						size_t nLen = wcslen(pRecent->GetItemText(i));
 						std::vector<WCHAR> vecPath(nLen + 2);
 						WCHAR* szPath = &vecPath[0];
-						wcscpy( szPath, pRecent->GetItemText(i) );
+						::wcsncpy_s(szPath, pRecent->GetItemText(i), _TRUNCATE);
 						CutLastYenFromDirectoryPath(szPath);
 						if( false == IsFileExists(szPath, false ) ){
 							pRecent->DeleteItem(i);
@@ -1134,7 +1134,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 	col.cchTextMax = int(std::size(szHeader)) - 4;
 	col.iSubItem = 0;
 	ListView_GetColumn( info.hListView, column, &col );
-	wcscat(szHeader, info.bSortAscending ? L"▼" : L"▲");
+	::wcsncat_s(szHeader, info.bSortAscending ? L"▼" : L"▲", _TRUNCATE);
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.iSubItem = 0;
