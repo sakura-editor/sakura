@@ -44,18 +44,19 @@ struct SShare_Flags{
 
 //! 共有ワークバッファ
 struct SShare_WorkBuffer{
+	template <class T>
+	constexpr auto GetBuffer() noexcept { return std::span{ GetWorkBuffer<T>(), GetWorkBufferCount<T>() }; }
+
+	template <class T>
+	constexpr T* GetWorkBuffer() noexcept { return reinterpret_cast<T*>(m_pWork); }
+
+	template <class T>
+	constexpr size_t GetWorkBufferCount() const noexcept { return std::size(m_pWork) / sizeof(T); }
+
 	//2007.09.16 kobake char型だと、常に文字列であるという誤解を招くので、BYTE型に変更。変数名も変更。
 	//           UNICODE版では、余分に領域を使うことが予想されるため、ANSI版の2倍確保。
-private:
 	BYTE				m_pWork[32000*sizeof(WCHAR)];
-public:
-	template <class T>
-	T* GetWorkBuffer(){ return reinterpret_cast<T*>(m_pWork); }
 
-	template <class T>
-	size_t GetWorkBufferCount(){ return sizeof(m_pWork)/sizeof(T); }
-
-public:
 	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
 	CLogicPoint			m_LogicPoint;					//!< カーソル位置
 	STypeConfig			m_TypeConfig;

@@ -2139,7 +2139,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			if( !::GetLongFileName( szPath, szWork ) )
 				continue;
 			if( nId == 100 ){	// パス名
-				::lstrcpy( szPath, szWork );
+				::wcsncpy_s(szPath, szWork, _TRUNCATE);
 			}else if( nId == 101 ){	// ファイル名
 				_wsplitpath_s( szWork, nullptr, 0, nullptr, 0, szPath, std::size(szPath), szExt, std::size(szExt) );
 				::lstrcat( szPath, szExt );
