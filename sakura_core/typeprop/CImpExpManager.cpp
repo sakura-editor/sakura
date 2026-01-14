@@ -913,8 +913,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				int n, kc, nc;
 				//値 -> szData
 				wchar_t szData[1024];
-				::wcsncpy_s(szData, int(std::size(szData)), in2.ReadLineW().c_str(), _TRUNCATE);
-				szData[std::size(szData) - 1] = L'\0';
+				::wcsncpy_s(szData, in2.ReadLineW().c_str(), _TRUNCATE);
 
 				//解析開始
 				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",

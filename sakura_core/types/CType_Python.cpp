@@ -481,11 +481,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			int len = w_end - col;
 			
 			if( len > 0 ){
-				if( len > int(std::size(szWord)) - 1){
-					len = int(std::size(szWord)) - 1;
-				}
-				::wcsncpy_s(szWord, len, pLine + col, _TRUNCATE);
-				szWord[ len ] = L'\0';
+				::wcsncpy_s(szWord, pLine + col, _TRUNCATE);
 			}
 			else {
 				::wcsncpy_s(szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED), _TRUNCATE);

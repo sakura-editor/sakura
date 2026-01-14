@@ -160,7 +160,6 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		else if( wcschr(L"〇一二三四五六七八九十百零壱弐参伍", pLine[i]) ) ::wcsncpy_s(szTitle, L"一", _TRUNCATE); //漢数字
 		else{
 			::wcsncpy_s(szTitle, nCharChars, &pLine[i], _TRUNCATE);	//	先頭文字をszTitleに保持。
-			szTitle[nCharChars] = L'\0';
 		}
 
 		/*	「見出し記号」に含まれる文字で始まるか、

@@ -1104,8 +1104,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						p = pn+1;
 					}
 					// KeyName
-					::wcsncpy_s(tmpKeydata.m_szKeyName, int(std::size(tmpKeydata.m_szKeyName)), p, _TRUNCATE);
-					tmpKeydata.m_szKeyName[std::size(tmpKeydata.m_szKeyName)-1] = '\0';
+					::wcsncpy_s(tmpKeydata.m_szKeyName, p, _TRUNCATE);
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
 						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。

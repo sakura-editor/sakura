@@ -452,15 +452,13 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
-				::wcsncpy_s(szFolder, nMaxPath, vPaths.rbegin()->c_str(), _TRUNCATE);
-				szFolder[nMaxPath-1] = L'\0';
+				::wcsncpy_s(szFolder, vPaths.rbegin()->c_str(), _TRUNCATE);
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
 					szFolder[0] = L'\0';
 					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
 						WCHAR szFolderItem[nMaxPath];
-						::wcsncpy_s(szFolderItem, nMaxPath, vPaths[i].c_str(), _TRUNCATE);
-						szFolderItem[nMaxPath-1] = L'\0';
+						::wcsncpy_s(szFolderItem, vPaths[i].c_str(), _TRUNCATE);
 						if( wcschr( szFolderItem, L';' ) ){
 							szFolderItem[0] = L'"';
 							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );

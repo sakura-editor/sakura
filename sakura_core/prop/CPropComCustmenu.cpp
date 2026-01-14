@@ -677,8 +677,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	ApiWrap::List_ResetContent( hwndLIST_RES );
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
-			::wcsncpy_s(szLabel, int(std::size(szLabel)), LS(STR_PROPCOMCUSTMENU_SEP), _TRUNCATE);	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
-			szLabel[std::size(szLabel) - 1] = L'\0';
+			::wcsncpy_s(szLabel, LS(STR_PROPCOMCUSTMENU_SEP), _TRUNCATE);	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
