@@ -2142,7 +2142,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 				::wcsncpy_s(szPath, szWork, _TRUNCATE);
 			}else if( nId == 101 ){	// ファイル名
 				_wsplitpath_s( szWork, nullptr, 0, nullptr, 0, szPath, std::size(szPath), szExt, std::size(szExt) );
-				::lstrcat( szPath, szExt );
+				::wcsncat_s(szPath, szExt, _TRUNCATE);
 			}
 			cmemBuf.AppendString( szPath );
 			if( nFiles > 1 ){
