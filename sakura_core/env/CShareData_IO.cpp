@@ -126,7 +126,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		{
 			WCHAR szBkFileName[std::size(szIniFileName) + 4];
 			::wcsncpy_s(szBkFileName, szIniFileName, _TRUNCATE);
-			::lstrcat(szBkFileName, L".bak");
+			::wcsncat_s(szBkFileName, L".bak", _TRUNCATE);
 			::CopyFile(szIniFileName, szBkFileName, FALSE);
 		}
 	}

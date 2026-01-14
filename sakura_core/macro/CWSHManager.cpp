@@ -106,7 +106,7 @@ CMacroManagerBase* CWSHMacroManager::Creator(const WCHAR* FileExt)
 
 	if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, nullptr, FileType, 1024))
 	{
-		lstrcat(FileType, L"\\ScriptEngine");
+		::wcsncat_s(FileType, L"\\ScriptEngine", _TRUNCATE);
 		if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, nullptr, EngineName, 1024))
 		{
 			return new CWSHMacroManager(EngineName);

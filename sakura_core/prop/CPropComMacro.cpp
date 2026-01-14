@@ -248,11 +248,11 @@ void CPropMacro::SetData( HWND hwndDlg )
 		WCHAR szText[8];
 		szText[0] = L'\0';
 		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened )
-			::lstrcat(szText, L"O");
+			::wcsncat_s(szText, L"O", _TRUNCATE);
 		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnTypeChanged )
-			::lstrcat(szText, L"T");
+			::wcsncat_s(szText, L"T", _TRUNCATE);
 		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnSave )
-			::lstrcat(szText, L"S");
+			::wcsncat_s(szText, L"S", _TRUNCATE);
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
@@ -541,11 +541,11 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	for( iItem = 0; iItem < MAX_CUSTMACRO; iItem++){
 		szText[0] = L'\0';
 		if( iItem == nMacroOnOpened )
-			::lstrcat(szText, L"O");
+			::wcsncat_s(szText, L"O", _TRUNCATE);
 		if( iItem == nMacroOnTypeChanged )
-			::lstrcat(szText, L"T");
+			::wcsncat_s(szText, L"T", _TRUNCATE);
 		if( iItem == nMacroOnSave )
-			::lstrcat(szText, L"S");
+			::wcsncat_s(szText, L"S", _TRUNCATE);
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = iItem;
 		sItem.mask = LVIF_TEXT;
