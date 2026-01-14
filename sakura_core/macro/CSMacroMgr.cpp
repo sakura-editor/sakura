@@ -841,7 +841,7 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 		}
 		//	Jun. 16, 2002 genta NULLのときは何もしない．
 		if( pszFuncNameJapanese != nullptr ){
-			::wcsncpy_s(pszFuncNameJapanese, 255, LS( nFuncID ), _TRUNCATE);
+			::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
 		}
 		return pszFuncName;
 	}
@@ -884,8 +884,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
 			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
-				::wcsncpy_s(pszFuncNameJapanese, 255, LS( nFuncID ), _TRUNCATE);
-				pszFuncNameJapanese[255] = L'\0';
+				::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
 			}
 			return nFuncID;
 		}
@@ -895,8 +894,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
 			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
-				::wcsncpy_s(pszFuncNameJapanese, 255, LS( nFuncID ), _TRUNCATE);
-				pszFuncNameJapanese[255] = L'\0';
+				::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
 			}
 			return nFuncID;
 		}

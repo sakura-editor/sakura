@@ -348,7 +348,7 @@ TEST(CCodeBase, codeUtf7)
 
 	bool bComplete1_2 = false;
 	auto decoded1 = pCodeBase->UnicodeToCode(encoded1, &bComplete1_2);
-	EXPECT_EQ(0, memcmp(mbsAscii, decoded1.data(), decoded1.size()));
+	EXPECT_THAT(LPCSTR(std::data(decoded1)), StrEq(mbsAscii));
 	EXPECT_TRUE(bComplete1_2);
 
 	// かな漢字の変換（UTF-7仕様）
@@ -362,7 +362,7 @@ TEST(CCodeBase, codeUtf7)
 
 	bool bComplete2_2 = false;
 	auto decoded2 = pCodeBase->UnicodeToCode(encoded2, &bComplete2_2);
-	ASSERT_EQ(0, memcmp(mbsKanaKanji, decoded2.data(), decoded2.size()));
+	ASSERT_THAT(LPCSTR(std::data(decoded2)), StrEq(mbsKanaKanji));
 	ASSERT_TRUE(bComplete2_2);
 
 	// UTF-7仕様

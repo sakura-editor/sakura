@@ -774,7 +774,6 @@ EFunctionCode GetPlugCmdInfoByName(
 	}
 	nLen = MAX_PLUGIN_ID < (psCmdName - pszFuncName) ? MAX_PLUGIN_ID : (psCmdName - pszFuncName);
 	::wcsncpy_s(sPluginName, nLen, pszFuncName, _TRUNCATE);
-	sPluginName[nLen] = L'\0'; 
 	psCmdName++;
 
 	nId = -1;

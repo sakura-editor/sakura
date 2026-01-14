@@ -71,7 +71,6 @@ LPWSTR CFileNameManager::GetTransformFileNameFast( LPCWSTR pszSrc, LPWSTR pszDes
 	}else{
 		// 変換する必要がない コピーだけする
 		::wcsncpy_s(pszDest, nDestLen, pszSrc, _TRUNCATE);
-		pszDest[nDestLen - 1] = '\0';
 	}
 	return pszDest;
 }

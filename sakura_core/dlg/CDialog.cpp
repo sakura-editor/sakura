@@ -641,7 +641,7 @@ HFONT CDialog::SetMainFont( HWND hTarget )
 	//lf.lfClipPrecision	= lf.lfClipPrecision;
 	//lf.lfQuality		= lf.lfQuality;
 	//lf.lfPitchAndFamily	= lf.lfPitchAndFamily;
-	//::wcsncpy_s(lf.lfFaceName, int(std::size(lf.lfFaceName)), lf.lfFaceName, _TRUNCATE);	// 画面のフォントに設定	2012/11/27 Uchi
+	//wcsncpy( lf.lfFaceName, lf.lfFaceName, int(std::size(lf.lfFaceName)));	// 画面のフォントに設定	2012/11/27 Uchi
 
 	// フォントを作成
 	hFont = ::CreateFontIndirect(&lf);

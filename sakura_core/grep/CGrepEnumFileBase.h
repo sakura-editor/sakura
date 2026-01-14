@@ -136,13 +136,15 @@ public:
 					if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
 						continue;
 					}
-					LPWSTR lpName = new WCHAR[ nKeyDirLen + wcslen( w32fd.cFileName ) + 1 ];
-					::wcsncpy_s(lpName, nKeyDirLen, vecKeys[ i ], _TRUNCATE);
-					wcscpy( lpName + nKeyDirLen, w32fd.cFileName );
-					LPWSTR lpFullPath = new WCHAR[ baseLen + wcslen(lpName) + 2 ];
-					wcscpy( lpFullPath, lpBaseFolder );
-					wcscpy( lpFullPath + baseLen, L"\\" );
-					wcscpy( lpFullPath + baseLen + 1, lpName );
+					const auto cchName = nKeyDirLen + wcslen(w32fd.cFileName) + 1;
+					LPWSTR lpName = new WCHAR[cchName];
+					::wcsncpy_s(lpName, cchName, vecKeys[ i ], _TRUNCATE);
+					::wcsncat_s(lpName, cchName, w32fd.cFileName, _TRUNCATE);
+					const auto cchFullPath = baseLen + wcslen(lpName) + 2;
+					LPWSTR lpFullPath = new WCHAR[cchFullPath];
+					::wcsncpy_s(lpFullPath, cchFullPath, lpBaseFolder, _TRUNCATE);
+					::wcsncat_s(lpFullPath, cchFullPath, L"\\", _TRUNCATE);
+					::wcsncat_s(lpFullPath, cchFullPath, lpName, _TRUNCATE);
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){
 						}else{

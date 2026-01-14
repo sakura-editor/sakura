@@ -144,11 +144,9 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				nLv = _wtoi( p + 4 );
 			}
 			while( nullptr != pszToken ){
-				::wcsncpy_s(pcOneRule[nCount].szMatch, 255, pszToken, _TRUNCATE);
-				wcsncpy_s( pcOneRule[nCount].szText, _countof(pcOneRule[0].szText), pszTextReplace, _TRUNCATE );
-				::wcsncpy_s(pcOneRule[nCount].szGroupName, 255, pszWork, _TRUNCATE);
-				pcOneRule[nCount].szMatch[255] = L'\0';
-				pcOneRule[nCount].szGroupName[255] = L'\0';
+				::wcsncpy_s(pcOneRule[nCount].szMatch, pszToken, _TRUNCATE);
+				::wcsncpy_s(pcOneRule[nCount].szText, pszTextReplace, _TRUNCATE);
+				::wcsncpy_s(pcOneRule[nCount].szGroupName, pszWork, _TRUNCATE);
 				pcOneRule[nCount].nLv = nLv;
 				pcOneRule[nCount].nLength = (int)wcslen(pcOneRule[nCount].szMatch);
 				pcOneRule[nCount].nRegexOption = regexOption;

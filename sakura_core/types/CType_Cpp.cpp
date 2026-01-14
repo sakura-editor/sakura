@@ -807,11 +807,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							for( int k = i + 1; k < nLineLen; k++ ){
 								if( pLine[k] == L'(' ){
 									// i = 1, k = 5, len = 5-1-1=3
-									CLogicInt tagLen = t_min(k - i - 1, CLogicInt(int(std::size(szRawStringTag)) - 1));
-									nRawStringTagLen = tagLen + 1;
-									szRawStringTag[0] = L')';
-									::wcsncpy_s(szRawStringTag + 1, tagLen, &pLine[i+1], _TRUNCATE);
-									szRawStringTag[nRawStringTagLen] = L'\0';
+									::wcsncpy_s(szRawStringTag, L")", _TRUNCATE);
+									::wcsncat_s(szRawStringTag, &pLine[i + 1], _TRUNCATE);
 									nRawStringTagCompLen = (int)wcslen(szRawStringTag);
 									break;
 								}

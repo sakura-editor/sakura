@@ -948,8 +948,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 					p = q + 1;
 				}
 
-				::wcsncpy_s(sKeyBind.m_pKeyNameArr[i].m_szKeyName, _countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName), p, _TRUNCATE);
-				sKeyBind.m_pKeyNameArr[i].m_szKeyName[_countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1] = '\0';
+				::wcsncpy_s(sKeyBind.m_pKeyNameArr[i].m_szKeyName, p, _TRUNCATE);
 			}
 		}
 	}
