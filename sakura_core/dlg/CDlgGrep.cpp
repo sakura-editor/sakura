@@ -461,7 +461,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 						::wcsncpy_s(szFolderItem, vPaths[i].c_str(), _TRUNCATE);
 						if( wcschr( szFolderItem, L';' ) ){
 							szFolderItem[0] = L'"';
-							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
+							::wcsncpy_s(szFolderItem + 1, nMaxPath, vPaths[i].c_str(), _TRUNCATE);
 							szFolderItem[nMaxPath-1] = L'\0';
 							::wcsncat_s(szFolderItem, L"\"", _TRUNCATE);
 							szFolderItem[nMaxPath-1] = L'\0';

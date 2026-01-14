@@ -390,9 +390,9 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 		return -1;
 	}
 
-	wcsncpy( plugin_table[nEmpty].m_szName, pszPluginName, MAX_PLUGIN_NAME );
+	::wcsncpy_s(plugin_table[nEmpty].m_szName, MAX_PLUGIN_NAME, pszPluginName, _TRUNCATE);
 	plugin_table[nEmpty].m_szName[ MAX_PLUGIN_NAME-1 ] = '\0';
-	wcsncpy( plugin_table[nEmpty].m_szId, sId.c_str(), MAX_PLUGIN_ID );
+	::wcsncpy_s(plugin_table[nEmpty].m_szId, MAX_PLUGIN_ID, sId.c_str(), _TRUNCATE);
 	plugin_table[nEmpty].m_szId[ MAX_PLUGIN_ID-1 ] = '\0';
 	plugin_table[nEmpty].m_state = isDuplicate ? PLS_UPDATED : PLS_INSTALLED;
 

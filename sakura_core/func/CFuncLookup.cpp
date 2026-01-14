@@ -128,7 +128,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, size_t size ) const
 	}
 	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
 		if( ( pszStr = LS( funccode ) )[0] != L'\0' ){
-			wcsncpy( ptr, pszStr, bufsize );
+			::wcsncpy_s(ptr, bufsize, pszStr, _TRUNCATE);
 			ptr[bufsize-1] = L'\0';
 			return true;	// 定義されたコマンド
 		}
@@ -141,19 +141,19 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, size_t size ) const
 
 	// 未定義コマンド(または現在のプロセスではロードされていないプラグインなど)
 	if( ( pszStr = LS( funccode ) )[0] != L'\0' ){
-		wcsncpy( ptr, pszStr, bufsize );
+		::wcsncpy_s(ptr, bufsize, pszStr, _TRUNCATE);
 		ptr[bufsize-1] = L'\0';
 		return false;
 	}
 
 	// なにかコピーしないとループ処理などで一つ前の名前になることがあるので(-- 不明 --)をコピーしておく
 	if( ( pszStr = LS( F_DISABLE ) )[0] != L'\0' ){
-		wcsncpy( ptr, pszStr, bufsize );
+		::wcsncpy_s(ptr, bufsize, pszStr, _TRUNCATE);
 		ptr[bufsize-1] = L'\0';
 		return false;
 	}
 	// リソース全死亡ガード
-	wcsncpy( ptr, L"unknown", bufsize );
+	::wcsncpy_s(ptr, bufsize, L"unknown", _TRUNCATE);
 	ptr[bufsize-1] = L'\0';
 
 	return false;

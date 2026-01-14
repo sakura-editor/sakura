@@ -70,7 +70,7 @@ LPWSTR CFileNameManager::GetTransformFileNameFast( LPCWSTR pszSrc, LPWSTR pszDes
 		GetShortViewPath( pszDest, nDestLen, pszSrc, hDC, nPxWidth, bFitMode );
 	}else{
 		// 変換する必要がない コピーだけする
-		wcsncpy( pszDest, pszSrc, nDestLen - 1 );
+		::wcsncpy_s(pszDest, nDestLen, pszSrc, _TRUNCATE);
 		pszDest[nDestLen - 1] = '\0';
 	}
 	return pszDest;

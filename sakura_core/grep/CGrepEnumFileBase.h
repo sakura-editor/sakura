@@ -137,7 +137,7 @@ public:
 						continue;
 					}
 					LPWSTR lpName = new WCHAR[ nKeyDirLen + wcslen( w32fd.cFileName ) + 1 ];
-					wcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
+					::wcsncpy_s(lpName, nKeyDirLen, vecKeys[ i ], _TRUNCATE);
 					wcscpy( lpName + nKeyDirLen, w32fd.cFileName );
 					LPWSTR lpFullPath = new WCHAR[ baseLen + wcslen(lpName) + 2 ];
 					wcscpy( lpFullPath, lpBaseFolder );

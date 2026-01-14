@@ -205,7 +205,7 @@ int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 {
 	for( CPlug::ArrayIter it = m_Jacks[ PP_COMMAND ].plugs.cbegin(); it != m_Jacks[ PP_COMMAND ].plugs.cend(); it++ ){
 		if( ((CPlug*)(*it))->GetFunctionCode() == funccode ){
-			wcsncpy( buf, ((CPlug*)(*it))->m_sLabel.c_str(), size );
+			::wcsncpy_s(buf, size, ((CPlug*)(*it))->m_sLabel.c_str(), _TRUNCATE);
 			buf[ size-1 ] = L'\0';
 			return 1;
 		}

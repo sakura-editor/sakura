@@ -3884,7 +3884,7 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
 	if( msg ){
 		auto len = int(wcslen(msg));
-		wcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
+		::wcsncpy_s(m_pszMenubarMessage, MENUBAR_MESSAGE_MAX_LEN, msg, _TRUNCATE);
 		if( len < MENUBAR_MESSAGE_MAX_LEN ){
 			wmemset( m_pszMenubarMessage + len, L' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
 		}

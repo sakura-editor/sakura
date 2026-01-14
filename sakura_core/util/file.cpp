@@ -913,13 +913,13 @@ void my_splitpath_w (
 			pe = wcsrchr(pf,L'.');		/* 最末尾の '.' を探す。 */
 			if( pe != nullptr ){					/* 見つかった(pe = L'.'の位置)*/
 				if( ext != nullptr ){	/* 拡張子を返値として書き込む。 */
-					wcsncpy(ext,pe,_MAX_EXT-1);
+					::wcsncpy_s(ext, _MAX_EXT, pe, _TRUNCATE);
 					ext[_MAX_EXT -1] = L'\0';
 				}
 				*pe = L'\0';	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
 			}
 			if( fnm != nullptr ){	/* ファイル名を返値として書き込む。 */
-				wcsncpy(fnm,pf,_MAX_FNAME-1);
+				::wcsncpy_s(fnm, _MAX_FNAME, pf, _TRUNCATE);
 				fnm[_MAX_FNAME -1] = L'\0';
 			}
 			*pf = L'\0';	/* ファイル名の先頭位置を文字列終端にする。 */
@@ -938,12 +938,12 @@ void my_splitpath_w (
 			}
 
 			/* ディレクトリ名を返値として書き込む。 */
-			wcsncpy(dir,pd,_MAX_DIR -1);
+			::wcsncpy_s(dir, _MAX_DIR, pd, _TRUNCATE);
 			dir[_MAX_DIR -1] = L'\0';
 		}
 		*pd = L'\0';		/* ディレクトリ名の先頭位置を文字列終端にする。 */
 		if( drv != nullptr ){	/* ドライブレターを返値として書き込む。 */
-			wcsncpy(drv,ppp,_MAX_DRIVE -1);
+			::wcsncpy_s(drv, _MAX_DRIVE, ppp, _TRUNCATE);
 			drv[_MAX_DRIVE -1] = L'\0';
 		}
 	}

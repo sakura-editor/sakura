@@ -758,7 +758,7 @@ static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& or
 	CNativeW mem;
 	mem.SetString(pBuf);
 	mem.Replace(org.c_str(), to.c_str());
-	wcsncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	::wcsncpy_s(pBuf, chBufSize, mem.GetStringPtr(), _TRUNCATE);
 	pBuf[chBufSize - 1] = L'\0';
 }
 

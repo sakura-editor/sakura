@@ -237,7 +237,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		}
 		if( szWork[0] != L'\0' ){
 			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
-			wcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
+			::wcsncpy_s(m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, size, szWork, _TRUNCATE);
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
 			/* 印刷設定名一覧 */
 			hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );

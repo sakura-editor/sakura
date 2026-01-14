@@ -810,7 +810,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									CLogicInt tagLen = t_min(k - i - 1, CLogicInt(int(std::size(szRawStringTag)) - 1));
 									nRawStringTagLen = tagLen + 1;
 									szRawStringTag[0] = L')';
-									wcsncpy( szRawStringTag + 1, &pLine[i+1], tagLen );
+									::wcsncpy_s(szRawStringTag + 1, tagLen, &pLine[i+1], _TRUNCATE);
 									szRawStringTag[nRawStringTagLen] = L'\0';
 									nRawStringTagCompLen = (int)wcslen(szRawStringTag);
 									break;

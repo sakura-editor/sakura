@@ -447,7 +447,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 	const unsigned int LABEL_MAX = nLabelSize;
 
 	if( L'\0' == pszLabel[0] ){
-		wcsncpy( pszLabel, LS( nFuncId ), LABEL_MAX - 1 );
+		::wcsncpy_s(pszLabel, LABEL_MAX, LS( nFuncId ), _TRUNCATE);
 		pszLabel[ LABEL_MAX - 1 ] = L'\0';
 	}
 	if( L'\0' == pszLabel[0] ){
