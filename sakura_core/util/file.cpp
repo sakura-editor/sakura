@@ -314,8 +314,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	int		nCharChars;
 	_wsplitpath_s( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( nullptr != pszFolder ){
-		wcscpy( pszFolder, szDrive );
-		wcscat( pszFolder, szDir );
+		::wcsncpy_s(pszFolder, _MAX_PATH, szDrive, _TRUNCATE);
+		::wcsncat_s(pszFolder, _MAX_PATH, szDir, _TRUNCATE);
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
@@ -326,8 +326,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		}
 	}
 	if( nullptr != pszFile ){
-		wcscpy( pszFile, szFname );
-		wcscat( pszFile, szExt );
+		::wcsncpy_s(pszFile, _MAX_PATH, szFname, _TRUNCATE);
+		::wcsncat_s(pszFile, _MAX_PATH, szExt, _TRUNCATE);
 	}
 	return;
 }
@@ -364,21 +364,21 @@ void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* ps
 	@date Oct. 4, 2005 genta 相対パスが絶対パスに直されなかった
 	@date Oct. 5, 2005 Moca  相対パスを絶対パスに変換するように
 */
-BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes )
+BOOL GetLongFileName(const std::filesystem::path& srcPath, std::span<WCHAR> szDestPath)
 {
 	WCHAR* name;
-	WCHAR szBuf[_MAX_PATH + 1];
-	int len = ::GetFullPathName( pszFilePathSrc, _MAX_PATH, szBuf, &name );
+	SFilePath szBuf;
+	int len = ::GetFullPathNameW(srcPath.c_str(), DWORD(std::size(szBuf)), szBuf, &name);
 	if( len <= 0 || _MAX_PATH <= len ){
-		len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
+		len = ::GetLongPathNameW(srcPath.c_str(), std::data(szDestPath), int(std::size(szDestPath)));
 		if( len <= 0 || _MAX_PATH < len ){
 			return FALSE;
 		}
 		return TRUE;
 	}
-	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
+	len = ::GetLongPathNameW(szBuf, std::data(szDestPath), int(std::size(szDestPath)));
 	if( len <= 0 || _MAX_PATH < len ){
-		wcscpy( pszFilePathDes, szBuf );
+		::wcsncpy_s(std::data(szDestPath), std::size(szDestPath), szBuf, _TRUNCATE);
 	}
 	return TRUE;
 }
@@ -913,14 +913,12 @@ void my_splitpath_w (
 			pe = wcsrchr(pf,L'.');		/* 最末尾の '.' を探す。 */
 			if( pe != nullptr ){					/* 見つかった(pe = L'.'の位置)*/
 				if( ext != nullptr ){	/* 拡張子を返値として書き込む。 */
-					wcsncpy(ext,pe,_MAX_EXT-1);
-					ext[_MAX_EXT -1] = L'\0';
+					::wcsncpy_s(ext, _MAX_EXT, pe, _TRUNCATE);
 				}
 				*pe = L'\0';	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
 			}
 			if( fnm != nullptr ){	/* ファイル名を返値として書き込む。 */
-				wcsncpy(fnm,pf,_MAX_FNAME-1);
-				fnm[_MAX_FNAME -1] = L'\0';
+				::wcsncpy_s(fnm, _MAX_FNAME, pf, _TRUNCATE);
 			}
 			*pf = L'\0';	/* ファイル名の先頭位置を文字列終端にする。 */
 		}
@@ -938,13 +936,11 @@ void my_splitpath_w (
 			}
 
 			/* ディレクトリ名を返値として書き込む。 */
-			wcsncpy(dir,pd,_MAX_DIR -1);
-			dir[_MAX_DIR -1] = L'\0';
+			::wcsncpy_s(dir, _MAX_DIR, pd, _TRUNCATE);
 		}
 		*pd = L'\0';		/* ディレクトリ名の先頭位置を文字列終端にする。 */
 		if( drv != nullptr ){	/* ドライブレターを返値として書き込む。 */
-			wcsncpy(drv,ppp,_MAX_DRIVE -1);
-			drv[_MAX_DRIVE -1] = L'\0';
+			::wcsncpy_s(drv, _MAX_DRIVE, ppp, _TRUNCATE);
 		}
 	}
 	return;

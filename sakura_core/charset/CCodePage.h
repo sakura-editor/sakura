@@ -52,10 +52,10 @@ public:
 	
 	//GUI用補助関数
 	static CCodePage::CodePageList& GetCodePageList();
-	static int GetNameNormal(LPWSTR outName, int charcodeEx);
-	static int GetNameShort(LPWSTR outName, int charcodeEx);
-	static int GetNameLong(LPWSTR outName, int charcodeEx);
-	static int GetNameBracket(LPWSTR outName, int charcodeEx);
+	static int GetNameNormal(std::span<WCHAR> outName, int charcodeEx);
+	static int GetNameShort(std::span<WCHAR> outName, int charcodeEx);
+	static int GetNameLong(std::span<WCHAR> outName, int charcodeEx);
+	static int GetNameBracket(std::span<WCHAR> outName, int charcodeEx);
 	static int AddComboCodePages(HWND hwnd, HWND combo, int nSelCode);
 	
 	//CP補助情報

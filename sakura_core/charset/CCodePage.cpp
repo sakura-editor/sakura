@@ -201,76 +201,76 @@ EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCH
 	return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 }
 
-int CCodePage::GetNameNormal(LPWSTR outName, int charcodeEx)
+int CCodePage::GetNameNormal(std::span<WCHAR> outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
+		::wcsncpy_s(std::data(outName), std::size(outName), CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal(), _TRUNCATE);
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"CP_ACP");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"CP_ACP", _TRUNCATE);
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"CP_OEM");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"CP_OEM", _TRUNCATE);
 	}else{
-		auto_sprintf(outName, L"CP%d", codepage);
+		auto_sprintf_s(outName, L"CP%d", codepage);
 	}
 	return 2;
 }
 
-int CCodePage::GetNameShort(LPWSTR outName, int charcodeEx)
+int CCodePage::GetNameShort(std::span<WCHAR> outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Short());
+		::wcsncpy_s(std::data(outName), std::size(outName), CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Short(), _TRUNCATE);
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"cp_acp");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"cp_acp", _TRUNCATE);
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"cp_oem");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"cp_oem", _TRUNCATE);
 	}else{
-		auto_sprintf(outName, L"cp%d", codepage);
+		auto_sprintf_s(outName, L"cp%d", codepage);
 	}
 	return 2;
 }
 
-int CCodePage::GetNameLong(LPWSTR outName, int charcodeEx)
+int CCodePage::GetNameLong(std::span<WCHAR> outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
+		::wcsncpy_s(std::data(outName), std::size(outName), CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal(), _TRUNCATE);
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"CP_ACP");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"CP_ACP", _TRUNCATE);
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"CP_OEMCP");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"CP_OEMCP", _TRUNCATE);
 	}else{
 		CPINFOEX cpInfo;
 		cpInfo.CodePageName[0] = L'\0';
 		if( ::GetCPInfoEx(codepage, 0, &cpInfo) ){
-			wcscpy(outName, cpInfo.CodePageName);
+			::wcsncpy_s(std::data(outName), std::size(outName), cpInfo.CodePageName, _TRUNCATE);
 		}else{
-			auto_sprintf(outName, L"CP%d", codepage);
+			auto_sprintf_s(outName, L"CP%d", codepage);
 		}
 	}
 	return 2;
 }
 
-int CCodePage::GetNameBracket(LPWSTR outName, int charcodeEx)
+int CCodePage::GetNameBracket(std::span<WCHAR> outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Bracket());
+		::wcsncpy_s(std::data(outName), std::size(outName), CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Bracket(), _TRUNCATE);
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"  [CP_ACP]");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"  [CP_ACP]", _TRUNCATE);
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"  [CP_OEM]");
+		::wcsncpy_s(std::data(outName), std::size(outName), L"  [CP_OEM]", _TRUNCATE);
 	}else{
-		auto_sprintf(outName, L"  [CP%d]", charcodeEx);
+		auto_sprintf_s(outName, L"  [CP%d]", charcodeEx);
 	}
 	return 2;
 }

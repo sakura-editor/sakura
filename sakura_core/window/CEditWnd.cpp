@@ -134,7 +134,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 						delete pCode;
 						if (ret != RESULT_COMPLETE) {
 							// うまくコードが取れなかった
-							wcscpy(szCode[i], L"-");
+							::wcsncpy_s(szCode[i], L"-", _TRUNCATE);
 						}
 					}
 				}
@@ -146,7 +146,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった
-					wcscpy(szCodeCP, L"-");
+					::wcsncpy_s(szCodeCP, L"-", _TRUNCATE);
 				}
 
 				// メッセージボックス表示
@@ -791,17 +791,9 @@ void CEditWnd::LayoutMainMenu()
 			/* メニューラベルの作成 */
 			// 2014.05.04 Moca プラグイン/マクロ等を置けるようにFunccode2Nameを使うように
 			GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabel, int(std::size(szLabel)) );
-			wcscpy( szKey, cMainMenu->m_sKey );
-			if (CKeyBind::GetMenuLabel(
-				G_AppInstance(),
-				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
-				cMainMenu->m_nFunc,
-				szLabel,
-				cMainMenu->m_sKey,
-				FALSE,
-				int(std::size(szLabel))) == nullptr) {
-				wcscpy( szLabel, L"?" );
+			::wcsncpy_s(szKey, cMainMenu->m_sKey, _TRUNCATE);
+			if (!CKeyBind::GetMenuLabel(szLabel, cMainMenu->m_nFunc, cMainMenu->m_sKey)) {
+				::wcsncpy_s(szLabel, L"?", _TRUNCATE);
 			}
 			::AppendMenu( hMenu, MF_STRING, cMainMenu->m_nFunc, szLabel );
 			break;
@@ -1993,10 +1985,10 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_SETTEXT:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（２）	// 2007.04.03 ryoji
 		// タイマーを使用してタイトルの変更を遅延する
-		if( m_pShareData->m_sFlags.m_bEditWndChanging ){
+		if( m_pShareData->m_sFlags.m_bEditWndChanging && lParam){
 			delete[] m_pszLastCaption;
 			m_pszLastCaption = new WCHAR[ ::wcslen((LPCWSTR)lParam) + 1 ];
-			::wcscpy( m_pszLastCaption, (LPCWSTR)lParam );	// 変更後のタイトルを記憶しておく
+			::wcsncpy_s(m_pszLastCaption, MENUBAR_MESSAGE_MAX_LEN, (LPCWSTR)lParam, _TRUNCATE);	// 変更後のタイトルを記憶しておく
 			::SetTimer( GetHwnd(), IDT_CAPTION, 50, nullptr );
 			return 0L;
 		}
@@ -3805,7 +3797,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 		_wsplitpath_s( szFile, nullptr, 0, nullptr, 0, nullptr, 0, szExt, std::size(szExt) );
 
 		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, nullptr, FileType, int(std::size(FileType)) - 13)){
-			wcscat( FileType, L"\\DefaultIcon" );
+			::wcsncat_s(FileType, L"\\DefaultIcon", _TRUNCATE);
 			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, nullptr, nullptr, 0)){
 				// 関連づけられたアイコンを取得する
 				SHFILEINFO shfi;
@@ -3850,7 +3842,7 @@ void CEditWnd::InitMenubarMessageFont(void)
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
+	::wcsncpy_s(lf.lfFaceName, L"ＭＳ ゴシック", _TRUNCATE);
 	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
 
 	MemDcHolder hdc = ::CreateCompatibleDC(nullptr);
@@ -3884,7 +3876,7 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
 	if( msg ){
 		auto len = int(wcslen(msg));
-		wcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
+		::wcsncpy_s(m_pszMenubarMessage, MENUBAR_MESSAGE_MAX_LEN, msg, _TRUNCATE);
 		if( len < MENUBAR_MESSAGE_MAX_LEN ){
 			wmemset( m_pszMenubarMessage + len, L' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
 		}

@@ -62,7 +62,7 @@ int CRecentCurDir::CompareItem( const CCurDirString* p1, LPCWSTR p2 ) const
 
 void CRecentCurDir::CopyItem( CCurDirString* dst, LPCWSTR src ) const
 {
-	wcscpy(*dst,src);
+	::wcsncpy_s(*dst, src, _TRUNCATE);
 }
 
 bool CRecentCurDir::ValidateReceiveType( LPCWSTR p ) const

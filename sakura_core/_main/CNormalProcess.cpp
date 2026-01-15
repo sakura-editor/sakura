@@ -267,12 +267,8 @@ bool CNormalProcess::InitializeProcess()
 			//	引数の設定がBOXに反映されない
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
-			int nSize = std::size(pEditWnd->m_cDlgGrep.m_szFile);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
-			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
-			nSize = std::size(pEditWnd->m_cDlgGrep.m_szFolder);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダー */
-			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
+			::wcsncpy_s(pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), _TRUNCATE);	/* 検索ファイル */
+			::wcsncpy_s(pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), _TRUNCATE);	/* 検索フォルダー */
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  nullptr);
@@ -521,7 +517,7 @@ void CNormalProcess::OpenFiles( HWND hwnd )
 		int i;
 		for( i = 0; i < fileNum; i++ ){
 			// ファイル名差し替え
-			wcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
+			::wcsncpy_s(fi.m_szPath, CCommandLine::getInstance()->GetFileName(i), _TRUNCATE);
 			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), hwnd, &fi, bViewMode );
 			if( ret == false ){
 				break;

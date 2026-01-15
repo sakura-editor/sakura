@@ -427,7 +427,7 @@ UINT_PTR CALLBACK OFNHookProc(
 									szDefExt[0] = L'\0';
 								break;
 							case 2:		// *.txt
-								::wcscpy(szDefExt, L".txt");
+								::wcsncpy_s(szDefExt, L".txt", _TRUNCATE);
 								break;
 							case 3:		// *.*
 							default:	// 不明
@@ -435,7 +435,7 @@ UINT_PTR CALLBACK OFNHookProc(
 								break;
 							}
 							::wcsncpy_s(szBuf, pData->m_pOf->lpstrFile, _TRUNCATE);
-							::wcscat(szBuf, szDefExt);
+							::wcsncat_s(szBuf, szDefExt, _TRUNCATE);
 							::wcsncpy_s(pData->m_szPath, szBuf, _TRUNCATE);
 						}
 					}
@@ -444,7 +444,7 @@ UINT_PTR CALLBACK OFNHookProc(
 					if( IsFileExists(pData->m_szPath, true) ){
 						WCHAR szText[_MAX_PATH + 100];
 						::wcsncpy_s(szText, pData->m_szPath, _TRUNCATE);
-						::wcscat(szText, LS(STR_DLGOPNFL2));
+						::wcsncat_s(szText, LS(STR_DLGOPNFL2), _TRUNCATE);
 						if( IDYES != ::MessageBox( pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
 							::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
 							return TRUE;
@@ -656,8 +656,8 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 		szFile, int(std::size(szFile))
 	);
 	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
-	wcscpy( m_szInitialDir, szDrive );
-	wcscat( m_szInitialDir, szDir );
+	::wcsncpy_s(m_szInitialDir, szDrive, _TRUNCATE);
+	::wcsncat_s(m_szInitialDir, szDir, _TRUNCATE);
 
 	return;
 }
@@ -691,7 +691,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
-			wcscpy(m_szInitialDir, p );
+			::wcsncpy_s(m_szInitialDir, p, _TRUNCATE);
 		}
 	}
 	m_vMRU = vMRU;
@@ -766,8 +766,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 			WCHAR szRelPath[_MAX_PATH];
 			auto_sprintf( szRelPath, L"%s%s%s%s", szDrive, szDir, szName, szExt );
 			const WCHAR* p = szRelPath;
-			if( ! ::GetLongFileName( p, pszPath ) ){
-				wcscpy( pszPath, p );
+			if( ! ::GetLongFileName( p, std::span{ pszPath, _MAX_PATH } ) ){
+				::wcsncpy_s(pszPath, _MAX_PATH, p, _TRUNCATE);
 			}
 		}
 	}
@@ -816,7 +816,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 		const WCHAR* pOrg = pszPath;
 		if( ::GetLongFileName( pOrg, szFullPath ) ){
 			// 成功。書き戻す
-			wcscpy( pszPath , szFullPath );
+			::wcsncpy_s(pszPath, _MAX_PATH, szFullPath, _TRUNCATE);
 		}
 	}
 
@@ -886,7 +886,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 
 	//ファイルパス受け取りバッファ
 	WCHAR* pszPathBuf = new WCHAR[2000];
-	wcscpy(pszPathBuf, pLoadInfo->cFilePath); // 2013.05.27 デフォルトファイル名を設定する
+	::wcsncpy_s(pszPathBuf, _MAX_PATH, pLoadInfo->cFilePath, _TRUNCATE); // 2013.05.27 デフォルトファイル名を設定する
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji

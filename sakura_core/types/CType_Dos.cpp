@@ -13,8 +13,8 @@
 void CType_Dos::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"MS-DOSバッチファイル" );
-	wcscpy( pType->m_szTypeExts, L"bat" );
+	::wcsncpy_s(pType->m_szTypeName, L"MS-DOSバッチファイル", _TRUNCATE);
+	::wcsncpy_s(pType->m_szTypeExts, L"bat", _TRUNCATE);
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"REM ", -1 );	/* 行コメントデリミタ */

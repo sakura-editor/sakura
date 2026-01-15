@@ -487,7 +487,7 @@ void CEditDoc::GetEditInfo(
 ) const
 {
 	//ファイルパス
-	wcscpy(pfi->m_szPath, m_cDocFile.GetFilePath());
+	::wcsncpy_s(pfi->m_szPath, m_cDocFile.GetFilePath(), _TRUNCATE);
 
 	//表示域
 	pfi->m_nViewTopLine = GetEditWnd().GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
@@ -504,7 +504,7 @@ void CEditDoc::GetEditInfo(
 
 	//GREPモード
 	pfi->m_bIsGrep = CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode;
-	wcscpy( pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey );
+	::wcsncpy_s(pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey, _TRUNCATE);
 
 	//デバッグモニタ (アウトプットウインドウ) モード
 	pfi->m_bIsDebug = CAppMode::getInstance()->IsDebugMode();

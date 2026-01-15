@@ -103,7 +103,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	/* 色設定 I/O */
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
-		wcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
+		::wcsncpy_s(ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName, _TRUNCATE);
 	}
 
 	// インポート
@@ -116,7 +116,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	m_Types.m_nColorInfoArrNum = COLORIDX_LAST;
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		m_Types.m_ColorInfoArr[i] =  ColorInfoArr[i];
-		wcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
+		::wcsncpy_s(m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName, _TRUNCATE);
 	}
 	/* ダイアログデータの設定 color */
 	SetData( hwndDlg );

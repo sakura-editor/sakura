@@ -390,10 +390,8 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 		return -1;
 	}
 
-	wcsncpy( plugin_table[nEmpty].m_szName, pszPluginName, MAX_PLUGIN_NAME );
-	plugin_table[nEmpty].m_szName[ MAX_PLUGIN_NAME-1 ] = '\0';
-	wcsncpy( plugin_table[nEmpty].m_szId, sId.c_str(), MAX_PLUGIN_ID );
-	plugin_table[nEmpty].m_szId[ MAX_PLUGIN_ID-1 ] = '\0';
+	::wcsncpy_s(plugin_table[nEmpty].m_szName, pszPluginName, _TRUNCATE);
+	::wcsncpy_s(plugin_table[nEmpty].m_szId, sId.c_str(), _TRUNCATE);
 	plugin_table[nEmpty].m_state = isDuplicate ? PLS_UPDATED : PLS_INSTALLED;
 
 	// コマンド数の設定	2010/7/11 Uchi

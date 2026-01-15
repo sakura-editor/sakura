@@ -203,13 +203,18 @@ EFunctionCode CJackManager::GetCommandCode( int index ) const
 //プラグインコマンドの名前を返す
 int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 {
-	for( CPlug::ArrayIter it = m_Jacks[ PP_COMMAND ].plugs.cbegin(); it != m_Jacks[ PP_COMMAND ].plugs.cend(); it++ ){
-		if( ((CPlug*)(*it))->GetFunctionCode() == funccode ){
-			wcsncpy( buf, ((CPlug*)(*it))->m_sLabel.c_str(), size );
-			buf[ size-1 ] = L'\0';
-			return 1;
+	const auto plugs = m_Jacks[PP_COMMAND].plugs;
+	if (const auto found = std::ranges::find_if(
+		plugs,
+		[funccode](const CPlug* plug) {
+			return plug->GetFunctionCode() == funccode;
 		}
+	); found != plugs.cend())
+	{
+		::wcsncpy_s(buf, size, (*found)->m_sLabel.c_str(), _TRUNCATE);
+		return 1;
 	}
+
 	return -1;
 }
 

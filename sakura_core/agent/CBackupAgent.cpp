@@ -192,7 +192,7 @@ int CBackupAgent::MakeBackUp(
 		WCHAR szNewPath[MAX_PATH];
 		WCHAR *pNewNrBase;
 
-		wcscpy( szNewPath, szPath );
+		::wcsncpy_s(szNewPath, szPath, _TRUNCATE);
 		pNewNrBase = szNewPath + wcslen( szNewPath ) - 2;
 
 		for( ; i >= 0; --i ){
@@ -304,7 +304,7 @@ bool CBackupAgent::FormatBackUpPath(
 		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, int(std::size(selDir)) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
-			wcscpy( szNewPath, selDir );
+			::wcsncpy_s(szNewPath, newPathCount, selDir, _TRUNCATE);
 		}
 		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szNewPath );
@@ -343,22 +343,22 @@ bool CBackupAgent::FormatBackUpPath(
 
 			szForm[0] = L'\0';
 			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-				wcscat( szForm, L"%Y" );
+				::wcsncat_s(szForm, L"%Y", _TRUNCATE);
 			}
 			if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-				wcscat( szForm, L"%m" );
+				::wcsncat_s(szForm, L"%m", _TRUNCATE);
 			}
 			if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-				wcscat( szForm, L"%d" );
+				::wcsncat_s(szForm, L"%d", _TRUNCATE);
 			}
 			if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-				wcscat( szForm, L"%H" );
+				::wcsncat_s(szForm, L"%H", _TRUNCATE);
 			}
 			if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-				wcscat( szForm, L"%M" );
+				::wcsncat_s(szForm, L"%M", _TRUNCATE);
 			}
 			if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-				wcscat( szForm, L"%S" );
+				::wcsncat_s(szForm, L"%S", _TRUNCATE);
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
 			wcsftime( szTime, int(std::size(szTime)) - 1, szForm, &result );
@@ -443,7 +443,7 @@ bool CBackupAgent::FormatBackUpPath(
 			// make keys
 			// $0-$9に対応するフォルダー名を切り出し
 			WCHAR keybuff[1024];
-			wcscpy( keybuff, szDir );
+			::wcsncpy_s(keybuff, szDir, _TRUNCATE);
 			CutLastYenFromDirectoryPath( keybuff );
 
 			WCHAR *folders[10];
@@ -468,7 +468,7 @@ bool CBackupAgent::FormatBackUpPath(
 			}
 			{
 				// $0-$9を置換
-				//wcscpy( szNewPath, L"" );
+				//::wcsncpy_s(szNewPath, L"", _TRUNCATE);
 				WCHAR *q = formatString.data();
 				WCHAR *q2 = q;
 				while( *q ){
@@ -504,7 +504,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 			// * を拡張子にする
 			while( wcschr( szNewPath, L'*' ) ){
-				wcscpy( temp, szNewPath );
+				::wcsncpy_s(temp, szNewPath, _TRUNCATE);
 				cp = wcschr( temp, L'*' );
 				*cp = 0;
 				if( -1 == auto_snprintf_s( szNewPath, newPathCount, L"%s%s%s", temp, ep, cp+1 ) ){

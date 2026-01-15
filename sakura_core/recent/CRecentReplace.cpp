@@ -62,7 +62,7 @@ int CRecentReplace::CompareItem( const CReplaceString* p1, LPCWSTR p2 ) const
 
 void CRecentReplace::CopyItem( CReplaceString* dst, LPCWSTR src ) const
 {
-	wcscpy(*dst,src);
+	::wcsncpy_s(*dst, src, _TRUNCATE);
 }
 
 bool CRecentReplace::ValidateReceiveType( LPCWSTR p ) const

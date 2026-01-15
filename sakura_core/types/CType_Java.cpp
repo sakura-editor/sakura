@@ -19,8 +19,8 @@
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Java" );
-	wcscpy( pType->m_szTypeExts, L"java,jav" );
+	::wcsncpy_s(pType->m_szTypeName, L"Java", _TRUNCATE);
+	::wcsncpy_s(pType->m_szTypeExts, L"java,jav", _TRUNCATE);
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* 行コメントデリミタ */
@@ -139,9 +139,9 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						nNestLevel2Arr.push_back( 0 );
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
-							wcscat( szClass, L"\\" );
+							::wcsncat_s(szClass, L"\\", _TRUNCATE);
 						}
-						wcscat( szClass, szWord );
+						::wcsncat_s(szClass, szWord, _TRUNCATE);
 
 						nFuncId = FL_OBJ_DEFINITION;
 						++nFuncNum;
@@ -302,7 +302,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					if( 0 < nClassNestArrNum /*nNestLevel == 1*/ &&
 						0 != wcscmp( L"new", szWordPrev )
 					){
-						wcscpy( szFuncName, szWord );
+						::wcsncpy_s(szFuncName, szWord, _TRUNCATE);
 						nFuncLine = nLineCount + CLogicInt(1);
 						if( 0 < nClassNestArrNum ){
 							nNestLevel2Arr[nClassNestArrNum - 1] = 1;
@@ -417,7 +417,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						! WCODE::IsControlCode(pLine[i]) &&
 						wcschr( szJavaKigou, pLine[i] ) == nullptr
 						){
-						wcscpy( szWordPrev, szWord );
+						::wcsncpy_s(szWordPrev, szWord, _TRUNCATE);
 						nWordIdx = 0;
 						memcpy(&szWord[nWordIdx], &pLine[i], sizeof(wchar_t)*nCharChars);
 						szWord[nWordIdx + nCharChars] = L'\0';

@@ -512,7 +512,7 @@ bool CViewCommander::Command_TagsMake( void )
 	WCHAR	szTargetPath[1024 /*_MAX_PATH+1*/ ];
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() )
 	{
-		wcscpy( szTargetPath, GetDocument()->m_cDocFile.GetFilePath() );
+		::wcsncpy_s(szTargetPath, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
 		szTargetPath[ wcslen( szTargetPath ) - wcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = L'\0';
 	}
 	else
@@ -577,14 +577,14 @@ bool CViewCommander::Command_TagsMake( void )
 	//	To Here Dec. 28, 2002 MIK
 
 	WCHAR	options[1024];
-	wcscpy( options, L"--excmd=n" );	//デフォルトのオプション
-	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat( options, L" -R" );	//サブフォルダーも対象
+	::wcsncpy_s(options, L"--excmd=n", _TRUNCATE);	//デフォルトのオプション
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) ::wcsncat_s(options, L" -R", _TRUNCATE);	//サブフォルダーも対象
 	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
-		wcscat( options, L" " );
-		wcscat( options, cDlgTagsMake.m_szTagsCmdLine );
+		::wcsncat_s(options, L" ", _TRUNCATE);
+		::wcsncat_s(options, cDlgTagsMake.m_szTagsCmdLine, _TRUNCATE);
 	}
-	wcscat( options, L" *" );	//配下のすべてのファイル
+	::wcsncat_s(options, L" *", _TRUNCATE);	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{
@@ -823,7 +823,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 
 	// 基準ファイル名の設定
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
+		::wcsncpy_s(szCurrentPath, count, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
 	}else{
 		if( 0 == ::GetCurrentDirectory( count - int(std::size(L"\\dmy")) - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;
@@ -833,10 +833,10 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, int(std::size(szExts)));
 		auto nExtLen = wcsnlen_s(szExts, std::size(szExts) );
-		wcscat( szCurrentPath, L"\\dmy" );
+		::wcsncat_s(szCurrentPath, count, L"\\dmy", _TRUNCATE);
 		if( nExtLen ){
-			wcscat( szCurrentPath, L"." );
-			wcscat( szCurrentPath, szExts );
+			::wcsncat_s(szCurrentPath, count, L".", _TRUNCATE);
+			::wcsncat_s(szCurrentPath, count, szExts, _TRUNCATE);
 		}
 	}
 	return true;

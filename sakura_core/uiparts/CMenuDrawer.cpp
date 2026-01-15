@@ -786,22 +786,12 @@ void CMenuDrawer::MyAppendMenu(
 
 	szLabel[0] = L'\0';
 	if( nullptr != pszLabel ){
-		wcsncpy( szLabel, pszLabel, int(std::size(szLabel)) - 1 );
-		szLabel[std::size(szLabel) - 1 ] = L'\0';
+		::wcsncpy_s(szLabel, pszLabel, _TRUNCATE);
 	}
-	wcscpy( szKey, pszKey); 
+	::wcsncpy_s(szKey, pszKey, _TRUNCATE); 
 	if( nFuncId != 0 ){
 		/* メニューラベルの作成 */
-		CKeyBind::GetMenuLabel(
-			m_hInstance,
-			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
-			int(nFuncId),
-			szLabel,
-			szKey,
-			bAddKeyStr,
-			int(std::size(szLabel))
-		 );
+		CKeyBind::GetMenuLabel(szLabel, int(nFuncId), szKey, bAddKeyStr);
 
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
 		{
@@ -1453,7 +1443,7 @@ LRESULT CMenuDrawer::OnMenuChar( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UI
 		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
-		wcscpy( szText, L"--unknown--" );
+		::wcsncpy_s(szText, L"--unknown--", _TRUNCATE);
 		mii.dwTypeData = szText;
 		mii.cch = int(std::size(szText)) - 1;
 		if( 0 == ::GetMenuItemInfo( hmenu, i, TRUE, &mii ) ){

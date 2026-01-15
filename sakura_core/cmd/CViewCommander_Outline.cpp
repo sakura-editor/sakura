@@ -162,7 +162,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	}
 
 	/* 解析対象ファイル名 */
-	wcscpy( cFuncInfoArr.m_szFilePath, GetDocument()->m_cDocFile.GetFilePath() );
+	::wcsncpy_s(cFuncInfoArr.m_szFilePath, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
 
 	/* アウトライン ダイアログの表示 */
 	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
