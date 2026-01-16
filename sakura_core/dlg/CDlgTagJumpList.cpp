@@ -1242,10 +1242,10 @@ bool CDlgTagJumpList::ReadTagsParameter(
 			if (0 == strncmp_literal(szLineData + 1, "_TAG_")) {
 				int  nRet;
 				s[0][0] = s[1][0] = s[2][0] = 0;
-				nRet = ::sscanf_s(
-					szLineData,
-					TAG_FILE_INFO_A,	//tagsファイル情報
-					s[0], s[1], s[2]
+				nRet = ::sscanf_s(szLineData, TAG_FILE_INFO_A,	//tagsファイル情報
+					s[0], unsigned(std::size(s[0])),
+					s[1], unsigned(std::size(s[1])),
+					s[2], unsigned(std::size(s[2]))
 				);
 				if (nRet < 2) {
 					szLineData[nLINEDATA_LAST_CHAR] = '\0';
@@ -1325,20 +1325,22 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 	//	@@ 2005.03.31 MIK TAG_FORMAT定数化
 	int nRet;
 	if (2 == nTagFormat) {
-		nRet = ::sscanf_s(
-			szLineData,
-			TAG_FORMAT_2_A,	//拡張tagsフォーマット
-			s[0], s[1], n2, s[2], s[3]
+		nRet = ::sscanf_s(szLineData, TAG_FORMAT_2_A,	//拡張tagsフォーマット
+			s[0], unsigned(std::size(s[0])),
+			s[1], unsigned(std::size(s[1])),
+			&n2, 
+			s[2], unsigned(std::size(s[2])),
+			s[3], unsigned(std::size(s[3]))
 		);
 		// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
 		if (nRet < 3) bRet = false;
 		if (*n2 <= 0) bRet = false;	//行番号不正(-excmd=nが指定されてないかも)
 	}
 	else {
-		nRet = ::sscanf_s(
-			szLineData,
-			TAG_FORMAT_1_A,	//tagsフォーマット
-			s[0], s[1], n2
+		nRet = ::sscanf_s(szLineData, TAG_FORMAT_1_A,	//tagsフォーマット
+			s[0], unsigned(std::size(s[0])),
+			s[1], unsigned(std::size(s[1])),
+			&n2
 		);
 		if (nRet < 2) bRet = false;
 		if (*n2 <= 0) bRet = false;

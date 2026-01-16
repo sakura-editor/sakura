@@ -915,8 +915,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				::wcsncpy_s(szData, in2.ReadLineW().c_str(), _TRUNCATE);
 
 				//解析開始
-				cnt = ::swscanf_s(szData, L"KeyBind[%03d]=%04x,%n",
-												&n,   &kc, &nc);
+				cnt = ::swscanf_s(szData, L"KeyBind[%03d]=%04x,%n", &n, &kc, &nc);
 				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
 				if( i != n ) break;
 				sKeyBind.m_pKeyNameArr[i].m_nKeyCode = (short)kc;
