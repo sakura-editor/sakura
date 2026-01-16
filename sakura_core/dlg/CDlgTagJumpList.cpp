@@ -749,8 +749,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 {
 	const WCHAR	*p;
-	WCHAR	*token;
-	int		i;
+
 	//	2005.03.31 MIK
 	WCHAR	tmp[MAX_TAG_STRING_LENGTH];
 
@@ -758,30 +757,32 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 	if( ! p ) p = L".c";	//見つからないときは ".c" と想定する。
 	p++;
 
-	for( i = 0; p_extentions[i]; i += 2 )
+	for (int i = 0; p_extentions[i]; i += 2)
 	{
 		::wcsncpy_s(tmp, p_extentions[i], _TRUNCATE);
-		token = ::wcstok_s(tmp, L",", &context);
-		while( token )
+		WCHAR* context1 = nullptr;
+		auto token1 = ::wcstok_s(tmp, L",", &context1);
+		while( token1 )
 		{
-			if( _wcsicmp( p, token ) == 0 )
+			if( _wcsicmp( p, token1 ) == 0 )
 			{
 				::wcsncpy_s(tmp, p_extentions[i+1], _TRUNCATE);
-				token = ::wcstok_s(tmp, L",", &context);
-				while( token )
+				WCHAR* context2 = nullptr;
+				auto token2 = ::wcstok_s(tmp, L",", &context2);
+				while( token2 )
 				{
-					if( token[0] == type )
+					if( token2[0] == type )
 					{
-						return _wcsdup( &token[2] );
+						return _wcsdup( &token2[2] );
 					}
 
-					token = ::wcstok_s(nullptr, L",", &context);
+					token2 = ::wcstok_s(nullptr, L",", &context2);
 				}
 
 				return _wcsdup( L"" );
 			}
 
-			token = ::wcstok_s(nullptr, L",", &context);
+			token1 = ::wcstok_s(nullptr, L",", &context1);
 		}
 	}
 

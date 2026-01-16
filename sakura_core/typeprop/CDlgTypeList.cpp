@@ -208,6 +208,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					if( !m_bRegistryChecked[ nIdx ] ){
 						WCHAR exts[_countof(type->m_szTypeExts)] = {0};
 						::wcsncpy_s(exts, type->m_szTypeExts, _TRUNCATE);
+						WCHAR* context = nullptr;
 						WCHAR *ext = ::wcstok_s(exts, CDocTypeManager::m_typeExtSeps, &context);
 
 						m_bExtRMenu[ nIdx ] = true;
@@ -240,6 +241,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 			WCHAR exts[_countof(type->m_szTypeExts)] = {0};
 			::wcsncpy_s(exts, type->m_szTypeExts, _TRUNCATE);
+			WCHAR* context = nullptr;
 			WCHAR *ext = ::wcstok_s(exts, CDocTypeManager::m_typeExtSeps, &context);
 			int nRet;
 			while( nullptr != ext ){
@@ -279,6 +281,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 			WCHAR exts[_countof(type->m_szTypeExts)] = {0};
 			::wcsncpy_s(exts, type->m_szTypeExts, _TRUNCATE);
+			WCHAR* context = nullptr;
 			WCHAR *ext = ::wcstok_s(exts, CDocTypeManager::m_typeExtSeps, &context);
 			int nRet;
 			while( nullptr != ext ){
