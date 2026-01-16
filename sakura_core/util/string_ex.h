@@ -165,11 +165,6 @@ WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
 WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
-inline int auto_vsnprintf_s(ACHAR* buf, size_t nBufCount, size_t count, const ACHAR* format, va_list& v) noexcept { return ::_vsnprintf_s (buf, nBufCount, count, format, v); }
-inline int auto_vsnprintf_s(WCHAR* buf, size_t nBufCount, size_t count, const WCHAR* format, va_list& v) noexcept { return ::_vsnwprintf_s(buf, nBufCount, count, format, v); }
-inline int auto_vsnprintf_s(std::span<ACHAR> buf, size_t count, const ACHAR* format, va_list& v)         noexcept { return auto_vsnprintf_s(std::data(buf), std::size(buf), count, format, v); }
-inline int auto_vsnprintf_s(std::span<WCHAR> buf, size_t count, const WCHAR* format, va_list& v)         noexcept { return auto_vsnprintf_s(std::data(buf), std::size(buf), count, format, v); }
-
 template<typename... Params> requires (... && !is_strict_integer_v<Params>)
 inline int auto_snprintf_s(ACHAR* buf, size_t nBufCount, size_t count, const ACHAR* format, Params&&... params) noexcept {
 	return ::_snprintf_s(buf, nBufCount, count, format, std::forward<Params>(params)...);

@@ -222,17 +222,6 @@ inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t cou
 }
 
 /*!
- * vsnwprintf_sのStaticString版
- *
- * @retval 0以上 成功
- * @retval -1 切り詰め発生
- */
-template<int N>
-inline int vsnwprintf_s(StaticString<N>& buf, size_t count, const WCHAR* format, va_list& v) noexcept {
-	return ::_vsnwprintf_s(std::data(buf), std::size(buf), count, format, v);
-}
-
-/*!
  * snwprintf_sのStaticString版
  *
  * @retval 0以上 成功

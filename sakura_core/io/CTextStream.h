@@ -41,6 +41,7 @@ private:
 //テキスト出力ストリーム
 // 2008.01.26 kobake 出力文字コードを任意で指定できるように変更
 class CTextOutputStream final : public COutputStream{
+	using Base = COutputStream;
 	using Me = CTextOutputStream;
 
 public:
@@ -50,11 +51,14 @@ public:
 	Me& operator = (const Me&) = delete;
 	CTextOutputStream(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	virtual ~CTextOutputStream();
+	~CTextOutputStream() override;
+
+	using Base::Write;
+
+	void	Write(std::wstring_view text);
 
 	//文字列書込。改行を入れたい場合は、文字列内に'\n'を含めること。(クラス側で適切な改行コードに変換して出力します)
 	void WriteString(const wchar_t* szData, int nLen = -1);
-	void WriteF(const wchar_t* format, ...);
 
 	//数値書込。(クラス側で適当に整形して出力します)
 	void WriteInt(int n);
