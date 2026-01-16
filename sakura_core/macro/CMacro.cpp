@@ -486,7 +486,7 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 							wchar_t to[7];
 							from[0] = wchar_t(c);
 							from[1] = L'\0';
-							auto_sprintf( to, L"\\u%04x", c );
+							auto_snprintf_s(to, _TRUNCATE, L"\\u%04x", c);
 							cmemWork.Replace( from, to );
 							break;
 						}
@@ -1103,7 +1103,7 @@ bool CMacro::HandleCommand(
 			cCmdLine.AppendString(L"\" -GFOLDER=\"");
 			cCmdLine.AppendString(cmWork3.GetStringPtr());
 			cCmdLine.AppendString(L"\" -GCODE=");
-			auto_sprintf( szTemp, L"%d", nCharSet );
+			auto_snprintf_s(szTemp, _TRUNCATE, L"%d", nCharSet);
 			cCmdLine.AppendString(szTemp);
 
 			//GOPTオプション
@@ -1125,7 +1125,7 @@ bool CMacro::HandleCommand(
 				if( lFlag & 0x200000 )::wcsncat_s(pOpt, L"O", _TRUNCATE);
 			}
 			if( pOpt[0] != L'\0' ){
-				auto_sprintf( szTemp, L" -GOPT=%s", pOpt );
+				auto_snprintf_s(szTemp, _TRUNCATE, L" -GOPT=%s", pOpt);
 				cCmdLine.AppendString(szTemp);
 			}
 

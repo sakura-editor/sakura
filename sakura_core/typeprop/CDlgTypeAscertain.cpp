@@ -131,7 +131,7 @@ void CDlgTypeAscertain::SetData( void )
 		bFind = FindNextFile( hFind, &wf )) {
 		if ( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
 			// 読込色設定ファイル発見
-			auto_sprintf( szText, L"File -- %s", wf.cFileName );
+			auto_snprintf_s(szText, _TRUNCATE, L"File -- %s", wf.cFileName);
 			ApiWrap::Combo_AddString( hwndCombo, szText );
 		}
 	}

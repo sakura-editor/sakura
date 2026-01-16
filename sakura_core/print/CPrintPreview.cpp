@@ -865,8 +865,8 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	WCHAR      szMessage[512];
 	WCHAR      szPageNum[INPUT_PAGE_NUM_LEN];
 	
-	auto_sprintf( szMessage, LS(STR_ERR_DLGPRNPRVW4) , m_nAllPageNum );
-	auto_sprintf( szPageNum, L"%d", m_nCurPageNum + 1 );
+	auto_snprintf_s(szMessage, _TRUNCATE, LS(STR_ERR_DLGPRNPRVW4) , m_nAllPageNum);
+	auto_snprintf_s(szPageNum, _TRUNCATE, L"%d", m_nCurPageNum + 1);
 
 	BOOL bDlgInputPageResult=cDlgInputPage.DoModal(
 		CEditApp::getInstance()->GetAppInstance(),
@@ -928,10 +928,10 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
 	}
 	wchar_t	szEdit[1024];
-	auto_sprintf( szEdit, LS(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum );
+	auto_snprintf_s(szEdit, _TRUNCATE, LS(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum);
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
 
-	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
+	auto_snprintf_s(szEdit, _TRUNCATE, L"%d %%", m_nPreview_Zoom);
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	::InvalidateRect( m_pParentWnd->GetHwnd(), nullptr, TRUE );
@@ -980,7 +980,7 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 	}
 
 	wchar_t	szEdit[1024];
-	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
+	auto_snprintf_s(szEdit, _TRUNCATE, L"%d %%", m_nPreview_Zoom);
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	/* WM_SIZE 処理 */
@@ -1123,7 +1123,7 @@ void CPrintPreview::OnPrint( void )
 
 		/* 印刷過程を表示 */
 		//	Jun. 18, 2001 genta ページ番号表示の計算ミス修正
-		auto_sprintf( szProgress, L"%d/%d", i + 1, nNum );
+		auto_snprintf_s(szProgress, _TRUNCATE, L"%d/%d", i + 1, nNum);
 		ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, szProgress );
 
 		/* 印刷 ページ開始 */

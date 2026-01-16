@@ -509,7 +509,7 @@ EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* p
 			}
 		}
 		else {
-			auto_sprintf( pd, L"%02X", *ps);
+			auto_snprintf_s(pd, _TRUNCATE, L"%02X", *ps);
 			pd += 2;
 		}
 	}

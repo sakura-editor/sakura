@@ -818,9 +818,9 @@ int CDlgGrep::GetData( void )
 	if( bFromThisText ){
 		WCHAR szHwnd[_MAX_PATH];
 #ifdef _WIN64
-		auto_sprintf(szHwnd, L":HWND:%016I64x", ::GetParent(GetHwnd()));
+		auto_snprintf_s(szHwnd, _TRUNCATE, L":HWND:%016I64x", ::GetParent(GetHwnd()));
 #else
-		auto_sprintf(szHwnd, L":HWND:%08x", ::GetParent(GetHwnd()));
+		auto_snprintf_s(szHwnd, _TRUNCATE, L":HWND:%08x", ::GetParent(GetHwnd()));
 #endif
 		m_szFile = szHwnd;
 	}else{

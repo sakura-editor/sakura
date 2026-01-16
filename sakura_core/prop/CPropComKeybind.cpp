@@ -468,7 +468,7 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	ApiWrap::List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
 		WCHAR	pszLabel[256];
-		auto_sprintf( pszLabel, L"%ls%s", szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		auto_snprintf_s(pszLabel, _TRUNCATE, L"%ls%s", szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName);
 		ApiWrap::List_AddString( hwndKeyList, pszLabel );
 	}
 	ApiWrap::List_SetCurSel( hwndKeyList, nIndex );

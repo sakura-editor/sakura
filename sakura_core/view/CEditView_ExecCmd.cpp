@@ -580,7 +580,7 @@ user_cancel:
 			::GetExitCodeProcess( pi.hProcess, &result );
 			if( bOutputExtInfo ){
 				WCHAR endCode[128];
-				auto_sprintf( endCode, LS(STR_EDITVIEW_EXECCMD_RET), result );
+				auto_snprintf_s(endCode, _TRUNCATE, LS(STR_EDITVIEW_EXECCMD_RET), result);
 				oa.OutputW( endCode );
 			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする

@@ -441,7 +441,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	HWND hNumCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_MACROID );
 	for( pos = 0; pos < MAX_CUSTMACRO ; ++pos ){
 		wchar_t buf[10];
-		auto_sprintf( buf, L"%d", pos );
+		auto_snprintf_s(buf, _TRUNCATE, L"%d", pos);
 		int result = ApiWrap::Combo_AddString( hNumCombo, buf );
 		if( result == CB_ERR ){
 			PleaseReportToAuthor( hwndDlg, L"PropComMacro::InitDlg::AddMacroId" );

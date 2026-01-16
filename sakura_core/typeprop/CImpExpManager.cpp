@@ -344,7 +344,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	CKeyWordSetMgr&	cKeyWordSetMgr = common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 	for (i=0; i < MAX_KEYWORDSET_PER_TYPE; i++) {
 		//types.m_nKeyWordSetIdx[i] = -1;
-		auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
+		auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordTemp, i+1);
 		if (m_cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szKeyData))) {
 			nIdx = cKeyWordSetMgr.SearchKeyWordSet( szKeyData );
 			if (nIdx < 0) {
@@ -353,14 +353,14 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 				nIdx = cKeyWordSetMgr.SearchKeyWordSet( szKeyData );
 			}
 			if (nIdx >= 0) {
-				auto_sprintf( szKeyName, szKeyKeywordCaseTemp, i+1 );
+				auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordCaseTemp, i+1);
 				bCase = false;		// 大文字小文字区別しない (Defaule)
 				m_cProfile.IOProfileData( szSecTypeEx, szKeyName, bCase );
 
 				// キーワード定義ファイル入力
 				CImpExpKeyWord	cImpExpKeyWord( common, nIdx, bCase );
 
-				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
+				auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordFileTemp, i+1);
 				szFileName[0] = L'\0';
 				if (m_cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
 					if( cImpExpKeyWord.Import( cImpExpKeyWord.MakeFullPath( szFileName ), TmpMsg )) {
@@ -450,7 +450,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	for (i=0; i < MAX_KEYWORDSET_PER_TYPE; i++) {
 		if (m_Types.m_nKeyWordSetIdx[i] >= 0) {
 			nIdx = m_Types.m_nKeyWordSetIdx[i];
-			auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
+			auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordTemp, i+1);
 			::wcsncpy_s(buff, cKeyWordSetMgr.GetTypeName( nIdx ), _TRUNCATE);
 			cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(buff));
 
@@ -463,13 +463,13 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 
 			if ( cImpExpKeyWord.Export( cImpExpKeyWord.GetFullPath(), sTmpMsg ) ) {
 				::wcsncpy_s(szFileName, cImpExpKeyWord.GetFileName().c_str(), _TRUNCATE);
-				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
+				auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordFileTemp, i+1);
 				if (cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
 					files += std::wstring( L"\n" ) + cImpExpKeyWord.GetFileName();
 				}
 			}
 
-			auto_sprintf( szKeyName, szKeyKeywordCaseTemp, i+1 );
+			auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordCaseTemp, i+1);
 			cProfile.IOProfileData( szSecTypeEx, szKeyName, bCase );
 		}
 	}
@@ -783,7 +783,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 		//About
 		if (wcslen(p2) > DICT_ABOUT_LEN) {
-			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN );
+			auto_snprintf_s(msgBuff, _TRUNCATE, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN);
 			sErrMsg = msgBuff;
 			++invalid_record;
 			continue;
@@ -807,7 +807,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 	// 2007.02.03 genta 失敗したら警告する
 	if( invalid_record > 0 ){
-		auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_RECORD), invalid_record );
+		auto_snprintf_s(msgBuff, _TRUNCATE, LS(STR_IMPEXP_DIC_RECORD), invalid_record);
 		sErrMsg = msgBuff;
 	}
 

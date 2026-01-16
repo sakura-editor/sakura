@@ -688,7 +688,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, nullptr, nullptr );
 		// 2010.08.28 相対パス解決
 		WCHAR szRelPath[_MAX_PATH];
-		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
+		auto_snprintf_s(szRelPath, _TRUNCATE, L"%s%s", szDrive, szDir);
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
 			::wcsncpy_s(m_szInitialDir, p, _TRUNCATE);
@@ -764,7 +764,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		}
 		else {
 			WCHAR szRelPath[_MAX_PATH];
-			auto_sprintf( szRelPath, L"%s%s%s%s", szDrive, szDir, szName, szExt );
+			auto_snprintf_s(szRelPath, _TRUNCATE, L"%s%s%s%s", szDrive, szDir, szName, szExt);
 			const WCHAR* p = szRelPath;
 			if( ! ::GetLongFileName( p, std::span{ pszPath, _MAX_PATH } ) ){
 				::wcsncpy_s(pszPath, _MAX_PATH, p, _TRUNCATE);

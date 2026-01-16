@@ -191,7 +191,7 @@ bool CProcessFactory::StartControlProcess()
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
 			szEXE, CCommandLine::getInstance()->GetProfileName() );
 	}else{
-		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN", szEXE ); // ""付加
+		::auto_snprintf_s(szCmdLineBuf, _TRUNCATE, L"\"%s\" -NOWIN", szEXE); // ""付加
 	}
 
 	//常駐プロセス起動

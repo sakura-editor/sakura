@@ -305,9 +305,9 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 		}
 		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, int(std::size(szTitle)), editInfo, node->m_nId, -1, nullptr );
 #ifdef _WIN64
-		auto_sprintf(pszWindowName, L":HWND:[%016I64x]%s", hWndTarget, pszTagName);
+		auto_snprintf_s(pszWindowName, _TRUNCATE, L":HWND:[%016I64x]%s", hWndTarget, pszTagName);
 #else
-		auto_sprintf(pszWindowName, L":HWND:[%08x]%s", hWndTarget, pszTagName);
+		auto_snprintf_s(pszWindowName, _TRUNCATE, L":HWND:[%08x]%s", hWndTarget, pszTagName);
 #endif
 		if( pmemTitle ){
 			pmemTitle->AppendString(szTitle);
@@ -811,15 +811,15 @@ DWORD CGrepAgent::DoGrep(
 	if( sGrepOption.bGrepHeader ){
 		WCHAR szBuffer[128];
 		if( bGrepReplace ){
-			auto_sprintf( szBuffer, LS(STR_GREP_REPLACE_COUNT), nHitCount );
+			auto_snprintf_s(szBuffer, _TRUNCATE, LS(STR_GREP_REPLACE_COUNT), nHitCount);
 		}else{
-			auto_sprintf( szBuffer, LS( STR_GREP_MATCH_COUNT ), nHitCount );
+			auto_snprintf_s(szBuffer, _TRUNCATE, LS( STR_GREP_MATCH_COUNT ), nHitCount);
 		}
 		CNativeW cmemOutput;
 		cmemOutput.SetString( szBuffer );
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #if defined(_DEBUG) && defined(TIME_MEASURE)
-		auto_sprintf( szBuffer, LS(STR_GREP_TIMER), cRunningTimer.Read() );
+		auto_snprintf_s(szBuffer, _TRUNCATE, LS(STR_GREP_TIMER), cRunningTimer.Read());
 		cmemOutput.SetString( szBuffer );
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #endif
@@ -1119,7 +1119,7 @@ wchar_t* lineColumnToString(
 #ifdef _DEBUG
 	// Debug 版に限って両方実行して、両者が一致することを確認
 	wchar_t strWork2[requiredMinimumCapacity];
-	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
+	::auto_snprintf_s(strWork2, _TRUNCATE, L"(%I64d,%d)", nLine, nColumn);
 	assert(wcscmp(strWork, strWork2) == 0);
 #endif
 	return strWork;
@@ -1170,7 +1170,7 @@ void CGrepAgent::SetGrepResult(
 	}
 	/* WZ風 */
 	else if( 2 == sGrepOption.nGrepOutputStyle ){
-		::auto_sprintf( strWork, L"・(%6I64d,%-5d): ", nLine, nColumn );
+		::auto_snprintf_s(strWork, _TRUNCATE, L"・(%6I64d,%-5d): ", nLine, nColumn);
 		cmemBuf.AppendString( strWork );
 		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
 	}
@@ -1393,13 +1393,13 @@ int CGrepAgent::DoGrepFile(
 					}else{
 						pszFormatBasePath = pszFormatBasePath2;	// (B)
 					}
-					auto_sprintf( szWork0, pszFormatBasePath, pszBaseFolder );
+					auto_snprintf_s(szWork0, _TRUNCATE, pszFormatBasePath, pszBaseFolder);
 					cmemMessage.AppendString( szWork0 );
 					bOutputBaseFolder = true;
 				}
 				if( !bOutputFolderName && sGrepOption.bGrepSeparateFolder ){
 					if( pszFolder[0] ){
-						auto_sprintf( szWork0, L"■\"%s\"\r\n", pszFolder );	// (C), (D)
+						auto_snprintf_s(szWork0, _TRUNCATE, L"■\"%s\"\r\n", pszFolder);	// (C), (D)
 					}else{
 						::wcsncpy_s(szWork0, cchWork, L"■\r\n", _TRUNCATE);
 					}
@@ -1412,7 +1412,7 @@ int CGrepAgent::DoGrepFile(
 					pszDispFilePath, pszCodeName );
 				cmemMessage.AppendString( szWork0 );
 			}else{
-				auto_sprintf( szWork0, pszFormatFullPath, pszFullPath, pszCodeName );	// (H)
+				auto_snprintf_s(szWork0, _TRUNCATE, pszFormatFullPath, pszFullPath, pszCodeName);	// (H)
 				cmemMessage.AppendString( szWork0 );
 			}
 		}
@@ -1494,7 +1494,7 @@ int CGrepAgent::DoGrepFile(
 						if( 5 <= nPercent - nOldPercent ){
 							nOldPercent = nPercent;
 							WCHAR szWork[10];
-							::auto_sprintf( szWork, L" (%3d%%)", nPercent );
+							::auto_snprintf_s(szWork, _TRUNCATE, L" (%3d%%)", nPercent);
 							std::wstring str;
 							str = str + pszFile + szWork;
 							ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
@@ -1933,7 +1933,7 @@ int CGrepAgent::DoGrepReplaceFile(
 					if( 5 <= nPercent - nOldPercent ){
 						nOldPercent = nPercent;
 						WCHAR szWork[10];
-						::auto_sprintf( szWork, L" (%3d%%)", nPercent );
+						::auto_snprintf_s(szWork, _TRUNCATE, L" (%3d%%)", nPercent);
 						std::wstring str;
 						str = str + pszFile + szWork;
 						ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );

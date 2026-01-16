@@ -684,12 +684,12 @@ bool CShareData::InitShareData()
 				*/
 				WCHAR szSettingName[64];
 				int i = 0;
-				auto_sprintf( szSettingName, L"印刷設定 %d", i + 1 );
+				auto_snprintf_s(szSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);
 				CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 			}
 			for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 				m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-				auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+				auto_snprintf_s(m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);	/* 印刷設定の名前 */
 			}
 		}
 

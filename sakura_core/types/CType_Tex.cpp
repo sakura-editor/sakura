@@ -159,7 +159,7 @@ public:
 			}
 			for (; i <= tagDepth && i < int(std::size(serials)); ++i) {
 				// "1.", "2.", "3.",..., "10.",..., "100.",...,"999.", "000.", "001.",...
-				pTopicEnd += auto_sprintf(pTopicEnd, serials[i]/1000 ? L"%03d." : L"%d.", serials[i]%1000);
+				pTopicEnd += auto_snprintf_s(pTopicEnd, _TRUNCATE, serials[i]/1000 ? L"%03d." : L"%d.", serials[i]%1000);
 			}
 			*pTopicEnd++ = L' ';
 			*pTopicEnd   = L'\0';

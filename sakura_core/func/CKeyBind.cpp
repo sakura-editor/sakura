@@ -216,7 +216,7 @@ int CKeyBind::CreateKeyBindList(
 
 				/* 機能番号 */
 				cMemList.AppendString( pszTAB );
-				auto_sprintf( pszStr, L"%d", iFunc );
+				auto_snprintf_s(pszStr, _TRUNCATE, L"%d", iFunc);
 				cMemList.AppendString( pszStr );
 
 				/* キーマクロに記録可能な機能かどうかを調べる */

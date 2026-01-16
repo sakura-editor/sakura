@@ -522,7 +522,7 @@ bool CDlgTypeList::InitializeType( void )
 		bool bUpdate = true;
 		for(int i = 1; i < GetDllShareData().m_nTypesCount; i++){
 			if( bUpdate ){
-				auto_sprintf( type->m_szTypeName, LS(STR_DLGTYPELIST_SETNAME), nNameNum );
+				auto_snprintf_s(type->m_szTypeName, _TRUNCATE, LS(STR_DLGTYPELIST_SETNAME), nNameNum);
 				nNameNum++;
 				bUpdate = false;
 			}
@@ -588,7 +588,7 @@ bool CDlgTypeList::CopyType()
 				n++;
 			}
 			WCHAR szNum[12];
-			auto_sprintf( szNum, L"%d", n );
+			auto_snprintf_s(szNum, _TRUNCATE, L"%d", n);
 			auto nLen = int(wcslen(szNum));
 			WCHAR szTemp[std::size(type.m_szTypeName) + 12];
 			::wcsncpy_s(szTemp, type.m_szTypeName, _TRUNCATE);

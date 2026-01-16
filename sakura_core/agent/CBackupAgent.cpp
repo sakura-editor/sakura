@@ -154,7 +154,7 @@ int CBackupAgent::MakeBackUp(
 		//	1. 該当ディレクトリ中のbackupファイルを1つずつ探す
 		for( i = 0; i <= 99; i++ ){	//	最大値に関わらず，99（2桁の最大値）まで探す
 			//	ファイル名をセット
-			auto_sprintf( pBase, L"%02d", i );
+			auto_snprintf_s(pBase, _TRUNCATE, L"%02d", i);
 
 			hFind = ::FindFirstFile( szPath, &fData );
 			if( hFind == INVALID_HANDLE_VALUE ){
@@ -175,7 +175,7 @@ int CBackupAgent::MakeBackUp(
 
 		for( ; i >= boundary; --i ){
 			//	ファイル名をセット
-			auto_sprintf( pBase, L"%02d", i );
+			auto_snprintf_s(pBase, _TRUNCATE, L"%02d", i);
 			if( ::DeleteFile( szPath ) == 0 ){
 				::MessageBox( CEditWnd::getInstance()->GetHwnd(), szPath, LS(STR_BACKUP_ERR_DELETE), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
@@ -197,8 +197,8 @@ int CBackupAgent::MakeBackUp(
 
 		for( ; i >= 0; --i ){
 			//	ファイル名をセット
-			auto_sprintf( pBase, L"%02d", i );
-			auto_sprintf( pNewNrBase, L"%02d", i + 1 );
+			auto_snprintf_s(pBase, _TRUNCATE, L"%02d", i);
+			auto_snprintf_s(pNewNrBase, _TRUNCATE, L"%02d", i + 1);
 
 			//	ファイルの移動
 			if( ::MoveFile( szPath, szNewPath ) == 0 ){
@@ -221,7 +221,7 @@ int CBackupAgent::MakeBackUp(
 	WCHAR	szExt[_MAX_EXT];
 	_wsplitpath_s( szPath, szDrive, szDir, szFname, szExt );
 	WCHAR	szPath2[MAX_PATH];
-	auto_sprintf( szPath2, L"%s%s", szDrive, szDir );
+	auto_snprintf_s(szPath2, _TRUNCATE, L"%s%s", szDrive, szDir);
 
 	HANDLE			hFind;
 	WIN32_FIND_DATA	fData;
@@ -310,7 +310,7 @@ bool CBackupAgent::FormatBackUpPath(
 		AddLastYenFromDirectoryPath( szNewPath );
 	}
 	else{
-		auto_sprintf( szNewPath, L"%s%s", szDrive, szDir );
+		auto_snprintf_s(szNewPath, _TRUNCATE, L"%s%s", szDrive, szDir);
 	}
 
 	/* 相対フォルダーを挿入 */
@@ -374,22 +374,22 @@ bool CBackupAgent::FormatBackUpPath(
 
 				szTime[0] = L'\0';
 				if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-					auto_sprintf(szTime,L"%d",ctimeLastWrite->wYear);
+					auto_snprintf_s(szTime, _TRUNCATE, L"%d",ctimeLastWrite->wYear);
 				}
 				if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wMonth);
+					auto_snprintf_s(szTime, _TRUNCATE, L"%ls%02d",szTime,ctimeLastWrite->wMonth);
 				}
 				if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wDay);
+					auto_snprintf_s(szTime, _TRUNCATE, L"%ls%02d",szTime,ctimeLastWrite->wDay);
 				}
 				if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wHour);
+					auto_snprintf_s(szTime, _TRUNCATE, L"%ls%02d",szTime,ctimeLastWrite->wHour);
 				}
 				if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wMinute);
+					auto_snprintf_s(szTime, _TRUNCATE, L"%ls%02d",szTime,ctimeLastWrite->wMinute);
 				}
 				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wSecond);
+					auto_snprintf_s(szTime, _TRUNCATE, L"%ls%02d",szTime,ctimeLastWrite->wSecond);
 				}
 				if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
 					return false;

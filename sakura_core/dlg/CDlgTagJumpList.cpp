@@ -287,13 +287,13 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		ListView_InsertItem( hwndList, &lvi );
 
 		if( item->baseDirId ){
-			auto_sprintf( tmp, L"(%d)", item->depth );
+			auto_snprintf_s(tmp, _TRUNCATE, L"(%d)", item->depth);
 		}else{
-			auto_sprintf( tmp, L"%d", item->depth );
+			auto_snprintf_s(tmp, _TRUNCATE, L"%d", item->depth);
 		}
 		ListView_SetItemText( hwndList, nIndex, 1, tmp );
 
-		auto_sprintf( tmp, L"%d", item->no );
+		auto_snprintf_s(tmp, _TRUNCATE, L"%d", item->no);
 		ListView_SetItemText( hwndList, nIndex, 2, tmp );
 
 		WCHAR *p = GetNameByType( item->type, item->filename );
@@ -1125,7 +1125,7 @@ int CDlgTagJumpList::find_key_core(
 		}
 
 		//タグファイル名を作成する。
-		auto_sprintf( szTagFile, L"%s%s", state.m_szCurPath, TAG_FILENAME_T );
+		auto_snprintf_s(szTagFile, _TRUNCATE, L"%s%s", state.m_szCurPath, TAG_FILENAME_T);
 		DEBUG_TRACE( L"tag: %s\n", szTagFile );
 		
 		//タグファイルを開く。

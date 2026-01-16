@@ -157,7 +157,7 @@ public:
 				wchar_t *Message = new wchar_t[SysStringLen(Info.bstrDescription) + 128];
 				//	Nov. 10, 2003 FILE Win9Xでは、[wsprintfW]が無効のため、[auto_sprintf]に修正
 				const wchar_t* szDesc=Info.bstrDescription;
-				auto_sprintf(Message, L"[Line %d] %ls", Line + 1, szDesc);
+				auto_snprintf_s(Message, _TRUNCATE, L"[Line %d] %ls", Line + 1, szDesc);
 				SysReAllocString(&Info.bstrDescription, Message);
 				delete[] Message;
 			}

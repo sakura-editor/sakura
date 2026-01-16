@@ -64,7 +64,7 @@ TEST(string_ex, auto_strchrW)
 TEST(string_ex, auto_sprintfA)
 {
 	char szText[_MAX_PATH];
-	auto_sprintf(szText, "%s-%d", "test", 101);
+	auto_snprintf_s(szText, _TRUNCATE, "%s-%d", "test", 101);
 	ASSERT_STREQ("test-101", szText);
 }
 
@@ -76,7 +76,7 @@ TEST(string_ex, auto_sprintfA)
 TEST(string_ex, auto_sprintfW)
 {
 	wchar_t szText[_MAX_PATH];
-	auto_sprintf(szText, L"%s-%d", L"test", 101);
+	auto_snprintf_s(szText, _TRUNCATE, L"%s-%d", L"test", 101);
 	ASSERT_STREQ(L"test-101", szText);
 }
 

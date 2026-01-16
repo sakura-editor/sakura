@@ -233,10 +233,10 @@ EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR
 	pd = pDst;
 	if( bbinary == false ){
 		for (i = cCharBuffer._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
-			auto_sprintf( pd, L"%02x", *ps);
+			auto_snprintf_s(pd, _TRUNCATE, L"%02x", *ps);
 		}
 	}else{
-		auto_sprintf( pd, L"?%02x", *ps );
+		auto_snprintf_s(pd, _TRUNCATE, L"?%02x", *ps);
 	}
 
 	return RESULT_COMPLETE;

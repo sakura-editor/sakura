@@ -755,7 +755,7 @@ void CCaret::ShowCaretPosInfo()
 		CLogicInt nIdx = GetCaretLogicPos().GetX2() - pcLayout->GetLogicOffset();
 		if( nIdx < nLineLen ){
 			if( nIdx < nLineLen - (pcLayout->GetLayoutEol().GetLen()?1:0) ){
-				//auto_sprintf( szCaretChar, L"%04x", );
+				//auto_snprintf_s(szCaretChar, _TRUNCATE, L"%04x",);
 				//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(m_pEditDoc->GetDocumentEncoding(), false);
 				CommonSetting_Statusbar* psStatusbar = &GetDllShareData().m_Common.m_sStatusbar;
@@ -833,7 +833,7 @@ void CCaret::ShowCaretPosInfo()
 	// ステータスバーに状態を書き出す
 	else{
 		WCHAR szRowCol[64];
-		auto_sprintf( szRowCol, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
+		auto_snprintf_s(szRowCol, _TRUNCATE, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x);	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		WCHAR szInsMode[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){

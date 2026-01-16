@@ -225,10 +225,10 @@ EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* p
 	pd = pDst;
 	if( bbinary == false ){
 		for (i = cCharBuffer._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
-			auto_sprintf( pd, L"%02X", *ps);
+			auto_snprintf_s(pd, _TRUNCATE, L"%02X", *ps);
 		}
 	}else{
-		auto_sprintf( pd, L"?%02X", *ps );
+		auto_snprintf_s(pd, _TRUNCATE, L"?%02X", *ps);
 	}
 
 	return RESULT_COMPLETE;

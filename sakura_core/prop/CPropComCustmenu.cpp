@@ -281,7 +281,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 //			idListBox = (int) LOWORD(wParam);	// identifier of list box
 //			hwndListBox = (HWND) lParam;		// handle of list box
 				WCHAR		szKey[2];
-				auto_sprintf( szKey, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+				auto_snprintf_s(szKey, _TRUNCATE, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]);
 				{
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
 						G_AppInstance(),
@@ -310,7 +310,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					);
 				}
 				else {
-					auto_sprintf( szLabel2, L"%ls", szLabel );
+					auto_snprintf_s(szLabel2, _TRUNCATE, L"%ls", szLabel);
 				}
 
 				ApiWrap::List_InsertString( hwndLIST_RES, nIdx2, szLabel2 );

@@ -127,7 +127,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				szChar[nCharChars] = L'\0';
 				for( int i = 0; i < CODE_CODEMAX; i++ ){
 					if( i == CODE_SJIS || i == CODE_JIS || i == CODE_EUC || i == CODE_LATIN1 || i == CODE_UNICODE || i == CODE_UTF8 || i == CODE_CESU8 ){
-						//auto_sprintf( szCaretChar, L"%04x", );
+						//auto_snprintf_s(szCaretChar, _TRUNCATE, L"%04x",);
 						//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 						CCodeBase* pCode = CCodeFactory::CreateCodeBase((ECodeType)i, false);
 						EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCode[i], &sStatusbar);

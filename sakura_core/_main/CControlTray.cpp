@@ -132,7 +132,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	cCmdLine.AppendString(L"\" -GFOLDER=\"");
 	cCmdLine.AppendString(cmWork3.GetStringPtr());
 	cCmdLine.AppendString(L"\" -GCODE=");
-	auto_sprintf( szTemp, L"%d", cDlgGrep.m_nGrepCharSet );
+	auto_snprintf_s(szTemp, _TRUNCATE, L"%d", cDlgGrep.m_nGrepCharSet);
 	cCmdLine.AppendString(szTemp);
 
 	//GOPTオプション
