@@ -116,14 +116,8 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 //転送系
 inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        ::memcpy (dest,src,count); return dest; }
 inline WCHAR* auto_memcpy(WCHAR* dest, const WCHAR* src, size_t count){ return ::wmemcpy(dest,src,count);              }
-inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, std::string_view  src) noexcept { return ::strncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
-inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, std::wstring_view src) noexcept { return ::wcsncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
-inline errno_t auto_strcpy_s(std::span<ACHAR> dst, std::string_view  src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
-inline errno_t auto_strcpy_s(std::span<WCHAR> dst, std::wstring_view src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
 inline ACHAR* auto_memset(ACHAR* dest, ACHAR c, size_t count){        memset (dest,c,count); return dest; }
 inline WCHAR* auto_memset(WCHAR* dest, WCHAR c, size_t count){ return wmemset(dest,c,count);              }
-inline errno_t auto_strcat_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcat_s(dst,nDstCount,src); }
-inline errno_t auto_strcat_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscat_s(dst,nDstCount,src); }
 
 //比較系
 inline int auto_memcmp (const ACHAR* p1, const ACHAR* p2, size_t count){ return amemcmp(p1,p2,count); }

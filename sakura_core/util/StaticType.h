@@ -205,11 +205,21 @@ private:
 	ArrayType	m_szData{};
 };
 
-template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }
-template<int N> inline errno_t wcscat_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.append(src); }
+template<int N>
+inline errno_t wcsncpy_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept {
+	if (_TRUNCATE != count && count < std::size( src )) {
+		src = src.substr( 0, count );
+	}
+	return dst.assign(src);
+}
 
-template<int N> inline errno_t wcsncpy_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscpy_s(dst, src); }
-template<int N> inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscat_s(dst, src); }
+template<int N>
+inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept {
+	if (_TRUNCATE != count && count < std::size( src )) {
+		src = src.substr( 0, count );
+	}
+	return dst.append(src);
+}
 
 template<int N>
 inline int vswprintf_s(StaticString<N>& buf, const WCHAR* format, va_list& v) noexcept {

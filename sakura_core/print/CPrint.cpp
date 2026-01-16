@@ -137,22 +137,22 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタードライバー名
-	wcscpy_s(
+	::wcsncpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset,
+		_TRUNCATE
 	);
 	// プリンターデバイス名
-	wcscpy_s(
+	::wcsncpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset,
+		_TRUNCATE
 	);
 	// プリンターポート名
-	wcscpy_s(
+	::wcsncpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset,
+		_TRUNCATE
 	);
 
 	// プリンターから得られた、dmFieldsは変更しない
@@ -218,22 +218,22 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタードライバー名
-	wcscpy_s(
+	::wcsncpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset,
+		_TRUNCATE
 	);
 	// プリンターデバイス名
-	wcscpy_s(
+	::wcsncpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset,
+		_TRUNCATE
 	);
 	// プリンターポート名
-	wcscpy_s(
+	::wcsncpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset,
+		_TRUNCATE
 	);
 
 	// プリンターから得られた、dmFieldsは変更しない
