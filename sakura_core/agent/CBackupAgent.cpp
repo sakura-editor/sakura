@@ -337,7 +337,7 @@ bool CBackupAgent::FormatBackUpPath(
 			break;
 		case 2:	//	日付，時刻
 			_tzset();
-			_wstrdate( szTime );
+			::_wstrdate_s(szTime, std::size(szTime));
 			_time64( &ltime );				/* システム時刻を得ます */
 			_localtime64_s( &result, &ltime );/* 現地時間に変換する */
 
