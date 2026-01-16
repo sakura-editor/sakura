@@ -299,7 +299,9 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 
 				{
-					KEYCODE keycode[3]={0}; wctomb(keycode, szKey[0]);
+					std::array<KEYCODE, 3> keycode{};
+					int converted = 0;
+					::wctomb_s(&converted, std::data(keycode), std::size(keycode), szKey[0]);
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = keycode[0];
 				}
 //@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
