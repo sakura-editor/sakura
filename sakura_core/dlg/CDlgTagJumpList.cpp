@@ -1328,7 +1328,7 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 		nRet = ::sscanf_s(szLineData, TAG_FORMAT_2_A,	//拡張tagsフォーマット
 			s[0], unsigned(std::size(s[0])),
 			s[1], unsigned(std::size(s[1])),
-			&n2, 
+			n2, 
 			s[2], unsigned(std::size(s[2])),
 			s[3], unsigned(std::size(s[3]))
 		);
@@ -1340,7 +1340,7 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 		nRet = ::sscanf_s(szLineData, TAG_FORMAT_1_A,	//tagsフォーマット
 			s[0], unsigned(std::size(s[0])),
 			s[1], unsigned(std::size(s[1])),
-			&n2
+			n2
 		);
 		if (nRet < 2) bRet = false;
 		if (*n2 <= 0) bRet = false;

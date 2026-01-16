@@ -443,12 +443,12 @@ static bool ShareData_IO_RECT( CDataProfile& cProfile, const WCHAR* pszSecName, 
 	if( cProfile.IsReadingMode() ){
 		ret = cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
 		if( ret ){
-			int buf[4];
-			scan_ints( szKeyData, pszForm, buf );
-			rcValue.left	= buf[0];
-			rcValue.top		= buf[1];
-			rcValue.right	= buf[2];
-			rcValue.bottom	= buf[3];
+			::swscanf_s(szKeyData, L"%ld,%ld,%ld,%ld",
+				&rcValue.left,
+				&rcValue.top,
+				&rcValue.right,
+				&rcValue.bottom
+			);
 		}
 	}else{
 		auto_snprintf_s(
@@ -729,12 +729,12 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		WCHAR		szKeyData[1024];
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData)) ){
-				int buf[4];
-				scan_ints( szKeyData, pszForm, buf );
-				common.m_sOutline.m_cxOutlineDockLeft	= buf[0];
-				common.m_sOutline.m_cyOutlineDockTop	= buf[1];
-				common.m_sOutline.m_cxOutlineDockRight	= buf[2];
-				common.m_sOutline.m_cyOutlineDockBottom	= buf[3];
+				::swscanf_s(szKeyData, L"%ld,%ld,%ld,%ld",
+					&common.m_sOutline.m_cxOutlineDockLeft,
+					&common.m_sOutline.m_cyOutlineDockTop,
+					&common.m_sOutline.m_cxOutlineDockRight,
+					&common.m_sOutline.m_cyOutlineDockBottom
+				);
 			}
 		}else{
 			auto_snprintf_s(
@@ -1053,16 +1053,16 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 				KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
 				::wcsncpy_s(szKeyName, keydata.m_szKeyName, _TRUNCATE);
 				if( cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData)) ){
-					int buf[8];
-					scan_ints( szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%d", buf );
-					keydata.m_nFuncCodeArr[0]	= (EFunctionCode)buf[0];
-					keydata.m_nFuncCodeArr[1]	= (EFunctionCode)buf[1];
-					keydata.m_nFuncCodeArr[2]	= (EFunctionCode)buf[2];
-					keydata.m_nFuncCodeArr[3]	= (EFunctionCode)buf[3];
-					keydata.m_nFuncCodeArr[4]	= (EFunctionCode)buf[4];
-					keydata.m_nFuncCodeArr[5]	= (EFunctionCode)buf[5];
-					keydata.m_nFuncCodeArr[6]	= (EFunctionCode)buf[6];
-					keydata.m_nFuncCodeArr[7]	= (EFunctionCode)buf[7];
+					::swscanf_s(szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%d",
+						(int*)&keydata.m_nFuncCodeArr[0],
+						(int*)&keydata.m_nFuncCodeArr[1],
+						(int*)&keydata.m_nFuncCodeArr[2],
+						(int*)&keydata.m_nFuncCodeArr[3],
+						(int*)&keydata.m_nFuncCodeArr[4],
+						(int*)&keydata.m_nFuncCodeArr[5],
+						(int*)&keydata.m_nFuncCodeArr[6],
+						(int*)&keydata.m_nFuncCodeArr[7]
+					);
 				}
 			}
 			else {		// 新バージョン(キー割り当てのImport,export の合わせた)	2008/5/25 Uchi
@@ -1079,7 +1079,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					pn = wcschr(p,',');
 					if (pn == nullptr)	continue;
 					*pn = 0;
-					nRes = scan_ints(p, L"%04x", &keycode);
+					nRes = ::swscanf_s(p, L"%04x", &keycode);
 					if (nRes!=1)	continue;
 					tmpKeydata.m_nKeyCode = (short)keycode;
 					p = pn+1;
@@ -1203,27 +1203,27 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		static const WCHAR* pszForm = L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
-				int buf[19];
-				scan_ints( szKeyData, pszForm, buf );
-				printsetting.m_nPrintFontWidth			= buf[ 0];
-				printsetting.m_nPrintFontHeight			= buf[ 1];
-				printsetting.m_nPrintDansuu				= buf[ 2];
-				printsetting.m_nPrintDanSpace			= buf[ 3];
-				printsetting.m_nPrintLineSpacing		= buf[ 4];
-				printsetting.m_nPrintMarginTY			= buf[ 5];
-				printsetting.m_nPrintMarginBY			= buf[ 6];
-				printsetting.m_nPrintMarginLX			= buf[ 7];
-				printsetting.m_nPrintMarginRX			= buf[ 8];
-				printsetting.m_nPrintPaperOrientation	= (short)buf[ 9];
-				printsetting.m_nPrintPaperSize			= (short)buf[10];
-				printsetting.m_bPrintWordWrap			= (buf[11]!=0);
-				printsetting.m_bPrintLineNumber			= (buf[12]!=0);
-				printsetting.m_bHeaderUse[0]			= buf[13];
-				printsetting.m_bHeaderUse[1]			= buf[14];
-				printsetting.m_bHeaderUse[2]			= buf[15];
-				printsetting.m_bFooterUse[0]			= buf[16];
-				printsetting.m_bFooterUse[1]			= buf[17];
-				printsetting.m_bFooterUse[2]			= buf[18];
+				::swscanf_s(szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%hd,%hd,%hhu,%hhu,%d,%d,%d,%d,%d,%d",
+					&printsetting.m_nPrintFontWidth,
+					&printsetting.m_nPrintFontHeight,
+					&printsetting.m_nPrintDansuu,
+					&printsetting.m_nPrintDanSpace,
+					&printsetting.m_nPrintLineSpacing,
+					&printsetting.m_nPrintMarginTY,
+					&printsetting.m_nPrintMarginBY,
+					&printsetting.m_nPrintMarginLX,
+					&printsetting.m_nPrintMarginRX,
+					&printsetting.m_nPrintPaperOrientation,
+					&printsetting.m_nPrintPaperSize,
+					(BYTE*)&printsetting.m_bPrintWordWrap,
+					(BYTE*)&printsetting.m_bPrintLineNumber,
+					&printsetting.m_bHeaderUse[0],
+					&printsetting.m_bHeaderUse[1],
+					&printsetting.m_bHeaderUse[2],
+					&printsetting.m_bFooterUse[0],
+					&printsetting.m_bFooterUse[1],
+					&printsetting.m_bFooterUse[2]
+				);
 			}
 		}else{
 			auto_snprintf_s( szKeyData, _TRUNCATE, pszForm,
@@ -1463,20 +1463,20 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	::wcsncpy_s(szKeyName, L"nInts", _TRUNCATE);
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
-			int buf[12];
-			scan_ints( szKeyData, pszForm, buf );
-			types.m_nIdx					= buf[ 0];
-			types.m_nMaxLineKetas			= buf[ 1];
-			types.m_nColumnSpace			= buf[ 2];
-			types.m_nTabSpace				= buf[ 3];
-			types.m_nKeyWordSetIdx[0]		= buf[ 4];
-			types.m_nKeyWordSetIdx[1]		= buf[ 5];
-			types.m_nStringType				= buf[ 6];
-			types.m_bLineNumIsCRLF			= (buf[ 7]!=0);
-			types.m_nLineTermType			= buf[ 8];
-			types.m_bWordWrap				= (buf[ 9]!=0);
-			types.m_nCurrentPrintSetting	= buf[10];
-			types.m_nTsvMode				= buf[11];
+			::swscanf_s(szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%hhu,%d,%hhu,%d,%d",
+				&types.m_nIdx,
+				&types.m_nMaxLineKetas,
+				&types.m_nColumnSpace,
+				&types.m_nTabSpace,
+				&types.m_nKeyWordSetIdx[0],
+				&types.m_nKeyWordSetIdx[1],
+				&types.m_nStringType,
+				(BYTE*)&types.m_bLineNumIsCRLF,
+				&types.m_nLineTermType,
+				(BYTE*)&types.m_bWordWrap,
+				&types.m_nCurrentPrintSetting,
+				&types.m_nTsvMode
+			);
 		}
 		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
 		if( types.m_nMaxLineKetas < CKetaXInt(MINLINEKETAS) ){
@@ -1570,12 +1570,12 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		WCHAR		szKeyData2[1024];
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData2)) ){
-				int buf[4];
-				scan_ints( szKeyData2, pszForm2, buf );
-				types.m_cxOutlineDockLeft	= buf[0];
-				types.m_cyOutlineDockTop	= buf[1];
-				types.m_cxOutlineDockRight	= buf[2];
-				types.m_cyOutlineDockBottom	= buf[3];
+				::swscanf_s(szKeyData2, L"%d,%d,%d,%d",
+					&types.m_cxOutlineDockLeft,
+					&types.m_cyOutlineDockTop,
+					&types.m_cxOutlineDockRight,
+					&types.m_cyOutlineDockBottom
+				);
 			}
 		}else{
 			auto_snprintf_s(
@@ -2319,13 +2319,13 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 		auto_snprintf_s(szKeyName, _TRUNCATE, L"C[%s]", g_ColorAttributeArr[j].szName);	//Stonee, 2001/01/12, 2001/01/15
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
-				int buf[5];
-				scan_ints( szKeyData, pszForm, buf);
-				pColorInfoArr[j].m_bDisp                  = (buf[0]!=0);
-				pColorInfoArr[j].m_sFontAttr.m_bBoldFont  = (buf[1]!=0);
-				pColorInfoArr[j].m_sColorAttr.m_cTEXT     = buf[2];
-				pColorInfoArr[j].m_sColorAttr.m_cBACK     = buf[3];
-				pColorInfoArr[j].m_sFontAttr.m_bUnderLine = (buf[4]!=0);
+				::swscanf_s(szKeyData, L"%hhu,%hhu,%06x,%06x,%hhu",
+					(BYTE*)&pColorInfoArr[j].m_bDisp,
+					(BYTE*)&pColorInfoArr[j].m_sFontAttr.m_bBoldFont,
+					&pColorInfoArr[j].m_sColorAttr.m_cTEXT,
+					&pColorInfoArr[j].m_sColorAttr.m_cBACK,
+					(BYTE*)&pColorInfoArr[j].m_sFontAttr.m_bUnderLine
+				);
 			}
 			else{
 				// 2006.12.07 ryoji
@@ -2369,21 +2369,21 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	cProfile.IOProfileData( pszSecName, pszKeyPointSize, nPointSize );	// 2009.10.01 ryoji
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData(pszSecName, pszKeyLf, StringBufferW(szKeyData)) ){
-			int buf[13];
-			scan_ints( szKeyData, pszForm, buf );
-			lf.lfHeight			= buf[ 0];
-			lf.lfWidth			= buf[ 1];
-			lf.lfEscapement		= buf[ 2];
-			lf.lfOrientation	= buf[ 3];
-			lf.lfWeight			= buf[ 4];
-			lf.lfItalic			= (BYTE)buf[ 5];
-			lf.lfUnderline		= (BYTE)buf[ 6];
-			lf.lfStrikeOut		= (BYTE)buf[ 7];
-			lf.lfCharSet		= (BYTE)buf[ 8];
-			lf.lfOutPrecision	= (BYTE)buf[ 9];
-			lf.lfClipPrecision	= (BYTE)buf[10];
-			lf.lfQuality		= (BYTE)buf[11];
-			lf.lfPitchAndFamily	= (BYTE)buf[12];
+			::swscanf_s(szKeyData, L"%ld,%ld,%ld,%ld,%ld,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
+				&lf.lfHeight,
+				&lf.lfWidth,
+				&lf.lfEscapement,
+				&lf.lfOrientation,
+				&lf.lfWeight,
+				&lf.lfItalic,
+				&lf.lfUnderline,
+				&lf.lfStrikeOut,
+				&lf.lfCharSet,
+				&lf.lfOutPrecision,
+				&lf.lfClipPrecision,
+				&lf.lfQuality,
+				&lf.lfPitchAndFamily
+			);
 			if( nPointSize != 0 ){
 				// DPI変更してもフォントのポイントサイズが変わらないように
 				// ポイント数からピクセル数に変換する
