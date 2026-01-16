@@ -1242,7 +1242,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 			if (0 == strncmp_literal(szLineData + 1, "_TAG_")) {
 				int  nRet;
 				s[0][0] = s[1][0] = s[2][0] = 0;
-				nRet = sscanf(
+				nRet = ::sscanf_s(
 					szLineData,
 					TAG_FILE_INFO_A,	//tagsファイル情報
 					s[0], s[1], s[2]
@@ -1325,7 +1325,7 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 	//	@@ 2005.03.31 MIK TAG_FORMAT定数化
 	int nRet;
 	if (2 == nTagFormat) {
-		nRet = sscanf(
+		nRet = ::sscanf_s(
 			szLineData,
 			TAG_FORMAT_2_A,	//拡張tagsフォーマット
 			s[0], s[1], n2, s[2], s[3]
@@ -1335,7 +1335,7 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 		if (*n2 <= 0) bRet = false;	//行番号不正(-excmd=nが指定されてないかも)
 	}
 	else {
-		nRet = sscanf(
+		nRet = ::sscanf_s(
 			szLineData,
 			TAG_FORMAT_1_A,	//tagsフォーマット
 			s[0], s[1], n2

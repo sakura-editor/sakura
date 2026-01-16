@@ -898,7 +898,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		if ( bVer2 ) {
 			int	an;
 			szLine = in2.ReadLineW();
-			cnt = swscanf(szLine.c_str(), L"Count=%d", &an);
+			cnt = ::swscanf_s(szLine.c_str(), L"Count=%d", &an);
 			if ( cnt != 1 || an < 0 || an > KEYNAME_SIZE ) {
 				bVer2 = false;
 			}
@@ -915,7 +915,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				::wcsncpy_s(szData, in2.ReadLineW().c_str(), _TRUNCATE);
 
 				//解析開始
-				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
+				cnt = ::swscanf_s(szData, L"KeyBind[%03d]=%04x,%n",
 												&n,   &kc, &nc);
 				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
 				if( i != n ) break;

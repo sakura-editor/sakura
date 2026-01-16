@@ -258,7 +258,7 @@ int scan_ints(
 	//スキャン
 	int dummy[32];
 	memset(dummy,0,sizeof(dummy));
-	int nRet = swscanf(
+	int nRet = ::swscanf_s(
 		pszData,pszFormat,
 		&dummy[ 0],&dummy[ 1],&dummy[ 2],&dummy[ 3],&dummy[ 4],&dummy[ 5],&dummy[ 6],&dummy[ 7],&dummy[ 8],&dummy[ 9],
 		&dummy[10],&dummy[11],&dummy[12],&dummy[13],&dummy[14],&dummy[15],&dummy[16],&dummy[17],&dummy[18],&dummy[19],
