@@ -569,7 +569,7 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	ZeroMemory( &pi, sizeof(pi) );
 
 	WCHAR	szCmdLine[1024];
-	::wcsncpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str(), _TRUNCATE);
+	::wcsncpy_s(szCmdLine, cCmdLineBuf.c_str(), _TRUNCATE);
 	//リソースリーク対策
 	BOOL bRet = ::CreateProcess( nullptr, szCmdLine, nullptr, nullptr, TRUE,
 		CREATE_NEW_CONSOLE, nullptr, nullptr, &sui, &pi );

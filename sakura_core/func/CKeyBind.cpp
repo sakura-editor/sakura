@@ -395,20 +395,20 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
 			  && (((p = wcschr( sName, sKey[0])) != nullptr) || ((p = wcschr( sName, _totlower(sKey[0]))) != nullptr)) ){
 			// 欧文風、使用している文字をアクセスキーに
-			::wcsncpy_s(sLabel, std::size(sLabel), sName, _TRUNCATE);
+			::wcsncpy_s(sLabel, sName, _TRUNCATE);
 			sLabel[p-sName] = L'&';
 			::wcsncpy_s(sLabel + (p-sName) + 1, int(std::size(sLabel)), p, _TRUNCATE);
 		}
 		else if( (p = wcschr( sName, L'(' )) != nullptr
 			  && (p = wcschr( p, sKey[0] )) != nullptr) {
 			// (付その後にアクセスキー
-			::wcsncpy_s(sLabel, std::size(sLabel), sName, _TRUNCATE);
+			::wcsncpy_s(sLabel, sName, _TRUNCATE);
 			sLabel[p-sName] = L'&';
 			::wcsncpy_s(sLabel + (p-sName) + 1, int(std::size(sLabel)), p, _TRUNCATE);
 		}
 		else if (wcscmp( sName + wcslen(sName) - 3, L"..." ) == 0) {
 			// 末尾...
-			::wcsncpy_s(sLabel, std::size(sLabel), sName, _TRUNCATE);
+			::wcsncpy_s(sLabel, sName, _TRUNCATE);
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る
 			::wcsncat_s(sLabel, L"(&", _TRUNCATE);
 			::wcsncat_s(sLabel, sKey, _TRUNCATE);

@@ -196,7 +196,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 
 	// ZIPファイルが扱えるか
 	if (!cZipFile.IsOk()) {
-		wcsncpy_s(msg, std::size(msg), LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
+		::wcsncpy_s(msg, LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
 		InfoMessage( hWndOwner, L"%s", msg);
 		return false;
 	}

@@ -1247,7 +1247,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	WCHAR szCmdLine[1024]; ::wcsncpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str(), _TRUNCATE);
+	WCHAR szCmdLine[1024]; ::wcsncpy_s(szCmdLine, cCmdLineBuf.c_str(), _TRUNCATE);
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列

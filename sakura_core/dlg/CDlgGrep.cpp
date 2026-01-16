@@ -566,16 +566,16 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //		::EndDialog( hwndDlg, FALSE );
 		if (m_bSelectOnceThisText) {
 			if (m_pShareData->m_sSearchKeywords.m_aGrepFiles.size()) {
-				wcsncpy_s(m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
+				::wcsncpy_s(m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aGrepFolders.size()) {
-				wcsncpy_s(m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
+				::wcsncpy_s(m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-				wcsncpy_s(m_szExcludeFile, std::size(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
+				::wcsncpy_s(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-				wcsncpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
+				::wcsncpy_s(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
 			}
 		}
 		CloseDialog( FALSE );
@@ -733,7 +733,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	}else{
 		std::wstring strFile(m_szFile);
 		if (strFile.substr(0, 6) == L":HWND:") {
-			wcsncpy_s(m_szFile, std::size(m_szFile), L"*.*", _TRUNCATE);
+			::wcsncpy_s(m_szFile, L"*.*", _TRUNCATE);
 		}
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);

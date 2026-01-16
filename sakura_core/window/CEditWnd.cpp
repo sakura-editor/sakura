@@ -2258,7 +2258,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = ::CreatePopupMenu();
 				if (cMainMenu->m_nFunc != 0 && cMainMenu->m_sName[0] == L'\0') {
 					// ストリングテーブルから読み込み
-					wcsncpy_s(tmpMenuName, std::size(tmpMenuName), LS( cMainMenu->m_nFunc ), _TRUNCATE);
+					::wcsncpy_s(tmpMenuName, LS( cMainMenu->m_nFunc ), _TRUNCATE);
 					pMenuName = tmpMenuName;
 				}else{
 					pMenuName = cMainMenu->m_sName;
@@ -3964,7 +3964,7 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 		if( p )
 		{
 			decltype(p->m_szTabCaption) caption;
-			wcsncpy_s(caption, std::size(caption), pszTabCaption, _TRUNCATE);
+			::wcsncpy_s(caption, pszTabCaption, _TRUNCATE);
 			if (wcscmp(caption, p->m_szTabCaption) != 0) {
 				::wcsncpy_s(p->m_szTabCaption, caption, _TRUNCATE);
 				changed = true;
@@ -3972,7 +3972,7 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 
 			// 2006.01.28 ryoji ファイル名、Grepモード追加
 			decltype(p->m_szFilePath) filePath;
-			wcsncpy_s(filePath, std::size(filePath), pszFilePath, _TRUNCATE );
+			::wcsncpy_s(filePath, pszFilePath, _TRUNCATE );
 			if (wcscmp(filePath, p->m_szFilePath) != 0) {
 				p->m_szFilePath = filePath;
 				changed = true;

@@ -122,9 +122,9 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 						// pszGroupDel = 「 /// group」
 						int nTitleLen = int(pszGroupDel - pszWork); // Len == 0 OK
 						if( nTitleLen < int(std::size(szText)) ){
-							wcsncpy_s(szText, std::size(szText), pszWork, nTitleLen);
+							::wcsncpy_s(szText, pszWork, nTitleLen);
 						}else{
-							wcsncpy_s(szText, std::size(szText), pszWork, _TRUNCATE);
+							::wcsncpy_s(szText, pszWork, _TRUNCATE);
 						}
 						pszTextReplace = szText;
 						bRegexRep2 = true;

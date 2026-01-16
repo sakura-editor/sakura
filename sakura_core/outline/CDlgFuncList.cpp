@@ -1532,7 +1532,7 @@ void CDlgFuncList::SetTreeFile()
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
 		// item.m_szTargetPath => szPath メタ文字の展開
 		if( !CFileNameManager::ExpandMetaToFolder(item.m_szTargetPath, szPath, int(std::size(szPath))) ){
-			::wcsncpy_s(szPath, std::size(szPath), L"<Error:Long Path>", _TRUNCATE);
+			::wcsncpy_s(szPath, L"<Error:Long Path>", _TRUNCATE);
 		}
 		// szPath => szPath2 <iniroot>展開
 		const WCHAR* pszFrom = szPath;
