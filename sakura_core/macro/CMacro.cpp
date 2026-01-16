@@ -324,7 +324,7 @@ void CMacroParam::SetIntParam( const int nParam )
 {
 	Clear();
 	m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
-	::_itow_s(nParam, m_pData, 10);
+	::_itow_s(nParam, m_pData, 16, 10);
 	m_nDataLen = (int)wcslen(m_pData);
 	m_eType = EMacroParamTypeInt;
 }

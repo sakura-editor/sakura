@@ -279,7 +279,8 @@ void CPropMacro::SetData( HWND hwndDlg )
 	
 	//	マクロ停止ダイアログ表示待ち時間
 	WCHAR szCancelTimer[16] = {0};
-	ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACROCANCELTIMER, ::_itow_s(m_Common.m_sMacro.m_nMacroCancelTimer, szCancelTimer, 10));
+	::_itow_s(m_Common.m_sMacro.m_nMacroCancelTimer, szCancelTimer, 10);
+	ApiWrap::DlgItem_SetText(hwndDlg, IDC_MACROCANCELTIMER, szCancelTimer);
 
 	return;
 }
