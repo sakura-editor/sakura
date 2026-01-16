@@ -237,10 +237,11 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 						szMeta, szPath, int(std::size(szPath)) );
 				}
 				if( false == bFolderPath || L'\0' == szPath[0] ){
-					pStr = _wgetenv( szMeta );
 					// 環境変数
-					if( nullptr != pStr ){
-						nPathLen = (int)wcslen( pStr );
+					size_t returnValue = 0;
+					if (SFilePath szBuf; 0 == ::_wgetenv_s(&returnValue, szBuf, std::size(szBuf), szMeta) && returnValue) {
+						pStr = szBuf;
+						nPathLen = szBuf.Length();
 						if( nPathLen < _MAX_PATH ){
 							::wcsncpy_s(szPath, pStr, _TRUNCATE);
 						}else{
