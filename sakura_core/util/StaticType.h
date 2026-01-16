@@ -221,14 +221,26 @@ inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t cou
 	return dst.append(src);
 }
 
+/*!
+ * vsnwprintf_sのStaticString版
+ *
+ * @retval 0以上 成功
+ * @retval -1 切り詰め発生
+ */
 template<int N>
-inline int vswprintf_s(StaticString<N>& buf, const WCHAR* format, va_list& v) noexcept {
-	return ::_vsnwprintf_s(std::data(buf), std::size(buf), _TRUNCATE, format, v);
+inline int vsnwprintf_s(StaticString<N>& buf, size_t count, const WCHAR* format, va_list& v) noexcept {
+	return ::_vsnwprintf_s(std::data(buf), std::size(buf), count, format, v);
 }
 
+/*!
+ * snwprintf_sのStaticString版
+ *
+ * @retval 0以上 成功
+ * @retval -1 切り詰め発生
+ */
 template<int N, typename... Params>
-inline int swprintf_s(StaticString<N>& buf, const WCHAR* format, Params&&... params) noexcept {
-	return ::_snwprintf_s(std::data(buf), _TRUNCATE, std::size(buf), format, std::forward<Params>(params)...);
+inline int snwprintf_s(StaticString<N>& buf, size_t count, const WCHAR* format, Params&&... params) noexcept {
+	return ::_snwprintf_s(std::data(buf), count, std::size(buf), format, std::forward<Params>(params)...);
 }
 
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */
