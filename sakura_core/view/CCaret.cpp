@@ -769,7 +769,7 @@ void CCaret::ShowCaretPosInfo()
 				}
 			}
 			else{
-				wcscpy_s(szCaretChar, std::size(szCaretChar), pcLayout->GetLayoutEol().GetName());
+				::wcsncpy_s(szCaretChar, std::size(szCaretChar), pcLayout->GetLayoutEol().GetName(), _TRUNCATE);
 			}
 		}
 	}

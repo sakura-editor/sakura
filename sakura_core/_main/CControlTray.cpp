@@ -992,8 +992,8 @@ bool CControlTray::OnSetTypeSetting(size_t index)
 	types[index]->m_nIdx = int(index);
 
 	auto& typeMini = m_pShareData->m_TypeMini[index];
-	::wcscpy_s(typeMini.m_szTypeName, type.m_szTypeName);
-	::wcscpy_s(typeMini.m_szTypeExts, type.m_szTypeExts);
+	::wcsncpy_s(typeMini.m_szTypeName, type.m_szTypeName, _TRUNCATE);
+	::wcsncpy_s(typeMini.m_szTypeExts, type.m_szTypeExts, _TRUNCATE);
 	typeMini.m_id = type.m_id;
 	typeMini.m_encoding = type.m_encoding;
 
@@ -1247,7 +1247,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
+	WCHAR szCmdLine[1024]; ::wcsncpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str(), _TRUNCATE);
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列

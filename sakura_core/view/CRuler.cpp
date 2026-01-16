@@ -114,7 +114,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		lf.lfClipPrecision	= 2;
 		lf.lfQuality		= 1;
 		lf.lfPitchAndFamily	= 34;
-		wcscpy_s( lf.lfFaceName, L"Arial" );
+		::wcsncpy_s(lf.lfFaceName, L"Arial", _TRUNCATE);
 		m_hFont = ::CreateFontIndirect( &lf );
 		m_nRulerHeight = pCommon->m_sWindow.m_nRulerHeight;
 	}

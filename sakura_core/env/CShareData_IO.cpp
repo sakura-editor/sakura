@@ -1051,7 +1051,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 		if( cProfile.IsReadingMode() ){
 			if (bOldVer) {
 				KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
-				wcscpy_s( szKeyName, keydata.m_szKeyName );
+				::wcsncpy_s(szKeyName, keydata.m_szKeyName, _TRUNCATE);
 				if( cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData)) ){
 					int buf[8];
 					scan_ints( szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%d", buf );
@@ -1386,8 +1386,8 @@ static bool ShareData_IO_BlockComment( CDataProfile& cProfile,
 
 	// 書き込み準備
 	if( !cProfile.IsReadingMode() ){
-		::wcscpy_s( szFrom, cBlockComment.getBlockCommentFrom() );
-		::wcscpy_s( szTo, cBlockComment.getBlockCommentTo() );
+		::wcsncpy_s(szFrom, cBlockComment.getBlockCommentFrom(), _TRUNCATE);
+		::wcsncpy_s(szTo, cBlockComment.getBlockCommentTo(), _TRUNCATE);
 	}
 
 	bool ret = false;
@@ -1424,7 +1424,7 @@ static bool ShareData_IO_LineComment( CDataProfile& cProfile,
 
 	// 書き込み準備
 	if( !cProfile.IsReadingMode() ){
-		::wcscpy_s( lbuf, cLineComment.getLineComment( nDataIndex ) );
+		::wcsncpy_s(lbuf, cLineComment.getLineComment( nDataIndex ), _TRUNCATE);
 		pos = cLineComment.getLineCommentPos( nDataIndex );
 	}
 
@@ -2201,7 +2201,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 
 			// 表示名
 			p++;
-			wcscpy_s( pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN+1, p );
+			::wcsncpy_s(pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN+1, p, _TRUNCATE);
 		}
 		else {
 			if (GetPlugCmdInfoByFuncCode( pcMenu->m_nFunc, szFuncName )) {

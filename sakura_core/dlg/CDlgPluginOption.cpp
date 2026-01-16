@@ -141,7 +141,7 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			wcscpy_s( buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
+			::wcsncpy_s(buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE, _TRUNCATE);
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化

@@ -299,7 +299,7 @@ public:
 			if (!GetProfileData(sectionName, entryKey, entryValue) || std::size(tEntryValue) <= entryValue.length()) {
 				return false;
 			}
-			::wcscpy_s(std::data(tEntryValue), std::size(tEntryValue), std::data(entryValue));
+			::wcsncpy_s(std::data(tEntryValue), std::size(tEntryValue), std::data(entryValue), _TRUNCATE);
 			return true;
 		} else {
 			SetProfileData(sectionName, entryKey, std::wstring_view{ std::data(tEntryValue), std::size(tEntryValue) });

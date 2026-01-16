@@ -481,7 +481,7 @@ void CTextDrawer::DispLineNumber(
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */
 			if( 2 == pTypes->m_nLineTermType ){
 				const wchar_t szSeparator[] = { pTypes->m_cLineTermChar, 0 };
-				::wcscat_s(szLineNum, szSeparator);
+				::wcsncat_s(szLineNum, szSeparator, _TRUNCATE);
 			}
 		}
 

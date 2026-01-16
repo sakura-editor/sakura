@@ -235,7 +235,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 
 	//コマンドライン実行
 	WCHAR	cmdline[1024];
-	wcscpy_s( cmdline, pszCmd );
+	::wcsncpy_s(cmdline, pszCmd, _TRUNCATE);
 	if( CreateProcess( nullptr, cmdline, nullptr, nullptr, TRUE,
 				CREATE_NEW_CONSOLE, nullptr, bCurDir ? pszCurDir : nullptr, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して

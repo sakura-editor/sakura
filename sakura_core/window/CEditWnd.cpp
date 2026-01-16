@@ -3966,7 +3966,7 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 			decltype(p->m_szTabCaption) caption;
 			wcsncpy_s(caption, std::size(caption), pszTabCaption, _TRUNCATE);
 			if (wcscmp(caption, p->m_szTabCaption) != 0) {
-				wcscpy_s(p->m_szTabCaption, caption);
+				::wcsncpy_s(p->m_szTabCaption, caption, _TRUNCATE);
 				changed = true;
 			}
 
@@ -4172,8 +4172,8 @@ void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, UINT_PTR idFrom) 
 			const WCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
 			auto nKeyLen = int(wcslen(pszKey));
 			if ( nLen + 9 + nKeyLen < nBufCount ){
-				wcscat_s( pszBuf, nBufCount, L"\n        " );
-				wcscat_s( pszBuf, nBufCount, pszKey );
+				::wcsncat_s(pszBuf, nBufCount, L"\n        ", _TRUNCATE);
+				::wcsncat_s(pszBuf, nBufCount, pszKey, _TRUNCATE);
 				nLen += 9 + nKeyLen;
 			}
 			delete ppcAssignedKeyList[j];

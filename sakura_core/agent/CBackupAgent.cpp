@@ -238,7 +238,7 @@ int CBackupAgent::MakeBackUp(
 		//@@@ 2001.12.11 start MIK
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
 			WCHAR	szDustPath[_MAX_PATH+1];
-			::wcscpy_s(szDustPath, szPath);
+			::wcsncpy_s(szDustPath, szPath, _TRUNCATE);
 			SHFILEOPSTRUCT	fos;
 			fos.hwnd   = CEditWnd::getInstance()->GetHwnd();
 			fos.wFunc  = FO_DELETE;
@@ -407,10 +407,10 @@ bool CBackupAgent::FormatBackUpPath(
 				//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
 				if( bup_setting.GetBackupType() == 3 ){
 					// 元の拡張子をクリアする
-					::wcscpy_s(szExt, L"");
+					::wcsncpy_s(szExt, L"", _TRUNCATE);
 				}
 				const WCHAR szBackupExt[] = { L'.', bup_setting.GetBackupExtChar(), L'0', L'0', 0 };
-				::wcscat_s(szExt, szBackupExt);
+				::wcsncat_s(szExt, szBackupExt, _TRUNCATE);
 			}
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s%s", szFname, szExt ) ){
 				return false;
