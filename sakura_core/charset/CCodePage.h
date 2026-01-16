@@ -41,7 +41,7 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return CPToUnicode(cSrc, pDst, m_nCodePageEx); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    → 特定コード 変換
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
 
 public:
 	//実装

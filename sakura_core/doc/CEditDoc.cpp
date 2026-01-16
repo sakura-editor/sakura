@@ -882,7 +882,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		int			nLen = (int)wcslen( pszGrepKey );
 		CNativeW	cmemDes;
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
-		auto_sprintf( szGrepTitle, LS(STR_TITLE_GREP),
+		auto_snprintf_s( szGrepTitle, _TRUNCATE, LS(STR_TITLE_GREP),
 			cmemDes.GetStringPtr(),
 			( nLen > cmemDes.GetStringLength() ) ? L"..." : L""
 		);

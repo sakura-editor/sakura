@@ -153,8 +153,8 @@ LRESULT CPrintPreview::OnPaint(
 	// 要素情報の表示 -> IDD_PRINTPREVIEWBAR右下のSTATICへ
 	WCHAR	szPaperName[256];
 	CPrint::GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , szPaperName );
-	auto_sprintf(
-		szText,
+	auto_snprintf_s(
+		szText, _TRUNCATE,
 		L"%s  %s",
 		szPaperName,
 		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? LS(STR_ERR_DLGPRNPRVW1) : LS(STR_ERR_DLGPRNPRVW2)

@@ -246,8 +246,8 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		::GetSystemDirectory(szCmdDir, int(std::size(szCmdDir)));
 
 		//コマンドライン文字列作成
-		auto_sprintf(
-			cmdline,
+		auto_snprintf_s(
+			cmdline, _TRUNCATE,
 			L"\"%s\\%s\" %s%s%s",
 			szCmdDir,
 			L"cmd.exe",

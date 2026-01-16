@@ -1957,7 +1957,7 @@ bool CEditView::GetSelectedData(
 				buffer->Append( pszQuote, quoteLen );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
-				auto lineNumLen = auto_snprintf_s(pszLineNum, _TRUNCATE, L" %d:" , nLineNum + 1);
+				auto lineNumLen = auto_snprintf_s(pszLineNum, std::size(strLineNum), _TRUNCATE, L" %d:", nLineNum + 1);
 				buffer->Append( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
 				buffer->Append( pszLineNum, (size_t)lineNumLen );
 			}

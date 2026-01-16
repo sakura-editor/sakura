@@ -83,7 +83,7 @@ static       wchar_t	WSTR_FILETREE_HEAD_V1[]	= L"SakuraEditorFileTree_Ver1";
 // Exportファイル名の作成
 //	  タイプ名などファイルとして扱うことを考えていない文字列を扱う
 //		2010/4/12 Uchi
-static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar_t* ext)
+static wchar_t* MakeExportFileName(std::span<WCHAR> res, const wchar_t* trg, const wchar_t* ext)
 {
 	wchar_t		conv[_MAX_PATH+1];
 	wchar_t*	p;
@@ -102,7 +102,7 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 	}
 	auto_snprintf_s(res, _MAX_PATH, L"%ls.%ls", conv, ext);
 
-	return res;
+	return std::data(res);
 }
 
 // インポート ファイル指定付き
@@ -506,7 +506,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 	int		nStructureVersion;
 	wchar_t	wbuff[_MAX_PATH + 1];
-	auto_sprintf( wbuff, L"%d.%d.%d.%d", 
+	auto_snprintf_s( wbuff, _TRUNCATE, L"%d.%d.%d.%d", 
 				HIWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 				LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 				HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),

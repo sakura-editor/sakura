@@ -1610,7 +1610,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 			//::wcsncat_s(basePath, L"..\\", _TRUNCATE);
 			DirUp( basePath );
 		}
-		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){
+		if( -1 == auto_snprintf_s( pszOutput, count, _TRUNCATE, L"%s%s", basePath, p ) ){
 			return nullptr;
 		}
 	}

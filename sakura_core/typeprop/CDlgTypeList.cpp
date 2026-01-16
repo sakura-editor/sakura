@@ -333,12 +333,12 @@ void CDlgTypeList::SetData( int selIdx )
 			continue;
 		}
 		if( type->m_szTypeExts[0] != L'\0' ){		/* タイプ属性：拡張子リスト */
-			auto_sprintf( szText, L"%s ( %s )",
+			auto_snprintf_s( szText, _TRUNCATE, L"%s ( %s )",
 				type->m_szTypeName,	/* タイプ属性：名称 */
 				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}else{
-			auto_sprintf( szText, L"%s",
+			auto_snprintf_s( szText, _TRUNCATE, L"%s",
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}

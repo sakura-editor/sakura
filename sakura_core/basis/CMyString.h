@@ -65,7 +65,7 @@ public:
 	{
 		va_list v;
 		va_start(v,szFormat);
-		m_pHead+=auto_vsprintf_s(m_pHead, std::size(m_szCmdLine)-(m_pHead-m_szCmdLine),szFormat,v);
+		m_pHead += auto_vsnprintf_s(m_pHead, std::size(m_szCmdLine) - (m_pHead - m_szCmdLine), _TRUNCATE, szFormat, v);
 		va_end(v);
 	}
 	const WCHAR* c_str() const

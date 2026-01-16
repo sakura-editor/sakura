@@ -260,9 +260,9 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 /*! 
 ** @brief プリンターをオープンし、hDCを作成する
 */
-HDC CPrint::CreateDC(
-	MYDEVMODE*	pMYDEVMODE,
-	WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
+HDC CPrint::CreateDCW(
+	MYDEVMODE*			pMYDEVMODE,
+	std::span<WCHAR>	szErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	HDC			hdc = nullptr;
@@ -282,8 +282,8 @@ HDC CPrint::CreateDC(
 		&hPrinter,					/* プリンターハンドルのポインタ */
 		nullptr
 	) ){
-		auto_sprintf(
-			pszErrMsg,
+		auto_snprintf_s(
+			szErrMsg, _TRUNCATE,
 			LS(STR_ERR_CPRINT01),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);
@@ -343,7 +343,7 @@ BOOL CPrint::GetPrintMetrics(
 	short*		pnPaperHeight,		/* 用紙印刷可能高さ */
 	short*		pnPaperOffsetLeft,	/* 用紙余白左端 */
 	short*		pnPaperOffsetTop,	/* 用紙余白上端 */
-	WCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
+	std::span<WCHAR>	pszErrMsg			/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -442,7 +442,7 @@ BOOL CPrint::PrintOpen(
 	WCHAR*		pszJobName,
 	MYDEVMODE*	pMYDEVMODE,
 	HDC*		phdc,
-	WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
+	std::span<WCHAR>	pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -470,8 +470,8 @@ BOOL CPrint::PrintOpen(
 	di.lpszDatatype = nullptr;
 	di.fwType = 0;
 	if( 0 >= ::StartDoc( hdc, &di ) ){
-		auto_sprintf(
-			pszErrMsg,
+		auto_snprintf_s(
+			pszErrMsg, _TRUNCATE,
 			LS(STR_ERR_CPRINT02),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);

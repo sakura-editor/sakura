@@ -622,8 +622,8 @@ void CDlgFuncList::SetData()
 			/* クリップボードにコピーするテキストを編集 */
 			if(item.pszText[0] != L'\0'){
 				// 検出結果の種類(関数,,,)があるとき
-				auto_sprintf(
-					szText,
+				auto_snprintf_s(
+					szText, _TRUNCATE,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
@@ -637,8 +637,8 @@ void CDlgFuncList::SetData()
 				m_cmemClipText.AppendString(L")\r\n");
 			}else{
 				// 検出結果の種類(関数,,,)がないとき
-				auto_sprintf(
-					szText,
+				auto_snprintf_s(
+					szText, _TRUNCATE,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
@@ -1127,8 +1127,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 
 		/* クリップボードにコピーするテキストを編集 */
 		WCHAR szText[2048];
-		auto_sprintf(
-			szText,
+		auto_snprintf_s(
+			szText, _TRUNCATE,
 			L"%s(%d,%d): ",
 			m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 			pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
@@ -1316,8 +1316,8 @@ void CDlgFuncList::SetListVB (void)
 		if(item.pszText[0] != L'\0'){
 			// 検出結果の種類(関数,,,)があるとき
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
-			auto_sprintf(
-				szText,
+			auto_snprintf_s(
+				szText, _TRUNCATE,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
@@ -1331,8 +1331,8 @@ void CDlgFuncList::SetListVB (void)
 			m_cmemClipText.AppendString(L")\r\n");
 		}else{
 			// 検出結果の種類(関数,,,)がないとき
-			auto_sprintf(
-				szText,
+			auto_snprintf_s(
+				szText, _TRUNCATE,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
@@ -1459,7 +1459,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				
 				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
 					WCHAR linenum[32];
-					auto_sprintf( linenum, L"(%d,%d): ",
+					auto_snprintf_s( linenum, _TRUNCATE, L"(%d,%d): ",
 						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
 					);

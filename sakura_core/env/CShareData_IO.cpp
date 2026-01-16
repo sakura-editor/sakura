@@ -451,8 +451,8 @@ static bool ShareData_IO_RECT( CDataProfile& cProfile, const WCHAR* pszSecName, 
 			rcValue.bottom	= buf[3];
 		}
 	}else{
-		auto_sprintf(
-			szKeyData,
+		auto_snprintf_s(
+			szKeyData, _TRUNCATE,
 			pszForm,
 			rcValue.left,
 			rcValue.top,
@@ -737,8 +737,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 				common.m_sOutline.m_cyOutlineDockBottom	= buf[3];
 			}
 		}else{
-			auto_sprintf(
-				szKeyData,
+			auto_snprintf_s(
+				szKeyData, _TRUNCATE,
 				pszForm,
 				common.m_sOutline.m_cxOutlineDockLeft,
 				common.m_sOutline.m_cyOutlineDockTop,
@@ -797,7 +797,7 @@ EFunctionCode GetPlugCmdInfoByName(
 // プラグインコマンドを機能番号から名前へ変換
 bool GetPlugCmdInfoByFuncCode(
 	EFunctionCode	eFuncCode,				//!< [in]  機能コード
-	WCHAR*			pszFuncName				//!< [out] 機能名．この先にはMAX_PLUGIN_ID + 20文字のメモリが必要．
+	std::span<WCHAR>	szFuncName				//!< [out] 機能名．この先にはMAX_PLUGIN_ID + 20文字のメモリが必要．
 )
 {
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
@@ -811,7 +811,7 @@ bool GetPlugCmdInfoByFuncCode(
 	if (nID < 0 || nNo < 0) {
 		return false;
 	}
-	auto_snprintf_s(pszFuncName, _TRUNCATE, L"%ls/%02d", plugin.m_PluginTable[nID].m_szId, nNo);
+	auto_snprintf_s(szFuncName, _TRUNCATE, L"%ls/%02d", plugin.m_PluginTable[nID].m_szId, nNo);
 	return true;
 }
 
@@ -1226,7 +1226,7 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 				printsetting.m_bFooterUse[2]			= buf[18];
 			}
 		}else{
-			auto_sprintf( szKeyData, pszForm,
+			auto_snprintf_s( szKeyData, _TRUNCATE, pszForm,
 				printsetting.m_nPrintFontWidth		,
 				printsetting.m_nPrintFontHeight		,
 				printsetting.m_nPrintDansuu			,
@@ -1487,7 +1487,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		}
 	}
 	else{
-		auto_sprintf( szKeyData, pszForm,
+		auto_snprintf_s( szKeyData, _TRUNCATE, pszForm,
 			types.m_nIdx,
 			types.m_nMaxLineKetas,
 			types.m_nColumnSpace,
@@ -1578,8 +1578,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				types.m_cyOutlineDockBottom	= buf[3];
 			}
 		}else{
-			auto_sprintf(
-				szKeyData2,
+			auto_snprintf_s(
+				szKeyData2, _TRUNCATE,
 				pszForm2,
 				types.m_cxOutlineDockLeft,
 				types.m_cyOutlineDockTop,
@@ -1700,7 +1700,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			// 2002.02.08 hor 未定義値を無視
 			else if(pKeyword[nPos])
 			{
-				auto_sprintf( szKeyData, L"%ls,%ls",
+				auto_snprintf_s( szKeyData, _TRUNCATE, L"%ls,%ls",
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
 					&pKeyword[nPos]);
 				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
@@ -1760,7 +1760,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			}/* 書き込み */
 			else{
 				if(types.m_KeyHelpArr[j].m_szPath[0] != L'\0'){
-					auto_sprintf( szKeyData, L"%d,%s,%s",
+					auto_snprintf_s( szKeyData, _TRUNCATE, L"%d,%s,%s",
 						types.m_KeyHelpArr[j].m_bUse?1:0,
 						types.m_KeyHelpArr[j].m_szAbout,
 						types.m_KeyHelpArr[j].m_szPath.c_str()
@@ -2218,7 +2218,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			}
 			// 書き込み
 			// ラベル編集後のノードはノード名を出力する 2012.10.14 syat 各国語対応
-			auto_sprintf( szLine, L"%d,%d,%ls,%ls,%ls", 
+			auto_snprintf_s( szLine, _TRUNCATE, L"%d,%d,%ls,%ls,%ls",
 				pcMenu->m_nLevel, 
 				pcMenu->m_nType, 
 				szFuncName, 
@@ -2284,7 +2284,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	//	MIK バージョン情報（書き込みのみ）
 	if( ! cProfile.IsReadingMode() ){
 		WCHAR	iniVer[256];
-		auto_sprintf( iniVer, L"%d.%d.%d.%d", 
+		auto_snprintf_s( iniVer, _TRUNCATE, L"%d.%d.%d.%d",
 					HIWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 					LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 					HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
@@ -2345,7 +2345,7 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 				pColorInfoArr[j].m_sFontAttr.m_bUnderLine = false;
 		}
 		else{
-			auto_sprintf( szKeyData, pszForm,
+			auto_snprintf_s( szKeyData, _TRUNCATE, pszForm,
 				pColorInfoArr[j].m_bDisp?1:0,
 				pColorInfoArr[j].m_sFontAttr.m_bBoldFont?1:0,
 				pColorInfoArr[j].m_sColorAttr.m_cTEXT,
@@ -2394,7 +2394,7 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 			}
 		}
 	}else{
-		auto_sprintf( szKeyData, pszForm,
+		auto_snprintf_s( szKeyData, _TRUNCATE, pszForm,
 			lf.lfHeight,
 			lf.lfWidth,
 			lf.lfEscapement,

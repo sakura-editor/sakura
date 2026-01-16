@@ -179,8 +179,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		}else{
 			auto_snprintf_s(szLineNum, _TRUNCATE, L"%d", (int)((Int)point.x) + 1);
 			::wcsncat_s(szLineNum, LS(STR_DLGFNCLST_LIST_COL), _TRUNCATE);
-			CUnicode().UnicodeToHex( cmemChar.GetStringPtr(), cmemChar.GetStringLength(),
-				szCharCode, &GetDllShareData().m_Common.m_sStatusbar );
+			CUnicode().UnicodeToHex(std::wstring_view{ cmemChar.GetStringPtr(), size_t(cmemChar.GetStringLength()) }, szCharCode, &GetDllShareData().m_Common.m_sStatusbar);
 		}
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::getInstance()->GetHwnd(),

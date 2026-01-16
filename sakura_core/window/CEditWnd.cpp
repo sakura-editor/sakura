@@ -130,7 +130,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 						//auto_snprintf_s(szCaretChar, _TRUNCATE, L"%04x",);
 						//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 						CCodeBase* pCode = CCodeFactory::CreateCodeBase((ECodeType)i, false);
-						EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCode[i], &sStatusbar);
+						EConvertResult ret = pCode->UnicodeToHex(std::wstring_view{ &pLine[nIdx], size_t(nLineLen - nIdx) }, szCode[i], &sStatusbar);
 						delete pCode;
 						if (ret != RESULT_COMPLETE) {
 							// うまくコードが取れなかった
@@ -142,7 +142,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				WCHAR szCodeCP[32];
 				sStatusbar.m_bDispSPCodepoint = true;
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCodeCP, &sStatusbar);
+				EConvertResult ret = pCode->UnicodeToHex(std::wstring_view{ &pLine[nIdx], size_t(nLineLen - nIdx) }, szCodeCP, &sStatusbar);
 				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった
@@ -150,7 +150,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				}
 
 				// メッセージボックス表示
-				auto_sprintf(szMsg, LS(STR_ERR_DLGEDITWND13),
+				auto_snprintf_s(szMsg, _TRUNCATE, LS(STR_ERR_DLGEDITWND13),
 					szChar, szCodeCP, szCode[CODE_SJIS], szCode[CODE_JIS], szCode[CODE_EUC], szCode[CODE_LATIN1], szCode[CODE_UNICODE], szCode[CODE_UTF8], szCode[CODE_CESU8]);
 				::MessageBox( hWnd, szMsg, GSTR_APPNAME, MB_OK );
 			}
@@ -2455,15 +2455,15 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 					WCHAR szBuf[60];
 					pszLabel = szBuf;
 					if( mode == CEditView::TGWRAP_FULL ){
-						auto_sprintf(
-							szBuf,
+						auto_snprintf_s(
+							szBuf, _TRUNCATE,
 							LS( STR_WRAP_WIDTH_FULL ),	//L"折り返し桁数: %d 桁（最大）",
 							MAXLINEKETAS
 						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
-						auto_sprintf(
-							szBuf,
+						auto_snprintf_s(
+							szBuf, _TRUNCATE,
 							LS( STR_WRAP_WIDTH_WINDOW ),	//L"折り返し桁数: %d 桁（右端）",
 							int((Int)GetActiveView().ViewColNumToWrapColNum(
 								GetActiveView().GetTextArea().m_nViewColNum
@@ -2471,8 +2471,8 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 						);
 					}
 					else {
-						auto_sprintf(
-							szBuf,
+						auto_snprintf_s(
+							szBuf, _TRUNCATE,
 							LS( STR_WRAP_WIDTH_FIXED ),	//L"折り返し桁数: %d 桁（指定）",
 							int((Int)GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas)
 						);

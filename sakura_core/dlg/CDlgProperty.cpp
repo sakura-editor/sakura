@@ -174,7 +174,7 @@ void CDlgProperty::SetData( void )
 
 		cmemProp.AppendString( LS(STR_DLGFLPROP_CREATE_DT) );
 		CFileTime ctimeCreation = wfd.ftCreationTime;
-		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
+		auto_snprintf_s( szWork, _TRUNCATE, LS(STR_DLGFLPROP_YMDHMS),
 			ctimeCreation->wYear,
 			ctimeCreation->wMonth,
 			ctimeCreation->wDay,
@@ -187,7 +187,7 @@ void CDlgProperty::SetData( void )
 
 		cmemProp.AppendString( LS(STR_DLGFLPROP_UPDATE_DT) );
 		CFileTime ctimeLastWrite = wfd.ftLastWriteTime;
-		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
+		auto_snprintf_s( szWork, _TRUNCATE, LS(STR_DLGFLPROP_YMDHMS),
 			ctimeLastWrite->wYear,
 			ctimeLastWrite->wMonth,
 			ctimeLastWrite->wDay,
@@ -200,7 +200,7 @@ void CDlgProperty::SetData( void )
 
 		cmemProp.AppendString( LS(STR_DLGFLPROP_ACCESS_DT) );
 		CFileTime ctimeLastAccess = wfd.ftLastAccessTime;
-		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
+		auto_snprintf_s( szWork, _TRUNCATE, LS(STR_DLGFLPROP_YMDHMS),
 			ctimeLastAccess->wYear,
 			ctimeLastAccess->wMonth,
 			ctimeLastAccess->wDay,

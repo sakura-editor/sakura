@@ -273,7 +273,7 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 	}
 }
 
-int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WCHAR* pszWindowPath, const WCHAR* pszFile)
+int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, std::span<WCHAR> szWindowName, WCHAR* pszWindowPath, const WCHAR* pszFile)
 {
 	hWndTarget = nullptr;	//out引数をクリアする
 
@@ -305,18 +305,18 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 		}
 		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, int(std::size(szTitle)), editInfo, node->m_nId, -1, nullptr );
 #ifdef _WIN64
-		auto_snprintf_s(pszWindowName, _TRUNCATE, L":HWND:[%016I64x]%s", hWndTarget, pszTagName);
+		auto_snprintf_s(szWindowName, _TRUNCATE, L":HWND:[%016I64x]%s", hWndTarget, pszTagName);
 #else
-		auto_snprintf_s(pszWindowName, _TRUNCATE, L":HWND:[%08x]%s", hWndTarget, pszTagName);
+		auto_snprintf_s(szWindowName, _TRUNCATE, L":HWND:[%08x]%s", hWndTarget, pszTagName);
 #endif
 		if( pmemTitle ){
 			pmemTitle->AppendString(szTitle);
 		}
 		pszWindowPath[0] = L'\0';
 	}else{
-		SplitPath_FolderAndFile(editInfo->m_szPath, pszWindowPath, pszWindowName);
+		SplitPath_FolderAndFile(editInfo->m_szPath, pszWindowPath, std::data(szWindowName));
 		if( pmemTitle ){
-			pmemTitle->AppendString(pszWindowName);
+			pmemTitle->AppendString(std::data(szWindowName));
 		}
 	}
 	if( pmemTitle ){
@@ -1393,26 +1393,26 @@ int CGrepAgent::DoGrepFile(
 					}else{
 						pszFormatBasePath = pszFormatBasePath2;	// (B)
 					}
-					auto_snprintf_s(szWork0, _TRUNCATE, pszFormatBasePath, pszBaseFolder);
+					auto_snprintf_s(szWork0, cchWork, _TRUNCATE, pszFormatBasePath, pszBaseFolder);
 					cmemMessage.AppendString( szWork0 );
 					bOutputBaseFolder = true;
 				}
 				if( !bOutputFolderName && sGrepOption.bGrepSeparateFolder ){
 					if( pszFolder[0] ){
-						auto_snprintf_s(szWork0, _TRUNCATE, L"■\"%s\"\r\n", pszFolder);	// (C), (D)
+						auto_snprintf_s(szWork0, cchWork, _TRUNCATE, L"■\"%s\"\r\n", pszFolder);	// (C), (D)
 					}else{
 						::wcsncpy_s(szWork0, cchWork, L"■\r\n", _TRUNCATE);
 					}
 					cmemMessage.AppendString( szWork0 );
 					bOutputFolderName = true;
 				}
-				auto_sprintf( szWork0,
+				auto_snprintf_s( szWork0, cchWork, _TRUNCATE,
 					(sGrepOption.bGrepSeparateFolder ? pszFormatFilePath // (E)
 						: pszFormatFilePath2),	// (F), (G)
 					pszDispFilePath, pszCodeName );
 				cmemMessage.AppendString( szWork0 );
 			}else{
-				auto_snprintf_s(szWork0, _TRUNCATE, pszFormatFullPath, pszFullPath, pszCodeName);	// (H)
+				auto_snprintf_s(szWork0, cchWork, _TRUNCATE, pszFormatFullPath, pszFullPath, pszCodeName);	// (H)
 				cmemMessage.AppendString( szWork0 );
 			}
 		}

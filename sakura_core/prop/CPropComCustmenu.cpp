@@ -304,7 +304,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				}
 //@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
 				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
-					auto_sprintf( szLabel2, L"%s(%hc)",
+					auto_snprintf_s( szLabel2, _TRUNCATE, L"%s(%hc)",
 						szLabel,
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]
 					);
@@ -687,7 +687,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
 			::wcsncpy_s(szLabel2, szLabel, _TRUNCATE);
 		}else{
-			auto_sprintf( szLabel2, L"%ls(%hc)",
+			auto_snprintf_s( szLabel2, _TRUNCATE, L"%ls(%hc)",
 				szLabel,
 				m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]
 			);
