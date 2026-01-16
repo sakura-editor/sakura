@@ -1090,8 +1090,8 @@ bool wide2utf8(std::string& utf8, const WCHAR* psz)
 
 BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance [[maybe_unused]], const WCHAR* pszPath)
 {
-	FILE* f = ::_wfopen_s(&fp, pszPath, L"rb");
-	if (!f) {
+	FILE* f = nullptr;
+	if (0 != ::_wfopen_s(&f, pszPath, L"rb")) {
 		return FALSE;
 	}
 	m_wstrPath = pszPath;

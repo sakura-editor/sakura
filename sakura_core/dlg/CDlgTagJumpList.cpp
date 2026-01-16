@@ -1130,8 +1130,7 @@ int CDlgTagJumpList::find_key_core(
 		DEBUG_TRACE( L"tag: %s\n", szTagFile );
 		
 		//タグファイルを開く。
-		FILE* fp = ::_wfopen_s(&fp, szTagFile, L"rb");
-		if( fp )
+		if (FILE* fp = nullptr; 0 == ::_wfopen_s(&fp, szTagFile, L"rb"))
 		{
 			DEBUG_TRACE( L"open tags\n" );
 			bool bSorted = true;

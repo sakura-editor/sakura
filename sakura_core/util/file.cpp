@@ -219,12 +219,15 @@ const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 */
 FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 {
+	FILE* fp = nullptr;
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
 		GetExedir( path, fname );
-		return ::_wfopen_s(&fp, path, mode);
+		::_wfopen_s(&fp, path, mode);
+	} else {
+		::_wfopen_s(&fp, fname, mode);
 	}
-	return ::_wfopen_s(&fp, fname, mode);
+	return fp;
 }
 
 /*! fnameが相対パスの場合は、INIファイルのパスからの相対パスとして開く
@@ -233,15 +236,18 @@ FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 */
 FILE* _wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 {
+	FILE* fp = nullptr;
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
 		if( bOrExedir )
 			GetInidirOrExedir( path, fname );
 		else
 			GetInidir( path, fname );
-		return ::_wfopen_s(&fp, path, mode);
+		::_wfopen_s(&fp, path, mode);
+	} else {
+		::_wfopen_s(&fp, fname, mode);
 	}
-	return ::_wfopen_s(&fp, fname, mode);
+	return fp;
 }
 
 /* フォルダーの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
