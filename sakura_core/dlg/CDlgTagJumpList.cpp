@@ -761,13 +761,13 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 	for( i = 0; p_extentions[i]; i += 2 )
 	{
 		::wcsncpy_s(tmp, p_extentions[i], _TRUNCATE);
-		token = _wcstok( tmp, L"," );
+		token = ::wcstok_s(tmp, L",", &context);
 		while( token )
 		{
 			if( _wcsicmp( p, token ) == 0 )
 			{
 				::wcsncpy_s(tmp, p_extentions[i+1], _TRUNCATE);
-				token = _wcstok( tmp, L"," );
+				token = ::wcstok_s(tmp, L",", &context);
 				while( token )
 				{
 					if( token[0] == type )
@@ -775,13 +775,13 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 						return _wcsdup( &token[2] );
 					}
 
-					token = _wcstok( nullptr, L"," );
+					token = ::wcstok_s(nullptr, L",", &context);
 				}
 
 				return _wcsdup( L"" );
 			}
 
-			token = _wcstok( nullptr, L"," );
+			token = ::wcstok_s(nullptr, L",", &context);
 		}
 	}
 
