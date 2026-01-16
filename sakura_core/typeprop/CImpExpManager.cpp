@@ -485,7 +485,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		::wcsncpy_s(szId, plugin.m_PluginTable[nPIdx].m_szId, _TRUNCATE);
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
 			wchar_t szPlug[8];
-			_swprintf( szPlug, L"/%d", nPlug );
+			::_snwprintf_s(szPlug, _TRUNCATE, L"/%d", nPlug);
 			::wcsncat_s(szId, szPlug, _TRUNCATE);
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szId));
@@ -496,7 +496,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		::wcsncpy_s(szId, plugin.m_PluginTable[nPIdx].m_szId, _TRUNCATE);
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
 			wchar_t szPlug[8];
-			_swprintf( szPlug, L"/%d", nPlug );
+			::_snwprintf_s(szPlug, _TRUNCATE, L"/%d", nPlug);
 			::wcsncat_s(szId, szPlug, _TRUNCATE);
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szId));
