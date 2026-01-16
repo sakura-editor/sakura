@@ -454,7 +454,7 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 	/* 2002.2.2 YAZAKI CSMacroMgrに頼む */
 	if (CSMacroMgr::GetFuncInfoByID(nFuncID, szFuncName, szFuncNameJapanese)) {
 		// 2014.01.24 Moca マクロ書き出しをm_eTypeを追加して統合
-		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"を削除
+		out.Write(std::format(L"{}(", szFuncName)); // 2014.12.25 Moca "S_"を削除
 		CMacroParam* pParam = m_pParamTop;
 		while( pParam ){
 			if( pParam != m_pParamTop ){
@@ -502,10 +502,10 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 			}
 			pParam = pParam->m_pNext;
 		}
-		out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
+		out.Write(std::format(L");\t// {}\r\n", szFuncNameJapanese));
 		return;
 	}
-	out.WriteF( LS(STR_ERR_DLGMACRO01) );
+	out.Write(cxx::load_string(STR_ERR_DLGMACRO01));
 }
 
 /**	マクロ引数変換

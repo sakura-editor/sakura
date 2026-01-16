@@ -680,7 +680,7 @@ bool CImpExpRegex::Export( const std::wstring& sFileName, std::wstring& sErrMsg 
 		return false;
 	}
 
-	out.WriteF( WSTR_REGEXKW_HEAD );
+	out.Write(WSTR_REGEXKW_HEAD);
 
 	const wchar_t* regex = m_Types.m_RegexKeywordList;
 	for (int i = 0; i < MAX_REGEX_KEYWORD; i++)
@@ -688,7 +688,7 @@ bool CImpExpRegex::Export( const std::wstring& sFileName, std::wstring& sErrMsg 
 		if( regex[0] == L'\0' ) break;
 		
 		const WCHAR* name  = GetColorNameByIndex(m_Types.m_RegexKeywordArr[i].m_nColorIndex);
-		out.WriteF( L"RxKey[%03d]=%s,%ls\n", i, name, regex);
+		out.Write(std::format(L"RxKey[{:03}]={},{}\n", i, name, regex));
 
 		for(; *regex != '\0'; regex++ ){}
 		regex++;
@@ -826,16 +826,15 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		return false;
 	}
 
-	out.WriteF( WSTR_KEYHELP_HEAD );
+	out.Write(WSTR_KEYHELP_HEAD);
 
 	for (int i = 0; i < m_Types.m_nKeyHelpNum; i++) {
-		out.WriteF(
-			L"KDct[%02d]=%d,%s,%s\n",
+		out.Write(std::format(L"KDct[{:02}]={},{},{}\n",
 			i,
-			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
+			m_Types.m_KeyHelpArr[i].m_bUse ? 1 : 0,
 			m_Types.m_KeyHelpArr[i].m_szAbout,
 			m_Types.m_KeyHelpArr[i].m_szPath.c_str()
-		);
+		));
 	}
 	out.Close();
 
@@ -1169,14 +1168,14 @@ bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		sErrMsg += sFileName;
 		return false;
 	}
-	out.WriteF( L"// " );
+	out.Write(L"// ");
 	// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
 	out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_nIdx ) );
-	out.WriteF( WSTR_KEYWORD_HEAD );
+	out.Write(WSTR_KEYWORD_HEAD);
 
-	out.WriteF( WSTR_KEYWORD_CASE );
-	out.WriteF( m_bCase ? L"True" : L"False" );
-	out.WriteF( L"\n\n" );
+	out.Write(WSTR_KEYWORD_CASE);
+	out.Write(m_bCase ? L"True" : L"False");
+	out.Write(L"\n\n");
 
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SortKeyWord(m_nIdx);	//MIK 2000.12.01 sort keyword
 
@@ -1186,7 +1185,7 @@ bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
 		// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
 		out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_nIdx, i ) );
-		out.WriteF( L"\n" );
+		out.Write(L"\n");
 	}
 	out.Close();
 

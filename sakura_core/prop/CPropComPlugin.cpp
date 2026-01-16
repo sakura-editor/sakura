@@ -547,18 +547,18 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	//アプリケーションパス
 	WCHAR szExePath[MAX_PATH + 1];
 	::GetModuleFileName( nullptr, szExePath, int(std::size(szExePath)) );
-	cCmdLineBuf.AppendF( L"\"%s\"", szExePath );
+	cCmdLineBuf.Append(std::format(LR"("{}")", szExePath));
 
 	// ファイル名
-	cCmdLineBuf.AppendF( L" \"%s\"", sReadMeName.c_str() );
+	cCmdLineBuf.Append(std::format(LR"( "{}")", sReadMeName));
 
 	// コマンドラインオプション
-	cCmdLineBuf.AppendF(L" -R -CODE=99");
+	cCmdLineBuf.Append(L" -R -CODE=99");
 
 	// グループID
 	int nGroup = GetDllShareData().m_sNodes.m_nGroupSequences;
 	if( nGroup > 0 ){
-		cCmdLineBuf.AppendF( L" -GROUP=%d", nGroup+1 );
+		cCmdLineBuf.Append(std::format(L" -GROUP={}", nGroup + 1));
 	}
 
 	//CreateProcessに渡すSTARTUPINFOを作成
