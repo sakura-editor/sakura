@@ -467,13 +467,13 @@ void CTextDrawer::DispLineNumber(
 				if( nullptr == pcLayout || 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
 					::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
 				}else{
-					_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
+					::_itow_s(pcLayout->GetLogicLineNo() + 1, szLineNum, 10);	/* 対応する論理行番号 */
 //###デバッグ用
-//					_itow( CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10 );	// 行の変更番号
+//					::_itow_s(CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10);	// 行の変更番号
 				}
 			}else{
 				/* 物理行（レイアウト行）番号表示モード */
-				_itow( (Int)nLineNum + 1, szLineNum, 10 );
+				::_itow_s((Int)nLineNum + 1, szLineNum, 10);
 			}
 			nLineCols = int(wcslen( szLineNum ));
 			nLineNumCols = nLineCols; // 2010.08.17 Moca 位置決定に行番号区切りは含めない

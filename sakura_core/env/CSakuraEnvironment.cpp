@@ -319,7 +319,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
 			{
 				wchar_t szText[11];
-				_itow( GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10 );
+				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -327,7 +327,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'y':	//	現在の物理行位置(1開始)
 			{
 				wchar_t szText[11];
-				_itow( GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10 );
+				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -358,7 +358,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					wchar_t szText[1024];
-					_itow(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
+					::_itow_s(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
 					q = wcs_pushW( q, q_max - q, szText, wcslen(szText));
 					++p;
 				}
@@ -373,7 +373,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					wchar_t szText[1024];
-					_itow(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
+					::_itow_s(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
 					q = wcs_pushW( q, q_max - q, szText);
 					++p;
 				}

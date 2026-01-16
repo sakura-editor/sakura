@@ -340,7 +340,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT | LVIF_PARAM;
 		sItem.iItem = index;
 		sItem.iSubItem = 0;
-		_itow( index, buf, 10 );
+		::_itow_s(index, buf, 10);
 		sItem.pszText = buf;
 		sItem.lParam = index;
 		ListView_InsertItem( hListView, &sItem );

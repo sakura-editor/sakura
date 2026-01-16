@@ -182,7 +182,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		else if( 0 == keta % 10 ){
 			wchar_t szColumn[32];
 			apt[idx * 2 + 1] = POINT{nX, 0};
-			_itow( ((Int)keta) / 10, szColumn, 10 );
+			::_itow_s(((Int)keta) / 10, szColumn, 10);
 			::TextOutW(gr, nX + 2 + 0, -1 + 0, PSZ_ARGS(szColumn));
 		}
 		//5目盛おきの区切り(中)

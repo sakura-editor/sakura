@@ -1473,12 +1473,12 @@ CColorStrategy* CPrintPreview::DrawPageText(
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
 						::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
 					}else{
-						_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
+						::_itow_s(pcLayout->GetLogicLineNo() + 1, szLineNum, 10);	/* 対応する論理行番号 */
 					}
 				}
 				else{
 					/* 物理行(レイアウト行)番号表示モード */
-					_itow( (Int)nLineNum + 1, szLineNum, 10 );
+					::_itow_s((Int)nLineNum + 1, szLineNum, 10);
 				}
 
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
