@@ -441,7 +441,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 	@date	2008/01/26	kobake 出力形式修正
 	@date	2013/06/21 エンコードをASCII系にする(SJIS固定をやめる)
 */
-BOOL CEditView::MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType code, bool bBom)
+BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, bool bBom )
 {
 	//一時
 	WCHAR* pszTmpName = _wtempnam( nullptr, SAKURA_DIFF_TEMP_PREFIX );
@@ -450,7 +450,7 @@ BOOL CEditView::MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType 
 		return FALSE;
 	}
 
-	::wcsncpy_s(std::data(filename), std::size(filename), pszTmpName, _TRUNCATE);
+	wcscpy( filename, pszTmpName );
 	free( pszTmpName );
 
 	//自分か？
@@ -459,7 +459,7 @@ BOOL CEditView::MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType 
 		EConvertResult eWriteResult = CWriteManager().WriteFile_From_CDocLineMgr(
 			m_pcEditDoc->m_cDocLineMgr,
 			SSaveInfo(
-				std::data(filename),
+				filename,
 				code,
 				CEol(EEolType::none),
 				bBom
@@ -468,7 +468,7 @@ BOOL CEditView::MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType 
 		return RESULT_FAILURE != eWriteResult;
 	}
 
-	CTextOutputStream out(std::data(filename), code, true, false);
+	CTextOutputStream out(filename, code, true, false);
 	if(!out){
 		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
@@ -485,7 +485,7 @@ BOOL CEditView::MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType 
 	}
 	if( bError ){
 		out.Close();
-		_wunlink(std::data(filename));	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+		_wunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 	}
 
@@ -494,7 +494,7 @@ BOOL CEditView::MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType 
 
 /*!	外部ファイルを指定でのファイルを表示
 */
-BOOL CEditView::MakeDiffTmpFile2(std::span<WCHAR> tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode)
+BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode )
 {
 	//一時
 	WCHAR* pszTmpName = _wtempnam( nullptr, SAKURA_DIFF_TEMP_PREFIX );
@@ -503,7 +503,7 @@ BOOL CEditView::MakeDiffTmpFile2(std::span<WCHAR> tmpName, const WCHAR* orgName,
 		return FALSE;
 	}
 
-	::wcsncpy_s(std::data(tmpName), std::size(tmpName), pszTmpName, _TRUNCATE);
+	wcscpy( tmpName, pszTmpName );
 	free( pszTmpName );
 
 	bool bBom = false;
@@ -512,7 +512,7 @@ BOOL CEditView::MakeDiffTmpFile2(std::span<WCHAR> tmpName, const WCHAR* orgName,
 		return FALSE;
 	}
 	CFileLoad	cfl( typeMini->m_encoding );
-	CTextOutputStream out(std::data(tmpName), saveCode, true, false);
+	CTextOutputStream out(tmpName, saveCode, true, false);
 	if(!out){
 		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
@@ -546,7 +546,7 @@ BOOL CEditView::MakeDiffTmpFile2(std::span<WCHAR> tmpName, const WCHAR* orgName,
 	}
 	catch(...){
 		out.Close();
-		_wunlink(std::data(tmpName));	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。
+		_wunlink( tmpName );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。
 		WarningMessage( nullptr, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
 	}

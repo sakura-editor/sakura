@@ -442,7 +442,7 @@ static inline const WCHAR* wtow_def( const WCHAR* arg, const WCHAR* def_val )
 	のように。
 	AddLParam以外にCKeyMacroMgr::LoadKeyMacroによってもCMacroが作成される点に注意
 */
-void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) const
+void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 {
 	WCHAR			szFuncName[1024];
 	WCHAR			szFuncNameJapanese[500];
@@ -452,7 +452,7 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 	int nFuncID = m_nFuncID;
 
 	/* 2002.2.2 YAZAKI CSMacroMgrに頼む */
-	if (CSMacroMgr::GetFuncInfoByID(nFuncID, szFuncName, szFuncNameJapanese)) {
+	if (CSMacroMgr::GetFuncInfoByID( hInstance, nFuncID, szFuncName, szFuncNameJapanese)){
 		// 2014.01.24 Moca マクロ書き出しをm_eTypeを追加して統合
 		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"を削除
 		CMacroParam* pParam = m_pParamTop;
@@ -1108,21 +1108,21 @@ bool CMacro::HandleCommand(
 
 			//GOPTオプション
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 )::wcsncat_s(pOpt, L"S", _TRUNCATE);	/* サブフォルダーからも検索する */
-			if( lFlag & 0x04 )::wcsncat_s(pOpt, L"L", _TRUNCATE);	/* 英大文字と英小文字を区別する */
-			if( lFlag & 0x08 )::wcsncat_s(pOpt, L"R", _TRUNCATE);	/* 正規表現 */
-			if(          0x20 == (lFlag & 0x400020) )::wcsncat_s(pOpt, L"P", _TRUNCATE);	// 行を出力する
-			else if( 0x400000 == (lFlag & 0x400020) )::wcsncat_s(pOpt, L"N", _TRUNCATE);	// 否ヒット行を出力する
-			if(      0x40 == (lFlag & 0xC0) )::wcsncat_s(pOpt, L"2", _TRUNCATE);	/* Grep: 出力形式 */
-			else if( 0x80 == (lFlag & 0xC0) )::wcsncat_s(pOpt, L"3", _TRUNCATE);
-			else ::wcsncat_s(pOpt, L"1", _TRUNCATE);
-			if( lFlag & 0x10000 )::wcsncat_s(pOpt, L"W", _TRUNCATE);
-			if( lFlag & 0x20000 )::wcsncat_s(pOpt, L"F", _TRUNCATE);
-			if( lFlag & 0x40000 )::wcsncat_s(pOpt, L"B", _TRUNCATE);
-			if( lFlag & 0x80000 )::wcsncat_s(pOpt, L"D", _TRUNCATE);
+			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダーからも検索する */
+			if( lFlag & 0x04 )wcscat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
+			if( lFlag & 0x08 )wcscat( pOpt, L"R" );	/* 正規表現 */
+			if(          0x20 == (lFlag & 0x400020) )wcscat( pOpt, L"P" );	// 行を出力する
+			else if( 0x400000 == (lFlag & 0x400020) )wcscat( pOpt, L"N" );	// 否ヒット行を出力する
+			if(      0x40 == (lFlag & 0xC0) )wcscat( pOpt, L"2" );	/* Grep: 出力形式 */
+			else if( 0x80 == (lFlag & 0xC0) )wcscat( pOpt, L"3" );
+			else wcscat( pOpt, L"1" );
+			if( lFlag & 0x10000 )wcscat( pOpt, L"W" );
+			if( lFlag & 0x20000 )wcscat( pOpt, L"F" );
+			if( lFlag & 0x40000 )wcscat( pOpt, L"B" );
+			if( lFlag & 0x80000 )wcscat( pOpt, L"D" );
 			if( bGrepReplace ){
-				if( lFlag & 0x100000 )::wcsncat_s(pOpt, L"C", _TRUNCATE);
-				if( lFlag & 0x200000 )::wcsncat_s(pOpt, L"O", _TRUNCATE);
+				if( lFlag & 0x100000 )wcscat( pOpt, L"C" );
+				if( lFlag & 0x200000 )wcscat( pOpt, L"O" );
 			}
 			if( pOpt[0] != L'\0' ){
 				auto_sprintf( szTemp, L" -GOPT=%s", pOpt );
@@ -1871,7 +1871,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			);
 			bool bRet;
 			WCHAR szPath[ _MAX_PATH ];
-			::wcsncpy_s(szPath, sDefault.c_str(), _TRUNCATE);
+			wcscpy( szPath, sDefault.c_str() );
 			if( LOWORD(ID) == F_FILEOPENDIALOG ){
 				bRet = cDlgOpenFile.DoModal_GetOpenFileName( szPath );
 			}else{
@@ -2329,7 +2329,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				std::vector<wchar_t> vStrMenu;
 				int nLen = (int)wcslen(varCopy2.Data.bstrVal);
 				vStrMenu.assign( nLen + 1, L'\0' );
-				::wcsncpy_s(&vStrMenu[0], std::size(vStrMenu), varCopy2.Data.bstrVal, _TRUNCATE);
+				wcscpy(&vStrMenu[0], varCopy2.Data.bstrVal);
 				HMENU hMenu = ::CreatePopupMenu();
 				std::vector<HMENU> vHmenu;
 				vHmenu.push_back( hMenu );

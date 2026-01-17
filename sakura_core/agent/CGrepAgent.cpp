@@ -1382,8 +1382,7 @@ int CGrepAgent::DoGrepFile(
 			X / O  :                  (D)Folder(Abs) -> (G)RelPath(File)
 			X / X  : (H)FullPath
 */
-			const auto cchWork = wcslen(pszFullPath) + wcslen(pszCodeName) + 10;
-			auto pszWork = std::make_unique<wchar_t[]>(cchWork);
+			auto pszWork = std::make_unique<wchar_t[]>(wcslen(pszFullPath) + wcslen(pszCodeName) + 10);
 			wchar_t* szWork0 = &pszWork[0];
 			if( sGrepOption.bGrepOutputBaseFolder || sGrepOption.bGrepSeparateFolder ){
 				if( !bOutputBaseFolder && sGrepOption.bGrepOutputBaseFolder ){
@@ -1401,7 +1400,7 @@ int CGrepAgent::DoGrepFile(
 					if( pszFolder[0] ){
 						auto_sprintf( szWork0, L"■\"%s\"\r\n", pszFolder );	// (C), (D)
 					}else{
-						::wcsncpy_s(szWork0, cchWork, L"■\r\n", _TRUNCATE);
+						wcscpy( szWork0, L"■\r\n" );
 					}
 					cmemMessage.AppendString( szWork0 );
 					bOutputFolderName = true;
@@ -1430,7 +1429,7 @@ int CGrepAgent::DoGrepFile(
 		{
 			if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 				if( IsValidCodeType(nCharCode) ){
-					::wcsncpy_s(szCpName, CCodeTypeName(nCharCode).Bracket(), _TRUNCATE);
+					wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
 					pszCodeName = szCpName;
 				}else{
 					CCodePage::GetNameBracket(szCpName, nCharCode);
@@ -1879,7 +1878,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		{
 			if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 				if( IsValidCodeType(nCharCode) ){
-					::wcsncpy_s(szCpName, CCodeTypeName(nCharCode).Bracket(), _TRUNCATE);
+					wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
 					pszCodeName = szCpName;
 				}else{
 					CCodePage::GetNameBracket(szCpName, nCharCode);

@@ -405,15 +405,15 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 				// エスケープシーケンス文字列を出力
 				switch( echarset ){
 				case CHARSET_JIS_HANKATA:
-					::memcpy_s(pw, 3, JISESCDATA_JISX0201Katakana, 3);
+					strncpy( reinterpret_cast<char*>(pw), JISESCDATA_JISX0201Katakana, 3 );
 					pw += 3;
 					break;
 				case CHARSET_JIS_ZENKAKU:
-					::memcpy_s(pw, 3, JISESCDATA_JISX0208_1983, 3);
+					strncpy( reinterpret_cast<char*>(pw), JISESCDATA_JISX0208_1983, 3 );
 					pw += 3;
 					break;
 				default: // case CHARSET_ASCII7:
-					::memcpy_s(pw, 3, JISESCDATA_ASCII7, 3);
+					strncpy( reinterpret_cast<char*>(pw), JISESCDATA_ASCII7, 3 );
 					pw += 3;
 					break;
 				}
@@ -431,7 +431,7 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 	// CHARSET_ASCII7 でデータが終了しない場合は、変換データの最後に
 	// CHARSET_ASCII7 のエスケープシーケンスを出力
 	if( echarset_cur != CHARSET_ASCII7 ){
-		::memcpy_s(pw, 3, JISESCDATA_ASCII7, 3);
+		strncpy( reinterpret_cast<char*>(pw), JISESCDATA_ASCII7, 3 );
 		pw += 3;
 	}
 

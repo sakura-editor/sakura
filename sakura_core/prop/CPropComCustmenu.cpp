@@ -677,7 +677,8 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	ApiWrap::List_ResetContent( hwndLIST_RES );
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
-			::wcsncpy_s(szLabel, LS(STR_PROPCOMCUSTMENU_SEP), _TRUNCATE);	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			wcsncpy( szLabel, LS(STR_PROPCOMCUSTMENU_SEP), int(std::size(szLabel)) - 1 );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			szLabel[std::size(szLabel) - 1] = L'\0';
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
@@ -685,7 +686,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 		}
 		/* キー */
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
-			::wcsncpy_s(szLabel2, szLabel, _TRUNCATE);
+			wcscpy( szLabel2, szLabel );
 		}else{
 			auto_sprintf( szLabel2, L"%ls(%hc)",
 				szLabel,

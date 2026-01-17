@@ -101,7 +101,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
 			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
 				DLLSHAREDATA* pShareData = &GetDllShareData();
-				::wcsncpy_s(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll", _TRUNCATE);
+				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
 				cProfile.IOProfileData(L"Common", L"szLanguageDll", StringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
 				std::vector<std::wstring> values;
 				pcShare->ConvertLangValues( values, true );
@@ -250,7 +250,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, L"MRUFOLDER[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_szOPENFOLDERArr[i] );
 		//お気に入り	//@@@ 2003.04.08 MIK
-		::wcsncat_s(szKeyName, L".bFavorite", _TRUNCATE);
+		wcscat( szKeyName, L".bFavorite" );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] );
 	}
 	//読み込み時は残りを初期化
@@ -544,7 +544,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ));
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			::wcsncat_s(common.m_sBackup.m_szBackUpFolder, L"\\", _TRUNCATE);
+			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	cProfile.IOProfileData( pszSecName, L"szBackUpFolder", common.m_sBackup.m_szBackUpFolder );
@@ -556,7 +556,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ) );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			::wcsncat_s(common.m_sBackup.m_szBackUpFolder, L"\\", _TRUNCATE);
+			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	
@@ -773,7 +773,8 @@ EFunctionCode GetPlugCmdInfoByName(
 		return F_INVALID;
 	}
 	nLen = MAX_PLUGIN_ID < (psCmdName - pszFuncName) ? MAX_PLUGIN_ID : (psCmdName - pszFuncName);
-	::wcsncpy_s(sPluginName, nLen, pszFuncName, _TRUNCATE);
+	wcsncpy( sPluginName, pszFuncName, nLen);
+	sPluginName[nLen] = L'\0'; 
 	psCmdName++;
 
 	nId = -1;
@@ -965,7 +966,13 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 				}
 				else {
 					if (bOutCmdName) {
-						if (!CSMacroMgr::GetFuncInfoByID(menu.m_nCustMenuItemFuncArr[i][j], szFuncName)) {
+						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+							G_AppInstance(),
+							menu.m_nCustMenuItemFuncArr[i][j],
+							szFuncName,
+							nullptr
+						);
+						if ( p == nullptr ) {
 							auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
 						}
 						cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szFuncName));
@@ -1097,13 +1104,14 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						p = pn+1;
 					}
 					// KeyName
-					::wcsncpy_s(tmpKeydata.m_szKeyName, p, _TRUNCATE);
+					wcsncpy(tmpKeydata.m_szKeyName, p, int(std::size(tmpKeydata.m_szKeyName))-1);
+					tmpKeydata.m_szKeyName[std::size(tmpKeydata.m_szKeyName)-1] = '\0';
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
 						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。
 						for( int im=0; im< jpVKEXNamesLen; im++ ){
 							if( wcscmp( tmpKeydata.m_szKeyName, jpVKEXNames[im] ) == 0 ){
-								::wcsncpy_s(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName, _TRUNCATE);
+								wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName );
 								sKeyBind.m_pKeyNameArr[im + 0x0100] = tmpKeydata;
 							}
 						}
@@ -1112,12 +1120,12 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						// 割り当て済みキーコードは上書き
 						int idx = sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode];
 						if( idx != KEYNAME_SIZE ){
-							::wcsncpy_s(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName, _TRUNCATE);
+							wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName );
 							sKeyBind.m_pKeyNameArr[idx] = tmpKeydata;
 						}else{// 未割り当てキーコードは末尾に追加
 							if( nKeyNameArrUsed >= KEYNAME_SIZE ){}
 							else{
-								::wcsncpy_s(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName, _TRUNCATE);
+								wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName );
 								sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = tmpKeydata;
 								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 							}
@@ -1153,9 +1161,16 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					if (bOutCmdName) {
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 						// 2010.06.30 Moca 日本語名を取得しないように
-						if (const auto p = CSMacroMgr::GetFuncInfoByID(keydata.m_nFuncCodeArr[j], szFuncName)) {
+						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+							nullptr,
+							keydata.m_nFuncCodeArr[j],
+							szFuncName,
+							nullptr
+						);
+						if( p ) {
 							auto_sprintf(szWork, L",%ls", p);
-						} else {
+						}
+						else {
 							auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 						}
 					}
@@ -1163,7 +1178,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 					}
 				}
-				::wcsncat_s(szKeyData, szWork, _TRUNCATE);
+				wcscat(szKeyData, szWork);
 			}
 
 			if( 0x0100 <= keydata.m_nKeyCode ){
@@ -1171,7 +1186,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 			}else{
 				auto_sprintf(szWork, L",%s", keydata.m_szKeyName);
 			}
-			::wcsncat_s(szKeyData, szWork, _TRUNCATE);
+			wcscat(szKeyData, szWork);
 			cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData));
 //
 		}
@@ -1289,9 +1304,9 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
-			::wcsncpy_s(printsetting.m_szHeaderForm[0], _EDITL("$f"), _TRUNCATE);
-			::wcsncpy_s(printsetting.m_szFooterForm[0], _EDITL(""), _TRUNCATE);
-			::wcsncpy_s(printsetting.m_szFooterForm[1], _EDITL("- $p -"), _TRUNCATE);
+			wcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
+			wcscpy( printsetting.m_szFooterForm[0], _EDITL("") );
+			wcscpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
 		}
 
 		//禁則	//@@@ 2002.04.09 MIK
@@ -1347,8 +1362,8 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 			if( i == 0 ){
 				pShare->m_TypeBasis = type;
 			}
-			::wcsncpy_s(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts, _TRUNCATE);
-			::wcsncpy_s(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName, _TRUNCATE);
+			wcscpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
+			wcscpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
 			pShare->m_TypeMini[i].m_id = type.m_id;
 			pShare->m_TypeMini[i].m_encoding = type.m_encoding;
 		}
@@ -1460,7 +1475,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	// 2005.04.07 D.S.Koba
 	static const WCHAR* pszForm = L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";	//MIK
-	::wcsncpy_s(szKeyName, L"nInts", _TRUNCATE);
+	wcscpy( szKeyName, L"nInts" );
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
 			int buf[12];
@@ -2150,7 +2165,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 
 			// 読み出し
 			if( pData ){
-				::wcsncpy_s(szLine, data[dataNum++].c_str(), _TRUNCATE);
+				wcscpy(szLine, data[dataNum++].c_str());
 			}else{
 				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szLine));
 			}
@@ -2210,7 +2225,12 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			else {
 				if (bOutCmdName) {
 					// マクロ名対応
-					p = CSMacroMgr::GetFuncInfoByID(pcMenu->m_nFunc, szFuncName);
+					p = CSMacroMgr::GetFuncInfoByID(
+						G_AppInstance(),
+						pcMenu->m_nFunc,
+						szFuncName,
+						nullptr
+					);
 				}
 				if ( !bOutCmdName || p == nullptr ) {
 					auto_sprintf( szFuncName, L"%d", pcMenu->m_nFunc );

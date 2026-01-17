@@ -36,7 +36,7 @@ void CLineComment::CopyTo( const int n, const wchar_t* buffer, int nCommentPos )
 {
 	auto nStrLen = int(wcslen(buffer));
 	if( 0 < nStrLen && nStrLen < COMMENT_DELIMITER_BUFFERSIZE ){
-		::wcsncpy_s(m_pszLineComment[n], buffer, _TRUNCATE);
+		wcscpy( m_pszLineComment[n], buffer );
 		m_nLineCommentPos[n] = nCommentPos;
 		m_nLineCommentLen[n] = nStrLen;
 	}

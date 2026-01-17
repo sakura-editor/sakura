@@ -157,7 +157,11 @@ public:
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
 		auto nWildCardLen = int(wcslen(lpKeys));
-		auto pWildCard = ::_wcsdup(lpKeys);
+		WCHAR* pWildCard = new WCHAR[nWildCardLen + 1];
+		if (!pWildCard) {
+			return patterns;
+		}
+		wcscpy(pWildCard, lpKeys);
 
 		int nPos = 0;
 		WCHAR*	token;
@@ -201,7 +205,9 @@ private:
 
 	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
-			keys.push_back(::_wcsdup(addKey));
+			WCHAR* newKey = new WCHAR[ wcslen( addKey ) + 1 ];
+			wcscpy( newKey, addKey );
+			keys.push_back( newKey );
 		}
 	}
 

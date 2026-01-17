@@ -136,7 +136,7 @@ void CDlgExec::SetData( void )
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	const int nCommandsCount = m_pShareData->m_sHistory.m_aCommands.size();
 	if( 0 < nCommandsCount ){
-		::wcsncpy_s(m_szCommand, m_pShareData->m_sHistory.m_aCommands[0], _TRUNCATE);
+		wcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
 		for( i = 0; i < nCommandsCount; ++i ){
 			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
@@ -148,7 +148,7 @@ void CDlgExec::SetData( void )
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	const int nCurDirsCount = m_pShareData->m_sHistory.m_aCurDirs.size();
 	if( 0 < nCurDirsCount ){
-		::wcsncpy_s(m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0], _TRUNCATE);
+		wcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
 		for( i = 0; i < nCurDirsCount; ++i ){
 			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
@@ -250,7 +250,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-				::wcsncpy_s(m_szCommand, szPath, _TRUNCATE);
+				wcscpy( m_szCommand, szPath );
 				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand );
 			}
 		}

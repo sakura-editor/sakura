@@ -61,7 +61,7 @@ int CRecentGrepFolder::CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) co
 
 void CRecentGrepFolder::CopyItem( CGrepFolderString* dst, LPCWSTR src ) const
 {
-	::wcsncpy_s(*dst, src, _TRUNCATE);
+	wcscpy(*dst,src);
 }
 
 bool CRecentGrepFolder::ValidateReceiveType( LPCWSTR p ) const

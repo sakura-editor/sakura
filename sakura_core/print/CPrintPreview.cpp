@@ -1028,7 +1028,7 @@ void CPrintPreview::OnPrint( void )
 
 	/* プリンターに渡すジョブ名を生成 */
 	if( ! m_pParentWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
-		::wcsncpy_s(szJobName, LS(STR_NO_TITLE2), _TRUNCATE);
+		wcscpy( szJobName, LS(STR_NO_TITLE2) );
 	}else{
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
@@ -1471,7 +1471,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				if( m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-						::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
+						wcscpy( szLineNum, L" " );
 					}else{
 						_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 					}
@@ -1486,10 +1486,10 @@ CColorStrategy* CPrintPreview::DrawPageText(
 					wchar_t szLineTerm[2];
 					szLineTerm[0] = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
 					szLineTerm[1] = L'\0';
-					::wcsncat_s(szLineNum, szLineTerm, _TRUNCATE);
+					wcscat( szLineNum, szLineTerm );
 				}
 				else{
-					::wcsncat_s(szLineNum, L" ", _TRUNCATE);
+					wcscat( szLineNum, L" " );
 				}
 
 				//文字列長
@@ -1887,7 +1887,7 @@ void CPrintPreview::SetPreviewFontHan( const LOGFONT* lf )
 	//	PrintSettingからコピー
 	m_lfPreviewHan.lfHeight			= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewHan.lfWidth	= 0;
-	::wcsncpy_s(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan, _TRUNCATE);
+	wcscpy(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan);
 }
 
 void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
@@ -1896,7 +1896,7 @@ void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
 	//	PrintSettingからコピー
 	m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewZen.lfWidth	= 0;
-	::wcsncpy_s(m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen, _TRUNCATE);
+	wcscpy(m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
 }
 
 int CALLBACK CPrintPreview::MyEnumFontFamProc(
@@ -2178,7 +2178,7 @@ void CPrintPreview::CreateFonts( HDC hdc )
 	// 印刷用半角フォントを作成 -> m_hFontHan
 	m_lfPreviewHan.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewHan.lfWidth = 0;
-	::wcsncpy_s(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan, _TRUNCATE);
+	wcscpy( m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan );
 	m_hFontHan	= CreateFontIndirect( &m_lfPreviewHan );
 	if (m_pPrintSetting->m_bColorPrint) {
 		lf = m_lfPreviewHan;	lf.lfWeight = FW_BOLD;
@@ -2202,7 +2202,7 @@ void CPrintPreview::CreateFonts( HDC hdc )
 	if (wcscmp(m_pPrintSetting->m_szPrintFontFaceHan, m_pPrintSetting->m_szPrintFontFaceZen)) {
 		m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
 		m_lfPreviewZen.lfWidth	= 0;
-		::wcsncpy_s(m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen, _TRUNCATE);
+		wcscpy( m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
 		m_hFontZen	= CreateFontIndirect( &m_lfPreviewZen );
 		if (m_pPrintSetting->m_bColorPrint) {
 			lf = m_lfPreviewZen;	lf.lfWeight = FW_BOLD;

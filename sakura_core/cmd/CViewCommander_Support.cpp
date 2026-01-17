@@ -228,7 +228,7 @@ retry:;
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 		GetInidirOrExedir( path, helpfile );
 	}else{
-		::wcsncpy_s(path, helpfile, _TRUNCATE);
+		wcscpy( path, helpfile );
 	}
 	// 2012.09.26 Moca HTMLHELP対応
 	WCHAR	szExt[_MAX_EXT];

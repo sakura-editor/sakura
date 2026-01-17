@@ -47,7 +47,7 @@ bool CRecentFile::TextToDataType( EditInfo* dst, LPCWSTR pszText ) const
 	if( int(std::size(dst->m_szPath)) < wcslen(pszText) + 1 ){
 		return false;
 	}
-	::wcsncpy_s(dst->m_szPath, pszText, _TRUNCATE);
+	wcscpy(dst->m_szPath, pszText);
 	return true;
 }
 

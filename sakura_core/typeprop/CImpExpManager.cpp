@@ -88,7 +88,7 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 	wchar_t		conv[_MAX_PATH+1];
 	wchar_t*	p;
 
-	::wcsncpy_s(conv, trg, _TRUNCATE);
+	wcscpy( conv, trg );
 
 	p = conv;
 	while ( (p = wcspbrk( p, L"\t\\:*?\"<>|" )) != nullptr ) {
@@ -119,7 +119,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 	WCHAR	szPath[_MAX_PATH + 1];
 	szPath[0] = L'\0';
 	if( !GetFileName().empty() ){
-		::wcsncpy_s(szPath, GetFullPath().c_str(), _TRUNCATE);
+		wcscpy( szPath, GetFullPath().c_str());
 	}
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return false;
@@ -166,7 +166,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 	WCHAR			szPath[_MAX_PATH + 1];
 	szPath[0] = L'\0';
 	if( !GetFileName().empty() ){
-		::wcsncpy_s(szPath, GetFullPath().c_str(), _TRUNCATE);
+		wcscpy( szPath, GetFullPath().c_str());
 	}
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return false;
@@ -311,7 +311,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	m_nIdx = m_Types.m_nIdx;
 	if (m_nIdx == 0) {
 		// 基本の場合の名前と拡張子を初期化
-		::wcsncpy_s(m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS), _TRUNCATE);
+		wcscpy( m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS) );
 		m_Types.m_szTypeExts[0] = L'\0';
 		m_Types.m_id = 0;
 	}else{
@@ -451,7 +451,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		if (m_Types.m_nKeyWordSetIdx[i] >= 0) {
 			nIdx = m_Types.m_nKeyWordSetIdx[i];
 			auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
-			::wcsncpy_s(buff, cKeyWordSetMgr.GetTypeName( nIdx ), _TRUNCATE);
+			wcscpy( buff, cKeyWordSetMgr.GetTypeName( nIdx ));
 			cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(buff));
 
 			// 大文字小文字区別
@@ -462,7 +462,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 			cImpExpKeyWord.SetBaseName( common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( nIdx ));
 
 			if ( cImpExpKeyWord.Export( cImpExpKeyWord.GetFullPath(), sTmpMsg ) ) {
-				::wcsncpy_s(szFileName, cImpExpKeyWord.GetFileName().c_str(), _TRUNCATE);
+				wcscpy( szFileName, cImpExpKeyWord.GetFileName().c_str());
 				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
 				if (cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
 					files += std::wstring( L"\n" ) + cImpExpKeyWord.GetFileName();
@@ -486,7 +486,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
-			::wcsncat_s(szId, szPlug, _TRUNCATE);
+			wcscat( szId, szPlug );
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szId));
 	}
@@ -497,7 +497,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
-			::wcsncat_s(szId, szPlug, _TRUNCATE);
+			wcscat( szId, szPlug );
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szId));
 	}
@@ -791,8 +791,8 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
-		::wcsncpy_s(m_Types.m_KeyHelpArr[i].m_szAbout, p4, _TRUNCATE);
-		::wcsncpy_s(m_Types.m_KeyHelpArr[i].m_szPath, p3, _TRUNCATE);
+		wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p4);
+		wcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  p3);
 		i++;
 	}
 	in.Close();
@@ -913,7 +913,8 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				int n, kc, nc;
 				//値 -> szData
 				wchar_t szData[1024];
-				::wcsncpy_s(szData, in2.ReadLineW().c_str(), _TRUNCATE);
+				wcsncpy(szData, in2.ReadLineW().c_str(), int(std::size(szData)) - 1);
+				szData[std::size(szData) - 1] = L'\0';
 
 				//解析開始
 				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
@@ -948,7 +949,8 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 					p = q + 1;
 				}
 
-				::wcsncpy_s(sKeyBind.m_pKeyNameArr[i].m_szKeyName, p, _TRUNCATE);
+				wcsncpy(sKeyBind.m_pKeyNameArr[i].m_szKeyName, p, _countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1);
+				sKeyBind.m_pKeyNameArr[i].m_szKeyName[_countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1] = '\0';
 			}
 		}
 	}

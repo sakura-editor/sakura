@@ -249,20 +249,20 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
 	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		::wcsncpy_s(m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);		/* 検索ファイル */
+		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		::wcsncpy_s(m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
+		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	
 	/* 除外ファイル */
 	if (m_szExcludeFile[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-			::wcsncpy_s(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);
+			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
 		}
 		else {
 			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
-			::wcsncpy_s(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN, _TRUNCATE);	/* 除外ファイル */
+			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN);	/* 除外ファイル */
 
 			/* 履歴に残して後で選択できるようにする */
 			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(DEFAULT_EXCLUDE_FILE_PATTERN);
@@ -272,11 +272,11 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	/* 除外フォルダー */
 	if (m_szExcludeFolder[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-			::wcsncpy_s(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);
+			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
 		}
 		else {
 			/* ユーザーの利便性向上のために除外フォルダーに対して初期値を設定する */
-			::wcsncpy_s(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN, _TRUNCATE);	/* 除外フォルダー */
+			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
 			
 			/* 履歴に残して後で選択できるようにする */
 			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
@@ -284,7 +284,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	}
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
-		::wcsncpy_s(m_szCurrentFilePath, pszCurrentFilePath, _TRUNCATE);
+		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)nullptr );
@@ -391,7 +391,7 @@ LRESULT CALLBACK CDlgGrep::OnFolderProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 		if( IsFileExists( sPath, true )){	//	第2引数がtrueだとディレクトリは対象外
 			SFilePath szWork;
 			SplitPath_FolderAndFile( sPath, szWork, nullptr );
-			::wcsncpy_s(sPath, szWork, _TRUNCATE);
+			wcscpy( sPath, szWork );
 		}
 
 		SetGrepFolder(hwnd, sPath);
@@ -452,20 +452,24 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
-				::wcsncpy_s(szFolder, vPaths.rbegin()->c_str(), _TRUNCATE);
+				wcsncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
+				szFolder[nMaxPath-1] = L'\0';
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
 					szFolder[0] = L'\0';
 					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
 						WCHAR szFolderItem[nMaxPath];
-						::wcsncpy_s(szFolderItem, vPaths[i].c_str(), _TRUNCATE);
+						wcsncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
+						szFolderItem[nMaxPath-1] = L'\0';
 						if( wcschr( szFolderItem, L';' ) ){
 							szFolderItem[0] = L'"';
-							::wcsncat_s(szFolderItem, vPaths[i].c_str(), _TRUNCATE);
-							::wcsncat_s(szFolderItem, L"\"", _TRUNCATE);
+							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
+							szFolderItem[nMaxPath-1] = L'\0';
+							wcscat( szFolderItem, L"\"" );
+							szFolderItem[nMaxPath-1] = L'\0';
 						}
 						if( i ){
-							::wcsncat_s(szFolder, L";", _TRUNCATE);
+							wcscat( szFolder, L";" );
 							szFolder[nMaxPath-1] = L'\0';
 						}
 						wcscat_s( szFolder, nMaxPath, szFolderItem );
@@ -861,7 +865,7 @@ int CDlgGrep::GetData( void )
 		//	Jun. 16, 2003 Moca
 		//	検索パターンが指定されていない場合のメッセージ表示をやめ、
 		//	「*.*」が指定されたものと見なす．
-		::wcsncpy_s(m_szFile, L"*.*", _TRUNCATE);
+		wcscpy( m_szFile, L"*.*" );
 	}
 	if( m_szFolder[0] == L'\0' ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGGREP4) );
@@ -893,7 +897,7 @@ int CDlgGrep::GetData( void )
 			if( wcschr( szFolderItem, L';' ) ){
 				szFolderItem[0] = L'"';
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
-				::wcsncat_s(szFolderItem, L"\"", _TRUNCATE);
+				wcscat(szFolderItem, L"\"");
 			}
 			auto nFolderItemLen = int(wcslen(szFolderItem));
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
@@ -901,12 +905,12 @@ int CDlgGrep::GetData( void )
 				return FALSE;
 			}
 			if( i ){
-				::wcsncat_s(szFolder, L";", _TRUNCATE);
+				wcscat( szFolder, L";" );
 			}
-			::wcsncat_s(szFolder, szFolderItem, _TRUNCATE);
+			wcscat( szFolder, szFolderItem );
 			nFolderLen = (int)wcslen( szFolder );
 		}
-		::wcsncpy_s(m_szFolder, szFolder, _TRUNCATE);
+		wcscpy( m_szFolder, szFolder );
 	}
 
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更

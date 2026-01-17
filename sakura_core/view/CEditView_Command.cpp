@@ -71,14 +71,14 @@ bool CEditView::TagJumpSub(
 			GetInidirOrExedir( szJumpToFile, pszFileName );
 		}
 		else {
-			::wcsncpy_s(szJumpToFile, pszFileName, _TRUNCATE);
+			wcscpy( szJumpToFile, pszFileName );
 		}
 
 		/* ロングファイル名を取得する */
 		WCHAR	szWork[1024];
 		if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 		{
-			::wcsncpy_s(szJumpToFile, szWork, _TRUNCATE);
+			wcscpy( szJumpToFile, szWork );
 		}
 	}
 
@@ -130,7 +130,7 @@ bool CEditView::TagJumpSub(
 		EditInfo	inf;
 		bool		bSuccess;
 
-		::wcsncpy_s(inf.m_szPath, szJumpToFile, _TRUNCATE);
+		wcscpy( inf.m_szPath, szJumpToFile );
 		inf.m_ptCursor.Set(CLogicInt(ptJumpTo.x - 1), CLogicInt(ptJumpTo.y - 1));
 		inf.m_nViewLeftCol = CLayoutInt(-1);
 		inf.m_nViewTopLine = CLayoutInt(-1);

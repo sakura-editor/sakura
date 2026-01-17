@@ -85,7 +85,8 @@ bool CKeyWordSetMgr::AddKeyWordSet(
 		--m_nKeyWordSetNum;	//	キーワードセットの追加をキャンセルする
 		return false;
 	}
-	::wcsncpy_s(m_szSetNameArr[nIdx], pszSetName, _TRUNCATE);
+	wcsncpy( m_szSetNameArr[nIdx], pszSetName, _countof(m_szSetNameArr[nIdx]) - 1 );
+	m_szSetNameArr[nIdx][_countof(m_szSetNameArr[nIdx]) - 1] = L'\0';
 	m_bKEYWORDCASEArr[nIdx] = bKEYWORDCASE;
 	m_nKeyWordNumArr[nIdx] = 0;
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
@@ -146,7 +147,8 @@ const wchar_t* CKeyWordSetMgr::SetTypeName( int nIdx, const wchar_t* name )
 	if( nullptr == name || nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
 		return nullptr;
 	}
-	::wcsncpy_s(m_szSetNameArr[nIdx], MAX_SETNAMELEN, name, _TRUNCATE);
+	wcsncpy( m_szSetNameArr[nIdx], name, MAX_SETNAMELEN );
+	m_szSetNameArr[nIdx][MAX_SETNAMELEN] = L'\0';
 	return m_szSetNameArr[nIdx];
 }
 
@@ -203,7 +205,8 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 	}
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
 	wchar_t* p = m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2];
-	::wcsncpy_s(p, MAX_KEYWORDLEN, pszKeyWord, _TRUNCATE);
+	wcsncpy( p, pszKeyWord, MAX_KEYWORDLEN );
+	p[MAX_KEYWORDLEN] = L'\0';
 	return p;
 }
 
@@ -245,7 +248,7 @@ int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
 		wmemcpy( m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord, MAX_KEYWORDLEN );
 		m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]][MAX_KEYWORDLEN] = L'\0';
 	}else{
-		::wcsncpy_s(m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord, _TRUNCATE);
+		wcscpy( m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord );
 	}
 	m_nKeyWordNumArr[nIdx]++;
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
@@ -273,7 +276,7 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, LPARAM lParam )
 	int  i;
 	int  endPos = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
 	for( i = m_nStartIdx[nIdx] + nIdx2; i < endPos; ++i ){
-		::wcsncpy_s(m_szKeyWordArr[i], m_szKeyWordArr[i + 1], _TRUNCATE);
+		wcscpy( m_szKeyWordArr[i], m_szKeyWordArr[i + 1] );
 	}
 	m_nKeyWordNumArr[nIdx]--;
 
@@ -462,7 +465,7 @@ int CKeyWordSetMgr::SetKeyWordArr(
 	}
 	int cnt, i;
 	for( cnt = 0, i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + nSize; cnt++, i++ ){
-		::wcsncpy_s(m_szKeyWordArr[i], ppszKeyWordArr[cnt], _TRUNCATE);
+		wcscpy( m_szKeyWordArr[i], ppszKeyWordArr[cnt] );
 	}
 	m_nKeyWordNumArr[nIdx] = nSize;
 	return nSize;

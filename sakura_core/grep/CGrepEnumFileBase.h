@@ -100,8 +100,11 @@ public:
 		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, 4096 - 1) : 0; // FIXME: パス長の上限は暫定値。
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
 			const auto baseLen = cchBaseFolder;
-			std::filesystem::path fileNamePattern{ lpBaseFolder };
-			fileNamePattern /= vecKeys[i];
+			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
+			if( nullptr == lpPath ) break;
+			wcscpy( lpPath, lpBaseFolder );
+			wcscpy( lpPath + baseLen, L"\\" );
+			wcscpy( lpPath + baseLen + 1, vecKeys[ i ] );
 			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
 			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
 			const WCHAR* keyDirSlash = wcsrchr( vecKeys[ i ], L'/' );
@@ -118,7 +121,7 @@ public:
 			const auto nKeyDirLen = keyDir ? keyDir - vecKeys[ i ] + 1 : 0;
 
 			WIN32_FIND_DATA w32fd;
-			HANDLE handle = ::FindFirstFileW(fileNamePattern.c_str(), &w32fd);
+			HANDLE handle = ::FindFirstFile( lpPath, &w32fd );
 			if( INVALID_HANDLE_VALUE != handle ){
 				do{
 					if( !::PathMatchSpec(w32fd.cFileName, vecKeys[ i ] + nKeyDirLen) ){
@@ -133,15 +136,13 @@ public:
 					if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
 						continue;
 					}
-					const auto cchName = nKeyDirLen + wcslen(w32fd.cFileName) + 1;
-					LPWSTR lpName = new WCHAR[cchName];
-					::wcsncpy_s(lpName, cchName, vecKeys[ i ], _TRUNCATE);
-					::wcsncat_s(lpName, cchName, w32fd.cFileName, _TRUNCATE);
-					const auto cchFullPath = baseLen + wcslen(lpName) + 2;
-					LPWSTR lpFullPath = new WCHAR[cchFullPath];
-					::wcsncpy_s(lpFullPath, cchFullPath, lpBaseFolder, _TRUNCATE);
-					::wcsncat_s(lpFullPath, cchFullPath, L"\\", _TRUNCATE);
-					::wcsncat_s(lpFullPath, cchFullPath, lpName, _TRUNCATE);
+					LPWSTR lpName = new WCHAR[ nKeyDirLen + wcslen( w32fd.cFileName ) + 1 ];
+					wcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
+					wcscpy( lpName + nKeyDirLen, w32fd.cFileName );
+					LPWSTR lpFullPath = new WCHAR[ baseLen + wcslen(lpName) + 2 ];
+					wcscpy( lpFullPath, lpBaseFolder );
+					wcscpy( lpFullPath + baseLen, L"\\" );
+					wcscpy( lpFullPath + baseLen + 1, lpName );
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){
 						}else{
@@ -161,6 +162,7 @@ public:
 				}while( ::FindNextFile( handle, &w32fd ) );
 				::FindClose( handle );
 			}
+			delete [] lpPath;
 		}
 		return found;
 	}

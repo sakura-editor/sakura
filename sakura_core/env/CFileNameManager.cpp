@@ -57,20 +57,21 @@ LPWSTR CFileNameManager::GetTransformFileNameFast( LPCWSTR pszSrc, LPWSTR pszDes
 			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[m_nTransformFileNameOrgId[0]]
 		);
 		for( i = 1; i < m_nTransformFileNameCount; i++ ){
-			::wcsncpy_s(szBuf, pszDest, _TRUNCATE);
+			wcscpy( szBuf, pszDest );
 			GetFilePathFormat( szBuf, pszDest, nDestLen,
 				m_szTransformFileNameFromExp[i],
 				m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[m_nTransformFileNameOrgId[i]] );
 		}
 		if( nPxWidth != -1 ){
-			::wcsncpy_s(szBuf, pszDest, _TRUNCATE);
+			wcscpy( szBuf, pszDest );
 			GetShortViewPath( pszDest, nDestLen, szBuf, hDC, nPxWidth, bFitMode );
 		}
 	}else if( nPxWidth != -1 ){
 		GetShortViewPath( pszDest, nDestLen, pszSrc, hDC, nPxWidth, bFitMode );
 	}else{
 		// 変換する必要がない コピーだけする
-		::wcsncpy_s(pszDest, nDestLen, pszSrc, _TRUNCATE);
+		wcsncpy( pszDest, pszSrc, nDestLen - 1 );
+		pszDest[nDestLen - 1] = '\0';
 	}
 	return pszDest;
 }
@@ -221,7 +222,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 					; // 読み飛ばす
 				for( ; nMetaLen == pAlias->nLenth; pAlias++ ){
 					if( 0 == wmemicmp( pAlias->szAlias, szMeta ) ){
-						::wcsncpy_s(szMeta, pAlias->szOrig, _TRUNCATE);
+						wcscpy( szMeta, pAlias->szOrig );
 						break;
 					}
 				}
@@ -242,7 +243,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 					if( nullptr != pStr ){
 						nPathLen = (int)wcslen( pStr );
 						if( nPathLen < _MAX_PATH ){
-							::wcsncpy_s(szPath, pStr, _TRUNCATE);
+							wcscpy( szPath, pStr );
 						}else{
 							*pd = L'\0';
 							return false;

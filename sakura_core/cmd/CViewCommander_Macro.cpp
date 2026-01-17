@@ -48,7 +48,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD24), nRet );
 			return;
 		}else{
-			::wcsncpy_s(GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir, _TRUNCATE);
+			wcscpy( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
 		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		int nSaveResult = m_pcSMacroMgr->Save(
@@ -97,7 +97,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
 		GetInidirOrExedir( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );
 	}else{
-		::wcsncpy_s(szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, _TRUNCATE);	/* マクロ用フォルダー */
+		wcscpy( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );	/* マクロ用フォルダー */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -112,7 +112,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	/* ファイルのフルパスを、フォルダーとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 //	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, NULL );
-//	::wcsncat_s(GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, L"\\", _TRUNCATE);
+//	wcscat( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, L"\\" );
 
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -142,7 +142,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	if( _IS_REL_PATH( pszFolder ) ){
 		GetInidirOrExedir( szInitDir, pszFolder );
 	}else{
-		::wcsncpy_s(szInitDir, pszFolder, _TRUNCATE);	/* マクロ用フォルダー */
+		wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダー */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -159,7 +159,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 
 	/* キーボードマクロの読み込み */
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む
-	::wcsncpy_s(GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szPath, _TRUNCATE);
+	wcscpy(GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szPath);
 //	GetDllShareData().m_CKeyMacroMgr.LoadKeyMacro( G_AppInstance(), m_pCommanderView->GetHwnd(), szPath );
 	return;
 }
@@ -218,7 +218,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 		if( _IS_REL_PATH( pszFolder ) ){
 			GetInidirOrExedir( szInitDir, pszFolder );
 		}else{
-			::wcsncpy_s(szInitDir, pszFolder, _TRUNCATE);	/* マクロ用フォルダー */
+			wcscpy( szInitDir, pszFolder );	/* マクロ用フォルダー */
 		}
 		/* ファイルオープンダイアログの初期化 */
 		cDlgOpenFile.Create(
