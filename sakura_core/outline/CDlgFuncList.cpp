@@ -568,9 +568,9 @@ void CDlgFuncList::SetData()
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncLineCRLF);
+				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineCRLF));
 			}else{
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncLineLAYOUT);
+				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineLAYOUT));
 			}
 			item.mask = LVIF_TEXT | LVIF_PARAM;
 			item.pszText = szText;
@@ -582,9 +582,9 @@ void CDlgFuncList::SetData()
 			// 2010.03.17 syat 桁追加
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncColCRLF);
+				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColCRLF));
 			}else{
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncColLAYOUT);
+				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColLAYOUT));
 			}
 			item.mask = LVIF_TEXT;
 			item.pszText = szText;
@@ -626,8 +626,8 @@ void CDlgFuncList::SetData()
 					szText, _TRUNCATE,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+					int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
+					int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				// "%s(%s)\r\n"
@@ -641,8 +641,8 @@ void CDlgFuncList::SetData()
 					szText, _TRUNCATE,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+					int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
+					int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
@@ -1131,8 +1131,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 			szText, _TRUNCATE,
 			L"%s(%d,%d): ",
 			m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-			pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-			pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+			int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
+			int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%s%ls\r\n"
@@ -1196,9 +1196,9 @@ void CDlgFuncList::SetListVB (void)
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncLineCRLF);
+			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineCRLF));
 		}else{
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncLineLAYOUT);
+			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineLAYOUT));
 		}
 		item.mask = LVIF_TEXT | LVIF_PARAM;
 		item.pszText = szText;
@@ -1210,9 +1210,9 @@ void CDlgFuncList::SetListVB (void)
 		// 2010.03.17 syat 桁追加
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncColCRLF);
+			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColCRLF));
 		}else{
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", pcFuncInfo->m_nFuncColLAYOUT);
+			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColLAYOUT));
 		}
 		item.mask = LVIF_TEXT;
 		item.pszText = szText;
@@ -1320,8 +1320,8 @@ void CDlgFuncList::SetListVB (void)
 				szText, _TRUNCATE,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+				int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
+				int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s(%s)\r\n"
@@ -1335,8 +1335,8 @@ void CDlgFuncList::SetListVB (void)
 				szText, _TRUNCATE,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+				int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
+				int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s\r\n"
@@ -1460,8 +1460,8 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
 					WCHAR linenum[32];
 					auto_snprintf_s( linenum, _TRUNCATE, L"(%d,%d): ",
-						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
+						int(pcFuncInfo->m_nFuncLineCRLF),				/* 検出行番号 */
+						int(pcFuncInfo->m_nFuncColCRLF)					/* 検出桁番号 */
 					);
 					text.AppendString( linenum );
 				}

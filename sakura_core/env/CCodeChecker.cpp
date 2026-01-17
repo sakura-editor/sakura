@@ -177,7 +177,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		if( point.x == -1 ){
 			cmemChar.SetString(LS(STR_ERR_CSHAREDATA22));
 		}else{
-			auto_snprintf_s(szLineNum, _TRUNCATE, L"%d", (int)((Int)point.x) + 1);
+		auto_snprintf_s(szLineNum, _TRUNCATE, L"%d", int(point.x) + 1);
 			::wcsncat_s(szLineNum, LS(STR_DLGFNCLST_LIST_COL), _TRUNCATE);
 			CUnicode().UnicodeToHex(std::wstring_view{ cmemChar.GetStringPtr(), size_t(cmemChar.GetStringLength()) }, szCharCode, &GetDllShareData().m_Common.m_sStatusbar);
 		}
