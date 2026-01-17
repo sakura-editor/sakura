@@ -73,12 +73,15 @@ uint32_t CRunningTimer::Read() const
 */
 void CRunningTimer::WriteTrace( std::wstring_view msg )
 {
-	WriteTraceFormat( L"%s", msg.data() );
+	const auto currentTime = GetTime();
+	WriteTraceInternal(currentTime, TraceType::Normal, msg);
 }
 
 void CRunningTimer::WriteTrace( int32_t n )
 {
-	WriteTraceFormat( L"%d", n );
+	const auto currentTime = GetTime();
+	const auto msg = std::format(L"{}", n);
+	WriteTraceInternal(currentTime, TraceType::Normal, msg);
 }
 
 CRunningTimer::TimePoint CRunningTimer::GetTime()
@@ -115,8 +118,8 @@ void CRunningTimer::FlushPendingTraces()
 void CRunningTimer::OutputHeader() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		Output(std::format(L"| timestamp (s) | {:<{}} | time (ms) | diff (ms) | message\n", L"name", m_nNameOutputWidth));
-		Output(std::format(L"|--------------:|-{:-<{}}-|----------:|----------:|--------\n", L"", m_nNameOutputWidth));
+		Output(L"| timestamp (s) | {:<{}} | time (ms) | diff (ms) | message\n", L"name", m_nNameOutputWidth);
+		Output(L"|--------------:|-{:-<{}}-|----------:|----------:|--------\n", L"", m_nNameOutputWidth);
 	}else{
 		// 従来形式では出力するものなし
 	}
@@ -142,13 +145,13 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 			//msg = msg
 		}
 
-		Output(std::format(L"| {:13.6f} | {:.{}}{:<{}} | {:9.3f} | {:9.3f} | {}\n",
+		Output(L"| {:13.6f} | {:.{}}{:<{}} | {:9.3f} | {:9.3f} | {}\n",
 			GetElapsedTimeInSeconds( CRunningTimer::m_initialTime, currentTime ),
 			L"_ _ _ _ _ _ _ _ _ _ ", m_nDepth * 2, m_timerName, (m_nNameOutputWidth - (m_nDepth * 2)),
 			GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0,
 			GetElapsedTimeInSeconds( m_lastTime, currentTime ) * 1000.0,
 			msg
-		));
+		);
 	}else{
 		if( traceType == TraceType::Enter ){
 			msg = L"Enter";
@@ -159,18 +162,18 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 		}
 
 		if( traceType == TraceType::Enter ){
-			Output(std::format(L"{:3d}:\"{}\" : {}\n",
+			Output(L"{:3d}:\"{}\" : {}\n",
 				m_nDepth,
 				m_timerName,
 				msg
-			));
+			);
 		}else{
-			Output(std::format(L"{:3d}:\"{}\", {}㍉秒 : {}\n",
+			Output(L"{:3d}:\"{}\", {}㍉秒 : {}\n",
 				m_nDepth,
 				m_timerName,
 				(int)(GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0),
 				msg
-			));
+			);
 		}
 	}
 }
