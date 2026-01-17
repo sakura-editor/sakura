@@ -9,7 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -136,7 +136,7 @@ protected:
 	void OutputHeader() const;
 	void OutputFooter() const;
 	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const;
-	void Output( std::wstring_view fmt, ... ) const;
+	void Output(const std::wstring& text) const;
 
 private:
 	TimePoint		m_startTime;				// 計測開始時間

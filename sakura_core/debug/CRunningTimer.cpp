@@ -9,7 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,7 +17,6 @@
 
 #include "StdAfx.h"
 #include "debug/CRunningTimer.h"
-#include <stdarg.h>
 
 int CRunningTimer::m_nNestCount = 0;
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
@@ -116,8 +115,8 @@ void CRunningTimer::FlushPendingTraces()
 void CRunningTimer::OutputHeader() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		Output( L"| timestamp (s) | %-*s | time (ms) | diff (ms) | message\n", m_nNameOutputWidth, L"name" );
-		Output( L"|--------------:|-%.*s-|----------:|----------:|--------\n", m_nNameOutputWidth, L"----------------------------------------------------------------------------------------------------" );
+		Output(std::format(L"| timestamp (s) | {:<{}} | time (ms) | diff (ms) | message\n", L"name", m_nNameOutputWidth));
+		Output(std::format(L"|--------------:|-{:-<{}}-|----------:|----------:|--------\n", L"", m_nNameOutputWidth));
 	}else{
 		// 従来形式では出力するものなし
 	}
@@ -126,7 +125,7 @@ void CRunningTimer::OutputHeader() const
 void CRunningTimer::OutputFooter() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		Output( L"\n" );
+		Output(L"\n");
 	}else{
 		// 従来形式では出力するものなし
 	}
@@ -143,12 +142,13 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 			//msg = msg
 		}
 
-		Output( L"| %13.6f | %.*s%-*s | %9.3f | %9.3f | %s\n",
+		Output(std::format(L"| {:13.6f} | {:.{}}{:<{}} | {:9.3f} | {:9.3f} | {}\n",
 			GetElapsedTimeInSeconds( CRunningTimer::m_initialTime, currentTime ),
-			m_nDepth * 2, L"_ _ _ _ _ _ _ _ _ _ ", (m_nNameOutputWidth - (m_nDepth * 2)), m_timerName.c_str(),
+			L"_ _ _ _ _ _ _ _ _ _ ", m_nDepth * 2, m_timerName, (m_nNameOutputWidth - (m_nDepth * 2)),
 			GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0,
 			GetElapsedTimeInSeconds( m_lastTime, currentTime ) * 1000.0,
-			msg.data() );
+			msg
+		));
 	}else{
 		if( traceType == TraceType::Enter ){
 			msg = L"Enter";
@@ -159,29 +159,23 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 		}
 
 		if( traceType == TraceType::Enter ){
-			Output( L"%3d:\"%s\" : %s\n",
+			Output(std::format(L"{:3d}:\"{}\" : {}\n",
 				m_nDepth,
-				m_timerName.c_str(),
-				msg.data() );
+				m_timerName,
+				msg
+			));
 		}else{
-			Output( L"%3d:\"%s\", %d㍉秒 : %s\n",
+			Output(std::format(L"{:3d}:\"{}\", {}㍉秒 : {}\n",
 				m_nDepth,
-				m_timerName.c_str(),
+				m_timerName,
 				(int)(GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0),
-				msg.data() );
+				msg
+			));
 		}
 	}
 }
 
-void CRunningTimer::Output( std::wstring_view fmt, ... ) const
+void CRunningTimer::Output(const std::wstring& text) const
 {
-	va_list args;
-	va_start( args, fmt );
-
-	std::wstring str;
-	vstrprintf( str, fmt.data(), args );
-
-	va_end( args );
-
-	OutputDebugStringW( str.data() );
+	::OutputDebugStringW(text.c_str());
 }

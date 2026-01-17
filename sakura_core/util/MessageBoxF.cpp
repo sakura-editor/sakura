@@ -24,6 +24,8 @@
 #include "CSelectLang.h"
 #include "config/app_constants.h"
 
+std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList);
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -179,12 +179,8 @@ template<typename... Params> requires (... && !is_strict_integer_v<Params>) inli
 std::wstring& eos(std::wstring& strOut, size_t cchOut);
 std::string& eos(std::string& strOut, size_t cchOut);
 
-int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList);
-int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList);
 int strprintf(std::wstring& strOut, const WCHAR* pszFormat, ...);
 int strprintf(std::string& strOut, const CHAR* pszFormat, ...);
-std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList);
-std::string vstrprintf(const CHAR* pszFormat, va_list& argList);
 std::wstring strprintf(const WCHAR* pszFormat, ...);
 std::string strprintf(const CHAR* pszFormat, ...);
 
