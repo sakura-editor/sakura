@@ -9,6 +9,9 @@
 #define SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
 #pragma once
 
+// snprintf_sに CStrictInteger を渡せない問題の回避に必要
+#include "basis/CStrictInteger.h"
+
 #include <vadefs.h>
 #include <string>
 #include <string_view>
@@ -167,10 +170,16 @@ inline int auto_vsnprintf_s(WCHAR* buf, size_t nBufCount, size_t count, const WC
 inline int auto_vsnprintf_s(std::span<ACHAR> buf, size_t count, const ACHAR* format, va_list& v)         noexcept { return auto_vsnprintf_s(std::data(buf), std::size(buf), count, format, v); }
 inline int auto_vsnprintf_s(std::span<WCHAR> buf, size_t count, const WCHAR* format, va_list& v)         noexcept { return auto_vsnprintf_s(std::data(buf), std::size(buf), count, format, v); }
 
-template<typename... Params> inline int auto_snprintf_s(ACHAR* buf, size_t nBufCount, size_t count, const ACHAR* format, Params&&... params) noexcept { return ::_snprintf_s(buf, nBufCount, count, format, std::forward<Params>(params)...); }
-template<typename... Params> inline int auto_snprintf_s(WCHAR* buf, size_t nBufCount, size_t count, const WCHAR* format, Params&&... params) noexcept { return ::_snwprintf_s(buf, nBufCount, count, format, std::forward<Params>(params)...); }
-template<typename... Params> inline int auto_snprintf_s(std::span<ACHAR> buf, size_t count, const ACHAR* format, Params&&... params)         noexcept { return auto_snprintf_s(std::data(buf), std::size(buf), count, format, std::forward<Params>(params)...); }
-template<typename... Params> inline int auto_snprintf_s(std::span<WCHAR> buf, size_t count, const WCHAR* format, Params&&... params)         noexcept { return auto_snprintf_s(std::data(buf), std::size(buf), count, format, std::forward<Params>(params)...); }
+template<typename... Params> requires (... && !is_strict_integer_v<Params>)
+inline int auto_snprintf_s(ACHAR* buf, size_t nBufCount, size_t count, const ACHAR* format, Params&&... params) noexcept {
+	return ::_snprintf_s(buf, nBufCount, count, format, std::forward<Params>(params)...);
+}
+template<typename... Params> requires (... && !is_strict_integer_v<Params>)
+inline int auto_snprintf_s(WCHAR* buf, size_t nBufCount, size_t count, const WCHAR* format, Params&&... params) noexcept {
+	return ::_snwprintf_s(buf, nBufCount, count, format, std::forward<Params>(params)...);
+}
+template<typename... Params> requires (... && !is_strict_integer_v<Params>) inline int auto_snprintf_s(std::span<ACHAR> buf, size_t count, const ACHAR* format, Params&&... params) noexcept { return auto_snprintf_s(std::data(buf), std::size(buf), count, format, std::forward<Params>(params)...); }
+template<typename... Params> requires (... && !is_strict_integer_v<Params>) inline int auto_snprintf_s(std::span<WCHAR> buf, size_t count, const WCHAR* format, Params&&... params) noexcept { return auto_snprintf_s(std::data(buf), std::size(buf), count, format, std::forward<Params>(params)...); }
 
 std::wstring& eos(std::wstring& strOut, size_t cchOut);
 std::string& eos(std::string& strOut, size_t cchOut);
