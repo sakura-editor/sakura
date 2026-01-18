@@ -1234,7 +1234,7 @@ static ECodeType DetectUnicode( CESI* pcesi )
 /*!
 	日本語コードセット判定
 */
-ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
+ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen)
 {
 
 	// 日本語コードセット判別
