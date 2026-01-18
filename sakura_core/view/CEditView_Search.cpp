@@ -487,7 +487,7 @@ int CEditView::IsSearchString(
 	else {
 		const wchar_t* pHit = CSearchAgent::SearchString(cStr.GetPtr(), cStr.GetLength(), nPos, m_sSearchPattern);
 		if( pHit ){
-			*pnSearchStart = pHit - cStr.GetPtr();
+			*pnSearchStart = int(pHit - cStr.GetPtr());
 			*pnSearchEnd = *pnSearchStart + m_sSearchPattern.GetLen();
 			return 1;
 		}
