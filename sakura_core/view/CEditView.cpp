@@ -2031,11 +2031,11 @@ bool CEditView::GetSelectedData(
 */
 bool CEditView::GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen )
 {
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	CLogicInt		nIdxFrom;
-	CLogicInt		nIdxTo;
-	CLogicInt		nSelectLen;
+	const wchar_t*	pLine = nullptr;
+	CLogicInt		nLineLen{ 0 };
+	CLogicInt		nIdxFrom{ 0 };
+	CLogicInt		nIdxTo{ 0 };
+	CLogicInt		nSelectLen{ 0 };
 
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;
