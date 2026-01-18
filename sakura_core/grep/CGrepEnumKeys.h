@@ -156,8 +156,10 @@ public:
 		std::vector< std::wstring > patterns;
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
-		auto nWildCardLen = int(wcslen(lpKeys));
-		auto pWildCard = ::_wcsdup(lpKeys);
+
+		std::wstring strWildCard{ lpKeys };
+		auto nWildCardLen = int(strWildCard.length());
+		auto pWildCard = std::data(strWildCard);
 
 		int nPos = 0;
 		WCHAR*	token;
@@ -177,10 +179,8 @@ public:
 			}
 			*q = L'\0';
 
-			std::wstring element(token);
-			patterns.push_back(element);
+			patterns.emplace_back(token);
 		}
-		delete[] pWildCard;
 		return patterns;
 	}
 
