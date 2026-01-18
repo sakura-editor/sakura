@@ -372,7 +372,7 @@ if(MSVC)
   add_compile_options(
     /source-charset:utf-8
     /execution-charset:shift_jis
-    /w34996
+    /WX
   )
 endif(MSVC)
 
@@ -384,7 +384,7 @@ if(MINGW)
     -MMD
     -finput-charset=utf-8
     -fexec-charset=cp932
-    -Wdeprecated-declarations
+    -Wall
   )
 endif(MINGW)
 
