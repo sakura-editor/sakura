@@ -61,12 +61,10 @@ public:
 		m_szCmdLine[0] = L'\0';
 		m_pHead = m_szCmdLine;
 	}
-	void AppendF(const WCHAR* szFormat, ...)
+	void Append(std::wstring_view text)
 	{
-		va_list v;
-		va_start(v,szFormat);
-		m_pHead+=auto_vsprintf_s(m_pHead, std::size(m_szCmdLine)-(m_pHead-m_szCmdLine),szFormat,v);
-		va_end(v);
+		::wcsncpy_s(m_pHead, std::size(m_szCmdLine) - (m_pHead - m_szCmdLine), std::data(text), _TRUNCATE);
+		m_pHead += text.length();
 	}
 	const WCHAR* c_str() const
 	{
@@ -84,4 +82,5 @@ private:
 	WCHAR	m_szCmdLine[1024];
 	WCHAR*	m_pHead;
 };
+
 #endif /* SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_ */

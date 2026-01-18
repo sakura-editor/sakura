@@ -1072,7 +1072,7 @@ int FormatFavoriteColumn(WCHAR* buf, int size, int index, bool view)
 	// 0 - 9 A - Z
 	const int mod = index % 36;
 	const WCHAR c = (WCHAR)(((mod) <= 9)?(L'0' + mod):(L'A' + mod - 10));
-	return auto_snprintf_s( buf, size, L"%c %s", c, (view ? L"  " : LS( STR_DLGFAV_HIDDEN )) );
+	return auto_snprintf_s( buf, size, _TRUNCATE, L"%c %s", c, (view ? L"  " : LS( STR_DLGFAV_HIDDEN )) );
 }
 
 /*!

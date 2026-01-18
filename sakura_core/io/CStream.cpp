@@ -96,8 +96,8 @@ void CStream::Open(const WCHAR* pszPath, const WCHAR* pszMode)
 	m_pcFileAttribute->PopAttribute(FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM);
 
 	//オープン
-	m_fp = _wfopen(pszPath,pszMode);
-	if(!m_fp){
+	m_fp = nullptr;
+	if (0 != ::_wfopen_s(&m_fp, pszPath, pszMode)) {
 		Close(); //属性復元
 	}
 

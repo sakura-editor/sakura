@@ -96,7 +96,7 @@ public:
 	// 文字コードの16進表示
 	virtual std::wstring CodeToHex(const CNativeW& cSrc, const CommonSetting_Statusbar& sStatusbar, bool bUseFallback = true);
 	// 文字コード表示用		2008/6/9 Uchi
-	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
+	virtual EConvertResult UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 	// 変換エラー処理（１バイト <-> U+D800 から U+D8FF）
 	static int BinToText(const unsigned char *pSrc, const int nLen, unsigned short *pDst);

@@ -83,7 +83,7 @@ static       wchar_t	WSTR_FILETREE_HEAD_V1[]	= L"SakuraEditorFileTree_Ver1";
 // Exportファイル名の作成
 //	  タイプ名などファイルとして扱うことを考えていない文字列を扱う
 //		2010/4/12 Uchi
-static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar_t* ext)
+static wchar_t* MakeExportFileName(std::span<WCHAR> res, const wchar_t* trg, const wchar_t* ext)
 {
 	wchar_t		conv[_MAX_PATH+1];
 	wchar_t*	p;
@@ -102,7 +102,7 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 	}
 	auto_snprintf_s(res, _MAX_PATH, L"%ls.%ls", conv, ext);
 
-	return res;
+	return std::data(res);
 }
 
 // インポート ファイル指定付き
@@ -344,7 +344,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	CKeyWordSetMgr&	cKeyWordSetMgr = common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 	for (i=0; i < MAX_KEYWORDSET_PER_TYPE; i++) {
 		//types.m_nKeyWordSetIdx[i] = -1;
-		auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
+		auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordTemp, i+1);
 		if (m_cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szKeyData))) {
 			nIdx = cKeyWordSetMgr.SearchKeyWordSet( szKeyData );
 			if (nIdx < 0) {
@@ -353,14 +353,14 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 				nIdx = cKeyWordSetMgr.SearchKeyWordSet( szKeyData );
 			}
 			if (nIdx >= 0) {
-				auto_sprintf( szKeyName, szKeyKeywordCaseTemp, i+1 );
+				auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordCaseTemp, i+1);
 				bCase = false;		// 大文字小文字区別しない (Defaule)
 				m_cProfile.IOProfileData( szSecTypeEx, szKeyName, bCase );
 
 				// キーワード定義ファイル入力
 				CImpExpKeyWord	cImpExpKeyWord( common, nIdx, bCase );
 
-				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
+				auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordFileTemp, i+1);
 				szFileName[0] = L'\0';
 				if (m_cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
 					if( cImpExpKeyWord.Import( cImpExpKeyWord.MakeFullPath( szFileName ), TmpMsg )) {
@@ -450,7 +450,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	for (i=0; i < MAX_KEYWORDSET_PER_TYPE; i++) {
 		if (m_Types.m_nKeyWordSetIdx[i] >= 0) {
 			nIdx = m_Types.m_nKeyWordSetIdx[i];
-			auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
+			auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordTemp, i+1);
 			::wcsncpy_s(buff, cKeyWordSetMgr.GetTypeName( nIdx ), _TRUNCATE);
 			cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(buff));
 
@@ -463,13 +463,13 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 
 			if ( cImpExpKeyWord.Export( cImpExpKeyWord.GetFullPath(), sTmpMsg ) ) {
 				::wcsncpy_s(szFileName, cImpExpKeyWord.GetFileName().c_str(), _TRUNCATE);
-				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
+				auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordFileTemp, i+1);
 				if (cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
 					files += std::wstring( L"\n" ) + cImpExpKeyWord.GetFileName();
 				}
 			}
 
-			auto_sprintf( szKeyName, szKeyKeywordCaseTemp, i+1 );
+			auto_snprintf_s(szKeyName, _TRUNCATE, szKeyKeywordCaseTemp, i+1);
 			cProfile.IOProfileData( szSecTypeEx, szKeyName, bCase );
 		}
 	}
@@ -485,7 +485,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		::wcsncpy_s(szId, plugin.m_PluginTable[nPIdx].m_szId, _TRUNCATE);
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
 			wchar_t szPlug[8];
-			_swprintf( szPlug, L"/%d", nPlug );
+			::_snwprintf_s(szPlug, _TRUNCATE, L"/%d", nPlug);
 			::wcsncat_s(szId, szPlug, _TRUNCATE);
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szId));
@@ -496,7 +496,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		::wcsncpy_s(szId, plugin.m_PluginTable[nPIdx].m_szId, _TRUNCATE);
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
 			wchar_t szPlug[8];
-			_swprintf( szPlug, L"/%d", nPlug );
+			::_snwprintf_s(szPlug, _TRUNCATE, L"/%d", nPlug);
 			::wcsncat_s(szId, szPlug, _TRUNCATE);
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szId));
@@ -506,7 +506,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 	int		nStructureVersion;
 	wchar_t	wbuff[_MAX_PATH + 1];
-	auto_sprintf( wbuff, L"%d.%d.%d.%d", 
+	auto_snprintf_s( wbuff, _TRUNCATE, L"%d.%d.%d.%d", 
 				HIWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 				LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 				HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
@@ -680,7 +680,7 @@ bool CImpExpRegex::Export( const std::wstring& sFileName, std::wstring& sErrMsg 
 		return false;
 	}
 
-	out.WriteF( WSTR_REGEXKW_HEAD );
+	out.Write(WSTR_REGEXKW_HEAD);
 
 	const wchar_t* regex = m_Types.m_RegexKeywordList;
 	for (int i = 0; i < MAX_REGEX_KEYWORD; i++)
@@ -688,7 +688,7 @@ bool CImpExpRegex::Export( const std::wstring& sFileName, std::wstring& sErrMsg 
 		if( regex[0] == L'\0' ) break;
 		
 		const WCHAR* name  = GetColorNameByIndex(m_Types.m_RegexKeywordArr[i].m_nColorIndex);
-		out.WriteF( L"RxKey[%03d]=%s,%ls\n", i, name, regex);
+		out.Write(std::format(L"RxKey[{:03}]={},{}\n", i, name, regex));
 
 		for(; *regex != '\0'; regex++ ){}
 		regex++;
@@ -783,7 +783,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 		//About
 		if (wcslen(p2) > DICT_ABOUT_LEN) {
-			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN );
+			auto_snprintf_s(msgBuff, _TRUNCATE, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN);
 			sErrMsg = msgBuff;
 			++invalid_record;
 			continue;
@@ -807,7 +807,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 	// 2007.02.03 genta 失敗したら警告する
 	if( invalid_record > 0 ){
-		auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_RECORD), invalid_record );
+		auto_snprintf_s(msgBuff, _TRUNCATE, LS(STR_IMPEXP_DIC_RECORD), invalid_record);
 		sErrMsg = msgBuff;
 	}
 
@@ -826,16 +826,15 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		return false;
 	}
 
-	out.WriteF( WSTR_KEYHELP_HEAD );
+	out.Write(WSTR_KEYHELP_HEAD);
 
 	for (int i = 0; i < m_Types.m_nKeyHelpNum; i++) {
-		out.WriteF(
-			L"KDct[%02d]=%d,%s,%s\n",
+		out.Write(std::format(L"KDct[{:02}]={},{},{}\n",
 			i,
-			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
+			m_Types.m_KeyHelpArr[i].m_bUse ? 1 : 0,
 			m_Types.m_KeyHelpArr[i].m_szAbout,
 			m_Types.m_KeyHelpArr[i].m_szPath.c_str()
-		);
+		));
 	}
 	out.Close();
 
@@ -899,7 +898,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		if ( bVer2 ) {
 			int	an;
 			szLine = in2.ReadLineW();
-			cnt = swscanf(szLine.c_str(), L"Count=%d", &an);
+			cnt = ::swscanf_s(szLine.c_str(), L"Count=%d", &an);
 			if ( cnt != 1 || an < 0 || an > KEYNAME_SIZE ) {
 				bVer2 = false;
 			}
@@ -916,8 +915,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 				::wcsncpy_s(szData, in2.ReadLineW().c_str(), _TRUNCATE);
 
 				//解析開始
-				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
-												&n,   &kc, &nc);
+				cnt = ::swscanf_s(szData, L"KeyBind[%03d]=%04x,%n", &n, &kc, &nc);
 				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
 				if( i != n ) break;
 				sKeyBind.m_pKeyNameArr[i].m_nKeyCode = (short)kc;
@@ -1169,14 +1167,14 @@ bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		sErrMsg += sFileName;
 		return false;
 	}
-	out.WriteF( L"// " );
+	out.Write(L"// ");
 	// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
 	out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_nIdx ) );
-	out.WriteF( WSTR_KEYWORD_HEAD );
+	out.Write(WSTR_KEYWORD_HEAD);
 
-	out.WriteF( WSTR_KEYWORD_CASE );
-	out.WriteF( m_bCase ? L"True" : L"False" );
-	out.WriteF( L"\n\n" );
+	out.Write(WSTR_KEYWORD_CASE);
+	out.Write(m_bCase ? L"True" : L"False");
+	out.Write(L"\n\n");
 
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SortKeyWord(m_nIdx);	//MIK 2000.12.01 sort keyword
 
@@ -1186,7 +1184,7 @@ bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
 		// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
 		out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_nIdx, i ) );
-		out.WriteF( L"\n" );
+		out.Write(L"\n");
 	}
 	out.Close();
 

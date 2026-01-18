@@ -324,7 +324,7 @@ void CMacroParam::SetIntParam( const int nParam )
 {
 	Clear();
 	m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
-	_itow(nParam, m_pData, 10);
+	::_itow_s(nParam, m_pData, 16, 10);
 	m_nDataLen = (int)wcslen(m_pData);
 	m_eType = EMacroParamTypeInt;
 }
@@ -454,7 +454,7 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 	/* 2002.2.2 YAZAKI CSMacroMgrに頼む */
 	if (CSMacroMgr::GetFuncInfoByID(nFuncID, szFuncName, szFuncNameJapanese)) {
 		// 2014.01.24 Moca マクロ書き出しをm_eTypeを追加して統合
-		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"を削除
+		out.Write(std::format(L"{}(", szFuncName)); // 2014.12.25 Moca "S_"を削除
 		CMacroParam* pParam = m_pParamTop;
 		while( pParam ){
 			if( pParam != m_pParamTop ){
@@ -486,7 +486,7 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 							wchar_t to[7];
 							from[0] = wchar_t(c);
 							from[1] = L'\0';
-							auto_sprintf( to, L"\\u%04x", c );
+							auto_snprintf_s(to, _TRUNCATE, L"\\u%04x", c);
 							cmemWork.Replace( from, to );
 							break;
 						}
@@ -502,10 +502,10 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 			}
 			pParam = pParam->m_pNext;
 		}
-		out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
+		out.Write(std::format(L");\t// {}\r\n", szFuncNameJapanese));
 		return;
 	}
-	out.WriteF( LS(STR_ERR_DLGMACRO01) );
+	out.Write(cxx::load_string(STR_ERR_DLGMACRO01));
 }
 
 /**	マクロ引数変換
@@ -1103,7 +1103,7 @@ bool CMacro::HandleCommand(
 			cCmdLine.AppendString(L"\" -GFOLDER=\"");
 			cCmdLine.AppendString(cmWork3.GetStringPtr());
 			cCmdLine.AppendString(L"\" -GCODE=");
-			auto_sprintf( szTemp, L"%d", nCharSet );
+			auto_snprintf_s(szTemp, _TRUNCATE, L"%d", nCharSet);
 			cCmdLine.AppendString(szTemp);
 
 			//GOPTオプション
@@ -1125,7 +1125,7 @@ bool CMacro::HandleCommand(
 				if( lFlag & 0x200000 )::wcsncat_s(pOpt, L"O", _TRUNCATE);
 			}
 			if( pOpt[0] != L'\0' ){
-				auto_sprintf( szTemp, L" -GOPT=%s", pOpt );
+				auto_snprintf_s(szTemp, _TRUNCATE, L" -GOPT=%s", pOpt);
 				cCmdLine.AppendString(szTemp);
 			}
 

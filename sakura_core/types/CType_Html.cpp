@@ -161,7 +161,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			*/
 			::wcsncpy_s(szTag, szTitle, _TRUNCATE);
 			if( !bXml ){
-				_wcslwr( szTag );
+				::_wcslwr_s(szTag);
 			}
 			
 			nLabelType = LT_DEFAULT;

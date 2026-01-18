@@ -9,7 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -99,10 +99,10 @@ public:
 
 	/*!
 		現在の経過時間でログを書き込む
-		@param[in]	fmt		書式文字列
+		@param[in]	fmt		sprintfスタイルの書式文字列
 		@param[in]	...		書式文字列に対応する引数
 	*/
-	template <typename... T>
+	template <typename... T> requires (... && !is_strict_integer_v<T>)
 	void WriteTraceFormat( std::wstring_view fmt, T... args )
 	{
 		auto currentTime = GetTime();
@@ -136,7 +136,12 @@ protected:
 	void OutputHeader() const;
 	void OutputFooter() const;
 	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const;
-	void Output( std::wstring_view fmt, ... ) const;
+	void Output(const std::wstring& text) const;
+
+	template <typename... Params>
+	void Output(std::wformat_string<Params...> _Fmt, Params&&... params ) const {
+		Output(std::vformat(_Fmt.get(), std::make_wformat_args(params...)));
+	}
 
 private:
 	TimePoint		m_startTime;				// 計測開始時間

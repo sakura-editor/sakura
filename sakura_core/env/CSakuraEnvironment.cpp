@@ -213,7 +213,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 					WCHAR szText[10];
 					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow()->GetHwnd() );
 					if( 0 < node->m_nId ){
-						_swprintf( szText, L"%d", node->m_nId );
+						::_snwprintf_s(szText, _TRUNCATE, L"%d", node->m_nId);
 						q = wcs_pushW( q, q_max - q, szText );
 					}
 				}
@@ -229,7 +229,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				WCHAR*	pEnd;
 				WCHAR*	p2;
 
-				wcscpy_s( buff, _MAX_PATH, pcDoc->m_cDocFile.GetFilePath() );
+				::wcsncpy_s(buff, _MAX_PATH, pcDoc->m_cDocFile.GetFilePath(), _TRUNCATE);
 				pEnd = nullptr;
 				for ( p2 = buff; *p2 != '\0'; p2++) {
 					if (*p2 == L'\\') {
@@ -319,7 +319,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
 			{
 				wchar_t szText[11];
-				_itow( GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10 );
+				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -327,7 +327,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'y':	//	現在の物理行位置(1開始)
 			{
 				wchar_t szText[11];
-				_itow( GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10 );
+				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -358,7 +358,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					wchar_t szText[1024];
-					_itow(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
+					::_itow_s(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
 					q = wcs_pushW( q, q_max - q, szText, wcslen(szText));
 					++p;
 				}
@@ -373,7 +373,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					wchar_t szText[1024];
-					_itow(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
+					::_itow_s(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
 					q = wcs_pushW( q, q_max - q, szText);
 					++p;
 				}
@@ -422,7 +422,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
 				DWORD dwVersionMS, dwVersionLS;
 				GetAppVersionInfo( nullptr, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-				int len = auto_sprintf( buf, L"%d.%d.%d.%d",
+				int len = auto_snprintf_s( buf, _TRUNCATE, L"%d.%d.%d.%d",
 					HIWORD( dwVersionMS ),
 					LOWORD( dwVersionMS ),
 					HIWORD( dwVersionLS ),
@@ -769,7 +769,7 @@ void CSakuraEnvironment::ResolvePath(WCHAR* pszPath)
 
 	// pSrc -> pszPath
 	if(pSrc != pszPath){
-		wcscpy_s(pszPath, _MAX_PATH, pSrc);
+		::wcsncpy_s(pszPath, _MAX_PATH, pSrc, _TRUNCATE);
 	}
 }
 

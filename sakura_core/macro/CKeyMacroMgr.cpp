@@ -106,7 +106,7 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath ) con
 	}
 
 	//最初のコメント
-	out.WriteF(LS(STR_ERR_DLGKEYMACMGR1));
+	out.Write(cxx::load_string(STR_ERR_DLGKEYMACMGR1));
 
 	//マクロ内容
 	CMacro* p = m_pTop;

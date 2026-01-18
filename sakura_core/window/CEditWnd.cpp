@@ -127,10 +127,10 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				szChar[nCharChars] = L'\0';
 				for( int i = 0; i < CODE_CODEMAX; i++ ){
 					if( i == CODE_SJIS || i == CODE_JIS || i == CODE_EUC || i == CODE_LATIN1 || i == CODE_UNICODE || i == CODE_UTF8 || i == CODE_CESU8 ){
-						//auto_sprintf( szCaretChar, L"%04x", );
+						//auto_snprintf_s(szCaretChar, _TRUNCATE, L"%04x",);
 						//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 						CCodeBase* pCode = CCodeFactory::CreateCodeBase((ECodeType)i, false);
-						EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCode[i], &sStatusbar);
+						EConvertResult ret = pCode->UnicodeToHex(std::wstring_view{ &pLine[nIdx], size_t(nLineLen - nIdx) }, szCode[i], &sStatusbar);
 						delete pCode;
 						if (ret != RESULT_COMPLETE) {
 							// うまくコードが取れなかった
@@ -142,7 +142,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				WCHAR szCodeCP[32];
 				sStatusbar.m_bDispSPCodepoint = true;
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCodeCP, &sStatusbar);
+				EConvertResult ret = pCode->UnicodeToHex(std::wstring_view{ &pLine[nIdx], size_t(nLineLen - nIdx) }, szCodeCP, &sStatusbar);
 				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった
@@ -150,7 +150,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				}
 
 				// メッセージボックス表示
-				auto_sprintf(szMsg, LS(STR_ERR_DLGEDITWND13),
+				auto_snprintf_s(szMsg, _TRUNCATE, LS(STR_ERR_DLGEDITWND13),
 					szChar, szCodeCP, szCode[CODE_SJIS], szCode[CODE_JIS], szCode[CODE_EUC], szCode[CODE_LATIN1], szCode[CODE_UNICODE], szCode[CODE_UTF8], szCode[CODE_CESU8]);
 				::MessageBox( hWnd, szMsg, GSTR_APPNAME, MB_OK );
 			}
@@ -2258,7 +2258,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = ::CreatePopupMenu();
 				if (cMainMenu->m_nFunc != 0 && cMainMenu->m_sName[0] == L'\0') {
 					// ストリングテーブルから読み込み
-					wcsncpy_s(tmpMenuName, std::size(tmpMenuName), LS( cMainMenu->m_nFunc ), _TRUNCATE);
+					::wcsncpy_s(tmpMenuName, LS( cMainMenu->m_nFunc ), _TRUNCATE);
 					pMenuName = tmpMenuName;
 				}else{
 					pMenuName = cMainMenu->m_sName;
@@ -2455,15 +2455,15 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 					WCHAR szBuf[60];
 					pszLabel = szBuf;
 					if( mode == CEditView::TGWRAP_FULL ){
-						auto_sprintf(
-							szBuf,
+						auto_snprintf_s(
+							szBuf, _TRUNCATE,
 							LS( STR_WRAP_WIDTH_FULL ),	//L"折り返し桁数: %d 桁（最大）",
 							MAXLINEKETAS
 						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
-						auto_sprintf(
-							szBuf,
+						auto_snprintf_s(
+							szBuf, _TRUNCATE,
 							LS( STR_WRAP_WIDTH_WINDOW ),	//L"折り返し桁数: %d 桁（右端）",
 							int((Int)GetActiveView().ViewColNumToWrapColNum(
 								GetActiveView().GetTextArea().m_nViewColNum
@@ -2471,8 +2471,8 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 						);
 					}
 					else {
-						auto_sprintf(
-							szBuf,
+						auto_snprintf_s(
+							szBuf, _TRUNCATE,
 							LS( STR_WRAP_WIDTH_FIXED ),	//L"折り返し桁数: %d 桁（指定）",
 							int((Int)GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas)
 						);
@@ -3964,15 +3964,15 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 		if( p )
 		{
 			decltype(p->m_szTabCaption) caption;
-			wcsncpy_s(caption, std::size(caption), pszTabCaption, _TRUNCATE);
+			::wcsncpy_s(caption, pszTabCaption, _TRUNCATE);
 			if (wcscmp(caption, p->m_szTabCaption) != 0) {
-				wcscpy_s(p->m_szTabCaption, caption);
+				::wcsncpy_s(p->m_szTabCaption, caption, _TRUNCATE);
 				changed = true;
 			}
 
 			// 2006.01.28 ryoji ファイル名、Grepモード追加
 			decltype(p->m_szFilePath) filePath;
-			wcsncpy_s(filePath, std::size(filePath), pszFilePath, _TRUNCATE );
+			::wcsncpy_s(filePath, pszFilePath, _TRUNCATE );
 			if (wcscmp(filePath, p->m_szFilePath) != 0) {
 				p->m_szFilePath = filePath;
 				changed = true;
@@ -4172,8 +4172,8 @@ void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, UINT_PTR idFrom) 
 			const WCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
 			auto nKeyLen = int(wcslen(pszKey));
 			if ( nLen + 9 + nKeyLen < nBufCount ){
-				wcscat_s( pszBuf, nBufCount, L"\n        " );
-				wcscat_s( pszBuf, nBufCount, pszKey );
+				::wcsncat_s(pszBuf, nBufCount, L"\n        ", _TRUNCATE);
+				::wcsncat_s(pszBuf, nBufCount, pszKey, _TRUNCATE);
 				nLen += 9 + nKeyLen;
 			}
 			delete ppcAssignedKeyList[j];

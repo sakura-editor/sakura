@@ -132,7 +132,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	cCmdLine.AppendString(L"\" -GFOLDER=\"");
 	cCmdLine.AppendString(cmWork3.GetStringPtr());
 	cCmdLine.AppendString(L"\" -GCODE=");
-	auto_sprintf( szTemp, L"%d", cDlgGrep.m_nGrepCharSet );
+	auto_snprintf_s(szTemp, _TRUNCATE, L"%d", cDlgGrep.m_nGrepCharSet);
 	cCmdLine.AppendString(szTemp);
 
 	//GOPTオプション
@@ -992,8 +992,8 @@ bool CControlTray::OnSetTypeSetting(size_t index)
 	types[index]->m_nIdx = int(index);
 
 	auto& typeMini = m_pShareData->m_TypeMini[index];
-	::wcscpy_s(typeMini.m_szTypeName, type.m_szTypeName);
-	::wcscpy_s(typeMini.m_szTypeExts, type.m_szTypeExts);
+	::wcsncpy_s(typeMini.m_szTypeName, type.m_szTypeName, _TRUNCATE);
+	::wcsncpy_s(typeMini.m_szTypeExts, type.m_szTypeExts, _TRUNCATE);
 	typeMini.m_id = type.m_id;
 	typeMini.m_encoding = type.m_encoding;
 
@@ -1144,16 +1144,16 @@ bool CControlTray::OpenNewEditor(
 	//アプリケーションパス
 	WCHAR szEXE[MAX_PATH + 1];
 	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)) );
-	cCmdLineBuf.AppendF( L"\"%s\"", szEXE );
+	cCmdLineBuf.Append(std::format(LR"("{}")", szEXE));
 
 	// ファイル名
-	if( sLoadInfo.cFilePath.c_str()[0] != L'\0' )	cCmdLineBuf.AppendF( L" \"%s\"", sLoadInfo.cFilePath.c_str() );
+	if( sLoadInfo.cFilePath.c_str()[0] != L'\0' )	cCmdLineBuf.Append(std::format(LR"( "{}")", std::wstring_view{ sLoadInfo.cFilePath }));
 
 	// コード指定
-	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( L" -CODE=%d", sLoadInfo.eCharCode );
+	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.Append(std::format(L" -CODE={}", int(sLoadInfo.eCharCode)));
 
 	// ビューモード指定
-	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( L" -R" );
+	if( sLoadInfo.bViewMode )cCmdLineBuf.Append(L" -R");
 
 	// グループID
 	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
@@ -1161,15 +1161,15 @@ bool CControlTray::OpenNewEditor(
 		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
 		int nGroup = CAppNodeManager::getInstance()->GetEditNode( hwndAncestor )->GetGroup();
 		if( nGroup > 0 ){
-			cCmdLineBuf.AppendF( L" -GROUP=%d", nGroup );
+			cCmdLineBuf.Append(std::format(L" -GROUP={}", nGroup));
 		}
 	}else{
 		// 空いているグループIDを使用する
-		cCmdLineBuf.AppendF( L" -GROUP=%d", CAppNodeManager::getInstance()->GetFreeGroupId() );
+		cCmdLineBuf.Append(std::format(L" -GROUP={}", CAppNodeManager::getInstance()->GetFreeGroupId()));
 	}
 
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", CCommandLine::getInstance()->GetProfileName() );
+		cCmdLineBuf.Append(std::format(LR"( -PROF="{}")", CCommandLine::getInstance()->GetProfileName()));
 	}
 
 	// 追加のコマンドラインオプション
@@ -1211,9 +1211,9 @@ bool CControlTray::OpenNewEditor(
 			output.WriteString(szCmdLineOption);
 			output.Close();
 			sync = true;
-			cCmdLineBuf.AppendF(L" -@=\"%s\"", szResponseFile);
+			cCmdLineBuf.Append(std::format(LR"( -@="{}")", szResponseFile));
 		}else{
-			cCmdLineBuf.AppendF(L" %s", szCmdLineOption);
+			cCmdLineBuf.Append(std::format(L" {}", szCmdLineOption));
 		}
 	}
 	// -- -- -- -- プロセス生成 -- -- -- -- //
@@ -1247,7 +1247,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
+	WCHAR szCmdLine[1024]; ::wcsncpy_s(szCmdLine, cCmdLineBuf.c_str(), _TRUNCATE);
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列
@@ -1365,10 +1365,10 @@ bool CControlTray::OpenNewEditor2(
 	// 追加のコマンドラインオプション
 	CCommandLineString cCmdLine;
 	if( pfi != nullptr ){
-		if( pfi->m_ptCursor.x >= 0					)cCmdLine.AppendF( L" -X=%d", int(pfi->m_ptCursor.x) + 1 );
-		if( pfi->m_ptCursor.y >= 0					)cCmdLine.AppendF( L" -Y=%d", int(pfi->m_ptCursor.y) + 1 );
-		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VX=%d", (Int)pfi->m_nViewLeftCol + 1 );
-		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VY=%d", (Int)pfi->m_nViewTopLine + 1 );
+		if( pfi->m_ptCursor.x >= 0					)cCmdLine.Append(std::format(L" -X={}", int(pfi->m_ptCursor.x) + 1));
+		if( pfi->m_ptCursor.y >= 0					)cCmdLine.Append(std::format(L" -Y={}", int(pfi->m_ptCursor.y) + 1));
+		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.Append(std::format(L" -VX={}", (Int)pfi->m_nViewLeftCol + 1));
+		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.Append(std::format(L" -VY={}", (Int)pfi->m_nViewTopLine + 1));
 	}
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = pfi ? pfi->m_szPath : L"";

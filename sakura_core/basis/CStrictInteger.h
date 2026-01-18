@@ -174,4 +174,14 @@ STRICTINT_LEFT_INT_CMP(short)
 STRICTINT_LEFT_INT_CMP(size_t)
 STRICTINT_LEFT_INT_CMP(LONG)
 
+// CStrictIntegerテンプレート型を検出するための型特性
+template<typename T>
+struct is_strict_integer : std::false_type {};
+
+template<int STRICT_ID, bool ALLOW_CMP_INT, bool ALLOW_ADDSUB_INT, bool ALLOW_CAST_INT, bool ALLOW_ASSIGNOP_INT>
+struct is_strict_integer<CStrictInteger<STRICT_ID, ALLOW_CMP_INT, ALLOW_ADDSUB_INT, ALLOW_CAST_INT, ALLOW_ASSIGNOP_INT>> : std::true_type {};
+
+template<typename T>
+inline constexpr bool is_strict_integer_v = is_strict_integer<std::remove_cv_t<std::remove_reference_t<T>>>::value;
+
 #endif /* SAKURA_CSTRICTINTEGER_5B7614A0_282F_48F6_9420_CE672061CF3E_H_ */

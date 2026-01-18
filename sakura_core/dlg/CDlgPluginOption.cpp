@@ -94,7 +94,7 @@ void CDlgPluginOption::SetData( void )
 	bool bLoadDefault = false;
 
 	// タイトル
-	auto_sprintf( buf, LS(STR_DLGPLUGINOPT_TITLE), m_cPlugin->m_sName.c_str());
+	auto_snprintf_s(buf, _TRUNCATE, LS(STR_DLGPLUGINOPT_TITLE), m_cPlugin->m_sName.c_str());
 	::SetWindowText( GetHwnd(), buf );
 
 	// リスト
@@ -141,11 +141,11 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			wcscpy_s( buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
+			::wcsncpy_s(buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE, _TRUNCATE);
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化
-			auto_sprintf( buf, L"%d", _wtoi(sValue.c_str()));
+			auto_snprintf_s(buf, _TRUNCATE, L"%d", _wtoi(sValue.c_str()));
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
 			// 値から表示へ
@@ -243,7 +243,7 @@ int CDlgPluginOption::GetData( void )
 			for (auto it2 = selects.cbegin(); it2 != selects.cend(); it2++) {
 				SepSelect(*it2, &sView, &sTrg);
 				if (sView == sWbuf) {
-					auto_sprintf( buf, L"%ls", sTrg.c_str());
+					auto_snprintf_s(buf, _TRUNCATE, L"%ls", sTrg.c_str());
 					break;
 				}
 			}
@@ -649,7 +649,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 		}
 		else if (sType == OPTION_TYPE_INT) {
 			nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nullptr, TRUE );
-			auto_sprintf( buf, L"%d", nVal);
+			auto_snprintf_s(buf, _TRUNCATE, L"%d", nVal);
 		}
 		else if (sType == OPTION_TYPE_SEL) {
 			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
@@ -712,7 +712,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	ListView_GetItem( hwndList, &lvi );
 
 	WCHAR	sTitle[MAX_LENGTH_VALUE+10];
-	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
+	auto_snprintf_s(sTitle, _TRUNCATE, LS(STR_DLGPLUGINOPT_SELECT), buf);
 	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir )) {
 		//	末尾に\マークを追加する．
 		AddLastChar( szDir, int(std::size(szDir)), L'\\' );

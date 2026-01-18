@@ -57,7 +57,7 @@ class CTmpFile{
 	using Me = CTmpFile;
 
 public:
-	CTmpFile(){ m_fp = tmpfile(); }
+	CTmpFile() { ::tmpfile_s(&m_fp); }	// ←エラー処理すべき
 	CTmpFile(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CTmpFile(Me&&) noexcept = delete;
@@ -67,4 +67,5 @@ public:
 private:
 	FILE* m_fp;
 };
+
 #endif /* SAKURA_CFILE_53DA3C63_95C0_49D0_9ED1_1C0131493912_H_ */

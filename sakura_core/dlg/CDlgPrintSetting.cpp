@@ -899,7 +899,7 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 
 		// フォント名/サイズの作成
 		int		nMM = MulDiv( nPointSize, 254, 720 );	// フォントサイズ計算(pt->1/10mm)
-		auto_sprintf(szName, nPointSize%10 ? L"%.32s(%.1fpt/%d.%dmm)" : L"%.32s(%.0fpt/%d.%dmm)",
+		auto_snprintf_s(szName, _TRUNCATE, nPointSize%10 ? L"%.32s(%.1fpt/%d.%dmm)" : L"%.32s(%.0fpt/%d.%dmm)",
 					lf.lfFaceName,
 					double(nPointSize)/10,
 					nMM/10, nMM/10);

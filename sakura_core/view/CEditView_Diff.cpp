@@ -134,12 +134,12 @@ void CEditView::ViewDiffInfo(
 
 	//オプションを作成する
 	WCHAR	szOption[16];	// "-cwbBt"
-	wcscpy_s( szOption, L"-" );
-	if( nFlgOpt & 0x0001 ) wcscat_s( szOption, L"i" );	//-i ignore-case         大文字小文字同一視
-	if( nFlgOpt & 0x0002 ) wcscat_s( szOption, L"w" );	//-w ignore-all-space    空白無視
-	if( nFlgOpt & 0x0004 ) wcscat_s( szOption, L"b" );	//-b ignore-space-change 空白変更無視
-	if( nFlgOpt & 0x0008 ) wcscat_s( szOption, L"B" );	//-B ignore-blank-lines  空行無視
-	if( nFlgOpt & 0x0010 ) wcscat_s( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
+	::wcsncpy_s(szOption, L"-", _TRUNCATE);
+	if( nFlgOpt & 0x0001 ) ::wcsncat_s(szOption, L"i", _TRUNCATE);	//-i ignore-case         大文字小文字同一視
+	if( nFlgOpt & 0x0002 ) ::wcsncat_s(szOption, L"w", _TRUNCATE);	//-w ignore-all-space    空白無視
+	if( nFlgOpt & 0x0004 ) ::wcsncat_s(szOption, L"b", _TRUNCATE);	//-b ignore-space-change 空白変更無視
+	if( nFlgOpt & 0x0008 ) ::wcsncat_s(szOption, L"B", _TRUNCATE);	//-B ignore-blank-lines  空行無視
+	if( nFlgOpt & 0x0010 ) ::wcsncat_s(szOption, L"t", _TRUNCATE);	//-t expand-tabs         TAB-SPACE変換
 	if( wcscmp( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
@@ -148,8 +148,8 @@ void CEditView::ViewDiffInfo(
 
 	{
 		//コマンドライン文字列作成(MAX:1024)
-		auto_sprintf(
-			cmdline,
+		auto_snprintf_s(
+			cmdline, _TRUNCATE,
 			L"\"%s\\%s\" %s \"%s\" \"%s\"",
 			szExeFolder,	//sakura.exeパス
 			L"diff.exe",		//diff.exe

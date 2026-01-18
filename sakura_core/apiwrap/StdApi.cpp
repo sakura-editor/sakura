@@ -44,7 +44,7 @@ namespace ApiWrap{
 
 			//先頭からpまでの部分文字列 -> szBuf
 			wchar_t szBuf[_MAX_PATH];
-			wcsncpy_s(szBuf, std::size(szBuf),szDirPath,p-szDirPath);
+			::wcsncpy_s(szBuf, szDirPath, p - szDirPath);
 
 			//存在するか
 			int nAcc = _waccess(szBuf,0);

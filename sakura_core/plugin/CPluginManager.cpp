@@ -196,7 +196,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 
 	// ZIPファイルが扱えるか
 	if (!cZipFile.IsOk()) {
-		wcsncpy_s(msg, std::size(msg), LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
+		::wcsncpy_s(msg, LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
 		InfoMessage( hWndOwner, L"%s", msg);
 		return false;
 	}
@@ -401,7 +401,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 
 	plugin_table[nEmpty].m_nCmdNum = 0;
 	for (i = 1; i < MAX_PLUG_CMD; i++) {
-		auto_sprintf( szPlugKey, L"C[%d]", i);
+		auto_snprintf_s(szPlugKey, _TRUNCATE, L"C[%d]", i);
 		sPlugCmd.clear();
 		cProfDef.IOProfileData( PII_COMMAND, szPlugKey, sPlugCmd );
 		if (sPlugCmd.empty()) {

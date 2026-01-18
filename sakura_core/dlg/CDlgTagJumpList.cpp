@@ -287,13 +287,13 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		ListView_InsertItem( hwndList, &lvi );
 
 		if( item->baseDirId ){
-			auto_sprintf( tmp, L"(%d)", item->depth );
+			auto_snprintf_s(tmp, _TRUNCATE, L"(%d)", item->depth);
 		}else{
-			auto_sprintf( tmp, L"%d", item->depth );
+			auto_snprintf_s(tmp, _TRUNCATE, L"%d", item->depth);
 		}
 		ListView_SetItemText( hwndList, nIndex, 1, tmp );
 
-		auto_sprintf( tmp, L"%d", item->no );
+		auto_snprintf_s(tmp, _TRUNCATE, L"%d", item->no);
 		ListView_SetItemText( hwndList, nIndex, 2, tmp );
 
 		WCHAR *p = GetNameByType( item->type, item->filename );
@@ -749,8 +749,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 {
 	const WCHAR	*p;
-	WCHAR	*token;
-	int		i;
+
 	//	2005.03.31 MIK
 	WCHAR	tmp[MAX_TAG_STRING_LENGTH];
 
@@ -758,30 +757,32 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 	if( ! p ) p = L".c";	//見つからないときは ".c" と想定する。
 	p++;
 
-	for( i = 0; p_extentions[i]; i += 2 )
+	for (int i = 0; p_extentions[i]; i += 2)
 	{
 		::wcsncpy_s(tmp, p_extentions[i], _TRUNCATE);
-		token = _wcstok( tmp, L"," );
-		while( token )
+		WCHAR* context1 = nullptr;
+		auto token1 = ::wcstok_s(tmp, L",", &context1);
+		while( token1 )
 		{
-			if( _wcsicmp( p, token ) == 0 )
+			if( _wcsicmp( p, token1 ) == 0 )
 			{
 				::wcsncpy_s(tmp, p_extentions[i+1], _TRUNCATE);
-				token = _wcstok( tmp, L"," );
-				while( token )
+				WCHAR* context2 = nullptr;
+				auto token2 = ::wcstok_s(tmp, L",", &context2);
+				while( token2 )
 				{
-					if( token[0] == type )
+					if( token2[0] == type )
 					{
-						return _wcsdup( &token[2] );
+						return _wcsdup( &token2[2] );
 					}
 
-					token = _wcstok( nullptr, L"," );
+					token2 = ::wcstok_s(nullptr, L",", &context2);
 				}
 
 				return _wcsdup( L"" );
 			}
 
-			token = _wcstok( nullptr, L"," );
+			token1 = ::wcstok_s(nullptr, L",", &context1);
 		}
 	}
 
@@ -1125,12 +1126,11 @@ int CDlgTagJumpList::find_key_core(
 		}
 
 		//タグファイル名を作成する。
-		auto_sprintf( szTagFile, L"%s%s", state.m_szCurPath, TAG_FILENAME_T );
+		auto_snprintf_s(szTagFile, _TRUNCATE, L"%s%s", state.m_szCurPath, TAG_FILENAME_T);
 		DEBUG_TRACE( L"tag: %s\n", szTagFile );
 		
 		//タグファイルを開く。
-		FILE* fp = _wfopen( szTagFile, L"rb" );
-		if( fp )
+		if (FILE* fp = nullptr; 0 == ::_wfopen_s(&fp, szTagFile, L"rb"))
 		{
 			DEBUG_TRACE( L"open tags\n" );
 			bool bSorted = true;
@@ -1242,10 +1242,10 @@ bool CDlgTagJumpList::ReadTagsParameter(
 			if (0 == strncmp_literal(szLineData + 1, "_TAG_")) {
 				int  nRet;
 				s[0][0] = s[1][0] = s[2][0] = 0;
-				nRet = sscanf(
-					szLineData,
-					TAG_FILE_INFO_A,	//tagsファイル情報
-					s[0], s[1], s[2]
+				nRet = ::sscanf_s(szLineData, TAG_FILE_INFO_A,	//tagsファイル情報
+					s[0], unsigned(std::size(s[0])),
+					s[1], unsigned(std::size(s[1])),
+					s[2], unsigned(std::size(s[2]))
 				);
 				if (nRet < 2) {
 					szLineData[nLINEDATA_LAST_CHAR] = '\0';
@@ -1325,20 +1325,22 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 	//	@@ 2005.03.31 MIK TAG_FORMAT定数化
 	int nRet;
 	if (2 == nTagFormat) {
-		nRet = sscanf(
-			szLineData,
-			TAG_FORMAT_2_A,	//拡張tagsフォーマット
-			s[0], s[1], n2, s[2], s[3]
+		nRet = ::sscanf_s(szLineData, TAG_FORMAT_2_A,	//拡張tagsフォーマット
+			s[0], unsigned(std::size(s[0])),
+			s[1], unsigned(std::size(s[1])),
+			n2, 
+			s[2], unsigned(std::size(s[2])),
+			s[3], unsigned(std::size(s[3]))
 		);
 		// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
 		if (nRet < 3) bRet = false;
 		if (*n2 <= 0) bRet = false;	//行番号不正(-excmd=nが指定されてないかも)
 	}
 	else {
-		nRet = sscanf(
-			szLineData,
-			TAG_FORMAT_1_A,	//tagsフォーマット
-			s[0], s[1], n2
+		nRet = ::sscanf_s(szLineData, TAG_FORMAT_1_A,	//tagsフォーマット
+			s[0], unsigned(std::size(s[0])),
+			s[1], unsigned(std::size(s[1])),
+			n2
 		);
 		if (nRet < 2) bRet = false;
 		if (*n2 <= 0) bRet = false;
@@ -1610,7 +1612,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 			//::wcsncat_s(basePath, L"..\\", _TRUNCATE);
 			DirUp( basePath );
 		}
-		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){
+		if( -1 == auto_snprintf_s( pszOutput, count, _TRUNCATE, L"%s%s", basePath, p ) ){
 			return nullptr;
 		}
 	}

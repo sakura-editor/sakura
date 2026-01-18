@@ -366,7 +366,7 @@ void COutlineErlang::build_arity( int arity )
 {
 	wchar_t numstr[12];
 	::_snwprintf_s( numstr, _TRUNCATE, L"/%d", arity );
-	::wcsncat_s(m_func, std::size(m_func), numstr, _TRUNCATE );
+	::wcsncat_s(m_func, numstr, _TRUNCATE );
 }
 
 /** Erlang アウトライン解析

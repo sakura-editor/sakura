@@ -12,6 +12,6 @@
 void CType_Other::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	auto_sprintf( pType->m_szTypeName, L"設定%d", pType->m_nIdx + 1 );
+	auto_snprintf_s(pType->m_szTypeName, _TRUNCATE, L"設定%d", pType->m_nIdx + 1);
 	pType->m_szTypeExts[0] = L'\0';
 }
