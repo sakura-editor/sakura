@@ -66,7 +66,11 @@ void CNativeA::AppendStringF(const char* pszData, ...)
 	va_list v;
 	va_start(v, pszData);
 	int len = _vsnprintf_s(buf, std::size(buf), _TRUNCATE, pszData, v);
+
+#ifdef _DEBUG
 	int e = errno;
+#endif
+
 	va_end(v);
 
 	if (len == -1) {
