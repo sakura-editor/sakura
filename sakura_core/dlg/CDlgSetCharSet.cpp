@@ -58,10 +58,9 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	ApiWrap::Combo_SetExtendedUI( m_hwndCharSet, TRUE );
 
 	// 文字コードセット選択コンボボックス初期化
-	int i;
 	CCodeTypesForCombobox cCodeTypes;
 	ApiWrap::Combo_ResetContent( m_hwndCharSet );
-	for (i = 1; i < cCodeTypes.GetCount(); ++i) {
+	for (size_t i = 1; i < cCodeTypes.GetCount(); ++i) {
 		int idx = ApiWrap::Combo_AddString( m_hwndCharSet, cCodeTypes.GetName(i) );
 		ApiWrap::Combo_SetItemData( m_hwndCharSet, idx, cCodeTypes.GetCode(i) );
 	}
