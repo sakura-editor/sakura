@@ -84,7 +84,7 @@ public:
 	}
 
 	//! 日本語コードセット判定
-	ECodeType CheckKanjiCode(const char* buff, size_t size) noexcept;
+	ECodeType CheckKanjiCode(const char* buff, size_t size);
 
 protected:
 	ECodeType DetectUnicodeBom(const char* pS, size_t nLen) noexcept;
