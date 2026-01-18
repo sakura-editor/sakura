@@ -201,7 +201,10 @@ private:
 
 	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
-			keys.push_back(::_wcsdup(addKey));
+			const auto cchAddKey = ::wcslen(addKey);
+			auto pszAddKey = new wchar_t[cchAddKey + 1];
+			::wcsncpy_s(pszAddKey, cchAddKey + 1, addKey, _TRUNCATE);
+			keys.push_back(pszAddKey);
 		}
 	}
 
