@@ -32,10 +32,26 @@ jobs:
           msystem: MINGW64
           update: true
           install: >-
+            libiconv
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
             mingw-w64-x86_64-7zip
+
+      - name: Check iconv
+        shell: msys2 {0}
+        continue-on-error: true
+        run: |
+          which iconv
+
+      - shell: msys2 {0}
+        run: |
+          pacman -U --noconfirm https://mirror.msys2.org/msys/x86_64/libiconv-1.18-1-x86_64.pkg.tar.zst
+
+      - name: Check iconv
+        shell: msys2 {0}
+        run: |
+          which iconv
 
       - name: Show environment variables for debug
         run: set
