@@ -106,7 +106,7 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 		if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
 		 && nPos == 0 && m_nSize <= size_t(cStr.GetLength())
 		 && wmemcmp(cStr.GetPtr(), m_pszId, m_nSize) == 0 ){
-			if( m_nSize== cStr.GetLength() ){
+			if (m_nSize == size_t(cStr.GetLength())) {
 				m_nCOMMENTEND = m_nSize;
 				return false;
 			}else{
@@ -126,7 +126,7 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 			m_nCOMMENTEND = cStr.GetLength();
 		}
 	}
-	else if (nPos == m_nCOMMENTEND) {
+	else if (nPos == int(m_nCOMMENTEND)) {
 		return true;
 	}
 	return false;

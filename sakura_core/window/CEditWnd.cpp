@@ -1705,7 +1705,7 @@ LRESULT CEditWnd::DispatchEvent(
 			break;
 		case PM_CHANGESETTING_FONTSIZE:
 			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
-					|| GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+					|| GetDocument()->m_cDocType.GetDocumentType().GetIndex() == int(wParam) ){
 				// 文字幅で幅も変わるので再構築する
 				// 変更中にさらに変更されると困るのでBlockingHookは無効
 				GetDocument()->OnChangeSetting( true, false );
@@ -1715,8 +1715,8 @@ LRESULT CEditWnd::DispatchEvent(
 			break;
 		case PM_CHANGESETTING_TYPE:
 			cTypeNew = CDocTypeManager().GetDocumentTypeOfPath(GetDocument()->m_cDocFile.GetFilePath());
-			if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam
-				|| cTypeNew.GetIndex() == wParam){
+			if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() == int(wParam)
+				|| cTypeNew.GetIndex() == int(wParam)) {
 				GetDocument()->OnChangeSetting();
 
 				// アウトライン解析画面処理
@@ -1739,12 +1739,12 @@ LRESULT CEditWnd::DispatchEvent(
 			break;
 		case PM_CHANGESETTING_TYPE2:
 			cTypeNew = CDocTypeManager().GetDocumentTypeOfPath(GetDocument()->m_cDocFile.GetFilePath());
-			if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam
-				|| cTypeNew.GetIndex() == wParam){
+			if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() == int(wParam)
+				|| cTypeNew.GetIndex() == int(wParam)) {
 				// indexのみ更新
 				GetDocument()->m_cDocType.SetDocumentTypeIdx();
 				// タイプが変更になった場合は適用する
-				if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() != wParam) {
+				if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() != int(wParam)) {
 					::SendMessage(m_hWnd, MYWM_CHANGESETTING, wParam, PM_CHANGESETTING_TYPE);
 				}
 			}
