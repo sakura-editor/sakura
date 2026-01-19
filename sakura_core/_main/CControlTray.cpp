@@ -977,7 +977,7 @@ void CControlTray::OnCommand( WORD wNotifyCode, [[maybe_unused]] WORD wID , [[ma
 
 bool CControlTray::OnSetTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
+	if (m_pShareData->m_nTypesCount <= 0 || size_t(m_pShareData->m_nTypesCount) <= index) {
 		return false;
 	}
 
@@ -1002,7 +1002,7 @@ bool CControlTray::OnSetTypeSetting(size_t index)
 
 bool CControlTray::OnGetTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
+	if (m_pShareData->m_nTypesCount <= 0 || size_t(m_pShareData->m_nTypesCount) <= index) {
 		return false;
 	}
 
@@ -1013,7 +1013,7 @@ bool CControlTray::OnGetTypeSetting(size_t index)
 
 bool CControlTray::OnAddTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount < 0 || int(MAX_TYPES) <= m_pShareData->m_nTypesCount || m_pShareData->m_nTypesCount < index) {
+	if (m_pShareData->m_nTypesCount < 0 || int(MAX_TYPES) <= m_pShareData->m_nTypesCount || size_t(m_pShareData->m_nTypesCount) < index) {
 		return false;
 	}
 
@@ -1056,7 +1056,7 @@ bool CControlTray::OnAddTypeSetting(size_t index)
 
 bool CControlTray::OnDelTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
+	if (m_pShareData->m_nTypesCount <= 0 || size_t(m_pShareData->m_nTypesCount) <= index) {
 		return false;
 	}
 

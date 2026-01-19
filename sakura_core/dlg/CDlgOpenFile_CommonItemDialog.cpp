@@ -506,7 +506,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 		CCodeTypesForCombobox cCodeTypes;
 		bool bCodeSel = false;
 		ECodeType eCodeSel = CODE_NONE;
-		for( int i = (m_customizeSetting.bSkipAutoDetect ? 1 : 0) /* 保存の場合は自動選択飛ばし */; i < cCodeTypes.GetCount(); ++i ){
+		for( int i = (m_customizeSetting.bSkipAutoDetect ? 1 : 0) /* 保存の場合は自動選択飛ばし */; i < int(cCodeTypes.GetCount()); ++i ){
 			auto code = cCodeTypes.GetCode(i);
 			hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)code, cCodeTypes.GetName(i)); RETURN_IF_FAILED
 			if( code == m_nCharCode ){

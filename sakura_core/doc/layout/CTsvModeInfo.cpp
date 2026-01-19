@@ -34,7 +34,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 		for (i = 0; i < nLineLen; ) {
 			if (WCODE::IsLineDelimiter(pcLine[i], true)) break;
 			if (pcLine[i] == delimiter) {
-				if (nField == m_tabLength.size()) {
+				if (nField == std::ssize(m_tabLength)) {
 					m_tabLength.push_back(nFieldWidth);
 				} else if (m_tabLength[nField] < nFieldWidth) {
 					m_tabLength[nField] = nFieldWidth;
@@ -53,7 +53,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 			nCharChars = CNativeW::GetSizeOfChar( pcLine, nLineLen, i );
 			i += nCharChars;
 		}
-		if (nField == m_tabLength.size()) {
+		if (nField == std::ssize(m_tabLength)) {
 			m_tabLength.push_back(nFieldWidth);
 		} else if (m_tabLength[nField] < nFieldWidth) {
 			m_tabLength[nField] = nFieldWidth;

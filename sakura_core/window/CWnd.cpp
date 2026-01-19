@@ -78,7 +78,7 @@ next:
 	}
 } //namespace CWindowCreationHook
 
-CWnd::CWnd(const WCHAR* pszInheritanceAppend)
+CWnd::CWnd([[maybe_unused]] const WCHAR* pszInheritanceAppend)
 {
 #ifdef _DEBUG
 	::wcsncpy_s(m_szClassInheritances, L"CWnd", _TRUNCATE );

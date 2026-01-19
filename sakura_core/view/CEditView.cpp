@@ -1844,7 +1844,7 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		// メモリ確保に失敗したら抜ける
-		if( buffer->Capacity() < nBufSize ){
+		if( buffer->Capacity() < size_t(nBufSize) ){
 			return false;
 		}
 
@@ -2031,11 +2031,11 @@ bool CEditView::GetSelectedData(
 */
 bool CEditView::GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen )
 {
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	CLogicInt		nIdxFrom;
-	CLogicInt		nIdxTo;
-	CLogicInt		nSelectLen;
+	const wchar_t*	pLine = nullptr;
+	CLogicInt		nLineLen{ 0 };
+	CLogicInt		nIdxFrom{ 0 };
+	CLogicInt		nIdxTo{ 0 };
+	CLogicInt		nSelectLen{ 0 };
 
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;

@@ -23,7 +23,7 @@ TEST(CSelectLang, test002)
 	// 初期化する
 	CSelectLang::InitializeLanguageEnvironment();
 
-	EXPECT_THAT(CSelectLang::GetLangInfo().size(), Ge(1));
+	EXPECT_THAT(CSelectLang::GetLangInfo(), ::testing::SizeIs(Ge(size_t(1))));
 
 	CSelectLang::ChangeLang(L"sakura_lang_en_US.dll");
 
