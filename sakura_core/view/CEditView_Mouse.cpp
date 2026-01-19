@@ -1834,10 +1834,11 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
 	if( cf == CClipboard::GetSakuraFormat() ){
-		const auto pClip = std::bit_cast<SSakuraClipData*>(pData);
-		if (const auto nLength = pClip->cchData; SSakuraClipData::CalcSize(nLength) <= nSize) {
-			const auto pszData = pClip->szData;
-			cmemBuf.SetString( pszData, nLength );	// 途中のNUL文字も含める
+		if (const auto pClip = std::bit_cast<SSakuraClipData*>(pData)) {
+			if (const auto nLength = pClip->cchData; SSakuraClipData::CalcSize(nLength) <= nSize) {
+				const auto pszData = pClip->szData;
+				cmemBuf.SetString(pszData, nLength);	// 途中のNUL文字も含める
+			}
 		}
 	}else if( cf == CF_UNICODETEXT ){
 		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );

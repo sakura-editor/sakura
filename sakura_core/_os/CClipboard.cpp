@@ -301,16 +301,21 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	}
 
 	//サクラ形式のデータがあれば取得
-	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
-	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
+	if (const auto uFormatSakuraClip = CClipboard::GetSakuraFormat();
+		(uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
 		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
-		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
-		if (hSakura != nullptr) {
-			const auto pClip   = (SSakuraClipData*)::GlobalLock(hSakura);
-			const auto nLength = pClip->cchData;
-			const auto szData  = pClip->szData;
-			cmemBuf->Append( szData, nLength );
-			::GlobalUnlock(hSakura);
+		if (const auto hSakura = GetClipboardData(uFormatSakuraClip)) {
+			if (const auto pClip = (SSakuraClipData*)::GlobalLock(hSakura)) {
+				const auto nSize = ::GlobalSize(hSakura);
+				if (const auto nLength = pClip->cchData; SSakuraClipData::CalcSize(nLength) <= nSize) {
+					const auto szData  = pClip->szData;
+					cmemBuf->Append(szData, nLength);
+
+					// ここで true を返して抜けたいが無理。
+				}
+				::GlobalUnlock(hSakura);
+			}
+			// おかしなデータが入ってた場合、何もペーストできなくともtrueを返してしまうが放置。
 			return true;
 		}
 	}
