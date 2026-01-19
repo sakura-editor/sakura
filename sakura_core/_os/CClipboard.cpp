@@ -126,6 +126,11 @@ bool CClipboard::SetText(
 	while(bSakuraText){
 		if( 0 == uFormatSakuraClip )break;
 
+		// SAKURAClipWはINT_MAXを越えるデータを格納できない
+		if (size_t(INT_MAX) < nDataLen) {
+			break;
+		}
+
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
