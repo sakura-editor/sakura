@@ -209,11 +209,12 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 
 		i++;
 		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
-		m_pData[i].size = sizeof(size_t) + nTextLen * sizeof( wchar_t );
+		m_pData[i].size = SSakuraClipData::CalcSize(nTextLen);
 		m_pData[i].data = new BYTE[m_pData[i].size];
-		*(size_t*)m_pData[i].data = nTextLen;
-		memcpy_raw( m_pData[i].data + sizeof(size_t), lpszText, nTextLen * sizeof( wchar_t ) );
-
+		auto pClip = std::bit_cast<SSakuraClipData*>(m_pData[i].data);
+		pClip->cchData = static_cast<int>(nTextLen);
+		::wmemcpy_s(pClip->szData, nTextLen + 1, lpszText, nTextLen);
+		pClip->szData[nTextLen] = L'\0';
 		i++;
 		if( bColumnSelect ){
 			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );

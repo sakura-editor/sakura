@@ -129,15 +129,15 @@ bool CClipboard::SetText(
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			sizeof(size_t) + (nDataLen + 1) * sizeof(wchar_t)
+			SSakuraClipData::CalcSize(nDataLen)
 		);
 		if( !hgClipSakura )break;
 
 		//確保した領域にデータをコピー
-		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
-		*((size_t*)pClip) = nDataLen; pClip += sizeof(nDataLen);						//データの長さ
-		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
-		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
+		auto pClip = static_cast<SSakuraClipData*>(::GlobalLock(hgClipSakura));
+		pClip->cchData = static_cast<int>(nDataLen);
+		::wmemcpy_s(pClip->szData, nDataLen, pData, nDataLen);
+		pClip->szData[nDataLen] = L'\0';
 		::GlobalUnlock( hgClipSakura );
 
 		//クリップボードに設定
@@ -301,9 +301,9 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
 		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
 		if (hSakura != nullptr) {
-			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
-			size_t nLength        = *((size_t*)pData);
-			const wchar_t* szData = (const wchar_t*)(pData + sizeof(size_t));
+			const auto pClip   = (SSakuraClipData*)::GlobalLock(hSakura);
+			const auto nLength = pClip->cchData;
+			const auto szData  = pClip->szData;
 			cmemBuf->Append( szData, nLength );
 			::GlobalUnlock(hSakura);
 			return true;
