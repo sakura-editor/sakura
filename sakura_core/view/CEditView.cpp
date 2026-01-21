@@ -137,7 +137,6 @@ BOOL CEditView::Create(
 {
 	m_bMiniMap = bMiniMap;
 
-	m_pcRuler = new CRuler(this, pcEditDoc);
 	m_pcViewFont = GetEditWnd().GetViewFont(m_bMiniMap);
 
 	m_cRegexKeyword = nullptr;				// 2007.04.08 ryoji
@@ -369,9 +368,6 @@ void CEditView::Close()
 
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = nullptr;
-
-	delete m_pcRuler;
-	m_pcRuler = nullptr;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

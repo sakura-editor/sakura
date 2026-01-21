@@ -32,6 +32,7 @@
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
 #include "view/CCaret.h"
+#include "view/CRuler.h"
 #include "view/CTextArea.h"
 #include "view/CViewFont.h"
 #include "CViewCalc.h" // parent
@@ -54,7 +55,6 @@
 #include "util/design_template.h"
 #include "_os/CClipboard.h"
 
-class CRuler;
 class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
@@ -104,6 +104,7 @@ class CEditView
 private:
 	using CAutoMarkMgrHolder = std::unique_ptr<CAutoMarkMgr>;
 	using CCaretHolder = std::unique_ptr<CCaret>;
+	using CRulerHolder = std::unique_ptr<CRuler>;
 	using CTextAreaHolder = std::unique_ptr<CTextArea>;
 
 public:
@@ -623,7 +624,7 @@ public:
 	//主要構成部品
 	CTextAreaHolder	m_pcTextArea = std::make_unique<CTextArea>(this);
 	CCaretHolder	m_pcCaret = std::make_unique<CCaret>(this, m_pcEditDoc);
-	CRuler*			m_pcRuler = nullptr;
+	CRulerHolder	m_pcRuler = std::make_unique<CRuler>(this, m_pcEditDoc);
 
 	//主要属性
 	CTextMetrics	m_cTextMetrics;
