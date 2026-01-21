@@ -183,6 +183,11 @@ CEditWnd& GetEditWnd()
 	return *pcEditWnd;
 }
 
+CViewFont* GetViewFont(bool isMiniMap)
+{
+	return GetEditWnd().GetViewFont(isMiniMap);
+}
+
 //	/* メッセージループ */
 //	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
 

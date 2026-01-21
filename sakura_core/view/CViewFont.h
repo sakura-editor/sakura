@@ -59,4 +59,7 @@ private:
 	LOGFONT	m_LogFont;
 	bool	m_bMiniMap;
 };
+
+CViewFont* GetViewFont(bool isMiniMap);
+
 #endif /* SAKURA_CVIEWFONT_650DC4AC_DEA2_4652_B47A_6CA998C2F9EF_H_ */

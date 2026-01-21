@@ -33,6 +33,7 @@
 #include "CTextDrawer.h"
 #include "view/CCaret.h"
 #include "view/CTextArea.h"
+#include "view/CViewFont.h"
 #include "CViewCalc.h" // parent
 #include "CEditView_Paint.h"	// parent
 #include "CViewParser.h"
@@ -53,7 +54,6 @@
 #include "util/design_template.h"
 #include "_os/CClipboard.h"
 
-class CViewFont;
 class CRuler;
 class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
@@ -630,7 +630,7 @@ public:
 	CViewSelect		m_cViewSelect;
 
 	//主要オブジェクト
-	CViewFont*		m_pcViewFont;
+	CViewFont*		m_pcViewFont = GetViewFont(false);
 
 	//主要ヘルパ
 	CViewParser		m_cParser;
