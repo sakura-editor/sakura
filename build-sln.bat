@@ -27,8 +27,6 @@ if not defined CMD_MSBUILD (
 
 set SLN_FILE=sakura.sln
 
-@rem https://www.appveyor.com/docs/environment-variables/
-
 set EXTRA_CMD=
 set LOG_FILE=msbuild-%platform%-%configuration%.log
 @rem https://msdn.microsoft.com/ja-jp/library/ms171470.aspx

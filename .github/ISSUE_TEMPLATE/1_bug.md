@@ -23,12 +23,10 @@ about: 問題、不具合の報告 (バグではなくても困っているこ�
 - 仕様の問題
 - プログラムの動作上の問題
   - 正式リリース版
-  - Azure Pipelines ビルド版
-  - Appveyor ビルド版
+  - GitHub ビルド版
   - ローカルビルド版
 - ビルドの問題
-  - Azure Pipelines
-  - Appveyor
+  - GitHub
   - ローカルビルド
 - ドキュメントの問題
 - GitHub 関連の問題
