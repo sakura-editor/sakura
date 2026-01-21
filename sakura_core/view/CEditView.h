@@ -16,7 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -31,7 +31,7 @@
 
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
-#include "CTextArea.h"
+#include "view/CTextArea.h"
 #include "CCaret.h"
 #include "CViewCalc.h" // parent
 #include "CEditView_Paint.h"	// parent
@@ -102,6 +102,9 @@ class CEditView
 , public CEditView_Paint
 , public CDocListenerEx
 {
+private:
+	using CTextAreaHolder = std::unique_ptr<CTextArea>;
+
 public:
 	const CEditDoc* GetDocument() const
 	{
@@ -617,7 +620,7 @@ public:
 	const STypeConfig*	m_pTypeData;
 
 	//主要構成部品
-	CTextArea*		m_pcTextArea = nullptr;
+	CTextAreaHolder	m_pcTextArea = std::make_unique<CTextArea>(this);
 	CCaret*			m_pcCaret = nullptr;
 	CRuler*			m_pcRuler = nullptr;
 

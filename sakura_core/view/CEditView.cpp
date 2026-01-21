@@ -17,7 +17,7 @@
 	Copyright (C) 2007, ryoji, じゅうじ, maru
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2010, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -136,7 +136,7 @@ BOOL CEditView::Create(
 )
 {
 	m_bMiniMap = bMiniMap;
-	m_pcTextArea = new CTextArea(this);
+
 	m_pcCaret = new CCaret(this, pcEditDoc);
 	m_pcRuler = new CRuler(this, pcEditDoc);
 	m_pcViewFont = GetEditWnd().GetViewFont(m_bMiniMap);
@@ -376,8 +376,6 @@ void CEditView::Close()
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = nullptr;
 
-	delete m_pcTextArea;
-	m_pcTextArea = nullptr;
 	delete m_pcCaret;
 	m_pcCaret = nullptr;
 	delete m_pcRuler;
