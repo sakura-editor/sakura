@@ -61,8 +61,8 @@ public:
 	CDisableWow64FsRedirect& operator = (CDisableWow64FsRedirect&&) = delete;
 
 private:
-	BOOL	m_isSuccess;
-	PVOID	m_OldValue;
+	BOOL	m_isSuccess = FALSE;
+	PVOID	m_OldValue = nullptr;
 };
 
 //カレントディレクトリユーティリティ。
