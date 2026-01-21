@@ -57,10 +57,10 @@ public:
 public:
 	SFilePath	m_szFilePath;	/*!< 解析対象ファイル名 */
 private:
-	int			m_nFuncInfoArrNum;	/*!< 配列要素数 */
-	CFuncInfo**	m_ppcFuncInfoArr;	/*!< 配列 */
+	int			m_nFuncInfoArrNum = 0;	/*!< 配列要素数 */
+	CFuncInfo**	m_ppcFuncInfoArr = nullptr;	/*!< 配列 */
 	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
-	int			m_nAppendTextLenMax;
+	int			m_nAppendTextLenMax = 0;
 
 	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);
 };
