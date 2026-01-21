@@ -43,8 +43,6 @@ set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 file(GLOB_RECURSE TESTS1_HEADERS
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.h
-  ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/*.hpp
-  ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/*.h
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.h
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.hpp
@@ -54,10 +52,19 @@ file(GLOB_RECURSE TESTS1_HEADERS
 # define source files of tests1
 file(GLOB_RECURSE TESTS1_SOURCES
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.cpp
-  ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.cpp
 )
+
+if(MSVC)
+  # coverage.cppのみC++17準拠にする
+  set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/src/test/resources/coverage.cpp
+    PROPERTIES
+      COMPILE_FLAGS "/std:c++17"
+      SKIP_PRECOMPILE_HEADERS ON
+  )
+endif(MSVC)
 
 if(MINGW)
   # coverage.cppをリストから削除
@@ -139,6 +146,9 @@ endif(MINGW)
 
 # Add dependencies
 add_dependencies(tests1
+  sakura
+  sakura_lang_en_US
+  sakura_lang_zh_CN
   test_resource_zip
   generate_gtest
   generate_miniz
