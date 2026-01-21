@@ -140,7 +140,6 @@ BOOL CEditView::Create(
 	m_pcRuler = new CRuler(this, pcEditDoc);
 	m_pcViewFont = GetEditWnd().GetViewFont(m_bMiniMap);
 
-	m_cHistory = new CAutoMarkMgr;
 	m_cRegexKeyword = nullptr;				// 2007.04.08 ryoji
 
 	SetDrawSwitch(true);
@@ -367,9 +366,6 @@ void CEditView::Close()
 
 	delete m_pcDropTarget;
 	m_pcDropTarget = nullptr;
-
-	delete m_cHistory;
-	m_cHistory = nullptr;
 
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = nullptr;

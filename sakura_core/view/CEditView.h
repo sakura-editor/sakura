@@ -42,6 +42,7 @@
 #include "window/CTipWnd.h"
 #include "window/CAutoScrollWnd.h"
 #include "env/CDicMgr.h"
+#include "env/CMarkMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "extmodule/CBregexp.h"
 #include "basis/CEol.h"				// EEolType
@@ -58,7 +59,6 @@ class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
 class CRegexKeyword;///
-class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
 class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
@@ -102,6 +102,7 @@ class CEditView
 , public CDocListenerEx
 {
 private:
+	using CAutoMarkMgrHolder = std::unique_ptr<CAutoMarkMgr>;
 	using CCaretHolder = std::unique_ptr<CCaret>;
 	using CTextAreaHolder = std::unique_ptr<CTextArea>;
 
@@ -744,7 +745,7 @@ private:
 
 public:
 	// その他
-	CAutoMarkMgr*	m_cHistory = nullptr;	//	Jump履歴
+	CAutoMarkMgrHolder	m_cHistory = std::make_unique<CAutoMarkMgr>();	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword = nullptr;	//@@@ 2001.11.17 add MIK
 	int				m_nMyIndex;	/* 分割状態 */
 	CMigemo*		m_pcmigemo;
