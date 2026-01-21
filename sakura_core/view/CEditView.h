@@ -644,8 +644,8 @@ public:
 	HWND			m_hwndHScrollBar = nullptr;	/* 水平スクロールバーウィンドウハンドル */
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	HWND			m_hwndSizeBoxPlaceholder;	/* サイズボックス代替スタティックウィンドウハンドル */
-	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
-	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
+	CSplitBoxWnd*	m_pcsbwVSplitBox = nullptr;	/* 垂直分割ボックス */
+	CSplitBoxWnd*	m_pcsbwHSplitBox = nullptr;	/* 水平分割ボックス */
 	CAutoScrollWnd	m_cAutoScrollWnd;	//!< オートスクロール
 
 public:
