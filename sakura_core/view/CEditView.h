@@ -31,8 +31,8 @@
 
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
+#include "view/CCaret.h"
 #include "view/CTextArea.h"
-#include "CCaret.h"
 #include "CViewCalc.h" // parent
 #include "CEditView_Paint.h"	// parent
 #include "CViewParser.h"
@@ -102,6 +102,7 @@ class CEditView
 , public CDocListenerEx
 {
 private:
+	using CCaretHolder = std::unique_ptr<CCaret>;
 	using CTextAreaHolder = std::unique_ptr<CTextArea>;
 
 public:
@@ -620,7 +621,7 @@ public:
 
 	//主要構成部品
 	CTextAreaHolder	m_pcTextArea = std::make_unique<CTextArea>(this);
-	CCaret*			m_pcCaret = nullptr;
+	CCaretHolder	m_pcCaret = std::make_unique<CCaret>(this, m_pcEditDoc);
 	CRuler*			m_pcRuler = nullptr;
 
 	//主要属性
