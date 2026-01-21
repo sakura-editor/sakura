@@ -847,8 +847,9 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 // インポート
 bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 {
+	constexpr auto KEYNAME_SIZE = _countof(m_Common.m_sKeyBind.m_pKeyNameArr) - 1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+
 	const auto& strPath = sFileName;
-	const auto KEYNAME_SIZE = int(std::size(m_Common.m_sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	CommonSetting_KeyBind sKeyBind = m_Common.m_sKeyBind;
 
 	//オープン
@@ -979,7 +980,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 	for( int j2=0; j2<sKeyBind.m_nKeyNameArrNum; j2++ ){
 		int idx = sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode];
 		if( idx == KEYNAME_SIZE ){// not assigned
-			if( nKeyNameArrUsed >= KEYNAME_SIZE ) continue;
+			if (KEYNAME_SIZE < nKeyNameArrUsed) continue;
 			m_Common.m_sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = sKeyBind.m_pKeyNameArr[j2];
 			sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 		}
