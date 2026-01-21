@@ -59,7 +59,6 @@ class COpeBlk;///
 class CSplitBoxWnd;///
 class CRegexKeyword;///
 class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
-class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
@@ -616,7 +615,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//参照
-	CEditDoc*		m_pcEditDoc;	//!< ドキュメント
+	CEditDoc*		m_pcEditDoc = GetListeningDoc();	//!< ドキュメント
 	const STypeConfig*	m_pTypeData;
 
 	//主要構成部品

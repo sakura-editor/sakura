@@ -129,7 +129,7 @@ CEditView::CEditView( void )
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
 BOOL CEditView::Create(
 	HWND		hwndParent,	//!< 親
-	CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
+	[[maybe_unused]] CEditDoc* pcEditDoc,	//!< 参照するドキュメント
 	int			nMyIndex,	//!< ビューのインデックス
 	BOOL		bShow,		//!< 作成時に表示するかどうか
 	bool		bMiniMap
@@ -230,7 +230,6 @@ BOOL CEditView::Create(
 
 	WNDCLASS	wc;
 	m_hwndParent = hwndParent;
-	m_pcEditDoc = pcEditDoc;
 	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	m_nMyIndex = nMyIndex;
 
