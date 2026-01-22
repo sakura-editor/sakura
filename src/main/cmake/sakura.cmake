@@ -481,12 +481,14 @@ if(MSVC)
     PUBLIC
       NOMINMAX
   )
-  # add compile options for sakura_core
-  target_compile_options(sakura_core
-    PRIVATE
-      /FAsu
-      /Fa"${CMAKE_BINARY_DIR}"
-  )
+  # add compile options for sakura_core (Visual Studio generator only)
+  if(CMAKE_GENERATOR MATCHES "^Visual Studio")
+    target_compile_options(sakura_core
+      PRIVATE
+        /FAsu
+        /Fa"${CMAKE_BINARY_DIR}"
+    )
+  endif()
 endif(MSVC)
 
 if(MINGW)
