@@ -1100,6 +1100,12 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					::wcsncpy_s(tmpKeydata.m_szKeyName, p, _TRUNCATE);
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
+// 互換性のため残したと書かれているが現状の共有データ構造と矛盾していて不正コードになってるので無効化しておく。
+// ・sKeyBind.m_pKeyNameArrのサイズは 0x101 で im + 0x0100 にアクセスしてはいけない。
+// ・tmpKeydata.m_nKeyCodeは設定ファイルから読む値で、負数にすることができる。
+// ・tmpKeydata.m_nKeyCodeを負数にするには 0x8000 以上の値を指定すればよい。（一般的なキーコードとしては不正値。）
+// ・どう直すのが適切か不明なので、一旦コードブロックを無効化しておく。
+#if 0
 						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。
 						for( int im=0; im< jpVKEXNamesLen; im++ ){
 							if( wcscmp( tmpKeydata.m_szKeyName, jpVKEXNames[im] ) == 0 ){
@@ -1107,6 +1113,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 								sKeyBind.m_pKeyNameArr[im + 0x0100] = tmpKeydata;
 							}
 						}
+#endif
 					}
 					else{
 						// 割り当て済みキーコードは上書き
