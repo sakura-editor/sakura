@@ -16,7 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -31,8 +31,10 @@
 
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
-#include "CTextArea.h"
-#include "CCaret.h"
+#include "view/CCaret.h"
+#include "view/CRuler.h"
+#include "view/CTextArea.h"
+#include "view/CViewFont.h"
 #include "CViewCalc.h" // parent
 #include "CEditView_Paint.h"	// parent
 #include "CViewParser.h"
@@ -42,6 +44,7 @@
 #include "window/CTipWnd.h"
 #include "window/CAutoScrollWnd.h"
 #include "env/CDicMgr.h"
+#include "env/CMarkMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "extmodule/CBregexp.h"
 #include "basis/CEol.h"				// EEolType
@@ -52,14 +55,10 @@
 #include "util/design_template.h"
 #include "_os/CClipboard.h"
 
-class CViewFont;
-class CRuler;
 class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
 class CRegexKeyword;///
-class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
-class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
@@ -102,6 +101,12 @@ class CEditView
 , public CEditView_Paint
 , public CDocListenerEx
 {
+private:
+	using CAutoMarkMgrHolder = std::unique_ptr<CAutoMarkMgr>;
+	using CCaretHolder = std::unique_ptr<CCaret>;
+	using CRulerHolder = std::unique_ptr<CRuler>;
+	using CTextAreaHolder = std::unique_ptr<CTextArea>;
+
 public:
 	const CEditDoc* GetDocument() const
 	{
@@ -613,20 +618,20 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//参照
-	CEditDoc*		m_pcEditDoc;	//!< ドキュメント
+	CEditDoc*		m_pcEditDoc = GetListeningDoc();	//!< ドキュメント
 	const STypeConfig*	m_pTypeData;
 
 	//主要構成部品
-	CTextArea*		m_pcTextArea = nullptr;
-	CCaret*			m_pcCaret = nullptr;
-	CRuler*			m_pcRuler = nullptr;
+	CTextAreaHolder	m_pcTextArea = std::make_unique<CTextArea>(this);
+	CCaretHolder	m_pcCaret = std::make_unique<CCaret>(this, m_pcEditDoc);
+	CRulerHolder	m_pcRuler = std::make_unique<CRuler>(this, m_pcEditDoc);
 
 	//主要属性
 	CTextMetrics	m_cTextMetrics;
 	CViewSelect		m_cViewSelect;
 
 	//主要オブジェクト
-	CViewFont*		m_pcViewFont;
+	CViewFont*		m_pcViewFont = GetViewFont(false);
 
 	//主要ヘルパ
 	CViewParser		m_cParser;
@@ -641,8 +646,8 @@ public:
 	HWND			m_hwndHScrollBar = nullptr;	/* 水平スクロールバーウィンドウハンドル */
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	HWND			m_hwndSizeBoxPlaceholder;	/* サイズボックス代替スタティックウィンドウハンドル */
-	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
-	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
+	CSplitBoxWnd*	m_pcsbwVSplitBox = nullptr;	/* 垂直分割ボックス */
+	CSplitBoxWnd*	m_pcsbwHSplitBox = nullptr;	/* 水平分割ボックス */
 	CAutoScrollWnd	m_cAutoScrollWnd;	//!< オートスクロール
 
 public:
@@ -741,7 +746,7 @@ private:
 
 public:
 	// その他
-	CAutoMarkMgr*	m_cHistory = nullptr;	//	Jump履歴
+	CAutoMarkMgrHolder	m_cHistory = std::make_unique<CAutoMarkMgr>();	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword = nullptr;	//@@@ 2001.11.17 add MIK
 	int				m_nMyIndex;	/* 分割状態 */
 	CMigemo*		m_pcmigemo;

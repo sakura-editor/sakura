@@ -17,7 +17,7 @@
 	Copyright (C) 2007, ryoji, じゅうじ, maru
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2010, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -129,19 +129,16 @@ CEditView::CEditView( void )
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
 BOOL CEditView::Create(
 	HWND		hwndParent,	//!< 親
-	CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
+	[[maybe_unused]] CEditDoc* pcEditDoc,	//!< 参照するドキュメント
 	int			nMyIndex,	//!< ビューのインデックス
 	BOOL		bShow,		//!< 作成時に表示するかどうか
 	bool		bMiniMap
 )
 {
 	m_bMiniMap = bMiniMap;
-	m_pcTextArea = new CTextArea(this);
-	m_pcCaret = new CCaret(this, pcEditDoc);
-	m_pcRuler = new CRuler(this, pcEditDoc);
+
 	m_pcViewFont = GetEditWnd().GetViewFont(m_bMiniMap);
 
-	m_cHistory = new CAutoMarkMgr;
 	m_cRegexKeyword = nullptr;				// 2007.04.08 ryoji
 
 	SetDrawSwitch(true);
@@ -230,7 +227,6 @@ BOOL CEditView::Create(
 
 	WNDCLASS	wc;
 	m_hwndParent = hwndParent;
-	m_pcEditDoc = pcEditDoc;
 	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	m_nMyIndex = nMyIndex;
 
@@ -370,18 +366,8 @@ void CEditView::Close()
 	delete m_pcDropTarget;
 	m_pcDropTarget = nullptr;
 
-	delete m_cHistory;
-	m_cHistory = nullptr;
-
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = nullptr;
-
-	delete m_pcTextArea;
-	m_pcTextArea = nullptr;
-	delete m_pcCaret;
-	m_pcCaret = nullptr;
-	delete m_pcRuler;
-	m_pcRuler = nullptr;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
