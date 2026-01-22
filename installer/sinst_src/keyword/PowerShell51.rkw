@@ -1,0 +1,11 @@
+﻿// 正規表現キーワード Ver1
+RxKey[000]=RK2,/(?#自動変数)(?<![-\w])\$(?:\$|\?|\\^|_|args|ConsoleFileName|Error|Event|EventArgs|EventSubscriber|ExecutionContext|false|foreach|HOME|Host|input|LASTEXITCODE|Matches|MyInvocation|NestedPromptLevel|null|PID|PROFILE|PSBoundParameters|PSCmdlet|PSCommandPath|PSCulture|PSDebugContext|PSEdition|PSHOME|PSItem|PSScriptRoot|PSSenderInfo|PSUICulture|PSVersionTable|PWD|Sender|ShellId|StackTrace|switch|this|true)(?![-\w])/ki
+RxKey[001]=RK1,/(?#変数)(?<!`)\$(?:\{[^}]+\}|(?:\$|\^|\?|_|\d+|[a-z_]\w*)(?::(?!:)(?:\d+|[a-z_]\w*))?)/ki
+RxKey[002]=RK2,/(?#型)\[(?:system\.)?((?:[a-z_]\w*)(?:\.[a-z_]\w*)*)(?:\[\])*(?=\s*\])/ki
+RxKey[003]=RK3,/(?#属性)\[(?:system\.)?([a-z_]\w*)(?=\s*(?:\(|\]))/ki
+RxKey[004]=RK3,/(?#プロパティ)\.([a-z_]\w*)/ki
+RxKey[005]=RK4,/(?#コマンド)(?<![-\w])([a-z]\w*-[a-z][\w-]*)(?![-\w])/ki
+RxKey[006]=RK5,/(?#演算子-文字)(?<![-\w])-(?:[ic])?(?:eq|ne|gt|ge|lt|le|like|notlike|match|notmatch|replace|contains|notcontains|in|notin|is|isnot)(?![-\w])|(?<![-\w])-(?:and|or|xor|not|band|bor|bxor|bnot|shl|shr|split|join|as|f)(?![-\w])/ki
+RxKey[007]=RK5,/(?#演算子-記号)(?:\+\+|--|\+=|-=|\*=|\/=|%=|=|\+|-|\*|\/|%|\.\.)/ki
+RxKey[008]=RK5,/(?#演算子-リダイレクト)(?:\d?>>|>>|\d?>|>|\d?>&\d)/ki
+RxKey[009]=NUM,/(?#数値引数)(?<=\(|,)\s*(-?\d+)\s*(?=,|\))/ki
