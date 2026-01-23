@@ -25,7 +25,7 @@ public:
 
 	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
 	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
-	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
+	bool empty() const noexcept { return !m_pData || m_nDataLen == 0; }
 	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
 
 private:
