@@ -11,42 +11,6 @@
 #include "mem/CNativeA.h"
 
 /*!
-	CStringRefのテスト
- */
-TEST(CStringRef, CStringRef)
-{
-	constexpr const wchar_t sz[] = L"test";
-	constexpr auto cch = std::size(sz) - 1;
-
-	CStringRef v1;
-	EXPECT_EQ(NULL, v1.data());
-	EXPECT_EQ(0, v1.length());
-	EXPECT_TRUE(v1.empty());
-	EXPECT_THAT(v1[0], L'\0');
-
-	CStringRef v2(sz, cch);
-	EXPECT_STREQ(sz, v2.data());
-	EXPECT_EQ(cch, v2.length());
-	EXPECT_FALSE(v2.empty());
-	EXPECT_THAT(v2[0], L't');
-	EXPECT_THAT(v2[1], L'e');
-	EXPECT_THAT(v2[2], L's');
-	EXPECT_THAT(v2[3], L't');
-	EXPECT_THAT(v2[4], L'\0');
-
-	CNativeW cmem(sz, cch);
-	CStringRef v3(cmem);
-	EXPECT_STREQ(sz, v3.data());
-	EXPECT_EQ(cch, v3.length());
-	EXPECT_FALSE(v3.empty());
-	EXPECT_THAT(v3[0], L't');
-	EXPECT_THAT(v3[1], L'e');
-	EXPECT_THAT(v3[2], L's');
-	EXPECT_THAT(v3[3], L't');
-	EXPECT_THAT(v3[4], L'\0');
-}
-
-/*!
  * @brief コンストラクタ(パラメータなし)の仕様
  * @remark バッファは確保されない
  * @remark 文字列長はゼロになる

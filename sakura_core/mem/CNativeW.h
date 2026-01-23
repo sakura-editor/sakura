@@ -16,23 +16,6 @@
 
 class CNativeW;
 
-//! 文字列への参照を保持するクラス
-class CStringRef final{
-public:
-	CStringRef() noexcept = default;
-	CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept;
-	explicit CStringRef( const CNativeW& cmem ) noexcept;
-
-	[[nodiscard]] LPCWSTR data() const noexcept { return m_pData; }
-	[[nodiscard]] size_t length() const noexcept { return static_cast<int>(m_nDataLen); }
-	bool empty() const noexcept { return !m_pData || m_nDataLen == 0; }
-	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
-
-private:
-	const wchar_t*	m_pData = nullptr;
-	unsigned		m_nDataLen = 0;
-};
-
 // グローバル演算子の前方宣言
 bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;

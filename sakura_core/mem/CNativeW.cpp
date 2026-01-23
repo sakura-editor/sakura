@@ -13,28 +13,6 @@
 
 #include "basis/CEol.h"
 
-/*!
-	コンストラクタ
-
-	C文字列の先頭アドレスと有効文字数を指定してCStringRefを構築する。
- */
-CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
-	: m_pData(pData)
-	, m_nDataLen(static_cast<decltype(m_nDataLen)>(nDataLen))
-{
-}
-
-/*!
-	コンストラクタ
-
-	指定したCNativeWを参照するCStringRefを構築する。
- */
-CStringRef::CStringRef( const CNativeW& cmem ) noexcept
-	: m_pData(cmem.GetStringPtr())
-	, m_nDataLen(static_cast<decltype(m_nDataLen)>(cmem.GetStringLength()))
-{
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
