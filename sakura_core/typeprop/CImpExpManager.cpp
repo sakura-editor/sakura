@@ -980,7 +980,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 	for( int j2=0; j2<sKeyBind.m_nKeyNameArrNum; j2++ ){
 		int idx = sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode];
 		if( idx == KEYNAME_SIZE ){// not assigned
-			if (KEYNAME_SIZE < nKeyNameArrUsed) continue;
+			if (nKeyNameArrUsed < 0 || KEYNAME_SIZE < nKeyNameArrUsed) continue;
 			m_Common.m_sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = sKeyBind.m_pKeyNameArr[j2];
 			sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 		}
