@@ -320,7 +320,7 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 
 void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen )
 {
-	Replace( std::wstring_view( pszFrom, nFromLen ), std::wstring_view( pszTo, nToLen ) );
+	Replace( std::wstring_view{ pszFrom, nFromLen }, std::wstring_view{ pszTo, nToLen } );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -345,7 +345,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t 
 	}
 
 	// IVSの異体字セレクタチェック
-	if (IsVariationSelector(std::wstring_view(pData + nIdx + 1, nDataLen - (nIdx + 1)))) {
+	if (IsVariationSelector(std::wstring_view(pData, nDataLen).substr(nIdx + 1))) {
 		// 正字 + 異体字セレクタで3個分
 		return CLogicInt(3);
 	}

@@ -81,10 +81,10 @@ public:
 	std::wstring_view GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
 		if(this){ // TODO: Remove "this" check
-			return std::wstring_view(GetPtr(),GetLengthWithEOL());
+			return std::wstring_view{ GetPtr(), size_t(GetLengthWithEOL()) };
 		}
 		else{
-			return std::wstring_view(nullptr,0);
+			return std::wstring_view{ L"" };
 		}
 	}
 	static std::wstring_view GetStringRefWithEOL_Safe(const CDocLine* docline) //###仮の名前、仮の対処
@@ -93,7 +93,7 @@ public:
 			return docline->GetStringRefWithEOL();
 		}
 		else{
-			return std::wstring_view(nullptr, 0);
+			return std::wstring_view{ L"" };
 		}
 	}
 	const CEol& GetEol() const{ return m_cEol; }

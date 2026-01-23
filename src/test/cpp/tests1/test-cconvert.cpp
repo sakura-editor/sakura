@@ -396,8 +396,8 @@ TEST_P(ConvTest, test)
 	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
 
 	const auto eFuncCode = std::get<0>(GetParam());
-	std::wstring_view source = std::get<1>(GetParam());
-	std::wstring_view expected = std::get<2>(GetParam());
+	std::wstring_view source{ std::get<1>(GetParam()) };
+	std::wstring_view expected{ std::get<2>(GetParam()) };
 	SEncodingConfig sEncodingConfig;
 	CCharWidthCache cCharWidthCache;
 	CNativeW cmemBuf(source.data(), source.length());

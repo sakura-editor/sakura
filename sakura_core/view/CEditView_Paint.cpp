@@ -976,7 +976,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	//文字列参照
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
-	std::wstring_view cLineStr = CDocLine::GetStringRefWithEOL_Safe(pcDocLine);
+	std::wstring_view cLineStr{ CDocLine::GetStringRefWithEOL_Safe(pcDocLine) };
 
 	// 描画範囲外の場合は色切替だけで抜ける
 	if(pInfo->m_pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){

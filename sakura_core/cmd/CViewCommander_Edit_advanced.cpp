@@ -711,7 +711,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 				pst->sKey = std::wstring_view( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
 			}else{
 				// 選択範囲の左端もはみ出している==データなし
-				pst->sKey = std::wstring_view( L"", 0 );
+				pst->sKey = std::wstring_view{ L"" };
 			}
 		}
 		pst->pCmemLine = &cmemLine;

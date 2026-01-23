@@ -1158,7 +1158,7 @@ prev_line:;
 		CNativeW cNull;
 		std::wstring_view cNullStr(L"", 0);
 		CNativeW& cmemLine = bLastInsert ? pArg->pInsData->back().cmemLine : cNull;
-		std::wstring_view cPrevLine2 = ((0 == nCount) ? cPrevLine: cNullStr);
+		std::wstring_view cPrevLine2{ ((0 == nCount) ? cPrevLine: cNullStr) };
 		int nSeq = pArg->pInsData->back().nSeq;
 		int nLen = cmemLine.GetStringLength();
 		CNativeW tmp;

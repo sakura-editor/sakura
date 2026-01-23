@@ -41,7 +41,7 @@ TEST( format, GetDateTimeFormat )
 
 	// 途中にnull文字
 	constexpr const wchar_t format4[] = L"%Y-%y-%m-%d\0%H:%M:%S";
-	auto result4 = GetDateTimeFormat( std::wstring_view(format4, int(std::size(format4)) - 1), time );
+	auto result4 = GetDateTimeFormat( std::wstring_view{ format4 }, time );
 	ASSERT_STREQ( L"12345-45-12-23", result4.c_str() );
 }
 
