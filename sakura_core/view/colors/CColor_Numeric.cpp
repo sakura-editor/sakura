@@ -80,7 +80,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 	int f = 0;
 
 	p = cStr.data() + offset;
-	q = cStr.data() + cStr.GetLength();
+	q = cStr.data() + cStr.length();
 
 	if( *p == L'0' )  /* 10進数,Cの16進数 */
 	{

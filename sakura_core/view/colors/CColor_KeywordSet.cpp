@@ -38,12 +38,12 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 			現在位置からキーワードを抜き出し、そのキーワードが登録単語ならば、色を変える
 	*/
 
-	const ECharKind charKind = CWordParse::WhatKindOfChar( cStr.data(), cStr.GetLength() , nPos );
+	const ECharKind charKind = CWordParse::WhatKindOfChar( cStr.data(), cStr.length() , nPos );
 	if( charKind <= CK_SPACE ){
 		return false; // この文字はキーワード対象文字ではない。
 	}
 	if( 0 < nPos ){
-		const ECharKind charKindPrev = CWordParse::WhatKindOfChar( cStr.data(), cStr.GetLength() , nPos-1 );
+		const ECharKind charKindPrev = CWordParse::WhatKindOfChar( cStr.data(), cStr.length() , nPos-1 );
 		const ECharKind charKindTwo = CWordParse::WhatKindOfTwoChars4KW( charKindPrev, charKind );
 		if( charKindTwo != CK_NULL ){
 			return false;
@@ -82,7 +82,7 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 				// CKeyWordSetMgr::SearchKeyWord2()から想定外の戻り値。
 				break;
 			}
-		} while( posWordEndCandidate < cStr.GetLength() && ((posWordEndCandidate = NextWordBreak( cStr, posWordEndCandidate )) != 0) );
+		} while( posWordEndCandidate < cStr.length() && ((posWordEndCandidate = NextWordBreak( cStr, posWordEndCandidate )) != 0) );
 
 		// nPos...posWordEnd がキーワード。
 		if( nPos < posWordEnd ) {
@@ -102,7 +102,7 @@ bool CColor_KeywordSet::EndColor([[maybe_unused]] const CStringRef& cStr, int nP
 static inline int NextWordBreak( const CStringRef& str, const int start )
 {
 	CLogicInt nColumnNew;
-	if( CWordParse::SearchNextWordPosition4KW( str.data(), CLogicInt(str.GetLength()), CLogicInt(start), &nColumnNew, true ) ){
+	if( CWordParse::SearchNextWordPosition4KW( str.data(), CLogicInt(str.length()), CLogicInt(start), &nColumnNew, true ) ){
 		return nColumnNew;
 	}
 	return start;

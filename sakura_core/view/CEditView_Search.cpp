@@ -436,7 +436,7 @@ int CEditView::IsSearchString(
 		** 対策として、行頭を MacthInfoに教えないといけないので、文字列の長さ・位置情報を与える形に変更
 		** 2003.05.04 かろと
 		*/
-		if( m_CurRegexp.Match( cStr.data(), cStr.GetLength(), nPos ) ){
+		if( m_CurRegexp.Match( cStr.data(), cStr.length(), nPos ) ){
 			*pnSearchStart = m_CurRegexp.GetIndex();	// 2002.02.08 hor
 			*pnSearchEnd = m_CurRegexp.GetLastIndex();
 			return 1;
@@ -448,7 +448,7 @@ int CEditView::IsSearchString(
 	else if( m_sCurSearchOption.bWordOnly ) { // 単語検索
 		/* 指定位置の単語の範囲を調べる */
 		CLogicInt posWordHead, posWordEnd;
-		if( ! CWordParse::WhereCurrentWord_2( cStr.data(), CLogicInt(cStr.GetLength()), nPos, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &posWordHead, &posWordEnd, nullptr, nullptr ) ) {
+		if( ! CWordParse::WhereCurrentWord_2( cStr.data(), CLogicInt(cStr.length()), nPos, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &posWordHead, &posWordEnd, nullptr, nullptr ) ) {
 			return 0; // 指定位置に単語が見つからなかった。
  		}
 		if( nPos != posWordHead ) {
@@ -485,7 +485,7 @@ int CEditView::IsSearchString(
 		return 0; // 指定位置の単語と検索文字列に含まれる単語は一致しなかった。
 	}
 	else {
-		const wchar_t* pHit = CSearchAgent::SearchString(cStr.data(), cStr.GetLength(), nPos, m_sSearchPattern);
+		const wchar_t* pHit = CSearchAgent::SearchString(cStr.data(), cStr.length(), nPos, m_sSearchPattern);
 		if( pHit ){
 			*pnSearchStart = int(pHit - cStr.data());
 			*pnSearchEnd = *pnSearchStart + m_sSearchPattern.GetLen();

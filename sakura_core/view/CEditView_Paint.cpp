@@ -435,7 +435,7 @@ CColor3Setting CEditView::GetColorIndex(
 		//1文字進む
 		pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(
 									cLineStr.data(),
-									cLineStr.GetLength(),
+									cLineStr.length(),
 									pInfo->m_nPosInLogic
 								);
 		if( pcLayoutNext && pcLayoutNext->GetLogicOffset() <= pInfo->m_nPosInLogic ){
@@ -991,7 +991,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 				//1文字進む
 				pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(
 											cLineStr.data(),
-											cLineStr.GetLength(),
+											cLineStr.length(),
 											pInfo->m_nPosInLogic
 										);
 			}
@@ -1080,7 +1080,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			nPosLength = nPosInLogic - nPosBgn;
 			//1文字情報取得
 			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.data()[nPosInLogic],
-				cLineStr.GetLength() - nPosInLogic);
+				cLineStr.length() - nPosInLogic);
 			FigureRenderType nextRenderType = CFigure_Text::RenderType_None;
 			bool is_text = (typeid(cFigure) == typeid(CFigure_Text));
 			if (is_text) {

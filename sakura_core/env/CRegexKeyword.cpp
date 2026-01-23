@@ -377,7 +377,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 			if( info.nOffset < nPos )
 			{
 				const auto begp = cStr.data();			//!< 行頭位置
-				const auto endp = begp + cStr.GetLength();	//!< 行末位置
+				const auto endp = begp + cStr.length();	//!< 行末位置
 				const auto startp = begp + nPos;			//!< 検索開始位置
 				int matched = ExistBMatchEx()
 					? BMatchEx(nullptr, begp, startp, endp, &pBregexp, m_szMsg)

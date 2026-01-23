@@ -83,7 +83,7 @@ public:
 	virtual EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst)=0;	//!< UNICODE    → 特定コード 変換
 	//! UNICODE    → 特定コード 変換
 	virtual EConvertResult UnicodeToCode(const CStringRef& cSrc, CMemory* pDst){
-		CNativeW mem(cSrc.data(), cSrc.GetLength());
+		CNativeW mem(cSrc.data(), cSrc.length());
 		return UnicodeToCode(mem, pDst);
 	}
 

@@ -903,9 +903,9 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 					CKetaXInt nKetaBefore = CNativeW::GetKetaOfChar(line, nPos);
 					CKetaXInt nKetaAfter = CNativeW::GetKetaOfChar(pszInput, nLen, 0);
 					nKetaDiff = nKetaBefore - nKetaAfter;
-					nPos += CNativeW::GetSizeOfChar(line.data(), line.GetLength(), nPos);
+					nPos += CNativeW::GetSizeOfChar(line.data(), line.length(), nPos);
 					nDelLen = 1;
-					if( nKetaDiff < 0 && nPos < line.GetLength() ){
+					if( nKetaDiff < 0 && nPos < line.length() ){
 						wchar_t c = line[nPos];
 						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c,
 								GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
