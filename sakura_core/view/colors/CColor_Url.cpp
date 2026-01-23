@@ -18,7 +18,7 @@
 
 bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	int	nUrlLen;
 

@@ -113,7 +113,7 @@ bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
 
 bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	if( cStr[nPos] == m_cQuote ){
 		m_nCOMMENTEND = -1;

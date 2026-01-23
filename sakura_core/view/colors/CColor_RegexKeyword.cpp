@@ -12,7 +12,7 @@
 
 bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	int		nMatchLen;
 	int		nMatchColor;

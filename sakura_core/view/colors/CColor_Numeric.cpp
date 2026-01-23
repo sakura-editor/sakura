@@ -20,7 +20,7 @@ static int IsNumber( const CStringRef& cStr, int offset );/* 数値ならその�
 
 bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	int	nnn;
 

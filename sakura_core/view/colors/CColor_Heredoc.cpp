@@ -46,7 +46,7 @@ CLayoutColorInfo* CColor_Heredoc::GetStrategyColorInfo() const
 
 bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	// ヒアドキュメント
 	// <<<HEREDOC_ID

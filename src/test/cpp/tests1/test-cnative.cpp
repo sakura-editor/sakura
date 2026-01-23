@@ -21,13 +21,13 @@ TEST(CStringRef, CStringRef)
 	CStringRef v1;
 	EXPECT_EQ(NULL, v1.GetPtr());
 	EXPECT_EQ(0, v1.GetLength());
-	EXPECT_FALSE(v1.IsValid());
+	EXPECT_TRUE(v1.empty());
 	EXPECT_THAT(v1[0], L'\0');
 
 	CStringRef v2(sz, cch);
 	EXPECT_STREQ(sz, v2.GetPtr());
 	EXPECT_EQ(cch, v2.GetLength());
-	EXPECT_TRUE(v2.IsValid());
+	EXPECT_FALSE(v2.empty());
 	EXPECT_THAT(v2[0], L't');
 	EXPECT_THAT(v2[1], L'e');
 	EXPECT_THAT(v2[2], L's');
@@ -38,7 +38,7 @@ TEST(CStringRef, CStringRef)
 	CStringRef v3(cmem);
 	EXPECT_STREQ(sz, v3.GetPtr());
 	EXPECT_EQ(cch, v3.GetLength());
-	EXPECT_TRUE(v3.IsValid());
+	EXPECT_FALSE(v3.empty());
 	EXPECT_THAT(v3[0], L't');
 	EXPECT_THAT(v3[1], L'e');
 	EXPECT_THAT(v3[2], L's');

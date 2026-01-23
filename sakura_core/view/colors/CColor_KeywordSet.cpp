@@ -29,7 +29,7 @@ CColor_KeywordSet::CColor_KeywordSet()
 // 2005.01.13 MIK 強調キーワード数追加に伴う配列化
 bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 {
-	if( ! cStr.IsValid() ) {
+	if (cStr.empty()) {
 		return false; // どうにもできない。
 	}
 

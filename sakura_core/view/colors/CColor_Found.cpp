@@ -26,7 +26,7 @@ bool CColor_Select::BeginColor([[maybe_unused]] const CStringRef& cStr, [[maybe_
 
 bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nLineNum, const CLayout* pcLayout)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	const CEditView& view = *(CColorStrategyPool::getInstance()->GetCurrentView());
 	if( !view.GetSelectionInfo().IsTextSelected() || !CTypeSupport(&view,COLORIDX_SELECT).IsDisp() ){
@@ -91,7 +91,8 @@ void CColor_Found::OnStartScanLogic()
 
 bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
+
 	const CEditView* pcView = CColorStrategyPool::getInstance()->GetCurrentView();
 	if( !pcView->m_bCurSrchKeyMark || 0 == this->validColorNum ){
 		return false;
