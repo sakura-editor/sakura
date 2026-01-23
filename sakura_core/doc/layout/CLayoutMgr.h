@@ -308,7 +308,7 @@ protected:
 		EKinsokuType	eKinsokuType;
 		CLogicInt		nPos;
 		CLogicInt		nBgn;
-		CStringRef		cLineStr;
+		std::wstring_view		cLineStr;
 		CLogicInt		nWordBgn;
 		CLogicInt		nWordLen;
 		CLayoutInt		nPosX;

@@ -865,7 +865,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		CColorStrategy* pStrategyNormal = nullptr;
 		CColorStrategy* pStrategyFound = nullptr;
 		CColorStrategy* pStrategy = nullptr;
-		CStringRef cStringLine(pcDocLine->GetPtr(), pcDocLine->GetLengthWithEOL());
+		std::wstring_view cStringLine(pcDocLine->GetPtr(), pcDocLine->GetLengthWithEOL());
 		{
 			pStrategy = pStrategyNormal = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
 			if( pStrategy ){

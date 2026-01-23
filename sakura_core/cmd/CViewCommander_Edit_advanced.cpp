@@ -588,7 +588,7 @@ void CViewCommander::Command_TRIM(
 /*!	物理行のソートに使う構造体*/
 struct SORTDATA {
 	const CNativeW* pCmemLine;
-	CStringRef sKey;
+	std::wstring_view sKey;
 };
 
 inline int CNativeW_comp(const CNativeW& lhs, const CNativeW& rhs )
@@ -706,12 +706,12 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 			nColumnTo   = m_pCommanderView->LineColumnToIndex( pcDocLine, nCT );
 			if(nColumnTo<nLineLenWithoutEOL){	// BOX選択範囲の右端が行内に収まっている場合
 				// 2006.03.31 genta std::string::assignを使って一時変数削除
-				pst->sKey = CStringRef( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
+				pst->sKey = std::wstring_view( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
 			}else if(nColumnFrom<nLineLenWithoutEOL){	// BOX選択範囲の右端が行末より右にはみ出している場合
-				pst->sKey = CStringRef( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
+				pst->sKey = std::wstring_view( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
 			}else{
 				// 選択範囲の左端もはみ出している==データなし
-				pst->sKey = CStringRef( L"", 0 );
+				pst->sKey = std::wstring_view( L"", 0 );
 			}
 		}
 		pst->pCmemLine = &cmemLine;
@@ -876,7 +876,7 @@ void CViewCommander::Command_MERGE(void)
 	GetDocument()->m_cLayoutMgr.LogicToLayout(sSelectOld, &sSelectOld_Layout);
 
 	// 2010.08.22 NUL対応修正
-	std::vector<CStringRef> lineArr;
+	std::vector<std::wstring_view> lineArr;
 	pLinew=nullptr;
 	int nLineLenw = 0;
 	bool bMerge = false;
@@ -885,7 +885,7 @@ void CViewCommander::Command_MERGE(void)
 		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
 		if( nullptr == pLine ) continue;
 		if( nullptr == pLinew || nLineLen != nLineLenw || wmemcmp(pLine, pLinew, nLineLen) ){
-			lineArr.push_back( CStringRef(pLine, nLineLen) );
+			lineArr.push_back( std::wstring_view(pLine, nLineLen) );
 		}else{
 			bMerge = true;
 		}

@@ -78,22 +78,22 @@ public:
 			*pnLen = 0; return nullptr;
 		}
 	}
-	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
+	std::wstring_view GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
 		if(this){ // TODO: Remove "this" check
-			return CStringRef(GetPtr(),GetLengthWithEOL());
+			return std::wstring_view(GetPtr(),GetLengthWithEOL());
 		}
 		else{
-			return CStringRef(nullptr,0);
+			return std::wstring_view(nullptr,0);
 		}
 	}
-	static CStringRef GetStringRefWithEOL_Safe(const CDocLine* docline) //###仮の名前、仮の対処
+	static std::wstring_view GetStringRefWithEOL_Safe(const CDocLine* docline) //###仮の名前、仮の対処
 	{
 		if(docline){
 			return docline->GetStringRefWithEOL();
 		}
 		else{
-			return CStringRef(nullptr, 0);
+			return std::wstring_view(nullptr, 0);
 		}
 	}
 	const CEol& GetEol() const{ return m_cEol; }
