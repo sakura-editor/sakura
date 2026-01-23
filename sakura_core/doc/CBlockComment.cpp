@@ -73,7 +73,7 @@ bool CBlockComment::Match_CommentFrom(
 	if (
 		L'\0' != m_szBlockCommentFrom[0] &&
 		L'\0' != m_szBlockCommentTo[0]  &&
-		nPos <= cStr.length() - m_nBlockFromLen &&	/* ブロックコメントデリミタ(From) */
+		nPos <= int(cStr.length()) - m_nBlockFromLen &&	/* ブロックコメントデリミタ(From) */
 		//0 == wmemicmp( &cStr.GetPtr()[nPos], m_szBlockCommentFrom, m_nBlockFromLen )	//非ASCIIも大文字小文字を区別しない	//###locale 依存
 		0 == wmemicmp_ascii( &cStr.data()[nPos], m_szBlockCommentFrom, m_nBlockFromLen )	//ASCIIのみ大文字小文字を区別しない（高速）
 	){
@@ -96,11 +96,11 @@ int CBlockComment::Match_CommentTo(
 	*/
 ) const
 {
-	for( int i = nPos; i <= cStr.length() - m_nBlockToLen; ++i ){
+	for( int i = nPos; i <= int(cStr.length()) - m_nBlockToLen; ++i ){
 		//if( 0 == wmemicmp( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//非ASCIIも大文字小文字を区別しない	//###locale 依存
 		if( 0 == wmemicmp_ascii( &cStr.data()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//ASCIIのみ大文字小文字を区別しない（高速）
 			return i + m_nBlockToLen;
 		}
 	}
-	return cStr.length();
+	return int(cStr.length());
 }

@@ -608,7 +608,7 @@ inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
 {
 	int ret = wmemcmp(c1.data(), c2.data(), t_min(c1.length(), c2.length()));
 	if( ret == 0 ){
-		return c1.length() - c2.length();
+		return int(c1.length() - c2.length());
 	}
 	return ret;
 }

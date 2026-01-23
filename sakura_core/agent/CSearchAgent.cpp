@@ -1112,9 +1112,9 @@ prev_line:;
 			else{
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount && !bInsertLineMode ){
-					if( cmemCurLine.GetStringLength() - cPrevLine.length() < cmemCurLine.GetStringLength() / 100
-						&& cPrevLine.length() + cmemLine.GetStringLength() <= cmemCurLine.GetStringLength()
-						&& cmemCurLine.capacity() / 2 <= cPrevLine.length() + cmemLine.GetStringLength() ){
+					if( cmemCurLine.GetStringLength() - int(cPrevLine.length()) < cmemCurLine.GetStringLength() / 100
+						&& int(cPrevLine.length()) + cmemLine.GetStringLength() <= cmemCurLine.GetStringLength()
+						&& cmemCurLine.capacity() / 2 <= int(cPrevLine.length()) + cmemLine.GetStringLength() ){
 						// 行のうちNextになるのが1%以下で行が短くなるなら再利用する(長い一行を分割する場合の最適化)
 						CNativeW tmp; // Nextを退避
 						tmp.SetString(cNextLine.data(), cNextLine.length());
@@ -1186,7 +1186,7 @@ prev_line:;
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLine, nSeq);
 			}
-			pArg->ptNewPos.x = cPrevLine2.length() + nLen;	/* 挿入された部分の次の位置のデータ位置 */
+			pArg->ptNewPos.x = int(cPrevLine2.length() + nLen);	/* 挿入された部分の次の位置のデータ位置 */
 		}
 	}
 	pArg->nInsLineNum = m_pcDocLineMgr->GetLineCount() - nAllLinesOld;

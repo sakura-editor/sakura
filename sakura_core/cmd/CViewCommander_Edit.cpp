@@ -905,7 +905,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 					nKetaDiff = nKetaBefore - nKetaAfter;
 					nPos += CNativeW::GetSizeOfChar(line.data(), line.length(), nPos);
 					nDelLen = 1;
-					if( nKetaDiff < 0 && nPos < line.length() ){
+					if( nKetaDiff < 0 && nPos < int(line.length()) ){
 						wchar_t c = line[nPos];
 						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c,
 								GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){

@@ -28,7 +28,7 @@ bool CColor_LineComment::BeginColor(const CStringRef& cStr, int nPos)
 bool CColor_LineComment::EndColor(const CStringRef& cStr, int nPos)
 {
 	//文字列終端
-	if( nPos >= cStr.length() ){
+	if (int(cStr.length()) <= nPos) {
 		return true;
 	}
 

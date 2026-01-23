@@ -53,11 +53,11 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	// ...
 	// HEREDOC_ID
 	if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
-	 && cStr[nPos] == '<' && nPos + 3 < cStr.length()
-	 && wmemcmp(cStr.data() + nPos + 1, L"<<", 2) == 0
+		&& nPos + 3 < int(cStr.length())
+		&& cStr.substr(nPos).starts_with(L"<<<")
 	){
 		// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+
-		const int length = cStr.length();
+		const auto length = int(cStr.length());
 		int nPosIdStart = nPos + 3;
 		for(; nPosIdStart < length; nPosIdStart++ ){
 			if(cStr[nPosIdStart] != L'\t' && cStr[nPosIdStart] != L' '){
