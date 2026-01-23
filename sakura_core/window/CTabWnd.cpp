@@ -2873,6 +2873,10 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 				continue;
 			if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 				continue;
+			if (nTab < 0 || nCount <= nTab) {
+				continue;
+			}
+
 			GetTabName( &pEditNode[i], bFull, TRUE, pData[nTab].szText, _countof(pData[0].szText) );
 			pData[nTab].hwnd = pEditNode[i].m_hWnd;
 			pData[nTab].iItem = i;
