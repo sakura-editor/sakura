@@ -71,8 +71,7 @@ if(MSVC)
   add_custom_command(
     OUTPUT "${CMIGEMO_INCLUDE_DIR}/migemo.h"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${CMIGEMO_INCLUDE_DIR}"
-    COMMAND ${CMD_PWSH} -ExecutionPolicy Bypass -Command
-      "$sjis = [System.Text.Encoding]::GetEncoding(932); $utf8 = [System.Text.UTF8Encoding]::new($true); [System.IO.File]::WriteAllText('${CMIGEMO_INCLUDE_DIR}/migemo.h', [System.IO.File]::ReadAllText('${CMIGEMO_BUILD_DIR}/src/migemo.h', $sjis), $utf8)"
+    COMMAND ${CMD_PWSH} -ExecutionPolicy Bypass -File "${CMAKE_SOURCE_DIR}/src/main/pwsh/sjis_to_utf8bom.ps1" -File "${CMIGEMO_BUILD_DIR}/src/migemo.h" -Destination "${CMIGEMO_INCLUDE_DIR}/migemo.h"
     DEPENDS copy_cmigemo_source_files
     COMMENT "Copying cmigemo/migemo.h to include directory"
   )
