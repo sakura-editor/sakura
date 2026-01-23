@@ -56,7 +56,7 @@ bool CLineComment::Match( int nPos, const CStringRef& cStr ) const
 			( m_nLineCommentPos[i] < 0 || nPos == m_nLineCommentPos[i] ) &&	//	位置指定ON.
 			nPos <= cStr.GetLength() - m_nLineCommentLen[i] &&	/* 行コメントデリミタ */
 			//0 == wmemicmp( &cStr.GetPtr()[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )	//非ASCIIも大文字小文字を区別しない	//###locale 依存
-			0 == wmemicmp_ascii( &cStr.GetPtr()[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )	//ASCIIのみ大文字小文字を区別しない（高速）
+			0 == wmemicmp_ascii( &cStr.data()[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )	//ASCIIのみ大文字小文字を区別しない（高速）
 		){
 			return true;
 		}

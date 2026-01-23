@@ -127,7 +127,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 					if( cStr[i] == '(' ){
 						if( nPos + 1 < i ){
 							m_tag = L')';
-							m_tag.append( cStr.GetPtr()+nPos+1, i - (nPos + 1) );
+							m_tag.append( cStr.data()+nPos+1, i - (nPos + 1) );
 							m_tag += L'"';
 						}else{
 							m_tag.assign(L")\"", 2);
@@ -235,7 +235,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 	int i;
 	for( i = nPos; i < cLineStr.GetLength(); ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( cLineStr.GetPtr(), cLineStr.GetLength(), i ));
+		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( cLineStr.data(), cLineStr.GetLength(), i ));
 		if( escapeType == STRING_LITERAL_CPP ){
 			// エスケープ \"
 			if( 1 == nCharChars && cLineStr[i] == L'\\' ){
@@ -277,7 +277,7 @@ int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nP
 	int i;
 	const int nCompLen = cLineStr.GetLength() - nQuoteLen + 1;
 	const WCHAR quote1 = pszQuote[0];
-	const WCHAR* pLine = cLineStr.GetPtr();
+	const WCHAR* pLine = cLineStr.data();
 	for( i = nPos; i < nCompLen; i += nCharChars ){
 		if( quote1 == pLine[i] && wmemcmp( pszQuote + 1, pLine + i + 1, nQuoteLen - 1 ) == 0 ){
 			return i + nQuoteLen;

@@ -606,7 +606,7 @@ bool SortByLineDesc(SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1-
 
 inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
 {
-	int ret = wmemcmp(c1.GetPtr(), c2.GetPtr(), t_min(c1.GetLength(), c2.GetLength()));
+	int ret = wmemcmp(c1.data(), c2.data(), t_min(c1.GetLength(), c2.GetLength()));
 	if( ret == 0 ){
 		return c1.GetLength() - c2.GetLength();
 	}
@@ -899,7 +899,7 @@ void CViewCommander::Command_MERGE(void)
 		int opeSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNextSeq();
 		for( int idx = 0; idx < nSize; idx++ ){
 			repData[idx].nSeq = opeSeq;
-			repData[idx].cmemLine.SetString( lineArr[idx].GetPtr(), lineArr[idx].GetLength() );
+			repData[idx].cmemLine.SetString( lineArr[idx].data(), lineArr[idx].GetLength() );
 		}
 		m_pCommanderView->ReplaceData_CEditView3(
 			sSelectOld_Layout,

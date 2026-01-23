@@ -79,8 +79,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 	int d = 0;
 	int f = 0;
 
-	p = cStr.GetPtr() + offset;
-	q = cStr.GetPtr() + cStr.GetLength();
+	p = cStr.data() + offset;
+	q = cStr.data() + cStr.GetLength();
 
 	if( *p == L'0' )  /* 10進数,Cの16進数 */
 	{

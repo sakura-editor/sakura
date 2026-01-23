@@ -54,7 +54,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	// HEREDOC_ID
 	if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
 	 && cStr[nPos] == '<' && nPos + 3 < cStr.GetLength()
-	 && wmemcmp(cStr.GetPtr() + nPos + 1, L"<<", 2) == 0
+	 && wmemcmp(cStr.data() + nPos + 1, L"<<", 2) == 0
 	){
 		// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+
 		const int length = cStr.GetLength();
@@ -90,7 +90,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 			}
 		}
 		if( i < length && WCODE::IsLineDelimiter(cStr[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
-			m_id = std::wstring(cStr.GetPtr()+nPosIdStart, k - nPosIdStart);
+			m_id = std::wstring(cStr.data()+nPosIdStart, k - nPosIdStart);
 			m_pszId = m_id.c_str();
 			m_nSize = m_id.size();
 			this->m_nCOMMENTEND = length;
@@ -105,7 +105,7 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 	if (!m_nCOMMENTEND) {
 		if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
 		 && nPos == 0 && m_nSize <= size_t(cStr.GetLength())
-		 && wmemcmp(cStr.GetPtr(), m_pszId, m_nSize) == 0 ){
+		 && wmemcmp(cStr.data(), m_pszId, m_nSize) == 0 ){
 			if (m_nSize == size_t(cStr.GetLength())) {
 				m_nCOMMENTEND = m_nSize;
 				return false;

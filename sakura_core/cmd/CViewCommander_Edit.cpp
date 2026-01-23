@@ -903,7 +903,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 					CKetaXInt nKetaBefore = CNativeW::GetKetaOfChar(line, nPos);
 					CKetaXInt nKetaAfter = CNativeW::GetKetaOfChar(pszInput, nLen, 0);
 					nKetaDiff = nKetaBefore - nKetaAfter;
-					nPos += CNativeW::GetSizeOfChar(line.GetPtr(), line.GetLength(), nPos);
+					nPos += CNativeW::GetSizeOfChar(line.data(), line.GetLength(), nPos);
 					nDelLen = 1;
 					if( nKetaDiff < 0 && nPos < line.GetLength() ){
 						wchar_t c = line[nPos];

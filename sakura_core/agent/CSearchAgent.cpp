@@ -1100,7 +1100,7 @@ prev_line:;
 				if( 0 == nCount ){
 					CNativeW tmp;
 					tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
-					tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
+					tmp.AppendString(cPrevLine.data(), cPrevLine.GetLength());
 					tmp.AppendNativeData(cmemLine);
 					pCDocLineNew->SetDocLineStringMove(&tmp, bEnableExtEol);
 				}
@@ -1117,7 +1117,7 @@ prev_line:;
 						&& cmemCurLine.capacity() / 2 <= cPrevLine.GetLength() + cmemLine.GetStringLength() ){
 						// 行のうちNextになるのが1%以下で行が短くなるなら再利用する(長い一行を分割する場合の最適化)
 						CNativeW tmp; // Nextを退避
-						tmp.SetString(cNextLine.GetPtr(), cNextLine.GetLength());
+						tmp.SetString(cNextLine.data(), cNextLine.GetLength());
 						cmemCurLine.swap(tmp);
 						tmp._SetStringLength(cPrevLine.GetLength());
 						tmp.AppendNativeData(cmemLine);
@@ -1126,7 +1126,7 @@ prev_line:;
 					}else{
 						CNativeW tmp;
 						tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
-						tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
+						tmp.AppendString(cPrevLine.data(), cPrevLine.GetLength());
 						tmp.AppendNativeData(cmemLine);
 						pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 					}
@@ -1163,9 +1163,9 @@ prev_line:;
 		int nLen = cmemLine.GetStringLength();
 		CNativeW tmp;
 		tmp.AllocStringBuffer(cPrevLine2.GetLength() + cmemLine.GetStringLength() + cNextLine.GetLength());
-		tmp.AppendString(cPrevLine2.GetPtr(), cPrevLine2.GetLength());
+		tmp.AppendString(cPrevLine2.data(), cPrevLine2.GetLength());
 		tmp.AppendNativeData(cmemLine);
-		tmp.AppendString(cNextLine.GetPtr(), cNextLine.GetLength());
+		tmp.AppendString(cNextLine.data(), cNextLine.GetLength());
 		if( nullptr == pCDocLine ){
 			CDocLine* pCDocLineNew = m_pcDocLineMgr->AddNewLine();	//末尾に追加
 			pCDocLineNew->SetDocLineStringMove(&tmp, bEnableExtEol);

@@ -471,7 +471,7 @@ bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFo
 	}
 	if( nMode == -2 ){
 		if( uFormat == CF_UNICODETEXT || uFormat == GetSakuraFormat() ){
-			return SetText(cstr.GetPtr(), cstr.GetLength(), false, false, uFormat);
+			return SetText(cstr.data(), cstr.GetLength(), false, false, uFormat);
 		}
 		return false;
 	}
@@ -485,7 +485,7 @@ bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFo
 		cmemBuf._SetRawLength(cstr.GetLength());
 		pBuf = (char*)cmemBuf.GetRawPtr();
 		size_t len = cstr.GetLength();
-		const wchar_t* pMem = cstr.GetPtr();
+		const wchar_t* pMem = cstr.data();
 		for(size_t i = 0; i < len; i++){
 			pBuf[i] = (unsigned char)pMem[i];
 			if( 0xff < pMem[i] ){
@@ -499,7 +499,7 @@ bool CClipboard::SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFo
 			return false;
 		}
 		if( eMode == CODE_UNICODE ){
-			pBuf = (char*)cstr.GetPtr();
+			pBuf = (char*)cstr.data();
 			nTextByteLen = cstr.GetLength() * sizeof(wchar_t);
 		}else{
 			CCodeBase* pCode = CCodeFactory::CreateCodeBase(eMode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode());
