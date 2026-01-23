@@ -24,7 +24,7 @@ public:
 	explicit CStringRef( const CNativeW& cmem ) noexcept;
 
 	[[nodiscard]] LPCWSTR data() const noexcept { return m_pData; }
-	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
+	[[nodiscard]] size_t length() const noexcept { return static_cast<int>(m_nDataLen); }
 	bool empty() const noexcept { return !m_pData || m_nDataLen == 0; }
 	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
 
