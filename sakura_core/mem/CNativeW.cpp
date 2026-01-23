@@ -35,21 +35,6 @@ CStringRef::CStringRef( const CNativeW& cmem ) noexcept
 {
 }
 
-/*!
-	指定位置の文字を取得する
-
-	標準ライブラリの実装とは異なり、範囲外を指定すると0が返る。
-	サクラエディタの内部データは拡張UTF-16LEなので、
-	取得した値が「1文字」であるとは限らないことに注意。
- */
-[[nodiscard]] wchar_t CStringRef::At( size_t nIndex ) const noexcept
-{
-	if( m_pData != nullptr && nIndex < m_nDataLen ){
-		return m_pData[nIndex];
-	}
-	return 0;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
