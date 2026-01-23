@@ -24,7 +24,7 @@
 
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos)
 {
-	return (nPos==0 || !IS_KEYWORD_CHAR(cStr.At(nPos-1)));
+	return (nPos==0 || !IS_KEYWORD_CHAR(cStr[nPos - 1]));
 }
 
 /*! 色の切り替え判定

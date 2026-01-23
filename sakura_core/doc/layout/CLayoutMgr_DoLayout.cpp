@@ -143,7 +143,7 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	if( pWork->eKinsokuType == KINSOKU_TYPE_NONE )
 	{
 		/* 英単語の先頭か */
-		if( pWork->nPos >= pWork->nBgn && IS_KEYWORD_CHAR(pWork->cLineStr.At(pWork->nPos)) ){
+		if( pWork->nPos >= pWork->nBgn && IS_KEYWORD_CHAR(pWork->cLineStr[pWork->nPos]) ){
 			// キーワード長を取得
 			CLayoutInt nWordKetas = CLayoutInt(0);
 			_GetKeywordLength( *this,
@@ -169,7 +169,7 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork) const
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 
-		if( _IsKinsokuPosKuto( GetMaxLineLayout() - pWork->nPosX, nCharKetas ) && IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )
+		if( _IsKinsokuPosKuto( GetMaxLineLayout() - pWork->nPosX, nCharKetas ) && IsKinsokuKuto( pWork->cLineStr[pWork->nPos] ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
@@ -192,7 +192,7 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		CLayoutXInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 
 		if( _IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 )
-		 && IsKinsokuHead( pWork->cLineStr.At( pWork->nPos + nCharSize ) )
+		 && IsKinsokuHead( pWork->cLineStr[pWork->nPos + nCharSize] )
 		 && !IsKinsokuHead( pWork->cLineStr[ pWork->nPos ] )		// 1字前が行頭禁則の対象でないこと
 		 && !IsKinsokuKuto( pWork->cLineStr[ pWork->nPos ] ) )	// 1字前が句読点ぶら下げの対象でないこと
 		{

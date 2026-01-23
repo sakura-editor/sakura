@@ -79,7 +79,7 @@ CLayoutColorInfo* CColor_Quote::GetStrategyColorInfo() const
 //staic
 bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
 {
-	if( 0 < nPos && cStr.At(nPos-1) == 'R' && cStr.At(nPos) == '"'
+	if( 0 < nPos && cStr[nPos - 1] == 'R' && cStr[nPos] == '"'
 		&& nPos + 1 < cStr.GetLength() ){
 		// \b(u8|u|U|L|)R"[^(]*\(
 		// \b = ^|[\s!"#$%&'()=@{};:<>?,.*/\-\+\[\]\]
@@ -115,7 +115,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
-	if( cStr.At(nPos) == m_cQuote ){
+	if( cStr[nPos] == m_cQuote ){
 		m_nCOMMENTEND = -1;
 		int nStringType = m_pTypeData->m_nStringType;
 		bool bPreString = true;
@@ -143,17 +143,17 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 			{
 				int i;
 				for(i = nPos - 1; 0 <= i; i--){
-					if( cStr.At(i) != L' ' && cStr.At(i) != L'\t' ){
+					if( cStr[i] != L' ' && cStr[i] != L'\t' ){
 						break;
 					}
 				}
-				if( !(0 <= i && cStr.At(i) == L'=') ){
+				if( !(0 <= i && cStr[i] == L'=') ){
 					bPreString = false;
 				}
 			}
 			break;
 		case STRING_LITERAL_CSHARP:
-			if( 0 < nPos && cStr.At(nPos - 1) == L'@' && m_cQuote == L'"' ){
+			if( 0 < nPos && cStr[nPos - 1] == L'@' && m_cQuote == L'"' ){
 				m_nCOMMENTEND = Match_Quote( m_cQuote, nPos + 1, cStr, STRING_LITERAL_PLSQL );
 				m_nColorTypeIndex = 2;
 				return true;

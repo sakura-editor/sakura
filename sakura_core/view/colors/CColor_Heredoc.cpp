@@ -53,7 +53,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	// ...
 	// HEREDOC_ID
 	if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
-	 && cStr.At(nPos) == '<' && nPos + 3 < cStr.GetLength()
+	 && cStr[nPos] == '<' && nPos + 3 < cStr.GetLength()
 	 && wmemcmp(cStr.GetPtr() + nPos + 1, L"<<", 2) == 0
 	){
 		// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+

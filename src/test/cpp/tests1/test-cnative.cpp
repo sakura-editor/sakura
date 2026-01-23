@@ -22,28 +22,28 @@ TEST(CStringRef, CStringRef)
 	EXPECT_EQ(NULL, v1.GetPtr());
 	EXPECT_EQ(0, v1.GetLength());
 	EXPECT_FALSE(v1.IsValid());
-	EXPECT_EQ(L'\0', v1.At(0));
+	EXPECT_THAT(v1[0], L'\0');
 
 	CStringRef v2(sz, cch);
 	EXPECT_STREQ(sz, v2.GetPtr());
 	EXPECT_EQ(cch, v2.GetLength());
 	EXPECT_TRUE(v2.IsValid());
-	EXPECT_EQ(L't', v2.At(0));
-	EXPECT_EQ(L'e', v2.At(1));
-	EXPECT_EQ(L's', v2.At(2));
-	EXPECT_EQ(L't', v2.At(3));
-	EXPECT_EQ(L'\0', v2.At(4));
+	EXPECT_THAT(v2[0], L't');
+	EXPECT_THAT(v2[1], L'e');
+	EXPECT_THAT(v2[2], L's');
+	EXPECT_THAT(v2[3], L't');
+	EXPECT_THAT(v2[4], L'\0');
 
 	CNativeW cmem(sz, cch);
 	CStringRef v3(cmem);
 	EXPECT_STREQ(sz, v3.GetPtr());
 	EXPECT_EQ(cch, v3.GetLength());
 	EXPECT_TRUE(v3.IsValid());
-	EXPECT_EQ(L't', v3.At(0));
-	EXPECT_EQ(L'e', v3.At(1));
-	EXPECT_EQ(L's', v3.At(2));
-	EXPECT_EQ(L't', v3.At(3));
-	EXPECT_EQ(L'\0', v3.At(4));
+	EXPECT_THAT(v3[0], L't');
+	EXPECT_THAT(v3[1], L'e');
+	EXPECT_THAT(v3[2], L's');
+	EXPECT_THAT(v3[3], L't');
+	EXPECT_THAT(v3[4], L'\0');
 }
 
 /*!
