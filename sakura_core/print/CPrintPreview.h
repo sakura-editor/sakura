@@ -28,7 +28,6 @@ class CDlgCancel;
 class CEditWnd;
 class CLayout;
 class CLayoutMgr;
-class CStringRef;
 
 class CPrintPreview {
 /* メンバ関数宣言 */

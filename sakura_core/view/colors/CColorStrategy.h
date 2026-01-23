@@ -27,7 +27,6 @@ class CColor_SingleQuote;
 class CColor_DoubleQuote;
 class CColor_Heredoc;
 class CEditView;
-class CStringRef;
 
 bool _IsPosKeywordHead(std::wstring_view cStr, int nPos);
 

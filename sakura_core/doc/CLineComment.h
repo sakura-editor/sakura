@@ -25,7 +25,6 @@
 #define COMMENT_DELIMITER_NUM	3
 #define COMMENT_DELIMITER_BUFFERSIZE	16
 
-class CStringRef;
 
 /*! 行コメントデリミタを管理する
 
