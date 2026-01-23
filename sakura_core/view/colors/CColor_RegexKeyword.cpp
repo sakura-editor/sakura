@@ -10,7 +10,7 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_RegexKeyword.h"
 
-bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_RegexKeyword::BeginColor(std::wstring_view cStr, int nPos)
 {
 	if (cStr.empty()) return false;
 
@@ -29,7 +29,7 @@ bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_RegexKeyword::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
+bool CColor_RegexKeyword::EndColor([[maybe_unused]] std::wstring_view cStr, int nPos)
 {
 	if( nPos == this->m_nCOMMENTEND ){
 		return true;

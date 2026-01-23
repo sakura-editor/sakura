@@ -14,7 +14,7 @@
 /** startより後ろの語の境界の位置を返す。
 	startより前の文字は読まない。一番大きい戻り値は str.GetLength()と等しくなる。
 */
-static int NextWordBreak( const CStringRef& str, const int start );
+static int NextWordBreak( std::wstring_view str, const int start );
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キーワードセット                        //
@@ -27,7 +27,7 @@ CColor_KeywordSet::CColor_KeywordSet()
 }
 
 // 2005.01.13 MIK 強調キーワード数追加に伴う配列化
-bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_KeywordSet::BeginColor(std::wstring_view cStr, int nPos)
 {
 	if (cStr.empty()) {
 		return false; // どうにもできない。
@@ -94,12 +94,12 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_KeywordSet::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
+bool CColor_KeywordSet::EndColor([[maybe_unused]] std::wstring_view cStr, int nPos)
 {
 	return nPos == this->m_nCOMMENTEND;
 }
 
-static inline int NextWordBreak( const CStringRef& str, const int start )
+static inline int NextWordBreak( std::wstring_view str, const int start )
 {
 	CLogicInt nColumnNew;
 	if( CWordParse::SearchNextWordPosition4KW( str.data(), CLogicInt(str.length()), CLogicInt(start), &nColumnNew, true ) ){

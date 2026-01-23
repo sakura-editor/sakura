@@ -452,7 +452,7 @@ public:
 	};
 	BOOL KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc );	// 2006.04.10 fon
 
-	int IsSearchString(const CStringRef& cStr, CLogicInt nPos, CLogicInt* pnSearchStart, CLogicInt* pnSearchEnd) const;	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
+	int IsSearchString(std::wstring_view cStr, CLogicInt nPos, CLogicInt* pnSearchStart, CLogicInt* pnSearchEnd) const;	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 
 	void GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPath = true, bool bTrimSpaceTab = false );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	bool GetCurrentTextForSearchDlg(CNativeW& cmemCurText, bool bGetHistory = false );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */

@@ -22,7 +22,7 @@
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
 
-bool _IsPosKeywordHead(const CStringRef& cStr, int nPos)
+bool _IsPosKeywordHead(std::wstring_view cStr, int nPos)
 {
 	return (nPos==0 || !IS_KEYWORD_CHAR(cStr[nPos - 1]));
 }
@@ -31,7 +31,7 @@ bool _IsPosKeywordHead(const CStringRef& cStr, int nPos)
 	@retval true 色の変更あり
 	@retval false 色の変更なし
 */
-bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
+bool SColorStrategyInfo::CheckChangeColor(std::wstring_view cLineStr)
 {
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(m_pcView);
@@ -233,7 +233,7 @@ void CColorStrategyPool::NotifyOnStartScanLogic()
 void CColorStrategyPool::CheckColorMODE(
 	CColorStrategy**	ppcColorStrategy,	//!< [in,out]
 	int					nPos,
-	const CStringRef&	cLineStr
+	std::wstring_view cLineStr
 )
 {
 	//色終了

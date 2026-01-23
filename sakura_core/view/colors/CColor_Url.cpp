@@ -16,7 +16,7 @@
 //                           URL                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Url::BeginColor(std::wstring_view cStr, int nPos)
 {
 	if (cStr.empty()) return false;
 
@@ -31,7 +31,7 @@ bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Url::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
+bool CColor_Url::EndColor([[maybe_unused]] std::wstring_view cStr, int nPos)
 {
 	if( nPos == this->m_nCOMMENTEND ){
 		return true;

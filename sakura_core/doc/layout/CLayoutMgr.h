@@ -281,7 +281,7 @@ public:
 		return CNativeW::GetColmOfChar( pData, nDataLen, i,
 			GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) + nSpace;
 	}
-	CLayoutXInt GetLayoutXOfChar( const CStringRef& str, int i ) const {
+	CLayoutXInt GetLayoutXOfChar( std::wstring_view str, int i ) const {
 		return GetLayoutXOfChar(str.data(), int(str.length()), i);
 	}
 	CPixelXInt GetWidthPerKeta() const { return Int(m_nCharLayoutXPerKeta); }

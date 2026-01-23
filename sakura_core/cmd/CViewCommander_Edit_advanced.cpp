@@ -604,7 +604,7 @@ bool SortByLineAsc (SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1-
 /*!	物理行のソートに使う関数(降順) */
 bool SortByLineDesc(SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1->pCmemLine, *pst2->pCmemLine) > 0;}
 
-inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
+inline int CStringRef_comp(std::wstring_view c1, std::wstring_view c2)
 {
 	int ret = wmemcmp(c1.data(), c2.data(), t_min(c1.length(), c2.length()));
 	if( ret == 0 ){

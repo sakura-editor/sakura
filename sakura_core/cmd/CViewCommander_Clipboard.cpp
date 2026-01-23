@@ -1028,7 +1028,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	@date 2014.12.30 Moca 同じCColorStrategyで違う色に切り替わったときに対応
 */
 CColorStrategy* CViewCommander::GetColorStrategyHTML(
-	const CStringRef&	cStringLine,
+	std::wstring_view cStringLine,
 	int					iLogic,
 	const CColorStrategyPool*	pool,
 	CColorStrategy**	ppStrategy,

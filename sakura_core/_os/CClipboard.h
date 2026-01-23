@@ -68,7 +68,7 @@ public:
 	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
 	bool GetText(std::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
 	bool IsIncludeClipboardFormat(const wchar_t* pFormatName);
-	bool SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
+	bool SetClipboardByFormat(std::wstring_view cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
 	bool GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol);
 
 	//演算子

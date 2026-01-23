@@ -415,7 +415,7 @@ bool CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText, bool bGetHist
 		(それ以外) 指定位置が検索文字列の始まりだった。
 */
 int CEditView::IsSearchString(
-	const CStringRef&	cStr,
+	std::wstring_view cStr,
 	/*
 	const wchar_t*	pszData,
 	CLogicInt		nDataLen,

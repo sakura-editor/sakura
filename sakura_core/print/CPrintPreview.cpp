@@ -1837,7 +1837,7 @@ void CPrintPreview::Print_DrawBlock(
 	@date 2014.12.30 Moca 正規表現の違う色が並んでいた場合に色替えできてなかったバグを修正
 */
 CColorStrategy* CPrintPreview::GetColorStrategy(
-	const CStringRef&	cStringLine,
+	std::wstring_view cStringLine,
 	int					iLogic,
 	CColorStrategy*		pStrategy,
 	bool&				bChange

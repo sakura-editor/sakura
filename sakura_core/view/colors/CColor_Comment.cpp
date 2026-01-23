@@ -13,7 +13,7 @@
 //                        行コメント                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CColor_LineComment::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_LineComment::BeginColor(std::wstring_view cStr, int nPos)
 {
 	if (cStr.empty()) return false;
 
@@ -25,7 +25,7 @@ bool CColor_LineComment::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_LineComment::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_LineComment::EndColor(std::wstring_view cStr, int nPos)
 {
 	//文字列終端
 	if (int(cStr.length()) <= nPos) {
@@ -44,7 +44,7 @@ bool CColor_LineComment::EndColor(const CStringRef& cStr, int nPos)
 //                    ブロックコメント１                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CColor_BlockComment::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_BlockComment::BeginColor(std::wstring_view cStr, int nPos)
 {
 	if (cStr.empty()) return false;
 
@@ -62,7 +62,7 @@ bool CColor_BlockComment::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_BlockComment::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_BlockComment::EndColor(std::wstring_view cStr, int nPos)
 {
 	if( 0 == this->m_nCOMMENTEND ){
 		/* この物理行にブロックコメントの終端があるか */

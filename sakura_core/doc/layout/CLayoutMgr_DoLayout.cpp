@@ -21,7 +21,7 @@
 //2008.07.27 kobake
 static bool _GetKeywordLength(
 	const CLayoutMgr&	cLayoutMgr,
-	const CStringRef&	cLineStr,		//!< [in]
+	std::wstring_view cLineStr,		//!< [in]
 	CLogicInt			nPos,			//!< [in]
 	CLogicInt*			p_nWordBgn,		//!< [out]
 	CLogicInt*			p_nWordLen,		//!< [out]
