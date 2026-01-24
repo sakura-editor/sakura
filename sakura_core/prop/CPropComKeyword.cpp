@@ -223,8 +223,12 @@ INT_PTR CPropKeyword::DispatchEvent(
 					/* リスト中で選択されているキーワードを編集する */
 					Edit_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					break;
+				default:
+					break;
 				}
 				return TRUE;
+			default:
+				break;
 			}
 		}else{
 			switch( pNMHDR->code ){
@@ -240,6 +244,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_KEYWORD;
 				return TRUE;
+			default:
+				break;
 			}
 		}
 		break;
@@ -254,6 +260,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 				/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 				SetKeyWordSet( hwndDlg, nIndex1 );
 				return TRUE;
+			default:
+				break;
 			}
 		}else{
 			switch( wNotifyCode ){
@@ -429,8 +437,12 @@ INT_PTR CPropKeyword::DispatchEvent(
 				case IDCANCEL:
 					EndDialog( hwndDlg, IDCANCEL );
 					break;
+				default:
+					break;
 				}
 				break;	/* BN_CLICKED */
+			default:
+				break;
 			}
 		}
 		break;	/* WM_COMMAND */
@@ -467,6 +479,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

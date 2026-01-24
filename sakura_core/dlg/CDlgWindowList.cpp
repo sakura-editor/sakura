@@ -90,6 +90,8 @@ BOOL CDlgWindowList::OnBnClicked(int wID)
 	case IDCANCEL:
 		::EndDialog(GetHwnd(), FALSE);
 		return TRUE;
+	default:
+		break;
 	}
 	return CDialog::OnBnClicked(wID);
 }

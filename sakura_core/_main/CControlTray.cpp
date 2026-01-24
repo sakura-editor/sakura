@@ -397,6 +397,8 @@ LRESULT CControlTray::DispatchEvent(
 			/* メニューアイテム描画 */
 			m_cMenuDrawer.DrawItem( lpdis );
 			return TRUE;
+		default:
+			break;
 		}
 		return FALSE;
 	case WM_MEASUREITEM:
@@ -410,6 +412,8 @@ LRESULT CControlTray::DispatchEvent(
 				lpmis->itemHeight = nItemHeight;
 			}
 			return TRUE;
+		default:
+			break;
 		}
 		return FALSE;
 	case WM_EXITMENULOOP:
@@ -583,6 +587,8 @@ LRESULT CControlTray::DispatchEvent(
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
 			MyWinHelp( hwnd, HELP_CONTEXT, FuncID_To_HelpContextID( (EFunctionCode)lphi->iCtrlId ) );
+			break;
+		default:
 			break;
 		}
 		return TRUE;
@@ -898,6 +904,8 @@ LRESULT CControlTray::DispatchEvent(
 			return 0L;
 		case WM_RBUTTONDBLCLK:
 			return 0L;
+		default:
+			break;
 		}
 		break;
 
@@ -970,6 +978,8 @@ void CControlTray::OnCommand( WORD wNotifyCode, [[maybe_unused]] WORD wID , [[ma
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
 	case 0:
+		break;
+	default:
 		break;
 	}
 	return;
@@ -1775,6 +1785,8 @@ INT_PTR CALLBACK CControlTray::ExitingDlgProc(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

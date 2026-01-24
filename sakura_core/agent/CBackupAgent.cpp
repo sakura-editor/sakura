@@ -49,6 +49,8 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 				return CALLBACK_INTERRUPT;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 	return CALLBACK_CONTINUE;
@@ -415,6 +417,8 @@ bool CBackupAgent::FormatBackUpPath(
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, _TRUNCATE, L"%s%s", szFname, szExt ) ){
 				return false;
 			}
+			break;
+		default:
 			break;
 		}
 

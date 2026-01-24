@@ -152,6 +152,8 @@ INT_PTR CPropFile::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_FILE;
 				return TRUE;
+			default:
+				break;
 			}
 			break;
 		case IDC_SPIN_AUTOLOAD_DELAY:
@@ -249,6 +251,8 @@ INT_PTR CPropFile::DispatchEvent(
 			case IDC_CHECK_ALERT_IF_LARGEFILE:
 				EnableFilePropInput(hwndDlg);
 				break;
+			default:
+				break;
 			}
 			break;
 		case EN_SETFOCUS:
@@ -258,6 +262,8 @@ INT_PTR CPropFile::DispatchEvent(
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -279,6 +285,8 @@ INT_PTR CPropFile::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

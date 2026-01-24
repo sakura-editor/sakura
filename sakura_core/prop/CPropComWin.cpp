@@ -143,6 +143,8 @@ INT_PTR CPropWin::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_WIN;
 				return TRUE;
+			default:
+				break;
 			}
 			break;
 		case IDC_SPIN_nRulerHeight:
@@ -254,6 +256,8 @@ INT_PTR CPropWin::DispatchEvent(
 				}
 				break;
 			// To Here 2004.05.13 Moca
+			default:
+				break;
 			}
 			break;
 		case EN_SETFOCUS:
@@ -263,6 +267,8 @@ INT_PTR CPropWin::DispatchEvent(
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -285,6 +291,8 @@ INT_PTR CPropWin::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

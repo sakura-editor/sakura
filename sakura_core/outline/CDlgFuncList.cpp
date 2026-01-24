@@ -321,6 +321,8 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 		}
 		break;
+	default:
+		break;
 	}
 
 	return result;
@@ -537,6 +539,8 @@ void CDlgFuncList::SetData()
 			break;
 		case OUTLINE_LIST:	// 汎用リスト 2010.03.28 syat
 			::SetWindowText( GetHwnd(), L"" );
+			break;
+		default:
 			break;
 		}
 		//	May 18, 2001 genta
@@ -1843,6 +1847,8 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 			case IDC_LIST_FL:
 			case IDC_TREE_FL:
 				continue;
+			default:
+				break;
 			}
 			ShowWindow( hwndPrev, SW_HIDE );
 		}
@@ -1950,6 +1956,8 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 				pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 			}
 		}
+	default:
+		break;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
@@ -2009,6 +2017,8 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 				m_bWaitTreeProcess=false;
 			}
 			return TRUE;
+		default:
+			break;
 		}
 	}else
 	if( hwndList == pNMHDR->hwndFrom ){
@@ -2047,6 +2057,8 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 			}
 			Key2Command( ((LV_KEYDOWN *)pNMHDR)->wVKey );
 			return TRUE;
+		default:
+			break;
 		}
 	}
 
@@ -2079,6 +2091,8 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 						}
 					}
 					::SetWindowLongPtr( GetHwnd(), DWLP_MSGRESULT, CDRF_DODEFAULT );
+					break;
+				default:
 					break;
 				}
 
@@ -2338,6 +2352,8 @@ BOOL CDlgFuncList::OnCbnSelEndOk( HWND hwndCtl, int wID )
 			::SendMessageAny(hWndTree, WM_SETREDRAW, (WPARAM)TRUE, 0);
 		}
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -3557,6 +3573,8 @@ void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 		if( (HWND)lParam == GetEditWnd().GetHwnd() )
 			return;	// 自分からの通知は無視
 		ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// アウトライン画面を再配置
+		break;
+	default:
 		break;
 	}
 	return;

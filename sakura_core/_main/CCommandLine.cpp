@@ -484,6 +484,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 						m_gi.bGrepPaste = true;	break;
 					case 'O':
 						m_gi.bGrepBackup = true;	break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -516,6 +518,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_PROFMGR:
 				m_bProfileMgr = true;
+				break;
+			default:
 				break;
 			}
 		}

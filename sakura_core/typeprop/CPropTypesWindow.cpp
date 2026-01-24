@@ -154,6 +154,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), cCodeTypeName.UseBom() );
 					}
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -183,6 +185,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 					CCodePage::AddComboCodePages( hwndDlg, ::GetDlgItem(hwndDlg, IDC_COMBO_DEFAULT_CODETYPE), -1 );
 				}
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
 		case EN_SETFOCUS:
@@ -198,6 +202,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				if(nVal > 255) nVal = 255;
 				ApiWrap::TrackBarCtl_SetPos( ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ), TRUE, nVal );
 			}
+			break;
+		default:
 			break;
 		}
 		break;	/* WM_COMMAND */
@@ -218,12 +224,15 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PROPTYPE_PAGENUM_WINDOW;
 			return TRUE;
+		default:
+			break;
 		}
 
 		// switch文追加 2014.08.02 katze
 		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( (int)wParam ) {
 		case IDC_SPIN_LINENUMWIDTH:
+		{
 			/* 行番号の最小桁数 */
 //			MYTRACE( L"IDC_SPIN_LINENUMWIDTH\n" );
 			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nullptr, FALSE );
@@ -242,8 +251,12 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nVal, FALSE );
 			return TRUE;
 		}
+		default:
+			break;
+		}
 		switch( (int)wParam ) {
 		case IDC_UPDOWN_BACKIMG_TRANSPARENCY:
+		{
 			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nullptr, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				if( nVal < 0xFF ){
@@ -257,6 +270,9 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nVal, FALSE );
 			ApiWrap::TrackBarCtl_SetPos( ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ), TRUE, nVal );
 			return TRUE;
+		}
+		default:
+			break;
 		}
 
 		break;	/* WM_NOTIFY */
@@ -291,6 +307,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, pos, FALSE );
 		}
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

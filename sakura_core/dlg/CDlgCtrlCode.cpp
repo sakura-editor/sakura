@@ -240,6 +240,8 @@ BOOL CDlgCtrlCode::OnBnClicked( int wID )
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */
@@ -287,6 +289,8 @@ BOOL CDlgCtrlCode::OnNotify( NMHDR* pNMHDR )
 					}
 				}
 			}
+			break;
+		default:
 			break;
 		}
 	}

@@ -120,6 +120,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					DispatchEvent( hwndDlg, WM_COMMAND, MAKEWPARAM(IDC_PLUGIN_OPTION, BN_CLICKED), (LPARAM)::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ) );
 				}
 				break;
+			default:
+				break;
 			}
 			break;
 		default:
@@ -134,6 +136,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_PLUGIN;
 				return TRUE;
+			default:
+				break;
 			}
 			break;
 		}
@@ -254,6 +258,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					}
 				}
 				break;
+			default:
+				break;
 			}
 			break;
 		case CBN_DROPDOWN:
@@ -267,6 +273,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			//default:
 			//	break;
 			//}
+			break;
+		default:
 			break;
 		}
 
@@ -288,6 +296,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

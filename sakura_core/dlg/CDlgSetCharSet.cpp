@@ -88,6 +88,8 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 	case IDCANCEL:
 		CloseDialog( FALSE );
 		return TRUE;
+	default:
+		break;
 	}
 
 	/* 基底クラスメンバ */
@@ -130,6 +132,7 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 	switch (wID) {
 	//	文字コードの変更をBOMチェックボックスに反映
 	case IDC_COMBO_CHARSET:
+	{
 		SetBOM();
 		nIdx = ApiWrap::Combo_GetCurSel( hwndCtl );
 		lRes = ApiWrap::Combo_GetItemData( hwndCtl, nIdx );
@@ -148,6 +151,9 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 			fCheck = BST_UNCHECKED;
 		}
 		ApiWrap::BtnCtl_SetCheck( m_hwndCheckBOM, fCheck );
+		break;
+	}
+	default:
 		break;
 	}
 	return TRUE;

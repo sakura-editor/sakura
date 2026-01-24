@@ -2161,10 +2161,16 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 				/* 印刷プレビューモードのオン/オフ */
 				m_pParentWnd->PrintPreviewModeONOFF();
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
+		default:
+			break;
 		}
 		break;	/* WM_COMMAND */
+	default:
+		break;
 	}
 	return FALSE;
 }

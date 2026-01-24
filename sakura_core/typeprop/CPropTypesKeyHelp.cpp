@@ -434,7 +434,11 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 			case IDC_BUTTON_KEYHELP_EXPORT:	/* エクスポート */
 				Export(hwndDlg);
 				return TRUE;
+			default:
+				break;
 			}
+			break;
+		default:
 			break;
 		}
 		break;
@@ -470,6 +474,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ファイルパス */
 			}
 			break;
+		default:
+			break;
 		}
 		break;
 
@@ -481,6 +487,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	case WM_CONTEXTMENU:	/* Context Menu */
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

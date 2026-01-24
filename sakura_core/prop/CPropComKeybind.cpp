@@ -79,8 +79,8 @@ LRESULT CALLBACK CPropComKeybindWndProc( [[maybe_unused]] HWND hwndDlg, UINT uMs
 	case WM_CTLCOLORSTATIC:
 	// 白色のブラシハンドルを返す
 		return (LRESULT)GetStockObject(WHITE_BRUSH);
-//	default:
-//		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -178,6 +178,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 				}
 			}
 			return TRUE;
+		default:
+			break;
 		}
 		break;
 
@@ -240,8 +242,12 @@ INT_PTR CPropKeybind::DispatchEvent(
 				::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 				::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndFuncList );
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
+		default:
+			break;
 		}
 		if( hwndCheckShift == hwndCtl
 		 || hwndCheckCtrl == hwndCtl
@@ -252,6 +258,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 				ChangeKeyList( hwndDlg );
 
 				return TRUE;
+			default:
+				break;
 			}
 		}else
 		if( hwndKeyList == hwndCtl ){
@@ -278,6 +286,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 				}
 				ApiWrap::Wnd_SetText( hwndEDIT_KEYSFUNC, pszLabel );
 				return TRUE;
+			default:
+				break;
 			}
 		}else
 		if( hwndFuncList == hwndCtl ){
@@ -306,6 +316,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 					delete [] ppcAssignedKeyList;
 				}
 				return TRUE;
+			default:
+				break;
 			}
 		}else
 		if( hwndCombo == hwndCtl){
@@ -315,6 +327,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 				/* 機能一覧に文字列をセット（リストボックス）*/
 				m_cLookup.SetListItem( hwndFuncList, nIndex2 );	//	Oct. 2, 2001 genta
 				return TRUE;
+			default:
+				break;
 			}
 
 //@@@ 2001.11.08 add start MIK
@@ -370,6 +384,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 					}
 					return TRUE;
 				}
+			default:
+				break;
 			}
 //@@@ 2001.11.08 add end MIK
 		}
@@ -405,6 +421,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.11.07 End
+	default:
+		break;
 	}
 	return FALSE;
 }

@@ -1332,7 +1332,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	case L')':
 	case L'{':
 	case L'(':
-
+	{
 		wchar_t wcCharOrg = wcChar;
 		nCaretPosX_PHY = GetCaret().GetCaretLogicPos().x;
 
@@ -1505,6 +1505,8 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 							nMode = 0;
 							n++;
 						}
+						break;
+					default:
 						break;
 					}
 				}
@@ -1700,6 +1702,9 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				)
 			);
 		}
+		break;
+	}
+	default:
 		break;
 	}
 	if( nullptr != pszData ){

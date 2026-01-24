@@ -153,7 +153,8 @@ LRESULT CTabWnd::TabWndDispatchEvent( [[maybe_unused]] HWND hwnd, UINT uMsg, WPA
 		m_bVisualStyle = ::IsVisualStyle();
 		break;
 
-	//default:
+	default:
+		break;
 	}
 
 	return 1L;	//デフォルトのディスパッチにまわす
@@ -1608,6 +1609,8 @@ LRESULT CTabWnd::OnNotify( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMs
 				((NMTTDISPINFO*)pnmh)->hinst = nullptr;
 			}
 			return 0L;
+		default:
+			break;
 		}
 	}
 	return 0L;

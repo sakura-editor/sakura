@@ -76,7 +76,11 @@ INT_PTR CALLBACK CPropFileName::DlgProc_page(
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -155,6 +159,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					}
 					m_nLastPos_FILENAME = nIndex;
 					break;
+				default:
+					break;
 				}
 				break;
 			default:
@@ -170,6 +176,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 				case PSN_SETACTIVE:
 					m_nPageNum = ID_PROPCOM_PAGENUM_FILENAME;
 					return TRUE;
+				default:
+					break;
 				}
 				break;
 			}
@@ -257,10 +265,12 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 						return TRUE;
 					}
 					break;
-				// default:
+				default:
+					break;
 				}
 				break;
-			// default:
+			default:
+				break;
 			}
 		}
 
@@ -280,6 +290,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

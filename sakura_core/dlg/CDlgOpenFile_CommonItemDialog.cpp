@@ -857,6 +857,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 			m_pFileDialog->SetFolder(psiFolder);
 		}
 		break;
+	default:
+		break;
 	}
 	return S_OK;
 }
@@ -876,6 +878,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnCheckButtonToggled(
 		break;
 	case CtrlId::CHECK_BOM:
 		m_bBom = bChecked ? true : false;
+		break;
+	default:
 		break;
 	}
 	return S_OK;

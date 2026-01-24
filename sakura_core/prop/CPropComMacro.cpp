@@ -117,6 +117,8 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			case LVN_ITEMCHANGED:
 				CheckListPosition_Macro( hwndDlg );
 				break;
+			default:
+				break;
 			}
 			break;
 		default:
@@ -132,6 +134,8 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_MACRO;
 				return TRUE;
+			default:
+				break;
 			}
 			break;
 		}
@@ -155,12 +159,16 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			case IDC_MACRO_REG:		// マクロ設定
 				SetMacro2List_Macro( hwndDlg );
 				break;
+			default:
+				break;
 			}
 			break;
 		case CBN_DROPDOWN:
 			switch( wID ){
 			case IDC_MACROPATH:
 				OnFileDropdown_Macro( hwndDlg );
+				break;
+			default:
 				break;
 			}
 			break;	/* CBN_DROPDOWN */
@@ -182,9 +190,13 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 					}
 				}
 				break;
+			default:
+				break;
 			}
 			break;
 		// To Here 2003.06.23 Moca
+		default:
+			break;
 		}
 
 		break;	/* WM_COMMAND */
@@ -205,6 +217,8 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

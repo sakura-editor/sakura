@@ -635,6 +635,8 @@ LRESULT CEditView::DispatchEvent(
 		case XBUTTON2:
 			OnXRBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 			break;
+		default:
+			break;
 		}
 
 		return TRUE;
@@ -647,6 +649,8 @@ LRESULT CEditView::DispatchEvent(
 			break;
 		case XBUTTON2:
 			OnXRBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+			break;
+		default:
 			break;
 		}
 

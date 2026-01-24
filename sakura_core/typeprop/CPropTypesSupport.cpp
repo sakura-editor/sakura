@@ -122,8 +122,12 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP), L"*.chm;*.col", true, EFITER_NONE);
 				}
 				return TRUE;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
+		default:
+			break;
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
@@ -142,6 +146,8 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PROPTYPE_PAGENUM_SUPPORT;
 			return TRUE;
+		default:
+			break;
 		}
 		break;
 
@@ -162,6 +168,8 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids3 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
+	default:
+		break;
 	}
 	return FALSE;
 }

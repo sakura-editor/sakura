@@ -245,6 +245,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 					}
 				}
 				break;
+			default:
+				break;
 			}
 			break;
 
@@ -322,6 +324,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KINSOKUHIDE ), 
 					::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKURET ) 
 				 || ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUKUTO ) );
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
 		case EN_SETFOCUS:
@@ -331,6 +335,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
+		default:
 			break;
 		}
 		break;	/* WM_COMMAND */
@@ -431,6 +437,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 				return TRUE;
+			default:
+				break;
 			}
 			break;
 		}
@@ -467,6 +475,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			m_hTypeFont = nullptr;
 		}
 		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }

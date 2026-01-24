@@ -786,6 +786,8 @@ void CEditDoc::OnChangeSetting(
 		case WRAP_WINDOW_WIDTH:
 			nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
 			break;
+		default:
+			break;
 		}
 
 		if( m_bTabSpaceCurTemp ){

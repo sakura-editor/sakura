@@ -1170,6 +1170,8 @@ LRESULT CEditWnd::DispatchEvent(
 				/* メニューアイテム描画 */
 				m_cMenuDrawer.DrawItem( lpdis );
 				return TRUE;
+			default:
+				break;
 			}
 		}
 		return FALSE;
@@ -1189,6 +1191,8 @@ LRESULT CEditWnd::DispatchEvent(
 				lpmis->itemHeight = nItemHeight;
 			}
 			return TRUE;
+		default:
+			break;
 		}
 		return FALSE;
 
@@ -1206,6 +1210,8 @@ LRESULT CEditWnd::DispatchEvent(
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
 			MyWinHelp( hwnd, HELP_CONTEXT, FuncID_To_HelpContextID( (EFunctionCode)lphi->iCtrlId ) );
+			break;
+		default:
 			break;
 		}
 		return TRUE;
@@ -1467,6 +1473,8 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			break;
 		//	To Here Jul. 21, 2003 genta
+		default:
+			break;
 		}
 		return 0L;
 	case WM_COMMAND:
@@ -1945,6 +1953,8 @@ LRESULT CEditWnd::DispatchEvent(
 			case MYBCN_MINIMAP:
 				LayoutMiniMap();
 				break;
+			default:
+				break;
 			}
 			EndLayoutBars();	// 2006.12.19 ryoji
 		}
@@ -2109,6 +2119,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			m_nCurrentFocus = F_SEARCH_BOX;
 			break;
 		case CBN_KILLFOCUS:
+		{
 			m_nCurrentFocus = 0;
 			//フォーカスがはずれたときに検索キーにしてしまう。
 			//検索キーワードを取得
@@ -2123,6 +2134,9 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				GetActiveView().m_bCurSearchUpdate = true;
 				GetActiveView().ChangeCurRegexp();
 			}
+			break;
+		}
+		default:
 			break;
 		}
 		return;	// CBN_SELCHANGE(1) がアクセラレータと誤認されないようにここで抜ける（rev1886 の問題の抜本対策）
@@ -2198,6 +2212,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			);
 			GetDocument()->HandleCommand( (EFunctionCode)(nFuncCode | FA_FROMKEYBOARD) );
 		}
+		break;
+	default:
 		break;
 	}
 

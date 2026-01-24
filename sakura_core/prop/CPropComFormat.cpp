@@ -187,8 +187,12 @@ INT_PTR CPropFormat::DispatchEvent(
 				EnableFormatPropInput( hwndDlg );
 			//	To Here Sept. 10, 2000
 				return 0;
+			default:
+				break;
 			}
 			break;	/* BN_CLICKED */
+		default:
+			break;
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
@@ -212,6 +216,8 @@ INT_PTR CPropFormat::DispatchEvent(
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_FORMAT;
 				return TRUE;
+			default:
+				break;
 			}
 //			break;	/* default */
 //		}
@@ -240,6 +246,8 @@ INT_PTR CPropFormat::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
+	default:
+		break;
 	}
 	return FALSE;
 }

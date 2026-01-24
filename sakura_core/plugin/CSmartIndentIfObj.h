@@ -68,6 +68,8 @@ public:
 				Wrap(&Result)->Receive(S);
 			}
 			return true;
+		default:
+			break;
 		}
 		return CWSHIfObj::HandleFunction(View, ID, Arguments, ArgSize, Result);
 	}

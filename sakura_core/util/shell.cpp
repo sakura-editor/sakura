@@ -197,6 +197,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				break;
 
 			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダーにする）
+			{
 				int nMsgResult = MYMESSAGEBOX(
 					hwnd,
 					MB_OKCANCEL | MB_ICONINFORMATION,
@@ -209,6 +210,9 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
 					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, std::size(pShareData->m_sHistory.m_szIMPORTFOLDER), L'\\' );
 				}
+				break;
+			}
+			default:
 				break;
 			}
 		}
@@ -577,6 +581,8 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 		case CDERR_STRUCTSIZE:		MYTRACE( L"CDERR_STRUCTSIZE \n" );		break;
 		case CFERR_MAXLESSTHANMIN:	MYTRACE( L"CFERR_MAXLESSTHANMIN \n" );	break;
 		case CFERR_NOFONTS:			MYTRACE( L"CFERR_NOFONTS \n" );			break;
+		default:
+			break;
 		}
 #endif
 		return FALSE;
