@@ -59,7 +59,7 @@ jobs:
 
       - name: Build with MinGW-w64-gcc
         shell: msys2 {0}
-        run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+        run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }} --no-test
 
       - name: Run unit tests
         shell: cmd
