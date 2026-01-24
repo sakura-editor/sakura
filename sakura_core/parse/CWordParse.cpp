@@ -487,7 +487,7 @@ BOOL IsURL(
 		for(urlp = &url_table[url_char[wc_to_c(*begin)]-1]; urlp->name[0] == wc_to_c(*begin); urlp++){	/* URLテーブルを探索 */
 			if( (urlp->length <= end - begin) && (wmemcmp(urlp->name, begin, urlp->length) == 0) ){	/* URLヘッダーは一致した */
 				if( urlp->is_mail ){	/* メール専用の解析へ */
-					if( IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen) ){
+					if (IsMailAddress(begin, urlp->length, end - begin, pnMatchLen)) {
 						*pnMatchLen = *pnMatchLen + urlp->length;
 						return TRUE;
 					}

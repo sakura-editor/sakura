@@ -66,7 +66,7 @@ TEST(IsURL, TpProtocol)
 	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(16)));
 }
 
-TEST(IsURL, DISABLED_MailtoProtocol)
+TEST(IsURL, MailtoProtocol)
 {
 	const auto result = IsURL(L"mailto:test@example.com");
 	EXPECT_TRUE(result);
