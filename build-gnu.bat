@@ -1,6 +1,7 @@
 @echo off
 set platform=%1
 set configuration=%2
+set no_test=%3
 
 if "%platform%" == "MinGW" (
 	@rem OK
@@ -39,6 +40,10 @@ cmake --build %BUILD_DIR% --config %configuration% --target tests1
 if errorlevel 1 (
 	echo cmake build tests1 failed. errorlevel %errorlevel%
 	exit /b 1
+)
+
+if defined no_test (
+	exit /b 0
 )
 
 @rem run test.
