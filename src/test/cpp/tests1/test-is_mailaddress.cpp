@@ -39,6 +39,8 @@ BOOL IsMailAddress(const wchar_t* pszBuf, size_t nBufLen, int* pnAddressLength);
 //////////////////////////////////////////////////////////////////////
 // テストコード
 
+namespace parse {
+
 TEST(testIsMailAddress, CheckBlank)
 {
 	wchar_t szTest[] = L""; //空文字
@@ -295,6 +297,8 @@ TEST(testIsMailAddress, OffsetParameter2)
 		<< "pszBuf + offset is \"" << (p2 <= p3 ? std::wstring(p2, p3) : L"") << "\"";
 	}
 }
+
+} // namespace parse
 
 //////////////////////////////////////////////////////////////////////
 // テストマクロの後始末

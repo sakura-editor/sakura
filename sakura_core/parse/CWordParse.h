@@ -136,6 +136,36 @@ BOOL IsURL( const wchar_t* pszLine, size_t nLineLen, int* pnMatchLen)
 	return IsURL(pszLine, 0, nLineLen, pnMatchLen);
 }
 
+//! URLマッチ結果構造体
+struct SUrlMatchResult {
+	//! マッチしたURL文字列
+	std::wstring_view matched;
+
+	//!	コンストラクター
+	explicit SUrlMatchResult(std::wstring_view line, size_t offset, ptrdiff_t matchLen)
+		: matched(line.substr(offset, matchLen))
+	{
+	}
+
+	//!	マッチしたかどうか
+	explicit operator bool() const noexcept { return !matched.empty(); }
+};
+
+//! 文字列がURLかどうかを検査する。
+inline SUrlMatchResult IsURL(std::wstring_view line) {
+	int nMatchLen = 0;
+	const auto result = IsURL(std::data(line), std::size(line), &nMatchLen);
+	return SUrlMatchResult{ line, 0, result ? nMatchLen : 0 };
+}
+
+//! 文字列がURLかどうかを検査する。
+inline SUrlMatchResult IsURL(std::wstring_view line, size_t offset) {
+	int nMatchLen = 0;
+	const auto result = IsURL(std::data(line), static_cast<int>(offset), std::size(line), &nMatchLen);
+	return SUrlMatchResult{ line, offset, result ? nMatchLen : 0 };
+}
+
+
 /** 指定アドレスがメールアドレスの先頭ならば TRUE とその長さを返す。
     @param[in]  pszBuf          文字列バッファの先頭アドレス
     @param[in]  offset          メールアドレス判定開始文字を示す、pszBuf からの相対位置。
