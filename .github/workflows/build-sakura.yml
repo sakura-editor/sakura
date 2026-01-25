@@ -75,14 +75,20 @@ jobs:
       shell: cmd
 
     - name: Install AutoHotKey
-      run: choco install autohotkey.install --confirm
+      run: |
+        $AutohotkeyDir = "$HOME\autohotkey"
+        if (!(Test-Path $AutohotkeyDir)) { New-Item -ItemType Directory -Path $AutohotkeyDir }
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip -OutFile "AutoHotkey.zip"
+        Expand-Archive -Path "AutoHotkey.zip" -DestinationPath $AutohotkeyDir -Force
+        echo "AutoHotKey=$HOME\autohotkey\AutoHotkey32.exe" >> $env:GITHUB_ENV
 
     - name: Install Locale Emulator
       run: |
         $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
         $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
         Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
-        Start-Process "AutoHotKey" "${LEInitScript}"
+        Start-Process $env:AutoHotKey "${LEInitScript}"
         Start-Process "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
       shell: pwsh
