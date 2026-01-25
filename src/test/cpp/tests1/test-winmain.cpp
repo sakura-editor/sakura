@@ -347,17 +347,23 @@ void CControlProcess_Terminate(const std::optional<std::wstring>& optProfileName
 		cxx::raise_system_error("hControlProcess can't be opened.");
 	}
 
-	// トレイウインドウを閉じる
-	::SendMessageW(hTrayWnd, WM_CLOSE, 0, 0);
+	// トレイウインドウが閉じられるまで繰り返す
+	while (::IsWindow(hTrayWnd)) {
+		// トレイウインドウにクローズを要求する
+		if (!::SendMessageTimeoutW(hTrayWnd, WM_CLOSE, 0, 0,
+			SMTO_NOTIMEOUTIFNOTHUNG | SMTO_ERRORONEXIT,
+			5000,
+			nullptr
+		)) {
+			// Sendが失敗したらPostしておく
+			::PostMessageW(hTrayWnd, WM_CLOSE, 0, 0);
 
-	if (DWORD dwExitCode = 0;
-		::GetExitCodeProcess(hControlProcess, &dwExitCode) &&
-		dwExitCode != STILL_ACTIVE)
-	{
-		return;
+			// 少し待つ
+			::Sleep(100);
+		}
 	}
 
-	// プロセス終了を待つ
+	// メインウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 	if (!hControlProcess.try_lock_for(std::chrono::milliseconds(30000))) {
 		cxx::raise_system_error("waitProcess is timeout.");
 	}
