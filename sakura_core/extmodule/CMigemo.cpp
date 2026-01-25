@@ -9,7 +9,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, miau
 	Copyright (C) 2012, Moca
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -84,18 +84,14 @@ bool CMigemo::DeinitDllImp(void)
 
 LPCWSTR CMigemo::GetDllNameImp([[maybe_unused]] int nIndex)
 {
-	const auto& szMigemoDll = GetDllShareData().m_Common.m_sHelper.m_szMigemoDll;
+	static SFilePath szMigemoDll;
 
-	if (std::filesystem::path dllPath{ szMigemoDll }; !dllPath.empty()) {
-		// 相対パスはiniファイル基準に変換
-		if(dllPath.is_relative()) {
-			dllPath = GetIniFileName().parent_path() / dllPath;
-		}
+	// 相対パスはiniファイル基準（またはexeファイル基準）の絶対パスに変換
+	GetInidirOrExedir(szMigemoDll, GetDllShareData().m_Common.m_sHelper.m_szMigemoDll);
 
-		// 指定されたパスが存在する場合はそれを使う
-		if (fexist(dllPath)) {
-			return szMigemoDll;
-		}
+	// 指定されたパスが存在する場合はそれを使う
+	if (std::filesystem::path dllPath{ szMigemoDll }; fexist(dllPath)) {
+		return szMigemoDll;
 	}
 
 	// デフォルトのDLL名を返す
