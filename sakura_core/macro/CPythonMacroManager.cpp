@@ -435,13 +435,13 @@ EXTERN PyObject* (*PyEval_EvalFrame)(PyFrameObject* f);
 EXTERN PyObject* (*PyEval_EvalFrameEx)(PyFrameObject* f, int throwflag);
 
 inline void Py_XINCREF(PyObject* op) {
-	if (op != NULL) {
+	if (op != nullptr) {
 		Py_IncRef(op);
 	}
 }
 
 inline void Py_XDECREF(PyObject* op) {
-	if (op != NULL) {
+	if (op != nullptr) {
 		Py_DecRef(op);
 	}
 }
@@ -733,7 +733,7 @@ constexpr Symbol symbols[] = {
 #undef X
 
 PyMethodDef g_moduleMethods[] = {
-	{NULL, NULL, 0, NULL}
+	{nullptr, nullptr, 0, nullptr}
 };
 
 PyModuleDef g_moduleDef = {
@@ -782,7 +782,7 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 		}
 		if (varType == VT_EMPTY) {
 			PyErr_BadArgument();
-			return NULL;
+			return nullptr;
 		}
 
 		if (varType == VT_BSTR) {
@@ -862,7 +862,7 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 		}
 	}
 
-	PyObject* retObj = NULL;
+	PyObject* retObj = nullptr;
 	if (i == nArgs) {
 		VARIANT vtResult;
 		::VariantInit(&vtResult);
@@ -915,10 +915,10 @@ CPythonMacroManager::CPythonMacroManager()
 		g_functionNames.push_back(to_achar(info.m_pszFuncName));
 	}
 	for (auto& name : g_commandNames) {
-		g_commandDescs.push_back({&name[0], (PyCFunction)handleCommand, METH_VARARGS, NULL});
+		g_commandDescs.push_back({&name[0], (PyCFunction)handleCommand, METH_VARARGS, nullptr});
 	}
 	for (auto& name : g_functionNames) {
-		g_functionDescs.push_back({&name[0], (PyCFunction)handleFunction, METH_VARARGS, NULL});
+		g_functionDescs.push_back({&name[0], (PyCFunction)handleFunction, METH_VARARGS, nullptr});
 	}
 
 	s_initialized = true;
@@ -983,17 +983,17 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
 				FORMAT_MESSAGE_IGNORE_INSERTS |
 				FORMAT_MESSAGE_FROM_SYSTEM,
-				NULL,
+				nullptr,
 				::GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 				(LPWSTR)&pMsg,
 				0,
-				NULL
+				nullptr
 			);
 			CNativeW str(pMsg);
 			::LocalFree((HLOCAL)pMsg);
 			str.Replace(L"%1", dllname);
-			ErrorMessage(NULL, L"%s", str.GetStringPtr());
+			ErrorMessage(nullptr, L"%s", str.GetStringPtr());
 			return false;
 		}
 		for (size_t i = 0; i < _countof(symbols); ++i) {
@@ -1078,11 +1078,11 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 inline
 bool wide2utf8(std::string& utf8, const WCHAR* psz)
 {
-	int nbytes = WideCharToMultiByte(CP_UTF8, 0, psz, -1, NULL, 0, NULL, NULL);
+	int nbytes = WideCharToMultiByte(CP_UTF8, 0, psz, -1, nullptr, 0, nullptr, nullptr);
 	if (nbytes == 0)
 		return false;
 	utf8.resize(nbytes);
-	nbytes = WideCharToMultiByte(CP_UTF8, 0, psz, -1, &utf8[0], nbytes, NULL, NULL);
+	nbytes = WideCharToMultiByte(CP_UTF8, 0, psz, -1, &utf8[0], nbytes, nullptr, nullptr);
 	if (nbytes == 0)
 		return false;
 	return true;
@@ -1121,7 +1121,7 @@ CMacroManagerBase* CPythonMacroManager::Creator(const WCHAR* FileExt)
 	if (_wcsicmp( FileExt, L"py" ) == 0) {
 		return new CPythonMacroManager;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // static
