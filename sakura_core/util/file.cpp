@@ -605,6 +605,43 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 	return pszFileName;
 }
 
+/*!
+ * 新しいテンポラリファイルパスを生成する
+ * Windows APIが生成したパスを「開いて閉じる」ため、呼ぶとファイルが生成される
+ *
+ * 生成されるパスの形式は以下の通り。
+ * C:\Users\berryzplus\AppData\Local\Temp\tesC85A.tmp
+ *
+ * @param [in] prefix ファイル名の前に付ける3文字の接頭辞。
+ * @param [in, opt] optTempDir 一時フォルダーのパス。指定しない場合はシステムの一時フォルダーを使う。
+ */
+std::filesystem::path GetTempFilePath(
+	std::wstring_view prefix,
+	const std::optional<std::filesystem::path>& optTempDir
+)
+{
+	// 一時フォルダーのパスを取得する
+	std::filesystem::path tempDir;
+	if (optTempDir.has_value()) {
+		tempDir = optTempDir.value();
+	} else {
+		SFilePath szTempDir;
+		::GetTempPathW(std::size(szTempDir), szTempDir);
+		tempDir = std::filesystem::path{ szTempDir };
+	}
+
+	// パス生成に必要なバッファを確保する
+	// （一時フォルダーのパス＋接頭辞(3文字)＋4桁の16進数＋拡張子＋NUL終端）
+	std::wstring buf(std::size(tempDir.native()) + 3 + 4 + 4 + 1, L'\0');
+
+	// Windows API関数を呼び出す。
+	// （オーバーフローしないので、エラーチェック省略）
+	constexpr uint16_t uUnique = 0;
+	::GetTempFileNameW(tempDir.c_str(), std::data(prefix), uUnique, std::data(buf));
+
+	return buf.c_str();
+}
+
 //! パスに使えない文字が含まれていないかチェックする
 // ファイル名、フォルダー名には「<>*|"?」が使えない
 // しかし「\\?\C:\Program files\」の形式では?が3文字目にあるので除外

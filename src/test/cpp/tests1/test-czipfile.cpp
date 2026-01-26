@@ -16,6 +16,8 @@
 
 #include <miniz-cpp/zip_file.hpp>
 
+#include "util/file.h"
+
 #include "tests1_rc.h"
 #include "rt_zipres.h"
 
@@ -54,38 +56,17 @@ bool WriteBinaryToFile(BinarySequenceView bin, std::filesystem::path path)
 }
 
 /*!
-	新しいテンポラリファイルパスを生成する
-	Windows APIが生成したパスを開いて閉じるため、呼ぶとファイルが生成される
-
-	生成されるパスの形式は以下の通り。
-	C:\Users\berryzplus\AppData\Local\Temp\tesC85A.tmp
-
-	@param [in] prefix ファイル名の前に付ける3文字の接頭辞。
+ * 新しいテンポラリファイルパスを生成する
+ * （拡張子を指定できる特殊バージョン）
+ *
+ * CZipFileが依存するIShellDispatchのZIP展開機能には
+ * 拡張子がzipでないアーカイブを解凍できない
+ * の制約があるためで作成した。
+ * 
+ * @param [in] prefix ファイル名の前に付ける3文字の接頭辞。
+ * @param [in] extension ファイルの拡張子（.zipを指定する）。
  */
-std::filesystem::path GetTempFilePath(std::wstring_view prefix)
-{
-	// 一時フォルダーのパスを取得する
-	const std::wstring tempDir = std::filesystem::temp_directory_path();
-
-	// パス生成に必要なバッファを確保する
-	// （一時フォルダーのパス＋接頭辞(3文字)＋4桁の16進数＋拡張子＋NUL終端）
-	std::wstring buf(tempDir.length() + 3 + 4 + 4 + 1, L'\0');
-
-	// Windows API関数を呼び出す。
-	// （オーバーフローしないので、エラーチェック省略）
-	constexpr uint16_t uUnique = 0;
-	::GetTempFileNameW(tempDir.c_str(), prefix.data(), uUnique, buf.data());
-
-	return buf.c_str();
-}
-
-/*!
-	新しいテンポラリファイルパスを生成する
-	（拡張子を指定できるオーバーロード版）
-
-	@param [in] prefix ファイル名の前に付ける3文字の接頭辞。
- */
-std::filesystem::path GetTempFilePath(std::wstring_view prefix, std::wstring_view extension)
+std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension)
 {
 	// 1回だけリトライする
 	for (auto n = 0; n <= 1; ++n) {
@@ -156,7 +137,7 @@ void extract_zip_resource(
 )
 {
 	// 一時ファイル名を生成する
-	auto tempPath = GetTempFilePath(L"tes", L"zip");
+	auto tempPath = GetTempFilePath(L"tes");
 
 	// リソースからzipファイルデータを抽出する
 	const auto bin = cxx::lock_resource<std::byte>(
@@ -206,7 +187,7 @@ TEST(CZipFIle, CZipFIle)
 
 		// 一時ファイル名を生成する
 		// zipファイルパスの拡張子はzipにしないと動かない。
-		auto tempPath = GetTempFilePath(L"tes", L"zip");
+		auto tempPath = GetTempFilePathWithExt(L"tes", L"zip");
 
 		// リソースからzipファイルデータを抽出して一時ファイルに書き込む
 		const auto bin = cxx::lock_resource<std::byte>(
