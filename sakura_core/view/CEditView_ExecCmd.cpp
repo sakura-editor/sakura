@@ -35,6 +35,9 @@
 #include "util/tchar_template.h"
 #include "apiwrap/StdControl.h"
 #include "mem/CNativeA.h"
+
+#include "cxx/ResourceHolder.hpp"
+
 #include "sakura_rc.h" // IDD_EXECRUNNING
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -113,10 +116,9 @@ protected:
 bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDir, COutputAdapter* customOa )
 {
 	using COutputAdapterHolder = std::unique_ptr<COutputAdapter>;
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 
 	HANDLE				hStdOutWrite, hStdOutRead, hStdIn;
-	PROCESS_INFORMATION	pi;
-	ZeroMemory( &pi, sizeof(pi) );
 	CDlgCancel				cDlgCancel;
 
 	bool bEditable = m_pcEditDoc->IsEditable();
@@ -234,6 +236,9 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		sui.hStdOutput = bGetStdout ? hStdOutWrite : GetStdHandle( STD_OUTPUT_HANDLE );
 		sui.hStdError = bGetStdout ? hStdOutWrite : GetStdHandle( STD_ERROR_HANDLE );
 	}
+
+	PROCESS_INFORMATION	pi{};
+
 	bool bRet = false;
 
 	//コマンドライン実行
@@ -261,9 +266,13 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		if( CreateProcess( nullptr, cmdline, nullptr, nullptr, TRUE,
 					CREATE_NEW_CONSOLE, nullptr, bCurDir ? pszCurDir : nullptr, &sui, &pi ) == FALSE ) {
 			MessageBox( nullptr, cmdline, LS(STR_EDITVIEW_EXECCMD_ERR), MB_OK | MB_ICONEXCLAMATION );
-			goto finish;
+
+			return false;
 		}
 	}
+
+	HandleHolder hProcessHolder{ pi.hProcess };
+	HandleHolder hThreadHolder{ pi.hThread };
 
 	// ファイル全体に対するフィルタ動作
 	//	現在編集中のファイルからのデータ書きだしおよびデータ取り込みが
@@ -617,8 +626,6 @@ finish:
 	if(hStdIn != nullptr) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
 	if(hStdOutWrite) CloseHandle( hStdOutWrite );
 	CloseHandle( hStdOutRead );
-	if( pi.hProcess ) CloseHandle( pi.hProcess );
-	if( pi.hThread ) CloseHandle( pi.hThread );
 
 	return bRet;
 }
