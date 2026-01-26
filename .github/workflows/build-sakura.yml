@@ -46,6 +46,7 @@ jobs:
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
+        submodules: true
 
     ## see https://github.com/microsoft/setup-msbuild
     - name: Add msbuild to PATH
