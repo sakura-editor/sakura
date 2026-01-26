@@ -161,12 +161,12 @@ void extract_zip_resource(
 /*!
  * @brief CZipFIleのテスト
  */
-TEST(CZipFIle, IsNG)
+TEST(CZipFile, IsNG)
 {
 	// IShellDispatchを使うためにOLEを初期化する必要がある
 	// このテストでは初期化を忘れた場合の挙動を確認する
 	CZipFile cZipFile;
-	ASSERT_FALSE(cZipFile.IsOk());
+	EXPECT_FALSE(cZipFile.IsOk());
 
 	// この場合、他のメソッドを呼び出すと落ちる。
 }
@@ -174,7 +174,7 @@ TEST(CZipFIle, IsNG)
 /*!
  * @brief CZipFIleのテスト
  */
-TEST(CZipFIle, CZipFIle)
+TEST(CZipFile, CZipFIle)
 {
 	// IShellDispatchを使うためにOLEを初期化する
 	if (FAILED(::OleInitialize(nullptr))) {
@@ -184,6 +184,11 @@ TEST(CZipFIle, CZipFIle)
 		// インスタンス作成時にOLEが初期化されていればIsOkはtrueを返す
 		CZipFile cZipFile;
 		ASSERT_TRUE(cZipFile.IsOk());
+
+		std::wstring folderName;
+		EXPECT_FALSE(cZipFile.ChkPluginDef(L"plugin.def", folderName));
+
+		EXPECT_FALSE(cZipFile.Unzip(L"out"));
 
 		// 一時ファイル名を生成する
 		// zipファイルパスの拡張子はzipにしないと動かない。
@@ -202,27 +207,27 @@ TEST(CZipFIle, CZipFIle)
 		ASSERT_TRUE(std::filesystem::exists(tempPath));
 
 		// zipファイルパスを設定する
-		ASSERT_TRUE(cZipFile.SetZip(tempPath.c_str()));
+		EXPECT_TRUE(cZipFile.SetZip(tempPath.c_str()));
 
-		// Azure PipelinesとGitHub Actionsで機能しないため、以下テスト省略。
-		//// プラグイン設定があるかチェックする
-		//std::wstring folderName;
-		//ASSERT_TRUE(cZipFile.ChkPluginDef(L"plugin.def", folderName));
-		std::wstring folderName = L"test-plugin";
+		// プラグイン設定があるかチェックする
+		EXPECT_TRUE(cZipFile.ChkPluginDef(L"plugin.def", folderName));
 
 		// zipファイルを解凍する
 		// 展開自体はWindowsの機能なので、展開後パスの存在チェックのみ行う
 		const auto dest = std::filesystem::current_path().append(L"unzipped").append(L"");
 		std::filesystem::create_directories(dest);
-		ASSERT_TRUE(cZipFile.Unzip(dest.c_str()));
-		ASSERT_TRUE(std::filesystem::exists(dest / folderName.c_str() / L"plugin.def"));
+		EXPECT_TRUE(cZipFile.Unzip(dest.c_str()));
+		EXPECT_TRUE(std::filesystem::exists(dest / folderName.c_str() / L"plugin.def"));
 		std::filesystem::remove_all(dest);
 
+		// 意図的に失敗させる
+		EXPECT_FALSE(cZipFile.Unzip(GetExeFileName()));
+
 		// zipファイルパスをクリアする
-		ASSERT_TRUE(cZipFile.SetZip(L""));
+		EXPECT_TRUE(cZipFile.SetZip(L""));
 
 		// 存在しないzipファイルパスを設定する
-		ASSERT_FALSE(cZipFile.SetZip(L"not found"));
+		EXPECT_FALSE(cZipFile.SetZip(L"not found"));
 
 		// 作成した一時ファイルを削除する
 		std::filesystem::remove(tempPath);
