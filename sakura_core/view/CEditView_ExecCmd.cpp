@@ -118,7 +118,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	using COutputAdapterHolder = std::unique_ptr<COutputAdapter>;
 	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 
-	HANDLE				hStdOutWrite, hStdOutRead, hStdIn;
+	HANDLE					hStdIn;
 	CDlgCancel				cDlgCancel;
 
 	bool bEditable = m_pcEditDoc->IsEditable();
@@ -161,20 +161,29 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		ptFrom = this->GetSelectionInfo().m_sSelect.GetFrom();
 	}
 
+	HANDLE hStdOutWrite = nullptr;
+	HANDLE hStdOutRead = nullptr;
+
 	//子プロセスの標準出力と接続するパイプを作成
-	SECURITY_ATTRIBUTES	sa;
-	sa.nLength = sizeof(sa);
+	SECURITY_ATTRIBUTES	sa = { sizeof(sa) };
 	sa.bInheritHandle = TRUE;
 	sa.lpSecurityDescriptor = nullptr;
-	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE ) {
+	if (HANDLE hReadPipe = nullptr; !::CreatePipe(&hReadPipe, &hStdOutWrite, &sa, 4096)) {
 		//エラー。対策無し
 		return false;
+	} else {
+		//hStdOutReadのほうは子プロセスでは使用されないので継承不能にする（子プロセスのリソースを無駄に増やさない）
+		::DuplicateHandle(
+			GetCurrentProcess(), hReadPipe,
+			GetCurrentProcess(), &hStdOutRead,
+			0,		// SAME_ACCESS なので省略
+			FALSE,	// 継承しない
+			DUPLICATE_CLOSE_SOURCE | DUPLICATE_SAME_ACCESS
+		);
 	}
-	//hStdOutReadのほうは子プロセスでは使用されないので継承不能にする（子プロセスのリソースを無駄に増やさない）
-	DuplicateHandle( GetCurrentProcess(), hStdOutRead,
-				GetCurrentProcess(), &hStdOutRead,					// 新しい継承不能ハンドルを受け取る	// 2007.01.31 ryoji
-				0, FALSE,
-				DUPLICATE_CLOSE_SOURCE | DUPLICATE_SAME_ACCESS );	// 元の継承可能ハンドルは DUPLICATE_CLOSE_SOURCE で閉じる	// 2007.01.31 ryoji
+
+	HandleHolder hStdOutWriteHolder{ hStdOutWrite };
+	HandleHolder hStdOutReadHolder{ hStdOutRead };
 
 	// From Here 2007.03.18 maru 子プロセスの標準入力ハンドル
 	// CDocLineMgr::WriteFileなど既存のファイル出力系の関数のなかには
@@ -226,15 +235,13 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	// To Here 2007.03.18 maru 子プロセスの標準入力ハンドル
 	
 	//CreateProcessに渡すSTARTUPINFOを作成
-	STARTUPINFO	sui;
-	ZeroMemory( &sui, sizeof(sui) );
-	sui.cb = sizeof(sui);
+	STARTUPINFO	sui = { sizeof(sui) };
 	if( bGetStdout || bSendStdin ) {
 		sui.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
 		sui.wShowWindow = bGetStdout ? SW_HIDE : SW_SHOW;
 		sui.hStdInput = hStdIn;
-		sui.hStdOutput = bGetStdout ? hStdOutWrite : GetStdHandle( STD_OUTPUT_HANDLE );
-		sui.hStdError = bGetStdout ? hStdOutWrite : GetStdHandle( STD_ERROR_HANDLE );
+		sui.hStdOutput  = bGetStdout ? hStdOutWrite : ::GetStdHandle(STD_OUTPUT_HANDLE);
+		sui.hStdError   = bGetStdout ? hStdOutWrite : ::GetStdHandle(STD_ERROR_HANDLE);
 	}
 
 	PROCESS_INFORMATION	pi{};
@@ -293,8 +300,6 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	// hStdOutWrite は CreateProcess() で継承したので親プロセスでは用済み
 	// hStdInも親プロセスでは使用しないが、Win9x系では子プロセスが終了してから
 	// クローズするようにしないと一時ファイルが自動削除されない
-	CloseHandle(hStdOutWrite);
-	hStdOutWrite = nullptr;	// 2007.09.08 genta 二重closeを防ぐ
 
 	if( bGetStdout ) {
 		DWORD	new_cnt;
@@ -624,8 +629,6 @@ user_cancel:
 finish:
 	//終了処理
 	if(hStdIn != nullptr) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
-	if(hStdOutWrite) CloseHandle( hStdOutWrite );
-	CloseHandle( hStdOutRead );
 
 	return bRet;
 }
