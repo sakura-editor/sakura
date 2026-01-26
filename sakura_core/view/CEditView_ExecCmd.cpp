@@ -118,7 +118,6 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	using COutputAdapterHolder = std::unique_ptr<COutputAdapter>;
 	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 
-	HANDLE					hStdIn;
 	CDlgCancel				cDlgCancel;
 
 	bool bEditable = m_pcEditDoc->IsEditable();
@@ -189,7 +188,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	// CDocLineMgr::WriteFileなど既存のファイル出力系の関数のなかには
 	// ファイルハンドルを返すタイプのものがないので、一旦書き出してから
 	// 一時ファイル属性でオープンすることに。
-	hStdIn = nullptr;
+	HANDLE hStdIn = nullptr;
 	if(bSendStdin){	/* 現在編集中のファイルを子プロセスの標準入力へ */
 		WCHAR		szPathName[MAX_PATH];
 		WCHAR		szTempFileName[MAX_PATH];
@@ -200,38 +199,28 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 
-		if( !GetCommander().Command_PUTFILE( szTempFileName, sendEncoding, nFlgOpt) ){	// 一時ファイル出力
-			hStdIn = nullptr;
+		// 一時ファイル出力
+		if (!GetCommander().Command_PUTFILE(szTempFileName, sendEncoding, nFlgOpt)) {
+			return false;	//一時ファイルに出力できなかった
+		}
+		// 子プロセスへの継承用にファイルを開く
+		else if (const auto hTempFile = ::CreateFileW(
+			szTempFileName,
+			GENERIC_READ,
+			0,
+			&sa,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+			nullptr
+		); hTempFile == INVALID_HANDLE_VALUE) {
+			return false;	//一時ファイルを開けなかった
 		} else {
-			// 子プロセスへの継承用にファイルを開く
-			hStdIn = CreateFile(
-				szTempFileName,
-				GENERIC_READ,
-				0,
-				&sa,
-				OPEN_EXISTING,
-				FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
-				nullptr
-			);
-			if(hStdIn == INVALID_HANDLE_VALUE) hStdIn = nullptr;
+			hStdIn = hTempFile;	//一時ファイルを開けた
 		}
 	}
-	
-	if (hStdIn == nullptr) {	/* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
-		bSendStdin = FALSE;
-		hStdIn = GetStdHandle( STD_INPUT_HANDLE );
-		if(hStdIn == nullptr){
-			// 2013.06.12 Moca 標準入力ハンドルを用意する
-			HANDLE hStdInWrite = nullptr;
-			if( CreatePipe( &hStdIn, &hStdInWrite, &sa, 1000 ) == FALSE ) {
-				//エラー
-				hStdIn = hStdInWrite = nullptr;
-			}
-			if( hStdInWrite != nullptr ){
-				::CloseHandle( hStdInWrite );
-			}
-		}
-	}
+
+	HandleHolder hStdInHolder{ hStdIn };
+
 	// To Here 2007.03.18 maru 子プロセスの標準入力ハンドル
 	
 	//CreateProcessに渡すSTARTUPINFOを作成
@@ -239,7 +228,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	if( bGetStdout || bSendStdin ) {
 		sui.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
 		sui.wShowWindow = bGetStdout ? SW_HIDE : SW_SHOW;
-		sui.hStdInput = hStdIn;
+		sui.hStdInput   = hStdIn     ? hStdIn       : ::GetStdHandle(STD_INPUT_HANDLE);
 		sui.hStdOutput  = bGetStdout ? hStdOutWrite : ::GetStdHandle(STD_OUTPUT_HANDLE);
 		sui.hStdError   = bGetStdout ? hStdOutWrite : ::GetStdHandle(STD_ERROR_HANDLE);
 	}
@@ -628,7 +617,10 @@ user_cancel:
 
 finish:
 	//終了処理
-	if(hStdIn != nullptr) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
+
+	// かつてはここで、リソース解放を行っていた。
+	// リソース管理をスマートポインタに任せたため、
+	// ここで何もしなくてもリソースは解放される。
 
 	return bRet;
 }
