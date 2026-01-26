@@ -112,11 +112,12 @@ protected:
 */
 bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDir, COutputAdapter* customOa )
 {
+	using COutputAdapterHolder = std::unique_ptr<COutputAdapter>;
+
 	HANDLE				hStdOutWrite, hStdOutRead, hStdIn;
 	PROCESS_INFORMATION	pi;
 	ZeroMemory( &pi, sizeof(pi) );
 	CDlgCancel				cDlgCancel;
-	COutputAdapter* oaInst = nullptr;
 
 	bool bEditable = m_pcEditDoc->IsEditable();
 
@@ -148,6 +149,8 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	if( nFlgOpt & 0x20 ) bOutputExtInfo = TRUE;
 	if( nFlgOpt & 0x40 ) bOutputExtInfo = FALSE;
 	bool	bCurDir = (nFlgOpt & 0x200) == 0x200;
+
+	COutputAdapterHolder oaHolder = nullptr;
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
 	CLayoutPoint ptFrom( 0, 0 );
@@ -289,12 +292,13 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		int		bufidx = 0;
 		bool	bLoopFlag = true;
 		bool	bCancelEnd = false; // キャンセルでプロセス停止
-		oaInst =  (customOa
-					? nullptr
-					: (outputEncoding == CODE_UTF8
-						? new COutputAdapterUTF8(this, bToEditWindow)
-						: new COutputAdapterDefault(this, bToEditWindow)) );
-		COutputAdapter& oa = customOa ? *customOa: *oaInst;
+
+		if (!customOa) {
+			oaHolder = outputEncoding == CODE_UTF8
+				? std::make_unique<COutputAdapterUTF8>(this, bToEditWindow)
+				: std::make_unique<COutputAdapterDefault>(this, bToEditWindow);
+		}
+		auto& oa = customOa ? *customOa : *oaHolder;
 
 		//中断ダイアログ表示
 		if( oa.IsEnableRunningDlg() ){
@@ -615,7 +619,7 @@ finish:
 	CloseHandle( hStdOutRead );
 	if( pi.hProcess ) CloseHandle( pi.hProcess );
 	if( pi.hThread ) CloseHandle( pi.hThread );
-	delete oaInst;
+
 	return bRet;
 }
 
