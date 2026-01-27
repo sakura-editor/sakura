@@ -56,7 +56,7 @@ void CViewCommander::Command_FILENEW( void )
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
-	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
+	CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
 	return;
 }
 
@@ -69,7 +69,7 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
-	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
+	CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
 		nullptr,
 		false,
 		curDir.c_str(),
@@ -137,7 +137,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
-				G_AppInstance(),
+				GetAppInstance(),
 				GetMainWindow(),
 				sFilesLoadInfo,
 				nullptr,
@@ -495,22 +495,22 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 #endif
 
 	CDlgProperty	cDlgProperty;
-//	cDlgProperty.Create( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
-	cDlgProperty.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
+//	cDlgProperty.Create( GetAppInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
+	cDlgProperty.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
 	return;
 }
 
 void CViewCommander::Command_PROFILEMGR( void )
 {
 	CDlgProfileMgr profMgr;
-	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
+	if( profMgr.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
 		WCHAR szOpt[MAX_PATH+10];
 		auto_snprintf_s(szOpt, _TRUNCATE, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str());
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;
 		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
+		CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
 	}
 }
 

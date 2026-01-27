@@ -359,6 +359,6 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 void CViewCommander::Command_ABOUT( void )
 {
 	CDlgAbout cDlgAbout;
-	cDlgAbout.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd() );
+	cDlgAbout.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd() );
 	return;
 }

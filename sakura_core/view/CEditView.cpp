@@ -249,7 +249,7 @@ BOOL CEditView::Create(
 	wc.lpfnWndProc		= EditViewWndProc;
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= 0;
-	wc.hInstance		= G_AppInstance();
+	wc.hInstance		= GetAppInstance();
 	wc.hIcon			= LoadIcon( nullptr, IDI_APPLICATION );
 	wc.hCursor			= nullptr/*LoadCursor( NULL, IDC_IBEAM )*/;
 	wc.hbrBackground	= (HBRUSH)nullptr/*(COLOR_WINDOW + 1)*/;
@@ -277,7 +277,7 @@ BOOL CEditView::Create(
 		0,						// window height
 		hwndParent,				// handle to parent or owner window
 		nullptr,					// handle to menu or child-window identifier
-		G_AppInstance(),		// handle to application instance
+		GetAppInstance(),		// handle to application instance
 		(LPVOID)this			// pointer to window-creation data(lpCreateParams)
 	);
 	if( nullptr == GetHwnd() ){
@@ -290,7 +290,7 @@ BOOL CEditView::Create(
 	}
 
 	/* 辞書Tip表示ウィンドウ作成 */
-	m_cTipWnd.Create( G_AppInstance(), GetHwnd()/*GetDllShareData().m_sHandles.m_hwndTray*/ );
+	m_cTipWnd.Create( GetAppInstance(), GetHwnd()/*GetDllShareData().m_sHandles.m_hwndTray*/ );
 
 	/* 再描画用コンパチブルＤＣ */
 	// 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -299,10 +299,10 @@ BOOL CEditView::Create(
 
 	/* 垂直分割ボックス */
 	m_pcsbwVSplitBox = new CSplitBoxWnd;
-	m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
+	m_pcsbwVSplitBox->Create( GetAppInstance(), GetHwnd(), TRUE );
 	/* 水平分割ボックス */
 	m_pcsbwHSplitBox = new CSplitBoxWnd;
-	m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
+	m_pcsbwHSplitBox->Create( GetAppInstance(), GetHwnd(), FALSE );
 
 	/* スクロールバー作成 */
 	CreateScrollBar();		// 2006.12.19 ryoji
@@ -1713,7 +1713,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 	if( bVert ){
 		if( m_pcsbwVSplitBox == nullptr ){	/* 垂直分割ボックス */
 			m_pcsbwVSplitBox = new CSplitBoxWnd;
-			m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
+			m_pcsbwVSplitBox->Create( GetAppInstance(), GetHwnd(), TRUE );
 		}
 	}
 	else{
@@ -1722,7 +1722,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 	if( bHorz ){
 		if( m_pcsbwHSplitBox == nullptr ){	/* 水平分割ボックス */
 			m_pcsbwHSplitBox = new CSplitBoxWnd;
-			m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
+			m_pcsbwHSplitBox->Create( GetAppInstance(), GetHwnd(), FALSE );
 		}
 	}
 	else{

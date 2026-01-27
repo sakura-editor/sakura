@@ -730,7 +730,7 @@ void CEditView::AutoScrollEnter()
 		return;
 	}
 	m_nAutoScrollMode = 2;
-	m_cAutoScrollWnd.Create(G_AppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
+	m_cAutoScrollWnd.Create(GetAppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
 	::SetTimer(GetHwnd(), 2, 200, AutoScrollTimerProc);
 	HCURSOR hCursor;
 	hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
@@ -1063,7 +1063,7 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 			if( ptMouse.x < GetTextArea().GetAreaLeft() || ptMouse.y < GetTextArea().GetAreaTop() ){	//	2002/2/10 aroka
 				/* 矢印カーソル */
 				if( ptMouse.y >= GetTextArea().GetAreaTop() )
-					::SetCursor( ::LoadCursor( G_AppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
+					::SetCursor( ::LoadCursor( GetAppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
 				else
 					::SetCursor( ::LoadCursor( nullptr, IDC_ARROW ) );
 			}
@@ -1090,9 +1090,9 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 				//migemo isearch 2004.10.22
 				if( m_nISearchMode > SEARCH_NONE ){
 					if (m_nISearchDirection == SEARCH_FORWARD){
-						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
+						::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
 					}else{
-						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
+						::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
 					}
 				}else
 				/* アイビーム */
@@ -2092,7 +2092,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, G_AppInstance(), nullptr );
+	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, GetAppInstance(), nullptr );
 	::SetFocus(hwnd);
 
 	// メニューを作成する

@@ -60,7 +60,7 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 	}
 	/* 検索ダイアログの表示 */
 	if( nullptr == GetEditWnd().m_cDlgFind.GetHwnd() ){
-		GetEditWnd().m_cDlgFind.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWnd().GetActiveView() );
+		GetEditWnd().m_cDlgFind.DoModeless( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWnd().GetActiveView() );
 	}
 	else{
 		/* アクティブにする */
@@ -515,7 +515,7 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 	/* 置換ダイアログの表示 */
 	//	From Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	if( !::IsWindow( GetEditWnd().m_cDlgReplace.GetHwnd() ) ){
-		GetEditWnd().m_cDlgReplace.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)m_pCommanderView, bSelected );
+		GetEditWnd().m_cDlgReplace.DoModeless( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)m_pCommanderView, bSelected );
 	}
 	else {
 		/* アクティブにする */
@@ -784,7 +784,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	/* 進捗表示&中止ダイアログの作成 */
 	CDlgCancel	cDlgCancel;
-	HWND		hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), IDD_REPLACERUNNING );
+	HWND		hwndCancel = cDlgCancel.DoModeless( GetAppInstance(), m_pCommanderView->GetHwnd(), IDD_REPLACERUNNING );
 	::EnableWindow( m_pCommanderView->GetHwnd(), FALSE );
 	::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), FALSE );
 	::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), FALSE );

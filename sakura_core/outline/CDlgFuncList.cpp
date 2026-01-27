@@ -1947,7 +1947,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 	case IDC_BUTTON_SETTING:
 		{
 			CDlgFileTree cDlgFileTree;
-			int nRet = cDlgFileTree.DoModal( G_AppInstance(), GetHwnd(), (LPARAM)this );
+			int nRet = cDlgFileTree.DoModal( GetAppInstance(), GetHwnd(), (LPARAM)this );
 			if( nRet == TRUE ){
 				EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 				CEditView* pcEditView = (CEditView*)m_lParam;

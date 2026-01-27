@@ -53,7 +53,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		int nSaveResult = m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
-			G_AppInstance(),
+			GetAppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
 		);
 		if ( !nSaveResult ){
@@ -101,7 +101,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		G_AppInstance(),
+		GetAppInstance(),
 		m_pCommanderView->GetHwnd(),
 		L"*.mac",
 		szInitDir
@@ -117,7 +117,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 	//@@@ 2002.1.24 YAZAKI
-	if ( !m_pcSMacroMgr->Save( STAND_KEYMACRO, G_AppInstance(), szPath ) ){
+	if ( !m_pcSMacroMgr->Save( STAND_KEYMACRO, GetAppInstance(), szPath ) ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD27), szPath );
 	}
 	return;
@@ -146,7 +146,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		G_AppInstance(),
+		GetAppInstance(),
 		m_pCommanderView->GetHwnd(),
 // 2005/02/20 novice デフォルトの拡張子変更
 // 2005/07/13 novice 多様なマクロをサポートしているのでデフォルトは全て表示にする
@@ -160,7 +160,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	/* キーボードマクロの読み込み */
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む
 	::wcsncpy_s(GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szPath, _TRUNCATE);
-//	GetDllShareData().m_CKeyMacroMgr.LoadKeyMacro( G_AppInstance(), m_pCommanderView->GetHwnd(), szPath );
+//	GetDllShareData().m_CKeyMacroMgr.LoadKeyMacro( GetAppInstance(), m_pCommanderView->GetHwnd(), szPath );
 	return;
 }
 
@@ -181,7 +181,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		BOOL bLoadResult = m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
-			G_AppInstance(),
+			GetAppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName,
 			nullptr
 		);
@@ -190,7 +190,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
-			m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView, 0 );
+			m_pcSMacroMgr->Exec( STAND_KEYMACRO, GetAppInstance(), m_pCommanderView, 0 );
 		}
 	}
 	return;
@@ -222,7 +222,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 		}
 		/* ファイルオープンダイアログの初期化 */
 		cDlgOpenFile.Create(
-			G_AppInstance(),
+			GetAppInstance(),
 			m_pCommanderView->GetHwnd(),
 			L"*.*",
 			szInitDir
@@ -253,7 +253,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 
 	BOOL bLoadResult = m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
-		G_AppInstance(),
+		GetAppInstance(),
 		pszPath,
 		pszType
 	);
@@ -261,7 +261,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_MACROERR1), pszPath );
 	}
 	else {
-		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
+		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, GetAppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
 	}
 
 	// 終わったら解放
@@ -286,7 +286,7 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	CDlgExec cDlgExec;
 
 	/* モードレスダイアログの表示 */
-	if( !cDlgExec.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
+	if( !cDlgExec.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
 		return;
 	}
 

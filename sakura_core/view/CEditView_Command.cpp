@@ -137,7 +137,7 @@ bool CEditView::TagJumpSub(
 		inf.m_nCharCode    = CODE_AUTODETECT;
 
 		bSuccess = CControlTray::OpenNewEditor2(
-			G_AppInstance(),
+			GetAppInstance(),
 			this->GetHwnd(),
 			&inf,
 			false,	/* ビューモードか */
@@ -233,7 +233,7 @@ open_c:;
 		sLoadInfo.eCharCode = GetDocument()->GetDocumentEncoding();
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor(
-			G_AppInstance(),
+			GetAppInstance(),
 			this->GetHwnd(),
 			sLoadInfo,
 			nullptr,

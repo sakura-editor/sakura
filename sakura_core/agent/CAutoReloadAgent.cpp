@@ -136,7 +136,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 
 			CDlgFileUpdateQuery dlg( pcDoc->m_cDocFile.GetFilePath(), pcDoc->m_cDocEditor.IsModified() );
 			EFileUpdateQuery result = (EFileUpdateQuery)dlg.DoModal(
-				G_AppInstance(),
+				GetAppInstance(),
 				GetMainWindow(),
 				IDD_FILEUPDATEQUERY,
 				0

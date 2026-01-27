@@ -115,7 +115,7 @@ void CViewCommander::Command_COMPARE( void )
 	/* 比較後、左右に並べて表示 */
 	cDlgCompare.m_bCompareAndTileHorz = GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz;
 	BOOL bDlgCompareResult = cDlgCompare.DoModal(
-		G_AppInstance(),
+		GetAppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
@@ -322,7 +322,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 
 	//DIFF差分表示ダイアログを表示する
 	int nDiffDlgResult = cDlgDiff.DoModal(
-		G_AppInstance(),
+		GetAppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath()

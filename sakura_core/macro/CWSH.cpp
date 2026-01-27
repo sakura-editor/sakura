@@ -269,7 +269,7 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 
 		MSG msg;
 		CDlgCancel cDlgCancel;
-		HWND hwndDlg = cDlgCancel.DoModeless(G_AppInstance(), nullptr, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
+		HWND hwndDlg = cDlgCancel.DoModeless(GetAppInstance(), nullptr, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
 		// ダイアログタイトルとファイル名を設定
 		::SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)GSTR_APPNAME);
 		::SendMessage(GetDlgItem(hwndDlg, IDC_STATIC_CMD),

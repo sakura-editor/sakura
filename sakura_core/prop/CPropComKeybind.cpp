@@ -300,7 +300,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				/* 機能に対応するキー名の取得(複数) */
 				CNativeW**	ppcAssignedKeyList;
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(	/* 機能に対応するキー名の取得(複数) */
-					G_AppInstance(), m_Common.m_sKeyBind.m_nKeyNameArrNum, (KEYDATA*)m_Common.m_sKeyBind.m_pKeyNameArr,
+					GetAppInstance(), m_Common.m_sKeyBind.m_nKeyNameArrNum, (KEYDATA*)m_Common.m_sKeyBind.m_pKeyNameArr,
 					&ppcAssignedKeyList, nFuncCode,
 					FALSE	// 2007.02.22 ryoji デフォルト機能は取得しない
 				);	
@@ -501,7 +501,7 @@ void CPropKeybind::Import( HWND hwndDlg )
 	CImpExpKeybind	cImpExpKeybind( m_Common );
 
 	// インポート
-	if (!cImpExpKeybind.ImportUI( G_AppInstance(), hwndDlg )) {
+	if (!cImpExpKeybind.ImportUI( GetAppInstance(), hwndDlg )) {
 		// インポートをしていない
 		return;
 	}
@@ -522,7 +522,7 @@ void CPropKeybind::Export( HWND hwndDlg )
 	CImpExpKeybind	cImpExpKeybind( m_Common );
 
 	// エクスポート
-	if (!cImpExpKeybind.ExportUI( G_AppInstance(), hwndDlg )) {
+	if (!cImpExpKeybind.ExportUI( GetAppInstance(), hwndDlg )) {
 		// エクスポートをしていない
 		return;
 	}

@@ -51,9 +51,13 @@ LPCWSTR GetAppName( void )
 const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
 const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 
-HINSTANCE G_AppInstance()
+/*!
+ * アプリケーションのインスタンスハンドルを取得する
+ */
+HINSTANCE GetAppInstance() noexcept
 {
-	return CProcess::getInstance()->GetProcessInstance();
+	const auto pcProcess = CProcess::getInstance();
+	return pcProcess ? pcProcess->GetProcessInstance() : ::GetModuleHandleW(nullptr);
 }
 
 /*!

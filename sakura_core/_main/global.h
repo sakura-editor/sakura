@@ -165,8 +165,7 @@ struct SSearchOption{
 	bool operator != (const SSearchOption& rhs) const noexcept;
 };
 
-HINSTANCE G_AppInstance();
-
+HINSTANCE	GetAppInstance() noexcept;
 LPCWSTR		GetProfileName() noexcept;
 HWND		GetMainWindow() noexcept;
 

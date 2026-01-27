@@ -167,7 +167,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					::wcsncpy_s(szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()), _TRUNCATE);
 					// ファイルオープンダイアログの初期化
 					cDlgOpenFile.Create(
-						G_AppInstance(),
+						GetAppInstance(),
 						hwndDlg,
 						L"*.zip",
 						szPath

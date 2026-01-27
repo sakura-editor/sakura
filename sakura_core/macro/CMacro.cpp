@@ -1135,7 +1135,7 @@ bool CMacro::HandleCommand(
 			sLoadInfo.eCharCode = CODE_NONE;
 			sLoadInfo.bViewMode = false;
 			CControlTray::OpenNewEditor(
-				G_AppInstance(),
+				GetAppInstance(),
 				pcEditView->GetHwnd(),
 				sLoadInfo,
 				cCmdLine.GetStringPtr()
@@ -1748,7 +1748,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			wmemcpy( Buffer, sDefaultValue.c_str(), nLen );
 			Buffer[nLen] = L'\0';
 			CDlgInput1 cDlgInput1;
-			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
+			if( cDlgInput1.DoModal( GetAppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
 				SysString S( Buffer, wcslen(Buffer) );
 				Wrap( &Result )->Receive( S );
 			}else{
@@ -1867,7 +1867,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 			CDlgOpenFile cDlgOpenFile;
 			cDlgOpenFile.Create(
-				G_AppInstance(), View->GetHwnd(),
+				GetAppInstance(), View->GetHwnd(),
 				sFilter.c_str(),
 				sDefault.c_str()
 			);

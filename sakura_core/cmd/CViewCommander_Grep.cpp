@@ -43,7 +43,7 @@ void CViewCommander::Command_GREP_DIALOG( void )
 	}
 
 	/* Grepダイアログの表示 */
-	int nRet = GetEditWnd().m_cDlgGrep.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath() );
+	int nRet = GetEditWnd().m_cDlgGrep.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath() );
 //	MYTRACE( L"nRet=%d\n", nRet );
 	if( !nRet ){
 		return;
@@ -122,7 +122,7 @@ void CViewCommander::Command_GREP( void )
 
 		/*======= Grepの実行 =============*/
 		/* Grep結果ウィンドウの表示 */
-		CControlTray::DoGrepCreateWindow(G_AppInstance(), m_pCommanderView->GetHwnd(), GetEditWnd().m_cDlgGrep);
+		CControlTray::DoGrepCreateWindow(GetAppInstance(), m_pCommanderView->GetHwnd(), GetEditWnd().m_cDlgGrep);
 	}
 	return;
 }
@@ -149,7 +149,7 @@ void CViewCommander::Command_GREP_REPLACE_DLG( void )
 		}
 	}
 
-	int nRet = cDlgGrepRep.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath(), (LPARAM)m_pCommanderView );
+	int nRet = cDlgGrepRep.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath(), (LPARAM)m_pCommanderView );
 	if( !nRet ){
 		return;
 	}
@@ -258,7 +258,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, cCmdLine.GetStringPtr(),
+		CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, cCmdLine.GetStringPtr(),
 			false, nullptr, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 	}
 	return;

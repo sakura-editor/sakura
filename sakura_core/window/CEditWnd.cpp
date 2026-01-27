@@ -334,9 +334,9 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	wc.lpfnWndProc		= CEditWndProc;
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= sizeof(LONG_PTR) * 1;                                  //拡張領域を1個確保。
-	wc.hInstance		= G_AppInstance();
+	wc.hInstance		= GetAppInstance();
 	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
+	wc.hIcon			= GetAppIcon( GetAppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
 
 	wc.hCursor			= nullptr/*LoadCursor( NULL, IDC_ARROW )*/;
 	wc.hbrBackground	= (HBRUSH)nullptr/*(COLOR_3DSHADOW + 1)*/;
@@ -346,7 +346,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	//	Dec. 6, 2002 genta
 	//	small icon指定のため RegisterClassExに変更
 	wc.cbSize			= sizeof( wc );
-	wc.hIconSm			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
+	wc.hIconSm			= GetAppIcon( GetAppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
 	ATOM	atom = RegisterClassEx( &wc );
 	if( 0 == atom ){
 		//	2004.05.13 Moca return NULLを有効にした
@@ -369,7 +369,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 		rc.Height(),		// window height
 		nullptr,				// handle to parent or owner window
 		nullptr,				// handle to menu or child-window identifier
-		G_AppInstance(),		// handle to application instance
+		GetAppInstance(),		// handle to application instance
 		nullptr				// pointer to window-creation data
 	);
 	return hwndResult;
@@ -603,7 +603,7 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();
 
 	//イメージ、ヘルパなどの作成
-	m_cMenuDrawer.Create( G_AppInstance(), GetHwnd(), pcIcons );
+	m_cMenuDrawer.Create( GetAppInstance(), GetHwnd(), pcIcons );
 	m_cToolbar.Create( pcIcons );
 
 	// プラグインコマンドを登録する
@@ -918,7 +918,7 @@ void CEditWnd::LayoutFuncKey( void )
 					bSizeBox = false;
 				}
 			}
-			m_cFuncKeyWnd.Open( G_AppInstance(), GetHwnd(), GetDocument(), bSizeBox );
+			m_cFuncKeyWnd.Open( GetAppInstance(), GetHwnd(), GetDocument(), bSizeBox );
 		}
 	}else{
 		m_cFuncKeyWnd.Close();
@@ -932,7 +932,7 @@ void CEditWnd::LayoutTabBar( void )
 {
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){	/* タブバーを表示する */
 		if( nullptr == m_cTabWnd.GetHwnd() ){
-			m_cTabWnd.Open( G_AppInstance(), GetHwnd() );
+			m_cTabWnd.Open( GetAppInstance(), GetHwnd() );
 		}else{
 			m_cTabWnd.UpdateStyle();
 		}
@@ -1115,7 +1115,7 @@ LRESULT CEditWnd::DispatchEvent(
 			int			nAssignedKeyNum;
 			int			j;
 			nAssignedKeyNum = CKeyBind::GetKeyStrList(
-				G_AppInstance(),
+				GetAppInstance(),
 				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 				(KEYDATA*)m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 				&ppcAssignedKeyList,
@@ -1577,7 +1577,7 @@ LRESULT CEditWnd::DispatchEvent(
 						sLoadInfo.eCharCode = CODE_NONE;
 						sLoadInfo.bViewMode = false;
 						CControlTray::OpenNewEditor(
-							G_AppInstance(),
+							GetAppInstance(),
 							GetHwnd(),
 							sLoadInfo,
 							nullptr,
@@ -2181,7 +2181,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				size_t nSize = files.size();
 				for( size_t f = 1; f < nSize; f++ ){
 					sLoadInfo.cFilePath = files[f].c_str();
-					CControlTray::OpenNewEditor( G_AppInstance(), GetHwnd(), sLoadInfo, nullptr, true );
+					CControlTray::OpenNewEditor( GetAppInstance(), GetHwnd(), sLoadInfo, nullptr, true );
 				}
 			}
 		}
@@ -2773,7 +2773,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					sLoadInfo.eCharCode = CODE_NONE;
 					sLoadInfo.bViewMode = false;
 					CControlTray::OpenNewEditor(
-						G_AppInstance(),
+						GetAppInstance(),
 						GetHwnd(),
 						sLoadInfo
 					);
@@ -2901,7 +2901,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::SetFocus( GetHwnd() );
 
 		// メニューを動的に作成するように変更
-		//hMenu = ::LoadMenu( G_AppInstance(), MAKEINTRESOURCE( IDR_MENU1 ) );
+		//hMenu = ::LoadMenu( GetAppInstance(), MAKEINTRESOURCE( IDR_MENU1 ) );
 		//::SetMenu( GetHwnd(), hMenu );
 		//::DrawMenuBar( GetHwnd() );
 		LayoutMainMenu();				// 2010/5/16 Uchi
@@ -3556,7 +3556,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	}
 
 	bRes = cDlgPrintSetting.DoModal(
-		G_AppInstance(),
+		GetAppInstance(),
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		GetHwnd(),
 		&nCurrentPrintSetting, /* 現在選択している印刷設定 */
@@ -3789,8 +3789,8 @@ void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
 */
 void CEditWnd::GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const
 {
-	*hIconBig   = GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
-	*hIconSmall = GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
+	*hIconBig   = GetAppIcon( GetAppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
+	*hIconSmall = GetAppIcon( GetAppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
 }
 
 /*!
@@ -4180,7 +4180,7 @@ void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, UINT_PTR idFrom) 
 	// 機能に対応するキー名の取得(複数)
 	CNativeW**	ppcAssignedKeyList;
 	int nAssignedKeyNum = CKeyBind::GetKeyStrList(
-		G_AppInstance(),
+		GetAppInstance(),
 		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 		&ppcAssignedKeyList,

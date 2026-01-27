@@ -531,7 +531,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				CDlgOpenFile dlg;
 				WCHAR szDir[_MAX_PATH];
 				GetInidir(szDir);
-				dlg.Create( G_AppInstance(), hwndDlg, L"*.*", szDir,
+				dlg.Create( GetAppInstance(), hwndDlg, L"*.*", szDir,
 					std::vector<LPCWSTR>(), std::vector<LPCWSTR>() );
 				WCHAR szFile[_MAX_PATH];
 				if( dlg.DoModal_GetOpenFileName(szFile) ){
@@ -700,7 +700,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			CDlgOpenFile dlg;
 			SLoadInfo sLoadInfo;
 			std::vector<std::wstring> aFileNames;
-			dlg.Create( G_AppInstance(), GetHwnd(), L"*.*", L".",
+			dlg.Create( GetAppInstance(), GetHwnd(), L"*.*", L".",
 				std::vector<LPCWSTR>(), std::vector<LPCWSTR>() );
 			if( dlg.DoModalOpenDlg(&sLoadInfo, &aFileNames, false) ){
 				if( 0 < aFileNames.size() ){
@@ -762,11 +762,11 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			std::wstring strTitle = LS(STR_DLGREPLC_STR);
 			WCHAR szPathFrom[_MAX_PATH];
 			szPathFrom[0] = L'\0';
-			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathFrom)) - 1, szPathFrom) ){
+			if( dlgInput.DoModal(GetAppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathFrom)) - 1, szPathFrom) ){
 				WCHAR szPathTo[_MAX_PATH];
 				szPathTo[0] = L'\0';
 				strMsg = LS(STR_FILETREE_REPLACE_PATH_TO);
-				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathTo)) - 1, szPathTo) ){
+				if( dlgInput.DoModal( GetAppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathTo)) - 1, szPathTo) ){
 					int nItemsCount = (int)m_fileTreeSetting.m_aItems.size();
 					for( int i = 0; i < nItemsCount; i++ ){
 						SFileTreeItem& item =  m_fileTreeSetting.m_aItems[i];
@@ -893,7 +893,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	case IDC_BUTTON_IMPORT:
 		{
 			CImpExpFileTree cImpExp(m_fileTreeSetting.m_aItems);
-			cImpExp.ImportUI(G_AppInstance(), GetHwnd());
+			cImpExp.ImportUI(GetAppInstance(), GetHwnd());
 			SetData();
 		}
 		return TRUE;
@@ -902,7 +902,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			std::vector<SFileTreeItem> items;
 			GetDataTree(items, TreeView_GetRoot(GetItemHwnd(IDC_TREE_FL)), 0, 0);
 			CImpExpFileTree cImpExp(items);
-			cImpExp.ExportUI(G_AppInstance(), GetHwnd());
+			cImpExp.ExportUI(GetAppInstance(), GetHwnd());
 		}
 		return TRUE;
 

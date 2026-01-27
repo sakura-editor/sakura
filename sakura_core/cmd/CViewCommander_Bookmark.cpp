@@ -51,7 +51,7 @@ void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 void CViewCommander::Command_JUMP_DIALOG( void )
 {
 	if( !GetEditWnd().m_cDlgJump.DoModal(
-		G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()
+		GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()
 	) ){
 		return;
 	}

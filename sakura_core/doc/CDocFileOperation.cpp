@@ -75,7 +75,7 @@ bool CDocFileOperation::OpenFileDialog(
 	// ファイルオープンダイアログを表示
 	CDlgOpenFile cDlgOpenFile;
 	cDlgOpenFile.Create(
-		G_AppInstance(),
+		GetAppInstance(),
 		hwndParent,
 		L"*.*",
 		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
@@ -262,7 +262,7 @@ bool CDocFileOperation::SaveFileDialog(
 	// ダイアログを表示
 	CDlgOpenFile cDlgOpenFile;
 	cDlgOpenFile.Create(
-		G_AppInstance(),
+		GetAppInstance(),
 		GetMainWindow(),
 		strDefaultWildCard.c_str(),
 		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
@@ -495,7 +495,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
-				G_AppInstance(),
+				GetAppInstance(),
 				GetMainWindow(),
 				sFilesLoadInfo,
 				nullptr,

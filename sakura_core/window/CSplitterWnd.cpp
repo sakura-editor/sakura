@@ -55,7 +55,7 @@ HWND CSplitterWnd::Create( HWND hwndParent )
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
 	atWork = RegisterWC(
-		G_AppInstance(),
+		GetAppInstance(),
 		nullptr,// Handle to the class icon.
 		nullptr,	//Handle to a small icon
 		nullptr,// Handle to the class cursor.

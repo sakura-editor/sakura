@@ -438,7 +438,7 @@ bool CDlgTypeList::Import()
 
 	// インポート
 	cImpExpType.SetBaseName( type.m_szTypeName );
-	if (!cImpExpType.ImportUI( G_AppInstance(), GetHwnd() )) {
+	if (!cImpExpType.ImportUI( GetAppInstance(), GetHwnd() )) {
 		// インポートをしていない
 		return false;
 	}
@@ -481,7 +481,7 @@ bool CDlgTypeList::Export()
 
 	// エクスポート
 	cImpExpType.SetBaseName( types.m_szTypeName );
-	if (!cImpExpType.ExportUI( G_AppInstance(), GetHwnd() )) {
+	if (!cImpExpType.ExportUI( GetAppInstance(), GetHwnd() )) {
 		// エクスポートをしていない
 		return false;
 	}

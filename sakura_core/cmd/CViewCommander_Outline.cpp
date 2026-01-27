@@ -168,7 +168,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
 	if( nullptr == GetEditWnd().m_cDlgFuncList.GetHwnd() ){
 		GetEditWnd().m_cDlgFuncList.DoModeless(
-			G_AppInstance(),
+			GetAppInstance(),
 			m_pCommanderView->GetHwnd(),
 			(LPARAM)m_pCommanderView,
 			&cFuncInfoArr,

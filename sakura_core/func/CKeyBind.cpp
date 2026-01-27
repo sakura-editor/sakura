@@ -448,7 +448,7 @@ LPWSTR CKeyBind::GetMenuLabel(
 		const auto cchLabelUsed = std::wstring_view{ std::data(szLabel) }.length();
 
 		// グローバル関数で取得できるものを引数で指定させるのはやめた。
-		const auto hInstance = G_AppInstance();
+		const auto hInstance = GetAppInstance();
 		const auto nKeyNameArrNum = GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum;
 		const auto pKeyNameArr = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr;
 

@@ -1159,7 +1159,7 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 	CNativeW		cMemKeyList;
 
 	CKeyBind::CreateKeyBindList(
-		G_AppInstance(),
+		GetAppInstance(),
 		GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum,
 		GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr,
 		cMemKeyList,
