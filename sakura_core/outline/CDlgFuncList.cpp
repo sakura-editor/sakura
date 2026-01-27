@@ -355,7 +355,7 @@ HWND CDlgFuncList::DoModeless(
 	m_nOutlineType = nOutlineType;		/* アウトライン解析の種別 */
 	m_nListType = nListType;			/* 一覧の種類 */
 	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	m_nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
 	m_nSortCol = m_type.m_nOutlineSortCol;
 	m_nSortColOld = m_nSortCol;
@@ -703,7 +703,7 @@ void CDlgFuncList::SetData()
 	// 2002/11/1 frozen 項目のソート基準を設定するコンボボックスはブックマーク一覧の以外の時に表示する
 	// Nov. 5, 2002 genta ツリー表示の時だけソート基準コンボボックスを表示
 	CEditView* pcEditView = (CEditView*)m_lParam;
-	int nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	int nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	if( nDocType != m_nDocType ){
 		// 以前とはドキュメントタイプが変わったので初期化する
 		m_nDocType = nDocType;
@@ -1498,7 +1498,7 @@ void CDlgFuncList::SetDocLineFuncList()
 		return;
 	}
 	CEditView* pcEditView=(CEditView*)m_lParam;
-	CDocLineMgr* pcDocLineMgr = &pcEditView->GetDocument()->m_cDocLineMgr;
+	CDocLineMgr* pcDocLineMgr = &GetDocument()->m_cDocLineMgr;
 	
 	CFuncListManager().ResetAllFucListMark(pcDocLineMgr, false);
 	int i;
@@ -1937,7 +1937,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 			CEditView* pcEditView=(CEditView*)m_lParam;
 			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_VIEW, true, TRUE, 0, 0, 0 );
 			m_nCurLine=pcEditView->GetCaret().GetCaretLayoutPos().GetY2() + CLayoutInt(1);
-			CDocTypeManager().GetTypeConfig(pcEditView->GetDocument()->m_cDocType.GetDocumentType(), m_type);
+			CDocTypeManager().GetTypeConfig(GetDocument()->m_cDocType.GetDocumentType(), m_type);
 			SetData();
 		}else
 		if(m_nViewType == VIEWTYPE_TREE){
@@ -2421,11 +2421,11 @@ bool CDlgFuncList::TagJumpTimer( const WCHAR* pFile, CMyPoint point, bool bCheck
 	CEditView* pcView = reinterpret_cast<CEditView*>(m_lParam);
 
 	// ファイルを開いていない場合は自分で開く
-	if( pcView->GetDocument()->IsAcceptLoad() ){
+	if( GetDocument()->IsAcceptLoad() ){
 		std::wstring strFile = pFile;
 		pcView->GetCommander().Command_FILEOPEN( strFile.c_str(), CODE_AUTODETECT, CAppMode::getInstance()->IsViewMode(), nullptr );
 		if( point.y != -1 ){
-			if( pcView->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+			if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				CLogicPoint pt;
 				pt.x = CLogicInt(point.GetX() - 1);
 				pt.y = CLogicInt(point.GetY() - 1);
@@ -2563,7 +2563,7 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFuncInfoArr, CLayoutInt nCurLine, CLayoutInt nCurCol )
 {
 	CEditView* pcEditView = (CEditView*)m_lParam;
-	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	m_nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
 	SyncColor();
 
@@ -3305,7 +3305,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 			ListView_GetItem(hwndList, &item);
 			const CFuncInfo* pFuncInfo = m_pcFuncInfoArr->GetAt(item.lParam);
 			// FIXME: 行番号があってるとは限らない
-			CDocLine* pCDocLine = pcEditView->GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
+			CDocLine* pCDocLine = GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
 			if( pCDocLine ){
 				CBookmarkSetter cBookmark(pCDocLine);
 				cBookmark.SetBookmark(false);

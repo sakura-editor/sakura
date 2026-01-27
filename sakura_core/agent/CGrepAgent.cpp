@@ -260,7 +260,7 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 		if( out && out != INVALID_HANDLE_VALUE ){
 			CMemory cmemOut;
 			std::unique_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(
-					pcEditView->GetDocument()->GetDocumentEncoding(), 0) );
+					GetDocument()->GetDocumentEncoding(), 0) );
 			pcCodeBase->UnicodeToCode( cmem, &cmemOut );
 			DWORD dwWrite = 0;
 			::WriteFile(out, cmemOut.GetRawPtr(), cmemOut.GetRawLength(), &dwWrite, nullptr);
@@ -387,17 +387,17 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->m_bDoing_UndoRedo		= true;
 
 	/* アンドゥバッファの処理 */
-	if( nullptr != pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk ){	/* 操作ブロック */
+	if( nullptr != GetDocument()->m_cDocEditor.m_pcOpeBlk ){	/* 操作ブロック */
 //@@@2002.2.2 YAZAKI NULLじゃないと進まないので、とりあえずコメント。＆NULLのときは、new COpeBlkする。
 //		while( NULL != m_pcOpeBlk ){}
 //		delete m_pcOpeBlk;
 //		m_pcOpeBlk = NULL;
 	}
 	else {
-		pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk = new COpeBlk;
-		pcViewDst->GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount = 0;
+		GetDocument()->m_cDocEditor.m_pcOpeBlk = new COpeBlk;
+		GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount = 0;
 	}
-	pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk->AddRef();
+	GetDocument()->m_cDocEditor.m_pcOpeBlk->AddRef();
 
 	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
 	pcViewDst->m_strCurSearchKey = pcmGrepKey->GetStringPtr();				/* 検索文字列 */
@@ -420,7 +420,7 @@ DWORD CGrepAgent::DoGrep(
 			if( bLineSelect ){
 				int len = cmemReplace.GetStringLength();
 				if( cmemReplace[len - 1] != WCODE::CR && cmemReplace[len - 1] != WCODE::LF ){
-					cmemReplace.AppendString(pcViewDst->GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
+					cmemReplace.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 				}
 			}
 			if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){

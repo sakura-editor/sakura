@@ -167,7 +167,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				出している行にだけスペースを挿入することとし、それではどの行にもスペースが挿入されない
 				とわかったときはやり直してスペースを挿入する。
 		*/
-		bool alignFullWidthChar = eIndent == INDENT_TAB && 0 == rcSel.GetFrom().x % this->GetDocument()->m_cLayoutMgr.GetTabSpace();
+		bool alignFullWidthChar = eIndent == INDENT_TAB && 0 == rcSel.GetFrom().x % GetDocument()->m_cLayoutMgr.GetTabSpace();
 #if 1	// ↓ここを残せば選択幅1のSPACEインデントで全角文字を揃える機能(2)が追加される。
 		alignFullWidthChar = alignFullWidthChar || (eIndent == INDENT_SPACE && 1 == rcSel.GetTo().x - rcSel.GetFrom().x);
 #endif
@@ -262,8 +262,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				);
 				insertionWasDone = true;
 				minOffset = t_min(
-					0 <= minOffset ? minOffset : this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout(),
-					ptInsert.x <= ptInserted.x ? ptInserted.x - ptInsert.x : t_max( CLayoutInt(0), this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() - ptInsert.x)
+					0 <= minOffset ? minOffset : GetDocument()->m_cLayoutMgr.GetMaxLineLayout(),
+					ptInsert.x <= ptInserted.x ? ptInserted.x - ptInsert.x : t_max( CLayoutInt(0), GetDocument()->m_cLayoutMgr.GetMaxLineLayout() - ptInsert.x)
 				);
 
 				GetCaret().MoveCursor( ptInserted, false );
@@ -289,8 +289,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 
 		// 挿入された文字の分だけ選択範囲を後ろにずらし、rcSelにセットする。
 		if( 0 < minOffset ) {
-			rcSel.GetFromPointer()->x = t_min( rcSel.GetFrom().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
-			rcSel.GetToPointer()->x = t_min( rcSel.GetTo().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
+			rcSel.GetFromPointer()->x = t_min( rcSel.GetFrom().x + minOffset, GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
+			rcSel.GetToPointer()->x = t_min( rcSel.GetTo().x + minOffset, GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 		}
 
 		/* カーソルを移動 */

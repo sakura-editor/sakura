@@ -273,7 +273,7 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 		// ダイアログタイトルとファイル名を設定
 		::SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)GSTR_APPNAME);
 		::SendMessage(GetDlgItem(hwndDlg, IDC_STATIC_CMD),
-			WM_SETTEXT, 0, (LPARAM)pParam->view->GetDocument()->m_cDocFile.GetFilePath());
+			WM_SETTEXT, 0, (LPARAM)GetDocument()->m_cDocFile.GetFilePath());
 		
 		bool bCanceled = false;
 		for(;;){

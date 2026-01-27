@@ -517,12 +517,12 @@ void CMainToolBar::UpdateToolbar( void )
 			{
 				WORD stateToSet = state & ~(TBSTATE_ENABLED | TBSTATE_CHECKED);
 				// 機能が利用可能か調べる
-				if( IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
+				if( IsFuncEnable( GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
 				{
 					stateToSet |= TBSTATE_ENABLED;
 				}
 				// 機能がチェック状態か調べる
-				if( IsFuncChecked( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
+				if( IsFuncChecked( GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
 				{
 					stateToSet |= TBSTATE_CHECKED;
 				}

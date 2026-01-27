@@ -370,7 +370,7 @@ void CTextDrawer::DispLineNumber(
 	if( pcLayout ){
 		pCDocLine = pcLayout->GetDocLineRef();
 
-		if( pView->GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, pView->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
+		if( GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
 			if( CTypeSupport(pView,COLORIDX_GYOU_MOD).IsDisp() ){	// 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 				bGyouMod = true;

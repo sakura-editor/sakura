@@ -44,7 +44,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 	const wchar_t*	pLineDes;
 	int			nLineLenDes;
 	int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>();
-	const CDocLineMgr& docMgr = commander.GetDocument()->m_cDocLineMgr;
+	const CDocLineMgr& docMgr = GetDocument()->m_cDocLineMgr;
 
 	bDifferent = true;
 	{

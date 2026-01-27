@@ -173,7 +173,7 @@ bool CNormalProcess::InitializeProcess()
 
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
-		pEditWnd->GetDocument()->SetCurDirNotitle();
+		GetDocument()->SetCurDirNotitle();
 		CAppMode::getInstance()->SetDebugModeON();
 		if( !CAppMode::getInstance()->IsDebugMode() ){
 			// デバッグではなくて(無題)
@@ -201,7 +201,7 @@ bool CNormalProcess::InitializeProcess()
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
-			// pEditWnd->GetDocument()->SetCurDirNotitle();
+			// GetDocument()->SetCurDirNotitle();
 			// 2003.06.23 Moca GREP実行前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
@@ -276,7 +276,7 @@ bool CNormalProcess::InitializeProcess()
 				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}else{
 				// 自分はGrepでない
-				pEditWnd->GetDocument()->SetCurDirNotitle();
+				GetDocument()->SetCurDirNotitle();
 			}
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 		}
@@ -312,7 +312,7 @@ bool CNormalProcess::InitializeProcess()
 			// Note. fi.m_nCharCode で文字コードが明示指定されていても、読み込み中断しない場合は別の文字コードが選択されることがある。
 			//       以前は「(無題)」にならない場合でも無条件に SetDocumentTypeWhenCreate() を呼んでいたが、
 			//       「前回と異なる文字コード」の問い合わせで前回の文字コードが選択された場合におかしくなっていた。
-			if( !pEditWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+			if( !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				// 読み込み中断して「(無題)」になった
 				// ---> 無効になったオプション指定を有効にする
 				pEditWnd->SetDocumentTypeWhenCreate(
@@ -328,7 +328,7 @@ bool CNormalProcess::InitializeProcess()
 			//	未設定＝-1になるようにしたので，安全のため両者が指定されたときだけ
 			//	移動するようにする． || → &&
 			if( ( CLayoutInt(0) <= fi.m_nViewTopLine && CLayoutInt(0) <= fi.m_nViewLeftCol )
-				&& fi.m_nViewTopLine < pEditWnd->GetDocument()->m_cLayoutMgr.GetLineCount() ){
+				&& fi.m_nViewTopLine < GetDocument()->m_cLayoutMgr.GetLineCount() ){
 				pEditWnd->GetActiveView().GetTextArea().SetViewTopLine( fi.m_nViewTopLine );
 				pEditWnd->GetActiveView().GetTextArea().SetViewLeftCol( fi.m_nViewLeftCol );
 			}
@@ -344,7 +344,7 @@ bool CNormalProcess::InitializeProcess()
 				  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 				*/
 				CLayoutPoint ptPos;
-				pEditWnd->GetDocument()->m_cLayoutMgr.LogicToLayout(
+				GetDocument()->m_cLayoutMgr.LogicToLayout(
 					fi.m_ptCursor,
 					&ptPos
 				);
@@ -352,7 +352,7 @@ bool CNormalProcess::InitializeProcess()
 				// From Here Mar. 28, 2003 MIK
 				// 改行の真ん中にカーソルが来ないように。
 				// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
-				const CDocLine *pTmpDocLine = pEditWnd->GetDocument()->m_cDocLineMgr.GetLine( fi.m_ptCursor.GetY2() );
+				const CDocLine *pTmpDocLine = GetDocument()->m_cDocLineMgr.GetLine( fi.m_ptCursor.GetY2() );
 				if( pTmpDocLine ){
 					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_ptCursor.x ) ptPos.x--;
 				}
@@ -365,7 +365,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->GetActiveView().RedrawAll();
 		}
 		else{
-			pEditWnd->GetDocument()->SetCurDirNotitle();	// (無題)ウィンドウ
+			GetDocument()->SetCurDirNotitle();	// (無題)ウィンドウ
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
@@ -373,8 +373,8 @@ bool CNormalProcess::InitializeProcess()
 				nType
 			);
 		}
-		if( !pEditWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-			pEditWnd->GetDocument()->SetCurDirNotitle();	// (無題)ウィンドウ
+		if( !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+			GetDocument()->SetCurDirNotitle();	// (無題)ウィンドウ
 			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
 			pEditWnd->UpdateCaption();
 		}
@@ -408,7 +408,7 @@ bool CNormalProcess::InitializeProcess()
 
 	// 2006.09.03 ryoji オープン後自動実行マクロを実行する
 	if( !( bDebugMode || bGrepMode ) )
-		pEditWnd->GetDocument()->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
+		GetDocument()->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 	// 起動時マクロオプション
 	LPCWSTR pszMacro = CCommandLine::getInstance()->GetMacro();

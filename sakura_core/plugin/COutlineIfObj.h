@@ -69,7 +69,7 @@ public:
 					ptLayout.x = (Int)ptLogic.x;
 					ptLayout.y = (Int)ptLogic.y;
 				}else{
-					View->GetDocument()->m_cLayoutMgr.LogicToLayout( ptLogic, &ptLayout );
+					GetDocument()->m_cLayoutMgr.LogicToLayout( ptLogic, &ptLayout );
 				}
 				int nParam = _wtoi(Arguments[3]);
 				if( LOWORD(ID) == F_OL_ADDFUNCINFO ){

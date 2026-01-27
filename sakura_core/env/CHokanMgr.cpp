@@ -318,7 +318,7 @@ void CHokanMgr::HokanSearchByKeyword(
 	vector_ex<std::wstring>& 	vKouho
 ){
 	const CEditView* pcEditView = reinterpret_cast<const CEditView*>(m_lParam);
-	const STypeConfig& type = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
 	CKeyWordSetMgr& keywordMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 	const auto nKeyLen = int(wcslen(pszCurWord));
 	for( int n = 0; n < MAX_KEYWORDSET_PER_TYPE; n++ ){
