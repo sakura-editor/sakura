@@ -869,7 +869,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	auto_snprintf_s(szPageNum, _TRUNCATE, L"%d", m_nCurPageNum + 1);
 
 	BOOL bDlgInputPageResult=cDlgInputPage.DoModal(
-		CEditApp::getInstance()->GetAppInstance(),
+		GetAppInstance(),
 		m_hwndPrintPreviewBar, 
 		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
@@ -1083,7 +1083,7 @@ void CPrintPreview::OnPrint( void )
 
 	/* 印刷過程を表示して、キャンセルするためのダイアログを作成 */
 	CDlgCancel	cDlgPrinting;
-	cDlgPrinting.DoModeless( CEditApp::getInstance()->GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
+	cDlgPrinting.DoModeless( GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
 	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_JOBNAME, szJobName );
 	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, L"" );	// XPS対応 2013/5/8 Uchi
 
@@ -1943,7 +1943,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,						/* default height				*/
 		m_pParentWnd->GetHwnd(),								/* handle of main window		*/
 		(HMENU) nullptr,						/* no menu for a scroll bar		*/
-		CEditApp::getInstance()->GetAppInstance(),						/* instance owning this window	*/
+		GetAppInstance(),						/* instance owning this window	*/
 		(LPVOID) nullptr						/* pointer not needed			*/
 	);
 	SCROLLINFO	si;
@@ -1969,7 +1969,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,						/* default height				*/
 		m_pParentWnd->GetHwnd(),								/* handle of main window		*/
 		(HMENU) nullptr,						/* no menu for a scroll bar		*/
-		CEditApp::getInstance()->GetAppInstance(),						/* instance owning this window	*/
+		GetAppInstance(),						/* instance owning this window	*/
 		(LPVOID) nullptr						/* pointer not needed			*/
 	);
 	si.cbSize = sizeof( si );
@@ -1994,7 +1994,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,										/* default height				*/
 		m_pParentWnd->GetHwnd(), 											/* handle of main window		*/
 		(HMENU) nullptr,										/* no menu for a scroll bar 	*/
-		CEditApp::getInstance()->GetAppInstance(),										/* instance owning this window	*/
+		GetAppInstance(),										/* instance owning this window	*/
 		(LPVOID) nullptr										/* pointer not needed			*/
 	);
 	::ShowWindow( m_hwndPrintPreviewBar, SW_SHOW );

@@ -125,7 +125,7 @@ void CMainToolBar::CreateToolBar( void )
 			0, 0, 0, 0,
 			m_pOwner->GetHwnd(),
 			nullptr,
-			CEditApp::getInstance()->GetAppInstance(),
+			GetAppInstance(),
 			nullptr
 		);
 
@@ -161,7 +161,7 @@ void CMainToolBar::CreateToolBar( void )
 		0, 0,
 		m_pOwner->GetHwnd(),
 		(HMENU)ID_TOOLBAR,
-		CEditApp::getInstance()->GetAppInstance(),
+		GetAppInstance(),
 		nullptr
 	);
 	if( nullptr == m_hwndToolBar ){
@@ -274,7 +274,7 @@ void CMainToolBar::CreateToolBar( void )
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
-								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, CEditApp::getInstance()->GetAppInstance(), nullptr );
+								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, GetAppInstance(), nullptr );
 						if( m_hwndSearchBox )
 						{
 							m_pOwner->SetCurrentFocus(0);
