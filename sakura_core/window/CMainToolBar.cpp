@@ -517,7 +517,7 @@ void CMainToolBar::UpdateToolbar( void )
 			{
 				WORD stateToSet = state & ~(TBSTATE_ENABLED | TBSTATE_CHECKED);
 				// 機能が利用可能か調べる
-				if( IsFuncEnable( GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
+				if (func::isEnabled(EFunctionCode(tbb.idCommand)))
 				{
 					stateToSet |= TBSTATE_ENABLED;
 				}

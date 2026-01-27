@@ -2334,7 +2334,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		EFunctionCode	id = (EFunctionCode)::GetMenuItemID(hMenu, nPos);
 		/* 機能が利用可能か調べる */
 		//	Jan.  8, 2006 genta 機能が有効な場合には明示的に再設定しないようにする．
-		if( ! IsFuncEnable( GetDocument(), m_pShareData, id ) ){
+		if (!func::isEnabled(id)) {
 			fuFlags = MF_BYCOMMAND | MF_GRAYED;
 			::EnableMenuItem(hMenu, id, fuFlags);
 		}
