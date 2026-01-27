@@ -19,7 +19,7 @@
 template<class T, std::enable_if_t<std::is_base_of_v<CDllImp, T>, std::nullptr_t> = nullptr>
 class TExtModule : public T {
 private:
-	std::wstring_view dllName = L"";
+	std::wstring_view dllName{ L"" };
 
 protected:
 	//! DLLパスを返す

@@ -43,7 +43,7 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 			const auto length = size_t(pResData.front());
 
 			// 文字列をstd::wstring_viewに格納して返す
-			return std::wstring_view(&pResData[1], length);
+			return std::wstring_view{ &pResData[1], length };
 		},
 		RT_STRING,
 		optModule

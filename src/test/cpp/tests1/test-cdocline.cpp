@@ -57,7 +57,7 @@ TEST(CDocLine, GetPtr)
 		EXPECT_EQ(nullptr, line.GetPtr());
 	}
 	{
-		std::wstring_view s = L"てきとうなもじれつ";
+		std::wstring_view s{ L"てきとうなもじれつ" };
 		CDocLine line;
 		line.SetDocLineString(s.data(), s.length(), false);
 		EXPECT_STREQ(line.GetPtr(), s.data());
@@ -129,25 +129,25 @@ TEST(CDocLine, GetStringRefWithEOL)
 	{
 		CDocLine line;
 		line.SetDocLineString(L"もじれつ", 4, false);
-		CStringRef ref = line.GetStringRefWithEOL();
-		EXPECT_EQ(ref.GetPtr(), line.GetPtr());
-		EXPECT_EQ(ref.GetLength(), line.GetLengthWithEOL());
+		std::wstring_view ref{ line.GetStringRefWithEOL() };
+		EXPECT_EQ(ref.data(), line.GetPtr());
+		EXPECT_EQ(ref.length(), line.GetLengthWithEOL());
 
 		ref = CDocLine::GetStringRefWithEOL_Safe(&line);
-		EXPECT_EQ(ref.GetPtr(), line.GetPtr());
-		EXPECT_EQ(ref.GetLength(), line.GetLengthWithEOL());
+		EXPECT_EQ(ref.data(), line.GetPtr());
+		EXPECT_EQ(ref.length(), line.GetLengthWithEOL());
 	}
 	{
 		CLogicInt n(123);
-		CStringRef ref = CDocLine::GetStringRefWithEOL_Safe(nullptr);
-		EXPECT_EQ(ref.GetPtr(), nullptr);
-		EXPECT_EQ(ref.GetLength(), 0);
+		std::wstring_view ref{ CDocLine::GetStringRefWithEOL_Safe(nullptr) };
+		EXPECT_TRUE(ref.empty());
+		EXPECT_THAT(ref, ::testing::SizeIs(Eq(0)));
 
 #ifdef _MSC_VER
 		CDocLine* p = reinterpret_cast<CDocLine*>(0);
 		ref = p->GetStringRefWithEOL();
-		EXPECT_EQ(ref.GetPtr(), nullptr);
-		EXPECT_EQ(ref.GetLength(), 0);
+		EXPECT_TRUE(ref.empty());
+		EXPECT_THAT(ref, ::testing::SizeIs(Eq(0)));
 #endif
 	}
 }

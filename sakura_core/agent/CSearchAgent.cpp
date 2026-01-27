@@ -1064,8 +1064,8 @@ prev_line:;
 			nInsSize--;
 		}
 	}
-	CStringRef	cPrevLine;
-	CStringRef	cNextLine;
+	std::wstring_view	cPrevLine;
+	std::wstring_view	cNextLine;
 	CNativeW	cmemCurLine;
 	if( nullptr == pCDocLine ){
 		/* ここでNULLが帰ってくるということは、*/
@@ -1077,8 +1077,8 @@ prev_line:;
 			cmemCurLine.swap(pCDocLine->_GetDocLineData());
 			nLineLen = cmemCurLine.GetStringLength();
 			pLine = cmemCurLine.GetStringPtr();
-			cPrevLine = CStringRef(pLine, pArg->sDelRange.GetFrom().x);
-			cNextLine = CStringRef(&pLine[pArg->sDelRange.GetFrom().x], nLineLen - pArg->sDelRange.GetFrom().x);
+			cPrevLine = std::wstring_view(pLine, pArg->sDelRange.GetFrom().x);
+			cNextLine = std::wstring_view(&pLine[pArg->sDelRange.GetFrom().x], nLineLen - pArg->sDelRange.GetFrom().x);
 			pArg->nInsSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
 		}else{
 			pArg->nInsSeq = 0;
@@ -1099,8 +1099,8 @@ prev_line:;
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount ){
 					CNativeW tmp;
-					tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
-					tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
+					tmp.AllocStringBuffer(cPrevLine.length() + cmemLine.GetStringLength());
+					tmp.AppendString(cPrevLine.data(), cPrevLine.length());
 					tmp.AppendNativeData(cmemLine);
 					pCDocLineNew->SetDocLineStringMove(&tmp, bEnableExtEol);
 				}
@@ -1112,21 +1112,21 @@ prev_line:;
 			else{
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount && !bInsertLineMode ){
-					if( cmemCurLine.GetStringLength() - cPrevLine.GetLength() < cmemCurLine.GetStringLength() / 100
-						&& cPrevLine.GetLength() + cmemLine.GetStringLength() <= cmemCurLine.GetStringLength()
-						&& cmemCurLine.capacity() / 2 <= cPrevLine.GetLength() + cmemLine.GetStringLength() ){
+					if( cmemCurLine.GetStringLength() - int(cPrevLine.length()) < cmemCurLine.GetStringLength() / 100
+						&& int(cPrevLine.length()) + cmemLine.GetStringLength() <= cmemCurLine.GetStringLength()
+						&& cmemCurLine.capacity() / 2 <= int(cPrevLine.length()) + cmemLine.GetStringLength() ){
 						// 行のうちNextになるのが1%以下で行が短くなるなら再利用する(長い一行を分割する場合の最適化)
 						CNativeW tmp; // Nextを退避
-						tmp.SetString(cNextLine.GetPtr(), cNextLine.GetLength());
+						tmp.SetString(cNextLine.data(), cNextLine.length());
 						cmemCurLine.swap(tmp);
-						tmp._SetStringLength(cPrevLine.GetLength());
+						tmp._SetStringLength(cPrevLine.length());
 						tmp.AppendNativeData(cmemLine);
 						pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
-						cNextLine = CStringRef(cmemCurLine.GetStringPtr(), cmemCurLine.GetStringLength());
+						cNextLine = std::wstring_view(cmemCurLine.GetStringPtr(), cmemCurLine.GetStringLength());
 					}else{
 						CNativeW tmp;
-						tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
-						tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
+						tmp.AllocStringBuffer(cPrevLine.length() + cmemLine.GetStringLength());
+						tmp.AppendString(cPrevLine.data(), cPrevLine.length());
 						tmp.AppendNativeData(cmemLine);
 						pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
 					}
@@ -1154,18 +1154,18 @@ prev_line:;
 			}
 		}
 	}
-	if( bLastInsert || 0 < cNextLine.GetLength() ){
+	if( bLastInsert || 0 < cNextLine.length() ){
 		CNativeW cNull;
-		CStringRef cNullStr(L"", 0);
+		std::wstring_view cNullStr(L"", 0);
 		CNativeW& cmemLine = bLastInsert ? pArg->pInsData->back().cmemLine : cNull;
-		const CStringRef& cPrevLine2 = ((0 == nCount) ? cPrevLine: cNullStr);
+		std::wstring_view cPrevLine2{ ((0 == nCount) ? cPrevLine: cNullStr) };
 		int nSeq = pArg->pInsData->back().nSeq;
 		int nLen = cmemLine.GetStringLength();
 		CNativeW tmp;
-		tmp.AllocStringBuffer(cPrevLine2.GetLength() + cmemLine.GetStringLength() + cNextLine.GetLength());
-		tmp.AppendString(cPrevLine2.GetPtr(), cPrevLine2.GetLength());
+		tmp.AllocStringBuffer(cPrevLine2.length() + cmemLine.GetStringLength() + cNextLine.length());
+		tmp.AppendString(cPrevLine2.data(), cPrevLine2.length());
 		tmp.AppendNativeData(cmemLine);
-		tmp.AppendString(cNextLine.GetPtr(), cNextLine.GetLength());
+		tmp.AppendString(cNextLine.data(), cNextLine.length());
 		if( nullptr == pCDocLine ){
 			CDocLine* pCDocLineNew = m_pcDocLineMgr->AddNewLine();	//末尾に追加
 			pCDocLineNew->SetDocLineStringMove(&tmp, bEnableExtEol);
@@ -1186,7 +1186,7 @@ prev_line:;
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLine, nSeq);
 			}
-			pArg->ptNewPos.x = cPrevLine2.GetLength() + nLen;	/* 挿入された部分の次の位置のデータ位置 */
+			pArg->ptNewPos.x = int(cPrevLine2.length() + nLen);	/* 挿入された部分の次の位置のデータ位置 */
 		}
 	}
 	pArg->nInsLineNum = m_pcDocLineMgr->GetLineCount() - nAllLinesOld;

@@ -130,7 +130,7 @@ TEST(CClipboard, SetHtmlText2) {
 
 // SetText のテスト（フォーマット指定なし・矩形選択なし・行選択なし）
 TEST(CClipboard, SetText1) {
-	constexpr std::wstring_view text = L"てすと";
+	constexpr auto text = std::wstring_view{ L"てすと" };
 	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
 	MockCClipboard clipboard;
 	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
@@ -140,7 +140,7 @@ TEST(CClipboard, SetText1) {
 
 // SetText のテスト（CF_UNICODETEXTのみ・矩形選択あり・行選択なし）
 TEST(CClipboard, SetText2) {
-	constexpr std::wstring_view text = L"てすと";
+	constexpr auto text = std::wstring_view{ L"てすと" };
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(::GlobalAlloc);
 	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
@@ -150,7 +150,7 @@ TEST(CClipboard, SetText2) {
 
 // SetText のテスト（サクラ独自形式のみ・矩形選択なし・行選択あり）
 TEST(CClipboard, SetText3) {
-	constexpr std::wstring_view text = L"てすと";
+	constexpr auto text = std::wstring_view{ L"てすと" };
 	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(::GlobalAlloc);
@@ -163,7 +163,7 @@ TEST(CClipboard, SetText3) {
 // SetText のテスト。
 // クリップボードのオープンに失敗していた場合、SetText は何もせずに失敗する。
 TEST(CClipboard, SetText4) {
-	constexpr std::wstring_view text = L"てすと";
+	constexpr auto text = std::wstring_view{ L"てすと" };
 	MockCClipboard clipboard(false);
 	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, false, -1));
@@ -171,7 +171,7 @@ TEST(CClipboard, SetText4) {
 
 // SetText のテスト。矩形選択マークの設定に失敗した場合。
 TEST(CClipboard, SetText5) {
-	constexpr std::wstring_view text = L"てすと";
+	constexpr auto text = std::wstring_view{ L"てすと" };
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, 1)).WillByDefault(Return(nullptr));
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), true, false, 0));
@@ -179,7 +179,7 @@ TEST(CClipboard, SetText5) {
 
 // SetText のテスト。行選択マークの設定に失敗した場合。
 TEST(CClipboard, SetText6) {
-	constexpr std::wstring_view text = L"てすと";
+	constexpr auto text = std::wstring_view{ L"てすと" };
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, 1)).WillByDefault(Return(nullptr));
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, 0));
@@ -211,8 +211,8 @@ protected:
 	CNativeW buffer;
 	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
 	const CEol eol{ EEolType::cr_and_lf };
-	static constexpr std::wstring_view unicodeText = L"CF_UNICODE";
-	static constexpr std::wstring_view sakuraText = L"SAKURAClipW";
+	static constexpr auto unicodeText = std::wstring_view{ L"CF_UNICODE" };
+	static constexpr auto sakuraText = std::wstring_view{ L"SAKURAClipW" };
 	static constexpr std::string_view oemText = "CF_OEMTEXT";
 	GlobalMemory unicodeMemory{ GMEM_MOVEABLE, (unicodeText.size() + 1) * sizeof(wchar_t) };
 	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(size_t) + (sakuraText.size() + 1) * sizeof(wchar_t) };
@@ -571,7 +571,7 @@ TEST(CClipboard, DISABLED_SetClipboardByFormat6) {
 
 // モード-2のテスト。SetTextと同じ処理を行う。
 TEST(CClipboard, SetClipboardByFormat7) {
-	constexpr std::wstring_view text = L"テスト";
+	constexpr auto text = std::wstring_view{ L"テスト" };
 	MockCClipboard clipboard;
 	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
 
