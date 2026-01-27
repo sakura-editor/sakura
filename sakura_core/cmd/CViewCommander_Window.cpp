@@ -34,21 +34,21 @@
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 void CViewCommander::Command_SPLIT_V( void )
 {
-	GetEditWndPtr()->m_cSplitterWnd.VSplitOnOff();
+	GetEditWnd().m_cSplitterWnd.VSplitOnOff();
 	return;
 }
 
 /* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 void CViewCommander::Command_SPLIT_H( void )
 {
-	GetEditWndPtr()->m_cSplitterWnd.HSplitOnOff();
+	GetEditWnd().m_cSplitterWnd.HSplitOnOff();
 	return;
 }
 
 /* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
 void CViewCommander::Command_SPLIT_VH( void )
 {
-	GetEditWndPtr()->m_cSplitterWnd.VHSplitOnOff();
+	GetEditWnd().m_cSplitterWnd.VHSplitOnOff();
 	return;
 }
 
@@ -101,7 +101,7 @@ void CViewCommander::Command_TAB_CLOSEOTHER( void )
 void CViewCommander::Command_WINLIST( int nCommandFrom )
 {
 	//ウィンドウ一覧をポップアップ表示する
-	GetEditWndPtr()->PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
+	GetEditWnd().PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
 	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
 }
 
@@ -388,7 +388,7 @@ void CViewCommander::Command_TILE_H( void )
 */
 void CViewCommander::Command_WINTOPMOST( LPARAM lparam )
 {
-	GetEditWndPtr()->WindowTopMost( int(lparam) );
+	GetEditWnd().WindowTopMost( int(lparam) );
 }
 
 //Start 2004.07.14 Kazika 追加
@@ -411,7 +411,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 		if( !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
-			GetEditWndPtr()->WindowTopMost(
+			GetEditWnd().WindowTopMost(
 				( (DWORD)::GetWindowLongPtr( GetMainWindow(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 			);
 		}
@@ -442,7 +442,7 @@ void CViewCommander::Command_GROUPCLOSE( void )
 /* 次のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_NEXTGROUP( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWndPtr()->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->NextGroup();
@@ -451,7 +451,7 @@ void CViewCommander::Command_NEXTGROUP( void )
 /* 前のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_PREVGROUP( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWndPtr()->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->PrevGroup();
@@ -460,7 +460,7 @@ void CViewCommander::Command_PREVGROUP( void )
 /* タブを右に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVERIGHT( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWndPtr()->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->MoveRight();
@@ -469,7 +469,7 @@ void CViewCommander::Command_TAB_MOVERIGHT( void )
 /* タブを左に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVELEFT( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWndPtr()->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->MoveLeft();
@@ -478,7 +478,7 @@ void CViewCommander::Command_TAB_MOVELEFT( void )
 /* 新規グループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_SEPARATE( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWndPtr()->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->Separate();
@@ -487,7 +487,7 @@ void CViewCommander::Command_TAB_SEPARATE( void )
 /* 次のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTNEXT( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWndPtr()->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->JoinNext();
@@ -496,7 +496,7 @@ void CViewCommander::Command_TAB_JOINTNEXT( void )
 /* 前のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTPREV( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWndPtr()->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->JoinPrev();

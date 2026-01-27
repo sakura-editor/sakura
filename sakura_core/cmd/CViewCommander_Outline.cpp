@@ -69,14 +69,14 @@ BOOL CViewCommander::Command_FUNCLIST(
 		}
 	}
 
-	if( nullptr != GetEditWndPtr()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
+	if( nullptr != GetEditWnd().m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
 		switch(nAction ){
 		case SHOW_NORMAL: // アクティブにする
 			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
-			GetEditWndPtr()->m_cDlgFuncList.SyncColor();
-			if( GetEditWndPtr()->m_cDlgFuncList.CheckListType( nOutlineType )){
+			GetEditWnd().m_cDlgFuncList.SyncColor();
+			if( GetEditWnd().m_cDlgFuncList.CheckListType( nOutlineType )){
 				if( bForeground ){
-					::SetFocus( GetEditWndPtr()->m_cDlgFuncList.GetHwnd() );
+					::SetFocus( GetEditWnd().m_cDlgFuncList.GetHwnd() );
 				}
 				bIsProcessing = false;
 				return TRUE;
@@ -84,11 +84,11 @@ BOOL CViewCommander::Command_FUNCLIST(
 			break;
 		case SHOW_TOGGLE: // 閉じる
 			//	開いているものと種別が同じなら閉じる．異なれば再解析
-			if( GetEditWndPtr()->m_cDlgFuncList.CheckListType( nOutlineType )){
-				if( GetEditWndPtr()->m_cDlgFuncList.IsDocking() )
-					::DestroyWindow( GetEditWndPtr()->m_cDlgFuncList.GetHwnd() );
+			if( GetEditWnd().m_cDlgFuncList.CheckListType( nOutlineType )){
+				if( GetEditWnd().m_cDlgFuncList.IsDocking() )
+					::DestroyWindow( GetEditWnd().m_cDlgFuncList.GetHwnd() );
 				else
-					::SendMessageAny( GetEditWndPtr()->m_cDlgFuncList.GetHwnd(), WM_CLOSE, 0, 0 );
+					::SendMessageAny( GetEditWnd().m_cDlgFuncList.GetHwnd(), WM_CLOSE, 0, 0 );
 				bIsProcessing = false;
 				return TRUE;
 			}
@@ -166,8 +166,8 @@ BOOL CViewCommander::Command_FUNCLIST(
 
 	/* アウトライン ダイアログの表示 */
 	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
-	if( nullptr == GetEditWndPtr()->m_cDlgFuncList.GetHwnd() ){
-		GetEditWndPtr()->m_cDlgFuncList.DoModeless(
+	if( nullptr == GetEditWnd().m_cDlgFuncList.GetHwnd() ){
+		GetEditWnd().m_cDlgFuncList.DoModeless(
 			G_AppInstance(),
 			m_pCommanderView->GetHwnd(),
 			(LPARAM)m_pCommanderView,
@@ -180,15 +180,15 @@ BOOL CViewCommander::Command_FUNCLIST(
 		);
 	}else{
 		/* アクティブにする */
-		GetEditWndPtr()->m_cDlgFuncList.Redraw( nOutlineType, nListType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
+		GetEditWnd().m_cDlgFuncList.Redraw( nOutlineType, nListType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
 		if( bForeground ){
-			::SetFocus( GetEditWndPtr()->m_cDlgFuncList.GetHwnd() );
+			::SetFocus( GetEditWnd().m_cDlgFuncList.GetHwnd() );
 		}
 	}
 
 	// ダイアログタイトルを上書き
 	if( ! sTitleOverride.empty() ){
-		GetEditWndPtr()->m_cDlgFuncList.SetWindowText( sTitleOverride.c_str() );
+		GetEditWnd().m_cDlgFuncList.SetWindowText( sTitleOverride.c_str() );
 	}
 
 	bIsProcessing = false;

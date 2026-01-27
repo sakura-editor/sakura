@@ -510,6 +510,6 @@ void CViewCommander::Command_Diff_Reset( void )
 	CDiffLineMgr(&GetDocument()->m_cDocLineMgr).ResetAllDiffMark();
 
 	//分割したビューも更新
-	GetEditWndPtr()->Views_Redraw();
+	GetEditWnd().Views_Redraw();
 	return;
 }

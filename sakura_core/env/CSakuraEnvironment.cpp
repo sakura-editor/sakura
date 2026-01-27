@@ -303,7 +303,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'C':	//	現在選択中のテキスト
 			{
 				CNativeW cmemCurText;
-				GetEditWndPtr()->GetActiveView().GetCurrentTextForSearch( cmemCurText );
+				GetEditWnd().GetActiveView().GetCurrentTextForSearch( cmemCurText );
 
 				q = wcs_pushW( q, q_max - q, cmemCurText.GetStringPtr(), cmemCurText.GetStringLength());
 				++p;
@@ -314,7 +314,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
 			{
 				wchar_t szText[11];
-				::_itow_s(GetEditWndPtr()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
+				::_itow_s(GetEditWnd().GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -322,7 +322,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'y':	//	現在の物理行位置(1開始)
 			{
 				wchar_t szText[11];
-				::_itow_s(GetEditWndPtr()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
+				::_itow_s(GetEditWnd().GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}

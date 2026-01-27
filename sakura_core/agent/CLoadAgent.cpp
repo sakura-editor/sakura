@@ -290,13 +290,13 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	}
 
 	//再描画 $$不足
-	// GetEditWndPtr()->GetActiveView().SetDrawSwitch(true);
-	bool bDraw = GetEditWndPtr()->GetActiveView().GetDrawSwitch();
+	// GetEditWnd().GetActiveView().SetDrawSwitch(true);
+	bool bDraw = GetEditWnd().GetActiveView().GetDrawSwitch();
 	if( bDraw ){
-		GetEditWndPtr()->Views_RedrawAll(); //ビュー再描画
+		GetEditWnd().Views_RedrawAll(); //ビュー再描画
 		InvalidateRect( GetMainWindow(), nullptr, TRUE );
 	}
-	CCaret& cCaret = GetEditWndPtr()->GetActiveView().GetCaret();
+	CCaret& cCaret = GetEditWnd().GetActiveView().GetCaret();
 	cCaret.MoveCursor(cCaret.GetCaretLayoutPos(),true);
-	GetEditWndPtr()->GetActiveView().AdjustScrollBars();
+	GetEditWnd().GetActiveView().AdjustScrollBars();
 }

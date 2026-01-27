@@ -235,7 +235,7 @@ void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCo
 	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(filename, nCharCode, bViewMode) );
 
 	//プラグイン：DocumentOpenイベント実行
-	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWndPtr()->GetActiveView() );
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWnd().GetActiveView() );
 }
 
 //! ファイルの再オープン
@@ -271,14 +271,14 @@ void CViewCommander::Command_PRINT( void )
 	Command_PRINT_PREVIEW();
 
 	/* 印刷実行 */
-	GetEditWndPtr()->m_pPrintPreview->OnPrint();
+	GetEditWnd().m_pPrintPreview->OnPrint();
 }
 
 /* 印刷プレビュー */
 void CViewCommander::Command_PRINT_PREVIEW( void )
 {
 	/* 印刷プレビューモードのオン/オフ */
-	GetEditWndPtr()->PrintPreviewModeONOFF();
+	GetEditWnd().PrintPreviewModeONOFF();
 	return;
 }
 
@@ -286,7 +286,7 @@ void CViewCommander::Command_PRINT_PREVIEW( void )
 void CViewCommander::Command_PRINT_PAGESETUP( void )
 {
 	/* 印刷ページ設定 */
-	GetEditWndPtr()->OnPrintPageSetting();
+	GetEditWnd().OnPrintPageSetting();
 	return;
 }
 
@@ -473,7 +473,7 @@ void CViewCommander::Command_VIEWMODE( void )
 	}
 
 	// 親ウィンドウのタイトルを更新
-	GetEditWndPtr()->UpdateCaption();
+	GetEditWnd().UpdateCaption();
 }
 
 /* ファイルのプロパティ */

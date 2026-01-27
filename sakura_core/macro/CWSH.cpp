@@ -188,7 +188,7 @@ public:
 	HRESULT STDMETHODCALLTYPE GetWindow(
 	    /* [out] */ HWND *phwnd) override
 	{
-		*phwnd = GetEditWndPtr()->m_cSplitterWnd.GetHwnd();
+		*phwnd = GetEditWnd().m_cSplitterWnd.GetHwnd();
 		return S_OK;
 	}
 
