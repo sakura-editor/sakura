@@ -37,7 +37,7 @@
 /*!
 	@return true:正常終了 / false:エラー終了
 */
-static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
+static bool Commander_COMPARE_core([[maybe_unused]] CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
 {
 	const wchar_t*	pLineSrc;
 	CLogicInt		nLineLenSrc;

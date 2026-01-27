@@ -702,7 +702,6 @@ void CDlgFuncList::SetData()
 	}
 	// 2002/11/1 frozen 項目のソート基準を設定するコンボボックスはブックマーク一覧の以外の時に表示する
 	// Nov. 5, 2002 genta ツリー表示の時だけソート基準コンボボックスを表示
-	CEditView* pcEditView = (CEditView*)m_lParam;
 	int nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	if( nDocType != m_nDocType ){
 		// 以前とはドキュメントタイプが変わったので初期化する
@@ -1497,7 +1496,6 @@ void CDlgFuncList::SetDocLineFuncList()
 	if( m_nOutlineType == OUTLINE_FILETREE ){
 		return;
 	}
-	CEditView* pcEditView=(CEditView*)m_lParam;
 	CDocLineMgr* pcDocLineMgr = &GetDocument()->m_cDocLineMgr;
 	
 	CFuncListManager().ResetAllFucListMark(pcDocLineMgr, false);
@@ -2562,7 +2560,6 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 */
 void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFuncInfoArr, CLayoutInt nCurLine, CLayoutInt nCurCol )
 {
-	CEditView* pcEditView = (CEditView*)m_lParam;
 	m_nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
 	SyncColor();
