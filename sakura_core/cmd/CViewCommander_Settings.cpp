@@ -38,18 +38,16 @@
 */
 void CViewCommander::Command_SHOWTOOLBAR( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
-
-	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((nullptr == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
-	pCEditWnd->LayoutToolBar();
-	pCEditWnd->EndLayoutBars();
+	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((nullptr == GetEditWnd().m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
+	GetEditWnd().LayoutToolBar();
+	GetEditWnd().EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TOOLBAR,
-		(LPARAM)pCEditWnd->GetHwnd(),
-		pCEditWnd->GetHwnd()
+		(LPARAM)GetEditWnd().GetHwnd(),
+		GetEditWnd().GetHwnd()
 	);
 }
 
@@ -59,18 +57,16 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 */
 void CViewCommander::Command_SHOWFUNCKEY( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
-
-	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((nullptr == pCEditWnd->m_cFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
-	pCEditWnd->LayoutFuncKey();
-	pCEditWnd->EndLayoutBars();
+	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((nullptr == GetEditWnd().m_cFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
+	GetEditWnd().LayoutFuncKey();
+	GetEditWnd().EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_FUNCKEY,
-		(LPARAM)pCEditWnd->GetHwnd(),
-		pCEditWnd->GetHwnd()
+		(LPARAM)GetEditWnd().GetHwnd(),
+		GetEditWnd().GetHwnd()
 	);
 }
 
@@ -83,11 +79,9 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
  */
 void CViewCommander::Command_SHOWTAB( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
-
-	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = ((nullptr == pCEditWnd->m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
-	pCEditWnd->LayoutTabBar();
-	pCEditWnd->EndLayoutBars();
+	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = ((nullptr == GetEditWnd().m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
+	GetEditWnd().LayoutTabBar();
+	GetEditWnd().EndLayoutBars();
 
 	// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
@@ -102,8 +96,8 @@ void CViewCommander::Command_SHOWTAB( void )
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TAB,
-		(LPARAM)pCEditWnd->GetHwnd(),
-		pCEditWnd->GetHwnd()
+		(LPARAM)GetEditWnd().GetHwnd(),
+		GetEditWnd().GetHwnd()
 	);
 }
 
@@ -113,18 +107,16 @@ void CViewCommander::Command_SHOWTAB( void )
 */
 void CViewCommander::Command_SHOWSTATUSBAR( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
-
-	GetDllShareData().m_Common.m_sWindow.m_bDispSTATUSBAR = ((nullptr == pCEditWnd->m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
-	pCEditWnd->LayoutStatusBar();
-	pCEditWnd->EndLayoutBars();
+	GetDllShareData().m_Common.m_sWindow.m_bDispSTATUSBAR = ((nullptr == GetEditWnd().m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
+	GetEditWnd().LayoutStatusBar();
+	GetEditWnd().EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_STATUSBAR,
-		(LPARAM)pCEditWnd->GetHwnd(),
-		pCEditWnd->GetHwnd()
+		(LPARAM)GetEditWnd().GetHwnd(),
+		GetEditWnd().GetHwnd()
 	);
 }
 
@@ -134,18 +126,16 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 */
 void CViewCommander::Command_SHOWMINIMAP( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
-
-	GetDllShareData().m_Common.m_sWindow.m_bDispMiniMap = ((nullptr == pCEditWnd->GetMiniMap().GetHwnd())? true: false);
-	pCEditWnd->LayoutMiniMap();
-	pCEditWnd->EndLayoutBars();
+	GetDllShareData().m_Common.m_sWindow.m_bDispMiniMap = ((nullptr == GetEditWnd().GetMiniMap().GetHwnd())? true: false);
+	GetEditWnd().LayoutMiniMap();
+	GetEditWnd().EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_MINIMAP,
-		(LPARAM)pCEditWnd->GetHwnd(),
-		pCEditWnd->GetHwnd()
+		(LPARAM)GetEditWnd().GetHwnd(),
+		GetEditWnd().GetHwnd()
 	);
 }
 

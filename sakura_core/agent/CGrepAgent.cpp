@@ -523,9 +523,8 @@ DWORD CGrepAgent::DoGrep(
 
 	//	Sep. 10, 2002 genta
 	//	CEditWndに新設した関数を使うように
-	auto pCEditWnd = GetEditWndPtr();
-	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
-	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
+	GetEditWnd().SetWindowIcon(hIconSmall, ICON_SMALL);
+	GetEditWnd().SetWindowIcon(hIconBig, ICON_BIG);
 
 	CGrepEnumKeys cGrepEnumKeys;
 	{
@@ -842,11 +841,11 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->m_bDoing_UndoRedo = false;
 
 	/* 表示処理ON/OFF */
-	pCEditWnd->SetDrawSwitchOfAllViews( bDrawSwitchOld );
+	GetEditWnd().SetDrawSwitchOfAllViews( bDrawSwitchOld );
 
 	/* 再描画 */
-	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-		pCEditWnd->RedrawAllViews( nullptr );
+	if( !GetEditWnd().UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+		GetEditWnd().RedrawAllViews( nullptr );
 
 	if( !bGrepCurFolder ){
 		// 現行フォルダーを検索したフォルダーに変更

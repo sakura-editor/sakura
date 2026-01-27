@@ -349,33 +349,27 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		case L'p':	//	現在のページ
-			{
-				CEditWnd*	pcEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
-				if (pcEditWnd->m_pPrintPreview){
-					wchar_t szText[1024];
-					::_itow_s(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
-					q = wcs_pushW( q, q_max - q, szText, wcslen(szText));
-					++p;
-				}
-				else {
-					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
-					++p;
-				}
+			if (const auto pcEditWnd = GetEditWndPtr(); pcEditWnd && pcEditWnd->m_pPrintPreview) {
+				SFilePath szText;
+				::_itow_s(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, std::size(szText), 10);
+				q = wcs_pushW( q, q_max - q, szText, wcslen(szText));
+				++p;
+			}
+			else {
+				q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
+				++p;
 			}
 			break;
 		case L'P':	//	総ページ
-			{
-				CEditWnd*	pcEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
-				if (pcEditWnd->m_pPrintPreview){
-					wchar_t szText[1024];
-					::_itow_s(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
-					q = wcs_pushW( q, q_max - q, szText);
-					++p;
-				}
-				else {
-					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
-					++p;
-				}
+			if (const auto pcEditWnd = GetEditWndPtr(); pcEditWnd && pcEditWnd->m_pPrintPreview) {
+				SFilePath szText;
+				::_itow_s(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, std::size(szText), 10);
+				q = wcs_pushW( q, q_max - q, szText);
+				++p;
+			}
+			else {
+				q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
+				++p;
 			}
 			break;
 		case L'D':	//	タイムスタンプ

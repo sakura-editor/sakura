@@ -748,14 +748,7 @@ BOOL CViewCommander::Command_PUTFILE(
 		}
 	}
 	else {	/* ファイル全体を出力 */
-		HWND		hwndProgress;
-		CEditWnd*	pCEditWnd = GetEditWndPtr();
-
-		if( nullptr != pCEditWnd ){
-			hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
-		}else{
-			hwndProgress = nullptr;
-		}
+		const auto hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
 		if( nullptr != hwndProgress ){
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}

@@ -1257,8 +1257,9 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 /* 機能がチェック状態か調べる */
 bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId )
 {
-	auto pCEditWnd = GetEditWndPtr();
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより、プレビュー判定削除
+	if (!GetEditWndPtr()) return false;
+
+	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより、プレビュー判定削除
 	ECodeType eDocCode = pcEditDoc->GetDocumentEncoding();
 	switch( nId ){
 	case F_FILE_REOPEN_SJIS:		return CODE_SJIS == eDocCode;
@@ -1280,19 +1281,20 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 		}else{
 			return false;
 		}
-	case F_SHOWTOOLBAR:			return pCEditWnd->m_cToolbar.GetToolbarHwnd() != nullptr;
-	case F_SHOWFUNCKEY:			return pCEditWnd->m_cFuncKeyWnd.GetHwnd() != nullptr;
-	case F_SHOWTAB:				return pCEditWnd->m_cTabWnd.GetHwnd() != nullptr;	//@@@ 2003.06.10 MIK
-	case F_SHOWSTATUSBAR:		return pCEditWnd->m_cStatusBar.GetStatusHwnd() != nullptr;
-	case F_SHOWMINIMAP:			return pCEditWnd->GetMiniMap().GetHwnd() != nullptr;
+	case F_SHOWTOOLBAR:			return GetEditWnd().m_cToolbar.GetToolbarHwnd() != nullptr;
+	case F_SHOWFUNCKEY:			return GetEditWnd().m_cFuncKeyWnd.GetHwnd() != nullptr;
+	case F_SHOWTAB:				return GetEditWnd().m_cTabWnd.GetHwnd() != nullptr;	//@@@ 2003.06.10 MIK
+	case F_SHOWSTATUSBAR:		return GetEditWnd().m_cStatusBar.GetStatusHwnd() != nullptr;
+	case F_SHOWMINIMAP:			return GetEditWnd().GetMiniMap().GetHwnd() != nullptr;
 	// 2008.05.30 nasukoji	テキストの折り返し方法
 	case F_TMPWRAPNOWRAP:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP );		// 折り返さない
 	case F_TMPWRAPSETTING:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_SETTING_WIDTH );		// 指定桁で折り返す
 	case F_TMPWRAPWINDOW:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH );		// 右端で折り返す
 	// 2009.07.06 syat  文字カウント方法
-	case F_SELECT_COUNT_MODE:	return ( pCEditWnd->m_nSelectCountMode == SELECT_COUNT_TOGGLE ?
-											pShareData->m_Common.m_sStatusbar.m_bDispSelCountByByte != FALSE :
-											pCEditWnd->m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
+	case F_SELECT_COUNT_MODE:
+		return SELECT_COUNT_TOGGLE == GetEditWnd().m_nSelectCountMode
+			? pShareData->m_Common.m_sStatusbar.m_bDispSelCountByByte
+			: SELECT_COUNT_BY_BYTE == GetEditWnd().m_nSelectCountMode;
 	// Mar. 6, 2002 genta
 	case F_VIEWMODE:			return CAppMode::getInstance()->IsViewMode(); //ビューモード
 	//	From Here 2003.06.23 Moca
@@ -1304,7 +1306,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	case F_CHGMOD_INS:			return pcEditDoc->m_cDocEditor.IsInsMode();	//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
 	case F_TOGGLE_KEY_SEARCH:	return pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord != FALSE;	//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
 	case F_BIND_WINDOW:			return ((pShareData->m_Common.m_sTabBar.m_bDispTabWnd) && !(pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin));	//2004.07.14 Kazika 追加
-	case F_TOPMOST:				return ((DWORD)::GetWindowLongPtr( pCEditWnd->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST) != 0;	// 2004.09.21 Moca
+	case F_TOPMOST:				return ((DWORD)::GetWindowLongPtr( GetEditWnd().GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST) != 0;	// 2004.09.21 Moca
 	// Jan. 10, 2004 genta インクリメンタルサーチ
 	case F_ISEARCH_NEXT:
 	case F_ISEARCH_PREV:
