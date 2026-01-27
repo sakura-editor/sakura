@@ -1337,27 +1337,21 @@ bool CMacro::HandleCommand(
 		}
 		break;
 	case F_COMMITUNDOBUFFER:
-		{
-			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk ){
-				int nCount = opeBlk->GetRefCount();
-				opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
-				pcEditView->SetUndoBuffer();
-				if( pcEditView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
-					pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
-					pcEditView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
-				}
+		if (auto opeBlk = GetOpeBlk()) {
+			int nCount = opeBlk->GetRefCount();
+			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
+			pcEditView->SetUndoBuffer();
+			if (!GetOpeBlk() && 0 < nCount) {
+				SetOpeBlk(new COpeBlk());
+				GetOpeBlk()->SetRefCount( nCount );
 			}
 		}
 		break;
 	case F_ADDREFUNDOBUFFER:
-		{
-			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk == nullptr ){
-				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
-			}
-			pcEditView->m_cCommander.GetOpeBlk()->AddRef();
+		if (auto opeBlk = GetOpeBlk(); !opeBlk) {
+			SetOpeBlk(new COpeBlk());
 		}
+		GetOpeBlk()->AddRef();
 		break;
 	case F_SETUNDOBUFFER:
 		{
@@ -1366,11 +1360,11 @@ bool CMacro::HandleCommand(
 		break;
 	case F_APPENDUNDOBUFFERCURSOR:
 		{
-			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk == nullptr ){
-				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
+			auto opeBlk = GetOpeBlk();
+			if (!opeBlk) {
+				SetOpeBlk(new COpeBlk());
 			}
-			opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+			opeBlk = GetOpeBlk();
 			opeBlk->AddRef();
 			opeBlk->AppendOpe(
 				new CMoveCaretOpe(

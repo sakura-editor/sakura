@@ -19,10 +19,10 @@ void CDocVisitor::SetAllEol(CEol cEol)
 
 	//アンドゥ記録開始
 	if(!pcView->m_bDoing_UndoRedo){
-		if(pcView->m_cCommander.GetOpeBlk() == nullptr){
-			pcView->m_cCommander.SetOpeBlk(new COpeBlk());
+		if (GetOpeBlk() == nullptr){
+			SetOpeBlk(new COpeBlk());
 		}
-		pcView->m_cCommander.GetOpeBlk()->AddRef();
+		GetOpeBlk()->AddRef();
 	}
 
 	//カーソル位置記憶
@@ -36,7 +36,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	//改行コードを統一する
 	if(cEol.IsValid()){
 		CLogicInt	nLine = CLogicInt(0);
-		COpeBlk* pcOpeBlk = pcView->m_bDoing_UndoRedo ? nullptr : pcView->m_cCommander.GetOpeBlk();
+		COpeBlk* pcOpeBlk = pcView->m_bDoing_UndoRedo ? nullptr : GetOpeBlk();
 		for (;;) {
 			CDocLine* pcDocLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLine); //#######非効率
 			if(!pcDocLine)break;
@@ -72,14 +72,14 @@ void CDocVisitor::SetAllEol(CEol cEol)
 		}
 	}
 	//アンドゥ記録
-	if(pcView->m_cCommander.GetOpeBlk()){
-		if(pcView->m_cCommander.GetOpeBlk()->GetNum()>0){
+	if(GetOpeBlk()){
+		if(GetOpeBlk()->GetNum()>0){
 			// カーソル位置復元
 			pcView->GetTextArea().SetViewTopLine(nViewTopLine);
 			pcView->GetTextArea().SetViewLeftCol(nViewLeftCol);
 			pcView->GetCaret().MoveCursor( ptCaretPosXY, true );
 			pcView->GetCaret().m_nCaretPosX_Prev = nCaretPosX_Prev;
-			pcView->m_cCommander.GetOpeBlk()->AppendOpe(
+			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					pcView->GetCaret().GetCaretLogicPos()
 				)

@@ -281,14 +281,14 @@ void CViewCommander::Command_UNDO( void )
 	}
 
 	{
-		COpeBlk* opeBlk = m_pCommanderView->m_cCommander.GetOpeBlk();
+		COpeBlk* opeBlk = GetOpeBlk();
 		if( opeBlk ){
 			int nCount = opeBlk->GetRefCount();
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 			m_pCommanderView->SetUndoBuffer();
-			if( m_pCommanderView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
-				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
-				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
+			if( GetOpeBlk() == nullptr && 0 < nCount ){
+				SetOpeBlk(new COpeBlk());
+				GetOpeBlk()->SetRefCount( nCount );
 			}
 		}
 	}
@@ -541,14 +541,14 @@ void CViewCommander::Command_REDO( void )
 	}
 
 	{
-		COpeBlk* opeBlk = m_pCommanderView->m_cCommander.GetOpeBlk();
+		COpeBlk* opeBlk = GetOpeBlk();
 		if( opeBlk ){
 			int nCount = opeBlk->GetRefCount();
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 			m_pCommanderView->SetUndoBuffer();
-			if( m_pCommanderView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
-				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
-				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
+			if( GetOpeBlk() == nullptr && 0 < nCount ){
+				SetOpeBlk(new COpeBlk());
+				GetOpeBlk()->SetRefCount( nCount );
 			}
 		}
 		// 注意：Opeを追加するとRedoはできなくなる

@@ -167,10 +167,10 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 							// →ドロップ先は外部のウィンドウである
-							if( nullptr == m_cCommander.GetOpeBlk() ){
-								m_cCommander.SetOpeBlk(new COpeBlk);
+							if( nullptr == GetOpeBlk() ){
+								SetOpeBlk(new COpeBlk);
 							}
-							m_cCommander.GetOpeBlk()->AddRef();
+							GetOpeBlk()->AddRef();
 
 							// 選択範囲を削除
 							DeleteData( true );
@@ -1848,10 +1848,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 
 	// アンドゥバッファの準備
-	if( nullptr == m_cCommander.GetOpeBlk() ){
-		m_cCommander.SetOpeBlk(new COpeBlk);
+	if( nullptr == GetOpeBlk() ){
+		SetOpeBlk(new COpeBlk);
 	}
-	m_cCommander.GetOpeBlk()->AddRef();
+	GetOpeBlk()->AddRef();
 
 	/* 移動の場合、位置関係を算出 */
 	if( bMove ){
@@ -2029,7 +2029,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				GetSelectionInfo().m_sSelect.GetFrom(),
 				&ptBefore
 			);
-			m_cCommander.GetOpeBlk()->AppendOpe(
+			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					sDelLogic.GetFrom(),
 					GetCaret().GetCaretLogicPos()
