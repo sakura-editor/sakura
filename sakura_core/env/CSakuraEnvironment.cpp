@@ -88,7 +88,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 */
 void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen)
 {
-	const CEditDoc* pcDoc = CEditDoc::getInstance(); //###
+	const CEditDoc* pcDoc = GetDocument(); //###
 
 	// Apr. 03, 2003 genta 固定文字列をまとめる
 	const std::wstring	PRINT_PREVIEW_ONLY		= LS( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
@@ -605,14 +605,14 @@ const wchar_t* CSakuraEnvironment::_ExParam_SkipCond(const wchar_t* pszSource, i
 */
 int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 {
-	const CEditDoc* pcDoc = CEditDoc::getInstance(); //###
+	const CEditDoc* pcDoc = GetDocument(); //###
 
 	switch( *pCond ){
 	case L'R': // $R ビューモードおよび読み取り専用属性
 		if( CAppMode::getInstance()->IsViewMode() ){
 			return 0; // ビューモード
 		}
-		else if( !CEditDoc::getInstance()->m_cDocLocker.IsDocWritable() ){
+		else if( !GetDocument()->m_cDocLocker.IsDocWritable() ){
 			return 1; // 上書き禁止
 		}
 		else{
@@ -682,7 +682,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 */
 std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
-	CEditDoc* pcDoc = CEditDoc::getInstance(); //######
+	CEditDoc* pcDoc = GetDocument(); //######
 	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		return pcDoc->m_cDocFile.GetFilePathClass().GetDirPath();
 	}

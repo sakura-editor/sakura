@@ -13,6 +13,6 @@
 
 BOOL CMiniMapView::Create( HWND hWndParent )
 {
-	auto pcEditDoc = CEditDoc::getInstance();
+	auto pcEditDoc = GetDocument();
 	return CEditView::Create( hWndParent, pcEditDoc, -1, FALSE, true );
 }

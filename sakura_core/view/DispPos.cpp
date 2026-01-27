@@ -25,6 +25,6 @@ void DispPos::ForwardLayoutLineRef(int nOffsetLine)
 		}
 	}
 	else{
-		m_pcLayoutRef = CEditDoc::getInstance()->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
+		m_pcLayoutRef = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
 	}
 }

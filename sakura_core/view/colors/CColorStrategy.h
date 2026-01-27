@@ -147,7 +147,7 @@ public:
 	//! 設定更新
 	virtual void Update(void)
 	{
-		const CEditDoc* pCEditDoc = CEditDoc::getInstance();
+		const CEditDoc* pCEditDoc = GetDocument();
 		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 	}
 
