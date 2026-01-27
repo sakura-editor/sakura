@@ -400,10 +400,7 @@ void CViewCommander::Command_Favorite( void )
 	CDlgFavorite	cDlgFavorite;
 
 	//ダイアログを表示する
-	if( !cDlgFavorite.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
-	{
-		return;
-	}
+	cDlgFavorite.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), LPARAM(GetDocument()) );
 
 	return;
 }
