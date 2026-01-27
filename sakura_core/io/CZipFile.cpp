@@ -4,179 +4,127 @@
 */
 /*
 	Copyright (C) 2011, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include <shellapi.h>
-#include "CZipFile.h"
-#include "basis/CMyString.h"
+#include "io/CZipFile.h"
 
 // コンストラクタ
 CZipFile::CZipFile() {
-	HRESULT		hr;
-
-	hr = CoCreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER, IID_IShellDispatch, reinterpret_cast<void **>(&psd));
-	if (FAILED(hr)) {
-		psd = nullptr;
+	if (const auto hr = m_pShellDispatch.CreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER); FAILED(hr)) {
+		m_pShellDispatch = nullptr;
 	}
-	pZipFile = nullptr;
 }
 
 // デストラクタ
-CZipFile::~CZipFile() {
-	if (pZipFile != nullptr) {
-		pZipFile->Release();
-		pZipFile = nullptr;
-	}
-	psd = nullptr;
-}
+CZipFile::~CZipFile() = default;
 
 // Zip File名 設定
-bool CZipFile::SetZip(const std::wstring& sZipPath)
+bool CZipFile::SetZip(const std::filesystem::path& zipPath)
 {
-	HRESULT			hr;
-	VARIANT			var;
-
-	if (pZipFile != nullptr) {
-		pZipFile->Release();
-		pZipFile = nullptr;
-	}
+	m_pZipFolder = nullptr;
 
 	// ZIP Folder設定
-	VariantInit(&var);
-	var.vt = VT_BSTR;
-	var.bstrVal = SysAllocString(sZipPath.c_str());
-	hr = psd->NameSpace(var, &pZipFile);
-	if (hr != S_OK) {
-		pZipFile = nullptr;
+	_variant_t var(zipPath.c_str());
+	if (const auto hr = m_pShellDispatch->NameSpace(var, &m_pZipFolder); hr != S_OK) {
+		m_pZipFolder = nullptr;
 		return false;
 	}
 
-	sZipName = sZipPath;
+	m_ZipPath = zipPath;
 
 	return true;
 }
 
 // ZIP File 内 フォルダー名取得と定義ファイル検査(Plugin用)
-bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName)
+bool CZipFile::ChkPluginDef(std::wstring_view sDefFile, std::wstring& sFolderName)
 {
-	HRESULT			hr;
-	VARIANT			vari;
-	FolderItems*	pZipFileItems;
-	long			lCount;
-	bool			bFoundDef = false;
-
 	sFolderName.clear();
 
+	if (!m_pZipFolder) {
+		return false;
+	}
+
 	// ZIP File List
-	hr = pZipFile->Items(&pZipFileItems);
-	if (hr != S_OK) {
-		pZipFile->Release();
+	cxx::com_pointer<FolderItems> pZipFileItems = nullptr;
+	if (const auto hr = m_pZipFolder->Items(&pZipFileItems); FAILED(hr)) {
+		m_pZipFolder = nullptr;
 		return false;
 	}
 
 	// 検査
-	hr = pZipFileItems->get_Count(&lCount);
-	VariantInit(&vari);
-	vari.vt = VT_I4;
-	for (vari.lVal = 0; vari.lVal < lCount; vari.lVal++) {
-		BSTR			bps;
-		VARIANT_BOOL	vFolder;
-		FolderItem*		pFileItem;
+	long lCount = 0;
+	if (const auto hr = pZipFileItems->get_Count(&lCount); hr != S_OK) {
+		return false;
+	}
 
-		hr = pZipFileItems->Item(vari, &pFileItem);
-		if (hr != S_OK) { continue; }
-		hr = pFileItem->get_Name(&bps);
-		if (hr != S_OK) { continue; }
-		hr = pFileItem->get_IsFolder(&vFolder);
-		if (hr != S_OK) { continue; }
-		if (vFolder) {
-			long			lCount2;
-			VARIANT			varj;
-			FolderItems*	pFileItems2;
-			Folder*			pFile;
+	for (_variant_t vari(long(0), VT_I4); vari.lVal <= lCount; ++vari.lVal) {
+		cxx::com_pointer<FolderItem> pFileItem = nullptr;
+		_bstr_t buffer;
+		VARIANT_BOOL isFolder;
+		cxx::com_pointer<FolderItems> pFileItems2 = nullptr;
+		cxx::com_pointer<Folder> pFile = nullptr;
+		long lCount2 = 0;
 
-			sFolderName = bps;	// Install Follder Name
-			hr = pFileItem->get_GetFolder((IDispatch **)&pFile);
-			if (hr != S_OK) { continue; }
-			hr = pFile->Items(&pFileItems2);
-			if (hr != S_OK) { continue; }
-			hr = pFileItems2->get_Count(&lCount2);
-			if (hr != S_OK) { continue; }
-			varj.vt = VT_I4;
-			for (varj.lVal = 0; varj.lVal < lCount2; varj.lVal++) {
-				hr = pFileItems2->Item(varj, &pFileItem);
-				if (hr != S_OK) { continue; }
-				hr = pFileItem->get_IsFolder(&vFolder);
-				if (hr != S_OK) { continue; }
-				hr = pFileItem->get_Path(&bps);
-				if (hr != S_OK) { continue; }
+		if (FAILED(pZipFileItems->Item(vari, &pFileItem)) ||
+			FAILED(pFileItem->get_Name(buffer.GetAddress())) ||
+			FAILED(pFileItem->get_IsFolder(&isFolder)) ||
+			!isFolder ||
+			FAILED(pFileItem->get_GetFolder((IDispatch**)&pFile)) ||
+			FAILED(pFile->Items(&pFileItems2)) ||
+			FAILED(pFileItems2->get_Count(&lCount2)))
+		{
+			continue;
+		}
 
-				// 定義ファイルか
-				if (!vFolder && wcslen(bps) >= sDefFile.length()
-					&& (wmemicmp(bps, ((sFolderName + L"/" + sDefFile).c_str())) == 0
-					|| wmemicmp(bps, ((sFolderName + L"\\" + sDefFile).c_str())) == 0
-					|| wmemicmp(bps, ((sZipName + L"\\" + sFolderName + L"\\" + sDefFile).c_str())) == 0)) {
-					bFoundDef = true;
-					break;
-				}
+		sFolderName = buffer;
+
+		for (_variant_t varj(long(0), VT_I4); varj.lVal < lCount2; ++varj.lVal) {
+			if (FAILED(pFileItems2->Item(varj, &pFileItem)) ||
+				FAILED(pFileItem->get_IsFolder(&isFolder)) ||
+				isFolder ||
+				FAILED(pFileItem->get_Name(buffer.GetAddress())))
+			{
+				continue;
 			}
-			VariantClear(&varj);
-			if (bFoundDef) {
-				break;
+
+			// 定義ファイルか
+			if (0 == wmemicmp(buffer, std::data(sDefFile))) {
+				return true;
 			}
 		}
 	}
-	VariantClear(&vari);
 
-	pZipFileItems->Release();
-
-	return bFoundDef;
+	return false;
 }
 
 // ZIP File 解凍
-bool CZipFile::Unzip(const std::wstring sOutPath)
+bool CZipFile::Unzip(const std::filesystem::path& outDir)
 {
-	HRESULT			hr;
-	VARIANT			var;
-	VARIANT			varOpt;
-	Folder*			pOutFolder;
-	FolderItems*	pZipFileItems;
+	if (!m_pZipFolder) {
+		return false;
+	}
 
 	// ZIP File List
-	hr = pZipFile->Items(&pZipFileItems);
-	if (hr != S_OK) {
-		pZipFile->Release();
+	cxx::com_pointer<FolderItems> pZipFileItems = nullptr;
+	if (const auto hr = m_pZipFolder->Items(&pZipFileItems); FAILED(hr)) {
+		m_pZipFolder = nullptr;
 		return false;
 	}
 
 	// 出力Folder設定
-	VariantInit(&var);
-	var.vt = VT_BSTR;
-	var.bstrVal = SysAllocString(sOutPath.c_str());
-	hr = psd->NameSpace(var, &pOutFolder);
-	VariantClear(&var);
-	if (hr != S_OK) {
-		pZipFileItems->Release();
-		pZipFile->Release();
+	cxx::com_pointer<Folder> pOutFolder = nullptr;
+	_variant_t var(outDir.c_str());
+	if (const auto hr = m_pShellDispatch->NameSpace(var, &pOutFolder); hr != S_OK) {
 		return false;
 	}
 
 	// 展開の設定
-	VariantInit(&var);
-	var.vt = VT_DISPATCH;
-	var.pdispVal = pZipFileItems;
-	VariantInit(&varOpt);
-	varOpt.vt = VT_I4;
-	varOpt.lVal = FOF_SILENT | FOF_NOCONFIRMATION;
+	var = _variant_t(LPDISPATCH(pZipFileItems), true);
+	_variant_t varOpt(long(FOF_SILENT | FOF_NOCONFIRMATION), VT_I4);
 
 	// 展開
-	hr = pOutFolder->CopyHere(var, varOpt);
-
-	pOutFolder->Release();
-	pZipFileItems->Release();
-
-	return (hr == S_OK);
+	return SUCCEEDED(pOutFolder->CopyHere(var, varOpt));
 }

@@ -172,6 +172,7 @@
 #include <imm.h>
 #include <oaidl.h>
 #include <shellapi.h>
+#include <ShlDisp.h>
 #include <ShlObj.h>
 #include <Uxtheme.h>
 #include <vsstyle.h>

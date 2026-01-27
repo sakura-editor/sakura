@@ -1,6 +1,6 @@
 ﻿/*!	@file */
 /*
-	Copyright (C) 2025, Sakura Editor Organization
+	Copyright (C) 2025-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
  */
@@ -42,18 +42,21 @@ public:
 		DWORD dwClsContext = CLSCTX_INPROC_SERVER
 	) noexcept
     {
-		// 以前のインターフェースを解放する
-		m_pInterface.Reset();
-
 		// SDK関数を使ってインスタンスを作成する
-		Microsoft::WRL::ComPtr<IUnknown> pUnknown;
-		_com_util::CheckError(CoCreateInstance(rclsid, pOuter, dwClsContext, IID_PPV_ARGS(&pUnknown)));
-
-		// 生成したIUnknownから希望のインターフェースを取得する
-		_com_util::CheckError(pUnknown.As(&m_pInterface));
-
+		// （operator&()を呼び出した時点で以前のインターフェースを解放される）
+		if (FAILED(::CoCreateInstance(rclsid, pOuter, dwClsContext, IID_PPV_ARGS(operator&()))))
+		{
+			// 失敗時はIUnknownを指定して1回だけリトライする
+			Microsoft::WRL::ComPtr<IUnknown> pUnknown;
+			const auto hr = ::CoCreateInstance(rclsid, pOuter, dwClsContext, IID_PPV_ARGS(&pUnknown));
+			if (SUCCEEDED(hr)) {
+				// 生成したIUnknownから希望のインターフェースを取得する
+				return pUnknown.As(&m_pInterface);
+			}
+			return hr;
+		}
 		return S_OK;
-    }
+	}
 
 	Interface* Detach()
     {

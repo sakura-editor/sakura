@@ -77,7 +77,7 @@ set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 # Convert RC files to UTF-8 for MinGW and clang-cl
 if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
   convert_rc_files_to_utf8(TESTS1_RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
-endif(MINGW)
+endif()
 
 # Create a custom target for test_resource_zip generation
 add_custom_target(test_resource_zip

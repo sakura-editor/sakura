@@ -56,6 +56,8 @@ void	GetInidirOrExedir(std::span<WCHAR> szIniOrExeDir, const std::optional<std::
 
 LPCWSTR GetRelPath( LPCWSTR pszPath );
 
+std::filesystem::path GetTempFilePath(std::wstring_view prefix, const std::optional<std::filesystem::path>& optTempDir = std::nullopt);
+
 //ファイル時刻
 class CFileTime{
 public:

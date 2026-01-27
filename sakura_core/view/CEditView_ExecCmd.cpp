@@ -190,12 +190,10 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	// 一時ファイル属性でオープンすることに。
 	HANDLE hStdIn = nullptr;
 	if(bSendStdin){	/* 現在編集中のファイルを子プロセスの標準入力へ */
-		WCHAR		szPathName[MAX_PATH];
-		WCHAR		szTempFileName[MAX_PATH];
+		SFilePath szTempFileName;
+		szTempFileName = GetTempFilePath(L"skr");
 
-		GetTempPath( MAX_PATH, szPathName );
-		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
-		DEBUG_TRACE( L"CEditView::ExecCmd() TempFilename=[%s]\n", szTempFileName );
+		DEBUG_TRACE(L"CEditView::ExecCmd() TempFilename=[%s]\n", szTempFileName.c_str());
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 

@@ -60,7 +60,7 @@ TEST_F(TrayWndTest, OnGetTypeSetting001)
 
 	HWND hWndTray = nullptr;
 	int index = 0;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, index, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, index, 0), IsTrue());
 
 	// 結果確認
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_nIdx, Eq(index));
@@ -70,33 +70,33 @@ TEST_F(TrayWndTest, OnGetTypeSetting102)
 {
 	// 取得の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, GetDllShareData().m_nTypesCount, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, GetDllShareData().m_nTypesCount, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting001)
 {
 	// テキストの前に追加
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, 0), IsTrue());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting002)
 {
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, 0), IsTrue());
 
 	auto typeName = std::format(L"設定{}", 2);
 	if (typeName != GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName) {
 		// 受け渡しバッファに値を設定
 		::wcscpy_s(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, typeName.c_str());
 
-		EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, NULL), IsTrue());
+		EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, 0), IsTrue());
 	}
 
 	// 重複する名前を追加
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, 0), IsTrue());
 
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, 0), IsTrue());
 
 	typeName = std::format(L"設定{}", 3);
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(typeName));
@@ -106,14 +106,14 @@ TEST_F(TrayWndTest, OnAddTypeSetting101)
 {
 	// 追加の空振り(基本の前には入れない)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 0, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 0, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting102)
 {
 	// 追加の空振り(上限値オーバー、「指定したインデックスの前」なので他と上限が違う)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount + 1, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount + 1, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting103)
@@ -124,7 +124,7 @@ TEST_F(TrayWndTest, OnAddTypeSetting103)
 
 	// 追加の空振り(もう追加できない)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount - 1, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount - 1, 0), IsFalse());
 
 	// 数を元に戻す
 	GetDllShareData().m_nTypesCount = defaultCount;
@@ -137,12 +137,12 @@ TEST_F(TrayWndTest, OnSetTypeSetting001)
 
 	// 更新してみる
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, 0), IsTrue());
 
 	// 受け取りバッファに値を設定
 	::wcscpy_s(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, L"");
 
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, 0), IsTrue());
 
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(L"テスト"));
 }
@@ -154,12 +154,12 @@ TEST_F(TrayWndTest, OnSetTypeSetting002)
 
 	// 更新してみる
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 0, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 0, 0), IsTrue());
 
 	// 受け取りバッファに値を設定
 	::wcscpy_s(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, L"");
 
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 0, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 0, 0), IsTrue());
 
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(L"テスト"));
 }
@@ -168,28 +168,28 @@ TEST_F(TrayWndTest, OnSetTypeSetting102)
 {
 	// 更新の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, GetDllShareData().m_nTypesCount, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, GetDllShareData().m_nTypesCount, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnDelTypeSetting001)
 {
 	// 削除してみる
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 8, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 8, 0), IsTrue());
 }
 
 TEST_F(TrayWndTest, OnDelTypeSetting101)
 {
 	// 削除の空振り(0は削除させない)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 0, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 0, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnDelTypeSetting102)
 {
 	// 削除の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, GetDllShareData().m_nTypesCount, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, GetDllShareData().m_nTypesCount, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnChangeSetting001)

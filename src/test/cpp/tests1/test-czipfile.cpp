@@ -16,6 +16,8 @@
 
 #include <miniz-cpp/zip_file.hpp>
 
+#include "util/file.h"
+
 #include "tests1_rc.h"
 #include "rt_zipres.h"
 
@@ -54,38 +56,17 @@ bool WriteBinaryToFile(BinarySequenceView bin, std::filesystem::path path)
 }
 
 /*!
-	新しいテンポラリファイルパスを生成する
-	Windows APIが生成したパスを開いて閉じるため、呼ぶとファイルが生成される
-
-	生成されるパスの形式は以下の通り。
-	C:\Users\berryzplus\AppData\Local\Temp\tesC85A.tmp
-
-	@param [in] prefix ファイル名の前に付ける3文字の接頭辞。
+ * 新しいテンポラリファイルパスを生成する
+ * （拡張子を指定できる特殊バージョン）
+ *
+ * CZipFileが依存するIShellDispatchのZIP展開機能には
+ * 拡張子がzipでないアーカイブを解凍できない
+ * の制約があるためで作成した。
+ * 
+ * @param [in] prefix ファイル名の前に付ける3文字の接頭辞。
+ * @param [in] extension ファイルの拡張子（.zipを指定する）。
  */
-std::filesystem::path GetTempFilePath(std::wstring_view prefix)
-{
-	// 一時フォルダーのパスを取得する
-	const std::wstring tempDir = std::filesystem::temp_directory_path();
-
-	// パス生成に必要なバッファを確保する
-	// （一時フォルダーのパス＋接頭辞(3文字)＋4桁の16進数＋拡張子＋NUL終端）
-	std::wstring buf(tempDir.length() + 3 + 4 + 4 + 1, L'\0');
-
-	// Windows API関数を呼び出す。
-	// （オーバーフローしないので、エラーチェック省略）
-	constexpr uint16_t uUnique = 0;
-	::GetTempFileNameW(tempDir.c_str(), prefix.data(), uUnique, buf.data());
-
-	return buf.c_str();
-}
-
-/*!
-	新しいテンポラリファイルパスを生成する
-	（拡張子を指定できるオーバーロード版）
-
-	@param [in] prefix ファイル名の前に付ける3文字の接頭辞。
- */
-std::filesystem::path GetTempFilePath(std::wstring_view prefix, std::wstring_view extension)
+std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension)
 {
 	// 1回だけリトライする
 	for (auto n = 0; n <= 1; ++n) {
@@ -156,7 +137,7 @@ void extract_zip_resource(
 )
 {
 	// 一時ファイル名を生成する
-	auto tempPath = GetTempFilePath(L"tes", L"zip");
+	auto tempPath = GetTempFilePath(L"tes");
 
 	// リソースからzipファイルデータを抽出する
 	const auto bin = cxx::lock_resource<std::byte>(
@@ -180,12 +161,12 @@ void extract_zip_resource(
 /*!
  * @brief CZipFIleのテスト
  */
-TEST(CZipFIle, IsNG)
+TEST(CZipFile, IsNG)
 {
 	// IShellDispatchを使うためにOLEを初期化する必要がある
 	// このテストでは初期化を忘れた場合の挙動を確認する
 	CZipFile cZipFile;
-	ASSERT_FALSE(cZipFile.IsOk());
+	EXPECT_FALSE(cZipFile.IsOk());
 
 	// この場合、他のメソッドを呼び出すと落ちる。
 }
@@ -193,7 +174,7 @@ TEST(CZipFIle, IsNG)
 /*!
  * @brief CZipFIleのテスト
  */
-TEST(CZipFIle, CZipFIle)
+TEST(CZipFile, CZipFIle)
 {
 	// IShellDispatchを使うためにOLEを初期化する
 	if (FAILED(::OleInitialize(nullptr))) {
@@ -204,9 +185,14 @@ TEST(CZipFIle, CZipFIle)
 		CZipFile cZipFile;
 		ASSERT_TRUE(cZipFile.IsOk());
 
+		std::wstring folderName;
+		EXPECT_FALSE(cZipFile.ChkPluginDef(L"plugin.def", folderName));
+
+		EXPECT_FALSE(cZipFile.Unzip(L"out"));
+
 		// 一時ファイル名を生成する
 		// zipファイルパスの拡張子はzipにしないと動かない。
-		auto tempPath = GetTempFilePath(L"tes", L"zip");
+		auto tempPath = GetTempFilePathWithExt(L"tes", L"zip");
 
 		// リソースからzipファイルデータを抽出して一時ファイルに書き込む
 		const auto bin = cxx::lock_resource<std::byte>(
@@ -221,27 +207,27 @@ TEST(CZipFIle, CZipFIle)
 		ASSERT_TRUE(std::filesystem::exists(tempPath));
 
 		// zipファイルパスを設定する
-		ASSERT_TRUE(cZipFile.SetZip(tempPath.c_str()));
+		EXPECT_TRUE(cZipFile.SetZip(tempPath.c_str()));
 
-		// Azure PipelinesとGitHub Actionsで機能しないため、以下テスト省略。
-		//// プラグイン設定があるかチェックする
-		//std::wstring folderName;
-		//ASSERT_TRUE(cZipFile.ChkPluginDef(L"plugin.def", folderName));
-		std::wstring folderName = L"test-plugin";
+		// プラグイン設定があるかチェックする
+		EXPECT_TRUE(cZipFile.ChkPluginDef(L"plugin.def", folderName));
 
 		// zipファイルを解凍する
 		// 展開自体はWindowsの機能なので、展開後パスの存在チェックのみ行う
 		const auto dest = std::filesystem::current_path().append(L"unzipped").append(L"");
 		std::filesystem::create_directories(dest);
-		ASSERT_TRUE(cZipFile.Unzip(dest.c_str()));
-		ASSERT_TRUE(std::filesystem::exists(dest / folderName.c_str() / L"plugin.def"));
+		EXPECT_TRUE(cZipFile.Unzip(dest.c_str()));
+		EXPECT_TRUE(std::filesystem::exists(dest / folderName.c_str() / L"plugin.def"));
 		std::filesystem::remove_all(dest);
 
+		// 意図的に失敗させる
+		EXPECT_FALSE(cZipFile.Unzip(GetExeFileName()));
+
 		// zipファイルパスをクリアする
-		ASSERT_TRUE(cZipFile.SetZip(L""));
+		EXPECT_TRUE(cZipFile.SetZip(L""));
 
 		// 存在しないzipファイルパスを設定する
-		ASSERT_FALSE(cZipFile.SetZip(L"not found"));
+		EXPECT_FALSE(cZipFile.SetZip(L"not found"));
 
 		// 作成した一時ファイルを削除する
 		std::filesystem::remove(tempPath);

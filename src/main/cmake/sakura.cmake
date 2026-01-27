@@ -458,6 +458,7 @@ target_compile_features(sakura_core PUBLIC cxx_std_20)
 
 # Add include directories for sakura_core
 target_include_directories(sakura_core
+  SYSTEM
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 )

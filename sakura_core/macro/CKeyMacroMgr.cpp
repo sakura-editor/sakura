@@ -27,6 +27,9 @@
 #include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include "io/CTextStream.h"
+
+#include "util/file.h"
+
 #include "CSelectLang.h"
 #include "mem/CNativeW.h"
 
@@ -437,10 +440,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 {
 	// 一時ファイル名を作成
-	WCHAR szTempDir[_MAX_PATH];
-	WCHAR szTempFile[_MAX_PATH];
-	if( 0 == ::GetTempPath( _MAX_PATH, szTempDir ) )return FALSE;
-	if( 0 == ::GetTempFileName( szTempDir, L"mac", 0, szTempFile ) )return FALSE;
+	SFilePath szTempFile;
+	szTempFile = GetTempFilePath(L"mac");
+
 	// 一時ファイルに書き込む
 	CTextOutputStream out = CTextOutputStream( szTempFile );
 	out.WriteString( pszCode );
