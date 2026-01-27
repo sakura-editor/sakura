@@ -19,10 +19,6 @@ inline CEditDoc* CViewCommander::GetDocument()
 {
 	return m_pCommanderView->m_pcEditDoc;
 }
-inline HWND CViewCommander::GetMainWindow()
-{
-	return ::GetParent( m_pCommanderView->m_hwndParent );
-}
 inline COpeBlk* CViewCommander::GetOpeBlk()
 {
 	return GetDocument()->m_cDocEditor.m_pcOpeBlk;
