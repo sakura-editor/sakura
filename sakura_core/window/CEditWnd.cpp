@@ -188,6 +188,27 @@ CViewFont* GetViewFont(bool isMiniMap)
 	return GetEditWnd().GetViewFont(isMiniMap);
 }
 
+COpeBlk* GetOpeBlk()
+{
+	return GetEditDoc().m_cDocEditor.m_pcOpeBlk;
+}
+
+void SetOpeBlk(COpeBlk* p)
+{
+	GetEditDoc().m_cDocEditor.m_pcOpeBlk = p;
+	GetEditDoc().m_cDocEditor.m_nOpeBlkRedawCount = 0;
+}
+
+CCaret& GetCaret()
+{
+	return GetEditWnd().GetActiveView().GetCaret();
+}
+
+CLayoutRange& GetSelect()
+{
+	return GetEditWnd().GetActiveView().GetSelectionInfo().m_sSelect;
+}
+
 //	/* メッセージループ */
 //	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
 
