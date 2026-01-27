@@ -2597,7 +2597,6 @@ void CDlgFuncList::SyncColor( void )
 		return;
 #ifdef DEFINE_SYNCCOLOR
 	// テキスト色・背景色をビューと同色にする
-	CEditView* pcEditView = (CEditView*)m_lParam;
 	const STypeConfig	*TypeDataPtr = &(GetTypeConfig());
 	COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	COLORREF clrBack = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;

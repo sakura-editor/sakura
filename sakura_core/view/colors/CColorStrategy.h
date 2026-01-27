@@ -147,7 +147,6 @@ public:
 	//! 設定更新
 	virtual void Update(void)
 	{
-		const CEditDoc* pCEditDoc = GetDocument();
 		m_pTypeData = &GetTypeConfig();
 	}
 
