@@ -154,6 +154,16 @@ CEditDoc& GetEditDoc()
 	return *doc;
 }
 
+/*!
+ * ドキュメントのタイプ別設定を取得する
+ *
+ * @throws CEditDocが生成されていない
+ */
+const STypeConfig& GetTypeConfig()
+{
+	return GetEditDoc().m_cDocType.GetDocumentAttribute();
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
