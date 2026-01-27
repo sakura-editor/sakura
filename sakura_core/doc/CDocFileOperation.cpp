@@ -213,7 +213,7 @@ bool CDocFileOperation::SaveFileDialog(
 	{
 		LPCWSTR	szExt;
 
-		const STypeConfig& type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
+		const STypeConfig& type = GetTypeConfig();
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			szExt = L"";

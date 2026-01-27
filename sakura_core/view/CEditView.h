@@ -112,7 +112,7 @@ public:
 	//! 2010.10.03 背景実装
 	bool IsBkBitmap() const{
 		return nullptr != m_pcEditDoc->m_hBackImg
-			&& 0 != GetDocument()->m_cDocType.GetDocumentAttribute().m_backImgOpacity;
+			&& 0 != GetTypeConfig().m_backImgOpacity;
 	}
 
 public:

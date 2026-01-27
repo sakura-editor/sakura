@@ -26,7 +26,7 @@ public:
 	virtual void Update(void)
 	{
 		CEditDoc* pCEditDoc = GetDocument();
-		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
+		m_pTypeData = &GetTypeConfig();
 	}
 
 protected:

@@ -317,7 +317,7 @@ void CHokanMgr::HokanSearchByKeyword(
 	bool 			bHokanLoHiCase,
 	vector_ex<std::wstring>& 	vKouho
 ){
-	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& type = GetTypeConfig();
 	CKeyWordSetMgr& keywordMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 	const auto nKeyLen = int(wcslen(pszCurWord));
 	for( int n = 0; n < MAX_KEYWORDSET_PER_TYPE; n++ ){

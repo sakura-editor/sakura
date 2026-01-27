@@ -794,7 +794,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 
 	/* 印刷用のレイアウト情報の変更 */
 	// タイプ別設定をコピー
-	m_typePrint = GetDocument()->m_cDocType.GetDocumentAttribute();
+	m_typePrint = GetTypeConfig();
 	STypeConfig& ref = m_typePrint;
 
 	ref.m_nMaxLineKetas = 		m_bPreview_EnableColumns;
@@ -1468,7 +1468,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 			if( m_pPrintSetting->m_bPrintLineNumber ){
 				wchar_t		szLineNum[64];	//	行番号を入れる。
 				/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				if( GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
+				if( GetTypeConfig().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
 						::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
@@ -1482,9 +1482,9 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				}
 
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
-				if( 2 == GetDocument()->m_cDocType.GetDocumentAttribute().m_nLineTermType ){
+				if( 2 == GetTypeConfig().m_nLineTermType ){
 					wchar_t szLineTerm[2];
-					szLineTerm[0] = GetDocument()->m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
+					szLineTerm[0] = GetTypeConfig().m_cLineTermChar;	/* 行番号区切り文字 */
 					szLineTerm[1] = L'\0';
 					::wcsncat_s(szLineNum, szLineTerm, _TRUNCATE);
 				}
@@ -1547,7 +1547,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 
 		// 2006.08.14 Moca 行番号が縦線の場合は1度に引く
 		if( m_pPrintSetting->m_bPrintLineNumber &&
-				1 == GetDocument()->m_cDocType.GetDocumentAttribute().m_nLineTermType ){
+				1 == GetTypeConfig().m_nLineTermType ){
 			// 縦線は本文と行番号の隙間1桁の中心に作画する(画面作画では、右詰め)
 			::MoveToEx( hdc,
 				nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ),
@@ -1765,7 +1765,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	if (pcLayout) {
 		int textColorIndex = ToColorInfoArrIndex(COLORIDX_TEXT);
 		if (-1 != textColorIndex) {
-			const ColorInfo& info = GetDocument()->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[textColorIndex];
+			const ColorInfo& info = GetTypeConfig().m_ColorInfoArr[textColorIndex];
 			::SetTextColor(hdc, info.m_sColorAttr.m_cTEXT);
 //			::SetBkColor(hdc, info.m_colBACK);
 		}
@@ -1801,7 +1801,7 @@ void CPrintPreview::Print_DrawBlock(
 	// 色設定
 	if (pcLayout) {
 		if (-1 != nColorIdx) {
-			const ColorInfo& info = GetDocument()->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
+			const ColorInfo& info = GetTypeConfig().m_ColorInfoArr[nColorIdx];
 			if (nKind == 2 && !info.m_sFontAttr.m_bUnderLine) {
 				// TABは下線が無ければ印字不要
 				return;

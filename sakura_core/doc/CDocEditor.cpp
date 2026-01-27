@@ -61,7 +61,7 @@ void CDocEditor::OnBeforeLoad([[maybe_unused]] SLoadInfo* sLoadInfo)
 void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
-	const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& type = GetTypeConfig();
 
 	if (type.m_bDetectIndentationStyleOnFileLoad) {
 		// インデントスタイル検出
@@ -113,7 +113,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 	//	Nov. 20, 2000 genta
 	//	IME状態の設定
-	this->SetImeMode( pcDoc->m_cDocType.GetDocumentAttribute().m_nImeState );
+	this->SetImeMode( GetTypeConfig().m_nImeState );
 
 	// カレントディレクトリの変更
 	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );

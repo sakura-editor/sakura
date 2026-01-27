@@ -1595,13 +1595,13 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				nDataLen = CLogicInt(m);
 			}
 
-			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): Int(1);
+			nCharChars = (GetTypeConfig().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): Int(1);
 			pszData = new wchar_t[nDataLen + nCharChars + 1];
 			wmemcpy( pszData, pLine2, nDataLen );
 			if( WCODE::CR  == wcChar || L'{' == wcChar || L'(' == wcChar ){
 				// 2005.10.11 ryoji TABキーがSPACE挿入の設定なら追加インデントもSPACEにする
 				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
-				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
+				if( GetTypeConfig().m_bInsSpace ){	// SPACE挿入設定
 					int i;
 					CKetaXInt m = CKetaXInt(0);
 					i = 0;

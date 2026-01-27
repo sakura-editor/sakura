@@ -156,7 +156,7 @@ void CTextDrawer::DispVerticalLines(
 {
 	const CEditView* pView=m_pEditView;
 
-	const STypeConfig&	typeData = pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig&	typeData = GetTypeConfig();
 
 	CTypeSupport cVertType(pView,COLORIDX_VERTLINE);
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
@@ -343,7 +343,7 @@ void CTextDrawer::DispLineNumber(
 	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 
 	const CEditView* pView=m_pEditView;
-	const STypeConfig* pTypes=&pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* pTypes=&GetTypeConfig();
 
 	int				nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	int				nCharWidth = pView->GetTextMetrics().GetHankakuDx();

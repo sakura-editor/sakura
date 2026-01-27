@@ -547,7 +547,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	// 出力対象ビューのタイプ別設定(grepout固定)
-	const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& type = GetTypeConfig();
 
 	std::vector<std::wstring> vPaths;
 	CreateFolders( pcmGrepFolder->GetStringPtr(), vPaths );

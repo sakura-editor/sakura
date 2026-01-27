@@ -2071,7 +2071,7 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 					break;
 				case CDDS_ITEMPREPAINT:
 					{	// 選択アイテムを反転表示にする
-						const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+						const STypeConfig	*TypeDataPtr = &(GetTypeConfig());
 						COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 						COLORREF clrTextBk = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 						if( hwndList == pNMHDR->hwndFrom ){
@@ -2598,7 +2598,7 @@ void CDlgFuncList::SyncColor( void )
 #ifdef DEFINE_SYNCCOLOR
 	// テキスト色・背景色をビューと同色にする
 	CEditView* pcEditView = (CEditView*)m_lParam;
-	const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+	const STypeConfig	*TypeDataPtr = &(GetTypeConfig());
 	COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	COLORREF clrBack = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 

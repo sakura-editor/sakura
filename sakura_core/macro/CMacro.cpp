@@ -1666,7 +1666,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if( varCopy.Data.iVal < MINLINEKETAS || varCopy.Data.iVal > MAXLINEKETAS )
 				return true;
 			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
-			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
+			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == GetTypeConfig().m_nTextWrapMethod );
 			GetEditWnd().ChangeLayoutParam(
 				false, 
 				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),

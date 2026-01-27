@@ -217,7 +217,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	}
 	else{
 		// 存在しないときもドキュメントに文字コードを反映する
-		const STypeConfig& types = pcDoc->m_cDocType.GetDocumentAttribute();
+		const STypeConfig& types = GetTypeConfig();
 		pcDoc->m_cDocFile.SetCodeSet( sLoadInfo.eCharCode, 
 			( sLoadInfo.eCharCode == types.m_encoding.m_eDefaultCodetype ) ?
 				types.m_encoding.m_bDefaultBom : CCodeTypeName( sLoadInfo.eCharCode ).IsBomDefOn() );
@@ -227,14 +227,14 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
 	// 「右端で折り返す」は、この後のOnSize()で再設定される
-	const STypeConfig& ref = pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& ref = GetTypeConfig();
 	CKetaXInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
 		nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
 
 	// テキストの折り返し方法
 	// CLayoutMgr::CreateLayoutで参照されるのでここで設定
-	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
+	pcDoc->m_nTextWrapMethodCur = GetTypeConfig().m_nTextWrapMethod;
 
 	// ファイルを読んだらタブ位置を再計算
 	// この後のSetLayoutInfoの中でもCTsvModeInfo::CalcTabLengthを呼ぶ所があるが
@@ -264,7 +264,7 @@ void CLoadAgent::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 	pcDoc->m_nCommandExecNum=0;
 
 	// テキストの折り返し方法を初期化
-	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	pcDoc->m_nTextWrapMethodCur = GetTypeConfig().m_nTextWrapMethod;	// 折り返し方法
 	pcDoc->m_bTextWrapMethodCurTemp = false;													// 一時設定適用中を解除
 	pcDoc->m_blfCurTemp = false;
 	pcDoc->m_bTabSpaceCurTemp = false;

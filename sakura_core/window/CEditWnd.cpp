@@ -695,7 +695,7 @@ HWND CEditWnd::Create(
 	Timer_ONOFF( true );
 
 	//デフォルトのIMEモード設定
-	GetDocument()->m_cDocEditor.SetImeMode( GetDocument()->m_cDocType.GetDocumentAttribute().m_nImeState );
+	GetDocument()->m_cDocEditor.SetImeMode( GetTypeConfig().m_nImeState );
 
 	return GetHwnd();
 }
@@ -738,7 +738,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 
 	// 文字コードの指定	2008/6/14 Uchi
 	if( IsValidCodeType( nCharCode ) || nDocumentType.IsValidType() ){
-		const STypeConfig& types = GetDocument()->m_cDocType.GetDocumentAttribute();
+		const STypeConfig& types = GetTypeConfig();
 		ECodeType eDefaultCharCode = types.m_encoding.m_eDefaultCodetype;
 		if( !IsValidCodeType( nCharCode ) ){
 			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用
@@ -2495,7 +2495,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 						auto_snprintf_s(
 							szBuf, _TRUNCATE,
 							LS( STR_WRAP_WIDTH_FIXED ),	//L"折り返し桁数: %d 桁（指定）",
-							int((Int)GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas)
+							int((Int)GetTypeConfig().m_nMaxLineKetas)
 						);
 					}
 					m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel, pszKey );
@@ -2937,7 +2937,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		/* 現在の印刷設定 */
 		m_pPrintPreview->SetPrintSetting(
 			&m_pShareData->m_PrintSettingArr[
-				GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting]
+				GetTypeConfig().m_nCurrentPrintSetting]
 		);
 
 		//	プリンターの情報を取得。
@@ -3548,7 +3548,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	int					nCurrentPrintSetting;
 	int					nLineNumberColumns;
 
-	nCurrentPrintSetting = GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting;
+	nCurrentPrintSetting = GetTypeConfig().m_nCurrentPrintSetting;
 	if( m_pPrintPreview ){
 		nLineNumberColumns = GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate(m_pPrintPreview->m_pLayoutMgr_Print); // 印刷プレビュー時は文書の桁数 2013.5.10 aroka
 	}else{
@@ -3567,7 +3567,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	if( FALSE != bRes ){
 		bool bChangePrintSettingNo = false;
 		/* 現在選択されているページ設定の番号が変更されたか */
-		if( GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting != nCurrentPrintSetting )
+		if( GetTypeConfig().m_nCurrentPrintSetting != nCurrentPrintSetting )
 		{
 			/* 変更フラグ(タイプ別設定) */
 			STypeConfig* type = new STypeConfig();
@@ -3591,7 +3591,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 			/* 現在の印刷設定 */
 			// 2013.08.27 印刷設定番号が変更された時に対応できていなかった
 			if( bChangePrintSettingNo ){
-				m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
+				m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetTypeConfig().m_nCurrentPrintSetting] );
 			}
 
 			/* 印刷プレビュー スクロールバー初期化 */
@@ -4790,9 +4790,9 @@ const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting)
 	if( bTempSetting && GetDocument()->m_blfCurTemp ){
 		return GetDocument()->m_lfCur;
 	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	bool bUseTypeFont = GetTypeConfig().m_bUseTypeFont;
 	if( bUseTypeFont ){
-		return GetDocument()->m_cDocType.GetDocumentAttribute().m_lf;
+		return GetTypeConfig().m_lf;
 	}
 	return m_pShareData->m_Common.m_sView.m_lf;
 }
@@ -4802,9 +4802,9 @@ int CEditWnd::GetFontPointSize(bool bTempSetting)
 	if( bTempSetting && GetDocument()->m_blfCurTemp ){
 		return GetDocument()->m_nPointSizeCur;
 	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	bool bUseTypeFont = GetTypeConfig().m_bUseTypeFont;
 	if( bUseTypeFont ){
-		return GetDocument()->m_cDocType.GetDocumentAttribute().m_nPointSize;
+		return GetTypeConfig().m_nPointSize;
 	}
 	return m_pShareData->m_Common.m_sView.m_nPointSize;
 }
@@ -4813,7 +4813,7 @@ ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 	if( GetDocument()->m_blfCurTemp ){
 		return CWM_CACHE_LOCAL;
 	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	bool bUseTypeFont = GetTypeConfig().m_bUseTypeFont;
 	if( bUseTypeFont ){
 		return CWM_CACHE_LOCAL;
 	}

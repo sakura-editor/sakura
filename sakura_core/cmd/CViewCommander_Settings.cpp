@@ -437,7 +437,7 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 		break;
 
 	case WRAP_SETTING_WIDTH:	// 指定桁で折り返す
-		nWidth = pcDoc->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas;
+		nWidth = GetTypeConfig().m_nMaxLineKetas;
 		break;
 
 	case WRAP_WINDOW_WIDTH:		// 右端で折り返す
@@ -452,7 +452,7 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 	pcDoc->m_nTextWrapMethodCur = nWrapMethod;	// 設定を記憶
 
 	// 折り返し方法の一時設定適用／一時設定適用解除	// 2008.06.08 ryoji
-	pcDoc->m_bTextWrapMethodCurTemp = !( pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod == nWrapMethod );
+	pcDoc->m_bTextWrapMethodCurTemp = !( GetTypeConfig().m_nTextWrapMethod == nWrapMethod );
 
 	// 折り返し位置を変更
 	GetEditWnd().ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpaceKetas(), pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, nWidth );

@@ -227,7 +227,7 @@ BOOL CEditView::Create(
 
 	WNDCLASS	wc;
 	m_hwndParent = hwndParent;
-	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	m_pTypeData = &GetTypeConfig();
 	m_nMyIndex = nMyIndex;
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
@@ -1366,7 +1366,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				{
 					/* 機能種別によるバッファの変換 */
 					int nStartColumn = (Int)sPos.GetX2() / (Int)GetTextMetrics().GetLayoutXDefault();
-					CConversionFacade(m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColumn, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_encoding, GetCharWidthCache()).ConvMemory(nFuncCode, cmemBuf);
+					CConversionFacade(m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColumn, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, GetTypeConfig().m_encoding, GetCharWidthCache()).ConvMemory(nFuncCode, cmemBuf);
 
 					/* 現在位置にデータを挿入 */
 					CLayoutPoint ptLayoutNew;	// 挿入された部分の次の位置
@@ -1404,7 +1404,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 
 		/* 機能種別によるバッファの変換 */
 		int nStartColum = (Int)GetSelectionInfo().m_sSelect.GetFrom().GetX2() / (Int)GetTextMetrics().GetLayoutXDefault();
-		CConversionFacade(m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColum, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_encoding, GetCharWidthCache()).ConvMemory(nFuncCode, cmemBuf);
+		CConversionFacade(m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColum, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, GetTypeConfig().m_encoding, GetCharWidthCache()).ConvMemory(nFuncCode, cmemBuf);
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
@@ -1459,7 +1459,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 	hMenu = ::CreatePopupMenu();
 
-	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& type = GetTypeConfig();
 	const EKeyHelpRMenuType eRmenuType = type.m_eKeyHelpRMenuShowType;
 
 	return CreatePopUpMenuSub( hMenu, nMenuIdx, nullptr, eRmenuType );
@@ -1643,7 +1643,7 @@ void CEditView::OnChangeSetting()
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );									/* 表示域の上端座標 */
 
 	// 文書種別更新
-	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	m_pTypeData = &GetTypeConfig();
 
 	/* ルーラー表示 */
 	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp && !m_bMiniMap ){

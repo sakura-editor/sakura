@@ -727,7 +727,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	  || GetSelect().GetFrom() == GetSelect().GetTo() ){
 		return;
 	}
-	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& type = GetTypeConfig();
 	bool bLineNumLayout = GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy
 		|| m_pCommanderView->GetSelectionInfo().IsBoxSelecting();
 	CLayoutRect rcSel;
