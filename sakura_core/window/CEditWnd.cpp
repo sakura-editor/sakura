@@ -2340,7 +2340,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		}
 
 		/* 機能がチェック状態か調べる */
-		if( IsFuncChecked( GetDocument(), m_pShareData, id ) ){
+		if (func::isChecked(id)) {
 			fuFlags = MF_BYCOMMAND | MF_CHECKED;
 			::CheckMenuItem(hMenu, id, fuFlags);
 		}
@@ -2462,7 +2462,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 			break;
 		case F_TOGGLE_KEY_SEARCH:
 			SetMenuFuncSel( hMenu, eFunc, pszKey,
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !IsFuncChecked( GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon || !func::isChecked(F_TOGGLE_KEY_SEARCH) );
 			break;
 		case F_WRAPWINDOWWIDTH:
 			{
