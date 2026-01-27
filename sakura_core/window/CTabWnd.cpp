@@ -453,7 +453,7 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		}
 		if( lpCursorName )
 		{
-			hInstance = (lpCursorName == IDC_NO)? nullptr: ::GetModuleHandle( nullptr );
+			hInstance = (lpCursorName == IDC_NO)? nullptr: GetAppInstance();
 			::SetCursor( ::LoadCursor( hInstance, lpCursorName ) );
 		}
 		else

@@ -733,7 +733,7 @@ void CEditView::AutoScrollEnter()
 	m_cAutoScrollWnd.Create(GetAppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
 	::SetTimer(GetHwnd(), 2, 200, AutoScrollTimerProc);
 	HCURSOR hCursor;
-	hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
+	hCursor = ::LoadCursor(GetAppInstance(), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
 	::SetCursor(hCursor);
 }
 
@@ -779,7 +779,7 @@ void CEditView::AutoScrollMove( CMyPoint& point )
 			cursor = IDC_CURSOR_AUTOSCROLL_VERTICAL;
 		}
 	}
-	const HCURSOR hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(cursor));
+	const HCURSOR hCursor = ::LoadCursor(GetAppInstance(), MAKEINTRESOURCE(cursor));
 	::SetCursor(hCursor);
 }
 

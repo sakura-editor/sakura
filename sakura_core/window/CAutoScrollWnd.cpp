@@ -44,7 +44,7 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 		pszClassName = L"SakuraAutoScrollHWnd";
 	}
 	m_hCenterImg = (HBITMAP)::LoadImage(hInstance, MAKEINTRESOURCE(idb), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-	HCURSOR hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(idc));
+	HCURSOR hCursor = ::LoadCursor(GetAppInstance(), MAKEINTRESOURCE(idc));
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(

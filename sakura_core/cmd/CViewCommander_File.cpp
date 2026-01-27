@@ -839,7 +839,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, [[m
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {
 			pcDlgCancel = new CDlgCancel;
-			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( nullptr ), nullptr, IDD_OPERATIONRUNNING ) ) ){
+			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( GetAppInstance(), nullptr, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
 				ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
 				ApiWrap::Progress_SetPos( hwndProgress, 0);

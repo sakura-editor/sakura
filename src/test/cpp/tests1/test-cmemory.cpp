@@ -93,7 +93,7 @@ TEST(CMemory, OverHeapMaxReq)
 
 	// メモリ確保失敗時に表示するメッセージボックスで、
 	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
-	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
+	CNormalProcess cProcess(GetAppInstance(), L"");
 
 	// _HEAP_MAXREQを越える値を指定すると、メモリは確保されない
 	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
@@ -120,7 +120,7 @@ TEST(CMemory, OverMaxSize)
 
 	// メモリ確保失敗時に表示するメッセージボックスで、
 	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
-	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
+	CNormalProcess cProcess(GetAppInstance(), L"");
 
 	// INT_MAXを越える値を指定すると、メモリは確保されない
 	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
