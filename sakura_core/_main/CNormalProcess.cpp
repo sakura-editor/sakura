@@ -154,7 +154,7 @@ bool CNormalProcess::InitializeProcess()
 	// CEditAppを作成
 	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
-	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
+	auto pEditWnd = GetEditWndPtr();
 	if( nullptr == pEditWnd->GetHwnd() ){
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );
@@ -439,7 +439,7 @@ bool CNormalProcess::InitializeProcess()
 bool CNormalProcess::MainLoop()
 {
 	if( GetMainWindow() ){
-		m_pcEditApp->GetEditWindow()->MessageLoop();	/* メッセージループ */
+		GetEditWnd().MessageLoop();	/* メッセージループ */
 		return true;
 	}
 	return false;
