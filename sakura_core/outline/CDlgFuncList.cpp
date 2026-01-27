@@ -3445,7 +3445,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 		bool* m_pbSwitch;
 	} SAutoSwitch( &m_bInChangeLayout );	// 処理中は m_bInChangeLayout フラグを ON にしておく
 
-	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	CEditDoc* pDoc = CEditDoc::getInstance();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	m_nDocType = pDoc->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 

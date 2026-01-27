@@ -111,7 +111,7 @@ DEF_NOTIFY(BeforeClose)
 
 CDocListener::CDocListener(CDocSubject* pcDoc)
 {
-	if(pcDoc==nullptr)pcDoc = CEditDoc::GetInstance(0); //$$ インチキ
+	if(pcDoc==nullptr)pcDoc = CEditDoc::getInstance(); //$$ インチキ
 	assert( pcDoc );
 	Listen(pcDoc);
 }
