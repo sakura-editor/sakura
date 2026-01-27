@@ -208,13 +208,19 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), (LPSTR)m_pData[i].data, int(m_pData[i].size), nullptr, nullptr );
 
 		i++;
-		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
-		m_pData[i].size = sizeof(size_t) + nTextLen * sizeof( wchar_t );
-		m_pData[i].data = new BYTE[m_pData[i].size];
-		*(size_t*)m_pData[i].data = nTextLen;
-		memcpy_raw( m_pData[i].data + sizeof(size_t), lpszText, nTextLen * sizeof( wchar_t ) );
 
-		i++;
+		// SAKURAClipWはINT_MAXを越えるデータを格納できない
+		if (nTextLen <= size_t(INT_MAX)) {
+			m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
+			m_pData[i].size = SSakuraClipData::CalcSize(nTextLen);
+			m_pData[i].data = new BYTE[m_pData[i].size];
+			auto pClip = std::bit_cast<SSakuraClipData*>(m_pData[i].data);
+			pClip->cchData = static_cast<int>(nTextLen);
+			::wmemcpy_s(pClip->szData, nTextLen, lpszText, nTextLen);
+			pClip->szData[nTextLen] = L'\0';
+			i++;
+		}
+
 		if( bColumnSelect ){
 			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );
 			m_pData[i].size = 1;
