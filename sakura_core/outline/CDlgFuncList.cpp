@@ -246,7 +246,7 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
 		if( (BOOL)wParam ){
 			if( ::GetActiveWindow() == GetHwnd() ){
-				::SetActiveWindow( GetEditWnd().GetHwnd() );
+				::SetActiveWindow( GetMainWindow() );
 				BlockingHook( nullptr );	// キュー内に溜まっているメッセージを処理
 				::SetActiveWindow( GetHwnd() );
 				return 0L;
@@ -1739,7 +1739,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( cWindowPlacement );
-			if (::GetWindowPlacement( GetEditWnd().GetHwnd(), &cWindowPlacement )){
+			if (::GetWindowPlacement( GetMainWindow(), &cWindowPlacement )){
 				/* ウィンドウ位置・サイズを-1以外の値にしておくと、CDialogで使用される． */
 				m_xPos = m_pShareData->m_Common.m_sOutline.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
 				m_yPos = m_pShareData->m_Common.m_sOutline.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;
@@ -1785,7 +1785,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		}
 		// 他ウィンドウに変更を通知する
 		if( ProfDockSync() ){
-			HWND hwndEdit = GetEditWnd().GetHwnd();
+			HWND hwndEdit = GetMainWindow();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 	}
@@ -2284,7 +2284,7 @@ BOOL CDlgFuncList::OnDestroy( void )
 
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
-	HWND hwndEdit = GetEditWnd().GetHwnd();
+	HWND hwndEdit = GetMainWindow();
 	if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 		/* 親のウィンドウ位置・サイズを記憶 */
 		WINDOWPLACEMENT cWindowPlacement;
@@ -2489,7 +2489,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 				m_pShareData->m_sWorkBuffer.m_LogicPoint = poCaret;
 
 				//	2006.07.09 genta 移動時に選択状態を保持するように
-				::SendMessageAny( GetEditWnd().GetHwnd(),
+				::SendMessageAny( GetMainWindow(),
 					MYWM_SETCARETPOS, 0, PM_SETCARETPOS_KEEPSELECT );
 			}
 			if( bCheckAutoClose && bFileJumpSelf ){
@@ -3061,7 +3061,7 @@ INT_PTR CDlgFuncList::OnLButtonUp( [[maybe_unused]] HWND hwnd, [[maybe_unused]] 
 
 		if( ProfDockSync() ){
 			// 他ウィンドウに変更を通知する
-			HWND hwndEdit = GetEditWnd().GetHwnd();
+			HWND hwndEdit = GetMainWindow();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 		return 1L;
@@ -3280,7 +3280,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 
 	// メニュー選択された状態に切り替える
 	EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
-	HWND hwndEdit = GetEditWnd().GetHwnd();
+	HWND hwndEdit = GetMainWindow();
 	if( nId == 450 ){	// 更新
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
@@ -3460,7 +3460,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
 			CEditView* pcEditView = &GetEditWnd().GetActiveView();
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3472,7 +3472,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), TRUE );
 			return true;	// 解析した
 		}
 	}else{	// 現在は表示
@@ -3497,7 +3497,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 				if( nId == OUTLINE_LAYOUT_FILECHANGED ) return false;	// ファイル切替ではフローティングは開かない（従来互換）
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3509,7 +3509,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), TRUE );
 			return true;	// 解析した
 		}
 
@@ -3570,7 +3570,7 @@ void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 {
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
-		if( (HWND)lParam == GetEditWnd().GetHwnd() )
+		if( (HWND)lParam == GetMainWindow() )
 			return;	// 自分からの通知は無視
 		ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// アウトライン画面を再配置
 		break;
@@ -3821,7 +3821,7 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 					::MoveWindow( GetHwnd(), rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE );
 				}
 				if( ProfDockSync() ){
-					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)GetEditWnd().GetHwnd() );	// 他ウィンドウにドッキング配置変更を通知する
+					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)GetMainWindow() );	// 他ウィンドウにドッキング配置変更を通知する
 				}
 				return TRUE;
 			}

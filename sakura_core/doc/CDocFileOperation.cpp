@@ -254,7 +254,7 @@ bool CDocFileOperation::SaveFileDialog(
 		SYSTEMTIME localTime = {};
 		::GetLocalTime( &localTime );
 		auto dateTimeString = GetDateTimeFormat( L"_%Y%m%d_%H%M%S", localTime );
-		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWnd().GetHwnd() );
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() );
 		const int nId = (node != nullptr && 0 < node->m_nId) ? node->m_nId : 0;
 		auto_snprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), L"%s%.0d%s", LS(STR_NO_TITLE2), nId, dateTimeString.c_str() );
 	}
@@ -263,7 +263,7 @@ bool CDocFileOperation::SaveFileDialog(
 	CDlgOpenFile cDlgOpenFile;
 	cDlgOpenFile.Create(
 		G_AppInstance(),
-		GetEditWndPtr()->GetHwnd(),
+		GetMainWindow(),
 		strDefaultWildCard.c_str(),
 		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
 		CMRUFile().GetPathList(),		//	最近のファイル
@@ -453,7 +453,7 @@ bool CDocFileOperation::FileClose()
 	m_pcDocRef->SetCurDirNotitle();
 
 	// 無題番号取得
-	CAppNodeManager::getInstance()->GetNoNameNumber( GetEditWnd().GetHwnd() );
+	CAppNodeManager::getInstance()->GetNoNameNumber( GetMainWindow() );
 
 	/* 親ウィンドウのタイトルを更新 */
 	GetEditWnd().UpdateCaption();
@@ -485,7 +485,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
 		std::vector<std::wstring> files;
-		if( !OpenFileDialog( GetEditWndPtr()->GetHwnd(), nullptr, &sLoadInfo, files ) ){
+		if( !OpenFileDialog( GetMainWindow(), nullptr, &sLoadInfo, files ) ){
 			return;
 		}
 		sLoadInfo.cFilePath = files[0].c_str();
@@ -496,7 +496,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
 				G_AppInstance(),
-				GetEditWndPtr()->GetHwnd(),
+				GetMainWindow(),
 				sFilesLoadInfo,
 				nullptr,
 				true
@@ -515,7 +515,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 
 	if( !m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		m_pcDocRef->SetCurDirNotitle();
-		CAppNodeManager::getInstance()->GetNoNameNumber( GetEditWnd().GetHwnd() );
+		CAppNodeManager::getInstance()->GetNoNameNumber( GetMainWindow() );
 	}
 
 	/* 親ウィンドウのタイトルを更新 */

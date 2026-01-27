@@ -185,9 +185,9 @@ ECallbackResult CGrepAgent::OnBeforeClose()
 	//GREP処理中は終了できない
 	if( m_bGrepRunning ){
 		// アクティブにする
-		ActivateFrameWindow( GetEditWndPtr()->GetHwnd() );	//@@@ 2003.06.25 MIK
+		ActivateFrameWindow( GetMainWindow() );	//@@@ 2003.06.25 MIK
 		TopInfoMessage(
-			GetEditWndPtr()->GetHwnd(),
+			GetMainWindow(),
 			LS(STR_GREP_RUNNINNG)
 		);
 		return CALLBACK_INTERRUPT;
@@ -828,7 +828,7 @@ DWORD CGrepAgent::DoGrep(
 	cDlgCancel.CloseDialog( 0 );
 
 	/* アクティブにする */
-	ActivateFrameWindow( GetEditWndPtr()->GetHwnd() );
+	ActivateFrameWindow( GetMainWindow() );
 
 	/* アンドゥバッファの処理 */
 	pcViewDst->SetUndoBuffer();

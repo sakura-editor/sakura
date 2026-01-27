@@ -124,7 +124,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	if( !GetEditWnd().m_cHokanMgr.GetHwnd() ){
 		GetEditWnd().m_cHokanMgr.DoModeless(
 			G_AppInstance(),
-			GetEditWnd().GetHwnd(),
+			GetMainWindow(),
 			(LPARAM)this
 		);
 	}

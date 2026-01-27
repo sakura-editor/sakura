@@ -34,7 +34,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 		std::vector<std::wstring> files;
 		SLoadInfo sLoadInfo(L"", CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
-			GetEditWndPtr()->GetHwnd(),
+			GetMainWindow(),
 			pLoadInfo->cFilePath,	//指定されたフォルダー
 			&sLoadInfo,
 			files
@@ -51,7 +51,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 				sFilesLoadInfo.cFilePath = files[i].c_str();
 				CControlTray::OpenNewEditor(
 					G_AppInstance(),
-					GetEditWndPtr()->GetHwnd(),
+					GetMainWindow(),
 					sFilesLoadInfo,
 					nullptr,
 					true
@@ -72,7 +72,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	if(!pcDoc->IsAcceptLoad()){
 		CControlTray::OpenNewEditor(
 			G_AppInstance(),
-			GetEditWndPtr()->GetHwnd(),
+			GetMainWindow(),
 			*pLoadInfo
 		);
 		return CALLBACK_INTERRUPT;
@@ -86,7 +86,7 @@ next:
 			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
 			//	ここでステータスメッセージを使っても画面に表示されない．
 			TopInfoMessage(
-				GetEditWndPtr()->GetHwnd(),
+				GetMainWindow(),
 				LS(STR_NOT_EXSIST_SAVE),	//Mar. 24, 2001 jepro 若干修正
 				pLoadInfo->cFilePath.GetBufferPointer()
 			);
@@ -109,7 +109,7 @@ next:
 		if(!cFile.IsFileReadable()){
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
-				GetEditWndPtr()->GetHwnd(),
+				GetMainWindow(),
 				LS(STR_LOADAGENT_ERR_OPEN),
 				pLoadInfo->cFilePath.c_str()
 			);
@@ -135,7 +135,7 @@ next:
 			//   ここでエラーを出さずに OnLoad に突入させてしまうと CFileLoad::FileOpen が例外を吐くので、
 			//   この段階でエラーを出して処理を中断させる。
 			ErrorMessage(
-				GetEditWndPtr()->GetHwnd(),
+				GetMainWindow(),
 				LS(STR_LOADAGENT_BIG_ERROR),
 				pLoadInfo->cFilePath.c_str(),
 				CFileLoad::GetSizeStringForHuman(nFileSize.QuadPart).c_str(),
@@ -149,7 +149,7 @@ next:
 			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
 				// 本当に開いて良いかどうかの警告ダイアログ
-				int nRet = MYMESSAGEBOX( GetEditWndPtr()->GetHwnd(),
+				int nRet = MYMESSAGEBOX( GetMainWindow(),
 					MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
 					GSTR_APPNAME,
 					LS(STR_LOADAGENT_BIG_WARNING),
@@ -192,7 +192,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// （ファイル読み込み開始とともにビューが表示されるので、あとで配置すると画面のちらつきが大きいの）
 	if( !GetEditWnd().m_cDlgFuncList.m_bEditWndReady ){
 		GetEditWnd().m_cDlgFuncList.Refresh();
-		HWND hEditWnd = GetEditWnd().GetHwnd();
+		HWND hEditWnd = GetMainWindow();
 		if( !::IsIconic( hEditWnd ) && GetEditWnd().m_cDlgFuncList.GetHwnd() ){
 			RECT rc;
 			::GetClientRect( hEditWnd, &rc );
@@ -294,7 +294,7 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	bool bDraw = GetEditWndPtr()->GetActiveView().GetDrawSwitch();
 	if( bDraw ){
 		GetEditWndPtr()->Views_RedrawAll(); //ビュー再描画
-		InvalidateRect( GetEditWndPtr()->GetHwnd(), nullptr, TRUE );
+		InvalidateRect( GetMainWindow(), nullptr, TRUE );
 	}
 	CCaret& cCaret = GetEditWndPtr()->GetActiveView().GetCaret();
 	cCaret.MoveCursor(cCaret.GetCaretLayoutPos(),true);

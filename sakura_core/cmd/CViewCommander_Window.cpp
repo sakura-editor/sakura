@@ -159,7 +159,7 @@ void CViewCommander::Command_CASCADE( void )
 			}
 			//	Mar. 20, 2004 genta
 			//	現在のウィンドウを末尾に持っていくためここではスキップ
-			if( pEditNodeArr[i].GetHwnd() == GetEditWndPtr()->GetHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == GetMainWindow() ){
 				current_win_index = i;
 				continue;
 			}
@@ -290,9 +290,9 @@ void CViewCommander::Command_TILE_V( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == GetEditWndPtr()->GetHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == GetMainWindow() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = GetEditWndPtr()->GetHwnd();
+				phwndArr[0] = GetMainWindow();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -349,9 +349,9 @@ void CViewCommander::Command_TILE_H( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == GetEditWndPtr()->GetHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == GetMainWindow() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = GetEditWndPtr()->GetHwnd();
+				phwndArr[0] = GetMainWindow();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -412,7 +412,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		if( !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
 			GetEditWndPtr()->WindowTopMost(
-				( (DWORD)::GetWindowLongPtr( GetEditWndPtr()->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+				( (DWORD)::GetWindowLongPtr( GetMainWindow(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 			);
 		}
 
@@ -422,7 +422,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
 			(WPARAM)((GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
-			(LPARAM)GetEditWndPtr()->GetHwnd(),	//CEditWndのウィンドウハンドル
+			(LPARAM)GetMainWindow(),	//CEditWndのウィンドウハンドル
 			m_pCommanderView->GetHwnd());									//自分自身
 		//End 2004.08.27 Kazika
 	}

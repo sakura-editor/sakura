@@ -31,7 +31,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	//	同名で上書きされるのを防ぐ
 	if( CAppMode::getInstance()->IsViewMode() && pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
 		ErrorBeep();
-		TopErrorMessage( GetEditWndPtr()->GetHwnd(), LS(STR_SAVEAGENT_VIEW_FILE) );
+		TopErrorMessage( GetMainWindow(), LS(STR_SAVEAGENT_VIEW_FILE) );
 		return CALLBACK_INTERRUPT;
 	}
 
@@ -40,7 +40,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 		HWND hwndOwner;
 		if( CShareData::getInstance()->IsPathOpened( pSaveInfo->cFilePath, &hwndOwner ) ){
 			ErrorMessage(
-				GetEditWndPtr()->GetHwnd(),
+				GetMainWindow(),
 				LS(STR_SAVEAGENT_OTHER),
 				(LPCWSTR)pSaveInfo->cFilePath
 			);
@@ -66,7 +66,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 			// ※ たとえ上書き保存の場合でもここでの失敗では書込み禁止へは遷移しない
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
-				GetEditWndPtr()->GetHwnd(),
+				GetMainWindow(),
 				LS(STR_SAVEAGENT_OTHER_APP),
 				pSaveInfo->cFilePath.c_str()
 			);

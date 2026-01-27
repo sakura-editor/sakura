@@ -28,7 +28,7 @@ void CAppMode::SetDebugModeON()
 			return;
 		}
 	}
-	pShare->m_sHandles.m_hwndDebug = GetEditWndPtr()->GetHwnd();
+	pShare->m_sHandles.m_hwndDebug = GetMainWindow();
 	this->_SetDebugMode(true);
 	this->SetViewMode(false);	// ビューモード	// 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAIL_Wが抑止されるのでとりあえずビューモードは辞めました
 	GetEditWndPtr()->UpdateCaption();
@@ -39,7 +39,7 @@ void CAppMode::SetDebugModeON()
 void CAppMode::SetDebugModeOFF()
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
-	if( pShare->m_sHandles.m_hwndDebug == GetEditWndPtr()->GetHwnd() ){
+	if( pShare->m_sHandles.m_hwndDebug == GetMainWindow() ){
 		pShare->m_sHandles.m_hwndDebug = nullptr;
 		this->_SetDebugMode(false);
 		GetEditWndPtr()->UpdateCaption();

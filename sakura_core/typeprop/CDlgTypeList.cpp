@@ -395,7 +395,7 @@ static void SendChangeSetting()
 		MYWM_CHANGESETTING,
 		(WPARAM)0,
 		(LPARAM)PM_CHANGESETTING_ALL,
-		GetEditWndPtr()->GetHwnd()
+		GetMainWindow()
 	);
 }
 
@@ -405,7 +405,7 @@ static void SendChangeSettingType(int nType)
 		MYWM_CHANGESETTING,
 		(WPARAM)nType,
 		(LPARAM)PM_CHANGESETTING_TYPE,
-		GetEditWndPtr()->GetHwnd()
+		GetMainWindow()
 	);
 }
 
@@ -415,7 +415,7 @@ static void SendChangeSettingType2(int nType)
 		MYWM_CHANGESETTING,
 		(WPARAM)nType,
 		(LPARAM)PM_CHANGESETTING_TYPE2,
-		GetEditWndPtr()->GetHwnd()
+		GetMainWindow()
 	);
 }
 

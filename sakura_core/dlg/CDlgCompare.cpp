@@ -157,7 +157,7 @@ void CDlgCompare::SetData( void )
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
-			if (pEditNodeArr[i].GetHwnd() == GetEditWndPtr()->GetHwnd()){
+			if (pEditNodeArr[i].GetHwnd() == GetMainWindow()){
 				// 2010.07.30 自分の名前もここから設定する
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, int(std::size(szMenu)), pfi, pEditNodeArr[i].m_nId, -1, calc.GetDC() );
 				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szMenu );

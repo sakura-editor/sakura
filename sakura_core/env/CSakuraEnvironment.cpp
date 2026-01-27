@@ -193,7 +193,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				NONCLIENTMETRICS met;
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-				CDCFont dcFont(met.lfCaptionFont, GetEditWndPtr()->GetHwnd());
+				CDCFont dcFont(met.lfCaptionFont, GetMainWindow());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
@@ -206,7 +206,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				}else if( CAppMode::getInstance()->IsDebugMode() ){
 				}else{
 					WCHAR szText[10];
-					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWndPtr()->GetHwnd() );
+					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() );
 					if( 0 < node->m_nId ){
 						::_snwprintf_s(szText, _TRUNCATE, L"%d", node->m_nId);
 						q = wcs_pushW( q, q_max - q, szText );
@@ -241,7 +241,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				NONCLIENTMETRICS met;
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-				CDCFont dcFont(met.lfCaptionFont, GetEditWndPtr()->GetHwnd());
+				CDCFont dcFont(met.lfCaptionFont, GetMainWindow());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( buff, szText, int(std::size(szText))-1, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 			}
@@ -627,7 +627,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 2;
 		}
 	case L'M': // $M キーボードマクロの記録中
-		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==GetEditWndPtr()->GetHwnd() ){ /* ウィンドウ */
+		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==GetMainWindow() ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
@@ -647,7 +647,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 1;
 		}
 	case L'I': // $I アイコン化されているか
-		if( ::IsIconic( GetEditWndPtr()->GetHwnd() )){
+		if( ::IsIconic( GetMainWindow() )){
 			return 0;
 		} else {
  			return 1;

@@ -244,7 +244,7 @@ void CDlgDiff::SetData( void )
 		int			selCode = CODE_NONE;
 
 		// 自分の文字コードを取得
-		::SendMessageAny( GetEditWndPtr()->GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
+		::SendMessageAny( GetMainWindow(), MYWM_GETFILEINFO, 0, 0 );
 		pFileInfo = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 		code = pFileInfo->m_nCharCode;
 
@@ -267,7 +267,7 @@ void CDlgDiff::SetData( void )
 				pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				/* 自分ならスキップ */
-				if ( pEditNode[i].GetHwnd() == GetEditWndPtr()->GetHwnd() )
+				if ( pEditNode[i].GetHwnd() == GetMainWindow() )
 				{
 					// 同じ形式にしておく。ただしアクセスキー番号はなし
 					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, int(std::size(szName)), pFileInfo, pEditNode[i].m_nId, -1, calc.GetDC() );

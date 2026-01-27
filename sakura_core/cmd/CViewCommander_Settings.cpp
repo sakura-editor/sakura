@@ -46,8 +46,8 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TOOLBAR,
-		(LPARAM)GetEditWnd().GetHwnd(),
-		GetEditWnd().GetHwnd()
+		(LPARAM)GetMainWindow(),
+		GetMainWindow()
 	);
 }
 
@@ -65,8 +65,8 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_FUNCKEY,
-		(LPARAM)GetEditWnd().GetHwnd(),
-		GetEditWnd().GetHwnd()
+		(LPARAM)GetMainWindow(),
+		GetMainWindow()
 	);
 }
 
@@ -87,7 +87,7 @@ void CViewCommander::Command_SHOWTAB( void )
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		GetEditWndPtr()->WindowTopMost(
-			( (DWORD)::GetWindowLongPtr( GetEditWndPtr()->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+			( (DWORD)::GetWindowLongPtr( GetMainWindow(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 		);
 	}
 
@@ -96,8 +96,8 @@ void CViewCommander::Command_SHOWTAB( void )
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TAB,
-		(LPARAM)GetEditWnd().GetHwnd(),
-		GetEditWnd().GetHwnd()
+		(LPARAM)GetMainWindow(),
+		GetMainWindow()
 	);
 }
 
@@ -115,8 +115,8 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_STATUSBAR,
-		(LPARAM)GetEditWnd().GetHwnd(),
-		GetEditWnd().GetHwnd()
+		(LPARAM)GetMainWindow(),
+		GetMainWindow()
 	);
 }
 
@@ -134,8 +134,8 @@ void CViewCommander::Command_SHOWMINIMAP( void )
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_MINIMAP,
-		(LPARAM)GetEditWnd().GetHwnd(),
-		GetEditWnd().GetHwnd()
+		(LPARAM)GetMainWindow(),
+		GetMainWindow()
 	);
 }
 

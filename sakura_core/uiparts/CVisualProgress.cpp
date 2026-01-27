@@ -68,7 +68,7 @@ void CVisualProgress::_Begin()
 {
 	//砂時計
 	if(!m_pcWaitCursor){
-		m_pcWaitCursor = new CWaitCursor( GetEditWndPtr()->GetHwnd() );
+		m_pcWaitCursor = new CWaitCursor( GetMainWindow() );
 	}
 
 	//プログレスバー

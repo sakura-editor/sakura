@@ -972,7 +972,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	switch( nId ){
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -985,7 +985,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		//	キーマクロエンジン以外のマクロを読み込んでいるときは
 		//	実行はできるが保存はできない．
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -995,7 +995,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		}
 	case F_EXECKEYMACRO:	/* キーマクロの実行 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -1010,7 +1010,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		}
 	case F_LOADKEYMACRO:	/* キーマクロの読み込み */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -1273,7 +1273,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	case F_FILE_REOPEN_UTF7:		return CODE_UTF7 == eDocCode;
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -1306,7 +1306,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	case F_CHGMOD_INS:			return pcEditDoc->m_cDocEditor.IsInsMode();	//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
 	case F_TOGGLE_KEY_SEARCH:	return pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord != FALSE;	//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
 	case F_BIND_WINDOW:			return ((pShareData->m_Common.m_sTabBar.m_bDispTabWnd) && !(pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin));	//2004.07.14 Kazika 追加
-	case F_TOPMOST:				return ((DWORD)::GetWindowLongPtr( GetEditWnd().GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST) != 0;	// 2004.09.21 Moca
+	case F_TOPMOST:				return ((DWORD)::GetWindowLongPtr( GetMainWindow(), GWL_EXSTYLE ) & WS_EX_TOPMOST) != 0;	// 2004.09.21 Moca
 	// Jan. 10, 2004 genta インクリメンタルサーチ
 	case F_ISEARCH_NEXT:
 	case F_ISEARCH_PREV:

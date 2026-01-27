@@ -135,9 +135,9 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 //	To Here Sept. 15, 2000 (Oct. 7, 2000 300→500; Nov. 3, 2000 500→540)
 	po.y = 0;
 
-	::GetClientRect( GetEditWnd().GetHwnd(), &rc );
+	::GetClientRect( GetMainWindow(), &rc );
 	po.x = t_min( po.x, rc.right );
-	::ClientToScreen( GetEditWnd().GetHwnd(), &po );
+	::ClientToScreen( GetMainWindow(), &po );
 	::GetWindowRect( GetEditWnd().m_cSplitterWnd.GetHwnd() , &rc );
 	po.y = rc.top;
 

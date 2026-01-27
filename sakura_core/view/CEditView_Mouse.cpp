@@ -2122,7 +2122,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	switch( nId ){
 	case 110:	// ファイルを開く
 		// 通常のドロップファイル処理を行う
-		::SendMessageAny( GetEditWnd().GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
+		::SendMessageAny( GetMainWindow(), WM_DROPFILES, (WPARAM)hDrop, 0 );
 		break;
 
 	case 100:	// パス名を貼り付ける
