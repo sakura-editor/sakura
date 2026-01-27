@@ -61,7 +61,7 @@ void CViewCommander::Command_CHG_CHARSET(
 		// 文字コードの確認
 		eCharSet = GetDocument()->GetDocumentEncoding();	// 設定する文字コードセット
 		bBom     = GetDocument()->GetDocumentBomExist();	// 設定するBOM
-		int nRet = GetEditWindow()->m_cDlgSetCharSet.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 
+		int nRet = GetEditWndPtr()->m_cDlgSetCharSet.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 
 						&eCharSet, &bBom );
 		if (!nRet) {
 			return;

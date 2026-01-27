@@ -92,8 +92,8 @@ void CViewCommander::Command_SHOWTAB( void )
 	// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
-		GetEditWindow()->WindowTopMost(
-			( (DWORD)::GetWindowLongPtr( GetEditWindow()->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+		GetEditWndPtr()->WindowTopMost(
+			( (DWORD)::GetWindowLongPtr( GetEditWndPtr()->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 		);
 	}
 
@@ -275,7 +275,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	constexpr int nPointSizeUnit = 5;
 	static const ZoomSetting zoomSetting( aZoomFactors.begin(), aZoomFactors.end(), nPointSizeMin, nPointSizeMax, nPointSizeUnit );
 	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
-		: GetEditWindow()->GetLogfont( mode == 2 ));
+		: GetEditWndPtr()->GetLogfont( mode == 2 ));
 
 	// TrueTypeのみ対応
 	if( OUT_STROKE_PRECIS != lf.lfOutPrecision && OUT_PS_ONLY_PRECIS != lf.lfOutPrecision ) {
@@ -286,7 +286,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		return;
 	}
 
-	const int nOriginalPointSize = GetEditWindow()->GetFontPointSize( false );
+	const int nOriginalPointSize = GetEditWndPtr()->GetFontPointSize( false );
 	double nCurrentZoom = (mode == 2 && GetDocument()->m_blfCurTemp) ? GetDocument()->m_nCurrentZoom : 1.0;
 	int nPointSize;
 
@@ -299,7 +299,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		double nBasePointSizeF = nOriginalPointSize;
 		if( nBasePointSizeF == 0.0 ){
 			// 基準値が無効値の時はLOGFONTのサイズから逆算
-			const LOGFONT& lfBase = (mode == 0) ? GetDllShareData().m_Common.m_sView.m_lf : GetEditWindow()->GetLogfont( false );
+			const LOGFONT& lfBase = (mode == 0) ? GetDllShareData().m_Common.m_sView.m_lf : GetEditWndPtr()->GetLogfont( false );
 			nBasePointSizeF = (lfBase.lfHeight != 0) ? (std::abs( DpiPixelsToPoints( lfBase.lfHeight ) ) * 10.0) : nPointSizeMin;
 		}
 		double nPointSizeF = 0.0;
@@ -387,7 +387,7 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 		return;	// 折り返し桁は元のまま
 	}
 
-	GetEditWindow()->ChangeLayoutParam( true, GetDocument()->m_cLayoutMgr.GetTabSpaceKetas(), GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, newKetas );
+	GetEditWndPtr()->ChangeLayoutParam( true, GetDocument()->m_cLayoutMgr.GetTabSpaceKetas(), GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, newKetas );
 	
 	//	Aug. 14, 2005 genta 共通設定へは反映させない
 //	m_pCommanderView->m_pTypeData->m_nMaxLineKetas = m_nViewColNum;
@@ -452,7 +452,7 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	case WRAP_WINDOW_WIDTH:		// 右端で折り返す
 		// ウィンドウが左右に分割されている場合は左側のウィンドウ幅を使用する
-		nWidth = m_pCommanderView->ViewColNumToWrapColNum( GetEditWindow()->GetView(0).GetTextArea().m_nViewColNum );
+		nWidth = m_pCommanderView->ViewColNumToWrapColNum( GetEditWndPtr()->GetView(0).GetTextArea().m_nViewColNum );
 		break;
 
 	default:
@@ -465,14 +465,14 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 	pcDoc->m_bTextWrapMethodCurTemp = !( pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod == nWrapMethod );
 
 	// 折り返し位置を変更
-	GetEditWindow()->ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpaceKetas(), pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, nWidth );
+	GetEditWndPtr()->ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpaceKetas(), pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, nWidth );
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 		// CEditWnd::ChangeLayoutParam->CLayoutMgr::ChangeLayoutParam->
 		// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
 		pcDoc->m_cLayoutMgr.CalculateTextWidth(FALSE);		// テキスト最大幅を算出する
-		GetEditWindow()->RedrawAllViews( nullptr );		// スクロールバーの更新が必要なので再表示を実行する
+		GetEditWndPtr()->RedrawAllViews( nullptr );		// スクロールバーの更新が必要なので再表示を実行する
 	}else{
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
 	}
@@ -490,7 +490,7 @@ void CViewCommander::Command_SELECT_COUNT_MODE( int nMode )
 {
 	//設定には保存せず、View毎に持つフラグを設定
 	//BOOL* pbDispSelCountByByte = &GetDllShareData().m_Common.m_sStatusbar.m_bDispSelCountByByte;
-	ESelectCountMode* pnSelectCountMode = &GetEditWindow()->m_nSelectCountMode;
+	ESelectCountMode* pnSelectCountMode = &GetEditWndPtr()->m_nSelectCountMode;
 
 	if( nMode == SELECT_COUNT_TOGGLE ){
 		//文字数⇔バイト数トグル

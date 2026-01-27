@@ -96,7 +96,7 @@ BOOL CViewCommander::HandleCommand(
 //	}
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	if( GetEditWindow()->m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
+	if( GetEditWndPtr()->m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
 		ErrorBeep();
 		return -1;
 	}

@@ -70,7 +70,7 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 {
 	HMENU		hMenu;
 
-	GetEditWindow()->GetMenuDrawer().ResetContents();
+	GetEditWndPtr()->GetMenuDrawer().ResetContents();
 
 	//	Oct. 3, 2001 genta
 
