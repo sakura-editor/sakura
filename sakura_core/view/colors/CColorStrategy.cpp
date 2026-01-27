@@ -174,7 +174,7 @@ void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 
 CColorStrategyPool::CColorStrategyPool()
 {
-	m_pcView = &(CEditWnd::getInstance()->GetView(0));
+	m_pcView = &(GetEditWndPtr()->GetView(0));
 	m_pcSelectStrategy = new CColor_Select();
 	m_pcFoundStrategy = new CColor_Found();
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列

@@ -3580,7 +3580,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 				MYWM_CHANGESETTING,
 				(WPARAM)GetDocument()->m_cDocType.GetDocumentType().GetIndex(),
 				(LPARAM)PM_CHANGESETTING_TYPE,
-				CEditWnd::getInstance()->GetHwnd()
+				GetEditWndPtr()->GetHwnd()
 			);
 			bChangePrintSettingNo = true;
 		}
@@ -3606,7 +3606,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 			MYWM_CHANGESETTING,
 			(WPARAM)0,
 			(LPARAM)PM_PRINTSETTING,
-			CEditWnd::getInstance()->GetHwnd()
+			GetEditWndPtr()->GetHwnd()
 		);
 	}
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更

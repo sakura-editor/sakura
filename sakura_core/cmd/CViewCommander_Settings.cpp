@@ -218,7 +218,7 @@ void CViewCommander::Command_FONT( void )
 #else
 	bool bFixedFont = true;
 #endif
-	if( MySelectFont( &lf, &nPointSize, CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), bFixedFont ) ){
+	if( MySelectFont( &lf, &nPointSize, GetEditWndPtr()->m_cSplitterWnd.GetHwnd(), bFixedFont ) ){
 		GetDllShareData().m_Common.m_sView.m_lf = lf;
 		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 

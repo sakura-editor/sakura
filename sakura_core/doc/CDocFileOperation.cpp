@@ -263,7 +263,7 @@ bool CDocFileOperation::SaveFileDialog(
 	CDlgOpenFile cDlgOpenFile;
 	cDlgOpenFile.Create(
 		G_AppInstance(),
-		CEditWnd::getInstance()->GetHwnd(),
+		GetEditWndPtr()->GetHwnd(),
 		strDefaultWildCard.c_str(),
 		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
 		CMRUFile().GetPathList(),		//	最近のファイル
@@ -485,7 +485,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
 		std::vector<std::wstring> files;
-		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), nullptr, &sLoadInfo, files ) ){
+		if( !OpenFileDialog( GetEditWndPtr()->GetHwnd(), nullptr, &sLoadInfo, files ) ){
 			return;
 		}
 		sLoadInfo.cFilePath = files[0].c_str();
@@ -496,7 +496,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
 				G_AppInstance(),
-				CEditWnd::getInstance()->GetHwnd(),
+				GetEditWndPtr()->GetHwnd(),
 				sFilesLoadInfo,
 				nullptr,
 				true

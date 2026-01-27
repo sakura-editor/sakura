@@ -53,7 +53,7 @@ bool CEditView::TagJumpSub(
 	}
 
 	// 参照元ウィンドウ保存
-	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
+	tagJump.hwndReferer = GetEditWndPtr()->GetHwnd();
 
 	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
@@ -267,7 +267,7 @@ open_c:;
 		GetCaret().GetCaretLayoutPos(),
 		&tagJump.point
 	);
-	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
+	tagJump.hwndReferer = GetEditWndPtr()->GetHwnd();
 	// タグジャンプ情報の保存
 	CTagJumpManager().PushTagJump(&tagJump);
 	return TRUE;

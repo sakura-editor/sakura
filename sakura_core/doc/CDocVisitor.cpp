@@ -15,7 +15,7 @@
 //! 改行コードを統一する
 void CDocVisitor::SetAllEol(CEol cEol)
 {
-	CEditView* pcView = &CEditWnd::getInstance()->GetActiveView();
+	CEditView* pcView = &GetEditWndPtr()->GetActiveView();
 
 	//アンドゥ記録開始
 	if(!pcView->m_bDoing_UndoRedo){

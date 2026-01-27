@@ -113,7 +113,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			}
 		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
-			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
+			GetEditWndPtr()->GetHwnd(),	//[in]  オーナーウィンドウ
 			defName.length()==0 ? nullptr : defName.c_str(),	//[in]  フォルダー
 			&sLoadInfo,							//[out] ロード情報受け取り
 			files								//[out] ファイル名
@@ -123,7 +123,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		for(size_t i = 0; i < files.size(); i++ ){
 			if (files[i].length() >= _MAX_PATH){
 				ErrorMessage(
-					CEditWnd::getInstance()->GetHwnd(),
+					GetEditWndPtr()->GetHwnd(),
 					LS(STR_ERR_FILEPATH_TOO_LONG),
 					files[i].c_str()
 				);
@@ -138,7 +138,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
 				G_AppInstance(),
-				CEditWnd::getInstance()->GetHwnd(),
+				GetEditWndPtr()->GetHwnd(),
 				sFilesLoadInfo,
 				nullptr,
 				true

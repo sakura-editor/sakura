@@ -1169,5 +1169,5 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 
 	// Windowsクリップボードにコピー
 	//2004.02.17 Moca 関数化
-	SetClipboardText( CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
+	SetClipboardText( GetEditWndPtr()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
 }

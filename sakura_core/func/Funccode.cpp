@@ -972,7 +972,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	switch( nId ){
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == CEditWnd::getInstance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -985,7 +985,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		//	キーマクロエンジン以外のマクロを読み込んでいるときは
 		//	実行はできるが保存はできない．
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == CEditWnd::getInstance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -995,7 +995,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		}
 	case F_EXECKEYMACRO:	/* キーマクロの実行 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == CEditWnd::getInstance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -1010,7 +1010,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		}
 	case F_LOADKEYMACRO:	/* キーマクロの読み込み */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == CEditWnd::getInstance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -1272,7 +1272,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	case F_FILE_REOPEN_UTF7:		return CODE_UTF7 == eDocCode;
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == CEditWnd::getInstance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetEditWndPtr()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;

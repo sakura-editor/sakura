@@ -633,7 +633,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 2;
 		}
 	case L'M': // $M キーボードマクロの記録中
-		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==CEditWnd::getInstance()->GetHwnd() ){ /* ウィンドウ */
+		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==GetEditWndPtr()->GetHwnd() ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
@@ -653,7 +653,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 1;
 		}
 	case L'I': // $I アイコン化されているか
-		if( ::IsIconic( CEditWnd::getInstance()->GetHwnd() )){
+		if( ::IsIconic( GetEditWndPtr()->GetHwnd() )){
 			return 0;
 		} else {
  			return 1;

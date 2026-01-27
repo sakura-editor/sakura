@@ -891,12 +891,12 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		pszTitle = szGrepTitle;
 	}
 	if( nullptr == pszTitle ){
-		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWndPtr()->GetHwnd() );
 		auto_snprintf_s(szGrepTitle, _TRUNCATE, L"%s%d", LS(STR_NO_TITLE1), node->m_nId);	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */
-	HWND	hwndMainFrame = CEditWnd::getInstance()->GetHwnd();
+	HWND	hwndMainFrame = GetEditWndPtr()->GetHwnd();
 	ActivateFrameWindow( hwndMainFrame );
 	if( CAppMode::getInstance()->IsViewMode() ){	/* ビューモード */
 		ConfirmBeep();
