@@ -29,11 +29,6 @@
 #include "config/system_constants.h"
 #include "config/app_constants.h"
 
-CEditWnd* CSakuraEnvironment::GetMainWindow()
-{
-	return CEditWnd::getInstance();
-}
-
 enum EExpParamName
 {
 	EExpParamName_none = -1,
@@ -198,7 +193,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				NONCLIENTMETRICS met;
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
+				CDCFont dcFont(met.lfCaptionFont, GetEditWndPtr()->GetHwnd());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
@@ -211,7 +206,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				}else if( CAppMode::getInstance()->IsDebugMode() ){
 				}else{
 					WCHAR szText[10];
-					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow()->GetHwnd() );
+					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWndPtr()->GetHwnd() );
 					if( 0 < node->m_nId ){
 						::_snwprintf_s(szText, _TRUNCATE, L"%d", node->m_nId);
 						q = wcs_pushW( q, q_max - q, szText );
@@ -246,7 +241,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				NONCLIENTMETRICS met;
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
+				CDCFont dcFont(met.lfCaptionFont, GetEditWndPtr()->GetHwnd());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( buff, szText, int(std::size(szText))-1, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 			}
@@ -308,7 +303,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'C':	//	現在選択中のテキスト
 			{
 				CNativeW cmemCurText;
-				GetMainWindow()->GetActiveView().GetCurrentTextForSearch( cmemCurText );
+				GetEditWndPtr()->GetActiveView().GetCurrentTextForSearch( cmemCurText );
 
 				q = wcs_pushW( q, q_max - q, cmemCurText.GetStringPtr(), cmemCurText.GetStringLength());
 				++p;
@@ -319,7 +314,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
 			{
 				wchar_t szText[11];
-				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
+				::_itow_s(GetEditWndPtr()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -327,7 +322,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'y':	//	現在の物理行位置(1開始)
 			{
 				wchar_t szText[11];
-				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
+				::_itow_s(GetEditWndPtr()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -355,7 +350,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			break;
 		case L'p':	//	現在のページ
 			{
-				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
+				CEditWnd*	pcEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					wchar_t szText[1024];
 					::_itow_s(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
@@ -370,7 +365,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			break;
 		case L'P':	//	総ページ
 			{
-				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
+				CEditWnd*	pcEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					wchar_t szText[1024];
 					::_itow_s(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
