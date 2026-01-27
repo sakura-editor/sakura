@@ -749,7 +749,7 @@ BOOL CViewCommander::Command_PUTFILE(
 	}
 	else {	/* ファイル全体を出力 */
 		HWND		hwndProgress;
-		CEditWnd*	pCEditWnd = GetEditWindow();
+		CEditWnd*	pCEditWnd = GetEditWndPtr();
 
 		if( nullptr != pCEditWnd ){
 			hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();

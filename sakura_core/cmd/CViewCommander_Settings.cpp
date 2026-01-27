@@ -38,7 +38,7 @@
 */
 void CViewCommander::Command_SHOWTOOLBAR( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((nullptr == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
 	pCEditWnd->LayoutToolBar();
@@ -59,7 +59,7 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 */
 void CViewCommander::Command_SHOWFUNCKEY( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((nullptr == pCEditWnd->m_cFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
 	pCEditWnd->LayoutFuncKey();
@@ -83,7 +83,7 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
  */
 void CViewCommander::Command_SHOWTAB( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = ((nullptr == pCEditWnd->m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
 	pCEditWnd->LayoutTabBar();
@@ -113,7 +113,7 @@ void CViewCommander::Command_SHOWTAB( void )
 */
 void CViewCommander::Command_SHOWSTATUSBAR( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sWindow.m_bDispSTATUSBAR = ((nullptr == pCEditWnd->m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
 	pCEditWnd->LayoutStatusBar();
@@ -134,7 +134,7 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 */
 void CViewCommander::Command_SHOWMINIMAP( void )
 {
-	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWndPtr();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sWindow.m_bDispMiniMap = ((nullptr == pCEditWnd->GetMiniMap().GetHwnd())? true: false);
 	pCEditWnd->LayoutMiniMap();
