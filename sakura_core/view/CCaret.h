@@ -88,9 +88,6 @@ public:
 	int GetHankakuDy() const;
 	int GetHankakuHeight() const;
 
-	//ドキュメントのインスタンスを求める
-	const CEditDoc* GetDocument() const{ return m_pEditDoc; }
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

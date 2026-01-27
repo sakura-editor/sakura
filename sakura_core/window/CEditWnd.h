@@ -265,8 +265,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
-	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
-	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
 
 	//ビュー
 	const CEditView&	GetActiveView() const { return *m_pcEditView; }

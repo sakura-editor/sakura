@@ -30,7 +30,6 @@ public:
 
 public:
 	//外部依存
-	CEditDoc* GetDocument();
 	COpeBlk* GetOpeBlk();
 	void SetOpeBlk(COpeBlk* p);
 	CLayoutRange& GetSelect();

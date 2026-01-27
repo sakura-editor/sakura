@@ -15,10 +15,6 @@
 #include "cmd/COpeBlk.h"
 
 //外部依存
-inline CEditDoc* CViewCommander::GetDocument()
-{
-	return m_pCommanderView->m_pcEditDoc;
-}
 inline COpeBlk* CViewCommander::GetOpeBlk()
 {
 	return GetDocument()->m_cDocEditor.m_pcOpeBlk;

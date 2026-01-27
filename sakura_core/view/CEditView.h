@@ -108,15 +108,6 @@ private:
 	using CTextAreaHolder = std::unique_ptr<CTextArea>;
 
 public:
-	const CEditDoc* GetDocument() const
-	{
-		return m_pcEditDoc;
-	}
-	CEditDoc* GetDocument()
-	{
-		return m_pcEditDoc;
-	}
-public:
 	//! 背景にビットマップを使用するかどうか
 	//! 2010.10.03 背景実装
 	bool IsBkBitmap() const{
