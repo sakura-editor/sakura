@@ -1135,7 +1135,7 @@ bool CMacro::HandleCommand(
 			sLoadInfo.eCharCode = CODE_NONE;
 			sLoadInfo.bViewMode = false;
 			CControlTray::OpenNewEditor(
-				G_AppInstance(),
+				GetAppInstance(),
 				pcEditView->GetHwnd(),
 				sLoadInfo,
 				cCmdLine.GetStringPtr()
@@ -1238,7 +1238,7 @@ bool CMacro::HandleCommand(
 		break;
 	case F_NEXTWINDOW:
 	case F_PREVWINDOW:
-		pcEditView->GetDocument()->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWが動作しなかったのを修正
+		GetDocument()->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWが動作しなかったのを修正
 		break;
 	case F_MESSAGEBOX:	// メッセージボックスの表示
 	case F_ERRORMSG:	// メッセージボックス（エラー）の表示
@@ -1337,27 +1337,21 @@ bool CMacro::HandleCommand(
 		}
 		break;
 	case F_COMMITUNDOBUFFER:
-		{
-			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk ){
-				int nCount = opeBlk->GetRefCount();
-				opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
-				pcEditView->SetUndoBuffer();
-				if( pcEditView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
-					pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
-					pcEditView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
-				}
+		if (auto opeBlk = GetOpeBlk()) {
+			int nCount = opeBlk->GetRefCount();
+			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
+			pcEditView->SetUndoBuffer();
+			if (!GetOpeBlk() && 0 < nCount) {
+				SetOpeBlk(new COpeBlk());
+				GetOpeBlk()->SetRefCount( nCount );
 			}
 		}
 		break;
 	case F_ADDREFUNDOBUFFER:
-		{
-			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk == nullptr ){
-				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
-			}
-			pcEditView->m_cCommander.GetOpeBlk()->AddRef();
+		if (auto opeBlk = GetOpeBlk(); !opeBlk) {
+			SetOpeBlk(new COpeBlk());
 		}
+		GetOpeBlk()->AddRef();
 		break;
 	case F_SETUNDOBUFFER:
 		{
@@ -1366,11 +1360,11 @@ bool CMacro::HandleCommand(
 		break;
 	case F_APPENDUNDOBUFFERCURSOR:
 		{
-			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-			if( opeBlk == nullptr ){
-				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
+			auto opeBlk = GetOpeBlk();
+			if (!opeBlk) {
+				SetOpeBlk(new COpeBlk());
 			}
-			opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+			opeBlk = GetOpeBlk();
 			opeBlk->AddRef();
 			opeBlk->AppendOpe(
 				new CMoveCaretOpe(
@@ -1561,7 +1555,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			Wrap( &Result )->Receive( nTab );
 			// 2013.04.30 Moca 条件追加。不要な場合はChangeLayoutParamを呼ばない
 			if( 0 < varCopy.Data.iVal && nTab != varCopy.Data.iVal ){
-				View->GetDocument()->m_bTabSpaceCurTemp = true;
+				GetDocument()->m_bTabSpaceCurTemp = true;
 				GetEditWnd().ChangeLayoutParam(
 					false, 
 					CKetaXInt(varCopy.Data.iVal),
@@ -1666,7 +1660,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if( varCopy.Data.iVal < MINLINEKETAS || varCopy.Data.iVal > MAXLINEKETAS )
 				return true;
 			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
-			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
+			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == GetTypeConfig().m_nTextWrapMethod );
 			GetEditWnd().ChangeLayoutParam(
 				false, 
 				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
@@ -1748,7 +1742,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			wmemcpy( Buffer, sDefaultValue.c_str(), nLen );
 			Buffer[nLen] = L'\0';
 			CDlgInput1 cDlgInput1;
-			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
+			if( cDlgInput1.DoModal( GetAppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
 				SysString S( Buffer, wcslen(Buffer) );
 				Wrap( &Result )->Receive( S );
 			}else{
@@ -1867,7 +1861,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 			CDlgOpenFile cDlgOpenFile;
 			cDlgOpenFile.Create(
-				G_AppInstance(), View->GetHwnd(),
+				GetAppInstance(), View->GetHwnd(),
 				sFilter.c_str(),
 				sDefault.c_str()
 			);
@@ -2056,7 +2050,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
 				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
-				SysString ret = View->GetDocument()->m_cCookie.GetCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal);
+				SysString ret = GetDocument()->m_cCookie.GetCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal);
 				Wrap( &Result )->Receive( ret );
 				return true;
 			}
@@ -2069,7 +2063,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
 				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
 				if(VariantChangeType(&varCopy3.Data, &(Arguments[2]), 0, VT_BSTR) != S_OK) return false;
-				SysString ret = View->GetDocument()->m_cCookie.GetCookieDefault(varCopy.Data.bstrVal, varCopy2.Data.bstrVal,
+				SysString ret = GetDocument()->m_cCookie.GetCookieDefault(varCopy.Data.bstrVal, varCopy2.Data.bstrVal,
 					varCopy3.Data.bstrVal, SysStringLen(varCopy3.Data.bstrVal) );
 				Wrap( &Result )->Receive( ret );
 				return true;
@@ -2083,7 +2077,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
 				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
 				if(VariantChangeType(&varCopy3.Data, &(Arguments[2]), 0, VT_BSTR) != S_OK) return false;
-				int ret = View->GetDocument()->m_cCookie.SetCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal,
+				int ret = GetDocument()->m_cCookie.SetCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal,
 					varCopy3.Data.bstrVal, SysStringLen(varCopy3.Data.bstrVal) );
 				Wrap( &Result )->Receive( ret );
 				return true;
@@ -2096,7 +2090,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
 				if(VariantChangeType(&varCopy2.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;
-				int ret = View->GetDocument()->m_cCookie.DeleteCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal);
+				int ret = GetDocument()->m_cCookie.DeleteCookie(varCopy.Data.bstrVal, varCopy2.Data.bstrVal);
 				Wrap( &Result )->Receive( ret );
 				return true;
 			}
@@ -2106,7 +2100,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 		{
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;
-				SysString ret = View->GetDocument()->m_cCookie.GetCookieNames(varCopy.Data.bstrVal);
+				SysString ret = GetDocument()->m_cCookie.GetCookieNames(varCopy.Data.bstrVal);
 				Wrap( &Result )->Receive( ret );
 				return true;
 			}
@@ -2151,7 +2145,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 						nLen--;
 					}
 				}
-				const int nTabWidth = (Int)View->GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
+				const int nTabWidth = (Int)GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
 				int nPosX = varCopy2.Data.lVal - 1;
 				for( int i =0; i < nLen; ){
 					if( pLine[i] == WCODE::TAB ){
@@ -2270,14 +2264,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			}else{
 				nLine = CLogicInt(nLineNum - 1); // nLineNumは1開始
 			}
-			const CDocLine* pcDocLine = View->GetDocument()->m_cDocLineMgr.GetLine(nLine);
+			const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(nLine);
 			if( pcDocLine == nullptr ){
 				return false;
 			}
 			int nRet;
 			switch( nAttType ){
 			case 0:
-				nRet = (CModifyVisitor().IsLineModified(pcDocLine, View->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ? 1: 0);
+				nRet = (CModifyVisitor().IsLineModified(pcDocLine, GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ? 1: 0);
 				break;
 			case 1:
 				nRet = pcDocLine->m_sMark.m_cModified.GetSeq();

@@ -17,6 +17,8 @@
 #include "types/CType.h" // CTypeConfig
 #include "env/CDocTypeManager.h"
 
+class CEditDoc;
+
 class CDocType{
 public:
 	//生成と破棄

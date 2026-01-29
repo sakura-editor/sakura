@@ -123,8 +123,8 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	// ※ Vista/7 の特定の PC でだけのちらつきか？ 該当 PC 以外の Vista/7 PC でもたまに微妙に表示が乱れた感じになる程度の症状が見られたが、それらが同一原因かどうかは不明。
 	if( !GetEditWnd().m_cHokanMgr.GetHwnd() ){
 		GetEditWnd().m_cHokanMgr.DoModeless(
-			G_AppInstance(),
-			GetEditWnd().GetHwnd(),
+			GetAppInstance(),
+			GetMainWindow(),
 			(LPARAM)this
 		);
 	}

@@ -50,8 +50,8 @@ void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 */
 void CViewCommander::Command_JUMP_DIALOG( void )
 {
-	if( !GetEditWindow()->m_cDlgJump.DoModal(
-		G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()
+	if( !GetEditWnd().m_cDlgJump.DoModal(
+		GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()
 	) ){
 		return;
 	}
@@ -73,9 +73,9 @@ void CViewCommander::Command_JUMP( void )
 
 	/* 行番号 */
 	int	nLineNum; //$$ 単位混在
-	nLineNum = GetEditWindow()->m_cDlgJump.m_nLineNum;
+	nLineNum = GetEditWnd().m_cDlgJump.m_nLineNum;
 
-	if( !GetEditWindow()->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
+	if( !GetEditWnd().m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if( GetDllShareData().m_bLineNumIsCRLF_ForJump ){
 			if( CLogicInt(0) >= nLineNum ){
@@ -112,10 +112,10 @@ void CViewCommander::Command_JUMP( void )
 		nLineNum = 1;
 	}
 	nMode = 0;
-	nCurrentLine = GetEditWindow()->m_cDlgJump.m_nPLSQL_E2 - 1;
+	nCurrentLine = GetEditWnd().m_cDlgJump.m_nPLSQL_E2 - 1;
 
 	int	nLineCount; //$$ 単位混在
-	nLineCount = GetEditWindow()->m_cDlgJump.m_nPLSQL_E1 - 1;
+	nLineCount = GetEditWnd().m_cDlgJump.m_nPLSQL_E1 - 1;
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( !m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF ){ //レイアウト単位
@@ -282,7 +282,7 @@ void CViewCommander::Command_BOOKMARK_SET(void)
 	}
 
 	// 2002.01.16 hor 分割したビューも更新
-	GetEditWindow()->Views_Redraw();
+	GetEditWnd().Views_Redraw();
 }
 
 //	from CViewCommander_New.cpp
@@ -374,7 +374,7 @@ void CViewCommander::Command_BOOKMARK_RESET(void)
 {
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).ResetAllBookMark();
 	// 2002.01.16 hor 分割したビューも更新
-	GetEditWindow()->Views_Redraw();
+	GetEditWnd().Views_Redraw();
 }
 
 //	from CViewCommander_New.cpp
@@ -389,7 +389,7 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 		m_pCommanderView->m_sSearchPattern
 	);
 	// 2002.01.16 hor 分割したビューも更新
-	GetEditWindow()->Views_Redraw();
+	GetEditWnd().Views_Redraw();
 }
 
 //! 次の関数リストマークを探し，見つかったら移動する

@@ -1595,13 +1595,13 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				nDataLen = CLogicInt(m);
 			}
 
-			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): Int(1);
+			nCharChars = (GetTypeConfig().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): Int(1);
 			pszData = new wchar_t[nDataLen + nCharChars + 1];
 			wmemcpy( pszData, pLine2, nDataLen );
 			if( WCODE::CR  == wcChar || L'{' == wcChar || L'(' == wcChar ){
 				// 2005.10.11 ryoji TABキーがSPACE挿入の設定なら追加インデントもSPACEにする
 				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
-				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
+				if( GetTypeConfig().m_bInsSpace ){	// SPACE挿入設定
 					int i;
 					CKetaXInt m = CKetaXInt(0);
 					i = 0;
@@ -1670,10 +1670,10 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			if( m_pTypeData->m_bIndentCppUndoSep ){
 				//キー入力とインデントを別のアンドゥバッファにする
 				SetUndoBuffer();
-				if( m_cCommander.GetOpeBlk() == nullptr ){
-					m_cCommander.SetOpeBlk(new COpeBlk);
+				if( GetOpeBlk() == nullptr ){
+					SetOpeBlk(new COpeBlk);
 				}
-				m_cCommander.GetOpeBlk()->AddRef();
+				GetOpeBlk()->AddRef();
 			}
 
 			/* データ置換 削除&挿入にも使える */
@@ -1682,7 +1682,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				pszData,	/* 挿入するデータ */
 				nDataLen,	/* 挿入するデータの長さ */
 				true,
-				m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk()
+				m_bDoing_UndoRedo?nullptr:GetOpeBlk()
 			);
 		}
 
@@ -1696,7 +1696,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 
 		if( bChange && !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
-			m_cCommander.GetOpeBlk()->AppendOpe(
+			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)

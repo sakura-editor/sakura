@@ -28,16 +28,6 @@ class CViewCommander{
 public:
 	CViewCommander(CEditView* pEditView);
 
-public:
-	//外部依存
-	CEditDoc* GetDocument();
-	CEditWnd* GetEditWindow();
-	HWND GetMainWindow();
-	COpeBlk* GetOpeBlk();
-	void SetOpeBlk(COpeBlk* p);
-	CLayoutRange& GetSelect();
-	CCaret& GetCaret();
-
 private:
 	CEditView*		m_pCommanderView;
 	CSMacroMgr*		m_pcSMacroMgr;

@@ -24,7 +24,7 @@ TEST(StdControl, Wnd_GetText2)
 	std::wstring s;
 	text[s.capacity()] = L'\0';
 
-	HINSTANCE hinstance = GetModuleHandleW(nullptr);
+	HINSTANCE hinstance = GetAppInstance();
 	HWND hwnd = CreateWindowExW(0, L"STATIC", text, 0, 1, 1, 1, 1, nullptr, nullptr, hinstance, nullptr);
 	ApiWrap::Wnd_GetText(hwnd, s);
 	DestroyWindow(hwnd);

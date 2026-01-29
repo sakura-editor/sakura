@@ -37,14 +37,14 @@
 /*!
 	@return true:正常終了 / false:エラー終了
 */
-static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
+static bool Commander_COMPARE_core([[maybe_unused]] CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
 {
 	const wchar_t*	pLineSrc;
 	CLogicInt		nLineLenSrc;
 	const wchar_t*	pLineDes;
 	int			nLineLenDes;
 	int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>();
-	const CDocLineMgr& docMgr = commander.GetDocument()->m_cDocLineMgr;
+	const CDocLineMgr& docMgr = GetDocument()->m_cDocLineMgr;
 
 	bDifferent = true;
 	{
@@ -115,7 +115,7 @@ void CViewCommander::Command_COMPARE( void )
 	/* 比較後、左右に並べて表示 */
 	cDlgCompare.m_bCompareAndTileHorz = GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz;
 	BOOL bDlgCompareResult = cDlgCompare.DoModal(
-		G_AppInstance(),
+		GetAppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
@@ -322,7 +322,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 
 	//DIFF差分表示ダイアログを表示する
 	int nDiffDlgResult = cDlgDiff.DoModal(
-		G_AppInstance(),
+		GetAppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath()
@@ -510,6 +510,6 @@ void CViewCommander::Command_Diff_Reset( void )
 	CDiffLineMgr(&GetDocument()->m_cDocLineMgr).ResetAllDiffMark();
 
 	//分割したビューも更新
-	GetEditWindow()->Views_Redraw();
+	GetEditWnd().Views_Redraw();
 	return;
 }

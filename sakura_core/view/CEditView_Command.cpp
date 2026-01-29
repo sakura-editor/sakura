@@ -53,7 +53,7 @@ bool CEditView::TagJumpSub(
 	}
 
 	// 参照元ウィンドウ保存
-	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
+	tagJump.hwndReferer = GetMainWindow();
 
 	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
@@ -137,7 +137,7 @@ bool CEditView::TagJumpSub(
 		inf.m_nCharCode    = CODE_AUTODETECT;
 
 		bSuccess = CControlTray::OpenNewEditor2(
-			G_AppInstance(),
+			GetAppInstance(),
 			this->GetHwnd(),
 			&inf,
 			false,	/* ビューモードか */
@@ -233,7 +233,7 @@ open_c:;
 		sLoadInfo.eCharCode = GetDocument()->GetDocumentEncoding();
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor(
-			G_AppInstance(),
+			GetAppInstance(),
 			this->GetHwnd(),
 			sLoadInfo,
 			nullptr,
@@ -267,7 +267,7 @@ open_c:;
 		GetCaret().GetCaretLayoutPos(),
 		&tagJump.point
 	);
-	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
+	tagJump.hwndReferer = GetMainWindow();
 	// タグジャンプ情報の保存
 	CTagJumpManager().PushTagJump(&tagJump);
 	return TRUE;

@@ -246,7 +246,7 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
 		if( (BOOL)wParam ){
 			if( ::GetActiveWindow() == GetHwnd() ){
-				::SetActiveWindow( GetEditWnd().GetHwnd() );
+				::SetActiveWindow( GetMainWindow() );
 				BlockingHook( nullptr );	// キュー内に溜まっているメッセージを処理
 				::SetActiveWindow( GetHwnd() );
 				return 0L;
@@ -355,7 +355,7 @@ HWND CDlgFuncList::DoModeless(
 	m_nOutlineType = nOutlineType;		/* アウトライン解析の種別 */
 	m_nListType = nListType;			/* 一覧の種類 */
 	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	m_nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
 	m_nSortCol = m_type.m_nOutlineSortCol;
 	m_nSortColOld = m_nSortCol;
@@ -702,8 +702,7 @@ void CDlgFuncList::SetData()
 	}
 	// 2002/11/1 frozen 項目のソート基準を設定するコンボボックスはブックマーク一覧の以外の時に表示する
 	// Nov. 5, 2002 genta ツリー表示の時だけソート基準コンボボックスを表示
-	CEditView* pcEditView = (CEditView*)m_lParam;
-	int nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	int nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	if( nDocType != m_nDocType ){
 		// 以前とはドキュメントタイプが変わったので初期化する
 		m_nDocType = nDocType;
@@ -1497,8 +1496,7 @@ void CDlgFuncList::SetDocLineFuncList()
 	if( m_nOutlineType == OUTLINE_FILETREE ){
 		return;
 	}
-	CEditView* pcEditView=(CEditView*)m_lParam;
-	CDocLineMgr* pcDocLineMgr = &pcEditView->GetDocument()->m_cDocLineMgr;
+	CDocLineMgr* pcDocLineMgr = &GetDocument()->m_cDocLineMgr;
 	
 	CFuncListManager().ResetAllFucListMark(pcDocLineMgr, false);
 	int i;
@@ -1739,7 +1737,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( cWindowPlacement );
-			if (::GetWindowPlacement( GetEditWnd().GetHwnd(), &cWindowPlacement )){
+			if (::GetWindowPlacement( GetMainWindow(), &cWindowPlacement )){
 				/* ウィンドウ位置・サイズを-1以外の値にしておくと、CDialogで使用される． */
 				m_xPos = m_pShareData->m_Common.m_sOutline.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
 				m_yPos = m_pShareData->m_Common.m_sOutline.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;
@@ -1785,7 +1783,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		}
 		// 他ウィンドウに変更を通知する
 		if( ProfDockSync() ){
-			HWND hwndEdit = GetEditWnd().GetHwnd();
+			HWND hwndEdit = GetMainWindow();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 	}
@@ -1937,7 +1935,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 			CEditView* pcEditView=(CEditView*)m_lParam;
 			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_VIEW, true, TRUE, 0, 0, 0 );
 			m_nCurLine=pcEditView->GetCaret().GetCaretLayoutPos().GetY2() + CLayoutInt(1);
-			CDocTypeManager().GetTypeConfig(pcEditView->GetDocument()->m_cDocType.GetDocumentType(), m_type);
+			CDocTypeManager().GetTypeConfig(GetDocument()->m_cDocType.GetDocumentType(), m_type);
 			SetData();
 		}else
 		if(m_nViewType == VIEWTYPE_TREE){
@@ -1949,7 +1947,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 	case IDC_BUTTON_SETTING:
 		{
 			CDlgFileTree cDlgFileTree;
-			int nRet = cDlgFileTree.DoModal( G_AppInstance(), GetHwnd(), (LPARAM)this );
+			int nRet = cDlgFileTree.DoModal( GetAppInstance(), GetHwnd(), (LPARAM)this );
 			if( nRet == TRUE ){
 				EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 				CEditView* pcEditView = (CEditView*)m_lParam;
@@ -2073,7 +2071,7 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 					break;
 				case CDDS_ITEMPREPAINT:
 					{	// 選択アイテムを反転表示にする
-						const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+						const STypeConfig	*TypeDataPtr = &(GetTypeConfig());
 						COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 						COLORREF clrTextBk = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 						if( hwndList == pNMHDR->hwndFrom ){
@@ -2284,7 +2282,7 @@ BOOL CDlgFuncList::OnDestroy( void )
 
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
-	HWND hwndEdit = GetEditWnd().GetHwnd();
+	HWND hwndEdit = GetMainWindow();
 	if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 		/* 親のウィンドウ位置・サイズを記憶 */
 		WINDOWPLACEMENT cWindowPlacement;
@@ -2421,11 +2419,11 @@ bool CDlgFuncList::TagJumpTimer( const WCHAR* pFile, CMyPoint point, bool bCheck
 	CEditView* pcView = reinterpret_cast<CEditView*>(m_lParam);
 
 	// ファイルを開いていない場合は自分で開く
-	if( pcView->GetDocument()->IsAcceptLoad() ){
+	if( GetDocument()->IsAcceptLoad() ){
 		std::wstring strFile = pFile;
 		pcView->GetCommander().Command_FILEOPEN( strFile.c_str(), CODE_AUTODETECT, CAppMode::getInstance()->IsViewMode(), nullptr );
 		if( point.y != -1 ){
-			if( pcView->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+			if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				CLogicPoint pt;
 				pt.x = CLogicInt(point.GetX() - 1);
 				pt.y = CLogicInt(point.GetY() - 1);
@@ -2489,7 +2487,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 				m_pShareData->m_sWorkBuffer.m_LogicPoint = poCaret;
 
 				//	2006.07.09 genta 移動時に選択状態を保持するように
-				::SendMessageAny( GetEditWnd().GetHwnd(),
+				::SendMessageAny( GetMainWindow(),
 					MYWM_SETCARETPOS, 0, PM_SETCARETPOS_KEEPSELECT );
 			}
 			if( bCheckAutoClose && bFileJumpSelf ){
@@ -2562,8 +2560,7 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 */
 void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFuncInfoArr, CLayoutInt nCurLine, CLayoutInt nCurCol )
 {
-	CEditView* pcEditView = (CEditView*)m_lParam;
-	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	m_nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
 	SyncColor();
 
@@ -2600,8 +2597,7 @@ void CDlgFuncList::SyncColor( void )
 		return;
 #ifdef DEFINE_SYNCCOLOR
 	// テキスト色・背景色をビューと同色にする
-	CEditView* pcEditView = (CEditView*)m_lParam;
-	const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+	const STypeConfig	*TypeDataPtr = &(GetTypeConfig());
 	COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	COLORREF clrBack = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
@@ -3061,7 +3057,7 @@ INT_PTR CDlgFuncList::OnLButtonUp( [[maybe_unused]] HWND hwnd, [[maybe_unused]] 
 
 		if( ProfDockSync() ){
 			// 他ウィンドウに変更を通知する
-			HWND hwndEdit = GetEditWnd().GetHwnd();
+			HWND hwndEdit = GetMainWindow();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 		return 1L;
@@ -3280,7 +3276,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 
 	// メニュー選択された状態に切り替える
 	EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
-	HWND hwndEdit = GetEditWnd().GetHwnd();
+	HWND hwndEdit = GetMainWindow();
 	if( nId == 450 ){	// 更新
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
@@ -3305,7 +3301,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 			ListView_GetItem(hwndList, &item);
 			const CFuncInfo* pFuncInfo = m_pcFuncInfoArr->GetAt(item.lParam);
 			// FIXME: 行番号があってるとは限らない
-			CDocLine* pCDocLine = pcEditView->GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
+			CDocLine* pCDocLine = GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
 			if( pCDocLine ){
 				CBookmarkSetter cBookmark(pCDocLine);
 				cBookmark.SetBookmark(false);
@@ -3445,7 +3441,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 		bool* m_pbSwitch;
 	} SAutoSwitch( &m_bInChangeLayout );	// 処理中は m_bInChangeLayout フラグを ON にしておく
 
-	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	CEditDoc* pDoc = GetDocument();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	m_nDocType = pDoc->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 
@@ -3460,7 +3456,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
 			CEditView* pcEditView = &GetEditWnd().GetActiveView();
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3472,7 +3468,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), TRUE );
 			return true;	// 解析した
 		}
 	}else{	// 現在は表示
@@ -3497,7 +3493,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 				if( nId == OUTLINE_LAYOUT_FILECHANGED ) return false;	// ファイル切替ではフローティングは開かない（従来互換）
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3509,7 +3505,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), TRUE );
 			return true;	// 解析した
 		}
 
@@ -3570,7 +3566,7 @@ void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 {
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
-		if( (HWND)lParam == GetEditWnd().GetHwnd() )
+		if( (HWND)lParam == GetMainWindow() )
 			return;	// 自分からの通知は無視
 		ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// アウトライン画面を再配置
 		break;
@@ -3821,7 +3817,7 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 					::MoveWindow( GetHwnd(), rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE );
 				}
 				if( ProfDockSync() ){
-					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)GetEditWnd().GetHwnd() );	// 他ウィンドウにドッキング配置変更を通知する
+					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)GetMainWindow() );	// 他ウィンドウにドッキング配置変更を通知する
 				}
 				return TRUE;
 			}

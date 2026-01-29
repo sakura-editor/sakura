@@ -242,7 +242,7 @@ INT_PTR CPropWin::DispatchEvent(
 					rc.top    = m_Common.m_sWindow.m_nWinPosX;
 					rc.left   = m_Common.m_sWindow.m_nWinPosY;
 					cDlgWinSize.DoModal(
-						::GetModuleHandle(nullptr),
+						GetAppInstance(),
 						hwndDlg,
 						m_Common.m_sWindow.m_eSaveWindowSize,
 						m_Common.m_sWindow.m_eSaveWindowPos,

@@ -727,7 +727,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	  || GetSelect().GetFrom() == GetSelect().GetTo() ){
 		return;
 	}
-	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& type = GetTypeConfig();
 	bool bLineNumLayout = GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy
 		|| m_pCommanderView->GetSelectionInfo().IsBoxSelecting();
 	CLayoutRect rcSel;
@@ -1015,7 +1015,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	}
 	cmemClip.AppendString(L"</pre>", 6);
 
-	CClipboard cClipboard( GetEditWindow()->GetHwnd() );
+	CClipboard cClipboard( GetMainWindow() );
 	if(!cClipboard){
 		return;
 	}
@@ -1159,7 +1159,7 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 	CNativeW		cMemKeyList;
 
 	CKeyBind::CreateKeyBindList(
-		G_AppInstance(),
+		GetAppInstance(),
 		GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum,
 		GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr,
 		cMemKeyList,
@@ -1169,5 +1169,5 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 
 	// Windowsクリップボードにコピー
 	//2004.02.17 Moca 関数化
-	SetClipboardText( CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
+	SetClipboardText( GetEditWnd().m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
 }

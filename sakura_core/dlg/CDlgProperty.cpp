@@ -88,7 +88,7 @@ void CDlgProperty::SetData( void )
 	cmemProp.AppendString( L"\r\n" );
 
 	cmemProp.AppendString( LS(STR_DLGFLPROP_FILETYPE) );
-	cmemProp.AppendString( pCEditDoc->m_cDocType.GetDocumentAttribute().m_szTypeName );
+	cmemProp.AppendString( GetTypeConfig().m_szTypeName );
 	cmemProp.AppendString( L"\r\n" );
 
 	cmemProp.AppendString( LS(STR_DLGFLPROP_ENCODING) );

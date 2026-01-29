@@ -1279,7 +1279,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 	int v1, v2, v3, v4;
 	int i;
 
-	CEditDoc& doc = *CEditWnd::getInstance()->GetDocument();
+	auto& doc = GetEditDoc();
 	ECodeType ecode_result;
 	CESI cesi( doc.m_cDocType.GetDocumentAttribute().m_encoding );
 

@@ -13,7 +13,7 @@
 	Copyright (C) 2005, genta, MIK, maru
 	Copyright (C) 2006, aroka, かろと, fon, ryoji
 	Copyright (C) 2007, ryoji, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -158,13 +158,14 @@ namespace nsFuncCode{
 	extern const int			nFuncList_Special_Num;
 };
 
+namespace func {
+
+bool isEnabled(EFunctionCode nId) noexcept;
+bool isChecked(EFunctionCode nId) noexcept;
+
+} // namespace func
+
 /*機能番号に対応したヘルプトピックIDを返す*/
-int FuncID_To_HelpContextID( EFunctionCode nFuncID );	//Stonee, 2001/02/23
+int FuncID_To_HelpContextID(EFunctionCode nFuncID) noexcept;	//Stonee, 2001/02/23
 
-class CEditDoc;
-struct DLLSHAREDATA;
-
-//2007.10.30 kobake 機能チェックをCEditWndからここへ移動
-bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能が利用可能か調べる */
-bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能がチェック状態か調べる */
 #endif /* SAKURA_FUNCCODE_071442E9_78EF_47B8_ABB5_CBB12C3EC84B_H_ */

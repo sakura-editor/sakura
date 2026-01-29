@@ -80,7 +80,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 */
 /* static */ HMODULE CSelectLang::getLangRsrcInstance() noexcept
 {
-	return !gm_Langs.empty() && gm_Selected ? HMODULE(gm_Langs[gm_Selected]->m_Module) : ::GetModuleHandleW(nullptr);
+	return !gm_Langs.empty() && gm_Selected ? HMODULE(gm_Langs[gm_Selected]->m_Module) : GetAppInstance();
 }
 
 /*!

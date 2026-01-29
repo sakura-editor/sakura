@@ -57,7 +57,7 @@ void CViewCommander::Command_CtrlCode_Dialog( void )
 	CDlgCtrlCode	cDlgCtrlCode;
 
 	//コントロールコード入力ダイアログを表示する
-	if( cDlgCtrlCode.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
+	if( cDlgCtrlCode.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
 	{
 		//コントロールコードを入力する
 		// 2013.06.11 Command_WCHAR -> HandleCommand マクロ記録対応

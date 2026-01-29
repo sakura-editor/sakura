@@ -136,7 +136,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 
 	//改行コードが混在しているかどうか判定
 	bool bTmpResult = false;
-	if( pcDoc->m_cDocType.GetDocumentAttribute().m_bChkEnterAtEnd ){
+	if( GetTypeConfig().m_bChkEnterAtEnd ){
 		bTmpResult = _CheckSavingEolcode(
 			pcDoc->m_cDocLineMgr, pSaveInfo->cEol
 		);
@@ -145,7 +145,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 	//ユーザー問い合わせ
 	if (bTmpResult) {
 		int nDlgResult = MYMESSAGEBOX(
-			CEditWnd::getInstance()->GetHwnd(),
+			GetMainWindow(),
 			MB_YESNOCANCEL | MB_ICONWARNING,
 			GSTR_APPNAME,
 			LS(STR_CODECHECKER_EOL_UNIFY),
@@ -184,7 +184,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 			CUnicode().UnicodeToHex(std::wstring_view{ cmemChar.GetStringPtr(), size_t(cmemChar.GetStringLength()) }, szCharCode, &GetDllShareData().m_Common.m_sStatusbar);
 		}
 		int nDlgResult = MYMESSAGEBOX(
-			CEditWnd::getInstance()->GetHwnd(),
+			GetMainWindow(),
 			MB_YESNOCANCEL | MB_ICONWARNING,
 			GSTR_APPNAME,
 			LS(STR_CODECHECKER_CONFORM_LOSESOME),
@@ -214,7 +214,7 @@ void CCodeChecker::OnFinalSave(ESaveResult eSaveResult)
 {
 	//カキコ結果
 	if(eSaveResult==SAVED_LOSESOME){
-		ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_CODECHECKER_LOSESOME_SAVE));
+		ErrorMessage(GetMainWindow(), LS(STR_CODECHECKER_LOSESOME_SAVE));
 	}
 }
 
@@ -226,7 +226,7 @@ void CCodeChecker::OnFinalLoad(ELoadResult eLoadResult)
 {
 	if(eLoadResult==LOADED_LOSESOME){
 		ErrorMessage(
-			CEditWnd::getInstance()->GetHwnd(),
+			GetMainWindow(),
 			LS(STR_CODECHECKER_LOSESOME_ROAD)
 		);
 	}

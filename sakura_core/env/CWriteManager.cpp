@@ -40,7 +40,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 		if(e==RESULT_FAILURE){
 			nRetVal=RESULT_FAILURE;
 			ErrorMessage(
-				CEditWnd::getInstance()->GetHwnd(),
+				GetMainWindow(),
 				LS(STR_FILESAVE_CONVERT_ERROR),
 				sSaveInfo.cFilePath.c_str()
 			);
@@ -78,7 +78,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				if(e==RESULT_FAILURE){
 					nRetVal=RESULT_FAILURE;
 					ErrorMessage(
-						CEditWnd::getInstance()->GetHwnd(),
+						GetMainWindow(),
 						LS(STR_FILESAVE_CONVERT_ERROR),
 						sSaveInfo.cFilePath.c_str()
 					);
@@ -121,7 +121,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				if(e==RESULT_FAILURE){
 					nRetVal=RESULT_FAILURE;
 					ErrorMessage(
-						CEditWnd::getInstance()->GetHwnd(),
+						GetMainWindow(),
 						LS(STR_FILESAVE_CONVERT_ERROR),
 						sSaveInfo.cFilePath.c_str()
 					);
@@ -141,7 +141,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 	}
 	catch(const CError_FileOpen&){ //########### 現時点では、この例外が発生した場合は正常に動作できない
 		ErrorMessage(
-			CEditWnd::getInstance()->GetHwnd(),
+			GetMainWindow(),
 			LS(STR_SAVEAGENT_OTHER_APP),
 			sSaveInfo.cFilePath.c_str()
 		);

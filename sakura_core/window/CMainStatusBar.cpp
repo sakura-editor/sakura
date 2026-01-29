@@ -30,7 +30,7 @@ void CMainStatusBar::CreateStatusBar()
 		0, 0, 0, 0, // X, Y, nWidth, nHeight
 		m_pOwner->GetHwnd(),
 		(HMENU)IDW_STATUSBAR,
-		CEditApp::getInstance()->GetAppInstance(),
+		GetAppInstance(),
 		nullptr
 	);
 
@@ -46,7 +46,7 @@ void CMainStatusBar::CreateStatusBar()
 		13,
 		m_hwndStatusBar,
 		nullptr,
-		CEditApp::getInstance()->GetAppInstance(),
+		GetAppInstance(),
 		nullptr
 	);
 

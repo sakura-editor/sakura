@@ -335,7 +335,7 @@ void CEditView::InsertData_CEditView(
 		pcOpe->m_nOrgSeq = nInsSeq;
 
 		// 操作の追加
-		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
+		GetOpeBlk()->AppendOpe( pcOpe );
 	}
 }
 
@@ -426,7 +426,7 @@ void CEditView::DeleteData2(
 			&pcOpe->m_ptCaretPos_PHY_After
 		);
 		// 操作の追加
-		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
+		GetOpeBlk()->AppendOpe( pcOpe );
 	}
 }
 
@@ -480,7 +480,7 @@ void CEditView::DeleteData(
 		CWaitCursor cWaitCursor( this->GetHwnd() );  // 2002.02.05 hor
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
-			m_cCommander.GetOpeBlk()->AppendOpe(
+			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
@@ -571,7 +571,7 @@ void CEditView::DeleteData(
 
 				pcOpe->m_ptCaretPos_PHY_After = GetCaret().GetCaretLogicPos();	// 操作後のキャレット位置
 				/* 操作の追加 */
-				m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
+				GetOpeBlk()->AppendOpe( pcOpe );
 			}
 		}else{
 			/* データ置換 削除&挿入にも使える */
@@ -580,7 +580,7 @@ void CEditView::DeleteData(
 				L"",					/* 挿入するデータ */
 				CLogicInt(0),			/* 挿入するデータの長さ */
 				bRedraw,
-				m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk()
+				m_bDoing_UndoRedo?nullptr:GetOpeBlk()
 			);
 		}
 	}else{
@@ -628,7 +628,7 @@ void CEditView::DeleteData(
 			L"",				/* 挿入するデータ */
 			CLogicInt(0),		/* 挿入するデータの長さ */
 			bRedraw,
-			m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk(),
+			m_bDoing_UndoRedo?nullptr:GetOpeBlk(),
 			false,
 			&sDelRangeLogic
 		);
@@ -984,7 +984,7 @@ void CEditView::RTrimPrevLine( void )
 						nullptr,		/* 挿入するデータ */
 						CLogicInt(0),			/* 挿入するデータの長さ */
 						true,
-						m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk()
+						m_bDoing_UndoRedo?nullptr:GetOpeBlk()
 					);
 					CLayoutPoint ptCP;
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCaretPos_PHY, &ptCP );
@@ -992,7 +992,7 @@ void CEditView::RTrimPrevLine( void )
 
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 						/* 操作の追加 */
-						m_cCommander.GetOpeBlk()->AppendOpe(
+						GetOpeBlk()->AppendOpe(
 							new CMoveCaretOpe(
 								GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 							)

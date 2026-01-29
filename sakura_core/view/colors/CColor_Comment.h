@@ -43,8 +43,7 @@ class CColor_BlockComment final : public CColorStrategy{
 public:
 	CColor_BlockComment(EColorIndexType nType) : m_nType(nType), m_nCOMMENTEND(0){}
 	void Update(void) override {
-		const CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
-		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
+		m_pTypeData = &GetTypeConfig();
 		m_pcBlockComment = &m_pTypeData->m_cBlockComments[m_nType - COLORIDX_BLOCK1];
 	}
 	EColorIndexType GetStrategyColor() const override{ return m_nType; }

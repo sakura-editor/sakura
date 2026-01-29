@@ -22,7 +22,7 @@ EDiffMark CDiffLineGetter::GetLineDiffMark() const{ return (EDiffMark)m_pcDocLin
 bool CDiffLineGetter::GetDiffColor(EColorIndexType* pnColorIndex) const
 {
 	EDiffMark type = GetLineDiffMark();
-	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+	CEditView* pView = &GetEditWnd().GetActiveView();
 
 	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
 	if( type ){

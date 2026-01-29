@@ -790,18 +790,18 @@ void CPrintPreview::OnChangePrintSetting( void )
 	}
 
 	/* 印刷用のレイアウト管理情報の初期化 */
-	m_pLayoutMgr_Print->Create( m_pParentWnd->GetDocument(), &m_pParentWnd->GetDocument()->m_cDocLineMgr );
+	m_pLayoutMgr_Print->Create( GetDocument(), &GetDocument()->m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
 	// タイプ別設定をコピー
-	m_typePrint = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute();
+	m_typePrint = GetTypeConfig();
 	STypeConfig& ref = m_typePrint;
 
 	ref.m_nMaxLineKetas = 		m_bPreview_EnableColumns;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
-	ref.m_nTabSpace =			m_pParentWnd->GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
-	ref.m_nTsvMode =			m_pParentWnd->GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode;
+	ref.m_nTabSpace =			GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
+	ref.m_nTsvMode =			GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode;
 
 	//@@@ 2002.09.22 YAZAKI
 	ref.m_cLineComment.CopyTo(0, L"", -1);	/* 行コメントデリミタ */
@@ -869,7 +869,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	auto_snprintf_s(szPageNum, _TRUNCATE, L"%d", m_nCurPageNum + 1);
 
 	BOOL bDlgInputPageResult=cDlgInputPage.DoModal(
-		CEditApp::getInstance()->GetAppInstance(),
+		GetAppInstance(),
 		m_hwndPrintPreviewBar, 
 		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
@@ -1027,12 +1027,12 @@ void CPrintPreview::OnPrint( void )
 	}
 
 	/* プリンターに渡すジョブ名を生成 */
-	if( ! m_pParentWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
+	if( ! GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
 		::wcsncpy_s(szJobName, LS(STR_NO_TITLE2), _TRUNCATE);
 	}else{
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
-		_wsplitpath_s( m_pParentWnd->GetDocument()->m_cDocFile.GetFilePath(), nullptr, 0, nullptr, 0, szFileName, std::size(szFileName), szExt, std::size(szExt) );
+		_wsplitpath_s( GetDocument()->m_cDocFile.GetFilePath(), nullptr, 0, nullptr, 0, szFileName, std::size(szFileName), szExt, std::size(szExt) );
 		auto_snprintf_s(szJobName, std::size(szJobName), L"%s%s", szFileName, szExt );
 	}
 
@@ -1066,7 +1066,7 @@ void CPrintPreview::OnPrint( void )
 			MYWM_CHANGESETTING,
 			(WPARAM)0,
 			(LPARAM)PM_PRINTSETTING,
-			CEditWnd::getInstance()->GetHwnd()
+			GetMainWindow()
 		);
 	}
 
@@ -1083,7 +1083,7 @@ void CPrintPreview::OnPrint( void )
 
 	/* 印刷過程を表示して、キャンセルするためのダイアログを作成 */
 	CDlgCancel	cDlgPrinting;
-	cDlgPrinting.DoModeless( CEditApp::getInstance()->GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
+	cDlgPrinting.DoModeless( GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
 	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_JOBNAME, szJobName );
 	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, L"" );	// XPS対応 2013/5/8 Uchi
 
@@ -1468,7 +1468,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 			if( m_pPrintSetting->m_bPrintLineNumber ){
 				wchar_t		szLineNum[64];	//	行番号を入れる。
 				/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				if( m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
+				if( GetTypeConfig().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
 						::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
@@ -1482,9 +1482,9 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				}
 
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
-				if( 2 == m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_nLineTermType ){
+				if( 2 == GetTypeConfig().m_nLineTermType ){
 					wchar_t szLineTerm[2];
-					szLineTerm[0] = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
+					szLineTerm[0] = GetTypeConfig().m_cLineTermChar;	/* 行番号区切り文字 */
 					szLineTerm[1] = L'\0';
 					::wcsncat_s(szLineNum, szLineTerm, _TRUNCATE);
 				}
@@ -1547,7 +1547,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 
 		// 2006.08.14 Moca 行番号が縦線の場合は1度に引く
 		if( m_pPrintSetting->m_bPrintLineNumber &&
-				1 == m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_nLineTermType ){
+				1 == GetTypeConfig().m_nLineTermType ){
 			// 縦線は本文と行番号の隙間1桁の中心に作画する(画面作画では、右詰め)
 			::MoveToEx( hdc,
 				nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ),
@@ -1654,7 +1654,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	int space = m_pLayoutMgr_Print->GetCharSpacing(); // 0
 
 	//タブ幅取得
-//	CLayoutInt nTabSpace = m_pParentWnd->GetDocument()->m_cLayoutMgr.GetTabSpace(); //	Sep. 23, 2002 genta LayoutMgrの値を使う
+//	CLayoutInt nTabSpace = GetDocument()->m_cLayoutMgr.GetTabSpace(); //	Sep. 23, 2002 genta LayoutMgrの値を使う
 	CLayoutXInt nTabSpace = m_pLayoutMgr_Print->GetTabSpace();	// docから自分のLayoutMgrに変更
 
 	CLayoutInt tabPadding = CLayoutInt(m_pLayoutMgr_Print->GetWidthPerKeta() - 1); //LayoutInt == 1描画単位
@@ -1765,7 +1765,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	if (pcLayout) {
 		int textColorIndex = ToColorInfoArrIndex(COLORIDX_TEXT);
 		if (-1 != textColorIndex) {
-			const ColorInfo& info = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[textColorIndex];
+			const ColorInfo& info = GetTypeConfig().m_ColorInfoArr[textColorIndex];
 			::SetTextColor(hdc, info.m_sColorAttr.m_cTEXT);
 //			::SetBkColor(hdc, info.m_colBACK);
 		}
@@ -1801,7 +1801,7 @@ void CPrintPreview::Print_DrawBlock(
 	// 色設定
 	if (pcLayout) {
 		if (-1 != nColorIdx) {
-			const ColorInfo& info = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
+			const ColorInfo& info = GetTypeConfig().m_ColorInfoArr[nColorIdx];
 			if (nKind == 2 && !info.m_sFontAttr.m_bUnderLine) {
 				// TABは下線が無ければ印字不要
 				return;
@@ -1943,7 +1943,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,						/* default height				*/
 		m_pParentWnd->GetHwnd(),								/* handle of main window		*/
 		(HMENU) nullptr,						/* no menu for a scroll bar		*/
-		CEditApp::getInstance()->GetAppInstance(),						/* instance owning this window	*/
+		GetAppInstance(),						/* instance owning this window	*/
 		(LPVOID) nullptr						/* pointer not needed			*/
 	);
 	SCROLLINFO	si;
@@ -1969,7 +1969,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,						/* default height				*/
 		m_pParentWnd->GetHwnd(),								/* handle of main window		*/
 		(HMENU) nullptr,						/* no menu for a scroll bar		*/
-		CEditApp::getInstance()->GetAppInstance(),						/* instance owning this window	*/
+		GetAppInstance(),						/* instance owning this window	*/
 		(LPVOID) nullptr						/* pointer not needed			*/
 	);
 	si.cbSize = sizeof( si );
@@ -1994,7 +1994,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,										/* default height				*/
 		m_pParentWnd->GetHwnd(), 											/* handle of main window		*/
 		(HMENU) nullptr,										/* no menu for a scroll bar 	*/
-		CEditApp::getInstance()->GetAppInstance(),										/* instance owning this window	*/
+		GetAppInstance(),										/* instance owning this window	*/
 		(LPVOID) nullptr										/* pointer not needed			*/
 	);
 	::ShowWindow( m_hwndPrintPreviewBar, SW_SHOW );
@@ -2114,7 +2114,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 						MYWM_CHANGESETTING,
 						(WPARAM)0,
 						(LPARAM)PM_PRINTSETTING,
-						CEditWnd::getInstance()->GetHwnd()
+						GetMainWindow()
 					);
 					// OnChangePrintSetting();
 					// ::InvalidateRect( m_pParentWnd->GetHwnd(), NULL, TRUE );

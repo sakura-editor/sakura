@@ -44,7 +44,7 @@
 */
 void CViewCommander::Command_SEARCH_BOX( void )
 {
-	GetEditWindow()->m_cToolbar.SetFocusSearchBox();
+	GetEditWnd().m_cToolbar.SetFocusSearchBox();
 }
 
 /* 検索(単語検索ダイアログ) */
@@ -56,16 +56,16 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 
 	/* 検索文字列を初期化 */
 	if( 0 < cmemCurText.GetStringLength() ){
-		GetEditWindow()->m_cDlgFind.m_strText = cmemCurText.GetStringPtr();
+		GetEditWnd().m_cDlgFind.m_strText = cmemCurText.GetStringPtr();
 	}
 	/* 検索ダイアログの表示 */
-	if( nullptr == GetEditWindow()->m_cDlgFind.GetHwnd() ){
-		GetEditWindow()->m_cDlgFind.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWindow()->GetActiveView() );
+	if( nullptr == GetEditWnd().m_cDlgFind.GetHwnd() ){
+		GetEditWnd().m_cDlgFind.DoModeless( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWnd().GetActiveView() );
 	}
 	else{
 		/* アクティブにする */
-		ActivateFrameWindow( GetEditWindow()->m_cDlgFind.GetHwnd() );
-		ApiWrap::DlgItem_SetText( GetEditWindow()->m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
+		ActivateFrameWindow( GetEditWnd().m_cDlgFind.GetHwnd() );
+		ApiWrap::DlgItem_SetText( GetEditWnd().m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	return;
 }
@@ -494,11 +494,11 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 
 	/* 検索文字列を初期化 */
 	if( 0 < cmemCurText.GetStringLength() ){
-		GetEditWindow()->m_cDlgReplace.m_strText = cmemCurText.GetStringPtr();
+		GetEditWnd().m_cDlgReplace.m_strText = cmemCurText.GetStringPtr();
 	}
 	if( 0 < GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.size() ){
-		if( GetEditWindow()->m_cDlgReplace.m_nReplaceKeySequence < GetDllShareData().m_Common.m_sSearch.m_nReplaceKeySequence ){
-			GetEditWindow()->m_cDlgReplace.m_strText2 = GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0];	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
+		if( GetEditWnd().m_cDlgReplace.m_nReplaceKeySequence < GetDllShareData().m_Common.m_sSearch.m_nReplaceKeySequence ){
+			GetEditWnd().m_cDlgReplace.m_strText2 = GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0];	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
 		}
 	}
 	
@@ -508,19 +508,19 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 		bSelected = FALSE;	//ファイル全体をチェックしてダイアログ表示
 	}
 	/* 置換オプションの初期化 */
-	GetEditWindow()->m_cDlgReplace.m_nReplaceTarget=0;	/* 置換対象 */
-	GetEditWindow()->m_cDlgReplace.m_nPaste=FALSE;		/* 貼り付ける？ */
+	GetEditWnd().m_cDlgReplace.m_nReplaceTarget=0;	/* 置換対象 */
+	GetEditWnd().m_cDlgReplace.m_nPaste=FALSE;		/* 貼り付ける？ */
 // To Here 2001.12.03 hor
 
 	/* 置換ダイアログの表示 */
 	//	From Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
-	if( !::IsWindow( GetEditWindow()->m_cDlgReplace.GetHwnd() ) ){
-		GetEditWindow()->m_cDlgReplace.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)m_pCommanderView, bSelected );
+	if( !::IsWindow( GetEditWnd().m_cDlgReplace.GetHwnd() ) ){
+		GetEditWnd().m_cDlgReplace.DoModeless( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)m_pCommanderView, bSelected );
 	}
 	else {
 		/* アクティブにする */
-		ActivateFrameWindow( GetEditWindow()->m_cDlgReplace.GetHwnd() );
-		ApiWrap::DlgItem_SetText( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
+		ActivateFrameWindow( GetEditWnd().m_cDlgReplace.GetHwnd() );
+		ApiWrap::DlgItem_SetText( GetEditWnd().m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	//	To Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	return;
@@ -543,8 +543,8 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		hwndParent = m_pCommanderView->GetHwnd();
 	}
 	//2002.02.10 hor
-	int nPaste			=	GetEditWindow()->m_cDlgReplace.m_nPaste;
-	int nReplaceTarget	=	GetEditWindow()->m_cDlgReplace.m_nReplaceTarget;
+	int nPaste			=	GetEditWnd().m_cDlgReplace.m_nPaste;
+	int nReplaceTarget	=	GetEditWnd().m_cDlgReplace.m_nReplaceTarget;
 
 	if( nPaste && nReplaceTarget == 3 ){
 		// 置換対象：行削除のときは、クリップボードから貼り付けを無効にする
@@ -554,8 +554,8 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	// From Here 2001.12.03 hor
 	if( nPaste && !GetDocument()->m_cDocEditor.IsEnablePaste()){
 		OkMessage( hwndParent, LS(STR_ERR_CEDITVIEW_CMD10) );
-		::CheckDlgButton( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_CHK_PASTE, FALSE );
-		::EnableWindow( ::GetDlgItem( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
+		::CheckDlgButton( GetEditWnd().m_cDlgReplace.GetHwnd(), IDC_CHK_PASTE, FALSE );
+		::EnableWindow( ::GetDlgItem( GetEditWnd().m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 		return;	//	失敗return;
 	}
 
@@ -582,7 +582,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 
 	// 2004.06.01 Moca 検索中に、他のプロセスによってm_aReplaceKeysが書き換えられても大丈夫なように
-	const CNativeW	cMemRepKey( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
+	const CNativeW	cMemRepKey( GetEditWnd().m_cDlgReplace.m_strText2.c_str() );
 
 	/* 次を検索 */
 	Command_SEARCH_NEXT( true, true, false, hwndParent, nullptr );
@@ -731,24 +731,24 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 
 	//2002.02.10 hor
-	BOOL nPaste			= GetEditWindow()->m_cDlgReplace.m_nPaste;
-	BOOL nReplaceTarget	= GetEditWindow()->m_cDlgReplace.m_nReplaceTarget;
+	BOOL nPaste			= GetEditWnd().m_cDlgReplace.m_nPaste;
+	BOOL nReplaceTarget	= GetEditWnd().m_cDlgReplace.m_nReplaceTarget;
 	BOOL bRegularExp	= m_pCommanderView->m_sCurSearchOption.bRegularExp;
-	BOOL bSelectedArea	= GetEditWindow()->m_cDlgReplace.m_bSelectedArea;
-	BOOL bConsecutiveAll = GetEditWindow()->m_cDlgReplace.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
+	BOOL bSelectedArea	= GetEditWnd().m_cDlgReplace.m_bSelectedArea;
+	BOOL bConsecutiveAll = GetEditWnd().m_cDlgReplace.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	if( nPaste && nReplaceTarget == 3 ){
 		// 置換対象：行削除のときは、クリップボードから貼り付けを無効にする
 		nPaste = FALSE;
 	}
 
-	GetEditWindow()->m_cDlgReplace.m_bCanceled=false;
-	GetEditWindow()->m_cDlgReplace.m_nReplaceCnt=0;
+	GetEditWnd().m_cDlgReplace.m_bCanceled=false;
+	GetEditWnd().m_cDlgReplace.m_nReplaceCnt=0;
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !GetDocument()->m_cDocEditor.IsEnablePaste() ){
 		OkMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD10) );
-		::CheckDlgButton( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_CHK_PASTE, FALSE );
-		::EnableWindow( ::GetDlgItem( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
+		::CheckDlgButton( GetEditWnd().m_cDlgReplace.GetHwnd(), IDC_CHK_PASTE, FALSE );
+		::EnableWindow( ::GetDlgItem( GetEditWnd().m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 		return;	// TRUE;
 	}
 	// To Here 2001.12.03 hor
@@ -784,7 +784,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	/* 進捗表示&中止ダイアログの作成 */
 	CDlgCancel	cDlgCancel;
-	HWND		hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), IDD_REPLACERUNNING );
+	HWND		hwndCancel = cDlgCancel.DoModeless( GetAppInstance(), m_pCommanderView->GetHwnd(), IDD_REPLACERUNNING );
 	::EnableWindow( m_pCommanderView->GetHwnd(), FALSE );
 	::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), FALSE );
 	::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), FALSE );
@@ -909,7 +909,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	else
 	{
 		// 2004.05.14 Moca 全置換の途中で他のウィンドウで置換されるとまずいのでコピーする
-		cmemClip.SetString( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
+		cmemClip.SetString( GetEditWnd().m_cDlgReplace.m_strText2.c_str() );
 	}
 
 	ptrdiff_t nREPLACEKEY = cmemClip.GetStringLength();
@@ -1437,7 +1437,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		if( 0 < nReplaceNum ){
 			// CLayoutMgrの更新(変更有の場合)
 			rLayoutMgr._DoLayout(false);
-			GetEditWindow()->ClearViewCaretPosInfo();
+			GetEditWnd().ClearViewCaretPosInfo();
 			if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 				rLayoutMgr.CalculateTextWidth();
 			}
@@ -1500,8 +1500,8 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 	// To Here 2001.12.03 hor
 
-	GetEditWindow()->m_cDlgReplace.m_bCanceled = (cDlgCancel.IsCanceled() != FALSE);
-	GetEditWindow()->m_cDlgReplace.m_nReplaceCnt=nReplaceNum;
+	GetEditWnd().m_cDlgReplace.m_bCanceled = (cDlgCancel.IsCanceled() != FALSE);
+	GetEditWnd().m_cDlgReplace.m_nReplaceCnt=nReplaceNum;
 	m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
 	ActivateFrameWindow( GetMainWindow() );
 }

@@ -366,7 +366,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
 					CDlgSameColor cDlgSameColor;
 					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT;
-					cDlgSameColor.DoModal( ::GetModuleHandle(nullptr), hwndDlg, wID, &m_Types, cr );
+					cDlgSameColor.DoModal( GetAppInstance(), hwndDlg, wID, &m_Types, cr );
 				}
 				::InvalidateRect( hwndListColor, nullptr, TRUE );
 				return TRUE;
@@ -376,7 +376,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
 					CDlgSameColor cDlgSameColor;
 					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cBACK;
-					cDlgSameColor.DoModal( ::GetModuleHandle(nullptr), hwndDlg, wID, &m_Types, cr );
+					cDlgSameColor.DoModal( GetAppInstance(), hwndDlg, wID, &m_Types, cr );
 				}
 				::InvalidateRect( hwndListColor, nullptr, TRUE );
 				return TRUE;
@@ -445,7 +445,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					}else{
 						m_nSet[ 0 ] = nIdx - 1;
 					}
-					cDlgKeywordSelect.DoModal( ::GetModuleHandle(nullptr), hwndDlg, m_nSet );
+					cDlgKeywordSelect.DoModal( GetAppInstance(), hwndDlg, m_nSet );
 					RearrangeKeywordSet( hwndDlg );	//	Jan. 23, 2005 genta キーワードセット再配置
 					//強調キーワード1を反映する。
 					if( -1 == m_nSet[ 0 ] ){

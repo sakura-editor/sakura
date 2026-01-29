@@ -29,11 +29,6 @@
 #include "config/system_constants.h"
 #include "config/app_constants.h"
 
-CEditWnd* CSakuraEnvironment::GetMainWindow()
-{
-	return CEditWnd::getInstance();
-}
-
 enum EExpParamName
 {
 	EExpParamName_none = -1,
@@ -93,7 +88,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 */
 void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen)
 {
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0); //###
+	const CEditDoc* pcDoc = GetDocument(); //###
 
 	// Apr. 03, 2003 genta 固定文字列をまとめる
 	const std::wstring	PRINT_PREVIEW_ONLY		= LS( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
@@ -198,7 +193,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				NONCLIENTMETRICS met;
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
+				CDCFont dcFont(met.lfCaptionFont, GetMainWindow());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
@@ -211,7 +206,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				}else if( CAppMode::getInstance()->IsDebugMode() ){
 				}else{
 					WCHAR szText[10];
-					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow()->GetHwnd() );
+					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() );
 					if( 0 < node->m_nId ){
 						::_snwprintf_s(szText, _TRUNCATE, L"%d", node->m_nId);
 						q = wcs_pushW( q, q_max - q, szText );
@@ -246,7 +241,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				NONCLIENTMETRICS met;
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
+				CDCFont dcFont(met.lfCaptionFont, GetMainWindow());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( buff, szText, int(std::size(szText))-1, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 			}
@@ -274,7 +269,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		//	From Here Jan. 15, 2002 hor
 		case L'B':	// タイプ別設定の名前			2013/03/28 Uchi
 			{
-				const STypeConfig&	sTypeCongig = pcDoc->m_cDocType.GetDocumentAttribute();
+				const STypeConfig&	sTypeCongig = GetTypeConfig();
 				if (sTypeCongig.m_nIdx > 0) {	// 基本は表示しない
 					q = wcs_pushW( q, q_max - q, sTypeCongig.m_szTypeName);
 				}
@@ -300,7 +295,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'Q':	// 印刷ページ設定の名前			2013/03/28 Uchi
 			{
 				PRINTSETTING*	ps = &GetDllShareData().m_PrintSettingArr[
-					 pcDoc->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting];
+					 GetTypeConfig().m_nCurrentPrintSetting];
 				q = wcs_pushW( q, q_max - q, ps->m_szPrintSettingName);
 				++p;
 			}
@@ -308,7 +303,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'C':	//	現在選択中のテキスト
 			{
 				CNativeW cmemCurText;
-				GetMainWindow()->GetActiveView().GetCurrentTextForSearch( cmemCurText );
+				GetEditWnd().GetActiveView().GetCurrentTextForSearch( cmemCurText );
 
 				q = wcs_pushW( q, q_max - q, cmemCurText.GetStringPtr(), cmemCurText.GetStringLength());
 				++p;
@@ -319,7 +314,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
 			{
 				wchar_t szText[11];
-				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
+				::_itow_s(GetEditWnd().GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -327,7 +322,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'y':	//	現在の物理行位置(1開始)
 			{
 				wchar_t szText[11];
-				::_itow_s(GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
+				::_itow_s(GetEditWnd().GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10);
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
@@ -354,33 +349,27 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		case L'p':	//	現在のページ
-			{
-				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
-				if (pcEditWnd->m_pPrintPreview){
-					wchar_t szText[1024];
-					::_itow_s(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
-					q = wcs_pushW( q, q_max - q, szText, wcslen(szText));
-					++p;
-				}
-				else {
-					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
-					++p;
-				}
+			if (const auto pcEditWnd = GetEditWndPtr(); pcEditWnd && pcEditWnd->m_pPrintPreview) {
+				SFilePath szText;
+				::_itow_s(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, std::size(szText), 10);
+				q = wcs_pushW( q, q_max - q, szText, wcslen(szText));
+				++p;
+			}
+			else {
+				q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
+				++p;
 			}
 			break;
 		case L'P':	//	総ページ
-			{
-				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
-				if (pcEditWnd->m_pPrintPreview){
-					wchar_t szText[1024];
-					::_itow_s(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
-					q = wcs_pushW( q, q_max - q, szText);
-					++p;
-				}
-				else {
-					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
-					++p;
-				}
+			if (const auto pcEditWnd = GetEditWndPtr(); pcEditWnd && pcEditWnd->m_pPrintPreview) {
+				SFilePath szText;
+				::_itow_s(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, std::size(szText), 10);
+				q = wcs_pushW( q, q_max - q, szText);
+				++p;
+			}
+			else {
+				q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
+				++p;
 			}
 			break;
 		case L'D':	//	タイムスタンプ
@@ -616,14 +605,14 @@ const wchar_t* CSakuraEnvironment::_ExParam_SkipCond(const wchar_t* pszSource, i
 */
 int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 {
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0); //###
+	const CEditDoc* pcDoc = GetDocument(); //###
 
 	switch( *pCond ){
 	case L'R': // $R ビューモードおよび読み取り専用属性
 		if( CAppMode::getInstance()->IsViewMode() ){
 			return 0; // ビューモード
 		}
-		else if( !CEditDoc::GetInstance(0)->m_cDocLocker.IsDocWritable() ){
+		else if( !GetDocument()->m_cDocLocker.IsDocWritable() ){
 			return 1; // 上書き禁止
 		}
 		else{
@@ -638,7 +627,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 2;
 		}
 	case L'M': // $M キーボードマクロの記録中
-		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==CEditWnd::getInstance()->GetHwnd() ){ /* ウィンドウ */
+		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==GetMainWindow() ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
@@ -658,7 +647,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 1;
 		}
 	case L'I': // $I アイコン化されているか
-		if( ::IsIconic( CEditWnd::getInstance()->GetHwnd() )){
+		if( ::IsIconic( GetMainWindow() )){
 			return 0;
 		} else {
  			return 1;
@@ -693,7 +682,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 */
 std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
-	CEditDoc* pcDoc = CEditDoc::GetInstance(0); //######
+	CEditDoc* pcDoc = GetDocument(); //######
 	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		return pcDoc->m_cDocFile.GetFilePathClass().GetDirPath();
 	}

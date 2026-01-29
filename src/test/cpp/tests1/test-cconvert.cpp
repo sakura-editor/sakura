@@ -393,7 +393,7 @@ TEST_P(ConvTest, test)
 {
 	// メモリ確保失敗時に表示するメッセージボックスで、
 	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
-	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
+	CNormalProcess cProcess(GetAppInstance(), L"");
 
 	const auto eFuncCode = std::get<0>(GetParam());
 	std::wstring_view source = std::get<1>(GetParam());

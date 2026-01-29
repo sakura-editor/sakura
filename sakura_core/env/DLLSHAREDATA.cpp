@@ -119,7 +119,7 @@ void CShareDataLockCounter::WaitLock( HWND hwndParent, CShareDataLockCounter** p
 				DWORD dwTimeNow = ::GetTickCount();
 				if( 2000 < dwTimeNow - dwTime ){
 					pDlg = new CLockCancel();
-					hwndCancel = pDlg->DoModeless(::GetModuleHandle( nullptr ), hwndParent, IDD_OPERATIONRUNNING);
+					hwndCancel = pDlg->DoModeless(GetAppInstance(), hwndParent, IDD_OPERATIONRUNNING);
 				}
 			}
 		}

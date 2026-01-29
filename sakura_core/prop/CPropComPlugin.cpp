@@ -167,7 +167,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					::wcsncpy_s(szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()), _TRUNCATE);
 					// ファイルオープンダイアログの初期化
 					cDlgOpenFile.Create(
-						G_AppInstance(),
+						GetAppInstance(),
 						hwndDlg,
 						L"*.zip",
 						szPath
@@ -213,7 +213,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						std::wstring sDirName = plugin->GetFolderName();
 						if( plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
-							cDlgPluginOption.DoModal( ::GetModuleHandle(nullptr), hwndDlg, this, sel );
+							cDlgPluginOption.DoModal( GetAppInstance(), hwndDlg, this, sel );
 						}else{
 							WarningMessage( hwndDlg, LS(STR_PROPCOMPLG_ERR1) );
 						}
