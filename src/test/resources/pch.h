@@ -28,3 +28,19 @@ using ::testing::StrCaseEq;
 using ::testing::StrCaseNe;
 using ::testing::StrEq;
 using ::testing::StrNe;
+
+/*!
+ * NORETURNマクロ
+ *
+ * 関数の制御が戻らないことを示す。
+ */
+#if defined(_MSC_VER)
+#  define NORETURN __declspec(noreturn)
+#elif defined(__GNUC__)
+#  define NORETURN __attribute__((noreturn))
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#  define NORETURN _Noreturn
+#else
+#  define NORETURN
+#endif
+
