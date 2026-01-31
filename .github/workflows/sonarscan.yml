@@ -123,7 +123,9 @@ jobs:
       if: env.SONAR_TOKEN
       working-directory: ${{ runner.temp }}
       run: |
-        choco install OpenCppCoverage -y
+        $Installer = "OpenCppCoverageSetup.exe"
+        Invoke-WebRequest -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe" -OutFile $Installer
+        Start-Process -FilePath .\$Installer -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" -Wait
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Run Tests
