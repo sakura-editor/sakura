@@ -18,7 +18,6 @@ Visual Studio の各バージョンごとにデフォルトの PlatformToolset (
 
 |Visual Studio のバージョン|PlatformToolset|
 |--|--|
-|Visual Studio 2017|v141|
 |Visual Studio 2019|v142|
 |Visual Studio 2022|v143|
 |Visual Studio 2026|v145|
@@ -45,7 +44,7 @@ https://qiita.com/yumetodo/items/a8324efaf83c9c08d168
 ## コマンドラインで PlatformToolset の設定を上書きする方法
 
 上記方法によって、デフォルトで使用する `PlatformToolset` を変更しますが、
-`/p:PlatformToolset=v141` あるいは `/p:PlatformToolset=v142` のようなパラメータを `msbuild.exe` の引数に
+`/p:PlatformToolset=v142` のようなパラメータを `msbuild.exe` の引数に
 追加してやれば、デフォルトの設定を上書きして好きな `PlatformToolset` でコンパイルすることができます。
 
 ### PlatformToolset の指定に関する参考リンク
