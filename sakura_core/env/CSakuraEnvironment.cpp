@@ -744,7 +744,9 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 LPCWSTR CSakuraEnvironment::ResolvePath(std::span<WCHAR> szPath)
 {
 	// ショートカット(.lnk)の解決: pSrc -> szBuf -> pSrc
-	ResolveShortcutLink(nullptr, std::data(szPath), std::data(szPath));
+	if (std::filesystem::path path{ std::data(szPath) }; !ResolveShortcutLink(nullptr, path, szPath)) {
+		::wcsncpy_s(std::data(szPath), std::size(szPath), path.c_str(), _TRUNCATE);
+	}
 
 	// ロングファイル名を取得する: pSrc -> szBuf2 -> pSrc
 	if (std::filesystem::path path{ std::data(szPath) }; !GetLongFileName(path, szPath)) {

@@ -10,6 +10,7 @@
 #include <Shlwapi.h>
 
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 
 #include "config/maxdata.h"
@@ -22,6 +23,8 @@
 #include "_main/CControlProcess.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
+#include "util/shell.h"
+#include "cxx/com_pointer.hpp"
 
 std::filesystem::path GetIniFileNameForIO(bool bWrite);
 
@@ -663,6 +666,43 @@ TEST(CFilePath, GetDirPath102)
 {
 	CFilePath path(L"test.txt");	//ディレクトリがない
 	EXPECT_THAT(path.GetDirPath(), StrEq(L""));
+}
+
+TEST(ResolveShortcutLink, test)
+{
+	EXPECT_HRESULT_SUCCEEDED(::OleInitialize(nullptr));
+	struct CoUninitializer {
+		~CoUninitializer() { ::OleUninitialize(); }
+	};
+	const CoUninitializer coGuard;
+
+	const auto target = GetTempFilePath(L"lnk");
+	{
+		std::ofstream ofs(target);
+		EXPECT_TRUE(ofs.is_open());
+		ofs << "dummy";
+	}
+
+	const auto link = std::filesystem::path{ target }.replace_filename(L"target.lnk");
+	cxx::com_pointer<IShellLink> shellLink;
+	EXPECT_HRESULT_SUCCEEDED(shellLink.CreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER));
+	EXPECT_HRESULT_SUCCEEDED(shellLink->SetPath(target.c_str()));
+
+	cxx::com_pointer<IPersistFile> persistFile;
+	EXPECT_HRESULT_SUCCEEDED(shellLink->QueryInterface(&persistFile));
+	EXPECT_HRESULT_SUCCEEDED(persistFile->Save(link.c_str(), TRUE));
+
+	SFilePath resolvedPath{};
+	EXPECT_TRUE(ResolveShortcutLink(nullptr, link, resolvedPath));
+
+	EXPECT_THAT(resolvedPath, StrEq(target));
+
+	// バッファ容量不足
+	std::wstring shortBuf( resolvedPath.length(), L'\0');
+	EXPECT_FALSE(ResolveShortcutLink(nullptr, link, shortBuf));
+
+	std::filesystem::remove(link);
+	std::filesystem::remove(target);
 }
 
 } // namespace path_util
