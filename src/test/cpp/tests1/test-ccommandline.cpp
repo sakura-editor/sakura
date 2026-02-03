@@ -30,11 +30,10 @@ bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
 std::wstring GetLocalPath(const std::wstring_view& filename)
 {
 	constexpr size_t cchBufSize = 4096;
-	auto pathBuf = std::make_unique<WCHAR[]>(cchBufSize);
-	if (!pathBuf) throw std::bad_alloc();
+	std::wstring pathBuf{ filename };
+	pathBuf.resize(cchBufSize, L'\0');
 
-	LPWSTR pszResolvedPath = pathBuf.get();
-	::wcscpy_s(pszResolvedPath, cchBufSize, filename.data());
+	LPWSTR pszResolvedPath = std::data(pathBuf);
 	CSakuraEnvironment::ResolvePath(pszResolvedPath);
 	return pszResolvedPath;
 }
