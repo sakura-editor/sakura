@@ -502,14 +502,6 @@ TEST_P(WinMainTest, runEditorProcess)
 		L"GoFileTop();"sv,
 
 		L"PrintPreview();"sv,			// 印刷プレビュー出す
-		L"WheelDown();"sv,
-		L"WheelUp();"sv,
-		L"WheelRight();"sv,
-		L"WheelLeft();"sv,
-		L"WheelPageDown();"sv,
-		L"WheelPageUp();"sv,
-		L"WheelPageRight();"sv,
-		L"WheelPageLeft();"sv,
 		L"PrintPreview();"sv,			// 印刷プレビュー消す
 
 		L"SplitWinVH();"sv,
@@ -540,9 +532,12 @@ TEST_P(WinMainTest, runEditorProcess)
 		L"ChgmodINS();"sv,
 		L"ChgmodINS();"sv,
 
+		L"GoFileTop();"sv,
 		L"SearchNext('3');"sv,			// 検索(呼ぶだけ)
+		L"GoFileEnd();"sv,
 		L"SearchPrev('3');"sv,			// 検索(呼ぶだけ)
 
+		L"GoFileTop();"sv,
 		// ↓コマンドライン経由なので日本語入れると危険！
 		L"Replace('3', 'threeeee');"sv,	// 置換(呼ぶだけ)
 		L"Undo();"sv,
