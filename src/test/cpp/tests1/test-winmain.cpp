@@ -523,6 +523,16 @@ TEST_P(WinMainTest, runEditorProcess)
 		L"PrevWindow();PrevWindow();PrevWindow();PrevWindow();"sv,
 		L"SplitWinVH();"sv,
 
+		L"SplitWinV();"sv,
+		L"SplitWinH();"sv,
+		L"SplitWinH();"sv,
+		L"SplitWinV();"sv,
+
+		L"SplitWinH();"sv,
+		L"SplitWinV();"sv,
+		L"SplitWinV();"sv,
+		L"SplitWinH();"sv,
+
 		L"Outline(1);"sv,				//アウトライン解析をリロード
 		L"Outline(2);"sv,				//アウトライン解析を閉じる
 
