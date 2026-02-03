@@ -741,27 +741,17 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 	}
 }
 
-void CSakuraEnvironment::ResolvePath(WCHAR* pszPath)
+LPCWSTR CSakuraEnvironment::ResolvePath(std::span<WCHAR> szPath)
 {
-	// pszPath -> pSrc
-	WCHAR* pSrc = pszPath;
-
 	// ショートカット(.lnk)の解決: pSrc -> szBuf -> pSrc
-	WCHAR szBuf[_MAX_PATH];
-	if( ResolveShortcutLink( nullptr, pSrc, szBuf ) ){
-		pSrc = szBuf;
-	}
+	ResolveShortcutLink(nullptr, std::data(szPath), std::data(szPath));
 
 	// ロングファイル名を取得する: pSrc -> szBuf2 -> pSrc
-	WCHAR szBuf2[_MAX_PATH];
-	if( ::GetLongFileName( pSrc, szBuf2 ) ){
-		pSrc = szBuf2;
+	if (std::filesystem::path path{ std::data(szPath) }; !GetLongFileName(path, szPath)) {
+		::wcsncpy_s(std::data(szPath), std::size(szPath), path.c_str(), _TRUNCATE);
 	}
 
-	// pSrc -> pszPath
-	if(pSrc != pszPath){
-		::wcsncpy_s(pszPath, _MAX_PATH, pSrc, _TRUNCATE);
-	}
+	return std::data(szPath);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

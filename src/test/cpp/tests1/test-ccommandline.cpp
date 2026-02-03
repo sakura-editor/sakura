@@ -32,10 +32,7 @@ std::wstring GetLocalPath(const std::wstring_view& filename)
 	constexpr size_t cchBufSize = 4096;
 	std::wstring pathBuf{ filename };
 	pathBuf.resize(cchBufSize, L'\0');
-
-	LPWSTR pszResolvedPath = std::data(pathBuf);
-	CSakuraEnvironment::ResolvePath(pszResolvedPath);
-	return pszResolvedPath;
+	return CSakuraEnvironment::ResolvePath(pathBuf);
 }
 
 /*!
