@@ -135,11 +135,6 @@ CPropCommon::CPropCommon()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-	m_hwndThis  = nullptr;		/* このダイアログのハンドル */
-	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;
-	m_nKeywordSet1 = -1;
-
 	return;
 }
 
