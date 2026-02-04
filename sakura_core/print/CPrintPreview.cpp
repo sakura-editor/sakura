@@ -47,9 +47,6 @@
 #define		PAGE_RANGE_X	160		/* 水平方向の１回のページスクロール幅 */
 #define		PAGE_RANGE_Y	160		/* 垂直方向の１回のページスクロール幅 */
 
-#define		COMPAT_BMP_BASE     1   /* COMPAT_BMP_SCALEピクセル幅を複写する画面ピクセル幅 */
-#define		COMPAT_BMP_SCALE    2   /* 互換BMPのCOMPAT_BMP_BASEに対する倍率(1以上の整数倍) */
-
 CPrint CPrintPreview::m_cPrint;		//!< 現在のプリンター情報 2003.05.02 かろと
 
 /*! コンストラクタ
@@ -57,17 +54,7 @@ CPrint CPrintPreview::m_cPrint;		//!< 現在のプリンター情報 2003.05.02 
 	コントロールも作成する。
 */
 CPrintPreview::CPrintPreview(CEditWnd* pParentWnd ) :
-	m_pParentWnd( pParentWnd ),
-	m_hdcCompatDC( nullptr ),			// 再描画用コンパチブルDC
-	m_hbmpCompatBMP( nullptr ),		// 再描画用メモリBMP
-	m_hbmpCompatBMPOld( nullptr ),		// 再描画用メモリBMP(OLD)
-	m_nbmpCompatScale( COMPAT_BMP_BASE ),
-	m_nPreviewVScrollPos( 0 ),
-	m_nPreviewHScrollPos( 0 ),
-	m_nPreview_Zoom( 100 ),			/* 印刷プレビュー倍率 */
-	m_nCurPageNum( 0 ),				/* 現在のページ */
-	m_bLockSetting( false ),
-	m_bDemandUpdateSetting( false )
+	m_pParentWnd( pParentWnd )
 {
 	/* 印刷用のレイアウト情報の作成 */
 	m_pLayoutMgr_Print = new CLayoutMgr;
