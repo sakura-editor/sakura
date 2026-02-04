@@ -53,9 +53,9 @@ protected:
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 
-	void SetData( void ) override;	/* ダイアログデータの設定 */
-	int GetData( void ) override;	/* ダイアログデータの取得 */
+	void SetData( ) override;	/* ダイアログデータの設定 */
+	int GetData( ) override;	/* ダイアログデータの取得 */
 };
 #endif /* SAKURA_CDLGGREPREPLACE_D97F4D2D_9963_40FB_91C1_5A6FF0407E99_H_ */

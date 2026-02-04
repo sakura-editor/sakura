@@ -300,7 +300,7 @@ void CDialog::SetDialogPosSize()
 	}
 }
 
-BOOL CDialog::OnDestroy( void )
+BOOL CDialog::OnDestroy( )
 {
 	/* ウィンドウ位置・サイズを記憶 */
 	WINDOWPLACEMENT cWindowPlacement;
@@ -387,7 +387,7 @@ BOOL CDialog::OnMove( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lP
 	return TRUE;
 }
 
-void CDialog::CreateSizeBox( void )
+void CDialog::CreateSizeBox( )
 {
 	/* サイズボックス */
 	m_hwndSizeBox = ::CreateWindowEx(
@@ -520,7 +520,7 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
-LPVOID CDialog::GetHelpIdTable(void)
+LPVOID CDialog::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

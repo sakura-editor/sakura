@@ -784,7 +784,7 @@ bool CAppNodeManager::IsSameGroup( HWND hWnd1, HWND hWnd2 )
 }
 
 /* 空いているグループ番号を取得する */
-int CAppNodeManager::GetFreeGroupId( void )
+int CAppNodeManager::GetFreeGroupId( )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 

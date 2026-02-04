@@ -37,11 +37,11 @@ protected:
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
 	BOOL OnEnKillFocus(HWND hwndCtl, int wID) override;
-	int  GetData( void ) override;
-	void SetData( void ) override;
-	LPVOID GetHelpIdTable( void ) override;
+	int  GetData( ) override;
+	void SetData( ) override;
+	LPVOID GetHelpIdTable( ) override;
 
-	void RenewItemState( void );
+	void RenewItemState( );
 
 private:
 	EWinSizeMode	m_eSaveWinSize;	//!< ウィンドウサイズの保存: 0/デフォルト，1/継承，2/指定

@@ -474,7 +474,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 }
 
 /* タグジャンプバック */
-void CViewCommander::Command_TAGJUMPBACK( void )
+void CViewCommander::Command_TAGJUMPBACK( )
 {
 // 2004/06/21 novice タグジャンプ機能追加
 	TagJump tagJump;
@@ -505,7 +505,7 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 	@date	2003.05.12	ダイアログ表示でフォルダー等を細かく指定できるようにした。
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
-bool CViewCommander::Command_TagsMake( void )
+bool CViewCommander::Command_TagsMake( )
 {
 #define	CTAGS_COMMAND	L"ctags.exe"
 

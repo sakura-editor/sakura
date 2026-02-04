@@ -85,7 +85,7 @@ public:
 
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
-	virtual BOOL OnDestroy( void );
+	virtual BOOL OnDestroy( );
 	virtual BOOL OnNotify([[maybe_unused]] NMHDR* pNMHDR) { return FALSE; }
 	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
@@ -94,8 +94,8 @@ public:
 	virtual BOOL OnTimer( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return TRUE; }
 	virtual BOOL OnKeyDown( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return TRUE; }
 	virtual BOOL OnDeviceChange( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return TRUE; }
-	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
-	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
+	virtual int GetData( ){return 1;}/* ダイアログデータの取得 */
+	virtual void SetData( ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
 	virtual BOOL OnStnClicked( [[maybe_unused]] int wID ) { return FALSE; }
 	virtual BOOL OnEnChange( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] int wID )     { return FALSE; }
@@ -115,7 +115,7 @@ public:
 	virtual LRESULT OnCharToItem( [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam ) { return -1; }
 	virtual BOOL OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual BOOL OnContextMenu(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
-	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	virtual LPVOID GetHelpIdTable();	//@@@ 2002.01.18 add
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
@@ -156,7 +156,7 @@ protected:
 	int				m_nHeight = -1;
 	int				m_xPos = -1;
 	int				m_yPos = -1;
-	void CreateSizeBox( void );
+	void CreateSizeBox( );
 	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }

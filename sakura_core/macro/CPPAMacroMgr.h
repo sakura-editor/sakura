@@ -47,7 +47,7 @@ public:
 
 	// Apr. 29, 2002 genta
 	static CMacroManagerBase* Creator(const WCHAR* ext);
-	static void declare(void);
+	static void declare();
 
 protected:
 	CNativeW m_cBuffer;

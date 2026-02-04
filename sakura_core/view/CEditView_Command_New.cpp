@@ -955,7 +955,7 @@ bool CEditView::ReplaceData_CEditView3(
 }
 
 // 2005.10.11 ryoji 前の行にある末尾の空白を削除
-void CEditView::RTrimPrevLine( void )
+void CEditView::RTrimPrevLine( )
 {
 	int			nCharChars;
 

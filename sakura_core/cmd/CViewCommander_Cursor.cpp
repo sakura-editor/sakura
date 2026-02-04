@@ -863,7 +863,7 @@ void CViewCommander::MoveViewTopLine(CLayoutInt nViewTopLine)
 }
 
 /* カーソル行をウィンドウ中央へ */
-void CViewCommander::Command_CURLINECENTER( void )
+void CViewCommander::Command_CURLINECENTER( )
 {
 	CLayoutInt		nViewTopLine;
 	nViewTopLine = GetCaret().GetCaretLayoutPos().GetY2() - ( m_pCommanderView->GetTextArea().m_nViewRowNum / 2 );
@@ -872,7 +872,7 @@ void CViewCommander::Command_CURLINECENTER( void )
 }
 
 /* カーソル行をウィンドウ上部へ */
-void CViewCommander::Command_CURLINETOP(void)
+void CViewCommander::Command_CURLINETOP()
 {
 	CLayoutInt		nViewTopLine;
 	nViewTopLine = GetCaret().GetCaretLayoutPos().GetY2();
@@ -881,7 +881,7 @@ void CViewCommander::Command_CURLINETOP(void)
 }
 
 /* カーソル行をウィンドウ下部へ */
-void CViewCommander::Command_CURLINEBOTTOM(void)
+void CViewCommander::Command_CURLINEBOTTOM()
 {
 	CLayoutInt		nViewTopLine;
 	nViewTopLine = GetCaret().GetCaretLayoutPos().GetY2() - (m_pCommanderView->GetTextArea().m_nViewRowNum);
@@ -891,7 +891,7 @@ void CViewCommander::Command_CURLINEBOTTOM(void)
 
 //	移動履歴を前へたどる
 //
-void CViewCommander::Command_JUMPHIST_PREV( void )
+void CViewCommander::Command_JUMPHIST_PREV( )
 {
 	// 2001.12.13 hor
 	// 移動履歴の最後に現在の位置を記憶する
@@ -916,7 +916,7 @@ void CViewCommander::Command_JUMPHIST_PREV( void )
 }
 
 //	移動履歴を次へたどる
-void CViewCommander::Command_JUMPHIST_NEXT( void )
+void CViewCommander::Command_JUMPHIST_NEXT( )
 {
 	if( m_pCommanderView->m_cHistory->CheckNext() ){
 		if( ! m_pCommanderView->m_cHistory->NextValid() ){
@@ -933,7 +933,7 @@ void CViewCommander::Command_JUMPHIST_NEXT( void )
 }
 
 //	現在位置を移動履歴に登録する
-void CViewCommander::Command_JUMPHIST_SET( void )
+void CViewCommander::Command_JUMPHIST_SET( )
 {
 	m_pCommanderView->AddCurrentLineToHistory();
 }
@@ -942,7 +942,7 @@ void CViewCommander::Command_JUMPHIST_SET( void )
 
 //	from CViewCommander_New.cpp
 // テキストを１行下へスクロール
-void CViewCommander::Command_WndScrollDown( void )
+void CViewCommander::Command_WndScrollDown( )
 {
 	CLayoutInt	nCaretMarginY;
 
@@ -981,7 +981,7 @@ void CViewCommander::Command_WndScrollDown( void )
 
 //	from CViewCommander_New.cpp
 // テキストを１行上へスクロール
-void CViewCommander::Command_WndScrollUp(void)
+void CViewCommander::Command_WndScrollUp()
 {
 	CLayoutInt	nCaretMarginY;
 

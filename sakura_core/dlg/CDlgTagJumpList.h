@@ -60,7 +60,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL	OnDestroy( void ) override;
+	BOOL	OnDestroy( ) override;
 	BOOL	OnBnClicked(int wID) override;
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam ) override;
@@ -71,7 +71,7 @@ protected:
 	BOOL	OnCbnEditChange( HWND hwndCtl, int wID ) override;
 	//BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
 	BOOL	OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;
-	LPVOID	GetHelpIdTable( void ) override;
+	LPVOID	GetHelpIdTable( ) override;
 
 private:
 	struct STagFindState {
@@ -91,19 +91,19 @@ private:
 		int nTop;
 	};
 
-	void	StopTimer( void );
+	void	StopTimer( );
 	void	StartTimer(int nDelay);
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int		GetData( void ) override;	/* ダイアログデータの取得 */
+	void	SetData( ) override;	/* ダイアログデータの設定 */
+	int		GetData( ) override;	/* ダイアログデータの取得 */
 	void	UpdateData(bool bInit);	//	@@ 2005.03.31 MIK
 
 	WCHAR	*GetNameByType( const WCHAR type, const WCHAR *name );	//タイプを名前に変換する。
-	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
+	int		SearchBestTag( );	//もっとも確率の高そうなインデックスを返す。
 	//	@@ 2005.03.31 MIK
-	const WCHAR *GetFileName( void );
-	const WCHAR *GetFilePath( void ){ return m_pszFileName != nullptr ? m_pszFileName : L""; }
-	void Empty( void );
+	const WCHAR *GetFileName( );
+	const WCHAR *GetFilePath( ){ return m_pszFileName != nullptr ? m_pszFileName : L""; }
+	void Empty( );
 	void SetTextDir();
 	void FindNext(bool bNewFind);
 	void find_key( const wchar_t* keyword );

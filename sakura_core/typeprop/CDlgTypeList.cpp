@@ -310,7 +310,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 }
 
 /* ダイアログデータの設定 */
-void CDlgTypeList::SetData( void )
+void CDlgTypeList::SetData( )
 {
 	SetData(m_nSettingType.GetIndex());
 }
@@ -380,7 +380,7 @@ void CDlgTypeList::SetData( int selIdx )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgTypeList::GetHelpIdTable(void)
+LPVOID CDlgTypeList::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }
@@ -493,7 +493,7 @@ bool CDlgTypeList::Export()
 	@retval true  正常
 	@retval false 異常
 */
-bool CDlgTypeList::InitializeType( void )
+bool CDlgTypeList::InitializeType( )
 {
 	HWND hwndDlg = GetHwnd();
 	HWND hwndList = GetItemHwnd( IDC_LIST_TYPES );

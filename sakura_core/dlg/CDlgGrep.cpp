@@ -595,7 +595,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 }
 
 /* ダイアログデータの設定 */
-void CDlgGrep::SetData( void )
+void CDlgGrep::SetData( )
 {
 	/* 検索文字列 */
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
@@ -765,7 +765,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	@retval TRUE  正常
 	@retval FALSE 入力エラー
 */
-int CDlgGrep::GetData( void )
+int CDlgGrep::GetData( )
 {
 	/* サブフォルダーからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_SUBFOLDER );
@@ -960,7 +960,7 @@ int CDlgGrep::GetData( void )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgGrep::GetHelpIdTable(void)
+LPVOID CDlgGrep::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

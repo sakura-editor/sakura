@@ -156,7 +156,7 @@ CDlgTagJumpList::~CDlgTagJumpList()
 	@author MIK
 	@date 2005.03.31 新規作成
 */
-void CDlgTagJumpList::StopTimer( void )
+void CDlgTagJumpList::StopTimer( )
 {
 	if( m_nTimerId != 0 ){
 		::KillTimer( GetHwnd(), m_nTimerId );
@@ -185,7 +185,7 @@ void CDlgTagJumpList::StartTimer( int nDelay = TAGJUMP_TIMER_DELAY )
 	@author MIK
 	@date 2005.03.31 新規作成
 */
-void CDlgTagJumpList::Empty( void )
+void CDlgTagJumpList::Empty( )
 {
 	m_nIndex = -1;
 	m_pcList->Empty();
@@ -208,7 +208,7 @@ int CDlgTagJumpList::DoModal(
 }
 
 /* ダイアログデータの設定 */
-void CDlgTagJumpList::SetData( void )
+void CDlgTagJumpList::SetData( )
 {
 	if( IsDirectTagJump() ){
 		m_bTagJumpICase = FALSE;
@@ -356,7 +356,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 
 	@date 2005.04.03 MIK 設定値の保存処理追加
 */
-int CDlgTagJumpList::GetData( void )
+int CDlgTagJumpList::GetData( )
 {
 	HWND	hwndList;
 
@@ -505,7 +505,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return bRet;
 }
 
-BOOL CDlgTagJumpList::OnDestroy( void )
+BOOL CDlgTagJumpList::OnDestroy( )
 {
 	CDialog::OnDestroy();
 	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog;
@@ -676,7 +676,7 @@ BOOL CDlgTagJumpList::OnEnChange( HWND hwndCtl, int wID )
 }
 #endif
 
-LPVOID CDlgTagJumpList::GetHelpIdTable( void )
+LPVOID CDlgTagJumpList::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }
@@ -850,7 +850,7 @@ typedef struct tagTagPathInfo {
 
 	@date 2014.06.14 ファイル名・拡張子以外にドライブ・パスも考慮するように
 */
-int CDlgTagJumpList::SearchBestTag( void )
+int CDlgTagJumpList::SearchBestTag( )
 {
 	if( m_pcList->GetCount() <= 0 ) return -1;	//選べません。
 	if( nullptr == m_pszFileName ) return 0;
@@ -1563,7 +1563,7 @@ next_line:
 /*!
 	パスからファイル名部分のみを取り出す．(2バイト対応)
 */
-const WCHAR* CDlgTagJumpList::GetFileName( void )
+const WCHAR* CDlgTagJumpList::GetFileName( )
 {
 	return GetFileTitlePointer(GetFilePath());
 }

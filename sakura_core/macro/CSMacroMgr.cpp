@@ -534,7 +534,7 @@ CSMacroMgr::~CSMacroMgr()
 }
 
 /*! キーマクロのバッファをクリアする */
-void CSMacroMgr::ClearAll( void )
+void CSMacroMgr::ClearAll( )
 {
 	int i;
 	for (i = 0; i < MAX_CUSTMACRO; i++){
@@ -723,7 +723,7 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const
 
 	@date 2007.10.19 genta 新規作成
 */
-void CSMacroMgr::UnloadAll(void)
+void CSMacroMgr::UnloadAll()
 {
 	for ( int idx = 0; idx < MAX_CUSTMACRO; idx++ ){
 		delete m_cSavedKeyMacro[idx];
@@ -1270,7 +1270,7 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 	@retval true 保存可能
 	@retval false 保存不可
 */
-bool CSMacroMgr::IsSaveOk(void)
+bool CSMacroMgr::IsSaveOk()
 {
 	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == nullptr ? false : true;
 }

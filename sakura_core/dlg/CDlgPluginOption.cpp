@@ -85,7 +85,7 @@ int CDlgPluginOption::DoModal(
 }
 
 /* ダイアログデータの設定 */
-void CDlgPluginOption::SetData( void )
+void CDlgPluginOption::SetData( )
 {
 	HWND	hwndList;
 	int		i;
@@ -195,7 +195,7 @@ void CDlgPluginOption::SetData( void )
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー */
-int CDlgPluginOption::GetData( void )
+int CDlgPluginOption::GetData( )
 {
 	// .ini ファイルへの書き込み
 	HWND	hwndList;
@@ -466,12 +466,12 @@ BOOL CDlgPluginOption::OnActivate( WPARAM wParam, LPARAM lParam )
 	return CDialog::OnActivate( wParam, lParam );
 }
 
-LPVOID CDlgPluginOption::GetHelpIdTable( void )
+LPVOID CDlgPluginOption::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }
 
-void CDlgPluginOption::ChangeListPosition( void )
+void CDlgPluginOption::ChangeListPosition( )
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
@@ -506,7 +506,7 @@ void CDlgPluginOption::ChangeListPosition( void )
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf );
 }
 
-void CDlgPluginOption::MoveFocusToEdit( void )
+void CDlgPluginOption::MoveFocusToEdit( )
 {
 	//	現在のFocus取得
 	int		iLine = ListView_GetNextItem( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS ), -1, LVNI_SELECTED);

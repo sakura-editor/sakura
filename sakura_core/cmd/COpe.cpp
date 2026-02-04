@@ -32,7 +32,7 @@ COpe::~COpe()
 }
 
 /* 編集操作要素のダンプ */
-void COpe::DUMP( void )
+void COpe::DUMP( )
 {
 	DEBUG_TRACE( L"\t\tm_nOpe                  = [%d]\n", m_nOpe               );
 	DEBUG_TRACE( L"\t\tm_ptCaretPos_PHY_Before = [%d,%d]\n", m_ptCaretPos_PHY_Before.x, m_ptCaretPos_PHY_Before.y   );
@@ -41,7 +41,7 @@ void COpe::DUMP( void )
 }
 
 /* 編集操作要素のダンプ */
-void CDeleteOpe::DUMP( void )
+void CDeleteOpe::DUMP( )
 {
 	COpe::DUMP();
 	DEBUG_TRACE( L"\t\tm_ptCaretPos_PHY_To     = [%d,%d]\n", m_ptCaretPos_PHY_To.x, m_ptCaretPos_PHY_To.y );
@@ -54,7 +54,7 @@ void CDeleteOpe::DUMP( void )
 }
 
 /* 編集操作要素のダンプ */
-void CInsertOpe::DUMP( void )
+void CInsertOpe::DUMP( )
 {
 	COpe::DUMP();
 	DEBUG_TRACE( L"\t\tm_cOpeLineData.size         = [%d]\n", m_cOpeLineData.size() );

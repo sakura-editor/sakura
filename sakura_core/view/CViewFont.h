@@ -49,7 +49,7 @@ public:
 
 private:
 	void CreateFonts( const LOGFONT *plf );
-	void DeleteFonts( void );
+	void DeleteFonts( );
 
 	HFONT	m_hFont_HAN;			/* 現在のフォントハンドル */
 	HFONT	m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */

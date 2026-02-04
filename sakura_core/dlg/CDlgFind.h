@@ -52,15 +52,15 @@ protected:
 //@@@ 2002.2.2 YAZAKI CShareDataに移動
 //	void AddToSearchKeyArr( const char* );
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
-	int GetData( void ) override;		/* ダイアログデータの取得 */
-	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
-	void SetData( void ) override;		/* ダイアログデータの設定 */
+	int GetData( ) override;		/* ダイアログデータの取得 */
+	void SetCombosList( );	/* 検索文字列/置換後文字列リストの設定 */
+	void SetData( ) override;		/* ダイアログデータの設定 */
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam ) override;	// 2009.11.29 ryoji
 
 	// BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 };
 #endif /* SAKURA_CDLGFIND_AF260AA4_6075_4B87_9F03_2CEEDAD64094_H_ */

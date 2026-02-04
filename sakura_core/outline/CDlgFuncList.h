@@ -78,8 +78,8 @@ public:
 protected:
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
 
-	CommonSetting_OutLine& CommonSet(void){ return m_pShareData->m_Common.m_sOutline; }
-	STypeConfig& TypeSet(void){ return m_type; }
+	CommonSetting_OutLine& CommonSet(){ return m_pShareData->m_Common.m_sOutline; }
+	STypeConfig& TypeSet(){ return m_type; }
 	int& ProfDockSet() { return CommonSet().m_nOutlineDockSet; }
 	BOOL& ProfDockSync() { return CommonSet().m_bOutlineDockSync; }
 	BOOL& ProfDockDisp() { return (ProfDockSet() == 0)? CommonSet().m_bOutlineDockDisp: TypeSet().m_bOutlineDockDisp; }
@@ -95,10 +95,10 @@ public:
 	*/
 	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nOutlineType; }
 	void Redraw( int nOutLineType, int nListType, CFuncInfoArr*, CLayoutInt nCurLine, CLayoutInt nCurCol );
-	void Refresh( void );
+	void Refresh( );
 	bool ChangeLayout( int nId );
 	void OnOutlineNotify( WPARAM wParam, LPARAM lParam );
-	void SyncColor( void );
+	void SyncColor( );
 	void SetWindowText( const WCHAR* szTitle );		//ダイアログタイトルの設定
 	EFunctionCode GetFuncCodeRedraw(int outlineType);
 	void LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDirPath );
@@ -127,11 +127,11 @@ protected:
 	BOOL OnNotify(NMHDR* pNMHDR) override;
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
-	BOOL OnDestroy(void) override; // 20060201 aroka
+	BOOL OnDestroy() override; // 20060201 aroka
 	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID ) override;
 	BOOL OnContextMenu(WPARAM wParam, LPARAM lParam) override;
 	void SetData() override;	/* ダイアログデータの設定 */
-	int GetData( void ) override;	/* ダイアログデータの取得 */
+	int GetData( ) override;	/* ダイアログデータの取得 */
 
 	/*
 	||  実装ヘルパ関数
@@ -140,7 +140,7 @@ protected:
 	void SetTreeJava(HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddClass);	/* ツリーコントロールの初期化：Javaメソッドツリー */
 	void SetTree(HTREEITEM hInsertAfter, bool tagjump = false, bool nolabel = false);		/* ツリーコントロールの初期化：汎用品 */
 	void SetTreeFile();				// ツリーコントロールの初期化：ファイルツリー
-	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
+	void SetListVB( );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 	void SetDocLineFuncList();
 	void SetItemSelection( int nSelectItemIndex, bool bAllowExpand );
 	void SetItemSelectionForTreeView( HWND hwndTree, int nSelectItemIndex, bool bAllowExpand );
@@ -164,7 +164,7 @@ protected:
 
 	// 2001.12.03 hor
 //	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 	void Key2Command(WORD KeyCode);		//	キー操作→コマンド変換
 	bool HitTestSplitter( int xPos, int yPos );
 	int HitTestCaptionButton( int xPos, int yPos );

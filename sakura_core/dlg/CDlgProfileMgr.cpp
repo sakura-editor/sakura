@@ -531,7 +531,7 @@ bool CDlgProfileMgr::WriteProfSettings( SProfileSettings& settings )
 	return IOProfSettings( settings, true );
 }
 
-LPVOID CDlgProfileMgr::GetHelpIdTable(void)
+LPVOID CDlgProfileMgr::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

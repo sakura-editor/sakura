@@ -134,7 +134,7 @@ public:
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	//管理
-	void MessageLoop( void );								/* メッセージループ */
+	void MessageLoop( );								/* メッセージループ */
 	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
 
 	//各種イベント
@@ -150,11 +150,11 @@ public:
 	LRESULT OnVScroll(WPARAM wParam, LPARAM lParam);
 	int	OnClose(HWND hWndActive, bool bGrepNoConfirm);	/* 終了時の処理 */
 	void OnDropFiles(HDROP hDrop);	/* ファイルがドロップされた */
-	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
+	BOOL OnPrintPageSetting( );/* 印刷ページ設定 */
 	LRESULT OnTimer(WPARAM wParam, LPARAM lParam);	// WM_TIMER 処理	// 2007.04.03 ryoji
-	void OnEditTimer( void );	/* タイマーの処理 */
-	void OnCaptionTimer( void );
-	void OnSysMenuTimer( void );
+	void OnEditTimer( );	/* タイマーの処理 */
+	void OnCaptionTimer( );
+	void OnSysMenuTimer( );
 	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);
 	LRESULT OnNcLButtonDown(WPARAM wp, LPARAM lp);
 	LRESULT OnNcLButtonUp(WPARAM wp, LPARAM lp);
@@ -173,7 +173,7 @@ public:
 	void InitMenu(HMENU hMenu, UINT uPos, BOOL fSystemMenu);
 	void InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t* pszName, const wchar_t* pszKey);
 	bool InitMenu_Special(HMENU hMenu, EFunctionCode eFunc);
-	void InitMenubarMessageFont(void);	//	メニューバーへのメッセージ表示機能をCEditWndより移管	//	Dec. 4, 2002 genta
+	void InitMenubarMessageFont();	//	メニューバーへのメッセージ表示機能をCEditWndより移管	//	Dec. 4, 2002 genta
 	LRESULT WinListMenu(HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull);	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
 	LRESULT PopupWinList( bool bMousePos );	/*!< ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon	// 2007.02.28 ryoji フルパス指定のパラメータを削除
 	void RegisterPluginCommand();			//プラグインコマンドをエディタに登録する
@@ -185,18 +185,18 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           整形                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void LayoutMainMenu( void );		// メインメニュー					// 2010/5/16 Uchi
-	void LayoutToolBar( void );			/* ツールバーの配置処理 */			// 2006.12.19 ryoji
-	void LayoutFuncKey( void );			/* ファンクションキーの配置処理 */	// 2006.12.19 ryoji
-	void LayoutTabBar( void );			/* タブバーの配置処理 */			// 2006.12.19 ryoji
-	void LayoutStatusBar( void );		/* ステータスバーの配置処理 */		// 2006.12.19 ryoji
+	void LayoutMainMenu( );		// メインメニュー					// 2010/5/16 Uchi
+	void LayoutToolBar( );			/* ツールバーの配置処理 */			// 2006.12.19 ryoji
+	void LayoutFuncKey( );			/* ファンクションキーの配置処理 */	// 2006.12.19 ryoji
+	void LayoutTabBar( );			/* タブバーの配置処理 */			// 2006.12.19 ryoji
+	void LayoutStatusBar( );		/* ステータスバーの配置処理 */		// 2006.12.19 ryoji
 	void LayoutMiniMap();				// ミニマップの配置処理
 	void EndLayoutBars( BOOL bAdjust = TRUE );	/* バーの配置終了処理 */	// 2006.12.19 ryoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           設定                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void PrintPreviewModeONOFF( void );	/* 印刷プレビューモードのオン/オフ */
+	void PrintPreviewModeONOFF( );	/* 印刷プレビューモードのオン/オフ */
 	
 	//アイコン
 	void SetWindowIcon(HICON hIcon, int flag);	//	Sep. 10, 2002 genta
@@ -204,7 +204,7 @@ public:
 	bool GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
 	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }		// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.17 nasukoji
 	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; }	// ホイール操作による横スクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.17 nasukoji
-	void ClearMouseState( void );		// 2009.01.17 nasukoji	マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
+	void ClearMouseState( );		// 2009.01.17 nasukoji	マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           情報                              //
@@ -245,13 +245,13 @@ public:
 	void Views_RedrawAll();
 	void Views_Redraw();
 	void SetActivePane(int nIndex);	/* アクティブなペインを設定 */
-	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */ //2007.08.26 kobake const追加
+	int GetActivePane( ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */ //2007.08.26 kobake const追加
 	bool SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
 	void RedrawAllViews( CEditView* pcViewExclude );				/* すべてのペインをRedrawする */
 	void Views_DisableSelectArea(bool bRedraw);
 	BOOL DetectWidthOfLineNumberAreaAllPane( bool bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
-	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
+	BOOL UpdateTextWrap( );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
 	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
 	void ChangeLayoutParam( bool bShowProgress, CKetaXInt nTabSize, int nTsvMode, CKetaXInt nMaxLineKetas );
 	//	Aug. 14, 2005 genta
@@ -273,7 +273,7 @@ public:
 	CEditView&			GetActiveView()       { return *m_pcEditView; }
 	const CEditView&    GetView(int n) const { return *m_pcEditViewArr[n]; }
 	CEditView&          GetView(int n)       { return *m_pcEditViewArr[n]; }
-	CMiniMapView&       GetMiniMap( void ) { return m_cMiniMapView; }
+	CMiniMapView&       GetMiniMap( ) { return m_cMiniMapView; }
 	bool                IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
 	int                 GetAllViewCount() const { return m_nEditViewCount; }
 
@@ -319,8 +319,8 @@ protected:
 		}
 	}
 
-	void CreateAccelTbl( void ); // ウィンドウ毎のアクセラレータテーブル作成(Wine用)
-	void DeleteAccelTbl( void ); // ウィンドウ毎のアクセラレータテーブル破棄(Wine用)
+	void CreateAccelTbl( ); // ウィンドウ毎のアクセラレータテーブル作成(Wine用)
+	void DeleteAccelTbl( ); // ウィンドウ毎のアクセラレータテーブル破棄(Wine用)
 
 public:
 	//D&Dフラグ管理
@@ -332,7 +332,7 @@ public:
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
 	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragLeave( void );
+	STDMETHODIMP DragLeave( );
 	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 
 	//フォーカス管理

@@ -295,7 +295,7 @@ CDisableWow64FsRedirect::~CDisableWow64FsRedirect()
 	}
 }
 
-BOOL IsPowerShellAvailable(void)
+BOOL IsPowerShellAvailable()
 {
 #ifndef _WIN64
 	/*

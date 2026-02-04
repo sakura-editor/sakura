@@ -79,7 +79,7 @@ public:
 	||  Attributes & Operations
 	*/
 	void Clear( int idx );
-	void ClearAll( void );	/* キーマクロのバッファをクリアする */
+	void ClearAll( );	/* キーマクロのバッファをクリアする */
 
 	//! キーボードマクロの実行
 	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
@@ -119,7 +119,7 @@ public:
 	/*! キーボードマクロの読み込み */
 	BOOL Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
 	BOOL Save( int idx, HINSTANCE hInstance, const WCHAR* pszPath );
-	void UnloadAll(void);
+	void UnloadAll();
 
 	/*! キーマクロのバッファにデータ追加 */
 	int Append( int idx, EFunctionCode nFuncID, const LPARAM* lParams, CEditView* pcEditView );
@@ -134,10 +134,10 @@ public:
 	//	Jun. 16, 2002 genta
 	static const MacroFuncInfo* GetFuncInfoByID( int nFuncID );
 	
-	bool IsSaveOk(void);
+	bool IsSaveOk();
 
 	//	Sep. 15, 2005 FILE	実行中マクロのインデックス番号操作 (INVALID_MACRO_IDX:無効)
-	int GetCurrentIdx( void ) const {
+	int GetCurrentIdx( ) const {
 		return m_CurrentIdx;
 	}
 	int SetCurrentIdx( int idx ) {

@@ -47,9 +47,9 @@ public:
 	void AppendData( CLogicInt nFuncLineCRLF, CLayoutInt nFuncLineLAYOUT, const WCHAR* pszFuncName,
 					 int nInfo, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
 	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const WCHAR*, const WCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
-	int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
-	void Empty( void );
-	void DUMP( void );
+	int	GetNum( ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
+	void Empty( );
+	void DUMP( );
 	void SetAppendText( int info, std::wstring s, bool overwrite );
 	std::wstring GetAppendText( int info );
 	int AppendTextLenMax(){ return m_nAppendTextLenMax; }

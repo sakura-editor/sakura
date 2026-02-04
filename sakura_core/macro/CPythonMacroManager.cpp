@@ -51,7 +51,7 @@ struct PyMethodDef
 struct PyModuleDef_Base
 {
 	PyObject_HEAD
-		PyObject* (*m_init)(void);
+		PyObject* (*m_init)();
 	Py_ssize_t m_index;
 	PyObject* m_copy;
 };
@@ -125,12 +125,12 @@ inline Py_ssize_t PyTuple_GET_SIZE(const void* op) {
 
 EXTERN void (*Py_Initialize)();
 EXTERN void (*Py_InitializeEx)(int);
-EXTERN void (*Py_Finalize)(void);
-EXTERN int (*Py_FinalizeEx)(void); // >= 3.6
-EXTERN int (*Py_IsInitialized)(void);
+EXTERN void (*Py_Finalize)();
+EXTERN int (*Py_FinalizeEx)(); // >= 3.6
+EXTERN int (*Py_IsInitialized)();
 
-EXTERN const char* (*Py_GetVersion)(void);
-EXTERN const char* (*Py_GetCompiler)(void);
+EXTERN const char* (*Py_GetVersion)();
+EXTERN const char* (*Py_GetCompiler)();
 EXTERN wchar_t* (*Py_GetProgramFullPath)();
 
 EXTERN void (*Py_IncRef)(PyObject*);
@@ -244,9 +244,9 @@ EXTERN int (*PyState_AddModule)(PyObject* module, PyModuleDef* def);
 EXTERN int (*PyState_RemoveModule)(PyModuleDef* def);
 
 EXTERN void (*PyErr_PrintEx)(int set_sys_last_vars);
-EXTERN void (*PyErr_Print)(void);
-EXTERN int (*PyErr_BadArgument)(void);
-EXTERN PyObject* (*PyErr_Occurred)(void);
+EXTERN void (*PyErr_Print)();
+EXTERN int (*PyErr_BadArgument)();
+EXTERN PyObject* (*PyErr_Occurred)();
 EXTERN void (*PyErr_Fetch)(PyObject** ptype, PyObject** pvalue, PyObject** ptraceback);
 EXTERN void (*PyErr_Restore)(PyObject* type, PyObject* value, PyObject* traceback);
 EXTERN void (*PyErr_NormalizeException)(PyObject** exc, PyObject** val, PyObject** tb);
@@ -311,7 +311,7 @@ EXTERN PyObject* (*PyImport_GetModule)(PyObject* name);
 EXTERN PyObject* (*PyImport_GetImporter)(PyObject* path);
 EXTERN int (*PyImport_ImportFrozenModuleObject)(PyObject* name);
 EXTERN int (*PyImport_ImportFrozenModule)(const char* name);
-EXTERN int (*PyImport_AppendInittab)(const char* name, PyObject* (*initfunc)(void));
+EXTERN int (*PyImport_AppendInittab)(const char* name, PyObject* (*initfunc)());
 
 // API Functions
 EXTERN int (*PyArg_ParseTuple)(PyObject* args, const char* format, ...);
@@ -333,11 +333,11 @@ EXTERN double (*PyOS_string_to_double)(const char* s, char** endptr, PyObject* o
 EXTERN char* (*PyOS_double_to_string)(double val, char format_code, int precision, int flags, int* ptype);
 
 // Reflection
-EXTERN PyObject* (*PyEval_GetBuiltins)(void);
-EXTERN PyObject* (*PyEval_GetLocals)(void);
-EXTERN PyObject* (*PyEval_GetGlobals)(void);
+EXTERN PyObject* (*PyEval_GetBuiltins)();
+EXTERN PyObject* (*PyEval_GetLocals)();
+EXTERN PyObject* (*PyEval_GetGlobals)();
 struct PyFrameObject;
-EXTERN PyFrameObject* (*PyEval_GetFrame)(void);
+EXTERN PyFrameObject* (*PyEval_GetFrame)();
 EXTERN PyFrameObject* (*PyFrame_GetBack)(PyFrameObject* frame);
 struct PyCodeObject;
 EXTERN PyCodeObject* (*PyFrame_GetCode)(PyFrameObject* frame);
@@ -744,7 +744,7 @@ PyModuleDef g_moduleDef = {
 	g_moduleMethods,
 };
 
-PyObject* PyInit_SakuraEditor(void)
+PyObject* PyInit_SakuraEditor()
 {
 	auto module = PyModule_Create(&g_moduleDef);
 	return module;

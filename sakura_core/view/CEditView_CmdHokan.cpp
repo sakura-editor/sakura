@@ -53,7 +53,7 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 	@author Moca
 	@date 2005.01.10 genta 関数化
 */
-void CEditView::PostprocessCommand_hokan(void)
+void CEditView::PostprocessCommand_hokan()
 {
 	if( m_bHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
 		CNativeW	cmemData;

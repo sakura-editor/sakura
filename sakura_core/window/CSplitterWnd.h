@@ -63,14 +63,14 @@ public: // 2002/2/3 aroka
 	void SetChildWndArr(HWND* hwndEditViewArr);	/* 子ウィンドウの設定 */
 	void DoSplit(int nHorizontal, int nVertical);	/* ウィンドウの分割 */
 	void SetActivePane(int nIndex);	/* アクティブペインの設定 */
-	int GetPrevPane( void );	/* 前のペインを返す */
-	int GetNextPane( void );	/* 次のペインを返す */
-	int GetFirstPane( void );	/* 最初のペインを返す */
-	int GetLastPane( void );	/* 最後のペインを返す */
+	int GetPrevPane( );	/* 前のペインを返す */
+	int GetNextPane( );	/* 次のペインを返す */
+	int GetFirstPane( );	/* 最初のペインを返す */
+	int GetLastPane( );	/* 最後のペインを返す */
 
-	void VSplitOnOff( void );	/* 縦分割ＯＮ／ＯＦＦ */
-	void HSplitOnOff( void );	/* 横分割ＯＮ／ＯＦＦ */
-	void VHSplitOnOff( void );	/* 縦横分割ＯＮ／ＯＦＦ */
+	void VSplitOnOff( );	/* 縦分割ＯＮ／ＯＦＦ */
+	void HSplitOnOff( );	/* 横分割ＯＮ／ＯＦＦ */
+	void VHSplitOnOff( );	/* 縦横分割ＯＮ／ＯＦＦ */
 //	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 	int GetAllSplitRows(){ return m_nAllSplitRows;} // 2002/2/3 aroka
 	int GetAllSplitCols(){ return m_nAllSplitCols;} // 2002/2/3 aroka

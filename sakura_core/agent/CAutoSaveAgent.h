@@ -37,15 +37,15 @@ public:
 
 	//時間間隔
 	void SetInterval(int m);	//!	時間間隔の設定
-	int GetInterval(void) const {return nInterval / MSec2Min; }	//!< 時間間隔の取得
-	void Reset(void){ nLastTick = ::GetTickCount(); }			//!< 基準時刻のリセット
+	int GetInterval() const {return nInterval / MSec2Min; }	//!< 時間間隔の取得
+	void Reset(){ nLastTick = ::GetTickCount(); }			//!< 基準時刻のリセット
 
 	//有効／無効
 	void Enable(bool flag);							//!< 有効／無効の設定
-	bool IsEnabled(void) const { return bEnabled; }	//!< 有効／無効の読み出し
+	bool IsEnabled() const { return bEnabled; }	//!< 有効／無効の読み出し
 
 	//!	規定時間に達したかどうかの判定
-	bool CheckAction(void);
+	bool CheckAction();
 
 private:
 	DWORD	nLastTick;	//!< 最後にチェックしたときの時刻 (GetTickCount()で取得したもの)

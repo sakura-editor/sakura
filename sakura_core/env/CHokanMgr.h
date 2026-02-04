@@ -36,7 +36,7 @@ public:
 	~CHokanMgr();
 
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);/* モードレスダイアログの表示 */
-	void Hide( void );
+	void Hide( );
 	/* 初期化 */
 	size_t Search(
 		POINT*			ppoWin,
@@ -61,7 +61,7 @@ public:
 
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam ) override;
-	BOOL OnDestroy( void ) override;
+	BOOL OnDestroy( ) override;
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnLbnSelChange( HWND hwndCtl, int wID ) override;
 
@@ -87,6 +87,6 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 };
 #endif /* SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_ */

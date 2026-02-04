@@ -147,7 +147,7 @@ BOOL CDlgWinSize::OnEnKillFocus(HWND hwndCtl, int wID)
 
 /*! @brief ダイアログボックスにデータを設定
 */
-void CDlgWinSize::SetData( void )
+void CDlgWinSize::SetData( )
 {
 	switch( m_eSaveWinSize ){
 	case 1:
@@ -192,7 +192,7 @@ void CDlgWinSize::SetData( void )
 
 /*! ダイアログボックスのデータを読み出す
 */
-int CDlgWinSize::GetData( void )
+int CDlgWinSize::GetData( )
 {
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINSIZE_DEF ) ){
 		m_eSaveWinSize = WINSIZEMODE_DEF;
@@ -235,7 +235,7 @@ int CDlgWinSize::GetData( void )
 
 /*! 利用可能・不可の状態を更新する
 */
-void CDlgWinSize::RenewItemState( void )
+void CDlgWinSize::RenewItemState( )
 {
 	BOOL state;
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINPOS_SET ) ){
@@ -256,7 +256,7 @@ void CDlgWinSize::RenewItemState( void )
 	::EnableWindow( GetItemHwnd( IDC_EDIT_SY ), state );
 }
 
-LPVOID CDlgWinSize::GetHelpIdTable( void )
+LPVOID CDlgWinSize::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }

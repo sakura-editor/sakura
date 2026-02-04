@@ -57,7 +57,7 @@ public:
 	void			SetFileTime( FILETIME& Time )	{ m_sFileInfo.cFileTime.SetFILETIME( Time ); }
 
 	const WCHAR*	GetFileName() const{ return GetFileTitlePointer(GetFilePath()); }	//!< ファイル名(パスなし)を取得
-	const WCHAR*	GetSaveFilePath(void) const;
+	const WCHAR*	GetSaveFilePath() const;
 	void			SetSaveFilePath(LPCWSTR pszPath){ m_szSaveFilePath.Assign(pszPath); }
 public: //####
 	CEditDoc*	m_pcDocRef;

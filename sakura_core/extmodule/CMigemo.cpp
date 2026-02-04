@@ -73,7 +73,7 @@ bool CMigemo::InitDllImp()
 	return m_migemo != nullptr;
 }
 
-bool CMigemo::DeinitDllImp(void)
+bool CMigemo::DeinitDllImp()
 {
 	if (IsAvailable() && m_migemo) {
 		(*m_migemo_close)(m_migemo);

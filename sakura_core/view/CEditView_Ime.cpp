@@ -36,7 +36,7 @@
 
 	@date  2006.12.04 ryoji 新規作成（関数化）
 */
-bool CEditView::IsImeON( void )
+bool CEditView::IsImeON( )
 {
 	bool bRet;
 	HIMC	hIme;
@@ -63,7 +63,7 @@ bool CEditView::IsImeON( void )
 }
 
 /* IME編集エリアの位置を変更 */
-void CEditView::SetIMECompFormPos( void )
+void CEditView::SetIMECompFormPos( )
 {
 	//
 	// If current composition form mode is near caret operation,
@@ -88,7 +88,7 @@ void CEditView::SetIMECompFormPos( void )
 }
 
 /* IME編集エリアの表示フォントを変更 */
-void CEditView::SetIMECompFormFont( void )
+void CEditView::SetIMECompFormFont( )
 {
 	//
 	// If current composition form mode is near caret operation,

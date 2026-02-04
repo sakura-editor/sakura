@@ -83,7 +83,7 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 }
 
 /* ダイアログデータの設定 */
-void CDlgTypeAscertain::SetData( void )
+void CDlgTypeAscertain::SetData( )
 {
 	// タイプ名設定
 	std::wstring typeNameTo = m_psi->sTypeNameTo + L"(&B)";
@@ -144,7 +144,7 @@ void CDlgTypeAscertain::SetData( void )
 	return;
 }
 
-LPVOID CDlgTypeAscertain::GetHelpIdTable(void)
+LPVOID CDlgTypeAscertain::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

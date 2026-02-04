@@ -66,7 +66,7 @@ bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 }
 
 /* すべて選択 */
-void CViewCommander::Command_SELECTALL( void )
+void CViewCommander::Command_SELECTALL( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
@@ -141,7 +141,7 @@ void CViewCommander::Command_SELECTLINE([[maybe_unused]] LPARAM lparam1)
 }
 
 /* 範囲選択開始 */
-void CViewCommander::Command_BEGIN_SELECT( void )
+void CViewCommander::Command_BEGIN_SELECT( )
 {
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在のカーソル位置から選択を開始する */

@@ -73,7 +73,7 @@ COpe* COpeBlk::GetOpe( int nIndex )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 編集操作要素ブロックのダンプ */
-void COpeBlk::DUMP( void )
+void COpeBlk::DUMP( )
 {
 #ifdef _DEBUG
 	int i;

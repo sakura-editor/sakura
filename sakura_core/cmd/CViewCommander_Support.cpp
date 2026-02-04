@@ -47,7 +47,7 @@
 	@date 2000/09/15 JEPRO [Esc]キーと[x]ボタンでも中止できるように変更
 	@date 2005/01/10 genta CEditView_Commandから移動
 */
-void CViewCommander::Command_HOKAN( void )
+void CViewCommander::Command_HOKAN( )
 {
 #if 0
 // 2011.06.24 Moca Plugin導入に従い未設定の確認をやめる
@@ -101,21 +101,21 @@ void CViewCommander::Command_ToggleKeySearch( int option )
 }
 
 /* ヘルプ目次 */
-void CViewCommander::Command_HELP_CONTENTS( void )
+void CViewCommander::Command_HELP_CONTENTS( )
 {
 	ShowWinHelpContents( m_pCommanderView->GetHwnd() );	//	目次を表示する
 	return;
 }
 
 /* ヘルプキーワード検索 */
-void CViewCommander::Command_HELP_SEARCH( void )
+void CViewCommander::Command_HELP_SEARCH( )
 {
 	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)L"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 
 /* コマンド一覧 */
-void CViewCommander::Command_MENU_ALLFUNC( void )
+void CViewCommander::Command_MENU_ALLFUNC( )
 {
 	UINT	uFlags;
 	POINT	po;
@@ -193,7 +193,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 /* 外部ヘルプ１
 	@date 2012.09.26 Moca HTMLHELP対応
 */
-void CViewCommander::Command_EXTHELP1( void )
+void CViewCommander::Command_EXTHELP1( )
 {
 retry:;
 	if( CHelpManager().ExtWinHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute()) ) == false){
@@ -358,7 +358,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 }
 
 /* バージョン情報 */
-void CViewCommander::Command_ABOUT( void )
+void CViewCommander::Command_ABOUT( )
 {
 	CDlgAbout cDlgAbout;
 	cDlgAbout.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd() );

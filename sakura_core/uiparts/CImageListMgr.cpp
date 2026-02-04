@@ -249,7 +249,7 @@ struct MyRGBQUAD : tagRGBQUAD
 	{
 		return !(*this == rhs);
 	}
-	operator COLORREF ( void ) const noexcept
+	operator COLORREF ( ) const noexcept
 	{
 		return RGB( rgbRed, rgbGreen, rgbBlue );
 	}

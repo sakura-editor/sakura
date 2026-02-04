@@ -55,7 +55,7 @@ protected:
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnStnClicked(int wID) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 private:
 	CUrlWnd m_UrlUrWnd;
 	CUrlWnd m_UrlGitWnd;

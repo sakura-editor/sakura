@@ -277,7 +277,7 @@ void CTipWnd::DrawTipText(
 }
 
 /* Tipを消す */
-void CTipWnd::Hide( void )
+void CTipWnd::Hide( )
 {
 	::ShowWindow( GetHwnd(), SW_HIDE );
 //	::DestroyWindow( GetHwnd() );

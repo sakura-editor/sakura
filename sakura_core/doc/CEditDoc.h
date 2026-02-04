@@ -66,7 +66,7 @@ public:
 	~CEditDoc();
 
 	//初期化
-	BOOL Create( void );
+	BOOL Create( );
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	void Clear();

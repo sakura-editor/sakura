@@ -198,7 +198,7 @@ BOOL CDlgGrepReplace::OnBnClicked( int wID )
 }
 
 /* ダイアログデータの設定 */
-void CDlgGrepReplace::SetData( void )
+void CDlgGrepReplace::SetData( )
 {
 	/* 置換後 */
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
@@ -214,7 +214,7 @@ void CDlgGrepReplace::SetData( void )
 /*! ダイアログデータの取得
 	TRUE==正常  FALSE==入力エラー
 */
-int CDlgGrepReplace::GetData( void )
+int CDlgGrepReplace::GetData( )
 {
 	m_bPaste = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHK_PASTE );
 
@@ -241,7 +241,7 @@ int CDlgGrepReplace::GetData( void )
 	return TRUE;
 }
 
-LPVOID CDlgGrepReplace::GetHelpIdTable(void)
+LPVOID CDlgGrepReplace::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }
