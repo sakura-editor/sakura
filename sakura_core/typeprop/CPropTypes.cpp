@@ -163,8 +163,8 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 		p->pfnCallback = nullptr;
 	}
 
-	PROPSHEETHEADER psh = { PROPSHEETHEADER_V2_SIZE };
-	psh.dwSize     = PROPSHEETHEADER_V2_SIZE;
+	PROPSHEETHEADER psh = { sizeof(PROPSHEETHEADER) };
+	psh.dwSize     = sizeof(PROPSHEETHEADER);
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE | PSH_USEPAGELANG;
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
