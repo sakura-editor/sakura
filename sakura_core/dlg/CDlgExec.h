@@ -43,10 +43,10 @@ protected:
 	CRecentCmd m_cRecentCmd;
 	CRecentCurDir m_cRecentCur;
 
-	int GetData( void ) override;	/* ダイアログデータの取得 */
-	void SetData( void ) override;	/* ダイアログデータの設定 */
+	int GetData( ) override;	/* ダイアログデータの取得 */
+	void SetData( ) override;	/* ダイアログデータの設定 */
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 };
 #endif /* SAKURA_CDLGEXEC_4A4BE162_D6C9_4E28_B1AC_091DFFE7DD72_H_ */

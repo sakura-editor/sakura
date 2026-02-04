@@ -73,10 +73,10 @@ protected:
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam ) override;	// 2009.11.29 ryoji
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 
-	void SetData( void ) override;		/* ダイアログデータの設定 */
-	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
-	int GetData( void ) override;		/* ダイアログデータの取得 */
+	void SetData( ) override;		/* ダイアログデータの設定 */
+	void SetCombosList( );	/* 検索文字列/置換後文字列リストの設定 */
+	int GetData( ) override;		/* ダイアログデータの取得 */
 };
 #endif /* SAKURA_CDLGREPLACE_37D62C07_5DAB_4CAC_A8B2_83C75329F8B7_H_ */

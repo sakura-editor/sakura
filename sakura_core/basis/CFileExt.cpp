@@ -54,7 +54,7 @@ const WCHAR *CFileExt::GetExt( int nIndex )
 	return m_vFileExtInfo[nIndex].m_sExt.c_str();
 }
 
-const WCHAR *CFileExt::GetExtFilter( void )
+const WCHAR *CFileExt::GetExtFilter( )
 {
 	CreateExtFilter(m_vstrFilter);
 	return m_vstrFilter.data();

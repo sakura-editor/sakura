@@ -22,7 +22,7 @@ bool CFigure_Comma::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) c
 	return false;
 }
 
-bool CFigure_Comma::Disp(void) const
+bool CFigure_Comma::Disp() const
 {
 	return m_pTypeData->m_nTsvMode == TSV_MODE_CSV;
 }

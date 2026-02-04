@@ -102,10 +102,10 @@ private: // 2002/2/10 aroka アクセス権変更
 	CEditView*		m_pcEditView = nullptr;
 public:
 	BOOL			Register_DropTarget(HWND hWnd);
-	BOOL			Revoke_DropTarget( void );
+	BOOL			Revoke_DropTarget( );
 	STDMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
 	STDMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
-	STDMETHODIMP	DragLeave( void ) override;
+	STDMETHODIMP	DragLeave( ) override;
 	STDMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
 protected:
 	/*

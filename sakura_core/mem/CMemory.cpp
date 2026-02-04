@@ -108,7 +108,7 @@ void CMemory::SwapHLByte( char* pData, const size_t nDataLen ) noexcept
 	
 	@note サイズが2の倍数でないときは、最後の1バイトは交換されない
 */
-void CMemory::SwapHLByte( void ) noexcept
+void CMemory::SwapHLByte( ) noexcept
 {
 	auto p0 = reinterpret_cast<uint16_t*>(GetRawPtr());
 	const auto p1 = p0 + GetRawLength() / 2;
@@ -219,7 +219,7 @@ void CMemory::AppendRawData( const void* pData, size_t nDataLen )
 	}
 }
 
-void CMemory::Reset( void ) noexcept
+void CMemory::Reset( ) noexcept
 {
 	::free( m_pRawData );
 	m_pRawData = nullptr;

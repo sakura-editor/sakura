@@ -56,7 +56,7 @@ CFigure& CFigureManager::GetFigure(const wchar_t* pText, int nTextLen)
 
 /*! 設定更新
 */
-void CFigureManager::OnChangeSetting(void)
+void CFigureManager::OnChangeSetting()
 {
 	m_vFiguresDisp.clear();
 

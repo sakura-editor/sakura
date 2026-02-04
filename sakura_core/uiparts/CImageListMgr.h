@@ -64,12 +64,12 @@ public:
 		int imageNo, DWORD fStyle, LONG cx, LONG cy ) const;
 
 	//! アイコン数を返す
-	int  Count(void) const;	//	アイコン数
+	int  Count() const;	//	アイコン数
 	
 	//! アイコンの幅
-	int  cx(void) const { return m_cx; }
+	int  cx() const { return m_cx; }
 	//! アイコンの高さ
-	int  cy(void) const { return m_cy; }
+	int  cy() const { return m_cy; }
 	
 	//! アイコンを追加する
 	int Add(const WCHAR* szPath);

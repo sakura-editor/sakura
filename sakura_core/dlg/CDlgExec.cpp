@@ -90,7 +90,7 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 }
 
 /* ダイアログデータの設定 */
-void CDlgExec::SetData( void )
+void CDlgExec::SetData( )
 {
 //	MYTRACE( L"CDlgExec::SetData()" );
 	int		i;
@@ -177,7 +177,7 @@ void CDlgExec::SetData( void )
 }
 
 /* ダイアログデータの取得 */
-int CDlgExec::GetData( void )
+int CDlgExec::GetData( )
 {
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, int(std::size(m_szCommand)));
 	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_CUR_DIR ) ){
@@ -280,7 +280,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgExec::GetHelpIdTable(void)
+LPVOID CDlgExec::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

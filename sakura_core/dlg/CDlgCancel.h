@@ -42,9 +42,9 @@ public:
 
 //	HWND Open( LPCWSTR );
 //	void Close( void );	/* モードレスダイアログの削除 */
-	BOOL IsCanceled( void ){ return m_bCANCEL; } /* IDCANCELボタンが押されたか？ */
+	BOOL IsCanceled( ){ return m_bCANCEL; } /* IDCANCELボタンが押されたか？ */
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;	/* ダイアログのメッセージ処理 *//* BOOL->INT_PTR 2008/7/18 Uchi*/
-	void DeleteAsync( void );	/* 自動破棄を遅延実行する */	// 2008.05.28 ryoji
+	void DeleteAsync( );	/* 自動破棄を遅延実行する */	// 2008.05.28 ryoji
 
 //	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 //	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
@@ -58,6 +58,6 @@ protected:
 	*/
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 };
 #endif /* SAKURA_CDLGCANCEL_D62561A1_41F6_4904_99B0_18EE33734269_H_ */

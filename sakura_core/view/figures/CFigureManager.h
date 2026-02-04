@@ -25,7 +25,7 @@ public:
 	CFigure& GetFigure(const wchar_t* pText, int nTextLen);
 
 	// 設定変更
-	void OnChangeSetting(void);
+	void OnChangeSetting();
 
 private:
 	std::vector<CFigure*>	m_vFigures;

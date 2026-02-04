@@ -19,7 +19,7 @@
 #include "CViewCommander_inline.h"
 
 //単語の左端まで削除
-void CViewCommander::Command_WordDeleteToStart( void )
+void CViewCommander::Command_WordDeleteToStart( )
 {
 	/* 矩形選択状態では実行不能(★★もろ手抜き★★) */
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
@@ -54,7 +54,7 @@ void CViewCommander::Command_WordDeleteToStart( void )
 }
 
 //単語の右端まで削除
-void CViewCommander::Command_WordDeleteToEnd( void )
+void CViewCommander::Command_WordDeleteToEnd( )
 {
 	/* 矩形選択状態では実行不能((★★もろ手抜き★★)) */
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
@@ -85,7 +85,7 @@ void CViewCommander::Command_WordDeleteToEnd( void )
 }
 
 //単語切り取り
-void CViewCommander::Command_WordCut( void )
+void CViewCommander::Command_WordCut( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		/* 切り取り(選択範囲をクリップボードにコピーして削除) */
@@ -104,7 +104,7 @@ void CViewCommander::Command_WordCut( void )
 }
 
 //単語削除
-void CViewCommander::Command_WordDelete( void )
+void CViewCommander::Command_WordDelete( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		/* 削除 */
@@ -119,7 +119,7 @@ void CViewCommander::Command_WordDelete( void )
 }
 
 //行頭まで切り取り(改行単位)
-void CViewCommander::Command_LineCutToStart( void )
+void CViewCommander::Command_LineCutToStart( )
 {
 	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -150,7 +150,7 @@ void CViewCommander::Command_LineCutToStart( void )
 }
 
 //行末まで切り取り(改行単位)
-void CViewCommander::Command_LineCutToEnd( void )
+void CViewCommander::Command_LineCutToEnd( )
 {
 	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -200,7 +200,7 @@ void CViewCommander::Command_LineCutToEnd( void )
 }
 
 //行頭まで削除(改行単位)
-void CViewCommander::Command_LineDeleteToStart( void )
+void CViewCommander::Command_LineDeleteToStart( )
 {
 	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -231,7 +231,7 @@ void CViewCommander::Command_LineDeleteToStart( void )
 }
 
 //行末まで削除(改行単位)
-void CViewCommander::Command_LineDeleteToEnd( void )
+void CViewCommander::Command_LineDeleteToEnd( )
 {
 	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -279,7 +279,7 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 }
 
 //行切り取り(折り返し単位)
-void CViewCommander::Command_CUT_LINE( void )
+void CViewCommander::Command_CUT_LINE( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -308,7 +308,7 @@ void CViewCommander::Command_CUT_LINE( void )
 }
 
 /* 行削除(折り返し単位) */
-void CViewCommander::Command_DELETE_LINE( void )
+void CViewCommander::Command_DELETE_LINE( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -365,7 +365,7 @@ void CViewCommander::Command_DELETE_LINE( void )
 }
 
 /* 行の二重化(折り返し単位) */
-void CViewCommander::Command_DUPLICATELINE( void )
+void CViewCommander::Command_DUPLICATELINE( )
 {
 	int				bCRLF;
 	int				bAddCRLF;

@@ -239,7 +239,7 @@ int CDlgFavorite::DoModal(
 }
 
 /* ダイアログデータの設定 */
-void CDlgFavorite::SetData( void )
+void CDlgFavorite::SetData( )
 {
 	int		nTab;
 
@@ -329,7 +329,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 	
 	@retval TRUE 正常(今のところFALSEは返さない)
 */
-int CDlgFavorite::GetData( void )
+int CDlgFavorite::GetData( )
 {
 	int		nTab;
 
@@ -467,7 +467,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
-BOOL CDlgFavorite::OnDestroy( void )
+BOOL CDlgFavorite::OnDestroy( )
 {
 	CDialog::OnDestroy();
 	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
@@ -728,7 +728,7 @@ BOOL CDlgFavorite::OnActivate( WPARAM wParam, LPARAM lParam )
 	return CDialog::OnActivate( wParam, lParam );
 }
 
-LPVOID CDlgFavorite::GetHelpIdTable( void )
+LPVOID CDlgFavorite::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }
@@ -736,7 +736,7 @@ LPVOID CDlgFavorite::GetHelpIdTable( void )
 /*
 	リストを更新する。
 */
-bool CDlgFavorite::RefreshList( void )
+bool CDlgFavorite::RefreshList( )
 {
 	int		nTab;
 	bool	bret;

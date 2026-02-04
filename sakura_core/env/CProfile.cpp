@@ -337,7 +337,7 @@ void CProfile::SetProfileData(
 	foundSection->m_Entries[entryKey] = entryValue;
 }
 
-void CProfile::DUMP( void )
+void CProfile::DUMP( )
 {
 #ifdef _DEBUG
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正

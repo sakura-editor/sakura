@@ -259,7 +259,7 @@ void CColorStrategyPool::CheckColorMODE(
 
 /*! 設定更新
 */
-void CColorStrategyPool::OnChangeSetting(void)
+void CColorStrategyPool::OnChangeSetting()
 {
 	m_vStrategiesDisp.clear();
 
@@ -348,7 +348,7 @@ bool CColorStrategyPool::IsSkipBeforeLayout()
 	return true;
 }
 
-bool CColorStrategyPool::HasRangeBasedColorStrategies(void) const noexcept
+bool CColorStrategyPool::HasRangeBasedColorStrategies() const noexcept
 {
 	return (m_pcLineComment != nullptr)
 		|| (m_pcBlockComment1 != nullptr)

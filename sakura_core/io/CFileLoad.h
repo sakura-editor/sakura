@@ -39,13 +39,13 @@ public:
 public:
 	CFileLoad() : CFileLoad( SEncodingConfig{} ) {};
 	CFileLoad( const SEncodingConfig& encode );
-	~CFileLoad( void );
+	~CFileLoad( );
 
 	void Prepare( const CFileLoad& other, size_t nOffsetBegin, size_t nOffsetEnd );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
 	ECodeType FileOpen( LPCWSTR, bool bBigFile, ECodeType, int, bool* pbBomExist = nullptr );		// 指定文字コードでファイルをオープンする
-	void FileClose( void );					// 明示的にファイルをクローズする
+	void FileClose( );					// 明示的にファイルをクローズする
 
 	//! 1行データをロードする 順アクセス用
 	EConvertResult ReadLine(
@@ -63,13 +63,13 @@ public:
 
 	//	Jun. 08, 2003 Moca
 	//! 開いたファイルにはBOMがあるか？
-	bool IsBomExist( void ){ return m_bBomExist; }
+	bool IsBomExist( ){ return m_bBomExist; }
 
 	//! 現在の進行率を取得する(0% - 100%) 若干誤差が出る
-	int GetPercent( void );
+	int GetPercent( );
 
 	//! ファイルサイズを取得する
-	inline LONGLONG GetFileSize( void ){ return m_nFileSize; }
+	inline LONGLONG GetFileSize( ){ return m_nFileSize; }
 
 	//! 指定オフセットから末尾に向かって最初に現れる行頭のオフセットを取得
 	size_t GetNextLineOffset( size_t nOffset );

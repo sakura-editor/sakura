@@ -59,7 +59,7 @@ public:
 		m_cExInfo.SetColorInfo(pColorInfo);
 	}
 	~CLayout();
-	void DUMP( void );
+	void DUMP( );
 
 	// m_ptLogicPos.xで補正したあとの文字列を得る
 	const wchar_t* GetPtr() const   { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; }

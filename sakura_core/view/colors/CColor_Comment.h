@@ -42,7 +42,7 @@ public:
 class CColor_BlockComment final : public CColorStrategy{
 public:
 	CColor_BlockComment(EColorIndexType nType) : m_nType(nType), m_nCOMMENTEND(0){}
-	void Update(void) override {
+	void Update() override {
 		m_pTypeData = &GetTypeConfig();
 		m_pcBlockComment = &m_pTypeData->m_cBlockComments[m_nType - COLORIDX_BLOCK1];
 	}

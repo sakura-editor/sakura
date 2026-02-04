@@ -25,7 +25,7 @@ public:
 	{
 		assert(0);
 	}
-	EColorIndexType GetColorIdx(void) const override { return COLORIDX_CTRLCODE; }
+	EColorIndexType GetColorIdx() const override { return COLORIDX_CTRLCODE; }
 };
 
 #endif /* SAKURA_CFIGURE_CTRLCODE_53EB409B_17F7_4B7F_9AD2_A00C29CDC792_H_ */

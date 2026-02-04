@@ -44,10 +44,10 @@ private:
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL	OnBnClicked(int wID) override;
 	BOOL	OnNotify(NMHDR* pNMHDR) override;
-	LPVOID	GetHelpIdTable( void ) override;
+	LPVOID	GetHelpIdTable( ) override;
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int		GetData( void ) override;	/* ダイアログデータの取得 */
+	void	SetData( ) override;	/* ダイアログデータの設定 */
+	int		GetData( ) override;	/* ダイアログデータの取得 */
 
 private:
 	/*

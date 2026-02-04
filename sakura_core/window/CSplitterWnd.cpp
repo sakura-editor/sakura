@@ -581,7 +581,7 @@ void CSplitterWnd::SetActivePane( int nIndex )
 }
 
 /* 縦分割ＯＮ／ＯＦＦ */
-void CSplitterWnd::VSplitOnOff( void )
+void CSplitterWnd::VSplitOnOff( )
 {
 	RECT		rc;
 	::GetClientRect( GetHwnd(), &rc );
@@ -601,7 +601,7 @@ void CSplitterWnd::VSplitOnOff( void )
 }
 
 /* 横分割ＯＮ／ＯＦＦ */
-void CSplitterWnd::HSplitOnOff( void )
+void CSplitterWnd::HSplitOnOff( )
 {
 	RECT		rc;
 	::GetClientRect( GetHwnd(), &rc );
@@ -621,7 +621,7 @@ void CSplitterWnd::HSplitOnOff( void )
 }
 
 /* 縦横分割ＯＮ／ＯＦＦ */
-void CSplitterWnd::VHSplitOnOff( void )
+void CSplitterWnd::VHSplitOnOff( )
 {
 	int		nX;
 	int		nY;
@@ -649,7 +649,7 @@ void CSplitterWnd::VHSplitOnOff( void )
 }
 
 /* 前のペインを返す */
-int CSplitterWnd::GetPrevPane( void )
+int CSplitterWnd::GetPrevPane( )
 {
 	int		nPane;
 	nPane = -1;
@@ -701,7 +701,7 @@ int CSplitterWnd::GetPrevPane( void )
 }
 
 /* 次のペインを返す */
-int CSplitterWnd::GetNextPane( void )
+int CSplitterWnd::GetNextPane( )
 {
 	int		nPane;
 	nPane = -1;
@@ -753,13 +753,13 @@ int CSplitterWnd::GetNextPane( void )
 }
 
 /* 最初のペインを返す */
-int CSplitterWnd::GetFirstPane( void )
+int CSplitterWnd::GetFirstPane( )
 {
 	return 0;
 }
 
 /* 最後のペインを返す */
-int CSplitterWnd::GetLastPane( void )
+int CSplitterWnd::GetLastPane( )
 {
 	int		nPane;
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 1 ){

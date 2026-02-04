@@ -112,7 +112,7 @@ BOOL CDlgFind::OnDestroy()
 }
 
 /* ダイアログデータの設定 */
-void CDlgFind::SetData( void )
+void CDlgFind::SetData( )
 {
 //	MYTRACE( L"CDlgFind::SetData()" );
 
@@ -177,7 +177,7 @@ void CDlgFind::SetData( void )
 
 // 検索文字列リストの設定
 //	2010/5/28 Uchi
-void CDlgFind::SetCombosList( void )
+void CDlgFind::SetCombosList( )
 {
 	HWND	hwndCombo;
 
@@ -193,7 +193,7 @@ void CDlgFind::SetCombosList( void )
 }
 
 /* ダイアログデータの取得 */
-int CDlgFind::GetData( void )
+int CDlgFind::GetData( )
 {
 //	MYTRACE( L"CDlgFind::GetData()" );
 
@@ -401,7 +401,7 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgFind::GetHelpIdTable(void)
+LPVOID CDlgFind::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

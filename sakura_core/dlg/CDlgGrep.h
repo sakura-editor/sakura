@@ -80,10 +80,10 @@ protected:
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 
-	void SetData( void ) override;	/* ダイアログデータの設定 */
-	int GetData( void ) override;	/* ダイアログデータの取得 */
+	void SetData( ) override;	/* ダイアログデータの設定 */
+	int GetData( ) override;	/* ダイアログデータの取得 */
 	void SetDataFromThisText(bool bChecked);	/* 現在編集中ファイルから検索チェックでの設定 */
 	static LRESULT CALLBACK OnFolderProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 };

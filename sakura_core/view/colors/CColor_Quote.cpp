@@ -27,7 +27,7 @@ public:
 	}
 };
 
-void CColor_Quote::Update(void)
+void CColor_Quote::Update()
 {
 	m_pTypeData = &GetTypeConfig();
 	m_nStringType = m_pTypeData->m_nStringType;

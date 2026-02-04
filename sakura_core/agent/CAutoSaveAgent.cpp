@@ -88,7 +88,7 @@ void CPassiveTimer::Enable(bool flag)
 	@retval true 所定時間が経過した。このときは測定基準が自動的にリセットされる。
 	@retval false 所定の時間に達していない。
 */
-bool CPassiveTimer::CheckAction(void)
+bool CPassiveTimer::CheckAction()
 {
 	if( !IsEnabled() )	//	有効でなければ何もしない
 		return false;

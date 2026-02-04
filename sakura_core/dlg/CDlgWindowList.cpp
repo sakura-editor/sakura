@@ -238,7 +238,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	return CDialog::OnInitDialog(hwndDlg, wParam, lParam);
 }
 
-BOOL CDlgWindowList::OnDestroy( void )
+BOOL CDlgWindowList::OnDestroy( )
 {
 	CDialog::OnDestroy();
 	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;

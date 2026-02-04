@@ -104,7 +104,7 @@ CMacroManagerBase* CPPAMacroMgr::Creator(const WCHAR* ext)
 
 	@date 2004.01.31 genta RegisterExtの廃止のためRegisterCreatorに置き換え
 */
-void CPPAMacroMgr::declare (void)
+void CPPAMacroMgr::declare ()
 {
 	if( DLL_SUCCESS == m_cPPA.InitDll() ){
 		CMacroFactory::getInstance()->RegisterCreator( Creator );
