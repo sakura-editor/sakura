@@ -282,12 +282,6 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			// 最後のフォルダー区切り記号を削除する
 			// [A:\]などのルートであっても削除
 			for(nPathLen = 0; pStr2[nPathLen] != L'\0'; nPathLen++ ){
-#ifdef _MBCS
-				if( _IS_SJIS_1( (unsigned char)pStr2[nPathLen] ) && _IS_SJIS_2( (unsigned char)pStr2[nPathLen + 1] ) ){
-					// SJIS読み飛ばし
-					nPathLen++; // 2003/01/17 sui
-				}else
-#endif
 				if( L'\\' == pStr2[nPathLen] && L'\0' == pStr2[nPathLen + 1] ){
 					pStr2[nPathLen] = L'\0';
 					break;

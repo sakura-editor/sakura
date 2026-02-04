@@ -28,9 +28,6 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "debug/CRunningTimer.h"
-#include <iterator>
-#include <deque>
-#include <memory>
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
@@ -237,12 +234,6 @@ std::wstring CGrepAgent::ChopYen( const std::wstring& str )
 	// 最後のフォルダー区切り記号を削除する
 	// [A:\]などのルートであっても削除
 	for(size_t i = 0; i < nPathLen; i++ ){
-#ifdef _MBCS
-		if( _IS_SJIS_1( (unsigned char)dst[i] ) && (i + 1 < nPathLen) && _IS_SJIS_2( (unsigned char)dst[i + 1] ) ){
-			// SJIS読み飛ばし
-			i++;
-		} else
-#endif
 		if( L'\\' == dst[i] && i == nPathLen - 1 ){
 			dst.resize( nPathLen - 1 );
 			break;
