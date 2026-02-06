@@ -126,18 +126,23 @@ bool CClipboard::SetText(
 	while(bSakuraText){
 		if( 0 == uFormatSakuraClip )break;
 
+		// SAKURAClipWはINT_MAXを越えるデータを格納できない
+		if (size_t(INT_MAX) < nDataLen) {
+			break;
+		}
+
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			sizeof(size_t) + (nDataLen + 1) * sizeof(wchar_t)
+			SSakuraClipData::CalcSize(nDataLen)
 		);
 		if( !hgClipSakura )break;
 
 		//確保した領域にデータをコピー
-		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
-		*((size_t*)pClip) = nDataLen; pClip += sizeof(nDataLen);						//データの長さ
-		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
-		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
+		auto pClip = static_cast<SSakuraClipData*>(::GlobalLock(hgClipSakura));
+		pClip->cchData = static_cast<int>(nDataLen);
+		::wmemcpy_s(pClip->szData, nDataLen, pData, nDataLen);
+		pClip->szData[nDataLen] = L'\0';
 		::GlobalUnlock( hgClipSakura );
 
 		//クリップボードに設定
@@ -296,16 +301,21 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	}
 
 	//サクラ形式のデータがあれば取得
-	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
-	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
+	if (const auto uFormatSakuraClip = CClipboard::GetSakuraFormat();
+		(uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
 		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
-		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
-		if (hSakura != nullptr) {
-			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
-			size_t nLength        = *((size_t*)pData);
-			const wchar_t* szData = (const wchar_t*)(pData + sizeof(size_t));
-			cmemBuf->Append( szData, nLength );
-			::GlobalUnlock(hSakura);
+		if (const auto hSakura = GetClipboardData(uFormatSakuraClip)) {
+			if (const auto pClip = (SSakuraClipData*)::GlobalLock(hSakura)) {
+				const auto nSize = ::GlobalSize(hSakura);
+				if (const auto nLength = pClip->cchData; SSakuraClipData::CalcSize(nLength) <= nSize) {
+					const auto szData  = pClip->szData;
+					cmemBuf->Append(szData, nLength);
+
+					// ここで true を返して抜けたいが無理。
+				}
+				::GlobalUnlock(hSakura);
+			}
+			// おかしなデータが入ってた場合、何もペーストできなくともtrueを返してしまうが放置。
 			return true;
 		}
 	}
