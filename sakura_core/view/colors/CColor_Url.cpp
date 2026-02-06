@@ -16,14 +16,14 @@
 //                           URL                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Url::BeginColor(std::wstring_view cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	int	nUrlLen;
 
 	if( _IsPosKeywordHead(cStr,nPos) /* URLを表示する */
-	 && IsURL( cStr.GetPtr(), nPos, cStr.GetLength(), &nUrlLen )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+	 && IsURL( cStr.data(), nPos, cStr.length(), &nUrlLen )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 	){
 		this->m_nCOMMENTEND = nPos + nUrlLen;
 		return true;
@@ -31,7 +31,7 @@ bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Url::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
+bool CColor_Url::EndColor([[maybe_unused]] std::wstring_view cStr, int nPos)
 {
 	if( nPos == this->m_nCOMMENTEND ){
 		return true;

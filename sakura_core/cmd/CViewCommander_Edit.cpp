@@ -897,15 +897,15 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 		}else{
 			// 文字幅に合わせてスペースを詰める
 			if( GetDllShareData().m_Common.m_sEdit.m_bOverWriteFixMode ){
-				const CStringRef line = pcLayout->GetDocLineRef()->GetStringRefWithEOL();
+				const std::wstring_view line{ pcLayout->GetDocLineRef()->GetStringRefWithEOL() };
 				CLogicInt nPos = GetCaret().GetCaretLogicPos().GetX();
-				if( line.At(nPos) != WCODE::TAB ){
+				if( line[nPos] != WCODE::TAB ){
 					CKetaXInt nKetaBefore = CNativeW::GetKetaOfChar(line, nPos);
 					CKetaXInt nKetaAfter = CNativeW::GetKetaOfChar(pszInput, nLen, 0);
 					nKetaDiff = nKetaBefore - nKetaAfter;
-					nPos += CNativeW::GetSizeOfChar(line.GetPtr(), line.GetLength(), nPos);
+					nPos += CNativeW::GetSizeOfChar(line.data(), line.length(), nPos);
 					nDelLen = 1;
-					if( nKetaDiff < 0 && nPos < line.GetLength() ){
+					if( nKetaDiff < 0 && nPos < int(line.length()) ){
 						wchar_t c = line[nPos];
 						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c,
 								GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){

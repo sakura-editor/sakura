@@ -28,7 +28,6 @@ class CDlgCancel;
 class CEditWnd;
 class CLayout;
 class CLayoutMgr;
-class CStringRef;
 
 class CPrintPreview {
 	static constexpr auto COMPAT_BMP_BASE =      1;   /* COMPAT_BMP_SCALEピクセル幅を複写する画面ピクセル幅 */
@@ -140,7 +139,7 @@ protected:
 
 	// 指定ロジック位置のCColorStrategyを取得
 	CColorStrategy* GetColorStrategy(
-		const CStringRef&	cStringLine,
+		std::wstring_view cStringLine,
 		int					iLogic,
 		CColorStrategy*		pStrategy,
 		bool&				bChange

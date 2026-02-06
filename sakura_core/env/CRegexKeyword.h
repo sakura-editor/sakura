@@ -44,7 +44,6 @@ typedef struct RegexInfo_t {
 	int    nFlag;           //色指定のチェックが入っているか？ YES=RK_EMPTY, NO=RK_NOMATCH
 } REGEX_INFO;
 
-class CStringRef;
 
 //!	正規表現キーワードクラス
 /*!
@@ -58,7 +57,7 @@ public:
 	//! 行検索開始
 	BOOL RegexKeyLineStart( void );
 	//! 行検索
-	BOOL RegexIsKeyword( const CStringRef& cStr, int nPos, int *nMatchLen, int *nMatchColor );
+	BOOL RegexIsKeyword( std::wstring_view cStr, int nPos, int *nMatchLen, int *nMatchColor );
 	//! タイプ設定
 	BOOL RegexKeySetTypes( const STypeConfig *pTypesPtr );
 

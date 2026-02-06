@@ -281,8 +281,8 @@ public:
 		return CNativeW::GetColmOfChar( pData, nDataLen, i,
 			GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) + nSpace;
 	}
-	CLayoutXInt GetLayoutXOfChar( const CStringRef& str, int i ) const {
-		return GetLayoutXOfChar(str.GetPtr(), str.GetLength(), i);
+	CLayoutXInt GetLayoutXOfChar( std::wstring_view str, int i ) const {
+		return GetLayoutXOfChar(str.data(), int(str.length()), i);
 	}
 	CPixelXInt GetWidthPerKeta() const { return Int(m_nCharLayoutXPerKeta); }
 	CPixelXInt GetCharSpacing() const { return m_nSpacing; }
@@ -308,7 +308,7 @@ protected:
 		EKinsokuType	eKinsokuType;
 		CLogicInt		nPos;
 		CLogicInt		nBgn;
-		CStringRef		cLineStr;
+		std::wstring_view		cLineStr;
 		CLogicInt		nWordBgn;
 		CLogicInt		nWordLen;
 		CLayoutInt		nPosX;

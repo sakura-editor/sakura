@@ -12,15 +12,15 @@
 #include "doc/layout/CLayout.h"
 #include "types/CTypeSupport.h"
 
-static int IsNumber( const CStringRef& cStr, int offset );/* 数値ならその長さを返す */	//@@@ 2001.02.17 by MIK
+static int IsNumber( std::wstring_view cStr, int offset );/* 数値ならその長さを返す */	//@@@ 2001.02.17 by MIK
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         半角数値                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Numeric::BeginColor(std::wstring_view cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	int	nnn;
 
@@ -34,7 +34,7 @@ bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Numeric::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
+bool CColor_Numeric::EndColor([[maybe_unused]] std::wstring_view cStr, int nPos)
 {
 	if( nPos == this->m_nCOMMENTEND ){
 		return true;
@@ -71,7 +71,7 @@ bool CColor_Numeric::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
  *   10進数, 16進数, LF接尾語, 浮動小数点数, 負符号
  *   IPアドレスのドット連結(本当は数値じゃないんだよね)
  */
-static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*, int length*/)
+static int IsNumber(std::wstring_view cStr,/*const wchar_t *buf,*/ int offset/*, int length*/)
 {
 	const wchar_t* p;
 	const wchar_t* q;
@@ -79,8 +79,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 	int d = 0;
 	int f = 0;
 
-	p = cStr.GetPtr() + offset;
-	q = cStr.GetPtr() + cStr.GetLength();
+	p = cStr.data() + offset;
+	q = cStr.data() + cStr.length();
 
 	if( *p == L'0' )  /* 10進数,Cの16進数 */
 	{

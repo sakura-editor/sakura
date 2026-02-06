@@ -13,43 +13,6 @@
 
 #include "basis/CEol.h"
 
-/*!
-	コンストラクタ
-
-	C文字列の先頭アドレスと有効文字数を指定してCStringRefを構築する。
- */
-CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
-	: m_pData(pData)
-	, m_nDataLen(static_cast<decltype(m_nDataLen)>(nDataLen))
-{
-}
-
-/*!
-	コンストラクタ
-
-	指定したCNativeWを参照するCStringRefを構築する。
- */
-CStringRef::CStringRef( const CNativeW& cmem ) noexcept
-	: m_pData(cmem.GetStringPtr())
-	, m_nDataLen(static_cast<decltype(m_nDataLen)>(cmem.GetStringLength()))
-{
-}
-
-/*!
-	指定位置の文字を取得する
-
-	標準ライブラリの実装とは異なり、範囲外を指定すると0が返る。
-	サクラエディタの内部データは拡張UTF-16LEなので、
-	取得した値が「1文字」であるとは限らないことに注意。
- */
-[[nodiscard]] wchar_t CStringRef::At( size_t nIndex ) const noexcept
-{
-	if( m_pData != nullptr && nIndex < m_nDataLen ){
-		return m_pData[nIndex];
-	}
-	return 0;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -357,7 +320,7 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 
 void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen )
 {
-	Replace( std::wstring_view( pszFrom, nFromLen ), std::wstring_view( pszTo, nToLen ) );
+	Replace( std::wstring_view{ pszFrom, nFromLen }, std::wstring_view{ pszTo, nToLen } );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -382,7 +345,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t 
 	}
 
 	// IVSの異体字セレクタチェック
-	if (IsVariationSelector(std::wstring_view(pData + nIdx + 1, nDataLen - (nIdx + 1)))) {
+	if (IsVariationSelector(std::wstring_view(pData, nDataLen).substr(nIdx + 1))) {
 		// 正字 + 異体字セレクタで3個分
 		return CLogicInt(3);
 	}

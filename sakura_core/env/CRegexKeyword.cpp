@@ -341,7 +341,7 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 	@note RegexKeyLineStart関数によって初期化されていること。
 */
 BOOL CRegexKeyword::RegexIsKeyword(
-	const CStringRef&	cStr,		//!< [in] 検索対象文字列
+	std::wstring_view cStr,		//!< [in] 検索対象文字列
 //	const wchar_t*		pLine,		//!< [in] １行のデータ
 	int					nPos,		//!< [in] 検索開始オフセット
 //	int					nLineLen,	//!< [in] １行の長さ
@@ -376,8 +376,8 @@ BOOL CRegexKeyword::RegexIsKeyword(
 			/* 以前の結果はもう古いので再検索する */
 			if( info.nOffset < nPos )
 			{
-				const auto begp = cStr.GetPtr();			//!< 行頭位置
-				const auto endp = begp + cStr.GetLength();	//!< 行末位置
+				const auto begp = cStr.data();			//!< 行頭位置
+				const auto endp = begp + cStr.length();	//!< 行末位置
 				const auto startp = begp + nPos;			//!< 検索開始位置
 				int matched = ExistBMatchEx()
 					? BMatchEx(nullptr, begp, startp, endp, &pBregexp, m_szMsg)

@@ -18,15 +18,15 @@ void CColor_Select::OnStartScanLogic()
 	m_nSelectEnd	= CLogicInt(-1);
 }
 
-bool CColor_Select::BeginColor([[maybe_unused]] const CStringRef& cStr, [[maybe_unused]] int nPos)
+bool CColor_Select::BeginColor([[maybe_unused]] std::wstring_view cStr, [[maybe_unused]] int nPos)
 {
 	assert(0);
 	return false;
 }
 
-bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nLineNum, const CLayout* pcLayout)
+bool CColor_Select::BeginColorEx(std::wstring_view cStr, int nPos, CLayoutInt nLineNum, const CLayout* pcLayout)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
 
 	const CEditView& view = *(CColorStrategyPool::getInstance()->GetCurrentView());
 	if( !view.GetSelectionInfo().IsTextSelected() || !CTypeSupport(&view,COLORIDX_SELECT).IsDisp() ){
@@ -59,7 +59,7 @@ bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nL
 	return false;
 }
 
-bool CColor_Select::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
+bool CColor_Select::EndColor([[maybe_unused]] std::wstring_view cStr, int nPos)
 {
 	//マッチ文字列終了検出
 	if( m_nSelectEnd <= nPos ){
@@ -89,9 +89,10 @@ void CColor_Found::OnStartScanLogic()
 	}
 }
 
-bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Found::BeginColor(std::wstring_view cStr, int nPos)
 {
-	if(!cStr.IsValid())return false;
+	if (cStr.empty()) return false;
+
 	const CEditView* pcView = CColorStrategyPool::getInstance()->GetCurrentView();
 	if( !pcView->m_bCurSrchKeyMark || 0 == this->validColorNum ){
 		return false;
@@ -116,7 +117,7 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Found::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
+bool CColor_Found::EndColor([[maybe_unused]] std::wstring_view cStr, int nPos)
 {
 	//マッチ文字列終了検出
 	if( m_nSearchEnd <= nPos ){ //+ == では行頭文字の場合、m_nSearchEndも０であるために文字色の解除ができないバグを修正 2003.05.03 かろと

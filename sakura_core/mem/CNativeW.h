@@ -16,24 +16,6 @@
 
 class CNativeW;
 
-//! 文字列への参照を保持するクラス
-class CStringRef final{
-public:
-	CStringRef() noexcept = default;
-	CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept;
-	explicit CStringRef( const CNativeW& cmem ) noexcept;
-
-	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
-	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
-	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
-	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
-	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
-
-private:
-	const wchar_t*	m_pData = nullptr;
-	unsigned		m_nDataLen = 0;
-};
-
 // グローバル演算子の前方宣言
 bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
@@ -138,20 +120,20 @@ public:
 	// -- -- staticインターフェース -- -- //
 	//! 指定した位置の文字がwchar_t何個分かを返す
 	static CLogicInt GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t index );
-	static CLogicInt GetSizeOfChar( const CStringRef& cStr, size_t index )
-		{ return GetSizeOfChar( cStr.GetPtr(), cStr.GetLength(), index ); }
+	static CLogicInt GetSizeOfChar( std::wstring_view cStr, size_t index )
+		{ return GetSizeOfChar( cStr.data(), cStr.length(), index ); }
 	//! 指定した位置の文字が半角何個分かを返す
 	static CKetaXInt GetKetaOfChar(const wchar_t* pData, size_t cchData, size_t index, CCharWidthCache& cache = GetCharWidthCache());
-	static CKetaXInt GetKetaOfChar(const CStringRef& cStr, size_t index, CCharWidthCache& cache = GetCharWidthCache())
-		{ return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), index, cache); }
+	static CKetaXInt GetKetaOfChar(std::wstring_view cStr, size_t index, CCharWidthCache& cache = GetCharWidthCache())
+		{ return GetKetaOfChar(cStr.data(), cStr.length(), index, cache); }
 	static const wchar_t* GetCharNext(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の次にある文字の位置を返します
 	static const wchar_t* GetCharPrev(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の直前にある文字の位置を返します
 
 	static CHabaXInt GetHabaOfChar( const wchar_t* pData, size_t cchData, size_t index, bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
 	static CLayoutXInt GetColmOfChar( const wchar_t* pData, size_t cchData, size_t index, bool bEnableExtEol )
 		{ return GetHabaOfChar(pData, cchData, index, bEnableExtEol); }
-	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, size_t index, bool bEnableExtEol )
-		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), index, bEnableExtEol); }
+	static CLayoutXInt GetColmOfChar( std::wstring_view cStr, size_t index, bool bEnableExtEol )
+		{ return GetHabaOfChar(cStr.data(), cStr.length(), index, bEnableExtEol); }
 };
 
 // 派生クラスでメンバー追加禁止

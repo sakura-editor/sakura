@@ -412,7 +412,7 @@ CColor3Setting CEditView::GetColorIndex(
 
 	//文字列参照
 	const CDocLine* pcDocLine = pcLayout->GetDocLineRef();
-	CStringRef cLineStr(pcDocLine->GetPtr(),pcDocLine->GetLengthWithEOL());
+	std::wstring_view cLineStr(pcDocLine->GetPtr(),pcDocLine->GetLengthWithEOL());
 
 	//color strategy
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
@@ -434,8 +434,8 @@ CColor3Setting CEditView::GetColorIndex(
 
 		//1文字進む
 		pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(
-									cLineStr.GetPtr(),
-									cLineStr.GetLength(),
+									cLineStr.data(),
+									cLineStr.length(),
 									pInfo->m_nPosInLogic
 								);
 		if( pcLayoutNext && pcLayoutNext->GetLogicOffset() <= pInfo->m_nPosInLogic ){
@@ -976,7 +976,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	//文字列参照
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
-	CStringRef cLineStr = CDocLine::GetStringRefWithEOL_Safe(pcDocLine);
+	std::wstring_view cLineStr{ CDocLine::GetStringRefWithEOL_Safe(pcDocLine) };
 
 	// 描画範囲外の場合は色切替だけで抜ける
 	if(pInfo->m_pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
@@ -990,8 +990,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 				//1文字進む
 				pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(
-											cLineStr.GetPtr(),
-											cLineStr.GetLength(),
+											cLineStr.data(),
+											cLineStr.length(),
 											pInfo->m_nPosInLogic
 										);
 			}
@@ -1079,8 +1079,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			int nPosInLogic = pInfo->GetPosInLogic(); // FowardChars/DrawImpで更新される
 			nPosLength = nPosInLogic - nPosBgn;
 			//1文字情報取得
-			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[nPosInLogic],
-				cLineStr.GetLength() - nPosInLogic);
+			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.data()[nPosInLogic],
+				int(cLineStr.length() - nPosInLogic));
 			FigureRenderType nextRenderType = CFigure_Text::RenderType_None;
 			bool is_text = (typeid(cFigure) == typeid(CFigure_Text));
 			if (is_text) {
