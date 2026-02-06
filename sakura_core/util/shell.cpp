@@ -347,69 +347,64 @@ HWND OpenHtmlHelp(
 /*! ショートカット(.lnk)の解決
 	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
 */
-BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
+bool ResolveShortcutLink(HWND hWnd, const std::filesystem::path& linkFile, std::span<WCHAR> szPath)
 {
-	BOOL			bRes;
-	HRESULT			hRes;
-	IShellLink*		pIShellLink;
-	IPersistFile*	pIPersistFile;
-	WIN32_FIND_DATA	wfd;
-	/* 初期化 */
-	pIShellLink = nullptr;
-	pIPersistFile = nullptr;
-	*lpszPath = 0; // assume failure
-	bRes = FALSE;
+	szPath[0] = 0;
 
-// 2009.01.08 ryoji CoInitializeを削除（WinMainにOleInitialize追加）
-
-	// Get a pointer to the IShellLink interface.
-//	hRes = 0;
-	WCHAR szAbsLongPath[_MAX_PATH];
-	if( ! ::GetLongFileName( lpszLinkFile, szAbsLongPath ) ){
-		return FALSE;
+	SFilePath szAbsLongPath;
+	if (!GetLongFileName(linkFile, szAbsLongPath)) {
+		return false;	// ファイルが存在しない
 	}
 
 	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダーに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 
-	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
-		// Get a pointer to the IPersistFile interface.
-		if( SUCCEEDED(hRes = pIShellLink->QueryInterface( IID_IPersistFile, (void**)&pIPersistFile ) ) ){
-			// Load the shortcut.
-			if( SUCCEEDED(hRes = pIPersistFile->Load( szAbsLongPath, STGM_READ ) ) ){
-				// Resolve the link.
-				if( SUCCEEDED( hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH ) ) ){
-					// Get the path to the link target.
-					WCHAR szGotPath[MAX_PATH];
-					szGotPath[0] = L'\0';
-					if( SUCCEEDED( hRes = pIShellLink->GetPath(szGotPath, MAX_PATH, &wfd, SLGP_SHORTPATH ) ) ){
-						// Get the description of the target.
-						WCHAR szDescription[MAX_PATH];
-						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
-							if( L'\0' != szGotPath[0] ){
-								/* 正常終了 */
-								::wcsncpy_s(lpszPath, _MAX_PATH, szGotPath, _TRUNCATE);
-								bRes = TRUE;
-							}
-						}
-					}
-				}
-			}
-		}
+	// Get a pointer to the IShellLink interface.
+	cxx::com_pointer<IShellLink> pShellLink = nullptr;
+	if (FAILED(pShellLink.CreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER))) {
+		return false;
 	}
-	// Release the pointer to the IPersistFile interface.
-	if( nullptr != pIPersistFile ){
-		pIPersistFile->Release();
-		pIPersistFile = nullptr;
+
+	// Get a pointer to the IPersistFile interface.
+	cxx::com_pointer<IPersistFile> pPersistFile = nullptr;
+	if (FAILED(pShellLink->QueryInterface(&pPersistFile))) {
+		return false;
 	}
-	// Release the pointer to the IShellLink interface.
-	if( nullptr != pIShellLink ){
-		pIShellLink->Release();
-		pIShellLink = nullptr;
+
+	// Load the shortcut.
+	if (FAILED(pPersistFile->Load(szAbsLongPath, STGM_READ))) {
+		return false;
 	}
-// 2009.01.08 ryoji CoUninitializeを削除（WinMainにOleUninitialize追加）
-	return bRes;
+
+	// Resolve the link.
+	if (FAILED(pShellLink->Resolve(hWnd, SLR_ANY_MATCH))) {
+		return false;
+	}
+
+	// Get the path to the link target.
+	SFilePath szGotPath;
+	WIN32_FIND_DATA	wfd{};
+	if (FAILED(pShellLink->GetPath(szGotPath, int(std::size(szGotPath)), &wfd, SLGP_SHORTPATH))) {
+		return false;
+	}
+
+	// Get the description of the target.
+	SFilePath szDescription;
+	if (FAILED(pShellLink->GetDescription(szDescription, int(std::size(szDescription))))) {
+		return false;
+	}
+
+	if (szGotPath.empty()) {
+		return false;
+	}
+
+	// 正常終了
+	if (STRUNCATE == ::wcsncpy_s(std::data(szPath), std::size(szPath), szGotPath, _TRUNCATE)) {
+		return false;
+	}
+
+	return true;
 }
 
 /*! ヘルプファイルのフルパスを返す
