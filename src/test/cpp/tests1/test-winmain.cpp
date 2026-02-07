@@ -43,7 +43,7 @@ namespace cxx {
  * @throw std::system_error システムエラー例外
  * @note 使い物になるかどうか試作してみただけ
  */
-NORETURN void raise_system_error(const std::string& message) {
+[[noreturn]] void raise_system_error(const std::string& message) {
 	throw std::system_error(int(::GetLastError()), std::system_category(), message);
 }
 
@@ -224,7 +224,7 @@ struct WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
 	 * テスト内で使うためのラッパー。
 	 * 関数が呼出元に返らないことをマークしたバージョン。
 	 */
-	static NORETURN void StartEditorProcess(const std::wstring& command) {
+	[[noreturn]] static void StartEditorProcess(const std::wstring& command) {
 		exit(testing::StartEditorProcess(command));
 	}
 };
