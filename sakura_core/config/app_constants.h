@@ -15,7 +15,7 @@
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-LPCWSTR GetAppName( void );
+LPCWSTR GetAppName( );
 
 #define GSTR_APPNAME_W  GetAppName()		//!< アプリ名の文字列
 #define GSTR_APPNAME    GSTR_APPNAME_W

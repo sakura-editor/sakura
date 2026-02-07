@@ -47,15 +47,15 @@ protected:
 	BOOL	OnLbnSelChange( HWND hwndCtl, int wID ) override;
 	BOOL	OnLbnDblclk( int wID ) override;
 	BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
-	LPVOID	GetHelpIdTable(void) override;
+	LPVOID	GetHelpIdTable() override;
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 標準以外のメッセージを捕捉する
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnDestroy( void ) override;
+	BOOL OnDestroy( ) override;
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int		GetData( void ) override;	/* ダイアログデータの取得 */
+	void	SetData( ) override;	/* ダイアログデータの設定 */
+	int		GetData( ) override;	/* ダイアログデータの取得 */
 
 private:
 	int			m_nIndexSave = 0;		// 最後に選択されていた番号

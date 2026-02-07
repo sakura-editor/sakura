@@ -16,7 +16,7 @@ public:
 	CDocLocker();
 
 	//クリア
-	void Clear(void) { m_bIsDocWritable = true; }
+	void Clear() { m_bIsDocWritable = true; }
 
 	//ロード前後
 	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;

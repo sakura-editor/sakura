@@ -40,9 +40,9 @@ protected:
 
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
-	int  GetData( void ) override;
-	void SetData( void ) override;
-	LPVOID GetHelpIdTable( void ) override;
+	int  GetData( ) override;
+	void SetData( ) override;
+	LPVOID GetHelpIdTable( ) override;
 
 	int m_nSet[ KEYWORD_SELECT_NUM ];
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;

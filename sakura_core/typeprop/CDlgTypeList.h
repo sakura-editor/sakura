@@ -46,10 +46,10 @@ protected:
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
 	void SetData() override;	/* ダイアログデータの設定 */
 	void SetData(int selIdx);	/* ダイアログデータの設定 */
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
-	bool Import( void );			// 2010/4/12 Uchi
-	bool Export( void );			// 2010/4/12 Uchi
-	bool InitializeType( void );	// 2010/4/12 Uchi
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
+	bool Import( );			// 2010/4/12 Uchi
+	bool Export( );			// 2010/4/12 Uchi
+	bool InitializeType( );	// 2010/4/12 Uchi
 	bool CopyType();
 	bool UpType();
 	bool DownType();

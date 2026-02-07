@@ -725,7 +725,7 @@ void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pc
 	return;
 }
 
-void CMenuDrawer::ResetContents( void )
+void CMenuDrawer::ResetContents( )
 {
 	LOGFONT	lf;
 	m_menuItems.clear();

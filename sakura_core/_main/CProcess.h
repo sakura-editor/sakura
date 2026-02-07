@@ -55,7 +55,7 @@ public:
 	HWND			GetMainWindow() const{ return m_hWnd; }
 
 	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
-	[[nodiscard]] LPCWSTR	GetAppName( void ) const { return m_strAppName.c_str(); }
+	[[nodiscard]] LPCWSTR	GetAppName( ) const { return m_strAppName.c_str(); }
 	void UpdateAppName( std::wstring_view appName );
 
 private:

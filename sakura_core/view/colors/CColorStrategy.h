@@ -145,7 +145,7 @@ public:
 	virtual void OnStartScanLogic(){}
 
 	//! 設定更新
-	virtual void Update(void)
+	virtual void Update()
 	{
 		m_pTypeData = &GetTypeConfig();
 	}
@@ -196,10 +196,10 @@ public:
 	bool IsSkipBeforeLayout();	// レイアウトが行頭からチェックしなくていいか判定
 
 	//設定変更
-	void OnChangeSetting(void);
+	void OnChangeSetting();
 
 	//ビューの設定・取得
-	CEditView* GetCurrentView(void) const noexcept { return m_pcView; }
+	CEditView* GetCurrentView() const noexcept { return m_pcView; }
 	void SetCurrentView(CEditView* pcView) { m_pcView = pcView; }
 
 	//範囲を持つ色分けがあるかどうか

@@ -92,7 +92,7 @@ void CHokanMgr::ChangeView( LPARAM pcEditView )
 	return;
 }
 
-void CHokanMgr::Hide( void )
+void CHokanMgr::Hide( )
 {
 	::ShowWindow( GetHwnd(), SW_HIDE );
 	m_nCurKouhoIdx = -1;
@@ -463,7 +463,7 @@ BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
-BOOL CHokanMgr::OnDestroy( void )
+BOOL CHokanMgr::OnDestroy( )
 {
 	/* 基底クラスメンバ */
 	CreateSizeBox();
@@ -706,7 +706,7 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
-LPVOID CHokanMgr::GetHelpIdTable(void)
+LPVOID CHokanMgr::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

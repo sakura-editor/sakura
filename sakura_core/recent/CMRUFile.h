@@ -48,9 +48,9 @@ public:
 	std::vector<LPCWSTR> GetPathList() const;
 
 	//	アクセス関数
-	int Length(void) const;	//	アイテムの数。
-	int MenuLength(void) const { return t_min(Length(), m_cRecentFile.GetViewCount()); }	//	メニューに表示されるアイテムの数
-	void ClearAll(void);//	アイテムを削除～。
+	int Length() const;	//	アイテムの数。
+	int MenuLength() const { return t_min(Length(), m_cRecentFile.GetViewCount()); }	//	メニューに表示されるアイテムの数
+	void ClearAll();//	アイテムを削除～。
 	bool GetEditInfo( int num, EditInfo* pfi ) const;				//	番号で指定したEditInfo（情報をまるごと）
 	bool GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const;	//	ファイル名で指定したEditInfo（情報をまるごと）
 	void Add( EditInfo* pEditInfo );		//	*pEditInfoを追加する。

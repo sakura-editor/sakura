@@ -19,6 +19,6 @@ public:
 
 	//action
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool trans) const override;
-	EColorIndexType GetColorIdx(void) const override { return COLORIDX_SPACE; }
+	EColorIndexType GetColorIdx() const override { return COLORIDX_SPACE; }
 };
 #endif /* SAKURA_CFIGURE_HANSPACE_38751BA0_6F58_4929_A24D_1937F2FB3E6A_H_ */

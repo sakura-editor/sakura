@@ -271,7 +271,7 @@ struct CDlgOpenFile_CommonItemDialog final
 		return m_pFileDialogCustomize->StartVisualGroup(dwIDCtl, pszLabel);
 	}
 	
-	HRESULT STDMETHODCALLTYPE EndVisualGroup(void) {
+	HRESULT STDMETHODCALLTYPE EndVisualGroup() {
 		assert(m_pFileDialogCustomize);
 		return m_pFileDialogCustomize->EndVisualGroup();
 	}

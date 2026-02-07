@@ -129,7 +129,7 @@ std::vector<LPCWSTR> CMRUFile::GetPathList() const
 }
 
 /*! アイテム数を返す */
-int CMRUFile::Length(void) const
+int CMRUFile::Length() const
 {
 	return m_cRecentFile.GetItemCount();
 }
@@ -137,7 +137,7 @@ int CMRUFile::Length(void) const
 /*!
 	ファイル履歴のクリア
 */
-void CMRUFile::ClearAll(void)
+void CMRUFile::ClearAll()
 {
 	m_cRecentFile.DeleteAllItem();
 }

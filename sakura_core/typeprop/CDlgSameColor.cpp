@@ -35,7 +35,7 @@ static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	0, 0
 };
 
-LPVOID CDlgSameColor::GetHelpIdTable( void )
+LPVOID CDlgSameColor::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }

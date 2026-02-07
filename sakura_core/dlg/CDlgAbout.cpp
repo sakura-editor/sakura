@@ -331,7 +331,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgAbout::GetHelpIdTable(void)
+LPVOID CDlgAbout::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

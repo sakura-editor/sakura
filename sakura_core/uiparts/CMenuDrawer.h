@@ -64,7 +64,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void ResetContents( void );
+	void ResetContents( );
 	void MyAppendMenu( HMENU hMenu, int nFlag, UINT_PTR nFuncId, const WCHAR*     pszLabel, const WCHAR*     pszKey, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 );	/* メニュー項目を追加 */	//お気に入り	//@@@ 2003.04.08 MIK	// add pszKey	2010/5/17 Uchi
 	void MyAppendMenuSep( HMENU hMenu, int nFlag, int nFuncId, const WCHAR* pszLabel, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 )
 	{

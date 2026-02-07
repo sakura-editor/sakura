@@ -46,7 +46,7 @@ public:
 
 	//	アクセス関数
 	int Length() const;	//	アイテムの数。
-	int MenuLength(void) const{ return t_min(Length(), m_cRecentFolder.GetViewCount()); }	//	メニューに表示されるアイテムの数
+	int MenuLength() const{ return t_min(Length(), m_cRecentFolder.GetViewCount()); }	//	メニューに表示されるアイテムの数
 	void ClearAll();					//	アイテムを削除～。
 	void Add( const WCHAR* pszFolder );	//	pszFolderを追加する。
 	const WCHAR* GetPath(int num) const;

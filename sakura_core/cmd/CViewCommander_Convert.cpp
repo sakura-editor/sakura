@@ -24,7 +24,7 @@
 #include "CSelectLang.h"
 
 /* 小文字 */
-void CViewCommander::Command_TOLOWER( void )
+void CViewCommander::Command_TOLOWER( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOLOWER );
@@ -32,7 +32,7 @@ void CViewCommander::Command_TOLOWER( void )
 }
 
 /* 大文字 */
-void CViewCommander::Command_TOUPPER( void )
+void CViewCommander::Command_TOUPPER( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOUPPER );
@@ -40,7 +40,7 @@ void CViewCommander::Command_TOUPPER( void )
 }
 
 /* 全角→半角 */
-void CViewCommander::Command_TOHANKAKU( void )
+void CViewCommander::Command_TOHANKAKU( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOHANKAKU );
@@ -48,7 +48,7 @@ void CViewCommander::Command_TOHANKAKU( void )
 }
 
 /* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
-void CViewCommander::Command_TOZENKAKUKATA( void )
+void CViewCommander::Command_TOZENKAKUKATA( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOZENKAKUKATA );
@@ -56,7 +56,7 @@ void CViewCommander::Command_TOZENKAKUKATA( void )
 }
 
 /* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-void CViewCommander::Command_TOZENKAKUHIRA( void )
+void CViewCommander::Command_TOZENKAKUHIRA( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOZENKAKUHIRA );
@@ -64,7 +64,7 @@ void CViewCommander::Command_TOZENKAKUHIRA( void )
 }
 
 /*! 半角英数→全角英数 */			//July. 30, 2001 Misaka
-void CViewCommander::Command_TOZENEI( void )
+void CViewCommander::Command_TOZENEI( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOZENEI );
@@ -72,7 +72,7 @@ void CViewCommander::Command_TOZENEI( void )
 }
 
 /*! 全角英数→半角英数 */
-void CViewCommander::Command_TOHANEI( void )
+void CViewCommander::Command_TOHANEI( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOHANEI );
@@ -80,7 +80,7 @@ void CViewCommander::Command_TOHANEI( void )
 }
 
 /* 全角カタカナ→半角カタカナ */		//Aug. 29, 2002 ai
-void CViewCommander::Command_TOHANKATA( void )
+void CViewCommander::Command_TOHANKATA( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TOHANKATA );
@@ -88,7 +88,7 @@ void CViewCommander::Command_TOHANKATA( void )
 }
 
 /* 半角カタカナ→全角カタカナ */
-void CViewCommander::Command_HANKATATOZENKAKUKATA( void )
+void CViewCommander::Command_HANKATATOZENKAKUKATA( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENKATA );
@@ -96,7 +96,7 @@ void CViewCommander::Command_HANKATATOZENKAKUKATA( void )
 }
 
 /* 半角カタカナ→全角ひらがな */
-void CViewCommander::Command_HANKATATOZENKAKUHIRA( void )
+void CViewCommander::Command_HANKATATOZENKAKUHIRA( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENHIRA );
@@ -104,7 +104,7 @@ void CViewCommander::Command_HANKATATOZENKAKUHIRA( void )
 }
 
 /* TAB→空白 */
-void CViewCommander::Command_TABTOSPACE( void )
+void CViewCommander::Command_TABTOSPACE( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_TABTOSPACE );
@@ -112,7 +112,7 @@ void CViewCommander::Command_TABTOSPACE( void )
 }
 
 /* 空白→TAB */ //---- Stonee, 2001/05/27
-void CViewCommander::Command_SPACETOTAB( void )
+void CViewCommander::Command_SPACETOTAB( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_SPACETOTAB );
@@ -120,7 +120,7 @@ void CViewCommander::Command_SPACETOTAB( void )
 }
 
 /* 自動判別→SJISコード変換 */
-void CViewCommander::Command_CODECNV_AUTO2SJIS( void )
+void CViewCommander::Command_CODECNV_AUTO2SJIS( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_AUTO2SJIS );
@@ -128,7 +128,7 @@ void CViewCommander::Command_CODECNV_AUTO2SJIS( void )
 }
 
 /* E-Mail(JIS→SJIS)コード変換 */
-void CViewCommander::Command_CODECNV_EMAIL( void )
+void CViewCommander::Command_CODECNV_EMAIL( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_EMAIL );
@@ -136,7 +136,7 @@ void CViewCommander::Command_CODECNV_EMAIL( void )
 }
 
 /* EUC→SJISコード変換 */
-void CViewCommander::Command_CODECNV_EUC2SJIS( void )
+void CViewCommander::Command_CODECNV_EUC2SJIS( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_EUC2SJIS );
@@ -144,7 +144,7 @@ void CViewCommander::Command_CODECNV_EUC2SJIS( void )
 }
 
 /* Unicode→SJISコード変換 */
-void CViewCommander::Command_CODECNV_UNICODE2SJIS( void )
+void CViewCommander::Command_CODECNV_UNICODE2SJIS( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UNICODE2SJIS );
@@ -152,7 +152,7 @@ void CViewCommander::Command_CODECNV_UNICODE2SJIS( void )
 }
 
 /* UnicodeBE→SJISコード変換 */
-void CViewCommander::Command_CODECNV_UNICODEBE2SJIS( void )
+void CViewCommander::Command_CODECNV_UNICODEBE2SJIS( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UNICODEBE2SJIS );
@@ -160,7 +160,7 @@ void CViewCommander::Command_CODECNV_UNICODEBE2SJIS( void )
 }
 
 /* UTF-8→SJISコード変換 */
-void CViewCommander::Command_CODECNV_UTF82SJIS( void )
+void CViewCommander::Command_CODECNV_UTF82SJIS( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UTF82SJIS );
@@ -168,7 +168,7 @@ void CViewCommander::Command_CODECNV_UTF82SJIS( void )
 }
 
 /* UTF-7→SJISコード変換 */
-void CViewCommander::Command_CODECNV_UTF72SJIS( void )
+void CViewCommander::Command_CODECNV_UTF72SJIS( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UTF72SJIS );
@@ -176,7 +176,7 @@ void CViewCommander::Command_CODECNV_UTF72SJIS( void )
 }
 
 /* SJIS→JISコード変換 */
-void CViewCommander::Command_CODECNV_SJIS2JIS( void )
+void CViewCommander::Command_CODECNV_SJIS2JIS( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2JIS );
@@ -184,7 +184,7 @@ void CViewCommander::Command_CODECNV_SJIS2JIS( void )
 }
 
 /* SJIS→EUCコード変換 */
-void CViewCommander::Command_CODECNV_SJIS2EUC( void )
+void CViewCommander::Command_CODECNV_SJIS2EUC( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2EUC );
@@ -192,7 +192,7 @@ void CViewCommander::Command_CODECNV_SJIS2EUC( void )
 }
 
 /* SJIS→UTF-8コード変換 */
-void CViewCommander::Command_CODECNV_SJIS2UTF8( void )
+void CViewCommander::Command_CODECNV_SJIS2UTF8( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2UTF8 );
@@ -200,7 +200,7 @@ void CViewCommander::Command_CODECNV_SJIS2UTF8( void )
 }
 
 /* SJIS→UTF-7コード変換 */
-void CViewCommander::Command_CODECNV_SJIS2UTF7( void )
+void CViewCommander::Command_CODECNV_SJIS2UTF7( )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2UTF7 );
@@ -208,7 +208,7 @@ void CViewCommander::Command_CODECNV_SJIS2UTF7( void )
 }
 
 /* Base64デコードして保存 */
-void CViewCommander::Command_BASE64DECODE( void )
+void CViewCommander::Command_BASE64DECODE( )
 {
 	/* テキストが選択されているか */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
@@ -254,7 +254,7 @@ err:
 }
 
 /* uudecodeして保存 */
-void CViewCommander::Command_UUDECODE( void )
+void CViewCommander::Command_UUDECODE( )
 {
 	/* テキストが選択されているか */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){

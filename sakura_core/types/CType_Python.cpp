@@ -82,7 +82,7 @@ struct COutlinePython {
 	int EnterString( const wchar_t* data, int linelen, int start_offset );
 	void DoScanLine( const wchar_t* data, int linelen, int start_offset );
 	
-	bool IsLogicalLineTop(void) const { return STATE_NORMAL == m_state; }
+	bool IsLogicalLineTop() const { return STATE_NORMAL == m_state; }
 };
 
 void CType_Python::InitTypeConfigImp(STypeConfig* pType)

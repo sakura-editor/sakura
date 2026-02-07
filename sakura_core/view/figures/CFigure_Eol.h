@@ -29,7 +29,7 @@ public:
 	}
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const override;
-	bool Disp(void) const override
+	bool Disp() const override
 	{
 		return true;
 	}
@@ -39,7 +39,7 @@ public:
 	void DispSpace([[maybe_unused]] CGraphics& gr, [[maybe_unused]] DispPos* pDispPos, [[maybe_unused]] CEditView* pcView, [[maybe_unused]] bool bTrans) const  override
 	{
 	}
-	EColorIndexType GetColorIdx(void) const override { return COLORIDX_EOL; }
+	EColorIndexType GetColorIdx() const override { return COLORIDX_EOL; }
 
 private:
 	HPEN m_hPen = nullptr;

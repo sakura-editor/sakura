@@ -100,7 +100,7 @@ LRESULT CALLBACK CMainToolBar::ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wPara
 	@date 2005.08.29 aroka ツールバーの折り返し
 	@date 2006.06.17 ryoji ビジュアルスタイルが有効の場合はツールバーを Rebar に入れてサイズ変更時のちらつきを無くす
 */
-void CMainToolBar::CreateToolBar( void )
+void CMainToolBar::CreateToolBar( )
 {
 	if( m_hwndToolBar )return;
 
@@ -370,7 +370,7 @@ void CMainToolBar::CreateToolBar( void )
 	return;
 }
 
-void CMainToolBar::DestroyToolBar( void )
+void CMainToolBar::DestroyToolBar( )
 {
 	if( m_hwndToolBar )
 	{
@@ -485,7 +485,7 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 	@date 2008.10.05 nasukoji ツールバー更新部分を外に出した
 	@date 2012.11.29 aroka OnTimerから分離したときのバグ修正
 */
-void CMainToolBar::OnToolbarTimer( void )
+void CMainToolBar::OnToolbarTimer( )
 {
 	// 2012.11.29 aroka ここではカウントアップ不要
 	//m_pOwner->IncrementTimerCount(10);
@@ -499,7 +499,7 @@ void CMainToolBar::OnToolbarTimer( void )
 	
 	@date 2008.10.05 nasukoji
 */
-void CMainToolBar::UpdateToolbar( void )
+void CMainToolBar::UpdateToolbar( )
 {
 	// 印刷プレビュー中なら、何もしない。
 	if( m_pOwner->IsInPreviewMode() )return;
@@ -584,7 +584,7 @@ size_t CMainToolBar::GetSearchKey(std::wstring& strText)
 ツールバーの検索ボックスにフォーカスを移動する.
 	@date 2006.06.04 yukihane 新規作成
 */
-void CMainToolBar::SetFocusSearchBox( void ) const
+void CMainToolBar::SetFocusSearchBox( ) const
 {
 	if( m_hwndSearchBox ){
 		::SetFocus(m_hwndSearchBox);
