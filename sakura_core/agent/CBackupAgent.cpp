@@ -41,7 +41,7 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 			return CALLBACK_INTERRUPT;
 		case 3: //	ファイルエラー
 			if( IDYES != ::MYMESSAGEBOX(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
 				LS(STR_BACKUP_ERR_TITLE),
 				LS(STR_BACKUP_ERR_MSG)
@@ -93,7 +93,7 @@ int CBackupAgent::MakeBackUp(
 	WCHAR	szPath[_MAX_PATH]; // バックアップ先パス名
 	if( !FormatBackUpPath( szPath, int(std::size(szPath)), target_file ) ){
 		int nMsgResult = ::TopConfirmMessage(
-			GetMainWindow(),
+			CEditWnd::getInstance()->GetHwnd(),
 			LS(STR_BACKUP_ERR_PATH_CRETE)
 		);
 		if( nMsgResult == IDYES ){
@@ -113,7 +113,7 @@ int CBackupAgent::MakeBackUp(
 		ConfirmBeep();
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 				LS(STR_BACKUP_CONFORM_TITLE1),
 				LS(STR_BACKUP_CONFORM_MSG1),
@@ -123,7 +123,7 @@ int CBackupAgent::MakeBackUp(
 		}
 		else{	//@@@ 2001.12.11 add end MIK
 			nRet = ::MYMESSAGEBOX(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				LS(STR_BACKUP_CONFORM_TITLE2),
 				LS(STR_BACKUP_CONFORM_MSG2),
@@ -179,7 +179,7 @@ int CBackupAgent::MakeBackUp(
 			//	ファイル名をセット
 			auto_snprintf_s(pBase, std::size(szPath) - (szPath - pBase), _TRUNCATE, L"%02d", i);
 			if( ::DeleteFile( szPath ) == 0 ){
-				::MessageBox( GetMainWindow(), szPath, LS(STR_BACKUP_ERR_DELETE), MB_OK );
+				::MessageBox( CEditWnd::getInstance()->GetHwnd(), szPath, LS(STR_BACKUP_ERR_DELETE), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
 				//	失敗しても保存は継続
 				return 0;
@@ -206,7 +206,7 @@ int CBackupAgent::MakeBackUp(
 			if( ::MoveFile( szPath, szNewPath ) == 0 ){
 				//	失敗した場合
 				//	後で考える
-				::MessageBox( GetMainWindow(), szPath, LS(STR_BACKUP_ERR_MOVE), MB_OK );
+				::MessageBox( CEditWnd::getInstance()->GetHwnd(), szPath, LS(STR_BACKUP_ERR_MOVE), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
 				//	失敗しても保存は継続
 				return 0;
@@ -242,7 +242,7 @@ int CBackupAgent::MakeBackUp(
 			WCHAR	szDustPath[_MAX_PATH+1];
 			::wcsncpy_s(szDustPath, szPath, _TRUNCATE);
 			SHFILEOPSTRUCT	fos;
-			fos.hwnd   = GetMainWindow();
+			fos.hwnd   = CEditWnd::getInstance()->GetHwnd();
 			fos.wFunc  = FO_DELETE;
 			fos.pFrom  = szDustPath;
 			fos.pTo    = nullptr;

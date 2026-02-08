@@ -154,16 +154,6 @@ CEditDoc& GetEditDoc()
 	return *doc;
 }
 
-/*!
- * ドキュメントのタイプ別設定を取得する
- *
- * @throws CEditDocが生成されていない
- */
-const STypeConfig& GetTypeConfig()
-{
-	return GetEditDoc().m_cDocType.GetDocumentAttribute();
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -599,7 +589,7 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 			if( -1 != nPane ){
 				GetEditWnd().SetActivePane( nPane );
 			}else{
-				CControlTray::ActiveNextWindow( GetMainWindow() );
+				CControlTray::ActiveNextWindow( GetEditWnd().GetHwnd() );
 			}
 		}
 		return TRUE;
@@ -610,7 +600,7 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 				GetEditWnd().SetActivePane( nPane );
 			}
 			else{
-				CControlTray::ActivePrevWindow( GetMainWindow() );
+				CControlTray::ActivePrevWindow( GetEditWnd().GetHwnd() );
 			}
 		}
 		return TRUE;
@@ -901,12 +891,12 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		pszTitle = szGrepTitle;
 	}
 	if( nullptr == pszTitle ){
-		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() );
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
 		auto_snprintf_s(szGrepTitle, _TRUNCATE, L"%s%d", LS(STR_NO_TITLE1), node->m_nId);	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */
-	HWND	hwndMainFrame = GetMainWindow();
+	HWND	hwndMainFrame = CEditWnd::getInstance()->GetHwnd();
 	ActivateFrameWindow( hwndMainFrame );
 	if( CAppMode::getInstance()->IsViewMode() ){	/* ビューモード */
 		ConfirmBeep();

@@ -63,7 +63,7 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 		pWsh = (CWSHMacroManager*)CWSHMacroManager::Creator( path.GetExt( true ) );
 		if( pWsh == nullptr ){ return false; }
 
-		BOOL bLoadResult = pWsh->LoadKeyMacro( GetAppInstance(), path );
+		BOOL bLoadResult = pWsh->LoadKeyMacro( G_AppInstance(), path );
 		if ( !bLoadResult ){
 			ErrorMessage( nullptr, LS(STR_WSHPLUG_LOADMACRO), static_cast<const WCHAR*>(path) );
 			delete pWsh;

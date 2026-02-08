@@ -292,7 +292,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				auto_snprintf_s(szKey, _TRUNCATE, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]);
 				{
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
-						GetAppInstance(),
+						G_AppInstance(),
 						hwndDlg,
 						LS(STR_PROPCOMCUSTMENU_AC1),
 						LS(STR_PROPCOMCUSTMENU_AC2),
@@ -736,7 +736,7 @@ void CPropCustmenu::Import( HWND hwndDlg )
 	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
 	// インポート
-	if (!cImpExpCustMenu.ImportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExpCustMenu.ImportUI( G_AppInstance(), hwndDlg )) {
 		// インポートをしていない
 		return;
 	}
@@ -752,7 +752,7 @@ void CPropCustmenu::Export( HWND hwndDlg )
 	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
 	// エクスポート
-	if (!cImpExpCustMenu.ExportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExpCustMenu.ExportUI( G_AppInstance(), hwndDlg )) {
 		// エクスポートをしていない
 		return;
 	}

@@ -479,7 +479,7 @@ void CCaret::ShowEditCaret()
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
 	CommonSetting* pCommon=&GetDllShareData().m_Common;
-	const STypeConfig* pTypes=&GetTypeConfig();
+	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 
 	using namespace WCODE;
 
@@ -660,7 +660,7 @@ void CCaret::ShowCaretPosInfo()
 {
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-	const STypeConfig* pTypes=&GetTypeConfig();
+	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 
 	if( !m_pEditView->GetDrawSwitch() ){
 		return;

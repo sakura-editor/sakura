@@ -34,7 +34,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 		std::vector<std::wstring> files;
 		SLoadInfo sLoadInfo(L"", CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
-			GetMainWindow(),
+			CEditWnd::getInstance()->GetHwnd(),
 			pLoadInfo->cFilePath,	//指定されたフォルダー
 			&sLoadInfo,
 			files
@@ -50,8 +50,8 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 				SLoadInfo sFilesLoadInfo = sLoadInfo;
 				sFilesLoadInfo.cFilePath = files[i].c_str();
 				CControlTray::OpenNewEditor(
-					GetAppInstance(),
-					GetMainWindow(),
+					G_AppInstance(),
+					CEditWnd::getInstance()->GetHwnd(),
 					sFilesLoadInfo,
 					nullptr,
 					true
@@ -71,8 +71,8 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	// 現在のウィンドウに対してファイルを読み込めない場合は、新たなウィンドウを開き、そこにファイルを読み込ませる
 	if(!pcDoc->IsAcceptLoad()){
 		CControlTray::OpenNewEditor(
-			GetAppInstance(),
-			GetMainWindow(),
+			G_AppInstance(),
+			CEditWnd::getInstance()->GetHwnd(),
 			*pLoadInfo
 		);
 		return CALLBACK_INTERRUPT;
@@ -86,7 +86,7 @@ next:
 			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
 			//	ここでステータスメッセージを使っても画面に表示されない．
 			TopInfoMessage(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_NOT_EXSIST_SAVE),	//Mar. 24, 2001 jepro 若干修正
 				pLoadInfo->cFilePath.GetBufferPointer()
 			);
@@ -109,7 +109,7 @@ next:
 		if(!cFile.IsFileReadable()){
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_LOADAGENT_ERR_OPEN),
 				pLoadInfo->cFilePath.c_str()
 			);
@@ -135,7 +135,7 @@ next:
 			//   ここでエラーを出さずに OnLoad に突入させてしまうと CFileLoad::FileOpen が例外を吐くので、
 			//   この段階でエラーを出して処理を中断させる。
 			ErrorMessage(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_LOADAGENT_BIG_ERROR),
 				pLoadInfo->cFilePath.c_str(),
 				CFileLoad::GetSizeStringForHuman(nFileSize.QuadPart).c_str(),
@@ -149,7 +149,7 @@ next:
 			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
 				// 本当に開いて良いかどうかの警告ダイアログ
-				int nRet = MYMESSAGEBOX( GetMainWindow(),
+				int nRet = MYMESSAGEBOX( CEditWnd::getInstance()->GetHwnd(),
 					MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
 					GSTR_APPNAME,
 					LS(STR_LOADAGENT_BIG_WARNING),
@@ -192,7 +192,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// （ファイル読み込み開始とともにビューが表示されるので、あとで配置すると画面のちらつきが大きいの）
 	if( !GetEditWnd().m_cDlgFuncList.m_bEditWndReady ){
 		GetEditWnd().m_cDlgFuncList.Refresh();
-		HWND hEditWnd = GetMainWindow();
+		HWND hEditWnd = GetEditWnd().GetHwnd();
 		if( !::IsIconic( hEditWnd ) && GetEditWnd().m_cDlgFuncList.GetHwnd() ){
 			RECT rc;
 			::GetClientRect( hEditWnd, &rc );
@@ -217,7 +217,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	}
 	else{
 		// 存在しないときもドキュメントに文字コードを反映する
-		const STypeConfig& types = GetTypeConfig();
+		const STypeConfig& types = pcDoc->m_cDocType.GetDocumentAttribute();
 		pcDoc->m_cDocFile.SetCodeSet( sLoadInfo.eCharCode, 
 			( sLoadInfo.eCharCode == types.m_encoding.m_eDefaultCodetype ) ?
 				types.m_encoding.m_bDefaultBom : CCodeTypeName( sLoadInfo.eCharCode ).IsBomDefOn() );
@@ -227,14 +227,14 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
 	// 「右端で折り返す」は、この後のOnSize()で再設定される
-	const STypeConfig& ref = GetTypeConfig();
+	const STypeConfig& ref = pcDoc->m_cDocType.GetDocumentAttribute();
 	CKetaXInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
 		nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
 
 	// テキストの折り返し方法
 	// CLayoutMgr::CreateLayoutで参照されるのでここで設定
-	pcDoc->m_nTextWrapMethodCur = GetTypeConfig().m_nTextWrapMethod;
+	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
 
 	// ファイルを読んだらタブ位置を再計算
 	// この後のSetLayoutInfoの中でもCTsvModeInfo::CalcTabLengthを呼ぶ所があるが
@@ -264,7 +264,7 @@ void CLoadAgent::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 	pcDoc->m_nCommandExecNum=0;
 
 	// テキストの折り返し方法を初期化
-	pcDoc->m_nTextWrapMethodCur = GetTypeConfig().m_nTextWrapMethod;	// 折り返し方法
+	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	pcDoc->m_bTextWrapMethodCurTemp = false;													// 一時設定適用中を解除
 	pcDoc->m_blfCurTemp = false;
 	pcDoc->m_bTabSpaceCurTemp = false;
@@ -290,13 +290,13 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	}
 
 	//再描画 $$不足
-	// GetEditWnd().GetActiveView().SetDrawSwitch(true);
-	bool bDraw = GetEditWnd().GetActiveView().GetDrawSwitch();
+	// CEditWnd::getInstance()->GetActiveView().SetDrawSwitch(true);
+	bool bDraw = CEditWnd::getInstance()->GetActiveView().GetDrawSwitch();
 	if( bDraw ){
-		GetEditWnd().Views_RedrawAll(); //ビュー再描画
-		InvalidateRect( GetMainWindow(), nullptr, TRUE );
+		CEditWnd::getInstance()->Views_RedrawAll(); //ビュー再描画
+		InvalidateRect( CEditWnd::getInstance()->GetHwnd(), nullptr, TRUE );
 	}
-	CCaret& cCaret = GetEditWnd().GetActiveView().GetCaret();
+	CCaret& cCaret = CEditWnd::getInstance()->GetActiveView().GetCaret();
 	cCaret.MoveCursor(cCaret.GetCaretLayoutPos(),true);
-	GetEditWnd().GetActiveView().AdjustScrollBars();
+	CEditWnd::getInstance()->GetActiveView().AdjustScrollBars();
 }

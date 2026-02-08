@@ -13,7 +13,7 @@
 	Copyright (C) 2005, MIK, Moca, genta
 	Copyright (C) 2006, aroka, ryoji
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2026, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -165,8 +165,8 @@ struct SSearchOption{
 	bool operator != (const SSearchOption& rhs) const noexcept;
 };
 
-HINSTANCE	GetAppInstance() noexcept;
+HINSTANCE G_AppInstance();
+
 LPCWSTR		GetProfileName() noexcept;
-HWND		GetMainWindow() noexcept;
 
 #endif /* SAKURA_GLOBAL_BD124BE7_A850_41F3_9F5D_8A4F0E45A4C9_H_ */

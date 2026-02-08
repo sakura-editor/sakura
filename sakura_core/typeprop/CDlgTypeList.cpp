@@ -395,7 +395,7 @@ static void SendChangeSetting()
 		MYWM_CHANGESETTING,
 		(WPARAM)0,
 		(LPARAM)PM_CHANGESETTING_ALL,
-		GetMainWindow()
+		CEditWnd::getInstance()->GetHwnd()
 	);
 }
 
@@ -405,7 +405,7 @@ static void SendChangeSettingType(int nType)
 		MYWM_CHANGESETTING,
 		(WPARAM)nType,
 		(LPARAM)PM_CHANGESETTING_TYPE,
-		GetMainWindow()
+		CEditWnd::getInstance()->GetHwnd()
 	);
 }
 
@@ -415,7 +415,7 @@ static void SendChangeSettingType2(int nType)
 		MYWM_CHANGESETTING,
 		(WPARAM)nType,
 		(LPARAM)PM_CHANGESETTING_TYPE2,
-		GetMainWindow()
+		CEditWnd::getInstance()->GetHwnd()
 	);
 }
 
@@ -438,7 +438,7 @@ bool CDlgTypeList::Import()
 
 	// インポート
 	cImpExpType.SetBaseName( type.m_szTypeName );
-	if (!cImpExpType.ImportUI( GetAppInstance(), GetHwnd() )) {
+	if (!cImpExpType.ImportUI( G_AppInstance(), GetHwnd() )) {
 		// インポートをしていない
 		return false;
 	}
@@ -481,7 +481,7 @@ bool CDlgTypeList::Export()
 
 	// エクスポート
 	cImpExpType.SetBaseName( types.m_szTypeName );
-	if (!cImpExpType.ExportUI( GetAppInstance(), GetHwnd() )) {
+	if (!cImpExpType.ExportUI( G_AppInstance(), GetHwnd() )) {
 		// エクスポートをしていない
 		return false;
 	}

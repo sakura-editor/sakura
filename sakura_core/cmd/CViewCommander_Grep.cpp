@@ -32,18 +32,18 @@ void CViewCommander::Command_GREP_DIALOG( void )
 {
 	CNativeW	cmemCurText;
 	// 2014.07.01 複数Grepウィンドウを使い分けている場合などに影響しないように、未設定のときだけHistoryを見る
-	bool bGetHistory = GetEditWnd().m_cDlgGrep.m_bSetText == false;
+	bool bGetHistory = GetEditWindow()->m_cDlgGrep.m_bSetText == false;
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	bool bSet = m_pCommanderView->GetCurrentTextForSearchDlg( cmemCurText, bGetHistory );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
 	if( bSet ){
-		GetEditWnd().m_cDlgGrep.m_strText = cmemCurText.GetStringPtr();
-		GetEditWnd().m_cDlgGrep.m_bSetText = true;
+		GetEditWindow()->m_cDlgGrep.m_strText = cmemCurText.GetStringPtr();
+		GetEditWindow()->m_cDlgGrep.m_bSetText = true;
 	}
 
 	/* Grepダイアログの表示 */
-	int nRet = GetEditWnd().m_cDlgGrep.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath() );
+	int nRet = GetEditWindow()->m_cDlgGrep.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath() );
 //	MYTRACE( L"nRet=%d\n", nRet );
 	if( !nRet ){
 		return;
@@ -61,9 +61,9 @@ void CViewCommander::Command_GREP( void )
 	CNativeW		cmWork2;
 	CNativeW		cmWork3;
 	CNativeW		cmWork4;
-	cmWork1.SetString( GetEditWnd().m_cDlgGrep.m_strText.c_str() );
-	cmWork2 = GetEditWnd().m_cDlgGrep.GetPackedGFileString();
-	cmWork3.SetString( GetEditWnd().m_cDlgGrep.m_szFolder );
+	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
+	cmWork2 = GetEditWindow()->m_cDlgGrep.GetPackedGFileString();
+	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき、または未編集で無題かつアウトプットでない場合。
@@ -96,22 +96,22 @@ void CViewCommander::Command_GREP( void )
 			&cmWork2,
 			&cmWork3,
 			false,
-			GetEditWnd().m_cDlgGrep.m_bSubFolder,
+			GetEditWindow()->m_cDlgGrep.m_bSubFolder,
 			false,
 			true, // Header
-			GetEditWnd().m_cDlgGrep.m_sSearchOption,
-			GetEditWnd().m_cDlgGrep.m_nGrepCharSet,
-			GetEditWnd().m_cDlgGrep.m_nGrepOutputLineType,
-			GetEditWnd().m_cDlgGrep.m_nGrepOutputStyle,
-			GetEditWnd().m_cDlgGrep.m_bGrepOutputFileOnly,
-			GetEditWnd().m_cDlgGrep.m_bGrepOutputBaseFolder,
-			GetEditWnd().m_cDlgGrep.m_bGrepSeparateFolder,
+			GetEditWindow()->m_cDlgGrep.m_sSearchOption,
+			GetEditWindow()->m_cDlgGrep.m_nGrepCharSet,
+			GetEditWindow()->m_cDlgGrep.m_nGrepOutputLineType,
+			GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle,
+			GetEditWindow()->m_cDlgGrep.m_bGrepOutputFileOnly,
+			GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder,
+			GetEditWindow()->m_cDlgGrep.m_bGrepSeparateFolder,
 			false,
 			false
 		);
 
 		//プラグイン：DocumentOpenイベント実行
-		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWnd().GetActiveView() );
+		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
 	}
 	else{
 		// 編集ウィンドウの上限チェック
@@ -122,7 +122,7 @@ void CViewCommander::Command_GREP( void )
 
 		/*======= Grepの実行 =============*/
 		/* Grep結果ウィンドウの表示 */
-		CControlTray::DoGrepCreateWindow(GetAppInstance(), m_pCommanderView->GetHwnd(), GetEditWnd().m_cDlgGrep);
+		CControlTray::DoGrepCreateWindow(G_AppInstance(), m_pCommanderView->GetHwnd(), GetEditWindow()->m_cDlgGrep);
 	}
 	return;
 }
@@ -132,7 +132,7 @@ void CViewCommander::Command_GREP( void )
 void CViewCommander::Command_GREP_REPLACE_DLG( void )
 {
 	CNativeW	cmemCurText;
-	CDlgGrepReplace& cDlgGrepRep = GetEditWnd().m_cDlgGrepReplace;
+	CDlgGrepReplace& cDlgGrepRep = GetEditWindow()->m_cDlgGrepReplace;
 
 	// 複数Grepウィンドウを使い分けている場合などに影響しないように、未設定のときだけHistoryを見る
 	bool bGetHistory = cDlgGrepRep.m_bSetText == false;
@@ -149,7 +149,7 @@ void CViewCommander::Command_GREP_REPLACE_DLG( void )
 		}
 	}
 
-	int nRet = cDlgGrepRep.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath(), (LPARAM)m_pCommanderView );
+	int nRet = cDlgGrepRep.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath(), (LPARAM)m_pCommanderView );
 	if( !nRet ){
 		return;
 	}
@@ -165,7 +165,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 	CNativeW		cmWork3;
 	CNativeW		cmWork4;
 
-	CDlgGrepReplace& cDlgGrepRep = GetEditWnd().m_cDlgGrepReplace;
+	CDlgGrepReplace& cDlgGrepRep = GetEditWindow()->m_cDlgGrepReplace;
 	cmWork1.SetString( cDlgGrepRep.m_strText.c_str() );
 	cmWork2 = cDlgGrepRep.GetPackedGFileString();
 	cmWork3.SetString( cDlgGrepRep.m_szFolder );
@@ -258,7 +258,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, cCmdLine.GetStringPtr(),
+		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, cCmdLine.GetStringPtr(),
 			false, nullptr, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 	}
 	return;

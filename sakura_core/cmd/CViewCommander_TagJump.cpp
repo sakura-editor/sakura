@@ -523,7 +523,7 @@ bool CViewCommander::Command_TagsMake( void )
 
 	//ダイアログを表示する
 	CDlgTagsMake	cDlgTagsMake;
-	if( !cDlgTagsMake.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0, szTargetPath ) ) return false;
+	if( !cDlgTagsMake.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0, szTargetPath ) ) return false;
 
 	WCHAR	cmdline[1024];
 	/* exeのあるフォルダー */
@@ -620,7 +620,7 @@ bool CViewCommander::Command_TagsMake( void )
 		//中断ダイアログ表示
 		HWND	hwndCancel;
 		HWND	hwndMsg;
-		hwndCancel = cDlgCancel.DoModeless( GetAppInstance(), m_pCommanderView->m_hwndParent, IDD_EXECRUNNING );
+		hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), m_pCommanderView->m_hwndParent, IDD_EXECRUNNING );
 		hwndMsg = ::GetDlgItem( hwndCancel, IDC_STATIC_CMD );
 		SetWindowText( hwndMsg, LS(STR_ERR_CEDITVIEW_CMD05) );
 
@@ -747,7 +747,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 
 	//複数あれば選択してもらう。
 	if( 1 < nMatchAll ){
-		if( ! cDlgTagJumpList.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ){
+		if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ){
 			nMatchAll = 0;
 			return true;	//キャンセル
 		}
@@ -789,7 +789,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	cDlgTagJumpList.SetFileName( szCurrentPath );
 	cDlgTagJumpList.SetKeyword( keyword );
 
-	if( ! cDlgTagJumpList.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0 ) )
+	if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) )
 	{
 		return true;	//キャンセル
 	}

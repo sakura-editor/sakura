@@ -84,7 +84,7 @@ BOOL CViewCommander::HandleCommand(
 	m_pCommanderView->TranslateCommand_isearch( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 
 	// 2013.09.23 novice 機能が利用可能か調べる
-	if (!func::isEnabled(nCommand)) {
+	if( !IsFuncEnable( GetDocument(), &GetDllShareData(), nCommand ) ){
 		return TRUE;
 	}
 
@@ -96,7 +96,7 @@ BOOL CViewCommander::HandleCommand(
 //	}
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	if( GetEditWnd().m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
+	if( GetEditWindow()->m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
 		ErrorBeep();
 		return -1;
 	}
@@ -138,7 +138,7 @@ BOOL CViewCommander::HandleCommand(
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, GetAppInstance(), m_pCommanderView,
+		if( !m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
 			nCommandFrom & FA_NONRECORD )){
 			InfoMessage(
 				this->m_pCommanderView->m_hwndParent,

@@ -51,7 +51,7 @@ BOOL CEditView::CreateScrollBar()
 		CW_USEDEFAULT,						/* default height */
 		GetHwnd(),								/* handle of main window */
 		(HMENU) nullptr,						/* no menu for a scroll bar */
-		GetAppInstance(),						/* instance owning this window */
+		G_AppInstance(),						/* instance owning this window */
 		(LPVOID) nullptr						/* pointer not needed */
 	);
 	si.cbSize = sizeof( si );
@@ -78,7 +78,7 @@ BOOL CEditView::CreateScrollBar()
 			CW_USEDEFAULT,						/* default height */
 			GetHwnd(),								/* handle of main window */
 			(HMENU) nullptr,						/* no menu for a scroll bar */
-			GetAppInstance(),						/* instance owning this window */
+			G_AppInstance(),						/* instance owning this window */
 			(LPVOID) nullptr						/* pointer not needed */
 		);
 		si.cbSize = sizeof( si );

@@ -281,14 +281,14 @@ void CViewCommander::Command_UNDO( void )
 	}
 
 	{
-		COpeBlk* opeBlk = GetOpeBlk();
+		COpeBlk* opeBlk = m_pCommanderView->m_cCommander.GetOpeBlk();
 		if( opeBlk ){
 			int nCount = opeBlk->GetRefCount();
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 			m_pCommanderView->SetUndoBuffer();
-			if( GetOpeBlk() == nullptr && 0 < nCount ){
-				SetOpeBlk(new COpeBlk());
-				GetOpeBlk()->SetRefCount( nCount );
+			if( m_pCommanderView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
+				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
+				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
 			}
 		}
 	}
@@ -452,7 +452,7 @@ void CViewCommander::Command_UNDO( void )
 			if( bFastMode ){
 				if( i == 0 ){
 					GetDocument()->m_cLayoutMgr._DoLayout(false);
-					GetEditWnd().ClearViewCaretPosInfo();
+					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 						// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
 						GetDocument()->m_cLayoutMgr.CalculateTextWidth(FALSE);
@@ -518,8 +518,8 @@ void CViewCommander::Command_UNDO( void )
 
 		GetCaret().ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		if( !GetEditWnd().UpdateTextWrap() && bDrawAll ){	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-			GetEditWnd().RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
+		if( !GetEditWindow()->UpdateTextWrap() && bDrawAll ){	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 		}
 
 		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );
@@ -541,14 +541,14 @@ void CViewCommander::Command_REDO( void )
 	}
 
 	{
-		COpeBlk* opeBlk = GetOpeBlk();
+		COpeBlk* opeBlk = m_pCommanderView->m_cCommander.GetOpeBlk();
 		if( opeBlk ){
 			int nCount = opeBlk->GetRefCount();
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 			m_pCommanderView->SetUndoBuffer();
-			if( GetOpeBlk() == nullptr && 0 < nCount ){
-				SetOpeBlk(new COpeBlk());
-				GetOpeBlk()->SetRefCount( nCount );
+			if( m_pCommanderView->m_cCommander.GetOpeBlk() == nullptr && 0 < nCount ){
+				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
+				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
 			}
 		}
 		// 注意：Opeを追加するとRedoはできなくなる
@@ -708,7 +708,7 @@ void CViewCommander::Command_REDO( void )
 			if( bFastMode ){
 				if( i == nOpeBlkNum - 1	){
 					GetDocument()->m_cLayoutMgr._DoLayout(false);
-					GetEditWnd().ClearViewCaretPosInfo();
+					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 						// CLayoutMgr::_DoLayoutにて長さ算出済みなのでbCalLineLen=FALSE指定
 						GetDocument()->m_cLayoutMgr.CalculateTextWidth(FALSE);
@@ -768,8 +768,8 @@ void CViewCommander::Command_REDO( void )
 
 		GetCaret().ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		if( !GetEditWnd().UpdateTextWrap() && bDrawAll ){	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-			GetEditWnd().RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
+		if( !GetEditWindow()->UpdateTextWrap() && bDrawAll ){	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 		}
 
 		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );

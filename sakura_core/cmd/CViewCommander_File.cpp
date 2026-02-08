@@ -56,7 +56,7 @@ void CViewCommander::Command_FILENEW( void )
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
-	CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
+	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
 	return;
 }
 
@@ -69,7 +69,7 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
-	CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
+	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
 		nullptr,
 		false,
 		curDir.c_str(),
@@ -113,7 +113,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			}
 		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
-			GetMainWindow(),	//[in]  オーナーウィンドウ
+			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
 			defName.length()==0 ? nullptr : defName.c_str(),	//[in]  フォルダー
 			&sLoadInfo,							//[out] ロード情報受け取り
 			files								//[out] ファイル名
@@ -123,7 +123,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		for(size_t i = 0; i < files.size(); i++ ){
 			if (files[i].length() >= _MAX_PATH){
 				ErrorMessage(
-					GetMainWindow(),
+					CEditWnd::getInstance()->GetHwnd(),
 					LS(STR_ERR_FILEPATH_TOO_LONG),
 					files[i].c_str()
 				);
@@ -137,8 +137,8 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
-				GetAppInstance(),
-				GetMainWindow(),
+				G_AppInstance(),
+				CEditWnd::getInstance()->GetHwnd(),
 				sFilesLoadInfo,
 				nullptr,
 				true
@@ -235,7 +235,7 @@ void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCo
 	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(filename, nCharCode, bViewMode) );
 
 	//プラグイン：DocumentOpenイベント実行
-	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWnd().GetActiveView() );
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
 }
 
 //! ファイルの再オープン
@@ -271,14 +271,14 @@ void CViewCommander::Command_PRINT( void )
 	Command_PRINT_PREVIEW();
 
 	/* 印刷実行 */
-	GetEditWnd().m_pPrintPreview->OnPrint();
+	GetEditWindow()->m_pPrintPreview->OnPrint();
 }
 
 /* 印刷プレビュー */
 void CViewCommander::Command_PRINT_PREVIEW( void )
 {
 	/* 印刷プレビューモードのオン/オフ */
-	GetEditWnd().PrintPreviewModeONOFF();
+	GetEditWindow()->PrintPreviewModeONOFF();
 	return;
 }
 
@@ -286,7 +286,7 @@ void CViewCommander::Command_PRINT_PREVIEW( void )
 void CViewCommander::Command_PRINT_PAGESETUP( void )
 {
 	/* 印刷ページ設定 */
-	GetEditWnd().OnPrintPageSetting();
+	GetEditWindow()->OnPrintPageSetting();
 	return;
 }
 
@@ -473,7 +473,7 @@ void CViewCommander::Command_VIEWMODE( void )
 	}
 
 	// 親ウィンドウのタイトルを更新
-	GetEditWnd().UpdateCaption();
+	GetEditWindow()->UpdateCaption();
 }
 
 /* ファイルのプロパティ */
@@ -495,22 +495,22 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 #endif
 
 	CDlgProperty	cDlgProperty;
-//	cDlgProperty.Create( GetAppInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
-	cDlgProperty.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
+//	cDlgProperty.Create( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
+	cDlgProperty.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
 	return;
 }
 
 void CViewCommander::Command_PROFILEMGR( void )
 {
 	CDlgProfileMgr profMgr;
-	if( profMgr.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
+	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
 		WCHAR szOpt[MAX_PATH+10];
 		auto_snprintf_s(szOpt, _TRUNCATE, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str());
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;
 		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
+		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
 	}
 }
 
@@ -748,7 +748,14 @@ BOOL CViewCommander::Command_PUTFILE(
 		}
 	}
 	else {	/* ファイル全体を出力 */
-		const auto hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
+		HWND		hwndProgress;
+		CEditWnd*	pCEditWnd = GetEditWindow();
+
+		if( nullptr != pCEditWnd ){
+			hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
+		}else{
+			hwndProgress = nullptr;
+		}
 		if( nullptr != hwndProgress ){
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
@@ -839,7 +846,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, [[m
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {
 			pcDlgCancel = new CDlgCancel;
-			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( GetAppInstance(), nullptr, IDD_OPERATIONRUNNING ) ) ){
+			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( nullptr ), nullptr, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
 				ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
 				ApiWrap::Progress_SetPos( hwndProgress, 0);
