@@ -769,7 +769,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 		if( 3000 < nEditLines ){
 			/* 進捗ダイアログの表示 */
 			pCDlgCancel = new CDlgCancel;
-			if( nullptr != ( hwndCancel = pCDlgCancel->DoModeless( GetAppInstance(), nullptr, IDD_OPERATIONRUNNING ) ) ){
+			if( nullptr != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( nullptr ), nullptr, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
 				ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
 				ApiWrap::Progress_SetPos( hwndProgress, 0 );

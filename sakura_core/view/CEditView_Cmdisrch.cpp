@@ -244,9 +244,9 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 
 	//マウスカーソル変更
 	if (direction == 1){
-		::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
+		::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
 	}else{
-		::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
+		::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
 	}
 }
 

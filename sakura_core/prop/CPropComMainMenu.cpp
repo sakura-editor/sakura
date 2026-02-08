@@ -380,7 +380,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					auto_snprintf_s(szKey, _TRUNCATE, L"%ls", pFuncWk->m_sKey);
 
 					if (!cDlgInput1.DoModal(
-							GetAppInstance(),
+							G_AppInstance(),
 							hwndDlg,
 							LS(STR_PROPCOMMAINMENU_ACCKEY1),
 							LS(STR_PROPCOMMAINMENU_ACCKEY2),
@@ -1098,7 +1098,7 @@ void CPropMainMenu::Import( HWND hwndDlg )
 	CImpExpMainMenu	cImpExp( m_Common );
 
 	// インポート
-	if (!cImpExp.ImportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExp.ImportUI( G_AppInstance(), hwndDlg )) {
 		// インポートをしていない
 		return;
 	}
@@ -1113,7 +1113,7 @@ void CPropMainMenu::Export( HWND hwndDlg )
 	GetData( hwndDlg );
 
 	// エクスポート
-	if (!cImpExp.ExportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExp.ExportUI( G_AppInstance(), hwndDlg )) {
 		// エクスポートをしていない
 		return;
 	}

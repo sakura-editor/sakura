@@ -156,7 +156,7 @@ void CTextDrawer::DispVerticalLines(
 {
 	const CEditView* pView=m_pEditView;
 
-	const STypeConfig&	typeData = GetTypeConfig();
+	const STypeConfig&	typeData = pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	CTypeSupport cVertType(pView,COLORIDX_VERTLINE);
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
@@ -340,10 +340,10 @@ void CTextDrawer::DispLineNumber(
 ) const
 {
 	//$$ 高速化：SearchLineByLayoutYにキャッシュを持たせる
-	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+	const CLayout*	pcLayout = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 
 	const CEditView* pView=m_pEditView;
-	const STypeConfig* pTypes=&GetTypeConfig();
+	const STypeConfig* pTypes=&pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int				nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	int				nCharWidth = pView->GetTextMetrics().GetHankakuDx();
@@ -370,7 +370,7 @@ void CTextDrawer::DispLineNumber(
 	if( pcLayout ){
 		pCDocLine = pcLayout->GetDocLineRef();
 
-		if( GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
+		if( pView->GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, pView->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
 			if( CTypeSupport(pView,COLORIDX_GYOU_MOD).IsDisp() ){	// 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 				bGyouMod = true;

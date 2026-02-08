@@ -128,7 +128,7 @@ int CallWinMain(
 #endif
 
 		// 実行中モジュールのインスタンスハンドルを取得する
-		const auto hInstance = GetAppInstance();
+		const auto hInstance = ::GetModuleHandleW(nullptr);
 
 		return wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
 

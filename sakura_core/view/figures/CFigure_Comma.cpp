@@ -38,7 +38,7 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 	DispPos& sPos=*pDispPos;
 
 	//必要なインターフェース
-	const CLayoutMgr& pcLayoutMgr = GetDocument()->m_cLayoutMgr;
+	const CLayoutMgr& pcLayoutMgr = pcView->GetDocument()->m_cLayoutMgr;
 	const CTextMetrics* pMetrics=&pcView->GetTextMetrics();
 	const CTextArea* pArea=&pcView->GetTextArea();
 

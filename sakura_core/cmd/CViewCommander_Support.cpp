@@ -135,13 +135,15 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 //	To Here Sept. 15, 2000 (Oct. 7, 2000 300→500; Nov. 3, 2000 500→540)
 	po.y = 0;
 
-	::GetClientRect( GetMainWindow(), &rc );
+	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
+	::GetClientRect( pCEditWnd->GetHwnd(), &rc );
 	po.x = t_min( po.x, rc.right );
-	::ClientToScreen( GetMainWindow(), &po );
-	::GetWindowRect( GetEditWnd().m_cSplitterWnd.GetHwnd() , &rc );
+	::ClientToScreen( pCEditWnd->GetHwnd(), &po );
+	::GetWindowRect( pCEditWnd->m_cSplitterWnd.GetHwnd() , &rc );
 	po.y = rc.top;
 
-	GetEditWnd().GetMenuDrawer().ResetContents();
+	pCEditWnd->GetMenuDrawer().ResetContents();
+
 	//	Oct. 3, 2001 genta
 	CFuncLookup& FuncLookup = GetDocument()->m_cFuncLookup;
 
@@ -158,11 +160,11 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
 				uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
 				//	Oct. 3, 2001 genta
-				GetEditWnd().GetMenuDrawer().MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, L"" );
+				pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, L"" );
 			}
 		}
 		//	Oct. 3, 2001 genta
-		GetEditWnd().GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , L"");
+		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , L"");
 //		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
 
@@ -194,7 +196,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 void CViewCommander::Command_EXTHELP1( void )
 {
 retry:;
-	if( CHelpManager().ExtWinHelpIsSet( &(GetTypeConfig()) ) == false){
+	if( CHelpManager().ExtWinHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute()) ) == false){
 //	if( 0 == wcslen( GetDllShareData().m_Common.m_szExtHelp1 ) ){
 		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
@@ -216,7 +218,7 @@ retry:;
 	}
 
 	CNativeW		cmemCurText;
-	const WCHAR*	helpfile = CHelpManager().GetExtWinHelp( &(GetTypeConfig()) );
+	const WCHAR*	helpfile = CHelpManager().GetExtWinHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	m_pCommanderView->GetCurrentTextForSearch( cmemCurText, false );
@@ -260,7 +262,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//	From Here Jul. 5, 2002 genta
 	const WCHAR *filename = nullptr;
 	if ( 0 == helpfile.length() ){
-		while( !CHelpManager().ExtHTMLHelpIsSet( &(GetTypeConfig())) ){
+		while( !CHelpManager().ExtHTMLHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
 			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
 	//		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -275,7 +277,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 				return;
 			}
 		}
-		filename = CHelpManager().GetExtHTMLHelp( &(GetTypeConfig()) );
+		filename = CHelpManager().GetExtHTMLHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
 	}
 	else {
 		filename = helpfile.c_str();
@@ -294,7 +296,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	}
 
 	/* HtmlHelpビューアはひとつ */
-	if( CHelpManager().HTMLHelpIsSingle( &(GetTypeConfig())) ){
+	if( CHelpManager().HTMLHelpIsSingle( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
@@ -359,6 +361,6 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 void CViewCommander::Command_ABOUT( void )
 {
 	CDlgAbout cDlgAbout;
-	cDlgAbout.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd() );
+	cDlgAbout.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd() );
 	return;
 }

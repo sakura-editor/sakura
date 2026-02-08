@@ -155,7 +155,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		if (ex.Reason() == CError_FileOpen::TOO_BIG) {
 			// ファイルサイズが大きすぎる (32bit 版の場合は 2GB あたりが上限)
 			ErrorMessage(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_ERR_DLGDOCLM_TOOBIG),
 				pszPath
 			);
@@ -163,7 +163,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		else if( !fexist( pszPath )){
 			// ファイルがない
 			ErrorMessage(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_ERR_DLGDOCLM1),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			);
@@ -171,14 +171,14 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		else if( -1 == _waccess( pszPath, 4 )){
 			// 読み込みアクセス権がない
 			ErrorMessage(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_ERR_DLGDOCLM2),
 				pszPath
 			 );
 		}
 		else{
 			ErrorMessage(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_ERR_DLGDOCLM3),
 				pszPath
 			 );
@@ -187,7 +187,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	catch( const CError_FileRead& ){
 		eRet = RESULT_FAILURE;
 		ErrorMessage(
-			GetMainWindow(),
+			CEditWnd::getInstance()->GetHwnd(),
 			LS(STR_ERR_DLGDOCLM4),
 			pszPath
 		 );

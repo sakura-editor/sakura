@@ -242,7 +242,7 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, [[maybe_unused]] LPA
 		if( CShareData::getInstance()->IsPrivateSettings() ){
 			// 個人設定フォルダーを使用するときは「設定フォルダー」ボタンを追加する
 			::SetWindowSubclass(hwndDlg, &PropSheetWndProc, 0, 0);
-			HINSTANCE hInstance = (HINSTANCE)GetAppInstance();
+			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( nullptr );
 			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, nullptr );
 			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
 			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );

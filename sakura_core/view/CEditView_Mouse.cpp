@@ -167,10 +167,10 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 							// →ドロップ先は外部のウィンドウである
-							if( nullptr == GetOpeBlk() ){
-								SetOpeBlk(new COpeBlk);
+							if( nullptr == m_cCommander.GetOpeBlk() ){
+								m_cCommander.SetOpeBlk(new COpeBlk);
 							}
-							GetOpeBlk()->AddRef();
+							m_cCommander.GetOpeBlk()->AddRef();
 
 							// 選択範囲を削除
 							DeleteData( true );
@@ -730,10 +730,10 @@ void CEditView::AutoScrollEnter()
 		return;
 	}
 	m_nAutoScrollMode = 2;
-	m_cAutoScrollWnd.Create(GetAppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
+	m_cAutoScrollWnd.Create(G_AppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
 	::SetTimer(GetHwnd(), 2, 200, AutoScrollTimerProc);
 	HCURSOR hCursor;
-	hCursor = ::LoadCursor(GetAppInstance(), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
+	hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
 	::SetCursor(hCursor);
 }
 
@@ -779,7 +779,7 @@ void CEditView::AutoScrollMove( CMyPoint& point )
 			cursor = IDC_CURSOR_AUTOSCROLL_VERTICAL;
 		}
 	}
-	const HCURSOR hCursor = ::LoadCursor(GetAppInstance(), MAKEINTRESOURCE(cursor));
+	const HCURSOR hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(cursor));
 	::SetCursor(hCursor);
 }
 
@@ -1063,7 +1063,7 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 			if( ptMouse.x < GetTextArea().GetAreaLeft() || ptMouse.y < GetTextArea().GetAreaTop() ){	//	2002/2/10 aroka
 				/* 矢印カーソル */
 				if( ptMouse.y >= GetTextArea().GetAreaTop() )
-					::SetCursor( ::LoadCursor( GetAppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
+					::SetCursor( ::LoadCursor( G_AppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
 				else
 					::SetCursor( ::LoadCursor( nullptr, IDC_ARROW ) );
 			}
@@ -1090,9 +1090,9 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 				//migemo isearch 2004.10.22
 				if( m_nISearchMode > SEARCH_NONE ){
 					if (m_nISearchDirection == SEARCH_FORWARD){
-						::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
+						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
 					}else{
-						::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
+						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
 					}
 				}else
 				/* アイビーム */
@@ -1848,10 +1848,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 
 	// アンドゥバッファの準備
-	if( nullptr == GetOpeBlk() ){
-		SetOpeBlk(new COpeBlk);
+	if( nullptr == m_cCommander.GetOpeBlk() ){
+		m_cCommander.SetOpeBlk(new COpeBlk);
 	}
-	GetOpeBlk()->AddRef();
+	m_cCommander.GetOpeBlk()->AddRef();
 
 	/* 移動の場合、位置関係を算出 */
 	if( bMove ){
@@ -2029,7 +2029,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				GetSelectionInfo().m_sSelect.GetFrom(),
 				&ptBefore
 			);
-			GetOpeBlk()->AppendOpe(
+			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					sDelLogic.GetFrom(),
 					GetCaret().GetCaretLogicPos()
@@ -2092,7 +2092,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, GetAppInstance(), nullptr );
+	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, G_AppInstance(), nullptr );
 	::SetFocus(hwnd);
 
 	// メニューを作成する
@@ -2122,7 +2122,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	switch( nId ){
 	case 110:	// ファイルを開く
 		// 通常のドロップファイル処理を行う
-		::SendMessageAny( GetMainWindow(), WM_DROPFILES, (WPARAM)hDrop, 0 );
+		::SendMessageAny( GetEditWnd().GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
 		break;
 
 	case 100:	// パス名を貼り付ける

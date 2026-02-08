@@ -931,7 +931,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 					//機能名を数値に置き換える。(数値の機能名もあるかも)
 					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-					EFunctionCode n2 = CSMacroMgr::GetFuncInfoByName(GetAppInstance(), p, nullptr);
+					EFunctionCode n2 = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, nullptr);
 					if( n2 == F_INVALID )
 					{
 						if( WCODE::Is09(*p) )

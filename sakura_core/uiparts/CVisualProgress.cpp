@@ -68,13 +68,13 @@ void CVisualProgress::_Begin()
 {
 	//砂時計
 	if(!m_pcWaitCursor){
-		m_pcWaitCursor = new CWaitCursor( GetMainWindow() );
+		m_pcWaitCursor = new CWaitCursor( CEditWnd::getInstance()->GetHwnd() );
 	}
 
 	//プログレスバー
-	HWND hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
+	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if( hwndProgress ){
-		GetEditWnd().m_cStatusBar.ShowProgressBar(true);
+		CEditWnd::getInstance()->m_cStatusBar.ShowProgressBar(true);
 		//範囲設定・リセット
 		ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
 		ApiWrap::Progress_SetPos( hwndProgress, 0);
@@ -84,7 +84,7 @@ void CVisualProgress::_Begin()
 void CVisualProgress::_Doing(int nPer)
 {
 	//プログレスバー更新
-	HWND hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
+	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if(hwndProgress){
 		if( nOldValue != nPer ){
 			ApiWrap::Progress_SetPos( hwndProgress, nPer + 1 ); // 2013.06.10 Moca Vista/7等でプログレスバーがアニメーションで遅れる対策
@@ -97,10 +97,10 @@ void CVisualProgress::_Doing(int nPer)
 void CVisualProgress::_End()
 {
 	//プログレスバー
-	HWND hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
+	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if( hwndProgress ){
 		ApiWrap::Progress_SetPos( hwndProgress, 0);
-		GetEditWnd().m_cStatusBar.ShowProgressBar(false);
+		CEditWnd::getInstance()->m_cStatusBar.ShowProgressBar(false);
 	}
 
 	//砂時計

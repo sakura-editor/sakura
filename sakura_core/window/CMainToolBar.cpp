@@ -125,7 +125,7 @@ void CMainToolBar::CreateToolBar( void )
 			0, 0, 0, 0,
 			m_pOwner->GetHwnd(),
 			nullptr,
-			GetAppInstance(),
+			CEditApp::getInstance()->GetAppInstance(),
 			nullptr
 		);
 
@@ -161,7 +161,7 @@ void CMainToolBar::CreateToolBar( void )
 		0, 0,
 		m_pOwner->GetHwnd(),
 		(HMENU)ID_TOOLBAR,
-		GetAppInstance(),
+		CEditApp::getInstance()->GetAppInstance(),
 		nullptr
 	);
 	if( nullptr == m_hwndToolBar ){
@@ -274,7 +274,7 @@ void CMainToolBar::CreateToolBar( void )
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
-								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, GetAppInstance(), nullptr );
+								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, CEditApp::getInstance()->GetAppInstance(), nullptr );
 						if( m_hwndSearchBox )
 						{
 							m_pOwner->SetCurrentFocus(0);
@@ -517,12 +517,12 @@ void CMainToolBar::UpdateToolbar( void )
 			{
 				WORD stateToSet = state & ~(TBSTATE_ENABLED | TBSTATE_CHECKED);
 				// 機能が利用可能か調べる
-				if (func::isEnabled(EFunctionCode(tbb.idCommand)))
+				if( IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
 				{
 					stateToSet |= TBSTATE_ENABLED;
 				}
 				// 機能がチェック状態か調べる
-				if (func::isChecked(EFunctionCode(tbb.idCommand)))
+				if( IsFuncChecked( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
 				{
 					stateToSet |= TBSTATE_CHECKED;
 				}

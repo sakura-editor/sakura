@@ -91,7 +91,7 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 {
 	bool bRet;
 	CPropTypes* pcPropTypes = new CPropTypes();
-	pcPropTypes->Create( GetAppInstance(), m_hwndOwner );
+	pcPropTypes->Create( G_AppInstance(), m_hwndOwner );
 
 	auto pType = std::make_unique<STypeConfig>();
 	CDocTypeManager().GetTypeConfig(nSettingType, *pType);
