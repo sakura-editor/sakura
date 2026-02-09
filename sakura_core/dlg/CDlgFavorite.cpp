@@ -940,7 +940,7 @@ void CDlgFavorite::AddItem()
 	CDlgInput1	cDlgInput1;
 	std::wstring strTitle = LS( STR_DLGFAV_ADD );
 	std::wstring strMessage = LS( STR_DLGFAV_ADD_PROMPT );
-	if( !cDlgInput1.DoModal( GetAppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szAddText ) ){
+	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szAddText ) ){
 		return;
 	}
 
@@ -971,7 +971,7 @@ void CDlgFavorite::EditItem()
 			CDlgInput1	cDlgInput1;
 			std::wstring strTitle = LS( STR_DLGFAV_EDIT );
 			std::wstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
-			if( !cDlgInput1.DoModal(GetAppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
+			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 				return;
 			}
 			GetFavorite(m_nCurrentTab);

@@ -91,7 +91,7 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 			CCodePage::GetNameLong(szCpNameNew, pLoadInfo->eCharCode);
 			ConfirmBeep();
 			int nRet = MYMESSAGEBOX(
-				GetMainWindow(),
+				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
 				LS(STR_ERR_DLGEDITDOC5),
 				LS(STR_ERR_DLGEDITDOC6),

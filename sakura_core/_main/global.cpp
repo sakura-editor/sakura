@@ -9,7 +9,7 @@
 	Copyright (C) 2002, KK
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, Moca
-	Copyright (C) 2018-2026, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -51,13 +51,9 @@ LPCWSTR GetAppName( void )
 const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
 const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 
-/*!
- * アプリケーションのインスタンスハンドルを取得する
- */
-HINSTANCE GetAppInstance() noexcept
+HINSTANCE G_AppInstance()
 {
-	const auto pcProcess = CProcess::getInstance();
-	return pcProcess ? pcProcess->GetProcessInstance() : ::GetModuleHandleW(nullptr);
+	return CProcess::getInstance()->GetProcessInstance();
 }
 
 /*!
@@ -67,18 +63,6 @@ LPCWSTR GetProfileName() noexcept
 {
 	const auto cmdline = CCommandLine::getInstance();
 	return cmdline ? cmdline->GetProfileName() : L"";
-}
-
-/*!
- * メインウインドウのハンドルを取得する
- */
-HWND GetMainWindow() noexcept
-{
-	if (const auto wnd = GetEditWndPtr()) {
-		return wnd->GetHwnd();
-	}
-	const auto pProcess = CProcess::getInstance();
-	return pProcess ? pProcess->GetMainWindow() : nullptr;
 }
 
 /*!

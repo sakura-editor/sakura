@@ -75,7 +75,7 @@ bool CDocFileOperation::OpenFileDialog(
 	// ファイルオープンダイアログを表示
 	CDlgOpenFile cDlgOpenFile;
 	cDlgOpenFile.Create(
-		GetAppInstance(),
+		G_AppInstance(),
 		hwndParent,
 		L"*.*",
 		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
@@ -213,7 +213,7 @@ bool CDocFileOperation::SaveFileDialog(
 	{
 		LPCWSTR	szExt;
 
-		const STypeConfig& type = GetTypeConfig();
+		const STypeConfig& type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			szExt = L"";
@@ -254,7 +254,7 @@ bool CDocFileOperation::SaveFileDialog(
 		SYSTEMTIME localTime = {};
 		::GetLocalTime( &localTime );
 		auto dateTimeString = GetDateTimeFormat( L"_%Y%m%d_%H%M%S", localTime );
-		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() );
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWnd().GetHwnd() );
 		const int nId = (node != nullptr && 0 < node->m_nId) ? node->m_nId : 0;
 		auto_snprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), L"%s%.0d%s", LS(STR_NO_TITLE2), nId, dateTimeString.c_str() );
 	}
@@ -262,8 +262,8 @@ bool CDocFileOperation::SaveFileDialog(
 	// ダイアログを表示
 	CDlgOpenFile cDlgOpenFile;
 	cDlgOpenFile.Create(
-		GetAppInstance(),
-		GetMainWindow(),
+		G_AppInstance(),
+		CEditWnd::getInstance()->GetHwnd(),
 		strDefaultWildCard.c_str(),
 		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
 		CMRUFile().GetPathList(),		//	最近のファイル
@@ -453,7 +453,7 @@ bool CDocFileOperation::FileClose()
 	m_pcDocRef->SetCurDirNotitle();
 
 	// 無題番号取得
-	CAppNodeManager::getInstance()->GetNoNameNumber( GetMainWindow() );
+	CAppNodeManager::getInstance()->GetNoNameNumber( GetEditWnd().GetHwnd() );
 
 	/* 親ウィンドウのタイトルを更新 */
 	GetEditWnd().UpdateCaption();
@@ -485,7 +485,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
 		std::vector<std::wstring> files;
-		if( !OpenFileDialog( GetMainWindow(), nullptr, &sLoadInfo, files ) ){
+		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), nullptr, &sLoadInfo, files ) ){
 			return;
 		}
 		sLoadInfo.cFilePath = files[0].c_str();
@@ -495,8 +495,8 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
-				GetAppInstance(),
-				GetMainWindow(),
+				G_AppInstance(),
+				CEditWnd::getInstance()->GetHwnd(),
 				sFilesLoadInfo,
 				nullptr,
 				true
@@ -515,7 +515,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 
 	if( !m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		m_pcDocRef->SetCurDirNotitle();
-		CAppNodeManager::getInstance()->GetNoNameNumber( GetMainWindow() );
+		CAppNodeManager::getInstance()->GetNoNameNumber( GetEditWnd().GetHwnd() );
 	}
 
 	/* 親ウィンドウのタイトルを更新 */

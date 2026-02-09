@@ -75,7 +75,7 @@ void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			CMyRect rcZenSp;
 			// 注：ベースライン無視
 			rcZenSp.SetPos(pDispPos->GetDrawPos().x, pDispPos->GetDrawPos().y);
-			rcZenSp.SetSize(dx[0]- DpiScaleX(GetTypeConfig().m_nColumnSpace),
+			rcZenSp.SetSize(dx[0]- DpiScaleX(pcView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace),
 				pcView->GetTextMetrics().GetHankakuHeight());
 
 			// 描画

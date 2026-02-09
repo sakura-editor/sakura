@@ -690,7 +690,7 @@ LRESULT CControlTray::DispatchEvent(
 					CDlgTypeList::SResult	sResult;
 					sResult.cDocumentType = CTypeConfig(0);
 					sResult.bTempChange = false;
-					if( cDlgTypeList.DoModal( GetAppInstance(), GetTrayHwnd(), &sResult ) ){
+					if( cDlgTypeList.DoModal( G_AppInstance(), GetTrayHwnd(), &sResult ) ){
 						// タイプ別設定
 						CPluginManager::getInstance()->LoadAllPlugin();
 						m_pcPropertyManager->OpenPropertySheetTypes( nullptr, -1, sResult.cDocumentType );

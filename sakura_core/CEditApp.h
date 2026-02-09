@@ -36,6 +36,13 @@ class CEditApp : public TSingleton<CEditApp>{
 public:
 	void Create(HINSTANCE hInst, int);
 
+	//モジュール情報
+	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
+
+	//ウィンドウ情報
+	CEditWnd* GetEditWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
+
+	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
 	CImageListMgr&	GetIcons(){ return m_cIcons; }
 
 	bool OpenPropertySheet( int nPageNum );
