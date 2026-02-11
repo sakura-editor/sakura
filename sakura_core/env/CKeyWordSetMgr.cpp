@@ -282,7 +282,7 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, LPARAM lParam )
 	KeyWordReAlloc( nIdx, m_nKeyWordNumArr[nIdx] );	// 2004.07.29 Moca
 
 	// 2014.05.04 Moca キーワード長の再計算
-	if( nDelKeywordLen == size_t(m_nKeyWordMaxLenArr[nIdx]) ){
+	if( nDelKeywordLen == m_nKeyWordMaxLenArr[nIdx] ){
 		KeywordMaxLen(nIdx);
 	}
 	return 0;

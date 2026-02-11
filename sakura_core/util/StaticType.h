@@ -48,13 +48,13 @@ public:
 	ElementType& operator[](size_t nIndex) noexcept
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex < size_t(m_nCount));
+		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
 	const ElementType& operator[](size_t nIndex) const noexcept
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex < size_t(m_nCount));
+		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
 

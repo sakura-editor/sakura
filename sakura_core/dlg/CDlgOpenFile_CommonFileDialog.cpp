@@ -343,7 +343,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 				i = 0;
 			}
 			CCodeTypesForCombobox cCodeTypes;
-			for( /*i = 0*/; i < int(cCodeTypes.GetCount()); ++i ){
+			for( /*i = 0*/; i < cCodeTypes.GetCount(); ++i ){
 				nIdx = ApiWrap::Combo_AddString( pData->m_hwndComboCODES, cCodeTypes.GetName(i) );
 				ApiWrap::Combo_SetItemData( pData->m_hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
 				if( cCodeTypes.GetCode(i) == pData->m_nCharCode ){

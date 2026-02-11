@@ -330,9 +330,10 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
 
 	// 2002/09/22 Moca Add
+	int i;
 	/* 文字コードセット選択コンボボックス初期化 */
 	CCodeTypesForCombobox cCodeTypes;
-	for (size_t i = 0; i < cCodeTypes.GetCount(); ++i ){
+	for( i = 0; i < cCodeTypes.GetCount(); ++i ){
 		int idx = ApiWrap::Combo_AddString( GetItemHwnd( IDC_COMBO_CHARSET ), cCodeTypes.GetName(i) );
 		ApiWrap::Combo_SetItemData( GetItemHwnd( IDC_COMBO_CHARSET ), idx, cCodeTypes.GetCode(i) );
 	}
@@ -629,11 +630,13 @@ void CDlgGrep::SetData( void )
 	// 2002/09/22 Moca Add
 	/* 文字コードセット */
 	{
+		int		nIdx, nCurIdx = -1;
+		ECodeType nCharSet;
 		HWND	hWndCombo = GetItemHwnd( IDC_COMBO_CHARSET );
-		int nCurIdx = ApiWrap::Combo_GetCurSel( hWndCombo );
+		nCurIdx = ApiWrap::Combo_GetCurSel( hWndCombo );
 		CCodeTypesForCombobox cCodeTypes;
-		for (int nIdx = 0; nIdx < int(cCodeTypes.GetCount()); ++nIdx) {
-			const auto nCharSet = (ECodeType)ApiWrap::Combo_GetItemData( hWndCombo, nIdx );
+		for( nIdx = 0; nIdx < cCodeTypes.GetCount(); nIdx++ ){
+			nCharSet = (ECodeType)ApiWrap::Combo_GetItemData( hWndCombo, nIdx );
 			if( nCharSet == m_nGrepCharSet ){
 				nCurIdx = nIdx;
 			}

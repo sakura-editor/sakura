@@ -311,10 +311,7 @@ std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
 	// 出力バッファを確保する
 	std::wstring strOut;
 
-#ifdef _DEBUG
-	const int nRet =
-#endif
-		vstrprintf(strOut, pszFormat, argList);
+	const auto nRet = vstrprintf(strOut, pszFormat, argList);
 	assert(nRet >= 0);
 
 	return strOut;
@@ -332,10 +329,7 @@ std::string vstrprintf(const CHAR* pszFormat, va_list& argList)
 	// 出力バッファを確保する
 	std::string strOut;
 
-#ifdef _DEBUG
-	const int nRet =
-#endif
-		vstrprintf(strOut, pszFormat, argList);
+	const int nRet = vstrprintf(strOut, pszFormat, argList);
 	assert(nRet >= 0);
 
 	return strOut;

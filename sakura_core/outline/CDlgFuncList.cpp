@@ -897,6 +897,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
 	CLayoutInt		nFuncColOld;
+	CLayoutInt		nFuncLineTop(INT_MAX);
+	CLayoutInt		nFuncColTop(INT_MAX);
 	TV_INSERTSTRUCT	tvis;
 	const WCHAR*	pPos;
 	HTREEITEM		htiGlobal = nullptr;	// Jan. 04, 2001 genta C++と統合

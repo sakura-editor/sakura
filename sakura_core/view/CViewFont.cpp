@@ -83,7 +83,7 @@ void CViewFont::DeleteFonts()
 	@param m_bBoldFont trueで太字
 	@param m_bUnderLine trueで下線
 */
-HFONT CViewFont::ChooseFontHandle([[maybe_unused]] int fontNo, SFontAttr sFontAttr ) const
+HFONT CViewFont::ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const
 {
 	assert( fontNo == 0 );
 	if( sFontAttr.m_bBoldFont ){	/* 太字か */
