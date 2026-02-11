@@ -124,7 +124,7 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	  m_bDirectTagJump(bDirectTagJump)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( std::size(anchorList) == std::extent_v<decltype(m_rcItems)>);
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	// 2010.07.22 Moca ページング採用で 最大値を100→50に減らす
 	m_pcList = new CSortedTagJumpList(50);

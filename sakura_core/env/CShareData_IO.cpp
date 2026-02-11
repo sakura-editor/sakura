@@ -1670,7 +1670,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		cProfile.IOProfileData( pszSecName, L"bUseRegexKeyword", types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
 		wchar_t* pKeyword = types.m_RegexKeywordList;
 		int nPos = 0;
-		constexpr auto nKeywordSize = int(std::extent_v<decltype(types.m_RegexKeywordList)>);
+		constexpr auto nKeywordSize = int(std::size(types.m_RegexKeywordList));
 		for(j = 0; j < int(std::size(types.m_RegexKeywordArr)); j++)
 		{
 			auto_snprintf_s(szKeyName, _TRUNCATE, L"RxKey[%03d]", j);

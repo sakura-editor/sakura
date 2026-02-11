@@ -13,9 +13,6 @@
 /x64
 /Win32
 
-# Visual StudioのCMake機能がビルド生成物を格納するフォルダ
-/out
-
 # GitHubに登録したくないファイル群
 *.aps
 *.bak

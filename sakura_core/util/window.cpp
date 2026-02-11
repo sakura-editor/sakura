@@ -338,7 +338,7 @@ HFONT GetSystemBasedFont( LONG nLogicalHeight )
 	// キー:文字列化したLOGFONT
 	static std::map<std::wstring, HFONT> fontStock;
 
-	NONCLIENTMETRICS metrics = { UINT(CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont)) };
+	NONCLIENTMETRICS metrics = { CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont ) };
 	if( !SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 ) ) {
 		return nullptr;
 	}
