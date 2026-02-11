@@ -20,7 +20,7 @@ BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path
 
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount);
 
-bool		ResolveShortcutLink(HWND hWnd, const std::filesystem::path& linkFile, std::span<WCHAR> szPath);	/* ショートカット(.lnk)の解決 */
+BOOL ResolveShortcutLink(HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath);/* ショートカット(.lnk)の解決 */
 
 HWND OpenHtmlHelp( HWND hWnd, LPCWSTR szFile, UINT uCmd, DWORD_PTR data,bool msgflag = true);
 DWORD NetConnect ( const WCHAR strNetWorkPass[] );
