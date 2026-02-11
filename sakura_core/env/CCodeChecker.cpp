@@ -180,7 +180,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 			cmemChar.SetString(LS(STR_ERR_CSHAREDATA22));
 		}else{
 			auto_sprintf( szLineNum, L"%d", (int)((Int)point.x) + 1 );
-			::wcsncat_s(szLineNum, LS(STR_DLGFNCLST_LIST_COL), _TRUNCATE);
+			wcscat( szLineNum, LS(STR_DLGFNCLST_LIST_COL) );
 			CUnicode().UnicodeToHex( cmemChar.GetStringPtr(), cmemChar.GetStringLength(),
 				szCharCode, &GetDllShareData().m_Common.m_sStatusbar );
 		}

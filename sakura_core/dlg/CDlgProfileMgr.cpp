@@ -390,7 +390,7 @@ void CDlgProfileMgr::RenameProf()
 	WCHAR szText[_MAX_PATH];
 	bool bDefault = MyList_GetText( hwndList, nCurIndex, szText );
 	WCHAR szTextOld[_MAX_PATH];
-	::wcsncpy_s(szTextOld, szText, _TRUNCATE);
+	wcscpy( szTextOld, szText );
 	std::wstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
 	int max_size = _MAX_PATH;
@@ -437,7 +437,7 @@ void CDlgProfileMgr::RenameProf()
 		}
 	}
 	if( bDefault ){
-		::wcsncat_s(szText, L"*", _TRUNCATE);
+		wcscat(szText, L"*");
 	}
 	ApiWrap::List_DeleteString( hwndList, nCurIndex );
 	ApiWrap::List_InsertString( hwndList, nCurIndex, szText );
@@ -452,7 +452,7 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 	WCHAR szProfileName[_MAX_PATH];
 	MyList_GetText( hwndList, index, szProfileName );
 	ApiWrap::List_DeleteString( hwndList, index );
-	::wcsncat_s(szProfileName, L"*", _TRUNCATE);
+	wcscat( szProfileName, L"*" );
 	ApiWrap::List_InsertString( hwndList, index, szProfileName );
 }
 

@@ -83,16 +83,16 @@ void CControlTray::DoGrep()
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		::wcsncpy_s(m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);		/* 検索ファイル */
+		wcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		::wcsncpy_s(m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
+		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-		::wcsncpy_s(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
+		wcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-		::wcsncpy_s(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
+		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダー */
 	}
 
 	/* Grepダイアログの表示 */
@@ -137,18 +137,18 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 
 	//GOPTオプション
 	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)::wcsncat_s(pOpt, L"S", _TRUNCATE);	// サブフォルダーからも検索する
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)::wcsncat_s(pOpt, L"L", _TRUNCATE);	// 英大文字と英小文字を区別する
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)::wcsncat_s(pOpt, L"R", _TRUNCATE);	// 正規表現
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )::wcsncat_s(pOpt, L"P", _TRUNCATE);	// 行を出力する
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )::wcsncat_s(pOpt, L"N", _TRUNCATE);	// 否ヒット行を出力する 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)::wcsncat_s(pOpt, L"W", _TRUNCATE);	// 単語単位で探す
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"1", _TRUNCATE);	// Grep: 出力形式
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"2", _TRUNCATE);	// Grep: 出力形式
-	if( 3 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"3", _TRUNCATE);
-	if( cDlgGrep.m_bGrepOutputFileOnly		)::wcsncat_s(pOpt, L"F", _TRUNCATE);
-	if( cDlgGrep.m_bGrepOutputBaseFolder		)::wcsncat_s(pOpt, L"B", _TRUNCATE);
-	if( cDlgGrep.m_bGrepSeparateFolder		)::wcsncat_s(pOpt, L"D", _TRUNCATE);
+	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
+	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
+	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
+	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
+	if( cDlgGrep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
+	if( cDlgGrep.m_sSearchOption.bWordOnly		)wcscat( pOpt, L"W" );	// 単語単位で探す
+	if( 1 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
+	if( 2 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
+	if( 3 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
+	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
+	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
+	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
 	if( pOpt[0] != L'\0' ){
 		cCmdLine.AppendString( L" -GOPT=" );
 		cCmdLine.AppendString( pOpt );
@@ -276,7 +276,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
-	::wcsncpy_s(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, _TRUNCATE);
+	wcscpy(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
 
 	return GetTrayHwnd();
 }
@@ -603,7 +603,7 @@ LRESULT CControlTray::DispatchEvent(
 		case PM_CHANGESETTING_ALL:
 			{
 				bool bChangeLang = wcscmp( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, m_szLanguageDll ) != 0;
-				::wcsncpy_s(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, _TRUNCATE);
+				wcscpy( m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 				std::vector<std::wstring> values;
 				if( bChangeLang ){
 					CShareData::getInstance()->ConvertLangValues(values, true);
@@ -1209,7 +1209,7 @@ bool CControlTray::OpenNewEditor(
 				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;
 			}
-			::wcsncpy_s(szResponseFile, pszTempFile, _TRUNCATE);
+			wcscpy(szResponseFile, pszTempFile);
 			free(pszTempFile);
 			CTextOutputStream output(szResponseFile);
 			if( !output ){

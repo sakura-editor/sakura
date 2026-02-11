@@ -298,8 +298,8 @@ void CPropCommon::InitData( const int* tempTypeKeywordSet, const WCHAR* name, co
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	if( tempTypeKeywordSet ){
 		m_nKeywordSet1 = tempTypeKeywordSet[0];
-		::wcsncpy_s(m_tempTypeName, name, _TRUNCATE);
-		::wcsncpy_s(m_tempTypeExts, exts, _TRUNCATE);
+		wcscpy(m_tempTypeName, name);
+		wcscpy(m_tempTypeExts, exts);
 		SKeywordSetIndex indexs;
 		indexs.typeId = -1;
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){

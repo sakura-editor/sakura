@@ -553,7 +553,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 						size_t nLen = wcslen(pRecent->GetItemText(i));
 						std::vector<WCHAR> vecPath(nLen + 2);
 						WCHAR* szPath = &vecPath[0];
-						::wcsncpy_s(szPath, std::size(vecPath), pRecent->GetItemText(i), _TRUNCATE);
+						wcscpy( szPath, pRecent->GetItemText(i) );
 						CutLastYenFromDirectoryPath(szPath);
 						if( false == IsFileExists(szPath, false ) ){
 							pRecent->DeleteItem(i);
@@ -754,8 +754,8 @@ bool CDlgFavorite::RefreshList( void )
 		{
 			ret_val = true;
 		
-			if( msg[0] != L'\0' ) ::wcsncat_s(msg, LS( STR_DLGFAV_DELIMITER ), _TRUNCATE);
-			::wcsncat_s(msg, m_aFavoriteInfo[nTab].m_pszCaption, _TRUNCATE);
+			if( msg[0] != L'\0' ) wcscat( msg, LS( STR_DLGFAV_DELIMITER ) );
+			wcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
 		}
 	}
 
@@ -1146,7 +1146,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 	col.cchTextMax = int(std::size(szHeader)) - 4;
 	col.iSubItem = 0;
 	ListView_GetColumn( info.hListView, column, &col );
-	::wcsncat_s(szHeader, info.bSortAscending ? L"▼" : L"▲", _TRUNCATE);
+	wcscat(szHeader, info.bSortAscending ? L"▼" : L"▲");
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.iSubItem = 0;

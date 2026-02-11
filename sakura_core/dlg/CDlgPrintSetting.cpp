@@ -225,7 +225,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_BUTTON_EDITSETTINGNAME:
-		::wcsncpy_s(szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, _TRUNCATE);
+		wcscpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
 		{
 			BOOL bDlgInputResult=cDlgInput1.DoModal(
 				m_hInstance,
@@ -240,7 +240,9 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			}
 		}
 		if( szWork[0] != L'\0' ){
-			::wcsncpy_s(m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, _TRUNCATE);
+			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
+			wcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
+			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
 			/* 印刷設定名一覧 */
 			hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
 			ApiWrap::Combo_ResetContent( hwndComboSettingName );
@@ -268,7 +270,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 
 			if (lf.lfFaceName[0] == L'\0') {
 				// 半角フォントを設定
-				::wcsncpy_s(lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan, _TRUNCATE);
+				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );
@@ -291,7 +293,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 
 			if (lf.lfFaceName[0] == L'\0') {
 				// 半角フォントを設定
-				::wcsncpy_s(lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan, _TRUNCATE);
+				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );

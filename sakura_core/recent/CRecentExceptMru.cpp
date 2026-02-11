@@ -62,7 +62,7 @@ int CRecentExceptMRU::CompareItem( const CMetaPath* p1, LPCWSTR p2 ) const
 
 void CRecentExceptMRU::CopyItem( CMetaPath* dst, LPCWSTR src ) const
 {
-	::wcsncpy_s(*dst, src, _TRUNCATE);
+	wcscpy(*dst,src);
 }
 
 bool CRecentExceptMRU::ValidateReceiveType( LPCWSTR p ) const
