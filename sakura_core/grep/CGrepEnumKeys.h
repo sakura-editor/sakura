@@ -156,10 +156,8 @@ public:
 		std::vector< std::wstring > patterns;
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
-
-		std::wstring strWildCard{ lpKeys };
-		auto nWildCardLen = int(strWildCard.length());
-		auto pWildCard = std::data(strWildCard);
+		auto nWildCardLen = int(wcslen(lpKeys));
+		auto pWildCard = ::_wcsdup(lpKeys);
 
 		int nPos = 0;
 		WCHAR*	token;
@@ -179,8 +177,10 @@ public:
 			}
 			*q = L'\0';
 
-			patterns.emplace_back(token);
+			std::wstring element(token);
+			patterns.push_back(element);
 		}
+		delete[] pWildCard;
 		return patterns;
 	}
 
@@ -201,10 +201,7 @@ private:
 
 	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
-			const auto cchAddKey = ::wcslen(addKey);
-			auto pszAddKey = new wchar_t[cchAddKey + 1];
-			::wcsncpy_s(pszAddKey, cchAddKey + 1, addKey, _TRUNCATE);
-			keys.push_back(pszAddKey);
+			keys.push_back(::_wcsdup(addKey));
 		}
 	}
 

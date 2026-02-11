@@ -112,10 +112,8 @@ void CESI::SetEvaluation( const ECodeType eCodeId, const int v1, const int v2 )
 	nidx = GetIndexById( eCodeId );
 	if( eCodeId == CODE_UNICODE || eCodeId == CODE_UNICODEBE ){
 		pcEI = &m_aWcInfo[nidx];
-	} else if (0 <= nidx && nidx < std::ssize(m_aMbcInfo)) {
+	}else{
 		pcEI = &m_aMbcInfo[nidx];
-	} else {
-		throw std::out_of_range("Invalid eCodeId");
 	}
 	pcEI->eCodeID = eCodeId;
 	pcEI->nSpecific = v1;
@@ -139,10 +137,8 @@ void CESI::GetEvaluation( const ECodeType eCodeId, int *pv1, int *pv2 ) const
 	nidx = GetIndexById( eCodeId );
 	if( eCodeId == CODE_UNICODE || eCodeId == CODE_UNICODEBE ){
 		pcEI = &m_aWcInfo[nidx];
-	} else if (0 <= nidx && nidx < std::ssize(m_aMbcInfo)) {
+	}else{
 		pcEI = &m_aMbcInfo[nidx];
-	} else {
-		throw std::out_of_range("Invalid eCodeId");
 	}
 	*pv1 = pcEI->nSpecific;
 	*pv2 = pcEI->nPoints;
@@ -1234,7 +1230,7 @@ static ECodeType DetectUnicode( CESI* pcesi )
 /*!
 	日本語コードセット判定
 */
-ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen)
+ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 {
 
 	// 日本語コードセット判別

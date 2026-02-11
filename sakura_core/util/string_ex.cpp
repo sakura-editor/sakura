@@ -404,9 +404,7 @@ size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
 wchar_t* mbstowcs_new(const char* src)
 {
 	const auto buffer = cxx::to_wstring(src, CP_SJIS);
-	auto ret = new wchar_t[buffer.length() + 1];
-	buffer.copy(ret, buffer.length());
-	return ret;
+	return ::_wcsdup(buffer.c_str());
 }
 
 /*!
