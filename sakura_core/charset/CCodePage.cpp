@@ -197,10 +197,10 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 }
 
 // 文字コード表示用	UNICODE → Hex 変換
-EConvertResult CCodePage::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	// コードの特性がわからないので何もしない
-	return CCodeBase::UnicodeToHex(src, dst, psStatusbar);
+	return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 }
 
 int CCodePage::GetNameNormal(std::span<WCHAR> outName, int charcodeEx)
@@ -215,7 +215,7 @@ int CCodePage::GetNameNormal(std::span<WCHAR> outName, int charcodeEx)
 	}else if( codepage == CP_OEMCP ){
 		::wcsncpy_s(std::data(outName), std::size(outName), L"CP_OEM", _TRUNCATE);
 	}else{
-		auto_snprintf_s(outName, _TRUNCATE, L"CP%d", codepage);
+		auto_sprintf_s(outName, L"CP%d", codepage);
 	}
 	return 2;
 }
@@ -232,7 +232,7 @@ int CCodePage::GetNameShort(std::span<WCHAR> outName, int charcodeEx)
 	}else if( codepage == CP_OEMCP ){
 		::wcsncpy_s(std::data(outName), std::size(outName), L"cp_oem", _TRUNCATE);
 	}else{
-		auto_snprintf_s(outName, _TRUNCATE, L"cp%d", codepage);
+		auto_sprintf_s(outName, L"cp%d", codepage);
 	}
 	return 2;
 }
@@ -254,7 +254,7 @@ int CCodePage::GetNameLong(std::span<WCHAR> outName, int charcodeEx)
 		if( ::GetCPInfoEx(codepage, 0, &cpInfo) ){
 			::wcsncpy_s(std::data(outName), std::size(outName), cpInfo.CodePageName, _TRUNCATE);
 		}else{
-			auto_snprintf_s(outName, _TRUNCATE, L"CP%d", codepage);
+			auto_sprintf_s(outName, L"CP%d", codepage);
 		}
 	}
 	return 2;
@@ -272,7 +272,7 @@ int CCodePage::GetNameBracket(std::span<WCHAR> outName, int charcodeEx)
 	}else if( codepage == CP_OEMCP ){
 		::wcsncpy_s(std::data(outName), std::size(outName), L"  [CP_OEM]", _TRUNCATE);
 	}else{
-		auto_snprintf_s(outName, _TRUNCATE, L"  [CP%d]", charcodeEx);
+		auto_sprintf_s(outName, L"  [CP%d]", charcodeEx);
 	}
 	return 2;
 }

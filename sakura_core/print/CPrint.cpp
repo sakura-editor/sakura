@@ -137,22 +137,22 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタードライバー名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンターデバイス名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンターポート名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
 	// プリンターから得られた、dmFieldsは変更しない
@@ -218,22 +218,22 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタードライバー名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンターデバイス名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンターポート名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
 	// プリンターから得られた、dmFieldsは変更しない
@@ -260,9 +260,9 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 /*! 
 ** @brief プリンターをオープンし、hDCを作成する
 */
-HDC CPrint::CreateDCW(
-	MYDEVMODE*			pMYDEVMODE,
-	std::span<WCHAR>	szErrMsg		/* エラーメッセージ格納場所 */
+HDC CPrint::CreateDC(
+	MYDEVMODE*	pMYDEVMODE,
+	WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	HDC			hdc = nullptr;
@@ -282,8 +282,8 @@ HDC CPrint::CreateDCW(
 		&hPrinter,					/* プリンターハンドルのポインタ */
 		nullptr
 	) ){
-		auto_snprintf_s(
-			szErrMsg, _TRUNCATE,
+		auto_sprintf(
+			pszErrMsg,
 			LS(STR_ERR_CPRINT01),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);
@@ -343,7 +343,7 @@ BOOL CPrint::GetPrintMetrics(
 	short*		pnPaperHeight,		/* 用紙印刷可能高さ */
 	short*		pnPaperOffsetLeft,	/* 用紙余白左端 */
 	short*		pnPaperOffsetTop,	/* 用紙余白上端 */
-	std::span<WCHAR>	pszErrMsg			/* エラーメッセージ格納場所 */
+	WCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -442,7 +442,7 @@ BOOL CPrint::PrintOpen(
 	WCHAR*		pszJobName,
 	MYDEVMODE*	pMYDEVMODE,
 	HDC*		phdc,
-	std::span<WCHAR>	pszErrMsg		/* エラーメッセージ格納場所 */
+	WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -470,8 +470,8 @@ BOOL CPrint::PrintOpen(
 	di.lpszDatatype = nullptr;
 	di.fwType = 0;
 	if( 0 >= ::StartDoc( hdc, &di ) ){
-		auto_snprintf_s(
-			pszErrMsg, _TRUNCATE,
+		auto_sprintf(
+			pszErrMsg,
 			LS(STR_ERR_CPRINT02),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);

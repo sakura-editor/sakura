@@ -486,7 +486,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 
 	/* 行番号区切り文字 */
 	wchar_t	szLineTermChar[2];
-	auto_snprintf_s(szLineTermChar, _TRUNCATE, L"%lc", m_Types.m_cLineTermChar);
+	auto_sprintf( szLineTermChar, L"%lc", m_Types.m_cLineTermChar );
 	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar );
 
 	//	From Here Sept. 10, 2000 JEPRO

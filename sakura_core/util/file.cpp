@@ -181,7 +181,7 @@ bool IsLocalDrive( const WCHAR* pszDrive )
 	long	lngRet;
 
 	if( iswalpha(pszDrive[0]) ){
-		auto_snprintf_s(szDriveType, _TRUNCATE, L"%c:\\", towupper(pszDrive[0]));
+		auto_sprintf(szDriveType, L"%c:\\", towupper(pszDrive[0]));
 		lngRet = GetDriveType( szDriveType );
 		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
 		{
@@ -219,15 +219,12 @@ const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 */
 FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 {
-	FILE* fp = nullptr;
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
 		GetExedir( path, fname );
-		::_wfopen_s(&fp, path, mode);
-	} else {
-		::_wfopen_s(&fp, fname, mode);
+		return _wfopen( path, mode );
 	}
-	return fp;
+	return _wfopen( fname, mode );
 }
 
 /*! fnameが相対パスの場合は、INIファイルのパスからの相対パスとして開く
@@ -236,18 +233,15 @@ FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 */
 FILE* _wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 {
-	FILE* fp = nullptr;
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
 		if( bOrExedir )
 			GetInidirOrExedir( path, fname );
 		else
 			GetInidir( path, fname );
-		::_wfopen_s(&fp, path, mode);
-	} else {
-		::_wfopen_s(&fp, fname, mode);
+		return _wfopen( path, mode );
 	}
-	return fp;
+	return _wfopen( fname, mode );
 }
 
 /* フォルダーの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
@@ -1103,7 +1097,7 @@ void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, in
 		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
 			// 入りきらなかったので1文字前までをコピー
 			wcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
-			::wcsncat_s(dest, nSize, L"...", _TRUNCATE);
+			wcscat_s(dest, nSize, L"...");
 			return;
 		}
 		strTempOld = strTemp;
@@ -1244,7 +1238,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 				strLeftFile += strFile; // C:\...\longfilename
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);
-				::wcsncat_s(dest, nSize, &path[nExtPos+1], _TRUNCATE); // 拡張子連結 C:\...\longf...ext
+				wcscat_s(dest, nSize, &path[nExtPos+1]); // 拡張子連結 C:\...\longf...ext
 			}else{
 				// ファイル名が置けないくらい拡張子か左側が長い。パスの左側を優先して残す
 				GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);

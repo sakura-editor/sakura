@@ -519,7 +519,7 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 			temp[0] = L'\0';
 		}
 		else if( m_Common.m_sBackup.m_bBackUpDustBox  ){
-			auto_snprintf_s(temp, _TRUNCATE, L"%ls\\", LS(STR_PROPCOMBK_DUSTBOX));
+			auto_sprintf( temp, L"%ls\\", LS(STR_PROPCOMBK_DUSTBOX) );
 		}
 		else{
 			wcsncpy_s( temp, L".\\", _TRUNCATE );
@@ -568,7 +568,7 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 		}
 	}
 	if( !m_Common.m_sBackup.m_bBackUpPathAdvanced ){	// 詳細設定モードでないときだけ自動更新する
-		auto_snprintf_s(m_Common.m_sBackup.m_szBackUpPathAdvanced, _TRUNCATE, L"%ls", temp);
+		auto_sprintf( m_Common.m_sBackup.m_szBackUpPathAdvanced, L"%ls", temp );
 		ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFILE, m_Common.m_sBackup.m_szBackUpPathAdvanced );
 	}
 	return;

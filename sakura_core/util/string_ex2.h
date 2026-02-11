@@ -37,6 +37,20 @@ int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith);
 inline void dupamp(const WCHAR* org, WCHAR* out)
 {	cescape( org, out, L'&', L'&' ); }
 
+/*
+	scanf的安全スキャン
+
+	使用例:
+		int a[3];
+		scan_ints("1,23,4,5", "%d,%d,%d", a);
+		//結果: a[0]=1, a[1]=23, a[2]=4 となる。
+*/
+int scan_ints(
+	const wchar_t*	pszData,	//!< [in]  データ文字列
+	const wchar_t*	pszFormat,	//!< [in]  データフォーマット
+	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
+);
+
 /*! @brief int2dec の第2引数の文字列出力先に必要十分なサイズ取得用
 	符号付き整数の最小値の場合に必要な長さを返す
 */

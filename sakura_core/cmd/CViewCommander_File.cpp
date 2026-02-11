@@ -392,9 +392,9 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( wcschr( GetDocument()->m_cDocFile.GetFilePath(), WCODE::SPACE ) ? TRUE : FALSE ){
-			auto_snprintf_s(szPath, _TRUNCATE, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath());
+			auto_sprintf( szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
-			auto_snprintf_s(szPath, _TRUNCATE, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath());
+			auto_sprintf( szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		m_pCommanderView->MySetClipboardData( szPath, wcslen( szPath ), false );
@@ -433,7 +433,7 @@ void CViewCommander::Command_BROWSE( void )
 		return;
 	}
 //	char	szURL[MAX_PATH + 64];
-//	auto_snprintf_s(szURL, _TRUNCATE, L"%ls", GetDocument()->m_cDocFile.GetFilePath());
+//	auto_sprintf( szURL, L"%ls", GetDocument()->m_cDocFile.GetFilePath() );
 	/* URLを開く */
 //	::ShellExecuteEx( NULL, L"open", szURL, NULL, NULL, SW_SHOW );
 
@@ -505,7 +505,7 @@ void CViewCommander::Command_PROFILEMGR( void )
 	CDlgProfileMgr profMgr;
 	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
 		WCHAR szOpt[MAX_PATH+10];
-		auto_snprintf_s(szOpt, _TRUNCATE, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str());
+		auto_sprintf( szOpt, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str() );
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;

@@ -302,14 +302,12 @@ bool CShareData::InitShareData()
 
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-			::wcsncpy_s(sWindow.m_szWindowCaptionActive, 
-				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>",
-				_TRUNCATE
-			);
-			::wcsncpy_s(sWindow.m_szWindowCaptionInactive, 
-				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>",
-				_TRUNCATE
-			);
+			wcscpy( sWindow.m_szWindowCaptionActive, 
+				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
+			wcscpy( sWindow.m_szWindowCaptionInactive, 
+				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
 		}
 
 		// [タブバー]タブ
@@ -318,9 +316,9 @@ bool CShareData::InitShareData()
 
 			sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 			sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
-			::wcsncpy_s(sTabBar.m_szTabWndCaption,
-				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}",
-				_TRUNCATE
+			wcscpy(	//@@@ 2003.06.13 MIK
+				sTabBar.m_szTabWndCaption,
+				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
 			);
 			sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 			sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
@@ -684,12 +682,12 @@ bool CShareData::InitShareData()
 				*/
 				WCHAR szSettingName[64];
 				int i = 0;
-				auto_snprintf_s(szSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);
+				auto_sprintf( szSettingName, L"印刷設定 %d", i + 1 );
 				CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 			}
 			for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 				m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-				auto_snprintf_s(m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);	/* 印刷設定の名前 */
+				auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
 			}
 		}
 

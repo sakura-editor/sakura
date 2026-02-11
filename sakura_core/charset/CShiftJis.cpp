@@ -246,21 +246,20 @@ EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem 
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CShiftJis::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
 	int				i;
 	unsigned char*	ps;
+	WCHAR*			pd;
 	bool			bbinary=false;
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInSjis) {
 		// Unicodeで表示
-		return CCodeBase::UnicodeToHex(src, dst, psStatusbar);
+		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
-
-	const auto cSrc = std::data(src);
 
 	cCharBuffer.AppendString(cSrc, 1);
 
@@ -276,13 +275,13 @@ EConvertResult CShiftJis::UnicodeToHex(std::wstring_view src, std::span<WCHAR> d
 
 	// Hex変換
 	ps = reinterpret_cast<unsigned char*>( cCharBuffer._GetMemory()->GetRawPtr() );
+	pd = pDst;
 	if( bbinary == false ){
-		for (i = cCharBuffer._GetMemory()->GetRawLength(); i >0; i--, ++ps) {
-			auto_snprintf_s(dst, _TRUNCATE, L"%02X", *ps);
-			dst = dst.subspan(2);
+		for (i = cCharBuffer._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
+			auto_sprintf( pd, L"%02X", *ps);
 		}
 	}else{
-		auto_snprintf_s(dst, _TRUNCATE, L"?%02X", *ps);
+		auto_sprintf( pd, L"?%02X", *ps );
 	}
 
 	return RESULT_COMPLETE;

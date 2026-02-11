@@ -47,10 +47,24 @@ if (-not((Get-Content $SonarScannerProperties | Select-String "^sonar.host.url=.
 }
 
 $sonarScannerArgs += @(
-  "-D`"sonar.cfamily.compile-commands=build/$Platform/$Configuration/bw-output/compile_commands.json`"",
-  "-D`"sonar.cfamily.cppunit.reportPath=*-googletest.xml`"",
-  "-D`"sonar.cfamily.cobertura.reportPaths=tests1-coverage.xml`""
+    "-D`"sonar.cfamily.compile-commands=build/$Platform/$Configuration/bw-output/compile_commands.json`""
 )
+
+$productId = vswhere -property productId -version "[$VsVersion,$([int]$VsVersion + 1))"
+
+$useOpenCppCoverage = ($env:GITHUB_ACTIONS -eq 'true') -or (-not ($productId -match "Enterprise$"))
+
+if (-not($useOpenCppCoverage)) {
+  $sonarScannerArgs += @(
+    "-D`"sonar.cfamily.vscoveragexml.reportsPath=TestResults/*/*.xml`""
+  )
+
+} elseif (Test-Path -Path "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe") {
+  $sonarScannerArgs += @(
+    "-D`"sonar.cfamily.cppunit.reportPath=*-googletest.xml`"",
+    "-D`"sonar.cfamily.cobertura.reportPaths=tests1-coverage.xml`""
+  )
+}
 
 $branch = & $env:CMD_GIT @("branch", "--show-current")
 

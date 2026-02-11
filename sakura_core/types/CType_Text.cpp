@@ -282,7 +282,7 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 			}
 			levelPrev = level;
 
-			nLength = auto_snprintf_s(szTitle, _TRUNCATE, L"%d - ", level);
+			nLength = auto_sprintf(szTitle,L"%d - ", level );
 			
 			wchar_t *pDest = szTitle + nLength; // 書き込み先
 			wchar_t *pDestEnd = szTitle + int(std::size(szTitle)) - 2;

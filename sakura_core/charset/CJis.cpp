@@ -472,20 +472,19 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CJis::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
 	int				i;
+	WCHAR*			pd;
 	unsigned char*	ps;
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInJis) {
 		// Unicodeで表示
-		return CCodeBase::UnicodeToHex(src, dst, psStatusbar);
+		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
-
-	const auto cSrc = std::data(src);
 
 	// 1文字データバッファ
 	cCharBuffer.SetString(cSrc, 1);
@@ -499,7 +498,8 @@ EConvertResult CJis::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, c
 	// Hex変換
 	bool	bInEsc;
 	bInEsc = false;
-	for (i = cCharBuffer._GetMemory()->GetRawLength(), ps = (unsigned char*)cCharBuffer._GetMemory()->GetRawPtr(); i >0; --i, ++ps) {
+	pd = pDst;
+	for (i = cCharBuffer._GetMemory()->GetRawLength(), ps = (unsigned char*)cCharBuffer._GetMemory()->GetRawPtr(); i >0; i--, ps ++) {
 		if (*ps == 0x1B) {
 			bInEsc = true;
 		}
@@ -509,8 +509,8 @@ EConvertResult CJis::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, c
 			}
 		}
 		else {
-			auto_snprintf_s(dst, _TRUNCATE, L"%02X", *ps);
-			dst = dst.subspan(2);
+			auto_sprintf( pd, L"%02X", *ps);
+			pd += 2;
 		}
 	}
 

@@ -468,8 +468,9 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 						}
 						if( i ){
 							::wcsncat_s(szFolder, L";", _TRUNCATE);
+							szFolder[nMaxPath-1] = L'\0';
 						}
-						::wcsncat_s(szFolder, szFolderItem, _TRUNCATE);
+						wcscat_s( szFolder, nMaxPath, szFolderItem );
 					}
 					::SetWindowText( hwnd, szFolder );
 				}
@@ -567,16 +568,16 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //		::EndDialog( hwndDlg, FALSE );
 		if (m_bSelectOnceThisText) {
 			if (m_pShareData->m_sSearchKeywords.m_aGrepFiles.size()) {
-				::wcsncpy_s(m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
+				wcsncpy_s(m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aGrepFolders.size()) {
-				::wcsncpy_s(m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
+				wcsncpy_s(m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-				::wcsncpy_s(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
+				wcsncpy_s(m_szExcludeFile, std::size(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
 			}
 			if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-				::wcsncpy_s(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
+				wcsncpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
 			}
 		}
 		CloseDialog( FALSE );
@@ -736,7 +737,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	}else{
 		std::wstring strFile(m_szFile);
 		if (strFile.substr(0, 6) == L":HWND:") {
-			::wcsncpy_s(m_szFile, L"*.*", _TRUNCATE);
+			wcsncpy_s(m_szFile, std::size(m_szFile), L"*.*", _TRUNCATE);
 		}
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);
@@ -822,9 +823,9 @@ int CDlgGrep::GetData( void )
 	if( bFromThisText ){
 		WCHAR szHwnd[_MAX_PATH];
 #ifdef _WIN64
-		auto_snprintf_s(szHwnd, _TRUNCATE, L":HWND:%016I64x", ::GetParent(GetHwnd()));
+		auto_sprintf(szHwnd, L":HWND:%016I64x", ::GetParent(GetHwnd()));
 #else
-		auto_snprintf_s(szHwnd, _TRUNCATE, L":HWND:%08x", ::GetParent(GetHwnd()));
+		auto_sprintf(szHwnd, L":HWND:%08x", ::GetParent(GetHwnd()));
 #endif
 		m_szFile = szHwnd;
 	}else{

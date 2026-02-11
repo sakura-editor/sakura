@@ -65,7 +65,7 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 		m_psi->sColorFile.clear();
 		m_psi->nColorType = ApiWrap::Combo_GetCurSel( GetItemHwnd( IDC_COMBO_COLORS ) ) - 1;
 		if (m_psi->nColorType >= MAX_TYPES && ApiWrap::Combo_GetLBText( GetItemHwnd( IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
-			if (::swscanf_s(buff1, L"File -- %s", buff2, unsigned(std::size(buff2))) > 0) {
+			if (swscanf( buff1, L"File -- %ls", buff2 ) > 0) {
 				m_psi->sColorFile = buff2;
 				m_psi->nColorType = MAX_TYPES;
 			}
@@ -108,13 +108,13 @@ void CDlgTypeAscertain::SetData( void )
 			continue;
 		}
 		if (type->m_szTypeExts[0] != L'\0' ) {		/* タイプ属性：拡張子リスト */
-			auto_snprintf_s( szText, _TRUNCATE, L"%s (%s)",
+			auto_sprintf( szText, L"%s (%s)",
 				type->m_szTypeName,	/* タイプ属性：名称 */
 				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}
 		else{
-			auto_snprintf_s( szText, _TRUNCATE, L"%s",
+			auto_sprintf( szText, L"%s",
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
@@ -133,7 +133,7 @@ void CDlgTypeAscertain::SetData( void )
 		bFind = FindNextFile( hFind, &wf )) {
 		if ( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
 			// 読込色設定ファイル発見
-			auto_snprintf_s(szText, _TRUNCATE, L"File -- %s", wf.cFileName);
+			auto_sprintf( szText, L"File -- %s", wf.cFileName );
 			ApiWrap::Combo_AddString( hwndCombo, szText );
 		}
 	}

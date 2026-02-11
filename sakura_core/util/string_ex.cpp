@@ -16,7 +16,6 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "util/std_macro.h"
-#include "util/tchar_convert.h"
 #include <limits.h>
 #include <locale.h>
 
@@ -192,6 +191,44 @@ const char* stristr_j( const char* s1, const char* s2 )
 }
 
 /*!
+	@brief 文字列の終端位置を調整する
+	@param[in, out] strOut	終端位置修正対象のインスタンス
+	@param[in]  cchOut		終端位置
+	@returns 終端位置を調整されたインスタンス。
+ */
+std::wstring& eos(std::wstring& strOut, size_t cchOut)
+{
+	if (strOut.empty() && cchOut < 8) {
+		std::wstring buf(strOut.data());
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
+	@brief 文字列の終端位置を調整する
+	@param[in, out] strOut	終端位置修正対象のインスタンス
+	@param[in]  cchOut		終端位置
+	@returns 終端位置を調整されたインスタンス。
+ */
+std::string& eos(std::string& strOut, size_t cchOut)
+{
+	if (strOut.empty() && cchOut < 16) {
+		std::string buf(strOut.data());
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
 	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
 		事前に確保したバッファに結果を書き込む高速バージョン
 	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
@@ -203,24 +240,27 @@ const char* stristr_j( const char* s1, const char* s2 )
  */
 int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
 {
-	strOut.clear();
-
 	// _vscwprintf() はフォーマットに必要な文字数を返す。
-	const size_t required = ::_vscwprintf(pszFormat, argList);
-	if (0 == required) {
-		return 0;
+	const int cchOut = ::_vscwprintf(pszFormat, argList);
+	if (cchOut <= 0) {
+		strOut.clear();
+		return cchOut;
 	}
 
 	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
 
 	// フォーマットする
-	const auto formatted = ::_vsnwprintf_s(std::data(strOut), std::size(strOut) + 1, _TRUNCATE, pszFormat, argList);
+	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	strOut.resize(formatted);
+	eos(strOut, cchOut);
 
-	return formatted;
+	return cchOut;
 }
 
 /*!
@@ -235,24 +275,27 @@ int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
  */
 int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList)
 {
-	strOut.clear();
-
 	// _vscwprintf() はフォーマットに必要な文字数を返す。
-	const size_t required = ::_vscprintf(pszFormat, argList);
-	if (0 == required) {
-		return 0;
+	const int cchOut = ::_vscprintf(pszFormat, argList);
+	if (cchOut <= 0) {
+		strOut.clear();
+		return cchOut;
 	}
 
 	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
 
 	// フォーマットする
-	const auto formatted = ::vsnprintf_s(std::data(strOut), std::size(strOut) + 1, _TRUNCATE, pszFormat, argList);
+	::vsprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	strOut.resize(formatted);
+	eos(strOut, cchOut);
 
-	return formatted;
+	return cchOut;
 }
 
 /*!
@@ -380,31 +423,70 @@ std::string strprintf(const CHAR* pszFormat, ...)
 //SJIS→UNICODE。終端にL'\0'を付けてくれる版。
 size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count)
 {
-	size_t ret = 0;
-	to_wcs(src, std::span{ dst, dst_count }, CP_SJIS);
+	size_t ret=::mbstowcs(dst,src,dst_count-1);
+	dst[ret]=L'\0';
 	return ret;
 }
-
-size_t mbstowcs2(wchar_t* pDst, size_t nDstCount, const char* pSrc, size_t nSrcCount)
+size_t mbstowcs2(wchar_t* pDst, int nDstCount, const char* pSrc, int nSrcCount)
 {
-	size_t ret = 0;
-	to_wcs(std::string_view{ pSrc, nSrcCount }, std::span{ pDst, nDstCount }, CP_SJIS);
-	return ret;
+	int ret=MultiByteToWideChar(
+		CP_SJIS,				// 2008/5/12 Uchi
+		0,
+		pSrc,
+		nSrcCount,
+		pDst,
+		nDstCount-1
+	);
+	pDst[ret]=L'\0';
+	return (size_t)ret;
 }
 
 //UNICODE→SJIS。終端に'\0'を付けてくれる版。
 size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
 {
-	size_t ret = 0;
-	to_mbs(src, std::span{ dst, dst_count }, CP_SJIS);
+	size_t ret=::wcstombs(dst,src,dst_count-1);
+	dst[ret]='\0';
 	return ret;
 }
 
 //SJIS→UNICODE。戻り値はnew[]で確保して返す。
 wchar_t* mbstowcs_new(const char* src)
 {
-	const auto buffer = cxx::to_wstring(src, CP_SJIS);
-	return ::_wcsdup(buffer.c_str());
+	size_t new_length=mbstowcs(nullptr,src,0);
+	wchar_t* ret=new wchar_t[new_length+1];
+	mbstowcs(ret,src,new_length);
+	ret[new_length]=L'\0';
+	return ret;
+}
+wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
+{
+	//必要な領域サイズ
+	int nNewLength = MultiByteToWideChar(
+		CP_SJIS,				// 2008/5/12 Uchi
+		0,
+		pSrc,
+		nSrcLen,
+		nullptr,
+		0
+	);
+	
+	//確保
+	wchar_t* pNew = new wchar_t[nNewLength+1];
+
+	//変換
+	nNewLength = MultiByteToWideChar(
+		CP_SJIS,				// 2008/5/12 Uchi
+		0,
+		pSrc,
+		nSrcLen,
+		pNew,
+		nNewLength
+	);
+	pNew[nNewLength] = L'\0';
+	if( pnDstLen ){
+		*pnDstLen = nNewLength;
+	}
+	return pNew;
 }
 
 /*!
@@ -416,33 +498,40 @@ wchar_t* mbstowcs_new(const char* src)
  */
 std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
 {
-	strOut.clear();
-
-	if (strInput.empty()) {
-		return strOut;
-	}
-
 	// 必要なバッファのサイズを確認する
-	size_t required = 0;
-	try {
-		required = cxx::count_as_wcs(strInput, CP_UTF8);
+	const auto cchOut = ::MultiByteToWideChar(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		nullptr,
+		0
+	);
 
-	} catch (const std::invalid_argument&) {
-		// 変換できない文字が含まれている場合
-		return strOut;
-	}
-
-	if (0 == required) {
+	if (cchOut <= 0) {
+		strOut.clear();
 		return strOut;
 	}
 
 	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
 
 	// 変換する
-	const auto converted = to_wcs(strInput, strOut, CP_UTF8);
+	::MultiByteToWideChar(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		strOut.data(),
+		(int)strOut.capacity()
+	);
 
-	strOut.resize(converted);
+	// NUL終端する
+	eos(strOut, cchOut);
 
 	return strOut;
 }
@@ -456,33 +545,44 @@ std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
  */
 std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
 {
-	strOut.clear();
-
-	if (strInput.empty()) {
-		return strOut;
-	}
-
 	// 必要なバッファのサイズを確認する
-	size_t required = 0;
-	try {
-		required = cxx::count_as_mbs( strInput, CP_UTF8 );
+	const auto cchOut= ::WideCharToMultiByte(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		nullptr,
+		0,
+		nullptr,
+		nullptr
+	);
 
-	} catch (const std::invalid_argument&) {
-		// 変換できない文字が含まれている場合
-		return strOut;
-	}
-
-	if (0 == required) {
+	if (cchOut <= 0) {
+		strOut.clear();
 		return strOut;
 	}
 
 	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
 
 	// 変換する
-	const auto converted = to_mbs(strInput, strOut, CP_UTF8);
+	::WideCharToMultiByte(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		strOut.data(),
+		(int)strOut.capacity(),
+		nullptr,
+		nullptr
+	);
 
-	strOut.resize(converted);
+	// NUL終端する
+	eos(strOut, cchOut);
 
 	return strOut;
 }

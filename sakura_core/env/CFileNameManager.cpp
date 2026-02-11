@@ -237,11 +237,10 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 						szMeta, szPath, int(std::size(szPath)) );
 				}
 				if( false == bFolderPath || L'\0' == szPath[0] ){
+					pStr = _wgetenv( szMeta );
 					// 環境変数
-					size_t returnValue = 0;
-					if (SFilePath szBuf; 0 == ::_wgetenv_s(&returnValue, szBuf, std::size(szBuf), szMeta) && returnValue) {
-						pStr = szBuf;
-						nPathLen = szBuf.Length();
+					if( nullptr != pStr ){
+						nPathLen = (int)wcslen( pStr );
 						if( nPathLen < _MAX_PATH ){
 							::wcsncpy_s(szPath, pStr, _TRUNCATE);
 						}else{
@@ -348,7 +347,7 @@ bool CFileNameManager::GetMenuFullLabel(
 	int ret = 0;
 	if( nullptr == pfi ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
-		ret = auto_snprintf_s( pszOutput, nBuffSize, _TRUNCATE, LS(STR_MENU_UNKOWN), szAccKey );
+		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_UNKOWN), szAccKey );
 		return 0 < ret;
 	}else if( pfi->m_bIsGrep ){
 		
@@ -374,13 +373,13 @@ bool CFileNameManager::GetMenuFullLabel(
 		//	Jan. 19, 2002 genta
 		//	&の重複処理を追加したため継続判定を若干変更
 		//	20100729 ExpandParameterにあわせて、・・・を...に変更
-		ret = auto_snprintf_s( pszOutput, nBuffSize, _TRUNCATE, LS(STR_MENU_GREP),
+		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_GREP),
 			szAccKey, pszKey,
 			( nGrepKeyLen > cmemDes.GetStringLength() ) ? L"...":L""
 		);
 	}else if( pfi->m_bIsDebug ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
-		ret = auto_snprintf_s( pszOutput, nBuffSize, _TRUNCATE, LS(STR_MENU_OUTPUT), szAccKey );
+		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_OUTPUT), szAccKey );
 	}else{
 		return GetMenuFullLabel(pszOutput, nBuffSize, bEspaceAmp, pfi->m_szPath, nId, pfi->m_bIsModified, pfi->m_nCharCode, bFavorite,
 			 index, bAccKeyZeroOrigin, hDC);
@@ -428,7 +427,7 @@ bool CFileNameManager::GetMenuFullLabel(
 		pszCharset = szCodePageName;
 	}
 	
-	int ret = auto_snprintf_s( pszOutput, nBuffSize, _TRUNCATE, L"%s%s%s%s%s",
+	int ret = auto_snprintf_s( pszOutput, nBuffSize, L"%s%s%s%s%s",
 		szAccKey, (bFavorite ? L"★ " : L""), pszName,
 		(bModified ? L" *":L""), pszCharset
 	);

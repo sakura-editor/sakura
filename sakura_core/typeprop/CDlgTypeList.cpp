@@ -210,10 +210,9 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				}else{
 					::EnableWindow( GetItemHwnd( IDC_CHECK_EXT_RMENU ), TRUE );
 					if( !m_bRegistryChecked[ nIdx ] ){
-						WCHAR exts[_countof(type->m_szTypeExts)] = {0};
+						WCHAR exts[std::size(type->m_szTypeExts)] = {0};
 						::wcsncpy_s(exts, type->m_szTypeExts, _TRUNCATE);
-						WCHAR* context = nullptr;
-						WCHAR *ext = ::wcstok_s(exts, CDocTypeManager::m_typeExtSeps, &context);
+						WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 
 						m_bExtRMenu[ nIdx ] = true;
 						m_bExtDblClick[ nIdx ] = true;
@@ -225,7 +224,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 								m_bExtRMenu[ nIdx ] &= bRMenu;
 								m_bExtDblClick[ nIdx ] &= bDblClick;
 							}
-							ext = ::wcstok_s(nullptr, CDocTypeManager::m_typeExtSeps, &context);
+							ext = _wcstok( nullptr, CDocTypeManager::m_typeExtSeps );
 						}
 						m_bRegistryChecked[ nIdx ] = true;
 					}
@@ -245,10 +244,9 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				ApiWrap::BtnCtl_SetCheck( hwndRMenu, !checked );
 				break;
 			}
-			WCHAR exts[_countof(type->m_szTypeExts)] = {0};
+			WCHAR exts[std::size(type->m_szTypeExts)] = {0};
 			::wcsncpy_s(exts, type->m_szTypeExts, _TRUNCATE);
-			WCHAR* context = nullptr;
-			WCHAR *ext = ::wcstok_s(exts, CDocTypeManager::m_typeExtSeps, &context);
+			WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;
 			while( nullptr != ext ){
 				if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == nullptr) {
@@ -270,7 +268,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 						}
 					}
 				}
-				ext = ::wcstok_s(nullptr, CDocTypeManager::m_typeExtSeps, &context);
+				ext = _wcstok( nullptr, CDocTypeManager::m_typeExtSeps );
 			}
 			m_bExtRMenu[nIdx] = checked;
 			::EnableWindow(hwndDblClick, checked);
@@ -285,10 +283,9 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				ApiWrap::BtnCtl_SetCheck( hwndDblClick, !checked );
 				break;
 			}
-			WCHAR exts[_countof(type->m_szTypeExts)] = {0};
+			WCHAR exts[std::size(type->m_szTypeExts)] = {0};
 			::wcsncpy_s(exts, type->m_szTypeExts, _TRUNCATE);
-			WCHAR* context = nullptr;
-			WCHAR *ext = ::wcstok_s(exts, CDocTypeManager::m_typeExtSeps, &context);
+			WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;
 			while( nullptr != ext ){
 				if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == nullptr) {
@@ -300,7 +297,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 						break;
 					}
 				}
-				ext = ::wcstok_s(nullptr, CDocTypeManager::m_typeExtSeps, &context);
+				ext = _wcstok( nullptr, CDocTypeManager::m_typeExtSeps );
 			}
 			m_bExtDblClick[ nIdx ] = checked;
 			return TRUE;
@@ -344,12 +341,12 @@ void CDlgTypeList::SetData( int selIdx )
 			continue;
 		}
 		if( type->m_szTypeExts[0] != L'\0' ){		/* タイプ属性：拡張子リスト */
-			auto_snprintf_s( szText, _TRUNCATE, L"%s ( %s )",
+			auto_sprintf( szText, L"%s ( %s )",
 				type->m_szTypeName,	/* タイプ属性：名称 */
 				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}else{
-			auto_snprintf_s( szText, _TRUNCATE, L"%s",
+			auto_sprintf( szText, L"%s",
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
@@ -533,7 +530,7 @@ bool CDlgTypeList::InitializeType( void )
 		bool bUpdate = true;
 		for(int i = 1; i < GetDllShareData().m_nTypesCount; i++){
 			if( bUpdate ){
-				auto_snprintf_s(type->m_szTypeName, _TRUNCATE, LS(STR_DLGTYPELIST_SETNAME), nNameNum);
+				auto_sprintf( type->m_szTypeName, LS(STR_DLGTYPELIST_SETNAME), nNameNum );
 				nNameNum++;
 				bUpdate = false;
 			}
@@ -599,7 +596,7 @@ bool CDlgTypeList::CopyType()
 				n++;
 			}
 			WCHAR szNum[12];
-			auto_snprintf_s(szNum, _TRUNCATE, L"%d", n);
+			auto_sprintf( szNum, L"%d", n );
 			auto nLen = int(wcslen(szNum));
 			WCHAR szTemp[std::size(type.m_szTypeName) + 12];
 			::wcsncpy_s(szTemp, type.m_szTypeName, _TRUNCATE);

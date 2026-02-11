@@ -81,8 +81,8 @@ next:
 CWnd::CWnd(const WCHAR* pszInheritanceAppend)
 {
 #ifdef _DEBUG
-	::wcsncpy_s(m_szClassInheritances, L"CWnd", _TRUNCATE );
-	::wcsncat_s(m_szClassInheritances, pszInheritanceAppend, _TRUNCATE );
+	wcsncpy_s(m_szClassInheritances, std::size(m_szClassInheritances), L"CWnd", _TRUNCATE );
+	wcsncat_s(m_szClassInheritances, std::size(m_szClassInheritances), pszInheritanceAppend, _TRUNCATE );
 #endif
 }
 

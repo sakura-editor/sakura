@@ -389,7 +389,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
 							if( L'\0' != szGotPath[0] ){
 								/* 正常終了 */
-								::wcsncpy_s(lpszPath, _MAX_PATH, szGotPath, _TRUNCATE);
+								wcscpy_s( lpszPath, _MAX_PATH, szGotPath );
 								bRes = TRUE;
 							}
 						}

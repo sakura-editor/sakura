@@ -229,7 +229,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		cCmdLine.AppendString(L"\" -GFOLDER=\"");
 		cCmdLine.AppendString(cmWork3.GetStringPtr());
 		cCmdLine.AppendString(L"\" -GCODE=");
-		auto_snprintf_s(szTemp, _TRUNCATE, L"%d", cDlgGrepRep.m_nGrepCharSet);
+		auto_sprintf( szTemp, L"%d", cDlgGrepRep.m_nGrepCharSet );
 		cCmdLine.AppendString(szTemp);
 
 		//GOPTオプション
