@@ -202,7 +202,7 @@ HINSTANCE CDlgFuncList::m_lastRcInstance = nullptr;
 CDlgFuncList::CDlgFuncList() : CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( std::size(anchorList) == std::extent_v<decltype(m_rcItems)> );
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	m_pcFuncInfoArr = nullptr;		/* 関数情報配列 */
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */
@@ -572,9 +572,9 @@ void CDlgFuncList::SetData()
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineCRLF));
+				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
 			}else{
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineLAYOUT));
+				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
 			}
 			item.mask = LVIF_TEXT | LVIF_PARAM;
 			item.pszText = szText;
@@ -586,9 +586,9 @@ void CDlgFuncList::SetData()
 			// 2010.03.17 syat 桁追加
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColCRLF));
+				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
 			}else{
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColLAYOUT));
+				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
 			}
 			item.mask = LVIF_TEXT;
 			item.pszText = szText;
@@ -626,12 +626,12 @@ void CDlgFuncList::SetData()
 			/* クリップボードにコピーするテキストを編集 */
 			if(item.pszText[0] != L'\0'){
 				// 検出結果の種類(関数,,,)があるとき
-				auto_snprintf_s(
-					szText, _TRUNCATE,
+				auto_sprintf(
+					szText,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-					int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				// "%s(%s)\r\n"
@@ -641,12 +641,12 @@ void CDlgFuncList::SetData()
 				m_cmemClipText.AppendString(L")\r\n");
 			}else{
 				// 検出結果の種類(関数,,,)がないとき
-				auto_snprintf_s(
-					szText, _TRUNCATE,
+				auto_sprintf(
+					szText,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-					int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
@@ -897,6 +897,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
 	CLayoutInt		nFuncColOld;
+	CLayoutInt		nFuncLineTop(INT_MAX);
+	CLayoutInt		nFuncColTop(INT_MAX);
 	TV_INSERTSTRUCT	tvis;
 	const WCHAR*	pPos;
 	HTREEITEM		htiGlobal = nullptr;	// Jan. 04, 2001 genta C++と統合
@@ -1048,11 +1050,11 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 					{
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
-							//::wcsncat_s(pClassName, L" 名前空間", _TRUNCATE);
+							//wcscat( pClassName, L" 名前空間" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE);
 						}
 						else
-							//::wcsncat_s(pClassName, L" クラス", _TRUNCATE);
+							//wcscat( pClassName, L" クラス" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS);
 					}
 					tvis.hParent = htiParent;
@@ -1129,12 +1131,12 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 
 		/* クリップボードにコピーするテキストを編集 */
 		WCHAR szText[2048];
-		auto_snprintf_s(
-			szText, _TRUNCATE,
+		auto_sprintf(
+			szText,
 			L"%s(%d,%d): ",
 			m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-			int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-			int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+			pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+			pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%s%ls\r\n"
@@ -1198,9 +1200,9 @@ void CDlgFuncList::SetListVB (void)
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineCRLF));
+			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
 		}else{
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineLAYOUT));
+			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
 		}
 		item.mask = LVIF_TEXT | LVIF_PARAM;
 		item.pszText = szText;
@@ -1212,9 +1214,9 @@ void CDlgFuncList::SetListVB (void)
 		// 2010.03.17 syat 桁追加
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColCRLF));
+			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
 		}else{
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColLAYOUT));
+			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
 		}
 		item.mask = LVIF_TEXT;
 		item.pszText = szText;
@@ -1239,57 +1241,57 @@ void CDlgFuncList::SetListVB (void)
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			::wcsncpy_s(szOption, LS(STR_DLGFNCLST_VB_STATIC), _TRUNCATE);
+			wcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
-				::wcsncat_s(szOption, std::size(szOption) - ::wcslen(szOption), LS(STR_DLGFNCLST_VB_PRIVATE), _TRUNCATE); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), int(std::size(szOption)) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			case 3  :	// フレンド(Friend)
-				::wcsncat_s(szOption, std::size(szOption) - ::wcslen(szOption), LS(STR_DLGFNCLST_VB_FRIEND), _TRUNCATE); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_FRIEND), int(std::size(szOption)) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			default :	// パブリック(Public)
-				::wcsncat_s(szOption, std::size(szOption) - ::wcslen(szOption), LS(STR_DLGFNCLST_VB_PUBLIC), _TRUNCATE); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), int(std::size(szOption)) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
 		int nInfo = pcFuncInfo->m_nInfo;
 		switch (nInfo & 0x0f) {
 			case 1:		// 関数(Function)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_FUNCTION), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
 				break;
 
 			// 2006.12.12 Moca ステータス→プロシージャに変更
 			case 2:		// プロシージャ(Sub)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROC), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROC));
 				break;
 
 			case 3:		// プロパティ 取得(Property Get)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPGET), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPGET));
 				break;
 
 			case 4:		// プロパティ 設定(Property Let)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPLET), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPLET));
 				break;
 
 			case 5:		// プロパティ 参照(Property Set)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPSET), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPSET));
 				break;
 
 			case 6:		// 定数(Const)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_CONST), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_CONST));
 				break;
 
 			case 7:		// 列挙型(Enum)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_ENUM), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_ENUM));
 				break;
 
 			case 8:		// ユーザ定義型(Type)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_TYPE), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_TYPE));
 				break;
 
 			case 9:		// イベント(Event)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_EVENT), _TRUNCATE);
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_EVENT));
 				break;
 
 			default:	// 未定義なのでクリア
@@ -1297,7 +1299,7 @@ void CDlgFuncList::SetListVB (void)
 		}
 		if ( 2 == ((nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
-			::wcsncat_s(szType, std::size(szType) - ::wcslen(szType), LS(STR_DLGFNCLST_VB_DECL), _TRUNCATE);
+			wcsncat(szType, LS(STR_DLGFNCLST_VB_DECL), int(std::size(szType)) - wcslen(szType));
 		}
 
 		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
@@ -1305,9 +1307,9 @@ void CDlgFuncList::SetListVB (void)
 			szTypeOption[0] = L'\0';	//	2006.12.17 genta 全体を0で埋める必要はない
 		} else
 		if ( szOption[0] == L'\0' ) {
-			auto_snprintf_s(szTypeOption, _TRUNCATE, L"%s", szType);
+			auto_sprintf(szTypeOption, L"%s", szType);
 		} else {
-			auto_snprintf_s(szTypeOption, _TRUNCATE, L"%s（%s）", szType, szOption);
+			auto_sprintf(szTypeOption, L"%s（%s）", szType, szOption);
 		}
 		item.pszText = szTypeOption;
 		item.iItem = i;
@@ -1318,12 +1320,12 @@ void CDlgFuncList::SetListVB (void)
 		if(item.pszText[0] != L'\0'){
 			// 検出結果の種類(関数,,,)があるとき
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
-			auto_snprintf_s(
-				szText, _TRUNCATE,
+			auto_sprintf(
+				szText,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-				int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s(%s)\r\n"
@@ -1333,12 +1335,12 @@ void CDlgFuncList::SetListVB (void)
 			m_cmemClipText.AppendString(L")\r\n");
 		}else{
 			// 検出結果の種類(関数,,,)がないとき
-			auto_snprintf_s(
-				szText, _TRUNCATE,
+			auto_sprintf(
+				szText,
 				L"%s(%d,%d): ",
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-				int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s\r\n"
@@ -1461,9 +1463,9 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				
 				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
 					WCHAR linenum[32];
-					auto_snprintf_s( linenum, _TRUNCATE, L"(%d,%d): ",
-						int(pcFuncInfo->m_nFuncLineCRLF),				/* 検出行番号 */
-						int(pcFuncInfo->m_nFuncColCRLF)					/* 検出桁番号 */
+					auto_sprintf( linenum, L"(%d,%d): ",
+						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
 					);
 					text.AppendString( linenum );
 				}
@@ -1534,7 +1536,7 @@ void CDlgFuncList::SetTreeFile()
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
 		// item.m_szTargetPath => szPath メタ文字の展開
 		if( !CFileNameManager::ExpandMetaToFolder(item.m_szTargetPath, szPath, int(std::size(szPath))) ){
-			::wcsncpy_s(szPath, L"<Error:Long Path>", _TRUNCATE);
+			wcscpy_s(szPath, std::size(szPath), L"<Error:Long Path>");
 		}
 		// szPath => szPath2 <iniroot>展開
 		const WCHAR* pszFrom = szPath;
@@ -1542,18 +1544,18 @@ void CDlgFuncList::SetTreeFile()
 			CNativeW strTemp(pszFrom);
 			strTemp.Replace(L"<iniroot>", IniDirPath.c_str());
 			if( int(std::size(szPath2)) <= strTemp.GetStringLength() ){
-				::wcsncpy_s(szPath2, std::size(szPath), L"<Error:Long Path>", _TRUNCATE);
+				wcscpy_s(szPath2, std::size(szPath), L"<Error:Long Path>");
 			}else{
-				::wcsncpy_s(szPath2, std::size(szPath), strTemp.GetStringPtr(), _TRUNCATE);
+				wcscpy_s(szPath2, std::size(szPath), strTemp.GetStringPtr());
 			}
 		}else{
-			::wcsncpy_s(szPath2, pszFrom, _TRUNCATE);
+			wcscpy(szPath2, pszFrom);
 		}
 		// szPath2 => szPath 「.」やショートパス等の展開
 		pszFrom = szPath2;
 		if( ::GetLongFileName(pszFrom, szPath) ){
 		}else{
-			::wcsncpy_s(szPath, pszFrom, _TRUNCATE);
+			wcscpy(szPath, pszFrom);
 		}
 		while( item.m_nDepth < (int)hParentTree.size() - 1 ){
 			hParentTree.resize(hParentTree.size() - 1);
@@ -3896,7 +3898,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 		// 各フォルダーのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
 		::GetLongFileName( L".", szPath );
-		::wcsncat_s(szPath, L"\\", _TRUNCATE);
+		wcscat( szPath, L"\\" );
 		int maxDir = CDlgTagJumpList::CalcMaxUpDirectory( szPath );
 		for( int i = 0; i <= maxDir; i++ ){
 			CDataProfile cProfile;

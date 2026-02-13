@@ -101,8 +101,8 @@ CMacroManagerBase* CWSHMacroManager::Creator(const WCHAR* FileExt)
 {
 	WCHAR FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
 	
-	::wcsncpy_s(FileExtWithDot, L".", _TRUNCATE);
-	::wcsncat_s(FileExtWithDot, FileExt, _TRUNCATE);
+	wcscpy( FileExtWithDot, L"." );
+	wcscat( FileExtWithDot, FileExt );
 
 	if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, nullptr, FileType, 1024))
 	{

@@ -10,5 +10,7 @@ $productId = vswhere -property productId -version "[$VsVersion,$([int]$VsVersion
 
 Write-Host "`$productId is '$productId'"
 
+$useOpenCppCoverage = ($env:GITHUB_ACTIONS -eq 'true') -or (-not ($productId -match "Enterprise$"))
+
 # Invoke Tests1.
-. "$PSScriptRoot\Run-Test.ps1" "$HomePath\$Platform\$Configuration\tests1.exe" $HomePath
+. "$PSScriptRoot\Run-Test.ps1" "$HomePath\$Platform\$Configuration\tests1.exe" $useOpenCppCoverage $HomePath

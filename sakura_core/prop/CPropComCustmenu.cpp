@@ -289,7 +289,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 //			idListBox = (int) LOWORD(wParam);	// identifier of list box
 //			hwndListBox = (HWND) lParam;		// handle of list box
 				WCHAR		szKey[2];
-				auto_snprintf_s(szKey, _TRUNCATE, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]);
+				auto_sprintf( szKey, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
 				{
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
 						G_AppInstance(),
@@ -307,20 +307,18 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 
 				{
-					std::array<KEYCODE, 3> keycode{};
-					int converted = 0;
-					::wctomb_s(&converted, std::data(keycode), std::size(keycode), szKey[0]);
+					KEYCODE keycode[3]={0}; wctomb(keycode, szKey[0]);
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = keycode[0];
 				}
 //@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
 				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
-					auto_snprintf_s( szLabel2, _TRUNCATE, L"%s(%hc)",
+					auto_sprintf( szLabel2, L"%s(%hc)",
 						szLabel,
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]
 					);
 				}
 				else {
-					auto_snprintf_s(szLabel2, _TRUNCATE, L"%ls", szLabel);
+					auto_sprintf( szLabel2, L"%ls", szLabel );
 				}
 
 				ApiWrap::List_InsertString( hwndLIST_RES, nIdx2, szLabel2 );
@@ -697,7 +695,8 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	ApiWrap::List_ResetContent( hwndLIST_RES );
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
-			::wcsncpy_s(szLabel, LS(STR_PROPCOMCUSTMENU_SEP), _TRUNCATE);	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			wcsncpy( szLabel, LS(STR_PROPCOMCUSTMENU_SEP), int(std::size(szLabel)) - 1 );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			szLabel[std::size(szLabel) - 1] = L'\0';
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
@@ -705,9 +704,9 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 		}
 		/* キー */
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
-			::wcsncpy_s(szLabel2, szLabel, _TRUNCATE);
+			wcscpy( szLabel2, szLabel );
 		}else{
-			auto_snprintf_s( szLabel2, _TRUNCATE, L"%ls(%hc)",
+			auto_sprintf( szLabel2, L"%ls(%hc)",
 				szLabel,
 				m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]
 			);

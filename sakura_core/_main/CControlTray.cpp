@@ -83,16 +83,16 @@ void CControlTray::DoGrep()
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		::wcsncpy_s(m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);		/* 検索ファイル */
+		wcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		::wcsncpy_s(m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
+		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-		::wcsncpy_s(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
+		wcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-		::wcsncpy_s(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
+		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダー */
 	}
 
 	/* Grepダイアログの表示 */
@@ -132,23 +132,23 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	cCmdLine.AppendString(L"\" -GFOLDER=\"");
 	cCmdLine.AppendString(cmWork3.GetStringPtr());
 	cCmdLine.AppendString(L"\" -GCODE=");
-	auto_snprintf_s(szTemp, _TRUNCATE, L"%d", cDlgGrep.m_nGrepCharSet);
+	auto_sprintf( szTemp, L"%d", cDlgGrep.m_nGrepCharSet );
 	cCmdLine.AppendString(szTemp);
 
 	//GOPTオプション
 	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)::wcsncat_s(pOpt, L"S", _TRUNCATE);	// サブフォルダーからも検索する
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)::wcsncat_s(pOpt, L"L", _TRUNCATE);	// 英大文字と英小文字を区別する
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)::wcsncat_s(pOpt, L"R", _TRUNCATE);	// 正規表現
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )::wcsncat_s(pOpt, L"P", _TRUNCATE);	// 行を出力する
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )::wcsncat_s(pOpt, L"N", _TRUNCATE);	// 否ヒット行を出力する 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)::wcsncat_s(pOpt, L"W", _TRUNCATE);	// 単語単位で探す
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"1", _TRUNCATE);	// Grep: 出力形式
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"2", _TRUNCATE);	// Grep: 出力形式
-	if( 3 == cDlgGrep.m_nGrepOutputStyle		)::wcsncat_s(pOpt, L"3", _TRUNCATE);
-	if( cDlgGrep.m_bGrepOutputFileOnly		)::wcsncat_s(pOpt, L"F", _TRUNCATE);
-	if( cDlgGrep.m_bGrepOutputBaseFolder		)::wcsncat_s(pOpt, L"B", _TRUNCATE);
-	if( cDlgGrep.m_bGrepSeparateFolder		)::wcsncat_s(pOpt, L"D", _TRUNCATE);
+	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
+	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
+	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
+	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
+	if( cDlgGrep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
+	if( cDlgGrep.m_sSearchOption.bWordOnly		)wcscat( pOpt, L"W" );	// 単語単位で探す
+	if( 1 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
+	if( 2 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
+	if( 3 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
+	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
+	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
+	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
 	if( pOpt[0] != L'\0' ){
 		cCmdLine.AppendString( L" -GOPT=" );
 		cCmdLine.AppendString( pOpt );
@@ -276,7 +276,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
-	::wcsncpy_s(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, _TRUNCATE);
+	wcscpy(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
 
 	return GetTrayHwnd();
 }
@@ -603,7 +603,7 @@ LRESULT CControlTray::DispatchEvent(
 		case PM_CHANGESETTING_ALL:
 			{
 				bool bChangeLang = wcscmp( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, m_szLanguageDll ) != 0;
-				::wcsncpy_s(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, _TRUNCATE);
+				wcscpy( m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 				std::vector<std::wstring> values;
 				if( bChangeLang ){
 					CShareData::getInstance()->ConvertLangValues(values, true);
@@ -987,7 +987,7 @@ void CControlTray::OnCommand( WORD wNotifyCode, [[maybe_unused]] WORD wID , [[ma
 
 bool CControlTray::OnSetTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount <= 0 || size_t(m_pShareData->m_nTypesCount) <= index) {
+	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
 		return false;
 	}
 
@@ -1002,8 +1002,8 @@ bool CControlTray::OnSetTypeSetting(size_t index)
 	types[index]->m_nIdx = int(index);
 
 	auto& typeMini = m_pShareData->m_TypeMini[index];
-	::wcsncpy_s(typeMini.m_szTypeName, type.m_szTypeName, _TRUNCATE);
-	::wcsncpy_s(typeMini.m_szTypeExts, type.m_szTypeExts, _TRUNCATE);
+	::wcscpy_s(typeMini.m_szTypeName, type.m_szTypeName);
+	::wcscpy_s(typeMini.m_szTypeExts, type.m_szTypeExts);
 	typeMini.m_id = type.m_id;
 	typeMini.m_encoding = type.m_encoding;
 
@@ -1012,7 +1012,7 @@ bool CControlTray::OnSetTypeSetting(size_t index)
 
 bool CControlTray::OnGetTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount <= 0 || size_t(m_pShareData->m_nTypesCount) <= index) {
+	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
 		return false;
 	}
 
@@ -1023,7 +1023,7 @@ bool CControlTray::OnGetTypeSetting(size_t index)
 
 bool CControlTray::OnAddTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount < 0 || int(MAX_TYPES) <= m_pShareData->m_nTypesCount || size_t(m_pShareData->m_nTypesCount) < index) {
+	if (m_pShareData->m_nTypesCount < 0 || int(MAX_TYPES) <= m_pShareData->m_nTypesCount || m_pShareData->m_nTypesCount < index) {
 		return false;
 	}
 
@@ -1066,7 +1066,7 @@ bool CControlTray::OnAddTypeSetting(size_t index)
 
 bool CControlTray::OnDelTypeSetting(size_t index)
 {
-	if (m_pShareData->m_nTypesCount <= 0 || size_t(m_pShareData->m_nTypesCount) <= index) {
+	if (m_pShareData->m_nTypesCount <= 0 || m_pShareData->m_nTypesCount <= index) {
 		return false;
 	}
 
@@ -1154,16 +1154,16 @@ bool CControlTray::OpenNewEditor(
 	//アプリケーションパス
 	WCHAR szEXE[MAX_PATH + 1];
 	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)) );
-	cCmdLineBuf.Append(std::format(LR"("{}")", szEXE));
+	cCmdLineBuf.AppendF( L"\"%s\"", szEXE );
 
 	// ファイル名
-	if( sLoadInfo.cFilePath.c_str()[0] != L'\0' )	cCmdLineBuf.Append(std::format(LR"( "{}")", std::wstring_view{ sLoadInfo.cFilePath }));
+	if( sLoadInfo.cFilePath.c_str()[0] != L'\0' )	cCmdLineBuf.AppendF( L" \"%s\"", sLoadInfo.cFilePath.c_str() );
 
 	// コード指定
-	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.Append(std::format(L" -CODE={}", int(sLoadInfo.eCharCode)));
+	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( L" -CODE=%d", sLoadInfo.eCharCode );
 
 	// ビューモード指定
-	if( sLoadInfo.bViewMode )cCmdLineBuf.Append(L" -R");
+	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( L" -R" );
 
 	// グループID
 	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
@@ -1171,15 +1171,15 @@ bool CControlTray::OpenNewEditor(
 		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
 		int nGroup = CAppNodeManager::getInstance()->GetEditNode( hwndAncestor )->GetGroup();
 		if( nGroup > 0 ){
-			cCmdLineBuf.Append(std::format(L" -GROUP={}", nGroup));
+			cCmdLineBuf.AppendF( L" -GROUP=%d", nGroup );
 		}
 	}else{
 		// 空いているグループIDを使用する
-		cCmdLineBuf.Append(std::format(L" -GROUP={}", CAppNodeManager::getInstance()->GetFreeGroupId()));
+		cCmdLineBuf.AppendF( L" -GROUP=%d", CAppNodeManager::getInstance()->GetFreeGroupId() );
 	}
 
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		cCmdLineBuf.Append(std::format(LR"( -PROF="{}")", CCommandLine::getInstance()->GetProfileName()));
+		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", CCommandLine::getInstance()->GetProfileName() );
 	}
 
 	// 追加のコマンドラインオプション
@@ -1209,7 +1209,7 @@ bool CControlTray::OpenNewEditor(
 				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;
 			}
-			::wcsncpy_s(szResponseFile, pszTempFile, _TRUNCATE);
+			wcscpy(szResponseFile, pszTempFile);
 			free(pszTempFile);
 			CTextOutputStream output(szResponseFile);
 			if( !output ){
@@ -1221,9 +1221,9 @@ bool CControlTray::OpenNewEditor(
 			output.WriteString(szCmdLineOption);
 			output.Close();
 			sync = true;
-			cCmdLineBuf.Append(std::format(LR"( -@="{}")", szResponseFile));
+			cCmdLineBuf.AppendF(L" -@=\"%s\"", szResponseFile);
 		}else{
-			cCmdLineBuf.Append(std::format(L" {}", szCmdLineOption));
+			cCmdLineBuf.AppendF(L" %s", szCmdLineOption);
 		}
 	}
 	// -- -- -- -- プロセス生成 -- -- -- -- //
@@ -1257,7 +1257,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	WCHAR szCmdLine[1024]; ::wcsncpy_s(szCmdLine, cCmdLineBuf.c_str(), _TRUNCATE);
+	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列
@@ -1375,10 +1375,10 @@ bool CControlTray::OpenNewEditor2(
 	// 追加のコマンドラインオプション
 	CCommandLineString cCmdLine;
 	if( pfi != nullptr ){
-		if( pfi->m_ptCursor.x >= 0					)cCmdLine.Append(std::format(L" -X={}", int(pfi->m_ptCursor.x) + 1));
-		if( pfi->m_ptCursor.y >= 0					)cCmdLine.Append(std::format(L" -Y={}", int(pfi->m_ptCursor.y) + 1));
-		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.Append(std::format(L" -VX={}", (Int)pfi->m_nViewLeftCol + 1));
-		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.Append(std::format(L" -VY={}", (Int)pfi->m_nViewTopLine + 1));
+		if( pfi->m_ptCursor.x >= 0					)cCmdLine.AppendF( L" -X=%d", int(pfi->m_ptCursor.x) + 1 );
+		if( pfi->m_ptCursor.y >= 0					)cCmdLine.AppendF( L" -Y=%d", int(pfi->m_ptCursor.y) + 1 );
+		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VX=%d", (Int)pfi->m_nViewLeftCol + 1 );
+		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VY=%d", (Int)pfi->m_nViewTopLine + 1 );
 	}
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = pfi ? pfi->m_szPath : L"";

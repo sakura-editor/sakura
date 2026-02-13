@@ -30,8 +30,8 @@ bool CWordParse::WhereCurrentWord_2(
 {
 	using namespace WCODE;
 
-	CLogicInt nLineLen{ (int)cchLine };
-	CLogicInt nIdx{ (int)index };
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
 
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
@@ -247,8 +247,8 @@ bool CWordParse::SearchNextWordPosition(
 	BOOL			bStopsBothEnds	//	単語の両端で止まる
 )
 {
-	CLogicInt nLineLen{ (int)cchLine };
-	CLogicInt nIdx{ (int)index };
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
 
 	// 文字種類が変わるまで後方へサーチ
 	// 空白とタブは無視する
@@ -296,8 +296,8 @@ bool CWordParse::SearchNextWordPosition4KW(
 	BOOL			bStopsBothEnds	//	単語の両端で止まる
 )
 {
-	CLogicInt nLineLen{ (int)cchLine };
-	CLogicInt nIdx{ (int)index };
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
 
 	// 文字種類が変わるまで後方へサーチ
 	// 空白とタブは無視する
@@ -341,8 +341,8 @@ bool CWordParse::SearchPrevWordPosition(
 	BOOL bStopsBothEnds
 )
 {
-	CLogicInt nLineLen{ (int)cchLine };
-	CLogicInt nIdx{ (int)index };
+	CLogicInt nLineLen(cchLine);
+	CLogicInt nIdx(index);
 
 	/* 現在位置の文字の種類を調べる */
 	ECharKind	nCharKind = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdx );

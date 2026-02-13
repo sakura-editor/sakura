@@ -164,7 +164,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					static std::wstring	sTrgDir;
 					CDlgOpenFile	cDlgOpenFile;
 					WCHAR			szPath[_MAX_PATH + 1];
-					::wcsncpy_s(szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()), _TRUNCATE);
+					wcscpy( szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()));
 					// ファイルオープンダイアログの初期化
 					cDlgOpenFile.Create(
 						G_AppInstance(),
@@ -350,7 +350,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT | LVIF_PARAM;
 		sItem.iItem = index;
 		sItem.iSubItem = 0;
-		::_itow_s(index, buf, 10);
+		_itow( index, buf, 10 );
 		sItem.pszText = buf;
 		sItem.lParam = index;
 		ListView_InsertItem( hListView, &sItem );
@@ -557,18 +557,18 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	//アプリケーションパス
 	WCHAR szExePath[MAX_PATH + 1];
 	::GetModuleFileName( nullptr, szExePath, int(std::size(szExePath)) );
-	cCmdLineBuf.Append(std::format(LR"("{}")", szExePath));
+	cCmdLineBuf.AppendF( L"\"%s\"", szExePath );
 
 	// ファイル名
-	cCmdLineBuf.Append(std::format(LR"( "{}")", sReadMeName));
+	cCmdLineBuf.AppendF( L" \"%s\"", sReadMeName.c_str() );
 
 	// コマンドラインオプション
-	cCmdLineBuf.Append(L" -R -CODE=99");
+	cCmdLineBuf.AppendF(L" -R -CODE=99");
 
 	// グループID
 	int nGroup = GetDllShareData().m_sNodes.m_nGroupSequences;
 	if( nGroup > 0 ){
-		cCmdLineBuf.Append(std::format(L" -GROUP={}", nGroup + 1));
+		cCmdLineBuf.AppendF( L" -GROUP=%d", nGroup+1 );
 	}
 
 	//CreateProcessに渡すSTARTUPINFOを作成
@@ -579,7 +579,7 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	ZeroMemory( &pi, sizeof(pi) );
 
 	WCHAR	szCmdLine[1024];
-	::wcsncpy_s(szCmdLine, cCmdLineBuf.c_str(), _TRUNCATE);
+	wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
 	//リソースリーク対策
 	BOOL bRet = ::CreateProcess( nullptr, szCmdLine, nullptr, nullptr, TRUE,
 		CREATE_NEW_CONSOLE, nullptr, nullptr, &sui, &pi );

@@ -387,8 +387,8 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 		szFile, int(std::size(szFile))
 	);
 	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
-	::wcsncpy_s(m_szInitialDir, szDrive, _TRUNCATE);
-	::wcsncat_s(m_szInitialDir, szDir, _TRUNCATE);
+	wcscpy( m_szInitialDir, szDrive );
+	wcscat( m_szInitialDir, szDir );
 
 
 	return;
@@ -419,10 +419,10 @@ void CDlgOpenFile_CommonItemDialog::Create(
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, nullptr, nullptr );
 		// 2010.08.28 相対パス解決
 		WCHAR szRelPath[_MAX_PATH];
-		auto_snprintf_s(szRelPath, _TRUNCATE, L"%s%s", szDrive, szDir);
+		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
-			::wcsncpy_s(m_szInitialDir, p, _TRUNCATE);
+			wcscpy(m_szInitialDir, p );
 		}
 	}
 	m_vMRU = vMRU;
@@ -468,7 +468,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 	std::vector<std::wstring> fileNames;
 	bool ret = DoModalOpenDlgImpl0(false, &fileNames, L"", specs);
 	if (ret) {
-		::wcsncpy_s(pszPath, _MAX_PATH, fileNames[0].c_str(), _TRUNCATE);
+		wcscpy(pszPath, fileNames[0].c_str());
 	}
 	return ret;
 }
@@ -484,7 +484,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 		const WCHAR* pOrg = pszPath;
 		if( ::GetLongFileName( pOrg, szFullPath ) ){
 			// 成功。書き戻す
-			::wcsncpy_s(pszPath, _MAX_PATH, szFullPath, _TRUNCATE);
+			wcscpy( pszPath , szFullPath );
 		}
 	}
 
@@ -506,7 +506,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 		CCodeTypesForCombobox cCodeTypes;
 		bool bCodeSel = false;
 		ECodeType eCodeSel = CODE_NONE;
-		for( int i = (m_customizeSetting.bSkipAutoDetect ? 1 : 0) /* 保存の場合は自動選択飛ばし */; i < int(cCodeTypes.GetCount()); ++i ){
+		for( int i = (m_customizeSetting.bSkipAutoDetect ? 1 : 0) /* 保存の場合は自動選択飛ばし */; i < cCodeTypes.GetCount(); ++i ){
 			auto code = cCodeTypes.GetCode(i);
 			hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)code, cCodeTypes.GetName(i)); RETURN_IF_FAILED
 			if( code == m_nCharCode ){
@@ -744,7 +744,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 		hr = pFileSaveDialog->GetResult(&pShellItem); RETURN_IF_FAILED
 		PWSTR pszFilePath;
 		hr = pShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath); RETURN_IF_FAILED
-		::wcsncpy_s(pszPath, _MAX_PATH, pszFilePath, _TRUNCATE);
+		wcscpy(pszPath, pszFilePath);
 		CoTaskMemFree(pszFilePath);
 	}
 

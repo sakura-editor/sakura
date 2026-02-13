@@ -198,7 +198,7 @@ const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 {
 	assert( m_state == STATE_FUNC_ARGS );
 
-	constexpr auto parptr_max = std::extent_v<decltype(m_parenthesis)>;
+	constexpr auto parptr_max = std::size(m_parenthesis);
 	wchar_t quote = L'\0'; // 先頭位置を保存
 	for(const wchar_t* head = p ; p < end ; p++ ){
 		if( quote ){
@@ -366,7 +366,7 @@ void COutlineErlang::build_arity( int arity )
 {
 	wchar_t numstr[12];
 	::_snwprintf_s( numstr, _TRUNCATE, L"/%d", arity );
-	::wcsncat_s(m_func, numstr, _TRUNCATE );
+	::wcsncat_s(m_func, std::size(m_func), numstr, _TRUNCATE );
 }
 
 /** Erlang アウトライン解析

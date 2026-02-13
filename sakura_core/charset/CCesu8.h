@@ -22,8 +22,8 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return CUtf8::UnicodeToCESU8(cSrc, pDst);
 	}
-	EConvertResult UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar) override {			//!< UNICODE → Hex 変換
-		return CUtf8()._UnicodeToHex(src, dst, psStatusbar, true);
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override {			//!< UNICODE → Hex 変換
+		return CUtf8()._UnicodeToHex( cSrc, iSLen, pDst, psStatusbar, true );
 	}
 };
 #endif /* SAKURA_CCESU8_25BC6708_E05F_44A8_936C_8C2FE260AA72_H_ */

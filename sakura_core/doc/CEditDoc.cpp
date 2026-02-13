@@ -487,7 +487,7 @@ void CEditDoc::GetEditInfo(
 ) const
 {
 	//ファイルパス
-	::wcsncpy_s(pfi->m_szPath, m_cDocFile.GetFilePath(), _TRUNCATE);
+	wcscpy(pfi->m_szPath, m_cDocFile.GetFilePath());
 
 	//表示域
 	pfi->m_nViewTopLine = GetEditWnd().GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
@@ -504,7 +504,7 @@ void CEditDoc::GetEditInfo(
 
 	//GREPモード
 	pfi->m_bIsGrep = CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode;
-	::wcsncpy_s(pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey, _TRUNCATE);
+	wcscpy( pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey );
 
 	//デバッグモニタ (アウトプットウインドウ) モード
 	pfi->m_bIsDebug = CAppMode::getInstance()->IsDebugMode();
@@ -884,7 +884,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		int			nLen = (int)wcslen( pszGrepKey );
 		CNativeW	cmemDes;
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
-		auto_snprintf_s( szGrepTitle, _TRUNCATE, LS(STR_TITLE_GREP),
+		auto_sprintf( szGrepTitle, LS(STR_TITLE_GREP),
 			cmemDes.GetStringPtr(),
 			( nLen > cmemDes.GetStringLength() ) ? L"..." : L""
 		);
@@ -892,7 +892,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	}
 	if( nullptr == pszTitle ){
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
-		auto_snprintf_s(szGrepTitle, _TRUNCATE, L"%s%d", LS(STR_NO_TITLE1), node->m_nId);	//(無題)
+		auto_sprintf( szGrepTitle, L"%s%d", LS(STR_NO_TITLE1), node->m_nId );	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */

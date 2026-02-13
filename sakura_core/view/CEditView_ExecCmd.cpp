@@ -237,7 +237,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 
 	//コマンドライン実行
 	WCHAR	cmdline[1024];
-	::wcsncpy_s(cmdline, pszCmd, _TRUNCATE);
+	wcscpy_s( cmdline, pszCmd );
 	if( CreateProcess( nullptr, cmdline, nullptr, nullptr, TRUE,
 				CREATE_NEW_CONSOLE, nullptr, bCurDir ? pszCurDir : nullptr, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
@@ -248,8 +248,8 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		::GetSystemDirectory(szCmdDir, int(std::size(szCmdDir)));
 
 		//コマンドライン文字列作成
-		auto_snprintf_s(
-			cmdline, _TRUNCATE,
+		auto_sprintf(
+			cmdline,
 			L"\"%s\\%s\" %s%s%s",
 			szCmdDir,
 			L"cmd.exe",
@@ -585,7 +585,7 @@ user_cancel:
 			::GetExitCodeProcess( pi.hProcess, &result );
 			if( bOutputExtInfo ){
 				WCHAR endCode[128];
-				auto_snprintf_s(endCode, _TRUNCATE, LS(STR_EDITVIEW_EXECCMD_RET), result);
+				auto_sprintf( endCode, LS(STR_EDITVIEW_EXECCMD_RET), result );
 				oa.OutputW( endCode );
 			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする

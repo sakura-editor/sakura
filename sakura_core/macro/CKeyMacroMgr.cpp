@@ -109,7 +109,7 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath ) con
 	}
 
 	//最初のコメント
-	out.Write(cxx::load_string(STR_ERR_DLGKEYMACMGR1));
+	out.WriteF(LS(STR_ERR_DLGKEYMACMGR1));
 
 	//マクロ内容
 	CMacro* p = m_pTop;
@@ -329,7 +329,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 								nBegin = k;
 								if( 0 < k - n - 2 ){
 									wchar_t hex[5];
-									::wcsncpy_s(hex, &p[n+2], _TRUNCATE);
+									wcsncpy( hex, &p[n+2], k - n - 2 );
+									hex[k - n - 2] = L'\0';
 									wchar_t* pEnd = nullptr;
 									wchar_t c = static_cast<wchar_t>(wcstol(hex, &pEnd, 16));
 									cmemTemp.AppendString( &c, 1 );

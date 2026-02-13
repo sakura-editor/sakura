@@ -71,14 +71,14 @@ bool CEditView::TagJumpSub(
 			GetInidirOrExedir( szJumpToFile, pszFileName );
 		}
 		else {
-			::wcsncpy_s(szJumpToFile, pszFileName, _TRUNCATE);
+			wcscpy( szJumpToFile, pszFileName );
 		}
 
 		/* ロングファイル名を取得する */
 		WCHAR	szWork[1024];
 		if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 		{
-			::wcsncpy_s(szJumpToFile, szWork, _TRUNCATE);
+			wcscpy( szJumpToFile, szWork );
 		}
 	}
 
@@ -130,7 +130,7 @@ bool CEditView::TagJumpSub(
 		EditInfo	inf;
 		bool		bSuccess;
 
-		::wcsncpy_s(inf.m_szPath, szJumpToFile, _TRUNCATE);
+		wcscpy( inf.m_szPath, szJumpToFile );
 		inf.m_ptCursor.Set(CLogicInt(ptJumpTo.x - 1), CLogicInt(ptJumpTo.y - 1));
 		inf.m_nViewLeftCol = CLayoutInt(-1);
 		inf.m_nViewTopLine = CLayoutInt(-1);
@@ -207,7 +207,7 @@ open_c:;
 	_wsplitpath_s( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
 
 	for( i = 0; i < open_extno; i++ ){
-		::_wmakepath_s( szPath, szDrive, szDir, szFname, open_ext[i] );
+		_wmakepath( szPath, szDrive, szDir, szFname, open_ext[i] );
 		if( !fexist(szPath) ){
 			if( i < open_extno - 1 )
 				continue;

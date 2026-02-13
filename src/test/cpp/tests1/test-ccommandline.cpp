@@ -30,9 +30,13 @@ bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
 std::wstring GetLocalPath(const std::wstring_view& filename)
 {
 	constexpr size_t cchBufSize = 4096;
-	std::wstring pathBuf{ filename };
-	pathBuf.resize(cchBufSize, L'\0');
-	return CSakuraEnvironment::ResolvePath(pathBuf);
+	auto pathBuf = std::make_unique<WCHAR[]>(cchBufSize);
+	if (!pathBuf) throw std::bad_alloc();
+
+	LPWSTR pszResolvedPath = pathBuf.get();
+	::wcscpy_s(pszResolvedPath, cchBufSize, filename.data());
+	CSakuraEnvironment::ResolvePath(pszResolvedPath);
+	return pszResolvedPath;
 }
 
 /*!
@@ -840,17 +844,17 @@ TEST(CCommandLine, ParseOpenFile)
 	CCommandLine cCommandLine1;
 	std::wstring strCmdLine1 = L"test.txt";
 	cCommandLine1.ParseCommandLine(strCmdLine1.data(), false);
-	EXPECT_THAT(cCommandLine1.GetOpenFile(), StrEq(GetLocalPath(L"test.txt")));
-	EXPECT_THAT(cCommandLine1.GetFileName(0), IsNull());
-	EXPECT_THAT(cCommandLine1.GetFileNum(), 0);
+	EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine1.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine1.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine1.GetFileNum());
 
 	CCommandLine cCommandLine2;
 	std::wstring strCmdLine2 = L"test1.txt test2.txt";
 	cCommandLine2.ParseCommandLine(strCmdLine2.data(), false);
-	EXPECT_THAT(cCommandLine2.GetOpenFile(),  StrEq(GetLocalPath(L"test1.txt")));
-	EXPECT_THAT(cCommandLine2.GetFileName(0), StrEq(GetLocalPath(L"test2.txt")));
-	EXPECT_THAT(cCommandLine2.GetFileName(1), IsNull());
-	EXPECT_THAT(cCommandLine2.GetFileNum(), 1);
+	EXPECT_STREQ(GetLocalPath(L"test1.txt").data(), cCommandLine2.GetOpenFile());
+	EXPECT_STREQ(GetLocalPath(L"test2.txt").data(), cCommandLine2.GetFileName(0));
+	EXPECT_EQ(NULL, cCommandLine1.GetFileName(1));
+	EXPECT_EQ(1, cCommandLine2.GetFileNum());
 }
 
 /*!

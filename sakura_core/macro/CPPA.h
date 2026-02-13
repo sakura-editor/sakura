@@ -50,7 +50,7 @@ public:
 
 	const char* GetVersion(){		//!< DLLのバージョン情報を取得。m_szMsgを壊す
 		if ( IsAvailable() ){
-			auto_snprintf_s(m_szMsg, _TRUNCATE, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
+			auto_sprintf(m_szMsg, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
 			return m_szMsg;
 		}
 		return "";

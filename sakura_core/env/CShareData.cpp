@@ -212,7 +212,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		::wcsncpy_s(lf.lfFaceName, L"ＭＳ ゴシック", _TRUNCATE);
+		wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -302,14 +302,12 @@ bool CShareData::InitShareData()
 
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-			::wcsncpy_s(sWindow.m_szWindowCaptionActive, 
-				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>",
-				_TRUNCATE
-			);
-			::wcsncpy_s(sWindow.m_szWindowCaptionInactive, 
-				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>",
-				_TRUNCATE
-			);
+			wcscpy( sWindow.m_szWindowCaptionActive, 
+				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
+			wcscpy( sWindow.m_szWindowCaptionInactive, 
+				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
 		}
 
 		// [タブバー]タブ
@@ -318,9 +316,9 @@ bool CShareData::InitShareData()
 
 			sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 			sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
-			::wcsncpy_s(sTabBar.m_szTabWndCaption,
-				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}",
-				_TRUNCATE
+			wcscpy(	//@@@ 2003.06.13 MIK
+				sTabBar.m_szTabWndCaption,
+				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
 			);
 			sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 			sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
@@ -363,7 +361,7 @@ bool CShareData::InitShareData()
 
 			sEdit.m_bOverWriteBoxDelete = false;
 			sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
-			::wcsncpy_s(sEdit.m_OpenDialogSelDir, L"%Personal%\\", _TRUNCATE);
+			wcscpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
 			sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		}
 
@@ -421,18 +419,18 @@ bool CShareData::InitShareData()
 			CommonSetting_Format& sFormat = m_pShareData->m_Common.m_sFormat;
 
 			/* 見出し記号 */
-			::wcsncpy_s(sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍", _TRUNCATE);
+			wcscpy( sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
 			/* 引用符 */
-			::wcsncpy_s(sFormat.m_szInyouKigou, L"> ", _TRUNCATE);		/* 引用符 */
+			wcscpy( sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
 
 			/*
 				書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと
 			*/
 
 			sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
-			::wcsncpy_s(sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'", _TRUNCATE);	//日付書式
+			wcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
 			sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
-			::wcsncpy_s(sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'", _TRUNCATE);			//時刻書式
+			wcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
 		}
 
 		// [検索]タブ
@@ -583,7 +581,7 @@ bool CShareData::InitShareData()
 			}
 			//	To Here Sep. 14, 2001 genta
 
-			::wcsncpy_s(sMacro.m_szMACROFOLDER, szIniFolder, _TRUNCATE);	/* マクロ用フォルダー */
+			wcscpy( sMacro.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダー */
 
 			sMacro.m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 			sMacro.m_nMacroOnTypeChanged = -1;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
@@ -602,20 +600,20 @@ bool CShareData::InitShareData()
 				sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
 				sFileName.m_szTransformFileNameTo[i][0] = L'\0';
 			}
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[0], L"デスクトップ\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[1], L"マイドキュメント\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[2], L"IEキャッシュ\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[3], L"TEMP\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[4], L"共有デスクトップ\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[5], L"共有ドキュメント\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\", _TRUNCATE);	// 2007.05.19 ryoji 追加
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[6], L"アプリデータ\\", _TRUNCATE);	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
 			sFileName.m_nTransformFileNameArrNum = 7;
 		}
 
@@ -684,12 +682,12 @@ bool CShareData::InitShareData()
 				*/
 				WCHAR szSettingName[64];
 				int i = 0;
-				auto_snprintf_s(szSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);
+				auto_sprintf( szSettingName, L"印刷設定 %d", i + 1 );
 				CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 			}
 			for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 				m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-				auto_snprintf_s(m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);	/* 印刷設定の名前 */
+				auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
 			}
 		}
 
@@ -712,7 +710,7 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_sHistory.m_aExceptMRU.clear();
 
-			::wcsncpy_s(m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder, _TRUNCATE);	/* 設定インポート用フォルダー */
+			wcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダー */
 
 			m_pShareData->m_sHistory.m_aCommands.clear();
 			m_pShareData->m_sHistory.m_aCurDirs.clear();
@@ -760,7 +758,8 @@ static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& or
 	CNativeW mem;
 	mem.SetString(pBuf);
 	mem.Replace(org.c_str(), to.c_str());
-	::wcsncpy_s(pBuf, chBufSize, mem.GetStringPtr(), _TRUNCATE);
+	wcsncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	pBuf[chBufSize - 1] = L'\0';
 }
 
 static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, std::vector<std::wstring>& values, int& index, bool setValues, bool bUpdate )
@@ -1125,7 +1124,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		if( pszPath == nullptr || nBufLen <= nLen ){
 			return -nLen;
 		}
-		::wcsncpy_s(pszPath, nBufLen, pszFile, _TRUNCATE);
+		wcscpy( pszPath, pszFile );
 		return nLen;
 	}
 	else {	//	フォルダー指定あり
@@ -1150,12 +1149,12 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			return -nAllLen;
 		}
 
-		::wcsncpy_s(pszPath, nBufLen, pszDir, _TRUNCATE);
+		wcscpy( pszPath, pszDir );
 		WCHAR *ptr2 = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
 			*ptr2++ = L'\\';
 		}
-		::wcsncpy_s(ptr2, nBufLen, pszFile, _TRUNCATE);
+		wcscpy( ptr2, pszFile );
 		return nAllLen;
 	}
 }

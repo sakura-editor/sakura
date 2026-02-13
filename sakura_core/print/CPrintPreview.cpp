@@ -140,8 +140,8 @@ LRESULT CPrintPreview::OnPaint(
 	// 要素情報の表示 -> IDD_PRINTPREVIEWBAR右下のSTATICへ
 	WCHAR	szPaperName[256];
 	CPrint::GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , szPaperName );
-	auto_snprintf_s(
-		szText, _TRUNCATE,
+	auto_sprintf(
+		szText,
 		L"%s  %s",
 		szPaperName,
 		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? LS(STR_ERR_DLGPRNPRVW1) : LS(STR_ERR_DLGPRNPRVW2)
@@ -852,8 +852,8 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	WCHAR      szMessage[512];
 	WCHAR      szPageNum[INPUT_PAGE_NUM_LEN];
 	
-	auto_snprintf_s(szMessage, _TRUNCATE, LS(STR_ERR_DLGPRNPRVW4) , m_nAllPageNum);
-	auto_snprintf_s(szPageNum, _TRUNCATE, L"%d", m_nCurPageNum + 1);
+	auto_sprintf( szMessage, LS(STR_ERR_DLGPRNPRVW4) , m_nAllPageNum );
+	auto_sprintf( szPageNum, L"%d", m_nCurPageNum + 1 );
 
 	BOOL bDlgInputPageResult=cDlgInputPage.DoModal(
 		CEditApp::getInstance()->GetAppInstance(),
@@ -915,10 +915,10 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
 	}
 	wchar_t	szEdit[1024];
-	auto_snprintf_s(szEdit, _TRUNCATE, LS(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum);
+	auto_sprintf( szEdit, LS(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum );
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
 
-	auto_snprintf_s(szEdit, _TRUNCATE, L"%d %%", m_nPreview_Zoom);
+	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	::InvalidateRect( m_pParentWnd->GetHwnd(), nullptr, TRUE );
@@ -967,7 +967,7 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 	}
 
 	wchar_t	szEdit[1024];
-	auto_snprintf_s(szEdit, _TRUNCATE, L"%d %%", m_nPreview_Zoom);
+	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	/* WM_SIZE 処理 */
@@ -1015,7 +1015,7 @@ void CPrintPreview::OnPrint( void )
 
 	/* プリンターに渡すジョブ名を生成 */
 	if( ! m_pParentWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
-		::wcsncpy_s(szJobName, LS(STR_NO_TITLE2), _TRUNCATE);
+		wcscpy( szJobName, LS(STR_NO_TITLE2) );
 	}else{
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
@@ -1110,7 +1110,7 @@ void CPrintPreview::OnPrint( void )
 
 		/* 印刷過程を表示 */
 		//	Jun. 18, 2001 genta ページ番号表示の計算ミス修正
-		auto_snprintf_s(szProgress, _TRUNCATE, L"%d/%d", i + 1, nNum);
+		auto_sprintf( szProgress, L"%d/%d", i + 1, nNum );
 		ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, szProgress );
 
 		/* 印刷 ページ開始 */
@@ -1458,14 +1458,14 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				if( m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-						::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
+						wcscpy( szLineNum, L" " );
 					}else{
-						::_itow_s(pcLayout->GetLogicLineNo() + 1, szLineNum, 10);	/* 対応する論理行番号 */
+						_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 					}
 				}
 				else{
 					/* 物理行(レイアウト行)番号表示モード */
-					::_itow_s((Int)nLineNum + 1, szLineNum, 10);
+					_itow( (Int)nLineNum + 1, szLineNum, 10 );
 				}
 
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
@@ -1473,10 +1473,10 @@ CColorStrategy* CPrintPreview::DrawPageText(
 					wchar_t szLineTerm[2];
 					szLineTerm[0] = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
 					szLineTerm[1] = L'\0';
-					::wcsncat_s(szLineNum, szLineTerm, _TRUNCATE);
+					wcscat( szLineNum, szLineTerm );
 				}
 				else{
-					::wcsncat_s(szLineNum, L" ", _TRUNCATE);
+					wcscat( szLineNum, L" " );
 				}
 
 				//文字列長
@@ -1874,7 +1874,7 @@ void CPrintPreview::SetPreviewFontHan( const LOGFONT* lf )
 	//	PrintSettingからコピー
 	m_lfPreviewHan.lfHeight			= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewHan.lfWidth	= 0;
-	::wcsncpy_s(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan, _TRUNCATE);
+	wcscpy(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan);
 }
 
 void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
@@ -1883,7 +1883,7 @@ void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
 	//	PrintSettingからコピー
 	m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewZen.lfWidth	= 0;
-	::wcsncpy_s(m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen, _TRUNCATE);
+	wcscpy(m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
 }
 
 int CALLBACK CPrintPreview::MyEnumFontFamProc(
@@ -2171,7 +2171,7 @@ void CPrintPreview::CreateFonts( HDC hdc )
 	// 印刷用半角フォントを作成 -> m_hFontHan
 	m_lfPreviewHan.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewHan.lfWidth = 0;
-	::wcsncpy_s(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan, _TRUNCATE);
+	wcscpy( m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan );
 	m_hFontHan	= CreateFontIndirect( &m_lfPreviewHan );
 	if (m_pPrintSetting->m_bColorPrint) {
 		lf = m_lfPreviewHan;	lf.lfWeight = FW_BOLD;
@@ -2195,7 +2195,7 @@ void CPrintPreview::CreateFonts( HDC hdc )
 	if (wcscmp(m_pPrintSetting->m_szPrintFontFaceHan, m_pPrintSetting->m_szPrintFontFaceZen)) {
 		m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
 		m_lfPreviewZen.lfWidth	= 0;
-		::wcsncpy_s(m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen, _TRUNCATE);
+		wcscpy( m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
 		m_hFontZen	= CreateFontIndirect( &m_lfPreviewZen );
 		if (m_pPrintSetting->m_bColorPrint) {
 			lf = m_lfPreviewZen;	lf.lfWeight = FW_BOLD;

@@ -103,7 +103,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	/* 色設定 I/O */
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
-		::wcsncpy_s(ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName, _TRUNCATE);
+		wcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
 	}
 
 	// インポート
@@ -116,7 +116,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	m_Types.m_nColorInfoArrNum = COLORIDX_LAST;
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		m_Types.m_ColorInfoArr[i] =  ColorInfoArr[i];
-		::wcsncpy_s(m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName, _TRUNCATE);
+		wcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
 	}
 	/* ダイアログデータの設定 color */
 	SetData( hwndDlg );
@@ -727,7 +727,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 					szVertLine[offset+1] = '\0';
 					offset += 1;
 				}
-				offset += auto_snprintf_s(&szVertLine[offset], std::size(szVertLine) - offset, _TRUNCATE, L"%d(%d,%d)", nXColAdd, nXCol, nXColEnd);
+				offset += auto_sprintf( &szVertLine[offset], L"%d(%d,%d)", nXColAdd, nXCol, nXColEnd );
 			}
 		}
 		else{
@@ -736,7 +736,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 				szVertLine[offset+1] = '\0';
 				offset += 1;
 			}
-			offset += auto_snprintf_s(&szVertLine[offset], std::size(szVertLine) - offset, _TRUNCATE, L"%d", nXCol);
+			offset += auto_sprintf( &szVertLine[offset], L"%d", nXCol );
 		}
 	}
 	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_VERTLINE ), MAX_VERTLINES * 15 );

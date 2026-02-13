@@ -66,16 +66,16 @@ if(MSVC)
   )
 endif(MSVC)
 
-# coverage.cppをリストから削除
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+if(MINGW)
+  # coverage.cppをリストから削除
   list(REMOVE_ITEM TESTS1_SOURCES ${CMAKE_SOURCE_DIR}/src/test/resources/coverage.cpp)
-endif()
+endif(MINGW)
 
 # define resource files of tests1
 set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 
-# Convert RC files to UTF-8 for MinGW and clang-cl
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+if(MINGW)
+  # Convert RC files to UTF-8 for MinGW
   convert_rc_files_to_utf8(TESTS1_RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
 endif()
 

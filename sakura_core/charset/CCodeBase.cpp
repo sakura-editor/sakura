@@ -25,7 +25,7 @@
 std::wstring CCodeBase::CodeToHex(const CNativeW& cSrc, const CommonSetting_Statusbar& sStatusbar, bool bUseFallback /* = true */)
 {
 	std::wstring buff(32, L'\0');
-	if (const auto ret = UnicodeToHex(std::wstring_view{ cSrc.GetStringPtr(), size_t(cSrc.GetStringLength()) }, buff, &sStatusbar);
+	if (const auto ret = UnicodeToHex(cSrc.GetStringPtr(), cSrc.GetStringLength(), buff.data(), &sStatusbar);
 		ret != RESULT_COMPLETE && bUseFallback) {
 		// うまくコードが取れなかった(Unicodeで表示)
 		return CCodeFactory::CreateCodeBase(CODE_UNICODE)->CodeToHex(cSrc, sStatusbar, false);
@@ -34,30 +34,28 @@ std::wstring CCodeBase::CodeToHex(const CNativeW& cSrc, const CommonSetting_Stat
 }
 
 // 表示用16進表示	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CCodeBase::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
-	const auto cSrc = std::data(src);
-
 	// IVS
-	if (const auto iSLen = int(std::size(src)); iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
+	if (iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
 		if (psStatusbar->m_bDispSPCodepoint) {
-			auto_snprintf_s(dst, _TRUNCATE, L"%04X, U+%05X", cSrc[0], ConvertToUtf32(cSrc + 1));
+			auto_sprintf(pDst, L"%04X, U+%05X", cSrc[0], ConvertToUtf32(cSrc + 1));
 		}
 		else {
-			auto_snprintf_s(dst, _TRUNCATE, L"%04X, %04X%04X", cSrc[0], cSrc[1], cSrc[2]);
+			auto_sprintf(pDst, L"%04X, %04X%04X", cSrc[0], cSrc[1], cSrc[2]);
 		}
 	}
 	// サロゲートペア
 	else if (iSLen >= 2 && IsSurrogatePair(cSrc)) {
 		if (psStatusbar->m_bDispSPCodepoint) {
-			auto_snprintf_s(dst, _TRUNCATE, L"U+%05X", 0x10000 + ((cSrc[0] & 0x3FF)<<10) + (cSrc[1] & 0x3FF));
+			auto_sprintf( pDst, L"U+%05X", 0x10000 + ((cSrc[0] & 0x3FF)<<10) + (cSrc[1] & 0x3FF));
 		}
 		else {
-			auto_snprintf_s(dst, _TRUNCATE, L"%04X%04X", cSrc[0], cSrc[1]);
+			auto_sprintf( pDst, L"%04X%04X", cSrc[0], cSrc[1]);
 		}
 	}
 	else {
-		auto_snprintf_s(dst, _TRUNCATE, L"U+%04X", cSrc[0]);
+		auto_sprintf( pDst, L"U+%04X", cSrc[0] );
 	}
 
 	return RESULT_COMPLETE;

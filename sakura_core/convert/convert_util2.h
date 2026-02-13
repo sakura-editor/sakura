@@ -200,7 +200,7 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, size_t nSrcLen, char *pDest )
 
 	// 文字列の最後のパッド文字 '=' を文字列長に含めないようにする処理
 	{
-		size_t i = 0;
+		int i = 0;
 		bool bret;
 		for( ; i < nsrclen; i++ ){
 			if constexpr ( sizeof(CHAR_TYPE) == 2 ){
@@ -216,18 +216,18 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, size_t nSrcLen, char *pDest )
 	}
 
 	nDesLen = 0;
-	for (size_t i = 0; i < nsrclen; ++i) {
+	for( int i = 0; i < nsrclen; i++ ){
 		if( i < nsrclen - (nsrclen % 4) ){
 			sMax = 4;
 		}else{
 			sMax = (nsrclen % 4);
 		}
 		lData = 0;
-		for (size_t j = 0; j < sMax; ++j) {
+		for( int j = 0; j < sMax; j++ ){
 			long k = Base64ToVal( pSrc[i + j] );
 			lData |= k << ((4 - j - 1) * 6);
 		}
-		for (size_t j = 0; j < (sMax * 6)/ 8 ; ++j) {
+		for( int j = 0; j < (sMax * 6)/ 8 ; j++ ){
 			pDest[nDesLen] = static_cast<char>((lData >> (8 * (2 - j))) & 0x0000ff);
 			nDesLen++;
 		}

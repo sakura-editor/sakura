@@ -48,13 +48,13 @@ public:
 	ElementType& operator[](size_t nIndex) noexcept
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex < size_t(m_nCount));
+		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
 	const ElementType& operator[](size_t nIndex) const noexcept
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex < size_t(m_nCount));
+		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
 
@@ -205,31 +205,20 @@ private:
 	ArrayType	m_szData{};
 };
 
-template<int N>
-inline errno_t wcsncpy_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept {
-	if (_TRUNCATE != count && count < std::size( src )) {
-		src = src.substr( 0, count );
-	}
-	return dst.assign(src);
-}
+template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }
+template<int N> inline errno_t wcscat_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.append(src); }
+
+template<int N> inline errno_t wcsncpy_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscpy_s(dst, src); }
+template<int N> inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscat_s(dst, src); }
 
 template<int N>
-inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept {
-	if (_TRUNCATE != count && count < std::size( src )) {
-		src = src.substr( 0, count );
-	}
-	return dst.append(src);
+inline int vswprintf_s(StaticString<N>& buf, const WCHAR* format, va_list& v) noexcept {
+	return ::_vsnwprintf_s(std::data(buf), std::size(buf), _TRUNCATE, format, v);
 }
 
-/*!
- * snwprintf_sのStaticString版
- *
- * @retval 0以上 成功
- * @retval -1 切り詰め発生
- */
 template<int N, typename... Params>
-inline int snwprintf_s(StaticString<N>& buf, size_t count, const WCHAR* format, Params&&... params) noexcept {
-	return ::_snwprintf_s(std::data(buf), count, std::size(buf), format, std::forward<Params>(params)...);
+inline int swprintf_s(StaticString<N>& buf, const WCHAR* format, Params&&... params) noexcept {
+	return ::_snwprintf_s(std::data(buf), _TRUNCATE, std::size(buf), format, std::forward<Params>(params)...);
 }
 
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */

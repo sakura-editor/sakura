@@ -344,7 +344,7 @@ bool CEditView::SearchBracket(
 	// 括弧処理 2007.10.16 kobake
 	if(nCharSize==1){
 		const KAKKO_T* p;
-		ptPos.x = int(bPos - cline);
+		ptPos.x = bPos - cline;
 		for( p = g_aKakkos; p->sStr != nullptr; p++ )
 		{
 			if( *(p->sStr) == cline[ptPos.x] )
@@ -423,7 +423,7 @@ bool CEditView::SearchBracketForward(
 			}// 03/01/08 ai End
 
 			if( level == 0 ){	//	見つかった！
-				ptPos.x = int(cPos - cline);
+				ptPos.x = cPos - cline;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, pptLayoutNew );
 				return true;
 				//	Happy Ending
@@ -514,7 +514,7 @@ bool CEditView::SearchBracketBackward(
 			}// 03/01/08 ai End
 
 			if( level == 0 ){	//	見つかった！
-				ptPos.x = int(pPos - cline);
+				ptPos.x = pPos - cline;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, pptLayoutNew );
 				return true;
 				//	Happy Ending

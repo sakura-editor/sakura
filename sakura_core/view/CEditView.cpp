@@ -1834,7 +1834,7 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		// メモリ確保に失敗したら抜ける
-		if( buffer->Capacity() < size_t(nBufSize) ){
+		if( buffer->Capacity() < nBufSize ){
 			return false;
 		}
 
@@ -1947,7 +1947,7 @@ bool CEditView::GetSelectedData(
 				buffer->Append( pszQuote, quoteLen );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
-				const auto lineNumLen = auto_snprintf_s(pszLineNum, std::size(strLineNum), _TRUNCATE, L" %d:", int(nLineNum) + 1);
+				auto lineNumLen = auto_sprintf( pszLineNum, L" %d:" , nLineNum + 1 );
 				buffer->Append( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
 				buffer->Append( pszLineNum, (size_t)lineNumLen );
 			}
@@ -2021,11 +2021,11 @@ bool CEditView::GetSelectedData(
 */
 bool CEditView::GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen )
 {
-	const wchar_t*	pLine = nullptr;
-	CLogicInt		nLineLen{ 0 };
-	CLogicInt		nIdxFrom{ 0 };
-	CLogicInt		nIdxTo{ 0 };
-	CLogicInt		nSelectLen{ 0 };
+	const wchar_t*	pLine;
+	CLogicInt		nLineLen;
+	CLogicInt		nIdxFrom;
+	CLogicInt		nIdxTo;
+	CLogicInt		nSelectLen;
 
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;

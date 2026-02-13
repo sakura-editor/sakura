@@ -123,7 +123,7 @@ public:
 	*/
 	static void SettingInitialize( PRINTSETTING&, const WCHAR* settingName );
 
-	static LPWSTR GetPaperName(int nPaperSize, std::span<WCHAR> szPaperName) noexcept;	/* 用紙の名前を取得 */
+	static WCHAR* GetPaperName( int , WCHAR* );	/* 用紙の名前を取得 */
 	/* 用紙の幅、高さ */
 	static BOOL GetPaperSize(
 		short*		pnPaperAllWidth,
@@ -162,7 +162,7 @@ public:
 		short*		pnPaperHeight,		/* 用紙印刷可能高さ */
 		short*		pnPaperOffsetLeft,	/* 用紙余白左端 */
 		short*		pnPaperOffsetTop,	/* 用紙余白上端 */
-		std::span<WCHAR>	pszErrMsg			/* エラーメッセージ格納場所 */
+		WCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 	);
 
 	/* 印刷 ジョブ開始 */
@@ -170,7 +170,7 @@ public:
 		WCHAR*		pszJobName,
 		MYDEVMODE*	pMYDEVMODE,
 		HDC*		phdc,
-		std::span<WCHAR>	pszErrMsg		/* エラーメッセージ格納場所 */
+		WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 	);
 	void PrintStartPage(HDC hdc);	/* 印刷 ページ開始 */
 	void PrintEndPage(HDC hdc);	/* 印刷 ページ終了 */
@@ -181,7 +181,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	// DC作成する(処理をまとめた) 2003.05.02 かろと
-	HDC CreateDCW( MYDEVMODE *pMYDEVMODE, std::span<WCHAR> szErrMsg);
+	HDC CreateDC( MYDEVMODE *pMYDEVMODE, WCHAR *pszErrMsg);
 	
 	static const PAPER_INFO* FindPaperInfo( int id );
 private:
@@ -191,5 +191,4 @@ private:
 	HGLOBAL	m_hDevMode = nullptr;				//!< 現在プリンターのDEVMODEへのメモリハンドル
 	HGLOBAL	m_hDevNames = nullptr;				//!< 現在プリンターのDEVNAMESへのメモリハンドル
 };
-
 #endif /* SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_ */

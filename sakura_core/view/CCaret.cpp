@@ -755,21 +755,21 @@ void CCaret::ShowCaretPosInfo()
 		CLogicInt nIdx = GetCaretLogicPos().GetX2() - pcLayout->GetLogicOffset();
 		if( nIdx < nLineLen ){
 			if( nIdx < nLineLen - (pcLayout->GetLayoutEol().GetLen()?1:0) ){
-				//auto_snprintf_s(szCaretChar, _TRUNCATE, L"%04x",);
+				//auto_sprintf( szCaretChar, L"%04x", );
 				//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(m_pEditDoc->GetDocumentEncoding(), false);
 				CommonSetting_Statusbar* psStatusbar = &GetDllShareData().m_Common.m_sStatusbar;
-				EConvertResult ret = pCode->UnicodeToHex(std::wstring_view{ &pLine[nIdx], size_t(nLineLen - nIdx) }, szCaretChar, psStatusbar);
+				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar, psStatusbar);
 				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった(Unicodeで表示)
 					pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-					/* EConvertResult ret = */ pCode->UnicodeToHex(std::wstring_view{ &pLine[nIdx], size_t(nLineLen - nIdx) }, szCaretChar, psStatusbar);
+					/* EConvertResult ret = */ pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar, psStatusbar);
 					delete pCode;
 				}
 			}
 			else{
-				::wcsncpy_s(szCaretChar, pcLayout->GetLayoutEol().GetName(), _TRUNCATE);
+				wcscpy_s(szCaretChar, std::size(szCaretChar), pcLayout->GetLayoutEol().GetName());
 			}
 		}
 	}
@@ -786,13 +786,13 @@ void CCaret::ShowCaretPosInfo()
 		{	// メッセージの左側文字列（「行:列」を除いた表示）
 			nLen = int(wcslen(pszCodeName) + wcslen(szEolMode) + wcslen(szCaretChar));
 			// これは %s(%s)%6s%s%s 等になる。%6ts表記は使えないので注意
-			auto_snprintf_s(
-				szFormat, _TRUNCATE,
+			auto_sprintf(
+				szFormat,
 				L"%%s(%%s)%%%ds%%s%%s",	// 「キャレット位置の文字情報」を右詰で配置（足りないときは左詰になって右に伸びる）
 				(nLen < 15)? 15 - nLen: 1
 			);
-			auto_snprintf_s(
-				szLeft, _TRUNCATE,
+			auto_sprintf(
+				szLeft,
 				szFormat,
 				pszCodeName,
 				szEolMode,
@@ -805,25 +805,25 @@ void CCaret::ShowCaretPosInfo()
 		nLen = int(MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft));	// 右側に残っている文字長
 		if( nLen > 0 ){	// メッセージの右側文字列（「行:列」表示）
 			WCHAR szRowCol[32];
-			auto_snprintf_s(
-				szRowCol, _TRUNCATE,
+			auto_sprintf(
+				szRowCol,
 				L"%d:%-4d",	// 「列」は最小幅を指定して左寄せ（足りないときは右に伸びる）
 				ptCaret.y,
 				ptCaret.x
 			);
-			auto_snprintf_s(
-				szFormat, _TRUNCATE,
+			auto_sprintf(
+				szFormat,
 				L"%%%ds",	// 「行:列」を右詰で配置（足りないときは左詰になって右に伸びる）
 				nLen
 			);
-			auto_snprintf_s(
-				szRight, _TRUNCATE,
+			auto_sprintf(
+				szRight,
 				szFormat,
 				szRowCol
 			);
 		}
-		auto_snprintf_s(
-			szText, _TRUNCATE,
+		auto_sprintf(
+			szText,
 			L"%s%s",
 			szLeft,
 			szRight
@@ -833,13 +833,13 @@ void CCaret::ShowCaretPosInfo()
 	// ステータスバーに状態を書き出す
 	else{
 		WCHAR szRowCol[64];
-		auto_snprintf_s(szRowCol, _TRUNCATE, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x);	//Oct. 30, 2000 JEPRO 千万行も要らん
+		auto_sprintf( szRowCol, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		WCHAR szInsMode[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			::wcsncpy_s(szInsMode, LS( STR_INS_MODE_INS ), _TRUNCATE);	// "挿入"
+			wcscpy( szInsMode, LS( STR_INS_MODE_INS ) );	// "挿入"
 		}else{
-			::wcsncpy_s(szInsMode, LS( STR_INS_MODE_OVR ), _TRUNCATE);	// "上書"
+			wcscpy( szInsMode, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
 
 		WCHAR szFontSize[16];
