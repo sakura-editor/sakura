@@ -46,11 +46,11 @@ protected:
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL	OnBnClicked(int wID) override;
 	BOOL	OnCbnSelChange(HWND hwndCtl, int wID) override;
-	LPVOID	GetHelpIdTable( void ) override;
+	LPVOID	GetHelpIdTable( ) override;
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int 	GetData( void ) override;	/* ダイアログデータの取得 */
+	void	SetData( ) override;	/* ダイアログデータの設定 */
+	int 	GetData( ) override;	/* ダイアログデータの取得 */
 
-	void	SetBOM( void );		// BOM の設定
+	void	SetBOM( );		// BOM の設定
 };
 #endif /* SAKURA_CDLGSETCHARSET_82E8A81C_64D0_45DE_BECC_4721CCC93FEB_H_ */

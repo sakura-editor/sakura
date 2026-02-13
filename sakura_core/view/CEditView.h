@@ -139,7 +139,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	/* Constructors */
-	CEditView( void );
+	CEditView( );
 	~CEditView();
 	void Close();
 	/* 初期化系メンバ関数 */
@@ -198,8 +198,8 @@ public:
 	void OnSize(int cx, int cy);							/* ウィンドウサイズの変更処理 */
 	void OnMove(int x, int y, int nWidth, int nHeight);
 	//フォーカス
-	void OnSetFocus( void );
-	void OnKillFocus( void );
+	void OnSetFocus( );
+	void OnKillFocus( );
 	//スクロール
 	CLayoutInt  OnVScroll(int nScrollCode, int nPos);							/* 垂直スクロールバーメッセージ処理 */
 	CLayoutInt  OnHScroll(int nScrollCode, int nPos);							/* 水平スクロールバーメッセージ処理 */
@@ -277,16 +277,16 @@ public:
 	void AdjustScrollBars( BOOL bRedraw = TRUE );						/* スクロールバーの状態を更新する */
 	BOOL CreateScrollBar();												/* スクロールバー作成 */	// 2006.12.19 ryoji
 	void DestroyScrollBar();											/* スクロールバー破棄 */	// 2006.12.19 ryoji
-	CLayoutInt GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
+	CLayoutInt GetWrapOverhang( ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
 	CKetaXInt ViewColNumToWrapColNum( CLayoutXInt nViewColNum ) const;	/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
-	CLayoutInt GetRightEdgeForScrollBar( void );								/* スクロールバー制御用に右端座標を取得する */		// 2009.08.28 nasukoji
+	CLayoutInt GetRightEdgeForScrollBar( );								/* スクロールバー制御用に右端座標を取得する */		// 2009.08.28 nasukoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           IME                               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//	Aug. 25, 2002 genta protected->publicに移動
-	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
+	bool IsImeON( );	// IME ONか	// 2006.12.04 ryoji
 	
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        スクロール                           //
@@ -313,8 +313,8 @@ public:
 	//                        過去の遺産                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
-	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
+	void SetIMECompFormPos( );								/* IME編集エリアの位置を変更 */
+	void SetIMECompFormFont( );							/* IME編集エリアの表示フォントを変更 */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       テキスト選択                          //
@@ -355,13 +355,13 @@ public: /* テスト用にアクセス属性を変更 */
 	/* IDropTarget実装 */
 	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragLeave( void );
+	STDMETHODIMP DragLeave( );
 	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 	STDMETHODIMP PostMyDropFiles( LPDATAOBJECT pDataObject );		/* 独自ドロップファイルメッセージをポストする */	// 2008.06.20 ryoji
 	void OnMyDropFiles( HDROP hDrop );								/* 独自ドロップファイルメッセージ処理 */	// 2008.06.20 ryoji
 	CLIPFORMAT GetAvailableClipFormat( LPDATAOBJECT pDataObject );
 	DWORD TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect );
-	bool IsDragSource( void );
+	bool IsDragSource( );
 
 	void _SetDragMode(BOOL b)
 	{
@@ -420,7 +420,7 @@ public:
 		bool			bFastMode = false,
 		const CLogicRange*	psDelRangeLogicFast = nullptr
 	);
-	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
+	void RTrimPrevLine( );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
 
 	//	Oct. 2, 2005 genta 挿入モードの設定・取得
 	bool IsInsMode() const;
@@ -465,8 +465,8 @@ private:
 	void ISearchExec(DWORD wChar);
 	void ISearchExec(LPCWSTR pszText);
 	void ISearchExec(bool bNext);
-	void ISearchBack(void) ;
-	void ISearchWordMake(void);
+	void ISearchBack() ;
+	void ISearchWordMake();
 	void ISearchSetStatusMsg(CNativeW* msg) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -489,7 +489,7 @@ public:
 	/* 支援 */
 	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離
 	void PreprocessCommand_hokan( int nCommand );
-	void PostprocessCommand_hokan(void);
+	void PostprocessCommand_hokan();
 
 	// 補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided );
@@ -509,7 +509,7 @@ public:
 	//                         メニュー                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	int	CreatePopUpMenu_R( void );		/* ポップアップメニュー(右クリック) */
+	int	CreatePopUpMenu_R( );		/* ポップアップメニュー(右クリック) */
 	int	CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus, EKeyHelpRMenuType eRmenuType );		/* ポップアップメニュー */
 	void AddKeyHelpMenu(HMENU hMenu, EKeyHelpRMenuType eRmenuType);
 
@@ -527,7 +527,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//	Aug. 31, 2000 genta
-	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
+	void AddCurrentLineToHistory();	//現在行を履歴に追加する
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                          その他                             //
@@ -546,7 +546,7 @@ public:
 	TOGGLE_WRAP_ACTION GetWrapMode( CKetaXInt* newKetas );
 	void SmartIndent_CPP(wchar_t wcChar);	/* C/C++スマートインデント処理 */
 	/* コマンド操作 */
-	void SetFont( void );										/* フォントの変更 */
+	void SetFont( );										/* フォントの変更 */
 	void SplitBoxOnOff(BOOL bVert, BOOL bHorz, BOOL bSizeBox);						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 
 //	2001/06/18 asa-o

@@ -149,7 +149,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 }
 
 /* ウィンドウ クローズ */
-void CFuncKeyWnd::Close( void )
+void CFuncKeyWnd::Close( )
 {
 	this->DestroyWindow();
 }
@@ -343,7 +343,7 @@ LRESULT CFuncKeyWnd::OnDestroy( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UIN
 }
 
 /*! ボタンのサイズを計算 */
-int CFuncKeyWnd::CalcButtonSize( void )
+int CFuncKeyWnd::CalcButtonSize( )
 {
 	int			nButtonNum;
 	RECT		rc;
@@ -371,7 +371,7 @@ int CFuncKeyWnd::CalcButtonSize( void )
 /*! ボタンの生成
 	@date 2007.02.05 ryoji ボタンの水平位置・幅の設定処理を削除（OnSizeで再配置されるので不要）
 */
-void CFuncKeyWnd::CreateButtons( void )
+void CFuncKeyWnd::CreateButtons( )
 {
 	RECT	rcParent;
 	int		nButtonHeight;

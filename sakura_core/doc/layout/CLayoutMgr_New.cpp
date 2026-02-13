@@ -314,7 +314,7 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 
 	@date 2009.08.28 nasukoji	新規作成
 */
-void CLayoutMgr::ClearLayoutLineWidth( void )
+void CLayoutMgr::ClearLayoutLineWidth( )
 {
 	CLayout* pLayout = m_pLayoutTop;
 

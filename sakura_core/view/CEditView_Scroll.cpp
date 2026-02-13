@@ -738,7 +738,7 @@ void CEditView::SyncScrollH( CLayoutInt col )
 /** 折り返し桁以後のぶら下げ余白計算
 	@date 2008.06.08 ryoji 新規作成
 */
-CLayoutInt CEditView::GetWrapOverhang( void ) const
+CLayoutInt CEditView::GetWrapOverhang( ) const
 {
 	CLayoutInt nMargin = GetTextMetrics().GetLayoutXDefault(CKetaXInt(1));	// 折り返し記号
 	if (!m_pTypeData->m_bKinsokuHide) {	// ぶら下げを隠す時はスキップ	2012/11/30 Uchi
@@ -790,7 +790,7 @@ CKetaXInt CEditView::ViewColNumToWrapColNum( CLayoutXInt nViewColNum ) const
 
 	@date 2009.08.28 nasukoji	新規作成
 */
-CLayoutInt CEditView::GetRightEdgeForScrollBar( void )
+CLayoutInt CEditView::GetRightEdgeForScrollBar( )
 {
 	// 折り返し桁以後のぶら下げ余白計算
 	CLayoutXInt nWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineLayout() + GetWrapOverhang();

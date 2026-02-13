@@ -273,7 +273,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 
 //	from CViewCommander_New.cpp
 /* Undo 元に戻す */
-void CViewCommander::Command_UNDO( void )
+void CViewCommander::Command_UNDO( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -533,7 +533,7 @@ void CViewCommander::Command_UNDO( void )
 
 //	from CViewCommander_New.cpp
 /* Redo やり直し */
-void CViewCommander::Command_REDO( void )
+void CViewCommander::Command_REDO( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -782,7 +782,7 @@ void CViewCommander::Command_REDO( void )
 }
 
 //カーソル位置または選択エリアを削除
-void CViewCommander::Command_DELETE( void )
+void CViewCommander::Command_DELETE( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){		/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -830,7 +830,7 @@ void CViewCommander::Command_DELETE( void )
 }
 
 //カーソル前を削除
-void CViewCommander::Command_DELETE_BACK( void )
+void CViewCommander::Command_DELETE_BACK( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();

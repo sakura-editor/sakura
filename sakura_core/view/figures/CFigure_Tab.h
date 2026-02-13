@@ -16,13 +16,13 @@ class CFigure_Tab final : public CFigureSpace{
 public:
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const override;
-	bool Disp(void) const override
+	bool Disp() const override
 	{
 		return true;
 	}
 
 	//action
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const override;
-	EColorIndexType GetColorIdx(void) const override { return COLORIDX_TAB; }
+	EColorIndexType GetColorIdx() const override { return COLORIDX_TAB; }
 };
 #endif /* SAKURA_CFIGURE_TAB_4401678E_D165_4130_A973_CC40038CDE8E_H_ */

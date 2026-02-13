@@ -51,7 +51,7 @@ CKeyMacroMgr::~CKeyMacroMgr()
 }
 
 /*! キーマクロのバッファをクリアする */
-void CKeyMacroMgr::ClearAll( void )
+void CKeyMacroMgr::ClearAll( )
 {
 	CMacro* p = m_pTop;
 	CMacro* del_p;
@@ -478,7 +478,7 @@ CMacroManagerBase* CKeyMacroMgr::Creator(const WCHAR* ext)
 
 	@date 2004.01.31 genta RegisterExtの廃止のためRegisterCreatorに置き換え
 */
-void CKeyMacroMgr::declare (void)
+void CKeyMacroMgr::declare ()
 {
 	//	常に実行
 	CMacroFactory::getInstance()->RegisterCreator( Creator );

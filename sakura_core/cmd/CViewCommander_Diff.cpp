@@ -106,7 +106,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 }
 
 /* ファイル内容比較 */
-void CViewCommander::Command_COMPARE( void )
+void CViewCommander::Command_COMPARE( )
 {
 	HWND		hwndCompareWnd = nullptr;
 	CDlgCompare	cDlgCompare;
@@ -315,7 +315,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 	@date	2002/11/09 編集中ファイルを許可
 	@date	2005/10/29 maru 一時ファイル作成処理をm_pCommanderView->MakeDiffTmpFileへ移動
 */
-void CViewCommander::Command_Diff_Dialog( void )
+void CViewCommander::Command_Diff_Dialog( )
 {
 	CDlgDiff	cDlgDiff;
 	bool	bTmpFile1 = false, bTmpFile2 = false;
@@ -402,7 +402,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 
 /*!	次の差分を探し，見つかったら移動する
 */
-void CViewCommander::Command_Diff_Next( void )
+void CViewCommander::Command_Diff_Next( )
 {
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
@@ -452,7 +452,7 @@ re_do:;
 
 /*!	前の差分を探し，見つかったら移動する
 */
-void CViewCommander::Command_Diff_Prev( void )
+void CViewCommander::Command_Diff_Prev( )
 {
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
@@ -505,7 +505,7 @@ re_do:;
 	@author	MIK
 	@date	2002/05/26
 */
-void CViewCommander::Command_Diff_Reset( void )
+void CViewCommander::Command_Diff_Reset( )
 {
 	CDiffLineMgr(&GetDocument()->m_cDocLineMgr).ResetAllDiffMark();
 

@@ -33,7 +33,7 @@ public:
 
 protected:
 
-	LPVOID GetHelpIdTable( void ) override;
+	LPVOID GetHelpIdTable( ) override;
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	//! ダイアログのメッセージ処理
 	BOOL OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam ) override;			//!< WM_INITDIALOG 処理
 	BOOL OnBnClicked( int wID ) override;							//!< BN_CLICKED 処理

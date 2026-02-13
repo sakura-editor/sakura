@@ -59,7 +59,7 @@ public:
 
 	//デストラクタ
 public:
-	~CWSHPlugin(void);
+	~CWSHPlugin();
 
 	//操作
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。

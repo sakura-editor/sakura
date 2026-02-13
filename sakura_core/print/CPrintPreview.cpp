@@ -669,7 +669,7 @@ void CPrintPreview::OnChangeSetting()
 	OnChangePrintSetting();
 }
 
-void CPrintPreview::OnChangePrintSetting( void )
+void CPrintPreview::OnChangePrintSetting( )
 {
 	HDC		hdc = ::GetDC( m_pParentWnd->GetHwnd() );
 	::SetMapMode( hdc, MM_LOMETRIC ); //MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
@@ -844,7 +844,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 
 	@author Moca
 **/
-void CPrintPreview::OnPreviewGoDirectPage( void )
+void CPrintPreview::OnPreviewGoDirectPage( )
 {
 	const int  INPUT_PAGE_NUM_LEN = 12;
 
@@ -987,7 +987,7 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 	滑らか
 	チェック時、2倍(COMPAT_BMP_SCALE/COMPAT_BMP_BASE)サイズでレンダリングする
 */
-void CPrintPreview::OnCheckAntialias( void )
+void CPrintPreview::OnCheckAntialias( )
 {
 	/* WM_SIZE 処理 */
 	RECT	rc;
@@ -998,7 +998,7 @@ void CPrintPreview::OnCheckAntialias( void )
 /*!
 	印刷
 */
-void CPrintPreview::OnPrint( void )
+void CPrintPreview::OnPrint( )
 {
 	HDC			hdc;
 	WCHAR		szJobName[256 + 1];
@@ -1550,7 +1550,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 }
 
 /* 印刷プレビュー スクロールバー初期化 */
-void CPrintPreview::InitPreviewScrollBar( void )
+void CPrintPreview::InitPreviewScrollBar( )
 {
 	SCROLLINFO	si;
 	RECT		rc;
@@ -1907,7 +1907,7 @@ int CALLBACK CPrintPreview::MyEnumFontFamProc(
 /*!
 	印刷プレビューに必要なコントロールを作成する
 */
-void CPrintPreview::CreatePrintPreviewControls( void )
+void CPrintPreview::CreatePrintPreviewControls( )
 {
 	/* 印刷プレビュー 操作バー */
 	m_hwndPrintPreviewBar = ::CreateDialogParam(
@@ -1996,7 +1996,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 /*!
 	印刷プレビューに必要だったコントロールを破棄する
 */
-void CPrintPreview::DestroyPrintPreviewControls( void )
+void CPrintPreview::DestroyPrintPreviewControls( )
 {
 	/* 印刷プレビュー 操作バー 削除 */
 	if ( m_hwndPrintPreviewBar ){
@@ -2054,7 +2054,7 @@ INT_PTR CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
 }
 
 /* 印刷プレビュー 操作バーにフォーカスを当てる */
-void CPrintPreview::SetFocusToPrintPreviewBar( void )
+void CPrintPreview::SetFocusToPrintPreviewBar( )
 {
 	if( nullptr != m_hwndPrintPreviewBar ){
 		::SetFocus( m_hwndPrintPreviewBar );

@@ -70,12 +70,12 @@ const PAPER_INFO CPrint::m_paperInfoArr[] = {
 
 const int CPrint::m_nPaperInfoArrNum = int(std::size(m_paperInfoArr));
 
-CPrint::CPrint( void )
+CPrint::CPrint( )
 {
 	return;
 }
 
-CPrint::~CPrint( void )
+CPrint::~CPrint( )
 {
 	// メモリ割り当て済みならば、解放する
 	// 2003.05.18 かろと

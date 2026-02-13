@@ -24,7 +24,7 @@
 #include "apiwrap/StdApi.h"
 
 /* 右クリックメニュー */
-void CViewCommander::Command_MENU_RBUTTON( void )
+void CViewCommander::Command_MENU_RBUTTON( )
 {
 	/* ポップアップメニュー(右クリック) */
 	auto nId = m_pCommanderView->CreatePopUpMenu_R();

@@ -179,7 +179,7 @@ static bool CPP_IsFunctionAfterKeyword( const wchar_t* s )
 
 class CCppPreprocessMng {
 public:
-	CCppPreprocessMng(void) = default;
+	CCppPreprocessMng() = default;
 
 	CLogicInt ScanLine(const wchar_t*, CLogicInt);
 

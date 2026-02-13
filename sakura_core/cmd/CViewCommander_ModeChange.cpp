@@ -21,7 +21,7 @@
 
 	@date 2005.10.02 genta InsMode関数化
 */
-void CViewCommander::Command_CHGMOD_INS( void )
+void CViewCommander::Command_CHGMOD_INS( )
 {
 	/* 挿入モードか？ */
 	if( m_pCommanderView->IsInsMode() ){

@@ -93,7 +93,7 @@ protected:
 	void SetInformation( const char *pS, size_t nLen );
 
 	//! 添え字に使われる優先順位表を作成
-	void InitPriorityTable( void );
+	void InitPriorityTable( );
 
 	//	**** 全般
 	// マルチバイト系とUNICODE系とでそれぞれ情報の格納先が違う。
@@ -114,13 +114,13 @@ public:
 
 	// m_dwStatus のセッター／ゲッター
 	void SetStatus( DWORD inf ){ m_dwStatus |= inf; }
-	DWORD GetStatus( void ) const { return m_dwStatus; }
+	DWORD GetStatus( ) const { return m_dwStatus; }
 
 	// m_nTargetDataLen のセッター／ゲッター
 protected:
 	void SetDataLen(const size_t n) noexcept { if( n < 1 ){ m_nTargetDataLen = 0; }else{ m_nTargetDataLen = static_cast<int>(n); } }
 public:
-	int GetDataLen( void ) const { return m_nTargetDataLen; }
+	int GetDataLen( ) const { return m_nTargetDataLen; }
 
 protected:
 	/*
@@ -154,10 +154,10 @@ public:
 	int m_nMbcEucZen;                        //!< EUC 全角のバイト数
 
 	//! マルチバイト系の捜査結果を、ポイントが大きい順にソート。 ソートした結果は、m_apMbcInfo に格納
-	void SortMBCInfo( void );
+	void SortMBCInfo( );
 
 	//! EUC と SJIS が候補のトップ２に上がっているかどうか
-	bool IsAmbiguousEucAndSjis( void ){
+	bool IsAmbiguousEucAndSjis( ){
 		// EUC と SJIS がトップ2に上がった時
 		// かつ、EUC と SJIS のポイント数が同数のとき
 		if( ((m_apMbcInfo[0]->eCodeID == CODE_SJIS && m_apMbcInfo[1]->eCodeID == CODE_EUC)
@@ -170,7 +170,7 @@ public:
 	}
 
 	//! SJIS と UTF-8 が候補のトップ2に上がっているかどうか
-	bool IsAmbiguousUtf8AndCesu8( void ){
+	bool IsAmbiguousUtf8AndCesu8( ){
 		// UTF-8 と SJIS がトップ2に上がった時
 		// かつ、UTF-8 と SJIS のポイント数が同数のとき
 		if( ((m_apMbcInfo[0]->eCodeID == CODE_UTF8 && m_apMbcInfo[1]->eCodeID == CODE_CESU8)
@@ -183,8 +183,8 @@ public:
 	}
 
 protected:
-	void GuessEucOrSjis( void );	//!< EUC か SJIS かを判定
-	void GuessUtf8OrCesu8( void );	//!< UTF-8 か CESU-8 かを判定
+	void GuessEucOrSjis( );	//!< EUC か SJIS かを判定
+	void GuessUtf8OrCesu8( );	//!< UTF-8 か CESU-8 かを判定
 public:
 	//
 	// 	**** UTF-16 判定関係の変数その他
@@ -193,12 +193,12 @@ public:
 	EBOMType m_eWcBomType;          //!< m_pWcInfo から推測される BOM の種類
 	ECodeType m_eMetaName;          //!< エンコーディング名からの種類判別
 
-	EBOMType GetBOMType(void) const { return m_eWcBomType; }
+	EBOMType GetBOMType() const { return m_eWcBomType; }
 	ECodeType GetMetaName() const { return m_eMetaName; }
 
 protected:
 	//! BOMの種類を推測して m_eWcBomType を設定
-	void GuessUtf16Bom( void );
+	void GuessUtf16Bom( );
 	ECodeType AutoDetectByXML( const char* pBuf, int nSize );
 	ECodeType AutoDetectByHTML( const char* pBuf, int nSize );
 	ECodeType AutoDetectByCoding( const char* pBuf, int nSize );

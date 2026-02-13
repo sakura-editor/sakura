@@ -31,7 +31,7 @@ public:
 
 	//ダイアログに渡す拡張子フィルタを取得する。(lpstrFilterに直接指定可能)
 	//2回呼び出すと古いバッファが無効になることがあるのに注意
-	const WCHAR *GetExtFilter( void );
+	const WCHAR *GetExtFilter( );
 
 	[[nodiscard]] int GetCount() const { return static_cast<int>(m_vFileExtInfo.size()); }
 

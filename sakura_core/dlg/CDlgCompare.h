@@ -45,16 +45,16 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnBnClicked(int wID) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 標準以外のメッセージを捕捉する
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnDestroy( void ) override;
+	BOOL OnDestroy( ) override;
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
 
-	void SetData( void ) override;	/* ダイアログデータの設定 */
-	int GetData( void ) override;	/* ダイアログデータの取得 */
+	void SetData( ) override;	/* ダイアログデータの設定 */
+	int GetData( ) override;	/* ダイアログデータの取得 */
 
 private:
 	POINT			m_ptDefaultSize;

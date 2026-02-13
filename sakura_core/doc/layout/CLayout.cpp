@@ -23,7 +23,7 @@ CLayout::~CLayout()
 	return;
 }
 
-void CLayout::DUMP( void )
+void CLayout::DUMP( )
 {
 	DEBUG_TRACE( L"\n\n■CLayout::DUMP()======================\n" );
 	DEBUG_TRACE( L"m_ptLogicPos.y=%d\t\t対応する論理行番号\n", m_ptLogicPos.y );

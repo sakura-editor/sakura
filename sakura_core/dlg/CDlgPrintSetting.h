@@ -45,10 +45,10 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	void SetData( void ) override;	/* ダイアログデータの設定 */
-	int GetData( void ) override;	/* ダイアログデータの取得 */
+	void SetData( ) override;	/* ダイアログデータの設定 */
+	int GetData( ) override;	/* ダイアログデータの取得 */
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnDestroy( void ) override;
+	BOOL OnDestroy( ) override;
 	BOOL OnNotify(NMHDR* pNMHDR) override;
 	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL OnBnClicked(int wID) override;
@@ -56,7 +56,7 @@ protected:
 	BOOL OnEnChange( HWND hwndCtl, int wID ) override;
 	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
 	BOOL OnEnKillFocus( HWND hwndCtl, int wID ) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable() override;	//@@@ 2002.01.18 add
 
 	void OnChangeSettingType(BOOL bGetData);	/* 設定のタイプが変わった */
 	void OnSpin(int nCtrlId, BOOL bDown);	/* スピンコントロールの処理 */

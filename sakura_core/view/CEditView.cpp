@@ -117,7 +117,7 @@ VOID CALLBACK EditViewTimerProc(
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditView::CEditView( void )
+CEditView::CEditView( )
 : CViewCalc(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cViewSelect(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cParser(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
@@ -983,7 +983,7 @@ void CEditView::OnSize( int cx, int cy )
 }
 
 /* 入力フォーカスを受け取ったときの処理 */
-void CEditView::OnSetFocus( void )
+void CEditView::OnSetFocus( )
 {
 	if( m_bMiniMap ){
 		return;
@@ -1022,7 +1022,7 @@ void CEditView::OnSetFocus( void )
 }
 
 /* 入力フォーカスを失ったときの処理 */
-void CEditView::OnKillFocus( void )
+void CEditView::OnKillFocus( )
 {
 	if( m_bMiniMap ){
 		return;
@@ -1062,7 +1062,7 @@ void CEditView::OnKillFocus( void )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* フォントの変更 */
-void CEditView::SetFont( void )
+void CEditView::SetFont( )
 {
 	HDC hdc = ::GetDC( GetHwnd() );
 
@@ -1444,7 +1444,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* ポップアップメニュー(右クリック) */
-int	CEditView::CreatePopUpMenu_R( void )
+int	CEditView::CreatePopUpMenu_R( )
 {
 	HMENU		hMenu;
 	int			nMenuIdx;
@@ -2579,7 +2579,7 @@ void CEditView::SendStatusMessage( const WCHAR* msg )
 
 	@date 2005.10.02 genta 管理方法変更のため関数化
 */
-bool CEditView::IsInsMode(void) const
+bool CEditView::IsInsMode() const
 {
 	return m_pcEditDoc->m_cDocEditor.IsInsMode();
 }
@@ -2619,7 +2619,7 @@ void CEditView::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //!	現在のカーソル行位置を履歴に登録する
-void CEditView::AddCurrentLineToHistory( void )
+void CEditView::AddCurrentLineToHistory( )
 {
 	CLogicPoint ptPos;
 

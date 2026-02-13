@@ -50,7 +50,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void ClearAll( void );				/* キーマクロのバッファをクリアする */
+	void ClearAll( );				/* キーマクロのバッファをクリアする */
 	void Append( EFunctionCode nFuncID, const LPARAM* lParams, class CEditView* pcEditView );		/* キーマクロのバッファにデータ追加 */
 	void Append( class CMacro* macro );		/* キーマクロのバッファにデータ追加 */
 	
@@ -64,7 +64,7 @@ public:
 	
 	// Apr. 29, 2002 genta
 	static CMacroManagerBase* Creator(const WCHAR* ext);
-	static void declare(void);
+	static void declare();
 
 protected:
 	CMacro*	m_pTop;	//	先頭と終端を保持

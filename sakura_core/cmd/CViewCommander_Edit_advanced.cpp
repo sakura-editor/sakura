@@ -820,7 +820,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	@date 2001.12.03 hor 新規作成
 	@date 2001.12.21 hor 選択範囲の調整ロジックを訂正
 */
-void CViewCommander::Command_MERGE(void)
+void CViewCommander::Command_MERGE()
 {
 	CLayoutInt		nCaretPosYOLD;
 	const wchar_t*	pLinew;
@@ -950,7 +950,7 @@ void CViewCommander::Command_MERGE(void)
 	@date 2010.03.17 ATOK用はSCS_SETRECONVERTSTRING => ATRECONVERTSTRING_SETに変更
 		2002.11.20 Stoneeさんの情報
 */
-void CViewCommander::Command_Reconvert(void)
+void CViewCommander::Command_Reconvert()
 {
 	//サイズを取得
 	LRESULT nSize = m_pCommanderView->SetReconvertStruct(nullptr);

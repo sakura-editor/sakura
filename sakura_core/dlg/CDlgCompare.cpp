@@ -126,7 +126,7 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 }
 
 /* ダイアログデータの設定 */
-void CDlgCompare::SetData( void )
+void CDlgCompare::SetData( )
 {
 	HWND			hwndList;
 	int				nRowNum;
@@ -203,7 +203,7 @@ void CDlgCompare::SetData( void )
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー */
-int CDlgCompare::GetData( void )
+int CDlgCompare::GetData( )
 {
 	HWND			hwndList;
 	int				nItem;
@@ -222,7 +222,7 @@ int CDlgCompare::GetData( void )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgCompare::GetHelpIdTable(void)
+LPVOID CDlgCompare::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }
@@ -267,7 +267,7 @@ BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
-BOOL CDlgCompare::OnDestroy( void )
+BOOL CDlgCompare::OnDestroy( )
 {
 	CDialog::OnDestroy();
 	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog;

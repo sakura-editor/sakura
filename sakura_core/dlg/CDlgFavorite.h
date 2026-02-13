@@ -48,20 +48,20 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL	OnDestroy( void ) override;
+	BOOL	OnDestroy( ) override;
 	BOOL	OnBnClicked(int wID) override;
 	BOOL	OnNotify(NMHDR* pNMHDR) override;
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam ) override;
-	LPVOID	GetHelpIdTable( void ) override;
+	LPVOID	GetHelpIdTable( ) override;
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 標準以外のメッセージを捕捉する
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL	OnMinMaxInfo( LPARAM lParam );
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int		GetData( void ) override;	/* ダイアログデータの取得 */
+	void	SetData( ) override;	/* ダイアログデータの設定 */
+	int		GetData( ) override;	/* ダイアログデータの取得 */
 
 	void	TabSelectChange(bool bSetFocus);
-	bool	RefreshList( void );
+	bool	RefreshList( );
 	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ダイアログデータの設定 */
 	bool	RefreshListOne( int nIndex );
 	//void	ChangeSlider( int nIndex );

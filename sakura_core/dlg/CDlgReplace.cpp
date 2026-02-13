@@ -121,7 +121,7 @@ void CDlgReplace::ChangeView( LPARAM pcEditView )
 }
 
 /* ダイアログデータの設定 */
-void CDlgReplace::SetData( void )
+void CDlgReplace::SetData( )
 {
 	// 検索文字列/置換後文字列リストの設定(関数化)	2010/5/26 Uchi
 	SetCombosList();
@@ -191,7 +191,7 @@ void CDlgReplace::SetData( void )
 
 // 検索文字列/置換後文字列リストの設定
 //	2010/5/26 Uchi
-void CDlgReplace::SetCombosList( void )
+void CDlgReplace::SetCombosList( )
 {
 	HWND	hwndCombo;
 
@@ -218,7 +218,7 @@ void CDlgReplace::SetCombosList( void )
 
 /* ダイアログデータの取得 */
 /* 0==条件未入力  0より大きい==正常   0より小さい==入力エラー */
-int CDlgReplace::GetData( void )
+int CDlgReplace::GetData( )
 {
 	/* 英大文字と英小文字を区別する */
 	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ));
@@ -611,7 +611,7 @@ BOOL CDlgReplace::OnActivate( WPARAM wParam, LPARAM lParam )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgReplace::GetHelpIdTable(void)
+LPVOID CDlgReplace::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

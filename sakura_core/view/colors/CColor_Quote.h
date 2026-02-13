@@ -18,7 +18,7 @@ public:
 		m_szQuote[1] = cQuote;
 		m_szQuote[2] = cQuote;
 	}
-	void Update(void) override;
+	void Update() override;
 	CLayoutColorInfo* GetStrategyColorInfo() const override;
 	void InitStrategyStatus() override{ m_nCOMMENTEND = -1; }
 	void SetStrategyColorInfo(const CLayoutColorInfo*) override;

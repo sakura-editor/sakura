@@ -55,28 +55,28 @@ public:
 
 	//	User Messages
 	void OnChangeSetting();
-	void OnChangePrintSetting( void );
+	void OnChangePrintSetting( );
 	void OnPreviewGoPage( int nPage );	/* プレビュー ページ指定 */
 	void OnPreviewGoPreviousPage(){ OnPreviewGoPage( m_nCurPageNum - 1 ); }		//	前のページへ
 	void OnPreviewGoNextPage(){ OnPreviewGoPage( m_nCurPageNum + 1 ); }		//	前のページへ
-	void OnPreviewGoDirectPage( void );
+	void OnPreviewGoDirectPage( );
 	void OnPreviewZoom( BOOL bZoomUp );
-	void OnPrint( void );	/* 印刷実行 */
-	BOOL OnPrintPageSetting( void );
-	void OnCheckAntialias( void );
+	void OnPrint( );	/* 印刷実行 */
+	BOOL OnPrintPageSetting( );
+	void OnCheckAntialias( );
 
 	/*
 	||	コントロール
 	*/
 	//	スクロールバー
-	void InitPreviewScrollBar( void );
+	void InitPreviewScrollBar( );
 
 	//	PrintPreviewバー（画面上部のコントロール）
-	void CreatePrintPreviewControls( void );
-	void DestroyPrintPreviewControls( void );
+	void CreatePrintPreviewControls( );
+	void DestroyPrintPreviewControls( );
 
-	void SetFocusToPrintPreviewBar( void );
-	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar; }
+	void SetFocusToPrintPreviewBar( );
+	HWND GetPrintPreviewBarHANDLE( ){ return m_hwndPrintPreviewBar; }
 	static HWND GetPrintPreviewBarHANDLE_Safe(const CPrintPreview *preview) {
 		if (preview)
 			return preview->m_hwndPrintPreviewBar;

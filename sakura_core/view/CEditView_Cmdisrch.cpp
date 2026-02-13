@@ -458,7 +458,7 @@ void CEditView::ISearchExec(bool bNext)
 }
 
 //!	バックスペースを押されたときの処理
-void CEditView::ISearchBack(void) {
+void CEditView::ISearchBack() {
 	if(m_nISearchHistoryCount==0) return;
 	
 	if(m_nISearchHistoryCount==1){
@@ -507,7 +507,7 @@ void CEditView::ISearchBack(void) {
 }
 
 //!	入力文字から、検索文字を生成する。
-void CEditView::ISearchWordMake(void)
+void CEditView::ISearchWordMake()
 {
 	switch ( m_nISearchMode ) {
 	case SEARCH_NORMAL: // 通常インクリメンタルサーチ

@@ -970,7 +970,7 @@ void CTabWnd::UpdateStyle()
 }
 
 /* ウィンドウ クローズ */
-void CTabWnd::Close( void )
+void CTabWnd::Close( )
 {
 	if( GetHwnd() )
 	{
@@ -2001,7 +2001,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 	@author ryoji
 	@date 2007.04.03 新規作成
 */
-void CTabWnd::AdjustWindowPlacement( void )
+void CTabWnd::AdjustWindowPlacement( )
 {
 	// タブまとめ表示の場合は編集ウィンドウの表示位置を復元する
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
@@ -2216,7 +2216,7 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 /*! タブのレイアウト調整処理
 	@date 2006.01.28 ryoji 新規作成
 */
-void CTabWnd::LayoutTab( void )
+void CTabWnd::LayoutTab( )
 {
 	// フォントを切り替える 2011.12.01 Moca
 	bool bChgFont = (0 != memcmp( &m_lf, &m_pShareData->m_Common.m_sTabBar.m_lf, sizeof(m_lf) ));
@@ -2337,7 +2337,7 @@ void CTabWnd::LayoutTab( void )
 /*! イメージリストの初期化処理
 	@date 2006.02.22 ryoji 新規作成
 */
-HIMAGELIST CTabWnd::InitImageList( void )
+HIMAGELIST CTabWnd::InitImageList( )
 {
 	SHFILEINFO sfi;
 	HIMAGELIST hImlSys;
@@ -2979,7 +2979,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 /** 次のグループの先頭ウィンドウを探す
 	@date 2007.06.20 ryoji 新規作成
 */
-HWND CTabWnd::GetNextGroupWnd( void )
+HWND CTabWnd::GetNextGroupWnd( )
 {
 	HWND hwndRet = nullptr;
 
@@ -3029,7 +3029,7 @@ HWND CTabWnd::GetNextGroupWnd( void )
 /** 前のグループの先頭ウィンドウを探す
 	@date 2007.06.20 ryoji 新規作成
 */
-HWND CTabWnd::GetPrevGroupWnd( void )
+HWND CTabWnd::GetPrevGroupWnd( )
 {
 	HWND hwndRet = nullptr;
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
@@ -3078,7 +3078,7 @@ HWND CTabWnd::GetPrevGroupWnd( void )
 /** 次のグループをアクティブにする
 	@date 2007.06.20 ryoji 新規作成
 */
-void CTabWnd::NextGroup( void )
+void CTabWnd::NextGroup( )
 {
 	HWND hWnd = GetNextGroupWnd();
 	if( hWnd )
@@ -3090,7 +3090,7 @@ void CTabWnd::NextGroup( void )
 /** 前のグループをアクティブにする
 	@date 2007.06.20 ryoji 新規作成
 */
-void CTabWnd::PrevGroup( void )
+void CTabWnd::PrevGroup( )
 {
 	HWND hWnd = GetPrevGroupWnd();
 	if( hWnd )
@@ -3102,7 +3102,7 @@ void CTabWnd::PrevGroup( void )
 /** タブを右に移動する
 	@date 2007.06.20 ryoji 新規作成
 */
-void CTabWnd::MoveRight( void )
+void CTabWnd::MoveRight( )
 {
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
 	{
@@ -3123,7 +3123,7 @@ void CTabWnd::MoveRight( void )
 /** タブを左に移動する
 	@date 2007.06.20 ryoji 新規作成
 */
-void CTabWnd::MoveLeft( void )
+void CTabWnd::MoveLeft( )
 {
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
 	{
@@ -3144,7 +3144,7 @@ void CTabWnd::MoveLeft( void )
 	@date 2007.06.20 ryoji 新規作成
 	@date 2007.11.30 ryoji 最大化時の分離対応
 */
-void CTabWnd::Separate( void )
+void CTabWnd::Separate( )
 {
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
@@ -3197,7 +3197,7 @@ void CTabWnd::Separate( void )
 /** 次のグループに移動する（現在のグループから分離、結合）
 	@date 2007.06.20 ryoji 新規作成
 */
-void CTabWnd::JoinNext( void )
+void CTabWnd::JoinNext( )
 {
 	HWND hWnd = GetNextGroupWnd();
 	if( hWnd )
@@ -3212,7 +3212,7 @@ void CTabWnd::JoinNext( void )
 /** 前のグループに移動する（現在のグループから分離、結合）
 	@date 2007.06.20 ryoji 新規作成
 */
-void CTabWnd::JoinPrev( void )
+void CTabWnd::JoinPrev( )
 {
 	HWND hWnd = GetPrevGroupWnd();
 	if( hWnd )

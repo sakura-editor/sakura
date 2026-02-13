@@ -73,7 +73,7 @@ BOOL CDlgProperty::OnBnClicked( int wID )
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-void CDlgProperty::SetData( void )
+void CDlgProperty::SetData( )
 {
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
 	CNativeW		cmemProp;
@@ -263,7 +263,7 @@ end_of_CodeTest:;
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgProperty::GetHelpIdTable(void)
+LPVOID CDlgProperty::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

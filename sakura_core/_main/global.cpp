@@ -37,7 +37,7 @@
 
 	@date 2007/09/21 kobake 整理
  */
-LPCWSTR GetAppName( void )
+LPCWSTR GetAppName( )
 {
 	const auto pcProcess = CProcess::getInstance();
 	if( !pcProcess )

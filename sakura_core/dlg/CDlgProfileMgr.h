@@ -53,7 +53,7 @@ protected:
 	void	SetData(int nSelIndex);	/* ダイアログデータの設定 */
 	int		GetData() override;	/* ダイアログデータの取得 */
 	int		GetData(bool bStart);	/* ダイアログデータの取得 */
-	LPVOID	GetHelpIdTable(void) override;
+	LPVOID	GetHelpIdTable() override;
 
 	void	UpdateIni();
 	void	CreateProf();

@@ -193,7 +193,7 @@ public:
 	// Jul. 29, 2006 genta
 	void GetEndLayoutPos(CLayoutPoint* ptLayoutEnd);
 
-	CLayoutInt GetMaxTextWidth(void) const { return m_nTextWidth; }		// 2009.08.28 nasukoji	テキスト最大幅を返す
+	CLayoutInt GetMaxTextWidth() const { return m_nTextWidth; }		// 2009.08.28 nasukoji	テキスト最大幅を返す
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           検索                              //
@@ -272,7 +272,7 @@ public:
 	);
 
 	BOOL CalculateTextWidth( BOOL bCalLineLen = TRUE, CLayoutInt nStart = CLayoutInt(-1), CLayoutInt nEnd = CLayoutInt(-1) );	/* テキスト最大幅を算出する */		// 2009.08.28 nasukoji
-	void ClearLayoutLineWidth( void );				/* 各行のレイアウト行長の記憶をクリアする */		// 2009.08.28 nasukoji
+	void ClearLayoutLineWidth( );				/* 各行のレイアウト行長の記憶をクリアする */		// 2009.08.28 nasukoji
 	CLayoutXInt GetLayoutXOfChar( const wchar_t* pData, int nDataLen, int i ) const {
 		CLayoutXInt nSpace = CLayoutXInt(0);
 		if( m_nSpacing ){

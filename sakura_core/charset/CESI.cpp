@@ -152,7 +152,7 @@ void CESI::GetEvaluation( const ECodeType eCodeId, int *pv1, int *pv2 ) const
 	m_pMbInfo に格納される文字コード情報の元々の順番は、m_pMbPriority[] テーブルの添え字に従う。
 	バブルソートは、元あった順序を比較的変更しない。
 */
-void CESI::SortMBCInfo( void )
+void CESI::SortMBCInfo( )
 {
 	MBCODE_INFO *pei_tmp;
 	int i, j;
@@ -668,7 +668,7 @@ void CESI::ScanCode( const char* pS, size_t cchS )
 	@retval CESI_BOMTYPE_UTF16BE   Big-Endian(BE)
 	@retval CESI_BOMTYPE_UNKNOWN   不明
 */
-void CESI::GuessUtf16Bom( void )
+void CESI::GuessUtf16Bom( )
 {
 	int i, j;
 	EBOMType ebom_type;
@@ -696,7 +696,7 @@ void CESI::GuessUtf16Bom( void )
 
 	m_bEucFlag が TRUE のとき EUC, FALSE のとき SJIS
 */
-void CESI::GuessEucOrSjis( void )
+void CESI::GuessEucOrSjis( )
 {
 	if( IsAmbiguousEucAndSjis()
 	 && static_cast<double>(m_nMbcEucZenHirakata) / m_nMbcEucZen >= 0.25 ){ // 0.25 という値は適当です。
@@ -721,7 +721,7 @@ void CESI::GuessEucOrSjis( void )
 
 	m_bCesu8Flag が TRUE のとき CESU-8, FALSE のとき UTF-8
 */
-void CESI::GuessUtf8OrCesu8( void )
+void CESI::GuessUtf8OrCesu8( )
 {
 	if( IsAmbiguousUtf8AndCesu8()
 	 && m_pEncodingConfig->m_bPriorCesu8 ){

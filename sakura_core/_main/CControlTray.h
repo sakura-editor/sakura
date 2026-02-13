@@ -73,10 +73,10 @@ public:
 	HWND Create(HINSTANCE hInstance);	/* 作成 */
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
 	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
-	void MessageLoop( void );	/* メッセージループ */
-	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
-	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
-	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
+	void MessageLoop( );	/* メッセージループ */
+	void OnDestroy( );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
+	int	CreatePopUpMenu_L( );	/* ポップアップメニュー(トレイ左ボタン) */
+	int	CreatePopUpMenu_R( );	/* ポップアップメニュー(トレイ右ボタン) */
 
 	//ウィンドウ管理
 	static bool OpenNewEditor(							//!< 新規編集ウィンドウの追加 ver 0

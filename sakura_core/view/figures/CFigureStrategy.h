@@ -20,10 +20,10 @@ public:
 	virtual bool Match(const wchar_t* pText, int nTextLen) const = 0;
 
 	//! 色分け表示対象判定
-	virtual bool Disp(void) const = 0;
+	virtual bool Disp() const = 0;
 
 	//! 設定更新
-	virtual void Update(void)
+	virtual void Update()
 	{
 		CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
 		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
@@ -55,7 +55,7 @@ public:
 	}
 
 	//! 色分け表示対象判定
-	bool Disp(void) const override
+	bool Disp() const override
 	{
 		return true;
 	}
@@ -68,17 +68,17 @@ public:
 
 protected:
 	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const = 0;
-	virtual EColorIndexType GetColorIdx(void) const = 0;
+	virtual EColorIndexType GetColorIdx() const = 0;
 
 public:
 	//! 色分け表示対象判定
-	bool Disp(void) const override
+	bool Disp() const override
 	{
 		EColorIndexType nColorIndex = GetColorIdx();
 		return m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp;
 	}
 
-	void Update(void) override
+	void Update() override
 	{
 		CFigure::Update();
 
@@ -91,7 +91,7 @@ public:
 	}
 
 protected:
-	EColorIndexType GetDispColorIdx(void) const{ return m_nDispColorIndex; }
+	EColorIndexType GetDispColorIdx() const{ return m_nDispColorIndex; }
 
 	// 実装補助
 	bool DrawImp_StyleSelect(SColorStrategyInfo* pInfo);

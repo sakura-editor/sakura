@@ -41,7 +41,7 @@ public:
 	||  Attributes & Operations
 	*/
 	void Show( int nX, int nY, RECT* pRect = nullptr );	/* Tipを表示 */
-	void Hide( void );	/* Tipを消す */
+	void Hide( );	/* Tipを消す */
 	void GetWindowSize(LPRECT pRect);		// 2001/06/19 asa-o ウィンドウのサイズを得る
 
 	void ChangeFont( LOGFONT* lf ){

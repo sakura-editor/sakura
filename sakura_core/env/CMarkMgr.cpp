@@ -38,7 +38,7 @@ void CMarkMgr::SetMax(int max)
 	@retval true	有効
 	@retval false	無効
 */
-bool CMarkMgr::CheckCurrent(void) const
+bool CMarkMgr::CheckCurrent() const
 {
 	if( m_nCurpos < Count() )
 		return m_cMarkChain[ m_nCurpos ].IsValid();
@@ -52,7 +52,7 @@ bool CMarkMgr::CheckCurrent(void) const
 	@retval true	有る
 	@retval false	無い
 */
-bool CMarkMgr::CheckPrev(void) const
+bool CMarkMgr::CheckPrev() const
 {
 	for( int i = m_nCurpos - 1; i >= 0; i-- ){
 		if( m_cMarkChain[ i ].IsValid() )
@@ -67,7 +67,7 @@ bool CMarkMgr::CheckPrev(void) const
 	@retval true	有る
 	@retval false	無い
 */
-bool CMarkMgr::CheckNext(void) const
+bool CMarkMgr::CheckNext() const
 {
 	for( int i = m_nCurpos + 1; i < Count(); i++ ){
 		if( m_cMarkChain[ i ].IsValid() )
@@ -82,7 +82,7 @@ bool CMarkMgr::CheckNext(void) const
 	@retval true	正常終了。現在位置は1つ前の有効な要素に移動した。
 	@retval false	有効な要素が見つからなかった。現在位置は移動していない。
 */
-bool CMarkMgr::PrevValid(void)
+bool CMarkMgr::PrevValid()
 {
 	for( int i = m_nCurpos - 1; i >= 0; i-- ){
 		if( m_cMarkChain[ i ].IsValid() ){
@@ -98,7 +98,7 @@ bool CMarkMgr::PrevValid(void)
 	@retval true	正常終了。現在位置は1つ後の有効な要素に移動した。
 	@retval false	有効な要素が見つからなかった。現在位置は移動していない。
 */
-bool CMarkMgr::NextValid(void)
+bool CMarkMgr::NextValid()
 {
 	for( int i = m_nCurpos + 1; i < Count(); i++ ){
 		if( m_cMarkChain[ i ].IsValid() ){
@@ -116,7 +116,7 @@ bool CMarkMgr::NextValid(void)
 	@par history
 	Apr. 1, 2001 genta 新規追加
 */
-void CMarkMgr::Flush(void)
+void CMarkMgr::Flush()
 {
 	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.end() );
 	m_nCurpos = 0;
@@ -153,7 +153,7 @@ void CAutoMarkMgr::Add(const CMark& m)
 	要素数が最大値を超えている場合に要素数が範囲内に収まるよう、
 	古い方(番号の若い方)から削除する。
 */
-void CAutoMarkMgr::Expire(void)
+void CAutoMarkMgr::Expire()
 {
 	if (std::ssize(m_cMarkChain) <= m_nMaxitem) {
 		return;

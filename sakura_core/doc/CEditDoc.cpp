@@ -383,7 +383,7 @@ void CEditDoc::SetBackgroundImage()
 }
 
 /* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
-void CEditDoc::InitAllView( void )
+void CEditDoc::InitAllView( )
 {
 	m_nCommandExecNum = 0;	/* コマンド実行回数 */
 
@@ -410,7 +410,7 @@ void CEditDoc::InitAllView( void )
 	@date 2001.09.29 genta マクロクラスを渡すように
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
-BOOL CEditDoc::Create( void )
+BOOL CEditDoc::Create( )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::Create" );
 

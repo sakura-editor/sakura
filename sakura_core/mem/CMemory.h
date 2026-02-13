@@ -51,7 +51,7 @@ public:
 	void SetRawDataHoldBuffer( const void* pData, size_t nDataLen );	//!< バッファの内容を置き換える(バッファを保持)
 	void SetRawDataHoldBuffer( const CMemory& cmemData );				//!< バッファの内容を置き換える(バッファを保持)
 	void AppendRawData( const void* pData, size_t nDataLen );			//!< バッファの最後にデータを追加する
-	void Reset( void ) noexcept;										//!< バッファをリセットする
+	void Reset( ) noexcept;										//!< バッファをリセットする
 
 	[[nodiscard]] const std::byte* GetRawPtr() const noexcept { return m_pRawData; } //!< データへのポインタを返す
 	std::byte* GetRawPtr() noexcept { return m_pRawData; }             //!< データへのポインタを返す

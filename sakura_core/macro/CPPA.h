@@ -57,7 +57,7 @@ public:
 	}
 
 	//! PPAメッセージを取得する
-	const char* GetLastMessage(void) const { return m_szMsg; }
+	const char* GetLastMessage() const { return m_szMsg; }
 
 	static std::string GetDeclarations(const MacroFuncInfo& cMacroFuncInfo);
 

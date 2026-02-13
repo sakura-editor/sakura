@@ -22,7 +22,7 @@
 #include "recent/CMRUFolder.h"
 
 //日付挿入
-void CViewCommander::Command_INS_DATE( void )
+void CViewCommander::Command_INS_DATE( )
 {
 	// 日付をフォーマット
 	WCHAR szText[1024];
@@ -35,7 +35,7 @@ void CViewCommander::Command_INS_DATE( void )
 }
 
 //時刻挿入
-void CViewCommander::Command_INS_TIME( void )
+void CViewCommander::Command_INS_TIME( )
 {
 	// 時刻をフォーマット
 	WCHAR szText[1024];
@@ -52,7 +52,7 @@ void CViewCommander::Command_INS_TIME( void )
 	@author	MIK
 	@date	2002/06/02
 */
-void CViewCommander::Command_CtrlCode_Dialog( void )
+void CViewCommander::Command_CtrlCode_Dialog( )
 {
 	CDlgCtrlCode	cDlgCtrlCode;
 
@@ -67,7 +67,7 @@ void CViewCommander::Command_CtrlCode_Dialog( void )
 }
 
 // 最近使ったファイル挿入
-void CViewCommander::Command_INS_FILE_USED_RECENTLY( void )
+void CViewCommander::Command_INS_FILE_USED_RECENTLY( )
 {
 	std::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();
 	std::wstring s;
@@ -81,7 +81,7 @@ void CViewCommander::Command_INS_FILE_USED_RECENTLY( void )
 }
 
 // 最近使ったフォルダー挿入
-void CViewCommander::Command_INS_FOLDER_USED_RECENTLY( void )
+void CViewCommander::Command_INS_FOLDER_USED_RECENTLY( )
 {
 	std::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();
 	std::wstring s;

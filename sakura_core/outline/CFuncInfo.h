@@ -40,7 +40,7 @@ class CFuncInfo {
 
 		//! クリップボードに追加する要素か？
 		//	2003.06.27 Moca
-		inline bool IsAddClipText( void ) const{
+		inline bool IsAddClipText( ) const{
 			return ( FUNCINFO_NOCLIPTEXT != ( m_nInfo & FUNCINFO_NOCLIPTEXT ) );
 		}
 

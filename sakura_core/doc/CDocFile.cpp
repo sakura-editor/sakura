@@ -14,7 +14,7 @@
 
 	2017/5/17 CFile.hから移動
 */
-const WCHAR* CDocFile::GetSaveFilePath(void) const
+const WCHAR* CDocFile::GetSaveFilePath() const
 {
 	if (m_szSaveFilePath.IsValidPath()) {
 		return m_szSaveFilePath;

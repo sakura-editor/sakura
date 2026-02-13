@@ -25,7 +25,7 @@
 	@author	ai
 	@date	02/06/26
 */
-void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
+void CViewCommander::Command_JUMP_SRCHSTARTPOS()
 {
 	if( m_pCommanderView->m_ptSrchStartPos_PHY.BothNatural() )
 	{
@@ -48,7 +48,7 @@ void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 /*! 指定行へジャンプダイアログの表示
 	2002.2.2 YAZAKI
 */
-void CViewCommander::Command_JUMP_DIALOG( void )
+void CViewCommander::Command_JUMP_DIALOG( )
 {
 	if( !GetEditWindow()->m_cDlgJump.DoModal(
 		G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()
@@ -58,7 +58,7 @@ void CViewCommander::Command_JUMP_DIALOG( void )
 }
 
 /* 指定行ヘジャンプ */
-void CViewCommander::Command_JUMP( void )
+void CViewCommander::Command_JUMP( )
 {
 	const wchar_t*	pLine;
 	int			nMode;
@@ -251,7 +251,7 @@ void CViewCommander::Command_JUMP( void )
 
 //	from CViewCommander_New.cpp
 //! ブックマークの設定・解除を行う(トグル動作)
-void CViewCommander::Command_BOOKMARK_SET(void)
+void CViewCommander::Command_BOOKMARK_SET()
 {
 	CDocLine*	pCDocLine;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() && m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().y<m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().y ){
@@ -287,7 +287,7 @@ void CViewCommander::Command_BOOKMARK_SET(void)
 
 //	from CViewCommander_New.cpp
 //! 次のブックマークを探し，見つかったら移動する
-void CViewCommander::Command_BOOKMARK_NEXT(void)
+void CViewCommander::Command_BOOKMARK_NEXT()
 {
 	int			nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
@@ -328,7 +328,7 @@ re_do:;								// hor
 
 //	from CViewCommander_New.cpp
 //! 前のブックマークを探し，見つかったら移動する．
-void CViewCommander::Command_BOOKMARK_PREV(void)
+void CViewCommander::Command_BOOKMARK_PREV()
 {
 	int			nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
@@ -370,7 +370,7 @@ re_do:;								// hor
 
 //	from CViewCommander_New.cpp
 //! ブックマークをクリアする
-void CViewCommander::Command_BOOKMARK_RESET(void)
+void CViewCommander::Command_BOOKMARK_RESET()
 {
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).ResetAllBookMark();
 	// 2002.01.16 hor 分割したビューも更新
@@ -380,7 +380,7 @@ void CViewCommander::Command_BOOKMARK_RESET(void)
 //	from CViewCommander_New.cpp
 //指定パターンに一致する行をマーク 2002.01.16 hor
 //キーマクロで記録できるように	2002.02.08 hor
-void CViewCommander::Command_BOOKMARK_PATTERN( void )
+void CViewCommander::Command_BOOKMARK_PATTERN( )
 {
 	//検索or置換ダイアログから呼び出された
 	if( !m_pCommanderView->ChangeCurRegexp(false) ) return;
@@ -393,7 +393,7 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 }
 
 //! 次の関数リストマークを探し，見つかったら移動する
-void CViewCommander::Command_FUNCLIST_NEXT(void)
+void CViewCommander::Command_FUNCLIST_NEXT()
 {
 	CLogicPoint	ptXY(0, GetCaret().GetCaretLogicPos().y);
 	int			nYOld = ptXY.y;
@@ -421,7 +421,7 @@ void CViewCommander::Command_FUNCLIST_NEXT(void)
 }
 
 //! 前のブックマークを探し，見つかったら移動する．
-void CViewCommander::Command_FUNCLIST_PREV(void)
+void CViewCommander::Command_FUNCLIST_PREV()
 {
 	CLogicPoint	ptXY(0,GetCaret().GetCaretLogicPos().y);
 	int			nYOld = ptXY.y;
