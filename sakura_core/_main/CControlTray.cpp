@@ -26,7 +26,6 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
 #include "CControlTray.h"
 #include "env/CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
@@ -489,14 +488,7 @@ LRESULT CControlTray::DispatchEvent(
 			// pszKeywords取得
 			const WCHAR* pszKeywords = &pWork[cchHelpFile + 1];
 
-			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
-			hwndHtmlHelp = OpenHtmlHelp(
-				nullptr,
-				pszHelpFile,
-				HH_DISPLAY_TOPIC,
-				(DWORD_PTR)0,
-				true
-			);
+			hwndHtmlHelp = HtmlHelpW(nullptr, pszHelpFile, HH_DISPLAY_TOPIC, (DWORD_PTR)0);
 
 			HH_AKLINK	link;
 			link.cbStruct		= sizeof_raw(link);
@@ -508,14 +500,7 @@ LRESULT CControlTray::DispatchEvent(
 			link.pszWindow		= nullptr;
 			link.fIndexOnFail	= TRUE;
 
-			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
-			hwndHtmlHelp = OpenHtmlHelp(
-				nullptr,
-				pszHelpFile,
-				HH_KEYWORD_LOOKUP,
-				(DWORD_PTR)&link,
-				false
-			);
+			hwndHtmlHelp = HtmlHelpW(nullptr, pszHelpFile, HH_KEYWORD_LOOKUP, (DWORD_PTR)&link);
 		}
 		return (LRESULT)hwndHtmlHelp;
 

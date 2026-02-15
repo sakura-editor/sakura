@@ -21,7 +21,6 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
@@ -331,21 +330,9 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		if( _IS_REL_PATH( filename ) ){
 			WCHAR path[_MAX_PATH];
 			GetInidirOrExedir( path, filename );
-			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
-			hwndHtmlHelp = OpenHtmlHelp(
-				nullptr/*GetDllShareData().m_sHandles.m_hwndTray*/,
-				path, //	Jul. 5, 2002 genta
-				HH_KEYWORD_LOOKUP,
-				(DWORD_PTR)&link
-			);
+			hwndHtmlHelp = HtmlHelpW(nullptr, path, HH_KEYWORD_LOOKUP, (DWORD_PTR)&link);
 		}else{
-			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
-			hwndHtmlHelp = OpenHtmlHelp(
-				nullptr/*GetDllShareData().m_sHandles.m_hwndTray*/,
-				filename, //	Jul. 5, 2002 genta
-				HH_KEYWORD_LOOKUP,
-				(DWORD_PTR)&link
-			);
+			hwndHtmlHelp = HtmlHelpW(nullptr, filename, HH_KEYWORD_LOOKUP, (DWORD_PTR)&link);
 		}
 	}
 

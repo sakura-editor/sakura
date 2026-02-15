@@ -7,10 +7,6 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
-#include <ShlObj.h>
-#include <shellapi.h>
-#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
@@ -317,33 +313,6 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 	return dwRet;
 }
 
-/*!
- * HTML Helpを開く
- *
- * @param[in, opt] hWnd 呼び出し元ウィンドウのハンドル（省略可）
- * @param[in] szFile HTML Helpのファイル名。不等号(>)に続けてウィンドウタイプ名を指定可能
- * @param[in] uCmd HtmlHelpに渡すコマンド
- * @param[in] data コマンドに応じたデータ（省略可）
- *
- * @return 開いたヘルプウィンドウのハンドル。失敗時は nullptr
- *
- * @note Windows95以前ではHHCtrl.ocxが標準で入っていないバージョンが存在した。
- *       過去にはHHCtrl.ocx未検出時にエラーメッセージを表示していたが、
- *       現在はHHCtrl.ocxを静的リンクする方式に変更したため、チェック処理は削除した。
- *
- * @date 2001/06/26 genta 新規作成
- */
-HWND OpenHtmlHelp(
-	HWND		hWnd,	//!< [in] 呼び出し元ウィンドウのウィンドウハンドル
-	LPCWSTR		szFile,	//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
-	UINT		uCmd,	//!< [in] HTML Help に渡すコマンド
-	DWORD_PTR	data,	//!< [in] コマンドに応じたデータ
-	[[maybe_unused]] bool		msgflag	//!< [in] エラーメッセージを表示するか。省略時はtrue。
-)
-{
-	return ::HtmlHelpW( hWnd, szFile, uCmd, data );
-}
-
 /*! ショートカット(.lnk)の解決
 	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
 */
@@ -520,7 +489,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 	LPCWSTR lpszHelp = GetHelpFilePath();
 	if( IsFileExists( lpszHelp, true ) ){
 		// HTML ヘルプを呼び出す
-		HWND hWnd = OpenHtmlHelp( hwndCaller, lpszHelp, uCommand, dwData );
+		HWND hWnd = HtmlHelpW(hwndCaller, lpszHelp, uCommand, dwData);
 		if (bDesktop && hWnd != nullptr){
 			::SetForegroundWindow( hWnd );	// ヘルプ画面を手前に出す
 		}
