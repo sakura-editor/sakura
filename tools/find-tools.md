@@ -45,7 +45,6 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 | NUM_VSVERSION  | 使用される Visual Studio のバージョン  |
 | -------------- | -------------------------------------- |
 | （未定義）     | インストールされている最新のバージョン |
-| 15             | Visual Studio 2017                     |
 | 16             | Visual Studio 2019                     |
 | 17             | Visual Studio 2022                     |
 | 18             | Visual Studio 2026                     |
@@ -60,12 +59,8 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
    4. `NUM_VSVERSION`が指定されている場合に限り、設定されている値とここまでのチェックで見つかったバージョンが同じであるか確認する。
       もし異なっている場合は環境変数を初期化した上で引数チェックをやり直す。
 2. 引数チェックで決定したバージョンの MSBuild を探す。
-   - Visual Studio 2017 が選択された場合
-      - VS2017 のインストールパスを取得し、配下の所定位置に`MSBuild.exe`が存在する場合、そのパスを`MSBuild`のパスとして利用する。
-      - CMakeのジェネレータ名を示す`CMAKE_G_PARAM`に`Visual Studio 15 2017`を設定する。
-   - Visual Studio 2019 以降が選択された場合
-      - Visual Studio Locator の`-find`オプションを利用して`MSBuild.exe`を検索し、見つかったパスを`MSBuild`のパスとして利用する。
-      - `NUM_VSVERSION`と別途取得したプロダクトバージョンからCMakeのジェネレータ名を生成し、`CMAKE_G_PARAM`に設定する。
+   - Visual Studio Locator の`-find`オプションを利用して`MSBuild.exe`を検索し、見つかったパスを`MSBuild`のパスとして利用する。
+   - `NUM_VSVERSION`と別途取得したプロダクトバージョンからCMakeのジェネレータ名を生成し、`CMAKE_G_PARAM`に設定する。
 
 ### 参照
 * https://github.com/Microsoft/vswhere
