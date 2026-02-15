@@ -147,7 +147,7 @@ INT_PTR CPropHelper::DispatchEvent(
 					/* 検索フォルダー */
 					// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_sHelper.m_szMigemoDict ) ){
-						GetInidirOrExedir(szPath, m_Common.m_sHelper.m_szMigemoDict);
+						GetInidirOrExedir( szPath, m_Common.m_sHelper.m_szMigemoDict, TRUE );
 					}else{
 						wcscpy( szPath, m_Common.m_sHelper.m_szMigemoDict );
 					}

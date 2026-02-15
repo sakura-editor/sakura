@@ -3158,9 +3158,9 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 	memset( &lf, 0, sizeof(LOGFONT) );
 	lf.lfCharSet = DEFAULT_CHARSET;
 	lf.lfHeight = ncm.lfCaptionFont.lfHeight;
-	::wcsncpy_s(lf.lfFaceName, L"Marlett", _TRUNCATE);
+	::lstrcpy( lf.lfFaceName, L"Marlett" );
 	HFONT hFont = ::CreateFontIndirect( &lf );
-	::wcsncpy_s(lf.lfFaceName, L"Webdings", _TRUNCATE);
+	::lstrcpy( lf.lfFaceName, L"Webdings" );
 	HFONT hFont2 = ::CreateFontIndirect( &lf );
 	gr.SetTextBackTransparent( true );
 
