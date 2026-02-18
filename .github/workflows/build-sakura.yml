@@ -83,6 +83,7 @@ jobs:
         Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip -OutFile "AutoHotkey.zip"
         Expand-Archive -Path "AutoHotkey.zip" -DestinationPath $AutohotkeyDir -Force
         echo "AutoHotKey=$HOME\autohotkey\AutoHotkey32.exe" >> $env:GITHUB_ENV
+      if: ${{ matrix.config == 'Release' }}
 
     - name: Install Locale Emulator
       run: |
@@ -92,14 +93,17 @@ jobs:
         Start-Process $env:AutoHotKey "${LEInitScript}"
         Start-Process "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
+      if: ${{ matrix.config == 'Release' }}
       shell: pwsh
 
     - name: Build HTML Help
       run: build-chm.bat
+      if: ${{ matrix.config == 'Release' }}
       shell: cmd
 
     - name: Build installer with Inno Setup
       run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
+      if: ${{ matrix.config == 'Release' }}
       shell: cmd
 
     - name: zipArtifacts
