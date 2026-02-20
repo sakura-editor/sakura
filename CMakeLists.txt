@@ -15,6 +15,10 @@ target_link_libraries(${PROJECT_NAME}
     sakura_core
 )
 
+add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+  COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:${PROJECT_NAME}>
+)
+
 # Create language DLL projects
 # en-US: 1033 (0x0409) - English (United States)
 # zh-CN: 2052 (0x0804) - Chinese (Simplified, PRC)
