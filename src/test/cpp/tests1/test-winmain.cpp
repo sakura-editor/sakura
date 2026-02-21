@@ -232,37 +232,22 @@ struct WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
 } // namespace winmain
 
 /*!
- * @brief コントロールプロセスの初期化完了を待つ
- *
- * CControlProcess::WaitForInitializedとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存CProcessFactory::WaitForInitializedControlProcess()と概ね等価です。
+ * @brief コントロールプロセスを起動する
  */
-void CControlProcess_WaitForInitialized(const std::optional<std::wstring>& optProfileName)
+void CControlProcess_Start(const std::optional<std::wstring>& optProfileName)
 {
-	// 初期化完了イベントを作成する
-	std::wstring strInitEvent{ GSTR_EVENT_SAKURA_CP_INITIALIZED };
+	// 初期化完了イベントの名前を決める
+	SFilePath initEventName{ GSTR_EVENT_SAKURA_CP_INITIALIZED };
 	if (optProfileName.has_value()) {
-		strInitEvent += *optProfileName;
+		initEventName += *optProfileName;
 	}
-	cxx::HandleHolder hEvent = ::CreateEventW(nullptr, TRUE, FALSE, strInitEvent.c_str());
+
+	// プロセス起動前に初期化完了イベントを作成する
+	cxx::HandleHolder hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
 	if (!hEvent) {
 		cxx::raise_system_error("create event failed.");
 	}
 
-	// 初期化完了イベントを待つ
-	if (!hEvent.try_lock_for(std::chrono::milliseconds(30000))){
-		cxx::raise_system_error("waitEvent is timeout.");
-	}
-}
-
-/*!
- * @brief コントロールプロセスを起動する
- *
- * CControlProcess::Startとして実装したいコードです。本体を変えたくないので一時定義しました。
- * 既存CProcessFactory::StartControlProcess()と概ね等価です。
- */
-void CControlProcess_Start(const std::optional<std::wstring>& optProfileName)
-{
 	const auto exePath = GetExeFileName();
 	const auto lpszAppName = exePath.c_str();
 
@@ -311,7 +296,9 @@ void CControlProcess_Start(const std::optional<std::wstring>& optProfileName)
 	::CloseHandle(pi.hProcess);
 
 	// コントロールプロセスの初期化完了を待つ
-	CControlProcess_WaitForInitialized(optProfileName);
+	if (!hEvent.try_lock_for(std::chrono::milliseconds(60000))){
+		cxx::raise_system_error("waitEvent is timeout.");
+	}
 }
 
 /*!
@@ -342,7 +329,8 @@ void CControlProcess_Terminate(const std::optional<std::wstring>& optProfileName
 	}
 
 	// プロセス情報の問い合せを行うためのハンドルを開く
-	cxx::HandleHolder hControlProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | SYNCHRONIZE, FALSE, dwControlProcessId);
+	// タイムアウト時に強制終了へフォールバックできるよう、TERMINATE 権限も付与する
+	cxx::HandleHolder hControlProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | SYNCHRONIZE | PROCESS_TERMINATE, FALSE, dwControlProcessId);
 	if (!hControlProcess) {
 		cxx::raise_system_error("hControlProcess can't be opened.");
 	}
@@ -364,8 +352,16 @@ void CControlProcess_Terminate(const std::optional<std::wstring>& optProfileName
 	}
 
 	// メインウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	if (!hControlProcess.try_lock_for(std::chrono::milliseconds(30000))) {
-		cxx::raise_system_error("waitProcess is timeout.");
+	if (!hControlProcess.try_lock_for(std::chrono::milliseconds(45000))) {
+		// 終了できないなら強制終了させる
+		if (const auto exitCode = 1; !::TerminateProcess(hControlProcess.get(), exitCode)) {
+			cxx::raise_system_error("waitProcess is timeout and terminate process failed.");
+		}
+
+		// TerminateProcess は非同期なので操作完了を待つ
+		if (!hControlProcess.try_lock_for(std::chrono::milliseconds(5000))) {
+			cxx::raise_system_error("waitProcess is timeout and force terminate is timeout.");
+		}
 	}
 }
 
