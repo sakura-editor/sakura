@@ -44,7 +44,7 @@
     <OutDir>..\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <LinkIncremental>false</LinkIncremental>
@@ -924,6 +924,9 @@
   </Target>
   <Target Name="GenerateDiff" Condition="!Exists('$(OutDir)diff.exe')" DependsOnTargets="GenerateVersionHeader" AfterTargets="Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_diffutils -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" WorkingDirectory="..\" />
+  </Target>
+  <Target Name="RemoveSakuraExe" Condition="Exists('$(TargetPath)')" DependsOnTargets="ClCompile;ResourceCompile" BeforeTargets="Link">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); attrib -R '$(TargetPath)'; Remove-Item '$(TargetPath)' -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="GenerateLang_en_US" Inputs="@(RcInclude);..\sakura_lang\sakura_rc_en-US.rc;..\sakura_lang\sakura_rc_en-US_rc.rc2" Outputs="$(OutDir)sakura_lang_en_US.dll" DependsOnTargets="GenerateVersionHeader;GenerateFuncCodeDefine" AfterTargets="Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target sakura_lang_en_US -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />

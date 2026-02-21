@@ -131,6 +131,10 @@ set_target_properties(tests1
     ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}"
 )
 
+add_custom_command(TARGET tests1 PRE_LINK
+  COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:tests1>
+)
+
 if(MINGW)
 
   # Add include directories for tests1
