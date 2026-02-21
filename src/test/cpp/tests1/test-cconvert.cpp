@@ -377,9 +377,6 @@ TEST(CConvert, Trim)
 	EXPECT_EQ(actual, expected);
 }
 
-//! googletestの出力に機能IDを出力させる
-std::ostream& operator << (std::ostream& os, const EFunctionCode& eFuncCode);
-
 //!変換テストのためのテストパラメータ型
 using ConvTestParamType = std::tuple<EFunctionCode, std::wstring_view, std::wstring_view>;
 
