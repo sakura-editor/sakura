@@ -169,7 +169,6 @@ public:
 	constexpr const WCHAR* c_str() const noexcept { return data(); }
 
 	constexpr operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
-	constexpr operator std::span<WCHAR>()          & noexcept { return std::span<WCHAR, N>{ *this }; }
 	constexpr operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
 
 	explicit operator std::filesystem::path() const & noexcept { return static_cast<std::wstring_view>(*this); }
