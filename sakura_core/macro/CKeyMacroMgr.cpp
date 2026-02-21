@@ -18,8 +18,6 @@
 */
 
 #include "StdAfx.h"
-#include <stdio.h>
-#include <string.h>
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
@@ -27,19 +25,12 @@
 #include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include "io/CTextStream.h"
-
 #include "util/file.h"
-
 #include "CSelectLang.h"
 #include "mem/CNativeW.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
-	m_pTop = nullptr;
-	m_pBot = nullptr;
-//	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
-	//	Apr. 29, 2002 genta
-	//	m_nReadyはCMacroManagerBaseへ
 	return;
 }
 
