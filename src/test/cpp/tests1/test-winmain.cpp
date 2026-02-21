@@ -342,7 +342,8 @@ void CControlProcess_Terminate(const std::optional<std::wstring>& optProfileName
 	}
 
 	// プロセス情報の問い合せを行うためのハンドルを開く
-	cxx::HandleHolder hControlProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | SYNCHRONIZE, FALSE, dwControlProcessId);
+	// タイムアウト時に強制終了へフォールバックできるよう、TERMINATE 権限も付与する
+	cxx::HandleHolder hControlProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | SYNCHRONIZE | PROCESS_TERMINATE, FALSE, dwControlProcessId);
 	if (!hControlProcess) {
 		cxx::raise_system_error("hControlProcess can't be opened.");
 	}
@@ -364,8 +365,16 @@ void CControlProcess_Terminate(const std::optional<std::wstring>& optProfileName
 	}
 
 	// メインウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	if (!hControlProcess.try_lock_for(std::chrono::milliseconds(30000))) {
-		cxx::raise_system_error("waitProcess is timeout.");
+	if (!hControlProcess.try_lock_for(std::chrono::milliseconds(45000))) {
+		// 終了できないなら強制終了させる
+		if (const auto exitCode = 1; !::TerminateProcess(hControlProcess.get(), exitCode)) {
+			cxx::raise_system_error("waitProcess is timeout and terminate process failed.");
+		}
+
+		// TerminateProcess は非同期なので操作完了を待つ
+		if (!hControlProcess.try_lock_for(std::chrono::milliseconds(5000))) {
+			cxx::raise_system_error("waitProcess is timeout and force terminate is timeout.");
+		}
 	}
 }
 
