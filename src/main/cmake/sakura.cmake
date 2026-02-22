@@ -310,6 +310,10 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
       # RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}"
   )
 
+  add_custom_command(TARGET ${SAKURA_LANG} PRE_LINK
+    COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:${SAKURA_LANG}>
+  )
+
   # MSVC specific settings
   if(MSVC)
     # Convert decimal LOCALE_ID to hexadecimal for MSVC RC
@@ -324,7 +328,7 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
     # avoid error LNK2001 for "__DllMainCRTStartup@12"
     set_target_properties(${SAKURA_LANG}
       PROPERTIES
-        LINK_FLAGS "/NOENTRY"
+        LINK_FLAGS "/NOENTRY /INCREMENTAL:NO"
     )
   endif(MSVC)
   

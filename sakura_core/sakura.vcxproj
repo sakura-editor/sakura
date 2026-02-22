@@ -928,10 +928,10 @@
   <Target Name="RemoveSakuraExe" Condition="Exists('$(TargetPath)')" DependsOnTargets="ClCompile;ResourceCompile" BeforeTargets="Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); attrib -R '$(TargetPath)'; Remove-Item '$(TargetPath)' -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
-  <Target Name="GenerateLang_en_US" Inputs="@(RcInclude);..\sakura_lang\sakura_rc_en-US.rc;..\sakura_lang\sakura_rc_en-US_rc.rc2" Outputs="$(OutDir)sakura_lang_en_US.dll" DependsOnTargets="GenerateVersionHeader;GenerateFuncCodeDefine" AfterTargets="Link">
+  <Target Name="GenerateLang_en_US" Inputs="..\src\main\cmake\version.h.in;@(FuncCodeRes);@(RcInclude);..\sakura_lang\sakura_rc_en-US.rc;..\sakura_lang\sakura_rc_en-US.rc2" Outputs="$(OutDir)sakura_lang_en_US.dll" AfterTargets="GenerateFuncCodeDefine;Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target sakura_lang_en_US -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
-  <Target Name="GenerateLang_zh_CN" Inputs="@(RcInclude);..\sakura_lang\sakura_rc_zh-CN.rc;..\sakura_lang\sakura_rc_zh-CN.rc2" Outputs="$(OutDir)sakura_lang_zh_CN.dll" DependsOnTargets="GenerateVersionHeader;GenerateFuncCodeDefine" AfterTargets="Link">
+  <Target Name="GenerateLang_zh_CN" Inputs="..\src\main\cmake\version.h.in;@(FuncCodeRes);@(RcInclude);..\sakura_lang\sakura_rc_zh-CN.rc;..\sakura_lang\sakura_rc_zh-CN.rc2" Outputs="$(OutDir)sakura_lang_zh_CN.dll" AfterTargets="GenerateFuncCodeDefine;Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target sakura_lang_zh_CN -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
