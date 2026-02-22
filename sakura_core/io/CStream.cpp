@@ -6,7 +6,6 @@
 */
 #include "StdAfx.h"
 #include "CStream.h"
-#include <string>
 #include "util/std_macro.h"
 
 //	::fflush(m_hFile);
@@ -23,8 +22,6 @@ class CFileAttribute{
 public:
 	CFileAttribute(const WCHAR* pszPath)
 	: m_strPath(pszPath)
-	, m_bAttributeChanged(false)
-	, m_dwAttribute(0)
 	{
 	}
 
@@ -53,8 +50,8 @@ public:
 	}
 private:
 	std::wstring	m_strPath;
-	bool			m_bAttributeChanged;
-	DWORD			m_dwAttribute;
+	bool			m_bAttributeChanged = false;
+	DWORD			m_dwAttribute = 0;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -63,20 +60,9 @@ private:
 
 CStream::CStream(const WCHAR* pszPath, const WCHAR* pszMode, bool bExceptionMode)
 {
-	m_fp = nullptr;
-	m_pcFileAttribute = nullptr;
 	m_bExceptionMode = bExceptionMode;
 	Open(pszPath,pszMode);
 }
-
-/*
-CStream::CStream()
-{
-	m_fp = NULL;
-	m_pcFileAttribute = NULL;
-	m_bExceptionMode = false;
-}
-*/
 
 CStream::~CStream()
 {

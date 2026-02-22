@@ -67,8 +67,8 @@ public:
 	//モード
 	bool IsExceptionMode() const{ return m_bExceptionMode; }
 private:
-	FILE*			m_fp;
-	CFileAttribute*	m_pcFileAttribute;
+	FILE*			m_fp = nullptr;
+	CFileAttribute*	m_pcFileAttribute = nullptr;
 	bool			m_bExceptionMode;
 };
 
