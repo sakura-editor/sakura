@@ -13,8 +13,12 @@
 #include "env/DLLSHAREDATA.h"
 #include "uiparts/CMenuDrawer.h"
 #include "util/window.h"
+#include "util/file.h"
 #include "version.h"
 #include "sakura_rc.h"
+
+using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 using SFuncCodeArray = std::array<EFunctionCode, 8>;
 
@@ -1785,6 +1789,148 @@ TEST_F(CShareDataTest, ChangeLang001)
 
 	// 言語を元に戻す
 	CSelectLang::ChangeLang(L"");
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * インデックス-1はキーマクロのファイル名を返す。
+ */
+TEST_F(CShareDataTest, GetMacroFilename001)
+{
+	const auto keyMacoroPath = GetExeFileName().replace_filename(L"RecKey.mac"s);
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// バッファにnullを指定した場合、格納すべき文字数を符号反転して返す
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, nullptr, 0), Eq(-std::ssize(keyMacoroPath.native())));
+
+	// 適切なバッファを指定した場合、キーマクロの文字数を返す
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(keyMacoroPath.native())));
+	EXPECT_THAT(buffer, StartsWith(keyMacoroPath.native()));
+
+	// バッファサイズが足りない場合、格納すべき文字数を符号反転して返す
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(keyMacoroPath.native()))), Eq(-std::ssize(keyMacoroPath.native())));
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名が未設定だった場合、0を返す
+ */
+TEST_F(CShareDataTest, GetMacroFilename002)
+{
+	auto& shareData = ::GetDllShareData();
+	auto& sMacro = shareData.m_Common.m_sMacro;
+
+	sMacro.m_MacroTable[2].m_szFile[0] = L'\0';
+	EXPECT_THAT(pcShareData->GetMacroFilename(2, nullptr, 0), Eq(0));
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名がフルパスだった場合のテスト
+ */
+TEST_F(CShareDataTest, GetMacroFilename003)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const auto testFilePath = GetIniFileName().replace_filename(L"test.mac"s);
+	::wcscpy_s(sMacro.m_MacroTable[3].m_szFile, testFilePath.c_str());
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[1].m_szFile, L"");
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名が相対パスだった場合のテスト
+ */
+TEST_F(CShareDataTest, GetMacroFilename004)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const std::wstring macroFolder{ sMacro.m_szMACROFOLDER };
+	::wcscpy_s(sMacro.m_szMACROFOLDER, L".");
+	const auto testFilePath = GetIniFileName().remove_filename() / L"." / L"test.mac";
+	::wcscpy_s(sMacro.m_MacroTable[4].m_szFile, L"test.mac");
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[4].m_szFile, L"");
+	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名が相対パス、かつ、マクロフォルダーが '\' で終わらない限界長のフルパス だった場合のテスト
+ */
+TEST_F(CShareDataTest, GetMacroFilename005)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH * 2, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const std::wstring macroFolder{ sMacro.m_szMACROFOLDER };
+	const std::filesystem::path tooLongPath{ std::format(LR"(C:\{:a<256})", L'a') };	// 259文字のパスを作る（MAX_PATHに収まる限界長。）
+	::wcsncpy_s(sMacro.m_szMACROFOLDER, tooLongPath.c_str(), _TRUNCATE);
+	const auto testFilePath = tooLongPath / L"test.mac";
+	::wcscpy_s(sMacro.m_MacroTable[5].m_szFile, L"test.mac");
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[5].m_szFile, L"");
+	::wmemset(sMacro.m_szMACROFOLDER, 0, std::size(sMacro.m_szMACROFOLDER));
+	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
+}
+
+TEST_F(CShareDataTest, GetMacroFilename101)
+{
+	EXPECT_THAT(pcShareData->GetMacroFilename(-2, nullptr, 0), Eq(0)); // 👈バグです。インデックスに下限を下回る値を指定したときに、範囲外アクセスしています。
+}
+
+TEST_F(CShareDataTest, GetMacroFilename102)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const std::wstring macroFolder{ sMacro.m_szMACROFOLDER };
+	sMacro.m_szMACROFOLDER[0] = L'\0';
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(MAX_CUSTMACRO, nullptr, 0), Eq(0)); // 👈バグです。インデックスに上限を下回る値を指定したときに、範囲外アクセスしています。
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
 }
 
 } // namespace env

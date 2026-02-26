@@ -26,6 +26,7 @@ using ::testing::Lt;
 using ::testing::Ne;
 using ::testing::NotNull;
 using ::testing::Return;
+using ::testing::StartsWith;
 using ::testing::StrCaseEq;
 using ::testing::StrCaseNe;
 using ::testing::StrEq;
