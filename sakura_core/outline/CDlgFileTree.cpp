@@ -968,7 +968,7 @@ BOOL CDlgFileTree::OnNotify(NMHDR* pNMHDR)
 	return CDialog::OnNotify(pNMHDR);
 }
 
-LPVOID CDlgFileTree::GetHelpIdTable( void )
+LPVOID CDlgFileTree::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }

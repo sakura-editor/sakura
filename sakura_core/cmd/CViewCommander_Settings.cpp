@@ -36,7 +36,7 @@
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutToolBar(), CEditWnd::EndLayoutBars() で行うように変更
 */
-void CViewCommander::Command_SHOWTOOLBAR( void )
+void CViewCommander::Command_SHOWTOOLBAR( )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
@@ -57,7 +57,7 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutFuncKey(), CEditWnd::EndLayoutBars() で行うように変更
 */
-void CViewCommander::Command_SHOWFUNCKEY( void )
+void CViewCommander::Command_SHOWFUNCKEY( )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
@@ -81,7 +81,7 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutTabBar(), CEditWnd::EndLayoutBars() で行うように変更
 	@date 2007.06.20 ryoji グループIDリセット
  */
-void CViewCommander::Command_SHOWTAB( void )
+void CViewCommander::Command_SHOWTAB( )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
@@ -111,7 +111,7 @@ void CViewCommander::Command_SHOWTAB( void )
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutStatusBar(), CEditWnd::EndLayoutBars() で行うように変更
 */
-void CViewCommander::Command_SHOWSTATUSBAR( void )
+void CViewCommander::Command_SHOWSTATUSBAR( )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
@@ -132,7 +132,7 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 
 	@date 2014.07.14 新規作成
 */
-void CViewCommander::Command_SHOWMINIMAP( void )
+void CViewCommander::Command_SHOWMINIMAP( )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
@@ -150,7 +150,7 @@ void CViewCommander::Command_SHOWMINIMAP( void )
 }
 
 /* タイプ別設定一覧 */
-void CViewCommander::Command_TYPE_LIST( void )
+void CViewCommander::Command_TYPE_LIST( )
 {
 	CDlgTypeList			cDlgTypeList;
 	CDlgTypeList::SResult	sResult;
@@ -189,20 +189,20 @@ void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
 }
 
 /* タイプ別設定 */
-void CViewCommander::Command_OPTION_TYPE( void )
+void CViewCommander::Command_OPTION_TYPE( )
 {
 	CEditApp::getInstance()->OpenPropertySheetTypes( -1, GetDocument()->m_cDocType.GetDocumentType() );
 }
 
 /* 共通設定 */
-void CViewCommander::Command_OPTION( void )
+void CViewCommander::Command_OPTION( )
 {
 	/* 設定プロパティシート テスト用 */
 	CEditApp::getInstance()->OpenPropertySheet( -1 );
 }
 
 /* フォント設定 */
-void CViewCommander::Command_FONT( void )
+void CViewCommander::Command_FONT( )
 {
 	HWND	hwndFrame;
 	hwndFrame = GetMainWindow();
@@ -374,7 +374,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	@note 変更する順序を変更したときはCEditWnd::InitMenu()も変更すること
 	@sa CEditWnd::InitMenu()
 */
-void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+void CViewCommander::Command_WRAPWINDOWWIDTH( )	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 {
 	// Jan. 8, 2006 genta 判定処理をm_pCommanderView->GetWrapMode()へ移動
 	CEditView::TOGGLE_WRAP_ACTION nWrapMode;
@@ -405,7 +405,7 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 	@author	MIK
 	@date	2003/04/07
 */
-void CViewCommander::Command_Favorite( void )
+void CViewCommander::Command_Favorite( )
 {
 	CDlgFavorite	cDlgFavorite;
 

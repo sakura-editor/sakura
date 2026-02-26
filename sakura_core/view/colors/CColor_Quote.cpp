@@ -27,7 +27,7 @@ public:
 	}
 };
 
-void CColor_Quote::Update(void)
+void CColor_Quote::Update()
 {
 	const CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
 	m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();

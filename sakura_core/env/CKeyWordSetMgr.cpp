@@ -34,7 +34,7 @@ inline int GetAlignmentSize( int nSize )
 	@note CKeyWordSetMgrは共有メモリ構造体に埋め込まれているため，
 	そのままではコンストラクタが動かないことに注意．
 */
-CKeyWordSetMgr::CKeyWordSetMgr( void )
+CKeyWordSetMgr::CKeyWordSetMgr( )
 {
 	m_nCurrentKeyWordSetIdx = 0;
 	m_nKeyWordSetNum = 0;
@@ -51,7 +51,7 @@ CKeyWordSetMgr::CKeyWordSetMgr( void )
 	
 	@date 2004.07.29 Moca 可変長記憶
 */
-void CKeyWordSetMgr::ResetAllKeyWordSet( void )
+void CKeyWordSetMgr::ResetAllKeyWordSet( )
 {
 	m_nKeyWordSetNum = 0;
 	int i;
@@ -622,7 +622,7 @@ int CKeyWordSetMgr::GetAllocSize( int nIdx ) const
 	
 	@return 共有空き領域(キーワード数)
  */
-int CKeyWordSetMgr::GetFreeSize( void ) const 
+int CKeyWordSetMgr::GetFreeSize( ) const 
 {
 	return MAX_KEYWORDNUM - m_nStartIdx[m_nKeyWordSetNum];
 }

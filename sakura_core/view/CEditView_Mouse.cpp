@@ -1753,7 +1753,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	return S_OK;
 }
 
-STDMETHODIMP CEditView::DragLeave( void )
+STDMETHODIMP CEditView::DragLeave( )
 {
 	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
 	/* 選択テキストのドラッグ中か */
@@ -2238,7 +2238,7 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 	return dwEffect;
 }
 
-bool CEditView::IsDragSource( void )
+bool CEditView::IsDragSource( )
 {
 	return ( this == GetEditWnd().GetDragSourceView() );
 }

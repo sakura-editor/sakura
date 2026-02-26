@@ -76,7 +76,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::wstring>*, bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode ) override;
 
-	void DlgOpenFail(void);
+	void DlgOpenFail();
 
 	void InitOfn( OPENFILENAME* ofn );
 
@@ -1054,7 +1054,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 	@author genta
 	@date 2004.05.29 genta 元々あった部分をまとめた
 */
-void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
+void CDlgOpenFile_CommonFileDialog::DlgOpenFail()
 {
 	const WCHAR*	pszError;
 	DWORD dwError = ::CommDlgExtendedError();

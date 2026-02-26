@@ -95,7 +95,7 @@ int CDlgCtrlCode::DoModal(
 }
 
 /* ダイアログデータの設定 */
-void CDlgCtrlCode::SetData( void )
+void CDlgCtrlCode::SetData( )
 {
 	HWND	hwndWork;
 	int		i, count;
@@ -165,7 +165,7 @@ void CDlgCtrlCode::SetData( void )
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー */
-int CDlgCtrlCode::GetData( void )
+int CDlgCtrlCode::GetData( )
 {
 	int		nIndex;
 	HWND	hwndList;
@@ -299,7 +299,7 @@ BOOL CDlgCtrlCode::OnNotify( NMHDR* pNMHDR )
 	return CDialog::OnNotify(pNMHDR);
 }
 
-LPVOID CDlgCtrlCode::GetHelpIdTable( void )
+LPVOID CDlgCtrlCode::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }

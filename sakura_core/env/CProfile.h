@@ -58,7 +58,7 @@ public:
 	bool GetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring& strEntryValue) const;
 	void SetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring_view entryValue);
 
-	void DUMP( void );
+	void DUMP( );
 
 private:
 	void _ReadOneline(const std::wstring& line);

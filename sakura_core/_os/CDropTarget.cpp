@@ -117,7 +117,7 @@ BOOL CDropTarget::Register_DropTarget( HWND hWnd )
 	return TRUE;
 }
 
-BOOL CDropTarget::Revoke_DropTarget( void )
+BOOL CDropTarget::Revoke_DropTarget( )
 {
 	BOOL bResult = TRUE;
 	if( m_hWnd_DropTarget != nullptr ){
@@ -141,7 +141,7 @@ STDMETHODIMP CDropTarget::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffe
 	}
 	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
 }
-STDMETHODIMP CDropTarget::DragLeave( void )
+STDMETHODIMP CDropTarget::DragLeave( )
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->DragLeave();
@@ -412,7 +412,7 @@ STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
 /** IEnumFORMATETC::Reset
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Reset(void)
+STDMETHODIMP CEnumFORMATETC::Reset()
 {
 	m_nIndex = 0;
 	return S_OK;

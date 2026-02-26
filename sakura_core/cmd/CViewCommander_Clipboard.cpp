@@ -32,7 +32,7 @@
 
 	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
 */
-void CViewCommander::Command_CUT( void )
+void CViewCommander::Command_CUT( )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -636,7 +636,7 @@ void CViewCommander::Command_ADDTAIL(
 }
 
 //選択範囲内全行コピー
-void CViewCommander::Command_COPYLINES( void )
+void CViewCommander::Command_COPYLINES( )
 {
 	/* 選択範囲内の全行をクリップボードにコピーする */
 	m_pCommanderView->CopySelectedAllLines(
@@ -647,7 +647,7 @@ void CViewCommander::Command_COPYLINES( void )
 }
 
 //選択範囲内全行引用符付きコピー
-void CViewCommander::Command_COPYLINESASPASSAGE( void )
+void CViewCommander::Command_COPYLINESASPASSAGE( )
 {
 	/* 選択範囲内の全行をクリップボードにコピーする */
 	m_pCommanderView->CopySelectedAllLines(
@@ -658,7 +658,7 @@ void CViewCommander::Command_COPYLINESASPASSAGE( void )
 }
 
 //選択範囲内全行行番号付きコピー
-void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
+void CViewCommander::Command_COPYLINESWITHLINENUMBER( )
 {
 	/* 選択範囲内の全行をクリップボードにコピーする */
 	m_pCommanderView->CopySelectedAllLines(
@@ -1087,7 +1087,7 @@ void CViewCommander::Command_COPY_COLOR_HTML_LINENUMBER()
 /*!	現在編集中のファイル名をクリップボードにコピー
 	2002/2/3 aroka
 */
-void CViewCommander::Command_COPYFILENAME( void )
+void CViewCommander::Command_COPYFILENAME( )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* クリップボードにデータを設定 */
@@ -1100,7 +1100,7 @@ void CViewCommander::Command_COPYFILENAME( void )
 }
 
 /* 現在編集中のファイルのパス名をクリップボードにコピー */
-void CViewCommander::Command_COPYPATH( void )
+void CViewCommander::Command_COPYPATH( )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* クリップボードにデータを設定 */
@@ -1113,7 +1113,7 @@ void CViewCommander::Command_COPYPATH( void )
 }
 
 /* 現在編集中のファイルのフォルダー名をクリップボードにコピー */
-void CViewCommander::Command_COPYDIRPATH( void )
+void CViewCommander::Command_COPYDIRPATH( )
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
 		ErrorBeep();
@@ -1135,7 +1135,7 @@ void CViewCommander::Command_COPYDIRPATH( void )
 
 //	May 9, 2000 genta
 /* 現在編集中のファイルのパス名とカーソル位置をクリップボードにコピー */
-void CViewCommander::Command_COPYTAG( void )
+void CViewCommander::Command_COPYTAG( )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		CLogicPoint ptColLine;
@@ -1154,7 +1154,7 @@ void CViewCommander::Command_COPYTAG( void )
 
 ////キー割り当て一覧をコピー
 	//Dec. 26, 2000 JEPRO //Jan. 24, 2001 JEPRO debug version (directed by genta)
-void CViewCommander::Command_CREATEKEYBINDLIST( void )
+void CViewCommander::Command_CREATEKEYBINDLIST( )
 {
 	CNativeW		cMemKeyList;
 

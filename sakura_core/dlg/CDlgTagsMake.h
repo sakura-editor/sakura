@@ -43,10 +43,10 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnBnClicked(int wID) override;
-	LPVOID	GetHelpIdTable(void) override;
+	LPVOID	GetHelpIdTable() override;
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int		GetData( void ) override;	/* ダイアログデータの取得 */
+	void	SetData( ) override;	/* ダイアログデータの設定 */
+	int		GetData( ) override;	/* ダイアログデータの取得 */
 
 private:
 	void SelectFolder( HWND hwndDlg );

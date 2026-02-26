@@ -15,7 +15,7 @@
 #include "CSelectLang.h"
 
 // デストラクタ
-CWSHPlugin::~CWSHPlugin(void)
+CWSHPlugin::~CWSHPlugin()
 {
 	for( CPlug::ArrayIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
 		delete *it;

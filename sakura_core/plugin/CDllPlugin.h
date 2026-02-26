@@ -42,7 +42,7 @@ public:
 
 	//デストラクタ
 public:
-	~CDllPlugin(void);
+	~CDllPlugin();
 
 	//実装
 public:

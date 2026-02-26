@@ -21,16 +21,16 @@ public:
 	void Create( CImageListMgr* pcIcons );
 
 	//作成・破棄
-	void CreateToolBar( void );		//!< ツールバー作成
-	void DestroyToolBar( void );	//!< ツールバー破棄
+	void CreateToolBar( );		//!< ツールバー作成
+	void DestroyToolBar( );	//!< ツールバー破棄
 
 	//メッセージ
 	bool EatMessage(MSG* msg);		//!< メッセージ処理。なんか処理したなら true を返す。
 	void ProcSearchBox( MSG* );		//!< 検索コンボボックスのメッセージ処理
 
 	//イベント
-	void OnToolbarTimer( void );	//!< タイマーの処理 20060128 aroka
-	void UpdateToolbar( void );		//!< ツールバーの表示を更新する		// 2008.09.23 nasukoji
+	void OnToolbarTimer( );	//!< タイマーの処理 20060128 aroka
+	void UpdateToolbar( );		//!< ツールバーの表示を更新する		// 2008.09.23 nasukoji
 
 	//描画
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
@@ -45,7 +45,7 @@ public:
 	size_t GetSearchKey(std::wstring& buffer); //!< 検索キーを取得。戻り値は検索キーの文字数。
 
 	//操作
-	void SetFocusSearchBox( void ) const;		/* ツールバー検索ボックスへフォーカスを移動 */	// 2006.06.04 yukihane
+	void SetFocusSearchBox( ) const;		/* ツールバー検索ボックスへフォーカスを移動 */	// 2006.06.04 yukihane
 
 private:
 	static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );

@@ -31,9 +31,9 @@ public:
 	int		AddBaseDir(std::wstring_view baseDir);
 	BOOL AddParamA( const ACHAR* keyword, const ACHAR* filename, int no, ACHAR type, const ACHAR* note, int depth, const int baseDirId );
 	BOOL GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir );
-	int GetCount( void ){ return m_nCount; }
-	void Empty( void );
-	bool IsOverflow( void ){ return m_bOverflow; }
+	int GetCount( ){ return m_nCount; }
+	void Empty( );
+	bool IsOverflow( ){ return m_bOverflow; }
 
 	typedef struct tagjump_info_t {
 		struct tagjump_info_t*	next;	//!< 次のリスト
@@ -52,7 +52,7 @@ public:
 
 		@date 2005.04.22 genta 最大値を可変に
 	*/
-	int GetCapacity(void) const { return m_MAX_TAGJUMPLIST; }
+	int GetCapacity() const { return m_MAX_TAGJUMPLIST; }
 
 private:
 	TagJumpInfo*	m_pTagjump = nullptr;	//!< タグジャンプ情報

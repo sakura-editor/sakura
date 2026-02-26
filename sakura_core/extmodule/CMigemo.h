@@ -58,7 +58,7 @@ protected:
 
 private:
 	bool InitDllImp() override;
-	bool DeinitDllImp(void) override;
+	bool DeinitDllImp() override;
 
 	std::string_view _migemo_query(const std::string& query) noexcept;
 	void _migemo_release(std::string_view found) noexcept;

@@ -100,7 +100,7 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 }
 
 /*! デストラクタ */
-CFileLoad::~CFileLoad( void )
+CFileLoad::~CFileLoad( )
 {
 	FileClose();
 }
@@ -269,7 +269,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	ファイルを閉じる
 	読み込み用バッファとm_memLineもクリアされる
 */
-void CFileLoad::FileClose( void )
+void CFileLoad::FileClose( )
 {
 	if( m_hFile != nullptr ){
 		if( m_pReadBufTop != nullptr ){
@@ -408,7 +408,7 @@ EConvertResult CFileLoad::ReadLine_core(
 	 現在の進行率を取得する
 	 @return 0% - 100%  若干誤差が出る
 */
-int CFileLoad::GetPercent( void ){
+int CFileLoad::GetPercent( ){
 	int nRet;
 	const size_t nSize = (m_nReadBufOffsetEnd - m_nReadBufOffsetBegin);
 	if( 0 == nSize || m_nReadBufOffsetEnd <= m_nReadBufOffsetCurrent ){

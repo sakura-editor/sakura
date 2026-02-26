@@ -81,7 +81,7 @@ LPWSTR CFileNameManager::GetTransformFileNameFast( LPCWSTR pszSrc, LPWSTR pszDes
 	@date 2003.01.27 Moca 新規作成
 	@date 2003.06.23 Moca 関数名変更
 */
-int CFileNameManager::TransformFileName_MakeCache( void ){
+int CFileNameManager::TransformFileName_MakeCache( ){
 	int i;
 	int nCount = 0;
 	for( i = 0; i < m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum; i++ ){

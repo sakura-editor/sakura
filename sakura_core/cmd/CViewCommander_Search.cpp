@@ -42,13 +42,13 @@
 ツールバーの検索ボックスにフォーカスを移動する.
 	@date 2006.06.04 yukihane 新規作成
 */
-void CViewCommander::Command_SEARCH_BOX( void )
+void CViewCommander::Command_SEARCH_BOX( )
 {
 	GetEditWindow()->m_cToolbar.SetFocusSearchBox();
 }
 
 /* 検索(単語検索ダイアログ) */
-void CViewCommander::Command_SEARCH_DIALOG( void )
+void CViewCommander::Command_SEARCH_DIALOG( )
 {
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	CNativeW		cmemCurText;
@@ -484,7 +484,7 @@ end_of_func:;
 }
 
 //置換(置換ダイアログ)
-void CViewCommander::Command_REPLACE_DIALOG( void )
+void CViewCommander::Command_REPLACE_DIALOG( )
 {
 	BOOL		bSelected = FALSE;
 
@@ -1507,7 +1507,7 @@ void CViewCommander::Command_REPLACE_ALL()
 }
 
 //検索マークの切替え	// 2001.12.03 hor クリア を 切替え に変更
-void CViewCommander::Command_SEARCH_CLEARMARK( void )
+void CViewCommander::Command_SEARCH_CLEARMARK( )
 {
 // From Here 2001.12.03 hor
 
@@ -1552,7 +1552,7 @@ void CViewCommander::Command_SEARCH_CLEARMARK( void )
 
 //	Jun. 16, 2000 genta
 //	対括弧の検索
-void CViewCommander::Command_BRACKETPAIR( void )
+void CViewCommander::Command_BRACKETPAIR( )
 {
 	CLayoutPoint ptColLine;
 	//int nLine, nCol;

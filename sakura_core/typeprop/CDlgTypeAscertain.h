@@ -45,7 +45,7 @@ protected:
 	// 実装ヘルパ関数
 	BOOL OnBnClicked(int wID) override;
 	void SetData() override;	/* ダイアログデータの設定 */
-	LPVOID GetHelpIdTable(void) override;
+	LPVOID GetHelpIdTable() override;
 
 private:
 	SAscertainInfo* m_psi;			// インターフェース

@@ -144,7 +144,7 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
-BOOL CDlgPrintSetting::OnDestroy( void )
+BOOL CDlgPrintSetting::OnDestroy( )
 {
 	::KillTimer( GetHwnd(), IDT_PRINTSETTING );
 
@@ -454,7 +454,7 @@ BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 }
 
 /* ダイアログデータの設定 */
-void CDlgPrintSetting::SetData( void )
+void CDlgPrintSetting::SetData( )
 {
 	HDC		hdc;
 	HWND	hwndComboFont;
@@ -508,7 +508,7 @@ void CDlgPrintSetting::SetData( void )
 
 /* ダイアログデータの取得 */
 /* TRUE==正常 FALSE==入力エラー */
-int CDlgPrintSetting::GetData( void )
+int CDlgPrintSetting::GetData( )
 {
 	HWND	hwndCtrl;
 	int		nIdx1;
@@ -880,7 +880,7 @@ void CDlgPrintSetting::UpdatePrintableLineAndColumn()
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgPrintSetting::GetHelpIdTable(void)
+LPVOID CDlgPrintSetting::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

@@ -884,7 +884,7 @@ void CEditWnd::LayoutMainMenu()
 /*! ツールバーの配置処理
 	@date 2006.12.19 ryoji 新規作成
 */
-void CEditWnd::LayoutToolBar( void )
+void CEditWnd::LayoutToolBar( )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR ){	/* ツールバーを表示する */
 		m_cToolbar.CreateToolBar();
@@ -897,7 +897,7 @@ void CEditWnd::LayoutToolBar( void )
 /*! ステータスバーの配置処理
 	@date 2006.12.19 ryoji 新規作成
 */
-void CEditWnd::LayoutStatusBar( void )
+void CEditWnd::LayoutStatusBar( )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR ){	/* ステータスバーを表示する */
 		/* ステータスバー作成 */
@@ -912,7 +912,7 @@ void CEditWnd::LayoutStatusBar( void )
 /*! ファンクションキーの配置処理
 	@date 2006.12.19 ryoji 新規作成
 */
-void CEditWnd::LayoutFuncKey( void )
+void CEditWnd::LayoutFuncKey( )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND ){	/* ファンクションキーを表示する */
 		if( nullptr == m_cFuncKeyWnd.GetHwnd() ){
@@ -936,7 +936,7 @@ void CEditWnd::LayoutFuncKey( void )
 /*! タブバーの配置処理
 	@date 2006.12.19 ryoji 新規作成
 */
-void CEditWnd::LayoutTabBar( void )
+void CEditWnd::LayoutTabBar( )
 {
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){	/* タブバーを表示する */
 		if( nullptr == m_cTabWnd.GetHwnd() ){
@@ -953,7 +953,7 @@ void CEditWnd::LayoutTabBar( void )
 /*! ミニマップの配置処理
 	@date 2014.07.14 新規作成
 */
-void CEditWnd::LayoutMiniMap( void )
+void CEditWnd::LayoutMiniMap( )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bDispMiniMap ){	/* タブバーを表示する */
 		if( !m_cMiniMapView.GetHwnd() ){
@@ -1018,7 +1018,7 @@ static inline BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
 //複数プロセス版
 /* メッセージループ */
 //2004.02.17 Moca GetMessageのエラーチェック
-void CEditWnd::MessageLoop( void )
+void CEditWnd::MessageLoop( )
 {
 	MSG	msg;
 	int ret;
@@ -2700,7 +2700,7 @@ STDMETHODIMP CEditWnd::DragOver( [[maybe_unused]] DWORD dwKeyState, [[maybe_unus
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragLeave( void )
+STDMETHODIMP CEditWnd::DragLeave( )
 {
 	return S_OK;
 }
@@ -2831,7 +2831,7 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 /*! キャプション更新用タイマーの処理
 	@date 2007.04.03 ryoji 新規
 */
-void CEditWnd::OnCaptionTimer( void )
+void CEditWnd::OnCaptionTimer( )
 {
 	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
 	// まだ切替中ならタイマー継続
@@ -2845,7 +2845,7 @@ void CEditWnd::OnCaptionTimer( void )
 	@date 2007.04.03 ryoji パラメータ無しにした
 	                       以前はコールバック関数でやっていたKillTimer()をここで行うようにした
 */
-void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
+void CEditWnd::OnSysMenuTimer( ) //by 鬼(2)
 {
 	::KillTimer( GetHwnd(), IDT_SYSMENU );	// 2007.04.03 ryoji
 
@@ -2875,7 +2875,7 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 
 /* 印刷プレビューモードのオン/オフ */
-void CEditWnd::PrintPreviewModeONOFF( void )
+void CEditWnd::PrintPreviewModeONOFF( )
 {
 	HMENU	hMenu;
 	HWND	hwndToolBar;
@@ -3548,7 +3548,7 @@ BOOL CEditWnd::DoMouseWheel( WPARAM wParam, LPARAM lParam )
 /* 印刷ページ設定
 	印刷プレビュー時にも、そうでないときでも呼ばれる可能性がある。
 */
-BOOL CEditWnd::OnPrintPageSetting( void )
+BOOL CEditWnd::OnPrintPageSetting( )
 {
 	/* 印刷設定（CANCEL押したときに破棄するための領域） */
 	CDlgPrintSetting	cDlgPrintSetting;
@@ -3851,7 +3851,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 
 	@date 2002.12.04 CEditViewのコンストラクタから移動
 */
-void CEditWnd::InitMenubarMessageFont(void)
+void CEditWnd::InitMenubarMessageFont()
 {
 	TEXTMETRIC	tm;
 	LOGFONT		lf;
@@ -4217,7 +4217,7 @@ void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, UINT_PTR idFrom) 
 	@date 2006.01.28 aroka ツールバー更新を OnToolbarTimerに移動した
 	@date 2007.04.03 ryoji パラメータ無しにした
 */
-void CEditWnd::OnEditTimer( void )
+void CEditWnd::OnEditTimer( )
 {
 	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
 	// タイマーの呼び出し間隔を 500msに変更。300*10→500*6にする。 20060128 aroka
@@ -4519,7 +4519,7 @@ BOOL CEditWnd::WrapWindowWidth( int nPane )
 	@retval 画面更新したかどうか
 	@date 2008.06.10 ryoji 新規作成
 */
-BOOL CEditWnd::UpdateTextWrap( void )
+BOOL CEditWnd::UpdateTextWrap( )
 {
 	// この関数はコマンド実行ごとに処理の最終段階で利用する
 	// （アンドゥ登録＆全ビュー更新のタイミング）
@@ -4727,7 +4727,7 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 
 	@date 2009.01.17 nasukoji	新規作成
 */
-void CEditWnd::ClearMouseState( void )
+void CEditWnd::ClearMouseState( )
 {
 	SetPageScrollByWheel( FALSE );		// ホイール操作によるページスクロール有無
 	SetHScrollByWheel( FALSE );			// ホイール操作による横スクロール有無
@@ -4741,7 +4741,7 @@ void CEditWnd::ClearMouseState( void )
 	      IsWine()によりプロセス毎にアクセラレータテーブルが作成されるようになる
 	      ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
 */
-void CEditWnd::CreateAccelTbl( void )
+void CEditWnd::CreateAccelTbl( )
 {
 	m_hAccel = CKeyBind::CreateAccerelator(
 		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
@@ -4759,7 +4759,7 @@ void CEditWnd::CreateAccelTbl( void )
 /*! ウィンドウ毎に作成したアクセラレータテーブルを破棄する
 	@datet 2009.08.15 Hidetaka Sakai, nasukoji
 */
-void CEditWnd::DeleteAccelTbl( void )
+void CEditWnd::DeleteAccelTbl( )
 {
 	if( m_hAccel ){
 		m_hAccel = nullptr;

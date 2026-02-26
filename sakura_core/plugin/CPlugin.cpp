@@ -33,7 +33,7 @@ CPlugin::CPlugin(std::wstring_view baseDir)
 }
 
 //デストラクタ
-CPlugin::~CPlugin(void)
+CPlugin::~CPlugin()
 {
 	for( CPluginOption::ArrayIter it = m_options.begin(); it != m_options.end(); it++ ){
 		delete *it;

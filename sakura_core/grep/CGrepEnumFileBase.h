@@ -54,7 +54,7 @@ public:
 		ClearItems();
 	}
 
-	void ClearItems( void ){
+	void ClearItems( ){
 		for( int i = 0; i < GetCount(); i++ ){
 			LPWSTR lp = m_vpItems[ i ].first;
 			m_vpItems[ i ].first = nullptr;
@@ -80,7 +80,7 @@ public:
 		return FALSE;
 	}
 
-	int GetCount( void ){
+	int GetCount( ){
 		return (int)m_vpItems.size();
 	}
 

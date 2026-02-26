@@ -30,7 +30,7 @@ CFuncInfoArr::~CFuncInfoArr()
 	return;
 }
 
-void CFuncInfoArr::Empty( void )
+void CFuncInfoArr::Empty( )
 {
 	int i;
 	if( m_nFuncInfoArrNum > 0 && nullptr != m_ppcFuncInfoArr ){
@@ -104,7 +104,7 @@ void CFuncInfoArr::AppendData(
 	return;
 }
 
-void CFuncInfoArr::DUMP( void )
+void CFuncInfoArr::DUMP( )
 {
 #ifdef _DEBUG
 	int i;

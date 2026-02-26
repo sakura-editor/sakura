@@ -319,7 +319,7 @@ bool CControlTray::CreateTrayIcon( [[maybe_unused]] HWND hWnd )
 }
 
 /* メッセージループ */
-void CControlTray::MessageLoop( void )
+void CControlTray::MessageLoop( )
 {
 //複数プロセス版
 	MSG	msg;
@@ -1527,7 +1527,7 @@ BOOL CControlTray::CloseAllEditor(
 }
 
 /*! ポップアップメニュー(トレイ左ボタン) */
-int	CControlTray::CreatePopUpMenu_L( void )
+int	CControlTray::CreatePopUpMenu_L( )
 {
 	int			i;
 	int			j;
@@ -1657,7 +1657,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 //	Oct. 12, 2000 JEPRO ポップアップメニュー(トレイ左ボタン) を参考にして新たに追加した部分
 
 /*! ポップアップメニュー(トレイ右ボタン) */
-int	CControlTray::CreatePopUpMenu_R( void )
+int	CControlTray::CreatePopUpMenu_R( )
 {
 	int		nId;
 	HMENU	hMenuTop;

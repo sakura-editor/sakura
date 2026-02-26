@@ -98,7 +98,7 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 }
 
 // BOM の設定
-void CDlgSetCharSet::SetBOM( void )
+void CDlgSetCharSet::SetBOM( )
 {
 	int 		nIdx;
 	LRESULT		lRes;
@@ -160,13 +160,13 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 	return TRUE;
 }
 
-LPVOID CDlgSetCharSet::GetHelpIdTable(void)
+LPVOID CDlgSetCharSet::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }
 
 /* ダイアログデータの設定 */
-void CDlgSetCharSet::SetData( void )
+void CDlgSetCharSet::SetData( )
 {
 	// 文字コードセット
 	int		nIdx, nCurIdx, nIdxOld;
@@ -197,7 +197,7 @@ void CDlgSetCharSet::SetData( void )
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー  */
-int CDlgSetCharSet::GetData( void )
+int CDlgSetCharSet::GetData( )
 {
 	// 文字コードセット
 	int		nIdx;

@@ -1066,7 +1066,7 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 
 	iniファイルの保存先がユーザー別設定フォルダーかどうか 2007.05.25 ryoji
 */
-[[nodiscard]]  bool CShareData::IsPrivateSettings( void ) const noexcept
+[[nodiscard]]  bool CShareData::IsPrivateSettings( ) const noexcept
 {
 	return m_pShareData != nullptr && 0 != ::wcscmp(m_pShareData->m_szPrivateIniFile, m_pShareData->m_szIniFile);
 }

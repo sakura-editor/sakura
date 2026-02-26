@@ -113,7 +113,7 @@ CRegexKeyword::~CRegexKeyword()
 
 	@retval TRUE 成功
 */
-BOOL CRegexKeyword::RegexKeyInit( void )
+BOOL CRegexKeyword::RegexKeyInit( )
 {
 	int	i;
 
@@ -190,7 +190,7 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 	キーワードはコンパイルデータとして内部変数にコピーする。
 	先頭指定、色指定側の使用・未使用をチェックする。
 */
-BOOL CRegexKeyword::RegexKeyCompile( void )
+BOOL CRegexKeyword::RegexKeyCompile( )
 {
 	int	i;
 	static const wchar_t dummy[2] = L"\0";
@@ -306,7 +306,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 	@note それぞれの行検索の最初に実行する。
 	タイプ設定等が変更されている場合はリロードする。
 */
-BOOL CRegexKeyword::RegexKeyLineStart( void )
+BOOL CRegexKeyword::RegexKeyLineStart( )
 {
 	int	i;
 

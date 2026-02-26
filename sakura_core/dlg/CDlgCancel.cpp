@@ -51,7 +51,7 @@ INT_PTR CDlgCancel::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM l
 /** 自動破棄を遅延実行する
 	@date 2008.05.28 ryoji 新規作成
 */
-void CDlgCancel::DeleteAsync( void )
+void CDlgCancel::DeleteAsync( )
 {
 	m_bAutoCleanup = true;
 	::PostMessageAny( GetHwnd(), WM_CLOSE, 0, 0 );
@@ -104,7 +104,7 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
-LPVOID CDlgCancel::GetHelpIdTable(void)
+LPVOID CDlgCancel::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

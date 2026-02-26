@@ -15,7 +15,7 @@
 #include "CSelectLang.h"
 
 // デストラクタ
-CDllPlugin::~CDllPlugin(void)
+CDllPlugin::~CDllPlugin()
 {
 	for( CPlug::ArrayIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
 		delete (CDllPlug*)(*it);

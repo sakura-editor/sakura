@@ -51,7 +51,7 @@ CMacro::CMacro( EFunctionCode nFuncID )
 	m_pParamTop = m_pParamBot = nullptr;
 }
 
-CMacro::~CMacro( void )
+CMacro::~CMacro( )
 {
 	ClearMacroParam();
 }

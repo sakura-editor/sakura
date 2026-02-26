@@ -818,7 +818,7 @@ static int TreeDummylParamToFuncInfoIndex(std::vector<int>& vec, LPARAM lParam)
 
 /* ダイアログデータの取得 */
 /* 0==条件未入力   0より大きい==正常   0より小さい==入力エラー */
-int CDlgFuncList::GetData( void )
+int CDlgFuncList::GetData( )
 {
 	HWND			hwndList;
 	HWND			hwndTree;
@@ -1168,7 +1168,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
   @date Jul 10, 2003  little YOSHI
   @date 2020.09.12 選択処理をGetFuncInfoIndex,SetItemSelectionへ移動
 */
-void CDlgFuncList::SetListVB (void)
+void CDlgFuncList::SetListVB ()
 {
 	int				i;
 	WCHAR			szType[64];
@@ -2280,7 +2280,7 @@ static int CALLBACK Compare_by_ItemTextDesc(LPARAM lParam1, LPARAM lParam2, LPAR
 	return Compare_by_ItemText(lParam2, lParam1, lParamSort);
 }
 
-BOOL CDlgFuncList::OnDestroy( void )
+BOOL CDlgFuncList::OnDestroy( )
 {
 	CDialog::OnDestroy();
 
@@ -2512,7 +2512,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgFuncList::GetHelpIdTable(void)
+LPVOID CDlgFuncList::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }
@@ -2596,7 +2596,7 @@ void CDlgFuncList::SetWindowText( const WCHAR* szTitle )
 /** 配色適用処理
 	@date 2010.06.05 ryoji 新規作成
 */
-void CDlgFuncList::SyncColor( void )
+void CDlgFuncList::SyncColor( )
 {
 	if( !IsDocking() )
 		return;
@@ -3415,7 +3415,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 /** 現在の設定に応じて表示を刷新する
 	@date 2010.06.05 ryoji 新規作成
 */
-void CDlgFuncList::Refresh( void )
+void CDlgFuncList::Refresh( )
 {
 	CEditWnd* pcEditWnd = &GetEditWnd();
 	BOOL bReloaded = ChangeLayout( OUTLINE_LAYOUT_FILECHANGED );	// 現在設定に従ってアウトライン画面を再配置する

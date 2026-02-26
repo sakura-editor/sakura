@@ -18,7 +18,7 @@ void CBookmarkSetter::SetBookmark(bool bFlag){ m_pcDocLine->m_sMark.m_cBookmarke
 /*
 	@date 2001.12.03 hor
 */
-void CBookmarkManager::ResetAllBookMark( void )
+void CBookmarkManager::ResetAllBookMark( )
 {
 	CDocLine* pDocLine = m_pcDocLineMgr->GetDocLineTop();
 	while( pDocLine ){

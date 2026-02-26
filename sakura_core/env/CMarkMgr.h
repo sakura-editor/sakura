@@ -49,7 +49,7 @@ public:
 		CLogicPoint GetPosition() const { return m_ptLogic; }
 		void SetPosition(const CLogicPoint& pt) { m_ptLogic = pt; }
 
-		bool IsValid(void) const { return true; }
+		bool IsValid() const { return true; }
 
 		bool operator==(CMark &r) const { return m_ptLogic.y == r.m_ptLogic.y; }
 		bool operator!=(CMark &r) const { return m_ptLogic.y != r.m_ptLogic.y; }
@@ -69,26 +69,26 @@ public:
 	CMarkMgr() : m_nCurpos(0), m_nMaxitem(10){}
 	// CMarkMgr(const CDocLineMgr *p) : doc(p) {}
 
-	int Count(void) const { return (int)m_cMarkChain.size(); }	//!<	項目数を返す
-	int GetMax(void) const { return m_nMaxitem; }	//!<	最大項目数を返す
+	int Count() const { return (int)m_cMarkChain.size(); }	//!<	項目数を返す
+	int GetMax() const { return m_nMaxitem; }	//!<	最大項目数を返す
 	void SetMax(int max);	//!<	最大項目数を設定
 
 	virtual void Add(const CMark& m) = 0;	//!<	要素の追加
 
 	//	Apr. 1, 2001 genta
-	virtual void Flush(void);	//!<	要素の全消去
+	virtual void Flush();	//!<	要素の全消去
 
 	//!	要素の取得
-	const CMark& GetCurrent(void) const { return m_cMarkChain[m_nCurpos]; }
+	const CMark& GetCurrent() const { return m_cMarkChain[m_nCurpos]; }
 
 	//	有効性の確認
-	bool  CheckCurrent(void) const;
-	bool  CheckPrev(void) const;
-	bool  CheckNext(void) const;
+	bool  CheckCurrent() const;
+	bool  CheckPrev() const;
+	bool  CheckNext() const;
 
 	//	現在位置の移動
-	bool NextValid(void);
-	bool PrevValid(void);
+	bool NextValid();
+	bool PrevValid();
 
 	const CMark& operator[](int index) const { return m_cMarkChain[index]; }
 
@@ -98,7 +98,7 @@ public:
 //	CMarkIterator End(void) const { return (CMarkIterator)m_cMarkChain.end(); }
 
 protected:
-	virtual void Expire(void) = 0;
+	virtual void Expire() = 0;
 
 	// CMarkFactory m_factory;	//	Factory Class (マクロで生成される）
 	CMarkChain m_cMarkChain;	//	マークデータ本体
@@ -118,6 +118,6 @@ private:
 class CAutoMarkMgr final : public CMarkMgr{
 public:
 	void Add(const CMark& m) override;	//!<	要素の追加
-	void Expire(void) override;	//!<	要素数の調整
+	void Expire() override;	//!<	要素数の調整
 };
 #endif /* SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_ */

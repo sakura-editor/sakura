@@ -105,7 +105,7 @@ BOOL CDlgKeywordSelect::OnBnClicked( int wID )
 
 /*! ダイアログデータの設定
 */
-void CDlgKeywordSelect::SetData( void )
+void CDlgKeywordSelect::SetData( )
 {
 	HWND	hwndCombo;
 	int		i;
@@ -144,7 +144,7 @@ void CDlgKeywordSelect::SetData( void )
 
 /*! ダイアログデータの設定
 */
-int CDlgKeywordSelect::GetData( void )
+int CDlgKeywordSelect::GetData( )
 {
 	HWND	hwndCombo;
 	int		index;
@@ -168,7 +168,7 @@ int CDlgKeywordSelect::GetData( void )
 	return TRUE;
 }
 
-LPVOID CDlgKeywordSelect::GetHelpIdTable( void )
+LPVOID CDlgKeywordSelect::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }

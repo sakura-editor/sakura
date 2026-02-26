@@ -47,7 +47,7 @@ void CSortedTagJumpList::Free( TagJumpInfo* item )
 /*
 	リストをすべて解放する。
 */
-void CSortedTagJumpList::Empty( void )
+void CSortedTagJumpList::Empty( )
 {
 	TagJumpInfo*	p;
 	TagJumpInfo*	next;

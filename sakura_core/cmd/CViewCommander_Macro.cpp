@@ -34,7 +34,7 @@
 #include "env/CSakuraEnvironment.h"
 
 /* キーマクロの記録開始／終了 */
-void CViewCommander::Command_RECKEYMACRO( void )
+void CViewCommander::Command_RECKEYMACRO( )
 {
 	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
@@ -77,7 +77,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 }
 
 /* キーマクロの保存 */
-void CViewCommander::Command_SAVEKEYMACRO( void )
+void CViewCommander::Command_SAVEKEYMACRO( )
 {
 	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
 	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
@@ -126,7 +126,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 /*! キーマクロの読み込み
 	@date 2005.02.20 novice デフォルトの拡張子変更
  */
-void CViewCommander::Command_LOADKEYMACRO( void )
+void CViewCommander::Command_LOADKEYMACRO( )
 {
 	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
 	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
@@ -165,7 +165,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 }
 
 /* キーマクロの実行 */
-void CViewCommander::Command_EXECKEYMACRO( void )
+void CViewCommander::Command_EXECKEYMACRO( )
 {
 	//@@@ 2002.1.24 YAZAKI 記録中は終了してから実行
 	if (GetDllShareData().m_sFlags.m_bRecordingKeyMacro){
@@ -281,7 +281,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 /*! 外部コマンド実行ダイアログ表示
 	@date 2002.02.02 YAZAKI.
 */
-void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
+void CViewCommander::Command_EXECCOMMAND_DIALOG( )
 {
 	CDlgExec cDlgExec;
 

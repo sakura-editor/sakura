@@ -180,13 +180,13 @@ public:
 
 	//操作
 public:
-	std::wstring	GetLabel( void ) const  { return m_sLabel; }
+	std::wstring	GetLabel( ) const  { return m_sLabel; }
 	void	GetKey( std::wstring* sectin, std::wstring* key ) const {
 		*sectin = m_sSection; 
 		*key = m_sKey;
 	}
-	std::wstring	GetType( void ) const	{ return m_sType; }
-	int 	GetIndex( void ) const	{ return m_index; }
+	std::wstring	GetType( ) const	{ return m_sType; }
+	int 	GetIndex( ) const	{ return m_index; }
 	std::vector<std::wstring>	GetSelects() const
 	{
 		return (wstring_split(m_sSelects, L'|'));
@@ -225,7 +225,7 @@ public:
 
 	//デストラクタ
 public:
-	virtual ~CPlugin(void);
+	virtual ~CPlugin();
 
 	//操作
 public:

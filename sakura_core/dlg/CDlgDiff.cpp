@@ -195,7 +195,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 }
 
 /* ダイアログデータの設定 */
-void CDlgDiff::SetData( void )
+void CDlgDiff::SetData( )
 {
 	//オプション
 	m_nDiffFlgOpt = m_pShareData->m_nDiffFlgOpt;
@@ -339,7 +339,7 @@ void CDlgDiff::SetData( void )
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー */
-int CDlgDiff::GetData( void )
+int CDlgDiff::GetData( )
 {
 	BOOL	ret = TRUE;
 
@@ -458,7 +458,7 @@ BOOL CDlgDiff::OnEnChange( HWND hwndCtl, int wID )
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
 
-LPVOID CDlgDiff::GetHelpIdTable( void )
+LPVOID CDlgDiff::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }
@@ -510,7 +510,7 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
-BOOL CDlgDiff::OnDestroy( void )
+BOOL CDlgDiff::OnDestroy( )
 {
 	CDialog::OnDestroy();
 	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcDiffDialog;

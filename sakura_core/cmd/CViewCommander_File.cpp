@@ -48,7 +48,7 @@
 #include "config/app_constants.h"
 
 /* 新規作成 */
-void CViewCommander::Command_FILENEW( void )
+void CViewCommander::Command_FILENEW( )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
@@ -61,7 +61,7 @@ void CViewCommander::Command_FILENEW( void )
 }
 
 /* 新規作成（新しいウインドウで開く） */
-void CViewCommander::Command_FILENEW_NEWWINDOW( void )
+void CViewCommander::Command_FILENEW_NEWWINDOW( )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
@@ -208,7 +208,7 @@ BOOL CViewCommander::Command_FILESAVEAS( const WCHAR* filename, EEolType eEolTyp
 
 	@date 2005.01.24 genta 新規作成
 */
-BOOL CViewCommander::Command_FILESAVEALL( void )
+BOOL CViewCommander::Command_FILESAVEALL( )
 {
 	CAppNodeGroupHandle(0).SendMessageToAllEditors(
 		WM_COMMAND,
@@ -220,7 +220,7 @@ BOOL CViewCommander::Command_FILESAVEALL( void )
 }
 
 /* 閉じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
-void CViewCommander::Command_FILECLOSE( void )
+void CViewCommander::Command_FILECLOSE( )
 {
 	GetDocument()->m_cDocFileOperation.FileClose();
 }
@@ -265,7 +265,7 @@ void CViewCommander::Command_FILE_REOPEN(
 }
 
 /* 印刷 */
-void CViewCommander::Command_PRINT( void )
+void CViewCommander::Command_PRINT( )
 {
 	// 使っていない処理を削除 2003.05.04 かろと
 	Command_PRINT_PREVIEW();
@@ -275,7 +275,7 @@ void CViewCommander::Command_PRINT( void )
 }
 
 /* 印刷プレビュー */
-void CViewCommander::Command_PRINT_PREVIEW( void )
+void CViewCommander::Command_PRINT_PREVIEW( )
 {
 	/* 印刷プレビューモードのオン/オフ */
 	GetEditWindow()->PrintPreviewModeONOFF();
@@ -283,7 +283,7 @@ void CViewCommander::Command_PRINT_PREVIEW( void )
 }
 
 /* 印刷のページレイアウトの設定 */
-void CViewCommander::Command_PRINT_PAGESETUP( void )
+void CViewCommander::Command_PRINT_PAGESETUP( )
 {
 	/* 印刷ページ設定 */
 	GetEditWindow()->OnPrintPageSetting();
@@ -329,7 +329,7 @@ BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 }
 
 /* Oracle SQL*Plusをアクティブ表示 */
-void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
+void CViewCommander::Command_ACTIVATE_SQLPLUS( )
 {
 	HWND		hwndSQLPLUS;
 	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
@@ -344,7 +344,7 @@ void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 }
 
 /* Oracle SQL*Plusで実行 */
-void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
+void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( )
 {
 //	HGLOBAL		hgClip;
 //	char*		pszClip;
@@ -426,7 +426,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 }
 
 /* ブラウズ */
-void CViewCommander::Command_BROWSE( void )
+void CViewCommander::Command_BROWSE( )
 {
 	if( !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		ErrorBeep();
@@ -459,7 +459,7 @@ void CViewCommander::Command_BROWSE( void )
 }
 
 /* ビューモード */
-void CViewCommander::Command_VIEWMODE( void )
+void CViewCommander::Command_VIEWMODE( )
 {
 	//ビューモードを反転
 	CAppMode::getInstance()->SetViewMode(!CAppMode::getInstance()->IsViewMode());
@@ -477,7 +477,7 @@ void CViewCommander::Command_VIEWMODE( void )
 }
 
 /* ファイルのプロパティ */
-void CViewCommander::Command_PROPERTY_FILE( void )
+void CViewCommander::Command_PROPERTY_FILE( )
 {
 #ifdef _DEBUG
 	{
@@ -500,7 +500,7 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 	return;
 }
 
-void CViewCommander::Command_PROFILEMGR( void )
+void CViewCommander::Command_PROFILEMGR( )
 {
 	CDlgProfileMgr profMgr;
 	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
@@ -515,7 +515,7 @@ void CViewCommander::Command_PROFILEMGR( void )
 }
 
 /* ファイルの場所を開く */
-void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
+void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER()
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
 		ErrorBeep();
@@ -645,14 +645,14 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 }
 
 /* 編集の全終了 */	// 2007.02.13 ryoji 追加
-void CViewCommander::Command_EXITALLEDITORS( void )
+void CViewCommander::Command_EXITALLEDITORS( )
 {
 	CControlTray::CloseAllEditor( TRUE, GetMainWindow(), TRUE, 0 );
 	return;
 }
 
 /* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
-void CViewCommander::Command_EXITALL( void )
+void CViewCommander::Command_EXITALL( )
 {
 	CControlTray::TerminateApplication( GetMainWindow() );	// 2006.12.25 ryoji 引数追加
 	return;

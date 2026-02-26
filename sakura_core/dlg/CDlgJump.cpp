@@ -221,7 +221,7 @@ BOOL CDlgJump::OnEnKillFocus(HWND hwndCtl, int wID)
 }
 
 /* ダイアログデータの設定 */
-void CDlgJump::SetData( void )
+void CDlgJump::SetData( )
 {
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
 	CFuncInfoArr	cFuncInfoArr;
@@ -344,7 +344,7 @@ void CDlgJump::SetData( void )
 
 /* ダイアログデータの取得 */
 /*   TRUE==正常   FALSE==入力エラー  */
-int CDlgJump::GetData( void )
+int CDlgJump::GetData( )
 {
 	BOOL	pTranslated;
 
@@ -376,7 +376,7 @@ int CDlgJump::GetData( void )
 }
 
 //@@@ 2002.01.18 add start
-LPVOID CDlgJump::GetHelpIdTable(void)
+LPVOID CDlgJump::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }

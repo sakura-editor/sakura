@@ -121,7 +121,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 }
 
 /* ダイアログデータの設定 */
-void CDlgTagsMake::SetData( void )
+void CDlgTagsMake::SetData( )
 {
 	//作成フォルダー
 	ApiWrap::Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), int(std::size(m_szPath)) );
@@ -141,7 +141,7 @@ void CDlgTagsMake::SetData( void )
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー */
-int CDlgTagsMake::GetData( void )
+int CDlgTagsMake::GetData( )
 {
 	//フォルダー
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, int(std::size(m_szPath)) );
@@ -163,7 +163,7 @@ int CDlgTagsMake::GetData( void )
 	return TRUE;
 }
 
-LPVOID CDlgTagsMake::GetHelpIdTable( void )
+LPVOID CDlgTagsMake::GetHelpIdTable( )
 {
 	return (LPVOID)p_helpids;
 }

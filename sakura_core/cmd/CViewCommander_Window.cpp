@@ -32,28 +32,28 @@
 #include "config/system_constants.h"
 
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
-void CViewCommander::Command_SPLIT_V( void )
+void CViewCommander::Command_SPLIT_V( )
 {
 	GetEditWindow()->m_cSplitterWnd.VSplitOnOff();
 	return;
 }
 
 /* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
-void CViewCommander::Command_SPLIT_H( void )
+void CViewCommander::Command_SPLIT_H( )
 {
 	GetEditWindow()->m_cSplitterWnd.HSplitOnOff();
 	return;
 }
 
 /* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
-void CViewCommander::Command_SPLIT_VH( void )
+void CViewCommander::Command_SPLIT_VH( )
 {
 	GetEditWindow()->m_cSplitterWnd.VHSplitOnOff();
 	return;
 }
 
 /* ウィンドウを閉じる */
-void CViewCommander::Command_WINCLOSE( void )
+void CViewCommander::Command_WINCLOSE( )
 {
 	/* 閉じる */
 	::PostMessage( GetMainWindow(), MYWM_CLOSE, 0, 								// 2007.02.13 ryoji WM_CLOSE→MYWM_CLOSEに変更
@@ -62,7 +62,7 @@ void CViewCommander::Command_WINCLOSE( void )
 }
 
 /* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-void CViewCommander::Command_FILECLOSEALL( void )
+void CViewCommander::Command_FILECLOSEALL( )
 {
 	int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() )->GetGroup();
 	CControlTray::CloseAllEditor( TRUE, GetMainWindow(), FALSE, nGroup );	// 2006.12.25, 2007.02.13 ryoji 引数追加
@@ -71,7 +71,7 @@ void CViewCommander::Command_FILECLOSEALL( void )
 
 /* このタブ以外を閉じる */	// 2008.11.22 syat
 // 2009.12.26 syat このウィンドウ以外を閉じるとの兼用化
-void CViewCommander::Command_TAB_CLOSEOTHER( void )
+void CViewCommander::Command_TAB_CLOSEOTHER( )
 {
 	int nGroup = 0;
 
@@ -107,7 +107,7 @@ void CViewCommander::Command_WINLIST( int nCommandFrom )
 
 /*! ウィンドウ一覧表示
 */
-void CViewCommander::Command_DLGWINLIST( void )
+void CViewCommander::Command_DLGWINLIST( )
 {
 	DWORD dwPid;
 	HWND hwnd = GetDllShareData().m_sHandles.m_hwndTray;
@@ -126,7 +126,7 @@ void CViewCommander::Command_DLGWINLIST( void )
 	@date 2004.03.20 genta Z-Orderの上から順に並べていくように．(SetWindowPosを利用)
 	@date 2007.06.20 ryoji タブモードは解除せずグループ単位で並べる
 */
-void CViewCommander::Command_CASCADE( void )
+void CViewCommander::Command_CASCADE( )
 {
 	int i;
 
@@ -266,7 +266,7 @@ void CViewCommander::Command_CASCADE( void )
 }
 
 //上下に並べて表示
-void CViewCommander::Command_TILE_V( void )
+void CViewCommander::Command_TILE_V( )
 {
 	int i;
 
@@ -325,7 +325,7 @@ void CViewCommander::Command_TILE_V( void )
 }
 
 //左右に並べて表示
-void CViewCommander::Command_TILE_H( void )
+void CViewCommander::Command_TILE_H( )
 {
 	int i;
 
@@ -400,7 +400,7 @@ void CViewCommander::Command_WINTOPMOST( LPARAM lparam )
 	@date 2004.07.14 Kazika 新規作成
 	@date 2007.06.20 ryoji GetDllShareData().m_TabWndWndplの廃止，グループIDリセット
 */
-void CViewCommander::Command_BIND_WINDOW( void )
+void CViewCommander::Command_BIND_WINDOW( )
 {
 	//タブモードであるならば
 	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd)
@@ -430,7 +430,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 //End 2004.07.14 Kazika
 
 /* グループを閉じる */	// 2007.06.20 ryoji 追加
-void CViewCommander::Command_GROUPCLOSE( void )
+void CViewCommander::Command_GROUPCLOSE( )
 {
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 		int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() )->GetGroup();
@@ -440,7 +440,7 @@ void CViewCommander::Command_GROUPCLOSE( void )
 }
 
 /* 次のグループ */			// 2007.06.20 ryoji
-void CViewCommander::Command_NEXTGROUP( void )
+void CViewCommander::Command_NEXTGROUP( )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
@@ -449,7 +449,7 @@ void CViewCommander::Command_NEXTGROUP( void )
 }
 
 /* 前のグループ */			// 2007.06.20 ryoji
-void CViewCommander::Command_PREVGROUP( void )
+void CViewCommander::Command_PREVGROUP( )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
@@ -458,7 +458,7 @@ void CViewCommander::Command_PREVGROUP( void )
 }
 
 /* タブを右に移動 */		// 2007.06.20 ryoji
-void CViewCommander::Command_TAB_MOVERIGHT( void )
+void CViewCommander::Command_TAB_MOVERIGHT( )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
@@ -467,7 +467,7 @@ void CViewCommander::Command_TAB_MOVERIGHT( void )
 }
 
 /* タブを左に移動 */		// 2007.06.20 ryoji
-void CViewCommander::Command_TAB_MOVELEFT( void )
+void CViewCommander::Command_TAB_MOVELEFT( )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
@@ -476,7 +476,7 @@ void CViewCommander::Command_TAB_MOVELEFT( void )
 }
 
 /* 新規グループ */			// 2007.06.20 ryoji
-void CViewCommander::Command_TAB_SEPARATE( void )
+void CViewCommander::Command_TAB_SEPARATE( )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
@@ -485,7 +485,7 @@ void CViewCommander::Command_TAB_SEPARATE( void )
 }
 
 /* 次のグループに移動 */	// 2007.06.20 ryoji
-void CViewCommander::Command_TAB_JOINTNEXT( void )
+void CViewCommander::Command_TAB_JOINTNEXT( )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
@@ -494,7 +494,7 @@ void CViewCommander::Command_TAB_JOINTNEXT( void )
 }
 
 /* 前のグループに移動 */	// 2007.06.20 ryoji
-void CViewCommander::Command_TAB_JOINTPREV( void )
+void CViewCommander::Command_TAB_JOINTPREV( )
 {
 	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
@@ -503,7 +503,7 @@ void CViewCommander::Command_TAB_JOINTPREV( void )
 }
 
 /* 左をすべて閉じる */		// 2008.11.22 syat
-void CViewCommander::Command_TAB_CLOSELEFT( void )
+void CViewCommander::Command_TAB_CLOSELEFT( )
 {
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd ){
 		int nGroup = 0;
@@ -532,7 +532,7 @@ void CViewCommander::Command_TAB_CLOSELEFT( void )
 }
 
 /* 右をすべて閉じる */		// 2008.11.22 syat
-void CViewCommander::Command_TAB_CLOSERIGHT( void )
+void CViewCommander::Command_TAB_CLOSERIGHT( )
 {
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd ){
 		int nGroup = 0;
@@ -561,7 +561,7 @@ void CViewCommander::Command_TAB_CLOSERIGHT( void )
 }
 
 //縦方向に最大化
-void CViewCommander::Command_MAXIMIZE_V( void )
+void CViewCommander::Command_MAXIMIZE_V( )
 {
 	HWND	hwndFrame;
 	RECT	rcOrg;
@@ -581,7 +581,7 @@ void CViewCommander::Command_MAXIMIZE_V( void )
 
 //2001.02.10 Start by MIK: 横方向に最大化
 //横方向に最大化
-void CViewCommander::Command_MAXIMIZE_H( void )
+void CViewCommander::Command_MAXIMIZE_H( )
 {
 	HWND	hwndFrame;
 	RECT	rcOrg;
@@ -602,7 +602,7 @@ void CViewCommander::Command_MAXIMIZE_H( void )
 //2001.02.10 End: 横方向に最大化
 
 /* すべて最小化 */	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
-void CViewCommander::Command_MINIMIZE_ALL( void )
+void CViewCommander::Command_MINIMIZE_ALL( )
 {
 	HWND*	phWndArr;
 	int		i;
@@ -627,7 +627,7 @@ void CViewCommander::Command_MINIMIZE_ALL( void )
 }
 
 /* 再描画 */
-void CViewCommander::Command_REDRAW( void )
+void CViewCommander::Command_REDRAW( )
 {
 	/* フォーカス移動時の再描画 */
 	m_pCommanderView->RedrawAll();
@@ -635,7 +635,7 @@ void CViewCommander::Command_REDRAW( void )
 }
 
 //アウトプットウィンドウ表示
-void CViewCommander::Command_WIN_OUTPUT( void )
+void CViewCommander::Command_WIN_OUTPUT( )
 {
 	// 2010.05.11 Moca CShareData::OpenDebugWindow()に統合
 	// メッセージ表示ウィンドウをViewから親に変更
