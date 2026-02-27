@@ -1933,4 +1933,73 @@ TEST_F(CShareDataTest, GetMacroFilename102)
 	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
 }
 
+/*!
+ * @brief マクロの再読み込み設定取得のテスト
+ *
+ * 指定されたインデックスのファイル名が未設定だった場合、falseを返す
+ */
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro001)
+{
+	auto& shareData = GetDllShareData();
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	sMacro.m_MacroTable[1].m_szFile[0] = L'\0';
+
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(1), IsFalse());
+}
+
+/*!
+ * @brief マクロの再読み込み設定取得のテスト
+ *
+ * 指定されたインデックスの再読み込みが有効だった場合、trueを返す
+ */
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro002)
+{
+	auto& shareData = GetDllShareData();
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const auto testFilePath = GetExeFileName().replace_filename(L"test.mac"s);
+	::wcscpy_s(sMacro.m_MacroTable[2].m_szFile, testFilePath.c_str());
+	sMacro.m_MacroTable[2].m_bReloadWhenExecute = true;
+
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(2), IsTrue());
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[2].m_szFile, L"");
+	sMacro.m_MacroTable[2].m_bReloadWhenExecute = false;
+}
+
+/*!
+ * @brief マクロの再読み込み設定取得のテスト
+ *
+ * 指定されたインデックスの再読み込みが無効だった場合、falseを返す
+ */
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro003)
+{
+	auto& shareData = GetDllShareData();
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const auto testFilePath = GetExeFileName().replace_filename(L"test.mac"s);
+	::wcscpy_s(sMacro.m_MacroTable[3].m_szFile, testFilePath.c_str());
+	sMacro.m_MacroTable[3].m_bReloadWhenExecute = false;
+
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(3), IsFalse());
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[3].m_szFile, L"");
+}
+
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro101)
+{
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(-1), IsFalse()); // 👈バグです。インデックスに下限を下回る値を指定したときに、範囲外アクセスしています。
+}
+
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro102)
+{
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(MAX_CUSTMACRO), IsFalse()); // 👈バグです。インデックスに上限を下回る値を指定したときに、範囲外アクセスしています。
+}
+
 } // namespace env
