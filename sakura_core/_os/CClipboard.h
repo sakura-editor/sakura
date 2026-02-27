@@ -46,6 +46,16 @@ struct StdWStringBuffer : public IWBuffer {
 	std::wstring* wstr;
 };
 
+struct alignas(4) SSakuraClipData {
+	//! データ全体のサイズを計算する
+	static constexpr size_t CalcSize(size_t nLength) noexcept { return sizeof(cchData) + (nLength + 1) * sizeof(WCHAR); }
+
+	int cchData = 0;
+	WCHAR szData[1] = {};
+};
+
+static_assert(offsetof(SSakuraClipData, szData) == 4);
+
 //!サクラエディタ用クリップボードクラス。後々はこの中で全てのクリップボードAPIを呼ばせたい。
 class CClipboard{
 	using Me = CClipboard;
