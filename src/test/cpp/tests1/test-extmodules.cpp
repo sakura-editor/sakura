@@ -108,7 +108,6 @@ struct ExtModuleTest : public ::testing::Test, public env::ShareDataTestSuite {
 };
 
 struct CMigemoTest : public ExtModuleTest {
-	using CShareDataHolder = std::unique_ptr<CShareData>;
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
 
 	CMigemoHolder pcMigemo = nullptr;
