@@ -1927,7 +1927,7 @@ TEST_F(CShareDataTest, GetMacroFilename102)
 	const std::wstring macroFolder{ sMacro.m_szMACROFOLDER };
 	sMacro.m_szMACROFOLDER[0] = L'\0';
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(MAX_CUSTMACRO, nullptr, 0), Eq(0)); // 👈バグです。インデックスに上限を下回る値を指定したときに、範囲外アクセスしています。
+	EXPECT_THAT(pcShareData->GetMacroFilename(MAX_CUSTMACRO, nullptr, 0), Eq(0)); // 👈バグです。インデックスに上限を上回る値を指定したときに、範囲外アクセスしています。
 
 	// 共有データを元に戻す
 	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
@@ -1999,7 +1999,7 @@ TEST_F(CShareDataTest, BeReloadWhenExecuteMacro101)
 
 TEST_F(CShareDataTest, BeReloadWhenExecuteMacro102)
 {
-	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(MAX_CUSTMACRO), IsFalse()); // 👈バグです。インデックスに上限を下回る値を指定したときに、範囲外アクセスしています。
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(MAX_CUSTMACRO), IsFalse()); // 👈バグです。インデックスに上限を上回る値を指定したときに、範囲外アクセスしています。
 }
 
 } // namespace env
