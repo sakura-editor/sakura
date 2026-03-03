@@ -281,6 +281,10 @@ private:
 
 public:
 	static void CallErrorProc(PpaExecInfo& info, int Err_CD, _In_opt_z_ LPCSTR Err_Mes);
+	static int	CallIntFunc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments, int* ResultValue);
+	static int	CallProc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments);
+	static int	CallStrFunc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments, LPSTR* ResultValue);
+	static int	CallStrObj(PpaExecInfo& info, int index, bool isSetMode, LPSTR* ResultValue);
 };
 
 #endif /* SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_ */

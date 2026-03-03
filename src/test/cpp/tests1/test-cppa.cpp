@@ -207,6 +207,102 @@ TEST_F(CPpaTest, ppaErrorProc)
 	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正\ndebug");
 }
 
+/*!
+ * CPPAマクロ呼出コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaProc)
+{
+	std::array ppszArgs1 = { "something is wrong." };
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+
+	// 正常なマクロ呼出
+	EXPECT_THAT(CPPA::CallProc(info, F_OKCANCELBOX, ppszArgs1), Eq(0));
+
+	// パラメーター不足でエラー
+	EXPECT_THAT(CPPA::CallProc(info, F_WCHAR, ppszArgs2), Eq(int(F_WCHAR) + 1));
+}
+
+/*!
+ * CPPAマクロ関数呼出コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaIntFunc)
+{
+	std::array ppszArgs1 = { "$I" };
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	std::array ppszArgs3 = { "0" };
+	std::array ppszArgs4 = { "1" };
+
+	// 数値を返すマクロ関数を呼び出す
+	int nValue = -1;
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_ISINSMODE, ppszArgs2, &nValue), Eq(0));
+
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_GETLINECOUNT, ppszArgs3, &nValue), Eq(0));
+
+	// パラメーター不足でfalseを返すケース
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_GETLINECOUNT, ppszArgs4, &nValue), Eq(int(F_GETLINECOUNT) + 1));
+
+	// 文字列を返すマクロ関数を呼び出す
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_EXPANDPARAMETER, ppszArgs1, &nValue), Eq(-2));
+
+	// コマンドを呼び出す
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_FILENEW, ppszArgs2, &nValue), Eq(int(F_FILENEW) + 1));
+}
+
+/*!
+ * CPPAマクロ関数呼出コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaStrFunc)
+{
+	std::array ppszArgs1 = { "$I" };
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	std::array ppszArgs3 = { "0" };
+
+	// 文字列を返すマクロ関数を呼び出す
+	LPSTR pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrFunc(info, F_EXPANDPARAMETER, ppszArgs1, &pszValue), Eq(0));
+
+	// 数値を返すマクロ関数を呼び出す
+	EXPECT_THAT(CPPA::CallStrFunc(info, F_ISINSMODE, ppszArgs2, &pszValue), Eq(int(F_ISINSMODE) + 1));
+	EXPECT_THAT(pszValue, StrEq(""));
+
+	// コマンドを呼び出す
+	pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrFunc(info, F_FILENEW, ppszArgs2, &pszValue), Eq(int(F_FILENEW) + 1));
+	EXPECT_THAT(pszValue, StrEq(""));
+}
+
+/*!
+ * CPPAユーザー定義文字列コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaStrObj)
+{
+	LPSTR pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrObj(info, 2, false, &pszValue), Eq(0));
+	EXPECT_THAT(pszValue, StrEq("debug"));
+
+	std::string test{ "test" };
+	pszValue = test.data();
+	EXPECT_THAT(CPPA::CallStrObj(info, 2, true, &pszValue), Eq(0));
+
+	pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrObj(info, 2, false, &pszValue), Eq(0));
+	EXPECT_THAT(pszValue, StrEq(test));
+
+	EXPECT_THAT(CPPA::CallStrObj(info, 0, true, &pszValue), Eq(-1));
+}
+
 TEST(CSMacroMgr, GetFuncInfoByID001)
 {
 	EXPECT_THAT(CSMacroMgr::GetFuncInfoByID(F_FILENEW), NotNull());
