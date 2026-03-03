@@ -40,6 +40,9 @@ include(${CMAKE_SOURCE_DIR}/src/main/cmake/diffutils.cmake)
 # Enable ctest command
 enable_testing()
 
+add_subdirectory("${CMAKE_SOURCE_DIR}/tools/ppa_stub"
+                 "${CMAKE_BINARY_DIR}/ppa_stub")
+
 # Include tests1 definition
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/tests1.cmake)
 
