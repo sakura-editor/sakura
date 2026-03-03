@@ -17,8 +17,22 @@
 #include "eval_outputs.hpp"
 
 #include "env/ShareDataTestSuite.hpp"
+#include "macro/CMacroFactory.h"
+#include "macro/CPPAMacroMgr.h"
+
+#include <fstream>
+
+std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
 
 namespace macro {
+
+struct CPpaStub : public CPPA
+{
+	CPpaStub()
+	{
+		EXPECT_THAT(InitDll(L"ppa_stub.dll"), Eq(EDllResult::DLL_SUCCESS));
+	}
+};
 
 struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
 	static inline std::unique_ptr<CEditDoc> pcEditDoc = nullptr;
@@ -112,6 +126,39 @@ TEST_F(CPpaTest, GetDllNameImp)
 {
 	CPPA cPpa;
 	EXPECT_THAT(cPpa.GetDllNameImp(0), StrEq(L"PPA.DLL"));
+}
+
+/*!
+	CPPA::GetVersionのテスト
+
+	アプリから使っているわけではないので、削除しても良いかも知れない。
+ */
+TEST_F(CPpaTest, GetVersion)
+{
+	// テスト対象はスタブDLL
+	CPpaStub cPpa;
+	EXPECT_THAT(cPpa.GetVersion(), StrEq("PPA.DLL Version 1.24"));
+
+	cPpa.DeinitDll();
+	EXPECT_THAT(cPpa.GetVersion(), StrEq(""));
+}
+
+/*!
+	CPPA::Executeのテスト
+
+	スタブを使ったテスト。
+	ppa_stub.Executeは何もしないのでテストは成功する。
+ */
+TEST_F(CPpaTest, Execute)
+{
+	// テスト対象はスタブDLL
+	CPpaStub cPpa;
+
+	// DLL読み込みは成功する
+	EXPECT_THAT(cPpa.IsAvailable(), IsTrue());
+
+	// Execute呼出は成功する
+	EXPECT_TRUE(cPpa.Execute(&pcEditWnd->GetActiveView(), 0));
 }
 
 /*!
@@ -301,6 +348,46 @@ TEST_F(CPpaTest, ppaStrObj)
 	EXPECT_THAT(pszValue, StrEq(test));
 
 	EXPECT_THAT(CPPA::CallStrObj(info, 0, true, &pszValue), Eq(-1));
+}
+
+/*!
+ * CPPAマクロマネージャーのテスト
+ */
+TEST_F(CPpaTest, CPPAMacroMgr001)
+{
+	EXPECT_THAT(CPPAMacroMgr::Creator(L"mac"), IsNull());
+
+	// スタブDLLを読み込む
+	CPPAMacroMgr::m_cPPA.InitDll(L"ppa_stub.dll");
+
+	CPPAMacroMgr::declare();
+
+	auto mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"ppa"));
+
+	const HINSTANCE unusedArg1 = nullptr;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"macro str;"), IsTrue());
+
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	const auto path = GetTempFilePathWithExt(L"tes", L"ppa");
+	EXPECT_THAT(mgr->LoadKeyMacro(unusedArg1, path.c_str()), IsFalse());
+
+	std::wofstream fs(path);
+	fs << L"macro str1;" << std::endl;
+	fs << L"macro str2;" << std::endl;
+	fs << L"macro str3;" << std::endl;
+	fs.close();
+
+	EXPECT_THAT(mgr->LoadKeyMacro(unusedArg1, path.c_str()), IsTrue());
+
+	std::filesystem::remove(path);
+
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	mgr = nullptr;
+
+	CMacroFactory::getInstance()->Unregister(CPPAMacroMgr::Creator);
 }
 
 TEST(CSMacroMgr, GetFuncInfoByID001)
