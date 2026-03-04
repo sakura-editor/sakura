@@ -94,41 +94,19 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 }
 
 /*!
-	BOMデータ取得
-
-	ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
-	マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
+ * BOMデータ取得
+ *
+ * ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
+ * マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
  */
-[[nodiscard]] BinarySequence CCodeBase::GetBomDefinition()
+void CCodeBase::GetBom(CMemory* pcmemBom)
 {
-	const CNativeW cBom( L"\xFEFF" );
-
-	bool bComplete = false;
-	auto converted = UnicodeToCode( cBom, &bComplete );
-	if( !bComplete ){
-		converted.clear();
-	}
-
-	return converted;
-}
-
-/*!
-	BOMデータ取得
-
-	ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
-	マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
- */
-void CCodeBase::GetBom( CMemory* pcmemBom )
-{
-	if( pcmemBom != nullptr ){
-		if( const auto bom = GetBomDefinition(); 0 < bom.length() ){
-			pcmemBom->SetRawData( bom.data(), bom.length() );
-		}else{
-			pcmemBom->Reset();
-		}
+	// ByteOrderMarkを特定コードに変換
+	if (pcmemBom && RESULT_COMPLETE != UnicodeToCode(CNativeW{ &WCODE::BOM, 1 }, pcmemBom)) {
+		// 変換できなかったらリセットする
+		pcmemBom->Reset();
 	}
 }
-
 
 /*!
 	改行データ取得

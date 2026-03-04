@@ -124,8 +124,7 @@ public:
 	}
 
 	//ファイル形式
-	[[nodiscard]] virtual BinarySequence GetBomDefinition();
-	void GetBom( CMemory* pcmemBom );
+	void					GetBom(CMemory* pcmemBom);
 	[[nodiscard]] virtual std::map<EEolType, BinarySequence> GetEolDefinitions();
 	void GetEol( CMemory* pcmemEol, EEolType eEolType );
 
