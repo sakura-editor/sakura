@@ -125,8 +125,7 @@ public:
 
 	//ファイル形式
 	void					GetBom(CMemory* pcmemBom);
-	[[nodiscard]] virtual std::map<EEolType, BinarySequence> GetEolDefinitions();
-	void GetEol( CMemory* pcmemEol, EEolType eEolType );
+	void					GetEol(CMemory* pcmemEol, EEolType eEolType);
 
 	// 文字コードの16進表示
 	// 文字コード表示用		2008/6/9 Uchi
