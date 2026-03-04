@@ -17,9 +17,34 @@
 
 #include "env/ShareDataTestSuite.hpp"
 
+#include "mem/CNativeW.h"
+#include "view/colors/EColorIndexType.h"
+
 #include "tests1_rc.h"
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
+
+namespace cxx {
+
+//! CスタイルのNUL区切り配列を作成する
+void make_cstyle_array(
+	std::span<WCHAR> buffer,
+	std::span<LPCWSTR> items
+)
+{
+	// 各要素をNUL区切りで連結した文字列を作成する
+	auto strItems = std::accumulate(items.begin(), items.end(), std::wstring(),
+		[](const std::wstring& a, std::wstring_view b) { return a + L'\0' + std::data(b); }
+	);
+
+	// 末尾にもう一つNULを付ける
+	strItems += L'\0';
+
+	// バッファにコピーする
+	::wmemcpy_s(std::data(buffer), std::size(buffer), std::data(strItems) + 1, std::size(strItems) - 1);
+}
+
+} // namespace cxx
 
 /*!
 	外部DLLの読み込みテスト
@@ -107,8 +132,134 @@ struct ExtModuleTest : public ::testing::Test, public env::ShareDataTestSuite {
 	}
 };
 
+struct CBregexpTest : public ExtModuleTest {
+	using CBregexpHolder = std::unique_ptr<CBregexp>;
+
+	CBregexpHolder pcBregexp = nullptr;
+
+	/*!
+	 * テストが起動される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override {
+		// テストクラスをインスタンス化する
+		pcBregexp = std::make_unique<CBregexp>();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		// テストクラスのインスタンスを破棄する
+		pcBregexp = nullptr;
+	}
+};
+
+TEST_F(CBregexpTest, test001)
+{
+	// 初期状態では利用不可
+	EXPECT_THAT(pcBregexp->IsAvailable(), IsFalse());
+
+	// ロード前はバージョン情報も取得できない
+	EXPECT_THAT(pcBregexp->GetVersionW(), StrEq(L""));
+
+	// ロード前は正規表現コンパイルできない
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+", L"$1d"), IsFalse());
+
+	// 正規表現設定に値を入れる
+	::wcsncpy_s(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib, L"", _TRUNCATE);
+
+	// 名前を指定せずにロードする
+	pcBregexp->InitDll();
+
+	// ロードされたら利用可能になる
+	EXPECT_THAT(pcBregexp->IsAvailable(), IsTrue());
+
+	// ロードされたらバージョン情報が取れる
+	EXPECT_THAT(pcBregexp->GetVersionW(), StrNe(L""));
+
+	// 不具合1： コンパイル前に呼び出すとAV例外になるメソッドがある
+#if 0
+	EXPECT_THAT(pcBregexp->GetIndex(), 0);
+	EXPECT_THAT(pcBregexp->GetLastIndex(), 0);
+	EXPECT_THAT(pcBregexp->GetMatchLen(), 0);
+	EXPECT_THAT(pcBregexp->GetStringLen(), 0);
+	EXPECT_THAT(pcBregexp->GetString(), StrEq(L""));
+#endif
+
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(L".+"), IsTrue());
+	EXPECT_THAT(pcBregexp->Compile(L"^$"), IsTrue());
+
+	// オプションビットをすべて立てても失敗はしない
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+", int(-1)), IsTrue());
+
+	// 構文エラーでコンパイルエラーを発生させる
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9"), IsFalse());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrNe(L""));
+
+	// 正規表現コンパイルを成功させる
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+"), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(L"[0-9]+"), IsTrue());
+
+	// 正規表現マッチが成功する
+	EXPECT_THAT(pcBregexp->Match(L"test123あいう", _countof(L"test123あいう") - 1, 0), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	EXPECT_THAT(pcBregexp->GetIndex(), 4);
+	EXPECT_THAT(pcBregexp->GetLastIndex(), 7);
+	EXPECT_THAT(pcBregexp->GetMatchLen(), 3);
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Match(L"a", _countof(L"a") - 1, 1), IsFalse());
+
+
+	// 正規表現コンパイルが成功する
+	EXPECT_THAT(pcBregexp->Compile(L"([0-9]+)", L"{$1d}"), IsTrue());
+
+	// 正規表現置換が成功する
+	EXPECT_THAT(pcBregexp->Replace(L"test123あいう", _countof(L"test123あいう") - 1, 0), IsTrue());
+	EXPECT_THAT(pcBregexp->GetLastMessage(), StrEq(L""));
+
+	// 置換結果を確認する
+	constexpr auto& expected = L"test{123d}あいう";
+	EXPECT_THAT(pcBregexp->GetString(), StrEq(expected));
+	EXPECT_THAT(pcBregexp->GetStringLen(), std::size(expected) - 1);
+
+	// マッチしないパターンの確認
+	EXPECT_THAT(pcBregexp->Replace(L"a", _countof(L"a") - 1, 1), IsFalse());
+}
+
+TEST_F(CBregexpTest, CheckRegexpSyntax001)
+{
+	constexpr auto hWndMessageParent = nullptr;
+	constexpr auto showMessage = false;
+	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", hWndMessageParent, showMessage), IsTrue());
+}
+
+TEST_F(CBregexpTest, CheckRegexpSyntax002)
+{
+	constexpr auto hWndMessageParent = nullptr;
+	constexpr auto showMessage = false;
+	constexpr auto nOption = -1;
+	constexpr auto bKakomi = true;
+	EXPECT_THAT(::CheckRegexpSyntax(L"m|([0-9]+)|", hWndMessageParent, showMessage, nOption, bKakomi), IsTrue());
+}
+
+TEST_F(CBregexpTest, CheckRegexpSyntax101)
+{
+	constexpr auto hWndMessageParent = nullptr;
+	constexpr auto showMessage = false;
+	constexpr auto nOption = -1;
+	constexpr auto bKakomi = true;
+	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", hWndMessageParent, showMessage, nOption, bKakomi), IsFalse());
+}
+
 struct CMigemoTest : public ExtModuleTest {
-	using CShareDataHolder = std::unique_ptr<CShareData>;
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
 
 	CMigemoHolder pcMigemo = nullptr;
@@ -238,6 +389,111 @@ TEST_F(CMigemoTest, test003)
 
 	// 与えた文字列をSJISに変換できない場合、与えた文字列がそのまま返る
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));
+}
+
+struct CRegexKeywordTest : public ExtModuleTest {
+	using CRegexKeywordHolder = std::unique_ptr<CRegexKeyword>;
+
+	CRegexKeywordHolder pcRegexKeyword = nullptr;
+
+	/*!
+	 * テストが起動される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override {
+		// テストクラスをインスタンス化する
+		pcRegexKeyword = std::make_unique<CRegexKeyword>(L"bregonig.dll");
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		// テストクラスのインスタンスを破棄する
+		pcRegexKeyword = nullptr;
+	}
+};
+
+TEST_F(CRegexKeywordTest, test001)
+{
+	auto pTypeConfig = std::make_unique<STypeConfig>();
+	pTypeConfig->m_id = 0;
+	pTypeConfig->m_bUseRegexKeyword = true;
+	std::array regexKeywords = { L"m/^#/k", L"m#^--#k", L"/^head/k", L"m/tail/k", L"m/[...)/k" };
+	cxx::make_cstyle_array(pTypeConfig->m_RegexKeywordList, regexKeywords);
+	pTypeConfig->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_REGEX1;
+	pTypeConfig->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_REGEX2;
+	pTypeConfig->m_RegexKeywordArr[2].m_nColorIndex = COLORIDX_KEYWORD1;
+	pTypeConfig->m_RegexKeywordArr[3].m_nColorIndex = COLORIDX_KEYWORD2;
+	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX1].m_bDisp = true;
+	pTypeConfig->m_ColorInfoArr[COLORIDX_REGEX2].m_bDisp = false;
+	pTypeConfig->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp = true;
+	pTypeConfig->m_ColorInfoArr[COLORIDX_KEYWORD2].m_bDisp = true;
+
+	// RegexKeySetTypesを呼ぶと初期化が走る
+	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
+
+	EXPECT_THAT(pcRegexKeyword->RegexKeyLineStart(), IsTrue());
+
+	// m_idが同じならtrueを返して抜ける
+	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
+
+	EXPECT_THAT(pcRegexKeyword->RegexKeyLineStart(), IsTrue());
+
+	const CStringRef line1{ L"##test", _countof(L"##test") - 1 };
+	const CStringRef line2{ L"//test", _countof(L"//test") - 1 };
+
+	int nMatchLen = -1;
+	int nMatchColor = COLORIDX_DEFAULT;
+
+	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(line1, 0, &nMatchLen, &nMatchColor), IsTrue());
+	EXPECT_THAT(nMatchLen, 1);
+	EXPECT_THAT(nMatchColor, COLORIDX_REGEX1);
+
+	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(line1, 0, &nMatchLen, &nMatchColor), IsTrue());
+
+	nMatchLen = -1;
+	nMatchColor = COLORIDX_DEFAULT;
+	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(line1, 0, &nMatchLen, &nMatchColor), IsTrue());
+	EXPECT_THAT(nMatchLen, 1);
+	EXPECT_THAT(nMatchColor, COLORIDX_REGEX1);
+
+	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(line1, 1, &nMatchLen, &nMatchColor), IsFalse());
+
+	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(line1, 2, &nMatchLen, &nMatchColor), IsFalse());
+
+	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(line2, 0, &nMatchLen, &nMatchColor), IsFalse());
+
+	// m_idが違うならクリアして再初期化になる
+	pTypeConfig->m_id = 1;
+	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());
+
+	pTypeConfig->m_bUseRegexKeyword = false;
+	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsFalse());
+
+	// テストクラスのインスタンスを破棄する
+	pcRegexKeyword = nullptr;
+
+	// テストクラスをインスタンス化する
+	pcRegexKeyword = std::make_unique<CRegexKeyword>(L"bregonig.dll");
+
+	pcRegexKeyword->DeinitDll();
+
+	pTypeConfig->m_bUseRegexKeyword = true;
+	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(pTypeConfig.get()), IsTrue());	// 戻り値、これで良いか検討必要。（RegexKeyCompileがfalseを返すケース。）
+
+	pcRegexKeyword->DeinitDll();
+
+	EXPECT_THAT(pcRegexKeyword->RegexKeyLineStart(), IsFalse());
+
+	EXPECT_THAT(pcRegexKeyword->RegexIsKeyword(line1, 0, &nMatchLen, &nMatchColor), IsFalse());
+
+	EXPECT_THAT(pcRegexKeyword->RegexKeySetTypes(nullptr), IsFalse());
+}
+
+TEST_F(CRegexKeywordTest, GetNewMagicNumber101)
+{
+	// 呼ぶだけ
+	CRegexKeyword::GetNewMagicNumber();
 }
 
 } // namespace extmodule
