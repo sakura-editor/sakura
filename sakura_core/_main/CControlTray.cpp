@@ -1179,7 +1179,7 @@ bool CControlTray::OpenNewEditor(
 	}
 
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", GetProfileName() );
+		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", CCommandLine::getInstance()->GetProfileName() );
 	}
 
 	// 追加のコマンドラインオプション
