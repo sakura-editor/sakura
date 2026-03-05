@@ -9,6 +9,7 @@
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "apiwrap/CommonControl.h"
+#include "DarkModeSubclass.h"
 
 #include "charset/CCodeFactory.h"
 
@@ -62,6 +63,8 @@ void CMainStatusBar::CreateStatusBar()
 		nullptr
 	);
 
+	DarkMode::setStatusBarCtrlSubclass(m_hwndStatusBar);
+
 	/* プログレスバー */
 	m_hwndProgressBar = ::CreateWindowEx(
 		WS_EX_TOOLWINDOW,
@@ -77,6 +80,8 @@ void CMainStatusBar::CreateStatusBar()
 		CEditApp::getInstance()->GetAppInstance(),
 		nullptr
 	);
+
+	DarkMode::setProgressBarCtrlSubclass(m_hwndProgressBar);
 
 	if( nullptr != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
 		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( FALSE );

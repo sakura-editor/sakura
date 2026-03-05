@@ -55,6 +55,7 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "DarkModeSubclass.h"
 
 #define ID_HOTKEY_TRAYMENU	0x1234
 
@@ -380,44 +381,13 @@ LRESULT CControlTray::DispatchEvent(
 
 	static WORD		wHotKeyMods;
 	static WORD		wHotKeyCode;
-	LPMEASUREITEMSTRUCT	lpmis;	/* 項目サイズ情報 */
-	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
-	int					nItemWidth;
-	int					nItemHeight;
 	static bool			bLDClick = false;	/* 左ダブルクリックをしたか 03/02/20 ai */
 
 	switch ( uMsg ){
 	case WM_MENUCHAR:
 		/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 		return m_cMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
-	case WM_DRAWITEM:
-		lpdis = (DRAWITEMSTRUCT*) lParam;	/* 項目描画情報 */
-		switch( lpdis->CtlType ){
-		case ODT_MENU:	/* オーナー描画メニュー */
-			/* メニューアイテム描画 */
-			m_cMenuDrawer.DrawItem( lpdis );
-			return TRUE;
-		default:
-			break;
-		}
-		return FALSE;
-	case WM_MEASUREITEM:
-		lpmis = (MEASUREITEMSTRUCT*) lParam;	// item-size information
-		switch( lpmis->CtlType ){
-		case ODT_MENU:	/* オーナー描画メニュー */
-			/* メニューアイテムの描画サイズを計算 */
-			nItemWidth = m_cMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
-			if( 0 < nItemWidth ){
-				lpmis->itemWidth = nItemWidth;
-				lpmis->itemHeight = nItemHeight;
-			}
-			return TRUE;
-		default:
-			break;
-		}
-		return FALSE;
 	case WM_EXITMENULOOP:
-		m_cMenuDrawer.EndDrawMenu();
 		break;
 
 	/* タスクトレイ左クリックメニューへのショートカットキー登録 */
@@ -601,6 +571,16 @@ LRESULT CControlTray::DispatchEvent(
 	case MYWM_CHANGESETTING:
 		switch( (e_PM_CHANGESETTING_SELECT)lParam ){
 		case PM_CHANGESETTING_ALL:
+			/* ダークモード設定を反映する */
+			{
+				const bool bNewDark = (GetDllShareData().m_Common.m_sWindow.m_bDarkMode != FALSE);
+				const bool bOldDark = DarkMode::isEnabled();
+				if( bNewDark != bOldDark ){
+					const auto dmType = bNewDark ? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::classic;
+					DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
+					DarkMode::setDefaultColors(true);
+				}
+			}
 			{
 				bool bChangeLang = wcscmp( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, m_szLanguageDll ) != 0;
 				wcscpy( m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );

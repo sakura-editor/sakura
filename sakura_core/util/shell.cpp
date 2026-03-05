@@ -22,6 +22,7 @@
 #include "config/app_constants.h"
 #include "cxx/com_pointer.hpp"
 #include "cxx/ResourceHolder.hpp"
+#include "DarkModeSubclass.h"
 
 #pragma comment(lib, "htmlhelp.lib") 
 
@@ -247,6 +248,8 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, [[maybe_unused]] LPA
 			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
 			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 		}
+
+		DarkMode::setDarkWndSafe(hwndDlg);
 	}
 	return 0;
 }
@@ -557,12 +560,14 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	cf.lStructSize = sizeof( cf );
 	cf.hwndOwner = hwndDlgOwner;
 	cf.hDC = nullptr;
-	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT | CF_EFFECTS | CF_ENABLEHOOK;
 	if( FixedFontOnly ){
 		//FIXEDフォント
 		cf.Flags |= CF_FIXEDPITCHONLY;
 	}
 	cf.lpLogFont = plf;
+	cf.lpfnHook = static_cast<LPCFHOOKPROC>(DarkMode::HookDlgProc);
+	cf.hInstance = GetModuleHandleW(nullptr);
 	if( !ChooseFont( &cf ) ){
 #ifdef _DEBUG
 		DWORD nErr;

@@ -1066,9 +1066,10 @@ BEGIN
     CONTROL         "显示状态栏(&S)",IDC_CHECK_DispSTATUSBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,37,88,10
     CONTROL         "水平滚动条(&R)",IDC_CHECK_bScrollBarHorz,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,104,13,89,10
     CONTROL         "菜单图标(&I)",IDC_CHECK_bMenuIcon,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,195,13,87,10
-    PUSHBUTTON      "窗口位置和大小(&W)...",IDC_BUTTON_WINSIZE,202,33,83,14
-    LTEXT           "注意：标签栏显示设置\n位于标签栏选项卡中",IDC_STATIC,111,30,83,17
-    GROUPBOX        "基本设置",IDC_STATIC,3,3,285,49,WS_GROUP
+    CONTROL         "暗黑模式(&D)",IDC_CHECK_bDarkMode,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,104,25,89,10
+    PUSHBUTTON      "窗口位置和大小(&W)...",IDC_BUTTON_WINSIZE,202,25,83,14
+    LTEXT           "注意：标签栏显示设置\n位于标签栏选项卡中",IDC_STATIC,111,37,83,17
+    GROUPBOX        "基本设置",IDC_STATIC,3,3,285,52,WS_GROUP
     LTEXT           "标尺高度(&H)",IDC_STATIC,7,68,58,8
     EDITTEXT        IDC_EDIT_nRulerHeight,101,66,28,12,ES_AUTOHSCROLL
     CONTROL         "Spin1",IDC_SPIN_nRulerHeight,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,124,66,10,12

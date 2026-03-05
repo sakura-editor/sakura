@@ -54,6 +54,7 @@
 #include "sakura.hh"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "DarkModeSubclass.h"
 
 // 画面ドッキング用の定義	// 2010.06.05 ryoji
 #define DEFINE_SYNCCOLOR
@@ -3122,33 +3123,28 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 	default:
 		break;
 	}
-	::MyFillRect( gr, rcWk, COLOR_3DFACE );
+	//::MyFillRect( gr, rcWk, COLOR_3DFACE );
+	::MyFillRect(gr, rcWk, DarkMode::getBackgroundColor());
 	::DrawEdge( gr, &rcWk, EDGE_ETCHED, BF_TOPLEFT );
 
 	// タイトルを描画する
 	BOOL bThemeActive = ::IsThemeActive();
-	BOOL bGradient = FALSE;
-	::SystemParametersInfo( SPI_GETGRADIENTCAPTIONS, 0, &bGradient, 0 );
-	if( !bThemeActive ) bGradient = FALSE;	// 適当に調整
 	HWND hwndFocus = ::GetFocus();
 	BOOL bActive = (GetHwnd() == hwndFocus || ::IsChild(GetHwnd(), hwndFocus));
 	RECT rcCaption;
 	GetCaptionRect( &rcCaption );
 	::OffsetRect( &rcCaption, -rcScr.left, -rcScr.top );
 	rcWk = rcCaption;
-	rcWk.top += 1;
-	rcWk.right -= DOCK_BUTTON_NUM * (::GetSystemMetrics( SM_CXSMSIZE ));
 	// ↓DrawCaption() に DC_SMALLCAP を指定してはいけないっぽい
 	// ↓DC_SMALLCAP 指定のものを Win7(64bit版) で動かしてみたら描画位置が下にずれて上半分しか見えなかった（x86ビルド/x64ビルドのどちらも NG）
-	::DrawCaption( hwnd, gr, &rcWk, DC_TEXT | (bGradient? DC_GRADIENT: 0) /*| DC_SMALLCAP*/ | (bActive? DC_ACTIVE: 0) );
-	rcWk.left = rcCaption.right;
-	int nClrCaption;
-	if( bGradient )
-		nClrCaption = ( bActive? COLOR_GRADIENTACTIVECAPTION: COLOR_GRADIENTINACTIVECAPTION );
-	else
-		nClrCaption = ( bActive? COLOR_ACTIVECAPTION: COLOR_INACTIVECAPTION );
-	::MyFillRect( gr, rcWk, nClrCaption );
+	gr.SetTextForeColor(DarkMode::getTextColor());
+	gr.SetTextBackColor(DarkMode::getBackgroundColor());
+	wchar_t buff[256];
+	::GetWindowText(GetHwnd(), buff, 256);
+	COLORREF clrCaption = bActive ? DarkMode::getHotBackgroundColor() : DarkMode::getBackgroundColor();
+	::MyFillRect( gr, rcWk, clrCaption );
 	::DrawEdge( gr, &rcCaption, BDR_SUNKENOUTER, BF_TOP );
+	::DrawText(gr, buff, -1, &rcCaption, DT_TOP|DT_LEFT);
 
 	// タイトル上のボタンを描画する
 	NONCLIENTMETRICS ncm;
@@ -3178,8 +3174,8 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 		int nClrCaptionText;
 		// マウスカーソルがボタン上にあればハイライト
 		if( ::PtInRect( &rcBtn, pt ) ){
-			::MyFillRect( gr, rcBtn, (bGradient && !bActive)? COLOR_INACTIVECAPTION: COLOR_ACTIVECAPTION );
-			nClrCaptionText = ( (bGradient && !bActive)? COLOR_INACTIVECAPTIONTEXT: COLOR_CAPTIONTEXT );
+			::MyFillRect( gr, rcBtn, COLOR_ACTIVECAPTION );
+			nClrCaptionText = COLOR_CAPTIONTEXT;
 		}else{
 			nClrCaptionText = ( bActive? COLOR_CAPTIONTEXT: COLOR_INACTIVECAPTIONTEXT );
 		}
