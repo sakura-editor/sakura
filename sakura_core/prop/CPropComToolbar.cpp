@@ -29,6 +29,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "DarkModeSubclass.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//11000
@@ -587,25 +588,25 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	RECT rcFrame = rcText;
 
 	// アイテム背景をウインドウ背景色で塗りつぶす
-	::MyFillRect( pDis->hDC, rcItem, COLOR_WINDOW );
+	::MyFillRect( pDis->hDC, rcItem, DarkMode::getCtrlBackgroundColor() );
 
 	// 背景色と前景色
-	int bkColor;
-	int textColor;
+	COLORREF bkColor;
+	COLORREF textColor;
 
 	/* アイテムが選択されている */
 	if( pDis->itemState & ODS_SELECTED ){
-		bkColor = COLOR_HIGHLIGHT;
-		textColor = COLOR_HIGHLIGHTTEXT;
+		bkColor = ::GetSysColor(COLOR_HIGHLIGHT);
+		textColor = DarkMode::getTextColor();
 	}else{
-		bkColor = COLOR_WINDOW;
-		textColor = COLOR_WINDOWTEXT;
+		bkColor = DarkMode::getCtrlBackgroundColor();
+		textColor = DarkMode::getTextColor();
 	}
 
 	// デバイスコンテキストのオプションを設定する
 	int bkModeOld = ::SetBkMode( pDis->hDC, TRANSPARENT );
-	COLORREF bkColorOld = ::SetBkColor( pDis->hDC, ::GetSysColor( bkColor ) );
-	COLORREF textColorOld = ::SetTextColor( pDis->hDC, ::GetSysColor( textColor ) );
+	COLORREF bkColorOld = ::SetBkColor( pDis->hDC, bkColor );
+	COLORREF textColorOld = ::SetTextColor( pDis->hDC, textColor );
 
 	// itemDataに紐づくボタン情報を取得する
 	TBBUTTON tbb = m_pcMenuDrawer->getButton((int)pDis->itemData);
@@ -629,7 +630,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 			rcItem.left + cxEdge,
 			rcItem.top + cyEdge + (rcItem.bottom - rcItem.top - cySmIcon) / 2,
 			tbb.iBitmap,
-			ILD_NORMAL,
+			true,
 			cxSmIcon,
 			cySmIcon
 		);

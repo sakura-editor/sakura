@@ -25,6 +25,7 @@
 #include "env/CShareData.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
 #include "config/system_constants.h"
+#include "DarkModeSubclass.h"
 
 //-------------------------------------------------
 
@@ -167,6 +168,14 @@ bool CControlProcess::InitializeProcess()
 	if( !CShareData_IO::LoadShareData() ){
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
+	}
+
+	/* ダークモード設定を反映する */
+	{
+		const auto dmType = GetDllShareData().m_Common.m_sWindow.m_bDarkMode
+			? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::classic;
+		DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
+		DarkMode::setDefaultColors(true);
 	}
 
 	/* 言語を選択する */

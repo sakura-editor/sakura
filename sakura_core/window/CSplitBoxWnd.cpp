@@ -17,6 +17,7 @@
 #include "window/CSplitBoxWnd.h"
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
+#include "DarkModeSubclass.h"
 #include "config/system_constants.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
@@ -124,23 +125,27 @@ LRESULT CSplitBoxWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_un
 	nVSplitHeight = 7;	/* 垂直分割ボックスの高さ */
 	nHSplitWidth = 7;	/* 水平分割ボックスの幅 */
 
+	COLORREF cTL0, cBR0, cTL1, cBR1;
+	if (DarkMode::isEnabled()) {
+		cTL0 = RGB(136, 136, 136);
+		cBR0 = RGB(63, 63, 63);
+		cTL1 = RGB(153, 153, 153);
+		cBR1 = RGB(96, 96, 96);
+	} else {
+		cTL0 = ::GetSysColor(COLOR_3DLIGHT);
+		cBR0 = ::GetSysColor(COLOR_3DDKSHADOW);
+		cTL1 = ::GetSysColor(COLOR_3DHILIGHT);
+		cBR1 = ::GetSysColor(COLOR_3DSHADOW);
+	}
+
 	if( m_bVertical ){
 		/* 垂直分割ボックスの描画 */
-		Draw3dRect( hdc, 0, 0, nCxVScroll, nVSplitHeight,
-			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-		 );
-		Draw3dRect( hdc, 1, 1, nCxVScroll - 2, nVSplitHeight - 2,
-			::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-		 );
+		Draw3dRect(hdc, 0, 0, nCxVScroll, nVSplitHeight, cTL0, cBR0);
+		Draw3dRect(hdc, 1, 1, nCxVScroll - 2, nVSplitHeight - 2, cTL1, cBR1);
 	}else{
 		/* 水平分割ボックスの描画 */
-		Draw3dRect( hdc, 0, 0, nHSplitWidth, nCyHScroll,
-			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-		 );
-
-		Draw3dRect( hdc, 1, 1, nHSplitWidth - 2, nCyHScroll - 2,
-			::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-		 );
+		Draw3dRect(hdc, 0, 0, nHSplitWidth, nCyHScroll, cTL0, cBR0);
+		Draw3dRect(hdc, 1, 1, nHSplitWidth - 2, nCyHScroll - 2, cTL1, cBR1);
 	}
 
 	::EndPaint(hwnd, &ps);
