@@ -38,3 +38,38 @@ TEST(CSakuraEnvironment, ExpandParameter_IniFileName)
 	CSakuraEnvironment::ExpandParameter(L"$I", szIniFile, std::size(szIniFile));
 	ASSERT_STREQ(GetIniFileName().c_str(), szIniFile.c_str());
 }
+
+/*!
+ * @brief プロファイル名の取得
+ */
+TEST(CSakuraEnvironment, ExpandParameter_ProfileName)
+{
+	// 受け取り用バッファを用意する
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	CSakuraEnvironment::ExpandParameter(L"$<profile>", std::data(buffer), int(std::size(buffer)));
+	buffer.resize(::wcsnlen(std::data(buffer), std::size(buffer)));
+	EXPECT_THAT(buffer, StrEq(L""));
+
+	// コマンドラインのインスタンスを用意する
+	auto pCommandLine = std::make_unique<CCommandLine>();
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+
+	// バッファを再確保する
+	buffer = std::wstring(_MAX_PATH, L'\0');
+
+	CSakuraEnvironment::ExpandParameter(L"$<profile>", std::data(buffer), int(std::size(buffer)));
+	buffer.resize(::wcsnlen(std::data(buffer), std::size(buffer)));
+	EXPECT_THAT(buffer, StrEq(L"profile1"));
+
+	// コマンドラインのインスタンスを用意する
+	pCommandLine = std::make_unique<CCommandLine>();
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// バッファを再確保する
+	buffer = std::wstring(_MAX_PATH, L'\0');
+
+	CSakuraEnvironment::ExpandParameter(L"$<profile>", std::data(buffer), int(std::size(buffer)));
+	buffer.resize(::wcsnlen(std::data(buffer), std::size(buffer)));
+	EXPECT_THAT(buffer, StrEq(L""));
+}

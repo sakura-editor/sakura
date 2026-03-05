@@ -217,7 +217,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = GetProfileName();
 	std::wstring strCEditAppName = GSTR_CEDITAPP;
 	strCEditAppName += pszProfileName;
 	HWND hwndWork = ::FindWindow( strCEditAppName.c_str(), strCEditAppName.c_str() );
@@ -299,9 +299,9 @@ bool CControlTray::CreateTrayIcon( [[maybe_unused]] HWND hWnd )
 			&dwVersionMS, &dwVersionLS );
 
 		std::wstring profname;
-		if( CCommandLine::getInstance()->GetProfileName()[0] != L'\0' ){
+		if (const auto pszProfileName = GetProfileName(); *pszProfileName) {
 			profname = L" ";
-			profname += CCommandLine::getInstance()->GetProfileName();
+			profname += pszProfileName;
 		}
 		auto_snprintf_s(pszTips, std::size(pszTips), L"%s %d.%d.%d.%d%ls",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,
@@ -1179,7 +1179,7 @@ bool CControlTray::OpenNewEditor(
 	}
 
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", CCommandLine::getInstance()->GetProfileName() );
+		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", GetProfileName() );
 	}
 
 	// 追加のコマンドラインオプション
