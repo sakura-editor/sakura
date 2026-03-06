@@ -966,7 +966,6 @@ struct PyObjectPtr final {
 
 bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_unused]] ) const
 {
-	static HMODULE s_hModule;
 	if (!s_hModule) {
 		const wchar_t* dllname = L"python3.dll";
 		std::wstring path = dllname;
