@@ -205,6 +205,9 @@
   <Target Name="CopyMiniz" Condition="!Exists('$(CMakeToolsBuildDir)include\miniz-cpp\zip_file.hpp')" BeforeTargets="ClCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_miniz -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
+  <Target Name="GeneratePpaStub" BeforeTargets="ClCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target ppa_stub -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
   <Target Name="MakeTestResource" Condition="!Exists('$(CMakeToolsBuildDir)resources.ja-JP.zip')" BeforeTargets="ResourceCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_resource_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>

@@ -256,6 +256,33 @@ std::string CPPA::GetDeclarations(const MacroFuncInfo& cMacroFuncInfo)
 	}
 }
 
+/*!
+ * CPPAマクロ関数呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallStrObj(
+	PpaExecInfo& info,
+	int index,
+	bool isSetMode,
+	LPSTR* ResultValue
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	int errCd = 0;
+	stdStrObj(funcName, index, isSetMode ? 1 : 0, & errCd, ResultValue);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
+}
+
 /*! ユーザー定義文字列型オブジェクト
 	現在は、デバッグ用文字列を設定する為のみ
 */
@@ -359,6 +386,33 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	}
 }
 
+/*!
+ * CPPAマクロ呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallProc(
+	PpaExecInfo& info,
+	EFunctionCode eFuncCd,
+	std::span<LPCSTR> arguments
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	auto ppArguments = std::data(arguments);
+	int errCd = 0;
+	stdProc(funcName, int(eFuncCd), ppArguments, int(std::size(arguments)), &errCd);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
+}
+
 //----------------------------------------------------------------------
 /** プロシージャ実行callback
 
@@ -409,6 +463,34 @@ void __stdcall CPPA::stdProc(
 	delete[] tmpArgLengths;
 }
 
+/*!
+ * CPPAマクロ関数呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallIntFunc(
+	PpaExecInfo& info,
+	EFunctionCode eFuncCd,
+	std::span<LPCSTR> arguments,
+	int* ResultValue
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	auto ppArguments = std::data(arguments);
+	int errCd = 0;
+	stdIntFunc(funcName, int(eFuncCd), ppArguments, int(std::size(arguments)), &errCd, ResultValue);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
+}
+
 //----------------------------------------------------------------------
 /*!
 	整数値を返す関数を処理する
@@ -448,6 +530,34 @@ void __stdcall CPPA::stdIntFunc(
 	*Err_CD = Index + 1; // 2003.06.01 Moca
 	::VariantClear(&Ret);
 	return;
+}
+
+/*!
+ * CPPAマクロ関数呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallStrFunc(
+	PpaExecInfo& info,
+	EFunctionCode eFuncCd,
+	std::span<LPCSTR> arguments,
+	LPSTR* ResultValue
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	auto ppArguments = std::data(arguments);
+	int errCd = 0;
+	stdStrFunc(funcName, int(eFuncCd), ppArguments, int(std::size(arguments)), &errCd, ResultValue);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
 }
 
 //----------------------------------------------------------------------

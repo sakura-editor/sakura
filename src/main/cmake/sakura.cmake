@@ -389,6 +389,7 @@ if(MINGW)
     -finput-charset=utf-8
     -fexec-charset=cp932
     -Wdeprecated-declarations
+    -Wno-trigraphs
   )
 endif(MINGW)
 

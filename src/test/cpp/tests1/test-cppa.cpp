@@ -17,16 +17,91 @@
 #include "eval_outputs.hpp"
 
 #include "env/ShareDataTestSuite.hpp"
+#include "macro/CMacroFactory.h"
+#include "macro/CPPAMacroMgr.h"
+
+#include <fstream>
+
+std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
 
 namespace macro {
 
+struct CPpaStub : public CPPA
+{
+	CPpaStub()
+	{
+		EXPECT_THAT(InitDll(L"ppa_stub.dll"), Eq(EDllResult::DLL_SUCCESS));
+	}
+};
+
 struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
+	static inline std::unique_ptr<CEditDoc> pcEditDoc = nullptr;
+	static inline std::unique_ptr<CEditWnd> pcEditWnd = nullptr;
+	static inline std::unique_ptr<CSMacroMgr> pcSMacroMgr = nullptr;
+
+	static inline CPPA::PpaExecInfo info{};
+
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
 		SetUpShareData();
+
+		// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
+
+		// ドキュメントの初期化前に文字幅キャッシュの生成が必要
+		SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
+		InitCharWidthCache(GetDllShareData().m_Common.m_sView.m_lf);
+
+#pragma region CanBeMove
+		// ドキュメントがなくてもエラーにならない
+		EXPECT_THAT(GetDocument(), IsNull());
+
+		// ドキュメントがないのでエラー
+		EXPECT_ANY_THROW(GetEditDoc());
+
+#pragma endregion CanBeMove
+
+		// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
+		pcEditDoc = std::make_unique<CEditDoc>(nullptr);
+
+#pragma region CanBeMove
+		// ドキュメントがあるので値を返す
+		EXPECT_THAT(GetDocument(), pcEditDoc.get());
+
+		// ドキュメントがあるのでエラーにならない
+		EXPECT_NO_THROW([] { GetEditDoc(); });
+
+		EXPECT_THAT(&GetEditDoc(), GetDocument());
+
+		// 編集ウインドウがなくてもエラーにならない
+		EXPECT_THAT(GetEditWndPtr(), IsNull());
+
+		// 編集ウインドウがないのでエラー
+		EXPECT_ANY_THROW(GetEditWnd());
+
+#pragma endregion CanBeMove
+
+		// CEditWndを用意する
+		pcEditWnd = std::make_unique<CEditWnd>();
+
+		// SMacroMgrを用意する
+		pcSMacroMgr = std::make_unique<CSMacroMgr>();
+
+#pragma region CanBeMove
+		// 編集ウインドウがあるので値を返す
+		EXPECT_THAT(GetEditWndPtr(), pcEditWnd.get());
+
+		// 編集ウインドウがあるのでエラーにならない
+		EXPECT_NO_THROW([] { GetEditWnd(); });
+
+#pragma endregion CanBeMove
+
+		// PPA実行情報を初期化する
+		info.m_pShareData = &GetDllShareData();
+		info.m_pcEditView = &pcEditWnd->GetActiveView();
+		info.m_bError = false;
 	}
 
 	/*!
@@ -34,6 +109,12 @@ struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
 	 */
 	static void TearDownTestSuite()
 	{
+		pcSMacroMgr = nullptr;
+
+		pcEditWnd = nullptr;
+
+		pcEditDoc = nullptr;
+
 		TearDownShareData();
 	}
 };
@@ -44,7 +125,40 @@ struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
 TEST_F(CPpaTest, GetDllNameImp)
 {
 	CPPA cPpa;
-	EXPECT_STREQ(L"PPA.DLL", cPpa.GetDllNameImp(0));
+	EXPECT_THAT(cPpa.GetDllNameImp(0), StrEq(L"PPA.DLL"));
+}
+
+/*!
+	CPPA::GetVersionのテスト
+
+	アプリから使っているわけではないので、削除しても良いかも知れない。
+ */
+TEST_F(CPpaTest, GetVersion)
+{
+	// テスト対象はスタブDLL
+	CPpaStub cPpa;
+	EXPECT_THAT(cPpa.GetVersion(), StrEq("PPA.DLL Version 1.24"));
+
+	cPpa.DeinitDll();
+	EXPECT_THAT(cPpa.GetVersion(), StrEq(""));
+}
+
+/*!
+	CPPA::Executeのテスト
+
+	スタブを使ったテスト。
+	ppa_stub.Executeは何もしないのでテストは成功する。
+ */
+TEST_F(CPpaTest, Execute)
+{
+	// テスト対象はスタブDLL
+	CPpaStub cPpa;
+
+	// DLL読み込みは成功する
+	EXPECT_THAT(cPpa.IsAvailable(), IsTrue());
+
+	// Execute呼出は成功する
+	EXPECT_TRUE(cPpa.Execute(&pcEditWnd->GetActiveView(), 0));
 }
 
 /*!
@@ -102,61 +216,6 @@ TEST_F(CPpaTest, GetDeclarations)
  */
 TEST_F(CPpaTest, ppaErrorProc)
 {
-	// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
-
-	// ドキュメントの初期化前に文字幅キャッシュの生成が必要
-	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
-	InitCharWidthCache(GetDllShareData().m_Common.m_sView.m_lf);
-
-#pragma region CanBeMove
-	// ドキュメントがなくてもエラーにならない
-	EXPECT_THAT(GetDocument(), IsNull());
-
-	// ドキュメントがないのでエラー
-	EXPECT_ANY_THROW(GetEditDoc());
-
-#pragma endregion CanBeMove
-
-	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
-	const auto pcEditDoc = std::make_unique<CEditDoc>(nullptr);
-
-#pragma region CanBeMove
-	// ドキュメントがあるので値を返す
-	EXPECT_THAT(GetDocument(), pcEditDoc.get());
-
-	// ドキュメントがあるのでエラーにならない
-	EXPECT_NO_THROW([] { GetEditDoc(); });
-
-	EXPECT_THAT(&GetEditDoc(), GetDocument());
-
-	// 編集ウインドウがなくてもエラーにならない
-	EXPECT_THAT(GetEditWndPtr(), IsNull());
-
-	// 編集ウインドウがないのでエラー
-	EXPECT_ANY_THROW(GetEditWnd());
-
-#pragma endregion CanBeMove
-
-	// CEditWndを用意する
-	const auto pcEditWnd = std::make_unique<CEditWnd>();
-
-	// SMacroMgrを用意する
-	const auto pcSMacroMgr = std::make_unique<CSMacroMgr>();
-
-#pragma region CanBeMove
-	// 編集ウインドウがあるので値を返す
-	EXPECT_THAT(GetEditWndPtr(), pcEditWnd.get());
-
-	// 編集ウインドウがあるのでエラーにならない
-	EXPECT_NO_THROW([] { GetEditWnd(); });
-
-#pragma endregion CanBeMove
-
-	// PPA実行情報を用意する
-	CPPA::PpaExecInfo info{};
-	info.m_pShareData = &GetDllShareData();
-	info.m_pcEditView = &pcEditWnd->GetActiveView();
-
 	// 既にエラーフラグが立っていたらメッセージは出さない
 	info.m_bError = true;
 	CPPA::CallErrorProc(info, int(F_FILENEW) + 1, nullptr);
@@ -193,6 +252,142 @@ TEST_F(CPpaTest, ppaErrorProc)
 	info.m_cMemDebug = "debug";
 	info.m_bError = false;
 	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正\ndebug");
+}
+
+/*!
+ * CPPAマクロ呼出コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaProc)
+{
+	std::array ppszArgs1 = { "something is wrong." };
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+
+	// 正常なマクロ呼出
+	EXPECT_THAT(CPPA::CallProc(info, F_OKCANCELBOX, ppszArgs1), Eq(0));
+
+	// パラメーター不足でエラー
+	EXPECT_THAT(CPPA::CallProc(info, F_WCHAR, ppszArgs2), Eq(int(F_WCHAR) + 1));
+}
+
+/*!
+ * CPPAマクロ関数呼出コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaIntFunc)
+{
+	std::array ppszArgs1 = { "$I" };
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	std::array ppszArgs3 = { "0" };
+	std::array ppszArgs4 = { "1" };
+
+	// 数値を返すマクロ関数を呼び出す
+	int nValue = -1;
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_ISINSMODE, ppszArgs2, &nValue), Eq(0));
+
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_GETLINECOUNT, ppszArgs3, &nValue), Eq(0));
+
+	// パラメーター不足でfalseを返すケース
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_GETLINECOUNT, ppszArgs4, &nValue), Eq(int(F_GETLINECOUNT) + 1));
+
+	// 文字列を返すマクロ関数を呼び出す
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_EXPANDPARAMETER, ppszArgs1, &nValue), Eq(-2));
+
+	// コマンドを呼び出す
+	EXPECT_THAT(CPPA::CallIntFunc(info, F_FILENEW, ppszArgs2, &nValue), Eq(int(F_FILENEW) + 1));
+}
+
+/*!
+ * CPPAマクロ関数呼出コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaStrFunc)
+{
+	std::array ppszArgs1 = { "$I" };
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	std::array ppszArgs3 = { "0" };
+
+	// 文字列を返すマクロ関数を呼び出す
+	LPSTR pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrFunc(info, F_EXPANDPARAMETER, ppszArgs1, &pszValue), Eq(0));
+
+	// 数値を返すマクロ関数を呼び出す
+	EXPECT_THAT(CPPA::CallStrFunc(info, F_ISINSMODE, ppszArgs2, &pszValue), Eq(int(F_ISINSMODE) + 1));
+	EXPECT_THAT(pszValue, StrEq(""));
+
+	// コマンドを呼び出す
+	pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrFunc(info, F_FILENEW, ppszArgs2, &pszValue), Eq(int(F_FILENEW) + 1));
+	EXPECT_THAT(pszValue, StrEq(""));
+}
+
+/*!
+ * CPPAユーザー定義文字列コールバックのテスト
+ *
+ * 実装が想定するメッセージを出力できるかチェックする
+ * 本来は確認ケースを分割すべきだが、初期化に手間がかかるため1つにまとめている
+ */
+TEST_F(CPpaTest, ppaStrObj)
+{
+	LPSTR pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrObj(info, 2, false, &pszValue), Eq(0));
+	EXPECT_THAT(pszValue, StrEq("debug"));
+
+	std::string test{ "test" };
+	pszValue = test.data();
+	EXPECT_THAT(CPPA::CallStrObj(info, 2, true, &pszValue), Eq(0));
+
+	pszValue = nullptr;
+	EXPECT_THAT(CPPA::CallStrObj(info, 2, false, &pszValue), Eq(0));
+	EXPECT_THAT(pszValue, StrEq(test));
+
+	EXPECT_THAT(CPPA::CallStrObj(info, 0, true, &pszValue), Eq(-1));
+}
+
+/*!
+ * CPPAマクロマネージャーのテスト
+ */
+TEST_F(CPpaTest, CPPAMacroMgr001)
+{
+	EXPECT_THAT(CPPAMacroMgr::Creator(L"mac"), IsNull());
+
+	// スタブDLLを読み込む
+	CPPAMacroMgr::m_cPPA.InitDll(L"ppa_stub.dll");
+
+	CPPAMacroMgr::declare();
+
+	auto mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"ppa"));
+
+	const HINSTANCE unusedArg1 = nullptr;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"macro str;"), IsTrue());
+
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	const auto path = GetTempFilePathWithExt(L"tes", L"ppa");
+	EXPECT_THAT(mgr->LoadKeyMacro(unusedArg1, path.c_str()), IsFalse());
+
+	std::wofstream fs(path);
+	fs << L"macro str1;" << std::endl;
+	fs << L"macro str2;" << std::endl;
+	fs << L"macro str3;" << std::endl;
+	fs.close();
+
+	EXPECT_THAT(mgr->LoadKeyMacro(unusedArg1, path.c_str()), IsTrue());
+
+	std::filesystem::remove(path);
+
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	mgr = nullptr;
+
+	CMacroFactory::getInstance()->Unregister(CPPAMacroMgr::Creator);
 }
 
 TEST(CSMacroMgr, GetFuncInfoByID001)

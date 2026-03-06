@@ -156,4 +156,5 @@ add_dependencies(tests1
   test_resource_zip
   generate_gtest
   generate_miniz
+  ppa_stub
 )
