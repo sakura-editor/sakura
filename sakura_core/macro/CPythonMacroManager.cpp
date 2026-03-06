@@ -977,7 +977,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 				path = path2;
 			}
 		}
-		s_hModule = LoadLibraryExedir(dllname);
+		s_hModule = LoadLibraryExedir(path.c_str());
 		if (!s_hModule) {
 			WCHAR* pMsg;
 			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
