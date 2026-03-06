@@ -234,11 +234,6 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	// 選択中の言語を更新
 	gm_Selected = nIndex;
 
-	// アプリ名をリソースから読み込む
-	if (auto pcProcess = CProcess::getInstance()) {
-		pcProcess->UpdateAppName(LoadStringW(STR_GSTR_APPNAME));
-	}
-
 	// ロケールを設定
 	::SetThreadUILanguage(getDefaultLangId());
 
