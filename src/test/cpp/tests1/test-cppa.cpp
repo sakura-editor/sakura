@@ -8,17 +8,12 @@
 
 #include "macro/CPPA.h"
 
-#include "doc/CEditDoc.h"
-#include "env/CShareData.h"
-#include "macro/CSMacroMgr.h"
-#include "view/CEditView.h"
-#include "window/CEditWnd.h"
-
-#include "eval_outputs.hpp"
-
-#include "env/ShareDataTestSuite.hpp"
 #include "macro/CMacroFactory.h"
 #include "macro/CPPAMacroMgr.h"
+
+#include "window/EditorTestSuite.hpp"
+
+#include "eval_outputs.hpp"
 
 #include <fstream>
 
@@ -34,11 +29,7 @@ struct CPpaStub : public CPPA
 	}
 };
 
-struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
-	static inline std::unique_ptr<CEditDoc> pcEditDoc = nullptr;
-	static inline std::unique_ptr<CEditWnd> pcEditWnd = nullptr;
-	static inline std::unique_ptr<CSMacroMgr> pcSMacroMgr = nullptr;
-
+struct CPpaTest : public ::testing::Test, public window::EditorTestSuite {
 	static inline CPPA::PpaExecInfo info{};
 
 	/*!
@@ -46,57 +37,7 @@ struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpShareData();
-
-		// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
-
-		// ドキュメントの初期化前に文字幅キャッシュの生成が必要
-		SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
-		InitCharWidthCache(GetDllShareData().m_Common.m_sView.m_lf);
-
-#pragma region CanBeMove
-		// ドキュメントがなくてもエラーにならない
-		EXPECT_THAT(GetDocument(), IsNull());
-
-		// ドキュメントがないのでエラー
-		EXPECT_ANY_THROW(GetEditDoc());
-
-#pragma endregion CanBeMove
-
-		// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
-		pcEditDoc = std::make_unique<CEditDoc>(nullptr);
-
-#pragma region CanBeMove
-		// ドキュメントがあるので値を返す
-		EXPECT_THAT(GetDocument(), pcEditDoc.get());
-
-		// ドキュメントがあるのでエラーにならない
-		EXPECT_NO_THROW([] { GetEditDoc(); });
-
-		EXPECT_THAT(&GetEditDoc(), GetDocument());
-
-		// 編集ウインドウがなくてもエラーにならない
-		EXPECT_THAT(GetEditWndPtr(), IsNull());
-
-		// 編集ウインドウがないのでエラー
-		EXPECT_ANY_THROW(GetEditWnd());
-
-#pragma endregion CanBeMove
-
-		// CEditWndを用意する
-		pcEditWnd = std::make_unique<CEditWnd>();
-
-		// SMacroMgrを用意する
-		pcSMacroMgr = std::make_unique<CSMacroMgr>();
-
-#pragma region CanBeMove
-		// 編集ウインドウがあるので値を返す
-		EXPECT_THAT(GetEditWndPtr(), pcEditWnd.get());
-
-		// 編集ウインドウがあるのでエラーにならない
-		EXPECT_NO_THROW([] { GetEditWnd(); });
-
-#pragma endregion CanBeMove
+		SetUpEditor();
 
 		// PPA実行情報を初期化する
 		info.m_pShareData = &GetDllShareData();
@@ -109,13 +50,7 @@ struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
 	 */
 	static void TearDownTestSuite()
 	{
-		pcSMacroMgr = nullptr;
-
-		pcEditWnd = nullptr;
-
-		pcEditDoc = nullptr;
-
-		TearDownShareData();
+		TearDownEditor();
 	}
 };
 

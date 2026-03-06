@@ -16,6 +16,9 @@
     <Filter Include="Other Files\env">
       <UniqueIdentifier>{17f8cd59-3000-4cc7-9d41-b34770ba8333}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Other Files\window">
+      <UniqueIdentifier>{9d35d017-de16-4c86-9963-7960382e52ba}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Pre-compiled Header">
       <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
     </Filter>
@@ -42,6 +45,9 @@
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp">
       <Filter>Other Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp">
+      <Filter>Other Files\window</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp">
       <Filter>Test Files</Filter>
@@ -206,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp">
       <Filter>Other Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp">
+      <Filter>Other Files\window</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp">
       <Filter>Other Files</Filter>
