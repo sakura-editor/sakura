@@ -20,6 +20,7 @@
 class CFuncInfo;
 #include <string>
 #include <map>
+#include <vector>
 #include "util/design_template.h"
 #include "basis/SakuraBasis.h"
 #include "basis/CMyString.h"
@@ -47,7 +48,7 @@ public:
 	void AppendData( CLogicInt nFuncLineCRLF, CLayoutInt nFuncLineLAYOUT, const WCHAR* pszFuncName,
 					 int nInfo, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
 	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const WCHAR*, const WCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
-	int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
+	int	GetNum( void ){	return static_cast<int>(m_funcInfoArr.size()); }	/* 配列要素数を返す */
 	void Empty( void );
 	void DUMP( void );
 	void SetAppendText( int info, std::wstring s, bool overwrite );
@@ -57,8 +58,7 @@ public:
 public:
 	SFilePath	m_szFilePath;	/*!< 解析対象ファイル名 */
 private:
-	int			m_nFuncInfoArrNum = 0;	/*!< 配列要素数 */
-	CFuncInfo**	m_ppcFuncInfoArr = nullptr;	/*!< 配列 */
+	std::vector<CFuncInfo*>	m_funcInfoArr;	/*!< 配列 */
 	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
 	int			m_nAppendTextLenMax = 0;
 
