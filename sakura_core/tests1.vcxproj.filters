@@ -193,7 +193,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-messageboxf.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\test\cpp\tests1\test-cppa.cpp">
+    <ClCompile Include="..\src\test\cpp\tests1\macro\test-cppa.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-extmodules.cpp">

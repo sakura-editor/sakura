@@ -123,7 +123,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cdocline.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cdoclinemgr.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-codechecker.cpp" />
-    <ClCompile Include="..\src\test\cpp\tests1\test-cppa.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\macro\test-cppa.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-csearchagent.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-crunningtimer.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-csharedata.cpp" />
