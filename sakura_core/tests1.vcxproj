@@ -119,6 +119,7 @@
     <ClCompile Include="..\src\test\resources\code-main.cpp" />
     <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\macro\test-macro.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cdocline.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cdoclinemgr.cpp" />
