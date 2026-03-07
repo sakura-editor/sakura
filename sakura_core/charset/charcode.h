@@ -24,6 +24,7 @@ constexpr int CP_SJIS = 932;
 //UNICODE定数
 namespace WCODE{
 	//文字
+	constexpr wchar_t BOM   = L'\ufeff';
 	constexpr wchar_t TAB   = L'\t';
 	constexpr wchar_t SPACE = L' ';
 	constexpr wchar_t CR    = L'\r';
