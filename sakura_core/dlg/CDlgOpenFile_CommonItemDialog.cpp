@@ -71,8 +71,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	HRESULT DoModalSaveDlgImpl1( IFileSaveDialog* pFileSaveDialog,
 								 WCHAR* pszPath );
 
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
+	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 
@@ -373,9 +373,6 @@ enum CtrlId {
 
 CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 {
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
@@ -389,7 +386,6 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
-
 
 	return;
 }
