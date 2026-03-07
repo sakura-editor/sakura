@@ -32,16 +32,10 @@ CFuncInfoArr::~CFuncInfoArr()
 
 void CFuncInfoArr::Empty( void )
 {
-	int i;
-	if( m_nFuncInfoArrNum > 0 && nullptr != m_ppcFuncInfoArr ){
-		for( i = 0; i < m_nFuncInfoArrNum; ++i ){
-			delete m_ppcFuncInfoArr[i];
-			m_ppcFuncInfoArr[i] = nullptr;
-		}
-		m_nFuncInfoArrNum = 0;
-		free( m_ppcFuncInfoArr );
-		m_ppcFuncInfoArr = nullptr;
+	for( auto* p : m_funcInfoArr ){
+		delete p;
 	}
+	m_funcInfoArr.clear();
 	m_AppendTextArr.clear();
 	m_nAppendTextLenMax = 0;
 	return;
@@ -51,23 +45,16 @@ void CFuncInfoArr::Empty( void )
 /* データがない場合はNULLを返す */
 CFuncInfo* CFuncInfoArr::GetAt(size_t nIdx) noexcept
 {
-	if (m_nFuncInfoArrNum <= nIdx) {
+	if (m_funcInfoArr.size() <= nIdx) {
 		return nullptr;
 	}
-	return m_ppcFuncInfoArr[nIdx];
+	return m_funcInfoArr[nIdx];
 }
 
 /*! 配列の最後にデータを追加する */
 void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
 {
-	if( 0 == m_nFuncInfoArrNum){
-		m_ppcFuncInfoArr = (CFuncInfo**)malloc( sizeof(CFuncInfo*) * (m_nFuncInfoArrNum + 1) );
-	}else{
-		m_ppcFuncInfoArr = (CFuncInfo**)realloc( m_ppcFuncInfoArr, sizeof(CFuncInfo*) * (m_nFuncInfoArrNum + 1) );
-	}
-	m_ppcFuncInfoArr[m_nFuncInfoArrNum] = pcFuncInfo;
-	m_nFuncInfoArrNum++;
-	return;
+	m_funcInfoArr.push_back( pcFuncInfo );
 }
 
 /*! 配列の最後にデータを追加する
@@ -109,14 +96,14 @@ void CFuncInfoArr::DUMP( void )
 #ifdef _DEBUG
 	int i;
 	MYTRACE( L"=============================\n" );
-	for( i = 0; i < m_nFuncInfoArrNum; i++ ){
+	for( i = 0; i < GetNum(); i++ ){
 		MYTRACE( L"[%d]------------------\n", i );
-		MYTRACE( L"m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
-		MYTRACE( L"m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
-		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
+		MYTRACE( L"m_nFuncLineCRLF	=%d\n", m_funcInfoArr[i]->m_nFuncLineCRLF );
+		MYTRACE( L"m_nFuncLineLAYOUT	=%d\n", m_funcInfoArr[i]->m_nFuncLineLAYOUT );
+		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_funcInfoArr[i]->m_cmemFuncName.GetStringPtr() );
 		MYTRACE( L"m_cmemFileName	=[%s]\n",
-			(m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() : L"NULL") );
-		MYTRACE( L"m_nInfo			=%d\n", m_ppcFuncInfoArr[i]->m_nInfo );
+			(m_funcInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_funcInfoArr[i]->m_cmemFileName.GetStringPtr() : L"NULL") );
+		MYTRACE( L"m_nInfo			=%d\n", m_funcInfoArr[i]->m_nInfo );
 	}
 	MYTRACE( L"=============================\n" );
 #endif
