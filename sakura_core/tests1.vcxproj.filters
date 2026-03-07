@@ -139,6 +139,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-design_template.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-docoutline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cconvert.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -209,6 +212,9 @@
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h">
       <Filter>Pre-compiled Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\testing\CrtAllocHook.hpp">
+      <Filter>Other Files\testing</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\testing\StartEditorProcess.hpp">
       <Filter>Other Files\testing</Filter>
