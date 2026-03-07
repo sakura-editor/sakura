@@ -966,7 +966,6 @@ struct PyObjectPtr final {
 
 bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_unused]] ) const
 {
-	static HMODULE s_hModule;
 	if (!s_hModule) {
 		const wchar_t* dllname = L"python3.dll";
 		std::wstring path = dllname;
@@ -977,7 +976,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 				path = path2;
 			}
 		}
-		s_hModule = LoadLibraryExedir(dllname);
+		s_hModule = LoadLibraryExedir(path.c_str());
 		if (!s_hModule) {
 			WCHAR* pMsg;
 			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |

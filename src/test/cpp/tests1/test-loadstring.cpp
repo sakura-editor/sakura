@@ -77,3 +77,9 @@ TEST(LoadStringW, LoadStringResource100)
 	// ID範囲を越える値を指定した場合は例外が発生する
 	EXPECT_ANY_THROW(cxx::load_string(std::numeric_limits<WORD>::max() + 1));
 }
+
+TEST(LoadStringW, LoadStringResource101)
+{
+	// 対応する文字列リソースが存在しない機能IDを指定
+	EXPECT_THAT(LS(F_EXPANDPARAMETER), StrEq(L""));
+}

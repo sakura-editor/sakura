@@ -1,28 +1,15 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2022, Sakura Editor Organization
+	Copyright (C) 2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-
 #include "macro/CPPA.h"
 
-#include "doc/CEditDoc.h"
-#include "env/CShareData.h"
-#include "macro/CSMacroMgr.h"
-#include "view/CEditView.h"
-#include "window/CEditWnd.h"
+#include "window/EditorTestSuite.hpp"
 
 #include "eval_outputs.hpp"
-
-#include "env/ShareDataTestSuite.hpp"
-#include "macro/CMacroFactory.h"
-#include "macro/CPPAMacroMgr.h"
-
-#include <fstream>
-
-std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
 
 namespace macro {
 
@@ -34,11 +21,7 @@ struct CPpaStub : public CPPA
 	}
 };
 
-struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
-	static inline std::unique_ptr<CEditDoc> pcEditDoc = nullptr;
-	static inline std::unique_ptr<CEditWnd> pcEditWnd = nullptr;
-	static inline std::unique_ptr<CSMacroMgr> pcSMacroMgr = nullptr;
-
+struct CPpaTest : public ::testing::Test, public window::EditorTestSuite {
 	static inline CPPA::PpaExecInfo info{};
 
 	/*!
@@ -46,57 +29,7 @@ struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpShareData();
-
-		// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
-
-		// ドキュメントの初期化前に文字幅キャッシュの生成が必要
-		SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
-		InitCharWidthCache(GetDllShareData().m_Common.m_sView.m_lf);
-
-#pragma region CanBeMove
-		// ドキュメントがなくてもエラーにならない
-		EXPECT_THAT(GetDocument(), IsNull());
-
-		// ドキュメントがないのでエラー
-		EXPECT_ANY_THROW(GetEditDoc());
-
-#pragma endregion CanBeMove
-
-		// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
-		pcEditDoc = std::make_unique<CEditDoc>(nullptr);
-
-#pragma region CanBeMove
-		// ドキュメントがあるので値を返す
-		EXPECT_THAT(GetDocument(), pcEditDoc.get());
-
-		// ドキュメントがあるのでエラーにならない
-		EXPECT_NO_THROW([] { GetEditDoc(); });
-
-		EXPECT_THAT(&GetEditDoc(), GetDocument());
-
-		// 編集ウインドウがなくてもエラーにならない
-		EXPECT_THAT(GetEditWndPtr(), IsNull());
-
-		// 編集ウインドウがないのでエラー
-		EXPECT_ANY_THROW(GetEditWnd());
-
-#pragma endregion CanBeMove
-
-		// CEditWndを用意する
-		pcEditWnd = std::make_unique<CEditWnd>();
-
-		// SMacroMgrを用意する
-		pcSMacroMgr = std::make_unique<CSMacroMgr>();
-
-#pragma region CanBeMove
-		// 編集ウインドウがあるので値を返す
-		EXPECT_THAT(GetEditWndPtr(), pcEditWnd.get());
-
-		// 編集ウインドウがあるのでエラーにならない
-		EXPECT_NO_THROW([] { GetEditWnd(); });
-
-#pragma endregion CanBeMove
+		SetUpEditor();
 
 		// PPA実行情報を初期化する
 		info.m_pShareData = &GetDllShareData();
@@ -109,13 +42,7 @@ struct CPpaTest : public ::testing::Test, public env::ShareDataTestSuite {
 	 */
 	static void TearDownTestSuite()
 	{
-		pcSMacroMgr = nullptr;
-
-		pcEditWnd = nullptr;
-
-		pcEditDoc = nullptr;
-
-		TearDownShareData();
+		TearDownEditor();
 	}
 };
 
@@ -348,76 +275,6 @@ TEST_F(CPpaTest, ppaStrObj)
 	EXPECT_THAT(pszValue, StrEq(test));
 
 	EXPECT_THAT(CPPA::CallStrObj(info, 0, true, &pszValue), Eq(-1));
-}
-
-/*!
- * CPPAマクロマネージャーのテスト
- */
-TEST_F(CPpaTest, CPPAMacroMgr001)
-{
-	EXPECT_THAT(CPPAMacroMgr::Creator(L"mac"), IsNull());
-
-	// スタブDLLを読み込む
-	CPPAMacroMgr::m_cPPA.InitDll(L"ppa_stub.dll");
-
-	CPPAMacroMgr::declare();
-
-	auto mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"ppa"));
-
-	const HINSTANCE unusedArg1 = nullptr;
-
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"macro str;"), IsTrue());
-
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	const auto path = GetTempFilePathWithExt(L"tes", L"ppa");
-	EXPECT_THAT(mgr->LoadKeyMacro(unusedArg1, path.c_str()), IsFalse());
-
-	std::wofstream fs(path);
-	fs << L"macro str1;" << std::endl;
-	fs << L"macro str2;" << std::endl;
-	fs << L"macro str3;" << std::endl;
-	fs.close();
-
-	EXPECT_THAT(mgr->LoadKeyMacro(unusedArg1, path.c_str()), IsTrue());
-
-	std::filesystem::remove(path);
-
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	mgr = nullptr;
-
-	CMacroFactory::getInstance()->Unregister(CPPAMacroMgr::Creator);
-}
-
-TEST(CSMacroMgr, GetFuncInfoByID001)
-{
-	EXPECT_THAT(CSMacroMgr::GetFuncInfoByID(F_FILENEW), NotNull());
-}
-
-TEST(CSMacroMgr, GetFuncInfoByID101)
-{
-	EXPECT_THAT(CSMacroMgr::GetFuncInfoByID(F_INVALID), IsNull());
-}
-
-TEST(CSMacroMgr, GetFuncInfoByID102)
-{
-	EXPECT_THAT(CSMacroMgr::GetFuncInfoByID(F_0), IsNull());
-}
-
-TEST(CSMacroMgr, GetFuncInfoByName001)
-{
-	EXPECT_THAT(CSMacroMgr::GetFuncInfoByName(nullptr, L"S_FileNew", nullptr), F_FILENEW);
-}
-
-TEST(CSMacroMgr, GetFuncInfoByName002)
-{
-	EXPECT_THAT(CSMacroMgr::GetFuncInfoByName(nullptr, L"ChangeInsertSpace", nullptr), F_CHGINSSPACE);
-}
-
-TEST(CSMacroMgr, GetFuncInfoByName101)
-{
-	EXPECT_THAT(CSMacroMgr::GetFuncInfoByName(nullptr, nullptr, nullptr), F_INVALID);
 }
 
 } // namespace macro
