@@ -58,7 +58,7 @@
 #include "recent/CRecentEditNode.h"
 #include "recent/CRecentFile.h"
 #include "recent/CRecentFolder.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除

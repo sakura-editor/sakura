@@ -17,7 +17,7 @@
 #include "window/CSplitBoxWnd.h"
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 #include "config/system_constants.h"
 
 CSplitBoxWnd::CSplitBoxWnd()

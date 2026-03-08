@@ -25,7 +25,7 @@
 #include "env/CShareData.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
 #include "config/system_constants.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 //-------------------------------------------------
 

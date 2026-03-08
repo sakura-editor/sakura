@@ -47,7 +47,7 @@
 #include "config/system_constants.h"
 
 #include "CSelectLang.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );

@@ -9,7 +9,7 @@
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "apiwrap/CommonControl.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 #include "charset/CCodeFactory.h"
 

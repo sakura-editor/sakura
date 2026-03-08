@@ -32,7 +32,7 @@
 #include "CSelectLang.h"
 #include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //

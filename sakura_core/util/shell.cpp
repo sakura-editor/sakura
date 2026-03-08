@@ -22,7 +22,7 @@
 #include "config/app_constants.h"
 #include "cxx/com_pointer.hpp"
 #include "cxx/ResourceHolder.hpp"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 #pragma comment(lib, "htmlhelp.lib") 
 

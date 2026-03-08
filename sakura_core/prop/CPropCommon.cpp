@@ -30,7 +30,7 @@
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {

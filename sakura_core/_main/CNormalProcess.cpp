@@ -34,7 +34,7 @@
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
 #include "CAppMode.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 #include "env/CDocTypeManager.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"

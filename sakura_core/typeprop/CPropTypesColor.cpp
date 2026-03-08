@@ -39,7 +39,7 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "config/app_constants.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 static const DWORD p_helpids2[] = {	//11400
 	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定

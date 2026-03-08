@@ -32,7 +32,7 @@
 #include "version.h"
 #include "util/std_macro.h"
 #include "env/DLLSHAREDATA.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 /*!
 	Windows Entry point

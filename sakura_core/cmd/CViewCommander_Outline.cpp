@@ -28,7 +28,7 @@
 #include "plugin/COutlineIfObj.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 /*!	アウトライン解析
 

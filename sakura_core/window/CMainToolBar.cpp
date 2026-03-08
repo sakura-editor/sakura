@@ -18,7 +18,7 @@
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
-#include "DarkModeSubclass.h"
+#include <DarkModeSubclass.h>
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
