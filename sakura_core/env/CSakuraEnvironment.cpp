@@ -675,7 +675,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	switch( eLongParam ){
 	case EExpParamName_profile:
 		{
-			LPCWSTR pszProf = CCommandLine::getInstance()->GetProfileName();
+			LPCWSTR pszProf = GetProfileName();
 			q = wcs_pushW( q, q_max - q, pszProf );
 		}
 		break;

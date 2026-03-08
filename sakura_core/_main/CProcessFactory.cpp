@@ -142,7 +142,7 @@ bool CProcessFactory::IsStartingControlProcess()
 */
 bool CProcessFactory::IsExistControlProcess()
 {
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = GetProfileName();
 	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
 	strMutexSakuraCp += pszProfileName;
  	HANDLE hMutexCP;
@@ -189,7 +189,7 @@ bool CProcessFactory::StartControlProcess()
 	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
-			szEXE, CCommandLine::getInstance()->GetProfileName() );
+			szEXE, GetProfileName() );
 	}else{
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN", szEXE ); // ""付加
 	}
@@ -249,7 +249,7 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
 	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
 	//
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = GetProfileName();
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
 	HANDLE hEvent;
