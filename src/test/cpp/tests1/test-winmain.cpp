@@ -480,6 +480,18 @@ TEST_P(WinMainTest, runEditorProcess)
 	};
 	cxx::writeTextFile(iniPath, iniLines);
 
+	// プロファイル指定がある場合の追加テスト
+	if (profileName && *profileName) {
+		// ファイル出力ストリームをバイナリモードで開く
+		std::ofstream fs(iniPath, std::ios::binary | std::ios::app);
+
+		// ダークモードをONにする
+		fs << "[Common]\r\n";
+		fs << "bDarkMode=1\r\n";
+
+		fs.close();
+	}
+
 	// 起動時実行マクロの中身を作る
 	constexpr std::array macroCommands = {
 		L"Down();"sv,
