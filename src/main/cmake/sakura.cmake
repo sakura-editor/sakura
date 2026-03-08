@@ -235,6 +235,9 @@ add_custom_target(generate_funccode_enum
     "${CMAKE_BINARY_DIR}/Funccode_enum.h"
 )
 
+# Include darkmodelib.cmake
+include(${CMAKE_SOURCE_DIR}/src/main/cmake/darkmodelib.cmake)
+
 if(MINGW)
   # Find iconv
   find_program(ICONV_PATH iconv REQUIRED)
@@ -364,7 +367,6 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src/main/cpp
   ${CMAKE_SOURCE_DIR}/src/main/resources
   ${CMAKE_SOURCE_DIR}/sakura_core
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/include
 )
 
 if(MSVC)
@@ -407,27 +409,6 @@ file(GLOB_RECURSE SOURCES
   ${CMAKE_SOURCE_DIR}/src/main/cpp/*.cpp
   ${CMAKE_SOURCE_DIR}/sakura_core/*.cpp
 )
-
-# darkmodelib source files (must not use sakura's precompiled header)
-set(DARKMODELIB_SOURCES
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DarkModeSubclass.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibColor.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibDpi.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibHook.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibIni.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibPaintHelper.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibSubclass.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibSubclassControl.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibSubclassWindow.cpp
-  ${CMAKE_SOURCE_DIR}/externals/darkmodelib/src/DmlibWinApi.cpp
-)
-
-set_source_files_properties(${DARKMODELIB_SOURCES}
-  PROPERTIES
-    SKIP_PRECOMPILE_HEADERS ON
-)
-
-list(APPEND SOURCES ${DARKMODELIB_SOURCES})
 
 set(RESOURCE_SCRIPTS
   ${CMAKE_SOURCE_DIR}/sakura_core/sakura_rc.rc
@@ -485,6 +466,7 @@ target_link_libraries(sakura_core
     windowscodecs
     winmm
     winspool
+    darkmodelib
 )
 
 # Add dependencies for sakura_core
@@ -492,6 +474,7 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
+  generate_darkmodelib
   generate_bregonig
   generate_cmigemo
 )
