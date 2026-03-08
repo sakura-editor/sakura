@@ -34,6 +34,7 @@
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
 #include "CAppMode.h"
+#include "DarkModeSubclass.h"
 #include "env/CDocTypeManager.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
@@ -83,6 +84,14 @@ bool CNormalProcess::InitializeProcess()
 	/* 共有メモリを初期化する */
 	if ( !CProcess::InitializeProcess() ){
 		return false;
+	}
+
+	/* ダークモード設定を反映する */
+	{
+		const auto dmType = GetDllShareData().m_Common.m_sWindow.m_bDarkMode
+			? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::classic;
+		DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
+		DarkMode::setDefaultColors(true);
 	}
 
 	/* 言語を選択する */

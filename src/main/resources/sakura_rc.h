@@ -795,6 +795,7 @@
 #define IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD 1738
 #define IDC_PYTHONDIR                   1739
 #define IDC_PYTHONDIRREF                1740
+#define IDC_CHECK_bDarkMode             1741
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000

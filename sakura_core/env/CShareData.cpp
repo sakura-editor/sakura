@@ -299,6 +299,7 @@ bool CShareData::InitShareData()
 			sWindow.m_bUseCompatibleBMP = TRUE;		// 2007.09.09 Moca 画面キャッシュを使う	// 2009.06.09 ryoji FALSE->TRUE
 
 			sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
+			sWindow.m_bDarkMode = FALSE;	/* ダークモードを使う */
 
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更

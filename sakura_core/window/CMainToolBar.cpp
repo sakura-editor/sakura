@@ -18,6 +18,7 @@
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
+#include "DarkModeSubclass.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -128,6 +129,10 @@ void CMainToolBar::CreateToolBar( void )
 			CEditApp::getInstance()->GetAppInstance(),
 			nullptr
 		);
+		if (DarkMode::isEnabled()) {
+			SetWindowTheme(m_hwndReBar, L"", L"");
+			SendMessage(m_hwndReBar, RB_SETBKCOLOR, 0, DarkMode::getBackgroundColor());
+		}
 
 		if( nullptr == m_hwndReBar ){
 			TopWarningMessage( m_pOwner->GetHwnd(), LS(STR_ERR_DLGEDITWND04) );
@@ -186,16 +191,15 @@ void CMainToolBar::CreateToolBar( void )
 		const int cyToolButton = cyBorder + cyEdge + cySmIcon + cyEdge + cyBorder;	//22
 		ApiWrap::Toolbar_SetButtonSize( m_hwndToolBar, cxToolButton, cyToolButton );	// 2009.10.01 ryoji 高DPI対応スケーリング
 		ApiWrap::Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
-		//	Oct. 12, 2000 genta
-		//	既に用意されているImage Listをアイコンとして登録
-		m_pcIcons->SetToolBarImages( m_hwndToolBar );
 		/* ツールバーにボタンを追加 */
 		int count = 0;	//@@@ 2002.06.15 MIK
 		int nToolBarButtonNum = 0;// 2005/8/29 aroka
 		//	From Here 2005.08.29 aroka
 		// はじめにツールバー構造体の配列を作っておく
-		TBBUTTON *pTbbArr = new TBBUTTON[GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonNum];
-		for( i = 0; i < GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
+		const auto nButtons = GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonNum;
+
+		TBBUTTON* pTbbArr = new TBBUTTON[nButtons];
+		for (i = 0; i < nButtons; ++i) {
 			nIdx = GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i];
 			pTbbArr[nToolBarButtonNum] = m_pOwner->GetMenuDrawer().getButton(nIdx);
 			// セパレータが続くときはひとつにまとめる
@@ -217,6 +221,42 @@ void CMainToolBar::CreateToolBar( void )
 			nToolBarButtonNum++;
 		}
 		//	To Here 2005.08.29 aroka
+
+		BITMAPINFO bminfo = {};
+		BITMAPINFOHEADER& bmih = bminfo.bmiHeader;
+		bmih.biSize = sizeof(BITMAPINFOHEADER);
+		bmih.biWidth = (LONG)cxSmIcon;
+		bmih.biHeight = -(LONG)cySmIcon;
+		bmih.biPlanes = 1;
+		bmih.biBitCount = 32;
+		bmih.biCompression = BI_RGB;
+		HDC hdc = CreateCompatibleDC(nullptr);
+		m_hImageList = ImageList_Create(cxSmIcon, cySmIcon, ILC_COLOR32, nButtons, 0);
+		m_hDisabledImageList = ImageList_Create(cxSmIcon, cySmIcon, ILC_COLOR32, nButtons, 0);
+		for (int j = 0; j < nToolBarButtonNum; ++j) {
+			TBBUTTON& tbbItem = pTbbArr[j];
+			if (tbbItem.fsStyle == TBSTYLE_BUTTON || tbbItem.fsStyle == TBSTYLE_DROPDOWN) {
+				uint32_t* pBits;
+				HBITMAP hBMP;
+				{
+					hBMP = ::CreateDIBSection(hdc, &bminfo, DIB_RGB_COLORS, (void**)&pBits, nullptr, 0);
+					m_pcIcons->DrawToolIcon(pBits, tbbItem.iBitmap, true, cxSmIcon, cySmIcon);
+					ImageList_Add(m_hImageList, hBMP, nullptr);
+					::DeleteObject(hBMP);
+				}
+				{
+					hBMP = ::CreateDIBSection(hdc, &bminfo, DIB_RGB_COLORS, (void**)&pBits, nullptr, 0);
+					m_pcIcons->DrawToolIcon(pBits, tbbItem.iBitmap, false, cxSmIcon, cySmIcon);
+					auto ret = ImageList_Add(m_hDisabledImageList, hBMP, nullptr);
+					tbbItem.iBitmap = ret;
+					::DeleteObject(hBMP);
+				}
+			}
+		}
+		::DeleteDC(hdc);
+
+		ApiWrap::Toolbar_SetImageList(m_hwndToolBar, 0, m_hImageList);
+		ApiWrap::Toolbar_SetDisabledImageList(m_hwndToolBar, 0, m_hDisabledImageList);
 
 		for( i = 0; i < nToolBarButtonNum; ++i ){
 			tbb = pTbbArr[i];
@@ -336,6 +376,7 @@ void CMainToolBar::CreateToolBar( void )
 			}
 			//@@@ 2002.06.15 MIK end
 		}
+		ApiWrap::Toolbar_SetBitmapSize(m_hwndToolBar, cxSmIcon, cySmIcon);
 		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			lToolType = ::GetWindowLongPtr(m_hwndToolBar, GWL_STYLE);
 			lToolType |= (TBSTYLE_FLAT);
@@ -365,6 +406,7 @@ void CMainToolBar::CreateToolBar( void )
 		// バンドを追加する
 		ApiWrap::Rebar_InsertBand( m_hwndReBar, -1, &rbBand );
 		::ShowWindow( m_hwndToolBar, SW_SHOW );
+		DarkMode::setDarkWndSafe(m_hwndReBar);
 	}
 
 	return;
@@ -401,6 +443,17 @@ void CMainToolBar::DestroyToolBar( void )
 		m_hwndReBar = nullptr;
 	}
 
+	if (m_hImageList)
+	{
+		ImageList_Destroy(m_hImageList);
+		m_hImageList = nullptr;
+	}
+	if (m_hDisabledImageList)
+	{
+		ImageList_Destroy(m_hDisabledImageList);
+		m_hDisabledImageList = nullptr;
+	}
+
 	return;
 }
 
@@ -412,69 +465,6 @@ bool CMainToolBar::EatMessage(MSG* msg)
 		return true;
 	}
 	return false;
-}
-
-/*!	@brief ToolBarのOwnerDraw
-
-	@param pnmh [in] Owner Draw情報
-
-	@note Common Control V4.71以降はNMTBCUSTOMDRAWを送ってくるが，
-	Common Control V4.70はLPNMCUSTOMDRAWしか送ってこないので
-	安全のため小さい方に合わせて処理を行う．
-	
-	@author genta
-	@date 2003.07.21 作成
-
-*/
-LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
-{
-	switch( pnmh->dwDrawStage ){
-	case CDDS_PREPAINT:
-		//	描画開始前
-		//	アイテムを自前で描画する旨を通知する
-		return CDRF_NOTIFYITEMDRAW;
-	
-	case CDDS_ITEMPREPAINT:
-		//	面倒くさいので，枠はToolbarに描いてもらう
-		//	アイコンが登録されていないので中身は何も描かれない
-		// 2010.07.15 Moca 検索(ボックス)なら枠を描かない
-		if( pnmh->dwItemSpec == F_SEARCH_BOX ){
-			return CDRF_SKIPDEFAULT;
-		}
-		return CDRF_NOTIFYPOSTPAINT;
-	
-	case CDDS_ITEMPOSTPAINT:
-		{
-			//	描画
-			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
-			int nIconId = ApiWrap::Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (int)pnmh->dwItemSpec );
-
-			// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
-			CMyRect rc( pnmh->rc );
-			int offset = ( rc.Height() - m_pcIcons->cy() ) / 2;
-
-			const int cxEdge = DpiScaleX( 1 );
-			const int cxSmIcon = DpiScaleX( 16 );
-			const int cySmIcon = DpiScaleY( 16 );
-
-			// ボタンを押されたらちょっと画像をずらす	// Aug. 30, 2003 genta
-			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? cxEdge : 0;
-
-			// アイコン描画
-			m_pcIcons->DrawToolIcon(
-				pnmh->hdc,
-				rc.left + offset + shift,
-				rc.top + offset + shift, // 押下時は右だけでなく下にもずらす // Sep. 6, 2003 genta
-				nIconId,
-				( pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL,
-				cxSmIcon, cySmIcon
-			);
-		}
-		break;
-	default:
-		break;
-	}
-	return CDRF_DODEFAULT;
 }
 
 /*! ツールバー更新用タイマーの処理

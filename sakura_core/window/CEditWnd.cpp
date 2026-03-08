@@ -58,6 +58,7 @@
 #include "recent/CRecentEditNode.h"
 #include "recent/CRecentFile.h"
 #include "recent/CRecentFolder.h"
+#include "DarkModeSubclass.h"
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
@@ -583,6 +584,8 @@ HWND CEditWnd::Create(
 	if(!hWnd)return nullptr;
 	m_hWnd = hWnd;
 
+	DarkMode::setDarkTitleBarEx(hWnd, true);
+
 	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
 	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
 	// ※起動元での起動先アイドリング検出については CControlTray::OpenNewEditor を参照
@@ -653,6 +656,10 @@ HWND CEditWnd::Create(
 
 	/* バーの配置終了 */
 	EndLayoutBars( FALSE );
+
+	DarkMode::setChildCtrlsTheme(hWnd);
+	DarkMode::setWindowMenuBarSubclass(hWnd);
+	DarkMode::setChildCtrlsSubclassAndTheme(hWnd);
 
 	// -- -- -- -- その他調整など -- -- -- -- //
 
@@ -878,6 +885,7 @@ void CEditWnd::LayoutMainMenu()
 		DestroyMenu( hMenuOld );
 	}
 
+	DarkMode::setWindowMenuBarSubclass(hWnd);
 	DrawMenuBar( hWnd );
 }
 
@@ -1022,6 +1030,9 @@ void CEditWnd::MessageLoop( void )
 {
 	MSG	msg;
 	int ret;
+
+	auto hWndDM = GetHwnd();
+	DarkMode::setDarkWndNotifySafeEx(hWndDM, false, true);
 
 	while(GetHwnd())
 	{
@@ -1172,38 +1183,8 @@ LRESULT CEditWnd::DispatchEvent(
 				}
 			}
 			return 0;
-		}else{
-			switch( lpdis->CtlType ){
-			case ODT_MENU:	/* オーナー描画メニュー */
-				/* メニューアイテム描画 */
-				m_cMenuDrawer.DrawItem( lpdis );
-				return TRUE;
-			default:
-				break;
-			}
 		}
 		return FALSE;
-	case WM_MEASUREITEM:
-		idCtl = (UINT) wParam;					// control identifier
-		lpmis = (MEASUREITEMSTRUCT*) lParam;	// item-size information
-		switch( lpmis->CtlType ){
-		case ODT_MENU:	/* オーナー描画メニュー */
-//			CMenuDrawer* pCMenuDrawer;
-//			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
-
-//			MYTRACE( L"WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
-			/* メニューアイテムの描画サイズを計算 */
-			nItemWidth = m_cMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
-			if( 0 < nItemWidth ){
-				lpmis->itemWidth = nItemWidth;
-				lpmis->itemHeight = nItemHeight;
-			}
-			return TRUE;
-		default:
-			break;
-		}
-		return FALSE;
-
 	case WM_PAINT:
 		return OnPaint( hwnd, uMsg, wParam, lParam );
 
@@ -1345,7 +1326,6 @@ LRESULT CEditWnd::DispatchEvent(
 		if( nullptr != m_cStatusBar.GetStatusHwnd() ){
 			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, L"");
 		}
-		m_cMenuDrawer.EndDrawMenu();
 		/* メッセージの配送 */
 		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 
@@ -1473,14 +1453,6 @@ LRESULT CEditWnd::DispatchEvent(
 				if( nId != 0 ) OnCommand( (WORD)0 /*メニュー*/, (WORD)nId, nullptr );
 			}
 			return FALSE;
-		//	From Here Jul. 21, 2003 genta
-		case NM_CUSTOMDRAW:
-			if( pnmh->hwndFrom == m_cToolbar.GetToolbarHwnd() ){
-				//	ツールバーのOwner Draw
-				return m_cToolbar.ToolBarOwnerDraw( (LPNMCUSTOMDRAW)pnmh );
-			}
-			break;
-		//	To Here Jul. 21, 2003 genta
 		default:
 			break;
 		}
@@ -1612,6 +1584,35 @@ LRESULT CEditWnd::DispatchEvent(
 		/* 設定変更の通知 */
 		switch( (e_PM_CHANGESETTING_SELECT)lParam ){
 		case PM_CHANGESETTING_ALL:
+			/* ダークモード設定を反映する */
+			{
+				const bool bNewDark = (m_pShareData->m_Common.m_sWindow.m_bDarkMode != FALSE);
+				const bool bOldDark = DarkMode::isEnabled();
+				if( bNewDark != bOldDark ){
+					const auto dmType = bNewDark ? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::classic;
+					DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
+					DarkMode::setDefaultColors(true);
+
+					// タイトルバーとメニューバーを更新する
+					DarkMode::setDarkTitleBarEx(GetHwnd(), true);
+					DarkMode::setWindowMenuBarSubclass(GetHwnd());
+
+					// 子コントロールのテーマを更新する
+					DarkMode::setChildCtrlsTheme(GetHwnd());
+
+					// エディットビューのWS_EX_STATICEDGEを切り替える
+					for( int v = 0; v < GetAllViewCount(); v++ ){
+						HWND hwndView = GetView(v).GetHwnd();
+						DarkMode::setWindowExStyle(hwndView, !bNewDark, WS_EX_STATICEDGE);
+						::SetWindowPos(hwndView, nullptr, 0, 0, 0, 0,
+							SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+					}
+
+					// ステータスバーを再作成する（サブクラスを更新するため）
+					m_cStatusBar.DestroyStatusBar();
+				}
+			}
+
 			/* 言語を選択する */
 			CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 			CShareData::getInstance()->RefreshString();
@@ -1966,6 +1967,7 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			EndLayoutBars();	// 2006.12.19 ryoji
 		}
+		DarkMode::setChildCtrlsSubclassAndTheme(hwnd);
 		return 0L;
 
 	//by 鬼 (2) MYWM_CHECKSYSMENUDBLCLKは不要に, WM_LBUTTONDBLCLK追加
@@ -2240,6 +2242,11 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	int			i;
 	HMENU		hMenuPopUp;
 
+	MENUINFO mi = { sizeof(mi) };
+	mi.fMask = MIM_STYLE;
+	mi.dwStyle = MNS_CHECKORBMP;
+	SetMenuInfo(hMenu, &mi);
+
 	if( hMenu == ::GetSubMenu( ::GetMenu( GetHwnd() ), uPos )
 		&& !fSystemMenu ){
 		// 情報取得
@@ -2343,7 +2350,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		/* 機能が利用可能か調べる */
 		//	Jan.  8, 2006 genta 機能が有効な場合には明示的に再設定しないようにする．
 		if( ! IsFuncEnable( GetDocument(), m_pShareData, id ) ){
-			fuFlags = MF_BYCOMMAND | MF_GRAYED;
+			fuFlags = MF_BYCOMMAND | MF_DISABLED;
 			::EnableMenuItem(hMenu, id, fuFlags);
 		}
 
@@ -3926,8 +3933,8 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth + 2;
 	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
 	rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
-	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
-	::SetBkColor( hdc, ::GetSysColor( COLOR_MENUBAR ) );
+	::SetTextColor( hdc, DarkMode::getTextColor() );
+	::SetBkColor( hdc, DarkMode::getDlgBackgroundColor());
 	{
 		const WCHAR* pchText = m_pszMenubarMessage;
 		const ULONG cchText = nStrLen;

@@ -47,6 +47,7 @@
 #include "config/system_constants.h"
 
 #include "CSelectLang.h"
+#include "DarkModeSubclass.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
@@ -283,6 +284,9 @@ BOOL CEditView::Create(
 	if( nullptr == GetHwnd() ){
 		return FALSE;
 	}
+	if (DarkMode::isEnabled()) {
+		DarkMode::setWindowExStyle(GetHwnd(), false, WS_EX_STATICEDGE);
+	}
 
 	if( !m_bMiniMap ){
 		m_pcDropTarget = new CDropTarget( this );
@@ -434,6 +438,7 @@ LRESULT CEditView::DispatchEvent(
 		if (m_hwndSizeBoxPlaceholder == nullptr) {
 			return -1;
 		}
+		DarkMode::setWindowCtlColorSubclass(hwnd);
 		return 0L;
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ

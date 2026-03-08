@@ -30,6 +30,7 @@
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
+#include "DarkModeSubclass.h"
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {
@@ -65,6 +66,7 @@ INT_PTR CPropCommon::DlgProc(
 		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
 		if( nullptr != pCPropCommon ){
 			UpdateDialogFont( hwndDlg );
+			DarkMode::setDarkWndSafe(hwndDlg);
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
 			return FALSE;
@@ -93,6 +95,7 @@ INT_PTR CPropCommon::DlgProc2(
 		pCPropCommon = ( CPropCommon* )(lParam);
 		if( nullptr != pCPropCommon ){
 			UpdateDialogFont( hwndDlg );
+			DarkMode::setDarkWndSafe(hwndDlg);
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
 		}else{
 			return FALSE;
