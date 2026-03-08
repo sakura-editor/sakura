@@ -3385,22 +3385,20 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 					cmemDir   = GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath().c_str();
 
 					IDataObject *DataObject;
-					IMalloc *Malloc;
 					IShellFolder *Desktop, *Folder;
 					LPITEMIDLIST PathID, ItemID;
-					SHGetMalloc(&Malloc);
 					SHGetDesktopFolder(&Desktop);
 					DWORD Eaten, Attribs;
 					if(SUCCEEDED(Desktop->ParseDisplayName(nullptr, nullptr, cmemDir.GetStringPtr(), &Eaten, &PathID, &Attribs)))
 					{
 						Desktop->BindToObject(PathID, nullptr, IID_IShellFolder, (void**)&Folder);
-						Malloc->Free(PathID);
+						CoTaskMemFree(PathID);
 						if(SUCCEEDED(Folder->ParseDisplayName(nullptr, nullptr, cmemTitle.GetStringPtr(), &Eaten, &ItemID, &Attribs)))
 						{
 							LPCITEMIDLIST List[1];
 							List[0] = ItemID;
 							Folder->GetUIObjectOf(nullptr, 1, List, IID_IDataObject, nullptr, (void**)&DataObject);
-							Malloc->Free(ItemID);
+							CoTaskMemFree(ItemID);
 #define DDASTEXT
 #ifdef  DDASTEXT
 							//テキストでも持たせる…便利
@@ -3434,7 +3432,6 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 						Folder->Release();
 					}
 					Desktop->Release();
-					Malloc->Release();
 				}
 			}
 		}

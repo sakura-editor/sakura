@@ -175,22 +175,19 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				//       （フォルダ名の末尾に'\\'を付加してもWindows 2000では付加しないのと同じ動作になってしまう）
 				LPSHELLFOLDER pDesktopFolder;
 				if( SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder)) ){
-					LPMALLOC pMalloc;
-					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
+					{
 						LPITEMIDLIST pIDL;
 						WCHAR* pszDisplayName = szPath;
 						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(nullptr, nullptr, pszDisplayName, nullptr, &pIDL, nullptr)) ){
-							SHELLEXECUTEINFO si;
-							::ZeroMemory( &si, sizeof(si) );
+							SHELLEXECUTEINFO si = {};
 							si.cbSize   = sizeof(si);
 							si.fMask    = SEE_MASK_IDLIST;
 							si.lpVerb   = L"open";
 							si.lpIDList = pIDL;
 							si.nShow    = SW_SHOWNORMAL;
 							::ShellExecuteEx( &si );	// フォルダを開く
-							pMalloc->Free( (void*)pIDL );
+							CoTaskMemFree(pIDL);
 						}
-						pMalloc->Release();
 					}
 					pDesktopFolder->Release();
 				}
