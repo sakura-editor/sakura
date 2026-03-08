@@ -25,7 +25,33 @@
 
 std::filesystem::path GetIniFileNameForIO(bool bWrite);
 
+namespace cxx {
+
+bool WritePrivateProfileStringW(
+	std::wstring_view appName,
+	std::wstring_view keyName,
+	std::wstring_view varValue,
+	const std::optional<std::filesystem::path>& iniPath = std::nullopt
+) noexcept
+{
+	return ::WritePrivateProfileStringW(std::data(appName), std::data(keyName), std::data(varValue), iniPath.has_value() ? iniPath.value().c_str() : nullptr);
+}
+
+std::wstring ExpandEnvironmentStringsW(const std::wstring& src)
+{
+	std::wstring expected(2048, L'\0');
+	if (const auto ret = ::ExpandEnvironmentStringsW(std::data(src), std::data(expected), DWORD(std::size(expected)))) {
+		expected.resize(ret - 1);
+	}
+	return expected;
+}
+
+} // namespace cxx
+
 namespace path_util {
+
+using cxx::WritePrivateProfileStringW;
+using cxx::ExpandEnvironmentStringsW;
 
 /*!
  * @brief パスがファイル名に使えない文字を含んでいるかチェックする
@@ -105,12 +131,13 @@ TEST(file, IsValidPathAvailableChar)
 TEST(file, GetExeFileName)
 {
 	// 標準的なコードでexeファイルのパスを取得
-	std::wstring path(_MAX_PATH, L'\0');
-	::GetModuleFileName(nullptr, path.data(), path.capacity());
+	std::wstring expected(_MAX_PATH, L'\0');
+	::GetModuleFileNameW(nullptr, std::data(expected), DWORD(std::size(expected)));
+	expected.resize(::wcsnlen(std::data(expected), std::size(expected)));
 
 	// 関数戻り値が、標準的なコードで取得した結果と一致すること
 	auto exePath = GetExeFileName();
-	ASSERT_STREQ(path.data(), exePath.c_str());
+	EXPECT_THAT(exePath, StrEq(expected));
 }
 
 /*!
@@ -124,23 +151,24 @@ TEST(file, Deprecated_GetExedir)
 	// 比較用関数呼び出し
 	auto exeBasePath = GetExeFileName().parent_path().append(filename);
 
-	// 戻り値取得用のバッファ
-	WCHAR szBuf[_MAX_PATH];
-
 	// 戻り値取得用のバッファを指定しない場合、何も起きない
 	GetExedir(nullptr);
 
-	// exeフォルダーの取得
-	GetExedir(szBuf);
-	::wcscat_s(szBuf, filename);
-	ASSERT_STREQ(exeBasePath.c_str(), szBuf);
+	// 戻り値取得用のバッファ
+	std::wstring buffer(_MAX_PATH, L'\0');
 
-	// 一旦クリアする
-	::wcscpy_s(szBuf, L"");
+	// exeフォルダーの取得
+	GetExedir(std::data(buffer));
+	buffer.resize(::wcsnlen(std::data(buffer), std::size(buffer)));
+	buffer += filename;
+	EXPECT_THAT(buffer, StrEq(exeBasePath.c_str()));
+
+	// バッファを再確保する
+	buffer = std::wstring(_MAX_PATH, L'\0');
 
 	// exe基準ファイルパスの取得
-	GetExedir(szBuf, filename);
-	ASSERT_STREQ(exeBasePath.c_str(), szBuf);
+	GetExedir(std::data(buffer), filename);
+	EXPECT_THAT(buffer, StartsWith(exeBasePath.c_str()));
 }
 
 /*!
@@ -150,7 +178,7 @@ TEST(file, GetIniFileName_OutOfProcess)
 {
 	// exeファイルの拡張子をiniに変えたパスが返る
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
-	ASSERT_STREQ(iniPath.c_str(), GetIniFileName().c_str());
+	EXPECT_THAT(GetIniFileName(), StrEq(iniPath.c_str()));
 }
 
 /*!
@@ -159,8 +187,7 @@ TEST(file, GetIniFileName_OutOfProcess)
 TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 {
 	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
+	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
@@ -168,7 +195,7 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 
 	// exeファイルの拡張子をiniに変えたパスが返る
 	auto path = GetExeFileName().replace_extension(L".ini");
-	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
+	EXPECT_THAT(GetIniFileName(), StrEq(path.c_str()));
 }
 
 /*!
@@ -177,8 +204,7 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 {
 	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
+	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
@@ -187,7 +213,7 @@ TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 	// exeファイルの拡張子をiniに変えたパスの最後のフォルダーにプロファイル名を加えたパスが返る
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
 	auto path = iniPath.parent_path().append(L"profile1").append(iniPath.filename().c_str());
-	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
+	EXPECT_THAT(GetIniFileName(), StrEq(path.c_str()));
 }
 
 /*!
@@ -223,7 +249,7 @@ protected:
 		}
 
 		// 削除チェック
-		ASSERT_FALSE(fexist(exeIniPath.c_str()));
+		EXPECT_FALSE(fexist(exeIniPath));
 	}
 };
 
@@ -232,30 +258,27 @@ protected:
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
 {
+	// 設定を書き込む
+	WritePrivateProfileStringW(L"Settings", L"MultiUser", L"1", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserRootFolder", L"0", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserSubFolder", L"", exeIniPath);
+
+	// 実在チェック
+	EXPECT_TRUE(fexist(exeIniPath));
+
 	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
+	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
-	// 設定を書き込む
-	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"0", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserSubFolder", L"", exeIniPath.c_str());
-
-	// 実在チェック
-	ASSERT_TRUE(fexist(exeIniPath.c_str()));
-
 	// 期待値を取得する
-	std::wstring expected(2048, L'\0');
-	ASSERT_TRUE(ExpandEnvironmentStrings(LR"(%USERPROFILE%\AppData\Roaming\sakura\profile1\)", expected.data(), (DWORD)expected.capacity()));
-	expected.assign(expected.data());
+	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\AppData\Roaming\sakura\profile1\)");
 	expected += GetIniFileName().filename();
 
 	// テスト実施
-	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
+	EXPECT_THAT(GetIniFileName(), StrEq(expected));
 }
 
 /*!
@@ -263,30 +286,27 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
 {
+	// 設定を書き込む
+	WritePrivateProfileStringW(L"Settings", L"MultiUser", L"1", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserRootFolder", L"3", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserSubFolder", L"sakura", exeIniPath);
+
+	// 実在チェック
+	EXPECT_TRUE(fexist(exeIniPath));
+
 	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
+	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// 設定を書き込む
-	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"3", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", exeIniPath.c_str());
-
-	// 実在チェック
-	ASSERT_TRUE(fexist(exeIniPath.c_str()));
-
 	// 期待値を取得する
-	std::wstring expected(2048, L'\0');
-	ASSERT_TRUE(ExpandEnvironmentStrings(LR"(%USERPROFILE%\Desktop\sakura\)", expected.data(), (DWORD)expected.capacity()));
-	expected.assign(expected.data());
+	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\Desktop\sakura\)");
 	expected += GetIniFileName().filename();
 
 	// テスト実施
-	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
+	EXPECT_THAT(GetIniFileName(), StrEq(expected));
 }
 
 /*!
@@ -294,30 +314,27 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
 {
+	// 設定を書き込む
+	WritePrivateProfileStringW(L"Settings", L"MultiUser", L"1", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserRootFolder", L"1", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserSubFolder", L"sakura", exeIniPath);
+
+	// 実在チェック
+	EXPECT_TRUE(fexist(exeIniPath));
+
 	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
+	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// 設定を書き込む
-	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"1", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", exeIniPath.c_str());
-
-	// 実在チェック
-	ASSERT_TRUE(fexist(exeIniPath.c_str()));
-
 	// 期待値を取得する
-	std::wstring expected(2048, L'\0');
-	ASSERT_TRUE(ExpandEnvironmentStrings(LR"(%USERPROFILE%\sakura\)", expected.data(), (DWORD)expected.capacity()));
-	expected.assign(expected.data());
+	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\sakura\)");
 	expected += GetIniFileName().filename();
 
 	// テスト実施
-	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
+	EXPECT_THAT(GetIniFileName(), StrEq(expected));
 }
 
 /*!
@@ -325,30 +342,27 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
  */
 TEST_F(CExeIniTest, GetIniFileName_PrivateDocument)
 {
+	// 設定を書き込む
+	WritePrivateProfileStringW(L"Settings", L"MultiUser", L"1", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserRootFolder", L"2", exeIniPath);
+	WritePrivateProfileStringW(L"Settings", L"UserSubFolder", L"sakura", exeIniPath);
+
+	// 実在チェック
+	EXPECT_TRUE(fexist(exeIniPath));
+
 	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
+	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// 設定を書き込む
-	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserRootFolder", L"2", exeIniPath.c_str());
-	::WritePrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", exeIniPath.c_str());
-
-	// 実在チェック
-	ASSERT_TRUE(fexist(exeIniPath.c_str()));
-
 	// 期待値を取得する
-	std::wstring expected(2048, L'\0');
-	ASSERT_TRUE(ExpandEnvironmentStrings(LR"(%USERPROFILE%\Documents\sakura\)", expected.data(), (DWORD)expected.capacity()));
-	expected.assign(expected.data());
+	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\Documents\sakura\)");
 	expected += GetIniFileName().filename();
 
 	// テスト実施
-	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
+	EXPECT_THAT(GetIniFileName(), StrEq(expected));
 }
 
 /*!
@@ -362,23 +376,24 @@ TEST(file, Deprecated_GetInidir)
 	// 比較用関数呼び出し
 	auto iniBasePath = GetIniFileName().parent_path().append(filename);
 
-	// 戻り値取得用のバッファ
-	WCHAR szBuf[_MAX_PATH];
-
 	// 戻り値取得用のバッファを指定しない場合、何も起きない
 	GetInidir(nullptr);
 
-	// iniフォルダーの取得
-	GetInidir(szBuf);
-	::wcscat_s(szBuf, filename);
-	ASSERT_STREQ(iniBasePath.c_str(), szBuf);
+	// 戻り値取得用のバッファ
+	std::wstring buffer(_MAX_PATH, L'\0');
 
-	// 一旦クリアする
-	::wcscpy_s(szBuf, L"");
+	// iniフォルダーの取得
+	GetInidir(std::data(buffer));
+	buffer.resize(::wcsnlen(std::data(buffer), std::size(buffer)));
+	buffer += filename;
+	EXPECT_THAT(buffer, StrEq(iniBasePath.c_str()));
+
+	// バッファを再確保する
+	buffer = std::wstring(_MAX_PATH, L'\0');
 
 	// ini基準ファイルパスの取得
-	GetInidir(szBuf, filename);
-	ASSERT_STREQ(iniBasePath.c_str(), szBuf);
+	GetInidir(std::data(buffer), filename);
+	EXPECT_THAT(buffer, StartsWith(iniBasePath.c_str()));
 }
 
 /*!
@@ -387,8 +402,7 @@ TEST(file, Deprecated_GetInidir)
 TEST(file, GetInidirOrExedir)
 {
 	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
+	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
@@ -397,7 +411,7 @@ TEST(file, GetInidirOrExedir)
 	std::wstring buf(_MAX_PATH, L'\0');
 
 	GetInidirOrExedir(buf.data(), L"", true);
-	ASSERT_STREQ(GetExeFileName().replace_filename(L"").c_str(), buf.data());
+	EXPECT_THAT(buf, StartsWith(GetExeFileName().replace_filename(L"").c_str()));
 
 	constexpr auto filename = L"test.txt";
 	auto exeBasePath = GetExeFileName().parent_path().append(filename);
@@ -411,23 +425,23 @@ TEST(file, GetInidirOrExedir)
 
 	// 両方あるときはINI基準のパスが変える
 	GetInidirOrExedir(buf.data(), filename, true);
-	ASSERT_STREQ(iniBasePath.c_str(), buf.data());
+	EXPECT_THAT(buf, StartsWith(iniBasePath.c_str()));
 
 	// INI基準パスのファイルを削除する
 	std::filesystem::remove(iniBasePath);
-	ASSERT_FALSE(fexist(iniBasePath.c_str()));
+	EXPECT_FALSE(fexist(iniBasePath));
 
 	// EXE基準のみ存在するときはEXE基準のパスが変える
 	GetInidirOrExedir(buf.data(), filename, true);
-	ASSERT_STREQ(exeBasePath.c_str(), buf.data());
+	EXPECT_THAT(buf, StartsWith(exeBasePath.c_str()));
 
 	// EXE基準パスのファイルを削除する
 	std::filesystem::remove(exeBasePath);
-	ASSERT_FALSE(fexist(exeBasePath.c_str()));
+	EXPECT_FALSE(fexist(exeBasePath));
 
 	// 両方ないときはINI基準のパスが変える
 	GetInidirOrExedir(buf.data(), filename, true);
-	ASSERT_STREQ(iniBasePath.c_str(), buf.data());
+	EXPECT_THAT(buf, StartsWith(iniBasePath.c_str()));
 }
 
 /*!
@@ -438,21 +452,21 @@ TEST(file, GetIniFileNameForIO)
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
 
 	// 書き込みモードのとき
-	ASSERT_STREQ(iniPath.c_str(), GetIniFileNameForIO(true).c_str());
+	EXPECT_THAT(GetIniFileNameForIO(true), StrEq(iniPath.c_str()));
 
 	// 書き込みモードでないとき
-	ASSERT_STREQ(iniPath.c_str(), GetIniFileNameForIO(false).c_str());
+	EXPECT_THAT(GetIniFileNameForIO(false), StrEq(iniPath.c_str()));
 
 	// 書き込みモードでないがiniファイルが実在するとき
 	CProfile().WriteProfile(iniPath.c_str(), L"file, GetIniFileNameForIOのテスト");
-	ASSERT_TRUE(fexist(iniPath.c_str()));
+	EXPECT_TRUE(fexist(iniPath));
 
 	// テスト実施
-	ASSERT_STREQ(iniPath.c_str(), GetIniFileNameForIO(false).c_str());
+	EXPECT_THAT(GetIniFileNameForIO(false), StrEq(iniPath.c_str()));
 
 	// INIファイルを削除する
 	std::filesystem::remove(iniPath);
-	ASSERT_FALSE(fexist(iniPath.c_str()));
+	EXPECT_FALSE(fexist(iniPath));
 }
 
 /*!
@@ -583,24 +597,21 @@ TEST(CFilePath, GetExt)
 
 	// 最も単純なパターン
 	path = L"test.txt";
-	ASSERT_STREQ(L".txt", path.GetExt());
-	ASSERT_STREQ(L"txt", path.GetExt(true));
+	EXPECT_THAT(path.GetExt(true), StrEq(L"txt"));
 
 	// ファイルに拡張子がないパターン
 	path = L"lib\\.NET Core\\README";
-	ASSERT_STREQ(L"", path.GetExt());
-	ASSERT_STREQ(L"", path.GetExt(true));
+	EXPECT_THAT(path.GetExt(true), StrEq(L""));
 
 	// 拡張子がない場合に返却されるポインタ値の確認
-	ASSERT_EQ(path.c_str() + path.Length(), path.GetExt());
+	EXPECT_EQ(path.GetExt(), path.c_str() + path.Length());
 
 	// ファイルに拡張子がないパターン
 	path = L"lib/.NET Core/README";
-	ASSERT_STREQ(L"", path.GetExt());
-	ASSERT_STREQ(L"", path.GetExt(true));
+	EXPECT_THAT(path.GetExt(true), StrEq(L""));
 
 	// 拡張子がない場合に返却されるポインタ値の確認
-	ASSERT_EQ(path.c_str() + path.Length(), path.GetExt());
+	EXPECT_EQ(path.GetExt(), path.c_str() + path.Length());
 }
 
 /*!
@@ -613,35 +624,35 @@ TEST(CFileNameManager, GetFilePathFormat)
 
 	// 十分な大きさのバッファを指定
 	strBuf = std::wstring(50, L'x');
-	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"), StrEq(LR"(C:\テンポラリ\test.txt)"));
 
 	// バッファ不足（パターンに一致した部分が切り捨てられる）
 	strBuf = std::wstring(6, L'x');
-	ASSERT_STREQ(LR"(C:\テンポ)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"), StrEq(LR"(C:\テンポ)"));
 
 	// バッファ不足（パターンに一致しない部分が切り捨てられる）
 	strBuf = std::wstring(15, L'x');
-	ASSERT_STREQ(LR"(C:\テンポラリ\test.t)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"), StrEq(LR"(C:\テンポラリ\test.t)"));
 
 	// ソースが部分文字列（十分な大きさのバッファを指定）
 	strBuf = std::wstring(50, L'x');
-	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\%Temp%\test.txt.bak)", 18), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\%Temp%\test.txt.bak)", 18), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"), StrEq(LR"(C:\テンポラリ\test.txt)"));
 
 	// ソースが部分文字列（十分な大きさのバッファを指定）
 	strBuf = std::wstring(50, L'x');
-	ASSERT_STREQ(LR"(C:\test.txt\テンポラリ)", CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\test.txt\%Temp%.bak)", 18), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\test.txt\%Temp%.bak)", 18), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"), StrEq(LR"(C:\test.txt\テンポラリ)"));
 
 	// ソースが部分文字列（置換文字が1文字アウト、十分な大きさのバッファを指定）
 	strBuf = std::wstring(50, L'x');
-	ASSERT_STREQ(LR"(C:\test.txt\%Temp)", CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\test.txt\%Temp%.bak)", 17), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\test.txt\%Temp%.bak)", 17), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"), StrEq(LR"(C:\test.txt\%Temp)"));
 
 	// 置換対象が部分文字列（十分な大きさのバッファを指定）
 	strBuf = std::wstring(50, L'x');
-	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, std::wstring_view(LR"(%Temp%\)", 6), L"テンポラリ"));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, std::wstring_view(LR"(%Temp%\)", 6), L"テンポラリ"), StrEq(LR"(C:\テンポラリ\test.txt)"));
 
 	// 置換先が部分文字列（十分な大きさのバッファを指定）
 	strBuf = std::wstring(50, L'x');
-	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", std::wstring_view(L"テンポラリってる", 5)));
+	EXPECT_THAT(CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", std::wstring_view(L"テンポラリってる", 5)), StrEq(LR"(C:\テンポラリ\test.txt)"));
 }
 
 TEST(CFilePath, GetDirPath001)
