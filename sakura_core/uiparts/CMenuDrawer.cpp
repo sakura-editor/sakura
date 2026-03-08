@@ -708,6 +708,13 @@ CMenuDrawer::CMenuDrawer()
 
 CMenuDrawer::~CMenuDrawer()
 {
+	for (auto& dib : m_dibs) {
+		if (dib.hBMP) {
+			// 生成したビットマップを削除する。（生ハンドルでなく、オブジェクトを格納したほうが分かりやすいかも？）
+			::DeleteObject(dib.hBMP);
+		}
+	}
+
 	if( nullptr != m_hFontMenu ){
 		::DeleteObject( m_hFontMenu );
 		m_hFontMenu = nullptr;
@@ -718,6 +725,9 @@ CMenuDrawer::~CMenuDrawer()
 
 void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pcIcons )
 {
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
+
 	m_hInstance = hInstance;
 	m_hWndOwner = hWndOwner;
 	m_pcIcons = pcIcons;
@@ -733,14 +743,25 @@ void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pc
 	bmih.biPlanes = 1;
 	bmih.biBitCount = 32;
 	bmih.biCompression = BI_RGB;
-	HDC hdc = CreateCompatibleDC(nullptr);
+
+	// 仮想デバイスコンテキストを生成する
+	const auto hdc = ::CreateCompatibleDC(nullptr);
+	if (!hdc) return;
+
+	// 仮想デバイスコンテキストをスマートポインターに入れる
+	MemDcHolder hDcHolder{ hdc };
+
 	for (int i = 0; i < pcIcons->Count(); ++i) {
 		DIB& dib = m_dibs[i];
-		dib.hBMP = ::CreateDIBSection(hdc, &bminfo, DIB_RGB_COLORS, &dib.pvBits, nullptr, 0);
-		::SelectObject(hdc, dib.hBMP);
-		m_pcIcons->DrawToolIcon(hdc, 0, 0, i, true, cx, cy);
+		if ((dib.hBMP = ::CreateDIBSection(hdc, &bminfo, DIB_RGB_COLORS, std::bit_cast<void**>(&dib.pvBits), nullptr, 0))) {
+			// ビットマップを選択してアイコンを描画する
+			SelectionHolder hBitmapOld{ hdc };
+			hBitmapOld = ::SelectObject(hdc, dib.hBMP);
+			m_pcIcons->DrawToolIcon(hdc, 0, 0, i, true, cx, cy);
+
+			// 選択解除されるときにデバイスコンテキストの内容がビットマップにコピーされる
+		}
 	}
-	::DeleteDC(hdc);
 
 	return;
 }

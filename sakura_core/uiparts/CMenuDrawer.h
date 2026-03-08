@@ -120,8 +120,8 @@ private:
 	int				m_nCompBitmapHeight;
 	int				m_nCompBitmapWidth;
 	struct DIB {
-		HBITMAP hBMP;
-		void* pvBits;
+		HBITMAP hBMP = nullptr;			//!< ビットマップハンドル
+		std::byte* pvBits = nullptr;	//!< ビットマップのビットデータ
 	};
 	std::vector<DIB> m_dibs;
 
