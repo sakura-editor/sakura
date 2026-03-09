@@ -596,7 +596,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 
 	/* アイテムが選択されている */
 	if( pDis->itemState & ODS_SELECTED ){
-		bkColor = ::GetSysColor(COLOR_HIGHLIGHT);
+		bkColor = DarkMode::getHotBackgroundColor();
 		textColor = DarkMode::getTextColor();
 	}else{
 		bkColor = DarkMode::getCtrlBackgroundColor();

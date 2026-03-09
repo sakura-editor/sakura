@@ -1114,7 +1114,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 
 	/* アイテムが選択されている */
 	if( pDis->itemState & ODS_SELECTED ){
-		gr.SetBrushColor(::GetSysColor(COLOR_HIGHLIGHT));
+		gr.SetBrushColor(DarkMode::getHotBackgroundColor());
 		gr.SetTextForeColor( DarkMode::getTextColor() );
 	}else{
 		gr.SetBrushColor(DarkMode::getCtrlBackgroundColor());
