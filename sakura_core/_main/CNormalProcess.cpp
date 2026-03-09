@@ -89,7 +89,7 @@ bool CNormalProcess::InitializeProcess()
 	/* ダークモード設定を反映する */
 	{
 		const auto dmType = GetDllShareData().m_Common.m_sWindow.m_bDarkMode
-			? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::classic;
+			? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::light;
 		DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
 		DarkMode::setDefaultColors(true);
 	}

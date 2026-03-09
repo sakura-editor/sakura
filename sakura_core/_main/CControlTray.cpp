@@ -574,9 +574,9 @@ LRESULT CControlTray::DispatchEvent(
 			/* ダークモード設定を反映する */
 			{
 				const bool bNewDark = (GetDllShareData().m_Common.m_sWindow.m_bDarkMode != FALSE);
-				const bool bOldDark = DarkMode::isEnabled();
+				const bool bOldDark = DarkMode::isEnabled() && DarkMode::isExperimentalActive();
 				if( bNewDark != bOldDark ){
-					const auto dmType = bNewDark ? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::classic;
+					const auto dmType = bNewDark ? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::light;
 					DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
 					DarkMode::setDefaultColors(true);
 				}
