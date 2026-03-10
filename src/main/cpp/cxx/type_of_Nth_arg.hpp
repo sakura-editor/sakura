@@ -13,9 +13,32 @@ namespace cxx {
 template<typename T>
 struct args_of_function;
 
+//! 関数型の引数を解析するためのメタタイプ
+template<typename R, typename... Args>
+struct args_of_function<R(Args...)>
+{
+	using types = std::tuple<Args...>;
+};
+
+//! 関数ポインタの引数を解析するためのメタタイプ
+template<typename R, typename... Args>
+struct args_of_function<R(*)(Args...)>
+{
+	using types = std::tuple<Args...>;
+};
+
+//! クラスメソッド引数を解析するためのメタタイプ
+template<typename R, typename C, typename... Args>
+struct args_of_function<R (C::*)(Args...)>
+{
+	using types = std::tuple<Args...>;
+};
+
+#if defined(_M_IX86)
+
 //! API関数ポインタの引数を解析するためのメタタイプ
 template<typename R, typename... Args>
-struct args_of_function<R(WINAPI *)(Args...)>
+struct args_of_function<R(__stdcall *)(Args...)>
 {
 	using types = std::tuple<Args...>;
 };
@@ -26,6 +49,8 @@ struct args_of_function<R (STDMETHODCALLTYPE C::*)(Args...)>
 {
 	using types = std::tuple<Args...>;
 };
+
+#endif // defined(_M_IX86)
 
 //! COMインターフェースメソッド引数を数える関数
 template<typename FuncDecl>
