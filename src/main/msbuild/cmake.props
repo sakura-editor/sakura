@@ -18,5 +18,10 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(CMakeToolsBuildDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>darkmode.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)'=='Debug'">$(CMakeToolsBuildDir)lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)'=='Release'">$(CMakeToolsBuildDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
 </Project>

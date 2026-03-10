@@ -1101,9 +1101,10 @@ BEGIN
     CONTROL         "&Show Status Bar",IDC_CHECK_DispSTATUSBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,37,88,10
     CONTROL         "Horizontal Scrollba&r",IDC_CHECK_bScrollBarHorz,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,104,13,89,10
     CONTROL         "Menu &Icon",IDC_CHECK_bMenuIcon,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,195,13,87,10
-    PUSHBUTTON      "&Window pos && size...",IDC_BUTTON_WINSIZE,202,33,83,14
-    LTEXT           "NB: Tab-Bar display\nis in the tab bar tab",IDC_STATIC,111,30,83,17
-    GROUPBOX        "Basic Settings",IDC_STATIC,3,3,285,49,WS_GROUP
+    CONTROL         "&Dark Mode",IDC_CHECK_bDarkMode,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,104,25,89,10
+    PUSHBUTTON      "&Window pos && size...",IDC_BUTTON_WINSIZE,202,25,83,14
+    LTEXT           "NB: Tab-Bar display\nis in the tab bar tab",IDC_STATIC,111,37,83,17
+    GROUPBOX        "Basic Settings",IDC_STATIC,3,3,285,52,WS_GROUP
     LTEXT           "Ruler H&eight",IDC_STATIC,7,68,58,8
     EDITTEXT        IDC_EDIT_nRulerHeight,101,66,28,12,ES_AUTOHSCROLL
     CONTROL         "Spin1",IDC_SPIN_nRulerHeight,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,124,66,10,12

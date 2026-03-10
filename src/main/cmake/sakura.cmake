@@ -235,6 +235,9 @@ add_custom_target(generate_funccode_enum
     "${CMAKE_BINARY_DIR}/Funccode_enum.h"
 )
 
+# Include darkmodelib.cmake
+include(${CMAKE_SOURCE_DIR}/src/main/cmake/darkmodelib.cmake)
+
 if(MINGW)
   # Find iconv
   find_program(ICONV_PATH iconv REQUIRED)
@@ -360,7 +363,7 @@ add_compile_definitions(
 
 # add include directories
 include_directories(
-  ${CMAKE_BINARY_DIR} 
+  ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src/main/cpp
   ${CMAKE_SOURCE_DIR}/src/main/resources
   ${CMAKE_SOURCE_DIR}/sakura_core
@@ -449,6 +452,7 @@ target_link_directories(sakura_core
 # link libraries
 target_link_libraries(sakura_core
   PUBLIC
+    darkmode
     comctl32
     dwmapi
     htmlhelp
@@ -470,6 +474,7 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
+  generate_darkmodelib
   generate_bregonig
   generate_cmigemo
 )

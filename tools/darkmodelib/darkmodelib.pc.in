@@ -1,0 +1,9 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/include
+
+Name: darkmodelib
+Description: Dark mode support library for Win32 applications
+Version: 0.48.0
+Libs: -L${libdir} -ldarkmode
+Cflags: -I${includedir}

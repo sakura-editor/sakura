@@ -34,6 +34,7 @@
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
 #include "CAppMode.h"
+#include "apiwrap/DarkMode.h"
 #include "env/CDocTypeManager.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
@@ -84,6 +85,9 @@ bool CNormalProcess::InitializeProcess()
 	if ( !CProcess::InitializeProcess() ){
 		return false;
 	}
+
+	/* ダークモード設定を反映する */
+	ApplyDarkModeSetting(GetDllShareData().m_Common.m_sWindow.m_bDarkMode);
 
 	/* 言語を選択する */
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );

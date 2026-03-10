@@ -27,6 +27,7 @@
 #include "config/app_constants.h"
 #include "recent/CRecentFile.h"
 #include "recent/CRecentFolder.h"
+#include "apiwrap/DarkMode.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 TYPE_NAME_ID<int> SpecialScrollModeArr[] = {
