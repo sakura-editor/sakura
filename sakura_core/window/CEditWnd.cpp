@@ -949,6 +949,10 @@ void CEditWnd::LayoutTabBar( void )
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){	/* タブバーを表示する */
 		if( nullptr == m_cTabWnd.GetHwnd() ){
 			m_cTabWnd.Open( G_AppInstance(), GetHwnd() );
+			// タブバーが後から作成された場合、ダークモードのテーマを適用する
+			if( DarkMode::isExperimentalActive() ){
+				DarkMode::setChildCtrlsSubclassAndTheme( m_cTabWnd.GetHwnd() );
+			}
 		}else{
 			m_cTabWnd.UpdateStyle();
 		}

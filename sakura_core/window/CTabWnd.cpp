@@ -33,6 +33,7 @@
 #include "util/string_ex2.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
+#include <DarkModeSubclass.h>
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 
@@ -930,6 +931,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		// ツールチップをマルチライン可能にする（SHRT_MAX: Win95でINT_MAXだと表示されない）	// 2007.03.03 ryoji
 		ApiWrap::Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
 
+		// ボタン用ツールチップにダークモードを適用する
+		DarkMode::setDarkTooltips( m_hwndToolTip, static_cast<int>(DarkMode::ToolTipsType::tooltip) );
+
 		// タブバーにツールチップを追加する
 		TOOLINFO	ti;
 		ti.cbSize      = CCSIZEOF_STRUCT(TOOLINFO, lpszText);
@@ -1555,14 +1559,24 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]
 
 	// 背景を描画する
 	::GetClientRect( hwnd, &rc );
-	::MyFillRect( gr, rc, COLOR_3DFACE );
+	if( DarkMode::isEnabled() ){
+		::MyFillRect( gr, rc, DarkMode::getDlgBackgroundColor() );
+	}else{
+		::MyFillRect( gr, rc, COLOR_3DFACE );
+	}
 
 	// ボタンを描画する
 	DrawListBtn( gr, &rc );
 	DrawCloseBtn( gr, &rc );	// 2006.10.21 ryoji 追加
 
 	// 上側に境界線を描画する
-	::DrawEdge(gr, &rc, EDGE_ETCHED, BF_TOP);
+	if( DarkMode::isEnabled() ){
+		gr.SetPen( DarkMode::getEdgeColor() );
+		::MoveToEx( gr, rc.left, rc.top, nullptr );
+		::LineTo( gr, rc.right, rc.top );
+	}else{
+		::DrawEdge(gr, &rc, EDGE_ETCHED, BF_TOP);
+	}
 
 	// トップバンドを描画する
 	if( auto nCurSel = TabCtrl_GetCurSel( m_hwndTab ); 0 <= nCurSel ){
@@ -2512,8 +2526,13 @@ void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 	if( bBtnHilighted )
 	{
 		CGraphics gr(hdc);
-		gr.SetPen( ::GetSysColor(COLOR_HIGHLIGHT) );
-		gr.SetBrushColor( ::GetSysColor(COLOR_MENU) );
+		if( DarkMode::isEnabled() ){
+			gr.SetPen( DarkMode::getHotEdgeColor() );
+			gr.SetBrushColor( DarkMode::getHotBackgroundColor() );
+		}else{
+			gr.SetPen( ::GetSysColor(COLOR_HIGHLIGHT) );
+			gr.SetBrushColor( ::GetSysColor(COLOR_MENU) );
+		}
 		::Rectangle( gr, lprcBtn->left, lprcBtn->top, lprcBtn->right, lprcBtn->bottom );
 	}
 }
@@ -2538,9 +2557,15 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
-	gr.SetPen( ::GetSysColor( nIndex ) );
-	gr.SetBrushColor( ::GetSysColor( nIndex ) ); //$$ GetSysColorBrushを用いた実装のほうが効率は良い
+	COLORREF clrBtn;
+	if( DarkMode::isEnabled() ){
+		clrBtn = DarkMode::getTextColor();
+	}else{
+		int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
+		clrBtn = ::GetSysColor( nIndex );
+	}
+	gr.SetPen( clrBtn );
+	gr.SetBrushColor( clrBtn );
 	for( int i = 0; i < int(std::size(ptBase)); i++ )
 	{
 		pt[i].x = ptBase[i].x + rcBtn.left;
@@ -2604,7 +2629,7 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	GetCloseBtnRect( lprcClient, &rcBtn );
 
 	// ボタンの左側にセパレータを描画する	// 2007.02.27 ryoji
-	gr.SetPen( ::GetSysColor( COLOR_3DSHADOW ) );
+	gr.SetPen( DarkMode::isEnabled() ? DarkMode::getEdgeColor() : ::GetSysColor( COLOR_3DSHADOW ) );
 	::MoveToEx( gr, rcBtn.left - DpiScaleX(4), rcBtn.top + 1, nullptr );
 	::LineTo( gr, rcBtn.left - DpiScaleX(4), rcBtn.bottom - 1 );
 
@@ -2616,9 +2641,15 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
-	gr.SetPen( ::GetSysColor(nIndex) );
-	gr.SetBrushColor( ::GetSysColor(nIndex) );
+	COLORREF clrBtn;
+	if( DarkMode::isEnabled() ){
+		clrBtn = DarkMode::getTextColor();
+	}else{
+		int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
+		clrBtn = ::GetSysColor(nIndex);
+	}
+	gr.SetPen( clrBtn );
+	gr.SetBrushColor( clrBtn );
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
 		!m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
 		!m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加（ウィンドウの閉じるボタンは全部閉じる）
@@ -2656,9 +2687,9 @@ void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool sele
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	int nIndex = COLOR_BTNTEXT;
-	gr.SetPen( ::GetSysColor(nIndex) );
-	gr.SetBrushColor( ::GetSysColor(nIndex) );
+	COLORREF clrBtn = DarkMode::isEnabled() ? DarkMode::getTextColor() : ::GetSysColor(COLOR_BTNTEXT);
+	gr.SetPen( clrBtn );
+	gr.SetBrushColor( clrBtn );
 	DrawCloseFigure( gr, rcBtn );
 }
 
