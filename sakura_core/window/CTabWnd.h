@@ -65,6 +65,7 @@ public:
 		OnSize( GetHwnd(), WM_SIZE, 0, 0 );
 	}
 	void UpdateStyle();
+	void UpdateTheme();		/*!< ダークモード切替時のテーマ更新 */
 protected:
 	/*
 	|| 実装ヘルパ系

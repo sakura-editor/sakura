@@ -33,7 +33,7 @@
 #include "util/string_ex2.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 
@@ -56,6 +56,17 @@
 #define CY_SMICON			DpiScaleY(16)
 
 static const RECT rcBtnBase = { 0, 0, 16, 16 };
+
+/*! ダークモード対応のボタン前景色を取得する
+	@param[in] bHilighted	ハイライト状態か
+*/
+static COLORREF GetBtnTextColor( BOOL bHilighted )
+{
+	if( IsDarkModeActive() ){
+		return DarkMode::getTextColor();
+	}
+	return ::GetSysColor( bHilighted ? COLOR_MENUTEXT : COLOR_BTNTEXT );
+}
 
 // 2006.02.01 ryoji タブ一覧メニュー用データ
 typedef struct {
@@ -973,6 +984,17 @@ void CTabWnd::UpdateStyle()
 	}
 }
 
+/*! ダークモード切替時のテーマ更新 */
+void CTabWnd::UpdateTheme()
+{
+	// ボタン用ツールチップのテーマを更新する
+	if( m_hwndToolTip ){
+		DarkMode::setDarkTooltips( m_hwndToolTip, static_cast<int>(DarkMode::ToolTipsType::tooltip) );
+	}
+	// 再描画（背景・ボタン等の色を更新する）
+	::InvalidateRect( GetHwnd(), nullptr, TRUE );
+}
+
 /* ウィンドウ クローズ */
 void CTabWnd::Close( void )
 {
@@ -1559,7 +1581,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]
 
 	// 背景を描画する
 	::GetClientRect( hwnd, &rc );
-	if( DarkMode::isEnabled() ){
+	if( IsDarkModeActive() ){
 		::MyFillRect( gr, rc, DarkMode::getDlgBackgroundColor() );
 	}else{
 		::MyFillRect( gr, rc, COLOR_3DFACE );
@@ -1570,7 +1592,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]
 	DrawCloseBtn( gr, &rc );	// 2006.10.21 ryoji 追加
 
 	// 上側に境界線を描画する
-	if( DarkMode::isEnabled() ){
+	if( IsDarkModeActive() ){
 		gr.SetPen( DarkMode::getEdgeColor() );
 		::MoveToEx( gr, rc.left, rc.top, nullptr );
 		::LineTo( gr, rc.right, rc.top );
@@ -2526,7 +2548,7 @@ void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 	if( bBtnHilighted )
 	{
 		CGraphics gr(hdc);
-		if( DarkMode::isEnabled() ){
+		if( IsDarkModeActive() ){
 			gr.SetPen( DarkMode::getHotEdgeColor() );
 			gr.SetBrushColor( DarkMode::getHotBackgroundColor() );
 		}else{
@@ -2557,13 +2579,7 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	COLORREF clrBtn;
-	if( DarkMode::isEnabled() ){
-		clrBtn = DarkMode::getTextColor();
-	}else{
-		int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
-		clrBtn = ::GetSysColor( nIndex );
-	}
+	COLORREF clrBtn = GetBtnTextColor( m_bListBtnHilighted );
 	gr.SetPen( clrBtn );
 	gr.SetBrushColor( clrBtn );
 	for( int i = 0; i < int(std::size(ptBase)); i++ )
@@ -2629,7 +2645,7 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	GetCloseBtnRect( lprcClient, &rcBtn );
 
 	// ボタンの左側にセパレータを描画する	// 2007.02.27 ryoji
-	gr.SetPen( DarkMode::isEnabled() ? DarkMode::getEdgeColor() : ::GetSysColor( COLOR_3DSHADOW ) );
+	gr.SetPen( IsDarkModeActive() ? DarkMode::getEdgeColor() : ::GetSysColor( COLOR_3DSHADOW ) );
 	::MoveToEx( gr, rcBtn.left - DpiScaleX(4), rcBtn.top + 1, nullptr );
 	::LineTo( gr, rcBtn.left - DpiScaleX(4), rcBtn.bottom - 1 );
 
@@ -2641,13 +2657,7 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	COLORREF clrBtn;
-	if( DarkMode::isEnabled() ){
-		clrBtn = DarkMode::getTextColor();
-	}else{
-		int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
-		clrBtn = ::GetSysColor(nIndex);
-	}
+	COLORREF clrBtn = GetBtnTextColor( m_bCloseBtnHilighted );
 	gr.SetPen( clrBtn );
 	gr.SetBrushColor( clrBtn );
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
@@ -2687,7 +2697,7 @@ void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool sele
 	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
 	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
-	COLORREF clrBtn = DarkMode::isEnabled() ? DarkMode::getTextColor() : ::GetSysColor(COLOR_BTNTEXT);
+	COLORREF clrBtn = GetBtnTextColor( FALSE );
 	gr.SetPen( clrBtn );
 	gr.SetBrushColor( clrBtn );
 	DrawCloseFigure( gr, rcBtn );

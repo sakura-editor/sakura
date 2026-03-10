@@ -47,7 +47,7 @@
 #include "config/system_constants.h"
 
 #include "CSelectLang.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
@@ -284,7 +284,7 @@ BOOL CEditView::Create(
 	if( nullptr == GetHwnd() ){
 		return FALSE;
 	}
-	if (DarkMode::isEnabled()) {
+	if (IsDarkModeActive()) {
 		DarkMode::setWindowExStyle(GetHwnd(), false, WS_EX_STATICEDGE);
 	}
 

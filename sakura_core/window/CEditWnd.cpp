@@ -58,7 +58,7 @@
 #include "recent/CRecentEditNode.h"
 #include "recent/CRecentFile.h"
 #include "recent/CRecentFolder.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
@@ -950,7 +950,7 @@ void CEditWnd::LayoutTabBar( void )
 		if( nullptr == m_cTabWnd.GetHwnd() ){
 			m_cTabWnd.Open( G_AppInstance(), GetHwnd() );
 			// タブバーが後から作成された場合、ダークモードのテーマを適用する
-			if( DarkMode::isExperimentalActive() ){
+			if( IsDarkModeActive() ){
 				DarkMode::setChildCtrlsSubclassAndTheme( m_cTabWnd.GetHwnd() );
 			}
 		}else{
@@ -1591,8 +1591,7 @@ LRESULT CEditWnd::DispatchEvent(
 			/* ダークモード設定を反映する */
 			{
 				const bool bNewDark = (m_pShareData->m_Common.m_sWindow.m_bDarkMode != FALSE);
-				const bool bOldDark = DarkMode::isEnabled() && DarkMode::isExperimentalActive();
-				if( bNewDark != bOldDark ){
+				if( bNewDark != IsDarkModeActive() ){
 					const auto dmType = bNewDark ? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::light;
 					DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
 					DarkMode::setDefaultColors(true);
@@ -1603,6 +1602,11 @@ LRESULT CEditWnd::DispatchEvent(
 
 					// 子コントロールのテーマを更新する
 					DarkMode::setChildCtrlsTheme(GetHwnd());
+
+					// タブバーのテーマを更新する（ツールチップ等）
+					if( m_cTabWnd.GetHwnd() ){
+						m_cTabWnd.UpdateTheme();
+					}
 
 					// エディットビューのWS_EX_STATICEDGEを切り替える
 					for( int v = 0; v < GetAllViewCount(); v++ ){

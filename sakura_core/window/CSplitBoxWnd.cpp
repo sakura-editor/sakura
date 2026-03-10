@@ -17,7 +17,7 @@
 #include "window/CSplitBoxWnd.h"
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 #include "config/system_constants.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
@@ -126,7 +126,7 @@ LRESULT CSplitBoxWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_un
 	COLORREF cBR0 = ::GetSysColor(COLOR_3DSHADOW);
 	COLORREF cBR1 = ::GetSysColor(COLOR_BTNSHADOW);
 
-	if (DarkMode::isEnabled()) {
+	if (IsDarkModeActive()) {
 		cBTN = DarkMode::getCtrlBackgroundColor();
 		cBR0 = DarkMode::getTextColor();
 		cBR1 = DarkMode::getHotEdgeColor();

@@ -25,7 +25,7 @@
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "config/system_constants.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
@@ -791,7 +791,7 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_un
 	::GetClientRect( GetHwnd(), &rc );
 	if( m_nAllSplitRows > 1 ){
 		::SetRect( &rcFrame, rc.left, m_nVSplitPos, rc.right, m_nVSplitPos + nFrameWidth );
-		if( DarkMode::isEnabled() ){
+		if( IsDarkModeActive() ){
 			HBRUSH hBrush = ::CreateSolidBrush( DarkMode::getViewBackgroundColor() );
 			::FillRect( hdc, &rcFrame, hBrush );
 			::DeleteObject( hBrush );
@@ -801,7 +801,7 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_un
 	}
 	if( m_nAllSplitCols > 1 ){
 		::SetRect( &rcFrame, m_nHSplitPos, rc.top, m_nHSplitPos + nFrameWidth, rc.bottom );
-		if( DarkMode::isEnabled() ){
+		if( IsDarkModeActive() ){
 			HBRUSH hBrush = ::CreateSolidBrush( DarkMode::getViewBackgroundColor() );
 			::FillRect( hdc, &rcFrame, hBrush );
 			::DeleteObject( hBrush );

@@ -18,7 +18,7 @@
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -129,7 +129,7 @@ void CMainToolBar::CreateToolBar( void )
 			CEditApp::getInstance()->GetAppInstance(),
 			nullptr
 		);
-		if (DarkMode::isEnabled()) {
+		if (IsDarkModeActive()) {
 			SetWindowTheme(m_hwndReBar, L"", L"");
 			SendMessage(m_hwndReBar, RB_SETBKCOLOR, 0, DarkMode::getBackgroundColor());
 		}
