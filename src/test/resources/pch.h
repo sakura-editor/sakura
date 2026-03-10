@@ -13,6 +13,7 @@
 
 // マッチャーのusing（追加するときは昇順で。）
 using ::testing::_;
+using ::testing::ContainsRegex;
 using ::testing::Eq;
 using ::testing::Ge;
 using ::testing::Gt;
@@ -23,6 +24,7 @@ using ::testing::IsNull;
 using ::testing::IsTrue;
 using ::testing::Le;
 using ::testing::Lt;
+using ::testing::MatchesRegex;
 using ::testing::Ne;
 using ::testing::NotNull;
 using ::testing::Return;
