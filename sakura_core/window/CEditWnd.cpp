@@ -1590,12 +1590,8 @@ LRESULT CEditWnd::DispatchEvent(
 		case PM_CHANGESETTING_ALL:
 			/* ダークモード設定を反映する */
 			{
-				const bool bNewDark = (m_pShareData->m_Common.m_sWindow.m_bDarkMode != FALSE);
-				if( bNewDark != IsDarkModeActive() ){
-					const auto dmType = bNewDark ? DarkMode::DarkModeType::dark : DarkMode::DarkModeType::light;
-					DarkMode::setDarkModeConfigEx(static_cast<UINT>(dmType));
-					DarkMode::setDefaultColors(true);
-
+				if( (m_pShareData->m_Common.m_sWindow.m_bDarkMode != FALSE) != IsDarkModeActive() ){
+					ApplyDarkModeSetting(m_pShareData->m_Common.m_sWindow.m_bDarkMode);
 					// タイトルバーとメニューバーを更新する
 					DarkMode::setDarkTitleBarEx(GetHwnd(), true);
 					DarkMode::setWindowMenuBarSubclass(GetHwnd());
@@ -1611,7 +1607,7 @@ LRESULT CEditWnd::DispatchEvent(
 					// エディットビューのWS_EX_STATICEDGEを切り替える
 					for( int v = 0; v < GetAllViewCount(); v++ ){
 						HWND hwndView = GetView(v).GetHwnd();
-						DarkMode::setWindowExStyle(hwndView, !bNewDark, WS_EX_STATICEDGE);
+						DarkMode::setWindowExStyle(hwndView, !IsDarkModeActive(), WS_EX_STATICEDGE);
 						::SetWindowPos(hwndView, nullptr, 0, 0, 0, 0,
 							SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 					}

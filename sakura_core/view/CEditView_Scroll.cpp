@@ -31,7 +31,7 @@
 #include "types/CTypeSupport.h"
 #include <limits.h>
 #include "config/app_constants.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）

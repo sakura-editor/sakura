@@ -28,7 +28,7 @@
 #include "func/CKeyBind.h"
 #include "uiparts/CGraphics.h"
 #include "util/window.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 #include "CEditApp.h"
 #include "sakura_rc.h"
 

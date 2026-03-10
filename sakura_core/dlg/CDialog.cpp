@@ -32,7 +32,7 @@
 #include "util/window.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
-#include <DarkModeSubclass.h>
+#include "apiwrap/DarkMode.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(
