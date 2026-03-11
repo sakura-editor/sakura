@@ -157,6 +157,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cfileext.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cfuncinfoarr.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cdoctypemanager.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
