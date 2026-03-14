@@ -9,4 +9,8 @@
       <Item Name="_Size">m_nDataBufSize / 2</Item>
     </Expand>
   </Type>
+  <Type Name="StaticString&lt;*&gt;">
+    <DisplayString Condition="m_szData[0] == 0">empty</DisplayString>
+    <DisplayString Condition="m_szData[0] != 0">{m_szData._Elems,su}</DisplayString>
+  </Type>
 </AutoVisualizer>
