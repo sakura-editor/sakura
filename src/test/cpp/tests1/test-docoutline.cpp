@@ -134,56 +134,69 @@ TEST(CFuncInfoArr, AppendData1_101)
 	CFuncInfoArr arr;
 
 	// 追加するデータ
-	CFuncInfo func1{
+	auto pFunc1 = new CFuncInfo(
 		CLogicInt(1), CLogicInt(1),
 		CLayoutInt(1), CLayoutInt(1),
 		L"func1",
 		L"test.cpp",
 		0
-	};
+	);
 
 	// mallocを失敗させる
 	const testing::CrtAllocHook<CFuncInfo*, _HOOK_ALLOC> allocHook;
 
 	// 実行するとクラッシュします。
-	EXPECT_DEATH({ arr.AppendData(&func1); }, "");	// 👈バグです。クラッシュではなく、std::bad_alloc例外を投げるべき。
+	EXPECT_THROW({ arr.AppendData(pFunc1); }, std::bad_alloc);
 }
 
+#ifdef _M_X64
 
-TEST(CFuncInfoArr, DISABLED_AppendData1_102)
+TEST(CFuncInfoArr, AppendData1_102)
 {
 	// テスト対象
 	CFuncInfoArr arr;
 
 	// 追加するデータ
-	CFuncInfo func1{
+	auto pFunc1 = new CFuncInfo(
 		CLogicInt(1), CLogicInt(1),
 		CLayoutInt(1), CLayoutInt(1),
 		L"func1",
 		L"test.cpp",
 		0
-	};
+	);
 
 	// 1個目は普通に追加する
-	arr.AppendData(&func1);
+	arr.AppendData(pFunc1);
+
+	// サイズが小さすぎるとメモリアロケーターのフックが誤爆するので、適当なサイズまで拡張する
+	for (int i = 0; i < 63 - 1; ++i) {
+		arr.AppendData(
+			CLogicInt(20 + i),
+			CLayoutInt(1),
+			L"funcB",
+			FL_OBJ_CLASS,
+			2
+		);
+	}
 
 	// 追加するデータ
-	CFuncInfo func2{
+	auto pFunc2 = new CFuncInfo(
 		CLogicInt(1), CLogicInt(1),
 		CLayoutInt(1), CLayoutInt(1),
 		L"func2",
 		L"test.cpp",
 		0
-	};
+	);
 
 	// reallocを失敗させる
-	const testing::CrtAllocHook<CFuncInfo*, _HOOK_REALLOC, 2> allocHook;
+	// std::vectorはstd::allocatorを使うので、再確保でも malloc 相当が呼ばれる。
+	const testing::CrtAllocHook<CFuncInfo*, _HOOK_ALLOC, 94> allocHook;
 
 	// 実行するとクラッシュします。
-	EXPECT_DEATH({ arr.AppendData(&func2); }, "");	// 👈バグです。クラッシュではなく、std::bad_alloc例外を投げるべき。
-
-	// ここで、解放されずに紛失した確保済みヒープが原因でクラッシュします。
+	EXPECT_THROW({ arr.AppendData(pFunc2); }, std::bad_alloc);
 }
+
+#endif // ifdef _M_X64
 
 #endif // if defined(_MSC_VER) && defined(_DEBUG)
 
