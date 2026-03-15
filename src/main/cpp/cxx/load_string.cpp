@@ -40,10 +40,13 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 			}
 
 			// 文字列の長さを取得
-			const auto length = size_t(pResData.front());
+			if (const auto length = size_t(pResData.front()); 1 < std::size(pResData)) {
+				// 文字列をstd::wstring_viewに格納して返す
+				return std::wstring_view(&pResData[1], length);
+			}
 
-			// 文字列をstd::wstring_viewに格納して返す
-			return std::wstring_view(&pResData[1], length);
+			// 空の文字列参照を返す
+			return std::wstring_view();
 		},
 		RT_STRING,
 		optModule
