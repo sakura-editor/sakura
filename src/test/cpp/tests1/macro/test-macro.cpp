@@ -156,6 +156,85 @@ TEST_F(MacroMgrTest, CKeyMacroMgr001)
 
 	std::filesystem::remove(path);
 
+	// 引数が足りなくてHandleCommandがfalseを返すケースの確認
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_Char()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_CharIme()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_CtrlCode()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_ChgmodEOL()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_SetMsgQuoteStr()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_InsText()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_AddTail()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0 ), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_InsBoxText()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_Jump()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_BookmarkPattern()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_Diff()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_ExecCommand()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_TraceOut()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_PutFile()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_InsFile()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_Replace()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_ReplaceAll()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_GrepReplace()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_Grep()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_FileOpen()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_FileSaveAs()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_MoveCursorLayout()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_MoveCursor()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_StatusMsg()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_SetViewTop()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"S_SetViewLeft()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
 	mgr = nullptr;
 
 	CMacroFactory::getInstance()->Unregister(CKeyMacroMgr::Creator);
@@ -314,6 +393,124 @@ TEST_F(MacroMgrTest, CWSHMacroManager001)
 	std::filesystem::remove(path);
 
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	mgr = nullptr;
+
+	CMacroFactory::getInstance()->Unregister(CWSHMacroManager::Creator);
+}
+
+/*!
+ * 引数が足りないのテスト
+ */
+TEST_F(MacroMgrTest, MissingArgs001)
+{
+	CWSHMacroManager::declare();
+
+	auto mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"js"));
+
+	const HINSTANCE unusedArg1 = nullptr;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ExpandParameter()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetLineStr()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetLineCount()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ChangeTabWidth()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ChangeWrapColm()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"IsCurTypeExt()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"IsSameTypeExt()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"InputBox()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"MessageBox()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ErrorMsg()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"WarnMsg()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"InfoMsg()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OkCancelBox()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"YesNoBox()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"CompareVersion()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Sleep()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"LayoutToLogicLineNum()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"LineColumnToIndex()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"LogicToLayoutLineNum()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"LineIndexToColumn()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetCookie()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetCookieDefault()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"SetCookie()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"DeleteCookie()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetCookieNames()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"SetDrawSwitch()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetStrWidth()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetStrLayoutLength()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"IsIncludeClipboardFormat()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetClipboardByFormat()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"SetClipboardByFormat()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"GetLineAttribute()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"CreateMenu()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ChangeInsertSpace()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsFalse());
 
 	mgr = nullptr;
 
