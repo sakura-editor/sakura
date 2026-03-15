@@ -39,6 +39,7 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
             mingw-w64-x86_64-7zip
+            mingw-w64-x86_64-gdb
 
       - name: Show environment variables for debug
         run: set
@@ -49,6 +50,30 @@ jobs:
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }} --no-test
 
       - name: Run unit tests
-        shell: cmd
-        run: tests1.exe --gtest_output=xml:${{ github.workspace }}/tests1.exe-googletest-${{ env.BuildPlatform }}-${{ env.Configuration }}.xml
+        id: run_unit_tests
+        continue-on-error: true
+        shell: msys2 {0}
+        run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+
+      - name: Try gdb backtrace on test failure
+        if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
+        continue-on-error: true
+        shell: msys2 {0}
         working-directory: ${{ github.workspace }}/${{ env.BuildPlatform }}/${{ env.Configuration }}
+        run: |
+          set -eo pipefail
+          echo "Run gdb trace for: tests1.exe"
+          gdb -batch \
+            -ex "set pagination off" \
+            -ex "run" \
+            -ex "bt" \
+            -ex "bt full" \
+            -ex "info registers" \
+            --args ./tests1.exe
+
+      - name: Mark workflow failed when unit tests fail
+        if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
+        shell: msys2 {0}
+        run: |
+          echo "Unit tests failed. See the gdb trace above."
+          exit 1
