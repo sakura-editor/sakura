@@ -96,10 +96,11 @@ void CHokanMgr::Hide( void )
 {
 	::ShowWindow( GetHwnd(), SW_HIDE );
 	m_nCurKouhoIdx = -1;
+
 	/* 入力フォーカスを受け取ったときの処理 */
-	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
-	pcEditView->OnSetFocus();
-	return;
+	if (auto pcEditView = std::bit_cast<CEditView*>(m_lParam)) {
+		pcEditView->OnSetFocus();
+	}
 }
 
 /*!	初期化
