@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2022, Sakura Editor Organization
+	Copyright (C) 2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -8,6 +8,11 @@
 #include "util/window.h"
 
 #include "env/ShareDataTestSuite.hpp"
+#include "window/EditorTestSuite.hpp"
+
+#include "dlg/CDlgCancel.h"
+#include "macro/CKeyMacroMgr.h"
+#include "macro/CMacroFactory.h"
 
 #include "_main/CControlTray.h"
 
@@ -204,6 +209,109 @@ TEST_F(TrayWndTest, OnChangeSetting001)
 	::wcscpy_s(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, L"");
 
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_CHANGESETTING, 0, int(PM_CHANGESETTING_ALL)), 0);
+}
+
+struct EditWndTest : public ::testing::Test, public window::EditorTestSuite {
+	static constexpr HINSTANCE unusedArg1 = nullptr;
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		SetUpEditor();
+
+		CKeyMacroMgr::declare();
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		CMacroFactory::getInstance()->Unregister(CKeyMacroMgr::Creator);
+
+		TearDownEditor();
+	}
+
+	std::unique_ptr<CMacroManagerBase> mgr = nullptr;
+
+	/*!
+	 * テストが実行された直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"mac"));
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override
+	{
+		mgr = nullptr;
+	}
+};
+
+/*!
+ * キャンセルダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgCancel001)
+{
+	CDlgCancel cDlgCancel;
+
+	const auto hWnd = pcEditWnd->GetHwnd();
+
+	cDlgCancel.DoModeless(unusedArg1, hWnd, IDD_GREPRUNNING);
+
+	cDlgCancel.CloseDialog(0);
+}
+
+/*!
+ * 検索ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFind001)
+{
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"SearchDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cDlgFind.CloseDialog(0);
+}
+
+/*!
+ * アウトライン解析ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFuncList001)
+{
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Outline(0)"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Outline(1)"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cDlgFuncList.CloseDialog(0);
+}
+
+/*!
+ * 補完ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgHokan001)
+{
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cHokanMgr.CloseDialog(0);
+}
+
+/*!
+ * 置換ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgReplace001)
+{
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ReplaceDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cDlgReplace.CloseDialog(0);
 }
 
 /*!
