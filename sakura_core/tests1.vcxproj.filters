@@ -26,6 +26,9 @@
       <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
+    <Filter Include="Other Files\dlg">
+      <UniqueIdentifier>{fe8a4e97-7407-4cb3-9387-7a58c099410c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake">
@@ -42,6 +45,9 @@
     </ClCompile>
     <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp">
       <Filter>Other Files\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.cpp">
+      <Filter>Other Files\dlg</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp">
       <Filter>Other Files\env</Filter>
@@ -221,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="..\src\test\resources\testing\StartEditorProcess.hpp">
       <Filter>Other Files\testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.hpp">
+      <Filter>Other Files\dlg</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp">
       <Filter>Other Files\env</Filter>

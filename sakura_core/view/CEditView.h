@@ -619,7 +619,7 @@ public:
 public:
 	//参照
 	CEditDoc*		m_pcEditDoc = GetListeningDoc();	//!< ドキュメント
-	const STypeConfig*	m_pTypeData;
+	const STypeConfig*	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	//主要構成部品
 	CTextAreaHolder	m_pcTextArea = std::make_unique<CTextArea>(this);

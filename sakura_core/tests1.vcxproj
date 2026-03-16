@@ -118,6 +118,7 @@
     </ClCompile>
     <ClCompile Include="..\src\test\resources\code-main.cpp" />
     <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\macro\test-macro.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="..\src\test\resources\pch.h" />
     <ClInclude Include="..\src\test\resources\testing\CrtAllocHook.hpp" />
     <ClInclude Include="..\src\test\resources\testing\StartEditorProcess.hpp" />
+    <ClInclude Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.hpp" />
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp" />
     <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp" />
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp" />

@@ -48,7 +48,8 @@ const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 
 HINSTANCE G_AppInstance()
 {
-	return CProcess::getInstance()->GetProcessInstance();
+	const auto process = CProcess::getInstance();
+	return process ? process->GetProcessInstance() : ::GetModuleHandleW(nullptr);
 }
 
 /*!

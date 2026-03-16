@@ -31,8 +31,12 @@
 #include "testing/StartEditorProcess.hpp"
 #include "cxx/ResourceHolder.hpp"
 
+#include "tests1_rc.h"
+
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
+
+void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
 namespace cxx {
 
@@ -169,6 +173,10 @@ struct WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
 		// テスト用ファイルの後始末
 		if (fexist(gm_TestDataPath)) {
 			std::filesystem::remove(gm_TestDataPath);
+		}
+
+		if (const auto pluginPath = GetIniFileName().remove_filename().append(L"plugins"); fexist(pluginPath)) {
+			std::filesystem::remove_all(pluginPath);
 		}
 	}
 
@@ -413,6 +421,12 @@ TEST_P(WinMainTest, runEditorProcess)
 	// テスト用プロファイル名
 	const auto profileName(GetParam());
 
+	// プラグイン設定フォルダー
+	const auto pluginPath = GetIniFileName().remove_filename().append(L"plugins");
+
+	// プラグイン定義を展開する
+	extract_zip_resource(IDR_ZIPRES1, pluginPath);
+
 	// テスト用INIファイル作成
 	// 標準機能をできるだけ動かすために設定を入れる
 	constexpr std::array iniLines = {
@@ -450,6 +464,13 @@ TEST_P(WinMainTest, runEditorProcess)
 		u8"nTBB[028]=384"sv,
 		u8"nToolBarButtonNum=29"sv,
 		u8""sv,
+
+		// プラグイン設定を出力
+		u8"[Plugin]"sv,
+		u8"EnablePlugin=1"sv,
+		u8"P[00].CmdNum=1"sv,
+		u8"P[00].Id=TestWshPlugin"sv,
+		u8"P[00].Name=test-plugin"sv,
 
 		// プリンター設定を出力
 		u8"[Print]"sv,
