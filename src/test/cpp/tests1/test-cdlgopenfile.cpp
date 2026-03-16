@@ -1,28 +1,43 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
-*/
+ */
 #include "pch.h"
-#include <vector>
-#include <tchar.h>
-#include <Windows.h>
-#include "util/design_template.h"
 #include "dlg/CDlgOpenFile.h"
 
-extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog();
-extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog();
+#include "window/EditorTestSuite.hpp"
 
-TEST(CDlgOpenFile, Construct)
+struct DlgOpenFileTest : public ::testing::Test, public window::EditorTestSuite {
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		SetUpEditor();
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		TearDownEditor();
+	}
+};
+
+TEST_F(DlgOpenFileTest, Construct)
 {
 	CDlgOpenFile cDlgOpenFile;
 }
 
-TEST(CDlgOpenFile, DISABLED_CommonItemDialogCreate)
+TEST_F(DlgOpenFileTest, CommonItemDialogCreate)
 {
-	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonItemDialog();
-	impl->Create(
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
 		L"*.txt",
@@ -32,10 +47,12 @@ TEST(CDlgOpenFile, DISABLED_CommonItemDialogCreate)
 	);
 }
 
-TEST(CDlgOpenFile, DISABLED_CommonFileDialogCreate)
+TEST_F(DlgOpenFileTest, CommonFileDialogCreate)
 {
-	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonFileDialog();
-	impl->Create(
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
+
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
 		L"*.txt",
@@ -45,11 +62,13 @@ TEST(CDlgOpenFile, DISABLED_CommonFileDialogCreate)
 	);
 }
 
-TEST(CDlgOpenFile, DISABLED_CommonItemDialogDefaltFilterLong)
+TEST_F(DlgOpenFileTest, CommonItemDialogDefaltFilterLong)
 {
-	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonItemDialog();
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+
 	// 落ちたり例外にならないこと
-	impl->Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
 		L".extension_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_LONG",
@@ -59,11 +78,13 @@ TEST(CDlgOpenFile, DISABLED_CommonItemDialogDefaltFilterLong)
 	);
 }
 
-TEST(CDlgOpenFile, DISABLED_CommonFileDialogDefaltFilterLong)
+TEST_F(DlgOpenFileTest, CommonFileDialogDefaltFilterLong)
 {
-	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonFileDialog();
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
+
 	// 落ちたり例外にならないこと
-	impl->Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
 		L"*.extension_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_LONG",
@@ -73,11 +94,13 @@ TEST(CDlgOpenFile, DISABLED_CommonFileDialogDefaltFilterLong)
 	);
 }
 
-TEST(CDlgOpenFile, DISABLED_CommonFileDialogDefaltFilterMany)
+TEST_F(DlgOpenFileTest, CommonFileDialogDefaltFilterMany)
 {
-	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonFileDialog();
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
+
 	// 落ちたり例外にならないこと
-	impl->Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
 		L"*.extension_50_0_long_long_long_long_long_long_LONG;*.extension_50_1_long_long_long_long_long_long_LONG;*.extension_50_2_long_long_long_long_long_long_LONG;*.extension_50_3_long_long_long_long_long_long_LONG;*.extension_50_4_long_long_long_long_long_long_LONG;*.extension_50_5_long_long_long_long_long_long_LONG;*.extension_50_6_long_long_long_long_long_long_LONG;*.extension_50_7_long_long_long_long_long_long_LONG;*.extension_50_8_long_long_long_long_long_long_LONG;*.extension_50_9_long_long_long_long_long_long_LONG",
@@ -87,11 +110,13 @@ TEST(CDlgOpenFile, DISABLED_CommonFileDialogDefaltFilterMany)
 	);
 }
 
-TEST(CDlgOpenFile, DISABLED_CommonItemDialogDefaltFilterMany)
+TEST_F(DlgOpenFileTest, ommonItemDialogDefaltFilterMany)
 {
-	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonItemDialog();
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+
 	// 落ちたり例外にならないこと
-	impl->Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
 		L"*.extension_50_0_long_long_long_long_long_long_LONG;*.extension_50_1_long_long_long_long_long_long_LONG;*.extension_50_2_long_long_long_long_long_long_LONG;*.extension_50_3_long_long_long_long_long_long_LONG;*.extension_50_4_long_long_long_long_long_long_LONG;*.extension_50_5_long_long_long_long_long_long_LONG;*.extension_50_6_long_long_long_long_long_long_LONG;*.extension_50_7_long_long_long_long_long_long_LONG;*.extension_50_8_long_long_long_long_long_long_LONG;*.extension_50_9_long_long_long_long_long_long_LONG",
