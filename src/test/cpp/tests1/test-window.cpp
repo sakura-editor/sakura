@@ -509,19 +509,34 @@ TEST_F(EditWndTest, ShowDlgKeywordSelect001)
 /*!
  * ファイルを開くダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgOpenFile001)
+TEST_F(EditWndTest, ShowDlgOpenFileLegacy001)
 {
+	// Vistaスタイルのファイルダイアログを無効にする
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
+
 	// 表示されたモーダルダイアログを閉じるようにする
 	dialog::ModalDialogCloser closer;
-
-	// Vistaスタイルのファイルダイアログは現状でテスト不可なので無効化する
-	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
 	// 設定を元に戻す
 	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+}
+
+/*!
+ * ファイルを開くダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgOpenFile001)
+{
+	// Vistaスタイルのファイルダイアログを有効にする
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+
+	// 表示されたモーダルダイアログを閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 }
 
 /*!
