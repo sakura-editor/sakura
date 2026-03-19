@@ -289,12 +289,12 @@ TEST_F(CSakuraEnvironmentTest, GetDlgInitialDir001)
 
 	pcEditDoc->m_cDocFile.SetFilePath(L"");
 
-#ifdef _DEBUG
-
+	// 不正な値を入れて例外発生をチェックする
 	GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir = EOpenDialogDir(3);
-	EXPECT_DEATH( { CSakuraEnvironment::GetDlgInitialDir(isControlProcess); }, "" );	// 👈バグです。設定ファイルに異常な値が入れてGetDlgInitialDirを呼ぶとクラッシュします。
+	EXPECT_ANY_THROW(CSakuraEnvironment::GetDlgInitialDir(isControlProcess));
 
-#endif // ifdef _DEBUG
+	// 設定を元に戻しておく
+	GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
 }
 
 /*!
