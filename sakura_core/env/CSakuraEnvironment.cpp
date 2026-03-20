@@ -747,8 +747,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 		}
 		break;
 	default:
-		assert(0);
-		return L"";
+		throw std::out_of_range(std::format("Invalid eOpenDialogDir value({})", int(eOpenDialogDir)));
 	}
 }
 

@@ -58,6 +58,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp">
       <Filter>Other Files\window</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\window\UiaTestSuite.cpp">
+      <Filter>Other Files\window</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -235,6 +238,9 @@
       <Filter>Other Files\env</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp">
+      <Filter>Other Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\window\UiaTestSuite.hpp">
       <Filter>Other Files\window</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp">
