@@ -673,7 +673,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		}
 		int select_col_keta = (Int)select_col / (Int)pView->GetTextMetrics().GetLayoutXDefault();
 		auto_sprintf( msg, L"%d col (%dpx) * %d lines selected.",
-			select_col_keta, int(select_col), int(select_line) );
+			select_col_keta, select_col, select_line );
 	}
 	else {
 		//	通常の選択では選択範囲の中身を数える
@@ -819,10 +819,9 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		auto_sprintf( msg, L"%d %s (%d lines) selected. [%d:%d]-[%d:%d]",
 			select_sum,
 			( bCountByByte ? L"bytes" : L"chars" ),
-			int(select_line),
-			int(m_sSelect.GetFrom().x), int(m_sSelect.GetFrom().y),
-			int(m_sSelect.GetTo().x), int(m_sSelect.GetTo().y)
-		);
+			select_line,
+			m_sSelect.GetFrom().x, m_sSelect.GetFrom().y,
+			m_sSelect.GetTo().x, m_sSelect.GetTo().y );
 #else
 		auto_sprintf( msg, L"%d %s (%d lines) selected.", select_sum, ( bCountByByte ? L"bytes" : L"chars" ), select_line );
 #endif

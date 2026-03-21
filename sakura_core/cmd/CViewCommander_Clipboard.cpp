@@ -923,12 +923,12 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 							cmemClip.AppendNativeData(cmemNullLine);
 						}
 					}else{
-						const auto ret = ::swprintf_s(szLineNum, szLineFormat, int(nLineNum) + 1);
+						int ret = _swprintf(szLineNum, szLineFormat, nLineNum + 1);
 						cmemClip.AppendString(szLineNum, ret);
 					}
 				}else{
 					if( bLineNumLayout || pcLayout->GetLogicOffset() == 0 ){
-						const auto ret = ::swprintf_s(szLineNum, szLineFormat, int(nLayoutLineNum) + 1);
+						int ret = _swprintf(szLineNum, szLineFormat, nLayoutLineNum + 1);
 						cmemClip.AppendString(szLineNum, ret);
 					}
 				}
@@ -1144,7 +1144,7 @@ void CViewCommander::Command_COPYTAG( void )
 		GetDocument()->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptColLine );
 
 		/* クリップボードにデータを設定 */
-		std::wstring buffer = strprintf(L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), int(ptColLine.y) + 1, int(ptColLine.x) + 1);
+		std::wstring buffer = strprintf(L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
 		m_pCommanderView->MySetClipboardData(buffer.c_str(), buffer.length(), false);
 	}
 	else{
