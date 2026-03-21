@@ -179,7 +179,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		if( point.x == -1 ){
 			cmemChar.SetString(LS(STR_ERR_CSHAREDATA22));
 		}else{
-			auto_sprintf( szLineNum, L"%d", (int)((Int)point.x) + 1 );
+			auto_sprintf( szLineNum, L"%d", int(point.x) + 1 );
 			wcscat( szLineNum, LS(STR_DLGFNCLST_LIST_COL) );
 			CUnicode().UnicodeToHex( cmemChar.GetStringPtr(), cmemChar.GetStringLength(),
 				szCharCode, &GetDllShareData().m_Common.m_sStatusbar );

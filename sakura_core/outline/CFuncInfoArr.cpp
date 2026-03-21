@@ -98,8 +98,8 @@ void CFuncInfoArr::DUMP( void )
 	MYTRACE( L"=============================\n" );
 	for( i = 0; i < GetNum(); i++ ){
 		MYTRACE( L"[%d]------------------\n", i );
-		MYTRACE( L"m_nFuncLineCRLF	=%d\n", m_funcInfoArr[i]->m_nFuncLineCRLF );
-		MYTRACE( L"m_nFuncLineLAYOUT	=%d\n", m_funcInfoArr[i]->m_nFuncLineLAYOUT );
+		MYTRACE( L"m_nFuncLineCRLF\t\t=%d\n", int(m_funcInfoArr[i]->m_nFuncLineCRLF) );
+		MYTRACE( L"m_nFuncLineLAYOUT\t=%d\n", int(m_funcInfoArr[i]->m_nFuncLineLAYOUT) );
 		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_funcInfoArr[i]->m_cmemFuncName.GetStringPtr() );
 		MYTRACE( L"m_cmemFileName	=[%s]\n",
 			(m_funcInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_funcInfoArr[i]->m_cmemFileName.GetStringPtr() : L"NULL") );

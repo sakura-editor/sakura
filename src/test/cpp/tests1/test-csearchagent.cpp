@@ -7,6 +7,8 @@
 #include "pch.h"
 #include "agent/CSaveAgent.h"
 
+#include "cmd/COpeBlk.h"
+
 #include <array>
 #include <initializer_list>
 #include <string_view>
@@ -46,6 +48,42 @@ COpeLineData MakeOpeLineData(std::initializer_list<RawLineData> lines)
 	return data;
 }
 
+}
+
+TEST(CDeleteOpe, Dump001)
+{
+	CDeleteOpe ope;
+
+	// 呼ぶだけ
+	ope.DUMP();
+}
+
+TEST(CInsertOpe, Dump001)
+{
+	CInsertOpe ope;
+
+	// 呼ぶだけ
+	ope.DUMP();
+}
+
+TEST(COpeBlk, AppendOpe001)
+{
+	COpeBlk blk;
+
+	auto pOpe = new CReplaceOpe();
+	pOpe->m_ptCaretPos_PHY_Before = CLogicPoint(0, 1);
+	pOpe->m_ptCaretPos_PHY_After = CLogicPoint(0, 1);
+	blk.AppendOpe(pOpe);
+
+	// 呼ぶだけ
+	blk.DUMP();
+}
+
+TEST(COpeBlk, AppendOpe101)
+{
+	COpeBlk blk;
+	auto pOpe = new CMoveCaretOpe();
+	blk.AppendOpe(pOpe);
 }
 
 /*!

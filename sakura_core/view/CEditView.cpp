@@ -1951,7 +1951,7 @@ bool CEditView::GetSelectedData(
 				buffer->Append( pszQuote, quoteLen );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
-				auto lineNumLen = auto_sprintf( pszLineNum, L" %d:" , nLineNum + 1 );
+				const auto lineNumLen = auto_sprintf( pszLineNum, L" %d:", int(nLineNum) + 1 );
 				buffer->Append( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
 				buffer->Append( pszLineNum, (size_t)lineNumLen );
 			}
