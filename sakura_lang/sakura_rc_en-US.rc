@@ -1366,7 +1366,7 @@ BEGIN
     CONTROL         "&Sec",IDC_CHECK_BACKUP_SEC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,205,132,33,10
     LTEXT           "",IDC_STATIC,12,60,271,83,NOT WS_VISIBLE
     CONTROL         "Use date/time when saving file",IDC_RADIO_BACKUP_DATETYPE1A,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,12,104,111,10
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,104,111,10
     CONTROL         "Use date/time from previous file update",IDC_RADIO_BACKUP_DATETYPE2A,
                     "Button",BS_AUTORADIOBUTTON,12,118,149,10
     LTEXT           "$x : x-th folder above's name (x=0-9)\r* : Extension\r%Y/%m/%d : YMD %y (2 dig. year) \r%H:%M:%S: HMS   \r%% : '%' symbol\r",IDC_LABEL_BACKUP_HELP2,165,75,115,50,SS_SUNKEN
