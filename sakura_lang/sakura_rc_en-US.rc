@@ -1346,7 +1346,7 @@ BEGIN
     CONTROL         "Create bac&kup during save",IDC_CHECK_BACKUP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,16,136,10
     CONTROL         "Det&ailed Settings",IDC_CHECK_BACKUP_ADVANCED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,32,79,10
     EDITTEXT        IDC_EDIT_BACKUPFILE,24,44,255,13,ES_AUTOHSCROLL
-    CONTROL         "Save once as .&bak",IDC_RADIO_BACKUP_TYPE1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,12,66,142,10
+    CONTROL         "Save once as .&bak",IDC_RADIO_BACKUP_TYPE1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,66,142,10
     CONTROL         "Save repeatedly as (.b00～b98)(&G)",IDC_RADIO_BACKUP_TYPE3,
                     "Button",BS_AUTORADIOBUTTON,12,80,156,10
     CONTROL         "App&end backup date/time to file name",IDC_RADIO_BACKUP_DATETYPE1,
