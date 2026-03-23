@@ -215,6 +215,8 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 
 namespace env {
 
+using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+
 /*!
  * @brief トップメニュー項目の機能ID
  *
@@ -2000,6 +2002,35 @@ TEST_F(CShareDataTest, BeReloadWhenExecuteMacro101)
 TEST_F(CShareDataTest, BeReloadWhenExecuteMacro102)
 {
 	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(MAX_CUSTMACRO), IsFalse()); // 👈バグです。インデックスに上限を上回る値を指定したときに、範囲外アクセスしています。
+}
+
+TEST_F(CShareDataTest, CShareDataLockCounter001)
+{
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const auto hWndDummy = ::CreateWindowExW(0, WC_STATIC, L"ダミーウインドウ", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+
+	WindowHolder windowHolder{ hWndDummy };
+
+	auto& shareData = GetDllShareData();
+
+	// 最初にロックする
+	shareData.m_nLockCount = 1;
+
+	EXPECT_THAT(CShareDataLockCounter::GetLockCounter(), shareData.m_nLockCount);
+
+	// 別スレッドでロック解除する
+	std::jthread t([&shareData] {
+		// WaitLockでダイアログを表示するまで2000mxなので、少し余裕を持って2500ms待つ
+		::Sleep(2500);
+
+		shareData.m_nLockCount = 0;	// ロック解除
+	});
+
+	// ロック解除待ちを実行する
+	CShareDataLockCounter* pLock = nullptr;
+	CShareDataLockCounter::WaitLock(hWndDummy, &pLock);
+
+	delete pLock;	// ここの設計は見直すべき。
 }
 
 } // namespace env
