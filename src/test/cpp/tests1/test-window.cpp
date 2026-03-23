@@ -486,7 +486,7 @@ TEST_F(EditWndTest, ShowDlgGrepReplace001)
 }
 
 /*!
- * 指定行へのジャンプダイアログの表示テスト
+ * 1行入力ダイアログの表示テスト
  */
 TEST_F(EditWndTest, ShowDlgInputBox001)
 {
@@ -501,7 +501,7 @@ TEST_F(EditWndTest, ShowDlgInputBox001)
 }
 
 /*!
- * Grep置換ダイアログの表示テスト
+ * 指定行へジャンプダイアログの表示テスト
  */
 TEST_F(EditWndTest, ShowDlgJump001)
 {
