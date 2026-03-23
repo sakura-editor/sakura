@@ -340,17 +340,6 @@ TEST_F(EditWndTest, ShowDlgFuncList001)
 }
 
 /*!
- * 補完ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgHokan001)
-{
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	pcEditWnd->m_cHokanMgr.CloseDialog(0);
-}
-
-/*!
  * 置換ダイアログの表示テスト
  */
 TEST_F(EditWndTest, ShowDlgReplace001)
@@ -759,6 +748,31 @@ TEST_F(EditWndTest, ShowDlgWindowList001)
 	CDlgWindowList cDlgWindowList;
 	const auto hWnd = pcEditWnd->GetHwnd();
 	cDlgWindowList.DoModal(unusedArg1, hWnd, 0);
+}
+
+/*!
+ * 補完ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowHokanMgr001)
+{
+	// データなしだとスカる
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	// とりあえずデータを入れる
+	const auto& text = L"test\n\ntes";
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_ADDTAIL_W, false, LPARAM(std::data(text)), LPARAM(std::size(text)), 0L, 0L);
+
+	// キャレットを強引に移動させる
+	auto& cCaret = pcEditWnd->GetActiveView().GetCaret();
+	cCaret.SetCaretLayoutPos(CLayoutPoint(15, 2));
+	cCaret.SetCaretLogicPos(CLogicPoint(3, 2));
+
+	// データありで補完実行
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cHokanMgr.CloseDialog(0);
 }
 
 /*!
