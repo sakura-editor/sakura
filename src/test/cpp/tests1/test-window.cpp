@@ -743,7 +743,10 @@ TEST_F(EditWndTest, ShowDlgWinSize101)
 TEST_F(EditWndTest, ShowDlgWindowList101)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	dialog::ModalDialogCloser closer([](HWND hWndDlg){
+		// キャンセルボタンが存在しないので強制的に閉じる
+		::EndDialog(hWndDlg, 0);
+	});
 
 	CDlgWindowList cDlgWindowList;
 	const auto hWnd = pcEditWnd->GetHwnd();
