@@ -353,9 +353,9 @@ TEST_F(EditWndTest, ShowDlgReplace001)
 /*!
  * バージョン情報ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgAbout001)
+TEST_F(EditWndTest, ShowDlgAbout101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"About()"), IsTrue());
@@ -365,9 +365,9 @@ TEST_F(EditWndTest, ShowDlgAbout001)
 /*!
  * ファイル比較ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgCompare001)
+TEST_F(EditWndTest, ShowDlgCompare101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgCompare cDlgCompare;
@@ -380,9 +380,9 @@ TEST_F(EditWndTest, ShowDlgCompare001)
 /*!
  * コントロールコード入力ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgCtrlCode001)
+TEST_F(EditWndTest, ShowDlgCtrlCode101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"CtrlCodeDialog()"), IsTrue());
@@ -392,9 +392,9 @@ TEST_F(EditWndTest, ShowDlgCtrlCode001)
 /*!
  * Diff差分ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgDiff001)
+TEST_F(EditWndTest, ShowDlgDiff101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"DiffDialog()"), IsTrue());
@@ -404,9 +404,9 @@ TEST_F(EditWndTest, ShowDlgDiff001)
 /*!
  * 外部コマンド実行ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgExec001)
+TEST_F(EditWndTest, ShowDlgExec101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ExecCommandDialog()"), IsTrue());
@@ -416,9 +416,9 @@ TEST_F(EditWndTest, ShowDlgExec001)
 /*!
  * 履歴とお気に入りの管理ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgFavorite001)
+TEST_F(EditWndTest, ShowDlgFavorite101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionFavorite()"), IsTrue());
@@ -428,9 +428,9 @@ TEST_F(EditWndTest, ShowDlgFavorite001)
 /*!
  * ファイルツリーダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgFileTree001)
+TEST_F(EditWndTest, ShowDlgFileTree101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgFileTree cDlgFileTree;
@@ -442,9 +442,9 @@ TEST_F(EditWndTest, ShowDlgFileTree001)
 /*!
  * 更新通知及び確認ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgFileUpdateQuery001 )
+TEST_F(EditWndTest, ShowDlgFileUpdateQuery101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgFileUpdateQuery cDlgFileUpdateQuery(L"", false);
@@ -455,9 +455,9 @@ TEST_F(EditWndTest, ShowDlgFileUpdateQuery001 )
 /*!
  * Grepダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgGrep001)
+TEST_F(EditWndTest, ShowDlgGrep101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP_DIALOG, true, 0, 0, 0, 0);
@@ -466,9 +466,9 @@ TEST_F(EditWndTest, ShowDlgGrep001)
 /*!
  * Grep置換ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgGrepReplace001)
+TEST_F(EditWndTest, ShowDlgGrepReplace101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP_REPLACE_DLG, true, 0, 0, 0, 0);
@@ -477,9 +477,9 @@ TEST_F(EditWndTest, ShowDlgGrepReplace001)
 /*!
  * 1行入力ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgInputBox001)
+TEST_F(EditWndTest, ShowDlgInputBox101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	// マクロ関数を呼ぶためにWSHマクロマネージャーを使う
@@ -492,9 +492,9 @@ TEST_F(EditWndTest, ShowDlgInputBox001)
 /*!
  * 指定行へジャンプダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgJump001)
+TEST_F(EditWndTest, ShowDlgJump101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_JUMP_DIALOG, true, 0, 0, 0, 0);
@@ -503,9 +503,9 @@ TEST_F(EditWndTest, ShowDlgJump001)
 /*!
  * 強調キーワード選択ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgKeywordSelect001)
+TEST_F(EditWndTest, ShowDlgKeywordSelect101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgKeywordSelect cDlgKeywordSelect;
@@ -517,12 +517,12 @@ TEST_F(EditWndTest, ShowDlgKeywordSelect001)
 /*!
  * ファイルを開くダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgOpenFileLegacy001)
+TEST_F(EditWndTest, ShowDlgOpenFileLegacy101)
 {
 	// Vistaスタイルのファイルダイアログを無効にする
 	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
 
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
@@ -535,12 +535,12 @@ TEST_F(EditWndTest, ShowDlgOpenFileLegacy001)
 /*!
  * ファイルを開くダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgOpenFile001)
+TEST_F(EditWndTest, ShowDlgOpenFile101)
 {
 	// Vistaスタイルのファイルダイアログを有効にする
 	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
 
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
@@ -574,7 +574,7 @@ TEST_F(EditWndTest, ShowDlgPluginOption001)
 	// プラグイン読み込み
 	CPluginManager::getInstance()->LoadAllPlugin();
 
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgPluginOption cDlgPluginOption;
@@ -595,9 +595,9 @@ TEST_F(EditWndTest, ShowDlgPluginOption001)
 /*!
  * 印刷設定ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgPrintSetting001)
+TEST_F(EditWndTest, ShowDlgPrintSetting101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgPrintSetting cDlgPrintSetting;
@@ -610,9 +610,9 @@ TEST_F(EditWndTest, ShowDlgPrintSetting001)
 /*!
  * プロファイルマネージャーダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgProfileMgr001)
+TEST_F(EditWndTest, ShowDlgProfileMgr101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	// プロファイルマネージャーを表示するには、CCommandLineのインスタンスが必要。	👈バグです。
@@ -624,9 +624,9 @@ TEST_F(EditWndTest, ShowDlgProfileMgr001)
 /*!
  * プロパティ情報ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgProperty001)
+TEST_F(EditWndTest, ShowDlgProperty101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"PropertyFile()"), IsTrue());
@@ -636,9 +636,9 @@ TEST_F(EditWndTest, ShowDlgProperty001)
 /*!
  * 文字色／背景色統一ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgSameColor001)
+TEST_F(EditWndTest, ShowDlgSameColor101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgSameColor cDlgSameColor;
@@ -653,9 +653,9 @@ TEST_F(EditWndTest, ShowDlgSameColor001)
 /*!
  * 文字コードセット設定ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgSetCharSet001)
+TEST_F(EditWndTest, ShowDlgSetCharSet101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ChgCharSet(99, 0)"), IsTrue());
@@ -665,9 +665,9 @@ TEST_F(EditWndTest, ShowDlgSetCharSet001)
 /*!
  * タグジャンプダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgTagJumpList001)
+TEST_F(EditWndTest, ShowDlgTagJumpList101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	bool bDirectTagJump = false;
@@ -679,9 +679,9 @@ TEST_F(EditWndTest, ShowDlgTagJumpList001)
 /*!
  * タグファイル作成ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgTagsMake001)
+TEST_F(EditWndTest, ShowDlgTagsMake101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgTagsMake cDlgTagsMake;
@@ -695,9 +695,9 @@ TEST_F(EditWndTest, ShowDlgTagsMake001)
 /*!
  * タイプ別設定インポート確認ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgTypeAscertain001)
+TEST_F(EditWndTest, ShowDlgTypeAscertain101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgTypeAscertain cDlgTypeAscertain;
@@ -709,9 +709,9 @@ TEST_F(EditWndTest, ShowDlgTypeAscertain001)
 /*!
  * ファイルタイプ一覧ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgTypeList001)
+TEST_F(EditWndTest, ShowDlgTypeList101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgTypeList cDlgTypeList;
@@ -723,9 +723,9 @@ TEST_F(EditWndTest, ShowDlgTypeList001)
 /*!
  * ウインドウサイズダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgWinSize001)
+TEST_F(EditWndTest, ShowDlgWinSize101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgWinSize cDlgWinSize;
@@ -740,9 +740,9 @@ TEST_F(EditWndTest, ShowDlgWinSize001)
 /*!
  * ウインドウ一覧ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgWindowList001)
+TEST_F(EditWndTest, ShowDlgWindowList101)
 {
-	// 表示されたモーダルダイアログを閉じるようにする
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
 	dialog::ModalDialogCloser closer;
 
 	CDlgWindowList cDlgWindowList;

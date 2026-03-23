@@ -33,7 +33,8 @@ LRESULT CALLBACK ModalDialogCloser::CBTProc(
 		hWnd = std::bit_cast<HWND>(wParam);
 	}
 	else if (HCBT_ACTIVATE == nCode && hWnd == std::bit_cast<HWND>(wParam)) {
-		::EndDialog(hWnd, FALSE); // サクラエディタの独自仕様で「キャンセルで閉じる」の意。
+		auto pThis = getInstance();
+		pThis->m_Action(hWnd);
 	}
 	else if (HCBT_DESTROYWND == nCode && hWnd == std::bit_cast<HWND>(wParam)) {
 		hWnd = nullptr;
@@ -42,9 +43,20 @@ LRESULT CALLBACK ModalDialogCloser::CBTProc(
 	return ::CallNextHookEx(gm_CbtHook, nCode, wParam, lParam);
 }
 
-ModalDialogCloser::ModalDialogCloser() noexcept
+/* static */ void ModalDialogCloser::CloseDialogByCancel(HWND hWndDlg)
+{
+	::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDCANCEL, BN_CLICKED), 0);
+}
+
+ModalDialogCloser::ModalDialogCloser(const std::function<void(HWND)>& action) noexcept
+	: m_Action(action)
 {
 	gm_CbtHook = ::SetWindowsHookExW(WH_CBT, &CBTProc, nullptr, ::GetCurrentThreadId());
+}
+
+ModalDialogCloser::ModalDialogCloser() noexcept
+	: ModalDialogCloser(&CloseDialogByCancel)
+{
 }
 
 ModalDialogCloser::~ModalDialogCloser() noexcept
