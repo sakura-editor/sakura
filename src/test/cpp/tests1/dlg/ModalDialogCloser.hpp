@@ -7,15 +7,18 @@
 #pragma once
 
 #include "cxx/ResourceHolder.hpp"
+#include "util/design_template.h"
+
+#include <functional>
 
 namespace dialog {
 
 /*!
  * モーダルダイアログテスト用のクラス
  *
- * WindowsHookを使ってダイアログの初期表示を検出し自動的に閉じるようにするもの。
+ * WindowsHookを使ってダイアログの初期表示を検出して閉じるようにするもの。
  */
-struct ModalDialogCloser final {
+struct ModalDialogCloser final : public TSingleInstance<ModalDialogCloser> {
 	using CbtHookHolder = cxx::ResourceHolder<&::UnhookWindowsHookEx>;
 
 	using Me = ModalDialogCloser;
@@ -32,10 +35,16 @@ struct ModalDialogCloser final {
 		_In_ LPARAM lParam
 	);
 
+	static void CloseDialogByCancel(HWND hWndDlg);
+
 	ModalDialogCloser() noexcept;
-	ModalDialogCloser( const Me& ) = delete;
+	explicit ModalDialogCloser(const std::function<void(HWND)>& action) noexcept;
+	ModalDialogCloser(const Me&) = delete;
 	Me& operator=(const Me&) = delete;
-	~ModalDialogCloser() noexcept;
+	~ModalDialogCloser() noexcept override;
+
+private:
+	std::function<void(HWND)> m_Action;
 };
 
 } // namespace dialog
