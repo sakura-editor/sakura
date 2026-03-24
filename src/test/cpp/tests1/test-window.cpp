@@ -309,7 +309,7 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	std::jthread StartWindowCloser(std::wstring_view dialogTitle) const
 	{
 		return StartWindowCloser(dialogTitle, [this] (HWND hWndFound) {
-			EmulateInvokeButton(hWndFound, L"キャンセル");
+			EmulateInvokeButton(hWndFound, L"OK");
 		});
 	}
 
