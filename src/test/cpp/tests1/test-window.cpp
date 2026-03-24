@@ -314,6 +314,22 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 			EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 		}
 	}
+
+	/*!
+	 * タイプ別設定プロパティーシートを表示する
+	 */
+	void ShowPropType(const std::optional<PropTypeSheetOrder>& optPageNum = std::nullopt, const std::optional<CTypeConfig>& optDocType = std::nullopt) const
+	{
+		// シート番号の指定がある場合
+		if (optPageNum.has_value()) {
+			CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(optPageNum.value()), optDocType.value_or(GetDocument()->m_cDocType.GetDocumentType()));
+		}
+		// シート番号の指定がない場合
+		else {
+			EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionType()"), IsTrue());
+			EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+		}
+	}
 };
 
 /*!
@@ -1011,8 +1027,7 @@ TEST_F(EditWndTest, ShowPropType001)
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
 
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionType()"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+	ShowPropType();
 }
 
 /*!
@@ -1023,7 +1038,7 @@ TEST_F(EditWndTest, ShowPropType002)
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
 
-	CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(ID_PROPTYPE_PAGENUM_SCREEN), GetDocument()->m_cDocType.GetDocumentType());
+	ShowPropType(ID_PROPTYPE_PAGENUM_SCREEN);
 }
 
 /*!
@@ -1034,7 +1049,7 @@ TEST_F(EditWndTest, ShowPropType003)
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
 
-	CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(ID_PROPTYPE_PAGENUM_COLOR), GetDocument()->m_cDocType.GetDocumentType());
+	ShowPropType(ID_PROPTYPE_PAGENUM_COLOR);
 }
 
 /*!
@@ -1045,7 +1060,7 @@ TEST_F(EditWndTest, ShowPropType004)
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
 
-	CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(ID_PROPTYPE_PAGENUM_WINDOW), GetDocument()->m_cDocType.GetDocumentType());
+	ShowPropType(ID_PROPTYPE_PAGENUM_WINDOW);
 }
 
 /*!
@@ -1056,7 +1071,7 @@ TEST_F(EditWndTest, ShowPropType005)
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
 
-	CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(ID_PROPTYPE_PAGENUM_SUPPORT), GetDocument()->m_cDocType.GetDocumentType());
+	ShowPropType(ID_PROPTYPE_PAGENUM_SUPPORT);
 }
 
 /*!
@@ -1067,7 +1082,7 @@ TEST_F(EditWndTest, ShowPropType006)
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
 
-	CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(ID_PROPTYPE_PAGENUM_REGEX), GetDocument()->m_cDocType.GetDocumentType());
+	ShowPropType(ID_PROPTYPE_PAGENUM_REGEX);
 }
 
 /*!
@@ -1078,7 +1093,7 @@ TEST_F(EditWndTest, ShowPropType007)
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
 
-	CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(ID_PROPTYPE_PAGENUM_KEYHELP), GetDocument()->m_cDocType.GetDocumentType());
+	ShowPropType(ID_PROPTYPE_PAGENUM_KEYHELP);
 }
 
 /*!
