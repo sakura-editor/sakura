@@ -289,12 +289,26 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 * ダイアログを閉じるスレッドを開始する
 	 *
 	 * @param dialogTitle タイトル
+	 * @param action 閉じるアクション
 	 * @return ダイアログを閉じるためのスレッド
 	 */
-	std::jthread StartWindowCloser(std::wstring_view dialogTitle)
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle, const std::function<void(HWND)>& action) const
 	{
-		return std::jthread([this, title = std::wstring(dialogTitle)] {
+		return std::jthread([this, title = std::wstring(dialogTitle), action] {
 			const auto hWndFound = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title);
+			action(hWndFound);
+		});
+	}
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle) const
+	{
+		return StartWindowCloser(dialogTitle, [this] (HWND hWndFound) {
 			EmulateInvokeButton(hWndFound, L"キャンセル");
 		});
 	}
