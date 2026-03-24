@@ -298,6 +298,22 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 			EmulateInvokeButton(hWndFound, L"キャンセル");
 		});
 	}
+
+	/*!
+	 * 共通設定プロパティーシートを表示する
+	 */
+	void ShowPropCommon(const std::optional<PropComSheetOrder>& optPageNum = std::nullopt) const
+	{
+		// シート番号の指定がある場合
+		if (optPageNum.has_value()) {
+			CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(optPageNum.value()));
+		}
+		// シート番号の指定がない場合
+		else {
+			EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionCommon()"), IsTrue());
+			EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+		}
+	}
 };
 
 /*!
@@ -786,8 +802,7 @@ TEST_F(EditWndTest, ShowPropCommon001)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionCommon()"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+	ShowPropCommon();
 }
 
 /*!
@@ -798,7 +813,7 @@ TEST_F(EditWndTest, ShowPropCommon002)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_GENERAL));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_GENERAL);
 }
 
 /*!
@@ -809,7 +824,7 @@ TEST_F(EditWndTest, ShowPropCommon003)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_WIN));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_WIN);
 }
 
 /*!
@@ -820,7 +835,7 @@ TEST_F(EditWndTest, ShowPropCommon004)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_MAINMENU));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_MAINMENU);
 }
 
 /*!
@@ -831,7 +846,7 @@ TEST_F(EditWndTest, ShowPropCommon005)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_TOOLBAR));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_TOOLBAR);
 }
 
 /*!
@@ -842,7 +857,7 @@ TEST_F(EditWndTest, ShowPropCommon006)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_TAB));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_TAB);
 }
 
 /*!
@@ -853,7 +868,7 @@ TEST_F(EditWndTest, ShowPropCommon007)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_STATUSBAR));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_STATUSBAR);
 }
 
 /*!
@@ -864,7 +879,7 @@ TEST_F(EditWndTest, ShowPropCommon008)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_EDIT));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_EDIT);
 }
 
 /*!
@@ -875,7 +890,7 @@ TEST_F(EditWndTest, ShowPropCommon009)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_FILE));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_FILE);
 }
 
 /*!
@@ -886,7 +901,7 @@ TEST_F(EditWndTest, ShowPropCommon010)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_FILENAME));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_FILENAME);
 }
 
 /*!
@@ -897,7 +912,7 @@ TEST_F(EditWndTest, ShowPropCommon011)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_BACKUP));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_BACKUP);
 }
 
 /*!
@@ -908,7 +923,7 @@ TEST_F(EditWndTest, ShowPropCommon012)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_FORMAT));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_FORMAT);
 }
 
 /*!
@@ -919,7 +934,7 @@ TEST_F(EditWndTest, ShowPropCommon013)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_GREP));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_GREP);
 }
 
 /*!
@@ -930,7 +945,7 @@ TEST_F(EditWndTest, ShowPropCommon014)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_KEYBOARD));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYBOARD);
 }
 
 /*!
@@ -941,7 +956,7 @@ TEST_F(EditWndTest, ShowPropCommon015)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_CUSTMENU));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_CUSTMENU);
 }
 
 /*!
@@ -952,7 +967,7 @@ TEST_F(EditWndTest, ShowPropCommon016)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_KEYWORD));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYWORD);
 }
 
 /*!
@@ -963,7 +978,7 @@ TEST_F(EditWndTest, ShowPropCommon017)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_HELPER));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_HELPER);
 }
 
 /*!
@@ -974,7 +989,7 @@ TEST_F(EditWndTest, ShowPropCommon018)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_MACRO));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_MACRO);
 }
 
 /*!
@@ -985,7 +1000,7 @@ TEST_F(EditWndTest, ShowPropCommon019)
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
 
-	CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(ID_PROPCOM_PAGENUM_PLUGIN));
+	ShowPropCommon(ID_PROPCOM_PAGENUM_PLUGIN);
 }
 
 /*!
