@@ -20,6 +20,9 @@ namespace window {
 	if (FAILED(::OleInitialize(nullptr)))
 		FAIL();
 
+	// 言語環境を初期化する
+	CSelectLang::InitializeLanguageEnvironment();
+
 	SetUpShareData();
 
 	// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
