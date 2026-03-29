@@ -1087,10 +1087,7 @@ LRESULT CEditWnd::DispatchEvent(
 	LPHELPINFO			lphi;
 
 	UINT				idCtl;	/* コントロールのID */
-	MEASUREITEMSTRUCT*	lpmis;
 	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
-	int					nItemWidth;
-	int					nItemHeight;
 	UINT				uItem;
 	LRESULT				lRes;
 	CTypeConfig			cTypeNew;
