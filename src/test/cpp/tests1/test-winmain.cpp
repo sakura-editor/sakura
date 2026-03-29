@@ -730,6 +730,33 @@ TEST_P(WinMainTest, runEditorProcess)
 /*!
  * @brief WinMainを起動してみるテスト
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
+ *  アウトプットウインドウを表示する。
+ */
+TEST_P(WinMainTest, OpenDebugWindow001)
+{
+	// テスト用プロファイル名
+	const auto profileName(GetParam());
+
+	// コントロールプロセスを起動する
+	const auto dwControlProcessId = testing::CreateControlProcess(profileName);
+
+	// エディタープロセスを起動する
+	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
+
+	// 編集ウインドウが有効になるのを待って閉じる
+	const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME);
+	testing::RequestForeignWindowClose(hWndFound);
+
+	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+	testing::WaitForForeignProcessExit(ep);
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(profileName, dwControlProcessId);
+}
+
+/*!
+ * @brief WinMainを起動してみるテスト
+ *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  プロファイルマネージャを表示してキャンセルで閉じる。
  */
 TEST_P(WinMainTest, ShowDlgProfileMgr101)
