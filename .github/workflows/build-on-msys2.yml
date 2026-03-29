@@ -72,7 +72,7 @@ jobs:
             -ex "bt" \
             -ex "bt full" \
             -ex "info registers" \
-            --args ./tests1.exe
+            --args ./tests1.exe --gtest_repeat=100 --gtest_throw_on_failure
 
       - name: Mark workflow failed when unit tests fail
         if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
