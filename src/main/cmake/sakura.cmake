@@ -454,6 +454,7 @@ target_link_libraries(sakura_core
   PUBLIC
     darkmode
     comctl32
+    dbghelp
     dwmapi
     htmlhelp
     imm32

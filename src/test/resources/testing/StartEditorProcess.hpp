@@ -6,10 +6,15 @@
  */
 #pragma once
 
+// MSVCデバッグビルド専用コードを隔離するためのCマクロ
+#if defined(_MSC_VER) && defined(_DEBUG)
+#define USE_STACK_TRACE
+#endif
+
 namespace testing {
 
 /*!
- * テストコード専用wWinMain呼出のラッパー関数
+ * @brief テストコード専用wWinMain呼出のラッパー関数
  *
  * 単体テストから wWinMain を呼び出すためのラッパー関数です。
  *
@@ -21,5 +26,12 @@ namespace testing {
  * コントロールプロセスが終了する前に他のテストが実行されると期待した動作にならない場合があります。
  */
 int StartEditorProcess(const std::wstring& commandLine);
+
+/*!
+ * @brief テストコード専用terminateハンドラー
+ *
+ * プロセスがterminateされたときに、スタックトレースを出力する。
+ */
+[[noreturn]] void OnTerminate();
 
 }
