@@ -728,6 +728,27 @@ TEST_P(WinMainTest, runEditorProcess)
 }
 
 /*!
+ * @brief WinMainを起動してみるテスト
+ *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
+ *  プロファイルマネージャを表示してキャンセルで閉じる。
+ */
+TEST_P(WinMainTest, ShowDlgProfileMgr101)
+{
+	// テスト用プロファイル名
+	const auto profileName(GetParam());
+
+	// エディタープロセスを起動する
+	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
+
+	// プロファイルマネージャが表示されるのを待って閉じる
+	const auto hWndDlgProfileMgr = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"プロファイルマネージャ");
+	EmulateInvokeButton(hWndDlgProfileMgr, L"閉じる(X)");
+
+	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+	testing::WaitForForeignProcessExit(ep);
+}
+
+/*!
  * @brief パラメータテストをインスタンス化する
  *  プロファイル指定なしとプロファイル指定ありの2パターンで実体化させる
  */
