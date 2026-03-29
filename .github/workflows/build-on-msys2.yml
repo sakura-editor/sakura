@@ -55,16 +55,12 @@ jobs:
       - name: Run unit tests
         id: run_unit_tests
         continue-on-error: true
-        env:
-          MSYS2_PATH_TYPE: inherit
         shell: msys2 {0}
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
 
       - name: Try gdb backtrace on test failure
         if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
         continue-on-error: true
-        env:
-          MSYS2_PATH_TYPE: inherit
         shell: msys2 {0}
         working-directory: ${{ github.workspace }}/${{ env.BuildPlatform }}/${{ env.Configuration }}
         run: |
