@@ -444,6 +444,15 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 		if (fexist(iniPath)) {
 			std::filesystem::remove(iniPath);
 		}
+
+		// テスト用INIファイル作成
+		// Grepダイアログを日本語で表示させるために設定を入れる
+		constexpr std::array iniLines = {
+			// 全般設定を出力
+			u8"[Common]"sv,
+			u8"szLanguageDll="sv,	// 言語DLLの指定(空にすると日本語になる)
+		};
+		cxx::writeTextFile(iniPath, iniLines);
 	}
 
 	/*!
@@ -524,9 +533,16 @@ TEST_P(WinMainTest, runEditorProcess)
 	// プラグイン定義を展開する
 	extract_zip_resource(IDR_ZIPRES1, pluginPath);
 
+	// ケース独自の設定ファイルを使うので、一旦削除する
+	std::filesystem::remove(iniPath);
+
 	// テスト用INIファイル作成
 	// 標準機能をできるだけ動かすために設定を入れる
 	constexpr std::array iniLines = {
+		// 全般設定を出力
+		u8"[Common]"sv,
+		u8"szLanguageDll="sv,	// 言語DLLの指定(空にすると日本語になる)
+
 		// ツールバー設定を出力
 		u8"[Toolbar]"sv,
 		u8"bToolBarIsFlat=1"sv,
@@ -802,7 +818,7 @@ TEST_P(WinMainTest, OpenDebugWindow001)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  Grepダイアログを表示してキャンセルで閉じる。
  */
-TEST_P(WinMainTest, DISABLED_ShowDlgGrep101)
+TEST_P(WinMainTest, ShowDlgGrep101)
 {
 	// テスト用プロファイル名
 	const auto profileName(GetParam());
