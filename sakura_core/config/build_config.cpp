@@ -1,12 +1,14 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "build_config.h"
-#include <stdlib.h> //malloc,free
+#include "config/build_config.h"
+
+// MSVCデバッグビルドではデフォルトで確保した領域にゴミが入るため、自前定義不要。
+#if 0
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
@@ -48,3 +50,5 @@ void* operator new[](size_t const size,
 	return p;
 }
 #endif
+
+#endif // if 0
