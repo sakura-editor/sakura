@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -36,10 +36,15 @@
 //! USE_UNFIXED_FONT を定義すると、フォント選択ダイアログで等幅フォント以外も選べるようになる
 //#define USE_UNFIXED_FONT
 
+// MSVCデバッグビルドではデフォルトで確保した領域にゴミが入るため、自前定義不要。
+#if 0
+
 //newされた領域をわざと汚すかどうか (デバッグ用)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
+
+#endif // if 0
 
 //crtdbg.hによるメモリリークチェックを使うかどうか (デバッグ用)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -52,6 +57,8 @@
 //#define NEW_ZENSPACE //新しい描画ルーチン (全角スペースを破線矩形で描画) を採用
 
 // -- -- -- -- ↑以上、ビルド設定完了 -- -- -- -- //
+
+#if 0
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
@@ -67,6 +74,8 @@
 		int const    line_number
 		);
 #endif
+
+#endif // if 0
 
 //crtdbg.hによるメモリリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
