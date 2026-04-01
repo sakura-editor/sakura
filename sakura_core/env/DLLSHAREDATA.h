@@ -47,18 +47,22 @@ struct SShare_WorkBuffer{
 	//2007.09.16 kobake char型だと、常に文字列であるという誤解を招くので、BYTE型に変更。変数名も変更。
 	//           UNICODE版では、余分に領域を使うことが予想されるため、ANSI版の2倍確保。
 private:
-	BYTE				m_pWork[32000*sizeof(WCHAR)];
-public:
-	template <class T>
-	T* GetWorkBuffer(){ return reinterpret_cast<T*>(m_pWork); }
-
-	template <class T>
-	size_t GetWorkBufferCount(){ return sizeof(m_pWork)/sizeof(T); }
+	using SWorkBuffer = StaticString<32000>;
+	SWorkBuffer			m_WorkBuffer{};
 
 public:
-	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
-	CLogicPoint			m_LogicPoint;					//!< カーソル位置
-	STypeConfig			m_TypeConfig;
+	template <class T>
+	T* GetWorkBuffer() noexcept { return std::bit_cast<T*>(LPWSTR(m_WorkBuffer)); }
+
+	template <class T>
+	size_t GetWorkBufferCount() const noexcept { return std::size(m_WorkBuffer) * sizeof(WCHAR) / sizeof(T); }
+
+	template <class T>
+	std::span<T> GetBuffer() noexcept { return std::span<T>(GetWorkBuffer<T>(), GetWorkBufferCount<T>()); }
+
+	EditInfo			m_EditInfo_MYWM_GETFILEINFO{};	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
+	CLogicPoint			m_LogicPoint{};					//!< カーソル位置
+	STypeConfig			m_TypeConfig{};
 };
 
 //! 共有ハンドル

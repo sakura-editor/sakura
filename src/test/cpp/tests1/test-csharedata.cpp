@@ -1562,7 +1562,10 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 	EXPECT_THAT(shareData.m_sVersion.m_dwProductVersionMS, MAKELONG(VER_B, VER_A));
 	EXPECT_THAT(shareData.m_sVersion.m_dwProductVersionLS, MAKELONG(VER_D, VER_C));
 
-	// SShare_WorkBuffer m_sWorkBuffer (初期化漏れ)
+	//EXPECT_THAT(shareData.m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO, Eq(EditInfo()));
+	EXPECT_THAT(shareData.m_sWorkBuffer.m_LogicPoint, Eq(CLogicPoint()));
+	//auto pTypeConfig = std::make_unique<STypeConfig>();
+	//EXPECT_THAT(shareData.m_sWorkBuffer.m_TypeConfig, EqSTypeConfig(*pTypeConfig));
 
 	EXPECT_THAT(shareData.m_sFlags.m_bEditWndChanging, IsFalse());
 	EXPECT_THAT(shareData.m_sFlags.m_bRecordingKeyMacro, IsFalse());
@@ -1775,6 +1778,8 @@ TEST_F(CShareDataTest, InitShareData001)
 
 	const auto& shareData = ::GetDllShareData();
 	EXPECT_THAT(shareData, IsInitializedShareData(pszProfileName, isMultiUserSettings, userRootFolder, userSubFolder));
+
+	EXPECT_THAT(::GetDllShareData().m_sWorkBuffer.GetBuffer<WCHAR>(), ::testing::SizeIs(Eq(size_t(32000))));
 }
 
 /*!
