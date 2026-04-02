@@ -384,6 +384,14 @@ TEST(ApiWrap, DlgItemTest001) {
 
 			CTextWidthCalc calc{ hDlg, IDC_COMBO_TEXT };
 			calc.Reset();
+
+			EXPECT_THAT(DpiUnscaleX(DpiScaleX(31)), 31);
+			EXPECT_THAT(DpiUnscaleY(DpiScaleY(31)), 31);
+
+			// 呼ぶだけ
+			RECT rc{ 1, 2, 3, 4 };
+			DpiScaleRect(&rc);
+			DpiUnscaleRect(&rc);
 		}
 	};
 

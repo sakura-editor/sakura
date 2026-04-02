@@ -12,57 +12,51 @@
 #include "cxx/ResourceHolder.hpp"
 
 /*!
-	@brief 画面 DPI スケーリング
-	@note 96 DPI ピクセルを想定しているデザインをどれだけスケーリングするか
+ * @brief 画面 DPI スケーリング
+ * @note 96 DPI ピクセルを想定しているデザインをどれだけスケーリングするか
+ * 
+ * @date 2009.10.01 ryoji 高DPI対応用に作成
+ */
+class CDPI final {
+private:
+	using CDpiHolder = std::unique_ptr<CDPI>;
 
-	@date 2009.10.01 ryoji 高DPI対応用に作成
-*/
-class CDPI{
-	static void Init()
-	{
-		if( !bInitialized )
-		{
-			HDC hDC = GetDC(nullptr);
-			nDpiX = GetDeviceCaps(hDC, LOGPIXELSX);
-			nDpiY = GetDeviceCaps(hDC, LOGPIXELSY);
-			ReleaseDC(nullptr, hDC);
-			bInitialized = true;
-		}
-	}
-	static int nDpiX;
-	static int nDpiY;
-	static bool bInitialized;
+	static constexpr auto DEFAULT_DPI = 96;
+
+	static constexpr auto POINTS_PER_INCH = 72;
+
+	static inline CDpiHolder gm_Instance = nullptr;
+
+	using Me = CDPI;
+
 public:
-	static int ScaleX(int x){Init(); return ::MulDiv(x, nDpiX, 96);}
-	static int ScaleY(int y){Init(); return ::MulDiv(y, nDpiY, 96);}
-	static int UnscaleX(int x){Init(); return ::MulDiv(x, 96, nDpiX);}
-	static int UnscaleY(int y){Init(); return ::MulDiv(y, 96, nDpiY);}
-	static void ScaleRect(LPRECT lprc)
-	{
-		lprc->left = ScaleX(lprc->left);
-		lprc->right = ScaleX(lprc->right);
-		lprc->top = ScaleY(lprc->top);
-		lprc->bottom = ScaleY(lprc->bottom);
-	}
-	static void UnscaleRect(LPRECT lprc)
-	{
-		lprc->left = UnscaleX(lprc->left);
-		lprc->right = UnscaleX(lprc->right);
-		lprc->top = UnscaleY(lprc->top);
-		lprc->bottom = UnscaleY(lprc->bottom);
-	}
-	static int PointsToPixels(int pt, int ptMag = 1){Init(); return ::MulDiv(pt, nDpiY, 72 * ptMag);}	// ptMag: 引数のポイント数にかかっている倍率
-	static int PixelsToPoints(int px, int ptMag = 1){Init(); return ::MulDiv(px * ptMag, 72, nDpiY);}	// ptMag: 戻り値のポイント数にかける倍率
+	static CDPI& Instance();
+
+	CDPI() noexcept;
+
+	LONG ScaleX(LONG x) const noexcept { return ::MulDiv(x, m_DpiX, DEFAULT_DPI); }
+	LONG ScaleY(LONG y) const noexcept { return ::MulDiv(y, m_DpiY, DEFAULT_DPI); }
+	LONG UnscaleX(LONG x) const noexcept { return ::MulDiv(x, DEFAULT_DPI, m_DpiX); }
+	LONG UnscaleY(LONG y) const noexcept { return ::MulDiv(y, DEFAULT_DPI, m_DpiY); }
+	LONG PointsToPixels(LONG pt, LONG ptMag = 1) const noexcept { return ::MulDiv(pt, m_DpiY, POINTS_PER_INCH * ptMag); }	// ptMag: 引数のポイント数にかかっている倍率
+	LONG PixelsToPoints(LONG px, LONG ptMag = 1) const noexcept { return ::MulDiv(px * ptMag, POINTS_PER_INCH, m_DpiY); }	// ptMag: 戻り値のポイント数にかける倍率
+
+	void ScaleRect(LPRECT lprc) const noexcept;
+	void UnscaleRect(LPRECT lprc) const noexcept;
+
+private:
+	LONG m_DpiX = DEFAULT_DPI;
+	LONG m_DpiY = DEFAULT_DPI;
 };
 
-inline int DpiScaleX(int x){return CDPI::ScaleX(x);}
-inline int DpiScaleY(int y){return CDPI::ScaleY(y);}
-inline int DpiUnscaleX(int x){return CDPI::UnscaleX(x);}
-inline int DpiUnscaleY(int y){return CDPI::UnscaleY(y);}
-inline void DpiScaleRect(LPRECT lprc){CDPI::ScaleRect(lprc);}
-inline void DpiUnscaleRect(LPRECT lprc){CDPI::UnscaleRect(lprc);}
-inline int DpiPointsToPixels(int pt, int ptMag = 1){return CDPI::PointsToPixels(pt, ptMag);}
-inline int DpiPixelsToPoints(int px, int ptMag = 1){return CDPI::PixelsToPoints(px, ptMag);}
+LONG	DpiScaleX(LONG x);
+LONG	DpiScaleY(LONG y);
+LONG	DpiUnscaleX(LONG x);
+LONG	DpiUnscaleY(LONG y);
+void	DpiScaleRect(LPRECT lprc);
+void	DpiUnscaleRect(LPRECT lprc);
+LONG	DpiPointsToPixels(LONG pt, LONG ptMag = 1);
+LONG	DpiPixelsToPoints(LONG px, LONG ptMag = 1);
 
 void ActivateFrameWindow(HWND hwnd);	/* アクティブにする */
 

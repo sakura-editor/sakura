@@ -15,9 +15,53 @@
 #include "config/system_constants.h"
 #include <dwmapi.h>	//DwmGetColorizationColor
 
-int CDPI::nDpiX = 96;
-int CDPI::nDpiY = 96;
-bool CDPI::bInitialized = false;
+/*!
+ * @brief CDPIのインスタンスを取得する
+ */
+/* static */ CDPI& CDPI::Instance()
+{
+	if (!gm_Instance) {
+		gm_Instance = std::make_unique<CDPI>();
+	}
+	return *gm_Instance;
+}
+
+/*!
+ * @brief システムDPIから構築する
+ */
+CDPI::CDPI() noexcept
+{
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	MemDcHolder hDC = ::CreateCompatibleDC(nullptr);
+
+	m_DpiX = ::GetDeviceCaps(hDC, LOGPIXELSX);
+	m_DpiY = ::GetDeviceCaps(hDC, LOGPIXELSY);
+}
+
+void CDPI::ScaleRect(LPRECT lprc) const noexcept
+{
+	lprc->left		= ScaleX(lprc->left);
+	lprc->right		= ScaleX(lprc->right);
+	lprc->top		= ScaleY(lprc->top);
+	lprc->bottom	= ScaleY(lprc->bottom);
+}
+
+void CDPI::UnscaleRect(LPRECT lprc) const noexcept
+{
+	lprc->left		= UnscaleX(lprc->left);
+	lprc->right		= UnscaleX(lprc->right);
+	lprc->top		= UnscaleY(lprc->top);
+	lprc->bottom	= UnscaleY(lprc->bottom);
+}
+
+LONG DpiScaleX(LONG x) { return CDPI::Instance().ScaleX(x); }
+LONG DpiScaleY(LONG y) { return CDPI::Instance().ScaleY(y); }
+LONG DpiUnscaleX(LONG x) { return CDPI::Instance().UnscaleX(x); }
+LONG DpiUnscaleY(LONG y) { return CDPI::Instance().UnscaleY(y); }
+void DpiScaleRect(LPRECT lprc) { CDPI::Instance().ScaleRect(lprc); }
+void DpiUnscaleRect(LPRECT lprc) { CDPI::Instance().UnscaleRect(lprc); }
+LONG DpiPointsToPixels(LONG pt, LONG ptMag) { return CDPI::Instance().PointsToPixels(pt, ptMag); }
+LONG DpiPixelsToPoints(LONG px, LONG ptMag) { return CDPI::Instance().PixelsToPoints(px, ptMag); }
 
 /**	指定したウィンドウの祖先のハンドルを取得する
 
