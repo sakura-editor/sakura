@@ -1,13 +1,15 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_
 #define SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_
 #pragma once
+
+#include "cxx/ResourceHolder.hpp"
 
 /*!
 	@brief 画面 DPI スケーリング
@@ -163,36 +165,42 @@ public:
 	[[nodiscard]] HFONT	GetFont() const { return m_hFont; }
 };
 
-class CDCFont
+/*!
+ * @brief 指定したフォントで描画を行うために必要なリソースを管理するクラス
+ *
+ * @note 通常の描画でGetDCを呼び出すシーンはない。
+ * @note このクラスを利用するコードはイレギュラーである可能性が高い。
+ */
+class CDCFont final
 {
+private:
+	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
+	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
+	using WindowDcHolder = cxx::ResourceHolder<&::ReleaseDC>;
+
 	using Me = CDCFont;
 
 public:
-	CDCFont(LOGFONT& font, HWND hwnd = nullptr){
-		m_hwnd = hwnd;
-		m_hDC = ::GetDC(hwnd);
-		m_hFont = ::CreateFontIndirect(&font);
-		m_hFontOld = (HFONT)::SelectObject(m_hDC, m_hFont);
+	explicit CDCFont(const LOGFONT& font, HWND hWnd = nullptr)
+		: m_hDC(hWnd)
+		, m_hFontOld(m_hDC)
+	{
+		m_hDC = ::GetWindowDC( hWnd );
+		m_hFont = ::CreateFontIndirectW(&font);
+		m_hFontOld = ::SelectObject(m_hDC, m_hFont);
 	}
 	CDCFont(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CDCFont(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CDCFont(){
-		if( m_hDC ){
-			::SelectObject(m_hDC, m_hFontOld);
-			::ReleaseDC(m_hwnd, m_hDC);
-			m_hDC = nullptr;
-			::DeleteObject(m_hFont);
-			m_hFont = nullptr;
-		}
-	}
-	HDC GetHDC(){ return m_hDC; }
+	~CDCFont() = default;
+
+	HDC GetHDC() const { return m_hDC; }
+
 private:
-	HWND  m_hwnd;
-	HDC   m_hDC;
-	HFONT m_hFontOld;
-	HFONT m_hFont;
+	WindowDcHolder	m_hDC;
+	FontHolder		m_hFont;
+	SelectionHolder	m_hFontOld;
 };
 
 HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
