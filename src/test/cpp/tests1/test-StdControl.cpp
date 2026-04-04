@@ -356,12 +356,31 @@ TEST(ApiWrap, DlgItemTest001) {
 			EXPECT_THAT(ApiWrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT), StrEq(L"test item"));
 
 			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 
 			ApiWrap::CheckDlgButton(hDlg, IDC_CHK_REGULAREXP, true);
 			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsTrue());
+			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsTrue());
 
 			ApiWrap::CheckDlgButton(hDlg, IDC_CHK_REGULAREXP, false);
 			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+
+			CheckDlgButtonBool(hDlg, IDC_CHK_REGULAREXP, true);
+			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsTrue());
+			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsTrue());
+
+			CheckDlgButtonBool(hDlg, IDC_CHK_REGULAREXP, false);
+			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+
+			EXPECT_THAT(apiwrap::IsDlgItemEnabled(hDlg, IDC_CHK_REGULAREXP), IsTrue());
+
+			DlgItem_Enable(hDlg, IDC_CHK_REGULAREXP, false);
+			EXPECT_THAT(apiwrap::IsDlgItemEnabled(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+
+			DlgItem_Enable(hDlg, IDC_CHK_REGULAREXP, true);
+			EXPECT_THAT(apiwrap::IsDlgItemEnabled(hDlg, IDC_CHK_REGULAREXP), IsTrue());
 
 			CTextWidthCalc calc{ hDlg, IDC_COMBO_TEXT };
 			calc.Reset();

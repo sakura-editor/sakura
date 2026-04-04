@@ -153,6 +153,69 @@ void ActivateFrameWindow( HWND hwnd )
 }
 
 /*!
+ * C++から扱いづらいWindows API関数のラッパーを定義する名前空間。
+ *
+ * 名前空間名は仮定義。
+ * ・既存 ApiWrap とは別名にする
+ * ・既存 cxx とカブるが、window 関連なので分けておく。
+ *
+ * 定義は関数名のアルファベット順、グループ化はしない。
+ */
+namespace apiwrap {
+
+/*!
+ * @brief ボタンにチェックを入れる
+ *
+ * チェックボタンまたはラジオボタンをチェック状態にする。
+ * 
+ * @note BS_AUTOCHECKBOX か BS_AUTORADIOBUTTON を付与しておくこと。
+ */
+void CheckDlgButton(HWND hDlg, int nIDButton, bool bCheck)
+{
+	const auto uCheck = bCheck ? BST_CHECKED : BST_UNCHECKED;
+	::CheckDlgButton(hDlg,nIDButton, uCheck);
+}
+
+/*!
+ * @brief コントロールの有効／無効を切り替える
+ */
+bool EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable)
+{
+	bool ret = false;
+	if (const auto hWndCtl = ::GetDlgItem(hWndDlg, nIDDlgItem)) {
+		ret = ::EnableWindow(hWndCtl, nEnable);
+	}
+	return ret;
+}
+
+/*!
+ * @brief ボタンがチェックされているか調べる
+ *
+ * チェックボタンまたはラジオボタンのチェック状態を確認する
+ *
+ * @note BS_AUTOCHECKBOX か BS_AUTORADIOBUTTON を付与しておくこと。
+ */
+bool IsDlgButtonChecked(HWND hDlg, int nIDButton)
+{
+	const auto uChecked = ::IsDlgButtonChecked(hDlg, nIDButton);
+	return uChecked & BST_CHECKED;
+}
+
+/*!
+ * @brief コントロールの有効かどうか調べる
+ */
+bool IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem)
+{
+	bool ret = false;
+	if (const auto hWndCtl = ::GetDlgItem(hWndDlg, nIDDlgItem)) {
+		ret = ::IsWindowEnabled(hWndCtl);
+	}
+	return ret;
+}
+
+} // namespace apiwrap
+
+/*!
  * @brief コントロールに設定されたフォントで初期化する
  */
 CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)

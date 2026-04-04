@@ -72,24 +72,33 @@ void ActivateFrameWindow(HWND hwnd);	/* アクティブにする */
 */
 BOOL BlockingHook( HWND hwndDlgCancel );
 
-#define GA_ROOTOWNER2	100
+constexpr int GA_ROOTOWNER2 = 100;
 
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
+
+namespace apiwrap {
+
+void	CheckDlgButton(HWND hDlg, int nIDButton, bool bCheck = true);
+bool	EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable = true);
+bool	IsDlgButtonChecked(HWND hDlg, int nIDButton);
+bool	IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem);
+
+} // namespace apiwrap
 
 //チェックボックス
 inline void CheckDlgButtonBool(HWND hDlg, int nIDButton, bool bCheck)
 {
-	CheckDlgButton(hDlg,nIDButton,bCheck?BST_CHECKED:BST_UNCHECKED);
+	apiwrap::CheckDlgButton(hDlg,nIDButton, bCheck);
 }
 inline bool IsDlgButtonCheckedBool(HWND hDlg, int nIDButton)
 {
-	return (IsDlgButtonChecked(hDlg,nIDButton) & BST_CHECKED) != 0;
+	return apiwrap::IsDlgButtonChecked(hDlg, nIDButton);
 }
 
 //ダイアログアイテムの有効化
 inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 {
-	return FALSE != ::EnableWindow( ::GetDlgItem(hwndDlg, nIDDlgItem), nEnable?TRUE:FALSE);
+	return apiwrap::EnableDlgItem(hwndDlg, nIDDlgItem, nEnable);
 }
 
 // 幅計算補助クラス
