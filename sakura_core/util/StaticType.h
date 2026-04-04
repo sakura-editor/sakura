@@ -85,7 +85,6 @@ public:
 	}
 	void push_back(SET_TYPE e)
 	{
-		assert(m_nCount<MAX_SIZE);
 		if (MAX_SIZE <= m_nCount) {
 			throw std::out_of_range("m_nCount is out of range.");
 		}
