@@ -276,10 +276,10 @@ CFontAutoDeleter& CFontAutoDeleter::operator = (const Me& other)
 {
 	Clear();
 
-	if (const auto hFont = other.m_hFont) {
+	if (const auto& hFont = other.m_hFont) {
 		if (LOGFONT lf = {};
-			::GetObject(hFont, sizeof(lf), &lf)) {
-			m_hFont = ::CreateFontIndirect(&lf);
+			::GetObjectW(hFont, sizeof(lf), &lf)) {
+			m_hFont = ::CreateFontIndirectW(&lf);
 		}
 	}
 
@@ -295,8 +295,7 @@ CFontAutoDeleter& CFontAutoDeleter::operator = (Me&& other) noexcept
 {
 	Clear();
 
-	m_hFont = other.m_hFont;
-	other.m_hFont = nullptr;
+	m_hFont = other.m_hFont.release();
 
 	return *this;
 }
@@ -308,13 +307,14 @@ CFontAutoDeleter::~CFontAutoDeleter() noexcept
 
 void CFontAutoDeleter::Clear() noexcept
 {
-	if (m_hFont) {
-		::DeleteObject(m_hFont);
-		m_hFont = nullptr;
-	}
+	m_hFont = nullptr;
 }
 
-void CFontAutoDeleter::SetFont( [[maybe_unused]] const HFONT& hFontOld, const HFONT& hFont, [[maybe_unused]] const HWND& hWnd )
+void CFontAutoDeleter::SetFont(
+	const HFONT& hFontOld [[maybe_unused]],
+	const HFONT& hFont,
+	const HWND& hWnd [[maybe_unused]]
+)
 {
 	Clear();
 
