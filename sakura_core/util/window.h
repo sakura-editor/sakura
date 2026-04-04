@@ -94,20 +94,26 @@ inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 
 // 幅計算補助クラス
 // 最大の幅を報告します
-class CTextWidthCalc
+class CTextWidthCalc final
 {
+private:
+	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
+
 	using Me = CTextWidthCalc;
 
 public:
 	CTextWidthCalc(HWND hParentDlg, int nID);
-	CTextWidthCalc(HWND hwndThis);
-	CTextWidthCalc(HFONT font);
-	CTextWidthCalc(HDC hdc);
+	explicit CTextWidthCalc(HWND hWnd);
+	explicit CTextWidthCalc(HFONT hFont);
+	explicit CTextWidthCalc(_In_opt_ HDC hDC);
 	CTextWidthCalc(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CTextWidthCalc(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	virtual ~CTextWidthCalc();
+	~CTextWidthCalc() = default;
+
 	void Reset(){ nCx = 0; nExt = 0; }
 	void SetCx(int cx = 0){ nCx = cx; }
 	void SetDefaultExtend(int extCx = 0){ nExt = extCx; }
@@ -117,8 +123,8 @@ public:
 	bool SetTextWidthIfMax(LPCWSTR pszText, int extCx);
 	int GetTextWidth(LPCWSTR pszText) const;
 	int GetTextHeight() const;
-	HDC GetDC() const{ return hDC; }
-	int GetCx(){ return nCx; }
+	HDC GetDC() const { return hDC; }
+	int GetCx() const { return nCx; }
 	// 算出方法がよく分からないので定数にしておく
 	// 制御不要なら ListViewはLVSCW_AUTOSIZE等推奨
 	enum StaticMagicNambers{
@@ -131,15 +137,14 @@ public:
 		//! リストビューのチェックボックスとマージンの幅
 		WIDTH_LV_ITEM_CHECKBOX = 30,
 	};
+
 private:
-	HWND  hwnd;
-	HDC   hDC;
-	HFONT hFont;
-	HFONT hFontOld;
-	int nCx;
-	int nExt;
-	bool  bHDCComp;
-	bool  bFromDC;
+	MemDcHolder		hDC = nullptr;
+	FontHolder		hFont = nullptr;
+	SelectionHolder	hFontOld;
+
+	int		nCx = 0;
+	int		nExt = 0;
 };
 
 /*!

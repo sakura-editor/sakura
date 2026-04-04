@@ -362,6 +362,9 @@ TEST(ApiWrap, DlgItemTest001) {
 
 			ApiWrap::CheckDlgButton(hDlg, IDC_CHK_REGULAREXP, false);
 			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+
+			CTextWidthCalc calc{ hDlg, IDC_COMBO_TEXT };
+			calc.Reset();
 		}
 	};
 

@@ -152,74 +152,43 @@ void ActivateFrameWindow( HWND hwnd )
 	return;
 }
 
+/*!
+ * @brief コントロールに設定されたフォントで初期化する
+ */
 CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
+	: CTextWidthCalc(::GetDlgItem(hParent, nID))
 {
-	assert_warning(hParent);
-
-	hwnd = ::GetDlgItem(hParent, nID);
-	hDC = ::GetDC( hwnd );
-	assert(hDC);
-	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
-	hFontOld = (HFONT)::SelectObject(hDC, hFont);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = false;
-	bFromDC = false;
 }
 
-CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
+/*!
+ * @brief ウインドウに設定されたフォントで初期化する
+ */
+CTextWidthCalc::CTextWidthCalc(HWND hWnd)
+	: CTextWidthCalc(GetWindowFont(hWnd))
 {
-	assert_warning(hwndThis);
-
-	hwnd = hwndThis;
-	hDC = ::GetDC( hwnd );
-	assert(hDC);
-	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
-	hFontOld = (HFONT)::SelectObject(hDC, hFont);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = false;
-	bFromDC = false;
 }
 
+/*!
+ * @brief 指定したフォントで初期化する
+ */
 CTextWidthCalc::CTextWidthCalc(HFONT font)
+	: CTextWidthCalc(HDC(nullptr))
 {
-	hwnd = nullptr;
-	HDC hDCTemp = ::GetDC( nullptr ); // Desktop
-	hDC = ::CreateCompatibleDC( hDCTemp );
-	::ReleaseDC( nullptr, hDCTemp );
-	assert(hDC);
-	hFont = font;
-	hFontOld = (HFONT)::SelectObject(hDC, hFont);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = true;
-	bFromDC = false;
-}
-
-CTextWidthCalc::CTextWidthCalc(HDC hdc)
-{
-	hwnd = nullptr;
-	hDC = hdc;
-	assert(hDC);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = true;
-	bFromDC = true;
-}
-
-CTextWidthCalc::~CTextWidthCalc()
-{
-	if(hDC && !bFromDC){
-		::SelectObject(hDC, hFontOld);
-		if( bHDCComp ){
-			::DeleteDC(hDC);
-		}else{
-			::ReleaseDC(hwnd, hDC);
-		}
-		hwnd = nullptr;
-		hDC = nullptr;
+	if (LOGFONT lf{}; ::GetObjectW(font, sizeof(lf), &lf)) {
+		hFont = ::CreateFontIndirectW(&lf);
 	}
+	hFontOld = ::SelectObject(GetDC(), hFont);
+}
+
+/*!
+ * @brief 指定したデバイスコンテキストで初期化する
+ *
+ * @note フォント以外の設定を適用したい場合に使う。
+ */
+CTextWidthCalc::CTextWidthCalc(_In_opt_ HDC hdc)
+	: hDC(::CreateCompatibleDC(hdc))
+	, hFontOld(GetDC())
+{
 }
 
 bool CTextWidthCalc::SetWidthIfMax([[maybe_unused]] int width)
