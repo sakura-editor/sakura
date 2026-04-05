@@ -1842,15 +1842,14 @@
 #define STR_DLGGREP_THISDOC_ERROR       35046
 #define STR_GSTR_APPNAME                35047
 #define STR_REGEX_COMPILE_ERR_PREAMBLE  35048
-#define IDS_STRING35049                 35049
-#define STR_PROPCOMMACR_SEL_PYTHONDIR   35050
+#define STR_PROPCOMMACR_SEL_PYTHONDIR   35049
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        35051
+#define _APS_NEXT_RESOURCE_VALUE        35050
 #define _APS_NEXT_COMMAND_VALUE         101
 #define _APS_NEXT_CONTROL_VALUE         1741
 #define _APS_NEXT_SYMED_VALUE           10000
