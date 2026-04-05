@@ -1843,13 +1843,20 @@
 #define STR_GSTR_APPNAME                35047
 #define STR_REGEX_COMPILE_ERR_PREAMBLE  35048
 #define STR_PROPCOMMACR_SEL_PYTHONDIR   35049
+#define IDS_EOLTYPENAME_0               35050
+#define IDS_EOLTYPENAME_1               35051
+#define IDS_EOLTYPENAME_2               35052
+#define IDS_EOLTYPENAME_3               35053
+#define IDS_EOLTYPENAME_4               35054
+#define IDS_EOLTYPENAME_5               35055
+#define IDS_EOLTYPENAME_6               35056
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        35050
+#define _APS_NEXT_RESOURCE_VALUE        35057
 #define _APS_NEXT_COMMAND_VALUE         101
 #define _APS_NEXT_CONTROL_VALUE         1741
 #define _APS_NEXT_SYMED_VALUE           10000
