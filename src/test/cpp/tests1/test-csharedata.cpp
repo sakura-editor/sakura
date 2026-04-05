@@ -379,6 +379,7 @@ MATCHER(IsInitializedCommonSettingWindow, "Checks if CommonSetting_Window is pro
 	EXPECT_THAT(sWindow.m_nMiniMapFontSize, -2);
 	EXPECT_THAT(sWindow.m_nMiniMapQuality, NONANTIALIASED_QUALITY);
 	EXPECT_THAT(sWindow.m_nMiniMapWidth, 150);
+	EXPECT_THAT(sWindow.m_bDarkMode, IsFalse());
 	EXPECT_THAT(sWindow.m_bSplitterWndHScroll, IsTrue());
 	EXPECT_THAT(sWindow.m_bSplitterWndVScroll, IsTrue());
 	EXPECT_THAT(sWindow.m_eSaveWindowSize, WINSIZEMODE_SAVE);

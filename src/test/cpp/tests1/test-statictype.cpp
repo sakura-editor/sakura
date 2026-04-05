@@ -29,14 +29,7 @@ TEST(StaticVector, test001)
 	EXPECT_THAT(vec.size(), Eq(3));
 
 	// 追加しようとしてもできないことを確認する
-
-#ifdef _DEBUG
-	// デバッグビルドでは、正常にクラッシュする
-	EXPECT_DEATH({ vec.push_back(40u); }, "");
-#else
-	// リリースビルドでもクラッシュする
 	EXPECT_THROW({ vec.push_back(0xffffff); }, std::out_of_range);
-#endif
 
 	// 追加できないので、サイズをカウントアップしてはいけない
 	EXPECT_THAT(vec.size(), Eq(3));

@@ -15,9 +15,53 @@
 #include "config/system_constants.h"
 #include <dwmapi.h>	//DwmGetColorizationColor
 
-int CDPI::nDpiX = 96;
-int CDPI::nDpiY = 96;
-bool CDPI::bInitialized = false;
+/*!
+ * @brief CDPIのインスタンスを取得する
+ */
+/* static */ CDPI& CDPI::Instance()
+{
+	if (!gm_Instance) {
+		gm_Instance = std::make_unique<CDPI>();
+	}
+	return *gm_Instance;
+}
+
+/*!
+ * @brief システムDPIから構築する
+ */
+CDPI::CDPI() noexcept
+{
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	MemDcHolder hDC = ::CreateCompatibleDC(nullptr);
+
+	m_DpiX = ::GetDeviceCaps(hDC, LOGPIXELSX);
+	m_DpiY = ::GetDeviceCaps(hDC, LOGPIXELSY);
+}
+
+void CDPI::ScaleRect(LPRECT lprc) const noexcept
+{
+	lprc->left		= ScaleX(lprc->left);
+	lprc->right		= ScaleX(lprc->right);
+	lprc->top		= ScaleY(lprc->top);
+	lprc->bottom	= ScaleY(lprc->bottom);
+}
+
+void CDPI::UnscaleRect(LPRECT lprc) const noexcept
+{
+	lprc->left		= UnscaleX(lprc->left);
+	lprc->right		= UnscaleX(lprc->right);
+	lprc->top		= UnscaleY(lprc->top);
+	lprc->bottom	= UnscaleY(lprc->bottom);
+}
+
+LONG DpiScaleX(LONG x) { return CDPI::Instance().ScaleX(x); }
+LONG DpiScaleY(LONG y) { return CDPI::Instance().ScaleY(y); }
+LONG DpiUnscaleX(LONG x) { return CDPI::Instance().UnscaleX(x); }
+LONG DpiUnscaleY(LONG y) { return CDPI::Instance().UnscaleY(y); }
+void DpiScaleRect(LPRECT lprc) { CDPI::Instance().ScaleRect(lprc); }
+void DpiUnscaleRect(LPRECT lprc) { CDPI::Instance().UnscaleRect(lprc); }
+LONG DpiPointsToPixels(LONG pt, LONG ptMag) { return CDPI::Instance().PointsToPixels(pt, ptMag); }
+LONG DpiPixelsToPoints(LONG px, LONG ptMag) { return CDPI::Instance().PixelsToPoints(px, ptMag); }
 
 /**	指定したウィンドウの祖先のハンドルを取得する
 
@@ -152,74 +196,106 @@ void ActivateFrameWindow( HWND hwnd )
 	return;
 }
 
-CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
-{
-	assert_warning(hParent);
+/*!
+ * C++から扱いづらいWindows API関数のラッパーを定義する名前空間。
+ *
+ * 名前空間名は仮定義。
+ * ・既存 ApiWrap とは別名にする
+ * ・既存 cxx とカブるが、window 関連なので分けておく。
+ *
+ * 定義は関数名のアルファベット順、グループ化はしない。
+ */
+namespace apiwrap {
 
-	hwnd = ::GetDlgItem(hParent, nID);
-	hDC = ::GetDC( hwnd );
-	assert(hDC);
-	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
-	hFontOld = (HFONT)::SelectObject(hDC, hFont);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = false;
-	bFromDC = false;
+/*!
+ * @brief ボタンにチェックを入れる
+ *
+ * チェックボタンまたはラジオボタンをチェック状態にする。
+ * 
+ * @note BS_AUTOCHECKBOX か BS_AUTORADIOBUTTON を付与しておくこと。
+ */
+void CheckDlgButton(HWND hDlg, int nIDButton, bool bCheck)
+{
+	const auto uCheck = bCheck ? BST_CHECKED : BST_UNCHECKED;
+	::CheckDlgButton(hDlg,nIDButton, uCheck);
 }
 
-CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
+/*!
+ * @brief コントロールの有効／無効を切り替える
+ */
+bool EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable)
 {
-	assert_warning(hwndThis);
-
-	hwnd = hwndThis;
-	hDC = ::GetDC( hwnd );
-	assert(hDC);
-	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
-	hFontOld = (HFONT)::SelectObject(hDC, hFont);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = false;
-	bFromDC = false;
-}
-
-CTextWidthCalc::CTextWidthCalc(HFONT font)
-{
-	hwnd = nullptr;
-	HDC hDCTemp = ::GetDC( nullptr ); // Desktop
-	hDC = ::CreateCompatibleDC( hDCTemp );
-	::ReleaseDC( nullptr, hDCTemp );
-	assert(hDC);
-	hFont = font;
-	hFontOld = (HFONT)::SelectObject(hDC, hFont);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = true;
-	bFromDC = false;
-}
-
-CTextWidthCalc::CTextWidthCalc(HDC hdc)
-{
-	hwnd = nullptr;
-	hDC = hdc;
-	assert(hDC);
-	nCx = 0;
-	nExt = 0;
-	bHDCComp = true;
-	bFromDC = true;
-}
-
-CTextWidthCalc::~CTextWidthCalc()
-{
-	if(hDC && !bFromDC){
-		::SelectObject(hDC, hFontOld);
-		if( bHDCComp ){
-			::DeleteDC(hDC);
-		}else{
-			::ReleaseDC(hwnd, hDC);
-		}
-		hwnd = nullptr;
-		hDC = nullptr;
+	bool ret = false;
+	if (const auto hWndCtl = ::GetDlgItem(hWndDlg, nIDDlgItem)) {
+		ret = ::EnableWindow(hWndCtl, nEnable);
 	}
+	return ret;
+}
+
+/*!
+ * @brief ボタンがチェックされているか調べる
+ *
+ * チェックボタンまたはラジオボタンのチェック状態を確認する
+ *
+ * @note BS_AUTOCHECKBOX か BS_AUTORADIOBUTTON を付与しておくこと。
+ */
+bool IsDlgButtonChecked(HWND hDlg, int nIDButton)
+{
+	const auto uChecked = ::IsDlgButtonChecked(hDlg, nIDButton);
+	return uChecked & BST_CHECKED;
+}
+
+/*!
+ * @brief コントロールの有効かどうか調べる
+ */
+bool IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem)
+{
+	bool ret = false;
+	if (const auto hWndCtl = ::GetDlgItem(hWndDlg, nIDDlgItem)) {
+		ret = ::IsWindowEnabled(hWndCtl);
+	}
+	return ret;
+}
+
+} // namespace apiwrap
+
+/*!
+ * @brief コントロールに設定されたフォントで初期化する
+ */
+CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
+	: CTextWidthCalc(::GetDlgItem(hParent, nID))
+{
+}
+
+/*!
+ * @brief ウインドウに設定されたフォントで初期化する
+ */
+CTextWidthCalc::CTextWidthCalc(HWND hWnd)
+	: CTextWidthCalc(GetWindowFont(hWnd))
+{
+}
+
+/*!
+ * @brief 指定したフォントで初期化する
+ */
+CTextWidthCalc::CTextWidthCalc(HFONT font)
+	: CTextWidthCalc(HDC(nullptr))
+{
+	if (LOGFONT lf{}; ::GetObjectW(font, sizeof(lf), &lf)) {
+		hFont = ::CreateFontIndirectW(&lf);
+	}
+	hFontOld = ::SelectObject(GetDC(), hFont);
+}
+
+/*!
+ * @brief 指定したデバイスコンテキストで初期化する
+ *
+ * @note フォント以外の設定を適用したい場合に使う。
+ */
+CTextWidthCalc::CTextWidthCalc(_In_opt_ HDC hdc)
+	: hDC(::CreateCompatibleDC(hdc))
+	, hFontOld(GetDC())
+{
 }
 
 bool CTextWidthCalc::SetWidthIfMax([[maybe_unused]] int width)
@@ -276,10 +352,10 @@ CFontAutoDeleter& CFontAutoDeleter::operator = (const Me& other)
 {
 	Clear();
 
-	if (const auto hFont = other.m_hFont) {
+	if (const auto& hFont = other.m_hFont) {
 		if (LOGFONT lf = {};
-			::GetObject(hFont, sizeof(lf), &lf)) {
-			m_hFont = ::CreateFontIndirect(&lf);
+			::GetObjectW(hFont, sizeof(lf), &lf)) {
+			m_hFont = ::CreateFontIndirectW(&lf);
 		}
 	}
 
@@ -295,8 +371,7 @@ CFontAutoDeleter& CFontAutoDeleter::operator = (Me&& other) noexcept
 {
 	Clear();
 
-	m_hFont = other.m_hFont;
-	other.m_hFont = nullptr;
+	m_hFont = other.m_hFont.release();
 
 	return *this;
 }
@@ -308,13 +383,14 @@ CFontAutoDeleter::~CFontAutoDeleter() noexcept
 
 void CFontAutoDeleter::Clear() noexcept
 {
-	if (m_hFont) {
-		::DeleteObject(m_hFont);
-		m_hFont = nullptr;
-	}
+	m_hFont = nullptr;
 }
 
-void CFontAutoDeleter::SetFont( [[maybe_unused]] const HFONT& hFontOld, const HFONT& hFont, [[maybe_unused]] const HWND& hWnd )
+void CFontAutoDeleter::SetFont(
+	const HFONT& hFontOld [[maybe_unused]],
+	const HFONT& hFont,
+	const HWND& hWnd [[maybe_unused]]
+)
 {
 	Clear();
 
