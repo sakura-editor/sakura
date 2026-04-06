@@ -289,9 +289,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 	WORD				wID;
 	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;
 	int					idCtrl;
-	int					nVal;
 	int					nIndex;
 	static HWND			hwndListColor;
 	LPDRAWITEMSTRUCT	pDis;
@@ -317,6 +315,10 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		}
 		SystemParametersInfo(SPI_GETFOCUSBORDERWIDTH, 0, &m_uFocusBorderWidth, 0);
 		SystemParametersInfo(SPI_GETFOCUSBORDERHEIGHT, 0, &m_uFocusBorderHeight, 0);
+
+		apiwrap::SetUpDownRange(hwndDlg, IDC_SPIN_LCColNum,  1, 1000);
+		apiwrap::SetUpDownRange(hwndDlg, IDC_SPIN_LCColNum2, 1, 1000);
+		apiwrap::SetUpDownRange(hwndDlg, IDC_SPIN_LCColNum3, 1, 1000);
 
 		return TRUE;
 
@@ -505,67 +507,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		//	From Here May 21, 2001 genta activate spin control
-		case IDC_SPIN_LCColNum:
-			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 1000 ){
-				nVal = 1000;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_LCColNum2:
-			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 1000 ){
-				nVal = 1000;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, nVal, FALSE );
-			return TRUE;
-		//	To Here May 21, 2001 genta activate spin control
 
-		//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
-		case IDC_SPIN_LCColNum3:
-			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 1000 ){
-				nVal = 1000;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, nVal, FALSE );
-			return TRUE;
-		//	To Here Jun. 01, 2001
-		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 //	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト
@@ -584,8 +527,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 			default:
 				break;
 			}
-			break;	/* default */
-		}
+
 		break;	/* WM_NOTIFY */
 	case WM_DRAWITEM:
 		idCtrl = (UINT) wParam;				/* コントロールのID */

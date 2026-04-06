@@ -74,8 +74,40 @@ namespace apiwrap {
 
 void	CheckDlgButton(HWND hDlg, int nIDButton, bool bCheck = true);
 bool	EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable = true);
+WORD	GetTrackBarPos(HWND hWndDlg, int nIDDlgItem);
+int		GetUpDownPos(HWND hWndDlg, int nIDDlgItem);
 bool	IsDlgButtonChecked(HWND hDlg, int nIDButton);
 bool	IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem);
+void	SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw = true);
+void	SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos);
+
+/*!
+ * @brief トラックバーのデータ範囲を変更する
+ */
+template<typename T1, typename T2>
+  requires std::convertible_to<T1, WORD> && std::convertible_to<T2, WORD>
+inline void SetTrackBarRange(HWND hWndDlg, int nIDDlgItem, T1 minimum, T2 maximum, bool bRedraw)
+{
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, TBM_SETRANGE, WPARAM(bRedraw), MAKELPARAM(minimum, maximum));
+}
+
+/*!
+ * @brief アップダウンコントロールのデータ範囲を変更する
+ */
+template<typename T1, typename T2>
+  requires std::convertible_to<T1, int> && std::convertible_to<T2, int>
+inline void SetUpDownRange(HWND hWndDlg, int nIDDlgItem, T1 minimum, T2 maximum)
+{
+	const auto min_val = static_cast<int>(minimum);
+	const auto max_val = static_cast<int>(maximum);
+	if (std::numeric_limits<short>::min() <= min_val && min_val <= std::numeric_limits<short>::max() &&
+		std::numeric_limits<short>::min() <= max_val && max_val <= std::numeric_limits<short>::max()) {
+		::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_SETRANGE, 0L, MAKELPARAM(max_val, min_val));
+		return;
+	}
+
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_SETRANGE32, min_val, max_val);
+}
 
 } // namespace apiwrap
 

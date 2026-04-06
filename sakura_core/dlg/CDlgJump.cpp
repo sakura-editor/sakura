@@ -24,6 +24,7 @@
 #include "outline/CFuncInfoArr.h"// 2002/2/10 aroka ヘッダー整理
 #include "util/shell.h"
 #include "util/os.h"
+#include "util/window.h"
 #include "window/CEditWnd.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
@@ -66,51 +67,6 @@ int CDlgJump::DoModal(
 {
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_JUMP, lParam );
 }
-
-// From Here Oct. 6, 2000 JEPRO added 行番号入力ボックスにスピンコントロールを付けるため
-// CDlgPrintSetting.cppのOnNotifyとOnSpin及びCpropComFile.cppのDispatchEvent_p2内のcase WM_NOTIFYを参考にした
-BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
-{
-	NM_UPDOWN*		pMNUD;
-	int				idCtrl;
-	int				nData;
-	idCtrl = (int)pNMHDR->idFrom;
-	pMNUD  = (NM_UPDOWN*)pNMHDR;
-/* スピンコントロールの処理 */
-	switch( idCtrl ){
-	case IDC_SPIN_LINENUM:
-	/* ジャンプしたい行番号の指定 */
-		nData = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, nullptr, FALSE );
-		if( pMNUD->iDelta < 0 ){
-			++nData;
-		}else
-		if( pMNUD->iDelta > 0 ){
-			nData--;
-		}
-		if( nData < 1 ){
-			nData = 1;
-		}
-		::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, nData, FALSE );
-		break;
-	case IDC_SPIN_PLSQL_E1:
-		nData = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, nullptr, FALSE );
-		if( pMNUD->iDelta < 0 ){
-			++nData;
-		}else
-		if( pMNUD->iDelta > 0 ){
-			nData--;
-		}
-		if( nData < 1 ){
-			nData = 1;
-		}
-		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, nData, FALSE );
-		break;
-	default:
-		break;
-	}
-	return TRUE;
-}
-// To Here Oct. 6, 2000
 
 BOOL CDlgJump::OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, int wID )
 {
@@ -223,6 +179,8 @@ BOOL CDlgJump::OnEnKillFocus(HWND hwndCtl, int wID)
 /* ダイアログデータの設定 */
 void CDlgJump::SetData( void )
 {
+	const auto hWndDlg = GetHwnd();
+
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
 	CFuncInfoArr	cFuncInfoArr;
 	int				i;
@@ -233,7 +191,9 @@ void CDlgJump::SetData( void )
 	int				nWorkLine; //$$ 条件により、レイアウト・ロジックの単位が混在するため、ミスの原因になりやすい
 	int				nPLSQLBlockNum;
 
-//	GetHwnd() = hwndDlg;
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_LINENUM,  1, INT_MAX);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_PLSQL_E1, 1, INT_MAX);
+
 //From Here Oct. 7, 2000 JEPRO 前回入力した行番号を保持するように下行を変更
 //	::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, "" );	/* 行番号 */
 	if( 0 == m_nLineNum ){

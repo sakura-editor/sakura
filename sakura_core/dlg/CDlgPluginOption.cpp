@@ -270,6 +270,8 @@ int CDlgPluginOption::GetData( void )
 
 BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	const auto hWndDlg = hwndDlg;
+
 	HWND		hwndList;
 	LV_COLUMN	col;
 	RECT		rc;
@@ -313,6 +315,8 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_DIR ), _MAX_PATH );
 	ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_NUM ), 11 );
 
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_PLUGIN_OPTION, INT_MIN, INT_MAX);
+
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
@@ -338,21 +342,6 @@ BOOL CDlgPluginOption::OnNotify(NMHDR* pNMHDR)
 		return TRUE;
 
 	case IDC_SPIN_PLUGIN_OPTION:
-		int			nVal;
-		NM_UPDOWN*	pMNUD;
-		
-		pMNUD  = (NM_UPDOWN*)pNMHDR;
-
-		nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nullptr, TRUE );
-		if( pMNUD->iDelta < 0 ){
-			if (nVal < INT_MAX)		++nVal;
-		}else
-		if( pMNUD->iDelta > 0 ){
-			// INT_MINは SetDlgItemInt で扱えない
-			if (nVal > -INT_MAX)	--nVal;
-		}
-		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nVal, TRUE );
-
 		// 編集中のデータの戻し
 		SetFromEdit( m_Line );
 		return TRUE;

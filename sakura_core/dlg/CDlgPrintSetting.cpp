@@ -128,6 +128,8 @@ int CDlgPrintSetting::DoModal(
 
 BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	const auto hWndDlg = hwndDlg;
+
 	_SetHwnd( hwndDlg );
 
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
@@ -140,6 +142,15 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	// CDialog::OnInitDialogの奥でOnChangeSettingTypeが呼ばれるのでここでは更新要求しない
 	//	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
 	//UpdatePrintableLineAndColumn();
+
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_FONTHEIGHT,  7,   200);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_LINESPACE,   0,   150);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_DANSUU,      1,   4);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_DANSPACE,    0,   30);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINTY,    0,   50);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINBY,    0,   50);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINLX,    0,   50);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINRX,    0,   50);
 
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
@@ -161,37 +172,6 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 
 	/* 基底クラスメンバ */
 	return CDialog::OnDestroy();
-}
-
-BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
-{
-	NM_UPDOWN*		pMNUD;
-	int				idCtrl;
-	BOOL			bSpinDown;
-	idCtrl = (int)pNMHDR->idFrom;
-	pMNUD  = (NM_UPDOWN*)pNMHDR;
-	if( pMNUD->iDelta < 0 ){
-		bSpinDown = FALSE;
-	}else{
-		bSpinDown = TRUE;
-	}
-	switch( idCtrl ){
-	case IDC_SPIN_FONTHEIGHT:
-	case IDC_SPIN_LINESPACE:
-	case IDC_SPIN_DANSUU:
-	case IDC_SPIN_DANSPACE:
-	case IDC_SPIN_MARGINTY:
-	case IDC_SPIN_MARGINBY:
-	case IDC_SPIN_MARGINLX:
-	case IDC_SPIN_MARGINRX:
-		/* スピンコントロールの処理 */
-		OnSpin( idCtrl, bSpinDown );
-		UpdatePrintableLineAndColumn();
-		break;
-	default:
-		break;
-	}
-	return TRUE;
 }
 
 BOOL CDlgPrintSetting::OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, int wID )
@@ -753,39 +733,6 @@ const struct {
 	{ IDC_EDIT_MARGINLX,	0,	50 },	//!< mm
 	{ IDC_EDIT_MARGINRX,	0,	50 },	//!< mm
 };
-
-/* スピンコントロールの処理 */
-void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
-{
-	int		nData = 0;
-	int		nCtrlIdEDIT = 0;
-	int		nDiff = 1;
-	int		nIdx = -1;
-	switch( nCtrlId ){
-	case IDC_SPIN_FONTHEIGHT:	nIdx = 0;				break;
-	case IDC_SPIN_LINESPACE:	nIdx = 1;	nDiff=10;	break;
-	case IDC_SPIN_DANSUU:		nIdx = 2;				break;
-	case IDC_SPIN_DANSPACE:		nIdx = 3;				break;
-	case IDC_SPIN_MARGINTY:		nIdx = 4;				break;
-	case IDC_SPIN_MARGINBY:		nIdx = 5;				break;
-	case IDC_SPIN_MARGINLX:		nIdx = 6;				break;
-	case IDC_SPIN_MARGINRX:		nIdx = 7;				break;
-	default:
-		break;
-	}
-	if( nIdx >= 0 ){
-		nCtrlIdEDIT = sDataRange[nIdx].ctrlid;
- 		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nullptr, FALSE );
- 		if( bDown ){
-			nData -= nDiff;
- 		}else{
-			nData += nDiff;
- 		}
-		/* 入力値(数値)のエラーチェックをして正しい値を返す */
-		nData = DataCheckAndCorrect( nCtrlIdEDIT, nData );
-		::SetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nData, FALSE );
-	}
-}
 
 /* 入力値(数値)のエラーチェックをして正しい値を返す */
 int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )

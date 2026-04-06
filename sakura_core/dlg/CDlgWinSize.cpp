@@ -16,6 +16,7 @@
 #include "dlg/CDlgWinSize.h"
 #include "util/shell.h"
 #include "util/os.h"
+#include "util/window.h"
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
@@ -76,17 +77,20 @@ int CDlgWinSize::DoModal(
 */
 BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	const auto hWndDlg = hwndDlg;
+
 	_SetHwnd( hwndDlg );
 
 	ApiWrap::Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_NORMAL ) );	//L"普通"
 	ApiWrap::Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MAXIMIZE ) );	//L"最大化"
 	ApiWrap::Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MINIMIZE ) );	//L"(最小化)"
 
-	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_SX ), 30000, 0 );
-	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_SY ), 30000, 0 );
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_SX, 0, 30000);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_SY, 0, 30000);
+
 	// ウィンドウの座標は、マイナス値も有効。
-	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_WX ), 30000, -30000 );
-	ApiWrap::UpDown_SetRange( GetItemHwnd( IDC_SPIN_WY ), 30000, -30000 );
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_WX, -30000, 30000);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_WY, -30000, 30000);
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
