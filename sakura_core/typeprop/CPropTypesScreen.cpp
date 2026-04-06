@@ -200,9 +200,6 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 	WORD		wID;
 	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
-	int			nVal;
 
 	switch( uMsg ){
 
@@ -225,7 +222,10 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS ), FALSE );	//ファイル拡張子
 		}
 
-		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_LINESPACE, LINESPACE_MAX, -LINESPACE_MAX);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MAXLINELEN, MINLINEKETAS, MAXLINEKETAS);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_CHARSPACE, 0, COLUMNSPACE_MAX);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_LINESPACE, -LINESPACE_MAX, LINESPACE_MAX);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_TABSPACE, 1, TABSPACE_MAX);
 
 		return TRUE;
 	case WM_COMMAND:
@@ -344,89 +344,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		case IDC_SPIN_MAXLINELEN:
-			/* 折り返し桁数 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < MINLINEKETAS ){
-				nVal = MINLINEKETAS;
-			}
-			if( nVal > MAXLINEKETAS ){
-				nVal = MAXLINEKETAS;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_CHARSPACE:
-			/* 文字の隙間 */
-//			MYTRACE( L"IDC_SPIN_CHARSPACE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 0 ){
-				nVal = 0;
-			}
-			if( nVal > COLUMNSPACE_MAX ){ // Feb. 18, 2003 genta 最大値の定数化
-				nVal = COLUMNSPACE_MAX;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_LINESPACE:
-			/* 行の隙間 */
-//			MYTRACE( L"IDC_SPIN_LINESPACE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nullptr, TRUE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-//	From Here Oct. 8, 2000 JEPRO 行間も最小0まで設定できるように変更(昔に戻っただけ?)
-//			if( nVal < 1 ){
-//				nVal = 1;
-//			}
-			if( nVal < -LINESPACE_MAX ){
-				nVal = -LINESPACE_MAX;
-			}
-//	To Here  Oct. 8, 2000
-			if( nVal > LINESPACE_MAX ){ // Feb. 18, 2003 genta 最大値の定数化
-				nVal = LINESPACE_MAX;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nVal, TRUE );
-			return TRUE;
-		case IDC_SPIN_TABSPACE:
-			//	Sep. 22, 2002 genta
-			/* TAB幅 */
-//			MYTRACE( L"IDC_SPIN_CHARSPACE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > TABSPACE_MAX ){
-				nVal = TABSPACE_MAX;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, nVal, FALSE );
-			return TRUE;
 
-		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 				OnHelp( hwndDlg, IDD_PROP_SCREEN );
@@ -443,8 +362,6 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			default:
 				break;
 			}
-			break;
-		}
 
 //		MYTRACE( L"pNMHDR->hwndFrom	=%xh\n",	pNMHDR->hwndFrom );
 //		MYTRACE( L"pNMHDR->idFrom	=%xh\n",	pNMHDR->idFrom );

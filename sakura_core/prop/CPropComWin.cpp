@@ -23,6 +23,7 @@
 #include "dlg/CDlgWinSize.h"	//	2004.05.13 Moca
 #include "util/shell.h"
 #include "util/os.h"
+#include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -97,6 +98,8 @@ INT_PTR CPropWin::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	const auto hWndDlg = hwndDlg;
+
 // From Here Sept. 9, 2000 JEPRO
 	WORD		wNotifyCode;
 	WORD		wID;
@@ -104,9 +107,6 @@ INT_PTR CPropWin::DispatchEvent(
 // To Here Sept. 9, 2000
 
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
-	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
 
 	switch( uMsg ){
 
@@ -122,14 +122,16 @@ INT_PTR CPropWin::DispatchEvent(
 		/* ルーラーとテキストの隙間 */
 		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerBottomSpace ), 2 );
 
+		apiwrap::SetUpDownRange(hwndDlg, IDC_SPIN_nRulerHeight, IDC_SPIN_nRulerHeight_MIN, IDC_SPIN_nRulerHeight_MAX);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_nRulerBottomSpace, 0, 32);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_nLineNumberRightSpace, 0, 32);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_FUNCKEYWND_GROUPNUM, 1, 12);
+
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		default:
+
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 				OnHelp( hwndDlg, IDD_PROP_WIN );
@@ -146,75 +148,7 @@ INT_PTR CPropWin::DispatchEvent(
 			default:
 				break;
 			}
-			break;
-		case IDC_SPIN_nRulerHeight:
-			/* ルーラ－の高さ */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < IDC_SPIN_nRulerHeight_MIN ){
-				nVal = IDC_SPIN_nRulerHeight_MIN;
-			}
-			if( nVal > IDC_SPIN_nRulerHeight_MAX ){
-				nVal = IDC_SPIN_nRulerHeight_MAX;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_nRulerBottomSpace:
-			/* ルーラーとテキストの隙間 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 0 ){
-				nVal = 0;
-			}
-			if( nVal > 32 ){
-				nVal = 32;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_nLineNumberRightSpace:
-			/* ルーラーとテキストの隙間 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 0 ){
-				nVal = 0;
-			}
-			if( nVal > 32 ){
-				nVal = 32;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_FUNCKEYWND_GROUPNUM:
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 12 ){
-				nVal = 12;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, nVal, FALSE );
-			return TRUE;
-		}
+
 		break;
 //****	To Here Sept. 21, 2000
 //	From Here Sept. 9, 2000 JEPRO

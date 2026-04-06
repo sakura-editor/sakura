@@ -19,6 +19,7 @@
 #include "recent/CMRUFolder.h"
 #include "util/shell.h"
 #include "util/os.h"
+#include "util/window.h"
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
@@ -107,14 +108,12 @@ INT_PTR CPropGeneral::DispatchEvent(
 	LPARAM	lParam 		// second message parameter
 )
 {
+	const auto hWndDlg = hwndDlg;
+
 	WORD		wNotifyCode;
 	WORD		wID;
 	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
-	int			nVal;
-//	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
 
@@ -125,6 +124,10 @@ INT_PTR CPropGeneral::DispatchEvent(
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
+
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_REPEATEDSCROLLLINENUM, 1, 10);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MAX_MRU_FILE, 0, MAX_MRU);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MAX_MRU_FOLDER, 0, MAX_OPENFOLDER);
 
 		return TRUE;
 	case WM_COMMAND:
@@ -224,65 +227,8 @@ INT_PTR CPropGeneral::DispatchEvent(
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		case IDC_SPIN_REPEATEDSCROLLLINENUM:
-			/* キーリピート時のスクロール行数 */
-//			MYTRACE( L"IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 10 ){
-				nVal = 10;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_MAX_MRU_FILE:
-			/* ファイルの履歴MAX */
-//			MYTRACE( L"IDC_SPIN_MAX_MRU_FILE\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 0 ){
-				nVal = 0;
-			}
-			if( nVal > MAX_MRU ){
-				nVal = MAX_MRU;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_MAX_MRU_FOLDER:
-			/* フォルダーの履歴MAX */
-//			MYTRACE( L"IDC_SPIN_MAX_MRU_FOLDER\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 0 ){
-				nVal = 0;
-			}
-			if( nVal > MAX_OPENFOLDER ){
-				nVal = MAX_OPENFOLDER;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, nVal, FALSE );
-			return TRUE;
-		default:
+
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 				OnHelp( hwndDlg, IDD_PROP_GENERAL );
@@ -299,8 +245,6 @@ INT_PTR CPropGeneral::DispatchEvent(
 			default:
 				break;
 			}
-			break;
-		}
 
 //		MYTRACE( L"pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
 //		MYTRACE( L"pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );

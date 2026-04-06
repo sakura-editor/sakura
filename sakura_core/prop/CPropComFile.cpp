@@ -96,14 +96,12 @@ INT_PTR CPropFile::DispatchEvent(
 	LPARAM	lParam 	//!< second message parameter
 )
 {
+	const auto hWndDlg = hwndDlg;
+
 	WORD		wNotifyCode;
 	WORD		wID;
 	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
-//	int			nVal;
-	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
 //	char		szFolder[_MAX_PATH];
 
 	switch( uMsg ){
@@ -111,6 +109,11 @@ INT_PTR CPropFile::DispatchEvent(
 		/* ダイアログデータの設定 File */
 		SetData( hwndDlg );
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
+
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_AUTOLOAD_DELAY, 0, SHRT_MAX);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_nDropFileNumMax, 1, 99);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_AUTOBACKUP_INTERVAL, 1, SHRT_MAX);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_ALERT_FILESIZE, 1, 2048);
 
 		return TRUE;
 //****	From Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
@@ -134,11 +137,8 @@ INT_PTR CPropFile::DispatchEvent(
 //		break;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		default:
+
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 				OnHelp( hwndDlg, IDD_PROP_FILE );
@@ -155,79 +155,7 @@ INT_PTR CPropFile::DispatchEvent(
 			default:
 				break;
 			}
-			break;
-		case IDC_SPIN_AUTOLOAD_DELAY:
-			// 自動読込時遅延
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 0 ){
-				nVal = 0;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_nDropFileNumMax:
-			/* 一度にドロップ可能なファイル数 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 99 ){
-				nVal = 99;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, nVal, FALSE );
-			return TRUE;
-//@@@ 2001.03.21 Start by MIK
-			/*NOTREACHED*/
-//			break;
-		case IDC_SPIN_AUTOBACKUP_INTERVAL:
-			/* バックアップ間隔 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 35791 ){
-				nVal = 35791;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_ALERT_FILESIZE:
-			/* ファイルの警告サイズ */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else 
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 2048 ){
-				nVal = 2048;  // 最大 2GB まで
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, nVal, FALSE );
-			return TRUE;
-			/*NOTREACHED*/
-//			break;
-//@@@ 2001.03.21 End by MIK
-		}
+
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるのでWM_NOTIFYをコメントアウトにしその下に修正を置いた
 		break;
 
