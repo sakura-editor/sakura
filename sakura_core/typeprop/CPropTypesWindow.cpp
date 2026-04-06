@@ -122,7 +122,6 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	WORD				wID;
 	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;		// 追加 2014.08.02 katze
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -135,7 +134,10 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), 1 );
 
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_LINENUMWIDTH, LINENUMWIDTH_MIN, LINENUMWIDTH_MAX);
+
 		apiwrap::SetTrackBarRange(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, 0, 255, false);
+		apiwrap::SetUpDownRange(hWndDlg, IDC_UPDOWN_BACKIMG_TRANSPARENCY, 0, 255);
 
 		return TRUE;
 
@@ -200,11 +202,11 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID))
 				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
-			if(wID == IDC_EDIT_BACKIMG_TRANSPARENCY){
-				int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nullptr, FALSE );
-				if(nVal < 0) nVal = 0;
-				if(nVal > 255) nVal = 255;
-				apiwrap::SetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, nVal);
+			[[fallthrough]];
+		case EN_CHANGE:
+			if(wID == IDC_EDIT_BACKIMG_TRANSPARENCY) {
+				const auto nVal = apiwrap::GetUpDownPos(hWndDlg, IDC_UPDOWN_BACKIMG_TRANSPARENCY);
+				apiwrap::SetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, WORD(nVal));
 			}
 			break;
 		default:
@@ -232,53 +234,6 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			break;
 		}
 
-		// switch文追加 2014.08.02 katze
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( (int)wParam ) {
-		case IDC_SPIN_LINENUMWIDTH:
-		{
-			/* 行番号の最小桁数 */
-//			MYTRACE( L"IDC_SPIN_LINENUMWIDTH\n" );
-			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < LINENUMWIDTH_MIN ){
-				nVal = LINENUMWIDTH_MIN;
-			}
-			if( nVal > LINENUMWIDTH_MAX ){
-				nVal = LINENUMWIDTH_MAX;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nVal, FALSE );
-			return TRUE;
-		}
-		default:
-			break;
-		}
-		switch( (int)wParam ) {
-		case IDC_UPDOWN_BACKIMG_TRANSPARENCY:
-		{
-			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				if( nVal < 0xFF ){
-					++nVal;
-				}
-			}else if( pMNUD->iDelta > 0 ){
-				if( nVal > 0 ){
-					--nVal;
-				}
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nVal, FALSE );
-			apiwrap::SetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, TRUE, nVal);
-			return TRUE;
-		}
-		default:
-			break;
-		}
-
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -300,15 +255,14 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 //@@@ 2001.11.17 add end MIK
 
 	case WM_HSCROLL:
-		if( (HWND)lParam == ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ) ){
-			WORD code = LOWORD(wParam);
+		if (IDC_TRACKBAR_BACKIMG_TRANSPARENCY == ::GetDlgCtrlID(HWND(lParam))) {
 			WORD pos;
-			if(code == TB_THUMBPOSITION || code == TB_THUMBTRACK){
+			if (const auto code = LOWORD(wParam); code == TB_THUMBPOSITION || code == TB_THUMBTRACK){
 				pos = HIWORD(wParam);
-			}else{
+			} else {
 				pos = apiwrap::GetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY);
 			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, pos, FALSE );
+			apiwrap::SetUpDownPos(hWndDlg, IDC_UPDOWN_BACKIMG_TRANSPARENCY, pos);
 		}
 		return TRUE;
 	default:
