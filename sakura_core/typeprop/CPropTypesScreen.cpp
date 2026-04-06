@@ -194,6 +194,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 	LPARAM		lParam 		// second message parameter
 )
 {
+	const auto hWndDlg = hwndDlg;
+
 	WORD		wNotifyCode;
 	WORD		wID;
 	HWND		hwndCtl;
@@ -222,7 +224,8 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), FALSE );	//設定の名前
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS ), FALSE );	//ファイル拡張子
 		}
-		ApiWrap::UpDown_SetRange(::GetDlgItem(hwndDlg, IDC_SPIN_LINESPACE), -LINESPACE_MAX, LINESPACE_MAX);
+
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_LINESPACE, LINESPACE_MAX, -LINESPACE_MAX);
 
 		return TRUE;
 	case WM_COMMAND:

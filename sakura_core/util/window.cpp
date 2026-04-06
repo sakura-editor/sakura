@@ -241,6 +241,14 @@ WORD GetTrackBarPos(HWND hWndDlg, int nIDDlgItem)
 }
 
 /*!
+ * @brief アップダウンコントロールの現在位置を取得する
+ */
+int GetUpDownPos(HWND hWndDlg, int nIDDlgItem)
+{
+	return int(::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_GETPOS, 0L, 0L));
+}
+
+/*!
  * @brief ボタンがチェックされているか調べる
  *
  * チェックボタンまたはラジオボタンのチェック状態を確認する
@@ -271,6 +279,14 @@ bool IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem)
 void SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw)
 {
 	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, TBM_SETPOS, WPARAM(bRedraw), LPARAM(pos));
+}
+
+/*!
+ * @brief アップダウンコントロールの現在位置を変更する
+ */
+void SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos)
+{
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_SETPOS, 0L, LPARAM(pos));
 }
 
 } // namespace apiwrap
