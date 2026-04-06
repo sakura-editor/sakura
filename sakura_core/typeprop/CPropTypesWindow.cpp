@@ -116,6 +116,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	LPARAM				lParam 		// second message parameter
 )
 {
+	const auto hWndDlg = hwndDlg;
+
 	WORD				wNotifyCode;
 	WORD				wID;
 	HWND				hwndCtl;
@@ -132,6 +134,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), 1 );
+
+		apiwrap::SetTrackBarRange(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, 0, 255, false);
 
 		return TRUE;
 
@@ -200,7 +204,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nullptr, FALSE );
 				if(nVal < 0) nVal = 0;
 				if(nVal > 255) nVal = 255;
-				ApiWrap::TrackBarCtl_SetPos( ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ), TRUE, nVal );
+				apiwrap::SetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, nVal);
 			}
 			break;
 		default:
@@ -268,7 +272,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				}
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nVal, FALSE );
-			ApiWrap::TrackBarCtl_SetPos( ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ), TRUE, nVal );
+			apiwrap::SetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, TRUE, nVal);
 			return TRUE;
 		}
 		default:
@@ -302,7 +306,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			if(code == TB_THUMBPOSITION || code == TB_THUMBTRACK){
 				pos = HIWORD(wParam);
 			}else{
-				pos = (WORD)ApiWrap::TrackBarCtl_GetPos((HWND)lParam);
+				pos = apiwrap::GetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY);
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, pos, FALSE );
 		}
@@ -325,6 +329,8 @@ void CPropTypesWindow::SetCombobox(HWND hwndWork, const int* nIds, int nCount, i
 /* ダイアログデータの設定 window */
 void CPropTypesWindow::SetData( HWND hwndDlg )
 {
+	const auto hWndDlg = hwndDlg;
+
 	{
 		// 文書アイコンを使う	//Sep. 10, 2002 genta
 		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon );
@@ -463,9 +469,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, m_Types.m_backImgPosOffset.y, TRUE);
 	BYTE transparency = 255 - m_Types.m_backImgOpacity;
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, transparency, FALSE);
-	HWND hWndTrackBar = ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY );
-	ApiWrap::TrackBarCtl_SetRange( hWndTrackBar, FALSE, 0, 255 );
-	ApiWrap::TrackBarCtl_SetPos( hWndTrackBar, TRUE, transparency );
+	apiwrap::SetTrackBarPos(hWndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY, transparency);
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if( 0 == m_Types.m_nLineTermType ){

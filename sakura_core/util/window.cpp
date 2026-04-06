@@ -233,6 +233,14 @@ bool EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable)
 }
 
 /*!
+ * @brief トラックバーの現在位置を取得する
+ */
+WORD GetTrackBarPos(HWND hWndDlg, int nIDDlgItem)
+{
+	return WORD(::SendDlgItemMessageW(hWndDlg, nIDDlgItem, TBM_GETPOS, 0L, 0L));
+}
+
+/*!
  * @brief ボタンがチェックされているか調べる
  *
  * チェックボタンまたはラジオボタンのチェック状態を確認する
@@ -255,6 +263,14 @@ bool IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem)
 		ret = ::IsWindowEnabled(hWndCtl);
 	}
 	return ret;
+}
+
+/*!
+ * @brief トラックバーの現在位置を変更する
+ */
+void SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw)
+{
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, TBM_SETPOS, WPARAM(bRedraw), LPARAM(pos));
 }
 
 } // namespace apiwrap

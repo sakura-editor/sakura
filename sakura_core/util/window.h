@@ -74,8 +74,20 @@ namespace apiwrap {
 
 void	CheckDlgButton(HWND hDlg, int nIDButton, bool bCheck = true);
 bool	EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable = true);
+WORD	GetTrackBarPos(HWND hWndDlg, int nIDDlgItem);
 bool	IsDlgButtonChecked(HWND hDlg, int nIDButton);
 bool	IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem);
+void	SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw = true);
+
+/*!
+ * @brief トラックバーのデータ範囲を変更する
+ */
+template<typename T1, typename T2>
+  requires std::convertible_to<T1, WORD> && std::convertible_to<T2, WORD>
+inline void SetTrackBarRange(HWND hWndDlg, int nIDDlgItem, T1 minimum, T2 maximum, bool bRedraw)
+{
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, TBM_SETRANGE, WPARAM(bRedraw), MAKELPARAM(minimum, maximum));
+}
 
 } // namespace apiwrap
 
