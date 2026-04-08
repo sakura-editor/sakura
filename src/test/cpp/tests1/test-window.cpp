@@ -41,8 +41,11 @@
 #include "prop/CPropCommon.h"
 #include "typeprop/CPropTypes.h"
 
+#include <fstream>
+
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "env/CommonSetting.h"
 
 #include "tests1_rc.h"
 
@@ -366,6 +369,52 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		return hWndPage;
 	}
 };
+
+/*!
+ * 上書き保存時バックアップのテスト
+ */
+TEST_F(EditWndTest, FileSaveWithBackupAgent001)
+{
+	auto& sBackup = GetDllShareData().m_Common.m_sBackup;
+	const CommonSetting_Backup backupOld = sBackup;
+
+	const auto targetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
+	const auto backupPath = targetPath.parent_path() / (targetPath.stem().native() + L".bak");
+
+	std::filesystem::remove(targetPath);
+	std::filesystem::remove(backupPath);
+
+	{
+		std::wofstream fs(targetPath);
+		fs << L"line1" << std::endl;
+	}
+
+	sBackup.m_bBackUp = true;
+	sBackup.m_bBackUpDialog = false;
+	sBackup.SetBackupType(1);
+	sBackup.m_bBackUpFolder = false;
+	sBackup.m_bBackUpPathAdvanced = false;
+	sBackup.m_bBackUpDustBox = false;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native()).c_str()), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Replace('line1', 'line1x')"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileSave()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(fexist(backupPath), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileClose()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	sBackup = backupOld;
+
+	std::filesystem::remove(targetPath);
+	std::filesystem::remove(backupPath);
+}
 
 /*!
  * キャンセルダイアログの表示テスト
