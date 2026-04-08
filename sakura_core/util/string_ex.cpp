@@ -421,46 +421,6 @@ std::string strprintf(const CHAR* pszFormat, ...)
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SJIS→UNICODE。戻り値はnew[]で確保して返す。
-wchar_t* mbstowcs_new(const char* src)
-{
-	size_t new_length=mbstowcs(nullptr,src,0);
-	wchar_t* ret=new wchar_t[new_length+1];
-	mbstowcs(ret,src,new_length);
-	ret[new_length]=L'\0';
-	return ret;
-}
-wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
-{
-	//必要な領域サイズ
-	int nNewLength = MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcLen,
-		nullptr,
-		0
-	);
-	
-	//確保
-	wchar_t* pNew = new wchar_t[nNewLength+1];
-
-	//変換
-	nNewLength = MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcLen,
-		pNew,
-		nNewLength
-	);
-	pNew[nNewLength] = L'\0';
-	if( pnDstLen ){
-		*pnDstLen = nNewLength;
-	}
-	return pNew;
-}
-
 /*!
 	@brief u8文字列を標準文字列に変換する。
 		動的にバッファを確保する簡易バージョン

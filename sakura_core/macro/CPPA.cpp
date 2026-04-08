@@ -419,48 +419,36 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	@date 2007.07.20 genta Indexと一緒にフラグを渡す
 */
 void __stdcall CPPA::stdProc(
-	const char*		FuncName,
+	const char*		FuncName [[maybe_unused]],
 	const int		_Index,
-	const char*		Argument[],
+	const char**	Arguments,
 	const int		ArgSize,
 	int*			Err_CD
 )
 {
-	NEVER_USED_PARAM(FuncName);
-	EFunctionCode Index=(EFunctionCode)_Index;
-
 	*Err_CD = 0;
 
+	auto tmpArguments = std::vector<std::wstring>();
+
 	//Argumentをwchar_t[]に変換 -> tmpArguments
-	WCHAR** tmpArguments2=new WCHAR*[ArgSize];
-	int* tmpArgLengths = new int[ArgSize];
-	for(int i=0;i<ArgSize;i++){
-		if(Argument[i]){
-			tmpArguments2[i]=mbstowcs_new(Argument[i]);
-			tmpArgLengths[i]=(int)wcslen(tmpArguments2[i]);
+	auto tmpArguments2 = std::vector<LPCWSTR>(ArgSize);
+	auto tmpArgLengths = std::vector<int>(ArgSize);
+	for (int i = 0; i < ArgSize; ++i) {
+		if (Arguments[i]) {
+			tmpArguments.emplace_back(cxx::to_wstring(Arguments[i], CP_SJIS));
+			tmpArguments2[i] = std::data(tmpArguments.back());
+			tmpArgLengths[i] = int(std::size(tmpArguments.back()));
 		}
 		else{
 			tmpArguments2[i]=nullptr;
 			tmpArgLengths[i]=0;
 		}
 	}
-	const WCHAR** tmpArguments=(const WCHAR**)tmpArguments2;
 
 	//処理
-	bool bRet = CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments,tmpArgLengths, ArgSize );
-	if( !bRet ){
-		*Err_CD = Index + 1;
+	if (const auto bRet = CMacro::HandleCommand(m_CurInstance->m_pcEditView, static_cast<EFunctionCode>(_Index | m_CurInstance->m_commandflags), std::data(tmpArguments2), std::data(tmpArgLengths), ArgSize); !bRet) {
+		*Err_CD = _Index + 1;
 	}
-
-	//tmpArgumentsを解放
-	for(int i=0;i<ArgSize;i++){
-		if(tmpArguments2[i]){
-			WCHAR* p=const_cast<WCHAR*>(tmpArguments2[i]);
-			delete[] p;
-		}
-	}
-	delete[] tmpArguments2;
-	delete[] tmpArgLengths;
 }
 
 /*!

@@ -239,7 +239,7 @@ private:
 	// コールバックプロシージャ群
 	static void __stdcall stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int* Err_CD, char** Value);	//	2003.06.01 Moca
 
-	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
+	static void __stdcall stdProc( const char* FuncName, const int Index, const char** Arguments, const int ArgSize, int* Err_CD);
 	static void __stdcall stdIntFunc( const char* FuncName, const int Index,
 		const char* Argument[], const int ArgSize, int* Err_CD, int* ResultValue); // 2002.02.24 Moca
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);

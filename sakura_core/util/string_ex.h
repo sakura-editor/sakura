@@ -207,10 +207,6 @@ std::string strprintf(const CHAR* pszFormat, ...);
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SJIS→UNICODE。
-wchar_t*	mbstowcs_new(const char* pszSrc);								//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
-wchar_t*	mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen);		//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
-
 std::wstring u8stowcs(std::string_view strInput);
 std::string wcstou8s(std::wstring_view strInput);
 
