@@ -421,35 +421,6 @@ std::string strprintf(const CHAR* pszFormat, ...)
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SJIS→UNICODE。終端にL'\0'を付けてくれる版。
-size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count)
-{
-	size_t ret=::mbstowcs(dst,src,dst_count-1);
-	dst[ret]=L'\0';
-	return ret;
-}
-size_t mbstowcs2(wchar_t* pDst, int nDstCount, const char* pSrc, int nSrcCount)
-{
-	int ret=MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcCount,
-		pDst,
-		nDstCount-1
-	);
-	pDst[ret]=L'\0';
-	return (size_t)ret;
-}
-
-//UNICODE→SJIS。終端に'\0'を付けてくれる版。
-size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
-{
-	size_t ret=::wcstombs(dst,src,dst_count-1);
-	dst[ret]='\0';
-	return ret;
-}
-
 //SJIS→UNICODE。戻り値はnew[]で確保して返す。
 wchar_t* mbstowcs_new(const char* src)
 {
