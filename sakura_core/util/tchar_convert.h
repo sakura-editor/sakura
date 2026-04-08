@@ -16,8 +16,6 @@ const WCHAR* to_wchar(const ACHAR* src);
 const WCHAR* to_wchar(const ACHAR* pSrcData, int nSrcLength);
 
 //ACHARに変換
-inline
-const ACHAR* to_achar(const ACHAR* src){ return src; }
 const ACHAR* to_achar(const WCHAR* src);
 const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
 
