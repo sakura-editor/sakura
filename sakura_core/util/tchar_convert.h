@@ -12,14 +12,14 @@
 #include "basis/primitive.h"
 
 //WCHARに変換
+const WCHAR* to_wchar(std::string_view source);
 const WCHAR* to_wchar(const ACHAR* src);
-const WCHAR* to_wchar(const ACHAR* pSrcData, int nSrcLength);
+const WCHAR* to_wchar(const ACHAR* pSrc, size_t nSrcLength);
 
 //ACHARに変換
-inline
-const ACHAR* to_achar(const ACHAR* src){ return src; }
+const ACHAR* to_achar(std::wstring_view source);
 const ACHAR* to_achar(const WCHAR* src);
-const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
+const ACHAR* to_achar(const WCHAR* pSrc, size_t nSrcLength);
 
 namespace cxx {
 

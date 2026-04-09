@@ -207,21 +207,6 @@ std::string strprintf(const CHAR* pszFormat, ...);
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#include <vector>
-
-//SJIS→UNICODE。終端にL'\0'を付けてくれる版。
-size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count);
-size_t mbstowcs2(wchar_t* pDst, int nDstCount, const char* pSrc, int nSrcCount);
-
-//UNICODE→SJIS。終端に'\0'を付けてくれる版。
-size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count);
-
-//SJIS→UNICODE。
-wchar_t*	mbstowcs_new(const char* pszSrc);								//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
-wchar_t*	mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen);		//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
-
-std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput);
-std::string wcstou8s(std::string& strOut, std::wstring_view strInput);
 std::wstring u8stowcs(std::string_view strInput);
 std::string wcstou8s(std::wstring_view strInput);
 

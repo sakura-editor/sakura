@@ -16,6 +16,7 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "util/std_macro.h"
+#include "util/tchar_convert.h"
 #include <limits.h>
 #include <locale.h>
 
@@ -420,173 +421,6 @@ std::string strprintf(const CHAR* pszFormat, ...)
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SJIS→UNICODE。終端にL'\0'を付けてくれる版。
-size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count)
-{
-	size_t ret=::mbstowcs(dst,src,dst_count-1);
-	dst[ret]=L'\0';
-	return ret;
-}
-size_t mbstowcs2(wchar_t* pDst, int nDstCount, const char* pSrc, int nSrcCount)
-{
-	int ret=MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcCount,
-		pDst,
-		nDstCount-1
-	);
-	pDst[ret]=L'\0';
-	return (size_t)ret;
-}
-
-//UNICODE→SJIS。終端に'\0'を付けてくれる版。
-size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
-{
-	size_t ret=::wcstombs(dst,src,dst_count-1);
-	dst[ret]='\0';
-	return ret;
-}
-
-//SJIS→UNICODE。戻り値はnew[]で確保して返す。
-wchar_t* mbstowcs_new(const char* src)
-{
-	size_t new_length=mbstowcs(nullptr,src,0);
-	wchar_t* ret=new wchar_t[new_length+1];
-	mbstowcs(ret,src,new_length);
-	ret[new_length]=L'\0';
-	return ret;
-}
-wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
-{
-	//必要な領域サイズ
-	int nNewLength = MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcLen,
-		nullptr,
-		0
-	);
-	
-	//確保
-	wchar_t* pNew = new wchar_t[nNewLength+1];
-
-	//変換
-	nNewLength = MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcLen,
-		pNew,
-		nNewLength
-	);
-	pNew[nNewLength] = L'\0';
-	if( pnDstLen ){
-		*pnDstLen = nNewLength;
-	}
-	return pNew;
-}
-
-/*!
-	@brief u8文字列を標準文字列に変換する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	変換された標準文字列を受け取る変数
-	@param[in]  strInput	u8文字列
-	@returns 標準文字列
- */
-std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
-{
-	// 必要なバッファのサイズを確認する
-	const auto cchOut = ::MultiByteToWideChar(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		nullptr,
-		0
-	);
-
-	if (cchOut <= 0) {
-		strOut.clear();
-		return strOut;
-	}
-
-	// 必要なバッファを確保する
-	if (const size_t required = cchOut + 1;
-		strOut.capacity() <= required)
-	{
-		strOut.resize(required, L'0');
-	}
-
-	// 変換する
-	::MultiByteToWideChar(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		strOut.data(),
-		(int)strOut.capacity()
-	);
-
-	// NUL終端する
-	eos(strOut, cchOut);
-
-	return strOut;
-}
-
-/*!
-	@brief 標準文字列をu8文字列に変換する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	変換されたu8文字列を受け取る変数
-	@param[in]  strInput	標準文字列
-	@returns u8文字列
- */
-std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
-{
-	// 必要なバッファのサイズを確認する
-	const auto cchOut= ::WideCharToMultiByte(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		nullptr,
-		0,
-		nullptr,
-		nullptr
-	);
-
-	if (cchOut <= 0) {
-		strOut.clear();
-		return strOut;
-	}
-
-	// 必要なバッファを確保する
-	if (const size_t required = cchOut + 1;
-		strOut.capacity() <= required)
-	{
-		strOut.resize(required, L'0');
-	}
-
-	// 変換する
-	::WideCharToMultiByte(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		strOut.data(),
-		(int)strOut.capacity(),
-		nullptr,
-		nullptr
-	);
-
-	// NUL終端する
-	eos(strOut, cchOut);
-
-	return strOut;
-}
-
 /*!
 	@brief u8文字列を標準文字列に変換する。
 		動的にバッファを確保する簡易バージョン
@@ -595,8 +429,7 @@ std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
  */
 std::wstring u8stowcs(std::string_view strInput)
 {
-	std::wstring strOut;
-	return u8stowcs(strOut, strInput);
+	return cxx::to_wstring(strInput, CP_UTF8);
 }
 
 /*!
@@ -607,8 +440,7 @@ std::wstring u8stowcs(std::string_view strInput)
  */
 std::string wcstou8s(std::wstring_view strInput)
 {
-	std::string strOut;
-	return wcstou8s(strOut, strInput);
+	return cxx::to_string(strInput, CP_UTF8);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
