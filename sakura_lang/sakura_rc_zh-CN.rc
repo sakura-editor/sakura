@@ -4040,6 +4040,13 @@ BEGIN
     STR_PLGMGR_INST_ID      "未找到Plugin.ID"
     STR_PLGMGR_INST_RESERVE1 "保留字段  """
     STR_PLGMGR_INST_RESERVE2 """ 不能用于Plugin.ID"
+    IDS_EOLTYPENAME_0 "没有换行符"
+    IDS_EOLTYPENAME_1 "CRLF"
+    IDS_EOLTYPENAME_2 "LF"
+    IDS_EOLTYPENAME_3 "CR"
+    IDS_EOLTYPENAME_4 "NEL"
+    IDS_EOLTYPENAME_5 "LS"
+    IDS_EOLTYPENAME_6 "PS"
 END
 
 #endif    // 中国語 (簡体字、中国) resources

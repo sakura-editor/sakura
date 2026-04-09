@@ -29,6 +29,9 @@ namespace WCODE{
 	constexpr wchar_t SPACE = L' ';
 	constexpr wchar_t CR    = L'\r';
 	constexpr wchar_t LF    = L'\n';
+	constexpr wchar_t NEL   = L'\x85';
+	constexpr wchar_t PS_   = L'\u2028';
+	constexpr wchar_t LS_   = L'\u2029';
 	constexpr wchar_t ESC   = L'\x1b';
 
 	//文字列
