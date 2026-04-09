@@ -1580,8 +1580,8 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 	EXPECT_THAT(shareData.m_sHandles.m_hwndTray, nullptr);
 	EXPECT_THAT(shareData.m_sHandles.m_hwndDebug, nullptr);
 
-	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName.data(), StrEq(L""));
-	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName2.data(), StrEq(L""));
+	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName1, StrEq(L""));
+	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName2, StrEq(L""));
 	for (int i = 0; i < std::ssize(shareData.m_sCharWidth.m_nCharPxWidthCache); ++i) {
 		EXPECT_THAT(shareData.m_sCharWidth.m_nCharPxWidthCache[i], 0) << L"Unexpected value at index " << i;
 	}

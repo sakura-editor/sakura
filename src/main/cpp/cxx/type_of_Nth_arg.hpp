@@ -5,6 +5,8 @@
 	SPDX-License-Identifier: Zlib
  */
 
+#ifndef SAKURA_TYPE_OF_NTH_ARG_15B00243_EC03_43DC_A714_C6D17C702CA9_H_
+#define SAKURA_TYPE_OF_NTH_ARG_15B00243_EC03_43DC_A714_C6D17C702CA9_H_
 #pragma once
 
 namespace cxx {
@@ -67,3 +69,4 @@ template<typename FuncDecl>
 using type_of_last_arg = type_of_Nth_arg<size_of_args<FuncDecl> - 1, FuncDecl>;
 
 } // namespace cxx
+#endif /* SAKURA_TYPE_OF_NTH_ARG_15B00243_EC03_43DC_A714_C6D17C702CA9_H_ */

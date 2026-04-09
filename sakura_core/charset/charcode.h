@@ -12,7 +12,9 @@
 //2007.09.13 kobake 作成
 #include <array>
 #include <mutex>
+#include "cxx/ResourceHolder.hpp"
 #include "parse/CWordParse.h"
+#include "util/StaticType.h"
 #include "util/std_macro.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -199,8 +201,8 @@ namespace WCODE
 // 文字幅の動的計算用キャッシュ関連
 struct SCharWidthCache {
 	// 文字半角全角キャッシュ
-	std::array<WCHAR, LF_FACESIZE> m_lfFaceName;
-	std::array<WCHAR, LF_FACESIZE> m_lfFaceName2;
+	StaticString<LF_FACESIZE> m_lfFaceName1;
+	StaticString<LF_FACESIZE> m_lfFaceName2;
 	std::array<short, 0x10000> m_nCharPxWidthCache;
 	int			m_nCharWidthCacheTest;				//cache溢れ検出
 };
@@ -222,17 +224,22 @@ enum ECharWidthCacheMode {
 	1文字当たり2バイトで文字のピクセル幅を保存しておく。
 */
 class CCharWidthCache {
+private:
+	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
+
 public:
 	CCharWidthCache() = default;
 	CCharWidthCache(const CCharWidthCache&) = delete;
 	CCharWidthCache& operator=(const CCharWidthCache&) = delete;
-	~CCharWidthCache() { DeleteLocalData(); }
+	virtual ~CCharWidthCache() = default;
 
 	// 再初期化
 	void Init(const LOGFONT& lf, const LOGFONT& lfFull, HDC hdcOrg);
 	void SelectCache(SCharWidthCache* pCache) { m_pCache = pCache; }
 	void Clear();
-	[[nodiscard]] bool GetMultiFont() const { return m_bMultiFont; }
+	[[nodiscard]] bool GetMultiFont() const noexcept { return m_bMultiFont; }
 
 	//!文字が半角かどうかを取得(DLLSHARE/フォント依存)
 	virtual bool CalcHankakuByFont(wchar_t c);
@@ -246,18 +253,18 @@ private:
 	int QueryPixelWidth(wchar_t c) const;
 	[[nodiscard]] HDC SelectHDC(wchar_t c) const;
 
-	HDC m_hdc = nullptr;
-	HDC m_hdcFull = nullptr;
-	HFONT m_hFontOld = nullptr;
-	HFONT m_hFontFullOld = nullptr;
-	HFONT m_hFont = nullptr;
-	HFONT m_hFontFull = nullptr;
-	bool m_bMultiFont;
-	SIZE m_han_size;
-	LOGFONT m_lf{};				// 2008/5/15 Uchi
-	LOGFONT m_lf2{};
+	MemDcHolder m_hdc1 = nullptr;
+	MemDcHolder m_hdc2 = nullptr;
+	FontHolder m_hFont1 = nullptr;
+	FontHolder m_hFont2 = nullptr;
+	SelectionHolder m_hFont1Old{ m_hdc1 };
+	SelectionHolder m_hFont2Old{ m_hdc2 };
+	bool m_bMultiFont = false;
+	SIZE m_han_size{};
+
 	SCharWidthCache* m_pCache = nullptr;
-	mutable std::mutex m_mtx;
+
+	mutable std::mutex m_mtx{};
 };
 
 // キャッシュの初期化関数群
