@@ -43,6 +43,9 @@ enable_testing()
 add_subdirectory("${CMAKE_SOURCE_DIR}/tools/ppa_stub"
                  "${CMAKE_BINARY_DIR}/ppa_stub")
 
+add_subdirectory("${CMAKE_SOURCE_DIR}/tools/dll_plugin1"
+                 "${CMAKE_BINARY_DIR}/dll_plugin1")
+
 # Include tests1 definition
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/tests1.cmake)
 

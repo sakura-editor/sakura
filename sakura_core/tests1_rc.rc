@@ -53,6 +53,7 @@ END
 IDR_ZIPRES1               101                     "resources.ja-JP.zip"
 IDR_ZIPRES2               101                     "cmigemo-dict-utf-8.zip"
 IDR_ZIPRES3               101                     "cmigemo-dict-cp932.zip"
+IDR_ZIPRES4               101                     "resources-dllplugin.zip"
 
 #endif    // 日本語 (日本) resources
 /////////////////////////////////////////////////////////////////////////////

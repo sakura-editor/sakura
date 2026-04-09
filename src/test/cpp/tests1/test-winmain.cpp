@@ -532,6 +532,7 @@ TEST_P(WinMainTest, runEditorProcess)
 
 	// プラグイン定義を展開する
 	extract_zip_resource(IDR_ZIPRES1, pluginPath);
+	extract_zip_resource(IDR_ZIPRES4, pluginPath);
 
 	// ケース独自の設定ファイルを使うので、一旦削除する
 	std::filesystem::remove(iniPath);
@@ -584,6 +585,9 @@ TEST_P(WinMainTest, runEditorProcess)
 		u8"P[00].CmdNum=1"sv,
 		u8"P[00].Id=TestWshPlugin"sv,
 		u8"P[00].Name=test-plugin"sv,
+		u8"P[01].CmdNum=2"sv,
+		u8"P[01].Id=TestDllPlugin"sv,
+		u8"P[01].Name=test-dllplugin"sv,
 
 		// プリンター設定を出力
 		u8"[Print]"sv,
