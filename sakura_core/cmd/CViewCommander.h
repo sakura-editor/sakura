@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -26,7 +26,7 @@ class CStringRef;
 
 class CViewCommander{
 public:
-	CViewCommander(CEditView* pEditView);
+	explicit CViewCommander(CEditView* pEditView);
 
 public:
 	//外部依存
@@ -44,7 +44,7 @@ private:
 
 public:
 	/* キーリピート状態 */
-	int				m_bPrevCommand;
+	int				m_bPrevCommand = 0;
 
 private:
 	enum EIndentType {
@@ -348,9 +348,6 @@ public:
 	int Command_CUSTMENU(int nMenuIdx);		/* カスタムメニュー表示 */
 
 	/* ウィンドウ系 */
-	void Command_SPLIT_V( void );		/* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
-	void Command_SPLIT_H( void );		/* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
-	void Command_SPLIT_VH( void );		/* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
 	void Command_WINCLOSE( void );		/* ウィンドウを閉じる */
 	void Command_FILECLOSEALL( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	void Command_BIND_WINDOW( void );	/* 結合して表示 */	//2004.07.14 Kazika 新規追加
@@ -400,4 +397,18 @@ public:
 	ptrdiff_t ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen, wchar_t* pszConvertedText);
 	void Sub_BoxSelectLock(LPARAM flags) noexcept;
 };
+
+
+namespace cmd::window {
+
+void	Command_SPLIT_V();				/* 上下に分割 */
+void	Command_SPLIT_H();				/* 左右に分割 */
+void	Command_SPLIT_VH();				/* 縦横に分割 */
+
+void	Command_WINMAXIMIZE();			/* ウィンドウを最大化 */
+void	Command_WINMINIMIZE();			/* ウィンドウを最小化 */
+void	Command_WINRESTORE();			/* ウィンドウを元のサイズに戻す */
+
+} // namespace cmd::window
+
 #endif /* SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_ */
