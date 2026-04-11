@@ -358,6 +358,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_SPLIT_V,					L"SplitWinV",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 	{F_SPLIT_H,					L"SplitWinH",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 	{F_SPLIT_VH,				L"SplitWinVH",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+	{F_WINMAXIMIZE,				L"WinMaximize",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを最大化
+	{F_WINMINIMIZE,				L"WinMinimize",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを最小化
+	{F_WINRESTORE,				L"WinRestore",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを元のサイズに戻す
 	{F_WINCLOSE,				L"WinClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを閉じる
 	{F_WIN_CLOSEALL,			L"WinCloseAll",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
 	{F_CASCADE,					L"CascadeWin",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //重ねて表示

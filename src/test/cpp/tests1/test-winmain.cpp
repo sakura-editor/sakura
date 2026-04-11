@@ -651,6 +651,10 @@ TEST_P(WinMainTest, runEditorProcess)
 		L"GoFileTop();"sv,
 
 		L"PrintPreview();"sv,			// 印刷プレビュー出す
+		L"WinMaximize();"sv,
+		L"WinRestore();"sv,
+		L"WinMinimize();"sv,
+		L"WinRestore();"sv,
 		L"PrintPreview();"sv,			// 印刷プレビュー消す
 
 		L"SplitWinVH();"sv,
@@ -660,6 +664,11 @@ TEST_P(WinMainTest, runEditorProcess)
 		L"WheelUp();"sv,
 		L"WheelRight();"sv,
 		L"WheelLeft();"sv,
+
+		L"WinMaximize();"sv,
+		L"WinRestore();"sv,
+		L"WinMinimize();"sv,
+		L"WinRestore();"sv,
 
 		L"PrevWindow();PrevWindow();PrevWindow();PrevWindow();"sv,
 		L"SplitWinVH();"sv,

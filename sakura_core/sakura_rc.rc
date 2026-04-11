@@ -4080,6 +4080,9 @@ BEGIN
     IDS_EOLTYPENAME_4 "NEL"
     IDS_EOLTYPENAME_5 "LS"
     IDS_EOLTYPENAME_6 "PS"
+    F_WINMAXIMIZE     "最大化"
+    F_WINMINIMIZE     "最小化"
+    F_WINRESTORE      "元に戻す"
 END
 
 #endif    // 日本語 (日本) resources
