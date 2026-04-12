@@ -522,6 +522,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	// 2002/09/21 Moca 追加
 	cProfile.IOProfileData(pszSecName, L"nGrepCharSet", common.m_sSearch.m_nGrepCharSet );
 	cProfile.IOProfileData( pszSecName, L"bGrepRealTime"			, common.m_sSearch.m_bGrepRealTimeView ); // 2003.06.16 Moca
+	cProfile.IOProfileData( pszSecName, L"nGrepThreadCount"		, common.m_sSearch.m_nGrepThreadCount );
 	cProfile.IOProfileData( pszSecName, L"bCaretTextForSearch"	, common.m_sSearch.m_bCaretTextForSearch );	// 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする
 	cProfile.IOProfileData( pszSecName, L"m_bInheritKeyOtherView"	, common.m_sSearch.m_bInheritKeyOtherView );
 	cProfile.IOProfileData( pszSecName, L"nTagJumpMode"			, common.m_sSearch.m_nTagJumpMode );
@@ -1686,7 +1687,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		cProfile.IOProfileData( pszSecName, L"bUseRegexKeyword", types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
 		wchar_t* pKeyword = types.m_RegexKeywordList;
 		int nPos = 0;
-		constexpr auto nKeywordSize = int(std::size(types.m_RegexKeywordList));
+		constexpr auto nKeywordSize = int(std::extent_v<decltype(types.m_RegexKeywordList)>);
 		for(j = 0; j < int(std::size(types.m_RegexKeywordArr)); j++)
 		{
 			auto_sprintf( szKeyName, L"RxKey[%03d]", j );
