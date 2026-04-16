@@ -21,6 +21,7 @@
 #include "_main/global.h"
 #include "CClipboard.h"
 #include "CSelectLang.h"
+#include <cstdint>
 
 COleLibrary CYbInterfaceBase::m_olelib;
 
@@ -191,6 +192,9 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		m_nFormat = 0;
 	}
 	if( lpszText != nullptr ){
+		if( nTextLen > UINT32_MAX ){
+			return;
+		}
 		m_nFormat = bColumnSelect? 4: 3;	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
 
@@ -209,10 +213,11 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 
 		i++;
 		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
-		m_pData[i].size = sizeof(size_t) + nTextLen * sizeof( wchar_t );
+		m_pData[i].size = sizeof(uint32_t) + (nTextLen + 1) * sizeof( wchar_t );
 		m_pData[i].data = new BYTE[m_pData[i].size];
-		*(size_t*)m_pData[i].data = nTextLen;
-		memcpy_raw( m_pData[i].data + sizeof(size_t), lpszText, nTextLen * sizeof( wchar_t ) );
+		*(uint32_t*)m_pData[i].data = static_cast<uint32_t>(nTextLen);
+		memcpy_raw( m_pData[i].data + sizeof(uint32_t), lpszText, nTextLen * sizeof( wchar_t ) );
+		*((wchar_t*)(m_pData[i].data + sizeof(uint32_t)) + nTextLen) = L'\0';
 
 		i++;
 		if( bColumnSelect ){

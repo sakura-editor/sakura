@@ -5,6 +5,7 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
+#include <cstdint>
 #include <array>
 #include <cstring>
 #include <functional>
@@ -49,8 +50,8 @@ MATCHER_P(AnsiStringInGlobalMemory, expected_string, "") {
 MATCHER_P(SakuraFormatInGlobalMemory, expected_string, "") {
 	char* p = (char*)::GlobalLock(arg);
 	if (!p) return false;
-	int length = *(size_t*)p;
-	p += sizeof(size_t);
+	uint32_t length = *(uint32_t*)p;
+	p += sizeof(uint32_t);
 	std::wstring_view actual((const wchar_t*)p);
 	bool match = actual.size() == length && actual == expected_string;
 	::GlobalUnlock(arg);
@@ -185,6 +186,13 @@ TEST(CClipboard, SetText6) {
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, 0));
 }
 
+// SetText のテスト。UINT32_MAX を超える長さが渡された場合。
+TEST(CClipboard, SetTextOverUint32Max) {
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
+	EXPECT_FALSE(clipboard.SetText(L"x", static_cast<size_t>(UINT32_MAX) + 1, false, false, -1));
+}
+
 // グローバルメモリを RAII で管理する簡易ヘルパークラス
 class GlobalMemory {
 public:
@@ -215,7 +223,7 @@ protected:
 	static constexpr std::wstring_view sakuraText = L"SAKURAClipW";
 	static constexpr std::string_view oemText = "CF_OEMTEXT";
 	GlobalMemory unicodeMemory{ GMEM_MOVEABLE, (unicodeText.size() + 1) * sizeof(wchar_t) };
-	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(size_t) + (sakuraText.size() + 1) * sizeof(wchar_t) };
+	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(uint32_t) + (sakuraText.size() + 1) * sizeof(wchar_t) };
 	GlobalMemory oemMemory{ GMEM_MOVEABLE, oemText.size() + 1 };
 
 	CClipboardGetText() {
@@ -223,8 +231,8 @@ protected:
 			std::wcscpy(p, unicodeText.data());
 		});
 		sakuraMemory.Lock<unsigned char>([=](unsigned char* p) {
-			*(size_t*)p = sakuraText.size();
-			std::wcscpy((wchar_t*)(p + sizeof(size_t)), sakuraText.data());
+			*(uint32_t*)p = static_cast<uint32_t>(sakuraText.size());
+			std::wcscpy((wchar_t*)(p + sizeof(uint32_t)), sakuraText.data());
 		});
 		oemMemory.Lock<char>([=](char* p) {
 			std::strcpy(p, oemText.data());
