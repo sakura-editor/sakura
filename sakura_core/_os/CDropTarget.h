@@ -171,6 +171,7 @@ private:
 	CDataObject* m_pcDataObject;
 public:
 	CEnumFORMATETC(CDataObject* pcDataObject) : m_pcDataObject(pcDataObject) {}
+	virtual ~CEnumFORMATETC() = default;
 	STDMETHOD_( ULONG, AddRef )( void )
 	{return ::InterlockedIncrement(&m_lRef);}
 	STDMETHOD_( ULONG, Release )( void )
