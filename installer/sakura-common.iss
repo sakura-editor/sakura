@@ -265,14 +265,14 @@ Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep\comm
 
 ; add ProgID
 ; see https://www.glamenv-septzen.net/view/14#idf5215e
-; see https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017
+; see https://learn.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=visualstudio
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document";                    ValueType: string; ValueName: "";       ValueData: "";                              Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell";              ValueType: string; ValueName: "";       ValueData: "";                              Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell\open";         ValueType: string; ValueName: "";       ValueData: "";                              Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell\open\command"; ValueType: string; ValueName: "";       ValueData: """{app}\sakura.exe"" ""%1""";   Flags: uninsdeletekey; Check: CheckPrivilege(true)
 
 ; add File Handlers to each extensions
-; see https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017
+; see https://learn.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=visualstudio
 Root: HKLM; Subkey: "SOFTWARE\Classes\.txt\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\.log\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\.c\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
@@ -300,14 +300,14 @@ Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep\comm
 
 ; add ProgID
 ; see https://www.glamenv-septzen.net/view/14#idf5215e
-; see https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017
+; see https://learn.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=visualstudio
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document";                    ValueType: string; ValueName: "";       ValueData: "";                              Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell";              ValueType: string; ValueName: "";       ValueData: "";                              Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell\open";         ValueType: string; ValueName: "";       ValueData: "";                              Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell\open\command"; ValueType: string; ValueName: "";       ValueData: """{app}\sakura.exe"" ""%1""";   Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 ; add File Handlers to each extensions
-; see https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017
+; see https://learn.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=visualstudio
 Root: HKLM; Subkey: "SOFTWARE\Classes\.txt\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
 Root: HKLM; Subkey: "SOFTWARE\Classes\.log\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
 Root: HKLM; Subkey: "SOFTWARE\Classes\.c\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
