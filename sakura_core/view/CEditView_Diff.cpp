@@ -20,8 +20,6 @@
 */
 
 #include "StdAfx.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "view/CEditView.h"
 #include "_main/global.h"
 #include "_main/CMutex.h"
@@ -99,28 +97,19 @@ void CEditView::ViewDiffInfo(
 	int				nFlgOpt,
 	bool 			bUTF8
 )
-/*
-	bool	bFlgCase,		//大文字小文字同一視
-	bool	bFlgBlank,		//空白無視
-	bool	bFlgWhite,		//空白変更無視
-	bool	bFlgBLine,		//空行無視
-	bool	bFlgTabSpc,		//TAB-SPACE変換
-	bool	bFlgFile12,		//編集中のファイルが旧ファイル
-*/
 {
 	CWaitCursor	cWaitCursor( this->GetHwnd() );
 	int		nFlgFile12 = 1;
 
-	/* exeのあるフォルダー */
-	WCHAR	szExeFolder[_MAX_PATH + 1];
+	/* diff.exeのあるパス */
+	WCHAR	szExePath[_MAX_PATH + 1];
 
 	WCHAR	cmdline[1024];
-	GetExedir( cmdline, L"diff.exe" );
-	SplitPath_FolderAndFile( cmdline, szExeFolder, nullptr );
+	GetExedir( szExePath, L"diff.exe" );
 
 	//	From Here Dec. 28, 2002 MIK
 	//	diff.exeの存在チェック
-	if( !IsFileExists( cmdline, true ) )
+	if( !IsFileExists( szExePath, true ) )
 	{
 		WarningMessage( GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF2) );
 		return;
@@ -148,11 +137,11 @@ void CEditView::ViewDiffInfo(
 
 	{
 		//コマンドライン文字列作成(MAX:1024)
-		auto_sprintf(
+		auto_snprintf_s(
 			cmdline,
-			L"\"%s\\%s\" %s \"%s\" \"%s\"",
-			szExeFolder,	//sakura.exeパス
-			L"diff.exe",		//diff.exe
+			std::size(cmdline),
+			L"\"%s\" %s \"%s\" \"%s\"",
+			szExePath,	//diff.exe
 			szOption,		//diffオプション
 			( nFlgFile12 ? pszFile2 : pszFile1 ),
 			( nFlgFile12 ? pszFile1 : pszFile2 )
