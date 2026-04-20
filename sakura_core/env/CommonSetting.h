@@ -396,6 +396,7 @@ struct CommonSetting_Search
 	//Grep
 	BOOL			m_bGrepExitConfirm;			//!< Grepモードで保存確認するか
 	BOOL			m_bGrepRealTimeView;		//!< Grep結果のリアルタイム表示 2003.06.16 Moca
+	int				m_nGrepThreadCount;			//!< Grep並列スレッド数（最低値・デフォルト2）
 
 	BOOL			m_bGTJW_RETURN;				//!< エンターキーでタグジャンプ
 	BOOL			m_bGTJW_LDBLCLK;			//!< ダブルクリックでタグジャンプ
