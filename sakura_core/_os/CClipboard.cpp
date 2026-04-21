@@ -16,6 +16,7 @@
 #include "charset/CUtf8.h"
 #include "basis/CEol.h"
 #include "mem/CNativeA.h"
+#include <cstdint>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
@@ -77,6 +78,9 @@ bool CClipboard::SetText(
 	if( !m_bOpenResult ){
 		return false;
 	}
+	if( nDataLen > UINT32_MAX ){
+		return false;
+	}
 
 	/*
 	// テキスト形式のデータ (CF_OEMTEXT)
@@ -117,7 +121,7 @@ bool CClipboard::SetText(
 	//	1回しか通らない. breakでここまで飛ぶ
 
 	// バイナリ形式のデータ
-	//	(size_t) 「データ」の長さ
+	//	(uint32_t) 「データ」の長さ
 	//	「データ」
 	HGLOBAL hgClipSakura = nullptr;
 	//サクラエディタ専用フォーマットを取得
@@ -129,13 +133,13 @@ bool CClipboard::SetText(
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			sizeof(size_t) + (nDataLen + 1) * sizeof(wchar_t)
+			sizeof(uint32_t) + (nDataLen + 1) * sizeof(wchar_t)
 		);
 		if( !hgClipSakura )break;
 
 		//確保した領域にデータをコピー
 		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
-		*((size_t*)pClip) = nDataLen; pClip += sizeof(nDataLen);						//データの長さ
+		*((uint32_t*)pClip) = static_cast<uint32_t>(nDataLen); pClip += sizeof(uint32_t);	//データの長さ
 		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
 		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
 		::GlobalUnlock( hgClipSakura );
@@ -302,11 +306,16 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
 		if (hSakura != nullptr) {
 			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
-			size_t nLength        = *((size_t*)pData);
-			const wchar_t* szData = (const wchar_t*)(pData + sizeof(size_t));
-			cmemBuf->Append( szData, nLength );
+			const size_t nDataSize = ::GlobalSize(hSakura);
+			if( pData != nullptr && nDataSize > sizeof(uint32_t) ){
+				const size_t nLength = static_cast<size_t>(*reinterpret_cast<uint32_t*>(pData));
+				const wchar_t* szData = reinterpret_cast<const wchar_t*>(pData + sizeof(uint32_t));
+				const size_t nAvailable = (nDataSize - sizeof(uint32_t)) / sizeof(wchar_t);
+				cmemBuf->Append( szData, std::min(nLength, nAvailable) );
+				::GlobalUnlock(hSakura);
+				return true;
+			}
 			::GlobalUnlock(hSakura);
-			return true;
 		}
 	}
 

@@ -461,6 +461,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
 			sSearch.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
+			sSearch.m_nGrepThreadCount = 2;				/* Grep並列スレッド数（最低値・デフォルト2） */
 
 			sSearch.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
 			sSearch.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */
