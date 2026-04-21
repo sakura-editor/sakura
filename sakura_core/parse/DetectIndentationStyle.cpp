@@ -160,8 +160,9 @@ bool glob_matches_extension(std::string_view glob, std::string_view extension)
 
 bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 {
-	fs::path path = pcDoc->m_cDocFile.GetFilePath();
-	if (!path.has_extension()) {
+	const auto& cFilePath = pcDoc->m_cDocFile.GetFilePathClass();
+	auto path = static_cast<std::filesystem::path>(cFilePath);
+	if (cFilePath.empty() || !path.has_extension()) {
 		return false;
 	}
 	const auto extension = path.extension().string();
@@ -170,7 +171,7 @@ bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 	while (path.has_parent_path()) {
 		path = path.parent_path();
 		auto configPath = path / ".editorconfig";
-		if (fs::exists(configPath)) {
+		if (fexist(configPath)) {
 			EditorConfig config;
 			if (parser.Parse(configPath.wstring(), config)) {
 				for (auto& section : config.sections) {
