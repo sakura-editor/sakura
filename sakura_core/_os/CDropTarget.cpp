@@ -171,6 +171,15 @@ STDMETHODIMP CDropSource::GiveFeedback( [[maybe_unused]] DWORD dropEffect )
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }
 
+DWORD CDropSource::DoDragDrop(LPDATAOBJECT pDataObject, DWORD dwDesiredEffects)
+{
+	if (DWORD dwEffects; SUCCEEDED(::DoDragDrop(pDataObject, this, dwDesiredEffects, &dwEffects))) {
+		return dwEffects;
+	}
+
+	return DROPEFFECT_NONE;
+}
+
 /** 転送対象の文字列を設定する
 	@param lpszText [in] 文字列
 	@param nTextLen [in] pszTextの長さ
@@ -222,15 +231,6 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 			m_pData[i].data[0] = '\0';
 		}
 	}
-}
-
-DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
-{
-	DWORD dwEffect;
-	CDropSource drop( bLeft );
-	if( SUCCEEDED( ::DoDragDrop( this, &drop, dwEffects, &dwEffect ) ) )
-		return dwEffect;
-	return DROPEFFECT_NONE;
 }
 
 /** IDataObject::GetData

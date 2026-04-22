@@ -3389,10 +3389,8 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 			if (cxx::com_pointer<IDataObject> pDataObject; SUCCEEDED(GetDocument()->GetDataObject(&pDataObject))) {
 				CDropSource drop(true);
 
-				DWORD dwEffect = 0;
-
 				//移動禁止なので、戻り値を見ない
-				::DoDragDrop(pDataObject, &drop, DROPEFFECT_COPY | DROPEFFECT_LINK, &dwEffect);
+				drop.DoDragDrop(pDataObject, DROPEFFECT_COPY | DROPEFFECT_LINK);
 			}
 		}
 		return 0;

@@ -762,6 +762,18 @@ TEST(CDropSource, GiveFeedback001)
 }
 
 /*!
+ * DoDragDrop のテスト。
+ */
+TEST(CDropSource, DoDragDrop101)
+{
+	const auto target = std::make_unique<CDropSource>(true);
+
+	LPDATAOBJECT pDataObject = nullptr;
+	DWORD dwEffects = 0;
+	EXPECT_HRESULT_EQ(target->DoDragDrop(pDataObject, dwEffects), DROPEFFECT_NONE);
+}
+
+/*!
  * 意図的にサポートしないメソッド のテスト。
  */
 TEST(CopiedTextData, NotSupportedMethods)
@@ -977,18 +989,6 @@ TEST(CopiedTextData, GetDataHere101)
 	smallMedium.hGlobal = smallBuffer;
 
 	EXPECT_HRESULT_EQ(target->GetDataHere(&format, &smallMedium), STG_E_MEDIUMFULL);
-}
-
-/*!
- * DragDrop のテスト。
- */
-TEST(CopiedTextData, DragDrop101)
-{
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
-
-	BOOL bLeft = FALSE;
-	DWORD dwEffects = 0;
-	EXPECT_THAT(target->DragDrop(bLeft, dwEffects), DROPEFFECT_NONE);
 }
 
 /*!
