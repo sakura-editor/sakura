@@ -417,6 +417,59 @@ TEST_F(EditWndTest, FileSaveWithBackupAgent001)
 }
 
 /*!
+ * CEditDoc::GetDataObjectのテスト
+ */
+TEST_F(EditWndTest, GetDocDataObject001)
+{
+	const auto targetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
+
+	std::filesystem::remove(targetPath);
+
+	cxx::com_pointer<IDataObject> pDataObject;
+	EXPECT_HRESULT_SUCCEEDED(GetDocument()->GetDataObject(&pDataObject));
+	EXPECT_THAT(pDataObject, IsNull());
+
+	{
+		std::wofstream fs(targetPath);
+		fs << L"line1" << std::endl;
+	}
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native()).c_str()), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_HRESULT_SUCCEEDED(GetDocument()->GetDataObject(&pDataObject));
+	EXPECT_THAT(pDataObject, NotNull());
+
+	const auto cfFormat = static_cast<CLIPFORMAT>(::RegisterClipboardFormatW(CFSTR_FILENAMEW));
+
+	FORMATETC format = { cfFormat, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM medium = {};
+	EXPECT_THAT(pDataObject->GetData(&format, &medium), S_OK);
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+
+	ASSERT_THAT(medium.hGlobal, NotNull());
+
+	cxx::GlobalWString memory{ medium.hGlobal };
+	EXPECT_THAT(memory.wstring(), StrEq(targetPath.native()));
+
+	// 独自仕様のチェック
+	format.cfFormat = CF_UNICODETEXT;
+	
+	EXPECT_THAT(pDataObject->GetData(&format, &medium), S_OK);
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+
+	ASSERT_THAT(medium.hGlobal, NotNull());
+	memory = medium.hGlobal;
+
+	EXPECT_THAT(memory.wstring(), StrEq(targetPath.native()));
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileClose()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	std::filesystem::remove(targetPath);
+}
+
+/*!
  * キャンセルダイアログの表示テスト
  */
 TEST_F(EditWndTest, ShowDlgCancel001)
