@@ -20,10 +20,321 @@
 #include "basis/CEol.h"
 #include "mem/CNativeW.h"
 #include "_os/CClipboard.h"
+#include "_os/CDropTarget.h"
+
+#include "cxx/com_pointer.hpp"
+#include "cxx/type_of_Nth_lambda_arg.hpp"
 
 using ::testing::_;
 using ::testing::Invoke;
 using ::testing::Return;
+
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
+namespace cxx {
+
+/*!
+ * @brief グローバルメモリを RAII で管理するヘルパークラス
+ */
+class GlobalMemory : public cxx::ResourceHolder<&::GlobalFree> {
+private:
+	using Base = cxx::ResourceHolder<&::GlobalFree>;
+	using Me = GlobalMemory;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//サイズだけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalMemory(SIZE_T cch) : GlobalMemory(::GlobalAlloc(GHND, cch)) {}
+
+	//HGLOBALを取得する
+	HGLOBAL Get() const noexcept { return Base::get(); }
+
+	//グローバルメモリをロックしてデータにアクセスする
+	template<typename TAction, typename T = cxx::type_of_Nth_lambda_arg<0, TAction>, typename R = cxx::lambda_traits<TAction>::return_type>
+	R Lock(TAction action) const
+	{
+		const auto hgClip = static_cast<HGLOBAL>(*this);
+		if (!hgClip) {
+			if constexpr (std::is_same_v<R, void>) {
+				return;	//戻り値は返せない
+			} else {
+				return R{};
+			}
+		}
+
+		auto pClip = static_cast<T>(::GlobalLock(hgClip));
+		if (!pClip) {
+			if constexpr (std::is_same_v<R, void>) {
+				return;	//戻り値は返せない
+			} else {
+				return R{};
+			}
+		}
+
+		using LockedGlobalHolder = cxx::ResourceHolder<&::GlobalUnlock>;
+		LockedGlobalHolder locked(hgClip);
+
+		if constexpr (std::is_same_v<R, void>) {
+			action(pClip);
+		} else {
+			const auto cbSize = ::GlobalSize(hgClip);
+			return action(pClip, cbSize);
+		}
+	}
+};
+
+/*!
+ * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ */
+class GlobalWString : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalWString;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//文字数だけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalWString(SIZE_T cch) : GlobalMemory(sizeof(WCHAR) * (cch + 1)) {}
+
+	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+	explicit GlobalWString(std::wstring_view text)
+		: GlobalWString(text.size())
+	{
+		Lock([text](LPWSTR pStr) {
+			std::ranges::copy(text, pStr);
+		});
+	}
+
+	//格納されている文字列データのコピーを取得する
+	std::wstring wstring() const & {
+		return Lock([](LPCWSTR pStr, size_t cbSize) {
+			return std::wstring(pStr, ::wcsnlen(pStr, cbSize / sizeof(WCHAR)));
+		});
+	}
+};
+
+/*!
+ * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ */
+class GlobalString : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalString;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//文字数だけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalString(SIZE_T cch) : GlobalMemory(cch + 1) {}
+
+	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+	explicit GlobalString(std::string_view text)
+		: GlobalString(text.size())
+	{
+		Lock([text](LPSTR pStr) {
+			std::ranges::copy(text, pStr);
+		});
+	}
+
+	//格納されている文字列データのコピーを取得する
+	std::string string() const & {
+		return Lock([](LPCSTR pStr, size_t cbSize) {
+			return std::string(pStr, ::strnlen(pStr, cbSize));
+		});
+	}
+};
+
+/*!
+ * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
+ */
+template<typename T>
+class GlobalData : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalData<T>;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//データ数だけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalData(int count) : GlobalMemory(count * sizeof(T)) {}
+
+	//格納されているデータのコピーを取得する
+	std::vector<T> data() const & {
+		return Lock([](T* p, size_t cbSize) {
+			return std::vector<T>(p, std::bit_cast<T*>(LPBYTE(p) + cbSize));
+		});
+	}
+
+	//格納されている値を取得する
+	T value() const & {
+		return Lock([](T* p, size_t cbSize) {
+			return *p;
+		});
+	}
+};
+
+/*!
+ * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
+ */
+class GlobalDropFiles : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalDropFiles;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//格納されているデータのコピーを取得する
+	std::vector<std::filesystem::path> data() const & {
+		return Lock([this](const DROPFILES* p, size_t cbSize [[maybe_unused]]) {
+			const auto hDrop = static_cast<HDROP>(get());
+
+			std::vector<std::filesystem::path> files;
+			const auto uFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
+			for (UINT i = 0; i < uFiles; ++i) {
+				// 必要サイズを取得する
+				const auto required = ::DragQueryFileW(hDrop, i, nullptr, 0);
+
+				// バッファを確保して取得する
+				std::wstring buffer(required, L'\0');
+				::DragQueryFileW(hDrop, i, std::data(buffer), int(std::size(buffer)));
+
+				// パスリストに追加する
+				files.emplace_back(buffer);
+			}
+
+			return files;
+		});
+	}
+};
+
+GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
+{
+	assert(!files.empty());
+
+	auto strFiles = std::accumulate(files.begin() + 1, files.end(), std::wstring(files.front()), [](const std::wstring& a, const std::filesystem::path& b) { return a + L'\0' + b.native(); }) + L'\0' + L'\0';
+
+	GlobalDropFiles drop(sizeof(DROPFILES) + std::size(strFiles) * sizeof(WCHAR));
+	drop.Lock([strFiles](DROPFILES* p) {
+		p->pFiles = DWORD(sizeof(DROPFILES));
+		p->fWide = TRUE;
+		std::ranges::copy(strFiles, LPWSTR(LPBYTE(p) + p->pFiles));
+	});
+	return drop;
+}
+
+/*!
+ * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ */
+class GlobalSakura : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalSakura;
+
+	using size_type = size_t;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+	explicit GlobalSakura(std::wstring_view text)
+		: GlobalMemory(sizeof(size_type) + sizeof(WCHAR) * (std::size(text) + 1))
+	{
+		Lock([text](LPWSTR pStr) {
+			*(size_type*)pStr = std::size(text);
+			std::ranges::copy(text, LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)));
+		});
+	}
+
+	//格納されている文字列データのコピーを取得する
+	std::wstring wstring() const & {
+		return Lock([](LPWSTR pStr, size_t) {
+			const auto length = *(size_type*)pStr;
+			return std::wstring(LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
+		});
+	}
+};
+
+} // namespace cxx
+
+namespace testing {
+
+inline std::wstring HResultName(HRESULT hr)
+{
+    switch (hr) {
+    case S_OK: return L"S_OK";
+    case S_FALSE: return L"S_FALSE";
+    case E_FAIL: return L"E_FAIL";
+    case E_INVALIDARG: return L"E_INVALIDARG";
+    case E_ACCESSDENIED: return L"E_ACCESSDENIED";
+    case E_POINTER: return L"E_POINTER";
+    case E_OUTOFMEMORY: return L"E_OUTOFMEMORY";
+    case E_NOTIMPL: return L"E_NOTIMPL";
+    case E_NOINTERFACE: return L"E_NOINTERFACE";
+    case E_UNEXPECTED: return L"E_UNEXPECTED";
+    default: break;
+    }
+
+	return L"";
+}
+
+inline std::wstring FormatHResultMessage(HRESULT hr)
+{
+	_com_error err{ hr };
+	const auto msg = err.ErrorMessage();
+	return msg ? msg : L"";
+}
+
+inline std::wstring DescribeHResult(HRESULT hr)
+{
+    const std::wstring wname = HResultName(hr);
+    const std::wstring wmsg  = FormatHResultMessage(hr);
+
+	if (wname.empty() && wmsg.empty()) {
+		return std::format(L"(0x{:X})", static_cast<unsigned long>(hr));
+	}
+
+	if (wmsg.empty()) {
+		return std::format(LR"((0x{:X}) "{}")", static_cast<unsigned long>(hr), wmsg);
+	}
+
+	return std::format(LR"({}(0x{:X}) "{}")", wname, static_cast<unsigned long>(hr), wmsg);
+}
+
+inline ::testing::AssertionResult HResultEq(
+    HRESULT actual,
+    HRESULT expected,
+    const char* actual_expr,
+	const char* expected_expr [[maybe_unused]]
+)
+{
+    if (actual == expected) {
+        return ::testing::AssertionSuccess();
+    }
+
+    return ::testing::AssertionFailure()
+        << actual_expr << " returned " << std::data(DescribeHResult(actual))
+        << ", expected " << std::data(DescribeHResult(expected));
+}
+
+} // namespace testing
+
+#define EXPECT_HRESULT_EQ(actual, expected) \
+    EXPECT_PRED_FORMAT2(                    \
+        [](const char* a, const char* e, auto av, auto ev) { \
+            return testing::HResultEq(av, ev, a, e);             \
+        },                                                   \
+        actual, expected)
 
 // グローバルメモリに書き込まれた特定の Unicode 文字列にマッチする述語関数
 MATCHER_P(WideStringInGlobalMemory, expected_string, "") {
@@ -690,3 +1001,289 @@ TEST(CClipboard, ClipboardRetryConstants) {
 	EXPECT_LE(CClipboard::CLIPBOARD_RETRY_COUNT, 100);  // Should not be excessive
 	EXPECT_LE(CClipboard::CLIPBOARD_RETRY_DELAY_MS, 1000);  // Should not be too long
 }
+
+namespace ole {
+
+TEST(CDropSource, QueryContinueDrag001)
+{
+	const auto target = std::make_unique<CDropSource>(TRUE);
+
+	EXPECT_HRESULT_EQ(target->QueryContinueDrag(TRUE, MK_LBUTTON), DRAGDROP_S_CANCEL);
+	EXPECT_HRESULT_EQ(target->QueryContinueDrag(FALSE, MK_RBUTTON), DRAGDROP_S_CANCEL);
+
+	EXPECT_HRESULT_EQ(target->QueryContinueDrag(FALSE, 0), DRAGDROP_S_DROP);
+
+	EXPECT_HRESULT_SUCCEEDED(target->QueryContinueDrag(FALSE, MK_LBUTTON));
+}
+
+TEST(CDropSource, QueryContinueDrag002)
+{
+	const auto target = std::make_unique<CDropSource>(FALSE);
+
+	EXPECT_HRESULT_EQ(target->QueryContinueDrag(FALSE, MK_LBUTTON), DRAGDROP_S_CANCEL);
+
+	EXPECT_HRESULT_EQ(target->QueryContinueDrag(FALSE, 0), DRAGDROP_S_DROP);
+
+	EXPECT_HRESULT_SUCCEEDED(target->QueryContinueDrag(FALSE, MK_RBUTTON));
+}
+
+TEST(CDropSource, GiveFeedback001)
+{
+	const auto target = std::make_unique<CDropSource>(TRUE);
+	EXPECT_HRESULT_EQ(target->GiveFeedback(DROPEFFECT_MOVE), DRAGDROP_S_USEDEFAULTCURSORS);
+}
+
+/*!
+ * 意図的にサポートしないメソッド のテスト。
+ */
+TEST(CopiedTextData, NotSupportedMethods)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	//構築後の変更はサポートしてない。
+	EXPECT_HRESULT_EQ(target->SetData(nullptr, nullptr, FALSE), E_NOTIMPL);
+
+	//固定値を返却するナゾ実装。たぶんバグ。（未実装なら、そう返すべき。）
+	EXPECT_HRESULT_EQ(target->GetCanonicalFormatEtc(nullptr, nullptr), DATA_S_SAMEFORMATETC);
+
+	//アドバイスはサポートしない。
+	EXPECT_HRESULT_EQ(target->DAdvise(nullptr, 0, nullptr, nullptr), OLE_E_ADVISENOTSUPPORTED);
+	EXPECT_HRESULT_EQ(target->DUnadvise(0), OLE_E_ADVISENOTSUPPORTED);
+	EXPECT_HRESULT_EQ(target->EnumDAdvise(nullptr), OLE_E_ADVISENOTSUPPORTED);
+}
+
+/*!
+ * EnumFormatEtc のテスト。
+ */
+TEST(CopiedTextData, EnumFormatEtc001)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	cxx::com_pointer<IEnumFORMATETC> pEnumFormatEtc = nullptr;
+	EXPECT_HRESULT_EQ(target->EnumFormatEtc(DATADIR_SET, &pEnumFormatEtc), S_FALSE);
+	EXPECT_THAT(pEnumFormatEtc, IsNull());
+
+	EXPECT_HRESULT_SUCCEEDED(target->EnumFormatEtc(DATADIR_GET, &pEnumFormatEtc));
+	EXPECT_THAT(pEnumFormatEtc, NotNull());
+
+	FORMATETC format = {};
+	ULONG fetched = 0;
+	EXPECT_HRESULT_SUCCEEDED(pEnumFormatEtc->Next(1, &format, &fetched));
+	EXPECT_THAT(fetched, 1UL);
+	EXPECT_THAT(format.cfFormat, testing::Eq<CLIPFORMAT>(CF_UNICODETEXT));
+	EXPECT_THAT(format.tymed, TYMED_HGLOBAL);
+
+	// 全部で3つなので2個まではスキップできる
+	EXPECT_HRESULT_SUCCEEDED(pEnumFormatEtc->Skip(2));
+
+	// 現在位置が3つ目なので、さらにスキップしようとすると失敗する
+	EXPECT_HRESULT_EQ(pEnumFormatEtc->Skip(1), S_FALSE);
+}
+
+/*!
+ * QueryGetData のテスト。
+ */
+TEST(CopiedTextData, QueryGetData101)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	EXPECT_HRESULT_EQ(target->QueryGetData(nullptr), E_INVALIDARG);
+
+	FORMATETC unknownFormat = { CF_HDROP, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->QueryGetData(&unknownFormat), DATA_E_FORMATETC);
+
+	DVTARGETDEVICE targetDevice = {};
+	FORMATETC withPtd = { CF_UNICODETEXT, &targetDevice, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->QueryGetData(&withPtd), DATA_E_FORMATETC);
+
+	FORMATETC badAspect = { CF_UNICODETEXT, nullptr, DVASPECT_THUMBNAIL, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->QueryGetData(&badAspect), DATA_E_FORMATETC);
+
+	FORMATETC badIndex = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, 0, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->QueryGetData(&badIndex), DATA_E_FORMATETC);
+
+	FORMATETC badTymed = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_ISTREAM };
+	EXPECT_HRESULT_EQ(target->QueryGetData(&badTymed), DATA_E_FORMATETC);
+
+	FORMATETC ok = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_SUCCEEDED(target->QueryGetData(&ok));
+}
+
+/*!
+ * QueryGetData のテスト。
+ *
+ * このパターンはあり得ないのでそのうち削除する
+ */
+TEST(CopiedTextData, QueryGetData102)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	//データを空にする
+	target->SetText(nullptr, 0, FALSE);
+
+	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_THAT(target->QueryGetData(&format), OLE_E_NOTRUNNING);	// 👈バグです。サクラエディタは起動時にOLEを初期化するため、「OLE未実行」にはならない。
+}
+
+/*!
+ * GetData のテスト。
+ */
+TEST(CopiedTextData, GetData001)
+{
+	const auto text = L"abc"s;
+	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+
+	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM medium = {};
+	EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+
+	cxx::GlobalWString buffer(medium.hGlobal);
+	EXPECT_THAT(buffer.wstring(), StrEq(text));
+}
+
+/*!
+ * GetData のテスト。
+ */
+TEST(CopiedTextData, GetData101)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	STGMEDIUM emptyMedium = {};
+	EXPECT_HRESULT_EQ(target->GetData(nullptr, &emptyMedium), E_INVALIDARG);
+
+	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetData(&format, nullptr), E_INVALIDARG);
+
+	FORMATETC unknownFormat = { CF_HDROP, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetData(&unknownFormat, &emptyMedium), DV_E_FORMATETC);
+
+	FORMATETC badAspect = { CF_UNICODETEXT, nullptr, DVASPECT_THUMBNAIL, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetData(&badAspect, &emptyMedium), DV_E_DVASPECT);
+
+	FORMATETC badIndex = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, 0, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetData(&badIndex, &emptyMedium), DV_E_LINDEX);
+
+	FORMATETC badTymed = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_ISTREAM };
+	EXPECT_HRESULT_EQ(target->GetData(&badTymed, &emptyMedium), DV_E_TYMED);
+}
+
+/*!
+ * GetData のテスト。
+ *
+ * このパターンはあり得ないのでそのうち削除する
+ */
+TEST(CopiedTextData, GetData102)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	//データを空にする
+	target->SetText(nullptr, 0, FALSE);
+
+	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM emptyMedium = {};
+	EXPECT_HRESULT_EQ(target->GetData(&format, &emptyMedium), OLE_E_NOTRUNNING);	// 👈バグです。サクラエディタは起動時にOLEを初期化するため、「OLE未実行」にはならない。
+}
+
+/*!
+ * GetDataHere のテスト。
+ */
+TEST(CopiedTextData, GetDataHere001)
+{
+	const auto text = L"abcdef"s;
+
+	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+
+	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+
+	STGMEDIUM medium = {};
+	medium.tymed = TYMED_HGLOBAL;
+
+	cxx::GlobalWString buffer(text.size());
+	medium.hGlobal = buffer;
+
+	EXPECT_HRESULT_SUCCEEDED(target->GetDataHere(&format, &medium));
+	EXPECT_THAT(buffer.wstring(), StrEq(text));
+}
+
+/*!
+ * GetDataHere のテスト。
+ */
+TEST(CopiedTextData, GetDataHere101)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetDataHere(&format, nullptr), E_INVALIDARG);
+
+	STGMEDIUM emptyMedium = {};
+	EXPECT_HRESULT_EQ(target->GetDataHere(nullptr, &emptyMedium), E_INVALIDARG);
+
+	STGMEDIUM nullMedium = {};
+	nullMedium.tymed = TYMED_HGLOBAL;
+	nullMedium.hGlobal = nullptr;
+	EXPECT_HRESULT_EQ(target->GetDataHere(&format, &nullMedium), E_INVALIDARG);
+
+	cxx::GlobalWString buffer(64);
+
+	STGMEDIUM medium = {};
+	medium.tymed = TYMED_HGLOBAL;
+	medium.hGlobal = buffer;
+
+	FORMATETC unknownFormat = { CF_HDROP, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetDataHere(&unknownFormat, &medium), DV_E_FORMATETC);
+
+	FORMATETC badAspect = { CF_UNICODETEXT, nullptr, DVASPECT_THUMBNAIL, -1, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetDataHere(&badAspect, &medium), DV_E_DVASPECT);
+
+	FORMATETC badIndex = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, 0, TYMED_HGLOBAL };
+	EXPECT_HRESULT_EQ(target->GetDataHere(&badIndex, &medium), DV_E_LINDEX);
+
+	FORMATETC badTymed = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_ISTREAM };
+	EXPECT_HRESULT_EQ(target->GetDataHere(&badTymed, &medium), DV_E_TYMED);
+
+	cxx::GlobalWString smallBuffer(2);
+
+	STGMEDIUM smallMedium = {};
+	smallMedium.tymed = TYMED_HGLOBAL;
+	smallMedium.hGlobal = smallBuffer;
+
+	EXPECT_HRESULT_EQ(target->GetDataHere(&format, &smallMedium), STG_E_MEDIUMFULL);
+}
+
+/*!
+ * DragDrop のテスト。
+ */
+TEST(CopiedTextData, DragDrop101)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+
+	BOOL bLeft = FALSE;
+	DWORD dwEffects = 0;
+	EXPECT_THAT(target->DragDrop(bLeft, dwEffects), DROPEFFECT_NONE);
+}
+
+/*!
+ * CEnumFORMATETC のテスト。
+ */
+TEST(CEnumFORMATETC, test001)
+{
+	auto* target = new CEnumFORMATETC(nullptr);
+
+	//AddRefする。内部カウンタが増えて2になる
+	EXPECT_THAT(target->AddRef(), 2UL);
+
+	//Cloneは未実装。
+	EXPECT_THAT(target->Clone(nullptr), E_NOTIMPL);
+
+	//Resetする。
+	EXPECT_HRESULT_SUCCEEDED(target->Reset());
+
+	//Releaseする。内部カウンタが減って1になる
+	EXPECT_THAT(target->Release(), 1UL);
+
+	//生ポインタなのでReleaseして解放する
+	EXPECT_THAT(target->Release(), 0UL);
+}
+
+} //namespace ole
