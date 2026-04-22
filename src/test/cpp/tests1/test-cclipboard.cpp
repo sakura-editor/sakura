@@ -338,54 +338,34 @@ inline ::testing::AssertionResult HResultEq(
 
 // グローバルメモリに書き込まれた特定の Unicode 文字列にマッチする述語関数
 MATCHER_P(WideStringInGlobalMemory, expected_string, "") {
-	const wchar_t* s = (const wchar_t*)::GlobalLock(arg);
-	if (!s) return false;
-	std::wstring_view actual(s);
-	bool match = actual == expected_string;
-	::GlobalUnlock(arg);
-	return match;
+	cxx::GlobalWString actual{ arg };
+	return actual.wstring() == expected_string;
 }
 
 // グローバルメモリに書き込まれた特定の ANSI 文字列にマッチする述語関数
 MATCHER_P(AnsiStringInGlobalMemory, expected_string, "") {
-	const char* s = (const char*)::GlobalLock(arg);
-	if (!s) return false;
-	std::string_view actual(s);
-	bool match = actual == expected_string;
-	::GlobalUnlock(arg);
-	return match;
+	cxx::GlobalString actual{ arg };
+	return actual.string() == expected_string;
 }
 
 // グローバルメモリに書き込まれたサクラ独自形式データにマッチする述語関数
 MATCHER_P(SakuraFormatInGlobalMemory, expected_string, "") {
-	char* p = (char*)::GlobalLock(arg);
-	if (!p) return false;
-	int length = *(size_t*)p;
-	p += sizeof(size_t);
-	std::wstring_view actual((const wchar_t*)p);
-	bool match = actual.size() == length && actual == expected_string;
-	::GlobalUnlock(arg);
-	return match;
+	cxx::GlobalSakura actual{ arg };
+	return actual.wstring() == expected_string;
 }
 
 // グローバルメモリに書き込まれた特定のバイト値にマッチする述語関数
 MATCHER_P(ByteValueInGlobalMemory, value, "") {
-	unsigned char* p = (unsigned char*)::GlobalLock(arg);
-	if (!p) return false;
-	bool match = *p == value;
-	::GlobalUnlock(arg);
-	return match;
+	cxx::GlobalData<BYTE> actual{ arg };
+	return actual.value() == value;
 }
 
 // グローバルメモリに書き込まれた特定のバイト列にマッチする述語関数
 MATCHER_P2(BytesInGlobalMemory, bytes, size, "") {
-	if (size != ::GlobalSize(arg))
-		return false;
-	void* p = ::GlobalLock(arg);
-	if (!p) return false;
-	bool match = std::memcmp(p, bytes, size) == 0;
-	::GlobalUnlock(arg);
-	return match;
+	cxx::GlobalData<BYTE> mem{ arg };
+	const auto actual = mem.data();
+	return size == std::size(actual) &&
+		0 == std::memcmp(std::data(actual), bytes, size);
 }
 
 class MockCClipboard : public CClipboard {
@@ -496,25 +476,6 @@ TEST(CClipboard, SetText6) {
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, 0));
 }
 
-// グローバルメモリを RAII で管理する簡易ヘルパークラス
-class GlobalMemory {
-public:
-	GlobalMemory(UINT flags, SIZE_T bytes) : handle_(::GlobalAlloc(flags, bytes)) {}
-	GlobalMemory(const GlobalMemory&) = delete;
-	GlobalMemory& operator=(const GlobalMemory&) = delete;
-	~GlobalMemory() {
-		if (handle_)
-			::GlobalFree(handle_);
-	}
-	HGLOBAL Get() { return handle_; }
-	template <typename T> void Lock(std::function<void (T*)> f) {
-		f(reinterpret_cast<T*>(::GlobalLock(handle_)));
-		::GlobalUnlock(handle_);
-	}
-private:
-	HGLOBAL handle_;
-};
-
 // GetText のテストで使用するダミーデータを準備するためのフィクスチャクラス
 class CClipboardGetText : public testing::Test {
 protected:
@@ -525,22 +486,11 @@ protected:
 	static constexpr std::wstring_view unicodeText = L"CF_UNICODE";
 	static constexpr std::wstring_view sakuraText = L"SAKURAClipW";
 	static constexpr std::string_view oemText = "CF_OEMTEXT";
-	GlobalMemory unicodeMemory{ GMEM_MOVEABLE, (unicodeText.size() + 1) * sizeof(wchar_t) };
-	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(size_t) + (sakuraText.size() + 1) * sizeof(wchar_t) };
-	GlobalMemory oemMemory{ GMEM_MOVEABLE, oemText.size() + 1 };
+	cxx::GlobalWString unicodeMemory{ unicodeText };
+	cxx::GlobalSakura sakuraMemory{ sakuraText };
+	cxx::GlobalString oemMemory{ oemText };
 
-	CClipboardGetText() {
-		unicodeMemory.Lock<wchar_t>([=](wchar_t* p) {
-			std::wcscpy(p, unicodeText.data());
-		});
-		sakuraMemory.Lock<unsigned char>([=](unsigned char* p) {
-			*(size_t*)p = sakuraText.size();
-			std::wcscpy((wchar_t*)(p + sizeof(size_t)), sakuraText.data());
-		});
-		oemMemory.Lock<char>([=](char* p) {
-			std::strcpy(p, oemText.data());
-		});
-	}
+	CClipboardGetText() = default;
 };
 
 // CClipboard::GetText のテスト群。
@@ -584,13 +534,8 @@ TEST_F(CClipboardGetText, NoSpecifiedFormat4) {
 
 // サクラ形式とCF_UNICODETEXTとCF_OEMTEXTが失敗した場合、CF_HDROPを取得する。
 TEST_F(CClipboardGetText, NoSpecifiedFormat5) {
-	constexpr std::array<char, 10> files = {"CF_HDROP\0"};
-	GlobalMemory mem(GMEM_MOVEABLE, sizeof(DROPFILES) + files.size());
-	mem.Lock<DROPFILES>([=](DROPFILES* d) {
-		d->pFiles = sizeof(DROPFILES);
-		d->fWide = FALSE;
-		memcpy((char*)d + sizeof(DROPFILES), files.data(), files.size());
-	});
+	const std::array files = { std::filesystem::path("CF_HDROP") };
+	auto mem = cxx::MakeDropFiles(files);
 	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
 	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(nullptr));
 	ON_CALL(clipboard, GetClipboardData(CF_OEMTEXT)).WillByDefault(Return(nullptr));
@@ -654,13 +599,8 @@ TEST_F(CClipboardGetText, OemTextFailure) {
 // CF_HDROP を指定して取得する。
 // 取得したファイルが1つであれば末尾に改行を付加しない。
 TEST_F(CClipboardGetText, HDropSuccessSingleFile) {
-	constexpr std::array<char, 6> files = {"file\0"};
-	GlobalMemory mem(GMEM_MOVEABLE, sizeof(DROPFILES) + files.size());
-	mem.Lock<DROPFILES>([=](DROPFILES* d) {
-		d->pFiles = sizeof(DROPFILES);
-		d->fWide = FALSE;
-		memcpy((char*)d + sizeof(DROPFILES), files.data(), files.size());
-	});
+	const std::array files = { std::filesystem::path("file") };
+	auto mem = cxx::MakeDropFiles(files);
 	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(CF_HDROP)).WillByDefault(Return(mem.Get()));
 	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_HDROP));
@@ -670,13 +610,12 @@ TEST_F(CClipboardGetText, HDropSuccessSingleFile) {
 // CF_HDROP を指定して取得する。
 // 取得したファイルが複数であればすべてのファイル名の末尾に改行を付加する。
 TEST_F(CClipboardGetText, HDropSuccessMultipleFiles) {
-	constexpr std::array<char, 13> files = {"file1\0file2\0"};
-	GlobalMemory mem(GMEM_MOVEABLE, sizeof(DROPFILES) + files.size());
-	mem.Lock<DROPFILES>([=](DROPFILES* d) {
-		d->pFiles = sizeof(DROPFILES);
-		d->fWide = FALSE;
-		memcpy((char*)d + sizeof(DROPFILES), files.data(), files.size());
-	});
+	const std::array files = {
+		std::filesystem::path("file1"),
+		std::filesystem::path("file2")
+	};
+	auto mem = cxx::MakeDropFiles(files);
+	EXPECT_THAT(mem.data(), testing::SizeIs(Eq(files.size())));
 	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(TRUE));
 	ON_CALL(clipboard, GetClipboardData(CF_HDROP)).WillByDefault(Return(mem.Get()));
 	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, CF_HDROP));
@@ -944,10 +883,8 @@ TEST(CClipboard, GetClipboardByFormat4) {
 // 0x00～0xff のバイト値を UTF-16 の符号単位（0x0000～0x00ff）にマップする。
 // 終端モード0ではデータ中の \0 をバイナリとして扱う（終端として認識しない）。
 TEST(CClipboard, GetClipboardByFormat5) {
-	GlobalMemory memory(GMEM_MOVEABLE, 2);
-	memory.Lock<char>([=](char* p) {
-		std::memcpy(p, "\x00\xff", 2);
-	});
+	std::string_view ansiText{ "\x00\xff", 2 };
+	cxx::GlobalString memory{ ansiText };
 	MockCClipboard clipboard;
 	CNativeW buffer;
 	CEol eol(EEolType::cr_and_lf);
@@ -961,10 +898,8 @@ TEST(CClipboard, GetClipboardByFormat5) {
 // モード3（UTF-16）のテスト。コード変換を行わないパターン。
 // 終端モードには2を設定する（2バイトの0値で終端されていることを期待する）。
 TEST(CClipboard, GetClipboardByFormat6) {
-	GlobalMemory memory(GMEM_MOVEABLE, sizeof(wchar_t) * 8);
-	memory.Lock<wchar_t>([=](wchar_t* p) {
-		std::memcpy(p, L"テスト\x00データ", 8);
-	});
+	std::wstring_view unicodeText{ L"テスト\0データ", 8 };
+	cxx::GlobalWString memory{ unicodeText };
 	MockCClipboard clipboard;
 	CNativeW buffer;
 	CEol eol(EEolType::cr_and_lf);
@@ -980,10 +915,8 @@ TEST(CClipboard, GetClipboardByFormat6) {
 //
 // CEditDoc のインスタンスに依存するためテスト不能。
 TEST(CClipboard, DISABLED_GetClipboardByFormat7) {
-	GlobalMemory memory(GMEM_MOVEABLE, 14);
-	memory.Lock<char>([=](char* p) {
-		std::memcpy(p, "テスト\x00データ", 14);
-	});
+	std::string_view sjisText{ "テスト\0データ", 13 };
+	cxx::GlobalString memory{ sjisText };
 	MockCClipboard clipboard;
 	CNativeW buffer;
 	CEol eol(EEolType::cr_and_lf);
