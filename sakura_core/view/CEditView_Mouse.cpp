@@ -1,4 +1,4 @@
-﻿/*!	@file
+/*!	@file
 	@brief マウスイベントの処理
 
 	@author Norio Nakatani
@@ -1828,23 +1828,63 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 
 	// ドロップデータの取得
-	HGLOBAL hData = GetGlobalData( pDataObject, cf );
-	if (hData == nullptr)
-		return E_INVALIDARG;
-	LPVOID pData = ::GlobalLock( hData );
-	SIZE_T nSize = ::GlobalSize( hData );
-	if( cf == CClipboard::GetSakuraFormat() ){
-		if( nSize > sizeof(size_t) ){
-			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(size_t));
-			cmemBuf.SetString( pszData, t_min( (SIZE_T)*(size_t*)pData, nSize / sizeof(wchar_t) ) );	// 途中のNUL文字も含める
+	HGLOBAL hData = nullptr;
+	LPVOID pData = nullptr;
+	SIZE_T nSize = 0;
+	for( ;; ){
+		hData = GetGlobalData( pDataObject, cf );
+		if( hData == nullptr )
+			return E_INVALIDARG;
+		pData = ::GlobalLock( hData );
+		nSize = ::GlobalSize( hData );
+		if( cf == CClipboard::GetSakuraFormat() ){
+			if( pData == nullptr || nSize < sizeof(SSakuraClipHeader) ){
+			}else{
+				SSakuraClipHeader header;
+				memcpy_raw(&header, pData, sizeof(header));
+				if( header.cchData >= 0 ){
+					const size_t cchData = static_cast<size_t>(header.cchData);
+					const size_t cchMax = (nSize - sizeof(SSakuraClipHeader)) / sizeof(wchar_t);
+					if( cchData <= cchMax ){
+						const wchar_t* pszData = reinterpret_cast<const wchar_t*>((BYTE*)pData + sizeof(SSakuraClipHeader));
+						cmemBuf.SetString( pszData, cchData );	// 途中のNUL文字も含める
+						break;
+					}
+				}
+			}
+
+			if( pData != nullptr ){
+				::GlobalUnlock( hData );
+			}
+			if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+				::GlobalFree( hData );
+			}
+
+			if( IsDataAvailable( pDataObject, CF_UNICODETEXT ) ){
+				cf = CF_UNICODETEXT;
+			}else if( IsDataAvailable( pDataObject, CF_TEXT ) ){
+				cf = CF_TEXT;
+			}else{
+				return E_INVALIDARG;
+			}
+			continue;
 		}
-	}else if( cf == CF_UNICODETEXT ){
-		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
-	}else{
-		CNativeA binary;
-		binary.SetString((char*)pData, nSize / sizeof(char));
-		auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
-		pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
+		if( cf == CF_UNICODETEXT ){
+			cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
+		}else{
+			CNativeA binary;
+			binary.SetString((char*)pData, nSize / sizeof(char));
+			auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
+			pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
+		}
+		break;
+	}
+
+	if( pData != nullptr ){
+		::GlobalUnlock( hData );
+	}
+	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+		::GlobalFree( hData );
 	}
 
 	// アンドゥバッファの準備

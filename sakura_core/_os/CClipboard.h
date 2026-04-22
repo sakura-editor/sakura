@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
@@ -8,6 +8,8 @@
 #ifndef SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_
 #define SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_
 #pragma once
+
+#include <cstdint>
 
 #include "mem/CNativeW.h"
 
@@ -45,6 +47,13 @@ struct StdWStringBuffer : public IWBuffer {
 	void Append(const wchar_t* pszData, size_t nDataLen) override { wstr->append(pszData, nDataLen); }
 	std::wstring* wstr;
 };
+
+#pragma pack(push, 1)
+struct SSakuraClipHeader {
+	int32_t cchData;
+};
+#pragma pack(pop)
+static_assert(sizeof(SSakuraClipHeader) == 4, "SSakuraClipHeader must be exactly 4 bytes");
 
 //!サクラエディタ用クリップボードクラス。後々はこの中で全てのクリップボードAPIを呼ばせたい。
 class CClipboard{

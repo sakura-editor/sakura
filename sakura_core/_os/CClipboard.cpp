@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
@@ -77,6 +77,7 @@ bool CClipboard::SetText(
 	if( !m_bOpenResult ){
 		return false;
 	}
+	const bool bCanUseSakuraFormat = (nDataLen <= static_cast<size_t>(INT32_MAX));
 
 	/*
 	// テキスト形式のデータ (CF_OEMTEXT)
@@ -122,21 +123,23 @@ bool CClipboard::SetText(
 	HGLOBAL hgClipSakura = nullptr;
 	//サクラエディタ専用フォーマットを取得
 	CLIPFORMAT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
-	bool bSakuraText = (uFormat == (UINT)-1 || uFormat == uFormatSakuraClip);
+	bool bSakuraText = bCanUseSakuraFormat && (uFormat == (UINT)-1 || uFormat == uFormatSakuraClip);
 	while(bSakuraText){
 		if( 0 == uFormatSakuraClip )break;
 
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			sizeof(size_t) + (nDataLen + 1) * sizeof(wchar_t)
+			sizeof(SSakuraClipHeader) + (nDataLen + 1) * sizeof(wchar_t)
 		);
 		if( !hgClipSakura )break;
 
 		//確保した領域にデータをコピー
 		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
-		*((size_t*)pClip) = nDataLen; pClip += sizeof(nDataLen);						//データの長さ
-		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
+		auto* pHeader = reinterpret_cast<SSakuraClipHeader*>(pClip);
+		pHeader->cchData = static_cast<int32_t>(nDataLen);
+		pClip += sizeof(SSakuraClipHeader);											//データの長さ
+		wmemcpy( reinterpret_cast<wchar_t*>(pClip), pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
 		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
 		::GlobalUnlock( hgClipSakura );
 
@@ -204,7 +207,10 @@ bool CClipboard::SetText(
 	if( bLineSelect && !(hgClipMSDEVLine && hgClipMSDEVLine2) ){
 		return false;
 	}
-	if( !(hgClipText && hgClipSakura) ){
+	if( !hgClipText ){
+		return false;
+	}
+	if( bCanUseSakuraFormat && !hgClipSakura ){
 		return false;
 	}
 	return true;
@@ -302,11 +308,38 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
 		if (hSakura != nullptr) {
 			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
-			size_t nLength        = *((size_t*)pData);
-			const wchar_t* szData = (const wchar_t*)(pData + sizeof(size_t));
-			cmemBuf->Append( szData, nLength );
-			::GlobalUnlock(hSakura);
-			return true;
+			const SIZE_T cbData = ::GlobalSize(hSakura);
+			if( pData == nullptr || cbData < sizeof(SSakuraClipHeader) ){
+				if( pData != nullptr ){
+					::GlobalUnlock(hSakura);
+				}
+				if( uGetFormat == uFormatSakuraClip ){
+					return false;
+				}
+			}else{
+				SSakuraClipHeader header;
+				memcpy_raw(&header, pData, sizeof(header));
+				if( header.cchData < 0 ){
+					::GlobalUnlock(hSakura);
+					if( uGetFormat == uFormatSakuraClip ){
+						return false;
+					}
+				}else{
+					const size_t cchData = static_cast<size_t>(header.cchData);
+					const size_t cchMax = (cbData - sizeof(SSakuraClipHeader)) / sizeof(wchar_t);
+					if( cchData > cchMax ){
+						::GlobalUnlock(hSakura);
+						if( uGetFormat == uFormatSakuraClip ){
+							return false;
+						}
+					}else{
+						const wchar_t* szData = reinterpret_cast<const wchar_t*>(pData + sizeof(SSakuraClipHeader));
+						cmemBuf->Append( szData, cchData );
+						::GlobalUnlock(hSakura);
+						return true;
+					}
+				}
+			}
 		}
 	}
 

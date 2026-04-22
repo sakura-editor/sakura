@@ -1,4 +1,4 @@
-﻿/*!	@file
+/*!	@file
 	@brief Drag & Drop
 
 	@author Norio Nakatani
@@ -191,7 +191,8 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		m_nFormat = 0;
 	}
 	if( lpszText != nullptr ){
-		m_nFormat = bColumnSelect? 4: 3;	// 矩形を含めるか
+		const bool bUseSakuraFormat = (nTextLen <= static_cast<size_t>(INT32_MAX));
+		m_nFormat = (bUseSakuraFormat ? 3 : 2) + (bColumnSelect ? 1 : 0);	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
 
 		i = 0;
@@ -208,13 +209,17 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), (LPSTR)m_pData[i].data, int(m_pData[i].size), nullptr, nullptr );
 
 		i++;
-		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
-		m_pData[i].size = sizeof(size_t) + nTextLen * sizeof( wchar_t );
-		m_pData[i].data = new BYTE[m_pData[i].size];
-		*(size_t*)m_pData[i].data = nTextLen;
-		memcpy_raw( m_pData[i].data + sizeof(size_t), lpszText, nTextLen * sizeof( wchar_t ) );
+		if( bUseSakuraFormat ){
+			m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
+			m_pData[i].size = sizeof(SSakuraClipHeader) + (nTextLen + 1) * sizeof( wchar_t );
+			m_pData[i].data = new BYTE[m_pData[i].size];
+			auto* pHeader = reinterpret_cast<SSakuraClipHeader*>(m_pData[i].data);
+			pHeader->cchData = static_cast<int32_t>(nTextLen);
+			memcpy_raw( m_pData[i].data + sizeof(SSakuraClipHeader), lpszText, nTextLen * sizeof( wchar_t ) );
+			*((wchar_t*)(m_pData[i].data + sizeof(SSakuraClipHeader)) + nTextLen) = L'\0';
+			i++;
+		}
 
-		i++;
 		if( bColumnSelect ){
 			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );
 			m_pData[i].size = 1;
