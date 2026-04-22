@@ -346,3 +346,128 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	bRet &= ImmReleaseContext(hWnd, hIMC);
 	return bRet;
 }
+
+namespace cxx {
+
+GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
+{
+	assert(!files.empty());
+
+	auto strFiles = std::accumulate(files.begin() + 1, files.end(), std::wstring(files.front()), [](const std::wstring& a, const std::filesystem::path& b) { return a + L'\0' + b.native(); }) + L'\0' + L'\0';
+
+	const size_t allocSize = sizeof(DROPFILES) + std::size(strFiles) * sizeof(WCHAR);
+	GlobalDropFiles drop(allocSize);
+	drop.Lock([strFiles](DROPFILES* p) {
+		p->pFiles = DWORD(sizeof(DROPFILES));
+		p->fWide = TRUE;
+		std::ranges::copy(strFiles, LPWSTR(LPBYTE(p) + p->pFiles));
+	});
+	return drop;
+}
+
+//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+GlobalWString::GlobalWString(std::wstring_view text)
+	: GlobalWString(text.size())
+{
+	SetText(text);
+}
+
+//文字列を指定して更新する
+void GlobalWString::SetText(std::wstring_view text) const
+{
+	Lock([text](LPWSTR pStr, size_t cbSize) {
+		if (cbSize / sizeof(WCHAR) <= std::size(text)) throw std::length_error("text length is too long.");
+		std::ranges::copy(text, pStr);
+		return true;
+	});
+}
+
+//格納されている文字列データのコピーを取得する
+std::wstring GlobalWString::wstring() const & {
+	return Lock([](LPCWSTR pStr, size_t cbSize) {
+		return std::wstring(pStr, ::wcsnlen(pStr, cbSize / sizeof(WCHAR)));
+	});
+}
+
+//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+GlobalString::GlobalString(std::string_view text)
+	: GlobalString(text.size())
+{
+	SetText(text);
+}
+
+//文字列を指定して更新する
+void GlobalString::SetText(std::string_view text) const
+{
+	Lock([text](LPSTR pStr, size_t cbSize) {
+		if (cbSize <= std::size(text)) throw std::length_error("text length is too long.");
+		std::ranges::copy(text, pStr);
+		return true;
+	});
+}
+
+//格納されている文字列データのコピーを取得する
+std::string GlobalString::string() const & {
+	return Lock([](LPCSTR pStr, size_t cbSize) {
+		return std::string(pStr, ::strnlen(pStr, cbSize));
+	});
+}
+
+//格納されているデータのコピーを取得する
+std::vector<std::filesystem::path> GlobalDropFiles::data() const & {
+	const auto hDrop = static_cast<HDROP>(get());
+	return Lock([hDrop](const DROPFILES* p [[maybe_unused]], size_t cbSize [[maybe_unused]]) {
+		std::vector<std::filesystem::path> files;
+		std::wstring buffer(_MAX_PATH, L'\0');
+		const auto uFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
+		for (UINT i = 0; i < uFiles; ++i) {
+			// 必要サイズを取得する
+			const auto required = ::DragQueryFileW(hDrop, i, nullptr, 0);
+
+			// バッファを確保して取得する
+			buffer.resize(required);
+			::DragQueryFileW(hDrop, i, std::data(buffer), UINT(std::size(buffer) + 1));
+
+			// パスリストに追加する
+			files.emplace_back(buffer);
+		}
+
+		return files;
+	});
+}
+
+//文字列を指定して必要サイズを計算する
+/* static */ size_t GlobalSakura::CalcSize(std::wstring_view text) noexcept
+{
+	return sizeof(size_type) + (std::size(text) + 1) * sizeof(WCHAR);
+}
+
+//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+GlobalSakura::GlobalSakura(std::wstring_view text)
+	: GlobalMemory(CalcSize(text))
+{
+	SetText(text);
+}
+
+// 文字列を指定して更新する
+void GlobalSakura::SetText(std::wstring_view text) const
+{
+	Lock([text](LPWSTR pStr, size_t cbSize) {
+		if (cbSize < CalcSize(text)) throw std::length_error("text length is too long.");
+		*(size_type*)pStr = size_type(std::size(text));
+		std::ranges::copy(text, LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)));
+		return true;
+	});
+}
+
+//格納されている文字列データのコピーを取得する
+std::wstring GlobalSakura::wstring() const & {
+	return Lock([](LPCWSTR pStr, size_t cbSize) -> std::wstring {
+		if (cbSize < sizeof(size_type) + sizeof(WCHAR)) return L"";
+		const auto length = *(const size_type*)pStr;
+		if (cbSize < sizeof(size_type) + (length + 1) * sizeof(WCHAR)) return L"";
+		return std::wstring(LPCWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
+	});
+}
+
+} // namespace cxx

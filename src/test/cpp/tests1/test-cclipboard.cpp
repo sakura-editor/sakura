@@ -23,7 +23,6 @@
 #include "_os/CDropTarget.h"
 
 #include "cxx/com_pointer.hpp"
-#include "cxx/type_of_Nth_lambda_arg.hpp"
 
 using ::testing::_;
 using ::testing::Invoke;
@@ -31,241 +30,6 @@ using ::testing::Return;
 
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
-
-namespace cxx {
-
-/*!
- * @brief グローバルメモリを RAII で管理するヘルパークラス
- */
-class GlobalMemory : public cxx::ResourceHolder<&::GlobalFree> {
-private:
-	using Base = cxx::ResourceHolder<&::GlobalFree>;
-	using Me = GlobalMemory;
-
-public:
-	//HGLOBALを指定して構築（メモリ変更は行わない）
-	using Base::Base;
-
-	//サイズだけ指定して構築（確保したメモリはゼロクリアされる）
-	explicit GlobalMemory(SIZE_T cch) : GlobalMemory(::GlobalAlloc(GHND, cch)) {}
-
-	//HGLOBALを取得する
-	HGLOBAL Get() const noexcept { return Base::get(); }
-
-	//グローバルメモリをロックしてデータにアクセスする
-	template<typename TAction, typename T = cxx::type_of_Nth_lambda_arg<0, TAction>, typename R = cxx::lambda_traits<TAction>::return_type>
-	R Lock(TAction action) const
-	{
-		const auto hgClip = static_cast<HGLOBAL>(*this);
-		if (!hgClip) {
-			if constexpr (std::is_same_v<R, void>) {
-				return;	//戻り値は返せない
-			} else {
-				return R{};
-			}
-		}
-
-		auto pClip = static_cast<T>(::GlobalLock(hgClip));
-		if (!pClip) {
-			if constexpr (std::is_same_v<R, void>) {
-				return;	//戻り値は返せない
-			} else {
-				return R{};
-			}
-		}
-
-		using LockedGlobalHolder = cxx::ResourceHolder<&::GlobalUnlock>;
-		LockedGlobalHolder locked(hgClip);
-
-		if constexpr (std::is_same_v<R, void>) {
-			action(pClip);
-		} else {
-			const auto cbSize = ::GlobalSize(hgClip);
-			return action(pClip, cbSize);
-		}
-	}
-};
-
-/*!
- * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
- */
-class GlobalWString : public GlobalMemory {
-private:
-	using Base = GlobalMemory;
-	using Me = GlobalWString;
-
-public:
-	//HGLOBALを指定して構築（メモリ変更は行わない）
-	using Base::Base;
-
-	//文字数だけ指定して構築（確保したメモリはゼロクリアされる）
-	explicit GlobalWString(SIZE_T cch) : GlobalMemory(sizeof(WCHAR) * (cch + 1)) {}
-
-	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
-	explicit GlobalWString(std::wstring_view text)
-		: GlobalWString(text.size())
-	{
-		Lock([text](LPWSTR pStr) {
-			std::ranges::copy(text, pStr);
-		});
-	}
-
-	//格納されている文字列データのコピーを取得する
-	std::wstring wstring() const & {
-		return Lock([](LPCWSTR pStr, size_t cbSize) {
-			return std::wstring(pStr, ::wcsnlen(pStr, cbSize / sizeof(WCHAR)));
-		});
-	}
-};
-
-/*!
- * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
- */
-class GlobalString : public GlobalMemory {
-private:
-	using Base = GlobalMemory;
-	using Me = GlobalString;
-
-public:
-	//HGLOBALを指定して構築（メモリ変更は行わない）
-	using Base::Base;
-
-	//文字数だけ指定して構築（確保したメモリはゼロクリアされる）
-	explicit GlobalString(SIZE_T cch) : GlobalMemory(cch + 1) {}
-
-	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
-	explicit GlobalString(std::string_view text)
-		: GlobalString(text.size())
-	{
-		Lock([text](LPSTR pStr) {
-			std::ranges::copy(text, pStr);
-		});
-	}
-
-	//格納されている文字列データのコピーを取得する
-	std::string string() const & {
-		return Lock([](LPCSTR pStr, size_t cbSize) {
-			return std::string(pStr, ::strnlen(pStr, cbSize));
-		});
-	}
-};
-
-/*!
- * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
- */
-template<typename T>
-class GlobalData : public GlobalMemory {
-private:
-	using Base = GlobalMemory;
-	using Me = GlobalData<T>;
-
-public:
-	//HGLOBALを指定して構築（メモリ変更は行わない）
-	using Base::Base;
-
-	//データ数だけ指定して構築（確保したメモリはゼロクリアされる）
-	explicit GlobalData(int count) : GlobalMemory(count * sizeof(T)) {}
-
-	//格納されているデータのコピーを取得する
-	std::vector<T> data() const & {
-		return Lock([](T* p, size_t cbSize) {
-			return std::vector<T>(p, std::bit_cast<T*>(LPBYTE(p) + cbSize));
-		});
-	}
-
-	//格納されている値を取得する
-	T value() const & {
-		return Lock([](T* p, size_t cbSize) {
-			return *p;
-		});
-	}
-};
-
-/*!
- * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
- */
-class GlobalDropFiles : public GlobalMemory {
-private:
-	using Base = GlobalMemory;
-	using Me = GlobalDropFiles;
-
-public:
-	//HGLOBALを指定して構築（メモリ変更は行わない）
-	using Base::Base;
-
-	//格納されているデータのコピーを取得する
-	std::vector<std::filesystem::path> data() const & {
-		return Lock([this](const DROPFILES* p, size_t cbSize [[maybe_unused]]) {
-			const auto hDrop = static_cast<HDROP>(get());
-
-			std::vector<std::filesystem::path> files;
-			const auto uFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
-			for (UINT i = 0; i < uFiles; ++i) {
-				// 必要サイズを取得する
-				const auto required = ::DragQueryFileW(hDrop, i, nullptr, 0);
-
-				// バッファを確保して取得する
-				std::wstring buffer(required, L'\0');
-				::DragQueryFileW(hDrop, i, std::data(buffer), int(std::size(buffer)));
-
-				// パスリストに追加する
-				files.emplace_back(buffer);
-			}
-
-			return files;
-		});
-	}
-};
-
-GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
-{
-	assert(!files.empty());
-
-	auto strFiles = std::accumulate(files.begin() + 1, files.end(), std::wstring(files.front()), [](const std::wstring& a, const std::filesystem::path& b) { return a + L'\0' + b.native(); }) + L'\0' + L'\0';
-
-	GlobalDropFiles drop(sizeof(DROPFILES) + std::size(strFiles) * sizeof(WCHAR));
-	drop.Lock([strFiles](DROPFILES* p) {
-		p->pFiles = DWORD(sizeof(DROPFILES));
-		p->fWide = TRUE;
-		std::ranges::copy(strFiles, LPWSTR(LPBYTE(p) + p->pFiles));
-	});
-	return drop;
-}
-
-/*!
- * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
- */
-class GlobalSakura : public GlobalMemory {
-private:
-	using Base = GlobalMemory;
-	using Me = GlobalSakura;
-
-	using size_type = size_t;
-
-public:
-	//HGLOBALを指定して構築（メモリ変更は行わない）
-	using Base::Base;
-
-	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
-	explicit GlobalSakura(std::wstring_view text)
-		: GlobalMemory(sizeof(size_type) + sizeof(WCHAR) * (std::size(text) + 1))
-	{
-		Lock([text](LPWSTR pStr) {
-			*(size_type*)pStr = std::size(text);
-			std::ranges::copy(text, LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)));
-		});
-	}
-
-	//格納されている文字列データのコピーを取得する
-	std::wstring wstring() const & {
-		return Lock([](LPWSTR pStr, size_t) {
-			const auto length = *(size_type*)pStr;
-			return std::wstring(LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
-		});
-	}
-};
-
-} // namespace cxx
 
 namespace testing {
 
@@ -364,8 +128,7 @@ MATCHER_P(ByteValueInGlobalMemory, value, "") {
 MATCHER_P2(BytesInGlobalMemory, bytes, size, "") {
 	cxx::GlobalData<BYTE> mem{ arg };
 	const auto actual = mem.data();
-	return size == std::size(actual) &&
-		0 == std::memcmp(std::data(actual), bytes, size);
+	return 0 == std::ranges::equal(actual, std::span(bytes, size));
 }
 
 class MockCClipboard : public CClipboard {
@@ -934,6 +697,38 @@ TEST(CClipboard, ClipboardRetryConstants) {
 	EXPECT_LE(CClipboard::CLIPBOARD_RETRY_COUNT, 100);  // Should not be excessive
 	EXPECT_LE(CClipboard::CLIPBOARD_RETRY_DELAY_MS, 1000);  // Should not be too long
 }
+
+namespace cxx {
+
+TEST(GlobalData, test001)
+{
+	cxx::GlobalData<char> memory{ 5 };
+	EXPECT_THAT(memory.get(), NotNull());
+	EXPECT_THAT(memory.size(), 5U);
+
+	EXPECT_THAT(memory.value(), '\0');
+
+	EXPECT_THAT(memory.SetValue('a'), IsTrue());
+	EXPECT_THAT(memory.value(), 'a');
+
+	EXPECT_THAT(memory.SetData("test"), IsTrue());
+	EXPECT_THAT(memory.data().data(), StrEq("test"));
+}
+
+TEST(GlobalData, test101)
+{
+	cxx::GlobalData<char> memory{ nullptr };
+	EXPECT_THAT(memory.get(), IsNull());
+	EXPECT_THAT(memory.size(), 0U);
+
+	EXPECT_THAT(memory.value(), '\0');
+
+	memory.Lock([](LPCSTR) {
+		//何もしない
+	});
+}
+
+} // namespace cxx
 
 namespace ole {
 
