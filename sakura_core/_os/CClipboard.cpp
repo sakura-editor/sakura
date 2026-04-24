@@ -7,6 +7,9 @@
 */
 
 #include "StdAfx.h"
+#include <algorithm>
+#include <cstdint>
+#include <cstring>
 #include <shellapi.h>// HDROP
 #include "CClipboard.h"
 #include "doc/CEditDoc.h"
@@ -117,9 +120,10 @@ bool CClipboard::SetText(
 	}
 	//	1回しか通らない. breakでここまで飛ぶ
 
-	// バイナリ形式のデータ
-	//	(size_t) 「データ」の長さ
-	//	「データ」
+	// バイナリ形式のデータ（SAKURAClipW独自形式）
+	//	(SSakuraClipHeader) ヘッダ：int32_t cchData = 「データ」の文字数
+	//	(wchar_t[cchData])  「データ」本体
+	//	(wchar_t)           終端ヌル
 	HGLOBAL hgClipSakura = nullptr;
 	//サクラエディタ専用フォーマットを取得
 	CLIPFORMAT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
@@ -136,10 +140,13 @@ bool CClipboard::SetText(
 
 		//確保した領域にデータをコピー
 		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
-		auto* pHeader = reinterpret_cast<SSakuraClipHeader*>(pClip);
-		pHeader->cchData = static_cast<int32_t>(nDataLen);
+		int32_t header = static_cast<int32_t>(nDataLen);
+		memcpy(pClip, &header, sizeof(header));
 		pClip += sizeof(SSakuraClipHeader);											//データの長さ
-		wmemcpy( reinterpret_cast<wchar_t*>(pClip), pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
+		if( nDataLen > 0 ){
+			wmemcpy( reinterpret_cast<wchar_t*>(pClip), pData, nDataLen );
+		}
+		pClip += nDataLen*sizeof(wchar_t);											//データ
 		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
 		::GlobalUnlock( hgClipSakura );
 
@@ -317,15 +324,15 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 					return false;
 				}
 			}else{
-				SSakuraClipHeader header;
-				memcpy_raw(&header, pData, sizeof(header));
-				if( header.cchData < 0 ){
+				int32_t cchRaw = 0;
+				memcpy(&cchRaw, pData, sizeof(cchRaw));
+				if( cchRaw < 0 ){
 					::GlobalUnlock(hSakura);
 					if( uGetFormat == uFormatSakuraClip ){
 						return false;
 					}
 				}else{
-					const size_t cchData = static_cast<size_t>(header.cchData);
+					const size_t cchData = static_cast<size_t>(cchRaw);
 					const size_t cchMax = (cbData - sizeof(SSakuraClipHeader)) / sizeof(wchar_t);
 					if( cchData > cchMax ){
 						::GlobalUnlock(hSakura);
@@ -333,8 +340,10 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 							return false;
 						}
 					}else{
-						const wchar_t* szData = reinterpret_cast<const wchar_t*>(pData + sizeof(SSakuraClipHeader));
-						cmemBuf->Append( szData, cchData );
+						if( cchData > 0 ){
+							const wchar_t* szData = reinterpret_cast<const wchar_t*>(pData + sizeof(SSakuraClipHeader));
+							cmemBuf->Append( szData, cchData );
+						}
 						::GlobalUnlock(hSakura);
 						return true;
 					}

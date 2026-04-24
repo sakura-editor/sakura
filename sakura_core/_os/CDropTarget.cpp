@@ -213,8 +213,8 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 			m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
 			m_pData[i].size = sizeof(SSakuraClipHeader) + (nTextLen + 1) * sizeof( wchar_t );
 			m_pData[i].data = new BYTE[m_pData[i].size];
-			auto* pHeader = reinterpret_cast<SSakuraClipHeader*>(m_pData[i].data);
-			pHeader->cchData = static_cast<int32_t>(nTextLen);
+			const int32_t cchData = static_cast<int32_t>(nTextLen);
+			memcpy_raw( m_pData[i].data, &cchData, sizeof(cchData) );
 			memcpy_raw( m_pData[i].data + sizeof(SSakuraClipHeader), lpszText, nTextLen * sizeof( wchar_t ) );
 			*((wchar_t*)(m_pData[i].data + sizeof(SSakuraClipHeader)) + nTextLen) = L'\0';
 			i++;

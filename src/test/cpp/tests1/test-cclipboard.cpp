@@ -197,6 +197,17 @@ TEST(CClipboard, SetText7) {
 	EXPECT_FALSE(clipboard.SetText(text, static_cast<size_t>(INT32_MAX) + 1, false, false, CClipboard::GetSakuraFormat()));
 }
 
+// SetText のテスト。nDataLen > INT32_MAX でも矩形選択フラグは書き込まれる。
+TEST(CClipboard, SetText8) {
+	const wchar_t text[] = L"x";
+	const size_t hugeLen = static_cast<size_t>(INT32_MAX) + 1;
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
+	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"MSDEVColumnSelect"), ByteValueInGlobalMemory(0)));
+	EXPECT_CALL(clipboard, SetClipboardData(CClipboard::GetSakuraFormat(), _)).Times(0);
+	EXPECT_TRUE(clipboard.SetText(text, hugeLen, true, false, -1));
+}
+
 // グローバルメモリを RAII で管理する簡易ヘルパークラス
 class GlobalMemory {
 public:
