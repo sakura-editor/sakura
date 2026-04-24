@@ -10,7 +10,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
