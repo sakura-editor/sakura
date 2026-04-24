@@ -11,7 +11,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -55,7 +55,7 @@ CDlgCompare::CDlgCompare()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
+	static_assert( std::size(anchorList) == std::extent_v<decltype(m_rcItems)> );
 
 	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */
 

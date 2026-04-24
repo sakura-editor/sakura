@@ -40,6 +40,9 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
+	//! !プレフィックスによる正規表現除外ファイルパターン（フェーズ2拡張）
+	std::vector<std::wstring> m_vecExceptFileRegexPatterns;
+
 public:
 	CGrepEnumKeys() noexcept = default;
 	CGrepEnumKeys(const Me&) = delete;
@@ -50,13 +53,12 @@ public:
 		ClearItems();
 	}
 
-	// 除外ファイルの2つの解析済み配列から1つのリストを作る
-	auto GetExcludeFiles() const ->  std::vector<decltype(m_vecExceptFileKeys)::value_type> {
-		std::vector<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
-		const auto& fileKeys = m_vecExceptFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), fileKeys.cbegin(), fileKeys.cend() );
-		const auto& absFileKeys = m_vecExceptAbsFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), absFileKeys.cbegin(), absFileKeys.cend() );
+	// 除外ファイルの解析済み配列から表示用リストを作る
+	auto GetExcludeFiles() const -> std::vector<std::wstring> {
+		std::vector<std::wstring> excludeFiles;
+		for( const auto& k : m_vecExceptFileKeys )    excludeFiles.emplace_back( k );
+		for( const auto& k : m_vecExceptAbsFileKeys ) excludeFiles.emplace_back( k );
+		for( const auto& p : m_vecExceptFileRegexPatterns ) excludeFiles.emplace_back( p );
 		return excludeFiles;
 	}
 
@@ -79,17 +81,19 @@ public:
 			const std::wstring& element = patterns[i];
 			const WCHAR* token = element.c_str();
 
+			// !プレフィックスは正規表現除外パターンとして格納（ワイルドカード検証不要）
+			if( token[0] == L'!' ){
+				m_vecExceptFileRegexPatterns.emplace_back( token + 1 );
+				continue;
+			}
+
 			//フィルタを種類ごとに振り分ける
 			enum KeyFilterType{
 				FILTER_SEARCH,
-				FILTER_EXCEPT_FILE,
 				FILTER_EXCEPT_FOLDER,
 			};
 			KeyFilterType keyType = FILTER_SEARCH;
-			if( token[0] == L'!' ){
-				token++;
-				keyType = FILTER_EXCEPT_FILE;
-			}else if( token[0] == L'#' ){
+			if( token[0] == L'#' ){
 				token++;
 				keyType = FILTER_EXCEPT_FOLDER;
 			}
@@ -107,12 +111,6 @@ public:
 //					push_back_unique( m_vecSearchAbsFileKeys, token );
 //					push_back_unique( m_vecSearchFileKeys, token );
 					return 2; // 絶対パス指定は不可
-				}
-			}else if( keyType == FILTER_EXCEPT_FILE ){
-				if( bRelPath ){
-					push_back_unique( m_vecExceptFileKeys, token );
-				}else{
-					push_back_unique( m_vecExceptAbsFileKeys, token );
 				}
 			}else if( keyType == FILTER_EXCEPT_FOLDER ){
 				if( bRelPath ){
@@ -194,6 +192,9 @@ private:
 		ClearEnumKeys(m_vecSearchFileKeys);
 		ClearEnumKeys(m_vecExceptFolderKeys);
 		ClearEnumKeys(m_vecSearchFolderKeys);
+		ClearEnumKeys(m_vecExceptAbsFileKeys);
+		ClearEnumKeys(m_vecExceptAbsFolderKeys);
+		m_vecExceptFileRegexPatterns.clear();
 		return;
 	}
 	void ClearEnumKeys( VGrepEnumKeys& keys ){
