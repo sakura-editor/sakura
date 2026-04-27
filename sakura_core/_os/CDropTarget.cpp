@@ -27,6 +27,9 @@ namespace {
 #define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
 #endif
 
+/**
+ * new BYTE[] を SEH 例外 STATUS_NO_MEMORY から保護して呼び出す。
+ */
 static bool SafeNewBytes(BYTE** ppOut, size_t nSize)
 {
 	__try {
@@ -212,9 +215,11 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		m_nFormat = 0;
 	}
 	if( lpszText != nullptr ){
+		// SAKURAClipW は int32_t 範囲に収まる場合だけ作る。
 		const bool bUseSakuraFormat = (nTextLen <= static_cast<size_t>(INT32_MAX));
 		m_nFormat = (bUseSakuraFormat ? 3 : 2) + (bColumnSelect ? 1 : 0);	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
+		// goto fail 時に未初期化ポインタを delete[] しないようにする。
 		for( i = 0; i < m_nFormat; i++ ){
 			m_pData[i].data = nullptr;
 		}
@@ -243,6 +248,7 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 			if( !SafeNewBytes(&m_pData[i].data, m_pData[i].size) ){
 				goto fail;
 			}
+			// SAKURAClipW のヘッダは固定幅の int32_t で書き込む。
 			const int32_t cchData = static_cast<int32_t>(nTextLen);
 			memcpy_raw( m_pData[i].data, &cchData, sizeof(cchData) );
 			memcpy_raw( m_pData[i].data + sizeof(SSakuraClipHeader), lpszText, nTextLen * sizeof( wchar_t ) );

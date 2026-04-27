@@ -52,6 +52,9 @@ namespace {
 #define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
 #endif
 
+/**
+ * CNativeW::SetString を SEH 例外 STATUS_NO_MEMORY から保護して呼び出す。
+ */
 static bool SafeSetString(CNativeW& buf, const wchar_t* pData, size_t nLen)
 {
 	__try {
@@ -1857,16 +1860,19 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			return E_INVALIDARG;
 		pData = ::GlobalLock( hData );
 		nSize = ::GlobalSize( hData );
+		// SAKURAClipW は壊れたヘッダを検出したら拒否し、次の形式へフォールバックする。
 		if( cf == CClipboard::GetSakuraFormat() ){
 			if( pData == nullptr || nSize < sizeof(SSakuraClipHeader) ){
 			}else{
 				SSakuraClipHeader header;
+				// エイリアシング安全な読み取り。
 				memcpy_raw(&header, pData, sizeof(header));
 				if( header.cchData >= 0 ){
 					const size_t cchData = static_cast<size_t>(header.cchData);
 					const size_t cchMax = (nSize - sizeof(SSakuraClipHeader)) / sizeof(wchar_t);
 					if( cchData <= cchMax ){
 						const wchar_t* pszData = reinterpret_cast<const wchar_t*>((BYTE*)pData + sizeof(SSakuraClipHeader));
+						// 途中の NUL 文字も含めて貼り付ける。
 						cmemBuf.SetString( pszData, cchData );	// 途中のNUL文字も含める
 						break;
 					}
@@ -1889,6 +1895,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			}
 			continue;
 		}
+		// CF_UNICODETEXT は文字数を上限で切り詰めたうえで SetString する。
 		if( cf == CF_UNICODETEXT ){
 			const size_t cchTotal = wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) );
 			const size_t cchSafe = (cchTotal > CClipboard::CLIPBOARD_MAX_CHARS)
@@ -1904,6 +1911,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				return E_OUTOFMEMORY;
 			}
 		}else{
+			// CF_TEXT は SJIS とみなして Unicode へ変換する。
 			const SIZE_T cbLimit = static_cast<SIZE_T>(CClipboard::CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
 			const SIZE_T cbSafe = (nSize > cbLimit) ? cbLimit : nSize;
 			CNativeA binary;

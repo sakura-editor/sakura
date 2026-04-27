@@ -25,6 +25,11 @@ namespace {
 #define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
 #endif
 
+/**
+ * IWBuffer::Append を SEH 例外 STATUS_NO_MEMORY から保護して呼び出す。
+ *
+ * C++ 例外ではなく Windows SEH を直接拾うためのラッパ。
+ */
 static bool SafeAppend(IWBuffer* cmemBuf, const wchar_t* pData, size_t nLen)
 {
 	__try {
@@ -336,7 +341,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		}
 	}
 
-	//サクラ形式のデータがあれば取得
+	// SAKURAClipW は破損データを検出したら拒否し、既定取得では次の形式へフォールバックする。
 	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
 	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
 		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
@@ -362,6 +367,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 				}else{
 					const size_t cchData = static_cast<size_t>(cchRaw);
 					const size_t cchMax = (cbData - sizeof(SSakuraClipHeader)) / sizeof(wchar_t);
+					// ヘッダの自己申告値が実メモリを超える場合は破損データとして扱う。
 					if( cchData > cchMax ){
 						::GlobalUnlock(hSakura);
 						if( uGetFormat == uFormatSakuraClip ){
@@ -371,6 +377,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 						bool bSakuraCopied = true;
 						if( cchData > 0 ){
 							const wchar_t* szData = reinterpret_cast<const wchar_t*>(pData + sizeof(SSakuraClipHeader));
+							// SAKURAClipW の貼り付けも SEH 経由で保護する。
 							bSakuraCopied = SafeAppend(cmemBuf, szData, cchData);
 						}
 						::GlobalUnlock(hSakura);
@@ -397,6 +404,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		if (szData) {
 			const SIZE_T cbGlobal = ::GlobalSize(hUnicode);
 			const size_t cchTotal = wcsnlen(szData, cbGlobal / sizeof(wchar_t));
+			// 文字数上限で切り詰めたうえで、SEH 例外を SafeAppend で拾う。
 			const size_t cchSafe = std::min(cchTotal, CLIPBOARD_MAX_CHARS);
 			if( !SafeAppend(cmemBuf, szData, cchSafe) ){
 				::GlobalUnlock(hUnicode);
@@ -418,6 +426,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		if( szData ){
 			const SIZE_T cbGlobal = ::GlobalSize(hText);
 			const SIZE_T cbLimit = static_cast<SIZE_T>(CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
+			// SJIS バイト列の上限も設けてから Unicode 変換する。
 			const SIZE_T cbSafe = std::min(cbGlobal, cbLimit);
 			//SJIS→UNICODE
 			CMemory cmemSjis( szData, cbSafe );
@@ -692,6 +701,7 @@ bool CClipboard::GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName,
 
 		// 長さオプションの解釈
 		size_t nLength = GetLengthByMode(hClipData, pData, nMode, nEndMode);
+		// バイナリモードは文字数、それ以外はバイト数で上限を適用する。
 		const size_t nLimit = (nMode == -1)
 			? CLIPBOARD_MAX_CHARS
 			: static_cast<size_t>(CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
