@@ -20,6 +20,26 @@
 #include "basis/CEol.h"
 #include "mem/CNativeA.h"
 
+namespace {
+#ifndef STATUS_NO_MEMORY
+#define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
+#endif
+
+static bool SafeAppend(IWBuffer* cmemBuf, const wchar_t* pData, size_t nLen)
+{
+	__try {
+		cmemBuf->Append(pData, nLen);
+		return true;
+	}
+	__except( GetExceptionCode() == STATUS_NO_MEMORY
+		? EXCEPTION_EXECUTE_HANDLER
+		: EXCEPTION_CONTINUE_SEARCH )
+	{
+		return false;
+	}
+}
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -102,9 +122,17 @@ bool CClipboard::SetText(
 	bool bUnicodeText = (uFormat == (UINT)-1 || uFormat == CF_UNICODETEXT);
 	while(bUnicodeText){
 		//領域確保
+		const size_t cchUnicode = nDataLen + 1;
+		if( cchUnicode <= nDataLen ){
+			break;
+		}
+		const size_t cbUnicode = cchUnicode * sizeof(wchar_t);
+		if( cbUnicode / sizeof(wchar_t) != cchUnicode ){
+			break;
+		}
 		hgClipText = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			(nDataLen + 1) * sizeof(wchar_t)
+			cbUnicode
 		);
 		if( !hgClipText )break;
 
@@ -340,12 +368,18 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 							return false;
 						}
 					}else{
+						bool bSakuraCopied = true;
 						if( cchData > 0 ){
 							const wchar_t* szData = reinterpret_cast<const wchar_t*>(pData + sizeof(SSakuraClipHeader));
-							cmemBuf->Append( szData, cchData );
+							bSakuraCopied = SafeAppend(cmemBuf, szData, cchData);
 						}
 						::GlobalUnlock(hSakura);
-						return true;
+						if( bSakuraCopied ){
+							return true;
+						}
+						if( uGetFormat == uFormatSakuraClip ){
+							return false;
+						}
 					}
 				}
 			}
@@ -361,7 +395,13 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	if( hUnicode != nullptr ){
 		wchar_t* szData = static_cast<wchar_t*>(::GlobalLock(hUnicode));
 		if (szData) {
-			cmemBuf->Append( szData, wcsnlen(szData, GlobalSize(hUnicode) / 2) );
+			const SIZE_T cbGlobal = ::GlobalSize(hUnicode);
+			const size_t cchTotal = wcsnlen(szData, cbGlobal / sizeof(wchar_t));
+			const size_t cchSafe = std::min(cchTotal, CLIPBOARD_MAX_CHARS);
+			if( !SafeAppend(cmemBuf, szData, cchSafe) ){
+				::GlobalUnlock(hUnicode);
+				return false;
+			}
 		}
 		::GlobalUnlock(hUnicode);
 		return true;
@@ -375,14 +415,26 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	}
 	if( hText != nullptr ){
 		char* szData = static_cast<char*>(::GlobalLock(hText));
-		//SJIS→UNICODE
-		CMemory cmemSjis( szData, GlobalSize(hText) );
-		CNativeW cmemUni;
-		CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
-		cmemSjis.Reset();
-		// '\0'までを取得
-		cmemUni._SetStringLength(wcslen(cmemUni.GetStringPtr()));
-		cmemBuf->Append(cmemUni.GetStringPtr(), (size_t)cmemUni.GetStringLength());
+		if( szData ){
+			const SIZE_T cbGlobal = ::GlobalSize(hText);
+			const SIZE_T cbLimit = static_cast<SIZE_T>(CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
+			const SIZE_T cbSafe = std::min(cbGlobal, cbLimit);
+			//SJIS→UNICODE
+			CMemory cmemSjis( szData, cbSafe );
+			CNativeW cmemUni;
+			CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
+			cmemSjis.Reset();
+			// '\0'までを取得
+			cmemUni._SetStringLength(wcslen(cmemUni.GetStringPtr()));
+			const size_t cchUni = std::min(
+				static_cast<size_t>(cmemUni.GetStringLength()),
+				CLIPBOARD_MAX_CHARS
+			);
+			if( !SafeAppend(cmemBuf, cmemUni.GetStringPtr(), cchUni) ){
+				::GlobalUnlock(hText);
+				return false;
+			}
+		}
 		::GlobalUnlock(hText);
 		return true;
 	}
@@ -640,6 +692,12 @@ bool CClipboard::GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName,
 
 		// 長さオプションの解釈
 		size_t nLength = GetLengthByMode(hClipData, pData, nMode, nEndMode);
+		const size_t nLimit = (nMode == -1)
+			? CLIPBOARD_MAX_CHARS
+			: static_cast<size_t>(CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
+		if( nLength > nLimit ){
+			nLength = nLimit;
+		}
 
 		// エンコードオプション
 		if( nMode == -1 ){
@@ -664,6 +722,9 @@ bool CClipboard::GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName,
 				if( -1 == nEndMode ){
 					// nLength 再設定
 					nLength = GetLengthByMode(hClipData, pData, eMode, nEndMode);
+					if( nLength > nLimit ){
+						nLength = nLimit;
+					}
 				}
 			}
 			if( eMode == CODE_UNICODE ){

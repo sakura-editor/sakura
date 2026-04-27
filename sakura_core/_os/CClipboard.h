@@ -88,6 +88,7 @@ public:
 	// OpenClipboard retry constants (public for testing)
 	static constexpr int CLIPBOARD_RETRY_COUNT = 10;
 	static constexpr int CLIPBOARD_RETRY_DELAY_MS = 10;
+	static constexpr size_t CLIPBOARD_MAX_CHARS = static_cast<size_t>(INT32_MAX);
 
 private:
 	HWND m_hwnd;
@@ -115,4 +116,5 @@ protected:
 	virtual HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) const;
 	virtual LPVOID GlobalLock(HGLOBAL hMem) const;
 };
+static constexpr size_t CLIPBOARD_MAX_CHARS = CClipboard::CLIPBOARD_MAX_CHARS;
 #endif /* SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_ */

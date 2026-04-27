@@ -9,6 +9,7 @@
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <limits>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -100,6 +101,12 @@ TEST(CClipboard, Empty) {
 	MockCClipboard clipboard;
 	EXPECT_CALL(clipboard, EmptyClipboard()).WillOnce(Return(TRUE));
 	clipboard.Empty();
+}
+
+// クリップボードの安全な上限値が定義されていることを確認する。
+TEST(CClipboard, ClipboardMaxCharsConstant) {
+	EXPECT_EQ(CLIPBOARD_MAX_CHARS, static_cast<size_t>(INT32_MAX));
+	EXPECT_GT(CLIPBOARD_MAX_CHARS, 0u);
 }
 
 // SetHtmlTextのテスト。
@@ -206,6 +213,14 @@ TEST(CClipboard, SetText8) {
 	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"MSDEVColumnSelect"), ByteValueInGlobalMemory(0)));
 	EXPECT_CALL(clipboard, SetClipboardData(CClipboard::GetSakuraFormat(), _)).Times(0);
 	EXPECT_TRUE(clipboard.SetText(text, hugeLen, true, false, -1));
+}
+
+// SetText のテスト。nDataLen + 1 が size_t を超える場合は失敗する。
+TEST(CClipboard, SetTextSizeTOverflow) {
+	const wchar_t text[] = L"x";
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
+	EXPECT_FALSE(clipboard.SetText(text, std::numeric_limits<size_t>::max(), false, false, -1));
 }
 
 // グローバルメモリを RAII で管理する簡易ヘルパークラス

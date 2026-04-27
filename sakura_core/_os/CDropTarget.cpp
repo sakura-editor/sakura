@@ -22,6 +22,27 @@
 #include "CClipboard.h"
 #include "CSelectLang.h"
 
+namespace {
+#ifndef STATUS_NO_MEMORY
+#define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
+#endif
+
+static bool SafeNewBytes(BYTE** ppOut, size_t nSize)
+{
+	__try {
+		*ppOut = new BYTE[nSize];
+		return true;
+	}
+	__except( GetExceptionCode() == STATUS_NO_MEMORY
+		? EXCEPTION_EXECUTE_HANDLER
+		: EXCEPTION_CONTINUE_SEARCH )
+	{
+		*ppOut = nullptr;
+		return false;
+	}
+}
+}
+
 COleLibrary CYbInterfaceBase::m_olelib;
 
 CYbInterfaceBase::CYbInterfaceBase()
@@ -194,25 +215,34 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		const bool bUseSakuraFormat = (nTextLen <= static_cast<size_t>(INT32_MAX));
 		m_nFormat = (bUseSakuraFormat ? 3 : 2) + (bColumnSelect ? 1 : 0);	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
+		for( i = 0; i < m_nFormat; i++ ){
+			m_pData[i].data = nullptr;
+		}
 
 		i = 0;
 		m_pData[0].cfFormat = CF_UNICODETEXT;
 		m_pData[0].size = (nTextLen + 1) * sizeof(wchar_t);
-		m_pData[0].data = new BYTE[m_pData[0].size];
+		if( !SafeNewBytes(&m_pData[0].data, m_pData[0].size) ){
+			goto fail;
+		}
 		memcpy_raw( m_pData[0].data, lpszText, nTextLen * sizeof(wchar_t) );
 		*((wchar_t*)m_pData[0].data + nTextLen) = L'\0';
 
 		i++;
 		m_pData[i].cfFormat = CF_TEXT;
 		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), nullptr, 0, nullptr, nullptr );
-		m_pData[i].data = new BYTE[m_pData[i].size];
+		if( !SafeNewBytes(&m_pData[i].data, m_pData[i].size) ){
+			goto fail;
+		}
 		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), (LPSTR)m_pData[i].data, int(m_pData[i].size), nullptr, nullptr );
 
 		i++;
 		if( bUseSakuraFormat ){
 			m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
 			m_pData[i].size = sizeof(SSakuraClipHeader) + (nTextLen + 1) * sizeof( wchar_t );
-			m_pData[i].data = new BYTE[m_pData[i].size];
+			if( !SafeNewBytes(&m_pData[i].data, m_pData[i].size) ){
+				goto fail;
+			}
 			const int32_t cchData = static_cast<int32_t>(nTextLen);
 			memcpy_raw( m_pData[i].data, &cchData, sizeof(cchData) );
 			memcpy_raw( m_pData[i].data + sizeof(SSakuraClipHeader), lpszText, nTextLen * sizeof( wchar_t ) );
@@ -223,10 +253,21 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		if( bColumnSelect ){
 			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );
 			m_pData[i].size = 1;
-			m_pData[i].data = new BYTE[1];
+			if( !SafeNewBytes(&m_pData[i].data, 1) ){
+				goto fail;
+			}
 			m_pData[i].data[0] = '\0';
 		}
+		return;
 	}
+
+fail:
+	for( int j = 0; j < m_nFormat; ++j ){
+		delete [](m_pData[j].data);
+	}
+	delete []m_pData;
+	m_pData = nullptr;
+	m_nFormat = 0;
 }
 
 DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
