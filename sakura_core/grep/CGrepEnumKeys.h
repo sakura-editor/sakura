@@ -1,7 +1,6 @@
 ﻿/*!	@file
-	
-	@brief GREP support library
-	
+	@brief GREP support library - 検索/除外ファイルパターン管理
+	@note v2.0 !プレフィックス正規表現除外・AddExceptFile/Folder 追加
 	@author wakura, Moca
 	@date 2008/04/28
 */
@@ -40,7 +39,7 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
-	//! !プレフィックスによる正規表現除外ファイルパターン（フェーズ2拡張）
+	// !プレフィックスで指定された正規表現除外パターン（SetFileKeys で格納、DoGrepTree 等でマッチング）
 	std::vector<std::wstring> m_vecExceptFileRegexPatterns;
 
 public:
@@ -53,7 +52,7 @@ public:
 		ClearItems();
 	}
 
-	// 除外ファイルの解析済み配列から表示用リストを作る
+	// 除外ファイルパターンの統合リストを返す（Grep ヘッダー表示用）
 	auto GetExcludeFiles() const -> std::vector<std::wstring> {
 		std::vector<std::wstring> excludeFiles;
 		for( const auto& k : m_vecExceptFileKeys )    excludeFiles.emplace_back( k );
@@ -62,7 +61,7 @@ public:
 		return excludeFiles;
 	}
 
-	// 除外フォルダーの2つの解析済み配列から1つのリストを作る
+	// 除外フォルダーパターンの統合リストを返す（Grep ヘッダー表示用）
 	auto GetExcludeFolders() const ->  std::vector<decltype(m_vecExceptFolderKeys)::value_type> {
 		std::vector<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
 		const auto& folderKeys = m_vecExceptFolderKeys;
@@ -81,7 +80,7 @@ public:
 			const std::wstring& element = patterns[i];
 			const WCHAR* token = element.c_str();
 
-			// !プレフィックスは正規表現除外パターンとして格納（ワイルドカード検証不要）
+			// !プレフィックス: 正規表現除外パターンとして格納（ワイルドカード検証対象外）
 			if( token[0] == L'!' ){
 				m_vecExceptFileRegexPatterns.emplace_back( token + 1 );
 				continue;
@@ -129,18 +128,12 @@ public:
 		return 0;
 	}
 
-	/*!
-		@brief 除外ファイルパターンを追加する
-		@param[in]	lpKeys	除外ファイルパターン
-	*/
+	// 除外ファイルパターンを追加する（既存パターンはクリアしない）
 	int AddExceptFile(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFileKeys, m_vecExceptAbsFileKeys);
 	}
 
-	/*!
-		@brief 除外フォルダーパターンを追加する
-		@param[in]	lpKeys	除外フォルダーパターン
-	*/
+	// 除外フォルダーパターンを追加する（既存パターンはクリアしない）
 	int AddExceptFolder(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
 	}
@@ -194,7 +187,7 @@ private:
 		ClearEnumKeys(m_vecSearchFolderKeys);
 		ClearEnumKeys(m_vecExceptAbsFileKeys);
 		ClearEnumKeys(m_vecExceptAbsFolderKeys);
-		m_vecExceptFileRegexPatterns.clear();
+		m_vecExceptFileRegexPatterns.clear();  // 正規表現除外パターンもクリア
 		return;
 	}
 	void ClearEnumKeys( VGrepEnumKeys& keys ){

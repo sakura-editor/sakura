@@ -1,4 +1,7 @@
-﻿/*! @file */
+﻿/*! @file
+	@brief Grep検索エージェント
+	@note v2.0 マルチスレッド対応・除外ファイル機能拡張
+*/
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
@@ -21,7 +24,16 @@ class CGrepEnumKeys;
 class CGrepEnumFiles;
 class CGrepEnumFolders;
 
-//! 並列Grep処理で使用するファイルタスク情報
+/**
+ * 並列Grep処理で使用するファイルタスク情報。
+ *
+ * DoGrepTreeEnumerate() でメインスレッドが列挙したファイル情報を
+ * ワーカースレッド（DoGrepFileWorker）に受け渡すためのデータ構造。
+ * スレッドプールのバッチ単位で vector に格納し、各ワーカーが
+ * atomic インデックスで取得して並列処理する。
+ *
+ * @sa DoGrepTreeEnumerate, DoGrepFileWorker
+ */
 struct SGrepFileTask {
 	std::wstring fullPath;    //!< 処理対象ファイルのフルパス
 	std::wstring fileName;    //!< ファイル名（タイプ別設定取得用）
@@ -183,7 +195,7 @@ private:
 		const SGrepOption&	sGrepOption
 	);
 
-	// ファイル列挙（メインスレッド用・キャンセル対応）
+	// フォルダー走査で SGrepFileTask を列挙する（メインスレッド専用・検索処理は行わない）
 	void DoGrepTreeEnumerate(
 		CDlgCancel*				pcDlgCancel,
 		CGrepEnumKeys&			cGrepEnumKeys,
@@ -196,7 +208,7 @@ private:
 		bool&					bCancelled
 	);
 
-	// スレッドセーフなファイル内検索（UI更新なし・atomic cancelフラグ使用）
+	// ワーカースレッド用ファイル内検索（UI操作なし・戻り値: -1=キャンセル, 0以上=ヒット数）
 	int DoGrepFileWorker(
 		const SGrepFileTask&		task,
 		const wchar_t*				pszKey,

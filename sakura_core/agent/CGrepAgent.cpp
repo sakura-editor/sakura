@@ -1,4 +1,7 @@
-﻿/*! @file */
+﻿/*! @file
+	@brief Grep検索エージェント
+	@note v2.0 マルチスレッド対応・除外ファイル機能拡張
+*/
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
@@ -33,6 +36,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+// マルチスレッドGrep用
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -819,10 +823,13 @@ DWORD CGrepAgent::DoGrep(
 		// ===== 並列Grep: サブフォルダー単位バッチ処理（Producer-Consumerパターン） =====
 		// 検索パス直下のサブフォルダーを1フォルダーずつ列挙・検索・解放することで
 		// メモリ消費を抑制し、出力順序をフォルダー順に安定化させる。
+		// 並列Grep: スレッドプールでファイル検索を並列化する
+		// メインスレッドがフォルダー単位でタスクを列挙し、ワーカーが並列に検索する
+		// Grep置換は副作用があるため既存の直列パスを使用する
 		const std::vector<std::wstring>& regexPatterns = cGrepEnumKeys.m_vecExceptFileRegexPatterns;
 		const std::wstring searchKey( pcmGrepKey->GetStringPtr(), pcmGrepKey->GetStringLength() );
 
-		// スレッド数 = max(設定値, 論理コア数 / 4)  ※設定値はiniファイルの nGrepThreadCount（1〜8）
+		// スレッド数: ini の設定値(1〜8) と論理コア数/4 の大きい方を採用
 		const int nIniThreads = GetDllShareData().m_Common.m_sSearch.m_nGrepThreadCount;
 		const unsigned int nClampedIni = (unsigned int)std::max( 1, std::min( nIniThreads, 8 ) );
 		const unsigned int nThreads = std::max<unsigned int>(
@@ -834,28 +841,34 @@ DWORD CGrepAgent::DoGrep(
 
 		// ===== スレッドプール: バッチ間でスレッドを再利用し生成・破棄コストを排除 =====
 		// バッチ番号インクリメントで新バッチを通知し、condition_variable で待機中ワーカーを起床させる。
+		// スレッドプール制御（poolMutex で保護）
 		std::mutex poolMutex;
 		std::condition_variable cvPoolStart;
 		size_t poolBatchId = 0;                             // バッチ番号（インクリメントで新バッチ通知）
 		bool bPoolShutdown = false;                         // true: ワーカーに終了を指示
+
+		// バッチ実行制御（ロックフリー）
 		const std::vector<SGrepFileTask>* pPoolBatch = nullptr; // 現在バッチのタスクリスト
 		std::atomic<size_t> poolNextTask{ 0 };              // 次に処理するタスクのインデックス
 		std::atomic<int>    poolBatchActive{ 0 };           // 現在バッチを処理中のワーカー数
 		std::atomic<bool>   bWorkCancelled{ false };        // true: キャンセル済み（バッチ間で維持）
+
+		// 結果集約（resultMutex で保護）
 		std::mutex resultMutex;
 		CNativeW sharedMessage;
-		std::set<std::wstring> writtenBaseFolders;
-		std::set<std::wstring> writtenFolders;
+		std::set<std::wstring> writtenBaseFolders;          // フォルダーヘッダー重複排除用
+		std::set<std::wstring> writtenFolders;              // フォルダーヘッダー重複排除用
 
 		// スレッドプールのワーカーを生成（1回のみ）
 		std::vector<std::thread> poolWorkers;
 		poolWorkers.reserve( nThreads );
 
+		// ワーカースレッド: バッチ待機→タスク取得→DoGrepFileWorker 実行のループ
 		for( unsigned int t = 0; t < nThreads; t++ ){
 			poolWorkers.emplace_back( [&](){
 				size_t localBatchId = 0;
 
-				// --- スレッドローカル初期化（スレッド生存中に1回のみ実行）---
+				// スレッドローカルに検索パターンと正規表現をコンパイル（スレッドセーフでないため個別生成）
 				CBregexp localRegexp;
 				CSearchStringPattern localPattern;
 				try{
@@ -869,6 +882,7 @@ DWORD CGrepAgent::DoGrep(
 					return;
 				}
 
+				// !プレフィックス除外パターンをスレッドローカルにコンパイル
 				std::vector<CBregexp> excludeRegexps( regexPatterns.size() );
 				for( size_t ri = 0; ri < regexPatterns.size(); ri++ ){
 					InitRegexp( nullptr, excludeRegexps[ri], false );
@@ -965,8 +979,7 @@ DWORD CGrepAgent::DoGrep(
 			} );
 		}
 
-		// バッチ実行ラムダ: vecTasks をプールのワーカーに割り当て結果を出力する
-		// 戻り値: true=継続, false=キャンセル発生
+		// バッチ実行: タスクをプールに投入し完了を待機する（false=キャンセル発生）
 		auto RunBatch = [&]( const std::vector<SGrepFileTask>& vecTasks ) -> bool {
 			if( vecTasks.empty() ) return true;
 			if( bWorkCancelled.load(std::memory_order_acquire) ) return false;
@@ -1031,7 +1044,7 @@ DWORD CGrepAgent::DoGrep(
 			return !bWorkCancelled.load(std::memory_order_acquire);
 		};
 
-		// 各検索パスをサブフォルダー単位でバッチ処理
+		// 検索パスごとに直列でバッチ処理する（出力順序保証のため）
 		for( int nPath = 0; nPath < (int)vPaths.size() && nGrepTreeResult != -1; nPath++ ){
 			std::wstring sPath = ChopYen( vPaths[nPath] );
 
@@ -1081,7 +1094,7 @@ DWORD CGrepAgent::DoGrep(
 			}
 		}
 
-		// スレッドプールをシャットダウン: 全ワーカーに終了を通知してjoin
+		// スレッドプール終了: 全ワーカーに終了通知し join で待機
 		{
 			std::lock_guard<std::mutex> lk( poolMutex );
 			bPoolShutdown = true;
@@ -1187,8 +1200,7 @@ int CGrepAgent::DoGrepTree(
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
 	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
 
-	// 正規表現除外パターン: 呼び出し元からコンパイル済みが渡された場合は使い回す（再帰コスト削減）
-	// 渡されなかった場合（最上位呼び出し）のみここでコンパイルする
+	// 除外正規表現: 親からコンパイル済みが渡された場合は再利用、なければ初期コンパイル
 	std::vector<CBregexp> localExclRegexps;
 	std::vector<CBregexp>* pVecExclRegexps = pExclRegexps;
 	if( pVecExclRegexps == nullptr ){
@@ -1403,9 +1415,15 @@ cancel_return:;
 	return -1;
 }
 
-/*!	@brief フォルダー走査のみ行い、SGrepFileTask をベクターに積む（メインスレッド用）
-	@note  ファイルの検索は行わない。DoGrep() からの並列化用エントリポイント。
-*/
+/**
+ * フォルダー走査で SGrepFileTask を列挙する（メインスレッド専用）。
+ *
+ * 並列Grep において列挙フェーズと検索フェーズを分離するために導入。
+ * 検索処理は行わず、ワーカースレッド（DoGrepFileWorker）に委譲する。
+ *
+ * @note メインスレッドで実行されるため BlockingHook() 等の UI 操作が安全。
+ * @sa DoGrepFileWorker, DoGrep
+ */
 void CGrepAgent::DoGrepTreeEnumerate(
 	CDlgCancel*				pcDlgCancel,
 	CGrepEnumKeys&			cGrepEnumKeys,
@@ -1705,15 +1723,15 @@ static void OutputPathInfo(
 	}
 }
 
-/*!	@brief ワーカースレッド用ファイル内Grep処理（UI更新なし・atomic cancelフラグ使用）
-
-	フォルダーヘッダー（bOutputBaseFolder/bOutputFolderName）は呼び出し元の
-	並列オーケストレーターが管理するため、本関数内では出力しない（true固定）。
-	WZ風スタイルのファイルヘッダー（bOutFileName）はファイル単位なので本関数内で制御する。
-
-	@retval -1 キャンセル
-	@retval それ以外 ヒット数
-*/
+/**
+ * ワーカースレッド用ファイル内Grep（UI 操作なし・スレッドセーフ）。
+ *
+ * フォルダーヘッダーはオーケストレーター側で管理するため本関数内では出力しない。
+ *
+ * @retval -1     キャンセル
+ * @retval 0以上  ヒット数
+ * @sa DoGrepTreeEnumerate, DoGrep
+ */
 int CGrepAgent::DoGrepFileWorker(
 	const SGrepFileTask&		task,			//!< [in] ファイルタスク
 	const wchar_t*				pszKey,			//!< [in] 検索パターン文字列
@@ -1736,6 +1754,7 @@ int CGrepAgent::DoGrepFileWorker(
 	CEol		cEol;
 	int			nEolCodeLen;
 
+	// ファイル拡張子からタイプ別設定を取得（文字コード判定用）
 	const STypeConfigMini* type = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( task.fileName.c_str() ), &type ) ){
 		return -1;
@@ -1751,7 +1770,7 @@ int CGrepAgent::DoGrepFileWorker(
 	bool bOutputBaseFolder = true;
 	bool bOutputFolderName = true;
 
-	/* 検索条件が長さゼロの場合はファイル名だけ返す */
+	// 検索条件が空の場合はファイル名のみを結果出力（ファイル一覧モード）
 	if( 0 == nKeyLen ){
 		WCHAR szCpName[100];
 		if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
@@ -1821,6 +1840,7 @@ int CGrepAgent::DoGrepFileWorker(
 			CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
 		}
 
+		// 行単位で検索実行（キャンセルチェックは 32 行ごと・UI 操作は行わない）
 		while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
 		{
 			const wchar_t* pLine    = cUnicodeBuffer.GetStringPtr();
