@@ -39,6 +39,7 @@ public:
 		return FALSE;
 	}
 
+	// 除外パターンを適用したフォルダー列挙（除外フォルダーを先に列挙してからフィルタリング）
 	int Enumerates( LPCWSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFolders& except ){
 		m_cGrepEnumExceptFolders.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFolderKeys, option, nullptr );
 		return CGrepEnumFolders::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFolderKeys, option, &except );
