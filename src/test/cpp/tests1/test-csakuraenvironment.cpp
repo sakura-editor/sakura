@@ -251,6 +251,24 @@ TEST_F(CSakuraEnvironmentTest, ExpandParameter_mixed)
 	pcEditDoc->m_cDocFile.SetFilePath(L"");
 }
 
+TEST_F(CSakuraEnvironmentTest, ExpandParameter001)
+{
+	// 呼ぶだけ
+	ExpandParameter(L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>");	// STR_ERR_CSHAREDATA17を更新して使うべき。
+}
+
+TEST_F(CSakuraEnvironmentTest, ExpandParameter002)
+{
+	// 呼ぶだけ
+	ExpandParameter(L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>");	// STR_ERR_CSHAREDATA18を更新して使うべき。
+}
+
+TEST_F(CSakuraEnvironmentTest, ExpandParameter003)
+{
+	// 呼ぶだけ
+	ExpandParameter(L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}");	// STR_ERR_CSHAREDATA10を更新して使うべき。
+}
+
 /*!
  * @brief 初期ディレクトリの取得
  */
