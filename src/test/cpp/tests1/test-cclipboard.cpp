@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2021-2022, Sakura Editor Organization
 
@@ -9,6 +9,7 @@
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <limits>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -45,14 +46,19 @@ MATCHER_P(AnsiStringInGlobalMemory, expected_string, "") {
 	return match;
 }
 
-// グローバルメモリに書き込まれたサクラ独自形式データにマッチする述語関数
+// グローバルメモリに書き込まれた SAKURAClipW 独自形式データにマッチする述語関数。
+// SSakuraClipHeader から int32_t でデータ長を読み取り、負値を不正として扱う。
 MATCHER_P(SakuraFormatInGlobalMemory, expected_string, "") {
 	char* p = (char*)::GlobalLock(arg);
 	if (!p) return false;
-	int length = *(size_t*)p;
-	p += sizeof(size_t);
-	std::wstring_view actual((const wchar_t*)p);
-	bool match = actual.size() == length && actual == expected_string;
+	int length = ((SSakuraClipHeader*)p)->cchData;
+	if (length < 0) {
+		::GlobalUnlock(arg);
+		return false;
+	}
+	p += sizeof(SSakuraClipHeader);
+	std::wstring_view actual((const wchar_t*)p, static_cast<size_t>(length));
+	bool match = actual == expected_string;
 	::GlobalUnlock(arg);
 	return match;
 }
@@ -96,6 +102,12 @@ TEST(CClipboard, Empty) {
 	MockCClipboard clipboard;
 	EXPECT_CALL(clipboard, EmptyClipboard()).WillOnce(Return(TRUE));
 	clipboard.Empty();
+}
+
+// クリップボードの安全な上限値が定義されていることを確認する。
+TEST(CClipboard, ClipboardMaxCharsConstant) {
+	EXPECT_EQ(CLIPBOARD_MAX_CHARS, static_cast<size_t>(INT32_MAX));
+	EXPECT_GT(CLIPBOARD_MAX_CHARS, 0u);
 }
 
 // SetHtmlTextのテスト。
@@ -185,6 +197,36 @@ TEST(CClipboard, SetText6) {
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, 0));
 }
 
+// SetText のテスト。nDataLen > INT32_MAX でサクラ形式を指定した場合、
+// SAKURAClipW のヘッダに収まらないため SetClipboardData は呼ばれず false を返す。
+TEST(CClipboard, SetText7) {
+	const wchar_t text[] = L"x";
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
+	EXPECT_FALSE(clipboard.SetText(text, static_cast<size_t>(INT32_MAX) + 1, false, false, CClipboard::GetSakuraFormat()));
+}
+
+// SetText のテスト。nDataLen > INT32_MAX でもフォーマット未指定（-1）の場合、
+// SAKURAClipW はスキップされるが CF_UNICODETEXT と矩形選択フラグは書き込まれ true を返す。
+TEST(CClipboard, SetText8) {
+	const wchar_t text[] = L"x";
+	const size_t hugeLen = static_cast<size_t>(INT32_MAX) + 1;
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
+	EXPECT_CALL(clipboard, SetClipboardData(::RegisterClipboardFormat(L"MSDEVColumnSelect"), ByteValueInGlobalMemory(0)));
+	EXPECT_CALL(clipboard, SetClipboardData(CClipboard::GetSakuraFormat(), _)).Times(0);
+	EXPECT_TRUE(clipboard.SetText(text, hugeLen, true, false, -1));
+}
+
+// SetText のテスト。nDataLen + 1 が size_t をオーバーフローする場合、
+// CF_UNICODETEXT の GlobalAlloc サイズ計算段階で検出されスキップ、false を返す。
+TEST(CClipboard, SetTextSizeTOverflow) {
+	const wchar_t text[] = L"x";
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
+	EXPECT_FALSE(clipboard.SetText(text, std::numeric_limits<size_t>::max(), false, false, -1));
+}
+
 // グローバルメモリを RAII で管理する簡易ヘルパークラス
 class GlobalMemory {
 public:
@@ -215,7 +257,7 @@ protected:
 	static constexpr std::wstring_view sakuraText = L"SAKURAClipW";
 	static constexpr std::string_view oemText = "CF_OEMTEXT";
 	GlobalMemory unicodeMemory{ GMEM_MOVEABLE, (unicodeText.size() + 1) * sizeof(wchar_t) };
-	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(size_t) + (sakuraText.size() + 1) * sizeof(wchar_t) };
+	GlobalMemory sakuraMemory{ GMEM_MOVEABLE, sizeof(SSakuraClipHeader) + (sakuraText.size() + 1) * sizeof(wchar_t) };
 	GlobalMemory oemMemory{ GMEM_MOVEABLE, oemText.size() + 1 };
 
 	CClipboardGetText() {
@@ -223,8 +265,8 @@ protected:
 			std::wcscpy(p, unicodeText.data());
 		});
 		sakuraMemory.Lock<unsigned char>([=](unsigned char* p) {
-			*(size_t*)p = sakuraText.size();
-			std::wcscpy((wchar_t*)(p + sizeof(size_t)), sakuraText.data());
+			((SSakuraClipHeader*)p)->cchData = static_cast<int32_t>(sakuraText.size());
+			std::wcscpy((wchar_t*)(p + sizeof(SSakuraClipHeader)), sakuraText.data());
 		});
 		oemMemory.Lock<char>([=](char* p) {
 			std::strcpy(p, oemText.data());
@@ -296,6 +338,48 @@ TEST_F(CClipboardGetText, NoSpecifiedFormat6) {
 	ON_CALL(clipboard, GetClipboardData(CF_OEMTEXT)).WillByDefault(Return(nullptr));
 	ON_CALL(clipboard, IsClipboardFormatAvailable(CF_HDROP)).WillByDefault(Return(FALSE));
 	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+}
+
+// GetText のテスト。SAKURAClipW ヘッダの cchData が負値（-1）の場合、
+// 第2段階フェイルセーフにより不正データとして拒否される（フォーマット未指定で false）。
+TEST_F(CClipboardGetText, SakuraFormatNegativeLength) {
+	GlobalMemory mem(GMEM_MOVEABLE, sizeof(SSakuraClipHeader) + (sakuraText.size() + 1) * sizeof(wchar_t));
+	mem.Lock<unsigned char>([=](unsigned char* p) {
+		((SSakuraClipHeader*)p)->cchData = -1;
+		std::wcscpy((wchar_t*)(p + sizeof(SSakuraClipHeader)), sakuraText.data());
+	});
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(mem.Get()));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+}
+
+// GetText のテスト。SAKURAClipW ヘッダの cchData（= 2）が実データ長（1文字分）を超過する場合、
+// 第3段階フェイルセーフにより破損データとして拒否される。
+TEST_F(CClipboardGetText, SakuraFormatOverflowLength) {
+	constexpr std::wstring_view shortText = L"x";
+	GlobalMemory mem(GMEM_MOVEABLE, sizeof(SSakuraClipHeader) + shortText.size() * sizeof(wchar_t));
+	mem.Lock<unsigned char>([=](unsigned char* p) {
+		((SSakuraClipHeader*)p)->cchData = 2;
+		std::memcpy(p + sizeof(SSakuraClipHeader), shortText.data(), shortText.size() * sizeof(wchar_t));
+	});
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(mem.Get()));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+}
+
+// GetText のテスト。SAKURAClipW が破損（ヘッダ負値）していても、
+// フォーマット未指定の既定取得では CF_UNICODETEXT にフォールバックし true を返す。
+TEST_F(CClipboardGetText, CorruptedSakuraFallsBackToUnicode) {
+	GlobalMemory mem(GMEM_MOVEABLE, sizeof(SSakuraClipHeader) + (sakuraText.size() + 1) * sizeof(wchar_t));
+	mem.Lock<unsigned char>([=](unsigned char* p) {
+		((SSakuraClipHeader*)p)->cchData = -1;
+		std::wcscpy((wchar_t*)(p + sizeof(SSakuraClipHeader)), sakuraText.data());
+	});
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(mem.Get()));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
 }
 
 // GetText で取得したいデータ形式が指定されている場合、他のデータ形式は無視する。

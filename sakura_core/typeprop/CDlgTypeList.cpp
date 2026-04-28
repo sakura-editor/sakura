@@ -10,7 +10,7 @@
 	Copyright (C) 2002, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, Uchi, Beta.Ito, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -210,7 +210,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				}else{
 					::EnableWindow( GetItemHwnd( IDC_CHECK_EXT_RMENU ), TRUE );
 					if( !m_bRegistryChecked[ nIdx ] ){
-						WCHAR exts[std::size(type->m_szTypeExts)] = {0};
+						WCHAR exts[std::extent_v<decltype(type->m_szTypeExts)>] = {0};
 						wcscpy( exts, type->m_szTypeExts );
 						WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 
@@ -244,7 +244,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				ApiWrap::BtnCtl_SetCheck( hwndRMenu, !checked );
 				break;
 			}
-			WCHAR exts[std::size(type->m_szTypeExts)] = {0};
+			WCHAR exts[std::extent_v<decltype(type->m_szTypeExts)>] = {0};
 			wcscpy( exts, type->m_szTypeExts );
 			WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;
@@ -283,7 +283,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				ApiWrap::BtnCtl_SetCheck( hwndDblClick, !checked );
 				break;
 			}
-			WCHAR exts[std::size(type->m_szTypeExts)] = {0};
+			WCHAR exts[std::extent_v<decltype(type->m_szTypeExts)>] = {0};
 			wcscpy( exts, type->m_szTypeExts );
 			WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;

@@ -1,4 +1,4 @@
-﻿/*!	@file
+/*!	@file
 	@brief マウスイベントの処理
 
 	@author Norio Nakatani
@@ -46,6 +46,29 @@
 #include "mem/CNativeA.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+
+namespace {
+#ifndef STATUS_NO_MEMORY
+#define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
+#endif
+
+/**
+ * CNativeW::SetString を SEH 例外 STATUS_NO_MEMORY から保護して呼び出す。
+ */
+static bool SafeSetString(CNativeW& buf, const wchar_t* pData, size_t nLen)
+{
+	__try {
+		buf.SetString(pData, nLen);
+		return true;
+	}
+	__except( GetExceptionCode() == STATUS_NO_MEMORY
+		? EXCEPTION_EXECUTE_HANDLER
+		: EXCEPTION_CONTINUE_SEARCH )
+	{
+		return false;
+	}
+}
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
@@ -1828,23 +1851,85 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 
 	// ドロップデータの取得
-	HGLOBAL hData = GetGlobalData( pDataObject, cf );
-	if (hData == nullptr)
-		return E_INVALIDARG;
-	LPVOID pData = ::GlobalLock( hData );
-	SIZE_T nSize = ::GlobalSize( hData );
-	if( cf == CClipboard::GetSakuraFormat() ){
-		if( nSize > sizeof(size_t) ){
-			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(size_t));
-			cmemBuf.SetString( pszData, t_min( (SIZE_T)*(size_t*)pData, nSize / sizeof(wchar_t) ) );	// 途中のNUL文字も含める
+	HGLOBAL hData = nullptr;
+	LPVOID pData = nullptr;
+	SIZE_T nSize = 0;
+	for( ;; ){
+		hData = GetGlobalData( pDataObject, cf );
+		if( hData == nullptr )
+			return E_INVALIDARG;
+		pData = ::GlobalLock( hData );
+		nSize = ::GlobalSize( hData );
+		// SAKURAClipW は壊れたヘッダを検出したら拒否し、次の形式へフォールバックする。
+		if( cf == CClipboard::GetSakuraFormat() ){
+			if( pData == nullptr || nSize < sizeof(SSakuraClipHeader) ){
+			}else{
+				SSakuraClipHeader header;
+				// エイリアシング安全な読み取り。
+				memcpy_raw(&header, pData, sizeof(header));
+				if( header.cchData >= 0 ){
+					const size_t cchData = static_cast<size_t>(header.cchData);
+					const size_t cchMax = (nSize - sizeof(SSakuraClipHeader)) / sizeof(wchar_t);
+					if( cchData <= cchMax ){
+						const wchar_t* pszData = reinterpret_cast<const wchar_t*>((BYTE*)pData + sizeof(SSakuraClipHeader));
+						// 途中の NUL 文字も含めて貼り付ける。
+						cmemBuf.SetString( pszData, cchData );	// 途中のNUL文字も含める
+						break;
+					}
+				}
+			}
+
+			if( pData != nullptr ){
+				::GlobalUnlock( hData );
+			}
+			if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+				::GlobalFree( hData );
+			}
+
+			if( IsDataAvailable( pDataObject, CF_UNICODETEXT ) ){
+				cf = CF_UNICODETEXT;
+			}else if( IsDataAvailable( pDataObject, CF_TEXT ) ){
+				cf = CF_TEXT;
+			}else{
+				return E_INVALIDARG;
+			}
+			continue;
 		}
-	}else if( cf == CF_UNICODETEXT ){
-		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
-	}else{
-		CNativeA binary;
-		binary.SetString((char*)pData, nSize / sizeof(char));
-		auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
-		pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
+		// CF_UNICODETEXT は文字数を上限で切り詰めたうえで SetString する。
+		if( cf == CF_UNICODETEXT ){
+			const size_t cchTotal = wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) );
+			const size_t cchSafe = (cchTotal > CClipboard::CLIPBOARD_MAX_CHARS)
+				? CClipboard::CLIPBOARD_MAX_CHARS
+				: cchTotal;
+			if( !SafeSetString(cmemBuf, (wchar_t*)pData, cchSafe) ){
+				if( pData != nullptr ){
+					::GlobalUnlock( hData );
+				}
+				if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+					::GlobalFree( hData );
+				}
+				return E_OUTOFMEMORY;
+			}
+		}else{
+			// CF_TEXT は SJIS とみなして Unicode へ変換する。
+			const SIZE_T cbLimit = static_cast<SIZE_T>(CClipboard::CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
+			const SIZE_T cbSafe = (nSize > cbLimit) ? cbLimit : nSize;
+			CNativeA binary;
+			binary.SetString((char*)pData, cbSafe / sizeof(char));
+			auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
+			pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
+			if( static_cast<size_t>(cmemBuf.GetStringLength()) > CClipboard::CLIPBOARD_MAX_CHARS ){
+				cmemBuf._SetStringLength(CClipboard::CLIPBOARD_MAX_CHARS);
+			}
+		}
+		break;
+	}
+
+	if( pData != nullptr ){
+		::GlobalUnlock( hData );
+	}
+	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+		::GlobalFree( hData );
 	}
 
 	// アンドゥバッファの準備

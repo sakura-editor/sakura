@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
@@ -8,6 +8,8 @@
 #ifndef SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_
 #define SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_
 #pragma once
+
+#include <cstdint>
 
 #include "mem/CNativeW.h"
 
@@ -46,6 +48,22 @@ struct StdWStringBuffer : public IWBuffer {
 	std::wstring* wstr;
 };
 
+#pragma pack(push, 1)
+/**
+ * SAKURAClipW 独自クリップボード形式のバイナリヘッダ。
+ *
+ * メモリレイアウト:
+ *   [SSakuraClipHeader (4bytes)] [wchar_t szData[cchData]] [wchar_t L'\0']
+ *
+ * int32_t 固定にすることで 32bit/64bit 間のレイアウト不一致を避ける。
+ * フォーマット名 "SAKURAClipW" 自体は変更しない。
+ */
+struct SSakuraClipHeader {
+	int32_t cchData;  //!< データの文字数（wchar_t 単位、負値は不正データ）
+};
+#pragma pack(pop)
+static_assert(sizeof(SSakuraClipHeader) == 4, "SSakuraClipHeader must be exactly 4 bytes");
+
 //!サクラエディタ用クリップボードクラス。後々はこの中で全てのクリップボードAPIを呼ばせたい。
 class CClipboard{
 	using Me = CClipboard;
@@ -79,6 +97,8 @@ public:
 	// OpenClipboard retry constants (public for testing)
 	static constexpr int CLIPBOARD_RETRY_COUNT = 10;
 	static constexpr int CLIPBOARD_RETRY_DELAY_MS = 10;
+	//! クリップボード読み込み時の安全な上限（文字数）。INT32_MAX に合わせる。
+	static constexpr size_t CLIPBOARD_MAX_CHARS = static_cast<size_t>(INT32_MAX);
 
 private:
 	HWND m_hwnd;
@@ -106,4 +126,6 @@ protected:
 	virtual HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) const;
 	virtual LPVOID GlobalLock(HGLOBAL hMem) const;
 };
+//! CClipboard::CLIPBOARD_MAX_CHARS のグローバルスコープ別名。
+static constexpr size_t CLIPBOARD_MAX_CHARS = CClipboard::CLIPBOARD_MAX_CHARS;
 #endif /* SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_ */
