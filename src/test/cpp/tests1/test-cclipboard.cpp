@@ -77,10 +77,9 @@ MATCHER_P2(BytesInGlobalMemory, bytes, size, "") {
 	return match;
 }
 
-class MockCClipboard : public CClipboard {
-public:
-	MockCClipboard(bool openStatus = true) : CClipboard(openStatus) {}
-	~MockCClipboard() override {}
+struct MockCClipboard : public CClipboard {
+	MOCK_CONST_METHOD1(OpenClipboard, BOOL (HWND));
+	MOCK_CONST_METHOD0(CloseClipboard, BOOL ());
 	MOCK_CONST_METHOD2(SetClipboardData, HANDLE (UINT, HANDLE));
 	MOCK_CONST_METHOD1(GetClipboardData, HANDLE (UINT));
 	MOCK_CONST_METHOD0(EmptyClipboard, BOOL ());
@@ -88,7 +87,73 @@ public:
 	MOCK_CONST_METHOD1(EnumClipboardFormats, UINT (UINT));
 	MOCK_CONST_METHOD2(GlobalAlloc, HGLOBAL (UINT, SIZE_T));
 	MOCK_CONST_METHOD1(GlobalLock, LPVOID (HGLOBAL));
+
+	explicit MockCClipboard(bool openStatus = true)
+		: CClipboard(openStatus)
+	{
+		ON_CALL(*this, OpenClipboard(_)).WillByDefault(Return(TRUE));
+		ON_CALL(*this, CloseClipboard()).WillByDefault(Return(TRUE));
+		ON_CALL(*this, GlobalAlloc(_, _)).WillByDefault(Invoke(&::GlobalAlloc ));
+		ON_CALL(*this, GlobalLock(_)).WillByDefault(Invoke(&::GlobalLock));
+	}
 };
+
+// Open/Close のテスト。
+// OpenClipboard が呼ばれることを確認する。
+// CloseClipboard が呼ばれることを確認する。
+TEST(CClipboard, OpenAndClose) {
+	MockCClipboard clipboard(false);
+
+	EXPECT_CALL(clipboard, OpenClipboard(_))
+		.Times(2)
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(TRUE));
+	EXPECT_CALL(clipboard, CloseClipboard())
+		.Times(1)
+		.WillOnce(Return(TRUE));
+
+	EXPECT_THAT(clipboard, IsFalse());
+
+	EXPECT_THAT(clipboard.Open(HWND(1234)), IsTrue());
+
+	EXPECT_THAT(clipboard, IsTrue());
+
+	clipboard.Close();
+
+	EXPECT_THAT(clipboard, IsFalse());
+}
+
+// Open/Close のテスト。
+// OpenClipboard が呼ばれることを確認する。
+// CloseClipboard が呼ばれることを確認する。
+TEST(CClipboard, OpenRetryOver) {
+	MockCClipboard clipboard(false);
+
+	EXPECT_CALL(clipboard, OpenClipboard(_))
+		.Times(10)
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(FALSE));
+	EXPECT_CALL(clipboard, CloseClipboard())
+		.Times(0);
+
+	EXPECT_THAT(clipboard, IsFalse());
+
+	EXPECT_THAT(clipboard.Open(HWND(1234)), IsFalse());
+
+	EXPECT_THAT(clipboard, IsFalse());
+
+	clipboard.Close();
+
+	EXPECT_THAT(clipboard, IsFalse());
+}
 
 // Empty のテスト。
 // EmptyClipboard が呼ばれることを確認する。

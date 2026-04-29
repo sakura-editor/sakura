@@ -716,6 +716,17 @@ TEST_P(WinMainTest, runEditorProcess)
 		L"ReplaceAll('3', 'threeee');"sv,	// すべて置換(呼ぶだけ)
 		L"Undo();"sv,
 
+		// OLEクリップボード
+		L"SetClipboard(3, 'test');"sv,
+		L"GetClipboard();"sv,
+		L"ClipboardEmpty();"sv,
+
+		// 生クリップボード
+		L"SetClipboardByFormat('test', '12345', 0, -1);"sv,
+		L"IsIncludeClipboardFormat('12345');"sv,
+		L"GetClipboardByFormat('12345', 0, 0);"sv,
+		L"ClipboardEmpty();"sv,
+
 		// フォントサイズ設定のテスト(ここから)
 		L"SetFontSize(0, 1, 0);"sv,		// 相対指定 - 拡大 - 対象：共通設定
 		L"SetFontSize(0, -1, 0);"sv,	// 相対指定 - 縮小 - 対象：共通設定
