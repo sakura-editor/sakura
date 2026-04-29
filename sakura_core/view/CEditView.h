@@ -198,8 +198,8 @@ public:
 	void OnSize(int cx, int cy);							/* ウィンドウサイズの変更処理 */
 	void OnMove(int x, int y, int nWidth, int nHeight);
 	//フォーカス
-	void OnSetFocus( void );
-	void OnKillFocus( void );
+	virtual void OnSetFocus();
+	virtual void OnKillFocus();
 	//スクロール
 	CLayoutInt  OnVScroll(int nScrollCode, int nPos);							/* 垂直スクロールバーメッセージ処理 */
 	CLayoutInt  OnHScroll(int nScrollCode, int nPos);							/* 水平スクロールバーメッセージ処理 */
@@ -207,7 +207,7 @@ public:
 	void OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos);				/* マウス左ボタン押下 */
 	void OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_);				/* マウス移動のメッセージ処理 */
 	void OnLBUTTONUP(WPARAM fwKeys, int xPos, int yPos);				/* マウス左ボタン開放のメッセージ処理 */
-	void OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos);			/* マウス左ボタンダブルクリック */
+	virtual void OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos);			/* マウス左ボタンダブルクリック */
 	void OnRBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);				/* マウス右ボタン押下 */
 	void OnRBUTTONUP(WPARAM fwKeys, int xPos, int yPos);				/* マウス右ボタン開放 */
 	void OnMBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);				/* マウス中ボタン押下 */
@@ -546,7 +546,7 @@ public:
 	TOGGLE_WRAP_ACTION GetWrapMode( CKetaXInt* newKetas );
 	void SmartIndent_CPP(wchar_t wcChar);	/* C/C++スマートインデント処理 */
 	/* コマンド操作 */
-	void SetFont( void );										/* フォントの変更 */
+	virtual void SetFont(HWND hWnd);										/* フォントの変更 */
 	void SplitBoxOnOff(BOOL bVert, BOOL bHorz, BOOL bSizeBox);						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 
 //	2001/06/18 asa-o
