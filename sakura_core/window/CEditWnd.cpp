@@ -684,8 +684,6 @@ HWND CEditWnd::Create(
 
 	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
 	if (const auto hWndTray = m_pShareData->m_sHandles.m_hwndTray) {
-		std::wcout << L"[UIPI] >> Send From: hwndEdit = " << (ULONG_PTR)hWnd << L" To hwndTray = " << (ULONG_PTR)hWndTray << std::endl;
-
 		// 戻り値取得用変数（成功するとhWndが返って来る）
 		DWORD_PTR dwRes = 0;
 
@@ -695,10 +693,7 @@ HWND CEditWnd::Create(
 		// メッセージ返送を回収する（とれない場合もあるが問題はない。）
 		::PeekMessageW(&msg, hWnd, MYWM_UIPI_CHECK, MYWM_UIPI_CHECK, PM_REMOVE | PM_QS_SENDMESSAGE);
 
-		std::wcout << L"[UIPI] << Send Result: dwRes = " << dwRes << std::endl;
-
 		if (!dwRes) {	// 送信失敗
-			std::wcout << L"[UIPI] No Response" << std::endl;
 			TopErrorMessage( GetHwnd(),
 				LS(STR_ERR_DLGEDITWND02)
 			);
@@ -706,7 +701,6 @@ HWND CEditWnd::Create(
 			m_hWnd = hWnd = nullptr;
 			return hWnd;
 		}
-		std::wcout << L"[UIPI] m_bUIPI=TRUE" << std::endl;
 	}
 
 	CShareData::getInstance()->SetTraceOutSource( GetHwnd() );	// TraceOut()起動元ウィンドウの設定	// 2006.06.26 ryoji
@@ -1546,7 +1540,6 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case MYWM_UIPI_CHECK:
 		/* エディタ－トレイ間でのUI特権分離の確認メッセージ */	// 2007.06.07 ryoji
-		std::wcout << L"[UIPI] ------ MYWM_UIPI_CHECK" << std::endl;
 		return LRESULT(lParam);
 
 	case MYWM_CLOSE:
