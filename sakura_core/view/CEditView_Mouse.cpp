@@ -15,7 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -76,7 +76,6 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 		return;
 	}
 
-	CNativeW	cmemCurText;
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 
@@ -151,35 +150,9 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					}
 					return;
 				}
-				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
-					DWORD dwEffects;
-					DWORD dwEffectsSrc = ( !m_pcEditDoc->IsEditable() )?
-											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
-					int nOpe = m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
-					GetEditWnd().SetDragSourceView( this );
-					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting() );
-					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
-					GetEditWnd().SetDragSourceView( nullptr );
-					if( m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
-						GetEditWnd().SetActivePane( m_nMyIndex );
-						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
-							// 移動範囲を削除する
-							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
-							// →ドロップ先は外部のウィンドウである
-							if( nullptr == m_cCommander.GetOpeBlk() ){
-								m_cCommander.SetOpeBlk(new COpeBlk);
-							}
-							m_cCommander.GetOpeBlk()->AddRef();
 
-							// 選択範囲を削除
-							DeleteData( true );
+				DragSelection();
 
-							// アンドゥバッファの処理
-							SetUndoBuffer();
-						}
-					}
-				}
 				return;
 			}
 		}
@@ -2241,4 +2214,59 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 bool CEditView::IsDragSource( void )
 {
 	return ( this == GetEditWnd().GetDragSourceView() );
+}
+
+/*!
+ * @brief 選択範囲をドラッグする
+ *
+ * 選択範囲からコピーデータを作成して、ドラッグ＆ドロップを開始する。
+ * 外部ウインドウに切り取りされたら、元の選択範囲を削除する。
+ */
+void CEditView::DragSelection()
+{
+	/* 選択範囲のデータを取得 */
+	CNativeW cmemCurText;
+	if (GetSelectedData(&cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) return;
+
+	// 選択範囲からクリップボードデータを作成する
+	const auto data = std::make_unique<CDataObject>(cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting());
+
+	// ドラッグ開始前のドキュメント操作番号を記憶する
+	const auto nOpe = GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
+
+	CDropSource drop(true);
+
+	// ドラッグ元ビューを設定する
+	GetEditWnd().SetDragSourceView(this);
+
+	// ドロップ効果を定義する
+	DWORD desiredEffects = DROPEFFECT_COPY;	//コピー可能
+	if (GetDocument()->IsEditable()) {
+		desiredEffects |= DROPEFFECT_MOVE;	//ムーブ可能
+	}
+
+	// ドラッグ＆ドロップを開始する
+	const auto actualEffects = drop.DoDragDrop(data.get(), desiredEffects);
+
+	// ドラッグ元ビューの設定を解除する
+	GetEditWnd().SetDragSourceView(nullptr);
+
+	// 切り取りされた場合、元の選択範囲を削除する。（別のエディタに移動したときなど。）
+	if (actualEffects & DROPEFFECT_MOVE && nOpe == GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer()) {
+		GetEditWnd().SetActivePane(m_nMyIndex);
+
+		// 移動範囲を削除する
+		// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
+		// →ドロップ先は外部のウィンドウである
+		if (!GetCommander().GetOpeBlk()) {
+			GetCommander().SetOpeBlk(new COpeBlk);
+		}
+		GetCommander().GetOpeBlk()->AddRef();
+
+		// 選択範囲を削除
+		DeleteData(true);
+
+		// アンドゥバッファの処理
+		SetUndoBuffer();
+	}
 }

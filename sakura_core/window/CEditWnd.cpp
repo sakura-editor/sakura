@@ -3377,73 +3377,20 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 		//by 鬼(2) 一回押された時だけ
 		if(m_IconClicked == icDown)
 		{
-			POINT P;
-			GetCursorPos(&P); //スクリーン座標
-			if(SendMessage(GetHwnd(), WM_NCHITTEST, 0, P.x | (P.y << 16)) != HTSYSMENU)
-			{
-				ReleaseCapture();
-				m_IconClicked = icNone;
+			POINT pt{};
+			::GetCursorPos(&pt); //スクリーン座標
 
-				if(GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
-				{
-					// 2010.08.22 Moca C:\temp.txt などのtopのファイルがD&Dできないバグの修正
-					CNativeW cmemTitle;
-					CNativeW cmemDir;
-					cmemTitle = GetDocument()->m_cDocFile.GetFileName();
-					cmemDir   = GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath().c_str();
+			if (HTSYSMENU == ::SendMessageW(GetHwnd(), WM_NCHITTEST, 0, pt.x | (pt.y << 16))) return 0L;
 
-					IDataObject *DataObject;
-					IMalloc *Malloc;
-					IShellFolder *Desktop, *Folder;
-					LPITEMIDLIST PathID, ItemID;
-					SHGetMalloc(&Malloc);
-					SHGetDesktopFolder(&Desktop);
-					DWORD Eaten, Attribs;
-					if(SUCCEEDED(Desktop->ParseDisplayName(nullptr, nullptr, cmemDir.GetStringPtr(), &Eaten, &PathID, &Attribs)))
-					{
-						Desktop->BindToObject(PathID, nullptr, IID_IShellFolder, (void**)&Folder);
-						Malloc->Free(PathID);
-						if(SUCCEEDED(Folder->ParseDisplayName(nullptr, nullptr, cmemTitle.GetStringPtr(), &Eaten, &ItemID, &Attribs)))
-						{
-							LPCITEMIDLIST List[1];
-							List[0] = ItemID;
-							Folder->GetUIObjectOf(nullptr, 1, List, IID_IDataObject, nullptr, (void**)&DataObject);
-							Malloc->Free(ItemID);
-#define DDASTEXT
-#ifdef  DDASTEXT
-							//テキストでも持たせる…便利
-							{
-								FORMATETC F;
-								F.cfFormat = CF_UNICODETEXT;
-								F.ptd      = nullptr;
-								F.dwAspect = DVASPECT_CONTENT;
-								F.lindex   = -1;
-								F.tymed    = TYMED_HGLOBAL;
+			::ReleaseCapture();
 
-								STGMEDIUM M;
-								const wchar_t* pFilePath = GetDocument()->m_cDocFile.GetFilePath();
-								auto Len = int(wcslen(pFilePath));
-								M.tymed          = TYMED_HGLOBAL;
-								M.pUnkForRelease = nullptr;
-								M.hGlobal        = GlobalAlloc(GMEM_MOVEABLE, (Len+1)*sizeof(wchar_t));
-								void* p = GlobalLock(M.hGlobal);
-								CopyMemory(p, pFilePath, (Len+1)*sizeof(wchar_t));
-								GlobalUnlock(M.hGlobal);
+			m_IconClicked = icNone;
 
-								DataObject->SetData(&F, &M, TRUE);
-							}
-#endif
-							//移動は禁止
-							DWORD R;
-							CDropSource drop(TRUE);
-							DoDragDrop(DataObject, &drop, DROPEFFECT_COPY | DROPEFFECT_LINK, &R);
-							DataObject->Release();
-						}
-						Folder->Release();
-					}
-					Desktop->Release();
-					Malloc->Release();
-				}
+			if (cxx::com_pointer<IDataObject> pDataObject; SUCCEEDED(GetDocument()->GetDataObject(&pDataObject))) {
+				CDropSource drop(true);
+
+				//移動禁止なので、戻り値を見ない
+				drop.DoDragDrop(pDataObject, DROPEFFECT_COPY | DROPEFFECT_LINK);
 			}
 		}
 		return 0;

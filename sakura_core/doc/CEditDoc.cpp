@@ -1022,3 +1022,83 @@ void CEditDoc::SetCurDirNotitle()
 		::SetCurrentDirectory( pszDir );
 	}
 }
+
+namespace cxx {
+
+/*!
+ * @brief 指定したファイルパスのIDataObjectを作成する
+ *
+ * Windowsシステムにファイルパスを表すIDataObjectを作ってもらう。
+ */
+HRESULT MakeDataObject(_Outptr_ LPDATAOBJECT *ppDataObject, const std::filesystem::path& path)
+{
+	// 出力値をクリアする
+	*ppDataObject = nullptr;
+
+	cxx::com_pointer<IShellFolder> pDesktop;
+	if (const auto hr = ::SHGetDesktopFolder(&pDesktop); FAILED(hr)) return hr;
+
+	std::wstring directory{ path.parent_path() };
+
+	const auto unusedArg1 = nullptr;
+
+	LPITEMIDLIST PathID;
+	DWORD Attribs = 0;
+	if (const auto hr = pDesktop->ParseDisplayName(nullptr, nullptr, std::data(directory), unusedArg1, &PathID, &Attribs); FAILED(hr)) return hr;
+
+	cxx::com_pointer<IShellFolder> pFolder;
+	if (const auto hr = pDesktop->BindToObject(PathID, nullptr, IID_PPV_ARGS(&pFolder)); FAILED(hr)) return hr;
+	::CoTaskMemFree(PathID);
+
+	std::wstring title = path.filename();
+	LPITEMIDLIST ItemID = nullptr;
+	if (const auto hr = pFolder->ParseDisplayName(nullptr, nullptr, std::data(title), unusedArg1, &ItemID, &Attribs); FAILED(hr)) return hr;
+
+	std::array idList = {
+		LPCITEMIDLIST(ItemID)
+	};
+
+	// ここで IDataObject を取得する
+	if (const auto hr = pFolder->GetUIObjectOf(nullptr, UINT(std::size(idList)), std::data(idList), IID_IDataObject, nullptr, (void**)ppDataObject); FAILED(hr)) return hr;
+	::CoTaskMemFree(ItemID);
+
+	return S_OK;
+}
+
+} // namespace cxx
+
+/*!
+ * @brief ドキュメントのIDataObjectを取得する
+ *
+ * Windowsシステムからドキュメントのファイルパスを表すIDataObjectを取得する。
+ *
+ * 独自に CF_UNICODETEXT 形式でファイルパスを格納するようになっている。
+ */
+HRESULT CEditDoc::GetDataObject(LPDATAOBJECT *ppDataObject) const
+{
+	// 出力値をクリアする
+	*ppDataObject = nullptr;
+
+	const auto cFilePath = m_cDocFile.GetFilePathClass();
+	if (!cFilePath.IsValidPath()) {
+		return S_FALSE;
+	}
+
+	const auto path = std::filesystem::path(cFilePath);
+	if (const auto hr = cxx::MakeDataObject(ppDataObject, path); FAILED(hr)) return hr;
+
+	// UNICODETEXT 形式のデータを作って追加する
+	cxx::GlobalWString hGlobal{ path.native() };
+
+	FORMATETC format{};
+	format.cfFormat = CF_UNICODETEXT;
+	format.dwAspect = DVASPECT_CONTENT;
+	format.lindex   = -1;
+	format.tymed    = TYMED_HGLOBAL;
+
+	STGMEDIUM medium{};
+	medium.tymed	= TYMED_HGLOBAL;
+	medium.hGlobal	= hGlobal.release();
+
+	return (*ppDataObject)->SetData(&format, &medium, TRUE);
+}
