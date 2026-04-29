@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2012, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,6 +16,19 @@
  */
 class CMiniMapView : public CEditView
 {
+private:
+	using Base = CEditView;
+	using Me = CMiniMapView;
+
 public:
+	//コンストラクタは流用する
+	using Base::Base;
+
 	BOOL Create( HWND hWndParent );
+
+	void	SetFont(HWND hWnd) override;
+
+	void	OnKillFocus() override;
+	void	OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos) override;
+	void	OnSetFocus() override;
 };

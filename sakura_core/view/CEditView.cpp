@@ -310,7 +310,7 @@ BOOL CEditView::Create(
 	/* スクロールバー作成 */
 	CreateScrollBar();		// 2006.12.19 ryoji
 
-	SetFont();
+	SetFont(GetHwnd());
 
 	if( bShow ){
 		ShowWindow( GetHwnd(), SW_SHOW );
@@ -570,9 +570,6 @@ LRESULT CEditView::DispatchEvent(
 	// 2004.04.27 To Here
 
 	case WM_LBUTTONDBLCLK:
-		if( m_bMiniMap ){
-			return 0L;
-		}
 		// 2007.10.02 nasukoji	非アクティブウィンドウのダブルクリック時はここでカーソルを移動する
 		// 2007.10.12 genta フォーカス移動のため，OnLBUTTONDBLCLKより移動
 		if(m_bActivateByMouse){
@@ -987,11 +984,8 @@ void CEditView::OnSize( int cx, int cy )
 }
 
 /* 入力フォーカスを受け取ったときの処理 */
-void CEditView::OnSetFocus( void )
+void CEditView::OnSetFocus()
 {
-	if( m_bMiniMap ){
-		return;
-	}
 	// 2004.04.02 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
 	{
 		CLayoutPoint ptPos = GetCaret().GetCaretLayoutPos();
@@ -1026,11 +1020,8 @@ void CEditView::OnSetFocus( void )
 }
 
 /* 入力フォーカスを失ったときの処理 */
-void CEditView::OnKillFocus( void )
+void CEditView::OnKillFocus()
 {
-	if( m_bMiniMap ){
-		return;
-	}
 	// 03/02/18 対括弧の強調表示(消去) ai
 	DrawBracketPair( false );
 	m_bDrawBracketPairFlag = FALSE;
@@ -1066,18 +1057,14 @@ void CEditView::OnKillFocus( void )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* フォントの変更 */
-void CEditView::SetFont( void )
+void CEditView::SetFont(HWND hWnd)
 {
-	HDC hdc = ::GetDC( GetHwnd() );
+	using WindowDcHolder = cxx::ResourceHolder<&::ReleaseDC>;
+	WindowDcHolder hdc{ hWnd };
+	hdc = ::GetDC(hWnd);
 
 	// メトリクス更新
-	if( m_bMiniMap ){
-		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), 0, 0);
-	}else{
-		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), DpiScaleY(m_pTypeData->m_nLineSpace), DpiScaleX(m_pTypeData->m_nColumnSpace));
-	}
-
-	::ReleaseDC( GetHwnd(), hdc );
+	GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), DpiScaleY(m_pTypeData->m_nLineSpace), DpiScaleX(m_pTypeData->m_nColumnSpace));
 
 	// エリア情報を更新
 	GetTextArea().UpdateAreaMetrics();
@@ -1086,7 +1073,7 @@ void CEditView::SetFont( void )
 	GetTextArea().DetectWidthOfLineNumberArea( false );
 
 	// ぜんぶ再描画
-	::InvalidateRect( GetHwnd(), nullptr, TRUE );
+	::InvalidateRect(hWnd, nullptr, TRUE);
 
 	//	Oct. 11, 2002 genta IMEのフォントも変更
 	SetIMECompFormFont();
@@ -1656,7 +1643,7 @@ void CEditView::OnChangeSetting()
 	GetTextArea().SetLeftYohaku(DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace));
 
 	/* フォントの変更 */
-	SetFont();
+	SetFont(GetHwnd());
 
 	/* フォントが変わっているかもしれないので、カーソル移動 */
 	// スクロールバーが移動するので呼び出し元でやる
