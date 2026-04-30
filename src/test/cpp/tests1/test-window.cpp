@@ -470,6 +470,18 @@ TEST_F(EditWndTest, GetDocDataObject001)
 }
 
 /*!
+ * ミニマップの何もしないメソッド群の呼出テスト
+ */
+TEST_F(EditWndTest, MiniMapNoopMethods)
+{
+	auto& minimap = pcEditWnd->GetMiniMap();
+
+	minimap.OnKillFocus();
+	minimap.OnLBUTTONDBLCLK(0, 0, 0);
+	minimap.OnSetFocus();
+}
+
+/*!
  * キャンセルダイアログの表示テスト
  */
 TEST_F(EditWndTest, ShowDlgCancel001)
