@@ -107,7 +107,7 @@ jobs:
       shell: cmd
 
     - name: Install Build Wrapper
-      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v7.1.0
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v8.0.0
 
     - name: Build with Build-Wrapper
       env:
@@ -157,7 +157,7 @@ jobs:
           *-googletest.xml
 
     - name: Analyze with SonarQube Scan action
-      uses: SonarSource/sonarqube-scan-action@v7.1.0
+      uses: SonarSource/sonarqube-scan-action@v8.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
