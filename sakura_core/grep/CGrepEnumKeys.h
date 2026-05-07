@@ -1,7 +1,6 @@
 ﻿/*!	@file
-	
-	@brief GREP support library
-	
+	@brief GREP support library - 検索/除外ファイルパターン管理
+	@note v2.0 !プレフィックス正規表現除外・AddExceptFile/Folder 追加
 	@author wakura, Moca
 	@date 2008/04/28
 */
@@ -40,6 +39,9 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
+	// !プレフィックスで指定された正規表現除外パターン（SetFileKeys で格納、DoGrepTree 等でマッチング）
+	std::vector<std::wstring> m_vecExceptFileRegexPatterns;
+
 public:
 	CGrepEnumKeys() noexcept = default;
 	CGrepEnumKeys(const Me&) = delete;
@@ -50,17 +52,16 @@ public:
 		ClearItems();
 	}
 
-	// 除外ファイルの2つの解析済み配列から1つのリストを作る
-	auto GetExcludeFiles() const ->  std::vector<decltype(m_vecExceptFileKeys)::value_type> {
-		std::vector<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
-		const auto& fileKeys = m_vecExceptFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), fileKeys.cbegin(), fileKeys.cend() );
-		const auto& absFileKeys = m_vecExceptAbsFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), absFileKeys.cbegin(), absFileKeys.cend() );
+	// 除外ファイルパターンの統合リストを返す（Grep ヘッダー表示用）
+	auto GetExcludeFiles() const -> std::vector<std::wstring> {
+		std::vector<std::wstring> excludeFiles;
+		for( const auto& k : m_vecExceptFileKeys )    excludeFiles.emplace_back( k );
+		for( const auto& k : m_vecExceptAbsFileKeys ) excludeFiles.emplace_back( k );
+		for( const auto& p : m_vecExceptFileRegexPatterns ) excludeFiles.emplace_back( p );
 		return excludeFiles;
 	}
 
-	// 除外フォルダーの2つの解析済み配列から1つのリストを作る
+	// 除外フォルダーパターンの統合リストを返す（Grep ヘッダー表示用）
 	auto GetExcludeFolders() const ->  std::vector<decltype(m_vecExceptFolderKeys)::value_type> {
 		std::vector<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
 		const auto& folderKeys = m_vecExceptFolderKeys;
@@ -79,17 +80,19 @@ public:
 			const std::wstring& element = patterns[i];
 			const WCHAR* token = element.c_str();
 
+			// !プレフィックス: 正規表現除外パターンとして格納（ワイルドカード検証対象外）
+			if( token[0] == L'!' ){
+				m_vecExceptFileRegexPatterns.emplace_back( token + 1 );
+				continue;
+			}
+
 			//フィルタを種類ごとに振り分ける
 			enum KeyFilterType{
 				FILTER_SEARCH,
-				FILTER_EXCEPT_FILE,
 				FILTER_EXCEPT_FOLDER,
 			};
 			KeyFilterType keyType = FILTER_SEARCH;
-			if( token[0] == L'!' ){
-				token++;
-				keyType = FILTER_EXCEPT_FILE;
-			}else if( token[0] == L'#' ){
+			if( token[0] == L'#' ){
 				token++;
 				keyType = FILTER_EXCEPT_FOLDER;
 			}
@@ -108,12 +111,6 @@ public:
 //					push_back_unique( m_vecSearchFileKeys, token );
 					return 2; // 絶対パス指定は不可
 				}
-			}else if( keyType == FILTER_EXCEPT_FILE ){
-				if( bRelPath ){
-					push_back_unique( m_vecExceptFileKeys, token );
-				}else{
-					push_back_unique( m_vecExceptAbsFileKeys, token );
-				}
 			}else if( keyType == FILTER_EXCEPT_FOLDER ){
 				if( bRelPath ){
 					push_back_unique( m_vecExceptFolderKeys, token );
@@ -131,18 +128,12 @@ public:
 		return 0;
 	}
 
-	/*!
-		@brief 除外ファイルパターンを追加する
-		@param[in]	lpKeys	除外ファイルパターン
-	*/
+	// 除外ファイルパターンを追加する（既存パターンはクリアしない）
 	int AddExceptFile(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFileKeys, m_vecExceptAbsFileKeys);
 	}
 
-	/*!
-		@brief 除外フォルダーパターンを追加する
-		@param[in]	lpKeys	除外フォルダーパターン
-	*/
+	// 除外フォルダーパターンを追加する（既存パターンはクリアしない）
 	int AddExceptFolder(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
 	}
@@ -194,6 +185,9 @@ private:
 		ClearEnumKeys(m_vecSearchFileKeys);
 		ClearEnumKeys(m_vecExceptFolderKeys);
 		ClearEnumKeys(m_vecSearchFolderKeys);
+		ClearEnumKeys(m_vecExceptAbsFileKeys);
+		ClearEnumKeys(m_vecExceptAbsFolderKeys);
+		m_vecExceptFileRegexPatterns.clear();  // 正規表現除外パターンもクリア
 		return;
 	}
 	void ClearEnumKeys( VGrepEnumKeys& keys ){

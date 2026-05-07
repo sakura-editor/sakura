@@ -1,4 +1,7 @@
-﻿/*! @file */
+﻿/*! @file
+	@brief Grep検索エージェント
+	@note v2.0 マルチスレッド対応・除外ファイル機能拡張
+*/
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2022, Sakura Editor Organization
@@ -9,13 +12,35 @@
 #define SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_
 #pragma once
 
+#include <atomic>
+#include <string>
+#include <vector>
 #include "doc/CDocListener.h"
+#include "extmodule/CBregexp.h"
 class CDlgCancel;
 class CEditView;
 class CSearchStringPattern;
 class CGrepEnumKeys;
 class CGrepEnumFiles;
 class CGrepEnumFolders;
+
+/**
+ * 並列Grep処理で使用するファイルタスク情報。
+ *
+ * DoGrepTreeEnumerate() でメインスレッドが列挙したファイル情報を
+ * ワーカースレッド（DoGrepFileWorker）に受け渡すためのデータ構造。
+ * スレッドプールのバッチ単位で vector に格納し、各ワーカーが
+ * atomic インデックスで取得して並列処理する。
+ *
+ * @sa DoGrepTreeEnumerate, DoGrepFileWorker
+ */
+struct SGrepFileTask {
+	std::wstring fullPath;    //!< 処理対象ファイルのフルパス
+	std::wstring fileName;    //!< ファイル名（タイプ別設定取得用）
+	std::wstring baseFolder;  //!< ベースフォルダー
+	std::wstring folder;      //!< 表示用フォルダー（bGrepSeparateFolder時）
+	std::wstring relPath;     //!< 相対パス（bGrepSeparateFolder時はファイル名のみ）
+};
 
 struct SGrepOption{
 	bool		bGrepReplace;			//!< Grep置換
@@ -100,11 +125,11 @@ private:
 		const SGrepOption&		sGrepOption,		//!< [in] Grepオプション
 		const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 		CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-		int						nNest,				//!< [in] ネストレベル
 		bool&					bOutputBaseFolder,
 		int*					pnHitCount,			//!< [i/o] ヒット数の合計
 		CNativeW&				cmemMessage,
-		CNativeW&				cUnicodeBuffer
+		CNativeW&				cUnicodeBuffer,
+		std::vector<CBregexp>* pExclRegexps = nullptr //!< [in] コンパイル済み除外正規表現（再帰呼び出し用・nullptrなら内部でコンパイル）
 	);
 
 	// Grep実行
@@ -168,6 +193,32 @@ private:
 		int				nMatchLen,		//	マッチした文字列の長さ
 		// オプション
 		const SGrepOption&	sGrepOption
+	);
+
+	// フォルダー走査で SGrepFileTask を列挙する（メインスレッド専用・検索処理は行わない）
+	void DoGrepTreeEnumerate(
+		CDlgCancel*				pcDlgCancel,
+		CGrepEnumKeys&			cGrepEnumKeys,
+		CGrepEnumFiles&			cGrepExceptAbsFiles,
+		CGrepEnumFolders&		cGrepExceptAbsFolders,
+		const WCHAR*			pszPath,
+		const WCHAR*			pszBasePath,
+		const SGrepOption&		sGrepOption,
+		std::vector<SGrepFileTask>& vecTasks,
+		bool&					bCancelled
+	);
+
+	// ワーカースレッド用ファイル内検索（UI操作なし・戻り値: -1=キャンセル, 0以上=ヒット数）
+	int DoGrepFileWorker(
+		const SGrepFileTask&		task,
+		const wchar_t*				pszKey,
+		const SSearchOption&		sSearchOption,
+		const SGrepOption&			sGrepOption,
+		CBregexp*					pLocalRegexp,
+		const CSearchStringPattern&	localPattern,
+		CNativeW&					cmemMessage,
+		CNativeW&					cUnicodeBuffer,
+		const std::atomic<bool>&	bCancelled
 	);
 
 	DWORD m_dwTickAddTail = 0;	// AddTail() を呼び出した時間
