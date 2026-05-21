@@ -2,7 +2,7 @@
 //2007.09.28 kobake Common整理
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -396,6 +396,7 @@ struct CommonSetting_Search
 	//Grep
 	BOOL			m_bGrepExitConfirm;			//!< Grepモードで保存確認するか
 	BOOL			m_bGrepRealTimeView;		//!< Grep結果のリアルタイム表示 2003.06.16 Moca
+	int				m_nGrepThreadCount;			//!< Grep並列スレッド数（最低値・デフォルト2）
 
 	BOOL			m_bGTJW_RETURN;				//!< エンターキーでタグジャンプ
 	BOOL			m_bGTJW_LDBLCLK;			//!< ダブルクリックでタグジャンプ

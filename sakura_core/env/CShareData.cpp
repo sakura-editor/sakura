@@ -18,7 +18,7 @@
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -461,6 +461,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
 			sSearch.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
+			sSearch.m_nGrepThreadCount = 2;				/* Grep並列スレッド数（最低値・デフォルト2） */
 
 			sSearch.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
 			sSearch.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */

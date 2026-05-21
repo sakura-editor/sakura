@@ -8,7 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -25,7 +25,8 @@
 #include "recent/CRecentExcludeFile.h"
 #include "recent/CRecentExcludeFolder.h"
 
-#define DEFAULT_EXCLUDE_FILE_PATTERN    L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
+// 除外ファイルパターン（正規表現、フルパスに対してマッチング）
+#define DEFAULT_EXCLUDE_FILE_PATTERN    L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$"
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
 
 //! GREPダイアログボックス
