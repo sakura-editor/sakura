@@ -1,7 +1,7 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,13 +9,27 @@
 #define SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_
 #pragma once
 
+#include <atomic>
+#include <string>
+#include <vector>
 #include "doc/CDocListener.h"
+#include "extmodule/CBregexp.h"
 class CDlgCancel;
 class CEditView;
 class CSearchStringPattern;
 class CGrepEnumKeys;
 class CGrepEnumFiles;
 class CGrepEnumFolders;
+
+//! 並列Grep処理で使用するファイルタスク情報
+// 1 ファイルを 1 タスクとして扱い、検索対象の実体情報と表示用文字列を分けて保持する。
+struct SGrepFileTask {
+	std::wstring fullPath;    //!< 処理対象ファイルのフルパス
+	std::wstring fileName;    //!< ファイル名（タイプ別設定取得用）
+	std::wstring baseFolder;  //!< ベースフォルダー
+	std::wstring folder;      //!< 表示用フォルダー（bGrepSeparateFolder時）
+	std::wstring relPath;     //!< 相対パス（bGrepSeparateFolder時はファイル名のみ）
+};
 
 struct SGrepOption{
 	bool		bGrepReplace;			//!< Grep置換
@@ -57,6 +71,34 @@ public:
 	ECallbackResult OnBeforeClose() override;
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
+	//! 検索結果 1 件分のフォーマット生成（HWND 非依存）
+	static void FormatGrepResultLine(
+		CNativeW& cmemMessage,
+		const WCHAR* pszFilePath,
+		const WCHAR* pszCodeName,
+		LONGLONG nLine,
+		int nColumn,
+		const wchar_t* pCompareData,
+		int nLineLen,
+		int nEolCodeLen,
+		const wchar_t* pMatchData,
+		int nMatchLen,
+		const SGrepOption& sGrepOption
+	);
+
+	//! 結果ヘッダ生成（"検索条件 ..."）
+	static CNativeW BuildGrepHeader(
+		const wchar_t* pszKey,
+		const wchar_t* pszFile,
+		const wchar_t* pszFolder,
+		const SSearchOption& sSearchOption,
+		const SGrepOption& sGrepOption,
+		const wchar_t* pszReplace = nullptr
+	);
+
+	//! 結果フッタ生成（"該当 N 件" / "N 件を置換"）
+	static CNativeW BuildGrepFooter(int nHitCount, bool bGrepReplace = false);
+
 	static void CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>& vPaths );
 	static std::wstring ChopYen( const std::wstring& str );
 	void AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout );
@@ -84,6 +126,20 @@ public:
 		bool					bGrepBackup
 	);
 
+	// 並列 Grep のワーカー本体。UI に触れず、1 ファイル分の検索だけを担当する。
+	// テストから直接呼び出せるように public 化。
+	int DoGrepFileWorker(
+		const SGrepFileTask&		task,
+		const wchar_t*				pszKey,
+		const SSearchOption&		sSearchOption,
+		const SGrepOption&			sGrepOption,
+		CBregexp*					pLocalRegexp,
+		const CSearchStringPattern&	localPattern,
+		CNativeW&					cmemMessage,
+		CNativeW&					cUnicodeBuffer,
+		const std::atomic<bool>&	bCancelled
+	);
+
 private:
 	// Grep実行
 	int DoGrepTree(
@@ -100,11 +156,11 @@ private:
 		const SGrepOption&		sGrepOption,		//!< [in] Grepオプション
 		const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 		CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-		int						nNest,				//!< [in] ネストレベル
 		bool&					bOutputBaseFolder,
 		int*					pnHitCount,			//!< [i/o] ヒット数の合計
 		CNativeW&				cmemMessage,
-		CNativeW&				cUnicodeBuffer
+		CNativeW&				cUnicodeBuffer,
+		std::vector<CBregexp>* pExclRegexps = nullptr //!< [in] コンパイル済み除外正規表現（再帰呼び出し用・nullptrなら内部でコンパイル）
 	);
 
 	// Grep実行
@@ -168,6 +224,20 @@ private:
 		int				nMatchLen,		//	マッチした文字列の長さ
 		// オプション
 		const SGrepOption&	sGrepOption
+	);
+
+	// ファイル列挙（メインスレッド用・キャンセル対応）
+	// 検索は行わず、ワーカーへ渡すタスクだけを作る。
+	void DoGrepTreeEnumerate(
+		CDlgCancel*				pcDlgCancel,
+		CGrepEnumKeys&			cGrepEnumKeys,
+		CGrepEnumFiles&			cGrepExceptAbsFiles,
+		CGrepEnumFolders&		cGrepExceptAbsFolders,
+		const WCHAR*			pszPath,
+		const WCHAR*			pszBasePath,
+		const SGrepOption&		sGrepOption,
+		std::vector<SGrepFileTask>& vecTasks,
+		bool&					bCancelled
 	);
 
 	DWORD m_dwTickAddTail = 0;	// AddTail() を呼び出した時間

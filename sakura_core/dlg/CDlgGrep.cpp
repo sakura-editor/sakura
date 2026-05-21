@@ -1,4 +1,4 @@
-﻿/*!	@file
+/*!	@file
 	@brief GREPダイアログボックス
 
 	@author Norio Nakatani
@@ -11,7 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2012, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -170,7 +170,8 @@ static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cm
 CNativeW CDlgGrep::GetPackedGFileString() const
 {
 	// ダイアログデータを取得
-	CNativeW cmFilePattern( m_szFile );
+	// ファイルパターンが空なら UI 既定値の "*.*" を補って、検索対象なしの状態を避ける。
+	CNativeW cmFilePattern( m_szFile[0] != L'\0' ? m_szFile : L"*.*" );
 	CNativeW cmExcludeFiles( m_szExcludeFile );
 	CNativeW cmExcludeFolders( m_szExcludeFolder );
 
@@ -257,33 +258,8 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	
-	/* 除外ファイル */
-	if (m_szExcludeFile[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
-		}
-		else {
-			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
-			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN);	/* 除外ファイル */
-
-			/* 履歴に残して後で選択できるようにする */
-			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(DEFAULT_EXCLUDE_FILE_PATTERN);
-		}
-	}
-
-	/* 除外フォルダー */
-	if (m_szExcludeFolder[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
-		}
-		else {
-			/* ユーザーの利便性向上のために除外フォルダーに対して初期値を設定する */
-			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
-			
-			/* 履歴に残して後で選択できるようにする */
-			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
-		}
-	}
+	/* 除外ファイル / 除外フォルダー */
+	DetermineDefaultExcludePatterns();
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
@@ -739,8 +715,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, L"" );
 		bEnableControls = FALSE;
 	}else{
-		std::wstring strFile(m_szFile);
-		if (strFile.substr(0, 6) == L":HWND:") {
+		if (IsHwndFileToken(m_szFile)) {
 			wcsncpy_s(m_szFile, std::size(m_szFile), L"*.*", _TRUNCATE);
 		}
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
@@ -825,16 +800,9 @@ int CDlgGrep::GetData( void )
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, std::size(m_szFile) );
 	bool bFromThisText = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_FROMTHISTEXT);
 	if( bFromThisText ){
-		WCHAR szHwnd[_MAX_PATH];
-#ifdef _WIN64
-		auto_sprintf(szHwnd, L":HWND:%016I64x", ::GetParent(GetHwnd()));
-#else
-		auto_sprintf(szHwnd, L":HWND:%08x", ::GetParent(GetHwnd()));
-#endif
-		m_szFile = szHwnd;
+		wcscpy(m_szFile, BuildHwndFileToken(::GetParent(GetHwnd())).c_str());
 	}else{
-		std::wstring strFile(m_szFile);
-		if (strFile.substr(0, 6) == L":HWND:") {
+		if (IsHwndFileToken(m_szFile)) {
 			ErrorMessage(GetHwnd(), LS(STR_DLGGREP_THISDOC_ERROR));
 			return FALSE;
 		}
@@ -929,12 +897,16 @@ int CDlgGrep::GetData( void )
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 		if( m_strText.size() < _MAX_PATH ){
-			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+			if( !m_bFromThisText ){
+				CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+			}
 			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 		}
 	}else{
 		// 2014.07.01 空キーも登録する
-		CSearchKeywordManager().AddToSearchKeyArr( L"" );
+		if( !m_bFromThisText ){
+			CSearchKeywordManager().AddToSearchKeyArr( L"" );
+		}
 	}
 
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23
@@ -975,4 +947,54 @@ static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 	}else{
 		::SetWindowText( hwndCtrl, folder );
 	}
+}
+
+void CDlgGrep::DetermineDefaultExcludePatterns()
+{
+	// 初期表示とテストで共通に使う、除外パターンの既定値補完ロジック。
+	/* 除外ファイル */
+	if (m_szExcludeFile[0] == L'\0') {
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
+		}
+		else {
+			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
+			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN);	/* 除外ファイル */
+
+			/* 履歴に残して後で選択できるようにする */
+			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(DEFAULT_EXCLUDE_FILE_PATTERN);
+		}
+	}
+
+	/* 除外フォルダー */
+	if (m_szExcludeFolder[0] == L'\0') {
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
+		}
+		else {
+			/* ユーザーの利便性向上のために除外フォルダーに対して初期値を設定する */
+			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
+			
+			/* 履歴に残して後で選択できるようにする */
+			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
+		}
+	}
+}
+
+std::wstring CDlgGrep::BuildHwndFileToken(HWND hwnd)
+{
+	// HWND を 16 進の文字列にして、コンボボックス内の擬似ファイル名として保持する。
+	WCHAR buf[_MAX_PATH];
+#ifdef _WIN64
+	auto_sprintf(buf, L":HWND:%016I64x", reinterpret_cast<uintptr_t>(hwnd));
+#else
+	auto_sprintf(buf, L":HWND:%08x", reinterpret_cast<uintptr_t>(hwnd));
+#endif
+	return std::wstring(buf);
+}
+
+bool CDlgGrep::IsHwndFileToken(const wchar_t* s)
+{
+	// 実際の値比較ではなく、特別な擬似ファイル名であるかどうかだけを判定する。
+	return s != nullptr && wcsncmp(s, L":HWND:", 6) == 0;
 }

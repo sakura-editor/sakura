@@ -1,4 +1,4 @@
-﻿/*!	@file
+/*!	@file
 	@brief GREPダイアログボックス
 
 	@author Norio Nakatani
@@ -8,7 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -25,7 +25,8 @@
 #include "recent/CRecentExcludeFile.h"
 #include "recent/CRecentExcludeFolder.h"
 
-#define DEFAULT_EXCLUDE_FILE_PATTERN    L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
+// 除外ファイルパターン（正規表現、フルパスに対してマッチング）
+#define DEFAULT_EXCLUDE_FILE_PATTERN    L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$"
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
 
 //! GREPダイアログボックス
@@ -43,6 +44,16 @@ public:
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	int DoModal( HINSTANCE, HWND, const WCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
+
+	//! 除外パターンの初期値を決定する
+	// 履歴が空なら既定値を補い、次回以降に選べるよう履歴にも積む。
+	void DetermineDefaultExcludePatterns();
+
+	//! HWND ファイルトークンの生成と判定（":HWND:..." 形式）
+	// 「編集中のテキストから検索」時の擬似ファイル名として使う。
+	static std::wstring BuildHwndFileToken(HWND hwnd);
+	// 実ファイルパスと区別するため、接頭辞だけを見て判定する。
+	static bool IsHwndFileToken(const wchar_t* s);
 
 	bool		m_bEnableThisText;
 	bool		m_bSelectOnceThisText;
