@@ -766,12 +766,9 @@ namespace {
 /*!
  * ファイル群をワーカー数 nThreads で並列走査して合計ヒット数を返す
  *
- * production の並列 Grep と同じく：
- *  - 各スレッドが自前の CBregexp / CSearchStringPattern / バッファを保持
- *  - 共有は CGrepAgent・タスクインデックス（atomic）・ヒット数集約（atomic）のみ
- *
- *  シングルスレッド（nThreads == 1）でも同じ経路を通すことで、両者の差を
- *  測定可能にしている。
+ * DoGrepFileWorker を直接呼ぶテスト専用ヘルパ。RunParallelGrep とは独立した実装で、
+ * production のスレッドプール経路（RunParallelGrep 本体）はカバーしない。
+ * production 本体の検証は RunParallelGrep_* テストを参照。
  */
 int RunWorkersParallel(
 	const std::vector<std::filesystem::path>& files,
@@ -1215,4 +1212,224 @@ TEST(CGrepEnumKeys, GetExcludeFolders_MergesRelAndAbs)
 	keys.SetFileKeys(L"*.cpp;#build;#C:\\sys");
 	auto folders = keys.GetExcludeFolders();
 	EXPECT_EQ(2, folders.size());	// 相対 1 件 + 絶対 1 件の合計
+}
+
+// =============================================================================
+// 9. RunParallelGrep 経路（UI非依存でテスト可能）
+// =============================================================================
+
+/*!
+ * @brief RunParallelGrep が pcDlgCancel/pcViewDst=nullptr で動作し、ヒット数が正しい (PR #2459)
+ * @remark UI 非依存（nullptr 渡し）でスレッドプール経路を走らせ、直列経路と同じ件数になることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_HitCountMatchesSingleThread)
+{
+	for (int i = 0; i < 8; ++i) {
+		m_temp->WriteEncodedTextFile(
+			L"rp_" + std::to_wstring(i) + L".txt",
+			CODE_UTF8,
+			BuildLineSequence(L"needle", L"abc", 100, 10));
+	}
+
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption();
+	const std::wstring rootPath = m_temp->Root().wstring();
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CGrepEnumFiles cGrepExceptAbsFiles;
+	CGrepEnumFolders cGrepExceptAbsFolders;
+	CNativeW cmemMessage;
+	int nHitCount = 0;
+
+	const std::vector<std::wstring> vPaths = { rootPath };
+	const int result = agent.RunParallelGrep(
+		nullptr, nullptr,
+		L"needle", sOpt, gOpt, vPaths,
+		keys, cGrepExceptAbsFiles, cGrepExceptAbsFolders,
+		cmemMessage, nHitCount);
+
+	EXPECT_EQ(0, result);           // 0 = 完了（-1 はキャンセル）
+	EXPECT_EQ(8 * 10, nHitCount);   // 8 ファイル × 10 件
+}
+
+/*!
+ * @brief RunParallelGrep がサブフォルダーを再帰して合計ヒット数を返す (1-1: サブフォルダー分岐経路)
+ * @remark ルート + sub1/ + sub1/sub2/ に配置したファイルを bGrepSubFolder=true で検索し、
+ *         RunParallelGrep のバッチ1..N（cTopFolders 列挙 → サブフォルダーバッチ）経路を踏む。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_SubfolderRecursion)
+{
+	// ルート直下: 50行・10行おきにヒット → 5件
+	m_temp->WriteEncodedTextFile(L"root.txt", CODE_UTF8,
+		BuildLineSequence(L"needle", L"abc", 50, 10));
+	// sub1/: 30行・10行おきにヒット → 3件
+	m_temp->WriteEncodedTextFile(L"sub1/s1.txt", CODE_UTF8,
+		BuildLineSequence(L"needle", L"abc", 30, 10));
+	// sub1/sub2/: 20行・10行おきにヒット → 2件
+	m_temp->WriteEncodedTextFile(L"sub1/sub2/s2.txt", CODE_UTF8,
+		BuildLineSequence(L"needle", L"abc", 20, 10));
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepSubFolder = true;
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CGrepEnumFiles cExAbsFiles;
+	CGrepEnumFolders cExAbsFolders;
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+	const int rc = agent.RunParallelGrep(
+		nullptr, nullptr,
+		L"needle", sOpt, gOpt, vPaths,
+		keys, cExAbsFiles, cExAbsFolders,
+		cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(10, nHit);    // 5 + 3 + 2
+}
+
+/*!
+ * @brief RunParallelGrep のワーカー内除外正規表現が適用される (1-2: excludeRegexps Compile/Match 経路)
+ * @remark .cpp/.obj/.exe の4ファイルを配置し、.obj/.exe を除外正規表現で除外した結果
+ *         .cpp 2ファイル分のヒットのみが返ることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_ExcludeRegexFiltersWorker)
+{
+	// 4ファイルに各 2 件の needle を含む
+	m_temp->WriteEncodedTextFile(L"main.cpp",  CODE_UTF8, L"needle\nneedle\n");
+	m_temp->WriteEncodedTextFile(L"util.cpp",  CODE_UTF8, L"needle\nneedle\n");
+	m_temp->WriteEncodedTextFile(L"main.obj",  CODE_UTF8, L"needle\nneedle\n");
+	m_temp->WriteEncodedTextFile(L"app.exe",   CODE_UTF8, L"needle\nneedle\n");
+
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption();
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	// *.*;!.*\.obj$;!.*\.exe$ → .obj/.exe を除外
+	keys.SetFileKeys(L"*.*;!.*\\.obj$;!.*\\.exe$");
+	CGrepEnumFiles cExAbsFiles;
+	CGrepEnumFolders cExAbsFolders;
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+	const int rc = agent.RunParallelGrep(
+		nullptr, nullptr,
+		L"needle", sOpt, gOpt, vPaths,
+		keys, cExAbsFiles, cExAbsFolders,
+		cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(4, nHit);     // .cpp 2 ファイル × 2 件（.obj/.exe は除外）
+}
+
+/*!
+ * @brief RunParallelGrep のベースフォルダーヘッダーが重複しない (2: ヘッダー出力一致検証)
+ * @remark bGrepOutputBaseFolder=true, bGrepSeparateFolder=false で複数ファイルを検索したとき、
+ *         ベースフォルダーヘッダー行（■"..."）が出力に 1 回だけ現れることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_BaseFolderHeader_NoDuplicate)
+{
+	m_temp->WriteEncodedTextFile(L"a.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"b.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"c.txt", CODE_UTF8, L"needle\n");
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepOutputBaseFolder = true;
+	gOpt.bGrepSeparateFolder   = false;
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CGrepEnumFiles cExAbsFiles;
+	CGrepEnumFolders cExAbsFolders;
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const std::wstring rootPath = m_temp->Root().wstring();
+	const std::vector<std::wstring> vPaths = { rootPath };
+	const int rc = agent.RunParallelGrep(
+		nullptr, nullptr,
+		L"needle", sOpt, gOpt, vPaths,
+		keys, cExAbsFiles, cExAbsFolders,
+		cmemMessage, nHit);
+
+	ASSERT_EQ(0, rc);
+	EXPECT_EQ(3, nHit);
+
+	// ベースフォルダーヘッダー（■"<root>"）は 1 回だけ出力されること
+	const std::wstring output(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	const std::wstring baseFolderHeader = L"■\"" + rootPath + L"\"";
+	int headerCount = 0;
+	size_t pos = 0;
+	while ((pos = output.find(baseFolderHeader, pos)) != std::wstring::npos) {
+		++headerCount;
+		pos += baseFolderHeader.size();
+	}
+	EXPECT_EQ(1, headerCount) << "ベースフォルダーヘッダーが重複して出力されている";
+}
+
+/*!
+ * @brief RunParallelGrep のベース/フォルダーヘッダーが重複しない (2: bGrepSeparateFolder=true)
+ * @remark bGrepOutputBaseFolder=true, bGrepSeparateFolder=true で複数ファイルを検索したとき、
+ *         ◎"..."（ベース）と ■\r\n（ルート直下フォルダー）が各 1 回だけ出ることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_SeparateFolderHeader_NoDuplicate)
+{
+	m_temp->WriteEncodedTextFile(L"x.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"y.txt", CODE_UTF8, L"needle\n");
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepOutputBaseFolder = true;
+	gOpt.bGrepSeparateFolder   = true;
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CGrepEnumFiles cExAbsFiles;
+	CGrepEnumFolders cExAbsFolders;
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const std::wstring rootPath = m_temp->Root().wstring();
+	const std::vector<std::wstring> vPaths = { rootPath };
+	const int rc = agent.RunParallelGrep(
+		nullptr, nullptr,
+		L"needle", sOpt, gOpt, vPaths,
+		keys, cExAbsFiles, cExAbsFolders,
+		cmemMessage, nHit);
+
+	ASSERT_EQ(0, rc);
+	EXPECT_EQ(2, nHit);
+
+	const std::wstring output(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+
+	// ◎"<root>" は 1 回だけ（ベースフォルダーヘッダー、bGrepSeparateFolder=true 時）
+	const std::wstring baseHeader = L"◎\"" + rootPath + L"\"";
+	int baseCount = 0;
+	size_t pos = 0;
+	while ((pos = output.find(baseHeader, pos)) != std::wstring::npos) {
+		++baseCount;
+		pos += baseHeader.size();
+	}
+	EXPECT_EQ(1, baseCount) << "ベースフォルダーヘッダー（◎）が重複して出力されている";
+
+	// ■\r\n（ルート直下 = 空フォルダー名）は 1 回だけ
+	const std::wstring folderHeader = L"■\r\n";
+	int folderCount = 0;
+	pos = 0;
+	while ((pos = output.find(folderHeader, pos)) != std::wstring::npos) {
+		++folderCount;
+		pos += folderHeader.size();
+	}
+	EXPECT_EQ(1, folderCount) << "フォルダーヘッダー（■\\r\\n）が重複して出力されている";
 }

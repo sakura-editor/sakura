@@ -140,6 +140,24 @@ public:
 		const std::atomic<bool>&	bCancelled
 	);
 
+	// 並列 Grep のスレッドプール管理・バッチ駆動コア。
+	// pcViewDst / pcDlgCancel は nullptr 可（nullptr 時は UI 操作をスキップ）。
+	// @retval -1 キャンセル   @retval 0 完了
+	// @param[out] nHitCountOut 合計ヒット数（キャンセル時も部分カウントを返す）
+	int RunParallelGrep(
+		CEditView*						pcViewDst,
+		CDlgCancel*						pcDlgCancel,
+		const std::wstring&				searchKey,
+		const SSearchOption&			sSearchOption,
+		const SGrepOption&				sGrepOption,
+		const std::vector<std::wstring>& vPaths,
+		CGrepEnumKeys&					cGrepEnumKeys,
+		CGrepEnumFiles&					cGrepExceptAbsFiles,
+		CGrepEnumFolders&				cGrepExceptAbsFolders,
+		CNativeW&						cmemMessage,
+		int&							nHitCountOut
+	);
+
 private:
 	// Grep実行
 	int DoGrepTree(

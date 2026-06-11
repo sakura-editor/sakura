@@ -1,4 +1,4 @@
-/*! @file
+﻿/*! @file
 	@brief Grep検索エージェント
 	@note マルチスレッド対応・除外ファイル機能拡張
 */
@@ -764,287 +764,14 @@ DWORD CGrepAgent::DoGrep(
 			cmemMessage._SetStringLength(0);
 		}
 	}else{
-		// ===== 並列Grep: サブフォルダー単位バッチ処理（Producer-Consumerパターン） =====
-		// 検索パス直下のサブフォルダーを1フォルダーずつ列挙・検索・解放することで
-		// メモリ消費を抑制し、出力順序をフォルダー順に安定化させる。
-		// 並列Grep: スレッドプールでファイル検索を並列化する
-		// メインスレッドがフォルダー単位でタスクを列挙し、ワーカーが並列に検索する
-		// Grep置換は副作用があるため既存の直列パスを使用する
-		const std::vector<std::wstring>& regexPatterns = cGrepEnumKeys.m_vecExceptFileRegexPatterns;
-		const std::wstring searchKey( pcmGrepKey->GetStringPtr(), pcmGrepKey->GetStringLength() );
-
-		// スレッド数 = max(設定値, 論理コア数 / 4)  ※設定値はiniファイルの nGrepThreadCount（1〜8）
-		const int nIniThreads = GetDllShareData().m_Common.m_sSearch.m_nGrepThreadCount;
-		const unsigned int nClampedIni = (unsigned int)std::max( 1, std::min( nIniThreads, 8 ) );
-		const unsigned int nThreads = std::max<unsigned int>(
-			nClampedIni,
-			std::thread::hardware_concurrency() / 4 );
-
-		// ヒット数（全バッチ共通・バッチ間で引き継ぐ）
-		std::atomic<int> atomicHitCount{ 0 };
-
-		// ===== スレッドプール: バッチ間でスレッドを再利用し生成・破棄コストを排除 =====
-		// バッチ番号インクリメントで新バッチを通知し、condition_variable で待機中ワーカーを起床させる。
-		std::mutex poolMutex;
-		std::condition_variable cvPoolStart;
-		size_t poolBatchId = 0;                             // バッチ番号（インクリメントで新バッチ通知）
-		bool bPoolShutdown = false;                         // true: ワーカーに終了を指示
-		const std::vector<SGrepFileTask>* pPoolBatch = nullptr; // 現在バッチのタスクリスト
-		std::atomic<size_t> poolNextTask{ 0 };              // 次に処理するタスクのインデックス
-		std::atomic<int>    poolBatchActive{ 0 };           // 現在バッチを処理中のワーカー数
-		std::atomic<bool>   bWorkCancelled{ false };        // true: キャンセル済み（バッチ間で維持）
-		std::mutex resultMutex;
-		CNativeW sharedMessage;
-		std::set<std::wstring> writtenBaseFolders;
-		std::set<std::wstring> writtenFolders;
-
-		// スレッドプールのワーカーを生成（1回のみ）。
-		// 各ワーカーはスレッドローカルの正規表現とバッファを持ち、毎回の再初期化を避ける。
-		std::vector<std::thread> poolWorkers;
-		poolWorkers.reserve( nThreads );
-		std::atomic<unsigned int> nActiveWorkers{ nThreads };  // 初期化成功したワーカー数（デッドロック防止用）
-
-		for( unsigned int t = 0; t < nThreads; t++ ){
-			poolWorkers.emplace_back( [&](){
-				size_t localBatchId = 0;
-
-				// --- スレッドローカル初期化（スレッド生存中に1回のみ実行）---
-				CBregexp localRegexp;
-				CSearchStringPattern localPattern;
-				try{
-					localPattern.SetPattern( nullptr,
-						searchKey.c_str(), searchKey.size(),
-						sSearchOption, &localRegexp );
-				}catch(...){
-					// 初期化失敗: 実働ワーカー数を減らしてシャットダウンまで待機
-					nActiveWorkers.fetch_sub( 1, std::memory_order_relaxed );
-					std::unique_lock<std::mutex> lk( poolMutex );
-					cvPoolStart.wait( lk, [&]{ return bPoolShutdown; } );
-					return;
-				}
-
-				std::vector<CBregexp> excludeRegexps( regexPatterns.size() );
-				for( size_t ri = 0; ri < regexPatterns.size(); ri++ ){
-					InitRegexp( nullptr, excludeRegexps[ri], false );
-					excludeRegexps[ri].Compile(
-						regexPatterns[ri].c_str(), CBregexp::optCaseSensitive );
-				}
-
-				CNativeW localMessage;
-				CNativeW localUnicodeBuffer;
-				localMessage.AllocStringBuffer( 4000 );
-				localUnicodeBuffer.AllocStringBuffer( 4000 );
-
-				while( true ){
-					// 新しいバッチまたはシャットダウンを待機
-					const std::vector<SGrepFileTask>* pBatch = nullptr;
-					{
-						std::unique_lock<std::mutex> lk( poolMutex );
-						cvPoolStart.wait( lk, [&]{
-							return poolBatchId > localBatchId || bPoolShutdown;
-						} );
-						if( bPoolShutdown && poolBatchId <= localBatchId ) break;
-						localBatchId = poolBatchId;
-						pBatch = pPoolBatch;
-					}
-
-					// バッチ処理（try/catch で例外をキャンセル扱い）
-					try{
-						while( true ){
-							const size_t idx = poolNextTask.fetch_add( 1, std::memory_order_relaxed );
-							if( idx >= pBatch->size() ) break;
-							if( bWorkCancelled.load(std::memory_order_acquire) ) break;
-
-							const SGrepFileTask& task = (*pBatch)[idx];
-
-							// 正規表現除外判定（フルパス全体に対してマッチング）
-							const int nFullPathLen = (int)task.fullPath.size();
-							bool bExcluded = false;
-							for( auto& reExcl : excludeRegexps ){
-								if( reExcl.Match( task.fullPath.c_str(), nFullPathLen, 0 ) ){
-									bExcluded = true;
-									break;
-								}
-							}
-							if( bExcluded ) continue;
-
-							// ファイル内検索
-							localMessage._SetStringLength(0);
-							const int fileHits = DoGrepFileWorker(
-								task, searchKey.c_str(),
-								sSearchOption, sGrepOption,
-								&localRegexp, localPattern,
-								localMessage, localUnicodeBuffer,
-								bWorkCancelled
-							);
-
-							if( fileHits == -1 ){
-								bWorkCancelled.store( true, std::memory_order_release );
-								break;
-							}
-
-							if( fileHits > 0 || localMessage.GetStringLength() > 0 ){
-								std::lock_guard<std::mutex> lk( resultMutex );
-								// フォルダーヘッダー重複排除（最初のマッチ時のみ出力）
-								if( sGrepOption.bGrepOutputBaseFolder &&
-								    writtenBaseFolders.find(task.baseFolder) == writtenBaseFolders.end() ){
-									writtenBaseFolders.insert( task.baseFolder );
-									sharedMessage.AppendString(
-										sGrepOption.bGrepSeparateFolder ? L"◎\"" : L"■\"" );
-									sharedMessage.AppendString( task.baseFolder.c_str() );
-									sharedMessage.AppendString( L"\"\r\n" );
-								}
-								if( sGrepOption.bGrepSeparateFolder &&
-								    writtenFolders.find(task.folder) == writtenFolders.end() ){
-									writtenFolders.insert( task.folder );
-									if( !task.folder.empty() ){
-										sharedMessage.AppendString( L"■\"" );
-										sharedMessage.AppendString( task.folder.c_str() );
-										sharedMessage.AppendString( L"\"\r\n" );
-									}else{
-										sharedMessage.AppendString( L"■\r\n" );
-									}
-								}
-								sharedMessage.AppendNativeData( localMessage );
-								atomicHitCount.fetch_add( fileHits, std::memory_order_relaxed );
-							}
-						}
-					}catch(...){
-						// 予期せぬ例外（std::bad_alloc 等）をキャンセル扱いにする
-						bWorkCancelled.store( true, std::memory_order_release );
-					}
-					// try/catch どちらの経路でも必ず実行し、デッドロックを防止する
-					poolBatchActive.fetch_sub( 1, std::memory_order_relaxed );
-				}
-			} );
-		}
-
-		// バッチ実行ラムダ: vecTasks をプールのワーカーに割り当て結果を出力する
-		// 戻り値: true=継続, false=キャンセル発生
-		// バッチ単位でワーカーにタスクを渡し、UI 更新と出力フラッシュはメインスレッドが担当する。
-		auto RunBatch = [&]( const std::vector<SGrepFileTask>& vecTasks ) -> bool {
-			if( vecTasks.empty() ) return true;
-			if( bWorkCancelled.load(std::memory_order_acquire) ) return false;
-
-			// バッチ設定（ロック下でバッチ番号をインクリメントしてワーカーを起床）
-			{
-				std::lock_guard<std::mutex> lk( poolMutex );
-				pPoolBatch = &vecTasks;
-				poolNextTask.store( 0, std::memory_order_relaxed );
-				poolBatchActive.store( (int)nActiveWorkers.load(std::memory_order_relaxed), std::memory_order_relaxed );
-				++poolBatchId;
-			}
-			cvPoolStart.notify_all();
-
-			// メインスレッド: 全ワーカーが完全終了するまでUI更新・キャンセル監視・結果フラッシュを継続
-			while( poolBatchActive.load(std::memory_order_relaxed) > 0 ){
-				::Sleep(5);
-
-				DWORD dwNow = ::GetTickCount();
-				if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
-					m_dwTickUICheck = dwNow;
-					if( !::BlockingHook( cDlgCancel.GetHwnd() ) ){
-						bWorkCancelled.store( true, std::memory_order_release );
-					}
-					if( cDlgCancel.IsCanceled() ){
-						bWorkCancelled.store( true, std::memory_order_release );
-					}
-					CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-						0 != ::IsDlgButtonChecked( cDlgCancel.GetHwnd(), IDC_CHECK_REALTIMEVIEW ) );
-					::SetDlgItemInt( cDlgCancel.GetHwnd(), IDC_STATIC_HITCOUNT,
-					                 atomicHitCount.load(), FALSE );
-				}
-
-				// 共有バッファをリアルタイム出力にフラッシュ
-				{
-					std::lock_guard<std::mutex> lk( resultMutex );
-					if( sharedMessage.GetStringLength() > 0 ){
-						cmemMessage.AppendNativeData( sharedMessage );
-						sharedMessage._SetStringLength(0);
-					}
-				}
-				if( 0 < cmemMessage.GetStringLength() &&
-				    (::GetTickCount() - m_dwTickAddTail) > ADDTAIL_INTERVAL_MILLISEC ){
-					AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-					cmemMessage._SetStringLength(0);
-				}
-			}
-
-			// 最終フラッシュ
-			{
-				std::lock_guard<std::mutex> lk( resultMutex );
-				if( sharedMessage.GetStringLength() > 0 ){
-					cmemMessage.AppendNativeData( sharedMessage );
-					sharedMessage._SetStringLength(0);
-				}
-			}
-			if( 0 < cmemMessage.GetStringLength() ){
-				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-				cmemMessage._SetStringLength(0);
-			}
-
-			return !bWorkCancelled.load(std::memory_order_acquire);
-		};
-
-		// 各検索パスをサブフォルダー単位でバッチ処理
-		for( int nPath = 0; nPath < (int)vPaths.size() && nGrepTreeResult != -1; nPath++ ){
-			std::wstring sPath = ChopYen( vPaths[nPath] );
-
-			// 検索パスが変わるたびにフォルダーヘッダー出力履歴をリセット
-			{
-				std::lock_guard<std::mutex> lk( resultMutex );
-				writtenBaseFolders.clear();
-				writtenFolders.clear();
-			}
-
-			// バッチ0: 検索パス直下のファイル（サブフォルダーは含まない）
-			{
-				SGrepOption sGrepOptionNoSub = sGrepOption;
-				sGrepOptionNoSub.bGrepSubFolder = false;
-				bool bEnumCancelled = false;
-				std::vector<SGrepFileTask> vecTasks;
-				DoGrepTreeEnumerate(
-					&cDlgCancel, cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders,
-					sPath.c_str(), sPath.c_str(), sGrepOptionNoSub,
-					vecTasks, bEnumCancelled
-				);
-				if( bEnumCancelled ){ nGrepTreeResult = -1; break; }
-				if( !RunBatch(vecTasks) ){ nGrepTreeResult = -1; break; }
-			}
-
-			// バッチ1..N: 直下サブフォルダーをそれぞれ独立バッチで列挙・検索・解放
-			// → フォルダー順の出力順序を保証し、1バッチ分のみメモリに保持する
-			if( sGrepOption.bGrepSubFolder && nGrepTreeResult != -1 ){
-				CGrepEnumOptions cGrepEnumOptionsDir;
-				CGrepEnumFilterFolders cTopFolders;
-				cTopFolders.Enumerates(
-					sPath.c_str(), cGrepEnumKeys, cGrepEnumOptionsDir, cGrepExceptAbsFolders );
-
-				const int nFolderCount = cTopFolders.GetCount();
-				for( int fi = 0; fi < nFolderCount && nGrepTreeResult != -1; fi++ ){
-					std::wstring subFolder = sPath + L"\\" + cTopFolders.GetFileName(fi);
-					bool bEnumCancelled = false;
-					std::vector<SGrepFileTask> vecTasks;
-					DoGrepTreeEnumerate(
-						&cDlgCancel, cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders,
-						subFolder.c_str(), sPath.c_str(), sGrepOption,
-						vecTasks, bEnumCancelled
-					);
-					if( bEnumCancelled ){ nGrepTreeResult = -1; break; }
-					if( !RunBatch(vecTasks) ){ nGrepTreeResult = -1; break; }
-				}
-			}
-		}
-
-		// スレッドプールをシャットダウン: 全ワーカーに終了を通知してjoin
-		{
-			std::lock_guard<std::mutex> lk( poolMutex );
-			bPoolShutdown = true;
-		}
-		cvPoolStart.notify_all();
-		for( auto& w : poolWorkers ) w.join();
-
-		nHitCount = atomicHitCount.load();
+		int parallelHitCount = 0;
+		nGrepTreeResult = RunParallelGrep(
+			pcViewDst, &cDlgCancel,
+			std::wstring( pcmGrepKey->GetStringPtr() ),
+			sSearchOption, sGrepOption, vPaths,
+			cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders,
+			cmemMessage, parallelHitCount );
+		nHitCount = parallelHitCount;
 	}
 	if( -1 == nGrepTreeResult && sGrepOption.bGrepHeader ){
 		const wchar_t* p = LS( STR_GREP_SUSPENDED );	//L"中断しました。\r\n"
@@ -1382,7 +1109,7 @@ void CGrepAgent::DoGrepTreeEnumerate(
 		lpFileName = cGrepEnumFilterFiles.GetFileName( i );
 
 		DWORD dwNow = ::GetTickCount();
-		if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
+		if( pcDlgCancel != nullptr && dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
 			m_dwTickUICheck = dwNow;
 			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
 				bCancelled = true;
@@ -1396,7 +1123,7 @@ void CGrepAgent::DoGrepTreeEnumerate(
 				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
 			);
 		}
-		if( dwNow - m_dwTickUIFileName > UIFILENAME_INTERVAL_MILLISEC ){
+		if( pcDlgCancel != nullptr && dwNow - m_dwTickUIFileName > UIFILENAME_INTERVAL_MILLISEC ){
 			m_dwTickUIFileName = dwNow;
 			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
 		}
@@ -1430,7 +1157,7 @@ void CGrepAgent::DoGrepTreeEnumerate(
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
 
 			DWORD dwNow = ::GetTickCount();
-			if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
+			if( pcDlgCancel != nullptr && dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
 				m_dwTickUICheck = dwNow;
 				if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
 					bCancelled = true;
@@ -1462,11 +1189,11 @@ void CGrepAgent::DoGrepTreeEnumerate(
 			);
 			if( bCancelled ) return;
 
-			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszPath );
+			if( pcDlgCancel != nullptr ) ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszPath );
 		}
 	}
 
-	ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, L" " );
+	if( pcDlgCancel != nullptr ) ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, L" " );
 }
 
 /*!	@brief マッチした行番号と桁番号をGrep結果に出力する為に文字列化
@@ -1775,7 +1502,7 @@ int CGrepAgent::DoGrepFileWorker(
 		WCHAR szCpName[100];
 		if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 			if( IsValidCodeType(nCharCode) ){
-				wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
+				wcscpy_s( szCpName, _countof(szCpName), CCodeTypeName(nCharCode).Bracket() );
 				pszCodeName = szCpName;
 			}else{
 				CCodePage::GetNameBracket(szCpName, nCharCode);
@@ -2931,4 +2658,313 @@ CNativeW CGrepAgent::BuildGrepFooter(int nHitCount, bool bGrepReplace)
 	auto_sprintf( szBuffer, pszFormat, nHitCount );
 	cmemMessage.SetString( szBuffer );
 	return cmemMessage;
+}
+
+// 並列Grep: スレッドプールでファイル検索を並列化する
+// @retval -1 キャンセル   @retval 0 完了
+int CGrepAgent::RunParallelGrep(
+	CEditView*						pcViewDst,
+	CDlgCancel*						pcDlgCancel,
+	const std::wstring&				searchKey,
+	const SSearchOption&			sSearchOption,
+	const SGrepOption&				sGrepOption,
+	const std::vector<std::wstring>& vPaths,
+	CGrepEnumKeys&					cGrepEnumKeys,
+	CGrepEnumFiles&					cGrepExceptAbsFiles,
+	CGrepEnumFolders&				cGrepExceptAbsFolders,
+	CNativeW&						cmemMessage,
+	int&							nHitCountOut
+)
+{
+	int nGrepTreeResult = 0;
+
+	const std::vector<std::wstring>& regexPatterns = cGrepEnumKeys.m_vecExceptFileRegexPatterns;
+
+	// スレッド数 = max(設定値, 論理コア数 / 4)  ※設定値はiniファイルの nGrepThreadCount（1〜8）
+	const int nIniThreads = GetDllShareData().m_Common.m_sSearch.m_nGrepThreadCount;
+	const unsigned int nClampedIni = (unsigned int)std::max( 1, std::min( nIniThreads, 8 ) );
+	const unsigned int nThreads = std::max<unsigned int>(
+		nClampedIni,
+		std::thread::hardware_concurrency() / 4 );
+
+	// ヒット数（全バッチ共通・バッチ間で引き継ぐ）
+	std::atomic<int> atomicHitCount{ 0 };
+
+	// ===== スレッドプール: バッチ間でスレッドを再利用し生成・破棄コストを排除 =====
+	// バッチ番号インクリメントで新バッチを通知し、condition_variable で待機中ワーカーを起床させる。
+	std::mutex poolMutex;
+	std::condition_variable cvPoolStart;
+	size_t poolBatchId = 0;                             // バッチ番号（インクリメントで新バッチ通知）
+	bool bPoolShutdown = false;                         // true: ワーカーに終了を指示
+	const std::vector<SGrepFileTask>* pPoolBatch = nullptr; // 現在バッチのタスクリスト
+	std::atomic<size_t> poolNextTask{ 0 };              // 次に処理するタスクのインデックス
+	std::atomic<int>    poolBatchActive{ 0 };           // 現在バッチを処理中のワーカー数
+	std::atomic<bool>   bWorkCancelled{ false };        // true: キャンセル済み（バッチ間で維持）
+	std::mutex resultMutex;
+	CNativeW sharedMessage;
+	std::set<std::wstring> writtenBaseFolders;
+	std::set<std::wstring> writtenFolders;
+
+	// スレッドプールのワーカーを生成（1回のみ）。
+	// 各ワーカーはスレッドローカルの正規表現とバッファを持ち、毎回の再初期化を避ける。
+	std::vector<std::thread> poolWorkers;
+	poolWorkers.reserve( nThreads );
+	std::atomic<unsigned int> nActiveWorkers{ nThreads };  // 初期化成功したワーカー数（デッドロック防止用）
+	std::atomic<unsigned int> nInitDone{ 0 };             // 初期化完了ワーカー数（成功・失敗を含む、バリア用）
+	std::mutex initMutex;
+	std::condition_variable cvInitDone;
+
+	for( unsigned int t = 0; t < nThreads; t++ ){
+		poolWorkers.emplace_back( [&](){
+			size_t localBatchId = 0;
+
+			// --- スレッドローカル初期化（スレッド生存中に1回のみ実行）---
+			CBregexp localRegexp;
+			CSearchStringPattern localPattern;
+			try{
+				localPattern.SetPattern( nullptr,
+					searchKey.c_str(), searchKey.size(),
+					sSearchOption, &localRegexp );
+			}catch(...){
+				// 初期化失敗: 実働ワーカー数を減らし、バリア通知後シャットダウンまで待機
+				nActiveWorkers.fetch_sub( 1, std::memory_order_relaxed );
+				nInitDone.fetch_add( 1, std::memory_order_relaxed );
+				cvInitDone.notify_one();
+				std::unique_lock<std::mutex> lk( poolMutex );
+				cvPoolStart.wait( lk, [&]{ return bPoolShutdown; } );
+				return;
+			}
+
+			// 初期化成功: バリアへ通知
+			nInitDone.fetch_add( 1, std::memory_order_relaxed );
+			cvInitDone.notify_one();
+
+			std::vector<CBregexp> excludeRegexps( regexPatterns.size() );
+			for( size_t ri = 0; ri < regexPatterns.size(); ri++ ){
+				InitRegexp( nullptr, excludeRegexps[ri], false );
+				excludeRegexps[ri].Compile(
+					regexPatterns[ri].c_str(), CBregexp::optCaseSensitive );
+			}
+
+			CNativeW localMessage;
+			CNativeW localUnicodeBuffer;
+			localMessage.AllocStringBuffer( 4000 );
+			localUnicodeBuffer.AllocStringBuffer( 4000 );
+
+			while( true ){
+				// 新しいバッチまたはシャットダウンを待機
+				const std::vector<SGrepFileTask>* pBatch = nullptr;
+				{
+					std::unique_lock<std::mutex> lk( poolMutex );
+					cvPoolStart.wait( lk, [&]{
+						return poolBatchId > localBatchId || bPoolShutdown;
+					} );
+					if( bPoolShutdown && poolBatchId <= localBatchId ) break;
+					localBatchId = poolBatchId;
+					pBatch = pPoolBatch;
+				}
+
+				// バッチ処理（try/catch で例外をキャンセル扱い）
+				try{
+					while( true ){
+						const size_t idx = poolNextTask.fetch_add( 1, std::memory_order_relaxed );
+						if( idx >= pBatch->size() ) break;
+						if( bWorkCancelled.load(std::memory_order_acquire) ) break;
+
+						const SGrepFileTask& task = (*pBatch)[idx];
+
+						// 正規表現除外判定（フルパス全体に対してマッチング）
+						const int nFullPathLen = (int)task.fullPath.size();
+						bool bExcluded = false;
+						for( auto& reExcl : excludeRegexps ){
+							if( reExcl.Match( task.fullPath.c_str(), nFullPathLen, 0 ) ){
+								bExcluded = true;
+								break;
+							}
+						}
+						if( bExcluded ) continue;
+
+						// ファイル内検索
+						localMessage._SetStringLength(0);
+						const int fileHits = DoGrepFileWorker(
+							task, searchKey.c_str(),
+							sSearchOption, sGrepOption,
+							&localRegexp, localPattern,
+							localMessage, localUnicodeBuffer,
+							bWorkCancelled
+						);
+
+						if( fileHits == -1 ){
+							bWorkCancelled.store( true, std::memory_order_release );
+							break;
+						}
+
+						if( fileHits > 0 || localMessage.GetStringLength() > 0 ){
+							std::lock_guard<std::mutex> lk( resultMutex );
+							// フォルダーヘッダー重複排除（最初のマッチ時のみ出力）
+							if( sGrepOption.bGrepOutputBaseFolder &&
+							    writtenBaseFolders.find(task.baseFolder) == writtenBaseFolders.end() ){
+								writtenBaseFolders.insert( task.baseFolder );
+								sharedMessage.AppendString(
+									sGrepOption.bGrepSeparateFolder ? L"◎\"" : L"■\"" );
+								sharedMessage.AppendString( task.baseFolder.c_str() );
+								sharedMessage.AppendString( L"\"\r\n" );
+							}
+							if( sGrepOption.bGrepSeparateFolder &&
+							    writtenFolders.find(task.folder) == writtenFolders.end() ){
+								writtenFolders.insert( task.folder );
+								if( !task.folder.empty() ){
+									sharedMessage.AppendString( L"■\"" );
+									sharedMessage.AppendString( task.folder.c_str() );
+									sharedMessage.AppendString( L"\"\r\n" );
+								}else{
+									sharedMessage.AppendString( L"■\r\n" );
+								}
+							}
+							sharedMessage.AppendNativeData( localMessage );
+							atomicHitCount.fetch_add( fileHits, std::memory_order_relaxed );
+						}
+					}
+				}catch(...){
+					// 予期せぬ例外（std::bad_alloc 等）をキャンセル扱いにする
+					bWorkCancelled.store( true, std::memory_order_release );
+				}
+				// try/catch どちらの経路でも必ず実行し、デッドロックを防止する
+				poolBatchActive.fetch_sub( 1, std::memory_order_relaxed );
+			}
+		} );
+	}
+
+	// 全ワーカーの初期化完了を待ってからバッチ処理を開始（4-1: デッドロック防止）
+	{
+		std::unique_lock<std::mutex> lk( initMutex );
+		cvInitDone.wait( lk, [&]{ return nInitDone.load(std::memory_order_relaxed) >= nThreads; } );
+	}
+
+	// バッチ実行ラムダ: vecTasks をプールのワーカーに割り当て結果を出力する
+	// 戻り値: true=継続, false=キャンセル発生
+	auto RunBatch = [&]( const std::vector<SGrepFileTask>& vecTasks ) -> bool {
+		if( vecTasks.empty() ) return true;
+		if( bWorkCancelled.load(std::memory_order_acquire) ) return false;
+
+		// バッチ設定（ロック下でバッチ番号をインクリメントしてワーカーを起床）
+		{
+			std::lock_guard<std::mutex> lk( poolMutex );
+			pPoolBatch = &vecTasks;
+			poolNextTask.store( 0, std::memory_order_relaxed );
+			poolBatchActive.store( (int)nActiveWorkers.load(std::memory_order_relaxed), std::memory_order_relaxed );
+			++poolBatchId;
+		}
+		cvPoolStart.notify_all();
+
+		// メインスレッド: 全ワーカーが完全終了するまでUI更新・キャンセル監視・結果フラッシュを継続
+		while( poolBatchActive.load(std::memory_order_relaxed) > 0 ){
+			::Sleep(5);
+
+			DWORD dwNow = ::GetTickCount();
+			if( pcDlgCancel != nullptr && dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
+				m_dwTickUICheck = dwNow;
+				if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+					bWorkCancelled.store( true, std::memory_order_release );
+				}
+				if( pcDlgCancel->IsCanceled() ){
+					bWorkCancelled.store( true, std::memory_order_release );
+				}
+				CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ) );
+				::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT,
+				                 atomicHitCount.load(), FALSE );
+			}
+
+			// 共有バッファをリアルタイム出力にフラッシュ
+			{
+				std::lock_guard<std::mutex> lk( resultMutex );
+				if( sharedMessage.GetStringLength() > 0 ){
+					cmemMessage.AppendNativeData( sharedMessage );
+					sharedMessage._SetStringLength(0);
+				}
+			}
+			if( pcViewDst != nullptr &&
+			    0 < cmemMessage.GetStringLength() &&
+			    (::GetTickCount() - m_dwTickAddTail) > ADDTAIL_INTERVAL_MILLISEC ){
+				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+				cmemMessage._SetStringLength(0);
+			}
+		}
+
+		// 最終フラッシュ
+		{
+			std::lock_guard<std::mutex> lk( resultMutex );
+			if( sharedMessage.GetStringLength() > 0 ){
+				cmemMessage.AppendNativeData( sharedMessage );
+				sharedMessage._SetStringLength(0);
+			}
+		}
+		if( pcViewDst != nullptr && 0 < cmemMessage.GetStringLength() ){
+			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+			cmemMessage._SetStringLength(0);
+		}
+
+		return !bWorkCancelled.load(std::memory_order_acquire);
+	};
+
+	// 各検索パスをサブフォルダー単位でバッチ処理
+	for( int nPath = 0; nPath < (int)vPaths.size() && nGrepTreeResult != -1; nPath++ ){
+		std::wstring sPath = ChopYen( vPaths[nPath] );
+
+		// 検索パスが変わるたびにフォルダーヘッダー出力履歴をリセット
+		{
+			std::lock_guard<std::mutex> lk( resultMutex );
+			writtenBaseFolders.clear();
+			writtenFolders.clear();
+		}
+
+		// バッチ0: 検索パス直下のファイル（サブフォルダーは含まない）
+		{
+			SGrepOption sGrepOptionNoSub = sGrepOption;
+			sGrepOptionNoSub.bGrepSubFolder = false;
+			bool bEnumCancelled = false;
+			std::vector<SGrepFileTask> vecTasks;
+			DoGrepTreeEnumerate(
+				pcDlgCancel, cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders,
+				sPath.c_str(), sPath.c_str(), sGrepOptionNoSub,
+				vecTasks, bEnumCancelled
+			);
+			if( bEnumCancelled ){ nGrepTreeResult = -1; break; }
+			if( !RunBatch(vecTasks) ){ nGrepTreeResult = -1; break; }
+		}
+
+		// バッチ1..N: 直下サブフォルダーをそれぞれ独立バッチで列挙・検索・解放
+		if( sGrepOption.bGrepSubFolder && nGrepTreeResult != -1 ){
+			CGrepEnumOptions cGrepEnumOptionsDir;
+			CGrepEnumFilterFolders cTopFolders;
+			cTopFolders.Enumerates(
+				sPath.c_str(), cGrepEnumKeys, cGrepEnumOptionsDir, cGrepExceptAbsFolders );
+
+			const int nFolderCount = cTopFolders.GetCount();
+			for( int fi = 0; fi < nFolderCount && nGrepTreeResult != -1; fi++ ){
+				std::wstring subFolder = sPath + L"\\" + cTopFolders.GetFileName(fi);
+				bool bEnumCancelled = false;
+				std::vector<SGrepFileTask> vecTasks;
+				DoGrepTreeEnumerate(
+					pcDlgCancel, cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders,
+					subFolder.c_str(), sPath.c_str(), sGrepOption,
+					vecTasks, bEnumCancelled
+				);
+				if( bEnumCancelled ){ nGrepTreeResult = -1; break; }
+				if( !RunBatch(vecTasks) ){ nGrepTreeResult = -1; break; }
+			}
+		}
+	}
+
+	// スレッドプールをシャットダウン: 全ワーカーに終了を通知してjoin
+	{
+		std::lock_guard<std::mutex> lk( poolMutex );
+		bPoolShutdown = true;
+	}
+	cvPoolStart.notify_all();
+	for( auto& w : poolWorkers ) w.join();
+
+	nHitCountOut = atomicHitCount.load();
+	return nGrepTreeResult;
 }
