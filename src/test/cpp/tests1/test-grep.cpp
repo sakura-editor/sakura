@@ -1433,3 +1433,1094 @@ TEST_F(GrepRealFileTest, RunParallelGrep_SeparateFolderHeader_NoDuplicate)
 	}
 	EXPECT_EQ(1, folderCount) << "フォルダーヘッダー（■\\r\\n）が重複して出力されている";
 }
+
+// =============================================================================
+// 補助ヘルパー（セクション 10–12 共通）
+// =============================================================================
+
+namespace {
+
+/*! 複数パスへの RunParallelGrep を最小限の引数で呼ぶラッパー */
+int RunParallelGrepOnPaths(
+	CGrepAgent& agent,
+	CGrepEnumKeys& keys,
+	const std::vector<std::wstring>& vPaths,
+	std::wstring_view key,
+	const SSearchOption& sOpt,
+	const SGrepOption& gOpt,
+	CNativeW& cmemMessage,
+	int& nHit)
+{
+	CGrepEnumFiles cExAbsFiles;
+	CGrepEnumFolders cExAbsFolders;
+	return agent.RunParallelGrep(
+		nullptr, nullptr,
+		std::wstring(key), sOpt, gOpt, vPaths,
+		keys, cExAbsFiles, cExAbsFolders,
+		cmemMessage, nHit);
+}
+
+/*! str 中に sub が何回現れるかを数える */
+int CountOccurrences(const std::wstring& str, const std::wstring& sub)
+{
+	int count = 0;
+	size_t pos = 0;
+	while ((pos = str.find(sub, pos)) != std::wstring::npos) {
+		++count;
+		pos += sub.size();
+	}
+	return count;
+}
+
+} // namespace
+
+// =============================================================================
+// 10. BuildGrepHeader / BuildGrepFooter の分岐網羅
+// =============================================================================
+
+/*!
+ * @brief BuildGrepHeader: リテラルキーのヘッダー基本形式
+ * @remark キーが引用符で囲まれ、ファイルパターン・フォルダーが出力に含まれ、末尾が \r\n\r\n で終わることを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepHeader_LiteralKeyBasic)
+{
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepSubFolder = false;
+
+	const auto result = CGrepAgent::BuildGrepHeader(
+		L"needle", L"*.txt", L"C:\\test", sOpt, gOpt);
+	const std::wstring out(result.GetStringPtr(), result.GetStringLength());
+
+	EXPECT_NE(out.find(L"\"needle\""), std::wstring::npos) << "キーが引用符で囲まれて出力されること";
+	EXPECT_NE(out.find(L"*.txt"),      std::wstring::npos) << "ファイルパターンが出力に含まれること";
+	EXPECT_NE(out.find(L"C:\\test"),   std::wstring::npos) << "フォルダーが出力に含まれること";
+	ASSERT_GE(out.size(), 4u);
+	EXPECT_EQ(out.substr(out.size() - 4), std::wstring(L"\r\n\r\n")) << "末尾が \\r\\n\\r\\n で終わること";
+}
+
+/*!
+ * @brief BuildGrepHeader: 空キーはファイル一覧モード（キー引用符なし）
+ * @remark 空キーの場合はキー行が引用符なしで出力され、ファイル・フォルダーは通常通り出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepHeader_EmptyKeyIsFileListMode)
+{
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepSubFolder = false;
+
+	const auto result = CGrepAgent::BuildGrepHeader(
+		L"", L"*.cpp", L"C:\\src", sOpt, gOpt);
+	const std::wstring out(result.GetStringPtr(), result.GetStringLength());
+
+	EXPECT_EQ(out.find(L"\"\""),   std::wstring::npos) << "空キーは引用符で囲まれない";
+	EXPECT_NE(out.find(L"*.cpp"),  std::wstring::npos) << "ファイルパターンは出力される";
+	EXPECT_NE(out.find(L"C:\\src"), std::wstring::npos) << "フォルダーは出力される";
+}
+
+/*!
+ * @brief BuildGrepHeader: 置換文字列・クリップボード貼り付けの分岐
+ * @remark bGrepReplace=true 時に置換文字列が出力に含まれ、bGrepPaste=true 時は置換文字列が出力されないことを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepHeader_ReplaceAndPasteVariants)
+{
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepReplace = true;
+	gOpt.bGrepPaste   = false;
+
+	// 置換文字列あり
+	{
+		const auto result = CGrepAgent::BuildGrepHeader(
+			L"needle", L"*.txt", L"C:\\t", sOpt, gOpt, L"replacement");
+		const std::wstring out(result.GetStringPtr(), result.GetStringLength());
+		EXPECT_NE(out.find(L"\"replacement\""), std::wstring::npos)
+			<< "置換文字列が引用符で囲まれて出力される";
+	}
+
+	// クリップボードから貼り付け（置換文字列は出力されない）
+	{
+		gOpt.bGrepPaste = true;
+		const auto result = CGrepAgent::BuildGrepHeader(
+			L"needle", L"*.txt", L"C:\\t", sOpt, gOpt, L"replacement");
+		const std::wstring out(result.GetStringPtr(), result.GetStringLength());
+		EXPECT_EQ(out.find(L"\"replacement\""), std::wstring::npos)
+			<< "bGrepPaste=true のとき置換文字列は出力されない";
+	}
+}
+
+/*!
+ * @brief BuildGrepHeader: 各検索・出力オプションの分岐が出力に影響すること
+ * @remark 単語単位・文字コード固定・lineType・FileOnly・正規表現の各 ON/OFF で出力が変化することを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepHeader_SearchAndOutputOptionBranches)
+{
+	// 単語単位 ON: 追加文言で出力が長くなること
+	{
+		const auto base = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t",
+			MakeSearchOption(false, false, false), MakeGrepOption());
+		const auto word = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t",
+			MakeSearchOption(false, false, true), MakeGrepOption());
+		EXPECT_GT(word.GetStringLength(), base.GetStringLength())
+			<< "単語単位 ON のとき bWordOnly 文言が追加される";
+	}
+
+	// 文字コード固定（SJIS）: 自動検出と異なる文字コード表記が出力されること
+	{
+		auto gAuto = MakeGrepOption(); gAuto.nGrepCharSet = CODE_AUTODETECT;
+		auto gSjis = MakeGrepOption(); gSjis.nGrepCharSet = CODE_SJIS;
+		const auto rAuto = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), gAuto);
+		const auto rSjis = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), gSjis);
+		const std::wstring sAuto(rAuto.GetStringPtr(), rAuto.GetStringLength());
+		const std::wstring sSjis(rSjis.GetStringPtr(), rSjis.GetStringLength());
+		EXPECT_NE(sAuto, sSjis)
+			<< "自動検出と文字コード固定で文字コード表記が異なる";
+	}
+
+	// lineType=2（否ヒット行）: lineType=1 と出力が異なること
+	{
+		auto g1 = MakeGrepOption(); g1.nGrepOutputLineType = 1;
+		auto g2 = MakeGrepOption(); g2.nGrepOutputLineType = 2;
+		const auto r1 = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), g1);
+		const auto r2 = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), g2);
+		const std::wstring s1(r1.GetStringPtr(), r1.GetStringLength());
+		const std::wstring s2(r2.GetStringPtr(), r2.GetStringLength());
+		EXPECT_NE(s1, s2)
+			<< "lineType=1 と lineType=2 で異なる文言が出力される";
+	}
+
+	// bGrepOutputFileOnly=true: 文言追加で出力が長くなること
+	{
+		auto gBase = MakeGrepOption(); gBase.bGrepOutputFileOnly = false;
+		auto gFile = MakeGrepOption(); gFile.bGrepOutputFileOnly = true;
+		const auto rBase = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), gBase);
+		const auto rFile = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), gFile);
+		EXPECT_GT(rFile.GetStringLength(), rBase.GetStringLength())
+			<< "bGrepOutputFileOnly=true のとき ファイル毎最初のみ 文言が追加される";
+	}
+
+	// 正規表現 ON: 正規表現DLL文言で出力が長くなること
+	{
+		const auto rBase = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), MakeGrepOption());
+		const auto rRegex = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(true, false), MakeGrepOption());
+		EXPECT_GT(rRegex.GetStringLength(), rBase.GetStringLength())
+			<< "正規表現 ON のとき正規表現DLL文言が追加される";
+
+		// 置換・正規表現・lineType=0・貼り付けなし → 1行目のみ表示の分岐
+		auto gRep = MakeGrepOption();
+		gRep.bGrepReplace = true;
+		gRep.bGrepPaste   = false;
+		gRep.nGrepOutputLineType = 0;
+		const auto rFirstLine = CGrepAgent::BuildGrepHeader(
+			L"key", L"*.txt", L"C:\\t", MakeSearchOption(true, false), gRep, L"rep");
+		EXPECT_GT(rFirstLine.GetStringLength(), 0);
+	}
+}
+
+/*!
+ * @brief BuildGrepFooter: 通常検索と置換で書式が異なり、どちらもヒット数を含む
+ * @remark BuildGrepFooter(42, false) と BuildGrepFooter(42, true) がそれぞれ "42" を含み、
+ *         かつ互いに異なる文字列になることを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepFooter_SearchAndReplaceFormats)
+{
+	const auto rSearch  = CGrepAgent::BuildGrepFooter(42, false);
+	const auto rReplace = CGrepAgent::BuildGrepFooter(42, true);
+	const std::wstring sSearch (rSearch .GetStringPtr(), rSearch .GetStringLength());
+	const std::wstring sReplace(rReplace.GetStringPtr(), rReplace.GetStringLength());
+
+	EXPECT_NE(sSearch.find(L"42"),  std::wstring::npos) << "通常フッターにヒット数が含まれる";
+	EXPECT_NE(sReplace.find(L"42"), std::wstring::npos) << "置換フッターにヒット数が含まれる";
+	EXPECT_NE(sSearch, sReplace)                        << "通常と置換でフッター文字列が異なる";
+}
+
+// =============================================================================
+// 11. FormatGrepResultLine の出力形式
+// =============================================================================
+
+/*!
+ * @brief FormatGrepResultLine: style=1 + bGrepOutputBaseFolder=true で行頭に ・ が付き CRLF 終端
+ * @remark ノーマルスタイルでベースフォルダー表示が ON のとき、先頭文字が ・ になり CRLF で終わることを確認する。
+ */
+TEST_F(GrepRealFileTest, FormatGrepResultLine_NormalStyleWithFolderBullet)
+{
+	CNativeW out;
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputStyle      = 1;
+	gOpt.bGrepOutputBaseFolder = true;
+	gOpt.nGrepOutputLineType   = 1;
+
+	CGrepAgent::FormatGrepResultLine(
+		out,
+		L"foo.cpp", L"",
+		1, 1,
+		L"needle in a haystack", 20, 0,
+		L"needle", 6,
+		gOpt);
+
+	const std::wstring result(out.GetStringPtr(), out.GetStringLength());
+	ASSERT_FALSE(result.empty());
+	EXPECT_EQ(result[0], L'・') << "ベースフォルダー表示 ON のとき行頭は ・ (U+30FB)";
+	ASSERT_GE(result.size(), 2u);
+	EXPECT_EQ(result.substr(result.size() - 2), std::wstring(L"\r\n")) << "CRLF 終端";
+}
+
+/*!
+ * @brief FormatGrepResultLine: style=2（WZ風）で行頭 ・(行番号,桁) 形式、ファイルパス非表示
+ * @remark WZ風スタイルは ・(<行>,<桁>): の行頭形式になり、ファイルパスは含まれないことを確認する。
+ */
+TEST_F(GrepRealFileTest, FormatGrepResultLine_WZStyle)
+{
+	CNativeW out;
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputStyle    = 2;
+	gOpt.nGrepOutputLineType = 1;
+
+	CGrepAgent::FormatGrepResultLine(
+		out,
+		L"bar.cpp", L"",
+		5, 3,
+		L"line content", 12, 0,
+		L"line", 4,
+		gOpt);
+
+	const std::wstring result(out.GetStringPtr(), out.GetStringLength());
+	ASSERT_FALSE(result.empty());
+	EXPECT_EQ(result[0], L'・') << "WZ風は行頭 ・";
+	EXPECT_NE(result.find(L'('), std::wstring::npos) << "行番号を括弧付きで出力する";
+	EXPECT_EQ(result.find(L"bar.cpp"), std::wstring::npos)
+		<< "ファイルパスは FormatGrepResultLine では出力しない";
+}
+
+/*!
+ * @brief FormatGrepResultLine: style=3 + lineType=0 でマッチ部分のみ出力され EOL 付加を制御
+ * @remark 結果のみモード・該当部分出力のとき、マッチ末尾が EOL でなければ \r\n を付加し、
+ *         EOL で終わる場合は余分な \r\n を付加しないことを確認する。
+ */
+TEST_F(GrepRealFileTest, FormatGrepResultLine_ResultOnlyMatchPartEol)
+{
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputStyle    = 3;
+	gOpt.nGrepOutputLineType = 0;
+
+	// Case 1: マッチ末尾が EOL でない → \r\n が追加される
+	{
+		CNativeW out;
+		CGrepAgent::FormatGrepResultLine(
+			out, L"f.cpp", L"",
+			1, 1,
+			L"needle in haystack\r\n", 20, 2,
+			L"needle", 6,
+			gOpt);
+		const std::wstring result(out.GetStringPtr(), out.GetStringLength());
+		EXPECT_EQ(result, std::wstring(L"needle\r\n"))
+			<< "マッチ末尾が EOL でない場合 \\r\\n を追加する";
+	}
+
+	// Case 2: マッチ末尾が \n → bEOL=false → 余分な \r\n を追加しない
+	{
+		CNativeW out;
+		const wchar_t matchData[] = L"needle\n";
+		CGrepAgent::FormatGrepResultLine(
+			out, L"f.cpp", L"",
+			1, 1,
+			matchData, 7, 1,
+			matchData, 7,
+			gOpt);
+		const std::wstring result(out.GetStringPtr(), out.GetStringLength());
+		EXPECT_EQ(result, std::wstring(L"needle\n"))
+			<< "マッチ末尾が \\n の場合 \\r\\n を追加しない";
+	}
+}
+
+// =============================================================================
+// 12. RunParallelGrep / DoGrepFileWorker 分岐追加
+// =============================================================================
+
+/*!
+ * @brief RunParallelGrep: ワーカースレッドローカルの正規表現コンパイル経路
+ * @remark 正規表現キーを渡したとき、ワーカースレッド内で正規表現がコンパイルされ正しく検索されることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_RegexKeySearch)
+{
+	m_temp->WriteEncodedTextFile(L"regex.txt", CODE_UTF8,
+		L"id=001\nid=042\nname=alice\nid=999\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const auto sOpt = MakeSearchOption(/*regex=*/true, /*caseSensitive=*/true);
+	const auto gOpt = MakeGrepOption();
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"^id=\\d+$", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(3, nHit);
+}
+
+/*!
+ * @brief RunParallelGrep: 単語単位検索分岐（CreateWordList / SearchStringWord）
+ * @remark bWordOnly=true で "word" を検索したとき、単独の "word" のみヒットし
+ *         "words" 内の "word" はマッチしないことを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_WordOnlySearch)
+{
+	m_temp->WriteEncodedTextFile(L"word.txt", CODE_UTF8, L"word\nwords\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const auto sOpt = MakeSearchOption(false, false, /*wordOnly=*/true);
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputLineType = 1;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"word", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(1, nHit) << "\"words\" 内の \"word\" は単語境界なしでマッチしない";
+}
+
+/*!
+ * @brief RunParallelGrep: lineType=0（該当部分）で 1 行内の複数ヒットをカウント
+ * @remark nGrepOutputLineType=0 のとき 1 行内の全マッチを数えるため、
+ *         2 回 needle が現れる行は 2 件となることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_MatchPartCountsAllHitsInLine)
+{
+	m_temp->WriteEncodedTextFile(L"multi.txt", CODE_UTF8, L"needle needle\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputLineType = 0;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"needle", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(2, nHit) << "1 行に 2 件のマッチがあれば lineType=0 では 2 件カウント";
+}
+
+/*!
+ * @brief RunParallelGrep: lineType=2（否ヒット行）の件数と出力内容
+ * @remark nGrepOutputLineType=2 のとき、ヒットしなかった行のみカウント・出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_NoHitLineOutput)
+{
+	m_temp->WriteEncodedTextFile(L"nohit.txt", CODE_UTF8,
+		L"target\nother\nelse\ntarget\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputLineType = 2;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"target", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(2, nHit) << "否ヒット行は 2 行（other・else）";
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	EXPECT_NE(out.find(L"other"), std::wstring::npos) << "否ヒット行 other が出力される";
+	EXPECT_NE(out.find(L"else"),  std::wstring::npos) << "否ヒット行 else が出力される";
+}
+
+/*!
+ * @brief RunParallelGrep: bGrepOutputFileOnly=true でファイル毎最初の 1 件のみ
+ * @remark 5 行すべてヒットするファイルを検索したとき、bGrepOutputFileOnly=true では 1 件のみ返ることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_OutputFileOnly)
+{
+	m_temp->WriteEncodedTextFile(L"fileonly.txt", CODE_UTF8,
+		L"needle\nneedle\nneedle\nneedle\nneedle\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	CNativeW cmemMessage;
+	int nHit = 0;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepOutputFileOnly = true;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"needle", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(1, nHit) << "bGrepOutputFileOnly=true ではファイル毎最初の 1 件のみ";
+}
+
+/*!
+ * @brief RunParallelGrep: 複数検索パスでパスごとにヘッダー履歴がリセットされる
+ * @remark 2 つの独立ディレクトリを vPaths に渡したとき、各パスのベースフォルダーヘッダーが
+ *         それぞれ 1 回ずつ出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_MultiplePathsHeaderResetPerPath)
+{
+	GrepTempDir dir1, dir2;
+	dir1.WriteEncodedTextFile(L"a.txt", CODE_UTF8, L"needle\n");
+	dir2.WriteEncodedTextFile(L"b.txt", CODE_UTF8, L"needle\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepOutputBaseFolder = true;
+	gOpt.bGrepSeparateFolder   = false;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	const std::vector<std::wstring> vPaths = {
+		dir1.Root().wstring(),
+		dir2.Root().wstring()
+	};
+	CNativeW cmemMessage;
+	int nHit = 0;
+	CGrepEnumFiles cExAbsFiles;
+	CGrepEnumFolders cExAbsFolders;
+
+	const int rc = agent.RunParallelGrep(
+		nullptr, nullptr,
+		L"needle", sOpt, gOpt, vPaths,
+		keys, cExAbsFiles, cExAbsFolders,
+		cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(2, nHit);
+
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	EXPECT_EQ(1, CountOccurrences(out, L"■\"" + dir1.Root().wstring() + L"\""))
+		<< "dir1 のヘッダーが 1 回のみ出力される";
+	EXPECT_EQ(1, CountOccurrences(out, L"■\"" + dir2.Root().wstring() + L"\""))
+		<< "dir2 のヘッダーが 1 回のみ出力される";
+}
+
+/*!
+ * @brief RunParallelGrep: ファイルのない空ディレクトリで 0 件・正常終了しハングしない
+ * @remark ファイルが存在しない一時ディレクトリを検索したとき、タスク 0 件バッチの早期リターンしハングしないことを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_EmptyDirectoryNoHang)
+{
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption();
+	CNativeW cmemMessage;
+	int nHit = 0;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"needle", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(0, nHit);
+}
+
+/*!
+ * @brief RunParallelGrep: # 除外フォルダーにより DoGrepTreeEnumerate でフォルダーが事前除外される
+ * @remark #excluded キーで excluded/ フォルダーを除外したとき、keep/ のファイルのみがヒットすることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_ExcludeFolderHashKey)
+{
+	m_temp->WriteEncodedTextFile(L"excluded/a.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"keep/b.txt",     CODE_UTF8, L"needle\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt;#excluded");
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepSubFolder = true;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	CNativeW cmemMessage;
+	int nHit = 0;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"needle", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(1, nHit) << "excluded/ は #excluded で除外されるため keep/ の 1 件のみ";
+}
+
+/*!
+ * @brief RunParallelGrep: bGrepSeparateFolder=true でサブフォルダー名ヘッダーが 1 回のみ出力される
+ * @remark sub/ に 3 件ヒットがあるとき、フォルダーヘッダー ■"<sub_path>" が 1 回だけ出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_SeparateFolderSubfolderNameHeader)
+{
+	m_temp->WriteEncodedTextFile(L"sub/c.txt", CODE_UTF8,
+		L"needle\nneedle\nneedle\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepSubFolder      = true;
+	gOpt.bGrepSeparateFolder = true;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	CNativeW cmemMessage;
+	int nHit = 0;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"needle", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(3, nHit);
+
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	const std::wstring subPath = (m_temp->Root() / L"sub").wstring();
+	EXPECT_EQ(1, CountOccurrences(out, L"■\"" + subPath + L"\""))
+		<< "sub フォルダーヘッダーが 1 回のみ出力される";
+}
+
+/*!
+ * @brief RunParallelGrep: 空キーはファイル一覧モードで 1 ファイル 1 件・ファイル名出力
+ * @remark 空キーの場合、ファイル内容を検索せず 1 ファイルあたり 1 件としてファイル名を出力することを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_EmptyKeyListsFiles)
+{
+	m_temp->WriteEncodedTextFile(L"list.txt", CODE_UTF8, L"content\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption();
+	CNativeW cmemMessage;
+	int nHit = 0;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(1, nHit) << "空キーはファイル 1 件につき 1 カウント";
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	EXPECT_NE(out.find(L"list.txt"), std::wstring::npos) << "ファイル名が出力に含まれる";
+}
+
+/*!
+ * @brief RunParallelGrep: ヒット 0 件で rc=0・正常終了
+ * @remark マッチしないキーで検索したとき、戻り値 0・ヒット数 0 で正常終了することを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_NoHitsReturnsZero)
+{
+	m_temp->WriteEncodedTextFile(L"empty.txt", CODE_UTF8, L"no match here\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption();
+	CNativeW cmemMessage;
+	int nHit = 0;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"needle", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(0, nHit);
+}
+
+/*!
+ * @brief RunParallelGrep: WZ風スタイル（style=2）でファイルヘッダーが 1 回のみ出力される
+ * @remark 3 件ヒットするファイルを WZ風スタイルで検索したとき、■"<filepath>" ヘッダーが 1 回だけ出ることを確認する。
+ */
+TEST_F(GrepRealFileTest, RunParallelGrep_WZStyleFileHeaderOnce)
+{
+	m_temp->WriteEncodedTextFile(L"wz.txt", CODE_UTF8,
+		L"needle\nneedle\nneedle\n");
+
+	CGrepAgent agent;
+	CGrepEnumKeys keys;
+	keys.SetFileKeys(L"*.txt");
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputStyle      = 2;
+	gOpt.bGrepOutputBaseFolder = false;
+	gOpt.bGrepSeparateFolder   = false;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	CNativeW cmemMessage;
+	int nHit = 0;
+	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
+
+	const int rc = RunParallelGrepOnPaths(agent, keys, vPaths, L"needle", sOpt, gOpt, cmemMessage, nHit);
+
+	EXPECT_EQ(0, rc);
+	EXPECT_EQ(3, nHit);
+
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	EXPECT_EQ(1, CountOccurrences(out, L"■\""))
+		<< "WZ風ファイルヘッダーが 1 回のみ出力される";
+}
+
+// =============================================================================
+// 13. DoGrepFileWorker / FormatGrepResultLine / BuildGrepHeader 未カバー分割
+// =============================================================================
+
+/*!
+ * @brief DoGrepFileWorker: 存在しないファイルは CError_FileOpen を捕捉し 0 件（エラーメッセージ
+ * @remark FileOpen 失敗時に catch(CError_FileOpen) 経路が開き、戻り値 0 と
+ *         フルパスを含むエラーメッセージが結果バッファに追記されることを確認する。
+ */
+TEST_F(GrepRealFileTest, FileWorker_FileOpenErrorReturnsZeroWithMessage)
+{
+	const std::filesystem::path path = m_temp->Sub(L"not_exist.txt");	// 作成しない
+
+	SGrepFileTask task;
+	task.fullPath   = path.wstring();
+	task.fileName   = path.filename().wstring();
+	task.baseFolder = m_temp->Root().wstring();
+	task.folder     = task.baseFolder;
+	task.relPath    = task.fileName;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption();
+
+	CSearchStringPattern pattern;
+	ASSERT_TRUE(pattern.SetPattern(nullptr, L"needle", 6, sOpt, nullptr));
+
+	CNativeW cmemMessage;
+	CNativeW cUnicodeBuffer;
+	std::atomic<bool> cancel{ false };
+
+	CGrepAgent agent;
+	const int hits = agent.DoGrepFileWorker(
+		task, L"needle", sOpt, gOpt,
+		nullptr, pattern, cmemMessage, cUnicodeBuffer, cancel);
+
+	EXPECT_EQ(0, hits) << "ファイルオープン失敗は 0 件で正常復帰する";
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	EXPECT_NE(out.find(path.wstring()), std::wstring::npos)
+		<< "エラーメッセージに対象フルパスが含まれる";
+}
+
+/*!
+ * @brief DoGrepFileWorker: 事前キャンセル済みフラグで走査前に -1 を返す
+ * @remark FileOpen 直後のキャンセルチェック（行ループ前）で即時 -1 を返すことを確認する。
+ */
+TEST_F(GrepRealFileTest, FileWorker_PreCancelledReturnsMinusOne)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"pre.txt", CODE_UTF8, L"needle\n");
+
+	CGrepAgent agent;
+	std::atomic<bool> cancel{ true };	// 走査開始前にキャンセル済み
+
+	EXPECT_EQ(-1, RunGrepFileWorker(agent, path, L"needle",
+		MakeSearchOption(false, false), MakeGrepOption(), cancel));
+}
+
+/*!
+ * @brief DoGrepFileWorker: 空キー時の出力スタイル書式分割マトリクス
+ * @remark 空キー（ファイル一覧モード）で style=1/2/3 × ベースフォルダー/フォルダー毎表示の
+ *         組み合わせごとに正しい行頭書式（●/■/■ /装飾なし）が選択されることを確認する。
+ *         文字コードは固定（CODE_UTF8）として自動判定分岐を踏まずに書式分岐のみを検証する。
+ */
+TEST_F(GrepRealFileTest, FileWorker_EmptyKeyOutputStyleVariants)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"name.txt", CODE_UTF8, L"x\n");
+
+	const auto run = [&](int style, bool baseFolder, bool sepFolder) -> std::wstring {
+		SGrepFileTask task;
+		task.fullPath   = path.wstring();
+		task.fileName   = path.filename().wstring();
+		task.baseFolder = m_temp->Root().wstring();
+		task.folder     = task.baseFolder;
+		task.relPath    = task.fileName;
+
+		const auto sOpt = MakeSearchOption(false, false);
+		auto gOpt = MakeGrepOption(CODE_UTF8);	// 文字コード固定で自動判定を回避
+		gOpt.nGrepOutputStyle      = style;
+		gOpt.bGrepOutputBaseFolder = baseFolder;
+		gOpt.bGrepSeparateFolder   = sepFolder;
+
+		CSearchStringPattern pattern;
+		pattern.SetPattern(nullptr, L"", 0, sOpt, nullptr);	// 空キーでは未使用
+
+		CNativeW cmemMessage;
+		CNativeW cUnicodeBuffer;
+		std::atomic<bool> cancel{ false };
+		CGrepAgent agent;
+		const int hits = agent.DoGrepFileWorker(
+			task, L"", sOpt, gOpt,
+			nullptr, pattern, cmemMessage, cUnicodeBuffer, cancel);
+		EXPECT_EQ(1, hits) << "style=" << style
+			<< " base=" << baseFolder << " sep=" << sepFolder;
+		return std::wstring(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	};
+
+	// style=1 + ベースフォルダー表示: 行頭 ・"（中黒 U+30FB）
+	{
+		const std::wstring out = run(1, true, false);
+		EXPECT_EQ(0u, out.find(L"・\"")) << "style=1/base のとき行頭は ・\"";
+	}
+	// style=2 + ベースフォルダー表示: 行頭 ■"（空白なし）
+	{
+		const std::wstring out = run(2, true, false);
+		EXPECT_EQ(0u, out.find(L"■\""))  << "style=2/base のとき行頭は ■\"";
+	}
+	// style=2 + フォルダー毎表示: 行頭 ◆"
+	{
+		const std::wstring out = run(2, false, true);
+		EXPECT_EQ(0u, out.find(L"◆\""))  << "style=2/sep のとき行頭は ◆\"";
+	}
+	// style=3 装飾なし: フルパス + CRLF のみ
+	{
+		const std::wstring out = run(3, false, false);
+		EXPECT_EQ(0u, out.find(path.wstring())) << "style=3 はフルパスから始まる";
+		EXPECT_EQ(out.find(L"■"),  std::wstring::npos);
+		EXPECT_EQ(out.find(L"・"), std::wstring::npos);
+	}
+}
+
+/*!
+ * @brief FormatGrepResultLine: 該当行出力（lineType=1）の 2000 文字クランプ
+ * @remark style=1 で行本文が 2000 文字を超える場合、出力が 2000 文字に切り詰められることを確認する。
+ */
+TEST_F(GrepRealFileTest, FormatGrepResultLine_LongLineIsTruncatedTo2000)
+{
+	const std::wstring longLine(3000, L'a');
+
+	CNativeW out;
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputStyle    = 1;
+	gOpt.nGrepOutputLineType = 1;
+
+	CGrepAgent::FormatGrepResultLine(
+		out, L"f.cpp", L"",
+		1, 1,
+		longLine.c_str(), static_cast<int>(longLine.size()), 0,
+		longLine.c_str(), 6,
+		gOpt);
+
+	const std::wstring result(out.GetStringPtr(), out.GetStringLength());
+	EXPECT_NE(result.find(std::wstring(2000, L'a')), std::wstring::npos)
+		<< "2000 文字までは出力される";
+	EXPECT_EQ(result.find(std::wstring(2001, L'a')), std::wstring::npos)
+		<< "2001 文字以上は出力されない";
+}
+
+/*!
+ * @brief FormatGrepResultLine: 該当部分出力（lineType=0）の 2500 文字クランプと EOL 付加
+ * @remark style=3 でもマッチ部分が 2500 文字を超える場合に切り詰められる。
+ *         切り詰め後の末尾が改行でなく \r\n が付加されることを確認する。
+ */
+TEST_F(GrepRealFileTest, FormatGrepResultLine_LongMatchIsTruncatedTo2500)
+{
+	const std::wstring longMatch(3000, L'b');
+
+	CNativeW out;
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputStyle    = 3;
+	gOpt.nGrepOutputLineType = 0;
+
+	CGrepAgent::FormatGrepResultLine(
+		out, L"f.cpp", L"",
+		1, 1,
+		longMatch.c_str(), static_cast<int>(longMatch.size()), 0,
+		longMatch.c_str(), static_cast<int>(longMatch.size()),
+		gOpt);
+
+	EXPECT_EQ(2502, out.GetStringLength())
+		<< "マッチ部分 2500 文字 + \\r\\n の合計 2502 文字";
+	const std::wstring result(out.GetStringPtr(), out.GetStringLength());
+	EXPECT_EQ(result.substr(result.size() - 2), std::wstring(L"\r\n"));
+}
+
+/*!
+ * @brief BuildGrepHeader: nullptr 引数を空文字列として扱い、クラッシュしない
+ * @remark pszKey / pszFile / pszFolder に nullptr を渡しても既定値（空文字列）で
+ *         安全にヘッダーが生成されることを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepHeader_NullArgumentsAreHandled)
+{
+	const auto result = CGrepAgent::BuildGrepHeader(
+		nullptr, nullptr, nullptr,
+		MakeSearchOption(false, false), MakeGrepOption());
+
+	EXPECT_GT(result.GetStringLength(), 0) << "nullptr 引数でもヘッダーが生成される";
+	ASSERT_GE(result.GetStringLength(), 4);
+	const std::wstring out(result.GetStringPtr(), result.GetStringLength());
+	EXPECT_EQ(out.substr(out.size() - 4), std::wstring(L"\r\n\r\n"));
+}
+
+// =============================================================================
+// 14. 未カバー else / catch 分岐の追加カバレッジ
+// =============================================================================
+
+/*!
+ * @brief DoGrepFileWorker: 空キー（自動判定）不存在ファイルで DetectError 分岐
+ * @remark 空キー（ファイル一覧モード）かつ CODE_AUTODETECT のとき、存在しないファイルの
+ *         文字コード判定が CODE_ERROR となり、!IsValidCodeOrCPType 分岐で
+ *         "(DetectError)" をコード名として出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, FileWorker_EmptyKeyDetectErrorOnMissingFile)
+{
+	const std::filesystem::path path = m_temp->Sub(L"missing.txt");	// 作成しない
+
+	SGrepFileTask task;
+	task.fullPath   = path.wstring();
+	task.fileName   = path.filename().wstring();
+	task.baseFolder = m_temp->Root().wstring();
+	task.folder     = task.baseFolder;
+	task.relPath    = task.fileName;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption(CODE_AUTODETECT);	// 自動判定経路
+
+	CSearchStringPattern pattern;
+	pattern.SetPattern(nullptr, L"", 0, sOpt, nullptr);	// 空キーでは未使用
+
+	CNativeW cmemMessage;
+	CNativeW cUnicodeBuffer;
+	std::atomic<bool> cancel{ false };
+
+	CGrepAgent agent;
+	const int hits = agent.DoGrepFileWorker(
+		task, L"", sOpt, gOpt,
+		nullptr, pattern, cmemMessage, cUnicodeBuffer, cancel);
+
+	EXPECT_EQ(1, hits) << "空キーは判定エラーでもファイル 1 件としてカウントする";
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	EXPECT_NE(out.find(L"(DetectError)"), std::wstring::npos)
+		<< "判定エラー時はコード名に (DetectError) が出力される";
+	EXPECT_NE(out.find(path.wstring()), std::wstring::npos)
+		<< "ファイルパスが出力に含まれる";
+}
+
+/*!
+ * @brief DoGrepFileWorker: 正規表現のゼロ長マッチで matchlen 補正分岐を経て無限ループしない
+ * @remark lineType=0（該当部分出力）でゼロ長マッチを許す正規表現（b*）を与えると、
+ *         matchlen <= 0 の補正分岐（GetSizeOfChar による前進）が機能して
+ *         走査が正常終了することを確認する。
+ */
+TEST_F(GrepRealFileTest, FileWorker_RegexZeroLengthMatchAdvances)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"zero.txt", CODE_UTF8, L"xb\n");
+
+	CGrepAgent agent;
+	const auto sOpt = MakeSearchOption(/*regex=*/true, /*caseSensitive=*/true);
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputLineType = 0;	// 該当部分出力（1 行内の複数マッチ継続ループ）
+
+	const int hits = RunGrepFileWorker(agent, path, L"b*", sOpt, gOpt);
+
+	// マッチ件数は正規表現エンジンのゼロ長マッチ仕様に依存するため、
+	// 正常終了（ハングしない）と 1 件以上のマッチのみを検証する。
+	EXPECT_GE(hits, 1);
+}
+
+/*!
+ * @brief BuildGrepHeader: 英大文字小文字を区別する（bLoHiCase=true）分岐
+ * @remark bLoHiCase の ON/OFF でヘッダー記述（区別する/区別しない）が切り替わることを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepHeader_CaseSensitiveBranch)
+{
+	const auto rIgnore = CGrepAgent::BuildGrepHeader(
+		L"key", L"*.txt", L"C:\\t",
+		MakeSearchOption(false, /*caseSensitive=*/false), MakeGrepOption());
+	const auto rCase = CGrepAgent::BuildGrepHeader(
+		L"key", L"*.txt", L"C:\\t",
+		MakeSearchOption(false, /*caseSensitive=*/true), MakeGrepOption());
+
+	const std::wstring sIgnore(rIgnore.GetStringPtr(), rIgnore.GetStringLength());
+	const std::wstring sCase  (rCase.GetStringPtr(),   rCase.GetStringLength());
+	EXPECT_NE(sIgnore, sCase)
+		<< "大文字小文字区別の ON/OFF でヘッダー記述が切り替わる";
+}
+
+/*!
+ * @brief BuildGrepHeader: 置換時（lineType=0 でも一致した箇所を出力）分岐
+ * @remark bGrepReplace=false かつ nGrepOutputLineType=0 のとき、lineType=1 とは
+ *         異なる記述（STR_GREP_SHOW_MATCH_AREA）が出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, BuildGrepHeader_MatchAreaLineTypeZero)
+{
+	auto g0 = MakeGrepOption(); g0.nGrepOutputLineType = 0;
+	auto g1 = MakeGrepOption(); g1.nGrepOutputLineType = 1;
+
+	const auto r0 = CGrepAgent::BuildGrepHeader(
+		L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), g0);
+	const auto r1 = CGrepAgent::BuildGrepHeader(
+		L"key", L"*.txt", L"C:\\t", MakeSearchOption(false, false), g1);
+
+	const std::wstring s0(r0.GetStringPtr(), r0.GetStringLength());
+	const std::wstring s1(r1.GetStringPtr(), r1.GetStringLength());
+	EXPECT_NE(s0, s1)
+		<< "lineType=0（一致した箇所）と lineType=1（一致した行）で記述が異なる";
+}
+
+// =============================================================================
+// 15. DoGrep 本体のスモークテスト（EditorTestSuite + stdout 経路）
+// =============================================================================
+
+namespace {
+
+/*!
+ * Windows 標準ハンドルの一時差し替え RAII ガード（test-cgrepagent-flow.cpp と同手法）
+ */
+class GrepStdHandleGuard {
+public:
+	GrepStdHandleGuard(DWORD id, HANDLE replacement)
+		: m_id(id), m_saved(::GetStdHandle(id))
+	{
+		::SetStdHandle(m_id, replacement);
+	}
+	~GrepStdHandleGuard()
+	{
+		::SetStdHandle(m_id, m_saved);
+	}
+	GrepStdHandleGuard(const GrepStdHandleGuard&) = delete;
+	GrepStdHandleGuard& operator=(const GrepStdHandleGuard&) = delete;
+
+private:
+	DWORD  m_id;
+	HANDLE m_saved;
+};
+
+/*!
+ * DoGrep を stdout モードで実行し、ヒット数と stdout 出力（ANSI文字列）を返す
+ *
+ * bGrepStdout=true にし AddTail は標準出力へ書き込む（GA-18 で実証済みの安全経路）。
+ * 標準出力は一時ファイルへ差し替えて回収する。
+ * bGrepCurFolder=true でカレントディレクトリ変更を抑止する。
+ */
+DWORD RunDoGrepStdout(
+	const std::wstring& key,
+	const std::wstring& filePattern,
+	const std::wstring& folder,
+	std::string& capturedStdout)
+{
+	capturedStdout.clear();
+
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_stdout.txt";
+
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ,
+		FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hTempFile == INVALID_HANDLE_VALUE) {
+		ADD_FAILURE() << "failed to create stdout capture file";
+		return 0;
+	}
+	struct HandleDeleter {
+		void operator()(HANDLE h) const {
+			if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h);
+		}
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		CGrepAgent agent;
+
+		const CNativeW cmKey(key.c_str());
+		const CNativeW cmRep(L"");
+		const CNativeW cmFile(filePattern.c_str());
+		const CNativeW cmFolder(folder.c_str());
+
+		SSearchOption sOpt;
+		sOpt.Reset();
+
+		hits = agent.DoGrep(
+			pView,
+			false,					// bGrepReplace
+			&cmKey, &cmRep, &cmFile, &cmFolder,
+			true,					// bGrepCurFolder: カレントディレクトリを変更しない
+			FALSE,					// bGrepSubFolder
+			true,					// bGrepStdout: stdout 経路（headless 安全）
+			true,					// bGrepHeader: ヘッダー組み立てコードを実行する
+			sOpt,
+			CODE_AUTODETECT,
+			1,						// nGrepOutputLineType: マッチ行
+			1,						// nGrepOutputStyle: Normal
+			false, false, false,	// FileOnly / BaseFolder / SeparateFolder
+			false, false			// Paste / Backup
+		);
+	} // ← stdout 復帰
+
+	::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+	char buf[8192] = {0};
+	DWORD dwRead = 0;
+	::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+	capturedStdout.assign(buf, dwRead);
+
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+	return hits;
+}
+
+} // namespace
+
+/*!
+ * @brief DoGrep: stdout モードでの基本検索スモーク (PR #2459)
+ * @remark EditorTestSuite 環境で DoGrep 本体を実行し、ヘッダー組み立て・検索条件・除外表示・
+ *         サブフォルダー記述切り替え → RunParallelGrep → ヒット数出力の全経路。
+ *         headless で実走するため、ヒット数と stdout 出力が正しいことを確認する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_StdoutMode_BasicSearchSmoke)
+{
+	m_temp->WriteEncodedTextFile(L"hit.txt", CODE_UTF8, L"needle\nabc\nneedle\n");
+
+	std::string out;
+	const DWORD hits = RunDoGrepStdout(
+		L"needle", L"*.txt", m_temp->Root().wstring(), out);
+
+	EXPECT_EQ(2u, hits) << "needle 2 件がヒットする";
+	EXPECT_NE(out.find("needle"), std::string::npos)
+		<< "stdout にヒット行が出力される";
+	EXPECT_NE(out.find("hit.txt"), std::string::npos)
+		<< "stdout にファイル名が出力される";
+}
+
+/*!
+ * @brief DoGrep: `!` 除外正規表現の事前検証と適用のスモーク (PR #2459)
+ * @remark 有効な `!` 除外パターンを与え、DoGrep 冒頭の事前検証ループ
+ *         （InitRegexp → Compile 成功）を経た上で、キーのヒット・除外ファイル表示と
+ *         ワーカーでの除外適用（skip 系 1 件除外）が行われることを確認する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_StdoutMode_ExcludeRegexSmoke)
+{
+	m_temp->WriteEncodedTextFile(L"keep.txt",      CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"skip_me.txt",   CODE_UTF8, L"needle\n");
+
+	std::string out;
+	const DWORD hits = RunDoGrepStdout(
+		L"needle", L"*.txt;!.*skip.*\\.txt$", m_temp->Root().wstring(), out);
+
+	EXPECT_EQ(1u, hits) << "skip_me.txt は除外し keep.txt の 1 件のみ";
+	EXPECT_NE(out.find("keep.txt"), std::string::npos)
+		<< "keep.txt のヒットが出力される";
+}

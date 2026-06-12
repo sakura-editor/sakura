@@ -41,6 +41,7 @@
 #include <condition_variable>
 #include <atomic>
 #include <set>
+#include <string_view>
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
@@ -858,7 +859,7 @@ int CGrepAgent::DoGrepTree(
 	int			nWork = 0;
 	int			nHitCountOld = -100;
 	bool		bOutputFolderName = false;
-	auto nBasePathLen = int(wcslen(pszBasePath));
+	auto nBasePathLen = int(std::wstring_view(pszBasePath).length());
 	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
 	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
@@ -917,7 +918,7 @@ int CGrepAgent::DoGrepTree(
 		currentFile += L"\\";
 		currentFile += lpFileName;
 		int nBasePathLen2 = nBasePathLen + 1;
-		if( (int)wcslen(pszPath) < nBasePathLen2 ){
+		if( (int)std::wstring_view(pszPath).length() < nBasePathLen2 ){
 			nBasePathLen2 = nBasePathLen;
 		}
 
@@ -1099,7 +1100,7 @@ void CGrepAgent::DoGrepTreeEnumerate(
 	int i;
 	int count;
 	LPCWSTR lpFileName;
-	auto nBasePathLen = int(wcslen(pszBasePath));
+	auto nBasePathLen = int(std::wstring_view(pszBasePath).length());
 	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
 	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
@@ -1132,7 +1133,7 @@ void CGrepAgent::DoGrepTreeEnumerate(
 		currentFile += L"\\";
 		currentFile += lpFileName;
 		int nBasePathLen2 = nBasePathLen + 1;
-		if( (int)wcslen(pszPath) < nBasePathLen2 ){
+		if( (int)std::wstring_view(pszPath).length() < nBasePathLen2 ){
 			nBasePathLen2 = nBasePathLen;
 		}
 
@@ -1438,7 +1439,7 @@ int CGrepAgent::DoGrepFileWorker(
 	// 拡張子ベースのタイプ別設定を使うため、判定対象はフルパスではなくファイル名にする。
 	CFileLoad cfl( type->m_encoding );
 
-	auto nKeyLen = int(wcslen(pszKey));
+	auto nKeyLen = int(std::wstring_view(pszKey).length());
 	const WCHAR* pszDispFilePath = ( sGrepOption.bGrepSeparateFolder || sGrepOption.bGrepOutputBaseFolder )
 	                               ? task.relPath.c_str() : task.fullPath.c_str();
 	const WCHAR* pszCodeName = L"";
@@ -1481,7 +1482,7 @@ int CGrepAgent::DoGrepFileWorker(
 				pszFormatFilePath  = L"%s\r\n";
 				pszFormatFilePath2 = L"%s\r\n";
 			}
-			auto pszWork = std::make_unique<wchar_t[]>( task.fullPath.size() + wcslen(pszCodeName) + 10 );
+			auto pszWork = std::make_unique<wchar_t[]>( task.fullPath.size() + std::wstring_view(pszCodeName).length() + 10 );
 			wchar_t* szWork0 = &pszWork[0];
 			if( sGrepOption.bGrepOutputBaseFolder || sGrepOption.bGrepSeparateFolder ){
 				auto_sprintf( szWork0,
@@ -2554,7 +2555,7 @@ CNativeW CGrepAgent::BuildGrepHeader(
 	if( pszFolder == nullptr ) pszFolder = L"";
 
 	CNativeW cmemMessage;
-	int nWork = (int)wcslen(pszKey);
+	int nWork = (int)std::wstring_view(pszKey).length();
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );
 	if( 0 < nWork ){
@@ -2654,7 +2655,7 @@ CNativeW CGrepAgent::BuildGrepFooter(int nHitCount, bool bGrepReplace)
 
 	// バッファサイズの根拠: フォーマット部 ≦ 64文字 + %d 展開 ≦ 11文字 + 終端0 << 128
 	// 言語リソース変更時の回帰検出のため Debug ビルドで動的検証する。
-	assert(wcslen(pszFormat) + 12 < kGrepFooterBufSize);
+	assert(wcsnlen_s(pszFormat, kGrepFooterBufSize) + 12 < kGrepFooterBufSize);
 	auto_sprintf( szBuffer, pszFormat, nHitCount );
 	cmemMessage.SetString( szBuffer );
 	return cmemMessage;

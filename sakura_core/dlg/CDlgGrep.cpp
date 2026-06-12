@@ -800,7 +800,7 @@ int CDlgGrep::GetData( void )
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, std::size(m_szFile) );
 	bool bFromThisText = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_FROMTHISTEXT);
 	if( bFromThisText ){
-		wcscpy(m_szFile, BuildHwndFileToken(::GetParent(GetHwnd())).c_str());
+		m_szFile.assign(BuildHwndFileToken(::GetParent(GetHwnd())));
 	}else{
 		if (IsHwndFileToken(m_szFile)) {
 			ErrorMessage(GetHwnd(), LS(STR_DLGGREP_THISDOC_ERROR));
