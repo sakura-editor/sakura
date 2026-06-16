@@ -27,6 +27,7 @@ namespace ApiWrap{
 		// GetWindowTextLength() はウィンドウテキスト取得に必要なバッファサイズを返す。
 		// 条件によっては必要なサイズより大きな値を返すことがある模様
 		// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengthw
+		::SetLastError(0);
 		const int cchRequired = ::GetWindowTextLength( hWnd );
 		if( cchRequired < 0 ){
 			// ドキュメントには失敗した場合、あるいはテキストが空の場合には 0 を返すとある。
@@ -46,6 +47,7 @@ namespace ApiWrap{
 
 		// GetWindowText() はコピーした文字数を返す。
 		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
+		::SetLastError(0);
 		const int actualCopied = ::GetWindowText( hWnd, strText.data(), (int)strText.capacity() );
 		if( actualCopied < 0 ){
 			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
