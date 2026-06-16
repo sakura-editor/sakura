@@ -211,6 +211,26 @@ TEST(ApiWrap, WndTest001)
 	CNativeW cmemText;
 	EXPECT_THAT(ApiWrap::Wnd_GetText(hWnd, cmemText), IsTrue());
 	EXPECT_THAT(cmemText.GetStringPtr(), StrEq(L"test"));
+
+	// GitHub #2476 GetWindowTextLengthが正常値の戻り値0を返すとき最新のエラー情報をクリアしない.
+	// https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-getwindowtextlengthw
+	// このテストは事前準備データを書き換えるので取得結果がexpectedでなくなる.
+	// 空文字列
+	ApiWrap::SetWindowTextW(hWnd, L"");
+	CNativeW cmemTextEmpty;
+	::SetLastError(1);
+	EXPECT_THAT(ApiWrap::Wnd_GetText(hWnd, cmemTextEmpty), IsTrue());
+	EXPECT_THAT(cmemTextEmpty.GetStringPtr(), StrEq(L""));
+	// エラールート
+	EXPECT_THAT(ApiWrap::Wnd_GetText(NULL, cmemTextEmpty), IsFalse());
+
+	// 空文字列
+	std::wstring strempty;
+	::SetLastError(1);
+	EXPECT_THAT(ApiWrap::Wnd_GetText(hWnd, strempty), IsTrue());
+	EXPECT_STREQ(L"", strempty.c_str());
+	// エラールート
+	EXPECT_THAT(ApiWrap::Wnd_GetText(NULL, strempty), IsFalse());
 }
 
 /*!
