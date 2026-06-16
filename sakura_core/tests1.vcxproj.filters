@@ -220,6 +220,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-codechecker.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-oletypes.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h">

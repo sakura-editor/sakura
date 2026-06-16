@@ -71,6 +71,7 @@ namespace ApiWrap{
 		// GetWindowTextLength() はウィンドウテキスト取得に必要なバッファサイズを返す。
 		// 条件によっては必要なサイズより大きな値を返すことがある模様
 		// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengtha
+		::SetLastError(0);
 		const int length = ::GetWindowTextLength(hwnd);
 		if (length < 0)
 		{
@@ -89,6 +90,7 @@ namespace ApiWrap{
 			str.AllocStringBuffer(bufsize);
 		}
 
+		::SetLastError(0);
 		int actualCount = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
 		if (actualCount < 0)
 		{
