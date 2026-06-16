@@ -52,19 +52,4 @@ private:
 	EShareMode	m_nFileShareModeOld;		//!< ファイルの排他制御モード
 };
 
-//!一時ファイル
-class CTmpFile{
-	using Me = CTmpFile;
-
-public:
-	CTmpFile(){ m_fp = tmpfile(); }
-	CTmpFile(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	CTmpFile(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CTmpFile(){ fclose(m_fp); }
-	FILE* GetFilePointer() const{ return m_fp; }
-private:
-	FILE* m_fp;
-};
 #endif /* SAKURA_CFILE_53DA3C63_95C0_49D0_9ED1_1C0131493912_H_ */
