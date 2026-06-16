@@ -113,6 +113,7 @@
     <Link Include="..\build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\test\cpp\tests1\test-oletypes.cpp" />
     <ClCompile Include="..\src\test\resources\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
