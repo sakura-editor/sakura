@@ -39,7 +39,19 @@ struct SysString
 		delete[] buf;
 	}
 	~SysString()                        { ::SysFreeString(Data); }
-	SysString& operator = (const SysString& Source) { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); return *this; }
+	SysString& operator = (const SysString& Source) {
+		if (this == &Source) {
+			return *this;
+		}
+	  BSTR tmp = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data));
+	  if (Data) {
+	    ::SysFreeString(Data);
+	    Data = nullptr;
+	  }
+	  Data = tmp;
+	  tmp = nullptr;
+	  return *this;
+	}
 	int Length()                        { return ::SysStringLen(Data); }
 	void Get(char **S, int *L)
 	{
@@ -79,10 +91,21 @@ struct Variant
 {
 	VARIANT Data;
 	Variant()                       { ::VariantInit(&Data); }
-	Variant(Variant &Source)        { ::VariantCopyInd(&Data, &Source.Data); }
-	Variant(VARIANT &Source)        { ::VariantCopyInd(&Data, &Source); }
+	Variant(Variant &Source)        { ::VariantInit(&Data); ::VariantCopyInd(&Data, &Source.Data); }
+	Variant(VARIANT &Source)        { ::VariantInit(&Data); ::VariantCopyInd(&Data, &Source); }
 	~Variant()                      { ::VariantClear(&Data); }
-	Variant& operator = (Variant& Source) { ::VariantCopyInd(&Data, &Source.Data); return *this; }
+	Variant& operator = (Variant& Source) {
+		if (this == &Source) {
+			return *this;
+		}
+	  VARIANT tmp;
+	  ::VariantInit(&tmp);
+	  ::VariantCopyInd(&tmp, &Source.Data);
+	  ::VariantClear(&Data);
+	  Data = tmp;
+	  ::VariantInit(&tmp);
+	  return *this;
+	}
 	/*! SysStringをVariantにセットする
 	
 		セット後、SysStringの方は中身がNULLになる。
