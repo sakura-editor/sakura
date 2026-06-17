@@ -109,7 +109,7 @@ private:
 	void find_key( const wchar_t* keyword );
 	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpPartialMatch, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
 	bool parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2, int nTagFormat);
-	bool ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, std::span<WCHAR> szNextPath, int* baseDirId);
+	bool ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, PTCHAR szNextPath, int* baseDirId);
 	void find_key_for_BinarySearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule );
 	void find_key_for_LinearSearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule, bool bSorted, bool bFoldcase, int length );
 
@@ -120,7 +120,7 @@ private:
 
 	//! depthから完全パス名(相対パス/絶対パス)を作成する
 	static WCHAR* GetFullPathFromDepth(WCHAR* pszOutput, int count, WCHAR* basePath, const WCHAR* fileName, int depth);
-	static WCHAR* CopyDirDir(std::span<WCHAR> dest, const WCHAR* target, const WCHAR* base);
+	static WCHAR* CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHAR* base );
 public:
 	static int CalcMaxUpDirectory(const WCHAR* p);
 	static WCHAR* DirUp( WCHAR* dir );

@@ -88,8 +88,8 @@ struct COutlinePython {
 void CType_Python::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	::wcsncpy_s(pType->m_szTypeName, L"Python", _TRUNCATE);
-	::wcsncpy_s(pType->m_szTypeExts, L"py", _TRUNCATE);
+	wcscpy( pType->m_szTypeName, L"Python" );
+	wcscpy( pType->m_szTypeExts, L"py" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */
@@ -481,10 +481,14 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			int len = w_end - col;
 			
 			if( len > 0 ){
-				::wcsncpy_s(szWord, pLine + col, _TRUNCATE);
+				if( len > int(std::size(szWord)) - 1){
+					len = int(std::size(szWord)) - 1;
+				}
+				wcsncpy( szWord, pLine + col, len );
+				szWord[ len ] = L'\0';
 			}
 			else {
-				::wcsncpy_s(szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED), _TRUNCATE);
+				wcscpy( szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED) );
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){
@@ -493,7 +497,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					len = int(std::size(szWord)) - 8;
 				}
 				// class
-				::wcsncat_s(szWord, LS(STR_OUTLINE_PYTHON_CLASS), _TRUNCATE);
+				wcscpy( szWord + len, LS(STR_OUTLINE_PYTHON_CLASS) );
 			}
 			
 			/*

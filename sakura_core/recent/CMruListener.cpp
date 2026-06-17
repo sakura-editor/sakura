@@ -180,7 +180,7 @@ void CMruListener::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 		if( GetDllShareData().m_Common.m_sFile.GetRestoreBookmarks() ){
 			// SetBookMarksでデータがNUL区切りに書き換わっているので再取得
 			cMRU.GetEditInfo(pcDoc->m_cDocFile.GetFilePath(),&eiOld);
-			::wcsncpy_s(eiNew.m_szMarkLines, eiOld.m_szMarkLines, _TRUNCATE);
+			wcscpy(eiNew.m_szMarkLines, eiOld.m_szMarkLines);
 		}
 	}
 	cMRU.Add( &eiNew );
@@ -217,7 +217,7 @@ void CMruListener::_HoldBookmarks_And_AddToMRU()
 	pcDoc->GetEditInfo( &fi );
 
 	//ブックマーク情報の保存
-	::wcsncpy_s(fi.m_szMarkLines, CBookmarkManager(&pcDoc->m_cDocLineMgr).GetBookMarks(), _TRUNCATE);
+	wcscpy( fi.m_szMarkLines, CBookmarkManager(&pcDoc->m_cDocLineMgr).GetBookMarks() );
 
 	//MRUリストに登録
 	CMRUFile	cMRU;

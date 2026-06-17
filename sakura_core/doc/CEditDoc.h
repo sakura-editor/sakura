@@ -100,6 +100,8 @@ public:
 
 	void SetCurDirNotitle();
 
+	HRESULT	GetDataObject(LPDATAOBJECT *ppDataObj) const;
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -192,6 +192,44 @@ const char* stristr_j( const char* s1, const char* s2 )
 }
 
 /*!
+	@brief 文字列の終端位置を調整する
+	@param[in, out] strOut	終端位置修正対象のインスタンス
+	@param[in]  cchOut		終端位置
+	@returns 終端位置を調整されたインスタンス。
+ */
+std::wstring& eos(std::wstring& strOut, size_t cchOut)
+{
+	if (strOut.empty() && cchOut < 8) {
+		std::wstring buf(strOut.data());
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
+	@brief 文字列の終端位置を調整する
+	@param[in, out] strOut	終端位置修正対象のインスタンス
+	@param[in]  cchOut		終端位置
+	@returns 終端位置を調整されたインスタンス。
+ */
+std::string& eos(std::string& strOut, size_t cchOut)
+{
+	if (strOut.empty() && cchOut < 16) {
+		std::string buf(strOut.data());
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
 	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
 		事前に確保したバッファに結果を書き込む高速バージョン
 	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
@@ -203,24 +241,27 @@ const char* stristr_j( const char* s1, const char* s2 )
  */
 int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
 {
-	strOut.clear();
-
 	// _vscwprintf() はフォーマットに必要な文字数を返す。
-	const size_t required = ::_vscwprintf(pszFormat, argList);
-	if (0 == required) {
-		return 0;
+	const int cchOut = ::_vscwprintf(pszFormat, argList);
+	if (cchOut <= 0) {
+		strOut.clear();
+		return cchOut;
 	}
 
 	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
 
 	// フォーマットする
-	const auto formatted = ::_vsnwprintf_s(std::data(strOut), std::size(strOut) + 1, _TRUNCATE, pszFormat, argList);
+	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	strOut.resize(formatted);
+	eos(strOut, cchOut);
 
-	return formatted;
+	return cchOut;
 }
 
 /*!
@@ -235,24 +276,27 @@ int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
  */
 int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList)
 {
-	strOut.clear();
-
 	// _vscwprintf() はフォーマットに必要な文字数を返す。
-	const size_t required = ::_vscprintf(pszFormat, argList);
-	if (0 == required) {
-		return 0;
+	const int cchOut = ::_vscprintf(pszFormat, argList);
+	if (cchOut <= 0) {
+		strOut.clear();
+		return cchOut;
 	}
 
 	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
 
 	// フォーマットする
-	const auto formatted = ::vsnprintf_s(std::data(strOut), std::size(strOut) + 1, _TRUNCATE, pszFormat, argList);
+	::vsprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	strOut.resize(formatted);
+	eos(strOut, cchOut);
 
-	return formatted;
+	return cchOut;
 }
 
 /*!
@@ -311,10 +355,7 @@ std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
 	// 出力バッファを確保する
 	std::wstring strOut;
 
-#ifdef _DEBUG
-	const int nRet =
-#endif
-		vstrprintf(strOut, pszFormat, argList);
+	const auto nRet = vstrprintf(strOut, pszFormat, argList);
 	assert(nRet >= 0);
 
 	return strOut;
@@ -332,10 +373,7 @@ std::string vstrprintf(const CHAR* pszFormat, va_list& argList)
 	// 出力バッファを確保する
 	std::string strOut;
 
-#ifdef _DEBUG
-	const int nRet =
-#endif
-		vstrprintf(strOut, pszFormat, argList);
+	const int nRet = vstrprintf(strOut, pszFormat, argList);
 	assert(nRet >= 0);
 
 	return strOut;
@@ -383,118 +421,6 @@ std::string strprintf(const CHAR* pszFormat, ...)
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SJIS→UNICODE。終端にL'\0'を付けてくれる版。
-size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count)
-{
-	size_t ret = 0;
-	to_wcs(src, std::span{ dst, dst_count }, CP_SJIS);
-	return ret;
-}
-
-size_t mbstowcs2(wchar_t* pDst, size_t nDstCount, const char* pSrc, size_t nSrcCount)
-{
-	size_t ret = 0;
-	to_wcs(std::string_view{ pSrc, nSrcCount }, std::span{ pDst, nDstCount }, CP_SJIS);
-	return ret;
-}
-
-//UNICODE→SJIS。終端に'\0'を付けてくれる版。
-size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
-{
-	size_t ret = 0;
-	to_mbs(src, std::span{ dst, dst_count }, CP_SJIS);
-	return ret;
-}
-
-//SJIS→UNICODE。戻り値はnew[]で確保して返す。
-wchar_t* mbstowcs_new(const char* src)
-{
-	const auto buffer = cxx::to_wstring(src, CP_SJIS);
-	auto ret = new wchar_t[buffer.length() + 1];
-	buffer.copy(ret, buffer.length());
-	return ret;
-}
-
-/*!
-	@brief u8文字列を標準文字列に変換する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	変換された標準文字列を受け取る変数
-	@param[in]  strInput	u8文字列
-	@returns 標準文字列
- */
-std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
-{
-	strOut.clear();
-
-	if (strInput.empty()) {
-		return strOut;
-	}
-
-	// 必要なバッファのサイズを確認する
-	size_t required = 0;
-	try {
-		required = cxx::count_as_wcs(strInput, CP_UTF8);
-
-	} catch (const std::invalid_argument&) {
-		// 変換できない文字が含まれている場合
-		return strOut;
-	}
-
-	if (0 == required) {
-		return strOut;
-	}
-
-	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
-
-	// 変換する
-	const auto converted = to_wcs(strInput, strOut, CP_UTF8);
-
-	strOut.resize(converted);
-
-	return strOut;
-}
-
-/*!
-	@brief 標準文字列をu8文字列に変換する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	変換されたu8文字列を受け取る変数
-	@param[in]  strInput	標準文字列
-	@returns u8文字列
- */
-std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
-{
-	strOut.clear();
-
-	if (strInput.empty()) {
-		return strOut;
-	}
-
-	// 必要なバッファのサイズを確認する
-	size_t required = 0;
-	try {
-		required = cxx::count_as_mbs( strInput, CP_UTF8 );
-
-	} catch (const std::invalid_argument&) {
-		// 変換できない文字が含まれている場合
-		return strOut;
-	}
-
-	if (0 == required) {
-		return strOut;
-	}
-
-	// 必要なバッファを確保する
-	strOut.resize(required, L'\0');
-
-	// 変換する
-	const auto converted = to_mbs(strInput, strOut, CP_UTF8);
-
-	strOut.resize(converted);
-
-	return strOut;
-}
-
 /*!
 	@brief u8文字列を標準文字列に変換する。
 		動的にバッファを確保する簡易バージョン
@@ -503,8 +429,7 @@ std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
  */
 std::wstring u8stowcs(std::string_view strInput)
 {
-	std::wstring strOut;
-	return u8stowcs(strOut, strInput);
+	return cxx::to_wstring(strInput, CP_UTF8);
 }
 
 /*!
@@ -515,8 +440,7 @@ std::wstring u8stowcs(std::string_view strInput)
  */
 std::string wcstou8s(std::wstring_view strInput)
 {
-	std::string strOut;
-	return wcstou8s(strOut, strInput);
+	return cxx::to_string(strInput, CP_UTF8);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

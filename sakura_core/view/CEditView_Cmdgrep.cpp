@@ -25,6 +25,12 @@
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
+[[nodiscard]] bool IsGrepMode() noexcept
+{
+	const auto pcGrepAgent = CEditApp::getInstance()->m_pcGrepAgent;
+	return pcGrepAgent && pcGrepAgent->m_bGrepMode;
+}
+
 /*!
 	コマンドコードの変換(grep mode時)
 */
@@ -37,7 +43,7 @@ void CEditView::TranslateCommand_grep(
 	[[maybe_unused]] LPARAM&			lparam4
 )
 {
-	if( ! CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode )
+	if (!IsGrepMode())
 		return;
 
 	if( nCommand == F_WCHAR ){

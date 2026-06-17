@@ -629,7 +629,7 @@ int CSearchAgent::SearchWord(
 						pattern
 					);
 					if( nullptr != pszRes ){
-						nHitPos = int(pszRes - pLine);
+						nHitPos = pszRes - pLine;
 						nIdxPos = nHitPos + nPatternLen;	// マッチ文字列長進めるように変更 2005.10.28 Karoto
 						if( nHitPos >= nHitTo ){
 							if( -1 != nHitPosOld ){

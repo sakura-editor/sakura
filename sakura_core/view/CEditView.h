@@ -518,8 +518,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	void AnalyzeDiffInfo( const char* pszDiffInfo, int nFlgFile12);	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-	BOOL MakeDiffTmpFile(std::span<WCHAR> filename, HWND hWnd, ECodeType code, bool bBom);	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
-	BOOL MakeDiffTmpFile2(std::span<WCHAR> tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode);
+	BOOL MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, bool bBom);	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
+	BOOL MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode);
 	void ViewDiffInfo( const WCHAR* pszFile1, const WCHAR* pszFile2, int nFlgOpt, bool bUTF8);		/* DIFF差分表示 */		//2005.10.29 maru
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -553,6 +553,8 @@ public:
 	bool  ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
 	void SetUndoBuffer( bool bPaintLineNumber = false );			// アンドゥバッファの処理
 	HWND StartProgress();
+
+	void	DragSelection();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         アクセサ                            //
@@ -619,7 +621,7 @@ public:
 public:
 	//参照
 	CEditDoc*		m_pcEditDoc = GetListeningDoc();	//!< ドキュメント
-	const STypeConfig*	m_pTypeData;
+	const STypeConfig*	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	//主要構成部品
 	CTextAreaHolder	m_pcTextArea = std::make_unique<CTextArea>(this);

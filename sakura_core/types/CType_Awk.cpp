@@ -13,8 +13,8 @@
 void CType_Awk::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	::wcsncpy_s(pType->m_szTypeName, L"AWK", _TRUNCATE);
-	::wcsncpy_s(pType->m_szTypeExts, L"awk", _TRUNCATE);
+	wcscpy( pType->m_szTypeName, L"AWK" );
+	wcscpy( pType->m_szTypeExts, L"awk" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );		/* 行コメントデリミタ */

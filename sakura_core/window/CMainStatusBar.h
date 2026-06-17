@@ -15,6 +15,8 @@ class CEditWnd;
 
 class CMainStatusBar : public CDocListenerEx{
 public:
+	static std::wstring UnicodeToHex(ECodeType eCodeType, std::wstring_view wide, const CommonSetting_Statusbar& sStatusbar);
+
 	//作成・破棄
 	CMainStatusBar(CEditWnd* pOwner);
 	void CreateStatusBar();		// ステータスバー作成

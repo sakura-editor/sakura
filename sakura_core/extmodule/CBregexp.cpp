@@ -259,7 +259,7 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 				szPattern = sReg->outp;
 				if( szPattern2 != nullptr ) {
 					// 置換パターンもあるので、置換パターンの最後に $(nParens+1)を追加
-					auto_snprintf_s(szAdd2, _TRUNCATE, L"$%d", nParens + 1);
+					auto_sprintf( szAdd2, L"$%d", nParens + 1 );
 				}
 			}
 			// sReg->outp のポインタを参照しているので、sRegを解放するのは最後に

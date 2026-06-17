@@ -40,7 +40,7 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
 	{
 		wchar_t FuncName[256];
-		::wcsncpy_s(FuncName, Info->m_pszFuncName, _TRUNCATE);
+		wcscpy(FuncName, Info->m_pszFuncName);
 
 		int ArgCount = 0;
 		if( Info->m_pData ){

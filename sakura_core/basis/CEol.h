@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2002, frozen, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -42,14 +42,26 @@ enum class EEolType : char {
 	code_max,				//!< 範囲外検出用のマーカー(行終端子として使用しないこと)
 };
 
-struct SEolDefinition{
-	const WCHAR*	m_szName;
-	const WCHAR*	m_szDataW;
-	const ACHAR*	m_szDataA;
-	size_t			m_nLen;
+/*!
+ * 行終端子情報定義用構造体
+ */
+struct SEolDefinition
+{
+	EEolType			m_eEolType;
+	WORD				m_wName;
+	std::wstring		m_Data;
 
-	bool StartsWith(const WCHAR* pData, size_t nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWith(const ACHAR* pData, size_t nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==memcmp(pData,m_szDataA,m_nLen); }
+	constexpr SEolDefinition(
+		EEolType eEolType,
+		int wName,
+		std::wstring_view data
+	);
+
+	const std::wstring&	GetVal() const noexcept;
+	std::string			GetVal(ECodeType eCodeType) const;
+
+	bool StartsWith(LPCWSTR pData, size_t nLen) const noexcept;
+	bool StartsWith(LPCSTR pData, size_t nLen, ECodeType eCodeType) const;
 };
 
 constexpr auto EOL_TYPE_NUM = static_cast<size_t>(EEolType::code_max); // 8
@@ -62,60 +74,63 @@ constexpr auto EOL_TYPE_NUM = static_cast<size_t>(EEolType::code_max); // 8
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
 class CEol {
-	EEolType m_eEolType = EEolType::none;	//!< 改行コードの種類
-
 public:
-	static constexpr bool IsNone( EEolType t ) noexcept
+	static constexpr bool IsNone(EEolType t) noexcept
 	{
 		return t == EEolType::none;
 	}
-	static constexpr bool IsValid( EEolType t ) noexcept
+	static constexpr bool IsValid(EEolType t) noexcept
 	{
 		return EEolType::none < t && t < EEolType::code_max;
 	}
-	static constexpr bool IsNoneOrValid( EEolType t ) noexcept
+	static constexpr bool IsNoneOrValid(EEolType t) noexcept
 	{
-		return IsNone( t ) || IsValid( t );
+		return IsNone(t) || IsValid(t);
 	}
 
-	constexpr explicit CEol( EEolType t ) noexcept
-	{
-		SetType( t );
-	}
 	CEol() noexcept = default;
 
+	constexpr explicit CEol(EEolType t) noexcept
+	{
+		SetType(t);
+	}
+
 	//取得
-	[[nodiscard]] bool IsNone() const noexcept { return IsNone( m_eEolType ); }			//!< 行終端子がないかどうか
-	[[nodiscard]] bool IsValid() const noexcept { return !IsNone(); }					//!< 行終端子があるかどうか
-	[[nodiscard]] constexpr EEolType GetType() const noexcept { return m_eEolType; }	//!< 現在のTypeを取得
-	[[nodiscard]] LPCWSTR	GetName() const noexcept;	//!< 現在のEOLの名称取得
-	[[nodiscard]] LPCWSTR	GetValue2() const noexcept;	//!< 現在のEOL文字列先頭へのポインタを取得
-	[[nodiscard]] CLogicInt	GetLen() const noexcept;	//!< 現在のEOL長を取得。文字単位。
+	const SEolDefinition& GetData() const noexcept;
+
+	constexpr bool     IsNone() const noexcept	{ return IsNone(m_eEolType); }	//!< 行終端子がないかどうか
+	constexpr bool     IsValid() const noexcept { return !IsNone(); }			//!< 行終端子があるかどうか
+	constexpr EEolType GetType() const noexcept { return m_eEolType; }			//!< 現在のTypeを取得
+
+	LPCWSTR			GetValue2() const noexcept;	//!< 現在のEOL文字列先頭へのポインタを取得
+	CLogicInt		GetLen() const noexcept;	//!< 現在のEOL長を取得。文字単位。
+	LPCWSTR			GetName() const;
 
 	//比較
-	[[nodiscard]] constexpr bool operator == ( EEolType t ) const noexcept { return GetType() == t; }
-	[[nodiscard]] constexpr bool operator != ( EEolType t ) const noexcept { return !operator == ( t ); }
+	constexpr bool operator == (EEolType rhs) const noexcept { return GetType() == rhs; }
+	constexpr bool operator == (const CEol& rhs) const noexcept { return *this == static_cast<EEolType>(rhs); }
 
 	//型変換
-	[[nodiscard]] constexpr explicit operator EEolType() const { return GetType(); }
+	constexpr explicit operator bool() const noexcept { return IsValid(); }
+	constexpr explicit operator EEolType() const noexcept { return GetType(); }
 
 	/*!
-		行末種別の設定。
-		@param t 行終端子の種別
-		@retval true 正常終了。設定が反映された。
-		@retval false 異常終了。強制的にCRLFに設定。
+	 * 行末種別の設定。
+	 * @param t 行終端子の種別
+	 * @retval true 正常終了。設定が反映された。
+	 * @retval false 異常終了。強制的にCRLFに設定。
 	 */
 	constexpr bool SetType( EEolType t ) noexcept
 	{
-		if( IsNoneOrValid( t ) ){
+		const auto ret = IsNoneOrValid(t);
+		if (ret) {
 			// 正しい値
 			m_eEolType = t;
-			return true;
-		}else{
+		} else {
 			// 異常値
 			m_eEolType = EEolType::cr_and_lf;
-			return false;
 		}
+		return ret;
 	}
 
 	//代入演算子
@@ -129,12 +144,9 @@ public:
 	void SetTypeByStringForFile( const char* pszData, size_t nDataLen ){ SetTypeByString( pszData, nDataLen ); }
 	void SetTypeByStringForFile_uni( const char* pszData, size_t nDataLen );
 	void SetTypeByStringForFile_unibe( const char* pszData, size_t nDataLen );
-};
 
-// グローバル演算子
-bool operator == ( const CEol& lhs, const CEol& rhs ) noexcept;
-bool operator != ( const CEol& lhs, const CEol& rhs ) noexcept;
-bool operator == ( EEolType lhs, const CEol& rhs ) noexcept;
-bool operator != ( EEolType lhs, const CEol& rhs ) noexcept;
+private:
+	EEolType m_eEolType = EEolType::none;	//!< 改行コードの種類
+};
 
 #endif /* SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_ */

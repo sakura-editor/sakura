@@ -141,18 +141,6 @@
 #endif
 #endif
 
-// Workaround for PROPSHEETHEADER_V2_SIZE
-#ifdef __MINGW32__
-#include <_mingw.h>
-#ifndef DUMMYUNION5_MEMBER
-#ifndef NONAMELESSUNION
-#define DUMMYUNION5_MEMBER(x) x
-#else /* NONAMELESSUNION */
-#define DUMMYUNION5_MEMBER(x) DUMMYUNIONNAME5.x
-#endif
-#endif
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -172,6 +160,7 @@
 #include <imm.h>
 #include <oaidl.h>
 #include <shellapi.h>
+#include <ShlDisp.h>
 #include <ShlObj.h>
 #include <Uxtheme.h>
 #include <vsstyle.h>

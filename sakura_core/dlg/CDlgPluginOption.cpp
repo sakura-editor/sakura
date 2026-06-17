@@ -94,7 +94,7 @@ void CDlgPluginOption::SetData( void )
 	bool bLoadDefault = false;
 
 	// タイトル
-	auto_snprintf_s(buf, _TRUNCATE, LS(STR_DLGPLUGINOPT_TITLE), m_cPlugin->m_sName.c_str());
+	auto_sprintf( buf, LS(STR_DLGPLUGINOPT_TITLE), m_cPlugin->m_sName.c_str());
 	::SetWindowText( GetHwnd(), buf );
 
 	// リスト
@@ -141,11 +141,11 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			::wcsncpy_s(buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE, _TRUNCATE);
+			wcscpy_s( buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化
-			auto_snprintf_s(buf, _TRUNCATE, L"%d", _wtoi(sValue.c_str()));
+			auto_sprintf( buf, L"%d", _wtoi(sValue.c_str()));
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
 			// 値から表示へ
@@ -226,10 +226,10 @@ int CDlgPluginOption::GetData( void )
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
 			if (wcscmp(buf,  BOOL_DISP_FALSE) == 0) {
-				::wcsncpy_s(buf, L"0", _TRUNCATE);
+				wcscpy (buf, L"0");
 			}
 			else {
-				::wcsncpy_s(buf, L"1", _TRUNCATE);
+				wcscpy (buf, L"1");
 			}
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
@@ -243,7 +243,7 @@ int CDlgPluginOption::GetData( void )
 			for (auto it2 = selects.cbegin(); it2 != selects.cend(); it2++) {
 				SepSelect(*it2, &sView, &sTrg);
 				if (sView == sWbuf) {
-					auto_snprintf_s(buf, _TRUNCATE, L"%ls", sTrg.c_str());
+					auto_sprintf( buf, L"%ls", sTrg.c_str());
 					break;
 				}
 			}
@@ -270,6 +270,8 @@ int CDlgPluginOption::GetData( void )
 
 BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	const auto hWndDlg = hwndDlg;
+
 	HWND		hwndList;
 	LV_COLUMN	col;
 	RECT		rc;
@@ -313,6 +315,8 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_DIR ), _MAX_PATH );
 	ApiWrap::EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_NUM ), 11 );
 
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_PLUGIN_OPTION, INT_MIN, INT_MAX);
+
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
@@ -338,21 +342,6 @@ BOOL CDlgPluginOption::OnNotify(NMHDR* pNMHDR)
 		return TRUE;
 
 	case IDC_SPIN_PLUGIN_OPTION:
-		int			nVal;
-		NM_UPDOWN*	pMNUD;
-		
-		pMNUD  = (NM_UPDOWN*)pNMHDR;
-
-		nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nullptr, TRUE );
-		if( pMNUD->iDelta < 0 ){
-			if (nVal < INT_MAX)		++nVal;
-		}else
-		if( pMNUD->iDelta > 0 ){
-			// INT_MINは SetDlgItemInt で扱えない
-			if (nVal > -INT_MAX)	--nVal;
-		}
-		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nVal, TRUE );
-
 		// 編集中のデータの戻し
 		SetFromEdit( m_Line );
 		return TRUE;
@@ -646,10 +635,10 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 		transform(sType.begin (), sType.end (), sType.begin (), my_towlower2);
 		if (sType == OPTION_TYPE_BOOL) {
 			if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLUGIN_OPTION ) ) {
-				::wcsncpy_s(buf, BOOL_DISP_TRUE, _TRUNCATE);
+				wcscpy( buf, BOOL_DISP_TRUE );
 			}
 			else {
-				::wcsncpy_s(buf, BOOL_DISP_FALSE, _TRUNCATE);
+				wcscpy( buf, BOOL_DISP_FALSE );
 			}
 			lvi.mask     = LVIF_TEXT;
 			lvi.iItem    = iLine;
@@ -659,7 +648,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 		}
 		else if (sType == OPTION_TYPE_INT) {
 			nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nullptr, TRUE );
-			auto_snprintf_s(buf, _TRUNCATE, L"%d", nVal);
+			auto_sprintf( buf, L"%d", nVal);
 		}
 		else if (sType == OPTION_TYPE_SEL) {
 			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
@@ -705,7 +694,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 
 	if (_IS_REL_PATH( szDir )) {
 		WCHAR	folder[_MAX_PATH];
-		::wcsncpy_s(folder, szDir, _TRUNCATE);
+		wcscpy( folder, szDir );
 		GetInidirOrExedir( szDir, folder );
 	}
 
@@ -722,7 +711,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	ListView_GetItem( hwndList, &lvi );
 
 	WCHAR	sTitle[MAX_LENGTH_VALUE+10];
-	auto_snprintf_s(sTitle, _TRUNCATE, LS(STR_DLGPLUGINOPT_SELECT), buf);
+	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
 	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir )) {
 		//	末尾に\マークを追加する．
 		AddLastChar( szDir, int(std::size(szDir)), L'\\' );

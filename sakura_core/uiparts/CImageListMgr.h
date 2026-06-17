@@ -61,7 +61,8 @@ public:
 		@param [in] cy アイコン高さ
 	*/
 	bool DrawToolIcon( HDC drawdc, LONG x, LONG y,
-		int imageNo, DWORD fStyle, LONG cx, LONG cy ) const;
+		int imageNo, bool enabled, LONG cx, LONG cy ) const;
+	bool DrawToolIcon( uint32_t* pixels, int imageNo, bool enabled, LONG cx, LONG cy ) const;
 
 	//! アイコン数を返す
 	int  Count(void) const;	//	アイコン数
@@ -76,17 +77,6 @@ public:
 
 	//! アイコンの追加を元に戻す
 	void ResetExtend();
-
-	/*!
-		イメージのToolBarへの登録
-	
-		@param hToolBar [in] 登録するToolBar
-		@param id [in] 登録する先頭アイコン番号
-
-		@date 2003.07.21 genta ここでは何も行わないが，受け皿だけ残しておく
-		@date 2003.07.21 genta 戻り型をvoidに変更
-	*/
-	void  SetToolBarImages([[maybe_unused]] HWND hToolBar, [[maybe_unused]] int id = 0) const { }
 
 protected:
 	int m_cx;			//!<	width of icon
@@ -105,14 +95,13 @@ protected:
 
 	int m_nIconCount;	//!<	アイコンの個数
 
-	// アイコン描画関数
-	void MyBitBlt( HDC drawdc, int nXDest, int nYDest,
-		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
-	void MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
-		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
+	uint32_t* m_pBits = nullptr;
+	LONG m_bmpWidth = 0;
+	LONG m_bmpHeight = 0;
+	HDC m_hDC;
 
 	//! ツールイメージをリサイズする
-	HBITMAP ResizeToolIcons( HBITMAP hRscbmp, COLORREF& clrTransparent ) const noexcept;
+	HBITMAP ResizeToolIcons( HBITMAP hRscbmp, uint32_t*& pBits, LONG& bmpWidth, LONG& bmpHeight, COLORREF& clrTransparent ) const noexcept;
 
 	//! ビットマップを一行拡張する
 	void Extend(bool = true);

@@ -66,28 +66,57 @@ if(MSVC)
   )
 endif(MSVC)
 
-# coverage.cppをリストから削除
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+if(MINGW)
+  # coverage.cppをリストから削除
   list(REMOVE_ITEM TESTS1_SOURCES ${CMAKE_SOURCE_DIR}/src/test/resources/coverage.cpp)
-endif()
+endif(MINGW)
 
 # define resource files of tests1
 set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 
-# Convert RC files to UTF-8 for MinGW and clang-cl
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+set(TEST_DLLPLUGIN_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-dllplugin")
+set(TEST_DLLPLUGIN_TARGET dll_plugin1)
+set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
+
+if(MINGW)
+  # Convert RC files to UTF-8 for MinGW
   convert_rc_files_to_utf8(TESTS1_RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
-endif(MINGW)
+endif()
 
 # Create a custom target for test_resource_zip generation
 add_custom_target(test_resource_zip
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin
+    ${TESTS1_RESOURCE_STAGE_DIR}/test-plugin
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
     ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
-    ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin
+    ${TESTS1_RESOURCE_STAGE_DIR}/test-plugin
     > NUL
   BYPRODUCTS ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
   COMMENT "Generating resources.ja-JP.zip"
+)
+
+# Create a custom target for test_dllplugin_zip generation
+add_custom_target(test_dllplugin_zip
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${TEST_DLLPLUGIN_DIR}
+    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:${TEST_DLLPLUGIN_TARGET}>
+    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll
+  COMMAND ${7ZIP_EXECUTABLE}
+    u -tzip -r -mcu=on
+    ${CMAKE_BINARY_DIR}/resources-dllplugin.zip
+    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
+    > NUL
+  BYPRODUCTS ${CMAKE_BINARY_DIR}/resources-dllplugin.zip
+  DEPENDS ${TEST_DLLPLUGIN_TARGET}
+  COMMENT "Generating resources-dllplugin.zip"
 )
 
 # define executable
@@ -131,6 +160,10 @@ set_target_properties(tests1
     ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}"
 )
 
+add_custom_command(TARGET tests1 PRE_LINK
+  COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:tests1>
+)
+
 if(MINGW)
 
   # Add include directories for tests1
@@ -150,6 +183,8 @@ add_dependencies(tests1
   sakura_lang_en_US
   sakura_lang_zh_CN
   test_resource_zip
+  test_dllplugin_zip
   generate_gtest
   generate_miniz
+  ppa_stub
 )

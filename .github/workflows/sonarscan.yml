@@ -34,6 +34,7 @@ jobs:
       with:
         ref: '${{ github.event.pull_request.head.sha }}'
         fetch-depth: 0
+        submodules: true
 
     - name: Setup environment variables
       id: setup-base-env
@@ -74,7 +75,10 @@ jobs:
       shell: pwsh
 
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
 
     - name: Install AutoHotKey
       run: |
@@ -103,7 +107,7 @@ jobs:
       shell: cmd
 
     - name: Install Build Wrapper
-      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v7.0.0
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v7.1.0
 
     - name: Build with Build-Wrapper
       env:
@@ -122,7 +126,9 @@ jobs:
       if: env.SONAR_TOKEN
       working-directory: ${{ runner.temp }}
       run: |
-        choco install OpenCppCoverage -y
+        $Installer = "OpenCppCoverageSetup.exe"
+        Invoke-WebRequest -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe" -OutFile $Installer
+        Start-Process -FilePath .\$Installer -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" -Wait
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Run Tests
@@ -151,7 +157,7 @@ jobs:
           *-googletest.xml
 
     - name: Analyze with SonarQube Scan action
-      uses: SonarSource/sonarqube-scan-action@v7.0.0
+      uses: SonarSource/sonarqube-scan-action@v7.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -172,7 +178,7 @@ jobs:
 
     - name: Upload Sonar CFamily failure reproducer (if present)
       if: ${{ always() && hashFiles('sonar-cfamily-reproducer.tar.xz') != '' }}
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: sonar-cfamily-reproducer-${{ runner.os }}-${{ github.run_id }}
         path: sonar-cfamily-reproducer.tar.xz

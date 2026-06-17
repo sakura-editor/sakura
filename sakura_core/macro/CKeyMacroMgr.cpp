@@ -18,8 +18,6 @@
 */
 
 #include "StdAfx.h"
-#include <stdio.h>
-#include <string.h>
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
@@ -27,16 +25,12 @@
 #include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include "io/CTextStream.h"
+#include "util/file.h"
 #include "CSelectLang.h"
 #include "mem/CNativeW.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
-	m_pTop = nullptr;
-	m_pBot = nullptr;
-//	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
-	//	Apr. 29, 2002 genta
-	//	m_nReadyはCMacroManagerBaseへ
 	return;
 }
 
@@ -106,7 +100,7 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath ) con
 	}
 
 	//最初のコメント
-	out.Write(cxx::load_string(STR_ERR_DLGKEYMACMGR1));
+	out.WriteF(LS(STR_ERR_DLGKEYMACMGR1));
 
 	//マクロ内容
 	CMacro* p = m_pTop;
@@ -326,7 +320,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 								nBegin = k;
 								if( 0 < k - n - 2 ){
 									wchar_t hex[5];
-									::wcsncpy_s(hex, &p[n+2], _TRUNCATE);
+									wcsncpy( hex, &p[n+2], k - n - 2 );
+									hex[k - n - 2] = L'\0';
 									wchar_t* pEnd = nullptr;
 									wchar_t c = static_cast<wchar_t>(wcstol(hex, &pEnd, 16));
 									cmemTemp.AppendString( &c, 1 );
@@ -437,10 +432,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 {
 	// 一時ファイル名を作成
-	WCHAR szTempDir[_MAX_PATH];
-	WCHAR szTempFile[_MAX_PATH];
-	if( 0 == ::GetTempPath( _MAX_PATH, szTempDir ) )return FALSE;
-	if( 0 == ::GetTempFileName( szTempDir, L"mac", 0, szTempFile ) )return FALSE;
+	SFilePath szTempFile;
+	szTempFile = GetTempFilePath(L"mac");
+
 	// 一時ファイルに書き込む
 	CTextOutputStream out = CTextOutputStream( szTempFile );
 	out.WriteString( pszCode );

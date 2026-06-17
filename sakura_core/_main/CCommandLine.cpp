@@ -266,7 +266,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 	if( bFind ){
 		CSakuraEnvironment::ResolvePath(szPath);
-		::wcsncpy_s(m_fi.m_szPath, szPath, _TRUNCATE);	/* ファイル名 */
+		wcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
 		nPos = i + 1;
 	}else{
 		m_fi.m_szPath[0] = L'\0';
@@ -274,8 +274,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	CNativeW cmResponseFile = L"";
-	std::wstring strCmdLineWork{ pszCmdLineSrc };
-	LPWSTR pszCmdLineWork = std::data(strCmdLineWork);
+	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
+	wcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != nullptr )
@@ -329,7 +329,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
 			if (wcsncmp_literal(szPath, L"file:///")==0) {
-				::wcsncpy_s(szPath, &(szPath[8]), _TRUNCATE);
+				wcscpy(szPath, &(szPath[8]));
 			}
 
 			if ( IsInvalidFilenameChars( szPath ) ){
@@ -344,7 +344,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			if (szPath[0] != L'\0') {
 				CSakuraEnvironment::ResolvePath(szPath);
 				if (m_fi.m_szPath[0] == L'\0') {
-					::wcsncpy_s(m_fi.m_szPath, szPath, _TRUNCATE);
+					wcscpy(m_fi.m_szPath, szPath );
 				}
 				else {
 					m_vFiles.push_back( szPath );
@@ -408,7 +408,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					::wcsncpy_s(m_fi.m_szDocType , L"grepout", _TRUNCATE);
+					wcscpy( m_fi.m_szDocType , L"grepout" );
 				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
@@ -499,7 +499,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_bDebugMode = true;
 				// 2010.06.16 Moca -TYPE=output 扱いとする
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					::wcsncpy_s(m_fi.m_szDocType , L"output", _TRUNCATE);
+					wcscpy( m_fi.m_szDocType , L"output" );
 				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効
@@ -525,6 +525,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		}
 		pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	}
+	delete [] pszCmdLineWork;
 
 	// レスポンスファイル解析
 	if( cmResponseFile.GetStringLength() && bResponse ){

@@ -25,6 +25,7 @@
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "config/system_constants.h"
+#include "apiwrap/DarkMode.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
@@ -70,7 +71,7 @@ HWND CSplitterWnd::Create( HWND hwndParent )
 	}
 
 	/* 基底クラスメンバ呼び出し */
-	return CWnd::Create(
+	HWND hWnd = CWnd::Create(
 		hwndParent,
 		0, // extended window style
 		pszClassName,	// Pointer to a null-terminated string or is an atom.
@@ -82,6 +83,8 @@ HWND CSplitterWnd::Create( HWND hwndParent )
 		0, // window height
 		nullptr // handle to menu, or child-window identifier
 	);
+	DarkMode::setDarkWndSafe(hWnd);
+	return hWnd;
 }
 
 /* 子ウィンドウの設定
@@ -788,11 +791,23 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_un
 	::GetClientRect( GetHwnd(), &rc );
 	if( m_nAllSplitRows > 1 ){
 		::SetRect( &rcFrame, rc.left, m_nVSplitPos, rc.right, m_nVSplitPos + nFrameWidth );
-		::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
+		if( IsDarkModeActive() ){
+			HBRUSH hBrush = ::CreateSolidBrush( DarkMode::getViewBackgroundColor() );
+			::FillRect( hdc, &rcFrame, hBrush );
+			::DeleteObject( hBrush );
+		}else{
+			::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
+		}
 	}
 	if( m_nAllSplitCols > 1 ){
 		::SetRect( &rcFrame, m_nHSplitPos, rc.top, m_nHSplitPos + nFrameWidth, rc.bottom );
-		::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
+		if( IsDarkModeActive() ){
+			HBRUSH hBrush = ::CreateSolidBrush( DarkMode::getViewBackgroundColor() );
+			::FillRect( hdc, &rcFrame, hBrush );
+			::DeleteObject( hBrush );
+		}else{
+			::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
+		}
 	}
 	::EndPaint(hwnd, &ps);
 	return 0L;

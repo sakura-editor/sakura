@@ -465,15 +465,15 @@ void CTextDrawer::DispLineNumber(
 			if( pTypes->m_bLineNumIsCRLF ){
 				/* 論理行番号表示モード */
 				if( nullptr == pcLayout || 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-					::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
+					wcscpy( szLineNum, L" " );
 				}else{
-					::_itow_s(pcLayout->GetLogicLineNo() + 1, szLineNum, 10);	/* 対応する論理行番号 */
+					_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 //###デバッグ用
-//					::_itow_s(CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10);	// 行の変更番号
+//					_itow( CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10 );	// 行の変更番号
 				}
 			}else{
 				/* 物理行（レイアウト行）番号表示モード */
-				::_itow_s((Int)nLineNum + 1, szLineNum, 10);
+				_itow( (Int)nLineNum + 1, szLineNum, 10 );
 			}
 			nLineCols = int(wcslen( szLineNum ));
 			nLineNumCols = nLineCols; // 2010.08.17 Moca 位置決定に行番号区切りは含めない
@@ -481,7 +481,7 @@ void CTextDrawer::DispLineNumber(
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */
 			if( 2 == pTypes->m_nLineTermType ){
 				const wchar_t szSeparator[] = { pTypes->m_cLineTermChar, 0 };
-				::wcsncat_s(szLineNum, szSeparator, _TRUNCATE);
+				::wcscat_s(szLineNum, szSeparator);
 			}
 		}
 

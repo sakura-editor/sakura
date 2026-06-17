@@ -10,11 +10,14 @@
     <Filter Include="Other Files">
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Other Files\testing">
+      <UniqueIdentifier>{f5277b5c-1446-48f8-acf0-82a8159010f9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Other Files\env">
       <UniqueIdentifier>{17f8cd59-3000-4cc7-9d41-b34770ba8333}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Other Files\testing">
-      <UniqueIdentifier>{f5277b5c-1446-48f8-acf0-82a8159010f9}</UniqueIdentifier>
+    <Filter Include="Other Files\window">
+      <UniqueIdentifier>{9d35d017-de16-4c86-9963-7960382e52ba}</UniqueIdentifier>
     </Filter>
     <Filter Include="Pre-compiled Header">
       <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
@@ -22,6 +25,9 @@
     <Filter Include="Resource Files">
       <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Other Files\dlg">
+      <UniqueIdentifier>{fe8a4e97-7407-4cb3-9387-7a58c099410c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,11 +43,23 @@
     <ClCompile Include="..\src\test\resources\code-main.cpp">
       <Filter>Other Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp">
+      <Filter>Other Files\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.cpp">
+      <Filter>Other Files\dlg</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp">
       <Filter>Other Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp">
-      <Filter>Other Files\testing</Filter>
+    <ClCompile Include="..\src\test\cpp\tests1\macro\test-macro.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp">
+      <Filter>Other Files\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\window\UiaTestSuite.cpp">
+      <Filter>Other Files\window</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp">
       <Filter>Test Files</Filter>
@@ -130,6 +148,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-design_template.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-docoutline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cconvert.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -145,6 +166,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cfileext.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-cfuncinfoarr.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-cdoctypemanager.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -152,6 +176,9 @@
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\resources\printECodeType.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\resources\printEEolType.cpp">
       <Filter>Other Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\resources\printEFunctionCode.cpp">
@@ -184,7 +211,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-messageboxf.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\test\cpp\tests1\test-cppa.cpp">
+    <ClCompile Include="..\src\test\cpp\tests1\macro\test-cppa.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-extmodules.cpp">
@@ -198,11 +225,23 @@
     <ClInclude Include="..\src\test\resources\pch.h">
       <Filter>Pre-compiled Header</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\test\resources\testing\CrtAllocHook.hpp">
+      <Filter>Other Files\testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\testing\StartEditorProcess.hpp">
+      <Filter>Other Files\testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.hpp">
+      <Filter>Other Files\dlg</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp">
       <Filter>Other Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\test\resources\StartEditorProcess.hpp">
-      <Filter>Other Files\testing</Filter>
+    <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp">
+      <Filter>Other Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\window\UiaTestSuite.hpp">
+      <Filter>Other Files\window</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp">
       <Filter>Other Files</Filter>

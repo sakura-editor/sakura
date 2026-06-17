@@ -128,6 +128,8 @@ int CDlgPrintSetting::DoModal(
 
 BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	const auto hWndDlg = hwndDlg;
+
 	_SetHwnd( hwndDlg );
 
 	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
@@ -140,6 +142,15 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	// CDialog::OnInitDialogの奥でOnChangeSettingTypeが呼ばれるのでここでは更新要求しない
 	//	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
 	//UpdatePrintableLineAndColumn();
+
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_FONTHEIGHT,  7,   200);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_LINESPACE,   0,   150);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_DANSUU,      1,   4);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_DANSPACE,    0,   30);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINTY,    0,   50);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINBY,    0,   50);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINLX,    0,   50);
+	apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_MARGINRX,    0,   50);
 
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
@@ -161,37 +172,6 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 
 	/* 基底クラスメンバ */
 	return CDialog::OnDestroy();
-}
-
-BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
-{
-	NM_UPDOWN*		pMNUD;
-	int				idCtrl;
-	BOOL			bSpinDown;
-	idCtrl = (int)pNMHDR->idFrom;
-	pMNUD  = (NM_UPDOWN*)pNMHDR;
-	if( pMNUD->iDelta < 0 ){
-		bSpinDown = FALSE;
-	}else{
-		bSpinDown = TRUE;
-	}
-	switch( idCtrl ){
-	case IDC_SPIN_FONTHEIGHT:
-	case IDC_SPIN_LINESPACE:
-	case IDC_SPIN_DANSUU:
-	case IDC_SPIN_DANSPACE:
-	case IDC_SPIN_MARGINTY:
-	case IDC_SPIN_MARGINBY:
-	case IDC_SPIN_MARGINLX:
-	case IDC_SPIN_MARGINRX:
-		/* スピンコントロールの処理 */
-		OnSpin( idCtrl, bSpinDown );
-		UpdatePrintableLineAndColumn();
-		break;
-	default:
-		break;
-	}
-	return TRUE;
 }
 
 BOOL CDlgPrintSetting::OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, int wID )
@@ -225,7 +205,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_BUTTON_EDITSETTINGNAME:
-		::wcsncpy_s(szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, _TRUNCATE);
+		wcscpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
 		{
 			BOOL bDlgInputResult=cDlgInput1.DoModal(
 				m_hInstance,
@@ -240,7 +220,9 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			}
 		}
 		if( szWork[0] != L'\0' ){
-			::wcsncpy_s(m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, _TRUNCATE);
+			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
+			wcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
+			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
 			/* 印刷設定名一覧 */
 			hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
 			ApiWrap::Combo_ResetContent( hwndComboSettingName );
@@ -268,7 +250,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 
 			if (lf.lfFaceName[0] == L'\0') {
 				// 半角フォントを設定
-				::wcsncpy_s(lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan, _TRUNCATE);
+				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );
@@ -291,7 +273,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 
 			if (lf.lfFaceName[0] == L'\0') {
 				// 半角フォントを設定
-				::wcsncpy_s(lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan, _TRUNCATE);
+				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );
@@ -752,39 +734,6 @@ const struct {
 	{ IDC_EDIT_MARGINRX,	0,	50 },	//!< mm
 };
 
-/* スピンコントロールの処理 */
-void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
-{
-	int		nData = 0;
-	int		nCtrlIdEDIT = 0;
-	int		nDiff = 1;
-	int		nIdx = -1;
-	switch( nCtrlId ){
-	case IDC_SPIN_FONTHEIGHT:	nIdx = 0;				break;
-	case IDC_SPIN_LINESPACE:	nIdx = 1;	nDiff=10;	break;
-	case IDC_SPIN_DANSUU:		nIdx = 2;				break;
-	case IDC_SPIN_DANSPACE:		nIdx = 3;				break;
-	case IDC_SPIN_MARGINTY:		nIdx = 4;				break;
-	case IDC_SPIN_MARGINBY:		nIdx = 5;				break;
-	case IDC_SPIN_MARGINLX:		nIdx = 6;				break;
-	case IDC_SPIN_MARGINRX:		nIdx = 7;				break;
-	default:
-		break;
-	}
-	if( nIdx >= 0 ){
-		nCtrlIdEDIT = sDataRange[nIdx].ctrlid;
- 		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nullptr, FALSE );
- 		if( bDown ){
-			nData -= nDiff;
- 		}else{
-			nData += nDiff;
- 		}
-		/* 入力値(数値)のエラーチェックをして正しい値を返す */
-		nData = DataCheckAndCorrect( nCtrlIdEDIT, nData );
-		::SetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nData, FALSE );
-	}
-}
-
 /* 入力値(数値)のエラーチェックをして正しい値を返す */
 int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 {
@@ -915,7 +864,7 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 
 		// フォント名/サイズの作成
 		int		nMM = MulDiv( nPointSize, 254, 720 );	// フォントサイズ計算(pt->1/10mm)
-		auto_snprintf_s(szName, _TRUNCATE, nPointSize%10 ? L"%.32s(%.1fpt/%d.%dmm)" : L"%.32s(%.0fpt/%d.%dmm)",
+		auto_sprintf(szName, nPointSize%10 ? L"%.32s(%.1fpt/%d.%dmm)" : L"%.32s(%.0fpt/%d.%dmm)",
 					lf.lfFaceName,
 					double(nPointSize)/10,
 					nMM/10, nMM/10);

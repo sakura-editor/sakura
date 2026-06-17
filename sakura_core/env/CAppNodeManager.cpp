@@ -482,6 +482,8 @@ void CAppNodeManager::ResetGroupId()
 
 	@note NULLを返す場合があるので戻り値のチェックが必要です
 */
+_Check_return_
+_Ret_maybenull_
 EditNode* CAppNodeManager::GetEditNode( HWND hWnd )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();

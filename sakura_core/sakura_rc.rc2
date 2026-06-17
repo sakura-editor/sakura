@@ -157,3 +157,9 @@ BEGIN
 		// See following link:
 		//  http://msdn.microsoft.com/en-us/library/dd318693.aspx
 END
+
+#ifdef __MINGW32__
+
+1 RT_MANIFEST "sakura.mingw.manifest.xml"
+
+#endif

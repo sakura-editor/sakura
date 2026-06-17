@@ -60,7 +60,7 @@ int CRecentExcludeFile::CompareItem( const CExcludeFileString* p1, LPCWSTR p2 ) 
 
 void CRecentExcludeFile::CopyItem( CExcludeFileString* dst, LPCWSTR src ) const
 {
-	::wcsncpy_s(*dst, src, _TRUNCATE);
+	wcscpy(*dst,src);
 }
 
 bool CRecentExcludeFile::ValidateReceiveType( LPCWSTR p ) const

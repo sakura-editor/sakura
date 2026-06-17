@@ -9,8 +9,6 @@
 #define SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_
 #pragma once
 
-#include <stdexcept>
-
 #include "util/string_ex.h"
 #include "debug/Debug2.h"
 
@@ -30,17 +28,33 @@ public:
 
 	StaticVector() = default;
 
-	explicit StaticVector(std::span<ELEMENT_TYPE> source) noexcept
-		: m_nCount(static_cast<int>(std::size(source)))
-		, m_aElements(source)
+	constexpr explicit StaticVector(std::initializer_list<ElementType> source)
+		: StaticVector(std::span<const ElementType>{ source.begin(), source.size() })
 	{
+	}
+
+	template<std::ranges::sized_range T>
+	constexpr explicit StaticVector(const T& source)
+	{
+		const auto sourceSize = static_cast<size_t>(std::size(source));
+		if (static_cast<size_t>(MAX_SIZE) < sourceSize) {
+			throw std::out_of_range("source is out of range.");
+		}
+
+		m_nCount = static_cast<int>(sourceSize);
+
+		auto itSource = std::ranges::begin(source);
+		for (int i = 0; i < m_nCount; ++i, ++itSource) {
+			m_aElements[i] = static_cast<ElementType>(*itSource);
+		}
 	}
 
 	//属性
 	int size() const noexcept { return m_nCount; }
 
-	auto begin() noexcept { return m_aElements.begin(); }
-	auto end() noexcept { return m_aElements.begin() + m_nCount; }
+	constexpr auto begin() noexcept { return m_aElements.begin(); }
+	constexpr auto end() noexcept { return m_aElements.begin() + MAX_SIZE; }
+
 	auto begin() const noexcept { return m_aElements.begin(); }
 	auto end() const noexcept { return m_aElements.begin() + m_nCount; }
 
@@ -48,13 +62,14 @@ public:
 	ElementType& operator[](size_t nIndex) noexcept
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex < size_t(m_nCount));
+		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
 	}
-	const ElementType& operator[](size_t nIndex) const noexcept
+	constexpr const ElementType& operator[](size_t nIndex) const
 	{
-		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex < size_t(m_nCount));
+		if (MAX_SIZE <= nIndex) {
+			throw std::out_of_range("nIndex is out of range.");
+		}
 		return m_aElements[nIndex];
 	}
 
@@ -70,7 +85,6 @@ public:
 	}
 	void push_back(SET_TYPE e)
 	{
-		assert(m_nCount<MAX_SIZE);
 		if (MAX_SIZE <= m_nCount) {
 			throw std::out_of_range("m_nCount is out of range.");
 		}
@@ -159,18 +173,24 @@ public:
 	constexpr size_t length() const noexcept
 	{
 		const auto pos = Traits::find(data(), size(), L'\0');
-		return pos ? static_cast<size_t>(pos - data()) : size();
+		return pos ? static_cast<size_t>(pos - data()) : size() - 1;
 	}
 
 	constexpr bool empty() const noexcept { return 0 == m_szData[0]; }
+
+	constexpr auto begin() noexcept { return m_szData.begin(); }
+	constexpr auto end() noexcept { return m_szData.end() - 1; }
+
+	auto begin() const noexcept { return m_szData.begin(); }
+	auto end() const noexcept { return m_szData.begin() + length(); }
 
 	constexpr       WCHAR* data()        noexcept { return std::data(m_szData); }
 	constexpr const WCHAR* data()  const noexcept { return std::data(m_szData); }
 	constexpr const WCHAR* c_str() const noexcept { return data(); }
 
 	constexpr operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
-	constexpr operator std::span<WCHAR>()          & noexcept { return std::span<WCHAR, N>{ *this }; }
 	constexpr operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
+	constexpr operator std::span<WCHAR>()          & noexcept { return operator std::span<WCHAR, N>(); }
 
 	explicit operator std::filesystem::path() const & noexcept { return static_cast<std::wstring_view>(*this); }
 
@@ -205,31 +225,20 @@ private:
 	ArrayType	m_szData{};
 };
 
-template<int N>
-inline errno_t wcsncpy_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept {
-	if (_TRUNCATE != count && count < std::size( src )) {
-		src = src.substr( 0, count );
-	}
-	return dst.assign(src);
-}
+template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }
+template<int N> inline errno_t wcscat_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.append(src); }
+
+template<int N> inline errno_t wcsncpy_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscpy_s(dst, src); }
+template<int N> inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscat_s(dst, src); }
 
 template<int N>
-inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept {
-	if (_TRUNCATE != count && count < std::size( src )) {
-		src = src.substr( 0, count );
-	}
-	return dst.append(src);
+inline int vswprintf_s(StaticString<N>& buf, const WCHAR* format, va_list& v) noexcept {
+	return ::_vsnwprintf_s(std::data(buf), std::size(buf), _TRUNCATE, format, v);
 }
 
-/*!
- * snwprintf_sのStaticString版
- *
- * @retval 0以上 成功
- * @retval -1 切り詰め発生
- */
 template<int N, typename... Params>
-inline int snwprintf_s(StaticString<N>& buf, size_t count, const WCHAR* format, Params&&... params) noexcept {
-	return ::_snwprintf_s(std::data(buf), count, std::size(buf), format, std::forward<Params>(params)...);
+inline int swprintf_s(StaticString<N>& buf, const WCHAR* format, Params&&... params) noexcept {
+	return ::_snwprintf_s(std::data(buf), _TRUNCATE, std::size(buf), format, std::forward<Params>(params)...);
 }
 
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */

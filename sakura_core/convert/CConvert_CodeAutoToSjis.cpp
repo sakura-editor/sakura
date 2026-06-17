@@ -26,11 +26,12 @@ CConvert_CodeAutoToSjis::CConvert_CodeAutoToSjis(const SEncodingConfig& sEncodin
 bool CConvert_CodeAutoToSjis::DoConvert(CNativeW* pcData)
 {
 	// Shift-JISに変換する（変換エラーは無視する）
-	const auto bin = CCodeFactory::CreateCodeBase(CODE_SJIS)->UnicodeToCode(*pcData);
+	CMemory cmemSjis;
+	CCodeFactory::CreateCodeBase(CODE_SJIS)->UnicodeToCode(*pcData, &cmemSjis);
 
 	// バイナリシーケンスの文字コードを自動検出する
 	CCodeMediator m(m_sEncodingConfig);
-	ECodeType eCodeType = m.CheckKanjiCode(reinterpret_cast<const char*>(bin.data()), bin.length());
+	ECodeType eCodeType = m.CheckKanjiCode(LPCSTR(cmemSjis.GetRawPtr()), size_t(cmemSjis.GetRawLength()));
 
 	// 検出された文字コードに基づいて変換に使うCCodeBaseを生成する
 	std::unique_ptr<CCodeBase> pcCodeBase;
@@ -56,7 +57,7 @@ bool CConvert_CodeAutoToSjis::DoConvert(CNativeW* pcData)
 	}
 
 	// 検出された文字コードに基づいてUnicode変換する（変換エラーは無視する）
-	*pcData = pcCodeBase->CodeToUnicode(bin);
+	pcCodeBase->CodeToUnicode(cmemSjis, pcData);
 
 	return true;
 }

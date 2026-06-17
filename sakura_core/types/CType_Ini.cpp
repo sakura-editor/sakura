@@ -15,8 +15,8 @@
 void CType_Ini::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	::wcsncpy_s(pType->m_szTypeName, L"設定ファイル", _TRUNCATE);
-	::wcsncpy_s(pType->m_szTypeExts, L"ini,inf,cnf,kwd,col", _TRUNCATE);
+	wcscpy( pType->m_szTypeName, L"設定ファイル" );
+	wcscpy( pType->m_szTypeExts, L"ini,inf,cnf,kwd,col" );
 	
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );				/* 行コメントデリミタ */

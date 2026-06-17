@@ -50,7 +50,7 @@ public:
 
 	const char* GetVersion(){		//!< DLLのバージョン情報を取得。m_szMsgを壊す
 		if ( IsAvailable() ){
-			auto_snprintf_s(m_szMsg, _TRUNCATE, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
+			auto_sprintf(m_szMsg, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
 			return m_szMsg;
 		}
 		return "";
@@ -239,7 +239,7 @@ private:
 	// コールバックプロシージャ群
 	static void __stdcall stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int* Err_CD, char** Value);	//	2003.06.01 Moca
 
-	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
+	static void __stdcall stdProc( const char* FuncName, const int Index, const char** Arguments, const int ArgSize, int* Err_CD);
 	static void __stdcall stdIntFunc( const char* FuncName, const int Index,
 		const char* Argument[], const int ArgSize, int* Err_CD, int* ResultValue); // 2002.02.24 Moca
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
@@ -281,6 +281,10 @@ private:
 
 public:
 	static void CallErrorProc(PpaExecInfo& info, int Err_CD, _In_opt_z_ LPCSTR Err_Mes);
+	static int	CallIntFunc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments, int* ResultValue);
+	static int	CallProc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments);
+	static int	CallStrFunc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments, LPSTR* ResultValue);
+	static int	CallStrObj(PpaExecInfo& info, int index, bool isSetMode, LPSTR* ResultValue);
 };
 
 #endif /* SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_ */

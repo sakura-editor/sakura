@@ -234,11 +234,6 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	// 選択中の言語を更新
 	gm_Selected = nIndex;
 
-	// アプリ名をリソースから読み込む
-	if (auto pcProcess = CProcess::getInstance()) {
-		pcProcess->UpdateAppName(LoadStringW(STR_GSTR_APPNAME));
-	}
-
 	// ロケールを設定
 	::SetThreadUILanguage(getDefaultLangId());
 
@@ -347,7 +342,13 @@ size_t CLoadString::CLoadStrBuffer::LoadStringW(UINT uid)
 	}
 	catch(const std::out_of_range&){
 		// 存在しない場合はアプリリソースから取得する
-		m_ResString = cxx::load_string(uid);
+		try {
+			m_ResString = cxx::load_string(uid);
+		}
+		catch(const std::out_of_range&){
+			// 本体にも存在しない場合はスルーする
+			m_ResString = L"";
+		}
 	}
 
 	m_String = m_ResString;

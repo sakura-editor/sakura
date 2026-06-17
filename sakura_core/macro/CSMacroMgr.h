@@ -127,7 +127,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	static LPWSTR GetFuncInfoByID(int nFuncID, std::span<WCHAR> szFuncName, const std::optional<std::span<WCHAR>>& optFuncNameJapanese = std::nullopt);	/* 機能ID→関数名，機能名日本語 */
+	static WCHAR* GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, WCHAR* pszFuncName, WCHAR* pszFuncNameJapanese );	/* 機能ID→関数名，機能名日本語 */
 	static EFunctionCode GetFuncInfoByName( HINSTANCE hInstance, const WCHAR* pszFuncName, WCHAR* pszFuncNameJapanese );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int nFuncID );	/* キーマクロに記録可能な機能かどうかを調べる */
 	

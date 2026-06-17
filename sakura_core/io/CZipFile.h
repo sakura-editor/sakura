@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2011, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -12,13 +12,12 @@
 #define SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_
 #pragma once
 
-#include <ShlDisp.h>
+#include "cxx/com_pointer.hpp"
 
 class CZipFile {
 private:
-	IShellDispatch*	psd;
-	Folder*			pZipFile;
-	std::wstring	sZipName;
+	using IShellDispatchPtr = cxx::com_pointer<IShellDispatch>;
+	using FolderPtr = cxx::com_pointer<Folder>;
 
 	using Me = CZipFile;
 
@@ -30,10 +29,15 @@ public:
 	Me& operator = (Me&&) noexcept = delete;
 	~CZipFile();	// デストラクタ
 
-public:
-	bool	IsOk() { return (psd != nullptr); }			// Zip Folderが使用できるか?
-	bool	SetZip(const std::wstring& sZipPath);		// Zip File名 設定
-	bool	ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName);	// ZIP File 内 フォルダー名取得と定義ファイル検査(Plugin用)
-	bool	Unzip(const std::wstring sOutPath);			// Zip File 解凍
+	bool	IsOk() const noexcept { return (m_pShellDispatch != nullptr); }			// Zip Folderが使用できるか?
+	bool	SetZip(const std::filesystem::path& zipPath);		// Zip File名 設定
+	bool	Unzip(const std::filesystem::path& outDir);			// Zip File 解凍
+	bool	ChkPluginDef(std::wstring_view defFileName, std::wstring& sFolderName);	// ZIP File 内 フォルダー名取得と定義ファイル検査(Plugin用)
+
+private:
+	IShellDispatchPtr	m_pShellDispatch = nullptr;
+	FolderPtr			m_pZipFolder = nullptr;
+	std::wstring		m_ZipPath;
 };
+
 #endif /* SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_ */

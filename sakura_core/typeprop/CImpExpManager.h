@@ -48,7 +48,7 @@ protected:
 		/* ファイルのフルパスをフォルダーとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, nullptr );
-		::wcsncat_s(GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\", _TRUNCATE);
+		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );
 	}
 
 	// デフォルト拡張子の取得(「*.txt」形式)

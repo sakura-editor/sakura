@@ -22,9 +22,9 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CClipboard::CClipboard(HWND hwnd)
+	: m_hwnd(hwnd)
+	, m_bOpenResult(OpenClipboardWithRetry(hwnd))
 {
-	m_hwnd = hwnd;
-	m_bOpenResult = OpenClipboardWithRetry(hwnd);
 }
 
 CClipboard::~CClipboard()
@@ -36,25 +36,24 @@ CClipboard::~CClipboard()
 //                     インターフェース                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CClipboard::Empty()
+bool CClipboard::Open(HWND hWndOwner)
 {
-	EmptyClipboard();
-}
+	if (!m_bOpenResult) {
+		m_bOpenResult = OpenClipboardWithRetry(hWndOwner);
 
-void CClipboard::Close()
-{
-	if(m_bOpenResult){
-		::CloseClipboard();
-		m_bOpenResult=FALSE;
+		if (m_bOpenResult) {
+			m_hwnd = hWndOwner;
+		}
 	}
+
+	return m_bOpenResult;
 }
 
-BOOL CClipboard::OpenClipboardWithRetry(HWND hwnd)
+bool CClipboard::OpenClipboardWithRetry(HWND hWndOwner) const
 {
 	for (int attempt = 0; attempt < CLIPBOARD_RETRY_COUNT; ++attempt) {
-		BOOL result = ::OpenClipboard(hwnd);
-		if (result) {
-			return result;
+		if (OpenClipboard(hWndOwner)) {
+			return true;
 		}
 		
 		// If this is not the last attempt, sleep briefly before retrying
@@ -63,7 +62,25 @@ BOOL CClipboard::OpenClipboardWithRetry(HWND hwnd)
 		}
 	}
 	
-	return FALSE;
+	return false;
+}
+
+void CClipboard::Close()
+{
+	if(m_bOpenResult){
+		if (m_hwnd) {
+			CloseClipboard();
+			m_hwnd = nullptr;
+		}
+		m_bOpenResult = FALSE;
+	}
+}
+
+void CClipboard::Empty() const
+{
+	if (m_bOpenResult) {
+		EmptyClipboard();
+	}
 }
 
 bool CClipboard::SetText(
@@ -680,6 +697,18 @@ int CClipboard::GetDataType() const
 	if(IsClipboardFormatAvailable(CF_OEMTEXT))return CF_OEMTEXT;
 	if(IsClipboardFormatAvailable(CF_HDROP))return CF_HDROP;
 	return -1;
+}
+
+BOOL CClipboard::OpenClipboard(
+	_In_opt_ HWND hWndNewOwner
+) const
+{
+	return ::OpenClipboard(hWndNewOwner);
+}
+
+BOOL CClipboard::CloseClipboard() const
+{
+	return ::CloseClipboard();
 }
 
 HANDLE CClipboard::SetClipboardData(UINT uFormat, HANDLE hMem) const {

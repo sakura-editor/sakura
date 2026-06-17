@@ -25,6 +25,7 @@
 #include "env/CShareData.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
 #include "config/system_constants.h"
+#include "apiwrap/DarkMode.h"
 
 //-------------------------------------------------
 
@@ -51,8 +52,8 @@ std::filesystem::path CControlProcess::GetIniFileName() const
 	const auto filename = iniPath.filename();
 	iniPath.remove_filename();
 
-	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
-		iniPath.append(pCommandLine->GetProfileName());
+	if (const auto pszProfileName = GetProfileName(); *pszProfileName) {
+		iniPath.append(pszProfileName);
 	}
 
 	return iniPath.append(filename.c_str());
@@ -96,8 +97,8 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	}
 	privateIniPath.append(subFolder);
 
-	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
-		privateIniPath.append(pCommandLine->GetProfileName());
+	if (const auto pszProfileName = GetProfileName(); *pszProfileName) {
+		privateIniPath.append(pszProfileName);
 	}
 
 	return privateIniPath.append(filename.c_str());
@@ -127,7 +128,7 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = GetProfileName();
 
 	// 初期化完了イベントを作成する
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
@@ -168,6 +169,9 @@ bool CControlProcess::InitializeProcess()
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
 	}
+
+	/* ダークモード設定を反映する */
+	ApplyDarkModeSetting(GetDllShareData().m_Common.m_sWindow.m_bDarkMode);
 
 	/* 言語を選択する */
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );

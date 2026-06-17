@@ -107,7 +107,7 @@ void GetDefaultColorInfoName(ColorInfo* pColorInfo, size_t nIndex) noexcept
 
 	assert( nIndex < int(std::size(ColorInfo_DEFAULT)) );
 
-	::wcsncpy_s(pColorInfo->m_szName, LS(ColorInfo_DEFAULT[nIndex].m_nNameId), _TRUNCATE);
+	::wcscpy_s(pColorInfo->m_szName, LS(ColorInfo_DEFAULT[nIndex].m_nNameId));
 }
 
 int GetDefaultColorInfoCount() noexcept

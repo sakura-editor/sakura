@@ -67,7 +67,7 @@ public:
 	static void declare(void);
 
 protected:
-	CMacro*	m_pTop;	//	先頭と終端を保持
-	CMacro*	m_pBot;
+	CMacro*	m_pTop = nullptr;	//	先頭と終端を保持
+	CMacro*	m_pBot = nullptr;
 };
 #endif /* SAKURA_CKEYMACROMGR_998F55D6_230A_4D86_B17C_A9ED9BCAA39C_H_ */

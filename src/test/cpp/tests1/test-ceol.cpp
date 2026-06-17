@@ -1,11 +1,15 @@
 ﻿/*
-	Copyright (C) 2021-2022, Sakura Editor Organization
+	Copyright (C) 2021-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 
 #include "pch.h"
 #include "basis/CEol.h"
+
+#include "charset/CCodeFactory.h"
+
+namespace basis {
 
 /*!
 	CEolのテスト
@@ -14,120 +18,119 @@ TEST(CEol, CEol)
 {
 	// 初期値は none 
 	CEol cEol;
-	EXPECT_EQ(EEolType::none, cEol.GetType());
-	EXPECT_EQ(EEolType::none, (EEolType)cEol);
+	EXPECT_THAT(cEol.GetType(), Eq(EEolType::none));
+	EXPECT_THAT(static_cast<EEolType>(cEol), Eq(EEolType::none));
 
 	// 代入したら変更できる
 	cEol = EEolType::line_feed;
-	EXPECT_EQ(EEolType::line_feed, cEol.GetType());
+	EXPECT_THAT(cEol.GetType(), Eq(EEolType::line_feed));
 
 	// コピーの確認
 	CEol cCopied = cEol;
-	EXPECT_EQ(cEol.GetType(), cCopied.GetType());
+	EXPECT_THAT(cCopied.GetType(), Eq(cEol.GetType()));
 
 	// EEolTypeは変な値でも格納できる
-	EEolType eBadValue = static_cast<EEolType>(100);
-	EXPECT_EQ(100, static_cast<int>(eBadValue));
+	const auto eBadValue = static_cast<EEolType>(100);
+	EXPECT_THAT(static_cast<int>(eBadValue), Eq(100));
 
 	// CEolは変な値を格納できない（入れようとした場合CRLFになる）
 	cEol = eBadValue;
-	EXPECT_EQ(EEolType::cr_and_lf, cEol.GetType());
+	EXPECT_THAT(cEol.GetType(), Eq(EEolType::cr_and_lf));
 }
+
+//! EOLテストのためのパラメータ型
+using CEolTestParam = std::tuple<EEolType, bool, std::wstring, std::wstring>;
+
+//! EOLテストのためのフィクスチャクラス
+class CEolTest : public ::testing::TestWithParam<CEolTestParam> {};
 
 /*!
 	CEolのテスト
  */
-TEST(CEol, typeNone)
+TEST_P(CEolTest, test)
 {
-	CEol cEol(EEolType::none);
+	const auto  eEolType  = std::get<0>(GetParam());
+	const auto  isValid   = std::get<1>(GetParam());
+	const auto& eolName   = std::get<2>(GetParam());
+	const auto& eolValue  = std::get<3>(GetParam());
 
-	EXPECT_EQ(EEolType::none, cEol.GetType());
-	EXPECT_EQ(0, cEol.GetLen());
-	EXPECT_STREQ(L"改行無", cEol.GetName());
-	EXPECT_STREQ(L"", cEol.GetValue2());
-	EXPECT_FALSE(cEol.IsValid());
+	CEol cEol{ eEolType };
+
+	EXPECT_THAT(cEol.GetType(),   Eq(eEolType));
+	EXPECT_THAT(cEol.IsValid(),   Eq(isValid));
+	EXPECT_THAT(cEol.GetValue2(), StrEq(eolValue));
+	EXPECT_THAT(cEol.GetLen(),    Eq(int(std::size(eolValue))));
+	EXPECT_THAT(cEol.GetName(),   StrEq(eolName));
 }
 
 /*!
-	CEolのテスト
+ * @brief パラメータテストをインスタンス化する
  */
-TEST(CEol, typeCrlf)
-{
-	CEol cEol(EEolType::cr_and_lf);
+INSTANTIATE_TEST_SUITE_P(CEolCases
+	, CEolTest
+	, ::testing::Values(
+		CEolTestParam{ EEolType::none,                false, L"改行無", {}        },
+		CEolTestParam{ EEolType::cr_and_lf,           true,  L"CRLF",   L"\r\n"   },
+		CEolTestParam{ EEolType::line_feed,           true,  L"LF",     L"\n"     },
+		CEolTestParam{ EEolType::carriage_return,     true,  L"CR",     L"\r"     },
+		CEolTestParam{ EEolType::next_line,           true,  L"NEL",    L"\x85",  },
+		CEolTestParam{ EEolType::line_separator,      true,  L"LS",     L"\u2028" },
+		CEolTestParam{ EEolType::paragraph_separator, true,  L"PS",     L"\u2029" }
+	)
+);
 
-	EXPECT_EQ(EEolType::cr_and_lf, cEol.GetType());
-	EXPECT_EQ(2, cEol.GetLen());
-	EXPECT_STREQ(L"CRLF", cEol.GetName());
-	EXPECT_STREQ(L"\r\n", cEol.GetValue2());
-	EXPECT_TRUE(cEol.IsValid());
+//! EOL検出テストのためのパラメータ型
+using DetectEolTestParam = std::tuple<ECodeType, EEolType, CNativeW>;
+
+//! EOL検出テストのためのフィクスチャクラス
+class DetectEolTest : public ::testing::TestWithParam<DetectEolTestParam> {};
+
+/*!
+ * Eol検出テスト
+ */
+TEST_P(DetectEolTest, test)
+{
+	const auto  eCodeType = std::get<0>(GetParam());
+	const auto  eEolType  = std::get<1>(GetParam());
+	const auto& line      = std::get<2>(GetParam());
+
+	CEol cEol{ static_cast<EEolType>(static_cast<int>(eEolType) + 1) };
+
+	const auto pCode = CCodeFactory::CreateCodeBase(eCodeType);
+
+	CMemory m;
+	pCode->UnicodeToCode(line, &m);
+
+	switch (eCodeType) {
+	case CODE_UTF16LE: cEol.SetTypeByStringForFile_uni(LPCSTR(m.GetRawPtr()), size_t(m.GetRawLength())); break;
+	case CODE_UTF16BE: cEol.SetTypeByStringForFile_unibe(LPCSTR(m.GetRawPtr()), size_t(m.GetRawLength())); break;
+	default: FAIL(); break;
+	}
+
+	EXPECT_THAT(cEol, Eq(eEolType));
 }
 
 /*!
-	CEolのテスト
+ * @brief パラメータテストをインスタンス化する
  */
-TEST(CEol, typeLf)
-{
-	CEol cEol(EEolType::line_feed);
+INSTANTIATE_TEST_SUITE_P(DetectEolCases
+	, DetectEolTest
+	, ::testing::Values(
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::none,                L""       },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::cr_and_lf,           L"\r\n"   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::line_feed,           L"\n"     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::carriage_return,     L"\r"     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::next_line,           L"\x85"   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::line_separator,      L"\u2028" },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::paragraph_separator, L"\u2029" },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::none,                L""       },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::cr_and_lf,           L"\r\n"   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::line_feed,           L"\n"     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::carriage_return,     L"\r"     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::next_line,           L"\x85"   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::line_separator,      L"\u2028" },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::paragraph_separator, L"\u2029" }
+	)
+);
 
-	EXPECT_EQ(EEolType::line_feed, cEol.GetType());
-	EXPECT_EQ(1, cEol.GetLen());
-	EXPECT_STREQ(L"LF", cEol.GetName());
-	EXPECT_STREQ(L"\n", cEol.GetValue2());
-	EXPECT_TRUE(cEol.IsValid());
-}
-
-/*!
-	CEolのテスト
- */
-TEST(CEol, typeCr)
-{
-	CEol cEol(EEolType::carriage_return);
-
-	EXPECT_EQ(EEolType::carriage_return, cEol.GetType());
-	EXPECT_EQ(1, cEol.GetLen());
-	EXPECT_STREQ(L"CR", cEol.GetName());
-	EXPECT_STREQ(L"\r", cEol.GetValue2());
-	EXPECT_TRUE(cEol.IsValid());
-}
-
-/*!
-	CEolのテスト
- */
-TEST(CEol, typeNel)
-{
-	CEol cEol(EEolType::next_line);
-
-	EXPECT_EQ(EEolType::next_line, cEol.GetType());
-	EXPECT_EQ(1, cEol.GetLen());
-	EXPECT_STREQ(L"NEL", cEol.GetName());
-	EXPECT_STREQ(L"\x85", cEol.GetValue2());
-	EXPECT_TRUE(cEol.IsValid());
-}
-
-/*!
-	CEolのテスト
- */
-TEST(CEol, typeLs)
-{
-	CEol cEol(EEolType::line_separator);
-
-	EXPECT_EQ(EEolType::line_separator, cEol.GetType());
-	EXPECT_EQ(1, cEol.GetLen());
-	EXPECT_STREQ(L"LS", cEol.GetName());
-	EXPECT_STREQ(L"\u2028", cEol.GetValue2());
-	EXPECT_TRUE(cEol.IsValid());
-}
-
-/*!
-	CEolのテスト
- */
-TEST(CEol, typePs)
-{
-	CEol cEol(EEolType::paragraph_separator);
-
-	EXPECT_EQ(EEolType::paragraph_separator, cEol.GetType());
-	EXPECT_EQ(1, cEol.GetLen());
-	EXPECT_STREQ(L"PS", cEol.GetName());
-	EXPECT_STREQ(L"\u2029", cEol.GetValue2());
-	EXPECT_TRUE(cEol.IsValid());
-}
+} // namespace basis

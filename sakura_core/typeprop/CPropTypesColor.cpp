@@ -39,6 +39,7 @@
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "config/app_constants.h"
+#include "apiwrap/DarkMode.h"
 
 static const DWORD p_helpids2[] = {	//11400
 	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定
@@ -103,7 +104,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	/* 色設定 I/O */
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
-		::wcsncpy_s(ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName, _TRUNCATE);
+		wcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
 	}
 
 	// インポート
@@ -116,7 +117,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	m_Types.m_nColorInfoArrNum = COLORIDX_LAST;
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		m_Types.m_ColorInfoArr[i] =  ColorInfoArr[i];
-		::wcsncpy_s(m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName, _TRUNCATE);
+		wcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
 	}
 	/* ダイアログデータの設定 color */
 	SetData( hwndDlg );
@@ -288,9 +289,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 	WORD				wID;
 	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;
 	int					idCtrl;
-	int					nVal;
 	int					nIndex;
 	static HWND			hwndListColor;
 	LPDRAWITEMSTRUCT	pDis;
@@ -316,6 +315,10 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		}
 		SystemParametersInfo(SPI_GETFOCUSBORDERWIDTH, 0, &m_uFocusBorderWidth, 0);
 		SystemParametersInfo(SPI_GETFOCUSBORDERHEIGHT, 0, &m_uFocusBorderHeight, 0);
+
+		apiwrap::SetUpDownRange(hwndDlg, IDC_SPIN_LCColNum,  1, 1000);
+		apiwrap::SetUpDownRange(hwndDlg, IDC_SPIN_LCColNum2, 1, 1000);
+		apiwrap::SetUpDownRange(hwndDlg, IDC_SPIN_LCColNum3, 1, 1000);
 
 		return TRUE;
 
@@ -504,67 +507,8 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		//	From Here May 21, 2001 genta activate spin control
-		case IDC_SPIN_LCColNum:
-			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 1000 ){
-				nVal = 1000;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, nVal, FALSE );
-			return TRUE;
-		case IDC_SPIN_LCColNum2:
-			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 1000 ){
-				nVal = 1000;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, nVal, FALSE );
-			return TRUE;
-		//	To Here May 21, 2001 genta activate spin control
 
-		//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
-		case IDC_SPIN_LCColNum3:
-			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 1000 ){
-				nVal = 1000;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, nVal, FALSE );
-			return TRUE;
-		//	To Here Jun. 01, 2001
-		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 //	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト
@@ -583,8 +527,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 			default:
 				break;
 			}
-			break;	/* default */
-		}
+
 		break;	/* WM_NOTIFY */
 	case WM_DRAWITEM:
 		idCtrl = (UINT) wParam;				/* コントロールのID */
@@ -727,7 +670,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 					szVertLine[offset+1] = '\0';
 					offset += 1;
 				}
-				offset += auto_snprintf_s(&szVertLine[offset], std::size(szVertLine) - offset, _TRUNCATE, L"%d(%d,%d)", nXColAdd, nXCol, nXColEnd);
+				offset += auto_sprintf( &szVertLine[offset], L"%d(%d,%d)", nXColAdd, nXCol, nXColEnd );
 			}
 		}
 		else{
@@ -736,7 +679,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 				szVertLine[offset+1] = '\0';
 				offset += 1;
 			}
-			offset += auto_snprintf_s(&szVertLine[offset], std::size(szVertLine) - offset, _TRUNCATE, L"%d", nXCol);
+			offset += auto_sprintf( &szVertLine[offset], L"%d", nXCol );
 		}
 	}
 	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_VERTLINE ), MAX_VERTLINES * 15 );
@@ -1093,7 +1036,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	ColorInfo*	pColorInfo;
 //	RECT		rc0,rc1,rc2;
 	RECT		rc1;
-	COLORREF	cRim = (COLORREF)::GetSysColor( COLOR_3DSHADOW );
+	COLORREF	cRim = (COLORREF)DarkMode::getEdgeColor();
 
 	if( pDis == nullptr || pDis->itemData == 0 ) return;
 
@@ -1108,27 +1051,27 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	pColorInfo = (ColorInfo*)pDis->itemData;
 
 	/* アイテム矩形塗りつぶし */
-	gr.SetBrushColor( ::GetSysColor( COLOR_WINDOW ) );
+	gr.SetBrushColor( DarkMode::getCtrlBackgroundColor() );
 	gr.FillMyRect( pDis->rcItem );
-	
+
 	/* アイテムが選択されている */
 	if( pDis->itemState & ODS_SELECTED ){
-		gr.SetBrushColor( ::GetSysColor( COLOR_HIGHLIGHT ) );
-		gr.SetTextForeColor( ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );
+		gr.SetBrushColor(DarkMode::getHotBackgroundColor());
+		gr.SetTextForeColor( DarkMode::getTextColor() );
 	}else{
-		gr.SetBrushColor( ::GetSysColor( COLOR_WINDOW ) );
-		gr.SetTextForeColor( ::GetSysColor( COLOR_WINDOWTEXT ) );
+		gr.SetBrushColor(DarkMode::getCtrlBackgroundColor());
+		gr.SetTextForeColor(DarkMode::getTextColor());
 	}
 
 	const int xOffset = ::MulDiv(m_uFocusBorderWidth, 2, 3);
 	const int yOffset = ::MulDiv(m_uFocusBorderHeight, 2, 3); // 少し重ならせる
 	const int colorSampleWidth = DpiScaleX(12);
-	rc1.left += xOffset + DpiScaleX(16);
 	rc1.top += yOffset;
 	rc1.right -= 2 * (colorSampleWidth + xOffset) + DpiScaleX(2);
 	rc1.bottom -= yOffset;
 	/* 選択ハイライト矩形 */
 	gr.FillMyRect(rc1);
+	rc1.left += xOffset + DpiScaleX(16);
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
 	SFontAttr sFontAttr;
@@ -1151,7 +1094,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	rc1.bottom = rc1.top + DpiScaleY(12);
 	if( pColorInfo->m_bDisp ){	/* 色分け/表示する */
 		// 2006.04.26 ryoji テキスト色を使う（「ハイコントラスト黒」のような設定でも見えるように）
-		gr.SetPen( ::GetSysColor( COLOR_WINDOWTEXT ) );
+		gr.SetPen( DarkMode::getTextColor() );
 		// チェックマークを2本の直線で描画する際に使用する3点の座標
 		const POINT pts[3] = {
 			{ rc1.left + DpiScaleX(2), rc1.top + DpiScaleY(3) }, // 左
@@ -1207,16 +1150,13 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 /* 色選択ダイアログ */
 BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
 {
-	CHOOSECOLOR		cc;
-	cc.lStructSize = sizeof_raw( cc );
+	CHOOSECOLOR		cc = {sizeof(cc)};
 	cc.hwndOwner = hwndParent;
 	cc.hInstance = nullptr;
 	cc.rgbResult = *pColor;
 	cc.lpCustColors = pCustColors;
-	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-	cc.lCustData = 0;
-	cc.lpfnHook = nullptr;
-	cc.lpTemplateName = nullptr;
+	cc.Flags = CC_FULLOPEN | CC_RGBINIT | CC_ENABLEHOOK;
+	cc.lpfnHook = static_cast<LPCCHOOKPROC>(DarkMode::HookDlgProc);
 	if( !::ChooseColor( &cc ) ){
 		return FALSE;
 	}

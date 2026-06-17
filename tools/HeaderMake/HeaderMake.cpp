@@ -264,7 +264,7 @@ next:
 		while(*p && !is_token(*p))p++;
 		q=p;
 		while(*q && is_token(*q))q++;
-		::strncpy_s(id, p,q-p);
+		strncpy_s(id, std::size(id),p,q-p);
 		id[q-p]='\0';
 		p=q;
 
@@ -273,7 +273,7 @@ next:
 		while(*p && !is_token(*p))p++;
 		q=p;
 		while(*q && is_token(*q))q++;
-		::strncpy_s(value, p,q-p);
+		strncpy_s(value, std::size(value),p,q-p);
 		value[q-p]='\0';
 		p=q;
 

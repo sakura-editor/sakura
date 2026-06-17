@@ -62,7 +62,7 @@ int CRecentTagjumpKeyword::CompareItem( const CTagjumpKeywordString* p1, LPCWSTR
 
 void CRecentTagjumpKeyword::CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) const
 {
-	::wcsncpy_s(*dst, src, _TRUNCATE);
+	wcscpy(*dst,src);
 }
 
 bool CRecentTagjumpKeyword::ValidateReceiveType( LPCWSTR p ) const

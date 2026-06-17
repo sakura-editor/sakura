@@ -235,6 +235,9 @@ add_custom_target(generate_funccode_enum
     "${CMAKE_BINARY_DIR}/Funccode_enum.h"
 )
 
+# Include darkmodelib.cmake
+include(${CMAKE_SOURCE_DIR}/src/main/cmake/darkmodelib.cmake)
+
 if(MINGW)
   # Find iconv
   find_program(ICONV_PATH iconv REQUIRED)
@@ -246,10 +249,7 @@ if(MINGW)
   message(STATUS "Found iconv: ${ICONV_PATH}")
 endif(MINGW)
 
-message(STATUS "Detected COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "Detected SIMULATE_ID: ${CMAKE_CXX_SIMULATE_ID}")
-
-# Function to convert RC files from UTF-16LE to UTF-8 for MinGW and clang-cl
+# Function to convert RC files from UTF-16LE to UTF-8 for MinGW
 # Parameters:
 #   RC_FILES_VAR - Variable name containing list of RC file paths
 #   LOCALE_NAME  - Locale name
@@ -261,23 +261,12 @@ function(convert_rc_files_to_utf8 RC_FILES_VAR LOCALE_NAME BINARY_DIR)
     get_filename_component(RC_EXT ${RC_FILE} EXT)
     set(UTF8_RC_FILE ${BINARY_DIR}/${RC_NAME}_${LOCALE_NAME}/${RC_NAME}${RC_EXT})
     
-    if(MINGW)
-      # MinGWの場合はiconvを使用
-      add_custom_command(
-        OUTPUT ${UTF8_RC_FILE}
-        COMMAND ${ICONV_PATH} -f UTF-16LE -t UTF-8 "${RC_FILE}" > "${UTF8_RC_FILE}"
-        DEPENDS ${RC_FILE}
-        COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using iconv"
-      )
-    else()
-      # clang-clの場合はPowerShellを使用
-      add_custom_command(
-        OUTPUT ${UTF8_RC_FILE}
-        COMMAND ${CMD_PWSH} -NoProfile -ExecutionPolicy Bypass -Command "[System.IO.File]::WriteAllText('${UTF8_RC_FILE}', [System.IO.File]::ReadAllText('${RC_FILE}', [System.Text.Encoding]::Unicode), [System.Text.Encoding]::UTF8)"
-        DEPENDS ${RC_FILE}
-        COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using PowerShell"
-      )
-    endif()
+    add_custom_command(
+      OUTPUT ${UTF8_RC_FILE}
+      COMMAND ${ICONV_PATH} -f UTF-16LE -t UTF-8 "${RC_FILE}" > "${UTF8_RC_FILE}"
+      DEPENDS ${RC_FILE}
+      COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using iconv"
+    )
     
     list(APPEND RC_FILES_UTF8 ${UTF8_RC_FILE})
   endforeach()
@@ -300,10 +289,10 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
     ${RC_FOLDER}/sakura_rc_${LOCALE_NAME}.rc
     ${RC_FOLDER}/sakura_rc_${LOCALE_NAME}.rc2)
   
-  # Convert RC files to UTF-8 for MinGW and clang-cl
-  if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+  if(MINGW)
+    # Convert RC files to UTF-8 for MinGW
     convert_rc_files_to_utf8(RESOURCE_SCRIPTS "${LOCALE_NAME}" ${CMAKE_CURRENT_BINARY_DIR})
-  endif()
+  endif(MINGW)
   
   # Create the library
   add_library(${SAKURA_LANG} MODULE ${RESOURCE_SCRIPTS})
@@ -324,6 +313,10 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
       # RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}"
   )
 
+  add_custom_command(TARGET ${SAKURA_LANG} PRE_LINK
+    COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:${SAKURA_LANG}>
+  )
+
   # MSVC specific settings
   if(MSVC)
     # Convert decimal LOCALE_ID to hexadecimal for MSVC RC
@@ -338,7 +331,7 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
     # avoid error LNK2001 for "__DllMainCRTStartup@12"
     set_target_properties(${SAKURA_LANG}
       PROPERTIES
-        LINK_FLAGS "/NOENTRY"
+        LINK_FLAGS "/NOENTRY /INCREMENTAL:NO"
     )
   endif(MSVC)
   
@@ -347,7 +340,7 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
     # Set RC flags for MinGW (windres uses decimal)
     target_compile_options(${SAKURA_LANG}
       PRIVATE
-        "$<$<COMPILE_LANGUAGE:RC>:-c 65001 -l ${LOCALE_ID} --use-temp-file>"
+        "$<$<COMPILE_LANGUAGE:RC>:-c 65001-l ${LOCALE_ID} --use-temp-file>"
     )
 
     # avoid prefixing of DLL name, set PREFIX to blank.
@@ -357,14 +350,6 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
         PREFIX ""
     )
   endif(MINGW)
-
-  if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
-    # Add include directories for RC files
-    target_include_directories(${SAKURA_LANG}
-      PRIVATE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/sakura_rc_${LOCALE_NAME}>"
-    )
-  endif()
 endfunction(create_language_dll)
 
 # add global definitions
@@ -378,7 +363,7 @@ add_compile_definitions(
 
 # add include directories
 include_directories(
-  ${CMAKE_BINARY_DIR} 
+  ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src/main/cpp
   ${CMAKE_SOURCE_DIR}/src/main/resources
   ${CMAKE_SOURCE_DIR}/sakura_core
@@ -393,15 +378,9 @@ if(MSVC)
 
   add_compile_options(
     /source-charset:utf-8
+    /execution-charset:shift_jis
+    /w34996
   )
-  
-  # 実行文字セットと警告をエラーにするオプションはclang-clでは指定できない
-  if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
-    add_compile_options(
-      /execution-charset:shift_jis
-      /WX
-    )
-  endif()
 endif(MSVC)
 
 if(MINGW)
@@ -412,7 +391,8 @@ if(MINGW)
     -MMD
     -finput-charset=utf-8
     -fexec-charset=cp932
-    -Wall
+    -Wdeprecated-declarations
+    -Wno-trigraphs
   )
 endif(MINGW)
 
@@ -442,10 +422,10 @@ set(NATVIS_FILES
 # define precompiled headers
 set(PCH_HEADER ${CMAKE_SOURCE_DIR}/sakura_core/StdAfx.h)
 
-# Convert RC files to UTF-8 for MinGW and clang-cl
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+if(MINGW)
+  # Convert RC files to UTF-8 for MinGW
   convert_rc_files_to_utf8(RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
-endif()
+endif(MINGW)
 
 # Create sakura_core object library
 add_library(sakura_core OBJECT ${PCH_HEADER} ${SOURCES} ${RESOURCE_SCRIPTS} ${HEADERS})
@@ -458,6 +438,7 @@ target_compile_features(sakura_core PUBLIC cxx_std_20)
 
 # Add include directories for sakura_core
 target_include_directories(sakura_core
+  SYSTEM
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 )
@@ -471,7 +452,9 @@ target_link_directories(sakura_core
 # link libraries
 target_link_libraries(sakura_core
   PUBLIC
+    darkmode
     comctl32
+    dbghelp
     dwmapi
     htmlhelp
     imm32
@@ -492,6 +475,8 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
+  generate_darkmodelib
+  generate_bregonig
   generate_cmigemo
 )
 
@@ -509,24 +494,13 @@ if(MSVC)
     PUBLIC
       NOMINMAX
   )
-  # add compile options for sakura_core (Visual Studio generator only)
-  if(CMAKE_GENERATOR MATCHES "^Visual Studio")
-    target_compile_options(sakura_core
-      PRIVATE
-        /FAsu
-        /Fa"${CMAKE_BINARY_DIR}"
-    )
-  endif()
-endif(MSVC)
-
-# clang-cl使用時にRC変換ファイルのためのincludeディレクトリを追加
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
-  # Add include directories for sakura_core
-  target_include_directories(sakura_core
+  # add compile options for sakura_core
+  target_compile_options(sakura_core
     PRIVATE
-      "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/sakura_rc_ja-JP>"
+      /FAsu
+      /Fa"${CMAKE_BINARY_DIR}"
   )
-endif()
+endif(MSVC)
 
 if(MINGW)
   # Set RC flags for MinGW (windres uses decimal)

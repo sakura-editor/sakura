@@ -9,6 +9,35 @@
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "apiwrap/CommonControl.h"
+#include "apiwrap/DarkMode.h"
+
+#include "charset/CCodeFactory.h"
+
+/*!
+ * 文字コードの16進表示
+ *
+ * ステータスバー表示用に文字を16進表記に変換する
+ *
+ * @param [in] eCodeType 文字コードセット種別
+ * @param [in] wide 表示する文字
+ * @param [in] sStatusBar 共通設定 ステータスバー
+ */
+/* static */ std::wstring CMainStatusBar::UnicodeToHex(ECodeType eCodeType, std::wstring_view wide, const CommonSetting_Statusbar& sStatusBar)
+{
+	// 出力先バッファを確保する
+	std::wstring buffer(32, L'\0');
+
+	// Hex変換
+	if (CCodeFactory::CreateCodeBase(eCodeType)->UnicodeToHex(std::data(wide), int(std::size(wide)), std::data(buffer), &sStatusBar) != RESULT_COMPLETE) {
+		// 変換に失敗したらUNICODEで変換する
+		CCodeFactory::CreateCodeBase(CODE_UTF16BE)->UnicodeToHex(std::data(wide), int(std::size(wide)), std::data(buffer), &sStatusBar);
+	}
+
+	// 出力先バッファのサイズを調整する
+	buffer.resize(::wcsnlen(buffer.c_str(), std::size(buffer)));
+
+	return buffer;
+}
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -34,6 +63,8 @@ void CMainStatusBar::CreateStatusBar()
 		nullptr
 	);
 
+	DarkMode::setStatusBarCtrlSubclass(m_hwndStatusBar);
+
 	/* プログレスバー */
 	m_hwndProgressBar = ::CreateWindowEx(
 		WS_EX_TOOLWINDOW,
@@ -49,6 +80,8 @@ void CMainStatusBar::CreateStatusBar()
 		CEditApp::getInstance()->GetAppInstance(),
 		nullptr
 	);
+
+	DarkMode::setProgressBarCtrlSubclass(m_hwndProgressBar);
 
 	if( nullptr != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
 		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( FALSE );

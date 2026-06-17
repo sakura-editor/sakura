@@ -1,41 +1,28 @@
-# .gitignore
-#
-
-# Visual Studioのデータベースフォルダ
-/.vs
-
-# ビルド中間生成物を格納するフォルダ
-/build
-
-# ビルド生成物を格納するフォルダ
-/ARM64
-/MinGW
-/x64
-/Win32
-
-# Visual StudioのCMake機能がビルド生成物を格納するフォルダ
-/out
-
-# GitHubに登録したくないファイル群
 *.aps
 *.bak
-*.dll
-*.exe
 *.iobj
 *.ipdb
-*.log
 *.pyc
 *.vcxproj.user
-
 **/packages
 **/TestResults
 .sonarqube
 /*.patch
+/.vs
 /cppcheck-*.xml
+/build
+/MinGW
+/Win32
+/x64
 Backup
 build-wrapper-win-x86*
 bw-output
+doxygen*.log
 html
+iss-*-*.log
+msbuild-*.log
+msbuild-*.log.csv
+msbuild-*.log.xlsx
 sakura-*.zip
 tags
 testData_*.txt
@@ -50,11 +37,8 @@ UpgradeLog.htm
 # SonarScanローカル実行用SONAR_TOKEN
 SONAR_TOKEN
 
-# SonarScanローカル実行したときに生成されるテスト結果ファイル
-*-googletest.xml
-
-# SonarScanローカル実行したときに生成されるテストカバレッジ記録ファイル
-*-coverage.xml
+# SonarScanローカル実行用したときに生成されるテスト結果ファイル
+tests1-googletest.xml
 
 # SonarScanローカル実行の失敗再現用アーカイブ
 sonar-cfamily-reproducer.tar.xz

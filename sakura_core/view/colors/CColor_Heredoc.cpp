@@ -104,18 +104,18 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 {
 	if (!m_nCOMMENTEND) {
 		if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
-		 && nPos == 0 && m_nSize <= size_t(cStr.GetLength())
+		 && nPos == 0 && m_nSize <= cStr.GetLength()
 		 && wmemcmp(cStr.GetPtr(), m_pszId, m_nSize) == 0 ){
-			if (m_nSize == size_t(cStr.GetLength())) {
+			if( m_nSize== cStr.GetLength() ){
 				m_nCOMMENTEND = m_nSize;
 				return false;
 			}else{
 				size_t i = m_nSize;
-				if( i + 1 < size_t(cStr.GetLength()) && cStr[i] == L';' && WCODE::IsLineDelimiter(cStr[i+1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+				if( i + 1 < cStr.GetLength() && cStr[i] == L';' && WCODE::IsLineDelimiter(cStr[i+1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID;
 					m_nCOMMENTEND = i;
 					return false;
-				}else if( m_nSize < size_t(cStr.GetLength()) && WCODE::IsLineDelimiter(cStr[m_nSize], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+				}else if( m_nSize < cStr.GetLength() && WCODE::IsLineDelimiter(cStr[m_nSize], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID
 					m_nCOMMENTEND = m_nSize;
 					return false;
@@ -126,7 +126,7 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 			m_nCOMMENTEND = cStr.GetLength();
 		}
 	}
-	else if (nPos == int(m_nCOMMENTEND)) {
+	else if (nPos == m_nCOMMENTEND) {
 		return true;
 	}
 	return false;

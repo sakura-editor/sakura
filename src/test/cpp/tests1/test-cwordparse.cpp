@@ -22,6 +22,165 @@ std::ostream& operator<<(std::ostream& os, ECharKind kind)
 	return os << s[kind];
 }
 
+namespace parse {
+
+TEST(IsURL, HttpProtocol)
+{
+	const auto result = IsURL(L"http://example.com");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(18)));
+}
+
+TEST(IsURL, HttpsProtocol)
+{
+	const auto result = IsURL(L"https://example.com");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(19)));
+}
+
+TEST(IsURL, FtpProtocol)
+{
+	const auto result = IsURL(L"ftp://ftp.example.com/path");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(26)));
+}
+
+TEST(IsURL, FileProtocol)
+{
+	const auto result = IsURL(L"file:///path/to/file.txt");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(24)));
+}
+
+TEST(IsURL, TtpProtocol)
+{
+	const auto result = IsURL(L"ttp://example.com");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(17)));
+}
+
+TEST(IsURL, TpProtocol)
+{
+	const auto result = IsURL(L"tp://example.com");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(16)));
+}
+
+TEST(IsURL, MailtoProtocol)
+{
+	const auto result = IsURL(L"mailto:test@example.com");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(23)));	// 7 (mailto:) + 16 (user@example.com) = 23
+}
+
+TEST(IsURL, MailtoProtocolWithBadAddress)
+{
+	const auto result = IsURL(L"mailto:admin@localhost");
+	EXPECT_FALSE(result);
+}
+
+TEST(IsURL, MailAddressOnly)
+{
+	const auto result = IsURL(L"user@example.com");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(16)));
+}
+
+TEST(IsURL, UrlWithPath)
+{
+	const auto result = IsURL(L"https://example.com/path/to/page.html");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(37)));
+}
+
+TEST(IsURL, UrlWithQuery)
+{
+	const auto result = IsURL(L"http://example.com?key=value&other=data");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(39)));
+}
+
+TEST(IsURL, UrlWithFragment)
+{
+	const auto result = IsURL(L"http://example.com/page#section");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(31)));
+}
+
+TEST(IsURL, UrlWithPort)
+{
+	const auto result = IsURL(L"http://example.com:8080/path");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(28)));
+}
+
+TEST(IsURL, UrlInText)
+{
+	std::wstring_view text = L"Check this: http://example.com for more info";
+	const auto result = IsURL(text, 12);
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(18)));
+}
+
+TEST(IsURL, NotUrl_NoProtocol)
+{
+	const auto result = IsURL(L"example.com");
+	EXPECT_FALSE(result);
+}
+
+TEST(IsURL, NotUrl_JustText)
+{
+	const auto result = IsURL(L"hello world");
+	EXPECT_FALSE(result);
+}
+
+TEST(IsURL, NotUrl_IncompleteProtocol)
+{
+	const auto result = IsURL(L"http://");
+	EXPECT_FALSE(result);
+}
+
+TEST(IsURL, NotUrl_InvalidMailAddress)
+{
+	const auto result = IsURL(L"@example.com");
+	EXPECT_FALSE(result);
+}
+
+TEST(IsURL, MailAddressWithSymbols)
+{
+	const auto result = IsURL(L"user.name+tag@example.co.jp");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(27)));
+}
+
+TEST(IsURL, UrlStopsAtSpace)
+{
+	const auto result = IsURL(L"http://example.com more text");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(18)));
+}
+
+TEST(IsURL, UrlStopsAtParenthesis)
+{
+	const auto result = IsURL(L"(http://example.com)", 1);
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(18)));
+}
+
+TEST(IsURL, GopherProtocol)
+{
+	const auto result = IsURL(L"gopher://gopher.example.com");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(27)));
+}
+
+TEST(IsURL, NewsProtocol)
+{
+	const auto result = IsURL(L"news:comp.lang.c++");
+	EXPECT_TRUE(result);
+	EXPECT_THAT(result.matched, ::testing::SizeIs(Eq(18)));
+}
+
 ECharKind WhatKindOfChar(wchar_t ch)
 {
 	return CWordParse::WhatKindOfChar(&ch, 1, 0);
@@ -336,3 +495,5 @@ TEST(WhereCurrentWord_2, ReturnsCMemoryIfSpecified)
 	EXPECT_EQ(word, L"editor");
 	EXPECT_EQ(wordLeft, L"edi");
 }
+
+} // namespace parse

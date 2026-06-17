@@ -28,12 +28,20 @@ enum ECodeType : int {
 	CODE_CESU8,						//!< CESU-8
 	CODE_LATIN1,					//!< Latin1				(Latin1, 欧文, Windows-1252, Windows Codepage 1252 West European)
 	CODE_CODEMAX,
+
+	CODE_UTF32LE    = 12000,		//!< UTF-32 LittleEndian(UCS-4)
+	CODE_UTF32BE    = 12001,		//!< UTF-32 BigEndian(UCS-4)
+
 	CODE_CPACP      = 90,
 	CODE_CPOEM      = 91,
 	CODE_AUTODETECT	= 99,			//!< 文字コード自動判別
 	CODE_ERROR      = -1,			//!< エラー
 	CODE_NONE       = -1,			//!< 未検出
 	CODE_DEFAULT    = CODE_UTF8,	//!< デフォルトの文字コード
+
+	CODE_UTF16LE    = CODE_UNICODE,		//!< 別名を付与しておく
+	CODE_UTF16BE    = CODE_UNICODEBE,	//!< 別名を付与しておく
+
 	/*
 		- MS-CP50220 
 			Unicode から cp50220 への変換時に、

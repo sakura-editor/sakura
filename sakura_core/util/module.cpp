@@ -20,7 +20,7 @@ void ChangeCurrentDirectoryToExeDir()
 {
 	WCHAR szExeDir[_MAX_PATH];
 	szExeDir[0] = L'\0';
-	GetExedir(szExeDir);
+	GetExedir( szExeDir, nullptr );
 	if( szExeDir[0] ){
 		::SetCurrentDirectory( szExeDir );
 	}else{
@@ -111,25 +111,23 @@ DWORD GetDllVersion(LPCWSTR lpszDllName)
 	@date 2007.05.20 ryoji iniファイルパスを優先
 	@author genta
 */
-HICON GetAppIcon(HINSTANCE hInst, WORD nResource, std::wstring_view fileName, bool bSmall)
+HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSmall )
 {
-	// ファイルパスはini基準を優先
-	SFilePath szPath;
-	GetInidirOrExedir(szPath, fileName);
+	// サイズの設定
+	int size = GetSystemMetrics( bSmall ? SM_CXSMICON : SM_CXICON );
 
-	// アイコンサイズはシステムから取得する（DPIは考慮しない。）
-	const auto cx = ::GetSystemMetrics(bSmall ? SM_CXSMICON : SM_CXICON);
-	const auto cy = ::GetSystemMetrics(bSmall ? SM_CYSMICON : SM_CYICON);
-
+	WCHAR szPath[_MAX_PATH];
 	HICON hIcon;
 
 	// ファイルからの読み込みをまず試みる
+	GetInidirOrExedir( szPath, szFile );
+
 	hIcon = (HICON)::LoadImage(
 		nullptr,
 		szPath,
 		IMAGE_ICON,
-		cx,
-		cy,
+		size,
+		size,
 		LR_SHARED | LR_LOADFROMFILE
 	);
 	if( hIcon != nullptr ){
@@ -141,8 +139,8 @@ HICON GetAppIcon(HINSTANCE hInst, WORD nResource, std::wstring_view fileName, bo
 		hInst,
 		MAKEINTRESOURCE(nResource),
 		IMAGE_ICON,
-		cx,
-		cy,
+		size,
+		size,
 		LR_SHARED
 	);
 	

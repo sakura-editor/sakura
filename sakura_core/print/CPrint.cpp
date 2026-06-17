@@ -137,22 +137,22 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタードライバー名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンターデバイス名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンターポート名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
 	// プリンターから得られた、dmFieldsは変更しない
@@ -218,22 +218,22 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタードライバー名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDriverName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンターデバイス名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterDeviceName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンターポート名
-	::wcsncpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset,
-		_TRUNCATE
+		int(std::size(pMYDEVMODE->m_szPrinterOutputName)),
+		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
 	// プリンターから得られた、dmFieldsは変更しない
@@ -260,9 +260,9 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 /*! 
 ** @brief プリンターをオープンし、hDCを作成する
 */
-HDC CPrint::CreateDCW(
-	MYDEVMODE*			pMYDEVMODE,
-	std::span<WCHAR>	szErrMsg		/* エラーメッセージ格納場所 */
+HDC CPrint::CreateDC(
+	MYDEVMODE*	pMYDEVMODE,
+	WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	HDC			hdc = nullptr;
@@ -282,8 +282,8 @@ HDC CPrint::CreateDCW(
 		&hPrinter,					/* プリンターハンドルのポインタ */
 		nullptr
 	) ){
-		auto_snprintf_s(
-			szErrMsg, _TRUNCATE,
+		auto_sprintf(
+			pszErrMsg,
 			LS(STR_ERR_CPRINT01),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);
@@ -343,7 +343,7 @@ BOOL CPrint::GetPrintMetrics(
 	short*		pnPaperHeight,		/* 用紙印刷可能高さ */
 	short*		pnPaperOffsetLeft,	/* 用紙余白左端 */
 	short*		pnPaperOffsetTop,	/* 用紙余白上端 */
-	std::span<WCHAR>	pszErrMsg			/* エラーメッセージ格納場所 */
+	WCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -442,7 +442,7 @@ BOOL CPrint::PrintOpen(
 	WCHAR*		pszJobName,
 	MYDEVMODE*	pMYDEVMODE,
 	HDC*		phdc,
-	std::span<WCHAR>	pszErrMsg		/* エラーメッセージ格納場所 */
+	WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -470,8 +470,8 @@ BOOL CPrint::PrintOpen(
 	di.lpszDatatype = nullptr;
 	di.fwType = 0;
 	if( 0 >= ::StartDoc( hdc, &di ) ){
-		auto_snprintf_s(
-			pszErrMsg, _TRUNCATE,
+		auto_sprintf(
+			pszErrMsg,
 			LS(STR_ERR_CPRINT02),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);
@@ -506,15 +506,16 @@ void CPrint::PrintClose( HDC hdc )
 }
 
 /* 用紙の名前を取得 */
-LPWSTR CPrint::GetPaperName(int nPaperSize, std::span<WCHAR> szPaperName) noexcept
+WCHAR* CPrint::GetPaperName( int nPaperSize, WCHAR* pszPaperName )
 {
 	// 2006.08.14 Moca 用紙情報の統合
-	if (const auto paperInfo = FindPaperInfo(nPaperSize)) {
-		::wcsncpy_s(std::data(szPaperName), std::size(szPaperName), paperInfo->m_pszName, _TRUNCATE);
-	} else {
-		::wcsncpy_s(std::data(szPaperName), std::size(szPaperName), LS(STR_ERR_CPRINT03), _TRUNCATE);
+	const PAPER_INFO* paperInfo = FindPaperInfo( nPaperSize );
+	if( nullptr != paperInfo ){
+		wcscpy( pszPaperName, paperInfo->m_pszName );
+	}else{
+		wcscpy( pszPaperName, LS(STR_ERR_CPRINT03) );
 	}
-	return std::data(szPaperName);
+	return pszPaperName;
 }
 
 /*!
@@ -540,9 +541,9 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 */
 void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settingName )
 {
-	::wcsncpy_s(pPrintSetting.m_szPrintSettingName, settingName, _TRUNCATE);			/* 印刷設定の名前 */
-	::wcsncpy_s(pPrintSetting.m_szPrintFontFaceHan, L"ＭＳ 明朝", _TRUNCATE);		/* 印刷フォント */
-	::wcsncpy_s(pPrintSetting.m_szPrintFontFaceZen, L"ＭＳ 明朝", _TRUNCATE);		/* 印刷フォント */
+	wcscpy( pPrintSetting.m_szPrintSettingName, settingName );			/* 印刷設定の名前 */
+	wcscpy( pPrintSetting.m_szPrintFontFaceHan, L"ＭＳ 明朝" );		/* 印刷フォント */
+	wcscpy( pPrintSetting.m_szPrintFontFaceZen, L"ＭＳ 明朝" );		/* 印刷フォント */
 	pPrintSetting.m_bColorPrint = false;		// カラー印刷			// 2013/4/26 Uchi
 	pPrintSetting.m_nPrintFontWidth = 12;		// 印刷フォント幅(1/10mm単位)
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
@@ -567,14 +568,14 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settin
 	pPrintSetting.m_bHeaderUse[0] = TRUE;
 	pPrintSetting.m_bHeaderUse[1] = FALSE;
 	pPrintSetting.m_bHeaderUse[2] = FALSE;
-	::wcsncpy_s(pPrintSetting.m_szHeaderForm[0], L"$f", _TRUNCATE);
+	wcscpy( pPrintSetting.m_szHeaderForm[0], L"$f" );
 	pPrintSetting.m_szHeaderForm[1][0] = L'\0';
 	pPrintSetting.m_szHeaderForm[2][0] = L'\0';
 	pPrintSetting.m_bFooterUse[0] = TRUE;
 	pPrintSetting.m_bFooterUse[1] = FALSE;
 	pPrintSetting.m_bFooterUse[2] = FALSE;
 	pPrintSetting.m_szFooterForm[0][0] = L'\0';
-	::wcsncpy_s(pPrintSetting.m_szFooterForm[1], L"- $p -", _TRUNCATE);
+	wcscpy( pPrintSetting.m_szFooterForm[1], L"- $p -" );
 	pPrintSetting.m_szFooterForm[2][0] = L'\0';
 }
 

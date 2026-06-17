@@ -15,6 +15,10 @@ target_link_libraries(${PROJECT_NAME}
     sakura_core
 )
 
+add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+  COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:${PROJECT_NAME}>
+)
+
 # Create language DLL projects
 # en-US: 1033 (0x0409) - English (United States)
 # zh-CN: 2052 (0x0804) - Chinese (Simplified, PRC)
@@ -35,6 +39,12 @@ include(${CMAKE_SOURCE_DIR}/src/main/cmake/diffutils.cmake)
 
 # Enable ctest command
 enable_testing()
+
+add_subdirectory("${CMAKE_SOURCE_DIR}/tools/ppa_stub"
+                 "${CMAKE_BINARY_DIR}/ppa_stub")
+
+add_subdirectory("${CMAKE_SOURCE_DIR}/tools/dll_plugin1"
+                 "${CMAKE_BINARY_DIR}/dll_plugin1")
 
 # Include tests1 definition
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/tests1.cmake)

@@ -220,19 +220,19 @@ bool CProfile::WriteProfile(
 	}
 
 	// 別ファイルに書き込んでから置き換える（プロセス強制終了などへの安全対策）
-	WCHAR szMirrorFile[_MAX_PATH];
-	szMirrorFile[0] = L'\0';
-	WCHAR szPath[_MAX_PATH];
-	LPWSTR lpszName;
-	DWORD nLen = ::GetFullPathName(m_ProfilePath.c_str(), int(std::size(szPath)), szPath, &lpszName);
-	if( 0 < nLen && nLen < int(std::size(szPath))
-		&& (lpszName - szPath + 11) < int(std::size(szMirrorFile)) )	// path\preuuuu.TMP
+	SFilePath szMirrorFile;
+	SFilePath szPath;
+	LPWSTR lpszName = nullptr;
+	if (const auto nLen = ::GetFullPathNameW(m_ProfilePath.c_str(), int(std::size(szPath)), szPath, &lpszName);
+		nLen < std::size(szPath) &&
+		lpszName - szPath + 11 < std::ssize(szMirrorFile)	// path\preuuuu.TMP
+	)
 	{
 		*lpszName = L'\0';
-		::GetTempFileName(szPath, L"sak", 0, szMirrorFile);
+		szMirrorFile = GetTempFilePath(L"sak", std::filesystem::path{ szPath });
 	}
 
-	if( !_WriteFile(szMirrorFile[0]? szMirrorFile: m_ProfilePath, lines) )
+	if( !_WriteFile(szMirrorFile.empty() ? m_ProfilePath : std::filesystem::path{ szMirrorFile }, lines))
 		return false;
 
 	if( szMirrorFile[0] ){

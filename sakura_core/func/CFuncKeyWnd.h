@@ -45,15 +45,15 @@ public:
 	*/
 private:
 	// 20060126 aroka すべてPrivateにして、初期化順序に合わせて並べ替え
-	CEditDoc*		m_pcEditDoc;
+	CEditDoc*		m_pcEditDoc = nullptr;
 	DLLSHAREDATA*	m_pShareData;
-	int				m_nCurrentKeyState;
+	int				m_nCurrentKeyState = -1;
 	WCHAR			m_szFuncNameArr[12][256];
 	HWND			m_hwndButtonArr[12];
 	HFONT			m_hFont;	/*!< 表示用フォント */
-	bool			m_bSizeBox;
-	HWND			m_hwndSizeBox;
-	int				m_nTimerCount;
+	bool			m_bSizeBox = false;
+	HWND			m_hwndSizeBox = nullptr;
+	int				m_nTimerCount = 0;
 	int				m_nButtonGroupNum; // Openで初期化
 	EFunctionCode	m_nFuncCodeArr[12]; // Open->CreateButtonsで初期化
 protected:

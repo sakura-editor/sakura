@@ -51,7 +51,6 @@ if not defined CMD_MSBUILD  call :msbuild  2> nul
 if not defined CMD_CMAKE    call :cmake    2> nul
 if not defined CMD_NINJA    call :cmake    2> nul
 if not defined CMD_LEPROC   call :leproc   2> nul
-if not defined CMD_PYTHON   call :python   2> nul
 echo ^|- CMD_GIT=%CMD_GIT%
 echo ^|- CMD_7Z=%CMD_7Z%
 echo ^|- CMD_HHC=%CMD_HHC%
@@ -63,7 +62,6 @@ echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
 echo ^|- CMD_CMAKE=%CMD_CMAKE%
 echo ^|- CMD_NINJA=%CMD_NINJA%
 echo ^|- CMD_LEPROC=%CMD_LEPROC%
-echo ^|- CMD_PYTHON=%CMD_PYTHON%
 echo ^|- NUM_VSVERSION=%NUM_VSVERSION%
 echo ^|- CMAKE_G_PARAM=%CMAKE_G_PARAM%
 endlocal ^
@@ -78,7 +76,6 @@ endlocal ^
     && set "CMD_CMAKE=%CMD_CMAKE%"              ^
     && set "CMD_NINJA=%CMD_NINJA%"              ^
     && set "CMD_LEPROC=%CMD_LEPROC%"            ^
-    && set "CMD_PYTHON=%CMD_PYTHON%"            ^
     && set "NUM_VSVERSION=%NUM_VSVERSION%"      ^
     && set "CMAKE_G_PARAM=%CMAKE_G_PARAM%"      ^
     && echo end
@@ -98,7 +95,6 @@ exit /b
     set CMD_CMAKE=
     set CMD_NINJA=
     set CMD_LEPROC=
-    set CMD_PYTHON=
     set NUM_VSVERSION=
     set CMAKE_G_PARAM=
     set FIND_TOOLS_CALLED=
@@ -113,9 +109,7 @@ exit /b
     )
 
     :: convert productLineVersion to Internal Major Version
-    if "%ARG_VSVERSION%" == "2017" (
-        set ARG_VSVERSION=15
-    ) else if "%ARG_VSVERSION%" == "2019" (
+    if "%ARG_VSVERSION%" == "2019" (
         set ARG_VSVERSION=16
     ) else if "%ARG_VSVERSION%" == "2022" (
         set ARG_VSVERSION=17
@@ -215,26 +209,14 @@ exit /b
 :: sub routine for finding msbuild
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
-    :: vs2017単独インストールで導入されるvswhereには機能制限がある
-    if "%NUM_VSVERSION%" == "15" (
-        call :find_msbuild_legacy
-        set CMAKE_G_PARAM=Visual Studio 15 2017
-    ) else (
-        call :find_msbuild
-        call :set_cmake_gparam_automatically
-    )
+    call :find_msbuild
+    call :set_cmake_gparam_automatically
     exit /b
 
 :find_msbuild
     set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
     for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
         set "CMD_MSBUILD=%%a"
-    )
-    exit /b
-
-:find_msbuild_legacy
-    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -property installationPath -version [15^,16^)`) do (
-        set "CMD_MSBUILD=%%d\MSBuild\15.0\Bin\MSBuild.exe"
     )
     exit /b
 
@@ -288,40 +270,3 @@ for /f "usebackq delims=" %%a in (`where $PATH2:LEProc.exe`) do (
     exit /b
 )
 exit /b
-
-:python
-call :find_py
-call :check_python_version
-if defined CMD_PYTHON (
-    exit /b 0
-)
-
-call :find_python
-call :check_python_version
-exit /b 0
-
-:find_py
-set PATH2=%PATH%
-for /f "usebackq delims=" %%a in (`where $PATH2:py.exe`) do (
-    set "CMD_PYTHON=%%a"
-    exit /b 0
-)
-exit /b 0
-
-:find_python
-set PATH2=%PATH%
-for /f "usebackq delims=" %%a in (`where $PATH2:python.exe`) do (
-    set "CMD_PYTHON=%%a"
-    exit /b 0
-)
-exit /b 0
-
-:check_python_version
-set PYTHON_VERSION=
-for /F "usebackq tokens=2*" %%v in (`"%CMD_PYTHON%" --version`) do (
-    set PYTHON_VERSION=%%v
-)
-if not defined PYTHON_VERSION (
-    set CMD_PYTHON=
-)
-exit /b 0

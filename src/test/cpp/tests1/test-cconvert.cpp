@@ -24,8 +24,6 @@
 #include "convert/CConvert_ZeneisuToHaneisu.h"
 #include "convert/CConvert_ZenkataToHankata.h"
 
-#include "_main/CNormalProcess.h"
-
 #include "util/tchar_convert.h"
 
 TEST(CConvert, ZenkataToHankata)
@@ -377,9 +375,6 @@ TEST(CConvert, Trim)
 	EXPECT_EQ(actual, expected);
 }
 
-//! googletestの出力に機能IDを出力させる
-std::ostream& operator << (std::ostream& os, const EFunctionCode& eFuncCode);
-
 //!変換テストのためのテストパラメータ型
 using ConvTestParamType = std::tuple<EFunctionCode, std::wstring_view, std::wstring_view>;
 
@@ -391,10 +386,6 @@ class ConvTest : public ::testing::TestWithParam<ConvTestParamType> {};
  */
 TEST_P(ConvTest, test)
 {
-	// メモリ確保失敗時に表示するメッセージボックスで、
-	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
-	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
-
 	const auto eFuncCode = std::get<0>(GetParam());
 	std::wstring_view source = std::get<1>(GetParam());
 	std::wstring_view expected = std::get<2>(GetParam());
@@ -451,6 +442,27 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestConv
 
 namespace cxx {
 
+TEST(to_achar, test001)
+{
+	// 空文字列
+	EXPECT_THAT(to_achar(L"あ", 1), StrEq("あ"));
+}
+
+TEST(to_achar, test101)
+{
+	EXPECT_THAT(to_achar(nullptr), IsNull());
+}
+
+TEST(to_achar, test102)
+{
+	EXPECT_THAT(to_achar(nullptr, 0), IsNull());
+}
+
+TEST(to_achar, test103)
+{
+	EXPECT_THAT(to_achar(L"", 0), IsNull());
+}
+
 TEST(to_string, test001)
 {
 	// 空文字列
@@ -486,6 +498,27 @@ TEST(to_string, test101)
 
 	// カラー絵文字「男性のシンボル」（サロゲートペアはSJISに変換できない）
 	EXPECT_ANY_THROW(cxx::to_string(L"\U0001F6B9"));
+}
+
+TEST(to_wchar, test001)
+{
+	// 空文字列
+	EXPECT_THAT(to_wchar("あ", 2), StrEq(L"あ"));
+}
+
+TEST(to_wchar, test101)
+{
+	EXPECT_THAT(to_wchar(nullptr), IsNull());
+}
+
+TEST(to_wchar, test102)
+{
+	EXPECT_THAT(to_wchar(nullptr, 0), IsNull());
+}
+
+TEST(to_wchar, test103)
+{
+	EXPECT_THAT(to_wchar("", 0), IsNull());
 }
 
 TEST(to_wstring, test001)

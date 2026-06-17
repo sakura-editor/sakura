@@ -40,7 +40,6 @@
 
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {
-	m_bPrevCommand = 0;
 	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
 }
 
@@ -583,9 +582,12 @@ BOOL CViewCommander::HandleCommand(
 		return bRet;
 
 	/* ウィンドウ系 */
-	case F_SPLIT_V:			Command_SPLIT_V();break;	/* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
-	case F_SPLIT_H:			Command_SPLIT_H();break;	/* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
-	case F_SPLIT_VH:		Command_SPLIT_VH();break;	/* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
+	case F_SPLIT_V:			cmd::window::Command_SPLIT_V(); break;		//上下に分割
+	case F_SPLIT_H:			cmd::window::Command_SPLIT_H(); break;		//左右に分割
+	case F_SPLIT_VH:		cmd::window::Command_SPLIT_VH(); break;		//縦横に分割
+	case F_WINMAXIMIZE:		cmd::window::Command_WINMAXIMIZE(); break;	//編集ウインドウを最大化
+	case F_WINMINIMIZE:		cmd::window::Command_WINMINIMIZE(); break;	//編集ウインドウを最小化
+	case F_WINRESTORE:		cmd::window::Command_WINRESTORE(); break;	//編集ウインドウを元のサイズに戻す
 	case F_WINCLOSE:		Command_WINCLOSE();break;	//ウィンドウを閉じる
 	case F_WIN_CLOSEALL:	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」を左記のように変更
 		//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)

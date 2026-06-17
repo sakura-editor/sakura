@@ -25,7 +25,8 @@ CConvert_CodeToSjis::CConvert_CodeToSjis(ECodeType eCodeType) noexcept
 bool CConvert_CodeToSjis::DoConvert(CNativeW* pcData)
 {
 	// バッファの内容がANSI版相当になるよう Unicode→SJIS 変換する
-	const auto bin = CCodeFactory::CreateCodeBase(CODE_SJIS)->UnicodeToCode(*pcData);
+	CMemory cmemSjis;
+	CCodeFactory::CreateCodeBase(CODE_SJIS)->UnicodeToCode(*pcData, &cmemSjis);
 
 	// xxx→SJIS 変換後にバッファ内容をUNICODE版相当に戻す（SJIS→Unicode）のと等価な結果を得るために
 	// xxx→Unicode 変換する
@@ -40,7 +41,7 @@ bool CConvert_CodeToSjis::DoConvert(CNativeW* pcData)
 	}
 
 	// 指定された文字コードに基づいてUnicode変換する（変換エラーは無視する）
-	*pcData = pcCodeBase->CodeToUnicode(bin);
+	pcCodeBase->CodeToUnicode(cmemSjis, pcData);
 
 	return true;
 }

@@ -103,13 +103,6 @@ CTextOutputStream::~CTextOutputStream()
 	delete m_pcCodeBase;
 }
 
-void CTextOutputStream::Write(
-	std::wstring_view text	//!< 書き込む文字列
-)
-{
-	WriteString(text.data(), (int)text.size());
-}
-
 void CTextOutputStream::WriteString(
 	const wchar_t*	szData,	//!< 書き込む文字列
 	int				nLen	//!< 書き込む文字列長。-1を渡すと自動計算。
@@ -159,6 +152,19 @@ void CTextOutputStream::WriteString(
 			break;
 		}
 	}
+}
+
+void CTextOutputStream::WriteF(const wchar_t* format, ...)
+{
+	//テキスト整形 -> buf
+	static wchar_t buf[16*1024]; //$$ 確保しすぎかも？
+	va_list v;
+	va_start(v,format);
+	auto_vsprintf_s(buf, std::size(buf),format,v);
+	va_end(v);
+
+	//出力
+	WriteString(buf);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

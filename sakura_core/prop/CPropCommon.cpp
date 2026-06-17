@@ -30,6 +30,7 @@
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
+#include "apiwrap/DarkMode.h"
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {
@@ -65,6 +66,7 @@ INT_PTR CPropCommon::DlgProc(
 		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
 		if( nullptr != pCPropCommon ){
 			UpdateDialogFont( hwndDlg );
+			DarkMode::setDarkWndSafe(hwndDlg);
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
 			return FALSE;
@@ -93,6 +95,7 @@ INT_PTR CPropCommon::DlgProc2(
 		pCPropCommon = ( CPropCommon* )(lParam);
 		if( nullptr != pCPropCommon ){
 			UpdateDialogFont( hwndDlg );
+			DarkMode::setDarkWndSafe(hwndDlg);
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
 		}else{
 			return FALSE;
@@ -134,11 +137,6 @@ CPropCommon::CPropCommon()
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
-
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-	m_hwndThis  = nullptr;		/* このダイアログのハンドル */
-	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;
-	m_nKeywordSet1 = -1;
 
 	return;
 }
@@ -231,8 +229,8 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 	}
 	//	To Here Jun. 2, 2001 genta
 
-	PROPSHEETHEADER psh = { PROPSHEETHEADER_V2_SIZE };
-	psh.dwSize     = PROPSHEETHEADER_V2_SIZE;
+	PROPSHEETHEADER psh = { sizeof(PROPSHEETHEADER) };
+	psh.dwSize     = sizeof(PROPSHEETHEADER);
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE | PSH_USEPAGELANG;
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
@@ -298,8 +296,8 @@ void CPropCommon::InitData( const int* tempTypeKeywordSet, const WCHAR* name, co
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	if( tempTypeKeywordSet ){
 		m_nKeywordSet1 = tempTypeKeywordSet[0];
-		::wcsncpy_s(m_tempTypeName, name, _TRUNCATE);
-		::wcsncpy_s(m_tempTypeExts, exts, _TRUNCATE);
+		wcscpy(m_tempTypeName, name);
+		wcscpy(m_tempTypeExts, exts);
 		SKeywordSetIndex indexs;
 		indexs.typeId = -1;
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
@@ -470,7 +468,7 @@ HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf
 	hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );
 
 	// フォント名の設定
-	auto_snprintf_s( szFontName, _TRUNCATE, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
+	auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
 		lf.lfFaceName, double(nps)/10 );
 	ApiWrap::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 

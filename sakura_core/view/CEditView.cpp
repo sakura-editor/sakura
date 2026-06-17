@@ -47,6 +47,7 @@
 #include "config/system_constants.h"
 
 #include "CSelectLang.h"
+#include "apiwrap/DarkMode.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
@@ -227,7 +228,6 @@ BOOL CEditView::Create(
 
 	WNDCLASS	wc;
 	m_hwndParent = hwndParent;
-	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	m_nMyIndex = nMyIndex;
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
@@ -282,6 +282,9 @@ BOOL CEditView::Create(
 	);
 	if( nullptr == GetHwnd() ){
 		return FALSE;
+	}
+	if (IsDarkModeActive()) {
+		DarkMode::setWindowExStyle(GetHwnd(), false, WS_EX_STATICEDGE);
 	}
 
 	if( !m_bMiniMap ){
@@ -434,6 +437,7 @@ LRESULT CEditView::DispatchEvent(
 		if (m_hwndSizeBoxPlaceholder == nullptr) {
 			return -1;
 		}
+		DarkMode::setWindowCtlColorSubclass(hwnd);
 		return 0L;
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -1834,7 +1838,7 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		// メモリ確保に失敗したら抜ける
-		if( buffer->Capacity() < size_t(nBufSize) ){
+		if( buffer->Capacity() < nBufSize ){
 			return false;
 		}
 
@@ -1947,7 +1951,7 @@ bool CEditView::GetSelectedData(
 				buffer->Append( pszQuote, quoteLen );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
-				const auto lineNumLen = auto_snprintf_s(pszLineNum, std::size(strLineNum), _TRUNCATE, L" %d:", int(nLineNum) + 1);
+				auto lineNumLen = auto_sprintf( pszLineNum, L" %d:" , nLineNum + 1 );
 				buffer->Append( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
 				buffer->Append( pszLineNum, (size_t)lineNumLen );
 			}
@@ -2021,11 +2025,11 @@ bool CEditView::GetSelectedData(
 */
 bool CEditView::GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen )
 {
-	const wchar_t*	pLine = nullptr;
-	CLogicInt		nLineLen{ 0 };
-	CLogicInt		nIdxFrom{ 0 };
-	CLogicInt		nIdxTo{ 0 };
-	CLogicInt		nSelectLen{ 0 };
+	const wchar_t*	pLine;
+	CLogicInt		nLineLen;
+	CLogicInt		nIdxFrom;
+	CLogicInt		nIdxTo;
+	CLogicInt		nSelectLen;
 
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;

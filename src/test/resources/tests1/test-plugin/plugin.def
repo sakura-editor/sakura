@@ -1,1 +1,63 @@
-plugin.def
+[Plugin]
+Id=TestWshPlugin
+Name=Test WSH Plugin
+Description=dummy WSH plugin for tests1.exe
+Type=wsh
+Author=Sakura Editor Organization
+Version=1.0.0
+Url=
+
+[Wsh]
+UseCache=0
+
+[Plug]
+EditorStart=noop.js
+EditorStart.Label=No-op on editor start
+EditorEnd=noop.js
+EditorEnd.Label=No-op on editor end
+DocumentOpen=noop.js
+DocumentOpen.Label=No-op on document open
+DocumentClose=noop.js
+DocumentClose.Label=No-op on document close
+DocumentBeforeSave=noop.js
+DocumentBeforeSave.Label=No-op before save
+DocumentAfterSave=noop.js
+DocumentAfterSave.Label=No-op after save
+Outline=noop.js
+Outline.Label=No-op outline
+SmartIndent=noop.js
+SmartIndent.Label=No-op smart indent
+Complement=noop.js
+Complement.Label=No-op complement
+ComplementGlobal=noop.js
+ComplementGlobal.Label=No-op global complement
+
+[Option]
+O[1].Section=Noop
+O[1].Key=EnableFeature
+O[1].Label=Enable Feature
+O[1].Type=bool
+O[1].Default=1
+
+O[2].Section=Noop
+O[2].Key=RetryCount
+O[2].Label=Retry Count
+O[2].Type=int
+O[2].Default=3
+
+O[3].Section=Noop
+O[3].Key=Mode
+O[3].Label=Mode
+O[3].Type=sel
+O[3].Select=Fast:fast|Normal:normal|Safe:safe
+O[3].Default=normal
+
+O[4].Section=Noop
+O[4].Key=OutputDir
+O[4].Label=Output Directory
+O[4].Type=dir
+O[4].Default=.\
+
+[Command]
+C[1]=noop.js
+C[1].Label=No-op script

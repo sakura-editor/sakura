@@ -16,3 +16,6 @@
 [submodule "externals/cmigemo"]
 	path = externals/cmigemo
 	url = https://github.com/koron/cmigemo.git
+[submodule "externals/darkmodelib"]
+	path = externals/darkmodelib
+	url = https://github.com/ozone10/darkmodelib.git

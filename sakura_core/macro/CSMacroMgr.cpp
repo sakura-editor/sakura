@@ -358,6 +358,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_SPLIT_V,					L"SplitWinV",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 	{F_SPLIT_H,					L"SplitWinH",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 	{F_SPLIT_VH,				L"SplitWinVH",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+	{F_WINMAXIMIZE,				L"WinMaximize",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを最大化
+	{F_WINMINIMIZE,				L"WinMinimize",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを最小化
+	{F_WINRESTORE,				L"WinRestore",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを元のサイズに戻す
 	{F_WINCLOSE,				L"WinClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを閉じる
 	{F_WIN_CLOSEALL,			L"WinCloseAll",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
 	{F_CASCADE,					L"CascadeWin",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //重ねて表示
@@ -819,36 +822,33 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 	@date 2002.06.16 genta 新設のGetFuncInfoById(int)を内部で使うように．
 	@date 2011.04.10 nasukoji 各国語メッセージリソース対応
 */
-LPWSTR CSMacroMgr::GetFuncInfoByID(
-	int					nFuncID,			//!< [in] 機能番号
-	std::span<WCHAR>	szFuncName,			//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
-	const std::optional<std::span<WCHAR>>& optFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
+WCHAR* CSMacroMgr::GetFuncInfoByID(
+	[[maybe_unused]] HINSTANCE	hInstance,			//!< [in] リソース取得のためのInstance Handle
+	int			nFuncID,			//!< [in] 機能番号
+	WCHAR*		pszFuncName,		//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
+	WCHAR*		pszFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
 )
 {
-	const auto MacroInfo = GetFuncInfoByID(nFuncID);
-	if (!MacroInfo) {
-		return nullptr;	//見付からなかった
-	}
-
-	// 見付かった機能名をコピー
-	::wcsncpy_s(std::data(szFuncName), std::size(szFuncName), MacroInfo->m_pszFuncName, _TRUNCATE);
-
-	// 機能名を含む場合、丸括弧の手前までに切り詰める
-	WCHAR *p = std::data(szFuncName);
-	while (*p){
-		if (*p == L'('){
-			*p = L'\0';
-			break;
+	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
+	if( MacroInfo != nullptr ){
+		if( pszFuncName != nullptr ){
+			wcscpy( pszFuncName, MacroInfo->m_pszFuncName );
+			WCHAR *p = pszFuncName;
+			while (*p){
+				if (*p == L'('){
+					*p = L'\0';
+					break;
+				}
+				p++;
+			}
 		}
-		p++;
+		//	Jun. 16, 2002 genta NULLのときは何もしない．
+		if( pszFuncNameJapanese != nullptr ){
+			wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
+		}
+		return pszFuncName;
 	}
-
-	//	Jun. 16, 2002 genta NULLのときは何もしない．
-	if (optFuncNameJapanese.has_value()) {
-		auto& szFuncNameJapanese = optFuncNameJapanese.value();
-		::wcsncpy_s(std::data(szFuncNameJapanese), std::size(szFuncNameJapanese), LS(nFuncID), _TRUNCATE);
-	}
-	return std::data(szFuncName);
+	return nullptr;
 }
 
 /*!
@@ -887,7 +887,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
 			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
-				::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
+				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
+				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
 		}
@@ -897,7 +898,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
 			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
-				::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
+				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
+				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
 		}

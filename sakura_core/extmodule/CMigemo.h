@@ -10,7 +10,7 @@
 	Copyright (C) 2004, isearch
 	Copyright (C) 2005, aroka
 	Copyright (C) 2009, miau
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

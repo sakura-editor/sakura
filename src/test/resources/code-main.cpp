@@ -36,6 +36,9 @@ int wmain(int argc, wchar_t **argv)
 	printf("Running main() from %s\n", std::source_location::current().file_name());
 	testing::InitGoogleMock(&argc, argv);
 
+	// terminate対策でスレッドトレースを出すようにする
+	std::set_terminate(testing::OnTerminate);
+
 	// テスト実行時のロケールは日本語に固定する
 	::SetThreadUILanguage(langId);	// スレッドのUI言語を変更
 

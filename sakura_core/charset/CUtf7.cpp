@@ -181,7 +181,7 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	}
 
 	// // UTF-16 LE → UTF-16 BE
-	::wmemcpy_s(&psrc[0], nSrcLen, pSrc, nSrcLen);	// NUL文字分を確保してないのでメモリ関数を使う
+	wcsncpy( &psrc[0], pSrc, nSrcLen );
 	CMemory::SwapHLByte( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(wchar_t) );
 
 	// 書き込み

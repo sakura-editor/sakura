@@ -65,9 +65,9 @@ public:
 	//その他ヘルパ
 	CMruListener*		m_pcMruListener;		//MRU管理
 	CSMacroMgr*			m_pcSMacroMgr;			//マクロ管理
-private:
+
 	CPropertyManager*	m_pcPropertyManager;	//プロパティ管理
-public:
+
 	CGrepAgent*			m_pcGrepAgent;			//GREPモード
 	CSoundSet			m_cSoundSet;			//サウンド管理
 

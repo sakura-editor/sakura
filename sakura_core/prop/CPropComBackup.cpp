@@ -77,13 +77,11 @@ INT_PTR CALLBACK CPropBackup::DlgProc_page(
 /* メッセージ処理 */
 INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	const auto hWndDlg = hwndDlg;
+
 	WORD		wNotifyCode;
 	WORD		wID;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
-//	int			nVal;
-	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
 //	int			nDummy;
 //	int			nCharChars;
 
@@ -101,14 +99,12 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), std::size(m_Common.m_sBackup.m_szBackUpFolder) - 1 - 1 );
 		// 20051107 aroka
 		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), std::size(m_Common.m_sBackup.m_szBackUpPathAdvanced) - 1 - 1 );
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_BACKUP_GENS, 1, 99);
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		default:
+
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 				OnHelp( hwndDlg, IDD_PROP_BACKUP );
@@ -124,26 +120,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			default:
 				break;
 			}
-			break;
 
-		case IDC_SPIN_BACKUP_GENS:
-			/* バックアップファイルの世代数 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 99 ){
-				nVal = 99;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, nVal, FALSE );
-			return TRUE;
-		}
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
 		break;
 
@@ -179,7 +156,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, int(std::size(szFolder)));
 
 					if( SelectDir( hwndDlg, LS(STR_PROPCOMBK_SEL_FOLDER), szFolder, szFolder ) ){
-						::wcsncpy_s(m_Common.m_sBackup.m_szBackUpFolder, szFolder, _TRUNCATE);
+						wcscpy( m_Common.m_sBackup.m_szBackUpFolder, szFolder );
 						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder );
 					}
 					UpdateBackupFile( hwndDlg );
@@ -519,7 +496,7 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 			temp[0] = L'\0';
 		}
 		else if( m_Common.m_sBackup.m_bBackUpDustBox  ){
-			auto_snprintf_s(temp, _TRUNCATE, L"%ls\\", LS(STR_PROPCOMBK_DUSTBOX));
+			auto_sprintf( temp, L"%ls\\", LS(STR_PROPCOMBK_DUSTBOX) );
 		}
 		else{
 			wcsncpy_s( temp, L".\\", _TRUNCATE );
@@ -527,48 +504,48 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 
 		switch( m_Common.m_sBackup.GetBackupType() ){
 		case 1: // .bak
-			::wcsncat_s(temp, L"$0.bak", _TRUNCATE);
+			wcscat( temp, L"$0.bak" );
 			break;
 		case 5: // .*.bak
-			::wcsncat_s(temp, L"$0.*.bak", _TRUNCATE);
+			wcscat( temp, L"$0.*.bak" );
 			break;
 		case 3: // .b??
-			::wcsncat_s(temp, L"$0.b??", _TRUNCATE);
+			wcscat( temp, L"$0.b??" );
 			break;
 		case 6: // .*.b??
-			::wcsncat_s(temp, L"$0.*.b??", _TRUNCATE);
+			wcscat( temp, L"$0.*.b??" );
 			break;
 		case 2:	//	日付，時刻
 		case 4:	//	日付，時刻
-			::wcsncat_s(temp, L"$0_", _TRUNCATE);
+			wcscat( temp, L"$0_" );
 
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-				::wcsncat_s(temp, L"%Y", _TRUNCATE);
+				wcscat( temp, L"%Y" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-				::wcsncat_s(temp, L"%m", _TRUNCATE);
+				wcscat( temp, L"%m" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-				::wcsncat_s(temp, L"%d", _TRUNCATE);
+				wcscat( temp, L"%d" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-				::wcsncat_s(temp, L"%H", _TRUNCATE);
+				wcscat( temp, L"%H" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-				::wcsncat_s(temp, L"%M", _TRUNCATE);
+				wcscat( temp, L"%M" );
 			}
 			if( m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-				::wcsncat_s(temp, L"%S", _TRUNCATE);
+				wcscat( temp, L"%S" );
 			}
 
-			::wcsncat_s(temp, L".*", _TRUNCATE);
+			wcscat( temp, L".*" );
 			break;
 		default:
 			break;
 		}
 	}
 	if( !m_Common.m_sBackup.m_bBackUpPathAdvanced ){	// 詳細設定モードでないときだけ自動更新する
-		auto_snprintf_s(m_Common.m_sBackup.m_szBackUpPathAdvanced, _TRUNCATE, L"%ls", temp);
+		auto_sprintf( m_Common.m_sBackup.m_szBackUpPathAdvanced, L"%ls", temp );
 		ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFILE, m_Common.m_sBackup.m_szBackUpPathAdvanced );
 	}
 	return;

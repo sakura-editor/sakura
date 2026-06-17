@@ -5,6 +5,8 @@
 	SPDX-License-Identifier: Zlib
  */
 
+#ifndef SAKURA_RESOURCEHOLDER_0BDC8DF8_F2AC_486F_8BF7_FD7E5D1B76DE_H_
+#define SAKURA_RESOURCEHOLDER_0BDC8DF8_F2AC_486F_8BF7_FD7E5D1B76DE_H_
 #pragma once
 
 #include "cxx/type_of_Nth_arg.hpp"
@@ -93,3 +95,4 @@ struct ResourceHolder
 };
 
 } // end of namespace cxx
+#endif /* SAKURA_RESOURCEHOLDER_0BDC8DF8_F2AC_486F_8BF7_FD7E5D1B76DE_H_ */

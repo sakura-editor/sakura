@@ -29,7 +29,7 @@
 class CUrlWnd
 {
 public:
-	CUrlWnd() { m_hWnd = nullptr; m_hFont = nullptr; m_bHilighted = FALSE; m_pOldProc = nullptr; }
+	CUrlWnd() {}
 	BOOL SetSubclassWindow( HWND hWnd );
 	HWND GetHwnd() const{ return m_hWnd; }
 protected:
@@ -39,10 +39,10 @@ protected:
 protected:
 	bool OnSetText( _In_opt_z_ LPCWSTR pchText, _In_opt_ size_t cchText = 0 ) const;
 protected:
-	HWND m_hWnd;
-	HFONT m_hFont;
-	BOOL m_bHilighted;
-	WNDPROC m_pOldProc;
+	HWND m_hWnd = nullptr;
+	HFONT m_hFont = nullptr;
+	BOOL m_bHilighted = FALSE;
+	WNDPROC m_pOldProc = nullptr;
 };
 
 class CDlgAbout final : public CDialog

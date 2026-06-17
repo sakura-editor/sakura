@@ -1,17 +1,58 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2022, Sakura Editor Organization
+	Copyright (C) 2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
 #include "util/window.h"
 
+#include "dlg/ModalDialogCloser.hpp"
 #include "env/ShareDataTestSuite.hpp"
+#include "window/EditorTestSuite.hpp"
 
+#include "dlg/CDlgCancel.h"
+#include "dlg/CDlgCompare.h"
+#include "dlg/CDlgCtrlCode.h"
+#include "dlg/CDlgDiff.h"
+#include "dlg/CDlgExec.h"
+#include "dlg/CDlgFavorite.h"
+#include "dlg/CDlgFileUpdateQuery.h"
+#include "dlg/CDlgInput1.h"
+#include "dlg/CDlgPluginOption.h"
+#include "dlg/CDlgPrintSetting.h"
+#include "dlg/CDlgTagJumpList.h"
+#include "dlg/CDlgTagsMake.h"
+#include "dlg/CDlgWinSize.h"
+#include "dlg/CDlgWindowList.h"
+#include "macro/CKeyMacroMgr.h"
+#include "macro/CMacroFactory.h"
+#include "macro/CWSHManager.h"
+#include "outline/CDlgFileTree.h"
+#include "typeprop/CDlgKeywordSelect.h"
+#include "typeprop/CDlgSameColor.h"
+#include "typeprop/CDlgTypeAscertain.h"
+#include "typeprop/CDlgTypeList.h"
+
+#include "_main/CCommandLine.h"
 #include "_main/CControlTray.h"
+#include "plugin/CJackManager.h"
+#include "plugin/CPluginManager.h"
+#include "prop/CPropCommon.h"
+#include "typeprop/CPropTypes.h"
+
+#include <fstream>
 
 #include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "env/CommonSetting.h"
+
+#include "tests1_rc.h"
+
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
+void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
 namespace window {
 
@@ -60,7 +101,7 @@ TEST_F(TrayWndTest, OnGetTypeSetting001)
 
 	HWND hWndTray = nullptr;
 	int index = 0;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, index, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, index, 0), IsTrue());
 
 	// 結果確認
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_nIdx, Eq(index));
@@ -70,33 +111,33 @@ TEST_F(TrayWndTest, OnGetTypeSetting102)
 {
 	// 取得の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, GetDllShareData().m_nTypesCount, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, GetDllShareData().m_nTypesCount, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting001)
 {
 	// テキストの前に追加
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, 0), IsTrue());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting002)
 {
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, 0), IsTrue());
 
 	auto typeName = std::format(L"設定{}", 2);
 	if (typeName != GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName) {
 		// 受け渡しバッファに値を設定
 		::wcscpy_s(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, typeName.c_str());
 
-		EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, NULL), IsTrue());
+		EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, 0), IsTrue());
 	}
 
 	// 重複する名前を追加
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 1, 0), IsTrue());
 
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, 0), IsTrue());
 
 	typeName = std::format(L"設定{}", 3);
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(typeName));
@@ -106,14 +147,14 @@ TEST_F(TrayWndTest, OnAddTypeSetting101)
 {
 	// 追加の空振り(基本の前には入れない)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 0, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, 0, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting102)
 {
 	// 追加の空振り(上限値オーバー、「指定したインデックスの前」なので他と上限が違う)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount + 1, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount + 1, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnAddTypeSetting103)
@@ -124,7 +165,7 @@ TEST_F(TrayWndTest, OnAddTypeSetting103)
 
 	// 追加の空振り(もう追加できない)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount - 1, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_ADD_TYPESETTING, GetDllShareData().m_nTypesCount - 1, 0), IsFalse());
 
 	// 数を元に戻す
 	GetDllShareData().m_nTypesCount = defaultCount;
@@ -137,12 +178,12 @@ TEST_F(TrayWndTest, OnSetTypeSetting001)
 
 	// 更新してみる
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 1, 0), IsTrue());
 
 	// 受け取りバッファに値を設定
 	::wcscpy_s(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, L"");
 
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 1, 0), IsTrue());
 
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(L"テスト"));
 }
@@ -154,12 +195,12 @@ TEST_F(TrayWndTest, OnSetTypeSetting002)
 
 	// 更新してみる
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 0, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, 0, 0), IsTrue());
 
 	// 受け取りバッファに値を設定
 	::wcscpy_s(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, L"");
 
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 0, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_GET_TYPESETTING, 0, 0), IsTrue());
 
 	EXPECT_THAT(GetDllShareData().m_sWorkBuffer.m_TypeConfig.m_szTypeName, StrEq(L"テスト"));
 }
@@ -168,28 +209,28 @@ TEST_F(TrayWndTest, OnSetTypeSetting102)
 {
 	// 更新の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, GetDllShareData().m_nTypesCount, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_SET_TYPESETTING, GetDllShareData().m_nTypesCount, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnDelTypeSetting001)
 {
 	// 削除してみる
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 8, NULL), IsTrue());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 8, 0), IsTrue());
 }
 
 TEST_F(TrayWndTest, OnDelTypeSetting101)
 {
 	// 削除の空振り(0は削除させない)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 0, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, 0, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnDelTypeSetting102)
 {
 	// 削除の空振り(上限値オーバー)
 	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, GetDllShareData().m_nTypesCount, NULL), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DEL_TYPESETTING, GetDllShareData().m_nTypesCount, 0), IsFalse());
 }
 
 TEST_F(TrayWndTest, OnChangeSetting001)
@@ -204,6 +245,1524 @@ TEST_F(TrayWndTest, OnChangeSetting001)
 	::wcscpy_s(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, L"");
 
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_CHANGESETTING, 0, int(PM_CHANGESETTING_ALL)), 0);
+}
+
+struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
+	static constexpr HINSTANCE unusedArg1 = nullptr;
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		SetUpEditor();
+
+		CKeyMacroMgr::declare();
+		CWSHMacroManager::declare();
+
+		SetUpUia();
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		TearDownUia();
+
+		CMacroFactory::getInstance()->Unregister(CWSHMacroManager::Creator);
+		CMacroFactory::getInstance()->Unregister(CKeyMacroMgr::Creator);
+
+		TearDownEditor();
+	}
+
+	std::unique_ptr<CMacroManagerBase> mgr = nullptr;
+
+	/*!
+	 * テストが実行された直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"mac"));
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override
+	{
+		mgr = nullptr;
+	}
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @param action 閉じるアクション
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle, const std::function<void(HWND)>& action) const
+	{
+		return std::jthread([this, title = std::wstring(dialogTitle), action] {
+			const auto hWndFound = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title);
+			action(hWndFound);
+		});
+	}
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle) const
+	{
+		return StartWindowCloser(dialogTitle, [this] (HWND hWndFound) {
+			EmulateInvokeButton(hWndFound, L"OK");
+		});
+	}
+
+	/*!
+	 * 共通設定プロパティーシートを表示する
+	 */
+	void ShowPropCommon(const std::optional<PropComSheetOrder>& optPageNum = std::nullopt) const
+	{
+		// シート番号の指定がある場合
+		if (optPageNum.has_value()) {
+			CEditApp::getInstance()->OpenPropertySheet(static_cast<int>(optPageNum.value()));
+		}
+		// シート番号の指定がない場合
+		else {
+			EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionCommon()"), IsTrue());
+			EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+		}
+	}
+
+	/*!
+	 * タイプ別設定プロパティーシートを表示する
+	 */
+	void ShowPropType(const std::optional<PropTypeSheetOrder>& optPageNum = std::nullopt, const std::optional<CTypeConfig>& optDocType = std::nullopt) const
+	{
+		// シート番号の指定がある場合
+		if (optPageNum.has_value()) {
+			CEditApp::getInstance()->OpenPropertySheetTypes(static_cast<int>(optPageNum.value()), optDocType.value_or(GetDocument()->m_cDocType.GetDocumentType()));
+		}
+		// シート番号の指定がない場合
+		else {
+			EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionType()"), IsTrue());
+			EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+		}
+	}
+
+	HWND GetActivePage(HWND hWndDlg) const
+	{
+		HWND hWndPage = nullptr;
+		const auto startTick = ::GetTickCount64();
+		while ((::GetTickCount64() - startTick) < 1000) {
+			hWndPage = HWND(::SendMessageW(hWndDlg, PSM_GETCURRENTPAGEHWND, 0L, 0L));
+			if (hWndPage != nullptr) {
+				break;
+			}
+			::Sleep(10);
+		}
+		EXPECT_THAT(hWndPage, Ne(nullptr));
+		return hWndPage;
+	}
+};
+
+/*!
+ * 上書き保存時バックアップのテスト
+ */
+TEST_F(EditWndTest, FileSaveWithBackupAgent001)
+{
+	auto& sBackup = GetDllShareData().m_Common.m_sBackup;
+	const CommonSetting_Backup backupOld = sBackup;
+
+	const auto targetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
+	const auto backupPath = targetPath.parent_path() / (targetPath.stem().native() + L".bak");
+
+	std::filesystem::remove(targetPath);
+	std::filesystem::remove(backupPath);
+
+	{
+		std::wofstream fs(targetPath);
+		fs << L"line1" << std::endl;
+	}
+
+	sBackup.m_bBackUp = true;
+	sBackup.m_bBackUpDialog = false;
+	sBackup.SetBackupType(1);
+	sBackup.m_bBackUpFolder = false;
+	sBackup.m_bBackUpPathAdvanced = false;
+	sBackup.m_bBackUpDustBox = false;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native()).c_str()), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Replace('line1', 'line1x')"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileSave()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(fexist(backupPath), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileClose()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	sBackup = backupOld;
+
+	std::filesystem::remove(targetPath);
+	std::filesystem::remove(backupPath);
+}
+
+/*!
+ * CEditDoc::GetDataObjectのテスト
+ */
+TEST_F(EditWndTest, GetDocDataObject001)
+{
+	const auto targetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
+
+	std::filesystem::remove(targetPath);
+
+	cxx::com_pointer<IDataObject> pDataObject;
+	EXPECT_HRESULT_SUCCEEDED(GetDocument()->GetDataObject(&pDataObject));
+	EXPECT_THAT(pDataObject, IsNull());
+
+	{
+		std::wofstream fs(targetPath);
+		fs << L"line1" << std::endl;
+	}
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native()).c_str()), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_HRESULT_SUCCEEDED(GetDocument()->GetDataObject(&pDataObject));
+	EXPECT_THAT(pDataObject, NotNull());
+
+	const auto cfFormat = static_cast<CLIPFORMAT>(::RegisterClipboardFormatW(CFSTR_FILENAMEW));
+
+	FORMATETC format = { cfFormat, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM medium = {};
+	EXPECT_THAT(pDataObject->GetData(&format, &medium), S_OK);
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+
+	ASSERT_THAT(medium.hGlobal, NotNull());
+
+	cxx::GlobalWString memory{ medium.hGlobal };
+	EXPECT_THAT(memory.wstring(), StrEq(targetPath.native()));
+
+	// 独自仕様のチェック
+	format.cfFormat = CF_UNICODETEXT;
+	
+	EXPECT_THAT(pDataObject->GetData(&format, &medium), S_OK);
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+
+	ASSERT_THAT(medium.hGlobal, NotNull());
+	memory = medium.hGlobal;
+
+	EXPECT_THAT(memory.wstring(), StrEq(targetPath.native()));
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileClose()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	std::filesystem::remove(targetPath);
+}
+
+/*!
+ * キャンセルダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgCancel001)
+{
+	CDlgCancel cDlgCancel;
+
+	const auto hWnd = pcEditWnd->GetHwnd();
+
+	cDlgCancel.DoModeless(unusedArg1, hWnd, IDD_GREPRUNNING);
+
+	cDlgCancel.CloseDialog(0);
+}
+
+/*!
+ * 検索ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFind001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	pcEditWnd->m_cDlgFind.DoModeless(unusedArg1, pcEditWnd->GetHwnd(), LPARAM(&pcEditWnd->GetActiveView()));
+	pcEditWnd->m_cDlgFind.CloseDialog(0);
+}
+
+/*!
+ * 検索ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFind101)
+{
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"SearchDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cDlgFind.CloseDialog(0);
+}
+
+/*!
+ * アウトライン解析ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFuncList001)
+{
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Outline(0)"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Outline(1)"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cDlgFuncList.CloseDialog(0);
+}
+
+/*!
+ * 置換ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgReplace001)
+{
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ReplaceDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cDlgReplace.CloseDialog(0);
+}
+
+/*!
+ * バージョン情報ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgAbout101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([this] (HWND hWndDlg) {
+		std::vector<INPUT> inputs{};
+		RECT rc{};
+
+		EXPECT_THAT(::GetWindowRect(::GetDlgItem(hWndDlg, IDC_STATIC_URL_UR), &rc), IsTrue());
+		inputs.emplace_back(MakeMouseInputMove((rc.left + rc.right) / 2, (rc.top + rc.bottom) / 2));
+
+		EXPECT_THAT(::GetWindowRect(::GetDlgItem(hWndDlg, IDC_STATIC_URL_GIT), &rc), IsTrue());
+		inputs.emplace_back(MakeMouseInputMove((rc.left + rc.right) / 2, (rc.top + rc.bottom) / 2));
+
+		EXPECT_THAT(SendInput(inputs), Eq(std::size(inputs)));
+
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"About()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * ファイル比較ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgCompare001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgCompare cDlgCompare;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	const LPARAM unusedArg2 = 0;
+	HWND hWndCompareWnd = nullptr;
+	cDlgCompare.DoModal(unusedArg1, hWnd, unusedArg2, L"", &hWndCompareWnd);
+}
+
+/*!
+ * ファイル比較ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgCompare101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgCompare cDlgCompare;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	const LPARAM unusedArg2 = 0;
+	HWND hWndCompareWnd = nullptr;
+	cDlgCompare.DoModal(unusedArg1, hWnd, unusedArg2, L"", &hWndCompareWnd);
+}
+
+/*!
+ * コントロールコード入力ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgCtrlCode001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	using target = CDlgCtrlCode;
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"CtrlCodeDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * コントロールコード入力ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgCtrlCode101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"CtrlCodeDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * Diff差分ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgDiff001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	using target = CDlgDiff;
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"DiffDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * Diff差分ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgDiff101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"DiffDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * 外部コマンド実行ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgExec001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		// プログラムを起動させに行く。
+		::SetDlgItemTextW(hWndDlg, IDC_COMBO_m_szCommand, L"ctags.exe --version");
+		::CheckDlgButtonBool(hWndDlg, IDC_CHECK_GETSTDOUT, true);
+		::CheckDlgButtonBool(hWndDlg, IDC_RADIO_EDITWINDOW, true);
+		::CheckDlgButtonBool(hWndDlg, IDC_CHECK_CUR_DIR, true);
+		::SetDlgItemTextW(hWndDlg, IDC_COMBO_CUR_DIR, GetExeFileName().parent_path().c_str());
+
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	using target = CDlgExec;
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ExecCommandDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * 外部コマンド実行ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgExec101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ExecCommandDialog()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * 履歴とお気に入りの管理ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFavorite001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	using target = CDlgFavorite;
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionFavorite()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * 履歴とお気に入りの管理ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFavorite101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"OptionFavorite()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * ファイルツリーダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFileTree001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgFileTree cDlgFileTree;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	auto& cDlgFuncList = pcEditWnd->m_cDlgFuncList;
+	cDlgFileTree.DoModal(unusedArg1, hWnd, LPARAM(&cDlgFuncList));
+}
+
+/*!
+ * ファイルツリーダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFileTree101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgFileTree cDlgFileTree;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	auto& cDlgFuncList = pcEditWnd->m_cDlgFuncList;
+	cDlgFileTree.DoModal(unusedArg1, hWnd, LPARAM(&cDlgFuncList));
+}
+
+/*!
+ * 更新通知及び確認ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFileUpdateQuery101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgFileUpdateQuery cDlgFileUpdateQuery(L"", false);
+	const auto hWnd = pcEditWnd->GetHwnd();
+	cDlgFileUpdateQuery.DoModal(unusedArg1, hWnd, IDD_FILEUPDATEQUERY, 0 );
+}
+
+/*!
+ * Grepダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgGrep001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDCANCEL, BN_CLICKED), 0);
+	});
+
+	using target = CDlgGrep;
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP_DIALOG, true, 0, 0, 0, 0);
+}
+
+/*!
+ * Grepダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgGrep101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP_DIALOG, true, 0, 0, 0, 0);
+}
+
+/*!
+ * Grep置換ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgGrepReplace001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDCANCEL, BN_CLICKED), 0);
+	});
+
+	using target = CDlgGrepReplace;
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP_REPLACE_DLG, true, 0, 0, 0, 0);
+}
+
+/*!
+ * Grep置換ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgGrepReplace101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP_REPLACE_DLG, true, 0, 0, 0, 0);
+}
+
+/*!
+ * 1行入力ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgInputBox001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		// 不明なボタンIDで処理中断
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDC_EDIT_INPUT1, BN_CLICKED), LPARAM(::GetDlgItem(hWndDlg, IDC_EDIT_INPUT1)));
+
+		// 文字数超過で処理中断
+		::SetDlgItemTextW(hWndDlg, IDC_EDIT_INPUT1, L"test");
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+
+		// 適切な入力なら取り込む
+		::SetDlgItemTextW(hWndDlg, IDC_EDIT_INPUT1, L"tes");
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	std::wstring buffer{ L"TES" };
+
+	CDlgInput1 dlg{};
+	EXPECT_THAT(dlg.DoModal(unusedArg1, pcEditWnd->GetHwnd(), L"title", L"message", std::size(buffer), std::data(buffer)), IsTrue());
+
+	EXPECT_THAT(buffer, StrEq(L"tes"));
+}
+
+/*!
+ * 1行入力ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgInputBox101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	// マクロ関数を呼ぶためにWSHマクロマネージャーを使う
+	mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"js"));
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"InputBox('test1', 'test2', 0)"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * 指定行へジャンプダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgJump001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDC_BUTTON_JUMP, BN_CLICKED), LPARAM(::GetDlgItem(hWndDlg, IDC_BUTTON_JUMP )));
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDCANCEL, BN_CLICKED), 0);
+	});
+
+	using target = CDlgJump;
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_JUMP_DIALOG, true, 0, 0, 0, 0);
+}
+
+/*!
+ * 指定行へジャンプダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgJump101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_JUMP_DIALOG, true, 0, 0, 0, 0);
+}
+
+/*!
+ * 強調キーワード選択ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgKeywordSelect001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgKeywordSelect cDlgKeywordSelect;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	std::array<int, 10> nSet{};
+	cDlgKeywordSelect.DoModal(unusedArg1, hWnd, nSet.data());
+}
+
+/*!
+ * 強調キーワード選択ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgKeywordSelect101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgKeywordSelect cDlgKeywordSelect;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	std::array<int, 10> nSet{};
+	cDlgKeywordSelect.DoModal(unusedArg1, hWnd, nSet.data());
+}
+
+/*!
+ * ファイルを開くダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgOpenFileLegacy101)
+{
+	// Vistaスタイルのファイルダイアログを無効にする
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
+
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	// 設定を元に戻す
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+}
+
+/*!
+ * ファイルを開くダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgOpenFile101)
+{
+	// Vistaスタイルのファイルダイアログを有効にする
+	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * プラグイン設定ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgPluginOption001)
+{
+	// プラグイン設定フォルダー
+	const auto pluginPath = GetIniFileName().remove_filename().append(L"plugins");
+
+	// プラグイン定義を展開する
+	extract_zip_resource(IDR_ZIPRES1, pluginPath);
+
+	constexpr int pluginId = 1;
+
+	auto& sPlugin = GetDllShareData().m_Common.m_sPlugin;
+	sPlugin.m_bEnablePlugin = true;
+
+	auto& pluginRec = sPlugin.m_PluginTable[pluginId];
+	pluginRec.m_nCmdNum = pluginId;
+	::wcscpy_s(pluginRec.m_szId, L"TestWshPlugin");
+	::wcscpy_s(pluginRec.m_szName, L"test-plugin");
+
+	// ジャック初期化
+	CJackManager::getInstance();
+
+	// プラグイン読み込み
+	CPluginManager::getInstance()->LoadAllPlugin();
+
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgPluginOption cDlgPluginOption;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	const auto propPlugin = std::make_unique<CPropPlugin>();
+	cDlgPluginOption.DoModal(unusedArg1, hWnd, propPlugin.get(), pluginId);
+
+	cDlgPluginOption.DoModal(unusedArg1, hWnd, propPlugin.get(), 0);
+
+	// プラグイン読み込み解除
+	CPluginManager::getInstance()->UnloadAllPlugin();
+
+	if (const auto pluginPath = GetIniFileName().remove_filename().append(L"plugins"); fexist(pluginPath)) {
+		std::filesystem::remove_all(pluginPath);
+	}
+}
+
+/*!
+ * 印刷設定ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgPrintSetting001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgPrintSetting cDlgPrintSetting;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	int nCurrentPrintSetting = -1;
+	int nLineNumberColumns = 10;
+	cDlgPrintSetting.DoModal(unusedArg1, hWnd, &nCurrentPrintSetting, GetDllShareData().m_PrintSettingArr, nLineNumberColumns);
+}
+
+/*!
+ * 印刷設定ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgPrintSetting101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgPrintSetting cDlgPrintSetting;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	int nCurrentPrintSetting = -1;
+	int nLineNumberColumns = 10;
+	cDlgPrintSetting.DoModal(unusedArg1, hWnd, &nCurrentPrintSetting, GetDllShareData().m_PrintSettingArr, nLineNumberColumns);
+}
+
+/*!
+ * プロファイルマネージャーダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgProfileMgr101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	// プロファイルマネージャーを表示するには、CCommandLineのインスタンスが必要。	👈バグです。
+	CCommandLine cmd;
+
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_PROFILEMGR, true, 0, 0, 0, 0);
+}
+
+/*!
+ * プロパティ情報ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgProperty001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"PropertyFile()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * プロパティ情報ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgProperty101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"PropertyFile()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * 文字色／背景色統一ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgSameColor001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgSameColor cDlgSameColor;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	const WORD wID = 1;
+	auto m_nCurrentColorType = 1;
+	auto& m_Types = pcEditDoc->m_cDocType.GetDocumentAttributeWrite();
+	COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT;
+	cDlgSameColor.DoModal(unusedArg1, hWnd, wID, &m_Types, cr);
+}
+
+/*!
+ * 文字色／背景色統一ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgSameColor101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgSameColor cDlgSameColor;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	const WORD wID = 1;
+	auto m_nCurrentColorType = 1;
+	auto& m_Types = pcEditDoc->m_cDocType.GetDocumentAttributeWrite();
+	COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT;
+	cDlgSameColor.DoModal(unusedArg1, hWnd, wID, &m_Types, cr);
+}
+
+/*!
+ * 文字コードセット設定ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgSetCharSet001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ChgCharSet(99, 0)"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * 文字コードセット設定ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgSetCharSet101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ChgCharSet(99, 0)"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+}
+
+/*!
+ * タグジャンプダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTagJumpList001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	bool bDirectTagJump = false;
+	CDlgTagJumpList cDlgTagJumpList(bDirectTagJump);
+	const auto hWnd = pcEditWnd->GetHwnd();
+	cDlgTagJumpList.DoModal(unusedArg1, hWnd, 0L);
+}
+
+/*!
+ * タグジャンプダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTagJumpList101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	bool bDirectTagJump = false;
+	CDlgTagJumpList cDlgTagJumpList(bDirectTagJump);
+	const auto hWnd = pcEditWnd->GetHwnd();
+	cDlgTagJumpList.DoModal(unusedArg1, hWnd, 0L);
+}
+
+/*!
+ * タグファイル作成ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTagsMake001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgTagsMake cDlgTagsMake;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	LPARAM lParam = 0;
+	std::filesystem::path path = L"";
+
+	cDlgTagsMake.DoModal(unusedArg1, hWnd, lParam, path.c_str());
+}
+
+/*!
+ * タグファイル作成ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTagsMake101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgTagsMake cDlgTagsMake;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	LPARAM lParam = 0;
+	std::filesystem::path path = L"";
+
+	cDlgTagsMake.DoModal(unusedArg1, hWnd, lParam, path.c_str());
+}
+
+/*!
+ * タイプ別設定インポート確認ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTypeAscertain001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgTypeAscertain cDlgTypeAscertain;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	CDlgTypeAscertain::SAscertainInfo sAscertainInfo{};
+	cDlgTypeAscertain.DoModal(unusedArg1, hWnd, &sAscertainInfo);
+}
+
+/*!
+ * タイプ別設定インポート確認ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTypeAscertain101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgTypeAscertain cDlgTypeAscertain;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	CDlgTypeAscertain::SAscertainInfo sAscertainInfo{};
+	cDlgTypeAscertain.DoModal(unusedArg1, hWnd, &sAscertainInfo);
+}
+
+/*!
+ * ファイルタイプ一覧ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTypeList001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgTypeList cDlgTypeList;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	CDlgTypeList::SResult sResult = { CTypeConfig(0), false };
+	cDlgTypeList.DoModal(unusedArg1, hWnd, &sResult);
+}
+
+/*!
+ * ファイルタイプ一覧ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgTypeList101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgTypeList cDlgTypeList;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	CDlgTypeList::SResult sResult = { CTypeConfig(0), false };
+	cDlgTypeList.DoModal(unusedArg1, hWnd, &sResult);
+}
+
+/*!
+ * ウインドウサイズダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgWinSize001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([] (HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+	});
+
+	CDlgWinSize cDlgWinSize;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	EWinSizeMode eSaveWinSize = WINSIZEMODE_DEF;
+	EWinSizeMode eSaveWinPos = WINSIZEMODE_DEF;
+	int nWinSizeType = 0;
+	RECT rc = {};
+	cDlgWinSize.DoModal(unusedArg1, hWnd, eSaveWinSize, eSaveWinPos, nWinSizeType, rc);
+}
+
+/*!
+ * ウインドウサイズダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgWinSize101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	CDlgWinSize cDlgWinSize;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	EWinSizeMode eSaveWinSize = WINSIZEMODE_DEF;
+	EWinSizeMode eSaveWinPos = WINSIZEMODE_DEF;
+	int nWinSizeType = 0;
+	RECT rc = {};
+	cDlgWinSize.DoModal(unusedArg1, hWnd, eSaveWinSize, eSaveWinPos, nWinSizeType, rc);
+}
+
+/*!
+ * ウインドウ一覧ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgWindowList001)
+{
+	// 表示されたモーダルダイアログをOKボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([](HWND hWndDlg) {
+		::SendMessageW(hWndDlg, WM_COMMAND, MAKELONG(IDOK, BN_CLICKED), 0);
+		::EndDialog(hWndDlg, IDOK);
+	});
+
+	CDlgWindowList cDlgWindowList;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	cDlgWindowList.DoModal(unusedArg1, hWnd, 0);
+}
+
+/*!
+ * ウインドウ一覧ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgWindowList101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer([](HWND hWndDlg){
+		// キャンセルボタンが存在しないので強制的に閉じる
+		::EndDialog(hWndDlg, 0);
+	});
+
+	CDlgWindowList cDlgWindowList;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	cDlgWindowList.DoModal(unusedArg1, hWnd, 0);
+}
+
+/*!
+ * 補完ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowHokanMgr001)
+{
+	// データなしだとスカる
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	// とりあえずデータを入れる
+	const auto& text = L"test\n\ntes";
+	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_ADDTAIL_W, false, LPARAM(std::data(text)), LPARAM(std::size(text)), 0L, 0L);
+
+	// キャレットを強引に移動させる
+	auto& cCaret = pcEditWnd->GetActiveView().GetCaret();
+	cCaret.SetCaretLayoutPos(CLayoutPoint(15, 2));
+	cCaret.SetCaretLogicPos(CLogicPoint(3, 2));
+
+	// データありで補完実行
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditWnd->m_cHokanMgr.CloseDialog(0);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon001)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon();
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon002)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_GENERAL);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon003)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_WIN);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon004)
+{
+	const auto exportPath = GetIniFileName().replace_filename(L"メインメニュー.ini");
+	std::filesystem::remove(exportPath);
+
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON), [&] (HWND hWndDlg) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg);
+
+		EmulateInvokeButton(hWndPage, L"エクスポート(X)...");
+		EmulateEnterSaveFileName(exportPath);
+
+		EmulateInvokeButton(hWndPage, L"インポート(I)...");
+		EmulateEnterOpenFileName(exportPath);
+
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_MAINMENU);
+
+	t.join();
+
+	std::filesystem::remove(exportPath);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon005)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_TOOLBAR);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon006)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_TAB);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon007)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_STATUSBAR);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon008)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_EDIT);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon009)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_FILE);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon010)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_FILENAME);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon011)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_BACKUP);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon012)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_FORMAT);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon013)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_GREP);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon014)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYBOARD);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon015)
+{
+	const auto exportPath = GetIniFileName().replace_filename(L"カスタムメニュー.mnu");
+	std::filesystem::remove(exportPath);
+
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON), [&] (HWND hWndDlg) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg);
+
+		EmulateInvokeButton(hWndPage, L"エクスポート(X)...");
+		EmulateEnterSaveFileName(exportPath);
+
+		EmulateInvokeButton(hWndPage, L"インポート(I)...");
+		EmulateEnterOpenFileName(exportPath);
+
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_CUSTMENU);
+
+	t.join();
+
+	std::filesystem::remove(exportPath);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon016)
+{
+	const auto exportPath = GetIniFileName().replace_filename(L"強調キーワード.kwd");
+	std::filesystem::remove(exportPath);
+
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON), [&] (HWND hWndDlg) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg);
+
+		EmulateInvokeButton(hWndPage, L"エクスポート(X)...");
+		EmulateEnterSaveFileName(exportPath);
+
+		EmulateInvokeButton(hWndPage, L"インポート(I)...");
+		EmulateEnterOpenFileName(exportPath);
+
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYWORD);
+
+	t.join();
+
+	std::filesystem::remove(exportPath);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon017)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_HELPER);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon018)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_MACRO);
+}
+
+/*!
+ * 共通設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropCommon019)
+{
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON));
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_PLUGIN);
+}
+
+/*!
+ * タイプ別設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropType001)
+{
+	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
+
+	ShowPropType();
+}
+
+/*!
+ * タイプ別設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropType002)
+{
+	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
+
+	ShowPropType(ID_PROPTYPE_PAGENUM_SCREEN);
+}
+
+/*!
+ * タイプ別設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropType003)
+{
+	const auto exportPath = GetIniFileName().replace_filename(L"基本.col");
+	std::filesystem::remove(exportPath);
+
+	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE), [&] (HWND hWndDlg) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg);
+
+		EmulateInvokeButton(hWndPage, L"文字色統一(<)...");
+		if (const auto hWndDlgSameColor = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"文字色統一")) {
+			EmulateInvokeButton(hWndDlgSameColor, L"全チェック(A)");
+			EmulateInvokeButton(hWndDlgSameColor, L"全解除(N)");
+			EmulateInvokeButton(hWndDlgSameColor, L"OK");
+		}
+		EmulateInvokeButton(hWndPage, L"背景色統一(>)...");
+		if (const auto hWndDlgSameColor = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"背景色統一")) {
+			EmulateInvokeButton(hWndDlgSameColor, L"全チェック(A)");
+			EmulateInvokeButton(hWndDlgSameColor, L"全解除(N)");
+			EmulateInvokeButton(hWndDlgSameColor, L"OK");
+		}
+
+		EmulateInvokeButton(hWndPage, L"エクスポート(X)...");
+		EmulateEnterSaveFileName(exportPath);
+
+		EmulateInvokeButton(hWndPage, L"インポート(I)...");
+		EmulateEnterOpenFileName(exportPath);
+
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	ShowPropType(ID_PROPTYPE_PAGENUM_COLOR);
+
+	t.join();
+
+	std::filesystem::remove(exportPath);
+}
+
+/*!
+ * タイプ別設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropType004)
+{
+	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE), [this] (HWND hWndDlg) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg);
+
+		// トラックバーのハンドルを取得する
+		const auto hWndTrackbar = ::GetDlgItem(hWndPage, IDC_TRACKBAR_BACKIMG_TRANSPARENCY);
+		EXPECT_THAT(hWndTrackbar, Ne(nullptr));
+		::SetFocus(hWndTrackbar);
+
+		// トラックバーのウインドウ矩形を取得する
+		RECT rcTrackbar{};
+		EXPECT_THAT(::GetWindowRect(hWndTrackbar, &rcTrackbar), IsTrue());
+
+		const LONG x = (rcTrackbar.left + rcTrackbar.right) / 2;
+		const LONG y = (rcTrackbar.top + rcTrackbar.bottom) / 2;
+
+		std::vector<INPUT> inputs{};
+		inputs.emplace_back(MakeMouseInputMove(x, y));
+		inputs.emplace_back(MakeMouseInputWheel(-WHEEL_DELTA));
+		EXPECT_THAT(SendInput(inputs), Eq(std::size(inputs)));
+
+		FORWARD_WM_HSCROLL(hWndPage, hWndTrackbar, TB_LINEDOWN, -WHEEL_DELTA, ::SendMessageW);
+
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	ShowPropType(ID_PROPTYPE_PAGENUM_WINDOW);
+}
+
+/*!
+ * タイプ別設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropType005)
+{
+	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE));
+
+	ShowPropType(ID_PROPTYPE_PAGENUM_SUPPORT);
+}
+
+/*!
+ * タイプ別設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropType006)
+{
+	const auto exportPath = GetIniFileName().replace_filename(L"テキスト.rkw");
+	std::filesystem::remove(exportPath);
+
+	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE), [&] (HWND hWndDlg) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg);
+
+		EmulateInvokeButton(hWndPage, L"エクスポート(X)...");
+		EmulateEnterSaveFileName(exportPath);
+
+		EmulateInvokeButton(hWndPage, L"インポート(I)...");
+		EmulateEnterOpenFileName(exportPath);
+
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	ShowPropType(ID_PROPTYPE_PAGENUM_REGEX);
+
+	t.join();
+
+	std::filesystem::remove(exportPath);
+}
+
+/*!
+ * タイプ別設定プロパティーシートの表示テスト
+ */
+TEST_F(EditWndTest, ShowPropType007)
+{
+	const auto exportPath = GetIniFileName().replace_filename(L"キーワードヘルプ.txt");
+	std::filesystem::remove(exportPath);
+
+	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE), [&] (HWND hWndDlg) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg);
+
+		EmulateInvokeButton(hWndPage, L"エクスポート(X)...");
+		EmulateEnterSaveFileName(exportPath);
+
+		EmulateInvokeButton(hWndPage, L"インポート(I)...");
+		EmulateEnterOpenFileName(exportPath);
+
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	ShowPropType(ID_PROPTYPE_PAGENUM_KEYHELP);
+
+	t.join();
+
+	std::filesystem::remove(exportPath);
 }
 
 /*!

@@ -23,7 +23,7 @@ TEST(CSelectLang, test002)
 	// 初期化する
 	CSelectLang::InitializeLanguageEnvironment();
 
-	EXPECT_THAT(CSelectLang::GetLangInfo(), ::testing::SizeIs(Ge(size_t(1))));
+	EXPECT_THAT(CSelectLang::GetLangInfo().size(), Ge(size_t(1)));
 
 	CSelectLang::ChangeLang(L"sakura_lang_en_US.dll");
 
@@ -76,4 +76,10 @@ TEST(LoadStringW, LoadStringResource100)
 {
 	// ID範囲を越える値を指定した場合は例外が発生する
 	EXPECT_ANY_THROW(cxx::load_string(std::numeric_limits<WORD>::max() + 1));
+}
+
+TEST(LoadStringW, LoadStringResource101)
+{
+	// 対応する文字列リソースが存在しない機能IDを指定
+	EXPECT_THAT(LS(F_EXPANDPARAMETER), StrEq(L""));
 }

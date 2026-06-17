@@ -93,14 +93,11 @@ public:
 	static INT_PTR CALLBACK DlgProc_page(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
-	//	Jun. 2, 2001 genta
-	//	ここにあったEvent Handlerはprotectedエリアに移動した．
-
-	HWND				m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND				m_hwndThis;		/* このダイアログのハンドル */
-	PropComSheetOrder	m_nPageNum;
+	HWND				m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
+	HWND				m_hwndThis = nullptr;		/* このダイアログのハンドル */
+	PropComSheetOrder	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;
 	DLLSHAREDATA*		m_pShareData;
-	int					m_nKeywordSet1;
+	int					m_nKeywordSet1 = -1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List
 	

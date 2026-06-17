@@ -39,6 +39,9 @@
     <IntDir>..\build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>..\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
+  <PropertyGroup>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
       <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\resources\;..\src\main\cpp;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -47,7 +50,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis /w34996 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..\src\test\resources\;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -114,12 +117,16 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\src\test\resources\code-main.cpp" />
-    <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp" />
     <ClCompile Include="..\src\test\resources\testing\StartEditorProcess.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\macro\test-macro.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\window\UiaTestSuite.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cdocline.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cdoclinemgr.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-codechecker.cpp" />
-    <ClCompile Include="..\src\test\cpp\tests1\test-cppa.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\macro\test-cppa.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-csearchagent.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-crunningtimer.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-csharedata.cpp" />
@@ -137,6 +144,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-ceol.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cerrorinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cfileext.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cfuncinfoarr.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-clayoutint.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cnative.cpp" />
@@ -145,6 +153,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-ctextmetrics.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cwordparse.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-design_template.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-docoutline.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-editinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-file.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-charcode.cpp" />
@@ -157,6 +166,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-mydevmode.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-parameterized.cpp" />
     <ClCompile Include="..\src\test\resources\printECodeType.cpp" />
+    <ClCompile Include="..\src\test\resources\printEEolType.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-sample-disabled.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-sample.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-ssearchoption.cpp" />
@@ -169,8 +179,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h" />
+    <ClInclude Include="..\src\test\resources\testing\CrtAllocHook.hpp" />
+    <ClInclude Include="..\src\test\resources\testing\StartEditorProcess.hpp" />
+    <ClInclude Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.hpp" />
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp" />
-    <ClInclude Include="..\src\test\resources\StartEditorProcess.hpp" />
+    <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp" />
+    <ClInclude Include="..\src\test\cpp\tests1\window\UiaTestSuite.hpp" />
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp" />
     <ClInclude Include="..\src\test\resources\rt_zipres.h" />
     <ClInclude Include="..\src\test\resources\TExtModule.hpp" />
@@ -201,8 +215,17 @@
   <Target Name="CopyMiniz" Condition="!Exists('$(CMakeToolsBuildDir)include\miniz-cpp\zip_file.hpp')" BeforeTargets="ClCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_miniz -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
+  <Target Name="GeneratePpaStub" BeforeTargets="ClCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target ppa_stub -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
   <Target Name="MakeTestResource" Condition="!Exists('$(CMakeToolsBuildDir)resources.ja-JP.zip')" BeforeTargets="ResourceCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_resource_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="MakeTestDllPlugin1" Condition="!Exists('$(CMakeToolsBuildDir)resources-dllplugin.zip')" BeforeTargets="ResourceCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_dllplugin_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="RemoveTests1Exe" Condition="Exists('$(TargetPath)')" DependsOnTargets="ClCompile;ResourceCompile" BeforeTargets="Link">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); attrib -R '$(TargetPath)'; Remove-Item '$(TargetPath)' -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->

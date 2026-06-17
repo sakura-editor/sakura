@@ -147,12 +147,12 @@ INT_PTR CPropHelper::DispatchEvent(
 					/* 検索フォルダー */
 					// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_sHelper.m_szMigemoDict ) ){
-						GetInidirOrExedir(szPath, m_Common.m_sHelper.m_szMigemoDict);
+						GetInidirOrExedir( szPath, m_Common.m_sHelper.m_szMigemoDict, TRUE );
 					}else{
-						::wcsncpy_s(szPath, m_Common.m_sHelper.m_szMigemoDict, _TRUNCATE);
+						wcscpy( szPath, m_Common.m_sHelper.m_szMigemoDict );
 					}
 					if( SelectDir( hwndDlg, LS(STR_PROPCOMHELP_MIGEMODIR), szPath, szPath ) ){
-						::wcsncpy_s(m_Common.m_sHelper.m_szMigemoDict, GetRelPath(szPath), _TRUNCATE); // 2015.03.03 可能なら相対パスにする
+						wcscpy( m_Common.m_sHelper.m_szMigemoDict, GetRelPath(szPath) ); // 2015.03.03 可能なら相対パスにする
 						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict );
 					}
 				}
