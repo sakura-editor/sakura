@@ -248,6 +248,7 @@ exit /b
     for /f "usebackq delims=" %%v in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property catalog_productLineVersion -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
         set VS_PRODUCT_LINE_VERSION=%%v
     )
+    if "%VS_PRODUCT_LINE_VERSION%" == "18" set VS_PRODUCT_LINE_VERSION=2026
     exit /b
 
 :cmake
