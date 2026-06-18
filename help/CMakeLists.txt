@@ -4,6 +4,9 @@ project(CompiledHtmlHelp)
 
 # Find vswhere
 find_program(CMD_VSWHERE vswhere.exe
+  PATHS
+    "C:/Program Files (x86)/Microsoft Visual Studio/Installer"
+    "C:/Program Files/Microsoft Visual Studio/Installer"
   DOC "Visual Studio Locator"
 )
 
