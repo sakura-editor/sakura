@@ -25,6 +25,7 @@ A free text editor for Windows.
 <!-- TOC -->
 
 - [Sakura Editor](#sakura-editor)
+  - [脆弱性の報告方法](#脆弱性の報告方法)
   - [ダウンロード](#ダウンロード)
   - [開発情報](#開発情報)
     - [How to build](#how-to-build)
