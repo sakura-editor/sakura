@@ -33,6 +33,12 @@ A free text editor for Windows.
 
 <!-- /TOC -->
 
+## 脆弱性の報告方法
+
+https://github.com/sakura-editor/sakura/security/advisories
+から報告を行ってください。
+
+
 ## ダウンロード
 
 リリース版は [Sakura Editor Portal](https://sakura-editor.github.io/) に置いてあります。
