@@ -229,7 +229,7 @@ TEST(Irregular, SetFileKeys_OnlyWhitespace_DefaultsApplied) {
  */
 TEST(Irregular, SetFileKeys_OnlyExcludePatterns_DefaultSearchApplied) {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"!*.obj;#build"));						// 解析は成功する
+	EXPECT_EQ(0, keys.SetFileKeys(L"!*.obj;#build", /*bExcludeFileRegex=*/true));	// 解析は成功する
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());							// 検索対象は補完されて 1 件
 	EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0]);						// 既定の検索対象
 	ASSERT_EQ(1, keys.m_vecExceptFileRegexPatterns.size());					// 除外正規表現は 1 件
@@ -281,7 +281,7 @@ TEST(Irregular, SetFileKeys_NullByteInMiddle_TruncatesAtNull) {
  */
 TEST(Irregular, SetFileKeys_BangPrefixWithInvalidRegex_RegisteredButFailsLater) {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"!(invalid(regex"));				// ひとまず登録は受理する
+	EXPECT_EQ(0, keys.SetFileKeys(L"!(invalid(regex", /*bExcludeFileRegex=*/true));	// ひとまず登録は受理する
 	ASSERT_EQ(1, keys.m_vecExceptFileRegexPatterns.size());			// 除外正規表現は 1 件
 	// InitRegexp は DLLSHAREDATA 必須のため TEST() 内では呼ばない。
 	// コンパイル失敗の検証は GrepIrregularTest フィクスチャ側で行う。
@@ -861,7 +861,7 @@ TEST_F(GrepIrregularTest, MultiThread_100ExcludeRegexes_AllApplied) {
 	for (int i = 0; i < 100; ++i) {
 		pattern += L";!.*exclude" + std::to_wstring(i) + L"\\.txt$";
 	}
-	EXPECT_EQ(0, keys.SetFileKeys(pattern.c_str()));			// 100 件の除外正規表現を受理する
+	EXPECT_EQ(0, keys.SetFileKeys(pattern.c_str(), /*bExcludeFileRegex=*/true));	// 100 件の除外正規表現を受理する
 	EXPECT_EQ(100, keys.m_vecExceptFileRegexPatterns.size());	// 除外正規表現は 100 件
 }
 

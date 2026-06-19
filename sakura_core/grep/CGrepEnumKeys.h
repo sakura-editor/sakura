@@ -1,6 +1,6 @@
 ﻿/*!	@file
 	@brief GREP support library - 検索/除外ファイルパターン管理
-	@note !プレフィックス正規表現除外・AddExceptFile/Folder 追加
+	@note !プレフィックス除外ファイル（正規表現/ワイルドカードは呼び出し側フラグで切替）・AddExceptFile/Folder 追加
 	@author wakura, Moca
 	@date 2008/04/28
 */
@@ -39,7 +39,7 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
-	// !プレフィックスで指定された正規表現除外パターン（SetFileKeys で格納、DoGrepTree 等でマッチング）
+	// 除外ファイルを正規表現モードのとき格納される除外パターン（SetFileKeys で格納、DoGrepTree 等でマッチング）
 	std::vector<std::wstring> m_vecExceptFileRegexPatterns;
 
 public:
@@ -71,18 +71,33 @@ public:
 		return excludeFolders;
 	}
 
-	int SetFileKeys( LPCWSTR lpKeys ){
+	int SetFileKeys( LPCWSTR lpKeys, bool bExcludeFileRegex = false ){
 		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダー探索用
 		ClearItems();
-		
+
 		std::vector< std::wstring > patterns = SplitPattern(lpKeys);
 		for (size_t i = 0; i < patterns.size(); i++) {
 			const std::wstring& element = patterns[i];
 			const WCHAR* token = element.c_str();
 
-			// !プレフィックス: 正規表現除外パターンとして格納（ワイルドカード検証対象外）
+			// !プレフィックス: 除外ファイル。正規表現/ワイルドカードの区別は
+			// 呼び出し側のフラグ（-GOPT=E / チェックボックス）で決める。
 			if( token[0] == L'!' ){
-				m_vecExceptFileRegexPatterns.emplace_back( token + 1 );
+				const WCHAR* p = token + 1;
+				if( bExcludeFileRegex ){
+					// 正規表現モード: バリデーションせず正規表現リストへ
+					m_vecExceptFileRegexPatterns.emplace_back( p );
+					continue;
+				}
+				int nValidStatus = ValidateKey( p );
+				if( 0 != nValidStatus ){
+					return nValidStatus;
+				}
+				if( _IS_REL_PATH( p ) ){
+					push_back_unique( m_vecExceptFileKeys, p );
+				}else{
+					push_back_unique( m_vecExceptAbsFileKeys, p );
+				}
 				continue;
 			}
 

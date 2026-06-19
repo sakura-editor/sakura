@@ -107,7 +107,8 @@ void CViewCommander::Command_GREP( void )
 			GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder,
 			GetEditWindow()->m_cDlgGrep.m_bGrepSeparateFolder,
 			false,
-			false
+			false,
+			GetEditWindow()->m_cDlgGrep.m_bExcludeFileRegularExp != FALSE
 		);
 
 		//プラグイン：DocumentOpenイベント実行
@@ -201,7 +202,8 @@ void CViewCommander::Command_GREP_REPLACE( void )
 			cDlgGrepRep.m_bGrepOutputBaseFolder,
 			cDlgGrepRep.m_bGrepSeparateFolder,
 			cDlgGrepRep.m_bPaste,
-			cDlgGrepRep.m_bBackup
+			cDlgGrepRep.m_bBackup,
+			cDlgGrepRep.m_bExcludeFileRegularExp != FALSE
 		);
 	}
 	else{
@@ -249,6 +251,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
 		if( cDlgGrepRep.m_bPaste					)wcscat( pOpt, L"C" );	// クリップボードから貼り付け
 		if( cDlgGrepRep.m_bBackup					)wcscat( pOpt, L"O" );	// バックアップ作成
+		if( cDlgGrepRep.m_bExcludeFileRegularExp	)wcscat( pOpt, L"E" );	// 除外ファイルを正規表現として扱う
 		if( pOpt[0] ) {
 			cCmdLine.AppendString( L" -GOPT=" );
 			cCmdLine.AppendString( pOpt );

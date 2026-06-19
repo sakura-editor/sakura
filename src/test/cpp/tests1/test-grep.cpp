@@ -424,13 +424,14 @@ TEST_F(GrepRealFileTest, RegexCompileAndMatch)
 // =============================================================================
 
 /*!
- * @brief `!` プレフィックスを除外正規表現として保存 (PR #2459)
- * @remark `!` で始まるパターンが除外正規表現リストに格納され、GetExcludeFiles にも反映されることを確認する。
+ * @brief `!` プレフィックスを正規表現モードで除外正規表現として保存 (PR #2459)
+ * @remark 正規表現モード（bExcludeFileRegex=true）で `!` を除外正規表現として保存し、
+ *         GetExcludeFiles にも反映されることを確認する。
  */
 TEST(CGrepEnumKeys, ParseRegexExcludePattern)
 {
 	CGrepEnumKeys keys;
-	ASSERT_EQ(0, keys.SetFileKeys(L"*.txt;!.*skip.*\\.txt$"));
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.txt;!.*skip.*\\.txt$", /*bExcludeFileRegex=*/true));
 
 	ASSERT_EQ(keys.m_vecExceptFileRegexPatterns.size(), 1u);
 	EXPECT_EQ(keys.m_vecExceptFileRegexPatterns[0], L".*skip.*\\.txt$");	// ! を除いた文字列で格納
@@ -861,9 +862,10 @@ TEST_F(GrepRealFileTest, MultiThread_StressNoDeadlockAcrossRepeats)
 // =============================================================================
 
 /*!
- * @brief 除外正規表現の列挙結果への適用 (PR #2459)
- * @remark `!.*\.obj$` / `!.*\.exe$` を SetFileKeys に与え、production と同じ経路（CBregexp.Compile → Match）で
- *         列挙結果をフィルタリングした結果、.cpp ファイルのみが残ることを確認する。
+ * @brief 正規表現モードの除外を列挙結果へ適用 (PR #2459)
+ * @remark 正規表現モード（bExcludeFileRegex=true）で `!.*\.obj$` / `!.*\.exe$` を SetFileKeys に与え、
+ *         production と同じ経路（CBregexp.Compile → Match）で列挙結果をフィルタリングした結果、
+ *         .cpp ファイルのみが残ることを確認する。
  */
 TEST_F(GrepRealFileTest, RegexExclude_AppliedToEnumeratedFiles)
 {
@@ -874,7 +876,7 @@ TEST_F(GrepRealFileTest, RegexExclude_AppliedToEnumeratedFiles)
 
 	CGrepEnumKeys keys;
 	// 探索対象は *.* だが、.obj と .exe は正規表現で除外
-	ASSERT_EQ(0, keys.SetFileKeys(L"*.*;!.*\\.obj$;!.*\\.exe$"));
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.*;!.*\\.obj$;!.*\\.exe$", /*bExcludeFileRegex=*/true));
 	ASSERT_EQ(keys.m_vecExceptFileRegexPatterns.size(), 2u);
 
 	// production と同じく、テストドライバが各パターンを CBregexp でコンパイル
@@ -915,14 +917,15 @@ TEST_F(GrepRealFileTest, RegexExclude_AppliedToEnumeratedFiles)
 }
 
 /*!
- * @brief 不正な除外正規表現はコンパイル失敗
- * @remark 不正な構文の除外正規表現パターンは CBregexp::Compile が false を返し、
- *         production での上流バリデーション（DoGrep 側）で弾けることを確認する。
+ * @brief 正規表現モードで不正なパターンはコンパイル失敗
+ * @remark 正規表現モード（bExcludeFileRegex=true）で不正な構文の除外パターンを与えると
+ *         CBregexp::Compile が false を返し、production での上流バリデーション（DoGrep 側）で
+ *         弾けることを確認する。
  */
 TEST_F(GrepRealFileTest, RegexExclude_InvalidPatternFailsToCompile)
 {
 	CGrepEnumKeys keys;
-	ASSERT_EQ(0, keys.SetFileKeys(L"*.cpp;!*invalid("));
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.cpp;!*invalid(", /*bExcludeFileRegex=*/true));
 	ASSERT_EQ(keys.m_vecExceptFileRegexPatterns.size(), 1u);
 
 	CBregexp regexp;
@@ -1106,14 +1109,14 @@ TEST(CGrepEnumKeys, SetFileKeys_ExcludeFolderHashAbsolute)
 }
 
 /*!
- * @brief 検索対象キー設定(SetFileKeys)の仕様：正規表現の事前バリデーションスキップ
- * @remark `!` から始まる正規表現パターンは `ValidateKey` の事前チェックをスキップするため、
- *         不正な文法でも戻り値0（受理）になることを確認する。
+ * @brief 正規表現モードで `!` パターンは ValidateKey をスキップして受理される
+ * @remark 正規表現モード（bExcludeFileRegex=true）では `!` から始まるパターンが
+ *         `ValidateKey` の事前チェックをスキップするため、不正な文法でも戻り値0（受理）になることを確認する。
  */
 TEST(CGrepEnumKeys, SetFileKeys_RegexExcludeNoValidation)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"!*invalid\\("));
+	EXPECT_EQ(0, keys.SetFileKeys(L"!*invalid\\(", /*bExcludeFileRegex=*/true));
 }
 
 /*!
@@ -1126,6 +1129,35 @@ TEST(CGrepEnumKeys, SetFileKeys_DuplicateKeyDeduplicated)
 	CGrepEnumKeys keys;
 	keys.SetFileKeys(L"*.cpp;*.cpp;*.cpp");
 	EXPECT_EQ(1, keys.m_vecSearchFileKeys.size());
+}
+
+/*!
+ * @brief `!` はデフォルト (bExcludeFileRegex=false) ではワイルドカード除外に入る (回帰)
+ * @remark 第2引数を省略した場合、`!` プレフィックスはワイルドカード除外リストに格納され、
+ *         正規表現除外リストは空のままであることを確認する。
+ */
+TEST(CGrepEnumKeys, SetFileKeys_ExcludeFileWildcardByDefault)
+{
+	CGrepEnumKeys keys;
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.cpp;!*.obj"));   // 第2引数省略=false
+	ASSERT_EQ(1u, keys.m_vecExceptFileKeys.size());
+	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileKeys[0]);
+	EXPECT_TRUE(keys.m_vecExceptFileRegexPatterns.empty());
+}
+
+/*!
+ * @brief `~` は特殊文字ではなく通常の検索対象ファイル名として扱われる (回帰)
+ * @remark `~` プレフィックスは除外でも正規表現でもなく、
+ *         通常の検索対象ファイルキーとして格納されることを確認する。
+ */
+TEST(CGrepEnumKeys, SetFileKeys_TildeIsNormalSearchTarget)
+{
+	CGrepEnumKeys keys;
+	ASSERT_EQ(0, keys.SetFileKeys(L"~temp*"));
+	ASSERT_EQ(1u, keys.m_vecSearchFileKeys.size());
+	EXPECT_STREQ(L"~temp*", keys.m_vecSearchFileKeys[0]);
+	EXPECT_TRUE(keys.m_vecExceptFileKeys.empty());			// 除外（ワイルドカード）にも入らない
+	EXPECT_TRUE(keys.m_vecExceptFileRegexPatterns.empty());	// 除外（正規表現）にも入らない
 }
 
 // ----- AddExceptFile / AddExceptFolder -----
@@ -1186,8 +1218,8 @@ TEST(CGrepEnumKeys, AddExceptFile_HashIsNotSpecial)
 
 /*!
  * @brief 除外ファイルの集約取得(GetExcludeFiles)の仕様
- * @remark SetFileKeys と AddExceptFile の両方で登録された除外ファイルが
- *         GetExcludeFiles で集約されることを確認する。
+ * @remark 正規表現モード（bExcludeFileRegex=true）の SetFileKeys と AddExceptFile の両方で登録された
+ *         除外ファイルが GetExcludeFiles で集約されることを確認する。
  *         集約対象は m_vecExceptFileKeys, m_vecExceptAbsFileKeys,
  *         m_vecExceptFileRegexPatterns の 3 配列。
  *         ただし実装によっては一部配列が含まれない場合がある（件数は実装に合わせて凍結）。
@@ -1195,7 +1227,7 @@ TEST(CGrepEnumKeys, AddExceptFile_HashIsNotSpecial)
 TEST(CGrepEnumKeys, GetExcludeFiles_MergesAllThreeArrays)
 {
 	CGrepEnumKeys keys;
-	keys.SetFileKeys(L"*.cpp;!.*\\.obj$");
+	keys.SetFileKeys(L"*.cpp;!.*\\.obj$", /*bExcludeFileRegex=*/true);
 	keys.AddExceptFile(L"*.tmp;C:\\foo.bak");
 	auto files = keys.GetExcludeFiles();
 	EXPECT_EQ(3, files.size());	// 正規表現・相対・絶対の 3 系統を集約した合計
@@ -1312,8 +1344,8 @@ TEST_F(GrepRealFileTest, RunParallelGrep_ExcludeRegexFiltersWorker)
 
 	CGrepAgent agent;
 	CGrepEnumKeys keys;
-	// *.*;!.*\.obj$;!.*\.exe$ → .obj/.exe を除外
-	keys.SetFileKeys(L"*.*;!.*\\.obj$;!.*\\.exe$");
+	// *.*;!.*\.obj$;!.*\.exe$ → 正規表現モードで .obj/.exe を除外
+	keys.SetFileKeys(L"*.*;!.*\\.obj$;!.*\\.exe$", /*bExcludeFileRegex=*/true);
 	CGrepEnumFiles cExAbsFiles;
 	CGrepEnumFolders cExAbsFolders;
 	CNativeW cmemMessage;
@@ -2417,7 +2449,8 @@ DWORD RunDoGrepStdout(
 	const std::wstring& key,
 	const std::wstring& filePattern,
 	const std::wstring& folder,
-	std::string& capturedStdout)
+	std::string& capturedStdout,
+	bool bExcludeFileRegex = false)   // → 追加
 {
 	capturedStdout.clear();
 
@@ -2467,7 +2500,8 @@ DWORD RunDoGrepStdout(
 			1,						// nGrepOutputLineType: マッチ行
 			1,						// nGrepOutputStyle: Normal
 			false, false, false,	// FileOnly / BaseFolder / SeparateFolder
-			false, false			// Paste / Backup
+			false, false,			// Paste / Backup
+			bExcludeFileRegex		// bGrepExcludeFileRegexp
 		);
 	} // ← stdout 復帰
 
@@ -2518,7 +2552,8 @@ TEST_F(GrepRealFileTest, DoGrep_StdoutMode_ExcludeRegexSmoke)
 
 	std::string out;
 	const DWORD hits = RunDoGrepStdout(
-		L"needle", L"*.txt;!.*skip.*\\.txt$", m_temp->Root().wstring(), out);
+		L"needle", L"*.txt;!.*skip.*\\.txt$", m_temp->Root().wstring(),
+		out, /*bExcludeFileRegex=*/true);
 
 	EXPECT_EQ(1u, hits) << "skip_me.txt は除外し keep.txt の 1 件のみ";
 	EXPECT_NE(out.find("keep.txt"), std::string::npos)

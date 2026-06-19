@@ -230,7 +230,8 @@ bool CNormalProcess::InitializeProcess()
 				gi.bGrepOutputBaseFolder,
 				gi.bGrepSeparateFolder,
 				gi.bGrepPaste,
-				gi.bGrepBackup
+				gi.bGrepBackup,
+				gi.bGrepExcludeFileRegexp
 			);
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 		}

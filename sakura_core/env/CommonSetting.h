@@ -388,6 +388,7 @@ struct CommonSetting_Search
 	bool			m_bGrepOutputBaseFolder;	//!< Grep: ベースフォルダー表示
 	bool			m_bGrepSeparateFolder;		//!< Grep: フォルダー毎に表示
 	bool			m_bGrepBackup;				//!< Grep: バックアップ作成
+	bool			m_bGrepExcludeFileRegexp;	//!< Grep: 除外ファイルを正規表現として扱う
 
 	BOOL			m_bCaretTextForSearch;		//!< カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
 	bool			m_bInheritKeyOtherView;		//!< 次・前検索で他のビューの検索条件を引き継ぐ

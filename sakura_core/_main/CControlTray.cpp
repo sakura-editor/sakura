@@ -150,6 +150,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
 	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
 	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
+	if( cDlgGrep.m_bExcludeFileRegularExp	)wcscat( pOpt, L"E" );	// 除外ファイルを正規表現として扱う
 	if( pOpt[0] != L'\0' ){
 		cCmdLine.AppendString( L" -GOPT=" );
 		cCmdLine.AppendString( pOpt );

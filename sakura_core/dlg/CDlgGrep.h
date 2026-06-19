@@ -25,8 +25,10 @@
 #include "recent/CRecentExcludeFile.h"
 #include "recent/CRecentExcludeFolder.h"
 
-// 除外ファイルパターン（正規表現、フルパスに対してマッチング）
-#define DEFAULT_EXCLUDE_FILE_PATTERN    L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$"
+// 正規表現ONのときの既定（フルパスに対する正規表現）
+#define DEFAULT_EXCLUDE_FILE_PATTERN_REGEX    L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$"
+// 正規表現OFFのときの既定（ワイルドカード）
+#define DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
 
 //! GREPダイアログボックス
@@ -59,6 +61,7 @@ public:
 	bool		m_bSelectOnceThisText;
 	BOOL		m_bSubFolder;/*!< サブフォルダーからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
+	BOOL		m_bExcludeFileRegularExp;	//!< 除外ファイルを正規表現として扱う
 
 	SSearchOption	m_sSearchOption;	//!< 検索オプション
 

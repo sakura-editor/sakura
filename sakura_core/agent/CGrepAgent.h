@@ -123,7 +123,8 @@ public:
 		bool					bGrepOutputBaseFolder,	//!< [in] ベースフォルダー表示
 		bool					bGrepSeparateFolder,	//!< [in] フォルダー毎に表示
 		bool					bGrepPaste,
-		bool					bGrepBackup
+		bool					bGrepBackup,
+		bool					bGrepExcludeFileRegexp	//!< [in] 除外ファイルを正規表現として扱う
 	);
 
 	// 並列 Grep のワーカー本体。UI に触れず、1 ファイル分の検索だけを担当する。

@@ -360,7 +360,8 @@ DWORD CGrepAgent::DoGrep(
 	bool					bGrepOutputBaseFolder,
 	bool					bGrepSeparateFolder,
 	bool					bGrepPaste,
-	bool					bGrepBackup
+	bool					bGrepBackup,
+	bool					bGrepExcludeFileRegexp
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DoGrep" );
@@ -534,7 +535,7 @@ DWORD CGrepAgent::DoGrep(
 
 	CGrepEnumKeys cGrepEnumKeys;
 	{
-		int nErrorNo = cGrepEnumKeys.SetFileKeys( pcmGrepFile->GetStringPtr() );
+		int nErrorNo = cGrepEnumKeys.SetFileKeys( pcmGrepFile->GetStringPtr(), bGrepExcludeFileRegexp );
 		if( nErrorNo != 0 ){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
@@ -2715,6 +2716,23 @@ int CGrepAgent::RunParallelGrep(
 	std::mutex initMutex;
 	std::condition_variable cvInitDone;
 
+	struct PoolJoinGuard {
+		std::vector<std::thread>&	workers;
+		std::mutex&					mtx;
+		std::condition_variable&	cv;
+		bool&						bShutdown;
+		~PoolJoinGuard(){
+			{
+				std::lock_guard<std::mutex> lk( mtx );
+				bShutdown = true;
+			}
+			cv.notify_all();
+			for( auto& w : workers ){
+				if( w.joinable() ) w.join();
+			}
+		}
+	} poolJoinGuard{ poolWorkers, poolMutex, cvPoolStart, bPoolShutdown };
+
 	for( unsigned int t = 0; t < nThreads; t++ ){
 		poolWorkers.emplace_back( [&](){
 			size_t localBatchId = 0;
@@ -2958,14 +2976,8 @@ int CGrepAgent::RunParallelGrep(
 		}
 	}
 
-	// スレッドプールをシャットダウン: 全ワーカーに終了を通知してjoin
-	{
-		std::lock_guard<std::mutex> lk( poolMutex );
-		bPoolShutdown = true;
-	}
-	cvPoolStart.notify_all();
-	for( auto& w : poolWorkers ) w.join();
-
+	// スレッドプールのシャットダウンと join は PoolJoinGuard のデストラクタが
+	// 担う（正常終了・例外伝播のどちらの経路でも確実に実行される）。
 	nHitCountOut = atomicHitCount.load();
 	return nGrepTreeResult;
 }

@@ -53,6 +53,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ファイル
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダー
 	IDC_COMBO_EXCLUDE_FILE,			HIDC_GREP_COMBO_EXCLUDE_FILE,		//除外ファイル
+	IDC_CHK_EXCLUDE_FILE_REGEXP,	HIDC_GREP_COMBO_EXCLUDE_FILE,		//除外ファイル正規表現
 	IDC_COMBO_EXCLUDE_FOLDER,		HIDC_GREP_COMBO_EXCLUDE_FOLDER,		//除外フォルダー
 	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//上
 	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//結果出力：行単位
@@ -77,6 +78,7 @@ CDlgGrep::CDlgGrep()
 	m_bSelectOnceThisText = false;
 	m_bSubFolder = FALSE;				// サブフォルダーからも検索する
 	m_bFromThisText = FALSE;			// この編集中のテキストから検索する
+	m_bExcludeFileRegularExp = FALSE;
 	m_sSearchOption.Reset();			// 検索オプション
 	m_nGrepCharSet = CODE_SJIS;			// 文字コードセット
 	m_nGrepOutputLineType = 1;			// 行を出力/該当部分/否マッチ行 を出力
@@ -157,6 +159,8 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
+	// 除外ファイルは常に '!' を付与する。
+	// 正規表現/ワイルドカードの区別は -GOPT=E（チェックボックス m_bExcludeFileRegularExp）で持つ。
 	for (const auto& pattern : patterns)
 	{
 		LPCWSTR escapeStr = GetEscapePattern(pattern);
@@ -241,6 +245,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCurrentFilePath )
 {
 	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: サブフォルダーも検索
+	m_bExcludeFileRegularExp = m_pShareData->m_Common.m_sSearch.m_bGrepExcludeFileRegexp;
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
 	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// 文字コードセット
 	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
@@ -461,6 +466,19 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //	case IDC_CHK_LOHICASE:	/* 英大文字と英小文字を区別する */
 //		MYTRACE( L"IDC_CHK_LOHICASE\n" );
 //		return TRUE;
+	case IDC_CHK_EXCLUDE_FILE_REGEXP:
+		{
+			bool bRegexp = 0 != ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
+			WCHAR szCur[MAX_GREP_PATH] = { 0 };
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, szCur, std::size(szCur) );
+			const WCHAR* pszOther = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD : DEFAULT_EXCLUDE_FILE_PATTERN_REGEX;
+			const WCHAR* pszThis  = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_REGEX    : DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD;
+			if( szCur[0] == L'\0' || wcscmp( szCur, pszOther ) == 0 ){
+				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, pszThis );
+			}
+		}
+		return TRUE;
+
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
 //		MYTRACE( L"IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
@@ -584,6 +602,7 @@ void CDlgGrep::SetData( void )
 
 	/* 除外ファイル */
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile);
+	::CheckDlgButton( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP, m_bExcludeFileRegularExp );
 
 	/* 除外フォルダー */
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
@@ -811,6 +830,7 @@ int CDlgGrep::GetData( void )
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, std::size(m_szFolder) );
 	/* 除外ファイル */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, std::size(m_szExcludeFile));
+	m_bExcludeFileRegularExp = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
 	/* 除外フォルダー */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
 
@@ -820,6 +840,7 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepExcludeFileRegexp = m_bExcludeFileRegularExp != FALSE;
 
 	if( m_szFile[0] != '\0' ) {
 		CGrepEnumKeys enumKeys;
@@ -958,11 +979,11 @@ void CDlgGrep::DetermineDefaultExcludePatterns()
 			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
 		}
 		else {
-			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
-			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN);	/* 除外ファイル */
-
-			/* 履歴に残して後で選択できるようにする */
-			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(DEFAULT_EXCLUDE_FILE_PATTERN);
+			const WCHAR* pszDefault = m_bExcludeFileRegularExp
+				? DEFAULT_EXCLUDE_FILE_PATTERN_REGEX
+				: DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD;
+			wcscpy_s(m_szExcludeFile, std::size(m_szExcludeFile), pszDefault);
+			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(pszDefault);
 		}
 	}
 

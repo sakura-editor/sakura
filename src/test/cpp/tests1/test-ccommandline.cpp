@@ -679,6 +679,19 @@ TEST(CCommandLine, ParseGrepReplaceCreateBackupFiles)
 }
 
 /*!
+ * @brief パラメータ解析(-GOPT)の仕様：除外ファイルを正規表現として扱う
+ * @remark -GOPT=E が指定されていなければ false、指定されていたら true
+ */
+TEST(CCommandLine, ParseGrepExcludeFileRegexp)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepExcludeFileRegexp);
+	cCommandLine.ParseCommandLine(L"-GOPT=E", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepExcludeFileRegexp);
+}
+
+/*!
  * @brief パラメータ解析(-GCODE)の仕様
  * @remark -GCODEが指定されていなければSJIS
  * @remark -GCODEが指定されていたら指定された数値
@@ -969,7 +982,7 @@ TEST(CCommandLine, ParseGrepOpt_MultipleFlagsCombined)
 TEST(CCommandLine, ParseGrepOpt_AllKnownFlagsOn)
 {
 	CCommandLine c;
-	c.ParseCommandLine(L"-GOPT=XUHSLRKPNW123FBDCO", false);
+	c.ParseCommandLine(L"-GOPT=XUHSLRKPNW123FBDCOE", false);
 	const auto& opt = c.GetGrepInfoRef();
 	EXPECT_TRUE(opt.bGrepCurFolder);							// X: 現フォルダー検索
 	EXPECT_TRUE(opt.bGrepStdout);								// U: 標準出力モード
@@ -986,6 +999,7 @@ TEST(CCommandLine, ParseGrepOpt_AllKnownFlagsOn)
 	EXPECT_TRUE(opt.bGrepSeparateFolder);						// D: フォルダー毎表示
 	EXPECT_TRUE(opt.bGrepPaste);								// C: クリップボード貼り付け
 	EXPECT_TRUE(opt.bGrepBackup);								// O: バックアップ有効
+	EXPECT_TRUE(opt.bGrepExcludeFileRegexp);					// E: 除外ファイル正規表現
 }
 
 /*!

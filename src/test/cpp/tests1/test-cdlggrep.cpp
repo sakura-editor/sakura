@@ -65,11 +65,12 @@ TEST_F(CDlgGrepTest, DefaultMemberValues_Constructor)
 
 /*!
  * @brief 除外パターンの定数検証 (DG-02)
- * @remark DEFAULT_EXCLUDE_FILE_PATTERN と DEFAULT_EXCLUDE_FOLDER_PATTERN が仕様通り定義されていることを確認する。
+ * @remark DEFAULT_EXCLUDE_FILE_PATTERN_REGEX / _WILDCARD と DEFAULT_EXCLUDE_FOLDER_PATTERN が仕様通り定義されていることを確認する。
  */
 TEST_F(CDlgGrepTest, DefaultExcludePatterns_Constants)
 {
-	EXPECT_STREQ(L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$", DEFAULT_EXCLUDE_FILE_PATTERN);
+	EXPECT_STREQ(L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$", DEFAULT_EXCLUDE_FILE_PATTERN_REGEX);
+	EXPECT_STREQ(L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb", DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD);
 	EXPECT_STREQ(L".git;.svn;.vs", DEFAULT_EXCLUDE_FOLDER_PATTERN);
 }
 
@@ -177,8 +178,9 @@ TEST_F(CDlgGrepTest, GetPackedGFileString_CombinedAllExclusions)
 }
 
 /*!
- * @brief パックとアンパックのラウンドトリップ検証 (GUI -> CLI -> EnumKeys) (DG-11)
- * @remark GUIで設定した複雑なパターンをパックし、それを再度 `CGrepEnumKeys::SetFileKeys` で正しくパースすることを確認する。
+ * @brief パックとアンパックのラウンドトリップ検証 (GUI -> CLI -> EnumKeys) ワイルドカード (DG-11)
+ * @remark GUIで設定した複雑なパターンをパックし、bExcludeFileRegex=false で SetFileKeys を呼ぶと
+ *         ! プレフィックスはワイルドカード除外リスト（m_vecExceptFileKeys）に入ることを確認する。
  */
 TEST_F(CDlgGrepTest, RoundTrip_GuiToCliToEnumKeys)
 {
@@ -188,9 +190,10 @@ TEST_F(CDlgGrepTest, RoundTrip_GuiToCliToEnumKeys)
 	wcscpy_s(dlg.m_szExcludeFile, L"*.obj;*.tmp");
 	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
 
+	// bExcludeFileRegex=false（既定）: ! プレフィックスはワイルドカード除外へ
 	CGrepEnumKeys keys;
 	EXPECT_EQ(0, keys.SetFileKeys(packed.c_str()));
-	
+
 	EXPECT_EQ(1, keys.m_vecSearchFileKeys.size());						// 検索対象は 1 件
 	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0]);
 
@@ -198,9 +201,35 @@ TEST_F(CDlgGrepTest, RoundTrip_GuiToCliToEnumKeys)
 	EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0]);
 	EXPECT_STREQ(L"dist", keys.m_vecExceptFolderKeys[1]);
 
-	EXPECT_EQ(2, keys.m_vecExceptFileRegexPatterns.size());				// ! プレフィックスは正規表現除外に入る
-	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileRegexPatterns[0].c_str());
-	EXPECT_STREQ(L"*.tmp", keys.m_vecExceptFileRegexPatterns[1].c_str());
+	EXPECT_EQ(2, keys.m_vecExceptFileKeys.size());						// ! プレフィックスはワイルドカード除外に入る
+	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileKeys[0]);
+	EXPECT_STREQ(L"*.tmp", keys.m_vecExceptFileKeys[1]);
+	EXPECT_TRUE(keys.m_vecExceptFileRegexPatterns.empty());				// 正規表現除外リストは空
+}
+
+/*!
+ * @brief パックとアンパックのラウンドトリップ検証 (GUI -> CLI -> EnumKeys) 正規表現 (DG-11b)
+ * @remark GetPackedGFileString は regex ON/OFF にかかわらず常に ! を出力する。
+ *         SetFileKeys(packed, true) で呼ぶと ! プレフィックスは正規表現除外リストに入ることを確認する。
+ */
+TEST_F(CDlgGrepTest, RoundTrip_GuiToCliToEnumKeys_RegexMode)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szExcludeFile, L".*skip.*\\.txt$");
+	dlg.m_bExcludeFileRegularExp = TRUE;
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+
+	// パック文字列は常に '!' を使う（regex フラグ非依存）
+	EXPECT_NE(std::wstring::npos, packed.find(L"!"));
+
+	// bExcludeFileRegex=true: ! プレフィックスは正規表現除外へ
+	CGrepEnumKeys keys;
+	EXPECT_EQ(0, keys.SetFileKeys(packed.c_str(), /*bExcludeFileRegex=*/true));
+
+	EXPECT_EQ(1, keys.m_vecExceptFileRegexPatterns.size());
+	EXPECT_STREQ(L".*skip.*\\.txt$", keys.m_vecExceptFileRegexPatterns[0].c_str());
+	EXPECT_TRUE(keys.m_vecExceptFileKeys.empty());
 }
 
 // ----- 切り出し関数のテスト -----
@@ -214,7 +243,7 @@ TEST_F(CDlgGrepTest, DetermineDefaultExcludePatterns_EmptyHistorySetsDefaults)
 	CDlgGrep dlg;
 	GetDllShareDataPtr()->m_sSearchKeywords.m_aExcludeFiles.clear();
 	dlg.DetermineDefaultExcludePatterns();
-	EXPECT_STREQ(DEFAULT_EXCLUDE_FILE_PATTERN, dlg.m_szExcludeFile);
+	EXPECT_STREQ(DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD, dlg.m_szExcludeFile);
 }
 
 /*!
