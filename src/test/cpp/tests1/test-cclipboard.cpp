@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021-2022, Sakura Editor Organization
+	Copyright (C) 2021-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,6 +9,7 @@
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <limits>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -217,6 +218,12 @@ TEST(CClipboard, Empty) {
 	clipboard.Empty();
 }
 
+// クリップボードの安全な上限値が定義されていることを確認する。
+TEST(CClipboard, ClipboardMaxCharsConstant) {
+	EXPECT_EQ(CLIPBOARD_MAX_CHARS, static_cast<size_t>(INT32_MAX));
+	EXPECT_GT(CLIPBOARD_MAX_CHARS, 0u);
+}
+
 // SetHtmlTextのテスト。
 // SetClipboardData に渡された引数が期待される結果と一致することを確認する。
 TEST(CClipboard, SetHtmlText1)
@@ -302,6 +309,46 @@ TEST(CClipboard, SetText6) {
 	MockCClipboard clipboard;
 	ON_CALL(clipboard, GlobalAlloc(_, 1)).WillByDefault(Return(nullptr));
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, 0));
+}
+
+// SetText のテスト。nDataLen > INT32_MAX でサクラ形式を指定した場合。
+// SAKURAClipW のヘッダに収まらないが SetClipboardData は呼ばれず false を返す。
+TEST(CClipboard, SetText7) {
+	const wchar_t text[] = L"x";
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
+	EXPECT_FALSE(clipboard.SetText(text, static_cast<size_t>(INT32_MAX) + 1, false, false, CClipboard::GetSakuraFormat()));
+}
+
+// SetText のテスト。nDataLen > INT32_MAX でフォーマット未指定（-1）の場合。
+// CLIPBOARD_MAX_CHARS 超過により早期リターンし、全形式でクリップボード設定されず false を返す。
+TEST(CClipboard, SetText8) {
+	const wchar_t text[] = L"x";
+	const size_t hugeLen = static_cast<size_t>(INT32_MAX) + 1;
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
+	EXPECT_FALSE(clipboard.SetText(text, hugeLen, true, false, -1));
+}
+
+// SetText のテスト。nDataLen が size_t の最大値の場合。
+// CLIPBOARD_MAX_CHARS 超過による早期リターン。SetClipboardData は呼ばれず false を返す。
+TEST(CClipboard, SetTextSizeTOverflow) {
+	const wchar_t text[] = L"x";
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(_, _)).Times(0);
+	EXPECT_FALSE(clipboard.SetText(text, std::numeric_limits<size_t>::max(), false, false, -1));
+}
+
+// SetText のテスト。空文字列（nDataLen == 0）の場合。
+// CF_UNICODETEXT とサクラ形式の両方が書き込まれ、サクラ形式は cchData = 0 となる。
+// 本体コピー（nDataLen > 0 の分岐）をスキップする経路を確認する。
+TEST(CClipboard, SetTextEmpty) {
+	const wchar_t text[] = L"";
+	MockCClipboard clipboard;
+	ON_CALL(clipboard, GlobalAlloc(_, _)).WillByDefault(Invoke(&::GlobalAlloc));
+	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, _));
+	EXPECT_CALL(clipboard, SetClipboardData(CClipboard::GetSakuraFormat(), _));
+	EXPECT_TRUE(clipboard.SetText(text, 0, false, false, -1));
 }
 
 // GetText のテストで使用するダミーデータを準備するためのフィクスチャクラス
@@ -396,6 +443,56 @@ TEST_F(CClipboardGetText, SakuraFormatSuccess) {
 TEST_F(CClipboardGetText, SakuraFormatFailure) {
 	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
 	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
+}
+
+// SAKURAClipW のサイズがヘッダ未満（cbData < sizeof(SSakuraClipHeader)）の場合。
+// 破損データとして拒否し、既定取得では CF_UNICODETEXT へフォールバックする。
+TEST_F(CClipboardGetText, SakuraCorruptTooSmall) {
+	cxx::GlobalData<BYTE> broken{ 2 };	// 4 バイト未満
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(broken.Get()));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
+}
+
+// SAKURAClipW のヘッダ cchData が負値（32/64bit 混在時の符号反転）の場合。
+// 破損データとして拒否し、サクラ形式を明示指定しているのでフォールバックせず false。
+TEST_F(CClipboardGetText, SakuraCorruptNegativeHeader) {
+	std::array<BYTE, sizeof(SSakuraClipHeader) + sizeof(wchar_t)> bytes{};
+	std::memset(bytes.data(), 0xFF, sizeof(SSakuraClipHeader));	// cchData = -1
+	cxx::GlobalData<BYTE> broken{ static_cast<int>(bytes.size()) };
+	broken.SetData(bytes);
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(broken.Get()));
+	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
+}
+
+// SAKURAClipW のヘッダ cchData が実メモリを超える（cchData > cchMax）場合。
+// 破損データとして拒否し、既定取得では CF_UNICODETEXT へフォールバックする。
+TEST_F(CClipboardGetText, SakuraCorruptLengthOverrun) {
+	std::array<BYTE, sizeof(SSakuraClipHeader) + sizeof(wchar_t)> bytes{};
+	const int32_t cchData = 100;	// 実際は wchar_t 1 個分しか格納されていない
+	std::memcpy(bytes.data(), &cchData, sizeof(cchData));
+	cxx::GlobalData<BYTE> broken{ static_cast<int>(bytes.size()) };
+	broken.SetData(bytes);
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(broken.Get()));
+	ON_CALL(clipboard, GetClipboardData(CF_UNICODETEXT)).WillByDefault(Return(unicodeMemory.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_STREQ(buffer.GetStringPtr(), unicodeText.data());
+}
+
+// SAKURAClipW のヘッダ cchData が 0 の場合。
+// 破損ではなく、空文字列として正常取得する（Append は呼ばれない）。
+// ※ 未確保の CNativeW では GetStringPtr() が NULL を返す。L"" とも一致しないため、
+//    文字列比較ではなく長さ 0 を確認する。
+TEST_F(CClipboardGetText, SakuraEmptyData) {
+	cxx::GlobalData<BYTE> empty{ static_cast<int>(sizeof(SSakuraClipHeader)) };	// 全 0 = cchData 0
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(empty.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, -1));
+	EXPECT_EQ(static_cast<int>(buffer.GetStringLength()), 0);
 }
 
 // CF_UNICODETEXTを指定して取得する。
@@ -1077,6 +1174,58 @@ TEST(CEnumFORMATETC, test001)
 
 	//生ポインタなのでReleaseして解放する
 	EXPECT_THAT(target->Release(), 0UL);
+}
+
+/*!
+ * SetText（矩形選択あり）のテスト。
+ * 矩形選択時に MSDEVColumnSelect 形式が追加されることを確認する。
+ */
+TEST(CopiedTextData, SetTextColumnSelect)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, TRUE);
+
+	// CF_UNICODETEXT / CF_TEXT / サクラ形式 / MSDEVColumnSelect の 4 形式になる。
+	cxx::com_pointer<IEnumFORMATETC> pEnum = nullptr;
+	EXPECT_HRESULT_SUCCEEDED(target->EnumFormatEtc(DATADIR_GET, &pEnum));
+	EXPECT_HRESULT_SUCCEEDED(pEnum->Skip(4));	// 4 個すべてスキップ可
+	EXPECT_HRESULT_EQ(pEnum->Skip(1), S_FALSE);	// 5 個目は無い
+
+	// MSDEVColumnSelect 形式を取得し、1 バイトの 0 が格納されていることを確認する。
+	const CLIPFORMAT columnFormat = (CLIPFORMAT)::RegisterClipboardFormat(L"MSDEVColumnSelect");
+	FORMATETC format = { columnFormat, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM medium = {};
+	EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
+	cxx::GlobalData<BYTE> data{ medium.hGlobal };
+	EXPECT_EQ(data.value(), BYTE(0));
+}
+
+/*!
+ * GetData（CF_TEXT / サクラ形式）のテスト。
+ * CF_UNICODETEXT 以外の形式を取得し、サクラ形式は int32_t ヘッダ + 本文を返す。
+ */
+TEST(CopiedTextData, GetDataOtherFormats)
+{
+	const auto text = L"abc"s;
+	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+
+	// CF_TEXT（ANSI 変換）
+	{
+		FORMATETC format = { CF_TEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+		STGMEDIUM medium = {};
+		EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
+		cxx::GlobalString buffer(medium.hGlobal);
+		EXPECT_THAT(buffer.string(), StrEq("abc"));
+	}
+
+	// サクラ独自形式（先頭 int32_t = 文字数、続いて本文 wchar 列）
+	{
+		const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
+		FORMATETC format = { sakuraFormat, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+		STGMEDIUM medium = {};
+		EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
+		cxx::GlobalSakura buffer(medium.hGlobal);
+		EXPECT_THAT(buffer.wstring(), StrEq(text));
+	}
 }
 
 } //namespace ole

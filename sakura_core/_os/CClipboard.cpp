@@ -1,12 +1,15 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
+#include <algorithm>
+#include <cstdint>
+#include <cstring>
 #include <shellapi.h>// HDROP
 #include "CClipboard.h"
 #include "doc/CEditDoc.h"
@@ -16,6 +19,67 @@
 #include "charset/CUtf8.h"
 #include "basis/CEol.h"
 #include "mem/CNativeA.h"
+
+namespace {
+#ifndef STATUS_NO_MEMORY
+#define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
+#endif
+
+/**
+ * IWBuffer::Append を SEH 例外 STATUS_NO_MEMORY から保護して呼び出す。
+ *
+ * C++ 例外ではなく Windows SEH を直接捕まえるためのラッパ。
+ */
+bool SafeAppend(IWBuffer* cmemBuf, const wchar_t* pData, size_t nLen)
+{
+	__try {
+		cmemBuf->Append(pData, nLen);
+		return true;
+	}
+	__except( GetExceptionCode() == STATUS_NO_MEMORY
+		? EXCEPTION_EXECUTE_HANDLER
+		: EXCEPTION_CONTINUE_SEARCH )
+	{
+		return false;
+	}
+}
+
+/**
+ * ロック済み SAKURAClipW データを検証し、正常なら cmemBuf へ追記する。
+ *
+ * @retval true  データのコピーに成功した。
+ * @retval false ヘッダ破損・サイズ不整合・SafeAppend 失敗のいずれかで失敗した。
+ */
+bool TryReadSakuraClipData(IWBuffer* cmemBuf, const BYTE* pData, SIZE_T cbData)
+{
+	// 第1段階: ロック失敗・データ不足を検出する。
+	if( pData == nullptr || cbData < sizeof(SSakuraClipHeader) ){
+		return false;
+	}
+
+	// 第2段階: ヘッダの符号反転による不正値（32/64bit混在時）を検出する。
+	int32_t cchRaw = 0;
+	memcpy(&cchRaw, pData, sizeof(cchRaw));
+	if( cchRaw < 0 ){
+		return false;
+	}
+
+	// 第3段階: ヘッダの自己申告値が実メモリを超える場合は破損データとして扱う。
+	const auto cchData = static_cast<size_t>(cchRaw);
+	if( const size_t cchMax = (cbData - sizeof(SSakuraClipHeader)) / sizeof(wchar_t); cchData > cchMax ){
+		return false;
+	}
+
+	if( cchData == 0 ){
+		return true;
+	}
+
+	// SAKURAClipW の貼り付けを SEH 経由で保護する。
+	const void* pBody = pData + sizeof(SSakuraClipHeader);
+	const wchar_t* szData = static_cast<const wchar_t*>(pBody);
+	return SafeAppend(cmemBuf, szData, cchData);
+}
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
@@ -94,6 +158,9 @@ bool CClipboard::SetText(
 	if( !m_bOpenResult ){
 		return false;
 	}
+	if( nDataLen > CLIPBOARD_MAX_CHARS ){
+		return false;
+	}
 
 	/*
 	// テキスト形式のデータ (CF_OEMTEXT)
@@ -115,27 +182,34 @@ bool CClipboard::SetText(
 	bool bUnicodeText = (uFormat == (UINT)-1 || uFormat == CF_UNICODETEXT);
 	while(bUnicodeText){
 		//領域確保
+		const size_t cchUnicode = nDataLen + 1;
+		const size_t cbUnicode = cchUnicode * sizeof(wchar_t);
+		// SIZE_T の加算・乗算オーバーフローを検出したらスキップする。
+		if( cchUnicode <= nDataLen || cbUnicode / sizeof(wchar_t) != cchUnicode ){
+			break;
+		}
 		hgClipText = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			(nDataLen + 1) * sizeof(wchar_t)
+			cbUnicode
 		);
-		if( !hgClipText )break;
+		if( hgClipText ){
+			//確保した領域にデータをコピー
+			wchar_t* pszClip = static_cast<wchar_t*>(::GlobalLock(hgClipText));
+			wmemcpy( pszClip, pData, nDataLen );	//データ
+			pszClip[nDataLen] = L'\0';				//終端ヌル
+			::GlobalUnlock( hgClipText );
 
-		//確保した領域にデータをコピー
-		wchar_t* pszClip = static_cast<wchar_t*>(::GlobalLock(hgClipText));
-		wmemcpy( pszClip, pData, nDataLen );	//データ
-		pszClip[nDataLen] = L'\0';				//終端ヌル
-		::GlobalUnlock( hgClipText );
-
-		//クリップボードに設定
-		SetClipboardData( CF_UNICODETEXT, hgClipText );
+			//クリップボードに設定
+			SetClipboardData( CF_UNICODETEXT, hgClipText );
+		}
 		bUnicodeText = false;
 	}
 	//	1回しか通らない. breakでここまで飛ぶ
 
-	// バイナリ形式のデータ
-	//	(size_t) 「データ」の長さ
-	//	「データ」
+	// バイナリ形式のデータ（SAKURAClipW独自形式）
+	//	(SSakuraClipHeader) ヘッダ：int32_t cchData = 「データ」の文字数
+	//	(wchar_t[cchData])  「データ」本体
+	//	(wchar_t)           終端ヌル
 	HGLOBAL hgClipSakura = nullptr;
 	//サクラエディタ専用フォーマットを取得
 	CLIPFORMAT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
@@ -146,14 +220,19 @@ bool CClipboard::SetText(
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			sizeof(size_t) + (nDataLen + 1) * sizeof(wchar_t)
+			sizeof(SSakuraClipHeader) + (nDataLen + 1) * sizeof(wchar_t)
 		);
 		if( !hgClipSakura )break;
 
 		//確保した領域にデータをコピー
 		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
-		*((size_t*)pClip) = nDataLen; pClip += sizeof(nDataLen);						//データの長さ
-		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
+		const auto header = static_cast<int32_t>(nDataLen);
+		memcpy(pClip, &header, sizeof(header));
+		pClip += sizeof(SSakuraClipHeader);											//データの長さ
+		if( nDataLen > 0 ){
+			wmemcpy( static_cast<wchar_t*>(static_cast<void*>(pClip)), pData, nDataLen );
+		}
+		pClip += nDataLen*sizeof(wchar_t);											//データ
 		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
 		::GlobalUnlock( hgClipSakura );
 
@@ -221,7 +300,10 @@ bool CClipboard::SetText(
 	if( bLineSelect && !(hgClipMSDEVLine && hgClipMSDEVLine2) ){
 		return false;
 	}
-	if( !(hgClipText && hgClipSakura) ){
+	if( !hgClipText ){
+		return false;
+	}
+	if( !hgClipSakura ){
 		return false;
 	}
 	return true;
@@ -312,18 +394,24 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		}
 	}
 
-	//サクラ形式のデータがあれば取得
+	// SAKURAClipW は破損データを検出したら拒否し、既定取得では次の形式へフォールバックする。
 	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
 	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
 		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
 		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
 		if (hSakura != nullptr) {
-			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
-			size_t nLength        = *((size_t*)pData);
-			const wchar_t* szData = (const wchar_t*)(pData + sizeof(size_t));
-			cmemBuf->Append( szData, nLength );
-			::GlobalUnlock(hSakura);
-			return true;
+			const BYTE* pData = static_cast<const BYTE*>(::GlobalLock(hSakura));
+			const SIZE_T cbData = ::GlobalSize(hSakura);
+			const bool bOk = TryReadSakuraClipData(cmemBuf, pData, cbData);
+			if( pData != nullptr ){
+				::GlobalUnlock(hSakura);
+			}
+			if( bOk ){
+				return true;
+			}
+			if( uGetFormat == uFormatSakuraClip ){
+				return false;
+			}
 		}
 	}
 
@@ -334,9 +422,15 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		hUnicode = GetClipboardData( CF_UNICODETEXT );
 	}
 	if( hUnicode != nullptr ){
-		wchar_t* szData = static_cast<wchar_t*>(::GlobalLock(hUnicode));
-		if (szData) {
-			cmemBuf->Append( szData, wcsnlen(szData, GlobalSize(hUnicode) / 2) );
+		if( wchar_t* szData = static_cast<wchar_t*>(::GlobalLock(hUnicode)) ){
+			const SIZE_T cbGlobal = ::GlobalSize(hUnicode);
+			const size_t cchTotal = wcsnlen(szData, cbGlobal / sizeof(wchar_t));
+			// 文字数上限で切り詰めたうえで、SEH 例外も SafeAppend で捕まえる。
+			const size_t cchSafe = std::min(cchTotal, CLIPBOARD_MAX_CHARS);
+			if( !SafeAppend(cmemBuf, szData, cchSafe) ){
+				::GlobalUnlock(hUnicode);
+				return false;
+			}
 		}
 		::GlobalUnlock(hUnicode);
 		return true;
@@ -350,14 +444,27 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	}
 	if( hText != nullptr ){
 		char* szData = static_cast<char*>(::GlobalLock(hText));
-		//SJIS→UNICODE
-		CMemory cmemSjis( szData, GlobalSize(hText) );
-		CNativeW cmemUni;
-		CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
-		cmemSjis.Reset();
-		// '\0'までを取得
-		cmemUni._SetStringLength(wcslen(cmemUni.GetStringPtr()));
-		cmemBuf->Append(cmemUni.GetStringPtr(), (size_t)cmemUni.GetStringLength());
+		if( szData ){
+			const SIZE_T cbGlobal = ::GlobalSize(hText);
+			const SIZE_T cbLimit = static_cast<SIZE_T>(CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
+			// SJIS バイト列の上限を設けてから Unicode 変換する。
+			const SIZE_T cbSafe = std::min(cbGlobal, cbLimit);
+			//SJIS→UNICODE
+			CMemory cmemSjis( szData, cbSafe );
+			CNativeW cmemUni;
+			CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
+			cmemSjis.Reset();
+			// '\0'までを取得
+			cmemUni._SetStringLength(wcslen(cmemUni.GetStringPtr()));
+			const size_t cchUni = std::min(
+				static_cast<size_t>(cmemUni.GetStringLength()),
+				CLIPBOARD_MAX_CHARS
+			);
+			if( !SafeAppend(cmemBuf, cmemUni.GetStringPtr(), cchUni) ){
+				::GlobalUnlock(hText);
+				return false;
+			}
+		}
 		::GlobalUnlock(hText);
 		return true;
 	}
@@ -615,6 +722,13 @@ bool CClipboard::GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName,
 
 		// 長さオプションの解釈
 		size_t nLength = GetLengthByMode(hClipData, pData, nMode, nEndMode);
+		// バイナリモードは文字数、それ以外はバイト数で上限を適用する。
+		const size_t nLimit = (nMode == -1)
+			? CLIPBOARD_MAX_CHARS
+			: CLIPBOARD_MAX_CHARS * sizeof(wchar_t);
+		if( nLength > nLimit ){
+			nLength = nLimit;
+		}
 
 		// エンコードオプション
 		if( nMode == -1 ){
@@ -639,6 +753,9 @@ bool CClipboard::GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName,
 				if( -1 == nEndMode ){
 					// nLength 再設定
 					nLength = GetLengthByMode(hClipData, pData, eMode, nEndMode);
+					if( nLength > nLimit ){
+						nLength = nLimit;
+					}
 				}
 			}
 			if( eMode == CODE_UNICODE ){
