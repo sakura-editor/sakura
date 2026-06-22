@@ -26,10 +26,10 @@
 #include "recent/CRecentExcludeFolder.h"
 
 // 正規表現ONのときの既定（フルパスに対する正規表現）
-#define DEFAULT_EXCLUDE_FILE_PATTERN_REGEX    L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$"
+inline constexpr const wchar_t* DEFAULT_EXCLUDE_FILE_PATTERN_REGEX    = L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$";
 // 正規表現OFFのときの既定（ワイルドカード）
-#define DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
-#define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
+inline constexpr const wchar_t* DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD = L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb";
+inline constexpr const wchar_t* DEFAULT_EXCLUDE_FOLDER_PATTERN       = L".git;.svn;.vs";
 
 //! GREPダイアログボックス
 class CDlgGrep : public CDialog

@@ -237,21 +237,21 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		//GOPTオプション
 		WCHAR	pOpt[64];
 		pOpt[0] = L'\0';
-		if( cDlgGrepRep.m_bSubFolder				)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
-		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcscat( pOpt, L"W" );	// 単語単位で探す
-		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
-		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
-		if( cDlgGrepRep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
+		if( cDlgGrepRep.m_bSubFolder				)wcscat_s( pOpt, L"S" );	// サブフォルダーからも検索する
+		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcscat_s( pOpt, L"W" );	// 単語単位で探す
+		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcscat_s( pOpt, L"L" );	// 英大文字と英小文字を区別する
+		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcscat_s( pOpt, L"R" );	// 正規表現
+		if( cDlgGrepRep.m_nGrepOutputLineType == 1     )wcscat_s( pOpt, L"P" );	// 行を出力する
 		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
-		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
-		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
-		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
-		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
-		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
-		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
-		if( cDlgGrepRep.m_bPaste					)wcscat( pOpt, L"C" );	// クリップボードから貼り付け
-		if( cDlgGrepRep.m_bBackup					)wcscat( pOpt, L"O" );	// バックアップ作成
-		if( cDlgGrepRep.m_bExcludeFileRegularExp	)wcscat( pOpt, L"E" );	// 除外ファイルを正規表現として扱う
+		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat_s( pOpt, L"1" );	// Grep: 出力形式
+		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat_s( pOpt, L"2" );	// Grep: 出力形式
+		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat_s( pOpt, L"3" );
+		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcscat_s( pOpt, L"F" );
+		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcscat_s( pOpt, L"B" );
+		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat_s( pOpt, L"D" );
+		if( cDlgGrepRep.m_bPaste					)wcscat_s( pOpt, L"C" );	// クリップボードから貼り付け
+		if( cDlgGrepRep.m_bBackup					)wcscat_s( pOpt, L"O" );	// バックアップ作成
+		if( cDlgGrepRep.m_bExcludeFileRegularExp	)wcscat_s( pOpt, L"E" );	// 除外ファイルを正規表現として扱う
 		if( pOpt[0] ) {
 			cCmdLine.AppendString( L" -GOPT=" );
 			cCmdLine.AppendString( pOpt );

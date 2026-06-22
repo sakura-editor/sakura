@@ -73,12 +73,12 @@ const DWORD p_helpids[] = {	//12000
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
 
 CDlgGrep::CDlgGrep()
+	: m_bExcludeFileRegularExp(FALSE)
 {
 	m_bEnableThisText = true;
 	m_bSelectOnceThisText = false;
 	m_bSubFolder = FALSE;				// サブフォルダーからも検索する
 	m_bFromThisText = FALSE;			// この編集中のテキストから検索する
-	m_bExcludeFileRegularExp = FALSE;
 	m_sSearchOption.Reset();			// 検索オプション
 	m_nGrepCharSet = CODE_SJIS;			// 文字コードセット
 	m_nGrepOutputLineType = 1;			// 行を出力/該当部分/否マッチ行 を出力

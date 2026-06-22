@@ -41,6 +41,7 @@
 #include <condition_variable>
 #include <atomic>
 #include <set>
+#include <functional>
 #include <string_view>
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
@@ -656,14 +657,12 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage.AppendNativeData( header );
 
 	nWork = cmemMessage.GetStringLength();
-	const wchar_t* pszWork = cmemMessage.GetStringPtr();
 //@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
 	CLayoutInt tmp_PosY_Layout = pcViewDst->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( 0 < nWork && sGrepOption.bGrepHeader ){
 		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 	}
 	cmemMessage._SetStringLength(0);
-	pszWork = nullptr;
 	
 	//	2007.07.22 genta バージョンを取得するために，
 	//	正規表現の初期化を上へ移動
@@ -1512,7 +1511,7 @@ int CGrepAgent::DoGrepFileWorker(
 			}
 		}
 
-		if( bCancelled.load(std::memory_order_relaxed) ){
+		if( bCancelled.load() ){
 			return -1;
 		}
 
@@ -1530,10 +1529,8 @@ int CGrepAgent::DoGrepFileWorker(
 			pCompareData = pLine;
 
 			// キャンセルチェック（32行ごと、メインスレッドのUIは不要）
-			if( 0 == nLine % 32 ){
-				if( bCancelled.load(std::memory_order_relaxed) ){
-					return -1;
-				}
+			if( 0 == nLine % 32 && bCancelled.load() ){
+				return -1;
 			}
 
 			int nHitOldLine = nHitCount;
@@ -1619,7 +1616,7 @@ int CGrepAgent::DoGrepFileWorker(
 					if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
 						break;
 					}
-					int nPosDiff = nColumn += nKeyLen - 1;
+					int nPosDiff = nColumn + nKeyLen - 1;
 					pCompareData += nPosDiff;
 					nLineLen     -= nPosDiff;
 					nColumnPrev  += nPosDiff;
@@ -1654,13 +1651,13 @@ int CGrepAgent::DoGrepFileWorker(
 	}
 	catch( const CError_FileOpen& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
-		str.Replace(L"%s", task.fullPath.c_str());
+		str.Replace(L"%s", task.fullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( const CError_FileRead& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEREAD));
-		str.Replace(L"%s", task.fullPath.c_str());
+		str.Replace(L"%s", task.fullPath);
 		cmemMessage.AppendNativeData( str );
 	}
 
@@ -2556,7 +2553,7 @@ CNativeW CGrepAgent::BuildGrepHeader(
 	if( pszFolder == nullptr ) pszFolder = L"";
 
 	CNativeW cmemMessage;
-	int nWork = (int)std::wstring_view(pszKey).length();
+	auto nWork = (int)std::wstring_view(pszKey).length();
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );
 	if( 0 < nWork ){
@@ -2684,7 +2681,7 @@ int CGrepAgent::RunParallelGrep(
 
 	// スレッド数 = max(設定値, 論理コア数 / 4)  ※設定値はiniファイルの nGrepThreadCount（1〜8）
 	const int nIniThreads = GetDllShareData().m_Common.m_sSearch.m_nGrepThreadCount;
-	const unsigned int nClampedIni = (unsigned int)std::max( 1, std::min( nIniThreads, 8 ) );
+	const auto nClampedIni = (unsigned int)std::max( 1, std::min( nIniThreads, 8 ) );
 	const unsigned int nThreads = std::max<unsigned int>(
 		nClampedIni,
 		std::thread::hardware_concurrency() / 4 );
@@ -2704,8 +2701,8 @@ int CGrepAgent::RunParallelGrep(
 	std::atomic<bool>   bWorkCancelled{ false };        // true: キャンセル済み（バッチ間で維持）
 	std::mutex resultMutex;
 	CNativeW sharedMessage;
-	std::set<std::wstring> writtenBaseFolders;
-	std::set<std::wstring> writtenFolders;
+	std::set<std::wstring, std::less<>> writtenBaseFolders;
+	std::set<std::wstring, std::less<>> writtenFolders;
 
 	// スレッドプールのワーカーを生成（1回のみ）。
 	// 各ワーカーはスレッドローカルの正規表現とバッファを持ち、毎回の再初期化を避ける。
@@ -2721,6 +2718,10 @@ int CGrepAgent::RunParallelGrep(
 		std::mutex&					mtx;
 		std::condition_variable&	cv;
 		bool&						bShutdown;
+		PoolJoinGuard( std::vector<std::thread>& w, std::mutex& m, std::condition_variable& c, bool& s )
+			: workers(w), mtx(m), cv(c), bShutdown(s) {}
+		PoolJoinGuard(const PoolJoinGuard&) = delete;
+		PoolJoinGuard& operator=(const PoolJoinGuard&) = delete;
 		~PoolJoinGuard(){
 			{
 				std::lock_guard<std::mutex> lk( mtx );
@@ -2746,8 +2747,8 @@ int CGrepAgent::RunParallelGrep(
 					sSearchOption, &localRegexp );
 			}catch(...){
 				// 初期化失敗: 実働ワーカー数を減らし、バリア通知後シャットダウンまで待機
-				nActiveWorkers.fetch_sub( 1, std::memory_order_relaxed );
-				nInitDone.fetch_add( 1, std::memory_order_relaxed );
+				nActiveWorkers.fetch_sub( 1 );
+				nInitDone.fetch_add( 1 );
 				cvInitDone.notify_one();
 				std::unique_lock<std::mutex> lk( poolMutex );
 				cvPoolStart.wait( lk, [&]{ return bPoolShutdown; } );
@@ -2755,7 +2756,7 @@ int CGrepAgent::RunParallelGrep(
 			}
 
 			// 初期化成功: バリアへ通知
-			nInitDone.fetch_add( 1, std::memory_order_relaxed );
+			nInitDone.fetch_add( 1 );
 			cvInitDone.notify_one();
 
 			std::vector<CBregexp> excludeRegexps( regexPatterns.size() );
@@ -2786,14 +2787,14 @@ int CGrepAgent::RunParallelGrep(
 				// バッチ処理（try/catch で例外をキャンセル扱い）
 				try{
 					while( true ){
-						const size_t idx = poolNextTask.fetch_add( 1, std::memory_order_relaxed );
+						const size_t idx = poolNextTask.fetch_add( 1 );
 						if( idx >= pBatch->size() ) break;
-						if( bWorkCancelled.load(std::memory_order_acquire) ) break;
+						if( bWorkCancelled.load() ) break;
 
 						const SGrepFileTask& task = (*pBatch)[idx];
 
 						// 正規表現除外判定（フルパス全体に対してマッチング）
-						const int nFullPathLen = (int)task.fullPath.size();
+						const auto nFullPathLen = (int)task.fullPath.size();
 						bool bExcluded = false;
 						for( auto& reExcl : excludeRegexps ){
 							if( reExcl.Match( task.fullPath.c_str(), nFullPathLen, 0 ) ){
@@ -2814,7 +2815,7 @@ int CGrepAgent::RunParallelGrep(
 						);
 
 						if( fileHits == -1 ){
-							bWorkCancelled.store( true, std::memory_order_release );
+							bWorkCancelled.store( true );
 							break;
 						}
 
@@ -2826,7 +2827,7 @@ int CGrepAgent::RunParallelGrep(
 								writtenBaseFolders.insert( task.baseFolder );
 								sharedMessage.AppendString(
 									sGrepOption.bGrepSeparateFolder ? L"◎\"" : L"■\"" );
-								sharedMessage.AppendString( task.baseFolder.c_str() );
+								sharedMessage.AppendString( task.baseFolder );
 								sharedMessage.AppendString( L"\"\r\n" );
 							}
 							if( sGrepOption.bGrepSeparateFolder &&
@@ -2834,22 +2835,22 @@ int CGrepAgent::RunParallelGrep(
 								writtenFolders.insert( task.folder );
 								if( !task.folder.empty() ){
 									sharedMessage.AppendString( L"■\"" );
-									sharedMessage.AppendString( task.folder.c_str() );
+									sharedMessage.AppendString( task.folder );
 									sharedMessage.AppendString( L"\"\r\n" );
 								}else{
 									sharedMessage.AppendString( L"■\r\n" );
 								}
 							}
 							sharedMessage.AppendNativeData( localMessage );
-							atomicHitCount.fetch_add( fileHits, std::memory_order_relaxed );
+							atomicHitCount.fetch_add( fileHits );
 						}
 					}
 				}catch(...){
 					// 予期せぬ例外（std::bad_alloc 等）をキャンセル扱いにする
-					bWorkCancelled.store( true, std::memory_order_release );
+					bWorkCancelled.store( true );
 				}
 				// try/catch どちらの経路でも必ず実行し、デッドロックを防止する
-				poolBatchActive.fetch_sub( 1, std::memory_order_relaxed );
+				poolBatchActive.fetch_sub( 1 );
 			}
 		} );
 	}
@@ -2857,37 +2858,37 @@ int CGrepAgent::RunParallelGrep(
 	// 全ワーカーの初期化完了を待ってからバッチ処理を開始（4-1: デッドロック防止）
 	{
 		std::unique_lock<std::mutex> lk( initMutex );
-		cvInitDone.wait( lk, [&]{ return nInitDone.load(std::memory_order_relaxed) >= nThreads; } );
+		cvInitDone.wait( lk, [&]{ return nInitDone.load() >= nThreads; } );
 	}
 
 	// バッチ実行ラムダ: vecTasks をプールのワーカーに割り当て結果を出力する
 	// 戻り値: true=継続, false=キャンセル発生
 	auto RunBatch = [&]( const std::vector<SGrepFileTask>& vecTasks ) -> bool {
 		if( vecTasks.empty() ) return true;
-		if( bWorkCancelled.load(std::memory_order_acquire) ) return false;
+		if( bWorkCancelled.load() ) return false;
 
 		// バッチ設定（ロック下でバッチ番号をインクリメントしてワーカーを起床）
 		{
 			std::lock_guard<std::mutex> lk( poolMutex );
 			pPoolBatch = &vecTasks;
-			poolNextTask.store( 0, std::memory_order_relaxed );
-			poolBatchActive.store( (int)nActiveWorkers.load(std::memory_order_relaxed), std::memory_order_relaxed );
+			poolNextTask.store( 0 );
+			poolBatchActive.store( (int)nActiveWorkers.load() );
 			++poolBatchId;
 		}
 		cvPoolStart.notify_all();
 
 		// メインスレッド: 全ワーカーが完全終了するまでUI更新・キャンセル監視・結果フラッシュを継続
-		while( poolBatchActive.load(std::memory_order_relaxed) > 0 ){
+		while( poolBatchActive.load() > 0 ){
 			::Sleep(5);
 
 			DWORD dwNow = ::GetTickCount();
 			if( pcDlgCancel != nullptr && dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
 				m_dwTickUICheck = dwNow;
 				if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-					bWorkCancelled.store( true, std::memory_order_release );
+					bWorkCancelled.store( true );
 				}
 				if( pcDlgCancel->IsCanceled() ){
-					bWorkCancelled.store( true, std::memory_order_release );
+					bWorkCancelled.store( true );
 				}
 				CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
 					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ) );
@@ -2924,7 +2925,7 @@ int CGrepAgent::RunParallelGrep(
 			cmemMessage._SetStringLength(0);
 		}
 
-		return !bWorkCancelled.load(std::memory_order_acquire);
+		return !bWorkCancelled.load();
 	};
 
 	// 各検索パスをサブフォルダー単位でバッチ処理
