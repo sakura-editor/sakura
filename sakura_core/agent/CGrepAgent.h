@@ -1,4 +1,4 @@
-/*! @file */
+﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2026, Sakura Editor Organization

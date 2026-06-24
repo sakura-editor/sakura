@@ -1,4 +1,4 @@
-/*!	@file
+﻿/*!	@file
 	@brief GREPダイアログボックス
 
 	@author Norio Nakatani
