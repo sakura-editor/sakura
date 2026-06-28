@@ -273,21 +273,19 @@ void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 
 	auto pszFolder = std::data(folder);
 
-	if (const auto nFolderLen = (int)::wcsnlen(pszFolder, cchFolder);
-		3 == nFolderLen
-	 && pszFolder[1] == L':'
-	 && pszFolder[2] == L'\\'
-	){
-		/* ドライブ名:\ */
-	}else{
-		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
-		if( 0 < nFolderLen ){
-			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
-			}else{
-				::wcscat_s(pszFolder, cchFolder, L"\\");
-			}
-		}
+	const auto nFolderLen = static_cast<int>(::wcsnlen(pszFolder, cchFolder));
+
+	if (0 == nFolderLen) {
+		return;
 	}
+
+	/* フォルダー文字列の末尾がフォルダー区切り文字になっていない場合は付加する */
+	if (const auto lastChar = pszFolder[nFolderLen - 1];
+		L'\\' != lastChar && L'/' != lastChar)
+	{
+		::wcscat_s(pszFolder, cchFolder, L"\\");
+	}
+
 	return;
 }
 
