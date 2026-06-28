@@ -267,22 +267,24 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 	return;
 }
 
-void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
+void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 {
-	if( 3 == wcslen( pszFolder )
+	const auto cchFolder = std::size(folder);
+
+	auto pszFolder = std::data(folder);
+
+	if (const auto nFolderLen = (int)::wcsnlen(pszFolder, cchFolder);
+		3 == nFolderLen
 	 && pszFolder[1] == L':'
 	 && pszFolder[2] == L'\\'
 	){
 		/* ドライブ名:\ */
 	}else{
 		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
-		int	nFolderLen;
-		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
 			}else{
-				pszFolder[nFolderLen] = L'\\';
-				pszFolder[nFolderLen + 1] = L'\0';
+				::wcscat_s(pszFolder, cchFolder, L"\\");
 			}
 		}
 	}

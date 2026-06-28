@@ -1630,16 +1630,18 @@ WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHA
 {
 	const auto destLen = std::size(destination);
 
+	assert(0 < destLen);
+
 	auto dest = std::data(destination);
 
 	if( _IS_REL_PATH( target ) ){
 		::wcscpy_s(dest, destLen, base);
-		AddLastYenFromDirectoryPath( dest );
-		::wcscat_s(dest, destLen, target);
+		AddLastYenFromDirectoryPath(destination);
+		if (dest[0]) ::wcscat_s(dest, destLen, target);
 	}else{
 		::wcscpy_s(dest, destLen, target);
 	}
-	AddLastYenFromDirectoryPath( dest );
+	AddLastYenFromDirectoryPath(destination);
 	return dest;
 }
 

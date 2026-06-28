@@ -126,6 +126,34 @@ TEST(CopyDirDir, test101)
 #endif // defined(_MSC_VER) && defined(_DEBUG)
 }
 
+TEST(CopyDirDir, test102)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	WCHAR szTemp3[3];	// バッファ不足を発生させる
+	EXPECT_THAT(CopyDirDir(szTemp3, L"Windows", LR"(C:)"), StrEq(L""));	// 入りきらない場合、バッファは空になる
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
+TEST(CopyDirDir, test103)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	WCHAR szTemp11[11];	// バッファ不足を発生させる
+	EXPECT_THAT(CopyDirDir(szTemp11, L"Windows", LR"(C:)"), StrEq(L""));	// 入りきらない場合、バッファは空になる
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
 } // namespace cxx
 
 namespace path_util {
