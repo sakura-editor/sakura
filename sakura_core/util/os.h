@@ -243,6 +243,7 @@ public:
 
 	//格納されているデータの個数を取得する
 	size_t size() const & {
+		if (!get()) return 0UL;
 		const auto cbSize = ::GlobalSize(get());
 		return cbSize / sizeof(T);
 	}
