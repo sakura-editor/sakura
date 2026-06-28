@@ -119,6 +119,8 @@ inline void CDlgTagJumpList::ClearPrevFindInfo(){
 	m_psFind0Match->m_nMatchAll = 0;
 }
 
+WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base );
+
 CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	: CDialog(true),
 	  m_bDirectTagJump(bDirectTagJump)
@@ -1624,14 +1626,18 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 /*!
 	ディレクトリとディレクトリを連結する
 */
-WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHAR* base )
+WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base )
 {
+	const auto destLen = std::size(destination);
+
+	auto dest = std::data(destination);
+
 	if( _IS_REL_PATH( target ) ){
-		wcscpy( dest, base );
+		::wcscpy_s(dest, destLen, base);
 		AddLastYenFromDirectoryPath( dest );
-		wcscat( dest, target );
+		::wcscat_s(dest, destLen, target);
 	}else{
-		wcscpy( dest, target );
+		::wcscpy_s(dest, destLen, target);
 	}
 	AddLastYenFromDirectoryPath( dest );
 	return dest;

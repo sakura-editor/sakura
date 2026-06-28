@@ -25,6 +25,8 @@
 
 std::filesystem::path GetIniFileNameForIO(bool bWrite);
 
+WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base );
+
 namespace cxx {
 
 bool WritePrivateProfileStringW(
@@ -44,6 +46,84 @@ std::wstring ExpandEnvironmentStringsW(const std::wstring& src)
 		expected.resize(ret - 1);
 	}
 	return expected;
+}
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+/*!
+ * @brief MSVCの無効なパラメーターハンドラーを無効化するためのクラス
+ */
+struct MsvcInvalidParameterHandlerDisabler
+{
+	using Holder = cxx::ResourceHolder<&::_set_invalid_parameter_handler>;
+	using Me = MsvcInvalidParameterHandlerDisabler;
+
+	static void __cdecl empty_handler(
+		wchar_t const*,
+		wchar_t const*,
+		wchar_t const*,
+		unsigned int,
+		uintptr_t
+	)
+	{
+		return;	// 何もしない
+	}
+
+	MsvcInvalidParameterHandlerDisabler() = default;
+
+	Holder prev{ ::_set_invalid_parameter_handler(&empty_handler) };
+};
+
+/*!
+ * @brief MSVCのアサーションダイアログを抑制するためのクラス
+ */
+struct MsvcReportMode
+{
+	using Me = MsvcReportMode;
+
+	MsvcReportMode() = default;
+
+	MsvcReportMode(const Me&) = delete;
+	Me& operator=(const Me&) = delete;
+
+	MsvcReportMode(Me&& other) noexcept = default;
+	Me& operator=(Me&& rhs) noexcept = default;
+
+	~MsvcReportMode()
+	{
+		::_CrtSetReportMode(_CRT_ASSERT, m_old);
+	}
+
+private:
+	int m_old = ::_CrtSetReportMode(_CRT_ASSERT, 0);
+};
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CopyDirDir, test001)
+{
+	WCHAR szTemp[_MAX_PATH];
+	EXPECT_THAT(CopyDirDir(szTemp, L"Windows", LR"(C:)"), StrEq(LR"(C:\Windows\)"));
+}
+
+TEST(CopyDirDir, test002)
+{
+	WCHAR szTemp[_MAX_PATH];
+	EXPECT_THAT(CopyDirDir(szTemp, LR"(C:\Windows)", LR"(A:)"), StrEq(LR"(C:\Windows\)"));
+}
+
+TEST(CopyDirDir, test101)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	WCHAR szTemp5[5];	// バッファ不足を発生させる
+	EXPECT_THAT(CopyDirDir(szTemp5, L"Windows", LR"(C:)"), StrEq(L""));	// 入りきらない場合、バッファは空になる
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
 }
 
 } // namespace cxx
