@@ -162,7 +162,7 @@ jobs:
         submodules: true
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v3
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
     - name: Set up Python
       uses: actions/setup-python@v6
@@ -187,7 +187,7 @@ jobs:
       shell: pwsh
 
     - name: Install Build Wrapper
-      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v8.2.0
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
 
     - name: Build with Build-Wrapper
       run: build-wrapper-win-x86-64.exe --out-dir bw-output MsBuild.exe /p:Platform=%BUILD_PLATFORM% /p:Configuration=%BUILD_CONFIGURATION% /t:ReBuild
