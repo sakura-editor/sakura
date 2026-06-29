@@ -42,7 +42,7 @@ jobs:
         }
       shell: pwsh
 
-    - name: Upload test result
+    - name: Publish test result
       uses: EnricoMi/publish-unit-test-result-action/windows@v2
       with:
         commit: ${{ github.event.workflow_run.head_sha }}
