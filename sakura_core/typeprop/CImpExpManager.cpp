@@ -782,8 +782,24 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 			fclose(fp2);
 
 		//About
-		if (wcslen(p2) > DICT_ABOUT_LEN) {
-			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN );
+		// 2026.06.23 CWE-787 fix: the original '>' allowed wcslen(p2)==DICT_ABOUT_LEN, so the
+		//            following copy wrote DICT_ABOUT_LEN+1 WCHAR into m_szAbout[DICT_ABOUT_LEN]
+		//            (a 1-WCHAR overflow). Reject when the value cannot hold its NUL terminator.
+		if (wcslen(p2) >= DICT_ABOUT_LEN) {
+			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN - 1 );
+			sErrMsg = msgBuff;
+			++invalid_record;
+			continue;
+		}
+
+		//Path
+		// 2026.06.23 CWE-787 fix: p3 (the dictionary path) is attacker-controlled and unbounded
+		//            (it is the remainder of a line read by CTextInputStream::ReadLineW with no
+		//            length limit). The original wcscpy into m_szPath (StaticString<_MAX_PATH>)
+		//            therefore overflowed the type-settings object on a crafted import file.
+		//            Reject over-long paths, consistent with the About-length handling above.
+		if (wcslen(p3) >= m_Types.m_KeyHelpArr[i].m_szPath.size()) {
+			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), int(m_Types.m_KeyHelpArr[i].m_szPath.size()) - 1 );
 			sErrMsg = msgBuff;
 			++invalid_record;
 			continue;
@@ -791,8 +807,8 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
-		wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p4);
-		wcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  p3);
+		wcsncpy_s(m_Types.m_KeyHelpArr[i].m_szAbout, p4, _TRUNCATE);	// 2026.06.23 bounded copy (defense in depth)
+		m_Types.m_KeyHelpArr[i].m_szPath = p3;				// 2026.06.23 StaticString::operator= copies with bounds + NUL
 		i++;
 	}
 	in.Close();

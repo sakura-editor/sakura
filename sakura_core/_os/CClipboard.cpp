@@ -568,7 +568,10 @@ static size_t GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, i
 		const wchar32_t* pData32 = (const wchar32_t*)pData;
 		const size_t len = nMemLength / 4;
 		nLength = 0;
-		while( pData32[nLength] != 0 && nLength < len ){
+		// 2026.06.23 CWE-125 fix: the range check must precede the dereference, otherwise
+		//            pData32[len] (one wchar32 past the GlobalSize buffer) is read when the
+		//            clipboard data has no 32-bit NUL terminator.
+		while( nLength < len && pData32[nLength] != 0 ){
 			nLength++;
 		}
 		nLength *= 4;
