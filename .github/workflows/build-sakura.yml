@@ -231,20 +231,6 @@ jobs:
         Copy-Item "$env:GITHUB_EVENT_PATH" github-event.json
       shell: pwsh
 
-    - name: Create source archive for SonarCloud
-      run: |
-        tar -czf sources.tar.gz `
-            --exclude=./.git `
-            --exclude=./externals `
-            --exclude=./bw-output `
-            --exclude=./x64 `
-            --exclude=./Win32 `
-            --exclude=./.scannerwork `
-            --exclude=./sources.tar.gz `
-            .
-      working-directory: ${{ github.workspace }}
-      shell: pwsh
-
     - name: Upload sonar-input artifact
       uses: actions/upload-artifact@v7
       with:
@@ -255,4 +241,3 @@ jobs:
           tests1-googletest.xml
           sonar-metadata.json
           github-event.json
-          sources.tar.gz
