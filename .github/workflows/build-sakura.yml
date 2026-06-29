@@ -217,13 +217,16 @@ jobs:
       shell: pwsh
 
     - name: Save sonar metadata
+      env:
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
       run: |
         [ordered]@{
           event_name  = '${{ github.event_name }}'
           ref_name    = '${{ github.ref_name }}'
           pr_number   = '${{ github.event.pull_request.number }}'
-          pr_head_ref = '${{ github.event.pull_request.head.ref }}'
-          pr_base_ref = '${{ github.event.pull_request.base.ref }}'
+          pr_head_ref = $env:PR_HEAD_REF
+          pr_base_ref = $env:PR_BASE_REF
         } | ConvertTo-Json | Set-Content sonar-metadata.json
         Copy-Item "$env:GITHUB_EVENT_PATH" github-event.json
       shell: pwsh
