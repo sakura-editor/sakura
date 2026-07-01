@@ -782,7 +782,10 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 			fclose(fp2);
 
 		//About
-		// p3 was advanced past the '\0' placed at the second comma, so
+		// 2026.06.23 CWE-787 fix: the original '>' allowed wcslen(p2)==DICT_ABOUT_LEN, so the
+		//            following copy wrote DICT_ABOUT_LEN+1 WCHAR into m_szAbout[DICT_ABOUT_LEN]
+		//            (a 1-WCHAR overflow). Reject when the value cannot hold its NUL terminator.
+		//  p3 was advanced past the '\0' placed at the second comma, so
 		// (p3 - 1) - p2 gives the exact length of p2 without walking the string.
 		if (DICT_ABOUT_LEN <= (p3 - 1) - p2) {
 			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN - 1 );
