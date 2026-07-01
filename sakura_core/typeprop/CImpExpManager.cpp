@@ -794,6 +794,11 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 			continue;
 		}
 
+		// 2026.06.23 CWE-787 fix: p3 (the dictionary path) is attacker-controlled and unbounded
+		//            (it is the remainder of a line read by CTextInputStream::ReadLineW with no
+		//            length limit). The original wcscpy into m_szPath (StaticString<_MAX_PATH>)
+		//            therefore overflowed the type-settings object on a crafted import file.
+		//            Reject over-long paths, consistent with the About-length handling above.
 		//Path
 		// p3 points into buff; end-p3 gives the remaining length without scanning the string.
 		if (const auto end = std::data(buff) + std::size(buff);
