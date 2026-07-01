@@ -10,6 +10,7 @@ jobs:
     name: Scan
     runs-on: windows-latest
     if: github.event.workflow_run.conclusion == 'success'
+    environment: sonarcloud
 
     steps:
     - name: Checkout
