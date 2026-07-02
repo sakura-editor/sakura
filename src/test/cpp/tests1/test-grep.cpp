@@ -247,12 +247,12 @@ int RunGrepFileWorker(
 	cUnicodeBuffer.AllocStringBuffer(4000);
 
 	return agent.DoGrepFileWorker(
-		task, keyStr.c_str(),
-		sSearchOption, sGrepOption,
+		SGrepSearchParams{ keyStr.c_str(), sSearchOption, sGrepOption },
+		task,
 		sSearchOption.bRegularExp ? &regexp : nullptr,
 		pattern,
-		cmemMessage, cUnicodeBuffer,
-		cancel);
+		cancel,
+		cmemMessage, cUnicodeBuffer);
 }
 
 // 同上だが、外側でキャンセル管理しない単純版
@@ -1278,8 +1278,9 @@ TEST_F(GrepRealFileTest, RunParallelGrep_HitCountMatchesSingleThread)
 	const std::vector<std::wstring> vPaths = { rootPath };
 	const int result = agent.RunParallelGrep(
 		nullptr, nullptr,
-		L"needle", sOpt, gOpt, vPaths,
-		keys, cGrepExceptAbsFiles, cGrepExceptAbsFolders,
+		SGrepSearchParams{ L"needle", sOpt, gOpt },
+		SGrepEnumContext{ keys, cGrepExceptAbsFiles, cGrepExceptAbsFolders },
+		vPaths,
 		cmemMessage, nHitCount);
 
 	EXPECT_EQ(0, result);           // 0 = 完了（-1 はキャンセル）
@@ -1318,8 +1319,9 @@ TEST_F(GrepRealFileTest, RunParallelGrep_SubfolderRecursion)
 	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
 	const int rc = agent.RunParallelGrep(
 		nullptr, nullptr,
-		L"needle", sOpt, gOpt, vPaths,
-		keys, cExAbsFiles, cExAbsFolders,
+		SGrepSearchParams{ L"needle", sOpt, gOpt },
+		SGrepEnumContext{ keys, cExAbsFiles, cExAbsFolders },
+		vPaths,
 		cmemMessage, nHit);
 
 	EXPECT_EQ(0, rc);
@@ -1354,8 +1356,9 @@ TEST_F(GrepRealFileTest, RunParallelGrep_ExcludeRegexFiltersWorker)
 	const std::vector<std::wstring> vPaths = { m_temp->Root().wstring() };
 	const int rc = agent.RunParallelGrep(
 		nullptr, nullptr,
-		L"needle", sOpt, gOpt, vPaths,
-		keys, cExAbsFiles, cExAbsFolders,
+		SGrepSearchParams{ L"needle", sOpt, gOpt },
+		SGrepEnumContext{ keys, cExAbsFiles, cExAbsFolders },
+		vPaths,
 		cmemMessage, nHit);
 
 	EXPECT_EQ(0, rc);
@@ -1390,8 +1393,9 @@ TEST_F(GrepRealFileTest, RunParallelGrep_BaseFolderHeader_NoDuplicate)
 	const std::vector<std::wstring> vPaths = { rootPath };
 	const int rc = agent.RunParallelGrep(
 		nullptr, nullptr,
-		L"needle", sOpt, gOpt, vPaths,
-		keys, cExAbsFiles, cExAbsFolders,
+		SGrepSearchParams{ L"needle", sOpt, gOpt },
+		SGrepEnumContext{ keys, cExAbsFiles, cExAbsFolders },
+		vPaths,
 		cmemMessage, nHit);
 
 	ASSERT_EQ(0, rc);
@@ -1436,8 +1440,9 @@ TEST_F(GrepRealFileTest, RunParallelGrep_SeparateFolderHeader_NoDuplicate)
 	const std::vector<std::wstring> vPaths = { rootPath };
 	const int rc = agent.RunParallelGrep(
 		nullptr, nullptr,
-		L"needle", sOpt, gOpt, vPaths,
-		keys, cExAbsFiles, cExAbsFolders,
+		SGrepSearchParams{ L"needle", sOpt, gOpt },
+		SGrepEnumContext{ keys, cExAbsFiles, cExAbsFolders },
+		vPaths,
 		cmemMessage, nHit);
 
 	ASSERT_EQ(0, rc);
@@ -1487,8 +1492,9 @@ int RunParallelGrepOnPaths(
 	CGrepEnumFolders cExAbsFolders;
 	return agent.RunParallelGrep(
 		nullptr, nullptr,
-		std::wstring(key), sOpt, gOpt, vPaths,
-		keys, cExAbsFiles, cExAbsFolders,
+		SGrepSearchParams{ std::wstring(key).c_str(), sOpt, gOpt },
+		SGrepEnumContext{ keys, cExAbsFiles, cExAbsFolders },
+		vPaths,
 		cmemMessage, nHit);
 }
 
@@ -1695,9 +1701,7 @@ TEST_F(GrepRealFileTest, FormatGrepResultLine_NormalStyleWithFolderBullet)
 	CGrepAgent::FormatGrepResultLine(
 		out,
 		L"foo.cpp", L"",
-		1, 1,
-		L"needle in a haystack", 20, 0,
-		L"needle", 6,
+		SGrepMatchInfo{ 1, 1, L"needle in a haystack", 20, 0, L"needle", 6 },
 		gOpt);
 
 	const std::wstring result(out.GetStringPtr(), out.GetStringLength());
@@ -1721,9 +1725,7 @@ TEST_F(GrepRealFileTest, FormatGrepResultLine_WZStyle)
 	CGrepAgent::FormatGrepResultLine(
 		out,
 		L"bar.cpp", L"",
-		5, 3,
-		L"line content", 12, 0,
-		L"line", 4,
+		SGrepMatchInfo{ 5, 3, L"line content", 12, 0, L"line", 4 },
 		gOpt);
 
 	const std::wstring result(out.GetStringPtr(), out.GetStringLength());
@@ -1750,9 +1752,7 @@ TEST_F(GrepRealFileTest, FormatGrepResultLine_ResultOnlyMatchPartEol)
 		CNativeW out;
 		CGrepAgent::FormatGrepResultLine(
 			out, L"f.cpp", L"",
-			1, 1,
-			L"needle in haystack\r\n", 20, 2,
-			L"needle", 6,
+			SGrepMatchInfo{ 1, 1, L"needle in haystack\r\n", 20, 2, L"needle", 6 },
 			gOpt);
 		const std::wstring result(out.GetStringPtr(), out.GetStringLength());
 		EXPECT_EQ(result, std::wstring(L"needle\r\n"))
@@ -1765,9 +1765,7 @@ TEST_F(GrepRealFileTest, FormatGrepResultLine_ResultOnlyMatchPartEol)
 		const wchar_t matchData[] = L"needle\n";
 		CGrepAgent::FormatGrepResultLine(
 			out, L"f.cpp", L"",
-			1, 1,
-			matchData, 7, 1,
-			matchData, 7,
+			SGrepMatchInfo{ 1, 1, matchData, 7, 1, matchData, 7 },
 			gOpt);
 		const std::wstring result(out.GetStringPtr(), out.GetStringLength());
 		EXPECT_EQ(result, std::wstring(L"needle\n"))
@@ -1941,8 +1939,9 @@ TEST_F(GrepRealFileTest, RunParallelGrep_MultiplePathsHeaderResetPerPath)
 
 	const int rc = agent.RunParallelGrep(
 		nullptr, nullptr,
-		L"needle", sOpt, gOpt, vPaths,
-		keys, cExAbsFiles, cExAbsFolders,
+		SGrepSearchParams{ L"needle", sOpt, gOpt },
+		SGrepEnumContext{ keys, cExAbsFiles, cExAbsFolders },
+		vPaths,
 		cmemMessage, nHit);
 
 	EXPECT_EQ(0, rc);
@@ -2146,8 +2145,9 @@ TEST_F(GrepRealFileTest, FileWorker_FileOpenErrorReturnsZeroWithMessage)
 
 	CGrepAgent agent;
 	const int hits = agent.DoGrepFileWorker(
-		task, L"needle", sOpt, gOpt,
-		nullptr, pattern, cmemMessage, cUnicodeBuffer, cancel);
+		SGrepSearchParams{ L"needle", sOpt, gOpt },
+		task,
+		nullptr, pattern, cancel, cmemMessage, cUnicodeBuffer);
 
 	EXPECT_EQ(0, hits) << "ファイルオープン失敗は 0 件で正常復帰する";
 	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
@@ -2202,8 +2202,9 @@ TEST_F(GrepRealFileTest, FileWorker_EmptyKeyOutputStyleVariants)
 		std::atomic<bool> cancel{ false };
 		CGrepAgent agent;
 		const int hits = agent.DoGrepFileWorker(
-			task, L"", sOpt, gOpt,
-			nullptr, pattern, cmemMessage, cUnicodeBuffer, cancel);
+			SGrepSearchParams{ L"", sOpt, gOpt },
+			task,
+			nullptr, pattern, cancel, cmemMessage, cUnicodeBuffer);
 		EXPECT_EQ(1, hits) << "style=" << style
 			<< " base=" << baseFolder << " sep=" << sepFolder;
 		return std::wstring(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
@@ -2248,9 +2249,7 @@ TEST_F(GrepRealFileTest, FormatGrepResultLine_LongLineIsTruncatedTo2000)
 
 	CGrepAgent::FormatGrepResultLine(
 		out, L"f.cpp", L"",
-		1, 1,
-		longLine.c_str(), static_cast<int>(longLine.size()), 0,
-		longLine.c_str(), 6,
+		SGrepMatchInfo{ 1, 1, longLine.c_str(), static_cast<int>(longLine.size()), 0, longLine.c_str(), 6 },
 		gOpt);
 
 	const std::wstring result(out.GetStringPtr(), out.GetStringLength());
@@ -2276,9 +2275,7 @@ TEST_F(GrepRealFileTest, FormatGrepResultLine_LongMatchIsTruncatedTo2500)
 
 	CGrepAgent::FormatGrepResultLine(
 		out, L"f.cpp", L"",
-		1, 1,
-		longMatch.c_str(), static_cast<int>(longMatch.size()), 0,
-		longMatch.c_str(), static_cast<int>(longMatch.size()),
+		SGrepMatchInfo{ 1, 1, longMatch.c_str(), static_cast<int>(longMatch.size()), 0, longMatch.c_str(), static_cast<int>(longMatch.size()) },
 		gOpt);
 
 	EXPECT_EQ(2502, out.GetStringLength())
@@ -2337,8 +2334,9 @@ TEST_F(GrepRealFileTest, FileWorker_EmptyKeyDetectErrorOnMissingFile)
 
 	CGrepAgent agent;
 	const int hits = agent.DoGrepFileWorker(
-		task, L"", sOpt, gOpt,
-		nullptr, pattern, cmemMessage, cUnicodeBuffer, cancel);
+		SGrepSearchParams{ L"", sOpt, gOpt },
+		task,
+		nullptr, pattern, cancel, cmemMessage, cUnicodeBuffer);
 
 	EXPECT_EQ(1, hits) << "空キーは判定エラーでもファイル 1 件としてカウントする";
 	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
@@ -2487,20 +2485,21 @@ DWORD RunDoGrepStdout(
 		SSearchOption sOpt;
 		sOpt.Reset();
 
+		SGrepOption gOpt;
+		gOpt.bGrepReplace        = false;
+		gOpt.bGrepSubFolder      = false;
+		gOpt.bGrepStdout         = true;
+		gOpt.bGrepHeader         = true;
+		gOpt.nGrepCharSet        = CODE_AUTODETECT;
+		gOpt.nGrepOutputLineType = 1;
+		gOpt.nGrepOutputStyle    = 1;
+
 		hits = agent.DoGrep(
 			pView,
-			false,					// bGrepReplace
-			&cmKey, &cmRep, &cmFile, &cmFolder,
-			true,					// bGrepCurFolder: カレントディレクトリを変更しない
-			FALSE,					// bGrepSubFolder
-			true,					// bGrepStdout: stdout 経路（headless 安全）
-			true,					// bGrepHeader: ヘッダー組み立てコードを実行する
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
 			sOpt,
-			CODE_AUTODETECT,
-			1,						// nGrepOutputLineType: マッチ行
-			1,						// nGrepOutputStyle: Normal
-			false, false, false,	// FileOnly / BaseFolder / SeparateFolder
-			false, false,			// Paste / Backup
+			gOpt,
+			true,					// bGrepCurFolder: カレントディレクトリを変更しない
 			bExcludeFileRegex		// bGrepExcludeFileRegexp
 		);
 	} // ← stdout 復帰
@@ -2558,4 +2557,694 @@ TEST_F(GrepRealFileTest, DoGrep_StdoutMode_ExcludeRegexSmoke)
 	EXPECT_EQ(1u, hits) << "skip_me.txt は除外し keep.txt の 1 件のみ";
 	EXPECT_NE(out.find("keep.txt"), std::string::npos)
 		<< "keep.txt のヒットが出力される";
+}
+
+/*!
+ * @brief DoGrepFileWorker: 空キー（自動判定）実在ファイルで有効コードの Bracket 分岐 (GA-21)
+ * @remark 空キー（ファイル一覧モード）かつ CODE_AUTODETECT で、実在の UTF-8(BOM) ファイルの
+ *         文字コード判定が有効コードになり、IsValidCodeType 真の Bracket 表記が出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, FileWorker_EmptyKeyAutoDetectValidCodeBracket)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"detect.txt", CODE_UTF8, L"日本語テキスト\n", /*withBom=*/true);
+
+	SGrepFileTask task;
+	task.fullPath   = path.wstring();
+	task.fileName   = path.filename().wstring();
+	task.baseFolder = m_temp->Root().wstring();
+	task.folder     = task.baseFolder;
+	task.relPath    = task.fileName;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	const auto gOpt = MakeGrepOption(CODE_AUTODETECT);	// 自動判定経路
+
+	CSearchStringPattern pattern;
+	pattern.SetPattern(nullptr, L"", 0, sOpt, nullptr);	// 空キーでは未使用
+
+	CNativeW cmemMessage;
+	CNativeW cUnicodeBuffer;
+	std::atomic<bool> cancel{ false };
+
+	CGrepAgent agent;
+	const int hits = agent.DoGrepFileWorker(
+		SGrepSearchParams{ L"", sOpt, gOpt },
+		task,
+		nullptr, pattern, cancel, cmemMessage, cUnicodeBuffer);
+
+	EXPECT_EQ(1, hits) << "空キーはファイル 1 件としてカウント";
+	const std::wstring out(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength());
+	EXPECT_EQ(std::wstring::npos, out.find(L"(DetectError)"))
+		<< "実在ファイルは判定エラーにならない";
+	EXPECT_NE(std::wstring::npos, out.find(L"["))
+		<< "有効コードの Bracket 表記（[UTF-8] 等）が出力される";
+}
+
+/*!
+ * @brief DoGrep: 置換モード（除外正規表現）サブフォルダーの直列パススモーク (GA-22)
+ * @remark bGrepReplace=true 経路（DoGrepTree → DoGrepReplaceFile）を実走し、
+ *         DoGrepTree の除外正規表現コンパイル・reExcl.Match フィルタ・サブフォルダー再帰を網羅する。
+ *         keep.txt と sub/child.txt は置換対象、skip_me.txt は ! 除外正規表現で除外される。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_ExcludeRegexAndSubfolderSmoke)
+{
+	m_temp->WriteEncodedTextFile(L"keep.txt",      CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"skip_me.txt",   CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"sub/child.txt", CODE_UTF8, L"needle\n");
+
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_replace_stdout.txt";
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	std::string out;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		CGrepAgent agent;
+
+		const CNativeW cmKey(L"needle");
+		const CNativeW cmRep(L"REPLACED");
+		const CNativeW cmFile(L"*.txt;!.*skip.*\\.txt$");
+		const CNativeW cmFolder(m_temp->Root().wstring().c_str());
+
+		SSearchOption sOpt;
+		sOpt.Reset();
+
+		SGrepOption gOpt;
+		gOpt.bGrepReplace        = true;
+		gOpt.bGrepSubFolder      = true;
+		gOpt.bGrepStdout         = true;
+		gOpt.bGrepHeader         = true;
+		gOpt.nGrepCharSet        = CODE_AUTODETECT;
+		gOpt.nGrepOutputLineType = 1;
+		gOpt.nGrepOutputStyle    = 1;
+
+		hits = agent.DoGrep(
+			pView,
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+			sOpt,
+			gOpt,
+			true,					// bGrepCurFolder: カレントディレクトリを変更しない
+			true					// bGrepExcludeFileRegexp=true（! 除外を正規表現扱い）
+		);
+
+		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		char buf[8192] = {0};
+		DWORD dwRead = 0;
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		out.assign(buf, dwRead);
+	}
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+
+	EXPECT_EQ(2u, hits) << "keep.txt と sub/child.txt の 2 件のみ置換（skip_me.txt は除外）";
+	EXPECT_NE(out.find("keep.txt"),  std::string::npos) << "keep.txt が出力される";
+	EXPECT_NE(out.find("child.txt"), std::string::npos) << "サブフォルダーの child.txt が出力される（再帰）";
+	EXPECT_EQ(out.find("skip_me"),   std::string::npos) << "skip_me.txt は除外正規表現で除外され出力されない";
+}
+
+// =============================================================================
+// Grep 置換経路の追加検証（GA-23 ～ GA-25）
+// =============================================================================
+
+namespace {
+
+//! ファイルの生バイトを読み出す（置換後内容の検証用）。
+//! BOM の有無や EOL に依存しないよう、バイト列としてそのまま返す。
+std::string ReadAllBytes(const std::filesystem::path& path)
+{
+	std::ifstream is(path, std::ios::binary);
+	if (!is) return {};
+	is.seekg(0, std::ios::end);
+	const std::streamoff len = is.tellg();
+	if (len <= 0) return {};
+	std::string buf(static_cast<size_t>(len), '\0');
+	is.seekg(0, std::ios::beg);
+	is.read(&buf[0], len);
+	buf.resize(static_cast<size_t>(is.gcount()));
+	return buf;
+}
+
+//! DoGrep を置換モードで実行する。
+//! stdout はテンポラリへ迂回してコンソールを汚さない（GA-22 と同じ手法）。
+//! ファイル書き換え（CWriteData）は stdout 経路とは独立に実行されるため、
+//! 置換後のファイル内容はこの呼び出し後に各テストが読み出して検証できる。
+DWORD RunDoGrepReplace(
+	const std::wstring& key,
+	const std::wstring& replaceTo,
+	const std::wstring& filePattern,
+	const std::wstring& folder,
+	bool bRegex,
+	bool bBackup,
+	bool bSubFolder)
+{
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_replace_stdout.txt";
+
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hTempFile == INVALID_HANDLE_VALUE) {
+		ADD_FAILURE() << "failed to create stdout capture file";
+		return 0;
+	}
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		CGrepAgent agent;
+
+		const CNativeW cmKey(key.c_str());
+		const CNativeW cmRep(replaceTo.c_str());
+		const CNativeW cmFile(filePattern.c_str());
+		const CNativeW cmFolder(folder.c_str());
+
+		SSearchOption sOpt;
+		sOpt.Reset();
+		sOpt.bRegularExp = bRegex;
+
+		SGrepOption gOpt;
+		gOpt.bGrepReplace        = true;
+		gOpt.bGrepSubFolder      = bSubFolder;
+		gOpt.bGrepStdout         = true;
+		gOpt.bGrepHeader         = true;
+		gOpt.nGrepCharSet        = CODE_AUTODETECT;
+		gOpt.nGrepOutputLineType = 1;
+		gOpt.nGrepOutputStyle    = 1;
+		gOpt.bGrepBackup         = bBackup;
+
+		hits = agent.DoGrep(
+			pView,
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+			sOpt,
+			gOpt,
+			true,	// bGrepCurFolder: カレントディレクトリを変更しない
+			false	// bGrepExcludeFileRegexp
+		);
+	} // ← stdout 復帰
+
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+	return hits;
+}
+
+} // namespace
+
+/*!
+ * @brief DoGrep 置換: リテラル置換が実ファイルへ書き込まれる (GA-23)
+ * @remark bGrepReplace=true の直行経路（DoGrepTree → DoGrepReplaceFile → CWriteData）で、
+ *         対象ファイルの内容が実際に needle → REPLACED へ書き換えられることを検証する。
+ *         GA-22 は stdout（ヒットファイル名）のみを見ていたため、書き込み結果を別途確認する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_LiteralWritesReplacedContent)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"keep.txt", CODE_UTF8, L"needle\n");
+
+	const DWORD hits = RunDoGrepReplace(
+		L"needle", L"REPLACED", L"*.txt", m_temp->Root().wstring(),
+		/*bRegex=*/false, /*bBackup=*/false, /*bSubFolder=*/false);
+
+	EXPECT_EQ(1u, hits) << "1 件が置換される";
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_NE(body.find("REPLACED"), std::string::npos)
+		<< "置換後の文字列がファイルへ書き込まれている";
+	EXPECT_EQ(body.find("needle"), std::string::npos)
+		<< "前の文字列は残らない";
+}
+
+/*!
+ * @brief DoGrep 置換: 正規表現置換が行内の全マッチを置換する (GA-24)
+ * @remark bRegularExp=true の置換経路（pRegexp->Replace）で、1 行内の複数マッチを
+ *         すべて置換し、ヒット数が一致することを検証する（g 相当の行末まで一括置換）。
+ * @note   bregonig.dll に依存する（他の正規表現テストと同条件）。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_RegexReplacesAllInLine)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"multi.txt", CODE_UTF8, L"needle needle needle\n");
+
+	const DWORD hits = RunDoGrepReplace(
+		L"needle", L"XX", L"*.txt", m_temp->Root().wstring(),
+		/*bRegex=*/true, /*bBackup=*/false, /*bSubFolder=*/false);
+
+	EXPECT_EQ(3u, hits) << "行内 3 件すべてがヒット・置換される";
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_EQ(body.find("needle"), std::string::npos)
+		<< "行内の全マッチが置換される";
+	EXPECT_NE(body.find("XX"), std::string::npos)
+		<< "置換後の文字列が書き込まれている";
+}
+
+/*!
+ * @brief DoGrep 置換: バックアップ有効時に .skrold が生成される (GA-25)
+ * @remark bGrepBackup=true のとき、元ファイルを .skrold へ退避し（元内容を保持）、
+ *         元パスには置換後内容が書き込まれることを検証する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_BackupCreatesSkrold)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"data.txt", CODE_UTF8, L"needle\n");
+
+	const DWORD hits = RunDoGrepReplace(
+		L"needle", L"REPLACED", L"*.txt", m_temp->Root().wstring(),
+		/*bRegex=*/false, /*bBackup=*/true, /*bSubFolder=*/false);
+
+	EXPECT_EQ(1u, hits) << "1 件が置換される";
+
+	// 元パスには置換後内容
+	const std::string body = ReadAllBytes(path);
+	EXPECT_NE(body.find("REPLACED"), std::string::npos)
+		<< "元パスに置換後内容が書き込まれている";
+	EXPECT_EQ(body.find("needle"), std::string::npos)
+		<< "元パスに前の文字列は残らない";
+
+	// バックアップ(.skrold)には元内容
+	const std::filesystem::path backup = path.wstring() + L".skrold";
+	ASSERT_TRUE(std::filesystem::exists(backup))
+		<< ".skrold バックアップが生成される";
+	const std::string backupBody = ReadAllBytes(backup);
+	EXPECT_NE(backupBody.find("needle"), std::string::npos)
+		<< ".skrold には前の内容が保持される";
+	EXPECT_EQ(backupBody.find("REPLACED"), std::string::npos)
+		<< ".skrold は置換前の内容である";
+}
+
+// =============================================================================
+// Grep 置換経路の全ギャップ検証（GA-26 ～ GA-33）
+// =============================================================================
+
+namespace {
+
+//! 置換テスト拡張の実行オプション。既定は最小構成。
+struct ReplaceRunParams {
+	std::wstring	key;
+	std::wstring	replaceTo;
+	std::wstring	folder;
+	std::wstring	filePattern    = L"*.txt";
+	bool			bRegex         = false;
+	bool			bWordOnly      = false;
+	bool			bBackup        = false;
+	bool			bSubFolder     = false;
+	bool			bOutputFileOnly = false;
+	int				nOutputLineType = 1;
+	ECodeType		charSet        = CODE_AUTODETECT;
+};
+
+//! DoGrep を置換モードで実行する（オプション構造体版）。
+//! stdout はテンポラリへ迂回してコンソールを汚さない（GA-22 と同じ手法）。
+DWORD RunDoGrepReplaceEx(const ReplaceRunParams& p)
+{
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_replace_ex_stdout.txt";
+
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hTempFile == INVALID_HANDLE_VALUE) {
+		ADD_FAILURE() << "failed to create stdout capture file";
+		return 0;
+	}
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		CGrepAgent agent;
+
+		const CNativeW cmKey(p.key.c_str());
+		const CNativeW cmRep(p.replaceTo.c_str());
+		const CNativeW cmFile(p.filePattern.c_str());
+		const CNativeW cmFolder(p.folder.c_str());
+
+		SSearchOption sOpt;
+		sOpt.Reset();
+		sOpt.bRegularExp = p.bRegex;
+		sOpt.bWordOnly   = p.bWordOnly;
+
+		SGrepOption gOpt;
+		gOpt.bGrepReplace         = true;
+		gOpt.bGrepSubFolder       = p.bSubFolder;
+		gOpt.bGrepStdout          = true;
+		gOpt.bGrepHeader          = true;
+		gOpt.nGrepCharSet         = p.charSet;
+		gOpt.nGrepOutputLineType  = p.nOutputLineType;
+		gOpt.nGrepOutputStyle     = 1;
+		gOpt.bGrepBackup          = p.bBackup;
+		gOpt.bGrepOutputFileOnly  = p.bOutputFileOnly;
+
+		hits = agent.DoGrep(
+			pView,
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+			sOpt,
+			gOpt,
+			true,	// bGrepCurFolder
+			false	// bGrepExcludeFileRegexp
+		);
+	}
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+	return hits;
+}
+
+//! 文字列中の部分文字列の出現回数を数える（置換件数の内容検証用）。
+size_t CountByteOccurrences(const std::string& hay, const std::string& needle)
+{
+	if (needle.empty()) return 0;
+	size_t n = 0;
+	for (size_t pos = hay.find(needle); pos != std::string::npos; pos = hay.find(needle, pos + needle.size())) {
+		++n;
+	}
+	return n;
+}
+
+} // namespace
+
+/*!
+ * @brief DoGrep 置換: 単語のみ検索は部分一致を置換しない (GA-26)
+ * @remark bWordOnly=true の置換経路（SearchStringWord）で、独立語 "cat" のみ置換され、
+ *         部分一致 "category" は置換されないことを検証する。
+ * @note   置換パターンのコンパイル（SetPattern）に bregonig.dll が要る。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_WordOnlySkipsSubstring)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"word.txt", CODE_UTF8, L"cat category cat\n");
+
+	ReplaceRunParams p;
+	p.key = L"cat"; p.replaceTo = L"REPLACED"; p.folder = m_temp->Root().wstring();
+	p.bWordOnly = true;
+	const DWORD hits = RunDoGrepReplaceEx(p);
+
+	EXPECT_EQ(2u, hits) << "独立語 cat の 2 件のみヒット・置換される";
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_NE(body.find("category"), std::string::npos)
+		<< "部分一致 category は置換されない";
+	EXPECT_EQ(2u, CountByteOccurrences(body, "REPLACED"))
+		<< "置換されたのは独立語の 2 件のみ";
+}
+
+/*!
+ * @brief DoGrep 置換: UTF-8 BOM 付きファイルは BOM を保持して書き戻す (GA-27)
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_Utf8BomPreserved)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"bom8.txt", CODE_UTF8, L"needle\n", /*withBom=*/true);
+
+	ReplaceRunParams p;
+	p.key = L"needle"; p.replaceTo = L"REPLACED"; p.folder = m_temp->Root().wstring();
+	const DWORD hits = RunDoGrepReplaceEx(p);
+
+	EXPECT_EQ(1u, hits);
+
+	const std::string body = ReadAllBytes(path);
+	ASSERT_GE(body.size(), 3u);
+	EXPECT_EQ(0xEF, static_cast<unsigned char>(body[0]));	// UTF-8 BOM が保持される
+	EXPECT_EQ(0xBB, static_cast<unsigned char>(body[1]));
+	EXPECT_EQ(0xBF, static_cast<unsigned char>(body[2]));
+	EXPECT_NE(body.find("REPLACED"), std::string::npos);
+	EXPECT_EQ(body.find("needle"), std::string::npos);
+}
+
+/*!
+ * @brief DoGrep 置換: UTF-16LE ファイルは BOM・エンコードを保持して書き戻す (GA-28)
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_Utf16LePreserved)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"u16.txt", CODE_UNICODE, L"needle\n", /*withBom=*/true);
+
+	ReplaceRunParams p;
+	p.key = L"needle"; p.replaceTo = L"REPLACED"; p.folder = m_temp->Root().wstring();
+	const DWORD hits = RunDoGrepReplaceEx(p);
+
+	EXPECT_EQ(1u, hits);
+
+	const std::string body = ReadAllBytes(path);
+	ASSERT_GE(body.size(), 2u);
+	EXPECT_EQ(0xFF, static_cast<unsigned char>(body[0]));	// UTF-16LE BOM が保持される
+	EXPECT_EQ(0xFE, static_cast<unsigned char>(body[1]));
+	// "REPLACED" が UTF-16LE（各文字の後ろに 0x00）で書き込まれている
+	const char rep16[] = { 'R',0,'E',0,'P',0,'L',0,'A',0,'C',0,'E',0,'D',0 };
+	EXPECT_NE(body.find(std::string(rep16, sizeof(rep16))), std::string::npos)
+		<< "置換後文字列が UTF-16LE で書き込まれている";
+}
+
+/*!
+ * @brief DoGrep 置換: SJIS 日本語の置換往復（再 Grep で確認） (GA-29)
+ * @remark SJIS(BOM なし)の日本語ファイルを置換し、置換後ファイルを SJIS で再検索して
+ *         置換後語がヒット・置換前語が 0 件になることで、エンコード往復の健全性を確認する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_SjisJapaneseRoundTrip)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"sjis.txt", CODE_SJIS, L"東京\n");
+
+	ReplaceRunParams p;
+	p.key = L"東京"; p.replaceTo = L"大阪"; p.folder = m_temp->Root().wstring();
+	p.charSet = CODE_SJIS;
+	const DWORD hits = RunDoGrepReplaceEx(p);
+
+	EXPECT_EQ(1u, hits);
+
+	// 置換後ファイルを SJIS で再検索して往復を確認する。
+	CGrepAgent agent;
+	EXPECT_EQ(1, RunGrepFileWorker(agent, path, L"大阪",
+		MakeSearchOption(false, false), MakeGrepOption(CODE_SJIS)))
+		<< "置換後語が SJIS として正しく書き戻され再検索でヒットする";
+	EXPECT_EQ(0, RunGrepFileWorker(agent, path, L"東京",
+		MakeSearchOption(false, false), MakeGrepOption(CODE_SJIS)))
+		<< "置換前語は残らない";
+}
+
+/*!
+ * @brief DoGrep 置換: bGrepOutputFileOnly でも全行が置換される (GA-30)
+ * @remark 出力（メッセージ）はファイル毎 1 回に抑制されるが、置換自体は全該当行に及ぶこと。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_OutputFileOnlyStillReplacesAll)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"multi.txt", CODE_UTF8, L"needle\nneedle\n");
+
+	ReplaceRunParams p;
+	p.key = L"needle"; p.replaceTo = L"REPLACED"; p.folder = m_temp->Root().wstring();
+	p.bOutputFileOnly = true;
+	const DWORD hits = RunDoGrepReplaceEx(p);
+
+	EXPECT_EQ(2u, hits) << "出力抑制されても 2 行ともヒット・置換される";
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_EQ(body.find("needle"), std::string::npos);
+	EXPECT_EQ(2u, CountByteOccurrences(body, "REPLACED"))
+		<< "全該当行が置換される";
+}
+
+/*!
+ * @brief DoGrep 置換: 否ヒット行タイプ(2)は置換では通常置換に正規化される (GA-31)
+ * @remark nGrepOutputLineType=2（否ヒット行）で置換を指示しても、DoGrep が 1 に正規化し、
+ *         通常どおりヒット行を置換すること。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_NoHitLineTypeNormalized)
+{
+	const auto path = m_temp->WriteEncodedTextFile(
+		L"nht.txt", CODE_UTF8, L"needle\n");
+
+	ReplaceRunParams p;
+	p.key = L"needle"; p.replaceTo = L"REPLACED"; p.folder = m_temp->Root().wstring();
+	p.nOutputLineType = 2;	// 置換モードでは 1 に正規化される
+	const DWORD hits = RunDoGrepReplaceEx(p);
+
+	EXPECT_EQ(1u, hits) << "否ヒット行指定でも通常のヒット行置換として動作する";
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_NE(body.find("REPLACED"), std::string::npos);
+	EXPECT_EQ(body.find("needle"), std::string::npos);
+}
+
+/*!
+ * @brief DoGrep 置換: 書き込みファイル(.skrnew)が開けない場合は元が壊れない (GA-32)
+ * @remark 出力先 "<path>.skrnew" と同名のディレクトリを先に作って書き込みオープンを失敗させる。
+ *         CError_WriteFileOpen 経路（STR_GREP_ERR_FILEWRITE）が通り、元ファイルは無変更のまま。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_WriteOpenFailureKeepsOriginal)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"data.txt", CODE_UTF8, L"needle\n");
+
+	// 出力先 .skrnew をディレクトリとして先取りし、ファイル書き込みを失敗させる。
+	const std::filesystem::path skrnew = path.wstring() + L".skrnew";
+	std::filesystem::create_directories(skrnew);
+
+	ReplaceRunParams p;
+	p.key = L"needle"; p.replaceTo = L"REPLACED"; p.folder = m_temp->Root().wstring();
+	const DWORD hits = RunDoGrepReplaceEx(p);
+
+	EXPECT_EQ(0u, hits) << "書き込みオープン失敗時はヒット確定前に中断する";
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_NE(body.find("needle"), std::string::npos)
+		<< "書き込み失敗時に元ファイルは無変更";
+	EXPECT_EQ(body.find("REPLACED"), std::string::npos)
+		<< "置換後内容は元ファイルへ書き込まれない";
+}
+
+/*!
+ * @brief DoGrep 置換: 元ファイルロックされていても元が壊れない (GA-33)
+ * @remark 元ファイルを共有読み取りのみ(削除・書き込み共有なし)で開いたまま置換を実行する。
+ *         読み取り open 失敗 or 置換確定(Delete/MoveFile)失敗のいずれの分岐でも、
+ *         元ファイルが破壊されない不変条件を検証する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_LockedOriginalNotCorrupted)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"locked.txt", CODE_UTF8, L"needle\n");
+
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	// 共有は読み取りのみ（削除・書き込み共有を与えない）→ 置換確定の Delete/MoveFile が失敗するはず。
+	std::unique_ptr<void, HandleDeleter> hLock{
+		::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL)
+	};
+	ASSERT_NE(INVALID_HANDLE_VALUE, hLock.get()) << "ロック用ハンドルの確保に失敗";
+
+	ReplaceRunParams p;
+	p.key = L"needle"; p.replaceTo = L"REPLACED"; p.folder = m_temp->Root().wstring();
+	(void)RunDoGrepReplaceEx(p);	// ヒット数は分岐により値が変わり得るため見ない
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_NE(body.find("needle"), std::string::npos)
+		<< "ロック中の元ファイルは破壊されない";
+	EXPECT_EQ(body.find("REPLACED"), std::string::npos)
+		<< "ロック中は置換後内容で上書きされない";
+}
+
+// =============================================================================
+// Grep 置換「貼り付けモード」検証（GA-34）
+// =============================================================================
+
+namespace {
+
+//! クリップボードに CF_UNICODETEXT を積む（貼り付けモード検証用）。
+void SetClipboardUnicodeText(HWND hwnd, const std::wstring& s)
+{
+	if (!::OpenClipboard(hwnd)) { ADD_FAILURE() << "OpenClipboard failed"; return; }
+	::EmptyClipboard();
+	const size_t bytes = (s.size() + 1) * sizeof(wchar_t);
+	if (HGLOBAL hMem = ::GlobalAlloc(GMEM_MOVEABLE, bytes)) {
+		if (void* p = ::GlobalLock(hMem)) {
+			memcpy(p, s.c_str(), bytes);
+			::GlobalUnlock(hMem);
+			::SetClipboardData(CF_UNICODETEXT, hMem);	// 所有権はクリップボードへ移る
+		}
+	}
+	::CloseClipboard();
+}
+
+//! クリップボードを空にする（後続テストへ影響させない）。
+void ClearClipboard(HWND hwnd)
+{
+	if (::OpenClipboard(hwnd)) { ::EmptyClipboard(); ::CloseClipboard(); }
+}
+
+} // namespace
+
+/*!
+ * @brief DoGrep 置換: 貼り付けモードはクリップボード内容で置換する (GA-34)
+ * @remark bGrepPaste=true の経路（MyGetClipboardData → CClipboard::GetText(CF_UNICODETEXT)）で、
+ *         置換文字列フィールドではなくクリップボードの内容が使われることを検証する。
+ * @note   クリップボードはグローバル資源のため、テスト後に空にする。
+ *         クリップボードにアクセスできる環境（EditorTestSuite のウィンドウ）を前提とする。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_PasteUsesClipboard)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"paste.txt", CODE_UTF8, L"needle\n");
+
+	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+	const HWND hwnd = pView->GetHwnd();
+
+	// クリップボードへ置換文字列を積む（置換フィールドには別値を入れ、そちらが使われないことを確認する）
+	SetClipboardUnicodeText(hwnd, L"REPLACED");
+
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_paste_stdout.txt";
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CGrepAgent agent;
+		const CNativeW cmKey(L"needle");
+		const CNativeW cmRep(L"IGNORED");	// 貼り付けモードでは置換値として使われない
+		const CNativeW cmFile(L"*.txt");
+		const CNativeW cmFolder(m_temp->Root().wstring().c_str());
+
+		SSearchOption sOpt;
+		sOpt.Reset();
+
+		SGrepOption gOpt;
+		gOpt.bGrepReplace        = true;
+		gOpt.bGrepPaste          = true;	// ← クリップボードから置換文字列を取得
+		gOpt.bGrepSubFolder      = false;
+		gOpt.bGrepStdout         = true;
+		gOpt.bGrepHeader         = true;
+		gOpt.nGrepCharSet        = CODE_AUTODETECT;
+		gOpt.nGrepOutputLineType = 1;
+		gOpt.nGrepOutputStyle    = 1;
+
+		hits = agent.DoGrep(
+			pView,
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+			sOpt,
+			gOpt,
+			true,	// bGrepCurFolder
+			false	// bGrepExcludeFileRegexp
+		);
+	} // ← stdout 復帰
+
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+	ClearClipboard(hwnd);
+
+	EXPECT_EQ(1u, hits) << "1 件が置換される";
+
+	const std::string body = ReadAllBytes(path);
+	EXPECT_NE(body.find("REPLACED"), std::string::npos)
+		<< "クリップボードの内容で置換される";
+	EXPECT_EQ(body.find("IGNORED"), std::string::npos)
+		<< "置換フィールドの値は貼り付けモードでは使われない";
+	EXPECT_EQ(body.find("needle"), std::string::npos)
+		<< "前の文字列は残らない";
 }

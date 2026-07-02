@@ -172,9 +172,10 @@ int RunGrepFileWorker(
 	cUnicodeBuffer.AllocStringBuffer(4000);
 
 	return agent.DoGrepFileWorker(
-		task, keyStr.c_str(), sSearchOption, sGrepOption,
-		sSearchOption.bRegularExp ? &regexp : nullptr, pattern,
-		cmemMessage, cUnicodeBuffer, cancel);
+		SGrepSearchParams{ keyStr.c_str(), sSearchOption, sGrepOption },
+		task, sSearchOption.bRegularExp ? &regexp : nullptr, pattern,
+		cancel,
+		cmemMessage, cUnicodeBuffer);
 }
 
 int RunGrepFileWorker(

@@ -73,7 +73,6 @@ const DWORD p_helpids[] = {	//12000
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
 
 CDlgGrep::CDlgGrep()
-	: m_bExcludeFileRegularExp(FALSE)
 {
 	m_bEnableThisText = true;
 	m_bSelectOnceThisText = false;
@@ -257,17 +256,17 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
 	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+		wcscpy_s( m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
+		wcscpy_s( m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	
 	/* 除外ファイル / 除外フォルダー */
 	DetermineDefaultExcludePatterns();
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
-		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
+		wcscpy_s(m_szCurrentFilePath, std::size(m_szCurrentFilePath), pszCurrentFilePath);
 	}
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)nullptr );
@@ -335,8 +334,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// フォント設定	2012/11/27 Uchi
 	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
-	m_cFontDeleters.resize( int(std::size(nItemIds)) );
-	for( size_t i2 = 0; i2 < int(std::size(nItemIds)); ++i2 ){
+	m_cFontDeleters.resize( std::size(nItemIds) );
+	for( size_t i2 = 0; i2 < std::size(nItemIds); ++i2 ){
 		HWND hwndItem = GetItemHwnd( nItemIds[i2] );
 		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
 		HFONT hFont = SetMainFont( hwndItem );
@@ -435,25 +434,20 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
-				wcsncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
-				szFolder[nMaxPath-1] = L'\0';
+				wcsncpy_s( szFolder, nMaxPath, vPaths.rbegin()->c_str(), _TRUNCATE );
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
 					szFolder[0] = L'\0';
 					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
 						WCHAR szFolderItem[nMaxPath];
-						wcsncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
-						szFolderItem[nMaxPath-1] = L'\0';
+						wcsncpy_s( szFolderItem, nMaxPath, vPaths[i].c_str(), _TRUNCATE );
 						if( wcschr( szFolderItem, L';' ) ){
 							szFolderItem[0] = L'"';
-							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
-							szFolderItem[nMaxPath-1] = L'\0';
-							wcscat( szFolderItem, L"\"" );
-							szFolderItem[nMaxPath-1] = L'\0';
+							wcsncpy_s( szFolderItem + 1, nMaxPath - 1, vPaths[i].c_str(), _TRUNCATE );
+							wcscat_s( szFolderItem, nMaxPath, L"\"" );
 						}
 						if( i ){
-							wcscat( szFolder, L";" );
-							szFolder[nMaxPath-1] = L'\0';
+							wcscat_s( szFolder, nMaxPath, L";" );
 						}
 						wcscat_s( szFolder, nMaxPath, szFolderItem );
 					}
@@ -813,7 +807,7 @@ int CDlgGrep::GetData( void )
 	m_bGrepSeparateFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_SEP_FOLDER );
 
 	/* 検索文字列 */
-	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );;
+	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );
 
 	/* 検索ファイル */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, std::size(m_szFile) );
@@ -858,7 +852,7 @@ int CDlgGrep::GetData( void )
 		//	Jun. 16, 2003 Moca
 		//	検索パターンが指定されていない場合のメッセージ表示をやめ、
 		//	「*.*」が指定されたものと見なす．
-		wcscpy( m_szFile, L"*.*" );
+		wcscpy_s( m_szFile, std::size(m_szFile), L"*.*" );
 	}
 	if( m_szFolder[0] == L'\0' ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGGREP4) );
@@ -889,21 +883,21 @@ int CDlgGrep::GetData( void )
 			// ;がフォルダー名に含まれていたら""で囲う
 			if( wcschr( szFolderItem, L';' ) ){
 				szFolderItem[0] = L'"';
-				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
-				wcscat(szFolderItem, L"\"");
+				::GetCurrentDirectory( nMaxPath - 2, szFolderItem + 1 );
+				wcscat_s(szFolderItem, nMaxPath, L"\"");
 			}
-			auto nFolderItemLen = int(wcslen(szFolderItem));
+			auto nFolderItemLen = int(std::wstring_view(szFolderItem).length());
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;
 			}
 			if( i ){
-				wcscat( szFolder, L";" );
+				wcscat_s( szFolder, nMaxPath, L";" );
 			}
-			wcscat( szFolder, szFolderItem );
-			nFolderLen = (int)wcslen( szFolder );
+			wcscat_s( szFolder, nMaxPath, szFolderItem );
+			nFolderLen = (int)std::wstring_view( szFolder ).length();
 		}
-		wcscpy( m_szFolder, szFolder );
+		wcscpy_s( m_szFolder, std::size(m_szFolder), szFolder );
 	}
 
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
@@ -976,7 +970,7 @@ void CDlgGrep::DetermineDefaultExcludePatterns()
 	/* 除外ファイル */
 	if (m_szExcludeFile[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
+			wcscpy_s(m_szExcludeFile, std::size(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
 		}
 		else {
 			const WCHAR* pszDefault = m_bExcludeFileRegularExp
@@ -990,11 +984,11 @@ void CDlgGrep::DetermineDefaultExcludePatterns()
 	/* 除外フォルダー */
 	if (m_szExcludeFolder[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
+			wcscpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
 		}
 		else {
 			/* ユーザーの利便性向上のために除外フォルダーに対して初期値を設定する */
-			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
+			wcscpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
 			
 			/* 履歴に残して後で選択できるようにする */
 			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);

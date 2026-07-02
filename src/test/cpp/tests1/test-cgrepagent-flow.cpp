@@ -44,8 +44,8 @@ TEST_F(CGrepAgentTest, FormatGrepResultLine_NormalStyle1_ProducesPathLineColCont
 	opt.nGrepOutputLineType = 1;
 
 	CGrepAgent::FormatGrepResultLine(
-		cmem, L"C:\\test.cpp", L" [UTF-8]", 42, 5,
-		L"  return true;\n", 15, 1, L"true", 4, opt
+		cmem, L"C:\\test.cpp", L" [UTF-8]",
+		SGrepMatchInfo{ 42, 5, L"  return true;\n", 15, 1, L"true", 4 }, opt
 	);
 	EXPECT_STREQ(L"C:\\test.cpp(42,5) [UTF-8]:   return true;\r\n", cmem.GetStringPtr());	// 正常形式の出力
 }
@@ -62,8 +62,8 @@ TEST_F(CGrepAgentTest, FormatGrepResultLine_WzStyle2_FileGrouped)
 	opt.nGrepOutputLineType = 1;
 
 	CGrepAgent::FormatGrepResultLine(
-		cmem, L"C:\\test.cpp", L"", 42, 5,
-		L"  return true;\n", 15, 1, L"true", 4, opt
+		cmem, L"C:\\test.cpp", L"",
+		SGrepMatchInfo{ 42, 5, L"  return true;\n", 15, 1, L"true", 4 }, opt
 	);
 	std::wstring s(cmem.GetStringPtr());
 	EXPECT_NE(std::wstring::npos, s.find(L"42"));				// 行番号
@@ -85,8 +85,8 @@ TEST_F(CGrepAgentTest, FormatGrepResultLine_ResultOnlyStyle3_NoPath)
 	opt.nGrepOutputLineType = 1;
 
 	CGrepAgent::FormatGrepResultLine(
-		cmem, L"C:\\test.cpp", L"", 42, 5,
-		L"  return true;\n", 15, 1, L"true", 4, opt
+		cmem, L"C:\\test.cpp", L"",
+		SGrepMatchInfo{ 42, 5, L"  return true;\n", 15, 1, L"true", 4 }, opt
 	);
 	EXPECT_STREQ(L"  return true;\r\n", cmem.GetStringPtr());
 }
@@ -104,8 +104,8 @@ TEST_F(CGrepAgentTest, FormatGrepResultLine_OutputLineType0_OnlyMatchPart)
 	opt.nGrepOutputLineType = 0; // 該当部分のみ
 
 	CGrepAgent::FormatGrepResultLine(
-		cmem, L"C:\\test.cpp", L"", 42, 5,
-		L"  return true;\n", 15, 1, L"true", 4, opt
+		cmem, L"C:\\test.cpp", L"",
+		SGrepMatchInfo{ 42, 5, L"  return true;\n", 15, 1, L"true", 4 }, opt
 	);
 	EXPECT_STREQ(L"true\r\n", cmem.GetStringPtr());
 }
@@ -122,8 +122,8 @@ TEST_F(CGrepAgentTest, FormatGrepResultLine_OutputLineType1_FullLine)
 	opt.nGrepOutputLineType = 1;
 
 	CGrepAgent::FormatGrepResultLine(
-		cmem, L"C:\\test.cpp", L"", 42, 5,
-		L"  return true;\n", 15, 1, L"true", 4, opt
+		cmem, L"C:\\test.cpp", L"",
+		SGrepMatchInfo{ 42, 5, L"  return true;\n", 15, 1, L"true", 4 }, opt
 	);
 	EXPECT_STREQ(L"  return true;\r\n", cmem.GetStringPtr());
 }
@@ -141,8 +141,8 @@ TEST_F(CGrepAgentTest, FormatGrepResultLine_OutputLineType2_NegativeLine)
 	opt.nGrepOutputLineType = 2;		// 否該当行
 
 	CGrepAgent::FormatGrepResultLine(
-		cmem, L"C:\\test.cpp", L"", 42, 1,
-		L"no match here", 13, 0, L"", 0, opt
+		cmem, L"C:\\test.cpp", L"",
+		SGrepMatchInfo{ 42, 1, L"no match here", 13, 0, L"", 0 }, opt
 	);
 	EXPECT_STREQ(L"no match here\r\n", cmem.GetStringPtr());
 }

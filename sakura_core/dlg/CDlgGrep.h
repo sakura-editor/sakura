@@ -61,7 +61,7 @@ public:
 	bool		m_bSelectOnceThisText;
 	BOOL		m_bSubFolder;/*!< サブフォルダーからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
-	BOOL		m_bExcludeFileRegularExp;	//!< 除外ファイルを正規表現として扱う
+	BOOL		m_bExcludeFileRegularExp = FALSE;	//!< 除外ファイルを正規表現として扱う
 
 	SSearchOption	m_sSearchOption;	//!< 検索オプション
 

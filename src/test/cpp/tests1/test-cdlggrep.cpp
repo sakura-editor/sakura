@@ -16,6 +16,7 @@
 #include "env/ShareDataTestSuite.hpp"
 #include "grep/CGrepEnumKeys.h"
 #include "mem/CNativeW.h"
+#include "sakura_rc.h"
 #include "env/DLLSHAREDATA.h"
 
 namespace {
@@ -552,5 +553,34 @@ TEST_F(CDlgGrepGuiTest, DoModalOK_FromThisText_DoesNotPolluteHistory)
 	
 	// 履歴が更新されていないことを確認
 	EXPECT_STREQ(L"prev_key", share->m_sSearchKeywords.m_aSearchKeys[0]);
+}
+
+/*!
+ * @brief 除外ファイル正規表現チェックボックスのトグル処理 (DG-28)
+ * @remark IDC_CHK_EXCLUDE_FILE_REGEXP の ON/OFF をそれぞれで OnBnClicked 内の
+ *         既定パターン入れ替え分岐（ワイルドカード→正規表現）を実行させること確認する。
+ *         アサーションは、クラッシュせず IDCANCEL で復帰すること（網羅目的）。
+ */
+TEST_F(CDlgGrepGuiTest, DoModal_ToggleExcludeFileRegexp_SwapsDefaultPattern)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		// 除外ファイル欄をワイルドカード既定値に固定してから ON にする
+		//   → bRegexp=true 分岐（pszOther=WILDCARD と一致 → REGEX へ SetText）
+		::SetDlgItemTextW(hWnd, IDC_COMBO_EXCLUDE_FILE, DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD);
+		::CheckDlgButton(hWnd, IDC_CHK_EXCLUDE_FILE_REGEXP, BST_CHECKED);
+		::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDC_CHK_EXCLUDE_FILE_REGEXP, BN_CLICKED), 0);
+
+		// 続けて OFF にする
+		//   → bRegexp=false 分岐（pszOther=REGEX と一致 → WILDCARD へ SetText）
+		::CheckDlgButton(hWnd, IDC_CHK_EXCLUDE_FILE_REGEXP, BST_UNCHECKED);
+		::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDC_CHK_EXCLUDE_FILE_REGEXP, BN_CLICKED), 0);
+
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+	});
+
+	CDlgGrep dlg;
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(0, rc);	// キャンセルで 0
 }
 

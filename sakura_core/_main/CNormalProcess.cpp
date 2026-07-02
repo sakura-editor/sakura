@@ -211,28 +211,30 @@ bool CNormalProcess::InitializeProcess()
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
-				&pEditWnd->GetActiveView(),
-				gi.bGrepReplace,
-				&gi.cmGrepKey,
-				&gi.cmGrepRep,
-				&gi.cmGrepFile,
-				&gi.cmGrepFolder,
-				gi.bGrepCurFolder,
-				gi.bGrepSubFolder,
-				gi.bGrepStdout,
-				gi.bGrepHeader,
-				gi.sGrepSearchOption,
-				gi.nGrepCharSet,	//	2002/09/21 Moca
-				gi.nGrepOutputLineType,
-				gi.nGrepOutputStyle,
-				gi.bGrepOutputFileOnly,
-				gi.bGrepOutputBaseFolder,
-				gi.bGrepSeparateFolder,
-				gi.bGrepPaste,
-				gi.bGrepBackup,
-				gi.bGrepExcludeFileRegexp
-			);
+			{
+				const SGrepInput grepInput{ &gi.cmGrepKey, &gi.cmGrepRep, &gi.cmGrepFile, &gi.cmGrepFolder };
+				SGrepOption sGrepOption;
+				sGrepOption.bGrepReplace = gi.bGrepReplace;
+				sGrepOption.bGrepSubFolder = gi.bGrepSubFolder != FALSE;
+				sGrepOption.bGrepStdout = gi.bGrepStdout;
+				sGrepOption.bGrepHeader = gi.bGrepHeader;
+				sGrepOption.nGrepCharSet = gi.nGrepCharSet;
+				sGrepOption.nGrepOutputLineType = gi.nGrepOutputLineType;
+				sGrepOption.nGrepOutputStyle = gi.nGrepOutputStyle;
+				sGrepOption.bGrepOutputFileOnly = gi.bGrepOutputFileOnly;
+				sGrepOption.bGrepOutputBaseFolder = gi.bGrepOutputBaseFolder;
+				sGrepOption.bGrepSeparateFolder = gi.bGrepSeparateFolder;
+				sGrepOption.bGrepPaste = gi.bGrepPaste;
+				sGrepOption.bGrepBackup = gi.bGrepBackup;
+				this->m_pcEditApp->m_pcGrepAgent->DoGrep(
+					&pEditWnd->GetActiveView(),
+					grepInput,
+					gi.sGrepSearchOption,
+					sGrepOption,
+					gi.bGrepCurFolder,
+					gi.bGrepExcludeFileRegexp
+				);
+			}
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 		}
 		else{
