@@ -47,6 +47,80 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 
+namespace {
+#ifndef STATUS_NO_MEMORY
+#define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
+#endif
+
+/**
+ * CNativeW::SetString を SEH 例外 STATUS_NO_MEMORY から保護して呼び出す。
+ */
+static bool SafeSetString(CNativeW& buf, const wchar_t* pData, size_t nLen)
+{
+	__try {
+		buf.SetString(pData, nLen);
+		return true;
+	}
+	__except( GetExceptionCode() == STATUS_NO_MEMORY
+		? EXCEPTION_EXECUTE_HANDLER
+		: EXCEPTION_CONTINUE_SEARCH )
+	{
+		return false;
+	}
+}
+
+/**
+ * 2.5クリック行ドラッグで選択開始行以上へドラッグした場合のキャレット行頭調整。
+ */
+void AdjustTripleClickCursorAbove(const CLayoutMgr& layoutMgr, CLayoutPoint& ptNewCursor)
+{
+	// GetCommander().Command_GOLINETOP( true, 0x09 );		// 改行単位の行頭へ移動
+	CLogicInt nLineLen;
+	const CLayout*	pcLayout;
+	const wchar_t*	pLine = layoutMgr.GetLineStr( ptNewCursor.GetY2(), &nLineLen, &pcLayout );
+	ptNewCursor.x = CLayoutInt(0);
+	if( pLine == nullptr ){
+		return;
+	}
+	while( pcLayout->GetLogicOffset() ){
+		ptNewCursor.y--;
+		pcLayout = pcLayout->GetPrevLayout();
+	}
+}
+
+/**
+ * 2.5クリック行ドラッグで選択開始行より下へドラッグした場合のキャレット行頭調整。
+ */
+static void AdjustTripleClickCursorBelow(
+	CLayoutMgr&			layoutMgr,
+	CLayoutPoint&		ptNewCursor,
+	const CLayoutPoint&	ptSelectBgnTo,
+	const CLogicPoint&	ptCaretLogic )
+{
+	CLayoutPoint ptCaret;
+
+	CLogicPoint ptCaretPrevLog(0, ptCaretLogic.y);
+
+	// 選択開始行より下にカーソルがある時は1行前と物理行番号の違いをチェックする
+	// 選択開始行にカーソルがある時はチェック不要
+	if( ptNewCursor.GetY() > ptSelectBgnTo.y ){
+		// 1行前の物理行を取得する
+		layoutMgr.LayoutToLogic( CLayoutPoint(CLayoutInt(0), ptNewCursor.GetY() - 1), &ptCaretPrevLog );
+	}
+
+	CLogicPoint ptNewCursorLogic;
+	layoutMgr.LayoutToLogic(ptNewCursor, &ptNewCursorLogic);
+	// 前の行と同じ物理行
+	if( ptCaretPrevLog.y == ptNewCursorLogic.y ){
+		// 1行先の物理行からレイアウト行を求める
+		layoutMgr.LogicToLayout( CLogicPoint(0, ptCaretLogic.y + 1), &ptCaret );
+
+		// カーソルを次の物理行頭へ移動する
+		ptNewCursor = ptCaret;
+	}
+}
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -122,39 +196,38 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.12.02 nasukoji	トリプルクリック時はドラッグを開始しない
-	if( !tripleClickMode && GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop ){
-		if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
-			/* 行選択エリアをドラッグした */
-			if( ptMouse.x < GetTextArea().GetAreaLeft() - GetTextMetrics().GetHankakuDx() ){
-				goto normal_action;
-			}
-			/* 指定カーソル位置が選択エリア内にあるか */
-			if( 0 == IsCurrentPositionSelected(ptNew) ){
-				POINT ptWk = {ptMouse.x, ptMouse.y};
-				::ClientToScreen(GetHwnd(), &ptWk);
-				if( !::DragDetect(GetHwnd(), ptWk) ){
-					// ドラッグ開始条件を満たさなかったのでクリック位置にカーソル移動する
-					if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-						/* 現在の選択範囲を非選択状態に戻す */
-						GetSelectionInfo().DisableSelectArea( true );
-					}
-//@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
-					/* カーソル移動。 */
-					if( ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom() ){
-						if( ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight() ){
-							GetCaret().MoveCursorToClientPoint( ptMouse );
-						}
-						else if( ptMouse.x < GetTextArea().GetAreaLeft() ){
-							GetCaret().MoveCursorToClientPoint( CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y) );
-						}
-					}
-					return;
-				}
-
+	// OLEによるドラッグ元にするか
+	if( !tripleClickMode
+		&& GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop
+		&& GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DropSource ){
+		/* 行選択エリアをドラッグした */
+		if( ptMouse.x < GetTextArea().GetAreaLeft() - GetTextMetrics().GetHankakuDx() ){
+			goto normal_action;
+		}
+		/* 指定カーソル位置が選択エリア内にあるか */
+		if( 0 == IsCurrentPositionSelected(ptNew) ){
+			POINT ptWk = {ptMouse.x, ptMouse.y};
+			::ClientToScreen(GetHwnd(), &ptWk);
+			/* ドラッグ開始条件を満たした */
+			if( ::DragDetect(GetHwnd(), ptWk) ){
 				DragSelection();
-
 				return;
 			}
+			// ドラッグ開始条件を満たさなかったのでクリック位置にカーソル移動する
+			if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+				/* 現在の選択範囲を非選択状態に戻す */
+				GetSelectionInfo().DisableSelectArea( true );
+			}
+//@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
+			/* カーソル移動。 */
+			if( ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom()
+				&& ptMouse.x < GetTextArea().GetAreaRight() ){
+				const int nClientX = ( ptMouse.x < GetTextArea().GetAreaLeft() )
+					? GetTextArea().GetDocumentLeftClientPointX()
+					: ptMouse.x;
+				GetCaret().MoveCursorToClientPoint( CMyPoint(nClientX, ptMouse.y) );
+			}
+			return;
 		}
 	}
 
@@ -1122,39 +1195,14 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 			if( m_dwTripleClickCheck ){
 				// 選択開始行以上にドラッグした
 				if( ptNewCursor.GetY() <= GetSelectionInfo().m_sSelectBgn.GetTo().y ){
-					// GetCommander().Command_GOLINETOP( true, 0x09 );		// 改行単位の行頭へ移動
-					CLogicInt nLineLen;
-					const CLayout*	pcLayout;
-					const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptNewCursor.GetY2(), &nLineLen, &pcLayout );
-					ptNewCursor.x = CLayoutInt(0);
-					if( pLine ){
-						while( pcLayout->GetLogicOffset() ){
-							ptNewCursor.y--;
-							pcLayout = pcLayout->GetPrevLayout();
-						}
-					}
+					AdjustTripleClickCursorAbove( m_pcEditDoc->m_cLayoutMgr, ptNewCursor );
 				}else{
-					CLayoutPoint ptCaret;
-
-					CLogicPoint ptCaretPrevLog(0, GetCaret().GetCaretLogicPos().y);
-
-					// 選択開始行より下にカーソルがある時は1行前と物理行番号の違いをチェックする
-					// 選択開始行にカーソルがある時はチェック不要
-					if( ptNewCursor.GetY() > GetSelectionInfo().m_sSelectBgn.GetTo().y ){
-						// 1行前の物理行を取得する
-						m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( CLayoutPoint(CLayoutInt(0), ptNewCursor.GetY() - 1), &ptCaretPrevLog );
-					}
-
-					CLogicPoint ptNewCursorLogic;
-					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(ptNewCursor, &ptNewCursorLogic);
-					// 前の行と同じ物理行
-					if( ptCaretPrevLog.y == ptNewCursorLogic.y ){
-						// 1行先の物理行からレイアウト行を求める
-						m_pcEditDoc->m_cLayoutMgr.LogicToLayout( CLogicPoint(0, GetCaret().GetCaretLogicPos().y + 1), &ptCaret );
-
-						// カーソルを次の物理行頭へ移動する
-						ptNewCursor = ptCaret;
-					}
+					AdjustTripleClickCursorBelow(
+						m_pcEditDoc->m_cLayoutMgr,
+						ptNewCursor,
+						GetSelectionInfo().m_sSelectBgn.GetTo(),
+						GetCaret().GetCaretLogicPos()
+					);
 				}
 			}
 		}else{
@@ -1801,23 +1849,85 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 
 	// ドロップデータの取得
-	HGLOBAL hData = GetGlobalData( pDataObject, cf );
-	if (hData == nullptr)
-		return E_INVALIDARG;
-	LPVOID pData = ::GlobalLock( hData );
-	SIZE_T nSize = ::GlobalSize( hData );
-	if( cf == CClipboard::GetSakuraFormat() ){
-		if( nSize > sizeof(size_t) ){
-			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(size_t));
-			cmemBuf.SetString( pszData, t_min( (SIZE_T)*(size_t*)pData, nSize / sizeof(wchar_t) ) );	// 途中のNUL文字も含める
+	HGLOBAL hData = nullptr;
+	LPVOID pData = nullptr;
+	SIZE_T nSize = 0;
+	for( ;; ){
+		hData = GetGlobalData( pDataObject, cf );
+		if( hData == nullptr )
+			return E_INVALIDARG;
+		pData = ::GlobalLock( hData );
+		nSize = ::GlobalSize( hData );
+		// SAKURAClipW は壊れたデータを検出したら拒否し、次の形式へフォールバックする。
+		if( cf == CClipboard::GetSakuraFormat() ){
+			if( pData != nullptr && nSize >= sizeof(SSakuraClipHeader) ){
+				SSakuraClipHeader header;
+				// エイリアシング安全な読み取り。
+				memcpy_raw(&header, pData, sizeof(header));
+				if( header.cchData >= 0 ){
+					const auto cchData = static_cast<size_t>(header.cchData);
+					const size_t cchMax = (nSize - sizeof(SSakuraClipHeader)) / sizeof(wchar_t);
+					if( cchData <= cchMax ){
+						const void* pBody = static_cast<const BYTE*>(pData) + sizeof(SSakuraClipHeader);
+						const wchar_t* pszData = static_cast<const wchar_t*>(pBody);
+						// 途中の NUL 文字も含めて貼り付ける。
+						cmemBuf.SetString( pszData, cchData );	// 途中のNUL文字も含める
+						break;
+					}
+				}
+			}
+
+			if( pData != nullptr ){
+				::GlobalUnlock( hData );
+			}
+			if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+				::GlobalFree( hData );
+			}
+
+			if( IsDataAvailable( pDataObject, CF_UNICODETEXT ) ){
+				cf = CF_UNICODETEXT;
+			}else if( IsDataAvailable( pDataObject, CF_TEXT ) ){
+				cf = CF_TEXT;
+			}else{
+				return E_INVALIDARG;
+			}
+			continue;
 		}
-	}else if( cf == CF_UNICODETEXT ){
-		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
-	}else{
-		CNativeA binary;
-		binary.SetString((char*)pData, nSize / sizeof(char));
-		auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
-		pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
+		// CF_UNICODETEXT は文字数を上限で切り詰めたうえで SetString する。
+		if( cf == CF_UNICODETEXT ){
+			const size_t cchTotal = wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) );
+			const size_t cchSafe = (cchTotal > CClipboard::CLIPBOARD_MAX_CHARS)
+				? CClipboard::CLIPBOARD_MAX_CHARS
+				: cchTotal;
+			if( !SafeSetString(cmemBuf, (wchar_t*)pData, cchSafe) ){
+				if( pData != nullptr ){
+					::GlobalUnlock( hData );
+				}
+				if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+					::GlobalFree( hData );
+				}
+				return E_OUTOFMEMORY;
+			}
+		}else{
+			// CF_TEXT は SJIS とみなして Unicode へ変換する。
+			const SIZE_T cbLimit = static_cast<SIZE_T>(CClipboard::CLIPBOARD_MAX_CHARS) * sizeof(wchar_t);
+			const SIZE_T cbSafe = (nSize > cbLimit) ? cbLimit : nSize;
+			CNativeA binary;
+			binary.SetString((char*)pData, cbSafe / sizeof(char));
+			auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
+			pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
+			if( static_cast<size_t>(cmemBuf.GetStringLength()) > CClipboard::CLIPBOARD_MAX_CHARS ){
+				cmemBuf._SetStringLength(CClipboard::CLIPBOARD_MAX_CHARS);
+			}
+		}
+		break;
+	}
+
+	if( pData != nullptr ){
+		::GlobalUnlock( hData );
+	}
+	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+		::GlobalFree( hData );
 	}
 
 	// アンドゥバッファの準備
@@ -2014,12 +2124,6 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 	/* アンドゥバッファの処理 */
 	SetUndoBuffer();
-
-	::GlobalUnlock( hData );
-	// 2004.07.12 fotomo/もか メモリリークの修正
-	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags(hData)) ){
-		::GlobalFree( hData );
-	}
 
 	return S_OK;
 }
