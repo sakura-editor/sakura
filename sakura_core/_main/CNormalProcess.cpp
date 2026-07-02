@@ -271,12 +271,8 @@ bool CNormalProcess::InitializeProcess()
 			//	引数の設定がBOXに反映されない
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
-			int nSize = std::size(pEditWnd->m_cDlgGrep.m_szFile);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
-			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
-			nSize = std::size(pEditWnd->m_cDlgGrep.m_szFolder);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダー */
-			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
+			pEditWnd->m_cDlgGrep.m_szFile = gi.cmGrepFile.GetStringPtr();	/* 検索ファイル */
+			pEditWnd->m_cDlgGrep.m_szFolder = cmemGrepFolder.GetStringPtr();	/* 検索フォルダー */
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  nullptr);
