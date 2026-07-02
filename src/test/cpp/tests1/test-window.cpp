@@ -410,6 +410,17 @@ TEST_F(EditWndTest, FileSaveWithBackupAgent001)
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileClose()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
+	auto backupAgent = std::make_unique<CBackupAgent>();
+
+	sBackup.m_bBackUpFolder = true;
+	sBackup.m_szBackUpFolder = L"%COMDESKTOP%";
+
+	SFilePath newPath;
+	backupAgent->FormatBackUpPath(newPath, std::size(newPath), backupPath.c_str());
+	EXPECT_THAT(newPath, StrEq(LR"(C:\Users\Public\Desktop\backup-agent-target.bak)"));
+
+	backupAgent = nullptr;
+
 	sBackup = backupOld;
 
 	std::filesystem::remove(targetPath);

@@ -147,8 +147,8 @@ struct MockCClipboard : public CClipboard {
 	{
 		ON_CALL(*this, OpenClipboard(_)).WillByDefault(Return(TRUE));
 		ON_CALL(*this, CloseClipboard()).WillByDefault(Return(TRUE));
-		ON_CALL(*this, GlobalAlloc(_, _)).WillByDefault(Invoke(&::GlobalAlloc ));
-		ON_CALL(*this, GlobalLock(_)).WillByDefault(Invoke(&::GlobalLock));
+		ON_CALL(*this, GlobalAlloc(_, _)).WillByDefault(&::GlobalAlloc);
+		ON_CALL(*this, GlobalLock(_)).WillByDefault(&::GlobalLock);
 	}
 };
 
