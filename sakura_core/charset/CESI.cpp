@@ -1032,7 +1032,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 						while( i < nSize && !IsXMLWhiteSpace(pBuf[i]) ){ i++; }
 					}
 					if( nSize <= i ){ return CODE_NONE; }
-					while( IsXMLWhiteSpace(pBuf[i]) && i < nSize ){ i++; }
+					while( i < nSize && IsXMLWhiteSpace(pBuf[i]) ){ i++; }	// 2026.06.23 CWE-125 fix: range check before deref (pBuf[nSize] OOB read)
 					if( nSize <= i ){ return CODE_NONE; }
 					if( '=' == pBuf[i]){
 						i += 1;
@@ -1042,7 +1042,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 						i--;
 						continue;
 					}
-					while( IsXMLWhiteSpace(pBuf[i]) && i < nSize ){ i++; }
+					while( i < nSize && IsXMLWhiteSpace(pBuf[i]) ){ i++; }	// 2026.06.23 CWE-125 fix: range check before deref (pBuf[nSize] OOB read)
 					if( nSize <= i ){ return CODE_NONE; }
 					char quoteChar = '\0';
 					int nBeginAttVal = i;

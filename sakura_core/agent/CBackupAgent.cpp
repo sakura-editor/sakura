@@ -289,6 +289,8 @@ bool CBackupAgent::FormatBackUpPath(
 	const WCHAR*	target_file
 )
 {
+	auto newPath = std::span(szNewPath, newPathCount);
+
 	WCHAR	szDrive[_MAX_DIR];
 	WCHAR	szDir[_MAX_DIR];
 	WCHAR	szFname[_MAX_FNAME];
@@ -309,7 +311,7 @@ bool CBackupAgent::FormatBackUpPath(
 			wcscpy( szNewPath, selDir );
 		}
 		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
-		AddLastYenFromDirectoryPath( szNewPath );
+		AddLastYenFromDirectoryPath(newPath);
 	}
 	else{
 		auto_sprintf( szNewPath, L"%s%s", szDrive, szDir );
