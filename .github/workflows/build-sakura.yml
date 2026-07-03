@@ -43,7 +43,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
         submodules: true
@@ -146,3 +146,98 @@ jobs:
       with:
         name: Dev ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Dev.zip'
+
+  sonar-build:
+    name: MSBuild for SonarCloud (x64/Debug)
+    runs-on: windows-latest
+
+    env:
+      BUILD_PLATFORM: x64
+      BUILD_CONFIGURATION: Debug
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+        submodules: true
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+
+    - name: Install AutoHotKey
+      run: |
+        $AutohotkeyDir = "$HOME\autohotkey"
+        if (!(Test-Path $AutohotkeyDir)) { New-Item -ItemType Directory -Path $AutohotkeyDir }
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip -OutFile "AutoHotkey.zip"
+        Expand-Archive -Path "AutoHotkey.zip" -DestinationPath $AutohotkeyDir -Force
+        echo "AutoHotKey=$HOME\autohotkey\AutoHotkey32.exe" >> $env:GITHUB_ENV
+
+    - name: Install Locale Emulator
+      run: |
+        $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
+        $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
+        Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
+        Start-Process $env:AutoHotKey "${LEInitScript}"
+        Start-Process "${LEExpandDir}\LEInstaller.exe"
+        echo "${LEExpandDir}" >> $env:GITHUB_PATH
+      shell: pwsh
+
+    - name: Install Build Wrapper
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+
+    - name: Build with Build-Wrapper
+      run: build-wrapper-win-x86-64.exe --out-dir bw-output MsBuild.exe /p:Platform=%BUILD_PLATFORM% /p:Configuration=%BUILD_CONFIGURATION% /t:ReBuild
+      shell: cmd
+
+    - name: Install OpenCppCoverage
+      working-directory: ${{ runner.temp }}
+      run: |
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe" -OutFile OpenCppCoverageSetup.exe
+        Start-Process -FilePath .\OpenCppCoverageSetup.exe -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" -Wait
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+      shell: pwsh
+
+    - name: Run Tests with coverage
+      run: |
+        $env:CMD_TESTS1 = $(Get-ChildItem -Recurse tests1.exe)[0].FullName
+        OpenCppCoverage.exe `
+          --export_type cobertura:tests1-coverage.xml `
+          --modules $env:CMD_TESTS1 `
+          --sources ${{ github.workspace }} `
+          --working_dir ${{ github.workspace }}\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }} `
+          --cover_children `
+          -- `
+          $env:CMD_TESTS1 `
+          --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
+      shell: pwsh
+
+    - name: Save sonar metadata
+      env:
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+      run: |
+        [ordered]@{
+          event_name  = '${{ github.event_name }}'
+          ref_name    = '${{ github.ref_name }}'
+          pr_number   = '${{ github.event.pull_request.number }}'
+          pr_head_ref = $env:PR_HEAD_REF
+          pr_base_ref = $env:PR_BASE_REF
+        } | ConvertTo-Json | Set-Content sonar-metadata.json
+        Copy-Item "$env:GITHUB_EVENT_PATH" github-event.json
+      shell: pwsh
+
+    - name: Upload sonar-input artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: sonar-input
+        path: |
+          bw-output/
+          tests1-coverage.xml
+          tests1-googletest.xml
+          sonar-metadata.json
+          github-event.json
