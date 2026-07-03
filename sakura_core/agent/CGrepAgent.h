@@ -87,6 +87,7 @@ struct SGrepMatchInfo {
 };
 
 //! DoGrep の検索入力文字列（非所有）
+//! @note 全メンバーは非 null 必須（DoGrep 内で無条件に参照されるメンバーがある）
 struct SGrepInput {
 	const CNativeW*	pcmGrepKey;		//!< [in] 検索キー
 	const CNativeW*	pcmGrepReplace;	//!< [in] 置換文字列
