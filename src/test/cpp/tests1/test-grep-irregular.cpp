@@ -1,4 +1,9 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2026, Sakura Editor Organization
+
+	SPDX-License-Identifier: Zlib
+*/
 // ======================================================================
 // Phase 4: Grep Irregular and Boundary Unit Tests (PR #2459)
 // ======================================================================
