@@ -378,7 +378,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	//  アウトライン解析方法
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szKeyData))) {
-		nDataLen = (int)wcslen( szKeyData );
+		nDataLen = (int)wcsnlen( szKeyData, _countof(szKeyData) );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
@@ -399,7 +399,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	}
 	//  スマートインデント
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szKeyData))) {
-		nDataLen = (int)wcslen( szKeyData );
+		nDataLen = (int)wcsnlen( szKeyData, _countof(szKeyData) );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
@@ -785,20 +785,24 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		// 2026.06.23 CWE-787 fix: the original '>' allowed wcslen(p2)==DICT_ABOUT_LEN, so the
 		//            following copy wrote DICT_ABOUT_LEN+1 WCHAR into m_szAbout[DICT_ABOUT_LEN]
 		//            (a 1-WCHAR overflow). Reject when the value cannot hold its NUL terminator.
-		if (wcslen(p2) >= DICT_ABOUT_LEN) {
+		//  p3 was advanced past the '\0' placed at the second comma, so
+		// (p3 - 1) - p2 gives the exact length of p2 without walking the string.
+		if (DICT_ABOUT_LEN <= (p3 - 1) - p2) {
 			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN - 1 );
 			sErrMsg = msgBuff;
 			++invalid_record;
 			continue;
 		}
 
-		//Path
 		// 2026.06.23 CWE-787 fix: p3 (the dictionary path) is attacker-controlled and unbounded
 		//            (it is the remainder of a line read by CTextInputStream::ReadLineW with no
 		//            length limit). The original wcscpy into m_szPath (StaticString<_MAX_PATH>)
 		//            therefore overflowed the type-settings object on a crafted import file.
 		//            Reject over-long paths, consistent with the About-length handling above.
-		if (wcslen(p3) >= m_Types.m_KeyHelpArr[i].m_szPath.size()) {
+		//Path
+		// p3 points into buff; end-p3 gives the remaining length without scanning the string.
+		if (const auto end = std::data(buff) + std::size(buff);
+			std::size(m_Types.m_KeyHelpArr[i].m_szPath) <= end - p3) {
 			auto_sprintf( msgBuff, LS(STR_IMPEXP_DIC_LENGTH), int(m_Types.m_KeyHelpArr[i].m_szPath.size()) - 1 );
 			sErrMsg = msgBuff;
 			++invalid_record;
