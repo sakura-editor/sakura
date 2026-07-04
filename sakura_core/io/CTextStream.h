@@ -8,7 +8,7 @@
 //将来はUTF-8等にすることにより、UNICODEデータの欠落が起こらないようにしたい。
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -32,10 +32,12 @@ public:
 	virtual ~CTextInputStream();
 
 	//操作
-	std::wstring ReadLineW(); //!< 1行読込。改行は削る
+	void			ReadLineW(std::wstring& line);
+	std::wstring	ReadLineW();
 
 private:
-	bool m_bIsUtf8; //!< UTF-8ならtrue
+	bool			m_bIsUtf8 = false;						//!< UTF-8ならtrue
+	std::string		m_Buffer = std::string(4096, L'\0');	//!< 内部バッファ
 };
 
 //テキスト出力ストリーム
@@ -68,4 +70,5 @@ class CTextInputStream_AbsIni final : public CTextInputStream{
 public:
 	CTextInputStream_AbsIni(const WCHAR* pszPath, bool bOrExedir = true);
 };
+
 #endif /* SAKURA_CTEXTSTREAM_CF4FEC73_4575_4B80_98F7_CFCBC0B433CD_H_ */

@@ -98,9 +98,11 @@ bool CProfile::ReadProfile(
 	}
 
 	try{
-		while( in ){
+		std::wstring line;
+
+		while (in) {
 			//1行読込
-			std::wstring line=in.ReadLineW();
+			in.ReadLineW(line);
 
 			//解析
 			_ReadOneline(line);
