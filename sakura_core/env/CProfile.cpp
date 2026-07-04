@@ -12,7 +12,7 @@
 	Copyright (C) 2004, D.S.Koba, MIK, genta
 	Copyright (C) 2006, D.S.Koba, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -39,7 +39,7 @@
 	@param line [in] 読み込んだ行
 */
 void CProfile::_ReadOneline(
-	const std::wstring& line
+	std::wstring_view line
 )
 {
 	//	空行を読み飛ばす
@@ -52,15 +52,22 @@ void CProfile::_ReadOneline(
 	}
 
 	// セクション取得
-	if (std::wsmatch m; std::regex_match(line, m, std::wregex(LR"(^\[([^=]+)\]$)"))) {
-		m_ProfileData.emplace_back(static_cast<std::wstring>(m[1]));
+	if (2 < line.length() && L'[' == line.front() && L']' == line.back()) {
+		if (const auto sectionName{ line.substr(1, line.length() - 2) };
+			std::wstring_view::npos == sectionName.find(L'=')) {
+			m_ProfileData.emplace_back(sectionName);
+			return;
+		}
+	}
+
+	// 最初のセクション以前の行のエントリは無視
+	if (m_ProfileData.empty()) {
 		return;
 	}
 
 	// エントリ取得
-	// ※最初のセクション以前の行のエントリは無視
-	if (std::wsmatch m; !m_ProfileData.empty() && std::regex_match(line, m, std::wregex(LR"(^([^=]+)=(.*)$)"))) {
-		m_ProfileData.back().m_Entries.try_emplace(m[1], m[2]);
+	if (const auto pos = line.find(L'='); std::wstring_view::npos != pos && 0 < pos && pos + 1 <= line.length()) {
+		m_ProfileData.back().m_Entries.try_emplace(std::wstring{ line.substr(0, pos) }, line.substr(pos + 1));
 	}
 }
 
