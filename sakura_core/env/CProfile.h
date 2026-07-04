@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2003-2006, D.S.Koba
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -29,7 +29,7 @@ class CProfile
 private:
 	struct SectionType
 	{
-		using EntriesType = std::map< std::wstring, std::wstring >;
+		using EntriesType = std::map<std::wstring, std::wstring, std::less<>>;
 
 		explicit SectionType(
 			std::wstring_view name
@@ -61,7 +61,7 @@ public:
 	void DUMP( void );
 
 private:
-	void _ReadOneline(const std::wstring& line);
+	void _ReadOneline(std::wstring_view line);
 	bool _WriteFile(const std::filesystem::path& path, std::span<const std::wstring> lines);
 
 	// メンバ変数
