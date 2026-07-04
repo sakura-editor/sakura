@@ -188,10 +188,10 @@ bool CProcessFactory::StartControlProcess()
 
 	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
+		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN -PROF=\"%ls\"",
 			szEXE, GetProfileName() );
 	}else{
-		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN", szEXE ); // ""付加
+		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN", szEXE ); // ""付加
 	}
 
 	//常駐プロセス起動
