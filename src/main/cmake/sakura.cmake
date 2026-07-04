@@ -68,18 +68,22 @@ else()
   set(GENERATOR_ARGS_FOR_HOST_TOOLS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
 
-# vswhereを探す。（なくてもOK）
+# vswhereを探す。（必須）
+# Chocolatey版vswhere(ver3.1.7+)を最優先とする
+# Visual Studio付属のvswhereは %ProgramFiles(x86)% に入っている
+# %ProgramFiles% は Windows 10 32bit版向けなので削除可
 find_program(CMD_VSWHERE vswhere.exe
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ChocolateyInstall}/bin"
     "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
-  PATH_SUFFIXES
-    "bin"
+    "$ENV{ProgramFiles}/Microsoft Visual Studio/Installer"
   DOC "Visual Studio Locator"
 )
 
 if(CMD_VSWHERE)
   message(STATUS "Found vswhere: ${CMD_VSWHERE}")
+else()
+  message(FATAL_ERROR "vswhere not found")
 endif()
 
 # 環境変数とvswhereを使ってVSバージョンを取得する
