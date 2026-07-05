@@ -6,6 +6,7 @@ from __future__ import annotations
 import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -204,14 +205,51 @@ def render_output(in_file: str, mode: str, enum_name: str, entries: list[tuple[s
     return "\n".join(lines) + "\n"
 
 
+def _validate_path_in_allowed_dirs(file_path: Path, allowed_roots: list[Path]) -> bool:
+    """
+    Validate that file_path is under at least one of the allowed root directories.
+    
+    Args:
+        file_path: Path to validate
+        allowed_roots: List of allowed root directory paths
+    
+    Returns:
+        True if file_path is under any allowed root, False otherwise
+    """
+    for root in allowed_roots:
+        try:
+            file_path.relative_to(root)
+            return True
+        except ValueError:
+            continue
+    return False
+
+
 def main_impl(in_file: str, out_file: str, mode_name: str, enum_name: str) -> int:
     mode = normalize_mode(mode_name)
     if mode is None:
         print(f"Error: Unknown mode[{mode_name}].")
         return 2
 
-    in_path = Path(in_file)
-    out_path = Path(out_file)
+    in_path = Path(in_file).resolve()
+    out_path = Path(out_file).resolve()
+
+    # Project root is 3 levels up from this script: ./src/main/py/header_make.py
+    project_root = Path(__file__).resolve().parents[3]
+    temp_root = Path(tempfile.gettempdir()).resolve()
+    working_dir = project_root.parents[0]
+
+    # Validate that in_file is under project root OR under temp directory
+    if not _validate_path_in_allowed_dirs(in_path, [project_root, temp_root]):
+        print(f"Error: Input file must be under project root [{project_root}] or temp directory [{temp_root}].")
+        print(f"  Specified: {in_path}")
+        return 3
+
+    # Validate that out_file is under working directory OR under temp directory
+    if not _validate_path_in_allowed_dirs(out_path, [working_dir, temp_root]):
+        print(f"Error: Output file must be under working directory [{working_dir}] or temp directory [{temp_root}].")
+        print(f"  Specified: {out_path}")
+        return 4
 
     if not needs_regeneration(in_path, out_path):
         print(f"OutputFile[{out_file}] needs no change.")

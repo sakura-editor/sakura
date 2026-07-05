@@ -395,6 +395,30 @@ class TestMainExecution:
             
             assert result == 0
             assert out_file.exists()
+    
+    def test_main_rejects_path_outside_project_root(self):
+        """main_impl returns 3 when input file is outside project root."""
+        result = header_make.main_impl(
+            in_file=r"C:\Windows\System32\input.hsrc",
+            out_file="output.h",
+            mode_name="define",
+            enum_name=""
+        )
+        assert result == 3
+    
+    def test_main_rejects_output_path_outside_allowed_dirs(self):
+        """main_impl returns 4 when output file is outside allowed directories."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            in_file = Path(tmpdir) / "input.txt"
+            in_file.write_text("TEST_ID = 1\n")
+            
+            result = header_make.main_impl(
+                in_file=str(in_file),
+                out_file=r"C:\Windows\System32\output.h",
+                mode_name="define",
+                enum_name=""
+            )
+            assert result == 4
 
     def test_enum_name_value_reflected_in_output(self):
         """Verify that enum_name parameter values are reflected in the output."""
