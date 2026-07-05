@@ -162,10 +162,16 @@ endif()
 
 message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
 
+# Find Python Interpreter(required)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+message(STATUS "Found Python: ${Python3_EXECUTABLE}")
+
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ProgramFiles}/7-zip"
+    "$ENV{ChocolateyInstall}/bin"
 )
 
 if(NOT 7ZIP_EXECUTABLE)

@@ -104,9 +104,71 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v3
 
+    # SonarQubeのBuild Wrapperをインストールする
+    - name: Install Build Wrapper
+      if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+
+    # OpenCppCoverageをインストールする
+    - name: Install OpenCppCoverage (winget)
+      id: install_opencppcoverage_winget
+      if: ${{ matrix.config == 'Debug' }}
+      continue-on-error: true
+      run: |
+        winget install `
+          --id OpenCppCoverage.OpenCppCoverage `
+          --exact `
+          --accept-package-agreements `
+          --accept-source-agreements
+      shell: pwsh
+
+    # wingetは失敗することがあるので、インストーラー方式も残しておく。
+    - name: Install OpenCppCoverage (installer)
+      if: ${{ matrix.config == 'Debug' && steps.install_opencppcoverage_winget.outcome == 'failure' }}
+      working-directory: ${{ runner.temp }}
+      run: |
+        $installer = '.\OpenCppCoverageSetup.exe'
+        Invoke-WebRequest `
+          -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe" `
+          -OutFile $installer
+        $expectedSha256 = '2295a733da39412c61e4f478677519dd0bb1893d88313ce56b468c9e50517888'
+        $actualSha256 = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+        if ($actualSha256 -ne $expectedSha256.ToLowerInvariant()) {
+          throw "SHA256 mismatch: expected=$expectedSha256 actual=$actualSha256"
+        }
+        Start-Process `
+          -FilePath $installer `
+          -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" `
+          -Wait
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+      shell: pwsh
+
     - name: Set up Python
-      if: ${{ matrix.platform == 'x64' }}
       uses: actions/setup-python@v6
+      with:
+        python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+
+    - name: Copy github-event.json
+      run: |
+        Copy-Item "$env:GITHUB_EVENT_PATH" github-event.json
+      shell: pwsh
+
+    - name: Generate sonar metadata
+      if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
+      env:
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+      run: |
+        [ordered]@{
+          event_name  = '${{ github.event_name }}'
+          ref_name    = '${{ github.ref_name }}'
+          pr_number   = '${{ github.event.pull_request.number }}'
+          pr_head_ref = $env:PR_HEAD_REF
+          pr_base_ref = $env:PR_BASE_REF
+        } | ConvertTo-Json | Set-Content sonar-metadata.json
+      shell: pwsh
 
     - name: Setup PR environment variables
       if: github.event_name == 'pull_request'
@@ -117,7 +179,13 @@ jobs:
         echo "GITHUB_PR_HEAD_SHORT_COMMIT=$('${{ github.event.pull_request.head.sha }}'.SubString(0, 8))" >> $env:GITHUB_ENV
       shell: pwsh
 
+    - name: Build with Build-Wrapper
+      if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
+      run: build-wrapper-win-x86-64.exe --out-dir bw-output MsBuild.exe /p:Platform=${{ matrix.platform }} /p:Configuration=${{ matrix.config }}
+      shell: cmd
+
     - name: MSBuild
+      if: ${{ matrix.platform != 'x64' || matrix.config != 'Debug' }}
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
 
@@ -128,9 +196,29 @@ jobs:
         path: help
 
     - name: Run unit tests
-      run: .\tests1.exe --gtest_output=xml:${{github.workspace}}\tests1.exe-googletest-${{matrix.platform}}-${{matrix.config}}.xml
-      working-directory: ${{github.workspace}}\${{matrix.platform}}\${{matrix.config}}
+      run: ctest
+        --test-dir build/${{ matrix.platform }}/CMakeTools
+        -C ${{ matrix.config }}
+        --output-on-failure
       shell: pwsh
+
+    - name: Upload test result
+      uses: EnricoMi/publish-unit-test-result-action/windows@v2
+      with:
+        files: |
+          *-googletest.xml
+
+    - name: Upload sonar-input artifact
+      if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: sonar-input
+        path: |
+          bw-output/
+          tests*-coverage.xml
+          tests*-googletest.xml
+          sonar-metadata.json
+          github-event.json
 
       # Toolbar Bitmap Split/Mux
     - run: build-bmp-tools.bat ${{matrix.config}}
@@ -181,98 +269,3 @@ jobs:
       with:
         name: Dev ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Dev.zip'
-
-  sonar-build:
-    name: MSBuild for SonarCloud (x64/Debug)
-    runs-on: windows-latest
-
-    env:
-      BUILD_PLATFORM: x64
-      BUILD_CONFIGURATION: Debug
-
-    steps:
-    - uses: actions/checkout@v7
-      with:
-        fetch-depth: 0
-        submodules: true
-
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v6
-
-    - name: Install AutoHotKey
-      run: |
-        $AutohotkeyDir = "$HOME\autohotkey"
-        if (!(Test-Path $AutohotkeyDir)) { New-Item -ItemType Directory -Path $AutohotkeyDir }
-        $ProgressPreference = 'SilentlyContinue'
-        Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip -OutFile "AutoHotkey.zip"
-        Expand-Archive -Path "AutoHotkey.zip" -DestinationPath $AutohotkeyDir -Force
-        echo "AutoHotKey=$HOME\autohotkey\AutoHotkey32.exe" >> $env:GITHUB_ENV
-
-    - name: Install Locale Emulator
-      run: |
-        $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
-        $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
-        Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
-        Start-Process $env:AutoHotKey "${LEInitScript}"
-        Start-Process "${LEExpandDir}\LEInstaller.exe"
-        echo "${LEExpandDir}" >> $env:GITHUB_PATH
-      shell: pwsh
-
-    - name: Install Build Wrapper
-      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
-
-    - name: Build with Build-Wrapper
-      run: build-wrapper-win-x86-64.exe --out-dir bw-output MsBuild.exe /p:Platform=%BUILD_PLATFORM% /p:Configuration=%BUILD_CONFIGURATION% /t:ReBuild
-      shell: cmd
-
-    - name: Install OpenCppCoverage
-      working-directory: ${{ runner.temp }}
-      run: |
-        $ProgressPreference = 'SilentlyContinue'
-        Invoke-WebRequest -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe" -OutFile OpenCppCoverageSetup.exe
-        Start-Process -FilePath .\OpenCppCoverageSetup.exe -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" -Wait
-        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
-      shell: pwsh
-
-    - name: Run Tests with coverage
-      run: |
-        $env:CMD_TESTS1 = $(Get-ChildItem -Recurse tests1.exe)[0].FullName
-        OpenCppCoverage.exe `
-          --export_type cobertura:tests1-coverage.xml `
-          --modules $env:CMD_TESTS1 `
-          --sources ${{ github.workspace }} `
-          --working_dir ${{ github.workspace }}\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }} `
-          --cover_children `
-          -- `
-          $env:CMD_TESTS1 `
-          --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
-      shell: pwsh
-
-    - name: Save sonar metadata
-      env:
-        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
-        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
-      run: |
-        [ordered]@{
-          event_name  = '${{ github.event_name }}'
-          ref_name    = '${{ github.ref_name }}'
-          pr_number   = '${{ github.event.pull_request.number }}'
-          pr_head_ref = $env:PR_HEAD_REF
-          pr_base_ref = $env:PR_BASE_REF
-        } | ConvertTo-Json | Set-Content sonar-metadata.json
-        Copy-Item "$env:GITHUB_EVENT_PATH" github-event.json
-      shell: pwsh
-
-    - name: Upload sonar-input artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: sonar-input
-        path: |
-          bw-output/
-          tests1-coverage.xml
-          tests1-googletest.xml
-          sonar-metadata.json
-          github-event.json
