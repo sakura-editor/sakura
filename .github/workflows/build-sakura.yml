@@ -143,6 +143,15 @@ jobs:
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
       shell: pwsh
 
+    - name: Install Ctags (winget)
+      run: |
+        winget install `
+          --id UniversalCtags.Ctags `
+          --exact `
+          --accept-package-agreements `
+          --accept-source-agreements
+      shell: pwsh
+
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
