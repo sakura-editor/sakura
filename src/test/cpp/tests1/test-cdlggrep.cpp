@@ -196,15 +196,15 @@ TEST_F(CDlgGrepTest, RoundTrip_GuiToCliToEnumKeys)
 	EXPECT_EQ(0, keys.SetFileKeys(packed.c_str()));
 
 	EXPECT_EQ(1, keys.m_vecSearchFileKeys.size());						// 検索対象は 1 件
-	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0]);
+	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0].c_str());
 
 	EXPECT_EQ(2, keys.m_vecExceptFolderKeys.size());					// 除外フォルダーは 2 件
-	EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0]);
-	EXPECT_STREQ(L"dist", keys.m_vecExceptFolderKeys[1]);
+	EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0].c_str());
+	EXPECT_STREQ(L"dist", keys.m_vecExceptFolderKeys[1].c_str());
 
 	EXPECT_EQ(2, keys.m_vecExceptFileKeys.size());						// ! プレフィックスはワイルドカード除外に入る
-	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileKeys[0]);
-	EXPECT_STREQ(L"*.tmp", keys.m_vecExceptFileKeys[1]);
+	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileKeys[0].c_str());
+	EXPECT_STREQ(L"*.tmp", keys.m_vecExceptFileKeys[1].c_str());
 	EXPECT_TRUE(keys.m_vecExceptFileRegexPatterns.empty());				// 正規表現除外リストは空
 }
 

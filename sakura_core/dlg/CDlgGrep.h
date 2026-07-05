@@ -51,6 +51,13 @@ public:
 	// 履歴が空なら既定値を補い、次回以降に選べるよう履歴にも積む。
 	void DetermineDefaultExcludePatterns();
 
+	//! 検索ファイル/フォルダー/除外パターン/カレントファイルパスの既定値を履歴から補完する
+	// CDlgGrep::DoModal / CDlgGrepReplace::DoModal 共通の初期化（2-E で重複解消）。
+	void LoadDefaultsFromShareData(const WCHAR* pszCurrentFilePath);
+
+	//! HWND ファイルトークンの接頭辞（":HWND:..." 形式の共通定義）
+	static constexpr const wchar_t HWND_FILE_TOKEN_PREFIX[] = L":HWND:";
+
 	//! HWND ファイルトークンの生成と判定（":HWND:..." 形式）
 	// 「編集中のテキストから検索」時の擬似ファイル名として使う。
 	static std::wstring BuildHwndFileToken(HWND hwnd);

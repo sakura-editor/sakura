@@ -452,14 +452,14 @@ TEST(CGrepEnumKeys, ParseFileAndFolderKeysWithDefaults)
 	ASSERT_EQ(0, keys.SetFileKeys(L"*.cpp;#build"));
 
 	ASSERT_EQ(keys.m_vecSearchFileKeys.size(), 1u);
-	EXPECT_STREQ(keys.m_vecSearchFileKeys[0], L"*.cpp");		// *.cpp が検索対象ファイルに振り分けられる
+	EXPECT_STREQ(keys.m_vecSearchFileKeys[0].c_str(), L"*.cpp");		// *.cpp が検索対象ファイルに振り分けられる
 
 	const auto excludeFolders = keys.GetExcludeFolders();
 	ASSERT_EQ(excludeFolders.size(), 1u);
 	EXPECT_STREQ(excludeFolders[0], L"build");					// # を除いたフォルダー名で除外に振り分けられる
 
 	ASSERT_EQ(keys.m_vecSearchFolderKeys.size(), 1u);
-	EXPECT_STREQ(keys.m_vecSearchFolderKeys[0], L"*.*");		// フォルダー未指定時は *.* を補完
+	EXPECT_STREQ(keys.m_vecSearchFolderKeys[0].c_str(), L"*.*");		// フォルダー未指定時は *.* を補完
 }
 
 /*!
@@ -951,8 +951,8 @@ TEST(CGrepEnumKeys, SplitPattern_SemicolonSeparator)
 	keys.SetFileKeys(L"*.cpp;*.h");
 	EXPECT_EQ(2, keys.m_vecSearchFileKeys.size());
 	if (keys.m_vecSearchFileKeys.size() == 2) {
-		EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0]);
-		EXPECT_STREQ(L"*.h", keys.m_vecSearchFileKeys[1]);
+		EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0].c_str());
+		EXPECT_STREQ(L"*.h", keys.m_vecSearchFileKeys[1].c_str());
 	}
 }
 
@@ -1021,8 +1021,8 @@ TEST(CGrepEnumKeys, SplitPattern_QuotesRemoved)
 	keys.SetFileKeys(L"\"*.cpp\";\"*.h\"");
 	EXPECT_EQ(2, keys.m_vecSearchFileKeys.size());
 	if (keys.m_vecSearchFileKeys.size() == 2) {
-		EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0]);
-		EXPECT_STREQ(L"*.h", keys.m_vecSearchFileKeys[1]);
+		EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0].c_str());
+		EXPECT_STREQ(L"*.h", keys.m_vecSearchFileKeys[1].c_str());
 	}
 }
 
@@ -1037,7 +1037,7 @@ TEST(CGrepEnumKeys, SplitPattern_QuotesInMiddle)
 	keys.SetFileKeys(L"a\"b\"c");
 	EXPECT_EQ(1, keys.m_vecSearchFileKeys.size());
 	if (keys.m_vecSearchFileKeys.size() == 1) {
-		EXPECT_STREQ(L"abc", keys.m_vecSearchFileKeys[0]);
+		EXPECT_STREQ(L"abc", keys.m_vecSearchFileKeys[0].c_str());
 	}
 }
 
@@ -1054,7 +1054,7 @@ TEST(CGrepEnumKeys, SetFileKeys_EmptyInputFallsBackToWildcard)
 	EXPECT_EQ(0, keys.SetFileKeys(L""));						// 受理する
 	EXPECT_EQ(1, keys.m_vecSearchFileKeys.size());				// *.* が 1 件補完される
 	if (keys.m_vecSearchFileKeys.size() == 1) {
-		EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0]);
+		EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0].c_str());
 	}
 }
 
@@ -1089,7 +1089,7 @@ TEST(CGrepEnumKeys, SetFileKeys_ExcludeFolderHashRelative)
 	EXPECT_EQ(0, keys.SetFileKeys(L"#build"));					// 受理する
 	EXPECT_EQ(1, keys.m_vecExceptFolderKeys.size());			// 相対除外フォルダーに 1 件追加
 	if (keys.m_vecExceptFolderKeys.size() == 1) {
-		EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0]);
+		EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0].c_str());
 	}
 }
 
@@ -1104,7 +1104,7 @@ TEST(CGrepEnumKeys, SetFileKeys_ExcludeFolderHashAbsolute)
 	EXPECT_EQ(0, keys.SetFileKeys(L"#C:\\build"));				// 受理する
 	EXPECT_EQ(1, keys.m_vecExceptAbsFolderKeys.size());			// 絶対除外フォルダーに 1 件追加
 	if (keys.m_vecExceptAbsFolderKeys.size() == 1) {
-		EXPECT_STREQ(L"C:\\build", keys.m_vecExceptAbsFolderKeys[0]);
+		EXPECT_STREQ(L"C:\\build", keys.m_vecExceptAbsFolderKeys[0].c_str());
 	}
 }
 
@@ -1141,7 +1141,7 @@ TEST(CGrepEnumKeys, SetFileKeys_ExcludeFileWildcardByDefault)
 	CGrepEnumKeys keys;
 	ASSERT_EQ(0, keys.SetFileKeys(L"*.cpp;!*.obj"));   // 第2引数省略=false
 	ASSERT_EQ(1u, keys.m_vecExceptFileKeys.size());
-	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileKeys[0]);
+	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileKeys[0].c_str());
 	EXPECT_TRUE(keys.m_vecExceptFileRegexPatterns.empty());
 }
 
@@ -1155,7 +1155,7 @@ TEST(CGrepEnumKeys, SetFileKeys_TildeIsNormalSearchTarget)
 	CGrepEnumKeys keys;
 	ASSERT_EQ(0, keys.SetFileKeys(L"~temp*"));
 	ASSERT_EQ(1u, keys.m_vecSearchFileKeys.size());
-	EXPECT_STREQ(L"~temp*", keys.m_vecSearchFileKeys[0]);
+	EXPECT_STREQ(L"~temp*", keys.m_vecSearchFileKeys[0].c_str());
 	EXPECT_TRUE(keys.m_vecExceptFileKeys.empty());			// 除外（ワイルドカード）にも入らない
 	EXPECT_TRUE(keys.m_vecExceptFileRegexPatterns.empty());	// 除外（正規表現）にも入らない
 }
@@ -1184,7 +1184,7 @@ TEST(CGrepEnumKeys, AddExceptFile_AbsolutePath)
 	keys.AddExceptFile(L"C:\\tmp\\foo.obj");
 	EXPECT_EQ(1, keys.m_vecExceptAbsFileKeys.size());
 	if (keys.m_vecExceptAbsFileKeys.size() == 1) {
-		EXPECT_STREQ(L"C:\\tmp\\foo.obj", keys.m_vecExceptAbsFileKeys[0]);
+		EXPECT_STREQ(L"C:\\tmp\\foo.obj", keys.m_vecExceptAbsFileKeys[0].c_str());
 	}
 }
 
@@ -1210,7 +1210,7 @@ TEST(CGrepEnumKeys, AddExceptFile_HashIsNotSpecial)
 	keys.AddExceptFile(L"#foo");
 	EXPECT_EQ(1, keys.m_vecExceptFileKeys.size());
 	if (keys.m_vecExceptFileKeys.size() == 1) {
-		EXPECT_STREQ(L"#foo", keys.m_vecExceptFileKeys[0]);
+		EXPECT_STREQ(L"#foo", keys.m_vecExceptFileKeys[0].c_str());
 	}
 }
 

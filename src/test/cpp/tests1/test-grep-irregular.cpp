@@ -215,7 +215,7 @@ TEST(Irregular, SetFileKeys_EmptyString_DefaultsApplied) {
 	CGrepEnumKeys keys;
 	EXPECT_EQ(0, keys.SetFileKeys(L""));						// 空文字列でも受理する
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());				// 検索対象は既定値で 1 件
-	EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0]);			// 既定の検索対象
+	EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0].c_str());			// 既定の検索対象
 }
 
 /*!
@@ -226,7 +226,7 @@ TEST(Irregular, SetFileKeys_OnlyWhitespace_DefaultsApplied) {
 	CGrepEnumKeys keys;
 	EXPECT_EQ(0, keys.SetFileKeys(L"   "));						// 空白のみでも受理する
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());				// 検索対象は既定値で 1 件
-	EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0]);			// 既定の検索対象
+	EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0].c_str());			// 既定の検索対象
 }
 
 /*!
@@ -237,11 +237,11 @@ TEST(Irregular, SetFileKeys_OnlyExcludePatterns_DefaultSearchApplied) {
 	CGrepEnumKeys keys;
 	EXPECT_EQ(0, keys.SetFileKeys(L"!*.obj;#build", /*bExcludeFileRegex=*/true));	// 解析は成功する
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());							// 検索対象は補完されて 1 件
-	EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0]);						// 既定の検索対象
+	EXPECT_STREQ(L"*.*", keys.m_vecSearchFileKeys[0].c_str());						// 既定の検索対象
 	ASSERT_EQ(1, keys.m_vecExceptFileRegexPatterns.size());					// 除外正規表現は 1 件
 	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileRegexPatterns[0].c_str());	// 除外ファイルの中身
 	ASSERT_EQ(1, keys.m_vecExceptFolderKeys.size());						// 除外フォルダーは 1 件
-	EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0]);					// 除外フォルダー名
+	EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0].c_str());					// 除外フォルダー名
 }
 
 /*!
@@ -253,7 +253,7 @@ TEST(Irregular, SetFileKeys_VeryLongPattern_4096Chars) {
 	std::wstring longPattern(4096, L'A');
 	EXPECT_EQ(0, keys.SetFileKeys(longPattern.c_str()));			// 長大入力でも解析は成功する
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());					// 1 件のまま
-	EXPECT_EQ(4096u, wcslen(keys.m_vecSearchFileKeys[0]));			// 長さをそのまま保持する
+	EXPECT_EQ(4096u, keys.m_vecSearchFileKeys[0].size());			// 長さをそのまま保持する
 }
 
 /*!
@@ -266,7 +266,7 @@ TEST(Irregular, SetFileKeys_ManyDuplicates_DeduplicatedTo1) {
 	for (int i = 0; i < 100; ++i) pattern += L"*.cpp;";
 	EXPECT_EQ(0, keys.SetFileKeys(pattern.c_str()));				// 重複があっても解析は成功する
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());					// 重複を 1 件にまとめる
-	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0]);			// 残る要素は *.cpp
+	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0].c_str());			// 残る要素は *.cpp
 }
 
 /*!
@@ -278,7 +278,7 @@ TEST(Irregular, SetFileKeys_NullByteInMiddle_TruncatesAtNull) {
 	std::wstring pattern(L"*.cpp\0*.h", 11);
 	EXPECT_EQ(0, keys.SetFileKeys(pattern.c_str()));				// c_str() なので途中の NUL で切れる
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());					// NUL 以降は見ない
-	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0]);			// 先頭側だけ残る
+	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0].c_str());			// 先頭側だけ残る
 }
 
 /*!
@@ -315,7 +315,7 @@ TEST(Irregular, SetFileKeys_PathWithDriveLetterInMiddle_TreatedAsRelative) {
 	EXPECT_EQ(0, keys.SetFileKeys(L"foo\\C:\\bar"));					// 解析は成功する
 	// 先頭が絶対パス形でないため、相対パス扱いのまま保持する。
 	ASSERT_EQ(1, keys.m_vecSearchFileKeys.size());						// 1 要素のまま
-	EXPECT_STREQ(L"foo\\C:\\bar", keys.m_vecSearchFileKeys[0]);			// 文字列をそのまま保持
+	EXPECT_STREQ(L"foo\\C:\\bar", keys.m_vecSearchFileKeys[0].c_str());			// 文字列をそのまま保持
 }
 
 // =============================================================================

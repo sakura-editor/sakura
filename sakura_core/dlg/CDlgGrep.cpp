@@ -20,6 +20,7 @@
 #include "dlg/CDlgGrep.h"
 #include "agent/CGrepAgent.h"
 #include "grep/CGrepEnumKeys.h"
+#include "grep/GrepPathFormat.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "charset/CCodePage.h"
 #include "util/module.h"
@@ -255,21 +256,30 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
+	LoadDefaultsFromShareData( pszCurrentFilePath );
+
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)nullptr );
+}
+
+/*!
+	検索ファイル/フォルダー/除外パターン/カレントファイルパスの既定値を履歴から補完する
+	（CDlgGrep::DoModal / CDlgGrepReplace::DoModal 共通。2-E で重複解消）
+*/
+void CDlgGrep::LoadDefaultsFromShareData( const WCHAR* pszCurrentFilePath )
+{
 	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 		wcscpy_s( m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		wcscpy_s( m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
-	
+
 	/* 除外ファイル / 除外フォルダー */
 	DetermineDefaultExcludePatterns();
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		wcscpy_s(m_szCurrentFilePath, std::size(m_szCurrentFilePath), pszCurrentFilePath);
 	}
-
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)nullptr );
 }
 
 BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
@@ -437,21 +447,9 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 				wcsncpy_s( szFolder, nMaxPath, vPaths.rbegin()->c_str(), _TRUNCATE );
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
-					szFolder[0] = L'\0';
-					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
-						WCHAR szFolderItem[nMaxPath];
-						wcsncpy_s( szFolderItem, nMaxPath, vPaths[i].c_str(), _TRUNCATE );
-						if( wcschr( szFolderItem, L';' ) ){
-							szFolderItem[0] = L'"';
-							wcsncpy_s( szFolderItem + 1, nMaxPath - 1, vPaths[i].c_str(), _TRUNCATE );
-							wcscat_s( szFolderItem, nMaxPath, L"\"" );
-						}
-						if( i ){
-							wcscat_s( szFolder, nMaxPath, L";" );
-						}
-						wcscat_s( szFolder, nMaxPath, szFolderItem );
-					}
-					::SetWindowText( hwnd, szFolder );
+					// ';' 区切り連結と引用は共通ヘルパに集約（2-E）
+					const std::wstring strJoined = FormatPathList( vPaths );
+					::SetWindowText( hwnd, strJoined.c_str() );
 				}
 			}
 		}
@@ -860,10 +858,8 @@ int CDlgGrep::GetData( void )
 		// 2011.11.24 Moca 複数フォルダー指定
 		std::vector<std::wstring> vPaths;
 		CGrepAgent::CreateFolders( m_szFolder, vPaths );
-		int nFolderLen = 0;
 		const int nMaxPath = MAX_GREP_PATH;
-		WCHAR szFolder[nMaxPath];
-		szFolder[0] = L'\0';
+		std::wstring strFolder;
 		for( int i = 0 ; i < (int)vPaths.size(); i ++ ){
 			// 相対パス→絶対パス
 			if( !::SetCurrentDirectory( vPaths[i].c_str() ) ){
@@ -872,24 +868,18 @@ int CDlgGrep::GetData( void )
 			}
 			WCHAR szFolderItem[nMaxPath];
 			::GetCurrentDirectory( nMaxPath, szFolderItem );
-			// ;がフォルダー名に含まれていたら""で囲う
-			if( wcschr( szFolderItem, L';' ) ){
-				szFolderItem[0] = L'"';
-				::GetCurrentDirectory( nMaxPath - 2, szFolderItem + 1 );
-				wcscat_s(szFolderItem, nMaxPath, L"\"");
-			}
-			auto nFolderItemLen = int(std::wstring_view(szFolderItem).length());
-			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
+			// ;がフォルダー名に含まれていたら""で囲う（引用は共通ヘルパに集約（2-E））
+			const std::wstring strFolderItem = QuotePathIfNeeded( szFolderItem );
+			if( nMaxPath < int(strFolder.length() + strFolderItem.length() + 1) ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;
 			}
 			if( i ){
-				wcscat_s( szFolder, nMaxPath, L";" );
+				strFolder += L';';
 			}
-			wcscat_s( szFolder, nMaxPath, szFolderItem );
-			nFolderLen = (int)std::wstring_view( szFolder ).length();
+			strFolder += strFolderItem;
 		}
-		wcscpy_s( m_szFolder, std::size(m_szFolder), szFolder );
+		wcscpy_s( m_szFolder, std::size(m_szFolder), strFolder.c_str() );
 	}
 
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
@@ -959,13 +949,9 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
-	if( wcschr( folder, L';') ){
-		std::wstring strQuoteFolder;
-		strQuoteFolder = std::wstring(L"\"") + folder + std::wstring(L"\"");
-		::SetWindowText( hwndCtrl, strQuoteFolder.c_str() );
-	}else{
-		::SetWindowText( hwndCtrl, folder );
-	}
+	// ';' を含むパスの引用は共通ヘルパに集約（2-E）
+	const std::wstring strFolder = QuotePathIfNeeded( folder );
+	::SetWindowText( hwndCtrl, strFolder.c_str() );
 }
 
 void CDlgGrep::DetermineDefaultExcludePatterns()
@@ -1005,9 +991,9 @@ std::wstring CDlgGrep::BuildHwndFileToken(HWND hwnd)
 	// HWND を 16 進の文字列にして、コンボボックス内の擬似ファイル名として保持する。
 	WCHAR buf[_MAX_PATH];
 #ifdef _WIN64
-	auto_sprintf(buf, L":HWND:%016I64x", reinterpret_cast<uintptr_t>(hwnd));
+	auto_sprintf(buf, L"%s%016I64x", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
 #else
-	auto_sprintf(buf, L":HWND:%08x", reinterpret_cast<uintptr_t>(hwnd));
+	auto_sprintf(buf, L"%s%08x", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
 #endif
 	return std::wstring(buf);
 }
@@ -1015,5 +1001,6 @@ std::wstring CDlgGrep::BuildHwndFileToken(HWND hwnd)
 bool CDlgGrep::IsHwndFileToken(const wchar_t* s)
 {
 	// 実際の値比較ではなく、特別な擬似ファイル名であるかどうかだけを判定する。
-	return s != nullptr && wcsncmp(s, L":HWND:", 6) == 0;
+	constexpr auto cchPrefix = std::size(HWND_FILE_TOKEN_PREFIX) - 1;
+	return s != nullptr && wcsncmp(s, HWND_FILE_TOKEN_PREFIX, cchPrefix) == 0;
 }

@@ -12,8 +12,10 @@
 #include "grep/CGrepEnumKeys.h"
 #include "grep/CGrepEnumFilterFiles.h"
 #include "grep/CGrepEnumFilterFolders.h"
+#include "grep/GrepPathFormat.h"
 #include "agent/CSearchAgent.h"
 #include "dlg/CDlgCancel.h"
+#include "dlg/CDlgGrep.h"
 #include "_main/CAppMode.h"
 #include "_main/CMutex.h"
 #include "env/CShareData.h"
@@ -80,31 +82,6 @@ static CNativeW EscapeStringLiteral( const STypeConfig& type, const CNativeW& cm
 /*!
  * パスリストを文字列化する
  */
-template<class ContainerType>
-static std::wstring FormatPathList( const ContainerType& container )
-{
-	std::wstring strPatterns;
-	bool firstItem = true;
-	for( const auto& pattern : container ){
-		// パスリストは ';' で区切る(2つ目以降の前に付加する)
-		if( firstItem ){
-			firstItem = false;
-		}else {
-			strPatterns += L';';
-		}
-
-		// ';' を含むパス名は引用符で囲む
-		if( std::wstring::npos != std::wstring_view( pattern ).find( L';' ) ){
-			strPatterns += L'"';
-			strPatterns += pattern;
-			strPatterns += L'"';
-		}else{
-			strPatterns += pattern;
-		}
-	}
-	return strPatterns;
-}
-
 class CFileLoadOrWnd{
 	CFileLoad m_cfl;
 	HWND m_hWnd;
@@ -287,9 +264,9 @@ static int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowN
 {
 	hWndTarget = nullptr;	//out引数をクリアする
 
-	constexpr auto& szTargetPrefix = L":HWND:";
-	constexpr auto cchTargetPrefix = int(std::size(szTargetPrefix)) - 1;
-	if( 0 != wcsncmp(pszFile, szTargetPrefix, cchTargetPrefix) ){
+	// :HWND: トークンの接頭辞定義と判定は CDlgGrep に共通化（2-E）
+	constexpr auto cchTargetPrefix = int(std::size(CDlgGrep::HWND_FILE_TOKEN_PREFIX)) - 1;
+	if( !CDlgGrep::IsHwndFileToken(pszFile) ){
 		return 0; // ハンドルGrepではない
 	}
 	// HWND* を size_t* として読み書きする型パンニングを避けるため、一旦 size_t で受けてから変換する
@@ -428,10 +405,9 @@ DWORD CGrepAgent::DoGrep(
 			}
 			if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
 				CLogicInt len = cmemReplace.GetStringLength();
-				wchar_t	*pszConvertedText = new wchar_t[len * 2]; // 全文字\n→\r\n変換で最大の２倍になる
-				auto nConvertedTextLen = pcViewDst->m_cCommander.ConvertEol(cmemReplace.GetStringPtr(), len, pszConvertedText);
-				cmemReplace.SetString(pszConvertedText, nConvertedTextLen);
-				delete [] pszConvertedText;
+				std::vector<wchar_t> convertedText(std::max<size_t>(1, len * 2)); // 全文字\n→\r\n変換で最大の２倍になる（len==0 でも data() が有効になるよう最低 1 確保）
+				auto nConvertedTextLen = pcViewDst->m_cCommander.ConvertEol(cmemReplace.GetStringPtr(), len, convertedText.data());
+				cmemReplace.SetString(convertedText.data(), nConvertedTextLen);
 			}
 		}else{
 			cmemReplace = *grepInput.pcmGrepReplace;
@@ -2082,7 +2058,6 @@ public:
 		,bBom(bBom_)
 		,bOldSave(bOldSave_)
 		,bufferSize(0)
-		,out(nullptr)
 		,pcCodeBase(CCodeFactory::CreateCodeBase(code_,0))
 		,memMessage(message)
 	{
@@ -2107,7 +2082,7 @@ public:
 	{
 		if( !out ){
 			try{
-				out = new CBinaryOutputStream(name.c_str(), true);
+				out = std::make_unique<CBinaryOutputStream>(name.c_str(), true);
 			}catch( const CError_FileOpen& ){
 				throw CError_WriteFileOpen();
 			}
@@ -2134,8 +2109,7 @@ public:
 	{
 		if( nHitCount && out ){
 			out->Close();
-			delete out;
-			out = nullptr;
+			out.reset();
 			if( bOldSave ){
 				std::wstring oldFile = fileName;
 				oldFile += L".skrold";
@@ -2170,8 +2144,7 @@ public:
 	{
 		if( out ){
 			out->Close();
-			delete out;
-			out = nullptr;
+			out.reset();
 			::DeleteFile( name.c_str() );
 		}
 	}
@@ -2183,7 +2156,7 @@ private:
 	bool bOldSave;
 	size_t bufferSize;
 	std::deque<CNativeW> buffer;
-	CBinaryOutputStream* out;
+	std::unique_ptr<CBinaryOutputStream> out;
 	std::unique_ptr<CCodeBase> pcCodeBase;
 	CNativeW&	memMessage;
 };

@@ -15,7 +15,9 @@
 #define SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_
 #pragma once
 
+#include <algorithm>
 #include <list>
+#include <string>
 #include <vector>
 #include <windows.h>
 #include <string.h>
@@ -23,7 +25,7 @@
 #include "util/string_ex.h"
 #include "util/file.h"
 
-typedef std::vector< LPCWSTR > VGrepEnumKeys;
+typedef std::vector< std::wstring > VGrepEnumKeys;
 
 class CGrepEnumKeys {
 
@@ -163,15 +165,12 @@ public:
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
 		auto nWildCardLen = int(wcslen(lpKeys));
-		WCHAR* pWildCard = new WCHAR[nWildCardLen + 1];
-		if (!pWildCard) {
-			return patterns;
-		}
-		wcscpy(pWildCard, lpKeys);
+		// my_strtok が書き換える作業バッファ。vector により例外時も解放される（RAII）
+		std::vector<WCHAR> wildCard(lpKeys, lpKeys + nWildCardLen + 1);
 
 		int nPos = 0;
 		WCHAR*	token;
-		while (nullptr != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
+		while (nullptr != (token = my_strtok<WCHAR>(wildCard.data(), nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
 			// "を取り除いて左に詰める
 			WCHAR* p;
 			WCHAR* q;
@@ -187,46 +186,31 @@ public:
 			}
 			*q = L'\0';
 
-			std::wstring element(token);
-			patterns.push_back(element);
+			patterns.emplace_back(token);
 		}
-		delete[] pWildCard;
 		return patterns;
 	}
 
 private:
 	void ClearItems( void ){
-		ClearEnumKeys(m_vecExceptFileKeys);
-		ClearEnumKeys(m_vecSearchFileKeys);
-		ClearEnumKeys(m_vecExceptFolderKeys);
-		ClearEnumKeys(m_vecSearchFolderKeys);
-		ClearEnumKeys(m_vecExceptAbsFileKeys);
-		ClearEnumKeys(m_vecExceptAbsFolderKeys);
+		m_vecExceptFileKeys.clear();
+		m_vecSearchFileKeys.clear();
+		m_vecExceptFolderKeys.clear();
+		m_vecSearchFolderKeys.clear();
+		m_vecExceptAbsFileKeys.clear();
+		m_vecExceptAbsFolderKeys.clear();
 		m_vecExceptFileRegexPatterns.clear();  // 正規表現除外パターンもクリア
 		return;
-	}
-	void ClearEnumKeys( VGrepEnumKeys& keys ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			delete [] keys[ i ];
-		}
-		keys.clear();
 	}
 
 	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
-			WCHAR* newKey = new WCHAR[ wcslen( addKey ) + 1 ];
-			wcscpy( newKey, addKey );
-			keys.push_back( newKey );
+			keys.emplace_back( addKey );
 		}
 	}
 
-	BOOL IsExist( VGrepEnumKeys& keys, LPCWSTR addKey ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			if( wcscmp( keys[ i ], addKey ) == 0 ){
-				return TRUE;
-			}
-		}
-		return FALSE;
+	BOOL IsExist( const VGrepEnumKeys& keys, LPCWSTR addKey ){
+		return std::find( keys.begin(), keys.end(), addKey ) != keys.end() ? TRUE : FALSE;
 	}
 
 	/*

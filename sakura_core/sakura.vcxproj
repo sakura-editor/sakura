@@ -181,6 +181,7 @@
     <ClInclude Include="..\sakura_core\grep\CGrepEnumFilterFolders.h" />
     <ClInclude Include="..\sakura_core\grep\CGrepEnumFolders.h" />
     <ClInclude Include="..\sakura_core\grep\CGrepEnumKeys.h" />
+    <ClInclude Include="..\sakura_core\grep\GrepPathFormat.h" />
     <ClInclude Include="..\sakura_core\charset\CCesu8.h" />
     <ClInclude Include="..\sakura_core\charset\CCodeBase.h" />
     <ClInclude Include="..\sakura_core\charset\CCodeFactory.h" />
