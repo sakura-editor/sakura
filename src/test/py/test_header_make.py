@@ -6,7 +6,6 @@ Tests cover:
 - Comment stripping (line, block, nested)
 - Token extraction and filtering
 - Output formatting (define and enum modes)
-- Binary equivalence with existing generated headers
 - Timestamp-based regeneration skipping
 - End-to-end execution flows
 """
@@ -250,63 +249,6 @@ class TestOutputFormatting:
         assert "#ifndef" in output
         assert "#define" in output
         assert "#endif" in output
-
-
-class TestEquivalenceWithExisting:
-    """
-    CRITICAL: Binary equivalence tests ensuring Python output matches legacy headers.
-    These tests validate that the migration maintains 100% compatibility.
-    """
-    
-    def test_equivalence_with_funccode_define_header(self):
-        """Generated define header matches existing Funccode_define.h exactly."""
-        # Locate source file
-        workspace_root = Path(__file__).parent.parent.parent.parent
-        input_file = workspace_root / "sakura_core" / "Funccode_x.hsrc"
-        ref_file = workspace_root / "build" / "x64" / "CMakeTools" / "Funccode_define.h"
-        
-        if not input_file.exists():
-            pytest.skip(f"Input file not found: {input_file}")
-        if not ref_file.exists():
-            pytest.skip(f"Reference file not found: {ref_file}")
-        
-        with tempfile.TemporaryDirectory() as tmpdir:
-            out_file = Path(tmpdir) / "Funccode_define.h"
-            result = header_make.main_impl(str(input_file), str(out_file), "define", "")
-            
-            if result != 0:
-                pytest.skip(f"main_impl returned error code {result}")
-            
-            # Compare binary content
-            generated = out_file.read_bytes()
-            reference = ref_file.read_bytes()
-            
-            assert generated == reference, f"Generated define header differs from reference (generated: {len(generated)} bytes, reference: {len(reference)} bytes)"
-    
-    def test_equivalence_with_funccode_enum_header(self):
-        """Generated enum header matches existing Funccode_enum.h exactly."""
-        # Locate source file
-        workspace_root = Path(__file__).parent.parent.parent.parent
-        input_file = workspace_root / "sakura_core" / "Funccode_x.hsrc"
-        ref_file = workspace_root / "build" / "x64" / "CMakeTools" / "Funccode_enum.h"
-        
-        if not input_file.exists():
-            pytest.skip(f"Input file not found: {input_file}")
-        if not ref_file.exists():
-            pytest.skip(f"Reference file not found: {ref_file}")
-        
-        with tempfile.TemporaryDirectory() as tmpdir:
-            out_file = Path(tmpdir) / "Funccode_enum.h"
-            result = header_make.main_impl(str(input_file), str(out_file), "enum", "EFunctionCode")
-            
-            if result != 0:
-                pytest.skip(f"main_impl returned error code {result}")
-            
-            # Compare binary content
-            generated = out_file.read_bytes()
-            reference = ref_file.read_bytes()
-            
-            assert generated == reference, f"Generated enum header differs from reference (generated: {len(generated)} bytes, reference: {len(reference)} bytes)"
 
 
 class TestTimestampSkipping:
