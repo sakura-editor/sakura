@@ -49,10 +49,17 @@ def normalize_mode(mode_name: str) -> str | None:
     return None
 
 
-def parse_args(argv: list[str]) -> tuple[str, str, str, str] | int:
-    if len(argv) <= 1:
-        return usage()
+def _consume_value(value_part: str, argv: list[str], i: int) -> tuple[str | None, int]:
+    if value_part:
+        if value_part.startswith("="):
+            value_part = value_part[1:]
+        return value_part, 0
+    if i + 1 < len(argv):
+        return argv[i + 1], 1
+    return None, 0
 
+
+def parse_args(argv: list[str]) -> tuple[str, str, str, str] | int:
     in_file = None
     out_file = None
     mode_name = None
@@ -64,30 +71,20 @@ def parse_args(argv: list[str]) -> tuple[str, str, str, str] | int:
         if raw.startswith("/"):
             raw = "-" + raw[1:]
 
-        def consume_value(prefix_len: int) -> tuple[str | None, int]:
-            value_part = raw[prefix_len:]
-            if value_part:
-                if value_part.startswith("="):
-                    value_part = value_part[1:]
-                return value_part, 0
-            if i + 1 >= len(argv):
-                return None, 0
-            return argv[i + 1], 1
-
         if raw.startswith("-in"):
-            value, consumed = consume_value(3)
+            value, consumed = _consume_value(raw[3:], argv, i)
             in_file = value
             i += consumed
         elif raw.startswith("-out"):
-            value, consumed = consume_value(4)
+            value, consumed = _consume_value(raw[4:], argv, i)
             out_file = value
             i += consumed
         elif raw.startswith("-mode"):
-            value, consumed = consume_value(5)
+            value, consumed = _consume_value(raw[5:], argv, i)
             mode_name = value
             i += consumed
         elif raw.startswith("-enum"):
-            value, consumed = consume_value(5)
+            value, consumed = _consume_value(raw[5:], argv, i)
             enum_name = value if value is not None else ""
             i += consumed
         else:
