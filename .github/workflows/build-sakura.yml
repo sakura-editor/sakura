@@ -152,6 +152,15 @@ jobs:
           --accept-source-agreements
       shell: pwsh
 
+   - name: Install DiffUtils (winget)
+      run: |
+        winget install `
+          --id GnuWin32.DiffUtils `
+          --exact `
+          --accept-package-agreements `
+          --accept-source-agreements
+      shell: pwsh
+
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
