@@ -217,6 +217,7 @@ jobs:
           bw-output/
           tests*-coverage.xml
           tests*-googletest.xml
+          pytest-coverage.xml
           sonar-metadata.json
           github-event.json
 
