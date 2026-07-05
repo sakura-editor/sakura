@@ -18,8 +18,19 @@ set(CTAGS_ZIP_FILE "${CMAKE_SOURCE_DIR}/installer/externals/universal-ctags/ctag
 set(CTAGS_GENERATED "${CTAGS_BUILD_DIR}/ctags.exe")
 set(CTAGS_EXECUTABLE "${OUTPUT_DIRECTORY}/ctags.exe")
 
+find_program(CTAGS_SYSTEM_EXECUTABLE
+  NAMES ctags
+)
+
+if(CTAGS_SYSTEM_EXECUTABLE)
+  add_custom_command(
+    OUTPUT "${CTAGS_EXECUTABLE}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CTAGS_SYSTEM_EXECUTABLE}" "${CTAGS_EXECUTABLE}"
+    DEPENDS "${CTAGS_SYSTEM_EXECUTABLE}"
+    COMMENT "Copying ctags.exe from system installation"
+  )
 # 実績のあるものだけビルド対象にする。
-if(CMAKE_GENERATOR MATCHES "^Visual Studio" AND NOT CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
+elseif(CMAKE_GENERATOR MATCHES "^Visual Studio" AND NOT CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
   add_custom_command(
     OUTPUT
       "${CMAKE_SOURCE_DIR}/externals/ctags/.git"

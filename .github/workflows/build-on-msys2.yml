@@ -58,6 +58,7 @@ jobs:
             mingw-w64-x86_64-python
             mingw-w64-x86_64-7zip
             mingw-w64-x86_64-gdb
+            mingw-w64-x86_64-ctags
 
       - name: Show environment variables for debug
         run: env
