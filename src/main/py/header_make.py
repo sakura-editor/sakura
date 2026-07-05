@@ -1,0 +1,251 @@
+#!/usr/bin/env python3
+"""Generate define/enum headers from Funccode_x.hsrc-like input."""
+
+from __future__ import annotations
+
+import os
+import re
+import sys
+from pathlib import Path
+
+
+MODE_DEFINE = "define"
+MODE_ENUM = "enum"
+
+DEFINE_GUARD = "SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_"
+ENUM_GUARD = "SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_"
+
+TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_-]+")
+
+
+def usage() -> int:
+    print(
+        "\nUsage: HeaderMake -in=<InputFile.hsrc> -out=<OutputFile.h> -mode=<Mode> [-enum=<EnumName>]\n"
+        "\n"
+        "  Argument parameters\n"
+        "    InputFile           : Input .hsrc file path\n"
+        "    OutputFile          : Output .h file path\n"
+        "    Mode                : define|enum\n"
+        "    EnumName (Optional) : Enum name (when enum mode only)\n"
+        "\n"
+        "  Mode\n"
+        "    define : Output .h file as #define list\n"
+        "    enum   : Output .h file as enum list"
+    )
+    return 1
+
+
+def get_file_title(fpath: str) -> str:
+    parts = re.split(r"[\\/]", fpath)
+    return parts[-1] if parts else fpath
+
+
+def normalize_mode(mode_name: str) -> str | None:
+    lower = mode_name.lower()
+    if lower == "define":
+        return MODE_DEFINE
+    if lower == "enum":
+        return MODE_ENUM
+    return None
+
+
+def parse_args(argv: list[str]) -> tuple[str, str, str, str] | int:
+    if len(argv) <= 1:
+        return usage()
+
+    in_file = None
+    out_file = None
+    mode_name = None
+    enum_name = ""
+
+    i = 1
+    while i < len(argv):
+        raw = argv[i]
+        if raw.startswith("/"):
+            raw = "-" + raw[1:]
+
+        def consume_value(prefix_len: int) -> tuple[str | None, int]:
+            value_part = raw[prefix_len:]
+            if value_part:
+                if value_part.startswith("="):
+                    value_part = value_part[1:]
+                return value_part, 0
+            if i + 1 >= len(argv):
+                return None, 0
+            return argv[i + 1], 1
+
+        if raw.startswith("-in"):
+            value, consumed = consume_value(3)
+            in_file = value
+            i += consumed
+        elif raw.startswith("-out"):
+            value, consumed = consume_value(4)
+            out_file = value
+            i += consumed
+        elif raw.startswith("-mode"):
+            value, consumed = consume_value(5)
+            mode_name = value
+            i += consumed
+        elif raw.startswith("-enum"):
+            value, consumed = consume_value(5)
+            enum_name = value if value is not None else ""
+            i += consumed
+        else:
+            print(f"Error: Unknown argument[{raw}]")
+            return 1
+
+        i += 1
+
+    if not in_file:
+        print("Error: Specify <InputFile> argument.")
+        return usage()
+    if not out_file:
+        print("Error: Specify <OutputFile> argument.")
+        return usage()
+    if not mode_name:
+        print("Error: Specify <Mode> argument.")
+        return usage()
+
+    return in_file, out_file, mode_name, enum_name
+
+
+def needs_regeneration(in_file: Path, out_file: Path) -> bool:
+    try:
+        in_mtime = in_file.stat().st_mtime
+        out_mtime = out_file.stat().st_mtime
+    except OSError:
+        return True
+    return in_mtime > out_mtime
+
+
+def strip_comments_keep_state(line: str, in_block_comment: bool) -> tuple[str, bool]:
+    out_chars: list[str] = []
+    i = 0
+    n = len(line)
+
+    while i < n:
+        if in_block_comment:
+            end = line.find("*/", i)
+            if end == -1:
+                return "", True
+            i = end + 2
+            in_block_comment = False
+            continue
+
+        if line.startswith("//", i):
+            break
+
+        if line.startswith("/*", i):
+            in_block_comment = True
+            i += 2
+            continue
+
+        out_chars.append(line[i])
+        i += 1
+
+    return "".join(out_chars), in_block_comment
+
+
+def iter_definitions(in_file: Path):
+    in_block_comment = False
+    with in_file.open("r", encoding="utf-8") as f:
+        for raw_line in f:
+            if raw_line.startswith("#"):
+                continue
+
+            line = raw_line.rstrip("\n")
+            line, in_block_comment = strip_comments_keep_state(line, in_block_comment)
+            tokens = TOKEN_PATTERN.findall(line)
+            if len(tokens) < 2:
+                continue
+            yield tokens[0], tokens[1]
+
+
+def render_output(in_file: str, mode: str, enum_name: str, entries: list[tuple[str, str]]) -> str:
+    lines: list[str] = ["/*! @file */"]
+
+    if mode == MODE_DEFINE:
+        lines.extend([
+            f"#ifndef {DEFINE_GUARD}",
+            f"#define {DEFINE_GUARD}",
+            "",
+        ])
+    elif mode == MODE_ENUM:
+        lines.extend([
+            f"#ifndef {ENUM_GUARD}",
+            f"#define {ENUM_GUARD}",
+            "",
+        ])
+
+    lines.extend([
+        f"// This file is generated by HeaderMake with {get_file_title(in_file)}.",
+        "// Don't edit this file manually.",
+        "",
+    ])
+
+    if mode == MODE_ENUM:
+        lines.append(f"enum {enum_name}{{")
+
+    for ident, value in entries:
+        if mode == MODE_DEFINE:
+            lines.append(f"#define {ident} {value}")
+        else:
+            lines.append(f"\t{ident} = {value},")
+
+    if mode == MODE_DEFINE:
+        lines.extend([
+            "",
+            f"#endif /* {DEFINE_GUARD} */",
+        ])
+    else:
+        lines.extend([
+            "};",
+            "",
+            f"#endif /* {ENUM_GUARD} */",
+        ])
+
+    return "\n".join(lines) + "\n"
+
+
+def main_impl(in_file: str, out_file: str, mode_name: str, enum_name: str) -> int:
+    mode = normalize_mode(mode_name)
+    if mode is None:
+        print(f"Error: Unknown mode[{mode_name}].")
+        return 2
+
+    in_path = Path(in_file)
+    out_path = Path(out_file)
+
+    if not needs_regeneration(in_path, out_path):
+        print(f"OutputFile[{out_file}] needs no change.")
+        return 0
+
+    entries = list(iter_definitions(in_path))
+    text = render_output(in_file, mode, enum_name, entries)
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", encoding="utf-8", newline="\r\n") as f:
+        f.write(text)
+
+    return 0
+
+
+def main(argv: list[str]) -> int:
+    parsed = parse_args(argv)
+    if isinstance(parsed, int):
+        return parsed
+
+    in_file, out_file, mode_name, enum_name = parsed
+
+    print("\nSTART HeaderMake.")
+    print("CMDLINE: " + " ".join(argv) + " ")
+    print("")
+
+    result = main_impl(in_file, out_file, mode_name, enum_name)
+
+    print("\nEND HeaderMake.\n")
+    return result
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
