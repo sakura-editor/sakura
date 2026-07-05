@@ -40,6 +40,10 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v6
+        with:
+          python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+          cache: 'pip'
+      - run: pip install -r requirements.txt
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
@@ -51,6 +55,7 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
+            mingw-w64-x86_64-python
             mingw-w64-x86_64-7zip
             mingw-w64-x86_64-gdb
 

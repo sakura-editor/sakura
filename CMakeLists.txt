@@ -75,3 +75,13 @@ add_test(NAME UnitTest
   WORKING_DIRECTORY ${OUTPUT_DIRECTORY}
   CONFIGURATIONS Release
 )
+
+add_test(NAME pytest
+  COMMAND ${Python3_EXECUTABLE} -m pytest
+    --ignore=externals
+    --cov
+    --cov-config=src/test/py/.coveragerc
+    --cov-report=xml:pytest-coverage.xml
+    --cov-fail-under=80
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)

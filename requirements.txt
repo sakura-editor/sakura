@@ -1,0 +1,4 @@
+chardet>=6
+pytest>=8,<9
+pytest-cov>=5,<6
+pytest-mock>=3,<4

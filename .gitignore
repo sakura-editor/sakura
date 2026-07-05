@@ -28,6 +28,10 @@ tags
 testData_*.txt
 UpgradeLog.htm
 
+# PyTest出力ファイルは除外する
+.coverage
+pytest-coverage.xml
+
 # SonarScanローカル実行用(解析ツールをダウンロードするフォルダ)
 .sonar
 

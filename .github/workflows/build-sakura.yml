@@ -144,8 +144,11 @@ jobs:
       shell: pwsh
 
     - name: Set up Python
-      if: ${{ matrix.platform == 'x64' }}
       uses: actions/setup-python@v6
+      with:
+        python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+        cache: 'pip'
+    - run: pip install -r requirements.txt
 
     - name: Copy github-event.json
       run: |

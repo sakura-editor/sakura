@@ -1,4 +1,4 @@
-name: Python Compile Check
+﻿name: Python Compile Check
 
 on:
   push:
@@ -16,17 +16,20 @@ on:
 jobs:
   python-compile-check:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        python-version: ['3.x']
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          submodules: false
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+          cache: 'pip'
+      - run: pip install -r requirements.txt
 
       - name: Python version check
         run: python --version
