@@ -43,6 +43,9 @@
 #include <set>
 #include <functional>
 #include <string_view>
+#ifdef _DEBUG
+#include <chrono>
+#endif
 
 constexpr DWORD UICHECK_INTERVAL_MILLISEC = 100;	// UI確認の時間間隔
 constexpr DWORD ADDTAIL_INTERVAL_MILLISEC = 50;	// 結果出力の時間間隔
@@ -175,6 +178,9 @@ public:
 	}
 	int GetPercent(){
 		if( m_hWnd ){
+			if( m_nLineNum <= 0 ){
+				return 0; // 行数 0 のウインドウでのゼロ除算を防ぐ
+			}
 			return (int)(m_nLineCurrent * 100.0 / m_nLineNum);
 		}
 		return m_cfl.GetPercent();
@@ -286,9 +292,12 @@ static int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowN
 	if( 0 != wcsncmp(pszFile, szTargetPrefix, cchTargetPrefix) ){
 		return 0; // ハンドルGrepではない
 	}
-	if( 0 >= ::swscanf_s(pszFile + cchTargetPrefix, L"%zx", (size_t*)&hWndTarget) || !IsSakuraMainWindow(hWndTarget) ){
+	// HWND* を size_t* として読み書きする型パンニングを避けるため、一旦 size_t で受けてから変換する
+	size_t nHwndValue = 0;
+	if( 0 >= ::swscanf_s(pszFile + cchTargetPrefix, L"%zx", &nHwndValue) || !IsSakuraMainWindow((HWND)nHwndValue) ){
 		return -1; // ハンドルを読み取れなかった、または、対象ウインドウハンドルが存在しない
 	}
+	hWndTarget = (HWND)nHwndValue;
 	if( pmemTitle ){
 		const wchar_t* p = L"Window:[";
 		pmemTitle->SetStringHoldBuffer(p, 8);
@@ -301,6 +310,9 @@ static int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowN
 		WCHAR szGrep[100];
 		editInfo->m_bIsModified = false;
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode(hWndTarget);
+		if( !node ){
+			return -1; // 管理リストに見つからない（対象ウインドウが閉じられた直後など）
+		}
 		WCHAR* pszTagName = szTitle;
 		if( editInfo->m_bIsGrep ){
 			// Grepは検索キーとタグがぶつかることがあるので単に(Grep)と表示
@@ -409,7 +421,8 @@ DWORD CGrepAgent::DoGrep(
 			}
 			if( bLineSelect ){
 				int len = cmemReplace.GetStringLength();
-				if( cmemReplace[len - 1] != WCODE::CR && cmemReplace[len - 1] != WCODE::LF ){
+				// 空クリップボード時に cmemReplace[len - 1] が範囲外参照になるのを防ぐ
+				if( len == 0 || (cmemReplace[len - 1] != WCODE::CR && cmemReplace[len - 1] != WCODE::LF) ){
 					cmemReplace.AppendString(pcViewDst->GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 				}
 			}
@@ -2612,6 +2625,34 @@ CNativeW CGrepAgent::BuildGrepFooter(int nHitCount, bool bGrepReplace)
 	return cmemMessage;
 }
 
+#ifdef _DEBUG
+// 0-5: 性能計測基盤（Debug 限定）
+// 並列 Grep の 列挙時間 / 検索時間 / resultMutex ロック待ち / バッチ終端待ち を集計し、
+// Grep 終了時に MYTRACE で出力する。Release ビルドでは一切のコードを生成しない。
+struct SGrepPerfStats {
+	std::atomic<long long> enumUs{ 0 };			// ファイル列挙時間（メインスレッド、μ秒）
+	std::atomic<long long> searchUs{ 0 };		// ファイル内検索時間（全ワーカー合算、μ秒）
+	std::atomic<long long> lockWaitUs{ 0 };		// resultMutex ロック待ち（全ワーカー合算、μ秒）
+	std::atomic<long long> batchWaitUs{ 0 };	// バッチ終端待ち（メインスレッド、μ秒）
+	void Trace() const {
+		MYTRACE( L"[GrepPerf] enum=%lldus search=%lldus lockWait=%lldus batchWait=%lldus\n",
+			enumUs.load(), searchUs.load(), lockWaitUs.load(), batchWaitUs.load() );
+	}
+};
+static long long GrepPerfNowUs()
+{
+	using namespace std::chrono;
+	return duration_cast<microseconds>( steady_clock::now().time_since_epoch() ).count();
+}
+#define GREP_PERF_BEGIN( var )			const long long var = GrepPerfNowUs()
+#define GREP_PERF_ADD( field, var )		perfStats.field.fetch_add( GrepPerfNowUs() - (var) )
+#define GREP_PERF_TRACE()				perfStats.Trace()
+#else
+#define GREP_PERF_BEGIN( var )			((void)0)
+#define GREP_PERF_ADD( field, var )		((void)0)
+#define GREP_PERF_TRACE()				((void)0)
+#endif
+
 /*!	@brief 並列Grep: スレッドプールでファイル検索を並列化する
 	@retval -1 キャンセル
 	@retval 0 完了
@@ -2646,6 +2687,11 @@ int CGrepAgent::RunParallelGrep(
 
 	// ヒット数（全バッチ共通・バッチ間で引き継ぐ）
 	std::atomic<int> atomicHitCount{ 0 };
+
+#ifdef _DEBUG
+	// 0-5: 性能計測（Debug 限定）
+	SGrepPerfStats perfStats;
+#endif
 
 	// ===== スレッドプール: バッチ間でスレッドを再利用し生成・破棄コストを排除 =====
 	// バッチ番号インクリメントで新バッチを通知し、condition_variable で待機中ワーカーを起床させる。
@@ -2772,12 +2818,14 @@ int CGrepAgent::RunParallelGrep(
 						// ファイル内検索
 						localMessage._SetStringLength(0);
 						const SGrepSearchParams workerParams{ searchKey.c_str(), sSearchOption, sGrepOption };
+						GREP_PERF_BEGIN( perfSearchStart );
 						const int fileHits = DoGrepFileWorker(
 							workerParams, task,
 							&localRegexp, localPattern,
 							bWorkCancelled,
 							localMessage, localUnicodeBuffer
 						);
+						GREP_PERF_ADD( searchUs, perfSearchStart );
 
 						if( fileHits == -1 ){
 							bWorkCancelled.store( true );
@@ -2785,7 +2833,9 @@ int CGrepAgent::RunParallelGrep(
 						}
 
 						if( fileHits > 0 || localMessage.GetStringLength() > 0 ){
+							GREP_PERF_BEGIN( perfLockStart );
 							std::scoped_lock lk( resultMutex );
+							GREP_PERF_ADD( lockWaitUs, perfLockStart );
 							// フォルダーヘッダー重複排除（最初のマッチ時のみ出力）
 							if( sGrepOption.bGrepOutputBaseFolder &&
 							    !writtenBaseFolders.contains(task.baseFolder) ){
@@ -2826,6 +2876,14 @@ int CGrepAgent::RunParallelGrep(
 		cvInitDone.wait( lk, [&]{ return nInitDone.load() >= nThreads; } );
 	}
 
+	// 全ワーカーが初期化に失敗した場合、結果 0 件のまま無警告で終了せずエラーとして中断する
+	if( nActiveWorkers.load() == 0 ){
+		ErrorMessage( pcViewDst != nullptr ? pcViewDst->m_hwndParent : nullptr,
+			L"Grep: 検索用ワーカースレッドの初期化にすべて失敗しました。検索を中断します。" );	// TODO: Phase 5 E-1 で LS() 化
+		nHitCountOut = 0;
+		return -1;
+	}
+
 	// バッチ実行ラムダ: vecTasks をプールのワーカーに割り当て結果を出力する
 	// 戻り値: true=継続, false=キャンセル発生
 	auto RunBatch = [&]( const std::vector<SGrepFileTask>& vecTasks ) {
@@ -2843,6 +2901,7 @@ int CGrepAgent::RunParallelGrep(
 		cvPoolStart.notify_all();
 
 		// メインスレッド: 全ワーカーが完全終了するまでUI更新・キャンセル監視・結果フラッシュを継続
+		GREP_PERF_BEGIN( perfBatchStart );
 		while( poolBatchActive.load() > 0 ){
 			::Sleep(5);
 
@@ -2875,6 +2934,7 @@ int CGrepAgent::RunParallelGrep(
 				cmemMessage._SetStringLength(0);
 			}
 		}
+		GREP_PERF_ADD( batchWaitUs, perfBatchStart );
 
 		// 最終フラッシュ
 		{
@@ -2909,12 +2969,14 @@ int CGrepAgent::RunParallelGrep(
 			sGrepOptionNoSub.bGrepSubFolder = false;
 			bool bEnumCancelled = false;
 			std::vector<SGrepFileTask> vecTasks;
+			GREP_PERF_BEGIN( perfEnumStart );
 			DoGrepTreeEnumerate(
 				pcDlgCancel, sGrepOptionNoSub,
 				SGrepEnumContext{ cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders },
 				sPath.c_str(), sPath.c_str(),
 				vecTasks, bEnumCancelled
 			);
+			GREP_PERF_ADD( enumUs, perfEnumStart );
 			if( bEnumCancelled ){ nGrepTreeResult = -1; break; }
 			if( !RunBatch(vecTasks) ){ nGrepTreeResult = -1; break; }
 		}
@@ -2925,20 +2987,24 @@ int CGrepAgent::RunParallelGrep(
 		}
 		CGrepEnumOptions cGrepEnumOptionsDir;
 		CGrepEnumFilterFolders cTopFolders;
+		GREP_PERF_BEGIN( perfEnumDirStart );
 		cTopFolders.Enumerates(
 			sPath.c_str(), cGrepEnumKeys, cGrepEnumOptionsDir, cGrepExceptAbsFolders );
+		GREP_PERF_ADD( enumUs, perfEnumDirStart );
 
 		const int nFolderCount = cTopFolders.GetCount();
 		for( int fi = 0; fi < nFolderCount && nGrepTreeResult != -1; fi++ ){
 			std::wstring subFolder = sPath + L"\\" + cTopFolders.GetFileName(fi);
 			bool bEnumCancelled = false;
 			std::vector<SGrepFileTask> vecTasks;
+			GREP_PERF_BEGIN( perfEnumSubStart );
 			DoGrepTreeEnumerate(
 				pcDlgCancel, sGrepOption,
 				SGrepEnumContext{ cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders },
 				subFolder.c_str(), sPath.c_str(),
 				vecTasks, bEnumCancelled
 			);
+			GREP_PERF_ADD( enumUs, perfEnumSubStart );
 			if( bEnumCancelled ){ nGrepTreeResult = -1; break; }
 			if( !RunBatch(vecTasks) ){ nGrepTreeResult = -1; break; }
 		}
@@ -2947,5 +3013,6 @@ int CGrepAgent::RunParallelGrep(
 	// スレッドプールのシャットダウンと join は PoolJoinGuard のデストラクタが
 	// 担う（正常終了・例外伝播のどちらの経路でも確実に実行される）。
 	nHitCountOut = atomicHitCount.load();
+	GREP_PERF_TRACE();
 	return nGrepTreeResult;
 }

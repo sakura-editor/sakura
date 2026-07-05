@@ -3248,3 +3248,251 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_PasteUsesClipboard)
 	EXPECT_EQ(body.find("needle"), std::string::npos)
 		<< "前の文字列は残らない";
 }
+
+// =============================================================================
+// 15. Grep 結果スナップショット（Phase 0-4）
+// =============================================================================
+
+namespace {
+
+/*!
+ * DoGrepFileWorker を 1 ファイルに対して実行し、ヒット数と出力メッセージ全文を返す
+ *
+ * ヒット数のみを検証する RunGrepFileWorker と異なり、出力文字列の完全一致
+ * スナップショットを取るための派生ヘルパ。文字コードは CODE_UTF8 固定とし、
+ * 自動判別によるコード名表記（"[UTF-8]" 等）の揺れを排除する。
+ */
+struct SWorkerSnapshot
+{
+	int hits;
+	std::wstring message;
+};
+
+SWorkerSnapshot RunWorkerSnapshot(
+	const std::filesystem::path& path,
+	std::wstring_view key,
+	int nOutputStyle,
+	int nOutputLineType)
+{
+	const std::wstring keyStr(key);
+
+	SGrepFileTask task;
+	task.fullPath = path.wstring();
+	task.fileName = path.filename().wstring();
+	task.baseFolder = path.parent_path().wstring();
+	task.folder = task.baseFolder;
+	task.relPath = task.fileName;
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption(CODE_UTF8);	// 文字コード固定で自動判別のコード名出力を回避
+	gOpt.nGrepOutputStyle = nOutputStyle;
+	gOpt.nGrepOutputLineType = nOutputLineType;
+
+	CSearchStringPattern pattern;
+	EXPECT_TRUE(pattern.SetPattern(nullptr, keyStr.c_str(), keyStr.size(), sOpt, nullptr));
+
+	CNativeW cmemMessage;
+	CNativeW cUnicodeBuffer;
+	cmemMessage.AllocStringBuffer(4000);
+	cUnicodeBuffer.AllocStringBuffer(4000);
+	std::atomic<bool> cancel{ false };
+	CGrepAgent agent;
+
+	const int hits = agent.DoGrepFileWorker(
+		SGrepSearchParams{ keyStr.c_str(), sOpt, gOpt },
+		task,
+		nullptr, pattern, cancel, cmemMessage, cUnicodeBuffer);
+
+	return SWorkerSnapshot{
+		hits,
+		std::wstring(cmemMessage.GetStringPtr(), cmemMessage.GetStringLength()) };
+}
+
+//! 2 行（1 行目のみヒット）の標準スナップショット入力を書き出す
+std::filesystem::path WriteSnapshotInput(const GrepTempDir& temp)
+{
+	// 1 行目: 7 桁目に "needle"（1 ヒット） / 2 行目: ヒットなし
+	return temp.WriteEncodedTextFile(L"snap.txt", CODE_UTF8, L"alpha needle one\nbravo two\n");
+}
+
+} // namespace
+
+/*!
+ * @brief スナップショット: style=1(ノーマル) × lineType=1(行単位)
+ * @remark "フルパス(行,桁): 該当行" 形式の完全一致を確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Style1_LineType1_MatchedLine)
+{
+	const auto path = WriteSnapshotInput(*m_temp);
+	const auto result = RunWorkerSnapshot(path, L"needle", 1, 1);
+
+	EXPECT_EQ(1, result.hits);
+	EXPECT_EQ(path.wstring() + L"(1,7): alpha needle one\r\n", result.message);
+}
+
+/*!
+ * @brief スナップショット: style=1(ノーマル) × lineType=0(該当部分)
+ * @remark 該当行全体ではなくマッチ部分のみが出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Style1_LineType0_MatchedPart)
+{
+	const auto path = WriteSnapshotInput(*m_temp);
+	const auto result = RunWorkerSnapshot(path, L"needle", 1, 0);
+
+	EXPECT_EQ(1, result.hits);
+	EXPECT_EQ(path.wstring() + L"(1,7): needle\r\n", result.message);
+}
+
+/*!
+ * @brief スナップショット: style=1(ノーマル) × lineType=2(否マッチ行)
+ * @remark ヒットしなかった 2 行目のみが桁 1 で出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Style1_LineType2_UnmatchedLine)
+{
+	const auto path = WriteSnapshotInput(*m_temp);
+	const auto result = RunWorkerSnapshot(path, L"needle", 1, 2);
+
+	EXPECT_EQ(1, result.hits);
+	EXPECT_EQ(path.wstring() + L"(2,1): bravo two\r\n", result.message);
+}
+
+/*!
+ * @brief スナップショット: style=2(WZ風) × lineType=1(行単位)
+ * @remark ファイルヘッダー行（■"フルパス"）と "・(%6d,%-5d): " 書式の完全一致を確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Style2_LineType1_MatchedLine)
+{
+	const auto path = WriteSnapshotInput(*m_temp);
+	const auto result = RunWorkerSnapshot(path, L"needle", 2, 1);
+
+	EXPECT_EQ(1, result.hits);
+	EXPECT_EQ(
+		L"■\"" + path.wstring() + L"\"\r\n"
+		L"・(     1,7    ): alpha needle one\r\n",
+		result.message);
+}
+
+/*!
+ * @brief スナップショット: style=3(結果のみ) × lineType=1(行単位)
+ * @remark パス・行番号などの装飾なしで該当行のみが出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Style3_LineType1_MatchedLine)
+{
+	const auto path = WriteSnapshotInput(*m_temp);
+	const auto result = RunWorkerSnapshot(path, L"needle", 3, 1);
+
+	EXPECT_EQ(1, result.hits);
+	EXPECT_EQ(L"alpha needle one\r\n", result.message);
+}
+
+/*!
+ * @brief スナップショット: style=3(結果のみ) × lineType=0(該当部分)
+ * @remark マッチ部分のみが装飾なしで出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Style3_LineType0_MatchedPart)
+{
+	const auto path = WriteSnapshotInput(*m_temp);
+	const auto result = RunWorkerSnapshot(path, L"needle", 3, 0);
+
+	EXPECT_EQ(1, result.hits);
+	EXPECT_EQ(L"needle\r\n", result.message);
+}
+
+/*!
+ * @brief スナップショット: style=1(ノーマル) × lineType=0 の同一行内複数ヒット
+ * @remark 同一行の 2 つのヒットがそれぞれの桁位置で 2 行出力されることを確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Style1_LineType0_MultipleHitsInLine)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"multi.txt", CODE_UTF8, L"needle x needle\n");
+	const auto result = RunWorkerSnapshot(path, L"needle", 1, 0);
+
+	EXPECT_EQ(2, result.hits);
+	EXPECT_EQ(
+		path.wstring() + L"(1,1): needle\r\n" +
+		path.wstring() + L"(1,10): needle\r\n",
+		result.message);
+}
+
+/*!
+ * @brief スナップショット: 除外ファイル(!)・除外フォルダー(#)適用後の列挙結果
+ * @remark "*.*;!*.log;#skip" 指定で .log ファイルと skip フォルダーが列挙から除外され、
+ *         残る要素が期待どおりであることを確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Enumerate_ExcludePatternsApplied)
+{
+	m_temp->WriteEncodedTextFile(L"a.txt", CODE_UTF8, L"a\n");
+	m_temp->WriteEncodedTextFile(L"b.log", CODE_UTF8, L"b\n");
+	m_temp->WriteEncodedTextFile(L"c.txt", CODE_UTF8, L"c\n");
+	m_temp->EnsureDir(L"keep");
+	m_temp->EnsureDir(L"skip");
+
+	CGrepEnumKeys keys;
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.*;!*.log;#skip"));
+
+	// ファイル列挙: b.log が除外される
+	{
+		CGrepEnumFilterFiles enumFiles;
+		CGrepEnumOptions enumOpts;
+		CGrepEnumFiles exceptAbs;
+		enumFiles.Enumerates(m_temp->Root().wstring().c_str(), keys, enumOpts, exceptAbs);
+
+		std::vector<std::wstring> found;
+		for (int i = 0; i < enumFiles.GetCount(); ++i) {
+			found.emplace_back(enumFiles.GetFileName(i));
+		}
+		std::sort(found.begin(), found.end());
+
+		ASSERT_EQ(2u, found.size());
+		EXPECT_EQ(L"a.txt", found[0]);
+		EXPECT_EQ(L"c.txt", found[1]);
+	}
+
+	// フォルダー列挙: skip が除外される
+	{
+		CGrepEnumFilterFolders enumFolders;
+		CGrepEnumOptions enumOpts;
+		CGrepEnumFolders exceptAbs;
+		enumFolders.Enumerates(m_temp->Root().wstring().c_str(), keys, enumOpts, exceptAbs);
+
+		std::vector<std::wstring> found;
+		for (int i = 0; i < enumFolders.GetCount(); ++i) {
+			found.emplace_back(enumFolders.GetFileName(i));
+		}
+		std::sort(found.begin(), found.end());
+
+		ASSERT_EQ(1u, found.size());
+		EXPECT_EQ(L"keep", found[0]);
+	}
+}
+
+/*!
+ * @brief スナップショット: 除外ファイルパターンが検索結果に反映される
+ * @remark 除外対象ファイルは列挙段階で落ちるため、残ったファイルの検索結果のみが
+ *         得られることを、列挙→ワーカー実行の結合で確認する。
+ */
+TEST_F(GrepRealFileTest, Snapshot_Enumerate_ThenWorker_ExcludedFileNotSearched)
+{
+	const auto hitPath = m_temp->WriteEncodedTextFile(L"hit.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"ignored.log", CODE_UTF8, L"needle\n");
+
+	CGrepEnumKeys keys;
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.*;!*.log"));
+
+	CGrepEnumFilterFiles enumFiles;
+	CGrepEnumOptions enumOpts;
+	CGrepEnumFiles exceptAbs;
+	enumFiles.Enumerates(m_temp->Root().wstring().c_str(), keys, enumOpts, exceptAbs);
+
+	std::wstring combined;
+	int totalHits = 0;
+	for (int i = 0; i < enumFiles.GetCount(); ++i) {
+		const auto result = RunWorkerSnapshot(
+			m_temp->Root() / enumFiles.GetFileName(i), L"needle", 1, 1);
+		totalHits += result.hits;
+		combined += result.message;
+	}
+
+	EXPECT_EQ(1, totalHits);
+	EXPECT_EQ(hitPath.wstring() + L"(1,1): needle\r\n", combined);
+}

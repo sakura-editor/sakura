@@ -85,20 +85,20 @@ int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR*
 	m_bBackup = m_pShareData->m_Common.m_sSearch.m_bGrepBackup;
 
 	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+		wcscpy_s( m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
+		wcscpy_s( m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	
 	/* 除外ファイル */
 	if (m_szExcludeFile[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
+			wcscpy_s(m_szExcludeFile, std::size(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
 		}
 		else {
 			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
-			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN_REGEX);	/* 除外ファイル */
+			wcscpy_s(m_szExcludeFile, std::size(m_szExcludeFile), DEFAULT_EXCLUDE_FILE_PATTERN_REGEX);	/* 除外ファイル */
 
 			/* 履歴に残して後で選択できるようにする */
 			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(DEFAULT_EXCLUDE_FILE_PATTERN_REGEX);
@@ -108,11 +108,11 @@ int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR*
 	/* 除外フォルダー */
 	if (m_szExcludeFolder[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
+			wcscpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
 		}
 		else {
 			/* ユーザーの利便性向上のために除外フォルダーに対して初期値を設定する */
-			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
+			wcscpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
 			
 			/* 履歴に残して後で選択できるようにする */
 			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
@@ -120,7 +120,7 @@ int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR*
 	}
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
-		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
+		wcscpy_s(m_szCurrentFilePath, std::size(m_szCurrentFilePath), pszCurrentFilePath);
 	}
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP_REPLACE, lParam );
@@ -227,11 +227,13 @@ int CDlgGrepReplace::GetData( void )
 	}
 
 	m_bBackup = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHK_BACKUP );
-	m_pShareData->m_Common.m_sSearch.m_bGrepBackup = m_bBackup;
 
 	if( !CDlgGrep::GetData() ){
 		return FALSE;
 	}
+
+	// 全検証通過後に共有設定へ書き込む（入力エラー時に共有設定を汚さない）
+	m_pShareData->m_Common.m_sSearch.m_bGrepBackup = m_bBackup;
 
 	if( m_strText2.size() < _MAX_PATH ){
 		CSearchKeywordManager().AddToReplaceKeyArr( m_strText2.c_str() );

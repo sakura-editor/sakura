@@ -828,14 +828,6 @@ int CDlgGrep::GetData( void )
 	/* 除外フォルダー */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
 
-	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
-	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
-	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: 出力形式
-	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
-	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
-	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
-	m_pShareData->m_Common.m_sSearch.m_bGrepExcludeFileRegexp = m_bExcludeFileRegularExp != FALSE;
-
 	if( m_szFile[0] != '\0' ) {
 		CGrepEnumKeys enumKeys;
 		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
@@ -911,6 +903,18 @@ int CDlgGrep::GetData( void )
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
+	}
+
+	// ==== ここから下では入力検証エラーで戻らない（共有設定への書き込みは全検証通過後に集約する） ====
+	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: 出力形式
+	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
+	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepExcludeFileRegexp = m_bExcludeFileRegularExp != FALSE;
+
+	if( m_strText.size() > 0 ){
 		if( m_strText.size() < _MAX_PATH ){
 			if( !m_bFromThisText ){
 				CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
