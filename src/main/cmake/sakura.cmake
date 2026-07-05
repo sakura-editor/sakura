@@ -207,18 +207,19 @@ add_custom_target(generate_version_header
     "${CMAKE_BINARY_DIR}/version.h"
 )
 
-# Include HeaderMake.cmake for HeaderMake command
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/HeaderMake.cmake)
-
 # Create a custom command for funccode_define generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_define.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_define.h
     -mode=define
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_define.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file
@@ -230,13 +231,17 @@ add_custom_target(generate_funccode_define
 # Create a custom command for funccode_enum generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_enum.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_enum.h
     -mode=enum
     -enum=EFunctionCode
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_enum.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file
