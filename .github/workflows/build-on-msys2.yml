@@ -28,6 +28,16 @@ jobs:
         with:
           submodules: true
 
+      - name: Install OpenCppCoverage (winget)
+        if: ${{ matrix.config == 'Debug' }}
+        run: |
+          winget install `
+            --id OpenCppCoverage.OpenCppCoverage `
+            --exact `
+            --accept-package-agreements `
+            --accept-source-agreements
+        shell: pwsh
+
       - name: Set up Python
         uses: actions/setup-python@v6
 

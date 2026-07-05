@@ -8,6 +8,16 @@
 # Include GoogleTest's targets
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake)
 
+# Find OpenCppCoverage for coverage test
+find_program(OpenCppCoverage_EXECUTABLE OpenCppCoverage
+  PATHS
+    "$ENV{ProgramFiles}/OpenCppCoverage"
+)
+
+if(OpenCppCoverage_EXECUTABLE)
+  message(STATUS "Found OpenCppCoverage: ${OpenCppCoverage_EXECUTABLE}")
+endif()
+
 set(MINIZ_SOURCE_DIR "${CMAKE_SOURCE_DIR}/externals/miniz-cpp")
 set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
 
