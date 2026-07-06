@@ -399,13 +399,15 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 	 * テストスイートの終了後に1回だけ呼ばれる関数
 	 */
 	static void TearDownTestSuite() {
+		std::error_code ec;
+
 		// テスト用ファイルの後始末
 		if (fexist(gm_TestDataPath)) {
-			std::filesystem::remove(gm_TestDataPath);
+			std::filesystem::remove(gm_TestDataPath, ec);
 		}
 
 		if (const auto pluginPath = GetIniFileName().remove_filename().append(L"plugins"); fexist(pluginPath)) {
-			std::filesystem::remove_all(pluginPath);
+			std::filesystem::remove_all(pluginPath, ec);
 		}
 
 		// UI Automationをシャットダウンする
@@ -442,7 +444,8 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 
 		// INIファイルを削除する
 		if (fexist(iniPath)) {
-			std::filesystem::remove(iniPath);
+			std::error_code ec;
+			std::filesystem::remove(iniPath, ec);
 		}
 
 		// テスト用INIファイル作成
@@ -461,7 +464,8 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 	void TearDown() override {
 		// INIファイルを削除する
 		if (fexist(iniPath)) {
-			std::filesystem::remove(iniPath);
+			std::error_code ec;
+			std::filesystem::remove(iniPath, ec);
 		}
 
 		// プロファイル指定がある場合、フォルダーも削除しておく
@@ -535,7 +539,8 @@ TEST_P(WinMainTest, runEditorProcess)
 	extract_zip_resource(IDR_ZIPRES4, pluginPath);
 
 	// ケース独自の設定ファイルを使うので、一旦削除する
-	std::filesystem::remove(iniPath);
+	std::error_code ec;
+	std::filesystem::remove(iniPath, ec);
 
 	// テスト用INIファイル作成
 	// 標準機能をできるだけ動かすために設定を入れる
