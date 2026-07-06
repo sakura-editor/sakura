@@ -1397,7 +1397,8 @@ TEST_F(EditWndTest, ShowPropCommon004)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_MAINMENU);
@@ -1539,7 +1540,8 @@ TEST_F(EditWndTest, ShowPropCommon015)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_CUSTMENU);
@@ -1571,7 +1573,8 @@ TEST_F(EditWndTest, ShowPropCommon016)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYWORD);
@@ -1671,7 +1674,8 @@ TEST_F(EditWndTest, ShowPropType003)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_COLOR);
@@ -1711,7 +1715,8 @@ TEST_F(EditWndTest, ShowPropType004)
 		FORWARD_WM_HSCROLL(hWndPage, hWndTrackbar, TB_LINEDOWN, -WHEEL_DELTA, ::SendMessageW);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_WINDOW);
@@ -1750,7 +1755,8 @@ TEST_F(EditWndTest, ShowPropType006)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_REGEX);
@@ -1782,7 +1788,8 @@ TEST_F(EditWndTest, ShowPropType007)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_KEYHELP);
