@@ -747,11 +747,33 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	return;
 }
 
-/*! ダイアログデータの取得
+/* ダイアログデータの取得
 	@retval TRUE  正常
 	@retval FALSE 入力エラー
 */
 int CDlgGrep::GetData( void )
+{
+	GetDataSimpleOptions();
+
+	const bool bFromThisText = m_bFromThisText != FALSE;
+
+	if( !GetDataFilePattern( bFromThisText ) ){
+		return FALSE;
+	}
+	if( !GetDataFolderPath( bFromThisText ) ){
+		return FALSE;
+	}
+	if( !ValidateSearchText() ){
+		return FALSE;
+	}
+
+	CommitDataToShareData( bFromThisText );
+
+	return TRUE;
+}
+
+// チェックボックス・ラジオ・コンボ等の単純フィールド取得（C-9）
+void CDlgGrep::GetDataSimpleOptions( void )
 {
 	/* サブフォルダーからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_SUBFOLDER );
@@ -806,10 +828,13 @@ int CDlgGrep::GetData( void )
 
 	/* 検索文字列 */
 	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );
+}
 
+// 検索ファイルパターンの取得・検証（C-9）
+BOOL CDlgGrep::GetDataFilePattern( bool bFromThisText )
+{
 	/* 検索ファイル */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, std::size(m_szFile) );
-	bool bFromThisText = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_FROMTHISTEXT);
 	if( bFromThisText ){
 		m_szFile.assign(BuildHwndFileToken(::GetParent(GetHwnd())));
 	}else{
@@ -818,13 +843,9 @@ int CDlgGrep::GetData( void )
 			return FALSE;
 		}
 	}
-	/* 検索フォルダー */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, std::size(m_szFolder) );
 	/* 除外ファイル */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, std::size(m_szExcludeFile));
 	m_bExcludeFileRegularExp = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
-	/* 除外フォルダー */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
 
 	if( m_szFile[0] != '\0' ) {
 		CGrepEnumKeys enumKeys;
@@ -844,6 +865,17 @@ int CDlgGrep::GetData( void )
 		//	「*.*」が指定されたものと見なす．
 		wcscpy_s( m_szFile, std::size(m_szFile), L"*.*" );
 	}
+	return TRUE;
+}
+
+// 検索フォルダーの取得・複数パス解決・検証（C-9）
+BOOL CDlgGrep::GetDataFolderPath( bool bFromThisText )
+{
+	/* 検索フォルダー */
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, std::size(m_szFolder) );
+	/* 除外フォルダー */
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
+
 	if( m_szFolder[0] == L'\0' ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGGREP4) );
 		return FALSE;
@@ -881,7 +913,12 @@ int CDlgGrep::GetData( void )
 		}
 		wcscpy_s( m_szFolder, std::size(m_szFolder), strFolder.c_str() );
 	}
+	return TRUE;
+}
 
+// 検索文字列の正規表現構文検証（C-9）
+BOOL CDlgGrep::ValidateSearchText( void )
+{
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
 	/* 検索文字列 */
 	if( 0 < m_strText.size() ){
@@ -894,7 +931,12 @@ int CDlgGrep::GetData( void )
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 	}
+	return TRUE;
+}
 
+// 検証通過後の共有設定・履歴への書き込み（C-9）
+void CDlgGrep::CommitDataToShareData( bool bFromThisText )
+{
 	// ==== ここから下では入力検証エラーで戻らない（共有設定への書き込みは全検証通過後に集約する） ====
 	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
@@ -906,21 +948,21 @@ int CDlgGrep::GetData( void )
 
 	if( m_strText.size() > 0 ){
 		if( m_strText.size() < _MAX_PATH ){
-			if( !m_bFromThisText ){
+			if( !bFromThisText ){
 				CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
 			}
 			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 		}
 	}else{
 		// 2014.07.01 空キーも登録する
-		if( !m_bFromThisText ){
+		if( !bFromThisText ){
 			CSearchKeywordManager().AddToSearchKeyArr( L"" );
 		}
 	}
 
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23
 	// 2016.03.08 Moca 「このファイルから検索」の場合はサブフォルダー共通設定を更新しない
-	if (!m_bFromThisText) {
+	if (!bFromThisText) {
 		/* 検索ファイル */
 		CSearchKeywordManager().AddToGrepFileArr( m_szFile );
 
@@ -936,8 +978,6 @@ int CDlgGrep::GetData( void )
 		// Grep：サブフォルダーも検索
 		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = m_bSubFolder;
 	}
-
-	return TRUE;
 }
 
 //@@@ 2002.01.18 add start

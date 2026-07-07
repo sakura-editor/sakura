@@ -11,6 +11,7 @@
 
 #include <atomic>
 #include <string>
+#include <utility>
 #include <vector>
 #include "doc/CDocListener.h"
 #include "extmodule/CBregexp.h"
@@ -84,6 +85,16 @@ struct SGrepMatchInfo {
 	int				nEolCodeLen;	//!< [in] EOL の長さ
 	const wchar_t*	pMatchData;		//!< [in] ヒットした文字列
 	int				nMatchLen;		//!< [in] ヒットした文字列長
+};
+
+//! 検索結果出力の宛先パス・表示情報（DoGrepFile / DoGrepFileWorker 共通化・静的時）
+struct SGrepOutputPaths {
+	const WCHAR*	pszFullPath;		//!< [in] フルパス
+	const WCHAR*	pszBaseFolder;		//!< [in] ベースフォルダー
+	const WCHAR*	pszFolder;			//!< [in] 表示用フォルダー
+	const WCHAR*	pszRelPath;			//!< [in] 相対パス
+	const WCHAR*	pszDispFilePath;	//!< [in] 表示用ファイルパス
+	const WCHAR*	pszCodeName;		//!< [in] 文字コード表記（"[SJIS]" 等）
 };
 
 //! DoGrep の検索入力文字列（非所有）
@@ -167,8 +178,8 @@ public:
 		int&								nHitCountOut	//!< [out] 合計ヒット数（キャンセル時も部分値）
 	);
 
-private:
 	// Grep実行
+	// キャンセル経路（FlushAndCancel）をテストから直接呼び出せるように public 化（DoGrepFileWorker と同様）。
 	int DoGrepTree(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
@@ -191,6 +202,7 @@ private:
 	);
 
 	// Grep実行
+	// 直列経路（MatchAndEmitGrepLine の pnHitCount 非 null 分岐）をテストから直接呼び出せるように public 化（DoGrepFileWorker と同様）。
 	int DoGrepFile(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,
@@ -210,6 +222,30 @@ private:
 		bool&					bOutputFolderName,
 		CNativeW&				cmemMessage,
 		CNativeW&				cUnicodeBuffer
+	);
+
+private:
+	//! 1 行分の検索一致判定と結果出力（DoGrepFile / DoGrepFileWorker 共通化・C-1）
+	//! 正規表現/単語のみ/文字列の 3 分割と否ヒット行(nGrepOutputLineType==2)処理をまとめる。
+	//! @param[in] pnGlobalHitCount 直列版は *pnHitCount を渡す。並列版は nullptr。
+	//! @return この行で追加されたヒット数
+	int MatchAndEmitGrepLine(
+		const wchar_t*			pLine,				//!< [in] 行の文字列
+		int						nLineLen,			//!< [in] 行の文字列長
+		LONGLONG				nLine,				//!< [in] 行番号
+		int						nEolCodeLen,		//!< [in] EOL の長さ
+		int						nKeyLen,			//!< [in] 検索キー長
+		const std::vector<std::pair<const wchar_t*, CLogicInt>>& searchWords,	//!< [in] 単語検索用（bWordOnly時）
+		const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
+		const SGrepOption&		sGrepOption,		//!< [in] Grep オプション
+		const CSearchStringPattern&	pattern,		//!< [in] 検索パターン
+		CBregexp*				pRegexp,			//!< [in] コンパイル済み正規表現
+		const SGrepOutputPaths&	paths,				//!< [in] 出力先パス情報
+		bool&					bOutputBaseFolder,	//!< [i/o] ベースフォルダー出力済みフラグ
+		bool&					bOutputFolderName,	//!< [i/o] フォルダー名出力済みフラグ
+		BOOL&					bOutFileName,		//!< [i/o] ファイル名出力済みフラグ
+		int*					pnGlobalHitCount,	//!< [i/o] 合計ヒット数（nullptr 可）
+		CNativeW&				cmemMessage			//!< [out] 結果メッセージ追記先
 	);
 
 	int DoGrepReplaceFile(

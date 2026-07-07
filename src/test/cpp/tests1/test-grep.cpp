@@ -53,6 +53,9 @@
 #include "io/CFileLoad.h"
 #include "util/file.h"
 
+#include "dlg/CDlgCancel.h"
+#include "view/CEditView.h"
+
 #include "window/EditorTestSuite.hpp"
 
 namespace {
@@ -456,7 +459,7 @@ TEST(CGrepEnumKeys, ParseFileAndFolderKeysWithDefaults)
 
 	const auto excludeFolders = keys.GetExcludeFolders();
 	ASSERT_EQ(excludeFolders.size(), 1u);
-	EXPECT_STREQ(excludeFolders[0], L"build");					// # を除いたフォルダー名で除外に振り分けられる
+	EXPECT_STREQ(excludeFolders[0].c_str(), L"build");					// # を除いたフォルダー名で除外に振り分けられる
 
 	ASSERT_EQ(keys.m_vecSearchFolderKeys.size(), 1u);
 	EXPECT_STREQ(keys.m_vecSearchFolderKeys[0].c_str(), L"*.*");		// フォルダー未指定時は *.* を補完
@@ -2673,6 +2676,79 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_ExcludeRegexAndSubfolderSmoke)
 	EXPECT_EQ(out.find("skip_me"),   std::string::npos) << "skip_me.txt は除外正規表現で除外され出力されない";
 }
 
+/*!
+ * @brief DoGrep 置換: 複数の除外正規表現が結合パターンとして適用される (GA-35)
+ * @remark 除外正規表現を 2 本与え、DoGrepTree の P4 結合（"(?:p1)|(?:p2)"）経路で
+ *         両パターンとも有効に除外されることを確認する（1 本のみの GA-22 では
+ *         結合の "|" 連結コードが実行されないため本テストで補完する）。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_MultipleExcludeRegexCombined)
+{
+	m_temp->WriteEncodedTextFile(L"keep.txt",    CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"skip_me.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"app.log",     CODE_UTF8, L"needle\n");
+
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_multiexcl_stdout.txt";
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	std::string out;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		CGrepAgent agent;
+
+		const CNativeW cmKey(L"needle");
+		const CNativeW cmRep(L"REPLACED");
+		const CNativeW cmFile(L"*.*;!.*skip.*\\.txt$;!.*\\.log$");
+		const CNativeW cmFolder(m_temp->Root().wstring().c_str());
+
+		SSearchOption sOpt;
+		sOpt.Reset();
+
+		SGrepOption gOpt;
+		gOpt.bGrepReplace        = true;
+		gOpt.bGrepSubFolder      = false;
+		gOpt.bGrepStdout         = true;
+		gOpt.bGrepHeader         = true;
+		gOpt.nGrepCharSet        = CODE_AUTODETECT;
+		gOpt.nGrepOutputLineType = 1;
+		gOpt.nGrepOutputStyle    = 1;
+
+		hits = agent.DoGrep(
+			pView,
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+			sOpt,
+			gOpt,
+			true,	// bGrepCurFolder
+			true	// bGrepExcludeFileRegexp=true（! 除外を正規表現扱い）
+		);
+
+		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		char buf[8192] = {0};
+		DWORD dwRead = 0;
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		out.assign(buf, dwRead);
+	}
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+
+	EXPECT_EQ(1u, hits) << "keep.txt の 1 件のみ置換（skip_me.txt / app.log は結合除外パターンで除外）";
+	EXPECT_NE(out.find("keep.txt"), std::string::npos) << "keep.txt が出力される";
+	EXPECT_EQ(out.find("skip_me"),  std::string::npos) << "skip_me.txt は 1 本目の除外パターンで除外";
+	EXPECT_EQ(out.find("app.log"),  std::string::npos) << "app.log は 2 本目の除外パターンで除外";
+}
+
 // =============================================================================
 // Grep 置換経路の追加検証（GA-23 ～ GA-25）
 // =============================================================================
@@ -3495,4 +3571,493 @@ TEST_F(GrepRealFileTest, Snapshot_Enumerate_ThenWorker_ExcludedFileNotSearched)
 
 	EXPECT_EQ(1, totalHits);
 	EXPECT_EQ(hitPath.wstring() + L"(1,1): needle\r\n", combined);
+}
+
+// =============================================================================
+// 16. DoGrepFile 直列経路の直接検証（GA-36 ～ GA-40）・ハンドルGrep エラー経路（GA-41）
+// =============================================================================
+//
+// 補足: :HWND: 正常系（実ウィンドウ経由のハンドルGrep）は、テスト環境の CEditWnd が
+// IsSakuraMainWindow のウィンドウクラス判定を満たさないため実行不可（CI で確認済み）。
+// 直列版 MatchAndEmitGrepLine（pnHitCount 非 null 分岐）は DoGrepFile を直接呼び出して
+// 実ファイルに対し検証する。CDlgCancel はダイアログ未生成（NULL HWND）で渡し、
+// UI 系 API は no-op となる（GA-42 と同じ方式）。UI チェックは 32 行ごとのため
+// 小さな入力では BlockingHook にも到達しない。
+
+namespace {
+
+//! DoGrepFile（直列版）の実行結果
+struct SSerialGrepResult {
+	int				ret;		//!< DoGrepFile の戻り値（このファイルのヒット数）
+	int				globalHits;	//!< *pnHitCount（直列版合計ヒット数）
+	std::wstring	message;	//!< 結果メッセージ
+};
+
+//! DoGrepFile を実ファイルに対して直接呼び出す（直列版 MatchAndEmitGrepLine, pnHitCount 非 null 経路）。
+SSerialGrepResult RunDoGrepFileSerial(
+	const std::filesystem::path& path,
+	const std::wstring& key,
+	const SSearchOption& sOpt,
+	int nOutputLineType)
+{
+	SSerialGrepResult result{ 0, 0, L"" };
+
+	// DoGrep 本体と同じ手順で検索パターンを構築する（bRegularExp 時は SetPattern 内でコンパイルされる）
+	CBregexp regexp;
+	CSearchStringPattern pattern;
+	if (!pattern.SetPattern(nullptr, key.c_str(), (int)key.size(), sOpt, &regexp)) {
+		ADD_FAILURE() << "SetPattern failed";
+		return result;
+	}
+
+	auto gOpt = MakeGrepOption();
+	gOpt.nGrepOutputLineType = nOutputLineType;
+
+	CDlgCancel cDlgCancel;	// ダイアログ未生成（NULL HWND・キャンセルされない）
+
+	const std::wstring fullPath   = path.wstring();
+	const std::wstring fileName   = path.filename().wstring();
+	const std::wstring baseFolder = path.parent_path().wstring();
+
+	CNativeW cmemMessage;
+	CNativeW cUnicodeBuffer;
+	cmemMessage.AllocStringBuffer(4000);
+	cUnicodeBuffer.AllocStringBuffer(4000);
+	bool bOutputBaseFolder = false;
+	bool bOutputFolderName = false;
+
+	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+	CGrepAgent agent;
+	result.ret = agent.DoGrepFile(
+		pView,
+		&cDlgCancel,
+		NULL,	// hWndTarget: NULL = 実ファイルを読み込む
+		key.c_str(),
+		fileName.c_str(),
+		sOpt,
+		gOpt,
+		pattern,
+		&regexp,
+		&result.globalHits,
+		fullPath.c_str(),
+		baseFolder.c_str(),
+		baseFolder.c_str(),
+		fileName.c_str(),
+		bOutputBaseFolder,
+		bOutputFolderName,
+		cmemMessage,
+		cUnicodeBuffer
+	);
+	result.message.assign(cmemMessage.GetStringPtr(), (size_t)cmemMessage.GetStringLength());
+	return result;
+}
+
+} // namespace
+
+/*!
+ * @brief DoGrepFile 直列経路の基本ヒット（lineType=1） (GA-36)
+ * @remark 直列版 MatchAndEmitGrepLine（pnGlobalHitCount 非 null 分岐）で、戻り値と
+ *         *pnHitCount の両方にヒット数が正しく加算されることを確認する。
+ */
+TEST_F(GrepRealFileTest, SerialGrep_DoGrepFile_BasicHits)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"ga36.txt", CODE_UTF8, L"UNIQ0 alpha\nUNIQ0 beta\n");
+
+	SSearchOption sOpt;
+	sOpt.Reset();
+	const auto r = RunDoGrepFileSerial(path, L"UNIQ0", sOpt, 1);
+
+	EXPECT_EQ(2, r.ret) << "UNIQ0 を含む 2 行がヒットする";
+	EXPECT_EQ(2, r.globalHits) << "直列版 *pnHitCount にも同数が加算される";
+	EXPECT_NE(r.message.find(L"UNIQ0 alpha"), std::wstring::npos) << "ヒット行が出力される";
+}
+
+/*!
+ * @brief DoGrepFile 直列経路: lineType=0 で 1 行内複数ヒットの累積 (GA-37)
+ * @remark 該当部分出力モードで 1 行に 3 つのマッチがあるとき、直列版 MatchAndEmitGrepLine の
+ *         ヒットごとの ++(*pnGlobalHitCount) が 3 回実行され合計 3 件となることを確認する。
+ */
+TEST_F(GrepRealFileTest, SerialGrep_DoGrepFile_MultipleHitsInLine)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"ga37.txt", CODE_UTF8, L"UNIQ1 x UNIQ1 x UNIQ1\n");
+
+	SSearchOption sOpt;
+	sOpt.Reset();
+	const auto r = RunDoGrepFileSerial(path, L"UNIQ1", sOpt, 0);	// 該当部分（1 行内の複数マッチ継続）
+
+	EXPECT_EQ(3, r.ret) << "1 行内の 3 マッチが戻り値に加算される";
+	EXPECT_EQ(3, r.globalHits) << "1 行内の 3 マッチが直列版合計ヒット数へすべて加算される";
+}
+
+/*!
+ * @brief DoGrepFile 直列経路: lineType=2（否ヒット行）でヒット数が巻き戻される (GA-38)
+ * @remark 否ヒット行モードでは、ヒット行のマッチ分を *pnGlobalHitCount から行開始値へ
+ *         巻き戻し、否ヒット行のみ +1 する（C-1 共通化の直列版分岐）。
+ *         ファイルはヒット行 1（マッチ 3 個）＋否ヒット行 2 の計 3 行。
+ *         巻き戻しが壊れている場合、ヒット行の 3 マッチが混入して 5 以上になる。
+ */
+TEST_F(GrepRealFileTest, SerialGrep_DoGrepFile_NoHitLineTypeRewindsCount)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"ga38.txt", CODE_UTF8, L"UNIQ2 UNIQ2 UNIQ2\nmissA\nmissB\n");
+
+	SSearchOption sOpt;
+	sOpt.Reset();
+	const auto r = RunDoGrepFileSerial(path, L"UNIQ2", sOpt, 2);	// 否ヒット行
+
+	EXPECT_EQ(2, r.ret)
+		<< "否ヒット行 2 のみカウントされる（ヒット行の 3 マッチは巻き戻される）";
+	EXPECT_EQ(2, r.globalHits)
+		<< "直列版 *pnHitCount も行開始値へ巻き戻されて否ヒット行 2 のみとなる";
+	EXPECT_EQ(r.message.find(L"UNIQ2"), std::wstring::npos)
+		<< "ヒット行（UNIQ2 を含む行）は否ヒット行モードでは出力されない";
+	EXPECT_NE(r.message.find(L"missA"), std::wstring::npos) << "否ヒット行 missA が出力される";
+	EXPECT_NE(r.message.find(L"missB"), std::wstring::npos) << "否ヒット行 missB が出力される";
+}
+
+/*!
+ * @brief DoGrepFile 直列経路: 単語のみ検索分岐 (GA-39)
+ * @remark 直列版 MatchAndEmitGrepLine の bWordOnly 分岐で、独立語のみヒットし
+ *         部分一致（UNIQ3words）はヒットしないことを確認する。
+ */
+TEST_F(GrepRealFileTest, SerialGrep_DoGrepFile_WordOnly)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"ga39.txt", CODE_UTF8, L"UNIQ3w UNIQ3words UNIQ3w\n");
+
+	SSearchOption sOpt;
+	sOpt.Reset();
+	sOpt.bWordOnly = true;
+	const auto r = RunDoGrepFileSerial(path, L"UNIQ3w", sOpt, 0);	// 1 行内の複数マッチを数える
+
+	EXPECT_EQ(2, r.ret) << "独立語 UNIQ3w の 2 件のみ（UNIQ3words は単語境界不成立）";
+	EXPECT_EQ(2, r.globalHits) << "直列版 *pnHitCount にも同数が加算される";
+}
+
+/*!
+ * @brief DoGrepFile 直列経路: 正規表現検索分岐 (GA-40)
+ * @remark 直列版 MatchAndEmitGrepLine の bRegularExp 分岐で、`^RXUNIQ\d+$` が
+ *         数字終端の行のみにヒットすることを確認する。
+ * @note   bregonig.dll に依存する（他の正規表現テストと同条件）。
+ */
+TEST_F(GrepRealFileTest, SerialGrep_DoGrepFile_Regex)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"ga40.txt", CODE_UTF8, L"RXUNIQ1\nRXUNIQ22\nRXUNIQx\n");
+
+	SSearchOption sOpt;
+	sOpt.Reset();
+	sOpt.bRegularExp = true;
+	const auto r = RunDoGrepFileSerial(path, L"^RXUNIQ\\d+$", sOpt, 1);
+
+	EXPECT_EQ(2, r.ret) << "RXUNIQ1 / RXUNIQ22 の 2 行のみヒットする";
+	EXPECT_EQ(2, r.globalHits) << "直列版 *pnHitCount にも同数が加算される";
+}
+
+/*!
+ * @brief ハンドルGrep: 無効 HWND トークンのエラー経路で SGrepRunningGuard がリセットする (GA-41)
+ * @remark 無効な :HWND: トークンで GetHwndTitle が -1 を返す経路（"HWND handle error."）でも、
+ *         A-3 の RAII ガードにより m_bGrepRunning がリセットされ、同一 agent で
+ *         続けて実行する通常 Grep が再入エラー（0xffffffff）にならないことを確認する。
+ *         本ガード導入前は本経路のみリセットが漏れ、以後 Grep が永続的に実行不能だった。
+ */
+TEST_F(GrepRealFileTest, HwndGrep_InvalidTokenErrorPath_GuardResetsRunningFlag)
+{
+	m_temp->WriteEncodedTextFile(L"guard.txt", CODE_UTF8, L"needle\nneedle\n");
+
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+
+	CGrepAgent agent;	// 2 回の DoGrep で同一インスタンスを使う（再入ガードは agent 単位）
+
+	// 1 回目: 無効 HWND トークン → GetHwndTitle が -1 → エラー経路で return 0
+	{
+		WCHAR tempDir[MAX_PATH];
+		::GetTempPathW(MAX_PATH, tempDir);
+		const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_badhwnd_stdout.txt";
+		HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+			GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
+		std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+		DWORD hits = 0;
+		std::string out;
+		{
+			GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+			CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+			const CNativeW cmKey(L"needle");
+			const CNativeW cmRep(L"");
+			const CNativeW cmFile(L":HWND:0");	// 無効ハンドル（IsSakuraMainWindow が false）
+			const CNativeW cmFolder(L"C:\\");
+
+			SSearchOption sOpt;
+			sOpt.Reset();
+
+			SGrepOption gOpt;
+			gOpt.bGrepStdout         = true;
+			gOpt.bGrepHeader         = true;
+			gOpt.nGrepCharSet        = CODE_AUTODETECT;
+			gOpt.nGrepOutputLineType = 1;
+			gOpt.nGrepOutputStyle    = 1;
+
+			hits = agent.DoGrep(
+				pView,
+				SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+				sOpt, gOpt,
+				true,	// bGrepCurFolder
+				false	// bGrepExcludeFileRegexp
+			);
+
+			::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+			char buf[8192] = {0};
+			DWORD dwRead = 0;
+			::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+			out.assign(buf, dwRead);
+		}
+		hFileGuard.reset();
+		::DeleteFileW(tmpFile.c_str());
+
+		EXPECT_EQ(0u, hits) << "無効 HWND トークンは 0 件で復帰する";
+		EXPECT_NE(out.find("HWND handle error"), std::string::npos)
+			<< "HWND ハンドルエラーのメッセージが出力される";
+	}
+
+	// 2 回目: 同一 agent で通常のファイル Grep。ガードが機能していれば正常実行できる。
+	//         ガードが機能していない場合は再入検知で 0xffffffff が返る。
+	{
+		WCHAR tempDir[MAX_PATH];
+		::GetTempPathW(MAX_PATH, tempDir);
+		const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_guard2_stdout.txt";
+		HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+			GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
+		std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+		DWORD hits2 = 0;
+		{
+			GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+			CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+			const CNativeW cmKey(L"needle");
+			const CNativeW cmRep(L"");
+			const CNativeW cmFile(L"*.txt");
+			const CNativeW cmFolder(m_temp->Root().wstring().c_str());
+
+			SSearchOption sOpt;
+			sOpt.Reset();
+
+			SGrepOption gOpt;
+			gOpt.bGrepStdout         = true;
+			gOpt.bGrepHeader         = true;
+			gOpt.nGrepCharSet        = CODE_AUTODETECT;
+			gOpt.nGrepOutputLineType = 1;
+			gOpt.nGrepOutputStyle    = 1;
+
+			hits2 = agent.DoGrep(
+				pView,
+				SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+				sOpt, gOpt,
+				true,	// bGrepCurFolder
+				false	// bGrepExcludeFileRegexp
+			);
+		}
+		hFileGuard.reset();
+		::DeleteFileW(tmpFile.c_str());
+
+		EXPECT_NE(0xffffffffu, hits2)
+			<< "SGrepRunningGuard により m_bGrepRunning がリセットされ再入エラーにならない";
+		EXPECT_EQ(2u, hits2) << "通常 Grep が正常に実行され needle 2 件がヒットする";
+	}
+}
+
+// =============================================================================
+// 17. DoGrepTree キャンセル経路・P4 結合安全化の検証（GA-42 ～ GA-44）
+// =============================================================================
+
+/*!
+ * @brief DoGrepTree: キャンセル済みダイアログで FlushAndCancel 経路を通る (GA-42)
+ * @remark ダイアログを生成せず m_bCANCEL=TRUE の CDlgCancel を注入し、ファイルループ先頭の
+ *         中断チェックで FlushAndCancel（B-1: goto cancel_return の代替ラムダ）が実行され、
+ *         (1) 戻り値 -1、(2) 残存メッセージの AddTail フラッシュ、(3) バッファ長 0 リセット、
+ *         の 3 点を確認する。フラッシュ先は stdout（bGrepStdout=true）で回収する。
+ */
+TEST_F(GrepRealFileTest, DoGrepTree_PreCancelledFlushesAndReturnsMinusOne)
+{
+	// キャンセルチェックはファイルループ内にあるためファイルが 1 つ以上必要
+	m_temp->WriteEncodedTextFile(L"c.txt", CODE_UTF8, L"needle\n");
+
+	CDlgCancel cDlgCancel;
+	cDlgCancel.m_bCANCEL = TRUE;	// ダイアログ未生成のままキャンセル済み状態にする
+
+	const auto sOpt = MakeSearchOption(false, false);
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepStdout = true;
+
+	CSearchStringPattern pattern;
+	ASSERT_TRUE(pattern.SetPattern(nullptr, L"needle", 6, sOpt, nullptr));
+	CBregexp regexp;	// 非正規表現検索のため未使用（キャンセル判定が先に走る）
+
+	CGrepEnumKeys keys;
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.txt"));
+	CGrepEnumFiles exceptAbsFiles;
+	CGrepEnumFolders exceptAbsFolders;
+
+	CNativeW cmemMessage;
+	cmemMessage.AppendString(L"PRELOADEDMARK\r\n");	// FlushAndCancel の残存フラッシュ検証用
+	CNativeW cUnicodeBuffer;
+	int nHitCount = 0;
+	bool bOutputBaseFolder = false;
+	const std::wstring rootPath = m_temp->Root().wstring();
+	const CNativeW cmRep(L"");
+
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogreptree_cancel_stdout.txt";
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	int ret = 0;
+	std::string out;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		CGrepAgent agent;
+		ret = agent.DoGrepTree(
+			pView,
+			&cDlgCancel,
+			L"needle",
+			cmRep,
+			keys,
+			exceptAbsFiles,
+			exceptAbsFolders,
+			rootPath.c_str(),
+			rootPath.c_str(),
+			sOpt,
+			gOpt,
+			pattern,
+			&regexp,
+			bOutputBaseFolder,
+			&nHitCount,
+			cmemMessage,
+			cUnicodeBuffer
+		);
+
+		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		char buf[8192] = {0};
+		DWORD dwRead = 0;
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		out.assign(buf, dwRead);
+	}
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+
+	EXPECT_EQ(-1, ret) << "キャンセル時は -1 を返す";
+	EXPECT_EQ(0, cmemMessage.GetStringLength())
+		<< "FlushAndCancel が残存メッセージをフラッシュして長さ 0 に戻す";
+	EXPECT_NE(out.find("PRELOADEDMARK"), std::string::npos)
+		<< "残存メッセージが AddTail（stdout）へフラッシュされる";
+}
+
+/*!
+ * @brief DoGrep 置換: 後方参照を含む除外正規表現は結合せず個別適用される (GA-43)
+ * @remark P4 結合はグループ番号が全パターン通しで振り直されるため、先行パターンに
+ *         キャプチャグループがあると後続パターンの \1 の参照先が変わる。
+ *         CanCombineExcludePatterns により個別コンパイルへ迂回し、各パターンが
+ *         単独コンパイル時と同じ意味で適用されることを直列（置換）経路で確認する。
+ *         p1=`.*(zk)m\.log$`（グループあり）、p2=`.*(zq)\1.*`（\1 は (zq) を参照）。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_BackRefExcludeNotCombined)
+{
+	m_temp->WriteEncodedTextFile(L"keep.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"zqzq.txt", CODE_UTF8, L"needle\n");	// p2 で除外（zqzq = (zq)\1）
+	m_temp->WriteEncodedTextFile(L"zkm.log",  CODE_UTF8, L"needle\n");	// p1 で除外
+
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_backref_stdout.txt";
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	std::string out;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		CGrepAgent agent;
+
+		const CNativeW cmKey(L"needle");
+		const CNativeW cmRep(L"REPLACED");
+		const CNativeW cmFile(L"*.*;!.*(zk)m\\.log$;!.*(zq)\\1.*");
+		const CNativeW cmFolder(m_temp->Root().wstring().c_str());
+
+		SSearchOption sOpt;
+		sOpt.Reset();
+
+		SGrepOption gOpt;
+		gOpt.bGrepReplace        = true;
+		gOpt.bGrepSubFolder      = false;
+		gOpt.bGrepStdout         = true;
+		gOpt.bGrepHeader         = true;
+		gOpt.nGrepCharSet        = CODE_AUTODETECT;
+		gOpt.nGrepOutputLineType = 1;
+		gOpt.nGrepOutputStyle    = 1;
+
+		hits = agent.DoGrep(
+			pView,
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+			sOpt,
+			gOpt,
+			true,	// bGrepCurFolder
+			true	// bGrepExcludeFileRegexp=true
+		);
+
+		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		char buf[8192] = {0};
+		DWORD dwRead = 0;
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		out.assign(buf, dwRead);
+	}
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+
+	EXPECT_EQ(1u, hits) << "keep.txt の 1 件のみ置換（後方参照パターンは個別適用で正しく除外）";
+	EXPECT_NE(out.find("keep.txt"), std::string::npos) << "keep.txt が出力される";
+	EXPECT_EQ(out.find("zqzq"),     std::string::npos) << "zqzq.txt は \\1 付きパターンで除外";
+	EXPECT_EQ(out.find("zkm"),      std::string::npos) << "zkm.log はグループ付きパターンで除外";
+}
+
+/*!
+ * @brief RunParallelGrep: 後方参照を含む除外正規表現は結合せず個別適用される (GA-44)
+ * @remark GA-43 と同じパターン構成を並列経路（ワーカー内 excludeRegexps）で検証する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_StdoutMode_BackRefExcludeNotCombined)
+{
+	m_temp->WriteEncodedTextFile(L"keep.txt", CODE_UTF8, L"needle\n");
+	m_temp->WriteEncodedTextFile(L"zqzq.txt", CODE_UTF8, L"needle\n");	// p2 で除外（zqzq = (zq)\1）
+	m_temp->WriteEncodedTextFile(L"zkm.log",  CODE_UTF8, L"needle\n");	// p1 で除外
+
+	std::string out;
+	const DWORD hits = RunDoGrepStdout(
+		L"needle", L"*.*;!.*(zk)m\\.log$;!.*(zq)\\1.*", m_temp->Root().wstring(),
+		out, /*bExcludeFileRegex=*/true);
+
+	EXPECT_EQ(1u, hits) << "keep.txt の 1 件のみ（後方参照パターンは個別適用で正しく除外）";
+	EXPECT_NE(out.find("keep.txt"), std::string::npos) << "keep.txt のヒットが出力される";
+	EXPECT_EQ(out.find("zqzq"),     std::string::npos) << "zqzq.txt は \\1 付きパターンで除外";
+	EXPECT_EQ(out.find("zkm"),      std::string::npos) << "zkm.log はグループ付きパターンで除外";
 }
