@@ -255,12 +255,12 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpEditor();
 
 		CKeyMacroMgr::declare();
 		CWSHMacroManager::declare();
-
-		SetUpUia();
 	}
 
 	/*!
@@ -268,12 +268,12 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	static void TearDownTestSuite()
 	{
-		TearDownUia();
-
 		CMacroFactory::getInstance()->Unregister(CWSHMacroManager::Creator);
 		CMacroFactory::getInstance()->Unregister(CKeyMacroMgr::Creator);
 
 		TearDownEditor();
+
+		TearDownUia();
 	}
 
 	std::unique_ptr<CMacroManagerBase> mgr = nullptr;

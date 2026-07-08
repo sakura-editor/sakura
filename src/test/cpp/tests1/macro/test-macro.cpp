@@ -70,12 +70,14 @@ std::filesystem::path find_dll_in_the_path(const std::filesystem::path& dllname)
 	return "";
 }
 
-struct MacroMgrTest : public ::testing::Test, public window::EditorTestSuite {
+struct MacroMgrTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpEditor();
 	}
 
@@ -85,6 +87,8 @@ struct MacroMgrTest : public ::testing::Test, public window::EditorTestSuite {
 	static void TearDownTestSuite()
 	{
 		TearDownEditor();
+
+		TearDownUia();
 	}
 };
 
