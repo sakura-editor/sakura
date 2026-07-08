@@ -370,7 +370,10 @@ namespace winmain {
  * 始動前に設定ファイルを削除するようにしている。
  * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
  */
-struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public window::UiaTestSuite {
+template<class T>
+struct TWinMainTest : public T, public window::UiaTestSuite {
+	using Base = T;
+
 	/*!
 	 * テスト用ファイルのパス
 	 */
@@ -424,12 +427,16 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 	 */
 	std::filesystem::path iniPath;
 
+	virtual ~TWinMainTest() = default;
+
+	virtual std::wstring_view GetProfileName() const = 0;
+
 	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
 		// テスト用プロファイル名
-		const std::wstring_view profileName(GetParam());
+		const std::wstring_view profileName{ GetProfileName() };
 
 		// コマンドラインのインスタンスを用意する
 		CCommandLine commandLine;
@@ -469,7 +476,7 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 		}
 
 		// プロファイル指定がある場合、フォルダーも削除しておく
-		if (const std::wstring_view profileName(GetParam()); !profileName.empty()) {
+		if (const std::wstring_view profileName{ GetProfileName() }; !profileName.empty()) {
 			std::filesystem::remove_all(iniPath.parent_path());
 		}
 	}
@@ -494,6 +501,19 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 
 		// コントロールプロセスに終了指示を出して終了を待つ
 		testing::TerminateControlProcess(profileName, dwControlProcessId);
+	}
+};
+
+/*!
+ * WinMain起動テストのためのフィクスチャクラス
+ *
+ * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので
+ * 始動前に設定ファイルを削除するようにしている。
+ * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
+ */
+struct WinMainTest : public TWinMainTest<::testing::TestWithParam<std::wstring_view>> {
+	std::wstring_view GetProfileName() const override {
+		return GetParam();
 	}
 };
 
@@ -773,14 +793,39 @@ TEST_P(WinMainTest, runEditorProcess)
 }
 
 /*!
+ * @brief パラメータテストをインスタンス化する
+ *  プロファイル指定なしとプロファイル指定ありの2パターンで実体化させる
+ */
+INSTANTIATE_TEST_SUITE_P(WinMain
+	, WinMainTest
+	, ::testing::Values(
+		L"",
+		L"profile1"
+	)
+);
+
+/*!
+ * WinMain起動テストのためのフィクスチャクラス
+ *
+ * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので
+ * 始動前に設定ファイルを削除するようにしている。
+ * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
+ */
+struct WinMainFuncTest : public TWinMainTest<::testing::Test> {
+	std::wstring_view GetProfileName() const override {
+		return L"";
+	}
+};
+
+/*!
  * @brief WinMainを起動してみるテスト
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  Grepを実行する。
  */
-TEST_P(WinMainTest, DoGrep001)
+TEST_F(WinMainFuncTest, DoGrep001)
 {
 	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	const auto profileName{ GetProfileName() };
 
 	// ケース独自の設定ファイルを使うので、一旦削除する
 	std::filesystem::remove(iniPath);
@@ -833,10 +878,10 @@ TEST_P(WinMainTest, DoGrep001)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  アウトプットウインドウを表示する。
  */
-TEST_P(WinMainTest, OpenDebugWindow001)
+TEST_F(WinMainFuncTest, OpenDebugWindow001)
 {
 	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	const auto profileName{ GetProfileName() };
 
 	// コントロールプロセスを起動する
 	const auto dwControlProcessId = testing::CreateControlProcess(profileName);
@@ -860,10 +905,10 @@ TEST_P(WinMainTest, OpenDebugWindow001)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  Grepダイアログを表示してキャンセルで閉じる。
  */
-TEST_P(WinMainTest, ShowDlgGrep101)
+TEST_F(WinMainFuncTest, ShowDlgGrep101)
 {
 	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	const auto profileName{ GetProfileName() };
 
 	// コントロールプロセスを起動する
 	const auto dwControlProcessId = testing::CreateControlProcess(profileName);
@@ -908,10 +953,10 @@ TEST_P(WinMainTest, ShowDlgGrep101)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  プロファイルマネージャを表示してキャンセルで閉じる。
  */
-TEST_P(WinMainTest, ShowDlgProfileMgr101)
+TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 {
 	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	const auto profileName{ GetProfileName() };
 
 	// エディタープロセスを起動する
 	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
@@ -923,17 +968,5 @@ TEST_P(WinMainTest, ShowDlgProfileMgr101)
 	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 	testing::WaitForForeignProcessExit(ep);
 }
-
-/*!
- * @brief パラメータテストをインスタンス化する
- *  プロファイル指定なしとプロファイル指定ありの2パターンで実体化させる
- */
-INSTANTIATE_TEST_SUITE_P(WinMain
-	, WinMainTest
-	, ::testing::Values(
-		L"",
-		L"profile1"
-	)
-);
 
 } // namespace winmain
