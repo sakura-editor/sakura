@@ -71,6 +71,7 @@ jobs:
           "-Dsonar.cfamily.compile-commands=bw-output/compile_commands.json"
           "-Dsonar.cfamily.cppunit.reportPath=*-googletest.xml"
           "-Dsonar.cfamily.cobertura.reportPaths=tests1-coverage.xml"
+          "-Dsonar.python.coverage.reportPaths=pytest-coverage.xml"
           "-Dsonar.verbose=true"
 
     - name: Upload Sonar CFamily failure reproducer (if present)

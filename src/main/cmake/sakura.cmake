@@ -68,18 +68,22 @@ else()
   set(GENERATOR_ARGS_FOR_HOST_TOOLS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
 
-# vswhereを探す。（なくてもOK）
+# vswhereを探す。（必須）
+# Chocolatey版vswhere(ver3.1.7+)を最優先とする
+# Visual Studio付属のvswhereは %ProgramFiles(x86)% に入っている
+# %ProgramFiles% は Windows 10 32bit版向けなので削除可
 find_program(CMD_VSWHERE vswhere.exe
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ChocolateyInstall}/bin"
     "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
-  PATH_SUFFIXES
-    "bin"
+    "$ENV{ProgramFiles}/Microsoft Visual Studio/Installer"
   DOC "Visual Studio Locator"
 )
 
 if(CMD_VSWHERE)
   message(STATUS "Found vswhere: ${CMD_VSWHERE}")
+else()
+  message(FATAL_ERROR "vswhere not found")
 endif()
 
 # 環境変数とvswhereを使ってVSバージョンを取得する
@@ -158,10 +162,16 @@ endif()
 
 message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
 
+# Find Python Interpreter(required)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+message(STATUS "Found Python: ${Python3_EXECUTABLE}")
+
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ProgramFiles}/7-zip"
+    "$ENV{ChocolateyInstall}/bin"
 )
 
 if(NOT 7ZIP_EXECUTABLE)
@@ -197,18 +207,19 @@ add_custom_target(generate_version_header
     "${CMAKE_BINARY_DIR}/version.h"
 )
 
-# Include HeaderMake.cmake for HeaderMake command
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/HeaderMake.cmake)
-
 # Create a custom command for funccode_define generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_define.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_define.h
     -mode=define
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_define.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file
@@ -220,13 +231,17 @@ add_custom_target(generate_funccode_define
 # Create a custom command for funccode_enum generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_enum.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_enum.h
     -mode=enum
     -enum=EFunctionCode
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_enum.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file

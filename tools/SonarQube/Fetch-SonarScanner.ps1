@@ -35,7 +35,7 @@ if (-not(Test-Path "$Destination\scanner\bin\sonar-scanner")) {
     # SonarScannerCLIを展開する
     if (-not(Test-Path "$Destination\scanner")) {
         # zipを展開する
-        7z x "$Destination\$sonarScannerFileName.zip" "-o$Destination" "*"
+        Expand-Archive -Path "$Destination\$sonarScannerFileName.zip" -DestinationPath $Destination
 
         # 解凍したフォルダ名からバージョンを取り除く
         Move-Item -Path "$Destination\$sonarScannerFileName" -Destination "$Destination\scanner"

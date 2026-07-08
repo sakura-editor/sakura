@@ -46,10 +46,42 @@ add_subdirectory("${CMAKE_SOURCE_DIR}/tools/ppa_stub"
 add_subdirectory("${CMAKE_SOURCE_DIR}/tools/dll_plugin1"
                  "${CMAKE_BINARY_DIR}/dll_plugin1")
 
+# Convert paths to native Windows format (backslashes) for OpenCppCoverage
+file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}" CMAKE_SOURCE_DIR_NATIVE)
+file(TO_NATIVE_PATH "${OUTPUT_DIRECTORY}" OUTPUT_DIRECTORY_NATIVE)
+
 # Include tests1 definition
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/tests1.cmake)
 
+if(OpenCppCoverage_EXECUTABLE)
+  add_test(NAME CoverageTest
+    COMMAND ${OpenCppCoverage_EXECUTABLE}
+      --export_type cobertura:${CMAKE_SOURCE_DIR_NATIVE}\\tests1-coverage.xml
+      --modules ${OUTPUT_DIRECTORY_NATIVE}\\tests1.exe
+      --sources ${CMAKE_SOURCE_DIR_NATIVE}
+      --excluded_sources ${CMAKE_SOURCE_DIR_NATIVE}\\build
+      --working_dir ${OUTPUT_DIRECTORY_NATIVE}
+      --cover_children
+      --
+      $<TARGET_FILE:tests1>
+      --gtest_output=xml:${CMAKE_SOURCE_DIR}/tests1-googletest.xml
+    CONFIGURATIONS Debug
+  )
+endif()
+
 add_test(NAME UnitTest
   COMMAND $<TARGET_FILE:tests1>
-    --gtest_output=xml:${OUTPUT_DIRECTORY}/tests1-googletest.xml
+    --gtest_output=xml:${CMAKE_SOURCE_DIR}/tests1-googletest.xml
+  WORKING_DIRECTORY ${OUTPUT_DIRECTORY}
+  CONFIGURATIONS Release
+)
+
+add_test(NAME pytest
+  COMMAND ${Python3_EXECUTABLE} -m pytest
+    --ignore=externals
+    --cov
+    --cov-config=src/test/py/.coveragerc
+    --cov-report=xml:pytest-coverage.xml
+    --cov-fail-under=80
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
