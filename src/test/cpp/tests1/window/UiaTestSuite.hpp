@@ -8,6 +8,7 @@
 
 #include "cxx/com_pointer.hpp"
 #include "dlg/ModalDialogCloser.hpp"
+#include "util/tchar_convert.h"
 
 // UI Automation経由でGUI操作を行う
 #include <UIAutomation.h>
@@ -182,6 +183,25 @@ struct UiaTestSuite
 		input.ki.dwFlags = isKeyUp ? KEYEVENTF_KEYUP : 0;
 
 		return input;
+	}
+
+	template <typename Func>
+	void RunGuiTest(Func&& f)
+	{
+		try {
+			std::forward<Func>(f)();
+		}
+		catch (const std::exception& e) {
+			FAIL() << "std::exception: " << typeid(e).name()
+				<< ": " << e.what();
+		}
+		catch (const _com_error& e) {
+			FAIL() << "_com_error: "
+				<< ": " << cxx::to_string(e.ErrorMessage());
+		}
+		catch (...) {
+			FAIL() << "unknown non-std exception";
+		}
 	}
 
 	HWND WaitForDialog(const std::wstring& title) const

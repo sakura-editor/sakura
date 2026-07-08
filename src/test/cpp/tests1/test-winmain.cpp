@@ -880,24 +880,26 @@ TEST_F(WinMainFuncTest, DoGrep001)
  */
 TEST_F(WinMainFuncTest, OpenDebugWindow001)
 {
-	// テスト用プロファイル名
-	const auto profileName{ GetProfileName() };
+	RunGuiTest([this] {
+		// テスト用プロファイル名
+		const auto profileName{ GetProfileName() };
 
-	// コントロールプロセスを起動する
-	const auto dwControlProcessId = testing::CreateControlProcess(profileName);
+		// コントロールプロセスを起動する
+		const auto dwControlProcessId = testing::CreateControlProcess(profileName);
 
-	// エディタープロセスを起動する
-	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
+		// エディタープロセスを起動する
+		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
 
-	// 編集ウインドウが有効になるのを待って閉じる
-	const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME);
-	testing::RequestForeignWindowClose(hWndFound);
+		// 編集ウインドウが有効になるのを待って閉じる
+		const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME);
+		testing::RequestForeignWindowClose(hWndFound);
 
-	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	testing::WaitForForeignProcessExit(ep);
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		testing::WaitForForeignProcessExit(ep);
 
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName, dwControlProcessId);
+		// コントロールプロセスに終了指示を出して終了を待つ
+		testing::TerminateControlProcess(profileName, dwControlProcessId);
+	});
 }
 
 /*!
@@ -907,45 +909,41 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
  */
 TEST_F(WinMainFuncTest, ShowDlgGrep101)
 {
-	// テスト用プロファイル名
-	const auto profileName{ GetProfileName() };
+	RunGuiTest([this] {
+		// テスト用プロファイル名
+		const auto profileName{ GetProfileName() };
 
-	// コントロールプロセスを起動する
-	const auto dwControlProcessId = testing::CreateControlProcess(profileName);
+		// コントロールプロセスを起動する
+		const auto dwControlProcessId = testing::CreateControlProcess(profileName);
 
-	// エディタープロセスを起動する
-	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
+		// エディタープロセスを起動する
+		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
 
-	// Grepダイアログが表示されるのを待って閉じる
-	for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
-		if (const auto hWndFound = ::FindWindowW(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep"); hWndFound) {
-			break;
+		// Grepダイアログが表示されるのを待って閉じる
+		const auto hWndDlgGrep = WaitForDialog(L"Grep");
+		EmulateInvokeButton(hWndDlgGrep, L"キャンセル(X)");
+
+		bool dlgClosed = false;
+		for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
+			if (const auto hWndFound = ::FindWindowW(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep"); !hWndFound) {
+				dlgClosed = true;
+				break;
+			}
+			Sleep(10);  // 10msスリープしてリトライ
 		}
-		Sleep(10);  // 10msスリープしてリトライ
-	}
-	const auto hWndDlgGrep = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep");
-	EmulateInvokeButton(hWndDlgGrep, L"キャンセル(X)");
 
-	bool dlgClosed = false;
-	for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
-		if (const auto hWndFound = ::FindWindowW(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep"); !hWndFound) {
-			dlgClosed = true;
-			break;
-		}
-		Sleep(10);  // 10msスリープしてリトライ
-	}
+		EXPECT_TRUE(dlgClosed) << "Grep dialog should be closed.";
 
-	EXPECT_TRUE(dlgClosed) << "Grep dialog should be closed.";
+		// 編集ウインドウを閉じる
+		const auto hWndFound = cxx::FindWindowW(GSTR_EDITWINDOWNAME);
+		testing::RequestForeignWindowClose(hWndFound);
 
-	// 編集ウインドウを閉じる
-	const auto hWndFound = cxx::FindWindowW(GSTR_EDITWINDOWNAME);
-	testing::RequestForeignWindowClose(hWndFound);
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		testing::WaitForForeignProcessExit(ep);
 
-	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	testing::WaitForForeignProcessExit(ep);
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName, dwControlProcessId);
+		// コントロールプロセスに終了指示を出して終了を待つ
+		testing::TerminateControlProcess(profileName, dwControlProcessId);
+	});
 }
 
 /*!
@@ -955,18 +953,20 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
  */
 TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 {
-	// テスト用プロファイル名
-	const auto profileName{ GetProfileName() };
+	RunGuiTest([this] {
+		// テスト用プロファイル名
+		const auto profileName{ GetProfileName() };
 
-	// エディタープロセスを起動する
-	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
+		// エディタープロセスを起動する
+		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
 
-	// プロファイルマネージャが表示されるのを待って閉じる
-	const auto hWndDlgProfileMgr = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"プロファイルマネージャ");
-	EmulateInvokeButton(hWndDlgProfileMgr, L"閉じる(X)");
+		// プロファイルマネージャが表示されるのを待って閉じる
+		const auto hWndDlgProfileMgr = WaitForDialog(L"プロファイルマネージャ");
+		EmulateInvokeButton(hWndDlgProfileMgr, L"閉じる(X)");
 
-	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	testing::WaitForForeignProcessExit(ep);
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		testing::WaitForForeignProcessExit(ep);
+	});
 }
 
 } // namespace winmain
