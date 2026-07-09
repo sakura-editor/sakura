@@ -8,6 +8,7 @@
 
 #include "cxx/com_pointer.hpp"
 #include "dlg/ModalDialogCloser.hpp"
+#include "util/tchar_convert.h"
 
 // UI Automation経由でGUI操作を行う
 #include <UIAutomation.h>
@@ -182,6 +183,57 @@ struct UiaTestSuite
 		input.ki.dwFlags = isKeyUp ? KEYEVENTF_KEYUP : 0;
 
 		return input;
+	}
+
+	template <typename Func>
+	void RunGuiTest(Func&& f)
+	{
+		try {
+			std::forward<Func>(f)();
+		}
+		catch (const std::exception& e) {
+			FAIL() << "std::exception: " << typeid(e).name()
+				<< ": " << e.what();
+		}
+		catch (const _com_error& e) {
+			FAIL() << "_com_error: "
+				<< ": " << cxx::to_string(e.ErrorMessage());
+		}
+		catch (...) {
+			FAIL() << "unknown non-std exception";
+		}
+	}
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @param action 閉じるアクション
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle, const std::function<void(HWND)>& action) const
+	{
+		return std::jthread([this, title = std::wstring(dialogTitle), action] {
+			const auto hWndFound = WaitForDialog(title);
+			action(hWndFound);
+		});
+	}
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle) const
+	{
+		return StartWindowCloser(dialogTitle, [this] (HWND hWndDlg) {
+			// OKボタンを押下して閉じる
+			const auto hOK = ::GetDlgItem(hWndDlg, IDOK);
+			std::wstring text(0x100, L'\0');
+			::GetWindowTextW(hOK, std::data(text), int(std::size(text)));
+			EmulateInvokeButton(hWndDlg, text.c_str());
+		});
 	}
 
 	HWND WaitForDialog(const std::wstring& title) const

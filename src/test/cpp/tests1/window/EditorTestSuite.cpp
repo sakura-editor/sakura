@@ -16,10 +16,6 @@ namespace window {
  */
 /* static */ void EditorTestSuite::SetUpEditor()
 {
-	// OLEを初期化する
-	if (FAILED(::OleInitialize(nullptr)))
-		FAIL();
-
 	// 言語環境を初期化する
 	CSelectLang::InitializeLanguageEnvironment();
 
@@ -147,9 +143,6 @@ namespace window {
 	pcEditDoc = nullptr;
 
 	TearDownShareData();
-
-	// OLEをシャットダウンする
-	::OleUninitialize();
 }
 
 } // namespace window

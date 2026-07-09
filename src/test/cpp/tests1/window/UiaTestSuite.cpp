@@ -14,8 +14,11 @@ namespace window {
  */
 /* static */ void UiaTestSuite::SetUpUia()
 {
+	// OLEを初期化する
+	EXPECT_HRESULT_SUCCEEDED(::OleInitialize(nullptr));
+
 	// UI Automationオブジェクトを作成する
-	_com_util::CheckError(m_pAutomation.CreateInstance(__uuidof(CUIAutomation), nullptr, CLSCTX_INPROC_SERVER));
+	EXPECT_HRESULT_SUCCEEDED(m_pAutomation.CreateInstance(__uuidof(CUIAutomation), nullptr, CLSCTX_INPROC_SERVER));
 }
 
 /*!
@@ -25,6 +28,9 @@ namespace window {
 {
 	// UI Automationオブジェクトを破棄する
 	m_pAutomation = nullptr;
+
+	// OLEをシャットダウンする
+	::OleUninitialize();
 }
 
 } // namespace window

@@ -350,10 +350,12 @@ protected:
 	 * テストが実行された直後に毎回呼ばれる関数
 	 */
 	void TearDown() override {
+		std::error_code ec;
+
 		// 存在チェック
 		if (std::filesystem::exists(exeIniPath)) {
 			// マルチユーザー構成設定ファイルを削除する
-			std::filesystem::remove(exeIniPath);
+			std::filesystem::remove(exeIniPath, ec);
 		}
 
 		// 削除チェック
@@ -535,8 +537,10 @@ TEST(file, GetInidirOrExedir)
 	GetInidirOrExedir(buf.data(), filename, true);
 	EXPECT_THAT(buf, StartsWith(iniBasePath.c_str()));
 
+	std::error_code ec;
+
 	// INI基準パスのファイルを削除する
-	std::filesystem::remove(iniBasePath);
+	std::filesystem::remove(iniBasePath, ec);
 	EXPECT_FALSE(fexist(iniBasePath));
 
 	// EXE基準のみ存在するときはEXE基準のパスが変える
@@ -544,7 +548,7 @@ TEST(file, GetInidirOrExedir)
 	EXPECT_THAT(buf, StartsWith(exeBasePath.c_str()));
 
 	// EXE基準パスのファイルを削除する
-	std::filesystem::remove(exeBasePath);
+	std::filesystem::remove(exeBasePath, ec);
 	EXPECT_FALSE(fexist(exeBasePath));
 
 	// 両方ないときはINI基準のパスが変える
@@ -573,7 +577,8 @@ TEST(file, GetIniFileNameForIO)
 	EXPECT_THAT(GetIniFileNameForIO(false), StrEq(iniPath.c_str()));
 
 	// INIファイルを削除する
-	std::filesystem::remove(iniPath);
+	std::error_code ec;
+	std::filesystem::remove(iniPath, ec);
 	EXPECT_FALSE(fexist(iniPath));
 }
 

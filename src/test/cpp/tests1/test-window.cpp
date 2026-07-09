@@ -255,12 +255,12 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpEditor();
 
 		CKeyMacroMgr::declare();
 		CWSHMacroManager::declare();
-
-		SetUpUia();
 	}
 
 	/*!
@@ -268,12 +268,12 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	static void TearDownTestSuite()
 	{
-		TearDownUia();
-
 		CMacroFactory::getInstance()->Unregister(CWSHMacroManager::Creator);
 		CMacroFactory::getInstance()->Unregister(CKeyMacroMgr::Creator);
 
 		TearDownEditor();
+
+		TearDownUia();
 	}
 
 	std::unique_ptr<CMacroManagerBase> mgr = nullptr;
@@ -292,34 +292,6 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	void TearDown() override
 	{
 		mgr = nullptr;
-	}
-
-	/*!
-	 * ダイアログを閉じるスレッドを開始する
-	 *
-	 * @param dialogTitle タイトル
-	 * @param action 閉じるアクション
-	 * @return ダイアログを閉じるためのスレッド
-	 */
-	std::jthread StartWindowCloser(std::wstring_view dialogTitle, const std::function<void(HWND)>& action) const
-	{
-		return std::jthread([this, title = std::wstring(dialogTitle), action] {
-			const auto hWndFound = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title);
-			action(hWndFound);
-		});
-	}
-
-	/*!
-	 * ダイアログを閉じるスレッドを開始する
-	 *
-	 * @param dialogTitle タイトル
-	 * @return ダイアログを閉じるためのスレッド
-	 */
-	std::jthread StartWindowCloser(std::wstring_view dialogTitle) const
-	{
-		return StartWindowCloser(dialogTitle, [this] (HWND hWndFound) {
-			EmulateInvokeButton(hWndFound, L"OK");
-		});
 	}
 
 	/*!
@@ -381,8 +353,10 @@ TEST_F(EditWndTest, FileSaveWithBackupAgent001)
 	const auto targetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
 	const auto backupPath = targetPath.parent_path() / (targetPath.stem().native() + L".bak");
 
-	std::filesystem::remove(targetPath);
-	std::filesystem::remove(backupPath);
+	std::error_code ec;
+
+	std::filesystem::remove(targetPath, ec);
+	std::filesystem::remove(backupPath, ec);
 
 	{
 		std::wofstream fs(targetPath);
@@ -423,8 +397,8 @@ TEST_F(EditWndTest, FileSaveWithBackupAgent001)
 
 	sBackup = backupOld;
 
-	std::filesystem::remove(targetPath);
-	std::filesystem::remove(backupPath);
+	std::filesystem::remove(targetPath, ec);
+	std::filesystem::remove(backupPath, ec);
 }
 
 /*!
@@ -434,7 +408,8 @@ TEST_F(EditWndTest, GetDocDataObject001)
 {
 	const auto targetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
 
-	std::filesystem::remove(targetPath);
+	std::error_code ec;
+	std::filesystem::remove(targetPath, ec);
 
 	cxx::com_pointer<IDataObject> pDataObject;
 	EXPECT_HRESULT_SUCCEEDED(GetDocument()->GetDataObject(&pDataObject));
@@ -477,7 +452,7 @@ TEST_F(EditWndTest, GetDocDataObject001)
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileClose()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
-	std::filesystem::remove(targetPath);
+	std::filesystem::remove(targetPath, ec);
 }
 
 /*!
@@ -983,7 +958,8 @@ TEST_F(EditWndTest, ShowDlgPluginOption001)
 	CPluginManager::getInstance()->UnloadAllPlugin();
 
 	if (const auto pluginPath = GetIniFileName().remove_filename().append(L"plugins"); fexist(pluginPath)) {
-		std::filesystem::remove_all(pluginPath);
+		std::error_code ec;
+		std::filesystem::remove_all(pluginPath, ec);
 	}
 }
 
@@ -1377,7 +1353,9 @@ TEST_F(EditWndTest, ShowPropCommon003)
 TEST_F(EditWndTest, ShowPropCommon004)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"メインメニュー.ini");
-	std::filesystem::remove(exportPath);
+
+	std::error_code ec;
+	std::filesystem::remove(exportPath, ec);
 
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON), [&] (HWND hWndDlg) {
@@ -1391,14 +1369,15 @@ TEST_F(EditWndTest, ShowPropCommon004)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_MAINMENU);
 
 	t.join();
 
-	std::filesystem::remove(exportPath);
+	std::filesystem::remove(exportPath, ec);
 }
 
 /*!
@@ -1517,7 +1496,9 @@ TEST_F(EditWndTest, ShowPropCommon014)
 TEST_F(EditWndTest, ShowPropCommon015)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"カスタムメニュー.mnu");
-	std::filesystem::remove(exportPath);
+
+	std::error_code ec;
+	std::filesystem::remove(exportPath, ec);
 
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON), [&] (HWND hWndDlg) {
@@ -1531,14 +1512,15 @@ TEST_F(EditWndTest, ShowPropCommon015)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_CUSTMENU);
 
 	t.join();
 
-	std::filesystem::remove(exportPath);
+	std::filesystem::remove(exportPath, ec);
 }
 
 /*!
@@ -1547,7 +1529,9 @@ TEST_F(EditWndTest, ShowPropCommon015)
 TEST_F(EditWndTest, ShowPropCommon016)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"強調キーワード.kwd");
-	std::filesystem::remove(exportPath);
+
+	std::error_code ec;
+	std::filesystem::remove(exportPath, ec);
 
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPCOMMON), [&] (HWND hWndDlg) {
@@ -1561,14 +1545,15 @@ TEST_F(EditWndTest, ShowPropCommon016)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYWORD);
 
 	t.join();
 
-	std::filesystem::remove(exportPath);
+	std::filesystem::remove(exportPath, ec);
 }
 
 /*!
@@ -1632,7 +1617,9 @@ TEST_F(EditWndTest, ShowPropType002)
 TEST_F(EditWndTest, ShowPropType003)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"基本.col");
-	std::filesystem::remove(exportPath);
+
+	std::error_code ec;
+	std::filesystem::remove(exportPath, ec);
 
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE), [&] (HWND hWndDlg) {
@@ -1659,14 +1646,15 @@ TEST_F(EditWndTest, ShowPropType003)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_COLOR);
 
 	t.join();
 
-	std::filesystem::remove(exportPath);
+	std::filesystem::remove(exportPath, ec);
 }
 
 /*!
@@ -1699,7 +1687,8 @@ TEST_F(EditWndTest, ShowPropType004)
 		FORWARD_WM_HSCROLL(hWndPage, hWndTrackbar, TB_LINEDOWN, -WHEEL_DELTA, ::SendMessageW);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_WINDOW);
@@ -1722,7 +1711,9 @@ TEST_F(EditWndTest, ShowPropType005)
 TEST_F(EditWndTest, ShowPropType006)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"テキスト.rkw");
-	std::filesystem::remove(exportPath);
+
+	std::error_code ec;
+	std::filesystem::remove(exportPath, ec);
 
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE), [&] (HWND hWndDlg) {
@@ -1736,14 +1727,15 @@ TEST_F(EditWndTest, ShowPropType006)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_REGEX);
 
 	t.join();
 
-	std::filesystem::remove(exportPath);
+	std::filesystem::remove(exportPath, ec);
 }
 
 /*!
@@ -1752,7 +1744,9 @@ TEST_F(EditWndTest, ShowPropType006)
 TEST_F(EditWndTest, ShowPropType007)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"キーワードヘルプ.txt");
-	std::filesystem::remove(exportPath);
+
+	std::error_code ec;
+	std::filesystem::remove(exportPath, ec);
 
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	std::jthread t = StartWindowCloser(LS(STR_PROPTYPE), [&] (HWND hWndDlg) {
@@ -1766,14 +1760,15 @@ TEST_F(EditWndTest, ShowPropType007)
 		EmulateEnterOpenFileName(exportPath);
 
 		// OKボタンを押下して閉じる
-		EmulateInvokeButton(hWndDlg, L"OK");
+		const auto text = apiwrap::GetDlgItemTextW(hWndDlg, IDOK);
+		EmulateInvokeButton(hWndDlg, text.c_str());
 	});
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_KEYHELP);
 
 	t.join();
 
-	std::filesystem::remove(exportPath);
+	std::filesystem::remove(exportPath, ec);
 }
 
 /*!

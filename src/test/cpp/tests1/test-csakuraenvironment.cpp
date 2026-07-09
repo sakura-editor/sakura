@@ -121,16 +121,18 @@ struct TSakuraEnvironmentTest : public Base, public window::EditorTestSuite {
 	 */
 	static void TearDownTestSuite()
 	{
+		std::error_code ec;
+
 		if (exists(testDataPath)) {
-			std::filesystem::remove(testDataPath);
+			std::filesystem::remove(testDataPath, ec);
 		}
 
 		if (exists(mru1Dir)) {
-			std::filesystem::remove_all(mru1Dir);
+			std::filesystem::remove_all(mru1Dir, ec);
 		}
 
 		if (exists(dummyDir)) {
-			std::filesystem::remove_all(dummyDir);
+			std::filesystem::remove_all(dummyDir, ec);
 		}
 
 		TearDownEditor();
@@ -349,8 +351,9 @@ TEST_F(CSakuraEnvironmentTest, ResolvePath001)
 	// パス解決を試みる
 	EXPECT_THAT(ResolvePath(link), StrEq(targetLongFileName));
 
-	std::filesystem::remove(link);
-	std::filesystem::remove(target);
+	std::error_code ec;
+	std::filesystem::remove(link, ec);
+	std::filesystem::remove(target, ec);
 }
 
 /*!
