@@ -70,13 +70,11 @@
       <AdditionalIncludeDirectories>..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0411</Culture>
     </ResourceCompile>
-    <Manifest>
-      <EnableDpiAwareness>true</EnableDpiAwareness>
-    </Manifest>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;Shlwapi.lib;Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/MANIFESTINPUT:..\build\$(Platform)\CMakeTools\sakura.exe.manifest</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
