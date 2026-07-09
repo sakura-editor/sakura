@@ -9,12 +9,14 @@
 
 #include "window/EditorTestSuite.hpp"
 
-struct DlgOpenFileTest : public ::testing::Test, public window::EditorTestSuite {
+struct DlgOpenFileTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpEditor();
 	}
 
@@ -24,6 +26,8 @@ struct DlgOpenFileTest : public ::testing::Test, public window::EditorTestSuite 
 	static void TearDownTestSuite()
 	{
 		TearDownEditor();
+
+		TearDownUia();
 	}
 };
 

@@ -278,7 +278,8 @@ struct CMigemoTest : public ExtModuleTest {
 
 		// 辞書ファイルを削除する
 		if (fexist(dictPath)) {
-			std::filesystem::remove_all(dictPath);
+			std::error_code ec;
+			std::filesystem::remove_all(dictPath, ec);
 		}
 
 		// テストクラスをインスタンス化する

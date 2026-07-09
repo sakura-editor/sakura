@@ -72,6 +72,67 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの
 
 namespace apiwrap {
 
+/*!
+ * @brief テキスト取得結果構造体
+ */
+struct SGetTextResult {
+	//!	取得した文字列バッファ
+	std::wstring buffer;
+
+	//!	取得した文字列
+	std::wstring_view text;
+
+	//!	取得結果
+	bool result = false;
+
+	//! デフォルトコンストラクタは失敗状態を表す
+	SGetTextResult() = default;
+
+	/*!
+	 * @brief 成功状態を表すコンストラクター
+	 */
+	explicit SGetTextResult(std::wstring&& buffer_)
+		: buffer(std::move(buffer_))
+		, text(buffer)
+		, result(true)
+	{
+	}
+
+	/*!
+	 * @brief 成功状態を表すコンストラクター
+	 *
+	 * @note 取得した文字列への参照を保持する
+	 */
+	explicit SGetTextResult(std::wstring_view text_)
+		: text(text_)
+		, result(true)
+	{
+	}
+
+	/*!
+	 * @brief 成功状態を返す変換演算子
+	 *
+	 * @retval true 取得成功。
+	 * @note テキストが空でもtrue。
+	 */
+	explicit operator bool() const noexcept { return result; }
+
+	/*!
+	 * @brief 取得した文字列バッファを返す変換演算子
+	 */
+	explicit operator const std::wstring&() const noexcept { return buffer; }
+
+	/*!
+	 * @brief 取得した文字列を返す変換演算子
+	 */
+	LPCWSTR c_str() const noexcept
+	{
+		assert(result);
+
+		return text.data();
+	}
+};
+
 void	CheckDlgButton(HWND hDlg, int nIDButton, bool bCheck = true);
 bool	EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable = true);
 WORD	GetTrackBarPos(HWND hWndDlg, int nIDDlgItem);
@@ -80,6 +141,9 @@ bool	IsDlgButtonChecked(HWND hDlg, int nIDButton);
 bool	IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem);
 void	SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw = true);
 void	SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos);
+
+SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem);
+SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> buffer);
 
 /*!
  * @brief トラックバーのデータ範囲を変更する

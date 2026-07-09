@@ -152,7 +152,7 @@ jobs:
           --accept-source-agreements
       shell: pwsh
 
-   - name: Install DiffUtils (winget)
+    - name: Install DiffUtils (winget)
       run: |
         winget install `
           --id GnuWin32.DiffUtils `
@@ -219,12 +219,6 @@ jobs:
         -C ${{ matrix.config }}
         --output-on-failure
       shell: pwsh
-
-    - name: Upload test result
-      uses: EnricoMi/publish-unit-test-result-action/windows@v2
-      with:
-        files: |
-          *-googletest.xml
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}

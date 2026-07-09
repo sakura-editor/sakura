@@ -68,13 +68,15 @@ bool WriteBinaryToFile(BinarySequenceView bin, std::filesystem::path path)
  */
 std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension)
 {
+	std::error_code ec;
+
 	// 1回だけリトライする
 	for (auto n = 0; n <= 1; ++n) {
 		// 拡張子指定なし版を呼び出す
 		auto tempPath = GetTempFilePath(prefix);
 
 		// 作成された一時ファイルを削除する
-		std::filesystem::remove(tempPath);
+		std::filesystem::remove(tempPath, ec);
 
 		tempPath.replace_extension(extension.data());
 
@@ -136,6 +138,8 @@ void extract_zip_resource(
 	const std::optional<std::filesystem::path>& optOutDir
 )
 {
+	std::error_code ec;
+
 	// 一時ファイル名を生成する
 	auto tempPath = GetTempFilePath(L"tes");
 
@@ -155,7 +159,7 @@ void extract_zip_resource(
 	extract_zip(tempPath, optOutDir.value_or(GetIniFileName().remove_filename()));
 
 	// 作成した一時ファイルを削除する
-	std::filesystem::remove(tempPath);
+	std::filesystem::remove(tempPath, ec);
 }
 
 /*!
@@ -176,6 +180,8 @@ TEST(CZipFile, DISABLED_IsNG) // 安定しないので無効化する
  */
 TEST(CZipFile, CZipFIle)
 {
+	std::error_code ec;
+
 	// IShellDispatchを使うためにOLEを初期化する
 	if (FAILED(::OleInitialize(nullptr))) {
 		FAIL();
@@ -218,7 +224,7 @@ TEST(CZipFile, CZipFIle)
 		std::filesystem::create_directories(dest);
 		EXPECT_TRUE(cZipFile.Unzip(dest.c_str()));
 		EXPECT_TRUE(std::filesystem::exists(dest / folderName.c_str() / L"plugin.def"));
-		std::filesystem::remove_all(dest);
+		std::filesystem::remove_all(dest, ec);
 
 		// 意図的に失敗させる
 		EXPECT_FALSE(cZipFile.Unzip(GetExeFileName()));
@@ -230,7 +236,7 @@ TEST(CZipFile, CZipFIle)
 		EXPECT_FALSE(cZipFile.SetZip(L"not found"));
 
 		// 作成した一時ファイルを削除する
-		std::filesystem::remove(tempPath);
+		std::filesystem::remove(tempPath, ec);
 	}
 
 	// OLEをシャットダウンする

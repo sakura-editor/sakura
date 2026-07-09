@@ -370,7 +370,10 @@ namespace winmain {
  * 始動前に設定ファイルを削除するようにしている。
  * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
  */
-struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public window::UiaTestSuite {
+template<class T>
+struct TWinMainTest : public T, public window::UiaTestSuite {
+	using Base = T;
+
 	/*!
 	 * テスト用ファイルのパス
 	 */
@@ -399,13 +402,15 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 	 * テストスイートの終了後に1回だけ呼ばれる関数
 	 */
 	static void TearDownTestSuite() {
+		std::error_code ec;
+
 		// テスト用ファイルの後始末
 		if (fexist(gm_TestDataPath)) {
-			std::filesystem::remove(gm_TestDataPath);
+			std::filesystem::remove(gm_TestDataPath, ec);
 		}
 
 		if (const auto pluginPath = GetIniFileName().remove_filename().append(L"plugins"); fexist(pluginPath)) {
-			std::filesystem::remove_all(pluginPath);
+			std::filesystem::remove_all(pluginPath, ec);
 		}
 
 		// UI Automationをシャットダウンする
@@ -422,12 +427,16 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 	 */
 	std::filesystem::path iniPath;
 
+	virtual ~TWinMainTest() = default;
+
+	virtual std::wstring_view GetProfileName() const = 0;
+
 	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
 		// テスト用プロファイル名
-		const std::wstring_view profileName(GetParam());
+		const std::wstring_view profileName{ GetProfileName() };
 
 		// コマンドラインのインスタンスを用意する
 		CCommandLine commandLine;
@@ -442,7 +451,8 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 
 		// INIファイルを削除する
 		if (fexist(iniPath)) {
-			std::filesystem::remove(iniPath);
+			std::error_code ec;
+			std::filesystem::remove(iniPath, ec);
 		}
 
 		// テスト用INIファイル作成
@@ -461,11 +471,12 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 	void TearDown() override {
 		// INIファイルを削除する
 		if (fexist(iniPath)) {
-			std::filesystem::remove(iniPath);
+			std::error_code ec;
+			std::filesystem::remove(iniPath, ec);
 		}
 
 		// プロファイル指定がある場合、フォルダーも削除しておく
-		if (const std::wstring_view profileName(GetParam()); !profileName.empty()) {
+		if (const std::wstring_view profileName{ GetProfileName() }; !profileName.empty()) {
 			std::filesystem::remove_all(iniPath.parent_path());
 		}
 	}
@@ -490,6 +501,19 @@ struct WinMainTest : public ::testing::TestWithParam<std::wstring_view>, public 
 
 		// コントロールプロセスに終了指示を出して終了を待つ
 		testing::TerminateControlProcess(profileName, dwControlProcessId);
+	}
+};
+
+/*!
+ * WinMain起動テストのためのフィクスチャクラス
+ *
+ * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので
+ * 始動前に設定ファイルを削除するようにしている。
+ * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
+ */
+struct WinMainTest : public TWinMainTest<::testing::TestWithParam<std::wstring_view>> {
+	std::wstring_view GetProfileName() const override {
+		return GetParam();
 	}
 };
 
@@ -535,7 +559,8 @@ TEST_P(WinMainTest, runEditorProcess)
 	extract_zip_resource(IDR_ZIPRES4, pluginPath);
 
 	// ケース独自の設定ファイルを使うので、一旦削除する
-	std::filesystem::remove(iniPath);
+	std::error_code ec;
+	std::filesystem::remove(iniPath, ec);
 
 	// テスト用INIファイル作成
 	// 標準機能をできるだけ動かすために設定を入れる
@@ -768,14 +793,39 @@ TEST_P(WinMainTest, runEditorProcess)
 }
 
 /*!
+ * @brief パラメータテストをインスタンス化する
+ *  プロファイル指定なしとプロファイル指定ありの2パターンで実体化させる
+ */
+INSTANTIATE_TEST_SUITE_P(WinMain
+	, WinMainTest
+	, ::testing::Values(
+		L"",
+		L"profile1"
+	)
+);
+
+/*!
+ * WinMain起動テストのためのフィクスチャクラス
+ *
+ * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので
+ * 始動前に設定ファイルを削除するようにしている。
+ * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
+ */
+struct WinMainFuncTest : public TWinMainTest<::testing::Test> {
+	std::wstring_view GetProfileName() const override {
+		return L"";
+	}
+};
+
+/*!
  * @brief WinMainを起動してみるテスト
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  Grepを実行する。
  */
-TEST_P(WinMainTest, DoGrep001)
+TEST_F(WinMainFuncTest, DoGrep001)
 {
 	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	const auto profileName{ GetProfileName() };
 
 	// ケース独自の設定ファイルを使うので、一旦削除する
 	std::filesystem::remove(iniPath);
@@ -828,26 +878,28 @@ TEST_P(WinMainTest, DoGrep001)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  アウトプットウインドウを表示する。
  */
-TEST_P(WinMainTest, OpenDebugWindow001)
+TEST_F(WinMainFuncTest, OpenDebugWindow001)
 {
-	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	RunGuiTest([this] {
+		// テスト用プロファイル名
+		const auto profileName{ GetProfileName() };
 
-	// コントロールプロセスを起動する
-	const auto dwControlProcessId = testing::CreateControlProcess(profileName);
+		// コントロールプロセスを起動する
+		const auto dwControlProcessId = testing::CreateControlProcess(profileName);
 
-	// エディタープロセスを起動する
-	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
+		// エディタープロセスを起動する
+		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
 
-	// 編集ウインドウが有効になるのを待って閉じる
-	const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME);
-	testing::RequestForeignWindowClose(hWndFound);
+		// 編集ウインドウが有効になるのを待って閉じる
+		const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME);
+		testing::RequestForeignWindowClose(hWndFound);
 
-	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	testing::WaitForForeignProcessExit(ep);
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		testing::WaitForForeignProcessExit(ep);
 
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName, dwControlProcessId);
+		// コントロールプロセスに終了指示を出して終了を待つ
+		testing::TerminateControlProcess(profileName, dwControlProcessId);
+	});
 }
 
 /*!
@@ -855,47 +907,43 @@ TEST_P(WinMainTest, OpenDebugWindow001)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  Grepダイアログを表示してキャンセルで閉じる。
  */
-TEST_P(WinMainTest, ShowDlgGrep101)
+TEST_F(WinMainFuncTest, ShowDlgGrep101)
 {
-	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	RunGuiTest([this] {
+		// テスト用プロファイル名
+		const auto profileName{ GetProfileName() };
 
-	// コントロールプロセスを起動する
-	const auto dwControlProcessId = testing::CreateControlProcess(profileName);
+		// コントロールプロセスを起動する
+		const auto dwControlProcessId = testing::CreateControlProcess(profileName);
 
-	// エディタープロセスを起動する
-	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
+		// エディタープロセスを起動する
+		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
 
-	// Grepダイアログが表示されるのを待って閉じる
-	for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
-		if (const auto hWndFound = ::FindWindowW(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep"); hWndFound) {
-			break;
+		// Grepダイアログが表示されるのを待って閉じる
+		const auto hWndDlgGrep = WaitForDialog(L"Grep");
+		EmulateInvokeButton(hWndDlgGrep, L"キャンセル(X)");
+
+		bool dlgClosed = false;
+		for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
+			if (const auto hWndFound = ::FindWindowW(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep"); !hWndFound) {
+				dlgClosed = true;
+				break;
+			}
+			Sleep(10);  // 10msスリープしてリトライ
 		}
-		Sleep(10);  // 10msスリープしてリトライ
-	}
-	const auto hWndDlgGrep = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep");
-	EmulateInvokeButton(hWndDlgGrep, L"キャンセル(X)");
 
-	bool dlgClosed = false;
-	for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
-		if (const auto hWndFound = ::FindWindowW(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep"); !hWndFound) {
-			dlgClosed = true;
-			break;
-		}
-		Sleep(10);  // 10msスリープしてリトライ
-	}
+		EXPECT_TRUE(dlgClosed) << "Grep dialog should be closed.";
 
-	EXPECT_TRUE(dlgClosed) << "Grep dialog should be closed.";
+		// 編集ウインドウを閉じる
+		const auto hWndFound = cxx::FindWindowW(GSTR_EDITWINDOWNAME);
+		testing::RequestForeignWindowClose(hWndFound);
 
-	// 編集ウインドウを閉じる
-	const auto hWndFound = cxx::FindWindowW(GSTR_EDITWINDOWNAME);
-	testing::RequestForeignWindowClose(hWndFound);
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		testing::WaitForForeignProcessExit(ep);
 
-	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	testing::WaitForForeignProcessExit(ep);
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName, dwControlProcessId);
+		// コントロールプロセスに終了指示を出して終了を待つ
+		testing::TerminateControlProcess(profileName, dwControlProcessId);
+	});
 }
 
 /*!
@@ -903,32 +951,22 @@ TEST_P(WinMainTest, ShowDlgGrep101)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  プロファイルマネージャを表示してキャンセルで閉じる。
  */
-TEST_P(WinMainTest, ShowDlgProfileMgr101)
+TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 {
-	// テスト用プロファイル名
-	const auto profileName(GetParam());
+	RunGuiTest([this] {
+		// テスト用プロファイル名
+		const auto profileName{ GetProfileName() };
 
-	// エディタープロセスを起動する
-	const auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
+		// エディタープロセスを起動する
+		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
 
-	// プロファイルマネージャが表示されるのを待って閉じる
-	const auto hWndDlgProfileMgr = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"プロファイルマネージャ");
-	EmulateInvokeButton(hWndDlgProfileMgr, L"閉じる(X)");
+		// プロファイルマネージャが表示されるのを待って閉じる
+		const auto hWndDlgProfileMgr = WaitForDialog(L"プロファイルマネージャ");
+		EmulateInvokeButton(hWndDlgProfileMgr, L"閉じる(X)");
 
-	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-	testing::WaitForForeignProcessExit(ep);
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		testing::WaitForForeignProcessExit(ep);
+	});
 }
-
-/*!
- * @brief パラメータテストをインスタンス化する
- *  プロファイル指定なしとプロファイル指定ありの2パターンで実体化させる
- */
-INSTANTIATE_TEST_SUITE_P(WinMain
-	, WinMainTest
-	, ::testing::Values(
-		L"",
-		L"profile1"
-	)
-);
 
 } // namespace winmain
