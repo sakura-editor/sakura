@@ -49,6 +49,13 @@ else()
   set(GENERATOR_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
 
+# マニフェスト用にCPUアーキテクチャを編集する
+if(ARCH STREQUAL "x64")
+  set(EXE_ARCH "amd64")
+else()
+  set(EXE_ARCH "${ARCH}")
+endif()
+
 # ホストツールのプラットフォームとCPUを決める
 if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64|x86_64")
   set(HOST_PLATFORM "x64")
@@ -248,6 +255,24 @@ add_custom_command(
 add_custom_target(generate_funccode_enum
   DEPENDS
     "${CMAKE_BINARY_DIR}/Funccode_enum.h"
+)
+
+# Create a custom command for sakura.exe.manifest generation
+add_custom_command(
+  OUTPUT "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+  COMMAND ${CMAKE_COMMAND} 
+    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -DEXE_NAME=sakura.exe
+    -DEXE_ARCH=${EXE_ARCH}
+    -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/sakura.exe.manifest
+    -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMENT "Generating sakura.exe.manifest"
+)
+
+# Create a custom target that depends on the generated file
+add_custom_target(generate_sakura_exe_manifest
+  DEPENDS
+    "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
 )
 
 # Include darkmodelib.cmake
@@ -532,5 +557,19 @@ if(MINGW)
       -municode
       -static
       $<$<CONFIG:Release>:-s>
+  )
+
+  set(SAKURA_EXE_MANIFEST "${CMAKE_BINARY_DIR}/sakura.exe.manifest")
+  set(SAKURA_MANIFEST_RC "${CMAKE_BINARY_DIR}/sakura_manifest.rc")
+
+  # Create a custom command for sakura_manifest.rc generation
+  add_custom_command(
+    OUTPUT "${SAKURA_MANIFEST_RC}"
+    COMMAND ${CMAKE_COMMAND} 
+      -DSOURCE_DIR="${CMAKE_SOURCE_DIR}"
+      -DOUTPUT_FILE="${SAKURA_MANIFEST_RC}"
+      -DMANIFEST_FILE="${SAKURA_EXE_MANIFEST}"
+      -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMENT "Generating sakura_manifest.rc"
   )
 endif(MINGW)
