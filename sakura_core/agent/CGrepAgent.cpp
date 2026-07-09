@@ -1,4 +1,4 @@
-﻿/*! @file
+/*! @file
 	@brief Grep検索エージェント
 	@note マルチスレッド対応・除外ファイル機能拡張
 */
@@ -410,12 +410,10 @@ DWORD CGrepAgent::DoGrep(
 				ErrorMessage( pcViewDst->m_hwndParent, LS(STR_DLGREPLC_CLIPBOARD) );
 				return 0;
 			}
-			if( bLineSelect ){
-				int len = cmemReplace.GetStringLength();
-				// 空クリップボード時に cmemReplace[len - 1] が範囲外参照になるのを防ぐ
-				if( len == 0 || (cmemReplace[len - 1] != WCODE::CR && cmemReplace[len - 1] != WCODE::LF) ){
-					cmemReplace.AppendString(pcViewDst->GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
-				}
+			// 空クリップボード時に cmemReplace[len - 1] が範囲外参照になるのを防ぐ
+			if( const int len = cmemReplace.GetStringLength();
+				bLineSelect && ( len == 0 || (cmemReplace[len - 1] != WCODE::CR && cmemReplace[len - 1] != WCODE::LF) ) ){
+				cmemReplace.AppendString(pcViewDst->GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 			}
 			if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
 				CLogicInt len = cmemReplace.GetStringLength();
@@ -837,6 +835,30 @@ static bool CanCombineExcludePatterns( const std::vector<std::wstring>& patterns
 	return true;
 }
 
+/*!	@brief 除外正規表現パターン群をコンパイルする（S134: ネスト削減のため共通化）
+	@note P4: 全除外パターンを1本に結合し、ファイルあたりのマッチ回数を1回にする。
+	      後方参照・名前付きグループを含む場合、または結合パターンのコンパイルに
+	      失敗した場合は従来の個別パターン方式にフォールバックする。
+	      resize() は MoveInsertable を要求するが CBregexp はムーブ不可（CDllImp が= delete）。
+	      vector(n) はデフォルト構築のみで済むため、ベクターのムーブ代入で代替する。
+*/
+static void CompileExcludeRegexps( const std::vector<std::wstring>& vecPatterns, std::vector<CBregexp>& regexps )
+{
+	if( vecPatterns.empty() ){
+		return;
+	}
+	regexps = std::vector<CBregexp>( 1 );
+	InitRegexp( nullptr, regexps[0], false );
+	if( !CanCombineExcludePatterns( vecPatterns )
+		|| !regexps[0].Compile( BuildCombinedExcludePattern( vecPatterns ).c_str(), CBregexp::optCaseSensitive ) ){
+		regexps = std::vector<CBregexp>( vecPatterns.size() );
+		for( size_t ri = 0; ri < regexps.size(); ri++ ){
+			InitRegexp( nullptr, regexps[ri], false );
+			regexps[ri].Compile( vecPatterns[ri].c_str(), CBregexp::optCaseSensitive );
+		}
+	}
+}
+
 /*! @brief Grep実行
 
 	@date 2001.06.27 genta	正規表現ライブラリの差し替え
@@ -899,24 +921,7 @@ int CGrepAgent::DoGrepTree(
 
 	if( pVecExclRegexps == nullptr ){
 		// 再帰呼び出しでは同じ除外正規表現を共有し、無駄な再コンパイルを防ぐ。
-		// resize() は MoveInsertable を要求するが CBregexp はムーブ不可（CDllImp が= delete）
-		// vector(n) はデフォルト構築のみで済むため、ベクターのムーブ代入で代替する
-		const auto& vecPatterns = cGrepEnumKeys.m_vecExceptFileRegexPatterns;
-		if( !vecPatterns.empty() ){
-			// P4: 全除外パターンを1本に結合し、ファイルあたりのマッチ回数を1回にする
-			localExclRegexps = std::vector<CBregexp>( 1 );
-			InitRegexp( nullptr, localExclRegexps[0], false );
-			// 後方参照・名前付きグループを含む場合は結合で意味が変わるため個別方式へ（P4 安全化）
-			if( !CanCombineExcludePatterns( vecPatterns )
-				|| !localExclRegexps[0].Compile( BuildCombinedExcludePattern( vecPatterns ).c_str(), CBregexp::optCaseSensitive ) ){
-				// 結合パターンのコンパイルに失敗した場合は従来の個別パターン方式にフォールバック
-				localExclRegexps = std::vector<CBregexp>( vecPatterns.size() );
-				for( size_t ri = 0; ri < localExclRegexps.size(); ri++ ){
-					InitRegexp( nullptr, localExclRegexps[ri], false );
-					localExclRegexps[ri].Compile( vecPatterns[ri].c_str(), CBregexp::optCaseSensitive );
-				}
-			}
-		}
+		CompileExcludeRegexps( cGrepEnumKeys.m_vecExceptFileRegexPatterns, localExclRegexps );
 		pVecExclRegexps = &localExclRegexps;
 	}
 
@@ -1482,10 +1487,8 @@ int CGrepAgent::MatchAndEmitGrepLine(
 				break;
 			}
 			if( matchlen <= 0 ){
-				matchlen = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
-				if( matchlen <= 0 ){
-					matchlen = 1;
-				}
+				const int nSizeOfChar = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
+				matchlen = ( 0 < nSizeOfChar ) ? nSizeOfChar : 1;
 			}
 			nIndex += matchlen;
 		}
@@ -1850,22 +1853,16 @@ int CGrepAgent::DoGrepFile(
 			wchar_t* szWork0 = &pszWork[0];
 			if( sGrepOption.bGrepOutputBaseFolder || sGrepOption.bGrepSeparateFolder ){
 				if( !bOutputBaseFolder && sGrepOption.bGrepOutputBaseFolder ){
-					const wchar_t* pszFormatBasePath = L"";
-					if( sGrepOption.bGrepSeparateFolder ){
-						pszFormatBasePath = L"◎\"%s\"\r\n";	// (A)
-					}else{
-						pszFormatBasePath = pszFormatBasePath2;	// (B)
-					}
+					const wchar_t* pszFormatBasePath =
+						sGrepOption.bGrepSeparateFolder ? L"◎\"%s\"\r\n"	// (A)
+						                                : pszFormatBasePath2;	// (B)
 					auto_sprintf( szWork0, pszFormatBasePath, pszBaseFolder );
 					cmemMessage.AppendString( szWork0 );
 					bOutputBaseFolder = true;
 				}
 				if( !bOutputFolderName && sGrepOption.bGrepSeparateFolder ){
-					if( pszFolder[0] ){
-						auto_sprintf( szWork0, L"■\"%s\"\r\n", pszFolder );	// (C), (D)
-					}else{
-						wcscpy_s( szWork0, 4, L"■\r\n" );	// "■\r\n" + 終端0 = 4文字、バッファは最小でも10文字以上確保済み
-					}
+					// L"■\r\n" は %s を含まないため pszFolder は評価されるが使用されない（可変長引数の余剰は無視される）
+					auto_sprintf( szWork0, (pszFolder[0] ? L"■\"%s\"\r\n" : L"■\r\n"), pszFolder );	// (C), (D)
 					cmemMessage.AppendString( szWork0 );
 					bOutputFolderName = true;
 				}
@@ -1924,6 +1921,44 @@ int CGrepAgent::DoGrepFile(
 			CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
 		}
 
+		// S134: ネスト削減のため、読み込みループ内のキャンセル確認・進捗表示更新をラムダ化
+		// 戻り値: 0=続行 / -1=キャンセル
+		auto CheckCancelAndUpdateProgress = [&]() -> int {
+			DWORD dwNowLoop = ::GetTickCount();
+			if ( dwNowLoop - m_dwTickUICheck <= UICHECK_INTERVAL_MILLISEC ) {
+				return 0;
+			}
+			m_dwTickUICheck = dwNowLoop;
+			if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {
+				return -1;
+			}
+			/* 中断ボタン押下チェック */
+			if( pcDlgCancel->IsCanceled() ){
+				return -1;
+			}
+			//	2003.06.23 Moca 表示設定をチェック
+			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+			);
+			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
+			if( 5000000 < cfl.GetFileSize() ){
+				int nPercent = cfl.GetPercent();
+				if( 5 <= nPercent - nOldPercent ){
+					nOldPercent = nPercent;
+					WCHAR szWork[10];
+					::auto_sprintf( szWork, L" (%3d%%)", nPercent );
+					std::wstring str;
+					str = str + pszFile + szWork;
+					ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
+				}
+			}else{
+				ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, pszFile );
+			}
+			::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszFolder );
+			return 0;
+		};
+
 		// 注意 : cfl.ReadLine が throw する可能性がある
 		while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
 		{
@@ -1935,38 +1970,8 @@ int CGrepAgent::DoGrepFile(
 
 			/* 処理中のユーザー操作を可能にする */
 			// 2010.08.31 間隔を1/32にする
-			if( 0 == nLine % 32 ) {
-				dwNow = ::GetTickCount();
-				if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
-					m_dwTickUICheck = dwNow;
-					if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {
-						return -1;
-					}
-					/* 中断ボタン押下チェック */
-					if( pcDlgCancel->IsCanceled() ){
-						return -1;
-					}
-					//	2003.06.23 Moca 表示設定をチェック
-					CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-						0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-					);
-					// 2002/08/30 Moca 進行状態を表示する(5MB以上)
-					if( 5000000 < cfl.GetFileSize() ){
-						int nPercent = cfl.GetPercent();
-						if( 5 <= nPercent - nOldPercent ){
-							nOldPercent = nPercent;
-							WCHAR szWork[10];
-							::auto_sprintf( szWork, L" (%3d%%)", nPercent );
-							std::wstring str;
-							str = str + pszFile + szWork;
-							ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
-						}
-					}else{
-						ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, pszFile );
-					}
-					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-					ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszFolder );
-				}
+			if( 0 == nLine % 32 && -1 == CheckCancelAndUpdateProgress() ) {
+				return -1;
 			}
 			const SGrepOutputPaths grepPaths{ pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszDispFilePath, pszCodeName };
 			nHitCount += MatchAndEmitGrepLine(
@@ -2228,16 +2233,14 @@ int CGrepAgent::DoGrepReplaceFile(
 					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
 				);
 				// 2002/08/30 Moca 進行状態を表示する(5MB以上)
-				if( 5000000 < cfl.GetFileSize() ){
-					int nPercent = cfl.GetPercent();
-					if( 5 <= nPercent - nOldPercent ){
-						nOldPercent = nPercent;
-						WCHAR szWork[10];
-						::auto_sprintf( szWork, L" (%3d%%)", nPercent );
-						std::wstring str;
-						str = str + pszFile + szWork;
-						ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
-					}
+				if( const int nPercent = cfl.GetPercent();
+					5000000 < cfl.GetFileSize() && 5 <= nPercent - nOldPercent ){
+					nOldPercent = nPercent;
+					WCHAR szWork[10];
+					::auto_sprintf( szWork, L" (%3d%%)", nPercent );
+					std::wstring str;
+					str = str + pszFile + szWork;
+					ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
 				}
 			}
 			cOutBuffer.SetStringHoldBuffer( L"", 0 );	// P7: 確保済みバッファを保持したまま長さ 0 に戻す
@@ -2740,21 +2743,7 @@ int CGrepAgent::RunParallelGrep(
 			cvInitDone.notify_one();
 
 			std::vector<CBregexp> excludeRegexps;
-			if( !regexPatterns.empty() ){
-				// P4: 全除外パターンを1本に結合し、ファイルあたりのマッチ回数を1回にする
-				excludeRegexps = std::vector<CBregexp>( 1 );
-				InitRegexp( nullptr, excludeRegexps[0], false );
-				// 後方参照・名前付きグループを含む場合は結合で意味が変わるため個別方式へ（P4 安全化）
-				if( !CanCombineExcludePatterns( regexPatterns )
-					|| !excludeRegexps[0].Compile( BuildCombinedExcludePattern( regexPatterns ).c_str(), CBregexp::optCaseSensitive ) ){
-					// 結合パターンのコンパイルに失敗した場合は従来の個別パターン方式にフォールバック
-					excludeRegexps = std::vector<CBregexp>( regexPatterns.size() );
-					for( size_t ri = 0; ri < regexPatterns.size(); ri++ ){
-						InitRegexp( nullptr, excludeRegexps[ri], false );
-						excludeRegexps[ri].Compile( regexPatterns[ri].c_str(), CBregexp::optCaseSensitive );
-					}
-				}
-			}
+			CompileExcludeRegexps( regexPatterns, excludeRegexps );
 
 			CNativeW localMessage;
 			CNativeW localUnicodeBuffer;
@@ -2794,6 +2783,25 @@ int CGrepAgent::RunParallelGrep(
 				dwLastFlushTick = ::GetTickCount();
 			};
 
+			// S134: ネスト削減のため、正規表現除外判定（フルパス全体に対してマッチング）をラムダ化
+			auto IsExcludedPath = [&excludeRegexps]( const std::wstring& fullPath ){
+				for( auto& reExcl : excludeRegexps ){
+					if( reExcl.Match( fullPath.c_str(), (int)fullPath.size(), 0 ) ){
+						return true;
+					}
+				}
+				return false;
+			};
+
+			// しきい値到達、またはリアルタイム表示の遅延を押さえるため ADDTAIL_INTERVAL 経過でマージする
+			// （ロック取得は最大でも 1000/ADDTAIL_INTERVAL 回/秒/ワーカーに抑制される）
+			auto MaybeFlushPendingResults = [&](){
+				if( pendingResults.size() >= kFlushFileCount || nPendingChars >= kFlushCharCount
+					|| (::GetTickCount() - dwLastFlushTick) > ADDTAIL_INTERVAL_MILLISEC ){
+					FlushPendingResults();
+				}
+			};
+
 			while( true ){
 				// 新しいバッチまたはシャットダウンを待機
 				const std::vector<SGrepFileTask>* pBatch = nullptr;
@@ -2816,16 +2824,7 @@ int CGrepAgent::RunParallelGrep(
 
 						const SGrepFileTask& task = (*pBatch)[idx];
 
-						// 正規表現除外判定（フルパス全体に対してマッチング）
-						const auto nFullPathLen = (int)task.fullPath.size();
-						bool bExcluded = false;
-						for( auto& reExcl : excludeRegexps ){
-							if( reExcl.Match( task.fullPath.c_str(), nFullPathLen, 0 ) ){
-								bExcluded = true;
-								break;
-							}
-						}
-						if( bExcluded ) continue;
+						if( IsExcludedPath( task.fullPath ) ) continue;
 
 						// ファイル内検索
 						localMessage._SetStringLength(0);
@@ -2852,12 +2851,7 @@ int CGrepAgent::RunParallelGrep(
 							pending.message.AppendNativeData( localMessage );
 							nPendingChars += (size_t)localMessage.GetStringLength();
 							atomicHitCount.fetch_add( fileHits );
-							// しきい値到達、またはリアルタイム表示の遅延を押さえるため ADDTAIL_INTERVAL 経過でマージする
-							// （ロック取得は最大でも 1000/ADDTAIL_INTERVAL 回/秒/ワーカーに抑制される）
-							if( pendingResults.size() >= kFlushFileCount || nPendingChars >= kFlushCharCount
-								|| (::GetTickCount() - dwLastFlushTick) > ADDTAIL_INTERVAL_MILLISEC ){
-								FlushPendingResults();
-							}
+							MaybeFlushPendingResults();
 						}
 					}
 				}catch(...){
