@@ -1,16 +1,24 @@
 name: SonarCloud
 
+# Controls when the action will run.
+# Triggered when the 'build sakura' workflow completes.
 on:
   workflow_run:
     workflows: ['build sakura']
     types: [completed]
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   sonar:
     name: Scan
     runs-on: windows-latest
     if: github.event.workflow_run.conclusion == 'success'
-    environment: sonarcloud
 
     steps:
     - name: Checkout
@@ -22,7 +30,7 @@ jobs:
         allow-unsafe-pr-checkout: true
 
     - name: Download sonar-input artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: sonar-input
         path: ${{ github.workspace }}
@@ -62,16 +70,17 @@ jobs:
       if: env.SONAR_TOKEN
       with:
         args: >
-          "-Dsonar.organization=${{ github.repository_owner }}"
-          "-Dsonar.projectKey=${{ steps.sonar-vars.outputs.project-key }}"
-          "-Dsonar.host.url=https://sonarcloud.io"
+          -Dsonar.organization=${{ github.repository_owner }}
+          -Dsonar.projectKey=${{ steps.sonar-vars.outputs.project-key }}
+          -Dsonar.host.url=https://sonarcloud.io
           ${{ steps.sonar-vars.outputs.pull-request-key }}
           ${{ steps.sonar-vars.outputs.branch-name }}
           ${{ steps.sonar-vars.outputs.branch-base }}
-          "-Dsonar.cfamily.compile-commands=bw-output/compile_commands.json"
-          "-Dsonar.cfamily.cppunit.reportPath=*-googletest.xml"
-          "-Dsonar.cfamily.cobertura.reportPaths=tests1-coverage.xml"
-          "-Dsonar.verbose=true"
+          -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
+          -Dsonar.cfamily.cppunit.reportPath=*-googletest.xml
+          -Dsonar.cfamily.cobertura.reportPaths=tests1-coverage.xml
+          -Dsonar.python.coverage.reportPaths=pytest-coverage.xml
+          -Dsonar.verbose=true
 
     - name: Upload Sonar CFamily failure reproducer (if present)
       if: ${{ always() && hashFiles('sonar-cfamily-reproducer.tar.xz') != '' }}

@@ -54,6 +54,8 @@
 #include "util/file.h"
 #include "_os/CClipboard.h"
 #include "dlg/CDlgGrep.h"
+#include "env/CAppNodeManager.h"
+#include "env/CSakuraEnvironment.h"
 #include "types/CType.h"
 #include "view/colors/CColorStrategy.h"
 
@@ -4370,12 +4372,30 @@ TEST_F(GrepRealFileTest, DoGrep_ReplacePasteMode_LineModeAppendsEol)
 TEST_F(GrepRealFileTest, HwndGrep_ValidWindow_SearchesWindowText)
 {
 	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+	const HWND hwndEditor = CEditWnd::getInstance()->GetHwnd();
+
+	// 前提1: IsSakuraMainWindow はウィンドウクラス名（GSTR_EDITWINDOWNAME）判定。
+	//        これが不成立の場合はテスト側では解消できないためスキップする。
+	if (!IsSakuraMainWindow(hwndEditor)) {
+		GTEST_SKIP() << "テスト環境の編集ウィンドウのクラス名が編集ウィンドウ名と"
+						"一致しないためスキップ（IsSakuraMainWindow 不成立）";
+	}
+
+	// 前提2: GetHwndTitle は CAppNodeManager::GetEditNode で編集ウィンドウノードの
+	//        登録を要求する。テスト環境では起動シーケンスの登録処理が走らないため、
+	//        本テスト内で登録し、スコープ脱出時に必ず解除する。
+	ASSERT_TRUE(CAppNodeGroupHandle(0).AddEditWndList(hwndEditor))
+		<< "EditNode の登録に失敗";
+	auto nodeGuard = std::unique_ptr<void, std::function<void(void*)>>(
+		reinterpret_cast<void*>(1),
+		[hwndEditor](void*) { CAppNodeGroupHandle(0).DeleteEditWndList(hwndEditor); }
+	);
 
 	// 対象テキストをアクティブ文書へ投入（キーは本テスト固有の文字列にする）
 	const CNativeW seed(L"hwuniq alpha\r\nhwuniq beta\r\n");
 	pView->GetCommander().Command_ADDTAIL(seed.GetStringPtr(), seed.GetStringLength());
 
-	const std::wstring token = CDlgGrep::BuildHwndFileToken(CEditWnd::getInstance()->GetHwnd());
+	const std::wstring token = CDlgGrep::BuildHwndFileToken(hwndEditor);
 
 	CGrepAgent agent;
 	SSearchOption sOpt;
@@ -4386,8 +4406,8 @@ TEST_F(GrepRealFileTest, HwndGrep_ValidWindow_SearchesWindowText)
 		MakeGrepOption(), sOpt, out);
 
 	if (out.find("HWND handle error") != std::string::npos) {
-		GTEST_SKIP() << "テスト環境の編集ウィンドウがハンドルGrep対象要件"
-						"（IsSakuraMainWindow / EditNode 登録）を満たさないためスキップ";
+		GTEST_SKIP() << "EditNode 登録後も対象ウィンドウとして認識されないためスキップ"
+						"（MYWM_GETFILEINFO 応答等の環境要因）";
 	}
 
 	EXPECT_EQ(2u, hits) << "ウィンドウ内の hwuniq 2 件がヒットする";

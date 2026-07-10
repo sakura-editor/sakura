@@ -34,7 +34,7 @@
         - MSBuild.exe sakura.sln
             - cmake.exe Gitリポジトリ情報を version.h に書き出す。
                 - git.exe
-            - HeaderMake.exe : Funccode_define.h, Funccode_enum.h を生成する
+                - python.exe [src/main/py/header_make.py](../src/main/py/header_make.py) : Funccode_define.h, Funccode_enum.h を生成する
             - cmake.exe 外部ソースからツールをビルドする、または、配布zipから展開する
                 - cmake.exe
                 - 7z.exe
