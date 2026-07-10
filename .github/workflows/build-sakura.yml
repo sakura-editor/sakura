@@ -21,9 +21,45 @@ defaults:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  check-encoding:
+    runs-on: &windows_runner windows-latest # YAMLアンカーを使う
+    defaults:
+      run:
+        shell: cmd # このJobでは 指定しない限り cmd を使う
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0  # 過去の履歴も含めて全て取得 (check_encoding.py で origin/master にアクセスするため)
+
+      - name: Show environment variables for debug
+        run: set
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          activate-environment: true
+
+      - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
+          
+      - name: Python version check
+        run: python --version
+
+      - name: Python compile check before install
+        run: python -m compileall -f .
+
+      - name: Check encoding
+        run: checkEncoding.bat
+
   build-chm:
     name: Build CHM
-    runs-on: &windows_runner windows-latest # YAMLアンカーを使う
+    runs-on: *windows_runner
+    needs: check-encoding
 
     steps:
     - uses: actions/checkout@v7
