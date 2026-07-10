@@ -22,6 +22,9 @@ jobs:
     env:
       BuildPlatform: MinGW
       Configuration: ${{ matrix.configuration }}
+    defaults:
+      run:
+        shell: msys2 {0} # 指定しない限りmsys2シェルを使う
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -63,22 +66,18 @@ jobs:
 
       - name: Show environment variables for debug
         run: env
-        shell: msys2 {0}
 
       - name: Build with MinGW-w64-gcc
-        shell: msys2 {0}
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }} --no-test
 
       - name: Run unit tests
         id: run_unit_tests
         continue-on-error: true
-        shell: msys2 {0}
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
 
       - name: Try gdb backtrace on test failure
         if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
         continue-on-error: true
-        shell: msys2 {0}
         working-directory: ${{ github.workspace }}/${{ env.BuildPlatform }}/${{ env.Configuration }}
         run: |
           set -eo pipefail
@@ -93,7 +92,6 @@ jobs:
 
       - name: Mark workflow failed when unit tests fail
         if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
-        shell: msys2 {0}
         run: |
           echo "Unit tests failed. See the gdb trace above."
           exit 1

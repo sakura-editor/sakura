@@ -15,6 +15,10 @@ on:
       - .gitignore
       - .editorconfig
 
+defaults:
+  run:
+    shell: pwsh # 指定しない限りpwshを使う
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-chm:
@@ -40,7 +44,6 @@ jobs:
         Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip -OutFile "AutoHotkey.zip"
         Expand-Archive -Path "AutoHotkey.zip" -DestinationPath $AutohotkeyDir -Force
         echo "AutoHotKey=$HOME\autohotkey\AutoHotkey32.exe" >> $env:GITHUB_ENV
-      shell: pwsh
 
     # HHC.exeを実行するためにLEProc.exeが必要
     - name: Install Locale Emulator
@@ -51,7 +54,6 @@ jobs:
         Start-Process $env:AutoHotKey "${LEInitScript}"
         Start-Process "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
-      shell: pwsh
 
     # HHC.exeを使ってHTMLヘルプをコンパイルする
     - name: Build HTML Help
@@ -120,7 +122,6 @@ jobs:
           --exact `
           --accept-package-agreements `
           --accept-source-agreements
-      shell: pwsh
 
     # wingetは失敗することがあるので、インストーラー方式も残しておく。
     - name: Install OpenCppCoverage (installer)
@@ -141,7 +142,6 @@ jobs:
           -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" `
           -Wait
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
-      shell: pwsh
 
     - name: Install Ctags (winget)
       run: |
@@ -150,7 +150,6 @@ jobs:
           --exact `
           --accept-package-agreements `
           --accept-source-agreements
-      shell: pwsh
 
     - name: Install DiffUtils (winget)
       run: |
@@ -159,7 +158,6 @@ jobs:
           --exact `
           --accept-package-agreements `
           --accept-source-agreements
-      shell: pwsh
 
     - name: Set up Python
       uses: actions/setup-python@v6
@@ -171,7 +169,6 @@ jobs:
     - name: Copy github-event.json
       run: |
         Copy-Item "$env:GITHUB_EVENT_PATH" github-event.json
-      shell: pwsh
 
     - name: Generate sonar metadata
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
@@ -186,7 +183,6 @@ jobs:
           pr_head_ref = $env:PR_HEAD_REF
           pr_base_ref = $env:PR_BASE_REF
         } | ConvertTo-Json | Set-Content sonar-metadata.json
-      shell: pwsh
 
     - name: Setup PR environment variables
       if: github.event_name == 'pull_request'
@@ -195,15 +191,13 @@ jobs:
         echo "GITHUB_PR_HEAD_URL=${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}/commits/${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
         echo "GITHUB_PR_HEAD_COMMIT=${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
         echo "GITHUB_PR_HEAD_SHORT_COMMIT=$('${{ github.event.pull_request.head.sha }}'.SubString(0, 8))" >> $env:GITHUB_ENV
-      shell: pwsh
 
     - name: Build with Build-Wrapper
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
       run: build-wrapper-win-x86-64.exe --out-dir bw-output MsBuild.exe /p:Platform=${{ matrix.platform }} /p:Configuration=${{ matrix.config }}
-      shell: cmd
 
     - name: MSBuild
-      if: ${{ matrix.platform != 'x64' || matrix.config != 'Debug' }}
+      if: ${{ !(matrix.platform == 'x64' && matrix.config == 'Debug') }}
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
 
@@ -218,7 +212,6 @@ jobs:
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
         --output-on-failure
-      shell: pwsh
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
