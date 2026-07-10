@@ -43,30 +43,30 @@ def check_encoding_module():
 
 def test_check_extension_accepts_cpp(check_encoding_module):
     """Test that .cpp files are recognized as valid"""
-    assert check_encoding_module.checkExtension("test.cpp") is True
+    assert check_encoding_module.check_extension("test.cpp") is True
 
 
 def test_check_extension_accepts_h(check_encoding_module):
     """Test that .h files are recognized as valid"""
-    assert check_encoding_module.checkExtension("test.h") is True
+    assert check_encoding_module.check_extension("test.h") is True
 
 
 def test_check_extension_accepts_rc(check_encoding_module):
     """Test that .rc files are recognized as valid"""
-    assert check_encoding_module.checkExtension("test.rc") is True
+    assert check_encoding_module.check_extension("test.rc") is True
 
 
 def test_check_extension_accepts_rc2(check_encoding_module):
     """Test that .rc2 files are recognized as valid"""
-    assert check_encoding_module.checkExtension("test.rc2") is True
+    assert check_encoding_module.check_extension("test.rc2") is True
 
 
 def test_check_extension_rejects_other_extensions(check_encoding_module):
     """Test that non-target extensions are rejected"""
-    assert check_encoding_module.checkExtension("test.txt") is False
-    assert check_encoding_module.checkExtension("test.py") is False
-    assert check_encoding_module.checkExtension("test.md") is False
-    assert check_encoding_module.checkExtension("test.exe") is False
+    assert check_encoding_module.check_extension("test.txt") is False
+    assert check_encoding_module.check_extension("test.py") is False
+    assert check_encoding_module.check_extension("test.md") is False
+    assert check_encoding_module.check_extension("test.exe") is False
 
 
 # ============================================================================
@@ -123,31 +123,31 @@ def test_check_encoding_handles_nonexistent_file(check_encoding_module):
 def test_check_encoding_result_cpp_allows_utf8_sig(check_encoding_module):
     """Test that .cpp files accept UTF-8-SIG encoding"""
     # check_encoding_result(file_name, encoding) should return True for valid combo
-    result = check_encoding_module.checkEncodingResult("test.cpp", "UTF-8-SIG")
+    result = check_encoding_module.check_encoding_result("test.cpp", "UTF-8-SIG")
     assert result is True
 
 
 def test_check_encoding_result_cpp_allows_ascii(check_encoding_module):
     """Test that .cpp files accept ASCII encoding"""
-    result = check_encoding_module.checkEncodingResult("test.cpp", "ascii")
+    result = check_encoding_module.check_encoding_result("test.cpp", "ascii")
     assert result is True
 
 
 def test_check_encoding_result_h_allows_utf8_sig(check_encoding_module):
     """Test that .h files accept UTF-8-SIG encoding"""
-    result = check_encoding_module.checkEncodingResult("test.h", "UTF-8-SIG")
+    result = check_encoding_module.check_encoding_result("test.h", "UTF-8-SIG")
     assert result is True
 
 
 def test_check_encoding_result_rc_requires_utf16(check_encoding_module):
     """Test that .rc files accept UTF-16 encoding"""
-    result = check_encoding_module.checkEncodingResult("test.rc", "UTF-16")
+    result = check_encoding_module.check_encoding_result("test.rc", "UTF-16")
     assert result is True
 
 
 def test_check_encoding_result_rc_rejects_utf8(check_encoding_module):
     """Test that .rc files reject UTF-8 encoding"""
-    result = check_encoding_module.checkEncodingResult("test.rc", "UTF-8")
+    result = check_encoding_module.check_encoding_result("test.rc", "UTF-8")
     assert result is False
 
 
@@ -163,7 +163,7 @@ def test_check_origin_master_success(mocker, check_encoding_module):
     mock_check_output.return_value = b"valid_output"
     
     # check_origin_master returns 0 on success (git returncode)
-    result = check_encoding_module.checkOriginMaster()
+    result = check_encoding_module.check_origin_master()
     assert result == 0
 
 
@@ -174,7 +174,7 @@ def test_check_origin_master_failure(mocker, check_encoding_module):
     mock_check_output.side_effect = subprocess.CalledProcessError(1, "git")
     
     # check_origin_master returns non-zero returncode on failure
-    result = check_encoding_module.checkOriginMaster()
+    result = check_encoding_module.check_origin_master()
     assert result != 0
 
 
@@ -184,7 +184,7 @@ def test_get_merge_base_valid_commit(mocker, check_encoding_module):
     mock_check_output = mocker.patch("subprocess.check_output")
     mock_check_output.return_value = b"abc123def456\n"
     
-    result = check_encoding_module.getMergeBase()
+    result = check_encoding_module.get_merge_base()
     assert result is not None
     assert result == "abc123def456"
 
@@ -197,7 +197,7 @@ def test_get_merge_base_invalid_no_commit(mocker, check_encoding_module):
     
     # get_merge_base will raise exception; test that it propagates
     with pytest.raises(subprocess.CalledProcessError):
-        check_encoding_module.getMergeBase()
+        check_encoding_module.get_merge_base()
 
 
 # ============================================================================
@@ -209,7 +209,7 @@ def test_get_diff_files_generators_valid_files(mocker, check_encoding_module):
     """Test get_diff_files generator yields files with target extensions"""
     # Mock get_merge_base to return a valid commit
     mock_merge_base = mocker.patch.object(
-        check_encoding_module, "getMergeBase"
+        check_encoding_module, "get_merge_base"
     )
     mock_merge_base.return_value = "abc123"
     
@@ -218,7 +218,7 @@ def test_get_diff_files_generators_valid_files(mocker, check_encoding_module):
     mock_check_output.return_value = b"src/test.cpp\nREADME.md\nsrc/style.rc"
     
     # Collect results from generator
-    files = list(check_encoding_module.getDiffFiles())
+    files = list(check_encoding_module.get_diff_files())
     
     # Should yield only .cpp and .rc files, not .md
     assert len(files) >= 1
@@ -234,7 +234,7 @@ def test_check_all_generator_yields_target_extensions(mocker, check_encoding_mod
     ]
     
     # Collect results from generator
-    files = list(check_encoding_module.checkAll())
+    files = list(check_encoding_module.check_all())
     
     # Should yield at least files with target extensions
     assert len(files) >= 1
@@ -264,7 +264,7 @@ def test_process_files_detects_encoding_violations(tmp_path, check_encoding_modu
     
     # Process files and count violations
     files = [str(cpp_file), str(rc_file)]
-    violation_count = check_encoding_module.processFiles(files)
+    violation_count = check_encoding_module.process_files(files)
     
     # Should report at least 1 violation (the .rc file)
     assert violation_count >= 1
@@ -289,7 +289,7 @@ def test_process_files_accepts_valid_files(tmp_path, check_encoding_module):
     
     # Process files
     files = [str(cpp_file), str(rc_file)]
-    violation_count = check_encoding_module.processFiles(files)
+    violation_count = check_encoding_module.process_files(files)
     
     # Should report 0 violations for valid files
     assert violation_count == 0
