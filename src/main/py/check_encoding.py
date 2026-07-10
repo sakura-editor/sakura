@@ -41,7 +41,7 @@ def check_encoding(file_path):
 
 # チェック対象の拡張子か判断する
 def check_extension(file_name):
-	base, ext = os.path.splitext(file_name)
+	_, ext = os.path.splitext(file_name)
 	return (ext in extensions)
 
 # origin/master が存在するか確認する
@@ -86,7 +86,7 @@ def check_all():
 
 # 指定したファイルの文字コードが期待通りか確認する
 def check_encoding_result(file_name, encoding):
-	base, ext = os.path.splitext(file_name)
+	_, ext = os.path.splitext(file_name)
 	encoding = encoding.lower()
 	if encoding in expect_encoding.get(ext, ()):
 		return True
