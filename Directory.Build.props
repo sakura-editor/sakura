@@ -19,6 +19,11 @@
     <!-- vcpkg_installの場所 -->
     <VcpkgInstalledDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '.\build\$(Platform)\CMakeTools\vcpkg_installed\'))</VcpkgInstalledDir>
   </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\share\cmigemo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
 
   <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props" />
 </Project>

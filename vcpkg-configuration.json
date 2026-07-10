@@ -10,6 +10,7 @@
       "kind": "filesystem",
       "packages": [
         "bregonig",
+        "cmigemo",
         "darkmodelib",
         "onigmo"
       ],

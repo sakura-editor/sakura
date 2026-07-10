@@ -222,6 +222,7 @@ if(MINGW)
   target_include_directories(tests1
     PRIVATE
       "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tests1_ja-JP>"
+      "$<BUILD_INTERFACE:${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/cmigemo>"
   )
   target_link_options(tests1
     PRIVATE

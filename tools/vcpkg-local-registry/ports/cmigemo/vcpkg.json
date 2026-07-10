@@ -1,0 +1,8 @@
+{
+  "name": "cmigemo",
+  "version-string": "1.3e",
+  "port-version": 0,
+  "license": "MIT",
+  "description": "C/Migemo library and dictionary zip packages",
+  "homepage": "https://github.com/koron/cmigemo"
+}

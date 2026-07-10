@@ -4,6 +4,10 @@
       "baseline": "4.20.0",
       "port-version": 0
     },
+    "cmigemo": {
+      "baseline": "1.3e",
+      "port-version": 0
+    },
     "darkmodelib": {
       "baseline": "0.48.0",
       "port-version": 0

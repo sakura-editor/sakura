@@ -295,6 +295,23 @@ add_custom_target(generate_bregonig
     "${OUTPUT_DIRECTORY}/bregonig.dll"
 )
 
+# Resolve cmigemo from vcpkg local registry
+find_package(cmigemo CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/migemo.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+  COMMENT "Copying migemo.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_cmigemo
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+)
+
 if(MINGW)
   # Find iconv
   find_program(ICONV_PATH iconv REQUIRED)
