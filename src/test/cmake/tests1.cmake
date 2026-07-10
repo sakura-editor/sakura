@@ -24,8 +24,8 @@ add_custom_target(generate_tests1_exe_manifest
     "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
 )
 
-# Include GoogleTest's targets
-include(${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake)
+# Find GoogleTest's package(required)
+find_package(GTest CONFIG REQUIRED)
 
 # Find OpenCppCoverage for coverage test
 find_program(OpenCppCoverage_EXECUTABLE OpenCppCoverage
@@ -184,8 +184,8 @@ target_include_directories(tests1
 target_link_libraries(tests1
   PRIVATE
     sakura_core
-    gmock
-    gtest
+    GTest::gtest
+    GTest::gmock
 )
 
 set_target_properties(tests1
@@ -237,7 +237,6 @@ add_dependencies(tests1
   generate_tests1_exe_manifest
   test_resource_zip
   test_dllplugin_zip
-  generate_gtest
   generate_miniz
   ppa_stub
 )
