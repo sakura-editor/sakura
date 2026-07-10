@@ -1,5 +1,5 @@
 """
-Unit tests for checkEncoding.py
+Unit tests for check_encoding.py
 
 Tests cover:
 - File extension validation
@@ -20,7 +20,7 @@ import pytest
 def _load_module():
     """Dynamically load checkEncoding module from repository root"""
     repo_root = Path(__file__).resolve().parents[3]
-    module_path = repo_root / "checkEncoding.py"
+    module_path = repo_root / "src/main/py/check_encoding.py"
     spec = importlib.util.spec_from_file_location("checkEncoding", module_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Failed to load module spec: {module_path}")
@@ -110,7 +110,7 @@ def test_check_encoding_detects_ascii(tmp_path, check_encoding_module):
 
 def test_check_encoding_handles_nonexistent_file(check_encoding_module):
     """Test that nonexistent file raises FileNotFoundError as expected"""
-    # checkEncoding.py opens file directly, so it raises FileNotFoundError
+    # check_encoding.py opens file directly, so it raises FileNotFoundError
     with pytest.raises(FileNotFoundError):
         check_encoding_module.check_encoding("/nonexistent/path/file.txt")
 

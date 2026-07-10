@@ -16,15 +16,17 @@ on:
 jobs:
   check-encoding:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd # 指定しない限りcmdを使う
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0  # 過去の履歴も含めて全て取得 (checkEncoding.py で origin/master にアクセスするため)
+          fetch-depth: 0  # 過去の履歴も含めて全て取得 (check_encoding.py で origin/master にアクセスするため)
 
       - name: Show environment variables for debug
         run: set
-        shell: cmd
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -35,8 +37,6 @@ jobs:
 
       - name: Python version check
         run: python --version
-        shell: cmd
 
       - name: Check encoding
-        run: python checkEncoding.py
-        shell: cmd
+        run: checkEncoding.bat
