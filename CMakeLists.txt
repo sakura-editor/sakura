@@ -45,9 +45,6 @@ include(${CMAKE_SOURCE_DIR}/src/main/cmake/diffutils.cmake)
 # Enable ctest command
 enable_testing()
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/tools/ppa_stub"
-                 "${CMAKE_BINARY_DIR}/ppa_stub")
-
 add_subdirectory("${CMAKE_SOURCE_DIR}/tools/dll_plugin1"
                  "${CMAKE_BINARY_DIR}/dll_plugin1")
 

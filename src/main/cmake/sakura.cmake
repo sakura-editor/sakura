@@ -312,6 +312,22 @@ add_custom_target(generate_cmigemo
     "${OUTPUT_DIRECTORY}/migemo.dll"
 )
 
+find_package(ppa-stub CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  COMMENT "Copying ppa_stub.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(ppa_stub
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+)
+
 if(MINGW)
   # Find iconv
   find_program(ICONV_PATH iconv REQUIRED)

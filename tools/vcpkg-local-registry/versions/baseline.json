@@ -15,6 +15,10 @@
     "onigmo": {
       "baseline": "6.2.0",
       "port-version": 0
+    },
+    "ppa-stub": {
+      "baseline": "1.0.0",
+      "port-version": 0
     }
   }
 }

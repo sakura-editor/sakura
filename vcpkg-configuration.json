@@ -12,7 +12,8 @@
         "bregonig",
         "cmigemo",
         "darkmodelib",
-        "onigmo"
+        "onigmo",
+        "ppa-stub"
       ],
       "path": "tools/vcpkg-local-registry"
     },

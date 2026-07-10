@@ -1,0 +1,17 @@
+{
+  "name": "ppa-stub",
+  "version-string": "1.0.0",
+  "port-version": 0,
+  "license": "MIT",
+  "description": "Test stub DLL implementing the PPA macro plugin interface for sakura editor",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
