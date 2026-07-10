@@ -52,6 +52,10 @@
 #include "grep/CGrepEnumKeys.h"
 #include "io/CFileLoad.h"
 #include "util/file.h"
+#include "_os/CClipboard.h"
+#include "dlg/CDlgGrep.h"
+#include "types/CType.h"
+#include "view/colors/CColorStrategy.h"
 
 #include "dlg/CDlgCancel.h"
 #include "view/CEditView.h"
@@ -4060,4 +4064,333 @@ TEST_F(GrepRealFileTest, DoGrep_StdoutMode_BackRefExcludeNotCombined)
 	EXPECT_NE(out.find("keep.txt"), std::string::npos) << "keep.txt のヒットが出力される";
 	EXPECT_EQ(out.find("zqzq"),     std::string::npos) << "zqzq.txt は \\1 付きパターンで除外";
 	EXPECT_EQ(out.find("zkm"),      std::string::npos) << "zkm.log はグループ付きパターンで除外";
+}
+
+
+// =============================================================================
+// 18. カバレッジ補完（DoGrep 早期経路・EscapeStringLiteral・AddTail・
+//     クリップボード置換・ハンドルGrep）（GA-45 ～ GA-51）
+// =============================================================================
+
+namespace {
+
+/*!
+ * DoGrep をヘッダ付き stdout モードで実行し、標準出力の内容とヒット数を返す
+ * テスト専用ヘルパ（GA-46/47/49/50/51 共用）。
+ */
+DWORD RunDoGrepStdoutHeader(
+	CGrepAgent& agent,
+	const std::wstring& key,
+	const std::wstring& rep,
+	const std::wstring& filePattern,
+	const std::wstring& folder,
+	SGrepOption gOpt,
+	const SSearchOption& sOpt,
+	std::string& out)
+{
+	WCHAR tempDir[MAX_PATH];
+	::GetTempPathW(MAX_PATH, tempDir);
+	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_cov_stdout.txt";
+	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hTempFile == INVALID_HANDLE_VALUE) {
+		ADD_FAILURE() << "stdout キャプチャファイル作成失敗";
+		return 0;
+	}
+	struct HandleDeleter {
+		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
+	};
+	std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
+
+	DWORD hits = 0;
+	{
+		GrepStdHandleGuard stdoutGuard(STD_OUTPUT_HANDLE, hTempFile);
+
+		CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+		const CNativeW cmKey(key.c_str());
+		const CNativeW cmRep(rep.c_str());
+		const CNativeW cmFile(filePattern.c_str());
+		const CNativeW cmFolder(folder.c_str());
+
+		gOpt.bGrepStdout = true;
+		gOpt.bGrepHeader = true;
+
+		hits = agent.DoGrep(
+			pView,
+			SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+			sOpt, gOpt,
+			true,	// bGrepCurFolder
+			false	// bGrepExcludeFileRegexp
+		);
+
+		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		char buf[16384] = {0};
+		DWORD dwRead = 0;
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		out.assign(buf, dwRead);
+	}
+	hFileGuard.reset();
+	::DeleteFileW(tmpFile.c_str());
+	return hits;
+}
+
+/*!
+ * 出力先ビューのタイプ別設定（文字列色分け・文字列区切り記号エスケープ方法）を
+ * 一時的に書き換え、スコープ脱出時に必ず復元する RAII ガード（GA-46/47 用）。
+ */
+class TypeConfigStringGuard {
+public:
+	TypeConfigStringGuard(BOOL bDisp, int nStringType)
+		: m_type(const_cast<STypeConfig&>(
+			CEditWnd::getInstance()->GetActiveView().m_pcEditDoc->m_cDocType.GetDocumentAttribute()))
+		, m_oldDisp(m_type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp)
+		, m_oldStringType(m_type.m_nStringType)
+	{
+		m_type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = bDisp;
+		m_type.m_nStringType = decltype(m_type.m_nStringType)(nStringType);
+	}
+	~TypeConfigStringGuard()
+	{
+		m_type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = m_oldDisp;
+		m_type.m_nStringType = m_oldStringType;
+	}
+	TypeConfigStringGuard(const TypeConfigStringGuard&) = delete;
+	TypeConfigStringGuard& operator=(const TypeConfigStringGuard&) = delete;
+private:
+	STypeConfig&	m_type;
+	BOOL			m_oldDisp;
+	decltype(std::declval<STypeConfig&>().m_nStringType)	m_oldStringType;
+};
+
+} // namespace
+
+/*!
+ * @brief DoGrep: 再入ガード（m_bGrepRunning=true）で 0xffffffff を返す (GA-45)
+ * @remark 再入チェックは SGrepRunningGuard 生成より前にあるため、早期 return 後も
+ *         フラグは true のまま維持される（呼び出し元＝先行実行中の DoGrep が責任を持つ）。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReentryGuardReturnsErrorCode)
+{
+	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+	CGrepAgent agent;
+	agent.m_bGrepRunning = true;	// 実行中を偽装
+
+	const CNativeW cmKey(L"reentry");
+	const CNativeW cmRep(L"");
+	const CNativeW cmFile(L"*.txt");
+	const CNativeW cmFolder(m_temp->Root().wstring().c_str());
+	SSearchOption sOpt;
+	sOpt.Reset();
+	SGrepOption gOpt;
+
+	const DWORD ret = agent.DoGrep(
+		pView, SGrepInput{ &cmKey, &cmRep, &cmFile, &cmFolder },
+		sOpt, gOpt, true, false);
+
+	EXPECT_EQ(0xffffffffu, ret) << "再入時は 0xffffffff を返す";
+	EXPECT_TRUE(agent.m_bGrepRunning)
+		<< "ガード生成前の早期 return のためフラグは維持される";
+	agent.m_bGrepRunning = false;	// 後続テストへの影響を避けるため復元
+}
+
+/*!
+ * @brief EscapeStringLiteral: CPP 系エスケープ分岐（\\ ' " のエスケープ） (GA-46)
+ * @remark 文字列色分け有効かつ STRING_LITERAL_CPP のタイプ別設定で DoGrep ヘッダ中の
+ *         検索キーがエスケープされることを確認する（\ → \\）。
+ */
+TEST_F(GrepRealFileTest, DoGrep_HeaderKeyEscape_CppStringType)
+{
+	TypeConfigStringGuard typeGuard(TRUE, STRING_LITERAL_CPP);
+
+	CGrepAgent agent;
+	SSearchOption sOpt;
+	sOpt.Reset();
+	std::string out;
+	const DWORD hits = RunDoGrepStdoutHeader(
+		agent, L"esc\\cpp", L"", L"*.txt", m_temp->Root().wstring(),
+		MakeGrepOption(), sOpt, out);
+
+	EXPECT_EQ(0u, hits) << "空フォルダーのためヒットなし";
+	EXPECT_NE(out.find("esc\\\\cpp"), std::string::npos)
+		<< "ヘッダの検索キーで \\ が \\\\ にエスケープされる";
+}
+
+/*!
+ * @brief EscapeStringLiteral: PLSQL エスケープ分岐（' " の二重化） (GA-47)
+ * @remark 文字列色分け有効かつ STRING_LITERAL_PLSQL のタイプ別設定で DoGrep ヘッダ中の
+ *         検索キーがエスケープされることを確認する（' → ''）。
+ */
+TEST_F(GrepRealFileTest, DoGrep_HeaderKeyEscape_PlsqlStringType)
+{
+	TypeConfigStringGuard typeGuard(TRUE, STRING_LITERAL_PLSQL);
+
+	CGrepAgent agent;
+	SSearchOption sOpt;
+	sOpt.Reset();
+	std::string out;
+	const DWORD hits = RunDoGrepStdoutHeader(
+		agent, L"esc'plsql", L"", L"*.txt", m_temp->Root().wstring(),
+		MakeGrepOption(), sOpt, out);
+
+	EXPECT_EQ(0u, hits) << "空フォルダーのためヒットなし";
+	EXPECT_NE(out.find("esc''plsql"), std::string::npos)
+		<< "ヘッダの検索キーで ' が '' にエスケープされる";
+}
+
+/*!
+ * @brief AddTail: エディタ出力分岐（Command_ADDTAIL 経路） (GA-48)
+ * @remark bAddStdout=false の場合、結果がアクティブ文書の末尾に追記され、
+ *         行数が増加することを確認する（stdout 分岐は GA-18 で検証済み）。
+ */
+TEST_F(GrepRealFileTest, AddTail_EditorMode_AppendsToDocument)
+{
+	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+	const auto before = pView->GetDocument()->m_cDocLineMgr.GetLineCount();
+
+	CGrepAgent agent;
+	const CNativeW msg(L"ADDTAILMARK1\r\nADDTAILMARK2\r\n");
+	agent.AddTail(pView, msg, false);	// エディタ出力分岐
+
+	const auto after = pView->GetDocument()->m_cDocLineMgr.GetLineCount();
+	EXPECT_GT(after, before) << "文書末尾への追記により行数が増える";
+}
+
+/*!
+ * @brief Grep置換: クリップボード貼り付け（通常テキスト・EOL変換あり） (GA-49)
+ * @remark bGrepPaste=true でクリップボード内容が置換文字列として使用され、
+ *         m_bConvertEOLPaste=true の EOL 変換分岐を通過して実ファイルが
+ *         置換されることを確認する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplacePasteMode_UsesClipboardText)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"paste.txt", CODE_UTF8, L"pkneedle\nrest\n");
+
+	// EOL 変換分岐（ConvertEol）を通すため一時的に有効化し、必ず復元する
+	auto& sEdit = GetDllShareData().m_Common.m_sEdit;
+	const auto oldConvertEol = sEdit.m_bConvertEOLPaste;
+	sEdit.m_bConvertEOLPaste = true;
+	auto shareGuard = std::unique_ptr<void, std::function<void(void*)>>(
+		reinterpret_cast<void*>(1),
+		[&sEdit, oldConvertEol](void*) { sEdit.m_bConvertEOLPaste = oldConvertEol; }
+	);
+
+	// クリップボードへ置換文字列を設定（通常テキスト）
+	{
+		CClipboard clipboard(CEditWnd::getInstance()->GetHwnd());
+		ASSERT_TRUE(static_cast<bool>(clipboard)) << "クリップボードを開けない";
+		ASSERT_TRUE(clipboard.SetText(L"PASTED", 6, false, false));
+	}
+
+	CGrepAgent agent;
+	SSearchOption sOpt;
+	sOpt.Reset();
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepReplace   = true;
+	gOpt.bGrepPaste     = true;
+	gOpt.bGrepSubFolder = false;
+
+	std::string out;
+	const DWORD hits = RunDoGrepStdoutHeader(
+		agent, L"pkneedle", L"", L"*.txt", m_temp->Root().wstring(),
+		gOpt, sOpt, out);
+
+	EXPECT_EQ(1u, hits) << "1 件が置換される";
+
+	std::ifstream is(path, std::ios::binary);
+	std::string content((std::istreambuf_iterator<char>(is)), std::istreambuf_iterator<char>());
+	EXPECT_NE(content.find("PASTED"), std::string::npos)
+		<< "ファイル内容がクリップボード文字列で置換される";
+	EXPECT_EQ(content.find("pkneedle"), std::string::npos) << "元の検索キーは残らない";
+}
+
+/*!
+ * @brief Grep置換: クリップボード貼り付け（ラインモード・改行補完） (GA-50)
+ * @remark m_bEnableLineModePaste=true かつラインモード形式のクリップボードで、
+ *         末尾に改行がない貼り付けデータへ改行が補完される分岐
+ *         （空クリップボード時の範囲外参照防止コードを含む行）を通過することを確認する。
+ */
+TEST_F(GrepRealFileTest, DoGrep_ReplacePasteMode_LineModeAppendsEol)
+{
+	const auto path = m_temp->WriteEncodedTextFile(L"lmode.txt", CODE_UTF8, L"lmneedle\nrest\n");
+
+	auto& sEdit = GetDllShareData().m_Common.m_sEdit;
+	const auto oldLineMode   = sEdit.m_bEnableLineModePaste;
+	const auto oldConvertEol = sEdit.m_bConvertEOLPaste;
+	sEdit.m_bEnableLineModePaste = true;
+	sEdit.m_bConvertEOLPaste     = false;
+	auto shareGuard = std::unique_ptr<void, std::function<void(void*)>>(
+		reinterpret_cast<void*>(1),
+		[&sEdit, oldLineMode, oldConvertEol](void*) {
+			sEdit.m_bEnableLineModePaste = oldLineMode;
+			sEdit.m_bConvertEOLPaste     = oldConvertEol;
+		}
+	);
+
+	// ラインモード（bLineSelect=true）・末尾改行なしで設定 → DoGrep 側で改行補完される
+	{
+		CClipboard clipboard(CEditWnd::getInstance()->GetHwnd());
+		ASSERT_TRUE(static_cast<bool>(clipboard)) << "クリップボードを開けない";
+		ASSERT_TRUE(clipboard.SetText(L"LINEPASTE", 9, false, /*bLineSelect=*/true));
+	}
+
+	CGrepAgent agent;
+	SSearchOption sOpt;
+	sOpt.Reset();
+	auto gOpt = MakeGrepOption();
+	gOpt.bGrepReplace   = true;
+	gOpt.bGrepPaste     = true;
+	gOpt.bGrepSubFolder = false;
+
+	std::string out;
+	const DWORD hits = RunDoGrepStdoutHeader(
+		agent, L"lmneedle", L"", L"*.txt", m_temp->Root().wstring(),
+		gOpt, sOpt, out);
+
+	EXPECT_EQ(1u, hits) << "1 件が置換される";
+
+	std::ifstream is(path, std::ios::binary);
+	std::string content((std::istreambuf_iterator<char>(is)), std::istreambuf_iterator<char>());
+	const auto pos = content.find("LINEPASTE");
+	ASSERT_NE(pos, std::string::npos) << "貼り付け文字列で置換される";
+	ASSERT_LT(pos + 9, content.size());
+	EXPECT_TRUE(content[pos + 9] == '\r' || content[pos + 9] == '\n')
+		<< "ラインモード貼り付けにより末尾へ改行が補完される";
+}
+
+/*!
+ * @brief ハンドルGrep: 有効ウィンドウの正常系（GetHwndTitle / CFileLoadOrWnd） (GA-51)
+ * @remark テストスイートの編集ウィンドウ自身を :HWND: トークンで指定し、
+ *         GetHwndTitle の有効 HWND 経路と CFileLoadOrWnd の HWND 分岐
+ *         （FileOpen/ReadLine/GetPercent/GetFileSize/FileClose）を通過することを確認する。
+ * @note   テスト環境の編集ウィンドウが IsSakuraMainWindow 判定や EditNode 登録の
+ *         要件を満たさない場合はエラー経路（GA-41 で検証済み）へ落ちるため、
+ *         その場合は GTEST_SKIP で環境要因として明示する。
+ */
+TEST_F(GrepRealFileTest, HwndGrep_ValidWindow_SearchesWindowText)
+{
+	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
+
+	// 対象テキストをアクティブ文書へ投入（キーは本テスト固有の文字列にする）
+	const CNativeW seed(L"hwuniq alpha\r\nhwuniq beta\r\n");
+	pView->GetCommander().Command_ADDTAIL(seed.GetStringPtr(), seed.GetStringLength());
+
+	const std::wstring token = CDlgGrep::BuildHwndFileToken(CEditWnd::getInstance()->GetHwnd());
+
+	CGrepAgent agent;
+	SSearchOption sOpt;
+	sOpt.Reset();
+	std::string out;
+	const DWORD hits = RunDoGrepStdoutHeader(
+		agent, L"hwuniq", L"", token, L"C:\\",
+		MakeGrepOption(), sOpt, out);
+
+	if (out.find("HWND handle error") != std::string::npos) {
+		GTEST_SKIP() << "テスト環境の編集ウィンドウがハンドルGrep対象要件"
+						"（IsSakuraMainWindow / EditNode 登録）を満たさないためスキップ";
+	}
+
+	EXPECT_EQ(2u, hits) << "ウィンドウ内の hwuniq 2 件がヒットする";
+	EXPECT_NE(out.find("hwuniq alpha"), std::string::npos) << "ヒット行が出力される";
+	EXPECT_NE(out.find("hwuniq beta"),  std::string::npos) << "ヒット行が出力される";
 }
