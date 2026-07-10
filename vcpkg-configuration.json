@@ -9,6 +9,7 @@
       "baseline": "2026-07-11",
       "kind": "filesystem",
       "packages": [
+        "bregonig",
         "darkmodelib",
         "onigmo"
       ],

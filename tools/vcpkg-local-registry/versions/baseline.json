@@ -1,5 +1,9 @@
 {
   "2026-07-11": {
+    "bregonig": {
+      "baseline": "4.20.0",
+      "port-version": 0
+    },
     "darkmodelib": {
       "baseline": "0.48.0",
       "port-version": 0

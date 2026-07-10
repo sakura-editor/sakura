@@ -278,6 +278,23 @@ add_custom_target(generate_sakura_exe_manifest
 # Resolve darkmodelib from vcpkg local registry
 find_package(darkmodelib CONFIG REQUIRED)
 
+# Resolve bregonig from vcpkg local registry
+find_package(bregonig CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/bregonig.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+  COMMENT "Copying bregonig.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_bregonig
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+)
+
 if(MINGW)
   # Find iconv
   find_program(ICONV_PATH iconv REQUIRED)
