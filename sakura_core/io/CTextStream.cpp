@@ -1,17 +1,24 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CTextStream.h"
+#include "io/CTextStream.h"
+
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h"	// move from CCodeMediator.h	2010/6/14 Uchi
 #include "charset/CUtf8.h"		// move from CCodeMediator.h	2010/6/14 Uchi
 #include "basis/CEol.h"
 #include "util/file.h"			// _IS_REL_PATH
 #include "util/module.h"
+
+namespace cxx {
+
+std::wstring_view MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer);
+
+} // namespace cxx
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CTextInputStream                        //
@@ -20,8 +27,6 @@
 CTextInputStream::CTextInputStream(const WCHAR* pszPath)
 : CStream(pszPath,L"rb")
 {
-	m_bIsUtf8=false;
-
 	if(Good()){
 		//BOM確認 -> m_bIsUtf8
 		static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
@@ -34,9 +39,6 @@ CTextInputStream::CTextInputStream(const WCHAR* pszPath)
 		if(!m_bIsUtf8){
 			fseek(GetFp(),0,SEEK_SET);
 		}
-	}
-	else{
-		m_bIsUtf8 = false;
 	}
 }
 
@@ -52,32 +54,61 @@ CTextInputStream::~CTextInputStream()
 {
 }
 
-std::wstring CTextInputStream::ReadLineW()
+/*!
+ * @brief 1行読込。改行は削る
+ */
+void CTextInputStream::ReadLineW(std::wstring& line)
 {
 	//$$ 非効率だけど今のところは許して。。
-	CNativeW line;
-	line.AllocStringBuffer(60);
-	for (;;) {
-		int c=getc(GetFp());
-		if(c==EOF)break; //EOFで終了
-		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" または "\r\n" で終了
-		if(c=='\n')break; //"\n" で終了
-		if( line._GetMemory()->capacity() < line._GetMemory()->GetRawLength() + 10 ){
-			line._GetMemory()->AllocBuffer( line._GetMemory()->GetRawLength() * 2 );
+
+	// 実は言う程「非効率」でもない。
+	// ・ファイルデータ → 内部バッファ m_Buffer
+	// ・内部バッファ m_Buffer → UNICODE文字列
+
+	// 現在のバッファ書込位置はイテレータで管理する
+	auto it = m_Buffer.begin();
+	for (;; ++it) {
+		int c = ::getc(GetFp());
+		// CRを検出したらCRLFかどうかチェックする
+		if ('\r' == c) {
+			c = ::getc(GetFp());
+			if ('\n' != c) {
+				::ungetc(c, GetFp());
+				c = '\r';
+			}
 		}
-		line._GetMemory()->AppendRawData(&c,sizeof(char));
+
+		// CRLF, LF, CR, EOF で終了
+		if ('\n' == c || '\r' == c || EOF == c) break; //EOFで終了
+
+		// バッファ末尾に到達したら拡張する
+		if (it == m_Buffer.end()) {
+			const auto pos = std::distance(m_Buffer.begin(), it);
+			m_Buffer.resize(m_Buffer.size() * 2);
+			it = m_Buffer.begin() + pos;
+		}
+
+		// バッファに書き込む
+		*it = static_cast<char>(c);
 	}
 
-	//UTF-8 → UNICODE
-	if(m_bIsUtf8){
-		CUtf8::UTF8ToUnicode(*(line._GetMemory()), &line);
-	}
-	//Shift_JIS → UNICODE
-	else{
-		CShiftJis::SJISToUnicode(*(line._GetMemory()), &line);
-	}
+	// 変換に使うコードページを確定させる
+	const auto codePage = m_bIsUtf8 ? CP_UTF8 : CP_SJIS;	// UTF-8ならCP_UTF8、そうでなければShift_JIS(CP932)とする
 
-	return std::wstring(line.GetStringPtr(), line.GetStringLength());	// EOLまで。NUL文字も含める。
+	// 変換を実行する
+	cxx::MultiByteToWideChar(codePage, std::string_view{ m_Buffer.begin(), it }, line);
+}
+
+/*!
+ * @brief 1行読込。改行は削る
+ *
+ * @note 既存コード互換のため残しておく。
+ */
+std::wstring CTextInputStream::ReadLineW()
+{
+	std::wstring line;
+	ReadLineW(line);
+	return line;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

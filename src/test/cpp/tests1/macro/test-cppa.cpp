@@ -21,7 +21,7 @@ struct CPpaStub : public CPPA
 	}
 };
 
-struct CPpaTest : public ::testing::Test, public window::EditorTestSuite {
+struct CPpaTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
 	static inline CPPA::PpaExecInfo info{};
 
 	/*!
@@ -29,6 +29,8 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite {
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpEditor();
 
 		// PPA実行情報を初期化する
@@ -43,6 +45,8 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite {
 	static void TearDownTestSuite()
 	{
 		TearDownEditor();
+
+		TearDownUia();
 	}
 };
 

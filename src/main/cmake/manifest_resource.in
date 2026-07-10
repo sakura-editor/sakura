@@ -1,0 +1,3 @@
+#include "Windows.h"
+
+1 RT_MANIFEST "@MANIFEST_FILE@"
