@@ -160,11 +160,16 @@ jobs:
           --accept-source-agreements
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
-        cache: 'pip'
-    - run: pip install -r requirements.txt
+
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      with:
+        activate-environment: true
+
+    - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
 
     - name: Copy github-event.json
       run: |

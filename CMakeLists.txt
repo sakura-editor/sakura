@@ -88,7 +88,11 @@ add_test(NAME UnitTest
 )
 
 add_test(NAME pytest
-  COMMAND ${Python3_EXECUTABLE} -m pytest
+  COMMAND
+    "${UV_EXECUTABLE}"
+    run
+    python
+    -m pytest
     --ignore=externals
     --cov
     --cov-config=src/test/py/.coveragerc

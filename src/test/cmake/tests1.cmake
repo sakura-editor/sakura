@@ -37,6 +37,11 @@ if(OpenCppCoverage_EXECUTABLE)
   message(STATUS "Found OpenCppCoverage: ${OpenCppCoverage_EXECUTABLE}")
 endif()
 
+find_program(UV_EXECUTABLE
+  NAMES uv
+  REQUIRED
+)
+
 set(MINIZ_SOURCE_DIR "${CMAKE_SOURCE_DIR}/externals/miniz-cpp")
 set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
 
