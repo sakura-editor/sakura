@@ -51,7 +51,7 @@ def check_extension(file_name):
 def check_origin_master():
 	ret_code = 0
 	try:
-		output = subprocess.check_output('git show -s origin/master --')
+		subprocess.check_output('git show -s origin/master --')
 	except subprocess.CalledProcessError as gitcode:
 		ret_code = gitcode.returncode
 	return ret_code
