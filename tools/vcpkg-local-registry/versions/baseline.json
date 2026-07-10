@@ -3,6 +3,10 @@
     "darkmodelib": {
       "baseline": "0.48.0",
       "port-version": 0
+    },
+    "onigmo": {
+      "baseline": "6.2.0",
+      "port-version": 0
     }
   }
 }
