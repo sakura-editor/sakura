@@ -73,6 +73,26 @@ public:
 		return excludeFolders;
 	}
 
+	//! `!` プレフィックス（除外ファイル指定）1件の振り分け（SetFileKeys の CC 削減用）
+	//! @retval 0 正常 / 非0 ValidateKey のエラー番号
+	int AddExcludeFileKey( const WCHAR* p, bool bExcludeFileRegex ){
+		if( bExcludeFileRegex ){
+			// 正規表現モード: バリデーションせず正規表現リストへ
+			m_vecExceptFileRegexPatterns.emplace_back( p );
+			return 0;
+		}
+		int nValidStatus = ValidateKey( p );
+		if( 0 != nValidStatus ){
+			return nValidStatus;
+		}
+		if( _IS_REL_PATH( p ) ){
+			push_back_unique( m_vecExceptFileKeys, p );
+		}else{
+			push_back_unique( m_vecExceptAbsFileKeys, p );
+		}
+		return 0;
+	}
+
 	int SetFileKeys( LPCWSTR lpKeys, bool bExcludeFileRegex = false ){
 		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダー探索用
 		ClearItems();
@@ -85,20 +105,9 @@ public:
 			// !プレフィックス: 除外ファイル。正規表現/ワイルドカードの区別は
 			// 呼び出し側のフラグ（-GOPT=E / チェックボックス）で決める。
 			if( token[0] == L'!' ){
-				const WCHAR* p = token + 1;
-				if( bExcludeFileRegex ){
-					// 正規表現モード: バリデーションせず正規表現リストへ
-					m_vecExceptFileRegexPatterns.emplace_back( p );
-					continue;
-				}
-				int nValidStatus = ValidateKey( p );
+				int nValidStatus = AddExcludeFileKey( token + 1, bExcludeFileRegex );
 				if( 0 != nValidStatus ){
 					return nValidStatus;
-				}
-				if( _IS_REL_PATH( p ) ){
-					push_back_unique( m_vecExceptFileKeys, p );
-				}else{
-					push_back_unique( m_vecExceptAbsFileKeys, p );
 				}
 				continue;
 			}
@@ -209,7 +218,7 @@ private:
 		}
 	}
 
-	BOOL IsExist( const VGrepEnumKeys& keys, LPCWSTR addKey ){
+	BOOL IsExist( const VGrepEnumKeys& keys, LPCWSTR addKey ) const {
 		return std::find( keys.begin(), keys.end(), addKey ) != keys.end() ? TRUE : FALSE;
 	}
 

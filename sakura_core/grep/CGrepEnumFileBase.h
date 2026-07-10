@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -45,7 +46,14 @@ public:
 class CGrepEnumFileBase {
 private:
 	VPGrepEnumItem m_vpItems;
-	std::unordered_set< std::wstring > m_setItemNames;	//!< IsExist 用の名前索引（m_vpItems と同期して維持する）
+	//! 透過的ハッシュ（LPCWSTR/wstring_view から一時 std::wstring を生成せずに検索するため）
+	struct SWStringHash {
+		using is_transparent = void;
+		[[nodiscard]] size_t operator()( std::wstring_view sv ) const noexcept {
+			return std::hash<std::wstring_view>{}( sv );
+		}
+	};
+	std::unordered_set< std::wstring, SWStringHash, std::equal_to<> > m_setItemNames;	//!< IsExist 用の名前索引（m_vpItems と同期して維持する）
 
 	using Me = CGrepEnumFileBase;
 
@@ -72,8 +80,8 @@ public:
 		return;
 	}
 
-	BOOL IsExist( LPCWSTR lpFileName ){
-		return m_setItemNames.count( lpFileName ) != 0 ? TRUE : FALSE;
+	BOOL IsExist( LPCWSTR lpFileName ) const {
+		return m_setItemNames.contains( std::wstring_view( lpFileName ) ) ? TRUE : FALSE;
 	}
 
 	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = nullptr ){
@@ -97,6 +105,20 @@ public:
 		return m_vpItems[ i ].second;
 	}
 
+	//! 属性フラグによる列挙除外判定（Enumerates の CC 削減用）
+	static bool IsIgnoredByAttribute( const WIN32_FIND_DATA& w32fd, const CGrepEnumOptions& option ){
+		if( option.m_bIgnoreHidden && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) ){
+			return true;
+		}
+		if( option.m_bIgnoreReadOnly && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) ){
+			return true;
+		}
+		if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
+			return true;
+		}
+		return false;
+	}
+
 	int Enumerates( LPCWSTR lpBaseFolder, const VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = nullptr ){
 		int found = 0;
 
@@ -110,35 +132,31 @@ public:
 			WIN32_FIND_DATA w32fd;
 			// ハンドルは RAII で管理し、例外発生時も FindClose を保証する
 			std::unique_ptr< void, FindHandleCloser > handle( ::FindFirstFile( path.c_str(), &w32fd ) );
-			if( INVALID_HANDLE_VALUE != handle.get() ){
-				do{
-					if( !::PathMatchSpec(w32fd.cFileName, key.c_str() + nKeyDirLen) ){
-						continue;
-					}
-					if( option.m_bIgnoreHidden && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) ){
-						continue;
-					}
-					if( option.m_bIgnoreReadOnly && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) ){
-						continue;
-					}
-					if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
-						continue;
-					}
-					std::wstring name = key.substr( 0, nKeyDirLen ) + w32fd.cFileName;
-					if( IsValid( w32fd, name.c_str() ) ){
-						const std::wstring fullPath = baseFolder + L"\\" + name;
-						if( pExceptItems && pExceptItems->IsExist( fullPath.c_str() ) ){
-						}else{
-							if( pExceptItems && nKeyDirLen ){
-								// フォルダーを含んだパスなら検索済みとして除外指定に追加する
-								pExceptItems->AddItem( fullPath, w32fd.nFileSizeLow );
-							}
-							AddItem( std::move( name ), w32fd.nFileSizeLow );
-							found++; // 2011.11.19
-						}
-					}
-				}while( ::FindNextFile( handle.get(), &w32fd ) );
+			if( INVALID_HANDLE_VALUE == handle.get() ){
+				continue;
 			}
+			do{
+				if( !::PathMatchSpec(w32fd.cFileName, key.c_str() + nKeyDirLen) ){
+					continue;
+				}
+				if( IsIgnoredByAttribute( w32fd, option ) ){
+					continue;
+				}
+				std::wstring name = key.substr( 0, nKeyDirLen ) + w32fd.cFileName;
+				if( !IsValid( w32fd, name.c_str() ) ){
+					continue;
+				}
+				const std::wstring fullPath = baseFolder + L"\\" + name;
+				if( pExceptItems && pExceptItems->IsExist( fullPath.c_str() ) ){
+					continue;	// 除外指定に一致（従来の空ブロック if/else 構造を反転）
+				}
+				if( pExceptItems && nKeyDirLen ){
+					// フォルダーを含んだパスなら検索済みとして除外指定に追加する
+					pExceptItems->AddItem( fullPath, w32fd.nFileSizeLow );
+				}
+				AddItem( std::move( name ), w32fd.nFileSizeLow );
+				found++; // 2011.11.19
+			}while( ::FindNextFile( handle.get(), &w32fd ) );
 		}
 		return found;
 	}
