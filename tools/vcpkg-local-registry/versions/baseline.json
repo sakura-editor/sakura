@@ -12,6 +12,10 @@
       "baseline": "0.48.0",
       "port-version": 0
     },
+    "dll-plugin1": {
+      "baseline": "1.0.0",
+      "port-version": 0
+    },
     "onigmo": {
       "baseline": "6.2.0",
       "port-version": 0

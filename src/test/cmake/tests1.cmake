@@ -141,7 +141,7 @@ add_custom_target(test_dllplugin_zip
     ${TEST_DLLPLUGIN_DIR}
     ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:${TEST_DLLPLUGIN_TARGET}>
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
     ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on

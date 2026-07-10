@@ -45,9 +45,6 @@ include(${CMAKE_SOURCE_DIR}/src/main/cmake/diffutils.cmake)
 # Enable ctest command
 enable_testing()
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/tools/dll_plugin1"
-                 "${CMAKE_BINARY_DIR}/dll_plugin1")
-
 # Convert paths to native Windows format (backslashes) for OpenCppCoverage
 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}" CMAKE_SOURCE_DIR_NATIVE)
 file(TO_NATIVE_PATH "${OUTPUT_DIRECTORY}" OUTPUT_DIRECTORY_NATIVE)

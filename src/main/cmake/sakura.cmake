@@ -328,6 +328,22 @@ add_custom_target(ppa_stub
     "${OUTPUT_DIRECTORY}/ppa_stub.dll"
 )
 
+find_package(dll-plugin1 CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMENT "Copying dll_plugin1.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(dll_plugin1
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+)
+
 if(MINGW)
   # Find iconv
   find_program(ICONV_PATH iconv REQUIRED)
