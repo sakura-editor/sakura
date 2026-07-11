@@ -1,0 +1,13 @@
+{
+  "name": "bregonig",
+  "version": "4.20.0",
+  "port-version": 0,
+  "license": "GPL-1.0-or-later OR Artistic-1.0-Perl",
+  "description": "bregonig regular expression compatibility DLL",
+  "homepage": "https://github.com/k-takata/bregonig",
+  "dependencies": [
+    {
+      "name": "onigmo"
+    }
+  ]
+}

@@ -48,3 +48,8 @@ if(MINGW)
       PREFIX ""
   )
 endif()
+
+install(TARGETS ${project_name}
+  LIBRARY DESTINATION bin
+  RUNTIME DESTINATION bin
+)
