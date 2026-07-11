@@ -275,8 +275,74 @@ add_custom_target(generate_sakura_exe_manifest
     "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
 )
 
-# Include darkmodelib.cmake
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/darkmodelib.cmake)
+# Resolve darkmodelib from vcpkg local registry
+find_package(darkmodelib CONFIG REQUIRED)
+
+# Resolve bregonig from vcpkg local registry
+find_package(bregonig CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/bregonig.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+  COMMENT "Copying bregonig.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_bregonig
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+)
+
+# Resolve cmigemo from vcpkg local registry
+find_package(cmigemo CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/migemo.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+  COMMENT "Copying migemo.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_cmigemo
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+)
+
+find_package(ppa-stub CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  COMMENT "Copying ppa_stub.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(ppa_stub
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+)
+
+find_package(dll-plugin1 CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMENT "Copying dll_plugin1.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(dll_plugin1
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+)
 
 if(MINGW)
   # Find iconv
@@ -492,7 +558,7 @@ target_link_directories(sakura_core
 # link libraries
 target_link_libraries(sakura_core
   PUBLIC
-    darkmode
+    darkmodelib::darkmodelib
     comctl32
     dbghelp
     dwmapi
@@ -515,7 +581,6 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
-  generate_darkmodelib
   generate_bregonig
   generate_cmigemo
 )

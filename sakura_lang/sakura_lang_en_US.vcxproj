@@ -140,6 +140,6 @@
   </ImportGroup>
   <Import Project="..\src\main\msbuild\cmake.targets" />
   <Target Name="PreGenerateLang_en_US" DependsOnTargets="GenerateVersionHeader" BeforeTargets="ResourceCompile">
-    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_funccode_define -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+    <Exec Command="%22$(CMakeExe)%22 --build $(CMakeToolsPath) --config $(Configuration) --target generate_funccode_define -- /nologo" />
   </Target>
 </Project>
