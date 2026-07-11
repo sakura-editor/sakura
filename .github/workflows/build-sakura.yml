@@ -26,6 +26,14 @@ env:
   CI_BUILD_NUMBER: ${{ github.run_number }}
   CI_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
   GITHUB_COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+  VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,read
+  VCPKG_NUGET_FEED: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
+  VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
+
+permissions:
+  actions: read
+  contents: read
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -63,6 +71,122 @@ jobs:
 
       - name: Check encoding
         run: checkEncoding.bat
+
+  build-vcpkg:
+    name: Build vcpkg
+    runs-on: *windows_runner
+    needs: check-encoding
+
+    env:
+      VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite
+
+    permissions:
+      packages: write
+
+    strategy:
+      matrix:
+        triplet:
+          - x64-windows-static
+          - x64-mingw-static
+          - x86-windows-static
+
+    steps:
+    ## see https://github.com/actions/checkout
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        fetch-depth: 1  # 過去の履歴は含めず取得
+        submodules: true
+
+    ## see https://github.com/microsoft/setup-msbuild
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
+
+    - name: Set up MSYS2
+      uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884 # v2.32.0
+      if: matrix.triplet == 'x64-mingw-static'
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          mingw-w64-x86_64-iconv
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-make
+          mingw-w64-x86_64-python
+          mingw-w64-x86_64-uv
+          mingw-w64-x86_64-7zip
+          mingw-w64-x86_64-gdb
+          mingw-w64-x86_64-ctags
+          mingw-w64-x86_64-diffutils
+
+    - name: Set up Python
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+      if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
+      with:
+        python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
+      with:
+        activate-environment: true
+
+    - run: uv venv
+      if: matrix.triplet == 'x64-mingw-static'
+      shell: msys2 {0}
+
+    - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
+      if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
+
+    - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
+      if: matrix.triplet == 'x64-mingw-static'
+      shell: msys2 {0}
+
+    - name: Bootstrap vcpkg
+      run: |
+        if (-not (Test-Path ".\bootstrap-vcpkg.bat" -PathType Leaf)) {
+            throw ".\bootstrap-vcpkg.bat not found."
+        }
+
+        & .\bootstrap-vcpkg.bat -disableMetrics
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to bootstrap vcpkg (exit code: $LASTEXITCODE)."
+        }
+      working-directory: ${{ env.VCPKG_ROOT }}
+
+    - name: Configure GitHub Packages for vcpkg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
+        $nuget = & $vcpkg fetch nuget
+
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path $nuget -PathType Leaf)) {
+            throw "Failed to obtain nuget.exe."
+        }
+
+        & $nuget sources remove `
+            -Name GitHubPackages `
+            -NonInteractive 2>$null
+
+        & $nuget sources add `
+            -Name GitHubPackages `
+            -Source "$env:VCPKG_NUGET_FEED" `
+            -UserName "$env:VCPKG_NUGET_OWNER" `
+            -Password "$env:GITHUB_TOKEN" `
+            -StorePasswordInClearText `
+            -NonInteractive
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to add the GitHub Packages NuGet source."
+        }
+
+    - name: vcpkg install (${{ matrix.triplet }})
+      run: |
+        & "${{ env.VCPKG_ROOT }}\vcpkg.exe" install `
+          --triplet "${{ matrix.triplet }}" `
+          --clean-after-build
 
   build-chm:
     name: Build CHM
@@ -136,6 +260,11 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
+    - name: Bootstrap vcpkg
+      run: .\bootstrap-vcpkg.bat -disableMetrics
+      working-directory: ${{ env.VCPKG_ROOT }}
+      shell: cmd
+
     # Toolbar Bitmap Split/Mux
     - name: Build Bitmap Split/Mux
       run: build-bmp-tools.bat ${{ matrix.config }}
@@ -145,7 +274,7 @@ jobs:
     # The type of runner that the job will run on
     name: MSBuild
     runs-on: *windows_runner
-    needs: build-chm
+    needs: [build-vcpkg, build-chm]
 
     strategy:
       matrix:
@@ -258,6 +387,46 @@ jobs:
         echo "GITHUB_PR_HEAD_URL=${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}/commits/${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
         echo "GITHUB_PR_HEAD_COMMIT=${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
         echo "GITHUB_PR_HEAD_SHORT_COMMIT=$('${{ github.event.pull_request.head.sha }}'.SubString(0, 8))" >> $env:GITHUB_ENV
+
+    - name: Bootstrap vcpkg
+      run: |
+        if (-not (Test-Path ".\bootstrap-vcpkg.bat" -PathType Leaf)) {
+            throw ".\bootstrap-vcpkg.bat not found."
+        }
+
+        & .\bootstrap-vcpkg.bat -disableMetrics
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to bootstrap vcpkg (exit code: $LASTEXITCODE)."
+        }
+      working-directory: ${{ env.VCPKG_ROOT }}
+
+    - name: Configure GitHub Packages for vcpkg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
+        $nuget = & $vcpkg fetch nuget
+
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path $nuget)) {
+            throw "Failed to obtain nuget.exe."
+        }
+
+        & $nuget sources remove `
+            -Name GitHubPackages `
+            -NonInteractive 2>$null
+
+        & $nuget sources add `
+            -Name GitHubPackages `
+            -Source "$env:VCPKG_NUGET_FEED" `
+            -UserName "$env:VCPKG_NUGET_OWNER" `
+            -Password "$env:GITHUB_TOKEN" `
+            -StorePasswordInClearText `
+            -NonInteractive
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to add the GitHub Packages NuGet source."
+        }
 
     - name: Build with Build-Wrapper
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}

@@ -13,6 +13,17 @@ on:
       - '.editorconfig'
   workflow_dispatch:
 
+env:
+  VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,read
+  VCPKG_NUGET_FEED: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
+  VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
+
+permissions:
+  actions: read
+  contents: read
+  packages: read
+
 jobs:
   mingw:
     runs-on: windows-latest
@@ -22,9 +33,11 @@ jobs:
     env:
       BuildPlatform: MinGW
       Configuration: ${{ matrix.configuration }}
+
     defaults:
       run:
         shell: msys2 {0} # 指定しない限りmsys2シェルを使う
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -64,6 +77,38 @@ jobs:
 
       - name: Show environment variables for debug
         run: env
+
+      - name: Bootstrap vcpkg
+        run: ./bootstrap-vcpkg.sh -disableMetrics
+        working-directory: ${{ env.VCPKG_ROOT }}
+
+      - name: Configure GitHub Packages for vcpkg
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
+          $nuget = & $vcpkg fetch nuget
+
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $nuget)) {
+              throw "Failed to obtain nuget.exe."
+          }
+
+          & $nuget sources remove `
+              -Name GitHubPackages `
+              -NonInteractive 2>$null
+
+          & $nuget sources add `
+              -Name GitHubPackages `
+              -Source "$env:VCPKG_NUGET_FEED" `
+              -UserName "$env:VCPKG_NUGET_OWNER" `
+              -Password "$env:GITHUB_TOKEN" `
+              -StorePasswordInClearText `
+              -NonInteractive
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Failed to add the GitHub Packages NuGet source."
+          }
 
       - name: Build with MinGW-w64-gcc
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }} --no-test

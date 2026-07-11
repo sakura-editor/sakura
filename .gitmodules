@@ -19,3 +19,7 @@
 [submodule "externals/darkmodelib"]
 	path = externals/darkmodelib
 	url = https://github.com/ozone10/darkmodelib.git
+[submodule "tools/vcpkg"]
+	path = tools/vcpkg
+	url = https://github.com/Microsoft/vcpkg.git
+	branch = master

@@ -94,6 +94,7 @@ add_test(NAME pytest
     python
     -m pytest
     --ignore=externals
+    --ignore=tools/vcpkg
     --cov
     --cov-config=src/test/py/.coveragerc
     --cov-report=xml:pytest-coverage.xml
