@@ -114,7 +114,33 @@ jobs:
           help/**/Compile.log
         if-no-files-found: error
 
-  # This workflow contains a single job called "build"
+  build-bmp-tools:
+    name: Build BmpTools
+    runs-on: *windows_runner
+    needs: check-encoding
+
+    strategy:
+      matrix:
+        config:
+          - Debug
+          - Release
+
+    steps:
+    ## see https://github.com/actions/checkout
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        fetch-depth: 1  # 過去の履歴は含めず取得
+        submodules: true
+
+    ## see https://github.com/microsoft/setup-msbuild
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
+
+    # Toolbar Bitmap Split/Mux
+    - name: Build Bitmap Split/Mux
+      run: build-bmp-tools.bat ${{ matrix.config }}
+      shell: cmd
+
   build:
     # The type of runner that the job will run on
     name: MSBuild
@@ -266,11 +292,6 @@ jobs:
           pytest-coverage.xml
           sonar-metadata.json
           github-event.json
-
-      # Toolbar Bitmap Split/Mux
-    - run: build-bmp-tools.bat ${{matrix.config}}
-      name: Bitmap Split/Mux
-      shell: cmd
 
     - name: Build installer with Inno Setup
       run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
