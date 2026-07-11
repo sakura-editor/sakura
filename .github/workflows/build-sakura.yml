@@ -19,6 +19,14 @@ defaults:
   run:
     shell: pwsh # 指定しない限りpwshを使う
 
+env:
+  CI_ACCOUNT_NAME: ${{ github.actor }}
+  CI_REPO_NAME: ${{ github.repository }}
+  CI_BUILD_VERSION: ${{ github.run_id }}
+  CI_BUILD_NUMBER: ${{ github.run_number }}
+  CI_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  GITHUB_COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   check-encoding:
@@ -112,14 +120,6 @@ jobs:
     name: MSBuild
     runs-on: *windows_runner
     needs: build-chm
-
-    env:
-      CI_ACCOUNT_NAME: ${{ github.actor }}
-      CI_REPO_NAME: ${{ github.repository }}
-      CI_BUILD_VERSION: ${{ github.run_id }}
-      CI_BUILD_NUMBER: ${{ github.run_number }}
-      CI_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      GITHUB_COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
 
     strategy:
       matrix:
