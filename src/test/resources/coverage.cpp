@@ -13,3 +13,4 @@ ExcludeSourceFromCodeCoverage(Exclusion2, L"*\\src\\test\\*");
 ExcludeSourceFromCodeCoverage(Exclusion3, L"*\\Windows Kits\\10\\Include\\*");
 ExcludeSourceFromCodeCoverage(Exclusion4, L"*\\VC\\Tools\\MSVC\\*\\include\\*");
 ExcludeSourceFromCodeCoverage(Exclusion5, L"*\\externals\\*");
+ExcludeSourceFromCodeCoverage(Exclusion6, L"*\\vcpkg\\buildtrees\\*");

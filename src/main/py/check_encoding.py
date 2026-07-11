@@ -18,7 +18,7 @@ patternUTF8_NoBOM = (
 patternUTF16 = (
 	"utf-16"
 )
-expectEncoding = {
+expect_encoding = {
 	".cpp" : patternUTF8_BOM,
 	".h"   : patternUTF8_BOM,
 	".rc"  : patternUTF16,
@@ -26,7 +26,7 @@ expectEncoding = {
 }
 
 # チェック対象の拡張子リスト
-extensions = expectEncoding.keys()
+extensions = expect_encoding.keys()
 
 # 指定したファイルの文字コードを返す
 def check_encoding(file_path):
@@ -40,72 +40,72 @@ def check_encoding(file_path):
 	return detector.result['encoding']
 
 # チェック対象の拡張子か判断する
-def checkExtension(fileName):
-	base, ext = os.path.splitext(fileName)
+def check_extension(file_name):
+	_, ext = os.path.splitext(file_name)
 	return (ext in extensions)
 
 # origin/master が存在するか確認する
 # 戻り値
 # origin/master が有効な場合 → 0
 # origin/master が無効な場合 → 0以外
-def checkOriginMaster():
-	retCode = 0
+def check_origin_master():
+	ret_code = 0
 	try:
-		output = subprocess.check_output('git show -s origin/master --')
+		subprocess.check_output('git show -s origin/master --')
 	except subprocess.CalledProcessError as gitcode:
-		retCode = gitcode.returncode
-	return retCode
+		ret_code = gitcode.returncode
+	return ret_code
 
-def getMergeBase():
+def get_merge_base():
 	output = subprocess.check_output('git show-branch --merge-base origin/master HEAD')
-	outputDec = output.decode()
-	mergeBase = outputDec.splitlines()
-	return mergeBase[0]
+	output_dec = output.decode()
+	merge_base = output_dec.splitlines()
+	return merge_base[0]
 
 # ベースとの差分をチェック
-def getDiffFiles():
-	mergeBase = getMergeBase()
+def get_diff_files():
+	merge_base = get_merge_base()
 
-	output = subprocess.check_output('git diff ' + mergeBase + ' --name-only --diff-filter=dr')
-	outputDec = output.decode()
-	diffFiles = outputDec.splitlines()
-	for fileName in diffFiles:
-		if checkExtension(fileName):
-			yield fileName
+	output = subprocess.check_output('git diff ' + merge_base + ' --name-only --diff-filter=dr')
+	output_dec = output.decode()
+	diff_files = output_dec.splitlines()
+	for file_name in diff_files:
+		if check_extension(file_name):
+			yield file_name
 		else:
-			print ("skip " + fileName)
+			print ("skip " + file_name)
 
 # デバッグ用
 # すべてのファイルを対象にチェック対象の拡張子のファイルの文字コードを調べてチェックする
-def checkAll():
+def check_all():
 	for rootdir, dirs, files in os.walk('.'):
-		for fileName in files:
-			if checkExtension(fileName):
-				full = os.path.join(rootdir, fileName)
+		for file_name in files:
+			if check_extension(file_name):
+				full = os.path.join(rootdir, file_name)
 				yield full
 
 # 指定したファイルの文字コードが期待通りか確認する
-def checkEncodingResult(fileName, encoding):
-	base, ext = os.path.splitext(fileName)
+def check_encoding_result(file_name, encoding):
+	_, ext = os.path.splitext(file_name)
 	encoding = encoding.lower()
-	if encoding in expectEncoding.get(ext, ()):
+	if encoding in expect_encoding.get(ext, ()):
 		return True
 	return False
 
 # 指定されたファイルリストに対して文字コードが適切かチェックする
 # (条件に満たないファイル数を返す。)
-def processFiles(files):
+def process_files(files):
 	# 条件に満たないファイル数
 	count = 0
 
-	for fileName in files:
-		print ("checking " + fileName)
-		encoding = check_encoding(fileName)
-		if not checkEncodingResult(fileName, encoding):
-			print ("NG", encoding, fileName)
+	for file_name in files:
+		print ("checking " + file_name)
+		encoding = check_encoding(file_name)
+		if not check_encoding_result(file_name, encoding):
+			print ("NG", encoding, file_name)
 			count = count + 1
 		else:
-			print ("OK", encoding, fileName)
+			print ("OK", encoding, file_name)
 	return count
 
 if __name__ == '__main__':
@@ -115,13 +115,13 @@ if __name__ == '__main__':
 
 	count = 0
 	if len(sys.argv) > 1 and sys.argv[1] == "all":
-		count = processFiles(checkAll())
+		count = process_files(check_all())
 	else:
-		retCode = checkOriginMaster()
-		if retCode == 0:
-			count = processFiles(getDiffFiles())
+		ret_code = check_origin_master()
+		if ret_code == 0:
+			count = process_files(get_diff_files())
 		else:
-			print ("skip. origin/master doesn't exist." + " retCode = " + str(retCode))
+			print ("skip. origin/master doesn't exist." + " ret_code = " + str(ret_code))
 
 	if count > 0:
 		print ("return 1")

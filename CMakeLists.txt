@@ -36,12 +36,6 @@ endif(MINGW)
 create_language_dll(en-US 1033)
 create_language_dll(zh-CN 2052)
 
-# Include bregonig.cmake for bregonig.dll
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/bregonig.cmake)
-
-# Include cmigemo.cmake for migemo.dll
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/cmigemo.cmake)
-
 # Include ctags.cmake for ctags command
 include(${CMAKE_SOURCE_DIR}/src/main/cmake/ctags.cmake)
 
@@ -50,12 +44,6 @@ include(${CMAKE_SOURCE_DIR}/src/main/cmake/diffutils.cmake)
 
 # Enable ctest command
 enable_testing()
-
-add_subdirectory("${CMAKE_SOURCE_DIR}/tools/ppa_stub"
-                 "${CMAKE_BINARY_DIR}/ppa_stub")
-
-add_subdirectory("${CMAKE_SOURCE_DIR}/tools/dll_plugin1"
-                 "${CMAKE_BINARY_DIR}/dll_plugin1")
 
 # Convert paths to native Windows format (backslashes) for OpenCppCoverage
 file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}" CMAKE_SOURCE_DIR_NATIVE)
@@ -88,8 +76,13 @@ add_test(NAME UnitTest
 )
 
 add_test(NAME pytest
-  COMMAND ${Python3_EXECUTABLE} -m pytest
+  COMMAND
+    "${UV_EXECUTABLE}"
+    run
+    python
+    -m pytest
     --ignore=externals
+    --ignore=tools/vcpkg
     --cov
     --cov-config=src/test/py/.coveragerc
     --cov-report=xml:pytest-coverage.xml

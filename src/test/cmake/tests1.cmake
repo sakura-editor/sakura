@@ -24,8 +24,8 @@ add_custom_target(generate_tests1_exe_manifest
     "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
 )
 
-# Include GoogleTest's targets
-include(${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake)
+# Find GoogleTest's package(required)
+find_package(GTest CONFIG REQUIRED)
 
 # Find OpenCppCoverage for coverage test
 find_program(OpenCppCoverage_EXECUTABLE OpenCppCoverage
@@ -36,6 +36,11 @@ find_program(OpenCppCoverage_EXECUTABLE OpenCppCoverage
 if(OpenCppCoverage_EXECUTABLE)
   message(STATUS "Found OpenCppCoverage: ${OpenCppCoverage_EXECUTABLE}")
 endif()
+
+find_program(UV_EXECUTABLE
+  NAMES uv
+  REQUIRED
+)
 
 set(MINIZ_SOURCE_DIR "${CMAKE_SOURCE_DIR}/externals/miniz-cpp")
 set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
@@ -136,7 +141,7 @@ add_custom_target(test_dllplugin_zip
     ${TEST_DLLPLUGIN_DIR}
     ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:${TEST_DLLPLUGIN_TARGET}>
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
     ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
@@ -179,8 +184,8 @@ target_include_directories(tests1
 target_link_libraries(tests1
   PRIVATE
     sakura_core
-    gmock
-    gtest
+    GTest::gtest
+    GTest::gmock
 )
 
 set_target_properties(tests1
@@ -217,6 +222,7 @@ if(MINGW)
   target_include_directories(tests1
     PRIVATE
       "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tests1_ja-JP>"
+      "$<BUILD_INTERFACE:${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/cmigemo>"
   )
   target_link_options(tests1
     PRIVATE
@@ -232,7 +238,6 @@ add_dependencies(tests1
   generate_tests1_exe_manifest
   test_resource_zip
   test_dllplugin_zip
-  generate_gtest
   generate_miniz
   ppa_stub
 )
