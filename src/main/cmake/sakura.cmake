@@ -275,8 +275,8 @@ add_custom_target(generate_sakura_exe_manifest
     "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
 )
 
-# Include darkmodelib.cmake
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/darkmodelib.cmake)
+# Resolve darkmodelib from vcpkg local registry
+find_package(darkmodelib CONFIG REQUIRED)
 
 if(MINGW)
   # Find iconv
@@ -492,7 +492,7 @@ target_link_directories(sakura_core
 # link libraries
 target_link_libraries(sakura_core
   PUBLIC
-    darkmode
+    darkmodelib::darkmodelib
     comctl32
     dbghelp
     dwmapi
@@ -515,7 +515,6 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
-  generate_darkmodelib
   generate_bregonig
   generate_cmigemo
 )
