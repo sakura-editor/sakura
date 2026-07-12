@@ -9,6 +9,8 @@
 
 #include "window/EditorTestSuite.hpp"
 
+#include <fstream>
+
 namespace window {
 
 /*!
@@ -183,5 +185,117 @@ INSTANTIATE_TEST_SUITE_P(FileDialog
 		false
 	)
 );
+
+//! ファイル選択テストのためのフィクスチャクラス
+struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
+	static constexpr auto& text = L"test.ini";
+	static inline auto path = GetExeFileName().replace_filename(text);
+
+	static inline HWND hWnd = nullptr;
+	static inline HWND hWndDlg = nullptr;
+	static inline HWND hWndFolder = nullptr;
+
+	static inline std::unique_ptr<CDialog> pcDlg = nullptr;
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		SetUpUia();
+
+		SetUpEditor();
+
+		// ファイルが存在しない、のメッセージが出ないようにファイルを作る
+		std::ofstream ofs{ path };
+		ofs.close();
+
+		constexpr HINSTANCE unusedArg1 = nullptr;
+		hWnd = pcEditWnd->GetHwnd();
+
+		// テスト用ダミーダイアログを作る
+		pcDlg = std::make_unique<CDialog>();
+		hWndDlg = pcDlg->DoModeless(unusedArg1, hWnd, IDD_GREP, 0L, SW_SHOW);
+		EXPECT_THAT(hWndDlg, NotNull());
+
+		// ファイルパスを入力する項目のハンドルを取得する
+		hWndFolder = ::GetDlgItem(hWndDlg, IDC_COMBO_FOLDER);
+		EXPECT_THAT(hWndFolder, NotNull());
+
+		// ファイルパスの初期値に相対パスを入れる
+		apiwrap::SetDlgItemTextW(hWndDlg, IDC_COMBO_FOLDER, text);
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		// テスト用ダミーダイアログを閉じる
+		pcDlg->CloseDialog(0);
+
+		// 作成したファイルを削除する
+		std::error_code ec;
+		std::filesystem::remove(path, ec);
+
+		TearDownEditor();
+
+		TearDownUia();
+	}
+};
+
+/*!
+ * ファイル選択のテスト
+ */
+TEST_F(SelectFileTest, SelectFile001)
+{
+	constexpr bool resolvePath = true;	// パス解決する場合のテスト
+
+	std::jthread j([&] {
+		if (const auto hWndDlgOpenFile = WaitForDialog(L"開く")) {
+			EmulateSetValue(GetFocusedElement(), path.c_str());	// 絶対パスを入れる
+			EmulateHitEnter();
+		}
+	});
+
+	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsTrue());
+
+	const auto ret = apiwrap::GetDlgItemTextW(hWndDlg, IDC_COMBO_FOLDER);
+	EXPECT_THAT(ret.c_str(), StrEq(text));	// 相対パスが設定される
+}
+
+
+/*!
+ * ファイル選択のテスト
+ */
+TEST_F(SelectFileTest, SelectFile002)
+{
+	constexpr bool resolvePath = false;	// パス解決しない場合のテスト
+
+	std::jthread j([&] {
+		if (const auto hWndDlgOpenFile = WaitForDialog(L"開く")) {
+			EmulateSetValue(GetFocusedElement(), path.c_str());	// 絶対パスを入れる
+			EmulateHitEnter();
+		}
+	});
+
+	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsTrue());
+
+	const auto ret = apiwrap::GetDlgItemTextW(hWndDlg, IDC_COMBO_FOLDER);
+	EXPECT_THAT(ret.c_str(), StrEq(path.c_str()));	// 絶対パスが設定される
+}
+
+/*!
+ * ファイル選択のテスト
+ */
+TEST_F(SelectFileTest, SelectFile101)
+{
+	constexpr bool resolvePath = true;
+
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsFalse());
+}
 
 } // namespace window
