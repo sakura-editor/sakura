@@ -314,6 +314,7 @@ TEST(ApiWrap, DlgItemTest001) {
 
 			// アイテムにテキストを設定しておく
 			ApiWrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, text);
+			apiwrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, text);
 
 			// バッファサイズ指定せずに取得。正常に取得できる
 			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT), StrEq(text));
