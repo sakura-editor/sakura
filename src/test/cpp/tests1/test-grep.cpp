@@ -35,6 +35,7 @@
 #include <random>
 #include <string>
 #include <string_view>
+#include <format>
 #include <thread>
 #include <utility>
 #include <vector>
@@ -549,7 +550,7 @@ TEST_F(GrepRealFileTest, FileWorker_CancelTerminatesScan)
 	std::promise<int> resultPromise;
 	auto resultFuture = resultPromise.get_future();
 
-	std::thread worker([&resultPromise, &agent, &path, &sOpt, &gOpt, &cancel]() {
+	std::jthread worker([&resultPromise, &agent, &path, &sOpt, &gOpt, &cancel]() {
 		resultPromise.set_value(
 			RunGrepFileWorker(agent, path, L"needle", sOpt, gOpt, cancel));
 	});
@@ -605,14 +606,14 @@ int RunWorkersParallel(
 			const int hits = RunGrepFileWorker(
 				agent, files[idx], key, sSearchOption, sGrepOption, cancel);
 			if (hits < 0) {
-				cancel.store(true);
-				break;
+				cancel.store(true);		// 次周回冒頭の判定で全ワーカーが停止する
+			} else {
+				total.fetch_add(hits);
 			}
-			total.fetch_add(hits);
 		}
 	};
 
-	std::vector<std::thread> workers;
+	std::vector<std::jthread> workers;
 	workers.reserve(nThreads);
 	for (unsigned int i = 0; i < nThreads; ++i) {
 		workers.emplace_back(worker);
@@ -631,7 +632,7 @@ TEST_F(GrepRealFileTest, MultiThread_HitCountMatchesSingleThread)
 {
 	std::vector<std::filesystem::path> files;
 	for (int i = 0; i < 12; ++i) {
-		const std::wstring name = L"file_" + std::to_wstring(i) + L".txt";
+		const std::wstring name = std::format(L"file_{}.txt", i);
 		files.push_back(m_temp->WriteEncodedTextFile(name, CODE_UTF8,
 			BuildLineSequence(L"needle", L"abc", 100, 10)));
 	}
@@ -656,7 +657,7 @@ TEST_F(GrepRealFileTest, MultiThread_StressNoDeadlockAcrossRepeats)
 {
 	std::vector<std::filesystem::path> files;
 	for (int i = 0; i < 8; ++i) {
-		const std::wstring name = L"stress_" + std::to_wstring(i) + L".txt";
+		const std::wstring name = std::format(L"stress_{}.txt", i);
 		files.push_back(m_temp->WriteEncodedTextFile(name, CODE_UTF8,
 			BuildLineSequence(L"needle", L"abc", 200, 20)));
 	}
@@ -1072,7 +1073,7 @@ TEST_F(GrepRealFileTest, RunParallelGrep_HitCountMatchesSingleThread)
 {
 	for (int i = 0; i < 8; ++i) {
 		m_temp->WriteEncodedTextFile(
-			L"rp_" + std::to_wstring(i) + L".txt",
+			std::format(L"rp_{}.txt", i),
 			CODE_UTF8,
 			BuildLineSequence(L"needle", L"abc", 100, 10));
 	}
@@ -3898,10 +3899,7 @@ TEST_F(GrepRealFileTest, HwndGrep_ValidWindow_SearchesWindowText)
 	//        本テスト内で登録し、スコープ脱出時に必ず解除する。
 	ASSERT_TRUE(CAppNodeGroupHandle(0).AddEditWndList(hwndEditor))
 		<< "EditNode の登録に失敗";
-	auto nodeGuard = std::unique_ptr<void, std::function<void(void*)>>(
-		reinterpret_cast<void*>(1),
-		[hwndEditor](void*) { CAppNodeGroupHandle(0).DeleteEditWndList(hwndEditor); }
-	);
+	ScopeExit nodeGuard([hwndEditor] { CAppNodeGroupHandle(0).DeleteEditWndList(hwndEditor); });
 
 	// 対象テキストをアクティブ文書へ投入（キーは本テスト固有の文字列にする）
 	const CNativeW seed(L"hwuniq alpha\r\nhwuniq beta\r\n");

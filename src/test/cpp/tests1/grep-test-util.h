@@ -88,7 +88,7 @@ public:
 		const auto path = Sub(relative);
 		std::filesystem::create_directories(path.parent_path());
 
-		const auto encoded = CCodeFactory::ConvertToCode(codeType, std::wstring(text));
+		const auto encoded = CCodeFactory::ConvertToCode(codeType, text);
 		if (encoded.result != RESULT_COMPLETE) {
 			ADD_FAILURE() << "CCodeFactory::ConvertToCode failed for codeType="
 				<< static_cast<int>(codeType);

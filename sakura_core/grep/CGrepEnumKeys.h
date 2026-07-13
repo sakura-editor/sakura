@@ -212,7 +212,7 @@ private:
 		return;
 	}
 
-	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
+	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ) const {
 		if( ! IsExist( keys, addKey) ){
 			keys.emplace_back( addKey );
 		}

@@ -280,7 +280,7 @@ TEST_F(CDlgGrepTest, DetermineDefaultExcludePatterns_AlreadySetSkipped)
  */
 TEST_F(CDlgGrepTest, BuildHwndFileToken_Format)
 {
-	HWND hwnd = (HWND)(uintptr_t)0xABCD1234;
+	auto hwnd = (HWND)(uintptr_t)0xABCD1234;
 	std::wstring token = CDlgGrep::BuildHwndFileToken(hwnd);
 #ifdef _WIN64
 	EXPECT_STREQ(L":HWND:00000000abcd1234", token.c_str());		// 64bit は 16 桁固定
@@ -473,7 +473,7 @@ TEST_F(CDlgGrepGuiTest, DoModalOK_FolderWithSemicolon_IsSplitBySeparator)
 	dlg.m_strText = L"foo";
 	wcscpy_s(dlg.m_szFile, L"*.cpp");
 	std::wstring folders = dir1.wstring() + L";" + dir2.wstring();
-	wcscpy_s(dlg.m_szFolder, folders.c_str());
+	dlg.m_szFolder = folders;
 
 	const auto hInstance = ::GetModuleHandleW(nullptr);
 	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
@@ -498,7 +498,7 @@ TEST_F(CDlgGrepGuiTest, DoModalOK_MultipleFolders_AllResolved)
 	CDlgGrep dlg;
 	dlg.m_strText = L"foo";
 	wcscpy_s(dlg.m_szFile, L"*.cpp");
-	wcscpy_s(dlg.m_szFolder, folders.c_str());
+	dlg.m_szFolder = folders;
 
 	const auto hInstance = ::GetModuleHandleW(nullptr);
 	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);

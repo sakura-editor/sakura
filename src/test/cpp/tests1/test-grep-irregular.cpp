@@ -17,6 +17,8 @@
 #include <functional>
 #include <future>
 #include <memory>
+#include <array>
+#include <format>
 #include <thread>
 #include <vector>
 
@@ -384,7 +386,7 @@ TEST_F(GrepIrregularTest, ExcludeFile_MixedGlobAndRegex_OrderReversed) {
  *		   全件がコンパイルに成功することを確認する。
  */
 TEST_F(GrepIrregularTest, ExcludeFile_AllValidRegex_AllCompileSuccessfully) {
-	const wchar_t* patterns[] = {
+	const std::array patterns = {
 									L".*\\.obj$",
 									L".*\\.exe$",
 									L".*\\.pdb$",
@@ -523,7 +525,7 @@ TEST_F(GrepIrregularTest, FileWorker_HiddenSystemFile_Searched) {
  * @remark 特定の文字コード特有のバイト列が含まれない短い文字列の場合、既定の文字コードにフォールバックすることを確認する。
  */
 TEST(Irregular, CodeMediator_ShortFile_FallbackToDefault) {
-	SEncodingConfig config = {0};
+	SEncodingConfig config = {};
 	config.m_eDefaultCodetype = CODE_SJIS;
 	CCodeMediator mediator(config);
 	const char* ascii = "short string";
@@ -535,7 +537,7 @@ TEST(Irregular, CodeMediator_ShortFile_FallbackToDefault) {
  * @remark 特定のSJIS文字が持つASCII領域の第2バイトで文字コードが誤判定されないことを確認する。
  */
 TEST(Irregular, CodeMediator_SjisSecondByteInAsciiRange_NotMisdetected) {
-	SEncodingConfig config = {0};
+	SEncodingConfig config = {};
 	config.m_eDefaultCodetype = CODE_UTF8;
 	CCodeMediator mediator(config);
 	// 噂 (0x92, 0x9A), SJIS
@@ -549,7 +551,7 @@ TEST(Irregular, CodeMediator_SjisSecondByteInAsciiRange_NotMisdetected) {
  *		   フラグON/OFFで判定が変わることを確認する。
  */
 TEST(Irregular, CodeMediator_PriorCesu8Flag_TogglesDetection) {
-	SEncodingConfig config = {0};
+	SEncodingConfig config = {};
 	config.m_bPriorCesu8 = true;
 	config.m_eDefaultCodetype = CODE_SJIS;
 	CCodeMediator mediator_cesu(config);
@@ -569,7 +571,7 @@ TEST(Irregular, CodeMediator_PriorCesu8Flag_TogglesDetection) {
  *		   (UTF-32LE BOM = FF FE 00 00 は UTF-16LE BOM = FF FE のスーパーセット)
  */
 TEST(Irregular, CodeMediator_Utf32LeBom_NotMisdetectedAsUtf16) {
-	SEncodingConfig config = {0};
+	SEncodingConfig config = {};
 	config.m_eDefaultCodetype = CODE_SJIS;
 	CCodeMediator mediator(config);
 	const char* utf32le = "\xFF\xFE\x00\x00" "A\x00\x00\x00";
@@ -627,7 +629,7 @@ TEST_F(GrepIrregularTest, Regex_CatastrophicBacktracking_TimeoutGuarded) {
 	auto path = m_temp->WriteRawBytes(L"backtrack.txt", line);
 
 	std::atomic<int> result{-999};
-	std::thread worker([&result, &path]() {
+	std::jthread worker([&result, &path]() {
 		CGrepAgent agent;
 		result = RunGrepFileWorker(
 			agent, path, L"(a+)+$",
@@ -661,7 +663,7 @@ TEST_F(GrepIrregularTest, Regex_CatastrophicBacktracking_TimeoutGuarded) {
 TEST_F(GrepIrregularTest, MultiThread_CancelImmediatelyAfterStart) {
 	std::vector<std::filesystem::path> files;
 	for (int i = 0; i < 50; ++i) {
-		files.push_back(m_temp->WriteRawBytes(L"f" + std::to_wstring(i) + L".txt", "foo\n"));
+		files.push_back(m_temp->WriteRawBytes(std::format(L"f{}.txt", i), "foo\n"));
 	}
 	CGrepAgent agent;
 	std::atomic<bool> cancel{ true }; // Already cancelled!
@@ -703,7 +705,7 @@ TEST_F(GrepIrregularTest, MultiThread_100ExcludeRegexes_AllApplied) {
 	CGrepEnumKeys keys;
 	std::wstring pattern = L"*.txt";
 	for (int i = 0; i < 100; ++i) {
-		pattern += L";!.*exclude" + std::to_wstring(i) + L"\\.txt$";
+		pattern += std::format(L";!.*exclude{}\\.txt$", i);
 	}
 	EXPECT_EQ(0, keys.SetFileKeys(pattern.c_str(), /*bExcludeFileRegex=*/true));	// 100 件の除外正規表現を受理する
 	EXPECT_EQ(100, keys.m_vecExceptFileRegexPatterns.size());	// 除外正規表現は 100 件
