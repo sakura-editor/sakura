@@ -208,7 +208,7 @@ inline int RunGrepFileWorker(
 	std::wstring_view key,
 	const SSearchOption& sSearchOption,
 	const SGrepOption& sGrepOption,
-	std::atomic<bool>& cancel)
+	const std::atomic<bool>& cancel)
 {
 	const std::wstring keyStr(key);
 	const std::wstring fullPath = path.wstring();

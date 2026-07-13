@@ -1,4 +1,4 @@
-/*! @file
+﻿/*! @file
 	@brief Grep検索エージェント
 	@note マルチスレッド対応・除外ファイル機能拡張
 */
@@ -2712,7 +2712,7 @@ int CGrepAgent::RunParallelGrep(
 
 	// スレッドプールのワーカーを生成（1回のみ）。
 	// 各ワーカーはスレッドローカルの正規表現とバッファを持ち、毎回の再初期化を避ける。
-	std::vector<std::thread> poolWorkers;
+	std::vector<std::jthread> poolWorkers;
 	poolWorkers.reserve( nThreads );
 	std::atomic nActiveWorkers{ nThreads };  // 初期化成功したワーカー数（デッドロック防止用）
 	std::atomic<unsigned int> nInitDone{ 0 };             // 初期化完了ワーカー数（成功・失敗を含む、バリア用）
@@ -2720,11 +2720,11 @@ int CGrepAgent::RunParallelGrep(
 	std::condition_variable cvInitDone;
 
 	struct PoolJoinGuard {
-		std::vector<std::thread>&	workers;
+		std::vector<std::jthread>&	workers;
 		std::mutex&					mtx;
 		std::condition_variable&	cv;
 		bool&						bShutdown;
-		PoolJoinGuard( std::vector<std::thread>& w, std::mutex& m, std::condition_variable& c, bool& s )
+		PoolJoinGuard( std::vector<std::jthread>& w, std::mutex& m, std::condition_variable& c, bool& s )
 			: workers(w), mtx(m), cv(c), bShutdown(s) {}
 		PoolJoinGuard(const PoolJoinGuard&) = delete;
 		PoolJoinGuard& operator=(const PoolJoinGuard&) = delete;

@@ -548,7 +548,7 @@ TEST_F(GrepRealFileTest, FileWorker_CancelTerminatesScan)
 	const auto sOpt = MakeSearchOption(false, false);
 	const auto gOpt = MakeGrepOption();
 
-	std::atomic<bool> cancel{ false };
+	std::atomic cancel{ false };
 	std::promise<int> resultPromise;
 	auto resultFuture = resultPromise.get_future();
 
@@ -595,9 +595,9 @@ int RunWorkersParallel(
 	const SGrepOption& sGrepOption,
 	unsigned int nThreads)
 {
-	std::atomic<int> total{ 0 };
+	std::atomic total{ 0 };
 	std::atomic<size_t> next{ 0 };
-	std::atomic<bool> cancel{ false };
+	std::atomic cancel{ false };
 
 	CGrepAgent agent; // ワーカー本体はステートレスにふるまうので共有してよい
 
@@ -1915,7 +1915,7 @@ TEST_F(GrepRealFileTest, FileWorker_FileOpenErrorReturnsZeroWithMessage)
 
 	CNativeW cmemMessage;
 	CNativeW cUnicodeBuffer;
-	std::atomic<bool> cancel{ false };
+	std::atomic cancel{ false };
 
 	CGrepAgent agent;
 	const int hits = agent.DoGrepFileWorker(
@@ -1938,7 +1938,7 @@ TEST_F(GrepRealFileTest, FileWorker_PreCancelledReturnsMinusOne)
 	const auto path = m_temp->WriteEncodedTextFile(L"pre.txt", CODE_UTF8, L"needle\n");
 
 	CGrepAgent agent;
-	std::atomic<bool> cancel{ true };	// 走査開始前にキャンセル済み
+	std::atomic cancel{ true };	// 走査開始前にキャンセル済み
 
 	EXPECT_EQ(-1, RunGrepFileWorker(agent, path, L"needle",
 		MakeSearchOption(false, false), MakeGrepOption(), cancel));
@@ -2996,7 +2996,7 @@ SWorkerSnapshot RunWorkerSnapshot(
 	CNativeW cUnicodeBuffer;
 	cmemMessage.AllocStringBuffer(4000);
 	cUnicodeBuffer.AllocStringBuffer(4000);
-	std::atomic<bool> cancel{ false };
+	std::atomic cancel{ false };
 	CGrepAgent agent;
 
 	const int hits = agent.DoGrepFileWorker(

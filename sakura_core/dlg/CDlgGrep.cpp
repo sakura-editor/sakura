@@ -35,6 +35,7 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/system_constants.h"
+#include <format>
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12000
@@ -461,11 +462,12 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDC_CHK_EXCLUDE_FILE_REGEXP:
 		{
 			bool bRegexp = 0 != ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
-			WCHAR szCur[MAX_GREP_PATH] = { 0 };
-			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, szCur, std::size(szCur) );
+			std::wstring strCur( MAX_GREP_PATH, L'\0' );
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, strCur.data(), int(strCur.size()) );
+			strCur.resize( std::wstring_view( strCur.c_str() ).length() );
 			const WCHAR* pszOther = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD : DEFAULT_EXCLUDE_FILE_PATTERN_REGEX;
 			const WCHAR* pszThis  = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_REGEX    : DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD;
-			if( szCur[0] == L'\0' || wcscmp( szCur, pszOther ) == 0 ){
+			if( strCur.empty() || strCur == pszOther ){
 				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, pszThis );
 			}
 		}
@@ -1029,13 +1031,11 @@ void CDlgGrep::DetermineDefaultExcludePatterns()
 std::wstring CDlgGrep::BuildHwndFileToken(HWND hwnd)
 {
 	// HWND を 16 進の文字列にして、コンボボックス内の擬似ファイル名として保持する。
-	WCHAR buf[_MAX_PATH];
 #ifdef _WIN64
-	auto_sprintf(buf, L"%s%016I64x", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
+	return std::format(L"{}{:016x}", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
 #else
-	auto_sprintf(buf, L"%s%08x", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
+	return std::format(L"{}{:08x}", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
 #endif
-	return std::wstring(buf);
 }
 
 bool CDlgGrep::IsHwndFileToken(const wchar_t* s)
