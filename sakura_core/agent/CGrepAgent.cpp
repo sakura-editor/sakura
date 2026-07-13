@@ -1,4 +1,4 @@
-﻿/*! @file
+/*! @file
 	@brief Grep検索エージェント
 	@note マルチスレッド対応・除外ファイル機能拡張
 */
@@ -803,6 +803,32 @@ static std::wstring BuildCombinedExcludePattern( const std::vector<std::wstring>
 	return combined;
 }
 
+/*!	@brief 1 パターンが P4 結合を阻害する構文を含むか判定する（S134: ネスト削減のため分離）
+	@retval true 後方参照または名前付きグループを含む（結合不可）
+*/
+static bool HasCombineBlockingSyntax( const std::wstring& pat )
+{
+	for( size_t i = 0; i + 1 < pat.size(); i++ ){
+		if( pat[i] == L'\\' ){
+			const wchar_t c = pat[i + 1];
+			if( (L'1' <= c && c <= L'9') || c == L'k' || c == L'g' ){
+				return true;	// \1～\9 / \k<name> / \g<name>
+			}
+			i++;	// エスケープ対象文字を読み飛ばす（"\\\\1" の誤検知防止）
+			continue;
+		}
+		if( pat[i] == L'(' && pat[i + 1] == L'?' && i + 2 < pat.size() ){
+			const wchar_t c2 = pat[i + 2];
+			const bool bLookBehind = ( c2 == L'<' && i + 3 < pat.size()
+				&& (pat[i + 3] == L'=' || pat[i + 3] == L'!') );
+			if( (c2 == L'<' && !bLookBehind) || c2 == L'\'' ){
+				return true;	// (?<name>...) / (?'name'...) 名前付きグループ
+			}
+		}
+	}
+	return false;
+}
+
 /*!	@brief 除外正規表現パターン群が P4 結合可能か判定する
 	@note "(?:p1)|(?:p2)" 結合はキャプチャグループ番号が全パターン通しで振り直される。
 	      後方参照（\1～\9、\k、\g）や名前付きグループを含むパターンは結合すると
@@ -813,23 +839,8 @@ static std::wstring BuildCombinedExcludePattern( const std::vector<std::wstring>
 static bool CanCombineExcludePatterns( const std::vector<std::wstring>& patterns )
 {
 	for( const auto& pat : patterns ){
-		for( size_t i = 0; i + 1 < pat.size(); i++ ){
-			if( pat[i] == L'\\' ){
-				const wchar_t c = pat[i + 1];
-				if( (L'1' <= c && c <= L'9') || c == L'k' || c == L'g' ){
-					return false;	// \1～\9 / \k<name> / \g<name>
-				}
-				i++;	// エスケープ対象文字を読み飛ばす（"\\\\1" の誤検知防止）
-				continue;
-			}
-			if( pat[i] == L'(' && pat[i + 1] == L'?' && i + 2 < pat.size() ){
-				const wchar_t c2 = pat[i + 2];
-				const bool bLookBehind = ( c2 == L'<' && i + 3 < pat.size()
-					&& (pat[i + 3] == L'=' || pat[i + 3] == L'!') );
-				if( (c2 == L'<' && !bLookBehind) || c2 == L'\'' ){
-					return false;	// (?<name>...) / (?'name'...) 名前付きグループ
-				}
-			}
+		if( HasCombineBlockingSyntax( pat ) ){
+			return false;
 		}
 	}
 	return true;
@@ -2744,7 +2755,16 @@ int CGrepAgent::RunParallelGrep(
 	PoolJoinGuard poolJoinGuard{ poolWorkers, poolMutex, cvPoolStart, bPoolShutdown };
 
 	for( unsigned int t = 0; t < nThreads; t++ ){
-		poolWorkers.emplace_back( [&](){
+		poolWorkers.emplace_back( [
+#ifdef _DEBUG
+			&perfStats,
+#endif
+			this, &searchKey, &sSearchOption, &sGrepOption, &regexPatterns,
+			&nActiveWorkers, &nInitDone, &initMutex, &cvInitDone,
+			&poolMutex, &cvPoolStart, &cvBatchDone, &bPoolShutdown,
+			&poolBatchId, &pPoolBatch, &poolNextTask, &poolBatchActive,
+			&bWorkCancelled, &resultMutex, &sharedMessage,
+			&writtenBaseFolders, &writtenFolders, &atomicHitCount ](){
 			size_t localBatchId = 0;
 
 			// --- スレッドローカル初期化（スレッド生存中に1回のみ実行）---
@@ -2834,6 +2854,46 @@ int CGrepAgent::RunParallelGrep(
 				}
 			};
 
+			// S134: ネスト削減のため、バッチ内タスク処理ループをラムダ化（同一スレッド内で同期実行）
+			auto ProcessBatchTasks = [&]( const std::vector<SGrepFileTask>& batch ){
+				while( true ){
+					const size_t idx = poolNextTask.fetch_add( 1 );
+					if( idx >= batch.size() || bWorkCancelled.load() ) break;
+
+					const SGrepFileTask& task = batch[idx];
+
+					if( IsExcludedPath( task.fullPath ) ) continue;
+
+					// ファイル内検索
+					localMessage._SetStringLength(0);
+					const SGrepSearchParams workerParams{ searchKey.c_str(), sSearchOption, sGrepOption };
+					GREP_PERF_BEGIN( perfSearchStart );
+					const int fileHits = DoGrepFileWorker(
+						workerParams, task,
+						&localRegexp, localPattern,
+						bWorkCancelled,
+						localMessage, localUnicodeBuffer
+					);
+					GREP_PERF_ADD( searchUs, perfSearchStart );
+
+					if( fileHits == -1 ){
+						bWorkCancelled.store( true );
+						continue;	// ループ先頭の判定で終了する
+					}
+
+					if( fileHits > 0 || localMessage.GetStringLength() > 0 ){
+						// P1: ここではロックを取らずローカルに蓄積し、しきい値到達時にまとめてマージする
+						auto& pending = pendingResults.emplace_back();
+						pending.pBaseFolder = &task.baseFolder;
+						pending.pFolder = &task.folder;
+						pending.message.AppendNativeData( localMessage );
+						nPendingChars += (size_t)localMessage.GetStringLength();
+						atomicHitCount.fetch_add( fileHits );
+						MaybeFlushPendingResults();
+					}
+				}
+			};
+
 			while( true ){
 				// 新しいバッチまたはシャットダウンを待機
 				const std::vector<SGrepFileTask>* pBatch = nullptr;
@@ -2849,42 +2909,7 @@ int CGrepAgent::RunParallelGrep(
 
 				// バッチ処理（try/catch で例外をキャンセル扱い）
 				try{
-					while( true ){
-						const size_t idx = poolNextTask.fetch_add( 1 );
-						if( idx >= pBatch->size() || bWorkCancelled.load() ) break;
-
-						const SGrepFileTask& task = (*pBatch)[idx];
-
-						if( IsExcludedPath( task.fullPath ) ) continue;
-
-						// ファイル内検索
-						localMessage._SetStringLength(0);
-						const SGrepSearchParams workerParams{ searchKey.c_str(), sSearchOption, sGrepOption };
-						GREP_PERF_BEGIN( perfSearchStart );
-						const int fileHits = DoGrepFileWorker(
-							workerParams, task,
-							&localRegexp, localPattern,
-							bWorkCancelled,
-							localMessage, localUnicodeBuffer
-						);
-						GREP_PERF_ADD( searchUs, perfSearchStart );
-
-						if( fileHits == -1 ){
-							bWorkCancelled.store( true );
-							continue;	// ループ先頭の判定で終了する
-						}
-
-						if( fileHits > 0 || localMessage.GetStringLength() > 0 ){
-							// P1: ここではロックを取らずローカルに蓄積し、しきい値到達時にまとめてマージする
-							auto& pending = pendingResults.emplace_back();
-							pending.pBaseFolder = &task.baseFolder;
-							pending.pFolder = &task.folder;
-							pending.message.AppendNativeData( localMessage );
-							nPendingChars += (size_t)localMessage.GetStringLength();
-							atomicHitCount.fetch_add( fileHits );
-							MaybeFlushPendingResults();
-						}
-					}
+					ProcessBatchTasks( *pBatch );
 				}catch(...){
 					// 予期せぬ例外（std::bad_alloc 等）をキャンセル扱いにする
 					bWorkCancelled.store( true );

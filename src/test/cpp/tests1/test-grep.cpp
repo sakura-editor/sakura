@@ -1190,10 +1190,10 @@ TEST(CGrepEnumKeys, AddExceptFile_RelativePath)
 TEST(CGrepEnumKeys, AddExceptFile_AbsolutePath)
 {
 	CGrepEnumKeys keys;
-	keys.AddExceptFile(L"C:\\tmp\\foo.obj");
+	keys.AddExceptFile(L"C:\\testdata\\foo.obj");
 	EXPECT_EQ(1, keys.m_vecExceptAbsFileKeys.size());
 	if (keys.m_vecExceptAbsFileKeys.size() == 1) {
-		EXPECT_STREQ(L"C:\\tmp\\foo.obj", keys.m_vecExceptAbsFileKeys[0].c_str());
+		EXPECT_STREQ(L"C:\\testdata\\foo.obj", keys.m_vecExceptAbsFileKeys[0].c_str());
 	}
 }
 

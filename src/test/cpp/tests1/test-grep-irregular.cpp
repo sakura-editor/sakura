@@ -631,15 +631,13 @@ TEST_F(GrepIrregularTest, FileWorker_VeryLongSingleLine_64KChars) {
  */
 TEST_F(GrepIrregularTest, FileWorker_LockedFile_ReturnsError) {
 	auto path = m_temp->WriteRawBytes(L"locked.txt", "foo\n");
-	struct HandleDeleter { void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); } };
-	std::unique_ptr<void, HandleDeleter> hFile{
-		::CreateFileW(path.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL)
-	};
-	ASSERT_NE(INVALID_HANDLE_VALUE, hFile.get());	// 排他ロック用のハンドルを確保する
+	HANDLE hFile = ::CreateFileW(path.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hFile);	// 排他ロック用のハンドルを確保する（失敗時は閉じる対象なし）
 
 	CGrepAgent agent;
 	// DoGrepFileWorker may return 0 or log error if file cannot be opened due to share violation
 	int hits = RunGrepFileWorker(agent, path, L"foo", MakeSearchOption(false, false), MakeGrepOption());
+	::CloseHandle(hFile);	// EXPECT の前に排他ロックを解放する
 	EXPECT_TRUE(hits == GREP_RESULT_NO_HIT || hits == GREP_RESULT_CANCELLED)
 		<< "Expected GREP_RESULT_NO_HIT(0) or GREP_RESULT_CANCELLED(-1), got " << hits;
 }
