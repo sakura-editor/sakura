@@ -32,6 +32,7 @@
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
+#include "util/string_ex.h"
 #include "debug/CRunningTimer.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
@@ -51,10 +52,6 @@ constexpr DWORD UICHECK_INTERVAL_MILLISEC = 100;	// UI確認の時間間隔
 constexpr DWORD ADDTAIL_INTERVAL_MILLISEC = 50;	// 結果出力の時間間隔
 constexpr DWORD UIFILENAME_INTERVAL_MILLISEC = 100;	// Cancelダイアログのファイル名表示更新間隔（P8: SendMessage コスト削減のため UICHECK_INTERVAL_MILLISEC と統一）
 
-//! Grep 結果フッタおよびタイマー表示のバッファサイズ
-//! "該当 %d 件\r\n" や "%d ミリ秒\r\n" 等のフォーマット結果が収まる十分なサイズ。
-//! int の最大桁数 (11桁) + フォーマット文字列の最大長 (≦ 64文字) + 終端 0 を考慮。
-constexpr size_t kGrepFooterBufSize = 128;
 
 /*!
  * 指定された文字列をタイプ別設定に従ってエスケープする
@@ -745,9 +742,7 @@ DWORD CGrepAgent::DoGrep(
 		CNativeW cmemOutput = BuildGrepFooter(nHitCount, sGrepOption.bGrepReplace);
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #if defined(_DEBUG) && defined(TIME_MEASURE)
-		WCHAR szTimerBuffer[kGrepFooterBufSize];
-		auto_sprintf( szTimerBuffer, LS(STR_GREP_TIMER), cRunningTimer.Read() );
-		cmemOutput.SetString( szTimerBuffer );
+		cmemOutput.SetString( strprintf( LS(STR_GREP_TIMER), cRunningTimer.Read() ).c_str() );
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #endif
 	}
@@ -808,13 +803,13 @@ static std::wstring BuildCombinedExcludePattern( const std::vector<std::wstring>
 */
 static bool HasCombineBlockingSyntax( const std::wstring& pat )
 {
-	for( size_t i = 0; i + 1 < pat.size(); i++ ){
+	size_t i = 0;
+	while( i + 1 < pat.size() ){
 		if( pat[i] == L'\\' ){
-			const wchar_t c = pat[i + 1];
-			if( (L'1' <= c && c <= L'9') || c == L'k' || c == L'g' ){
+			if( const wchar_t c = pat[i + 1]; (L'1' <= c && c <= L'9') || c == L'k' || c == L'g' ){
 				return true;	// \1～\9 / \k<name> / \g<name>
 			}
-			i++;	// エスケープ対象文字を読み飛ばす（"\\\\1" の誤検知防止）
+			i += 2;	// エスケープ対象文字ごと読み飛ばす（"\\\\1" の誤検知防止）
 			continue;
 		}
 		if( pat[i] == L'(' && pat[i + 1] == L'?' && i + 2 < pat.size() ){
@@ -825,6 +820,7 @@ static bool HasCombineBlockingSyntax( const std::wstring& pat )
 				return true;	// (?<name>...) / (?'name'...) 名前付きグループ
 			}
 		}
+		i++;
 	}
 	return false;
 }
@@ -838,12 +834,7 @@ static bool HasCombineBlockingSyntax( const std::wstring& pat )
 */
 static bool CanCombineExcludePatterns( const std::vector<std::wstring>& patterns )
 {
-	for( const auto& pat : patterns ){
-		if( HasCombineBlockingSyntax( pat ) ){
-			return false;
-		}
-	}
-	return true;
+	return std::ranges::none_of( patterns, HasCombineBlockingSyntax );
 }
 
 /*!	@brief 除外正規表現パターン群をコンパイルする（S134: ネスト削減のため共通化）
@@ -908,7 +899,7 @@ int CGrepAgent::DoGrepTree(
 	auto nBasePathLen = int(std::wstring_view(pszBasePath).length());
 
 	// B-1: goto cancel_return の代替。残存メッセージをフラッシュしてキャンセル値(-1)を返す。
-	auto FlushAndCancel = [&]() -> int {
+	auto FlushAndCancel = [&]() {
 		if( 0 < cmemMessage.GetStringLength() ){
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 			cmemMessage._SetStringLength(0);
@@ -2598,14 +2589,10 @@ CNativeW CGrepAgent::BuildGrepHeader(
 CNativeW CGrepAgent::BuildGrepFooter(int nHitCount, bool bGrepReplace)
 {
 	CNativeW cmemMessage;
-	WCHAR szBuffer[kGrepFooterBufSize];
 	const WCHAR* pszFormat = bGrepReplace ? LS( STR_GREP_REPLACE_COUNT ) : LS( STR_GREP_MATCH_COUNT );
 
-	// バッファサイズの根拠: フォーマット部 ≦ 64文字 + %d 展開 ≦ 11文字 + 終端0 << 128
-	// 言語リソース変更時の回帰検出のため Debug ビルドで動的検証する。
-	assert(wcsnlen_s(pszFormat, kGrepFooterBufSize) + 12 < kGrepFooterBufSize);
-	auto_sprintf( szBuffer, pszFormat, nHitCount );
-	cmemMessage.SetString( szBuffer );
+	// strprintf は必要長を動的確保するため固定バッファ長の検証は不要
+	cmemMessage.SetString( strprintf( pszFormat, nHitCount ).c_str() );
 	return cmemMessage;
 }
 
@@ -2700,7 +2687,7 @@ int CGrepAgent::RunParallelGrep(
 		std::thread::hardware_concurrency() / 4 );
 
 	// ヒット数（全バッチ共通・バッチ間で引き継ぐ）
-	std::atomic<int> atomicHitCount{ 0 };
+	std::atomic atomicHitCount{ 0 };
 
 #ifdef _DEBUG
 	// 0-5: 性能計測（Debug 限定）
@@ -2716,8 +2703,8 @@ int CGrepAgent::RunParallelGrep(
 	bool bPoolShutdown = false;                         // true: ワーカーに終了を指示
 	const std::vector<SGrepFileTask>* pPoolBatch = nullptr; // 現在バッチのタスクリスト
 	std::atomic<size_t> poolNextTask{ 0 };              // 次に処理するタスクのインデックス
-	std::atomic<int>    poolBatchActive{ 0 };           // 現在バッチを処理中のワーカー数
-	std::atomic<bool>   bWorkCancelled{ false };        // true: キャンセル済み（バッチ間で維持）
+	std::atomic poolBatchActive{ 0 };           // 現在バッチを処理中のワーカー数
+	std::atomic bWorkCancelled{ false };        // true: キャンセル済み（バッチ間で維持）
 	std::mutex resultMutex;
 	CNativeW sharedMessage;
 	std::set<std::wstring, std::less<>> writtenBaseFolders;
@@ -2727,7 +2714,7 @@ int CGrepAgent::RunParallelGrep(
 	// 各ワーカーはスレッドローカルの正規表現とバッファを持ち、毎回の再初期化を避ける。
 	std::vector<std::thread> poolWorkers;
 	poolWorkers.reserve( nThreads );
-	std::atomic<unsigned int> nActiveWorkers{ nThreads };  // 初期化成功したワーカー数（デッドロック防止用）
+	std::atomic nActiveWorkers{ nThreads };  // 初期化成功したワーカー数（デッドロック防止用）
 	std::atomic<unsigned int> nInitDone{ 0 };             // 初期化完了ワーカー数（成功・失敗を含む、バリア用）
 	std::mutex initMutex;
 	std::condition_variable cvInitDone;

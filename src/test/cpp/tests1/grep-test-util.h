@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2026, Sakura Editor Organization
 
@@ -158,6 +158,15 @@ private:
 	F m_f;
 };
 
+/*! %TEMP% ディレクトリを std::wstring で返す（C 配列バッファ回避） */
+inline std::wstring GetTempDirString()
+{
+	std::wstring dir(MAX_PATH, L'\0');
+	dir.resize(::GetTempPathW(MAX_PATH, dir.data()));
+	return dir;
+}
+
+
 inline SSearchOption MakeSearchOption(bool regex, bool caseSensitive, bool wordOnly = false)
 {
 	SSearchOption opt;
@@ -257,6 +266,6 @@ inline int RunGrepFileWorker(
 	const SSearchOption& sSearchOption,
 	const SGrepOption& sGrepOption)
 {
-	std::atomic<bool> cancel{ false };
+	std::atomic cancel{ false };
 	return RunGrepFileWorker(agent, path, key, sSearchOption, sGrepOption, cancel);
 }

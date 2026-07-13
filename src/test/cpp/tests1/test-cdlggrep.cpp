@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2026, Sakura Editor Organization
 
@@ -342,8 +342,8 @@ struct CDlgGrepGuiTest : public ::testing::Test, public env::ShareDataTestSuite 
 		}
 
 		// tests1.exe の配置ディレクトリ基準で一時フォルダを作成（GetTempPath はパス非依存で環境差異が出るため使わない）
-		wchar_t exePath[MAX_PATH];
-		::GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+		std::wstring exePath(MAX_PATH, L'\0');
+		exePath.resize(::GetModuleFileNameW(nullptr, exePath.data(), MAX_PATH));
 		m_testDir = std::filesystem::path(exePath).parent_path() / L"test_grep_gui";
 		std::filesystem::create_directories(m_testDir);
 

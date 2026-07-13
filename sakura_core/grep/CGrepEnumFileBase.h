@@ -28,7 +28,7 @@
 #include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
-typedef std::pair< std::wstring, DWORD > PairGrepEnumItem;
+using PairGrepEnumItem = std::pair< std::wstring, DWORD >;
 typedef std::vector< PairGrepEnumItem > VPGrepEnumItem;
 
 class CGrepEnumOptions {

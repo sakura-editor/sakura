@@ -628,7 +628,7 @@ TEST_F(GrepIrregularTest, Regex_CatastrophicBacktracking_TimeoutGuarded) {
 	line += "b";
 	auto path = m_temp->WriteRawBytes(L"backtrack.txt", line);
 
-	std::atomic<int> result{-999};
+	std::atomic result{-999};
 	std::jthread worker([&result, &path]() {
 		CGrepAgent agent;
 		result = RunGrepFileWorker(
@@ -666,7 +666,7 @@ TEST_F(GrepIrregularTest, MultiThread_CancelImmediatelyAfterStart) {
 		files.push_back(m_temp->WriteRawBytes(std::format(L"f{}.txt", i), "foo\n"));
 	}
 	CGrepAgent agent;
-	std::atomic<bool> cancel{ true }; // Already cancelled!
+	std::atomic cancel{ true }; // Already cancelled!
 	int hits = RunGrepFileWorker(agent, files[0], L"foo", MakeSearchOption(false, false), MakeGrepOption(), cancel);
 	EXPECT_EQ(GREP_RESULT_CANCELLED, hits);	   // 開始直後キャンセルは -1
 }
@@ -679,7 +679,7 @@ TEST_F(GrepIrregularTest, MultiThread_CancelImmediatelyAfterStart) {
 TEST_F(GrepIrregularTest, MultiThread_FileDeletedMidScan) {
 	auto path = m_temp->WriteRawBytes(L"deleted.txt", "foo\n");
 	CGrepAgent agent;
-	std::atomic<bool> cancel{ false };
+	std::atomic cancel{ false };
 	
 	// Delete file before starting worker
 	::DeleteFileW(path.c_str());
@@ -726,7 +726,7 @@ TEST_F(GrepIrregularTest, MultiThread_RepeatedStartCancel_50Iterations) {
 
 	int cancelledCount = 0;
 	for (int i = 0; i < 50; ++i) {
-		std::atomic<bool> cancel{ true };
+		std::atomic cancel{ true };
 		const int result = RunGrepFileWorker(
 			agent, path, L"foo",
 			MakeSearchOption(false, false), MakeGrepOption(), cancel);

@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2026, Sakura Editor Organization
 
@@ -249,7 +249,7 @@ TEST(CGrepAgent, CreateFolders_SemicolonSeparated_SplitsCorrectly)
 TEST(CGrepAgent, CreateFolders_QuotedSemicolon_PreservesAsOne)
 {
 	std::vector<std::wstring> v;
-	CGrepAgent::CreateFolders(L"\"C:\\a;b\"", v);
+	CGrepAgent::CreateFolders(LR"("C:\a;b")", v);
 	ASSERT_EQ(1, v.size());
 	EXPECT_STREQ(L"C:\\a;b", v[0].c_str());
 }
@@ -262,10 +262,7 @@ TEST(CGrepAgent, CreateFolders_QuotedSemicolon_PreservesAsOne)
  */
 TEST(CGrepAgent, CreateFolders_LongFileName_Resolved)
 {
-	WCHAR tempDir[MAX_PATH];
-	::GetTempPathW(MAX_PATH, tempDir);
-
-	const std::wstring longPath = std::wstring(tempDir) + L"sakura_grep_test_very_long_file_name.tmp";
+	const std::wstring longPath = GetTempDirString() + L"sakura_grep_test_very_long_file_name.tmp";
 
 	HANDLE hFile = ::CreateFileW(longPath.c_str(), GENERIC_WRITE, 0, nullptr,
 		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -275,14 +272,16 @@ TEST(CGrepAgent, CreateFolders_LongFileName_Resolved)
 
 	ScopeExit fileGuard([&longPath] { ::DeleteFileW(longPath.c_str()); });
 
-	WCHAR shortPath[MAX_PATH];
-	if (0 == ::GetShortPathNameW(longPath.c_str(), shortPath, MAX_PATH)) {
+	std::wstring shortPath(MAX_PATH, L'\0');
+	const DWORD nShortLen = ::GetShortPathNameW(longPath.c_str(), shortPath.data(), MAX_PATH);
+	if (0 == nShortLen) {
 		GTEST_SKIP() << "8.3 形式が無効なボリュームのためスキップ。GetLastError="
 					 << ::GetLastError();
 	}
+	shortPath.resize(nShortLen);
 
 	std::vector<std::wstring> v;
-	CGrepAgent::CreateFolders(shortPath, v);
+	CGrepAgent::CreateFolders(shortPath.c_str(), v);
 	ASSERT_EQ(1u, v.size());
 	EXPECT_GT(v[0].length(), 0u);
 }
@@ -361,9 +360,7 @@ struct GrepAgentFlowTest
  */
 TEST_F(GrepAgentFlowTest, AddTail_StdoutMode_WritesToStdout)
 {
-	WCHAR tempDir[MAX_PATH];
-	::GetTempPathW(MAX_PATH, tempDir);
-	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_stdout_test.txt";
+	const std::wstring tmpFile = GetTempDirString() + L"sakura_stdout_test.txt";
 
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
 		GENERIC_WRITE | GENERIC_READ,
@@ -391,11 +388,12 @@ TEST_F(GrepAgentFlowTest, AddTail_StdoutMode_WritesToStdout)
 	} // ← stdout 復帰
 
 	::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
-	char buf[128] = {0};
+	std::string buf(128, '\0');
 	DWORD dwRead = 0;
-	::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
+	::ReadFile(hTempFile, buf.data(), static_cast<DWORD>(buf.size()), &dwRead, nullptr);
+	buf.resize(dwRead);
 
-	EXPECT_TRUE(strstr(buf, "HelloGrepTest") != nullptr);
+	EXPECT_TRUE(buf.find("HelloGrepTest") != std::string::npos);
 
 	hFileGuard.reset();
 	::DeleteFileW(tmpFile.c_str());

@@ -1155,7 +1155,8 @@ TEST(CCommandLine, ParseGrep_OptionNameMixedCase)
  */
 TEST(CCommandLine, ParseGrep_ArgumentOrderInvariant)
 {
-	CCommandLine c1, c2;
+	CCommandLine c1;
+	CCommandLine c2;
 	c1.ParseCommandLine(L"-GKEY=foo -GFILE=*.cpp -GFOLDER=C:\\tmp", false);
 	c2.ParseCommandLine(L"-GFOLDER=C:\\tmp -GFILE=*.cpp -GKEY=foo", false);
 	EXPECT_STREQ(c1.GetGrepInfoRef().cmGrepKey.GetStringPtr(), c2.GetGrepInfoRef().cmGrepKey.GetStringPtr());
@@ -1242,7 +1243,7 @@ TEST(CCommandLine, ParseGrepKey_ContainsEqualsInValue)
 TEST(CCommandLine, ParseGrepKey_EscapedDoubleQuotes)
 {
 	CCommandLine c;
-	c.ParseCommandLine(L"-GKEY=\"he said \"\"hi\"\"\"", false);
+	c.ParseCommandLine(LR"(-GKEY="he said ""hi""")", false);
 	EXPECT_STREQ(L"he said \"hi\"", c.GetGrepInfoRef().cmGrepKey.GetStringPtr());
 }
 
@@ -1275,6 +1276,6 @@ TEST(CCommandLine, ParseGrepFolder_RelativePath)
 TEST(CCommandLine, ParseGrepFolder_UncPath)
 {
 	CCommandLine c;
-	c.ParseCommandLine(L"-GFOLDER=\\\\server\\share\\src", false);
+	c.ParseCommandLine(LR"(-GFOLDER=\\server\share\src)", false);
 	EXPECT_STREQ(L"\\\\server\\share\\src", c.GetGrepInfoRef().cmGrepFolder.GetStringPtr());
 }

@@ -25,7 +25,7 @@
 #include "util/string_ex.h"
 #include "util/file.h"
 
-typedef std::vector< std::wstring > VGrepEnumKeys;
+using VGrepEnumKeys = std::vector< std::wstring >;
 
 class CGrepEnumKeys {
 
@@ -81,8 +81,7 @@ public:
 			m_vecExceptFileRegexPatterns.emplace_back( p );
 			return 0;
 		}
-		int nValidStatus = ValidateKey( p );
-		if( 0 != nValidStatus ){
+		if( int nValidStatus = ValidateKey( p ); 0 != nValidStatus ){
 			return nValidStatus;
 		}
 		if( _IS_REL_PATH( p ) ){
@@ -105,8 +104,7 @@ public:
 			// !プレフィックス: 除外ファイル。正規表現/ワイルドカードの区別は
 			// 呼び出し側のフラグ（-GOPT=E / チェックボックス）で決める。
 			if( token[0] == L'!' ){
-				int nValidStatus = AddExcludeFileKey( token + 1, bExcludeFileRegex );
-				if( 0 != nValidStatus ){
+				if( int nValidStatus = AddExcludeFileKey( token + 1, bExcludeFileRegex ); 0 != nValidStatus ){
 					return nValidStatus;
 				}
 				continue;
