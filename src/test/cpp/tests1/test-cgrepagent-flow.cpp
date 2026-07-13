@@ -17,6 +17,7 @@
 #include "agent/CGrepAgent.h"
 #include "env/ShareDataTestSuite.hpp"
 #include "window/EditorTestSuite.hpp"
+#include "grep-test-util.h"
 
 // ----- FormatGrepResultLine -----
 
@@ -266,16 +267,13 @@ TEST(CGrepAgent, CreateFolders_LongFileName_Resolved)
 
 	const std::wstring longPath = std::wstring(tempDir) + L"sakura_grep_test_very_long_file_name.tmp";
 
-	HANDLE hFile = ::CreateFileW(longPath.c_str(), GENERIC_WRITE, 0, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = ::CreateFileW(longPath.c_str(), GENERIC_WRITE, 0, nullptr,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	ASSERT_NE(INVALID_HANDLE_VALUE, hFile)
 		<< "一時ファイル作成失敗：テスト前提条件未達。GetLastError=" << ::GetLastError();
 	::CloseHandle(hFile);
 
-	auto fileGuard = std::unique_ptr<void, std::function<void(void*)>>(
-		reinterpret_cast<void*>(1),
-		[&longPath](void*) { ::DeleteFileW(longPath.c_str()); }
-	);
+	ScopeExit fileGuard([&longPath] { ::DeleteFileW(longPath.c_str()); });
 
 	WCHAR shortPath[MAX_PATH];
 	if (0 == ::GetShortPathNameW(longPath.c_str(), shortPath, MAX_PATH)) {
@@ -369,7 +367,7 @@ TEST_F(GrepAgentFlowTest, AddTail_StdoutMode_WritesToStdout)
 
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
 		GENERIC_WRITE | GENERIC_READ,
-		FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile)
 		<< "一時ファイル作成失敗。テスト前提条件未達。";
 
@@ -392,10 +390,10 @@ TEST_F(GrepAgentFlowTest, AddTail_StdoutMode_WritesToStdout)
 		agent.AddTail(pView, msg, true);
 	} // ← stdout 復帰
 
-	::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+	::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 	char buf[128] = {0};
 	DWORD dwRead = 0;
-	::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+	::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 
 	EXPECT_TRUE(strstr(buf, "HelloGrepTest") != nullptr);
 

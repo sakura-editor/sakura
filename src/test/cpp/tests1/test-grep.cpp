@@ -63,218 +63,9 @@
 #include "view/CEditView.h"
 
 #include "window/EditorTestSuite.hpp"
+#include "grep-test-util.h"
 
 namespace {
-
-// =============================================================================
-// 一時ディレクトリ RAII
-// =============================================================================
-
-/*!
- * テスト用の一時ディレクトリを生成・自動削除する RAII クラス
- *
- *  - コンストラクタで一意な一時ディレクトリを作る
- *  - デストラクタで再帰削除する
- *  - WriteEncodedTextFile / WriteRawBytes 等のヘルパで配下にファイルを書き込む
- */
-class GrepTempDir
-{
-public:
-	explicit GrepTempDir(std::wstring_view prefix = L"grp")
-	{
-		// GetTempFilePath は一時ファイルを生成するので、それを消してから
-		// 同名のディレクトリを掘り直すことで一意性を担保する。
-		auto candidate = GetTempFilePath(prefix);
-		std::filesystem::remove(candidate);
-		std::filesystem::create_directories(candidate);
-		m_root = candidate;
-	}
-
-	GrepTempDir(const GrepTempDir&) = delete;
-	GrepTempDir& operator=(const GrepTempDir&) = delete;
-
-	~GrepTempDir()
-	{
-		std::error_code ec;
-		std::filesystem::remove_all(m_root, ec);
-	}
-
-	const std::filesystem::path& Root() const noexcept { return m_root; }
-
-	std::filesystem::path Sub(std::wstring_view relative) const
-	{
-		return m_root / std::filesystem::path(relative);
-	}
-
-	void EnsureDir(std::wstring_view relative) const
-	{
-		std::filesystem::create_directories(Sub(relative));
-	}
-
-	/*!
-	 * 任意の文字コードでテキストファイルを書き出す
-	 *
-	 * BOM 付き UTF-8 / UTF-16LE / UTF-16BE に対応するために
-	 * withBom を指定可能にしている（自動判定経路のテストで使用）。
-	 */
-	std::filesystem::path WriteEncodedTextFile(
-		std::wstring_view relative,
-		ECodeType codeType,
-		std::wstring_view text,
-		bool withBom = false) const
-	{
-		const auto path = Sub(relative);
-		std::filesystem::create_directories(path.parent_path());
-
-		const auto encoded = CCodeFactory::ConvertToCode(codeType, std::wstring(text));
-		if (encoded.result != RESULT_COMPLETE) {
-			ADD_FAILURE() << "CCodeFactory::ConvertToCode failed for codeType="
-				<< static_cast<int>(codeType);
-			return path;
-		}
-
-		std::ofstream os(path, std::ios::binary | std::ios::trunc);
-		if (!os) {
-			ADD_FAILURE() << "failed to open file for write: " << path.string();
-			return path;
-		}
-
-		if (withBom) {
-			switch (codeType) {
-			case CODE_UTF8:
-				os.write("\xEF\xBB\xBF", 3);
-				break;
-			case CODE_UNICODE:
-				os.write("\xFF\xFE", 2);
-				break;
-			case CODE_UNICODEBE:
-				os.write("\xFE\xFF", 2);
-				break;
-			default:
-				break;
-			}
-		}
-		os.write(encoded.destination.data(),
-			static_cast<std::streamsize>(encoded.destination.size()));
-		return path;
-	}
-
-	std::filesystem::path WriteRawBytes(
-		std::wstring_view relative, std::string_view bytes) const
-	{
-		const auto path = Sub(relative);
-		std::filesystem::create_directories(path.parent_path());
-		std::ofstream os(path, std::ios::binary | std::ios::trunc);
-		os.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
-		return path;
-	}
-
-private:
-	std::filesystem::path m_root;
-};
-
-// =============================================================================
-// 補助ヘルパ
-// =============================================================================
-
-SSearchOption MakeSearchOption(bool regex, bool caseSensitive, bool wordOnly = false)
-{
-	SSearchOption opt;
-	opt.Reset();
-	opt.bRegularExp = regex;
-	opt.bLoHiCase = caseSensitive;
-	opt.bWordOnly = wordOnly;
-	return opt;
-}
-
-SGrepOption MakeGrepOption(ECodeType charSet = CODE_AUTODETECT)
-{
-	// テストで共通に使う Grep 条件をまとめ、個別ケースでは必要な項目だけ上書きする。
-	SGrepOption gopt;
-	gopt.nGrepCharSet = charSet;
-	gopt.nGrepOutputStyle = 1; // Normal
-	gopt.nGrepOutputLineType = 1; // ヒット行を出力
-	gopt.bGrepHeader = false;
-	return gopt;
-}
-
-/*!
- * 1 ファイルに対する Grep ワーカーを呼び出してヒット数を返す
- *
- * CGrepAgent::DoGrepFileWorker は PR #2459 で並列 Grep の単位として
- * 切り出された関数。ここで直接呼ぶことで、ファイル列挙以降の検索処理を
- * 実ファイルに対して検証する。
- *
- *  @retval -1 キャンセル
- *  @retval >=0 ヒット数
- */
-int RunGrepFileWorker(
-	CGrepAgent& agent,
-	const std::filesystem::path& path,
-	std::wstring_view key,
-	const SSearchOption& sSearchOption,
-	const SGrepOption& sGrepOption,
-	std::atomic<bool>& cancel)
-{
-	const std::wstring keyStr(key);
-	const std::wstring fullPath = path.wstring();
-	const std::wstring fileName = path.filename().wstring();
-	const std::wstring baseFolder = path.parent_path().wstring();
-
-	SGrepFileTask task;
-	task.fullPath = fullPath;
-	task.fileName = fileName;
-	task.baseFolder = baseFolder;
-	task.folder = baseFolder;
-	task.relPath = fileName;
-
-	CBregexp regexp;
-	if (sSearchOption.bRegularExp) {
-		if (!InitRegexp(nullptr, regexp, false)) {
-			ADD_FAILURE() << "InitRegexp failed (bregonig.dll missing?)";
-			return -1;
-		}
-		const DWORD flags = sSearchOption.bLoHiCase
-			? CBregexp::optCaseSensitive
-			: 0;
-		if (!regexp.Compile(keyStr.c_str(), flags)) {
-			ADD_FAILURE() << "regexp.Compile failed: " << path.string();
-			return -1;
-		}
-	}
-
-	CSearchStringPattern pattern;
-	if (!pattern.SetPattern(nullptr, keyStr.c_str(), keyStr.size(),
-			sSearchOption, sSearchOption.bRegularExp ? &regexp : nullptr)) {
-		ADD_FAILURE() << "SetPattern failed";
-		return -1;
-	}
-
-	CNativeW cmemMessage;
-	CNativeW cUnicodeBuffer;
-	cmemMessage.AllocStringBuffer(4000);
-	cUnicodeBuffer.AllocStringBuffer(4000);
-
-	return agent.DoGrepFileWorker(
-		SGrepSearchParams{ keyStr.c_str(), sSearchOption, sGrepOption },
-		task,
-		sSearchOption.bRegularExp ? &regexp : nullptr,
-		pattern,
-		cancel,
-		cmemMessage, cUnicodeBuffer);
-}
-
-// 同上だが、外側でキャンセル管理しない単純版
-int RunGrepFileWorker(
-	CGrepAgent& agent,
-	const std::filesystem::path& path,
-	std::wstring_view key,
-	const SSearchOption& sSearchOption,
-	const SGrepOption& sGrepOption)
-{
-	std::atomic<bool> cancel{ false };
-	return RunGrepFileWorker(agent, path, key, sSearchOption, sGrepOption, cancel);
-}
 
 /*!
  * 1 行分のテキストを EOL 付きで反復した文字列を作る
@@ -744,14 +535,14 @@ TEST_F(GrepRealFileTest, FileWorker_CancelTerminatesScan)
 	std::promise<int> resultPromise;
 	auto resultFuture = resultPromise.get_future();
 
-	std::thread worker([&]() {
+	std::thread worker([&resultPromise, &agent, &path, &sOpt, &gOpt, &cancel]() {
 		resultPromise.set_value(
 			RunGrepFileWorker(agent, path, L"needle", sOpt, gOpt, cancel));
 	});
 
 	// ワーカーがファイルを開いて走り出すための猶予
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	cancel.store(true, std::memory_order_release);
+	cancel.store(true);
 
 	// wait_for の結果を変数に受けてから join し、ASSERT でテスト中断しても
 	// スレッドがダングリング参照を踏まないようにする。
@@ -793,17 +584,17 @@ int RunWorkersParallel(
 
 	CGrepAgent agent; // ワーカー本体はステートレスにふるまうので共有してよい
 
-	auto worker = [&]() {
-		while (!cancel.load(std::memory_order_acquire)) {
-			const size_t idx = next.fetch_add(1, std::memory_order_acq_rel);
+	auto worker = [&cancel, &next, &files, &agent, &key, &sSearchOption, &sGrepOption, &total]() {
+		while (!cancel.load()) {
+			const size_t idx = next.fetch_add(1);
 			if (idx >= files.size()) break;
 			const int hits = RunGrepFileWorker(
 				agent, files[idx], key, sSearchOption, sGrepOption, cancel);
 			if (hits < 0) {
-				cancel.store(true, std::memory_order_release);
+				cancel.store(true);
 				break;
 			}
-			total.fetch_add(hits, std::memory_order_relaxed);
+			total.fetch_add(hits);
 		}
 	};
 
@@ -2467,7 +2258,7 @@ DWORD RunDoGrepStdout(
 
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
 		GENERIC_WRITE | GENERIC_READ,
-		FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hTempFile == INVALID_HANDLE_VALUE) {
 		ADD_FAILURE() << "failed to create stdout capture file";
 		return 0;
@@ -2513,10 +2304,10 @@ DWORD RunDoGrepStdout(
 		);
 	} // ← stdout 復帰
 
-	::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+	::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 	char buf[8192] = {0};
 	DWORD dwRead = 0;
-	::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+	::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 	capturedStdout.assign(buf, dwRead);
 
 	hFileGuard.reset();
@@ -2625,8 +2416,7 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_ExcludeRegexAndSubfolderSmoke)
 	::GetTempPathW(MAX_PATH, tempDir);
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_replace_stdout.txt";
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
 	struct HandleDeleter {
 		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
@@ -2667,10 +2457,10 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_ExcludeRegexAndSubfolderSmoke)
 			true					// bGrepExcludeFileRegexp=true（! 除外を正規表現扱い）
 		);
 
-		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 		char buf[8192] = {0};
 		DWORD dwRead = 0;
-		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 		out.assign(buf, dwRead);
 	}
 	hFileGuard.reset();
@@ -2698,8 +2488,7 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_MultipleExcludeRegexCombined)
 	::GetTempPathW(MAX_PATH, tempDir);
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_multiexcl_stdout.txt";
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
 	struct HandleDeleter {
 		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
@@ -2740,10 +2529,10 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_MultipleExcludeRegexCombined)
 			true	// bGrepExcludeFileRegexp=true（! 除外を正規表現扱い）
 		);
 
-		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 		char buf[8192] = {0};
 		DWORD dwRead = 0;
-		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 		out.assign(buf, dwRead);
 	}
 	hFileGuard.reset();
@@ -2795,8 +2584,7 @@ DWORD RunDoGrepReplace(
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_replace_stdout.txt";
 
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hTempFile == INVALID_HANDLE_VALUE) {
 		ADD_FAILURE() << "failed to create stdout capture file";
 		return 0;
@@ -2959,8 +2747,7 @@ DWORD RunDoGrepReplaceEx(const ReplaceRunParams& p)
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_replace_ex_stdout.txt";
 
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hTempFile == INVALID_HANDLE_VALUE) {
 		ADD_FAILURE() << "failed to create stdout capture file";
 		return 0;
@@ -3209,7 +2996,7 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_LockedOriginalNotCorrupted)
 	};
 	// 共有は読み取りのみ（削除・書き込み共有を与えない）→ 置換確定の Delete/MoveFile が失敗するはず。
 	std::unique_ptr<void, HandleDeleter> hLock{
-		::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL)
+		::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr)
 	};
 	ASSERT_NE(INVALID_HANDLE_VALUE, hLock.get()) << "ロック用ハンドルの確保に失敗";
 
@@ -3275,8 +3062,7 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_PasteUsesClipboard)
 	::GetTempPathW(MAX_PATH, tempDir);
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_paste_stdout.txt";
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
 	struct HandleDeleter {
 		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
@@ -3637,7 +3423,7 @@ SSerialGrepResult RunDoGrepFileSerial(
 	result.ret = agent.DoGrepFile(
 		pView,
 		&cDlgCancel,
-		NULL,	// hWndTarget: NULL = 実ファイルを読み込む
+		nullptr,	// hWndTarget: nullptr = 実ファイルを読み込む
 		key.c_str(),
 		fileName.c_str(),
 		sOpt,
@@ -3780,8 +3566,7 @@ TEST_F(GrepRealFileTest, HwndGrep_InvalidTokenErrorPath_GuardResetsRunningFlag)
 		::GetTempPathW(MAX_PATH, tempDir);
 		const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_badhwnd_stdout.txt";
 		HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-			GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 		ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
 		std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
 
@@ -3814,10 +3599,10 @@ TEST_F(GrepRealFileTest, HwndGrep_InvalidTokenErrorPath_GuardResetsRunningFlag)
 				false	// bGrepExcludeFileRegexp
 			);
 
-			::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+			::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 			char buf[8192] = {0};
 			DWORD dwRead = 0;
-			::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+			::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 			out.assign(buf, dwRead);
 		}
 		hFileGuard.reset();
@@ -3835,8 +3620,7 @@ TEST_F(GrepRealFileTest, HwndGrep_InvalidTokenErrorPath_GuardResetsRunningFlag)
 		::GetTempPathW(MAX_PATH, tempDir);
 		const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_guard2_stdout.txt";
 		HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-			GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 		ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
 		std::unique_ptr<void, HandleDeleter> hFileGuard{ hTempFile };
 
@@ -3921,8 +3705,7 @@ TEST_F(GrepRealFileTest, DoGrepTree_PreCancelledFlushesAndReturnsMinusOne)
 	::GetTempPathW(MAX_PATH, tempDir);
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogreptree_cancel_stdout.txt";
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
 	struct HandleDeleter {
 		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
@@ -3956,10 +3739,10 @@ TEST_F(GrepRealFileTest, DoGrepTree_PreCancelledFlushesAndReturnsMinusOne)
 			cUnicodeBuffer
 		);
 
-		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 		char buf[8192] = {0};
 		DWORD dwRead = 0;
-		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 		out.assign(buf, dwRead);
 	}
 	hFileGuard.reset();
@@ -3990,8 +3773,7 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_BackRefExcludeNotCombined)
 	::GetTempPathW(MAX_PATH, tempDir);
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_backref_stdout.txt";
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	ASSERT_NE(INVALID_HANDLE_VALUE, hTempFile) << "stdout キャプチャファイル作成失敗";
 	struct HandleDeleter {
 		void operator()(HANDLE h) const { if (h && h != INVALID_HANDLE_VALUE) ::CloseHandle(h); }
@@ -4032,10 +3814,10 @@ TEST_F(GrepRealFileTest, DoGrep_ReplaceMode_BackRefExcludeNotCombined)
 			true	// bGrepExcludeFileRegexp=true
 		);
 
-		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 		char buf[8192] = {0};
 		DWORD dwRead = 0;
-		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 		out.assign(buf, dwRead);
 	}
 	hFileGuard.reset();
@@ -4094,8 +3876,7 @@ DWORD RunDoGrepStdoutHeader(
 	::GetTempPathW(MAX_PATH, tempDir);
 	const std::wstring tmpFile = std::wstring(tempDir) + L"sakura_dogrep_cov_stdout.txt";
 	HANDLE hTempFile = ::CreateFileW(tmpFile.c_str(),
-		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hTempFile == INVALID_HANDLE_VALUE) {
 		ADD_FAILURE() << "stdout キャプチャファイル作成失敗";
 		return 0;
@@ -4126,10 +3907,10 @@ DWORD RunDoGrepStdoutHeader(
 			false	// bGrepExcludeFileRegexp
 		);
 
-		::SetFilePointer(hTempFile, 0, NULL, FILE_BEGIN);
+		::SetFilePointer(hTempFile, 0, nullptr, FILE_BEGIN);
 		char buf[16384] = {0};
 		DWORD dwRead = 0;
-		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, NULL);
+		::ReadFile(hTempFile, buf, sizeof(buf) - 1, &dwRead, nullptr);
 		out.assign(buf, dwRead);
 	}
 	hFileGuard.reset();
@@ -4144,8 +3925,7 @@ DWORD RunDoGrepStdoutHeader(
 class TypeConfigStringGuard {
 public:
 	TypeConfigStringGuard(BOOL bDisp, int nStringType)
-		: m_type(const_cast<STypeConfig&>(
-			CEditWnd::getInstance()->GetActiveView().m_pcEditDoc->m_cDocType.GetDocumentAttribute()))
+		: m_type(CEditWnd::getInstance()->GetActiveView().m_pcEditDoc->m_cDocType.GetDocumentAttributeWrite())
 		, m_oldDisp(m_type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp)
 		, m_oldStringType(m_type.m_nStringType)
 	{
@@ -4272,10 +4052,7 @@ TEST_F(GrepRealFileTest, DoGrep_ReplacePasteMode_UsesClipboardText)
 	auto& sEdit = GetDllShareData().m_Common.m_sEdit;
 	const auto oldConvertEol = sEdit.m_bConvertEOLPaste;
 	sEdit.m_bConvertEOLPaste = true;
-	auto shareGuard = std::unique_ptr<void, std::function<void(void*)>>(
-		reinterpret_cast<void*>(1),
-		[&sEdit, oldConvertEol](void*) { sEdit.m_bConvertEOLPaste = oldConvertEol; }
-	);
+	ScopeExit shareGuard([&sEdit, oldConvertEol] { sEdit.m_bConvertEOLPaste = oldConvertEol; });
 
 	// クリップボードへ置換文字列を設定（通常テキスト）
 	{
@@ -4321,13 +4098,10 @@ TEST_F(GrepRealFileTest, DoGrep_ReplacePasteMode_LineModeAppendsEol)
 	const auto oldConvertEol = sEdit.m_bConvertEOLPaste;
 	sEdit.m_bEnableLineModePaste = true;
 	sEdit.m_bConvertEOLPaste     = false;
-	auto shareGuard = std::unique_ptr<void, std::function<void(void*)>>(
-		reinterpret_cast<void*>(1),
-		[&sEdit, oldLineMode, oldConvertEol](void*) {
-			sEdit.m_bEnableLineModePaste = oldLineMode;
-			sEdit.m_bConvertEOLPaste     = oldConvertEol;
-		}
-	);
+	ScopeExit shareGuard([&sEdit, oldLineMode, oldConvertEol] {
+		sEdit.m_bEnableLineModePaste = oldLineMode;
+		sEdit.m_bConvertEOLPaste     = oldConvertEol;
+	});
 
 	// ラインモード（bLineSelect=true）・末尾改行なしで設定 → DoGrep 側で改行補完される
 	{

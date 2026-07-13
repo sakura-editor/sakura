@@ -31,172 +31,15 @@
 #include "_main/CCommandLine.h"
 #include "window/EditorTestSuite.hpp"
 #include "util/file.h"
+#include "grep-test-util.h"
 
 namespace {
-
-// このファイル内だけで使う補助関数とテスト用 RAII クラスをまとめる。
-// いずれも CGrepAgent や各テストクラスのメソッドではなく、テスト専用の自由関数/ヘルパー。
-
-// =============================================================================
-// Helper: GrepTempDir (reused from Phase 2/3 infra)
-// =============================================================================
-// 各テストで使う一時ディレクトリを RAII で生成・削除し、失敗時の後始末を安定させる。
-class GrepTempDir
-{
-public:
-	explicit GrepTempDir(std::wstring_view prefix = L"grp_irr")
-	{
-		auto candidate = GetTempFilePath(prefix);
-		std::filesystem::remove(candidate);
-		std::filesystem::create_directories(candidate);
-		m_root = candidate;
-	}
-
-	~GrepTempDir()
-	{
-		std::error_code ec;
-		std::filesystem::remove_all(m_root, ec);
-	}
-
-	const std::filesystem::path& Root() const noexcept { return m_root; }
-
-	// 一時ルート配下の相対パスを組み立てる。
-	std::filesystem::path Sub(std::wstring_view relative) const
-	{
-		return m_root / std::filesystem::path(relative);
-	}
-
-	// テスト用の一時ルート配下に、必要なら親ディレクトリごと作る。
-	void EnsureDir(std::wstring_view relative) const
-	{
-		std::filesystem::create_directories(Sub(relative));
-	}
-
-	// 指定した文字コードでテキストファイルを書き出す。
-	std::filesystem::path WriteEncodedTextFile(
-		std::wstring_view relative,
-		ECodeType codeType,
-		std::wstring_view text,
-		bool withBom = false) const
-	{
-		const auto path = Sub(relative);
-		std::filesystem::create_directories(path.parent_path());
-
-		const auto encoded = CCodeFactory::ConvertToCode(codeType, std::wstring(text));
-		std::ofstream os(path, std::ios::binary | std::ios::trunc);
-		if (withBom) {
-			switch (codeType) {
-				case CODE_UTF8: os.write("\xEF\xBB\xBF", 3); break;
-				case CODE_UNICODE: os.write("\xFF\xFE", 2);  break;
-				case CODE_UNICODEBE: os.write("\xFE\xFF", 2); break;
-				default: break;
-			}
-		}
-		os.write(encoded.destination.data(), static_cast<std::streamsize>(encoded.destination.size()));
-		return path;
-	}
-
-	// 生バイト列をそのままファイルに書き出す。
-	std::filesystem::path WriteRawBytes(
-		std::wstring_view relative, std::string_view bytes) const
-	{
-		const auto path = Sub(relative);
-		std::filesystem::create_directories(path.parent_path());
-		std::ofstream os(path, std::ios::binary | std::ios::trunc);
-		os.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
-		return path;
-	}
-
-private:
-	std::filesystem::path m_root;
-};
-
-SSearchOption MakeSearchOption(bool regex, bool caseSensitive, bool wordOnly = false)
-{
-	// 各ケースの比較条件を明示するため、必要なフラグだけを都度組み立てる自由関数。
-	SSearchOption opt;
-	opt.Reset();
-	opt.bRegularExp = regex;
-	opt.bLoHiCase = caseSensitive;
-	opt.bWordOnly = wordOnly;
-	return opt;
-}
-
-// DoGrepFileWorker の戻り値に意味を持たせる定数
-constexpr int GREP_RESULT_NO_HIT = 0;		 		// ヒットなし（ファイル読み取り不可含む）
-constexpr int GREP_RESULT_CANCELLED = -1;	  		// キャンセルまたはエラー
-
-SGrepOption MakeGrepOption(ECodeType charSet = CODE_AUTODETECT)
-{
-	// 不要な UI 要素の影響を避けるため、Grep オプションは最小構成に固定する自由関数。
-	SGrepOption gopt;
-	gopt.nGrepCharSet = charSet;
-	gopt.nGrepOutputStyle = 1;
-	gopt.nGrepOutputLineType = 1;
-	gopt.bGrepHeader = false;
-	return gopt;
-}
-
-int RunGrepFileWorker(
-	CGrepAgent& agent,
-	const std::filesystem::path& path,
-	std::wstring_view key,
-	const SSearchOption& sSearchOption,
-	const SGrepOption& sGrepOption,
-	std::atomic<bool>& cancel)
-{
-	// 実ファイルを 1 件だけ検索するためのタスクを構築し、DoGrepFileWorker を直接叩く自由関数。
-	const std::wstring keyStr(key);
-	const std::wstring fullPath = path.wstring();
-	const std::wstring fileName = path.filename().wstring();
-	const std::wstring baseFolder = path.parent_path().wstring();
-
-	SGrepFileTask task;
-	task.fullPath = fullPath;
-	task.fileName = fileName;
-	task.baseFolder = baseFolder;
-	task.folder = baseFolder;
-	task.relPath = fileName;
-
-	CBregexp regexp;
-	if (sSearchOption.bRegularExp) {
-		if (!InitRegexp(nullptr, regexp, false)) return -1;
-		const DWORD flags = sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
-		if (!regexp.Compile(keyStr.c_str(), flags)) return -1;
-	}
-
-	CSearchStringPattern pattern;
-	if (!pattern.SetPattern(nullptr, keyStr.c_str(), keyStr.size(),
-			sSearchOption, sSearchOption.bRegularExp ? &regexp : nullptr)) {
-		return -1;
-	}
-
-	CNativeW cmemMessage;
-	CNativeW cUnicodeBuffer;
-	cmemMessage.AllocStringBuffer(4000);
-	cUnicodeBuffer.AllocStringBuffer(4000);
-
-	return agent.DoGrepFileWorker(
-		SGrepSearchParams{ keyStr.c_str(), sSearchOption, sGrepOption },
-		task, sSearchOption.bRegularExp ? &regexp : nullptr, pattern,
-		cancel,
-		cmemMessage, cUnicodeBuffer);
-}
-
-int RunGrepFileWorker(
-	CGrepAgent& agent, const std::filesystem::path& path, std::wstring_view key,
-	const SSearchOption& sSearchOption, const SGrepOption& sGrepOption)
-{
-	// キャンセルなしのテスト用薄いラッパ。これもメソッドではなく補助関数。
-	std::atomic<bool> cancel{ false };
-	return RunGrepFileWorker(agent, path, key, sSearchOption, sGrepOption, cancel);
-}
 
 struct GrepIrregularTest : public ::testing::Test, public window::EditorTestSuite {
 	// 各ケースを独立させるため、毎回一時ディレクトリを作り直す。
 	static void SetUpTestSuite() { SetUpEditor(); }
 	static void TearDownTestSuite() { TearDownEditor(); }
-	void SetUp() override { m_temp = std::make_unique<GrepTempDir>(); }
+	void SetUp() override { m_temp = std::make_unique<GrepTempDir>(L"grp_irr"); }
 	void TearDown() override { m_temp.reset(); }
 	std::unique_ptr<GrepTempDir> m_temp;
 };
@@ -650,10 +493,7 @@ TEST_F(GrepIrregularTest, FileWorker_ReadOnlyAttribute_Searched) {
 	auto path = m_temp->WriteRawBytes(L"readonly.txt", "foo\n");
 	::SetFileAttributesW(path.c_str(), FILE_ATTRIBUTE_READONLY);
 	// 属性を確実に元に戻す RAII ガード
-	auto attrGuard = std::unique_ptr<void, std::function<void(void*)>>(
-		reinterpret_cast<void*>(1),
-		[&path](void*) { ::SetFileAttributesW(path.c_str(), FILE_ATTRIBUTE_NORMAL); }
-	);
+	ScopeExit attrGuard([&path] { ::SetFileAttributesW(path.c_str(), FILE_ATTRIBUTE_NORMAL); });
 
 	CGrepAgent agent;
 	EXPECT_EQ(1, RunGrepFileWorker(agent, path, L"foo", MakeSearchOption(false, false), MakeGrepOption())); // 読み取り専用でも検索する
@@ -787,7 +627,7 @@ TEST_F(GrepIrregularTest, Regex_CatastrophicBacktracking_TimeoutGuarded) {
 	auto path = m_temp->WriteRawBytes(L"backtrack.txt", line);
 
 	std::atomic<int> result{-999};
-	std::thread worker([&]() {
+	std::thread worker([&result, &path]() {
 		CGrepAgent agent;
 		result = RunGrepFileWorker(
 			agent, path, L"(a+)+$",

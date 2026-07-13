@@ -295,7 +295,7 @@ TEST_F(CDlgGrepTest, BuildHwndFileToken_Format)
  */
 TEST_F(CDlgGrepTest, BuildHwndFileToken_NullHwnd)
 {
-	HWND hwnd = NULL;
+	HWND hwnd = nullptr;
 	std::wstring token = CDlgGrep::BuildHwndFileToken(hwnd);
 #ifdef _WIN64
 	EXPECT_STREQ(L":HWND:0000000000000000", token.c_str());		// NULL でもゼロ埋め
