@@ -319,6 +319,17 @@ bool IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem)
 }
 
 /*!
+ * @brief ダイアログボックス項目のテキストを設定する
+ */
+bool SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::wstring_view text)
+{
+	// コントロールが存在しない場合は失敗とする
+	if (!::GetDlgItem(hWndDlg, nIDDlgItem)) return false;
+
+	return ::SetDlgItemTextW(hWndDlg, nIDDlgItem, std::data(text));
+}
+
+/*!
  * @brief トラックバーの現在位置を変更する
  */
 void SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw)

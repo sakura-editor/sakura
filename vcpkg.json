@@ -1,0 +1,17 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    "bregonig",
+    "cmigemo",
+    {
+      "name": "darkmodelib",
+      "platform": "static"
+    },
+    "dll-plugin1",
+    {
+      "name": "gtest",
+      "platform": "static"
+    },
+    "ppa-stub"
+  ]
+}

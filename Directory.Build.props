@@ -1,0 +1,29 @@
+﻿<Project>
+  <PropertyGroup>
+    <!-- vcpkg の場所 -->
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and '$(VCPKG_ROOT)' != '' and Exists('$(VCPKG_ROOT)\scripts\buildsystems\msbuild\vcpkg.props')">$(VCPKG_ROOT)\</VcpkgRoot>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\vcpkg\scripts\buildsystems\msbuild\vcpkg.props')">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\vcpkg\'))</VcpkgRoot>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and Exists('$(MSBuildThisFileDirectory)tools\vcpkg\scripts\buildsystems\msbuild\vcpkg.props')">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'tools\vcpkg\'))</VcpkgRoot>
+
+    <!-- トリプレット -->
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='ARM64'">arm64-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+
+    <!-- マニフェストモード有効 -->
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+
+    <!-- マニフェスト(vcpkg.json)の場所 -->
+    <VcpkgManifestRoot>$(MSBuildThisFileDirectory)</VcpkgManifestRoot>
+
+    <!-- vcpkg_installの場所 -->
+    <VcpkgInstalledDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '.\build\$(Platform)\CMakeTools\vcpkg_installed\'))</VcpkgInstalledDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\share\cmigemo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+
+  <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props" />
+</Project>

@@ -13,6 +13,17 @@ on:
       - '.editorconfig'
   workflow_dispatch:
 
+env:
+  VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,read
+  VCPKG_NUGET_FEED: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
+  VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
+
+permissions:
+  actions: read
+  contents: read
+  packages: read
+
 jobs:
   mingw:
     runs-on: windows-latest
@@ -22,6 +33,11 @@ jobs:
     env:
       BuildPlatform: MinGW
       Configuration: ${{ matrix.configuration }}
+
+    defaults:
+      run:
+        shell: msys2 {0} # 指定しない限りmsys2シェルを使う
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -29,7 +45,7 @@ jobs:
           submodules: true
 
       - name: Install OpenCppCoverage (winget)
-        if: ${{ matrix.config == 'Debug' }}
+        if: ${{ env.Configuration == 'Debug' }}
         run: |
           winget install `
             --id OpenCppCoverage.OpenCppCoverage `
@@ -37,13 +53,6 @@ jobs:
             --accept-package-agreements `
             --accept-source-agreements
         shell: pwsh
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
-          cache: 'pip'
-      - run: pip install -r requirements.txt
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
@@ -56,29 +65,62 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
             mingw-w64-x86_64-python
+            mingw-w64-x86_64-uv
             mingw-w64-x86_64-7zip
             mingw-w64-x86_64-gdb
             mingw-w64-x86_64-ctags
             mingw-w64-x86_64-diffutils
 
+      - run: uv venv
+
+      - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
+
       - name: Show environment variables for debug
         run: env
-        shell: msys2 {0}
+
+      - name: Bootstrap vcpkg
+        run: ./bootstrap-vcpkg.sh -disableMetrics
+        working-directory: ${{ env.VCPKG_ROOT }}
+
+      - name: Configure GitHub Packages for vcpkg
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
+          $nuget = & $vcpkg fetch nuget
+
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $nuget)) {
+              throw "Failed to obtain nuget.exe."
+          }
+
+          & $nuget sources remove `
+              -Name GitHubPackages `
+              -NonInteractive 2>$null
+
+          & $nuget sources add `
+              -Name GitHubPackages `
+              -Source "$env:VCPKG_NUGET_FEED" `
+              -UserName "$env:VCPKG_NUGET_OWNER" `
+              -Password "$env:GITHUB_TOKEN" `
+              -StorePasswordInClearText `
+              -NonInteractive
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Failed to add the GitHub Packages NuGet source."
+          }
 
       - name: Build with MinGW-w64-gcc
-        shell: msys2 {0}
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }} --no-test
 
       - name: Run unit tests
         id: run_unit_tests
         continue-on-error: true
-        shell: msys2 {0}
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
 
       - name: Try gdb backtrace on test failure
         if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
         continue-on-error: true
-        shell: msys2 {0}
         working-directory: ${{ github.workspace }}/${{ env.BuildPlatform }}/${{ env.Configuration }}
         run: |
           set -eo pipefail
@@ -93,7 +135,6 @@ jobs:
 
       - name: Mark workflow failed when unit tests fail
         if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
-        shell: msys2 {0}
         run: |
           echo "Unit tests failed. See the gdb trace above."
           exit 1

@@ -1,0 +1,6 @@
+dll-plugin1 provides a CMake package target:
+
+  find_package(dll-plugin1 CONFIG REQUIRED)
+
+The DLL is available at:
+  ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll

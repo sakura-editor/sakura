@@ -4,7 +4,7 @@
   </ItemGroup>
   <Target Name="ConfigureCMakeTools" Condition="!Exists('$(CMakeToolsBuildDir)CMakeCache.txt')">
     <SetEnv name="VisualStudioVersion" value="$(VisualStudioVersion)" prefix="false" />
-    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' -A $(Platform) -B '$(CMakeToolsPath)' -S '$([MSBuild]::NormalizePath('$(CMakeToolsSourceDir)', '.'))' -DCMAKE_CONFIGURATION_TYPES='Debug;Release'&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;chcp 65001 &gt; NUL; [Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' -A $(Platform) -B '$(CMakeToolsPath)' -S '$([MSBuild]::NormalizePath('$(CMakeToolsSourceDir)', '.'))' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' -DCMAKE_TOOLCHAIN_FILE='$(VcpkgRoot)scripts/buildsystems/vcpkg.cmake' -DVCPKG_TARGET_TRIPLET=$(VcpkgTriplet)&quot;" StdOutEncoding="UTF-8" StdErrEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="GenerateVersionHeader" Inputs="..\src\main\cmake\version.h.in" Outputs="$(VersionHeader)" DependsOnTargets="ConfigureCMakeTools" BeforeTargets="ResourceCompile;ClCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_version_header -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
@@ -17,9 +17,6 @@
   </Target>
   <Target Name="GenerateSakuraExeManifest" Inputs="..\src\main\cmake\manifest.in;..\src\main\cmake\manifest.cmake" Outputs="$(CMakeToolsBuildDir)sakura.exe.manifest" BeforeTargets="Link">
     <Exec Command="%22$(CMakeExe)%22 --build $(CMakeToolsPath) --config $(Configuration) --target generate_sakura_exe_manifest -- /nologo" />
-  </Target>
-  <Target Name="GenerateDarkModeLib" BeforeTargets="ClCompile">
-    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target generate_darkmodelib -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="AppendCMakeToolsCleanTargetsForCMakeTools" BeforeTargets="CoreClean">
     <RemoveDir Directories="$(CMakeToolsBuildDir)" />
