@@ -275,7 +275,7 @@ TEST(CGrepAgent, CreateFolders_LongFileName_Resolved)
 	std::wstring shortPath(MAX_PATH, L'\0');
 	const DWORD nShortLen = ::GetShortPathNameW(longPath.c_str(), shortPath.data(), MAX_PATH);
 	if (0 == nShortLen) {
-		GTEST_SKIP() << "8.3 形式が無効なボリュームのためスキップ。GetLastError="
+		GTEST_SKIP() << "Skipped: 8.3 short names disabled on this volume. GetLastError="
 					 << ::GetLastError();
 	}
 	shortPath.resize(nShortLen);

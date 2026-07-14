@@ -351,9 +351,10 @@ DWORD CGrepAgent::DoGrep(
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DoGrep" );
 
-	// 再入不可
+	// 再入不可（0xffffffff を返す契約は GA-45 で正常系として検証されている。
+	// Debug ビルドで DebugBreak() する assert_warning はヘッドレス CI を
+	// クラッシュさせるため付けない）
 	if( this->m_bGrepRunning ){
-		assert_warning( false == this->m_bGrepRunning );
 		return 0xffffffff;
 	}
 
