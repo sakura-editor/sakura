@@ -115,8 +115,8 @@ BOOL CDlgGrepReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 	case IDC_COMBO_TEXT2:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			const auto& keys = m_pShareData->m_sSearchKeywords.m_aReplaceKeys;
-			for( int i = 0; i < keys.size(); ++i ){
-				ApiWrap::Combo_AddString( hwndCtl, keys[i] );
+			for( const auto& key : keys ){
+				ApiWrap::Combo_AddString( hwndCtl, key );
 			}
 		}
 		break;

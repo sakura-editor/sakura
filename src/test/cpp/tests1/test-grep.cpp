@@ -51,6 +51,7 @@
 #include "grep/CGrepEnumFilterFiles.h"
 #include "grep/CGrepEnumFilterFolders.h"
 #include "grep/CGrepEnumKeys.h"
+#include "grep/GrepPathFormat.h"
 #include "io/CFileLoad.h"
 #include "util/file.h"
 #include "_os/CClipboard.h"
@@ -250,6 +251,34 @@ TEST_F(GrepRealFileTest, RegexCompileAndMatch)
 	ASSERT_TRUE(regexp.Compile(L"^needle$", CBregexp::optCaseSensitive));
 	EXPECT_TRUE(regexp.Match(L"needle", 6, 0));								// 一致する
 	EXPECT_FALSE(regexp.Match(L"Needle", 6, 0));							// 大文字小文字区別で不一致
+}
+
+// =============================================================================
+// GrepPathFormat 整形
+// =============================================================================
+
+/*!
+ * @brief ';' を含むパスの引用符付け (QuotePathIfNeeded)
+ * @remark ';' を含むパスは '"' で囲まれ、含まないパスはそのまま返ることを確認する。
+ */
+TEST(GrepPathFormat, QuotePathIfNeeded)
+{
+	EXPECT_EQ(QuotePathIfNeeded(L"a;b"), L"\"a;b\"");		// ';' を含む → 引用符で囲む
+	EXPECT_EQ(QuotePathIfNeeded(L"plain"), L"plain");		// ';' を含まない → そのまま
+	EXPECT_EQ(QuotePathIfNeeded(L""), L"");					// 空文字はそのまま
+}
+
+/*!
+ * @brief パスリストの ';' 区切り連結 (FormatPathList)
+ * @remark ';' を含む要素のみ引用符で囲み、要素間を ';' で連結することを確認する。
+ */
+TEST(GrepPathFormat, FormatPathListQuotesSemicolonElements)
+{
+	const std::vector<std::wstring> paths{ L"a", L"b;c", L"d" };
+	EXPECT_EQ(FormatPathList(paths), L"a;\"b;c\";d");
+
+	const std::vector<std::wstring> empty;
+	EXPECT_EQ(FormatPathList(empty), L"");					// 空リストは空文字
 }
 
 // =============================================================================

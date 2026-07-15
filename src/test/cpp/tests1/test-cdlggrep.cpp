@@ -12,6 +12,7 @@
 #include <fstream>
 
 #include "dlg/CDlgGrep.h"
+#include "dlg/CDlgGrepReplace.h"
 #include "dlg/ModalDialogCloser.hpp"
 #include "env/ShareDataTestSuite.hpp"
 #include "grep/CGrepEnumKeys.h"
@@ -582,5 +583,44 @@ TEST_F(CDlgGrepGuiTest, DoModal_ToggleExcludeFileRegexp_SwapsDefaultPattern)
 	const auto hInstance = ::GetModuleHandleW(nullptr);
 	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
 	EXPECT_EQ(0, rc);	// キャンセルで 0
+}
+
+
+// =============================================================================
+// CDlgGrepReplace 結合テスト
+// =============================================================================
+
+/*!
+ * @brief Grep置換ダイアログのキャンセル即時送信テスト
+ * @remark DoModal が LoadDefaultsFromShareData を経由して起動し、
+ *         IDCANCEL で 0 を返して正常終了することを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, GrepReplace_DoModalCancelImmediately_NoException)
+{
+	dialog::ModalDialogCloser closer; // デフォルトで IDCANCEL を送信
+	CDlgGrepReplace dlg;
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr, 0);
+	EXPECT_EQ(0, rc);
+}
+
+/*!
+ * @brief Grep置換ダイアログの有効入力での OK 送信テスト
+ * @remark 有効な検索キー・置換キー・ファイル・フォルダを指定して IDOK を送信し、
+ *         全検証通過後に共有設定 m_bGrepBackup が書き込まれることを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, GrepReplace_DoModalOK_WritesBackupSetting)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+	});
+	CDlgGrepReplace dlg;
+	dlg.m_strText = L"search";
+	dlg.m_strText2 = L"replace";
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szFolder, m_testDir.c_str());
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr, 0);
+	EXPECT_EQ(1, rc);	// 全検証通過 → m_bGrepBackup 書き込み行（L198）を通過
 }
 

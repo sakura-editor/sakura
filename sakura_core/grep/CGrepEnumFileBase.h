@@ -91,7 +91,7 @@ public:
 		return FALSE;
 	}
 
-	int GetCount( void ){
+	int GetCount( void ) const {
 		return (int)m_vpItems.size();
 	}
 
@@ -119,7 +119,7 @@ public:
 		return false;
 	}
 
-	int Enumerates( LPCWSTR lpBaseFolder, const VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = nullptr ){
+	int Enumerates( LPCWSTR lpBaseFolder, const VGrepEnumKeys& vecKeys, const CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = nullptr ){
 		int found = 0;
 
 		const std::wstring baseFolder = lpBaseFolder ? lpBaseFolder : L"";

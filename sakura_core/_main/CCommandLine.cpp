@@ -274,17 +274,18 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	CNativeW cmResponseFile = L"";
-	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
-	wcscpy( pszCmdLineWork, pszCmdLineSrc );
-	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
+	const int nCmdLineWorkSize = lstrlen( pszCmdLineSrc ) + 1;
+	LPWSTR pszCmdLineWork = new WCHAR[nCmdLineWorkSize];
+	wcscpy_s( pszCmdLineWork, nCmdLineWorkSize, pszCmdLineSrc );
+	int nCmdLineWorkLen = nCmdLineWorkSize - 1;
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != nullptr )
 	{
 		DEBUG_TRACE( L"OPT=[%s]\n", pszToken );
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
-		if( ( bParseOptDisabled ||
-			! (pszToken[0] == '-' || (pszToken[0] == '"' && pszToken[1] == '-')) )){
+		if( bParseOptDisabled ||
+			! (pszToken[0] == '-' || (pszToken[0] == '"' && pszToken[1] == '-')) ){
 
 			if( pszToken[0] == L'\"' ){
 				CNativeW cmWork;

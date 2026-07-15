@@ -140,6 +140,29 @@ TEST(Irregular, SetFileKeys_BangPrefixWithInvalidRegex_RegisteredButFailsLater) 
 }
 
 /*!
+ * @brief `!` 除外（非正規表現モード）のバリデーションエラー (IRR-07c)
+ * @remark ワイルドカードモードの `!` 除外は ValidateKey を通り、
+ *         フォルダー部分のワイルドカードでエラー 1 を返すことを確認する。
+ */
+TEST(Irregular, SetFileKeys_BangPrefixWildcardMode_InvalidKeyReturns1) {
+	CGrepEnumKeys keys;
+	EXPECT_EQ(1, keys.SetFileKeys(L"*.cpp;!*\\bad.exe", /*bExcludeFileRegex=*/false));
+}
+
+/*!
+ * @brief `!` 除外（非正規表現モード）の絶対パス振り分け (IRR-07d)
+ * @remark 絶対パスの `!` 除外は m_vecExceptAbsFileKeys へ振り分けられることを確認する。
+ */
+TEST(Irregular, SetFileKeys_BangPrefixWildcardMode_AbsolutePathToAbsKeys) {
+	CGrepEnumKeys keys;
+	ASSERT_EQ(0, keys.SetFileKeys(L"*.cpp;!C:\\out\\foo.obj", /*bExcludeFileRegex=*/false));
+
+	ASSERT_EQ(1u, keys.m_vecExceptAbsFileKeys.size());
+	EXPECT_STREQ(L"C:\\out\\foo.obj", keys.m_vecExceptAbsFileKeys[0].c_str());	// 絶対パスは Abs 側へ
+	EXPECT_EQ(0u, keys.m_vecExceptFileKeys.size());								// 相対側には入らない
+}
+
+/*!
  * @brief 不正な除外正規表現パターンのコンパイル失敗確認 (IRR-07b)
  * @remark ! プレフィックス付きの不正なパターンは登録されるが、bregonig でのコンパイルは失敗することを確認する。
  */

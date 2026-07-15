@@ -691,9 +691,9 @@ DWORD CGrepAgent::DoGrep(
 		nHitCount = nGrepTreeResult;
 	}else if( sGrepOption.bGrepReplace ){
 		// Grep置換は副作用（ファイル書き換え）を伴うため既存の直列処理を維持する
-		for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
+		for( const auto& pathItem : vPaths ){
 			bool bOutputBaseFolder = false;
-			std::wstring sPath = ChopYen( vPaths[nPath] );
+			std::wstring sPath = ChopYen( pathItem );
 			int nTreeRet = DoGrepTree(
 				pcViewDst,
 				&cDlgCancel,
@@ -771,11 +771,9 @@ DWORD CGrepAgent::DoGrep(
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 		pCEditWnd->RedrawAllViews( nullptr );
 
-	if( !bGrepCurFolder ){
-		// 現行フォルダーを検索したフォルダーに変更
-		if( 0 < vPaths.size() ){
-			::SetCurrentDirectory( vPaths[0].c_str() );
-		}
+	// 現行フォルダーを検索したフォルダーに変更
+	if( !bGrepCurFolder && 0 < vPaths.size() ){
+		::SetCurrentDirectory( vPaths[0].c_str() );
 	}
 
 	return nHitCount;
@@ -1061,8 +1059,7 @@ int CGrepAgent::DoGrepTree(
 		for( i = 0; i < count; i++ ){
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
 
-			DWORD dwNow = ::GetTickCount();
-			if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+			if( DWORD dwNow = ::GetTickCount(); dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
 				m_dwTickUICheck = dwNow;
 				//サブフォルダーの探索を再帰呼び出し。
 				/* 処理中のユーザー操作を可能にする */
@@ -1085,7 +1082,7 @@ int CGrepAgent::DoGrepTree(
 			currentPath += L"\\";
 			currentPath += lpFileName;
 
-			int nGrepTreeResult = DoGrepTree(
+			if( const int nGrepTreeResult = DoGrepTree(
 				pcViewDst,
 				pcDlgCancel,
 				pszKey,
@@ -1104,8 +1101,7 @@ int CGrepAgent::DoGrepTree(
 				cmemMessage,
 				cUnicodeBuffer,
 				pVecExclRegexps	// コンパイル済みパターンを再帰に引き継ぐ（再コンパイル不要）
-			);
-			if( -1 == nGrepTreeResult ){
+			); -1 == nGrepTreeResult ){
 				return FlushAndCancel();
 			}
 			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダーから戻ってきたら...
@@ -1207,8 +1203,7 @@ void CGrepAgent::DoGrepTreeEnumerate(
 		for( i = 0; i < count; i++ ){
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
 
-			DWORD dwNow = ::GetTickCount();
-			if( CheckGrepCancelUI( pcDlgCancel, dwNow ) != 0 ){
+			if( DWORD dwNow = ::GetTickCount(); CheckGrepCancelUI( pcDlgCancel, dwNow ) != 0 ){
 				bCancelled = true;
 				return;
 			}
@@ -2110,12 +2105,10 @@ public:
 			if( bOldSave ){
 				std::wstring oldFile = fileName;
 				oldFile += L".skrold";
-				if( fexist(oldFile.c_str()) ){
-					if( FALSE == ::DeleteFile( oldFile.c_str() ) ){
-						memMessage.AppendString( LS(STR_GREP_REP_ERR_DELETE) );
-						memMessage.AppendStringF( L"[%s]\r\n", oldFile.c_str());
-						return;
-					}
+				if( fexist(oldFile.c_str()) && FALSE == ::DeleteFile( oldFile.c_str() ) ){
+					memMessage.AppendString( LS(STR_GREP_REP_ERR_DELETE) );
+					memMessage.AppendStringF( L"[%s]\r\n", oldFile.c_str());
+					return;
 				}
 				if( FALSE == ::MoveFile( fileName, oldFile.c_str() ) ){
 					memMessage.AppendString( LS(STR_GREP_REP_ERR_REPLACE) );
@@ -3011,7 +3004,10 @@ int CGrepAgent::RunParallelGrep(
 	};
 
 	// 各検索パスをサブフォルダー単位でバッチ処理
-	for( int nPath = 0; nPath < (int)vPaths.size() && nGrepTreeResult != -1; nPath++ ){
+	for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
+		if( nGrepTreeResult == -1 ){
+			break;
+		}
 		std::wstring sPath = ChopYen( vPaths[nPath] );
 
 		// 検索パスが変わるたびにフォルダーヘッダー出力履歴をリセット
@@ -3052,7 +3048,10 @@ int CGrepAgent::RunParallelGrep(
 		GREP_PERF_ADD( enumUs, perfEnumDirStart );
 
 		const int nFolderCount = cTopFolders.GetCount();
-		for( int fi = 0; fi < nFolderCount && nGrepTreeResult != -1; fi++ ){
+		for( int fi = 0; fi < nFolderCount; fi++ ){
+			if( nGrepTreeResult == -1 ){
+				break;
+			}
 			std::wstring subFolder = sPath + L"\\" + cTopFolders.GetFileName(fi);
 			bool bEnumCancelled = false;
 			std::vector<SGrepFileTask> vecTasks;
