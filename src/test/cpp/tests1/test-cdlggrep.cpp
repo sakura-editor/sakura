@@ -13,6 +13,7 @@
 
 #include "dlg/CDlgGrep.h"
 #include "dlg/CDlgGrepReplace.h"
+#include "recent/CRecentReplace.h"
 #include "dlg/ModalDialogCloser.hpp"
 #include "env/ShareDataTestSuite.hpp"
 #include "grep/CGrepEnumKeys.h"
@@ -622,5 +623,47 @@ TEST_F(CDlgGrepGuiTest, GrepReplace_DoModalOK_WritesBackupSetting)
 	const auto hInstance = ::GetModuleHandleW(nullptr);
 	const int rc = dlg.DoModal(hInstance, nullptr, nullptr, 0);
 	EXPECT_EQ(1, rc);	// 全検証通過 → m_bGrepBackup 書き込み行（L198）を通過
+}
+
+
+/*!
+ * @brief 置換後コンボの遅延投入テスト (CBN_DROPDOWN)
+ * @remark OnInitDialog はコンボへ履歴を投入しないため、初回ドロップダウン時に
+ *         OnCbnDropDown が置換履歴から遅延投入することを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, GrepReplace_ComboText2DropDown_PopulatesFromHistory)
+{
+	// 置換履歴を 1 件登録する（共有データ経由で OnCbnDropDown のループ本体を通す）
+	{
+		CRecentReplace cRecentReplace;
+		cRecentReplace.AppendItem(L"replhist");
+		cRecentReplace.Terminate();
+	}
+
+	// 期待値は共有データの現在の履歴件数から算出する（先行テストの履歴残留に依存しない）
+	const int nExpectedCount = int(GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.size());
+
+	int nComboCount = -1;
+	dialog::ModalDialogCloser closer([&nComboCount](HWND hWnd) {
+		HWND hwndCombo = ::GetDlgItem(hWnd, IDC_COMBO_TEXT2);
+		// 初回ドロップダウン → CB_GETCOUNT == 0 分岐 → 履歴ループで投入
+		::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDC_COMBO_TEXT2, CBN_DROPDOWN), reinterpret_cast<LPARAM>(hwndCombo));
+		nComboCount = int(::SendMessageW(hwndCombo, CB_GETCOUNT, 0, 0));
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+	});
+
+	CDlgGrepReplace dlg;
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr, 0);
+	EXPECT_EQ(0, rc);				// キャンセルで 0
+	EXPECT_EQ(nExpectedCount, nComboCount);	// 履歴件数どおり遅延投入される
+	EXPECT_GE(nComboCount, 1);				// 少なくともシードした 1 件は投入される
+
+	// 後続テストへの影響を避けるため登録した履歴を削除する
+	{
+		CRecentReplace cRecentReplace;
+		cRecentReplace.DeleteItem(0);
+		cRecentReplace.Terminate();
+	}
 }
 
