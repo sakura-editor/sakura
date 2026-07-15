@@ -76,6 +76,11 @@ public:
 	//! `!` プレフィックス（除外ファイル指定）1件の振り分け（SetFileKeys の CC 削減用）
 	//! @retval 0 正常 / 非0 ValidateKey のエラー番号
 	int AddExcludeFileKey( const WCHAR* p, bool bExcludeFileRegex ){
+		if( p[0] == L'\0' ){
+			// `!` 単体（空パターン）は無視する。
+			// 空の正規表現は全パスにマッチし全ファイル除外となるため登録しない。
+			return 0;
+		}
 		if( bExcludeFileRegex ){
 			// 正規表現モード: バリデーションせず正規表現リストへ
 			m_vecExceptFileRegexPatterns.emplace_back( p );

@@ -304,6 +304,35 @@ TEST(CGrepEnumKeys, ParseRegexExcludePattern)
 }
 
 /*!
+ * @brief `!` 単体（空の除外パターン）は登録せず無視する (PR #9)
+ * @remark 空の正規表現は全パスにマッチし全ファイル除外となるため、
+ *         正規表現モード・ワイルドカードモードのいずれでも登録されないことを確認する。
+ */
+TEST(CGrepEnumKeys, EmptyExcludePatternIsIgnored)
+{
+	// 正規表現モード: `!` 単体は m_vecExceptFileRegexPatterns に登録されない
+	{
+		CGrepEnumKeys keys;
+		ASSERT_EQ(0, keys.SetFileKeys(L"*.txt;!", /*bExcludeFileRegex=*/true));
+		EXPECT_EQ(keys.m_vecExceptFileRegexPatterns.size(), 0u);
+		EXPECT_EQ(keys.GetExcludeFiles().size(), 0u);
+	}
+	// ワイルドカードモード: `!` 単体は除外ファイルキーに登録されない
+	{
+		CGrepEnumKeys keys;
+		ASSERT_EQ(0, keys.SetFileKeys(L"*.txt;!"));
+		EXPECT_EQ(keys.GetExcludeFiles().size(), 0u);
+	}
+	// 空でない除外パターンは従来どおり登録される（回帰確認）
+	{
+		CGrepEnumKeys keys;
+		ASSERT_EQ(0, keys.SetFileKeys(L"*.txt;!;!.*\\.obj$", /*bExcludeFileRegex=*/true));
+		ASSERT_EQ(keys.m_vecExceptFileRegexPatterns.size(), 1u);
+		EXPECT_EQ(keys.m_vecExceptFileRegexPatterns[0], L".*\\.obj$");
+	}
+}
+
+/*!
  * @brief ファイルパターンと除外フォルダーの同時解析
  * @remark 検索対象ファイルパターンと除外フォルダー指定が正しく振り分けられ、
  *         フォルダー未指定時は *.* を補完することを確認する。

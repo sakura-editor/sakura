@@ -526,7 +526,7 @@ DWORD CGrepAgent::DoGrep(
 			return 0;
 		}
 		if( !testRegexp.Compile( pat.c_str(), CBregexp::optCaseSensitive ) ){
-			ErrorMessage( pcViewDst->m_hwndParent, L"無効な除外正規表現パターン: %s", pat.c_str() );
+			ErrorMessage( pcViewDst->m_hwndParent, L"無効な除外正規表現パターン: %s", pat.c_str() );	// TODO: Phase 5 E-1 で LS() 化
 			pcViewDst->SetUndoBuffer();
 			return 0;
 		}
@@ -1669,7 +1669,11 @@ int CGrepAgent::DoGrepFileWorker(
 
 	const STypeConfigMini* type = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( task.fileName.c_str() ), &type ) ){
-		return -1;
+		// タイプ別設定の取得失敗は当該ファイルのみスキップし、エラー行を出力して検索を継続する
+		CNativeW str( L"・タイプ別設定の取得に失敗しました: %s\r\n" );	// TODO: Phase 5 E-1 で LS() 化
+		str.Replace( L"%s", task.fullPath );
+		cmemMessage.AppendNativeData( str );
+		return 0;
 	}
 	// 拡張子ベースのタイプ別設定を使うため、判定対象はフルパスではなくファイル名にする。
 	CFileLoad cfl( type->m_encoding );
@@ -1841,7 +1845,11 @@ int CGrepAgent::DoGrepFile(
 	int		nEolCodeLen;
 	const STypeConfigMini* type = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
-		return -1;
+		// タイプ別設定の取得失敗は当該ファイルのみスキップし、エラー行を出力して検索を継続する
+		CNativeW str( L"・タイプ別設定の取得に失敗しました: %s\r\n" );	// TODO: Phase 5 E-1 で LS() 化
+		str.Replace( L"%s", pszFullPath );
+		cmemMessage.AppendNativeData( str );
+		return 0;
 	}
 	CFileLoadOrWnd	cfl( type->m_encoding, hWndTarget );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	int		nOldPercent = 0;
@@ -2900,6 +2908,9 @@ int CGrepAgent::RunParallelGrep(
 					FlushPendingResults();
 				}catch(...){
 					bWorkCancelled.store( true );
+					// pBaseFolder/pFolder は現バッチの vecTasks を参照しており、
+					// バッチ終了後は無効になるため、flush 失敗時は破棄して残留させない
+					pendingResults.clear();
 				}
 				// try/catch どちらの経路でも必ず実行し、デッドロックを防止する
 				// P2-1: ロストウェイクアップ防止のためデクリメントは poolMutex 内で行い、メインスレッドへ終端を通知する
