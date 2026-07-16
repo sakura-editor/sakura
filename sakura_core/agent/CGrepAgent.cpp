@@ -959,6 +959,8 @@ int CGrepAgent::DoGrepTree(
 
 		currentFile.resize( nCurrentDirLen );
 		currentFile += lpFileName;
+		// 相対表示の起点: 通常はベースパス直後の '\' を飛ばすため +1 する。
+		// pszPath == pszBasePath（検索パス直下）の場合は区切り '\' が存在しないため +1 しない。
 		int nBasePathLen2 = nBasePathLen + 1;
 		if( (int)std::wstring_view(pszPath).length() < nBasePathLen2 ){
 			nBasePathLen2 = nBasePathLen;
@@ -1459,6 +1461,7 @@ int CGrepAgent::MatchAndEmitGrepLine(
 			nIndex = pRegexp->GetIndex();
 			int matchlen = pRegexp->GetMatchLen();
 #ifdef _DEBUG
+			// 正規表現エンジンの検索位置が前進しない場合の無限ループをデバッグ時に検出する
 			if( nIndex <= nIndexPrev ){
 				MYTRACE( L"ERROR: CGrepAgent::MatchAndEmitGrepLine() nIndex <= nIndexPrev break \n" );
 				break;
@@ -1480,9 +1483,12 @@ int CGrepAgent::MatchAndEmitGrepLine(
 					sGrepOption
 				);
 			}
+			// 該当行出力(0)以外の出力形式、またはファイル名のみ出力では、行内の初回ヒットで打ち切る
 			if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
 				break;
 			}
+			// ゼロ幅マッチ（例: 先読みのみのパターン）では検索位置が前進せず無限ループするため、
+			// 最低1文字（サロゲートペア考慮）分は必ず前進させる
 			if( matchlen <= 0 ){
 				const int nSizeOfChar = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
 				matchlen = ( 0 < nSizeOfChar ) ? nSizeOfChar : 1;
@@ -1512,6 +1518,7 @@ int CGrepAgent::MatchAndEmitGrepLine(
 					sGrepOption
 				);
 			}
+			// 該当行出力(0)以外の出力形式、またはファイル名のみ出力では、行内の初回ヒットで打ち切る
 			if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
 				break;
 			}
@@ -1540,6 +1547,7 @@ int CGrepAgent::MatchAndEmitGrepLine(
 					sGrepOption
 				);
 			}
+			// 該当行出力(0)以外の出力形式、またはファイル名のみ出力では、行内の初回ヒットで打ち切る
 			if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
 				break;
 			}
@@ -1594,6 +1602,7 @@ static int EmitFileNameOnlyForWorker(
 	const WCHAR* pszCodeName = L"";
 	WCHAR szCpName[100];
 
+	// 文字コード自動判別時のみ、表示用にファイルの文字コード名を判定する（判別エラーでもヒットにカウントする）
 	if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 		CCodeMediator cmediator( type->m_encoding );
 		const ECodeType nCharCode = cmediator.CheckKanjiCodeOfFile( task.fullPath.c_str() );
@@ -1607,6 +1616,7 @@ static int EmitFileNameOnlyForWorker(
 			pszCodeName = szCpName;
 		}
 	}
+	// 出力形式（1:ノーマル / 2:ファイル毎 / 3:結果のみ）ごとにファイル名行の書式を選択する
 	const wchar_t* pszFormatFullPath  = L"";
 	const wchar_t* pszFormatFilePath  = L"";
 	const wchar_t* pszFormatFilePath2 = L"";
@@ -1625,6 +1635,7 @@ static int EmitFileNameOnlyForWorker(
 	}
 	auto pszWork = std::make_unique<wchar_t[]>( task.fullPath.size() + std::wstring_view(pszCodeName).length() + 10 );
 	wchar_t* szWork0 = &pszWork[0];
+	// ベースフォルダー表示/フォルダー別表示時は相対パス、それ以外はフルパスで出力する
 	if( sGrepOption.bGrepOutputBaseFolder || sGrepOption.bGrepSeparateFolder ){
 		auto_sprintf( szWork0,
 			(sGrepOption.bGrepSeparateFolder ? pszFormatFilePath : pszFormatFilePath2),
@@ -1706,10 +1717,12 @@ int CGrepAgent::DoGrepFileWorker(
 			}
 		}
 
+		// ファイルオープン直後にキャンセルを確認してから行読込ループへ入る
 		if( bCancelled.load() ){
 			return -1;
 		}
 
+		// 単語単位検索用の検索語リストを事前生成する（行ループ内での再生成を避ける）
 		std::vector<std::pair<const wchar_t*, CLogicInt>> searchWords;
 		if( sSearchOption.bWordOnly ){
 			CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
@@ -1735,6 +1748,7 @@ int CGrepAgent::DoGrepFileWorker(
 				nullptr, cmemMessage
 			);
 
+			// ファイル名のみ出力では最初のヒットで当該ファイルの検索を打ち切る
 			if( sGrepOption.bGrepOutputFileOnly && 1 <= nHitCount ){
 				break;
 			}
@@ -1771,6 +1785,7 @@ static int CheckCancelAndUpdateProgress(
 )
 {
 	DWORD dwNowLoop = ::GetTickCount();
+	// 前回チェックから一定間隔が経過するまではUI処理をスキップする（減算比較のためTickCountのラップ安全）
 	if ( dwNowLoop - dwTickUICheck <= UICHECK_INTERVAL_MILLISEC ) {
 		return 0;
 	}
@@ -2638,12 +2653,14 @@ static void AppendGrepFolderHeader(
 	std::set<std::wstring, std::less<>>&	writtenFolders		//!< [i/o] 出力済みフォルダー
 )
 {
+	// ベースフォルダーヘッダー（◎/■）は検索パスごとに初出時のみ出力する
 	if( sGrepOption.bGrepOutputBaseFolder && !writtenBaseFolders.contains(baseFolder) ){
 		writtenBaseFolders.insert( baseFolder );
 		sharedMessage.AppendString( sGrepOption.bGrepSeparateFolder ? L"◎\"" : L"■\"" );
 		sharedMessage.AppendString( baseFolder );
 		sharedMessage.AppendString( L"\"\r\n" );
 	}
+	// フォルダー別表示の見出し（■）は初出時のみ出力する（空はベースフォルダー直下を表す）
 	if( sGrepOption.bGrepSeparateFolder && !writtenFolders.contains(folder) ){
 		writtenFolders.insert( folder );
 		if( !folder.empty() ){
@@ -2847,6 +2864,7 @@ int CGrepAgent::RunParallelGrep(
 			auto ProcessBatchTasks = [&]( const std::vector<SGrepFileTask>& batch ){
 				while( true ){
 					const size_t idx = poolNextTask.fetch_add( 1 );
+					// バッチ内の全タスクを消化したか、キャンセルが発生したら終了する
 					if( idx >= batch.size() || bWorkCancelled.load() ) break;
 
 					const SGrepFileTask& task = batch[idx];
@@ -2891,6 +2909,7 @@ int CGrepAgent::RunParallelGrep(
 					cvPoolStart.wait( lk, [&poolBatchId, &localBatchId, &bPoolShutdown]{
 					return poolBatchId > localBatchId || bPoolShutdown;
 				} );
+					// シャットダウン指示でも、未処理の新バッチが配布済みなら先に処理してから終了する
 					if( bPoolShutdown && poolBatchId <= localBatchId ) break;
 					localBatchId = poolBatchId;
 					pBatch = pPoolBatch;

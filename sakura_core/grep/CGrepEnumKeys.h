@@ -86,6 +86,8 @@ public:
 			m_vecExceptFileRegexPatterns.emplace_back( p );
 			return 0;
 		}
+		// ワイルドカードモード: 不正文字などを検証したうえで、
+		// 相対パスは名前ベースの除外キーへ、絶対パスは絶対パス除外キーへ振り分ける（重複は登録しない）
 		if( int nValidStatus = ValidateKey( p ); 0 != nValidStatus ){
 			return nValidStatus;
 		}

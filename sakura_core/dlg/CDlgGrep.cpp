@@ -467,6 +467,8 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			strCur.resize( std::wstring_view( strCur.c_str() ).length() );
 			const WCHAR* pszOther = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD : DEFAULT_EXCLUDE_FILE_PATTERN_REGEX;
 			const WCHAR* pszThis  = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_REGEX    : DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD;
+			// 未入力、または切り替え前モードの既定値のままの場合のみ、現モードの既定値へ置き換える
+			// （ユーザーが編集した除外パターンは上書きしない）
 			if( strCur.empty() || strCur == pszOther ){
 				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, pszThis );
 			}
@@ -728,6 +730,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, L"" );
 		bEnableControls = FALSE;
 	}else{
+		// 「このテキストから検索」用の HWND トークンはファイルパターン欄に表示しない（*.* に差し替え）
 		if (IsHwndFileToken(m_szFile)) {
 			wcsncpy_s(m_szFile, std::size(m_szFile), L"*.*", _TRUNCATE);
 		}
@@ -840,6 +843,7 @@ BOOL CDlgGrep::GetDataFilePattern( bool bFromThisText )
 	if( bFromThisText ){
 		m_szFile.assign(BuildHwndFileToken(::GetParent(GetHwnd())));
 	}else{
+		// 「このテキストから検索」が無効なのに HWND トークンが直接入力されている場合は入力エラー
 		if (IsHwndFileToken(m_szFile)) {
 			ErrorMessage(GetHwnd(), LS(STR_DLGGREP_THISDOC_ERROR));
 			return FALSE;
@@ -948,6 +952,7 @@ void CDlgGrep::CommitDataToShareData( bool bFromThisText )
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepExcludeFileRegexp = m_bExcludeFileRegularExp != FALSE;
 
+	// 検索キーが _MAX_PATH 未満の場合のみ履歴へ登録する（「このテキストから検索」時は登録しない）
 	if( m_strText.size() > 0 ){
 		if( m_strText.size() < _MAX_PATH ){
 			if( !bFromThisText ){

@@ -60,6 +60,7 @@ private:
 	//! FindFirstFile ハンドルの RAII クローザ
 	struct FindHandleCloser {
 		void operator()( HANDLE h ) const {
+			// FindFirstFile 失敗時（INVALID_HANDLE_VALUE）はクローズ対象外
 			if( h && h != INVALID_HANDLE_VALUE ) ::FindClose( h );
 		}
 	};
@@ -136,6 +137,7 @@ public:
 				continue;
 			}
 			do{
+				// 検索キーのワイルドカードにマッチしない名前はスキップ
 				if( !::PathMatchSpec(w32fd.cFileName, key.c_str() + nKeyDirLen) ){
 					continue;
 				}
@@ -143,6 +145,7 @@ public:
 					continue;
 				}
 				std::wstring name = key.substr( 0, nKeyDirLen ) + w32fd.cFileName;
+				// 派生クラスの判定（ファイル列挙/フォルダー列挙の種別・"." ".." 除外等）で対象外ならスキップ
 				if( !IsValid( w32fd, name.c_str() ) ){
 					continue;
 				}
