@@ -23,6 +23,7 @@
 #include "basis/CMyString.h"
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
+#include "env/CSakuraEnvironment.h"
 #include "util/file.h"
 #include "config/system_constants.h"
 #include "_main/CCommandLine.h"
@@ -196,6 +197,38 @@ public:
 	DWORD dwThreadId;
 };
 
+/*!
+ * @brief 起動したエディタープロセスオブジェクト
+ *
+ * @note 使い物になるかどうか試作してみた
+ */
+class EditorProcessHolder : public cxx::ProcessHolder
+{
+private:
+	using Base = cxx::ProcessHolder;
+	using Me = EditorProcessHolder;
+
+public:
+	explicit EditorProcessHolder(
+		HANDLE hProcess,
+		DWORD dwProcessId,
+		DWORD dwThreadId,
+		HWND hWnd
+	)
+		: Base(hProcess, dwProcessId, dwThreadId)
+		, hWnd(hWnd)
+	{
+	}
+
+	EditorProcessHolder(const Me&) = delete;
+	Me& operator=(const Me&) = delete;
+
+	EditorProcessHolder(Me&& other) noexcept = default;
+	Me& operator=(Me&& rhs) noexcept = default;
+
+	HWND hWnd;
+};
+
 } // namespace cxx
 
 namespace testing {
@@ -366,6 +399,28 @@ cxx::ProcessHolder CreateSakuraProcess(
 }
 
 /*!
+ * @brief 編集ウィンドウを列挙するコールバック関数
+ *
+ * @param hWnd 列挙されたウィンドウのハンドル
+ * @param lParam 列挙の呼び出し元から渡されたパラメータ（HWND* を期待）
+ * @retval TRUE 列挙続行（編集ウィンドウではなかった。）
+ * @retval FALSE 列挙停止（編集ウィンドウが見付かった。）
+ */
+BOOL CALLBACK EnumEditorWindowProc(
+	_In_ HWND   hWnd,
+	_In_ LPARAM lParam
+)
+{
+	if (!hWnd || !lParam || !IsSakuraMainWindow(hWnd)) return TRUE;	// 検索続行
+
+	auto phWndFound = std::bit_cast<HWND*>(lParam);
+
+	*phWndFound = hWnd;
+
+	return FALSE;
+}
+
+/*!
  * @brief エディタープロセスを起動する
  *
  * @tparam T コマンドライン引数のコンテナ型
@@ -376,7 +431,7 @@ cxx::ProcessHolder CreateSakuraProcess(
  */
 template<class T>
 	requires std::ranges::range<T> && std::convertible_to<std::ranges::range_reference_t<T>, std::wstring_view>
-cxx::ProcessHolder CreateEditorProcess(
+cxx::EditorProcessHolder CreateEditorProcess(
 	const T& args,
 	std::wstring_view profileName,
 	bool sync = true
@@ -402,7 +457,7 @@ cxx::ProcessHolder CreateEditorProcess(
 	auto ep = CreateSakuraProcess(si, commandArgs, std::nullopt, profileName, dwCreationFlag);
 	EXPECT_THAT(ep, NotNull());
 
-	if (!sync) return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
+	if (!sync) return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, HWND(nullptr) };
 
 	// エディターのメインスレッドを開く
 	cxx::HandleHolder hThread{ ::OpenThread(THREAD_SUSPEND_RESUME, FALSE, ep.dwThreadId) };
@@ -417,11 +472,19 @@ cxx::ProcessHolder CreateEditorProcess(
 	// エディター初期化完了を待つ
 	std::array handles{ hEvent.get(), ep.get() };
 	if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 30000); WAIT_OBJECT_0 != dwRet) {
-		return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
+		return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, nullptr };
 	}
 
+	// メインウインドウを取得する
+	HWND hWndFound = nullptr;
+
+	// スレッドに含まれるウインドウを列挙する
+	::EnumThreadWindows(ep.dwThreadId, EnumEditorWindowProc, LPARAM(&hWndFound));
+
+	EXPECT_THAT(hWndFound, NotNull());
+
 	// プロセスオブジェクトを返す
-	return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
+	return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, hWndFound };
 }
 
 //! 外部ウインドウにクローズを要求する
@@ -429,18 +492,11 @@ void RequestForeignWindowClose(HWND hWnd)
 {
 	// ウインドウが閉じられるまで繰り返す
 	while (::IsWindow(hWnd)) {
-		// ウインドウにクローズを要求する
-		if (!::SendMessageTimeoutW(hWnd, WM_CLOSE, 0, 0,
-			SMTO_NOTIMEOUTIFNOTHUNG | SMTO_ERRORONEXIT,
-			5000,
-			nullptr
-		)) {
-			// Sendが失敗したらPostしておく
-			::PostMessageW(hWnd, WM_CLOSE, 0, 0);
+		// プロセス間通信なのでポストする
+		::PostMessageW(hWnd, WM_CLOSE, 0, 0);
 
-			// 少し待つ
-			::Sleep(100);
-		}
+		// 少し待つ
+		::Sleep(100);
 	}
 }
 
@@ -1056,10 +1112,10 @@ TEST_F(WinMainFuncTest, DoGrep001)
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(args, profileName);
 	EXPECT_THAT(ep, NotNull());
+	EXPECT_THAT(ep.hWnd, NotNull());
 
 	// 編集ウインドウにクローズを要求する
-	const auto hWndFound = WaitForEditor();
-	testing::RequestForeignWindowClose(hWndFound);
+	testing::RequestForeignWindowClose(ep.hWnd);
 
 	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 	ep.lock();
@@ -1086,10 +1142,10 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
 		// エディタープロセスを起動する
 		auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
 		EXPECT_THAT(ep, NotNull());
+		EXPECT_THAT(ep.hWnd, NotNull());
 
 		// 編集ウインドウにクローズを要求する
-		const auto hWndFound = WaitForEditor();
-		testing::RequestForeignWindowClose(hWndFound);
+		testing::RequestForeignWindowClose(ep.hWnd);
 
 		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 		ep.lock();
@@ -1122,15 +1178,13 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
 		// エディタープロセスを起動する
 		auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
 		EXPECT_THAT(ep, NotNull());
+		EXPECT_THAT(ep.hWnd, NotNull());
 
 		// Grepダイアログが表示されるのを待って閉じる
 		t.join();
 
-		const auto hWndFound = WaitForEditor();
-		EXPECT_THAT(hWndFound, NotNull());
-
 		// 編集ウインドウにクローズを要求する
-		testing::RequestForeignWindowClose(hWndFound);
+		testing::RequestForeignWindowClose(ep.hWnd);
 
 		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 		ep.lock();
@@ -1158,7 +1212,7 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 		});
 
 		// エディタープロセスを起動する
-		auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
+		auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName, false);
 		EXPECT_THAT(ep, NotNull());
 
 		// プロファイルマネージャが表示されるのを待って閉じる
