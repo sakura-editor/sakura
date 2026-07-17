@@ -74,6 +74,12 @@ struct ResourceHolder
     {
     }
 
+	ResourceHolder(const Me&) = delete;
+	Me& operator=(const Me&) = delete;
+
+	ResourceHolder(Me&& other) noexcept = default;
+	Me& operator=(Me&& rhs) noexcept = default;
+
 	// bound 更新（OwnedResourceHolder の updateContext 相当）
 	template<typename... Bound>
 	void updateBound(Bound&&... bound) noexcept
@@ -84,15 +90,19 @@ struct ResourceHolder
 
 	pointer get() const noexcept { return m_Holder.get(); }
 	pointer release() noexcept { return m_Holder.release(); }
+	void reset(resource_type p) { m_Holder.reset(p); }
 
 	Me& operator = (resource_type t)
 	{
-		m_Holder.reset(t);
+		reset(t);
 		return *this;
 	}
+
+	explicit operator bool() const noexcept { return static_cast<bool>(m_Holder); }
 
 	/* implicit */ operator resource_type() const noexcept { return get(); }
 };
 
 } // end of namespace cxx
+
 #endif /* SAKURA_RESOURCEHOLDER_0BDC8DF8_F2AC_486F_8BF7_FD7E5D1B76DE_H_ */

@@ -108,7 +108,7 @@ void writeTextFile(
 }
 
 //! HANDLE型のスマートポインタ
-class HandleHolder final : public cxx::ResourceHolder<&::CloseHandle>
+class HandleHolder : public cxx::ResourceHolder<&::CloseHandle>
 {
 private:
 	using Base = cxx::ResourceHolder<&::CloseHandle>;
@@ -120,29 +120,46 @@ public:
 	 */
 	using Base::ResourceHolder;
 
-	void lock() const noexcept
+	virtual ~HandleHolder() = default;
+
+	void lock()
 	{
 		Lock(INFINITE);	//無限に待つ
 	}
 
-	bool try_lock() const noexcept
+	bool try_lock()
 	{
 		return Lock(0);	//ロック取得を試行
 	}
 
 	template<class Rep, class Period>
-	bool try_lock_for(const std::chrono::duration<Rep, Period>& rel_time) const noexcept
+	bool try_lock_for(const std::chrono::duration<Rep, Period>& rel_time)
 	{
 		const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(rel_time);
 		return Lock(DWORD(milliseconds.count()));
 	}
 
-	bool Lock(DWORD dwTimeout = INFINITE) const noexcept
+	bool unlock()
+	{
+		return Unlock();
+	}
+
+	virtual bool Lock(DWORD dwTimeout = INFINITE)
 	{
 		// ロック取得を試行
 		const auto dwRet = ::WaitForSingleObject(get(), dwTimeout);
 
+		if (WAIT_FAILED == dwRet) {
+			// エラー
+			return false;
+		}
+
 		return WAIT_OBJECT_0 == dwRet || WAIT_ABANDONED == dwRet;
+	}
+
+	virtual bool Unlock()
+	{
+		return true;
 	}
 };
 
@@ -302,7 +319,7 @@ void RequestForeignWindowClose(HWND hWnd)
 }
 
 //! 外部プロセスの終了を待つ
-void WaitForForeignProcessExit(const cxx::HandleHolder& process)
+void WaitForForeignProcessExit(cxx::HandleHolder& process)
 {
 	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 	if (!process.try_lock_for(std::chrono::milliseconds(45000))) {
@@ -346,7 +363,7 @@ void TerminateControlProcess(
 
 	// プロセス情報の問い合せを行うためのハンドルを開く
 	// タイムアウト時に強制終了へフォールバックできるよう、TERMINATE 権限も付与する
-	cxx::HandleHolder process = ::OpenProcess(PROCESS_QUERY_INFORMATION | SYNCHRONIZE | PROCESS_TERMINATE, FALSE, dwControlProcessId);
+	cxx::HandleHolder process{ ::OpenProcess(PROCESS_QUERY_INFORMATION | SYNCHRONIZE | PROCESS_TERMINATE, FALSE, dwControlProcessId) };
 	if (!process) {
 		// プロセスIDが無効は「既に終了している」なので、除外する
 		if (ERROR_INVALID_PARAMETER == ::GetLastError()) {
@@ -852,7 +869,8 @@ TEST_F(WinMainFuncTest, DoGrep001)
 	};
 
 	// エディタープロセスを起動する
-	const auto ep = testing::CreateEditorProcess(args, profileName);
+	auto ep = testing::CreateEditorProcess(args, profileName);
+	EXPECT_THAT(ep, NotNull());
 
 	// Grepダイアログが表示されるのを待って閉じる
 	for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
@@ -888,7 +906,8 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
 		const auto dwControlProcessId = testing::CreateControlProcess(profileName);
 
 		// エディタープロセスを起動する
-		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
+		auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
+		EXPECT_THAT(ep, NotNull());
 
 		// 編集ウインドウが有効になるのを待って閉じる
 		const auto hWndFound = WaitForEditor();
@@ -917,7 +936,8 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
 		const auto dwControlProcessId = testing::CreateControlProcess(profileName);
 
 		// エディタープロセスを起動する
-		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
+		auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
+		EXPECT_THAT(ep, NotNull());
 
 		// Grepダイアログが表示されるのを待って閉じる
 		const auto hWndDlgGrep = WaitForDialog(L"Grep");
@@ -958,7 +978,8 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 		const auto profileName{ GetProfileName() };
 
 		// エディタープロセスを起動する
-		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
+		auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
+		EXPECT_THAT(ep, NotNull());
 
 		// プロファイルマネージャが表示されるのを待って閉じる
 		const auto hWndDlgProfileMgr = WaitForDialog(L"プロファイルマネージャ");
