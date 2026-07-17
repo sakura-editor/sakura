@@ -325,7 +325,8 @@ cxx::ProcessHolder CreateControlProcess(std::wstring_view profileName)
 	EXPECT_THAT(cp, NotNull());
 
 	// 初期化完了を待つ
-	hEvent.lock();
+	std::array handles{ hEvent.get(), cp.get() };
+	::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 15000);
 
 	// プロセスオブジェクトを返す
 	return cxx::ProcessHolder{ cp.release(), cp.dwProcessId, cp.dwThreadId };
