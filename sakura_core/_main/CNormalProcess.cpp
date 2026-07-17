@@ -540,7 +540,7 @@ void CNormalProcess::OpenFiles(HWND hwnd) const
 		for( i = 0; i < fileNum; i++ ){
 			// ファイル名差し替え
 			wcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
-			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), hwnd, &fi, bViewMode );
+			bool ret = CControlTray::OpenNewEditor2(GetProcessInstance(), hwnd, &fi, bViewMode, true);	// 開くのを待つ
 			if( ret == false ){
 				break;
 			}
