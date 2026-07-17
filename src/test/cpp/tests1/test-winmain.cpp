@@ -333,6 +333,39 @@ cxx::ProcessHolder CreateControlProcess(std::wstring_view profileName)
 }
 
 /*!
+ * @brief プロセスを起動する
+ *
+ * @tparam T コマンドライン引数のコンテナ型
+ * @param args コマンドライン引数
+ * @param profileName プロファイル名
+ * @return 起動したプロセスオブジェクト
+ * @note 使い物になるかどうか試作してみた
+ */
+template<class T>
+	requires std::ranges::range<T> && std::convertible_to<std::ranges::range_reference_t<T>, std::wstring_view>
+cxx::ProcessHolder CreateSakuraProcess(
+	const T& args,
+	std::wstring_view profileName,
+	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE
+)
+{
+	// コマンドライン引数の編集用vector
+	std::vector<std::wstring> commandArgs{ std::begin(args), std::end(args) };
+
+	// スタートアップ情報（入力用構造体なので値を入れる）
+	STARTUPINFO si = { sizeof(STARTUPINFO) };
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = SW_SHOWDEFAULT;
+
+	// エディタープロセスを起動する
+	auto ep = CreateSakuraProcess(si, commandArgs, std::nullopt, profileName, dwCreationFlag);
+	EXPECT_THAT(ep, NotNull());
+
+	// プロセスオブジェクトを返す
+	return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
+}
+
+/*!
  * @brief エディタープロセスを起動する
  *
  * @tparam T コマンドライン引数のコンテナ型
@@ -345,7 +378,8 @@ template<class T>
 	requires std::ranges::range<T> && std::convertible_to<std::ranges::range_reference_t<T>, std::wstring_view>
 cxx::ProcessHolder CreateEditorProcess(
 	const T& args,
-	std::wstring_view profileName
+	std::wstring_view profileName,
+	bool sync = true
 )
 {
 	// コマンドライン引数の編集用vector
@@ -361,7 +395,33 @@ cxx::ProcessHolder CreateEditorProcess(
 	si.dwFlags = STARTF_USESHOWWINDOW;
 	si.wShowWindow = SW_SHOWDEFAULT;
 
-	return CreateSakuraProcess(si, commandArgs, std::nullopt, profileName);
+	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
+	if (sync) dwCreationFlag |= CREATE_SUSPENDED;
+
+	// エディタープロセスを起動する
+	auto ep = CreateSakuraProcess(si, commandArgs, std::nullopt, profileName, dwCreationFlag);
+	EXPECT_THAT(ep, NotNull());
+
+	if (!sync) return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
+
+	// エディターのメインスレッドを開く
+	cxx::HandleHolder hThread{ ::OpenThread(THREAD_SUSPEND_RESUME, FALSE, ep.dwThreadId) };
+
+	// 初期化完了イベントを作成する
+	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ep.dwThreadId) };
+	cxx::HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
+
+	// エディターのメインスレッドを再開する
+	::ResumeThread(hThread);
+
+	// エディター初期化完了を待つ
+	std::array handles{ hEvent.get(), ep.get() };
+	if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 30000); WAIT_OBJECT_0 != dwRet) {
+		return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
+	}
+
+	// プロセスオブジェクトを返す
+	return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
 }
 
 //! 外部ウインドウにクローズを要求する
@@ -997,15 +1057,7 @@ TEST_F(WinMainFuncTest, DoGrep001)
 	auto ep = testing::CreateEditorProcess(args, profileName);
 	EXPECT_THAT(ep, NotNull());
 
-	// Grepダイアログが表示されるのを待って閉じる
-	for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
-		if (const auto hWndFound = ::FindWindowW(GSTR_EDITWINDOWNAME, nullptr); hWndFound) {
-			break;
-		}
-		Sleep(10);  // 10msスリープしてリトライ
-	}
-
-	// 編集ウインドウを閉じる
+	// 編集ウインドウにクローズを要求する
 	const auto hWndFound = WaitForEditor();
 	testing::RequestForeignWindowClose(hWndFound);
 
@@ -1035,7 +1087,7 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
 		auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
 		EXPECT_THAT(ep, NotNull());
 
-		// 編集ウインドウが有効になるのを待って閉じる
+		// 編集ウインドウにクローズを要求する
 		const auto hWndFound = WaitForEditor();
 		testing::RequestForeignWindowClose(hWndFound);
 
@@ -1074,8 +1126,10 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
 		// Grepダイアログが表示されるのを待って閉じる
 		t.join();
 
-		// 編集ウインドウを閉じる
 		const auto hWndFound = WaitForEditor();
+		EXPECT_THAT(hWndFound, NotNull());
+
+		// 編集ウインドウにクローズを要求する
 		testing::RequestForeignWindowClose(hWndFound);
 
 		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ

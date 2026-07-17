@@ -84,6 +84,15 @@ bool CNormalProcess::InitializeProcess()
 		return false;
 	}
 
+	// エディター初期化完了イベントを開く
+	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ::GetCurrentThreadId()) };
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+	HandleHolder hEvent{ ::OpenEventW(STANDARD_RIGHTS_REQUIRED | EVENT_MODIFY_STATE | SYNCHRONIZE, FALSE, initEventName) };
+
+	// スコープを抜けるときシグナル状態になるようにする
+	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
+	InitEventHolder initEvent{ hEvent.get() };
+
 	/* 共有メモリを初期化する */
 	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
 		return false;
@@ -437,6 +446,8 @@ bool CNormalProcess::InitializeProcess()
 
 	// 複数ファイル読み込み
 	OpenFiles( pEditWnd->GetHwnd() );
+
+	initEvent = nullptr;
 
 	return pEditWnd->GetHwnd() ? true : false;
 }
