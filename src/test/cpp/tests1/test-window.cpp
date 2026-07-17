@@ -1627,13 +1627,13 @@ TEST_F(EditWndTest, ShowPropType003)
 		const auto hWndPage = GetActivePage(hWndDlg);
 
 		EmulateInvokeButton(hWndPage, L"文字色統一(<)...");
-		if (const auto hWndDlgSameColor = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"文字色統一")) {
+		if (const auto hWndDlgSameColor = WaitForDialog(L"文字色統一")) {
 			EmulateInvokeButton(hWndDlgSameColor, L"全チェック(A)");
 			EmulateInvokeButton(hWndDlgSameColor, L"全解除(N)");
 			EmulateInvokeButton(hWndDlgSameColor, L"OK");
 		}
 		EmulateInvokeButton(hWndPage, L"背景色統一(>)...");
-		if (const auto hWndDlgSameColor = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"背景色統一")) {
+		if (const auto hWndDlgSameColor = WaitForDialog(L"背景色統一")) {
 			EmulateInvokeButton(hWndDlgSameColor, L"全チェック(A)");
 			EmulateInvokeButton(hWndDlgSameColor, L"全解除(N)");
 			EmulateInvokeButton(hWndDlgSameColor, L"OK");

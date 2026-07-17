@@ -845,9 +845,9 @@ TEST_F(WinMainFuncTest, DoGrep001)
 
 	std::array args{
 		LR"(-GREPMODE)"s,
-		LR"(-GKEY="test")"s,
-		LR"(-GFILE="*.*;#.git;#.svn;#.vs;!*.msi;!*.exe;!*.obj;!*.pdb;!*.ilk;!*.res;!*.pch;!*.iobj;!*.ipdb")"s,
-		std::format(LR"(-GFOLDER="{}")", iniPath.parent_path().c_str()),
+		LR"(-GKEY="localhost")"s,
+		LR"(-GFILE="*.*;#en-US;#DriverData;#UMDF;#udc;#mde;#wd;!*.sys;!*.dll;!*.exe;!*.mui;!*.nls;!*.chm;!*.dat;!*.tmp;!*.wdf")"s,
+		LR"(-GFOLDER="C:\WINDOWS\System32\Drivers")"s,
 		LR"(-GOPT=SP1)"s
 	};
 
@@ -863,7 +863,7 @@ TEST_F(WinMainFuncTest, DoGrep001)
 	}
 
 	// 編集ウインドウを閉じる
-	const auto hWndFound = cxx::FindWindowW(GSTR_EDITWINDOWNAME);
+	const auto hWndFound = WaitForEditor();
 	testing::RequestForeignWindowClose(hWndFound);
 
 	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
@@ -891,7 +891,7 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
 		const auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
 
 		// 編集ウインドウが有効になるのを待って閉じる
-		const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME);
+		const auto hWndFound = WaitForEditor();
 		testing::RequestForeignWindowClose(hWndFound);
 
 		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
@@ -935,7 +935,7 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
 		EXPECT_TRUE(dlgClosed) << "Grep dialog should be closed.";
 
 		// 編集ウインドウを閉じる
-		const auto hWndFound = cxx::FindWindowW(GSTR_EDITWINDOWNAME);
+		const auto hWndFound = WaitForEditor();
 		testing::RequestForeignWindowClose(hWndFound);
 
 		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ

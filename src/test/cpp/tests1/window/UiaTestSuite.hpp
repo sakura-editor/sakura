@@ -6,6 +6,7 @@
  */
 #pragma once
 
+#include "config/system_constants.h"
 #include "cxx/com_pointer.hpp"
 #include "dlg/ModalDialogCloser.hpp"
 #include "util/tchar_convert.h"
@@ -236,9 +237,9 @@ struct UiaTestSuite
 		});
 	}
 
-	HWND WaitForDialog(const std::wstring& title) const
+	HWND WaitForDialog(const std::wstring& title, ULONGLONG timeoutMillis = 60000) const
 	{
-		return WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title);
+		return WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title, timeoutMillis);
 	}
 
 	IUIAutomationElementPtr WaitForFocus(ULONGLONG startTick, ULONGLONG timeoutMillis) const
@@ -259,7 +260,7 @@ struct UiaTestSuite
 		return pFocusedElement;
 	}
 
-	HWND WaitForWindow(LPCWSTR targetClass, const std::optional<std::wstring>& title = std::nullopt, bool waitCaret = true, ULONGLONG timeoutMillis = defaultTimeoutMillis) const
+	HWND WaitForWindow(LPCWSTR targetClass, const std::optional<std::wstring>& title = std::nullopt, ULONGLONG timeoutMillis = defaultTimeoutMillis, bool waitCaret = true) const
 	{
 		const auto startTick = ::GetTickCount64();
 
@@ -280,6 +281,11 @@ struct UiaTestSuite
 		while (::GetTickCount64() - startTick < timeoutMillis);
 
 		return nullptr;
+	}
+
+	HWND WaitForEditor(const std::optional<std::wstring>& title = std::nullopt, ULONGLONG timeoutMillis = 60000) const
+	{
+		return WaitForWindow(GSTR_EDITWINDOWNAME, title, timeoutMillis);
 	}
 
 	template<typename... Conditions>
