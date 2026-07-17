@@ -42,7 +42,6 @@ protected:
 	bool MainLoop() override;
 	void OnExitProcess() override;
 
-protected:
 	//実装補助
 	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
 	void	OpenFiles(HWND hEditWnd) const;
