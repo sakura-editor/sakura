@@ -529,19 +529,20 @@ void CNormalProcess::OpenFiles(HWND hwnd) const
 	bool bViewMode = CCommandLine::getInstance()->IsViewMode();
 
 	if (auto fileNum = CCommandLine::getInstance()->GetFileNum();
-		0 < fileNum) {
-		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
+		0 < fileNum)
+	{
 		// ファイルドロップ数の上限に合わせる
-		if( fileNum > nDropFileNumMax ){
+		if (const auto nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
+			nDropFileNumMax < fileNum) {
 			fileNum = nDropFileNumMax;
 		}
 
-		int i;
-		for( i = 0; i < fileNum; i++ ){
+		for (int i = 0; i < fileNum; ++i) {
 			// ファイル名差し替え
-			wcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
-			bool ret = CControlTray::OpenNewEditor2(GetProcessInstance(), hwnd, &fi, bViewMode, true);	// 開くのを待つ
-			if( ret == false ){
+			::wcscpy_s(fi.m_szPath, CCommandLine::getInstance()->GetFileName(i));
+
+			// 同期モードでファイルを開いていく
+			if (!CControlTray::OpenNewEditor2(GetProcessInstance(), hwnd, &fi, bViewMode, true)) {
 				break;
 			}
 		}
