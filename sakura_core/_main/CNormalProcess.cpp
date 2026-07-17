@@ -522,14 +522,14 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 
 	@date 2015.03.14 novice 新規作成
 */
-void CNormalProcess::OpenFiles( HWND hwnd )
+void CNormalProcess::OpenFiles(HWND hwnd) const
 {
 	EditInfo fi;
 	CCommandLine::getInstance()->GetEditInfo( &fi );
 	bool bViewMode = CCommandLine::getInstance()->IsViewMode();
 
-	int fileNum = CCommandLine::getInstance()->GetFileNum();
-	if( fileNum > 0 ){
+	if (auto fileNum = CCommandLine::getInstance()->GetFileNum();
+		0 < fileNum) {
 		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
 		// ファイルドロップ数の上限に合わせる
 		if( fileNum > nDropFileNumMax ){
