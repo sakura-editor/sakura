@@ -1125,10 +1125,10 @@ bool CControlTray::OpenNewEditor(
 )
 {
 	/* 共有データ構造体のアドレスを返す */
-	DLLSHAREDATA*	pShareData = &GetDllShareData();
+	const auto pShareData = &GetDllShareData();
 
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if (MAX_EDITWINDOWS <= pShareData->m_sNodes.m_nEditArrNum) {
 		OkMessage( nullptr, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}
@@ -1333,13 +1333,9 @@ bool CControlTray::OpenNewEditor2(
 	bool			bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
-	DLLSHAREDATA*	pShareData;
-
-	/* 共有データ構造体のアドレスを返す */
-	pShareData = &GetDllShareData();
-
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if (const auto pShareData = &GetDllShareData();
+		MAX_EDITWINDOWS <= pShareData->m_sNodes.m_nEditArrNum) {
 		OkMessage( nullptr, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}
