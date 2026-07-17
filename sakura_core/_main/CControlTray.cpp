@@ -65,6 +65,18 @@
 /////////////////////////////////////////////////////////////////////////
 static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 
+namespace cxx {
+
+/*!
+ * @brief トップレベルウインドウを検索する
+ */
+HWND FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt)
+{
+	return ::FindWindowW(std::data(std::wstring(className)), optWindowName.has_value() ? std::data(*optWindowName) : nullptr);
+}
+
+} // namespace cxx
+
 //Stonee, 2001/03/21
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
 void CControlTray::DoGrep()
@@ -221,8 +233,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	const auto pszProfileName = GetProfileName();
 	std::wstring strCEditAppName = GSTR_CEDITAPP;
 	strCEditAppName += pszProfileName;
-	HWND hwndWork = ::FindWindow( strCEditAppName.c_str(), strCEditAppName.c_str() );
-	if( nullptr != hwndWork ){
+	if (const auto hWndTray = cxx::FindWindowW(strCEditAppName, strCEditAppName); hWndTray){
 		return nullptr;
 	}
 
@@ -1235,7 +1246,8 @@ bool CControlTray::OpenNewEditor(
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
 	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
-	BOOL bCreateResult = CreateProcess(
+
+	if (const auto bCreateResult = ::CreateProcessW(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列
 		nullptr,					// セキュリティ記述子
@@ -1247,7 +1259,7 @@ bool CControlTray::OpenNewEditor(
 		&s,						// スタートアップ情報
 		&p						// プロセス情報
 	);
-	if( !bCreateResult ){
+		!bCreateResult) {
 		//	失敗
 		WCHAR* pMsg;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |

@@ -42,6 +42,8 @@ void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& o
 
 namespace cxx {
 
+HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt);
+
 /*!
  * @brief システムエラーを例外として発生させる
  *
@@ -51,14 +53,6 @@ namespace cxx {
  */
 NORETURN void raise_system_error(const std::string& message) {
 	throw std::system_error(int(::GetLastError()), std::system_category(), message);
-}
-
-/*!
- * @brief トップレベルウインドウを検索する
- */
-HWND FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt)
-{
-	return ::FindWindowW(std::data(std::wstring(className)), optWindowName.has_value() ? std::data(*optWindowName) : nullptr);
 }
 
 /*!
