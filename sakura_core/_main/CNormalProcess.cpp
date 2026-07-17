@@ -171,7 +171,9 @@ bool CNormalProcess::InitializeProcess()
 	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
-	if( nullptr == pEditWnd->GetHwnd() ){
+
+	const auto hEditWnd = pEditWnd->GetHwnd();
+	if (!hEditWnd) {
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
@@ -207,7 +209,6 @@ bool CNormalProcess::InitializeProcess()
 		// 2010.06.16 Moca Grepでもオプション指定を適用
 		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 		pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを予め表示しておく
-		HWND hEditWnd = pEditWnd->GetHwnd();
 		if( !::IsIconic( hEditWnd ) && pEditWnd->m_cDlgFuncList.GetHwnd() ){
 			RECT rc;
 			::GetClientRect( hEditWnd, &rc );
@@ -291,8 +292,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
-			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  nullptr);
-			if( FALSE != nRet ){
+			if (pEditWnd->m_cDlgGrep.DoModal(GetProcessInstance(), hEditWnd,  LPCWSTR(nullptr))) {
 				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}else{
 				// 自分はGrepでない
@@ -407,7 +407,6 @@ bool CNormalProcess::InitializeProcess()
 
 	//WM_SIZEをポスト
 	{	// ファイル読み込みしなかった場合にはこの WM_SIZE がアウトライン画面を配置する
-		HWND hEditWnd = pEditWnd->GetHwnd();
 		if( !::IsIconic( hEditWnd ) ){
 			RECT rc;
 			::GetClientRect( hEditWnd, &rc );
@@ -431,8 +430,9 @@ bool CNormalProcess::InitializeProcess()
 		pEditWnd->GetDocument()->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 	// 起動時マクロオプション
-	LPCWSTR pszMacro = CCommandLine::getInstance()->GetMacro();
-	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){
+	if (const auto pszMacro = CCommandLine::getInstance()->GetMacro();
+		pszMacro && pszMacro[0] != L'\0')
+	{
 		LPCWSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
 		if( pszMacroType == nullptr || pszMacroType[0] == L'\0' || _wcsicmp(pszMacroType, L"file") == 0 ){
 			pszMacroType = nullptr;
