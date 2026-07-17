@@ -320,7 +320,7 @@ bool CControlTray::CreateTrayIcon( [[maybe_unused]] HWND hWnd )
 }
 
 /* メッセージループ */
-void CControlTray::MessageLoop( void )
+void CControlTray::MessageLoop() const
 {
 //複数プロセス版
 	MSG	msg;
@@ -338,7 +338,7 @@ void CControlTray::MessageLoop( void )
 }
 
 /* タスクトレイのアイコンに関する処理 */
-BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const WCHAR* pszTip )
+BOOL CControlTray::TrayMessage(HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const WCHAR* pszTip) const
 {
 	BOOL			res;
 	NOTIFYICONDATA	tnd;
@@ -947,7 +947,7 @@ LRESULT CControlTray::DispatchEvent(
 }
 
 /* WM_COMMANDメッセージ処理 */
-void CControlTray::OnCommand( WORD wNotifyCode, [[maybe_unused]] WORD wID , [[maybe_unused]] HWND hwndCtl )
+void CControlTray::OnCommand(WORD wNotifyCode, [[maybe_unused]] WORD wID , [[maybe_unused]] HWND hwndCtl) const
 {
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */

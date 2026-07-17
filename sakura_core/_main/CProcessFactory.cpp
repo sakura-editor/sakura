@@ -80,7 +80,7 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	return process;
 }
 
-bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
+bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine) const
 {
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
@@ -112,7 +112,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	@author aroka
 	@date 2002/01/03
 */
-bool CProcessFactory::IsValidVersion()
+bool CProcessFactory::IsValidVersion() const
 {
 	// Windowsバージョンは廃止。
 	// 動作可能バージョン(=windows7以降)でなければ起動できない。
@@ -125,7 +125,7 @@ bool CProcessFactory::IsValidVersion()
 	@author aroka
 	@date 2002/01/03 作成 2002/01/18 変更
 */
-bool CProcessFactory::IsStartingControlProcess()
+bool CProcessFactory::IsStartingControlProcess() const
 {
 	return CCommandLine::getInstance()->IsNoWindow();
 }
