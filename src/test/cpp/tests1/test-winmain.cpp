@@ -935,24 +935,18 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
 		// コントロールプロセスを起動する
 		const auto dwControlProcessId = testing::CreateControlProcess(profileName);
 
+		// 表示されたGrepダイアログを閉じるためのスレッドを起動する
+		std::jthread t = StartWindowCloser(L"Grep", [this] (HWND hWndDlg) {
+			EmulateInvokeButton(hWndDlg, L"キャンセル(X)");
+		});
+
 		// エディタープロセスを起動する
 		auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
 		EXPECT_THAT(ep, NotNull());
 
+
 		// Grepダイアログが表示されるのを待って閉じる
-		const auto hWndDlgGrep = WaitForDialog(L"Grep");
-		EmulateInvokeButton(hWndDlgGrep, L"キャンセル(X)");
-
-		bool dlgClosed = false;
-		for (const auto startTick = ::GetTickCount64(); ::GetTickCount64() - startTick < 5000;) {
-			if (const auto hWndFound = ::FindWindowW(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"Grep"); !hWndFound) {
-				dlgClosed = true;
-				break;
-			}
-			Sleep(10);  // 10msスリープしてリトライ
-		}
-
-		EXPECT_TRUE(dlgClosed) << "Grep dialog should be closed.";
+		t.join();
 
 		// 編集ウインドウを閉じる
 		const auto hWndFound = WaitForEditor();
@@ -977,13 +971,18 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 		// テスト用プロファイル名
 		const auto profileName{ GetProfileName() };
 
+		// 表示されたプロファイルマネージャを閉じるためのスレッドを起動する
+		std::jthread t = StartWindowCloser(L"プロファイルマネージャ", [&] (HWND hWndDlg) {
+			// プロファイルマネージャを閉じる
+			EmulateInvokeButton(hWndDlg, L"閉じる(X)");
+		});
+
 		// エディタープロセスを起動する
 		auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName);
 		EXPECT_THAT(ep, NotNull());
 
 		// プロファイルマネージャが表示されるのを待って閉じる
-		const auto hWndDlgProfileMgr = WaitForDialog(L"プロファイルマネージャ");
-		EmulateInvokeButton(hWndDlgProfileMgr, L"閉じる(X)");
+		t.join();
 
 		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 		testing::WaitForForeignProcessExit(ep);
