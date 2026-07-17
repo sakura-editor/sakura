@@ -91,18 +91,18 @@ struct UiaTestSuite
 		EmulateInvoke(pItem);
 	}
 
-	void EmulateEnterOpenFileName(const std::filesystem::path& exportPath) const
+	void EmulateEnterOpenFileName(const std::filesystem::path& path) const
 	{
 		if (const auto hWndDlgOpenFile = WaitForDialog(L"開く")) {
-			EmulateSetValue(GetFocusedElement(), exportPath.filename().c_str());
+			EmulateSetValue(GetFocusedElement(), path.c_str());
 			EmulateHitEnter();
 		}
 	}
 
-	void EmulateEnterSaveFileName(const std::filesystem::path& exportPath) const
+	void EmulateEnterSaveFileName(const std::filesystem::path& path) const
 	{
 		if (const auto hWndDlgSaveAs = WaitForDialog(L"名前を付けて保存")) {
-			EmulateSetValue(GetFocusedElement(), exportPath.filename().c_str());
+			EmulateSetValue(GetFocusedElement(), path.c_str());
 			EmulateHitEnter();
 		}
 	}
