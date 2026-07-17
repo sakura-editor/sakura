@@ -838,10 +838,6 @@ TEST_P(WinMainTest, runEditorProcess)
 		fs.close();
 	}
 
-	// コントロールプロセスを起動する
-	auto cp = testing::CreateControlProcess(profileName);
-	EXPECT_THAT(cp, NotNull());
-
 	// 起動時実行マクロの中身を作る
 	constexpr std::array macroCommands = {
 		L"Down();"sv,
@@ -970,7 +966,7 @@ TEST_P(WinMainTest, runEditorProcess)
 	EXPECT_EXIT({ StartEditorProcess(command); }, ::testing::ExitedWithCode(0), ".*" );
 
 	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName, cp.dwProcessId);
+	testing::TerminateControlProcess(profileName);
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
 	EXPECT_THAT(fexist(iniPath), IsTrue());
@@ -1075,6 +1071,89 @@ TEST_F(WinMainFuncTest, CreateControlProcess102)
 }
 
 /*!
+ * @brief コントロールプロセス起動の失敗をテストする。（初期化完了イベント作成済み）
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess103)
+{
+	// テスト用プロファイル名
+	const auto profileName{ GetProfileName() };
+
+	// 初期化完了イベントの名前を決める
+	SFilePath initEventName{ GSTR_EVENT_SAKURA_CP_INITIALIZED };
+	initEventName += profileName;
+
+	// プロセス起動前に初期化完了イベントを作成する
+	cxx::HandleHolder hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
+
+	// エディタープロセスを起動する
+	std::array<std::wstring, 0> args{};
+	auto ep = testing::CreateEditorProcess(args, profileName, false);
+	EXPECT_THAT(ep, NotNull());
+
+	// プロセスが完全に終了するまで待つ
+	ep.lock();
+}
+
+/*!
+ * @brief WinMainを起動してみるテスト
+ *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
+ *  複数ファイルを開くパターンのテスト。
+ */
+TEST_F(WinMainFuncTest, CreateEditorProcess001)
+{
+	// テスト用プロファイル名
+	const auto profileName{ GetProfileName() };
+
+	// コマンドラインを組み立てる
+	std::array args{
+		gm_TestDataPath.native(),	// 1つ目のファイル
+		gm_TestDataPath.native(),	// 2つ目のファイルはCNormalProcess::OpenFilesで処理される
+		gm_TestDataPath.native(),	// 3つ目のファイルもCNormalProcess::OpenFilesで処理される
+	};
+
+	// エディタープロセスを起動する
+	auto ep = testing::CreateEditorProcess(args, profileName);
+	EXPECT_THAT(ep, NotNull());
+	EXPECT_THAT(ep.hWnd, NotNull());
+
+	// 編集ウインドウにクローズを要求する
+	testing::RequestForeignWindowClose(ep.hWnd);
+
+	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+	ep.lock();
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(profileName);
+}
+
+/*!
+ * @brief WinMainを起動してみるテスト
+ *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
+ *  エディター起動の失敗をテストする。
+ */
+TEST_F(WinMainFuncTest, CreateEditorProcess101)
+{
+	// テスト用プロファイル名
+	const auto profileName{ GetProfileName() };
+
+	// ミューテックスの名前を組み立てる
+	SFilePath szMutexName{ GSTR_MUTEX_SAKURA_CP };
+	szMutexName += profileName;
+
+	// ミューテックスを作成してロックする
+	cxx::HandleHolder hMutex{ ::CreateMutexW(nullptr, TRUE, szMutexName) };
+	EXPECT_THAT(hMutex, NotNull());
+
+	// エディタープロセスを起動する
+	std::array<std::wstring, 0> args{};
+	auto ep = testing::CreateEditorProcess(args, profileName, false);
+	EXPECT_THAT(ep, NotNull());
+
+	// プロセスが完全に終了するまで待つ
+	ep.lock();
+}
+
+/*!
  * @brief WinMainを起動してみるテスト
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  Grepを実行する。
@@ -1131,28 +1210,22 @@ TEST_F(WinMainFuncTest, DoGrep001)
  */
 TEST_F(WinMainFuncTest, OpenDebugWindow001)
 {
-	RunGuiTest([this] {
-		// テスト用プロファイル名
-		const auto profileName{ GetProfileName() };
+	// テスト用プロファイル名
+	const auto profileName{ GetProfileName() };
 
-		// コントロールプロセスを起動する
-		auto cp = testing::CreateControlProcess(profileName);
-		EXPECT_THAT(cp, NotNull());
+	// エディタープロセスを起動する
+	auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
+	EXPECT_THAT(ep, NotNull());
+	EXPECT_THAT(ep.hWnd, NotNull());
 
-		// エディタープロセスを起動する
-		auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
-		EXPECT_THAT(ep, NotNull());
-		EXPECT_THAT(ep.hWnd, NotNull());
+	// 編集ウインドウにクローズを要求する
+	testing::RequestForeignWindowClose(ep.hWnd);
 
-		// 編集ウインドウにクローズを要求する
-		testing::RequestForeignWindowClose(ep.hWnd);
+	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+	ep.lock();
 
-		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-		ep.lock();
-
-		// コントロールプロセスに終了指示を出して終了を待つ
-		testing::TerminateControlProcess(profileName, cp.dwProcessId);
-	});
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(profileName);
 }
 
 /*!
@@ -1162,36 +1235,30 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
  */
 TEST_F(WinMainFuncTest, ShowDlgGrep101)
 {
-	RunGuiTest([this] {
-		// テスト用プロファイル名
-		const auto profileName{ GetProfileName() };
+	// テスト用プロファイル名
+	const auto profileName{ GetProfileName() };
 
-		// コントロールプロセスを起動する
-		auto cp = testing::CreateControlProcess(profileName);
-		EXPECT_THAT(cp, NotNull());
-
-		// 表示されたGrepダイアログを閉じるためのスレッドを起動する
-		std::jthread t = StartWindowCloser(L"Grep", [this] (HWND hWndDlg) {
-			EmulateInvokeButton(hWndDlg, L"キャンセル(X)");
-		});
-
-		// エディタープロセスを起動する
-		auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
-		EXPECT_THAT(ep, NotNull());
-		EXPECT_THAT(ep.hWnd, NotNull());
-
-		// Grepダイアログが表示されるのを待って閉じる
-		t.join();
-
-		// 編集ウインドウにクローズを要求する
-		testing::RequestForeignWindowClose(ep.hWnd);
-
-		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-		ep.lock();
-
-		// コントロールプロセスに終了指示を出して終了を待つ
-		testing::TerminateControlProcess(profileName, cp.dwProcessId);
+	// 表示されたGrepダイアログを閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(L"Grep", [this] (HWND hWndDlg) {
+		EmulateInvokeButton(hWndDlg, L"キャンセル(X)");
 	});
+
+	// エディタープロセスを起動する
+	auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
+	EXPECT_THAT(ep, NotNull());
+	EXPECT_THAT(ep.hWnd, NotNull());
+
+	// Grepダイアログが表示されるのを待って閉じる
+	t.join();
+
+	// 編集ウインドウにクローズを要求する
+	testing::RequestForeignWindowClose(ep.hWnd);
+
+	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+	ep.lock();
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(profileName);
 }
 
 /*!
@@ -1201,26 +1268,24 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
  */
 TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 {
-	RunGuiTest([this] {
-		// テスト用プロファイル名
-		const auto profileName{ GetProfileName() };
+	// テスト用プロファイル名
+	const auto profileName{ GetProfileName() };
 
-		// 表示されたプロファイルマネージャを閉じるためのスレッドを起動する
-		std::jthread t = StartWindowCloser(L"プロファイルマネージャ", [&] (HWND hWndDlg) {
-			// プロファイルマネージャを閉じる
-			EmulateInvokeButton(hWndDlg, L"閉じる(X)");
-		});
-
-		// エディタープロセスを起動する
-		auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName, false);
-		EXPECT_THAT(ep, NotNull());
-
-		// プロファイルマネージャが表示されるのを待って閉じる
-		t.join();
-
-		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
-		ep.lock();
+	// 表示されたプロファイルマネージャを閉じるためのスレッドを起動する
+	std::jthread t = StartWindowCloser(L"プロファイルマネージャ", [this] (HWND hWndDlg) {
+		// プロファイルマネージャを閉じる
+		EmulateInvokeButton(hWndDlg, L"閉じる(X)");
 	});
+
+	// エディタープロセスを起動する
+	auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName, false);
+	EXPECT_THAT(ep, NotNull());
+
+	// プロファイルマネージャが表示されるのを待って閉じる
+	t.join();
+
+	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+	ep.lock();
 }
 
 } // namespace winmain
