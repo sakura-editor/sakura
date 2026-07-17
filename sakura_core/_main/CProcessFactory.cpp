@@ -68,14 +68,11 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
-		if( !IsExistControlProcess() ){
+
 			process = new CControlProcess( hInstance, lpCmdLine );
-		}
+
 	}
 	else{
-		if( !IsExistControlProcess() ){
-			StartControlProcess();
-		}
 
 			process = new CNormalProcess( hInstance, lpCmdLine );
 
@@ -140,7 +137,7 @@ bool CProcessFactory::IsStartingControlProcess()
 	@date 2002/01/03
 	@date 2006/04/10 ryoji
 */
-bool CProcessFactory::IsExistControlProcess()
+/* static */ bool CProcessFactory::IsExistControlProcess()
 {
 	const auto pszProfileName = GetProfileName();
 	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
@@ -165,7 +162,7 @@ bool CProcessFactory::IsExistControlProcess()
 	@date Aug. 28, 2001
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
-bool CProcessFactory::StartControlProcess()
+/* static */ bool CProcessFactory::StartControlProcess()
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"StartControlProcess" );
 

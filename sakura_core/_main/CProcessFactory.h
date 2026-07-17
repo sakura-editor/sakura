@@ -35,14 +35,15 @@ class CProcess;
 */
 class CProcessFactory {
 public:
+	static bool	IsExistControlProcess();
+	static bool	StartControlProcess();
+
 	CProcess* Create( HINSTANCE hInstance, LPCWSTR lpCmdLine );
 protected:
 private:
 	bool IsValidVersion();
 	bool ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine);
 	bool IsStartingControlProcess();
-	bool IsExistControlProcess();
-	bool StartControlProcess();
 };
 
 #endif /* SAKURA_CPROCESSFACTORY_5006562F_7795_40FF_AA4C_FFB94842F7C5_H_ */

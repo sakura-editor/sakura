@@ -22,6 +22,9 @@
 
 #include "StdAfx.h"
 #include "CNormalProcess.h"
+
+#include "_main/CProcessFactory.h"
+
 #include "CCommandLine.h"
 #include "CControlTray.h"
 #include "window/CEditWnd.h" // 2002/2/3 aroka
@@ -82,7 +85,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	/* 共有メモリを初期化する */
-	if ( !CProcess::InitializeProcess() ){
+	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
 		return false;
 	}
 
