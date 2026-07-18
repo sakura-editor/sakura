@@ -54,6 +54,12 @@ using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
+namespace testing {
+
+void RequestForeignWindowClose(HWND hWnd);
+
+} // namespace testing
+
 namespace window {
 
 struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, public window::UiaTestSuite {
@@ -103,6 +109,109 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 		TearDownUia();
 	}
 };
+
+TEST_F(TrayWndTest, OpenNewEditor101)
+{
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	SLoadInfo sLoadInfo{};
+	EXPECT_THAT(CControlTray::OpenNewEditor(nullptr, HWND(nullptr), sLoadInfo), IsFalse());
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+TEST_F(TrayWndTest, OpenNewEditor102)
+{
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	EditInfo fi{};
+	EXPECT_THAT(CControlTray::OpenNewEditor2(nullptr, HWND(nullptr), &fi, false), IsFalse());
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+TEST_F(TrayWndTest, DISABLED_OnCreate101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_CREATE, 0L, 0L), IsTrue());	// 戻り値は反転される
+}
+
+TEST_F(TrayWndTest, DISABLED_OnDestroy101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_DESTROY, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, DISABLED_OnClose101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_CLOSE, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, DISABLED_OnQueryEndSession101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_QUERYENDSESSION, 0L, 0L), IsTrue());
+}
+
+TEST_F(TrayWndTest, OnEndSession101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_ENDSESSION, FALSE, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnHelp101)
+{
+	HWND hWndTray = nullptr;
+	// FIXME: helpinfo構造体を渡さないと落ちる
+	// EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, 0L), IsFalse());
+
+	HELPINFO hi{};
+	hi.iContextType = HELPINFO_WINDOW;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
+}
+
+TEST_F(TrayWndTest, OnCommand101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_COMMAND, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnTimer101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_TIMER, 2 /* IDT_EDITCHECK */, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnMenuChar101)
+{
+	HWND hWndTray = nullptr;
+	pcTrayWnd->DispatchEvent(hWndTray, WM_MENUCHAR, 0L, 0L);
+}
+
+TEST_F(TrayWndTest, OnExitMenuLoop101)
+{
+	HWND hWndTray = nullptr;
+	pcTrayWnd->DispatchEvent(hWndTray, WM_EXITMENULOOP, 0L, 0L);
+}
+
+TEST_F(TrayWndTest, OnHotKey101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HOTKEY, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnTaskbarReCreated101)
+{
+	const UINT uMsgTaskbarCreated = ::RegisterWindowMessageW(L"TaskbarCreated");
+
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, uMsgTaskbarCreated, 0L, 0L), IsFalse());
+}
 
 TEST_F(TrayWndTest, OnGetTypeSetting001)
 {
@@ -255,6 +364,73 @@ TEST_F(TrayWndTest, OnChangeSetting001)
 	::wcscpy_s(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, L"");
 
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_CHANGESETTING, 0, int(PM_CHANGESETTING_ALL)), 0);
+}
+
+TEST_F(TrayWndTest, OnDeleteMe101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DELETE_ME, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, DISABLED_OnHtmlHelp101)	// 共有メモリ未設定の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_HTMLHELP, WPARAM(hWndTray), 0L), IsFalse());
+}
+
+/*!
+ * トレイダブルクリックのテスト
+ * トレイアイコンをダブルクリックすると新規エディターが開く
+ */
+TEST_F(TrayWndTest, OpenNewEditor103)
+{
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+
+	// 表示された編集ウィンドウを閉じるためのスレッドを起動する
+	std::jthread t1([this] {
+		// 編集ウィンドウハンドルを保存する
+		const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME, std::nullopt, 5000, false);
+
+		// 編集ウィンドウからプロセスIDを取得する
+		DWORD dwProcessId = 0;
+		::GetWindowThreadProcessId(hWndFound, &dwProcessId);
+
+		// プロセス情報の問い合せを行うためのハンドルを開く
+		HandleHolder ep{ ::OpenProcess(SYNCHRONIZE, FALSE, dwProcessId) };
+
+		// 編集ウインドウにクローズを要求する
+		testing::RequestForeignWindowClose(hWndFound);
+
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		::WaitForSingleObject(ep, 30000);
+	});
+
+	// ミューテックスの名前を組み立てる
+	SFilePath szMutexName{ GSTR_MUTEX_SAKURA_CP };
+
+	// ミューテックスを作成してロックする
+	HandleHolder hMutex{ ::CreateMutexW(nullptr, TRUE, szMutexName) };
+	EXPECT_THAT(hMutex, NotNull());
+
+	// コマンドラインオブジェクトを用意する
+	CCommandLine cCommandLine{};
+	cCommandLine.ParseCommandLine(L"-PROF=", false);
+
+	// トレイアイコンダブルクリックイベントを発生させる
+	HWND hWndTray = nullptr;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDBLCLK);
+}
+
+TEST_F(TrayWndTest, ShowDlgWinList101)
+{
+	// 表示されたウィンドウ一覧ダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(LS(F_WINDOW_LIST_SUBMENU), [this] (HWND hWndDlg) {
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DLGWINLIST, 0L, 0L), IsFalse());
 }
 
 struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
