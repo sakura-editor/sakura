@@ -1501,7 +1501,6 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	WCHAR		szMenu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	POINT		po;
 	RECT		rc;
-	EditInfo*	pfi;
 
 	//本当はセマフォにしないとだめ
 	if( m_bUseTrayMenu ) return -1;
@@ -1563,7 +1562,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd() ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
-				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
+				const auto pfi = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				// メニューラベル。1からアクセスキーを振る
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, int(std::size(szMenu)), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
