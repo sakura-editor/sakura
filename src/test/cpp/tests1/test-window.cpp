@@ -376,11 +376,15 @@ TEST_F(TrayWndTest, OnChangeSetting001)
 
 TEST_F(TrayWndTest, OnDeleteMe101)
 {
+	pcTrayWnd->m_bCreatedTrayIcon = true;
+
 	HWND hWndTray = nullptr;
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DELETE_ME, 0L, 0L), IsFalse());
+
+	pcTrayWnd->m_bCreatedTrayIcon = false;
 }
 
-TEST_F(TrayWndTest, DISABLED_OnHtmlHelp101)	// 共有メモリ未設定の考慮がないので呼べない
+TEST_F(TrayWndTest, OnHtmlHelp101)
 {
 	HWND hWndTray = nullptr;
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_HTMLHELP, WPARAM(hWndTray), 0L), IsFalse());

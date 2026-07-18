@@ -460,7 +460,7 @@ LRESULT CControlTray::DispatchEvent(
 	case MYWM_HTMLHELP:
 		{
 			auto &sWorkBuffer = m_pShareData->m_sWorkBuffer;
-			WCHAR* pWork = sWorkBuffer.GetWorkBuffer<WCHAR>();
+			const auto pWork = sWorkBuffer.GetWorkBuffer<WCHAR>();
 
 			// pszHelpFile取得
 			const WCHAR* pszHelpFile = pWork;
@@ -468,6 +468,8 @@ LRESULT CControlTray::DispatchEvent(
 
 			// pszKeywords取得
 			const WCHAR* pszKeywords = &pWork[cchHelpFile + 1];
+
+			if (!*pszHelpFile) return 0L;
 
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
