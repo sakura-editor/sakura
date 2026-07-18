@@ -56,15 +56,38 @@ void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& o
 
 namespace window {
 
-struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, public window::UiaTestSuite {
 	using CControlTrayHolder = std::unique_ptr<CControlTray>;
+
+	static inline CControlTrayHolder pcTrayWnd = nullptr;
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpShareData();
+
+		// トレイウィンドウをインスタンス化する
+		pcTrayWnd = std::make_unique<CControlTray>();
+
+		pcTrayWnd->m_hIcons.Create(G_AppInstance());
+
+		pcTrayWnd->m_cMenuDrawer.Create(
+			CSelectLang::getLangRsrcInstance(),
+			pcTrayWnd->GetTrayHwnd(),
+			&pcTrayWnd->m_hIcons
+		);
+
+		//プロパティ管理
+		pcTrayWnd->m_pcPropertyManager = new CPropertyManager();
+		pcTrayWnd->m_pcPropertyManager->Create(
+			pcTrayWnd->GetTrayHwnd(),
+			&pcTrayWnd->m_hIcons,
+			&pcTrayWnd->m_cMenuDrawer
+		);
 	}
 
 	/*!
@@ -72,25 +95,12 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite {
 	 */
 	static void TearDownTestSuite()
 	{
-		TearDownShareData();
-	}
-
-	CControlTrayHolder pcTrayWnd = nullptr;
-
-	/*!
-	 * テストが起動される直前に毎回呼ばれる関数
-	 */
-	void SetUp() override {
-		// テストクラスをインスタンス化する
-		pcTrayWnd = std::make_unique<CControlTray>();
-	}
-
-	/*!
-	 * テストが実行された直後に毎回呼ばれる関数
-	 */
-	void TearDown() override {
-		// テストクラスのインスタンスを破棄する
+		// トレイウィンドウのインスタンスを破棄する
 		pcTrayWnd = nullptr;
+
+		TearDownShareData();
+
+		TearDownUia();
 	}
 };
 
