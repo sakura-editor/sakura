@@ -384,7 +384,6 @@ LRESULT CControlTray::DispatchEvent(
 
 	int				nId;
 	HWND			hwndWork;
-	LPHELPINFO		lphi;
 
 	int			nRowNum;
 	EditNode*	pEditNodeArr;
@@ -564,13 +563,8 @@ LRESULT CControlTray::DispatchEvent(
 
 //	case WM_QUERYENDSESSION:
 	case WM_HELP:
-		lphi = (LPHELPINFO) lParam;
-		switch( lphi->iContextType ){
-		case HELPINFO_MENUITEM:
+		if (const auto lphi = (LPHELPINFO) lParam; lphi && HELPINFO_MENUITEM == lphi->iContextType) {
 			MyWinHelp( hwnd, HELP_CONTEXT, FuncID_To_HelpContextID( (EFunctionCode)lphi->iCtrlId ) );
-			break;
-		default:
-			break;
 		}
 		return TRUE;
 	case WM_COMMAND:

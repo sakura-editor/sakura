@@ -176,8 +176,7 @@ TEST_F(TrayWndTest, OnEndSession101)
 TEST_F(TrayWndTest, OnHelp101)
 {
 	HWND hWndTray = nullptr;
-	// FIXME: helpinfo構造体を渡さないと落ちる
-	// EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, 0L), IsFalse());
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, 0L), IsTrue());
 
 	HELPINFO hi{};
 	hi.iContextType = HELPINFO_WINDOW;
