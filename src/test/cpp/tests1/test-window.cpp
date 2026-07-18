@@ -108,6 +108,15 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 
 		TearDownUia();
 	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		// キューに溜まったメッセージは全部捨てる
+		MSG msg{};
+		while (::PeekMessageW(&msg, nullptr, 0L, 0L, PM_REMOVE)) ;
+	}
 };
 
 TEST_F(TrayWndTest, OpenNewEditor101)
@@ -379,6 +388,126 @@ TEST_F(TrayWndTest, DISABLED_OnHtmlHelp101)	// 共有メモリ未設定の考慮
 }
 
 /*!
+ * トレイ左クリックメニューの表示テスト
+ * 左クリックメニューからGrepダイアログを表示して実行する
+ */
+TEST_F(TrayWndTest, DoGrep001)
+{
+	// 検索条件
+	CSearchKeywordManager().AddToSearchKeyArr(LR"(localhost)");
+
+	// 検索フォルダー
+	CSearchKeywordManager().AddToGrepFolderArr(LR"(C:\WINDOWS\System32\Drivers)");
+
+	// 検索ファイル
+	CSearchKeywordManager().AddToGrepFileArr(LR"(*.*)");
+
+	// 除外フォルダー
+	CSearchKeywordManager().AddToExcludeFolderArr(LR"(en-US;DriverData;UMDF;udc;mde;wd;)");
+
+	// 除外ファイル
+	CSearchKeywordManager().AddToExcludeFileArr(LR"(*.sys;*.dll;*.exe;*.mui;*.nls;*.chm;*.dat;*.tmp;*.wdf)");
+
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示されたGrepダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(L"Grep", [this](HWND hWndDlg) {
+		// 検索ボタンを押下してGrep実行する
+		EmulateInvokeButton(hWndDlg, L"検索(F)");
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"Grep(G)...");
+	});
+
+	// トレイアイコン左クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// Grepダイアログが閉じられるのを待つ
+	t1.join();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sSearchKeywords.m_aSearchKeys.clear();
+	GetDllShareData().m_sSearchKeywords.m_aGrepFolders.clear();
+	GetDllShareData().m_sSearchKeywords.m_aGrepFiles.clear();
+	GetDllShareData().m_sSearchKeywords.m_aExcludeFolders.clear();
+	GetDllShareData().m_sSearchKeywords.m_aExcludeFiles.clear();
+
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+/*!
+ * トレイ左クリックメニューの表示テスト
+ * 左クリックメニューから開くダイアログを表示する
+ */
+TEST_F(TrayWndTest, OpenFile001)
+{
+	const auto path = GetIniFileName().replace_filename(L"dummy.txt");
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	{
+		std::wofstream fos(path);
+		fos << L"ダミーファイルです" << std::endl;
+	}
+
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
+	std::jthread t1([this, path] {
+		EmulateEnterOpenFileName(path);
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"開く(O)...");
+	});
+
+	// トレイアイコン左クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// ファイルダイアログが閉じられるのを待つ
+	t1.join();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+
+	std::filesystem::remove(path, ec);
+}
+
+/*!
  * トレイダブルクリックのテスト
  * トレイアイコンをダブルクリックすると新規エディターが開く
  */
@@ -419,6 +548,81 @@ TEST_F(TrayWndTest, OpenNewEditor103)
 	// トレイアイコンダブルクリックイベントを発生させる
 	HWND hWndTray = nullptr;
 	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDBLCLK);
+}
+
+/*!
+ * トレイ右クリックメニューの表示テスト
+ * 右クリックメニューからバージョン情報ダイアログを表示する
+ */
+TEST_F(TrayWndTest, ShowDlgAbout001)
+{
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示されたバージョン情報ダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(LS(F_ABOUT), [this] (HWND hWndDlg) {
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"バージョン情報(A)");
+	});
+
+	// トレイアイコン右クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_RBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_RBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// バージョン情報ダイアログが閉じられるのを待つ
+	t1.join();
+}
+
+/*!
+ * トレイ左クリックメニューの表示テスト
+ * 左クリックメニューから履歴とお気に入りの管理ダイアログを表示しする
+ */
+TEST_F(TrayWndTest, ShowDlgFavorite001)
+{
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示された履歴とお気に入りの管理ダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(L"履歴とお気に入りの管理", [this](HWND hWndDlg) {
+		EmulateInvokeButton(hWndDlg, L"閉じる(C)");
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"履歴の管理(M)...");
+	});
+
+	// トレイアイコン左クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// 履歴とお気に入りの管理ダイアログが閉じられるのを待つ
+	t1.join();
 }
 
 TEST_F(TrayWndTest, ShowDlgWinList101)
