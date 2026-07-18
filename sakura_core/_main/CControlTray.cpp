@@ -1438,24 +1438,23 @@ void CControlTray::TerminateApplication(
 	HWND hWndFrom	//!< [in] 呼び出し元のウィンドウハンドル
 )
 {
-	DLLSHAREDATA* pShareData = &GetDllShareData();	/* 共有データ構造体のアドレスを返す */
+	const auto pShareData = &GetDllShareData();	/* 共有データ構造体のアドレスを返す */
 
 	/* 現在の編集ウィンドウの数を調べる */
-	if( pShareData->m_Common.m_sGeneral.m_bExitConfirm ){	//終了時の確認
-		if( 0 < CAppNodeGroupHandle(0).GetEditorWindowsNum() ){
-			if( IDYES != ::MYMESSAGEBOX(
+	if (pShareData->m_Common.m_sGeneral.m_bExitConfirm &&	//終了時の確認
+		0 < CAppNodeGroupHandle(0).GetEditorWindowsNum() &&
+		IDYES != ::MessageBoxF(
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
 				GSTR_APPNAME,
 				LS(STR_TRAY_EXITALL)
 			) ){
 				return;
-			}
-		}
 	}
+
 	/* 「すべてのウィンドウを閉じる」要求 */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-	BOOL bCheckConfirm = (pShareData->m_Common.m_sGeneral.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
-	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
+	if (const auto bCheckConfirm = pShareData->m_Common.m_sGeneral.m_bExitConfirm;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
+		CloseAllEditor(bCheckConfirm, hWndFrom, TRUE, 0)) {	// 2006.12.25, 2007.02.13 ryoji 引数追加
 		::PostMessageAny( pShareData->m_sHandles.m_hwndTray, WM_CLOSE, 0, 0 );
 	}
 	return;
