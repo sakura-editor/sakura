@@ -16,8 +16,8 @@ class CDocLine;
 class CDocLineMgr;
 
 //! Modified管理
-class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx{
-	friend class TSingleton<CModifyManager>;
+class CModifyManager : public TSakuraSingleton<CModifyManager>, public CDocListenerEx{
+	friend class TSakuraSingleton<CModifyManager>;
 	CModifyManager(){}
 
 public:

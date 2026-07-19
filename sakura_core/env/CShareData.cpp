@@ -32,6 +32,7 @@
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
+#include "plugin/CJackManager.h"
 #include "_main/CControlProcess.h"
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"
@@ -75,6 +76,7 @@ CShareData::CShareData() = default;
 */
 CShareData::~CShareData()
 {
+	CJackManager::resetInstance();
 	CFileNameManager::resetInstance();
 
 	if( m_pShareData ){
