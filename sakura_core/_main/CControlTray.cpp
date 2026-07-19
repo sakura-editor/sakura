@@ -96,16 +96,16 @@ void CControlTray::DoGrep()
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		wcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+		m_cDlgGrep.m_szFile = m_pShareData->m_sSearchKeywords.m_aGrepFiles[0];		/* 検索ファイル */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
+		m_cDlgGrep.m_szFolder = m_pShareData->m_sSearchKeywords.m_aGrepFolders[0];	/* 検索フォルダー */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-		wcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
+		m_cDlgGrep.m_szExcludeFile = m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0];	/* 除外ファイル */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダー */
+		m_cDlgGrep.m_szExcludeFolder = m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0];	/* 除外フォルダー */
 	}
 
 	/* Grepダイアログの表示 */

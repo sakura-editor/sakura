@@ -396,6 +396,21 @@ TEST_F(TrayWndTest, OnHtmlHelp101)
  */
 TEST_F(TrayWndTest, DoGrep001)
 {
+	// 検索条件
+	CSearchKeywordManager().AddToSearchKeyArr(LR"(localhost)");
+
+	// 検索フォルダー
+	CSearchKeywordManager().AddToGrepFolderArr(LR"(C:\WINDOWS\System32\Drivers)");
+
+	// 検索ファイル
+	CSearchKeywordManager().AddToGrepFileArr(LR"(*.*)");
+
+	// 除外フォルダー
+	CSearchKeywordManager().AddToExcludeFolderArr(LR"(en-US;DriverData;UMDF;udc;mde;wd;)");
+
+	// 除外ファイル
+	CSearchKeywordManager().AddToExcludeFileArr(LR"(*.sys;*.dll;*.exe;*.mui;*.nls;*.chm;*.dat;*.tmp;*.wdf)");
+
 	// 開いているファイルの数を上限値に設定する
 	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
 
@@ -431,6 +446,12 @@ TEST_F(TrayWndTest, DoGrep001)
 	t1.join();
 
 	// 設定を元に戻す
+	GetDllShareData().m_sSearchKeywords.m_aSearchKeys.clear();
+	GetDllShareData().m_sSearchKeywords.m_aGrepFolders.clear();
+	GetDllShareData().m_sSearchKeywords.m_aGrepFiles.clear();
+	GetDllShareData().m_sSearchKeywords.m_aExcludeFolders.clear();
+	GetDllShareData().m_sSearchKeywords.m_aExcludeFiles.clear();
+
 	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
 }
 
@@ -572,7 +593,7 @@ TEST_F(TrayWndTest, ShowDlgAbout001)
 
 /*!
  * トレイ左クリックメニューの表示テスト
- * 左クリックメニューから履歴とお気に入りの管理ダイアログを表示する
+ * 左クリックメニューから履歴とお気に入りの管理ダイアログを表示しする
  */
 TEST_F(TrayWndTest, ShowDlgFavorite001)
 {
