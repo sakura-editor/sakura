@@ -593,7 +593,7 @@ TEST_F(TrayWndTest, ShowDlgAbout001)
 
 /*!
  * トレイ左クリックメニューの表示テスト
- * 左クリックメニューから履歴とお気に入りの管理ダイアログを表示しする
+ * 左クリックメニューから履歴とお気に入りの管理ダイアログを表示する
  */
 TEST_F(TrayWndTest, ShowDlgFavorite001)
 {
