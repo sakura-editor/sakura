@@ -116,6 +116,33 @@ struct UiaTestSuite
 		EXPECT_THAT(SendInput(inputs), Eq(std::size(inputs)));
 	}
 
+	void EmulateSelectPopupMenu(const _bstr_t& name) const
+	{
+		const auto hPopupMenu = WaitForWindow(MAKEINTRESOURCEW(32768), std::nullopt, 60000, false);
+		EXPECT_THAT(hPopupMenu, NotNull());
+
+		auto condMenuItem = CreatePropertyCondition(
+			UIA_ControlTypePropertyId,
+			UIA_MenuItemControlTypeId
+		);
+		auto condName = CreatePropertyCondition(
+			UIA_NamePropertyId,
+			name
+		);
+		auto cond = CreateAndCondition(condMenuItem, condName);
+
+		auto item = FindFirst(hPopupMenu, TreeScope_Subtree, cond);
+		EXPECT_THAT(item, NotNull());
+
+		cxx::com_pointer<IUIAutomationInvokePattern> invoke;
+		EXPECT_HRESULT_SUCCEEDED(item->GetCurrentPatternAs(
+			UIA_InvokePatternId,
+			IID_PPV_ARGS(&invoke)
+		));
+
+		EXPECT_HRESULT_SUCCEEDED(invoke->Invoke());
+	}
+
 	IUIAutomationElementPtr FindFirst(
 		_In_ HWND hWndDlg,
 		TreeScope scope,

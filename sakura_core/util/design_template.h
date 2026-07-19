@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,7 +16,10 @@
 #pragma once
 
 #include <algorithm>
+#include <concepts>
+#include <memory>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 #include "debug/Debug2.h"
@@ -47,6 +50,63 @@ public:
 protected:
 	TSingleton(){}
 	DISALLOW_COPY_AND_ASSIGN(TSingleton);
+};
+
+/*!
+ * @brief サクラエディタの変則Singletonパターン。
+ *
+ * TSingletonを元に作成。
+ * 生成したインスタンスをリセットできるようにしてある。
+ */
+template <class T>
+class TSakuraSingleton {
+private:
+	using Me = TSakuraSingleton<T>;
+
+	//! 生成済みインスタンス
+	static inline std::unique_ptr<T> gm_Instance = nullptr;
+
+public:
+	/*!
+	 * @brief インスタンスポインタを取得する
+	 *
+	 * @returns インスタンスポインタ
+	 * @note インスタンスが未生成の場合は生成する
+	 */
+	[[nodiscard]]
+	static T* getInstance()
+	{
+		static_assert(
+			std::default_initializable<T> && !std::is_array_v<T>,
+			"T must be publicly default-initializable and must not be an array"
+		);
+
+		if (!gm_Instance) {
+			gm_Instance = std::make_unique<T>();
+		}
+
+		return gm_Instance.get();
+	}
+
+	/*!
+	 * @brief インスタンスを破棄する
+	 *
+	 * @note 取得したポインタを破棄後に使用しないこと
+	 */
+	static void resetInstance()
+	{
+		gm_Instance.reset();
+	}
+
+protected:
+	TSakuraSingleton() = default;
+
+public:
+	TSakuraSingleton(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+
+	TSakuraSingleton(Me&&) = delete;
+	Me& operator = (Me&&) = delete;
 };
 
 /*!
