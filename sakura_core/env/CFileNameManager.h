@@ -26,7 +26,6 @@ class CFileNameManager : public TSingleton<CFileNameManager>{
 	friend class TSingleton<CFileNameManager>;
 	CFileNameManager()
 	{
-		m_pShareData = &GetDllShareData();
 		m_nTransformFileNameCount = -1;
 	}
 
@@ -60,8 +59,6 @@ public:
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
 private:
-	DLLSHAREDATA* m_pShareData;
-
 	// ファイル名簡易表示用キャッシュ
 	int		m_nTransformFileNameCount; // 有効数
 	WCHAR	m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
