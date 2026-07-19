@@ -128,6 +128,7 @@ private:
 	bool	OnAddTypeSetting(size_t index);
 	bool	OnDelTypeSetting(size_t index);
 
+public:	// テストできないのでアクセス権変更
 	/*
 	|| メンバ変数
 	*/

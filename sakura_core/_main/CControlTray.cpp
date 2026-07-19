@@ -96,21 +96,21 @@ void CControlTray::DoGrep()
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		wcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+		m_cDlgGrep.m_szFile = m_pShareData->m_sSearchKeywords.m_aGrepFiles[0];		/* 検索ファイル */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
+		m_cDlgGrep.m_szFolder = m_pShareData->m_sSearchKeywords.m_aGrepFolders[0];	/* 検索フォルダー */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-		wcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
+		m_cDlgGrep.m_szExcludeFile = m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0];	/* 除外ファイル */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダー */
+		m_cDlgGrep.m_szExcludeFolder = m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0];	/* 除外フォルダー */
 	}
 
 	/* Grepダイアログの表示 */
-	int nRet = m_cDlgGrep.DoModal( m_hInstance, nullptr, L"" );
-	if( !nRet || GetTrayHwnd() == nullptr ){
+	if (const auto nRet = m_cDlgGrep.DoModal(m_hInstance, nullptr, L"");
+		!nRet || GetTrayHwnd() == nullptr ){
 		return;
 	}
 	m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
@@ -384,7 +384,6 @@ LRESULT CControlTray::DispatchEvent(
 
 	int				nId;
 	HWND			hwndWork;
-	LPHELPINFO		lphi;
 
 	int			nRowNum;
 	EditNode*	pEditNodeArr;
@@ -461,7 +460,7 @@ LRESULT CControlTray::DispatchEvent(
 	case MYWM_HTMLHELP:
 		{
 			auto &sWorkBuffer = m_pShareData->m_sWorkBuffer;
-			WCHAR* pWork = sWorkBuffer.GetWorkBuffer<WCHAR>();
+			const auto pWork = sWorkBuffer.GetWorkBuffer<WCHAR>();
 
 			// pszHelpFile取得
 			const WCHAR* pszHelpFile = pWork;
@@ -469,6 +468,8 @@ LRESULT CControlTray::DispatchEvent(
 
 			// pszKeywords取得
 			const WCHAR* pszKeywords = &pWork[cchHelpFile + 1];
+
+			if (!*pszHelpFile) return 0L;
 
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
@@ -564,13 +565,8 @@ LRESULT CControlTray::DispatchEvent(
 
 //	case WM_QUERYENDSESSION:
 	case WM_HELP:
-		lphi = (LPHELPINFO) lParam;
-		switch( lphi->iContextType ){
-		case HELPINFO_MENUITEM:
+		if (const auto lphi = (LPHELPINFO) lParam; lphi && HELPINFO_MENUITEM == lphi->iContextType) {
 			MyWinHelp( hwnd, HELP_CONTEXT, FuncID_To_HelpContextID( (EFunctionCode)lphi->iCtrlId ) );
-			break;
-		default:
-			break;
 		}
 		return TRUE;
 	case WM_COMMAND:
@@ -1442,24 +1438,23 @@ void CControlTray::TerminateApplication(
 	HWND hWndFrom	//!< [in] 呼び出し元のウィンドウハンドル
 )
 {
-	DLLSHAREDATA* pShareData = &GetDllShareData();	/* 共有データ構造体のアドレスを返す */
+	const auto pShareData = &GetDllShareData();	/* 共有データ構造体のアドレスを返す */
 
 	/* 現在の編集ウィンドウの数を調べる */
-	if( pShareData->m_Common.m_sGeneral.m_bExitConfirm ){	//終了時の確認
-		if( 0 < CAppNodeGroupHandle(0).GetEditorWindowsNum() ){
-			if( IDYES != ::MYMESSAGEBOX(
+	if (pShareData->m_Common.m_sGeneral.m_bExitConfirm &&	//終了時の確認
+		0 < CAppNodeGroupHandle(0).GetEditorWindowsNum() &&
+		IDYES != ::MessageBoxF(
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
 				GSTR_APPNAME,
 				LS(STR_TRAY_EXITALL)
 			) ){
 				return;
-			}
-		}
 	}
+
 	/* 「すべてのウィンドウを閉じる」要求 */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-	BOOL bCheckConfirm = (pShareData->m_Common.m_sGeneral.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
-	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
+	if (const auto bCheckConfirm = pShareData->m_Common.m_sGeneral.m_bExitConfirm;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
+		CloseAllEditor(bCheckConfirm, hWndFrom, TRUE, 0)) {	// 2006.12.25, 2007.02.13 ryoji 引数追加
 		::PostMessageAny( pShareData->m_sHandles.m_hwndTray, WM_CLOSE, 0, 0 );
 	}
 	return;
@@ -1506,7 +1501,6 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	WCHAR		szMenu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	POINT		po;
 	RECT		rc;
-	EditInfo*	pfi;
 
 	//本当はセマフォにしないとだめ
 	if( m_bUseTrayMenu ) return -1;
@@ -1568,7 +1562,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd() ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
-				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
+				const auto pfi = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				// メニューラベル。1からアクセスキーを振る
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, int(std::size(szMenu)), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
