@@ -78,12 +78,10 @@ public:
 	{
 	}
 
-public:
 	bool ImportAscertain( HINSTANCE, HWND, const std::wstring&, std::wstring& ) override;
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
@@ -115,11 +113,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.col"; }
 	const wchar_t* GetOriginExtension() override	{ return L"col"; }
@@ -140,11 +136,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.rkw"; }
 	const wchar_t* GetOriginExtension() override	{ return L"rkw"; }
@@ -165,11 +159,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.txt"; }
 	const wchar_t* GetOriginExtension() override	{ return L"txt"; }
@@ -190,11 +182,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.key"; }
 	const wchar_t* GetOriginExtension() override	{ return L"key"; }
@@ -215,11 +205,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.mnu"; }
 	const wchar_t* GetOriginExtension() override	{ return L"mnu"; }
@@ -242,11 +230,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.kwd"; }
 	const wchar_t* GetOriginExtension() override	{ return L"kwd"; }
@@ -269,11 +255,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
@@ -294,12 +278,10 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 	static void IO_FileTreeIni( CDataProfile&, std::vector<SFileTreeItem>& );
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
@@ -307,4 +289,5 @@ public:
 private:
 	std::vector<SFileTreeItem>&		m_aFileTreeItems;
 };
+
 #endif /* SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_ */

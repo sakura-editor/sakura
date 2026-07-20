@@ -15,7 +15,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -63,7 +63,7 @@ class CEditDoc
 public:
 	//コンストラクタ・デストラクタ
 	CEditDoc(CEditApp* pcApp);
-	~CEditDoc();
+	~CEditDoc() override;
 
 	//初期化
 	BOOL Create( void );
@@ -105,7 +105,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
 	//参照
 
 	//データ構造
@@ -113,7 +112,6 @@ public:
 	CLayoutMgr		m_cLayoutMgr;
 
 	//各種機能
-public:
 	CDocFile			m_cDocFile;
 	CDocFileOperation	m_cDocFileOperation;
 	CDocEditor			m_cDocEditor;
@@ -121,7 +119,6 @@ public:
 	CCookieManager		m_cCookie;
 
 	//ヘルパ
-public:
 	CBackupAgent		m_cBackupAgent;
 	CAutoSaveAgent		m_cAutoSaveAgent;		//!< 自動保存管理
 	CAutoReloadAgent	m_cAutoReloadAgent;
@@ -129,15 +126,12 @@ public:
 	CDocLocker			m_cDocLocker;
 
 	//動的状態
-public:
 	int				m_nCommandExecNum = 0;			//!< コマンド実行回数
 
 	//環境情報
-public:
 	CFuncLookup		m_cFuncLookup;				//!< 機能名，機能番号などのresolve
 
 	//未整理変数
-public:
 	int				m_nTextWrapMethodCur;		// 折り返し方法					// 2008.05.30 nasukoji
 	bool			m_bTextWrapMethodCurTemp = false;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
 	LOGFONT			m_lfCur;					// 一時設定フォント

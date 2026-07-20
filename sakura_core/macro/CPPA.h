@@ -65,10 +65,9 @@ public:
 
 	static std::string GetDeclarations(const MacroFuncInfo& cMacroFuncInfo);
 
-protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
-public:
 	LPCWSTR GetDllNameImp(int nIndex) override;
+
 protected:
 	bool InitDllImp() override;
 
