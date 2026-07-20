@@ -10,7 +10,7 @@
 	Copyright (C) 2001, YAZAKI
 	Copyright (C) 2002, YAZAKI, aroka, genta, Moca
 	Copyright (C) 2003, Moca, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -58,7 +58,6 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 
 	PpaExecInfo info;
 	info.m_pcEditView = pcEditView;
-	info.m_pShareData = &GetDllShareData();
 	info.m_bError = false;			//	2003.06.01 Moca
 	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
 	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
