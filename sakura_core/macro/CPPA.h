@@ -174,10 +174,10 @@ public:
 		{ m_fnAddStrVar(lpszDef, lpszVal, nCnst); }
 #endif
 
-	template <class T> void SetIntFunc(T proc) const { m_fnSetIntFunc(proc); }
-	template <class T> void SetStrFunc(T proc) const { m_fnSetStrFunc(proc); }
-	template <class T> void SetProc(T proc) const { m_fnSetProc(proc); }
-	template <class T> void SetErrProc(T proc) const { m_fnSetErrProc(proc); }
+	template <class T> void SetIntFunc(T proc) const { m_fnSetIntFunc((void*)proc); }
+	template <class T> void SetStrFunc(T proc) const { m_fnSetStrFunc((void*)proc); }
+	template <class T> void SetProc(T proc) const { m_fnSetProc((void*)proc); }
+	template <class T> void SetErrProc(T proc) const { m_fnSetErrProc((void*)proc); }
 
 #if 0
 	void Abort()
@@ -194,7 +194,7 @@ public:
 		{ return m_fnGetArgBStr(index); }
 #endif
 
-	template <class T> void SetStrObj(T proc) const { m_fnSetStrObj(proc); }
+	template <class T> void SetStrObj(T proc) const { m_fnSetStrObj((void*)proc); }
 
 #if 0
 	void SetIntObj(void* proc)
@@ -241,7 +241,7 @@ public:
 		{ return (BOOL)m_fnIsRunning(); }
 #endif
 
-	template <class T> void SetFinishProc(T proc) const { m_fnSetFinishProc(proc); }
+	template <class T> void SetFinishProc(T proc) const { m_fnSetFinishProc((void*)proc); }
 #endif
 
 private:
