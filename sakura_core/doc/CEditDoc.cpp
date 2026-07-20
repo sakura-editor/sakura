@@ -585,7 +585,7 @@ bool CEditDoc::IsAcceptLoad() const
 	@date 2006.05.19 genta 上位16bitに送信元の識別子が入るように変更
 	@date 2007.06.20 ryoji グループ内で巡回するように変更
 */
-BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
+BOOL CEditDoc::HandleCommand(EFunctionCode nCommand) const
 {
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
 	//	下位16ビットのみを取り出す
@@ -1002,7 +1002,7 @@ void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 
 /*! (無題)の時のカレントディレクトリを設定する
 */
-void CEditDoc::SetCurDirNotitle()
+void CEditDoc::SetCurDirNotitle() const
 {
 	if( m_cDocFile.GetFilePathClass().IsValidPath() ){
 		return; // ファイルがあるときは何もしない

@@ -30,26 +30,28 @@ public:
 	// ファイル名の初期値を設定
 	void SetBaseName(const std::wstring& sBase);
 	// フルパス名を取得
-	inline std::wstring GetFullPath()
+	inline std::wstring GetFullPath() const
 	{
-		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + m_sOriginName };
+		return MakeFullPath(m_sOriginName);
 	}
 	// フルパス名を取得
-	inline std::wstring MakeFullPath( std::wstring sFileName )
+	inline std::wstring MakeFullPath(std::wstring_view sFileName) const
 	{
-		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + sFileName };
+		return (std::filesystem::path{ GetDllShareData().m_sHistory.m_szIMPORTFOLDER } / sFileName).native();
 	}
 	// ファイル名を取得
-	inline std::wstring GetFileName()	{ return m_sOriginName; }
+	inline std::wstring GetFileName() const { return m_sOriginName; }
 
 protected:
 	// Import Folderの設定
-	inline void SetImportFolder( const WCHAR* szPath ) 
+	inline void SetImportFolder(std::wstring_view importPath) const
 	{
 		/* ファイルのフルパスをフォルダーとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, nullptr );
-		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );
+		const auto szPath = std::data(importPath);
+		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, nullptr);
+
+		wcscat_s(GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\");
 	}
 
 	// デフォルト拡張子の取得(「*.txt」形式)
@@ -85,7 +87,8 @@ public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
-	bool IsAddType(){ return m_bAddType; }
+
+	bool	IsAddType() const noexcept { return m_bAddType; }
 
 private:
 	// インターフェース用
@@ -94,9 +97,9 @@ private:
 	HWND			m_hwndList;
 
 	// 内部使用
-	int				m_nColorType;
+	int				m_nColorType = -1;
 	std::wstring 	m_sColorFile;
-	bool			m_bAddType;
+	bool			m_bAddType = false;
 	CDataProfile	m_cProfile;
 };
 

@@ -90,7 +90,7 @@ private:
 	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ) const;  /* ツールバーIndexの取得 */// 20050809 aroka
 	int Find( int nFuncID );
 	const WCHAR* GetLabel( int nFuncID );
-	WCHAR GetAccelCharFromLabel( const WCHAR* pszLabel );
+	WCHAR	GetAccelCharFromLabel(std::wstring_view label) const;
 	int ToolbarNoToIndex( int nToolbarNo ) const;
 
 	HINSTANCE		m_hInstance = nullptr;

@@ -44,8 +44,12 @@ CPPA::~CPPA()
 {
 }
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-bool CPPA::Execute(CEditView* pcEditView, int flags )
+/*!
+ * @brief PPA.DLLを実行する
+ *
+ * @date 2007/07/22 genta flags追加
+ */
+bool CPPA::Execute(CEditView* pcEditView, int flags) const
 {
 	//PPAの多重起動禁止 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {

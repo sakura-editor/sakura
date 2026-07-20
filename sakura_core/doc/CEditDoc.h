@@ -87,7 +87,7 @@ public:
 	bool IsAcceptLoad() const;				//!< このウィンドウで(新しいウィンドウを開かずに)新しいファイルを開けるか
 
 	//イベント
-	BOOL HandleCommand(EFunctionCode nCommand);
+	BOOL	HandleCommand(EFunctionCode nCommand) const;
 	void OnChangeType();
 	void OnChangeSetting(bool bDoLayout = true,
 						 bool bBlockingHook = true,
@@ -98,7 +98,7 @@ public:
 
 	void SetBackgroundImage();
 
-	void SetCurDirNotitle();
+	void	SetCurDirNotitle() const;
 
 	HRESULT	GetDataObject(LPDATAOBJECT *ppDataObj) const;
 

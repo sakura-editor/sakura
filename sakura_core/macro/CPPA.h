@@ -32,6 +32,8 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタープ�
 
 #define PPADLL_VER 123
 
+class CEditView;
+
 /*
 PPA(Poor-Pascal for Application)はDelphi/C++Builder用の
 Pascalインタープリタコンポーネントです。
@@ -159,29 +161,20 @@ private:
 #endif
 
 public:
-	// exported
-	//	2007.07.22 genta : flags追加
-	bool Execute(class CEditView* pcEditView, int flags );
-	void SetSource(const char* ss)
-		{ m_fnSetSource(ss); }
-	void SetDeclare(const char* ss)
-		{ m_fnSetDeclare(ss); }
-	void SetDefProc(const char* ss)
-		{ m_fnSetDefProc(ss); }
-	void SetDefine(const char* ss)
-		{ m_fnSetDefine(ss); }
+	bool	Execute(CEditView* pcEditView, int flags) const;
+
+	void SetSource(const char* ss) const { m_fnSetSource(ss); }
+	void SetDeclare(const char* ss) const { m_fnSetDeclare(ss); }
+	void SetDefProc(const char* ss) const { m_fnSetDefProc(ss); }
+	void SetDefine(const char* ss) const { m_fnSetDefine(ss); }
 	void AddIntVar(const char* lpszDef, int nVal, int nCnst)
 		{ m_fnAddIntVar(lpszDef, nVal, nCnst); }
 	void AddStrVar(const char* lpszDef, const char* lpszVal, int nCnst)
 		{ m_fnAddStrVar(lpszDef, lpszVal, nCnst); }
-	void SetIntFunc(void* proc)
-		{ m_fnSetIntFunc(proc); }
-	void SetStrFunc(void* proc)
-		{ m_fnSetStrFunc(proc); }
-	void SetProc(void* proc)
-		{ m_fnSetProc(proc); }
-	void SetErrProc(void* proc)
-		{ m_fnSetErrProc(proc); }
+	void SetIntFunc(void* proc) const { m_fnSetIntFunc(proc); }
+	void SetStrFunc(void* proc) const { m_fnSetStrFunc(proc); }
+	void SetProc(void* proc) const { m_fnSetProc(proc); }
+	void SetErrProc(void* proc) const { m_fnSetErrProc(proc); }
 	void Abort()
 		{ m_fnAbort(); }
 //	int  GetVersion()
@@ -194,14 +187,12 @@ public:
 		{ return m_fnGetArgStr(index); }
 	char* GetArgBStr(int index)
 		{ return m_fnGetArgBStr(index); }
-	void SetStrObj(void* proc)
-		{ m_fnSetStrObj(proc); }
+	void SetStrObj(void* proc) const { m_fnSetStrObj(proc); }
 	void SetIntObj(void* proc)
 		{ m_fnSetIntObj(proc); }
 	void AddIntObj(const char* ss, int def, BOOL read, int index)
 		{ m_fnAddIntObj(ss, def, read, index); }
-	void AddStrObj(const char* ss, const char* def, BOOL read, int index)
-		{ m_fnAddStrObj(ss, def, read, index); }
+	void AddStrObj(const char* ss, const char* def, BOOL read, int index) const { m_fnAddStrObj(ss, def, read, index); }
 	int  GetIntVar(const char* ss)
 		{ return m_fnGetIntVar(ss); }
 	char* GetStrVar(const char* ss)
@@ -233,8 +224,7 @@ public:
 #if PPADLL_VER >= 123
 	BOOL IsRunning()
 		{ return (BOOL)m_fnIsRunning(); }
-	void SetFinishProc(void* proc)	//	2003.06.01 Moca
-		{ m_fnSetFinishProc(proc); }
+	void SetFinishProc(void* proc) const { m_fnSetFinishProc(proc); }
 #endif
 
 private:

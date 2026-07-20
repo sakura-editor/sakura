@@ -1028,11 +1028,12 @@ const WCHAR* CMenuDrawer::GetLabel( int nFuncID )
 	return m_menuItems[i].m_cmemLabel.GetStringPtr();
 }
 
-WCHAR CMenuDrawer::GetAccelCharFromLabel( const WCHAR* pszLabel )
+WCHAR CMenuDrawer::GetAccelCharFromLabel(std::wstring_view label) const
 {
-	int i;
-	int nLen = (int)wcslen( pszLabel );
-	for( i = 0; i + 1 < nLen; ++i ){
+	//TODO: ロジックを書き直すbool
+	const auto pszLabel = std::data(label);
+	const auto nLen = (int)std::size(label);
+	for (int i = 0; i + 1 < nLen; ++i ){
 		if( L'&' == pszLabel[i] ){
 			if( L'&' == pszLabel[i + 1]  ){
 				i++;
