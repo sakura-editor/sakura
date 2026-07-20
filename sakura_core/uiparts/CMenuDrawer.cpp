@@ -1029,19 +1029,11 @@ const WCHAR* CMenuDrawer::GetLabel( int nFuncID )
 
 WCHAR CMenuDrawer::GetAccelCharFromLabel(std::wstring_view label) const
 {
-	//TODO: ロジックを書き直すbool
-	const auto pszLabel = std::data(label);
-	const auto nLen = (int)std::size(label);
-	for (int i = 0; i + 1 < nLen; ++i ){
-		if( L'&' == pszLabel[i] ){
-			if( L'&' == pszLabel[i + 1]  ){
-				i++;
-			}else{
-				return (WCHAR)towupper( pszLabel[i + 1] );
-			}
-		}
+	const auto pos = label.find(L'&');
+	if (std::wstring_view::npos == pos || std::size(label) <= pos + 1) {
+		return L'\0';	// L'&'が見付からない、または、L'&'の後に文字がない場合、L'\0'を返す
 	}
-	return L'\0';
+	return (WCHAR)towupper(label[pos + 1]);
 }
 
 struct WorkData{
