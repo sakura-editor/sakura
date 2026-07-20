@@ -14,7 +14,7 @@
 	Copyright (C) 2006, aroka, fon
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -38,9 +38,6 @@
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CMenuDrawer::CMenuDrawer()
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。	/* ツールバーのボタン TBBUTTON構造体 */
 	/* ツールバーのボタン TBBUTTON構造体 */
 	/*
@@ -795,16 +792,15 @@ void CMenuDrawer::ResetContents( void )
 		}
 	}
 	m_nMenuHeight = m_nMenuFontHeight + DpiScaleY(4); // margin
-	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
+	if (m_pShareData->m_Common.m_sWindow.m_bMenuIcon &&
+		m_nMenuHeight < 20) {
 		// 最低アイコン分の高さを確保
-		if( 20 > m_nMenuHeight ){
 			m_nMenuHeight = 20;
-		}
 	}
 
 //@@@ 2002.01.03 YAZAKI 不使用のため
 //	m_nMaxTab = 0;
-//	m_nMaxTabLen = 0;
+//	m_nMaxTabLenCMenuDrawer::getButton = 0;
 	return;
 }
 
@@ -965,12 +961,11 @@ int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc ) con
  */
 int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc ) const
 {
-	if( bOnlyFunc ){
-		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
-		if ( !( F_MENU_FIRST <= idCommand && idCommand < F_MENU_NOT_USED_FIRST )
-			&& !( F_PLUGCOMMAND_FIRST <= idCommand && idCommand < F_PLUGCOMMAND_LAST )){
+	// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
+	if (bOnlyFunc &&
+		(idCommand < F_MENU_FIRST || F_MENU_NOT_USED_FIRST <= idCommand) &&
+		(idCommand < F_PLUGCOMMAND_FIRST || F_PLUGCOMMAND_LAST < idCommand)) {
 			return -1;
-		}
 	}
 
 	int nIndex = -1;
@@ -994,8 +989,9 @@ int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc ) const
  */
 TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 {
-	int index = ToolbarNoToIndex( nToolbarNo );
-	if( 0 <= index && index < m_nMyButtonNum ){
+	if (const auto index = ToolbarNoToIndex(nToolbarNo);
+		0 <= index &&
+		index < m_nMyButtonNum) {
 		return m_tbMyButton[index];
 	}
 
@@ -1031,20 +1027,13 @@ const WCHAR* CMenuDrawer::GetLabel( int nFuncID )
 	return m_menuItems[i].m_cmemLabel.GetStringPtr();
 }
 
-WCHAR CMenuDrawer::GetAccelCharFromLabel( const WCHAR* pszLabel )
+WCHAR CMenuDrawer::GetAccelCharFromLabel(std::wstring_view label) const
 {
-	int i;
-	int nLen = (int)wcslen( pszLabel );
-	for( i = 0; i + 1 < nLen; ++i ){
-		if( L'&' == pszLabel[i] ){
-			if( L'&' == pszLabel[i + 1]  ){
-				i++;
-			}else{
-				return (WCHAR)towupper( pszLabel[i + 1] );
-			}
-		}
+	const auto pos = label.find(L'&');
+	if (std::wstring_view::npos == pos || std::size(label) <= pos + 1) {
+		return L'\0';	// L'&'が見付からない、または、L'&'の後に文字がない場合、L'\0'を返す
 	}
-	return L'\0';
+	return (WCHAR)towupper(label[pos + 1]);
 }
 
 struct WorkData{

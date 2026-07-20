@@ -126,6 +126,8 @@ namespace window {
 	CEditApp::getInstance()->m_pcEditWnd = nullptr;
 	CEditApp::getInstance()->m_pcEditDoc = nullptr;
 
+	CEditApp::resetInstance();
+
 	pcPropertyManager = nullptr;
 	pcMruListener = nullptr;
 	pcGrepAgent = nullptr;

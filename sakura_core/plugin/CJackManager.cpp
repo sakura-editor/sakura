@@ -4,20 +4,19 @@
 */
 /*
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CJackManager.h"
+#include "plugin/CJackManager.h"
+
 #include "env/CPropertyManager.h"
 #include "typeprop/CPropTypes.h"
 
 //コンストラクタ
 CJackManager::CJackManager()
 {
-	int i;
-
 	//ジャック定義一覧
 	//添え字がEJackの値と同じであること。
 	struct tagJackEntry {
@@ -41,10 +40,9 @@ CJackManager::CJackManager()
 		{ PP_COMPLEMENTGLOBAL		, L"ComplementGlobal"	},
 	};
 
-	m_pShareData = &GetDllShareData();
-
 	m_Jacks.reserve( PP_BUILTIN_JACK_COUNT );
-	for( i=0; i<PP_BUILTIN_JACK_COUNT; i++ ){
+
+	for (int i = 0; i < PP_BUILTIN_JACK_COUNT; ++i) {
 		assert( i == jackNames[i].id );
 
 		JackDef jack;
@@ -62,7 +60,10 @@ std::vector<JackDef> CJackManager::GetJackDef() const
 }
 
 //プラグをジャックに関連付ける
-ERegisterPlugResult CJackManager::RegisterPlug( std::wstring pszJack, CPlug* plug )
+ERegisterPlugResult CJackManager::RegisterPlug(
+	std::wstring_view pszJack,
+	CPlug* plug
+)
 {
 	EJack ppId = GetJackFromName( pszJack );
 	if( ppId == PP_NONE ){
@@ -70,17 +71,15 @@ ERegisterPlugResult CJackManager::RegisterPlug( std::wstring pszJack, CPlug* plu
 	}
 
 	//機能IDの昇順になるようにプラグを登録する
-	CPlug::Array& plugs = m_Jacks[ ppId ].plugs;
-	int plugid = plug->GetFunctionCode();
-	if( plugs.empty()  ||  (*(plugs.end() - 1))->GetFunctionCode() < plugid ){
+	auto& plugs = m_Jacks[ ppId ].plugs;
+	if (const auto plugid = plug->GetFunctionCode();
+		plugs.empty() || plugs.back()->GetFunctionCode() < plugid) {
+		// 末尾に追加
 		plugs.push_back( plug );
-	} else {
-		for( unsigned int index=0; index<plugs.size(); index++ ){
-			if( plugid < plugs[index]->GetFunctionCode() ){
+	} else if (const auto it = std::ranges::find_if(plugs, [plugid] (const CPlug* p) { return plugid < p->GetFunctionCode(); }); it != plugs.end()) {
+		// 見付かった位置に挿入
+		const auto index = std::distance(plugs.begin(), it);
 				plugs.insert( plugs.begin() + index, plug );
-				break;
-			}
-		}
 	}
 
 	switch( ppId ){
@@ -109,7 +108,10 @@ ERegisterPlugResult CJackManager::RegisterPlug( std::wstring pszJack, CPlug* plu
 }
 
 //プラグの関連付けを解除する
-bool CJackManager::UnRegisterPlug( std::wstring pszJack, CPlug* plug )
+bool CJackManager::UnRegisterPlug(
+	std::wstring_view pszJack,
+	const CPlug* plug
+)
 {
 	EJack ppId = GetJackFromName( pszJack );
 
@@ -147,14 +149,11 @@ bool CJackManager::UnRegisterPlug( std::wstring pszJack, CPlug* plug )
 }
 
 //ジャック名をジャック番号に変換する
-EJack CJackManager::GetJackFromName( std::wstring sName )
+EJack CJackManager::GetJackFromName(std::wstring_view sName) const
 {
-	unsigned int i;
-	const WCHAR* szName = sName.c_str();
-
-	for( i=0; i < m_Jacks.size(); i++ ){
-		if( wcscmp( m_Jacks[i].szName, szName ) == 0 ){
-			return m_Jacks[i].ppId;
+	for (const auto& jack : m_Jacks) {
+		if (jack.szName == sName) {
+			return jack.ppId;
 		}
 	}
 
