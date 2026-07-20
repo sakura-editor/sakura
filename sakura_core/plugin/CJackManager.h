@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -56,12 +56,11 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : public TSingleton<CJackManager>{
-	friend class TSingleton<CJackManager>;
+class CJackManager final : public TSakuraSingleton<CJackManager> {
+public:
 	CJackManager();
 
 	//操作
-public:
 	ERegisterPlugResult RegisterPlug( std::wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
 	bool UnRegisterPlug( std::wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
 	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する
@@ -84,4 +83,5 @@ private:
 	DLLSHAREDATA* m_pShareData;
 	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
+
 #endif /* SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_ */
