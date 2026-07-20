@@ -14,18 +14,15 @@
 
 #include <string_view>
 
-#include "util/design_template.h"
 #include "config/maxdata.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
+#include "util/design_template.h"
 
-struct DLLSHAREDATA;
 struct EditInfo;
-DLLSHAREDATA& GetDllShareData();
 
 //!ファイル名管理
-class CFileNameManager : public TSakuraSingleton<CFileNameManager> {
+class CFileNameManager : public TSakuraSingleton<CFileNameManager>, private env::ShareDataClient {
 public:
-	CFileNameManager() = default;
-
 	//ファイル名関連
 	LPWSTR GetTransformFileNameFast( LPCWSTR, LPWSTR, int nDestLen, HDC hDC, bool bFitMode = true, int cchMaxWidth = 0 );	// 2002.11.24 Moca Add
 	int TransformFileName_MakeCache( void );
@@ -55,8 +52,6 @@ public:
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
 private:
-	DLLSHAREDATA* m_pShareData = &GetDllShareData();
-
 	// ファイル名簡易表示用キャッシュ
 	int		m_nTransformFileNameCount = -1; // 有効数
 	WCHAR	m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
