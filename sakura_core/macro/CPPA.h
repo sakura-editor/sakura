@@ -166,14 +166,20 @@ public:
 	void SetDeclare(const char* ss) const { m_fnSetDeclare(ss); }
 	void SetDefProc(const char* ss) const { m_fnSetDefProc(ss); }
 	void SetDefine(const char* ss) const { m_fnSetDefine(ss); }
+
+#if 0
 	void AddIntVar(const char* lpszDef, int nVal, int nCnst)
 		{ m_fnAddIntVar(lpszDef, nVal, nCnst); }
 	void AddStrVar(const char* lpszDef, const char* lpszVal, int nCnst)
 		{ m_fnAddStrVar(lpszDef, lpszVal, nCnst); }
+#endif
+
 	void SetIntFunc(void* proc) const { m_fnSetIntFunc(proc); }
 	void SetStrFunc(void* proc) const { m_fnSetStrFunc(proc); }
 	void SetProc(void* proc) const { m_fnSetProc(proc); }
 	void SetErrProc(void* proc) const { m_fnSetErrProc(proc); }
+
+#if 0
 	void Abort()
 		{ m_fnAbort(); }
 //	int  GetVersion()
@@ -186,12 +192,20 @@ public:
 		{ return m_fnGetArgStr(index); }
 	char* GetArgBStr(int index)
 		{ return m_fnGetArgBStr(index); }
+#endif
+
 	void SetStrObj(void* proc) const { m_fnSetStrObj(proc); }
+
+#if 0
 	void SetIntObj(void* proc)
 		{ m_fnSetIntObj(proc); }
 	void AddIntObj(const char* ss, int def, BOOL read, int index)
 		{ m_fnAddIntObj(ss, def, read, index); }
+#endif
+
 	void AddStrObj(const char* ss, const char* def, BOOL read, int index) const { m_fnAddStrObj(ss, def, read, index); }
+
+#if 0
 	int  GetIntVar(const char* ss)
 		{ return m_fnGetIntVar(ss); }
 	char* GetStrVar(const char* ss)
@@ -219,10 +233,14 @@ public:
 	DWORD GetArgReal(int index)
 		{ return m_fnGetArgReal(index); }
 #endif
+#endif
 
 #if PPADLL_VER >= 123
+#if 0
 	BOOL IsRunning()
 		{ return (BOOL)m_fnIsRunning(); }
+#endif
+
 	void SetFinishProc(void* proc) const { m_fnSetFinishProc(proc); }
 #endif
 
