@@ -50,7 +50,7 @@ Pascalインタープリタコンポーネントです。
 class CPPA : public CDllImp {
 public:
 	CPPA();
-	virtual ~CPPA();
+	~CPPA() override;
 
 	const char* GetVersion(){		//!< DLLのバージョン情報を取得。m_szMsgを壊す
 		if ( IsAvailable() ){
@@ -174,10 +174,10 @@ public:
 		{ m_fnAddStrVar(lpszDef, lpszVal, nCnst); }
 #endif
 
-	void SetIntFunc(void* proc) const { m_fnSetIntFunc(proc); }
-	void SetStrFunc(void* proc) const { m_fnSetStrFunc(proc); }
-	void SetProc(void* proc) const { m_fnSetProc(proc); }
-	void SetErrProc(void* proc) const { m_fnSetErrProc(proc); }
+	template <class T> void SetIntFunc(T proc) const { m_fnSetIntFunc(proc); }
+	template <class T> void SetStrFunc(T proc) const { m_fnSetStrFunc(proc); }
+	template <class T> void SetProc(T proc) const { m_fnSetProc(proc); }
+	template <class T> void SetErrProc(T proc) const { m_fnSetErrProc(proc); }
 
 #if 0
 	void Abort()
@@ -194,7 +194,7 @@ public:
 		{ return m_fnGetArgBStr(index); }
 #endif
 
-	void SetStrObj(void* proc) const { m_fnSetStrObj(proc); }
+	template <class T> void SetStrObj(T proc) const { m_fnSetStrObj(proc); }
 
 #if 0
 	void SetIntObj(void* proc)
@@ -241,7 +241,7 @@ public:
 		{ return (BOOL)m_fnIsRunning(); }
 #endif
 
-	void SetFinishProc(void* proc) const { m_fnSetFinishProc(proc); }
+	template <class T> void SetFinishProc(T proc) const { m_fnSetFinishProc(proc); }
 #endif
 
 private:
