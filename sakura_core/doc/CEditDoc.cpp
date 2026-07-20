@@ -222,6 +222,7 @@ CEditDoc::CEditDoc([[maybe_unused]] CEditApp* pcApp)
 
 CEditDoc::~CEditDoc()
 {
+	CModifyManager::resetInstance();
 	CCodeChecker::resetInstance();
 	CJackManager::resetInstance();
 	CAppMode::resetInstance();
