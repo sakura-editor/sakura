@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <concepts>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
@@ -66,6 +67,9 @@ private:
 	//! 生成済みインスタンス
 	static inline std::unique_ptr<T> gm_Instance = nullptr;
 
+	//! インスタンス生成用の排他制御用ミューテックス
+	static inline std::mutex gm_Mutex;
+
 public:
 	/*!
 	 * @brief インスタンスポインタを取得する
@@ -73,13 +77,14 @@ public:
 	 * @returns インスタンスポインタ
 	 * @note インスタンスが未生成の場合は生成する
 	 */
-	[[nodiscard]]
 	static T* getInstance()
 	{
 		static_assert(
 			std::default_initializable<T> && !std::is_array_v<T>,
 			"T must be publicly default-initializable and must not be an array"
 		);
+
+		std::unique_lock lock{ gm_Mutex };
 
 		if (!gm_Instance) {
 			gm_Instance = std::make_unique<T>();
@@ -95,6 +100,8 @@ public:
 	 */
 	static void resetInstance()
 	{
+		std::unique_lock lock{ gm_Mutex };
+
 		gm_Instance.reset();
 	}
 
