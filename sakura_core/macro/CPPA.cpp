@@ -151,15 +151,15 @@ bool CPPA::InitDllImp()
 	if( ! RegisterEntries(table) )
 		return false;
 
-	SetIntFunc((void *)CPPA::stdIntFunc);	// 2003.02.24 Moca
-	SetStrFunc((void *)CPPA::stdStrFunc);
-	SetProc((void *)CPPA::stdProc);
+	SetIntFunc(&stdIntFunc);
+	SetStrFunc(&stdStrFunc);
+	SetProc(&stdProc);
 
 	// 2003.06.01 Moca エラーメッセージを追加
-	SetErrProc((void *)CPPA::stdError);
-	SetStrObj((void *)CPPA::stdStrObj);	// UserErrorMes用
+	SetErrProc(&stdError);
+	SetStrObj(&stdStrObj);	// UserErrorMes用
 #if PPADLL_VER >= 123
-	SetFinishProc((void *)CPPA::stdFinishProc);
+	SetFinishProc(&stdFinishProc);
 #endif
 
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
