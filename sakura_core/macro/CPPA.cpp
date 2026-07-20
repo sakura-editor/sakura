@@ -568,8 +568,9 @@ void __stdcall CPPA::stdStrFunc(
 	VARIANT Ret;
 	::VariantInit(&Ret);
 	*Err_CD = 0;
-	if( false != CallHandleFunction(Index, Argument, ArgSize, &Ret) ){
-		if(VT_BSTR == Ret.vt){
+
+	if (CallHandleFunction(Index, Argument, ArgSize, &Ret) &&
+		VT_BSTR == Ret.vt) {
 			int len;
 			char* buf;
 			Wrap(&Ret.bstrVal)->Get(&buf,&len);
@@ -578,7 +579,6 @@ void __stdcall CPPA::stdStrFunc(
 			*ResultValue = m_CurInstance->m_cMemRet.GetStringPtr();
 			::VariantClear(&Ret);
 			return;
-		}
 	}
 	::VariantClear(&Ret);
 	*Err_CD = Index + 1;

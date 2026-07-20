@@ -631,13 +631,13 @@ void CEditDoc::OnChangeType()
 	OnChangeSetting();
 
 	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
-	if( !m_cDocFile.GetFilePathClass().IsValidPath() ){
-		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
+	if (!m_cDocFile.GetFilePathClass().IsValidPath() &&
+		!m_cDocEditor.IsModified() &&
+		0 == m_cDocLineMgr.GetLineCount()) {
 			const STypeConfig& types = m_cDocType.GetDocumentAttribute();
 			m_cDocFile.SetCodeSet( types.m_encoding.m_eDefaultCodetype, types.m_encoding.m_bDefaultBom );
 			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
 			GetEditWnd().GetActiveView().GetCaret().ShowCaretPosInfo();
-		}
 	}
 
 	// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
@@ -988,14 +988,13 @@ void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 		return;	// 再入り実行はしない
 
 	bRunning = true;
-	if( CEditApp::getInstance()->m_pcSMacroMgr->IsEnabled(idx) ){
-		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
+	if (CEditApp::getInstance()->m_pcSMacroMgr->IsEnabled(idx) &&
+		!(::GetAsyncKeyState(VK_SHIFT) & 0x8000)) {	// Shift キーが押されていなければ実行
 			if( nullptr != pszSaveFilePath )
 				m_cDocFile.SetSaveFilePath(pszSaveFilePath);
 			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
 			HandleCommand((EFunctionCode)(( F_USERMACRO_0 + idx ) | FA_NONRECORD) );
 			m_cDocFile.SetSaveFilePath(L"");
-		}
 	}
 	bRunning = false;
 }

@@ -792,11 +792,10 @@ void CMenuDrawer::ResetContents( void )
 		}
 	}
 	m_nMenuHeight = m_nMenuFontHeight + DpiScaleY(4); // margin
-	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
+	if (m_pShareData->m_Common.m_sWindow.m_bMenuIcon &&
+		m_nMenuHeight < 20) {
 		// 最低アイコン分の高さを確保
-		if( 20 > m_nMenuHeight ){
 			m_nMenuHeight = 20;
-		}
 	}
 
 //@@@ 2002.01.03 YAZAKI 不使用のため
@@ -962,12 +961,11 @@ int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc ) con
  */
 int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc ) const
 {
-	if( bOnlyFunc ){
-		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
-		if ( !( F_MENU_FIRST <= idCommand && idCommand < F_MENU_NOT_USED_FIRST )
-			&& !( F_PLUGCOMMAND_FIRST <= idCommand && idCommand < F_PLUGCOMMAND_LAST )){
+	// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
+	if (bOnlyFunc &&
+		(idCommand < F_MENU_FIRST || F_MENU_NOT_USED_FIRST <= idCommand) &&
+		(idCommand < F_PLUGCOMMAND_FIRST || F_PLUGCOMMAND_LAST < idCommand)) {
 			return -1;
-		}
 	}
 
 	int nIndex = -1;
