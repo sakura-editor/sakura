@@ -17,8 +17,6 @@
 //コンストラクタ
 CJackManager::CJackManager()
 {
-	int i;
-
 	//ジャック定義一覧
 	//添え字がEJackの値と同じであること。
 	struct tagJackEntry {
@@ -43,7 +41,8 @@ CJackManager::CJackManager()
 	};
 
 	m_Jacks.reserve( PP_BUILTIN_JACK_COUNT );
-	for( i=0; i<PP_BUILTIN_JACK_COUNT; i++ ){
+
+	for (int i = 0; i < PP_BUILTIN_JACK_COUNT; ++i) {
 		assert( i == jackNames[i].id );
 
 		JackDef jack;

@@ -513,10 +513,10 @@ CSMacroMgr::CSMacroMgr()
 	CWSHMacroManager::declare();
 	CPythonMacroManager::declare();
 	
-	int i;
-	for ( i = 0 ; i < MAX_CUSTMACRO ; i++ ){
-		m_cSavedKeyMacro[i] = nullptr;
+	for (auto& pSavedKeyMacro : m_cSavedKeyMacro) {
+		pSavedKeyMacro = nullptr;
 	}
+
 	//	Jun. 16, 2002 genta
 	m_pKeyMacro = nullptr;
 	m_pTempMacro = nullptr;

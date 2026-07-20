@@ -67,7 +67,6 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
 	WCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
-	int		i;
 	bool	bFavorite;
 
 	NONCLIENTMETRICS met;
@@ -76,7 +75,7 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 	CDCFont dcFont(met.lfMenuFont);
 
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
-	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
+	for (int i = 0; i < m_cRecentFolder.GetItemCount(); ++i)
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
