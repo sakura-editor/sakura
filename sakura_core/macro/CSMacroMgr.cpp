@@ -18,7 +18,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -507,8 +507,6 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 CSMacroMgr::CSMacroMgr()
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CSMacroMgr::CSMacroMgr" );
-	
-	m_pShareData = &GetDllShareData();
 	
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();

@@ -12,8 +12,10 @@
 #define SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_
 #pragma once
 
-#include "plugin/CPlugin.h"
 #include <list>
+
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
+#include "plugin/CPlugin.h"
 #include "util/design_template.h"
 
 #define PP_COMMAND_STR	L"Command"
@@ -56,7 +58,7 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : public TSakuraSingleton<CJackManager> {
+class CJackManager final : public TSakuraSingleton<CJackManager>, private env::ShareDataClient {
 public:
 	CJackManager();
 
@@ -80,7 +82,6 @@ public:
 
 	//メンバ変数
 private:
-	DLLSHAREDATA* m_pShareData;
 	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
 

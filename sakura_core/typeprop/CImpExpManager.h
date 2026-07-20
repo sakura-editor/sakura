@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,6 +16,7 @@
 #pragma once
 
 #include "env/CDataProfile.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "env/DLLSHAREDATA.h"
 
 class CImpExpManager
@@ -64,7 +65,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          タイプ別設定                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpType : public CImpExpManager
+class CImpExpType : public CImpExpManager, private env::ShareDataClient
 {
 public:
 	// Constructor
@@ -73,8 +74,6 @@ public:
 		, m_Types( types )
 		, m_hwndList( hwndList )
 	{
-		/* 共有データ構造体のアドレスを返す */
-		m_pShareData = &GetDllShareData();
 	}
 
 public:
@@ -95,7 +94,6 @@ private:
 	HWND			m_hwndList;
 
 	// 内部使用
-	DLLSHAREDATA*	m_pShareData;
 	int				m_nColorType;
 	std::wstring 	m_sColorFile;
 	bool			m_bAddType;
