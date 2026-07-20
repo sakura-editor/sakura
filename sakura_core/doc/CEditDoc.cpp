@@ -220,6 +220,8 @@ CEditDoc::CEditDoc([[maybe_unused]] CEditApp* pcApp)
 
 CEditDoc::~CEditDoc()
 {
+	CCodeChecker::resetInstance();
+
 	if( m_hBackImg ){
 		::DeleteObject( m_hBackImg );
 	}
