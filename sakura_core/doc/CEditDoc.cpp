@@ -861,8 +861,8 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	int			nBool;
 
 	//クローズ事前処理
-	ECallbackResult eBeforeCloseResult = NotifyBeforeClose();
-	if(eBeforeCloseResult==CALLBACK_INTERRUPT)return FALSE;
+	if (const auto eBeforeCloseResult = NotifyBeforeClose();
+		CALLBACK_INTERRUPT == eBeforeCloseResult) return FALSE;
 
 	// デバッグモニタモードのときは保存確認しない
 	if(CAppMode::getInstance()->IsDebugMode())return TRUE;

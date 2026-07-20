@@ -800,7 +800,7 @@ void CMenuDrawer::ResetContents( void )
 
 //@@@ 2002.01.03 YAZAKI 不使用のため
 //	m_nMaxTab = 0;
-//	m_nMaxTabLen = 0;
+//	m_nMaxTabLenCMenuDrawer::getButton = 0;
 	return;
 }
 
@@ -989,8 +989,9 @@ int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc ) const
  */
 TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 {
-	int index = ToolbarNoToIndex( nToolbarNo );
-	if( 0 <= index && index < m_nMyButtonNum ){
+	if (const auto index = ToolbarNoToIndex(nToolbarNo);
+		0 <= index &&
+		index < m_nMyButtonNum) {
 		return m_tbMyButton[index];
 	}
 
