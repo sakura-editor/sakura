@@ -22,6 +22,8 @@
 class CImpExpManager
 {
 public:
+	virtual ~CImpExpManager() = default;
+
 	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
 	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
 	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg);
