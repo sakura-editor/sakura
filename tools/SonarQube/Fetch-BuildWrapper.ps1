@@ -27,6 +27,15 @@ if (-not(Test-Path "$Destination\build-wrapper-win-x86-64.exe")) {
     # BuildWrapperを展開する
     if (-not(Test-Path "$Destination\build-wrapper-win-x86-64.exe")) {
         # zipを展開する
-        7z e "$Destination\build-wrapper-win-x86.zip" "-o$Destination" "build-wrapper-win-x86\build-wrapper-win-x86-64.exe"
+        $extractedRoot = Join-Path $Destination "build-wrapper-win-x86"
+        Expand-Archive -Path "$Destination\build-wrapper-win-x86.zip" -DestinationPath $Destination -Force
+
+        $extractedExe = Join-Path $extractedRoot "build-wrapper-win-x86-64.exe"
+        if (-not(Test-Path $extractedExe)) {
+            throw "build-wrapper-win-x86-64.exe was not found in archive."
+        }
+
+        Move-Item -Path $extractedExe -Destination "$Destination\build-wrapper-win-x86-64.exe" -Force
+        Remove-Item -Path $extractedRoot -Recurse -Force
     }
 }

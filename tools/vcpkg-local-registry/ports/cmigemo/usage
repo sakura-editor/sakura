@@ -1,0 +1,9 @@
+cmigemo provides CMake targets and dictionary zip paths:
+
+  find_package(cmigemo CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE cmigemo::cmigemo)
+
+Dictionary zip files are available via:
+
+  cmigemo_DICT_UTF8_ZIP
+  cmigemo_DICT_CP932_ZIP

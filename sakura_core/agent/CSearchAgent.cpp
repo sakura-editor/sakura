@@ -266,7 +266,10 @@ void CSearchAgent::CreateCharCharsArr(
 		if( 0 == pnCharCharsArr[i] ){
 			pnCharCharsArr[i] = 1;
 		}
-		if( 2 == pnCharCharsArr[i] ){
+		// 2026.06.23 CWE-787 fix: guard i+1 against nSrcLen. A pattern ending in a lone lead
+		//            surrogate makes GetSizeOfChar return 2 at i==nSrcLen-1, so the write to
+		//            pnCharCharsArr[i+1] (== [nSrcLen]) ran one int past the new int[nSrcLen].
+		if( 2 == pnCharCharsArr[i] && i + 1 < nSrcLen ){
 			pnCharCharsArr[i + 1] = pnCharCharsArr[i];
 		}
 		i+= pnCharCharsArr[i];

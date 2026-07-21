@@ -25,81 +25,14 @@
 
 #include "cxx/com_pointer.hpp"
 
+#include "testing/HResultEq.hpp"
+
 using ::testing::_;
 using ::testing::Invoke;
 using ::testing::Return;
 
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
-
-namespace testing {
-
-inline std::wstring HResultName(HRESULT hr)
-{
-    switch (hr) {
-    case S_OK: return L"S_OK";
-    case S_FALSE: return L"S_FALSE";
-    case E_FAIL: return L"E_FAIL";
-    case E_INVALIDARG: return L"E_INVALIDARG";
-    case E_ACCESSDENIED: return L"E_ACCESSDENIED";
-    case E_POINTER: return L"E_POINTER";
-    case E_OUTOFMEMORY: return L"E_OUTOFMEMORY";
-    case E_NOTIMPL: return L"E_NOTIMPL";
-    case E_NOINTERFACE: return L"E_NOINTERFACE";
-    case E_UNEXPECTED: return L"E_UNEXPECTED";
-    default: break;
-    }
-
-	return L"";
-}
-
-inline std::wstring FormatHResultMessage(HRESULT hr)
-{
-	_com_error err{ hr };
-	const auto msg = err.ErrorMessage();
-	return msg ? msg : L"";
-}
-
-inline std::wstring DescribeHResult(HRESULT hr)
-{
-    const std::wstring wname = HResultName(hr);
-    const std::wstring wmsg  = FormatHResultMessage(hr);
-
-	if (wname.empty() && wmsg.empty()) {
-		return std::format(L"(0x{:X})", static_cast<unsigned long>(hr));
-	}
-
-	if (wmsg.empty()) {
-		return std::format(LR"((0x{:X}) "{}")", static_cast<unsigned long>(hr), wmsg);
-	}
-
-	return std::format(LR"({}(0x{:X}) "{}")", wname, static_cast<unsigned long>(hr), wmsg);
-}
-
-inline ::testing::AssertionResult HResultEq(
-    HRESULT actual,
-    HRESULT expected,
-    const char* actual_expr,
-	const char* expected_expr [[maybe_unused]]
-)
-{
-    if (actual == expected) {
-        return ::testing::AssertionSuccess();
-    }
-
-    return ::testing::AssertionFailure()
-        << actual_expr << " returned " << std::data(DescribeHResult(actual))
-        << ", expected " << std::data(DescribeHResult(expected));
-}
-
-} // namespace testing
-
-#define EXPECT_HRESULT_EQ(actual, expected) \
-    EXPECT_PRED_FORMAT2(                    \
-        [](const char* a, const char* e, auto av, auto ev) { \
-            return testing::HResultEq(av, ev, a, e);             \
-        },                                                   \
-        actual, expected)
 
 // グローバルメモリに書き込まれた特定の Unicode 文字列にマッチする述語関数
 MATCHER_P(WideStringInGlobalMemory, expected_string, "") {
@@ -148,8 +81,8 @@ struct MockCClipboard : public CClipboard {
 	{
 		ON_CALL(*this, OpenClipboard(_)).WillByDefault(Return(TRUE));
 		ON_CALL(*this, CloseClipboard()).WillByDefault(Return(TRUE));
-		ON_CALL(*this, GlobalAlloc(_, _)).WillByDefault(Invoke(&::GlobalAlloc ));
-		ON_CALL(*this, GlobalLock(_)).WillByDefault(Invoke(&::GlobalLock));
+		ON_CALL(*this, GlobalAlloc(_, _)).WillByDefault(&::GlobalAlloc);
+		ON_CALL(*this, GlobalLock(_)).WillByDefault(&::GlobalLock);
 	}
 };
 

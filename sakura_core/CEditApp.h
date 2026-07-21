@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -28,12 +28,11 @@ class CGrepAgent;
 enum EFunctionCode;
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
-class CEditApp : public TSingleton<CEditApp>{
-	friend class TSingleton<CEditApp>;
-	CEditApp(){}
-	virtual ~CEditApp();
-
+class CEditApp final : public TSakuraSingleton<CEditApp> {
 public:
+	CEditApp() = default;
+	~CEditApp() noexcept;
+
 	void Create(HINSTANCE hInst, int);
 
 	//モジュール情報
@@ -49,27 +48,27 @@ public:
 	bool OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType );
 
 public:
-	HINSTANCE			m_hInst;
+	HINSTANCE			m_hInst = nullptr;
 
 	//ドキュメント
-	CEditDoc*			m_pcEditDoc;
+	CEditDoc*			m_pcEditDoc = nullptr;
 
 	//ウィンドウ
-	CEditWnd*			m_pcEditWnd;
+	CEditWnd*			m_pcEditWnd = nullptr;
 
 	//IO管理
-	CLoadAgent*			m_pcLoadAgent;
-	CSaveAgent*			m_pcSaveAgent;
-	CVisualProgress*	m_pcVisualProgress;
+	CLoadAgent*			m_pcLoadAgent = nullptr;
+	CSaveAgent*			m_pcSaveAgent = nullptr;
+	CVisualProgress*	m_pcVisualProgress = nullptr;
 
 	//その他ヘルパ
-	CMruListener*		m_pcMruListener;		//MRU管理
-	CSMacroMgr*			m_pcSMacroMgr;			//マクロ管理
+	CMruListener*		m_pcMruListener = nullptr;		//!< MRU管理
+	CSMacroMgr*			m_pcSMacroMgr = nullptr;		//!< マクロ管理
 
-	CPropertyManager*	m_pcPropertyManager;	//プロパティ管理
+	CPropertyManager*	m_pcPropertyManager = nullptr;	//!< プロパティ管理
 
-	CGrepAgent*			m_pcGrepAgent;			//GREPモード
-	CSoundSet			m_cSoundSet;			//サウンド管理
+	CGrepAgent*			m_pcGrepAgent = nullptr;		//!< GREPモード
+	CSoundSet			m_cSoundSet;					//!< サウンド管理
 
 	//GUIオブジェクト
 	CImageListMgr		m_cIcons;					//!< Image List
@@ -80,4 +79,5 @@ class CAppExitException : public std::exception{
 public:
 	const char* what() const throw() override{ return "CAppExitException"; }
 };
+
 #endif /* SAKURA_CEDITAPP_421797BC_DD8E_4209_AAF7_6BDC4D1CAAE9_H_ */

@@ -95,6 +95,30 @@ int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR>
 	);
 }
 
+/*!
+ * ナロー文字列をワイド文字列に変換します。
+ *
+ * @param [in] codePage 変換に使用するコードページ。
+ * @param [in] source 変換元のナロー文字列
+ * @param [in, out] buffer 変換後のワイド文字列を受け取るバッファ
+ */
+std::wstring_view MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer) {
+	// 変換を実行する
+
+	// 変換に必要な出力バッファサイズを求める
+	const auto required = cxx::CountAsWideChar(codePage, source);
+
+	// 変換に必要な出力バッファを確保する
+	buffer.resize(required);
+
+	// 変換を実行する
+	const auto converted = cxx::MultiByteToWideChar(codePage, source, std::span{ buffer });
+
+	buffer.resize(converted); // MultiByteToWideCharの戻り値は終端NULを含まない
+
+	return buffer;
+}
+
 } // namespace cxx
 
 const WCHAR* to_wchar(const ACHAR* src)
@@ -264,9 +288,7 @@ std::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
 	std::wstring buffer(required, '\0');
 
 	// 変換を実行する
-	const auto converted = cxx::MultiByteToWideChar(codePage, source, buffer);
-
-	buffer.resize(converted); // MultiByteToWideCharの戻り値は終端NULを含まない
+	cxx::MultiByteToWideChar(codePage, source, buffer);
 
 	return buffer;
 }

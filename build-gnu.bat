@@ -14,8 +14,21 @@ if not defined MSYSTEM call :setmsys64path
 
 set BUILD_DIR=build/%platform%
 
+call :setvcpkgroot
+if errorlevel 1 (
+	echo vcpkg not found. errorlevel %errorlevel%
+	exit /b 1
+)
+
+if not exist "%VCPKG_ROOT%\vcpkg.exe" call "%VCPKG_ROOT%\bootstrap-vcpkg.bat" -disableMetrics
+
+set "CMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
+set "CMAKE_TOOLCHAIN_FILE=%CMAKE_TOOLCHAIN_FILE:\=/%"
+
+if not defined VCPKG_TARGET_TRIPLET set VCPKG_TARGET_TRIPLET=x64-mingw-static
+
 @rem run cmake configure.
-cmake -S . -B %BUILD_DIR% -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_PLATFORM=%platform%
+cmake -S . -B %BUILD_DIR% -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_PLATFORM=%platform% "-DCMAKE_TOOLCHAIN_FILE=%CMAKE_TOOLCHAIN_FILE%" -DVCPKG_TARGET_TRIPLET=%VCPKG_TARGET_TRIPLET%
 if errorlevel 1 (
 	echo cmake configure failed. errorlevel %errorlevel%
 	exit /b 1
@@ -59,6 +72,20 @@ exit /b 0
 path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
 path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
 exit /b 0
+
+:setvcpkgroot
+if defined VCPKG_ROOT (
+    if exist "%VCPKG_ROOT%\scripts\buildsystems\msbuild\vcpkg.props" exit /b 0
+)
+if exist "%~dp0..\vcpkg\scripts\buildsystems\msbuild\vcpkg.props" (
+    set "VCPKG_ROOT=%~dp0..\vcpkg"
+    exit /b 0
+)
+if exist "%~dp0tools\vcpkg\scripts\buildsystems\msbuild\vcpkg.props" (
+    set "VCPKG_ROOT=%~dp0tools\vcpkg"
+    exit /b 0
+)
+exit /b 1
 
 @rem ------------------------------------------------------------------------------
 @rem show help

@@ -6,11 +6,24 @@ Param(
     [String]$HomePath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..\..")
 )
 
-$productId = vswhere -property productId -version "[$VsVersion,$([int]$VsVersion + 1))"
+$ctest = @( (Get-Command ctest.exe -ErrorAction Ignore).Source, $(vswhere -find 'Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\ctest.exe' -version "[$VsVersion,$([int]$VsVersion + 1))") ) | Where-Object { $_ } | Select-Object -First 1
+if ([String]::IsNullOrWhiteSpace($ctest)) {
+    throw "ctest.exe was not found."
+}
 
-Write-Host "`$productId is '$productId'"
+$p = Start-Process `
+  -FilePath $ctest `
+  -ArgumentList @(
+    "--test-dir", "build/$Platform/CMakeTools",
+    "-C", $Configuration,
+    "--output-on-failure",
+    "-V"
+  ) `
+  -NoNewWindow `
+  -WorkingDirectory $HomePath `
+  -PassThru `
+  -Wait
 
-$useOpenCppCoverage = ($env:GITHUB_ACTIONS -eq 'true') -or (-not ($productId -match "Enterprise$"))
-
-# Invoke Tests1.
-. "$PSScriptRoot\Run-Test.ps1" "$HomePath\$Platform\$Configuration\tests1.exe" $useOpenCppCoverage $HomePath
+if ($p.ExitCode -ne 0) {
+  throw "MsBuild was Failed."
+}

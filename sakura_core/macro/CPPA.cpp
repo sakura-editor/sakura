@@ -10,7 +10,7 @@
 	Copyright (C) 2001, YAZAKI
 	Copyright (C) 2002, YAZAKI, aroka, genta, Moca
 	Copyright (C) 2003, Moca, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -44,8 +44,12 @@ CPPA::~CPPA()
 {
 }
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-bool CPPA::Execute(CEditView* pcEditView, int flags )
+/*!
+ * @brief PPA.DLLを実行する
+ *
+ * @date 2007/07/22 genta flags追加
+ */
+bool CPPA::Execute(CEditView* pcEditView, int flags) const
 {
 	//PPAの多重起動禁止 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {
@@ -58,7 +62,6 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 
 	PpaExecInfo info;
 	info.m_pcEditView = pcEditView;
-	info.m_pShareData = &GetDllShareData();
 	info.m_bError = false;			//	2003.06.01 Moca
 	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
 	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
@@ -148,15 +151,15 @@ bool CPPA::InitDllImp()
 	if( ! RegisterEntries(table) )
 		return false;
 
-	SetIntFunc((void *)CPPA::stdIntFunc);	// 2003.02.24 Moca
-	SetStrFunc((void *)CPPA::stdStrFunc);
-	SetProc((void *)CPPA::stdProc);
+	SetIntFunc(&stdIntFunc);
+	SetStrFunc(&stdStrFunc);
+	SetProc(&stdProc);
 
 	// 2003.06.01 Moca エラーメッセージを追加
-	SetErrProc((void *)CPPA::stdError);
-	SetStrObj((void *)CPPA::stdStrObj);	// UserErrorMes用
+	SetErrProc(&stdError);
+	SetStrObj(&stdStrObj);	// UserErrorMes用
 #if PPADLL_VER >= 123
-	SetFinishProc((void *)CPPA::stdFinishProc);
+	SetFinishProc(&stdFinishProc);
 #endif
 
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
@@ -565,8 +568,9 @@ void __stdcall CPPA::stdStrFunc(
 	VARIANT Ret;
 	::VariantInit(&Ret);
 	*Err_CD = 0;
-	if( false != CallHandleFunction(Index, Argument, ArgSize, &Ret) ){
-		if(VT_BSTR == Ret.vt){
+
+	if (CallHandleFunction(Index, Argument, ArgSize, &Ret) &&
+		VT_BSTR == Ret.vt) {
 			int len;
 			char* buf;
 			Wrap(&Ret.bstrVal)->Get(&buf,&len);
@@ -575,7 +579,6 @@ void __stdcall CPPA::stdStrFunc(
 			*ResultValue = m_CurInstance->m_cMemRet.GetStringPtr();
 			::VariantClear(&Ret);
 			return;
-		}
 	}
 	::VariantClear(&Ret);
 	*Err_CD = Index + 1;

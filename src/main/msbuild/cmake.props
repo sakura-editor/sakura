@@ -4,9 +4,6 @@
     <CMakeToolsSourceDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\..\..\'))</CMakeToolsSourceDir>
     <CMakeToolsBuildDir>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..\..\..\build\$(Platform)\CMakeTools\'))</CMakeToolsBuildDir>
     <CMakeToolsPath>$([MSBuild]::NormalizePath('$(CMakeToolsBuildDir)', '.'))</CMakeToolsPath>
-    <HeaderMakeBuildDir>$([MSBuild]::NormalizePath('$(CMakeToolsBuildDir)', '.\HeaderMake\'))</HeaderMakeBuildDir>
-    <HeaderMakeBuildPath>$([MSBuild]::NormalizePath('$(HeaderMakeBuildDir)', '.'))</HeaderMakeBuildPath>
-    <HeaderMakeExe>$([MSBuild]::NormalizePath('$(CMakeToolsPath)', '.\bin\HeaderMake.exe'))</HeaderMakeExe>
     <VersionHeader>$(CMakeToolsBuildDir)version.h</VersionHeader>
     <FuncCodeDefine>$(CMakeToolsBuildDir)Funccode_define.h</FuncCodeDefine>
     <FuncCodeEnum>$(CMakeToolsBuildDir)Funccode_enum.h</FuncCodeEnum>
@@ -19,7 +16,7 @@
       <AdditionalIncludeDirectories>$(CMakeToolsBuildDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>darkmode.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)'=='Debug'">$(CMakeToolsBuildDir)lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Configuration)'=='Release'">$(CMakeToolsBuildDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>

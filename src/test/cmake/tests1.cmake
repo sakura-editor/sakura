@@ -4,9 +4,43 @@
 #   ${7ZIP_EXECUTABLE}
 #   ${ARCH}
 #   ${CMAKE_GENERATOR_PLATFORM}
+#   ${EXE_ARCH}
 
-# Include GoogleTest's targets
-include(${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake)
+# Create a custom command for tests1.exe.manifest generation
+add_custom_command(
+  OUTPUT "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+  COMMAND ${CMAKE_COMMAND} 
+    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -DEXE_NAME="tests1.exe"
+    -DEXE_ARCH="${EXE_ARCH}"
+    -DOUTPUT_FILE="${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+    -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMENT "Generating tests1.exe.manifest"
+)
+
+# Create a custom target that depends on the generated file
+add_custom_target(generate_tests1_exe_manifest
+  DEPENDS
+    "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+)
+
+# Find GoogleTest's package(required)
+find_package(GTest CONFIG REQUIRED)
+
+# Find OpenCppCoverage for coverage test
+find_program(OpenCppCoverage_EXECUTABLE OpenCppCoverage
+  PATHS
+    "$ENV{ProgramFiles}/OpenCppCoverage"
+)
+
+if(OpenCppCoverage_EXECUTABLE)
+  message(STATUS "Found OpenCppCoverage: ${OpenCppCoverage_EXECUTABLE}")
+endif()
+
+find_program(UV_EXECUTABLE
+  NAMES uv
+  REQUIRED
+)
 
 set(MINIZ_SOURCE_DIR "${CMAKE_SOURCE_DIR}/externals/miniz-cpp")
 set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
@@ -107,7 +141,7 @@ add_custom_target(test_dllplugin_zip
     ${TEST_DLLPLUGIN_DIR}
     ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:${TEST_DLLPLUGIN_TARGET}>
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
     ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
@@ -150,8 +184,8 @@ target_include_directories(tests1
 target_link_libraries(tests1
   PRIVATE
     sakura_core
-    gmock
-    gtest
+    GTest::gtest
+    GTest::gmock
 )
 
 set_target_properties(tests1
@@ -165,11 +199,30 @@ add_custom_command(TARGET tests1 PRE_LINK
 )
 
 if(MINGW)
+  set(TESTS1_EXE_MANIFEST "${CMAKE_BINARY_DIR}/tests1.exe.manifest")
+  set(TESTS1_MANIFEST_RC "${CMAKE_BINARY_DIR}/tests1_manifest.rc")
+
+  # Create a custom command for tests1_manifest.rc generation
+  add_custom_command(
+    OUTPUT "${TESTS1_MANIFEST_RC}"
+    COMMAND ${CMAKE_COMMAND} 
+      -DSOURCE_DIR="${CMAKE_SOURCE_DIR}"
+      -DOUTPUT_FILE="${TESTS1_MANIFEST_RC}"
+      -DMANIFEST_FILE="${TESTS1_EXE_MANIFEST}"
+      -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMENT "Generating tests1_manifest.rc"
+  )
+
+  target_sources(tests1
+    PRIVATE
+      "${TESTS1_MANIFEST_RC}"
+  )
 
   # Add include directories for tests1
   target_include_directories(tests1
     PRIVATE
       "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tests1_ja-JP>"
+      "$<BUILD_INTERFACE:${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/cmigemo>"
   )
   target_link_options(tests1
     PRIVATE
@@ -182,9 +235,9 @@ add_dependencies(tests1
   sakura
   sakura_lang_en_US
   sakura_lang_zh_CN
+  generate_tests1_exe_manifest
   test_resource_zip
   test_dllplugin_zip
-  generate_gtest
   generate_miniz
   ppa_stub
 )

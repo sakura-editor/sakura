@@ -21,20 +21,22 @@ struct CPpaStub : public CPPA
 	}
 };
 
-struct CPpaTest : public ::testing::Test, public window::EditorTestSuite {
-	static inline CPPA::PpaExecInfo info{};
+struct CPpaTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
+	static inline std::unique_ptr<CPPA::PpaExecInfo> info = nullptr;
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpEditor();
 
 		// PPA実行情報を初期化する
-		info.m_pShareData = &GetDllShareData();
-		info.m_pcEditView = &pcEditWnd->GetActiveView();
-		info.m_bError = false;
+		info = std::make_unique<CPPA::PpaExecInfo>();
+		info->m_pcEditView = &pcEditWnd->GetActiveView();
+		info->m_bError = false;
 	}
 
 	/*!
@@ -42,7 +44,11 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite {
 	 */
 	static void TearDownTestSuite()
 	{
+		info = nullptr;
+
 		TearDownEditor();
+
+		TearDownUia();
 	}
 };
 
@@ -144,41 +150,41 @@ TEST_F(CPpaTest, GetDeclarations)
 TEST_F(CPpaTest, ppaErrorProc)
 {
 	// 既にエラーフラグが立っていたらメッセージは出さない
-	info.m_bError = true;
-	CPPA::CallErrorProc(info, int(F_FILENEW) + 1, nullptr);
+	info->m_bError = true;
+	CPPA::CallErrorProc(*info, int(F_FILENEW) + 1, nullptr);
 
 	// コマンドエラー
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, int(F_FILENEW) + 1, nullptr), L"関数の実行エラー\nprocedure S_FileNew; index 30101;");
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, int(F_FILENEW) + 1, nullptr), L"関数の実行エラー\nprocedure S_FileNew; index 30101;");
 
 	// 関数エラー
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, int(F_GETFILENAME) + 1, nullptr), L"関数の実行エラー\nfunction S_GetFilename: string; index 40001;");
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, int(F_GETFILENAME) + 1, nullptr), L"関数の実行エラー\nfunction S_GetFilename: string; index 40001;");
 
 	// 不明な関数エラー
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, 1 + 1, nullptr), L"不明な関数の実行エラー(バグです)\nFunc_ID=1");
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 1 + 1, nullptr), L"不明な関数の実行エラー(バグです)\nFunc_ID=1");
 
 	// エラー情報が不正
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正");
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, nullptr), L"エラー情報が不正");
 
 	// 詳細不明のPPAエラー
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, ""), L"詳細不明のエラー");
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, ""), L"詳細不明のエラー");
 
 	// 詳細ありのPPAエラー
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, "test"), L"test");
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, "test"), L"test");
 
 	// 未定義のエラー
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, -1, "test"), L"未定義のエラー\nError_CD=-1\ntest");
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, -1, "test"), L"未定義のエラー\nError_CD=-1\ntest");
 
 	// デバッグ情報付きのエラー
-	info.m_cMemDebug = "debug";
-	info.m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(info, 0, nullptr), L"エラー情報が不正\ndebug");
+	info->m_cMemDebug = "debug";
+	info->m_bError = false;
+	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, nullptr), L"エラー情報が不正\ndebug");
 }
 
 /*!
@@ -193,10 +199,10 @@ TEST_F(CPpaTest, ppaProc)
 	std::array ppszArgs2 = { LPCSTR(nullptr) };
 
 	// 正常なマクロ呼出
-	EXPECT_THAT(CPPA::CallProc(info, F_OKCANCELBOX, ppszArgs1), Eq(0));
+	EXPECT_THAT(CPPA::CallProc(*info, F_OKCANCELBOX, ppszArgs1), Eq(0));
 
 	// パラメーター不足でエラー
-	EXPECT_THAT(CPPA::CallProc(info, F_WCHAR, ppszArgs2), Eq(int(F_WCHAR) + 1));
+	EXPECT_THAT(CPPA::CallProc(*info, F_WCHAR, ppszArgs2), Eq(int(F_WCHAR) + 1));
 }
 
 /*!
@@ -214,18 +220,18 @@ TEST_F(CPpaTest, ppaIntFunc)
 
 	// 数値を返すマクロ関数を呼び出す
 	int nValue = -1;
-	EXPECT_THAT(CPPA::CallIntFunc(info, F_ISINSMODE, ppszArgs2, &nValue), Eq(0));
+	EXPECT_THAT(CPPA::CallIntFunc(*info, F_ISINSMODE, ppszArgs2, &nValue), Eq(0));
 
-	EXPECT_THAT(CPPA::CallIntFunc(info, F_GETLINECOUNT, ppszArgs3, &nValue), Eq(0));
+	EXPECT_THAT(CPPA::CallIntFunc(*info, F_GETLINECOUNT, ppszArgs3, &nValue), Eq(0));
 
 	// パラメーター不足でfalseを返すケース
-	EXPECT_THAT(CPPA::CallIntFunc(info, F_GETLINECOUNT, ppszArgs4, &nValue), Eq(int(F_GETLINECOUNT) + 1));
+	EXPECT_THAT(CPPA::CallIntFunc(*info, F_GETLINECOUNT, ppszArgs4, &nValue), Eq(int(F_GETLINECOUNT) + 1));
 
 	// 文字列を返すマクロ関数を呼び出す
-	EXPECT_THAT(CPPA::CallIntFunc(info, F_EXPANDPARAMETER, ppszArgs1, &nValue), Eq(-2));
+	EXPECT_THAT(CPPA::CallIntFunc(*info, F_EXPANDPARAMETER, ppszArgs1, &nValue), Eq(-2));
 
 	// コマンドを呼び出す
-	EXPECT_THAT(CPPA::CallIntFunc(info, F_FILENEW, ppszArgs2, &nValue), Eq(int(F_FILENEW) + 1));
+	EXPECT_THAT(CPPA::CallIntFunc(*info, F_FILENEW, ppszArgs2, &nValue), Eq(int(F_FILENEW) + 1));
 }
 
 /*!
@@ -242,15 +248,15 @@ TEST_F(CPpaTest, ppaStrFunc)
 
 	// 文字列を返すマクロ関数を呼び出す
 	LPSTR pszValue = nullptr;
-	EXPECT_THAT(CPPA::CallStrFunc(info, F_EXPANDPARAMETER, ppszArgs1, &pszValue), Eq(0));
+	EXPECT_THAT(CPPA::CallStrFunc(*info, F_EXPANDPARAMETER, ppszArgs1, &pszValue), Eq(0));
 
 	// 数値を返すマクロ関数を呼び出す
-	EXPECT_THAT(CPPA::CallStrFunc(info, F_ISINSMODE, ppszArgs2, &pszValue), Eq(int(F_ISINSMODE) + 1));
+	EXPECT_THAT(CPPA::CallStrFunc(*info, F_ISINSMODE, ppszArgs2, &pszValue), Eq(int(F_ISINSMODE) + 1));
 	EXPECT_THAT(pszValue, StrEq(""));
 
 	// コマンドを呼び出す
 	pszValue = nullptr;
-	EXPECT_THAT(CPPA::CallStrFunc(info, F_FILENEW, ppszArgs2, &pszValue), Eq(int(F_FILENEW) + 1));
+	EXPECT_THAT(CPPA::CallStrFunc(*info, F_FILENEW, ppszArgs2, &pszValue), Eq(int(F_FILENEW) + 1));
 	EXPECT_THAT(pszValue, StrEq(""));
 }
 
@@ -263,18 +269,18 @@ TEST_F(CPpaTest, ppaStrFunc)
 TEST_F(CPpaTest, ppaStrObj)
 {
 	LPSTR pszValue = nullptr;
-	EXPECT_THAT(CPPA::CallStrObj(info, 2, false, &pszValue), Eq(0));
+	EXPECT_THAT(CPPA::CallStrObj(*info, 2, false, &pszValue), Eq(0));
 	EXPECT_THAT(pszValue, StrEq("debug"));
 
 	std::string test{ "test" };
 	pszValue = test.data();
-	EXPECT_THAT(CPPA::CallStrObj(info, 2, true, &pszValue), Eq(0));
+	EXPECT_THAT(CPPA::CallStrObj(*info, 2, true, &pszValue), Eq(0));
 
 	pszValue = nullptr;
-	EXPECT_THAT(CPPA::CallStrObj(info, 2, false, &pszValue), Eq(0));
+	EXPECT_THAT(CPPA::CallStrObj(*info, 2, false, &pszValue), Eq(0));
 	EXPECT_THAT(pszValue, StrEq(test));
 
-	EXPECT_THAT(CPPA::CallStrObj(info, 0, true, &pszValue), Eq(-1));
+	EXPECT_THAT(CPPA::CallStrObj(*info, 0, true, &pszValue), Eq(-1));
 }
 
 } // namespace macro

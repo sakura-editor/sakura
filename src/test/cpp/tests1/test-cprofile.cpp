@@ -1,21 +1,103 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include <tchar.h>
-#include <Windows.h>
+#include "env/CDataProfile.h"
+
 #include <Shlwapi.h>
 
-#include "env/CProfile.h"
-
 #include <cstdlib>
-#include <filesystem>
+#include <fstream>
 
 #include "util/file.h"
-#include "env/CDataProfile.h"
+
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
+/*!
+ * @brief 内部バッファが溢れたら拡張する
+ */
+TEST(CProfile, ReadProfile_ExpandLineBuffer)
+{
+	std::filesystem::path iniPath{ "test.ini" };
+
+	std::error_code ec;
+	std::filesystem::remove(iniPath, ec);
+
+	// ファイル出力ストリームをバイナリモードで開く
+	std::ofstream os(iniPath, std::ios::binary);
+
+	std::vector<std::string> lines{
+		"; test"s,
+		"[test]"s,
+		"test=1"s,
+	};
+
+	constexpr auto& prefix = "too_long_item=";
+	auto tooLongLine = std::format("{}{:x<4083}", prefix, 'x');	// 4096文字を超える行を作る
+	lines.emplace_back(tooLongLine);
+
+	// 各行を書き込む
+	for (const auto& line : lines) {
+		if (!line.empty()) {
+			os.write(LPCSTR(std::data(line)), std::size(line));
+		}
+		os << '\r';
+	}
+
+	os.close();
+
+	CDataProfile cProfile;
+	cProfile.ReadProfile(iniPath);
+
+	bool value = false;
+	EXPECT_THAT(cProfile.GetProfileData(L"test", L"test", value), IsTrue());
+	EXPECT_THAT(value, IsTrue());
+
+	std::filesystem::remove(iniPath, ec);
+}
+
+/*!
+ * @brief 設定ファイルの改行コードがCR
+ */
+TEST(CProfile, ReadProfile_LineTerminatorCr)
+{
+	std::filesystem::path iniPath{ "test.ini" };
+
+	std::error_code ec;
+	std::filesystem::remove(iniPath, ec);
+
+	// ファイル出力ストリームをバイナリモードで開く
+	std::ofstream os(iniPath, std::ios::binary);
+
+	const std::array lines{
+		u8"; test"sv,
+		u8"[test]"sv,
+		u8"test=1"sv,
+	};
+
+	// 各行を書き込む
+	for (const auto& line : lines) {
+		if (!line.empty()) {
+			os.write(LPCSTR(std::data(line)), std::size(line));
+		}
+		os << '\r';
+	}
+
+	os.close();
+
+	CDataProfile cProfile;
+	cProfile.ReadProfile(iniPath);
+
+	bool value = false;
+	EXPECT_THAT(cProfile.GetProfileData(L"test", L"test", value), IsTrue());
+	EXPECT_THAT(value, IsTrue());
+
+	std::filesystem::remove(iniPath, ec);
+}
 
 /*!
  * @brief WriteProfileは指定されたパスに含まれるサブディレクトリを作成する

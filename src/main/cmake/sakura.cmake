@@ -49,6 +49,13 @@ else()
   set(GENERATOR_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
 
+# マニフェスト用にCPUアーキテクチャを編集する
+if(ARCH STREQUAL "x64")
+  set(EXE_ARCH "amd64")
+else()
+  set(EXE_ARCH "${ARCH}")
+endif()
+
 # ホストツールのプラットフォームとCPUを決める
 if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64|x86_64")
   set(HOST_PLATFORM "x64")
@@ -68,18 +75,22 @@ else()
   set(GENERATOR_ARGS_FOR_HOST_TOOLS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
 
-# vswhereを探す。（なくてもOK）
+# vswhereを探す。（必須）
+# Chocolatey版vswhere(ver3.1.7+)を最優先とする
+# Visual Studio付属のvswhereは %ProgramFiles(x86)% に入っている
+# %ProgramFiles% は Windows 10 32bit版向けなので削除可
 find_program(CMD_VSWHERE vswhere.exe
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ChocolateyInstall}/bin"
     "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
-  PATH_SUFFIXES
-    "bin"
+    "$ENV{ProgramFiles}/Microsoft Visual Studio/Installer"
   DOC "Visual Studio Locator"
 )
 
 if(CMD_VSWHERE)
   message(STATUS "Found vswhere: ${CMD_VSWHERE}")
+else()
+  message(FATAL_ERROR "vswhere not found")
 endif()
 
 # 環境変数とvswhereを使ってVSバージョンを取得する
@@ -158,10 +169,16 @@ endif()
 
 message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
 
+# Find Python Interpreter(required)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+message(STATUS "Found Python: ${Python3_EXECUTABLE}")
+
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ProgramFiles}/7-zip"
+    "$ENV{ChocolateyInstall}/bin"
 )
 
 if(NOT 7ZIP_EXECUTABLE)
@@ -197,18 +214,19 @@ add_custom_target(generate_version_header
     "${CMAKE_BINARY_DIR}/version.h"
 )
 
-# Include HeaderMake.cmake for HeaderMake command
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/HeaderMake.cmake)
-
 # Create a custom command for funccode_define generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_define.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_define.h
     -mode=define
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_define.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file
@@ -220,13 +238,17 @@ add_custom_target(generate_funccode_define
 # Create a custom command for funccode_enum generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_enum.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_enum.h
     -mode=enum
     -enum=EFunctionCode
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_enum.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file
@@ -235,8 +257,92 @@ add_custom_target(generate_funccode_enum
     "${CMAKE_BINARY_DIR}/Funccode_enum.h"
 )
 
-# Include darkmodelib.cmake
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/darkmodelib.cmake)
+# Create a custom command for sakura.exe.manifest generation
+add_custom_command(
+  OUTPUT "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+  COMMAND ${CMAKE_COMMAND} 
+    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -DEXE_NAME=sakura.exe
+    -DEXE_ARCH=${EXE_ARCH}
+    -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/sakura.exe.manifest
+    -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMENT "Generating sakura.exe.manifest"
+)
+
+# Create a custom target that depends on the generated file
+add_custom_target(generate_sakura_exe_manifest
+  DEPENDS
+    "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+)
+
+# Resolve darkmodelib from vcpkg local registry
+find_package(darkmodelib CONFIG REQUIRED)
+
+# Resolve bregonig from vcpkg local registry
+find_package(bregonig CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/bregonig.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+  COMMENT "Copying bregonig.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_bregonig
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+)
+
+# Resolve cmigemo from vcpkg local registry
+find_package(cmigemo CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/migemo.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+  COMMENT "Copying migemo.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_cmigemo
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+)
+
+find_package(ppa-stub CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  COMMENT "Copying ppa_stub.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(ppa_stub
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+)
+
+find_package(dll-plugin1 CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMENT "Copying dll_plugin1.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(dll_plugin1
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+)
 
 if(MINGW)
   # Find iconv
@@ -452,7 +558,7 @@ target_link_directories(sakura_core
 # link libraries
 target_link_libraries(sakura_core
   PUBLIC
-    darkmode
+    darkmodelib::darkmodelib
     comctl32
     dbghelp
     dwmapi
@@ -475,7 +581,6 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
-  generate_darkmodelib
   generate_bregonig
   generate_cmigemo
 )
@@ -517,5 +622,19 @@ if(MINGW)
       -municode
       -static
       $<$<CONFIG:Release>:-s>
+  )
+
+  set(SAKURA_EXE_MANIFEST "${CMAKE_BINARY_DIR}/sakura.exe.manifest")
+  set(SAKURA_MANIFEST_RC "${CMAKE_BINARY_DIR}/sakura_manifest.rc")
+
+  # Create a custom command for sakura_manifest.rc generation
+  add_custom_command(
+    OUTPUT "${SAKURA_MANIFEST_RC}"
+    COMMAND ${CMAKE_COMMAND} 
+      -DSOURCE_DIR="${CMAKE_SOURCE_DIR}"
+      -DOUTPUT_FILE="${SAKURA_MANIFEST_RC}"
+      -DMANIFEST_FILE="${SAKURA_EXE_MANIFEST}"
+      -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMENT "Generating sakura_manifest.rc"
   )
 endif(MINGW)

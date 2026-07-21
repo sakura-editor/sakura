@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,11 +16,14 @@
 #pragma once
 
 #include "env/CDataProfile.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "env/DLLSHAREDATA.h"
 
 class CImpExpManager
 {
 public:
+	virtual ~CImpExpManager() = default;
+
 	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
 	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
 	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg);
@@ -29,26 +32,28 @@ public:
 	// ファイル名の初期値を設定
 	void SetBaseName(const std::wstring& sBase);
 	// フルパス名を取得
-	inline std::wstring GetFullPath()
+	inline std::wstring GetFullPath() const
 	{
-		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + m_sOriginName };
+		return MakeFullPath(m_sOriginName);
 	}
 	// フルパス名を取得
-	inline std::wstring MakeFullPath( std::wstring sFileName )
+	inline std::wstring MakeFullPath(std::wstring_view sFileName) const
 	{
-		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + sFileName };
+		return (std::filesystem::path{ GetDllShareData().m_sHistory.m_szIMPORTFOLDER } / sFileName).native();
 	}
 	// ファイル名を取得
-	inline std::wstring GetFileName()	{ return m_sOriginName; }
+	inline std::wstring GetFileName() const { return m_sOriginName; }
 
 protected:
 	// Import Folderの設定
-	inline void SetImportFolder( const WCHAR* szPath ) 
+	inline void SetImportFolder(std::wstring_view importPath) const
 	{
 		/* ファイルのフルパスをフォルダーとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, nullptr );
-		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );
+		const auto szPath = std::data(importPath);
+		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, nullptr);
+
+		wcscat_s(GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\");
 	}
 
 	// デフォルト拡張子の取得(「*.txt」形式)
@@ -64,7 +69,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          タイプ別設定                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpType : public CImpExpManager
+class CImpExpType : public CImpExpManager, private env::ShareDataClient
 {
 public:
 	// Constructor
@@ -73,20 +78,17 @@ public:
 		, m_Types( types )
 		, m_hwndList( hwndList )
 	{
-		/* 共有データ構造体のアドレスを返す */
-		m_pShareData = &GetDllShareData();
 	}
 
-public:
 	bool ImportAscertain( HINSTANCE, HWND, const std::wstring&, std::wstring& ) override;
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
-	bool IsAddType(){ return m_bAddType; }
+
+	bool	IsAddType() const noexcept { return m_bAddType; }
 
 private:
 	// インターフェース用
@@ -95,10 +97,9 @@ private:
 	HWND			m_hwndList;
 
 	// 内部使用
-	DLLSHAREDATA*	m_pShareData;
-	int				m_nColorType;
+	int				m_nColorType = -1;
 	std::wstring 	m_sColorFile;
-	bool			m_bAddType;
+	bool			m_bAddType = false;
 	CDataProfile	m_cProfile;
 };
 
@@ -114,11 +115,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.col"; }
 	const wchar_t* GetOriginExtension() override	{ return L"col"; }
@@ -139,11 +138,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.rkw"; }
 	const wchar_t* GetOriginExtension() override	{ return L"rkw"; }
@@ -164,11 +161,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.txt"; }
 	const wchar_t* GetOriginExtension() override	{ return L"txt"; }
@@ -189,11 +184,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.key"; }
 	const wchar_t* GetOriginExtension() override	{ return L"key"; }
@@ -214,11 +207,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.mnu"; }
 	const wchar_t* GetOriginExtension() override	{ return L"mnu"; }
@@ -241,11 +232,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.kwd"; }
 	const wchar_t* GetOriginExtension() override	{ return L"kwd"; }
@@ -268,11 +257,9 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
@@ -293,12 +280,10 @@ public:
 	{
 	}
 
-public:
 	bool Import( const std::wstring&, std::wstring& ) override;
 	bool Export( const std::wstring&, std::wstring& ) override;
 	static void IO_FileTreeIni( CDataProfile&, std::vector<SFileTreeItem>& );
 
-public:
 	// デフォルト拡張子の取得
 	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
@@ -306,4 +291,5 @@ public:
 private:
 	std::vector<SFileTreeItem>&		m_aFileTreeItems;
 };
+
 #endif /* SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_ */

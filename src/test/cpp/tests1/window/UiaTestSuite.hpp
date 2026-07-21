@@ -6,8 +6,10 @@
  */
 #pragma once
 
+#include "config/system_constants.h"
 #include "cxx/com_pointer.hpp"
 #include "dlg/ModalDialogCloser.hpp"
+#include "util/tchar_convert.h"
 
 // UI Automation経由でGUI操作を行う
 #include <UIAutomation.h>
@@ -90,18 +92,18 @@ struct UiaTestSuite
 		EmulateInvoke(pItem);
 	}
 
-	void EmulateEnterOpenFileName(const std::filesystem::path& exportPath) const
+	void EmulateEnterOpenFileName(const std::filesystem::path& path) const
 	{
 		if (const auto hWndDlgOpenFile = WaitForDialog(L"開く")) {
-			EmulateSetValue(GetFocusedElement(), exportPath.filename().c_str());
+			EmulateSetValue(GetFocusedElement(), path.c_str());
 			EmulateHitEnter();
 		}
 	}
 
-	void EmulateEnterSaveFileName(const std::filesystem::path& exportPath) const
+	void EmulateEnterSaveFileName(const std::filesystem::path& path) const
 	{
 		if (const auto hWndDlgSaveAs = WaitForDialog(L"名前を付けて保存")) {
-			EmulateSetValue(GetFocusedElement(), exportPath.filename().c_str());
+			EmulateSetValue(GetFocusedElement(), path.c_str());
 			EmulateHitEnter();
 		}
 	}
@@ -112,6 +114,33 @@ struct UiaTestSuite
 		inputs.emplace_back(MakeKeyboardInput(VK_RETURN, false));
 		inputs.emplace_back(MakeKeyboardInput(VK_RETURN, true));
 		EXPECT_THAT(SendInput(inputs), Eq(std::size(inputs)));
+	}
+
+	void EmulateSelectPopupMenu(const _bstr_t& name) const
+	{
+		const auto hPopupMenu = WaitForWindow(MAKEINTRESOURCEW(32768), std::nullopt, 60000, false);
+		EXPECT_THAT(hPopupMenu, NotNull());
+
+		auto condMenuItem = CreatePropertyCondition(
+			UIA_ControlTypePropertyId,
+			UIA_MenuItemControlTypeId
+		);
+		auto condName = CreatePropertyCondition(
+			UIA_NamePropertyId,
+			name
+		);
+		auto cond = CreateAndCondition(condMenuItem, condName);
+
+		auto item = FindFirst(hPopupMenu, TreeScope_Subtree, cond);
+		EXPECT_THAT(item, NotNull());
+
+		cxx::com_pointer<IUIAutomationInvokePattern> invoke;
+		EXPECT_HRESULT_SUCCEEDED(item->GetCurrentPatternAs(
+			UIA_InvokePatternId,
+			IID_PPV_ARGS(&invoke)
+		));
+
+		EXPECT_HRESULT_SUCCEEDED(invoke->Invoke());
 	}
 
 	IUIAutomationElementPtr FindFirst(
@@ -184,9 +213,60 @@ struct UiaTestSuite
 		return input;
 	}
 
-	HWND WaitForDialog(const std::wstring& title) const
+	template <typename Func>
+	void RunGuiTest(Func&& f)
 	{
-		return WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title);
+		try {
+			std::forward<Func>(f)();
+		}
+		catch (const std::exception& e) {
+			FAIL() << "std::exception: " << typeid(e).name()
+				<< ": " << e.what();
+		}
+		catch (const _com_error& e) {
+			FAIL() << "_com_error: "
+				<< ": " << cxx::to_string(e.ErrorMessage());
+		}
+		catch (...) {
+			FAIL() << "unknown non-std exception";
+		}
+	}
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @param action 閉じるアクション
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle, const std::function<void(HWND)>& action) const
+	{
+		return std::jthread([this, title = std::wstring(dialogTitle), action] {
+			const auto hWndFound = WaitForDialog(title);
+			action(hWndFound);
+		});
+	}
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(std::wstring_view dialogTitle) const
+	{
+		return StartWindowCloser(dialogTitle, [this] (HWND hWndDlg) {
+			// OKボタンを押下して閉じる
+			const auto hOK = ::GetDlgItem(hWndDlg, IDOK);
+			std::wstring text(0x100, L'\0');
+			::GetWindowTextW(hOK, std::data(text), int(std::size(text)));
+			EmulateInvokeButton(hWndDlg, text.c_str());
+		});
+	}
+
+	HWND WaitForDialog(const std::wstring& title, ULONGLONG timeoutMillis = 60000) const
+	{
+		return WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title, timeoutMillis);
 	}
 
 	IUIAutomationElementPtr WaitForFocus(ULONGLONG startTick, ULONGLONG timeoutMillis) const
@@ -207,7 +287,7 @@ struct UiaTestSuite
 		return pFocusedElement;
 	}
 
-	HWND WaitForWindow(LPCWSTR targetClass, const std::optional<std::wstring>& title = std::nullopt, bool waitCaret = true, ULONGLONG timeoutMillis = defaultTimeoutMillis) const
+	HWND WaitForWindow(LPCWSTR targetClass, const std::optional<std::wstring>& title = std::nullopt, ULONGLONG timeoutMillis = defaultTimeoutMillis, bool waitCaret = true) const
 	{
 		const auto startTick = ::GetTickCount64();
 
@@ -228,6 +308,11 @@ struct UiaTestSuite
 		while (::GetTickCount64() - startTick < timeoutMillis);
 
 		return nullptr;
+	}
+
+	HWND WaitForEditor(const std::optional<std::wstring>& title = std::nullopt, ULONGLONG timeoutMillis = 60000) const
+	{
+		return WaitForWindow(GSTR_EDITWINDOWNAME, title, timeoutMillis);
 	}
 
 	template<typename... Conditions>

@@ -36,6 +36,9 @@ int wmain(int argc, wchar_t **argv)
 	printf("Running main() from %s\n", std::source_location::current().file_name());
 	testing::InitGoogleMock(&argc, argv);
 
+	// コンソール出力のコードページをUTF-8にする
+	::SetConsoleOutputCP(CP_UTF8);
+
 	// terminate対策でスレッドトレースを出すようにする
 	std::set_terminate(testing::OnTerminate);
 

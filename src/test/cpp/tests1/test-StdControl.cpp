@@ -22,38 +22,7 @@ using namespace std::literals::string_literals;
  */
 namespace ApiWrap {
 
-/*!
- * @brief テキスト取得結果構造体
- */
-struct SGetTextResult {
-	bool success = false;	//!< テキストの取得に成功したか
-	std::wstring text;		//!< 取得したテキスト
-
-	//! デフォルトコンストラクタは失敗状態を表す
-	SGetTextResult() = default;
-
-	//! 成功状態を表すコンストラクタ
-	explicit SGetTextResult(std::wstring&& result) noexcept
-		: success(true)
-		, text(std::move(result))
-	{
-	}
-
-	/*!
-	 * @brief 成功状態を返す変換演算子
-	 *
-	 * @retval true 取得成功。
-	 * @note テキストが空でもtrue。
-	 */
-	explicit operator bool() const noexcept { return success; }
-
-	/*!
-	 * @brief 取得した文字列を返す変換演算子
-	 *
-	 * @note 失敗状態でも空文字列が返る。
-	 */
-	explicit operator const std::wstring& () const noexcept { return text; }
-};
+using SGetTextResult = apiwrap::SGetTextResult;
 
 /*!
  * @brief 指定したウインドウのテキストを取得する
@@ -138,17 +107,6 @@ SGetTextResult GetCbItemText(HWND hWnd, size_t index)
 		if (std::wstring buffer(itemLength, L'\0'); Combo_GetLBText(hWnd, static_cast<int>(index), std::data(buffer))) {
 			return SGetTextResult(std::move(buffer));
 		}
-	}
-	return SGetTextResult();
-}
-
-/*!
- * @brief ダイアログボックス項目のテキストを取得する
- */
-SGetTextResult GetDlgItemTextW(HWND hDlg, int nIdDlgItem)
-{
-	if (std::wstring buffer; DlgItem_GetText(hDlg, nIdDlgItem, buffer)) {
-		return SGetTextResult(std::move(buffer));
 	}
 	return SGetTextResult();
 }
@@ -351,9 +309,28 @@ TEST(ApiWrap, DlgItemTest001) {
 		}
 
 		void OnFirstIdle(HWND hDlg) const {
+			// 検証用文字列
+			constexpr auto& text = L"test item";
+
 			// アイテムにテキストを設定しておく
-			ApiWrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, L"test item"s);
-			EXPECT_THAT(ApiWrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT), StrEq(L"test item"));
+			ApiWrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, text);
+			apiwrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, text);
+
+			// バッファサイズ指定せずに取得。正常に取得できる
+			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT), StrEq(text));
+
+			// 適切なバッファに取得。正常に取得できる
+			StaticString<std::size(text)> enoughBuffer{};
+			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT, enoughBuffer), IsTrue());
+			EXPECT_THAT(enoughBuffer, StrEq(text));
+
+			// 小さいバッファに取得。失敗する。
+			StaticString<std::size(text) - 1> smallBuffer{};
+			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT, smallBuffer), IsFalse());
+
+			// 存在しないIDを指定して取得。失敗する。
+			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT2), IsFalse());
+			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT2, enoughBuffer), IsFalse());
 
 			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsFalse());

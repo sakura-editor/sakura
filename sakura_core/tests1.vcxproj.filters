@@ -228,6 +228,9 @@
     <ClInclude Include="..\src\test\resources\testing\CrtAllocHook.hpp">
       <Filter>Other Files\testing</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\test\resources\testing\HResultEq.hpp">
+      <Filter>Other Files\testing</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\test\resources\testing\StartEditorProcess.hpp">
       <Filter>Other Files\testing</Filter>
     </ClInclude>

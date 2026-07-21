@@ -28,6 +28,10 @@ tags
 testData_*.txt
 UpgradeLog.htm
 
+# PyTest出力ファイルは除外する
+.coverage
+pytest-coverage.xml
+
 # SonarScanローカル実行用(解析ツールをダウンロードするフォルダ)
 .sonar
 
@@ -38,7 +42,9 @@ UpgradeLog.htm
 SONAR_TOKEN
 
 # SonarScanローカル実行用したときに生成されるテスト結果ファイル
-tests1-googletest.xml
+tests*-googletest.xml
+tests*-coverage.xml
+LastCoverageResults.log
 
 # SonarScanローカル実行の失敗再現用アーカイブ
 sonar-cfamily-reproducer.tar.xz

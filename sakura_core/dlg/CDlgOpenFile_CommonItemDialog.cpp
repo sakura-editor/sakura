@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -50,8 +50,8 @@ struct CDlgOpenFile_CommonItemDialog final
 		const std::vector<LPCWSTR>& vOPENFOLDER
 	) override;
 
-	bool DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFileter ) override;
-	bool DoModal_GetSaveFileName( WCHAR* pszPath ) override;
+	bool DoModal_GetOpenFileName(std::span<WCHAR> szPath, EFilter eAddFileter) override;
+	bool DoModal_GetSaveFileName(std::span<WCHAR> szPath) override;
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo,
 						 std::vector<std::wstring>* pFileNames,
 						 bool bOptions ) override;
@@ -426,8 +426,17 @@ void CDlgOpenFile_CommonItemDialog::Create(
 	return;
 }
 
-bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFilter )
+bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(
+	std::span<WCHAR> szPath,
+	EFilter eAddFilter
+)
 {
+	const auto cchPath = std::size(szPath);
+
+	assert(_MAX_PATH <= cchPath);
+
+	auto pszPath = std::data(szPath);
+
 	//	2003.05.12 MIK
 	std::vector<COMDLG_FILTERSPEC> specs;
 	specs.reserve(7);
@@ -464,7 +473,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 	std::vector<std::wstring> fileNames;
 	bool ret = DoModalOpenDlgImpl0(false, &fileNames, L"", specs);
 	if (ret) {
-		wcscpy(pszPath, fileNames[0].c_str());
+		::wcscpy_s(pszPath, cchPath, fileNames[0].c_str());
 	}
 	return ret;
 }
@@ -472,8 +481,16 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 /*! 保存ダイアログ モーダルダイアログの表示
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 */
-bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
+bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName(
+	std::span<WCHAR> szPath
+)
 {
+	const auto cchPath = std::size(szPath);
+
+	assert(_MAX_PATH <= cchPath);
+
+	auto pszPath = std::data(szPath);
+
 	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
 	if( pszPath[0] ){
 		WCHAR szFullPath[_MAX_PATH];
