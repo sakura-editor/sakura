@@ -60,6 +60,10 @@
 #include "recent/CRecentFolder.h"
 #include "apiwrap/DarkMode.h"
 
+#include "macro/CMacroFactory.h"
+#include "view/colors/CColorStrategy.h"
+#include "view/figures/CFigureManager.h"
+
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
 
@@ -221,6 +225,10 @@ CEditWnd::CEditWnd()
 
 CEditWnd::~CEditWnd()
 {
+	CMacroFactory::resetInstance();
+	CColorStrategyPool::resetInstance();
+	CFigureManager::resetInstance();
+
 	delete[] m_pszLastCaption;
 
 	m_hWnd = nullptr;

@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -89,11 +89,10 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager : public TSingleton<CAppNodeManager>{
-	friend class TSingleton<CAppNodeManager>;
-	CAppNodeManager(){}
-
+class CAppNodeManager final : public TSakuraSingleton<CAppNodeManager> {
 public:
+	CAppNodeManager() = default;
+
 	//グループ
 	void ResetGroupId();									/* グループをIDリセットする */
 

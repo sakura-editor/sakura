@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -169,12 +169,10 @@ protected:
 	const STypeConfig* m_pTypeData = nullptr;
 };
 
-class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
-	friend class TSingleton<CColorStrategyPool>;
+class CColorStrategyPool final : public TSakuraSingleton<CColorStrategyPool> {
+public:
 	CColorStrategyPool();
 	virtual ~CColorStrategyPool();
-
-public:
 
 	//取得
 	CColorStrategy*	GetStrategy(int nIndex) const noexcept { return m_vStrategiesDisp[nIndex]; }

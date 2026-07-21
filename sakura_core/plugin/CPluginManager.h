@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -12,16 +12,17 @@
 #define SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_
 #pragma once
 
-#include "plugin/CPlugin.h"
 #include <list>
 #include <string>
 
-class CPluginManager final : public TSingleton<CPluginManager>{
-	friend class TSingleton<CPluginManager>;
+#include "plugin/CPlugin.h"
+#include "util/design_template.h"
+
+class CPluginManager final : public TSakuraSingleton<CPluginManager> {
+public:
 	CPluginManager();
 
 	// 操作
-public:
 	bool LoadAllPlugin(CommonSetting* common = nullptr);				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
@@ -50,4 +51,5 @@ private:
 	std::wstring m_sBaseDir;			//pluginsフォルダーのパス
 	std::wstring m_sExePluginDir;		//Exeフォルダー配下pluginsフォルダーのパス
 };
+
 #endif /* SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_ */

@@ -76,6 +76,7 @@ CShareData::CShareData() = default;
 CShareData::~CShareData()
 {
 	CFileNameManager::resetInstance();
+	CAppNodeManager::resetInstance();
 
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
