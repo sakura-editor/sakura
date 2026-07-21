@@ -66,6 +66,29 @@ pip install cpplint
 cpplint --recursive sakura_core
 ```
 
+## Agent Build/Test Preset (x64 Debug)
+
+When an agent needs a fixed CI-aligned build/test setup, use this preset derived from `.github/workflows/build-sakura.yml`:
+
+1. Fixed target:
+   - `Platform=x64`
+   - `Configuration=Debug`
+2. Setup:
+   - Add MSBuild to `PATH`
+   - Set up Python (`vars.PYTHON_VERSION` or `3.14.3`)
+   - Install `uv`
+   - `uv pip install --require-hashes --no-build --no-deps -r requirements.txt`
+   - Bootstrap vcpkg from `<workspace>\tools\vcpkg`
+3. Tool install:
+   - Install Ctags (winget)
+   - Install DiffUtils (winget)
+   - Install OpenCppCoverage using winget
+   - If winget fails, install via official installer with SHA256 verification, then add `C:\Program Files\OpenCppCoverage` to `PATH`
+4. Build:
+   - Use Build Wrapper + MSBuild for x64/Debug (as in workflow), or `build-sln.bat x64 Debug` when Build Wrapper is not required.
+5. Test:
+   - `ctest --test-dir build/x64/CMakeTools -C Debug --output-on-failure`
+
 ## Architecture
 
 ### Two-Process Model

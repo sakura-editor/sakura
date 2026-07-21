@@ -9,7 +9,7 @@
 	Copyright (C) 2002, YAZAKI, genta
 	Copyright (C) 2005, FILE
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -22,6 +22,7 @@
 #include <WTypes.h> //VARTYPE
 
 #include "CMacroManagerBase.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "env/DLLSHAREDATA.h"
 #include "config/maxdata.h"
 #include "util/design_template.h"
@@ -56,7 +57,7 @@ typedef MacroFuncInfo* MacroFuncInfoArray;
 
 @date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 -----------------------------------------------------------------------*/
-class CSMacroMgr
+class CSMacroMgr final : private env::ShareDataClient
 {
 	//	データの型宣言
 	CMacroManagerBase* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
@@ -150,7 +151,6 @@ public:
 	CMacroManagerBase* SetTempMacro( CMacroManagerBase *newMacro );
 
 private:
-	DLLSHAREDATA*	m_pShareData;
 	CMacroManagerBase** Idx2Ptr(int idx);
 
 	/*!	実行中マクロのインデックス番号 (INVALID_MACRO_IDX:無効)

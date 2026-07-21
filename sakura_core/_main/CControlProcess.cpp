@@ -9,7 +9,7 @@
 	Copyright (C) 2002, aroka CProcessより分離, YAZAKI
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -130,16 +130,13 @@ bool CControlProcess::InitializeProcess()
 
 	const auto pszProfileName = GetProfileName();
 
-	// 初期化完了イベントを作成する
+	// 初期化完了イベントの名前を組み立てる
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
-	m_hEventCPInitialized = ::CreateEvent( nullptr, TRUE, FALSE, strInitEvent.c_str() );
-	if( nullptr == m_hEventCPInitialized )
-	{
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateEvent()失敗。\n終了します。" );
-		return false;
-	}
+
+	// 起動元が作成した初期化完了イベントを開く。
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+	HandleHolder hEvent{ ::OpenEventW(EVENT_MODIFY_STATE, FALSE, std::data(strInitEvent)) };
 
 	/* コントロールプロセスの目印 */
 	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
@@ -194,11 +191,7 @@ bool CControlProcess::InitializeProcess()
 	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
-	if( !::SetEvent( m_hEventCPInitialized ) ){
-		ErrorBeep();
-		TopErrorMessage( nullptr, LS(STR_ERR_CTRLMTX4) );
-		return false;
-	}
+	if (hEvent) ::SetEvent(hEvent);
 
 	return true;
 }
@@ -234,10 +227,6 @@ CControlProcess::~CControlProcess()
 {
 	delete m_pcTray;
 
-	if( m_hEventCPInitialized ){
-		::ResetEvent( m_hEventCPInitialized );
-	}
-	::CloseHandle( m_hEventCPInitialized );
 	if( m_hMutexCP ){
 		::ReleaseMutex( m_hMutexCP );
 	}

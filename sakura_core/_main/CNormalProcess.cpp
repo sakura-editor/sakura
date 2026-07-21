@@ -22,6 +22,9 @@
 
 #include "StdAfx.h"
 #include "CNormalProcess.h"
+
+#include "_main/CProcessFactory.h"
+
 #include "CCommandLine.h"
 #include "CControlTray.h"
 #include "window/CEditWnd.h" // 2002/2/3 aroka
@@ -52,6 +55,7 @@ CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 CNormalProcess::~CNormalProcess()
 {
+	CEditApp::resetInstance();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -81,8 +85,17 @@ bool CNormalProcess::InitializeProcess()
 		return false;
 	}
 
+	// エディター初期化完了イベントを開く
+	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ::GetCurrentThreadId()) };
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+	HandleHolder hEvent{ ::OpenEventW(STANDARD_RIGHTS_REQUIRED | EVENT_MODIFY_STATE | SYNCHRONIZE, FALSE, initEventName) };
+
+	// スコープを抜けるときシグナル状態になるようにする
+	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
+	InitEventHolder initEvent{ hEvent.get() };
+
 	/* 共有メモリを初期化する */
-	if ( !CProcess::InitializeProcess() ){
+	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
 		return false;
 	}
 
@@ -159,7 +172,9 @@ bool CNormalProcess::InitializeProcess()
 	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
-	if( nullptr == pEditWnd->GetHwnd() ){
+
+	const auto hEditWnd = pEditWnd->GetHwnd();
+	if (!hEditWnd) {
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
@@ -195,7 +210,6 @@ bool CNormalProcess::InitializeProcess()
 		// 2010.06.16 Moca Grepでもオプション指定を適用
 		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 		pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを予め表示しておく
-		HWND hEditWnd = pEditWnd->GetHwnd();
 		if( !::IsIconic( hEditWnd ) && pEditWnd->m_cDlgFuncList.GetHwnd() ){
 			RECT rc;
 			::GetClientRect( hEditWnd, &rc );
@@ -282,8 +296,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
-			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  nullptr);
-			if( FALSE != nRet ){
+			if (pEditWnd->m_cDlgGrep.DoModal(GetProcessInstance(), hEditWnd,  LPCWSTR(nullptr))) {
 				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}else{
 				// 自分はGrepでない
@@ -398,7 +411,6 @@ bool CNormalProcess::InitializeProcess()
 
 	//WM_SIZEをポスト
 	{	// ファイル読み込みしなかった場合にはこの WM_SIZE がアウトライン画面を配置する
-		HWND hEditWnd = pEditWnd->GetHwnd();
 		if( !::IsIconic( hEditWnd ) ){
 			RECT rc;
 			::GetClientRect( hEditWnd, &rc );
@@ -422,8 +434,9 @@ bool CNormalProcess::InitializeProcess()
 		pEditWnd->GetDocument()->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 	// 起動時マクロオプション
-	LPCWSTR pszMacro = CCommandLine::getInstance()->GetMacro();
-	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){
+	if (const auto pszMacro = CCommandLine::getInstance()->GetMacro();
+		pszMacro && pszMacro[0] != L'\0')
+	{
 		LPCWSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
 		if( pszMacroType == nullptr || pszMacroType[0] == L'\0' || _wcsicmp(pszMacroType, L"file") == 0 ){
 			pszMacroType = nullptr;
@@ -437,6 +450,8 @@ bool CNormalProcess::InitializeProcess()
 
 	// 複数ファイル読み込み
 	OpenFiles( pEditWnd->GetHwnd() );
+
+	initEvent = nullptr;
 
 	return pEditWnd->GetHwnd() ? true : false;
 }
@@ -511,26 +526,27 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 
 	@date 2015.03.14 novice 新規作成
 */
-void CNormalProcess::OpenFiles( HWND hwnd )
+void CNormalProcess::OpenFiles(HWND hwnd) const
 {
 	EditInfo fi;
 	CCommandLine::getInstance()->GetEditInfo( &fi );
 	bool bViewMode = CCommandLine::getInstance()->IsViewMode();
 
-	int fileNum = CCommandLine::getInstance()->GetFileNum();
-	if( fileNum > 0 ){
-		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
+	if (auto fileNum = CCommandLine::getInstance()->GetFileNum();
+		0 < fileNum)
+	{
 		// ファイルドロップ数の上限に合わせる
-		if( fileNum > nDropFileNumMax ){
+		if (const auto nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
+			nDropFileNumMax < fileNum) {
 			fileNum = nDropFileNumMax;
 		}
 
-		int i;
-		for( i = 0; i < fileNum; i++ ){
+		for (int i = 0; i < fileNum; ++i) {
 			// ファイル名差し替え
-			wcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
-			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), hwnd, &fi, bViewMode );
-			if( ret == false ){
+			::wcscpy_s(fi.m_szPath, CCommandLine::getInstance()->GetFileName(i));
+
+			// 同期モードでファイルを開いていく
+			if (!CControlTray::OpenNewEditor2(GetProcessInstance(), hwnd, &fi, bViewMode, true)) {
 				break;
 			}
 		}

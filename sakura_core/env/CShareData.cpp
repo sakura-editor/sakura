@@ -26,7 +26,9 @@
 
 #include "StdAfx.h"
 #include "env/CShareData.h"
+
 #include "env/DLLSHAREDATA.h"
+#include "env/CFileNameManager.h"
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
@@ -73,6 +75,8 @@ CShareData::CShareData() = default;
 */
 CShareData::~CShareData()
 {
+	CFileNameManager::resetInstance();
+
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
 		::UnmapViewOfFile( m_pShareData );

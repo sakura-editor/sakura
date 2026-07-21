@@ -10,7 +10,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, aroka, genta
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -21,6 +21,7 @@
 #pragma once
 
 #include "Funccode_enum.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "mem/CNativeW.h"
 
 class CMenuDrawer;
@@ -45,7 +46,7 @@ struct DLLSHAREDATA;
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 20050809 aroka クラス外部からアクセスされないメンバはprivateにした。
 */
-class CMenuDrawer
+class CMenuDrawer final : private env::ShareDataClient
 {
 	using Me = CMenuDrawer;
 
@@ -89,11 +90,8 @@ private:
 	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ) const;  /* ツールバーIndexの取得 */// 20050809 aroka
 	int Find( int nFuncID );
 	const WCHAR* GetLabel( int nFuncID );
-	WCHAR GetAccelCharFromLabel( const WCHAR* pszLabel );
+	WCHAR	GetAccelCharFromLabel(std::wstring_view label) const;
 	int ToolbarNoToIndex( int nToolbarNo ) const;
-
-private:
-	DLLSHAREDATA*	m_pShareData;
 
 	HINSTANCE		m_hInstance = nullptr;
 	HWND			m_hWndOwner = nullptr;
@@ -130,11 +128,12 @@ public:
 	//	Oct. 16, 2000 genta
 	CImageListMgr	*m_pcIcons = nullptr;	//	Image List
 
-protected:
+private:
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	void SetTBBUTTONVal( TBBUTTON* ptb, int iBitmap, int idCommand,
 						 BYTE fsState, BYTE fsStyle, DWORD_PTR dwData,
 						 INT_PTR iString ) const;	/* TBBUTTON構造体にデータをセット */
 };
+
 #endif /* SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_ */

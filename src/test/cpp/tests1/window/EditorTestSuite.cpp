@@ -16,9 +16,6 @@ namespace window {
  */
 /* static */ void EditorTestSuite::SetUpEditor()
 {
-	// 言語環境を初期化する
-	CSelectLang::InitializeLanguageEnvironment();
-
 	SetUpShareData();
 
 	// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
@@ -128,6 +125,8 @@ namespace window {
 	CEditApp::getInstance()->m_pcLoadAgent = nullptr;
 	CEditApp::getInstance()->m_pcEditWnd = nullptr;
 	CEditApp::getInstance()->m_pcEditDoc = nullptr;
+
+	CEditApp::resetInstance();
 
 	pcPropertyManager = nullptr;
 	pcMruListener = nullptr;

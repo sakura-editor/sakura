@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -12,8 +12,10 @@
 #define SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_
 #pragma once
 
-#include "plugin/CPlugin.h"
 #include <list>
+
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
+#include "plugin/CPlugin.h"
 #include "util/design_template.h"
 
 #define PP_COMMAND_STR	L"Command"
@@ -56,18 +58,17 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : public TSingleton<CJackManager>{
-	friend class TSingleton<CJackManager>;
+class CJackManager final : public TSakuraSingleton<CJackManager>, private env::ShareDataClient {
+public:
 	CJackManager();
 
 	//操作
-public:
-	ERegisterPlugResult RegisterPlug( std::wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
-	bool UnRegisterPlug( std::wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
+	ERegisterPlugResult RegisterPlug(std::wstring_view jackName, CPlug* plug);	//プラグをジャックに関連付ける
+	bool	UnRegisterPlug(std::wstring_view jackName, const CPlug* plug);	//プラグの関連付けを解除する
 	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する
 	void InvokePlugins( EJack jack, CEditView* view );		//プラグインを列挙して呼び出し
 private:
-	EJack GetJackFromName( std::wstring sName );	//ジャック名をジャック番号に変換する
+	EJack	GetJackFromName(std::wstring_view sName) const;	//ジャック名をジャック番号に変換する
 
 	//属性
 public:
@@ -81,7 +82,7 @@ public:
 
 	//メンバ変数
 private:
-	DLLSHAREDATA* m_pShareData;
 	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
+
 #endif /* SAKURA_CJACKMANAGER_99C6FE17_62C7_45E8_82F2_C36441FF809C_H_ */

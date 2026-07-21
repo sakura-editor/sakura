@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -65,7 +65,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	);
 }
 
-CEditApp::~CEditApp()
+CEditApp::~CEditApp() noexcept
 {
 	delete m_pcSMacroMgr;
 	delete m_pcPropertyManager;

@@ -11,6 +11,32 @@
 
 #include "util/design_template.h"
 
+/*!
+ * TSakuraSingletonの挙動を検証するためのクラス
+ */
+class CSakuraSingleton : public TSakuraSingleton<CSakuraSingleton>
+{
+public:
+	CSakuraSingleton() = default;
+	virtual ~CSakuraSingleton() noexcept = default;
+};
+
+/*!
+ * @brief TSakuraSingletonの挙動を検証するテスト
+ */
+TEST(CSakuraSingleton, CSakuraSingleton)
+{
+	// いきなり呼び出してもNULLは返らない
+	EXPECT_THAT(CSakuraSingleton::getInstance(), NotNull());
+
+	// 何度呼び出しても同じ値が返る
+	const auto pInstance = CSakuraSingleton::getInstance();
+	EXPECT_THAT(CSakuraSingleton::getInstance(), Eq(pInstance));
+	EXPECT_THAT(CSakuraSingleton::getInstance(), Eq(pInstance));
+	EXPECT_THAT(CSakuraSingleton::getInstance(), Eq(pInstance));
+
+	CSakuraSingleton::resetInstance();
+}
 
 /*!
  * TSingleInstanceの挙動を検証するためのクラス

@@ -10,7 +10,7 @@
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2003, MIK
 	Copyright (C) 2004, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,13 +21,15 @@
 
 #include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include <vector>
+
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "recent/CRecentFile.h"
 
 struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFile {
+class CMRUFile final : private env::ShareDataClient {
 	using Me = CMRUFile;
 
 public:
@@ -55,11 +57,8 @@ public:
 	bool GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const;	//	ファイル名で指定したEditInfo（情報をまるごと）
 	void Add( EditInfo* pEditInfo );		//	*pEditInfoを追加する。
 
-protected:
-	//	共有メモリアクセス用。
-	struct DLLSHAREDATA*	m_pShareData;		//	共有メモリを参照するよ。
-
 private:
 	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
 };
+
 #endif /* SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_ */

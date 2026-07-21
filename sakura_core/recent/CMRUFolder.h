@@ -9,7 +9,7 @@
 	Copyright (C) 2000, jepro
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2003, MIK
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,12 +19,13 @@
 #pragma once
 
 #include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "recent/CRecentFolder.h"
 
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFolder {
+class CMRUFolder final : private env::ShareDataClient {
 	using Me = CMRUFolder;
 
 public:
@@ -51,11 +52,8 @@ public:
 	void Add( const WCHAR* pszFolder );	//	pszFolderを追加する。
 	const WCHAR* GetPath(int num) const;
 
-protected:
-	//	共有メモリアクセス用。
-	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
-
 private:
 	CRecentFolder	m_cRecentFolder;	//履歴	//@@@ 2003.04.08 MIK
 };
+
 #endif /* SAKURA_CMRUFOLDER_32D69CDD_037F_4DE1_961E_B730F56F4189_H_ */

@@ -300,7 +300,7 @@ jobs:
     # SonarQubeのBuild Wrapperをインストールする
     - name: Install Build Wrapper
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
-      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
 
     # OpenCppCoverageをインストールする
     - name: Install OpenCppCoverage (winget)

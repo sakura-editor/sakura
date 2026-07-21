@@ -54,17 +54,46 @@ using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
+namespace testing {
+
+void RequestForeignWindowClose(HWND hWnd);
+
+} // namespace testing
+
 namespace window {
 
-struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, public window::UiaTestSuite {
 	using CControlTrayHolder = std::unique_ptr<CControlTray>;
+
+	static inline CControlTrayHolder pcTrayWnd = nullptr;
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		SetUpUia();
+
 		SetUpShareData();
+
+		// トレイウィンドウをインスタンス化する
+		pcTrayWnd = std::make_unique<CControlTray>();
+
+		pcTrayWnd->m_hIcons.Create(G_AppInstance());
+
+		pcTrayWnd->m_cMenuDrawer.Create(
+			CSelectLang::getLangRsrcInstance(),
+			pcTrayWnd->GetTrayHwnd(),
+			&pcTrayWnd->m_hIcons
+		);
+
+		//プロパティ管理
+		pcTrayWnd->m_pcPropertyManager = new CPropertyManager();
+		pcTrayWnd->m_pcPropertyManager->Create(
+			pcTrayWnd->GetTrayHwnd(),
+			&pcTrayWnd->m_hIcons,
+			&pcTrayWnd->m_cMenuDrawer
+		);
 	}
 
 	/*!
@@ -72,27 +101,125 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite {
 	 */
 	static void TearDownTestSuite()
 	{
+		// トレイウィンドウのインスタンスを破棄する
+		pcTrayWnd = nullptr;
+
 		TearDownShareData();
-	}
 
-	CControlTrayHolder pcTrayWnd = nullptr;
-
-	/*!
-	 * テストが起動される直前に毎回呼ばれる関数
-	 */
-	void SetUp() override {
-		// テストクラスをインスタンス化する
-		pcTrayWnd = std::make_unique<CControlTray>();
+		TearDownUia();
 	}
 
 	/*!
 	 * テストが実行された直後に毎回呼ばれる関数
 	 */
 	void TearDown() override {
-		// テストクラスのインスタンスを破棄する
-		pcTrayWnd = nullptr;
+		// キューに溜まったメッセージは全部捨てる
+		MSG msg{};
+		while (::PeekMessageW(&msg, nullptr, 0L, 0L, PM_REMOVE)) ;
 	}
 };
+
+TEST_F(TrayWndTest, OpenNewEditor101)
+{
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	SLoadInfo sLoadInfo{};
+	EXPECT_THAT(CControlTray::OpenNewEditor(nullptr, HWND(nullptr), sLoadInfo), IsFalse());
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+TEST_F(TrayWndTest, OpenNewEditor102)
+{
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	EditInfo fi{};
+	EXPECT_THAT(CControlTray::OpenNewEditor2(nullptr, HWND(nullptr), &fi, false), IsFalse());
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+TEST_F(TrayWndTest, DISABLED_OnCreate101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_CREATE, 0L, 0L), IsTrue());	// 戻り値は反転される
+}
+
+TEST_F(TrayWndTest, DISABLED_OnDestroy101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_DESTROY, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, DISABLED_OnClose101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_CLOSE, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, DISABLED_OnQueryEndSession101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_QUERYENDSESSION, 0L, 0L), IsTrue());
+}
+
+TEST_F(TrayWndTest, OnEndSession101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_ENDSESSION, FALSE, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnHelp101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, 0L), IsTrue());
+
+	HELPINFO hi{};
+	hi.iContextType = HELPINFO_WINDOW;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
+}
+
+TEST_F(TrayWndTest, OnCommand101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_COMMAND, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnTimer101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_TIMER, 2 /* IDT_EDITCHECK */, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnMenuChar101)
+{
+	HWND hWndTray = nullptr;
+	pcTrayWnd->DispatchEvent(hWndTray, WM_MENUCHAR, 0L, 0L);
+}
+
+TEST_F(TrayWndTest, OnExitMenuLoop101)
+{
+	HWND hWndTray = nullptr;
+	pcTrayWnd->DispatchEvent(hWndTray, WM_EXITMENULOOP, 0L, 0L);
+}
+
+TEST_F(TrayWndTest, OnHotKey101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HOTKEY, 0L, 0L), IsFalse());
+}
+
+TEST_F(TrayWndTest, OnTaskbarReCreated101)
+{
+	const UINT uMsgTaskbarCreated = ::RegisterWindowMessageW(L"TaskbarCreated");
+
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, uMsgTaskbarCreated, 0L, 0L), IsFalse());
+}
 
 TEST_F(TrayWndTest, OnGetTypeSetting001)
 {
@@ -245,6 +372,272 @@ TEST_F(TrayWndTest, OnChangeSetting001)
 	::wcscpy_s(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, L"");
 
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_CHANGESETTING, 0, int(PM_CHANGESETTING_ALL)), 0);
+}
+
+TEST_F(TrayWndTest, OnDeleteMe101)
+{
+	pcTrayWnd->m_bCreatedTrayIcon = true;
+
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DELETE_ME, 0L, 0L), IsFalse());
+
+	pcTrayWnd->m_bCreatedTrayIcon = false;
+}
+
+TEST_F(TrayWndTest, OnHtmlHelp101)
+{
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_HTMLHELP, WPARAM(hWndTray), 0L), IsFalse());
+}
+
+/*!
+ * トレイ左クリックメニューの表示テスト
+ * 左クリックメニューからGrepダイアログを表示して実行する
+ */
+TEST_F(TrayWndTest, DoGrep001)
+{
+	// 検索条件
+	CSearchKeywordManager().AddToSearchKeyArr(LR"(localhost)");
+
+	// 検索フォルダー
+	CSearchKeywordManager().AddToGrepFolderArr(LR"(C:\WINDOWS\System32\Drivers)");
+
+	// 検索ファイル
+	CSearchKeywordManager().AddToGrepFileArr(LR"(*.*)");
+
+	// 除外フォルダー
+	CSearchKeywordManager().AddToExcludeFolderArr(LR"(en-US;DriverData;UMDF;udc;mde;wd;)");
+
+	// 除外ファイル
+	CSearchKeywordManager().AddToExcludeFileArr(LR"(*.sys;*.dll;*.exe;*.mui;*.nls;*.chm;*.dat;*.tmp;*.wdf)");
+
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示されたGrepダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(L"Grep", [this](HWND hWndDlg) {
+		// 検索ボタンを押下してGrep実行する
+		EmulateInvokeButton(hWndDlg, L"検索(F)");
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"Grep(G)...");
+	});
+
+	// トレイアイコン左クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// Grepダイアログが閉じられるのを待つ
+	t1.join();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sSearchKeywords.m_aSearchKeys.clear();
+	GetDllShareData().m_sSearchKeywords.m_aGrepFolders.clear();
+	GetDllShareData().m_sSearchKeywords.m_aGrepFiles.clear();
+	GetDllShareData().m_sSearchKeywords.m_aExcludeFolders.clear();
+	GetDllShareData().m_sSearchKeywords.m_aExcludeFiles.clear();
+
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+/*!
+ * トレイ左クリックメニューの表示テスト
+ * 左クリックメニューから開くダイアログを表示する
+ */
+TEST_F(TrayWndTest, OpenFile001)
+{
+	const auto path = GetIniFileName().replace_filename(L"dummy.txt");
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	{
+		std::wofstream fos(path);
+		fos << L"ダミーファイルです" << std::endl;
+	}
+
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
+	std::jthread t1([this, path] {
+		EmulateEnterOpenFileName(path);
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"開く(O)...");
+	});
+
+	// トレイアイコン左クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// ファイルダイアログが閉じられるのを待つ
+	t1.join();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+
+	std::filesystem::remove(path, ec);
+}
+
+/*!
+ * トレイダブルクリックのテスト
+ * トレイアイコンをダブルクリックすると新規エディターが開く
+ */
+TEST_F(TrayWndTest, OpenNewEditor103)
+{
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+
+	// 表示された編集ウィンドウを閉じるためのスレッドを起動する
+	std::jthread t1([this] {
+		// 編集ウィンドウハンドルを保存する
+		const auto hWndFound = WaitForWindow(GSTR_EDITWINDOWNAME, std::nullopt, 5000, false);
+
+		// 編集ウィンドウからプロセスIDを取得する
+		DWORD dwProcessId = 0;
+		::GetWindowThreadProcessId(hWndFound, &dwProcessId);
+
+		// プロセス情報の問い合せを行うためのハンドルを開く
+		HandleHolder ep{ ::OpenProcess(SYNCHRONIZE, FALSE, dwProcessId) };
+
+		// 編集ウインドウにクローズを要求する
+		testing::RequestForeignWindowClose(hWndFound);
+
+		// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+		::WaitForSingleObject(ep, 30000);
+	});
+
+	// ミューテックスの名前を組み立てる
+	SFilePath szMutexName{ GSTR_MUTEX_SAKURA_CP };
+
+	// ミューテックスを作成してロックする
+	HandleHolder hMutex{ ::CreateMutexW(nullptr, TRUE, szMutexName) };
+	EXPECT_THAT(hMutex, NotNull());
+
+	// コマンドラインオブジェクトを用意する
+	CCommandLine cCommandLine{};
+	cCommandLine.ParseCommandLine(L"-PROF=", false);
+
+	// トレイアイコンダブルクリックイベントを発生させる
+	HWND hWndTray = nullptr;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDBLCLK);
+}
+
+/*!
+ * トレイ右クリックメニューの表示テスト
+ * 右クリックメニューからバージョン情報ダイアログを表示する
+ */
+TEST_F(TrayWndTest, ShowDlgAbout001)
+{
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示されたバージョン情報ダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(LS(F_ABOUT), [this] (HWND hWndDlg) {
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"バージョン情報(A)");
+	});
+
+	// トレイアイコン右クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_RBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_RBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// バージョン情報ダイアログが閉じられるのを待つ
+	t1.join();
+}
+
+/*!
+ * トレイ左クリックメニューの表示テスト
+ * 左クリックメニューから履歴とお気に入りの管理ダイアログを表示しする
+ */
+TEST_F(TrayWndTest, ShowDlgFavorite001)
+{
+	// ポップアップメニューは親ウィンドウを指定する必要があるのでダミーウィンドウを作る
+	const auto hInstance = G_AppInstance();
+	const auto hWnd = ::CreateWindowExW(0, WC_STATIC, L"test", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+	using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
+	WindowHolder hWndHolder{ hWnd };
+
+	pcTrayWnd->m_hInstance = hInstance;
+	pcTrayWnd->m_hWnd = hWnd;
+
+	// 表示された履歴とお気に入りの管理ダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(L"履歴とお気に入りの管理", [this](HWND hWndDlg) {
+		EmulateInvokeButton(hWndDlg, L"閉じる(C)");
+	});
+
+	std::jthread t2([this] {
+		// ポップアップメニュー項目を選択させる
+		EmulateSelectPopupMenu(L"履歴の管理(M)...");
+	});
+
+	// トレイアイコン左クリックメニューを表示させる
+	HWND hWndTray = hWnd;
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDOWN);
+	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONUP);
+
+	// ポップアップメニュー項目の選択を待つ
+	t2.join();
+
+	// 履歴とお気に入りの管理ダイアログが閉じられるのを待つ
+	t1.join();
+}
+
+TEST_F(TrayWndTest, ShowDlgWinList101)
+{
+	// 表示されたウィンドウ一覧ダイアログを閉じるためのスレッドを起動する
+	std::jthread t1 = StartWindowCloser(LS(F_WINDOW_LIST_SUBMENU), [this] (HWND hWndDlg) {
+		// OKボタンを押下して閉じる
+		EmulateInvokeButton(hWndDlg, L"OK");
+	});
+
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DLGWINLIST, 0L, 0L), IsFalse());
 }
 
 struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
@@ -1627,13 +2020,13 @@ TEST_F(EditWndTest, ShowPropType003)
 		const auto hWndPage = GetActivePage(hWndDlg);
 
 		EmulateInvokeButton(hWndPage, L"文字色統一(<)...");
-		if (const auto hWndDlgSameColor = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"文字色統一")) {
+		if (const auto hWndDlgSameColor = WaitForDialog(L"文字色統一")) {
 			EmulateInvokeButton(hWndDlgSameColor, L"全チェック(A)");
 			EmulateInvokeButton(hWndDlgSameColor, L"全解除(N)");
 			EmulateInvokeButton(hWndDlgSameColor, L"OK");
 		}
 		EmulateInvokeButton(hWndPage, L"背景色統一(>)...");
-		if (const auto hWndDlgSameColor = WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), L"背景色統一")) {
+		if (const auto hWndDlgSameColor = WaitForDialog(L"背景色統一")) {
 			EmulateInvokeButton(hWndDlgSameColor, L"全チェック(A)");
 			EmulateInvokeButton(hWndDlgSameColor, L"全解除(N)");
 			EmulateInvokeButton(hWndDlgSameColor, L"OK");
