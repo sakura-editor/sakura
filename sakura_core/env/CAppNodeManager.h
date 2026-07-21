@@ -108,7 +108,7 @@ public:
 	//総合情報
 	int GetOpenedWindowArr(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );				/* 現在開いている編集ウィンドウの配列を返す */
 
-protected:
+private:
 	int _GetOpenedWindowArrCore(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
 
 public:
