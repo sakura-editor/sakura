@@ -274,7 +274,7 @@ void CEditWnd::UpdateCaption()
 }
 
 //!< ウィンドウ生成用の矩形を取得
-void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, [[maybe_unused]] int nGroup, const STabGroupInfo& sTabGroupInfo)
+void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, [[maybe_unused]] int nGroup, const STabGroupInfo& sTabGroupInfo) const
 {
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
@@ -384,7 +384,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	return hwndResult;
 }
 
-void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
+void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const
 {
 	HWND hwndTop = nullptr;
 	WINDOWPLACEMENT	wpTop = {0};
@@ -2697,7 +2697,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
-STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect) const
 {
 	if( pDataObject == nullptr || pdwEffect == nullptr ){
 		return E_INVALIDARG;
@@ -2719,7 +2719,7 @@ STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, [
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragOver( [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::DragOver([[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect) const
 {
 	if( pdwEffect == nullptr )
 		return E_INVALIDARG;
@@ -2728,12 +2728,12 @@ STDMETHODIMP CEditWnd::DragOver( [[maybe_unused]] DWORD dwKeyState, [[maybe_unus
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragLeave( void )
+STDMETHODIMP CEditWnd::DragLeave() const
 {
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::Drop(LPDATAOBJECT pDataObject, [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect)
 {
 	if( pDataObject == nullptr || pdwEffect == nullptr )
 		return E_INVALIDARG;
@@ -2859,7 +2859,7 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 /*! キャプション更新用タイマーの処理
 	@date 2007.04.03 ryoji 新規
 */
-void CEditWnd::OnCaptionTimer( void )
+void CEditWnd::OnCaptionTimer() const
 {
 	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
 	// まだ切替中ならタイマー継続
@@ -3752,7 +3752,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	@author genta
 	@date 2002.09.10
 */
-void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
+void CEditWnd::SetWindowIcon(HICON hIcon, int flag) const
 {
 	HICON hOld = (HICON)::SendMessage( GetHwnd(), WM_SETICON, flag, (LPARAM)hIcon );
 	if( hOld != nullptr ){
@@ -3952,12 +3952,14 @@ void CEditWnd::SendStatusMessage( const WCHAR* msg )
 	@date 2003.05.31 新規作成
 	@date 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 */
-void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _pszFilePath, bool bIsGrep )
+void CEditWnd::ChangeFileNameNotify(
+	std::wstring_view tabCaption,
+	std::wstring_view tabFilePath,
+	bool bIsGrep
+) const
 {
-	const WCHAR* pszFilePath = _pszFilePath;
-
-	if( nullptr == pszTabCaption ) pszTabCaption = L"";	//ガード
-	if( nullptr == pszFilePath ) pszFilePath = L"";		//ガード 2006.01.28 ryoji
+	const auto pszTabCaption = std::data(tabCaption);
+	const auto pszFilePath = std::data(tabFilePath);
 
 	CRecentEditNode	cRecentEditNode;
 	int nIndex = cRecentEditNode.FindItemByHwnd( GetHwnd() );
@@ -4005,7 +4007,7 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 	@param top  0:トグル動作 1:最前面 2:最前面解除 その他:なにもしない
 	@date 2004.09.21 Moca
 */
-void CEditWnd::WindowTopMost( int top )
+void CEditWnd::WindowTopMost(int top) const
 {
 	if( 0 == top ){
 		DWORD dwExstyle = (DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE );
@@ -4050,7 +4052,7 @@ void CEditWnd::WindowTopMost( int top )
 // ツールバー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときにウィンドウからON/OFFを
 //	呼び出してもらうことにより、余計な負荷を停止したい。
-void CEditWnd::Timer_ONOFF( bool bStart )
+void CEditWnd::Timer_ONOFF(bool bStart) const
 {
 	if( nullptr != GetHwnd() ){
 		if( bStart ){
