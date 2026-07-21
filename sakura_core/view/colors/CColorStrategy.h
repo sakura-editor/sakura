@@ -174,7 +174,7 @@ protected:
 class CColorStrategyPool final : public TSakuraSingleton<CColorStrategyPool>, private env::ShareDataClient {
 public:
 	CColorStrategyPool();
-	virtual ~CColorStrategyPool();
+	~CColorStrategyPool();
 
 	//取得
 	CColorStrategy*	GetStrategy(int nIndex) const noexcept { return m_vStrategiesDisp[nIndex]; }

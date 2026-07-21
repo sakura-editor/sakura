@@ -18,7 +18,7 @@
 class CFigureManager final : public TSakuraSingleton<CFigureManager>, private env::ShareDataClient {
 public:
 	CFigureManager();
-	virtual ~CFigureManager();
+	~CFigureManager();
 
 	//! 描画するCFigureを取得
 	//	@param	pText	対象文字列の先頭
