@@ -330,8 +330,8 @@ public:
 	const CMyPoint& GetDragPosOrg() const{ return m_ptDragPosOrg; }
 
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
-	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) const;
-	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) const;
+	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt [[maybe_unused]], LPDWORD pdwEffect) const;
+	STDMETHODIMP DragOver(DWORD dwKeyState [[maybe_unused]], POINTL pt [[maybe_unused]], LPDWORD pdwEffect) const;
 	STDMETHODIMP DragLeave() const;
 	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 

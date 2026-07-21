@@ -274,7 +274,11 @@ void CEditWnd::UpdateCaption()
 }
 
 //!< ウィンドウ生成用の矩形を取得
-void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, [[maybe_unused]] int nGroup, const STabGroupInfo& sTabGroupInfo) const
+void CEditWnd::_GetWindowRectForInit(
+	CMyRect* rcResult,
+	int nGroup [[maybe_unused]],
+	const STabGroupInfo& sTabGroupInfo
+) const
 {
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
@@ -384,7 +388,10 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	return hwndResult;
 }
 
-void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const
+void CEditWnd::_GetTabGroupInfo(
+	STabGroupInfo* pTabGroupInfo,
+	int& nGroup
+) const
 {
 	HWND hwndTop = nullptr;
 	WINDOWPLACEMENT	wpTop = {0};
@@ -2689,7 +2696,12 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
-STDMETHODIMP CEditWnd::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect) const
+STDMETHODIMP CEditWnd::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt [[maybe_unused]],
+	LPDWORD pdwEffect
+) const
 {
 	if( pDataObject == nullptr || pdwEffect == nullptr ){
 		return E_INVALIDARG;
@@ -2711,7 +2723,11 @@ STDMETHODIMP CEditWnd::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, [[
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragOver([[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect) const
+STDMETHODIMP CEditWnd::DragOver(
+	DWORD dwKeyState [[maybe_unused]],
+	POINTL pt [[maybe_unused]],
+	LPDWORD pdwEffect
+) const
 {
 	if( pdwEffect == nullptr )
 		return E_INVALIDARG;
@@ -3745,8 +3761,8 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 */
 void CEditWnd::SetWindowIcon(HICON hIcon, int flag) const
 {
-	HICON hOld = (HICON)::SendMessage( GetHwnd(), WM_SETICON, flag, (LPARAM)hIcon );
-	if( hOld != nullptr ){
+	if (const auto hOld = (HICON)::SendMessageW(GetHwnd(), WM_SETICON, flag, LPARAM(hIcon));
+		hOld != nullptr ){
 		::DestroyIcon( hOld );
 	}
 }
