@@ -1077,11 +1077,10 @@ void CEditWnd::MessageLoop( void )
 		//アクセラレータ
 		else{
 			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
-			if( msg.message == WM_KEYDOWN ){
-				if( GetActiveView().m_bHokan ){
-					if( -1 == m_cHokanMgr.KeyProc( msg.wParam, msg.lParam ) )
+			if (WM_KEYDOWN == msg.message &&
+				GetActiveView().m_bHokan &&
+				-1 == m_cHokanMgr.KeyProc(msg.wParam, msg.lParam)) {
 						continue;	// 補完ウィンドウが処理を実行した
-				}
 			}
 
 			if( m_hAccel && TranslateAccelerator( msg.hwnd, m_hAccel, &msg ) ){}
@@ -1101,6 +1100,8 @@ LRESULT CEditWnd::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	const auto hWnd = GetHwnd();
+
 	int					nRet;
 	LPNMHDR				pnmh;
 	int					nPane;
@@ -1285,8 +1286,9 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_MOVE:
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
-			if( !::IsZoomed( GetHwnd() ) && !::IsIconic( GetHwnd() ) ){
+		if (WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos &&
+			!::IsZoomed(hWnd) &&
+			!::IsIconic(hWnd)) {
 				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
 				// Aero Snapで縦方向最大化で終了して次回起動するときは元のサイズにする必要があるので、
 				// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
@@ -1300,7 +1302,6 @@ LRESULT CEditWnd::DispatchEvent(
 				::OffsetRect(&rcWin, rcWork.left - rcMon.left, rcWork.top - rcMon.top);	// スクリーン座標に変換
 				m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWin.left;
 				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
-			}
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -2339,16 +2340,13 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				bool	bInList;		// リストが1個以上ある
 				bInList = InitMenu_Special( hMenu, cMainMenu->m_nFunc );
 				// リストが無い場合の処理
-				if (!bInList) {
-					//分割線に囲まれ、かつリストなし ならば 次の分割線をスキップ
-					if ((i == nIdxStr + 1
-						  || (pcMenu->m_cMainMenuTbl[i-1].m_nType == T_SEPARATOR
-							&& pcMenu->m_cMainMenuTbl[i-1].m_nLevel == cMainMenu->m_nLevel))
-						&& i + 1 < nIdxEnd
-						&& pcMenu->m_cMainMenuTbl[i+1].m_nType == T_SEPARATOR
-						&& pcMenu->m_cMainMenuTbl[i+1].m_nLevel == cMainMenu->m_nLevel) {
+				//分割線に囲まれ、かつリストなし ならば 次の分割線をスキップ
+				if (!bInList &&
+					i + 1 < nIdxEnd &&
+					T_SEPARATOR == pcMenu->m_cMainMenuTbl[i + 1].m_nType &&
+					cMainMenu->m_nLevel == pcMenu->m_cMainMenuTbl[i + 1].m_nLevel &&
+					(i == nIdxStr + 1 || (0 < i && T_SEPARATOR == pcMenu->m_cMainMenuTbl[i - 1].m_nType && cMainMenu->m_nLevel == pcMenu->m_cMainMenuTbl[i - 1].m_nLevel))) {
 						i++;		// スキップ
-					}
 				}
 				break;
 			}
@@ -3183,10 +3181,9 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			if( nullptr != m_cStatusBar.GetStatusHwnd() ){
 				bSizeBox = false;
 			}
-			if( nullptr != m_cFuncKeyWnd.GetHwnd() ){
-				if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 1 ){
+			if (1 == m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place &&
+				m_cFuncKeyWnd.GetHwnd()) {
 					bSizeBox = false;
-				}
 			}
 			if( wParam == SIZE_MAXIMIZED ){
 				bSizeBox = false;
