@@ -11,6 +11,7 @@
 
 #include "basis/CMyString.h"
 #include "config/maxdata.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "util/design_template.h"
 
 class CAppNodeGroupHandle;
@@ -89,7 +90,7 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager final : public TSakuraSingleton<CAppNodeManager> {
+class CAppNodeManager final : public TSakuraSingleton<CAppNodeManager>, private env::ShareDataClient {
 public:
 	CAppNodeManager() = default;
 

@@ -11,10 +11,11 @@
 
 #include <vector>
 
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "util/design_template.h"
-#include "CFigureStrategy.h"
+#include "view/figures/CFigureStrategy.h"
 
-class CFigureManager final : public TSakuraSingleton<CFigureManager> {
+class CFigureManager final : public TSakuraSingleton<CFigureManager>, private env::ShareDataClient {
 public:
 	CFigureManager();
 	virtual ~CFigureManager();

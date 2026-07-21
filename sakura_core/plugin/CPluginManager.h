@@ -15,10 +15,11 @@
 #include <list>
 #include <string>
 
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "plugin/CPlugin.h"
 #include "util/design_template.h"
 
-class CPluginManager final : public TSakuraSingleton<CPluginManager> {
+class CPluginManager final : public TSakuraSingleton<CPluginManager>, private env::ShareDataClient {
 public:
 	CPluginManager();
 

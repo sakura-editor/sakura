@@ -9,6 +9,8 @@
 #define SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_
 #pragma once
 
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
+
 // 要先行定義
 #include "EColorIndexType.h"
 #include "uiparts/CGraphics.h"
@@ -169,7 +171,7 @@ protected:
 	const STypeConfig* m_pTypeData = nullptr;
 };
 
-class CColorStrategyPool final : public TSakuraSingleton<CColorStrategyPool> {
+class CColorStrategyPool final : public TSakuraSingleton<CColorStrategyPool>, private env::ShareDataClient {
 public:
 	CColorStrategyPool();
 	virtual ~CColorStrategyPool();
