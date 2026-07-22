@@ -809,14 +809,13 @@ void CEditWnd::LayoutMainMenu()
 	const auto pcMenu = &m_pShareData->m_Common.m_sMainMenu;
 
 	HWND		hWnd = GetHwnd();
-	HMENU		hMenu;
-	int			i;
 	int 		j;
 	int 		nCount;
 	LPCWSTR		pszName;
 
-	hMenu = ::CreateMenu();
-	for (i = 0; i < MAX_MAINMENU_TOP && pcMenu->m_nMenuTopIdx[i] >= 0; i++) {
+	const auto hMenu = ::CreateMenu();
+
+	for (int i = 0; i < MAX_MAINMENU_TOP && pcMenu->m_nMenuTopIdx[i] >= 0; i++) {
 		nCount = ( i >= MAX_MAINMENU_TOP || pcMenu->m_nMenuTopIdx[i+1] < 0 ? pcMenu->m_nMainMenuNum : pcMenu->m_nMenuTopIdx[i+1] )
 				- pcMenu->m_nMenuTopIdx[i];		// メニュー項目数
 		const auto cMainMenu = &pcMenu->m_cMainMenuTbl[pcMenu->m_nMenuTopIdx[i]];
@@ -3104,7 +3103,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		int			nBdrWidth = ::GetSystemMetrics(SM_CXSIZEFRAME) + ::GetSystemMetrics(SM_CXEDGE) * 2; // 境界の幅
 		SIZE		sz;
 		HDC			hdc;
-		int			i;
+
 		// 2004-02-28 yasu
 		// 正確な幅を計算するために、表示フォントを取得してhdcに選択させる。
 		hdc = ::GetDC( m_cStatusBar.GetStatusHwnd() );
@@ -3117,7 +3116,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		if( wParam != SIZE_MAXIMIZED ){
 			nStArr[nStArrNum - 1] -= nSbxWidth;
 		}
-		for( i = nStArrNum - 1; i > 0; i-- ){
+		for (int i = nStArrNum - 1; i > 0; --i) {
 			::GetTextExtentPoint32W(hdc, PSZ_ARGS(pszLabel[i]), &sz);
 			nStArr[i - 1] = nStArr[i] - ( sz.cx + nBdrWidth );
 		}
@@ -4400,10 +4399,9 @@ void  CEditWnd::SetActivePane( int nIndex )
 */
 bool CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
 {
-	int i;
 	bool bDrawSwitchOld = GetActiveView().GetDrawSwitch();
 
-	for( i = 0; i < GetAllViewCount(); i++ ){
+	for (int i = 0; i < GetAllViewCount(); ++i) {
 		GetView(i).SetDrawSwitch( bDraw );
 	}
 	m_cMiniMapView.SetDrawSwitch( bDraw );
@@ -4420,11 +4418,8 @@ bool CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
 */
 void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
 {
-	int i;
-	CEditView* pcView;
-
-	for( i = 0; i < GetAllViewCount(); i++ ){
-		pcView = &GetView(i);
+	for (int i = 0; i < GetAllViewCount(); ++i) {
+		const auto pcView = &GetView(i);
 		if( pcView == pcViewExclude )
 			continue;
 		if( i == m_nActivePaneIndex ){
