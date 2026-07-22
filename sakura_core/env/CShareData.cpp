@@ -76,6 +76,7 @@ CShareData::CShareData() = default;
 CShareData::~CShareData()
 {
 	CFileNameManager::resetInstance();
+	CAppNodeManager::resetInstance();
 
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
@@ -1168,7 +1169,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 	idxは正確なものでなければならない。
 	YAZAKI
 */
-bool CShareData::BeReloadWhenExecuteMacro( int idx )
+bool CShareData::BeReloadWhenExecuteMacro(int idx) const
 {
 	if( !m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() )
 		return false;
@@ -1184,7 +1185,7 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 	@date 2005.01.30 genta CShareData::Init()から分離．
 		一つずつ設定しないで一気にデータ転送するように．
 */
-void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
+void CShareData::InitToolButtons(DLLSHAREDATA* pShareData) const
 {
 		/* ツールバーボタン構造体 */
 //Sept. 16, 2000 JEPRO

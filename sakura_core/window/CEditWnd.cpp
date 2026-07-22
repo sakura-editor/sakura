@@ -60,6 +60,10 @@
 #include "recent/CRecentFolder.h"
 #include "apiwrap/DarkMode.h"
 
+#include "macro/CMacroFactory.h"
+#include "view/colors/CColorStrategy.h"
+#include "view/figures/CFigureManager.h"
+
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
 
@@ -221,6 +225,10 @@ CEditWnd::CEditWnd()
 
 CEditWnd::~CEditWnd()
 {
+	CMacroFactory::resetInstance();
+	CColorStrategyPool::resetInstance();
+	CFigureManager::resetInstance();
+
 	delete[] m_pszLastCaption;
 
 	m_hWnd = nullptr;
@@ -266,7 +274,7 @@ void CEditWnd::UpdateCaption()
 }
 
 //!< ウィンドウ生成用の矩形を取得
-void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, [[maybe_unused]] int nGroup, const STabGroupInfo& sTabGroupInfo)
+void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, [[maybe_unused]] int nGroup, const STabGroupInfo& sTabGroupInfo) const
 {
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
@@ -376,7 +384,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	return hwndResult;
 }
 
-void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
+void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const
 {
 	HWND hwndTop = nullptr;
 	WINDOWPLACEMENT	wpTop = {0};
@@ -1069,11 +1077,10 @@ void CEditWnd::MessageLoop( void )
 		//アクセラレータ
 		else{
 			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
-			if( msg.message == WM_KEYDOWN ){
-				if( GetActiveView().m_bHokan ){
-					if( -1 == m_cHokanMgr.KeyProc( msg.wParam, msg.lParam ) )
+			if (WM_KEYDOWN == msg.message &&
+				GetActiveView().m_bHokan &&
+				-1 == m_cHokanMgr.KeyProc(msg.wParam, msg.lParam)) {
 						continue;	// 補完ウィンドウが処理を実行した
-				}
 			}
 
 			if( m_hAccel && TranslateAccelerator( msg.hwnd, m_hAccel, &msg ) ){}
@@ -1093,6 +1100,8 @@ LRESULT CEditWnd::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	const auto hWnd = GetHwnd();
+
 	int					nRet;
 	LPNMHDR				pnmh;
 	int					nPane;
@@ -1277,8 +1286,9 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_MOVE:
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
-			if( !::IsZoomed( GetHwnd() ) && !::IsIconic( GetHwnd() ) ){
+		if (WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos &&
+			!::IsZoomed(hWnd) &&
+			!::IsIconic(hWnd)) {
 				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
 				// Aero Snapで縦方向最大化で終了して次回起動するときは元のサイズにする必要があるので、
 				// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
@@ -1292,7 +1302,6 @@ LRESULT CEditWnd::DispatchEvent(
 				::OffsetRect(&rcWin, rcWork.left - rcMon.left, rcWork.top - rcMon.top);	// スクリーン座標に変換
 				m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWin.left;
 				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
-			}
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -2331,16 +2340,13 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				bool	bInList;		// リストが1個以上ある
 				bInList = InitMenu_Special( hMenu, cMainMenu->m_nFunc );
 				// リストが無い場合の処理
-				if (!bInList) {
-					//分割線に囲まれ、かつリストなし ならば 次の分割線をスキップ
-					if ((i == nIdxStr + 1
-						  || (pcMenu->m_cMainMenuTbl[i-1].m_nType == T_SEPARATOR
-							&& pcMenu->m_cMainMenuTbl[i-1].m_nLevel == cMainMenu->m_nLevel))
-						&& i + 1 < nIdxEnd
-						&& pcMenu->m_cMainMenuTbl[i+1].m_nType == T_SEPARATOR
-						&& pcMenu->m_cMainMenuTbl[i+1].m_nLevel == cMainMenu->m_nLevel) {
+				//分割線に囲まれ、かつリストなし ならば 次の分割線をスキップ
+				if (!bInList &&
+					i + 1 < nIdxEnd &&
+					T_SEPARATOR == pcMenu->m_cMainMenuTbl[i + 1].m_nType &&
+					cMainMenu->m_nLevel == pcMenu->m_cMainMenuTbl[i + 1].m_nLevel &&
+					(i == nIdxStr + 1 || (0 < i && T_SEPARATOR == pcMenu->m_cMainMenuTbl[i - 1].m_nType && cMainMenu->m_nLevel == pcMenu->m_cMainMenuTbl[i - 1].m_nLevel))) {
 						i++;		// スキップ
-					}
 				}
 				break;
 			}
@@ -2689,7 +2695,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
-STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect) const
 {
 	if( pDataObject == nullptr || pdwEffect == nullptr ){
 		return E_INVALIDARG;
@@ -2711,7 +2717,7 @@ STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, [
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragOver( [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::DragOver([[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect) const
 {
 	if( pdwEffect == nullptr )
 		return E_INVALIDARG;
@@ -2720,12 +2726,12 @@ STDMETHODIMP CEditWnd::DragOver( [[maybe_unused]] DWORD dwKeyState, [[maybe_unus
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragLeave( void )
+STDMETHODIMP CEditWnd::DragLeave() const
 {
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect )
+STDMETHODIMP CEditWnd::Drop(LPDATAOBJECT pDataObject, [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect)
 {
 	if( pDataObject == nullptr || pdwEffect == nullptr )
 		return E_INVALIDARG;
@@ -2851,7 +2857,7 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 /*! キャプション更新用タイマーの処理
 	@date 2007.04.03 ryoji 新規
 */
-void CEditWnd::OnCaptionTimer( void )
+void CEditWnd::OnCaptionTimer() const
 {
 	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
 	// まだ切替中ならタイマー継続
@@ -3175,10 +3181,9 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			if( nullptr != m_cStatusBar.GetStatusHwnd() ){
 				bSizeBox = false;
 			}
-			if( nullptr != m_cFuncKeyWnd.GetHwnd() ){
-				if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 1 ){
+			if (1 == m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place &&
+				m_cFuncKeyWnd.GetHwnd()) {
 					bSizeBox = false;
-				}
 			}
 			if( wParam == SIZE_MAXIMIZED ){
 				bSizeBox = false;
@@ -3744,7 +3749,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	@author genta
 	@date 2002.09.10
 */
-void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
+void CEditWnd::SetWindowIcon(HICON hIcon, int flag) const
 {
 	HICON hOld = (HICON)::SendMessage( GetHwnd(), WM_SETICON, flag, (LPARAM)hIcon );
 	if( hOld != nullptr ){
@@ -3944,12 +3949,14 @@ void CEditWnd::SendStatusMessage( const WCHAR* msg )
 	@date 2003.05.31 新規作成
 	@date 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 */
-void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _pszFilePath, bool bIsGrep )
+void CEditWnd::ChangeFileNameNotify(
+	std::wstring_view tabCaption,
+	std::wstring_view tabFilePath,
+	bool bIsGrep
+) const
 {
-	const WCHAR* pszFilePath = _pszFilePath;
-
-	if( nullptr == pszTabCaption ) pszTabCaption = L"";	//ガード
-	if( nullptr == pszFilePath ) pszFilePath = L"";		//ガード 2006.01.28 ryoji
+	const auto pszTabCaption = std::data(tabCaption);
+	const auto pszFilePath = std::data(tabFilePath);
 
 	CRecentEditNode	cRecentEditNode;
 	int nIndex = cRecentEditNode.FindItemByHwnd( GetHwnd() );
@@ -3997,7 +4004,7 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 	@param top  0:トグル動作 1:最前面 2:最前面解除 その他:なにもしない
 	@date 2004.09.21 Moca
 */
-void CEditWnd::WindowTopMost( int top )
+void CEditWnd::WindowTopMost(int top) const
 {
 	if( 0 == top ){
 		DWORD dwExstyle = (DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE );
@@ -4042,7 +4049,7 @@ void CEditWnd::WindowTopMost( int top )
 // ツールバー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときにウィンドウからON/OFFを
 //	呼び出してもらうことにより、余計な負荷を停止したい。
-void CEditWnd::Timer_ONOFF( bool bStart )
+void CEditWnd::Timer_ONOFF(bool bStart) const
 {
 	if( nullptr != GetHwnd() ){
 		if( bStart ){

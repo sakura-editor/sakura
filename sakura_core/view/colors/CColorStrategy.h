@@ -1,13 +1,15 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_
 #define SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_
 #pragma once
+
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 
 // 要先行定義
 #include "EColorIndexType.h"
@@ -169,12 +171,10 @@ protected:
 	const STypeConfig* m_pTypeData = nullptr;
 };
 
-class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
-	friend class TSingleton<CColorStrategyPool>;
-	CColorStrategyPool();
-	virtual ~CColorStrategyPool();
-
+class CColorStrategyPool final : public TSakuraSingleton<CColorStrategyPool>, private env::ShareDataClient {
 public:
+	CColorStrategyPool();
+	~CColorStrategyPool();
 
 	//取得
 	CColorStrategy*	GetStrategy(int nIndex) const noexcept { return m_vStrategiesDisp[nIndex]; }
