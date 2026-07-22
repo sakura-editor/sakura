@@ -805,8 +805,9 @@ void CEditWnd::LayoutMainMenu()
 {
 	WCHAR		szLabel[300];
 	WCHAR		szKey[10];
-	CommonSetting_MainMenu*	pcMenu = &m_pShareData->m_Common.m_sMainMenu;
-	CMainMenu*	cMainMenu;
+
+	const auto pcMenu = &m_pShareData->m_Common.m_sMainMenu;
+
 	HWND		hWnd = GetHwnd();
 	HMENU		hMenu;
 	int			i;
@@ -818,7 +819,7 @@ void CEditWnd::LayoutMainMenu()
 	for (i = 0; i < MAX_MAINMENU_TOP && pcMenu->m_nMenuTopIdx[i] >= 0; i++) {
 		nCount = ( i >= MAX_MAINMENU_TOP || pcMenu->m_nMenuTopIdx[i+1] < 0 ? pcMenu->m_nMainMenuNum : pcMenu->m_nMenuTopIdx[i+1] )
 				- pcMenu->m_nMenuTopIdx[i];		// メニュー項目数
-		cMainMenu = &pcMenu->m_cMainMenuTbl[pcMenu->m_nMenuTopIdx[i]];
+		const auto cMainMenu = &pcMenu->m_cMainMenuTbl[pcMenu->m_nMenuTopIdx[i]];
 		switch (cMainMenu->m_nType) {
 		case T_NODE:
 			// ラベル未設定かつFunctionコードがありならストリングテーブルから取得 2012/10/18 syat 各国語対応
@@ -1262,9 +1263,8 @@ LRESULT CEditWnd::DispatchEvent(
 		// ・WM_SHOWWINDOWはすべての表示切替で呼ばれるわけではないのでWM_WINDOWPOSCHANGEDで処理
 		//   （タブグループ解除などの設定変更時はWM_SHOWWINDOWは呼ばれない）
 		// ・即時切替だとタブ切替に干渉して元のタブに戻ってしまうことがあるので後で切り替える
-		WINDOWPOS* pwp;
-		pwp = (WINDOWPOS*)lParam;
-		if( pwp->flags & SWP_SHOWWINDOW )
+		if (const auto pwp = (WINDOWPOS*)lParam;
+			pwp->flags & SWP_SHOWWINDOW)
 			::PostMessage( hwnd, MYWM_SHOWOWNEDPOPUPS, TRUE, 0 );
 		else if( pwp->flags & SWP_HIDEWINDOW )
 			::PostMessage( hwnd, MYWM_SHOWOWNEDPOPUPS, FALSE, 0 );

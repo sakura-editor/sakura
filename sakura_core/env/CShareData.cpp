@@ -1137,7 +1137,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		//	相対パス→絶対パス
 		const auto nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, std::size(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), L'\\' );
 		int nAllLen;
-		WCHAR *pszDir;
+		LPCWSTR pszDir = nullptr;
 		WCHAR szDir[_MAX_PATH + SFilePath::size()];
 
 		 // 2003.06.24 Moca フォルダーも相対パスなら実行ファイルからのパス
