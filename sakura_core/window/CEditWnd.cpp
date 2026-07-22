@@ -1563,11 +1563,11 @@ LRESULT CEditWnd::DispatchEvent(
 			CJackManager::getInstance()->InvokePlugins( PP_EDITOR_END, &GetActiveView() );
 
 			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
-			if( PM_CLOSE_EXIT != (PM_CLOSE_EXIT & wParam) ){	// 全終了要求でない場合
+			if (PM_CLOSE_EXIT != (PM_CLOSE_EXIT & wParam) &&	// 全終了要求でない場合
 				// タブまとめ表示で(無題)を残す指定の場合、残ウィンドウが１個なら新規エディタを起動して終了する
-				if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
-					!m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
-					m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin
+				m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
+				!m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
+				m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin
 					){
 					// 自グループ内の残ウィンドウ数を調べる	// 2007.06.20 ryoji
 					int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->GetGroup();
@@ -1587,7 +1587,6 @@ LRESULT CEditWnd::DispatchEvent(
 							true
 						);
 					}
-				}
 			}
 			::DestroyWindow( hwnd );
 		}
