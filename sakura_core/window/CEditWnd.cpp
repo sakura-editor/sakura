@@ -1106,7 +1106,6 @@ LRESULT CEditWnd::DispatchEvent(
 	LPNMHDR				pnmh;
 	int					nPane;
 	EditInfo*			pfi;
-	LPHELPINFO			lphi;
 
 	UINT				idCtl;	/* コントロールのID */
 	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
@@ -1218,13 +1217,8 @@ LRESULT CEditWnd::DispatchEvent(
 		return GetActiveView().GetCommander().HandleCommand( F_COPY, true, 0, 0, 0, 0 );
 
 	case WM_HELP:
-		lphi = (LPHELPINFO) lParam;
-		switch( lphi->iContextType ){
-		case HELPINFO_MENUITEM:
+		if (const auto lphi = (LPHELPINFO) lParam; lphi && HELPINFO_MENUITEM == lphi->iContextType) {
 			MyWinHelp( hwnd, HELP_CONTEXT, FuncID_To_HelpContextID( (EFunctionCode)lphi->iCtrlId ) );
-			break;
-		default:
-			break;
 		}
 		return TRUE;
 
