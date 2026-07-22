@@ -338,12 +338,18 @@ protected:
 	 */
 	std::filesystem::path exeIniPath;
 
+	/*
+	 * profile1 配下のフォルダーのパス
+	 */
+	std::filesystem::path profileDirPath;
+
 	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
 		// マルチユーザー構成設定ファイルのパス
 		exeIniPath = GetExeFileName().concat(L".ini");
+		profileDirPath.clear();
 	}
 
 	/*!
@@ -358,8 +364,16 @@ protected:
 			std::filesystem::remove(exeIniPath, ec);
 		}
 
+		// profile1 配下のフォルダーも削除する
+		if (!profileDirPath.empty()) {
+			std::filesystem::remove_all(profileDirPath, ec);
+		}
+
 		// 削除チェック
 		EXPECT_FALSE(fexist(exeIniPath));
+		if (!profileDirPath.empty()) {
+			EXPECT_FALSE(std::filesystem::exists(profileDirPath));
+		}
 	}
 };
 
@@ -383,9 +397,12 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
+	const auto iniPath = GetIniFileName();
+	profileDirPath = iniPath.parent_path();
+
 	// 期待値を取得する
 	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\AppData\Roaming\sakura\profile1\)");
-	expected += GetIniFileName().filename();
+	expected += iniPath.filename();
 
 	// テスト実施
 	EXPECT_THAT(GetIniFileName(), StrEq(expected));
@@ -554,6 +571,10 @@ TEST(file, GetInidirOrExedir)
 	// 両方ないときはINI基準のパスが変える
 	GetInidirOrExedir(buf.data(), filename, true);
 	EXPECT_THAT(buf, StartsWith(iniBasePath.c_str()));
+
+	std::filesystem::remove(iniBasePath, ec);
+	std::filesystem::remove(exeBasePath, ec);
+	std::filesystem::remove_all(iniBasePath.parent_path(), ec);
 }
 
 /*!
