@@ -1015,8 +1015,7 @@ void CEditWnd::LayoutMiniMap( void )
 void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 {
 	int nCmdShow = m_pPrintPreview? SW_HIDE: SW_SHOW;
-	HWND hwndToolBar = (nullptr != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();
-	if( nullptr != hwndToolBar )
+	if (const auto hwndToolBar = (nullptr != m_cToolbar.GetRebarHwnd()) ? m_cToolbar.GetRebarHwnd() : m_cToolbar.GetToolbarHwnd())
 		::ShowWindow( hwndToolBar, nCmdShow );
 	if( m_cStatusBar.GetStatusHwnd() )
 		::ShowWindow( m_cStatusBar.GetStatusHwnd(), nCmdShow );
@@ -4593,8 +4592,7 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		CLayoutPoint tmp = CLayoutPoint(CLayoutInt(0), GetView(i).m_pcTextArea->GetViewTopLine());
-		const CLayout* layoutLine = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(tmp.GetY2());
-		if( layoutLine ){
+		if (const auto layoutLine = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(tmp.GetY2())) {
 			CLogicInt nLineCenter = layoutLine->GetLogicOffset() + layoutLine->GetLengthWithoutEOL() / 2;
 			pptPosArray[i * NUM_OF_POS + 0].x = nLineCenter;
 			pptPosArray[i * NUM_OF_POS + 0].y = layoutLine->GetLogicLineNo();
@@ -4781,8 +4779,7 @@ const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting)
 	if( bTempSetting && GetDocument()->m_blfCurTemp ){
 		return GetDocument()->m_lfCur;
 	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
-	if( bUseTypeFont ){
+	if (const auto bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont) {
 		return GetDocument()->m_cDocType.GetDocumentAttribute().m_lf;
 	}
 	return m_pShareData->m_Common.m_sView.m_lf;
@@ -4793,8 +4790,7 @@ int CEditWnd::GetFontPointSize(bool bTempSetting)
 	if( bTempSetting && GetDocument()->m_blfCurTemp ){
 		return GetDocument()->m_nPointSizeCur;
 	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
-	if( bUseTypeFont ){
+	if (const auto bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont) {
 		return GetDocument()->m_cDocType.GetDocumentAttribute().m_nPointSize;
 	}
 	return m_pShareData->m_Common.m_sView.m_nPointSize;
@@ -4804,8 +4800,7 @@ ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 	if( GetDocument()->m_blfCurTemp ){
 		return CWM_CACHE_LOCAL;
 	}
-	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
-	if( bUseTypeFont ){
+	if (const auto bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont) {
 		return CWM_CACHE_LOCAL;
 	}
 	return CWM_CACHE_SHARE;
