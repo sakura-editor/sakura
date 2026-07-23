@@ -506,7 +506,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			::ShowWindow( GetHwnd(), nCmdShow );
 			::UpdateWindow( GetHwnd() );	// 画面更新
 			::BringWindowToTop( GetHwnd() );
-			::ShowWindow( sTabGroupInfo.hwndTop , SW_HIDE );	// 以前の先頭ウィンドウはここで消しておかないと消えるアニメーションが見える場合がある
+			::ShowWindowAsync(sTabGroupInfo.hwndTop, SW_HIDE );	// 以前の先頭ウィンドウはここで消しておかないと消えるアニメーションが見える場合がある
 
 			// アニメーション効果を戻す
 			ai.iMinAnimate = iMinAnimateOld;
