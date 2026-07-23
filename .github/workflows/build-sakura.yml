@@ -52,7 +52,7 @@ jobs:
         run: set
 
       - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
@@ -120,7 +120,7 @@ jobs:
           mingw-w64-x86_64-diffutils
 
     - name: Set up Python
-      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
@@ -351,7 +351,7 @@ jobs:
           --accept-source-agreements
 
     - name: Set up Python
-      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 

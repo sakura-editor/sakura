@@ -684,6 +684,16 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	void TearDown() override
 	{
+		// 強制的に「編集なし」にする
+		pcEditDoc->m_cDocEditor.m_bIsDocModified = false;
+
+		// 強制的に「Grepモード」を解除する
+		CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = false;
+
+		// キューに溜まったメッセージは全部捨てる
+		MSG msg{};
+		while (::PeekMessageW(&msg, nullptr, 0L, 0L, PM_REMOVE)) ;
+
 		mgr = nullptr;
 	}
 
@@ -735,6 +745,305 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	}
 };
 
+TEST_F(EditWndTest, DISABLED_OnCreate101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_CREATE, 0L, 0L), IsTrue());	// 戻り値は反転される
+}
+
+TEST_F(EditWndTest, DISABLED_OnDestroy101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_DESTROY, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, DISABLED_OnMove101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_MOVE, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, DISABLED_OnSize101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_SIZE, SIZE_RESTORED, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, DISABLED_OnSetFocus101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_SETFOCUS, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnEnable101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_ENABLE, TRUE, 0L), IsFalse());
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_ENABLE, FALSE, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnSetText101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_SETTEXT, 0L, LPARAM(L"title-from-test"));
+}
+
+TEST_F(EditWndTest, DISABLED_OnClose101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_CLOSE, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, DISABLED_OnQueryEndSession101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_QUERYENDSESSION, 0L, 0L), IsTrue());
+}
+
+TEST_F(EditWndTest, OnShowWindow101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_SHOWWINDOW, FALSE, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnPaintIcon101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_PAINTICON, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnIconEraseBkgnd101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_ICONERASEBKGND, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnWindowPosChanged101)
+{
+	HWND hWndEdit = nullptr;
+	WINDOWPOS wp{};
+	wp.flags = SWP_SHOWWINDOW;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_WINDOWPOSCHANGED, 0L, LPARAM(&wp)), IsFalse());
+}
+
+TEST_F(EditWndTest, OnWindowPosChanged102)
+{
+	HWND hWndEdit = nullptr;
+	WINDOWPOS wp{};
+	wp.flags = SWP_HIDEWINDOW;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_WINDOWPOSCHANGED, 0L, LPARAM(&wp)), IsFalse());
+}
+
+TEST_F(EditWndTest, OnHScroll101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_HSCROLL, MAKEWPARAM(SB_LINELEFT, 0), 0L);
+}
+
+TEST_F(EditWndTest, OnVScroll101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_VSCROLL, MAKEWPARAM(SB_LINEUP, 0), 0L);
+}
+
+TEST_F(EditWndTest, OnMenuSelect101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_MENUSELECT, 0L, 0L);
+}
+
+TEST_F(EditWndTest, DISABLED_OnNotify101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_NOTIFY, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnHelp101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_HELP, 0L, 0L), IsTrue());
+
+	HELPINFO hi{};
+	hi.iContextType = HELPINFO_WINDOW;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
+}
+
+TEST_F(EditWndTest, OnCommand101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_COMMAND, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnCommand102)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
+	dialog::ModalDialogCloser closer;
+
+	GetDllShareData().m_sHistory.m_nOPENFOLDERArrNum = 1;
+
+	// ファイルを開くダイアログを表示する
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_COMMAND, MAKEWPARAM(IDM_SELOPENFOLDER, 0), 0L), IsFalse());
+
+	GetDllShareData().m_sHistory.m_nOPENFOLDERArrNum = 0;
+}
+
+TEST_F(EditWndTest, DISABLED_OnSysCommand101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_SYSCOMMAND, SC_CLOSE, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnTimer101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_TIMER, 2 /* IDT_EDITCHECK */, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnExitMenuLoop101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_EXITMENULOOP, 0L, 0L);
+}
+
+TEST_F(EditWndTest, DISABLED_OnInitMenuPopup101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_INITMENUPOPUP, 0L, 0L);
+}
+
+TEST_F(EditWndTest, DISABLED_OnDropFiles101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_DROPFILES, 0L, 0L);
+}
+
+TEST_F(EditWndTest, DISABLED_OnThemeChanged101)	// パラメーター不正の考慮がないので呼べない
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_THEMECHANGED, 0L, 0L);
+}
+
+TEST_F(EditWndTest, OnMenuChar101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_MENUCHAR, 0L, 0L);
+}
+
+TEST_F(EditWndTest, OnCopy101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_COPY, 0L, 0L);
+}
+
+TEST_F(EditWndTest, OnPaste101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, WM_PASTE, 0L, 0L);
+}
+
+TEST_F(EditWndTest, OnMyWmGetLineData101)
+{
+	HWND hWndEdit = nullptr;
+	const auto invalidLine = GetDocument()->m_cDocLineMgr.GetLineCount() + CLogicInt(1);
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_GETLINEDATA, WPARAM(invalidLine), 0L), Eq(-2));
+}
+
+TEST_F(EditWndTest, OnMyWmUipiCheck101)
+{
+	HWND hWndEdit = nullptr;
+	constexpr LPARAM expected = 0x1234;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_UIPI_CHECK, 0L, expected), Eq(expected));
+}
+
+TEST_F(EditWndTest, OnMyWmAllowActivate101)
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, MYWM_ALLOWACTIVATE, 0L, 0L);
+}
+
+TEST_F(EditWndTest, DISABLED_OnMyWmChangeSetting101)	// 副作用が大きいので無効
+{
+	HWND hWndEdit = nullptr;
+	pcEditWnd->DispatchEvent(hWndEdit, MYWM_CHANGESETTING, 0L, int(PM_CHANGESETTING_ALL));
+}
+
+TEST_F(EditWndTest, OnMyWmSaveEditState101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_SAVEEDITSTATE, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnMyWmSetActivePane101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_SETACTIVEPANE, WPARAM(-1), 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnMyWmSetCaretPos101)
+{
+	HWND hWndEdit = nullptr;
+	GetDllShareData().m_sWorkBuffer.m_LogicPoint = CLogicPoint(0, 0);
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_SETCARETPOS, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnMyWmGetCaretPos101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_GETCARETPOS, 0L, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnMyWmGetLineCount101)
+{
+	HWND hWndEdit = nullptr;
+	const auto lineCount = pcEditWnd->DispatchEvent(hWndEdit, MYWM_GETLINECOUNT, 0L, 0L);
+	EXPECT_THAT(lineCount, Ge(0));
+}
+
+TEST_F(EditWndTest, OnMyWmAddStringLenW101)
+{
+	HWND hWndEdit = nullptr;
+	auto* pWork = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
+	::wcscpy_s(pWork, 4, L"abc");
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_ADDSTRINGLEN_W, 3, 0L), IsFalse());
+}
+
+TEST_F(EditWndTest, OnLButtonDown101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(10, 20)), IsFalse());
+}
+
+TEST_F(EditWndTest, OnMouseWheel101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_MOUSEWHEEL, MAKEWPARAM(0, WHEEL_DELTA), MAKELPARAM(10, 20)), IsFalse());
+}
+
+TEST_F(EditWndTest, OnLButtonUp101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_LBUTTONUP, 0L, MAKELPARAM(10, 20)), IsFalse());
+}
+
+TEST_F(EditWndTest, OnNCLButtonDown101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_NCLBUTTONDOWN, 0L, MAKELPARAM(10, 20)), IsFalse());
+}
+
+TEST_F(EditWndTest, OnNCLButtonUp101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_NCLBUTTONUP, 0L, MAKELPARAM(10, 20)), IsFalse());
+}
+
+TEST_F(EditWndTest, OnLButtonDblClk101)
+{
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_LBUTTONDBLCLK, 0L, MAKELPARAM(10, 20)), IsFalse());
+}
+
 /*!
  * 上書き保存時バックアップのテスト
  */
@@ -752,8 +1061,8 @@ TEST_F(EditWndTest, FileSaveWithBackupAgent001)
 	std::filesystem::remove(backupPath, ec);
 
 	{
-		std::wofstream fs(targetPath);
-		fs << L"line1" << std::endl;
+		std::wofstream fos(targetPath);
+		fos << L"line1" << std::endl;
 	}
 
 	sBackup.m_bBackUp = true;
@@ -809,8 +1118,8 @@ TEST_F(EditWndTest, GetDocDataObject001)
 	EXPECT_THAT(pDataObject, IsNull());
 
 	{
-		std::wofstream fs(targetPath);
-		fs << L"line1" << std::endl;
+		std::wofstream fos(targetPath);
+		fos << L"line1" << std::endl;
 	}
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native()).c_str()), IsTrue());

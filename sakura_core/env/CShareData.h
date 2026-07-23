@@ -85,7 +85,7 @@ public:
 
 	//マクロ関連
 	int			GetMacroFilename( int idx, WCHAR* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する	//	Jun. 14, 2003 genta 引数追加．書式変更
-	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
+	bool		BeReloadWhenExecuteMacro(int idx) const;	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 
 	//タイプ別設定(コントロールプロセス専用)
 	void CreateTypeSettings();
@@ -107,7 +107,7 @@ protected:
 	void InitKeyword(DLLSHAREDATA* pShareData);
 	bool InitKeyAssign(DLLSHAREDATA* pShareData); // 2007.11.04 genta 起動中止のため値を返す
 	void RefreshKeyAssignString(DLLSHAREDATA* pShareData);
-	void InitToolButtons(DLLSHAREDATA* pShareData);
+	void	InitToolButtons(DLLSHAREDATA* pShareData) const;
 	void InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types);
 	void InitPopupMenu(DLLSHAREDATA* pShareData);
 

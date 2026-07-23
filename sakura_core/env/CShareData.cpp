@@ -76,6 +76,7 @@ CShareData::CShareData() = default;
 CShareData::~CShareData()
 {
 	CFileNameManager::resetInstance();
+	CAppNodeManager::resetInstance();
 
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
@@ -1129,14 +1130,14 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		if( pszPath == nullptr || nBufLen <= nLen ){
 			return -nLen;
 		}
-		wcscpy( pszPath, pszFile );
+		::wcscpy_s(pszPath, nBufLen, pszFile);
 		return nLen;
 	}
 	else {	//	フォルダー指定あり
 		//	相対パス→絶対パス
 		const auto nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, std::size(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), L'\\' );
 		int nAllLen;
-		WCHAR *pszDir;
+		LPCWSTR pszDir = nullptr;
 		WCHAR szDir[_MAX_PATH + SFilePath::size()];
 
 		 // 2003.06.24 Moca フォルダーも相対パスなら実行ファイルからのパス
@@ -1154,12 +1155,14 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			return -nAllLen;
 		}
 
-		wcscpy( pszPath, pszDir );
-		WCHAR *ptr2 = pszPath + nDirLen;
+		::wcsncpy_s(pszPath, nBufLen, pszDir, nDirLen);
+
 		if( -1 == nFolderSep ){
-			*ptr2++ = L'\\';
+			::wcscat_s(pszPath, nBufLen, L"\\");
 		}
-		wcscpy( ptr2, pszFile );
+
+		::wcscat_s(pszPath, nBufLen, pszFile);
+
 		return nAllLen;
 	}
 }
@@ -1168,7 +1171,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 	idxは正確なものでなければならない。
 	YAZAKI
 */
-bool CShareData::BeReloadWhenExecuteMacro( int idx )
+bool CShareData::BeReloadWhenExecuteMacro(int idx) const
 {
 	if( !m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() )
 		return false;
@@ -1184,7 +1187,7 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 	@date 2005.01.30 genta CShareData::Init()から分離．
 		一つずつ設定しないで一気にデータ転送するように．
 */
-void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
+void CShareData::InitToolButtons(DLLSHAREDATA* pShareData) const
 {
 		/* ツールバーボタン構造体 */
 //Sept. 16, 2000 JEPRO
