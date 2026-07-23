@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,6 +11,7 @@
 
 #include "basis/CMyString.h"
 #include "config/maxdata.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "util/design_template.h"
 
 class CAppNodeGroupHandle;
@@ -89,11 +90,10 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager : public TSingleton<CAppNodeManager>{
-	friend class TSingleton<CAppNodeManager>;
-	CAppNodeManager(){}
-
+class CAppNodeManager final : public TSakuraSingleton<CAppNodeManager>, private env::ShareDataClient {
 public:
+	CAppNodeManager() = default;
+
 	//グループ
 	void ResetGroupId();									/* グループをIDリセットする */
 
@@ -108,7 +108,7 @@ public:
 	//総合情報
 	int GetOpenedWindowArr(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );				/* 現在開いている編集ウィンドウの配列を返す */
 
-protected:
+private:
 	int _GetOpenedWindowArrCore(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
 
 public:

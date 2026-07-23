@@ -112,8 +112,8 @@ public:
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
-	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
-	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ウィンドウ生成用の矩形を取得
+	void	_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const;
+	void	_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo) const;	//!< ウィンドウ生成用の矩形を取得
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
 
@@ -153,7 +153,7 @@ public:
 	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
 	LRESULT OnTimer(WPARAM wParam, LPARAM lParam);	// WM_TIMER 処理	// 2007.04.03 ryoji
 	void OnEditTimer( void );	/* タイマーの処理 */
-	void OnCaptionTimer( void );
+	void	OnCaptionTimer() const;
 	void OnSysMenuTimer( void );
 	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);
 	LRESULT OnNcLButtonDown(WPARAM wp, LPARAM lp);
@@ -165,7 +165,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//ファイル名変更通知
-	void ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
+	void	ChangeFileNameNotify(std::wstring_view tabCaption, std::wstring_view tabFilePath, bool bIsGrep) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         メニュー                            //
@@ -199,7 +199,7 @@ public:
 	void PrintPreviewModeONOFF( void );	/* 印刷プレビューモードのオン/オフ */
 	
 	//アイコン
-	void SetWindowIcon(HICON hIcon, int flag);	//	Sep. 10, 2002 genta
+	void	SetWindowIcon(HICON hIcon, int flag) const;
 	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
 	bool GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
 	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }		// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.17 nasukoji
@@ -234,7 +234,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      ウィンドウ操作                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void WindowTopMost(int top); // 2004.09.21 Moca
+	void	WindowTopMost(int top) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        ビュー管理                           //
@@ -303,7 +303,7 @@ protected:
 	int	CreateFileDropDownMenu(HWND hwnd);	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 
 	//タイマー
-	void Timer_ONOFF(bool bStart); /* 更新の開始／停止 20060128 aroka */
+	void	Timer_ONOFF(bool bStart) const; /* 更新の開始／停止 20060128 aroka */
 
 	// メニュー
 	void CheckFreeSubMenu(HWND hWnd, HMENU hMenu, UINT uPos);		// メニューバーの無効化を検査	2010/6/18 Uchi
@@ -330,9 +330,9 @@ public:
 	const CMyPoint& GetDragPosOrg() const{ return m_ptDragPosOrg; }
 
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
-	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragLeave( void );
+	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt [[maybe_unused]], LPDWORD pdwEffect) const;
+	STDMETHODIMP DragOver(DWORD dwKeyState [[maybe_unused]], POINTL pt [[maybe_unused]], LPDWORD pdwEffect) const;
+	STDMETHODIMP DragLeave() const;
 	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 
 	//フォーカス管理

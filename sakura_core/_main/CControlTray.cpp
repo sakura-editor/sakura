@@ -1218,6 +1218,11 @@ bool CControlTray::OpenNewEditor(
 		}
 	}
 
+	// タブまとめ時は起動したプロセスが立ち上がるまでしばらくタイトルバーをアクティブに保つため、強制的に同期モードにする。（プロセスの起動前に変更する必要がある。）
+	if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin && !sync) {
+		sync = true;
+	}
+
 	//	プロセスの起動
 	PROCESS_INFORMATION p;
 	STARTUPINFO s;
@@ -1276,11 +1281,6 @@ bool CControlTray::OpenNewEditor(
 		);
 		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
 		return false;
-	}
-
-	// タブまとめ時は起動したプロセスが立ち上がるまでしばらくタイトルバーをアクティブに保つため、強制的に同期モードにする
-	if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin && !sync){
-		sync = true;
 	}
 
 	// MYWM_FIRST_IDLE が届くまでちょっとだけ余分に待つ	// 2008.04.19 ryoji
