@@ -19,6 +19,7 @@
 #pragma once
 
 #include <Unknwn.h>
+#include "CClipboard.h"
 #include "util/design_template.h"
 #include "util/os.h"
 

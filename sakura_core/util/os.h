@@ -289,7 +289,7 @@ private:
 	using Base = GlobalMemory;
 	using Me = GlobalSakura;
 
-	using size_type = size_t;	//TODO: int32_t に戻す
+	using size_type = int32_t;
 
 public:
 	//HGLOBALを指定して構築（メモリ変更は行わない）
