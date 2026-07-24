@@ -18,7 +18,7 @@
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -217,7 +217,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
+		wcscpy_s( lf.lfFaceName, L"ＭＳ ゴシック" );
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -455,6 +455,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGrepOutputBaseFolder = false;
 			sSearch.m_bGrepSeparateFolder = false;
 			sSearch.m_bGrepBackup = true;
+			sSearch.m_bGrepExcludeFileRegexp = false;   // 既定はワイルドカード
 
 			sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダーの初期値をカレントフォルダーにする */
 			sSearch.m_nGrepCharSet = CODE_AUTODETECT;	/* Grep: 文字コードセット */
@@ -466,6 +467,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
 			sSearch.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
+			sSearch.m_nGrepThreadCount = 2;				/* Grep並列スレッド数（最低値・デフォルト2） */
 
 			sSearch.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
 			sSearch.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */
@@ -1019,8 +1021,7 @@ void CShareData::TraceOutString( const wchar_t* pStr, int len )
 			LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 			wmemcpy( pOutBuffer, pStr + outPos, outLen );
 			pOutBuffer[outLen] = L'\0';
-			DWORD_PTR	dwMsgResult;
-			if( 0 == ::SendMessageTimeout( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, outLen, 0,
+			if( DWORD_PTR dwMsgResult = 0; 0 == ::SendMessageTimeout( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, outLen, 0,
 				SMTO_NORMAL, 10000, &dwMsgResult ) ){
 				// エラーかタイムアウト
 				break;

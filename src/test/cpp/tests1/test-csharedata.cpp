@@ -1942,6 +1942,43 @@ TEST_F(CShareDataTest, GetMacroFilename102)
 }
 
 /*!
+ * @brief TraceOutString の分割送信ループのテスト
+ * @remark GSTR_EDITWINDOWNAME クラスのダミーウィンドウを m_hwndDebug に設定し、
+ *         OpenDebugWindow の既存ウィンドウ経路と SendMessageTimeout 送信ループを通過することを確認する。
+ *         クラス登録に成功した場合のみ実行する（既に本物の編集ウィンドウクラスが登録済みの環境では SKIP）。
+ */
+TEST_F(CShareDataTest, TraceOutString_SendsViaDebugWindow)
+{
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+
+	// IsSakuraMainWindow 判定を満たすダミークラスを登録する
+	WNDCLASSW wc = {};
+	wc.lpfnWndProc = ::DefWindowProcW;
+	wc.hInstance = hInstance;
+	wc.lpszClassName = GSTR_EDITWINDOWNAME;
+	if( 0 == ::RegisterClassW(&wc) ){
+		GTEST_SKIP() << "GSTR_EDITWINDOWNAME クラスが登録済みのためスキップ（実ウィンドウクラスとの競合回避）";
+	}
+
+	auto& shareData = GetDllShareData();
+	const HWND hwndDebugBackup = shareData.m_sHandles.m_hwndDebug;
+	{
+		const auto hWndDummy = ::CreateWindowExW(0, GSTR_EDITWINDOWNAME, L"デバッグダミー", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+		ASSERT_THAT(hWndDummy, Ne(nullptr));
+		WindowHolder windowHolder{ hWndDummy };
+
+		shareData.m_sHandles.m_hwndDebug = hWndDummy;
+
+		// 分割送信ループ（wmemcpy → SendMessageTimeout 成功 → outPos 加算）を通す
+		pcShareData->TraceOutString(L"trace-out-coverage\r\n", -1);
+
+		shareData.m_sHandles.m_hwndDebug = hwndDebugBackup;
+	}
+	// ウィンドウ破棄後にクラス登録を解除する（後続テストの実ウィンドウ生成と競合させない）
+	::UnregisterClassW(GSTR_EDITWINDOWNAME, hInstance);
+}
+
+/*!
  * @brief マクロの再読み込み設定取得のテスト
  *
  * 指定されたインデックスのファイル名が未設定だった場合、falseを返す
