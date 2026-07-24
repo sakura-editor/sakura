@@ -158,6 +158,10 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-file.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-charcode.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-format.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cdlggrep.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cgrepagent-flow.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grep-irregular.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grep.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-grepinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-int2dec.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-is_mailaddress.cpp" />
