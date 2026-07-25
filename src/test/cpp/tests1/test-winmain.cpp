@@ -674,7 +674,7 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 	{
 		// コントロールプロセスを起動する
 		auto cp = testing::CreateControlProcess(profileName);
-		EXPECT_THAT(cp, NotNull());
+		ASSERT_THAT(cp, NotNull());
 
 		// コントロールプロセスに終了指示を出して終了を待つ
 		testing::TerminateControlProcess(profileName, cp.dwProcessId);
@@ -709,13 +709,13 @@ TEST_P(WinMainTest, runWithNoWin)
 	CControlProcess_StartAndTerminate(profileName);
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
-	EXPECT_THAT(fexist(iniPath), IsTrue());
+	ASSERT_THAT(fexist(iniPath), IsTrue());
 
 	// コントロールプロセスを起動し、終了指示を出して、終了を待つ
 	CControlProcess_StartAndTerminate(profileName);
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
-	EXPECT_THAT(fexist(iniPath), IsTrue());
+	ASSERT_THAT(fexist(iniPath), IsTrue());
 }
 
 /*!
@@ -957,13 +957,13 @@ TEST_P(WinMainTest, runEditorProcess)
 	command += std::format(LR"( -MTYPE=js -M="{}")", std::regex_replace(strStartupMacro, std::wregex(LR"(")"), LR"("")"));
 
 	// テストプログラム内のグローバル変数を汚さないために、別プロセスで起動させる
-	EXPECT_EXIT({ StartEditorProcess(command); }, ::testing::ExitedWithCode(0), ".*" );
+	ASSERT_EXIT({ StartEditorProcess(command); }, ::testing::ExitedWithCode(0), ".*" );
 
 	// コントロールプロセスに終了指示を出して終了を待つ
 	testing::TerminateControlProcess(profileName);
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
-	EXPECT_THAT(fexist(iniPath), IsTrue());
+	ASSERT_THAT(fexist(iniPath), IsTrue());
 }
 
 /*!
@@ -1007,10 +1007,10 @@ TEST_F(WinMainFuncTest, CreateControlProcess101)
 
 	// ミューテックスを作成してロックする
 	cxx::HandleHolder hMutex{ ::CreateMutexW(nullptr, TRUE, szMutexName) };
-	EXPECT_THAT(hMutex, NotNull());
+	ASSERT_THAT(hMutex, NotNull());
 
 	// コントロールプロセスを起動する
-	EXPECT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
+	ASSERT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
 }
 
 /*!
@@ -1037,7 +1037,7 @@ TEST_F(WinMainFuncTest, CreateControlProcess102)
 		shareDataName
 	);
 
-	EXPECT_THAT(hFileMap, NotNull());
+	ASSERT_THAT(hFileMap, NotNull());
 
 	// スマートポインターに入れる
 	cxx::HandleHolder fileMapHolder{ hFileMap };
@@ -1052,16 +1052,16 @@ TEST_F(WinMainFuncTest, CreateControlProcess102)
 		0
 	);
 
-	EXPECT_THAT(mappedData, NotNull());
+	ASSERT_THAT(mappedData, NotNull());
 
 	auto pShareData = static_cast<DLLSHAREDATA*>(mappedData);
 
-	EXPECT_THAT(pShareData, NotNull());
+	ASSERT_THAT(pShareData, NotNull());
 
 	pShareData->m_nSize = sizeof(DLLSHAREDATA) + 1;
 
 	// コントロールプロセスを起動する
-	EXPECT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
+	ASSERT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
 }
 
 /*!
@@ -1082,7 +1082,7 @@ TEST_F(WinMainFuncTest, CreateControlProcess103)
 	// エディタープロセスを起動する
 	std::array<std::wstring, 0> args{};
 	auto ep = testing::CreateEditorProcess(args, profileName, false);
-	EXPECT_THAT(ep, NotNull());
+	ASSERT_THAT(ep, NotNull());
 
 	// プロセスが完全に終了するまで待つ
 	ep.lock();
@@ -1107,8 +1107,8 @@ TEST_F(WinMainFuncTest, CreateEditorProcess001)
 
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(args, profileName);
-	EXPECT_THAT(ep, NotNull());
-	EXPECT_THAT(ep.hWnd, NotNull());
+	ASSERT_THAT(ep, NotNull());
+	ASSERT_THAT(ep.hWnd, NotNull());
 
 	// 編集ウインドウにクローズを要求する
 	testing::RequestForeignWindowClose(ep.hWnd);
@@ -1136,12 +1136,12 @@ TEST_F(WinMainFuncTest, CreateEditorProcess101)
 
 	// ミューテックスを作成してロックする
 	cxx::HandleHolder hMutex{ ::CreateMutexW(nullptr, TRUE, szMutexName) };
-	EXPECT_THAT(hMutex, NotNull());
+	ASSERT_THAT(hMutex, NotNull());
 
 	// エディタープロセスを起動する
 	std::array<std::wstring, 0> args{};
 	auto ep = testing::CreateEditorProcess(args, profileName, false);
-	EXPECT_THAT(ep, NotNull());
+	ASSERT_THAT(ep, NotNull());
 
 	// プロセスが完全に終了するまで待つ
 	ep.lock();
@@ -1172,7 +1172,7 @@ TEST_F(WinMainFuncTest, DoGrep001)
 
 	// コントロールプロセスを起動する
 	auto cp = testing::CreateControlProcess(profileName);
-	EXPECT_THAT(cp, NotNull());
+	ASSERT_THAT(cp, NotNull());
 
 	std::array args{
 		LR"(-GREPMODE)"s,
@@ -1184,8 +1184,8 @@ TEST_F(WinMainFuncTest, DoGrep001)
 
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(args, profileName);
-	EXPECT_THAT(ep, NotNull());
-	EXPECT_THAT(ep.hWnd, NotNull());
+	ASSERT_THAT(ep, NotNull());
+	ASSERT_THAT(ep.hWnd, NotNull());
 
 	// 編集ウインドウにクローズを要求する
 	testing::RequestForeignWindowClose(ep.hWnd);
@@ -1209,8 +1209,8 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
 
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(std::array{ LR"(-DEBUGMODE)" }, profileName);
-	EXPECT_THAT(ep, NotNull());
-	EXPECT_THAT(ep.hWnd, NotNull());
+	ASSERT_THAT(ep, NotNull());
+	ASSERT_THAT(ep.hWnd, NotNull());
 
 	// 編集ウインドウにクローズを要求する
 	testing::RequestForeignWindowClose(ep.hWnd);
@@ -1239,8 +1239,8 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
 
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
-	EXPECT_THAT(ep, NotNull());
-	EXPECT_THAT(ep.hWnd, NotNull());
+	ASSERT_THAT(ep, NotNull());
+	ASSERT_THAT(ep.hWnd, NotNull());
 
 	// Grepダイアログが表示されるのを待って閉じる
 	t.join();
@@ -1273,7 +1273,7 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName, false);
-	EXPECT_THAT(ep, NotNull());
+	ASSERT_THAT(ep, NotNull());
 
 	// プロファイルマネージャが表示されるのを待って閉じる
 	t.join();
