@@ -65,6 +65,8 @@ namespace window {
 struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, public window::UiaTestSuite {
 	using CControlTrayHolder = std::unique_ptr<CControlTray>;
 
+	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
+
 	static inline CControlTrayHolder pcTrayWnd = nullptr;
 
 	/*!
@@ -72,6 +74,10 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 	 */
 	static void SetUpTestSuite()
 	{
+		// コマンドラインオブジェクトを用意する
+		pCommandLine = std::make_unique<CCommandLine>();
+		pCommandLine->ParseCommandLine(L"-PROF=", false);
+
 		SetUpUia();
 
 		SetUpShareData();
@@ -107,6 +113,8 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 		TearDownShareData();
 
 		TearDownUia();
+
+		pCommandLine = nullptr;
 	}
 
 	/*!
@@ -643,11 +651,17 @@ TEST_F(TrayWndTest, ShowDlgWinList101)
 struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
 	static constexpr HINSTANCE unusedArg1 = nullptr;
 
+	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
+
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		// コマンドラインオブジェクトを用意する
+		pCommandLine = std::make_unique<CCommandLine>();
+		pCommandLine->ParseCommandLine(L"-PROF=", false);
+
 		SetUpUia();
 
 		SetUpEditor();
@@ -667,6 +681,8 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		TearDownEditor();
 
 		TearDownUia();
+
+		pCommandLine = nullptr;
 	}
 
 	std::unique_ptr<CMacroManagerBase> mgr = nullptr;
