@@ -559,10 +559,6 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite() {
-		// OLEを初期化する
-		if (FAILED(::OleInitialize(nullptr)))
-			FAIL();
-
 		// UI Automationを初期化する
 		SetUpUia();
 
@@ -591,9 +587,6 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 
 		// UI Automationをシャットダウンする
 		TearDownUia();
-
-		// OLEをシャットダウンする
-		::OleUninitialize();
 	}
 
 	/*!

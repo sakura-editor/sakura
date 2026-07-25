@@ -14,6 +14,50 @@
 // UI Automation経由でGUI操作を行う
 #include <UIAutomation.h>
 
+namespace cxx {
+
+/*!
+ * @brief COMライブラリの初期化状態をRAIIで管理するクラス
+ */
+class COleInit final
+{
+private:
+	/*!
+	 * @brief COMライブラリのクリーンアップ
+	 */
+	static void Cleanup([[maybe_unused]] const COleInit*)
+	{
+		// OLEをシャットダウンする
+		::OleUninitialize();
+	}
+
+	using CleanupHolder = cxx::ResourceHolder<&COleInit::Cleanup>;
+
+	using Me = COleInit;
+
+	/*!
+	 * @brief COMライブラリの初期化状態
+	 * 
+	 * クラスの生成と同時にSTAモードでCOMライブラリを初期化する。
+	 * 初期化に成功した場合、クリーンアップ用のリソースホルダーを生成する。
+	 * 初期化失敗した場合、リソースホルダーはnullptrとなり、クリーンアップは行われない。
+	 */
+	CleanupHolder m_Initialized = SUCCEEDED(::OleInitialize(nullptr)) ? this : nullptr;
+
+public:
+	COleInit() = default;
+	~COleInit() noexcept = default;
+
+	COleInit(const Me&) = delete;
+	Me& operator=(const Me&) = delete;
+
+	explicit operator bool() const noexcept {
+		return m_Initialized;
+	}
+};
+
+} // namespace cxx
+
 namespace window {
 
 struct UiaTestSuite
@@ -34,6 +78,8 @@ struct UiaTestSuite
 	 * UI操作に使うCOMオブジェクト。
 	 */
 	static inline IUIAutomationPtr m_pAutomation = nullptr;
+
+	static inline std::unique_ptr<cxx::COleInit> pcOleInit = nullptr;
 
 	//! UI Automationでボタン押下
 	static void EmulateInvoke(const IUIAutomationElementPtr& pElement)
