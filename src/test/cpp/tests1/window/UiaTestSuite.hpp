@@ -108,7 +108,7 @@ struct UiaTestSuite
 		}
 	}
 
-	void EmulateHitEnter() const
+	static void EmulateHitEnter()
 	{
 		std::vector<INPUT> inputs{};
 		inputs.emplace_back(MakeKeyboardInput(VK_RETURN, false));
@@ -172,7 +172,7 @@ struct UiaTestSuite
 		return pFocusedElement;
 	}
 
-	INPUT MakeMouseInputMove(LONG x, LONG y) const
+	static INPUT MakeMouseInputMove(LONG x, LONG y)
 	{
 		const auto vx = ::GetSystemMetrics(SM_XVIRTUALSCREEN);
 		const auto vy = ::GetSystemMetrics(SM_YVIRTUALSCREEN);
@@ -191,7 +191,7 @@ struct UiaTestSuite
 		return input;
 	}
 
-	INPUT MakeMouseInputWheel(int delta) const
+	static INPUT MakeMouseInputWheel(int delta)
 	{
 		INPUT input{};
 
@@ -202,7 +202,7 @@ struct UiaTestSuite
 		return input;
 	}
 
-	INPUT MakeKeyboardInput(WORD virtualKey, bool isKeyUp = false) const
+	static INPUT MakeKeyboardInput(WORD virtualKey, bool isKeyUp = false)
 	{
 		INPUT input{};
 
@@ -214,7 +214,7 @@ struct UiaTestSuite
 	}
 
 	template <typename Func>
-	void RunGuiTest(Func&& f)
+	static void RunGuiTest(Func&& f)
 	{
 		try {
 			std::forward<Func>(f)();
@@ -330,7 +330,7 @@ struct UiaTestSuite
 
 	template<typename T>
 		requires std::ranges::range<T>
-	UINT SendInput(T& inputs) const
+	static UINT SendInput(T& inputs)
 	{
 		return ::SendInput(UINT(std::size(inputs)), std::data(inputs), sizeof(decltype(inputs[0])));
 	}
