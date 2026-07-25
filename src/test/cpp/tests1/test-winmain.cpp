@@ -1226,9 +1226,9 @@ TEST_F(WinMainFuncTest, ShowDlgGrep101)
 	const auto profileName{ GetProfileName() };
 
 	// 表示されたGrepダイアログを閉じるためのスレッドを起動する
-	std::jthread t = StartWindowCloser(L"Grep", [this] (HWND hWndDlg) {
-		EmulateInvokeButton(hWndDlg, L"キャンセル(X)");
-	});
+	auto t = StartDialogCloser(L"Grep", [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
+		EmulateInvokeButton(pUIAutomation, hWndDlg, IDCANCEL, st);
+	}, 15000);
 
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(std::array{ LR"(-GREPDLG)", LR"(-GREPMODE)" }, profileName);
@@ -1259,10 +1259,10 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 	const auto profileName{ GetProfileName() };
 
 	// 表示されたプロファイルマネージャを閉じるためのスレッドを起動する
-	std::jthread t = StartWindowCloser(L"プロファイルマネージャ", [this] (HWND hWndDlg) {
+	auto t = StartDialogCloser(L"プロファイルマネージャ", [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
 		// プロファイルマネージャを閉じる
-		EmulateInvokeButton(hWndDlg, L"閉じる(X)");
-	});
+		EmulateInvokeButton(pUIAutomation, hWndDlg, IDCANCEL, st);
+	}, 15000);
 
 	// エディタープロセスを起動する
 	auto ep = testing::CreateEditorProcess(std::array{ LR"(-PROFMGR)" }, profileName, false);
