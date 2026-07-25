@@ -567,11 +567,11 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 		SetUpUia();
 
 		// テスト用ファイル作成
-		std::wofstream fs(gm_TestDataPath);
+		std::wofstream fos(gm_TestDataPath);
 		for (int n = 1; n <= 1000; n++) {
-			fs << n << std::endl;
+			fos << n << std::endl;
 		}
-		fs.close();
+		fos.close();
 	}
 
 	/*!
