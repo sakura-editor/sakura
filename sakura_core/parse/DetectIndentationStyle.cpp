@@ -48,8 +48,11 @@ constexpr std::string_view trim(std::string_view s) noexcept {
 	return s.substr(first, (last - first + 1));
 }
 
-inline bool strieq(std::string_view lhs, std::string_view rhs) {
-	return 0 == _strnicmp(lhs.data(), rhs.data(), std::min(lhs.size(), rhs.size()));
+//! 大文字小文字を区別せずに文字列全体が一致するかを判定する
+//! EditorConfigの値は"tab"や"true"のような決められた語のみが有効なので、
+//! 部分一致や前方一致を認めてはならない。
+inline bool strieq(std::string_view lhs, std::string_view rhs) noexcept {
+	return lhs.size() == rhs.size() && 0 == _strnicmp(lhs.data(), rhs.data(), lhs.size());
 }
 
 inline void tolower(std::string& s) {
