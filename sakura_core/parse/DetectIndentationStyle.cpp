@@ -161,7 +161,14 @@ bool glob_matches_extension(std::string_view glob, std::string_view extension)
 	return false;
 }
 
-bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
+/*!
+	.editorconfigの指定からインデントスタイルを決定する
+
+	@retval true  インデントスタイルを決定できた
+	@retval false 決定できなかった。.editorconfigの読み込みに成功していても、
+	              対象セクションにindent_styleが無ければfalseを返す
+*/
+bool ReadEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 {
 	const auto& cFilePath = pcDoc->m_cDocFile.GetFilePathClass();
 	auto path = static_cast<std::filesystem::path>(cFilePath);
@@ -239,7 +246,7 @@ bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 */
 void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style)
 {
-	if (FindEditorConfig(pcDoc, style)) {
+	if (ReadEditorConfig(pcDoc, style)) {
 		return;
 	}
 	const auto& cDocLineMgr = pcDoc->m_cDocLineMgr;
