@@ -182,14 +182,14 @@ bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 						if (section.indent_style) {
 							if (section.indent_style == EditorConfig::IndentStyle::Tab) {
 								style.character = IndentationStyle::Character::Tabs;
+								// タブ幅の指定がないときはstyle.tabSpaceを-1のままとし、現在のタブ幅を維持する
 								if (section.tab_width.has_value()) {
 									style.tabSpace = section.tab_width.value();
-									return true;
 								}
 								else if (section.indent_size.has_value()) {
 									style.tabSpace = section.indent_size.value();
-									return true;
 								}
+								return true;
 							}
 							else if (section.indent_style == EditorConfig::IndentStyle::Space) {
 								style.character = IndentationStyle::Character::Spaces;
