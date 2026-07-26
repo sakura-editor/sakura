@@ -448,6 +448,7 @@ jobs:
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
         --output-on-failure
+        -V
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
