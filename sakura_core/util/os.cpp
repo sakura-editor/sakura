@@ -439,7 +439,7 @@ std::vector<std::filesystem::path> GlobalDropFiles::data() const & {
 //文字列を指定して必要サイズを計算する
 /* static */ size_t GlobalSakura::CalcSize(std::wstring_view text) noexcept
 {
-	return sizeof(size_type) + (std::size(text) + 1) * sizeof(WCHAR);
+	return sizeof(LengthFieldType) + (std::size(text) + 1) * sizeof(WCHAR);
 }
 
 //文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
@@ -454,8 +454,10 @@ void GlobalSakura::SetText(std::wstring_view text) const
 {
 	Lock([text](LPWSTR pStr, size_t cbSize) {
 		if (cbSize < CalcSize(text)) throw std::length_error("text length is too long.");
-		*(size_type*)pStr = size_type(std::size(text));
-		std::ranges::copy(text, LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)));
+		// 64bitビルドでは長さフィールドで表せない長さの文字列がありうる
+		if (std::size(text) > size_t(std::numeric_limits<LengthFieldType>::max())) throw std::length_error("text length is too long.");
+		*(LengthFieldType*)pStr = LengthFieldType(std::size(text));
+		std::ranges::copy(text, LPWSTR(pStr + sizeof(LengthFieldType) / sizeof(WCHAR)));
 		return true;
 	});
 }
@@ -463,10 +465,10 @@ void GlobalSakura::SetText(std::wstring_view text) const
 //格納されている文字列データのコピーを取得する
 std::wstring GlobalSakura::wstring() const & {
 	return Lock([](LPCWSTR pStr, size_t cbSize) -> std::wstring {
-		if (cbSize < sizeof(size_type) + sizeof(WCHAR)) return L"";
-		const auto length = *(const size_type*)pStr;
-		if (cbSize < sizeof(size_type) + (length + 1) * sizeof(WCHAR)) return L"";
-		return std::wstring(LPCWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
+		if (cbSize < sizeof(LengthFieldType) + sizeof(WCHAR)) return L"";
+		const auto length = *(const LengthFieldType*)pStr;
+		if (cbSize < sizeof(LengthFieldType) + (length + 1) * sizeof(WCHAR)) return L"";
+		return std::wstring(LPCWSTR(pStr + sizeof(LengthFieldType) / sizeof(WCHAR)), length);
 	});
 }
 

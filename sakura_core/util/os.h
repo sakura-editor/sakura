@@ -289,7 +289,9 @@ private:
 	using Base = GlobalMemory;
 	using Me = GlobalSakura;
 
-	using size_type = size_t;	//TODO: int32_t に戻す
+	//! 長さフィールドの型。CClipboard::SAKURAClipW_LengthFieldType と一致させること。
+	//! ビルドのポインタ幅に依存させてはならない。(issue #2325)
+	using LengthFieldType = int32_t;
 
 public:
 	//HGLOBALを指定して構築（メモリ変更は行わない）
