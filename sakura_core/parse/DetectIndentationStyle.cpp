@@ -111,7 +111,7 @@ struct EditorConfigParser {
 					}
 					else if (key == "tab_width") {
 						int tab_width;
-						if (std::errc() != std::from_chars(key.data(), key.data() + key.size(), tab_width).ec) {
+						if (std::errc() != std::from_chars(value.data(), value.data() + value.size(), tab_width).ec) {
 							return false;
 						}
 						section->tab_width = tab_width;
