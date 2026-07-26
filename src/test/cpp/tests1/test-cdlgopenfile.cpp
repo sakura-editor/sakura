@@ -251,9 +251,7 @@ TEST_F(SelectFileTest, SelectFile001)
 {
 	constexpr bool resolvePath = true;	// パス解決する場合のテスト
 
-	std::jthread j([&] {
-		EmulateEnterOpenFileName(path);
-	});
+	auto t = StartEnterOpenFileName(path);
 
 	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsTrue());
 
@@ -269,9 +267,7 @@ TEST_F(SelectFileTest, SelectFile002)
 {
 	constexpr bool resolvePath = false;	// パス解決しない場合のテスト
 
-	std::jthread j([&] {
-		EmulateEnterOpenFileName(path);
-	});
+	auto t = StartEnterOpenFileName(path);
 
 	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsTrue());
 
