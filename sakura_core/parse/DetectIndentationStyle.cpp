@@ -200,6 +200,8 @@ bool ReadEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 							}
 							else if (section.indent_style == EditorConfig::IndentStyle::Space) {
 								style.character = IndentationStyle::Character::Spaces;
+								// インデント幅が決まらないとスペース挿入を有効化できないため(CDocEditor::OnAfterLoad参照)、
+								// 指定が無い場合はfalseを返してファイル内容からの検出に委ねる。タブ側と扱いが異なるのは意図的。
 								if (section.indent_size.has_value()) {
 									style.tabSpace = *section.indent_size;
 									if (style.tabSpace == -1 && section.tab_width.has_value()) {
