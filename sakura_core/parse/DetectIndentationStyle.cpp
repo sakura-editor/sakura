@@ -219,6 +219,24 @@ bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 
 } // namespace
 
+/*!
+	インデントスタイルを決定する
+
+	.editorconfigによる指定を、ファイル内容からの検出より優先する。
+	.editorconfigはファイルのあるディレクトリから親へ遡って探索し、
+	root = trueが指定されたファイルで打ち切る。
+
+	.editorconfigから指定を得られなかった場合はファイル内容から検出する。
+	該当する.editorconfigが無い場合のほか、対象セクションにindent_styleが
+	書かれていない場合や、indent_style = spaceでインデント幅が決まらない
+	場合も、指定が無かったものとして扱う。
+
+	インデント幅を決められなかった場合はstyle.tabSpaceを-1のままにする。
+	呼び出し元は現在のタブ幅を維持すること。
+	indent_style = tabのみが指定された場合がこれに当たる。
+	なおファイル内容から検出できるインデント幅は半角空白の場合のみで、
+	タブ文字の幅はファイル内容からは決められない。
+*/
 void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style)
 {
 	if (FindEditorConfig(pcDoc, style)) {
