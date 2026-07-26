@@ -55,6 +55,18 @@ inline bool strieq(std::string_view lhs, std::string_view rhs) noexcept {
 	return lhs.size() == rhs.size() && 0 == _strnicmp(lhs.data(), rhs.data(), lhs.size());
 }
 
+//! 値全体を10進数の整数として解釈する
+//! EditorConfigではどのプロパティにもunsetを指定でき、認識できない値は
+//! 無視すべきなので、解釈できない場合は値を返さない。
+inline std::optional<int> parse_int(std::string_view value) noexcept {
+	int result;
+	const auto [ptr, ec] = std::from_chars(value.data(), value.data() + value.size(), result);
+	if (ec != std::errc() || ptr != value.data() + value.size()) {
+		return std::nullopt;
+	}
+	return result;
+}
+
 inline void tolower(std::string& s) {
 	for (char& c : s) c = (char)std::tolower(c);
 }
@@ -104,20 +116,14 @@ struct EditorConfigParser {
 						if (strieq(value, "tab")) {
 							section->indent_size = -1;
 						}
-						else {
-							int indent_size;
-							if (std::errc() != std::from_chars(value.data(), value.data() + value.size(), indent_size).ec) {
-								return false;
-							}
-							section->indent_size = indent_size;
+						else if (const auto n = parse_int(value)) {
+							section->indent_size = *n;
 						}
 					}
 					else if (key == "tab_width") {
-						int tab_width;
-						if (std::errc() != std::from_chars(value.data(), value.data() + value.size(), tab_width).ec) {
-							return false;
+						if (const auto n = parse_int(value)) {
+							section->tab_width = *n;
 						}
-						section->tab_width = tab_width;
 					}
 				}
 				else {
