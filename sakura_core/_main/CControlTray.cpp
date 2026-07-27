@@ -50,6 +50,7 @@
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "_main/CCommandLine.h"
+#include "_main/process_sync.h"
 #include "grep/CGrepEnumKeys.h"
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
@@ -1285,17 +1286,18 @@ bool CControlTray::OpenNewEditor(
 	bool bRet = true;
 	if (sync)
 	{
-		// エディター初期化完了イベントを作成する
+		// エディター初期化完了イベントを作成する（スコープ離脱で確実に閉じる）
 		SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, p.dwThreadId) };
-		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
+		using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+		HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
 
 		// エディターのメインスレッドを再開する
 		::ResumeThread(p.hThread);
 
-		// エディター初期化完了を待つ
-		std::array handles{ hEvent, p.hProcess };
-		const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 15000);
-		if (WAIT_OBJECT_0 != dwRet) {
+		// エディター初期化完了を待つ。待機中も送信メッセージ(sent message)は捌く（#2550）。
+		// これを怠ると、初期化中の子が本スレッドのウィンドウへ同期SendMessageした場合に
+		// タイムアウトまでデッドロックする。ポストは意図的に非ディスパッチ。
+		if (WaitEditorInitialized(hEvent.get(), p.hProcess, 15000) != ESyncWaitResult::Initialized) {
 			ErrorMessage(
 				hWndParent,
 				LS(STR_TRAY_CREATEPROC2),
