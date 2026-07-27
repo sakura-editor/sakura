@@ -57,7 +57,7 @@ jobs:
           python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           activate-environment: true
 
@@ -126,7 +126,7 @@ jobs:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         activate-environment: true
@@ -356,7 +356,7 @@ jobs:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       with:
         activate-environment: true
 
