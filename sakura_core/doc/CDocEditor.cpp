@@ -67,7 +67,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		// インデントスタイル検出
 		// 現時点の実装ではレイアウトには影響しないのでここで実行する
 		IndentationStyle indentStyle{};
-		DetectIndentationStyle(pcDoc, 256, indentStyle);
+		DetectIndentationStyle(pcDoc->m_cDocFile.GetFilePathClass(), pcDoc->m_cDocLineMgr, 256, indentStyle);
 		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
 		auto setTemporaryTabSpaceKetas = [&]() {
 			// タブ幅を一時的に設定

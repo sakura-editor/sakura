@@ -7,7 +7,9 @@
 #include "StdAfx.h"
 #include "DetectIndentationStyle.h"
 
-#include "doc/CEditDoc.h"
+#include "basis/CMyString.h"
+#include "doc/logic/CDocLine.h"
+#include "doc/logic/CDocLineMgr.h"
 #include "config/app_constants.h"
 #include <fstream>
 #include <regex>
@@ -170,13 +172,14 @@ bool glob_matches_extension(std::string_view glob, std::string_view extension)
 /*!
 	.editorconfigの指定からインデントスタイルを決定する
 
+	@param cFilePath 対象ファイルのパス。このファイルのあるディレクトリから親へ遡って
+	                 .editorconfigを探し、root = trueが指定されたファイルで打ち切る
 	@retval true  インデントスタイルを決定できた
 	@retval false 決定できなかった。.editorconfigの読み込みに成功していても、
 	              対象セクションにindent_styleが無ければfalseを返す
 */
-bool ReadEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
+bool ReadEditorConfig(const CFilePath& cFilePath, IndentationStyle& style)
 {
-	const auto& cFilePath = pcDoc->m_cDocFile.GetFilePathClass();
 	auto path = static_cast<std::filesystem::path>(cFilePath);
 	if (cFilePath.empty() || !path.has_extension()) {
 		return false;
@@ -252,12 +255,11 @@ bool ReadEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 	なおファイル内容から検出できるインデント幅は半角空白の場合のみで、
 	タブ文字の幅はファイル内容からは決められない。
 */
-void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style)
+void DetectIndentationStyle(const CFilePath& cFilePath, const CDocLineMgr& cDocLineMgr, size_t nMaxLinesToCheck, IndentationStyle& style)
 {
-	if (ReadEditorConfig(pcDoc, style)) {
+	if (ReadEditorConfig(cFilePath, style)) {
 		return;
 	}
-	const auto& cDocLineMgr = pcDoc->m_cDocLineMgr;
 	int nSpaceUsed = 0;
 	int nTabUsed = 0;
 	style.character = IndentationStyle::Character::Unknown;
