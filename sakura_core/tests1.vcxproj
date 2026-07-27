@@ -153,6 +153,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-ctextmetrics.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cwordparse.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-design_template.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-detectindentationstyle.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-docoutline.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-editinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-file.cpp" />
