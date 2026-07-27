@@ -1294,7 +1294,28 @@ bool CControlTray::OpenNewEditor(
 
 		// エディター初期化完了を待つ
 		std::array handles{ hEvent, p.hProcess };
-		const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 15000);
+		const auto count = DWORD(std::size(handles));
+
+		const auto startTick = ::GetTickCount64();
+		const ULONGLONG timeoutMillis = 15000;	// タイムアウト時間
+
+		DWORD dwRet = 0;
+		do {
+			// 残り時間を考慮して待機する
+			const auto elapsed = ::GetTickCount64() - startTick;	// 経過時間
+			const auto remaining = DWORD(timeoutMillis - elapsed);			// 残り時間
+			dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles), FALSE, remaining, QS_SENDMESSAGE);
+
+			// 自スレッドにメッセージが送られてきた場合
+			if (count == dwRet) {
+				BlockingHook(nullptr);	// 溜まったメッセージを処理する
+			}
+		}
+		while (::GetTickCount64() - startTick < timeoutMillis && // タイムアウト発生
+			WAIT_OBJECT_0 != dwRet && // エディター初期化完了
+			WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
+		);
+
 		if (WAIT_OBJECT_0 != dwRet) {
 			ErrorMessage(
 				hWndParent,
