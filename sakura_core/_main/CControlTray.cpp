@@ -1307,7 +1307,7 @@ bool CControlTray::OpenNewEditor(
 			dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles), FALSE, remaining, QS_SENDMESSAGE);
 
 			// 自スレッドにメッセージが送られてきた場合
-			if (count == dwRet) {
+			if (WAIT_OBJECT_0 + count == dwRet) {
 				BlockingHook(nullptr);	// 溜まったメッセージを処理する
 			}
 		}
