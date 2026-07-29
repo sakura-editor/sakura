@@ -170,7 +170,11 @@ HWND WaitForWindow(
 		// 全プロセスのトップレベルウィンドウを対象に検索する
 		const auto hWndFound = ::FindWindowW(targetClass, pszTitle);
 		if (!hWndFound) {
-			std::clog << "window not found." << std::endl;
+			std::clog << "window not found. "
+				<< (!IS_INTRESOURCE(targetClass) ? std::format("({})", cxx::to_string(targetClass, CP_UTF8)) : "(Dialog)")
+				<< ", "
+				<< (pszTitle ? std::format("title: '{}'", cxx::to_string(pszTitle, CP_UTF8)) : "no title")
+				<< std::endl;
 		} else if (!::IsWindowVisible(hWndFound)) {
 			std::clog << "window is not visible." << std::endl;
 			return HWND(nullptr);
