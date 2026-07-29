@@ -1299,19 +1299,20 @@ bool CControlTray::OpenNewEditor(
 		const auto startTick = ::GetTickCount64();
 		const ULONGLONG timeoutMillis = 15000;	// タイムアウト時間
 
-		DWORD dwRet = 0;
+		DWORD dwRet = WAIT_TIMEOUT;
 		do {
 			// 残り時間を考慮して待機する
 			const auto elapsed = ::GetTickCount64() - startTick;	// 経過時間
+			if (timeoutMillis <= elapsed) break; // タイムアウト発生
 			const auto remaining = DWORD(timeoutMillis - elapsed);			// 残り時間
 			dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles), FALSE, remaining, QS_SENDMESSAGE);
 
 			// 自スレッドにメッセージが送られてきた場合
-			if (count == dwRet) {
+			if (WAIT_OBJECT_0 + count == dwRet) {
 				BlockingHook(nullptr);	// 溜まったメッセージを処理する
 			}
 		}
-		while (::GetTickCount64() - startTick < timeoutMillis && // タイムアウト発生
+		while (
 			WAIT_OBJECT_0 != dwRet && // エディター初期化完了
 			WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
 		);

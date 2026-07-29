@@ -170,7 +170,11 @@ HWND WaitForWindow(
 		// 全プロセスのトップレベルウィンドウを対象に検索する
 		const auto hWndFound = ::FindWindowW(targetClass, pszTitle);
 		if (!hWndFound) {
-			std::clog << "window not found." << std::endl;
+			std::clog << "window not found. "
+				<< (!IS_INTRESOURCE(targetClass) ? std::format("({})", cxx::to_string(targetClass, CP_UTF8)) : "(Dialog)")
+				<< ", "
+				<< (pszTitle ? std::format("title: '{}'", cxx::to_string(pszTitle, CP_UTF8)) : "no title")
+				<< std::endl;
 		} else if (!::IsWindowVisible(hWndFound)) {
 			std::clog << "window is not visible." << std::endl;
 			return HWND(nullptr);
@@ -341,7 +345,8 @@ std::jthread UiaTestSuite::StartDialogCloser(
 {
 	LPCWSTR targetClass = MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS);
 
-	return StartWindowCloser(targetClass, std::wstring{ dialogTitle }, action, timeoutMillis);
+	const std::wstring buffer{ dialogTitle };	// 一旦バッファにコピーする
+	return StartWindowCloser(targetClass, buffer, action, timeoutMillis);
 }
 
 /*!
@@ -467,7 +472,8 @@ std::jthread UiaTestSuite::StartDialogCloser(
 	ULONGLONG timeoutMillis
 ) const
 {
-	return StartDialogCloser(title, [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
+	std::wstring buffer{ title };	// 一旦バッファにコピーする
+	return StartDialogCloser(buffer, [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
 	}, timeoutMillis);
