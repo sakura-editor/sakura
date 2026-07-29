@@ -345,7 +345,8 @@ std::jthread UiaTestSuite::StartDialogCloser(
 {
 	LPCWSTR targetClass = MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS);
 
-	return StartWindowCloser(targetClass, std::wstring{ dialogTitle }, action, timeoutMillis);
+	const std::wstring buffer{ dialogTitle };	// 一旦バッファにコピーする
+	return StartWindowCloser(targetClass, buffer, action, timeoutMillis);
 }
 
 /*!
@@ -471,7 +472,8 @@ std::jthread UiaTestSuite::StartDialogCloser(
 	ULONGLONG timeoutMillis
 ) const
 {
-	return StartDialogCloser(title, [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
+	std::wstring buffer{ title };	// 一旦バッファにコピーする
+	return StartDialogCloser(buffer, [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
 	}, timeoutMillis);
