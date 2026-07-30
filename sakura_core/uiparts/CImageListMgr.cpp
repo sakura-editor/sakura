@@ -239,7 +239,7 @@ bool CImageListMgr::DrawToolIcon( HDC drawdc, LONG x, LONG y,
 {
 	if ( m_hIconBitmap == nullptr )
 		return false;
-	if ( imageNo < 0 || m_nIconCount < imageNo )
+	if ( imageNo < 0 || m_nIconCount <= imageNo )
 		return false;
 
 	BLENDFUNCTION bf = { 0 };
@@ -254,7 +254,7 @@ bool CImageListMgr::DrawToolIcon(uint32_t* pixels, int imageNo, bool enabled, LO
 {
 	if (m_hIconBitmap == nullptr)
 		return false;
-	if (imageNo < 0 || m_nIconCount < imageNo)
+	if (imageNo < 0 || m_nIconCount <= imageNo)
 		return false;
 
 	auto sy = (imageNo / MAX_X) * m_cy;

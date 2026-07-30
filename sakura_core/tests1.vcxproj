@@ -146,7 +146,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cfileext.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cfuncinfoarr.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-clayoutint.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cimagelistmgr.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cmenudrawer.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cnative.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cprofile.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-csakuraenvironment.cpp" />
