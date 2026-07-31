@@ -116,6 +116,7 @@ jobs:
       - name: Run unit tests
         id: run_unit_tests
         continue-on-error: true
+        timeout-minutes: 25 # 指定時間を越えたら打ち切る。値は暫定。(ビルド + テストなので長め。)
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
 
       - name: Try gdb backtrace on test failure

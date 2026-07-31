@@ -6,7 +6,6 @@
  */
 #pragma once
 
-#include "config/system_constants.h"
 #include "cxx/com_pointer.hpp"
 #include "dlg/ModalDialogCloser.hpp"
 #include "util/tchar_convert.h"
@@ -14,7 +13,72 @@
 // UI Automation経由でGUI操作を行う
 #include <UIAutomation.h>
 
+namespace cxx {
+
+/*!
+ * @brief COMライブラリの初期化状態をRAIIで管理するクラス
+ */
+class COleInit final
+{
+private:
+	/*!
+	 * @brief COMライブラリのクリーンアップ
+	 */
+	static void Cleanup([[maybe_unused]] const COleInit*)
+	{
+		// OLEをシャットダウンする
+		::OleUninitialize();
+	}
+
+	using CleanupHolder = cxx::ResourceHolder<&COleInit::Cleanup>;
+
+	using Me = COleInit;
+
+	/*!
+	 * @brief COMライブラリの初期化状態
+	 * 
+	 * クラスの生成と同時にSTAモードでCOMライブラリを初期化する。
+	 * 初期化に成功した場合、クリーンアップ用のリソースホルダーを生成する。
+	 * 初期化失敗した場合、リソースホルダーはnullptrとなり、クリーンアップは行われない。
+	 */
+	CleanupHolder m_Initialized = SUCCEEDED(::OleInitialize(nullptr)) ? this : nullptr;
+
+public:
+	COleInit() = default;
+	~COleInit() noexcept = default;
+
+	COleInit(const Me&) = delete;
+	Me& operator=(const Me&) = delete;
+
+	explicit operator bool() const noexcept {
+		return m_Initialized;
+	}
+};
+
+} // namespace cxx
+
 namespace window {
+
+//! デフォルトの待機時間
+static constexpr auto defaultTimeoutMillis = 5000;
+
+HWND WaitForDialog(
+	const std::wstring& title,
+	std::stop_token st = {},
+	ULONGLONG timeoutMillis = defaultTimeoutMillis
+);
+
+HWND WaitForPopupMenu(
+	std::stop_token st,
+	ULONGLONG timeoutMillis = defaultTimeoutMillis
+);
+
+HWND WaitForWindow(
+	LPCWSTR targetClass,
+	const std::optional<std::wstring>& optTitle = std::nullopt,
+	std::stop_token st = {},
+	ULONGLONG timeoutMillis = defaultTimeoutMillis
+);
 
 struct UiaTestSuite
 {
@@ -28,87 +92,47 @@ struct UiaTestSuite
 	//! デフォルトの待機時間
 	static constexpr auto defaultTimeoutMillis = 5000;
 
-	/*!
-	 * UI Automationオブジェクト
-	 *
-	 * UI操作に使うCOMオブジェクト。
-	 */
-	static inline IUIAutomationPtr m_pAutomation = nullptr;
+	static inline std::unique_ptr<cxx::COleInit> pcOleInit = nullptr;
 
-	//! UI Automationでボタン押下
-	static void EmulateInvoke(const IUIAutomationElementPtr& pElement)
-	{
-		IUIAutomationInvokePatternPtr pInvokePattern;
-		_com_util::CheckError(pElement->GetCurrentPatternAs(UIA_InvokePatternId, IID_PPV_ARGS(&pInvokePattern)));
-		_com_util::CheckError(pInvokePattern->Invoke());
-	}
+	static void EmulateInvokeButton(
+		IUIAutomation* pAutomation,
+		_In_ HWND hWndDlg,
+		std::wstring_view caption,
+		std::stop_token st
+	);
 
-	//! UI Automationで値設定
-	static void EmulateSetValue(const IUIAutomationElementPtr& pElement, const _bstr_t& val)
-	{
-		IUIAutomationValuePatternPtr pValuePattern;
-		_com_util::CheckError(pElement->GetCurrentPatternAs(UIA_ValuePatternId, IID_PPV_ARGS(&pValuePattern)));
-		_com_util::CheckError(pValuePattern->SetValue(val));
-	}
+	static void EmulateInvokeButton(
+		IUIAutomation* pAutomation,
+		_In_ HWND hWndDlg,
+		int nIDDlgItem,
+		std::stop_token st
+	);
 
-	/*!
-	 * テストスイートの開始前に1回だけ呼ばれる関数
-	 */
-	static void SetUpUia();
+	static void EmulateInvokeMenuItem(
+		IUIAutomation* pAutomation,
+		_In_ HWND hWndPopupMenu,
+		std::wstring_view caption,
+		std::stop_token st
+	);
 
-	/*!
-	 * テストスイートの終了後に1回だけ呼ばれる関数
-	 */
-	static void TearDownUia();
+	static std::function<void(IUIAutomation*, HWND, std::stop_token)> EmulateEnterFileName(
+		const std::filesystem::path& path
+	);
 
-	IUIAutomationConditionPtr CreatePropertyCondition(
-		PROPERTYID propertyId,
-		const _variant_t& value
-	) const
-	{
-		IUIAutomationConditionPtr condition;
-		_com_util::CheckError(m_pAutomation->CreatePropertyCondition(propertyId, value, &condition));
-		return condition;
-	}
+	static void EmulateEnterOpenFileName(
+		IUIAutomation* pAutomation,
+		const std::filesystem::path& path,
+		std::stop_token st = {}
+	);
 
-	IUIAutomationElementPtr ElementFromHandle(_In_ HWND hWnd) const
-	{
-		IUIAutomationElementPtr pElement;
-		_com_util::CheckError(m_pAutomation->ElementFromHandle(hWnd, &pElement));
-		return pElement;
-	}
+	static void EmulateEnterSaveFileName(
+		IUIAutomation* pAutomation,
+		const std::filesystem::path& path,
+		std::stop_token st = {}
+	);
 
-	void EmulateInvokeButton(_In_ HWND hWndDlg, const _bstr_t& caption) const
-	{
-		// ボタンの検索条件を構築する
-		auto pControlTypeCondition = CreatePropertyCondition(UIA_ControlTypePropertyId, UIA_ButtonControlTypeId);
-		auto pNameCondition = CreatePropertyCondition(UIA_NamePropertyId, caption);
-		auto pFinalCondition = CreateAndCondition(pControlTypeCondition, pNameCondition);
-
-		// ボタンを検索する
-		auto pItem = FindFirst(hWndDlg, TreeScope_Subtree, pFinalCondition);
-
-		// ボタンを押下する
-		EmulateInvoke(pItem);
-	}
-
-	void EmulateEnterOpenFileName(const std::filesystem::path& path) const
-	{
-		if (const auto hWndDlgOpenFile = WaitForDialog(L"開く")) {
-			EmulateSetValue(GetFocusedElement(), path.c_str());
-			EmulateHitEnter();
-		}
-	}
-
-	void EmulateEnterSaveFileName(const std::filesystem::path& path) const
-	{
-		if (const auto hWndDlgSaveAs = WaitForDialog(L"名前を付けて保存")) {
-			EmulateSetValue(GetFocusedElement(), path.c_str());
-			EmulateHitEnter();
-		}
-	}
-
-	void EmulateHitEnter() const
+	//! UI AutomationでEnterキー押下を偽装
+	static void EmulateHitEnter()
 	{
 		std::vector<INPUT> inputs{};
 		inputs.emplace_back(MakeKeyboardInput(VK_RETURN, false));
@@ -116,63 +140,28 @@ struct UiaTestSuite
 		EXPECT_THAT(SendInput(inputs), Eq(std::size(inputs)));
 	}
 
-	void EmulateSelectPopupMenu(const _bstr_t& name) const
+	//! UI Automationでボタン押下を偽装
+	static void EmulateInvoke(
+		const IUIAutomationElementPtr& pElement
+	)
 	{
-		const auto hPopupMenu = WaitForWindow(MAKEINTRESOURCEW(32768), std::nullopt, 60000, false);
-		EXPECT_THAT(hPopupMenu, NotNull());
-
-		auto condMenuItem = CreatePropertyCondition(
-			UIA_ControlTypePropertyId,
-			UIA_MenuItemControlTypeId
-		);
-		auto condName = CreatePropertyCondition(
-			UIA_NamePropertyId,
-			name
-		);
-		auto cond = CreateAndCondition(condMenuItem, condName);
-
-		auto item = FindFirst(hPopupMenu, TreeScope_Subtree, cond);
-		EXPECT_THAT(item, NotNull());
-
-		cxx::com_pointer<IUIAutomationInvokePattern> invoke;
-		EXPECT_HRESULT_SUCCEEDED(item->GetCurrentPatternAs(
-			UIA_InvokePatternId,
-			IID_PPV_ARGS(&invoke)
-		));
-
-		EXPECT_HRESULT_SUCCEEDED(invoke->Invoke());
+		IUIAutomationInvokePatternPtr pInvokePattern;
+		ASSERT_HRESULT_SUCCEEDED(pElement->GetCurrentPatternAs(UIA_InvokePatternId, IID_PPV_ARGS(&pInvokePattern)));
+		ASSERT_HRESULT_SUCCEEDED(pInvokePattern->Invoke());
 	}
 
-	IUIAutomationElementPtr FindFirst(
-		_In_ HWND hWndDlg,
-		TreeScope scope,
-		const IUIAutomationConditionPtr& pCondition
-	) const
+	//! UI Automationで値設定
+	static void EmulateSetValue(
+		const IUIAutomationElementPtr& pElement,
+		std::wstring_view val
+	)
 	{
-		const auto pDlg = ElementFromHandle(hWndDlg);
-
-		IUIAutomationElementPtr pItem;
-		const auto startTick = ::GetTickCount64();
-		while (::GetTickCount64() - startTick < defaultTimeoutMillis) {
-			_com_util::CheckError(pDlg->FindFirst(scope, pCondition, &pItem));
-			if (pItem) {
-				break;
-			}
-	
-			::Sleep(10);  // 10msスリープしてリトライ
-		}
-
-		return pItem;
+		IUIAutomationValuePatternPtr pValuePattern;
+		ASSERT_HRESULT_SUCCEEDED(pElement->GetCurrentPatternAs(UIA_ValuePatternId, IID_PPV_ARGS(&pValuePattern)));
+		ASSERT_HRESULT_SUCCEEDED(pValuePattern->SetValue(_bstr_t{ ::SysAllocStringLen(std::data(val), UINT(std::size(val))) }));
 	}
 
-	IUIAutomationElementPtr GetFocusedElement() const
-	{
-		IUIAutomationElementPtr pFocusedElement;
-		_com_util::CheckError(m_pAutomation->GetFocusedElement(&pFocusedElement));
-		return pFocusedElement;
-	}
-
-	INPUT MakeMouseInputMove(LONG x, LONG y) const
+	static INPUT MakeMouseInputMove(LONG x, LONG y)
 	{
 		const auto vx = ::GetSystemMetrics(SM_XVIRTUALSCREEN);
 		const auto vy = ::GetSystemMetrics(SM_YVIRTUALSCREEN);
@@ -191,7 +180,7 @@ struct UiaTestSuite
 		return input;
 	}
 
-	INPUT MakeMouseInputWheel(int delta) const
+	static INPUT MakeMouseInputWheel(int delta)
 	{
 		INPUT input{};
 
@@ -202,7 +191,7 @@ struct UiaTestSuite
 		return input;
 	}
 
-	INPUT MakeKeyboardInput(WORD virtualKey, bool isKeyUp = false) const
+	static INPUT MakeKeyboardInput(WORD virtualKey, bool isKeyUp = false)
 	{
 		INPUT input{};
 
@@ -214,7 +203,7 @@ struct UiaTestSuite
 	}
 
 	template <typename Func>
-	void RunGuiTest(Func&& f)
+	static void RunGuiTest(Func&& f)
 	{
 		try {
 			std::forward<Func>(f)();
@@ -232,108 +221,91 @@ struct UiaTestSuite
 		}
 	}
 
-	/*!
-	 * ダイアログを閉じるスレッドを開始する
-	 *
-	 * @param dialogTitle タイトル
-	 * @param action 閉じるアクション
-	 * @return ダイアログを閉じるためのスレッド
-	 */
-	std::jthread StartWindowCloser(std::wstring_view dialogTitle, const std::function<void(HWND)>& action) const
-	{
-		return std::jthread([this, title = std::wstring(dialogTitle), action] {
-			const auto hWndFound = WaitForDialog(title);
-			action(hWndFound);
-		});
-	}
-
-	/*!
-	 * ダイアログを閉じるスレッドを開始する
-	 *
-	 * @param dialogTitle タイトル
-	 * @return ダイアログを閉じるためのスレッド
-	 */
-	std::jthread StartWindowCloser(std::wstring_view dialogTitle) const
-	{
-		return StartWindowCloser(dialogTitle, [this] (HWND hWndDlg) {
-			// OKボタンを押下して閉じる
-			const auto hOK = ::GetDlgItem(hWndDlg, IDOK);
-			std::wstring text(0x100, L'\0');
-			::GetWindowTextW(hOK, std::data(text), int(std::size(text)));
-			EmulateInvokeButton(hWndDlg, text.c_str());
-		});
-	}
-
-	HWND WaitForDialog(const std::wstring& title, ULONGLONG timeoutMillis = 60000) const
-	{
-		return WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title, timeoutMillis);
-	}
-
-	IUIAutomationElementPtr WaitForFocus(ULONGLONG startTick, ULONGLONG timeoutMillis) const
-	{
-		IUIAutomationElementPtr pFocusedElement = nullptr;
-
-		do {
-			_com_util::CheckError(m_pAutomation->GetFocusedElement(&pFocusedElement));
-
-			if (pFocusedElement) {
-				break;
-			}
-
-			::Sleep(10);  // 10msスリープしてリトライ
-		}
-		while (::GetTickCount64() - startTick < timeoutMillis);
-
-		return pFocusedElement;
-	}
-
-	HWND WaitForWindow(LPCWSTR targetClass, const std::optional<std::wstring>& title = std::nullopt, ULONGLONG timeoutMillis = defaultTimeoutMillis, bool waitCaret = true) const
-	{
-		const auto startTick = ::GetTickCount64();
-
-		do {
-			// ウィンドウがVisibleかつEnabledになるのを待つ
-			if (const auto hWndFound = ::FindWindowW(targetClass, title.has_value() ? title.value().c_str() : nullptr); hWndFound && ::IsWindowEnabled(hWndFound) && ::IsWindowVisible(hWndFound)) {
-				if (!waitCaret) {
-					return hWndFound;
-				}
-
-				WaitForFocus(startTick, timeoutMillis);
-
-				return hWndFound;
-			}
-
-			Sleep(10);  // 10msスリープしてリトライ
-		}
-		while (::GetTickCount64() - startTick < timeoutMillis);
-
-		return nullptr;
-	}
-
-	HWND WaitForEditor(const std::optional<std::wstring>& title = std::nullopt, ULONGLONG timeoutMillis = 60000) const
-	{
-		return WaitForWindow(GSTR_EDITWINDOWNAME, title, timeoutMillis);
-	}
-
-	template<typename... Conditions>
-	requires (1 < sizeof...(Conditions)) && (std::convertible_to<Conditions, IUIAutomationCondition*>&& ...)
-	IUIAutomationConditionPtr CreateAndCondition(Conditions... conditions) const
-	{
-		std::array<IUIAutomationCondition*, sizeof...(Conditions)> arrayOfCondtions{
-			static_cast<IUIAutomationCondition*>(conditions)...
-		};
-
-		IUIAutomationConditionPtr condition;
-		_com_util::CheckError(m_pAutomation->CreateAndConditionFromNativeArray(std::data(arrayOfCondtions), int(std::size(arrayOfCondtions)), &condition));
-		return condition;
-	}
-
-	template<typename T>
-		requires std::ranges::range<T>
-	UINT SendInput(T& inputs) const
+	template<std::ranges::range T>
+	static UINT SendInput(T& inputs)
 	{
 		return ::SendInput(UINT(std::size(inputs)), std::data(inputs), sizeof(decltype(inputs[0])));
 	}
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpUia();
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownUia();
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param title タイトル
+	 * @param action 閉じるアクション
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartDialogCloser(
+		std::wstring_view title,
+		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
+		ULONGLONG timeoutMillis = defaultTimeoutMillis
+	) const;
+
+	/*!
+	 * ファイルを開くダイアログを閉じるスレッドを開始する
+	 *
+	 * @param path ファイルパス
+	 * @return ファイルを開くダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartEnterOpenFileName(
+		const std::filesystem::path& path
+	) const;
+
+	/*!
+	 * ポップアップメニューを選択するスレッドを開始する
+	 *
+	 * @param menuLabel メニューラベル
+	 * @return ポップアップメニューを選択するためのスレッド
+	 */
+	std::jthread StartPopupMenuSelector(
+		std::wstring_view menuLabel,
+		ULONGLONG timeoutMillis = defaultTimeoutMillis
+	) const;
+
+	/*!
+	 * UI Automationを利用するスレッドを開始する
+	 *
+	 * @param action 実行するアクション
+	 * @return スレッド
+	 */
+	std::jthread StartUiaThread(
+		const std::function<void(IUIAutomation*, std::stop_token)>& action
+	) const;
+
+	/*!
+	 * ウィンドウを閉じるスレッドを開始する
+	 *
+	 * @param targetClass ウィンドウクラス名
+	 * @param optTitle タイトル
+	 * @param action 閉じるアクション
+	 * @return ウィンドウを閉じるためのスレッド
+	 */
+	std::jthread StartWindowCloser(
+		LPCWSTR targetClass,
+		const std::optional<std::wstring>& optTitle,
+		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
+		ULONGLONG timeoutMillis = defaultTimeoutMillis
+	) const;
+
+	/*!
+	 * ダイアログを閉じるスレッドを開始する
+	 *
+	 * @param dialogTitle タイトル
+	 * @return ダイアログを閉じるためのスレッド
+	 */
+	std::jthread StartDialogCloser(
+		std::wstring_view dialogTitle,
+		ULONGLONG timeoutMillis = defaultTimeoutMillis
+	) const;
 };
 
 } // namespace env

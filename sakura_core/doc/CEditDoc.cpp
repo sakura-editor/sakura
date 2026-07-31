@@ -60,8 +60,6 @@
 #include "sakura_rc.h"
 #include "config/app_constants.h"
 
-#include "plugin/CJackManager.h"
-
 #pragma comment(lib, "windowscodecs.lib")
 
 #define IDT_ROLLMOUSE	1
@@ -224,7 +222,6 @@ CEditDoc::~CEditDoc()
 {
 	CModifyManager::resetInstance();
 	CCodeChecker::resetInstance();
-	CJackManager::resetInstance();
 	CAppMode::resetInstance();
 
 	if( m_hBackImg ){

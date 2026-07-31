@@ -52,12 +52,12 @@ jobs:
         run: set
 
       - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           activate-environment: true
 
@@ -120,13 +120,13 @@ jobs:
           mingw-w64-x86_64-diffutils
 
     - name: Set up Python
-      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         activate-environment: true
@@ -351,12 +351,12 @@ jobs:
           --accept-source-agreements
 
     - name: Set up Python
-      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       with:
         activate-environment: true
 
@@ -444,10 +444,12 @@ jobs:
         path: help
 
     - name: Run unit tests
+      timeout-minutes: 15 # 指定時間を越えたら打ち切る。値は暫定。
       run: ctest
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
         --output-on-failure
+        -V
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}

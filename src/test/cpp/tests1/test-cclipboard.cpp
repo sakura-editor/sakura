@@ -51,6 +51,33 @@ MATCHER_P(SakuraFormatInGlobalMemory, expected_string, "") {
 	return actual.wstring() == expected_string;
 }
 
+// サクラ独自形式(SAKURAClipW)のバイナリレイアウトは、
+// Win32/x64/ARM64 のどのビルドでも、また過去バージョンとの間でも一致していなければならない。
+// 長さフィールドをポインタ幅に依存する型にすると、
+// 異なるビルド間でのコピー＆ペーストが壊れる。(issue #2325)
+static_assert(sizeof(CClipboard::SAKURAClipW_LengthFieldType) == 4);
+
+// グローバルメモリに書き込まれたサクラ独自形式データのバイナリレイアウトにマッチする述語関数
+MATCHER_P(SakuraFormatLayoutInGlobalMemory, expected_string, "") {
+	const std::wstring_view expected = expected_string;
+	const cxx::GlobalData<BYTE> mem{ arg };
+	const auto bytes = mem.data();
+	CClipboard::SAKURAClipW_LengthFieldType length = 0;
+	if (bytes.size() < sizeof(length) + expected.length() * sizeof(wchar_t)) return false;
+	std::memcpy(&length, bytes.data(), sizeof(length));
+	if (size_t(length) != expected.length()) return false;
+	return 0 == std::memcmp(bytes.data() + sizeof(length), expected.data(), expected.length() * sizeof(wchar_t));
+}
+
+// サクラ独自形式データのバイト列を組み立てる（32bit版・旧バージョンが書き込む形式）
+static std::vector<BYTE> MakeSakuraFormatBytes(std::wstring_view text, int32_t storedLength)
+{
+	std::vector<BYTE> bytes(sizeof(storedLength) + (text.length() + 1) * sizeof(wchar_t), 0);
+	std::memcpy(bytes.data(), &storedLength, sizeof(storedLength));
+	std::memcpy(bytes.data() + sizeof(storedLength), text.data(), text.length() * sizeof(wchar_t));
+	return bytes;
+}
+
 // グローバルメモリに書き込まれた特定のバイト値にマッチする述語関数
 MATCHER_P(ByteValueInGlobalMemory, value, "") {
 	cxx::GlobalData<BYTE> actual{ arg };
@@ -187,6 +214,17 @@ TEST(CClipboard, SetText1) {
 	MockCClipboard clipboard;
 	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, WideStringInGlobalMemory(text)));
 	EXPECT_CALL(clipboard, SetClipboardData(sakuraFormat, SakuraFormatInGlobalMemory(text)));
+	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), false, false, -1));
+}
+
+// SetText のテスト。サクラ独自形式のバイナリレイアウトを検証する。
+// 長さフィールドは 32bit 固定でなければならない。(issue #2325)
+TEST(CClipboard, SetTextSakuraFormatLayout) {
+	constexpr std::wstring_view text = L"てすと";
+	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
+	MockCClipboard clipboard;
+	EXPECT_CALL(clipboard, SetClipboardData(CF_UNICODETEXT, _));
+	EXPECT_CALL(clipboard, SetClipboardData(sakuraFormat, SakuraFormatLayoutInGlobalMemory(text)));
 	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), false, false, -1));
 }
 
@@ -329,6 +367,44 @@ TEST_F(CClipboardGetText, SakuraFormatSuccess) {
 TEST_F(CClipboardGetText, SakuraFormatFailure) {
 	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(FALSE));
 	EXPECT_FALSE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
+}
+
+// 長さフィールドが4バイトで書かれたサクラ形式データを読めることを確認する。
+// 他のビット数のビルドや過去バージョンが書き込んだデータを読む状況に相当する。(issue #2325)
+TEST_F(CClipboardGetText, SakuraFormatBinaryLayout) {
+	constexpr std::wstring_view text = L"サクラ";
+	const auto bytes = MakeSakuraFormatBytes(text, int32_t(text.length()));
+	const cxx::GlobalData<BYTE> mem(int(bytes.size()));
+	ASSERT_TRUE(mem.SetData(bytes));
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(mem.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
+	EXPECT_EQ(text, std::wstring_view(buffer.GetStringPtr(), buffer.GetStringLength()));
+}
+
+// 長さフィールドが実データより大きい壊れたデータを読んでも、確保領域外を参照しない。
+TEST_F(CClipboardGetText, SakuraFormatBrokenLength) {
+	constexpr std::wstring_view text = L"サクラ";
+	const auto bytes = MakeSakuraFormatBytes(text, 0x40000000);
+	const cxx::GlobalData<BYTE> mem(int(bytes.size()));
+	ASSERT_TRUE(mem.SetData(bytes));
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(mem.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
+	// 終端ヌルを含む、確保されている文字数で頭打ちになる
+	EXPECT_EQ(text.length() + 1, size_t(buffer.GetStringLength()));
+}
+
+// 長さフィールドが負の壊れたデータを読んでも、確保領域外を参照しない。
+TEST_F(CClipboardGetText, SakuraFormatNegativeLength) {
+	constexpr std::wstring_view text = L"サクラ";
+	const auto bytes = MakeSakuraFormatBytes(text, -1);
+	const cxx::GlobalData<BYTE> mem(int(bytes.size()));
+	ASSERT_TRUE(mem.SetData(bytes));
+	ON_CALL(clipboard, IsClipboardFormatAvailable(sakuraFormat)).WillByDefault(Return(TRUE));
+	ON_CALL(clipboard, GetClipboardData(sakuraFormat)).WillByDefault(Return(mem.Get()));
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, nullptr, eol, sakuraFormat));
+	EXPECT_EQ(0, buffer.GetStringLength());
 }
 
 // CF_UNICODETEXTを指定して取得する。

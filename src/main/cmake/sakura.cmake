@@ -462,7 +462,8 @@ endfunction(create_language_dll)
 add_compile_definitions(
   UNICODE
   _UNICODE
-  _WIN32_WINNT=_WIN32_WINNT_WIN10
+  WINVER=0x0A00
+  _WIN32_WINNT=0x0A00
   $<$<CONFIG:Debug>:_DEBUG>
   $<$<CONFIG:Release>:NDEBUG>
 )

@@ -7,7 +7,9 @@
 #include "StdAfx.h"
 #include "DetectIndentationStyle.h"
 
-#include "doc/CEditDoc.h"
+#include "basis/CMyString.h"
+#include "doc/logic/CDocLine.h"
+#include "doc/logic/CDocLineMgr.h"
 #include "config/app_constants.h"
 #include <fstream>
 #include <regex>
@@ -48,8 +50,23 @@ constexpr std::string_view trim(std::string_view s) noexcept {
 	return s.substr(first, (last - first + 1));
 }
 
-inline bool strieq(std::string_view lhs, std::string_view rhs) {
-	return 0 == _strnicmp(lhs.data(), rhs.data(), std::min(lhs.size(), rhs.size()));
+//! 大文字小文字を区別せずに文字列全体が一致するかを判定する
+//! EditorConfigの値は"tab"や"true"のような決められた語のみが有効なので、
+//! 部分一致や前方一致を認めてはならない。
+inline bool strieq(std::string_view lhs, std::string_view rhs) noexcept {
+	return lhs.size() == rhs.size() && 0 == _strnicmp(lhs.data(), rhs.data(), lhs.size());
+}
+
+//! 値全体を10進数の整数として解釈する
+//! EditorConfigではどのプロパティにもunsetを指定でき、認識できない値は
+//! 無視すべきなので、解釈できない場合は値を返さない。
+inline std::optional<int> parse_int(std::string_view value) noexcept {
+	int result;
+	const auto [ptr, ec] = std::from_chars(value.data(), value.data() + value.size(), result);
+	if (ec != std::errc() || ptr != value.data() + value.size()) {
+		return std::nullopt;
+	}
+	return result;
 }
 
 inline void tolower(std::string& s) {
@@ -101,20 +118,14 @@ struct EditorConfigParser {
 						if (strieq(value, "tab")) {
 							section->indent_size = -1;
 						}
-						else {
-							int indent_size;
-							if (std::errc() != std::from_chars(value.data(), value.data() + value.size(), indent_size).ec) {
-								return false;
-							}
-							section->indent_size = indent_size;
+						else if (const auto n = parse_int(value)) {
+							section->indent_size = *n;
 						}
 					}
 					else if (key == "tab_width") {
-						int tab_width;
-						if (std::errc() != std::from_chars(key.data(), key.data() + key.size(), tab_width).ec) {
-							return false;
+						if (const auto n = parse_int(value)) {
+							section->tab_width = *n;
 						}
-						section->tab_width = tab_width;
 					}
 				}
 				else {
@@ -158,9 +169,17 @@ bool glob_matches_extension(std::string_view glob, std::string_view extension)
 	return false;
 }
 
-bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
+/*!
+	.editorconfigの指定からインデントスタイルを決定する
+
+	@param cFilePath 対象ファイルのパス。このファイルのあるディレクトリから親へ遡って
+	                 .editorconfigを探し、root = trueが指定されたファイルで打ち切る
+	@retval true  インデントスタイルを決定できた
+	@retval false 決定できなかった。.editorconfigの読み込みに成功していても、
+	              対象セクションにindent_styleが無ければfalseを返す
+*/
+bool ReadEditorConfig(const CFilePath& cFilePath, IndentationStyle& style)
 {
-	const auto& cFilePath = pcDoc->m_cDocFile.GetFilePathClass();
 	auto path = static_cast<std::filesystem::path>(cFilePath);
 	if (cFilePath.empty() || !path.has_extension()) {
 		return false;
@@ -179,17 +198,19 @@ bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 						if (section.indent_style) {
 							if (section.indent_style == EditorConfig::IndentStyle::Tab) {
 								style.character = IndentationStyle::Character::Tabs;
+								// タブ幅の指定がないときはstyle.tabSpaceを-1のままとし、現在のタブ幅を維持する
 								if (section.tab_width.has_value()) {
 									style.tabSpace = section.tab_width.value();
-									return true;
 								}
 								else if (section.indent_size.has_value()) {
 									style.tabSpace = section.indent_size.value();
-									return true;
 								}
+								return true;
 							}
 							else if (section.indent_style == EditorConfig::IndentStyle::Space) {
 								style.character = IndentationStyle::Character::Spaces;
+								// インデント幅が決まらないとスペース挿入を有効化できないため(CDocEditor::OnAfterLoad参照)、
+								// 指定が無い場合はfalseを返してファイル内容からの検出に委ねる。タブ側と扱いが異なるのは意図的。
 								if (section.indent_size.has_value()) {
 									style.tabSpace = *section.indent_size;
 									if (style.tabSpace == -1 && section.tab_width.has_value()) {
@@ -216,12 +237,29 @@ bool FindEditorConfig(const CEditDoc* pcDoc, IndentationStyle& style)
 
 } // namespace
 
-void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style)
+/*!
+	インデントスタイルを決定する
+
+	.editorconfigによる指定を、ファイル内容からの検出より優先する。
+	.editorconfigはファイルのあるディレクトリから親へ遡って探索し、
+	root = trueが指定されたファイルで打ち切る。
+
+	.editorconfigから指定を得られなかった場合はファイル内容から検出する。
+	該当する.editorconfigが無い場合のほか、対象セクションにindent_styleが
+	書かれていない場合や、indent_style = spaceでインデント幅が決まらない
+	場合も、指定が無かったものとして扱う。
+
+	インデント幅を決められなかった場合はstyle.tabSpaceを-1のままにする。
+	呼び出し元は現在のタブ幅を維持すること。
+	indent_style = tabのみが指定された場合がこれに当たる。
+	なおファイル内容から検出できるインデント幅は半角空白の場合のみで、
+	タブ文字の幅はファイル内容からは決められない。
+*/
+void DetectIndentationStyle(const CFilePath& cFilePath, const CDocLineMgr& cDocLineMgr, size_t nMaxLinesToCheck, IndentationStyle& style)
 {
-	if (FindEditorConfig(pcDoc, style)) {
+	if (ReadEditorConfig(cFilePath, style)) {
 		return;
 	}
-	const auto& cDocLineMgr = pcDoc->m_cDocLineMgr;
 	int nSpaceUsed = 0;
 	int nTabUsed = 0;
 	style.character = IndentationStyle::Character::Unknown;

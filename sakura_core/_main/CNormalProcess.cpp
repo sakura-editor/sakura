@@ -55,6 +55,9 @@ CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 CNormalProcess::~CNormalProcess()
 {
+	CJackManager::resetInstance();
+	CPluginManager::resetInstance();
+
 	CEditApp::resetInstance();
 }
 
