@@ -1087,5 +1087,74 @@ TEST(CEnumFORMATETC, test001)
 	//生ポインタなのでReleaseして解放する
 	EXPECT_THAT(target->Release(), 0UL);
 }
+/*!
+ * SetText（矩形選択あり）のテスト。
+ *
+ * 矩形選択時は MSDEVColumnSelect 形式が追加され、フォーマット数が 4 になる。
+ * SetText 内のフォーマット数算出とインデックス操作に対する回帰テスト。
+ */
+TEST(CopiedTextData, SetTextColumnSelect)
+{
+	const auto target = std::make_unique<CDataObject>(L"abc", 3, TRUE);
+
+	// CF_UNICODETEXT / CF_TEXT / サクラ形式 / MSDEVColumnSelect の 4 形式になる
+	cxx::com_pointer<IEnumFORMATETC> pEnumFormatEtc = nullptr;
+	EXPECT_HRESULT_SUCCEEDED(target->EnumFormatEtc(DATADIR_GET, &pEnumFormatEtc));
+	EXPECT_THAT(pEnumFormatEtc, NotNull());
+
+	// 4個すべてスキップできる
+	EXPECT_HRESULT_SUCCEEDED(pEnumFormatEtc->Skip(4));
+
+	// 5個目は無いのでスキップに失敗する
+	EXPECT_HRESULT_EQ(pEnumFormatEtc->Skip(1), S_FALSE);
+
+	// MSDEVColumnSelect 形式には 1バイトの 0 が格納される
+	const CLIPFORMAT columnFormat = (CLIPFORMAT)::RegisterClipboardFormat(L"MSDEVColumnSelect");
+	FORMATETC format = { columnFormat, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM medium = {};
+	EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+	EXPECT_THAT(medium.hGlobal, ByteValueInGlobalMemory(BYTE(0)));
+}
+
+/*!
+ * GetData（サクラ独自形式）のテスト。
+ *
+ * SAKURAClipW のバイナリレイアウトを検証する。
+ * 先頭が固定幅の長さフィールド、続いて本文の wchar_t 列が並ぶ。(issue #2325)
+ *
+ * ※ CDataObject::SetText は終端ヌルを書き込まないため、
+ *    終端ヌルの存在を前提とする cxx::GlobalSakura ではなくバイト列で検証する。
+ */
+TEST(CopiedTextData, GetDataSakuraFormatLayout)
+{
+	const auto text = L"abc"s;
+	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+
+	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
+	FORMATETC format = { sakuraFormat, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM medium = {};
+	EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+	EXPECT_THAT(medium.hGlobal, SakuraFormatLayoutInGlobalMemory(text));
+}
+
+/*!
+ * GetData（CF_TEXT）のテスト。
+ *
+ * ANSI 変換された文字列が取得できることを確認する。
+ */
+TEST(CopiedTextData, GetDataAnsiText)
+{
+	const auto text = L"abc"s;
+	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+
+	FORMATETC format = { CF_TEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM medium = {};
+	EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
+	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
+	EXPECT_THAT(medium.hGlobal, AnsiStringInGlobalMemory("abc"s));
+}
 
 } //namespace ole
+
