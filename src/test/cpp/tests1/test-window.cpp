@@ -1258,6 +1258,38 @@ TEST_F(EditWndTest, OnLButtonDblClk101)
 }
 
 /*!
+ * コマンド：コマンドプロンプトを開く
+ */
+TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
+{
+	const auto targetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
+
+	std::error_code ec;
+	std::filesystem::remove(targetPath, ec);
+
+	{
+		std::wofstream fos(targetPath);
+		fos << L"line1" << std::endl;
+	}
+
+	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native()).c_str()), IsTrue());
+	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	Shell32::setInstance<MockShell32>();
+	auto pShell32 = (MockShell32*)Shell32::getInstance();
+	EXPECT_CALL(*pShell32, ShellExecuteExW(_))
+		.Times(1)
+		.WillOnce(Return(FALSE));
+
+	HWND hWndEdit = nullptr;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_COMMAND, MAKEWPARAM(F_OPEN_COMMAND_PROMPT, 0), 0L), IsFalse());
+
+	Shell32::resetInstance();
+
+	std::filesystem::remove(targetPath, ec);
+}
+
+/*!
  * 上書き保存時バックアップのテスト
  */
 TEST_F(EditWndTest, FileSaveWithBackupAgent001)
