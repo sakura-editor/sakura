@@ -40,6 +40,7 @@
 #include "plugin/CPluginManager.h"
 #include "prop/CPropCommon.h"
 #include "typeprop/CPropTypes.h"
+#include "util/shell.h"
 
 #include <fstream>
 
@@ -53,6 +54,61 @@ using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
+
+struct MockShell32 final : public Shell32
+{
+	MOCK_CONST_METHOD1(ShellExecuteExW, BOOL (SHELLEXECUTEINFOW*));
+};
+
+namespace env {
+
+/*!
+ * ShellExecuteExWの呼出(非モック)
+ */
+TEST(Shell32, ShellExecuteExW001)
+{
+	const auto path = GetIniFileName().replace_filename(L"test.bat");
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	{
+		std::wofstream fos(path);
+		fos << L"echo test" << std::endl;
+	}
+
+	SHELLEXECUTEINFOW execInfo{ sizeof(SHELLEXECUTEINFOW) };
+	execInfo.fMask = SEE_MASK_DEFAULT;
+	execInfo.lpVerb = L"open";
+	execInfo.lpFile = path.c_str();
+	execInfo.lpParameters = nullptr;
+	execInfo.lpDirectory = path.parent_path().c_str();
+	execInfo.nShow = SW_SHOWNORMAL;
+
+	EXPECT_THAT(Shell32::getInstance()->ShellExecuteExW(&execInfo), IsTrue());
+	Shell32::resetInstance();
+
+	std::filesystem::remove(path, ec);
+}
+
+/*!
+ * ShellExecuteExWの呼出(モック利用)
+ */
+TEST(Shell32, ShellExecuteExW101)
+{
+	Shell32::setInstance<MockShell32>();
+	auto pShell32 = (MockShell32*)Shell32::getInstance();
+	EXPECT_CALL(*pShell32, ShellExecuteExW(_))
+		.Times(1)
+		.WillOnce(Return(TRUE));
+
+	SHELLEXECUTEINFOW execInfo{ sizeof(SHELLEXECUTEINFOW) };
+	EXPECT_THAT(Shell32::getInstance()->ShellExecuteExW(&execInfo), IsTrue());
+
+	Shell32::resetInstance();
+}
+
+} //namespace env
 
 namespace testing {
 

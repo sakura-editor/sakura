@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -25,6 +25,11 @@
 #include "apiwrap/DarkMode.h"
 
 #pragma comment(lib, "htmlhelp.lib") 
+
+BOOL Shell32::ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const
+{
+	return ::ShellExecuteExW(pExecInfo);
+}
 
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
 {
