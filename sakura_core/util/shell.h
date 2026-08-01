@@ -3,7 +3,7 @@
 // なんかシェルっぽい機能の関数群
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,7 +11,20 @@
 #define SAKURA_SHELL_0A8B6454_B007_46E5_9606_8D2FD7993B91_H_
 #pragma once
 
+#include "util/design_template.h"
+
 #include <Windows.h>
+#include <Shlwapi.h>
+
+//! Shell32.dll呼出をテスト可能にするDIっぽいもの
+struct Shell32 : public TSakuraSingleton<Shell32>
+{
+	using Me = Shell32;
+
+	virtual ~Shell32() = default;
+
+	virtual BOOL	ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const;
+};
 
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 

@@ -105,6 +105,20 @@ public:
 		gm_Instance.reset();
 	}
 
+	/*!
+	 * @brief インスタンスを設定する
+	 *
+	 * @note テスト用にモックを注入して疑似DIを実現する
+	 * @note 古い設計と根本的に考え方が異なるため、注意。
+	 */
+	template <class U>
+	static void setInstance()
+	{
+		std::unique_lock lock{ gm_Mutex };
+
+		gm_Instance = std::make_unique<U>();
+	}
+
 protected:
 	TSakuraSingleton() = default;
 
