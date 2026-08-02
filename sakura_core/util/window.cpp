@@ -155,8 +155,8 @@ void ActivateFrameWindow( HWND hwnd )
 {
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
 	DLLSHAREDATA* pShareData = &GetDllShareData();
-	if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
-		if( IsSakuraMainWindow( hwnd ) ){
+	if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
+		IsSakuraMainWindow(hwnd)) {
 			if( pShareData->m_sFlags.m_bEditWndChanging )
 				return;	// 切替の最中(busy)は要求を無視する
 			pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
@@ -172,7 +172,7 @@ void ActivateFrameWindow( HWND hwnd )
 				10000,
 				&dwResult
 			);
-		}
+
 	}
 
 	// 対象がdisableのときは最近のポップアップをフォアグラウンド化する
