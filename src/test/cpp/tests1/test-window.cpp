@@ -710,18 +710,6 @@ TEST_F(TrayWndTest, ShowDlgFavorite001)
 }
 
 /*!
- * ウィンドウ一覧ダイアログを表示する
- */
-TEST_F(TrayWndTest, ShowDlgWinList101)
-{
-	// 表示されたウィンドウ一覧ダイアログを閉じるためのスレッドを起動する
-	auto t1 = StartDialogCloser(LS(F_WINDOW_LIST_SUBMENU));
-
-	HWND hWndTray = nullptr;
-	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DLGWINLIST, 0L, 0L), IsFalse());
-}
-
-/*!
  * タイプ別設定一覧ダイアログの表示テスト
  */
 TEST_F(TrayWndTest, ShowDlgTypeList101)
@@ -732,6 +720,18 @@ TEST_F(TrayWndTest, ShowDlgTypeList101)
 	// タイプ別設定一覧ダイアログを表示する
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, F_TYPE_LIST);
+}
+
+/*!
+ * ウィンドウ一覧ダイアログを表示する
+ */
+TEST_F(TrayWndTest, ShowDlgWinList101)
+{
+	// 表示されたウィンドウ一覧ダイアログを閉じるためのスレッドを起動する
+	auto t1 = StartDialogCloser(LS(F_WINDOW_LIST_SUBMENU));
+
+	HWND hWndTray = nullptr;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, MYWM_DLGWINLIST, 0L, 0L), IsFalse());
 }
 
 /*!
