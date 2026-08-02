@@ -175,12 +175,25 @@ TEST_P(FileDialogTest, DoModalOpenDlg001)
  */
 TEST_P(FileDialogTest, DoModalOpenDlg101)
 {
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(std::nullopt);
 
 	// コマンドコードで、無理矢理動かす
 	const auto hWnd = pcEditWnd->GetHwnd();
 	FORWARD_WM_COMMAND(hWnd, F_FILEOPEN, nullptr, 0, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * ファイルを開くダイアログの表示テスト
+ */
+TEST_P(FileDialogTest, DoModalOpenDlg102)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(std::nullopt);
+
+	SLoadInfo loadInfo{};
+	bool bOptions = false;
+	CDlgOpenFile::getInstance()->DoModalOpenDlg(&loadInfo, nullptr, bOptions);
 }
 
 /*!
@@ -215,8 +228,8 @@ TEST_P(FileDialogTest, DoModalSaveDlg001)
  */
 TEST_P(FileDialogTest, DoModalSaveDlg101)
 {
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(std::nullopt);
 
 	// コマンドコードで、無理矢理動かす
 	const auto hWnd = pcEditWnd->GetHwnd();
@@ -261,12 +274,24 @@ TEST_P(FileDialogTest, GetOpenFileName001)
  */
 TEST_P(FileDialogTest, GetOpenFileName101)
 {
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(std::nullopt);
 
 	// コマンドコードで、無理矢理動かす
 	const auto hWnd = pcEditWnd->GetHwnd();
 	FORWARD_WM_COMMAND(hWnd, F_LOADKEYMACRO, nullptr, 0, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * ファイルを開くダイアログの表示テスト
+ */
+TEST_P(FileDialogTest, GetOpenFileName102)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(std::nullopt);
+
+	SFilePath szPath{};
+	CDlgOpenFile::getInstance()->DoModal_GetOpenFileName(szPath, EFilter::EFITER_NONE);
 }
 
 /*!
@@ -321,8 +346,8 @@ TEST_P(FileDialogTest, GetSaveFileName101)
 	LPARAM lParams = 0L;
 	pcSMacroMgr->Append(STAND_KEYMACRO, F_0, &lParams, &pcEditWnd->GetView(0));
 
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(std::nullopt);
 
 	// コマンドコードで、無理矢理動かす
 	const auto hWnd = pcEditWnd->GetHwnd();
