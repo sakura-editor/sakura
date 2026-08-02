@@ -73,7 +73,7 @@ bool CDocFileOperation::OpenFileDialog(
 	ActivateFrameWindow( hwndParent );
 
 	// ファイルオープンダイアログを表示
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		hwndParent,
@@ -260,7 +260,7 @@ bool CDocFileOperation::SaveFileDialog(
 	}
 
 	// ダイアログを表示
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		CEditWnd::getInstance()->GetHwnd(),

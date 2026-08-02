@@ -174,12 +174,22 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 	}
 
 	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		CDlgOpenFile::setInstance<MockCDlgOpenFile>();
+	}
+
+	/*!
 	 * テストが実行された直後に毎回呼ばれる関数
 	 */
 	void TearDown() override {
 		// キューに溜まったメッセージは全部捨てる
 		MSG msg{};
 		while (::PeekMessageW(&msg, nullptr, 0L, 0L, PM_REMOVE)) ;
+
+		CDlgOpenFile::resetInstance();
 	}
 };
 
@@ -550,14 +560,15 @@ TEST_F(TrayWndTest, OpenFile101)
 	// 開いているファイルの数を上限値に設定する
 	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
 
-	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-	auto t1 = StartEnterOpenFileName(path);
+	MockCDlgOpenFile::gm_Files.emplace_back(path.native());
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModalOpenDlg(_, _, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, F_FILEOPEN);
-
-	// ファイルダイアログが閉じられるのを待つ
-	t1.join();
 
 	// 設定を元に戻す
 	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
@@ -646,12 +657,15 @@ TEST_F(TrayWndTest, SelectAndOpenFilesFromMruFile102)
  */
 TEST_F(TrayWndTest, SelectAndOpenFilesFromMruFolder101)
 {
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
-
 	GetDllShareData().m_sHistory.m_nOPENFOLDERArrNum = 1;
 
-	// ファイルを開くダイアログを表示する
+	MockCDlgOpenFile::gm_Files.clear();
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModalOpenDlg(_, _, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
+
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, IDM_SELOPENFOLDER);
 
@@ -885,11 +899,13 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	std::unique_ptr<CMacroManagerBase> mgr = nullptr;
 
 	/*!
-	 * テストが実行された直前に毎回呼ばれる関数
+	 * テストが実行される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override
 	{
 		mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"mac"));
+
+		CDlgOpenFile::setInstance<MockCDlgOpenFile>();
 	}
 
 	/*!
@@ -906,6 +922,8 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		// キューに溜まったメッセージは全部捨てる
 		MSG msg{};
 		while (::PeekMessageW(&msg, nullptr, 0L, 0L, PM_REMOVE)) ;
+
+		CDlgOpenFile::resetInstance();
 
 		mgr = nullptr;
 	}
@@ -1089,8 +1107,12 @@ TEST_F(EditWndTest, OnCommand101)
 
 TEST_F(EditWndTest, OnCommand102)
 {
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	MockCDlgOpenFile::gm_Files.clear();
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModalOpenDlg(_, _, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	GetDllShareData().m_sHistory.m_nOPENFOLDERArrNum = 1;
 
@@ -1834,31 +1856,17 @@ TEST_F(EditWndTest, ShowDlgKeywordSelect101)
 /*!
  * ファイルを開くダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgOpenFileLegacy101)
-{
-	// Vistaスタイルのファイルダイアログを無効にする
-	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = false;
-
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
-
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	// 設定を元に戻す
-	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
-}
-
-/*!
- * ファイルを開くダイアログの表示テスト
- */
 TEST_F(EditWndTest, ShowDlgOpenFile101)
 {
 	// Vistaスタイルのファイルダイアログを有効にする
 	GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
 
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	MockCDlgOpenFile::gm_Files.clear();
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModalOpenDlg(_, _, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
@@ -2300,9 +2308,18 @@ TEST_F(EditWndTest, ShowPropCommon003)
 TEST_F(EditWndTest, ShowPropCommon004)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"メインメニュー.ini");
+	MockCDlgOpenFile::gm_Files.emplace_back(exportPath.native());
 
 	std::error_code ec;
 	std::filesystem::remove(exportPath, ec);
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetSaveFileName(_))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	auto t = StartDialogCloser(LS(STR_PROPCOMMON), [&](IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
@@ -2310,10 +2327,10 @@ TEST_F(EditWndTest, ShowPropCommon004)
 		const auto hWndPage = GetActivePage(hWndDlg);
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"エクスポート(X)...", st);
-		EmulateEnterSaveFileName(pUIAutomation, exportPath, st);
+		// 保存先ファイル名の入力はモックで実現する
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"インポート(I)...", st);
-		EmulateEnterOpenFileName(pUIAutomation, exportPath, st);
+		// 開くファイル名の入力はモックで実現する
 
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
@@ -2442,9 +2459,18 @@ TEST_F(EditWndTest, ShowPropCommon014)
 TEST_F(EditWndTest, ShowPropCommon015)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"カスタムメニュー.mnu");
+	MockCDlgOpenFile::gm_Files.emplace_back(exportPath.native());
 
 	std::error_code ec;
 	std::filesystem::remove(exportPath, ec);
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetSaveFileName(_))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	auto t = StartDialogCloser(LS(STR_PROPCOMMON), [&](IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
@@ -2452,10 +2478,10 @@ TEST_F(EditWndTest, ShowPropCommon015)
 		const auto hWndPage = GetActivePage(hWndDlg);
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"エクスポート(X)...", st);
-		EmulateEnterSaveFileName(pUIAutomation, exportPath, st);
+		// 保存先ファイル名の入力はモックで実現する
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"インポート(I)...", st);
-		EmulateEnterOpenFileName(pUIAutomation, exportPath, st);
+		// 開くファイル名の入力はモックで実現する
 
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
@@ -2474,9 +2500,18 @@ TEST_F(EditWndTest, ShowPropCommon015)
 TEST_F(EditWndTest, ShowPropCommon016)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"強調キーワード.kwd");
+	MockCDlgOpenFile::gm_Files.emplace_back(exportPath.native());
 
 	std::error_code ec;
 	std::filesystem::remove(exportPath, ec);
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetSaveFileName(_))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	// 表示された共通設定を閉じるためのスレッドを起動する
 	auto t = StartDialogCloser(LS(STR_PROPCOMMON), [&](IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
@@ -2484,10 +2519,10 @@ TEST_F(EditWndTest, ShowPropCommon016)
 		const auto hWndPage = GetActivePage(hWndDlg);
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"エクスポート(X)...", st);
-		EmulateEnterSaveFileName(pUIAutomation, exportPath, st);
+		// 保存先ファイル名の入力はモックで実現する
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"インポート(I)...", st);
-		EmulateEnterOpenFileName(pUIAutomation, exportPath, st);
+		// 開くファイル名の入力はモックで実現する
 
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
@@ -2561,9 +2596,18 @@ TEST_F(EditWndTest, ShowPropType002)
 TEST_F(EditWndTest, ShowPropType003)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"基本.col");
+	MockCDlgOpenFile::gm_Files.emplace_back(exportPath.native());
 
 	std::error_code ec;
 	std::filesystem::remove(exportPath, ec);
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetSaveFileName(_))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	auto t = StartDialogCloser(LS(STR_PROPTYPE), [&](IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
@@ -2585,10 +2629,10 @@ TEST_F(EditWndTest, ShowPropType003)
 		}
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, IDC_BUTTON_EXPORT, st);	// L"エクスポート(X)..."
-		EmulateEnterSaveFileName(pUIAutomation, exportPath, st);
+		// 保存先ファイル名の入力はモックで実現する
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, IDC_BUTTON_IMPORT, st);	// L"インポート(I)..."
-		EmulateEnterOpenFileName(pUIAutomation, exportPath, st);
+		// 開くファイル名の入力はモックで実現する
 
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
@@ -2654,9 +2698,18 @@ TEST_F(EditWndTest, ShowPropType005)
 TEST_F(EditWndTest, ShowPropType006)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"テキスト.rkw");
+	MockCDlgOpenFile::gm_Files.emplace_back(exportPath.native());
 
 	std::error_code ec;
 	std::filesystem::remove(exportPath, ec);
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetSaveFileName(_))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	auto t = StartDialogCloser(LS(STR_PROPTYPE), [&](IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
@@ -2664,10 +2717,10 @@ TEST_F(EditWndTest, ShowPropType006)
 		const auto hWndPage = GetActivePage(hWndDlg);
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"エクスポート(X)...", st);
-		EmulateEnterSaveFileName(pUIAutomation, exportPath, st);
+		// 保存先ファイル名の入力はモックで実現する
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"インポート(I)...", st);
-		EmulateEnterOpenFileName(pUIAutomation, exportPath, st);
+		// 開くファイル名の入力はモックで実現する
 
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
@@ -2686,9 +2739,18 @@ TEST_F(EditWndTest, ShowPropType006)
 TEST_F(EditWndTest, ShowPropType007)
 {
 	const auto exportPath = GetIniFileName().replace_filename(L"キーワードヘルプ.txt");
+	MockCDlgOpenFile::gm_Files.emplace_back(exportPath.native());
 
 	std::error_code ec;
 	std::filesystem::remove(exportPath, ec);
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetSaveFileName(_))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	// 表示されたタイプ別設定を閉じるためのスレッドを起動する
 	auto t = StartDialogCloser(LS(STR_PROPTYPE), [&](IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
@@ -2696,10 +2758,10 @@ TEST_F(EditWndTest, ShowPropType007)
 		const auto hWndPage = GetActivePage(hWndDlg);
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"エクスポート(X)...", st);
-		EmulateEnterSaveFileName(pUIAutomation, exportPath, st);
+		// 保存先ファイル名の入力はモックで実現する
 
 		EmulateInvokeButton(pUIAutomation, hWndPage, L"インポート(I)...", st);
-		EmulateEnterOpenFileName(pUIAutomation, exportPath, st);
+		// 開くファイル名の入力はモックで実現する
 
 		// OKボタンを押下して閉じる
 		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);

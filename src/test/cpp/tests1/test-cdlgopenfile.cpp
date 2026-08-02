@@ -48,12 +48,24 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	}
 
 	/*!
-	 * テストが実行された直前に毎回呼ばれる関数
+	 * テストが実行される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override
 	{
 		// テスト設定を反映する
 		GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = GetParam();
+
+		const auto unusedArg1 = G_AppInstance();
+
+		auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
+		cDlgOpenFile.Create(
+			unusedArg1,
+			nullptr,
+			L"*.txt",
+			LR"(C:\Windows\System32)",
+			std::vector<LPCWSTR>(),
+			std::vector<LPCWSTR>()
+		);
 	}
 
 	/*!
@@ -69,7 +81,7 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 TEST_P(FileDialogTest, Create001)
 {
 	// 落ちたり例外にならないこと
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
@@ -83,7 +95,7 @@ TEST_P(FileDialogTest, Create001)
 TEST_P(FileDialogTest, Create002_LongFilter)
 {
 	// 落ちたり例外にならないこと
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
@@ -97,7 +109,7 @@ TEST_P(FileDialogTest, Create002_LongFilter)
 TEST_P(FileDialogTest, Create003_ManyFiltersy)
 {
 	// 落ちたり例外にならないこと
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		GetModuleHandle(nullptr),
 		nullptr,
@@ -242,6 +254,24 @@ struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, 
 
 		TearDownUia();
 	}
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		CDlgOpenFile::setInstance<MockCDlgOpenFile>();
+
+		MockCDlgOpenFile::gm_Files.emplace_back(path.native());
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override
+	{
+		CDlgOpenFile::resetInstance();
+	}
 };
 
 /*!
@@ -251,7 +281,10 @@ TEST_F(SelectFileTest, SelectFile001)
 {
 	constexpr bool resolvePath = true;	// パス解決する場合のテスト
 
-	auto t = StartEnterOpenFileName(path);
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsTrue());
 
@@ -267,7 +300,10 @@ TEST_F(SelectFileTest, SelectFile002)
 {
 	constexpr bool resolvePath = false;	// パス解決しない場合のテスト
 
-	auto t = StartEnterOpenFileName(path);
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsTrue());
 
@@ -282,8 +318,12 @@ TEST_F(SelectFileTest, SelectFile101)
 {
 	constexpr bool resolvePath = true;
 
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
-	dialog::ModalDialogCloser closer;
+	MockCDlgOpenFile::gm_Files.clear();
+
+	auto& cDlgOpenFile = static_cast<MockCDlgOpenFile&>(*CDlgOpenFile::getInstance());
+	EXPECT_CALL(cDlgOpenFile, DoModal_GetOpenFileName(_, _))
+		.Times(1)
+		.WillOnce(testing::DoDefault());
 
 	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsFalse());
 }

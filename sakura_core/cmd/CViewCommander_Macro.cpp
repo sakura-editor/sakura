@@ -88,7 +88,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD26) );
 	}
 
-	CDlgOpenFile	cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	WCHAR			szPath[_MAX_PATH + 1];
 	WCHAR			szInitDir[_MAX_PATH + 1];
 	szPath[0] = L'\0';
@@ -131,7 +131,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
 	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;	/* キーボードマクロを記録中のウィンドウ */
 
-	CDlgOpenFile	cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	WCHAR			szPath[_MAX_PATH + 1];
 	WCHAR			szInitDir[_MAX_PATH + 1];
 	const WCHAR*		pszFolder;
@@ -205,7 +205,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
  */
 void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* pszType )
 {
-	CDlgOpenFile	cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	WCHAR			szPath[_MAX_PATH + 1];
 	WCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダー
 	const WCHAR*	pszFolder;					//マクロフォルダー

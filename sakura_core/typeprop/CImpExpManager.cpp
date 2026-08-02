@@ -109,7 +109,7 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 {
 	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		hInstance,
 		hwndParent,
@@ -156,7 +156,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 {
 	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		hInstance,
 		hwndParent,

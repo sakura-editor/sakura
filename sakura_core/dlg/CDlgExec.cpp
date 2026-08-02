@@ -239,7 +239,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	//From Here Mar. 28, 2001 JEPRO
 	case IDC_BUTTON_REFERENCE:	/* ファイル名の「参照...」ボタン */
 		{
-			CDlgOpenFile	cDlgOpenFile;
+			auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 			WCHAR			szPath[_MAX_PATH + 1];
 			wcsncpy_s(szPath, m_szCommand, _TRUNCATE);
 			/* ファイルオープンダイアログの初期化 */
