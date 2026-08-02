@@ -32,7 +32,7 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpEditor();
 	}
@@ -44,7 +44,7 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	{
 		TearDownEditor();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 
 	/*!
@@ -214,7 +214,7 @@ struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, 
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpEditor();
 
@@ -252,7 +252,7 @@ struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, 
 
 		TearDownEditor();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 
 	/*!

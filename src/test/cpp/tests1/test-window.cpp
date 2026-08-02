@@ -134,7 +134,7 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 		pCommandLine = std::make_unique<CCommandLine>();
 		pCommandLine->ParseCommandLine(L"-PROF=", false);
 
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpShareData();
 
@@ -168,7 +168,7 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 
 		TearDownShareData();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 
 		pCommandLine = nullptr;
 	}
@@ -873,7 +873,7 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		pCommandLine = std::make_unique<CCommandLine>();
 		pCommandLine->ParseCommandLine(L"-PROF=", false);
 
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpEditor();
 
@@ -891,7 +891,7 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 
 		TearDownEditor();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 
 		pCommandLine = nullptr;
 	}

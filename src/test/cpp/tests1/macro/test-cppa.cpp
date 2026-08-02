@@ -29,7 +29,7 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite, public
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpEditor();
 
@@ -48,7 +48,7 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite, public
 
 		TearDownEditor();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 };
 

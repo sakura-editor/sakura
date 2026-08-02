@@ -76,7 +76,7 @@ struct MacroMgrTest : public ::testing::Test, public window::EditorTestSuite, pu
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpEditor();
 	}
@@ -88,7 +88,7 @@ struct MacroMgrTest : public ::testing::Test, public window::EditorTestSuite, pu
 	{
 		TearDownEditor();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 };
 

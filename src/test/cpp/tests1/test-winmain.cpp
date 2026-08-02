@@ -560,7 +560,7 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 	 */
 	static void SetUpTestSuite() {
 		// UI Automationを初期化する
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		// テスト用ファイル作成
 		std::wofstream fos(gm_TestDataPath);
@@ -586,7 +586,7 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 		}
 
 		// UI Automationをシャットダウンする
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 
 	/*!

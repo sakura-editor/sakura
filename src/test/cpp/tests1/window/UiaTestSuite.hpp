@@ -161,6 +161,7 @@ struct UiaTestSuite
 		ASSERT_HRESULT_SUCCEEDED(pValuePattern->SetValue(_bstr_t{ ::SysAllocStringLen(std::data(val), UINT(std::size(val))) }));
 	}
 
+	//! SendInputでマウス移動を偽装するためのデータを作る
 	static INPUT MakeMouseInputMove(LONG x, LONG y)
 	{
 		const auto vx = ::GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -180,6 +181,7 @@ struct UiaTestSuite
 		return input;
 	}
 
+	//! SendInputでマウスホイールを偽装するためのデータを作る
 	static INPUT MakeMouseInputWheel(int delta)
 	{
 		INPUT input{};
@@ -191,6 +193,7 @@ struct UiaTestSuite
 		return input;
 	}
 
+	//! SendInputでキー押下を偽装するためのデータを作る
 	static INPUT MakeKeyboardInput(WORD virtualKey, bool isKeyUp = false)
 	{
 		INPUT input{};
@@ -201,6 +204,22 @@ struct UiaTestSuite
 
 		return input;
 	}
+
+	template<std::ranges::range T>
+	static UINT SendInput(T& inputs)
+	{
+		return ::SendInput(UINT(std::size(inputs)), std::data(inputs), sizeof(decltype(inputs[0])));
+	}
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpUiaTestSuite();
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownUiaTestSuite();
 
 	template <typename Func>
 	static void RunGuiTest(Func&& f)
@@ -220,22 +239,6 @@ struct UiaTestSuite
 			FAIL() << "unknown non-std exception";
 		}
 	}
-
-	template<std::ranges::range T>
-	static UINT SendInput(T& inputs)
-	{
-		return ::SendInput(UINT(std::size(inputs)), std::data(inputs), sizeof(decltype(inputs[0])));
-	}
-
-	/*!
-	 * テストスイートの開始前に1回だけ呼ばれる関数
-	 */
-	static void SetUpUia();
-
-	/*!
-	 * テストスイートの終了後に1回だけ呼ばれる関数
-	 */
-	static void TearDownUia();
 
 	/*!
 	 * ダイアログを閉じるスレッドを開始する

@@ -192,7 +192,7 @@ HWND WaitForWindow(
 /*!
  * テストスイートの開始前に1回だけ呼ばれる関数
  */
-/* static */ void UiaTestSuite::SetUpUia()
+/* static */ void UiaTestSuite::SetUpUiaTestSuite()
 {
 	// OLEを初期化する
 	pcOleInit = std::make_unique<cxx::COleInit>();
@@ -204,7 +204,7 @@ HWND WaitForWindow(
 /*!
  * テストスイートの終了後に1回だけ呼ばれる関数
  */
-/* static */ void UiaTestSuite::TearDownUia()
+/* static */ void UiaTestSuite::TearDownUiaTestSuite()
 {
 	// OLEをシャットダウンする
 	pcOleInit = nullptr;
