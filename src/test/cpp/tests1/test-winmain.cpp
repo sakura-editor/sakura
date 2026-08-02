@@ -648,6 +648,8 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 		if (const std::wstring_view profileName{ GetProfileName() }; !profileName.empty()) {
 			std::filesystem::remove_all(iniPath.parent_path());
 		}
+
+		TearDownUia();
 	}
 
 	/*!

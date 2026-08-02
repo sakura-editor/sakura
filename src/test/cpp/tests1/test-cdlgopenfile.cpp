@@ -11,6 +11,14 @@
 
 #include <fstream>
 
+namespace uia {
+
+cxx::com_pointer<IUIAutomationElement> GetFocusedElement(
+	IUIAutomation* pAutomation
+);
+
+} // namespace uia
+
 namespace window {
 
 /*!
@@ -75,7 +83,14 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	{
 		// 設定を元に戻す
 		GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
+
+		TearDownUia();
 	}
+
+	/*!
+	 * ファイルを開くダイアログのタイトルを取得する
+	 */
+	std::wstring GetOpenFileNameDialogTitle() const { return GetParam() ? L"開く" : L"ファイルを開く"; }
 };
 
 TEST_P(FileDialogTest, Create001)
@@ -123,6 +138,41 @@ TEST_P(FileDialogTest, Create003_ManyFiltersy)
 /*!
  * ファイルを開くダイアログの表示テスト
  */
+TEST_P(FileDialogTest, DoModalOpenDlg001)
+{
+	const auto path = GetExeFileName().replace_filename(L"test.txt");
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// ファイルが存在しない、のメッセージが出ないようにファイルを作る
+	std::ofstream ofs{ path };
+	ofs.close();
+
+	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
+	auto t = StartDialogCloser(GetOpenFileNameDialogTitle(), [path] (IUIAutomation* pUIAutomation, HWND, std::stop_token) {
+		auto pItem = uia::GetFocusedElement(pUIAutomation);
+		ASSERT_THAT(pItem, NotNull());
+
+		// ファイル名を入力する
+		EmulateSetValue(pItem, path.c_str());
+
+		// Enterキー押下で閉じる
+		EmulateHitEnter();
+	});
+
+	SLoadInfo loadInfo{};
+	std::vector<std::wstring> files;
+	bool bOptions = true;
+	CDlgOpenFile::getInstance()->DoModalOpenDlg(&loadInfo, &files, bOptions);
+
+	// 作成したファイルを削除する
+	std::filesystem::remove(path, ec);
+}
+
+/*!
+ * ファイルを開くダイアログの表示テスト
+ */
 TEST_P(FileDialogTest, DoModalOpenDlg101)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
@@ -131,6 +181,33 @@ TEST_P(FileDialogTest, DoModalOpenDlg101)
 	// コマンドコードで、無理矢理動かす
 	const auto hWnd = pcEditWnd->GetHwnd();
 	FORWARD_WM_COMMAND(hWnd, F_FILEOPEN, nullptr, 0, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * 名前を付けて保存ダイアログの表示テスト
+ */
+TEST_P(FileDialogTest, DoModalSaveDlg001)
+{
+	const auto path = GetExeFileName().replace_filename(L"test.txt");
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
+	auto t = StartDialogCloser(L"名前を付けて保存", [path](IUIAutomation* pUIAutomation, HWND, std::stop_token) {
+		auto pItem = uia::GetFocusedElement(pUIAutomation);
+		ASSERT_THAT(pItem, NotNull());
+
+		// ファイル名を入力する
+		EmulateSetValue(pItem, path.c_str());
+
+		// Enterキー押下で閉じる
+		EmulateHitEnter();
+	});
+
+	SSaveInfo saveInfo{};
+	bool bSimpleMode = true;
+	CDlgOpenFile::getInstance()->DoModalSaveDlg(&saveInfo, bSimpleMode);
 }
 
 /*!
@@ -149,6 +226,39 @@ TEST_P(FileDialogTest, DoModalSaveDlg101)
 /*!
  * ファイルを開くダイアログの表示テスト
  */
+TEST_P(FileDialogTest, GetOpenFileName001)
+{
+	const auto path = GetExeFileName().replace_filename(L"test.txt");
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// ファイルが存在しない、のメッセージが出ないようにファイルを作る
+	std::ofstream ofs{ path };
+	ofs.close();
+
+	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
+	auto t = StartDialogCloser(L"開く", [path] (IUIAutomation* pUIAutomation, HWND, std::stop_token) {
+		auto pItem = uia::GetFocusedElement(pUIAutomation);
+		ASSERT_THAT(pItem, NotNull());
+
+		// ファイル名を入力する
+		EmulateSetValue(pItem, path.c_str());
+
+		// Enterキー押下で閉じる
+		EmulateHitEnter();
+	});
+
+	SFilePath szPath{ path.filename().c_str() };
+	CDlgOpenFile::getInstance()->DoModal_GetOpenFileName(szPath, EFilter::EFITER_TEXT);
+
+	// 作成したファイルを削除する
+	std::filesystem::remove(path, ec);
+}
+
+/*!
+ * ファイルを開くダイアログの表示テスト
+ */
 TEST_P(FileDialogTest, GetOpenFileName101)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じるようにする
@@ -157,6 +267,42 @@ TEST_P(FileDialogTest, GetOpenFileName101)
 	// コマンドコードで、無理矢理動かす
 	const auto hWnd = pcEditWnd->GetHwnd();
 	FORWARD_WM_COMMAND(hWnd, F_LOADKEYMACRO, nullptr, 0, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * 名前を付けて保存ダイアログの表示テスト
+ */
+TEST_P(FileDialogTest, GetSaveFileName001)
+{
+	const auto path = GetExeFileName().replace_filename(L"test.txt");
+	const auto dummyPath = GetExeFileName().replace_filename(L"dummy.txt");
+
+	std::error_code ec;
+
+	// 上書き確認メッセージが出ないように、事前にパスを削除しておく
+	std::filesystem::remove(path, ec);
+
+	// パス解決でｋるようにファイルを作る
+	std::filesystem::remove(dummyPath, ec);
+	std::ofstream ofs{ dummyPath };
+	ofs.close();
+
+	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
+	auto t = StartDialogCloser(L"名前を付けて保存", [path](IUIAutomation* pUIAutomation, HWND, std::stop_token) {
+		auto pItem = uia::GetFocusedElement(pUIAutomation);
+		ASSERT_THAT(pItem, NotNull());
+
+		// ファイル名を入力する
+		EmulateSetValue(pItem, path.c_str());
+
+		// Enterキー押下で閉じる
+		EmulateHitEnter();
+	});
+
+	SFilePath szPath{ dummyPath.filename().native() };
+	CDlgOpenFile::getInstance()->DoModal_GetSaveFileName(szPath);
+
+	std::filesystem::remove(dummyPath, ec);
 }
 
 /*!
@@ -271,6 +417,8 @@ struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, 
 	void TearDown() override
 	{
 		CDlgOpenFile::resetInstance();
+
+		TearDownUia();
 	}
 };
 

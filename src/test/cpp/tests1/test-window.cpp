@@ -190,6 +190,8 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 		while (::PeekMessageW(&msg, nullptr, 0L, 0L, PM_REMOVE)) ;
 
 		CDlgOpenFile::resetInstance();
+
+		TearDownUia();
 	}
 };
 
@@ -926,6 +928,8 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		CDlgOpenFile::resetInstance();
 
 		mgr = nullptr;
+
+		TearDownUia();
 	}
 
 	/*!
@@ -2772,6 +2776,16 @@ TEST_F(EditWndTest, ShowPropType007)
 	t.join();
 
 	std::filesystem::remove(exportPath, ec);
+}
+
+TEST_F(EditWndTest, DISABLED_Timeout101)
+{
+	StartUiaThread([] (const IUIAutomation*, std::stop_token st) {
+		std::mutex mutex;
+		std::condition_variable_any condition;
+		std::unique_lock lock(mutex);
+		condition.wait_for(lock, st, std::chrono::seconds(31), [] { return false; });
+	});
 }
 
 /*!
