@@ -45,7 +45,9 @@ jobs:
           submodules: true
 
       - name: Install OpenCppCoverage (winget)
+        id: install_opencppcoverage_winget
         if: ${{ env.Configuration == 'Debug' }}
+        continue-on-error: true
         run: |
           winget install `
             --id OpenCppCoverage.OpenCppCoverage `
@@ -53,6 +55,26 @@ jobs:
             --accept-package-agreements `
             --accept-source-agreements
         shell: pwsh
+
+      # wingetは失敗することがあるので、インストーラー方式も残しておく。
+      - name: Install OpenCppCoverage (installer)
+        if: ${{ env.Configuration == 'Debug' && steps.install_opencppcoverage_winget.outcome == 'failure' }}
+        working-directory: ${{ runner.temp }}
+        run: |
+          $installer = '.\OpenCppCoverageSetup.exe'
+          Invoke-WebRequest `
+            -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe" `
+            -OutFile $installer
+          $expectedSha256 = '2295a733da39412c61e4f478677519dd0bb1893d88313ce56b468c9e50517888'
+          $actualSha256 = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actualSha256 -ne $expectedSha256.ToLowerInvariant()) {
+            throw "SHA256 mismatch: expected=$expectedSha256 actual=$actualSha256"
+          }
+          Start-Process `
+            -FilePath $installer `
+            -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" `
+            -Wait
+          echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
@@ -135,7 +157,7 @@ jobs:
             --args ./tests1.exe --gtest_repeat=100 --gtest_throw_on_failure
 
       - name: Mark workflow failed when unit tests fail
-        if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
+        if: steps.run_unit_tests.outcome == 'failure'
         run: |
           echo "Unit tests failed. See the gdb trace above."
           exit 1
