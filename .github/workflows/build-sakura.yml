@@ -344,6 +344,7 @@ jobs:
           --accept-source-agreements
 
     - name: Install DiffUtils (winget)
+      continue-on-error: true
       run: |
         winget install `
           --id GnuWin32.DiffUtils `
