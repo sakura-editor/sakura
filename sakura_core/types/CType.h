@@ -213,8 +213,8 @@ struct STypeConfig{
 //@@@ 2001.11.17 add start MIK
 	bool				m_bUseRegexKeyword;								//!< 正規表現キーワードを使うか
 	DWORD				m_nRegexKeyMagicNumber;							//!< 正規表現キーワード更新マジックナンバー
-	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];			//!< 正規表現キーワード
-	wchar_t				m_RegexKeywordList[MAX_REGEX_KEYWORDLISTLEN];	//!< 正規表現キーワード
+	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD]{};			//!< 正規表現キーワード
+	wchar_t				m_RegexKeywordList[MAX_REGEX_KEYWORDLISTLEN]{};	//!< 正規表現キーワード
 //@@@ 2001.11.17 add end MIK
 
 //@@@ 2006.04.10 fon ADD-start
@@ -237,7 +237,7 @@ struct STypeConfig{
 	bool				m_bUseDocumentIcon;				//!< ファイルに関連づけられたアイコンを使う
 
 	bool				m_bUseTypeFont;					//!< タイプ別フォントの使用
-	LOGFONT				m_lf;							//!< フォント // 2013.03.18 aroka
+	LOGFONT				m_lf{};							//!< フォント // 2013.03.18 aroka
 	INT					m_nPointSize;					//!< フォントサイズ（1/10ポイント単位）
 
 	STypeConfig()
