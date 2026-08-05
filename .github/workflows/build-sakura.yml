@@ -334,7 +334,8 @@ jobs:
           -Wait
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
-    - name: Install Ctags (winget)
+    - name: Install CTags (winget)
+      continue-on-error: true
       run: |
         winget install `
           --id UniversalCtags.Ctags `
@@ -343,6 +344,7 @@ jobs:
           --accept-source-agreements
 
     - name: Install DiffUtils (winget)
+      continue-on-error: true
       run: |
         winget install `
           --id GnuWin32.DiffUtils `

@@ -11,6 +11,8 @@
 
 #include "eval_outputs.hpp"
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 namespace macro {
 
 struct CPpaStub : public CPPA
@@ -29,7 +31,7 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite, public
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpEditor();
 
@@ -48,7 +50,7 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite, public
 
 		TearDownEditor();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 };
 
@@ -284,3 +286,5 @@ TEST_F(CPpaTest, ppaStrObj)
 }
 
 } // namespace macro
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)

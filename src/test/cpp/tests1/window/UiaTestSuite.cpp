@@ -8,42 +8,10 @@
 #include "window/UiaTestSuite.hpp"
 
 #include "config/system_constants.h"
-#include "cxx/type_of_Nth_lambda_arg.hpp"
+#include "cxx/load_string.hpp"
 #include "util/window.h"
 
-namespace cxx {
-
-template<typename TQuery, typename R = cxx::lambda_traits<TQuery>::return_type>
-R WaitForQuery(
-	TQuery query,
-	std::stop_token st,
-	ULONGLONG timeoutMillis,
-	DWORD intervalMillis = 100
-)
-{
-	const auto startTick = ::GetTickCount64();
-
-	while (!st.stop_requested()) {
-		// 脱出条件を満たしたら抜ける
-		auto result = query();
-		if (result) return result;
-
-		// タイムアウトしたら抜ける
-		const auto elapsed = ::GetTickCount64() - startTick;	// 経過時間
-		if (timeoutMillis <= elapsed) return result;
-
-		// 停止要求が来ていたら待機せずに抜ける
-		if (st.stop_requested()) return result;
-
-		// GUI待機なので残り時間を考慮して待機する
-		const auto remaining = timeoutMillis - elapsed;			// 残り時間
-		::Sleep(std::min(intervalMillis, DWORD(remaining)));
-	}
-
-	return {};
-}
-
-} // namespace cxx
+using namespace std::literals::string_literals;
 
 namespace uia {
 
@@ -123,14 +91,7 @@ inline cxx::com_pointer<IUIAutomationCondition> CreateAndCondition(
 
 namespace window {
 
-HWND WaitForDialog(
-	const std::wstring& title,
-	std::stop_token st,
-	ULONGLONG timeoutMillis
-)
-{
-	return WaitForWindow(MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS), title, st, timeoutMillis);
-}
+bool IsDialog(_In_ HWND hWnd, _In_opt_ LPCWSTR pClassName);
 
 HWND WaitForPopupMenu(
 	std::stop_token st,
@@ -163,27 +124,24 @@ HWND WaitForWindow(
 	ULONGLONG timeoutMillis
 )
 {
-	LPCWSTR pszTitle = optTitle.has_value() ? optTitle.value().c_str() : nullptr;
+	const auto windowType = IS_INTRESOURCE(targetClass) && WC_DIALOG == targetClass ? "Dialog"s : "Window"s;
+	const auto dispTitle = std::format("'{:s}'", cxx::to_string(optTitle.value_or(L""), CP_UTF8));
 
 	// ウィンドウがVisibleかつEnabledになるのを待つ
-	return cxx::WaitForQuery([targetClass, pszTitle] {
+	return cxx::WaitForQuery([targetClass, optTitle, windowType, dispTitle] {
 		// 全プロセスのトップレベルウィンドウを対象に検索する
-		const auto hWndFound = ::FindWindowW(targetClass, pszTitle);
+		const auto hWndFound = ::FindWindowW(targetClass, optTitle.has_value() ? std::data(optTitle.value()) : nullptr);
 		if (!hWndFound) {
-			std::clog << "window not found. "
-				<< (!IS_INTRESOURCE(targetClass) ? std::format("({})", cxx::to_string(targetClass, CP_UTF8)) : "(Dialog)")
-				<< ", "
-				<< (pszTitle ? std::format("title: '{}'", cxx::to_string(pszTitle, CP_UTF8)) : "no title")
-				<< std::endl;
+			std::clog << std::format("{:s} not found.", windowType) << (optTitle.has_value() ? std::format(" title: {:s}", dispTitle) : "") << std::endl;
 		} else if (!::IsWindowVisible(hWndFound)) {
-			std::clog << "window is not visible." << std::endl;
+			std::clog << std::format("{:s} is not visible.", windowType) << (optTitle.has_value() ? std::format(" title: {:s}", dispTitle) : "") << std::endl;
 			return HWND(nullptr);
 		} else if (!::IsWindowEnabled(hWndFound)) {
-			std::clog << "window is disabled." << std::endl;
+			std::clog << std::format("{:s} is disabled.", windowType) << (optTitle.has_value() ? std::format(" title: {:s}", dispTitle) : "") << std::endl;
 			return HWND(nullptr);
 		} else if (hWndFound != ::GetForegroundWindow()) {
-			std::clog << "window is not foreground." << std::endl;
-			return HWND(nullptr);
+			std::clog << std::format("{:s} is not foreground.", windowType) << (optTitle.has_value() ? std::format(" title: {:s}", dispTitle) : "") << std::endl;
+			::SetForegroundWindow(hWndFound);
 		}
 		return hWndFound;
 	}, st, timeoutMillis);
@@ -192,7 +150,7 @@ HWND WaitForWindow(
 /*!
  * テストスイートの開始前に1回だけ呼ばれる関数
  */
-/* static */ void UiaTestSuite::SetUpUia()
+/* static */ void UiaTestSuite::SetUpUiaTestSuite()
 {
 	// OLEを初期化する
 	pcOleInit = std::make_unique<cxx::COleInit>();
@@ -204,34 +162,10 @@ HWND WaitForWindow(
 /*!
  * テストスイートの終了後に1回だけ呼ばれる関数
  */
-/* static */ void UiaTestSuite::TearDownUia()
+/* static */ void UiaTestSuite::TearDownUiaTestSuite()
 {
 	// OLEをシャットダウンする
 	pcOleInit = nullptr;
-}
-
-/* static */ void UiaTestSuite::EmulateInvokeButton(
-	IUIAutomation* pAutomation,
-	_In_ HWND hWndDlg,
-	std::wstring_view caption,
-	std::stop_token st
-)
-{
-	// ボタンの検索条件を構築する
-	auto pControlTypeCondition = uia::CreatePropertyCondition(pAutomation, UIA_ControlTypePropertyId, UIA_ButtonControlTypeId);
-	auto pNameCondition = uia::CreatePropertyCondition(pAutomation, UIA_NamePropertyId, _bstr_t{ ::SysAllocStringLen(std::data(caption), UINT(std::size(caption))) });
-	auto pFinalCondition = uia::CreateAndCondition(pAutomation, pControlTypeCondition, pNameCondition);
-
-	// ボタンを検索する
-	auto pItem = uia::FindFirst(pAutomation, hWndDlg, TreeScope_Subtree, pFinalCondition, st);
-	ASSERT_THAT(pItem, NotNull()) << "button not found: " << cxx::to_string(caption);
-
-	if (st.stop_requested()) {
-		return;
-	}
-
-	// ボタンを押下する
-	EmulateInvoke(pItem);
 }
 
 /* static */ void UiaTestSuite::EmulateInvokeButton(
@@ -261,6 +195,39 @@ HWND WaitForWindow(
 	EmulateInvoke(pItem);
 }
 
+/*!
+ * @brief スレッド実行をブロックしているウィンドウを列挙するコールバック関数
+ *
+ * @param hWnd 列挙されたウィンドウのハンドル
+ * @param lParam 列挙の呼び出し元から渡されたパラメータ（使用しない）
+ */
+/* static */ BOOL CALLBACK UiaTestSuite::CloseBlockingWindowProc(
+	_In_ HWND   hWnd,
+	_In_ LPARAM lParam [[maybe_unused]]
+)
+{
+	if (hWnd && ::IsWindow(hWnd) && ::IsWindowVisible(hWnd)) {
+		if (window::IsDialog(hWnd, nullptr)) {
+			::EndDialog(hWnd, 0);
+		} else {
+			::DestroyWindow(hWnd);
+		}
+	}
+
+	return TRUE;
+}
+
+/* static */ HWND UiaTestSuite::GetActivePage(
+	HWND hWndDlg,
+	std::stop_token st,
+	ULONGLONG timeoutMillis
+)
+{
+	return cxx::WaitForQuery([hWndDlg] {
+		return HWND(::SendMessageW(hWndDlg, PSM_GETCURRENTPAGEHWND, 0L, 0L));
+	}, st, timeoutMillis);
+}
+
 /* static */ void UiaTestSuite::EmulateInvokeMenuItem(
 	IUIAutomation* pAutomation,
 	_In_ HWND hWndPopupMenu,
@@ -285,81 +252,128 @@ HWND WaitForWindow(
 	EmulateInvoke(pItem);
 }
 
-/* static */ std::function<void(IUIAutomation*, HWND, std::stop_token)> UiaTestSuite::EmulateEnterFileName(
-	const std::filesystem::path& path
+/* static */ void UiaTestSuite::SendDlgCommand(
+	_In_ HWND hWndDlg,
+	int nIDDlgItem,
+	int notifyCode
 )
 {
-	return [path] (IUIAutomation* pAutomation, HWND, std::stop_token st) {
-		// ファイル名を入力する
-		EmulateSetValue(uia::GetFocusedElement(pAutomation), path.native());
+	const auto hWndCtrl = ::GetDlgItem(hWndDlg, nIDDlgItem);
+	ASSERT_THAT(hWndCtrl, NotNull()) << "control not found: #" << nIDDlgItem;
+
+	EXPECT_THAT(::SendMessageTimeoutW(hWndDlg, WM_COMMAND, MAKEWPARAM(nIDDlgItem, notifyCode), LPARAM(hWndCtrl), SMTO_ABORTIFHUNG | SMTO_BLOCK | SMTO_NOTIMEOUTIFNOTHUNG, 0, nullptr), IsTrue());
+}
+
+/* static */ void UiaTestSuite::SendPsmPressButton(
+	_In_ HWND hWndPropertySheet,
+	UINT button
+)
+{
+	EXPECT_THAT(::SendMessageTimeoutW(hWndPropertySheet, PSM_PRESSBUTTON, button, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK | SMTO_NOTIMEOUTIFNOTHUNG, 0, nullptr), IsTrue());
+}
+
+/*!
+ * @brief UI Automationを使ったテストを実行する
+ */
+template <class TAction>
+void UiaTestSuite::RunUiaAction(
+	TAction&& action
+) const
+{
+	const auto st = m_StopSource.get_token();
+
+	RunGuiTest([action, st] {
+		// UI Automationオブジェクトを作成する
+		IUIAutomationPtr pAutomation = nullptr;
+		ASSERT_HRESULT_SUCCEEDED(pAutomation.CreateInstance(__uuidof(CUIAutomation), nullptr, CLSCTX_INPROC_SERVER));
 
 		// 停止要求が来ていたら抜ける
 		if (st.stop_requested()) {
 			return;
 		}
 
-		// Enterキーを押下して閉じる
-		EmulateHitEnter();
-	};
+		std::forward<TAction>(action)(pAutomation, st);
+	});
 }
 
-/* static */ void UiaTestSuite::EmulateEnterOpenFileName(
-	IUIAutomation* pAutomation,
-	const std::filesystem::path& path,
-	std::stop_token st
-)
+/*!
+ * UIAテストケースの開始前に自分で呼ぶ関数
+ */
+void UiaTestSuite::SetUpUia()
 {
-	const auto action = EmulateEnterFileName(path);
+	const auto testThreadId = ::GetCurrentThreadId();
 
-	if (const auto hWndDlgOpenFile = window::WaitForDialog(L"開く", st)) {
-		action(pAutomation, hWndDlgOpenFile, st);
+	m_StopSource = std::stop_source{};
+	m_Thread = std::jthread([this, testThreadId] (std::stop_token st) {
+		m_Timeout = true;	// 初期値は「タイムアウト発生」にする
+
+		std::mutex mutex;
+		std::condition_variable_any condition;
+		std::unique_lock lock(mutex);
+		condition.wait_for(lock, st, std::chrono::seconds(30), [] { return false; });
+
+		if (st.stop_requested()) {
+			m_Timeout = false;	// タイムアウトは発生しなかった
+			return;
+		}
+
+		m_StopSource.request_stop();
+
+		// スレッドブロックしているウィンドウを列挙して閉じる
+		::EnumThreadWindows(testThreadId, CloseBlockingWindowProc, 0L);
+	});
+}
+
+/*!
+ * UIAテストケースの終了後に呼ばれる関数
+ */
+void UiaTestSuite::TearDownUia()
+{
+	m_StopSource.request_stop();
+
+	m_Thread.request_stop();
+
+	if (m_Thread.joinable()) {
+		m_Thread.join();
 	}
-}
 
-/* static */ void UiaTestSuite::EmulateEnterSaveFileName(
-	IUIAutomation* pAutomation,
-	const std::filesystem::path& path,
-	std::stop_token st
-)
-{
-	const auto action = EmulateEnterFileName(path);
-
-	if (const auto hWndDlgOpenFile = window::WaitForDialog(L"名前を付けて保存", st)) {
-		action(pAutomation, hWndDlgOpenFile, st);
+	if (m_Timeout) {
+		ADD_FAILURE() << "test case timed out after 30 seconds";
 	}
 }
 
 /*!
  * ダイアログを閉じるスレッドを開始する
  *
- * @param dialogTitle タイトル
+ * @param optTitle タイトル
  * @param action 閉じるアクション
  * @param timeoutMillis タイムアウト時間（ミリ秒）
  * @return ダイアログを閉じるためのスレッド
  */
 std::jthread UiaTestSuite::StartDialogCloser(
-	std::wstring_view dialogTitle,
+	const std::optional<std::wstring>& optTitle,
 	const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
 	ULONGLONG timeoutMillis
-) const
+)
 {
-	LPCWSTR targetClass = MAKEINTRESOURCEW(dialog::ModalDialogCloser::DIALOG_CLASS);
-
-	const std::wstring buffer{ dialogTitle };	// 一旦バッファにコピーする
-	return StartWindowCloser(targetClass, buffer, action, timeoutMillis);
+	return StartWindowCloser(WC_DIALOG, optTitle, action, timeoutMillis);
 }
 
 /*!
- * ファイルを開くダイアログを閉じるスレッドを開始する
+ * ダイアログを閉じるスレッドを開始する
  *
- * @param path ファイルパス
- * @return ファイルを開くダイアログを閉じるためのスレッド
+ * @param titleResourceId タイトルのリソースID
+ * @param action 閉じるアクション
+ * @return ダイアログを閉じるためのスレッド
  */
-std::jthread UiaTestSuite::StartEnterOpenFileName(
-	const std::filesystem::path& path
-) const
+std::jthread UiaTestSuite::StartDialogCloser(
+	int titleResourceId,
+	const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action
+)
 {
-	return StartDialogCloser(L"開く", EmulateEnterFileName(path));
+	const std::wstring buffer{ cxx::load_string(titleResourceId) };
+
+	return StartDialogCloser(buffer, action);
 }
 
 /*!
@@ -371,7 +385,7 @@ std::jthread UiaTestSuite::StartEnterOpenFileName(
 std::jthread UiaTestSuite::StartPopupMenuSelector(
 	std::wstring_view menuLabel,
 	ULONGLONG timeoutMillis
-) const
+)
 {
 	// 閉じるアクションを構築する
 	const auto action = [menuLabel] (IUIAutomation* pAutomation, HWND hWndPopupMenu, std::stop_token st) {
@@ -394,6 +408,23 @@ std::jthread UiaTestSuite::StartPopupMenuSelector(
 }
 
 /*!
+ * プロパティーシートを閉じるスレッドを開始する
+ *
+ * @param titleResourceId タイトルのリソースID
+ * @param psButtonId ボタンID
+ * @return プロパティーシートを閉じるためのスレッド
+ */
+std::jthread UiaTestSuite::StartPropertySheetCloser(
+	int titleResourceId,
+	UINT psButtonId
+)
+{
+	return StartDialogCloser(titleResourceId, [psButtonId] (IUIAutomation*, HWND hWndDlg, std::stop_token) {
+		SendPsmPressButton(hWndDlg, psButtonId);
+	});
+}
+
+/*!
  * UI Automationを利用するスレッドを開始する
  *
  * @param action 実行するアクション
@@ -401,8 +432,10 @@ std::jthread UiaTestSuite::StartPopupMenuSelector(
  */
 std::jthread UiaTestSuite::StartUiaThread(
 	const std::function<void(IUIAutomation*, std::stop_token)>& action
-) const
+)
 {
+	SetUpUia();
+
 	return std::jthread([this, action] (std::stop_token st) {
 		// OLEを初期化する
 		cxx::COleInit oleInit;
@@ -413,20 +446,10 @@ std::jthread UiaTestSuite::StartUiaThread(
 			return;
 		}
 
-		// UI Automationオブジェクトを作成する
-		IUIAutomationPtr pAutomation = nullptr;
-		ASSERT_HRESULT_SUCCEEDED(pAutomation.CreateInstance(__uuidof(CUIAutomation), nullptr, CLSCTX_INPROC_SERVER));
-
-		// 停止要求が来ていたら抜ける
-		if (st.stop_requested()) {
-			return;
-		}
-
 		// アクションを実行する
-		RunGuiTest([action, pAutomation, st] {
-			action(pAutomation, st);
-		});
-	});
+		RunUiaAction(action);
+
+	}, m_StopSource.get_token());
 }
 
 /*!
@@ -443,11 +466,11 @@ std::jthread UiaTestSuite::StartWindowCloser(
 	const std::optional<std::wstring>& optTitle,
 	const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
 	ULONGLONG timeoutMillis
-) const
+)
 {
-	return StartUiaThread([targetClass, optTitle, action, timeoutMillis] (IUIAutomation* pAutomation, std::stop_token st) {
+	return StartUiaThread([targetClass, has_title = optTitle.has_value(), title = optTitle.value_or(L""), action, timeoutMillis] (IUIAutomation* pAutomation, std::stop_token st) {
 		// テスト対象ウィンドウを検索する
-		const auto hWndFound = window::WaitForWindow(targetClass, optTitle, st, timeoutMillis);
+		const auto hWndFound = window::WaitForWindow(targetClass, has_title ? std::optional(title) : std::nullopt, st, timeoutMillis);
 		ASSERT_THAT(hWndFound, NotNull());
 
 		// 停止要求が来ていたら抜ける
@@ -458,25 +481,6 @@ std::jthread UiaTestSuite::StartWindowCloser(
 		// 閉じるアクションを実行する
 		action(pAutomation, hWndFound, st);
 	});
-}
-
-/*!
- * ダイアログを閉じるスレッドを開始する
- *
- * @param title タイトル
- * @param timeoutMillis タイムアウト時間（ミリ秒）
- * @return ダイアログを閉じるためのスレッド
- */
-std::jthread UiaTestSuite::StartDialogCloser(
-	std::wstring_view title,
-	ULONGLONG timeoutMillis
-) const
-{
-	std::wstring buffer{ title };	// 一旦バッファにコピーする
-	return StartDialogCloser(buffer, [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
-		// OKボタンを押下して閉じる
-		EmulateInvokeButton(pUIAutomation, hWndDlg, IDOK, st);
-	}, timeoutMillis);
 }
 
 } // namespace window

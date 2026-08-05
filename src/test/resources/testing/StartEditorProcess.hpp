@@ -34,4 +34,9 @@ int StartEditorProcess(const std::wstring& commandLine);
  */
 [[noreturn]] void OnTerminate();
 
+/*!
+ * @brief テストコード専用SEH構造化例外ハンドラー
+ */
+LONG OnUnhandledException(EXCEPTION_POINTERS* ep);
+
 }

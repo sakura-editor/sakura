@@ -83,7 +83,7 @@ BOOL CDlgOpenFile::SelectFile(
 	bool resolvePath,
 	EFilter eAddFilter)
 {
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	WCHAR			szFilePath[_MAX_PATH + 1];
 	WCHAR			szPath[_MAX_PATH + 1];
 	::GetWindowText( hwndCtl, szFilePath, int(std::size(szFilePath)) );

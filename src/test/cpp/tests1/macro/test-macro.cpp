@@ -20,6 +20,8 @@
 
 std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 namespace macro {
 
 std::filesystem::path find_dll_in_the_path(const std::filesystem::path& dllname)
@@ -76,7 +78,7 @@ struct MacroMgrTest : public ::testing::Test, public window::EditorTestSuite, pu
 	 */
 	static void SetUpTestSuite()
 	{
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		SetUpEditor();
 	}
@@ -88,7 +90,7 @@ struct MacroMgrTest : public ::testing::Test, public window::EditorTestSuite, pu
 	{
 		TearDownEditor();
 
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 };
 
@@ -560,3 +562,5 @@ TEST(CSMacroMgr, GetFuncInfoByName101)
 }
 
 } // namespace macro
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)

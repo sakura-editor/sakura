@@ -642,7 +642,7 @@ public:
 
 public:
 	//ウィンドウ
-	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
+	HWND			m_hwndParent = nullptr;		/* 親ウィンドウハンドル */
 	HWND			m_hwndVScrollBar = nullptr;	/* 垂直スクロールバーウィンドウハンドル */
 	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
 	HWND			m_hwndHScrollBar = nullptr;	/* 水平スクロールバーウィンドウハンドル */
@@ -742,7 +742,7 @@ public:
 
 	// IME
 private:
-	HWND			m_hWnd;
+	HWND			m_hWnd = nullptr;
 	int				m_nLastReconvLine;             //2002.04.09 minfu 再変換情報保存用;
 	int				m_nLastReconvIndex;            //2002.04.09 minfu 再変換情報保存用;
 

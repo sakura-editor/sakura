@@ -101,7 +101,7 @@ void SelectOpenFileFromFolder(
 	sLoadInfo.eCharCode = CODE_AUTODETECT;	// 文字コード自動判別
 	sLoadInfo.bViewMode = false;
 
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		unusedArg1,
 		nullptr,

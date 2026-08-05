@@ -114,6 +114,12 @@ public:
 	template <class U>
 	static void setInstance()
 	{
+		static_assert(
+			std::has_virtual_destructor_v<T> &&
+			std::is_nothrow_destructible_v<T>,
+			"T must have a virtual noexcept destructor"
+		);
+
 		std::unique_lock lock{ gm_Mutex };
 
 		gm_Instance = std::make_unique<U>();
