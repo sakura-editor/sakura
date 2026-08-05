@@ -11,6 +11,8 @@
 
 #include "eval_outputs.hpp"
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 namespace macro {
 
 struct CPpaStub : public CPPA
@@ -284,3 +286,5 @@ TEST_F(CPpaTest, ppaStrObj)
 }
 
 } // namespace macro
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)

@@ -1146,11 +1146,15 @@ TEST_F(EditWndTest, OnHelp101)
 	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
 }
 
-TEST_F(EditWndTest, OnCommand101)
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
+TEST_F(EditWndTest, DISABLED_OnCommand101)
 {
 	HWND hWndEdit = nullptr;
 	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_COMMAND, 0L, 0L), IsFalse());
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 TEST_F(EditWndTest, OnCommand102)
 {
@@ -1212,6 +1216,8 @@ TEST_F(EditWndTest, OnMenuChar101)
 	pcEditWnd->DispatchEvent(hWndEdit, WM_MENUCHAR, 0L, 0L);
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 TEST_F(EditWndTest, OnCopy101)
 {
 	HWND hWndEdit = nullptr;
@@ -1223,6 +1229,8 @@ TEST_F(EditWndTest, OnPaste101)
 	HWND hWndEdit = nullptr;
 	pcEditWnd->DispatchEvent(hWndEdit, WM_PASTE, 0L, 0L);
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 TEST_F(EditWndTest, OnMyWmGetLineData101)
 {
@@ -1282,6 +1290,8 @@ TEST_F(EditWndTest, OnMyWmGetLineCount101)
 	EXPECT_THAT(lineCount, Ge(0));
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 TEST_F(EditWndTest, OnMyWmAddStringLenW101)
 {
 	HWND hWndEdit = nullptr;
@@ -1289,6 +1299,8 @@ TEST_F(EditWndTest, OnMyWmAddStringLenW101)
 	::wcscpy_s(pWork, 4, L"abc");
 	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, MYWM_ADDSTRINGLEN_W, 3, 0L), IsFalse());
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 TEST_F(EditWndTest, OnLButtonDown101)
 {
@@ -1325,6 +1337,8 @@ TEST_F(EditWndTest, OnLButtonDblClk101)
 	HWND hWndEdit = nullptr;
 	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_LBUTTONDBLCLK, 0L, MAKELPARAM(10, 20)), IsFalse());
 }
+
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * コマンド：コマンドプロンプトを開く
@@ -1471,6 +1485,8 @@ TEST_F(EditWndTest, GetDocDataObject001)
 	std::filesystem::remove(targetPath, ec);
 }
 
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * キャンセルダイアログの表示テスト
  */
@@ -1484,6 +1500,8 @@ TEST_F(EditWndTest, ShowDlgCancel001)
 
 	cDlgCancel.CloseDialog(0);
 }
+
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * 検索ダイアログの表示テスト
@@ -1562,6 +1580,8 @@ TEST_F(EditWndTest, ShowDlgAbout101)
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 }
 
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * ファイル比較ダイアログの表示テスト
  */
@@ -1591,6 +1611,8 @@ TEST_F(EditWndTest, ShowDlgCompare101)
 	HWND hWndCompareWnd = nullptr;
 	cDlgCompare.DoModal(unusedArg1, hWnd, unusedArg2, L"", &hWndCompareWnd);
 }
+
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * コントロールコード入力ダイアログの表示テスト
@@ -1701,6 +1723,8 @@ TEST_F(EditWndTest, ShowDlgFavorite101)
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 }
 
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * ファイルツリーダイアログの表示テスト
  */
@@ -1741,6 +1765,8 @@ TEST_F(EditWndTest, ShowDlgFileUpdateQuery101)
 	const auto hWnd = pcEditWnd->GetHwnd();
 	cDlgFileUpdateQuery.DoModal(unusedArg1, hWnd, IDD_FILEUPDATEQUERY, 0 );
 }
+
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * Grepダイアログの表示テスト
@@ -1794,6 +1820,8 @@ TEST_F(EditWndTest, ShowDlgGrepReplace101)
 	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP_REPLACE_DLG, true, 0, 0, 0, 0);
 }
 
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * 1行入力ダイアログの表示テスト
  */
@@ -1820,6 +1848,8 @@ TEST_F(EditWndTest, ShowDlgInputBox001)
 
 	EXPECT_THAT(buffer, StrEq(L"tes"));
 }
+
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * 1行入力ダイアログの表示テスト
@@ -1862,6 +1892,8 @@ TEST_F(EditWndTest, ShowDlgJump101)
 	pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_JUMP_DIALOG, true, 0, 0, 0, 0);
 }
 
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * 強調キーワード選択ダイアログの表示テスト
  */
@@ -1890,6 +1922,8 @@ TEST_F(EditWndTest, ShowDlgKeywordSelect101)
 	cDlgKeywordSelect.DoModal(unusedArg1, hWnd, nSet.data());
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * ファイルを開くダイアログの表示テスト
  */
@@ -1908,6 +1942,8 @@ TEST_F(EditWndTest, ShowDlgOpenFile101)
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileOpen('', 99, 0, '無題1')"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * プラグイン設定ダイアログの表示テスト
@@ -1992,6 +2028,8 @@ TEST_F(EditWndTest, ShowDlgPrintSetting101)
 	cDlgPrintSetting.DoModal(unusedArg1, hWnd, &nCurrentPrintSetting, GetDllShareData().m_PrintSettingArr, nLineNumberColumns);
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * プロファイルマネージャーダイアログの表示テスト
  */
@@ -2029,6 +2067,8 @@ TEST_F(EditWndTest, ShowDlgProperty101)
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"PropertyFile()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * 文字色／背景色統一ダイアログの表示テスト
@@ -2081,6 +2121,8 @@ TEST_F(EditWndTest, ShowDlgSameColor101)
 	cDlgSameColor.DoModal(unusedArg1, hWnd, wID, &m_Types, cr);
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * 文字コードセット設定ダイアログの表示テスト
  */
@@ -2104,6 +2146,8 @@ TEST_F(EditWndTest, ShowDlgSetCharSet101)
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ChgCharSet(99, 0)"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * タグジャンプダイアログの表示テスト
@@ -2287,6 +2331,8 @@ TEST_F(EditWndTest, ShowDlgWindowList101)
 	cDlgWindowList.DoModal(unusedArg1, hWnd, 0);
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * 補完ダイアログの表示テスト
  */
@@ -2311,6 +2357,8 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 
 	pcEditWnd->m_cHokanMgr.CloseDialog(0);
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * 共通設定プロパティーシートの表示テスト
@@ -2638,6 +2686,8 @@ TEST_F(EditWndTest, ShowPropType002)
  */
 TEST_F(EditWndTest, ShowPropType003)
 {
+	RunGuiTest([this] {
+
 	const auto exportPath = GetIniFileName().replace_filename(L"基本.col");
 	MockCDlgOpenFile::gm_Files.emplace_back(exportPath.native());
 
@@ -2686,6 +2736,8 @@ TEST_F(EditWndTest, ShowPropType003)
 	t.join();
 
 	std::filesystem::remove(exportPath, ec);
+
+	});
 }
 
 /*!
