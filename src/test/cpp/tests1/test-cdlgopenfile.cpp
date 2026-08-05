@@ -294,11 +294,18 @@ TEST_P(FileDialogTest, GetOpenFileName102)
 	CDlgOpenFile::getInstance()->DoModal_GetOpenFileName(szPath, EFilter::EFITER_NONE);
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * 名前を付けて保存ダイアログの表示テスト
  */
 TEST_P(FileDialogTest, GetSaveFileName001)
 {
+	if (!GetParam()) {
+		GTEST_SUCCESS_("Legacy Common File Dialog may cause error on GitHub Actions.");
+		return;
+	}
+
 	const auto path = GetExeFileName().replace_filename(L"test.txt");
 	const auto dummyPath = GetExeFileName().replace_filename(L"dummy.txt");
 
@@ -329,6 +336,8 @@ TEST_P(FileDialogTest, GetSaveFileName001)
 
 	std::filesystem::remove(dummyPath, ec);
 }
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * 名前を付けて保存ダイアログの表示テスト
