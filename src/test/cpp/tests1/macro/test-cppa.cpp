@@ -221,13 +221,16 @@ TEST_F(CPpaTest, ppaErrorProc)
  */
 TEST_F(CPpaTest, ppaProc)
 {
-	std::array ppszArgs1 = { "something is wrong." };
-	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	auto pUser32 = (MockUser32*)User32::getInstance();
 
 	// 正常なマクロ呼出
+	std::array ppszArgs1 = { "something is wrong." };
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"something is wrong."), _, _, _)).WillOnce(Return(MB_OK));
 	EXPECT_THAT(CPPA::CallProc(*info, F_OKCANCELBOX, ppszArgs1), Eq(0));
 
 	// パラメーター不足でエラー
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"挿入すべき文字コードが指定されていません．"), _, _, _)).WillOnce(Return(MB_OK));
 	EXPECT_THAT(CPPA::CallProc(*info, F_WCHAR, ppszArgs2), Eq(int(F_WCHAR) + 1));
 }
 
