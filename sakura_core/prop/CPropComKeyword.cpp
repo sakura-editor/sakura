@@ -13,7 +13,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -578,6 +578,7 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, [[maybe_unused]] HWND hwnd
 	SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
+	// 現在選択されているキーワードセットの英大文字小文字区別設定を取得
 	bool	bCase = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordCase( nIdx );
 	CImpExpKeyWord	cImpExpKeyWord( m_Common, nIdx, bCase );
 
@@ -635,8 +636,9 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	::SendMessage( hwndDlg, WM_SETREDRAW, FALSE, 0 );
 
 	ListView_DeleteAllItems( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ) );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYSETRENAME ), 0 <= nIdx );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYCLEAN ), 0 <= nIdx );
 	if( 0 <= nIdx ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYSETRENAME ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELSET ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KEYWORDCASE ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ), TRUE );
@@ -646,22 +648,23 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 		//	なのでここで無効にしておく．
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYCLEAN ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_IMPORT ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EXPORT ), TRUE );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, FALSE );
 
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYSETRENAME ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELSET ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KEYWORDCASE ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADDKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYCLEAN ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_IMPORT ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EXPORT ), FALSE );
+
+		// 無効化時も描画停止を解除して画面を再描画
+		::SendMessage( hwndDlg, WM_SETREDRAW, TRUE, 0 );
+		InvalidateRect( hwndDlg, nullptr, FALSE );
 		return;
 	}
 
