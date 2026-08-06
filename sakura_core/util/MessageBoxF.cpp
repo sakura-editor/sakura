@@ -9,7 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -17,38 +17,91 @@
 #include "StdAfx.h"
 #include "MessageBoxF.h"
 
+#include "_main/CProcess.h"
+#include "config/app_constants.h"
+#include "util/os.h"
+#include "util/tchar_convert.h"
+#include "window/CEditWnd.h"
+
+#include "CSelectLang.h"
+
 #include <iostream>
 
-#include "_main/CProcess.h"
-#include "window/CEditWnd.h"
-#include "CSelectLang.h"
-#include "config/app_constants.h"
+HWND GetMessageBoxOwner(HWND hWndOwner);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
-{
-	// 選択中の言語IDを取得する
-	LANGID wLangId = CSelectLang::getDefaultLangId();
 
+/*!
+ * メッセージボックスを表示します。
+ *
+ * @note 直接呼ばないでください。
+ */
+/* static */ int User32::MessageBoxW(
+	_In_opt_ HWND hWndOwner,
+	const std::optional<std::wstring>& optText,
+	const std::optional<std::wstring>& optCaption,
+	_In_ UINT uType
+)
+{
+	if (!hWndOwner) {
+		hWndOwner = GetMessageBoxOwner(hWndOwner);
+	}
+
+	// 選択中の言語IDを取得する
+	const auto wLangId = CSelectLang::getDefaultLangId();
+
+	return User32::getInstance()->MessageBoxExW(
+		hWndOwner,
+		optText.has_value() ? std::data(*optText) : nullptr,
+		optCaption.has_value() ? std::data(*optCaption) : nullptr,
+		uType,
+		wLangId
+	);
+}
+
+/*!
+ * メッセージボックスを表示します。
+ *
+ * @note 直接呼ばないでください。
+ */
+int User32::MessageBoxExW(
+	_In_opt_ HWND hWnd,
+	_In_opt_ LPCWSTR lpText,
+	_In_opt_ LPCWSTR lpCaption,
+	_In_ UINT uType,
+	_In_ WORD wLanguageId
+) const
+{
 	// 標準エラー出力が存在する場合
 	if(::GetStdHandle(STD_ERROR_HANDLE)){
 		// lpText を標準エラー出力に書き出す
-		std::clog << (lpText ? wcstou8s(lpText) : "") << std::endl;
+		std::clog << (lpText ? cxx::to_string(lpText, CP_UTF8) : "") << std::endl;
 
 		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
 		return 0;
 	}
 
+	// 本物のAPIを呼ぶ。構造的にテスト不能なので、いつか代替策を考える必要がある。
+	return ::MessageBoxExW(hWnd, lpText, lpCaption, uType, wLanguageId);
+}
+
+/*!
+ * メッセージボックスを表示します。
+ *
+ * @note 直接呼ばないでください。
+ * @note ヘッダー側でWindows SDKのマクロMessageBoxをWrap_MessageBoxに定義し直している。
+ */
+int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
+{
 	// lpText, lpCaption をローカルバッファにコピーして MessageBox API を呼び出す
 	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも
 	//    メッセージボックス上の Ctrl+C が文字化けしないように
-	return ::MessageBoxEx(hWnd,
-		lpText ? std::wstring(lpText).c_str() : nullptr,
-		lpCaption ? std::wstring(lpCaption).c_str() : nullptr,
-		uType,
-		wLangId
+	return User32::MessageBoxW(hWnd,
+		lpText ? std::make_optional(lpText) : std::nullopt,
+		lpCaption ? std::make_optional(lpCaption) : std::nullopt,
+		uType
 	);
 }
 
@@ -87,9 +140,6 @@ int VMessageBoxF(
 )
 {
 	const auto buf = vstrprintf(lpText,v);
-	if (!hwndOwner) {
-		hwndOwner = GetMessageBoxOwner(hwndOwner);
-	}
 	return ::MessageBox(hwndOwner, buf.data(), lpCaption, uType);
 }
 

@@ -9,9 +9,33 @@
 #define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
+#include "util/design_template.h"
 #include "cxx/type_of_Nth_lambda_arg.hpp"
 
-#include <ObjIdl.h> // LPDATAOBJECT
+#include <objidl.h> // LPDATAOBJECT
+
+//! User32.dll呼出をテスト可能にするDIっぽいもの
+struct User32 : public TSakuraSingleton<User32>
+{
+	using Me = User32;
+
+	static int MessageBoxW(
+		_In_opt_ HWND hWnd,
+		const std::optional<std::wstring>& optText,
+		const std::optional<std::wstring>& optCaption,
+		_In_ UINT uType
+	);
+
+	virtual ~User32() = default;
+
+	virtual int	MessageBoxExW(
+		_In_opt_ HWND hWnd,
+		_In_opt_ LPCWSTR lpText,
+		_In_opt_ LPCWSTR lpCaption,
+		_In_ UINT uType,
+		_In_ WORD wLanguageId
+	) const;
+};
 
 //クリップボード
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
