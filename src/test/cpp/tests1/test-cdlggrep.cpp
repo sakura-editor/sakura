@@ -1,0 +1,669 @@
+﻿/*! @file */
+/*
+	Copyright (C) 2026, Sakura Editor Organization
+
+	SPDX-License-Identifier: Zlib
+*/
+
+#include "pch.h"
+#include <Windows.h>
+
+#include <filesystem>
+#include <fstream>
+
+#include "dlg/CDlgGrep.h"
+#include "dlg/CDlgGrepReplace.h"
+#include "recent/CRecentReplace.h"
+#include "dlg/ModalDialogCloser.hpp"
+#include "env/ShareDataTestSuite.hpp"
+#include "grep/CGrepEnumKeys.h"
+#include "mem/CNativeW.h"
+#include "sakura_rc.h"
+#include "env/DLLSHAREDATA.h"
+
+namespace {
+
+struct CDlgGrepTest
+	: public ::testing::Test
+	, public env::ShareDataTestSuite
+{
+	static void SetUpTestSuite()
+	{
+		// CDlgGrep は履歴や既定値の取得で ShareData を参照するため、事前に初期化する。
+		SetUpShareData();
+	}
+
+	static void TearDownTestSuite()
+	{
+		TearDownShareData();
+	}
+};
+
+} // namespace
+
+// ======================================================================
+// Phase 3-A: CDlgGrep Unit Tests (PR #2459)
+// ======================================================================
+
+// ----- 既定値とパック処理 -----
+
+/*!
+ * @brief コンストラクタ直後の既定値検証 (DG-01)
+ * @remark コンストラクタ呼び出し直後、サブフォルダー検索や出力形式などが既定値になっていることを確認する。
+ */
+TEST_F(CDlgGrepTest, DefaultMemberValues_Constructor)
+{
+	CDlgGrep dlg;
+
+	EXPECT_FALSE(dlg.m_bSubFolder);							// 初期状態ではサブフォルダー検索は無効
+	EXPECT_FALSE(dlg.m_bFromThisText);						// 初期状態では編集中テキスト検索は無効
+	EXPECT_EQ(CODE_SJIS, dlg.m_nGrepCharSet);				// 既定の文字コードは SJIS
+	EXPECT_EQ(1, dlg.m_nGrepOutputLineType);				// 既定の出力対象はヒット行
+	EXPECT_EQ(1, dlg.m_nGrepOutputStyle);					// 既定の出力形式は Normal
+	EXPECT_EQ(L'\0', dlg.m_szFile[0]);						// 検索ファイル欄は空で開始
+	EXPECT_EQ(L'\0', dlg.m_szFolder[0]);					// 検索フォルダー欄は空で開始
+	EXPECT_EQ(L'\0', dlg.m_szExcludeFile[0]);				// 除外ファイル欄は空で開始
+	EXPECT_EQ(L'\0', dlg.m_szExcludeFolder[0]);				// 除外フォルダー欄は空で開始
+}
+
+/*!
+ * @brief 除外パターンの定数検証 (DG-02)
+ * @remark DEFAULT_EXCLUDE_FILE_PATTERN_REGEX / _WILDCARD と DEFAULT_EXCLUDE_FOLDER_PATTERN が仕様通り定義されていることを確認する。
+ */
+TEST_F(CDlgGrepTest, DefaultExcludePatterns_Constants)
+{
+	EXPECT_STREQ(L".*\\.msi$;.*\\.exe$;.*\\.obj$;.*\\.pdb$;.*\\.ilk$;.*\\.res$;.*\\.pch$;.*\\.iobj$;.*\\.ipdb$", DEFAULT_EXCLUDE_FILE_PATTERN_REGEX);
+	EXPECT_STREQ(L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb", DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD);
+	EXPECT_STREQ(L".git;.svn;.vs", DEFAULT_EXCLUDE_FOLDER_PATTERN);
+}
+
+/*!
+ * @brief パック処理：除外指定なし (DG-03)
+ * @remark 除外指定がない場合、検索ファイルパターンをそのまま返すことを確認する。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_NoExclusions)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.cpp", packed.c_str());
+}
+
+/*!
+ * @brief パック処理：除外フォルダーあり (DG-04)
+ * @remark 除外フォルダーが指定された場合、`#` プレフィックスを付加して結合することを確認する。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_WithExcludeFolders)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szExcludeFolder, L".git;.svn");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.cpp;#.git;#.svn", packed.c_str());
+}
+
+/*!
+ * @brief パック処理：除外ファイルあり (DG-05)
+ * @remark 除外ファイルが指定された場合、`!` プレフィックスを付加して結合することを確認する。
+ *         検索対象ファイルが空の場合は `*.*` を補う。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_WithExcludeFiles)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szFile, L"");	// 空の場合は内部で *.* になる
+	wcscpy_s(dlg.m_szExcludeFile, L"*.obj;*.exe");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.*;!*.obj;!*.exe", packed.c_str());
+}
+
+/*!
+ * @brief パック処理：除外フォルダー内の「!」エスケープ (DG-06)
+ * @remark `!` が含まれるフォルダー名をダブルクォートでエスケープして結合することを確認する。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_EscapeBangInExcludeFolder)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szExcludeFolder, L"!special");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.*;\"#!special\"", packed.c_str());
+}
+
+/*!
+ * @brief パック処理：除外フォルダー内の「#」エスケープ (DG-07)
+ * @remark `#` が含まれるフォルダー名をダブルクォートでエスケープして結合することを確認する。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_EscapeHashInExcludeFolder)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szExcludeFolder, L"#hash");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.*;\"##hash\"", packed.c_str());
+}
+
+/*!
+ * @brief パック処理：除外フォルダー名のスペース区切り (DG-08)
+ * @remark SplitPattern はスペースを区切り文字として扱うため、
+ *         「my folder」は「my」と「folder」に分割され、それぞれに # が付く。
+ *         スペース含みの単一フォルダー名は GetPackedGFileString 経由では扱えない（既知制限）。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_EscapeSpaceInExcludeFolder)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szExcludeFolder, L"my folder");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.*;#my;#folder", packed.c_str());
+}
+
+/*!
+ * @brief パック処理：除外フォルダー内のセミコロン (DG-09)
+ * @remark セミコロンは区切り文字として処理され、それぞれ独立した除外指定となることを確認する。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_EscapeSemicolonInExcludeFolder)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szExcludeFolder, L"a;b");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.*;#a;#b", packed.c_str());
+}
+
+/*!
+ * @brief パック処理：複合パターン (DG-10)
+ * @remark 除外フォルダーと除外ファイルの両方が指定された場合、すべてを正しくパック文字列に結合することを確認する。
+ */
+TEST_F(CDlgGrepTest, GetPackedGFileString_CombinedAllExclusions)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szExcludeFolder, L"build;dist");
+	wcscpy_s(dlg.m_szExcludeFile, L"*.obj;*.tmp");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+	EXPECT_STREQ(L"*.cpp;#build;#dist;!*.obj;!*.tmp", packed.c_str());
+}
+
+/*!
+ * @brief パックとアンパックのラウンドトリップ検証 (GUI -> CLI -> EnumKeys) ワイルドカード (DG-11)
+ * @remark GUIで設定した複雑なパターンをパックし、bExcludeFileRegex=false で SetFileKeys を呼ぶと
+ *         ! プレフィックスはワイルドカード除外リスト（m_vecExceptFileKeys）に入ることを確認する。
+ */
+TEST_F(CDlgGrepTest, RoundTrip_GuiToCliToEnumKeys)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szExcludeFolder, L"build;dist");
+	wcscpy_s(dlg.m_szExcludeFile, L"*.obj;*.tmp");
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+
+	// bExcludeFileRegex=false（既定）: ! プレフィックスはワイルドカード除外へ
+	CGrepEnumKeys keys;
+	EXPECT_EQ(0, keys.SetFileKeys(packed.c_str()));
+
+	EXPECT_EQ(1, keys.m_vecSearchFileKeys.size());						// 検索対象は 1 件
+	EXPECT_STREQ(L"*.cpp", keys.m_vecSearchFileKeys[0].c_str());
+
+	EXPECT_EQ(2, keys.m_vecExceptFolderKeys.size());					// 除外フォルダーは 2 件
+	EXPECT_STREQ(L"build", keys.m_vecExceptFolderKeys[0].c_str());
+	EXPECT_STREQ(L"dist", keys.m_vecExceptFolderKeys[1].c_str());
+
+	EXPECT_EQ(2, keys.m_vecExceptFileKeys.size());						// ! プレフィックスはワイルドカード除外に入る
+	EXPECT_STREQ(L"*.obj", keys.m_vecExceptFileKeys[0].c_str());
+	EXPECT_STREQ(L"*.tmp", keys.m_vecExceptFileKeys[1].c_str());
+	EXPECT_TRUE(keys.m_vecExceptFileRegexPatterns.empty());				// 正規表現除外リストは空
+}
+
+/*!
+ * @brief パックとアンパックのラウンドトリップ検証 (GUI -> CLI -> EnumKeys) 正規表現 (DG-11b)
+ * @remark GetPackedGFileString は regex ON/OFF にかかわらず常に ! を出力する。
+ *         SetFileKeys(packed, true) で呼ぶと ! プレフィックスは正規表現除外リストに入ることを確認する。
+ */
+TEST_F(CDlgGrepTest, RoundTrip_GuiToCliToEnumKeys_RegexMode)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szExcludeFile, L".*skip.*\\.txt$");
+	dlg.m_bExcludeFileRegularExp = TRUE;
+	std::wstring packed = dlg.GetPackedGFileString().GetStringPtr();
+
+	// パック文字列は常に '!' を使う（regex フラグ非依存）
+	EXPECT_NE(std::wstring::npos, packed.find(L"!"));
+
+	// bExcludeFileRegex=true: ! プレフィックスは正規表現除外へ
+	CGrepEnumKeys keys;
+	EXPECT_EQ(0, keys.SetFileKeys(packed.c_str(), /*bExcludeFileRegex=*/true));
+
+	EXPECT_EQ(1, keys.m_vecExceptFileRegexPatterns.size());
+	EXPECT_STREQ(L".*skip.*\\.txt$", keys.m_vecExceptFileRegexPatterns[0].c_str());
+	EXPECT_TRUE(keys.m_vecExceptFileKeys.empty());
+}
+
+// ----- 切り出し関数のテスト -----
+
+/*!
+ * @brief 既定除外パターンの決定：履歴が空の場合 (DG-12)
+ * @remark 履歴が空の場合、定数で定義された既定パターンを使用し、履歴にも追加することを確認する。
+ */
+TEST_F(CDlgGrepTest, DetermineDefaultExcludePatterns_EmptyHistorySetsDefaults)
+{
+	CDlgGrep dlg;
+	GetDllShareDataPtr()->m_sSearchKeywords.m_aExcludeFiles.clear();
+	dlg.DetermineDefaultExcludePatterns();
+	EXPECT_STREQ(DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD, dlg.m_szExcludeFile);
+}
+
+/*!
+ * @brief 既定除外パターンの決定：履歴が存在する場合 (DG-13)
+ * @remark 履歴が既に存在する場合、先頭の履歴を既定の除外パターンとして使用することを確認する。
+ */
+TEST_F(CDlgGrepTest, DetermineDefaultExcludePatterns_NonEmptyHistoryUsesHistoryTop)
+{
+	CDlgGrep dlg;
+	GetDllShareDataPtr()->m_sSearchKeywords.m_aExcludeFiles.clear();
+	GetDllShareDataPtr()->m_sSearchKeywords.m_aExcludeFiles.push_back(L"*.bak");
+	dlg.DetermineDefaultExcludePatterns();
+	EXPECT_STREQ(L"*.bak", dlg.m_szExcludeFile);
+}
+
+/*!
+ * @brief 既定除外パターンの決定：既に値がセットされている場合 (DG-14)
+ * @remark 既に `m_szExcludeFile` に値がセットされている場合は、既定値の書き込みをスキップすることを確認する。
+ */
+TEST_F(CDlgGrepTest, DetermineDefaultExcludePatterns_AlreadySetSkipped)
+{
+	CDlgGrep dlg;
+	wcscpy_s(dlg.m_szExcludeFile, L"*.tmp");
+	dlg.DetermineDefaultExcludePatterns();
+	EXPECT_STREQ(L"*.tmp", dlg.m_szExcludeFile);
+}
+
+// ----- :HWND: トークンのテスト -----
+
+/*!
+ * @brief HWNDフォーマット(BuildHwndFileToken)のテスト (DG-15)
+ * @remark 指定されたHWND値を `:HWND:` プレフィックス付きの固定長文字列として正しくフォーマットすることを確認する。
+ */
+TEST_F(CDlgGrepTest, BuildHwndFileToken_Format)
+{
+	auto hwnd = (HWND)(uintptr_t)0xABCD1234;
+	std::wstring token = CDlgGrep::BuildHwndFileToken(hwnd);
+#ifdef _WIN64
+	EXPECT_STREQ(L":HWND:00000000abcd1234", token.c_str());		// 64bit は 16 桁固定
+#else
+	EXPECT_STREQ(L":HWND:abcd1234", token.c_str());				// 32bit は 8 桁固定
+#endif
+}
+
+/*!
+ * @brief HWNDフォーマット(BuildHwndFileToken)のテスト(NULL指定) (DG-16)
+ * @remark HWNDがNULLの場合でも正しくゼロ埋めしてフォーマットすることを確認する。
+ */
+TEST_F(CDlgGrepTest, BuildHwndFileToken_NullHwnd)
+{
+	HWND hwnd = nullptr;
+	std::wstring token = CDlgGrep::BuildHwndFileToken(hwnd);
+#ifdef _WIN64
+	EXPECT_STREQ(L":HWND:0000000000000000", token.c_str());		// NULL でもゼロ埋め
+#else
+	EXPECT_STREQ(L":HWND:00000000", token.c_str());				// NULL でもゼロ埋め
+#endif
+}
+
+/*!
+ * @brief HWNDファイルトークン判定(IsHwndFileToken)のポジティブテスト (DG-17)
+ * @remark 正しいフォーマットの `:HWND:` 文字列に対して true を返すことを確認する。
+ */
+TEST_F(CDlgGrepTest, IsHwndFileToken_PositiveCases)
+{
+	EXPECT_TRUE(CDlgGrep::IsHwndFileToken(L":HWND:00000000"));	// 正しい接頭辞なら true
+	EXPECT_TRUE(CDlgGrep::IsHwndFileToken(L":HWND:abc123"));
+}
+
+/*!
+ * @brief HWNDファイルトークン判定(IsHwndFileToken)のネガティブテスト (DG-18)
+ * @remark 異なるフォーマットや通常のファイル名に対して false を返すことを確認する。
+ */
+TEST_F(CDlgGrepTest, IsHwndFileToken_NegativeCases)
+{
+	EXPECT_FALSE(CDlgGrep::IsHwndFileToken(L"*.cpp"));			// 通常のファイル名は false
+	EXPECT_FALSE(CDlgGrep::IsHwndFileToken(L":hwnd:abc"));
+	EXPECT_FALSE(CDlgGrep::IsHwndFileToken(L":HWND"));
+	EXPECT_FALSE(CDlgGrep::IsHwndFileToken(L""));
+}
+
+// =============================================================================
+// フル GUI 結合テスト (Phase 5 / DG-20 ～ 27)
+// =============================================================================
+
+struct CDlgGrepGuiTest : public ::testing::Test, public env::ShareDataTestSuite {
+	static void SetUpTestSuite() { SetUpShareData(); }
+	static void TearDownTestSuite() { TearDownShareData(); }
+
+	std::filesystem::path m_testDir;
+
+	void SetUp() override {
+		if (::GetModuleHandleW(nullptr) == nullptr) {
+			GTEST_SKIP() << "GUI not available";
+		}
+
+		// tests1.exe の配置ディレクトリ基準で一時フォルダを作成（GetTempPath はパス非依存で環境差異が出るため使わない）
+		std::wstring exePath(MAX_PATH, L'\0');
+		exePath.resize(::GetModuleFileNameW(nullptr, exePath.data(), MAX_PATH));
+		m_testDir = std::filesystem::path(exePath).parent_path() / L"test_grep_gui";
+		std::filesystem::create_directories(m_testDir);
+
+		// フォルダ存在チェックを通過させるためのダミーファイル
+		std::ofstream ofs(m_testDir / L"dummy.cpp", std::ios::trunc);
+		ofs << "int main() { return 0; }\n";
+	}
+
+	void TearDown() override {
+		std::error_code ec;
+		std::filesystem::remove_all(m_testDir, ec);
+	}
+};
+
+/*!
+ * @brief キャンセル即時送信テスト (DG-20)
+ * @remark DoModal に対して直ちに IDCANCEL を送信し、0 を返して正常終了することを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalCancelImmediately_NoException)
+{
+	dialog::ModalDialogCloser closer; // デフォルトで IDCANCEL を送信
+	CDlgGrep dlg;
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(0, rc);
+}
+
+/*!
+ * @brief 有効入力でのOK送信テスト (DG-21)
+ * @remark 有効な検索キーワード・ファイル・フォルダを指定して IDOK を送信し、正常に受理されて 1 (OK) が返ることを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalOK_WithValidInputs_ReturnsOK)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+	});
+	CDlgGrep dlg;
+	dlg.m_strText = L"search";
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szFolder, m_testDir.c_str());
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(1, rc);
+}
+
+/*!
+ * @brief フォルダ未指定時のフォールバック動作 (DG-22)
+ * @remark フォルダが空の状態で IDOK を送信した場合、
+ *         GetData 内でカレントフォルダ等にフォールバックして成功する仕様を凍結する。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalOK_EmptyFolder_FallsBackToCurrentDir)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		HWND hOwner = ::GetWindow(hWnd, GW_OWNER);
+		if (hOwner != nullptr) {
+			// MessageBox を閉じる
+			::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+			// 本体をキャンセルで閉じて復帰させる
+			::PostMessageW(hOwner, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+		} else {
+			// 本体のダイアログには OK を送る
+			::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+		}
+	});
+
+	CDlgGrep dlg;
+	dlg.m_strText = L"search";
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	dlg.m_szFolder[0] = L'\0';			// 空のフォルダ
+
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(1, rc);					// 空フォルダでも GetData 内でカレントフォルダ等にフォールバックして成功する仕様を凍結
+}
+
+/*!
+ * @brief 不正正規表現指定時の DoModal 動作 (DG-23)
+ * @remark 不正な正規表現を指定して IDOK を送信した場合でも、
+ *         DoModal は成功（rc=1）を返す仕様を凍結する。
+ *         構文チェックは DoModal 内ではブロッキングしない。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalOK_InvalidRegex_StillReturnsOK)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		HWND hOwner = ::GetWindow(hWnd, GW_OWNER);
+		if (hOwner != nullptr) {
+			::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+			::PostMessageW(hOwner, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+		} else {
+			::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+		}
+	});
+
+	CDlgGrep dlg;
+	dlg.m_strText = L"(invalid";
+	dlg.m_sSearchOption.bRegularExp = true;
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szFolder, m_testDir.c_str());
+
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(1, rc);					// 不正正規表現でも DoModal は成功する仕様を凍結（構文チェックは DoModal 内でブロッキングしない）
+}
+
+/*!
+ * @brief セミコロン区切りフォルダの仕様凍結テスト (DG-24)
+ * @remark セミコロンは CreateFolders で区切り文字として分割される仕様（既知制限）。
+ *         セミコロン含みの単一フォルダとしては扱えないため、
+ *         セミコロンで区切った 2 つの実在フォルダを渡して IDOK が返ることを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalOK_FolderWithSemicolon_IsSplitBySeparator)
+{
+	// セミコロンを含むパスは CreateFolders で分割されるため、
+	// 「セミコロン含みの単一フォルダ」としては扱えない。
+	// これは Sakura の仕様（既知制限）。
+	//
+	// 代わりに、セミコロンで区切った 2 つの実在フォルダを検証する。
+	auto dir1 = m_testDir / L"folderA";
+	auto dir2 = m_testDir / L"folderB";
+	std::filesystem::create_directories(dir1);
+	std::filesystem::create_directories(dir2);
+
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+	});
+	CDlgGrep dlg;
+	dlg.m_strText = L"foo";
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	std::wstring folders = dir1.wstring() + L";" + dir2.wstring();
+	dlg.m_szFolder = folders;
+
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(1, rc);
+}
+
+/*!
+ * @brief 複数絶対パス指定時の挙動 (DG-25)
+ * @remark セミコロン区切りで各々が有効な絶対パスである場合、2つのフォルダとしてそのまま保持（または解決）することを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalOK_MultipleFolders_AllResolved)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+	});
+	auto sub1 = m_testDir / L"sub1";
+	auto sub2 = m_testDir / L"sub2";
+	std::filesystem::create_directories(sub1);
+	std::filesystem::create_directories(sub2);
+	const std::wstring folders = sub1.wstring() + L";" + sub2.wstring();
+
+	CDlgGrep dlg;
+	dlg.m_strText = L"foo";
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	dlg.m_szFolder = folders;
+
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(1, rc);
+	// 正規化の詳細は実装依存のため、成功して戻ることのみ確認する
+}
+
+/*!
+ * @brief 通常検索時の履歴追加 (DG-26)
+ * @remark 「自テキスト検索」ではない場合、実行によって検索キーワード等を共有データの履歴に記録することを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalOK_HistoryRecordedExceptFromThisText)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+	});
+	CDlgGrep dlg;
+	dlg.m_strText = L"history_test";
+	wcscpy_s(dlg.m_szFile, L"*.h");
+	wcscpy_s(dlg.m_szFolder, m_testDir.c_str());
+	dlg.m_bFromThisText = FALSE;
+	
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	dlg.DoModal(hInstance, nullptr, nullptr);
+	
+	auto* share = GetDllShareDataPtr();
+	EXPECT_STREQ(L"history_test", share->m_sSearchKeywords.m_aSearchKeys[0]);
+}
+
+/*!
+ * @brief 自テキスト検索時の履歴非汚染 (DG-27)
+ * @remark 「自テキスト検索」モードでの実行時は、一時的な検索であるため共有データの履歴を汚染しないことを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, DoModalOK_FromThisText_DoesNotPolluteHistory)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+	});
+	
+	auto* share = GetDllShareDataPtr();
+	// 履歴の先頭に別の値を入れておく
+	wcscpy_s(share->m_sSearchKeywords.m_aSearchKeys[0], _MAX_PATH, L"prev_key");
+
+	CDlgGrep dlg;
+	dlg.m_strText = L"pollute_test";
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szFolder, m_testDir.c_str());
+	dlg.m_bFromThisText = TRUE;
+	
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	dlg.DoModal(hInstance, nullptr, nullptr);
+	
+	// 履歴が更新されていないことを確認
+	EXPECT_STREQ(L"prev_key", share->m_sSearchKeywords.m_aSearchKeys[0]);
+}
+
+/*!
+ * @brief 除外ファイル正規表現チェックボックスのトグル処理 (DG-28)
+ * @remark IDC_CHK_EXCLUDE_FILE_REGEXP の ON/OFF をそれぞれで OnBnClicked 内の
+ *         既定パターン入れ替え分岐（ワイルドカード→正規表現）を実行させること確認する。
+ *         アサーションは、クラッシュせず IDCANCEL で復帰すること（網羅目的）。
+ */
+TEST_F(CDlgGrepGuiTest, DoModal_ToggleExcludeFileRegexp_SwapsDefaultPattern)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		// 除外ファイル欄をワイルドカード既定値に固定してから ON にする
+		//   → bRegexp=true 分岐（pszOther=WILDCARD と一致 → REGEX へ SetText）
+		::SetDlgItemTextW(hWnd, IDC_COMBO_EXCLUDE_FILE, DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD);
+		::CheckDlgButton(hWnd, IDC_CHK_EXCLUDE_FILE_REGEXP, BST_CHECKED);
+		::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDC_CHK_EXCLUDE_FILE_REGEXP, BN_CLICKED), 0);
+
+		// 続けて OFF にする
+		//   → bRegexp=false 分岐（pszOther=REGEX と一致 → WILDCARD へ SetText）
+		::CheckDlgButton(hWnd, IDC_CHK_EXCLUDE_FILE_REGEXP, BST_UNCHECKED);
+		::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDC_CHK_EXCLUDE_FILE_REGEXP, BN_CLICKED), 0);
+
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+	});
+
+	CDlgGrep dlg;
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr);
+	EXPECT_EQ(0, rc);	// キャンセルで 0
+}
+
+
+// =============================================================================
+// CDlgGrepReplace 結合テスト
+// =============================================================================
+
+/*!
+ * @brief Grep置換ダイアログのキャンセル即時送信テスト
+ * @remark DoModal が LoadDefaultsFromShareData を経由して起動し、
+ *         IDCANCEL で 0 を返して正常終了することを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, GrepReplace_DoModalCancelImmediately_NoException)
+{
+	dialog::ModalDialogCloser closer; // デフォルトで IDCANCEL を送信
+	CDlgGrepReplace dlg;
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr, 0);
+	EXPECT_EQ(0, rc);
+}
+
+/*!
+ * @brief Grep置換ダイアログの有効入力での OK 送信テスト
+ * @remark 有効な検索キー・置換キー・ファイル・フォルダを指定して IDOK を送信し、
+ *         全検証通過後に共有設定 m_bGrepBackup が書き込まれることを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, GrepReplace_DoModalOK_WritesBackupSetting)
+{
+	dialog::ModalDialogCloser closer([](HWND hWnd) {
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), 0);
+	});
+	CDlgGrepReplace dlg;
+	dlg.m_strText = L"search";
+	dlg.m_strText2 = L"replace";
+	wcscpy_s(dlg.m_szFile, L"*.cpp");
+	wcscpy_s(dlg.m_szFolder, m_testDir.c_str());
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr, 0);
+	EXPECT_EQ(1, rc);	// 全検証通過 → m_bGrepBackup 書き込み行（L198）を通過
+}
+
+
+/*!
+ * @brief 置換後コンボの遅延投入テスト (CBN_DROPDOWN)
+ * @remark OnInitDialog はコンボへ履歴を投入しないため、初回ドロップダウン時に
+ *         OnCbnDropDown が置換履歴から遅延投入することを確認する。
+ */
+TEST_F(CDlgGrepGuiTest, GrepReplace_ComboText2DropDown_PopulatesFromHistory)
+{
+	// 置換履歴を 1 件登録する（共有データ経由で OnCbnDropDown のループ本体を通す）
+	{
+		CRecentReplace cRecentReplace;
+		cRecentReplace.AppendItem(L"replhist");
+		cRecentReplace.Terminate();
+	}
+
+	// 期待値は共有データの現在の履歴件数から算出する（先行テストの履歴残留に依存しない）
+	const int nExpectedCount = int(GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.size());
+
+	int nComboCount = -1;
+	dialog::ModalDialogCloser closer([&nComboCount](HWND hWnd) {
+		HWND hwndCombo = ::GetDlgItem(hWnd, IDC_COMBO_TEXT2);
+		// 初回ドロップダウン → CB_GETCOUNT == 0 分岐 → 履歴ループで投入
+		::SendMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDC_COMBO_TEXT2, CBN_DROPDOWN), reinterpret_cast<LPARAM>(hwndCombo));
+		nComboCount = int(::SendMessageW(hwndCombo, CB_GETCOUNT, 0, 0));
+		::PostMessageW(hWnd, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), 0);
+	});
+
+	CDlgGrepReplace dlg;
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const int rc = dlg.DoModal(hInstance, nullptr, nullptr, 0);
+	EXPECT_EQ(0, rc);				// キャンセルで 0
+	EXPECT_EQ(nExpectedCount, nComboCount);	// 履歴件数どおり遅延投入される
+	EXPECT_GE(nComboCount, 1);				// 少なくともシードした 1 件は投入される
+
+	// 後続テストへの影響を避けるため登録した履歴を削除する
+	{
+		CRecentReplace cRecentReplace;
+		cRecentReplace.DeleteItem(0);
+		cRecentReplace.Terminate();
+	}
+}
+

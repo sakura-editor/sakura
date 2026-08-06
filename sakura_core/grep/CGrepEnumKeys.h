@@ -1,14 +1,13 @@
 ﻿/*!	@file
-	
-	@brief GREP support library
-	
+	@brief GREP support library - 検索/除外ファイルパターン管理
+	@note !プレフィックス除外ファイル（正規表現/ワイルドカードは呼び出し側フラグで切替）・AddExceptFile/Folder 追加
 	@author wakura, Moca
 	@date 2008/04/28
 */
 /*
 	Copyright (C) 2008, wakura
 	Copyright (C) 2011, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,7 +15,9 @@
 #define SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_
 #pragma once
 
+#include <algorithm>
 #include <list>
+#include <string>
 #include <vector>
 #include <windows.h>
 #include <string.h>
@@ -24,7 +25,7 @@
 #include "util/string_ex.h"
 #include "util/file.h"
 
-typedef std::vector< LPCWSTR > VGrepEnumKeys;
+using VGrepEnumKeys = std::vector< std::wstring >;
 
 class CGrepEnumKeys {
 
@@ -40,6 +41,9 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
+	// 除外ファイルを正規表現モードのとき格納される除外パターン（SetFileKeys で格納、DoGrepTree 等でマッチング）
+	std::vector<std::wstring> m_vecExceptFileRegexPatterns;
+
 public:
 	CGrepEnumKeys() noexcept = default;
 	CGrepEnumKeys(const Me&) = delete;
@@ -50,17 +54,16 @@ public:
 		ClearItems();
 	}
 
-	// 除外ファイルの2つの解析済み配列から1つのリストを作る
-	auto GetExcludeFiles() const ->  std::vector<decltype(m_vecExceptFileKeys)::value_type> {
-		std::vector<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
-		const auto& fileKeys = m_vecExceptFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), fileKeys.cbegin(), fileKeys.cend() );
-		const auto& absFileKeys = m_vecExceptAbsFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), absFileKeys.cbegin(), absFileKeys.cend() );
+	// 除外ファイルパターンの統合リストを返す（Grep ヘッダー表示用）
+	auto GetExcludeFiles() const -> std::vector<std::wstring> {
+		std::vector<std::wstring> excludeFiles;
+		for( const auto& k : m_vecExceptFileKeys )    excludeFiles.emplace_back( k );
+		for( const auto& k : m_vecExceptAbsFileKeys ) excludeFiles.emplace_back( k );
+		for( const auto& p : m_vecExceptFileRegexPatterns ) excludeFiles.emplace_back( p );
 		return excludeFiles;
 	}
 
-	// 除外フォルダーの2つの解析済み配列から1つのリストを作る
+	// 除外フォルダーパターンの統合リストを返す（Grep ヘッダー表示用）
 	auto GetExcludeFolders() const ->  std::vector<decltype(m_vecExceptFolderKeys)::value_type> {
 		std::vector<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
 		const auto& folderKeys = m_vecExceptFolderKeys;
@@ -70,26 +73,57 @@ public:
 		return excludeFolders;
 	}
 
-	int SetFileKeys( LPCWSTR lpKeys ){
+	//! `!` プレフィックス（除外ファイル指定）1件の振り分け（SetFileKeys の CC 削減用）
+	//! @retval 0 正常 / 非0 ValidateKey のエラー番号
+	int AddExcludeFileKey( const WCHAR* p, bool bExcludeFileRegex ){
+		if( p[0] == L'\0' ){
+			// `!` 単体（空パターン）は無視する。
+			// 空の正規表現は全パスにマッチし全ファイル除外となるため登録しない。
+			return 0;
+		}
+		if( bExcludeFileRegex ){
+			// 正規表現モード: バリデーションせず正規表現リストへ
+			m_vecExceptFileRegexPatterns.emplace_back( p );
+			return 0;
+		}
+		// ワイルドカードモード: 不正文字などを検証したうえで、
+		// 相対パスは名前ベースの除外キーへ、絶対パスは絶対パス除外キーへ振り分ける（重複は登録しない）
+		if( int nValidStatus = ValidateKey( p ); 0 != nValidStatus ){
+			return nValidStatus;
+		}
+		if( _IS_REL_PATH( p ) ){
+			push_back_unique( m_vecExceptFileKeys, p );
+		}else{
+			push_back_unique( m_vecExceptAbsFileKeys, p );
+		}
+		return 0;
+	}
+
+	int SetFileKeys( LPCWSTR lpKeys, bool bExcludeFileRegex = false ){
 		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダー探索用
 		ClearItems();
-		
+
 		std::vector< std::wstring > patterns = SplitPattern(lpKeys);
 		for (size_t i = 0; i < patterns.size(); i++) {
 			const std::wstring& element = patterns[i];
 			const WCHAR* token = element.c_str();
 
+			// !プレフィックス: 除外ファイル。正規表現/ワイルドカードの区別は
+			// 呼び出し側のフラグ（-GOPT=E / チェックボックス）で決める。
+			if( token[0] == L'!' ){
+				if( int nValidStatus = AddExcludeFileKey( token + 1, bExcludeFileRegex ); 0 != nValidStatus ){
+					return nValidStatus;
+				}
+				continue;
+			}
+
 			//フィルタを種類ごとに振り分ける
 			enum KeyFilterType{
 				FILTER_SEARCH,
-				FILTER_EXCEPT_FILE,
 				FILTER_EXCEPT_FOLDER,
 			};
 			KeyFilterType keyType = FILTER_SEARCH;
-			if( token[0] == L'!' ){
-				token++;
-				keyType = FILTER_EXCEPT_FILE;
-			}else if( token[0] == L'#' ){
+			if( token[0] == L'#' ){
 				token++;
 				keyType = FILTER_EXCEPT_FOLDER;
 			}
@@ -108,12 +142,6 @@ public:
 //					push_back_unique( m_vecSearchFileKeys, token );
 					return 2; // 絶対パス指定は不可
 				}
-			}else if( keyType == FILTER_EXCEPT_FILE ){
-				if( bRelPath ){
-					push_back_unique( m_vecExceptFileKeys, token );
-				}else{
-					push_back_unique( m_vecExceptAbsFileKeys, token );
-				}
 			}else if( keyType == FILTER_EXCEPT_FOLDER ){
 				if( bRelPath ){
 					push_back_unique( m_vecExceptFolderKeys, token );
@@ -131,18 +159,12 @@ public:
 		return 0;
 	}
 
-	/*!
-		@brief 除外ファイルパターンを追加する
-		@param[in]	lpKeys	除外ファイルパターン
-	*/
+	// 除外ファイルパターンを追加する（既存パターンはクリアしない）
 	int AddExceptFile(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFileKeys, m_vecExceptAbsFileKeys);
 	}
 
-	/*!
-		@brief 除外フォルダーパターンを追加する
-		@param[in]	lpKeys	除外フォルダーパターン
-	*/
+	// 除外フォルダーパターンを追加する（既存パターンはクリアしない）
 	int AddExceptFolder(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
 	}
@@ -157,15 +179,12 @@ public:
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
 		auto nWildCardLen = int(wcslen(lpKeys));
-		WCHAR* pWildCard = new WCHAR[nWildCardLen + 1];
-		if (!pWildCard) {
-			return patterns;
-		}
-		wcscpy(pWildCard, lpKeys);
+		// my_strtok が書き換える作業バッファ。vector により例外時も解放される（RAII）
+		std::vector<WCHAR> wildCard(lpKeys, lpKeys + nWildCardLen + 1);
 
 		int nPos = 0;
 		WCHAR*	token;
-		while (nullptr != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
+		while (nullptr != (token = my_strtok<WCHAR>(wildCard.data(), nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
 			// "を取り除いて左に詰める
 			WCHAR* p;
 			WCHAR* q;
@@ -181,43 +200,31 @@ public:
 			}
 			*q = L'\0';
 
-			std::wstring element(token);
-			patterns.push_back(element);
+			patterns.emplace_back(token);
 		}
-		delete[] pWildCard;
 		return patterns;
 	}
 
 private:
 	void ClearItems( void ){
-		ClearEnumKeys(m_vecExceptFileKeys);
-		ClearEnumKeys(m_vecSearchFileKeys);
-		ClearEnumKeys(m_vecExceptFolderKeys);
-		ClearEnumKeys(m_vecSearchFolderKeys);
+		m_vecExceptFileKeys.clear();
+		m_vecSearchFileKeys.clear();
+		m_vecExceptFolderKeys.clear();
+		m_vecSearchFolderKeys.clear();
+		m_vecExceptAbsFileKeys.clear();
+		m_vecExceptAbsFolderKeys.clear();
+		m_vecExceptFileRegexPatterns.clear();  // 正規表現除外パターンもクリア
 		return;
 	}
-	void ClearEnumKeys( VGrepEnumKeys& keys ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			delete [] keys[ i ];
-		}
-		keys.clear();
-	}
 
-	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
+	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ) const {
 		if( ! IsExist( keys, addKey) ){
-			WCHAR* newKey = new WCHAR[ wcslen( addKey ) + 1 ];
-			wcscpy( newKey, addKey );
-			keys.push_back( newKey );
+			keys.emplace_back( addKey );
 		}
 	}
 
-	BOOL IsExist( VGrepEnumKeys& keys, LPCWSTR addKey ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			if( wcscmp( keys[ i ], addKey ) == 0 ){
-				return TRUE;
-			}
-		}
-		return FALSE;
+	BOOL IsExist( const VGrepEnumKeys& keys, LPCWSTR addKey ) const {
+		return std::find( keys.begin(), keys.end(), addKey ) != keys.end() ? TRUE : FALSE;
 	}
 
 	/*

@@ -12,7 +12,7 @@
 	Copyright (C) 2005, D.S.Koba, genta, susu
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -274,17 +274,18 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	CNativeW cmResponseFile = L"";
-	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
-	wcscpy( pszCmdLineWork, pszCmdLineSrc );
-	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
+	const int nCmdLineWorkSize = lstrlen( pszCmdLineSrc ) + 1;
+	LPWSTR pszCmdLineWork = new WCHAR[nCmdLineWorkSize];
+	wcscpy_s( pszCmdLineWork, nCmdLineWorkSize, pszCmdLineSrc );
+	int nCmdLineWorkLen = nCmdLineWorkSize - 1;
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != nullptr )
 	{
 		DEBUG_TRACE( L"OPT=[%s]\n", pszToken );
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
-		if( ( bParseOptDisabled ||
-			! (pszToken[0] == '-' || (pszToken[0] == '"' && pszToken[1] == '-')) )){
+		if( bParseOptDisabled ||
+			! (pszToken[0] == '-' || (pszToken[0] == '"' && pszToken[1] == '-')) ){
 
 			if( pszToken[0] == L'\"' ){
 				CNativeW cmWork;
@@ -484,6 +485,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 						m_gi.bGrepPaste = true;	break;
 					case 'O':
 						m_gi.bGrepBackup = true;	break;
+					case 'E':
+						m_gi.bGrepExcludeFileRegexp = true;	break;
 					default:
 						break;
 					}
