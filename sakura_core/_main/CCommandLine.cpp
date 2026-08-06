@@ -12,7 +12,7 @@
 	Copyright (C) 2005, D.S.Koba, genta, susu
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -484,6 +484,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 						m_gi.bGrepPaste = true;	break;
 					case 'O':
 						m_gi.bGrepBackup = true;	break;
+				case 'E':
+						m_gi.bGrepExcludeFileRegexp = true;	break;
 					default:
 						break;
 					}

@@ -15,6 +15,10 @@
 #define SAKURA_CGREPENUMFILEBASE_6B85547E_13E4_4183_AE06_B4D6395ABC88_H_
 #pragma once
 
+#include <memory>
+#include <string>
+#include <unordered_set>
+#include <utility>
 #include <vector>
 #include <windows.h>
 #include <string.h>
@@ -23,7 +27,7 @@
 #include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
-typedef std::pair< LPWSTR, DWORD > PairGrepEnumItem;
+typedef std::pair< std::wstring, DWORD > PairGrepEnumItem;
 typedef std::vector< PairGrepEnumItem > VPGrepEnumItem;
 
 class CGrepEnumOptions {
@@ -41,8 +45,16 @@ public:
 class CGrepEnumFileBase {
 private:
 	VPGrepEnumItem m_vpItems;
+	std::unordered_set< std::wstring > m_setItemNames;	//!< IsExist 用の名前索引（m_vpItems と同期して維持する）
 
 	using Me = CGrepEnumFileBase;
+
+	//! FindFirstFile ハンドルの RAII クローザ
+	struct FindHandleCloser {
+		void operator()( HANDLE h ) const {
+			if( h && h != INVALID_HANDLE_VALUE ) ::FindClose( h );
+		}
+	};
 
 public:
 	CGrepEnumFileBase() noexcept = default;
@@ -55,22 +67,13 @@ public:
 	}
 
 	void ClearItems( void ){
-		for( int i = 0; i < GetCount(); i++ ){
-			LPWSTR lp = m_vpItems[ i ].first;
-			m_vpItems[ i ].first = nullptr;
-			delete [] lp;
-		}
 		m_vpItems.clear();
+		m_setItemNames.clear();
 		return;
 	}
 
 	BOOL IsExist( LPCWSTR lpFileName ){
-		for( int i = 0; i < GetCount(); i++ ){
-			if( wcscmp( m_vpItems[ i ].first, lpFileName ) == 0 ){
-				return TRUE;
-			}
-		}
-		return FALSE;
+		return m_setItemNames.count( lpFileName ) != 0 ? TRUE : FALSE;
 	}
 
 	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = nullptr ){
@@ -86,7 +89,7 @@ public:
 
 	LPCWSTR GetFileName( int i ){
 		if( i < 0 || i >= GetCount() ) return nullptr;
-		return m_vpItems[ i ].first;
+		return m_vpItems[ i ].first.c_str();
 	}
 
 	DWORD GetFileSizeLow( int i ){
@@ -94,37 +97,22 @@ public:
 		return m_vpItems[ i ].second;
 	}
 
-	int Enumerates( LPCWSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = nullptr ){
+	int Enumerates( LPCWSTR lpBaseFolder, const VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = nullptr ){
 		int found = 0;
 
-		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, 4096 - 1) : 0; // FIXME: パス長の上限は暫定値。
-		for( int i = 0; i < (int)vecKeys.size(); i++ ){
-			const auto baseLen = cchBaseFolder;
-			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
-			if( nullptr == lpPath ) break;
-			wcscpy( lpPath, lpBaseFolder );
-			wcscpy( lpPath + baseLen, L"\\" );
-			wcscpy( lpPath + baseLen + 1, vecKeys[ i ] );
-			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
-			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
-			const WCHAR* keyDirSlash = wcsrchr( vecKeys[ i ], L'/' );
-			const WCHAR* keyDir;
-			if( keyDirYen == nullptr ){
-				keyDir = keyDirSlash;
-			}else if( keyDirSlash == nullptr ){
-				keyDir = keyDirYen;
-			}else if( keyDirYen < keyDirSlash ){
-				keyDir = keyDirSlash;
-			}else{
-				keyDir = keyDirYen;
-			}
-			const auto nKeyDirLen = keyDir ? keyDir - vecKeys[ i ] + 1 : 0;
+		const std::wstring baseFolder = lpBaseFolder ? lpBaseFolder : L"";
+		for( const auto& key : vecKeys ){
+			const std::wstring path = baseFolder + L"\\" + key;
+			// key ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
+			const size_t keyDirPos = key.find_last_of( L"\\/" );
+			const size_t nKeyDirLen = ( keyDirPos != std::wstring::npos ) ? keyDirPos + 1 : 0;
 
 			WIN32_FIND_DATA w32fd;
-			HANDLE handle = ::FindFirstFile( lpPath, &w32fd );
-			if( INVALID_HANDLE_VALUE != handle ){
+			// ハンドルは RAII で管理し、例外発生時も FindClose を保証する
+			std::unique_ptr< void, FindHandleCloser > handle( ::FindFirstFile( path.c_str(), &w32fd ) );
+			if( INVALID_HANDLE_VALUE != handle.get() ){
 				do{
-					if( !::PathMatchSpec(w32fd.cFileName, vecKeys[ i ] + nKeyDirLen) ){
+					if( !::PathMatchSpec(w32fd.cFileName, key.c_str() + nKeyDirLen) ){
 						continue;
 					}
 					if( option.m_bIgnoreHidden && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) ){
@@ -136,35 +124,30 @@ public:
 					if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
 						continue;
 					}
-					LPWSTR lpName = new WCHAR[ nKeyDirLen + wcslen( w32fd.cFileName ) + 1 ];
-					wcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
-					wcscpy( lpName + nKeyDirLen, w32fd.cFileName );
-					LPWSTR lpFullPath = new WCHAR[ baseLen + wcslen(lpName) + 2 ];
-					wcscpy( lpFullPath, lpBaseFolder );
-					wcscpy( lpFullPath + baseLen, L"\\" );
-					wcscpy( lpFullPath + baseLen + 1, lpName );
-					if( IsValid( w32fd, lpName ) ){
-						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){
+					std::wstring name = key.substr( 0, nKeyDirLen ) + w32fd.cFileName;
+					if( IsValid( w32fd, name.c_str() ) ){
+						const std::wstring fullPath = baseFolder + L"\\" + name;
+						if( pExceptItems && pExceptItems->IsExist( fullPath.c_str() ) ){
 						}else{
-							m_vpItems.emplace_back( lpName, w32fd.nFileSizeLow );
-							found++; // 2011.11.19
 							if( pExceptItems && nKeyDirLen ){
 								// フォルダーを含んだパスなら検索済みとして除外指定に追加する
-								pExceptItems->m_vpItems.emplace_back( lpFullPath, w32fd.nFileSizeLow );
-							}else{
-								delete [] lpFullPath;
+								pExceptItems->AddItem( fullPath, w32fd.nFileSizeLow );
 							}
-							continue;
+							AddItem( std::move( name ), w32fd.nFileSizeLow );
+							found++; // 2011.11.19
 						}
 					}
-					delete [] lpName;
-					delete [] lpFullPath;
-				}while( ::FindNextFile( handle, &w32fd ) );
-				::FindClose( handle );
+				}while( ::FindNextFile( handle.get(), &w32fd ) );
 			}
-			delete [] lpPath;
 		}
 		return found;
+	}
+
+private:
+	//! 列挙結果へ 1 件追加する（IsExist 用の名前索引も同期して更新する）
+	void AddItem( std::wstring name, DWORD dwFileSizeLow ){
+		m_setItemNames.insert( name );
+		m_vpItems.emplace_back( std::move( name ), dwFileSizeLow );
 	}
 };
 

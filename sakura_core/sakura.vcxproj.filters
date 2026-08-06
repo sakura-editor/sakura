@@ -202,6 +202,9 @@
     <ClInclude Include="..\sakura_core\grep\CGrepEnumKeys.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\grep\GrepPathFormat.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
     <ClInclude Include="..\sakura_core\env\CHokanMgr.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
