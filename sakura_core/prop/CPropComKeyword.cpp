@@ -558,7 +558,6 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, [[maybe_unused]] HWND hwnd
 {
 	bool	bCase = false;
 	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
-	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase( nIdx, bCase );
 	CImpExpKeyWord	cImpExpKeyWord( m_Common, nIdx, bCase );
 
 	// インポート
@@ -578,8 +577,9 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, [[maybe_unused]] HWND hwnd
 	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 	SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
-	bool	bCase;
-	CImpExpKeyWord	cImpExpKeyWord( m_Common, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, bCase );
+	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
+	bool	bCase = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordCase( nIdx );
+	CImpExpKeyWord	cImpExpKeyWord( m_Common, nIdx, bCase );
 
 	// エクスポート
 	if (!cImpExpKeyWord.ExportUI( G_AppInstance(), hwndDlg )) {
@@ -636,6 +636,7 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 
 	ListView_DeleteAllItems( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ) );
 	if( 0 <= nIdx ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYSETRENAME ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELSET ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KEYWORDCASE ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ), TRUE );
@@ -645,17 +646,20 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 		//	なのでここで無効にしておく．
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYCLEAN ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_IMPORT ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EXPORT ), TRUE );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, FALSE );
 
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYSETRENAME ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELSET ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KEYWORDCASE ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADDKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYCLEAN ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_IMPORT ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EXPORT ), FALSE );
 		return;
