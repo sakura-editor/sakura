@@ -5,7 +5,7 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "util/os.h"
-#include "util/string_ex.h"
+#include "util/tchar_convert.h"
 
 struct MockUser32 final : public User32
 {
@@ -22,4 +22,4 @@ struct MockUser32 final : public User32
 #define EXPECT_ERROUT(statementExpression, expected) \
 	testing::internal::CaptureStderr(); \
 	statementExpression; \
-	EXPECT_STREQ(strprintf(L"%s\n", expected).data(), u8stowcs(testing::internal::GetCapturedStderr()).data())
+	EXPECT_THAT(cxx::to_wstring(testing::internal::GetCapturedStderr(), CP_UTF8), StrEq(std::format(L"{:s}\n", expected)))
