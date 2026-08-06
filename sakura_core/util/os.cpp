@@ -436,6 +436,12 @@ std::vector<std::filesystem::path> GlobalDropFiles::data() const & {
 	});
 }
 
+namespace {
+//! SAKURAClipW形式の先頭に置く文字数フィールドの型。
+//! 定義を分散させると異なるビルド間でレイアウトがずれるので、CClipboard の定義を唯一の正とする。(issue #2325)
+using size_type = CClipboard::SAKURAClipW_LengthFieldType;
+} // end of anonymous namespace
+
 //文字列を指定して必要サイズを計算する
 /* static */ size_t GlobalSakura::CalcSize(std::wstring_view text) noexcept
 {
@@ -454,6 +460,8 @@ void GlobalSakura::SetText(std::wstring_view text) const
 {
 	Lock([text](LPWSTR pStr, size_t cbSize) {
 		if (cbSize < CalcSize(text)) throw std::length_error("text length is too long.");
+		// 64bitビルドでは文字数フィールドで表せない長さの文字列がありうる
+		if (std::size(text) > size_t(std::numeric_limits<size_type>::max())) throw std::length_error("text length is too long.");
 		*(size_type*)pStr = size_type(std::size(text));
 		std::ranges::copy(text, LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)));
 		return true;

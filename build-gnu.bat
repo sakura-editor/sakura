@@ -60,7 +60,7 @@ if defined no_test (
 )
 
 @rem run test.
-ctest --test-dir %BUILD_DIR% --build-config %configuration% --output-on-failure
+ctest --test-dir %BUILD_DIR% --build-config %configuration% --output-on-failure -V
 if errorlevel 1 (
 	echo ctest failed. errorlevel %errorlevel%
 	exit /b 1

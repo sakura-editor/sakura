@@ -200,7 +200,9 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		m_nFormat = 0;
 	}
 	if( lpszText != nullptr ){
-		m_nFormat = bColumnSelect? 4: 3;	// 矩形を含めるか
+		// 長さフィールドで表せない長さのときは独自形式では受け渡さない
+		const bool bSakuraFormat = nTextLen <= CClipboard::SAKURAClipW_MaxLength;
+		m_nFormat = 2 + (bSakuraFormat? 1: 0) + (bColumnSelect? 1: 0);	// 独自形式・矩形を含めるか
 		m_pData = new DATA[m_nFormat];
 
 		i = 0;
@@ -216,15 +218,18 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 		m_pData[i].data = new BYTE[m_pData[i].size];
 		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), (LPSTR)m_pData[i].data, int(m_pData[i].size), nullptr, nullptr );
 
-		i++;
-		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
-		m_pData[i].size = sizeof(size_t) + nTextLen * sizeof( wchar_t );
-		m_pData[i].data = new BYTE[m_pData[i].size];
-		*(size_t*)m_pData[i].data = nTextLen;
-		memcpy_raw( m_pData[i].data + sizeof(size_t), lpszText, nTextLen * sizeof( wchar_t ) );
+		if( bSakuraFormat ){
+			using LengthField = CClipboard::SAKURAClipW_LengthFieldType;
+			i++;
+			m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
+			m_pData[i].size = sizeof(LengthField) + nTextLen * sizeof( wchar_t );
+			m_pData[i].data = new BYTE[m_pData[i].size];
+			*(LengthField*)m_pData[i].data = (LengthField)nTextLen;
+			memcpy_raw( m_pData[i].data + sizeof(LengthField), lpszText, nTextLen * sizeof( wchar_t ) );
+		}
 
-		i++;
 		if( bColumnSelect ){
+			i++;
 			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );
 			m_pData[i].size = 1;
 			m_pData[i].data = new BYTE[1];

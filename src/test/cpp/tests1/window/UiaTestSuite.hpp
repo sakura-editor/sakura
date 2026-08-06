@@ -7,11 +7,15 @@
 #pragma once
 
 #include "cxx/com_pointer.hpp"
+#include "cxx/type_of_Nth_lambda_arg.hpp"
 #include "dlg/ModalDialogCloser.hpp"
 #include "util/tchar_convert.h"
 
 // UI Automation経由でGUI操作を行う
 #include <UIAutomation.h>
+
+#include "testing/HResultEq.hpp"
+#include "testing/StartEditorProcess.hpp"
 
 namespace cxx {
 
@@ -55,18 +59,42 @@ public:
 	}
 };
 
+template<typename TQuery, typename R = cxx::lambda_traits<TQuery>::return_type>
+R WaitForQuery(
+	TQuery query,
+	std::stop_token st,
+	ULONGLONG timeoutMillis,
+	DWORD intervalMillis = 200
+)
+{
+	const auto startTick = ::GetTickCount64();
+
+	while (!st.stop_requested()) {
+		// 脱出条件を満たしたら抜ける
+		auto result = query();
+		if (result) return result;
+
+		// タイムアウトしたら抜ける
+		const auto elapsed = ::GetTickCount64() - startTick;	// 経過時間
+		if (timeoutMillis <= elapsed) return result;
+
+		// 停止要求が来ていたら待機せずに抜ける
+		if (st.stop_requested()) return result;
+
+		// GUI待機なので残り時間を考慮して待機する
+		const auto remaining = timeoutMillis - elapsed;			// 残り時間
+		::Sleep(std::min(intervalMillis, DWORD(remaining)));
+	}
+
+	return {};
+}
+
 } // namespace cxx
 
 namespace window {
 
 //! デフォルトの待機時間
 static constexpr auto defaultTimeoutMillis = 5000;
-
-HWND WaitForDialog(
-	const std::wstring& title,
-	std::stop_token st = {},
-	ULONGLONG timeoutMillis = defaultTimeoutMillis
-);
 
 HWND WaitForPopupMenu(
 	std::stop_token st,
@@ -94,11 +122,9 @@ struct UiaTestSuite
 
 	static inline std::unique_ptr<cxx::COleInit> pcOleInit = nullptr;
 
-	static void EmulateInvokeButton(
-		IUIAutomation* pAutomation,
-		_In_ HWND hWndDlg,
-		std::wstring_view caption,
-		std::stop_token st
+	static BOOL CALLBACK CloseBlockingWindowProc(
+		_In_ HWND   hWnd,
+		_In_ LPARAM lParam [[maybe_unused]]
 	);
 
 	static void EmulateInvokeButton(
@@ -108,6 +134,13 @@ struct UiaTestSuite
 		std::stop_token st
 	);
 
+	static HWND GetActivePage(
+		HWND hWndDlg,
+		std::stop_token st = {},
+		ULONGLONG timeoutMillis = 5000
+	);
+
+	//! UI Automationでメニュー項目選択を偽装
 	static void EmulateInvokeMenuItem(
 		IUIAutomation* pAutomation,
 		_In_ HWND hWndPopupMenu,
@@ -115,29 +148,22 @@ struct UiaTestSuite
 		std::stop_token st
 	);
 
-	static std::function<void(IUIAutomation*, HWND, std::stop_token)> EmulateEnterFileName(
-		const std::filesystem::path& path
-	);
-
-	static void EmulateEnterOpenFileName(
-		IUIAutomation* pAutomation,
-		const std::filesystem::path& path,
-		std::stop_token st = {}
-	);
-
-	static void EmulateEnterSaveFileName(
-		IUIAutomation* pAutomation,
-		const std::filesystem::path& path,
-		std::stop_token st = {}
-	);
-
-	//! UI AutomationでEnterキー押下を偽装
+	//! SendInputでEnterキー押下を偽装
 	static void EmulateHitEnter()
 	{
 		std::vector<INPUT> inputs{};
 		inputs.emplace_back(MakeKeyboardInput(VK_RETURN, false));
 		inputs.emplace_back(MakeKeyboardInput(VK_RETURN, true));
-		EXPECT_THAT(SendInput(inputs), Eq(std::size(inputs)));
+		ASSERT_THAT(SendInput(inputs), Eq(std::size(inputs)));
+	}
+
+	//! SendInputでESCキー押下を偽装
+	static void EmulateHitEscape()
+	{
+		std::vector<INPUT> inputs{};
+		inputs.emplace_back(MakeKeyboardInput(VK_ESCAPE, false));
+		inputs.emplace_back(MakeKeyboardInput(VK_ESCAPE, true));
+		ASSERT_THAT(SendInput(inputs), Eq(std::size(inputs)));
 	}
 
 	//! UI Automationでボタン押下を偽装
@@ -147,7 +173,7 @@ struct UiaTestSuite
 	{
 		IUIAutomationInvokePatternPtr pInvokePattern;
 		ASSERT_HRESULT_SUCCEEDED(pElement->GetCurrentPatternAs(UIA_InvokePatternId, IID_PPV_ARGS(&pInvokePattern)));
-		ASSERT_HRESULT_SUCCEEDED(pInvokePattern->Invoke());
+		ASSERT_HRESULT_EQ(pInvokePattern->Invoke(), S_OK);
 	}
 
 	//! UI Automationで値設定
@@ -161,6 +187,7 @@ struct UiaTestSuite
 		ASSERT_HRESULT_SUCCEEDED(pValuePattern->SetValue(_bstr_t{ ::SysAllocStringLen(std::data(val), UINT(std::size(val))) }));
 	}
 
+	//! SendInputでマウス移動を偽装するためのデータを作る
 	static INPUT MakeMouseInputMove(LONG x, LONG y)
 	{
 		const auto vx = ::GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -180,6 +207,7 @@ struct UiaTestSuite
 		return input;
 	}
 
+	//! SendInputでマウスホイールを偽装するためのデータを作る
 	static INPUT MakeMouseInputWheel(int delta)
 	{
 		INPUT input{};
@@ -191,6 +219,7 @@ struct UiaTestSuite
 		return input;
 	}
 
+	//! SendInputでキー押下を偽装するためのデータを作る
 	static INPUT MakeKeyboardInput(WORD virtualKey, bool isKeyUp = false)
 	{
 		INPUT input{};
@@ -202,24 +231,35 @@ struct UiaTestSuite
 		return input;
 	}
 
-	template <typename Func>
-	static void RunGuiTest(Func&& f)
+	template <typename TAction>
+	static void RunGuiTest(
+		TAction&& action
+	)
 	{
-		try {
-			std::forward<Func>(f)();
+#ifdef USE_STACK_TRACE
+		__try
+		{
+#endif
+			std::clog << "RunGuiTest() start" << std::endl;
+
+			std::forward<TAction>(action)();
+
+			std::clog << "RunGuiTest() end" << std::endl;
+
+#ifdef USE_STACK_TRACE
 		}
-		catch (const std::exception& e) {
-			FAIL() << "std::exception: " << typeid(e).name()
-				<< ": " << e.what();
+		__except (testing::OnUnhandledException(GetExceptionInformation()))
+		{
+			std::clog << "RunGuiTest() crashed." << std::endl;
 		}
-		catch (const _com_error& e) {
-			FAIL() << "_com_error: "
-				<< ": " << cxx::to_string(e.ErrorMessage());
-		}
-		catch (...) {
-			FAIL() << "unknown non-std exception";
-		}
+#endif
 	}
+
+	static void SendDlgCommand(
+		_In_ HWND hWndDlg,
+		int nIDDlgItem,
+		int notifyCode = BN_CLICKED
+	);
 
 	template<std::ranges::range T>
 	static UINT SendInput(T& inputs)
@@ -227,38 +267,63 @@ struct UiaTestSuite
 		return ::SendInput(UINT(std::size(inputs)), std::data(inputs), sizeof(decltype(inputs[0])));
 	}
 
+	static void SendPsmPressButton(
+		_In_ HWND hWndPropertySheet,
+		UINT button
+	);
+
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
-	static void SetUpUia();
+	static void SetUpUiaTestSuite();
 
 	/*!
 	 * テストスイートの終了後に1回だけ呼ばれる関数
 	 */
-	static void TearDownUia();
+	static void TearDownUiaTestSuite();
+
+	/*!
+	 * UIAテストケースの開始前に自分で呼ぶ関数
+	 */
+	void SetUpUia();
+
+	/*!
+	 * UIAテストケースの終了後に呼ばれる関数
+	 */
+	void TearDownUia();
+
+	/*!
+	 * @brief UI Automationを使ったテストを実行する
+	 */
+	template <class TAction>
+	void RunUiaAction(
+		TAction&& action
+	) const;
 
 	/*!
 	 * ダイアログを閉じるスレッドを開始する
 	 *
-	 * @param title タイトル
+	 * @param optTitle タイトル
 	 * @param action 閉じるアクション
 	 * @return ダイアログを閉じるためのスレッド
 	 */
 	std::jthread StartDialogCloser(
-		std::wstring_view title,
+		const std::optional<std::wstring>& optTitle,
 		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
-		ULONGLONG timeoutMillis = defaultTimeoutMillis
-	) const;
+		ULONGLONG timeoutMillis = defaultTimeoutMillis * 3
+	);
 
 	/*!
-	 * ファイルを開くダイアログを閉じるスレッドを開始する
+	 * ダイアログを閉じるスレッドを開始する
 	 *
-	 * @param path ファイルパス
-	 * @return ファイルを開くダイアログを閉じるためのスレッド
+	 * @param titleResourceId タイトルのリソースID
+	 * @param action 閉じるアクション
+	 * @return ダイアログを閉じるためのスレッド
 	 */
-	std::jthread StartEnterOpenFileName(
-		const std::filesystem::path& path
-	) const;
+	std::jthread StartDialogCloser(
+		int titleResourceId,
+		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action
+	);
 
 	/*!
 	 * ポップアップメニューを選択するスレッドを開始する
@@ -269,7 +334,19 @@ struct UiaTestSuite
 	std::jthread StartPopupMenuSelector(
 		std::wstring_view menuLabel,
 		ULONGLONG timeoutMillis = defaultTimeoutMillis
-	) const;
+	);
+
+	/*!
+	 * プロパティーシートを閉じるスレッドを開始する
+	 *
+	 * @param titleResourceId タイトルのリソースID
+	 * @param psButtonId ボタンID
+	 * @return プロパティーシートを閉じるためのスレッド
+	 */
+	std::jthread StartPropertySheetCloser(
+		int titleResourceId,
+		UINT psButtonId = PSBTN_OK
+	);
 
 	/*!
 	 * UI Automationを利用するスレッドを開始する
@@ -279,7 +356,7 @@ struct UiaTestSuite
 	 */
 	std::jthread StartUiaThread(
 		const std::function<void(IUIAutomation*, std::stop_token)>& action
-	) const;
+	);
 
 	/*!
 	 * ウィンドウを閉じるスレッドを開始する
@@ -294,18 +371,11 @@ struct UiaTestSuite
 		const std::optional<std::wstring>& optTitle,
 		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
 		ULONGLONG timeoutMillis = defaultTimeoutMillis
-	) const;
+	);
 
-	/*!
-	 * ダイアログを閉じるスレッドを開始する
-	 *
-	 * @param dialogTitle タイトル
-	 * @return ダイアログを閉じるためのスレッド
-	 */
-	std::jthread StartDialogCloser(
-		std::wstring_view dialogTitle,
-		ULONGLONG timeoutMillis = defaultTimeoutMillis
-	) const;
+	std::stop_source m_StopSource;
+	std::jthread m_Thread;
+	bool m_Timeout = false;
 };
 
 } // namespace env

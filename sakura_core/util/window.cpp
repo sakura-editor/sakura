@@ -155,8 +155,8 @@ void ActivateFrameWindow( HWND hwnd )
 {
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
 	DLLSHAREDATA* pShareData = &GetDllShareData();
-	if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
-		if( IsSakuraMainWindow( hwnd ) ){
+	if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
+		IsSakuraMainWindow(hwnd)) {
 			if( pShareData->m_sFlags.m_bEditWndChanging )
 				return;	// 切替の最中(busy)は要求を無視する
 			pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
@@ -172,7 +172,7 @@ void ActivateFrameWindow( HWND hwnd )
 				10000,
 				&dwResult
 			);
-		}
+
 	}
 
 	// 対象がdisableのときは最近のポップアップをフォアグラウンド化する
@@ -291,6 +291,26 @@ WORD GetTrackBarPos(HWND hWndDlg, int nIDDlgItem)
 int GetUpDownPos(HWND hWndDlg, int nIDDlgItem)
 {
 	return int(::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_GETPOS, 0L, 0L));
+}
+
+/*!
+ * @brief ウィンドウのテキストを取得する
+ */
+SGetTextResult GetWindowTextW(HWND hWnd)
+{
+	// 必要な文字数を確認する
+	const auto cchRequired = ::GetWindowTextLengthW(hWnd);
+	if (!cchRequired) return SGetTextResult{ std::wstring() };
+
+	// バッファを確保する
+	std::wstring buffer(cchRequired, L'\0');
+
+	// 文字列を取得する
+	const auto actualCopied = ::GetWindowTextW(hWnd, std::data(buffer), cchRequired + 1);
+	buffer.resize(actualCopied);
+
+	// バッファを所有権ごと呼出元に返す
+	return SGetTextResult{ std::move(buffer) };
 }
 
 /*!
