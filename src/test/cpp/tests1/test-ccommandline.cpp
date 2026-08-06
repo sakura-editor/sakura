@@ -911,6 +911,8 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
 	User32::resetInstance();
 }
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 /*!
  * @brief 長過ぎるファイルパスに関する仕様
  * @remark _MAX_PATH - 1を超えるファイル名は利用できない
@@ -922,23 +924,21 @@ TEST(CCommandLine, ParseTooLongFilePath)
 
 	// _MAX_PATH - 1を超えるパスは無視される
 	CCommandLine cCommandLine;
-	std::wstring strCmdLine;
 	std::wstring strPath(_MAX_PATH, L'a');
 	// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
 	const auto expectedMessage = strprintf(LS(STR_ERR_FILEPATH_TOO_LONG), std::data(strPath));
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expectedMessage), StrEq(L"FileNameError"), _, _)).WillOnce(Return(MB_OK));
-	strprintf(strCmdLine, L"%s test.txt", strPath.c_str());
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expectedMessage), StrEq(L"FileNameError"), _, _))
+		.Times(2)
+		.WillOnce(Return(MB_OK))
+		.WillOnce(Return(MB_OK));
+	const auto strCmdLine = std::format(L"{:s} \"{:s}\" test.txt", strPath, strPath);
 	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
-	// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
-	//EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetOpenFile());
-	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
+	EXPECT_THAT(cCommandLine.GetOpenFile(), StrEq(GetLocalPath(L"test.txt")));
+	EXPECT_THAT(cCommandLine.GetFileName(0), IsNull());
+	EXPECT_THAT(cCommandLine.GetFileNum(), Eq(0));
 
 	User32::resetInstance();
 }
-
-// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
-#ifndef __MINGW32__
 
 /*!
  * @brief ファイルパスに指定できる上限文字列長に関する仕様
@@ -958,15 +958,14 @@ TEST(CCommandLine, ParseMaxFilePath)
 	// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
 	const auto expectedMessage = strprintf(LS(STR_ERR_FILEPATH_TOO_LONG), std::data(strPath));
 	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expectedMessage), StrEq(L"FileNameError"), _, _)).Times(0);	// エラーにならないので0回表示。
-	std::wstring strCmdLine;
-	strprintf(strCmdLine, L"%s test.txt", strPath.c_str());
+	const auto strCmdLine = std::format( L"{:s} test.txt", strPath);
 	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
-	EXPECT_STREQ(strPath.data(), cCommandLine.GetOpenFile());
-	EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetFileName(0));
-	EXPECT_EQ(NULL, cCommandLine.GetFileName(1));
-	EXPECT_EQ(1, cCommandLine.GetFileNum());
+	EXPECT_THAT(cCommandLine.GetOpenFile(), StrEq(strPath.c_str()));
+	EXPECT_THAT(cCommandLine.GetFileName(0), StrEq(GetLocalPath(L"test.txt")));
+	EXPECT_THAT(cCommandLine.GetFileName(1), IsNull());
+	EXPECT_THAT(cCommandLine.GetFileNum(), Eq(1));
 
 	User32::resetInstance();
 }
 
-#endif //ifndef __MINGW32__
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
