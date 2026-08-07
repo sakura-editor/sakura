@@ -49,6 +49,8 @@
 #include "config/app_constants.h"
 #include "env/CommonSetting.h"
 
+#include "eval_outputs.hpp"
+
 #include "tests1_rc.h"
 
 using namespace std::literals::string_literals;
@@ -291,6 +293,50 @@ TEST_F(TrayWndTest, OpenNewEditor102)
 
 	// 設定を元に戻す
 	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+TEST_F(TrayWndTest, TerminateApplication101)
+{
+	GetDllShareData().m_Common.m_sGeneral.m_bExitConfirm = false;
+
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+
+	User32::setInstance<MockUser32>();
+	auto pUser32 = (MockUser32*)User32::getInstance();
+
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _)).Times(0);
+
+	const HWND hWndFrom = nullptr;
+	CControlTray::TerminateApplication(hWndFrom);
+
+	User32::resetInstance();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+
+	GetDllShareData().m_Common.m_sGeneral.m_bExitConfirm = false;
+}
+
+TEST_F(TrayWndTest, TerminateApplication102)
+{
+	GetDllShareData().m_Common.m_sGeneral.m_bExitConfirm = true;
+
+	GetDllShareData().m_sNodes.m_nEditArrNum = 1;
+
+	User32::setInstance<MockUser32>();
+	auto pUser32 = (MockUser32*)User32::getInstance();
+
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"現在開いている編集用のウィンドウをすべて閉じて終了しますか?"), _, _, _)).WillOnce(Return(IDNO));
+
+	const HWND hWndFrom = nullptr;
+	CControlTray::TerminateApplication(hWndFrom);
+
+	User32::resetInstance();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+
+	GetDllShareData().m_Common.m_sGeneral.m_bExitConfirm = false;
 }
 
 TEST_F(TrayWndTest, DISABLED_OnCreate101)	// パラメーター不正の考慮がないので呼べない

@@ -52,6 +52,20 @@ struct CPpaTest : public ::testing::Test, public window::EditorTestSuite, public
 
 		TearDownUiaTestSuite();
 	}
+
+	/*!
+	 * テストが起動される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override {
+		User32::setInstance<MockUser32>();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		User32::resetInstance();
+	}
 };
 
 /*!
@@ -151,42 +165,52 @@ TEST_F(CPpaTest, GetDeclarations)
  */
 TEST_F(CPpaTest, ppaErrorProc)
 {
+	auto pUser32 = (MockUser32*)User32::getInstance();
+
 	// 既にエラーフラグが立っていたらメッセージは出さない
 	info->m_bError = true;
 	CPPA::CallErrorProc(*info, int(F_FILENEW) + 1, nullptr);
 
 	// コマンドエラー
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, int(F_FILENEW) + 1, nullptr), L"関数の実行エラー\nprocedure S_FileNew; index 30101;");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"関数の実行エラー\nprocedure S_FileNew; index 30101;"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, int(F_FILENEW) + 1, nullptr);
 
 	// 関数エラー
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, int(F_GETFILENAME) + 1, nullptr), L"関数の実行エラー\nfunction S_GetFilename: string; index 40001;");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"関数の実行エラー\nfunction S_GetFilename: string; index 40001;"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, int(F_GETFILENAME) + 1, nullptr);
 
 	// 不明な関数エラー
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 1 + 1, nullptr), L"不明な関数の実行エラー(バグです)\nFunc_ID=1");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"不明な関数の実行エラー(バグです)\nFunc_ID=1"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, 1 + 1, nullptr);
 
 	// エラー情報が不正
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, nullptr), L"エラー情報が不正");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"エラー情報が不正"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, 0, nullptr);
 
 	// 詳細不明のPPAエラー
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, ""), L"詳細不明のエラー");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"詳細不明のエラー"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, 0, "");
 
 	// 詳細ありのPPAエラー
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, "test"), L"test");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"test"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, 0, "test");
 
 	// 未定義のエラー
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, -1, "test"), L"未定義のエラー\nError_CD=-1\ntest");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"未定義のエラー\nError_CD=-1\ntest"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, -1, "test");
 
 	// デバッグ情報付きのエラー
 	info->m_cMemDebug = "debug";
 	info->m_bError = false;
-	EXPECT_ERROUT(CPPA::CallErrorProc(*info, 0, nullptr), L"エラー情報が不正\ndebug");
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"エラー情報が不正\ndebug"), _, _, _)).WillOnce(Return(MB_OK));
+	CPPA::CallErrorProc(*info, 0, nullptr);
 }
 
 /*!
@@ -197,13 +221,16 @@ TEST_F(CPpaTest, ppaErrorProc)
  */
 TEST_F(CPpaTest, ppaProc)
 {
-	std::array ppszArgs1 = { "something is wrong." };
-	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	auto pUser32 = (MockUser32*)User32::getInstance();
 
 	// 正常なマクロ呼出
+	std::array ppszArgs1 = { "something is wrong." };
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"something is wrong."), _, _, _)).WillOnce(Return(MB_OK));
 	EXPECT_THAT(CPPA::CallProc(*info, F_OKCANCELBOX, ppszArgs1), Eq(0));
 
 	// パラメーター不足でエラー
+	std::array ppszArgs2 = { LPCSTR(nullptr) };
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(L"挿入すべき文字コードが指定されていません．"), _, _, _)).WillOnce(Return(MB_OK));
 	EXPECT_THAT(CPPA::CallProc(*info, F_WCHAR, ppszArgs2), Eq(int(F_WCHAR) + 1));
 }
 

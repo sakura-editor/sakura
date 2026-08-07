@@ -204,13 +204,6 @@ std::wstring strprintf(const WCHAR* pszFormat, ...);
 std::string strprintf(const CHAR* pszFormat, ...);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      文字コード変換                         //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-std::wstring u8stowcs(std::string_view strInput);
-std::string wcstou8s(std::wstring_view strInput);
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       リテラル比較                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // リテラルとの文字列比較の際に、手打ちで文字数を入力するのは

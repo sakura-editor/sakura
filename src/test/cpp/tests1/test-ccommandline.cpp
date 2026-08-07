@@ -1,19 +1,25 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include <tchar.h>
-#include <Windows.h>
-
 #include "_main/CCommandLine.h"
+
 #include "env/CSakuraEnvironment.h"
 #include "util/string_ex.h"
 
+#include "CSelectLang.h"
+
 #include <cstdlib>
 #include <fstream>
+
+#include "eval_outputs.hpp"
+
+#include "sakura_rc.h"
+
+using namespace std::literals::string_view_literals;
 
 bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
@@ -878,24 +884,34 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
 	// ファイル名に使えない文字 = "\\/:*?\"<>|"
 	// このうち、\\と/はパス区切りのため実質対象外になる。
 	// このうち、:は代替データストリーム(ADS)の識別記号のため対象外とする。
-	const std::wstring_view badNames[] = {
-		L"test*.txt",
-		L"test?.txt",
-		L"test\".txt",
-		L"test<.txt",
-		L"test>.txt",
-		L"test|.txt",
+	const std::array badNames = {
+		L"test*.txt"sv,
+		L"test?.txt"sv,
+		L"test\".txt"sv,
+		L"test<.txt"sv,
+		L"test>.txt"sv,
+		L"test|.txt"sv,
 	};
+
+	User32::setInstance<MockUser32>();
+	auto pUser32 = (MockUser32*)User32::getInstance();
 
 	// ファイル名に使えない文字を含んでいたら、ファイル名としては認識されない。
 	CCommandLine cCommandLine;
 	for (const auto& badName : badNames) {
+		// "%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
+		const auto expectedMessage = strprintf(LS(STR_CMDLINE_PARSECMD1), std::data(badName));
+		EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expectedMessage), StrEq(L"FileNameError"), _, _)).WillOnce(Return(MB_OK));
 		cCommandLine.ParseCommandLine( badName.data(), false );
 		EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
 		EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
 		EXPECT_EQ(0, cCommandLine.GetFileNum());
 	}
+
+	User32::resetInstance();
 }
+
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * @brief 長過ぎるファイルパスに関する仕様
@@ -903,20 +919,26 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
  */
 TEST(CCommandLine, ParseTooLongFilePath)
 {
+	User32::setInstance<MockUser32>();
+	auto pUser32 = (MockUser32*)User32::getInstance();
+
 	// _MAX_PATH - 1を超えるパスは無視される
 	CCommandLine cCommandLine;
-	std::wstring strCmdLine;
 	std::wstring strPath(_MAX_PATH, L'a');
-	strprintf(strCmdLine, L"%s test.txt", strPath.c_str());
+	// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+	const auto expectedMessage = strprintf(LS(STR_ERR_FILEPATH_TOO_LONG), std::data(strPath));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expectedMessage), StrEq(L"FileNameError"), _, _))
+		.Times(2)
+		.WillOnce(Return(MB_OK))
+		.WillOnce(Return(MB_OK));
+	const auto strCmdLine = std::format(L"{:s} \"{:s}\" test.txt", strPath, strPath);
 	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
-	// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
-	//EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetOpenFile());
-	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
-}
+	EXPECT_THAT(cCommandLine.GetOpenFile(), StrEq(GetLocalPath(L"test.txt")));
+	EXPECT_THAT(cCommandLine.GetFileName(0), IsNull());
+	EXPECT_THAT(cCommandLine.GetFileNum(), Eq(0));
 
-// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
-#ifndef __MINGW32__
+	User32::resetInstance();
+}
 
 /*!
  * @brief ファイルパスに指定できる上限文字列長に関する仕様
@@ -924,19 +946,26 @@ TEST(CCommandLine, ParseTooLongFilePath)
  */
 TEST(CCommandLine, ParseMaxFilePath)
 {
+	User32::setInstance<MockUser32>();
+	auto pUser32 = (MockUser32*)User32::getInstance();
+
 	// 絶対パスへの変換処理の影響を受けないように、事前に絶対パス化しておく
 	std::wstring strPath = GetLocalPath(L"a");
 	strPath.resize(_MAX_PATH - 1, L'a');
 
 	// _MAX_PATH - 1までのパスは受け付けられる
 	CCommandLine cCommandLine;
-	std::wstring strCmdLine;
-	strprintf(strCmdLine, L"%s test.txt", strPath.c_str());
+	// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+	const auto expectedMessage = strprintf(LS(STR_ERR_FILEPATH_TOO_LONG), std::data(strPath));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expectedMessage), StrEq(L"FileNameError"), _, _)).Times(0);	// エラーにならないので0回表示。
+	const auto strCmdLine = std::format( L"{:s} test.txt", strPath);
 	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
-	EXPECT_STREQ(strPath.data(), cCommandLine.GetOpenFile());
-	EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetFileName(0));
-	EXPECT_EQ(NULL, cCommandLine.GetFileName(1));
-	EXPECT_EQ(1, cCommandLine.GetFileNum());
+	EXPECT_THAT(cCommandLine.GetOpenFile(), StrEq(strPath.c_str()));
+	EXPECT_THAT(cCommandLine.GetFileName(0), StrEq(GetLocalPath(L"test.txt")));
+	EXPECT_THAT(cCommandLine.GetFileName(1), IsNull());
+	EXPECT_THAT(cCommandLine.GetFileNum(), Eq(1));
+
+	User32::resetInstance();
 }
 
-#endif //ifndef __MINGW32__
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
