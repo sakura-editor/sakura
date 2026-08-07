@@ -2660,6 +2660,53 @@ TEST_F(EditWndTest, ShowPropCommon019)
 }
 
 /*!
+ * 共通設定プロパティーシートの表示テスト
+ *
+ * キーワードセットが0件のとき、セット依存のコントロールが無効化されること
+ */
+TEST_F(EditWndTest, ShowPropCommon020)
+{
+	auto& cKeyWordSetMgr = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
+
+	// キーワードセットが0件の状態を作る
+	const auto nKeyWordSetNumOrg = cKeyWordSetMgr.m_nKeyWordSetNum;
+	const auto nCurrentKeyWordSetIdxOrg = cKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
+	cKeyWordSetMgr.m_nKeyWordSetNum = 0;
+	cKeyWordSetMgr.m_nCurrentKeyWordSetIdx = -1;
+
+	// 表示された共通設定を閉じるためのスレッドを起動する
+	auto t = StartDialogCloser(STR_PROPCOMMON, [] (const IUIAutomation*, HWND hWndDlg, std::stop_token st) {
+		// アクティブなプロパティーシートのハンドルを取得する
+		const auto hWndPage = GetActivePage(hWndDlg, st);
+
+		// キーワードセットが選択されていないので、セット依存のコントロールは無効
+		const auto hWndKeySetRename = ::GetDlgItem(hWndPage, IDC_BUTTON_KEYSETRENAME);	// L"変更(H)..."
+		EXPECT_THAT(hWndKeySetRename, Ne(nullptr));
+		EXPECT_THAT(::IsWindowEnabled(hWndKeySetRename), IsFalse());
+
+		const auto hWndKeyClean = ::GetDlgItem(hWndPage, IDC_BUTTON_KEYCLEAN);	// L"整理(O)"
+		EXPECT_THAT(hWndKeyClean, Ne(nullptr));
+		EXPECT_THAT(::IsWindowEnabled(hWndKeyClean), IsFalse());
+
+		// セット追加はセット数0でも押せる必要がある（押せないと復帰できない）
+		const auto hWndAddSet = ::GetDlgItem(hWndPage, IDC_BUTTON_ADDSET);	// L"セット追加(M)..."
+		EXPECT_THAT(hWndAddSet, Ne(nullptr));
+		EXPECT_THAT(::IsWindowEnabled(hWndAddSet), IsTrue());
+
+		// キャンセルボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_CANCEL);
+	});
+
+	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYWORD);
+
+	t.join();
+
+	// 共有データを元に戻す
+	cKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nCurrentKeyWordSetIdxOrg;
+	cKeyWordSetMgr.m_nKeyWordSetNum = nKeyWordSetNumOrg;
+}
+
+/*!
  * タイプ別設定プロパティーシートの表示テスト
  */
 TEST_F(EditWndTest, ShowPropType001)
