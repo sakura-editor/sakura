@@ -2,12 +2,63 @@
 
 ## [Unreleased](https://github.com/sakura-editor/sakura/tree/HEAD)
 
-[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.2...HEAD)
+[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.3...HEAD)
 
-### その他変更
+## [v2.4.3](https://github.com/sakura-editor/sakura/tree/v2.4.3) (2026-08-08)
 
+[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.2...v2.4.3)
+
+### セキュリティ修正
+
+- 「PowerShellを開く」機能でのOSコマンドインジェクション脆弱性を修正 ([GHSA-6x2x-729r-wjh5](https://github.com/sakura-editor/sakura/security/advisories/GHSA-6x2x-729r-wjh5) / JVN#74538868)
+- WSHマクロ経由のExecCmdスタックバッファオーバーフロー脆弱性を修正 ([GHSA-g26p-p558-cmwj](https://github.com/sakura-editor/sakura/security/advisories/GHSA-g26p-p558-cmwj))
+- 制御プロセス起動時、無制限プロファイル名によるスタックバッファオーバーフロー脆弱性を修正 ([GHSA-jg35-7phr-86wq](https://github.com/sakura-editor/sakura/security/advisories/GHSA-jg35-7phr-86wq))
+- 長いファイルパスによるViewDiffInfo / TagsMakeのスタックバッファオーバーフロー脆弱性を修正 ([GHSA-jpr9-7379-v6m7](https://github.com/sakura-editor/sakura/security/advisories/GHSA-jpr9-7379-v6m7))
+- キーワードヘルプ辞書インポートのバッファオーバーフロー等、複数の脆弱性を修正 ([GHSA-hmv4-c8rc-fq53](https://github.com/sakura-editor/sakura/security/advisories/GHSA-hmv4-c8rc-fq53))
+- 書き込み範囲のチェック漏れによるバッファオーバーフローに対策(CUtf7) [\#1869](https://github.com/sakura-editor/sakura/pull/1869) ([berryzplus](https://github.com/berryzplus))
+- CopyDirDirのバッファオーバーフローに対策 [\#2501](https://github.com/sakura-editor/sakura/pull/2501) ([berryzplus](https://github.com/berryzplus))
+- ファイルダイアログでの出力先バッファサイズ不整合に対策 [\#2530](https://github.com/sakura-editor/sakura/pull/2530) ([berryzplus](https://github.com/berryzplus))
+
+### 仕様変更
+
+- 動作環境をWindows 10以降に変更（Windows 7/8.1のサポートを終了） [\#2133](https://github.com/sakura-editor/sakura/pull/2133) ([gorogoro123](https://github.com/gorogoro123))
+- 指定桁縦線に指定できる本数を増やした [\#1945](https://github.com/sakura-editor/sakura/pull/1945) ([kurages](https://github.com/kurages))
+- タブまとめモード時、同期起動を強制するタイミングをプロセス起動前に変更 [\#2546](https://github.com/sakura-editor/sakura/pull/2546) ([berryzplus](https://github.com/berryzplus))
+- UIプロセス分離(UIPI)の確認仕様を変更 [\#2455](https://github.com/sakura-editor/sakura/pull/2455) ([berryzplus](https://github.com/berryzplus))
+- クリッカブルURLの仕様変更をロールバック [\#1965](https://github.com/sakura-editor/sakura/pull/1965) ([beru](https://github.com/beru))
+- 設定ファイルの読み込み速度を改善 [\#2512](https://github.com/sakura-editor/sakura/pull/2512) ([berryzplus](https://github.com/berryzplus))
+- ファイルを開く速度を改善（行データ読み出し・行レイアウト化処理のマルチスレッド対応など） [\#2021](https://github.com/sakura-editor/sakura/pull/2021) [\#1994](https://github.com/sakura-editor/sakura/pull/1994) [\#1992](https://github.com/sakura-editor/sakura/pull/1992) [\#1951](https://github.com/sakura-editor/sakura/pull/1951) ([suconbu](https://github.com/suconbu))
+- ファイル名変更通知のブロードキャスト頻度を抑制 [\#2162](https://github.com/sakura-editor/sakura/pull/2162) ([beru](https://github.com/beru))
+
+### 機能追加
+
+- ダークモードに対応 [\#2135](https://github.com/sakura-editor/sakura/pull/2135) ([beru](https://github.com/beru))
+- マクロでPythonが使用可能に [\#1866](https://github.com/sakura-editor/sakura/pull/1866) ([beru](https://github.com/beru))
+- EditorConfigに簡易対応 [\#2279](https://github.com/sakura-editor/sakura/pull/2279) ([beru](https://github.com/beru))
+- 簡体字中国語言語パックを追加 [\#2039](https://github.com/sakura-editor/sakura/pull/2039) ([graceful321](https://github.com/graceful321))
+- Windows PowerShell 5.1向けの強調キーワード・正規表現キーワード・配色定義ファイルを追加 [\#2332](https://github.com/sakura-editor/sakura/pull/2332) ([BHCrusher1](https://github.com/BHCrusher1))
+- IVS(異体字セレクタ)に対応 [\#1937](https://github.com/sakura-editor/sakura/pull/1937) ([berryzplus](https://github.com/berryzplus))
+- INT_MAXを超えるバイト数のテキストをクリップボードへコピー可能に [\#2067](https://github.com/sakura-editor/sakura/pull/2067) ([beru](https://github.com/beru))
+
+### バグ修正
+
+- 最終行を矩形選択して削除するとクラッシュする不具合を修正 [\#1947](https://github.com/sakura-editor/sakura/pull/1947) ([suconbu](https://github.com/suconbu))
+- タグジャンプ時にクラッシュする不具合を修正 [\#2447](https://github.com/sakura-editor/sakura/pull/2447) ([berryzplus](https://github.com/berryzplus))
+- 外部コマンド実行時のパラメータ展開でnullptrアクセスが発生する不具合に対策 [\#2445](https://github.com/sakura-editor/sakura/pull/2445) ([berryzplus](https://github.com/berryzplus))
+- realloc/malloc失敗時の対策を追加（メモリ不足時の安定性向上） [\#2410](https://github.com/sakura-editor/sakura/pull/2410) ([beru](https://github.com/beru))
+- エディタープロセスの起動に失敗する場合の対応 [\#2548](https://github.com/sakura-editor/sakura/pull/2548) ([hpmy-dev](https://github.com/hpmy-dev))
+- Excel VBAからコードをコピーすると余分な文字が付く不具合を修正 [\#2146](https://github.com/sakura-editor/sakura/pull/2146) ([beru](https://github.com/beru))
+- CF_UNICODETEXT形式のクリップボードデータをペーストした際にU+0000が余分に追加される不具合を修正 [\#2095](https://github.com/sakura-editor/sakura/pull/2095) ([beru](https://github.com/beru))
+- CSV/TSVモードで開いたときに桁位置が揃わない不具合を修正 [\#2119](https://github.com/sakura-editor/sakura/pull/2119) ([suconbu](https://github.com/suconbu))
+- 水平スクロール時に文字が欠けて表示される不具合を修正 [\#1975](https://github.com/sakura-editor/sakura/pull/1975) ([suconbu](https://github.com/suconbu))
+- 文字幅キャッシュの構築タイミングに関する不具合を修正 [\#2334](https://github.com/sakura-editor/sakura/pull/2334) ([berryzplus](https://github.com/berryzplus))
+- 文字幅キャッシュ構築処理(GetTextExtentPoint32呼び出し)の排他制御漏れを修正 [\#2038](https://github.com/sakura-editor/sakura/pull/2038) ([suconbu](https://github.com/suconbu))
+- タイプ別設定の管理に関する不具合を修正 [\#2295](https://github.com/sakura-editor/sakura/pull/2295) ([berryzplus](https://github.com/berryzplus))
+- 正規表現DLLに拡張関数がない場合に処理が失敗する不具合を修正 [\#2288](https://github.com/sakura-editor/sakura/pull/2288) ([berryzplus](https://github.com/berryzplus))
+- 色種別リストのオーナー描画によるDPIスケーリング対応を改良 [\#1882](https://github.com/sakura-editor/sakura/pull/1882) [\#1887](https://github.com/sakura-editor/sakura/pull/1887) ([beru](https://github.com/beru))
+- ダイアログ(IDD_PROP_SUPPORT)の候補ラベル表示位置・サイズを調整 [\#2278](https://github.com/sakura-editor/sakura/pull/2278) ([beru](https://github.com/beru))
+- メニューのスペルミスを修正 [\#1878](https://github.com/sakura-editor/sakura/pull/1878) ([takeyamajp](https://github.com/takeyamajp))
 - コンテキストメニュー情報の定義漏れを追加 [\#1876](https://github.com/sakura-editor/sakura/pull/1876) ([takeyamajp](https://github.com/takeyamajp))
-- v2.4.2リリース後作業 [\#1875](https://github.com/sakura-editor/sakura/pull/1875) ([berryzplus](https://github.com/berryzplus))
 
 ## [v2.4.2](https://github.com/sakura-editor/sakura/tree/v2.4.2) (2022-12-04)
 
