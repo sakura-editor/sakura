@@ -12,7 +12,7 @@
 #define BUILD_VERSION @BUILD_VERSION@
 
 /* enable 'dev version' macro which will be disabled on release branches */
-#define DEV_VERSION
+/* #define DEV_VERSION */
 
 // バージョン定義 //
 #define VER_A	@SAKURA_MAJOR_VERSION@	// メジャーバージョン(2固定)
