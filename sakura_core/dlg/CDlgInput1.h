@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,6 +16,7 @@
 #pragma once
 
 #include "mem/CNativeW.h"
+#include "util/design_template.h"
 
 class CDlgInput1;
 
@@ -25,9 +26,14 @@ class CDlgInput1;
 /*!
 	@brief １行入力ダイアログボックス
 */
-class CDlgInput1
+class CDlgInput1 : public TSakuraSingleton<CDlgInput1>
 {
+private:
+	using Me = CDlgInput1;
+
 public:
+	virtual ~CDlgInput1() noexcept = default;
+
 	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const WCHAR* pszTitle,
 				  const WCHAR* pszMessage, size_t bufferSize, WCHAR* pszText );
 
@@ -50,4 +56,5 @@ protected:
 	||  実装ヘルパ関数
 	*/
 };
+
 #endif /* SAKURA_CDLGINPUT1_43CB765B_D257_4DBC_85E9_D2587B7E9D8E_H_ */

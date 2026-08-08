@@ -63,6 +63,17 @@ struct MockShell32 final : public Shell32
 	MOCK_CONST_METHOD1(ShellExecuteExW, BOOL (SHELLEXECUTEINFOW*));
 };
 
+struct MockCDlgInput1 final : public CDlgInput1
+{
+	MOCK_METHOD5(DoModal, BOOL(
+		_In_opt_ HWND hWndOwner,
+		_In_z_ LPCWSTR pszTitle,
+		_In_z_ LPCWSTR pszMessage,
+		_Out_writes_z_(cchBuffer) LPWSTR pBuffer,
+		size_t cchBuffer
+	));
+};
+
 namespace dialog {
 
 constexpr auto& title1 = L"検索";

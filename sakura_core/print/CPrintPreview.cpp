@@ -849,7 +849,8 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 {
 	const int  INPUT_PAGE_NUM_LEN = 12;
 
-	CDlgInput1 cDlgInputPage;
+	auto& cDlgInputPage = *CDlgInput1::getInstance();
+
 	WCHAR      szMessage[512];
 	WCHAR      szPageNum[INPUT_PAGE_NUM_LEN];
 	

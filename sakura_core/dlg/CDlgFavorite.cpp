@@ -937,7 +937,7 @@ void CDlgFavorite::AddItem()
 	WCHAR* szAddText = &vecAddText[0];
 	szAddText[0] = L'\0';
 
-	CDlgInput1	cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	std::wstring strTitle = LS( STR_DLGFAV_ADD );
 	std::wstring strMessage = LS( STR_DLGFAV_ADD_PROMPT );
 	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szAddText ) ){
@@ -968,7 +968,7 @@ void CDlgFavorite::EditItem()
 			std::vector<WCHAR> vecAddText(max_size);
 			WCHAR* szText = &vecAddText[0];
 			wcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
-			CDlgInput1	cDlgInput1;
+			auto& cDlgInput1 = *CDlgInput1::getInstance();
 			std::wstring strTitle = LS( STR_DLGFAV_EDIT );
 			std::wstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
 			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){

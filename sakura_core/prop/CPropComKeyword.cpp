@@ -89,7 +89,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 	static HWND			hwndCOMBO_SET;
 	static HWND			hwndLIST_KEYWORD;
 	RECT				rc;
-	CDlgInput1			cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	wchar_t				szKeyWord[MAX_KEYWORDLEN + 1];
 	LONG_PTR			lStyle;
 	LV_DISPINFO*		plvdi;
@@ -491,7 +491,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	int			nIndex1;
 	LV_ITEM		lvi;
 	wchar_t		szKeyWord[MAX_KEYWORDLEN + 1];
-	CDlgInput1	cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 
 	nIndex1 = ListView_GetNextItem( hwndLIST_KEYWORD, -1, LVNI_ALL | LVNI_SELECTED );
 	if( -1 == nIndex1 ){

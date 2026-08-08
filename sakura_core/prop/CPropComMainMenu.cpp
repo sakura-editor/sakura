@@ -249,7 +249,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	HTREEITEM		htiTemp2;
 	TV_DISPINFO*	ptdi;
 
-	CDlgInput1		cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 
 	static	bool	bInMove;
 	bool			bIsNode;
