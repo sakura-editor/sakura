@@ -1053,10 +1053,15 @@ TEST_F(WinMainFuncTest, CreateControlProcess102)
 
 	ASSERT_THAT(pShareData, NotNull());
 
+	// DLLSHAREDATAのサイズを不正にする
 	pShareData->m_nSize = sizeof(DLLSHAREDATA) + 1;
 
 	// コントロールプロセスを起動する
-	ASSERT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
+	EXPECT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
+
+	// DLLSHAREDATAのサイズを元に戻す
+	// 共有メモリはスーパーグローバル変数なので、テスト終了後は元に戻す必要がある
+	pShareData->m_nSize = sizeof(DLLSHAREDATA);
 }
 
 /*!
