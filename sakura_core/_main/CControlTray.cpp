@@ -39,6 +39,7 @@
 #include "plugin/CJackManager.h"
 #include "io/CTextStream.h"
 #include "util/module.h"
+#include "util/os.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
@@ -123,6 +124,19 @@ void SelectOpenFileFromFolder(
 
 		CControlTray::OpenNewEditor(unusedArg1, hWnd, sLoadInfo, nullptr, true, nullptr, bNewWindow);
 	}
+}
+
+BOOL User32::TrackPopupMenu(
+	_In_ HMENU hMenu,
+	_In_ UINT uFlags,
+	_In_ int x,
+	_In_ int y,
+	_Reserved_ int nReserved,
+	_In_ HWND hWnd,
+	_Reserved_ CONST RECT* prcRect
+) const
+{
+	return ::TrackPopupMenu(hMenu, uFlags, x, y, nReserved, hWnd, prcRect);
 }
 
 //Stonee, 2001/03/21
@@ -1613,7 +1627,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	rc.bottom = 0;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = ::TrackPopupMenu(
+	nId = User32::getInstance()->TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN
@@ -1682,7 +1696,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	rc.bottom = 0;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = ::TrackPopupMenu(
+	nId = User32::getInstance()->TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN

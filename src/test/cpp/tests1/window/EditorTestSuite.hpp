@@ -53,6 +53,16 @@ struct MockUser32 final : public User32
 		_In_ WORD wLanguageId
 	));
 
+	MOCK_CONST_METHOD7(TrackPopupMenu, BOOL(
+		_In_ HMENU hMenu,
+		_In_ UINT uFlags,
+		_In_ int x,
+		_In_ int y,
+		_Reserved_ int nReserved,
+		_In_ HWND hWnd,
+		_Reserved_ CONST RECT* prcRect
+	));
+
 	static int _MessageBoxExW(
 		_In_opt_ HWND hWnd,
 		_In_opt_ LPCWSTR lpText,
