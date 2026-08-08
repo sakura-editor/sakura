@@ -34,10 +34,14 @@
   TypeName& operator=(TypeName&&) = delete;
 
 /*!
-	Singletonパターン
-
-	2008.03.03 kobake 作成
-*/
+ * @brief Singletonパターン
+ *
+ * @note シングルトンは状態を持ってはならない。
+ * @note C++では状態を持たないオブジェクトをインスタンス化する意味はない。
+ * @note シングルトンが必要な場合、TSakuraSingletonの利用を検討すること。
+ *
+ * @date 2008.03.03 kobake 作成
+ */
 template <class T>
 class TSingleton{
 public:
@@ -57,6 +61,7 @@ protected:
  * @brief サクラエディタの変則Singletonパターン。
  *
  * TSingletonを元に作成。
+ * TSingleInstanceとは異なり、インスタンスを自動生成する。
  * 生成したインスタンスをリセットできるようにしてある。
  */
 template <class T>
@@ -67,7 +72,7 @@ private:
 	//! 生成済みインスタンス
 	static inline std::unique_ptr<T> gm_Instance = nullptr;
 
-	//! インスタンス生成用の排他制御用ミューテックス
+	//! インスタンス生成の排他制御用ミューテックス
 	static inline std::mutex gm_Mutex;
 
 public:
@@ -137,7 +142,7 @@ public:
 };
 
 /*!
-	複数インスタンスを生成しようとしたときのエラー
+ * @brief 複数インスタンスを生成しようとしたときのエラー
  */
 class multi_instance_not_allowed : public std::domain_error {
 public:
