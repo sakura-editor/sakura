@@ -79,16 +79,17 @@ inline std::string DescribeHResult(HRESULT hr)
 /*!
  * @brief HRESULTの値が期待される値と等しいことを確認するためのアサーション関数
  *
- * @param actual 評価されたHRESULT値。
- * @param expected 期待値。
  * @param actual_expr 評価された式。
  * @param expected_expr 期待値を表す式。
+ * @param actual 評価されたHRESULT値。
+ * @param expected 期待値。
  */
+template <typename T1, typename T2>
 inline ::testing::AssertionResult HResultEq(
-	HRESULT actual,
-	HRESULT expected,
 	const char* actual_expr,
-	const char* expected_expr [[maybe_unused]] // HRESULT値はマクロ定義するので、使い物にならない。
+	const char* expected_expr,  // HRESULT値はマクロ定義するので、使い物にならない。
+	T1 actual,
+	T2 expected
 )
 {
 	if (actual == expected) {
@@ -103,9 +104,9 @@ inline ::testing::AssertionResult HResultEq(
 } // namespace testing
 
 //! @brief HRESULTの値が期待される値と等しいことを確認するためのマクロ
-#define EXPECT_HRESULT_EQ(actual, expected)						\
-	EXPECT_PRED_FORMAT2(										\
-		[](const char* a, const char* e, auto av, auto ev) {	\
-			return testing::HResultEq(av, ev, a, e);			\
-		},														\
-		actual, expected)
+#define EXPECT_HRESULT_EQ(actual, expected) \
+	EXPECT_PRED_FORMAT2(testing::HResultEq, actual, expected)
+
+//! @brief HRESULTの値が期待される値と等しいことを確認するためのマクロ
+#define ASSERT_HRESULT_EQ(actual, expected) \
+	ASSERT_PRED_FORMAT2(testing::HResultEq, actual, expected)

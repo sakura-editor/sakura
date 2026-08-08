@@ -17,7 +17,7 @@
 	Copyright (C) 2003, genta
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -73,6 +73,9 @@ public:
 	HWND Create(HINSTANCE hInstance);	/* 作成 */
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
 	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+
+	void	ExecCommand(HWND hWnd, EFunctionCode funcCode);
+
 	void	MessageLoop() const;	/* メッセージループ */
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */

@@ -162,7 +162,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			case IDC_PLUGIN_INST_ZIP:		// ZIPプラグインを追加
 				{
 					static std::wstring	sTrgDir;
-					CDlgOpenFile	cDlgOpenFile;
+					auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 					WCHAR			szPath[_MAX_PATH + 1];
 					wcscpy( szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()));
 					// ファイルオープンダイアログの初期化

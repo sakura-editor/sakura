@@ -677,7 +677,7 @@ CMenuDrawer::CMenuDrawer()
 			&m_tbMyButton[i],
 			(F_DUMMY_MAX_CODE < funcCode)? imageIndex : -1,	// 2007.11.02 ryoji アイコンの未定義化(-1)
 			funcCode,
-			(tbd[i] == F_DISABLE)? 0 : TBSTATE_ENABLED,	// F_DISABLE なら DISABLEに	2010/7/11 Uchi
+			(funcCode == F_DISABLE)? 0 : TBSTATE_ENABLED,	// F_DISABLE なら DISABLEに	2010/7/11 Uchi
 			style, 0, 0
 		);
 	}

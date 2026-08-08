@@ -191,9 +191,9 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 	EXPECT_THAT(actual.m_bUseKeyWordHelp, expected.m_bUseKeyWordHelp);
 	EXPECT_THAT(actual.m_nKeyHelpNum, expected.m_nKeyHelpNum);
 	for (size_t i = 0; i < std::size(actual.m_KeyHelpArr); ++i) {
-		EXPECT_THAT(actual.m_KeyHelpArr[i].m_bUse,    expected.m_KeyHelpArr[i].m_bUse)                  << L"Unexpected value at index " << i;
-		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szAbout, StrEq(expected.m_KeyHelpArr[i].m_szAbout))        << L"Unexpected value at index " << i;
-		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szPath,  StrEq(expected.m_KeyHelpArr[i].m_szPath.c_str())) << L"Unexpected value at index " << i;
+		EXPECT_THAT(actual.m_KeyHelpArr[i].m_bUse,    expected.m_KeyHelpArr[i].m_bUse)						<< L"Unexpected value at index " << i;
+		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szAbout, StrEq(expected.m_KeyHelpArr[i].m_szAbout.c_str()))	<< L"Unexpected value at index " << i;
+		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szPath,  StrEq(expected.m_KeyHelpArr[i].m_szPath.c_str()))		<< L"Unexpected value at index " << i;
 	}
 	EXPECT_THAT(actual.m_bUseKeyHelpAllSearch, expected.m_bUseKeyHelpAllSearch);
 	EXPECT_THAT(actual.m_bUseKeyHelpKeyDisp, expected.m_bUseKeyHelpKeyDisp);

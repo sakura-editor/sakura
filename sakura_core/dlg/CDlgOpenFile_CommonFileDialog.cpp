@@ -78,16 +78,16 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	void DlgOpenFail(void);
 
-	void InitOfn( OPENFILENAME* ofn );
+	void InitOfn(OPENFILENAME* ofn) const;
 
 	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
 	static LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam , UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
 	static UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
 
 	//! リトライ機能付き GetOpenFileName
-	bool _GetOpenFileNameRecover( OPENFILENAME* ofn );
+	bool _GetOpenFileNameRecover(OPENFILENAME* ofn) const;
 	//! リトライ機能付き GetOpenFileName
-	bool GetSaveFileNameRecover( OPENFILENAME* ofn );
+	bool GetSaveFileNameRecover(OPENFILENAME* ofn) const;
 
 	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
@@ -469,7 +469,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 			{
 				wchar_t szFolder[_MAX_PATH];
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-				lRes = CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, int(std::size(szFolder)) );
+				CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, int(std::size(szFolder)) );
 			}
 //			MYTRACE( L"\tlRes=%d\pszFolder=[%ls]\n", lRes, szFolder );
 
@@ -1119,7 +1119,7 @@ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 	@author ryoji
 	@date 2005.10.29
 */
-void CDlgOpenFile_CommonFileDialog::InitOfn( OPENFILENAME* ofn )
+void CDlgOpenFile_CommonFileDialog::InitOfn(OPENFILENAME* ofn) const
 {
 	memset_raw(ofn, 0, sizeof(*ofn));
 
@@ -1206,7 +1206,7 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 	@author Moca
 	@date 2006.09.03 新規作成
 */
-bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover( OPENFILENAME* ofn )
+bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover(OPENFILENAME* ofn) const
 {
 	BOOL bRet = ::GetOpenFileName( ofn );
 	if( !bRet  ){
@@ -1223,7 +1223,7 @@ bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover( OPENFILENAME* ofn )
 	@author Moca
 	@date 2006.09.03 新規作成
 */
-bool CDlgOpenFile_CommonFileDialog::GetSaveFileNameRecover( OPENFILENAME* ofn )
+bool CDlgOpenFile_CommonFileDialog::GetSaveFileNameRecover(OPENFILENAME* ofn) const
 {
 	BOOL bRet = ::GetSaveFileName( ofn );
 	if( !bRet  ){

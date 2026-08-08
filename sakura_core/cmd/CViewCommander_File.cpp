@@ -12,7 +12,7 @@
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji, maru
 	Copyright (C) 2007, ryoji, maru, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,7 +21,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-#include <Shlwapi.h>
 #include "_main/CControlTray.h"
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"
@@ -556,21 +555,8 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
-	/*
-		以下のコマンドを実行する
-		cmd.exe /k cd /d "<ディレクトリパス>"
-		
-		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
-		その場合、管理者用のコマンドプロンプトに対しては動作しない。
-		
-		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
-	*/
-	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
-	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
-
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
-	WCHAR szCmdExePathBuf[MAX_PATH];
+	SFilePath szCmdExePathBuf;
 	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, int(std::size(szCmdExePathBuf))) == 0) {
 		ErrorBeep();
 		return;
@@ -592,9 +578,16 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 	*/
 	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
-	auto hInstance = ::ShellExecuteW(nullptr, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
-	// If the function succeeds, it returns a value greater than 32. 
-	if (hInstance <= (decltype(hInstance))32) {
+
+	SHELLEXECUTEINFOW execInfo{ sizeof(SHELLEXECUTEINFOW) };
+	execInfo.fMask = SEE_MASK_DEFAULT;
+	execInfo.lpVerb = pVerb;
+	execInfo.lpFile = szCmdExePathBuf;
+	execInfo.lpParameters = nullptr;	// 対話モードにするためパラメーターを指定しない
+	execInfo.lpDirectory = std::data(strFolder);
+	execInfo.nShow = SW_SHOWNORMAL;
+
+	if (!Shell32::getInstance()->ShellExecuteExW(&execInfo)) {
 		ErrorBeep();
 		return;
 	}
