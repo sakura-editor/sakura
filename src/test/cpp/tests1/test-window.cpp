@@ -1419,6 +1419,22 @@ TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
 }
 
 /*!
+ * Diffコンポーネントのテスト
+ *
+ * 将来的に要らなくなるはず。
+ */
+TEST_F(EditWndTest, DiffComponents001)
+{
+	auto pcDocLineMgr = &pcEditDoc->m_cDocLineMgr;
+
+	auto pcDiffLineSetter = std::make_unique<CDiffLineSetter>(pcDocLineMgr->GetDocLineTop());
+	ASSERT_THAT(pcDiffLineSetter, NotNull());
+
+	auto pcDiffLineMgr = std::make_unique<CDiffLineMgr>(pcDocLineMgr);
+	ASSERT_THAT(pcDiffLineMgr, NotNull());
+}
+
+/*!
  * 上書き保存時バックアップのテスト
  */
 TEST_F(EditWndTest, FileSaveWithBackupAgent001)
@@ -2970,6 +2986,20 @@ TEST_F(EditWndTest, DISABLED_Timeout101)
 		std::unique_lock lock(mutex);
 		condition.wait_for(lock, st, std::chrono::seconds(31), [] { return false; });
 	});
+}
+
+TEST(CDiffManager, test001)
+{
+	auto pcDiffManager = CDiffManager::getInstance();
+
+	ASSERT_THAT(pcDiffManager, NotNull());
+
+	ASSERT_THAT(pcDiffManager->IsDiffUse(), IsFalse());
+
+	pcDiffManager->SetDiffUse(true);
+	ASSERT_THAT(pcDiffManager->IsDiffUse(), IsTrue());
+
+	CDiffManager::resetInstance();
 }
 
 /*!
