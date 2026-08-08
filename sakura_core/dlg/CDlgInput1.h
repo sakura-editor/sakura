@@ -15,8 +15,11 @@
 #define SAKURA_CDLGINPUT1_43CB765B_D257_4DBC_85E9_D2587B7E9D8E_H_
 #pragma once
 
-#include "mem/CNativeW.h"
 #include "util/design_template.h"
+
+#include <span>
+#include <string>
+#include <string_view>
 
 class CDlgInput1;
 
@@ -24,37 +27,85 @@ class CDlgInput1;
 クラスの宣言
 -----------------------------------------------------------------------*/
 /*!
-	@brief １行入力ダイアログボックス
-*/
+ * @brief １行入力ダイアログボックス
+ */
 class CDlgInput1 : public TSakuraSingleton<CDlgInput1>
 {
 private:
+	using SBuffer = std::span<WCHAR>;
+	using SFuncType = std::function<int(HWND, std::wstring_view)>;
+
 	using Me = CDlgInput1;
 
 public:
+	static INT_PTR CALLBACK DlgProc(
+		HWND hWndDlg,
+		UINT uMsg,
+		WPARAM wParam,
+		LPARAM lParam
+	);
+
+	static LRESULT CALLBACK SubclassProc(
+		HWND hWnd,
+		UINT uMsg,
+		WPARAM wParam,
+		LPARAM lParam,
+		UINT_PTR uIdSubclass,
+		DWORD_PTR dwRefData
+	);
+
+	static inline SFuncType NoValidation = [] (HWND, std::wstring_view) { return 1; };	//!< 何もしない評価関数
+
 	virtual ~CDlgInput1() noexcept = default;
 
-	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const WCHAR* pszTitle,
-				  const WCHAR* pszMessage, size_t bufferSize, WCHAR* pszText );
+	BOOL DoModal(
+		_Reserved_ HINSTANCE unusedArg1 [[maybe_unused]],
+		_In_opt_ HWND hWndOwner,
+		_In_z_ const WCHAR* pszTitle,
+		_In_z_ const WCHAR* pszMessage,
+		size_t cchBuffer,
+		_Inout_updates_z_(cchBuffer) WCHAR* pszBuffer
+	);
 
-	/*
-	||  Attributes & Operations
-	*/
-	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* ダイアログのメッセージ処理 */
+	BOOL DoModal(
+		_In_opt_ HWND hWndOwner,
+		std::wstring_view title,
+		std::wstring_view message,
+		std::span<WCHAR> buffer,
+		const std::optional<SFuncType>& optFunc = std::nullopt
+	);
 
-	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND		m_hWnd;			/* このダイアログのハンドル */
+	BOOL DoModal(
+		_In_opt_ HWND hWndOwner,
+		std::wstring_view title,
+		std::wstring_view message,
+		std::wstring& buffer
+	);
 
-	const WCHAR*	m_pszTitle;		/* ダイアログタイトル */
-	const WCHAR*	m_pszMessage;	/* メッセージ */
-	int			m_nMaxTextLen;	/* 入力サイズ上限 */
-//	char*		m_pszText;		/* テキスト */
-	CNativeW	m_cmemText;		/* テキスト */
-protected:
-	/*
-	||  実装ヘルパ関数
-	*/
+	virtual BOOL DoModal(
+		_In_opt_ HWND hWndOwner,
+		_In_z_ LPCWSTR pszTitle,
+		_In_z_ LPCWSTR pszMessage,
+		_Inout_updates_z_(cchBuffer) LPWSTR pBuffer,
+		size_t cchBuffer
+	);
+
+	INT_PTR	DispatchDlgEvent(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT	DispatchEvent(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	int		GetDlgData(HWND hWndDlg);
+	void	SetDlgData(HWND hWndDlg) const;
+
+	bool	OnInitDialog(HWND hWndDlg, HWND hWndFocus, LPARAM lParam);
+	void	OnCommand(HWND hWnd, int id, HWND hWndCtl, UINT notifyCode);
+
+	HWND			m_hWnd;		/* このダイアログのハンドル */
+
+	std::wstring	m_Title;	/* ダイアログタイトル */
+	std::wstring	m_Message;	/* メッセージ */
+	SBuffer			m_Text;		/* テキスト */
+
+	SFuncType		m_Func = NoValidation;
 };
 
 #endif /* SAKURA_CDLGINPUT1_43CB765B_D257_4DBC_85E9_D2587B7E9D8E_H_ */
