@@ -37,6 +37,33 @@ struct User32 : public TSakuraSingleton<User32>
 	) const;
 };
 
+//! Comdlg32.dll呼出をテスト可能にするDIっぽいもの
+struct Comdlg32 : public TSakuraSingleton<Comdlg32> {
+	virtual ~Comdlg32() = default;
+
+	virtual BOOL ChooseColorW(
+		LPCHOOSECOLORW pCc
+	) const;
+
+	virtual BOOL ChooseFontW(
+		LPCHOOSEFONTW pCf
+	) const;
+
+	virtual DWORD CommDlgExtendedError() const;
+
+	virtual BOOL GetOpenFileNameW(
+		LPOPENFILENAMEW pOfn
+	) const;
+
+	virtual BOOL GetSaveFileNameW(
+		LPOPENFILENAMEW pOfn
+	) const;
+
+	virtual BOOL PrintDlgW(
+		_Inout_ LPPRINTDLGW pPD
+	) const;
+};
+
 //クリップボード
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );

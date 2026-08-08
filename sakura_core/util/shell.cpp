@@ -31,6 +31,11 @@ BOOL Shell32::ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const
 	return ::ShellExecuteExW(pExecInfo);
 }
 
+BOOL Comdlg32::ChooseFontW(LPCHOOSEFONTW pCf) const
+{
+	return ::ChooseFontW(pCf);
+}
+
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
 {
 	return SelectDir(hWnd, title, initialDirectory, std::span(strFolderName, nMaxCount));
@@ -573,7 +578,7 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	cf.lpLogFont = plf;
 	cf.lpfnHook = static_cast<LPCFHOOKPROC>(DarkMode::HookDlgProc);
 	cf.hInstance = GetModuleHandleW(nullptr);
-	if( !ChooseFont( &cf ) ){
+	if (!Comdlg32::getInstance()->ChooseFontW(&cf)) {
 #ifdef _DEBUG
 		DWORD nErr;
 		nErr = CommDlgExtendedError();

@@ -10,17 +10,24 @@
 	Copyright (C) 2001, hor
 	Copyright (C) 2002, MIK
 	Copyright (C) 2003, かろと
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
-#include <WinSpool.h>
-#include "CPrint.h"
+#include "print/CPrint.h"
+
 #include "_main/global.h"
-#include "CSelectLang.h"
 #include "basis/CMyString.h"
+#include "util/os.h"
+
+#include "CSelectLang.h"
+
+BOOL Comdlg32::PrintDlgW(_Inout_ LPPRINTDLGW pPD) const
+{
+	return ::PrintDlgW(pPD);
+}
 
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {
@@ -125,7 +132,7 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pPD->lStructSize = sizeof(*pPD);
 	pPD->hDevMode = m_hDevMode;
 	pPD->hDevNames = m_hDevNames;
-	if( !::PrintDlg( pPD ) ){
+	if (!Comdlg32::getInstance()->PrintDlgW(pPD)) {
 		// プリンターを変更しなかった
 		return FALSE;
 	}
@@ -201,7 +208,7 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 		memset_raw ( &pd, 0, sizeof(pd) );
 		pd.lStructSize	= sizeof(pd);
 		pd.Flags		= PD_RETURNDEFAULT;
-		if( !::PrintDlg( &pd ) ){
+		if (!Comdlg32::getInstance()->PrintDlgW(&pd)) {
 			pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンターがなかったフラグ */
 			return FALSE;
 		}

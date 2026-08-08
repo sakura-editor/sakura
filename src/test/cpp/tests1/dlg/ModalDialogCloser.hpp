@@ -16,6 +16,9 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
+#include <string>
+#include <string_view>
 
 namespace dialog {
 
@@ -69,7 +72,7 @@ public:
 	ModalDialogCloser(const std::optional<std::wstring>& optTitle, const std::function<void(HWND)>& action);
 
 	ModalDialogCloser(int dialogTitleResourceId, const std::function<void(HWND)>& action);
-	ModalDialogCloser(const std::optional<std::wstring>& optTitle, int nIDDlgItem = IDCANCEL);
+	explicit ModalDialogCloser(const std::optional<std::wstring>& optTitle = std::nullopt, int nIDDlgItem = IDCANCEL);
 
 	ModalDialogCloser(const Me&) = delete;
 	Me& operator=(const Me&) = delete;

@@ -58,6 +58,25 @@ static const DWORD p_helpids[] = {	//13100
 
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
 
+DWORD Comdlg32::CommDlgExtendedError() const
+{
+	return ::CommDlgExtendedError();
+}
+
+BOOL Comdlg32::GetOpenFileNameW(
+	LPOPENFILENAMEW pOfn
+) const
+{
+	return ::GetOpenFileNameW(pOfn);
+}
+
+BOOL Comdlg32::GetSaveFileNameW(
+	LPOPENFILENAMEW pOfn
+) const
+{
+	return ::GetSaveFileNameW(pOfn);
+}
+
 namespace apiwrap {
 
 template <class TFunc>
@@ -69,7 +88,7 @@ bool CallCommDlgFunc(
 	assert(pOfn);
 
 	auto bRet = std::forward<TFunc>(func)();
-	if (!bRet && FNERR_INVALIDFILENAME == ::CommDlgExtendedError()) {
+	if (!bRet && FNERR_INVALIDFILENAME == Comdlg32::getInstance()->CommDlgExtendedError()) {
 		pOfn->lpstrFile[0] = L'\0';
 		pOfn->lpstrInitialDir = L"";
 		bRet = std::forward<TFunc>(func)();
@@ -1230,7 +1249,7 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 */
 bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover(OPENFILENAME* ofn) const
 {
-	return apiwrap::CallCommDlgFunc([ofn] () { return ::GetOpenFileNameW(ofn); }, ofn);
+	return apiwrap::CallCommDlgFunc([ofn] () { return Comdlg32::getInstance()->GetOpenFileNameW(ofn); }, ofn);
 }
 
 /*! リトライ機能付き GetSaveFileName
@@ -1239,7 +1258,7 @@ bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover(OPENFILENAME* ofn) c
 */
 bool CDlgOpenFile_CommonFileDialog::GetSaveFileNameRecover(OPENFILENAME* ofn) const
 {
-	return apiwrap::CallCommDlgFunc([ofn] () { return ::GetSaveFileNameW(ofn); }, ofn);
+	return apiwrap::CallCommDlgFunc([ofn] () { return Comdlg32::getInstance()->GetSaveFileNameW(ofn); }, ofn);
 }
 
 std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog()

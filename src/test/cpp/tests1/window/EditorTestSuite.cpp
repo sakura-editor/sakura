@@ -145,3 +145,38 @@ namespace window {
 }
 
 } // namespace window
+
+/* static */ void MockComdlg32::_Cleanup([[maybe_unused]] const MockComdlg32*)
+{
+	gm_Files.clear();
+}
+
+/* static */ BOOL MockComdlg32::_GetOpenFileNameW(
+	LPOPENFILENAMEW pOfn
+)
+{
+	const auto result = !gm_Files.empty();
+	if (result) {
+		::wcscpy_s(pOfn->lpstrFile, pOfn->nMaxFile, std::data(gm_Files.front()));
+	}
+	return result;
+}
+
+/* static */ BOOL MockComdlg32::_GetSaveFileNameW(
+	LPOPENFILENAMEW pOfn
+)
+{
+	const auto result = !gm_Files.empty();
+	if (result) {
+		::wcscpy_s(pOfn->lpstrFile, pOfn->nMaxFile, std::data(gm_Files.front()));
+	}
+	return result;
+}
+
+MockComdlg32::MockComdlg32()
+{
+	ON_CALL(*this, GetOpenFileNameW(_)).WillByDefault(&_GetOpenFileNameW);
+	ON_CALL(*this, GetSaveFileNameW(_)).WillByDefault(&_GetSaveFileNameW);
+
+	ON_CALL(*this, CommDlgExtendedError()).WillByDefault([]() { return 0; });
+}
