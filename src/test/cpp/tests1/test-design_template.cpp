@@ -1,15 +1,41 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021-2022, Sakura Editor Organization
+	Copyright (C) 2021-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include <tchar.h>
-#include <Windows.h>
-#include <Shlwapi.h>
-
 #include "util/design_template.h"
+
+/*!
+ * TSingletonの挙動を検証するためのクラス
+ */
+class CSingleton : public TSingleton<CSingleton>
+{
+private:
+	CSingleton() = default;
+	friend class TSingleton<CSingleton>;
+
+public:
+	HMODULE GetAppInstance() const noexcept { return ::GetModuleHandleW(nullptr); }
+};
+
+/*!
+ * @brief TSingletonの挙動を検証するテスト
+ */
+TEST(CSingleton, CSingleton)
+{
+	// いきなり呼び出してもNULLは返らない
+	EXPECT_THAT(CSingleton::getInstance(), NotNull());
+
+	// 何度呼び出しても同じ値が返る
+	const auto pInstance = CSingleton::getInstance();
+	EXPECT_THAT(CSingleton::getInstance(), Eq(pInstance));
+	EXPECT_THAT(CSingleton::getInstance(), Eq(pInstance));
+	EXPECT_THAT(CSingleton::getInstance(), Eq(pInstance));
+
+	EXPECT_THAT(CSingleton::getInstance()->GetAppInstance(), Eq(G_AppInstance()));
+}
 
 /*!
  * TSakuraSingletonの挙動を検証するためのクラス

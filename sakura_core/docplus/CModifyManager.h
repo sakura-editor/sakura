@@ -9,7 +9,7 @@
 #define SAKURA_CMODIFYMANAGER_12000875_531F_42DC_A6B0_231385193CB8_H_
 #pragma once
 
-#include "util/design_template.h" //TSingleton
+#include "util/design_template.h" //TSakuraSingleton
 #include "doc/CDocListener.h" // CDocListenerEx
 
 class CDocLine;
