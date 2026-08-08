@@ -145,6 +145,8 @@ void	SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos);
 SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem);
 SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> buffer);
 
+SGetTextResult	GetWindowTextW(HWND hWnd);
+
 bool	SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::wstring_view text);
 
 /*!

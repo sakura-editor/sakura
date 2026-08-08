@@ -57,7 +57,7 @@ jobs:
           python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           activate-environment: true
 
@@ -126,7 +126,7 @@ jobs:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         activate-environment: true
@@ -334,7 +334,8 @@ jobs:
           -Wait
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
-    - name: Install Ctags (winget)
+    - name: Install CTags (winget)
+      continue-on-error: true
       run: |
         winget install `
           --id UniversalCtags.Ctags `
@@ -343,6 +344,7 @@ jobs:
           --accept-source-agreements
 
     - name: Install DiffUtils (winget)
+      continue-on-error: true
       run: |
         winget install `
           --id GnuWin32.DiffUtils `
@@ -356,7 +358,7 @@ jobs:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       with:
         activate-environment: true
 
@@ -444,10 +446,12 @@ jobs:
         path: help
 
     - name: Run unit tests
+      timeout-minutes: 15 # 指定時間を越えたら打ち切る。値は暫定。
       run: ctest
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
         --output-on-failure
+        -V
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}

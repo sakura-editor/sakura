@@ -560,7 +560,7 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 	 */
 	static void SetUpTestSuite() {
 		// UI Automationを初期化する
-		SetUpUia();
+		SetUpUiaTestSuite();
 
 		// テスト用ファイル作成
 		std::wofstream fos(gm_TestDataPath);
@@ -586,7 +586,7 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 		}
 
 		// UI Automationをシャットダウンする
-		TearDownUia();
+		TearDownUiaTestSuite();
 	}
 
 	/*!
@@ -648,6 +648,8 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 		if (const std::wstring_view profileName{ GetProfileName() }; !profileName.empty()) {
 			std::filesystem::remove_all(iniPath.parent_path());
 		}
+
+		TearDownUia();
 	}
 
 	/*!
@@ -1051,10 +1053,15 @@ TEST_F(WinMainFuncTest, CreateControlProcess102)
 
 	ASSERT_THAT(pShareData, NotNull());
 
+	// DLLSHAREDATAのサイズを不正にする
 	pShareData->m_nSize = sizeof(DLLSHAREDATA) + 1;
 
 	// コントロールプロセスを起動する
-	ASSERT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
+	EXPECT_EXIT({ StartEditorProcess(std::format(LR"(-NOWIN -PROF="{:s}")", profileName)); }, ::testing::ExitedWithCode(0), ".*");	// たぶんバグです。エラー終了なのに0を返してる。
+
+	// DLLSHAREDATAのサイズを元に戻す
+	// 共有メモリはスーパーグローバル変数なので、テスト終了後は元に戻す必要がある
+	pShareData->m_nSize = sizeof(DLLSHAREDATA);
 }
 
 /*!

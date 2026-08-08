@@ -9,9 +9,33 @@
 #define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
+#include "util/design_template.h"
 #include "cxx/type_of_Nth_lambda_arg.hpp"
 
-#include <ObjIdl.h> // LPDATAOBJECT
+#include <objidl.h> // LPDATAOBJECT
+
+//! User32.dll呼出をテスト可能にするDIっぽいもの
+struct User32 : public TSakuraSingleton<User32>
+{
+	using Me = User32;
+
+	static int MessageBoxW(
+		_In_opt_ HWND hWnd,
+		const std::optional<std::wstring>& optText,
+		const std::optional<std::wstring>& optCaption,
+		_In_ UINT uType
+	);
+
+	virtual ~User32() = default;
+
+	virtual int	MessageBoxExW(
+		_In_opt_ HWND hWnd,
+		_In_opt_ LPCWSTR lpText,
+		_In_opt_ LPCWSTR lpCaption,
+		_In_ UINT uType,
+		_In_ WORD wLanguageId
+	) const;
+};
 
 //クリップボード
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
@@ -102,6 +126,8 @@ namespace cxx {
 
 /*!
  * @brief グローバルメモリを RAII で管理するヘルパークラス
+ *
+ * クリップボードや IDataObject でやり取りする HGLOBAL の基底。データ形式ごとに派生クラスを用意する。
  */
 class GlobalMemory : public cxx::ResourceHolder<&::GlobalFree> {
 private:
@@ -154,6 +180,8 @@ public:
 
 /*!
  * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ *
+ * 対応形式: CF_UNICODETEXT (終端NUL付きのUTF-16文字列)
  */
 class GlobalWString : public GlobalMemory {
 private:
@@ -179,6 +207,8 @@ public:
 
 /*!
  * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ *
+ * 対応形式: CF_TEXT / CF_OEMTEXT / "HTML Format" (終端NUL付きのマルチバイト文字列)
  */
 class GlobalString : public GlobalMemory {
 private:
@@ -204,6 +234,8 @@ public:
 
 /*!
  * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
+ *
+ * 対応形式: MSDEVColumnSelect / MSDEVLineSelect 等、型付きの生データを置く形式全般
  */
 template<typename T>
 class GlobalData : public GlobalMemory {
@@ -267,6 +299,8 @@ public:
 
 /*!
  * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
+ *
+ * 対応形式: CF_HDROP (DROPFILES ヘッダ + NUL区切りのパス列)
  */
 class GlobalDropFiles : public GlobalMemory {
 private:
@@ -283,13 +317,20 @@ public:
 
 /*!
  * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ *
+ * 対応形式: SAKURAClipW (サクラエディタ独自のクリップボード形式)
+ *
+ * バイナリレイアウトは以下の通り。
+ *   [文字数 (CClipboard::SAKURAClipW_LengthFieldType)][本文 (WCHAR × 文字数)][終端NUL]
+ *
+ * 先頭に文字数を持つのは、終端NULに頼らず埋め込みNULを含む本文を正確な長さで受け渡すため。
+ * このレイアウトは Win32/x64/ARM64 の各ビルド間、及び過去バージョンとの間で
+ * 一致していなければならないので、文字数フィールドをポインタ幅に依存する型にしてはならない。(issue #2325)
  */
 class GlobalSakura : public GlobalMemory {
 private:
 	using Base = GlobalMemory;
 	using Me = GlobalSakura;
-
-	using size_type = size_t;	//TODO: int32_t に戻す
 
 public:
 	//HGLOBALを指定して構築（メモリ変更は行わない）

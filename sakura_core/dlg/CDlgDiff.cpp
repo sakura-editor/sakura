@@ -117,7 +117,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 
 	case IDC_BUTTON_DIFF_DST:	/* 参照 */
 		{
-			CDlgOpenFile	cDlgOpenFile;
+			auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 			WCHAR			szPath[_MAX_PATH];
 			wcscpy( szPath, m_szFile2 );
 			/* ファイルオープンダイアログの初期化 */

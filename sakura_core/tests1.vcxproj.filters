@@ -55,6 +55,12 @@
     <ClCompile Include="..\src\test\cpp\tests1\macro\test-macro.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\view\test-color-strategy.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\view\test-figure-strategy.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp">
       <Filter>Other Files\window</Filter>
     </ClCompile>

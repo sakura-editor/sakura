@@ -9,6 +9,9 @@
 #define SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_
 #pragma once
 
+#include <cstdint>
+#include <limits>
+
 #include "mem/CNativeW.h"
 
 class CEol;
@@ -95,6 +98,20 @@ private:
 public:
 	static bool HasValidData();    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue
 	static CLIPFORMAT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
+
+	//! サクラエディタ独自形式(SAKURAClipW)の先頭に置く文字数フィールドの型
+	//!
+	//! Win32/x64/ARM64 の各ビルド間、及び過去バージョンとの間でクリップボードを
+	//! やり取りするため、ポインタ幅に依存しない32bit固定でなければならない。
+	//! size_t にするとx64/ARM64でデータのレイアウトが変わり、
+	//! 他ビルドで貼り付けたときに文字化けやクラッシュを起こす。(issue #2325)
+	using SAKURAClipW_LengthFieldType = int32_t;
+
+	//! サクラエディタ独自形式(SAKURAClipW)で扱える最大文字数
+	//!
+	//! これを超える長さのテキストは独自形式では受け渡しできないため、
+	//! CF_UNICODETEXT のみで受け渡す。
+	static constexpr size_t SAKURAClipW_MaxLength = std::numeric_limits<SAKURAClipW_LengthFieldType>::max();
 
 protected:
 	// 単体テスト用コンストラクタ

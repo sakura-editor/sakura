@@ -109,7 +109,7 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 {
 	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		hInstance,
 		hwndParent,
@@ -156,7 +156,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 {
 	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		hInstance,
 		hwndParent,
@@ -853,7 +853,7 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 			L"KDct[%02d]=%d,%s,%s\n",
 			i,
 			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
-			m_Types.m_KeyHelpArr[i].m_szAbout,
+			m_Types.m_KeyHelpArr[i].m_szAbout.c_str(),
 			m_Types.m_KeyHelpArr[i].m_szPath.c_str()
 		);
 	}

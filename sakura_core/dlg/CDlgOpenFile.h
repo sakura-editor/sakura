@@ -86,12 +86,12 @@ public:
 
 /*!	ファイルオープンダイアログボックス
 */
-class CDlgOpenFile final : public IDlgOpenFile
+class CDlgOpenFile : public TSakuraSingleton<CDlgOpenFile>, public IDlgOpenFile
 {
 public:
 	//コンストラクタ・デストラクタ
 	CDlgOpenFile();
-	~CDlgOpenFile() = default;
+	virtual ~CDlgOpenFile() = default;
 
 	void Create(
 		HINSTANCE					hInstance,
