@@ -52,7 +52,7 @@ endfunction()
 # Initialize variables with default values
 set(SAKURA_MAJOR_VERSION "2") # メジャーバージョン(2固定)
 set(SAKURA_MINOR_VERSION "4") # マイナーバージョン(4以降はGitHub版)
-set(SAKURA_PATCH_VERSION "3") # 連番(マージの通し番号)
+set(SAKURA_PATCH_VERSION "4") # 連番(マージの通し番号)
 set(BUILD_VERSION "0")
 
 # CIのビルドページURL(ENVで指定する)
