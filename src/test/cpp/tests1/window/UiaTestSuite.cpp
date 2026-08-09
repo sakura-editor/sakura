@@ -483,4 +483,36 @@ std::jthread UiaTestSuite::StartWindowCloser(
 	});
 }
 
+void UiaTestSuite::RunMessageLoop(
+	ULONGLONG timeoutMilli
+)
+{
+	// スレッド同期用フラグ変数
+	std::atomic_bool finished = false;
+
+	// 別スレッドでModalDialogCloserの完了を待機する
+	auto t = StartUiaThread([&finished, timeoutMilli] (const IUIAutomation*, std::stop_token st) {
+		// ModalDialogCloserの完了を待機する
+		cxx::WaitForQuery([] { return dialog::ModalDialogCloser::IsHandled(); }, st, timeoutMilli);
+
+		// 完了フラグを立てる
+		finished.store(true, std::memory_order_release);
+	});
+
+	// 完了フラグが立つまでPeekMessageでループする
+	MSG msg{};
+	while (!finished.load(std::memory_order_acquire)) {
+		// 溜まっているメッセージをすべてウィンドウに配送する
+		while (::PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
+			if (::IsDialogMessageW(msg.hwnd, &msg)) continue;
+
+			::TranslateMessage(&msg);
+			::DispatchMessageW(&msg);
+		}
+
+		// Sleepの代わり。
+		::MsgWaitForMultipleObjectsEx(0, nullptr, 10, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
+	}
+}
+
 } // namespace window

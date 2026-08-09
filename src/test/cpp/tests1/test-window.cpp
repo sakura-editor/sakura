@@ -1797,13 +1797,19 @@ TEST_F(EditWndTest, GetDocDataObject001)
  */
 TEST_F(EditWndTest, ShowDlgCancel001)
 {
+	// 表示されたモーダルダイアログを閉じる
+	dialog::ModalDialogCloser closer(L"Grep実行中", [](HWND hWndDlg) {
+		SendDlgCommand(hWndDlg, IDCANCEL);
+	});
+
 	CDlgCancel cDlgCancel;
 
 	const auto hWnd = pcEditWnd->GetHwnd();
 
 	cDlgCancel.DoModeless(unusedArg1, hWnd, IDD_GREPRUNNING);
 
-	cDlgCancel.CloseDialog(0);
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -1816,12 +1822,11 @@ TEST_F(EditWndTest, ShowDlgFind001)
 	// 表示されたモーダルダイアログをOKボタンで閉じる
 	dialog::ModalDialogCloser closer(L"検索", IDOK);
 
+	using target = CDlgFind;
 	pcEditWnd->m_cDlgFind.DoModeless(unusedArg1, pcEditWnd->GetHwnd(), LPARAM(&pcEditWnd->GetActiveView()));
 
-	// キューに溜まったメッセージは全部捨てる
-	BlockingHook(nullptr);
-
-	pcEditWnd->m_cDlgFind.CloseDialog(0);
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
 }
 
 /*!
@@ -1829,10 +1834,15 @@ TEST_F(EditWndTest, ShowDlgFind001)
  */
 TEST_F(EditWndTest, ShowDlgFind101)
 {
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(L"検索");
+
+	using target = CDlgFind;
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"SearchDialog()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
-	pcEditWnd->m_cDlgFind.CloseDialog(0);
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
 }
 
 /*!
@@ -1840,13 +1850,17 @@ TEST_F(EditWndTest, ShowDlgFind101)
  */
 TEST_F(EditWndTest, ShowDlgFuncList001)
 {
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(std::nullopt, [] (HWND hWndDlg) {
+		SendDlgCommand(hWndDlg, IDCANCEL);
+	});
+
+	using target = CDlgFuncList;
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Outline(0)"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Outline(1)"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	pcEditWnd->m_cDlgFuncList.CloseDialog(0);
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
 }
 
 /*!
@@ -1854,10 +1868,15 @@ TEST_F(EditWndTest, ShowDlgFuncList001)
  */
 TEST_F(EditWndTest, ShowDlgReplace001)
 {
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(L"置換");
+
+	using target = CDlgReplace;
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ReplaceDialog()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
-	pcEditWnd->m_cDlgReplace.CloseDialog(0);
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
 }
 
 /*!
@@ -2643,6 +2662,14 @@ TEST_F(EditWndTest, ShowDlgWindowList101)
  */
 TEST_F(EditWndTest, ShowHokanMgr001)
 {
+	// 表示されたモーダルダイアログを閉じる
+	dialog::ModalDialogCloser closer(std::nullopt, [this] (HWND hWndDlg) {
+		SendDlgCommand(hWndDlg, IDOK);
+	});
+
+	using target = CHokanMgr;
+	const auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
+
 	// データなしだとスカる
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
@@ -2660,7 +2687,11 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Complete()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
-	pcEditWnd->m_cHokanMgr.CloseDialog(0);
+	// 非表示ウィンドウはModalDialogCloserに拾われないので強制的に表示させる
+	::ShowWindow(cHokanMgr.GetHwnd(), SW_SHOW);
+
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)

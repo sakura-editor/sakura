@@ -373,6 +373,10 @@ struct UiaTestSuite
 		ULONGLONG timeoutMillis = defaultTimeoutMillis
 	);
 
+	void RunMessageLoop(
+		ULONGLONG timeoutMillis = defaultTimeoutMillis * 6
+	);
+
 	std::stop_source m_StopSource;
 	std::jthread m_Thread;
 	bool m_Timeout = false;
