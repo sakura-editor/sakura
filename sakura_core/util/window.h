@@ -148,6 +148,7 @@ SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> bu
 SGetTextResult	GetWindowTextW(HWND hWnd);
 
 bool	SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::wstring_view text);
+bool	SetWindowTextW(HWND hWnd, std::wstring_view text);
 
 /*!
  * @brief トラックバーのデータ範囲を変更する

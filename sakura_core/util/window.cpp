@@ -365,6 +365,16 @@ void SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos)
 	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_SETPOS, 0L, LPARAM(pos));
 }
 
+/*!
+ * @brief ウィンドウのテキストを設定する
+ */
+bool SetWindowTextW(HWND hWnd, std::wstring_view text)
+{
+	assert(L'\0' == *(text.data() + text.size()));
+
+	return ::SetWindowTextW(hWnd, std::data(text));
+}
+
 } // namespace apiwrap
 
 /*!
