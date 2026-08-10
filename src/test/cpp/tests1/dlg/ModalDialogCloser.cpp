@@ -60,6 +60,40 @@ bool IsTitleMatched(_In_ HWND hWnd, _In_opt_ LPCWSTR pTitle, std::wstring_view e
 
 namespace dialog {
 
+struct FindFileNameEditContext {
+	HWND found = nullptr;
+};
+
+BOOL CALLBACK FindFileNameEditProc(HWND hWndCtl, LPARAM lParam)
+{
+	auto* pCtx = std::bit_cast<FindFileNameEditContext*>(lParam);
+
+	if (1001 != ::GetDlgCtrlID(hWndCtl)) {
+		return TRUE;
+	}
+
+	if (const auto className = window::GetClassNameW(hWndCtl);
+		WC_EDIT == className) {
+		pCtx->found = hWndCtl;
+		return FALSE;   // 検索終了
+	}
+
+	return TRUE;
+}
+
+HWND FindFileNameEdit(HWND hFileDialog)
+{
+	FindFileNameEditContext ctx{};
+
+	::EnumChildWindows(
+		hFileDialog,
+		&FindFileNameEditProc,
+		LPARAM(&ctx)
+	);
+
+	return ctx.found;
+}
+
 bool ModalDialogCloser::ExecuteAction(HWND hWnd) noexcept
 {
 	Me* entry = nullptr;

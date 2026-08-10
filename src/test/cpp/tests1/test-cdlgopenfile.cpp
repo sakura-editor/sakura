@@ -15,15 +15,9 @@
 
 void CallDlgOpenFail();
 
-namespace uia {
-
-cxx::com_pointer<IUIAutomationElement> GetFocusedElement(
-	IUIAutomation* pAutomation
-);
-
-} // namespace uia
-
 namespace dialog {
+
+HWND FindFileNameEdit(HWND hFileDialog);
 
 /*!
  * @brief ファイルダイアログテストのパラメーター
@@ -39,6 +33,10 @@ using FileDialogTestParam = bool;
  *
  */
 struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, public window::EditorTestSuite, public window::UiaTestSuite {
+	static constexpr auto& openDialogTitle = L"開く";
+	static constexpr auto& saveDialogTitle0 = L"開く";
+	static constexpr auto& saveDialogTitle = L"名前を付けて保存";
+
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
@@ -96,11 +94,6 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 
 		TearDownUia();
 	}
-
-	/*!
-	 * ファイルを開くダイアログのタイトルを取得する
-	 */
-	std::wstring GetOpenFileNameDialogTitle() const { return GetParam() ? L"開く" : L"ファイルを開く"; }
 };
 
 TEST_P(FileDialogTest, Create001)
@@ -150,7 +143,8 @@ TEST_P(FileDialogTest, Create003_ManyFiltersy)
  */
 TEST_P(FileDialogTest, DoModalOpenDlg001)
 {
-	std::jthread t;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
 	const auto testAction = [] () {
 		SLoadInfo loadInfo{};
@@ -169,16 +163,12 @@ TEST_P(FileDialogTest, DoModalOpenDlg001)
 	ofs.close();
 
 	if (GetParam()) {
-		// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-		t = StartDialogCloser(GetOpenFileNameDialogTitle(), [path] (IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-			auto pItem = uia::GetFocusedElement(pUIAutomation);
-			ASSERT_THAT(pItem, NotNull());
-
-			// ファイル名を入力する
-			EmulateSetValue(pItem, path.native());
-
-			// Enterキー押下で閉じる
-			EmulateHitEnter();
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(openDialogTitle, [path] (HWND hWndDlg) {
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			apiwrap::SetDlgItemTextW(hWndDlg, 1148, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
 		});
 
 	} else {
@@ -265,7 +255,8 @@ TEST_P(FileDialogTest, DoModalOpenDlg102)
  */
 TEST_P(FileDialogTest, DoModalSaveDlg001)
 {
-	std::jthread t;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
 	const auto testAction = [] () {
 		SSaveInfo saveInfo{};
@@ -279,16 +270,15 @@ TEST_P(FileDialogTest, DoModalSaveDlg001)
 	std::filesystem::remove(path, ec);
 
 	if (GetParam()) {
-		// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-		t = StartDialogCloser(L"名前を付けて保存", [path](IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-			auto pItem = uia::GetFocusedElement(pUIAutomation);
-			ASSERT_THAT(pItem, NotNull());
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(saveDialogTitle0, [path] (HWND hWndDlg) {
+			ASSERT_THAT(apiwrap::GetWindowTextW(hWndDlg), StrEq(saveDialogTitle));
 
-			// ファイル名を入力する
-			EmulateSetValue(pItem, path.native());
-
-			// Enterキー押下で閉じる
-			EmulateHitEnter();
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			const auto hWndEdit = dialog::FindFileNameEdit(hWndDlg);
+			apiwrap::SetWindowTextW(hWndEdit, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
 		});
 
 	} else {
@@ -344,7 +334,8 @@ TEST_P(FileDialogTest, DoModalSaveDlg101)
  */
 TEST_P(FileDialogTest, GetOpenFileName001)
 {
-	std::jthread t;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
 	const auto testAction = [] () {
 		SFilePath szPath{};
@@ -361,16 +352,12 @@ TEST_P(FileDialogTest, GetOpenFileName001)
 	ofs.close();
 
 	if (GetParam()) {
-		// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-		t = StartDialogCloser(L"開く", [path] (IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-			auto pItem = uia::GetFocusedElement(pUIAutomation);
-			ASSERT_THAT(pItem, NotNull());
-
-			// ファイル名を入力する
-			EmulateSetValue(pItem, path.native());
-
-			// Enterキー押下で閉じる
-			EmulateHitEnter();
+		// 表示されたモーダルダイアログを閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(openDialogTitle, [path] (HWND hWndDlg) {
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			apiwrap::SetDlgItemTextW(hWndDlg, 1148, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
 		});
 
 	} else {
@@ -458,7 +445,8 @@ TEST_P(FileDialogTest, GetOpenFileName102)
  */
 TEST_P(FileDialogTest, GetSaveFileName001)
 {
-	std::jthread t;
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
 	const auto testAction = [] () {
 		SFilePath szPath{};
@@ -479,16 +467,15 @@ TEST_P(FileDialogTest, GetSaveFileName001)
 	ofs.close();
 
 	if (GetParam()) {
-		// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-		t = StartDialogCloser(L"名前を付けて保存", [path](IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-			auto pItem = uia::GetFocusedElement(pUIAutomation);
-			ASSERT_THAT(pItem, NotNull());
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(saveDialogTitle0, [path] (HWND hWndDlg) {
+			ASSERT_THAT(apiwrap::GetWindowTextW(hWndDlg), StrEq(saveDialogTitle));
 
-			// ファイル名を入力する
-			EmulateSetValue(pItem, path.native());
-
-			// Enterキー押下で閉じる
-			EmulateHitEnter();
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			const auto hWndEdit = dialog::FindFileNameEdit(hWndDlg);
+			apiwrap::SetWindowTextW(hWndEdit, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
 		});
 
 	} else {
