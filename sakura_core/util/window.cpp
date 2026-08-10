@@ -147,6 +147,46 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 	return TRUE/*ret*/;
 }
 
+/*!	エディターの初期化完了を待つ
+
+	待機中に自スレッドへ送られてくるメッセージを処理する。
+	これを行わないと、送信元のスレッドが ::SendMessage から戻れずブロックし続ける。
+
+	@param[in] hEvent        初期化完了イベント
+	@param[in] hProcess      エディタープロセス
+	@param[in] timeoutMillis タイムアウト時間
+	@retval WAIT_OBJECT_0     エディター初期化完了
+	@retval WAIT_OBJECT_0 + 1 エディタープロセス終了
+	@retval WAIT_TIMEOUT      時間切れ
+*/
+DWORD WaitForEditorInitialized( HANDLE hEvent, HANDLE hProcess, ULONGLONG timeoutMillis )
+{
+	const std::array handles{ hEvent, hProcess };
+	const auto count = static_cast<DWORD>(std::size(handles));
+
+	const auto startTick = ::GetTickCount64();
+
+	DWORD dwRet = WAIT_TIMEOUT;
+	do {
+		// 残り時間を考慮して待機する
+		const auto elapsed = ::GetTickCount64() - startTick;	// 経過時間
+		if (timeoutMillis <= elapsed) break; // タイムアウト発生
+		const auto remaining = static_cast<DWORD>(timeoutMillis - elapsed);			// 残り時間
+		dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles), FALSE, remaining, QS_SENDMESSAGE);
+
+		// 自スレッドにメッセージが送られてきた場合
+		if (WAIT_OBJECT_0 + count == dwRet) {
+			BlockingHook(nullptr);	// 溜まったメッセージを処理する
+		}
+	}
+	while (
+		WAIT_OBJECT_0 != dwRet && // エディター初期化完了
+		WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
+	);
+
+	return dwRet;
+}
+
 /** フレームウィンドウをアクティブにする
 	@date 2007.11.07 ryoji 対象がdisableのときは最近のポップアップをフォアグラウンド化する．
 		（モーダルダイアログやメッセージボックスを表示しているようなとき）
