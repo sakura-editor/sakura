@@ -52,5 +52,15 @@ struct MockUser32 final : public User32
 		_In_ UINT uType,
 		_In_ WORD wLanguageId
 	));
+
+	static int _MessageBoxExW(
+		_In_opt_ HWND hWnd,
+		_In_opt_ LPCWSTR lpText,
+		_In_opt_ LPCWSTR lpCaption,
+		_In_ UINT uType,
+		_In_ WORD wLanguageId
+	);
+
+	MockUser32();
 };
 
