@@ -42,6 +42,8 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
+using namespace std::literals::string_view_literals;
+
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
 //	IDCANCEL,				HIDCANCEL_OPENDLG,		//Winのヘルプで勝手に出てくる
@@ -75,6 +77,84 @@ BOOL Comdlg32::GetSaveFileNameW(
 ) const
 {
 	return ::GetSaveFileNameW(pOfn);
+}
+
+/*!
+ * @brief CommDlgExtendedError() のエラーコードを文字列に変換する
+ *
+ * @retval ""     エラーコードなし
+ * @retval ""以外 エラーコード文字列
+ *
+ * @throws std::out_of_range 未定義のエラーコードを検出した場合
+ */
+std::wstring Comdlg32::CommDlgExtendedErrorString() const
+{
+#pragma push_macro("CD_ERR_ENTRY")
+
+#define CD_ERR_ENTRY(code)	{ code, L ## #code ## sv }
+
+	const std::map<DWORD, std::wstring_view> codeMap{
+		CD_ERR_ENTRY(CDERR_DIALOGFAILURE),
+
+		CD_ERR_ENTRY(CDERR_GENERALCODES),
+		CD_ERR_ENTRY(CDERR_STRUCTSIZE),
+		CD_ERR_ENTRY(CDERR_INITIALIZATION),
+		CD_ERR_ENTRY(CDERR_NOTEMPLATE),
+		CD_ERR_ENTRY(CDERR_NOHINSTANCE),
+		CD_ERR_ENTRY(CDERR_LOADSTRFAILURE),
+		CD_ERR_ENTRY(CDERR_FINDRESFAILURE),
+		CD_ERR_ENTRY(CDERR_LOADRESFAILURE),
+		CD_ERR_ENTRY(CDERR_LOCKRESFAILURE),
+		CD_ERR_ENTRY(CDERR_MEMALLOCFAILURE),
+		CD_ERR_ENTRY(CDERR_MEMLOCKFAILURE),
+		CD_ERR_ENTRY(CDERR_NOHOOK),
+		CD_ERR_ENTRY(CDERR_REGISTERMSGFAIL),
+
+		CD_ERR_ENTRY(PDERR_PRINTERCODES),
+		CD_ERR_ENTRY(PDERR_SETUPFAILURE),
+		CD_ERR_ENTRY(PDERR_PARSEFAILURE),
+		CD_ERR_ENTRY(PDERR_RETDEFFAILURE),
+		CD_ERR_ENTRY(PDERR_LOADDRVFAILURE),
+		CD_ERR_ENTRY(PDERR_GETDEVMODEFAIL),
+		CD_ERR_ENTRY(PDERR_INITFAILURE),
+		CD_ERR_ENTRY(PDERR_NODEVICES),
+		CD_ERR_ENTRY(PDERR_NODEFAULTPRN),
+		CD_ERR_ENTRY(PDERR_DNDMMISMATCH),
+		CD_ERR_ENTRY(PDERR_CREATEICFAILURE),
+		CD_ERR_ENTRY(PDERR_PRINTERNOTFOUND),
+		CD_ERR_ENTRY(PDERR_DEFAULTDIFFERENT),
+
+		CD_ERR_ENTRY(CFERR_CHOOSEFONTCODES),
+		CD_ERR_ENTRY(CFERR_NOFONTS),
+		CD_ERR_ENTRY(CFERR_MAXLESSTHANMIN),
+
+		CD_ERR_ENTRY(FNERR_FILENAMECODES),
+		CD_ERR_ENTRY(FNERR_SUBCLASSFAILURE),
+		CD_ERR_ENTRY(FNERR_INVALIDFILENAME),
+		CD_ERR_ENTRY(FNERR_BUFFERTOOSMALL),
+
+		CD_ERR_ENTRY(FRERR_FINDREPLACECODES),
+		CD_ERR_ENTRY(FRERR_BUFFERLENGTHZERO),
+
+		CD_ERR_ENTRY(CCERR_CHOOSECOLORCODES),
+	};
+
+#pragma pop_macro("CD_ERR_ENTRY")
+
+	// エラーコードを取得する
+	const auto code = CommDlgExtendedError();
+	if (!code) {
+		return {};	// エラーコードなし
+	}
+
+	// コードマップから文字列を取得する
+	if (const auto found = codeMap.find(code);
+		found != codeMap.end())
+	{
+		return std::data(found->second);	// 見付かった値を返す
+	}
+
+	throw std::out_of_range{ std::format("CommDlgExtendedError: unknown error code {}", code) };
 }
 
 namespace apiwrap {
@@ -1120,32 +1200,22 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 */
 /* static */ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 {
-	const auto dwError = Comdlg32::getInstance()->CommDlgExtendedError();
-	if( dwError == 0 ){
+	std::wstring name;
+	try {
+		name = Comdlg32::getInstance()->CommDlgExtendedErrorString();
+	}
+	catch (const std::out_of_range&) {
+		name = L"UNKNOWN_ERRORCODE";
+	}
+
+	if (name.empty()) {
 		//	ユーザーキャンセルによる
 		return;
 	}
 
-	const WCHAR* pszError;
+	const auto formatted = std::format(L"{:<21}", name);
 
-	switch( dwError ){
-	case CDERR_DIALOGFAILURE  : pszError = L"CDERR_DIALOGFAILURE  "; break;
-	case CDERR_FINDRESFAILURE : pszError = L"CDERR_FINDRESFAILURE "; break;
-	case CDERR_NOHINSTANCE    : pszError = L"CDERR_NOHINSTANCE    "; break;
-	case CDERR_INITIALIZATION : pszError = L"CDERR_INITIALIZATION "; break;
-	case CDERR_NOHOOK         : pszError = L"CDERR_NOHOOK         "; break;
-	case CDERR_LOCKRESFAILURE : pszError = L"CDERR_LOCKRESFAILURE "; break;
-	case CDERR_NOTEMPLATE     : pszError = L"CDERR_NOTEMPLATE     "; break;
-	case CDERR_LOADRESFAILURE : pszError = L"CDERR_LOADRESFAILURE "; break;
-	case CDERR_STRUCTSIZE     : pszError = L"CDERR_STRUCTSIZE     "; break;
-	case CDERR_LOADSTRFAILURE : pszError = L"CDERR_LOADSTRFAILURE "; break;
-	case FNERR_BUFFERTOOSMALL : pszError = L"FNERR_BUFFERTOOSMALL "; break;
-	case CDERR_MEMALLOCFAILURE: pszError = L"CDERR_MEMALLOCFAILURE"; break;
-	case FNERR_INVALIDFILENAME: pszError = L"FNERR_INVALIDFILENAME"; break;
-	case CDERR_MEMLOCKFAILURE : pszError = L"CDERR_MEMLOCKFAILURE "; break;
-	case FNERR_SUBCLASSFAILURE: pszError = L"FNERR_SUBCLASSFAILURE"; break;
-	default:					pszError = L"UNKNOWN_ERRORCODE    "; break;
-	}
+	const auto pszError = std::data(formatted);
 
 	ErrorBeep();
 

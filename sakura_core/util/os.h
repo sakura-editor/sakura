@@ -62,6 +62,8 @@ struct Comdlg32 : public TSakuraSingleton<Comdlg32> {
 	virtual BOOL PrintDlgW(
 		_Inout_ LPPRINTDLGW pPD
 	) const;
+
+	std::wstring CommDlgExtendedErrorString() const;
 };
 
 //クリップボード
