@@ -101,6 +101,9 @@ bool CNormalProcess::InitializeProcess()
 	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
 	InitEventHolder initEvent{ hEvent.get() };
 
+	// スコープを抜けるときシグナル状態になるようにする
+	InitEventHolder grepEvent;
+
 	// ミューテックスもスマートポインタに入れておく
 	HandleHolder mutexHolder{ hMutex };
 
@@ -227,6 +230,11 @@ bool CNormalProcess::InitializeProcess()
 		}
 		GrepInfo gi;
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
+
+		// Grep完了イベントを開く
+		SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_GREP_COMPLETED, ::GetCurrentThreadId()) };
+		grepEvent = ::OpenEventW(EVENT_MODIFY_STATE, FALSE, grepEventName);
+
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
 			// pEditWnd->GetDocument()->SetCurDirNotitle();

@@ -108,4 +108,17 @@ private:
 	CNativeW	m_cmProfile;		//! プロファイル名
 	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
 };
+
+namespace cxx {
+
+constexpr bool iequals(std::wstring_view lhs, std::wstring_view rhs)
+{
+    return lhs.size() == rhs.size() &&
+		std::ranges::equal(lhs, rhs, [] (wchar_t a, wchar_t b) {
+            return std::towupper(a) == std::towupper(b);
+        });
+}
+
+} // namespace cxx
+
 #endif /* SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_ */

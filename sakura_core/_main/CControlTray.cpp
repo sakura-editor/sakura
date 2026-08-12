@@ -66,6 +66,8 @@
 /////////////////////////////////////////////////////////////////////////
 static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 
+std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s);
+
 namespace cxx {
 
 /*!
@@ -1217,6 +1219,12 @@ bool CControlTray::OpenNewEditor(
 			cCmdLineBuf.AppendF(L" %s", szCmdLineOption);
 		}
 	}
+
+	std::vector<std::wstring_view> additionalOpts;
+	if (szCmdLineOption) {
+		additionalOpts = SplitLegacyCommandLine(szCmdLineOption);
+	}
+
 	// -- -- -- -- プロセス生成 -- -- -- -- //
 
 	// 無効なディレクトリのときはNULLに変更
@@ -1299,9 +1307,25 @@ bool CControlTray::OpenNewEditor(
 	bool bRet = true;
 	if (sync)
 	{
+		const bool isGrepMode = std::ranges::any_of(additionalOpts, [] (std::wstring_view opt) {
+			return cxx::iequals(opt, L"-GREPMODE")
+				|| cxx::iequals(opt, L"-GREPDLG");
+		});
+
 		// エディター初期化完了イベントを作成する
 		SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, p.dwThreadId) };
 		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
+
+		using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+		HandleHolder initIvent{ hEvent };
+		HandleHolder grepEvent{};
+
+		if (isGrepMode)
+		{
+			// Grep完了イベントを作成する
+			SFilePath grepEventName{ std::format( GSTR_EVENT_SAKURA_GREP_COMPLETED, p.dwThreadId ) };
+			grepEvent = ::CreateEventW(nullptr, TRUE, FALSE, grepEventName);
+		}
 
 		// エディターのメインスレッドを再開する
 		::ResumeThread(p.hThread);
@@ -1338,6 +1362,21 @@ bool CControlTray::OpenNewEditor(
 				szEXE
 			);
 			bRet = false;
+		}
+
+		if (isGrepMode) dwRet = WAIT_TIMEOUT;
+		
+		while (
+			WAIT_OBJECT_0 != dwRet && // Grep完了
+			WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
+		) {
+			std::array handles2{ grepEvent.get(), p.hProcess};
+			dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles2), FALSE, 100, QS_SENDMESSAGE);
+
+			// 自スレッドにメッセージが送られてきた場合
+			if (WAIT_OBJECT_0 + count == dwRet) {
+				BlockingHook(nullptr);	// 溜まったメッセージを処理する
+			}
 		}
 	}
 

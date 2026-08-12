@@ -156,6 +156,12 @@ public:
 	{
 		return true;
 	}
+
+	Me& operator = (HANDLE t)
+	{
+		reset(t);
+		return *this;
+	}
 };
 
 /*!
@@ -456,9 +462,22 @@ cxx::EditorProcessHolder CreateEditorProcess(
 	// エディターのメインスレッドを開く
 	cxx::HandleHolder hThread{ ::OpenThread(THREAD_SUSPEND_RESUME, FALSE, ep.dwThreadId) };
 
+	const bool isGrepMode = std::ranges::any_of(commandArgs, [] (std::wstring_view opt) {
+		return cxx::iequals(opt, L"-GREPMODE")
+			|| cxx::iequals(opt, L"-GREPDLG");
+	});
+
 	// 初期化完了イベントを作成する
 	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ep.dwThreadId) };
 	cxx::HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
+
+	cxx::HandleHolder grepEvent{};
+
+	if (isGrepMode) {
+		// Grep完了イベントを作成する
+		SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_GREP_COMPLETED, ep.dwThreadId) };
+		grepEvent = ::CreateEventW(nullptr, TRUE, FALSE, grepEventName);
+	}
 
 	// エディターのメインスレッドを再開する
 	::ResumeThread(hThread);
@@ -467,6 +486,14 @@ cxx::EditorProcessHolder CreateEditorProcess(
 	std::array handles{ hEvent.get(), ep.get() };
 	if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 30000); WAIT_OBJECT_0 != dwRet) {
 		return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, nullptr };
+	}
+
+	if (isGrepMode) {
+		// Grep完了を待つ
+		std::array grepHandles{ grepEvent.get(), ep.get() };
+		if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(grepHandles)), std::data(grepHandles), FALSE, 30000); WAIT_OBJECT_0 != dwRet) {
+			return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, nullptr };
+		}
 	}
 
 	// メインウインドウを取得する

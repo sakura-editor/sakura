@@ -62,6 +62,62 @@
 #define CMDLINEOPT_PROF			501  //!< プロファイルを選択
 #define CMDLINEOPT_PROFMGR		502  //!< プロファイルマネージャを起動時に表示
 
+std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s)
+{
+	std::vector<std::wstring_view> args;
+
+	// 正規表現パターン:
+	//   ^(?:-\w+[=:])?  … オプション接頭辞 (-XXX= または -XXX:) は省略可能
+	//   "                … 開き引用符
+	//   (?:              … 引用符内文字の繰り返し
+	//     ""             …   "" → " のエスケープ
+	//     | \"           …   \" → " のエスケープ
+	//     | \\(?!")      …   " が後続しない単独 \ (リテラル)
+	//     | [^"\\]       …   " と \ 以外の通常文字
+	//   )*
+	//   "                … 閉じ引用符
+	std::wregex re(LR"(^(?:-\w+[=:])?"(?:""|\\"|\\(?!")|[^"\\])*")");
+
+	while (!s.empty()) {
+		// 先頭の空白を読み飛ばす
+		if (const auto p0 = s.find_first_not_of(L' '); std::wstring_view::npos == p0) {
+			s = std::wstring_view{};	// 残余が空白のみ → 処理終了
+			continue;
+		} else if (p0) {
+			s = s.substr(p0);
+		}
+
+		// 次の区切り文字を探す
+		const auto p1 = s.find_first_of(L' ');
+
+		if (std::wstring_view::npos == p1) {
+			args.emplace_back(s);	// 残り全部を1つの引数とみなす → 処理終了
+			s = std::wstring_view{};
+			continue;
+		}
+
+		// 引用符を探す
+		if (const auto p2 = s.find_first_of(L'"'); std::wstring_view::npos == p2 || p1 < p2) {
+			args.emplace_back(s.substr(0, p1));
+			s = s.substr(p1);
+			continue;
+		}
+
+		// 引用符の正規表現とマッチさせる
+		std::match_results<std::wstring_view::const_iterator> m;
+		if (!std::regex_search(s.begin(), s.end(), m, re)) {
+			args.emplace_back(s);	// 残り全部を1つの引数とみなす → 処理終了
+			s = std::wstring_view{};
+			continue;
+		}
+
+		args.emplace_back(s.substr(0, m.length()));
+		s = s.substr(m.length());
+	}
+
+	return args;
+}
+
 /*!
 	コマンドラインのチェックを行って、オプション番号と
 	引数がある場合はその先頭アドレスを返す。

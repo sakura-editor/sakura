@@ -21,6 +21,8 @@
 
 using namespace std::literals::string_view_literals;
 
+std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s);
+
 bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 
@@ -43,6 +45,55 @@ std::wstring GetLocalPath(const std::wstring_view& filename)
 	::wcscpy_s(pszResolvedPath, cchBufSize, filename.data());
 	CSakuraEnvironment::ResolvePath(pszResolvedPath);
 	return pszResolvedPath;
+}
+
+/*!
+ * @brief コマンドライン文字列を分割する関数のテスト
+ */
+TEST(SplitLegacyCommandLine, test001)
+{
+	const auto args1 = SplitLegacyCommandLine(LR"(test.exe arg1 -arg2="test arg" "the ""3rd"" arg" finalArg)");
+	EXPECT_THAT(args1[0], StrEq(LR"(test.exe)"));
+	EXPECT_THAT(args1[1], StrEq(LR"(arg1)"));
+	EXPECT_THAT(args1[2], StrEq(LR"(-arg2="test arg")"));
+	EXPECT_THAT(args1[3], StrEq(LR"("the ""3rd"" arg")"));
+	EXPECT_THAT(args1[4], StrEq(LR"(finalArg)"));
+
+	const auto args2 = SplitLegacyCommandLine(L"arg1 arg2 ");
+	EXPECT_THAT(args2, ::testing::SizeIs(2));
+	EXPECT_THAT(args2[0], StrEq(L"arg1"));
+	EXPECT_THAT(args2[1], StrEq(L"arg2"));
+
+	const auto args3 = SplitLegacyCommandLine(L"   ");
+	EXPECT_THAT(args3, ::testing::IsEmpty());
+
+	// "C:\path\to\file" の \ はリテラルとして扱われ、トークン全体が1引数になる
+	const auto args4 = SplitLegacyCommandLine(LR"(exe "C:\path\to\file")");
+	EXPECT_THAT(args4, ::testing::SizeIs(2));
+	EXPECT_THAT(args4[0], StrEq(L"exe"));
+	EXPECT_THAT(args4[1], StrEq(LR"("C:\path\to\file")"));
+
+	// "te\"st" は \" をエスケープとして扱い、トークン全体が1引数になる
+	const auto args5 = SplitLegacyCommandLine(LR"(exe "te\"st")");
+	EXPECT_THAT(args5, ::testing::SizeIs(2));
+	EXPECT_THAT(args5[0], StrEq(L"exe"));
+	EXPECT_THAT(args5[1], StrEq(LR"("te\"st")"));
+
+	// 閉じ引用符なし → 残り全部を最後の引数として扱う
+	const auto args6 = SplitLegacyCommandLine(L"arg1 \"open here arg3");
+	EXPECT_THAT(args6, ::testing::SizeIs(2));
+	EXPECT_THAT(args6[0], StrEq(L"arg1"));
+	EXPECT_THAT(args6[1], StrEq(L"\"open here arg3"));
+
+	EXPECT_THAT( cxx::iequals(L"abc", L"abc"), IsTrue());	// ケース含め一致
+	EXPECT_THAT( cxx::iequals(L"ABC", L"ABC"), IsTrue());	// ケース含め一致
+	EXPECT_THAT( cxx::iequals(L"abc", L"ABC"), IsTrue());	// ケース違い
+	EXPECT_THAT( cxx::iequals(L"ABC", L"abc"), IsTrue());	// ケース違い
+	EXPECT_THAT( cxx::iequals(L"AbC", L"aBc"), IsTrue());	// ケース違い
+
+	EXPECT_THAT( cxx::iequals(L"AbC", L"def"), IsFalse());
+	EXPECT_THAT( cxx::iequals(L"AbC", L"ab"), IsFalse());
+	EXPECT_THAT( cxx::iequals(L"AbC", std::wstring_view{ L"abc", 2 }), IsFalse());
 }
 
 /*!
