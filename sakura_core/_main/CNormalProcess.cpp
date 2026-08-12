@@ -228,6 +228,7 @@ bool CNormalProcess::InitializeProcess()
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
+<<<<<<< HEAD
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
 				&pEditWnd->GetActiveView(),
 				gi.bGrepReplace,
@@ -249,6 +250,33 @@ bool CNormalProcess::InitializeProcess()
 				gi.bGrepPaste,
 				gi.bGrepBackup
 			);
+=======
+			::SetEvent( hEvent.get() );
+			{
+				const SGrepInput grepInput{ &gi.cmGrepKey, &gi.cmGrepRep, &gi.cmGrepFile, &gi.cmGrepFolder };
+				SGrepOption sGrepOption;
+				sGrepOption.bGrepReplace = gi.bGrepReplace;
+				sGrepOption.bGrepSubFolder = gi.bGrepSubFolder != FALSE;
+				sGrepOption.bGrepStdout = gi.bGrepStdout;
+				sGrepOption.bGrepHeader = gi.bGrepHeader;
+				sGrepOption.nGrepCharSet = gi.nGrepCharSet;
+				sGrepOption.nGrepOutputLineType = gi.nGrepOutputLineType;
+				sGrepOption.nGrepOutputStyle = gi.nGrepOutputStyle;
+				sGrepOption.bGrepOutputFileOnly = gi.bGrepOutputFileOnly;
+				sGrepOption.bGrepOutputBaseFolder = gi.bGrepOutputBaseFolder;
+				sGrepOption.bGrepSeparateFolder = gi.bGrepSeparateFolder;
+				sGrepOption.bGrepPaste = gi.bGrepPaste;
+				sGrepOption.bGrepBackup = gi.bGrepBackup;
+				this->m_pcEditApp->m_pcGrepAgent->DoGrep(
+					&pEditWnd->GetActiveView(),
+					grepInput,
+					gi.sGrepSearchOption,
+					sGrepOption,
+					gi.bGrepCurFolder,
+					gi.bGrepExcludeFileRegexp
+				);
+			}
+>>>>>>> 9c9c17856 (プロセスエラーの追加対応)
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 		}
 		else{
@@ -283,6 +311,7 @@ bool CNormalProcess::InitializeProcess()
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			hMutex = nullptr;
+			::SetEvent( hEvent.get() );
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない

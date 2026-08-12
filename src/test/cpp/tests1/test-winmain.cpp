@@ -1282,4 +1282,88 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 	ep.lock();
 }
 
+/*!
+ * @brief 初期化完了イベントの通知タイミング検証（バグ検知テスト）
+ *
+ *  エディタープロセスは、編集ウインドウ生成完了（＝Grepダイアログを
+ *  表示できる状態）になった時点で初期化完了イベントをシグナルすべき。
+ *  現行実装は InitializeProcess の return 時（Grep/ダイアログ完了後）
+ *  までシグナルしないため、呼出元 CControlTray::OpenNewEditor(sync) が
+ *  15秒でタイムアウトし STR_TRAY_CREATEPROC2 を誤表示する。
+ *  本テストはダイアログ表示中のイベント状態を採取してこれを検知する。
+ *  （現行コードでは FAIL する。シグナル位置修正後に PASS する。）
+ */
+TEST_F(WinMainFuncTest, GrepInitEventSignaledBeforeDialog)
+{
+	// テスト用プロファイル名
+	const auto profileName{ GetProfileName() };
+
+	// エディタープロセスをサスペンド状態で起動する
+	STARTUPINFO si = { sizeof(STARTUPINFO) };
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = SW_SHOWDEFAULT;
+	std::vector<std::wstring> args{
+		LR"(-GREPDLG)",
+		LR"(-GREPMODE)",
+		std::format(LR"(-CODE={})", static_cast<int>(CODE_AUTODETECT)),
+	};
+	auto ep = testing::CreateSakuraProcess(si, args, std::nullopt, profileName,
+		CREATE_DEFAULT_ERROR_MODE | CREATE_SUSPENDED);
+	ASSERT_THAT(ep, NotNull());
+
+	// エディターのメインスレッドを開く
+	cxx::HandleHolder hThread{ ::OpenThread(THREAD_SUSPEND_RESUME, FALSE, ep.dwThreadId) };
+	ASSERT_THAT(hThread, NotNull());
+
+	// 初期化完了イベントを作成する（CControlTray::OpenNewEditor と同手順）
+	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ep.dwThreadId) };
+	cxx::HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
+	ASSERT_THAT(hEvent, NotNull());
+
+	// Grepダイアログ表示時点のイベント状態を採取してから閉じるスレッドを起動する
+	std::atomic<DWORD> probedState{ WAIT_FAILED };
+	auto t = StartDialogCloser(L"Grep",
+		[hProbeEvent = hEvent.get(), &probedState]
+		(IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {
+			// ダイアログが表示されている＝編集ウインドウ生成済＝初期化完了済。
+			// この時点でイベントはシグナル済であるべき（猶予2秒）。
+			probedState = ::WaitForSingleObject(hProbeEvent, 2000);
+			// 後始末: ダイアログをキャンセルで閉じる
+			EmulateInvokeButton(pUIAutomation, hWndDlg, IDCANCEL, st);
+		}, 15000);
+
+	// エディターのメインスレッドを再開する
+	::ResumeThread(hThread);
+
+	// ダイアログの検出～クローズ完了を待つ
+	t.join();
+
+	// ★バグ検知ポイント★
+	// 現行コード: ダイアログ表示中はシグナルされないため WAIT_TIMEOUT で FAIL
+	// 修正後　　: DoModal 前に SetEvent 済のため WAIT_OBJECT_0 で PASS
+	EXPECT_EQ(DWORD(WAIT_OBJECT_0), probedState.load())
+		<< "初期化完了イベントがダイアログ表示前にシグナルされていない。"
+		<< "この不備により OpenNewEditor(sync) は15秒タイムアウトし "
+		<< "STR_TRAY_CREATEPROC2 を誤表示する。";
+
+	// --- 以下は後始末 ---
+
+	// ダイアログクローズ後、InitializeProcess の return でイベントは必ずシグナルされる
+	EXPECT_EQ(DWORD(WAIT_OBJECT_0), ::WaitForSingleObject(hEvent.get(), 15000));
+
+	// 編集ウインドウ（無題）を検索してクローズを要求する
+	HWND hWndFound = nullptr;
+	::EnumThreadWindows(ep.dwThreadId, testing::EnumEditorWindowProc, LPARAM(&hWndFound));
+	if (hWndFound) {
+		testing::RequestForeignWindowClose(hWndFound);
+	}
+
+	// プロセスの完全終了を待つ
+	ep.lock();
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(profileName);
+}
+
 } // namespace winmain
+
