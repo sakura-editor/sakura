@@ -1413,6 +1413,8 @@ TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
 	HWND hWndEdit = nullptr;
 	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_COMMAND, MAKEWPARAM(F_OPEN_COMMAND_PROMPT, 0), 0L), IsFalse());
 
+	pcEditDoc->m_cDocFile.SetFilePath(L"");
+
 	Shell32::resetInstance();
 
 	std::filesystem::remove(targetPath, ec);
@@ -1485,6 +1487,8 @@ TEST_F(EditWndTest, FileSaveWithBackupAgent001)
 	backupAgent->FormatBackUpPath(newPath, std::size(newPath), backupPath.c_str());
 	EXPECT_THAT(newPath, StrEq(LR"(C:\Users\Public\Desktop\backup-agent-target.bak)"));
 
+	pcEditDoc->m_cDocFile.SetFilePath(L"");
+
 	backupAgent = nullptr;
 
 	sBackup = backupOld;
@@ -1543,6 +1547,8 @@ TEST_F(EditWndTest, GetDocDataObject001)
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"FileClose()"), IsTrue());
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
+
+	pcEditDoc->m_cDocFile.SetFilePath(L"");
 
 	std::filesystem::remove(targetPath, ec);
 }
