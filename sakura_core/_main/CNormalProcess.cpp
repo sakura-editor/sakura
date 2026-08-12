@@ -238,6 +238,8 @@ bool CNormalProcess::InitializeProcess()
 			mutexHolder = nullptr;
 			hMutex = nullptr;
 
+			initEvent = nullptr;
+
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
 				&pEditWnd->GetActiveView(),
 				gi.bGrepReplace,
@@ -295,6 +297,8 @@ bool CNormalProcess::InitializeProcess()
 			mutexHolder = nullptr;
 			hMutex = nullptr;
 			
+			initEvent = nullptr;
+
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
@@ -460,8 +464,6 @@ bool CNormalProcess::InitializeProcess()
 
 	// 複数ファイル読み込み
 	OpenFiles( pEditWnd->GetHwnd() );
-
-	initEvent = nullptr;
 
 	return pEditWnd->GetHwnd() ? true : false;
 }
