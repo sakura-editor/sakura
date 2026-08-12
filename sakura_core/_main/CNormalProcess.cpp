@@ -88,6 +88,10 @@ bool CNormalProcess::InitializeProcess()
 		return false;
 	}
 
+	// スコープを抜けるときミューテックスを解放する
+	using ShareDataLockHolder = cxx::ResourceHolder<&::ReleaseMutex>;
+	ShareDataLockHolder shareDataLock{ hMutex };	// ロック保持中は、他プロセスとの競合を意識しなくてよい。
+
 	// エディター初期化完了イベントを開く
 	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ::GetCurrentThreadId()) };
 	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
@@ -96,6 +100,9 @@ bool CNormalProcess::InitializeProcess()
 	// スコープを抜けるときシグナル状態になるようにする
 	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
 	InitEventHolder initEvent{ hEvent.get() };
+
+	// ミューテックスもスマートポインタに入れておく
+	HandleHolder mutexHolder{ hMutex };
 
 	/* 共有メモリを初期化する */
 	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
@@ -144,8 +151,10 @@ bool CNormalProcess::InitializeProcess()
 			//	To Here Oct. 19, 2001 genta
 			/* アクティブにする */
 			ActivateFrameWindow( hwndOwner );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
+
+			shareDataLock = nullptr;
+			mutexHolder = nullptr;
+			hMutex = nullptr;
 
 			// 複数ファイル読み込み
 			OpenFiles( hwndOwner );
@@ -178,8 +187,6 @@ bool CNormalProcess::InitializeProcess()
 
 	const auto hEditWnd = pEditWnd->GetHwnd();
 	if (!hEditWnd) {
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
 	}
 
@@ -226,8 +233,11 @@ bool CNormalProcess::InitializeProcess()
 			// 2003.06.23 Moca GREP実行前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
+
+			shareDataLock = nullptr;
+			mutexHolder = nullptr;
+			hMutex = nullptr;
+
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
 				&pEditWnd->GetActiveView(),
 				gi.bGrepReplace,
@@ -280,8 +290,9 @@ bool CNormalProcess::InitializeProcess()
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
+
+			shareDataLock = nullptr;
+			mutexHolder = nullptr;
 			hMutex = nullptr;
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
@@ -421,10 +432,9 @@ bool CNormalProcess::InitializeProcess()
 	//再描画
 	::InvalidateRect( pEditWnd->GetHwnd(), nullptr, TRUE );
 
-	if( hMutex ){
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
-	}
+	shareDataLock = nullptr;
+	mutexHolder = nullptr;
+	hMutex = nullptr;
 
 	//プラグイン：EditorStartイベント実行
 	CJackManager::getInstance()->InvokePlugins(PP_EDITOR_START, &pEditWnd->GetActiveView());
