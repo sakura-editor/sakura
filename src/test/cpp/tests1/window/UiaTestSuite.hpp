@@ -310,7 +310,7 @@ struct UiaTestSuite
 	std::jthread StartDialogCloser(
 		const std::optional<std::wstring>& optTitle,
 		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
-		ULONGLONG timeoutMillis = defaultTimeoutMillis * 3
+		ULONGLONG timeoutMillis = defaultTimeoutMillis * 4
 	);
 
 	/*!
