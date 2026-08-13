@@ -699,7 +699,8 @@ void CCaret::ShowCaretPosInfo()
 	//	May 12, 2000 genta
 	//	改行コードの表示を追加
 	CEol cNlType = m_pEditDoc->m_cDocEditor.GetNewLineCode();
-	const WCHAR* szEolMode = cNlType.GetName();
+	WCHAR szEolMode[5] = {};
+	wcscpy_s(szEolMode, cNlType.GetName());
 
 	// -- -- -- -- キャレット位置 -> ptCaret -- -- -- -- //
 	//
