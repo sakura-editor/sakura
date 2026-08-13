@@ -9,7 +9,11 @@
 
 #include "window/EditorTestSuite.hpp"
 
+#include "eval_outputs.hpp"
+
 #include <fstream>
+
+void CallDlgOpenFail();
 
 namespace uia {
 
@@ -218,7 +222,7 @@ TEST_P(FileDialogTest, DoModalOpenDlg101)
 			.Times(1)
 			.WillOnce(Return(FALSE));
 		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
-			.Times(1)
+			.Times(2)
 			.WillRepeatedly(Return(0));
 	}
 
@@ -249,7 +253,7 @@ TEST_P(FileDialogTest, DoModalOpenDlg102)
 			.Times(1)
 			.WillOnce(Return(FALSE));
 		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
-			.Times(1)
+			.Times(2)
 			.WillRepeatedly(Return(0));
 	}
 
@@ -328,7 +332,7 @@ TEST_P(FileDialogTest, DoModalSaveDlg101)
 			.Times(1)
 			.WillOnce(Return(FALSE));
 		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
-			.Times(1)
+			.Times(2)
 			.WillRepeatedly(Return(0));
 	}
 
@@ -410,7 +414,7 @@ TEST_P(FileDialogTest, GetOpenFileName101)
 			.Times(1)
 			.WillOnce(Return(FALSE));
 		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
-			.Times(1)
+			.Times(2)
 			.WillRepeatedly(Return(0));
 	}
 
@@ -441,8 +445,9 @@ TEST_P(FileDialogTest, GetOpenFileName102)
 			.WillOnce(Return(FALSE))
 			.WillOnce(Return(FALSE));
 		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
-			.Times(1)
-			.WillOnce(Return(FNERR_INVALIDFILENAME));
+			.Times(2)
+			.WillOnce(Return(FNERR_INVALIDFILENAME))
+			.WillOnce(Return(0));
 	}
 
 	testAction();
@@ -532,8 +537,9 @@ TEST_P(FileDialogTest, GetSaveFileName101)
 			.WillOnce(Return(FALSE))
 			.WillOnce(Return(FALSE));
 		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
-			.Times(1)
-			.WillOnce(Return(FNERR_INVALIDFILENAME));
+			.Times(2)
+			.WillOnce(Return(FNERR_INVALIDFILENAME))
+			.WillOnce(Return(0));
 	}
 
 	testAction();
@@ -682,5 +688,93 @@ TEST_F(SelectFileTest, SelectFile101)
 
 	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsFalse());
 }
+
+/*!
+ * @brief DlgOpenFailテストのパラメーター
+ *
+ * @param code CommDlgのエラーコード
+ * @param name CommDlgのエラー識別子
+ */
+using DlgOpenFailTestParam = std::tuple<DWORD, std::wstring_view>;
+
+/*!
+ * DlgOpenFailテストのためのフィクスチャクラス
+ */
+struct DlgOpenFailTest : public ::testing::TestWithParam<DlgOpenFailTestParam> {
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		User32::setInstance<MockUser32>();
+		Comdlg32::setInstance<MockComdlg32>();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override
+	{
+		Comdlg32::resetInstance();
+		User32::resetInstance();
+	}
+};
+
+/*!
+ * @brief DlgOpenFailのテスト
+ */
+TEST_P(DlgOpenFailTest, test)
+{
+	const auto code = std::get<0>(GetParam());
+	const auto name = std::get<1>(GetParam());
+
+	const auto expected = std::format(L"ダイアログが開けません。\n\nエラー:{:<21s}", name);
+
+	auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+	EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+		.Times(1)
+		.WillOnce(Return(code));
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expected), _, _, _))
+		.Times(1)
+		.WillOnce(Return(IDOK));
+
+	CallDlgOpenFail();
+}
+
+#pragma push_macro("CD_ERR_ENTRY")
+
+#define CD_ERR_ENTRY(code)	DlgOpenFailTestParam{ code, L ## #code }
+
+/*!
+ * @brief パラメータテストをインスタンス化する
+ */
+INSTANTIATE_TEST_SUITE_P(CommDlgCodes
+	, DlgOpenFailTest
+	, ::testing::Values(
+		CD_ERR_ENTRY(CDERR_DIALOGFAILURE),
+		CD_ERR_ENTRY(CDERR_FINDRESFAILURE),
+		CD_ERR_ENTRY(CDERR_NOHINSTANCE),
+		CD_ERR_ENTRY(CDERR_INITIALIZATION),
+		CD_ERR_ENTRY(CDERR_NOHOOK),
+		CD_ERR_ENTRY(CDERR_LOCKRESFAILURE),
+		CD_ERR_ENTRY(CDERR_NOTEMPLATE),
+		CD_ERR_ENTRY(CDERR_LOADRESFAILURE),
+		CD_ERR_ENTRY(CDERR_STRUCTSIZE),
+		CD_ERR_ENTRY(CDERR_LOADSTRFAILURE),
+		CD_ERR_ENTRY(FNERR_BUFFERTOOSMALL),
+		CD_ERR_ENTRY(CDERR_MEMALLOCFAILURE),
+		CD_ERR_ENTRY(FNERR_INVALIDFILENAME),
+		CD_ERR_ENTRY(CDERR_MEMLOCKFAILURE),
+		CD_ERR_ENTRY(FNERR_SUBCLASSFAILURE),
+
+		// 未定義のエラーコードは以下固定値。
+		DlgOpenFailTestParam{ 0x6000, L"UNKNOWN_ERRORCODE" }
+	)
+);
+
+#pragma pop_macro("CD_ERR_ENTRY")
 
 } // namespace dialog

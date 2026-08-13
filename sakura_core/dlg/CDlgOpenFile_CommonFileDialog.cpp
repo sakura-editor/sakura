@@ -117,7 +117,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::wstring>*, bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode ) override;
 
-	void DlgOpenFail(void);
+	static void DlgOpenFail(void);
 
 	void InitOfn(OPENFILENAME* ofn) const;
 
@@ -1118,15 +1118,16 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 	@author genta
 	@date 2004.05.29 genta 元々あった部分をまとめた
 */
-void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
+/* static */ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 {
-	const WCHAR*	pszError;
-	DWORD dwError = ::CommDlgExtendedError();
+	const auto dwError = Comdlg32::getInstance()->CommDlgExtendedError();
 	if( dwError == 0 ){
 		//	ユーザーキャンセルによる
 		return;
 	}
-	
+
+	const WCHAR* pszError;
+
 	switch( dwError ){
 	case CDERR_DIALOGFAILURE  : pszError = L"CDERR_DIALOGFAILURE  "; break;
 	case CDERR_FINDRESFAILURE : pszError = L"CDERR_FINDRESFAILURE "; break;
@@ -1143,11 +1144,14 @@ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 	case FNERR_INVALIDFILENAME: pszError = L"FNERR_INVALIDFILENAME"; break;
 	case CDERR_MEMLOCKFAILURE : pszError = L"CDERR_MEMLOCKFAILURE "; break;
 	case FNERR_SUBCLASSFAILURE: pszError = L"FNERR_SUBCLASSFAILURE"; break;
-	default: pszError = L"UNKNOWN_ERRORCODE"; break;
+	default:					pszError = L"UNKNOWN_ERRORCODE    "; break;
 	}
 
 	ErrorBeep();
-	TopErrorMessage( m_hwndParent,
+
+	// "ダイアログが開けません。\n\nエラー:%s"
+	TopErrorMessage(
+		nullptr,
 		LS(STR_DLGOPNFL_ERR1),
 		pszError
 	);
@@ -1265,4 +1269,9 @@ std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog()
 {
 	std::shared_ptr<IDlgOpenFile> ret(new CDlgOpenFile_CommonFileDialog());
 	return ret;
+}
+
+void CallDlgOpenFail() //　テスト専用グローバル関数
+{
+	CDlgOpenFile_CommonFileDialog::DlgOpenFail();
 }
