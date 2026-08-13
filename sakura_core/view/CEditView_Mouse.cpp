@@ -2229,7 +2229,7 @@ void CEditView::DragSelection()
 {
 	/* 選択範囲のデータを取得 */
 	CNativeW cmemCurText;
-	if (GetSelectedData(&cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) return;
+	if (!GetSelectedData(&cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) return;
 
 	// 選択範囲からクリップボードデータを作成する
 	const auto data = std::make_unique<CDataObject>(cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting());
