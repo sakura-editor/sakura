@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (C) 2025, Sakura Editor Organization
+	Copyright (C) 2025-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
  */
@@ -26,6 +26,31 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 		throw std::invalid_argument("string resource id should be in WORD range!");
 	}
 
+	// 文字列リソースを検索して参照を返す
+#if 1
+	// リソースを格納するモジュールを特定する(省略時はアプリリソースから取得)
+	const auto hModule = optModule.value_or(::GetModuleHandleW(nullptr));
+
+	// 文字列の先頭を受け取るためのポインター
+	LPCWSTR lpBuffer = nullptr;
+
+	// バッファサイズに0を指定してLoadStringWを呼び出すと、文字列の長さが返る
+	const auto cchResStr = ::LoadStringW(hModule, id, LPWSTR(&lpBuffer), 0);
+
+#if 0 // 新実装では↓の処理を行わない
+	if (!cchResStr) {
+		throw std::out_of_range("missing resource!");
+	}
+#endif
+
+	// 先頭ポインターと文字列長で文字列参照を構築して返す
+	return std::wstring_view(lpBuffer, cchResStr);
+
+#else
+	// 過去実装（LoadStringWの内部実装を模倣）では、不正な言語DLLを読み込んだときの例外が分かりづらいので辞める
+
+	// 単純削除だとうっかり復活させる懸念があるため、あえて残しておく
+
 	// RT_STRINGリソースのブロック番号を計算
 	const auto block = WORD((id >> 4) + 1);
 	const auto index = id & 0xF;
@@ -51,6 +76,8 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 		RT_STRING,
 		optModule
 	);
+
+#endif
 }
 
 /*!
