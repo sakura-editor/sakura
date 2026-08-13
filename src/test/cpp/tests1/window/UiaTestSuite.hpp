@@ -314,18 +314,6 @@ struct UiaTestSuite
 	);
 
 	/*!
-	 * ダイアログを閉じるスレッドを開始する
-	 *
-	 * @param titleResourceId タイトルのリソースID
-	 * @param action 閉じるアクション
-	 * @return ダイアログを閉じるためのスレッド
-	 */
-	std::jthread StartDialogCloser(
-		int titleResourceId,
-		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action
-	);
-
-	/*!
 	 * ポップアップメニューを選択するスレッドを開始する
 	 *
 	 * @param menuLabel メニューラベル
@@ -334,18 +322,6 @@ struct UiaTestSuite
 	std::jthread StartPopupMenuSelector(
 		std::wstring_view menuLabel,
 		ULONGLONG timeoutMillis = defaultTimeoutMillis
-	);
-
-	/*!
-	 * プロパティーシートを閉じるスレッドを開始する
-	 *
-	 * @param titleResourceId タイトルのリソースID
-	 * @param psButtonId ボタンID
-	 * @return プロパティーシートを閉じるためのスレッド
-	 */
-	std::jthread StartPropertySheetCloser(
-		int titleResourceId,
-		UINT psButtonId = PSBTN_OK
 	);
 
 	/*!

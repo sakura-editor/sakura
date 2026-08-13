@@ -370,21 +370,6 @@ std::jthread UiaTestSuite::StartDialogCloser(
 
 /*!
  * ダイアログを閉じるスレッドを開始する
- *
- * @param titleResourceId タイトルのリソースID
- * @param action 閉じるアクション
- * @return ダイアログを閉じるためのスレッド
- */
-std::jthread UiaTestSuite::StartDialogCloser(
-	int titleResourceId,
-	const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action
-)
-{
-	const std::wstring buffer{ cxx::load_string(titleResourceId) };
-
-	return StartDialogCloser(buffer, action);
-}
-
 /*!
  * ポップアップメニューを選択するスレッドを開始する
  *
@@ -413,23 +398,6 @@ std::jthread UiaTestSuite::StartPopupMenuSelector(
 
 		// 閉じるアクションを実行する
 		action(pAutomation, hWndFound, st);
-	});
-}
-
-/*!
- * プロパティーシートを閉じるスレッドを開始する
- *
- * @param titleResourceId タイトルのリソースID
- * @param psButtonId ボタンID
- * @return プロパティーシートを閉じるためのスレッド
- */
-std::jthread UiaTestSuite::StartPropertySheetCloser(
-	int titleResourceId,
-	UINT psButtonId
-)
-{
-	return StartDialogCloser(titleResourceId, [psButtonId] (IUIAutomation*, HWND hWndDlg, std::stop_token) {
-		SendPsmPressButton(hWndDlg, psButtonId);
 	});
 }
 
