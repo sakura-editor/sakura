@@ -42,3 +42,15 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 };
 
 } // namespace env
+
+struct MockUser32 final : public User32
+{
+	MOCK_CONST_METHOD5(MessageBoxExW, int(
+		_In_opt_ HWND hWnd,
+		_In_opt_ LPCWSTR lpText,
+		_In_opt_ LPCWSTR lpCaption,
+		_In_ UINT uType,
+		_In_ WORD wLanguageId
+	));
+};
+
