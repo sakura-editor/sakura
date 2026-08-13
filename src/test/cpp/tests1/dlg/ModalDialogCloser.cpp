@@ -92,11 +92,6 @@ bool ModalDialogCloser::ExecuteAction(HWND hWnd) noexcept
 	return false;
 }
 
-void CALLBACK ModalDialogCloser::TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
-{
-	ExecuteAction(hWnd);
-}
-
 /*!
  * CBTフックプロシージャ
  *
@@ -152,6 +147,11 @@ LRESULT CALLBACK ModalDialogCloser::CBTProc(
 		}
 	}
 	return ::CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+void CALLBACK ModalDialogCloser::TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
+{
+	ExecuteAction(hWnd);
 }
 
 ModalDialogCloser::ModalDialogCloser(

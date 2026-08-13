@@ -58,8 +58,8 @@ private:
 		_In_ LPARAM lParam
 	);
 
-	static void CALLBACK TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 	static bool ExecuteAction(HWND hWnd) noexcept;
+	static void CALLBACK TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 
 public:
 	ModalDialogCloser(const std::optional<std::wstring>& optTitle, const std::function<void(HWND)>& action);
