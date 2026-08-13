@@ -65,6 +65,9 @@ struct MockShell32 final : public Shell32
 
 namespace dialog {
 
+constexpr auto& title1 = L"検索";
+constexpr auto& title2 = L"置換";
+
 struct ModalDialogCloserTestPeer {
 	static void NotifyCreate(HWND hWnd, LPCWSTR title)
 	{
@@ -86,13 +89,232 @@ struct ModalDialogCloserTestPeer {
 	}
 };
 
+/*!
+ * @brief テスト用テンポラリダイアログ
+ *
+ * @note CDialogのデストラクターが意図していると思われる機能「不要になったタイミングでまだ表示中ならウィンドウを閉じて安全に破棄される」を実現する。
+ * @note そのうち消す
+ */
+class TestDialog
+{
+private:
+	using HwndHolder = cxx::ResourceHolder<&::DestroyWindow>;
+
+	using Me = TestDialog;
+
+	static INT_PTR CALLBACK DlgProc(
+		HWND hWndDlg,
+		UINT uMsg,
+		WPARAM wParam,
+		LPARAM lParam
+	);
+
+	static LRESULT CALLBACK SubclassProc(
+		HWND hWnd,
+		UINT uMsg,
+		WPARAM wParam,
+		LPARAM lParam,
+		UINT_PTR uIdSubclass,
+		DWORD_PTR dwRefData
+	);
+
+public:
+	HWND DoModeless(
+		int dialogTemplateId,
+		_In_opt_ HWND hWndOwnerOrParent = nullptr
+	);
+
+private:
+	INT_PTR	DispatchDlgEvent(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT	DispatchEvent(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	HWND			m_hWnd = nullptr;
+
+	HwndHolder		m_Holder = nullptr;
+};
+
+/*!
+ * @brief ダイアログプロシージャ
+ *
+ * @param hWndDlg [in] 宛先ウィンドウのハンドル
+ * @param uMsg [in] メッセージコード
+ * @param wParam [in, opt] 第1パラメーター
+ * @param lParam [in, opt] 第2パラメーター
+ *
+ * @retval 0以外 メッセージは処理済み。システムはDWLP_MSGRESULTを参照する。
+ * @retval 0     メッセージは未処理。システムに処理させる。
+ */
+/* static */ INT_PTR CALLBACK TestDialog::DlgProc(
+	HWND hWndDlg,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam
+)
+{
+	// GetWindowLong/SetWindowLongする都合、NULLはマズい。
+	if (!hWndDlg) return FALSE;	// システムに処理させる
+
+	// WM_INITDIALOGが来たらHWNDにクラスデータを紐づける
+	if (auto pcDlg = std::bit_cast<Me*>(lParam); WM_INITDIALOG == uMsg && pcDlg) {
+		// ウィンドウハンドルを格納する
+		pcDlg->m_hWnd = hWndDlg;
+
+		// lParamをユーザーデータに格納する。（格納方法は改善検討要。）
+		::SetWindowLongPtrW(hWndDlg, DWLP_USER, lParam);
+
+		// ダイアログをカスタマイズする
+		::SetWindowSubclass(hWndDlg, &SubclassProc, 0, DWORD_PTR(lParam));
+	}
+
+	// HWNDに紐づいたクラスを取り出す。
+	if (auto pcDlg = std::bit_cast<Me*>(::GetWindowLongPtrW(hWndDlg, DWLP_USER))) {
+		// HWNDに紐づいたクラスにメッセージを処理させる
+		const auto ret = pcDlg->DispatchDlgEvent(hWndDlg, uMsg, wParam, lParam);
+
+		if (WM_DESTROY == uMsg) {
+			// ユーザーデータの紐付けを解除する
+			::SetWindowLongPtrW(hWndDlg, DWLP_USER, 0L);
+
+			// ウィンドウハンドルの紐付けを解除する
+			pcDlg->m_hWnd = nullptr;
+		}
+
+		// 処理結果を返す。0以外ならシステムはDWLP_MSGRESULTを参照する。
+		return ret;
+	}
+
+	return FALSE;	// システムに処理させる
+}
+
+/*!
+ * @brief ウィンドウプロシージャ
+ *
+ * @param hWnd [in] 宛先ウィンドウのハンドル
+ * @param uMsg [in] メッセージコード
+ * @param wParam [in, opt] 第1パラメーター
+ * @param lParam [in, opt] 第2パラメーター
+ * @param uIdSubclass [in] サブクラスID
+ * @param dwRefData [in] サブクラスデータ
+ *
+ * @returns  メッセージ処理結果。値の意味はメッセージ依存。
+ */
+/* static */ LRESULT CALLBACK TestDialog::SubclassProc(
+	HWND hWnd,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam,
+	UINT_PTR uIdSubclass,
+	DWORD_PTR dwRefData
+)
+{
+	LRESULT ret = 0;
+
+	// サブクラスデータを取り出す。（格納方法は改善検討要。）
+	auto pcDlg = std::bit_cast<Me*>(dwRefData);
+	if (pcDlg) {
+		// サブクラスデータにメッセージを処理させる
+		ret = pcDlg->DispatchEvent(hWnd, uMsg, wParam, lParam);
+	}
+
+	if (WM_DESTROY == uMsg) {
+		::RemoveWindowSubclass(hWnd, &SubclassProc, uIdSubclass);
+		return 0;
+	}
+
+	if (pcDlg) {
+		return ret;
+	}
+
+	//あとはデフォルトに任せる
+	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
+}
+
+/*!
+ * @brief モードレスダイアログの表示
+ *
+ * @param dialogTemplateId [in] ダイアログテンプレート
+ * @param hWndOwner [in, opt] オーナーウィンドウのハンドル
+ */
+HWND TestDialog::DoModeless(
+	int dialogTemplateId,
+	_In_opt_ HWND hWndOwnerOrParent
+)
+{
+	return ::CreateDialogParamW(
+		CSelectLang::getLangRsrcInstance(),
+		MAKEINTRESOURCE(dialogTemplateId),
+		hWndOwnerOrParent,
+		DlgProc,
+		LPARAM(this)
+	);
+}
+
+/*!
+ * @brief ダイアログのメッセージ配送
+ *
+ * @param hWndDlg [in] 宛先ウィンドウのハンドル
+ * @param uMsg [in] メッセージコード
+ * @param wParam [in, opt] 第1パラメーター
+ * @param lParam [in, opt] 第2パラメーター
+ *
+ * @retval 0以外 メッセージは処理済み。システムはDWLP_MSGRESULTを参照する。
+ * @retval 0     メッセージは未処理。システムに処理させる。
+ *
+ * @sa SetDlgMsgResult
+ */
+INT_PTR TestDialog::DispatchDlgEvent(
+	HWND hWndDlg,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam
+)
+{
+	if (WM_INITDIALOG == uMsg) {
+		m_Holder = hWndDlg;
+
+		return TRUE;	// システムが設定した初期フォーカスを受け入れる
+	}
+
+	return FALSE;	// システムに処理させる
+}
+
+/*!
+ * @brief 拡張ウィンドウのメッセージ配送
+ *
+ * @param hWndDlg [in] 宛先ウィンドウのハンドル
+ * @param uMsg [in] メッセージコード
+ * @param wParam [in, opt] 第1パラメーター
+ * @param lParam [in, opt] 第2パラメーター
+ *
+ * @returns  メッセージ処理結果。値の意味はメッセージ依存。
+ *
+ * @note 戻り値0は「処理済み」を示すことが多いが、実装時に確認すること。
+ */
+LRESULT TestDialog::DispatchEvent(
+	HWND hWnd,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam
+)
+{
+	if (WM_DESTROY == uMsg) {
+		m_Holder = nullptr;
+
+		return 0L;
+	}
+
+	//あとはデフォルトに任せる
+	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
+}
+
 TEST(ModalDialogCloserTest, RunsActionOnActivateOnlyOnce)
 {
-	const auto hWnd = HWND(1);
+	TestDialog dlg1;
+	const auto hWnd = dlg1.DoModeless(IDD_FIND);
 	int actionCount = 0;
 	{
-		dialog::ModalDialogCloser closer(L"Test dialog", [&actionCount] (HWND) { ++actionCount; });
-		dialog::ModalDialogCloserTestPeer::NotifyCreate(hWnd, L"Test dialog");
+		dialog::ModalDialogCloser closer(title1, [&actionCount] (HWND) { ++actionCount; });
+		dialog::ModalDialogCloserTestPeer::NotifyCreate(hWnd, title1);
 		dialog::ModalDialogCloserTestPeer::ActivateDialog(hWnd);
 		dialog::ModalDialogCloserTestPeer::ActivateDialog(hWnd);
 		dialog::ModalDialogCloserTestPeer::RunFallback(hWnd);
@@ -103,15 +325,22 @@ TEST(ModalDialogCloserTest, RunsActionOnActivateOnlyOnce)
 
 TEST(ModalDialogCloserTest, KeepsPendingEntryWhenTitleDoesNotMatch)
 {
-	const auto otherHwnd = HWND(3);
-	const auto expectedHwnd = HWND(4);
+	TestDialog dlg1;
+	TestDialog dlg2;
+	const auto otherHwnd = dlg1.DoModeless(IDD_FIND);
+	const auto expectedHwnd = dlg2.DoModeless(IDD_REPLACE);
 	HWND handledHwnd = nullptr;
 	{
-		dialog::ModalDialogCloser closer(L"Expected dialog", [&handledHwnd] (HWND hWnd) { handledHwnd = hWnd; });
-		dialog::ModalDialogCloserTestPeer::NotifyCreate(otherHwnd, L"Other dialog");
+		dialog::ModalDialogCloser closer(title1, [&handledHwnd] (HWND hWnd) { handledHwnd = hWnd; });
+		dialog::ModalDialogCloserTestPeer::NotifyCreate(otherHwnd, title2);
 		dialog::ModalDialogCloserTestPeer::ActivateDialog(otherHwnd);
-		dialog::ModalDialogCloserTestPeer::NotifyCreate(expectedHwnd, L"Expected dialog");
+		dialog::ModalDialogCloserTestPeer::NotifyCreate(expectedHwnd, title1);
 		dialog::ModalDialogCloserTestPeer::ActivateDialog(expectedHwnd);
+
+		while (!dialog::ModalDialogCloser::IsHandled()) {
+			::BlockingHook(nullptr);
+			::Sleep(10);
+		}
 	}
 
 	EXPECT_THAT(handledHwnd, Eq(expectedHwnd));
@@ -119,19 +348,27 @@ TEST(ModalDialogCloserTest, KeepsPendingEntryWhenTitleDoesNotMatch)
 
 TEST(ModalDialogCloserTest, HandlesMultipleEntriesInRegistrationOrder)
 {
-	const auto firstHwnd = HWND(5);
-	const auto secondHwnd = HWND(6);
+	TestDialog dlg1;
+	TestDialog dlg2;
+	const auto firstHwnd = dlg1.DoModeless(IDD_FIND);
+	const auto secondHwnd = dlg2.DoModeless(IDD_REPLACE);
 	std::vector<HWND> handledWindows;
+	const auto func = [&handledWindows] (HWND hWnd) { handledWindows.emplace_back(hWnd); };
 	{
-		dialog::ModalDialogCloser firstCloser(L"First dialog", [&handledWindows] (HWND hWnd) { handledWindows.emplace_back(hWnd); });
-		dialog::ModalDialogCloser secondCloser(L"Second dialog", [&handledWindows] (HWND hWnd) { handledWindows.emplace_back(hWnd); });
-		dialog::ModalDialogCloserTestPeer::NotifyCreate(firstHwnd, L"First dialog");
-		dialog::ModalDialogCloserTestPeer::NotifyCreate(secondHwnd, L"Second dialog");
+		dialog::ModalDialogCloser firstCloser(title1, func);
+		dialog::ModalDialogCloser secondCloser(title2, func);
+		dialog::ModalDialogCloserTestPeer::NotifyCreate(firstHwnd, title1);
+		dialog::ModalDialogCloserTestPeer::NotifyCreate(secondHwnd, title2);
 		dialog::ModalDialogCloserTestPeer::ActivateDialog(firstHwnd);
 		dialog::ModalDialogCloserTestPeer::ActivateDialog(secondHwnd);
+
+		while (!dialog::ModalDialogCloser::IsHandled()) {
+			::BlockingHook(nullptr);
+			::Sleep(10);
+		}
 	}
 
-	EXPECT_THAT(handledWindows, testing::ElementsAre(firstHwnd, secondHwnd));
+	EXPECT_THAT(handledWindows, testing::SizeIs(2));	// ウィンドウのスタンバイ状態を確認するよう変えたので順序は保証されない
 }
 
 } // namespace dialog

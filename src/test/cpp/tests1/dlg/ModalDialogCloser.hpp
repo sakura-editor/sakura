@@ -33,7 +33,7 @@ private:
 	using Me = ModalDialogCloser;
 
 	static constexpr UINT TIMER_ID_FIRST_IDLE = 9999;
-	static constexpr UINT FALLBACK_DELAY_MILLIS = 500;
+	static constexpr UINT SNOOZE_INTERVAL = 10;
 
 	enum class State {
 		Pending,
@@ -62,6 +62,8 @@ private:
 	static void CALLBACK TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 
 public:
+	static bool IsHandled() noexcept;
+
 	ModalDialogCloser(const std::optional<std::wstring>& optTitle, const std::function<void(HWND)>& action);
 
 	ModalDialogCloser(int dialogTitleResourceId, const std::function<void(HWND)>& action);
