@@ -27,6 +27,7 @@
 
 #include "StdAfx.h"
 #include <HtmlHelp.h>
+#include "cxx/ResourceHolder.hpp"
 #include "CControlTray.h"
 #include "env/CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
@@ -1287,13 +1288,14 @@ bool CControlTray::OpenNewEditor(
 	{
 		// エディター初期化完了イベントを作成する
 		SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, p.dwThreadId) };
-		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
+		using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+		HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
 
 		// エディターのメインスレッドを再開する
 		::ResumeThread(p.hThread);
 
 		// エディター初期化完了を待つ
-		std::array handles{ hEvent, p.hProcess };
+		std::array handles{ hEvent.get(), p.hProcess };
 		const auto count = DWORD(std::size(handles));
 
 		const auto startTick = ::GetTickCount64();

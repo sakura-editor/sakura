@@ -97,6 +97,13 @@ bool CNormalProcess::InitializeProcess()
 	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
 	InitEventHolder initEvent{ hEvent.get() };
 
+	// Grep完了イベントを開く（作成側が存在しない場合はnullptrになる）
+	SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_EP_GREP_COMPLETED, ::GetCurrentThreadId()) };
+	HandleHolder hGrepEvent{ ::OpenEventW(STANDARD_RIGHTS_REQUIRED | EVENT_MODIFY_STATE | SYNCHRONIZE, FALSE, grepEventName) };
+
+	// スコープを抜けるとき（＝Grep完了後）シグナル状態になるようにする
+	InitEventHolder grepEvent{ hGrepEvent.get() };
+
 	/* 共有メモリを初期化する */
 	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
 		return false;
@@ -228,7 +235,8 @@ bool CNormalProcess::InitializeProcess()
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-<<<<<<< HEAD
+			// エディター初期化完了を通知する（Grep 実行前）
+			initEvent = nullptr;
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
 				&pEditWnd->GetActiveView(),
 				gi.bGrepReplace,
@@ -250,33 +258,6 @@ bool CNormalProcess::InitializeProcess()
 				gi.bGrepPaste,
 				gi.bGrepBackup
 			);
-=======
-			::SetEvent( hEvent.get() );
-			{
-				const SGrepInput grepInput{ &gi.cmGrepKey, &gi.cmGrepRep, &gi.cmGrepFile, &gi.cmGrepFolder };
-				SGrepOption sGrepOption;
-				sGrepOption.bGrepReplace = gi.bGrepReplace;
-				sGrepOption.bGrepSubFolder = gi.bGrepSubFolder != FALSE;
-				sGrepOption.bGrepStdout = gi.bGrepStdout;
-				sGrepOption.bGrepHeader = gi.bGrepHeader;
-				sGrepOption.nGrepCharSet = gi.nGrepCharSet;
-				sGrepOption.nGrepOutputLineType = gi.nGrepOutputLineType;
-				sGrepOption.nGrepOutputStyle = gi.nGrepOutputStyle;
-				sGrepOption.bGrepOutputFileOnly = gi.bGrepOutputFileOnly;
-				sGrepOption.bGrepOutputBaseFolder = gi.bGrepOutputBaseFolder;
-				sGrepOption.bGrepSeparateFolder = gi.bGrepSeparateFolder;
-				sGrepOption.bGrepPaste = gi.bGrepPaste;
-				sGrepOption.bGrepBackup = gi.bGrepBackup;
-				this->m_pcEditApp->m_pcGrepAgent->DoGrep(
-					&pEditWnd->GetActiveView(),
-					grepInput,
-					gi.sGrepSearchOption,
-					sGrepOption,
-					gi.bGrepCurFolder,
-					gi.bGrepExcludeFileRegexp
-				);
-			}
->>>>>>> 9c9c17856 (プロセスエラーの追加対応)
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 		}
 		else{
@@ -311,7 +292,8 @@ bool CNormalProcess::InitializeProcess()
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			hMutex = nullptr;
-			::SetEvent( hEvent.get() );
+			// エディター初期化完了を通知する（ダイアログ表示前）
+			initEvent = nullptr;
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない

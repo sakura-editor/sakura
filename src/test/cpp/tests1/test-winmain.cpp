@@ -460,6 +460,10 @@ cxx::EditorProcessHolder CreateEditorProcess(
 	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ep.dwThreadId) };
 	cxx::HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
 
+	// Grep完了イベントを作成する
+	SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_EP_GREP_COMPLETED, ep.dwThreadId) };
+	cxx::HandleHolder hGrepEvent{ ::CreateEventW(nullptr, TRUE, FALSE, grepEventName) };
+
 	// エディターのメインスレッドを再開する
 	::ResumeThread(hThread);
 
