@@ -9,6 +9,8 @@
 #include "cxx/ResourceHolder.hpp"
 #include "dlg/CDlgOpenFile.h"
 
+#include "CSelectLang.h"
+
 #include <deque>
 #include <exception>
 #include <functional>
@@ -24,7 +26,7 @@ struct ModalDialogCloserTestPeer;
  *
  * WindowsHookを使ってダイアログの初期表示を検出して閉じるもの。
  */
-class ModalDialogCloser final {
+class ModalDialogCloser {
 private:
 	friend struct ModalDialogCloserTestPeer;
 
@@ -83,6 +85,37 @@ private:
 	std::exception_ptr m_Exception;
 	DWORD m_HookError = ERROR_SUCCESS;
 	bool m_TimerActive = false;
+};
+
+/*!
+ * プロパティシートテスト用のクラス
+ */
+class PropertySheetCloser : public ModalDialogCloser
+{
+public:
+	explicit PropertySheetCloser(const std::function<void(HWND, HWND)>& action)
+		: ModalDialogCloser(std::nullopt, [action] (HWND hWndDlg) {
+			// アクティブなプロパティーシートのハンドルを取得する 
+			const auto hWndPage = HWND(::SendMessageW(hWndDlg, PSM_GETCURRENTPAGEHWND, 0L, 0L));
+
+			// WM_HELPを送信してヘルプ表示処理を空振りさせる
+			HELPINFO hi{};
+			::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+			// コンテキストメニュー表示を空振りさせる
+			FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+			action(hWndDlg, hWndPage);
+		})
+	{
+	}
+
+	explicit PropertySheetCloser(int button = PSBTN_CANCEL)
+		: PropertySheetCloser([button] (HWND hWndDlg, HWND) {
+			::SendMessageW(hWndDlg, PSM_PRESSBUTTON, button, 0L);
+		})
+	{
+	}
 };
 
 } // namespace dialog

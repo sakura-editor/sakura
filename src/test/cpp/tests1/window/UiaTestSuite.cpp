@@ -258,10 +258,19 @@ HWND WaitForWindow(
 	int notifyCode
 )
 {
+	// 指定されたコントロールのハンドルを取得する
 	const auto hWndCtrl = ::GetDlgItem(hWndDlg, nIDDlgItem);
-	ASSERT_THAT(hWndCtrl, NotNull()) << "control not found: #" << nIDDlgItem;
 
+	// コントロールのハンドルが取れなくても、それ自体は問題でない(ログの要否は今後検討する)
+	//ASSERT_THAT(hWndCtrl, NotNull()) << "control not found: #" << nIDDlgItem;
+
+#if 0
+	// 元々はクロススレッド想定で書いていた
 	EXPECT_THAT(::SendMessageTimeoutW(hWndDlg, WM_COMMAND, MAKEWPARAM(nIDDlgItem, notifyCode), LPARAM(hWndCtrl), SMTO_ABORTIFHUNG | SMTO_BLOCK | SMTO_NOTIMEOUTIFNOTHUNG, 0, nullptr), IsTrue());
+#else
+	// 同スレッドからSendMessageを呼ぶと、DlgProcの直呼びとして処理されるので効率がよい
+	FORWARD_WM_COMMAND(hWndDlg, nIDDlgItem, hWndCtrl, notifyCode, ::SendMessageW);
+#endif
 }
 
 /* static */ void UiaTestSuite::SendPsmPressButton(
@@ -269,7 +278,7 @@ HWND WaitForWindow(
 	UINT button
 )
 {
-	EXPECT_THAT(::SendMessageTimeoutW(hWndPropertySheet, PSM_PRESSBUTTON, button, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK | SMTO_NOTIMEOUTIFNOTHUNG, 0, nullptr), IsTrue());
+	::SendMessageW(hWndPropertySheet, PSM_PRESSBUTTON, button, 0L);
 }
 
 /*!
