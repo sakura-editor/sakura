@@ -1924,31 +1924,6 @@ TEST_F(EditWndTest, GetDocDataObject001)
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
-/*!
- * キャンセルダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgCancel001)
-{
-	// 表示されたモーダルダイアログを閉じる
-	dialog::ModalDialogCloser closer(L"Grep実行中", [](HWND hWndDlg) {
-		// コンテキストメニュー表示を空振りさせる
-		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
-
-		// ボタンID以外でOnCommandを空振りさせる
-		SendDlgCommand(hWndDlg, IDC_STATIC_CURPATH);
-
-		SendDlgCommand(hWndDlg, IDCANCEL);
-	});
-
-	CDlgCancel cDlgCancel;
-
-	const auto hWnd = pcEditWnd->GetHwnd();
-	cDlgCancel.DoModeless(unusedArg1, hWnd, IDD_GREPRUNNING);
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-}
-
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
@@ -2205,6 +2180,9 @@ TEST_F(EditWndTest, ShowDlgAbout001)
 		// コンテキストメニュー表示を空振りさせる
 		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
 
+		// 処理対象でないボタンIDを送信して空振りさせる
+		SendDlgCommand(hWndDlg, 0L);
+
 		SendDlgCommand(hWndDlg, IDOK);
 	});
 
@@ -2226,6 +2204,33 @@ TEST_F(EditWndTest, ShowDlgAbout101)
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
+
+/*!
+ * キャンセルダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgCancel001)
+{
+	// 表示されたモーダルダイアログを閉じる
+	dialog::ModalDialogCloser closer(L"Grep実行中", [](HWND hWndDlg) {
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		SendDlgCommand(hWndDlg, 0L);
+
+		// ボタンID以外でOnCommandを空振りさせる
+		SendDlgCommand(hWndDlg, IDC_STATIC_CURPATH);
+
+		SendDlgCommand(hWndDlg, IDCANCEL);
+	});
+
+	CDlgCancel cDlgCancel;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	cDlgCancel.DoModeless(unusedArg1, hWnd, IDD_GREPRUNNING);
+
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
+}
 
 /*!
  * ファイル比較ダイアログの表示テスト
