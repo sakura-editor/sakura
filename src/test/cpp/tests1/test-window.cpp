@@ -1922,243 +1922,6 @@ TEST_F(EditWndTest, GetDocDataObject001)
 	EXPECT_THAT(memory.wstring(), StrEq(targetPath.native()));
 }
 
-#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
-
-#if defined(_MSC_VER) &&  defined(_DEBUG)
-
-/*!
- * 検索ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgFind001)
-{
-	// 検索条件
-	CSearchKeywordManager().AddToSearchKeyArr(LR"(localhost)");
-
-	// 表示されたモーダルダイアログを閉じる
-	dialog::ModalDialogCloser closer(L"検索", [](HWND hWndDlg) {
-		// コンテキストメニュー表示を空振りさせる
-		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
-
-		// ボタンID以外でOnCommandを空振りさせる
-		SendDlgCommand(hWndDlg, IDC_STATIC_CURPATH);
-
-		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, false);
-		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
-		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, true);
-		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
-
-		// 検索系ボタンの押下(空振りさせる)
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
-
-		SendDlgCommand(hWndDlg, IDC_COMBO_TEXT, CBN_DROPDOWN);
-
-		// 検索条件をセット
-		apiwrap::SetDlgItemTextW(hWndDlg, IDC_COMBO_TEXT, L"test");
-
-		// 検索系ボタンの押下(最後まではいけない)
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
-
-		SendDlgCommand(hWndDlg, IDCANCEL);
-	});
-
-	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
-		.Times(2)
-		.WillOnce(Return(IDOK))		// 検索条件を指定してください。
-		.WillOnce(Return(IDOK));	// 検索条件を指定してください。
-
-	auto& cDlgFind = pcEditWnd->m_cDlgFind;
-	cDlgFind.DoModeless(unusedArg1, pcEditWnd->GetHwnd(), LPARAM(&pcEditWnd->GetActiveView()));
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-
-	// 設定を元に戻す
-	GetDllShareData().m_sSearchKeywords.m_aSearchKeys.clear();
-}
-
-/*!
- * 検索ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgFind101)
-{
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(L"検索");
-
-	auto& cDlgFind = pcEditWnd->m_cDlgFind;
-	cDlgFind.DoModeless(unusedArg1, pcEditWnd->GetHwnd(), LPARAM(&pcEditWnd->GetActiveView()));
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-}
-
-/*!
- * 検索ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgFind102)
-{
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(L"検索");
-
-	using target = CDlgFind;
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"SearchDialog()"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-}
-
-/*!
- * アウトライン解析ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgFuncList001)
-{
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer1(std::nullopt, [] (HWND hWndDlg) {
-		// コンテキストメニュー表示を空振りさせる
-		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
-
-		SendDlgCommand(hWndDlg, IDC_BUTTON_MENU);
-
-		SendDlgCommand(hWndDlg, IDC_BUTTON_COPY);
-
-		SendDlgCommand(hWndDlg, IDC_BUTTON_WINSIZE);
-
-		SendDlgCommand(hWndDlg, IDC_CHECK_bAutoCloseDlgFuncList);
-
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SETTING);
-
-		CMyRect rc{};
-		::GetClientRect(hWndDlg, &rc);
-		FORWARD_WM_SIZE(hWndDlg, SIZE_RESTORED, rc.right, rc.bottom, ::SendMessageW);
-
-		SendDlgCommand(hWndDlg, IDCANCEL);
-	});
-
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer2(L"ファイルツリー設定");
-
-	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, TrackPopupMenu(_, _, _, _, _, _, _))
-		.Times(1)
-		.WillOnce(Return(450));	// 更新
-
-	using target = CDlgFuncList;
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"Outline(0)"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-}
-
-/*!
- * 置換ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgReplace001)
-{
-	// 検索条件
-	CSearchKeywordManager().AddToSearchKeyArr(LR"(localhost)");
-
-	// 置換文字列
-	CSearchKeywordManager().AddToReplaceKeyArr( LR"(royalhost)" );
-
-	// 表示されたモーダルダイアログを閉じる
-	dialog::ModalDialogCloser closer(L"置換", [](HWND hWndDlg) {
-		// コンテキストメニュー表示を空振りさせる
-		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
-
-		// ボタンID以外でOnCommandを空振りさせる
-		SendDlgCommand(hWndDlg, IDC_STATIC_CURPATH);
-
-		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, false);
-		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
-		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, true);
-		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
-
-		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_PASTE, true);
-		SendDlgCommand(hWndDlg, IDC_CHK_PASTE);
-		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_PASTE, false);
-		SendDlgCommand(hWndDlg, IDC_CHK_PASTE);
-
-		// 検索系ボタンの押下(空振りさせる)
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCE);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCEALL);
-
-		SendDlgCommand(hWndDlg, IDC_COMBO_TEXT, CBN_DROPDOWN);
-		SendDlgCommand(hWndDlg, IDC_COMBO_TEXT2, CBN_DROPDOWN);
-
-		// 検索条件をセット
-		apiwrap::SetDlgItemTextW(hWndDlg, IDC_COMBO_TEXT, L"test");
-		apiwrap::SetDlgItemTextW(hWndDlg, IDC_COMBO_TEXT2, L"text");
-
-		// 検索系ボタンの押下(最後まではいけない)
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCE);
-		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCEALL);
-
-		SendDlgCommand(hWndDlg, IDCANCEL);
-	});
-
-	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
-		.Times(5)
-		.WillOnce(Return(IDOK))		// 文字列を指定してください。
-		.WillOnce(Return(IDOK))		// 文字列を指定してください。
-		.WillOnce(Return(IDOK))		// 文字列を指定してください。
-		.WillOnce(Return(IDOK))		// 置換条件を指定してください。
-		.WillOnce(Return(IDOK));	// 0箇所を置換しました。
-
-	auto& cDlgReplace = pcEditWnd->m_cDlgReplace;
-	cDlgReplace.DoModeless(unusedArg1, pcEditWnd->GetHwnd(), LPARAM(&pcEditWnd->GetActiveView()), false);
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-
-	// 設定を元に戻す
-	GetDllShareData().m_sSearchKeywords.m_aSearchKeys.clear();
-	GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.clear();
-}
-
-/*!
- * 置換ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgReplace101)
-{
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(L"置換");
-
-	auto& cDlgReplace = pcEditWnd->m_cDlgReplace;
-	cDlgReplace.DoModeless(unusedArg1, pcEditWnd->GetHwnd(), LPARAM(&pcEditWnd->GetActiveView()), false);
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-}
-
-/*!
- * 置換ダイアログの表示テスト
- */
-TEST_F(EditWndTest, ShowDlgReplace102)
-{
-	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(L"置換");
-
-	using target = CDlgReplace;
-	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L"ReplaceDialog()"), IsTrue());
-	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
-
-	// キューに溜まるメッセージを処理する
-	RunMessageLoop();
-}
-
 /*!
  * バージョン情報ダイアログの表示テスト
  */
@@ -2569,6 +2332,137 @@ TEST_F(EditWndTest, ShowDlgFileUpdateQuery101)
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)
+
+/*!
+ * 検索ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFind001)
+{
+	// 検索条件
+	CSearchKeywordManager().AddToSearchKeyArr(LR"(localhost)");
+
+	GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind = false;
+
+	// 表示されたモーダルダイアログを閉じる
+	dialog::ModalDialogCloser closer(L"検索", [](HWND hWndDlg) {
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		SendDlgCommand(hWndDlg, 0L);
+
+		// ボタンID以外でOnCommandを空振りさせる
+		SendDlgCommand(hWndDlg, IDC_STATIC_CURPATH);
+
+		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, false);
+		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
+		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, true);
+		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
+
+		// 検索系ボタンの押下(空振りさせる)
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
+
+		SendDlgCommand(hWndDlg, IDC_COMBO_TEXT, CBN_DROPDOWN);
+
+		// 検索条件をセット
+		apiwrap::SetDlgItemTextW(hWndDlg, IDC_COMBO_TEXT, L"test");
+
+		// 前方検索
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
+
+		// 後方検索
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
+
+		// 該当行をマーク
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
+
+		SendDlgCommand(hWndDlg, IDCANCEL);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.Times(4)
+		.WillOnce(Return(IDOK))		// 検索条件を指定してください。
+		.WillOnce(Return(IDOK))		// 検索条件を指定してください。
+		.WillOnce(Return(IDOK))		// 前方(↓) に文字列 'test' が１つも見つかりません。
+		.WillOnce(Return(IDOK));	// 後方(↓) に文字列 'test' が１つも見つかりません。
+
+	using target = CDlgFind;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	FORWARD_WM_COMMAND(hWnd, F_SEARCH_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sSearchKeywords.m_aSearchKeys.clear();
+	GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind = true;
+}
+
+/*!
+ * 検索ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFind101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(L"検索");
+
+	using target = CDlgFind;
+	EXPECT_THAT(ExecMacroCommand(L"SearchDialog()"), IsTrue());
+
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
+}
+
+/*!
+ * アウトライン解析ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgFuncList101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer1(L"x", [] (HWND hWndDlg) {
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		SendDlgCommand(hWndDlg, 0L);
+
+		SendDlgCommand(hWndDlg, IDC_BUTTON_MENU);
+
+		SendDlgCommand(hWndDlg, IDC_BUTTON_COPY);
+
+		SendDlgCommand(hWndDlg, IDC_BUTTON_WINSIZE);
+
+		SendDlgCommand(hWndDlg, IDC_CHECK_bAutoCloseDlgFuncList);
+
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SETTING);
+
+		SendDlgCommand(hWndDlg, IDC_COMBO_nSortType, CBN_SELENDOK);
+
+		CMyRect rc{};
+		::GetClientRect(hWndDlg, &rc);
+		FORWARD_WM_SIZE(hWndDlg, SIZE_RESTORED, rc.right, rc.bottom, ::SendMessageW);
+
+		SendDlgCommand(hWndDlg, IDCANCEL);
+	});
+
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer2(L"ファイルツリー設定");
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, TrackPopupMenu(_, _, _, _, _, _, _))
+		.Times(1)
+		.WillOnce(Return(450));	// 更新
+
+	using target = CDlgFuncList;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	FORWARD_WM_COMMAND(hWnd, F_OUTLINE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
+}
 
 /*!
  * Grepダイアログの表示テスト
@@ -3103,6 +2997,107 @@ TEST_F(EditWndTest, ShowDlgProperty101)
 
 	using target = CDlgProperty;
 	EXPECT_THAT(ExecMacroCommand(L"PropertyFile()"), IsTrue());
+}
+
+/*!
+ * 置換ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgReplace001)
+{
+	// 検索条件
+	CSearchKeywordManager().AddToSearchKeyArr(LR"(localhost)");
+
+	// 置換文字列
+	CSearchKeywordManager().AddToReplaceKeyArr( LR"(royalhost)" );
+
+	// 表示されたモーダルダイアログを閉じる
+	dialog::ModalDialogCloser closer(L"置換", [](HWND hWndDlg) {
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		SendDlgCommand(hWndDlg, 0L);
+
+		// ボタンID以外でOnCommandを空振りさせる
+		SendDlgCommand(hWndDlg, IDC_STATIC_CURPATH);
+
+		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, false);
+		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
+		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_REGULAREXP, true);
+		SendDlgCommand(hWndDlg, IDC_CHK_REGULAREXP);
+
+		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_PASTE, true);
+		SendDlgCommand(hWndDlg, IDC_CHK_PASTE);
+		apiwrap::CheckDlgButton(hWndDlg, IDC_CHK_PASTE, false);
+		SendDlgCommand(hWndDlg, IDC_CHK_PASTE);
+
+		// 検索系ボタンの押下(空振りさせる)
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
+		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCE);
+		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCEALL);
+
+		SendDlgCommand(hWndDlg, IDC_COMBO_TEXT, CBN_DROPDOWN);
+		SendDlgCommand(hWndDlg, IDC_COMBO_TEXT2, CBN_DROPDOWN);
+
+		// 検索条件をセット
+		apiwrap::SetDlgItemTextW(hWndDlg, IDC_COMBO_TEXT, L"test");
+		apiwrap::SetDlgItemTextW(hWndDlg, IDC_COMBO_TEXT2, L"text");
+
+		// 前方検索
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHNEXT);
+
+		// 後方検索
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SEARCHPREV);
+
+		// 該当行をマーク
+		SendDlgCommand(hWndDlg, IDC_BUTTON_SETMARK);
+
+		// 置換実行
+		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCE);
+
+		// 全置換実行
+		SendDlgCommand(hWndDlg, IDC_BUTTON_REPALCEALL);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.Times(8)
+		.WillOnce(Return(IDOK))		// 文字列を指定してください。
+		.WillOnce(Return(IDOK))		// 文字列を指定してください。
+		.WillOnce(Return(IDOK))		// 文字列を指定してください。
+		.WillOnce(Return(IDOK))		// 置換条件を指定してください。
+		.WillOnce(Return(IDOK))		// 前方(↓) に文字列 'test' が１つも見つかりません。
+		.WillOnce(Return(IDOK))		// 後方(↑) に文字列 'test' が１つも見つかりません。
+		.WillOnce(Return(IDOK))		// 前方(↓) に文字列 'test' が１つも見つかりません。
+		.WillOnce(Return(IDOK));	// 0箇所を置換しました。
+
+	using target = CDlgReplace;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	FORWARD_WM_COMMAND(hWnd, F_REPLACE_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
+
+	// 設定を元に戻す
+	GetDllShareData().m_sSearchKeywords.m_aSearchKeys.clear();
+	GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.clear();
+}
+
+/*!
+ * 置換ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgReplace101)
+{
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	dialog::ModalDialogCloser closer(L"置換");
+
+	using target = CDlgReplace;
+	EXPECT_THAT(ExecMacroCommand(L"ReplaceDialog()"), IsTrue());
+
+	// キューに溜まるメッセージを処理する
+	RunMessageLoop();
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
