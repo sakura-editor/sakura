@@ -795,7 +795,7 @@ void CCaret::ShowCaretPosInfo()
 				szLeft,
 				szFormat,
 				pszCodeName,
-				szEolMode,
+				szEolMode.c_str(),
 				szCaretChar[0]? L"[": L" ",	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
 				szCaretChar,
 				szCaretChar[0]? L"]": L" "	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
