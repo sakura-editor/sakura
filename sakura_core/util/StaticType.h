@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -62,7 +62,8 @@ public:
 	ElementType& operator[](size_t nIndex) noexcept
 	{
 		assert(nIndex<MAX_SIZE);
-		assert_warning(nIndex<m_nCount);
+		assert_warning(0 <= m_nCount);
+		assert_warning(0 == m_nCount || nIndex < size_t(m_nCount));
 		return m_aElements[nIndex];
 	}
 	constexpr const ElementType& operator[](size_t nIndex) const
