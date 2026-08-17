@@ -380,12 +380,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					auto_sprintf( szKey, L"%ls", pFuncWk->m_sKey);
 
 					if (!cDlgInput1.DoModal(
-							G_AppInstance(),
 							hwndDlg,
 							LS(STR_PROPCOMMAINMENU_ACCKEY1),
 							LS(STR_PROPCOMMAINMENU_ACCKEY2),
-							1,
-							szKey)) {
+						std::span(szKey, 2),
+						CDlgInput1::NoValidation
+					)) {
 						return TRUE;
 					}
 					auto_sprintf( pFuncWk->m_sKey, L"%s", szKey);
@@ -524,7 +524,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能
-							wcscpy( szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
+							::wcscpy_s( szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdxFunc];
 						}
 						else if (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) != 0) {
@@ -532,7 +532,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							eFuncCode = m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc );
 						}
 						else {
-							wcscpy( szLabel, L"?" );
+							::wcscpy_s( szLabel, L"?" );
 							eFuncCode = F_SEPARATOR;
 						}
 						break;
