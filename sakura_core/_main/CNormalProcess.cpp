@@ -14,7 +14,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, Uchi
 	Copyright (C) 2009, syat, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -228,27 +228,30 @@ bool CNormalProcess::InitializeProcess()
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
-				&pEditWnd->GetActiveView(),
-				gi.bGrepReplace,
-				&gi.cmGrepKey,
-				&gi.cmGrepRep,
-				&gi.cmGrepFile,
-				&gi.cmGrepFolder,
-				gi.bGrepCurFolder,
-				gi.bGrepSubFolder,
-				gi.bGrepStdout,
-				gi.bGrepHeader,
-				gi.sGrepSearchOption,
-				gi.nGrepCharSet,	//	2002/09/21 Moca
-				gi.nGrepOutputLineType,
-				gi.nGrepOutputStyle,
-				gi.bGrepOutputFileOnly,
-				gi.bGrepOutputBaseFolder,
-				gi.bGrepSeparateFolder,
-				gi.bGrepPaste,
-				gi.bGrepBackup
-			);
+			{
+				const SGrepInput grepInput{ &gi.cmGrepKey, &gi.cmGrepRep, &gi.cmGrepFile, &gi.cmGrepFolder };
+				SGrepOption sGrepOption;
+				sGrepOption.bGrepReplace = gi.bGrepReplace;
+				sGrepOption.bGrepSubFolder = gi.bGrepSubFolder != FALSE;
+				sGrepOption.bGrepStdout = gi.bGrepStdout;
+				sGrepOption.bGrepHeader = gi.bGrepHeader;
+				sGrepOption.nGrepCharSet = gi.nGrepCharSet;
+				sGrepOption.nGrepOutputLineType = gi.nGrepOutputLineType;
+				sGrepOption.nGrepOutputStyle = gi.nGrepOutputStyle;
+				sGrepOption.bGrepOutputFileOnly = gi.bGrepOutputFileOnly;
+				sGrepOption.bGrepOutputBaseFolder = gi.bGrepOutputBaseFolder;
+				sGrepOption.bGrepSeparateFolder = gi.bGrepSeparateFolder;
+				sGrepOption.bGrepPaste = gi.bGrepPaste;
+				sGrepOption.bGrepBackup = gi.bGrepBackup;
+				this->m_pcEditApp->m_pcGrepAgent->DoGrep(
+					&pEditWnd->GetActiveView(),
+					grepInput,
+					gi.sGrepSearchOption,
+					sGrepOption,
+					gi.bGrepCurFolder,
+					gi.bGrepExcludeFileRegexp
+				);
+			}
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 		}
 		else{

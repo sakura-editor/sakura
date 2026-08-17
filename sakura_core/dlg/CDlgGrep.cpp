@@ -11,7 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2012, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -20,6 +20,7 @@
 #include "dlg/CDlgGrep.h"
 #include "agent/CGrepAgent.h"
 #include "grep/CGrepEnumKeys.h"
+#include "grep/GrepPathFormat.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "charset/CCodePage.h"
 #include "util/module.h"
@@ -34,6 +35,7 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/system_constants.h"
+#include <format>
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12000
@@ -53,6 +55,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ファイル
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダー
 	IDC_COMBO_EXCLUDE_FILE,			HIDC_GREP_COMBO_EXCLUDE_FILE,		//除外ファイル
+	IDC_CHK_EXCLUDE_FILE_REGEXP,	HIDC_GREP_COMBO_EXCLUDE_FILE,		//除外ファイル正規表現
 	IDC_COMBO_EXCLUDE_FOLDER,		HIDC_GREP_COMBO_EXCLUDE_FOLDER,		//除外フォルダー
 	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//上
 	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//結果出力：行単位
@@ -157,6 +160,8 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
+	// 除外ファイルは常に '!' を付与する。
+	// 正規表現/ワイルドカードの区別は -GOPT=E（チェックボックス m_bExcludeFileRegularExp）で持つ。
 	for (const auto& pattern : patterns)
 	{
 		LPCWSTR escapeStr = GetEscapePattern(pattern);
@@ -170,7 +175,8 @@ static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cm
 CNativeW CDlgGrep::GetPackedGFileString() const
 {
 	// ダイアログデータを取得
-	CNativeW cmFilePattern( m_szFile );
+	// ファイルパターンが空なら UI 既定値の "*.*" を補って、検索対象なしの状態を避ける。
+	CNativeW cmFilePattern( m_szFile[0] != L'\0' ? m_szFile : L"*.*" );
 	CNativeW cmExcludeFiles( m_szExcludeFile );
 	CNativeW cmExcludeFolders( m_szExcludeFolder );
 
@@ -240,6 +246,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCurrentFilePath )
 {
 	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: サブフォルダーも検索
+	m_bExcludeFileRegularExp = m_pShareData->m_Common.m_sSearch.m_bGrepExcludeFileRegexp;
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
 	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// 文字コードセット
 	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
@@ -250,46 +257,30 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
-	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
-	}
-	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
-	}
-	
-	/* 除外ファイル */
-	if (m_szExcludeFile[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
-		}
-		else {
-			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
-			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN);	/* 除外ファイル */
-
-			/* 履歴に残して後で選択できるようにする */
-			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(DEFAULT_EXCLUDE_FILE_PATTERN);
-		}
-	}
-
-	/* 除外フォルダー */
-	if (m_szExcludeFolder[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
-		}
-		else {
-			/* ユーザーの利便性向上のために除外フォルダーに対して初期値を設定する */
-			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
-			
-			/* 履歴に残して後で選択できるようにする */
-			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
-		}
-	}
-
-	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
-		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
-	}
+	LoadDefaultsFromShareData( pszCurrentFilePath );
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)nullptr );
+}
+
+/*!
+	検索ファイル/フォルダー/除外パターン/カレントファイルパスの既定値を履歴から補完する
+	（CDlgGrep::DoModal / CDlgGrepReplace::DoModal 共通。2-E で重複解消）
+*/
+void CDlgGrep::LoadDefaultsFromShareData( const WCHAR* pszCurrentFilePath )
+{
+	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
+		wcscpy_s( m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+	}
+	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
+		wcscpy_s( m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
+	}
+
+	/* 除外ファイル / 除外フォルダー */
+	DetermineDefaultExcludePatterns();
+
+	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
+		wcscpy_s(m_szCurrentFilePath, std::size(m_szCurrentFilePath), pszCurrentFilePath);
+	}
 }
 
 BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
@@ -354,8 +345,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// フォント設定	2012/11/27 Uchi
 	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
-	m_cFontDeleters.resize( int(std::size(nItemIds)) );
-	for( size_t i2 = 0; i2 < int(std::size(nItemIds)); ++i2 ){
+	m_cFontDeleters.resize( std::size(nItemIds) );
+	for( size_t i2 = 0; i2 < std::size(nItemIds); ++i2 ){
 		HWND hwndItem = GetItemHwnd( nItemIds[i2] );
 		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
 		HFONT hFont = SetMainFont( hwndItem );
@@ -454,29 +445,12 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
-				wcsncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
-				szFolder[nMaxPath-1] = L'\0';
+				wcsncpy_s( szFolder, nMaxPath, vPaths.rbegin()->c_str(), _TRUNCATE );
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
-					szFolder[0] = L'\0';
-					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
-						WCHAR szFolderItem[nMaxPath];
-						wcsncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
-						szFolderItem[nMaxPath-1] = L'\0';
-						if( wcschr( szFolderItem, L';' ) ){
-							szFolderItem[0] = L'"';
-							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
-							szFolderItem[nMaxPath-1] = L'\0';
-							wcscat( szFolderItem, L"\"" );
-							szFolderItem[nMaxPath-1] = L'\0';
-						}
-						if( i ){
-							wcscat( szFolder, L";" );
-							szFolder[nMaxPath-1] = L'\0';
-						}
-						wcscat_s( szFolder, nMaxPath, szFolderItem );
-					}
-					::SetWindowText( hwnd, szFolder );
+					// ';' 区切り連結と引用は共通ヘルパに集約（2-E）
+					const std::wstring strJoined = FormatPathList( vPaths );
+					::SetWindowText( hwnd, strJoined.c_str() );
 				}
 			}
 		}
@@ -485,6 +459,22 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //	case IDC_CHK_LOHICASE:	/* 英大文字と英小文字を区別する */
 //		MYTRACE( L"IDC_CHK_LOHICASE\n" );
 //		return TRUE;
+	case IDC_CHK_EXCLUDE_FILE_REGEXP:
+		{
+			bool bRegexp = 0 != ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
+			std::wstring strCur( MAX_GREP_PATH, L'\0' );
+			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, strCur.data(), int(strCur.size()) );
+			strCur.resize( std::wstring_view( strCur.c_str() ).length() );
+			const WCHAR* pszOther = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD : DEFAULT_EXCLUDE_FILE_PATTERN_REGEX;
+			const WCHAR* pszThis  = bRegexp ? DEFAULT_EXCLUDE_FILE_PATTERN_REGEX    : DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD;
+			// 未入力、または切り替え前モードの既定値のままの場合のみ、現モードの既定値へ置き換える
+			// （ユーザーが編集した除外パターンは上書きしない）
+			if( strCur.empty() || strCur == pszOther ){
+				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, pszThis );
+			}
+		}
+		return TRUE;
+
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
 //		MYTRACE( L"IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
@@ -608,6 +598,7 @@ void CDlgGrep::SetData( void )
 
 	/* 除外ファイル */
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile);
+	::CheckDlgButton( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP, m_bExcludeFileRegularExp );
 
 	/* 除外フォルダー */
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
@@ -739,8 +730,8 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, L"" );
 		bEnableControls = FALSE;
 	}else{
-		std::wstring strFile(m_szFile);
-		if (strFile.substr(0, 6) == L":HWND:") {
+		// 「このテキストから検索」用の HWND トークンはファイルパターン欄に表示しない（*.* に差し替え）
+		if (IsHwndFileToken(m_szFile)) {
 			wcsncpy_s(m_szFile, std::size(m_szFile), L"*.*", _TRUNCATE);
 		}
 		ApiWrap::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
@@ -761,11 +752,33 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	return;
 }
 
-/*! ダイアログデータの取得
+/* ダイアログデータの取得
 	@retval TRUE  正常
 	@retval FALSE 入力エラー
 */
 int CDlgGrep::GetData( void )
+{
+	GetDataSimpleOptions();
+
+	const bool bFromThisText = m_bFromThisText != FALSE;
+
+	if( !GetDataFilePattern( bFromThisText ) ){
+		return FALSE;
+	}
+	if( !GetDataFolderPath( bFromThisText ) ){
+		return FALSE;
+	}
+	if( !ValidateSearchText() ){
+		return FALSE;
+	}
+
+	CommitDataToShareData( bFromThisText );
+
+	return TRUE;
+}
+
+// チェックボックス・ラジオ・コンボ等の単純フィールド取得（C-9）
+void CDlgGrep::GetDataSimpleOptions( void )
 {
 	/* サブフォルダーからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_SUBFOLDER );
@@ -819,39 +832,26 @@ int CDlgGrep::GetData( void )
 	m_bGrepSeparateFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_SEP_FOLDER );
 
 	/* 検索文字列 */
-	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );;
+	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );
+}
 
+// 検索ファイルパターンの取得・検証（C-9）
+BOOL CDlgGrep::GetDataFilePattern( bool bFromThisText )
+{
 	/* 検索ファイル */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, std::size(m_szFile) );
-	bool bFromThisText = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_FROMTHISTEXT);
 	if( bFromThisText ){
-		WCHAR szHwnd[_MAX_PATH];
-#ifdef _WIN64
-		auto_sprintf(szHwnd, L":HWND:%016I64x", ::GetParent(GetHwnd()));
-#else
-		auto_sprintf(szHwnd, L":HWND:%08x", ::GetParent(GetHwnd()));
-#endif
-		m_szFile = szHwnd;
+		m_szFile.assign(BuildHwndFileToken(::GetParent(GetHwnd())));
 	}else{
-		std::wstring strFile(m_szFile);
-		if (strFile.substr(0, 6) == L":HWND:") {
+		// 「このテキストから検索」が無効なのに HWND トークンが直接入力されている場合は入力エラー
+		if (IsHwndFileToken(m_szFile)) {
 			ErrorMessage(GetHwnd(), LS(STR_DLGGREP_THISDOC_ERROR));
 			return FALSE;
 		}
 	}
-	/* 検索フォルダー */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, std::size(m_szFolder) );
 	/* 除外ファイル */
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, std::size(m_szExcludeFile));
-	/* 除外フォルダー */
-	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
-
-	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
-	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
-	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: 出力形式
-	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
-	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
-	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+	m_bExcludeFileRegularExp = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
 
 	if( m_szFile[0] != '\0' ) {
 		CGrepEnumKeys enumKeys;
@@ -869,8 +869,19 @@ int CDlgGrep::GetData( void )
 		//	Jun. 16, 2003 Moca
 		//	検索パターンが指定されていない場合のメッセージ表示をやめ、
 		//	「*.*」が指定されたものと見なす．
-		wcscpy( m_szFile, L"*.*" );
+		wcscpy_s( m_szFile, std::size(m_szFile), L"*.*" );
 	}
+	return TRUE;
+}
+
+// 検索フォルダーの取得・複数パス解決・検証（C-9）
+BOOL CDlgGrep::GetDataFolderPath( bool bFromThisText )
+{
+	/* 検索フォルダー */
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, std::size(m_szFolder) );
+	/* 除外フォルダー */
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, std::size(m_szExcludeFolder));
+
 	if( m_szFolder[0] == L'\0' ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGGREP4) );
 		return FALSE;
@@ -885,10 +896,8 @@ int CDlgGrep::GetData( void )
 		// 2011.11.24 Moca 複数フォルダー指定
 		std::vector<std::wstring> vPaths;
 		CGrepAgent::CreateFolders( m_szFolder, vPaths );
-		int nFolderLen = 0;
 		const int nMaxPath = MAX_GREP_PATH;
-		WCHAR szFolder[nMaxPath];
-		szFolder[0] = L'\0';
+		std::wstring strFolder;
 		for( int i = 0 ; i < (int)vPaths.size(); i ++ ){
 			// 相対パス→絶対パス
 			if( !::SetCurrentDirectory( vPaths[i].c_str() ) ){
@@ -897,26 +906,25 @@ int CDlgGrep::GetData( void )
 			}
 			WCHAR szFolderItem[nMaxPath];
 			::GetCurrentDirectory( nMaxPath, szFolderItem );
-			// ;がフォルダー名に含まれていたら""で囲う
-			if( wcschr( szFolderItem, L';' ) ){
-				szFolderItem[0] = L'"';
-				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
-				wcscat(szFolderItem, L"\"");
-			}
-			auto nFolderItemLen = int(wcslen(szFolderItem));
-			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
+			// ;がフォルダー名に含まれていたら""で囲う（引用は共通ヘルパに集約（2-E））
+			const std::wstring strFolderItem = QuotePathIfNeeded( szFolderItem );
+			if( nMaxPath < int(strFolder.length() + strFolderItem.length() + 1) ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;
 			}
 			if( i ){
-				wcscat( szFolder, L";" );
+				strFolder += L';';
 			}
-			wcscat( szFolder, szFolderItem );
-			nFolderLen = (int)wcslen( szFolder );
+			strFolder += strFolderItem;
 		}
-		wcscpy( m_szFolder, szFolder );
+		wcscpy_s( m_szFolder, std::size(m_szFolder), strFolder.c_str() );
 	}
+	return TRUE;
+}
 
+// 検索文字列の正規表現構文検証（C-9）
+BOOL CDlgGrep::ValidateSearchText( void )
+{
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
 	/* 検索文字列 */
 	if( 0 < m_strText.size() ){
@@ -928,18 +936,40 @@ int CDlgGrep::GetData( void )
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
+	}
+	return TRUE;
+}
+
+// 検証通過後の共有設定・履歴への書き込み（C-9）
+void CDlgGrep::CommitDataToShareData( bool bFromThisText )
+{
+	// ==== ここから下では入力検証エラーで戻らない（共有設定への書き込みは全検証通過後に集約する） ====
+	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: 出力形式
+	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
+	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepExcludeFileRegexp = m_bExcludeFileRegularExp != FALSE;
+
+	// 検索キーが _MAX_PATH 未満の場合のみ履歴へ登録する（「このテキストから検索」時は登録しない）
+	if( m_strText.size() > 0 ){
 		if( m_strText.size() < _MAX_PATH ){
-			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+			if( !bFromThisText ){
+				CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+			}
 			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 		}
 	}else{
 		// 2014.07.01 空キーも登録する
-		CSearchKeywordManager().AddToSearchKeyArr( L"" );
+		if( !bFromThisText ){
+			CSearchKeywordManager().AddToSearchKeyArr( L"" );
+		}
 	}
 
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23
 	// 2016.03.08 Moca 「このファイルから検索」の場合はサブフォルダー共通設定を更新しない
-	if (!m_bFromThisText) {
+	if (!bFromThisText) {
 		/* 検索ファイル */
 		CSearchKeywordManager().AddToGrepFileArr( m_szFile );
 
@@ -955,8 +985,6 @@ int CDlgGrep::GetData( void )
 		// Grep：サブフォルダーも検索
 		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = m_bSubFolder;
 	}
-
-	return TRUE;
 }
 
 //@@@ 2002.01.18 add start
@@ -968,11 +996,56 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
-	if( wcschr( folder, L';') ){
-		std::wstring strQuoteFolder;
-		strQuoteFolder = std::wstring(L"\"") + folder + std::wstring(L"\"");
-		::SetWindowText( hwndCtrl, strQuoteFolder.c_str() );
-	}else{
-		::SetWindowText( hwndCtrl, folder );
+	// ';' を含むパスの引用は共通ヘルパに集約（2-E）
+	const std::wstring strFolder = QuotePathIfNeeded( folder );
+	::SetWindowText( hwndCtrl, strFolder.c_str() );
+}
+
+void CDlgGrep::DetermineDefaultExcludePatterns()
+{
+	// 初期表示とテストで共通に使う、除外パターンの既定値補完ロジック。
+	/* 除外ファイル */
+	if (m_szExcludeFile[0] == L'\0') {
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+			wcscpy_s(m_szExcludeFile, std::size(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
+		}
+		else {
+			const WCHAR* pszDefault = m_bExcludeFileRegularExp
+				? DEFAULT_EXCLUDE_FILE_PATTERN_REGEX
+				: DEFAULT_EXCLUDE_FILE_PATTERN_WILDCARD;
+			wcscpy_s(m_szExcludeFile, std::size(m_szExcludeFile), pszDefault);
+			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(pszDefault);
+		}
 	}
+
+	/* 除外フォルダー */
+	if (m_szExcludeFolder[0] == L'\0') {
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+			wcscpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
+		}
+		else {
+			/* ユーザーの利便性向上のために除外フォルダーに対して初期値を設定する */
+			wcscpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダー */
+			
+			/* 履歴に残して後で選択できるようにする */
+			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
+		}
+	}
+}
+
+std::wstring CDlgGrep::BuildHwndFileToken(HWND hwnd)
+{
+	// HWND を 16 進の文字列にして、コンボボックス内の擬似ファイル名として保持する。
+#ifdef _WIN64
+	return std::format(L"{}{:016x}", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
+#else
+	return std::format(L"{}{:08x}", HWND_FILE_TOKEN_PREFIX, reinterpret_cast<uintptr_t>(hwnd));
+#endif
+}
+
+bool CDlgGrep::IsHwndFileToken(const wchar_t* s)
+{
+	// 実際の値比較ではなく、特別な擬似ファイル名であるかどうかだけを判定する。
+	constexpr auto cchPrefix = std::size(HWND_FILE_TOKEN_PREFIX) - 1;
+	return s != nullptr && wcsncmp(s, HWND_FILE_TOKEN_PREFIX, cchPrefix) == 0;
 }
