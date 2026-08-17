@@ -125,6 +125,8 @@ CEditView::CEditView( void )
 , m_cTextDrawer(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cCommander(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 {
+	// 設定に従いフォント情報を初期化する
+	SetFont();
 }
 
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
@@ -310,6 +312,8 @@ BOOL CEditView::Create(
 	/* スクロールバー作成 */
 	CreateScrollBar();		// 2006.12.19 ryoji
 
+	// 設定に従いフォント情報を初期化する
+	// (分割ビューのために残しておく)
 	SetFont();
 
 	if( bShow ){
@@ -1066,9 +1070,10 @@ void CEditView::OnKillFocus( void )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* フォントの変更 */
-void CEditView::SetFont( void )
+void CEditView::SetFont()
 {
-	HDC hdc = ::GetDC( GetHwnd() );
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	MemDcHolder hdc = ::CreateCompatibleDC(nullptr);
 
 	// メトリクス更新
 	if( m_bMiniMap ){
@@ -1077,7 +1082,7 @@ void CEditView::SetFont( void )
 		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), DpiScaleY(m_pTypeData->m_nLineSpace), DpiScaleX(m_pTypeData->m_nColumnSpace));
 	}
 
-	::ReleaseDC( GetHwnd(), hdc );
+	hdc = nullptr;
 
 	// エリア情報を更新
 	GetTextArea().UpdateAreaMetrics();
