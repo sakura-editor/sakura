@@ -125,6 +125,10 @@ CEditView::CEditView( void )
 , m_cTextDrawer(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cCommander(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 {
+	constexpr bool bMiniMap = false;	// TODO: パラメーターで受け取るようにしたい
+
+	m_bMiniMap = bMiniMap;	// SetFont内で使用するため、初期化しておく必要がある
+
 	// 設定に従いフォント情報を初期化する
 	SetFont();
 }
