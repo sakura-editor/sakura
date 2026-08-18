@@ -290,14 +290,18 @@ INT_PTR CPropCustmenu::DispatchEvent(
 //			hwndListBox = (HWND) lParam;		// handle of list box
 				WCHAR		szKey[2];
 				auto_sprintf( szKey, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
-				if (!cDlgInput1.DoModal(
+				{
+					BOOL bDlgInputResult = cDlgInput1.DoModal(
+						G_AppInstance(),
 						hwndDlg,
 						LS(STR_PROPCOMCUSTMENU_AC1),
 						LS(STR_PROPCOMCUSTMENU_AC2),
-					szKey,
-					CDlgInput1::NoValidation
-				)) {
+						1,
+						szKey
+					);
+					if( !bDlgInputResult ){
 						return TRUE;
+					}
 				}
 				//	Oct. 3, 2001 genta
 				m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );

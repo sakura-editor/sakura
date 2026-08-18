@@ -1747,15 +1747,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			size_t nLen = t_min( sDefaultValue.length(), (size_t)nMaxLen);
 			wmemcpy( Buffer, sDefaultValue.c_str(), nLen );
 			Buffer[nLen] = L'\0';
-			if (auto& cDlgInput1 = *CDlgInput1::getInstance();
-				cDlgInput1.DoModal(
-				View->GetHwnd(),
-				L"sakura macro",
-				sMessage,
-				std::span(Buffer, nMaxLen + 1),
-				CDlgInput1::NoValidation
-			))
-			{
+			auto& cDlgInput1 = *CDlgInput1::getInstance();
+			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
 				SysString S( Buffer, wcslen(Buffer) );
 				Wrap( &Result )->Receive( S );
 			}else{

@@ -366,14 +366,18 @@ INT_PTR CPropKeyword::DispatchEvent(
 				case IDC_BUTTON_KEYSETRENAME: // キーワードセットの名称変更
 					// モードレスダイアログの表示
 					wcscpy( szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
-					if (!cDlgInput1.DoModal(
+					{
+						BOOL bDlgInputResult = cDlgInput1.DoModal(
+							G_AppInstance(),
 							hwndDlg,
 							LS(STR_PROPCOMKEYWORD_RENAME1),
 							LS(STR_PROPCOMKEYWORD_RENAME2),
-						std::span(szKeyWord, MAX_SETNAMELEN + 1),
-						CDlgInput1::NoValidation
-					)) {
+							MAX_SETNAMELEN,
+							szKeyWord
+						);
+						if( !bDlgInputResult ){
 							return TRUE;
+						}
 					}
 					if( szKeyWord[0] != L'\0' ){
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
@@ -394,13 +398,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					}
 					/* モードレスダイアログの表示 */
 					szKeyWord[0] = L'\0';
-					if (!cDlgInput1.DoModal(
-						hwndDlg,
-						LS(STR_PROPCOMKEYWORD_KEYADD1),
-						LS(STR_PROPCOMKEYWORD_KEYADD2),
-						szKeyWord,
-						CDlgInput1::NoValidation
-					)) {
+					if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYADD1), LS(STR_PROPCOMKEYWORD_KEYADD2), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
 					if( szKeyWord[0] != L'\0' ){
@@ -508,13 +506,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	wcscpy( szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
 
 	/* モードレスダイアログの表示 */
-	if (!cDlgInput1.DoModal(
-		hwndDlg,
-		LS(STR_PROPCOMKEYWORD_KEYEDIT1),
-		LS(STR_PROPCOMKEYWORD_KEYEDIT2),
-		szKeyWord,
-		CDlgInput1::NoValidation
-	)) {
+	if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYEDIT1), LS(STR_PROPCOMKEYWORD_KEYEDIT2), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
 	if( szKeyWord[0] != L'\0' ){
