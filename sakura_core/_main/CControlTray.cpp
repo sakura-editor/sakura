@@ -1364,18 +1364,33 @@ bool CControlTray::OpenNewEditor(
 			bRet = false;
 		}
 
-		if (isGrepMode) dwRet = WAIT_TIMEOUT;
-		
-		while (
-			WAIT_OBJECT_0 != dwRet && // Grep完了
-			WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
-		) {
-			std::array handles2{ grepEvent.get(), p.hProcess};
-			dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles2), FALSE, 100, QS_SENDMESSAGE);
+		// プロセス起動正常、かつ、Grepモードの場合
+		if (bRet && isGrepMode) {
+			dwRet = WAIT_TIMEOUT;
 
-			// 自スレッドにメッセージが送られてきた場合
-			if (WAIT_OBJECT_0 + count == dwRet) {
-				BlockingHook(nullptr);	// 溜まったメッセージを処理する
+			constexpr auto waitIntervals = 100; // 100ms
+
+			while (
+				WAIT_OBJECT_0 != dwRet && // Grep完了
+				WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
+			) {
+				std::array handles2{ grepEvent.get(), p.hProcess};
+				dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles2), FALSE, waitIntervals, QS_SENDMESSAGE);
+
+				// 自スレッドにメッセージが送られてきた場合
+				if (WAIT_OBJECT_0 + count == dwRet) {
+					BlockingHook(nullptr);	// 溜まったメッセージを処理する
+				}
+			}
+
+			if (WAIT_OBJECT_0 != dwRet) {
+				// プロセス起動側と同じメッセージを出しておく
+				ErrorMessage(
+					hWndParent,
+					LS(STR_TRAY_CREATEPROC2),
+					szEXE
+				);
+				bRet = false;
 			}
 		}
 	}
