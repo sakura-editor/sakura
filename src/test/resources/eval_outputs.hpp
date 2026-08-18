@@ -6,17 +6,7 @@
 */
 #include "util/os.h"
 #include "util/tchar_convert.h"
-
-struct MockUser32 final : public User32
-{
-	MOCK_CONST_METHOD5(MessageBoxExW, int(
-		_In_opt_ HWND hWnd,
-		_In_opt_ LPCWSTR lpText,
-		_In_opt_ LPCWSTR lpCaption,
-		_In_ UINT uType,
-		_In_ WORD wLanguageId
-	));
-};
+#include "window/EditorTestSuite.hpp"
 
 // 標準エラー出力に吐き出されたメッセージを評価します
 #define EXPECT_ERROUT(statementExpression, expected) \

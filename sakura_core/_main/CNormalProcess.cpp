@@ -88,14 +88,27 @@ bool CNormalProcess::InitializeProcess()
 		return false;
 	}
 
+	// スコープを抜けるときミューテックスを閉じる
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+	HandleHolder mutexHolder{ hMutex };
+
+	// スコープを抜けるときミューテックスを解放する
+	using ShareDataLockHolder = cxx::ResourceHolder<&::ReleaseMutex>;
+	ShareDataLockHolder shareDataLock{ hMutex };	// ロック保持中は、他プロセスとの競合を意識しなくてよい。
+
 	// エディター初期化完了イベントを開く
 	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ::GetCurrentThreadId()) };
-	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 	HandleHolder hEvent{ ::OpenEventW(STANDARD_RIGHTS_REQUIRED | EVENT_MODIFY_STATE | SYNCHRONIZE, FALSE, initEventName) };
 
+	// スコープを抜けるときイベントを閉じる
+	HandleHolder grepEventHolder;
+
 	// スコープを抜けるときシグナル状態になるようにする
-	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
-	InitEventHolder initEvent{ hEvent.get() };
+	using EventHolder = cxx::ResourceHolder<&::SetEvent>;
+	EventHolder initEvent{ hEvent.get() };
+
+	// スコープを抜けるときシグナル状態になるようにする
+	EventHolder grepEvent;
 
 	/* 共有メモリを初期化する */
 	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
@@ -144,8 +157,10 @@ bool CNormalProcess::InitializeProcess()
 			//	To Here Oct. 19, 2001 genta
 			/* アクティブにする */
 			ActivateFrameWindow( hwndOwner );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
+
+			shareDataLock = nullptr;
+			mutexHolder = nullptr;
+			hMutex = nullptr;
 
 			// 複数ファイル読み込み
 			OpenFiles( hwndOwner );
@@ -178,8 +193,6 @@ bool CNormalProcess::InitializeProcess()
 
 	const auto hEditWnd = pEditWnd->GetHwnd();
 	if (!hEditWnd) {
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
 	}
 
@@ -220,14 +233,27 @@ bool CNormalProcess::InitializeProcess()
 		}
 		GrepInfo gi;
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
+
+		// Grep完了イベントを開く
+		SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_GREP_COMPLETED, ::GetCurrentThreadId()) };
+		grepEventHolder = ::OpenEventW(EVENT_MODIFY_STATE, FALSE, grepEventName);
+
+		// スコープを抜けるときシグナル状態になるようにする
+		grepEvent = grepEventHolder.get();
+
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
 			// pEditWnd->GetDocument()->SetCurDirNotitle();
 			// 2003.06.23 Moca GREP実行前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
+
+			shareDataLock = nullptr;
+			mutexHolder = nullptr;
+			hMutex = nullptr;
+
+			initEvent = nullptr;
+
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
 				&pEditWnd->GetActiveView(),
 				gi.bGrepReplace,
@@ -280,10 +306,13 @@ bool CNormalProcess::InitializeProcess()
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
+
+			shareDataLock = nullptr;
+			mutexHolder = nullptr;
 			hMutex = nullptr;
 			
+			initEvent = nullptr;
+
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
@@ -421,10 +450,9 @@ bool CNormalProcess::InitializeProcess()
 	//再描画
 	::InvalidateRect( pEditWnd->GetHwnd(), nullptr, TRUE );
 
-	if( hMutex ){
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
-	}
+	shareDataLock = nullptr;
+	mutexHolder = nullptr;
+	hMutex = nullptr;
 
 	//プラグイン：EditorStartイベント実行
 	CJackManager::getInstance()->InvokePlugins(PP_EDITOR_START, &pEditWnd->GetActiveView());
@@ -450,8 +478,6 @@ bool CNormalProcess::InitializeProcess()
 
 	// 複数ファイル読み込み
 	OpenFiles( pEditWnd->GetHwnd() );
-
-	initEvent = nullptr;
 
 	return pEditWnd->GetHwnd() ? true : false;
 }

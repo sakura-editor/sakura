@@ -1,20 +1,35 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14
+MinimumVisualStudioVersion = 16.0.0.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CMake", "CMake", "{1C516A55-AD16-4F8D-B09F-FA99E7C35CFF}"
 	ProjectSection(SolutionItems) = preProject
 		CMakeLists.txt = CMakeLists.txt
-		src\main\cmake\manifest.cmake = src\main\cmake\manifest.cmake
-		src\main\cmake\manifest.in = src\main\cmake\manifest.in
+		src\test\cmake\compiletests.cmake = src\test\cmake\compiletests.cmake
 		src\main\cmake\sakura.cmake = src\main\cmake\sakura.cmake
-		src\main\cmake\version.cmake = src\main\cmake\version.cmake
-		src\main\cmake\version.h.in = src\main\cmake\version.h.in
+		src\test\cmake\tests1.cmake = src\test\cmake\tests1.cmake
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura", "sakura_core\sakura.vcxproj", "{AF03508C-515E-4A0E-87BE-67ED1E254BD0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests1", "sakura_core\tests1.vcxproj", "{701E3407-EC27-49F7-ADC7-520CF2B4B438}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{DDB4EF12-CC4E-5E88-E6FC-71A802F4DE97}"
+	ProjectSection(SolutionItems) = preProject
+		src\main\cmake\manifest.cmake = src\main\cmake\manifest.cmake
+		src\main\cmake\manifest.in = src\main\cmake\manifest.in
+		src\main\cmake\manifest_resource.cmake = src\main\cmake\manifest_resource.cmake
+		src\main\cmake\manifest_resource.in = src\main\cmake\manifest_resource.in
+		src\main\cmake\version.cmake = src\main\cmake\version.cmake
+		src\main\cmake\version.h.in = src\main\cmake\version.h.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "externals", "externals", "{EB395841-D7ED-4A00-8043-49A006CEBD5C}"
+	ProjectSection(SolutionItems) = preProject
+		src\main\cmake\ctags.cmake = src\main\cmake\ctags.cmake
+		src\main\cmake\diffutils.cmake = src\main\cmake\diffutils.cmake
+		src\main\cmake\git_submodule_update_locked.cmake = src\main\cmake\git_submodule_update_locked.cmake
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +58,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DDB4EF12-CC4E-5E88-E6FC-71A802F4DE97} = {1C516A55-AD16-4F8D-B09F-FA99E7C35CFF}
+		{EB395841-D7ED-4A00-8043-49A006CEBD5C} = {1C516A55-AD16-4F8D-B09F-FA99E7C35CFF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06C18222-C02C-4F04-A17C-2453F9C27866}

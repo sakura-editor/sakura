@@ -94,6 +94,13 @@ struct {
 	{ IDC_EDIT_LINECOMMENT3	, IDC_CHECK_LCPOS3, IDC_EDIT_LINECOMMENTPOS3}
 };
 
+BOOL Comdlg32::ChooseColorW(
+	LPCHOOSECOLORW pCc
+) const
+{
+	return ::ChooseColorW(pCc);
+}
+
 /* 色の設定をインポート */
 // 2010/4/23 Uchi Importの外出し
 bool CPropTypesColor::Import( HWND hwndDlg )
@@ -1157,7 +1164,7 @@ BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCu
 	cc.lpCustColors = pCustColors;
 	cc.Flags = CC_FULLOPEN | CC_RGBINIT | CC_ENABLEHOOK;
 	cc.lpfnHook = static_cast<LPCCHOOKPROC>(DarkMode::HookDlgProc);
-	if( !::ChooseColor( &cc ) ){
+	if (!Comdlg32::getInstance()->ChooseColorW(&cc)) {
 		return FALSE;
 	}
 	*pColor = cc.rgbResult;

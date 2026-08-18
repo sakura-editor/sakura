@@ -3270,7 +3270,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	// メニューを表示する
 	RECT rcWork;
 	GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
-	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+	int nId = User32::getInstance()->TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 								( pt.x > rcWork.left )? pt.x: rcWork.left,
 								( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
 								0, GetHwnd(), nullptr);

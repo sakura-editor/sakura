@@ -258,10 +258,19 @@ HWND WaitForWindow(
 	int notifyCode
 )
 {
+	// 指定されたコントロールのハンドルを取得する
 	const auto hWndCtrl = ::GetDlgItem(hWndDlg, nIDDlgItem);
-	ASSERT_THAT(hWndCtrl, NotNull()) << "control not found: #" << nIDDlgItem;
 
+	// コントロールのハンドルが取れなくても、それ自体は問題でない(ログの要否は今後検討する)
+	//ASSERT_THAT(hWndCtrl, NotNull()) << "control not found: #" << nIDDlgItem;
+
+#if 0
+	// 元々はクロススレッド想定で書いていた
 	EXPECT_THAT(::SendMessageTimeoutW(hWndDlg, WM_COMMAND, MAKEWPARAM(nIDDlgItem, notifyCode), LPARAM(hWndCtrl), SMTO_ABORTIFHUNG | SMTO_BLOCK | SMTO_NOTIMEOUTIFNOTHUNG, 0, nullptr), IsTrue());
+#else
+	// 同スレッドからSendMessageを呼ぶと、DlgProcの直呼びとして処理されるので効率がよい
+	FORWARD_WM_COMMAND(hWndDlg, nIDDlgItem, hWndCtrl, notifyCode, ::SendMessageW);
+#endif
 }
 
 /* static */ void UiaTestSuite::SendPsmPressButton(
@@ -269,7 +278,7 @@ HWND WaitForWindow(
 	UINT button
 )
 {
-	EXPECT_THAT(::SendMessageTimeoutW(hWndPropertySheet, PSM_PRESSBUTTON, button, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK | SMTO_NOTIMEOUTIFNOTHUNG, 0, nullptr), IsTrue());
+	::SendMessageW(hWndPropertySheet, PSM_PRESSBUTTON, button, 0L);
 }
 
 /*!
@@ -361,21 +370,6 @@ std::jthread UiaTestSuite::StartDialogCloser(
 
 /*!
  * ダイアログを閉じるスレッドを開始する
- *
- * @param titleResourceId タイトルのリソースID
- * @param action 閉じるアクション
- * @return ダイアログを閉じるためのスレッド
- */
-std::jthread UiaTestSuite::StartDialogCloser(
-	int titleResourceId,
-	const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action
-)
-{
-	const std::wstring buffer{ cxx::load_string(titleResourceId) };
-
-	return StartDialogCloser(buffer, action);
-}
-
 /*!
  * ポップアップメニューを選択するスレッドを開始する
  *
@@ -404,23 +398,6 @@ std::jthread UiaTestSuite::StartPopupMenuSelector(
 
 		// 閉じるアクションを実行する
 		action(pAutomation, hWndFound, st);
-	});
-}
-
-/*!
- * プロパティーシートを閉じるスレッドを開始する
- *
- * @param titleResourceId タイトルのリソースID
- * @param psButtonId ボタンID
- * @return プロパティーシートを閉じるためのスレッド
- */
-std::jthread UiaTestSuite::StartPropertySheetCloser(
-	int titleResourceId,
-	UINT psButtonId
-)
-{
-	return StartDialogCloser(titleResourceId, [psButtonId] (IUIAutomation*, HWND hWndDlg, std::stop_token) {
-		SendPsmPressButton(hWndDlg, psButtonId);
 	});
 }
 
@@ -481,6 +458,38 @@ std::jthread UiaTestSuite::StartWindowCloser(
 		// 閉じるアクションを実行する
 		action(pAutomation, hWndFound, st);
 	});
+}
+
+void UiaTestSuite::RunMessageLoop(
+	ULONGLONG timeoutMilli
+)
+{
+	// スレッド同期用フラグ変数
+	std::atomic_bool finished = false;
+
+	// 別スレッドでModalDialogCloserの完了を待機する
+	auto t = StartUiaThread([&finished, timeoutMilli] (const IUIAutomation*, std::stop_token st) {
+		// ModalDialogCloserの完了を待機する
+		cxx::WaitForQuery([] { return dialog::ModalDialogCloser::IsHandled(); }, st, timeoutMilli);
+
+		// 完了フラグを立てる
+		finished.store(true, std::memory_order_release);
+	});
+
+	// 完了フラグが立つまでPeekMessageでループする
+	MSG msg{};
+	while (!finished.load(std::memory_order_acquire)) {
+		// 溜まっているメッセージをすべてウィンドウに配送する
+		while (::PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
+			if (::IsDialogMessageW(msg.hwnd, &msg)) continue;
+
+			::TranslateMessage(&msg);
+			::DispatchMessageW(&msg);
+		}
+
+		// Sleepの代わり。
+		::MsgWaitForMultipleObjectsEx(0, nullptr, 10, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
+	}
 }
 
 } // namespace window

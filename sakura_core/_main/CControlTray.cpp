@@ -39,6 +39,7 @@
 #include "plugin/CJackManager.h"
 #include "io/CTextStream.h"
 #include "util/module.h"
+#include "util/os.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
@@ -64,6 +65,8 @@
 #define IDT_EDITCHECK_INTERVAL 3000
 /////////////////////////////////////////////////////////////////////////
 static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
+
+std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s);
 
 namespace cxx {
 
@@ -123,6 +126,19 @@ void SelectOpenFileFromFolder(
 
 		CControlTray::OpenNewEditor(unusedArg1, hWnd, sLoadInfo, nullptr, true, nullptr, bNewWindow);
 	}
+}
+
+BOOL User32::TrackPopupMenu(
+	_In_ HMENU hMenu,
+	_In_ UINT uFlags,
+	_In_ int x,
+	_In_ int y,
+	_Reserved_ int nReserved,
+	_In_ HWND hWnd,
+	_Reserved_ CONST RECT* prcRect
+) const
+{
+	return ::TrackPopupMenu(hMenu, uFlags, x, y, nReserved, hWnd, prcRect);
 }
 
 //Stonee, 2001/03/21
@@ -1203,6 +1219,12 @@ bool CControlTray::OpenNewEditor(
 			cCmdLineBuf.AppendF(L" %s", szCmdLineOption);
 		}
 	}
+
+	std::vector<std::wstring_view> additionalOpts;
+	if (szCmdLineOption) {
+		additionalOpts = SplitLegacyCommandLine(szCmdLineOption);
+	}
+
 	// -- -- -- -- プロセス生成 -- -- -- -- //
 
 	// 無効なディレクトリのときはNULLに変更
@@ -1285,9 +1307,25 @@ bool CControlTray::OpenNewEditor(
 	bool bRet = true;
 	if (sync)
 	{
+		const bool isGrepMode = std::ranges::any_of(additionalOpts, [] (std::wstring_view opt) {
+			return cxx::iequals(opt, L"-GREPMODE")
+				|| cxx::iequals(opt, L"-GREPDLG");
+		});
+
 		// エディター初期化完了イベントを作成する
 		SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, p.dwThreadId) };
 		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
+
+		using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+		HandleHolder initIvent{ hEvent };
+		HandleHolder grepEvent{};
+
+		if (isGrepMode)
+		{
+			// Grep完了イベントを作成する
+			SFilePath grepEventName{ std::format( GSTR_EVENT_SAKURA_GREP_COMPLETED, p.dwThreadId ) };
+			grepEvent = ::CreateEventW(nullptr, TRUE, FALSE, grepEventName);
+		}
 
 		// エディターのメインスレッドを再開する
 		::ResumeThread(p.hThread);
@@ -1324,6 +1362,36 @@ bool CControlTray::OpenNewEditor(
 				szEXE
 			);
 			bRet = false;
+		}
+
+		// プロセス起動正常、かつ、Grepモードの場合
+		if (bRet && isGrepMode) {
+			dwRet = WAIT_TIMEOUT;
+
+			constexpr auto waitIntervals = 100; // 100ms
+
+			while (
+				WAIT_OBJECT_0 != dwRet && // Grep完了
+				WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
+			) {
+				std::array handles2{ grepEvent.get(), p.hProcess};
+				dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles2), FALSE, waitIntervals, QS_SENDMESSAGE);
+
+				// 自スレッドにメッセージが送られてきた場合
+				if (WAIT_OBJECT_0 + count == dwRet) {
+					BlockingHook(nullptr);	// 溜まったメッセージを処理する
+				}
+			}
+
+			if (WAIT_OBJECT_0 != dwRet) {
+				// プロセス起動側と同じメッセージを出しておく
+				ErrorMessage(
+					hWndParent,
+					LS(STR_TRAY_CREATEPROC2),
+					szEXE
+				);
+				bRet = false;
+			}
 		}
 	}
 
@@ -1613,7 +1681,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	rc.bottom = 0;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = ::TrackPopupMenu(
+	nId = User32::getInstance()->TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN
@@ -1682,7 +1750,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	rc.bottom = 0;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = ::TrackPopupMenu(
+	nId = User32::getInstance()->TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN

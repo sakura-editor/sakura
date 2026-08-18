@@ -9,17 +9,15 @@
 
 #include "window/EditorTestSuite.hpp"
 
+#include "eval_outputs.hpp"
+
 #include <fstream>
 
-namespace uia {
+void CallDlgOpenFail();
 
-cxx::com_pointer<IUIAutomationElement> GetFocusedElement(
-	IUIAutomation* pAutomation
-);
+namespace dialog {
 
-} // namespace uia
-
-namespace window {
+HWND FindFileNameEdit(HWND hFileDialog);
 
 /*!
  * @brief ファイルダイアログテストのパラメーター
@@ -35,6 +33,10 @@ using FileDialogTestParam = bool;
  *
  */
 struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, public window::EditorTestSuite, public window::UiaTestSuite {
+	static constexpr auto& openDialogTitle = L"開く";
+	static constexpr auto& saveDialogTitle0 = L"開く";
+	static constexpr auto& saveDialogTitle = L"名前を付けて保存";
+
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
@@ -43,6 +45,8 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 		SetUpUiaTestSuite();
 
 		SetUpEditor();
+
+		Comdlg32::setInstance<MockComdlg32>();
 	}
 
 	/*!
@@ -50,6 +54,8 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	 */
 	static void TearDownTestSuite()
 	{
+		Comdlg32::resetInstance();
+
 		TearDownEditor();
 
 		TearDownUiaTestSuite();
@@ -60,6 +66,8 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	 */
 	void SetUp() override
 	{
+		MockComdlg32::gm_Files.clear();
+
 		// テスト設定を反映する
 		GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = GetParam();
 
@@ -86,11 +94,6 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 
 		TearDownUia();
 	}
-
-	/*!
-	 * ファイルを開くダイアログのタイトルを取得する
-	 */
-	std::wstring GetOpenFileNameDialogTitle() const { return GetParam() ? L"開く" : L"ファイルを開く"; }
 };
 
 TEST_P(FileDialogTest, Create001)
@@ -140,6 +143,16 @@ TEST_P(FileDialogTest, Create003_ManyFiltersy)
  */
 TEST_P(FileDialogTest, DoModalOpenDlg001)
 {
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
+
+	const auto testAction = [] () {
+		SLoadInfo loadInfo{};
+		std::vector<std::wstring> files;
+		bool bOptions = true;
+		CDlgOpenFile::getInstance()->DoModalOpenDlg(&loadInfo, &files, bOptions);
+	};
+
 	const auto path = GetExeFileName().replace_filename(L"test.txt");
 
 	std::error_code ec;
@@ -149,22 +162,27 @@ TEST_P(FileDialogTest, DoModalOpenDlg001)
 	std::ofstream ofs{ path };
 	ofs.close();
 
-	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-	auto t = StartDialogCloser(GetOpenFileNameDialogTitle(), [path] (IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-		auto pItem = uia::GetFocusedElement(pUIAutomation);
-		ASSERT_THAT(pItem, NotNull());
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(openDialogTitle, [path] (HWND hWndDlg) {
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			apiwrap::SetDlgItemTextW(hWndDlg, 1148, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
+		});
 
-		// ファイル名を入力する
-		EmulateSetValue(pItem, path.c_str());
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetOpenFileNameW(_))
+			.Times(1)
+			.WillOnce(testing::DoDefault());
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(0);
 
-		// Enterキー押下で閉じる
-		EmulateHitEnter();
-	});
+		MockComdlg32::gm_Files.emplace_back(path.native());
+	}
 
-	SLoadInfo loadInfo{};
-	std::vector<std::wstring> files;
-	bool bOptions = true;
-	CDlgOpenFile::getInstance()->DoModalOpenDlg(&loadInfo, &files, bOptions);
+	testAction();
 
 	// 作成したファイルを削除する
 	std::filesystem::remove(path, ec);
@@ -176,11 +194,29 @@ TEST_P(FileDialogTest, DoModalOpenDlg001)
 TEST_P(FileDialogTest, DoModalOpenDlg101)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(std::nullopt);
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
-	// コマンドコードで、無理矢理動かす
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_FILEOPEN, nullptr, 0, pcEditWnd->DispatchEvent);
+	const auto testAction = [] () {
+		// コマンドコードで、無理矢理動かす
+		const auto hWnd = pcEditWnd->GetHwnd();
+		FORWARD_WM_COMMAND(hWnd, F_FILEOPEN, nullptr, 0, pcEditWnd->DispatchEvent);
+	};
+
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>();
+
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetOpenFileNameW(_))
+			.Times(1)
+			.WillOnce(Return(FALSE));
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(2)
+			.WillRepeatedly(Return(0));
+	}
+
+	testAction();
 }
 
 /*!
@@ -189,11 +225,29 @@ TEST_P(FileDialogTest, DoModalOpenDlg101)
 TEST_P(FileDialogTest, DoModalOpenDlg102)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(std::nullopt);
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
-	SLoadInfo loadInfo{};
-	bool bOptions = false;
-	CDlgOpenFile::getInstance()->DoModalOpenDlg(&loadInfo, nullptr, bOptions);
+	const auto testAction = [] () {
+		SLoadInfo loadInfo{};
+		bool bOptions = false;
+		CDlgOpenFile::getInstance()->DoModalOpenDlg(&loadInfo, nullptr, bOptions);
+	};
+
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>();
+
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetOpenFileNameW(_))
+			.Times(1)
+			.WillOnce(Return(FALSE));
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(2)
+			.WillRepeatedly(Return(0));
+	}
+
+	testAction();
 }
 
 /*!
@@ -201,26 +255,47 @@ TEST_P(FileDialogTest, DoModalOpenDlg102)
  */
 TEST_P(FileDialogTest, DoModalSaveDlg001)
 {
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
+
+	const auto testAction = [] () {
+		SSaveInfo saveInfo{};
+		bool bSimpleMode = true;
+		CDlgOpenFile::getInstance()->DoModalSaveDlg(&saveInfo, bSimpleMode);
+	};
+
 	const auto path = GetExeFileName().replace_filename(L"test.txt");
 
 	std::error_code ec;
 	std::filesystem::remove(path, ec);
 
-	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-	auto t = StartDialogCloser(L"名前を付けて保存", [path](IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-		auto pItem = uia::GetFocusedElement(pUIAutomation);
-		ASSERT_THAT(pItem, NotNull());
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(saveDialogTitle0, [path] (HWND hWndDlg) {
+			ASSERT_THAT(apiwrap::GetWindowTextW(hWndDlg), StrEq(saveDialogTitle));
 
-		// ファイル名を入力する
-		EmulateSetValue(pItem, path.c_str());
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			const auto hWndEdit = dialog::FindFileNameEdit(hWndDlg);
+			apiwrap::SetWindowTextW(hWndEdit, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
+		});
 
-		// Enterキー押下で閉じる
-		EmulateHitEnter();
-	});
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetSaveFileNameW(_))
+			.Times(1)
+			.WillOnce(testing::DoDefault());
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(0);
 
-	SSaveInfo saveInfo{};
-	bool bSimpleMode = true;
-	CDlgOpenFile::getInstance()->DoModalSaveDlg(&saveInfo, bSimpleMode);
+		MockComdlg32::gm_Files.emplace_back(path.native());
+	}
+
+	testAction();
+
+	// 保存したファイルを削除する
+	std::filesystem::remove( path, ec );
 }
 
 /*!
@@ -229,11 +304,29 @@ TEST_P(FileDialogTest, DoModalSaveDlg001)
 TEST_P(FileDialogTest, DoModalSaveDlg101)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(std::nullopt);
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
-	// コマンドコードで、無理矢理動かす
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_FILESAVEAS_DIALOG, nullptr, 0, pcEditWnd->DispatchEvent);
+	const auto testAction = [] () {
+		// コマンドコードで、無理矢理動かす
+		const auto hWnd = pcEditWnd->GetHwnd();
+		FORWARD_WM_COMMAND(hWnd, F_FILESAVEAS_DIALOG, nullptr, 0, pcEditWnd->DispatchEvent);
+	};
+
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>();
+
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetSaveFileNameW(_))
+			.Times(1)
+			.WillOnce(Return(FALSE));
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(2)
+			.WillRepeatedly(Return(0));
+	}
+
+	testAction();
 }
 
 /*!
@@ -241,6 +334,14 @@ TEST_P(FileDialogTest, DoModalSaveDlg101)
  */
 TEST_P(FileDialogTest, GetOpenFileName001)
 {
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
+
+	const auto testAction = [] () {
+		SFilePath szPath{};
+		CDlgOpenFile::getInstance()->DoModal_GetOpenFileName(szPath, EFilter::EFITER_TEXT);
+	};
+
 	const auto path = GetExeFileName().replace_filename(L"test.txt");
 
 	std::error_code ec;
@@ -250,20 +351,27 @@ TEST_P(FileDialogTest, GetOpenFileName001)
 	std::ofstream ofs{ path };
 	ofs.close();
 
-	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-	auto t = StartDialogCloser(L"開く", [path] (IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-		auto pItem = uia::GetFocusedElement(pUIAutomation);
-		ASSERT_THAT(pItem, NotNull());
+	if (GetParam()) {
+		// 表示されたモーダルダイアログを閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(openDialogTitle, [path] (HWND hWndDlg) {
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			apiwrap::SetDlgItemTextW(hWndDlg, 1148, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
+		});
 
-		// ファイル名を入力する
-		EmulateSetValue(pItem, path.c_str());
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetOpenFileNameW(_))
+			.Times(1)
+			.WillOnce(testing::DoDefault());
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(0);
 
-		// Enterキー押下で閉じる
-		EmulateHitEnter();
-	});
+		MockComdlg32::gm_Files.emplace_back(path.native());
+	}
 
-	SFilePath szPath{ path.filename().c_str() };
-	CDlgOpenFile::getInstance()->DoModal_GetOpenFileName(szPath, EFilter::EFITER_TEXT);
+	testAction();
 
 	// 作成したファイルを削除する
 	std::filesystem::remove(path, ec);
@@ -275,11 +383,29 @@ TEST_P(FileDialogTest, GetOpenFileName001)
 TEST_P(FileDialogTest, GetOpenFileName101)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(std::nullopt);
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
-	// コマンドコードで、無理矢理動かす
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_LOADKEYMACRO, nullptr, 0, pcEditWnd->DispatchEvent);
+	const auto testAction = [] () {
+		// コマンドコードで、無理矢理動かす
+		const auto hWnd = pcEditWnd->GetHwnd();
+		FORWARD_WM_COMMAND(hWnd, F_LOADKEYMACRO, nullptr, 0, pcEditWnd->DispatchEvent);
+	};
+
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>();
+
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetOpenFileNameW(_))
+			.Times(1)
+			.WillOnce(Return(FALSE));
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(2)
+			.WillRepeatedly(Return(0));
+	}
+
+	testAction();
 }
 
 /*!
@@ -288,23 +414,44 @@ TEST_P(FileDialogTest, GetOpenFileName101)
 TEST_P(FileDialogTest, GetOpenFileName102)
 {
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(std::nullopt);
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
-	SFilePath szPath{};
-	CDlgOpenFile::getInstance()->DoModal_GetOpenFileName(szPath, EFilter::EFITER_NONE);
+	const auto testAction = [] () {
+		SFilePath szPath{};
+		CDlgOpenFile::getInstance()->DoModal_GetOpenFileName(szPath, EFilter::EFITER_NONE);
+	};
+
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>();
+
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetOpenFileNameW(_))
+			.Times(2)
+			.WillOnce(Return(FALSE))
+			.WillOnce(Return(FALSE));
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(2)
+			.WillOnce(Return(FNERR_INVALIDFILENAME))
+			.WillOnce(Return(0));
+	}
+
+	testAction();
 }
-
-#if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * 名前を付けて保存ダイアログの表示テスト
  */
 TEST_P(FileDialogTest, GetSaveFileName001)
 {
-	if (!GetParam()) {
-		GTEST_SUCCESS_("Legacy Common File Dialog may cause error on GitHub Actions.");
-		return;
-	}
+	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
+
+	const auto testAction = [] () {
+		SFilePath szPath{};
+		CDlgOpenFile::getInstance()->DoModal_GetSaveFileName(szPath);
+	};
 
 	const auto path = GetExeFileName().replace_filename(L"test.txt");
 	const auto dummyPath = GetExeFileName().replace_filename(L"dummy.txt");
@@ -314,56 +461,75 @@ TEST_P(FileDialogTest, GetSaveFileName001)
 	// 上書き確認メッセージが出ないように、事前にパスを削除しておく
 	std::filesystem::remove(path, ec);
 
-	// パス解決でｋるようにファイルを作る
+	// パス解決できるようにファイルを作る
 	std::filesystem::remove(dummyPath, ec);
 	std::ofstream ofs{ dummyPath };
 	ofs.close();
 
-	// 表示されたファイルダイアログを閉じるためのスレッドを起動する
-	auto t = StartDialogCloser(L"名前を付けて保存", [path](IUIAutomation* pUIAutomation, HWND, std::stop_token) {
-		auto pItem = uia::GetFocusedElement(pUIAutomation);
-		ASSERT_THAT(pItem, NotNull());
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>(saveDialogTitle0, [path] (HWND hWndDlg) {
+			ASSERT_THAT(apiwrap::GetWindowTextW(hWndDlg), StrEq(saveDialogTitle));
 
-		// ファイル名を入力する
-		EmulateSetValue(pItem, path.c_str());
+			// 現状の値を決め打ち
+			// ある日突然機能しなくなる可能性あるので注意
+			const auto hWndEdit = dialog::FindFileNameEdit(hWndDlg);
+			apiwrap::SetWindowTextW(hWndEdit, path.c_str());
+			SendDlgCommand(hWndDlg, IDOK);
+		});
 
-		// Enterキー押下で閉じる
-		EmulateHitEnter();
-	});
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetSaveFileNameW(_))
+			.Times(1)
+			.WillOnce(testing::DoDefault());
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(0);
 
-	SFilePath szPath{ dummyPath.filename().native() };
-	CDlgOpenFile::getInstance()->DoModal_GetSaveFileName(szPath);
+		MockComdlg32::gm_Files.emplace_back(dummyPath.native());
+	}
 
+	testAction();
+
+	// 保存したファイルを削除する
 	std::filesystem::remove(dummyPath, ec);
 }
-
-#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
  * 名前を付けて保存ダイアログの表示テスト
  */
 TEST_P(FileDialogTest, GetSaveFileName101)
 {
-	// 保存先のパスを作る
-	const auto path = GetExeFileName().replace_filename(L"test-save-file.txt");
-
-	// 上書き確認メッセージが出ないように、事前にパスを削除しておく
-	std::error_code ec;
-	std::filesystem::remove(path, ec);
-
-	// キーマクロ保存が使えるようにダミーマクロを登録する
-	LPARAM lParams = 0L;
-	pcSMacroMgr->Append(STAND_KEYMACRO, F_0, &lParams, &pcEditWnd->GetView(0));
-
 	// 表示されたモーダルダイアログをキャンセルボタンで閉じる
-	dialog::ModalDialogCloser closer(std::nullopt);
+	std::unique_ptr<dialog::ModalDialogCloser> closer = nullptr;
 
-	// コマンドコードで、無理矢理動かす
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_SAVEKEYMACRO, nullptr, 0, pcEditWnd->DispatchEvent);
+	const auto testAction = [] () {
+		// キーマクロ保存が使えるようにダミーマクロを登録する
+		LPARAM lParams = 0L;
+		pcSMacroMgr->Append(STAND_KEYMACRO, F_0, &lParams, &pcEditWnd->GetView(0));
 
-	// 保存したファイルを削除する
-	std::filesystem::remove(path, ec);
+		// コマンドコードで、無理矢理動かす
+		const auto hWnd = pcEditWnd->GetHwnd();
+		FORWARD_WM_COMMAND(hWnd, F_SAVEKEYMACRO, nullptr, 0, pcEditWnd->DispatchEvent);
+	};
+
+	if (GetParam()) {
+		// 表示されたモーダルダイアログをキャンセルボタンで閉じる
+		closer = std::make_unique<dialog::ModalDialogCloser>();
+
+	} else {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetSaveFileNameW(_))
+			.Times(2)
+			.WillOnce(Return(FALSE))
+			.WillOnce(Return(FALSE));
+		EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+			.Times(2)
+			.WillOnce(Return(FNERR_INVALIDFILENAME))
+			.WillOnce(Return(0));
+	}
+
+	testAction();
 }
 
 /*!
@@ -510,4 +676,92 @@ TEST_F(SelectFileTest, SelectFile101)
 	EXPECT_THAT(CDlgOpenFile::SelectFile(hWndDlg, hWndFolder, L"*.ini", resolvePath, EFITER_NONE), IsFalse());
 }
 
-} // namespace window
+/*!
+ * @brief DlgOpenFailテストのパラメーター
+ *
+ * @param code CommDlgのエラーコード
+ * @param name CommDlgのエラー識別子
+ */
+using DlgOpenFailTestParam = std::tuple<DWORD, std::wstring_view>;
+
+/*!
+ * DlgOpenFailテストのためのフィクスチャクラス
+ */
+struct DlgOpenFailTest : public ::testing::TestWithParam<DlgOpenFailTestParam> {
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		User32::setInstance<MockUser32>();
+		Comdlg32::setInstance<MockComdlg32>();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override
+	{
+		Comdlg32::resetInstance();
+		User32::resetInstance();
+	}
+};
+
+/*!
+ * @brief DlgOpenFailのテスト
+ */
+TEST_P(DlgOpenFailTest, test)
+{
+	const auto code = std::get<0>(GetParam());
+	const auto name = std::get<1>(GetParam());
+
+	const auto expected = std::format(L"ダイアログが開けません。\n\nエラー:{:<21s}", name);
+
+	auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+	EXPECT_CALL(*pComdlg32, CommDlgExtendedError())
+		.Times(1)
+		.WillOnce(Return(code));
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(expected), _, _, _))
+		.Times(1)
+		.WillOnce(Return(IDOK));
+
+	CallDlgOpenFail();
+}
+
+#pragma push_macro("CD_ERR_ENTRY")
+
+#define CD_ERR_ENTRY(code)	DlgOpenFailTestParam{ code, L ## #code }
+
+/*!
+ * @brief パラメータテストをインスタンス化する
+ */
+INSTANTIATE_TEST_SUITE_P(CommDlgCodes
+	, DlgOpenFailTest
+	, ::testing::Values(
+		CD_ERR_ENTRY(CDERR_DIALOGFAILURE),
+		CD_ERR_ENTRY(CDERR_FINDRESFAILURE),
+		CD_ERR_ENTRY(CDERR_NOHINSTANCE),
+		CD_ERR_ENTRY(CDERR_INITIALIZATION),
+		CD_ERR_ENTRY(CDERR_NOHOOK),
+		CD_ERR_ENTRY(CDERR_LOCKRESFAILURE),
+		CD_ERR_ENTRY(CDERR_NOTEMPLATE),
+		CD_ERR_ENTRY(CDERR_LOADRESFAILURE),
+		CD_ERR_ENTRY(CDERR_STRUCTSIZE),
+		CD_ERR_ENTRY(CDERR_LOADSTRFAILURE),
+		CD_ERR_ENTRY(FNERR_BUFFERTOOSMALL),
+		CD_ERR_ENTRY(CDERR_MEMALLOCFAILURE),
+		CD_ERR_ENTRY(FNERR_INVALIDFILENAME),
+		CD_ERR_ENTRY(CDERR_MEMLOCKFAILURE),
+		CD_ERR_ENTRY(FNERR_SUBCLASSFAILURE),
+
+		// 未定義のエラーコードは以下固定値。
+		DlgOpenFailTestParam{ 0x6000, L"UNKNOWN_ERRORCODE" }
+	)
+);
+
+#pragma pop_macro("CD_ERR_ENTRY")
+
+} // namespace dialog

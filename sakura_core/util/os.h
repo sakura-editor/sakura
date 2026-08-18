@@ -35,6 +35,45 @@ struct User32 : public TSakuraSingleton<User32>
 		_In_ UINT uType,
 		_In_ WORD wLanguageId
 	) const;
+
+	virtual BOOL TrackPopupMenu(
+		_In_ HMENU hMenu,
+		_In_ UINT uFlags,
+		_In_ int x,
+		_In_ int y,
+		_Reserved_ int nReserved,
+		_In_ HWND hWnd,
+		_Reserved_ CONST RECT* prcRect
+	) const;
+};
+
+//! Comdlg32.dll呼出をテスト可能にするDIっぽいもの
+struct Comdlg32 : public TSakuraSingleton<Comdlg32> {
+	virtual ~Comdlg32() = default;
+
+	virtual BOOL ChooseColorW(
+		LPCHOOSECOLORW pCc
+	) const;
+
+	virtual BOOL ChooseFontW(
+		LPCHOOSEFONTW pCf
+	) const;
+
+	virtual DWORD CommDlgExtendedError() const;
+
+	virtual BOOL GetOpenFileNameW(
+		LPOPENFILENAMEW pOfn
+	) const;
+
+	virtual BOOL GetSaveFileNameW(
+		LPOPENFILENAMEW pOfn
+	) const;
+
+	virtual BOOL PrintDlgW(
+		_Inout_ LPPRINTDLGW pPD
+	) const;
+
+	std::wstring CommDlgExtendedErrorString() const;
 };
 
 //クリップボード

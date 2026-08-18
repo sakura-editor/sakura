@@ -139,6 +139,7 @@ WORD	GetTrackBarPos(HWND hWndDlg, int nIDDlgItem);
 int		GetUpDownPos(HWND hWndDlg, int nIDDlgItem);
 bool	IsDlgButtonChecked(HWND hDlg, int nIDButton);
 bool	IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem);
+void	LimitEditText(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> buffer);
 void	SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw = true);
 void	SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos);
 
@@ -148,6 +149,7 @@ SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> bu
 SGetTextResult	GetWindowTextW(HWND hWnd);
 
 bool	SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::wstring_view text);
+bool	SetWindowTextW(HWND hWnd, std::wstring_view text);
 
 /*!
  * @brief トラックバーのデータ範囲を変更する

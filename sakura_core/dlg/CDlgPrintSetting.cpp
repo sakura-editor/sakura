@@ -196,7 +196,7 @@ BOOL CDlgPrintSetting::OnCbnSelChange( [[maybe_unused]] HWND hwndCtl, int wID )
 BOOL CDlgPrintSetting::OnBnClicked( int wID )
 {
 	WCHAR			szWork[256];
-	CDlgInput1		cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	HWND			hwndComboSettingName;
 	switch( wID ){
 	case IDC_BUTTON_HELP:

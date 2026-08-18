@@ -31,6 +31,11 @@ BOOL Shell32::ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const
 	return ::ShellExecuteExW(pExecInfo);
 }
 
+BOOL Comdlg32::ChooseFontW(LPCHOOSEFONTW pCf) const
+{
+	return ::ChooseFontW(pCf);
+}
+
 BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
 {
 	return SelectDir(hWnd, title, initialDirectory, std::span(strFolderName, nMaxCount));
@@ -573,26 +578,17 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	cf.lpLogFont = plf;
 	cf.lpfnHook = static_cast<LPCFHOOKPROC>(DarkMode::HookDlgProc);
 	cf.hInstance = GetModuleHandleW(nullptr);
-	if( !ChooseFont( &cf ) ){
+	if (!Comdlg32::getInstance()->ChooseFontW(&cf)) {
 #ifdef _DEBUG
-		DWORD nErr;
-		nErr = CommDlgExtendedError();
-		switch( nErr ){
-		case CDERR_FINDRESFAILURE:	MYTRACE( L"CDERR_FINDRESFAILURE \n" );	break;
-		case CDERR_INITIALIZATION:	MYTRACE( L"CDERR_INITIALIZATION \n" );	break;
-		case CDERR_LOCKRESFAILURE:	MYTRACE( L"CDERR_LOCKRESFAILURE \n" );	break;
-		case CDERR_LOADRESFAILURE:	MYTRACE( L"CDERR_LOADRESFAILURE \n" );	break;
-		case CDERR_LOADSTRFAILURE:	MYTRACE( L"CDERR_LOADSTRFAILURE \n" );	break;
-		case CDERR_MEMALLOCFAILURE:	MYTRACE( L"CDERR_MEMALLOCFAILURE\n" );	break;
-		case CDERR_MEMLOCKFAILURE:	MYTRACE( L"CDERR_MEMLOCKFAILURE \n" );	break;
-		case CDERR_NOHINSTANCE:		MYTRACE( L"CDERR_NOHINSTANCE \n" );		break;
-		case CDERR_NOHOOK:			MYTRACE( L"CDERR_NOHOOK \n" );			break;
-		case CDERR_NOTEMPLATE:		MYTRACE( L"CDERR_NOTEMPLATE \n" );		break;
-		case CDERR_STRUCTSIZE:		MYTRACE( L"CDERR_STRUCTSIZE \n" );		break;
-		case CFERR_MAXLESSTHANMIN:	MYTRACE( L"CFERR_MAXLESSTHANMIN \n" );	break;
-		case CFERR_NOFONTS:			MYTRACE( L"CFERR_NOFONTS \n" );			break;
-		default:
-			break;
+		std::wstring name;
+		try {
+			name = Comdlg32::getInstance()->CommDlgExtendedErrorString();
+		}
+		catch (const std::out_of_range&) {
+			// 不明なエラー
+		}
+		if (!name.empty()) {
+			TRACE("%s \n", std::data(name));
 		}
 #endif
 		return FALSE;

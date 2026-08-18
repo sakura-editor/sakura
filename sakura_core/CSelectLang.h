@@ -138,7 +138,7 @@ private:
 		std::wstring		m_String;		//!< リソース文字列格納用バッファ
 	};
 
-	static inline std::array<CLoadStrBuffer, 4> gm_Buffers{};		//!< 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
+	static inline std::array<CLoadStrBuffer, 16> gm_Buffers{};		//!< 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
 	static inline size_t gm_LastUsedIndex = std::size(gm_Buffers);	//!< 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
 
 	using Me = CLoadString;

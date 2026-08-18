@@ -350,6 +350,15 @@ bool SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::wstring_view text)
 }
 
 /*!
+ * @brief エディットコントロールに入力文字数を設定する
+ */
+void LimitEditText(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> buffer)
+{
+	const auto cchLimit = std::size(buffer) - 1;
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, EM_LIMITTEXT, WPARAM(cchLimit), 0L);
+}
+
+/*!
  * @brief トラックバーの現在位置を変更する
  */
 void SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw)
@@ -363,6 +372,16 @@ void SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw)
 void SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos)
 {
 	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_SETPOS, 0L, LPARAM(pos));
+}
+
+/*!
+ * @brief ウィンドウのテキストを設定する
+ */
+bool SetWindowTextW(HWND hWnd, std::wstring_view text)
+{
+	assert(L'\0' == *(text.data() + text.size()));
+
+	return ::SetWindowTextW(hWnd, std::data(text));
 }
 
 } // namespace apiwrap

@@ -329,7 +329,7 @@ static bool IsProfileDuplicate(HWND hwndList, LPCWSTR szProfName, int skipIndex)
 
 void CDlgProfileMgr::CreateProf()
 {
-	CDlgInput1 cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	int max_size = _MAX_PATH;
 	WCHAR szText[_MAX_PATH];
 	std::wstring strTitle = LS(STR_DLGPROFILE_NEW_PROF_TITLE);
@@ -385,7 +385,7 @@ void CDlgProfileMgr::DeleteProf()
 void CDlgProfileMgr::RenameProf()
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
-	CDlgInput1 cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	int nCurIndex = ApiWrap::List_GetCurSel(hwndList);
 	WCHAR szText[_MAX_PATH];
 	bool bDefault = MyList_GetText( hwndList, nCurIndex, szText );

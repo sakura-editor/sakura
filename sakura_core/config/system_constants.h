@@ -588,6 +588,9 @@
 //! 初期化完了イベント
 inline constexpr std::wstring_view GSTR_EVENT_SAKURA_EP_INITIALIZED = L"EventSakuraEditorEPInitialized_{:d}";
 
+//! Grep完了イベント
+inline constexpr std::wstring_view GSTR_EVENT_SAKURA_GREP_COMPLETED = L"EventSakuraEditorGrepCompleted_{:d}";
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ウィンドウクラス                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

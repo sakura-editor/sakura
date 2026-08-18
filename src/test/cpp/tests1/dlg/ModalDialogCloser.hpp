@@ -9,11 +9,16 @@
 #include "cxx/ResourceHolder.hpp"
 #include "dlg/CDlgOpenFile.h"
 
+#include "CSelectLang.h"
+
 #include <deque>
 #include <exception>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
+#include <string>
+#include <string_view>
 
 namespace dialog {
 
@@ -24,7 +29,7 @@ struct ModalDialogCloserTestPeer;
  *
  * WindowsHookを使ってダイアログの初期表示を検出して閉じるもの。
  */
-class ModalDialogCloser final {
+class ModalDialogCloser {
 private:
 	friend struct ModalDialogCloserTestPeer;
 
@@ -33,7 +38,7 @@ private:
 	using Me = ModalDialogCloser;
 
 	static constexpr UINT TIMER_ID_FIRST_IDLE = 9999;
-	static constexpr UINT FALLBACK_DELAY_MILLIS = 500;
+	static constexpr UINT SNOOZE_INTERVAL = 10;
 
 	enum class State {
 		Pending,
@@ -58,14 +63,16 @@ private:
 		_In_ LPARAM lParam
 	);
 
-	static void CALLBACK TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 	static bool ExecuteAction(HWND hWnd) noexcept;
+	static void CALLBACK TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 
 public:
+	static bool IsHandled() noexcept;
+
 	ModalDialogCloser(const std::optional<std::wstring>& optTitle, const std::function<void(HWND)>& action);
 
 	ModalDialogCloser(int dialogTitleResourceId, const std::function<void(HWND)>& action);
-	ModalDialogCloser(const std::optional<std::wstring>& optTitle, int nIDDlgItem = IDCANCEL);
+	explicit ModalDialogCloser(const std::optional<std::wstring>& optTitle = std::nullopt, int nIDDlgItem = IDCANCEL);
 
 	ModalDialogCloser(const Me&) = delete;
 	Me& operator=(const Me&) = delete;
@@ -81,6 +88,37 @@ private:
 	std::exception_ptr m_Exception;
 	DWORD m_HookError = ERROR_SUCCESS;
 	bool m_TimerActive = false;
+};
+
+/*!
+ * プロパティシートテスト用のクラス
+ */
+class PropertySheetCloser : public ModalDialogCloser
+{
+public:
+	explicit PropertySheetCloser(const std::function<void(HWND, HWND)>& action)
+		: ModalDialogCloser(std::nullopt, [action] (HWND hWndDlg) {
+			// アクティブなプロパティーシートのハンドルを取得する 
+			const auto hWndPage = HWND(::SendMessageW(hWndDlg, PSM_GETCURRENTPAGEHWND, 0L, 0L));
+
+			// WM_HELPを送信してヘルプ表示処理を空振りさせる
+			HELPINFO hi{};
+			::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+			// コンテキストメニュー表示を空振りさせる
+			FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+			action(hWndDlg, hWndPage);
+		})
+	{
+	}
+
+	explicit PropertySheetCloser(int button = PSBTN_CANCEL)
+		: PropertySheetCloser([button] (HWND hWndDlg, HWND) {
+			::SendMessageW(hWndDlg, PSM_PRESSBUTTON, button, 0L);
+		})
+	{
+	}
 };
 
 } // namespace dialog

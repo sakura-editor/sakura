@@ -9,6 +9,7 @@
 
 #include "cxx/load_string.hpp"
 #include "doc/CDocListener.h"
+#include "util/window.h"
 
 namespace window {
 
@@ -37,14 +38,70 @@ bool IsDialog(_In_ HWND hWnd, _In_opt_ LPCWSTR pClassName)
 	return DIALOG_CLASS == window::GetClassNameW(hWnd);
 }
 
+bool IsTitleMatched(_In_ HWND hWnd, _In_opt_ LPCWSTR pTitle, std::wstring_view expected)
+{
+	std::wstring_view title;
+
+	std::wstring buffer;
+	if (!pTitle || IS_INTRESOURCE(pTitle)) {
+		if (auto ret = apiwrap::GetWindowTextW(hWnd)) {
+			buffer = std::move(ret.buffer);
+			title = buffer;
+		}
+	}
+	else {
+		title = pTitle;
+	}
+
+	return title == expected;
+}
+
 } // namespace window
 
 namespace dialog {
+
+struct FindFileNameEditContext {
+	HWND found = nullptr;
+};
+
+BOOL CALLBACK FindFileNameEditProc(HWND hWndCtl, LPARAM lParam)
+{
+	auto* pCtx = std::bit_cast<FindFileNameEditContext*>(lParam);
+
+	if (1001 != ::GetDlgCtrlID(hWndCtl)) {
+		return TRUE;
+	}
+
+	if (const auto className = window::GetClassNameW(hWndCtl);
+		WC_EDIT == className) {
+		pCtx->found = hWndCtl;
+		return FALSE;   // 検索終了
+	}
+
+	return TRUE;
+}
+
+HWND FindFileNameEdit(HWND hFileDialog)
+{
+	FindFileNameEditContext ctx{};
+
+	::EnumChildWindows(
+		hFileDialog,
+		&FindFileNameEditProc,
+		LPARAM(&ctx)
+	);
+
+	return ctx.found;
+}
 
 bool ModalDialogCloser::ExecuteAction(HWND hWnd) noexcept
 {
 	Me* entry = nullptr;
 	if (hWnd) {
+		if (!::IsWindowVisible(hWnd)) return false;
+
+		if (!::IsWindowEnabled(hWnd)) return false;
+
 		std::unique_lock lock{ gm_Mutex };
 
 		const auto found = gm_HwndMap.find(hWnd);
@@ -65,8 +122,6 @@ bool ModalDialogCloser::ExecuteAction(HWND hWnd) noexcept
 			entry->m_Action(hWnd);
 
 			entry->m_State = State::Handled;
-
-			return true;
 		}
 	}
 	catch (...) {
@@ -89,12 +144,15 @@ bool ModalDialogCloser::ExecuteAction(HWND hWnd) noexcept
 		}
 	}
 
-	return false;
-}
+	if (hWnd) {
+		std::unique_lock lock{ gm_Mutex };
 
-void CALLBACK ModalDialogCloser::TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
-{
-	ExecuteAction(hWnd);
+		if (gm_Entries.empty() && gm_HwndMap.empty()) {
+			gm_CbtHook = nullptr;
+		}
+	}
+
+	return entry && State::Handled == entry->m_State;
 }
 
 /*!
@@ -121,10 +179,20 @@ LRESULT CALLBACK ModalDialogCloser::CBTProc(
 
 		if (!gm_Entries.empty())
 		{
-			const auto& entry = gm_Entries.front();
-			if (const auto pDialogTitle = pCreateWnd->lpcs->lpszName;
-				!entry->m_DialogTitle.has_value() ||
-				(pDialogTitle && !IS_INTRESOURCE(pDialogTitle) && *entry->m_DialogTitle == pDialogTitle)) {
+			// タイトルが一致するcloserを探す。タイトルが指定されていない場合は最初のエントリを使う。
+			const auto pDialogTitle = pCreateWnd->lpcs->lpszName;
+			const auto func = [hWnd, pDialogTitle]( const auto& entry ) {
+				return !entry->m_DialogTitle.has_value()
+					|| window::IsTitleMatched( hWnd, pDialogTitle, *entry->m_DialogTitle );
+			};
+
+			if (const auto found = std::ranges::find_if(gm_Entries, func);
+				found != gm_Entries.end())
+			{
+				// 見つかったcloserを取り出す
+				const auto entry = *found;
+
+				// closerの状態を更新する
 				entry->m_State = State::Created;
 				entry->m_hWnd = hWnd;
 
@@ -132,26 +200,26 @@ LRESULT CALLBACK ModalDialogCloser::CBTProc(
 				gm_HwndMap.try_emplace(hWnd, entry);
 
 				// タイトル監視エントリを除去する
-				gm_Entries.pop_front();
+				gm_Entries.erase(found);
 
 				// タイマーをセットする
-				entry->m_TimerActive = 0 != ::SetTimer(hWnd, TIMER_ID_FIRST_IDLE, FALLBACK_DELAY_MILLIS, &TimerProc);
-			}
-		}
-	}
-	else if (HCBT_ACTIVATE == nCode)
-	{
-		if (ExecuteAction(hWnd)) {
-			std::unique_lock lock{ gm_Mutex };
-
-			if (gm_Entries.empty() && gm_HwndMap.empty()) {
-				const auto ret = ::CallNextHookEx(nullptr, nCode, wParam, lParam);
-				CbtHookHolder hook = std::move(gm_CbtHook);
-				return ret;
+				entry->m_TimerActive = 0 != ::SetTimer(hWnd, TIMER_ID_FIRST_IDLE, SNOOZE_INTERVAL, &TimerProc);
 			}
 		}
 	}
 	return ::CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+bool ModalDialogCloser::IsHandled() noexcept
+{
+	std::unique_lock lock{ gm_Mutex };
+
+	return !gm_CbtHook;
+}
+
+void CALLBACK ModalDialogCloser::TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
+{
+	ExecuteAction(hWnd);
 }
 
 ModalDialogCloser::ModalDialogCloser(
