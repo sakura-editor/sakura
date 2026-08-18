@@ -33,7 +33,7 @@ class CDlgInput1 : public TSakuraSingleton<CDlgInput1>
 {
 private:
 	using SBuffer = std::span<WCHAR>;
-	using SFuncType = std::function<int(HWND, std::wstring_view)>;
+	using SFuncType = std::function<int(HWND, std::wstring_view, size_t)>;
 
 	using Me = CDlgInput1;
 
@@ -45,6 +45,8 @@ public:
 		LPARAM lParam
 	);
 
+	static int NoValidation(HWND hWndDlg, std::wstring_view text, size_t cchBuffer);
+
 	static LRESULT CALLBACK SubclassProc(
 		HWND hWnd,
 		UINT uMsg,
@@ -54,8 +56,6 @@ public:
 		DWORD_PTR dwRefData
 	);
 
-	static inline SFuncType NoValidation = [] (HWND, std::wstring_view) { return 1; };	//!< 何もしない評価関数
-
 	virtual ~CDlgInput1() noexcept = default;
 
 	BOOL DoModal(
@@ -63,8 +63,8 @@ public:
 		_In_opt_ HWND hWndOwner,
 		_In_z_ const WCHAR* pszTitle,
 		_In_z_ const WCHAR* pszMessage,
-		size_t cchBuffer,
-		_Inout_updates_z_(cchBuffer) WCHAR* pszBuffer
+		size_t cchMaxTextLength,
+		_Inout_updates_z_(cchMaxTextLength + 1) WCHAR* pszText
 	);
 
 	BOOL DoModal(
@@ -79,7 +79,8 @@ public:
 		_In_opt_ HWND hWndOwner,
 		std::wstring_view title,
 		std::wstring_view message,
-		std::wstring& buffer
+		std::wstring& buffer,
+		const std::optional<SFuncType>& optFunc = std::nullopt
 	);
 
 	virtual BOOL DoModal(
@@ -105,7 +106,7 @@ public:
 	std::wstring	m_Message;	/* メッセージ */
 	SBuffer			m_Text;		/* テキスト */
 
-	SFuncType		m_Func = NoValidation;
+	SFuncType		m_Func = &NoValidation;
 };
 
 #endif /* SAKURA_CDLGINPUT1_43CB765B_D257_4DBC_85E9_D2587B7E9D8E_H_ */

@@ -89,6 +89,27 @@ static const DWORD p_helpids[] = {	//13000
 }
 
 /*!
+ * @brief 入力データを検証する関数
+ *
+ * @param hWndDlg [in] 宛先ウィンドウのハンドル
+ * @param text [in] 入力データ
+ * @param cchBuffer [in] バッファーサイズ
+ *
+ * @returns データを取り込んでよいか
+ * @retval > 0 取り込んでよい
+ * @retval = 0 データがない
+ * @retval < 0 取り込んではいけない
+ */
+/* static */ int CDlgInput1::NoValidation(
+	HWND /* hWndDlg */,
+	std::wstring_view /* text */,
+	size_t /* cchBuffer */
+)
+{
+	return 1;	// データを取り込んでよい
+}
+
+/*!
  * @brief ウィンドウプロシージャ
  *
  * @param hWnd [in] 宛先ウィンドウのハンドル
@@ -134,12 +155,14 @@ static const DWORD p_helpids[] = {	//13000
 /*!
  * @brief モーダルダイアログの表示
  *
+ * @note 移行元実装。
+ *
  * @param [in, opt] モジュールハンドル。
  * @param hWndOwner [in, opt] オーナーウィンドウのハンドル
  * @param pszTitle [in] タイトル文字列
  * @param pszMessage [in] メッセージ文字列
- * @param cchBuffer [in] 入力値を受け取るバッファのサイズ。NUL終端を含むサイズを指定する。
- * @param pszBuffer [in, out] 入力値を受け取るバッファ
+ * @param cchMaxTextLength [in] 入力可能文字数
+ * @param pszText [in, out] 入力値を受け取るバッファ
  *
  * @note 既存コード互換用に残しておく
  */
@@ -148,21 +171,27 @@ BOOL CDlgInput1::DoModal(
 	_In_opt_ HWND hWndOwner,
 	_In_z_ const WCHAR*	pszTitle,
 	_In_z_ const WCHAR*	pszMessage,
-	size_t cchBuffer,
-	_Inout_updates_z_(cchBuffer) WCHAR* pszBuffer
+	size_t cchMaxTextLength,
+	_Inout_updates_z_(cchMaxTextLength + 1) WCHAR* pszText
 )
 {
+	assert(pszTitle);
+	assert(pszMessage);
+	assert(0 < cchMaxTextLength);
+
+	// 移行先実装を呼び出す
 	return DoModal(
 		hWndOwner,
 		pszTitle,
 		pszMessage,
-		pszBuffer,
-		cchBuffer
+		std::span(pszText, cchMaxTextLength + 1)
 	);
 }
 
 /*!
  * @brief モーダルダイアログの表示
+ *
+ * @note 移行先実装。
  *
  * @param hWndOwner [in, opt] オーナーウィンドウのハンドル
  * @param title [in] タイトル文字列
@@ -177,11 +206,10 @@ BOOL CDlgInput1::DoModal(
 	const std::optional<SFuncType>& optFunc
 )
 {
-	m_Func = optFunc.value_or([buffer] (HWND, std::wstring_view text) {
-		if (text.empty()) return 0;
-		return std::size(text) < std::size(buffer) ? 1 : -1;
-	});
+	// 検証関数を取り出す。指定がなければ「検証なし」とする
+	m_Func = optFunc.value_or(&NoValidation);
 
+	// 内部実装を呼び出す。呼出先はテスト時に差し替え可能。
 	return DoModal(
 		hWndOwner,
 		std::data(title),
@@ -194,23 +222,28 @@ BOOL CDlgInput1::DoModal(
 /*!
  * @brief モーダルダイアログの表示
  *
+ * @note std::wstringをバッファにする版。
+ *
  * @param hWndOwner [in, opt] オーナーウィンドウのハンドル
  * @param title [in] タイトル文字列
  * @param message [in] メッセージ文字列
- * @param buffer [out] 入力値を受け取るバッファ
+ * @param buffer [out] 入力値を受け取るバッファ。呼び出し側で適切なサイズにresizeすること。
  */
 BOOL CDlgInput1::DoModal(
 	_In_opt_ HWND hWndOwner,
 	std::wstring_view title,
 	std::wstring_view message,
-	std::wstring& buffer
+	std::wstring& buffer,
+	const std::optional<SFuncType>& optFunc
 )
 {
+	// 移行先実装を呼び出す
 	return DoModal(
 		hWndOwner,
-		std::data(title),
-		std::data(message),
-		std::span(std::data(buffer), std::size(buffer) + 1)
+		title,
+		message,
+		std::span(std::data(buffer), std::size(buffer) + 1),
+		optFunc
 	);
 }
 
@@ -355,8 +388,8 @@ int CDlgInput1::GetDlgData(HWND hWndDlg)
 	const auto result = apiwrap::GetDlgItemTextW(hWndDlg, IDC_EDIT_INPUT1);
 	if (!result) return -1;
 
-	const auto ret = m_Func(hWndDlg, result.text);
-	if (0 < ret) {
+	const auto ret = m_Func(hWndDlg, result.text, std::size(m_Text));
+	if (0 <= ret) {
 		::wcsncpy_s(std::data(m_Text), std::size(m_Text), std::data(result.text), _TRUNCATE);
 	}
 
@@ -419,8 +452,11 @@ void CDlgInput1::OnCommand(HWND hWnd, int id, HWND, UINT)
 	// OKボタンとキャンセルボタンは通知コードに依らず処理させる
 	switch(id) {
 	case IDOK:
-		GetDlgData(hWnd);
-		::EndDialog(hWnd, TRUE);
+		if (const auto ret = GetDlgData(hWnd);
+			0 <= ret)
+		{
+			::EndDialog(hWnd, static_cast<bool>(ret));
+		}
 		return;
 
 	case IDCANCEL:

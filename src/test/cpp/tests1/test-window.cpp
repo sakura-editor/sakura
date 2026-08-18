@@ -2590,6 +2590,43 @@ TEST_F(EditWndTest, ShowDlgInputBox001)
 		// 処理対象でないボタンIDを送信して空振りさせる
 		SendDlgCommand(hWndDlg, 0L);
 
+		// 文字数超過していたら切り詰める
+		::SetDlgItemTextW(hWndDlg, IDC_EDIT_INPUT1, L"test");
+		SendDlgCommand(hWndDlg, IDOK);
+	});
+
+	std::wstring buffer{ L"TES" };
+
+	EXPECT_THAT(cDlgInput1.DoModal(unusedArg1, pcEditWnd->GetHwnd(), L"title", L"message", std::size(buffer) + 1, std::data(buffer)), IsTrue());
+
+	EXPECT_THAT(buffer, StrEq(L"tes"));
+}
+
+/*!
+ * 1行入力ダイアログの表示テスト
+ */
+TEST_F(EditWndTest, ShowDlgInputBox002)
+{
+	// モックを解除してダイアログをテストする
+	CDlgInput1::resetInstance();
+
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
+
+	// 表示されたモーダルダイアログを閉じる
+	dialog::ModalDialogCloser closer(L"汎用入力ダイアログ", [&cDlgInput1] (HWND hWndDlg) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndDlg, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndDlg, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndDlg, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		SendDlgCommand(hWndDlg, 0L);
+
 		// 文字数超過の場合は取り込まず、ダイアログは閉じない
 		::SetDlgItemTextW(hWndDlg, IDC_EDIT_INPUT1, L"test");
 		SendDlgCommand(hWndDlg, IDOK);
@@ -2601,7 +2638,10 @@ TEST_F(EditWndTest, ShowDlgInputBox001)
 
 	std::wstring buffer{ L"TES" };
 
-	EXPECT_THAT(cDlgInput1.DoModal(unusedArg1, pcEditWnd->GetHwnd(), L"title", L"message", std::size(buffer) + 1, std::data(buffer)), IsTrue());
+	EXPECT_THAT(cDlgInput1.DoModal(pcEditWnd->GetHwnd(), L"title", L"message", buffer, [] (HWND, std::wstring_view text, size_t cchBuffer) {
+		if (text.empty()) return 0;
+		return std::size(text) <= cchBuffer ? 1 : -1;
+	}), IsTrue());
 
 	EXPECT_THAT(buffer, StrEq(L"tes"));
 }
@@ -2611,7 +2651,7 @@ TEST_F(EditWndTest, ShowDlgInputBox001)
 /*!
  * 1行入力ダイアログの表示テスト
  */
-TEST_F(EditWndTest, ShowDlgInputBox002)
+TEST_F(EditWndTest, ShowDlgInputBox003)
 {
 	// マクロ関数を呼ぶためにWSHマクロマネージャーを使う
 	mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"js"));
