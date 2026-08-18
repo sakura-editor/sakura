@@ -189,7 +189,8 @@ LRESULT CALLBACK ModalDialogCloser::CBTProc(
 			if (const auto found = std::ranges::find_if(gm_Entries, func);
 				found != gm_Entries.end())
 			{
-				const auto& entry = gm_Entries.front();
+				// 見つかったcloserを取り出す
+				const auto entry = *found;
 
 				// closerの状態を更新する
 				entry->m_State = State::Created;
