@@ -88,13 +88,16 @@ bool CNormalProcess::InitializeProcess()
 		return false;
 	}
 
+	// スコープを抜けるときミューテックスを閉じる
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+	HandleHolder mutexHolder{ hMutex };
+
 	// スコープを抜けるときミューテックスを解放する
 	using ShareDataLockHolder = cxx::ResourceHolder<&::ReleaseMutex>;
 	ShareDataLockHolder shareDataLock{ hMutex };	// ロック保持中は、他プロセスとの競合を意識しなくてよい。
 
 	// エディター初期化完了イベントを開く
 	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ::GetCurrentThreadId()) };
-	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 	HandleHolder hEvent{ ::OpenEventW(STANDARD_RIGHTS_REQUIRED | EVENT_MODIFY_STATE | SYNCHRONIZE, FALSE, initEventName) };
 
 	// スコープを抜けるときシグナル状態になるようにする
@@ -103,9 +106,6 @@ bool CNormalProcess::InitializeProcess()
 
 	// スコープを抜けるときシグナル状態になるようにする
 	InitEventHolder grepEvent;
-
-	// ミューテックスもスマートポインタに入れておく
-	HandleHolder mutexHolder{ hMutex };
 
 	/* 共有メモリを初期化する */
 	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
