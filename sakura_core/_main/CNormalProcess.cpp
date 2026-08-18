@@ -100,12 +100,15 @@ bool CNormalProcess::InitializeProcess()
 	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ::GetCurrentThreadId()) };
 	HandleHolder hEvent{ ::OpenEventW(STANDARD_RIGHTS_REQUIRED | EVENT_MODIFY_STATE | SYNCHRONIZE, FALSE, initEventName) };
 
-	// スコープを抜けるときシグナル状態になるようにする
-	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
-	InitEventHolder initEvent{ hEvent.get() };
+	// スコープを抜けるときイベントを閉じる
+	HandleHolder grepEventHolder;
 
 	// スコープを抜けるときシグナル状態になるようにする
-	InitEventHolder grepEvent;
+	using EventHolder = cxx::ResourceHolder<&::SetEvent>;
+	EventHolder initEvent{ hEvent.get() };
+
+	// スコープを抜けるときシグナル状態になるようにする
+	EventHolder grepEvent;
 
 	/* 共有メモリを初期化する */
 	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
@@ -233,7 +236,10 @@ bool CNormalProcess::InitializeProcess()
 
 		// Grep完了イベントを開く
 		SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_GREP_COMPLETED, ::GetCurrentThreadId()) };
-		grepEvent = ::OpenEventW(EVENT_MODIFY_STATE, FALSE, grepEventName);
+		grepEventHolder = ::OpenEventW(EVENT_MODIFY_STATE, FALSE, grepEventName);
+
+		// スコープを抜けるときシグナル状態になるようにする
+		grepEvent = grepEventHolder.get();
 
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
