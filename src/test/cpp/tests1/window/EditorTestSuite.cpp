@@ -146,6 +146,12 @@ namespace window {
 
 } // namespace window
 
+MockUser32::MockUser32()
+{
+	// デフォルトの動作を設定する
+	ON_CALL(*this, MessageBoxExW(_, _, _, _, _)).WillByDefault(&_MessageBoxExW);
+}
+
 /* static */ void MockComdlg32::_Cleanup([[maybe_unused]] const MockComdlg32*)
 {
 	gm_Files.clear();
