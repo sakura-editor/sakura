@@ -101,13 +101,6 @@ public:
 			// アクティブなプロパティーシートのハンドルを取得する 
 			const auto hWndPage = HWND(::SendMessageW(hWndDlg, PSM_GETCURRENTPAGEHWND, 0L, 0L));
 
-			// WM_HELPを送信してヘルプ表示処理を空振りさせる
-			HELPINFO hi{};
-			::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
-
-			// コンテキストメニュー表示を空振りさせる
-			FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
-
 			action(hWndDlg, hWndPage);
 		})
 	{

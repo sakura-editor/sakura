@@ -4048,7 +4048,31 @@ TEST_F(EditWndTest, ShowPropCommon001)
 TEST_F(EditWndTest, ShowPropCommon002)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_GENERAL);
 }
@@ -4059,7 +4083,31 @@ TEST_F(EditWndTest, ShowPropCommon002)
 TEST_F(EditWndTest, ShowPropCommon003)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_WIN);
 }
@@ -4071,6 +4119,22 @@ TEST_F(EditWndTest, ShowPropCommon004)
 {
 	// 表示された共通設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		SendDlgCommand(hWndPage, IDC_BUTTON_EXPORT);	// L"エクスポート(X)..."
 		// 保存先ファイル名の入力はモックで実現する
 
@@ -4098,6 +4162,10 @@ TEST_F(EditWndTest, ShowPropCommon004)
 		.Times(1)
 		.WillOnce(Return(IDOK));
 
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
 	ShowPropCommon(ID_PROPCOM_PAGENUM_MAINMENU);
 }
 
@@ -4107,7 +4175,31 @@ TEST_F(EditWndTest, ShowPropCommon004)
 TEST_F(EditWndTest, ShowPropCommon005)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_TOOLBAR);
 }
@@ -4118,7 +4210,31 @@ TEST_F(EditWndTest, ShowPropCommon005)
 TEST_F(EditWndTest, ShowPropCommon006)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_TAB);
 }
@@ -4129,7 +4245,31 @@ TEST_F(EditWndTest, ShowPropCommon006)
 TEST_F(EditWndTest, ShowPropCommon007)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_STATUSBAR);
 }
@@ -4140,7 +4280,31 @@ TEST_F(EditWndTest, ShowPropCommon007)
 TEST_F(EditWndTest, ShowPropCommon008)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_EDIT);
 }
@@ -4151,7 +4315,31 @@ TEST_F(EditWndTest, ShowPropCommon008)
 TEST_F(EditWndTest, ShowPropCommon009)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_FILE);
 }
@@ -4162,7 +4350,31 @@ TEST_F(EditWndTest, ShowPropCommon009)
 TEST_F(EditWndTest, ShowPropCommon010)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_FILENAME);
 }
@@ -4173,7 +4385,31 @@ TEST_F(EditWndTest, ShowPropCommon010)
 TEST_F(EditWndTest, ShowPropCommon011)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_BACKUP);
 }
@@ -4184,7 +4420,31 @@ TEST_F(EditWndTest, ShowPropCommon011)
 TEST_F(EditWndTest, ShowPropCommon012)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_FORMAT);
 }
@@ -4195,7 +4455,31 @@ TEST_F(EditWndTest, ShowPropCommon012)
 TEST_F(EditWndTest, ShowPropCommon013)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_GREP);
 }
@@ -4207,6 +4491,22 @@ TEST_F(EditWndTest, ShowPropCommon014)
 {
 	// 表示された共通設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		SendDlgCommand(hWndPage, IDC_BUTTON_EXPORT);	// L"エクスポート(X)..."
 		// 保存先ファイル名の入力はモックで実現する
 
@@ -4234,6 +4534,10 @@ TEST_F(EditWndTest, ShowPropCommon014)
 		.Times(1)
 		.WillOnce(Return(IDOK));
 
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
 	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYBOARD);
 }
 
@@ -4244,6 +4548,22 @@ TEST_F(EditWndTest, ShowPropCommon015)
 {
 	// 表示された共通設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		SendDlgCommand(hWndPage, IDC_BUTTON_EXPORT);	// L"エクスポート(X)..."
 		// 保存先ファイル名の入力はモックで実現する
 
@@ -4271,6 +4591,10 @@ TEST_F(EditWndTest, ShowPropCommon015)
 		.Times(1)
 		.WillOnce(Return(IDOK));
 
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
 	ShowPropCommon(ID_PROPCOM_PAGENUM_CUSTMENU);
 }
 
@@ -4281,6 +4605,22 @@ TEST_F(EditWndTest, ShowPropCommon016)
 {
 	// 表示された共通設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		SendDlgCommand(hWndPage, IDC_BUTTON_EXPORT);	// L"エクスポート(X)..."
 		// 保存先ファイル名の入力はモックで実現する
 
@@ -4308,6 +4648,10 @@ TEST_F(EditWndTest, ShowPropCommon016)
 		.Times(1)
 		.WillOnce(Return(IDOK));
 
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
 	ShowPropCommon(ID_PROPCOM_PAGENUM_KEYWORD);
 }
 
@@ -4317,7 +4661,31 @@ TEST_F(EditWndTest, ShowPropCommon016)
 TEST_F(EditWndTest, ShowPropCommon017)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_HELPER);
 }
@@ -4328,7 +4696,31 @@ TEST_F(EditWndTest, ShowPropCommon017)
 TEST_F(EditWndTest, ShowPropCommon018)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_MACRO);
 }
@@ -4339,7 +4731,31 @@ TEST_F(EditWndTest, ShowPropCommon018)
 TEST_F(EditWndTest, ShowPropCommon019)
 {
 	// 表示された共通設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropCommon(ID_PROPCOM_PAGENUM_PLUGIN);
 }
@@ -4353,6 +4769,22 @@ TEST_F(EditWndTest, ShowPropCommon020)
 {
 	// 表示された共通設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		// キーワードセットが選択されていないので、セット依存のコントロールは無効
 		const auto hWndKeySetRename = ::GetDlgItem(hWndPage, IDC_BUTTON_KEYSETRENAME);	// L"変更(H)..."
 		EXPECT_THAT(hWndKeySetRename, Ne(nullptr));
@@ -4370,6 +4802,11 @@ TEST_F(EditWndTest, ShowPropCommon020)
 		// キャンセルボタンを押下して閉じる
 		SendPsmPressButton(hWndDlg, PSBTN_CANCEL);
 	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	auto& cKeyWordSetMgr = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
@@ -4407,7 +4844,31 @@ TEST_F(EditWndTest, ShowPropType001)
 TEST_F(EditWndTest, ShowPropType002)
 {
 	// 表示されたタイプ別設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_SCREEN);
 }
@@ -4419,6 +4880,22 @@ TEST_F(EditWndTest, ShowPropType003)
 {
 	// 表示されたタイプ別設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		SendDlgCommand(hWndPage, IDC_BUTTON_TEXTCOLOR);
 		SendDlgCommand(hWndPage, IDC_BUTTON_BACKCOLOR);
 
@@ -4476,6 +4953,10 @@ TEST_F(EditWndTest, ShowPropType003)
 		.Times(1)
 		.WillOnce(Return(IDOK));
 
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
 	ShowPropType(ID_PROPTYPE_PAGENUM_COLOR);
 }
 
@@ -4486,6 +4967,22 @@ TEST_F(EditWndTest, ShowPropType004)
 {
 	// 表示されたタイプ別設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		// トラックバーのハンドルを取得する
 		const auto hWndTrackbar = ::GetDlgItem(hWndPage, IDC_TRACKBAR_BACKIMG_TRANSPARENCY);
 		EXPECT_THAT(hWndTrackbar, Ne(nullptr));
@@ -4509,6 +5006,11 @@ TEST_F(EditWndTest, ShowPropType004)
 		SendPsmPressButton(hWndDlg, PSBTN_OK);
 	});
 
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
 	ShowPropType(ID_PROPTYPE_PAGENUM_WINDOW);
 }
 
@@ -4518,7 +5020,31 @@ TEST_F(EditWndTest, ShowPropType004)
 TEST_F(EditWndTest, ShowPropType005)
 {
 	// 表示されたタイプ別設定をOKボタンで閉じる
-	dialog::PropertySheetCloser closer(PSBTN_OK);
+	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
+		// OKボタンを押下して閉じる
+		SendPsmPressButton(hWndDlg, PSBTN_OK);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_SUPPORT);
 }
@@ -4530,6 +5056,22 @@ TEST_F(EditWndTest, ShowPropType006)
 {
 	// 表示されたタイプ別設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		SendDlgCommand(hWndPage, IDC_BUTTON_REGEX_EXPORT);	// L"エクスポート(X)..."
 		// 保存先ファイル名の入力はモックで実現する
 
@@ -4557,6 +5099,10 @@ TEST_F(EditWndTest, ShowPropType006)
 		.Times(1)
 		.WillOnce(Return(IDOK));
 
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
 	ShowPropType(ID_PROPTYPE_PAGENUM_REGEX);
 }
 
@@ -4567,6 +5113,22 @@ TEST_F(EditWndTest, ShowPropType007)
 {
 	// 表示されたタイプ別設定を閉じる
 	dialog::PropertySheetCloser closer([] (HWND hWndDlg, HWND hWndPage) {
+		// 処理対象でないメッセージを送信して空振りさせる
+		::SendMessageW(hWndPage, WM_NULL, 0L, 0L);
+
+		// WM_HELPを送信してヘルプ表示処理を空振りさせる
+		HELPINFO hi{};
+		::SendMessageW(hWndPage, WM_HELP, 0L, LPARAM(&hi));
+
+		// コンテキストメニュー表示を空振りさせる
+		FORWARD_WM_CONTEXTMENU(hWndPage, nullptr, 0L, 0L, ::SendMessageW);
+
+		// 処理対象でないボタンIDを送信して空振りさせる
+		FORWARD_WM_COMMAND(hWndPage, 0L, nullptr, BN_CLICKED,::SendMessageW);
+
+		// ヘルプボタンを押下する
+		SendDlgCommand(hWndPage, IDC_BUTTON_HELP);
+
 		SendDlgCommand(hWndPage, IDC_BUTTON_KEYHELP_EXPORT);	// L"エクスポート(X)..."
 		// 保存先ファイル名の入力はモックで実現する
 
@@ -4593,6 +5155,10 @@ TEST_F(EditWndTest, ShowPropType007)
 	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(exportMsg), _, _, _))
 		.Times(1)
 		.WillOnce(Return(IDOK));
+
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	ShowPropType(ID_PROPTYPE_PAGENUM_KEYHELP);
 }
