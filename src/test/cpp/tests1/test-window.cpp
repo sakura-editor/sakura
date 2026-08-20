@@ -666,6 +666,12 @@ TEST_F(TrayWndTest, OnHelp101)
 	HELPINFO hi{};
 	hi.iContextType = HELPINFO_WINDOW;
 	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());
+
+	hi.iContextType = HELPINFO_MENUITEM;
+	EXPECT_THAT(pcTrayWnd->DispatchEvent(hWndTray, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
 }
 
 TEST_F(TrayWndTest, OnCommand101)
@@ -958,6 +964,24 @@ TEST_F(TrayWndTest, ExitAll101)
 {
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, F_EXITALL);
+}
+
+TEST_F(TrayWndTest, HelpContents101)
+{
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_COMMAND, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
+	HWND hWndTray = nullptr;
+	pcTrayWnd->ExecCommand(hWndTray, F_HELP_CONTENTS);
+}
+
+TEST_F(TrayWndTest, HelpSearch101)
+{
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_KEY, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
+	HWND hWndTray = nullptr;
+	pcTrayWnd->ExecCommand(hWndTray, F_HELP_SEARCH);
 }
 
 /*!
@@ -1608,6 +1632,16 @@ TEST_F(EditWndTest, OnHelp101)
 	HELPINFO hi{};
 	hi.iContextType = HELPINFO_WINDOW;
 	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());
+
+	hi.iContextType = HELPINFO_MENUITEM;
+	EXPECT_THAT(pcEditWnd->DispatchEvent(hWndEdit, WM_HELP, 0L, LPARAM(&hi)), IsTrue());
+
+	User32::resetInstance();
+
+	EXPECT_THAT(User32::getInstance()->WinHelpW(hWndEdit, nullptr, HELP_CONTEXT, 0L), IsFalse());
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -1920,6 +1954,24 @@ TEST_F(EditWndTest, GetDocDataObject001)
 	memory = medium.hGlobal;
 
 	EXPECT_THAT(memory.wstring(), StrEq(targetPath.native()));
+}
+
+TEST_F(EditWndTest, HelpContents101)
+{
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_COMMAND, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
+	const auto hWnd = pcEditWnd->GetHwnd();
+	FORWARD_WM_COMMAND(hWnd, F_HELP_CONTENTS, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+TEST_F(EditWndTest, HelpSearch101)
+{
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_KEY, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
+
+	const auto hWnd = pcEditWnd->GetHwnd();
+	FORWARD_WM_COMMAND(hWnd, F_HELP_SEARCH, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 }
 
 /*!

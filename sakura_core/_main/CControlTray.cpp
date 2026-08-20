@@ -468,6 +468,14 @@ void CControlTray::ExecCommand(HWND hWnd, EFunctionCode id)
 		CDlgAbout().DoModal(unusedArg1, hWnd);
 		break;
 
+	case F_HELP_CONTENTS:	// ヘルプ目次
+		ShowWinHelpContents(hWnd);
+		break;
+
+	case F_HELP_SEARCH:	// ヘルプキーワード検索
+		MyWinHelp(hWnd, HELP_KEY, ULONG_PTR(L""));
+		break;
+
 	case F_EXITALLEDITORS:	// 編集の全終了
 		CloseAllEditor(TRUE, hWnd, TRUE, 0);
 		break;
@@ -831,14 +839,6 @@ LRESULT CControlTray::DispatchEvent(
 			/* ポップアップメニュー(トレイ右ボタン) */
 			nId = CreatePopUpMenu_R();
 			switch( nId ){
-			case F_HELP_CONTENTS:
-				/* ヘルプ目次 */
-				ShowWinHelpContents( GetTrayHwnd() );	//	目次を表示する
-				break;
-			case F_HELP_SEARCH:
-				/* ヘルプキーワード検索 */
-				MyWinHelp( GetTrayHwnd(), HELP_KEY, (ULONG_PTR)L"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-				break;
 			case F_EXTHELP1:
 				/* 外部ヘルプ１ */
 				do{
