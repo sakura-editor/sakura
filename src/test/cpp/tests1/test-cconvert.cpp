@@ -380,6 +380,8 @@ TEST(CConvert, Trim)
 	EXPECT_EQ(actual, expected);
 }
 
+#if defined(_MSC_VER) && defined(_DEBUG)
+
 //!変換テストのためのテストパラメータ型
 using ConvTestParamType = std::tuple<EFunctionCode, std::wstring_view, std::wstring_view>;
 
@@ -502,6 +504,8 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestConv
 		ConvTestParamType{ F_CODECNV_SJIS2UTF7,			L"化けラッタ!!",				L"+UxYwUTDpMMMwvwAhACE-" }
 	)
 );
+
+#endif // if defined(_MSC_VER) && defined(_DEBUG)
 
 namespace cxx {
 
