@@ -24,7 +24,12 @@
 #include "convert/CConvert_ZeneisuToHaneisu.h"
 #include "convert/CConvert_ZenkataToHankata.h"
 
+#include "config/system_constants.h"
 #include "util/tchar_convert.h"
+
+#include "dlg/ModalDialogCloser.hpp"
+#include "env/ShareDataTestSuite.hpp"
+#include "window/EditorTestSuite.hpp"
 
 TEST(CConvert, ZenkataToHankata)
 {
@@ -375,32 +380,92 @@ TEST(CConvert, Trim)
 	EXPECT_EQ(actual, expected);
 }
 
+#if defined(_MSC_VER) && defined(_DEBUG)
+
 //!変換テストのためのテストパラメータ型
 using ConvTestParamType = std::tuple<EFunctionCode, std::wstring_view, std::wstring_view>;
 
 //!変換テストのためのフィクスチャクラス
-class ConvTest : public ::testing::TestWithParam<ConvTestParamType> {};
+struct ConvTest : public ::testing::TestWithParam<ConvTestParamType>, public window::EditorTestSuite, public window::UiaTestSuite {
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		SetUpUiaTestSuite();
+
+		SetUpEditor();
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		TearDownEditor();
+
+		TearDownUiaTestSuite();
+	}
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		User32::setInstance<MockUser32>();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override
+	{
+		// 強制的に「編集なし」にする
+		pcEditDoc->m_cDocEditor.m_bIsDocModified = false;
+
+		// キューに溜まったメッセージは全部捨てる
+		MSG msg{};
+		while (::PeekMessageW(&msg, nullptr, 0L, 0L, PM_REMOVE)) ;
+
+		User32::resetInstance();
+
+		TearDownUia();
+	}
+
+};
 
 /*!
  * @brief 機能コードによるバッファ変換のテスト
  */
 TEST_P(ConvTest, test)
 {
-	const auto eFuncCode = std::get<0>(GetParam());
-	std::wstring_view source = std::get<1>(GetParam());
-	std::wstring_view expected = std::get<2>(GetParam());
-	SEncodingConfig sEncodingConfig;
-	CCharWidthCache cCharWidthCache;
-	CNativeW cmemBuf(source.data(), source.length());
-	CConversionFacade(
-		4,								// タブ幅(タブ幅が半角スペース何個分かを指定する)
-		0,								// 変換開始桁位置
-		false,							// 拡張改行コードを有効にするかどうか
-		sEncodingConfig,				// 文字コード自動検出のオプション
-		cCharWidthCache					// 文字幅キャッシュ
-	).ConvMemory(eFuncCode, cmemBuf);
+	const std::wstring expected{ std::get<2>(GetParam()) };
 
-	EXPECT_STREQ(expected.data(), cmemBuf.GetStringPtr());
+	const auto hWnd = pcEditWnd->GetHwnd();
+
+	// 全選択してゴミを削除する
+	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	FORWARD_WM_COMMAND(hWnd, F_DELETE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	auto pShareData = GetDllShareDataPtr();
+	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
+	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
+
+	const auto source = std::get<1>(GetParam());
+	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(source), std::size(source));
+
+	// 末尾にデータを入れて全選択する
+	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(source), 0L);
+	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	// バッファ変換機能を呼び出す
+	const auto eFuncCode = std::get<0>(GetParam());
+	FORWARD_WM_COMMAND(hWnd, eFuncCode, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	// 全データを取得する
+	const auto nLineLen = static_cast<size_t>(pcEditWnd->DispatchEvent(hWnd, MYWM_GETLINEDATA, 0L, 0L));
+	std::wstring_view actual{ std::data(buffer), nLineLen };
+	EXPECT_THAT(actual, StrEq(expected));
 }
 
 /*!
@@ -439,6 +504,8 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestConv
 		ConvTestParamType{ F_CODECNV_SJIS2UTF7,			L"化けラッタ!!",				L"+UxYwUTDpMMMwvwAhACE-" }
 	)
 );
+
+#endif // if defined(_MSC_VER) && defined(_DEBUG)
 
 namespace cxx {
 
