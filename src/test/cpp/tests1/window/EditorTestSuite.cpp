@@ -146,6 +146,23 @@ namespace window {
 
 } // namespace window
 
+/* static */ BOOL MockUser32::_WinHelpW(
+	_In_opt_ HWND /* hWndMain */,
+	_In_opt_ LPCWSTR /* lpszHelp */,
+	_In_ UINT /* uCommand */,
+	_In_ ULONG_PTR /* dwData */
+)
+{
+	return TRUE;
+}
+
+MockUser32::MockUser32()
+{
+	// デフォルトの動作を設定する
+	ON_CALL(*this, MessageBoxExW(_, _, _, _, _)).WillByDefault(&_MessageBoxExW);
+	ON_CALL(*this, WinHelpW(_, _, _, _)).WillByDefault(&_WinHelpW);
+}
+
 /* static */ void MockComdlg32::_Cleanup([[maybe_unused]] const MockComdlg32*)
 {
 	gm_Files.clear();

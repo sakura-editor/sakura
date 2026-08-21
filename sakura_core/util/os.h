@@ -45,6 +45,13 @@ struct User32 : public TSakuraSingleton<User32>
 		_In_ HWND hWnd,
 		_Reserved_ CONST RECT* prcRect
 	) const;
+
+	virtual BOOL WinHelpW(
+		_In_opt_ HWND hWndMain,
+		_In_opt_ LPCWSTR lpszHelp,
+		_In_ UINT uCommand,
+		_In_ ULONG_PTR dwData
+	) const;
 };
 
 //! Comdlg32.dll呼出をテスト可能にするDIっぽいもの

@@ -26,6 +26,21 @@
 
 #pragma comment(lib, "htmlhelp.lib") 
 
+/*!
+ * @brief MyWinHelpの呼出をモックできるようにするための関数
+ *
+ * @note 直接呼ばないでください
+ */
+BOOL User32::WinHelpW(
+	_In_opt_ HWND,
+	_In_opt_ LPCWSTR,
+	_In_ UINT,
+	_In_ ULONG_PTR
+) const
+{
+	return FALSE;
+}
+
 BOOL Shell32::ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const
 {
 	return ::ShellExecuteExW(pExecInfo);
@@ -453,6 +468,9 @@ static LPCWSTR GetHelpFilePath()
 */
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 {
+	// MyWinHelpの呼出をテストできるようにするため、モック可能なメソッド呼出を挟む。
+	if (User32::getInstance()->WinHelpW(hwndCaller, nullptr, uCommand, dwData)) return TRUE;
+
 	UINT uCommandOrg = uCommand;	// WinHelp のコマンド
 	bool bDesktop = false;	// デスクトップを親にしてヘルプ画面を出すかどうか
 	HH_POPUP hp;	// ポップアップヘルプ用の構造体

@@ -24,12 +24,6 @@
 	return 0;
 }
 
-MockUser32::MockUser32()
-{
-	// デフォルトの動作を設定する
-	ON_CALL(*this, MessageBoxExW(_, _, _, _, _)).WillByDefault(&_MessageBoxExW);
-}
-
 /*!
 	MessageBoxFのテスト 
  */
