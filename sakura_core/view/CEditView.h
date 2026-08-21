@@ -644,118 +644,118 @@ public:
 	//ウィンドウ
 	HWND			m_hwndParent = nullptr;		/* 親ウィンドウハンドル */
 	HWND			m_hwndVScrollBar = nullptr;	/* 垂直スクロールバーウィンドウハンドル */
-	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
+	int				m_nVScrollRate = 1;		/* 垂直スクロールバーの縮尺 */
 	HWND			m_hwndHScrollBar = nullptr;	/* 水平スクロールバーウィンドウハンドル */
-	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
-	HWND			m_hwndSizeBoxPlaceholder;	/* サイズボックス代替スタティックウィンドウハンドル */
+	HWND			m_hwndSizeBox = nullptr;		/* サイズボックスウィンドウハンドル */
+	HWND			m_hwndSizeBoxPlaceholder = nullptr;	/* サイズボックス代替スタティックウィンドウハンドル */
 	CSplitBoxWnd*	m_pcsbwVSplitBox = nullptr;	/* 垂直分割ボックス */
 	CSplitBoxWnd*	m_pcsbwHSplitBox = nullptr;	/* 水平分割ボックス */
 	CAutoScrollWnd	m_cAutoScrollWnd;	//!< オートスクロール
 
 public:
 	//描画
-	bool			m_bDrawSWITCH;
-	COLORREF		m_crBack;				/* テキストの背景色 */			// 2006.12.07 ryoji
-	COLORREF		m_crBack2;				// テキストの背景(キャレット用)
-	CLayoutInt		m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
-	CLayoutInt		m_nOldUnderLineYBg;
-	int				m_nOldUnderLineYMargin;
-	int				m_nOldUnderLineYHeight;
-	int				m_nOldUnderLineYHeightReal;
-	int				m_nOldCursorLineX;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
-	int				m_nOldCursorVLineWidth;	// カーソル位置縦線の太さ(px)
+	bool			m_bDrawSWITCH = false;
+	COLORREF		m_crBack = COLORREF(-1);				/* テキストの背景色 */			// 2006.12.07 ryoji
+	COLORREF		m_crBack2 = COLORREF(-1);				// テキストの背景(キャレット用)
+	CLayoutInt		m_nOldUnderLineY = CLayoutInt(-1);		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
+	CLayoutInt		m_nOldUnderLineYBg = CLayoutInt(-1);
+	int				m_nOldUnderLineYMargin = 0;
+	int				m_nOldUnderLineYHeight = 0;
+	int				m_nOldUnderLineYHeightReal = 0;
+	int				m_nOldCursorLineX = -1;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
+	int				m_nOldCursorVLineWidth = 1;	// カーソル位置縦線の太さ(px)
 
 public:
 	//画面バッファ
-	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
-	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
-	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
-	int				m_nCompatBMPWidth;  /* 再作画用メモリＢＭＰの幅 */	// 2007.09.09 Moca 互換BMPによる画面バッファ
-	int				m_nCompatBMPHeight; /* 再作画用メモリＢＭＰの高さ */	// 2007.09.09 Moca 互換BMPによる画面バッファ
+	HDC				m_hdcCompatDC = nullptr;		/* 再描画用コンパチブルＤＣ */
+	HBITMAP			m_hbmpCompatBMP = nullptr;	/* 再描画用メモリＢＭＰ */
+	HBITMAP			m_hbmpCompatBMPOld = nullptr;	/* 再描画用メモリＢＭＰ(OLD) */
+	int				m_nCompatBMPWidth = -1;  /* 再作画用メモリＢＭＰの幅 */	// 2007.09.09 Moca 互換BMPによる画面バッファ
+	int				m_nCompatBMPHeight = -1; /* 再作画用メモリＢＭＰの高さ */	// 2007.09.09 Moca 互換BMPによる画面バッファ
 
 public:
 	//D&D
 	CDropTarget*	m_pcDropTarget = nullptr;
-	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
-	CLIPFORMAT		m_cfDragData;	/* ドラッグデータのクリップ形式 */	// 2008.06.20 ryoji
-	BOOL			m_bDragBoxData;	/* ドラッグデータは矩形か */
+	BOOL			m_bDragMode = FALSE;	/* 選択テキストのドラッグ中か */
+	CLIPFORMAT		m_cfDragData = 0;	/* ドラッグデータのクリップ形式 */	// 2008.06.20 ryoji
+	BOOL			m_bDragBoxData = FALSE;	/* ドラッグデータは矩形か */
 	CLayoutPoint	m_ptCaretPos_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
-	CLayoutInt		m_nCaretPosX_Prev_DragEnter;	/* ドラッグ開始時のX座標記憶 */	// 2007.12.09 ryoji
+	CLayoutInt		m_nCaretPosX_Prev_DragEnter = CLayoutInt(0);	/* ドラッグ開始時のX座標記憶 */	// 2007.12.09 ryoji
 
 	//括弧
 	CLogicPoint		m_ptBracketCaretPos_PHY;	// 前カーソル位置の括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	CLogicPoint		m_ptBracketPairPos_PHY;		// 対括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
-	BOOL			m_bDrawBracketPairFlag;		/* 対括弧の強調表示を行なうか */						// 03/02/18 ai
+	BOOL			m_bDrawBracketPairFlag = FALSE;		/* 対括弧の強調表示を行なうか */						// 03/02/18 ai
 
 	//マウス
 	bool			m_bActivateByMouse = false;		//!< マウスによるアクティベート	//2007.10.02 nasukoji
-	DWORD			m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
+	DWORD			m_dwTripleClickCheck = 0;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
 	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
 	int				m_nWheelDelta = 0;	//!< ホイール変化量
 	EFunctionCode	m_eWheelScroll = F_0; //!< スクロールの種類
 	int				m_nMousePause = 0;	// マウス停止時間
 	CMyPoint		m_cMousePausePos;	// マウスの停止位置
-	bool			m_bHideMouse;
+	bool			m_bHideMouse = false;
 
 	int				m_nAutoScrollMode = 0;		//!< オートスクロールモード
-	bool			m_bAutoScrollDragMode;		//!< ドラッグモード
+	bool			m_bAutoScrollDragMode = false;		//!< ドラッグモード
 	CMyPoint		m_cAutoScrollMousePos;		//!< オートスクロールのマウス基準位置
-	bool			m_bAutoScrollVertical;		//!< 垂直スクロール可
-	bool			m_bAutoScrollHorizontal;	//!< 水平スクロール可
+	bool			m_bAutoScrollVertical = false;		//!< 垂直スクロール可
+	bool			m_bAutoScrollHorizontal = false;	//!< 水平スクロール可
 
 	//検索
 	CSearchStringPattern m_sSearchPattern;
 	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */
-	bool				m_bCurSrchKeyMark;			/* 検索文字列のマーク */
-	bool				m_bCurSearchUpdate;			//!< コンパイルデータ更新要求
-	int					m_nCurSearchKeySequence;	//!< 検索キーシーケンス
+	bool				m_bCurSrchKeyMark = false;			/* 検索文字列のマーク */
+	bool				m_bCurSearchUpdate = false;			//!< コンパイルデータ更新要求
+	int					m_nCurSearchKeySequence = -1;	//!< 検索キーシーケンス
 	std::wstring		m_strCurSearchKey;			//!< 検索文字列
 	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
 	CLogicPoint			m_ptSrchStartPos_PHY;		// 検索/置換開始時のカーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
-	BOOL				m_bSearch;					/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
-	ESearchDirection	m_nISearchDirection;		//!< 検索方向
-	ESearchMode			m_nISearchMode;				//!< 検索モード
-	bool				m_bISearchWrap;
-	bool				m_bISearchFlagHistory[256];
-	int					m_nISearchHistoryCount;
-	bool				m_bISearchFirst;
+	BOOL				m_bSearch = FALSE;					/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
+	ESearchDirection	m_nISearchDirection = SEARCH_FORWARD;		//!< 検索方向
+	ESearchMode			m_nISearchMode = SEARCH_NONE;				//!< 検索モード
+	bool				m_bISearchWrap = false;
+	bool				m_bISearchFlagHistory[256] = {};
+	int					m_nISearchHistoryCount = 0;
+	bool				m_bISearchFirst = false;
 	CLayoutRange		m_sISearchHistory[256];
 
 	//マクロ
-	bool			m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
-	BOOL			m_bCommandRunning;	/* コマンドの実行中 */
+	bool			m_bExecutingKeyMacro = false;		/* キーボードマクロの実行中 */
+	BOOL			m_bCommandRunning = FALSE;	/* コマンドの実行中 */
 
 	// 入力補完
-	BOOL			m_bHokan;			//	補完中か？＝補完ウィンドウが表示されているか？かな？
+	BOOL			m_bHokan = FALSE;			//	補完中か？＝補完ウィンドウが表示されているか？かな？
 
 	//編集
-	bool			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
+	bool			m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 	// 辞書Tip関連
-	DWORD			m_dwTipTimer;			/* Tip起動タイマー */
+	DWORD			m_dwTipTimer = 0;			/* Tip起動タイマー */
 	CTipWnd			m_cTipWnd;				/* Tip表示ウィンドウ */
-	POINT			m_poTipCurPos;			/* Tip起動時のマウスカーソル位置 */
-	BOOL			m_bInMenuLoop;			/* メニュー モーダル ループに入っています */
+	POINT			m_poTipCurPos{};			/* Tip起動時のマウスカーソル位置 */
+	BOOL			m_bInMenuLoop = FALSE;			/* メニュー モーダル ループに入っています */
 	CDicMgr			m_cDicMgr;				/* 辞書マネージャ */
 
-	WCHAR			m_szComposition[512]; // IMR_DOCUMENTFEED用入力中文字列データ
+	WCHAR			m_szComposition[512] = {}; // IMR_DOCUMENTFEED用入力中文字列データ
 
 	// IME
 private:
 	HWND			m_hWnd = nullptr;
-	int				m_nLastReconvLine;             //2002.04.09 minfu 再変換情報保存用;
-	int				m_nLastReconvIndex;            //2002.04.09 minfu 再変換情報保存用;
+	int				m_nLastReconvLine = -1;             //2002.04.09 minfu 再変換情報保存用;
+	int				m_nLastReconvIndex = -1;            //2002.04.09 minfu 再変換情報保存用;
 
 public:
 	// その他
 	CAutoMarkMgrHolder	m_cHistory = std::make_unique<CAutoMarkMgr>();	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword = nullptr;	//@@@ 2001.11.17 add MIK
-	int				m_nMyIndex;	/* 分割状態 */
-	CMigemo*		m_pcmigemo;
-	bool			m_bMiniMap;
-	bool			m_bMiniMapMouseDown;
-	CLayoutInt		m_nPageViewTop;
-	CLayoutInt		m_nPageViewBottom;
+	int				m_nMyIndex = 0;	/* 分割状態 */
+	CMigemo*		m_pcmigemo = nullptr;
+	bool			m_bMiniMap = false;
+	bool			m_bMiniMapMouseDown = false;
+	CLayoutInt		m_nPageViewTop = CLayoutInt(0);
+	CLayoutInt		m_nPageViewBottom = CLayoutInt(0);
 
 	DISALLOW_COPY_AND_ASSIGN(CEditView);
 };

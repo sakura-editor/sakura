@@ -398,19 +398,19 @@ private:
 	LPWSTR			m_pszLastCaption = nullptr;
 	SMenubarMessage m_pszMenubarMessage;		//!< メニューバー右端に表示するメッセージ
 public:
-	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
+	int				m_nTimerCount = 0;		//!< OnTimer用 2003.08.29 wmlhq
 	CLogicPointEx*	m_posSaveAry = nullptr;		//!< フォント変更前の座標
 private:
 	int				m_nCurrentFocus = 0;	//!< 現在のフォーカス情報
-	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
-	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
-	BOOL			m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
+	int				m_nWinSizeType = 0;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
+	BOOL			m_bPageScrollByWheel = FALSE;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
+	BOOL			m_bHorizontalScrollByWheel = FALSE;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
 	AccelHolder		m_hAccel = nullptr;			//!< ウィンドウ毎のアクセラレータテーブルのハンドル
 
 	//フォント・イメージ
 	FontHolder		m_hFontCaretPosInfo = nullptr;	//!< キャレットの行桁位置表示用フォント
-	int				m_nCaretPosInfoCharWidth;	//!< キャレットの行桁位置表示用フォントの幅
-	int				m_nCaretPosInfoCharHeight;	//!< キャレットの行桁位置表示用フォントの高さ
+	int				m_nCaretPosInfoCharWidth = 0;	//!< キャレットの行桁位置表示用フォントの幅
+	int				m_nCaretPosInfoCharHeight = 0;	//!< キャレットの行桁位置表示用フォントの高さ
 
 	//D&Dフラグ
 	bool			m_bDragMode = false;
