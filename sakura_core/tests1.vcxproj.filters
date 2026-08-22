@@ -202,6 +202,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-crunningtimer.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-editorinitwait.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-czipfile.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>

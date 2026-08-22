@@ -66,6 +66,9 @@ void ActivateFrameWindow(HWND hwnd);	/* アクティブにする */
 */
 BOOL BlockingHook( HWND hwndDlgCancel );
 
+//! エディターの初期化完了を待つ（待機中に送られてくるメッセージを処理する）
+DWORD WaitForEditorInitialized( HANDLE hEvent, HANDLE hProcess, ULONGLONG timeoutMillis );
+
 constexpr int GA_ROOTOWNER2 = 100;
 
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
