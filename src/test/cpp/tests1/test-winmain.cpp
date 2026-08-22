@@ -16,6 +16,7 @@
 #include <string_view>
 #include <thread>
 #include <fstream>
+#include <type_traits>
 
 #include "config/maxdata.h"
 #include "basis/primitive.h"
@@ -44,6 +45,10 @@ namespace cxx {
 
 HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt);
 
+int CountAsMultiByte(UINT codePage, std::wstring_view source, BOOL& bUsedDefaultChar);
+
+int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer);
+
 /*!
  * @brief システムエラーを例外として発生させる
  *
@@ -68,15 +73,60 @@ std::filesystem::path GetSystemDirectoryW()
 }
 
 /*!
+ * @brief ワイド文字列をナロー文字列に変換します。
+ *
+ * @note 使い物になるかどうか試作してみただけ
+ */
+int to_string(_In_ UINT codePage, std::wstring_view source, std::string& buffer) {
+	if (source.empty()) {
+		buffer.resize(0);
+		return 0;
+	}
+
+	// 変換エラーを受け取るフラグ
+	BOOL bUsedDefaultChar = FALSE;
+
+	// 変換に必要な出力バッファサイズを求める
+	const auto required = cxx::CountAsMultiByte(codePage, source, bUsedDefaultChar);
+
+	// 変換エラーがあったら例外を投げる
+	if (bUsedDefaultChar) {
+		throw std::invalid_argument("Invalid wide character sequence.");
+	}
+
+	// 変換に必要な出力バッファを確保する
+	buffer.resize(required + 1, '\0');
+
+	// 変換を実行する
+	const auto converted = cxx::WideCharToMultiByte(codePage, source, buffer);
+
+	buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
+
+	return converted;
+}
+
+template<class T>
+concept DataAndSizeAccessible = requires(const T& value) {
+	std::data(value);
+	std::size(value);
+};
+
+template<class Lines>
+concept TextLines = DataAndSizeAccessible<Lines> && requires(const Lines& lines) {
+	requires DataAndSizeAccessible<std::remove_cvref_t<decltype(*std::data(lines))>>;
+};
+
+/*!
  * @brief テキストファイルを書き出す
  *
  * @param outPath 出力先パス
  * @param lines 書き込む行の配列
  * @note 使い物になるかどうか試作してみただけ
  */
+template<TextLines Lines>
 void writeTextFile(
 	const std::filesystem::path& outPath,
-	std::span<const std::u8string_view> lines
+	const Lines& lines
 )
 {
 	if (const auto parentPath = outPath.parent_path(); !fexist(parentPath)) {
@@ -85,21 +135,31 @@ void writeTextFile(
 	}
 
 	// ファイル出力ストリームをバイナリモードで開く
-	std::ofstream fs(outPath, std::ios::binary);
+	std::ofstream fos(outPath, std::ios::binary);
 
 	// UTF-8 BOMを出力
 	const std::array bom = { '\xEF', '\xBB', '\xBF' };
-	fs.write(bom.data(), bom.size());
+	fos.write(bom.data(), bom.size());
+
+	// UTF16→UTF8変換用のバッファ
+	std::string buffer{};
 
 	// 各行を書き込む
 	for (const auto& line : lines) {
-		if (!line.empty()) {
-			fs.write(LPCSTR(std::data(line)), std::size(line));
+		if constexpr (std::convertible_to<decltype(line), std::wstring_view>) {
+			if (0 < cxx::to_string(CP_UTF8, line, buffer)) {
+				fos.write(std::data(buffer), std::size(buffer));
+			}
 		}
-		fs << "\r\n";
+		else {
+			if (0 < std::size(line)) {
+				fos.write(LPCSTR(std::data(line)), std::size(line));
+			}
+		}
+		fos << "\r\n";
 	}
 
-	fs.close();
+	fos.close();
 }
 
 //! HANDLE型のスマートポインタ
