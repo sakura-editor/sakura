@@ -1,0 +1,210 @@
+﻿/*
+ * アウトライン解析テスト向け Java 構文サンプル（Java11相当）
+ * アウトラインに現れる代表的な文書構造を示す。
+ *
+ * Copyright (C) 2026, Sakura Editor Organization
+ *
+ * SPDX-License-Identifier: Zlib
+ */
+package outline.sample;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+@FunctionalInterface
+interface NameFilter {
+    boolean accept(String name);
+
+    default NameFilter and(NameFilter other) {
+        Objects.requireNonNull(other);
+        return name -> accept(name) && other.accept(name);
+    }
+
+    static NameFilter acceptAll() {
+        return name -> true;
+    }
+}
+
+abstract class AbstractRepository<T> {
+    private final List<T> values = new ArrayList<>();
+
+    protected AbstractRepository() {
+    }
+
+    public final void add(T value) {
+        values.add(Objects.requireNonNull(value));
+    }
+
+    public final List<T> findAll() {
+        return Collections.unmodifiableList(values);
+    }
+
+    /**
+     * 値を識別するためのキーを生成します。
+     *
+     * @param value キーを生成する値
+     * @return 値を識別するキー
+     */
+    protected abstract String keyOf(T value);
+}
+
+/**
+ * 解析用サンプルクラス。
+ *
+ * <p>パブリックなクラスにはJavaDocを書くのが普通。</p>
+ */
+public class TestSource extends AbstractRepository<String>
+        implements AutoCloseable {
+
+    // クラス定数（Javaでは「フィールド」と呼ぶ。）
+    private static final String DEFAULT_NAME = "unknown";
+
+    // メンバー定数（finalを付けると変更不可の定数になる。）
+    private final String name;
+
+    // メンバー変数（内部データのカプセル化を意識してprivateにすることが多い。）
+    private State state = State.NEW;
+
+    /**
+     * デフォルト名でインスタンスを生成します。
+     */
+    public TestSource() {
+        this(DEFAULT_NAME);
+    }
+
+    /**
+     * 指定された名前でインスタンスを生成します。
+     *
+     * @param name インスタンスの名前
+     * @throws NullPointerException {@code name}が{@code null}の場合
+     */
+    public TestSource(String name) {
+        this.name = Objects.requireNonNull(name);
+    }
+
+    /**
+     * インスタンスの名前を取得します。
+     *
+     * @return インスタンスの名前
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * 現在の状態を取得します。
+     *
+     * @return 現在の状態
+     */
+    public State getState() {
+        return state;
+    }
+
+    /**
+     * 指定された条件を満たす最初の文字列を検索します。
+     *
+     * @param filter 文字列を判定するフィルター
+     * @return 条件を満たす最初の文字列。該当する文字列がない場合は空の{@link Optional}
+     * @throws NullPointerException {@code filter}が{@code null}の場合
+     */
+    public Optional<String> findFirst(NameFilter filter) {
+        Predicate<String> predicate = filter::accept;
+        return findAll().stream().filter(predicate).findFirst();
+    }
+
+    /**
+     * 文字列のリストから{@code null}と空文字列を除き、前後の空白を取り除きます。
+     *
+     * @param source 正規化する文字列のリスト
+     * @return 正規化された文字列のリスト
+     * @throws NullPointerException {@code source}が{@code null}の場合
+     */
+    public List<String> normalize(List<String> source) {
+        return source.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 指定された文字列の行数を数えます。
+     *
+     * @param text 行数を数える文字列
+     * @return 文字列の行数
+     * @throws IOException 文字列の読み取りに失敗した場合
+     * @throws NullPointerException {@code text}が{@code null}の場合
+     */
+    public int countLines(String text) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
+            int count = 0;
+            while (reader.readLine() != null) {
+                count++;
+            }
+            return count;
+        }
+    }
+
+    public void start() {
+        switch (state) {
+        case NEW:
+            state = State.RUNNING;
+            break;
+        case RUNNING:
+            break;
+        default:
+            throw new IllegalStateException("Cannot start from " + state);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String keyOf(String value) {
+        return value.toLowerCase();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void close() {
+        state = State.CLOSED;
+    }
+
+    public enum State {
+        NEW,
+        RUNNING,
+        CLOSED
+    }
+
+    public static final class Builder {
+        private String name = DEFAULT_NAME;
+
+        public Builder name(String value) {
+            name = Objects.requireNonNull(value);
+            return this;
+        }
+
+        public TestSource build() {
+            return new TestSource(name);
+        }
+    }
+
+    private final class Entry {
+        private final String value;
+
+        private Entry(String value) {
+            this.value = value;
+        }
+
+        private String describe() {
+            return TestSource.this.name + ":" + value;
+        }
+    }
+}
