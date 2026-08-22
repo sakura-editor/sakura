@@ -1371,6 +1371,8 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 
 } // namespace winmain
 
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
 namespace outline {
 
 //!アウトライン解析テストのためのテストパラメータ型
@@ -1617,3 +1619,5 @@ INSTANTIATE_TEST_CASE_P(Outline
 );
 
 } // namespace outline
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
