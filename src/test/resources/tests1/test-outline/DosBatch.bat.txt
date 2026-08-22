@@ -1,0 +1,13 @@
+﻿@echo off
+REM MS-DOS batch outline syntax sample
+
+: (1) Initialization
+set "MESSAGE=Hello, world!"
+call :print_message
+
+: (A) Subroutines
+goto :eof
+
+:print_message
+echo %MESSAGE%
+exit /b 0

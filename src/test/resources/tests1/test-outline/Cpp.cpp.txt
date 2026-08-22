@@ -1,0 +1,201 @@
+// アウトライン解析テスト向け C++ 構文サンプル（C++20相当）
+// アウトラインに現れる代表的な文書構造を示す。
+//
+// 	Copyright (C) 2026, Sakura Editor Organization
+//
+// 	SPDX-License-Identifier: Zlib
+//
+
+#include <concepts>
+#include <string>
+#include <utility>
+
+// 名前空間の階層を示す。
+namespace outline::sample {
+
+// MSVC とその他の処理系で C++20 準拠を判定する条件コンパイルを示す。
+#if defined(_MSVC_LANG) && _MSVC_LANG >= 202002L
+inline constexpr auto language_standard = L"MSVC C++20 or later";
+#elif __cplusplus >= 202002L
+inline constexpr auto language_standard = L"C++20 or later";
+#else
+inline constexpr auto language_standard = L"before C++20";
+#endif
+
+/* 列挙型のサンプル */
+enum class Status {
+	ready,
+	running,
+	finished,
+};
+
+/*!
+ * @brief 構造体のサンプル
+ *
+ * C++的には、構造体 ≒ 全メンバーpublicなclass。
+ *
+ * アクセスレベルを明示すれば一部メンバーだけプライベートにすることもできる。
+ */
+struct Result {
+	int value{};
+
+	[[nodiscard]] bool succeeded() const noexcept
+	{
+		return value == 0;
+	}
+};
+
+/*
+ * 複数行にまたがるブロックコメントを示す。
+ * コメント内の class HiddenFromOutline は宣言として扱われない。
+ */
+
+// 行末のバックスラッシュで次の行まで継続するコメントを示す。 \
+class HiddenByContinuedComment {};
+
+// 共用体、インターフェイス、typedef 宣言を示す。
+union Payload {
+	int integer;
+	double real;
+};
+
+__interface OutlineInterface {
+	void execute();
+};
+
+typedef unsigned long LegacyValue;
+
+// 継承指定と final を伴うクラスを示す。
+class Base {
+public:
+	virtual ~Base() = default;
+};
+
+class Derived final:public Base {
+public:
+	explicit Derived(int value) noexcept
+		:value_(value)
+	{
+	}
+
+	[[nodiscard]] int operator()(int offset) const noexcept
+	{
+		return value_ + offset;
+	}
+
+	[[nodiscard]] int operator[](int index) const noexcept
+	{
+		return value_ + index;
+	}
+
+	explicit operator bool() const noexcept
+	{
+		return value_ != 0;
+	}
+
+	Derived& operator<<(int value) noexcept
+	{
+		value_ = value;
+		return *this;
+	}
+
+private:
+	int value_;
+};
+
+// 型制約（C++20 のコンセプト）のサンプルを示す。
+template <class T>
+concept Numeric = std::integral<T> || std::floating_point<T>;
+
+// クラステンプレートと明示的特殊化を示す。
+template <class T>
+struct Holder:Base {
+	T value{};
+};
+
+template <>
+struct Holder<int>:Base {
+	int value{};
+};
+
+// テンプレートクラスのサンプルを示す。
+template <Numeric T>
+class Accumulator final {
+public:
+	explicit Accumulator(T initial) : total_(initial) {}
+
+	void add(T value)
+	{
+		total_ += value;
+	}
+
+	[[nodiscard]] T total() const noexcept
+	{
+		return total_;
+	}
+
+private:
+	T total_{};
+};
+
+// MSVC 固有の __declspec 属性を付けた関数を示す。
+__declspec(noinline) int normalize(int value) noexcept
+{
+	return value < 0 ? 0 : value;
+}
+
+// 関数宣言、修飾名、関数テンプレートの特殊化を示す。
+int declared_function(int value) noexcept;
+
+template <class T>
+T convert(T value)
+{
+	return value;
+}
+
+template <>
+int convert<int>(int value)
+{
+	return value;
+}
+
+// ユーザー定義リテラルと各種リテラルを示す。
+constexpr unsigned long long operator "" _outline(unsigned long long value) noexcept
+{
+	return value;
+}
+
+inline constexpr auto character_literal = '\'';
+inline constexpr auto escaped_character_literal = '\\';
+inline constexpr auto ordinary_string = "quoted \\\"text\\\"";
+inline constexpr auto tagged_raw_string = LR"outline(raw string
+continued on another line)outline";
+
+// 長過ぎる単語を無視する状態から通常状態へ戻る経路を示す。
+inline constexpr int identifier_that_is_intentionally_longer_than_one_hundred_characters_to_exercise_the_outline_parser_word_length_limit_and_recovery_path = 100;
+
+// 自由関数と戻り値の型推論を示す。
+[[nodiscard]] auto make_message(Status status) -> std::wstring
+{
+	switch (status) {
+	case Status::ready:
+		return L"ready";
+	case Status::running:
+		return L"running";
+	case Status::finished:
+		return L"finished";
+	}
+	return LR"(unknown)";   // RAW文字列のサンプル
+}
+
+} // namespace outline::sample
+
+// グローバル関数を示す。
+int main(int argc, char* argv[])
+{
+	outline::sample::Accumulator<int> accumulator{1};
+	accumulator.add(2);
+
+sample_label:
+	return accumulator.total() == 3 ? 0 : 1;
+}

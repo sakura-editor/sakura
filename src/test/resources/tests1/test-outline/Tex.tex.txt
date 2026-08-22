@@ -1,0 +1,15 @@
+\documentclass{book}
+\begin{document}
+
+\chapter{Outline sample}
+\section{First section}
+\subsection{Nested subsection}
+This paragraph is not an outline entry.
+
+\section*{Unnumbered section}
+\subsubsection{Detailed topic}
+
+\chapter{Second chapter}
+\paragraph{Paragraph heading}
+
+\end{document}

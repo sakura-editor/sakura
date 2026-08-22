@@ -1,0 +1,71 @@
+# アウトライン解析テスト向け Python 構文サンプル（Python ver3.11相当）
+# アウトラインに現れる代表的な文書構造を示す。
+#
+#   Copyright (C) 2026, Sakura Editor Organization
+#
+#   SPDX-License-Identifier: Zlib
+#
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from enum import Enum, auto
+from typing import Iterable
+
+
+# 列挙クラスを示す。
+class Status(Enum):
+    READY = auto()
+    RUNNING = auto()
+    FINISHED = auto()
+
+
+# データクラスとインスタンスメソッドを示す。
+@dataclass(slots=True)
+class Result:
+    value: int
+
+    # クラス内のメソッドを示す。
+    def succeeded(self) -> bool:
+        return self.value == 0
+
+
+# 継承するクラス、初期化メソッド、プロパティを示す。
+class Accumulator(Result):
+    def __init__(self, initial: int = 0) -> None:
+        super().__init__(initial)
+
+    # 通常の公開メソッドを示す。
+    def add(self, values: Iterable[int]) -> None:
+        self.value += sum(values)
+
+    # デコレーター付きメソッドを示す。
+    @property
+    def total(self) -> int:
+        return self.value
+
+
+# モジュール直下の関数と入れ子関数を示す。
+def format_status(status: Status) -> str:
+    # 関数内に定義されたローカル関数を示す。
+    def label(value: Status) -> str:
+        return value.name.lower()
+
+    return f"status={label(status)}"
+
+
+# 非同期関数を示す。
+async def load_result() -> Result:
+    return Result(0)
+
+
+# 実行時のエントリーポイントを示す。
+def main() -> int:
+    accumulator = Accumulator(1)
+    accumulator.add([2, 3])
+    print(format_status(Status.FINISHED))
+    return 0 if accumulator.total == 6 else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

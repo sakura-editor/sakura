@@ -1,0 +1,6 @@
+﻿正規表現置換ルールの対象外
+CHAPTER はじめに
+SECTION 概要
+PLAIN 置換しない項目
+CHAPTER 次の章
+SECTION 詳細
