@@ -44,9 +44,10 @@ int CountAsMultiByte(UINT codePage, std::wstring_view source, BOOL& bUsedDefault
  * @param [in] source 変換元のワイド文字列
  * @param [out] buffer 変換後のナロー文字列を受け取るバッファ
  */
-int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer) {
+int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer)
+{
 	// 変換を実行する
-	return ::WideCharToMultiByte(
+	const auto converted = ::WideCharToMultiByte(
 		codePage,
 		0,
 		std::data(source),
@@ -56,6 +57,12 @@ int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR>
 		nullptr,
 		nullptr
 	);
+
+	if (0 <= converted && converted < std::ssize(buffer)) {
+		buffer[converted] = '\0'; // 終端NULを付加する
+	}
+
+	return converted;
 }
 
 /*!
@@ -83,9 +90,10 @@ int CountAsWideChar(UINT codePage, std::string_view source) {
  * @param [in] source 変換元のナロー文字列
  * @param [out] buffer 変換後のワイド文字列を受け取るバッファ
  */
-int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR> buffer) {
+int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR> buffer)
+{
 	// 変換を実行する
-	return ::MultiByteToWideChar(
+	const auto converted = ::MultiByteToWideChar(
 		codePage,
 		0,
 		std::data(source),
@@ -93,6 +101,12 @@ int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR>
 		std::data(buffer),
 		int(std::size(buffer))
 	);
+
+	if (0 <= converted && converted < std::ssize(buffer)) {
+		buffer[converted] = L'\0'; // 終端NULを付加する
+	}
+
+	return converted;
 }
 
 /*!
@@ -158,9 +172,7 @@ const WCHAR* to_wchar(std::string_view source)
 	auto buffer = std::span(pDst, nDstCnt);
 
 	//変換
-	nDstLen = cxx::MultiByteToWideChar(CP_SJIS, source, buffer);
-
-	pDst[nDstLen] = L'\0';
+	cxx::MultiByteToWideChar(CP_SJIS, source, buffer);
 
 	return pDst;
 }
@@ -178,7 +190,6 @@ const ACHAR* to_achar(const WCHAR* pSrc, size_t nSrcLength)
 {
 	return to_achar(std::wstring_view(pSrc, nSrcLength));
 }
-
 
 const ACHAR* to_achar(std::wstring_view source)
 {
@@ -203,9 +214,7 @@ const ACHAR* to_achar(std::wstring_view source)
 	auto buffer = std::span(pDst, nDstCnt);
 
 	//変換
-	nDstLen = cxx::WideCharToMultiByte(CP_SJIS, source, buffer);
-
-	pDst[nDstLen] = '\0';
+	cxx::WideCharToMultiByte(CP_SJIS, source, buffer);
 
 	return pDst;
 }
