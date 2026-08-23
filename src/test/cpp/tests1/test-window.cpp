@@ -1388,6 +1388,7 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	static inline const std::filesystem::path keywordHelpExportPath = GetIniFileName().replace_filename(L"キーワードヘルプ.txt");
 	static inline const std::filesystem::path mainmenuExportPath = GetIniFileName().replace_filename(L"メインメニュー.ini");
 	static inline const std::filesystem::path regexKeywordExportPath = GetIniFileName().replace_filename(L"テキスト.rkw");
+	static inline const std::filesystem::path tagsPath = GetIniFileName().replace_filename(L"tags");
 	static inline const std::filesystem::path typeConfigExportPath = GetIniFileName().replace_filename(L"基本.ini");
 
 	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
@@ -1420,6 +1421,7 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		std::filesystem::remove(keywordHelpExportPath, ec);
 		std::filesystem::remove(mainmenuExportPath, ec);
 		std::filesystem::remove(regexKeywordExportPath, ec);
+		std::filesystem::remove(tagsPath, ec);
 		std::filesystem::remove(typeConfigExportPath, ec);
 
 		{
@@ -1450,6 +1452,7 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		std::filesystem::remove(keywordHelpExportPath, ec);
 		std::filesystem::remove(mainmenuExportPath, ec);
 		std::filesystem::remove(regexKeywordExportPath, ec);
+		std::filesystem::remove(tagsPath, ec);
 		std::filesystem::remove(typeConfigExportPath, ec);
 
 		CMacroFactory::getInstance()->Unregister(CWSHMacroManager::Creator);
@@ -1887,6 +1890,40 @@ TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
 
 	HWND hWnd = nullptr;
 	FORWARD_WM_COMMAND(hWnd, F_OPEN_COMMAND_PROMPT, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * コマンド：タグジャンプ
+ */
+TEST_F(EditWndTest, Command_TAGJUMP001)
+{
+	HWND hWnd = nullptr;
+
+	// とりあえずデータを入れる
+	auto pShareData = GetDllShareDataPtr();
+	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
+	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
+
+	const auto& text = L"#define FUNCTION_ALIAS TARGET_FUNCTION\n";
+	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
+
+	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+
+	// タグファイルを作る
+	{
+		std::ofstream fos(tagsPath);
+		fos << R"(!_TAG_FILE_FORMAT\t2\t/extended format/)" << std::endl;
+		fos << R"(!_TAG_FILE_SORTED\t1\t/0=unsorted, 1=sorted, 2=foldcase/)" << std::endl;
+		fos << R"(FUNCTION_ALIAS\tmacro_alias.h\t1;"\td)" << std::endl;
+	}
+
+	// キャレット位置を設定する
+	auto& ptCaret = sWorkBuffer.m_LogicPoint;
+	ptCaret = CLogicPoint(9, 0);	// 10文字目、1行目
+	pcEditWnd->DispatchEvent(hWnd, MYWM_SETCARETPOS, std::size(text), 0L);
+
+	// タグジャンプ発動
+	FORWARD_WM_COMMAND(hWnd, F_TAGJUMP, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 }
 
 /*!
