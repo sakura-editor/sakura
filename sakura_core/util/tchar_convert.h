@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -10,6 +10,10 @@
 #pragma once
 
 #include "basis/primitive.h"
+
+#include <span>
+#include <string>
+#include <string_view>
 
 //WCHARに変換
 const WCHAR* to_wchar(std::string_view source);
@@ -22,6 +26,11 @@ const ACHAR* to_achar(const WCHAR* src);
 const ACHAR* to_achar(const WCHAR* pSrc, size_t nSrcLength);
 
 namespace cxx {
+
+int		MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR> buffer);
+int		MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer);
+int		WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer);
+int		WideCharToMultiByte(UINT codePage, std::wstring_view source, std::string& buffer);
 
 std::string		to_string(std::wstring_view source, _In_opt_ UINT codePage = CP_ACP);
 std::wstring	to_wstring(std::string_view source, _In_opt_ UINT codePage = CP_ACP);

@@ -45,10 +45,6 @@ namespace cxx {
 
 HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt);
 
-int CountAsMultiByte(UINT codePage, std::wstring_view source, BOOL& bUsedDefaultChar);
-
-int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer);
-
 /*!
  * @brief システムエラーを例外として発生させる
  *
@@ -70,39 +66,6 @@ std::filesystem::path GetSystemDirectoryW()
 	SFilePath buf;
 	::GetSystemDirectoryW(buf, int(std::size(buf)));
 	return LPCWSTR(buf);
-}
-
-/*!
- * @brief ワイド文字列をナロー文字列に変換します。
- *
- * @note 使い物になるかどうか試作してみただけ
- */
-int to_string(_In_ UINT codePage, std::wstring_view source, std::string& buffer) {
-	if (source.empty()) {
-		buffer.resize(0);
-		return 0;
-	}
-
-	// 変換エラーを受け取るフラグ
-	BOOL bUsedDefaultChar = FALSE;
-
-	// 変換に必要な出力バッファサイズを求める
-	const auto required = cxx::CountAsMultiByte(codePage, source, bUsedDefaultChar);
-
-	// 変換エラーがあったら例外を投げる
-	if (bUsedDefaultChar) {
-		throw std::invalid_argument("Invalid wide character sequence.");
-	}
-
-	// 変換に必要な出力バッファを確保する
-	buffer.resize(required + 1, '\0');
-
-	// 変換を実行する
-	const auto converted = cxx::WideCharToMultiByte(codePage, source, buffer);
-
-	buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
-
-	return converted;
 }
 
 template<class T>
@@ -147,7 +110,7 @@ void writeTextFile(
 	// 各行を書き込む
 	for (const auto& line : lines) {
 		if constexpr (std::convertible_to<decltype(line), std::wstring_view>) {
-			if (0 < cxx::to_string(CP_UTF8, line, buffer)) {
+			if (0 < cxx::WideCharToMultiByte(CP_UTF8, line, buffer)) {
 				fos.write(std::data(buffer), std::size(buffer));
 			}
 		}

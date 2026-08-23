@@ -511,23 +511,32 @@ namespace cxx {
 
 TEST(to_achar, test001)
 {
-	// 空文字列
-	EXPECT_THAT(to_achar(L"あ", 1), StrEq("あ"));
+	// ASCIIのみの文字列
+	EXPECT_THAT(to_achar(L"abc123"), StrEq("abc123"));
+}
+
+TEST(to_achar, test002)
+{
+	// 日本語を含む文字列
+	EXPECT_THAT(to_achar(L"あい"), StrEq("あい"));
 }
 
 TEST(to_achar, test101)
 {
-	EXPECT_THAT(to_achar(nullptr), IsNull());
+	// 空文字列
+	EXPECT_THAT(to_achar(L""), StrEq(""));
 }
 
 TEST(to_achar, test102)
 {
-	EXPECT_THAT(to_achar(nullptr, 0), IsNull());
+	// 長さ0の文字列
+	EXPECT_THAT(to_achar(nullptr, 0), StrEq(""));
 }
 
 TEST(to_achar, test103)
 {
-	EXPECT_THAT(to_achar(L"", 0), IsNull());
+	// 不正値(NULL)
+	EXPECT_THAT(to_achar(nullptr), StrEq(""));
 }
 
 TEST(to_string, test001)
@@ -569,23 +578,32 @@ TEST(to_string, test101)
 
 TEST(to_wchar, test001)
 {
-	// 空文字列
-	EXPECT_THAT(to_wchar("あ", 2), StrEq(L"あ"));
+	// ASCIIのみの文字列
+	EXPECT_THAT(to_wchar("abc123"), StrEq(L"abc123"));
+}
+
+TEST(to_wchar, test002)
+{
+	// 日本語を含む文字列
+	EXPECT_THAT(to_wchar("あい"), StrEq(L"あい"));
 }
 
 TEST(to_wchar, test101)
 {
-	EXPECT_THAT(to_wchar(nullptr), IsNull());
+	// 空文字列
+	EXPECT_THAT(to_wchar(""), StrEq(L""));
 }
 
 TEST(to_wchar, test102)
 {
-	EXPECT_THAT(to_wchar(nullptr, 0), IsNull());
+	// 長さ0の文字列
+	EXPECT_THAT(to_wchar(nullptr, 0), StrEq(L""));
 }
 
 TEST(to_wchar, test103)
 {
-	EXPECT_THAT(to_wchar("", 0), IsNull());
+	// 不正値(NULL)
+	EXPECT_THAT(to_wchar(nullptr), StrEq(L""));
 }
 
 TEST(to_wstring, test001)
@@ -632,6 +650,15 @@ TEST(to_wstring, test101)
 
 	// SJIS仕様違反 後続バイト値が範囲外2
 	EXPECT_ANY_THROW(cxx::to_wstring("\x81\xFD"));
+}
+
+TEST(WideCharToMultiByte, test101)
+{
+	std::string buffer = "dummy";
+
+	// 空文字列
+	EXPECT_THAT(cxx::WideCharToMultiByte(CP_UTF8, L"", buffer), Eq(0));
+	EXPECT_THAT(buffer, StrEq(""));
 }
 
 } // namespace cxx

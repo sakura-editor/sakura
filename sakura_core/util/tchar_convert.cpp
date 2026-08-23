@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -44,9 +44,10 @@ int CountAsMultiByte(UINT codePage, std::wstring_view source, BOOL& bUsedDefault
  * @param [in] source 変換元のワイド文字列
  * @param [out] buffer 変換後のナロー文字列を受け取るバッファ
  */
-int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer) {
+int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer)
+{
 	// 変換を実行する
-	return ::WideCharToMultiByte(
+	const auto converted = ::WideCharToMultiByte(
 		codePage,
 		0,
 		std::data(source),
@@ -56,6 +57,51 @@ int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR>
 		nullptr,
 		nullptr
 	);
+
+	if (0 <= converted && converted < std::ssize(buffer)) {
+		buffer[converted] = '\0'; // 終端NULを付加する
+	}
+
+	return converted;
+}
+
+/*!
+ * ワイド文字列をナロー文字列に変換します。
+ *
+ * @param [in] codePage 変換に使用するコードページ。
+ * @param [in] source 変換元のワイド文字列
+ * @param [out] buffer 変換後のナロー文字列を受け取るバッファ
+ */
+int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::string& buffer)
+{
+	// 変換元が空文字列なら早期リターンする
+	if (source.empty()) {
+		buffer.clear();
+		return 0;
+	}
+
+	// 変換エラーを受け取るフラグ
+	BOOL bUsedDefaultChar = FALSE;
+
+	// 変換に必要な出力バッファサイズを求める
+	const auto required = cxx::CountAsMultiByte(codePage, source, bUsedDefaultChar);
+
+	// 変換エラーがあったら例外を投げる
+	if (bUsedDefaultChar) {
+		throw std::invalid_argument("Invalid wide character sequence.");
+	}
+
+	// 変換に必要な出力バッファを確保する
+	buffer.resize(required + 1);
+
+	// 変換を実行する
+	const auto converted = WideCharToMultiByte(codePage, source, std::span{ buffer });
+
+	if (0 <= converted && converted < std::ssize(buffer)) {
+		buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
+	}
+
+	return converted;
 }
 
 /*!
@@ -83,9 +129,10 @@ int CountAsWideChar(UINT codePage, std::string_view source) {
  * @param [in] source 変換元のナロー文字列
  * @param [out] buffer 変換後のワイド文字列を受け取るバッファ
  */
-int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR> buffer) {
+int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR> buffer)
+{
 	// 変換を実行する
-	return ::MultiByteToWideChar(
+	const auto converted = ::MultiByteToWideChar(
 		codePage,
 		0,
 		std::data(source),
@@ -93,6 +140,12 @@ int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR>
 		std::data(buffer),
 		int(std::size(buffer))
 	);
+
+	if (0 <= converted && converted < std::ssize(buffer)) {
+		buffer[converted] = L'\0'; // 終端NULを付加する
+	}
+
+	return converted;
 }
 
 /*!
@@ -102,42 +155,56 @@ int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR>
  * @param [in] source 変換元のナロー文字列
  * @param [in, out] buffer 変換後のワイド文字列を受け取るバッファ
  */
-std::wstring_view MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer) {
-	// 変換を実行する
+int MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer)
+{
+	// 変換元が空文字列なら早期リターンする
+	if (source.empty()) {
+		buffer.clear();
+		return 0;
+	}
 
 	// 変換に必要な出力バッファサイズを求める
 	const auto required = cxx::CountAsWideChar(codePage, source);
 
+	// 変換エラーがあったら例外を投げる
+	if (0 == required) {
+		throw std::invalid_argument("Invalid character sequence.");
+	}
+
 	// 変換に必要な出力バッファを確保する
-	buffer.resize(required);
+	buffer.resize(required + 1);
 
 	// 変換を実行する
 	const auto converted = cxx::MultiByteToWideChar(codePage, source, std::span{ buffer });
 
-	buffer.resize(converted); // MultiByteToWideCharの戻り値は終端NULを含まない
+	if (0 <= converted && converted < std::ssize(buffer)) {
+		buffer.resize(converted); // MultiByteToWideCharの戻り値は終端NULを含まない
+	}
 
-	return buffer;
+	return converted;
 }
 
 } // namespace cxx
 
 const WCHAR* to_wchar(const ACHAR* src)
 {
-	if(src==nullptr)return nullptr;
+	if (!src) {
+		return L"";
+	}
 
 	return to_wchar(std::string_view(src));
 }
 
 const WCHAR* to_wchar(const ACHAR* pSrc, size_t nSrcLength)
 {
-	if (!pSrc || !nSrcLength) return nullptr;
-
 	return to_wchar(std::string_view(pSrc, nSrcLength));
 }
 
 const WCHAR* to_wchar(std::string_view source)
 {
-	if (source.empty()) return nullptr;
+	if (source.empty()) {
+		return L"";
+	}
 
 	//必要なサイズを計算
 	int nDstLen = cxx::CountAsWideChar(CP_SJIS, source);
@@ -156,31 +223,30 @@ const WCHAR* to_wchar(std::string_view source)
 	auto buffer = std::span(pDst, nDstCnt);
 
 	//変換
-	nDstLen = cxx::MultiByteToWideChar(CP_SJIS, source, buffer);
-
-	pDst[nDstLen] = L'\0';
+	cxx::MultiByteToWideChar(CP_SJIS, source, buffer);
 
 	return pDst;
 }
 
 const ACHAR* to_achar(const WCHAR* src)
 {
-	if(src==nullptr)return nullptr;
+	if (!src) {
+		return "";
+	}
 
 	return to_achar(std::wstring_view(src));
 }
 
 const ACHAR* to_achar(const WCHAR* pSrc, size_t nSrcLength)
 {
-	if (!pSrc || !nSrcLength) return nullptr;
-
 	return to_achar(std::wstring_view(pSrc, nSrcLength));
 }
 
-
 const ACHAR* to_achar(std::wstring_view source)
 {
-	if (source.empty()) return nullptr;
+	if (source.empty()) {
+		return "";
+	}
 
 	//必要なサイズを計算
 	BOOL bUsedDefaultChar = FALSE;
@@ -199,9 +265,7 @@ const ACHAR* to_achar(std::wstring_view source)
 	auto buffer = std::span(pDst, nDstCnt);
 
 	//変換
-	nDstLen = cxx::WideCharToMultiByte(CP_SJIS, source, buffer);
-
-	pDst[nDstLen] = '\0';
+	cxx::WideCharToMultiByte(CP_SJIS, source, buffer);
 
 	return pDst;
 }
@@ -231,24 +295,11 @@ std::string to_string(std::wstring_view source, _In_opt_ UINT codePage) {
 		}
 	}
 
-	// 変換エラーを受け取るフラグ
-	BOOL bUsedDefaultChar = FALSE;
-
-	// 変換に必要な出力バッファサイズを求める
-	const auto required = cxx::CountAsMultiByte(codePage, source, bUsedDefaultChar);
-
-	// 変換エラーがあったら例外を投げる
-	if (bUsedDefaultChar) {
-		throw std::invalid_argument("Invalid wide character sequence.");
-	}
-
 	// 変換に必要な出力バッファを確保する
-	std::string buffer(required, '\0');
+	std::string buffer;
 
 	// 変換を実行する
-	const auto converted = cxx::WideCharToMultiByte(codePage, source, buffer);
-
-	buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
+	cxx::WideCharToMultiByte(codePage, source, buffer);
 
 	return buffer;
 }
@@ -276,16 +327,8 @@ std::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
 		}
 	}
 
-	// 変換に必要な出力バッファサイズを求める
-	const auto required = cxx::CountAsWideChar(codePage, source);
-
-	// 変換エラーがあったら例外を投げる
-	if (0 == required) {
-		throw std::invalid_argument("Invalid character sequence.");
-	}
-
 	// 変換に必要な出力バッファを確保する
-	std::wstring buffer(required, '\0');
+	std::wstring buffer;
 
 	// 変換を実行する
 	cxx::MultiByteToWideChar(codePage, source, buffer);
