@@ -652,4 +652,13 @@ TEST(to_wstring, test101)
 	EXPECT_ANY_THROW(cxx::to_wstring("\x81\xFD"));
 }
 
+TEST(WideCharToMultiByte, test101)
+{
+	std::string buffer = "dummy";
+
+	// 空文字列
+	EXPECT_THAT(cxx::WideCharToMultiByte(CP_UTF8, L"", buffer), Eq(0));
+	EXPECT_THAT(buffer, StrEq(""));
+}
+
 } // namespace cxx

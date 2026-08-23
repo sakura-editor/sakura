@@ -12,13 +12,8 @@
 #include "charset/CUtf8.h"		// move from CCodeMediator.h	2010/6/14 Uchi
 #include "basis/CEol.h"
 #include "util/file.h"			// _IS_REL_PATH
+#include "util/tchar_convert.h"
 #include "util/module.h"
-
-namespace cxx {
-
-std::wstring_view MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer);
-
-} // namespace cxx
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CTextInputStream                        //
