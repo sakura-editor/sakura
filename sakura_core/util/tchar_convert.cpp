@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -123,21 +123,23 @@ std::wstring_view MultiByteToWideChar(UINT codePage, std::string_view source, st
 
 const WCHAR* to_wchar(const ACHAR* src)
 {
-	if(src==nullptr)return nullptr;
+	if (!src) {
+		return L"";
+	}
 
 	return to_wchar(std::string_view(src));
 }
 
 const WCHAR* to_wchar(const ACHAR* pSrc, size_t nSrcLength)
 {
-	if (!pSrc || !nSrcLength) return nullptr;
-
 	return to_wchar(std::string_view(pSrc, nSrcLength));
 }
 
 const WCHAR* to_wchar(std::string_view source)
 {
-	if (source.empty()) return nullptr;
+	if (source.empty()) {
+		return L"";
+	}
 
 	//必要なサイズを計算
 	int nDstLen = cxx::CountAsWideChar(CP_SJIS, source);
@@ -165,22 +167,24 @@ const WCHAR* to_wchar(std::string_view source)
 
 const ACHAR* to_achar(const WCHAR* src)
 {
-	if(src==nullptr)return nullptr;
+	if (!src) {
+		return "";
+	}
 
 	return to_achar(std::wstring_view(src));
 }
 
 const ACHAR* to_achar(const WCHAR* pSrc, size_t nSrcLength)
 {
-	if (!pSrc || !nSrcLength) return nullptr;
-
 	return to_achar(std::wstring_view(pSrc, nSrcLength));
 }
 
 
 const ACHAR* to_achar(std::wstring_view source)
 {
-	if (source.empty()) return nullptr;
+	if (source.empty()) {
+		return "";
+	}
 
 	//必要なサイズを計算
 	BOOL bUsedDefaultChar = FALSE;
