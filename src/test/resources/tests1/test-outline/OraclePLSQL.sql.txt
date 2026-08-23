@@ -1,0 +1,121 @@
+﻿-- アウトライン解析テスト向け PL/SQL 構文サンプル（Oracle PL/SQL相当）
+-- アウトラインに現れる代表的な文書構造を示す。
+--
+-- Copyright (C) 2026, Sakura Editor Organization
+--
+-- SPDX-License-Identifier: Zlib
+--
+
+-- PL/SQLの単独関数
+CREATE OR REPLACE FUNCTION normalize_name(
+    p_name IN VARCHAR2
+) RETURN VARCHAR2
+IS
+BEGIN
+    RETURN UPPER(TRIM(p_name));
+END normalize_name;
+/
+
+-- PL/SQLのプロシージャ
+CREATE OR REPLACE PROCEDURE validate_identifier(
+    p_identifier IN NUMBER
+)
+IS
+BEGIN
+    IF p_identifier IS NULL OR p_identifier <= 0 THEN
+        raise_application_error(-20001, 'Identifier must be positive');
+    END IF;
+EXCEPTION
+    WHEN VALUE_ERROR THEN
+        raise_application_error(-20002, 'Invalid identifier');
+END validate_identifier;
+/
+
+-- PL/SQLのパッケージ宣言（いわゆる仕様部）
+CREATE OR REPLACE PACKAGE outline_sample
+AS
+    SUBTYPE t_name IS VARCHAR2(100);
+
+    TYPE t_item IS RECORD (
+        identifier NUMBER,
+        name       t_name,
+        created_at DATE
+    );
+
+    TYPE t_item_table IS TABLE OF t_item INDEX BY PLS_INTEGER;
+
+    c_default_name CONSTANT t_name := 'unknown';
+
+    FUNCTION get_name(
+        p_identifier IN NUMBER
+    ) RETURN t_name;
+
+    PROCEDURE list_items(
+        p_result OUT SYS_REFCURSOR
+    );
+END outline_sample;
+/
+
+-- ISで区切る最小構成のパッケージ仕様部
+CREATE OR REPLACE PACKAGE outline_sample_is
+IS
+    PROCEDURE ping;
+END outline_sample_is;
+/
+
+-- ISで区切る最小構成のパッケージ本体
+CREATE OR REPLACE PACKAGE BODY outline_sample_is
+IS
+    PROCEDURE ping
+    IS
+    BEGIN
+        NULL;
+    END ping;
+END outline_sample_is;
+/
+
+-- PL/SQLのパッケージ本体
+CREATE OR REPLACE PACKAGE BODY outline_sample
+AS
+    g_last_identifier NUMBER;
+
+    FUNCTION get_name(
+        p_identifier IN NUMBER
+    ) RETURN t_name
+    IS
+        l_name t_name;
+    BEGIN
+        SELECT object_name
+          INTO l_name
+          FROM user_objects
+         WHERE object_id = p_identifier;
+
+        g_last_identifier := p_identifier;
+        RETURN l_name;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RETURN c_default_name;
+    END get_name;
+
+    PROCEDURE list_items(
+        p_result OUT SYS_REFCURSOR
+    )
+    IS
+    BEGIN
+        OPEN p_result FOR
+            SELECT object_id, object_name, created
+              FROM user_objects
+             ORDER BY object_id;
+    END list_items;
+
+    PROCEDURE write_diagnostics
+    IS
+        l_index PLS_INTEGER := 1;
+    BEGIN
+        WHILE l_index <= 3 LOOP
+            DBMS_OUTPUT.PUT_LINE('Item ' || TO_CHAR(l_index));
+            l_index := l_index + 1;
+        END LOOP;
+    END write_diagnostics;
+END outline_sample;
+/

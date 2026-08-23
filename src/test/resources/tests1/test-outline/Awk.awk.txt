@@ -1,0 +1,16 @@
+# AWK outline syntax sample
+
+(1) Record processing
+BEGIN {
+    FS = ","
+    total = 0
+}
+
+(A) Aggregate values
+NR > 1 {
+    total += $2
+}
+
+END {
+    print "total", total
+}

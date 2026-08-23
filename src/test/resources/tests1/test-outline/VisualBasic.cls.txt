@@ -1,0 +1,120 @@
+﻿' ==================================================================***
+' アウトライン解析テスト向け Visual Basic 構文サンプル（VBA7.1相当）
+' アウトラインに現れる代表的な文書構造を示す。
+' ==================================================================***
+'
+'	Copyright (C) 2026, Sakura Editor Organization
+'
+'	SPDX-License-Identifier: Zlib
+'
+
+' コンパイルオプション
+Option Explicit
+Option Compare Text
+Option Base 1
+
+' イベント宣言
+' 　イベントは必ずパブリック。
+' 　外部に公開する仕組みなのでプライベートはあり得ない。
+Public Event ProgressChanged(ByVal current As Long, ByVal total As Long)
+Public Event ProcessingFailed(ByVal number As Long, ByVal description As String)
+
+' クラスの状態
+Private mName As String
+Private mTarget As Object
+
+' クラス初期化イベント
+' 　C++の「コンストラクタ」に近い。
+' 　イベントなのでシグニチャ変更できず、常に「引数なし」で初期化される。
+Private Sub Class_Initialize()
+	mName = vbNullString
+	Set mTarget = Nothing
+End Sub
+
+' クラス終了イベント
+' 　C++の「デストラクタ」に近い。
+Private Sub Class_Terminate()
+	Set mTarget = Nothing
+End Sub
+
+' プロパティ取得関数（POD系）
+Public Property Get Name() As String
+	Name = mName
+End Property
+
+' プロパティ設定関数（POD系）
+Public Property Let Name(ByVal value As String)
+	mName = value
+End Property
+
+' プロパティ取得関数（Object系）
+Public Property Get Target() As Object
+	Set Target = mTarget
+End Property
+
+' プロパティ設定関数（Object系）
+Public Property Set Target(ByVal value As Object)
+	Set mTarget = value
+End Property
+
+' プロパティ取得関数（プライベートバージョン）
+Private Property Get HasTarget() As Boolean
+	HasTarget = Not mTarget Is Nothing
+End Property
+
+Public Sub RunSample(ByVal itemCount As Long, Optional ByVal verbose As Boolean = False)
+	Dim index As Long
+	Dim values() As String
+	Dim item As Variant
+
+	If itemCount < 0 Then Exit Sub
+
+	ReDim values(1 To itemCount)
+
+	For index = LBound(values) To UBound(values)
+		values(index) = CStr(index)
+	Next index
+
+	For Each item In values
+		If verbose Then Debug.Print item
+	Next item
+
+	Select Case itemCount
+		Case 0
+			Debug.Print "No items"
+		Case 1 To 9
+			Debug.Print "A few items"
+		Case Else
+			Debug.Print "Many items"
+	End Select
+
+	RaiseEvent ProgressChanged(itemCount, itemCount)
+End Sub
+
+Private Sub ValidateValue(ByVal value As Variant)
+	If IsNull(value) Or IsEmpty(value) Then
+		Err.Raise 5, "ValidateValue", "A value is required."
+	ElseIf VarType(value) = vbString Then
+		Debug.Assert Len(CStr(value)) > 0
+	Else
+		Debug.Print TypeName(value)
+	End If
+End Sub
+
+Friend Sub ResetState()
+	mName = vbNullString
+	Set mTarget = Nothing
+End Sub
+
+Public Function ExecuteWithErrorHandling(ByVal value As Variant) As Boolean
+	On Error GoTo ErrorHandler
+
+	ValidateValue value
+	ExecuteWithErrorHandling = True
+	Exit Function
+
+ErrorHandler:
+	RaiseEvent ProcessingFailed(Err.Number, Err.Description)
+	ExecuteWithErrorHandling = False
+End Function
+

@@ -2669,9 +2669,18 @@ TEST_F(EditWndTest, ShowDlgFuncList101)
 
 		SendDlgCommand(hWndDlg, IDC_COMBO_nSortType, CBN_SELENDOK);
 
+		// タイマーを空振りさせる
+		FORWARD_WM_TIMER(hWndDlg, 1, ::SendMessageW);
+		FORWARD_WM_TIMER(hWndDlg, 2, ::SendMessageW);
+		FORWARD_WM_TIMER(hWndDlg, 3, ::SendMessageW);
+		FORWARD_WM_TIMER(hWndDlg, 4, ::SendMessageW);
+
 		CMyRect rc{};
 		::GetClientRect(hWndDlg, &rc);
 		FORWARD_WM_SIZE(hWndDlg, SIZE_RESTORED, rc.right, rc.bottom, ::SendMessageW);
+
+		// OKボタンを押下するとOnJump経由でGetDataが呼ばれる
+		SendDlgCommand(hWndDlg, IDOK);
 
 		SendDlgCommand(hWndDlg, IDCANCEL);
 	});

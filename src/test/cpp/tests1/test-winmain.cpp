@@ -16,6 +16,7 @@
 #include <string_view>
 #include <thread>
 #include <fstream>
+#include <type_traits>
 
 #include "config/maxdata.h"
 #include "basis/primitive.h"
@@ -44,6 +45,10 @@ namespace cxx {
 
 HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt);
 
+int CountAsMultiByte(UINT codePage, std::wstring_view source, BOOL& bUsedDefaultChar);
+
+int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer);
+
 /*!
  * @brief システムエラーを例外として発生させる
  *
@@ -68,15 +73,60 @@ std::filesystem::path GetSystemDirectoryW()
 }
 
 /*!
+ * @brief ワイド文字列をナロー文字列に変換します。
+ *
+ * @note 使い物になるかどうか試作してみただけ
+ */
+int to_string(_In_ UINT codePage, std::wstring_view source, std::string& buffer) {
+	if (source.empty()) {
+		buffer.resize(0);
+		return 0;
+	}
+
+	// 変換エラーを受け取るフラグ
+	BOOL bUsedDefaultChar = FALSE;
+
+	// 変換に必要な出力バッファサイズを求める
+	const auto required = cxx::CountAsMultiByte(codePage, source, bUsedDefaultChar);
+
+	// 変換エラーがあったら例外を投げる
+	if (bUsedDefaultChar) {
+		throw std::invalid_argument("Invalid wide character sequence.");
+	}
+
+	// 変換に必要な出力バッファを確保する
+	buffer.resize(required + 1, '\0');
+
+	// 変換を実行する
+	const auto converted = cxx::WideCharToMultiByte(codePage, source, buffer);
+
+	buffer.resize(converted); // WideCharToMultiByteの戻り値は終端NULを含まない
+
+	return converted;
+}
+
+template<class T>
+concept DataAndSizeAccessible = requires(const T& value) {
+	std::data(value);
+	std::size(value);
+};
+
+template<class Lines>
+concept TextLines = DataAndSizeAccessible<Lines> && requires(const Lines& lines) {
+	requires DataAndSizeAccessible<std::remove_cvref_t<decltype(*std::data(lines))>>;
+};
+
+/*!
  * @brief テキストファイルを書き出す
  *
  * @param outPath 出力先パス
  * @param lines 書き込む行の配列
  * @note 使い物になるかどうか試作してみただけ
  */
+template<TextLines Lines>
 void writeTextFile(
 	const std::filesystem::path& outPath,
-	std::span<const std::u8string_view> lines
+	const Lines& lines
 )
 {
 	if (const auto parentPath = outPath.parent_path(); !fexist(parentPath)) {
@@ -85,21 +135,31 @@ void writeTextFile(
 	}
 
 	// ファイル出力ストリームをバイナリモードで開く
-	std::ofstream fs(outPath, std::ios::binary);
+	std::ofstream fos(outPath, std::ios::binary);
 
 	// UTF-8 BOMを出力
 	const std::array bom = { '\xEF', '\xBB', '\xBF' };
-	fs.write(bom.data(), bom.size());
+	fos.write(bom.data(), bom.size());
+
+	// UTF16→UTF8変換用のバッファ
+	std::string buffer{};
 
 	// 各行を書き込む
 	for (const auto& line : lines) {
-		if (!line.empty()) {
-			fs.write(LPCSTR(std::data(line)), std::size(line));
+		if constexpr (std::convertible_to<decltype(line), std::wstring_view>) {
+			if (0 < cxx::to_string(CP_UTF8, line, buffer)) {
+				fos.write(std::data(buffer), std::size(buffer));
+			}
 		}
-		fs << "\r\n";
+		else {
+			if (0 < std::size(line)) {
+				fos.write(LPCSTR(std::data(line)), std::size(line));
+			}
+		}
+		fos << "\r\n";
 	}
 
-	fs.close();
+	fos.close();
 }
 
 //! HANDLE型のスマートポインタ
@@ -1310,3 +1370,254 @@ TEST_F(WinMainFuncTest, ShowDlgProfileMgr101)
 }
 
 } // namespace winmain
+
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+
+namespace outline {
+
+//!アウトライン解析テストのためのテストパラメータ型
+struct OutlineTestParamType {
+	LPCWSTR extention;
+};
+
+/*!
+ * googletestにECodeTypeを出力させる
+ * 
+ * パラメータテストのパラメータにOutlineTestParamTypeを渡した場合に文字列を併記して分かりやすくする。
+ */
+void PrintTo(OutlineTestParamType param, std::ostream* os)
+{
+	*os << cxx::to_string(param.extention, CP_UTF8);
+}
+
+//!アウトライン解析テストのためのフィクスチャクラス
+struct OutlineTest : public ::testing::TestWithParam<OutlineTestParamType> {
+	using Base = ::testing::TestWithParam<OutlineTestParamType>;
+
+	/*!
+	 * 設定ファイルのパス
+	 *
+	 * GetIniFileNameを使ってtests1.iniのパスを取得する。
+	 */
+	static inline const auto iniPath = GetIniFileName();
+
+	static inline const auto outlinePath = GetExeFileName().parent_path() / L"outline";
+
+	static void SetUpTestSuite() {
+		std::error_code ec;
+		std::filesystem::remove_all(outlinePath, ec);
+
+		extract_zip_resource(IDR_ZIPRES5, GetExeFileName().parent_path());
+
+		// INIファイルを削除する
+		std::filesystem::remove(iniPath, ec);
+
+		// テスト用INIファイル作成
+		std::vector<std::wstring> iniLines{
+			// 全般設定を出力
+			L"[Common]"s,
+			L"szLanguageDll="s,	// 言語DLLの指定(空にすると日本語になる)
+			L"nOutlineDockSet=1"s,	// アウトライン解析のドッキング設定をタイプ別に保存する
+			L"bRememberOutlineWindowPos=1"s,
+
+			L"[Other]"s,
+			L"nTypesCount=21"s,
+
+			//[Types(0)]
+			//szTypeExts=
+			//szTypeName=基本
+
+			//[Types(1)]
+			//szTypeExts=txt,log,1st,err,ps
+			//szTypeName=テキスト
+			std::format(L"[Types({})]", 1),
+			std::format(L"bOutlineDockDisp={}", int(true)),
+			std::format(L"eOutlineDockSide={}", int(DOCKSIDE_LEFT)),
+			std::format(L"xyOutlineDock={},{},{},{}", 200, 0, 0, 0),
+
+			//[Types(2)]
+			//szTypeExts=c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm
+			//szTypeName=C/C++
+			std::format(L"[Types({})]", 2),
+			std::format(L"bOutlineDockDisp={}", int(true)),
+			std::format(L"eOutlineDockSide={}", int(DOCKSIDE_TOP)),
+			std::format(L"xyOutlineDock={},{},{},{}", 0, 200, 0, 0),
+
+			//[Types(3)]
+			//szTypeExts=html,htm,shtml,plg
+			//szTypeName=HTML
+
+			//[Types(4)]
+			//szTypeExts=sql,plsql
+			//szTypeName=PL/SQL
+			std::format(L"[Types({})]", 4),
+			std::format(L"bOutlineDockDisp={}", int(true)),
+			std::format(L"eOutlineDockSide={}", int(DOCKSIDE_RIGHT)),
+			std::format(L"xyOutlineDock={},{},{},{}", 0, 0, 200, 0, 0),
+
+			//[Types(5)]
+			//szTypeExts=cbl,cpy,pco,cob
+			//szTypeName=COBOL
+
+			//[Types(6)]
+			//szTypeExts=java,jav
+			//szTypeName=Java
+			std::format(L"[Types({})]", 6),
+			std::format(L"bOutlineDockDisp={}", int(true)),
+			std::format(L"eOutlineDockSide={}", int(DOCKSIDE_BOTTOM)),
+			std::format(L"xyOutlineDock={},{},{},{}", 0, 0, 0, 200),
+
+			//[Types(8)]
+			//szTypeExts=awk
+			//szTypeName=AWK
+
+			//[Types(9)]
+			//szTypeExts=bat
+			//szTypeName=MS-DOSバッチファイル
+			std::format(L"[Types({})]", 9),
+			std::format(L"bOutlineDockDisp={}", int(true)),
+			std::format(L"eOutlineDockSide={}", int(DOCKSIDE_UNDOCKABLE)),
+
+			//[Types(10)]
+			//szTypeExts=tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo
+			//szTypeName=TeX
+
+			//[Types(12)]
+			//szTypeExts=cgi,pl,pm
+			//szTypeName=Perl
+
+			//[Types(13)]
+			//szTypeExts=py
+			//szTypeName=Python
+
+			//[Types(14)]
+			//szTypeExts=rtf
+			//szTypeName=リッチテキスト
+
+			//[Types(16)]
+			//szTypeExts=ini,inf,cnf,kwd,col
+			//szTypeName=設定ファイル
+
+			//[Types(17)]
+			//szTypeExts=csv
+			//szTypeName=CSV
+			std::format(L"[Types({})]", 17),
+			std::format(L"szTypeName={}", L"CSV"),
+			std::format(L"szTypeExts={}", L"csv"),
+			std::format(L"nDefaultOutline={}", int(OUTLINE_LIST)),
+			L"nInts=17,10240,0,4,-1,-1,0,1,1,0,0,2"s,
+
+			std::format(L"[Types({})]", 18),
+			std::format(L"szTypeName={}", L"RuleFile1"),
+			std::format(L"szTypeExts={}", L"cr1"),
+			std::format(L"nDefaultOutline={}", int(OUTLINE_FILE)),
+			std::format(L"szOutlineRuleFilename={}", LR"(outline\rule.rule)"),
+
+			std::format(L"[Types({})]", 19),
+			std::format(L"szTypeName={}", L"RuleFile2"),
+			std::format(L"szTypeExts={}", L"cr2"),
+			std::format(L"nDefaultOutline={}", int(OUTLINE_FILE)),
+			std::format(L"szOutlineRuleFilename={}", LR"(outline\rule_regex.rule)"),
+
+			std::format(L"[Types({})]", 20),
+			std::format(L"szTypeName={}", L"RuleFile3"),
+			std::format(L"szTypeExts={}", L"cr3"),
+			std::format(L"nDefaultOutline={}", int(OUTLINE_FILE)),
+			std::format(L"szOutlineRuleFilename={}", LR"(outline\rule_regex_replace.rule)"),
+			L"xyOutlineDock=0,0,0,0"
+		};
+
+		cxx::writeTextFile( iniPath, iniLines );
+
+		// コントロールプロセスを起動する
+		auto cp = testing::CreateControlProcess(L"");
+		ASSERT_THAT(cp, NotNull());
+	}
+
+	static void TearDownTestSuite() {
+		// コントロールプロセスに終了指示を出して終了を待つ
+		testing::TerminateControlProcess(L"");
+
+		// コントロールプロセスが終了すると、INIファイルが作成される
+		ASSERT_THAT(fexist(iniPath), IsTrue());
+
+		std::error_code ec;
+
+		// INIファイルを削除する
+		std::filesystem::remove(iniPath, ec);
+
+		std::filesystem::remove_all(outlinePath, ec);
+	}
+};
+
+/*!
+ * @brief アウトライン解析のテスト
+ */
+TEST_P(OutlineTest, test)
+{
+	// テスト対象拡張子
+	const auto ext = GetParam().extention;
+
+	// テストファイル名
+	const std::wstring filename = std::format(L"test_source{:s}", ext);
+
+	// テストファイルパス
+	const auto path = outlinePath / filename;
+	ASSERT_THAT(fexist(path), IsTrue());
+
+	// 起動時実行マクロの中身を作る
+	std::vector<std::wstring> macroCommands = {
+		L"Outline(0);"s,				// アウトライン解析
+
+		L"Outline(1);"s,				//アウトライン解析をリロード
+		L"Outline(2);"s				//アウトライン解析を閉じる
+	};
+
+	macroCommands.emplace_back(L"ExitAllEditors();"s);	//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
+
+	// 起動時実行マクロを組み立てる
+	const auto strStartupMacro = std::accumulate(macroCommands.cbegin(), macroCommands.cend(), std::wstring(), [](const std::wstring& a, std::wstring_view b) { return a + std::data(b); });
+
+	// コマンドラインを組み立てる
+	std::wstring command(path);
+	command += LR"( -PROF="")";
+	command += std::format(LR"( -MTYPE=js -M="{}")", std::regex_replace(strStartupMacro, std::wregex(LR"(")"), LR"("")"));
+
+	// テストプログラム内のグローバル変数を汚さないために、別プロセスで起動させる
+	ASSERT_EXIT({ exit(testing::StartEditorProcess(command)); }, ::testing::ExitedWithCode(0), ".*" );
+}
+
+/*!
+ * @brief パラメータテストをインスタンス化する
+ *  各変換機能の正常系をチェックするパターンで実体化させる
+ */
+INSTANTIATE_TEST_CASE_P(Outline
+	, OutlineTest
+	, ::testing::Values(
+		// 組み込みのタイプ別設定に紐づく拡張子
+		OutlineTestParamType{ L".asm" },
+		OutlineTestParamType{ L".awk" },
+		OutlineTestParamType{ L".bas" },
+		OutlineTestParamType{ L".bat" },
+		OutlineTestParamType{ L".cbl" },
+		OutlineTestParamType{ L".cls" },
+		OutlineTestParamType{ L".cpp" },
+		OutlineTestParamType{ L".html" },
+		OutlineTestParamType{ L".java" },
+		OutlineTestParamType{ L".pl" },
+		OutlineTestParamType{ L".py" },
+		OutlineTestParamType{ L".sql" },
+		OutlineTestParamType{ L".tex" },
+		OutlineTestParamType{ L".txt" },
+		// ユーザー指定のタイプ別設定に紐づく拡張子
+		OutlineTestParamType{ L".csv" },
+		// ユーザー指定、ルールファイルを使う拡張子
+		OutlineTestParamType{ L".cr1" },
+		OutlineTestParamType{ L".cr2" },
+		OutlineTestParamType{ L".cr3" }
+	)
+);
+
+} // namespace outline
+
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
