@@ -8,11 +8,14 @@
 #include "window/EditorTestSuite.hpp"
 
 #include "view/colors/CColor_Comment.h"
+#include "view/colors/CColor_Heredoc.h"
 #include "view/colors/CColor_Numeric.h"
 #include "view/colors/CColor_Quote.h"
 #include "view/colors/CColor_Url.h"
 
 namespace view::color {
+
+using namespace std::literals::string_view_literals;
 
 struct TestCase {
 	const wchar_t* text;
@@ -47,11 +50,13 @@ struct ColorStrategyTest : public ::testing::Test, public window::EditorTestSuit
 		m_digitDisp = type.m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp;
 		m_urlDisp = type.m_ColorInfoArr[COLORIDX_URL].m_bDisp;
 		m_commentDisp = type.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp;
+		m_heredocDisp = type.m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp;
 		m_singleQuoteDisp = type.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;
 		m_doubleQuoteDisp = type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;
 		m_stringType = type.m_nStringType;
 		m_stringLineOnly = type.m_bStringLineOnly;
 		m_stringEndLine = type.m_bStringEndLine;
+		m_heredocType = type.m_nHeredocType;
 		m_lineComment = type.m_cLineComment;
 		m_blockComments[0] = type.m_cBlockComments[0];
 		m_blockComments[1] = type.m_cBlockComments[1];
@@ -63,11 +68,13 @@ struct ColorStrategyTest : public ::testing::Test, public window::EditorTestSuit
 		type.m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = m_digitDisp;
 		type.m_ColorInfoArr[COLORIDX_URL].m_bDisp = m_urlDisp;
 		type.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = m_commentDisp;
+		type.m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp = m_heredocDisp;
 		type.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = m_singleQuoteDisp;
 		type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = m_doubleQuoteDisp;
 		type.m_nStringType = m_stringType;
 		type.m_bStringLineOnly = m_stringLineOnly;
 		type.m_bStringEndLine = m_stringEndLine;
+		type.m_nHeredocType = m_heredocType;
 		type.m_cLineComment = m_lineComment;
 		type.m_cBlockComments[0] = m_blockComments[0];
 		type.m_cBlockComments[1] = m_blockComments[1];
@@ -82,11 +89,13 @@ private:
 	bool m_digitDisp = false;
 	bool m_urlDisp = false;
 	bool m_commentDisp = false;
+	bool m_heredocDisp = false;
 	bool m_singleQuoteDisp = false;
 	bool m_doubleQuoteDisp = false;
 	int m_stringType = STRING_LITERAL_CPP;
 	bool m_stringLineOnly = false;
 	bool m_stringEndLine = false;
+	int m_heredocType = HEREDOC_PHP;
 	CLineComment m_lineComment;
 	CBlockComment m_blockComments[2];
 };
@@ -611,6 +620,94 @@ TEST_F(ColorStrategyTest, QuoteContinuesCppStringAfterEscapedLineEnd)
 	EXPECT_THAT(strategy.EndColor(nextLine, 0), IsFalse());
 	EXPECT_THAT(strategy.EndColor(nextLine, 4), IsFalse());
 	EXPECT_THAT(strategy.EndColor(nextLine, 5), IsTrue());
+}
+
+TEST_F(ColorStrategyTest, HeredocProperties)
+{
+	CColor_Heredoc strategy;
+	strategy.Update();
+
+	EXPECT_THAT(strategy.GetStrategyColor(), Eq(COLORIDX_HEREDOC));
+
+	GetTypeConfig().m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp = true;
+	EXPECT_THAT(strategy.Disp(), IsTrue());
+
+	GetTypeConfig().m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp = false;
+	EXPECT_THAT(strategy.Disp(), IsFalse());
+}
+
+TEST_F(ColorStrategyTest, HeredocRecognizesPhpDeclarations)
+{
+	GetTypeConfig().m_nHeredocType = HEREDOC_PHP;
+	const std::array declarations = {
+		L"<<<ID\n"sv,
+		L"<<<  ID\r\n"sv,
+		L"<<<'ID'\n"sv,
+		L"<<<\t\"ID_2\"\n"sv,
+	};
+
+	for (const auto declaration : declarations) {
+		SCOPED_TRACE(testing::Message() << "declaration length=" << declaration.size());
+		CColor_Heredoc strategy;
+		strategy.Update();
+		const CStringRef line(declaration.data(), static_cast<int>(declaration.size()));
+
+		EXPECT_THAT(strategy.BeginColor(line, 0), IsTrue());
+		EXPECT_THAT(strategy.EndColor(line, static_cast<int>(declaration.size()) - 1), IsFalse());
+		EXPECT_THAT(strategy.EndColor(line, static_cast<int>(declaration.size())), IsTrue());
+	}
+}
+
+TEST_F(ColorStrategyTest, HeredocRejectsInvalidDeclarations)
+{
+	GetTypeConfig().m_nHeredocType = HEREDOC_PHP;
+	const std::array invalidDeclarations = {
+		L"<<<\n"sv,
+		L"<<<'ID\n"sv,
+		L"<<<ID suffix\n"sv,
+		L"<<<ID"sv,
+	};
+
+	CColor_Heredoc strategy;
+	strategy.Update();
+	EXPECT_THAT(strategy.BeginColor(CStringRef(), 0), IsFalse());
+	for (const auto declaration : invalidDeclarations) {
+		SCOPED_TRACE(testing::Message() << "declaration length=" << declaration.size());
+		const CStringRef line(declaration.data(), static_cast<int>(declaration.size()));
+		EXPECT_THAT(strategy.BeginColor(line, 0), IsFalse());
+	}
+
+	GetTypeConfig().m_nHeredocType = HEREDOC_PERL;
+	const CStringRef unsupported{ L"<<<ID\n", 6 };
+	EXPECT_THAT(strategy.BeginColor(unsupported, 0), IsFalse());
+}
+
+TEST_F(ColorStrategyTest, HeredocCarriesStateAcrossLinesAndRecognizesTerminators)
+{
+	GetTypeConfig().m_nHeredocType = HEREDOC_PHP;
+	CColor_Heredoc declarationStrategy;
+	declarationStrategy.Update();
+	const CStringRef declaration{ L"<<<ID\n", 6 };
+	ASSERT_THAT(declarationStrategy.BeginColor(declaration, 0), IsTrue());
+	std::unique_ptr<CLayoutColorInfo> colorInfo(declarationStrategy.GetStrategyColorInfo());
+	ASSERT_THAT(colorInfo.get(), NotNull());
+
+	const auto expectEndPosition = [&](std::wstring_view text, int end) {
+		CColor_Heredoc strategy;
+		strategy.Update();
+		strategy.SetStrategyColorInfo(colorInfo.get());
+		strategy.InitStrategyStatus();
+		const CStringRef line(text.data(), static_cast<int>(text.size()));
+
+		EXPECT_THAT(strategy.EndColor(line, 0), IsFalse());
+		EXPECT_THAT(strategy.EndColor(line, end - 1), IsFalse());
+		EXPECT_THAT(strategy.EndColor(line, end), IsTrue());
+	};
+
+	expectEndPosition(L"body\n", 5);
+	expectEndPosition(L"ID\n", 2);
+	expectEndPosition(L"ID;\n", 2);
+	expectEndPosition(L"IDsuffix\n", 9);
 }
 
 } // namespace view::color
