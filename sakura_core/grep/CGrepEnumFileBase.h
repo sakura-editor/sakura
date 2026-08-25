@@ -20,6 +20,7 @@
 #include <string.h>
 #include <tchar.h>
 #include <Shlwapi.h>
+#include "cxx/ResourceHolder.hpp"
 #include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
@@ -123,6 +124,9 @@ public:
 			WIN32_FIND_DATA w32fd;
 			HANDLE handle = ::FindFirstFile( lpPath, &w32fd );
 			if( INVALID_HANDLE_VALUE != handle ){
+				// 検索ハンドルをスマートポインタに入れる(途中で抜けても確実に閉じる)
+				using FindFileHolder = cxx::ResourceHolder<&::FindClose>;
+				FindFileHolder handleHolder{ handle };
 				do{
 					if( !::PathMatchSpec(w32fd.cFileName, vecKeys[ i ] + nKeyDirLen) ){
 						continue;
@@ -160,7 +164,6 @@ public:
 					delete [] lpName;
 					delete [] lpFullPath;
 				}while( ::FindNextFile( handle, &w32fd ) );
-				::FindClose( handle );
 			}
 			delete [] lpPath;
 		}
