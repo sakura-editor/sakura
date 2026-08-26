@@ -157,11 +157,8 @@ public:
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
 		auto nWildCardLen = int(wcslen(lpKeys));
-		WCHAR* pWildCard = new WCHAR[nWildCardLen + 1];
-		if (!pWildCard) {
-			return patterns;
-		}
-		wcscpy(pWildCard, lpKeys);
+		std::wstring strWildCard(lpKeys, nWildCardLen);
+		WCHAR* pWildCard = strWildCard.data();
 
 		int nPos = 0;
 		WCHAR*	token;
@@ -184,7 +181,6 @@ public:
 			std::wstring element(token);
 			patterns.push_back(element);
 		}
-		delete[] pWildCard;
 		return patterns;
 	}
 
@@ -194,6 +190,8 @@ private:
 		ClearEnumKeys(m_vecSearchFileKeys);
 		ClearEnumKeys(m_vecExceptFolderKeys);
 		ClearEnumKeys(m_vecSearchFolderKeys);
+		ClearEnumKeys(m_vecExceptAbsFileKeys);
+		ClearEnumKeys(m_vecExceptAbsFolderKeys);
 		return;
 	}
 	void ClearEnumKeys( VGrepEnumKeys& keys ){
