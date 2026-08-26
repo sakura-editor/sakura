@@ -157,9 +157,8 @@ public:
 
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
 		auto nWildCardLen = int(wcslen(lpKeys));
-		std::vector<WCHAR> vecWildCard(static_cast<size_t>(nWildCardLen) + 1);
-		wcscpy_s(vecWildCard.data(), vecWildCard.size(), lpKeys);
-		WCHAR* pWildCard = vecWildCard.data();
+		std::wstring strWildCard(lpKeys, nWildCardLen);
+		WCHAR* pWildCard = strWildCard.data();
 
 		int nPos = 0;
 		WCHAR*	token;
