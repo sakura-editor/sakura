@@ -1,0 +1,13 @@
+﻿#pragma once
+
+// Python3.DLLに要求するバージョン
+// とりあえず v3.14 以降にしておく。
+#define Py_LIMITED_API 0x030e0000
+
+// Python3.DLLとはリンクしない
+// これはPython 3.14 で導入された仕組み
+// Python.hをincludeする前に定義しておく必要がある
+#define Py_NO_LINK_LIB
+
+// CMakeで検出した Python3 ヘッダーファイルをincludeする
+#include "@Python3_INCLUDE_DIR@/Python.h"
