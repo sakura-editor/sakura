@@ -16,7 +16,9 @@
 #define SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_
 #pragma once
 
+#include <algorithm>
 #include <list>
+#include <string>
 #include <vector>
 #include <windows.h>
 #include <string.h>
@@ -24,7 +26,7 @@
 #include "util/string_ex.h"
 #include "util/file.h"
 
-typedef std::vector< LPCWSTR > VGrepEnumKeys;
+using VGrepEnumKeys = std::vector< std::wstring >;
 
 class CGrepEnumKeys {
 
@@ -46,9 +48,7 @@ public:
 	Me& operator = (const Me&) = delete;
 	CGrepEnumKeys(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CGrepEnumKeys(){
-		ClearItems();
-	}
+	~CGrepEnumKeys() = default;
 
 	// 除外ファイルの2つの解析済み配列から1つのリストを作る
 	auto GetExcludeFiles() const ->  std::vector<decltype(m_vecExceptFileKeys)::value_type> {
@@ -186,36 +186,23 @@ public:
 
 private:
 	void ClearItems( void ){
-		ClearEnumKeys(m_vecExceptFileKeys);
-		ClearEnumKeys(m_vecSearchFileKeys);
-		ClearEnumKeys(m_vecExceptFolderKeys);
-		ClearEnumKeys(m_vecSearchFolderKeys);
-		ClearEnumKeys(m_vecExceptAbsFileKeys);
-		ClearEnumKeys(m_vecExceptAbsFolderKeys);
+		m_vecExceptFileKeys.clear();
+		m_vecSearchFileKeys.clear();
+		m_vecExceptFolderKeys.clear();
+		m_vecSearchFolderKeys.clear();
+		m_vecExceptAbsFileKeys.clear();
+		m_vecExceptAbsFolderKeys.clear();
 		return;
-	}
-	void ClearEnumKeys( VGrepEnumKeys& keys ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			delete [] keys[ i ];
-		}
-		keys.clear();
 	}
 
 	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
-			WCHAR* newKey = new WCHAR[ wcslen( addKey ) + 1 ];
-			wcscpy( newKey, addKey );
-			keys.push_back( newKey );
+			keys.emplace_back( addKey );
 		}
 	}
 
-	BOOL IsExist( VGrepEnumKeys& keys, LPCWSTR addKey ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			if( wcscmp( keys[ i ], addKey ) == 0 ){
-				return TRUE;
-			}
-		}
-		return FALSE;
+	BOOL IsExist( const VGrepEnumKeys& keys, LPCWSTR addKey ) const {
+		return ( keys.cend() != std::find( keys.cbegin(), keys.cend(), addKey ) ) ? TRUE : FALSE;
 	}
 
 	/*
