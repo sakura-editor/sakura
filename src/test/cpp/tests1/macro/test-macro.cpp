@@ -330,17 +330,21 @@ TEST_F(MacroMgrTest, CPythonMacroManager001)
 
 	std::filesystem::remove(badDllPath, ec);
 
-	// x86_64環境であれば、実際に python3.dll を読み込むテストを行う
-#if defined(_M_AMD64) && !defined(__MINGW32__)
-
 	// DLLを解放する
 	CPythonMacroManager::s_hModule = nullptr;
 
-	// PATH環境変数からDLLを探す
-	const auto python3Path = find_dll_in_the_path("python3.dll");
-	GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory = python3Path;
+	// python3.dllの名前は環境別で固定
+	constexpr auto& dllName =
+#ifdef __MINGW32__
+		L"libpython3.dll"
+#else
+		L"python3.dll"
+#endif
+	;
 
-	::SetDllDirectoryW(python3Path.c_str());
+	// PATH環境変数からDLLを探す
+	const auto python3Path = find_dll_in_the_path(dllName);
+	GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory = python3Path;
 
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L""), IsTrue());
 
@@ -361,10 +365,6 @@ TEST_F(MacroMgrTest, CPythonMacroManager001)
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
 	std::filesystem::remove(path, ec);
-
-	::SetDllDirectoryW(L"");
-
-#endif // defined(_M_AMD64) && !defined(__MINGW32__)
 
 	// DLLパスを元に戻す
 	GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory = pathOld;

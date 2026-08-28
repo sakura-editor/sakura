@@ -145,6 +145,7 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h" />
     <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_define.h" />
     <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_enum.h" />
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\python3_config.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />

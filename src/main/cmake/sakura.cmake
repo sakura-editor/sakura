@@ -169,10 +169,29 @@ endif()
 
 message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
 
-# Find Python Interpreter(required)
-find_package(Python3 REQUIRED COMPONENTS Interpreter)
+# Find Python interpreter and development artifacts(required)
+find_package(Python3 3.14 REQUIRED COMPONENTS Interpreter Development)
 
-message(STATUS "Found Python: ${Python3_EXECUTABLE}")
+list(GET Python3_INCLUDE_DIRS 0 Python3_INCLUDE_DIR)
+get_filename_component(Python3_EXECUTABLE_DIR "${Python3_EXECUTABLE}" DIRECTORY)
+find_file(Python3_STABLE_ABI_DLL
+  NAMES python3.dll
+  HINTS
+    "${Python3_EXECUTABLE_DIR}"
+    ${Python3_RUNTIME_LIBRARY_DIRS}
+  NO_DEFAULT_PATH
+  REQUIRED
+)
+
+configure_file(
+  "${CMAKE_SOURCE_DIR}/src/main/cmake/python3_config.h.in"
+  "${CMAKE_BINARY_DIR}/python3_config.h"
+  @ONLY
+)
+
+message(STATUS "Found Python interpreter: ${Python3_EXECUTABLE}")
+message(STATUS "Found Python headers: ${Python3_INCLUDE_DIR}")
+message(STATUS "Found Python Stable ABI DLL: ${Python3_STABLE_ABI_DLL}")
 
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z

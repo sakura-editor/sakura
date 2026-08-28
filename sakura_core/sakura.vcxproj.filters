@@ -145,6 +145,9 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_enum.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\python3_config.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\resources\sakura.hh">
       <Filter>Other Files</Filter>
     </ClInclude>
