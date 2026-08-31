@@ -1,11 +1,12 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "agent/CGrepAgent.h"
+#include "basis/GrepInfo.h"
 #include "grep/CGrepEnumKeys.h"
 #include "grep/CGrepEnumFilterFiles.h"
 #include "grep/CGrepEnumFilterFolders.h"
@@ -317,36 +318,49 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 }
 
 
+/*!	GrepInfo から出力オプションを取り出す
+
+	@param[in] gi Grep実行の入力一式
+	@return 出力・置換の挙動を決めるオプション
+	@note Grep置換では「一致しなかった行を出力」が成立しないため、行単位出力に落とす。
+*/
+SGrepOption SGrepOption::FromGrepInfo( const GrepInfo& gi )
+{
+	SGrepOption sGrepOption;
+	sGrepOption.bGrepSubFolder = gi.bGrepSubFolder;
+	sGrepOption.bGrepStdout = gi.bGrepStdout;
+	sGrepOption.bGrepHeader = gi.bGrepHeader;
+	sGrepOption.nGrepCharSet = gi.nGrepCharSet;
+	sGrepOption.nGrepOutputLineType = gi.nGrepOutputLineType;
+	sGrepOption.nGrepOutputStyle = gi.nGrepOutputStyle;
+	sGrepOption.bGrepOutputFileOnly = gi.bGrepOutputFileOnly;
+	sGrepOption.bGrepOutputBaseFolder = gi.bGrepOutputBaseFolder;
+	sGrepOption.bGrepSeparateFolder = gi.bGrepSeparateFolder;
+	sGrepOption.bGrepReplace = gi.bGrepReplace;
+	sGrepOption.bGrepPaste = gi.bGrepPaste;
+	sGrepOption.bGrepBackup = gi.bGrepBackup;
+	if( sGrepOption.bGrepReplace ){
+		// Grep否定行はGrep置換では無効
+		if( sGrepOption.nGrepOutputLineType == 2 ){
+			sGrepOption.nGrepOutputLineType = 1; // 行単位
+		}
+	}
+	return sGrepOption;
+}
+
 /*! Grep実行
 
-  @param[in] pcmGrepKey 検索パターン
-  @param[in] pcmGrepFile 検索対象ファイルパターン(!で除外指定))
-  @param[in] pcmGrepFolder 検索対象フォルダー
+  @param[in] pcViewDst Grep結果の出力先
+  @param[in] gi Grep実行の入力一式。検索パターン・検索対象ファイルパターン(!で除外指定)・
+                検索対象フォルダー・検索オプション・出力オプションを含む
 
   @date 2008.12.07 nasukoji	ファイル名パターンのバッファオーバラン対策
   @date 2008.12.13 genta 検索パターンのバッファオーバラン対策
   @date 2012.10.13 novice 検索オプションをクラスごと代入
 */
 DWORD CGrepAgent::DoGrep(
-	CEditView*				pcViewDst,
-	bool					bGrepReplace,
-	const CNativeW*			pcmGrepKey,
-	const CNativeW*			pcmGrepReplace,
-	const CNativeW*			pcmGrepFile,
-	const CNativeW*			pcmGrepFolder,
-	bool					bGrepCurFolder,
-	BOOL					bGrepSubFolder,
-	bool					bGrepStdout,
-	bool					bGrepHeader,
-	const SSearchOption&	sSearchOption,
-	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-	int						nGrepOutputLineType,
-	int						nGrepOutputStyle,
-	bool					bGrepOutputFileOnly,
-	bool					bGrepOutputBaseFolder,
-	bool					bGrepSeparateFolder,
-	bool					bGrepPaste,
-	bool					bGrepBackup
+	CEditView*				pcViewDst,	//!< [in] Grep結果の出力先
+	const GrepInfo&			gi			//!< [in] Grep実行の入力一式(検索キー・対象・オプション)
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DoGrep" );
@@ -391,14 +405,14 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk->AddRef();
 
 	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
-	pcViewDst->m_strCurSearchKey = pcmGrepKey->GetStringPtr();				/* 検索文字列 */
-	pcViewDst->m_sCurSearchOption = sSearchOption;						// 検索オプション
+	pcViewDst->m_strCurSearchKey = gi.cmGrepKey.GetStringPtr();				/* 検索文字列 */
+	pcViewDst->m_sCurSearchOption = gi.sGrepSearchOption;						// 検索オプション
 	pcViewDst->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 
 	// 置換後文字列の準備
 	CNativeW cmemReplace;
-	if( bGrepReplace ){
-		if( bGrepPaste ){
+	if( gi.bGrepReplace ){
+		if( gi.bGrepPaste ){
 			// 矩形・ラインモード貼り付けは未サポート
 			bool bColmnSelect;
 			bool bLineSelect = false;
@@ -422,7 +436,7 @@ DWORD CGrepAgent::DoGrep(
 				delete [] pszConvertedText;
 			}
 		}else{
-			cmemReplace = *pcmGrepReplace;
+			cmemReplace = gi.cmGrepRep;
 		}
 	}
 	/* 正規表現 */
@@ -444,11 +458,11 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	//2014.06.13 別ウィンドウで検索したとき用にGrepダイアログの検索キーを設定
-	GetEditWnd().m_cDlgGrep.m_strText = pcmGrepKey->GetStringPtr();
+	GetEditWnd().m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();
 	GetEditWnd().m_cDlgGrep.m_bSetText = true;
-	GetEditWnd().m_cDlgGrepReplace.m_strText = pcmGrepKey->GetStringPtr();
-	if( bGrepReplace ){
-		GetEditWnd().m_cDlgGrepReplace.m_strText2 = pcmGrepReplace->GetStringPtr();
+	GetEditWnd().m_cDlgGrepReplace.m_strText = gi.cmGrepKey.GetStringPtr();
+	if( gi.bGrepReplace ){
+		GetEditWnd().m_cDlgGrepReplace.m_strText2 = gi.cmGrepRep.GetStringPtr();
 	}
 	GetEditWnd().m_cDlgGrepReplace.m_bSetText = true;
 	hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), pcViewDst->m_hwndParent, IDD_GREPRUNNING );
@@ -460,7 +474,7 @@ DWORD CGrepAgent::DoGrep(
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
 	//	2011.12.10 Moca 表示の際に...に切り捨てられるので登録するように
-	wcsncpy_s( CAppMode::getInstance()->m_szGrepKey, int(std::size(CAppMode::getInstance()->m_szGrepKey)), pcmGrepKey->GetStringPtr(), _TRUNCATE );
+	wcsncpy_s( CAppMode::getInstance()->m_szGrepKey, int(std::size(CAppMode::getInstance()->m_szGrepKey)), gi.cmGrepKey.GetStringPtr(), _TRUNCATE );
 	this->m_bGrepMode = true;
 
 	//	2007.07.22 genta
@@ -469,14 +483,14 @@ DWORD CGrepAgent::DoGrep(
 	{
 		/* 検索パターンのコンパイル */
 		bool bError;
-		if( bGrepReplace && !bGrepPaste ){
+		if( gi.bGrepReplace && !gi.bGrepPaste ){
 			// Grep置換
 			// 2015.03.03 Grep置換がoptGlobalじゃないバグを修正
-			bError = !pattern.SetPattern(pcViewDst->GetHwnd(), pcmGrepKey->GetStringPtr(), pcmGrepKey->GetStringLength(),
-				cmemReplace.GetStringPtr(), sSearchOption, &cRegexp, true);
+			bError = !pattern.SetPattern(pcViewDst->GetHwnd(), gi.cmGrepKey.GetStringPtr(), gi.cmGrepKey.GetStringLength(),
+				cmemReplace.GetStringPtr(), gi.sGrepSearchOption, &cRegexp, true);
 		}else{
-			bError = !pattern.SetPattern(pcViewDst->GetHwnd(), pcmGrepKey->GetStringPtr(), pcmGrepKey->GetStringLength(),
-				sSearchOption, &cRegexp);
+			bError = !pattern.SetPattern(pcViewDst->GetHwnd(), gi.cmGrepKey.GetStringPtr(), gi.cmGrepKey.GetStringLength(),
+				gi.sGrepSearchOption, &cRegexp);
 		}
 		if( bError ){
 			this->m_bGrepRunning = false;
@@ -487,24 +501,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	
 	// Grepオプションまとめ
-	sGrepOption.bGrepSubFolder = FALSE != bGrepSubFolder;
-	sGrepOption.bGrepStdout = bGrepStdout;
-	sGrepOption.bGrepHeader = bGrepHeader;
-	sGrepOption.nGrepCharSet = nGrepCharSet;
-	sGrepOption.nGrepOutputLineType = nGrepOutputLineType;
-	sGrepOption.nGrepOutputStyle = nGrepOutputStyle;
-	sGrepOption.bGrepOutputFileOnly = bGrepOutputFileOnly;
-	sGrepOption.bGrepOutputBaseFolder = bGrepOutputBaseFolder;
-	sGrepOption.bGrepSeparateFolder = bGrepSeparateFolder;
-	sGrepOption.bGrepReplace = bGrepReplace;
-	sGrepOption.bGrepPaste = bGrepPaste;
-	sGrepOption.bGrepBackup = bGrepBackup;
-	if( sGrepOption.bGrepReplace ){
-		// Grep否定行はGrep置換では無効
-		if( sGrepOption.nGrepOutputLineType == 2 ){
-			sGrepOption.nGrepOutputLineType = 1; // 行単位
-		}
-	}
+	sGrepOption = SGrepOption::FromGrepInfo( gi );
 
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
@@ -520,7 +517,7 @@ DWORD CGrepAgent::DoGrep(
 
 	CGrepEnumKeys cGrepEnumKeys;
 	{
-		int nErrorNo = cGrepEnumKeys.SetFileKeys( pcmGrepFile->GetStringPtr() );
+		int nErrorNo = cGrepEnumKeys.SetFileKeys( gi.cmGrepFile.GetStringPtr() );
 		if( nErrorNo != 0 ){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
@@ -542,24 +539,24 @@ DWORD CGrepAgent::DoGrep(
 	const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	std::vector<std::wstring> vPaths;
-	CreateFolders( pcmGrepFolder->GetStringPtr(), vPaths );
+	CreateFolders( gi.cmGrepFolder.GetStringPtr(), vPaths );
 
-	nWork = pcmGrepKey->GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
+	nWork = gi.cmGrepKey.GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
 	/* 最後にテキストを追加 */
 	CNativeW	cmemWork;
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
 	if( 0 < nWork ){
 		cmemMessage.AppendString( L"\"" );
-		cmemMessage += EscapeStringLiteral(type, *pcmGrepKey);
+		cmemMessage += EscapeStringLiteral(type, gi.cmGrepKey);
 		cmemMessage.AppendString( L"\"\r\n" );
 	}else{
 		cmemMessage.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
 	}
 
-	if( bGrepReplace ){
+	if( gi.bGrepReplace ){
 		cmemMessage.AppendString( LS(STR_GREP_REPLACE_TO) );
-		if( bGrepPaste ){
+		if( gi.bGrepPaste ){
 			cmemMessage.AppendString( LS(STR_GREP_PASTE_CLIPBOAD) );
 		}else{
 			cmemMessage.AppendString( L"\"" );
@@ -572,7 +569,7 @@ DWORD CGrepAgent::DoGrep(
 	WCHAR szWindowName[_MAX_PATH];
 	WCHAR szWindowPath[_MAX_PATH];
 	{
-		int nHwndRet = GetHwndTitle(hWndTarget, &cmemWork, szWindowName, szWindowPath, pcmGrepFile->GetStringPtr());
+		int nHwndRet = GetHwndTitle(hWndTarget, &cmemWork, szWindowName, szWindowPath, gi.cmGrepFile.GetStringPtr());
 		if( -1 == nHwndRet ){
 			cmemMessage.AppendString(L"HWND handle error.\n");
 			if( sGrepOption.bGrepHeader ){
@@ -629,19 +626,19 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage.AppendString( pszWork );
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
-		if( sSearchOption.bWordOnly ){
+		if( gi.sGrepSearchOption.bWordOnly ){
 		/* 単語単位で探す */
 			cmemMessage.AppendString( LS( STR_GREP_COMPLETE_WORD ) );	//L"    (単語単位で探す)\r\n"
 		}
 
-		if( sSearchOption.bLoHiCase ){
+		if( gi.sGrepSearchOption.bLoHiCase ){
 			pszWork = LS( STR_GREP_CASE_SENSITIVE );	//L"    (英大文字小文字を区別する)\r\n"
 		}else{
 			pszWork = LS( STR_GREP_IGNORE_CASE );	//L"    (英大文字小文字を区別しない)\r\n"
 		}
 		cmemMessage.AppendString( pszWork );
 
-		if( sSearchOption.bRegularExp ){
+		if( gi.sGrepSearchOption.bRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
 			cmemMessage.AppendString( LS( STR_GREP_REGEX_DLL ) );	//L"    (正規表現:"
 			cmemMessage.AppendString( cRegexp.GetVersionW() );
@@ -667,7 +664,7 @@ DWORD CGrepAgent::DoGrep(
 			// 否該当行
 			pszWork = LS( STR_GREP_SHOW_MATCH_NOHITLINE );	//L"    (一致しなかった行を出力)\r\n"
 		}else{
-			if( bGrepReplace && sSearchOption.bRegularExp && !bGrepPaste ){
+			if( gi.bGrepReplace && gi.sGrepSearchOption.bRegularExp && !gi.bGrepPaste ){
 				pszWork = LS(STR_GREP_SHOW_FIRST_LINE);
 			}else{
 				pszWork = LS( STR_GREP_SHOW_MATCH_AREA );
@@ -728,9 +725,9 @@ DWORD CGrepAgent::DoGrep(
 				pcViewDst,
 				&cDlgCancel,
 				hwnd,
-				pcmGrepKey->GetStringPtr(),
+				gi.cmGrepKey.GetStringPtr(),
 				szWindowName,
-				sSearchOption,
+				gi.sGrepSearchOption,
 				sGrepOption,
 				pattern,
 				&cRegexp,
@@ -765,14 +762,14 @@ DWORD CGrepAgent::DoGrep(
 			int nTreeRet = DoGrepTree(
 				pcViewDst,
 				&cDlgCancel,
-				pcmGrepKey->GetStringPtr(),
+				gi.cmGrepKey.GetStringPtr(),
 				cmemReplace,
 				cGrepEnumKeys,
 				cGrepExceptAbsFiles,
 				cGrepExceptAbsFolders,
 				sPath.c_str(),
 				sPath.c_str(),
-				sSearchOption,
+				gi.sGrepSearchOption,
 				sGrepOption,
 				pattern,
 				&cRegexp,
@@ -801,7 +798,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	if( sGrepOption.bGrepHeader ){
 		WCHAR szBuffer[128];
-		if( bGrepReplace ){
+		if( gi.bGrepReplace ){
 			auto_sprintf( szBuffer, LS(STR_GREP_REPLACE_COUNT), nHitCount );
 		}else{
 			auto_sprintf( szBuffer, LS( STR_GREP_MATCH_COUNT ), nHitCount );
@@ -839,7 +836,7 @@ DWORD CGrepAgent::DoGrep(
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 		pCEditWnd->RedrawAllViews( nullptr );
 
-	if( !bGrepCurFolder ){
+	if( !gi.bGrepCurFolder ){
 		// 現行フォルダーを検索したフォルダーに変更
 		if( 0 < vPaths.size() ){
 			::SetCurrentDirectory( vPaths[0].c_str() );

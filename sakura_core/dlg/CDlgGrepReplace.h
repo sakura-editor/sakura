@@ -8,7 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, Moca
 	Copyright (C) 2014, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -35,9 +35,11 @@ public:
 	||  Attributes & Operations
 	*/
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCurrentFilePath, LPARAM lParam );	/* モーダルダイアログの表示 */
+	//! 置換に固有の項目を足した Grep 実行の入力一式を作る
+	GrepInfo MakeGrepInfo() const override;
 
-	bool		m_bPaste;
-	bool		m_bBackup;
+	bool		m_bPaste = false;
+	bool		m_bBackup = false;
 
 	std::wstring	m_strText2;				//!< 置換後
 	int				m_nReplaceKeySequence;	//!< 置換後シーケンス

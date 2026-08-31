@@ -11,13 +11,14 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2014, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "dlg/CDlgGrepReplace.h"
+#include "basis/GrepInfo.h"
 #include "view/CEditView.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/module.h"
@@ -71,6 +72,21 @@ CDlgGrepReplace::CDlgGrepReplace()
 		m_strText2 = m_pShareData->m_sSearchKeywords.m_aReplaceKeys[0];
 	}
 	return;
+}
+
+/*!
+ * 置換に固有の項目を足した Grep 実行の入力一式を作る
+ *
+ * @return Grep置換を1回実行するのに必要な入力の全体
+ */
+GrepInfo CDlgGrepReplace::MakeGrepInfo() const
+{
+	GrepInfo gi = CDlgGrep::MakeGrepInfo();
+	gi.cmGrepRep.SetString( m_strText2.c_str() );
+	gi.bGrepReplace = true;
+	gi.bGrepPaste = m_bPaste;
+	gi.bGrepBackup = m_bBackup;
+	return gi;
 }
 
 /* モーダルダイアログの表示 */
