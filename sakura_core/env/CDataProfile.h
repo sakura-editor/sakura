@@ -15,11 +15,12 @@
 #include "util/StaticType.h"
 
 /*!
- * バッファ参照型
+ * @brief バッファ参照型
  *
  * 読み書き可能なWCHARバッファとサイズを指定して構築する
  */
-using StringBufferW = std::span<WCHAR>;
+template<size_t N>
+using StringBufferW = std::span<WCHAR, N>;
 
 /*!
  * プロファイル用データ変換
@@ -203,108 +204,76 @@ public:
 	using CProfile::SetProfileData;
 
 	 /*!
-	  * Profileから読み込んだ文字列を設定値に変換して取得する
+	  * Profileから読み込んだ文字列をサイズ固定のバッファに読み込む
 	  *
 	  * @retval true 成功
 	  * @retval false 失敗
 	  */
-	template<profile_data::is_supported T>
+	template <size_t N>
 	[[nodiscard]] bool GetProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
-		T&						tEntryValue		//!< [out] エントリ値
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
+		std::span<WCHAR, N>		tEntryValue		//!< [in,out] エントリ値
 	) const
 	{
-		if (std::wstring strEntryValue; GetProfileData(sectionName, entryKey, strEntryValue)) {
-			return profile_data::TryParse(strEntryValue, tEntryValue);
+		// 読み込み作業用に可変バッファを用意する
+		std::wstring entryValue;
+		if (!GetProfileData(sectionName, entryKey, entryValue) || N <= entryValue.length()) {
+			return false;	// 指定した設定項目がなかった、または、バッファに入り切らない
 		}
-		return false;
+
+		// 固定長バッファにコピーする
+		::wcscpy_s(std::data(tEntryValue), N, entryValue.c_str());
+
+		return true;
 	}
 
 	/*!
-	 * 設定値を文字列に変換してProfileへ書き込む
-	 */
-	template<profile_data::is_supported T>
-	void SetProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
-		const T					tEntryValue		//!< [in] エントリ値
-	)
-	{
-		const std::wstring strEntryValue = profile_data::ToString(tEntryValue);
-		SetProfileData(sectionName, entryKey, strEntryValue);
-	}
-
-	/*!
-	 * 設定値の入出力テンプレート
-	 *
-	 * 設定値の入出力を行う。
-	 *
-	 * @retval true	設定値を正しく読み書きできた
-	 * @retval false 設定値を読み込めなかった
-	 */
-	template<profile_data::is_supported T>
-	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
-		T&						tEntryValue		//!< [in,out] エントリ値
-	)
-	{
-		if( IsReadingMode() ){
-			return GetProfileData(sectionName, entryKey, tEntryValue);
-		}else{
-			SetProfileData(sectionName, entryKey, tEntryValue);
-			return true;
-		}
-	}
-
-	/*!
-	 * 設定値の入出力テンプレート
-	 *
-	 * 設定値の入出力を行う。
+	 * 設定値を入出力する
 	 *
 	 * @retval true	設定値を正しく読み書きできた
 	 * @retval false 設定値を読み込めなかった
 	 */
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		std::wstring&			entryValue		//!< [in,out] エントリ値
 	)
 	{
 		if (IsReadingMode()) {
 			return GetProfileData(sectionName, entryKey, entryValue);
-		} else {
-			SetProfileData(sectionName, entryKey, entryValue);
-			return true;
 		}
+		else {
+			SetProfileData(sectionName, entryKey, entryValue);
+		}
+		return true;
 	}
 
 	/*!
-	 * 文字列設定値の入出力
+	 * サイズ制限付き文字列値の入出力
 	 *
-	 * 文字列設定値の入出力を行う。
+	 * サイズ制限付き文字列値の入出力を行う。
 	 *
 	 * @retval true	設定値を正しく読み書きできた
 	 * @retval false 設定値を読み込めなかった
 	 */
+	template <size_t N>
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
-		std::span<WCHAR>		tEntryValue		//!< [in,out] エントリ値
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
+		std::span<WCHAR, N>		tEntryValue		//!< [in,out] エントリ値
 	)
 	{
+		static_assert(1 <= N, "entry size must be greater than 0.");
+
 		if (IsReadingMode()) {
-			std::wstring entryValue;
-			if (!GetProfileData(sectionName, entryKey, entryValue) || std::size(tEntryValue) <= entryValue.length()) {
-				return false;
-			}
-			::wcscpy_s(std::data(tEntryValue), std::size(tEntryValue), std::data(entryValue));
-			return true;
-		} else {
-			SetProfileData(sectionName, entryKey, std::wstring_view{ std::data(tEntryValue), std::size(tEntryValue) });
-			return true;
+			return GetProfileData(sectionName, entryKey, tEntryValue);
 		}
+		else {
+			const auto len = ::wcsnlen(std::data(tEntryValue), N);
+			SetProfileData(sectionName, entryKey, std::wstring_view{ std::data(tEntryValue), len });
+		}
+		return true;
 	}
 
 	/*!
@@ -317,13 +286,43 @@ public:
 	 */
 	template <int N>
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		StaticString<N>&		szEntryValue	//!< [in,out] エントリ値
 	)
 	{
-		// std::span<WCHAR>型に変換して入出力する
-		return IOProfileData(sectionName, entryKey, std::span<WCHAR, N>{ szEntryValue });
+		// std::span<WCHAR, N>型に変換して入出力する
+		return IOProfileData(sectionName, entryKey, StringBufferW(szEntryValue));
+	}
+
+	/*!
+	 * 設定値の入出力テンプレート
+	 *
+	 * 設定値の入出力を行う。
+	 *
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めなかった
+	 */
+	template<typename T>
+	bool IOProfileData(
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
+		T&						tEntryValue		//!< [in,out] エントリ値
+	)
+	{
+		if (IsReadingMode()) {
+			if (std::wstring strEntryValue;
+				!GetProfileData(sectionName, entryKey, strEntryValue) ||
+				!profile_data::TryParse(strEntryValue, tEntryValue))
+			{
+				return false;
+			}
+		}
+		else {
+			const auto strEntryValue = profile_data::ToString(tEntryValue);
+			SetProfileData(sectionName, entryKey, strEntryValue);
+		}
+		return true;
 	}
 };
 

@@ -297,8 +297,8 @@ bool CProfile::_WriteFile(
 	@date 2003-10-22 D.S.Koba 作成
 */
 bool CProfile::GetProfileData(
-	const std::wstring&	sectionName,	//!< [in] セクション名
-	const std::wstring&	entryKey,		//!< [in] エントリ名
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
 	std::wstring&		strEntryValue	//!< [out] エントリ値
 ) const
 {
@@ -326,8 +326,8 @@ bool CProfile::GetProfileData(
 	@date 2003-10-21 D.S.Koba 作成
 */
 void CProfile::SetProfileData(
-	const std::wstring&	sectionName,	//!< [in] セクション名
-	const std::wstring&	entryKey,		//!< [in] エントリ名
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
 	std::wstring_view	entryValue		//!< [in] エントリ値
 )
 {
@@ -343,7 +343,7 @@ void CProfile::SetProfileData(
 	}
 
 	// エントリに指定された値を書き込む
-	foundSection->m_Entries[entryKey] = entryValue;
+	foundSection->m_Entries[std::wstring(entryKey)] = entryValue;
 }
 
 void CProfile::DUMP( void )

@@ -54,7 +54,7 @@ TEST(CProfile, ReadProfile_ExpandLineBuffer)
 	cProfile.ReadProfile(iniPath);
 
 	bool value = false;
-	EXPECT_THAT(cProfile.GetProfileData(L"test", L"test", value), IsTrue());
+	EXPECT_THAT(cProfile.IOProfileData(L"test", L"test", value), IsTrue());
 	EXPECT_THAT(value, IsTrue());
 
 	std::filesystem::remove(iniPath, ec);
@@ -92,8 +92,8 @@ TEST(CProfile, ReadProfile_LineTerminatorCr)
 	CDataProfile cProfile;
 	cProfile.ReadProfile(iniPath);
 
-	bool value = false;
-	EXPECT_THAT(cProfile.GetProfileData(L"test", L"test", value), IsTrue());
+	int value = false;
+	EXPECT_THAT(cProfile.IOProfileData(L"test", L"test", value), IsTrue());
 	EXPECT_THAT(value, IsTrue());
 
 	std::filesystem::remove(iniPath, ec);

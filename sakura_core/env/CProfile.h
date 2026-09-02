@@ -55,8 +55,17 @@ public:
 	bool ReadProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt) noexcept;
 	bool WriteProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt, const std::optional<std::wstring>& optComment = std::nullopt);
 
-	bool GetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring& strEntryValue) const;
-	void SetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring_view entryValue);
+	bool GetProfileData(
+		std::wstring_view	sectionName,
+		std::wstring_view	entryKey,
+		std::wstring&		strEntryValue
+	) const;
+
+	void SetProfileData(
+		std::wstring_view	sectionName,
+		std::wstring_view	entryKey,
+		std::wstring_view	entryValue
+	);
 
 	void DUMP( void );
 
