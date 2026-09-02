@@ -1770,7 +1770,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 							wcsncpy_s( types.m_KeyHelpArr[j].m_szAbout, pH, _TRUNCATE );
 							pH = pT+1;
 							if( L'\0' != (*pH) ){
-								types.m_KeyHelpArr[j].m_szPath = pH;
+								types.m_KeyHelpArr[j].m_szPath = std::wstring_view(pH);
 								types.m_nKeyHelpNum = j+1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
 							}
 						}

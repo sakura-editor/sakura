@@ -487,7 +487,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				}
 				if( cProfile.ReadProfile(pszIniFileName) ){
 					CImpExpFileTree::IO_FileTreeIni(cProfile, m_fileTreeSetting.m_aItems);
-					m_fileTreeSetting.m_szLoadProjectIni = pszIniFileName;
+					m_fileTreeSetting.m_szLoadProjectIni = std::wstring_view(pszIniFileName);
 				}
 			}
 			SetDataInit();
@@ -740,7 +740,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 						SFileTreeItem item;
 						item.m_eFileTreeItemType = EFileTreeItemType_File;
 						item.m_szTargetPath = cmemFile;
-						item.m_szLabelName = GetFileTitlePointer(aFileNames[i].c_str());
+						item.m_szLabelName = std::wstring_view(GetFileTitlePointer(aFileNames[i].c_str()));
 						htiInsert = InsertTreeItem(item, htiParent, htiInsert);
 						if( htiItemFirst == nullptr ){
 							htiItemFirst = htiInsert;

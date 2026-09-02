@@ -3930,7 +3930,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 			}
 			if( cProfile.ReadProfile(pszIniFileName) ){
 				CImpExpFileTree::IO_FileTreeIni(cProfile, data.m_aItems);
-				data.m_szLoadProjectIni = pszIniFileName;
+				data.m_szLoadProjectIni = std::wstring_view(pszIniFileName);
 				bReadIni = true;
 			}
 		}

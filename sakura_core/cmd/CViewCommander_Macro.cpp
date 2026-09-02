@@ -142,7 +142,7 @@ void CViewCommander::Command_LOADKEYMACRO() const
 	if( _IS_REL_PATH( pszFolder ) ){
 		GetInidirOrExedir( szInitDir, pszFolder );
 	}else{
-		szInitDir = pszFolder;	/* マクロ用フォルダー */
+		szInitDir = std::wstring_view(pszFolder);
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(

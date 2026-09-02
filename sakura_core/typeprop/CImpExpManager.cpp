@@ -812,7 +812,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
 		wcsncpy_s(m_Types.m_KeyHelpArr[i].m_szAbout, p4, _TRUNCATE);	// 2026.06.23 bounded copy (defense in depth)
-		m_Types.m_KeyHelpArr[i].m_szPath = p3;				// 2026.06.23 StaticString::operator= copies with bounds + NUL
+		m_Types.m_KeyHelpArr[i].m_szPath = std::wstring_view(p3);
 		i++;
 	}
 	in.Close();
