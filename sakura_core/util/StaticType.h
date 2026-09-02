@@ -229,13 +229,36 @@ private:
 	ArrayType	m_aElements{};
 };
 
-//! ヒープを用いない文字列クラス
-//2007.09.23 kobake 作成。
+/*!
+ * @brief ヒープを用いない文字列クラス
+ *
+ * 固定長の文字バッファをクラス内部に保持する文字列クラス。
+ * ヒープ領域を使用しないため、共有メモリに配置できる。
+ * 既存コードにある生配列を最小の変更で置き換えるために、
+ * C++の作法に照らして不適切な演算子を多く定義している。
+ *
+ * @code{.cpp}
+ * using SFilePath = StaticString<_MAX_PATH>;
+ * SFilePath filePath{};
+ *
+ * // 以下と同等。
+ * WCHAR szFilePath[_MAX_PATH] {};
+ * @endcode
+ *
+ * @tparam N_BUFFER_COUNT バッファの要素数。文字列長 + 1（ヌル文字）以上を指定すること。
+ *
+ * @author kobake
+ * @date 2007.09.23 kobake 作成
+ */
 template <int N_BUFFER_COUNT>
-class StaticString{
+// TODO: final指定したいが継承クラスがあるのでコメントアウトしている
+class StaticString /* final */ {
 private:
 	//テンプレート定数名が長過ぎて不便なので、エイリアスを切る
 	static constexpr auto N = N_BUFFER_COUNT;
+
+	// 文字バッファの要素数は 1以上 を想定する
+	static_assert(1 <= N, "N_BUFFER_COUNT must be greater than 0.");
 
 	using ArrayType = std::array<WCHAR, N>;
 	using Traits = std::char_traits<WCHAR>;
@@ -249,10 +272,39 @@ public:
 
 	//コンストラクタ・デストラクタ
 	StaticString() = default;
-	constexpr explicit StaticString(std::wstring_view src) { assign(src); }
 
 	/*!
-	 * 文字列を末尾に追加する
+	 * @brief 文字列をコピーして構築する
+	 *
+	 * @param source [in] 割り当てる文字列への参照
+	 */
+	constexpr explicit StaticString(
+		std::wstring_view source
+	) noexcept
+	{
+		assign(source);
+	}
+
+	/*!
+	 * @brief 文字配列をコピーして構築する
+	 *
+	 * 配列の要素数が内部バッファの要素数を超える場合はコンパイルエラーになる。
+	 *
+	 * @tparam Size コピー元配列の要素数
+	 * @param source [in] 割り当てる文字列
+	 */
+	template<std::size_t Size>
+	constexpr explicit StaticString(const WCHAR (&source)[Size]) noexcept
+	{
+		// コピー元配列が長過ぎる場合、コンパイルエラーにする
+		constexpr auto Length = Size - 1;
+		static_assert(Length < size(), "source string is too long.");
+
+		assign(std::wstring_view(source, Length));
+	}
+
+	/*!
+	 * @brief 文字列を末尾に追加する
 	 *
 	 * @retval 0 成功
 	 * @retval STRUNCATE 切り詰め発生
@@ -267,7 +319,7 @@ public:
 	}
 
 	/*!
-	 * 文字列を代入する
+	 * @brief 文字列を代入する
 	 *
 	 * @retval 0 成功
 	 * @retval STRUNCATE 切り詰め発生
@@ -281,7 +333,10 @@ public:
 	}
 
 	/*!
-	 * 文字列長を取得する
+	 * @brief 文字列長を取得する
+	 *
+	 * @note 毎回再計算するので効率は良くない。
+	 * @note 長さを頻繁に確認する用途ではstd::wstringへの移行を検討すること。
 	 */
 	constexpr size_t length() const noexcept
 	{
@@ -301,15 +356,36 @@ public:
 	constexpr const WCHAR* data()  const noexcept { return std::data(m_szData); }
 	constexpr const WCHAR* c_str() const noexcept { return data(); }
 
-	constexpr operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
-	constexpr operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
-	constexpr operator std::span<WCHAR>()          & noexcept { return operator std::span<WCHAR, N>(); }
+	constexpr explicit		 operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
+	constexpr /* implicit */ operator std::span<WCHAR>()          & noexcept { return operator std::span<WCHAR, N>(); }
+	constexpr /* implicit */ operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
 
 	explicit operator std::filesystem::path() const & noexcept { return static_cast<std::wstring_view>(*this); }
 
 	constexpr Me& operator = (std::wstring_view rhs) noexcept { assign(rhs); return *this; }
 	constexpr Me& operator = (const std::wstring& rhs) noexcept { assign(rhs); return *this; }
-	constexpr Me& operator = (const std::filesystem::path& path) noexcept { assign(path.wstring()); return *this; }
+	Me& operator = (const std::filesystem::path& path) noexcept { assign(path.native()); return *this; }
+
+	/*!
+	 * @brief 文字配列を代入する
+	 *
+	 * 代入元配列の要素数が内部バッファの要素数を超える場合はコンパイルエラーになる。
+	 *
+	 * @tparam Size 代入元配列の要素数
+	 * @param rhs [in] 代入元配列
+	 * @return 自分自身への参照
+	 */
+	template<std::size_t Size>
+	constexpr Me& operator = (const WCHAR (&rhs)[Size]) noexcept
+	{
+		// 代入元配列が長過ぎる場合、コンパイルエラーにする
+		constexpr auto Length = Size - 1;
+		static_assert(Length < size(), "source string is too long.");
+
+		assign(std::wstring_view(rhs, Length));
+
+		return *this;
+	}
 
 	constexpr Me& operator += (std::wstring_view rhs) noexcept { append(rhs); return *this; }
 	constexpr Me& operator += (const std::wstring& rhs) noexcept { append(rhs); return *this; }
@@ -322,13 +398,34 @@ public:
 	const WCHAR* GetBufferPointer() const{ return data(); }
 
 	//簡易データアクセス
-	constexpr operator       WCHAR*()       & noexcept { return data(); }
-	constexpr operator const WCHAR*() const & noexcept { return data(); }
+	constexpr /* implicit */ operator       WCHAR*()       & noexcept { return data(); }
+	constexpr /* implicit */ operator const WCHAR*() const & noexcept { return data(); }
 
 	WCHAR At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
+	/*!
+	 * @brief ポインタを指定して文字列を割り当てる
+	 *
+	 * @param src [in, opt] 割り当てる文字列を指すポインタ。
+	 *
+	 * @note 引数にはNULLを指定できる
+	 * @note NULLチェックの責任が分散してしまうので廃止予定。
+	 */
+	// TODO: いつか廃止する
+	// TODO: いつか以下のC++属性をコメントインする
+	// [[deprecated("Use assign() instead.")]]
 	void Assign(const WCHAR* src) noexcept { assign(std::wstring_view{ src ? src : L"" }); }
+
+	/*!
+	 * @brief ポインタを指定して文字列を割り当てる
+	 *
+	 * @param src [in, opt] 割り当てる文字列を指すポインタ。
+	 *
+	 * @note 引数にはNULLを指定できる
+	 * @note NULLチェックの責任が分散してしまうので廃止予定。
+	 */
+	// TODO: いつか廃止する
 	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
 
 	//各種メソッド

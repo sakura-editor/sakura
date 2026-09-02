@@ -10,8 +10,15 @@
     </Expand>
   </Type>
   <Type Name="StaticString&lt;*&gt;">
-    <DisplayString Condition="m_szData[0] == 0">empty</DisplayString>
-    <DisplayString Condition="m_szData[0] != 0">{m_szData._Elems,su}</DisplayString>
+    <Intrinsic Name="length" Expression="wcsnlen(m_szData._Elems, $T1 - 1)" />
+    <DisplayString Condition="m_szData[0] == 0">empty (0/{$T1,d})</DisplayString>
+    <DisplayString Condition="m_szData[0] != 0">{m_szData._Elems,su} ({length(),d}/{$T1,d})</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>length() + 1</Size>
+        <ValuePointer>m_szData._Elems</ValuePointer>
+      </ArrayItems>
+    </Expand>
   </Type>
   <Type Name="StaticVector&lt;*,*,*&gt;">
     <DisplayString Condition="m_nCount == 0">empty (0/{$T2,d})</DisplayString>
