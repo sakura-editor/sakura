@@ -37,26 +37,26 @@
  * SFilePath aMruFileArr[50] {};
  * @endcode
  *
- * @tparam ELEMENT_TYPE 要素型。
- * @tparam MAX_SIZE バッファの要素数。
- * @tparam SET_TYPE push_backで追加する型。
+ * @tparam T 要素型。
+ * @tparam N バッファの要素数。
+ * @tparam A push_backで追加する型。
  *
  * @author kobake
  * @date 2007.09.23 kobake 作成
  */
-template <class ELEMENT_TYPE, int MAX_SIZE, class SET_TYPE = const ELEMENT_TYPE&>
+template <class T, int N, class A = const T&>
 class StaticVector final {
 public:
 	//型
-	using ElementType = ELEMENT_TYPE;
+	using ElementType = T;
 
 private:
-	using ArrayType = std::array<ElementType, MAX_SIZE>;
+	using ArrayType = std::array<T, N>;
 
-	using Me = StaticVector<ElementType, MAX_SIZE, SET_TYPE>;
+	using Me = StaticVector<T, N, A>;
 
 public:
-	static constexpr size_t size() noexcept { return MAX_SIZE; }
+	static constexpr size_t size() noexcept { return N; }
 
 	StaticVector() = default;
 
@@ -161,7 +161,7 @@ public:
 		m_aElements[countOld] = ElementType(std::forward<Args>(args)...);
 	}
 
-	void push_back(SET_TYPE e)
+	void push_back(A e)
 	{
 		// 変更前の有効要素数を取得する
 		const auto countOld = m_nCount;

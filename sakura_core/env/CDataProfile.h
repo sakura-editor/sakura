@@ -199,6 +199,9 @@ namespace profile_data {
  * @date 2007/09/24 kobake データ変換部を子クラスに分離
  */
 class CDataProfile : public CProfile {
+private:
+	using OptionStr = std::optional<std::wstring>;
+
 public:
 	using CProfile::GetProfileData;
 	using CProfile::SetProfileData;
@@ -322,6 +325,36 @@ public:
 			const auto strEntryValue = profile_data::ToString(tEntryValue);
 			SetProfileData(sectionName, entryKey, strEntryValue);
 		}
+		return true;
+	}
+
+	/*!
+	 * 配列型(StaticVector)の入出力
+	 *
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めなかった
+	 */
+	template <typename T, int N, typename A>
+	bool IOProfileDataSet(
+		const std::wstring&		sectionName,	//!< [in] セクション名
+		std::wstring_view		entrySetName,	//!< [in] エントリセット名
+		StaticVector<T, N, A>&	aEntries,		//!< [in,out] エントリ値
+		const OptionStr&		optCountName = std::nullopt
+	)
+	{
+		int count = static_cast<int>(aEntries.count());
+		if (!IOProfileData(sectionName, optCountName.value_or(std::format(L"_{:s}_Counts", entrySetName)), count)) return false;
+
+		if (IsReadingMode()) {
+			count = std::min(std::max(0, count), static_cast<int>(std::size(aEntries)));
+			aEntries.resize(count);
+		}
+
+		for (int i = 0; i < count; ++i) {
+			const auto key = std::format(L"{:s}[{:02d}]", entrySetName, i);
+			IOProfileData(sectionName, key, aEntries[i]);
+		}
+
 		return true;
 	}
 };

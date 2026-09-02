@@ -262,13 +262,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		}
 	}
 	
-	cProfile.IOProfileData( pszSecName, L"_ExceptMRU_Counts", pShare->m_sHistory.m_aExceptMRU._GetSizeRef() );
-	pShare->m_sHistory.m_aExceptMRU.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sHistory.m_aExceptMRU.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"ExceptMRU[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aExceptMRU[i] );
-	}
+	cProfile.IOProfileDataSet( pszSecName, L"ExceptMRU", pShare->m_sHistory.m_aExceptMRU );
 }
 
 /*!
@@ -282,25 +276,9 @@ void CShareData_IO::ShareData_IO_Keys( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = L"Keys";
-	int		i;
-	int		nSize;
-	WCHAR	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, L"_SEARCHKEY_Counts", pShare->m_sSearchKeywords.m_aSearchKeys._GetSizeRef() );
-	pShare->m_sSearchKeywords.m_aSearchKeys.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sSearchKeywords.m_aSearchKeys.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"SEARCHKEY[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aSearchKeys[i] );
-	}
-
-	cProfile.IOProfileData( pszSecName, L"_REPLACEKEY_Counts", pShare->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef() );
-	pShare->m_sSearchKeywords.m_aReplaceKeys.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sSearchKeywords.m_aReplaceKeys.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"REPLACEKEY[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aReplaceKeys[i] );
-	}
+	cProfile.IOProfileDataSet( pszSecName, L"SEARCHKEY",  pShare->m_sSearchKeywords.m_aSearchKeys );
+	cProfile.IOProfileDataSet( pszSecName, L"REPLACEKEY", pShare->m_sSearchKeywords.m_aReplaceKeys );
 }
 
 /*!
@@ -314,43 +292,11 @@ void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = L"Grep";
-	int		i;
-	int		nSize;
-	WCHAR	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, L"_GREPFILE_Counts", pShare->m_sSearchKeywords.m_aGrepFiles._GetSizeRef() );
-	pShare->m_sSearchKeywords.m_aGrepFiles.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sSearchKeywords.m_aGrepFiles.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"GREPFILE[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFiles[i] );
-	}
-
-	cProfile.IOProfileData( pszSecName, L"_GREPFOLDER_Counts", pShare->m_sSearchKeywords.m_aGrepFolders._GetSizeRef() );
-	pShare->m_sSearchKeywords.m_aGrepFolders.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sSearchKeywords.m_aGrepFolders.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"GREPFOLDER[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFolders[i] );
-	}
-
-	/* 除外ファイルパターン */
-	cProfile.IOProfileData(pszSecName, L"_GREPEXCLUDEFILE_Counts", pShare->m_sSearchKeywords.m_aExcludeFiles._GetSizeRef());
-	pShare->m_sSearchKeywords.m_aExcludeFiles.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sSearchKeywords.m_aExcludeFiles.count());
-	for (i = 0; i < nSize; ++i) {
-		auto_sprintf(szKeyName, L"GREPEXCLUDEFILE[%02d]", i);
-		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aExcludeFiles[i]);
-	}
-
-	/* 除外フォルダーパターン */
-	cProfile.IOProfileData(pszSecName, L"_GREPEXCLUDEFOLDER_Counts", pShare->m_sSearchKeywords.m_aExcludeFolders._GetSizeRef());
-	pShare->m_sSearchKeywords.m_aExcludeFolders.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sSearchKeywords.m_aExcludeFolders.count());
-	for (i = 0; i < nSize; ++i) {
-		auto_sprintf(szKeyName, L"GREPEXCLUDEFOLDER[%02d]", i);
-		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aExcludeFolders[i]);
-	}
+	cProfile.IOProfileDataSet( pszSecName, L"GREPFILE",          pShare->m_sSearchKeywords.m_aGrepFiles );
+	cProfile.IOProfileDataSet( pszSecName, L"GREPFOLDER",        pShare->m_sSearchKeywords.m_aGrepFolders );
+	cProfile.IOProfileDataSet( pszSecName, L"GREPEXCLUDEFILE",   pShare->m_sSearchKeywords.m_aExcludeFiles );
+	cProfile.IOProfileDataSet( pszSecName, L"GREPEXCLUDEFOLDER", pShare->m_sSearchKeywords.m_aExcludeFolders );
 }
 
 /*!
@@ -381,24 +327,10 @@ void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = L"Cmd";
-	int		i;
-	WCHAR	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, L"nCmdArrNum", pShare->m_sHistory.m_aCommands._GetSizeRef() );
-	pShare->m_sHistory.m_aCommands.SetSizeLimit();
-	int nSize = static_cast<int>(pShare->m_sHistory.m_aCommands.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"szCmdArr[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCommands[i] );
-	}
+	cProfile.IOProfileDataSet( pszSecName, L"szCmdArr",    pShare->m_sHistory.m_aCommands, L"nCmdArrNum" );
 
-	cProfile.IOProfileData( pszSecName, L"nCurDirArrNum", pShare->m_sHistory.m_aCurDirs._GetSizeRef() );
-	pShare->m_sHistory.m_aCurDirs.SetSizeLimit();
-	nSize = static_cast<int>(pShare->m_sHistory.m_aCurDirs.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"szCurDirArr[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCurDirs[i] );
-	}
+	cProfile.IOProfileDataSet( pszSecName, L"szCurDirArr", pShare->m_sHistory.m_aCurDirs, L"nCurDirArrNum" );
 }
 
 /*!
@@ -2303,16 +2235,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	cProfile.IOProfileData(pszSecName, L"szTagsCmdLine", StringBufferW(pShare->m_szTagsCmdLine));
 	
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
-	cProfile.IOProfileData( pszSecName, L"_TagJumpKeyword_Counts", pShare->m_sTagJump.m_aTagJumpKeywords._GetSizeRef() );
-	pShare->m_sHistory.m_aCommands.SetSizeLimit();
-	const auto nSize = static_cast<int>(pShare->m_sTagJump.m_aTagJumpKeywords.count());
-	for( i = 0; i < nSize; ++i ){
-		auto_sprintf( szKeyName, L"TagJumpKeyword[%02d]", i );
-		if( i >= nSize ){
-			pShare->m_sTagJump.m_aTagJumpKeywords[i][0] = L'\0';
-		}
-		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sTagJump.m_aTagJumpKeywords[i] );
-	}
+	cProfile.IOProfileDataSet( pszSecName, L"TagJumpKeyword",        pShare->m_sTagJump.m_aTagJumpKeywords );
 	cProfile.IOProfileData( pszSecName, L"m_bTagJumpICase"		, pShare->m_sTagJump.m_bTagJumpICase );
 	cProfile.IOProfileData( pszSecName, L"m_bTagJumpAnyWhere"	, pShare->m_sTagJump.m_bTagJumpPartialMatch);
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプの
