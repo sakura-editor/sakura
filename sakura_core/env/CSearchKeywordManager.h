@@ -17,12 +17,12 @@
 //共有メモリ内構造体
 struct SShare_SearchKeywords{
 	// -- -- 検索キー -- -- //
-	StaticVector< StaticString<_MAX_PATH>, MAX_SEARCHKEY,  const WCHAR*>	m_aSearchKeys;
-	StaticVector< StaticString<_MAX_PATH>, MAX_REPLACEKEY, const WCHAR*>	m_aReplaceKeys;
-	StaticVector< StaticString<MAX_GREP_PATH>, MAX_GREPFILE,   const WCHAR*>	m_aGrepFiles;
-	StaticVector< StaticString<MAX_GREP_PATH>, MAX_GREPFOLDER, const WCHAR*>	m_aGrepFolders;
-	StaticVector< StaticString<MAX_EXCLUDE_PATH>, MAX_EXCLUDEFILE,   const WCHAR*>	m_aExcludeFiles;
-	StaticVector< StaticString<MAX_EXCLUDE_PATH>, MAX_EXCLUDEFOLDER, const WCHAR*>	m_aExcludeFolders;
+	StaticVector<StaticString<_MAX_PATH>, MAX_SEARCHKEY, std::wstring_view>	m_aSearchKeys;
+	StaticVector<StaticString<_MAX_PATH>, MAX_REPLACEKEY, std::wstring_view>	m_aReplaceKeys;
+	StaticVector<StaticString<MAX_GREP_PATH>, MAX_GREPFILE, std::wstring_view>	m_aGrepFiles;
+	StaticVector<StaticString<MAX_GREP_PATH>, MAX_GREPFOLDER, std::wstring_view>	m_aGrepFolders;
+	StaticVector<StaticString<MAX_EXCLUDE_PATH>, MAX_EXCLUDEFILE, std::wstring_view>	m_aExcludeFiles;
+	StaticVector<StaticString<MAX_EXCLUDE_PATH>, MAX_EXCLUDEFOLDER, std::wstring_view>	m_aExcludeFolders;
 };
 
 //! 検索キーワード管理

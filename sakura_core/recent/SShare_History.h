@@ -24,7 +24,7 @@ struct SShare_History{
 	bool							m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
 
 	//MRU除外リスト一覧
-	StaticVector< StaticString<_MAX_PATH>, MAX_MRU,  const WCHAR* >	m_aExceptMRU;
+	StaticVector<StaticString<_MAX_PATH>, MAX_MRU, std::wstring_view>	m_aExceptMRU;
 
 	//MRU以外の情報
 	SFilePath													m_szIMPORTFOLDER;	// インポートディレクトリの履歴
