@@ -21,8 +21,79 @@
 #include "_main/CControlProcess.h"
 #include "config/app_constants.h"
 
-void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
-	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize );
+using OptionStr = std::optional<std::wstring>;
+
+void ShareData_IO_LogFont(
+	CDataProfile& cProfile,
+	std::wstring_view pszSecName,
+	std::wstring_view pszKeyLf,
+	LOGFONT& lf,
+	INT& nPointSize,
+	const OptionStr& optPointSizeKey = std::nullopt,
+	const OptionStr& optFaceNameKey = std::nullopt
+)
+{
+	const auto ret1 = cProfile.IOProfileData( pszSecName, optPointSizeKey.value_or(L"nPointSize"), nPointSize);
+
+	std::wstring strEntryValue;
+	if (cProfile.IsWritingMode()) {
+		strEntryValue = std::format(L"{},{},{},{},{},{},{},{},{},{},{},{},{}",
+			lf.lfHeight,
+			lf.lfWidth,
+			lf.lfEscapement,
+			lf.lfOrientation,
+			lf.lfWeight,
+			lf.lfItalic,
+			lf.lfUnderline,
+			lf.lfStrikeOut,
+			lf.lfCharSet,
+			lf.lfOutPrecision,
+			lf.lfClipPrecision,
+			lf.lfQuality,
+			lf.lfPitchAndFamily
+		);
+	}
+
+	const auto ret2 = cProfile.IOProfileData(pszSecName, pszKeyLf, strEntryValue);
+
+	if (ret2 && cProfile.IsReadingMode()) {
+		LOGFONT lfTemp{};
+		if (13 == ::swscanf_s(
+			strEntryValue.c_str(),
+			L"%d,%d,%d,%d,%d,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
+			&lfTemp.lfHeight,
+			&lfTemp.lfWidth,
+			&lfTemp.lfEscapement,
+			&lfTemp.lfOrientation,
+			&lfTemp.lfWeight,
+			&lfTemp.lfItalic,
+			&lfTemp.lfUnderline,
+			&lfTemp.lfStrikeOut,
+			&lfTemp.lfCharSet,
+			&lfTemp.lfOutPrecision,
+			&lfTemp.lfClipPrecision,
+			&lfTemp.lfQuality,
+			&lfTemp.lfPitchAndFamily
+		))
+		{
+			lf = lfTemp;
+
+			if (ret1 && 0 != nPointSize) {
+				// DPI変更してもフォントのポイントサイズが変わらないように
+				// ポイント数からピクセル数に変換する
+				lf.lfHeight = -DpiPointsToPixels( abs(nPointSize), 10 );	// pointSize: 1/10ポイント単位のサイズ
+			}
+			else {
+				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
+				nPointSize = DpiPixelsToPoints( abs(lf.lfHeight), 10 );		// （従来フォントダイアログで小数点は指定不可）
+			}
+		}
+	}
+
+	if (ret2) {
+		cProfile.IOProfileData(pszSecName, optFaceNameKey.value_or(std::format(L"{}FaceName", pszKeyLf)), StringBufferW(lf.lfFaceName));
+	}
+}
 
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
@@ -517,8 +588,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	
 	// ai 02/05/23 Add S
 	{// Keword Help Font
-		ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"khlf", L"khps", L"khlfFaceName",
-			common.m_sHelper.m_lf, common.m_sHelper.m_nPointSize );
+		ShareData_IO_LogFont( cProfile, pszSecName, L"khlf", common.m_sHelper.m_lf, common.m_sHelper.m_nPointSize, L"khps" );
 	}// Keword Help Font
 	
 	cProfile.IOProfileData( pszSecName, L"nMRUArrNum_MAX"			, common.m_sGeneral.m_nMRUArrNum_MAX );
@@ -552,8 +622,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, L"bTabMultiLine"			, common.m_sTabBar.m_bTabMultiLine );	// タブ多段
 	cProfile.IOProfileData(pszSecName, L"eTabPosition", common.m_sTabBar.m_eTabPosition );	// タブ位置
 
-	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lfTabFont", L"lfTabFontPs", L"lfTabFaceName",
-		common.m_sTabBar.m_lf, common.m_sTabBar.m_nPointSize );
+	ShareData_IO_LogFont( cProfile, pszSecName, L"lfTabFont", common.m_sTabBar.m_lf, common.m_sTabBar.m_nPointSize, L"lfTabFontPs", L"lfTabFaceName" );
 	
 	cProfile.IOProfileData( pszSecName, L"nTabMaxWidth"			, common.m_sTabBar.m_nTabMaxWidth );
 	cProfile.IOProfileData( pszSecName, L"nTabMinWidth"			, common.m_sTabBar.m_nTabMinWidth );
@@ -943,8 +1012,7 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 
 	const WCHAR* pszSecName = L"Font";
 	CommonSetting_View& view = pShare->m_Common.m_sView;
-	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lf", L"nPointSize", L"lfFaceName",
-		view.m_lf, view.m_nPointSize );
+	ShareData_IO_LogFont( cProfile, pszSecName, L"lf", view.m_lf, view.m_nPointSize );
 
 	cProfile.IOProfileData( pszSecName, L"bFontIs_FIXED_PITCH", view.m_bFontIs_FIXED_PITCH );
 }
@@ -1232,13 +1300,11 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 			auto_sprintf( szKeyName,  L"PS[%02d].lfHeader",			i );
 			auto_sprintf( szKeyName2, L"PS[%02d].nHeaderPointSize",	i );
 			auto_sprintf( szKeyName3, L"PS[%02d].lfHeaderFaceName",	i );
-			ShareData_IO_Sub_LogFont( cProfile, pszSecName, szKeyName,szKeyName2, szKeyName3,
-				printsetting.m_lfHeader, printsetting.m_nHeaderPointSize );
+			ShareData_IO_LogFont( cProfile, pszSecName, szKeyName, printsetting.m_lfHeader, printsetting.m_nHeaderPointSize, szKeyName2, szKeyName3 );
 			auto_sprintf( szKeyName,  L"PS[%02d].lfFooter",			i );
 			auto_sprintf( szKeyName2, L"PS[%02d].nFooterPointSize",	i );
 			auto_sprintf( szKeyName3, L"PS[%02d].lfFooterFaceName",	i );
-			ShareData_IO_Sub_LogFont( cProfile, pszSecName, szKeyName,szKeyName2, szKeyName3,
-				printsetting.m_lfFooter, printsetting.m_nFooterPointSize );
+			ShareData_IO_LogFont( cProfile, pszSecName, szKeyName, printsetting.m_lfFooter, printsetting.m_nFooterPointSize, szKeyName2, szKeyName3 );
 		}
 
 		auto_sprintf( szKeyName, L"PS[%02d].szDriver", i );
@@ -1747,8 +1813,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	{ // フォント設定
 		cProfile.IOProfileData( pszSecName, L"bUseTypeFont", types.m_bUseTypeFont );
-		ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lf", L"nPointSize", L"lfFaceName",
-			types.m_lf, types.m_nPointSize );
+		ShareData_IO_LogFont( cProfile, pszSecName, L"lf", types.m_lf, types.m_nPointSize );
 	}
 }
 
@@ -2319,61 +2384,6 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
-	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize )
-{
-	const WCHAR* pszForm = L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
-	WCHAR		szKeyData[1024];
-
-	cProfile.IOProfileData( pszSecName, pszKeyPointSize, nPointSize );	// 2009.10.01 ryoji
-	if( cProfile.IsReadingMode() ){
-		if( cProfile.IOProfileData(pszSecName, pszKeyLf, StringBufferW(szKeyData)) ){
-			int buf[13];
-			scan_ints( szKeyData, pszForm, buf );
-			lf.lfHeight			= buf[ 0];
-			lf.lfWidth			= buf[ 1];
-			lf.lfEscapement		= buf[ 2];
-			lf.lfOrientation	= buf[ 3];
-			lf.lfWeight			= buf[ 4];
-			lf.lfItalic			= (BYTE)buf[ 5];
-			lf.lfUnderline		= (BYTE)buf[ 6];
-			lf.lfStrikeOut		= (BYTE)buf[ 7];
-			lf.lfCharSet		= (BYTE)buf[ 8];
-			lf.lfOutPrecision	= (BYTE)buf[ 9];
-			lf.lfClipPrecision	= (BYTE)buf[10];
-			lf.lfQuality		= (BYTE)buf[11];
-			lf.lfPitchAndFamily	= (BYTE)buf[12];
-			if( nPointSize != 0 ){
-				// DPI変更してもフォントのポイントサイズが変わらないように
-				// ポイント数からピクセル数に変換する
-				lf.lfHeight = -DpiPointsToPixels( abs(nPointSize), 10 );	// pointSize: 1/10ポイント単位のサイズ
-			}else{
-				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
-				nPointSize = DpiPixelsToPoints( abs(lf.lfHeight), 10 );		// （従来フォントダイアログで小数点は指定不可）
-			}
-		}
-	}else{
-		auto_sprintf( szKeyData, pszForm,
-			lf.lfHeight,
-			lf.lfWidth,
-			lf.lfEscapement,
-			lf.lfOrientation,
-			lf.lfWeight,
-			lf.lfItalic,
-			lf.lfUnderline,
-			lf.lfStrikeOut,
-			lf.lfCharSet,
-			lf.lfOutPrecision,
-			lf.lfClipPrecision,
-			lf.lfQuality,
-			lf.lfPitchAndFamily
-		);
-		cProfile.IOProfileData(pszSecName, pszKeyLf, StringBufferW(szKeyData));
-	}
-	
-	cProfile.IOProfileData(pszSecName, pszKeyFaceName, StringBufferW(lf.lfFaceName));
-}
-
 void CShareData_IO::ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fileTree, const WCHAR* pszSecName )
 {
 	cProfile.IOProfileData( pszSecName, L"bFileTreeProject", fileTree.m_bProject );
