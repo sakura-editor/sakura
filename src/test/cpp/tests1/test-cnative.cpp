@@ -24,6 +24,10 @@ TEST(CStringRef, CStringRef)
 	EXPECT_FALSE(v1.IsValid());
 	EXPECT_EQ(L'\0', v1.At(0));
 
+	EXPECT_THAT(v1.length(), Eq(0));
+	EXPECT_THAT(v1.empty(), IsTrue());
+	EXPECT_THAT(v1, StrEq(L""));
+
 	CStringRef v2(sz, cch);
 	EXPECT_STREQ(sz, v2.GetPtr());
 	EXPECT_EQ(cch, v2.GetLength());
@@ -33,6 +37,10 @@ TEST(CStringRef, CStringRef)
 	EXPECT_EQ(L's', v2.At(2));
 	EXPECT_EQ(L't', v2.At(3));
 	EXPECT_EQ(L'\0', v2.At(4));
+
+	EXPECT_THAT(v2.length(), Eq(4));
+	EXPECT_THAT(v2.empty(), IsFalse());
+	EXPECT_THAT(v2, StrEq(L"test"));
 
 	CNativeW cmem(sz, cch);
 	CStringRef v3(cmem);
@@ -936,4 +944,20 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 
 	// 対処方法 関数コメントにある仕様通りに修正する。
 	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
+}
+
+TEST(CNativeW, length001)
+{
+	CNativeW mem{ L"test" };
+	EXPECT_THAT(mem.length(), Eq(4));
+	EXPECT_THAT(mem.empty(), IsFalse());
+	EXPECT_THAT(mem, StrEq(L"test"));
+}
+
+TEST(CNativeW, length101)
+{
+	CNativeW mem{};
+	EXPECT_THAT(mem.length(), Eq(0));
+	EXPECT_THAT(mem.empty(), IsTrue());
+	EXPECT_THAT(mem, StrEq(L""));
 }

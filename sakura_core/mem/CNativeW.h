@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -17,6 +17,7 @@
 class CNativeW;
 
 //! 文字列への参照を保持するクラス
+// TODO: いつか廃止する
 class CStringRef final{
 public:
 	CStringRef() noexcept = default;
@@ -28,6 +29,29 @@ public:
 	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
 	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
 	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
+
+	/*!
+	 * @brief 文字列が空かどうか調べる
+	 */
+	constexpr bool empty() const noexcept { return 0 == length(); }
+
+	/*!
+	 * @brief 文字列長を取得する
+	 */
+	constexpr size_t length() const noexcept
+	{
+		return static_cast<size_t>(m_nDataLen);
+	}
+
+	/*!
+	 * @brief 文字列参照に変換する
+	 *
+	 * explicitを付けないのはC++の作法に照らして適切でない。
+	 * C++への移行を加速させるために仮置き。
+	 *
+	 * @return 文字列参照
+	 */
+	constexpr /* implicit */ operator std::wstring_view()   const & noexcept { return std::wstring_view{ m_pData, m_nDataLen }; }
 
 private:
 	const wchar_t*	m_pData = nullptr;
@@ -46,10 +70,14 @@ CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false);
 class CNativeW final : public CNative{
 	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 
+	using Me = CNativeW;
+
 public:
 	//コンストラクタ・デストラクタ
 	CNativeW() noexcept = default;
 	CNativeW( const wchar_t* pData, size_t nDataLen ); //!< nDataLenは文字単位。
+
+	// TODO: いつかexplicitを付ける
 	CNativeW( const wchar_t* pData );
 
 	/*! メモリ確保済みかどうか */
@@ -90,6 +118,19 @@ public:
 	wchar_t* GetStringPtr()
 	{
 		return reinterpret_cast<wchar_t*>(GetRawPtr());
+	}
+
+	/*!
+	 * @brief 文字列が空かどうか調べる
+	 */
+	bool empty() const noexcept { return 0 == length(); }
+
+	/*!
+	 * @brief 文字列長を取得する
+	 */
+	size_t length() const noexcept
+	{
+		return static_cast<size_t>(GetStringLength());
 	}
 
 	//特殊
@@ -133,6 +174,42 @@ public:
 
 	void Replace( std::wstring_view strFrom, std::wstring_view strTo );   //!< 文字列置換
 	void Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen );   //!< 文字列置換
+
+	/*!
+	 * @brief 文字列を代入する演算子
+	 *
+	 * implicitなコンストラクタと競合するので追加できない。
+	 *
+	 * @param rhs [in] 代入元文字列
+	 * @return 自分自身への参照
+	 */
+	 // TODO: いつかコメントインする
+	//Me& operator = (std::wstring_view rhs) noexcept { SetString(rhs.data(), rhs.length()); return *this; }
+
+	Me& operator = (const std::wstring& rhs) noexcept { return operator = (static_cast<std::wstring_view>(rhs)); }
+	Me& operator = (const std::filesystem::path& path) noexcept { return operator = (path.native()); }
+
+	/*!
+	 * @brief 文字列を代入する演算子
+	 *
+	 * @param rhs [in] 代入元文字列
+	 * @return 自分自身への参照
+	 */
+	template<size_t N>
+	Me& operator = (const WCHAR (&rhs)[N]) noexcept
+	{
+		return operator = (std::wstring_view(rhs, N - 1));
+	}
+
+	/*!
+	 * @brief 文字列参照に変換する
+	 *
+	 * explicitを付けないのはC++の作法に照らして適切でない。
+	 * C++への移行を加速させるために仮置き。
+	 *
+	 * @return 文字列参照
+	 */
+	/* implicit */ operator std::wstring_view() const & noexcept { return std::wstring_view(GetStringPtr(), static_cast<size_t>(GetStringLength())); }
 
 public:
 	// -- -- staticインターフェース -- -- //
