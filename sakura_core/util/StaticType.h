@@ -25,8 +25,6 @@
  *
  * 有効要素数と固定長バッファをクラス内部に保持する可変長配列クラス。
  * ヒープ領域を使用しないため、共有メモリに配置できる。
- * 既存コードにある生配列を最小の変更で置き換えるために、
- * C++の作法に照らして不適切な演算子を多く定義している。
  *
  * @code{.cpp}
  * using SMruList = StaticVector<SFilePath, 50>;
@@ -98,10 +96,9 @@ public:
 	constexpr       auto* data()        noexcept { return std::data(m_aElements); }
 	constexpr const auto* data()  const noexcept { return std::data(m_aElements); }
 
-	constexpr explicit		 operator std::span<ElementType, size()>() & noexcept { return std::span<ElementType, size()>(data(), size()); }
-	constexpr /* implicit */ operator std::span<ElementType>() & noexcept { return operator std::span<ElementType, size()>(); }
-	constexpr /* implicit */ operator std::span<const ElementType>() const & noexcept { return std::span(data(), count()); }
-	constexpr /* implicit */ operator const ElementType*() const & noexcept { return data(); }
+	constexpr explicit operator std::span<ElementType, size()>() & noexcept { return std::span<ElementType, size()>(data(), size()); }
+	constexpr explicit operator std::span<ElementType>() & noexcept { return operator std::span<ElementType, size()>(); }
+	constexpr explicit operator std::span<const ElementType>() const & noexcept { return std::span<const ElementType, size()>(data(), count()); }
 
 	//要素アクセス
 	/*!
