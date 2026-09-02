@@ -61,8 +61,8 @@ public:
 	/*!
 	 * @brief データを指定して構築する
 	 */
-	template<std::ranges::sized_range T>
-	constexpr explicit StaticVector(const T& source)
+	template<std::ranges::sized_range S>
+	constexpr explicit StaticVector(const S& source)
 	{
 		// 要素数がバッファサイズを越えたら例外を投げる
 		const auto sourceSize = std::size(source);
