@@ -56,7 +56,7 @@ private:
 	using Me = StaticVector<ElementType, MAX_SIZE, SET_TYPE>;
 
 public:
-	static int max_size() noexcept { return MAX_SIZE; }
+	static constexpr size_t size() noexcept { return MAX_SIZE; }
 
 	StaticVector() = default;
 
@@ -68,8 +68,8 @@ public:
 	{
 		// 要素数がバッファサイズを越えたら例外を投げる
 		const auto sourceSize = std::size(source);
-		if (static_cast<size_t>(MAX_SIZE) < sourceSize) {
-			throw std::out_of_range(std::format("source has too many elements. (elements: {}, allowed: {})", sourceSize, MAX_SIZE));
+		if (size() < sourceSize) {
+			throw std::out_of_range(std::format("source has too many elements. (elements: {}, allowed: {})", sourceSize, size()));
 		}
 
 		m_nCount = static_cast<int>(sourceSize);
@@ -86,19 +86,21 @@ public:
 	}
 
 	//属性
-	constexpr int size() const noexcept { return m_nCount; }
+	constexpr size_t count() const noexcept { return m_nCount; }
+	constexpr bool empty() const noexcept { return 0 == m_nCount; }
 
 	constexpr auto begin() noexcept { return m_aElements.begin(); }
-	constexpr auto end() noexcept { return m_aElements.begin() + MAX_SIZE; }
+	constexpr auto end() noexcept { return m_aElements.begin() + size(); }
 
 	auto begin() const noexcept { return m_aElements.begin(); }
-	auto end() const noexcept { return m_aElements.begin() + m_nCount; }
+	auto end() const noexcept { return m_aElements.begin() + count(); }
 
 	constexpr       auto* data()        noexcept { return std::data(m_aElements); }
 	constexpr const auto* data()  const noexcept { return std::data(m_aElements); }
 
-	constexpr explicit		 operator std::span<ElementType, MAX_SIZE>() & noexcept { return std::span<ElementType, MAX_SIZE>{ data(), MAX_SIZE }; }
-	constexpr /* implicit */ operator std::span<ElementType>() & noexcept { return operator std::span<ElementType, MAX_SIZE>(); }
+	constexpr explicit		 operator std::span<ElementType, size()>() & noexcept { return std::span<ElementType, size()>(data(), size()); }
+	constexpr /* implicit */ operator std::span<ElementType>() & noexcept { return operator std::span<ElementType, size()>(); }
+	constexpr /* implicit */ operator std::span<const ElementType>() const & noexcept { return std::span(data(), count()); }
 	constexpr /* implicit */ operator const ElementType*() const & noexcept { return data(); }
 
 	//要素アクセス
@@ -112,8 +114,8 @@ public:
 	constexpr ElementType& operator[](size_t nIndex)
 	{
 		// 有効要素数を越えたら例外を投げる
-		if (size_t(m_nCount) <= nIndex) {
-			throw std::out_of_range(std::format("nIndex is out of range. (nIndex: {}, allowed: {})", nIndex, m_nCount - 1));
+		if (count() <= nIndex) {
+			throw std::out_of_range(std::format("nIndex is out of range. (nIndex: {}, allowed: {})", nIndex, count() - 1));
 		}
 
 		return m_aElements[nIndex];
@@ -129,8 +131,8 @@ public:
 	constexpr const ElementType& operator[](size_t nIndex) const
 	{
 		// バッファサイズを越えたら例外を投げる
-		if (size_t(MAX_SIZE) <= nIndex) {
-			throw std::out_of_range(std::format("nIndex is out of range. (nIndex: {}, allowed: {})", nIndex, MAX_SIZE - 1));
+		if (size() <= nIndex) {
+			throw std::out_of_range(std::format("nIndex is out of range. (nIndex: {}, allowed: {})", nIndex, size() - 1));
 		}
 
 		return m_aElements[nIndex];
@@ -180,8 +182,8 @@ public:
 	constexpr void resize(size_t nNewSize)
 	{
 		// バッファサイズを越えたら例外を投げる
-		if (size_t(MAX_SIZE) < nNewSize) {
-			throw std::out_of_range(std::format("nNewSize is out of range. (nNewSize: {}, allowed: {})", nNewSize, MAX_SIZE - 1));
+		if (size() < nNewSize) {
+			throw std::out_of_range(std::format("nNewSize is out of range. (nNewSize: {}, allowed: {})", nNewSize, size() - 1));
 		}
 		m_nCount = static_cast<int>(nNewSize);
 	}
@@ -211,9 +213,13 @@ public:
 	 */
 	 // TODO: いつか廃止する
 	void SetSizeLimit(){
-		if( MAX_SIZE < m_nCount ){
-			m_nCount = MAX_SIZE;
-		}else if( m_nCount < 0 ){
+		if (const auto maxSize = static_cast<int>(size());
+			maxSize < m_nCount)
+		{
+			m_nCount = maxSize;
+		}
+		else if (m_nCount < 0)
+		{
 			m_nCount = 0;
 		}
 	}
