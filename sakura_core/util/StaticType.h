@@ -12,10 +12,40 @@
 #include "util/string_ex.h"
 #include "debug/Debug2.h"
 
-//! ヒープを用いないvector
-//2007.09.23 kobake 作成。
+#include <array>
+#include <initializer_list>
+#include <ranges>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+
+/*!
+ * @brief ヒープを用いない可変長配列クラス
+ *
+ * 有効要素数と固定長バッファをクラス内部に保持する可変長配列クラス。
+ * ヒープ領域を使用しないため、共有メモリに配置できる。
+ * 既存コードにある生配列を最小の変更で置き換えるために、
+ * C++の作法に照らして不適切な演算子を多く定義している。
+ *
+ * @code{.cpp}
+ * using SMruList = StaticVector<SFilePath, 50>;
+ * SMruList mruList{};
+ *
+ * // 以下とおおむね同等。
+ * int nMruFileNum = 0;
+ * SFilePath aMruFileArr[50] {};
+ * @endcode
+ *
+ * @tparam ELEMENT_TYPE 要素型。
+ * @tparam MAX_SIZE バッファの要素数。
+ * @tparam SET_TYPE push_backで追加する型。
+ *
+ * @author kobake
+ * @date 2007.09.23 kobake 作成
+ */
 template <class ELEMENT_TYPE, int MAX_SIZE, class SET_TYPE = const ELEMENT_TYPE&>
-class StaticVector {
+class StaticVector final {
 public:
 	//型
 	using ElementType = ELEMENT_TYPE;
@@ -23,34 +53,40 @@ public:
 private:
 	using ArrayType = std::array<ElementType, MAX_SIZE>;
 
+	using Me = StaticVector<ElementType, MAX_SIZE, SET_TYPE>;
+
 public:
 	static int max_size() noexcept { return MAX_SIZE; }
 
 	StaticVector() = default;
 
-	constexpr explicit StaticVector(std::initializer_list<ElementType> source)
-		: StaticVector(std::span<const ElementType>{ source.begin(), source.size() })
-	{
-	}
-
+	/*!
+	 * @brief データを指定して構築する
+	 */
 	template<std::ranges::sized_range T>
 	constexpr explicit StaticVector(const T& source)
 	{
-		const auto sourceSize = static_cast<size_t>(std::size(source));
+		// 要素数がバッファサイズを越えたら例外を投げる
+		const auto sourceSize = std::size(source);
 		if (static_cast<size_t>(MAX_SIZE) < sourceSize) {
-			throw std::out_of_range("source is out of range.");
+			throw std::out_of_range(std::format("source has too many elements. (elements: {}, allowed: {})", sourceSize, MAX_SIZE));
 		}
 
 		m_nCount = static_cast<int>(sourceSize);
 
-		auto itSource = std::ranges::begin(source);
-		for (int i = 0; i < m_nCount; ++i, ++itSource) {
-			m_aElements[i] = static_cast<ElementType>(*itSource);
-		}
+		std::ranges::copy(source, m_aElements.begin());
+	}
+
+	/*!
+	 * @brief イニシャライザで構築する
+	 */
+	constexpr explicit StaticVector(std::initializer_list<const ElementType> source)
+		: StaticVector(std::span(source.begin(), source.size()))
+	{
 	}
 
 	//属性
-	int size() const noexcept { return m_nCount; }
+	constexpr int size() const noexcept { return m_nCount; }
 
 	constexpr auto begin() noexcept { return m_aElements.begin(); }
 	constexpr auto end() noexcept { return m_aElements.begin() + MAX_SIZE; }
@@ -58,43 +94,94 @@ public:
 	auto begin() const noexcept { return m_aElements.begin(); }
 	auto end() const noexcept { return m_aElements.begin() + m_nCount; }
 
+	constexpr       auto* data()        noexcept { return std::data(m_aElements); }
+	constexpr const auto* data()  const noexcept { return std::data(m_aElements); }
+
+	constexpr explicit		 operator std::span<ElementType, MAX_SIZE>() & noexcept { return std::span<ElementType, MAX_SIZE>{ data(), MAX_SIZE }; }
+	constexpr /* implicit */ operator std::span<ElementType>() & noexcept { return operator std::span<ElementType, MAX_SIZE>(); }
+	constexpr /* implicit */ operator const ElementType*() const & noexcept { return data(); }
+
 	//要素アクセス
-	ElementType& operator[](size_t nIndex) noexcept
+	/*!
+	 * @brief 指定した要素を取得する（読み書き可能。）
+	 *
+	 * @param nIndex [in] 取得する要素のインデックス。
+	 * @returns 指定した要素への参照。（読み書き可能。）
+	 * @throws std::out_of_range インデックスがバッファの要素数を超える場合。
+	 */
+	constexpr ElementType& operator[](size_t nIndex)
 	{
-		assert(nIndex<MAX_SIZE);
-		assert_warning(0 <= m_nCount);
-		assert_warning(0 == m_nCount || nIndex < size_t(m_nCount));
+		// 有効要素数を越えたら例外を投げる
+		if (size_t(m_nCount) <= nIndex) {
+			throw std::out_of_range(std::format("nIndex is out of range. (nIndex: {}, allowed: {})", nIndex, m_nCount - 1));
+		}
+
 		return m_aElements[nIndex];
 	}
+
+	/*!
+	 * @brief 指定した要素を取得する（読み取り専用。）
+	 *
+	 * @param nIndex [in] 取得する要素のインデックス。
+	 * @returns 指定した要素への参照。（読み取り専用。）
+	 * @throws std::out_of_range インデックスがバッファの要素数を超える場合。
+	 */
 	constexpr const ElementType& operator[](size_t nIndex) const
 	{
-		if (MAX_SIZE <= nIndex) {
-			throw std::out_of_range("nIndex is out of range.");
+		// バッファサイズを越えたら例外を投げる
+		if (size_t(MAX_SIZE) <= nIndex) {
+			throw std::out_of_range(std::format("nIndex is out of range. (nIndex: {}, allowed: {})", nIndex, MAX_SIZE - 1));
 		}
+
 		return m_aElements[nIndex];
 	}
 
 	//操作
 	void clear() noexcept { m_nCount=0; }
+
+	/*!
+	 * @brief 配列末尾に要素を追加する
+	 *
+	 * @tparam Args... 要素の構築に必要な引数群。
+	 * @param args [in] 追加するデータ。
+	 * @throws std::out_of_range 有効要素数が既にバッファの要素数に達していた場合。
+	 */
 	template<typename ... Args>
-	void emplace_back(Args ...args)
+	void emplace_back(Args&& ...args)
 	{
-		if (MAX_SIZE <= m_nCount) {
-			throw std::out_of_range("m_nCount is out of range.");
-		}
-		m_aElements[m_nCount++] = ElementType(args...);
+		// 変更前の有効要素数を取得する
+		const auto countOld = m_nCount;
+
+		// 有効要素数を1増やす
+		resize(countOld + 1);
+
+		// 末尾要素に代入する
+		m_aElements[countOld] = ElementType(std::forward<Args>(args)...);
 	}
+
 	void push_back(SET_TYPE e)
 	{
-		if (MAX_SIZE <= m_nCount) {
-			throw std::out_of_range("m_nCount is out of range.");
-		}
-		m_aElements[m_nCount++] = e;
+		// 変更前の有効要素数を取得する
+		const auto countOld = m_nCount;
+
+		// 有効要素数を1増やす
+		resize(countOld + 1);
+
+		// 末尾要素に代入する
+		m_aElements[countOld] = e;
 	}
-	void resize(size_t nNewSize)
+
+	/*!
+	 * @brief 有効要素数を更新する
+	 *
+	 * @param nNewSize [in] 新しい有効要素数。
+	 * @throws std::out_of_range 有効要素数がバッファの要素数を超える場合。
+	 */
+	constexpr void resize(size_t nNewSize)
 	{
-		if (size_t(MAX_SIZE) <= nNewSize) {
-			throw std::out_of_range("nNewSize is out of range.");
+		// バッファサイズを越えたら例外を投げる
+		if (size_t(MAX_SIZE) < nNewSize) {
+			throw std::out_of_range(std::format("nNewSize is out of range. (nNewSize: {}, allowed: {})", nNewSize, MAX_SIZE - 1));
 		}
 		m_nCount = static_cast<int>(nNewSize);
 	}
@@ -103,7 +190,26 @@ public:
 	ElementType* dataPtr() noexcept { return &m_aElements.front();}
 
 	//特殊
+	/*!
+	 * @brief 有効要素数への参照を取得する
+	 *
+	 * カプセル化を無効化する効果がある。
+	 *
+	 * 存在自体が「問題あり」寄り。
+	 *
+	 * CRecent派生クラスで使ってるので削除できない。
+	 */
+	 // TODO: いつか廃止する
 	int& _GetSizeRef(){ return m_nCount; }
+
+	/*!
+	 * @brief の有効要素数を妥当な値に更新する
+	 *
+	 * 有効要素数に不正な値を入れてしまったあとに補正するためのもの。
+	 *
+	 * 存在自体が「問題あり」寄り。
+	 */
+	 // TODO: いつか廃止する
 	void SetSizeLimit(){
 		if( MAX_SIZE < m_nCount ){
 			m_nCount = MAX_SIZE;

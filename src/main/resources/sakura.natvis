@@ -13,4 +13,14 @@
     <DisplayString Condition="m_szData[0] == 0">empty</DisplayString>
     <DisplayString Condition="m_szData[0] != 0">{m_szData._Elems,su}</DisplayString>
   </Type>
+  <Type Name="StaticVector&lt;*,*,*&gt;">
+    <DisplayString Condition="m_nCount == 0">empty (0/{$T2,d})</DisplayString>
+    <DisplayString Condition="m_nCount != 0">[{m_aElements._Elems,[m_nCount]na}] ({m_nCount,d}/{$T2,d})</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>m_nCount</Size>
+        <ValuePointer>m_aElements._Elems</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
 </AutoVisualizer>

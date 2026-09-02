@@ -9,6 +9,17 @@
 
 namespace basis {
 
+static_assert([] {
+	const StaticVector<size_t, 3> vec{ 10u, 20u, 30u };
+	return vec.size() == 3 && vec[0] == 10u && vec[1] == 20u && vec[2] == 30u;
+}());
+
+static_assert([] {
+	const std::vector<size_t> source{ 10u, 20u, 30u };
+	const StaticVector<size_t, 3> vec(source);
+	return vec.size() == 3 && vec[0] == 10u && vec[1] == 20u && vec[2] == 30u;
+}());
+
 /*!
 	@brief StaticVectorのテスト
  */
@@ -36,13 +47,24 @@ TEST(StaticVector, test001)
 
 	// 範囲外アクセス
 	try {
+		auto cv = vec;
+		cv[3];
+
+		FAIL() << "Expected std::out_of_range to be thrown";
+	}
+	catch (const std::out_of_range& e) {
+		EXPECT_THAT(e.what(), StrEq("nIndex is out of range. (nIndex: 3, allowed: 2)"));
+	}
+
+	// 範囲外アクセス
+	try {
 		const auto& cv = vec;
 		cv[3];
 
 		FAIL() << "Expected std::out_of_range to be thrown";
 	}
 	catch (const std::out_of_range& e) {
-		EXPECT_STREQ(e.what(), "nIndex is out of range.");
+		EXPECT_THAT(e.what(), StrEq("nIndex is out of range. (nIndex: 3, allowed: 2)"));
 	}
 
 	auto* ptr = vec.dataPtr();
@@ -106,7 +128,7 @@ TEST(StaticVector, test001)
 		FAIL() << "Expected std::out_of_range to be thrown";
 	}
 	catch (const std::out_of_range& e) {
-		EXPECT_STREQ(e.what(), "source is out of range.");
+		EXPECT_THAT(e.what(), StrEq("source has too many elements. (elements: 4, allowed: 3)"));
 	}
 
 	// 長さ3の配列を用意する
@@ -119,6 +141,17 @@ TEST(StaticVector, test001)
 	EXPECT_THAT(vec[1], Eq(20u));
 	EXPECT_THAT(vec[2], Eq(30u));
 	EXPECT_THAT(std::distance(vec.begin(), vec.end()), Eq(3));
+
+	const std::vector<size_t> vectorSource{ 10u, 20u, 30u };
+	vec = StaticVector<size_t, 3>(vectorSource);
+
+	EXPECT_THAT(vec.size(), Eq(3));
+	EXPECT_THAT(vec[0], Eq(10u));
+	EXPECT_THAT(vec[1], Eq(20u));
+	EXPECT_THAT(vec[2], Eq(30u));
+
+	const std::vector<size_t> tooLargeVector{ 10u, 20u, 30u, 40u };
+	EXPECT_THROW((StaticVector<size_t, 3>(tooLargeVector)), std::out_of_range);
 }
 
 /*!
