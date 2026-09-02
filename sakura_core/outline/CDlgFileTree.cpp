@@ -740,7 +740,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 						SFileTreeItem item;
 						item.m_eFileTreeItemType = EFileTreeItemType_File;
 						item.m_szTargetPath = cmemFile;
-						item.m_szLabelName = std::wstring_view(GetFileTitlePointer(aFileNames[i].c_str()));
+						item.m_szLabelName = std::filesystem::path(aFileNames[i]).filename();
 						htiInsert = InsertTreeItem(item, htiParent, htiInsert);
 						if( htiItemFirst == nullptr ){
 							htiItemFirst = htiInsert;
