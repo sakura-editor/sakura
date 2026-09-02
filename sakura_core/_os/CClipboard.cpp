@@ -230,11 +230,13 @@ bool CClipboard::SetText(
 	return true;
 }
 
-bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
+bool CClipboard::SetHtmlText(std::wstring_view text) const
 {
 	if( !m_bOpenResult ){
 		return false;
 	}
+
+	const CNativeW cmemBUf{ text };
 
 	CNativeA cmemUtf8;
 	CUtf8().UnicodeToCode(cmemBUf, cmemUtf8._GetMemory());
