@@ -496,7 +496,7 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 	if( 0 < cmemCurText.GetStringLength() ){
 		GetEditWindow()->m_cDlgReplace.m_strText = cmemCurText.GetStringPtr();
 	}
-	if( 0 < GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.size() ){
+	if (!GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.empty()) {
 		if( GetEditWindow()->m_cDlgReplace.m_nReplaceKeySequence < GetDllShareData().m_Common.m_sSearch.m_nReplaceKeySequence ){
 			GetEditWindow()->m_cDlgReplace.m_strText2 = GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0];	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
 		}

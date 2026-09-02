@@ -155,20 +155,20 @@ void CControlTray::DoGrep()
 		return;
 	}
 
-	if( 0 < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size()
-		&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence ){
+	if (!m_pShareData->m_sSearchKeywords.m_aSearchKeys.empty()
+		&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence) {
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
-	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
+	if (!m_pShareData->m_sSearchKeywords.m_aGrepFiles.empty()) {
 		m_cDlgGrep.m_szFile = m_pShareData->m_sSearchKeywords.m_aGrepFiles[0];		/* 検索ファイル */
 	}
-	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
+	if (!m_pShareData->m_sSearchKeywords.m_aGrepFolders.empty()) {
 		m_cDlgGrep.m_szFolder = m_pShareData->m_sSearchKeywords.m_aGrepFolders[0];	/* 検索フォルダー */
 	}
-	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+	if (!m_pShareData->m_sSearchKeywords.m_aExcludeFiles.empty()) {
 		m_cDlgGrep.m_szExcludeFile = m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0];	/* 除外ファイル */
 	}
-	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+	if (!m_pShareData->m_sSearchKeywords.m_aExcludeFolders.empty()) {
 		m_cDlgGrep.m_szExcludeFolder = m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0];	/* 除外フォルダー */
 	}
 

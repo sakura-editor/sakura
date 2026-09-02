@@ -384,8 +384,8 @@ bool CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText, bool bGetHist
 			bGet = true;
 		}
 		if( bGet ){
-			if( 0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size()
-					&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence ){
+			if (!GetDllShareData().m_sSearchKeywords.m_aSearchKeys.empty()
+					&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence) {
 				cmemCurText.SetString( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );	// 履歴からとってくる
 				return true; // ""でもtrue
 			}else{

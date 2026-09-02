@@ -250,16 +250,16 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
-	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
+	if (m_szFile[0] == L'\0' && !m_pShareData->m_sSearchKeywords.m_aGrepFiles.empty()) {
 		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
-	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
+	if (m_szFolder[0] == L'\0' && !m_pShareData->m_sSearchKeywords.m_aGrepFolders.empty()) {
 		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	
 	/* 除外ファイル */
 	if (m_szExcludeFile[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+		if (!m_pShareData->m_sSearchKeywords.m_aExcludeFiles.empty()) {
 			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
 		}
 		else {
@@ -273,7 +273,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 
 	/* 除外フォルダー */
 	if (m_szExcludeFolder[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+		if (!m_pShareData->m_sSearchKeywords.m_aExcludeFolders.empty()) {
 			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
 		}
 		else {
@@ -571,16 +571,16 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDCANCEL:
 //		::EndDialog( hwndDlg, FALSE );
 		if (m_bSelectOnceThisText) {
-			if (m_pShareData->m_sSearchKeywords.m_aGrepFiles.size()) {
+			if (!m_pShareData->m_sSearchKeywords.m_aGrepFiles.empty()) {
 				wcsncpy_s(m_szFile, std::size(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
 			}
-			if (m_pShareData->m_sSearchKeywords.m_aGrepFolders.size()) {
+			if (!m_pShareData->m_sSearchKeywords.m_aGrepFolders.empty()) {
 				wcsncpy_s(m_szFolder, std::size(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダー */
 			}
-			if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+			if (!m_pShareData->m_sSearchKeywords.m_aExcludeFiles.empty()) {
 				wcsncpy_s(m_szExcludeFile, std::size(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
 			}
-			if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+			if (!m_pShareData->m_sSearchKeywords.m_aExcludeFolders.empty()) {
 				wcsncpy_s(m_szExcludeFolder, std::size(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダー */
 			}
 		}
