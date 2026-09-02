@@ -417,17 +417,6 @@ public:
 	// [[deprecated("Use assign() instead.")]]
 	void Assign(const WCHAR* src) noexcept { assign(std::wstring_view{ src ? src : L"" }); }
 
-	/*!
-	 * @brief ポインタを指定して文字列を割り当てる
-	 *
-	 * @param src [in, opt] 割り当てる文字列を指すポインタ。
-	 *
-	 * @note 引数にはNULLを指定できる
-	 * @note NULLチェックの責任が分散してしまうので廃止予定。
-	 */
-	// TODO: いつか廃止する
-	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
-
 	//各種メソッド
 	int Length() const noexcept { return static_cast<int>(length()); }
 
