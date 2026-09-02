@@ -21,7 +21,7 @@ template <typename T> void SetLines(CDocLineMgr& m, int seq, T begin, T end)
 {
 	for (auto it = begin; it != end; ++it) {
 		CDocLine* line = m.AddNewLine();
-		line->SetDocLineString(it->data(), it->length());
+		line->SetDocLineString(CNativeW(*it), false);
 		line->m_sMark.m_cModified = seq;
 	}
 }
@@ -41,7 +41,7 @@ COpeLineData MakeOpeLineData(std::initializer_list<RawLineData> lines)
 	COpeLineData data;
 	for (RawLineData rawLine : lines) {
 		CLineData line;
-		line.cmemLine = rawLine.line;
+		line.cmemLine = std::wstring_view(rawLine.line);
 		line.nSeq = rawLine.seq;
 		data.push_back(line);
 	}

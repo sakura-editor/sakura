@@ -473,7 +473,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				cmemWork.Replace( L"\r", L"\\r" );
 				cmemWork.Replace( L"\n", L"\\n" );
 				cmemWork.Replace( L"\t", L"\\t" );
-				cmemWork.Replace( L"\0", 1, L"\\u0000", 6 );
+				cmemWork.Replace( std::wstring_view(L"\0", 1), std::wstring_view(L"\\u0000", 6) );
 				cmemWork.Replace( L"\u0085", L"\\u0085" );
 				cmemWork.Replace( L"\u2028", L"\\u2028" );
 				cmemWork.Replace( L"\u2029", L"\\u2029" );

@@ -329,7 +329,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		nPos = 0;
 	}
 
-	CNativeW cmResponseFile = L"";
+	CNativeW cmResponseFile{ L"" };
 	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
 	wcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );

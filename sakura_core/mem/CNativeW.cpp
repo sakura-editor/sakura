@@ -59,9 +59,9 @@ CNativeW::CNativeW( const wchar_t* pData, size_t nDataLen )
 	SetString( pData, nDataLen );
 }
 
-CNativeW::CNativeW( const wchar_t* pData )
+CNativeW::CNativeW(std::wstring_view text)
 {
-	SetString(pData);
+	SetString(std::data(text), std::size(text));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -75,14 +75,9 @@ void CNativeW::SetString( const wchar_t* pData, size_t nDataLen )
 }
 
 // バッファの内容を置き換える
-void CNativeW::SetString( const wchar_t* pszData )
+void CNativeW::SetString( std::wstring_view data )
 {
-	if( pszData != nullptr ){
-		std::wstring_view data(pszData);
-		SetString( data.data(), data.length() );
-	}else{
-		Reset();
-	}
+	SetString( data.data(), data.length() );
 }
 
 void CNativeW::SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen )
@@ -167,29 +162,55 @@ void CNativeW::AppendNativeData( const CNativeW& cmemData )
  * 指定した文字列を連結した文字列バッファを作成する
  *
  * @param lhs 文字列バッファ(CNativeW)
- * @param rhs 文字列ポインタ(C string)
+ * @param rhs 文字列(std::wstring_view)
  * @return 新しい文字列バッファ
  * @throws std::bad_alloc メモリ確保に失敗した
  */
-CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false)
+CNativeW operator + (const CNativeW& lhs, std::wstring_view rhs) noexcept(false)
 {
 	CNativeW tmp(lhs);
-	tmp.AppendString(rhs);
-	return tmp;
+	return (tmp += rhs);
 }
 
 /*!
  * 指定した文字列を連結した文字列バッファを作成する
  *
- * @param lhs 文字列ポインタ(C string)
- * @param rhs 文字列バッファ(CNativeW)
+ * @param lhs 文字列バッファ(CNativeW)
+ * @param rhs 文字列(std::wstring_view)
  * @return 新しい文字列バッファ
  * @throws std::bad_alloc メモリ確保に失敗した
  */
-CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
+CNativeW operator + (std::wstring_view lhs, const CNativeW& rhs) noexcept(false)
 {
 	CNativeW tmp(lhs);
-	return tmp + rhs;
+	return (tmp += rhs);
+}
+
+/*!
+ * 指定した文字列を連結する
+ *
+ * @param lhs 文字列バッファ(CNativeW)
+ * @param rhs 文字列(std::wstring_view)
+ * @return 文字列バッファ
+ * @throws std::bad_alloc メモリ確保に失敗した
+ */
+CNativeW& operator += (CNativeW& lhs, std::wstring_view rhs) noexcept(false)
+{
+	lhs.AppendString(rhs);
+	return lhs;
+}
+
+/*!
+ * 指定した文字を連結する
+ *
+ * @param lhs 文字列バッファ(CNativeW)
+ * @param rhs 文字(wchar_t)
+ * @return 文字列バッファ
+ * @throws std::bad_alloc メモリ確保に失敗した
+ */
+CNativeW& operator += (CNativeW& lhs, wchar_t rhs) noexcept(false)
+{
+	return (lhs += std::wstring_view(&rhs, 1));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -223,108 +244,62 @@ CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
 int CNativeW::Compare(const CNativeW& rhs) const noexcept
 {
 	if (this == &rhs) return 0;
-	const int lhsIsValid = static_cast<int>(IsValid());
-	const int rhsIsValid = static_cast<int>(rhs.IsValid());
-	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
-	// データ長が短い方を基準に比較を行う
-	const int lhsLength = static_cast<int>(GetStringLength());
-	const int rhsLength = static_cast<int>(rhs.GetStringLength());
-	const int minLength = std::min(lhsLength, rhsLength);
-	// データ長の範囲で文字列を比較する
-	auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), minLength);
-	if (!cmp) cmp = lhsLength - rhsLength;
-	return cmp;
-}
-
-/*!
- * 文字列ポインタ型との比較
- *
- * @param rhs 比較対象(C string)
- * @retval < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
- * @retval < 0 文字列値が比較対象より小さい
- * @retval == 0 比較対象と等しい
- * @retval == 0 自身がメモリ未確保、かつ、比較対象がnullptr
- * @retval > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
- * @retval > 0 文字列値が比較対象より大きい
- */
-int CNativeW::Compare(const wchar_t* rhs) const noexcept
-{
-	const int lhsIsValid = static_cast<int>(IsValid());
-	const int rhsIsValid = rhs ? 1 : 0;
-	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
-	const wchar_t* lhs = GetStringPtr();
-	const size_t lhsLength = GetStringLength();
-	// NUL終端考慮のために終端を拡張し、比較自体はCRTに丸投げする
-	return wcsncmp(lhs, rhs, lhsLength + 1);
+	const auto lhsValid = IsValid();
+	const auto rhsValid = rhs.IsValid();
+	if (!lhsValid && !rhsValid) return 0;
+	if (!lhsValid) return -1;
+	if (!rhsValid) return 1;
+	const auto lhs = static_cast<std::wstring_view>(*this);
+	return lhs.compare(rhs);
 }
 
 /* 等しい内容か */
 bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 {
-	if(&cmem1==&cmem2)return true;
-
-	const int nLen1 = cmem1.GetStringLength();
-	const int nLen2 = cmem2.GetStringLength();
-	if( nLen1 == nLen2 ){
-		const wchar_t* psz1 = cmem1.GetStringPtr();
-		const wchar_t* psz2 = cmem2.GetStringPtr();
-		if( 0 == wmemcmp( psz1, psz2, nLen1 ) ){
-			return true;
-		}
-	}
-	return false;
+	return cmem1.Equals(cmem2);
 }
 
 /*!
- * 文字列ポインタ型との等価比較
+ * 同型との等価比較
  *
  * @param lhs 比較対象(CNativeW)
- * @param rhs 比較対象(C string)
+ * @param rhs 比較対象(CNativeW)
  * @retval true 等しい
  * @retval false 等しくない
  */
-bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept
+bool operator == (const CNativeW& lhs, const CNativeW& rhs) noexcept
 {
 	return lhs.Equals(rhs);
 }
 
 /*!
- * 文字列ポインタ型との否定の等価比較
+ * 文字列との等価比較
  *
  * @param lhs 比較対象(CNativeW)
- * @param rhs 比較対象(C string)
- * @retval true 等しくない
- * @retval false 等しい
- */
-bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept
-{
-	return !(lhs == rhs);
-}
-
-/*!
- * 文字列ポインタ型との等価比較(引数逆転版)
- *
- * @param lhs 比較対象(C string)
- * @param rhs 比較対象(CNativeW)
+ * @param rhs 比較対象(std::wstring_view)
  * @retval true 等しい
  * @retval false 等しくない
  */
-bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept
+bool operator == (const CNativeW& lhs, std::wstring_view rhs) noexcept(false)
 {
-	return rhs.Equals(lhs);
+	return 0 == lhs.Compare(rhs);
 }
 
 /*!
- * 文字列ポインタ型との否定の等価比較(引数逆転版)
+ * 文字列ポインタとの等価比較
  *
- * @param lhs 比較対象(C string)
- * @param rhs 比較対象(CNativeW)
- * @retval true 等しくない
- * @retval false 等しい
+ * @param lhs 比較対象(CNativeW)
+ * @param rhs 比較対象(C String)
+ * @retval true 等しい
+ * @retval false 等しくない
  */
-bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept
+bool operator == (const CNativeW& lhs, LPCWSTR rhs) noexcept(false)
 {
-	return !(lhs == rhs);
+	// rhsがNULLでない場合、文字列として比較する
+	if (rhs) return (lhs == std::wstring_view(rhs));
+
+	// rhsがNULLの場合、メモリ未確保を等しいとみなす
+	return !lhs.IsValid();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -353,11 +328,6 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 		cmemWork.AppendString( &GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld );
 	}
 	SetRawDataHoldBuffer( cmemWork );
-}
-
-void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen )
-{
-	Replace( std::wstring_view( pszFrom, nFromLen ), std::wstring_view( pszTo, nToLen ) );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -267,7 +267,7 @@ bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
 		return false;
 	}
 	m_cTipWnd.m_cKey = cmemCurText;
-	m_cTipWnd.m_cInfo = cmemCurText.GetStringPtr();
+	m_cTipWnd.m_cInfo = cmemCurText;
 	m_cTipWnd.m_nSearchLine = (Int)ptNew.y;
 	m_dwTipTimer = 0;		// 辞書Tipを表示している */
 	m_poTipCurPos = *po;	// 現在のマウスカーソル位置 */
@@ -278,7 +278,7 @@ bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
 void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPath /* = true */, bool bTrimSpaceTab /* = false */ )
 {
 	int				i;
-	CNativeW		cmemTopic = L"";
+	CNativeW		cmemTopic{ L"" };
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nIdx;

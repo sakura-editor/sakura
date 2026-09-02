@@ -4,11 +4,14 @@
 
 	SPDX-License-Identifier: Zlib
 */
-#include <stdexcept>
 #include "pch.h"
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
+
+#include <stdexcept>
+
+using namespace std::literals::string_view_literals;
 
 /*!
 	CStringRefのテスト
@@ -111,22 +114,6 @@ TEST(CNativeW, ConstructWithStringEmpty)
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
 	EXPECT_LE(0, value.capacity());
-}
-
-/*!
- * @brief コンストラクタ(NULL指定)の仕様
- * @remark バッファは確保されない
- * @remark 文字列長はゼロになる
- */
-TEST(CNativeW, ConstructWithStringNull)
-{
-	CNativeW value(NULL);
-	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_EQ(NULL, value.GetStringPtr());
-
-	CNativeW value2(NULL);
-	EXPECT_EQ(0, value2.GetStringLength());
-	EXPECT_EQ(NULL, value2.GetStringPtr());
 }
 
 /*!
@@ -251,32 +238,6 @@ TEST(CNativeW, AssignString)
 }
 
 /*!
- * @brief 代入演算子(NULL指定)の仕様
- * @remark バッファを確保している場合は解放される
- * @remark 文字列長はゼロになる
- */
-TEST(CNativeW, AssignStringNullPointer)
-{
-	CNativeW value(L"test");
-	value = nullptr;	// NULLではなくnullptrを使うよう修正
-	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_EQ(NULL, value.GetStringPtr());
-}
-
-/*!
- * @brief 代入演算子(NULL指定)の仕様
- * @remark バッファを確保している場合は解放される
- * @remark 文字列長はゼロになる
- */
-TEST(CNativeW, AssignStringNullLiteral)
-{
-	CNativeW value(L"test");
-	value = nullptr;	// NULLではなくnullptrを使うよう修正
-	ASSERT_EQ(NULL, value.GetStringPtr());
-	EXPECT_EQ(0, value.GetStringLength());
-}
-
-/*!
  * @brief 加算代入演算子(文字指定)の仕様
  * @remark バッファが確保される
  * @remark 文字列長は演算子呼出前の文字列長+1になる
@@ -311,19 +272,6 @@ TEST(CNativeW, AppendString)
 }
 
 /*!
- * @brief 加算代入演算子(NULL指定)の仕様
- * @remark 加算代入しても内容に変化無し
- */
-TEST(CNativeW, AppendStringNullPointer)
-{
-	CNativeW org(L"orz");
-	CNativeW value(org);
-	value += nullptr;	// NULLではなくnullptrを使うよう修正
-	EXPECT_EQ(value.GetStringLength(), org.GetStringLength());
-	EXPECT_EQ(org, value);
-}
-
-/*!
  * @brief 独自関数AppendStringFの仕様
  * @remark 指定したフォーマットで、引数がフォーマットされる
  * @remark 指定したフォーマットがNULLの場合、例外を投げる
@@ -351,7 +299,7 @@ TEST(CNativeW, AppendStringWithFormatting)
 	ASSERT_EQ(L"いちご25%", value);
 
 	// 未確保状態からの書式化をテストする
-	value = nullptr; //テスト前の初期値(未確保
+	value = CNativeW(); //テスト前の初期値(未確保
 	value.AppendStringF( L"KEY[%03d]", 12 );
 	ASSERT_EQ( L"KEY[012]", value );
 
@@ -366,7 +314,7 @@ TEST(CNativeW, AppendStringWithFormatting)
 	// フォーマット出力長2047字を超える条件をテストする
 	{
 		std::wstring longText( 2048, L'=' );
-		value = nullptr; //テスト前の初期値(未確保
+		value = CNativeW(); //テスト前の初期値(未確保
 		value.AppendStringF( L"%s", longText.c_str() );
 		ASSERT_EQ( longText.c_str(), value );
 	}
@@ -702,7 +650,7 @@ TEST(CNativeW, CompareWithCNativeW)
 }
 
 /*!
- * 文字列ポインタ型との比較のテスト
+ * 文字列型との比較のテスト
  *
  * @remark < 0 自身がメモリ未確保、かつ、比較対象がNULL以外
  * @remark < 0 文字列値が比較対象より小さい
@@ -710,18 +658,19 @@ TEST(CNativeW, CompareWithCNativeW)
  * @remark > 0 自身がメモリ確保済み、かつ、比較対象がNULL
  * @remark > 0 文字列値が比較対象より大きい
  */
-TEST(CNativeW, CompareWithStringPtr)
+TEST(CNativeW, CompareWithString)
 {
 	//互いに値の異なる文字列定数を定義する
-	constexpr const wchar_t* pcN0 = NULL;
-	constexpr const wchar_t szS0[] = L"ab";
-	constexpr const wchar_t szM0[] = L"aac";
-	constexpr const wchar_t szM1[] = L"abc";
-	constexpr const wchar_t szM2[] = L"acc";
-	constexpr const wchar_t szL0[] = L"abcd";
+	constexpr const auto pcN0 = nullptr;
+	constexpr const auto szS0 = L"ab";
+	constexpr const auto szM0 = L"aac";
+	constexpr const auto szM1 = L"abc";
+	constexpr const auto szM2 = L"acc";
+	constexpr const auto szL0 = L"abcd";
 
 	// 定数に対応するCNativeWのインスタンスを用意する
-	CNativeW cN0(pcN0), cM1(szM1);
+	CNativeW cN0;
+	CNativeW cM1(szM1);
 
 	// 比較
 	// ASSERT_GTの判定仕様は v1 > v2
@@ -730,9 +679,9 @@ TEST(CNativeW, CompareWithStringPtr)
 	ASSERT_GT(0, cN0.Compare(szM1));
 	ASSERT_GT(0, cM1.Compare(szM2));
 	ASSERT_GT(0, cM1.Compare(szL0));
-	ASSERT_EQ(0, cN0.Compare(pcN0));
+	ASSERT_EQ(cN0, pcN0);
 	ASSERT_EQ(0, cM1.Compare(szM1));
-	ASSERT_LT(0, cM1.Compare(pcN0));
+	ASSERT_LT(0, cM1.Compare(L""));
 	ASSERT_LT(0, cM1.Compare(szM0));
 	ASSERT_LT(0, cM1.Compare(szS0));
 }
@@ -746,11 +695,11 @@ TEST(CNativeW, globalOperatorAdd)
 {
 	CNativeW v1(L"前半");
 	constexpr const wchar_t v2[] = L"後半";
-	EXPECT_STREQ(L"前半後半", (v1 + v2).GetStringPtr());
+	EXPECT_THAT(v1 + v2, StrEq(L"前半後半"));
 
 	constexpr const wchar_t v3[] = L"前半";
 	CNativeW v4(L"後半");
-	EXPECT_STREQ(L"前半後半", (v3 + v4).GetStringPtr());
+	EXPECT_THAT(v3 + v4, StrEq(L"前半後半"));
 }
 
 /*!

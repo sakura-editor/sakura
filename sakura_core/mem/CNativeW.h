@@ -59,16 +59,24 @@ private:
 };
 
 // グローバル演算子の前方宣言
-bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
-bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
-bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept;
-bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept;
-CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false);
-CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false);
+bool operator == (const CNativeW& lhs, const CNativeW& rhs) noexcept;
+bool operator == (const CNativeW& lhs, std::wstring_view rhs);
+bool operator == (const CNativeW& lhs, LPCWSTR rhs);
+CNativeW operator + (const CNativeW& lhs, std::wstring_view rhs) noexcept(false);
+CNativeW operator + (std::wstring_view lhs, const CNativeW& rhs) noexcept(false);
+CNativeW& operator += (CNativeW& lhs, std::wstring_view rhs) noexcept(false);
+CNativeW& operator += (CNativeW& lhs, wchar_t rhs) noexcept(false);
 
 //! UNICODE文字列管理クラス
 class CNativeW final : public CNative{
-	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
+private:
+	friend bool operator == (const CNativeW& lhs, const CNativeW& rhs) noexcept;
+	friend bool operator == (const CNativeW& lhs, std::wstring_view rhs) noexcept(false);
+	friend bool operator == (const CNativeW& lhs, LPCWSTR rhs) noexcept(false);
+	friend CNativeW operator + (const CNativeW& lhs, std::wstring_view rhs) noexcept(false);
+	friend CNativeW operator + (std::wstring_view lhs, const CNativeW& rhs) noexcept(false);
+	friend CNativeW& operator += (CNativeW& lhs, std::wstring_view rhs) noexcept(false);
+	friend CNativeW& operator += (CNativeW& lhs, wchar_t rhs) noexcept(false);
 
 	using Me = CNativeW;
 
@@ -77,8 +85,7 @@ public:
 	CNativeW() noexcept = default;
 	CNativeW( const wchar_t* pData, size_t nDataLen ); //!< nDataLenは文字単位。
 
-	// TODO: いつかexplicitを付ける
-	CNativeW( const wchar_t* pData );
+	explicit CNativeW(std::wstring_view text);
 
 	/*! メモリ確保済みかどうか */
 	[[nodiscard]] bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
@@ -88,7 +95,7 @@ public:
 
 	//WCHAR
 	void SetString( const wchar_t* pData, size_t nDataLen );			//!< バッファの内容を置き換える。nDataLenは文字単位。
-	void SetString( const wchar_t* pszData );							//!< バッファの内容を置き換える。
+	void SetString( std::wstring_view data );							//!< バッファの内容を置き換える。
 	void SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen );
 	void AppendString( const wchar_t* pszData, size_t nDataLen );		//!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
 	void AppendString( std::wstring_view data );						//!< バッファの最後にデータを追加する
@@ -97,13 +104,6 @@ public:
 	//CNativeW
 	void SetNativeData( const CNativeW& cNative );						//!< バッファの内容を置き換える
 	void AppendNativeData( const CNativeW& cNative );					//!< バッファの最後にデータを追加する
-
-	//演算子
-	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
-	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
-	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
-	bool operator == (const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
-	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
 	[[nodiscard]] wchar_t operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
@@ -160,10 +160,9 @@ public:
 	//                           判定                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	
-	int Compare(const CNativeW& rhs) const noexcept;
-	int Compare(const wchar_t* rhs) const noexcept;
-	bool Equals(const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
-	bool Equals(const wchar_t* rhs) const noexcept { return 0 == Compare(rhs); }
+	int		Compare(const CNativeW& rhs) const noexcept;
+	int		Compare(std::wstring_view rhs) const { return Compare(CNativeW(rhs)); }
+	bool	Equals(const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
 
 	//! 同一の文字列ならtrue
 	static bool IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 );
@@ -173,18 +172,14 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	void Replace( std::wstring_view strFrom, std::wstring_view strTo );   //!< 文字列置換
-	void Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen );   //!< 文字列置換
 
 	/*!
 	 * @brief 文字列を代入する演算子
 	 *
-	 * implicitなコンストラクタと競合するので追加できない。
-	 *
 	 * @param rhs [in] 代入元文字列
 	 * @return 自分自身への参照
 	 */
-	 // TODO: いつかコメントインする
-	//Me& operator = (std::wstring_view rhs) noexcept { SetString(rhs.data(), rhs.length()); return *this; }
+	Me& operator = (std::wstring_view rhs) noexcept { SetString(rhs.data(), rhs.length()); return *this; }
 
 	Me& operator = (const std::wstring& rhs) noexcept { return operator = (static_cast<std::wstring_view>(rhs)); }
 	Me& operator = (const std::filesystem::path& path) noexcept { return operator = (path.native()); }

@@ -34,7 +34,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 
 	{
 		// 変換テスト
-		CNativeW buffer = L"abcde";
+		CNativeW buffer{ L"abcde" };
 		CMemory tmp;
 		EConvertResult e = pcCodeBase->UnicodeToCode( buffer, &tmp );
 		if(e==RESULT_FAILURE){

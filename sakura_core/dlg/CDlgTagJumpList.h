@@ -145,7 +145,7 @@ private:
 	STagFindState* m_psFindPrev = nullptr; //!< 前回の最後に検索した状態
 	STagFindState* m_psFind0Match = nullptr; //!< 前回の1つもHitしなかった最後のtags
 
-	CNativeW	m_strOldKeyword = { L"" };	//!< 前回のキーワード
+	CNativeW	m_strOldKeyword{ L"" };	//!< 前回のキーワード
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
 	BOOL	m_bOldTagJumpPartialMatch;	//!< 前回の文字列の途中にマッチ
 
