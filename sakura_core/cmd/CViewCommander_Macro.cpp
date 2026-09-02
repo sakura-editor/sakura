@@ -97,7 +97,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
 		GetInidirOrExedir( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );
 	}else{
-		szInitDir = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER.c_str();	/* マクロ用フォルダー */
+		szInitDir = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;	/* マクロ用フォルダー */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(

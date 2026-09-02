@@ -182,11 +182,11 @@ bool CShareData::InitShareData()
 
 		// マルチユーザー用のiniファイルパス(exe基準の初期化よりも先に行う必要がある)
 		auto privateIniPath = GetIniFileName();
-		m_pShareData->m_szPrivateIniFile = privateIniPath.c_str();
+		m_pShareData->m_szPrivateIniFile = privateIniPath;
 
 		// exe基準のiniファイルパス
 		auto iniPath = GetExeFileName().replace_extension(L".ini");
-		m_pShareData->m_szIniFile = iniPath.c_str();
+		m_pShareData->m_szIniFile = iniPath;
 
 		// 設定ファイルフォルダー
 		WCHAR	szIniFolder[_MAX_PATH];

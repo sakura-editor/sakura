@@ -3907,7 +3907,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 				data.m_eFileTreeSettingLoadType = EFileTreeSettingFrom_File;
 				IniDirPath = szPath;
 				CutLastYenFromDirectoryPath( IniDirPath );
-				data.m_szLoadProjectIni = strIniFileName.c_str();
+				data.m_szLoadProjectIni = strIniFileName;
 				break;
 			}
 			CDlgTagJumpList::DirUp( szPath );
