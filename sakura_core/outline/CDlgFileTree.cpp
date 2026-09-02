@@ -739,7 +739,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 						cmemFile.Replace(L"%", L"%%");
 						SFileTreeItem item;
 						item.m_eFileTreeItemType = EFileTreeItemType_File;
-						item.m_szTargetPath = cmemFile.GetStringPtr();
+						item.m_szTargetPath = cmemFile;
 						item.m_szLabelName = GetFileTitlePointer(aFileNames[i].c_str());
 						htiInsert = InsertTreeItem(item, htiParent, htiInsert);
 						if( htiItemFirst == nullptr ){
@@ -773,7 +773,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 						CNativeW str(item.m_szTargetPath);
 						str.Replace(szPathFrom, szPathTo);
 						if( str.GetStringLength() < (int)item.m_szTargetPath.GetBufferCount() ){
-							item.m_szTargetPath = str.GetStringPtr();
+							item.m_szTargetPath = str;
 						}
 					}
 				}
