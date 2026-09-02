@@ -192,7 +192,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 	switch( wID ){
 	case IDC_COMBO_TEXT:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
+			const auto nSize = static_cast<int>(m_pShareData->m_sSearchKeywords.m_aSearchKeys.count());
 			for( int i = 0; i < nSize; ++i ){
 				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 			}
@@ -200,7 +200,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 		break;
 	case IDC_COMBO_FILE:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aGrepFiles.size();
+			const auto nSize = static_cast<int>(m_pShareData->m_sSearchKeywords.m_aGrepFiles.count());
 			for( int i = 0; i < nSize; ++i ){
 				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aGrepFiles[i] );
 			}
@@ -208,7 +208,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 		break;
 	case IDC_COMBO_FOLDER:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aGrepFolders.size();
+			const auto nSize = static_cast<int>(m_pShareData->m_sSearchKeywords.m_aGrepFolders.count());
 			for( int i = 0; i < nSize; ++i ){
 				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aGrepFolders[i] );
 			}
@@ -216,7 +216,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 		break;
 	case IDC_COMBO_EXCLUDE_FILE:
 		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size();
+			const auto nSize = static_cast<int>(m_pShareData->m_sSearchKeywords.m_aExcludeFiles.count());
 			for (int i = 0; i < nSize; ++i) {
 				ApiWrap::Combo_AddString(hwndCtl, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[i]);
 			}
@@ -224,7 +224,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 		break;
 	case IDC_COMBO_EXCLUDE_FOLDER:
 		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size();
+			const auto nSize = static_cast<int>(m_pShareData->m_sSearchKeywords.m_aExcludeFolders.count());
 			for (int i = 0; i < nSize; ++i) {
 				ApiWrap::Combo_AddString(hwndCtl, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[i]);
 			}

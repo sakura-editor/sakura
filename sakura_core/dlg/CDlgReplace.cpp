@@ -80,7 +80,7 @@ BOOL CDlgReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 	switch( wID ){
 	case IDC_COMBO_TEXT:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
+			const auto nSize = static_cast<int>(m_pShareData->m_sSearchKeywords.m_aSearchKeys.count());
 			for (int i = 0; i < nSize; ++i) {
 				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 			}
@@ -88,7 +88,7 @@ BOOL CDlgReplace::OnCbnDropDown( HWND hwndCtl, int wID )
 		break;
 	case IDC_COMBO_TEXT2:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size();
+			const auto nSize = static_cast<int>(m_pShareData->m_sSearchKeywords.m_aReplaceKeys.count());
 			for (int i = 0; i < nSize; ++i) {
 				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
 			}

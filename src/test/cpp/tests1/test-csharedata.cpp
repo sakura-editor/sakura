@@ -1682,22 +1682,22 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 
 	EXPECT_THAT(shareData.m_nLockCount, 0);
 
-	EXPECT_THAT(shareData.m_sSearchKeywords.m_aSearchKeys.size(), 0);
-	EXPECT_THAT(shareData.m_sSearchKeywords.m_aReplaceKeys.size(), 0);
-	EXPECT_THAT(shareData.m_sSearchKeywords.m_aGrepFiles.size(), 1);
+	EXPECT_THAT(shareData.m_sSearchKeywords.m_aSearchKeys.count(), 0);
+	EXPECT_THAT(shareData.m_sSearchKeywords.m_aReplaceKeys.count(), 0);
+	EXPECT_THAT(shareData.m_sSearchKeywords.m_aGrepFiles.count(), 1);
 	EXPECT_THAT(shareData.m_sSearchKeywords.m_aGrepFiles[0], StrEq(L"*.*"));
-	EXPECT_THAT(shareData.m_sSearchKeywords.m_aGrepFolders.size(), 0);
+	EXPECT_THAT(shareData.m_sSearchKeywords.m_aGrepFolders.count(), 0);
 
 	EXPECT_THAT(shareData.m_sTagJump.m_TagJumpNum, 0);
 	EXPECT_THAT(shareData.m_sTagJump.m_TagJumpTop, 0);
-	EXPECT_THAT(shareData.m_sTagJump.m_aTagJumpKeywords.size(), 0);
+	EXPECT_THAT(shareData.m_sTagJump.m_aTagJumpKeywords.count(), 0);
 	EXPECT_THAT(shareData.m_sTagJump.m_bTagJumpICase, IsFalse());
 	EXPECT_THAT(shareData.m_sTagJump.m_bTagJumpPartialMatch, IsFalse());
 
-	EXPECT_THAT(shareData.m_sHistory.m_aExceptMRU.size(), 0);
+	EXPECT_THAT(shareData.m_sHistory.m_aExceptMRU.count(), 0);
 	EXPECT_THAT(shareData.m_sHistory.m_szIMPORTFOLDER, StrEq(iniFolder));
-	EXPECT_THAT(shareData.m_sHistory.m_aCommands.size(), 0);
-	EXPECT_THAT(shareData.m_sHistory.m_aCurDirs.size(), 0);
+	EXPECT_THAT(shareData.m_sHistory.m_aCommands.count(), 0);
+	EXPECT_THAT(shareData.m_sHistory.m_aCurDirs.count(), 0);
 
 	EXPECT_THAT(shareData.m_nExecFlgOpt, 1);
 	EXPECT_THAT(shareData.m_nDiffFlgOpt, 0);
