@@ -447,11 +447,15 @@ jobs:
         path: help
 
     - name: Run unit tests
-      timeout-minutes: 15 # 指定時間を越えたら打ち切る。値は暫定。
+      # 最大3回リトライするため、通常時間(約6分)の3倍以上の余裕を持たせる。値は暫定。
+      timeout-minutes: 30
+      # UI Automationを使うテストがCI環境限定で断続的にタイムアウトすることがある(既知のflaky、#2603)。
+      # 30秒ウォッチドッグで有限失敗に変換した上で、失敗時のみ最大2回まで再試行する。
       run: ctest
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
         --output-on-failure
+        --repeat until-pass:3
         -V
 
     - name: Upload sonar-input artifact
