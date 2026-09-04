@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,6 +16,7 @@ class CSearchStringPattern;
 class CGrepEnumKeys;
 class CGrepEnumFiles;
 class CGrepEnumFolders;
+struct GrepInfo;
 
 struct SGrepOption{
 	bool		bGrepReplace;			//!< Grep置換
@@ -45,6 +46,9 @@ struct SGrepOption{
 		,bGrepPaste(false)
 		,bGrepBackup(false)
 	{}
+
+	//! GrepInfo から出力オプションを取り出す(Grep置換では否ヒット行の出力が無効になる)
+	static SGrepOption FromGrepInfo( const GrepInfo& gi );
 };
 
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
@@ -63,25 +67,8 @@ public:
 
 	// Grep実行
 	DWORD DoGrep(
-		CEditView*				pcViewDst,
-		bool					bGrepReplace,
-		const CNativeW*			pcmGrepKey,
-		const CNativeW*			pcmGrepReplace,
-		const CNativeW*			pcmGrepFile,
-		const CNativeW*			pcmGrepFolder,
-		bool					bGrepCurFolder,
-		BOOL					bGrepSubFolder,
-		bool					bGrepStdout,
-		bool					bGrepHeader,
-		const SSearchOption&	sSearchOption,
-		ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-		int						nGrepOutputLineType,
-		int						nGrepOutputStyle,
-		bool					bGrepOutputFileOnly,	//!< [in] ファイル毎最初のみ出力
-		bool					bGrepOutputBaseFolder,	//!< [in] ベースフォルダー表示
-		bool					bGrepSeparateFolder,	//!< [in] フォルダー毎に表示
-		bool					bGrepPaste,
-		bool					bGrepBackup
+		CEditView*				pcViewDst,	//!< [in] Grep結果の出力先
+		const GrepInfo&			gi			//!< [in] Grep実行の入力一式(検索キー・対象・オプション)
 	);
 
 private:

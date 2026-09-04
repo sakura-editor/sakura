@@ -7,7 +7,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -19,6 +19,7 @@
 #include "_main/CControlTray.h"
 #include "CEditApp.h"
 #include "agent/CGrepAgent.h"
+#include "basis/GrepInfo.h"
 #include "plugin/CPlugin.h"
 #include "plugin/CJackManager.h"
 #include "CSelectLang.h"
@@ -57,13 +58,6 @@ void CViewCommander::Command_GREP_DIALOG( void )
 */
 void CViewCommander::Command_GREP( void )
 {
-	CNativeW		cmWork1;
-	CNativeW		cmWork2;
-	CNativeW		cmWork3;
-	CNativeW		cmWork4;
-	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
-	cmWork2 = GetEditWindow()->m_cDlgGrep.GetPackedGFileString();
-	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき、または未編集で無題かつアウトプットでない場合。
@@ -88,27 +82,8 @@ void CViewCommander::Command_GREP( void )
 			GetDocument()->OnChangeType();
 		}
 		
-		CEditApp::getInstance()->m_pcGrepAgent->DoGrep(
-			m_pCommanderView,
-			false,
-			&cmWork1,
-			&cmWork4,
-			&cmWork2,
-			&cmWork3,
-			false,
-			GetEditWindow()->m_cDlgGrep.m_bSubFolder,
-			false,
-			true, // Header
-			GetEditWindow()->m_cDlgGrep.m_sSearchOption,
-			GetEditWindow()->m_cDlgGrep.m_nGrepCharSet,
-			GetEditWindow()->m_cDlgGrep.m_nGrepOutputLineType,
-			GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle,
-			GetEditWindow()->m_cDlgGrep.m_bGrepOutputFileOnly,
-			GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder,
-			GetEditWindow()->m_cDlgGrep.m_bGrepSeparateFolder,
-			false,
-			false
-		);
+		const GrepInfo gi = GetEditWindow()->m_cDlgGrep.MakeGrepInfo();
+		CEditApp::getInstance()->m_pcGrepAgent->DoGrep( m_pCommanderView, gi );
 
 		//プラグイン：DocumentOpenイベント実行
 		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
@@ -182,27 +157,8 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		  !CAppMode::getInstance()->IsDebugMode()
 		)
 	){
-		CEditApp::getInstance()->m_pcGrepAgent->DoGrep(
-			m_pCommanderView,
-			true,
-			&cmWork1,
-			&cmWork4,
-			&cmWork2,
-			&cmWork3,
-			false,
-			cDlgGrepRep.m_bSubFolder,
-			false, // Stdout
-			true, // Header
-			cDlgGrepRep.m_sSearchOption,
-			cDlgGrepRep.m_nGrepCharSet,
-			cDlgGrepRep.m_nGrepOutputLineType,
-			cDlgGrepRep.m_nGrepOutputStyle,
-			cDlgGrepRep.m_bGrepOutputFileOnly,
-			cDlgGrepRep.m_bGrepOutputBaseFolder,
-			cDlgGrepRep.m_bGrepSeparateFolder,
-			cDlgGrepRep.m_bPaste,
-			cDlgGrepRep.m_bBackup
-		);
+		const GrepInfo gi = cDlgGrepRep.MakeGrepInfo();
+		CEditApp::getInstance()->m_pcGrepAgent->DoGrep( m_pCommanderView, gi );
 	}
 	else{
 		// 編集ウィンドウの上限チェック

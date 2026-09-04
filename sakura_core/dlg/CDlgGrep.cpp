@@ -11,13 +11,14 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2012, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "dlg/CDlgGrep.h"
+#include "basis/GrepInfo.h"
 #include "agent/CGrepAgent.h"
 #include "grep/CGrepEnumKeys.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
@@ -180,6 +181,32 @@ CNativeW CDlgGrep::GetPackedGFileString() const
 	AppendExcludeFilePatterns( cmGFileString, cmExcludeFiles );
 
 	return cmGFileString;
+}
+
+/*!
+ * ダイアログの設定内容から Grep 実行の入力一式を作る
+ *
+ * @return Grep を1回実行するのに必要な入力の全体
+ * @note 置換に固有の項目は CDlgGrepReplace::MakeGrepInfo() で足す。
+ */
+GrepInfo CDlgGrep::MakeGrepInfo() const
+{
+	GrepInfo gi;
+	gi.cmGrepKey.SetString( m_strText.c_str() );
+	gi.cmGrepFile = GetPackedGFileString();
+	gi.cmGrepFolder.SetString( m_szFolder );
+	gi.sGrepSearchOption = m_sSearchOption;
+	gi.bGrepCurFolder = false;
+	gi.bGrepStdout = false;
+	gi.bGrepHeader = true;
+	gi.bGrepSubFolder = ( FALSE != m_bSubFolder );
+	gi.nGrepCharSet = m_nGrepCharSet;
+	gi.nGrepOutputStyle = m_nGrepOutputStyle;
+	gi.nGrepOutputLineType = m_nGrepOutputLineType;
+	gi.bGrepOutputFileOnly = m_bGrepOutputFileOnly;
+	gi.bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
+	gi.bGrepSeparateFolder = m_bGrepSeparateFolder;
+	return gi;
 }
 
 /*!

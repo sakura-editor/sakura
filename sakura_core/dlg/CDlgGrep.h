@@ -8,7 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -25,6 +25,8 @@
 #include "recent/CRecentExcludeFile.h"
 #include "recent/CRecentExcludeFolder.h"
 
+struct GrepInfo;
+
 #define DEFAULT_EXCLUDE_FILE_PATTERN    L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
 
@@ -40,6 +42,8 @@ public:
 	||  Attributes & Operations
 	*/
 	CNativeW GetPackedGFileString() const;	//!< 除外ファイル、除外フォルダーの設定を "-GFILE=" の設定に pack する
+	//! ダイアログの設定内容から Grep 実行の入力一式を作る
+	virtual GrepInfo MakeGrepInfo() const;
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	int DoModal( HINSTANCE, HWND, const WCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
