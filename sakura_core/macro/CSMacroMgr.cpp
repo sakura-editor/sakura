@@ -30,6 +30,7 @@
 #include "macro/CPythonMacroManager.h"
 #include "macro/CMacroFactory.h"
 #include "env/CShareData.h"
+#include "io/CTextStream.h"
 #include "view/CEditView.h"
 #include "debug/CRunningTimer.h"
 
@@ -591,7 +592,7 @@ int CSMacroMgr::Append(
 
 	@date 2007.07.16 genta flags追加
 */
-BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int flags )
+EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int flags )
 {
 	if( idx == STAND_KEYMACRO ){
 		//	Jun. 16, 2002 genta
@@ -602,10 +603,10 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			int prevmacro = SetCurrentIdx( idx );
 			m_pKeyMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
-			return TRUE;
+			return EMacroResult::Success;
 		}
 		else {
-			return FALSE;
+			return EMacroResult::Failure;
 		}
 	}
 	if( idx == TEMP_KEYMACRO ){		// 一時マクロ
@@ -613,14 +614,14 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			int prevmacro = SetCurrentIdx( idx );
 			m_pTempMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
-			return TRUE;
+			return EMacroResult::Success;
 		}
 		else {
-			return FALSE;
+			return EMacroResult::Failure;
 		}
 	}
 	if( idx < 0 || MAX_CUSTMACRO <= idx )	//	範囲チェック
-		return FALSE;
+		return EMacroResult::Failure;
 
 	/* 読み込み前か、毎回読み込む設定の場合は、ファイルを読み込みなおす */
 	//	Apr. 29, 2002 genta
@@ -631,11 +632,11 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 		WCHAR ptr[_MAX_PATH * 2];
 		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, int(std::size(ptr)) );
 		if ( n <= 0 ){
-			return FALSE;
+			return EMacroResult::Failure;
 		}
 
-		if( !Load( idx, hInstance, ptr, nullptr ) )
-			return FALSE;
+		if( const auto eLoadResult = Load( idx, hInstance, ptr, nullptr ); eLoadResult != EMacroResult::Success )
+			return eLoadResult;
 	}
 
 	//	Sep. 15, 2005 FILE
@@ -645,7 +646,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	m_cSavedKeyMacro[idx]->ExecKeyMacro2(pcEditView, flags);
 	SetCurrentIdx( prevmacro );
 
-	return TRUE;
+	return EMacroResult::Success;
 }
 
 /*! キーボードマクロの読み込み
@@ -659,7 +660,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 
 	@author Norio Nakatani, YAZAKI, genta
 */
-BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType )
+EMacroResult CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType )
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
@@ -693,28 +694,32 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const
 	m_sMacroPath.clear();
 	*ppMacro = CMacroFactory::getInstance()->Create(ext);
 	if( *ppMacro == nullptr )
-		return FALSE;
-	BOOL bRet;
-	if( pszType == nullptr ){
-		bRet = (*ppMacro)->LoadKeyMacro(hInstance, pszPath);
-		if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) {
-			m_sMacroPath = pszPath;
+		return EMacroResult::Failure;
+	EMacroResult eResult = EMacroResult::Failure;
+	try{
+		if( pszType == nullptr ){
+			eResult = (*ppMacro)->LoadKeyMacro(hInstance, pszPath) ? EMacroResult::Success : EMacroResult::Failure;
+			if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) {
+				m_sMacroPath = pszPath;
+			}
+		}else{
+			eResult = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath) ? EMacroResult::Success : EMacroResult::Failure;
 		}
-	}else{
-		bRet = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath);
+	}
+	catch( const CError_TextEncoding& ){
+		//	マクロファイルの文字コード変換エラー
+		//	例外はここで止め、読み込み失敗時の共通処理で生成途中のオブジェクトを解放する
+		eResult = EMacroResult::EncodingError;
 	}
 
 	//	From Here Jun. 16, 2002 genta
 	//	読み込みエラー時はインスタンス削除
-	if( bRet ){
-		return TRUE;
-	}
-	else {
+	if( eResult != EMacroResult::Success ){
 		delete *ppMacro;
 		*ppMacro = nullptr;
 	}
 	//	To Here Jun. 16, 2002 genta
-	return FALSE;
+	return eResult;
 }
 
 /** マクロオブジェクトをすべて破棄する(キーボードマクロ以外)
