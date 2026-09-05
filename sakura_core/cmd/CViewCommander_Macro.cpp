@@ -178,6 +178,8 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 	//@@@ 2002.1.24 YAZAKI
 	if ( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
+		using enum EMacroResult;
+
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		const auto eLoadResult = m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
@@ -185,10 +187,10 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName,
 			nullptr
 		);
-		if ( eLoadResult != EMacroResult::Success ){
+		if ( eLoadResult != Success ){
 			ErrorMessage(
 				m_pCommanderView->GetHwnd(),
-				eLoadResult == EMacroResult::EncodingError ? LS(STR_ERR_MACRO_ENCODING) : LS(STR_ERR_CEDITVIEW_CMD28),
+				eLoadResult == EncodingError ? LS(STR_ERR_MACRO_ENCODING) : LS(STR_ERR_CEDITVIEW_CMD28),
 				GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
 			);
 		}

@@ -594,6 +594,8 @@ int CSMacroMgr::Append(
 */
 EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int flags )
 {
+	using enum EMacroResult;
+
 	if( idx == STAND_KEYMACRO ){
 		//	Jun. 16, 2002 genta
 		//	キーマクロ以外のサポートによりNULLの可能性が出てきたので判定追加
@@ -603,10 +605,10 @@ EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditV
 			int prevmacro = SetCurrentIdx( idx );
 			m_pKeyMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
-			return EMacroResult::Success;
+			return Success;
 		}
 		else {
-			return EMacroResult::Failure;
+			return Failure;
 		}
 	}
 	if( idx == TEMP_KEYMACRO ){		// 一時マクロ
@@ -614,14 +616,14 @@ EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditV
 			int prevmacro = SetCurrentIdx( idx );
 			m_pTempMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
-			return EMacroResult::Success;
+			return Success;
 		}
 		else {
-			return EMacroResult::Failure;
+			return Failure;
 		}
 	}
 	if( idx < 0 || MAX_CUSTMACRO <= idx )	//	範囲チェック
-		return EMacroResult::Failure;
+		return Failure;
 
 	/* 読み込み前か、毎回読み込む設定の場合は、ファイルを読み込みなおす */
 	//	Apr. 29, 2002 genta
@@ -632,10 +634,10 @@ EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditV
 		WCHAR ptr[_MAX_PATH * 2];
 		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, int(std::size(ptr)) );
 		if ( n <= 0 ){
-			return EMacroResult::Failure;
+			return Failure;
 		}
 
-		if( const auto eLoadResult = Load( idx, hInstance, ptr, nullptr ); eLoadResult != EMacroResult::Success )
+		if( const auto eLoadResult = Load( idx, hInstance, ptr, nullptr ); eLoadResult != Success )
 			return eLoadResult;
 	}
 
@@ -646,7 +648,7 @@ EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditV
 	m_cSavedKeyMacro[idx]->ExecKeyMacro2(pcEditView, flags);
 	SetCurrentIdx( prevmacro );
 
-	return EMacroResult::Success;
+	return Success;
 }
 
 /*! キーボードマクロの読み込み
@@ -662,6 +664,8 @@ EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditV
 */
 EMacroResult CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType )
 {
+	using enum EMacroResult;
+
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
 	if( ppMacro == nullptr ){
@@ -694,27 +698,27 @@ EMacroResult CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPat
 	m_sMacroPath.clear();
 	*ppMacro = CMacroFactory::getInstance()->Create(ext);
 	if( *ppMacro == nullptr )
-		return EMacroResult::Failure;
-	EMacroResult eResult = EMacroResult::Failure;
+		return Failure;
+	EMacroResult eResult = Failure;
 	try{
 		if( pszType == nullptr ){
-			eResult = (*ppMacro)->LoadKeyMacro(hInstance, pszPath) ? EMacroResult::Success : EMacroResult::Failure;
+			eResult = (*ppMacro)->LoadKeyMacro(hInstance, pszPath) ? Success : Failure;
 			if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) {
 				m_sMacroPath = pszPath;
 			}
 		}else{
-			eResult = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath) ? EMacroResult::Success : EMacroResult::Failure;
+			eResult = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath) ? Success : Failure;
 		}
 	}
 	catch( const CError_TextEncoding& ){
 		//	マクロファイルの文字コード変換エラー
 		//	例外はここで止め、読み込み失敗時の共通処理で生成途中のオブジェクトを解放する
-		eResult = EMacroResult::EncodingError;
+		eResult = EncodingError;
 	}
 
 	//	From Here Jun. 16, 2002 genta
 	//	読み込みエラー時はインスタンス削除
-	if( eResult != EMacroResult::Success ){
+	if( eResult != Success ){
 		delete *ppMacro;
 		*ppMacro = nullptr;
 	}
