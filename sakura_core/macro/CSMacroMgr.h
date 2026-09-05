@@ -33,6 +33,13 @@ const int STAND_KEYMACRO	= -1;	//!< 標準マクロ(キーマクロ)
 const int TEMP_KEYMACRO		= -2;	//!< 一時マクロ(名前を指定してマクロ実行)
 const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
+//! マクロの読み込み・実行結果
+enum class EMacroResult {
+	Success,
+	Failure,
+	EncodingError,
+};
+
 struct MacroFuncInfoEx
 {
 	int			m_nArgMinSize;
@@ -83,7 +90,7 @@ public:
 	void ClearAll( void );	/* キーマクロのバッファをクリアする */
 
 	//! キーボードマクロの実行
-	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
+	EMacroResult Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
 	
 	//!	実行可能か？CShareDataに問い合わせ
 	bool IsEnabled(int idx) const {
@@ -118,7 +125,8 @@ public:
 	}
 
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
+	EMacroResult Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
+
 	BOOL Save( int idx, HINSTANCE hInstance, const WCHAR* pszPath );
 	void UnloadAll(void);
 

@@ -23,6 +23,9 @@
 
 class CCodeBase;
 
+//! テキスト入力時の文字コード変換エラー
+class CError_TextEncoding {};
+
 //テキスト入力ストリーム (UTF-8, SJIS)
 class CTextInputStream : public CStream{
 public:

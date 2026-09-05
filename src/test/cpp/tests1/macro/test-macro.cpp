@@ -11,6 +11,7 @@
 #include "macro/CPPAMacroMgr.h"
 #include "macro/CPythonMacroManager.h"
 #include "macro/CWSHManager.h"
+#include "io/CTextStream.h"
 
 #include "window/EditorTestSuite.hpp"
 
@@ -409,6 +410,63 @@ TEST_F(MacroMgrTest, CWSHMacroManager001)
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());
 
 	mgr = nullptr;
+
+	CMacroFactory::getInstance()->Unregister(CWSHMacroManager::Creator);
+}
+
+/*!
+ * BOMなしUTF-8で保存されたマクロファイルの読み込み
+ *
+ * BOMのないファイルはShift_JISとして読み込まれる。
+ * UTF-8の日本語の行末バイトがShift_JISの先頭バイトになると不完全なシーケンスとなり、
+ * CTextInputStream::ReadLineW は CError_TextEncoding を投げる。
+ * CSMacroMgr::Load はこれを捕まえて文字コード変換エラーを返す。
+ */
+TEST_F(MacroMgrTest, CWSHMacroManagerUtf8NoBom001)
+{
+	CWSHMacroManager::declare();
+
+	const HINSTANCE unusedArg1 = nullptr;
+	const auto path = GetTempFilePathWithExt(L"tes", L"js");
+
+	// "// 日本語コメント" + "Editor.InsText("ASCII");"
+	// 行末の「ト」(E3 83 88) の 0x88 がShift_JISの先頭バイトとして孤立する
+	constexpr auto macroBody =
+		"// \xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E\xE3\x82\xB3\xE3\x83\xA1\xE3\x83\xB3\xE3\x83\x88\r\n"
+		"Editor.InsText(\"ASCII\");\r\n";
+
+	// BOMなしUTF-8で書き込む
+	{
+		std::ofstream fs(path, std::ios::binary);
+		fs << macroBody;
+	}
+
+	// エンジン単体では例外が上がる
+	auto mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"js"));
+	EXPECT_THROW(mgr->LoadKeyMacro(unusedArg1, path.c_str()), CError_TextEncoding);
+	mgr = nullptr;
+
+	// CSMacroMgr::Load は例外を止めて文字コード変換エラーを返す
+	EXPECT_THAT(pcSMacroMgr->Load(TEMP_KEYMACRO, unusedArg1, path.c_str(), nullptr), Eq(EMacroResult::EncodingError));
+
+	// 読み込みに失敗したマクロオブジェクトは残らない
+	EXPECT_THAT(pcSMacroMgr->SetTempMacro(nullptr), IsNull());
+
+	// BOM付きUTF-8で書き込むと読み込める
+	{
+		std::ofstream fs(path, std::ios::binary);
+		fs << "\xEF\xBB\xBF" << macroBody;
+	}
+
+	EXPECT_THAT(pcSMacroMgr->Load(TEMP_KEYMACRO, unusedArg1, path.c_str(), nullptr), Eq(EMacroResult::Success));
+
+	pcSMacroMgr->Clear(TEMP_KEYMACRO);
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 文字コード以外の理由(ファイルがない)で失敗したときは文字コードエラー扱いにならない
+	EXPECT_THAT(pcSMacroMgr->Load(TEMP_KEYMACRO, unusedArg1, path.c_str(), nullptr), Eq(EMacroResult::Failure));
 
 	CMacroFactory::getInstance()->Unregister(CWSHMacroManager::Creator);
 }
