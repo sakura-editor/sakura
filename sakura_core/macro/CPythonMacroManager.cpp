@@ -444,8 +444,15 @@ void ShowError(HWND hWndMessageOwner, std::wstring_view caption)
 bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_unused]] ) const
 {
 	try {
-		if (!s_hModule) {
-			s_hModule = PythonApi::getInstance()->LoadModule(GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory);
+		SFilePath dir = GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory;
+
+		if (!s_hModule || std::wstring_view(dir) != std::wstring_view(prev_dir)) {
+			prev_dir = dir;
+			if (s_hModule) {
+				::FreeLibrary(s_hModule);
+				s_hModule = nullptr;
+			}
+			s_hModule = PythonApi::getInstance()->LoadModule(dir);
 
 			if (!s_hModule) return false;
 		}
