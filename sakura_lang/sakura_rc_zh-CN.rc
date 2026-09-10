@@ -4047,6 +4047,7 @@ BEGIN
     IDS_EOLTYPENAME_4 "NEL"
     IDS_EOLTYPENAME_5 "LS"
     IDS_EOLTYPENAME_6 "PS"
+    STR_ERR_MACRO_ENCODING  "字符编码转换失败。\n请确认文件是否以带BOM的UTF-8或Shift_JIS等编码保存。\n\n%s"
 END
 
 #endif    // 中国語 (簡体字、中国) resources

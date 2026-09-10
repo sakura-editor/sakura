@@ -15,6 +15,8 @@
 #include "util/tchar_convert.h"
 #include "util/module.h"
 
+#include <stdexcept>
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CTextInputStream                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -91,7 +93,13 @@ void CTextInputStream::ReadLineW(std::wstring& line)
 	const auto codePage = m_bIsUtf8 ? CP_UTF8 : CP_SJIS;	// UTF-8ならCP_UTF8、そうでなければShift_JIS(CP932)とする
 
 	// 変換を実行する
-	cxx::MultiByteToWideChar(codePage, std::string_view{ m_Buffer.begin(), it }, line);
+	try {
+		cxx::MultiByteToWideChar(codePage, std::string_view{ m_Buffer.begin(), it }, line);
+	}
+	catch (const std::invalid_argument&) {
+		// 呼び出し元が文字コード変換の失敗を他の不正引数と区別できるようにする
+		throw CError_TextEncoding();
+	}
 }
 
 /*!

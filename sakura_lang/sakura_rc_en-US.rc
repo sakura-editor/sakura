@@ -4150,6 +4150,7 @@ BEGIN
     IDS_EOLTYPENAME_4 "NEL"
     IDS_EOLTYPENAME_5 "LS"
     IDS_EOLTYPENAME_6 "PS"
+    STR_ERR_MACRO_ENCODING  "Failed to convert character encoding.\nCheck that the file is saved as UTF-8 with BOM or Shift_JIS.\n\n%s"
 END
 
 #endif    // 英語 (米国) resources

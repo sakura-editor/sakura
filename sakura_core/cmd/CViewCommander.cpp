@@ -136,15 +136,33 @@ BOOL CViewCommander::HandleCommand(
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
+		using enum EMacroResult;
+
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
-			nCommandFrom & FA_NONRECORD )){
-			InfoMessage(
-				this->m_pCommanderView->m_hwndParent,
-				LS(STR_ERR_MACRO1),
-				nCommand - F_USERMACRO_0,
-				m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
-			);
+		const auto eMacroResult = m_pcSMacroMgr->Exec(
+			nCommand - F_USERMACRO_0,
+			G_AppInstance(),
+			m_pCommanderView,
+			nCommandFrom & FA_NONRECORD
+		);
+		if( eMacroResult != Success ){
+			if( eMacroResult == EncodingError ){
+				//	マクロファイルの文字コード変換エラー
+				//	L"文字コードの変換に失敗しました。\nBOM付きUTF-8またはShift_JIS等で保存されているか確認してください。\n\n%s"
+				ErrorMessage(
+					this->m_pCommanderView->m_hwndParent,
+					LS(STR_ERR_MACRO_ENCODING),
+					m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+				);
+			}
+			else {
+				InfoMessage(
+					this->m_pCommanderView->m_hwndParent,
+					LS(STR_ERR_MACRO1),
+					nCommand - F_USERMACRO_0,
+					m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+				);
+			}
 		}
 		return TRUE;
 	}

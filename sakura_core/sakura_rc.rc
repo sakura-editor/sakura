@@ -4080,6 +4080,7 @@ BEGIN
     IDS_EOLTYPENAME_4 "NEL"
     IDS_EOLTYPENAME_5 "LS"
     IDS_EOLTYPENAME_6 "PS"
+    STR_ERR_MACRO_ENCODING  "文字コードの変換に失敗しました。\nBOM付きUTF-8またはShift_JIS等で保存されているか確認してください。\n\n%s"
     F_WINMAXIMIZE     "最大化"
     F_WINMINIMIZE     "最小化"
     F_WINRESTORE      "元に戻す"
