@@ -1874,11 +1874,10 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 				strMem += L'\t';
 			}
 			auto nMemLen = static_cast<int>(strMem.length() + 1);
-			auto pszMem = strMem.data();
 			auto_sprintf( szKeyName, L"szKW[%02d].Size", i );
 			cProfile.IOProfileData( pszSecName, szKeyName, nMemLen );
 			auto_sprintf( szKeyName, L"szKW[%02d]", i );
-			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pszMem, nMemLen));
+			cProfile.IOProfileData(pszSecName, szKeyName, strMem);
 		}
 	}
 }
