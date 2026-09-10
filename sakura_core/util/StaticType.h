@@ -473,13 +473,9 @@ public:
 	/*!
 	 * @brief 文字列バッファに変換する
 	 *
-	 * explicitを付けないのはC++の作法に照らして適切でない。
-	 * C++への移行を加速させるために仮置き。
-	 *
 	 * @return 文字列バッファ
 	 */
-	// TODO: いつか explicit を付ける
-	constexpr /* implicit */ operator std::span<WCHAR>() & noexcept
+	constexpr explicit operator std::span<WCHAR>() & noexcept
 	{
 		return span();
 	}
