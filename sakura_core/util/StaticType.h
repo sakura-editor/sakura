@@ -499,13 +499,9 @@ public:
 	/*!
 	 * @brief 文字列参照に変換する
 	 *
-	 * explicitを付けないのはC++の作法に照らして適切でない。
-	 * C++への移行を加速させるために仮置き。
-	 *
 	 * @return 文字列参照
 	 */
-	// TODO: いつか explicit を付ける
-	constexpr /* implicit */ operator std::wstring_view() const & noexcept
+	constexpr explicit operator std::wstring_view() const & noexcept
 	{
 		return str();
 	}
