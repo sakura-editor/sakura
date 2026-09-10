@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -24,6 +24,24 @@ const std::array<unsigned char, 128> gm_keyword_char = {
 	CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_CTRL,   /* 7: pqrstuvwxyz{|}~. */
 	/* 0: not-keyword, 1:__iscsym(), 2:user-define */
 };
+
+namespace cxx {
+
+std::wstring GetFaceName(const HFONT hFont)
+{
+	LOGFONT lf{};
+
+	if (!hFont ||
+		!::GetObjectW(hFont, sizeof(LOGFONT), &lf))
+	{
+		return L"";
+	}
+
+	const auto len = cxx::strnlen_s(lf.lfFaceName);
+	return std::wstring(lf.lfFaceName, len);
+}
+
+} // namespace cxx
 
 namespace WCODE
 {
@@ -130,13 +148,11 @@ void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
 
 void CCharWidthCache::Clear()
 {
-	LOGFONT lf{};
-
 	if (!m_pCache) return;
 
 	// キャッシュのクリア
-	m_pCache->m_lfFaceName1 = m_hFont1 && ::GetObjectW(m_hFont1, sizeof(LOGFONT), &lf) ? lf.lfFaceName : L"";
-	m_pCache->m_lfFaceName2 = m_hFont2 && ::GetObjectW(m_hFont2, sizeof(LOGFONT), &lf) ? lf.lfFaceName : L"";
+	m_pCache->m_lfFaceName1 = cxx::GetFaceName(m_hFont1);
+	m_pCache->m_lfFaceName2 = cxx::GetFaceName(m_hFont2);
 	m_pCache->m_nCharPxWidthCache.fill(0);
 	m_pCache->m_nCharWidthCacheTest = 0x12345678;
 }
