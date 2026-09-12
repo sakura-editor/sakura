@@ -470,11 +470,9 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 	const auto& PyCapsule_New = PythonApi::getInstance()->PyCapsule_New;
 	const auto& PyDict_New = PythonApi::getInstance()->PyDict_New;
 	const auto& PyEval_EvalCode = PythonApi::getInstance()->PyEval_EvalCode;
-	const auto& PyImport_AddModule = PythonApi::getInstance()->PyImport_AddModule;
 	const auto& PyImport_AppendInittab = PythonApi::getInstance()->PyImport_AppendInittab;
 	const auto& PyImport_ImportModule = PythonApi::getInstance()->PyImport_ImportModule;
 	const auto& PyModule_AddObject = PythonApi::getInstance()->PyModule_AddObject;
-	const auto& PyModule_GetDict = PythonApi::getInstance()->PyModule_GetDict;
 
 	const auto& Py_XDECREF = PyXDecRef;
 
@@ -521,22 +519,12 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 			break;
 		}
 
-		PyObjectPtr pMain = PyImport_AddModule("__main__");
-		if (!pMain) {
+		PyObjectPtr dict = PyDict_New();
+		if (!dict) {
 			break;
 		}
 
-		PyObject* pGlobals = PyModule_GetDict(pMain); // borrowed reference
-		if (!pGlobals) {
-			break;
-		}
-
-		PyObjectPtr pLocals = PyDict_New();
-		if (!pLocals) {
-			break;
-		}
-
-		if (PyObjectPtr pObj = PyEval_EvalCode(pCode, pGlobals, pLocals); !pObj) {
+		if (PyObjectPtr pObj = PyEval_EvalCode(pCode, dict, dict); !pObj) {
 			ShowError(hWndMessageOwner, m_wstrPath);
 			break;
 		}
