@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -42,5 +42,8 @@ struct GrepInfo {
 
 	// コンストラクタ
 	GrepInfo() noexcept;
+
+	//! 出力・置換の挙動が矛盾しないよう補正した複製を返す
+	GrepInfo Normalized() const;
 };
 #endif /* SAKURA_GREPINFO_9A59ABAF_04F9_4D29_B216_0B0784DD2290_H_ */

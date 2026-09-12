@@ -18,39 +18,6 @@ class CGrepEnumFiles;
 class CGrepEnumFolders;
 struct GrepInfo;
 
-struct SGrepOption{
-	bool		bGrepReplace;			//!< Grep置換
-	bool		bGrepSubFolder;			//!< サブフォルダーからも検索する
-	bool		bGrepStdout;			//!< 標準出力モード
-	bool		bGrepHeader;			//!< ヘッダー・フッター表示
-	ECodeType	nGrepCharSet;			//!< 文字コードセット選択
-	int			nGrepOutputLineType;	//!< 0:ヒット部分を出力, 1: ヒット行を出力, 2: 否ヒット行を出力
-	int			nGrepOutputStyle;		//!< 出力形式 1: Normal, 2: WZ風(ファイル単位) 3: 結果のみ
-	bool		bGrepOutputFileOnly;	//!< ファイル毎最初のみ検索
-	bool		bGrepOutputBaseFolder;	//!< ベースフォルダー表示
-	bool		bGrepSeparateFolder;	//!< フォルダー毎に表示
-	bool		bGrepPaste;				//!< Grep置換：クリップボードから貼り付ける
-	bool		bGrepBackup;			//!< Grep置換：バックアップ
-
-	SGrepOption() :
-		 bGrepReplace(false)
-		,bGrepSubFolder(true)
-		,bGrepStdout(false)
-		,bGrepHeader(true)
-		,nGrepCharSet(CODE_AUTODETECT)
-		,nGrepOutputLineType(1)
-		,nGrepOutputStyle(1)
-		,bGrepOutputFileOnly(false)
-		,bGrepOutputBaseFolder(false)
-		,bGrepSeparateFolder(false)
-		,bGrepPaste(false)
-		,bGrepBackup(false)
-	{}
-
-	//! GrepInfo から出力オプションを取り出す(Grep置換では否ヒット行の出力が無効になる)
-	static SGrepOption FromGrepInfo( const GrepInfo& gi );
-};
-
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 //	Mar. 28, 2004 genta DoGrepFileから不要な引数を削除
 class CGrepAgent : public CDocListenerEx{
@@ -84,7 +51,7 @@ private:
 		const WCHAR*			pszPath,			//!< [in] 検索対象パス
 		const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベース)
 		const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-		const SGrepOption&		sGrepOption,		//!< [in] Grepオプション
+		const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
 		const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 		CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 		int						nNest,				//!< [in] ネストレベル
@@ -102,7 +69,7 @@ private:
 		const wchar_t*			pszKey,
 		const WCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,
-		const SGrepOption&		sGrepOption,
+		const GrepInfo&			sGrepOption,
 		const CSearchStringPattern& pattern,
 		CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		int*					pnHitCount,
@@ -123,7 +90,7 @@ private:
 		const CNativeW&			cmGrepReplace,
 		const WCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,
-		const SGrepOption&		sGrepOption,
+		const GrepInfo&			sGrepOption,
 		const CSearchStringPattern& pattern,
 		CBregexp*				pRegexp,
 		int*					pnHitCount,
@@ -154,7 +121,7 @@ private:
 		const wchar_t*	pMatchData,		//	マッチした文字列
 		int				nMatchLen,		//	マッチした文字列の長さ
 		// オプション
-		const SGrepOption&	sGrepOption
+		const GrepInfo&		sGrepOption
 	);
 
 	DWORD m_dwTickAddTail = 0;	// AddTail() を呼び出した時間

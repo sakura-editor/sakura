@@ -318,36 +318,6 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 }
 
 
-/*!	GrepInfo から出力オプションを取り出す
-
-	@param[in] gi Grep実行の入力一式
-	@return 出力・置換の挙動を決めるオプション
-	@note Grep置換では「一致しなかった行を出力」が成立しないため、行単位出力に落とす。
-*/
-SGrepOption SGrepOption::FromGrepInfo( const GrepInfo& gi )
-{
-	SGrepOption sGrepOption;
-	sGrepOption.bGrepSubFolder = gi.bGrepSubFolder;
-	sGrepOption.bGrepStdout = gi.bGrepStdout;
-	sGrepOption.bGrepHeader = gi.bGrepHeader;
-	sGrepOption.nGrepCharSet = gi.nGrepCharSet;
-	sGrepOption.nGrepOutputLineType = gi.nGrepOutputLineType;
-	sGrepOption.nGrepOutputStyle = gi.nGrepOutputStyle;
-	sGrepOption.bGrepOutputFileOnly = gi.bGrepOutputFileOnly;
-	sGrepOption.bGrepOutputBaseFolder = gi.bGrepOutputBaseFolder;
-	sGrepOption.bGrepSeparateFolder = gi.bGrepSeparateFolder;
-	sGrepOption.bGrepReplace = gi.bGrepReplace;
-	sGrepOption.bGrepPaste = gi.bGrepPaste;
-	sGrepOption.bGrepBackup = gi.bGrepBackup;
-	if( sGrepOption.bGrepReplace ){
-		// Grep否定行はGrep置換では無効
-		if( sGrepOption.nGrepOutputLineType == 2 ){
-			sGrepOption.nGrepOutputLineType = 1; // 行単位
-		}
-	}
-	return sGrepOption;
-}
-
 /*! Grep実行
 
   @param[in] pcViewDst Grep結果の出力先
@@ -381,7 +351,6 @@ DWORD CGrepAgent::DoGrep(
 	CNativeW	cmemMessage;
 	CNativeW	cUnicodeBuffer;
 	int			nWork;
-	SGrepOption	sGrepOption;
 
 	/*
 	|| バッファサイズの調整
@@ -501,7 +470,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	
 	// Grepオプションまとめ
-	sGrepOption = SGrepOption::FromGrepInfo( gi );
+	const GrepInfo sGrepOption = gi.Normalized();
 
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
@@ -865,7 +834,7 @@ int CGrepAgent::DoGrepTree(
 	const WCHAR*			pszPath,			//!< [in] 検索対象パス
 	const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベースフォルダー)
 	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-	const SGrepOption&		sGrepOption,		//!< [in] Grepオプション
+	const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
 	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 	int						nNest,				//!< [in] ネストレベル
@@ -1135,7 +1104,7 @@ void CGrepAgent::SetGrepResult(
 	const wchar_t*	pMatchData,		/*!< [in] マッチした文字列 */
 	int			nMatchLen,			/*!< [in] マッチした文字列の長さ */
 	/* オプション */
-	const SGrepOption&	sGrepOption
+	const GrepInfo&		sGrepOption
 )
 {
 	CNativeW cmemBuf(L"");
@@ -1199,7 +1168,7 @@ void CGrepAgent::SetGrepResult(
 
 static void OutputPathInfo(
 	CNativeW&		cmemMessage,
-	SGrepOption		sGrepOption,
+	const GrepInfo&	sGrepOption,
 	const WCHAR*	pszFullPath,
 	const WCHAR*	pszBaseFolder,
 	const WCHAR*	pszFolder,
@@ -1277,7 +1246,7 @@ int CGrepAgent::DoGrepFile(
 	const wchar_t*			pszKey,				//!< [in] 検索パターン
 	const WCHAR*			pszFile,			//!< [in] 処理対象ファイル名(表示用)
 	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-	const SGrepOption&		sGrepOption,		//!< [in] Grepオプション
+	const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
 	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 	int*					pnHitCount,			//!< [i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
@@ -1823,7 +1792,7 @@ int CGrepAgent::DoGrepReplaceFile(
 	const CNativeW&			cmGrepReplace,
 	const WCHAR*			pszFile,
 	const SSearchOption&	sSearchOption,
-	const SGrepOption&		sGrepOption,
+	const GrepInfo&			sGrepOption,
 	const CSearchStringPattern& pattern,
 	CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	int*					pnHitCount,

@@ -9,7 +9,6 @@
 #include <Windows.h>
 
 #include "basis/GrepInfo.h"
-#include "agent/CGrepAgent.h"
 #include "dlg/CDlgGrepReplace.h"
 #include "env/ShareDataTestSuite.hpp"
 
@@ -184,10 +183,10 @@ TEST(GrepInfo, operatorEqualAndNotEqual)
 }
 
 /*!
- * @brief SGrepOption::FromGrepInfo() のテスト
- *  GrepInfo の各メンバが SGrepOption の対応するメンバへ移されること
+ * @brief GrepInfo::Normalized() のテスト
+ *  補正対象以外のメンバがそのまま引き継がれること
  */
-TEST(SGrepOption, FromGrepInfo_CopiesMembers)
+TEST(GrepInfo, Normalized_KeepsOtherMembers)
 {
 	GrepInfo gi;
 	gi.bGrepSubFolder = true;
@@ -203,52 +202,68 @@ TEST(SGrepOption, FromGrepInfo_CopiesMembers)
 	gi.bGrepPaste = true;
 	gi.bGrepBackup = true;
 
-	const SGrepOption option = SGrepOption::FromGrepInfo(gi);
+	const GrepInfo normalized = gi.Normalized();
 
-	EXPECT_TRUE(option.bGrepSubFolder);
-	EXPECT_TRUE(option.bGrepStdout);
-	EXPECT_FALSE(option.bGrepHeader);
-	EXPECT_EQ(CODE_EUC, option.nGrepCharSet);
-	EXPECT_EQ(1, option.nGrepOutputLineType);
-	EXPECT_EQ(3, option.nGrepOutputStyle);
-	EXPECT_TRUE(option.bGrepOutputFileOnly);
-	EXPECT_TRUE(option.bGrepOutputBaseFolder);
-	EXPECT_TRUE(option.bGrepSeparateFolder);
-	EXPECT_FALSE(option.bGrepReplace);
-	EXPECT_TRUE(option.bGrepPaste);
-	EXPECT_TRUE(option.bGrepBackup);
+	EXPECT_TRUE(normalized.bGrepSubFolder);
+	EXPECT_TRUE(normalized.bGrepStdout);
+	EXPECT_FALSE(normalized.bGrepHeader);
+	EXPECT_EQ(CODE_EUC, normalized.nGrepCharSet);
+	EXPECT_EQ(1, normalized.nGrepOutputLineType);
+	EXPECT_EQ(3, normalized.nGrepOutputStyle);
+	EXPECT_TRUE(normalized.bGrepOutputFileOnly);
+	EXPECT_TRUE(normalized.bGrepOutputBaseFolder);
+	EXPECT_TRUE(normalized.bGrepSeparateFolder);
+	EXPECT_FALSE(normalized.bGrepReplace);
+	EXPECT_TRUE(normalized.bGrepPaste);
+	EXPECT_TRUE(normalized.bGrepBackup);
 }
 
 /*!
- * @brief SGrepOption::FromGrepInfo() のテスト
+ * @brief GrepInfo::Normalized() のテスト
  *  Grep置換では「一致しなかった行を出力」が行単位出力に落ちること
  */
-TEST(SGrepOption, FromGrepInfo_ReplaceDisablesNoHitLine)
+TEST(GrepInfo, Normalized_ReplaceDisablesNoHitLine)
 {
 	GrepInfo gi;
 	gi.bGrepReplace = true;
 	gi.nGrepOutputLineType = 2;	// 否ヒット行を出力
 
-	const SGrepOption option = SGrepOption::FromGrepInfo(gi);
+	const GrepInfo normalized = gi.Normalized();
 
-	EXPECT_TRUE(option.bGrepReplace);
-	EXPECT_EQ(1, option.nGrepOutputLineType);	// 行単位に落ちる
+	EXPECT_TRUE(normalized.bGrepReplace);
+	EXPECT_EQ(1, normalized.nGrepOutputLineType);	// 行単位に落ちる
 }
 
 /*!
- * @brief SGrepOption::FromGrepInfo() のテスト
+ * @brief GrepInfo::Normalized() のテスト
  *  Grep置換でなければ「一致しなかった行を出力」がそのまま残ること
  */
-TEST(SGrepOption, FromGrepInfo_KeepsNoHitLineWhenNotReplace)
+TEST(GrepInfo, Normalized_KeepsNoHitLineWhenNotReplace)
 {
 	GrepInfo gi;
 	gi.bGrepReplace = false;
 	gi.nGrepOutputLineType = 2;
 
-	const SGrepOption option = SGrepOption::FromGrepInfo(gi);
+	const GrepInfo normalized = gi.Normalized();
 
-	EXPECT_FALSE(option.bGrepReplace);
-	EXPECT_EQ(2, option.nGrepOutputLineType);
+	EXPECT_FALSE(normalized.bGrepReplace);
+	EXPECT_EQ(2, normalized.nGrepOutputLineType);
+}
+
+/*!
+ * @brief GrepInfo::Normalized() のテスト
+ *  元のオブジェクトが変更されないこと
+ */
+TEST(GrepInfo, Normalized_DoesNotModifySelf)
+{
+	GrepInfo gi;
+	gi.bGrepReplace = true;
+	gi.nGrepOutputLineType = 2;
+
+	const GrepInfo normalized = gi.Normalized();
+
+	EXPECT_EQ(2, gi.nGrepOutputLineType);
+	EXPECT_EQ(1, normalized.nGrepOutputLineType);
 }
 
 /*!
