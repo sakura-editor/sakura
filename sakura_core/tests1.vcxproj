@@ -165,6 +165,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-charcode.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-format.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-grepinfo.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grepmessageformat.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-int2dec.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-is_mailaddress.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-loadstring.cpp" />

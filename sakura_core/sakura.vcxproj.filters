@@ -205,6 +205,9 @@
     <ClInclude Include="..\sakura_core\grep\CGrepEnumKeys.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\grep\GrepMessageFormat.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
     <ClInclude Include="..\sakura_core\env\CHokanMgr.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
@@ -1248,6 +1251,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\agent\CGrepAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\grep\GrepMessageFormat.cpp">
+      <Filter>Cpp Source Files\grep</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\env\CHokanMgr.cpp">
       <Filter>Cpp Source Files\env</Filter>
