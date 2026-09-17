@@ -104,26 +104,6 @@ private:
 		CNativeW&				cUnicodeBuffer
 	);
 
-	// Grep結果をpszWorkに格納
-	void SetGrepResult(
-		// データ格納先
-		CNativeW&		cmemMessage,
-		// マッチしたファイルの情報
-		const WCHAR*	pszFilePath,	//	フルパス or 相対パス
-		const WCHAR*	pszCodeName,	//	文字コード情報"[SJIS]"とか
-		// マッチした行の情報
-		LONGLONG		nLine,			//	マッチした行番号
-		int				nColumn,		//	マッチした桁番号
-		const wchar_t*	pCompareData,	//	行の文字列
-		int				nLineLen,		//	行の文字列の長さ
-		int				nEolCodeLen,	//	EOLの長さ
-		// マッチした文字列の情報
-		const wchar_t*	pMatchData,		//	マッチした文字列
-		int				nMatchLen,		//	マッチした文字列の長さ
-		// オプション
-		const GrepInfo&		sGrepOption
-	);
-
 	DWORD m_dwTickAddTail = 0;	// AddTail() を呼び出した時間
 	DWORD m_dwTickUICheck = 0;	// 処理中にユーザーによるUI操作が行われていないか確認した時間
 	DWORD m_dwTickUIFileName = 0;	// Cancelダイアログのファイル名表示更新を行った時間
