@@ -12,7 +12,7 @@
 	Copyright (C) 2010, Uchi
 	Copyright (C) 2012, novice
 	Copyright (C) 2013, Moca, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,6 +21,7 @@
 #include "CCodePage.h"
 #include <vector>
 #include <map>
+#include <mutex>
 #include "CSelectLang.h"
 
 struct SCodeSet {
@@ -59,15 +60,17 @@ static std::vector<ECodeType>	vDispIdx;
 
 void InitCodeSet()
 {
-	if (msCodeSet.empty()) {
-		int 	i;
-		for (i = 0; i < int(std::size(ASCodeSet)); i++) {
+	// 並列Grepのワーカースレッドからも呼ばれるため、初期化が1回だけ実行されることを保証する
+	static std::once_flag	onceInitCodeSet;
+	std::call_once( onceInitCodeSet, []{
+		for (int i = 0; i < int(std::size(ASCodeSet)); i++) {
 			vDispIdx.push_back( ASCodeSet[i].m_eCodeSet );
 			if (i > 0) {
+				// 添字0(CODE_AUTODETECT)は表示順にだけ載せ、名前引きの対象からは外す
 				msCodeSet[ASCodeSet[i].m_eCodeSet] = ASCodeSet[i];
 			}
 		}
-	}
+	} );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -97,30 +100,40 @@ CCodeTypeName::CCodeTypeName(size_t nCodeType)
 
 LPCWSTR CCodeTypeName::Normal() const
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+	// 非constのoperator[]は要素が無ければ挿入してしまうため、並列呼び出しでmapが壊れる。
+	// const参照経由のfind()なら読み取りだけで済み、検索も1回で終わる。
+	const MSCodeSet&	codeSet = msCodeSet;
+	const auto			it = codeSet.find( m_eCodeType );
+	if (it == codeSet.end()) {
 		return nullptr;
 	}
-	return msCodeSet[m_eCodeType].m_sNormal;
+	return it->second.m_sNormal;
 }
 
 LPCWSTR CCodeTypeName::Short() const
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+	const MSCodeSet&	codeSet = msCodeSet;
+	const auto			it = codeSet.find( m_eCodeType );
+	if (it == codeSet.end()) {
 		return nullptr;
 	}
-	return msCodeSet[m_eCodeType].m_sShort;
+	return it->second.m_sShort;
 }
 
 LPCWSTR CCodeTypeName::Bracket() const
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+	const MSCodeSet&	codeSet = msCodeSet;
+	const auto			it = codeSet.find( m_eCodeType );
+	if (it == codeSet.end()) {
 		return nullptr;
 	}
 
 //	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";
-	static	std::wstring	sWork;
+	// 3ステートメントに分けて組み立てるため、プロセス共有のstaticだと
+	// 並列Grepのワーカースレッド間で内容が混ざる(例: "  [EUC]EUC]")。スレッドごとに持つ。
+	thread_local	std::wstring	sWork;
 	sWork = L"  [";
-	sWork += msCodeSet[m_eCodeType].m_sShort;
+	sWork += it->second.m_sShort;
 	sWork += L"]";	// 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
 
 	return sWork.c_str();

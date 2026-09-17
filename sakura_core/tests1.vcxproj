@@ -163,6 +163,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-editinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-file.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-charcode.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-charset.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-format.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-grepinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-int2dec.cpp" />

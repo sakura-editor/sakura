@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -422,7 +422,9 @@ bool CFileNameManager::GetMenuFullLabel(
 	const WCHAR* pszCharset = L"";
 	WCHAR szCodePageName[100];
 	if( IsValidCodeTypeExceptSJIS(nCharCode)){
-		pszCharset = CCodeTypeName(nCharCode).Bracket();
+		// Bracket() の戻り値はスレッドローカルバッファへのポインタなので、保持せず即コピーする
+		wcscpy_s( szCodePageName, _countof(szCodePageName), CCodeTypeName(nCharCode).Bracket() );
+		pszCharset = szCodePageName;
 	}else if( IsValidCodeOrCPTypeExceptSJIS(nCharCode) ){
 		CCodePage::GetNameBracket(szCodePageName, nCharCode);
 		pszCharset = szCodePageName;
