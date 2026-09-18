@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,6 +9,11 @@
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
+
+#include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
+#include "testing/MsvcReportMode.hpp"
+
+using namespace testing;
 
 /*!
 	CStringRefのテスト
@@ -28,6 +33,9 @@ TEST(CStringRef, CStringRef)
 	EXPECT_THAT(v1.empty(), IsTrue());
 	EXPECT_THAT(v1.length(), Eq(0));
 
+	SFilePath p1{ v1 };
+	EXPECT_THAT(p1, StrEq(L""));
+
 	CStringRef v2(sz, cch);
 	EXPECT_STREQ(sz, v2.GetPtr());
 	EXPECT_EQ(cch, v2.GetLength());
@@ -42,6 +50,12 @@ TEST(CStringRef, CStringRef)
 	EXPECT_THAT(v2.empty(), IsFalse());
 	EXPECT_THAT(v2.length(), Eq(4));
 
+	p1 = v2;
+	EXPECT_THAT(p1, StrEq(L"test"));
+
+	p1 = nullptr;
+	EXPECT_THAT(p1, StrEq(L""));
+
 	CNativeW cmem(sz, cch);
 	CStringRef v3(cmem);
 	EXPECT_STREQ(sz, v3.GetPtr());
@@ -52,6 +66,12 @@ TEST(CStringRef, CStringRef)
 	EXPECT_EQ(L's', v3.At(2));
 	EXPECT_EQ(L't', v3.At(3));
 	EXPECT_EQ(L'\0', v3.At(4));
+
+	SFilePath p2{ cmem };
+	EXPECT_THAT(p2, StrEq(L"test"));
+
+	CStringRef v4{ p2 };
+	EXPECT_THAT(v4.str(), StrEq(L"test"));
 }
 
 /*!
@@ -310,6 +330,26 @@ TEST(CNativeW, AppendString)
 	EXPECT_LE(cch, value.capacity());
 }
 
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeW, AppendStringF101)
+{
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	std::wstring_view format{ nullptr, 0 };
+	CNativeW value;
+	value.AppendStringF(format);
+	EXPECT_THAT(errno, Eq(EINVAL));
+
+	// メモリ確保前に落ちるので値はNULLのまま。
+	EXPECT_THAT(value.GetStringPtr(), IsNull());
+}
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+
 /*!
  * @brief 加算代入演算子(NULL指定)の仕様
  * @remark 加算代入しても内容に変化無し
@@ -335,10 +375,6 @@ TEST(CNativeW, AppendStringWithFormatting)
 	CNativeW value;
 	value.AppendStringF(L"いちご%d%%", 100);
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
-
-	// フォーマットに NULL を渡したケースをテストする
-	ASSERT_THROW(value.AppendStringF(std::wstring_view(NULL, 0)), std::invalid_argument);
-	ASSERT_THROW(value.AppendStringF(std::wstring_view(L"ダミー", 0)), std::invalid_argument);
 
 	// 文字列長を0にして、追加確保が行われないケースをテストする
 	value = L"いちご100%"; //テスト前の初期値(念のため再代入しておく
@@ -960,4 +996,39 @@ TEST(CNativeW, length101)
 	EXPECT_THAT(mem, StrEq(L""));
 	EXPECT_THAT(mem.empty(), IsTrue());
 	EXPECT_THAT(mem.length(), Eq(0));
+}
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeA, AppendStringF101)
+{
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	LPCSTR format = nullptr;
+	CNativeA value;
+	value.AppendStringF(format);
+	EXPECT_THAT(errno, Eq(EINVAL));
+
+	// メモリ確保前に落ちるので値はNULLのまま。
+	EXPECT_THAT(value.GetStringPtr(), IsNull());
+}
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeA, AppendStringWithFormatting)
+{
+	CNativeA value;
+
+	// 文字列長を0にして、追加確保が行われないケースをテストする
+	value = "いちご100%"; //テスト前の初期値(念のため再代入しておく
+	EXPECT_THAT(value.GetStringPtr(), StrEq("いちご100%"));
+
+	value = "";
+	EXPECT_THAT(value.GetStringPtr(), StrEq(""));
+
+	value.AppendStringF("%s%d%%", "いちご", 25);
+	EXPECT_THAT(value.GetStringPtr(), StrEq("いちご25%"));
 }

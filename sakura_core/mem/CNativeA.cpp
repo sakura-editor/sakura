@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -60,22 +60,43 @@ void CNativeA::AppendString( const char* pszData, size_t nLength )
 //! バッファの最後にデータを追加する (フォーマット機能付き)
 void CNativeA::AppendStringF(const char* pszData, ...)
 {
-	char buf[2048];
+	// 現在の文字列長を取得
+	const auto currentLength = GetStringLength();
 
-	// 整形
+	// 可変長引数のポインタを取得
 	va_list v;
 	va_start(v, pszData);
-	int len = _vsnprintf_s(buf, std::size(buf), _TRUNCATE, pszData, v);
-	int e = errno;
+
+	// 整形によって追加される文字数をカウント
+	const int additional = cxx::_vscprintf(pszData, v);
+
+	if (additional <= 0) return;
+
+	// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
+	const auto newCapacity = currentLength + additional;
+	AllocStringBuffer( newCapacity );
+
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span(&GetStringPtr()[currentLength], additional + 1);
+
+	// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
+	const auto added = cxx::_vsprintf_s(buffer, pszData, v);
+
+	int e = 0;
+	if (added < 0) e = errno;
+
+	// 可変長引数のポインタを解放
 	va_end(v);
 
-	if (len == -1) {
+	if (added < 0) {
 		DEBUG_TRACE(L"AppendStringF error. errno = %d", e);
 		throw std::exception();
 	}
 
-	// 追加
-	AppendString( buf, len );
+	if (added <= 0) return;
+
+	// 文字列終端を再設定する
+	_SetRawLength(currentLength + added);
 }
 
 const CNativeA& CNativeA::operator = ( char cChar )

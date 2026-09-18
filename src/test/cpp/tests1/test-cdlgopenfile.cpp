@@ -8,6 +8,7 @@
 #include "dlg/CDlgOpenFile.h"
 
 #include "window/EditorTestSuite.hpp"
+#include "util/shell.h"
 
 #include "eval_outputs.hpp"
 
@@ -763,5 +764,17 @@ INSTANTIATE_TEST_SUITE_P(CommDlgCodes
 );
 
 #pragma pop_macro("CD_ERR_ENTRY")
+
+TEST(SelectDir, test101)
+{
+	const HWND hWnd = nullptr;
+	const auto& title = L"SelectDir test";
+	const auto initialDirectory = nullptr;
+	WCHAR* pszFolderName = nullptr;
+	size_t cchFolderNmme = 0;
+
+	// 呼ぶだけ
+	EXPECT_THAT(SelectDir(hWnd, title, initialDirectory, pszFolderName, cchFolderNmme), IsFalse());
+}
 
 } // namespace dialog

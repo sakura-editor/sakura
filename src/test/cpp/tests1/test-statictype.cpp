@@ -293,6 +293,56 @@ TEST(StaticString, test001)
 	EXPECT_THAT(static_cast<size_t>(std::distance(constPath.begin(), constPath.end())), Eq(constPath.length()));
 }
 
+// swprintf_sの確認
+TEST(StaticString, swprintf_s001)
+{
+	std::wstring expected(259, L'a');
+
+	SFilePath path{};
+	EXPECT_THAT(swprintf_s(path, L"%s", std::data(expected)), Eq(259));
+	EXPECT_THAT(path, StrEq(expected));
+}
+
+// swprintf_sの確認
+TEST(StaticString, swprintf_s101)
+{
+	std::wstring expected(259, L'b');
+	std::wstring dummy(260, L'b');
+
+	SFilePath path{ std::wstring(259, L'a') };
+	EXPECT_THAT(swprintf_s(path, L"%s", std::data(dummy)), Lt(0));
+	EXPECT_THAT(path, StrEq(expected));
+}
+
+TEST(StaticString, test101)
+{
+	EXPECT_THAT(([] {
+		// バッファサイズより文字列が長いと例外。
+		StaticString<4> str{ L"test"}; }),
+		ThrowsMessage<std::out_of_range>(Eq("source string is too long. (length: 4, allowed: 3)"))
+	);
+}
+
+TEST(StaticString, test102)
+{
+	EXPECT_THAT(([] {
+		// バッファサイズより文字列が長いと例外。
+		StaticString<4> str{};
+		str = L"test"; }),
+		ThrowsMessage<std::out_of_range>(Eq("source string is too long. (length: 4, allowed: 3)"))
+	);
+}
+
+TEST(StaticString, test103)
+{
+	EXPECT_THAT(([] {
+		// 残りバッファサイズより文字列が長いと例外。
+		StaticString<4> str{ L"te" };
+		str += L"st"; }),
+		ThrowsMessage<std::out_of_range>(Eq("source string is too long. (length: 2, allowed: 1)"))
+	);
+}
+
 } // namespace basis
 
 namespace cxx {

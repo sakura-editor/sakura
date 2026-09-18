@@ -13,24 +13,54 @@
 #include "basis/primitive.h"
 #include "util/string_ex.h"
 
+#include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
+#include "testing/MsvcReportMode.hpp"
+
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
+using namespace testing;
+
 /*!
 	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数は strnlen か std::char_traits<char>::length です。
+
+	strlenに渡す文字列ポインタが以下を満たすなら「危険」でもないです。
+	・非NULLであること
+	・I/FのNUL終端を確約できること
  */
 TEST(string_ex, auto_strlenA)
 {
-	ASSERT_EQ(3, auto_strlen("abc"));
+	constexpr auto& text = "abc";
+	ASSERT_THAT(auto_strlen(text), Eq(3));
 }
 
 /*!
 	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数は wcsnlen か std::char_traits<wchar_t>::length です。
+
+	wcslenに渡す文字列ポインタが以下を満たすなら「危険」でもないです。
+	・非NULLであること
+	・I/FのNUL終端を確約できること
  */
 TEST(string_ex, auto_strlenW)
 {
-	ASSERT_EQ(3, auto_strlen(L"abc"));
+	constexpr auto& text = L"abc";
+	ASSERT_THAT(auto_strlen(text), Eq(3));
+}
+
+TEST(string_ex, auto_strnlenA)
+{
+	constexpr auto& text = "abc";
+	ASSERT_THAT(auto_strnlen(text, std::size(text)), Eq(3));
+}
+
+TEST(string_ex, auto_strnlenW)
+{
+	constexpr auto& text = L"abc";
+	ASSERT_THAT(auto_strnlen(text, std::size(text)), Eq(3));
 }
 
 /*!
@@ -58,8 +88,7 @@ TEST(string_ex, auto_strchrW)
 /*!
 	@brief 旧コード互換用。使わないでください。
 
-	代替関数は snprintf_s か auto_snprintf_s です。
-	可能であれば 非Unicodeな文字列 を扱うコードを書かないでください。
+	代替関数は strprintf か auto_sprintf_s です。
  */
 TEST(string_ex, auto_sprintfA)
 {
@@ -71,13 +100,72 @@ TEST(string_ex, auto_sprintfA)
 /*!
 	@brief 旧コード互換用。使わないでください。
 
-	代替関数は strprintf か _swnprintf_s か auto_snprintf_s です。
+	代替関数は strprintf か auto_sprintf_s です。
  */
 TEST(string_ex, auto_sprintfW)
 {
 	wchar_t szText[_MAX_PATH];
 	auto_sprintf(szText, L"%s-%d", L"test", 101);
 	ASSERT_STREQ(L"test-101", szText);
+}
+
+/*!
+ * @brief 旧コード互換用。使わないでください。
+ *
+ * サクラエディタ独自関数です。
+ *
+ * 第1引数には出力先の固定長バッファを指定します。
+ *
+ * 固定長バッファとして扱えるなら生配列でもstd::arrayでもstd::vectorでも構いません。
+ *
+ * バッファ変数の宣言を変更できる場合、 strprintf への移行を検討してください。
+ *
+ * 書式文字列ごと変更できる場合、 std::format への移行を検討してください。
+ */
+TEST(string_ex, auto_sprintf_sA)
+{
+	std::array<char, _MAX_PATH> szText{};
+	EXPECT_THAT(auto_sprintf_s(szText, "%s-%d", "test", 101), 8);
+	ASSERT_THAT(std::data(szText), StrEq("test-101"));
+}
+
+TEST(string_ex, auto_sprintf_sW)
+{
+	SFilePath szText;
+	EXPECT_THAT(auto_sprintf_s(szText, L"%s-%d", L"test", 101), 8);
+	ASSERT_THAT(szText, StrEq(L"test-101"));
+}
+
+TEST(string_ex, ConvertPrintfArgReturnsSourcePointerA)
+{
+	const auto source = "test"s;
+	EXPECT_THAT(cxx::ConvertPrintfArg(source), Eq(source.c_str()));
+}
+
+TEST(string_ex, ConvertPrintfArgReturnsSourcePointerW)
+{
+	const auto source = L"test"s;
+	EXPECT_THAT(cxx::ConvertPrintfArg(source), Eq(source.c_str()));
+}
+
+TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferA)
+{
+	EXPECT_THAT(
+		[] { cxx::ConvertPrintfArg("test data"sv.substr(0, 4)); },
+		ThrowsMessage<std::invalid_argument>(
+			Eq("invalid usage")
+		)
+	);
+}
+
+TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferW)
+{
+	EXPECT_THAT(
+		[] { cxx::ConvertPrintfArg(L"test data"sv.substr(0, 4)); },
+		ThrowsMessage<std::invalid_argument>(
+			Eq("invalid usage")
+		)
+	);
 }
 
 /*!
@@ -132,7 +220,7 @@ TEST(string_ex, strprintfEmpty)
  */
 TEST(string_ex, strprintfW_small_output)
 {
-	std::wstring text = strprintf(L"");
+	std::wstring text;
 	EXPECT_STREQ(L"", text.c_str());
 
 	text = strprintf(L"%d", 1);
@@ -165,7 +253,7 @@ TEST(string_ex, strprintfW_small_output)
  */
 TEST(string_ex, strprintfA_small_output)
 {
-	std::string text = strprintf("");
+	std::string text;
 	EXPECT_STREQ("", text.c_str());
 
 	text = strprintf("%d", 1);
@@ -215,6 +303,79 @@ TEST(string_ex, strprintfA_small_output)
 
 	text = strprintf("1234567890%d", 123456);
 	EXPECT_STREQ("1234567890123456", text.c_str());
+}
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(string_ex, strprintfA101)
+{
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	LPCSTR format = nullptr;
+	const auto ret = strprintf(format, "arg");
+	EXPECT_THAT(errno, Eq(EINVAL));
+	EXPECT_THAT(ret, StrEq(""));
+}
+
+TEST(string_ex, strprintfW101)
+{
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	LPCWSTR format = nullptr;
+	const auto ret = strprintf(format, L"arg");
+	EXPECT_THAT(errno, Eq(EINVAL));
+	EXPECT_THAT(ret, StrEq(L""));
+}
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(string_ex, strprintfA102)
+{
+	// formatが空なら呼び出す意味はない。
+	auto ret = strprintf("", nullptr);
+	EXPECT_THAT(ret, StrEq(""));
+
+	ACHAR buf[50]{};
+	::sprintf_s(buf, "", nullptr);
+	EXPECT_THAT((LPCSTR)buf, StrEq(""));
+
+	LPCSTR format = "%s";
+	ret = strprintf(format, (LPCSTR)nullptr);
+	EXPECT_THAT(ret, StrEq("(null)"));
+	::sprintf_s(buf, format, (LPCSTR)nullptr);
+	EXPECT_THAT(buf, StartsWith("(null)"));
+}
+
+TEST(string_ex, strprintfW102)
+{
+	// formatが空なら呼び出す意味はない。
+	auto ret = strprintf(L"", nullptr);
+	EXPECT_THAT(ret, StrEq(L""));
+
+	WCHAR buf[50]{};
+	::swprintf_s(buf, L"", nullptr);
+	EXPECT_THAT((LPCWSTR)buf, StrEq(L""));
+
+	LPCWSTR format = L"%s";
+	ret = strprintf(format, (LPCWSTR)nullptr);
+	EXPECT_THAT(ret, StrEq(L"(null)"));
+	::swprintf_s(buf, format, (LPCWSTR)nullptr);
+	EXPECT_THAT(buf, StartsWith(L"(null)"));
+}
+
+TEST(string_ex, strprintfW103)
+{
+	EXPECT_THAT(([] {
+		// 書式化パラメーターに部分文字列を検出したら例外を投げること
+		strprintf(L"%s", L"test data"sv.substr(0, 4)); }),
+		ThrowsMessage<std::invalid_argument>(Eq("invalid usage"))
+	);
 }
 
 /*!

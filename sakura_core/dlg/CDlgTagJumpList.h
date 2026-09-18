@@ -156,4 +156,30 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
 };
+
+namespace cxx {
+
+WCHAR* CopyDirDir(
+	std::span<WCHAR> destination,
+	_In_z_ LPCWSTR target,
+	_In_z_ LPCWSTR base
+);
+
+} // namespace cxx
+
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+inline WCHAR* CopyDirDir(
+	A1& destination,
+	const A2& target,
+	const A2& base
+)
+{
+	return cxx::CopyDirDir(
+		std::span<WCHAR>(destination),
+		static_cast<LPCWSTR>(cxx::NullTerminatedString(target)),
+		static_cast<LPCWSTR>(cxx::NullTerminatedString(base))
+	);
+}
+
+
 #endif /* SAKURA_CDLGTAGJUMPLIST_D44C3C98_9BF7_4B99_923B_9005CD54872F_H_ */

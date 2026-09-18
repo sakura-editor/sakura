@@ -1078,13 +1078,17 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	}
 }
 
-int FormatFavoriteColumn(WCHAR* buf, int size, int index, bool view)
+static int FormatFavoriteColumn(WCHAR* buf, int size, int index, bool view)
 {
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span(buf, size);
+
 	// 2010.03.21 Moca Textに連番を設定することによってアクセスキーにする
 	// 0 - 9 A - Z
-	const int mod = index % 36;
-	const WCHAR c = (WCHAR)(((mod) <= 9)?(L'0' + mod):(L'A' + mod - 10));
-	return auto_snprintf_s( buf, size, L"%c %s", c, (view ? L"  " : LS( STR_DLGFAV_HIDDEN )) );
+	const auto mod = index % (10 + 26);	// 0,1,2,...,9,A,B,...,Z
+	const auto c = static_cast<WCHAR>((mod < 10 ? L'0' : L'A' - 10) + mod);
+
+	return auto_sprintf_s( buffer, L"%c %s", c, (view ? L"  " : LS( STR_DLGFAV_HIDDEN )) );
 }
 
 /*!

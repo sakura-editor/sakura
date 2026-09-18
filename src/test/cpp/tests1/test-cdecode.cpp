@@ -70,7 +70,7 @@ TEST_P(UuDecodeTest, DoDecode)
 		// 正常に解釈できた場合、ファイル名もチェック。
 		// （ファイル名は固定でtestを指定し、評価を簡略化している）
 		SFilePath fileName;
-		decoder.CopyFilename(static_cast<std::span<WCHAR, _MAX_PATH>>(fileName));
+		decoder.CopyFilename(fileName);
 		EXPECT_THAT(fileName, StrEq(L"test"));
 	}
 }

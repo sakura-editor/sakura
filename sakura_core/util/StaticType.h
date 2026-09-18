@@ -9,8 +9,8 @@
 #define SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_
 #pragma once
 
-#include "util/string_ex.h"
 #include "debug/Debug2.h"
+#include "util/string_ex.h"
 
 #include <array>
 #include <initializer_list>
@@ -298,13 +298,14 @@ public:
 	/*!
 	 * @brief 文字列をコピーして構築する
 	 *
+	 * @tparam A [in] コピーする文字列の型（NUL終端文字列に変換できる型）
 	 * @param source [in] コピーする文字列
+	 * @throws std::out_of_range 文字列が長過ぎて入り切らない場合。
 	 */
-	constexpr explicit StaticString(
-		std::wstring_view source
-	)
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr explicit StaticString(const A& source)
 	{
-		assign(source);
+		operator = (source);
 	}
 
 	/*!
@@ -315,11 +316,7 @@ public:
 	 */
 	constexpr errno_t append(std::wstring_view src) noexcept
 	{
-		const auto len = length();
-		const auto count = std::min<size_t>(std::size(src), size() - len - 1);
-		Traits::move(data() + len, std::data(src), count);
-		Traits::assign(data()[len + count], L'\0');
-		return count < std::size(src) ? STRUNCATE : 0;
+		return auto_strcat_s(*this, src);
 	}
 
 	/*!
@@ -330,10 +327,7 @@ public:
 	 */
 	constexpr errno_t assign(std::wstring_view src) noexcept
 	{
-		const auto count = std::min<size_t>(std::size(src), size() - 1);
-		Traits::move(data(), std::data(src), count);
-		Traits::assign(data()[count], L'\0');
-		return count < std::size(src) ? STRUNCATE : 0;
+		return auto_strcpy_s(*this, src);
 	}
 
 	constexpr auto begin() noexcept { return m_szData.begin(); }
@@ -363,8 +357,7 @@ public:
 	 */
 	constexpr size_t length() const noexcept
 	{
-		const auto len = ::wcsnlen(data(), size());
-		return len < size() ? len : size() - 1;
+		return cxx::strnlen(data(), size());
 	}
 
 	constexpr auto span()       & noexcept { return std::span<WCHAR, size()>(data(), size()); }
@@ -406,52 +399,27 @@ public:
 	/*!
 	 * @brief バッファの内容を置き換える
 	 *
-	 * @param rhs [in] 代入する文字列
+	 * @tparam A [in] 代入する文字列の型（NUL終端文字列に変換できる型）
+	 * @param rhs [in, opt] 代入する文字列
 	 * @return 自分自身への参照
+	 * @throws std::out_of_range 文字列が長過ぎて入り切らない場合。
 	 */
-	constexpr Me& operator = (std::wstring_view rhs)
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr Me& operator = (const A& rhs)
 	{
-		assign(rhs);
-		
-		return *this;
-	}
+		// 入力元をNUL終端文字列とみなす
+		const auto szText = cxx::NullTerminatedString{ rhs };
 
-	/*!
-	 * @brief バッファの内容を置き換える
-	 *
-	 * @param rhs [in] 代入する文字列
-	 * @return 自分自身への参照
-	 */
-	constexpr Me& operator = (const std::wstring& rhs)
-	{
-		assign(rhs);
-		
-		return *this;
-	}
+		// 入力元を文字列として扱う
+		auto text = static_cast<std::wstring_view>(szText);
 
-	/*!
-	 * @brief バッファの内容を置き換える
-	 *
-	 * @param src [in, opt] 代入する文字列を指すポインタ。
-	 *
-	 * @note 引数にはNULLを指定できる
-	 */
-	constexpr Me& operator = (_In_opt_z_ LPCWSTR rhs)
-	{
-		Assign(rhs);
-		
-		return *this;
-	}
-
-	/*!
-	 * @brief バッファの最後に文字列を追加する
-	 *
-	 * @param rhs [in] 追加する文字列
-	 * @return 自分自身への参照
-	 */
-	constexpr Me& operator += (std::wstring_view rhs) noexcept
-	{
-		append(rhs);
+		// 文字列を代入する
+		if (const auto ret = assign(text);
+			STRUNCATE == ret)
+		{
+			// 代入元文字列が長過ぎる場合、例外を投げる
+			throw std::out_of_range(std::format("source string is too long. (length: {}, allowed: {})", text.length(), size() - 1));
+		}
 
 		return *this;
 	}
@@ -459,12 +427,35 @@ public:
 	/*!
 	 * @brief バッファの最後に文字列を追加する
 	 *
-	 * @param rhs [in] 追加する文字列
+	 * @tparam A [in] 代入する文字列の型（文字列参照に変換できる型）
+	 * @param rhs [in, opt] 追加する文字列
 	 * @return 自分自身への参照
+	 * @throws std::out_of_range 文字列が長過ぎて入り切らない場合。
 	 */
-	constexpr Me& operator += (const std::wstring& rhs) noexcept
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr Me& operator += (const A& rhs)
 	{
-		append(rhs);
+		static_assert(
+			!std::same_as<std::remove_cvref_t<A>, std::nullptr_t>,
+			"rhs can't be NULL"
+		);
+
+		// 入力元をNUL終端文字列とみなす
+		const auto szText = cxx::NullTerminatedString{ rhs };
+
+		// 入力元を文字列として扱う
+		auto text = static_cast<std::wstring_view>(szText);
+
+		// 追加前の文字列長を取得する
+		const auto len = length();
+
+		// 文字列を末尾に追加する
+		if (const auto ret = append(text);
+			STRUNCATE == ret)
+		{
+			// 文字列が長過ぎる場合、例外を投げる
+			throw std::out_of_range(std::format("source string is too long. (length: {}, allowed: {})", text.length(), size() - len - 1));
+		}
 
 		return *this;
 	}
@@ -536,21 +527,5 @@ public:
 private:
 	ArrayType	m_szData{};
 };
-
-template<int N> inline errno_t wcscpy_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.assign(src); }
-template<int N> inline errno_t wcscat_s(StaticString<N>& dst, std::wstring_view src)        noexcept { return dst.append(src); }
-
-template<int N> inline errno_t wcsncpy_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscpy_s(dst, src); }
-template<int N> inline errno_t wcsncat_s(StaticString<N>& dst, std::wstring_view src, size_t count) noexcept { if (_TRUNCATE != count && count < std::size(src)) src = src.substr(0, count); return wcscat_s(dst, src); }
-
-template<int N>
-inline int vswprintf_s(StaticString<N>& buf, const WCHAR* format, va_list& v) noexcept {
-	return ::_vsnwprintf_s(std::data(buf), std::size(buf), _TRUNCATE, format, v);
-}
-
-template<int N, typename... Params>
-inline int swprintf_s(StaticString<N>& buf, const WCHAR* format, Params&&... params) noexcept {
-	return ::_snwprintf_s(std::data(buf), _TRUNCATE, std::size(buf), format, std::forward<Params>(params)...);
-}
 
 #endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */

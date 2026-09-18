@@ -14,6 +14,7 @@
 #include "sakura_rc.h"
 
 using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
 
 /*!
  * 仮定義用namespace
@@ -23,25 +24,6 @@ using namespace std::literals::string_literals;
 namespace ApiWrap {
 
 using SGetTextResult = apiwrap::SGetTextResult;
-
-/*!
- * @brief 指定したウインドウのテキストを取得する
- */
-SGetTextResult GetWindowTextW(HWND hWnd)
-{
-	if (std::wstring buffer; Wnd_GetText(hWnd, buffer)) {
-		return SGetTextResult(std::move(buffer));
-	}
-	return SGetTextResult();
-}
-
-/*!
- * @brief 指定したウインドウのテキストを変更する
- */
-bool SetWindowTextW(HWND hWnd, const std::wstring& text)
-{
-	return Wnd_SetText(hWnd, std::data(text));
-}
 
 /*!
  * @brief 指定したエディットコントロールの入力文字数を制限する
@@ -111,29 +93,6 @@ SGetTextResult GetCbItemText(HWND hWnd, size_t index)
 	return SGetTextResult();
 }
 
-/*!
- * @brief 指定したウインドウのテキストを変更する
- */
-bool SetDlgItemTextW(HWND hDlg, int nIdDlgItem, const std::wstring& text)
-{
-	return DlgItem_SetText(hDlg, nIdDlgItem, std::data(text));
-}
-
-void CheckDlgButton(HWND hDlg, int nIDButton, bool bCheck = true)
-{
-	CheckDlgButtonBool(hDlg, nIDButton, bCheck);
-}
-
-bool IsDlgButtonChecked(HWND hDlg, int nIDButton)
-{
-	return IsDlgButtonCheckedBool(hDlg, nIDButton);
-}
-
-bool EnableDlgItem(HWND hDlg, int nIDDlgItem, bool enable = true)
-{
-	return DlgItem_Enable(hDlg, nIDDlgItem, enable);
-}
-
 } // namespace ApiWrap
 
 namespace window {
@@ -145,7 +104,7 @@ using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
  */
 TEST(ApiWrap, WndTest001)
 {
-	EXPECT_THAT(ApiWrap::GetWindowTextW(nullptr), IsFalse());
+	EXPECT_THAT(apiwrap::GetWindowTextW(nullptr), IsFalse());
 
 	const auto expected = L"0123456789012345678901234567890123456789"s;
 
@@ -155,7 +114,7 @@ TEST(ApiWrap, WndTest001)
 	WindowHolder windowHolder{ hWnd };
 
 	// 単純な取得
-	EXPECT_THAT(ApiWrap::GetWindowTextW(hWnd), StrEq(expected));
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(expected));
 
 	// GitHub #1528 の退行防止テストケース。
 	// 取得する文字列の長さが basic_string::capacity と同じだった場合に一文字取りこぼしていた。
@@ -163,8 +122,24 @@ TEST(ApiWrap, WndTest001)
 	EXPECT_THAT(ApiWrap::Wnd_GetText(hWnd, s), IsTrue());
 	EXPECT_THAT(s, StrEq(expected));
 
-	ApiWrap::SetWindowTextW(hWnd, L"test"s);
-	EXPECT_THAT(ApiWrap::GetWindowTextW(hWnd), StrEq(L"test"));
+	apiwrap::SetWindowTextW(hWnd, L"test"s);
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(L"test"));
+
+	apiwrap::SetWindowTextW(hWnd, L"text"sv);
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(L"text"));
+
+	StaticString<4> smallBuf{};
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd, smallBuf), IsFalse());
+	EXPECT_THAT(smallBuf, StrEq(L""));
+
+	apiwrap::SetWindowTextW(hWnd, L"text"sv.substr(0, 3));
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(L"tex"));
+
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd, smallBuf), IsTrue());
+	EXPECT_THAT(smallBuf, StrEq(L"tex"));
+
+	apiwrap::SetWindowTextW(hWnd, (LPCWSTR)L"test");
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(L"test"));
 
 	CNativeW cmemText;
 	EXPECT_THAT(ApiWrap::Wnd_GetText(hWnd, cmemText), IsTrue());
@@ -188,11 +163,11 @@ TEST(ApiWrap, EditCtlTest001)
 	ApiWrap::LimitEditText(hWnd, arrayBuffer);
 
 	// 現在のテキストを取得
-	EXPECT_THAT(ApiWrap::GetWindowTextW(hWnd), StrEq(L""));
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(L""));
 
 	// 制限を無視してテキストを変更（変更できてしまう仕様）
-	ApiWrap::SetWindowTextW(hWnd, std::format(L"{:a<20}", L'a'));
-	EXPECT_THAT(ApiWrap::GetWindowTextW(hWnd), StrEq(std::format(L"{:a<20}", L'a')));
+	apiwrap::SetWindowTextW(hWnd, std::format(L"{:a<20}", L'a'));
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(std::format(L"{:a<20}", L'a')));
 }
 
 /*!
@@ -270,11 +245,11 @@ TEST(ApiWrap, ComboTest001) {
 	ApiWrap::LimitCbText(hWnd, arrayBuffer);
 
 	// 選択中アイテムのテキストを取得
-	EXPECT_THAT(ApiWrap::GetWindowTextW(hWnd), StrEq(L""));
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(L""));
 
 	// 制限を無視してテキストを変更（変更できてしまう仕様）
-	ApiWrap::SetWindowTextW(hWnd, std::format(L"{:a<20}", L'a'));
-	EXPECT_THAT(ApiWrap::GetWindowTextW(hWnd), StrEq(std::format(L"{:a<20}", L'a')));
+	apiwrap::SetWindowTextW(hWnd, std::format(L"{:a<20}", L'a'));
+	EXPECT_THAT(apiwrap::GetWindowTextW(hWnd), StrEq(std::format(L"{:a<20}", L'a')));
 
 	// アイテムを追加（追加できてしまう仕様）
 	ApiWrap::AddCbItems(hWnd, std::array{ std::format(L"{:a<20}", L'a') });
@@ -313,10 +288,15 @@ TEST(ApiWrap, DlgItemTest001) {
 			constexpr auto& text = L"test item";
 
 			// アイテムにテキストを設定しておく
-			ApiWrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, text);
 			apiwrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, text);
 
 			// バッファサイズ指定せずに取得。正常に取得できる
+			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT), StrEq(text));
+
+			apiwrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, std::wstring_view(text).substr(0, 4));
+			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT), StrEq(L"test"));
+
+			apiwrap::SetDlgItemTextW(hDlg, IDC_COMBO_TEXT, (LPCWSTR)text);
 			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT), StrEq(text));
 
 			// 適切なバッファに取得。正常に取得できる
@@ -332,23 +312,27 @@ TEST(ApiWrap, DlgItemTest001) {
 			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT2), IsFalse());
 			EXPECT_THAT(apiwrap::GetDlgItemTextW(hDlg, IDC_COMBO_TEXT2, enoughBuffer), IsFalse());
 
-			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+			// 呼ぶだけ
+			SFilePath buf1{};
+			apiwrap::LimitComboText(hDlg, IDC_COMBO_TEXT, buf1);
+
+			EXPECT_THAT(apiwrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 
-			ApiWrap::CheckDlgButton(hDlg, IDC_CHK_REGULAREXP, true);
-			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsTrue());
+			apiwrap::CheckDlgButton(hDlg, IDC_CHK_REGULAREXP, true);
+			EXPECT_THAT(apiwrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsTrue());
 			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsTrue());
 
-			ApiWrap::CheckDlgButton(hDlg, IDC_CHK_REGULAREXP, false);
-			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+			apiwrap::CheckDlgButton(hDlg, IDC_CHK_REGULAREXP, false);
+			EXPECT_THAT(apiwrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 
 			CheckDlgButtonBool(hDlg, IDC_CHK_REGULAREXP, true);
-			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsTrue());
+			EXPECT_THAT(apiwrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsTrue());
 			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsTrue());
 
 			CheckDlgButtonBool(hDlg, IDC_CHK_REGULAREXP, false);
-			EXPECT_THAT(ApiWrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
+			EXPECT_THAT(apiwrap::IsDlgButtonChecked(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 			EXPECT_THAT(IsDlgButtonCheckedBool(hDlg, IDC_CHK_REGULAREXP), IsFalse());
 
 			EXPECT_THAT(apiwrap::IsDlgItemEnabled(hDlg, IDC_CHK_REGULAREXP), IsTrue());

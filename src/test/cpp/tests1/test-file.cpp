@@ -20,6 +20,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
+#include "dlg/CDlgTagJumpList.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
 
@@ -27,8 +28,6 @@
 #include "testing/MsvcReportMode.hpp"
 
 std::filesystem::path GetIniFileNameForIO(bool bWrite);
-
-WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base );
 
 namespace cxx {
 

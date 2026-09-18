@@ -37,7 +37,20 @@ FILE *_wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir = TRUE); // 200
 
 //パス文字列処理
 void CutLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダーの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
+
+namespace cxx {
+
 void AddLastYenFromDirectoryPath(std::span<WCHAR> folder);			/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
+
+} // namespace cxx
+
+template <basis::WritableBuffer<WCHAR> A>
+void AddLastYenFromDirectoryPath(A& folder)
+{
+	// パスの末尾に円マークを付ける
+	cxx::AddLastYenFromDirectoryPath(std::span<WCHAR>{ folder });
+}
+
 std::wstring AddLastYenPath(std::wstring_view path);
 void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile );	/* ファイルのフルパスを、フォルダーとファイル名に分割 */
 void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath );/* フォルダー、ファイル名から、結合したパスを作成 */
