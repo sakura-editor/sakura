@@ -9,6 +9,17 @@
       <Item Name="_Size">m_nDataBufSize / 2</Item>
     </Expand>
   </Type>
+  <Type Name="CStringRef">
+    <DisplayString Condition="m_pData == 0">NULL</DisplayString>
+    <DisplayString Condition="m_nDataLen == 0 || m_pData[0] == 0">empty ({m_nDataLen,d})</DisplayString>
+    <DisplayString Condition="m_pData != 0 &amp;&amp; m_pData[0] != 0">{m_pData,su} ({m_nDataLen,d})</DisplayString>
+    <Expand>
+      <ArrayItems Condition="m_pData != 0">
+        <Size>m_nDataLen + 1</Size>
+        <ValuePointer>(wchar_t*)m_pData</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
   <Type Name="cxx::NullTerminatedString&lt;wchar_t&gt;">
     <DisplayString Condition="m_IsNull">NULL</DisplayString>
     <DisplayString Condition="!m_IsNull &amp;&amp; m_Length == 0">empty (0)</DisplayString>

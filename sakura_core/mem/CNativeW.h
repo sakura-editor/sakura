@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,25 +9,83 @@
 #define SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_
 #pragma once
 
-#include "CNative.h"
 #include "basis/SakuraBasis.h"
+#include "basis/primitive.h"
 #include "charset/charcode.h"
 #include "debug/Debug2.h" //assert
+#include "mem/CNative.h"
+
+#include <string_view>
 
 class CNativeW;
 
 //! 文字列への参照を保持するクラス
+// TODO: いつか廃止する
 class CStringRef final{
 public:
 	CStringRef() noexcept = default;
 	CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept;
 	explicit CStringRef( const CNativeW& cmem ) noexcept;
 
+	/*!
+	 * @brief バッファへのポインタを取得する
+	 */
+	constexpr LPCWSTR data() const noexcept
+	{
+		return m_pData;
+	}
+
+	/*!
+	 * @brief 文字列が空かどうか調べる
+	 */
+	constexpr bool empty() const noexcept
+	{
+		return 0 == m_nDataLen || !data() || 0 == data()[0];
+	}
+
+	/*!
+	 * @brief 文字列長を取得する
+	 */
+	constexpr size_t length() const noexcept
+	{
+		return m_nDataLen;
+	}
+
+	/*!
+	 * @brief 文字列参照を取得する
+	 *
+	 * @return 文字列参照
+	 */
+	constexpr std::wstring_view str() const noexcept
+	{
+		return std::wstring_view{ data(), length() };
+	}
+
 	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
 	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
 	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
 	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
 	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
+
+	/*!
+	 * @brief 文字列に変換する演算子
+	 *
+	 * @return 文字列
+	 */
+	constexpr explicit operator std::wstring() const
+	{
+		return std::wstring{ str() };
+	}
+
+	/*!
+	 * @brief 文字列参照に変換する
+	 *
+	 * @return 文字列参照
+	 */
+	constexpr explicit operator std::wstring_view() const& noexcept
+	{
+		return str();
+	}
 
 private:
 	const wchar_t*	m_pData = nullptr;
