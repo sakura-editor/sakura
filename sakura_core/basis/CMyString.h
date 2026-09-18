@@ -15,14 +15,51 @@
 #include "config/maxdata.h"
 
 //共通型
+
+/*!
+ * @brief ファイルパスを格納する文字列バッファ
+ *
+ * _MAX_PATH == 260
+ *
+ * 文字列長 _MAX_PATH - 1 までを格納できる固定長バッファ。
+ *
+ * 4096程度に拡張すべきだが、色々事情があり対応保留。
+ */
 using SFilePath = StaticString<_MAX_PATH>;
+
+/*!
+ * @brief 長めの文字列を格納する文字列バッファ
+ *
+ * 上限値の根拠が不明瞭なので、検討の余地がある。
+ */
 using SFilePathLong = StaticString<MAX_GREP_PATH>;
-class CFilePath : public StaticString<_MAX_PATH>{
+
+/*!
+ * @brief ドキュメントパスの格納に使っているクラス
+ *
+ * SFilePathなので最大259文字。
+ */
+// TODO: いつか削除する
+class CFilePath : public SFilePath {
 private:
-	using Super = StaticString<_MAX_PATH>;
+	using Base = SFilePath;
+	using Me = CFilePath;
+
 public:
-	CFilePath() = default;
-	CFilePath(const WCHAR* rhs) : Super(std::wstring_view{ rhs ? rhs : L"" }) {}
+	// コンストラクタは流用
+	using Base::Base;
+
+	/*!
+	 * @brief 文字列をコピーして構築する
+	 *
+	 * explicitを付けないのはC++の作法に照らして適切でない。
+	 *
+	 * @param pszPath [in, opt] コピーする文字列
+	 */
+	constexpr /* implicit */ CFilePath(_In_opt_z_ LPCWSTR pszPath)
+	{
+		Assign(pszPath);
+	}
 
 	[[nodiscard]] bool IsValidPath() const noexcept { return !empty(); }
 	[[nodiscard]] std::wstring GetDirPath() const

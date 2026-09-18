@@ -245,30 +245,70 @@ private:
 	ArrayType	m_aElements{};
 };
 
-//! ヒープを用いない文字列クラス
-//2007.09.23 kobake 作成。
-template <int N_BUFFER_COUNT>
-class StaticString{
+/*!
+ * @brief ヒープを用いない文字列クラス
+ *
+ * 固定長の文字バッファをクラス内部に保持する文字列クラス。
+ * ヒープ領域を使用しないため、共有メモリに配置できる。
+ *
+ * 既存コードにある生配列を最小の変更で置き換えるために、
+ * C++の作法に照らして不適切な演算子を多く定義している。
+ *
+ * Windows APIには指定できる文字列に長さ制限があるものも多いため、
+ * LPCWSTRへの暗黙変換機能を外したとしてもクラスの存在価値はなくならない。
+ *
+ * @code{.cpp}
+ * using SFilePath = StaticString<_MAX_PATH>;
+ * SFilePath filePath{};
+ *
+ * // 以下と同等。
+ * WCHAR szFilePath[_MAX_PATH] {};
+ * @endcode
+ *
+ * @tparam N バッファサイズ。最大文字列長 + 1（NUL終端）を指定すること。
+ *
+ * @author kobake
+ * @date 2007.09.23 kobake 作成
+ */
+template <int N>
+// TODO: final指定したいが継承クラスがあるのでコメントアウトしている
+class StaticString /* final */ {
 private:
-	//テンプレート定数名が長過ぎて不便なので、エイリアスを切る
-	static constexpr auto N = N_BUFFER_COUNT;
+	// 文字バッファの要素数は 1以上 を想定する
+	static_assert(1 <= N, "BUFFER_COUNT must be greater than 0.");
 
 	using ArrayType = std::array<WCHAR, N>;
 	using Traits = std::char_traits<WCHAR>;
 
 	using Me = StaticString<N>;
 
+#pragma push_macro("DISABLE_IMPLICIT_OPERATORS")
+
+// C++の作法に照らして不適切な演算子を無効にするマクロ（これを有効にするとクラスの存在価値が半減することに注意。
+#define DISABLE_IMPLICIT_OPERATORS 0
+
 public:
-	static constexpr auto BUFFER_COUNT = N_BUFFER_COUNT;
+	static constexpr auto BUFFER_COUNT = N;
 
 	static constexpr auto size() noexcept { return BUFFER_COUNT; }
 
 	//コンストラクタ・デストラクタ
 	StaticString() = default;
-	constexpr explicit StaticString(std::wstring_view src) { assign(src); }
 
 	/*!
-	 * 文字列を末尾に追加する
+	 * @brief 文字列をコピーして構築する
+	 *
+	 * @param source [in] コピーする文字列
+	 */
+	constexpr explicit StaticString(
+		std::wstring_view source
+	)
+	{
+		assign(source);
+	}
+
+	/*!
+	 * @brief 文字列を末尾に追加する
 	 *
 	 * @retval 0 成功
 	 * @retval STRUNCATE 切り詰め発生
@@ -283,7 +323,7 @@ public:
 	}
 
 	/*!
-	 * 文字列を代入する
+	 * @brief 文字列を代入する
 	 *
 	 * @retval 0 成功
 	 * @retval STRUNCATE 切り詰め発生
@@ -296,59 +336,202 @@ public:
 		return count < std::size(src) ? STRUNCATE : 0;
 	}
 
-	/*!
-	 * 文字列長を取得する
-	 */
-	constexpr size_t length() const noexcept
-	{
-		const auto pos = Traits::find(data(), size(), L'\0');
-		return pos ? static_cast<size_t>(pos - data()) : size() - 1;
-	}
-
-	constexpr bool empty() const noexcept { return 0 == m_szData[0]; }
-
 	constexpr auto begin() noexcept { return m_szData.begin(); }
 	constexpr auto end() noexcept { return m_szData.end() - 1; }
 
 	auto begin() const noexcept { return m_szData.begin(); }
 	auto end() const noexcept { return m_szData.begin() + length(); }
 
-	constexpr       WCHAR* data()        noexcept { return std::data(m_szData); }
-	constexpr const WCHAR* data()  const noexcept { return std::data(m_szData); }
-	constexpr const WCHAR* c_str() const noexcept { return data(); }
+	constexpr auto c_str() const noexcept { return data(); }
 
-	constexpr operator std::span<WCHAR, N>()       & noexcept { return std::span<WCHAR, N>{ data(), N }; }
-	constexpr operator std::wstring_view()   const & noexcept { return std::wstring_view{ data(), length() }; }
-	constexpr operator std::span<WCHAR>()          & noexcept { return operator std::span<WCHAR, N>(); }
+	constexpr auto data()        noexcept { return std::data(m_szData); }
+	constexpr auto data()  const noexcept { return std::data(m_szData); }
 
-	explicit operator std::filesystem::path() const & noexcept { return static_cast<std::wstring_view>(*this); }
+	/*!
+	 * @brief 文字列が空かどうか調べる
+	 */
+	constexpr bool empty() const noexcept
+	{
+		 return 0 == m_szData[0];
+	}
 
-	constexpr Me& operator = (std::wstring_view rhs) noexcept { assign(rhs); return *this; }
-	constexpr Me& operator = (const std::wstring& rhs) noexcept { assign(rhs); return *this; }
-	constexpr Me& operator = (const std::filesystem::path& path) noexcept { assign(path.wstring()); return *this; }
+	/*!
+	 * @brief 文字列長を取得する
+	 *
+	 * @note 毎回再計算するので効率は良くない。
+	 * @note 長さを頻繁に確認する用途ではstd::wstringへの移行を検討すること。
+	 */
+	constexpr size_t length() const noexcept
+	{
+		const auto len = ::wcsnlen(data(), size());
+		return len < size() ? len : size() - 1;
+	}
 
-	constexpr Me& operator += (std::wstring_view rhs) noexcept { append(rhs); return *this; }
-	constexpr Me& operator += (const std::wstring& rhs) noexcept { append(rhs); return *this; }
+	constexpr auto span()       & noexcept { return std::span<WCHAR, size()>(data(), size()); }
+	constexpr auto str()  const & noexcept { return std::wstring_view(data(), length()); }
 
 	//クラス属性
-	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
+	size_t GetBufferCount() const noexcept { return size(); }
 
 	//データアクセス
 	WCHAR*       GetBufferPointer()      { return data(); }
 	const WCHAR* GetBufferPointer() const{ return data(); }
 
+#if !DISABLE_IMPLICIT_OPERATORS
+
 	//簡易データアクセス
 	constexpr operator       WCHAR*()       & noexcept { return data(); }
 	constexpr operator const WCHAR*() const & noexcept { return data(); }
 
+#endif // #if !DISABLE_IMPLICIT_OPERATORS
+
 	WCHAR At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const WCHAR* src) noexcept { assign(std::wstring_view{ src ? src : L"" }); }
-	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
+	/*!
+	 * @brief ポインタを指定して文字列を割り当てる
+	 *
+	 * @param pszData [in, opt] 割り当てる文字列を指すポインタ。
+	 *
+	 * @note 引数にはNULLを指定できる
+	 */
+	constexpr void Assign(_In_opt_z_ LPCWSTR pszData) noexcept
+	{
+		assign(std::wstring_view{ pszData ? pszData : L"" });
+	}
 
 	//各種メソッド
-	int Length() const noexcept { return static_cast<int>(length()); }
+	constexpr int Length() const noexcept { return static_cast<int>(length()); }
+
+	/*!
+	 * @brief バッファの内容を置き換える
+	 *
+	 * @param rhs [in] 代入する文字列
+	 * @return 自分自身への参照
+	 */
+	constexpr Me& operator = (std::wstring_view rhs)
+	{
+		assign(rhs);
+		
+		return *this;
+	}
+
+	/*!
+	 * @brief バッファの内容を置き換える
+	 *
+	 * @param rhs [in] 代入する文字列
+	 * @return 自分自身への参照
+	 */
+	constexpr Me& operator = (const std::wstring& rhs)
+	{
+		assign(rhs);
+		
+		return *this;
+	}
+
+	/*!
+	 * @brief バッファの内容を置き換える
+	 *
+	 * @param src [in, opt] 代入する文字列を指すポインタ。
+	 *
+	 * @note 引数にはNULLを指定できる
+	 */
+	constexpr Me& operator = (_In_opt_z_ LPCWSTR rhs)
+	{
+		Assign(rhs);
+		
+		return *this;
+	}
+
+	/*!
+	 * @brief バッファの最後に文字列を追加する
+	 *
+	 * @param rhs [in] 追加する文字列
+	 * @return 自分自身への参照
+	 */
+	constexpr Me& operator += (std::wstring_view rhs) noexcept
+	{
+		append(rhs);
+
+		return *this;
+	}
+
+	/*!
+	 * @brief バッファの最後に文字列を追加する
+	 *
+	 * @param rhs [in] 追加する文字列
+	 * @return 自分自身への参照
+	 */
+	constexpr Me& operator += (const std::wstring& rhs) noexcept
+	{
+		append(rhs);
+
+		return *this;
+	}
+
+	/*!
+	 * @brief 文字列バッファに変換する
+	 *
+	 * @return 文字列バッファ
+	 */
+	constexpr explicit operator std::span<WCHAR, size()>() & noexcept
+	{
+		return span();
+	}
+
+	/*!
+	 * @brief 文字列バッファに変換する
+	 *
+	 * explicitを付けないのはC++の作法に照らして適切でない。
+	 * C++への移行を加速させるために仮置き。
+	 *
+	 * @return 文字列バッファ
+	 */
+	// TODO: いつか explicit を付ける
+	constexpr /* implicit */ operator std::span<WCHAR>() & noexcept
+	{
+		return span();
+	}
+
+#if DISABLE_IMPLICIT_OPERATORS
+
+	/*!
+	 * @brief 文字列に変換する演算子
+	 *
+	 * @return 文字列
+	 */
+	constexpr explicit operator std::wstring() const
+	{
+		return std::wstring{ str() };
+	}
+
+#endif // #if DISABLE_IMPLICIT_OPERATORS
+
+#pragma pop_macro("DISABLE_IMPLICIT_OPERATORS")
+
+	/*!
+	 * @brief 文字列参照に変換する
+	 *
+	 * explicitを付けないのはC++の作法に照らして適切でない。
+	 * C++への移行を加速させるために仮置き。
+	 *
+	 * @return 文字列参照
+	 */
+	// TODO: いつか explicit を付ける
+	constexpr /* implicit */ operator std::wstring_view() const & noexcept
+	{
+		return str();
+	}
+
+	/*!
+	 * @brief ファイルパスに変換する
+	 *
+	 * @return ファイルパス
+	 */
+	explicit operator std::filesystem::path() const & noexcept
+	{
+		return str();
+	}
 
 private:
 	ArrayType	m_szData{};
