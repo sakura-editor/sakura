@@ -14,7 +14,7 @@ using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
 static_assert(!basis::StringViewCompatible<LPCWSTR, WCHAR>);
-static_assert(!basis::StringViewCompatible<CNativeW, WCHAR>);
+static_assert(basis::StringViewCompatible<CNativeW, WCHAR>);
 static_assert(basis::StringViewCompatible<CStringRef, WCHAR>);
 static_assert(basis::StringViewCompatible<SFilePath, WCHAR>);
 static_assert(!basis::StringViewCompatible<std::filesystem::path, WCHAR>);

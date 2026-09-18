@@ -110,6 +110,40 @@ public:
 	CNativeW( const wchar_t* pData, size_t nDataLen ); //!< nDataLenは文字単位。
 	CNativeW( const wchar_t* pData );
 
+	/*!
+	 * @brief バッファへのポインタを取得する
+	 */
+	LPCWSTR data() const noexcept
+	{
+		return GetStringPtr();
+	}
+
+	/*!
+	 * @brief 文字列が空かどうか調べる
+	 */
+	bool empty() const noexcept
+	{
+		return !length() || !data() || !data()[0];
+	}
+
+	/*!
+	 * @brief 文字列長を取得する
+	 */
+	size_t length() const noexcept
+	{
+		return static_cast<size_t>(GetStringLength());
+	}
+
+	/*!
+	 * @brief 文字列参照を取得する
+	 *
+	 * @return 文字列参照
+	 */
+	std::wstring_view str() const noexcept
+	{
+		return std::wstring_view{ data(), length() };
+	}
+
 	/*! メモリ確保済みかどうか */
 	[[nodiscard]] bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
 
@@ -191,6 +225,26 @@ public:
 
 	void Replace( std::wstring_view strFrom, std::wstring_view strTo );   //!< 文字列置換
 	void Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen );   //!< 文字列置換
+
+	/*!
+	 * @brief 文字列に変換する演算子
+	 *
+	 * @return 文字列
+	 */
+	constexpr explicit operator std::wstring() const
+	{
+		return std::wstring{ str() };
+	}
+
+	/*!
+	 * @brief 文字列参照に変換する
+	 *
+	 * @return 文字列参照
+	 */
+	explicit operator std::wstring_view() const& noexcept
+	{
+		return str();
+	}
 
 public:
 	// -- -- staticインターフェース -- -- //

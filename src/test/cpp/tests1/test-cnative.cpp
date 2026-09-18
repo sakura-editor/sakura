@@ -945,3 +945,19 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 	// 対処方法 関数コメントにある仕様通りに修正する。
 	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
 }
+
+TEST(CNativeW, length001)
+{
+	CNativeW mem{ L"test" };
+	EXPECT_THAT(mem, StrEq(L"test"));
+	EXPECT_THAT(mem.empty(), IsFalse());
+	EXPECT_THAT(mem.length(), Eq(4));
+}
+
+TEST(CNativeW, length101)
+{
+	CNativeW mem{};
+	EXPECT_THAT(mem, StrEq(L""));
+	EXPECT_THAT(mem.empty(), IsTrue());
+	EXPECT_THAT(mem.length(), Eq(0));
+}
