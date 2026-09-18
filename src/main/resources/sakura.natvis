@@ -9,6 +9,17 @@
       <Item Name="_Size">m_nDataBufSize / 2</Item>
     </Expand>
   </Type>
+  <Type Name="cxx::NullTerminatedString&lt;wchar_t&gt;">
+    <DisplayString Condition="m_IsNull">NULL</DisplayString>
+    <DisplayString Condition="!m_IsNull &amp;&amp; m_Length == 0">empty (0)</DisplayString>
+    <DisplayString Condition="!m_IsNull &amp;&amp; m_RawPtr != 0">{m_RawPtr,su} ({m_Length,d})</DisplayString>
+    <Expand>
+      <ArrayItems Condition="m_RawPtr != 0">
+        <Size>m_Length + 1</Size>
+        <ValuePointer>m_RawPtr</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
   <Type Name="StaticString&lt;*&gt;">
     <DisplayString Condition="m_szData[0] == 0">empty</DisplayString>
     <DisplayString Condition="m_szData[0] != 0">{m_szData._Elems,su}</DisplayString>

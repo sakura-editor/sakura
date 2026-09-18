@@ -7,6 +7,60 @@
 #include "pch.h"
 #include "util/StaticType.h"
 
+#include "basis/CMyString.h"
+#include "mem/CNativeW.h"
+
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
+static_assert(!basis::StringViewCompatible<LPCWSTR, WCHAR>);
+static_assert(!basis::StringViewCompatible<CNativeW, WCHAR>);
+static_assert(!basis::StringViewCompatible<CStringRef, WCHAR>);
+static_assert(basis::StringViewCompatible<SFilePath, WCHAR>);
+static_assert(!basis::StringViewCompatible<std::filesystem::path, WCHAR>);
+static_assert(!basis::StringViewCompatible<std::nullptr_t, WCHAR>);
+static_assert(basis::StringViewCompatible<std::wstring, WCHAR>);
+static_assert(basis::StringViewCompatible<std::wstring_view, WCHAR>);
+static_assert(!basis::StringViewCompatible<WCHAR[16], WCHAR>);
+static_assert(!basis::StringViewCompatible<const WCHAR[16], WCHAR>);
+static_assert(!basis::StringViewCompatible<std::array<WCHAR, 16>, WCHAR>);
+static_assert(!basis::StringViewCompatible<std::vector<WCHAR>, WCHAR>);
+
+static_assert(!basis::StringConstructible<LPCWSTR, WCHAR>);
+static_assert(!basis::StringConstructible<CNativeW, WCHAR>);
+static_assert(!basis::StringConstructible<CStringRef, WCHAR>);
+static_assert(!basis::StringConstructible<SFilePath, WCHAR>);
+static_assert(basis::StringConstructible<std::filesystem::path, WCHAR>);
+static_assert(!basis::StringConstructible<std::nullptr_t, WCHAR>);
+static_assert(!basis::StringConstructible<std::wstring, WCHAR>);
+static_assert(!basis::StringConstructible<std::wstring_view, WCHAR>);
+static_assert(!basis::StringConstructible<WCHAR[16], WCHAR>);
+static_assert(!basis::StringConstructible<const WCHAR[16], WCHAR>);
+static_assert(!basis::StringConstructible<std::array<WCHAR, 16>, WCHAR>);
+static_assert(!basis::StringConstructible<std::vector<WCHAR>, WCHAR>);
+
+static_assert(basis::NullTerminatedStringConstructible<WCHAR*, WCHAR>);
+static_assert(basis::NullTerminatedStringConstructible<const WCHAR*, WCHAR>);
+static_assert(!basis::NullTerminatedStringConstructible<void*, WCHAR>);
+static_assert(!basis::NullTerminatedStringConstructible<int*, WCHAR>);
+static_assert(basis::NullTerminatedStringConstructible<WCHAR[16], WCHAR>);
+static_assert(basis::NullTerminatedStringConstructible<const WCHAR[16], WCHAR>);
+static_assert(!basis::NullTerminatedStringConstructible<int[16], WCHAR>);
+static_assert(!basis::NullTerminatedStringConstructible<volatile WCHAR[16], WCHAR>);
+
+static_assert(!basis::WritableBuffer<LPCWSTR, WCHAR>);
+static_assert(!basis::WritableBuffer<CNativeW, WCHAR>);
+static_assert(!basis::WritableBuffer<CStringRef, WCHAR>);
+static_assert(basis::WritableBuffer<SFilePath, WCHAR>);
+static_assert(!basis::WritableBuffer<std::filesystem::path, WCHAR>);
+static_assert(!basis::WritableBuffer<std::nullptr_t, WCHAR>);
+static_assert(!basis::WritableBuffer<std::wstring, WCHAR>);
+static_assert(!basis::WritableBuffer<std::wstring_view, WCHAR>);
+static_assert(basis::WritableBuffer<WCHAR[16], WCHAR>);
+static_assert(!basis::WritableBuffer<const WCHAR[16], WCHAR>);
+static_assert(basis::WritableBuffer<std::array<WCHAR, 16>, WCHAR>);
+static_assert(basis::WritableBuffer<std::vector<WCHAR>, WCHAR>);
+
 namespace basis {
 
 /*!
@@ -207,3 +261,180 @@ TEST(StaticString, test001)
 }
 
 } // namespace basis
+
+namespace cxx {
+
+//! @brief NUL終端文字列と互換性のある型で初期化
+TEST(NullTerminatedString, test001)
+{
+	auto testData = L"test"s;
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Eq(testData.c_str()));
+}
+
+//! @brief std::filesystem::path型で初期化
+TEST(NullTerminatedString, test002)
+{
+	auto testData = std::filesystem::path("test");
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Eq(testData.c_str()));
+}
+
+//! @brief NULで初期化
+TEST(NullTerminatedString, test003)
+{
+	auto value = cxx::NullTerminatedString(nullptr);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), IsNull());
+	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), IsNull());
+}
+
+//! @brief 配列で初期化
+TEST(NullTerminatedString, test004)
+{
+	WCHAR testData[_MAX_PATH] = L"test";
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Eq(testData));
+}
+
+//! @brief 配列で初期化
+TEST(NullTerminatedString, test005)
+{
+	const auto& testData = L"test\0data";
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Eq<LPCWSTR>(testData));
+}
+
+//! @brief ポインタで初期化
+TEST(NullTerminatedString, test006)
+{
+	LPCWSTR testData = L"test";
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Eq(testData));
+}
+
+//! @brief ポインタで初期化
+TEST(NullTerminatedString, test007)
+{
+	LPCWSTR testData = nullptr;
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), IsNull());
+	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), IsNull());
+}
+
+//! @brief 文字列として扱える型で初期化
+TEST(NullTerminatedString, test008)
+{
+	auto testData = L""sv;
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L""));
+	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Ne(testData.data()));
+}
+
+//! @brief 文字列として扱える型で初期化
+TEST(NullTerminatedString, test009)
+{
+	auto testData = L"test"sv;
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Eq(testData.data()));
+}
+
+//! @brief 文字列として扱える型で初期化
+TEST(NullTerminatedString, test00A)
+{
+	auto testData = L"testData"sv.substr(0, 4);
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsTrue());
+	EXPECT_THAT(value.c_str(), Ne(testData.data()));
+}
+
+//! @brief 文字列表現を生成できる型で初期化
+TEST(NullTerminatedString, test00B)
+{
+	struct Dummy {
+		explicit operator std::wstring() const { return L"test"; }
+	};
+
+	auto testData = Dummy();
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
+	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(value.uses_buffer(), IsTrue());
+}
+
+//! @brief NUL終端文字列と互換性のある型で初期化
+TEST(NullTerminatedString, test00C)
+{
+	auto testData = L""s;
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L""));
+	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Eq(testData.data()));
+}
+
+//! @brief 文字列として扱える型で初期化
+TEST(NullTerminatedString, test00D)
+{
+	auto testData = L"testData"sv.substr(0, 0);
+	auto value = cxx::NullTerminatedString(testData);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L""));
+	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+	EXPECT_THAT(value.c_str(), Ne(testData.data()));
+}
+
+TEST(NullTerminatedString, test101)
+{
+	auto value = cxx::NullTerminatedString(LPCWSTR(nullptr), 0);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), IsNull());
+	EXPECT_THAT(value.c_str(), IsNull());
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+}
+
+TEST(NullTerminatedString, test102)
+{
+	auto value = cxx::NullTerminatedString(L"", 0);
+	EXPECT_THAT(static_cast<LPCWSTR>(value), NotNull());
+	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value.uses_buffer(), IsFalse());
+}
+
+//! @brief 配列で初期化
+TEST(NullTerminatedString, test103)
+{
+	EXPECT_THAT(([] {
+		WCHAR testData[5] = {};
+		std::wstring dummy(5, L'a');
+		std::ranges::copy_n(dummy.begin(), 5, std::begin(testData));
+		auto value = cxx::NullTerminatedString(testData); }),
+		ThrowsMessage<std::invalid_argument>(Eq("char array should be null-terminated."))
+	);
+}
+
+} // namespace cxx
