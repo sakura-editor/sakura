@@ -187,6 +187,27 @@ constexpr errno_t strcat_s(A1& dst, const A2& src) noexcept
 }
 
 /*!
+ * @brief CStrictIntegerっぽい型
+ */
+template<typename A>
+concept StrictIntegerLike =
+	// int から例外なく構築できること
+	(std::is_nothrow_constructible_v<std::remove_cvref_t<A>, int>)
+	// GetValue() メソッドを持つこと
+	&& (requires(const A& value) {
+		{
+			value.GetValue()
+		} noexcept -> std::same_as<int>;
+	})
+	// Int に例外なく変換できること
+	&& (requires(const A& value) {
+		{
+			static_cast<Int>(value)
+		} noexcept -> std::same_as<Int>;
+	})
+	;
+
+/*!
  * @brief sprintf系関数の引数を変換する
  *
  * sprintf系関数にC++標準の文字列を渡せない対策として作成。
@@ -196,6 +217,13 @@ constexpr errno_t strcat_s(A1& dst, const A2& src) noexcept
 template <typename T>
 constexpr decltype(auto) ConvertPrintfArg(const T& value)
 {
+#if 0
+	static_assert(
+		!cxx::StrictIntegerLike<T>,
+		"StrictInteger is not supported."
+	);
+#endif
+
 	if constexpr (basis::NullTerminatedStringConstructible<T, WCHAR>) {
 		const auto text = cxx::NullTerminatedString<WCHAR>{ value };
 		if (text.uses_buffer()) {
@@ -209,6 +237,9 @@ constexpr decltype(auto) ConvertPrintfArg(const T& value)
 			throw std::invalid_argument("invalid usage");
 		}
 		return text.c_str();
+	}
+	else if constexpr (cxx::StrictIntegerLike<T>) {
+		return static_cast<int>(value);
 	}
 	else {
 		return value;
