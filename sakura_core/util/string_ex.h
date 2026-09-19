@@ -531,10 +531,8 @@ WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
 WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
-inline int auto_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v) { return ::vsprintf(buf, format, v); }
-inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v) { return ::_vswprintf(buf, format, v); }
-inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
-inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
+template <typename... Args> int auto_sprintf(WCHAR* buf, _In_z_ _Printf_format_string_ const WCHAR* format, const Args&... args) { return ::_swprintf (buf, format, cxx::ConvertPrintfArg(std::as_const(args))...); }
+template <typename... Args> int auto_sprintf(ACHAR* buf, _In_z_ _Printf_format_string_ const ACHAR* format, const Args&... args) { return std::sprintf(buf, format, cxx::ConvertPrintfArg(std::as_const(args))...); }
 
 template <typename CharT, basis::WritableBuffer<CharT> A, typename... Params>
 int auto_snprintf_s(
@@ -598,6 +596,21 @@ int auto_sprintf_s(
 	return cxx::_sprintf_s(
 		pBuffer,
 		nBufferSize,
+		format,
+		std::as_const(params)...
+	);
+}
+
+template <typename CharT, basis::WritableBuffer<CharT> A, typename... Params>
+int auto_sprintf(
+	A& dst,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_sprintf_s(
+		dst,
 		format,
 		std::as_const(params)...
 	);
