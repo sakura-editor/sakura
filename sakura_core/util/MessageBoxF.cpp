@@ -18,6 +18,8 @@
 #include "MessageBoxF.h"
 
 #include "_main/CProcess.h"
+
+#include "basis/primitive.h"
 #include "config/app_constants.h"
 #include "util/os.h"
 #include "util/tchar_convert.h"
@@ -32,34 +34,6 @@ HWND GetMessageBoxOwner(HWND hWndOwner);
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-/*!
- * メッセージボックスを表示します。
- *
- * @note 直接呼ばないでください。
- */
-/* static */ int User32::MessageBoxW(
-	_In_opt_ HWND hWndOwner,
-	const std::optional<std::wstring>& optText,
-	const std::optional<std::wstring>& optCaption,
-	_In_ UINT uType
-)
-{
-	if (!hWndOwner) {
-		hWndOwner = GetMessageBoxOwner(hWndOwner);
-	}
-
-	// 選択中の言語IDを取得する
-	const auto wLangId = CSelectLang::getDefaultLangId();
-
-	return User32::getInstance()->MessageBoxExW(
-		hWndOwner,
-		optText.has_value() ? std::data(*optText) : nullptr,
-		optCaption.has_value() ? std::data(*optCaption) : nullptr,
-		uType,
-		wLangId
-	);
-}
 
 /*!
  * メッセージボックスを表示します。
@@ -88,6 +62,43 @@ int User32::MessageBoxExW(
 }
 
 /*!
+ * @brief メッセージボックスを表示する
+ *
+ * サクラエディタで使いやすいようにWindows APIをカスタムしたもの。
+ *
+ * @param[in] text メッセージボックスに表示する文字列
+ * @param[in, opt] uType メッセージボックスのスタイル (省略時は OkOnly)
+ * @param[in, opt] hWndOwner オーナーウィンドウのハンドル（省略時はメインウィンドウ）
+ * @param[in, opt] optCaption メッセージボックスのタイトル（省略時は「アプリ名」）
+ * @returns メッセージボックスがどのボタンで閉じられたかを示す値。IDYESなど。
+ */
+int MessageBoxS(
+	const std::wstring& text,						// NUL終端を保証したいため、あえて std::wstring にする
+	UINT uType,
+	_In_opt_ HWND hWndOwner,
+	const std::optional<std::wstring>& optCaption	// NUL終端を保証したいため、あえて std::wstring にする
+)
+{
+	// メッセージボックスはモーダルダイアログなので、オーナーを指定する
+	hWndOwner = GetMessageBoxOwner(hWndOwner);
+
+	// キャプションを省略したら「アプリ名」を使う
+	const auto capStr = optCaption.value_or(GSTR_APPNAME);
+
+	// 現在の言語IDを取得する
+	const auto langId = CSelectLang::getDefaultLangId();
+
+	// Windows API を呼び出す
+	return User32::getInstance()->MessageBoxExW(
+		hWndOwner,
+		text.c_str(),	// 非NULLのNUL終端文字列を渡す。
+		capStr.c_str(),	// 非NULLのNUL終端文字列を渡す。
+		uType,
+		langId
+	);
+}
+
+/*!
  * メッセージボックスを表示します。
  *
  * @note 直接呼ばないでください。
@@ -95,13 +106,22 @@ int User32::MessageBoxExW(
  */
 int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 {
+	// メッセージ本文はNUL終端文字列として扱う
+	const auto text = cxx::NullTerminatedString{ lpText };
+
+	// メッセージタイトルはNUL終端文字列として扱う（ただし、省略可能。）
+	const auto capStr = cxx::NullTerminatedString{ lpCaption };
+
 	// lpText, lpCaption をローカルバッファにコピーして MessageBox API を呼び出す
 	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも
 	//    メッセージボックス上の Ctrl+C が文字化けしないように
-	return User32::MessageBoxW(hWnd,
-		lpText ? std::make_optional(lpText) : std::nullopt,
-		lpCaption ? std::make_optional(lpCaption) : std::nullopt,
-		uType
+
+	// メッセージボックスを表示する
+	return MessageBoxS(
+		std::wstring{ text.str() },	// NUL終端を保証するため、ここでコピーする
+		uType,
+		hWnd,
+		capStr.optStr()	// 指定されている場合、ここで std::wstring が生成される
 	);
 }
 

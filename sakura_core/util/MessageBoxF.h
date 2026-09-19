@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,6 +21,9 @@
 
 #include <cstdarg>
 
+#include <optional>
+#include <string>
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -29,6 +32,22 @@
 #undef MessageBox
 #define MessageBox Wrap_MessageBox
 int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
+
+/*!
+ * @brief メッセージボックスを表示する
+ *
+ * @param[in] text メッセージボックスに表示する文字列
+ * @param[in, opt] uType メッセージボックスのスタイル (省略時は OkOnly)
+ * @param[in, opt] hWndOwner オーナーウィンドウのハンドル（省略時はメインウィンドウ）
+ * @param[in, opt] optCaption メッセージボックスのタイトル（省略時は「アプリ名」）
+ * @returns メッセージボックスがどのボタンで閉じられたかを示す値。IDYESなど。
+ */
+int MessageBoxS(
+	const std::wstring& text,
+	UINT uType = MB_OK,
+	_In_opt_ HWND hWndOwner = nullptr,
+	const std::optional<std::wstring>& optCaption = std::nullopt
+);
 
 //テキスト整形機能付きMessageBox
 int VMessageBoxF( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, va_list& v );
