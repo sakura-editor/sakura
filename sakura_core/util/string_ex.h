@@ -860,11 +860,15 @@ int strprintf(
 	const Params&... params
 )
 {
+#if 0 // パラメーターなしで呼び出すケースが多いのでチェックを無効化する
+
 	// パラメーターがない場合、コンパイルエラーにする
 	static_assert(
 		0 < sizeof...(params),
 		"One or more paramaters should be passed"
 	);
+
+#endif
 
 	// 整形によって出力される文字数をカウント
 	const int count = cxx::_scprintf(format, std::as_const(params)...);
