@@ -1116,7 +1116,9 @@ int CGrepAgent::DoGrepFile(
 			if( !IsValidCodeOrCPType(nCharCode) ){
 				pszCodeName = L"  [(DetectError)]";
 			}else if( IsValidCodeType(nCharCode) ){
-				pszCodeName = CCodeTypeName(nCharCode).Bracket();
+				// Bracket() の戻り値はスレッドローカルバッファへのポインタなので、保持せず即コピーする
+				wcscpy_s( szCpName, _countof(szCpName), CCodeTypeName(nCharCode).Bracket() );
+				pszCodeName = szCpName;
 			}else{
 				CCodePage::GetNameBracket(szCpName, nCharCode);
 				pszCodeName = szCpName;
