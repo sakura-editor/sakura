@@ -9,6 +9,9 @@
 
 #include "StdAfx.h"
 #include "env/CShareData_IO.h"
+
+#include "basis/primitive.h"
+
 #include "doc/CDocTypeSetting.h" // ColorInfo !!
 #include "CShareData.h"
 #include "util/string_ex2.h"
@@ -797,11 +800,17 @@ EFunctionCode GetPlugCmdInfoByName(
 }
 
 // プラグインコマンドを機能番号から名前へ変換
+template <basis::WritableBuffer<WCHAR> A>
 bool GetPlugCmdInfoByFuncCode(
 	EFunctionCode	eFuncCode,				//!< [in]  機能コード
-	WCHAR*			pszFuncName				//!< [out] 機能名．この先にはMAX_PLUGIN_ID + 20文字のメモリが必要．
+	A&				szFuncName				//!< [out] 機能名．この先にはMAX_PLUGIN_ID + 20文字のメモリが必要．
 )
 {
+	static_assert(
+		MAX_PLUGIN_ID + 20 <= _countof(szFuncName),
+		"szFuncName must have (MAX_PLUGIN_ID + 20) elements."
+	);
+
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
 
 	if (eFuncCode < F_PLUGCOMMAND_FIRST || eFuncCode > F_PLUGCOMMAND_LAST) {
@@ -813,7 +822,9 @@ bool GetPlugCmdInfoByFuncCode(
 	if (nID < 0 || nNo < 0) {
 		return false;
 	}
-	auto_sprintf(pszFuncName, L"%ls/%02d", plugin.m_PluginTable[nID].m_szId, nNo);
+
+	auto_sprintf_s(szFuncName, L"%s/%02d", plugin.m_PluginTable[nID].m_szId, nNo);
+
 	return true;
 }
 
