@@ -10,7 +10,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -154,12 +154,10 @@ public:
 			}
 			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
 			{
-				wchar_t *Message = new wchar_t[SysStringLen(Info.bstrDescription) + 128];
 				//	Nov. 10, 2003 FILE Win9Xでは、[wsprintfW]が無効のため、[auto_sprintf]に修正
-				const wchar_t* szDesc=Info.bstrDescription;
-				auto_sprintf(Message, L"[Line %d] %ls", Line + 1, szDesc);
-				SysReAllocString(&Info.bstrDescription, Message);
-				delete[] Message;
+				const auto pszDesc = Info.bstrDescription;
+				const auto msg = strprintf(L"[Line %d] %s", Line + 1, pszDesc);
+				::SysReAllocString(&Info.bstrDescription, msg.c_str());
 			}
 			m_Client->Error(Info.bstrDescription, Info.bstrSource);
 			SysFreeString(Info.bstrSource);
