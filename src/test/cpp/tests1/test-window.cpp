@@ -1874,6 +1874,30 @@ TEST_F(EditWndTest, OnLButtonDblClk101)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
+ * コマンド：選択範囲内全行行番号付きコピー
+ */
+TEST_F(EditWndTest, Command_COPYLINESWITHLINENUMBER001)
+{
+	HWND hWnd = nullptr;
+
+	// とりあえずデータを入れる
+	auto pShareData = GetDllShareDataPtr();
+	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
+	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
+
+	const auto& text = L"This is test-data.\n2行目\n3行目。\n";
+	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
+
+	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+
+	// 全選択する
+	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	//選択範囲内全行行番号付きコピー
+	FORWARD_WM_COMMAND(hWnd, F_COPYLINESWITHLINENUMBER, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+/*!
  * コマンド：コマンドプロンプトを開く
  */
 TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
