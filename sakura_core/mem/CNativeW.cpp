@@ -81,48 +81,6 @@ void CNativeW::AppendString( const wchar_t* pszData, size_t nDataLen )
 	AppendRawData( pszData, nDataLen * sizeof(wchar_t) );
 }
 
-/*!
- * バッファの最後にデータを追加する (フォーマット機能付き)
- *
- * @param format フォーマット書式文字列
- * @param va_args C-style の可変長引数
- * @throws std::invalid_argument formatが無効値
- * @throws std::bad_alloc メモリ確保に失敗
- * @remark 不正なフォーマットを指定すると無効なパラメータ例外で即死します。
- */
-void CNativeW::AppendStringF( std::wstring_view format, ... )
-{
-	// 現在の文字列長を取得
-	const auto currentLength = GetStringLength();
-
-	// 可変長引数のポインタを取得
-	va_list v;
-	va_start( v, format );
-
-	// 整形によって追加される文字数をカウント
-	const int additional = cxx::_vscprintf(std::data(format), v);
-
-	if (additional <= 0) return;
-
-	// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
-	const auto newCapacity = currentLength + additional;
-	AllocStringBuffer( newCapacity );
-
-	// 出力先を固定長バッファとして扱う
-	auto buffer = std::span(&GetStringPtr()[currentLength], additional + 1);
-
-	// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-	const auto added = cxx::_vsprintf_s(buffer, format.data(), v);
-
-	// 可変長引数のポインタを解放
-	va_end( v );
-
-	if (added <= 0) return;
-
-	// 文字列終端を再設定する
-	_SetStringLength( currentLength + added );
-}
-
 //! バッファの最後にデータを追加する
 void CNativeW::AppendNativeData( const CNativeW& cmemData )
 {

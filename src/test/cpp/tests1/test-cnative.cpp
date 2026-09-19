@@ -341,7 +341,13 @@ TEST(CNativeW, AppendStringF101)
 	// formatは必須。省略したらクラッシュする
 	std::wstring_view format{ nullptr, 0 };
 	CNativeW value;
-	value.AppendStringF(format);
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		value.AppendStringF(format); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 22"))
+	);
+
 	EXPECT_THAT(errno, Eq(EINVAL));
 
 	// メモリ確保前に落ちるので値はNULLのまま。
@@ -349,6 +355,20 @@ TEST(CNativeW, AppendStringF101)
 }
 
 #endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeW, AppendStringF102)
+{
+	CNativeW value;
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		// エンコードエラーを発生させる。（ShiftJISの後続バイトが欠落）
+		value.AppendStringF(L"%S", "\x81\0"); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 42"))
+	);
+
+	EXPECT_THAT(errno, Eq(EILSEQ));
+}
 
 /*!
  * @brief 加算代入演算子(NULL指定)の仕様
@@ -1007,9 +1027,15 @@ TEST(CNativeA, AppendStringF101)
 	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
 
 	// formatは必須。省略したらクラッシュする
-	LPCSTR format = nullptr;
+	std::string_view format{ nullptr, 0 };
 	CNativeA value;
-	value.AppendStringF(format);
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		value.AppendStringF(format); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 22"))
+	);
+
 	EXPECT_THAT(errno, Eq(EINVAL));
 
 	// メモリ確保前に落ちるので値はNULLのまま。
@@ -1017,6 +1043,20 @@ TEST(CNativeA, AppendStringF101)
 }
 
 #endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeA, AppendStringF102)
+{
+	CNativeA value;
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		// エンコードエラーを発生させる。（無効な文字値WEOF）
+		value.AppendStringF("%S", L"\xFFFF"); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 42"))
+	);
+
+	EXPECT_THAT(errno, Eq(EILSEQ));
+}
 
 TEST(CNativeA, AppendStringWithFormatting)
 {

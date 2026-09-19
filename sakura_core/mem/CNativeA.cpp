@@ -57,48 +57,6 @@ void CNativeA::AppendString( const char* pszData, size_t nLength )
 	AppendRawData( pszData, nLength );
 }
 
-//! バッファの最後にデータを追加する (フォーマット機能付き)
-void CNativeA::AppendStringF(const char* pszData, ...)
-{
-	// 現在の文字列長を取得
-	const auto currentLength = GetStringLength();
-
-	// 可変長引数のポインタを取得
-	va_list v;
-	va_start(v, pszData);
-
-	// 整形によって追加される文字数をカウント
-	const int additional = cxx::_vscprintf(pszData, v);
-
-	if (additional <= 0) return;
-
-	// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
-	const auto newCapacity = currentLength + additional;
-	AllocStringBuffer( newCapacity );
-
-	// 出力先を固定長バッファとして扱う
-	auto buffer = std::span(&GetStringPtr()[currentLength], additional + 1);
-
-	// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-	const auto added = cxx::_vsprintf_s(buffer, pszData, v);
-
-	int e = 0;
-	if (added < 0) e = errno;
-
-	// 可変長引数のポインタを解放
-	va_end(v);
-
-	if (added < 0) {
-		DEBUG_TRACE(L"AppendStringF error. errno = %d", e);
-		throw std::exception();
-	}
-
-	if (added <= 0) return;
-
-	// 文字列終端を再設定する
-	_SetRawLength(currentLength + added);
-}
-
 const CNativeA& CNativeA::operator = ( char cChar )
 {
 	char pszChar[2];
