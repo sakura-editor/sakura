@@ -789,65 +789,6 @@ int swprintf_s(
  *
  * @param[in, out] out フォーマットされたテキストを受け取る変数
  * @param[in] format フォーマット文字列
- * @param[in] argList 引数リスト
- * @returns 出力された文字数。NUL終端を含まない。
- * @retval >= 0 正常終了
- * @retval < 0 異常終了
- */
-template <typename CharT>
-inline int vstrprintf(
-	std::basic_string<CharT>& out,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& argList
-)
-{
-	// 整形によって出力される文字数をカウント
-	const int count = cxx::_vscprintf(format, argList);
-
-	// 出力文字数が0未満ならエラー、戻り値は空。
-	if (count <= 0) return count;
-
-	// 出力先バッファを確保する
-	out.resize(count);
-
-	// 整形を実行する
-	return cxx::_vsprintf_s(out.data(), out.size() + 1, format, argList);
-}
-
-/*!
- * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
- * 	動的にバッファを確保する簡易バージョン
- *
- * @param[in] format フォーマット文字列
- * @param[in] argList 引数リスト
- * @returns フォーマットされた文字列
- */
-template <typename CharT>
-inline std::basic_string<CharT> vstrprintf(
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& argList
-)
-{
-	// 出力先バッファを用意する
-	std::basic_string<CharT> out;
-
-	// 整形を実行する
-	const auto formatted = vstrprintf(out, format, argList);
-
-	if (formatted <= 0) return {};
-
-	// NUL終端する
-	out.resize(formatted);
-
-	return out;
-}
-
-/*!
- * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
- * 	事前に確保したバッファに結果を書き込む高速バージョン
- *
- * @param[in, out] out フォーマットされたテキストを受け取る変数
- * @param[in] format フォーマット文字列
  * @param[in, opt] params 引数リスト
  * @returns 出力された文字数。NUL終端を含まない。
  * @retval >= 0 正常終了
