@@ -188,19 +188,6 @@ void CTextOutputStream::WriteString(
 	}
 }
 
-void CTextOutputStream::WriteF(const wchar_t* format, ...)
-{
-	//テキスト整形 -> buf
-	static wchar_t buf[16*1024]; //$$ 確保しすぎかも？
-	va_list v;
-	va_start(v,format);
-	auto_vsprintf_s(buf, std::size(buf),format,v);
-	va_end(v);
-
-	//出力
-	WriteString(buf);
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  CTextInputStream_AbsIni                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

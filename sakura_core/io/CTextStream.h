@@ -20,6 +20,7 @@
 
 #include "CStream.h"
 #include "charset/charset.h"
+#include "util/StaticType.h"
 
 class CCodeBase;
 
@@ -59,16 +60,40 @@ public:
 
 	//文字列書込。改行を入れたい場合は、文字列内に'\n'を含めること。(クラス側で適切な改行コードに変換して出力します)
 	void WriteString(const wchar_t* szData, int nLen = -1);
-	void WriteF(const wchar_t* format, ...);
 
-	//数値書込。(クラス側で適当に整形して出力します)
-	void WriteInt(int n);
+	/*!
+	 * @brief 書式付き文字列を出力する
+	 *
+	 * かなり効率悪いので、後日改善する。
+	 */
+	template <typename... Args>
+	void WriteF(
+		_In_z_ _Printf_format_string_ LPCWSTR format,
+		const Args&... args
+	)
+	{
+		//テキスト整形 -> buf
+		static StaticString<16 * 1024> buf{}; //$$ 確保しすぎかも？
+
+		const auto written = cxx::_sprintf_s(
+			buf,
+			format,
+			std::as_const(args)...
+		);
+
+		// エラーは想定していない
+		assert(0 <= written);
+
+		//出力
+		WriteString(buf, written);
+	}
 
 private:
 	CCodeBase* m_pcCodeBase;
 };
 
 //テキスト入力ストリーム。相対パスの場合はINIファイルのパスからの相対パスとして開く。
+// TODO: いつか削除する
 class CTextInputStream_AbsIni final : public CTextInputStream{
 public:
 	CTextInputStream_AbsIni(const WCHAR* pszPath, bool bOrExedir = true);
