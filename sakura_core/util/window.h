@@ -9,6 +9,7 @@
 #define SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_
 #pragma once
 
+#include "basis/primitive.h"
 #include "cxx/ResourceHolder.hpp"
 
 /*!
@@ -127,8 +128,6 @@ struct SGetTextResult {
 	 */
 	LPCWSTR c_str() const noexcept
 	{
-		assert(result);
-
 		return text.data();
 	}
 };
@@ -139,17 +138,109 @@ WORD	GetTrackBarPos(HWND hWndDlg, int nIDDlgItem);
 int		GetUpDownPos(HWND hWndDlg, int nIDDlgItem);
 bool	IsDlgButtonChecked(HWND hDlg, int nIDButton);
 bool	IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem);
-void	LimitEditText(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> buffer);
 void	SetTrackBarPos(HWND hWndDlg, int nIDDlgItem, WORD pos, bool bRedraw = true);
 void	SetUpDownPos(HWND hWndDlg, int nIDDlgItem, WORD pos);
 
 SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem);
-SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> buffer);
 
 SGetTextResult	GetWindowTextW(HWND hWnd);
 
-bool	SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::wstring_view text);
-bool	SetWindowTextW(HWND hWnd, std::wstring_view text);
+/*!
+ * @brief ダイアログボックス項目のテキストを取得する
+ */
+template <basis::WritableBuffer<WCHAR> A>
+SGetTextResult GetDlgItemTextW(
+	HWND hWndDlg,
+	int nIDDlgItem,
+	A& itemText
+)
+{
+	// ダイアログが無効な場合は失敗とする
+	if (!hWndDlg || !::IsWindow( hWndDlg )) return SGetTextResult{};
+
+	// コントロールが存在しない場合は失敗とする
+	if (!::GetDlgItem(hWndDlg, nIDDlgItem)) return SGetTextResult{};
+
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span{ itemText };
+
+	// 必要な文字数を確認する
+	const auto cchRequired = static_cast<int>(::SendDlgItemMessageW(hWndDlg, nIDDlgItem, WM_GETTEXTLENGTH, 0L, 0L));
+	if (!cchRequired) return SGetTextResult{ std::wstring_view(buffer.data(), 0) };
+
+	// バッファが足りない場合は失敗とする
+	if (std::ssize(buffer) < cchRequired + 1) return SGetTextResult{};
+
+	// 文字列を取得する
+	const auto actualCopied = ::GetDlgItemTextW(hWndDlg, nIDDlgItem, buffer.data(), cchRequired + 1);
+
+	// バッファ参照を呼出元に返す
+	return SGetTextResult{ std::wstring_view(buffer.data(), actualCopied) };
+}
+
+/*!
+ * @brief ウィンドウのテキストを取得する
+ */
+template <basis::WritableBuffer<WCHAR> A>
+SGetTextResult GetWindowTextW(
+	HWND hWnd,
+	A& windowText
+)
+{
+	// ウィンドウが無効な場合は失敗とする
+	if (!hWnd || !::IsWindow(hWnd)) return SGetTextResult{};
+
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span{ windowText };
+
+	// 必要な文字数を確認する
+	const auto cchRequired = ::GetWindowTextLengthW(hWnd);
+	if (!cchRequired) return SGetTextResult{ std::wstring_view(buffer.data(), 0) };
+
+	// バッファが足りない場合は失敗とする
+	if (std::ssize(buffer) < cchRequired + 1) return SGetTextResult{};
+
+	// 文字列を取得する
+	const auto actualCopied = ::GetWindowTextW(hWnd, buffer.data(), cchRequired + 1);
+
+	// バッファ参照を呼出元に返す
+	return SGetTextResult{ std::wstring_view(buffer.data(), actualCopied) };
+}
+
+/*!
+ * @brief 指定したkコンボボックスの入力文字数を制限する
+ */
+template <basis::WritableBuffer<WCHAR> A>
+void LimitComboText(HWND hWndDlg, int nIDDlgItem, A& buffer)
+{
+	const auto cchLimit = std::size(std::span(buffer)) - 1;
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, CB_LIMITTEXT, WPARAM(cchLimit), 0L);
+}
+
+/*!
+ * @brief エディットコントロールに入力文字数を設定する
+ */
+template <basis::WritableBuffer<WCHAR> A>
+void LimitEditText(HWND hWndDlg, int nIDDlgItem, A& buffer)
+{
+	const auto cchLimit = std::size(std::span(buffer)) - 1;
+	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, EM_LIMITTEXT, WPARAM(cchLimit), 0L);
+}
+
+/*!
+ * @brief ダイアログボックス項目のテキストを設定する
+ */
+template <basis::NullTerminatedStringConstructible<WCHAR> A>
+bool SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, const A& text)
+{
+	// ダイアログが無効な場合は失敗とする
+	if (!hWndDlg || !::IsWindow(hWndDlg)) return false;
+
+	// コントロールが存在しない場合は失敗とする
+	if (!::GetDlgItem(hWndDlg, nIDDlgItem)) return false;
+
+	return ::SetDlgItemTextW(hWndDlg, nIDDlgItem, static_cast<LPCWSTR>(cxx::NullTerminatedString(text)));
+}
 
 /*!
  * @brief トラックバーのデータ範囲を変更する
@@ -177,6 +268,18 @@ inline void SetUpDownRange(HWND hWndDlg, int nIDDlgItem, T1 minimum, T2 maximum)
 	}
 
 	::SendDlgItemMessageW(hWndDlg, nIDDlgItem, UDM_SETRANGE32, min_val, max_val);
+}
+
+/*!
+ * @brief ウィンドウのテキストを設定する
+ */
+template <basis::NullTerminatedStringConstructible<WCHAR> A>
+bool SetWindowTextW(HWND hWnd, const A& text)
+{
+	// ウィンドウが無効な場合は失敗とする
+	if (!hWnd || !::IsWindow(hWnd)) return false;
+
+	return ::SetWindowTextW(hWnd, static_cast<LPCWSTR>(cxx::NullTerminatedString(text)));
 }
 
 } // namespace apiwrap

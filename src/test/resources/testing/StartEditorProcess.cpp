@@ -197,7 +197,7 @@ void DumpCppException(std::exception_ptr eptr)
 }
 
 int CallWinMain(
-	std::span<WCHAR> cmdLine
+	std::wstring& cmdLine
 )
 {
 #ifdef USE_STACK_TRACE

@@ -267,6 +267,8 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 	return;
 }
 
+namespace cxx {
+
 void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 {
 	const auto cchFolder = std::size(folder);
@@ -288,6 +290,8 @@ void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 
 	return;
 }
+
+} // namespace cxx
 
 //! パスらしき文字列の末尾に'\\'または'/'がなかったら'\\'を付加する
 std::wstring AddLastYenPath(std::wstring_view path)

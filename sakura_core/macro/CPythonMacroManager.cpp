@@ -48,7 +48,8 @@ struct PythonApi final : public TSakuraSingleton<PythonApi> {
 		function = std::bit_cast<Function>(addr);
 	}
 
-	HMODULE	LoadModule(std::wstring_view pythonDir);
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	HMODULE	LoadModule(const A& pythonDir);
 
 	DllSearchPathHolder m_DllSearchPathHolder;
 
@@ -83,8 +84,15 @@ struct PythonApi final : public TSakuraSingleton<PythonApi> {
 	decltype(&::PyUnicode_FromWideChar) PyUnicode_FromWideChar = nullptr;
 };
 
-HMODULE PythonApi::LoadModule(std::wstring_view pythonDir)
+template <basis::NullTerminatedStringConstructible<WCHAR> A>
+HMODULE PythonApi::LoadModule(const A& arg)
 {
+	// 入力元をNUL終端文字列とみなす
+	const auto szPythonDir = cxx::NullTerminatedString<WCHAR>{ arg };
+
+	// 入力元を文字列として扱う
+	std::wstring_view pythonDir{ szPythonDir };
+
 	// python3.dllの名前は環境別で固定
 	constexpr auto& dllName =
 #ifdef __MINGW32__

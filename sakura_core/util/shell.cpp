@@ -51,16 +51,13 @@ BOOL Comdlg32::ChooseFontW(LPCHOOSEFONTW pCf) const
 	return ::ChooseFontW(pCf);
 }
 
-BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
-{
-	return SelectDir(hWnd, title, initialDirectory, std::span(strFolderName, nMaxCount));
-}
+namespace cxx {
 
 /* フォルダー選択ダイアログ */
 BOOL SelectDir(
-	HWND hWnd,
-	const std::wstring& title,
-	const std::filesystem::path& initialDirectory,
+	_In_opt_ HWND hWnd,
+	_In_z_ LPCWSTR title,
+	_In_z_ LPCWSTR initialDirectory,
 	std::span<WCHAR> buffer
 )
 {
@@ -95,13 +92,13 @@ BOOL SelectDir(
 
 	// 初期フォルダーを設定
 	cxx::com_pointer<IShellItem> psiFolder;
-	hres = SHCreateItemFromParsingName(initialDirectory.c_str(), nullptr, IID_PPV_ARGS(&psiFolder));
+	hres = SHCreateItemFromParsingName(initialDirectory, nullptr, IID_PPV_ARGS(&psiFolder));
 	if ( SUCCEEDED(hres) ) {
 		pDialog->SetFolder(psiFolder);
 	}
 
 	// タイトル文字列を設定
-	hres = pDialog->SetTitle( title.c_str() );
+	hres = pDialog->SetTitle(title);
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}
@@ -136,6 +133,8 @@ BOOL SelectDir(
 
 	return bRet;
 }
+
+} // namespace cxx
 
 ///////////////////////////////////////////////////////////////////////
 // From Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群

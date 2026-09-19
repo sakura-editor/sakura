@@ -1,16 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
   <Type Name="CNativeW">
-    <DisplayString Condition="m_pRawData == 0">empty</DisplayString>
-    <DisplayString Condition="m_pRawData != 0">{m_pRawData,su}</DisplayString>
+    <DisplayString Condition="m_pRawData == 0 || m_nDataBufSize == 0">NULL</DisplayString>
+    <DisplayString Condition="m_nRawLen == 0 || m_pRawData[0] == 0">empty (0,{m_nDataBufSize / 2,d})</DisplayString>
+    <DisplayString Condition="m_pRawData != 0 &amp;&amp; m_pRawData[0] != 0">{m_pRawData,su} ({m_nRawLen / 2,d},{m_nDataBufSize / 2,d})</DisplayString>
     <Expand>
-      <Item Condition="m_pRawData != 0" Name="_Data">m_pRawData,su</Item>
-      <Item Name="_Length">m_nRawLen / 2</Item>
-      <Item Name="_Size">m_nDataBufSize / 2</Item>
+      <ArrayItems Condition="m_pRawData != 0">
+        <Size>(m_nRawLen / 2) + 1</Size>
+        <ValuePointer>(wchar_t*)m_pRawData</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="CStringRef">
+    <DisplayString Condition="m_pData == 0">NULL</DisplayString>
+    <DisplayString Condition="m_nDataLen == 0 || m_pData[0] == 0">empty ({m_nDataLen,d})</DisplayString>
+    <DisplayString Condition="m_pData != 0 &amp;&amp; m_pData[0] != 0">{m_pData,su} ({m_nDataLen,d})</DisplayString>
+    <Expand>
+      <ArrayItems Condition="m_pData != 0">
+        <Size>m_nDataLen + 1</Size>
+        <ValuePointer>(wchar_t*)m_pData</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="cxx::NullTerminatedString&lt;wchar_t&gt;">
+    <DisplayString Condition="m_IsNull">NULL</DisplayString>
+    <DisplayString Condition="!m_IsNull &amp;&amp; m_Length == 0">empty (0)</DisplayString>
+    <DisplayString Condition="!m_IsNull &amp;&amp; m_RawPtr != 0">{m_RawPtr,su} ({m_Length,d})</DisplayString>
+    <Expand>
+      <ArrayItems Condition="m_RawPtr != 0">
+        <Size>m_Length + 1</Size>
+        <ValuePointer>m_RawPtr</ValuePointer>
+      </ArrayItems>
     </Expand>
   </Type>
   <Type Name="StaticString&lt;*&gt;">
-    <DisplayString Condition="m_szData[0] == 0">empty</DisplayString>
-    <DisplayString Condition="m_szData[0] != 0">{m_szData._Elems,su}</DisplayString>
+    <Intrinsic Name="length" Expression="wcsnlen(m_szData._Elems, $T1 - 1)" />
+    <DisplayString Condition="m_szData[0] == 0">empty (0/{$T1,d})</DisplayString>
+    <DisplayString Condition="m_szData[0] != 0">{m_szData._Elems,su} ({length(),d}/{$T1,d})</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>length() + 1</Size>
+        <ValuePointer>m_szData._Elems</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="StaticVector&lt;*,*,*&gt;">
+    <DisplayString Condition="m_nCount == 0">empty (0/{$T2,d})</DisplayString>
+    <DisplayString Condition="m_nCount != 0">[{m_aElements._Elems,[m_nCount]na}] ({m_nCount,d}/{$T2,d})</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>m_nCount</Size>
+        <ValuePointer>m_aElements._Elems</ValuePointer>
+      </ArrayItems>
+    </Expand>
   </Type>
 </AutoVisualizer>

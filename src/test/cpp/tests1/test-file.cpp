@@ -20,14 +20,18 @@
 #include "env/DLLSHAREDATA.h"
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
+#include "dlg/CDlgTagJumpList.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
 
+#include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
+#include "testing/MsvcReportMode.hpp"
+
 std::filesystem::path GetIniFileNameForIO(bool bWrite);
 
-WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base );
-
 namespace cxx {
+
+using namespace testing;
 
 bool WritePrivateProfileStringW(
 	std::wstring_view appName,
@@ -47,58 +51,6 @@ std::wstring ExpandEnvironmentStringsW(const std::wstring& src)
 	}
 	return expected;
 }
-
-#if defined(_MSC_VER) && defined(_DEBUG)
-
-/*!
- * @brief MSVCの無効なパラメーターハンドラーを無効化するためのクラス
- */
-struct MsvcInvalidParameterHandlerDisabler
-{
-	using Holder = cxx::ResourceHolder<&::_set_invalid_parameter_handler>;
-	using Me = MsvcInvalidParameterHandlerDisabler;
-
-	static void __cdecl empty_handler(
-		wchar_t const*,
-		wchar_t const*,
-		wchar_t const*,
-		unsigned int,
-		uintptr_t
-	)
-	{
-		return;	// 何もしない
-	}
-
-	MsvcInvalidParameterHandlerDisabler() = default;
-
-	Holder prev{ ::_set_invalid_parameter_handler(&empty_handler) };
-};
-
-/*!
- * @brief MSVCのアサーションダイアログを抑制するためのクラス
- */
-struct MsvcReportMode
-{
-	using Me = MsvcReportMode;
-
-	MsvcReportMode() = default;
-
-	MsvcReportMode(const Me&) = delete;
-	Me& operator=(const Me&) = delete;
-
-	MsvcReportMode(Me&& other) noexcept = default;
-	Me& operator=(Me&& rhs) noexcept = default;
-
-	~MsvcReportMode()
-	{
-		::_CrtSetReportMode(_CRT_ASSERT, m_old);
-	}
-
-private:
-	int m_old = ::_CrtSetReportMode(_CRT_ASSERT, 0);
-};
-
-#endif // defined(_MSC_VER) && defined(_DEBUG)
 
 TEST(CopyDirDir, test001)
 {

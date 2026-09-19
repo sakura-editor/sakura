@@ -14,6 +14,7 @@
 #pragma once
 
 #include "convert/CDecode.h"
+#include "util/string_ex.h"
 
 class CDecode_UuDecode final : public CDecode{
 private:
@@ -21,7 +22,12 @@ private:
 
 public:
 	bool DoDecode(const CNativeW& cData, CMemory* pDst) override;
-	void CopyFilename(std::span<WCHAR> dst) const { ::wcsncpy_s(std::data(dst), std::size(dst), m_aFilename, _TRUNCATE); }
+
+	template <basis::WritableBuffer<WCHAR> A>
+	void CopyFilename(A& dst) const
+	{
+		wcscpy_s(dst, m_aFilename);
+	}
 };
 
 #endif /* SAKURA_CDECODE_UUDECODE_E299AA83_2825_45E6_866A_A08D73F8F47F_H_ */

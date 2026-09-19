@@ -343,12 +343,15 @@ bool CFileNameManager::GetMenuFullLabel(
 	const EditInfo* editInfo, int nId, bool bFavorite,
 	int index, bool bAccKeyZeroOrigin, HDC hDC
 ){
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span( pszOutput, nBuffSize );
+
 	const EditInfo* pfi = editInfo;
 	WCHAR szAccKey[4];
 	int ret = 0;
 	if( nullptr == pfi ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
-		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_UNKOWN), szAccKey );
+		ret = auto_sprintf_s( buffer, LS(STR_MENU_UNKOWN), szAccKey );
 		return 0 < ret;
 	}else if( pfi->m_bIsGrep ){
 		
@@ -374,13 +377,13 @@ bool CFileNameManager::GetMenuFullLabel(
 		//	Jan. 19, 2002 genta
 		//	&の重複処理を追加したため継続判定を若干変更
 		//	20100729 ExpandParameterにあわせて、・・・を...に変更
-		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_GREP),
+		ret = auto_sprintf_s( buffer, LS(STR_MENU_GREP),
 			szAccKey, pszKey,
 			( nGrepKeyLen > cmemDes.GetStringLength() ) ? L"...":L""
 		);
 	}else if( pfi->m_bIsDebug ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
-		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_OUTPUT), szAccKey );
+		ret = auto_sprintf_s( buffer, LS(STR_MENU_OUTPUT), szAccKey );
 	}else{
 		return GetMenuFullLabel(pszOutput, nBuffSize, bEspaceAmp, pfi->m_szPath, nId, pfi->m_bIsModified, pfi->m_nCharCode, bFavorite,
 			 index, bAccKeyZeroOrigin, hDC);
@@ -393,6 +396,8 @@ bool CFileNameManager::GetMenuFullLabel(
 	const WCHAR* pszFile, int nId, bool bModified, ECodeType nCharCode, bool bFavorite,
 	int index, bool bAccKeyZeroOrigin, HDC hDC
 ){
+	auto buffer = std::span(pszOutput, nBuffSize);
+
 	WCHAR szAccKey[4];
 	WCHAR szFileName[_MAX_PATH];
 	WCHAR szMenu2[_MAX_PATH * 2];
@@ -428,7 +433,7 @@ bool CFileNameManager::GetMenuFullLabel(
 		pszCharset = szCodePageName;
 	}
 	
-	int ret = auto_snprintf_s( pszOutput, nBuffSize, L"%s%s%s%s%s",
+	int ret = auto_sprintf_s( buffer, L"%s%s%s%s%s",
 		szAccKey, (bFavorite ? L"★ " : L""), pszName,
 		(bModified ? L" *":L""), pszCharset
 	);

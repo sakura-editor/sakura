@@ -75,6 +75,32 @@ public:
 		const std::optional<SFuncType>& optFunc = std::nullopt
 	);
 
+	/*!
+	 * @brief モーダルダイアログの表示
+	 *
+	 * @param hWndOwner [in, opt] オーナーウィンドウのハンドル
+	 * @param title [in] タイトル文字列
+	 * @param message [in] メッセージ文字列
+	 * @param buffer [out] 入力値を受け取るバッファ
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2, basis::WritableBuffer<WCHAR> A3>
+	BOOL DoModal(
+		_In_opt_ HWND hWndOwner,
+		const A1& title,
+		const A2& message,
+		A3& buffer,
+		const std::optional<SFuncType>& optFunc = std::nullopt
+	)
+	{
+		return DoModal(
+			hWndOwner,
+			static_cast<std::wstring_view>(cxx::NullTerminatedString(title)),
+			static_cast<std::wstring_view>(cxx::NullTerminatedString(message)),
+			static_cast<std::span<WCHAR>>(buffer),
+			optFunc
+		);
+	}
+
 	BOOL DoModal(
 		_In_opt_ HWND hWndOwner,
 		std::wstring_view title,

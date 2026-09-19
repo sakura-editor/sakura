@@ -10,7 +10,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -1602,6 +1602,9 @@ int CDlgTagJumpList::CalcMaxUpDirectory( const WCHAR* p )
 WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	WCHAR* basePath, const WCHAR* fileName, int depth )
 {
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span(pszOutput, count);
+
 	DEBUG_TRACE( L"base  %s\n", basePath );
 	DEBUG_TRACE( L"file  %s\n", fileName );
 	DEBUG_TRACE( L"depth %d\n",  depth );
@@ -1616,7 +1619,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 			//wcscat( basePath, L"..\\" );
 			DirUp( basePath );
 		}
-		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){
+		if( -1 == auto_sprintf_s( buffer, L"%s%s", basePath, p ) ){
 			return nullptr;
 		}
 	}
@@ -1644,6 +1647,23 @@ WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHA
 	AddLastYenFromDirectoryPath(destination);
 	return dest;
 }
+
+namespace cxx {
+
+WCHAR* CopyDirDir(
+	std::span<WCHAR> destination,
+	_In_z_ LPCWSTR target,
+	_In_z_ LPCWSTR base
+)
+{
+	return ::CopyDirDir(
+		destination,
+		target,
+		base
+	);
+}
+
+} // namespace cxx
 
 /*
 	@param dir [in,out] フォルダーのパス 

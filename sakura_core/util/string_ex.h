@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,10 +9,13 @@
 #define SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
 #pragma once
 
+#include "basis/primitive.h"
+
 #include <vadefs.h>
 #include <string>
 #include <string_view>
-#include "basis/primitive.h"
+#include <variant>
+
 #include "debug/Debug2.h"
 
 // 2007.10.19 kobake
@@ -28,6 +31,461 @@
 	独自
 	auto_～:  引数の型により、自動で処理が決定される版 (例: auto_strcpy)
 */
+
+namespace cxx {
+
+/*!
+ * @brief NUL終端文字列の文字列長を調べる
+ *
+ * C++標準だと上限を指定できないので自作。（Wide/Ascii両対応）
+ *
+ * @param[in] pText 文字列
+ * @param[in] cchText 文字列バッファのサイズ
+ * @returns 文字列長
+ */
+template <typename CharT>
+constexpr size_t strnlen(
+	const CharT* pText,
+	size_t cchText
+)
+{
+	const auto nulPos = std::char_traits<CharT>::find(pText, cchText, CharT());
+	return nulPos ? static_cast<size_t>(nulPos - pText) : cchText - 1;
+}
+
+/*!
+ * @brief 配列内のNUL終端位置を調べる
+ *
+ * 配列内で最初に現われるNULの位置を返す。
+ *
+ * @tparam[in] CharT 文字の型
+ * @tparam[in] N 配列サイズ
+ * @param[in] str 文字列
+ * @returns 文字列長
+ */
+template <typename CharT, size_t N>
+constexpr size_t strnlen_s(
+	const CharT(&str)[N]
+)
+{
+	return cxx::strnlen(str, std::size(str));
+}
+
+/*!
+ * @brief 文字数を指定して文字列をコピーする
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @param[in] count コピーする文字数
+ * @retval 0 成功
+ * @retval STRUNCATE 切り詰め発生
+ */
+template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
+constexpr errno_t strncpy_s(A1& dst, const A2& src, size_t count) noexcept
+{
+	// 入力元をNUL終端文字列とみなす
+	const auto szText = cxx::NullTerminatedString{ src };
+
+	// 入力元を文字列として扱う
+	auto text = std::basic_string_view<CharT>{ szText };
+
+	// 上限が指定されていない場合、入力元文字列の文字数を使う
+	if (_TRUNCATE == count) {
+		count = text.length();
+	}
+
+	// 切り詰めが発生したかどうかを記録するフラグ
+	bool truncated = false;
+
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span<CharT>{ dst };
+	
+	// 上限がバッファサイズを超えていた場合、バッファサイズに切り詰める
+	if (const auto bufferSize = std::size(buffer);
+		bufferSize <= count)
+	{
+		count = bufferSize - 1;
+
+		truncated = true;
+	}
+
+	// 文字列をコピーする
+	std::ranges::copy_n(text.begin(), count, buffer.begin());
+	std::char_traits<CharT>::assign(buffer[count], CharT());
+
+	// 切り詰めが発生したかどうかに応じて固定値を返す
+	return truncated ? STRUNCATE : 0;
+}
+
+/*!
+ * @brief 文字列をコピーする
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ * 
+ * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @retval 0 成功
+ * @retval STRUNCATE 切り詰め発生
+ */
+template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
+constexpr errno_t strcpy_s(A1& dst, const A2& src) noexcept
+{
+	return cxx::strncpy_s<CharT>(dst, src, _TRUNCATE);
+}
+
+/*!
+ * @brief 文字数を指定して末尾に文字列をコピーする
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @param[in] count コピーする文字数
+ * @retval 0 成功
+ * @retval STRUNCATE 切り詰め発生
+ */
+template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
+constexpr errno_t strncat_s(A1& dst, const A2& src, size_t count) noexcept
+{
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span<CharT>{ dst };
+
+	// 出力先に既に入っている文字列の長さを求める
+	const auto len = cxx::strnlen(buffer.data(), buffer.size());
+
+	// バッファの末尾から残りを切り出す
+	buffer = buffer.subspan(len);
+
+	// 切り出したバッファに文字列をコピーする
+	return cxx::strncpy_s<CharT>(buffer, src, count);
+}
+
+/*!
+ * @brief 末尾に文字列をコピーする
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @retval 0 成功
+ * @retval STRUNCATE 切り詰め発生
+ */
+template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
+constexpr errno_t strcat_s(A1& dst, const A2& src) noexcept
+{
+	return cxx::strncat_s<CharT>(dst, src, _TRUNCATE);
+}
+
+/*!
+ * @brief 文字列に書式付きデータを書き込みます。
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * sprintf系関数はセキュリティ上問題あるので、std::formatへの移行を検討してください。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+ // TODO: いつか廃止する
+inline int _vsnprintf_s(
+	WCHAR* pBuffer,
+	size_t nBufferSIze,
+	size_t nMaxCount,
+	_In_z_ _Printf_format_string_ LPCWSTR format,
+	va_list& argList
+) noexcept
+{
+	return ::_vsnwprintf_s(
+		pBuffer,
+		nBufferSIze,
+		nMaxCount,
+		format,
+		argList
+	);
+}
+
+// TODO: いつか廃止する
+inline int _vsnprintf_s(
+	ACHAR* pBuffer,
+	size_t nBufferSIze,
+	size_t nMaxCount,
+	_In_z_ _Printf_format_string_ LPCSTR format,
+	va_list& argList
+) noexcept
+{
+	return ::_vsnprintf_s(
+		pBuffer,
+		nBufferSIze,
+		nMaxCount,
+		format,
+		argList
+	);
+}
+
+// TODO: いつか廃止する
+template <typename CharT, basis::WritableBuffer<CharT> A>
+int _vsnprintf_s(
+	A& dst,
+	size_t count,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& argList
+) noexcept
+{
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span<CharT>{ dst };
+	
+	// Cランタイムの実装に任せる
+	return cxx::_vsnprintf_s(
+		std::data(buffer),
+		std::size(buffer),
+		count,
+		format,
+		argList
+	);
+}
+
+// TODO: いつか廃止する
+inline int _vscprintf(
+	_In_z_ _Printf_format_string_ LPCWSTR format,
+	va_list& argList
+) noexcept
+{
+	return ::_vscwprintf( format, argList );
+}
+
+// TODO: いつか廃止する
+inline int _vscprintf(
+	_In_z_ _Printf_format_string_ LPCSTR format,
+	va_list& argList
+) noexcept
+{
+	return ::_vscprintf( format, argList );
+}
+
+// TODO: いつか廃止する
+template <typename CharT, basis::WritableBuffer<CharT> A>
+int _vsprintf_s(
+	A& dst,
+	const CharT* format,
+	va_list& argList
+) noexcept
+{
+	return cxx::_vsnprintf_s( dst, _TRUNCATE, format, argList );
+}
+
+// TODO: いつか廃止する
+template <typename CharT>
+int _vsprintf_s(
+	CharT* pBuffer,
+	size_t nBufferSIze,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& argList
+) noexcept
+{
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span{ pBuffer, nBufferSIze };
+
+	return cxx::_vsprintf_s( buffer, format, argList );
+}
+
+/*!
+ * @brief sprintf系関数の引数を変換する
+ *
+ * sprintf系関数にC++標準の文字列を渡せない対策として作成。
+ *
+ * sprintf系関数はセキュリティ上問題あるので、std::formatへの移行を検討してください。
+ */
+template <typename T>
+constexpr decltype(auto) ConvertPrintfArg(const T& value)
+{
+	if constexpr (basis::NullTerminatedStringConstructible<T, WCHAR>) {
+		const auto text = cxx::NullTerminatedString<WCHAR>{ value };
+		if (text.uses_buffer()) {
+			throw std::invalid_argument("invalid usage");
+		}
+		return text.c_str();
+	}
+	else if constexpr (basis::NullTerminatedStringConstructible<T, ACHAR>) {
+		const auto text = cxx::NullTerminatedString<ACHAR>{ value };
+		if (text.uses_buffer()) {
+			throw std::invalid_argument("invalid usage");
+		}
+		return text.c_str();
+	}
+	else {
+		return value;
+	}
+}
+
+/*!
+ * @brief 文字列に書式付きデータを書き込みます。
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * sprintf系関数はセキュリティ上問題あるので、std::formatへの移行を検討してください。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+template <typename... Params>
+int _snprintf_s(
+	WCHAR* pBuffer,
+	size_t nBufferSIze,
+	size_t nMaxCount,
+	_In_z_ _Printf_format_string_ const WCHAR* format,
+	const Params&... params
+)
+{
+	// Cランタイムの実装にパラメータ展開で転送する
+	return ::_snwprintf_s(
+		pBuffer,
+		nBufferSIze,
+		nMaxCount,
+		format,
+		cxx::ConvertPrintfArg(std::as_const(params))...
+	);
+}
+
+template <typename... Params>
+int _snprintf_s(
+	ACHAR* pBuffer,
+	size_t nBufferSIze,
+	size_t nMaxCount,
+	_In_z_ _Printf_format_string_ const ACHAR* format,
+	const Params&... params
+)
+{
+	// Cランタイムの実装にパラメータ展開で転送する
+	return ::_snprintf_s(
+		pBuffer,
+		nBufferSIze,
+		nMaxCount,
+		format,
+		cxx::ConvertPrintfArg(std::as_const(params))...
+	);
+}
+
+/*!
+ * @brief 文字列に書式付きデータを書き込みます。
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * sprintf系関数はセキュリティ上問題あるので、std::formatへの移行を検討してください。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+template <typename CharT, basis::WritableBuffer<CharT> A1, typename... Params>
+int _snprintf_s(
+	A1& dst,
+	size_t count,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span{ dst };
+
+	// パラメータ展開で転送する
+	return cxx::_snprintf_s(
+		std::data(buffer),
+		std::size(buffer),
+		count,
+		format,
+		std::as_const(params)...
+	);
+}
+
+/*!
+ * @brief 書式付きデータの文字数をカウントします。
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * sprintf系関数はセキュリティ上問題あるので、std::formatへの移行を検討してください。
+ *
+ * @return 書き込まれる文字数
+ * @retval < 0 エラー発生
+ */
+template <typename... Params>
+int _scprintf(
+	_In_z_ _Printf_format_string_ LPCWSTR format,
+	const Params&... params
+)
+{
+	return ::_scwprintf(
+		format,
+		cxx::ConvertPrintfArg(std::as_const(params))...
+	);
+}
+
+template <typename... Params>
+int _scprintf(
+	_In_z_ _Printf_format_string_ LPCSTR format,
+	const Params&... params
+)
+{
+	return ::_scprintf(
+		format,
+		cxx::ConvertPrintfArg(std::as_const(params))...
+	);
+}
+
+/*!
+ * @brief 文字列に書式付きデータを書き込みます。
+ *
+ * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
+ *
+ * sprintf系関数はセキュリティ上問題あるので、std::formatへの移行を検討してください。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+template <typename CharT, basis::WritableBuffer<CharT> A1, typename... Params>
+int _sprintf_s(
+	A1& dst,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_snprintf_s(
+		dst,
+		_TRUNCATE,
+		format,
+		std::as_const(params)...
+	);
+}
+
+template <typename CharT, typename... Params>
+int _sprintf_s(
+	CharT* pBuffer,
+	size_t nBufferSize,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span{ pBuffer, nBufferSize };
+
+	// パラメータ展開で転送する
+	return cxx::_sprintf_s(
+		buffer,
+		format,
+		std::as_const(params)...
+	);
+}
+
+} // namespace cxx
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          メモリ                             //
@@ -118,18 +576,28 @@ inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        :
 inline WCHAR* auto_memcpy(WCHAR* dest, const WCHAR* src, size_t count){ return ::wmemcpy(dest,src,count);              }
 inline ACHAR* auto_strcpy(ACHAR* dst, const ACHAR* src){ return strcpy(dst,src); }
 inline WCHAR* auto_strcpy(WCHAR* dst, const WCHAR* src){ return wcscpy(dst,src); }
-inline errno_t auto_strcpy_s(ACHAR* dst, size_t nDstCount, std::string_view  src) noexcept { return ::strncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
-inline errno_t auto_strcpy_s(WCHAR* dst, size_t nDstCount, std::wstring_view src) noexcept { return ::wcsncpy_s(dst, std::min(std::size(src) + 1, nDstCount), std::data(src), _TRUNCATE); }
-inline errno_t auto_strcpy_s(std::span<ACHAR> dst, std::string_view  src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
-inline errno_t auto_strcpy_s(std::span<WCHAR> dst, std::wstring_view src)         noexcept { return auto_strcpy_s(std::data(dst), std::size(dst), src); }
 inline ACHAR* auto_strncpy(ACHAR* dst,const ACHAR* src,size_t count){ return strncpy(dst,src,count); }
 inline WCHAR* auto_strncpy(WCHAR* dst,const WCHAR* src,size_t count){ return wcsncpy(dst,src,count); }
 inline ACHAR* auto_memset(ACHAR* dest, ACHAR c, size_t count){        memset (dest,c,count); return dest; }
 inline WCHAR* auto_memset(WCHAR* dest, WCHAR c, size_t count){ return wmemset(dest,c,count);              }
 inline ACHAR* auto_strcat(ACHAR* dst, const ACHAR* src){ return strcat(dst,src); }
 inline WCHAR* auto_strcat(WCHAR* dst, const WCHAR* src){ return wcscat(dst,src); }
-inline errno_t auto_strcat_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcat_s(dst,nDstCount,src); }
-inline errno_t auto_strcat_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscat_s(dst,nDstCount,src); }
+
+template <basis::WritableBuffer<ACHAR> A1, basis::NullTerminatedStringConstructible<ACHAR> A2> constexpr errno_t auto_strncpy_s(A1& dst, const A2& src, size_t count) { return cxx::strncpy_s<ACHAR>(dst, src, count); }
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t auto_strncpy_s(A1& dst, const A2& src, size_t count) { return cxx::strncpy_s<WCHAR>(dst, src, count); }
+template <basis::WritableBuffer<ACHAR> A1, basis::NullTerminatedStringConstructible<ACHAR> A2> constexpr errno_t auto_strncat_s(A1& dst, const A2& src, size_t count) { return cxx::strncat_s<ACHAR>(dst, src, count); }
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t auto_strncat_s(A1& dst, const A2& src, size_t count) { return cxx::strncat_s<WCHAR>(dst, src, count); }
+
+template <basis::WritableBuffer<ACHAR> A1, basis::NullTerminatedStringConstructible<ACHAR> A2> constexpr errno_t auto_strcpy_s(A1& dst, const A2& src) { return auto_strncpy_s(dst, src, _TRUNCATE); }
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t auto_strcpy_s(A1& dst, const A2& src) { return auto_strncpy_s(dst, src, _TRUNCATE); }
+template <basis::WritableBuffer<ACHAR> A1, basis::NullTerminatedStringConstructible<ACHAR> A2> constexpr errno_t auto_strcat_s(A1& dst, const A2& src) { return auto_strncat_s(dst, src, _TRUNCATE); }
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t auto_strcat_s(A1& dst, const A2& src) { return auto_strncat_s(dst, src, _TRUNCATE); }
+
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t wcsncpy_s(A1& dst, const A2& src, size_t count) { return auto_strncpy_s(dst, src, count); }
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t wcsncat_s(A1& dst, const A2& src, size_t count) { return auto_strncat_s(dst, src, count); }
+
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t wcscpy_s(A1& dst, const A2& src) { return auto_strcpy_s(dst, src); }
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t wcscat_s(A1& dst, const A2& src) { return auto_strcat_s(dst, src); }
 
 //比較系
 inline int auto_memcmp (const ACHAR* p1, const ACHAR* p2, size_t count){ return amemcmp(p1,p2,count); }
@@ -152,8 +620,9 @@ inline int auto_stricmp(const WCHAR* p1, const WCHAR* p2){ return wmemicmp(p1,p2
 //長さ計算系
 inline size_t auto_strlen(const ACHAR* str){ return strlen(str); }
 inline size_t auto_strlen(const WCHAR* str){ return wcslen(str); }
-inline size_t auto_strnlen(const ACHAR* str, size_t count){ return strnlen(str, count); }
-inline size_t auto_strnlen(const WCHAR* str, size_t count){ return wcsnlen(str, count); }
+
+constexpr size_t auto_strnlen(const ACHAR* str, size_t count) { return cxx::strnlen(str, count); }
+constexpr size_t auto_strnlen(const WCHAR* str, size_t count) { return cxx::strnlen(str, count); }
 
 //検索系（SJIS, UCS2 専用）
 inline const ACHAR* auto_strstr(const ACHAR* str, const ACHAR* strSearch){ return ::strstr_j(str,strSearch); }
@@ -179,29 +648,264 @@ inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v) { return :
 inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
 inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
 
-inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v) noexcept { return ::_vsnprintf_s (buf, nBufCount, _TRUNCATE, format, v); }
-inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v) noexcept { return ::_vsnwprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
-inline int auto_vsprintf_s(std::span<ACHAR> buf, const ACHAR* format, va_list& v)         noexcept { return auto_vsprintf_s(std::data(buf), std::size(buf), format, v); }
-inline int auto_vsprintf_s(std::span<WCHAR> buf, const WCHAR* format, va_list& v)         noexcept { return auto_vsprintf_s(std::data(buf), std::size(buf), format, v); }
+template <typename CharT, basis::WritableBuffer<CharT> A>
+int auto_vsnprintf_s(
+	A& dst,
+	size_t count,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& v
+) noexcept
+{
+	return cxx::_vsnprintf_s( dst, count, format, v );
+}
 
-template<typename... Params> inline int auto_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, Params&&... params) noexcept { return ::_snprintf_s(buf, nBufCount, _TRUNCATE, format, std::forward<Params>(params)...); }
-template<typename... Params> inline int auto_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, Params&&... params) noexcept { return ::_snwprintf_s(buf, nBufCount, _TRUNCATE, format, std::forward<Params>(params)...); }
-template<typename... Params> inline int auto_sprintf_s(std::span<ACHAR> buf, const ACHAR* format, Params&&... params)         noexcept { return auto_sprintf_s(std::data(buf), std::size(buf), format, std::forward<Params>(params)...); }
-template<typename... Params> inline int auto_sprintf_s(std::span<WCHAR> buf, const WCHAR* format, Params&&... params)         noexcept { return auto_sprintf_s(std::data(buf), std::size(buf), format, std::forward<Params>(params)...); }
+template <typename CharT>
+int auto_vsnprintf_s(
+	CharT* pBuffer,
+	size_t nBufferSize,
+	size_t count,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& v
+) noexcept
+{
+	return cxx::_vsnprintf_s( pBuffer, nBufferSize, count, format, v );
+}
 
-#define auto_snprintf_s(buf, nBufCount, format, ...)	::_snwprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
+template <typename CharT, basis::WritableBuffer<CharT> A>
+int auto_vsprintf_s(
+	A& dst,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& v
+) noexcept
+{
+	return cxx::_vsprintf_s( dst, format, v );
+}
 
-std::wstring& eos(std::wstring& strOut, size_t cchOut);
-std::string& eos(std::string& strOut, size_t cchOut);
+template <typename CharT>
+int auto_vsprintf_s(
+	CharT* pBuffer,
+	size_t nBufferSize,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& v
+) noexcept
+{
+	return cxx::_vsprintf_s( pBuffer, nBufferSize, format, v );
+}
 
-int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList);
-int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList);
-int strprintf(std::wstring& strOut, const WCHAR* pszFormat, ...);
-int strprintf(std::string& strOut, const CHAR* pszFormat, ...);
-std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList);
-std::string vstrprintf(const CHAR* pszFormat, va_list& argList);
-std::wstring strprintf(const WCHAR* pszFormat, ...);
-std::string strprintf(const CHAR* pszFormat, ...);
+template <typename CharT, basis::WritableBuffer<CharT> A, typename... Params>
+int auto_snprintf_s(
+	A& dst,
+	size_t count,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_snprintf_s(
+		dst,
+		count,
+		format,
+		std::as_const(params)...
+	);
+}
+
+template <typename CharT, typename... Params>
+int auto_snprintf_s(
+	CharT* pBuffer,
+	size_t nBufferSize,
+	size_t count,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_snprintf_s(
+		pBuffer,
+		nBufferSize,
+		count,
+		format,
+		std::as_const(params)...
+	);
+}
+
+template <typename CharT, basis::WritableBuffer<CharT> A, typename... Params>
+int auto_sprintf_s(
+	A& dst,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	return cxx::_sprintf_s(
+		dst,
+		format,
+		std::as_const(params)...
+	);
+}
+
+template <typename CharT, typename... Params>
+int auto_sprintf_s(
+	CharT* pBuffer,
+	size_t nBufferSize,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_sprintf_s(
+		pBuffer,
+		nBufferSize,
+		format,
+		std::as_const(params)...
+	);
+}
+
+/*!
+ * @brief 文字列に書式付きデータを書き込みます。
+ *
+ * 生配列をSFilePathに置換できるよう用意したもの。
+ *
+ * セキュリティ上問題があるので、std::formatへの移行を検討してください。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+template <basis::WritableBuffer<WCHAR> A, typename... Params>
+int swprintf_s(
+	A& dst,
+	_In_z_ _Printf_format_string_ const WCHAR* format,
+	const Params&... params
+)
+{
+	return auto_sprintf_s(
+		dst,
+		format,
+		std::as_const(params)...
+	);
+}
+
+/*!
+ * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+ * 	事前に確保したバッファに結果を書き込む高速バージョン
+ *
+ * @param[in, out] out フォーマットされたテキストを受け取る変数
+ * @param[in] format フォーマット文字列
+ * @param[in] argList 引数リスト
+ * @returns 出力された文字数。NUL終端を含まない。
+ * @retval >= 0 正常終了
+ * @retval < 0 異常終了
+ */
+template <typename CharT>
+inline int vstrprintf(
+	std::basic_string<CharT>& out,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& argList
+)
+{
+	// 整形によって出力される文字数をカウント
+	const int count = cxx::_vscprintf(format, argList);
+
+	// 出力文字数が0未満ならエラー、戻り値は空。
+	if (count <= 0) return count;
+
+	// 出力先バッファを確保する
+	out.resize(count);
+
+	// 整形を実行する
+	return cxx::_vsprintf_s(out.data(), out.size() + 1, format, argList);
+}
+
+/*!
+ * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+ * 	動的にバッファを確保する簡易バージョン
+ *
+ * @param[in] format フォーマット文字列
+ * @param[in] argList 引数リスト
+ * @returns フォーマットされた文字列
+ */
+template <typename CharT>
+inline std::basic_string<CharT> vstrprintf(
+	_In_z_ _Printf_format_string_ const CharT* format,
+	va_list& argList
+)
+{
+	// 出力先バッファを用意する
+	std::basic_string<CharT> out;
+
+	// 整形を実行する
+	const auto formatted = vstrprintf(out, format, argList);
+
+	if (formatted <= 0) return {};
+
+	// NUL終端する
+	out.resize(formatted);
+
+	return out;
+}
+
+/*!
+ * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+ * 	事前に確保したバッファに結果を書き込む高速バージョン
+ *
+ * @param[in, out] out フォーマットされたテキストを受け取る変数
+ * @param[in] format フォーマット文字列
+ * @param[in, opt] params 引数リスト
+ * @returns 出力された文字数。NUL終端を含まない。
+ * @retval >= 0 正常終了
+ * @retval < 0 異常終了
+ */
+template <typename CharT, typename... Params>
+int strprintf(
+	std::basic_string<CharT>& out,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// パラメーターがない場合、コンパイルエラーにする
+	static_assert(
+		0 < sizeof...(params),
+		"One or more paramaters should be passed"
+	);
+
+	// 整形によって出力される文字数をカウント
+	const int count = cxx::_scprintf(format, std::as_const(params)...);
+
+	// 出力文字数が0未満ならエラー、戻り値は空。
+	if (count <= 0) return count;
+
+	// 出力先バッファを確保する
+	out.resize(count);
+
+	// 整形を実行する
+	return cxx::_sprintf_s(out.data(), out.size() + 1, format, std::as_const(params)...);
+}
+
+/*!
+ * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+ * 	動的にバッファを確保する簡易バージョン
+ *
+ * @param[in] format フォーマット文字列
+ * @param[in, opt] params 引数リスト
+ * @returns フォーマットされた文字列
+ */
+template <typename CharT, typename... Params>
+auto strprintf(
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+) -> std::basic_string<CharT>
+{
+	// 出力先バッファを用意する
+	std::basic_string<CharT> out;
+
+	// 整形を実行する
+	const auto formatted = strprintf(out, format, std::as_const(params)...);
+
+	if (formatted <= 0) return {};
+
+	// NUL終端する
+	out.resize(formatted);
+
+	return out;
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       リテラル比較                          //
@@ -233,4 +937,5 @@ template <size_t Size>
 inline int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
+
 #endif /* SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_ */

@@ -17,9 +17,12 @@
 /*!
  * バッファ参照型
  *
- * 読み書き可能なWCHARバッファとサイズを指定して構築する
+ * basis::WritableBufferを導入前、生配列をキャストするために使っていたもの。
+ *
+ * 単純削除して構わないが、影響箇所が多いので一旦放置する
  */
-using StringBufferW = std::span<WCHAR>;
+// TODO: いつか廃止する
+#define StringBufferW(x) (x)
 
 /*!
  * プロファイル用データ変換
@@ -288,42 +291,43 @@ public:
 	 * @retval true	設定値を正しく読み書きできた
 	 * @retval false 設定値を読み込めなかった
 	 */
+	template <basis::WritableBuffer<WCHAR> A>
 	bool IOProfileData(
 		const std::wstring&		sectionName,	//!< [in] セクション名
 		const std::wstring&		entryKey,		//!< [in] エントリ名
-		std::span<WCHAR>		tEntryValue		//!< [in,out] エントリ値
+		A&						tEntryValue		//!< [in,out] エントリ値
 	)
 	{
 		if (IsReadingMode()) {
+			// 可変長バッファを用意する
 			std::wstring entryValue;
-			if (!GetProfileData(sectionName, entryKey, entryValue) || std::size(tEntryValue) <= entryValue.length()) {
-				return false;
-			}
-			::wcscpy_s(std::data(tEntryValue), std::size(tEntryValue), std::data(entryValue));
-			return true;
-		} else {
-			SetProfileData(sectionName, entryKey, std::wstring_view{ std::data(tEntryValue), std::size(tEntryValue) });
-			return true;
-		}
-	}
 
-	/*!
-	 * 独自定義文字配列拡張型(StaticString)の入出力
-	 *
-	 * 型引数が合わないために通常入出力と分離。
-	 *
-	 * @retval true	設定値を正しく読み書きできた
-	 * @retval false 設定値を読み込めなかった
-	 */
-	template <int N>
-	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
-		StaticString<N>&		szEntryValue	//!< [in,out] エントリ値
-	)
-	{
-		// std::span<WCHAR>型に変換して入出力する
-		return IOProfileData(sectionName, entryKey, std::span<WCHAR, N>{ szEntryValue });
+			// 可変長バッファに読み込んでサイズチェックする
+			if (const auto buffer = std::span( tEntryValue );
+				!GetProfileData(sectionName, entryKey, entryValue) ||
+				std::size(buffer) < entryValue.length() + 1)
+			{
+				return false;	// エントリがなかった、または、バッファに入り切らない
+			}
+
+			// バッファにコピーする
+			wcscpy_s(tEntryValue, entryValue);
+		}
+		else {
+			// バッファに格納された文字列を取り出して書き込む
+			auto text = std::wstring_view{ tEntryValue };
+
+			// 引数が配列型ならNUL終端を捜す
+			if constexpr (std::is_array_v<std::remove_cvref_t<A>>) {
+				const auto len = cxx::strnlen_s(tEntryValue);
+				text = text.substr(0, len);
+			}
+
+			// 設定値を書き込む
+			SetProfileData(sectionName, entryKey, text);
+		}
+
+		return true;
 	}
 };
 

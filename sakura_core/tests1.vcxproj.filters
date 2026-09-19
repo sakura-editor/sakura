@@ -261,6 +261,12 @@
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp">
       <Filter>Other Files\env</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\test\resources\testing\MsvcInvalidParameterHandlerDisabler.hpp">
+      <Filter>Other Files\testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\resources\testing\MsvcReportMode.hpp">
+      <Filter>Other Files\testing</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp">
       <Filter>Other Files\window</Filter>
     </ClInclude>

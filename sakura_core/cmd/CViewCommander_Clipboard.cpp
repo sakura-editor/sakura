@@ -1144,7 +1144,7 @@ void CViewCommander::Command_COPYTAG( void )
 		GetDocument()->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptColLine );
 
 		/* クリップボードにデータを設定 */
-		std::wstring buffer = strprintf(L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
+		std::wstring buffer = strprintf(L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), int(ptColLine.y) + 1, int(ptColLine.x) + 1 );
 		m_pCommanderView->MySetClipboardData(buffer.c_str(), buffer.length(), false);
 	}
 	else{
