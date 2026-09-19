@@ -1379,6 +1379,9 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 
 	static inline const std::filesystem::path backupAgentTargetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
 	static inline const std::filesystem::path backupPath = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".bak");
+	static inline const std::filesystem::path backupPathB00 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b00");
+	static inline const std::filesystem::path backupPathB01 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b01");
+	static inline const std::filesystem::path backupPathB02 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b02");
 	static inline const std::filesystem::path colorizeExportPath = GetIniFileName().replace_filename(L"基本.col");
 	static inline const std::filesystem::path custmenuExportPath = GetIniFileName().replace_filename(L"カスタムメニュー.mnu");
 	static inline const std::filesystem::path dummyPath = GetIniFileName().replace_filename(L"dummy.txt");
@@ -1412,6 +1415,9 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		std::error_code ec;
 		std::filesystem::remove(backupAgentTargetPath, ec);
 		std::filesystem::remove(backupPath, ec);
+		std::filesystem::remove(backupPathB00, ec);
+		std::filesystem::remove(backupPathB01, ec);
+		std::filesystem::remove(backupPathB02, ec);
 		std::filesystem::remove(colorizeExportPath, ec);
 		std::filesystem::remove(custmenuExportPath, ec);
 		std::filesystem::remove(dummyPath, ec);
@@ -1430,6 +1436,16 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		}
 
 		{
+			std::wofstream fos(backupPathB00);
+			fos << L"ダミーファイルです" << std::endl;
+		}
+
+		{
+			std::wofstream fos(backupPathB01);
+			fos << L"ダミーファイルです" << std::endl;
+		}
+
+		{
 			std::wofstream fos(dummyPath);
 			fos << L"ダミーファイルです" << std::endl;
 		}
@@ -1443,6 +1459,9 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		std::error_code ec;
 		std::filesystem::remove(backupAgentTargetPath, ec);
 		std::filesystem::remove(backupPath, ec);
+		std::filesystem::remove(backupPathB00, ec);
+		std::filesystem::remove(backupPathB01, ec);
+		std::filesystem::remove(backupPathB02, ec);
 		std::filesystem::remove(colorizeExportPath, ec);
 		std::filesystem::remove(custmenuExportPath, ec);
 		std::filesystem::remove(dummyPath, ec);
@@ -2005,6 +2024,38 @@ TEST_F(EditWndTest, FileSaveWithBackupAgent001)
 	EXPECT_THAT(newPath, StrEq(LR"(C:\Users\Public\Desktop\backup-agent-target.bak)"));
 
 	backupAgent = nullptr;
+
+	sBackup = backupOld;
+}
+
+/*!
+ * 上書き保存時バックアップのテスト
+ */
+TEST_F(EditWndTest, FileSaveWithBackupAgent003)
+{
+	const auto& targetPath = backupAgentTargetPath;
+
+	auto& sBackup = GetDllShareData().m_Common.m_sBackup;
+	const CommonSetting_Backup backupOld = sBackup;
+
+	sBackup.m_bBackUp = true;
+	sBackup.m_bBackUpDialog = false;
+	sBackup.SetBackupType(3);
+	sBackup.m_bBackUpFolder = false;
+	sBackup.m_bBackUpPathAdvanced = false;
+	sBackup.m_bBackUpDustBox = true;
+
+	// ファイルを開く
+	EXPECT_THAT(ExecMacroCommand(std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native())), IsTrue());
+
+	// 編集済みにする
+	pcEditDoc->m_cDocEditor.m_bIsDocModified = true;
+
+	// 上書き保存してバックアップを作らせる
+	EXPECT_THAT(ExecMacroCommand(L"FileSave()"), IsTrue());
+
+	// バックアップが作られたことを確認する
+	EXPECT_THAT(fexist(backupPathB02), IsTrue());
 
 	sBackup = backupOld;
 }
