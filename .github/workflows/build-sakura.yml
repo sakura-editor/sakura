@@ -230,7 +230,7 @@ jobs:
 
     # コンパイルしたHTMLヘルプをartifactにする
     - name: Upload CHM artifacts
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: build-chm-artifacts
         path: |
@@ -456,7 +456,7 @@ jobs:
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: sonar-input
         path: |
@@ -478,35 +478,35 @@ jobs:
 
     ## see https://github.com/actions/upload-artifact
     - name: Upload Installer
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Installer ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Installer.zip'
 
     - name: Upload Exe
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Exe ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip'
 
     - name: Upload Log
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Log ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Log.zip'
 
     - name: Upload Asm
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Asm ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Asm.zip'
 
     - name: Upload Dev
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Dev ${{ matrix.platform }} ${{ matrix.config }}
