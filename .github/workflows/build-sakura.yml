@@ -194,14 +194,14 @@ jobs:
     needs: check-encoding
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       with:
         fetch-depth: 1
         submodules: true
 
     # HHC.exeを実行するためにMsBuildが必要
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v3
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
     # LEProc.exeをインストールするためにAutoHotKeyが必要
     - name: Install AutoHotKey
@@ -230,7 +230,7 @@ jobs:
 
     # コンパイルしたHTMLヘルプをartifactにする
     - name: Upload CHM artifacts
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: build-chm-artifacts
         path: |
@@ -288,14 +288,14 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       with:
         fetch-depth: 0
         submodules: true
 
     ## see https://github.com/microsoft/setup-msbuild
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v3
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
     # SonarQubeのBuild Wrapperをインストールする
     - name: Install Build Wrapper
@@ -441,7 +441,7 @@ jobs:
       shell: cmd
 
     - name: Restore CHM artifacts
-      uses: actions/download-artifact@v8
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: build-chm-artifacts
         path: help
@@ -456,7 +456,7 @@ jobs:
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: sonar-input
         path: |
@@ -478,35 +478,35 @@ jobs:
 
     ## see https://github.com/actions/upload-artifact
     - name: Upload Installer
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Installer ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Installer.zip'
 
     - name: Upload Exe
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Exe ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip'
 
     - name: Upload Log
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Log ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Log.zip'
 
     - name: Upload Asm
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Asm ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Asm.zip'
 
     - name: Upload Dev
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Dev ${{ matrix.platform }} ${{ matrix.config }}
