@@ -44,7 +44,7 @@ jobs:
         shell: cmd # このJobでは 指定しない限り cmd を使う
     steps:
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0  # 過去の履歴も含めて全て取得 (check_encoding.py で origin/master にアクセスするため)
 
@@ -92,7 +92,7 @@ jobs:
 
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1  # 過去の履歴は含めず取得
         submodules: true
@@ -194,7 +194,7 @@ jobs:
     needs: check-encoding
 
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1
         submodules: true
@@ -251,7 +251,7 @@ jobs:
 
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1  # 過去の履歴は含めず取得
         submodules: true
@@ -288,7 +288,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
         submodules: true
