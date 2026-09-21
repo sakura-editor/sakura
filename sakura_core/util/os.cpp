@@ -347,6 +347,31 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	return bRet;
 }
 
+DWORD Kernel32::GetCurrentDirectoryW(
+	_In_ DWORD nBufferLength,
+	_Out_writes_to_opt_( nBufferLength, return +1 )
+	LPWSTR lpBuffer
+) const
+{
+	return ::GetCurrentDirectoryW(nBufferLength, lpBuffer);
+}
+
+UINT Kernel32::GetSystemDirectoryW(
+	_Out_writes_to_opt_( uSize, return +1 )
+	LPWSTR lpBuffer,
+	_In_ UINT uSize
+) const
+{
+	return ::GetSystemDirectoryW(lpBuffer, uSize);
+}
+
+BOOL Kernel32::SetCurrentDirectoryW(
+	_In_ LPCWSTR lpPathName
+) const
+{
+	return ::SetCurrentDirectoryW(lpPathName);
+}
+
 namespace cxx {
 
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
@@ -476,6 +501,60 @@ std::wstring GlobalSakura::wstring() const & {
 		if (cbSize < sizeof(size_type) + (length + 1) * sizeof(WCHAR)) return L"";
 		return std::wstring(LPCWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
 	});
+}
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW()
+{
+	SFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
+	if (!ret) {
+		cxx::raise_system_error("GetSystemDirectoryW() failed");
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief カレントディレクトリのパスを取得する
+ *
+ * @return カレントディレクトリのパス
+ */
+std::wstring GetCurrentDirectoryW()
+{
+	SFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetCurrentDirectoryW(DWORD(std::size(buf)), buf.data());
+	if (!ret) {
+		cxx::raise_system_error("GetCurrentDirectoryW() failed");
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief カレントディレクトリを変更する
+ *
+ * @param[in] newPath 新しいディレクトリ
+ */
+void SetCurrentDirectoryW(
+	std::wstring_view newPath
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> path{ newPath };
+
+	// カレントディレクトリを変更する
+	if (const auto ret = Kernel32::getInstance()->SetCurrentDirectoryW(path.c_str());
+		!ret)
+	{
+		cxx::raise_system_error("SetCurrentDirectoryW() failed");
+	}
 }
 
 } // namespace cxx

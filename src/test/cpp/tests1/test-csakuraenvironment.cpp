@@ -408,4 +408,72 @@ INSTANTIATE_TEST_SUITE_P(ExpandParamCases
 	)
 );
 
+/*!
+ * Kernel32のAPI呼出テスト
+ */
+struct Kernel32 : public ::testing::Test {
+	using Target = ::Kernel32;
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		Target::setInstance<MockKernel32>();
+
+		pKernel32 = (MockKernel32*)Target::getInstance();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		Target::resetInstance();
+	}
+
+	MockKernel32* pKernel32 = nullptr;
+};
+
+TEST_F(Kernel32, GetCurrentDirectoryW101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillOnce(Return(0));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetCurrentDirectoryW();
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("GetCurrentDirectoryW() failed"))
+	);
+}
+
+TEST_F(Kernel32, GetSystemDirectoryW101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, GetSystemDirectoryW(_, _))
+		.WillOnce(Return(0));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetSystemDirectoryW();
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("GetSystemDirectoryW() failed"))
+	);
+}
+
+TEST_F(Kernel32, SetCurrentDirectoryW101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.WillOnce(Return(FALSE));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::SetCurrentDirectoryW(L"path/to/file");
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("SetCurrentDirectoryW() failed"))
+	);
+}
+
 } // namespace env

@@ -43,6 +43,25 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 } // namespace env
 
+struct MockKernel32 final : public Kernel32
+{
+	MOCK_CONST_METHOD2(GetCurrentDirectoryW, DWORD(
+		_In_ DWORD nBufferLength,
+		_Out_writes_to_opt_(nBufferLength,return + 1)
+		LPWSTR lpBuffer
+	));
+
+	MOCK_CONST_METHOD2(GetSystemDirectoryW, UINT(
+		_Out_writes_to_opt_(uSize, return +1)
+		LPWSTR lpBuffer,
+		_In_ UINT uSize
+	));
+
+	MOCK_CONST_METHOD1(SetCurrentDirectoryW, BOOL(
+		_In_ LPCWSTR lpPathName
+	));
+};
+
 struct MockUser32 final : public User32
 {
 	MOCK_CONST_METHOD5(MessageBoxExW, int(
