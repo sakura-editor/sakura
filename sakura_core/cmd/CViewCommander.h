@@ -11,6 +11,7 @@
 
 #include "basis/CEol.h"
 #include "types/CType.h"
+#include "util/MessageBoxF.h"
 
 class CEditView;
 enum EFunctionCode;
@@ -37,6 +38,8 @@ public:
 	void SetOpeBlk(COpeBlk* p);
 	CLayoutRange& GetSelect();
 	CCaret& GetCaret();
+
+	HWND GetCommanderViewHwnd(HWND hWnd) const;
 
 private:
 	CEditView*		m_pCommanderView;
@@ -390,7 +393,34 @@ public:
 
 private:
 	void MoveViewTopLine(CLayoutInt nViewTopLine);
-	void AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, ...);
+
+	/*!
+	 * @brief 検索で見つからないときの警告（メッセージボックス／サウンド）
+	 *
+	 * @date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
+	 */
+	template <typename... Params>
+	void AlertNotFound(
+		HWND hwnd,
+		bool bReplaceAll,
+		_In_z_ _Printf_format_string_ LPCWSTR format,
+		const Params&... params
+	) const
+	{
+		if (GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND &&
+			!bReplaceAll)
+		{
+			hwnd = GetCommanderViewHwnd(hwnd);
+
+			// メッセージを表示する
+			InfoMessage(hwnd, format, std::as_const(params)...);
+
+		}
+		else {
+			DefaultBeep();
+		}
+	}
+
 	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	bool Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:

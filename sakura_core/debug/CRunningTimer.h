@@ -9,7 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -18,7 +18,9 @@
 #define SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_
 #pragma once
 
+#include "debug/Debug1.h"
 #include "util/string_ex.h"
+
 #include <string>
 #include <string_view>
 #include <chrono>
@@ -100,14 +102,18 @@ public:
 	/*!
 		現在の経過時間でログを書き込む
 		@param[in]	fmt		書式文字列
-		@param[in]	...		書式文字列に対応する引数
+		@param[in]	args	書式文字列に対応する引数
 	*/
 	template <typename... T>
-	void WriteTraceFormat( std::wstring_view fmt, T... args )
+	void WriteTraceFormat(
+		_In_z_ _Printf_format_string_ LPCWSTR fmt,
+		const T&... args
+	)
 	{
 		auto currentTime = GetTime();
-		std::wstring msg;
-		strprintf( msg, fmt.data(), args... );
+
+		const auto msg = strprintf(fmt, std::as_const(args)...);
+
 		WriteTraceInternal( currentTime, TraceType::Normal, msg );
 	}
 
@@ -136,7 +142,17 @@ protected:
 	void OutputHeader() const;
 	void OutputFooter() const;
 	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const;
-	void Output( std::wstring_view fmt, ... ) const;
+
+	template <typename... Args>
+	void Output(
+		_In_z_ _Printf_format_string_ LPCWSTR format,
+		const Args&... args
+	) const
+	{
+		const auto msg = strprintf(format, std::as_const(args)...);
+
+		cxx::OutputDebugStringW(msg);
+	}
 
 private:
 	TimePoint		m_startTime;				// 計測開始時間
@@ -148,4 +164,5 @@ private:
 	size_t			m_nNameOutputWidth = 40;	// タイマー名出力幅(文字数)(初期値は最小幅)
 	std::vector<TraceEntry> m_pendingTraces;	// 出力保留中の情報
 };
+
 #endif /* SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_ */

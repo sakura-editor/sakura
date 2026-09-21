@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -20,6 +20,22 @@ using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
 using namespace testing;
+
+// CStrictIntegerっぽい型を検出するコンセプトのテスト
+static_assert(!cxx::StrictIntegerLike<int>);
+
+#ifdef USE_STRICT_INT
+
+static_assert(cxx::StrictIntegerLike<CLayoutInt>);
+static_assert(cxx::StrictIntegerLike<CLogicInt>);
+
+#else
+
+static_assert(!cxx::StrictIntegerLike<CLayoutInt>);
+static_assert(!cxx::StrictIntegerLike<CLogicInt>);
+
+#endif // ifdef USE_STRICT_INT
+
 
 /*!
 	@brief 旧コード互換用。可能であれば使わないでください。
@@ -210,6 +226,16 @@ TEST(string_ex, strprintfEmpty)
 {
 	std::wstring text = strprintf(L"%hs", "");
 	ASSERT_TRUE(text.empty());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(CLayoutInt出力テスト)。
+ */
+TEST(string_ex, strprintfCLayoutInt)
+{
+	CLayoutInt value{ 25 };
+	std::wstring text = strprintf(L"いちご%d%%", value);
+	EXPECT_THAT(text, StrEq(L"いちご25%"));
 }
 
 /*!

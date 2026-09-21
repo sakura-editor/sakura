@@ -241,7 +241,49 @@ public:
 		}
 	}
 
-	void AppendStringF( std::wstring_view format, ... );				//!< バッファの最後にデータを追加する (フォーマット機能付き)
+	/*!
+	 * バッファの最後にデータを追加する (フォーマット機能付き)
+	 *
+	 * @param[in] format フォーマット書式文字列
+	 * @param[in, opt] args 引数リスト
+	 * @throws std::invalid_argument formatが無効値
+	 * @throws std::bad_alloc メモリ確保に失敗
+	 * @remark 不正なフォーマットを指定すると無効なパラメータ例外で即死します。
+	 */
+	template <typename... Args>
+	void AppendStringF(
+		std::wstring_view format,
+		const Args&... args
+	)
+	{
+		// 整形によって追加される文字数をカウント
+		const int additional = cxx::_scprintf(format.data(), std::as_const(args)...);
+
+		if (additional < 0) {
+			const auto e = errno;
+			throw std::domain_error(std::format("AppendStringF error. errno = {:d}", e));
+		}
+
+		if (additional <= 0) return;
+
+		// 現在の文字列長を取得
+		const auto currentLength = GetStringLength();
+
+		// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
+		const auto newCapacity = currentLength + additional;
+		AllocStringBuffer(newCapacity);
+
+		// 出力先を固定長バッファとして扱う
+		auto buffer = std::span(&GetStringPtr()[currentLength], additional + 1);
+
+		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
+		const auto added = cxx::_sprintf_s(buffer, format.data(), std::as_const(args)...);
+
+		if (added <= 0) return;
+
+		// 文字列終端を再設定する
+		_SetStringLength(currentLength + added);
+	}
 
 	//CNativeW
 	void SetNativeData( const CNativeW& cNative );						//!< バッファの内容を置き換える

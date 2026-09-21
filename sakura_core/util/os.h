@@ -10,6 +10,7 @@
 #pragma once
 
 #include "util/design_template.h"
+#include "basis/primitive.h"
 #include "cxx/type_of_Nth_lambda_arg.hpp"
 
 #include <objidl.h> // LPDATAOBJECT
@@ -19,14 +20,7 @@ struct User32 : public TSakuraSingleton<User32>
 {
 	using Me = User32;
 
-	static int MessageBoxW(
-		_In_opt_ HWND hWnd,
-		const std::optional<std::wstring>& optText,
-		const std::optional<std::wstring>& optCaption,
-		_In_ UINT uType
-	);
-
-	virtual ~User32() = default;
+	~User32() override = default;
 
 	virtual int	MessageBoxExW(
 		_In_opt_ HWND hWnd,

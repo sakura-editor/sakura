@@ -187,116 +187,25 @@ constexpr errno_t strcat_s(A1& dst, const A2& src) noexcept
 }
 
 /*!
- * @brief 文字列に書式付きデータを書き込みます。
- *
- * 同名のCランタイム関数を自前実装したもの。（Wide/Ascii両対応）
- *
- * sprintf系関数はセキュリティ上問題あるので、std::formatへの移行を検討してください。
- *
- * @return 書き込まれた文字数
- * @retval < 0 エラー発生
+ * @brief CStrictIntegerっぽい型
  */
- // TODO: いつか廃止する
-inline int _vsnprintf_s(
-	WCHAR* pBuffer,
-	size_t nBufferSIze,
-	size_t nMaxCount,
-	_In_z_ _Printf_format_string_ LPCWSTR format,
-	va_list& argList
-) noexcept
-{
-	return ::_vsnwprintf_s(
-		pBuffer,
-		nBufferSIze,
-		nMaxCount,
-		format,
-		argList
-	);
-}
-
-// TODO: いつか廃止する
-inline int _vsnprintf_s(
-	ACHAR* pBuffer,
-	size_t nBufferSIze,
-	size_t nMaxCount,
-	_In_z_ _Printf_format_string_ LPCSTR format,
-	va_list& argList
-) noexcept
-{
-	return ::_vsnprintf_s(
-		pBuffer,
-		nBufferSIze,
-		nMaxCount,
-		format,
-		argList
-	);
-}
-
-// TODO: いつか廃止する
-template <typename CharT, basis::WritableBuffer<CharT> A>
-int _vsnprintf_s(
-	A& dst,
-	size_t count,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& argList
-) noexcept
-{
-	// 出力先を固定長バッファとして扱う
-	auto buffer = std::span<CharT>{ dst };
-	
-	// Cランタイムの実装に任せる
-	return cxx::_vsnprintf_s(
-		std::data(buffer),
-		std::size(buffer),
-		count,
-		format,
-		argList
-	);
-}
-
-// TODO: いつか廃止する
-inline int _vscprintf(
-	_In_z_ _Printf_format_string_ LPCWSTR format,
-	va_list& argList
-) noexcept
-{
-	return ::_vscwprintf( format, argList );
-}
-
-// TODO: いつか廃止する
-inline int _vscprintf(
-	_In_z_ _Printf_format_string_ LPCSTR format,
-	va_list& argList
-) noexcept
-{
-	return ::_vscprintf( format, argList );
-}
-
-// TODO: いつか廃止する
-template <typename CharT, basis::WritableBuffer<CharT> A>
-int _vsprintf_s(
-	A& dst,
-	const CharT* format,
-	va_list& argList
-) noexcept
-{
-	return cxx::_vsnprintf_s( dst, _TRUNCATE, format, argList );
-}
-
-// TODO: いつか廃止する
-template <typename CharT>
-int _vsprintf_s(
-	CharT* pBuffer,
-	size_t nBufferSIze,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& argList
-) noexcept
-{
-	// 出力先を固定長バッファとして扱う
-	auto buffer = std::span{ pBuffer, nBufferSIze };
-
-	return cxx::_vsprintf_s( buffer, format, argList );
-}
+template<typename A>
+concept StrictIntegerLike =
+	// int から例外なく構築できること
+	(std::is_nothrow_constructible_v<std::remove_cvref_t<A>, int>)
+	// GetValue() メソッドを持つこと
+	&& (requires(const A& value) {
+		{
+			value.GetValue()
+		} noexcept -> std::same_as<int>;
+	})
+	// Int に例外なく変換できること
+	&& (requires(const A& value) {
+		{
+			static_cast<Int>(value)
+		} noexcept -> std::same_as<Int>;
+	})
+	;
 
 /*!
  * @brief sprintf系関数の引数を変換する
@@ -308,6 +217,13 @@ int _vsprintf_s(
 template <typename T>
 constexpr decltype(auto) ConvertPrintfArg(const T& value)
 {
+#if 0
+	static_assert(
+		!cxx::StrictIntegerLike<T>,
+		"StrictInteger is not supported."
+	);
+#endif
+
 	if constexpr (basis::NullTerminatedStringConstructible<T, WCHAR>) {
 		const auto text = cxx::NullTerminatedString<WCHAR>{ value };
 		if (text.uses_buffer()) {
@@ -321,6 +237,9 @@ constexpr decltype(auto) ConvertPrintfArg(const T& value)
 			throw std::invalid_argument("invalid usage");
 		}
 		return text.c_str();
+	}
+	else if constexpr (cxx::StrictIntegerLike<T>) {
+		return static_cast<int>(value);
 	}
 	else {
 		return value;
@@ -643,54 +562,8 @@ WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
 WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
-inline int auto_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v) { return ::vsprintf(buf, format, v); }
-inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v) { return ::_vswprintf(buf, format, v); }
-inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
-inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
-
-template <typename CharT, basis::WritableBuffer<CharT> A>
-int auto_vsnprintf_s(
-	A& dst,
-	size_t count,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& v
-) noexcept
-{
-	return cxx::_vsnprintf_s( dst, count, format, v );
-}
-
-template <typename CharT>
-int auto_vsnprintf_s(
-	CharT* pBuffer,
-	size_t nBufferSize,
-	size_t count,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& v
-) noexcept
-{
-	return cxx::_vsnprintf_s( pBuffer, nBufferSize, count, format, v );
-}
-
-template <typename CharT, basis::WritableBuffer<CharT> A>
-int auto_vsprintf_s(
-	A& dst,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& v
-) noexcept
-{
-	return cxx::_vsprintf_s( dst, format, v );
-}
-
-template <typename CharT>
-int auto_vsprintf_s(
-	CharT* pBuffer,
-	size_t nBufferSize,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& v
-) noexcept
-{
-	return cxx::_vsprintf_s( pBuffer, nBufferSize, format, v );
-}
+template <typename... Args> int auto_sprintf(WCHAR* buf, _In_z_ _Printf_format_string_ const WCHAR* format, const Args&... args) { return ::_swprintf (buf, format, cxx::ConvertPrintfArg(std::as_const(args))...); }
+template <typename... Args> int auto_sprintf(ACHAR* buf, _In_z_ _Printf_format_string_ const ACHAR* format, const Args&... args) { return std::sprintf(buf, format, cxx::ConvertPrintfArg(std::as_const(args))...); }
 
 template <typename CharT, basis::WritableBuffer<CharT> A, typename... Params>
 int auto_snprintf_s(
@@ -754,6 +627,21 @@ int auto_sprintf_s(
 	return cxx::_sprintf_s(
 		pBuffer,
 		nBufferSize,
+		format,
+		std::as_const(params)...
+	);
+}
+
+template <typename CharT, basis::WritableBuffer<CharT> A, typename... Params>
+int auto_sprintf(
+	A& dst,
+	_In_z_ _Printf_format_string_ const CharT* format,
+	const Params&... params
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_sprintf_s(
+		dst,
 		format,
 		std::as_const(params)...
 	);
@@ -789,65 +677,6 @@ int swprintf_s(
  *
  * @param[in, out] out フォーマットされたテキストを受け取る変数
  * @param[in] format フォーマット文字列
- * @param[in] argList 引数リスト
- * @returns 出力された文字数。NUL終端を含まない。
- * @retval >= 0 正常終了
- * @retval < 0 異常終了
- */
-template <typename CharT>
-inline int vstrprintf(
-	std::basic_string<CharT>& out,
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& argList
-)
-{
-	// 整形によって出力される文字数をカウント
-	const int count = cxx::_vscprintf(format, argList);
-
-	// 出力文字数が0未満ならエラー、戻り値は空。
-	if (count <= 0) return count;
-
-	// 出力先バッファを確保する
-	out.resize(count);
-
-	// 整形を実行する
-	return cxx::_vsprintf_s(out.data(), out.size() + 1, format, argList);
-}
-
-/*!
- * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
- * 	動的にバッファを確保する簡易バージョン
- *
- * @param[in] format フォーマット文字列
- * @param[in] argList 引数リスト
- * @returns フォーマットされた文字列
- */
-template <typename CharT>
-inline std::basic_string<CharT> vstrprintf(
-	_In_z_ _Printf_format_string_ const CharT* format,
-	va_list& argList
-)
-{
-	// 出力先バッファを用意する
-	std::basic_string<CharT> out;
-
-	// 整形を実行する
-	const auto formatted = vstrprintf(out, format, argList);
-
-	if (formatted <= 0) return {};
-
-	// NUL終端する
-	out.resize(formatted);
-
-	return out;
-}
-
-/*!
- * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
- * 	事前に確保したバッファに結果を書き込む高速バージョン
- *
- * @param[in, out] out フォーマットされたテキストを受け取る変数
- * @param[in] format フォーマット文字列
  * @param[in, opt] params 引数リスト
  * @returns 出力された文字数。NUL終端を含まない。
  * @retval >= 0 正常終了
@@ -860,11 +689,15 @@ int strprintf(
 	const Params&... params
 )
 {
+#if 0 // パラメーターなしで呼び出すケースが多いのでチェックを無効化する
+
 	// パラメーターがない場合、コンパイルエラーにする
 	static_assert(
 		0 < sizeof...(params),
 		"One or more paramaters should be passed"
 	);
+
+#endif
 
 	// 整形によって出力される文字数をカウント
 	const int count = cxx::_scprintf(format, std::as_const(params)...);

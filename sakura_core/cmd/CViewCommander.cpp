@@ -19,7 +19,7 @@
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2011, ryoji, nasukoji
 	Copyright (C) 2012, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -41,6 +41,19 @@
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {
 	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
+}
+
+/*!
+ * @brief コマンダービューのウィンドウハンドルを取得
+ *
+ * 既存コード互換用。
+ *
+ * CViewCommanderはCEditViewのメンバーなので、
+ * CViewCommander.hでCEditView.hはインクルードできない。
+ */
+HWND CViewCommander::GetCommanderViewHwnd(HWND hWnd) const
+{
+	return hWnd ? hWnd : m_pCommanderView->GetHwnd();
 }
 
 /*!
@@ -739,27 +752,4 @@ ptrdiff_t CViewCommander::ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen,
 		}
 	}
 	return nConvertedTextLen;
-}
-
-/*!
-	@brief 検索で見つからないときの警告（メッセージボックス／サウンド）
-
-	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
-*/
-void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, ...)
-{
-	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
-		&& !bReplaceAll
-	){
-		if( nullptr == hwnd ){
-			hwnd = m_pCommanderView->GetHwnd();
-		}
-		//InfoMessage(hwnd, format, __VA_ARGS__);
-		va_list p;
-		va_start(p, format);
-		VMessageBoxF(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p);
-		va_end(p);
-	}else{
-		DefaultBeep();
-	}
 }
