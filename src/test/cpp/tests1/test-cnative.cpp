@@ -794,6 +794,50 @@ TEST(CNativeW, CompareWithStringPtr)
 }
 
 /*!
+ * @brief 比較演算子の複合テスト
+ */
+TEST(CNativeW, comparisonOperators001)
+{
+	CNativeW value{ L"test data" };
+
+	// 同じオブジェクト
+	EXPECT_TRUE(value == value);
+	EXPECT_THAT(value != value, IsFalse());
+
+	// 同じ値
+	EXPECT_TRUE(value == L"test data");
+	EXPECT_THAT(value != L"test data", IsFalse());
+
+	// 異なる値
+	EXPECT_TRUE(value != L"test date");
+	EXPECT_THAT(value == L"test date", IsFalse());
+
+	// 比較対象が空
+	EXPECT_TRUE(L"" < value);
+	EXPECT_TRUE(value > L"");
+
+	// 比較対象がNULL
+	EXPECT_TRUE(nullptr <= value);
+	EXPECT_TRUE(value >= nullptr);
+
+	// 先頭部分が一致、かつ、比較対象より短い
+	EXPECT_TRUE(L"test" < value);
+	EXPECT_TRUE(value > L"test");
+
+	// 先頭部分が一致、かつ、比較対象より長い
+	EXPECT_TRUE(value < L"test data1");
+	EXPECT_TRUE(L"test data1" > value);
+
+	// 比較対象より大きい（辞書順で後）
+	EXPECT_TRUE(L"exam" < value);
+	EXPECT_TRUE(value > L"exam");
+
+	// 比較対象より小さい（辞書順で前）
+	EXPECT_TRUE(value < L"xyz");
+	EXPECT_TRUE(L"xyz" > value);
+}
+
+/*!
  * @brief グローバル加算演算子のテスト
  * @remark 1つ目の引数の末尾に2つ目の引数を連結する
  * @remark 順序逆転版も同仕様。
