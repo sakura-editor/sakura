@@ -15,6 +15,7 @@
 #include "debug/Debug2.h" //assert
 #include "mem/CNative.h"
 
+#include <compare>
 #include <string_view>
 
 class CNativeW;
@@ -112,10 +113,6 @@ private:
 };
 
 // グローバル演算子の前方宣言
-bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
-bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
-bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept;
-bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept;
 CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false);
 CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false);
 
@@ -124,8 +121,6 @@ class CNativeW final : public CNative{
 private:
 	using Base = CNative;
 	using Me = CNativeW;
-
-	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 
 public:
 	//コンストラクタ・デストラクタ
@@ -292,8 +287,58 @@ public:
 	//演算子
 	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
 
-	bool operator == (const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
-	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
+	/*!
+	 * @brief 三方比較演算子(C++20で導入された比較演算子)
+	 *
+	 * 標準的な演算子 <, <=, ==, !=, >=, > を自動的に生成する。
+	 * 自前実装を用意する場合は == の実装が別途必要。
+	 *
+	 * @tparam A [in] 比較する文字列の型（NUL終端文字列に変換できる型）
+	 * @param rhs [in, opt] 比較する文字列
+	 * @return 比較結果(std::strong_ordering)
+	 * @throws std::invalid_argument 文字列が不正だったとき
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr auto operator <=> (const A& rhs) const
+	{
+		if constexpr (std::is_same_v<A, Me>) {
+			// compare結果を0と比較することで、標準的な比較結果を生成する
+			return Compare(rhs) <=> 0;
+		}
+		else {
+			// 入力元をNUL終端文字列とみなす
+			const auto szRhs = cxx::NullTerminatedString<WCHAR>{ rhs };
+
+			// compare結果を0と比較することで、標準的な比較結果を生成する
+			return Compare(szRhs.c_str()) <=> 0;
+		}
+	}
+
+	/*!
+	 * @brief 等価比較演算子
+	 *
+	 * @tparam A [in] 比較する文字列の型（NUL終端文字列に変換できる型）
+	 * @param rhs [in, opt] 比較する文字列
+	 * @return 等価比較の結果
+	 * @retval true  等しい
+	 * @retval false 等しくない
+	 * @throws std::invalid_argument 文字列が不正だったとき
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr bool operator == (const A& rhs) const
+	{
+		if constexpr (std::is_same_v<A, Me>) {
+			// 比較結果が0かどうかを返す
+			return 0 == Compare(rhs);
+		}
+		else {
+			// 入力元をNUL終端文字列とみなす
+			const auto szRhs = cxx::NullTerminatedString<WCHAR>{ rhs };
+
+			// 比較結果が0かどうかを返す
+			return 0 == Compare(szRhs.c_str());
+		}
+	}
 
 	//ネイティブ取得インターフェース
 	[[nodiscard]] wchar_t operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。

@@ -199,58 +199,6 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 	return false;
 }
 
-/*!
- * 文字列ポインタ型との等価比較
- *
- * @param lhs 比較対象(CNativeW)
- * @param rhs 比較対象(C string)
- * @retval true 等しい
- * @retval false 等しくない
- */
-bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept
-{
-	return lhs.Equals(rhs);
-}
-
-/*!
- * 文字列ポインタ型との否定の等価比較
- *
- * @param lhs 比較対象(CNativeW)
- * @param rhs 比較対象(C string)
- * @retval true 等しくない
- * @retval false 等しい
- */
-bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept
-{
-	return !(lhs == rhs);
-}
-
-/*!
- * 文字列ポインタ型との等価比較(引数逆転版)
- *
- * @param lhs 比較対象(C string)
- * @param rhs 比較対象(CNativeW)
- * @retval true 等しい
- * @retval false 等しくない
- */
-bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept
-{
-	return rhs.Equals(lhs);
-}
-
-/*!
- * 文字列ポインタ型との否定の等価比較(引数逆転版)
- *
- * @param lhs 比較対象(C string)
- * @param rhs 比較対象(CNativeW)
- * @retval true 等しくない
- * @retval false 等しい
- */
-bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept
-{
-	return !(lhs == rhs);
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ変換インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

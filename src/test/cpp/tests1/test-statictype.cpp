@@ -293,6 +293,111 @@ TEST(StaticString, test001)
 	EXPECT_THAT(static_cast<size_t>(std::distance(constPath.begin(), constPath.end())), Eq(constPath.length()));
 }
 
+/*!
+ * @brief compare(CaseSensitive)のテスト
+ */
+TEST(StaticString, compareCaseSensitive001)
+{
+	StaticString<10> value{ L"test data" };
+
+	// 同じオブジェクト
+	EXPECT_THAT(value.compare(value), Eq(0));
+
+	// 同じ値
+	EXPECT_THAT(value.compare(L"test data"), Eq(0));
+
+	// 比較対象が空
+	EXPECT_THAT(value.compare(L""), Gt(0));
+
+	// 比較対象がNULL
+	EXPECT_THAT(value.compare(nullptr), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より短い
+	EXPECT_THAT(value.compare(L"test"), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より長い
+	EXPECT_THAT(value.compare(L"test data1"), Lt(0));
+
+	// 比較対象より小さい（辞書順で前）
+	EXPECT_THAT(value.compare(L"exam"), Gt(0));
+
+	// 比較対象より大きい（辞書順で後）
+	EXPECT_THAT(value.compare(L"xyz"), Lt(0));
+}
+
+/*!
+ * @brief compare(IgnoreCase)のテスト
+ */
+TEST(StaticString, compareIgnoreCase001)
+{
+	StaticString<10, false> value{ L"Test Data" };
+
+	// 同じ値
+	EXPECT_THAT(value.compare(L"test data"), Eq(0));
+
+	// 比較対象が空
+	EXPECT_THAT(value.compare(L""), Gt(0));
+
+	// 比較対象がNULL
+	EXPECT_THAT(value.compare(nullptr), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より短い
+	EXPECT_THAT(value.compare(L"TEST"), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より長い
+	EXPECT_THAT(value.compare(L"test data1"), Lt(0));
+
+	// 比較対象より大きい（辞書順で後）
+	EXPECT_THAT(value.compare(L"EXAM"), Gt(0));
+
+	// 比較対象より小さい（辞書順で前）
+	EXPECT_THAT(value.compare(L"XYZ"), Lt(0));
+}
+
+/*!
+ * @brief 比較演算子の複合テスト
+ */
+TEST(StaticString, comparisonOperators001)
+{
+	StaticString<10> value{ L"test data" };
+
+	// 同じオブジェクト
+	EXPECT_TRUE(value == value);
+	EXPECT_THAT(value != value, IsFalse());
+
+	// 同じ値
+	EXPECT_TRUE(value == L"test data");
+	EXPECT_THAT(value != L"test data", IsFalse());
+
+	// 異なる値
+	EXPECT_TRUE(value != L"test date");
+	EXPECT_THAT(value == L"test date", IsFalse());
+
+	// 比較対象が空
+	EXPECT_TRUE(L"" < value);
+	EXPECT_TRUE(value > L"");
+
+	// 比較対象がNULL
+	EXPECT_TRUE(nullptr <= value);
+	EXPECT_TRUE(value >= nullptr);
+
+	// 先頭部分が一致、かつ、比較対象より短い
+	EXPECT_TRUE(L"test" < value);
+	EXPECT_TRUE(value > L"test");
+
+	// 先頭部分が一致、かつ、比較対象より長い
+	EXPECT_TRUE(value < L"test data1");
+	EXPECT_TRUE(L"test data1" > value);
+
+	// 比較対象より大きい（辞書順で後）
+	EXPECT_TRUE(L"exam" < value);
+	EXPECT_TRUE(value > L"exam");
+
+	// 比較対象より小さい（辞書順で前）
+	EXPECT_TRUE(value < L"xyz");
+	EXPECT_TRUE(L"xyz" > value);
+}
+
 // swprintf_sの確認
 TEST(StaticString, swprintf_s001)
 {
