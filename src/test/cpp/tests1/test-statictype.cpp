@@ -293,6 +293,67 @@ TEST(StaticString, test001)
 	EXPECT_THAT(static_cast<size_t>(std::distance(constPath.begin(), constPath.end())), Eq(constPath.length()));
 }
 
+/*!
+ * @brief compare(CaseSensitive)のテスト
+ */
+TEST(StaticString, compareCaseSensitive001)
+{
+	StaticString<10> value{ L"test data" };
+
+	// 同じオブジェクト
+	EXPECT_THAT(value.compare(value), Eq(0));
+
+	// 同じ値
+	EXPECT_THAT(value.compare(L"test data"), Eq(0));
+
+	// 比較対象が空
+	EXPECT_THAT(value.compare(L""), Gt(0));
+
+	// 比較対象がNULL
+	EXPECT_THAT(value.compare(nullptr), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より短い
+	EXPECT_THAT(value.compare(L"test"), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より長い
+	EXPECT_THAT(value.compare(L"test data1"), Lt(0));
+
+	// 比較対象より小さい（辞書順で前）
+	EXPECT_THAT(value.compare(L"exam"), Gt(0));
+
+	// 比較対象より大きい（辞書順で後）
+	EXPECT_THAT(value.compare(L"xyz"), Lt(0));
+}
+
+/*!
+ * @brief compare(IgnoreCase)のテスト
+ */
+TEST(StaticString, compareIgnoreCase001)
+{
+	StaticString<10, false> value{ L"Test Data" };
+
+	// 同じ値
+	EXPECT_THAT(value.compare(L"test data"), Eq(0));
+
+	// 比較対象が空
+	EXPECT_THAT(value.compare(L""), Gt(0));
+
+	// 比較対象がNULL
+	EXPECT_THAT(value.compare(nullptr), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より短い
+	EXPECT_THAT(value.compare(L"TEST"), Gt(0));
+
+	// 先頭部分が一致、かつ、比較対象より長い
+	EXPECT_THAT(value.compare(L"test data1"), Lt(0));
+
+	// 比較対象より大きい（辞書順で後）
+	EXPECT_THAT(value.compare(L"EXAM"), Gt(0));
+
+	// 比較対象より小さい（辞書順で前）
+	EXPECT_THAT(value.compare(L"XYZ"), Lt(0));
+}
+
 // swprintf_sの確認
 TEST(StaticString, swprintf_s001)
 {
