@@ -45,29 +45,6 @@ namespace cxx {
 
 HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt);
 
-/*!
- * @brief システムエラーを例外として発生させる
- *
- * @param message 追加のエラーメッセージ
- * @throw std::system_error システムエラー例外
- * @note 使い物になるかどうか試作してみただけ
- */
-NORETURN void raise_system_error(const std::string& message) {
-	throw std::system_error(int(::GetLastError()), std::system_category(), message);
-}
-
-/*!
- * @brief システムディレクトリのパスを取得する
- *
- * @return システムディレクトリのパス
- */
-std::filesystem::path GetSystemDirectoryW()
-{
-	SFilePath buf;
-	::GetSystemDirectoryW(buf, int(std::size(buf)));
-	return LPCWSTR(buf);
-}
-
 template<class T>
 concept DataAndSizeAccessible = requires(const T& value) {
 	std::data(value);

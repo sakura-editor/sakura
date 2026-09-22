@@ -9,11 +9,38 @@
 #define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
-#include "util/design_template.h"
 #include "basis/primitive.h"
 #include "cxx/type_of_Nth_lambda_arg.hpp"
+#include "util/design_template.h"
+
+#include <string>
+#include <string_view>
 
 #include <objidl.h> // LPDATAOBJECT
+
+//! Kernel32.dll呼出をテスト可能にするDIっぽいもの
+struct Kernel32 : public TSakuraSingleton<Kernel32>
+{
+	using Me = Kernel32;
+
+	~Kernel32() override = default;
+
+	virtual DWORD GetCurrentDirectoryW(
+		_In_ DWORD nBufferLength,
+		_Out_writes_to_opt_(nBufferLength,return + 1)
+		LPWSTR lpBuffer
+	) const;
+
+	virtual UINT GetSystemDirectoryW(
+		_Out_writes_to_opt_(uSize, return +1)
+		LPWSTR lpBuffer,
+		_In_ UINT uSize
+	) const;
+
+	virtual BOOL SetCurrentDirectoryW(
+		_In_ LPCWSTR lpPathName
+	) const;
+};
 
 //! User32.dll呼出をテスト可能にするDIっぽいもの
 struct User32 : public TSakuraSingleton<User32>
@@ -390,6 +417,44 @@ public:
 };
 
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
+
+/*!
+ * @brief システムエラーを例外として発生させる
+ *
+ * @param[in] message エラーメッセージ
+ */
+template <basis::NullTerminatedStringConstructible<ACHAR> A>
+[[noreturn]] inline void raise_system_error(const A& message)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<ACHAR> msg{ message };
+
+	// システムエラー例外を発生させる
+	throw std::system_error(int(::GetLastError()), std::system_category(), msg.c_str());
+}
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW();
+
+/*!
+ * @brief カレントディレクトリのパスを取得する
+ *
+ * @return カレントディレクトリのパス
+ */
+std::wstring GetCurrentDirectoryW();
+
+/*!
+ * @brief カレントディレクトリを変更する
+ *
+ * @param[in] newPath 新しいディレクトリ
+ */
+void SetCurrentDirectoryW(
+	std::wstring_view newPath
+);
 
 } // namespace cxx
 

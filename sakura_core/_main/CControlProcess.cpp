@@ -27,6 +27,8 @@
 #include "config/system_constants.h"
 #include "apiwrap/DarkMode.h"
 
+#include "util/os.h"
+
 //-------------------------------------------------
 
 /*!
@@ -151,15 +153,19 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 	
+	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
+	const auto sysDir = cxx::GetSystemDirectoryW();
+	if (const auto curDir = cxx::GetCurrentDirectoryW();
+		curDir != sysDir)
+	{
+		// カレントディレクトリを変更する
+		cxx::SetCurrentDirectoryW(sysDir);
+	}
+
 	/* 共有メモリを初期化 */
 	if( !CProcess::InitializeProcess() ){
 		return false;
 	}
-
-	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
-	WCHAR szDir[_MAX_PATH];
-	::GetSystemDirectory( szDir, int(std::size(szDir)) );
-	::SetCurrentDirectory( szDir );
 
 	/* 共有データのロード */
 	if( !CShareData_IO::LoadShareData() ){
