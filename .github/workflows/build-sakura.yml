@@ -199,6 +199,12 @@ jobs:
         fetch-depth: 1
         submodules: true
 
+    # コンパイル制御にpythonが必要
+    - name: Set up Python
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+
     # HHC.exeを実行するためにMsBuildが必要
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
