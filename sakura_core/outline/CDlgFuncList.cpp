@@ -1246,15 +1246,15 @@ void CDlgFuncList::SetListVB (void)
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
-				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), int(std::size(szOption)) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_PRIVATE));
 				break;
 
 			case 3  :	// フレンド(Friend)
-				wcsncat(szOption, LS(STR_DLGFNCLST_VB_FRIEND), int(std::size(szOption)) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_FRIEND));
 				break;
 
 			default :	// パブリック(Public)
-				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), int(std::size(szOption)) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_PUBLIC));
 		}
 		int nInfo = pcFuncInfo->m_nInfo;
 		switch (nInfo & 0x0f) {
@@ -1300,7 +1300,7 @@ void CDlgFuncList::SetListVB (void)
 		}
 		if ( 2 == ((nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
-			wcsncat(szType, LS(STR_DLGFNCLST_VB_DECL), int(std::size(szType)) - wcslen(szType));
+			wcscat_s(szType, LS(STR_DLGFNCLST_VB_DECL));
 		}
 
 		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加

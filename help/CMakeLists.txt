@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 
 project(CompiledHtmlHelp)
 
+# Find python
+find_package(Python3 3.14 REQUIRED COMPONENTS Interpreter)
+
 # Find vswhere
 find_program(CMD_VSWHERE vswhere.exe
   PATHS
@@ -110,6 +113,7 @@ add_custom_target(build_chm_converter
 # Set paths
 set(SRC_HELP ${CMAKE_CURRENT_SOURCE_DIR})
 set(SJIS_HELP ${CMAKE_BINARY_DIR}/converted_help_source)
+set(COMPILE_CHM_SCRIPT ${SRC_HELP}/../src/main/py/compile_chm.py)
 
 # Create sakura.hh from src/main/resources/sakura.hh
 set(HH_INPUT ${SRC_HELP}/../src/main/resources/sakura.hh)
@@ -195,13 +199,14 @@ foreach(CHM_TARGET macro plugin sakura)
     COMMAND ${CMAKE_COMMAND} -E env 
       "CMD_HHC=${CMD_HHC}"
       "CMD_LEPROC=${CMD_LEPROC}"
-      ${CMD_PWSH} -ExecutionPolicy RemoteSigned -File 
-        ${CMAKE_SOURCE_DIR}/CompileChm.ps1 
+      ${Python3_EXECUTABLE}
+        ${COMPILE_CHM_SCRIPT}
         ${HHP_FILE}
         ${CHM_FILE}
     DEPENDS 
       ${SJIS_HELP}/.converted
       ${HHP_FILE}
+      ${COMPILE_CHM_SCRIPT}
     COMMENT "Compiling ${CHM_TARGET}.chm"
     VERBATIM
   )
