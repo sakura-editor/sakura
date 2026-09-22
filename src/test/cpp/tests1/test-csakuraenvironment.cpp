@@ -448,6 +448,22 @@ TEST_F(Kernel32, GetCurrentDirectoryW101)
 	);
 }
 
+TEST_F(Kernel32, GetCurrentDirectoryW102)
+{
+	// バッファを溢れさせる
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillOnce(Invoke([](DWORD nBufferLength, LPWSTR lpBuffer) -> DWORD {
+			return nBufferLength + 1;
+		}));
+
+	// メッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetCurrentDirectoryW();
+		}),
+		ThrowsMessage<std::out_of_range>(StartsWith("current path is too long."))
+	);
+}
+
 TEST_F(Kernel32, GetSystemDirectoryW101)
 {
 	// APIが0を返したら例外。
@@ -459,6 +475,22 @@ TEST_F(Kernel32, GetSystemDirectoryW101)
 			cxx::GetSystemDirectoryW();
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("GetSystemDirectoryW() failed"))
+	);
+}
+
+TEST_F(Kernel32, GetSystemDirectoryW102)
+{
+	// バッファを溢れさせる
+	EXPECT_CALL(*pKernel32, GetSystemDirectoryW(_, _))
+		.WillOnce(Invoke([](LPWSTR lpBuffer, UINT uSize) -> UINT {
+			return uSize + 1;
+		}));
+
+	// メッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetSystemDirectoryW();
+		}),
+		ThrowsMessage<std::out_of_range>(StartsWith("system directory path is too long."))
 	);
 }
 
@@ -474,6 +506,117 @@ TEST_F(Kernel32, SetCurrentDirectoryW101)
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("SetCurrentDirectoryW() failed"))
 	);
+}
+
+/*!
+ * CCurrentDirectoryBackupPointのテスト
+ */
+struct CCurrentDirectoryBackupPoint : public ::testing::Test {
+	using Target = ::CCurrentDirectoryBackupPoint;
+	using Kernel32 = ::Kernel32;
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		Kernel32::setInstance<MockKernel32>();
+
+		pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		Kernel32::resetInstance();
+	}
+
+	MockKernel32* pKernel32 = nullptr;
+};
+
+/*!
+ * @brief カレントディレクトリの取得＆復元に成功するパターン
+ */
+TEST_F(CCurrentDirectoryBackupPoint, test001)
+{
+	// それっぽいカレントディレクトリを返す
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillOnce(Invoke([](DWORD nBufferLength, LPWSTR lpBuffer) -> DWORD {
+			std::wstring buffer = LR"(C:\Windows\System32)";
+			::wcsncpy_s(lpBuffer, nBufferLength, buffer.c_str(), _TRUNCATE);
+			return DWORD(buffer.length() + 1);
+		}));
+
+	// APIが1を返したら正常。
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.WillOnce(Return(TRUE));
+
+	// テスト実行（上記APIが呼ばれる）
+	{
+		Target t;
+	}
+}
+
+/*!
+ * @brief カレントディレクトリの取得に失敗したとき
+ */
+TEST_F(CCurrentDirectoryBackupPoint, test101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillOnce(Return(0));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			Target t;
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("GetCurrentDirectoryW() failed"))
+	);
+}
+
+/*!
+ * @brief 長過ぎるディレクトリが返った時
+ */
+TEST_F(CCurrentDirectoryBackupPoint, test102)
+{
+	// 長さ_MAX_PATHのパスを返す
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillOnce(Invoke([](DWORD nBufferLength, LPWSTR lpBuffer) -> DWORD {
+			std::wstring buffer(_MAX_PATH, L'a');
+			::wcsncpy_s(lpBuffer, nBufferLength, buffer.c_str(), _TRUNCATE);
+			return DWORD(buffer.length());
+		}));
+
+	// メッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			Target t;
+		}),
+		ThrowsMessage<std::out_of_range>(StartsWith("source string is too long."))
+	);
+}
+
+/*!
+ * @brief ディレクトリの復元に失敗したとき
+ */
+TEST_F(CCurrentDirectoryBackupPoint, test103)
+{
+	// それっぽいカレントディレクトリを返す
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillOnce(Invoke([](DWORD nBufferLength, LPWSTR lpBuffer) -> DWORD {
+			std::wstring buffer = LR"(C:\Windows\System32)";
+			::wcsncpy_s(lpBuffer, nBufferLength, buffer.c_str(), _TRUNCATE);
+			return DWORD(buffer.length() + 1);
+		}));
+
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.WillOnce(Return(FALSE));
+
+	// テスト実行（失敗はログで確認する）
+	{
+		Target t;
+	}
 }
 
 } // namespace env

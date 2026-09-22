@@ -10,6 +10,8 @@
 #pragma once
 
 #include "basis/primitive.h"
+#include "basis/CMyString.h"
+#include "cxx/ResourceHolder.hpp"
 #include "cxx/type_of_Nth_lambda_arg.hpp"
 #include "util/design_template.h"
 
@@ -158,21 +160,34 @@ private:
 	PVOID	m_OldValue = nullptr;
 };
 
-//カレントディレクトリユーティリティ。
-//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
-//2008.03.01 kobake 作成
+/*!
+ * @brief カレントディレクトリ復元ポイント
+ *
+ * 構築時にカレントディレクトリを取得し、破棄時に復元する
+ *
+ * @note GUIスレッド専用ユーティリティです。
+ *
+ * @date 2008/03/01 kobake 作成
+ */
 class CCurrentDirectoryBackupPoint{
+private:
 	using Me = CCurrentDirectoryBackupPoint;
+
+	static void _CleanUp(
+		const CCurrentDirectoryBackupPoint* pThis
+	);
+
+	using Holder = cxx::ResourceHolder<&_CleanUp>;
 
 public:
 	CCurrentDirectoryBackupPoint();
+
 	CCurrentDirectoryBackupPoint(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
-	CCurrentDirectoryBackupPoint(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CCurrentDirectoryBackupPoint();
+
 private:
-	WCHAR m_szCurDir[_MAX_PATH];
+	SFilePath	m_szCurDir{};
+	Holder		m_Holder{ this };
 };
 
 /*!
