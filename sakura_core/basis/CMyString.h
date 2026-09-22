@@ -25,14 +25,14 @@
  *
  * 4096程度に拡張すべきだが、色々事情があり対応保留。
  */
-using SFilePath = StaticString<_MAX_PATH>;
+using SFilePath = StaticString<_MAX_PATH, false>;
 
 /*!
  * @brief 長めの文字列を格納する文字列バッファ
  *
  * 上限値の根拠が不明瞭なので、検討の余地がある。
  */
-using SFilePathLong = StaticString<MAX_GREP_PATH>;
+using SFilePathLong = StaticString<MAX_GREP_PATH, false>;
 
 /*!
  * @brief ドキュメントパスの格納に使っているクラス

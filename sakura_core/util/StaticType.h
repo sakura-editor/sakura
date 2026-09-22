@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <array>
+#include <compare>
 #include <initializer_list>
 #include <ranges>
 #include <span>
@@ -472,6 +473,40 @@ public:
 
 	//各種メソッド
 	constexpr int Length() const noexcept { return static_cast<int>(length()); }
+
+	/*!
+	 * @brief 三方比較演算子(C++20で導入された比較演算子)
+	 *
+	 * 標準的な演算子 <, <=, ==, !=, >=, > を自動的に生成する。
+	 * 自前実装を用意する場合は == の実装が別途必要。
+	 *
+	 * @tparam A [in] 比較する文字列の型（NUL終端文字列に変換できる型）
+	 * @param rhs [in, opt] 比較する文字列
+	 * @return 比較結果(std::strong_ordering)
+	 * @throws std::invalid_argument 文字列が不正だったとき
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr auto operator <=> (const A& rhs) const
+	{
+		// compare結果を0と比較することで、標準的な比較結果を生成する
+		return compare(rhs) <=> 0;
+	}
+
+	/*!
+	 * @brief 等価比較演算子
+	 *
+	 * @tparam A [in] 比較する文字列の型（NUL終端文字列に変換できる型）
+	 * @param rhs [in, opt] 比較する文字列
+	 * @return 等価比較の結果
+	 * @retval true  等しい
+	 * @retval false 等しくない
+	 * @throws std::invalid_argument 文字列が不正だったとき
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr bool operator == (const A& rhs) const
+	{
+		return 0 == compare(rhs);
+	}
 
 	/*!
 	 * @brief バッファの内容を置き換える
