@@ -118,7 +118,7 @@ void CESI::SetEvaluation( const ECodeType eCodeId, const int v1, const int v2 )
 
 		pcEI = &m_aWcInfo[nidx];
 	}else{
-		assert(nidx < std::ssize(m_aMbcInfo));
+		if (std::ssize(m_aMbcInfo) <= nidx) return;
 
 		pcEI = &m_aMbcInfo[nidx];
 	}
@@ -151,7 +151,7 @@ void CESI::GetEvaluation( const ECodeType eCodeId, int *pv1, int *pv2 ) const
 
 		pcEI = &m_aWcInfo[nidx];
 	}else{
-		assert(nidx < std::ssize(m_aMbcInfo));
+		if (std::ssize(m_aMbcInfo) <= nidx) return;
 
 		pcEI = &m_aMbcInfo[nidx];
 	}
