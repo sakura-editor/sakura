@@ -1171,13 +1171,11 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 */
 void CDlgFuncList::SetListVB (void)
 {
-	int				i;
 	LV_ITEM			item;
-	HWND			hwndList;
 
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 
-	hwndList = GetItemHwnd( IDC_LIST_FL );
+	const auto hwndList = GetItemHwnd( IDC_LIST_FL );
 
 	m_cmemClipText.SetString( L"" );
 	{
@@ -1191,12 +1189,15 @@ void CDlgFuncList::SetListVB (void)
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
 
+	// 項目別バッファ
 	StaticString<64>	szOption;
 	StaticString<64>	szType;
 	StaticString<256>	szTypeOption;
 
-	WCHAR			szText[2048];
-	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
+	// 使い回しバッファ
+	StaticString<2048>	szText;
+
+	for (int i = 0; i < m_pcFuncInfoArr->GetNum(); ++i) {
 		/* 現在の解析結果要素 */
 		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
@@ -1238,11 +1239,12 @@ void CDlgFuncList::SetListVB (void)
 
 		// 2001/06/23 N.Nakatani for Visual Basic
 		//	Jun. 26, 2001 genta 半角かな→全角に
-		wmemset(szText, L'\0', int(std::size(szText)));
 
 		szOption = L"";
 		szType = L"";
 		szTypeOption = L"";
+
+		szText = L"";
 
 		if (const auto vbStaticFlag = (pcFuncInfo->m_nInfo >> 8) & 0x01;
 			vbStaticFlag)
