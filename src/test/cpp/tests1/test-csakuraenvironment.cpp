@@ -20,6 +20,7 @@
 #include "cxx/com_pointer.hpp"
 #include "io/CFileLoad.h"
 #include "util/file.h"
+#include "util/module.h"
 #include "util/os.h"
 #include "util/tchar_convert.h"
 #include "recent/CMRUFolder.h"
@@ -83,16 +84,21 @@ void PrintTo(SExpectedStr expected, std::ostream* os)
 
 template<typename Base>
 struct TSakuraEnvironmentTest : public Base, public window::EditorTestSuite {
-	static inline std::filesystem::path exePath = GetExeFileName();
-	static inline std::filesystem::path dummyDir = exePath.parent_path() / L"dummy_dir";
-	static inline std::filesystem::path mru1Dir = exePath.parent_path() / L"mru1";
-	static inline std::filesystem::path testDataPath = exePath.replace_filename("test_data.txt");
+	static inline std::filesystem::path exePath{};
+	static inline std::filesystem::path dummyDir{};
+	static inline std::filesystem::path mru1Dir{};
+	static inline std::filesystem::path testDataPath{};
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		exePath = GetExeFileName();
+		dummyDir = exePath.parent_path() / L"dummy_dir";
+		mru1Dir = exePath.parent_path() / L"mru1";
+		testDataPath = exePath.replace_filename("test_data.txt");
+
 		SetUpEditor();
 
 		if (!exists(dummyDir)) {
@@ -460,7 +466,84 @@ TEST_F(Kernel32, GetCurrentDirectoryW102)
 	EXPECT_THAT(([] {
 			cxx::GetCurrentDirectoryW();
 		}),
-		ThrowsMessage<std::out_of_range>(StartsWith("current path is too long."))
+		ThrowsMessage<std::overflow_error>(StartsWith("current path is too long."))
+	);
+}
+
+TEST_F(Kernel32, GetModuleFileNameW101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Return(0));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetModuleFileNameW(nullptr);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("GetModuleFileNameW() failed"))
+	);
+}
+
+TEST_F(Kernel32, GetModuleFileNameW102)
+{
+	// バッファを溢れさせる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			return nSize;
+		}));
+
+	// メッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetModuleFileNameW(nullptr);
+		}),
+		ThrowsMessage<std::overflow_error>(StartsWith("module file path is too long."))
+	);
+}
+
+TEST_F(Kernel32, GetModuleFileNameW103)
+{
+	const auto hModule = std::bit_cast<HMODULE>(uintptr_t{ 1 });
+	constexpr std::wstring_view expected = L"C:\\sakura\\sakura.exe";
+
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(hModule, _, _))
+		.WillOnce(Invoke([expected](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(expected, lpFilename);
+			lpFilename[expected.size()] = L'\0';
+			return DWORD(expected.size());
+		}));
+
+	EXPECT_THAT(cxx::GetModuleFileNameW(hModule), StrEq(expected.data()));
+}
+
+TEST_F(Kernel32, GetExeFileName001)
+{
+	// SFilePathに収まる最大長のパスを返す
+	const std::wstring expected(SFilePath::size() - 1, L'a');
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([expected](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(expected, lpFilename);
+			lpFilename[expected.size()] = L'\0';
+			return DWORD(expected.size());
+		}));
+
+	EXPECT_THAT(GetExeFileName().native(), StrEq(expected.c_str()));
+}
+
+TEST_F(Kernel32, GetExeFileName101)
+{
+	// 終端NULを含めるとSFilePathに収まらない長さのパスを返す
+	const std::wstring path(SFilePath::size(), L'a');
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([path](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(path, lpFilename);
+			lpFilename[path.size()] = L'\0';
+			return DWORD(path.size());
+		}));
+
+	EXPECT_THAT(([] {
+			GetExeFileName();
+		}),
+		ThrowsMessage<std::overflow_error>(StartsWith("exe path is too long."))
 	);
 }
 
@@ -490,7 +573,7 @@ TEST_F(Kernel32, GetSystemDirectoryW102)
 	EXPECT_THAT(([] {
 			cxx::GetSystemDirectoryW();
 		}),
-		ThrowsMessage<std::out_of_range>(StartsWith("system directory path is too long."))
+		ThrowsMessage<std::overflow_error>(StartsWith("system directory path is too long."))
 	);
 }
 
@@ -503,6 +586,90 @@ TEST_F(Kernel32, SetCurrentDirectoryW101)
 	// システム例外のメッセージは先頭一致で評価する
 	EXPECT_THAT(([] {
 			cxx::SetCurrentDirectoryW(L"path/to/file");
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("SetCurrentDirectoryW() failed"))
+	);
+}
+
+/*!
+ * ChangeCurrentDirectoryToExeDirのテスト
+ */
+struct ChangeCurrentDirectoryToExeDir : public ::testing::Test {
+	using Kernel32 = ::Kernel32;
+
+	void SetUp() override
+	{
+		Kernel32::setInstance<MockKernel32>();
+
+		pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	}
+
+	void TearDown() override
+	{
+		Kernel32::resetInstance();
+	}
+
+	MockKernel32* pKernel32 = nullptr;
+};
+
+/*!
+ * @brief 実行ファイルのディレクトリへの移動に成功するパターン
+ */
+TEST_F(ChangeCurrentDirectoryToExeDir, test001)
+{
+	constexpr std::wstring_view exePath = LR"(C:\sakura\sakura.exe)";
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([exePath](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(exePath, lpFilename);
+			lpFilename[exePath.size()] = L'\0';
+			return DWORD(exePath.size());
+		}));
+
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(StrEq(LR"(C:\sakura)")))
+		.WillOnce(Return(TRUE));
+
+	::ChangeCurrentDirectoryToExeDir();
+}
+
+/*!
+ * @brief 実行ファイルのパスが長過ぎるとき
+ */
+TEST_F(ChangeCurrentDirectoryToExeDir, test101)
+{
+	const std::wstring exePath(_MAX_PATH, L'a');
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([exePath](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(exePath, lpFilename);
+			lpFilename[exePath.size()] = L'\0';
+			return DWORD(exePath.size());
+		}));
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_)).Times(0);
+
+	EXPECT_THAT(([] {
+			::ChangeCurrentDirectoryToExeDir();
+		}),
+		ThrowsMessage<std::overflow_error>(StartsWith("exe path is too long."))
+	);
+}
+
+/*!
+ * @brief カレントディレクトリの変更に失敗したとき
+ */
+TEST_F(ChangeCurrentDirectoryToExeDir, test102)
+{
+	constexpr std::wstring_view exePath = LR"(C:\sakura\sakura.exe)";
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([exePath](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(exePath, lpFilename);
+			lpFilename[exePath.size()] = L'\0';
+			return DWORD(exePath.size());
+		}));
+
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(StrEq(LR"(C:\sakura)")))
+		.WillOnce(Return(FALSE));
+
+	EXPECT_THAT(([] {
+			::ChangeCurrentDirectoryToExeDir();
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("SetCurrentDirectoryW() failed"))
 	);
@@ -592,7 +759,7 @@ TEST_F(CCurrentDirectoryBackupPoint, test102)
 	EXPECT_THAT(([] {
 			Target t;
 		}),
-		ThrowsMessage<std::out_of_range>(StartsWith("source string is too long."))
+		ThrowsMessage<std::overflow_error>(StartsWith("source string is too long."))
 	);
 }
 

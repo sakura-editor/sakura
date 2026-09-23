@@ -33,6 +33,13 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		LPWSTR lpBuffer
 	) const;
 
+	virtual DWORD GetModuleFileNameW(
+		_In_opt_ HMODULE hModule,
+		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
+		LPWSTR lpFilename,
+		_In_ DWORD nSize
+	) const;
+
 	virtual UINT GetSystemDirectoryW(
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
@@ -449,18 +456,28 @@ template <basis::NullTerminatedStringConstructible<ACHAR> A>
 }
 
 /*!
- * @brief システムディレクトリのパスを取得する
- *
- * @return システムディレクトリのパス
- */
-std::wstring GetSystemDirectoryW();
-
-/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
  */
 std::wstring GetCurrentDirectoryW();
+
+/*!
+ * @brief モジュールのファイルパスを取得する
+ *
+ * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
+ * @return モジュールのファイルパス
+ */
+std::wstring GetModuleFileNameW(
+	_In_opt_ HMODULE hModule
+);
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW();
 
 /*!
  * @brief カレントディレクトリを変更する

@@ -548,7 +548,7 @@ INSTANTIATE_TEST_SUITE_P(FileDialog
 //! ファイル選択テストのためのフィクスチャクラス
 struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
 	static constexpr auto& text = L"test.ini";
-	static inline auto path = GetExeFileName().replace_filename(text);
+	static inline std::filesystem::path path{};
 
 	static inline HWND hWnd = nullptr;
 	static inline HWND hWndDlg = nullptr;
@@ -561,6 +561,8 @@ struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, 
 	 */
 	static void SetUpTestSuite()
 	{
+		path = GetExeFileName().replace_filename(text);
+
 		SetUpUiaTestSuite();
 
 		SetUpEditor();

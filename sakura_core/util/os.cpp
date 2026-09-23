@@ -282,7 +282,7 @@ BOOL IsWow64()
  *
  * カレントディレクトリを取得してメンバー変数に保存します。
  *
- * @throw std::out_of_range パスが長過ぎて保存できなかったとき
+ * @throw std::overflow_error パスが長過ぎて保存できなかったとき
  * @throw std::system_error Windowsがエラーを返したとき
  */
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
@@ -400,6 +400,16 @@ DWORD Kernel32::GetCurrentDirectoryW(
 ) const
 {
 	return ::GetCurrentDirectoryW(nBufferLength, lpBuffer);
+}
+
+DWORD Kernel32::GetModuleFileNameW(
+	_In_opt_ HMODULE hModule,
+	_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
+	LPWSTR lpFilename,
+	_In_ DWORD nSize
+) const
+{
+	return ::GetModuleFileNameW(hModule, lpFilename, nSize);
 }
 
 UINT Kernel32::GetSystemDirectoryW(
@@ -550,29 +560,6 @@ std::wstring GlobalSakura::wstring() const & {
 }
 
 /*!
- * @brief システムディレクトリのパスを取得する
- *
- * @return システムディレクトリのパス
- */
-std::wstring GetSystemDirectoryW()
-{
-	SSuperLongFilePath buf;
-
-	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
-
-	if (!ret) {
-		cxx::raise_system_error("GetSystemDirectoryW() failed");
-	}
-
-	if (std::size(buf) < ret) {
-		// システムディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::out_of_range(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
-	}
-
-	return std::wstring(buf.c_str(), ret);
-}
-
-/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
@@ -589,7 +576,56 @@ std::wstring GetCurrentDirectoryW()
 
 	if (std::size(buf) < ret) {
 		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::out_of_range(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+		throw std::overflow_error(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief モジュールのファイルパスを取得する
+ *
+ * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
+ * @return モジュールのファイルパス
+ */
+std::wstring GetModuleFileNameW(
+	_In_opt_ HMODULE hModule
+)
+{
+	SSuperLongFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetModuleFileNameW(hModule, buf.data(), DWORD(std::size(buf)));
+
+	if (!ret) {
+		cxx::raise_system_error("GetModuleFileNameW() failed");
+	}
+
+	if (std::size(buf) <= ret) {
+		// モジュールのファイルパスが長過ぎる場合、例外を投げる
+		throw std::overflow_error(std::format("module file path is too long. (length: at least {}, allowed: {})", ret, std::size(buf) - 1));
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW()
+{
+	SSuperLongFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
+
+	if (!ret) {
+		cxx::raise_system_error("GetSystemDirectoryW() failed");
+	}
+
+	if (std::size(buf) < ret) {
+		// システムディレクトリのパスが長過ぎる場合、例外を投げる
+		throw std::overflow_error(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
 	}
 
 	return std::wstring(buf.c_str(), ret);

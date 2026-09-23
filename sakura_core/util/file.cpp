@@ -18,6 +18,7 @@
 
 #include "charset/codechecker.h"
 #include "util/module.h"
+#include "util/os.h"
 #include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -479,13 +480,16 @@ int CalcDirectoryDepth(
  */
 std::filesystem::path GetExeFileName()
 {
-	// メモリ確保
-	constexpr const size_t cchPath = decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT - 1;
-	std::wstring path(cchPath, L'\0');
-
 	// sakura.exe のパスを取得して返却
-	::GetModuleFileName(nullptr, path.data(), (DWORD)path.capacity());
-	return path.data();
+	const auto path = cxx::GetModuleFileNameW(nullptr);
+	if (const auto cchMaxPath = decltype(DLLSHAREDATA::m_szIniFile)::size();
+		cchMaxPath <= path.length())
+	{
+		// EXEパスが長過ぎる場合、例外を投げる
+		throw std::overflow_error(std::format("exe path is too long. (length: at least {}, allowed: {})", path.length(), cchMaxPath - 1));
+	}
+
+	return path;
 }
 
 /*!

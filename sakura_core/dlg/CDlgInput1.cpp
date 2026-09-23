@@ -167,7 +167,7 @@ static const DWORD p_helpids[] = {	//13000
  * @note 既存コード互換用に残しておく
  */
 BOOL CDlgInput1::DoModal(
-	_Reserved_ HINSTANCE [[maybe_unused]],
+	_Reserved_ HINSTANCE,
 	_In_opt_ HWND hWndOwner,
 	_In_z_ const WCHAR*	pszTitle,
 	_In_z_ const WCHAR*	pszMessage,

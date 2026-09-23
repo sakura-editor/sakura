@@ -12,24 +12,25 @@
 #include "util/file.h"
 #include <Shlwapi.h>	// 2006.06.17 ryoji
 
-/*! 
-	カレントディレクトリを実行ファイルの場所に移動
-	@date 2010.08.28 Moca 新規作成
-*/
+/*!
+ * @brief カレントディレクトリを実行ファイルの場所に移動
+ *
+ * @date 2010.08.28 Moca 新規作成
+ */
 void ChangeCurrentDirectoryToExeDir()
 {
-	WCHAR szExeDir[_MAX_PATH];
-	szExeDir[0] = L'\0';
-	GetExedir( szExeDir, nullptr );
-	if( szExeDir[0] ){
-		::SetCurrentDirectory( szExeDir );
-	}else{
-		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
-		szExeDir[0] = L'\0';
-		int n = ::GetSystemDirectory( szExeDir, _MAX_PATH );
-		if( n && n < _MAX_PATH ){
-			::SetCurrentDirectory( szExeDir );
-		}
+	try {
+		// 実行ファイルのあるディレクトリパスを取得する
+		const auto exeDir = GetExeFileName().parent_path().native();
+
+		// カレントディレクトリを移動する
+		cxx::SetCurrentDirectoryW(exeDir);
+	}
+	// 失敗を検出したとき
+	catch (const std::system_error& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+		throw;
 	}
 }
 
