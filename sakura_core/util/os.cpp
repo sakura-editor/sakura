@@ -550,29 +550,6 @@ std::wstring GlobalSakura::wstring() const & {
 }
 
 /*!
- * @brief システムディレクトリのパスを取得する
- *
- * @return システムディレクトリのパス
- */
-std::wstring GetSystemDirectoryW()
-{
-	SSuperLongFilePath buf;
-
-	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
-
-	if (!ret) {
-		cxx::raise_system_error("GetSystemDirectoryW() failed");
-	}
-
-	if (std::size(buf) < ret) {
-		// システムディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::out_of_range(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
-	}
-
-	return std::wstring(buf.c_str(), ret);
-}
-
-/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
@@ -590,6 +567,29 @@ std::wstring GetCurrentDirectoryW()
 	if (std::size(buf) < ret) {
 		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
 		throw std::out_of_range(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW()
+{
+	SSuperLongFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
+
+	if (!ret) {
+		cxx::raise_system_error("GetSystemDirectoryW() failed");
+	}
+
+	if (std::size(buf) < ret) {
+		// システムディレクトリのパスが長過ぎる場合、例外を投げる
+		throw std::out_of_range(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
 	}
 
 	return std::wstring(buf.c_str(), ret);

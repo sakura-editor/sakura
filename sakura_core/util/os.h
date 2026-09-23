@@ -449,18 +449,18 @@ template <basis::NullTerminatedStringConstructible<ACHAR> A>
 }
 
 /*!
- * @brief システムディレクトリのパスを取得する
- *
- * @return システムディレクトリのパス
- */
-std::wstring GetSystemDirectoryW();
-
-/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
  */
 std::wstring GetCurrentDirectoryW();
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW();
 
 /*!
  * @brief カレントディレクトリを変更する
