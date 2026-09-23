@@ -572,11 +572,12 @@ void CDlgFuncList::SetData()
 
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
-			if(m_bLineNumIsCRLF ){
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
-			}else{
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
-			}
+			auto_sprintf_s(
+				szText,
+				L"%d",
+				pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
+			);
+
 			item.mask = LVIF_TEXT | LVIF_PARAM;
 			item.pszText = szText;
 			item.iItem = i;
@@ -586,11 +587,12 @@ void CDlgFuncList::SetData()
 
 			// 2010.03.17 syat 桁追加
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
-			if(m_bLineNumIsCRLF ){
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
-			}else{
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
-			}
+			auto_sprintf_s(
+				szText,
+				L"%d",
+				pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
+			);
+
 			item.mask = LVIF_TEXT;
 			item.pszText = szText;
 			item.iItem = i;
@@ -1171,15 +1173,11 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 */
 void CDlgFuncList::SetListVB (void)
 {
-	int				i;
-	WCHAR			szType[64];
-	WCHAR			szOption[64];
 	LV_ITEM			item;
-	HWND			hwndList;
 
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 
-	hwndList = GetItemHwnd( IDC_LIST_FL );
+	const auto hwndList = GetItemHwnd( IDC_LIST_FL );
 
 	m_cmemClipText.SetString( L"" );
 	{
@@ -1193,18 +1191,26 @@ void CDlgFuncList::SetListVB (void)
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
 
-	WCHAR			szText[2048];
-	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
+	// 項目別バッファ
+	StaticString<64>	szOption;
+	StaticString<64>	szType;
+	StaticString<256>	szTypeOption;
+
+	// 使い回しバッファ
+	StaticString<2048>	szText;
+
+	for (int i = 0; i < m_pcFuncInfoArr->GetNum(); ++i) {
 		/* 現在の解析結果要素 */
 		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
-		if(m_bLineNumIsCRLF ){
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
-		}else{
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
-		}
+		auto_sprintf_s(
+			szText,
+			L"%d",
+			pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
+		);
+
 		item.mask = LVIF_TEXT | LVIF_PARAM;
 		item.pszText = szText;
 		item.iItem = i;
@@ -1213,12 +1219,12 @@ void CDlgFuncList::SetListVB (void)
 		ListView_InsertItem( hwndList, &item);
 
 		// 2010.03.17 syat 桁追加
-		/* 行番号の表示 false=折り返し単位／true=改行単位 */
-		if(m_bLineNumIsCRLF ){
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
-		}else{
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
-		}
+		auto_sprintf_s(
+			szText,
+			L"%d",
+			pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
+		);
+
 		item.mask = LVIF_TEXT;
 		item.pszText = szText;
 		item.iItem = i;
@@ -1236,89 +1242,94 @@ void CDlgFuncList::SetListVB (void)
 
 		// 2001/06/23 N.Nakatani for Visual Basic
 		//	Jun. 26, 2001 genta 半角かな→全角に
-		wmemset(szText, L'\0', int(std::size(szText)));
-		wmemset(szType, L'\0', int(std::size(szType)));
-		wmemset(szOption, L'\0', int(std::size(szOption)));
-		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
+
+		szOption = L"";
+		szType = L"";
+		szTypeOption = L"";
+
+		szText = L"";
+
+		if (const auto vbStaticFlag = (pcFuncInfo->m_nInfo >> 8) & 0x01;
+			vbStaticFlag)
+		{
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			wcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
+			auto_strcpy_s(szOption, LS(STR_DLGFNCLST_VB_STATIC));
 		}
-		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
-			case 2  :	// プライベート(Private)
-				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_PRIVATE));
-				break;
 
-			case 3  :	// フレンド(Friend)
-				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_FRIEND));
-				break;
+		// VBアクセス識別子のIDを取り出す
+		const auto vbAccessModifierId = (pcFuncInfo->m_nInfo >> 4) & 0x0f;
 
-			default :	// パブリック(Public)
-				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_PUBLIC));
-		}
+		// VBアクセス識別子のIDとラベルのマップ
+		const std::map<int, std::wstring_view> vbAccessModifiers{
+			{ 1, LS(STR_DLGFNCLST_VB_PUBLIC) },		// パブリック(Public)
+			{ 2, LS(STR_DLGFNCLST_VB_PRIVATE) },	// プライベート(Private)
+			{ 3, LS(STR_DLGFNCLST_VB_FRIEND) },		// フレンド(Friend)
+		};
+
+		// VBアクセス識別子のラベルを探す
+		const auto foundVbAccessModifier = vbAccessModifiers.find(vbAccessModifierId);
+
+		// 見つからなかった場合はデフォルトのパブリック(Public)を使用
+		const auto& vbAccessModifier = foundVbAccessModifier != vbAccessModifiers.end()
+			? foundVbAccessModifier->second
+			: vbAccessModifiers.at(1);
+
+		// szOptionに追加。（リソース文字列なので演算子は使わない）
+		auto_strcat_s(szOption, vbAccessModifier);
+
+		// VBタイプ識別子のIDを取り出す
 		int nInfo = pcFuncInfo->m_nInfo;
-		switch (nInfo & 0x0f) {
-			case 1:		// 関数(Function)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
-				break;
 
-			// 2006.12.12 Moca ステータス→プロシージャに変更
-			case 2:		// プロシージャ(Sub)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROC));
-				break;
+		// VBタイプ識別子のIDとラベルのマップ
+		std::map<int, std::wstring_view> vbTypes{
+			{ 1, LS(STR_DLGFNCLST_VB_FUNCTION) },	// 関数(Function)
+			{ 2, LS(STR_DLGFNCLST_VB_PROC) },		// プロシージャ(Sub)
+			{ 3, LS(STR_DLGFNCLST_VB_PROPGET) },	// プロパティ 取得(Property Get)
+			{ 4, LS(STR_DLGFNCLST_VB_PROPLET) },	// プロパティ 設定(Property Let)
+			{ 5, LS(STR_DLGFNCLST_VB_PROPSET) },	// プロパティ 参照(Property Set)
+			{ 6, LS(STR_DLGFNCLST_VB_CONST) },		// 定数(Const)
+			{ 7, LS(STR_DLGFNCLST_VB_ENUM) },		// 列挙型(Enum)
+			{ 8, LS(STR_DLGFNCLST_VB_TYPE) },		// ユーザ定義型(Type)
+			{ 9, LS(STR_DLGFNCLST_VB_EVENT) },		// イベント(Event)
+		};
 
-			case 3:		// プロパティ 取得(Property Get)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPGET));
-				break;
-
-			case 4:		// プロパティ 設定(Property Let)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPLET));
-				break;
-
-			case 5:		// プロパティ 参照(Property Set)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPSET));
-				break;
-
-			case 6:		// 定数(Const)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_CONST));
-				break;
-
-			case 7:		// 列挙型(Enum)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_ENUM));
-				break;
-
-			case 8:		// ユーザ定義型(Type)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_TYPE));
-				break;
-
-			case 9:		// イベント(Event)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_EVENT));
-				break;
-
-			default:	// 未定義なのでクリア
+		// VBタイプ識別子のラベルを探す
+		if (const auto foundVbType = vbTypes.find(nInfo & 0x0f);
+			foundVbType != vbTypes.end())
+		{
+			// 見付かったラベルをszTypeに追加。（リソース文字列なので演算子は使わない）
+			auto_strcpy_s(szType, foundVbType->second);
+		}
+		// 見付からなかった場合
+		else {
+			// 未定義なのでクリア
 				nInfo	= 0;
 		}
-		if ( 2 == ((nInfo >> 8) & 0x02) ) {
+
+		if (const auto vbDeclareFlag = (nInfo >> 8) & 0x02;
+			vbDeclareFlag)
+		{
 			// 宣言(Declareなど)
-			wcscat_s(szType, LS(STR_DLGFNCLST_VB_DECL));
+			auto_strcat_s(szType, LS(STR_DLGFNCLST_VB_DECL));
 		}
 
-		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
 		if ( 0 == nInfo ) {
 			szTypeOption[0] = L'\0';	//	2006.12.17 genta 全体を0で埋める必要はない
-		} else
-		if ( szOption[0] == L'\0' ) {
-			auto_sprintf(szTypeOption, L"%s", szType);
 		} else {
-			auto_sprintf(szTypeOption, L"%s（%s）", szType, szOption);
+			auto_sprintf_s(szTypeOption, L"%s", szType);
+
+			if (!szOption.empty()) {
+				auto_strcat_s(szTypeOption, strprintf(L"（%s）", szOption));
+			}
 		}
-		item.pszText = szTypeOption;
+		item.pszText = szTypeOption.data();
 		item.iItem = i;
 		item.iSubItem = FL_COL_REMARK;
 		ListView_SetItem( hwndList, &item);
 
 		/* クリップボードにコピーするテキストを編集 */
-		if(item.pszText[0] != L'\0'){
+		if (!szTypeOption.empty()) {
 			// 検出結果の種類(関数,,,)があるとき
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
 			auto_sprintf(
@@ -1332,7 +1343,7 @@ void CDlgFuncList::SetListVB (void)
 			// "%s(%s)\r\n"
 			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"(");
-			m_cmemClipText.AppendString(item.pszText);
+			m_cmemClipText.AppendString(szTypeOption.c_str());
 			m_cmemClipText.AppendString(L")\r\n");
 		}else{
 			// 検出結果の種類(関数,,,)がないとき
