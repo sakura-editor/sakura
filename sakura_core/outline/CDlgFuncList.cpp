@@ -1193,6 +1193,7 @@ void CDlgFuncList::SetListVB (void)
 
 	StaticString<64>	szOption;
 	StaticString<64>	szType;
+	StaticString<256>	szTypeOption;
 
 	WCHAR			szText[2048];
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
@@ -1241,6 +1242,7 @@ void CDlgFuncList::SetListVB (void)
 
 		szOption = L"";
 		szType = L"";
+		szTypeOption = L"";
 
 		if (const auto vbStaticFlag = (pcFuncInfo->m_nInfo >> 8) & 0x01;
 			vbStaticFlag)
@@ -1307,21 +1309,22 @@ void CDlgFuncList::SetListVB (void)
 			auto_strcat_s(szType, LS(STR_DLGFNCLST_VB_DECL));
 		}
 
-		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
 		if ( 0 == nInfo ) {
 			szTypeOption[0] = L'\0';	//	2006.12.17 genta 全体を0で埋める必要はない
-		} else if (szOption.empty()) {
-			auto_sprintf(szTypeOption, L"%s", szType);
 		} else {
-			auto_sprintf(szTypeOption, L"%s（%s）", szType, szOption);
+			auto_sprintf_s(szTypeOption, L"%s", szType);
+
+			if (!szOption.empty()) {
+				auto_strcat_s(szTypeOption, strprintf(L"（%s）", szOption));
+			}
 		}
-		item.pszText = szTypeOption;
+		item.pszText = szTypeOption.data();
 		item.iItem = i;
 		item.iSubItem = FL_COL_REMARK;
 		ListView_SetItem( hwndList, &item);
 
 		/* クリップボードにコピーするテキストを編集 */
-		if(item.pszText[0] != L'\0'){
+		if (!szTypeOption.empty()) {
 			// 検出結果の種類(関数,,,)があるとき
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
 			auto_sprintf(
@@ -1335,7 +1338,7 @@ void CDlgFuncList::SetListVB (void)
 			// "%s(%s)\r\n"
 			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"(");
-			m_cmemClipText.AppendString(item.pszText);
+			m_cmemClipText.AppendString(szTypeOption.c_str());
 			m_cmemClipText.AppendString(L")\r\n");
 		}else{
 			// 検出結果の種類(関数,,,)がないとき
