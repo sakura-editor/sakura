@@ -572,11 +572,12 @@ void CDlgFuncList::SetData()
 
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
-			if(m_bLineNumIsCRLF ){
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
-			}else{
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
-			}
+			auto_sprintf_s(
+				szText,
+				L"%d",
+				pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
+			);
+
 			item.mask = LVIF_TEXT | LVIF_PARAM;
 			item.pszText = szText;
 			item.iItem = i;
@@ -586,11 +587,12 @@ void CDlgFuncList::SetData()
 
 			// 2010.03.17 syat 桁追加
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
-			if(m_bLineNumIsCRLF ){
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
-			}else{
-				auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
-			}
+			auto_sprintf_s(
+				szText,
+				L"%d",
+				pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
+			);
+
 			item.mask = LVIF_TEXT;
 			item.pszText = szText;
 			item.iItem = i;
@@ -1203,11 +1205,12 @@ void CDlgFuncList::SetListVB (void)
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
-		if(m_bLineNumIsCRLF ){
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineCRLF );
-		}else{
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncLineLAYOUT );
-		}
+		auto_sprintf_s(
+			szText,
+			L"%d",
+			pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
+		);
+
 		item.mask = LVIF_TEXT | LVIF_PARAM;
 		item.pszText = szText;
 		item.iItem = i;
@@ -1216,12 +1219,12 @@ void CDlgFuncList::SetListVB (void)
 		ListView_InsertItem( hwndList, &item);
 
 		// 2010.03.17 syat 桁追加
-		/* 行番号の表示 false=折り返し単位／true=改行単位 */
-		if(m_bLineNumIsCRLF ){
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColCRLF );
-		}else{
-			auto_sprintf( szText, L"%d", pcFuncInfo->m_nFuncColLAYOUT );
-		}
+		auto_sprintf_s(
+			szText,
+			L"%d",
+			pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
+		);
+
 		item.mask = LVIF_TEXT;
 		item.pszText = szText;
 		item.iItem = i;
