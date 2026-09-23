@@ -299,7 +299,7 @@ public:
 	 * @throws std::invalid_argument 文字列が不正だったとき
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-	constexpr auto operator <=> (const A& rhs) const
+	auto operator <=> (const A& rhs) const
 	{
 		if constexpr (std::is_same_v<A, Me>) {
 			// compare結果を0と比較することで、標準的な比較結果を生成する
@@ -325,7 +325,7 @@ public:
 	 * @throws std::invalid_argument 文字列が不正だったとき
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-	constexpr bool operator == (const A& rhs) const
+	bool operator == (const A& rhs) const
 	{
 		if constexpr (std::is_same_v<A, Me>) {
 			// 比較結果が0かどうかを返す
@@ -448,7 +448,7 @@ public:
 	 *
 	 * @return 文字列
 	 */
-	constexpr explicit operator std::wstring() const
+	explicit operator std::wstring() const
 	{
 		return std::wstring{ str() };
 	}
