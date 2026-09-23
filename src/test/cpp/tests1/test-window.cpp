@@ -466,7 +466,7 @@ namespace window {
 struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, public window::UiaTestSuite {
 	using CControlTrayHolder = std::unique_ptr<CControlTray>;
 
-	static inline const std::filesystem::path dummyPath = GetIniFileName().replace_filename(L"dummy.txt");
+	static inline std::filesystem::path dummyPath{};
 
 	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
 
@@ -477,6 +477,8 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 	 */
 	static void SetUpTestSuite()
 	{
+		dummyPath = GetIniFileName().replace_filename(L"dummy.txt");
+
 		// コマンドラインオブジェクトを用意する
 		pCommandLine = std::make_unique<CCommandLine>();
 		pCommandLine->ParseCommandLine(L"-PROF=", false);
@@ -1377,22 +1379,22 @@ TEST_F(TrayWndTest, ShowContextMenu001)
 struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
 	static constexpr HINSTANCE unusedArg1 = nullptr;
 
-	static inline const std::filesystem::path backupAgentTargetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
-	static inline const std::filesystem::path backupPath = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".bak");
-	static inline const std::filesystem::path backupPathB00 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b00");
-	static inline const std::filesystem::path backupPathB01 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b01");
-	static inline const std::filesystem::path backupPathB02 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b02");
-	static inline const std::filesystem::path colorizeExportPath = GetIniFileName().replace_filename(L"基本.col");
-	static inline const std::filesystem::path custmenuExportPath = GetIniFileName().replace_filename(L"カスタムメニュー.mnu");
-	static inline const std::filesystem::path dummyPath = GetIniFileName().replace_filename(L"dummy.txt");
-	static inline const std::filesystem::path fileTreeExportPath = GetIniFileName().replace_filename(L"ファイルツリー.ini");
-	static inline const std::filesystem::path keybindExportPath = GetIniFileName().replace_filename(L"キー割り当て.key");
-	static inline const std::filesystem::path keywordExportPath = GetIniFileName().replace_filename(L"強調キーワード.kwd");
-	static inline const std::filesystem::path keywordHelpExportPath = GetIniFileName().replace_filename(L"キーワードヘルプ.txt");
-	static inline const std::filesystem::path mainmenuExportPath = GetIniFileName().replace_filename(L"メインメニュー.ini");
-	static inline const std::filesystem::path regexKeywordExportPath = GetIniFileName().replace_filename(L"テキスト.rkw");
-	static inline const std::filesystem::path tagsPath = GetIniFileName().replace_filename(L"tags");
-	static inline const std::filesystem::path typeConfigExportPath = GetIniFileName().replace_filename(L"基本.ini");
+	static inline std::filesystem::path backupAgentTargetPath{};
+	static inline std::filesystem::path backupPath{};
+	static inline std::filesystem::path backupPathB00{};
+	static inline std::filesystem::path backupPathB01{};
+	static inline std::filesystem::path backupPathB02{};
+	static inline std::filesystem::path colorizeExportPath{};
+	static inline std::filesystem::path custmenuExportPath{};
+	static inline std::filesystem::path dummyPath{};
+	static inline std::filesystem::path fileTreeExportPath{};
+	static inline std::filesystem::path keybindExportPath{};
+	static inline std::filesystem::path keywordExportPath{};
+	static inline std::filesystem::path keywordHelpExportPath{};
+	static inline std::filesystem::path mainmenuExportPath{};
+	static inline std::filesystem::path regexKeywordExportPath{};
+	static inline std::filesystem::path tagsPath{};
+	static inline std::filesystem::path typeConfigExportPath{};
 
 	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
 
@@ -1401,6 +1403,23 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	static void SetUpTestSuite()
 	{
+		backupAgentTargetPath = GetIniFileName().replace_filename(L"backup-agent-target.txt");
+		backupPath = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".bak");
+		backupPathB00 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b00");
+		backupPathB01 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b01");
+		backupPathB02 = backupAgentTargetPath.parent_path() / (backupAgentTargetPath.stem().native() + L".b02");
+		colorizeExportPath = GetIniFileName().replace_filename(L"基本.col");
+		custmenuExportPath = GetIniFileName().replace_filename(L"カスタムメニュー.mnu");
+		dummyPath = GetIniFileName().replace_filename(L"dummy.txt");
+		fileTreeExportPath = GetIniFileName().replace_filename(L"ファイルツリー.ini");
+		keybindExportPath = GetIniFileName().replace_filename(L"キー割り当て.key");
+		keywordExportPath = GetIniFileName().replace_filename(L"強調キーワード.kwd");
+		keywordHelpExportPath = GetIniFileName().replace_filename(L"キーワードヘルプ.txt");
+		mainmenuExportPath = GetIniFileName().replace_filename(L"メインメニュー.ini");
+		regexKeywordExportPath = GetIniFileName().replace_filename(L"テキスト.rkw");
+		tagsPath = GetIniFileName().replace_filename(L"tags");
+		typeConfigExportPath = GetIniFileName().replace_filename(L"基本.ini");
+
 		// コマンドラインオブジェクトを用意する
 		pCommandLine = std::make_unique<CCommandLine>();
 		pCommandLine->ParseCommandLine(L"-PROF=", false);

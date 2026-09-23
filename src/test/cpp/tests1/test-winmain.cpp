@@ -1339,11 +1339,14 @@ struct OutlineTest : public ::testing::TestWithParam<OutlineTestParamType> {
 	 *
 	 * GetIniFileNameを使ってtests1.iniのパスを取得する。
 	 */
-	static inline const auto iniPath = GetIniFileName();
+	static inline std::filesystem::path iniPath{};
 
-	static inline const auto outlinePath = GetExeFileName().parent_path() / L"outline";
+	static inline std::filesystem::path outlinePath{};
 
 	static void SetUpTestSuite() {
+		iniPath = GetIniFileName();
+		outlinePath = GetExeFileName().parent_path() / L"outline";
+
 		std::error_code ec;
 		std::filesystem::remove_all(outlinePath, ec);
 

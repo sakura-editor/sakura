@@ -84,16 +84,21 @@ void PrintTo(SExpectedStr expected, std::ostream* os)
 
 template<typename Base>
 struct TSakuraEnvironmentTest : public Base, public window::EditorTestSuite {
-	static inline std::filesystem::path exePath = GetExeFileName();
-	static inline std::filesystem::path dummyDir = exePath.parent_path() / L"dummy_dir";
-	static inline std::filesystem::path mru1Dir = exePath.parent_path() / L"mru1";
-	static inline std::filesystem::path testDataPath = exePath.replace_filename("test_data.txt");
+	static inline std::filesystem::path exePath{};
+	static inline std::filesystem::path dummyDir{};
+	static inline std::filesystem::path mru1Dir{};
+	static inline std::filesystem::path testDataPath{};
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
 	static void SetUpTestSuite()
 	{
+		exePath = GetExeFileName();
+		dummyDir = exePath.parent_path() / L"dummy_dir";
+		mru1Dir = exePath.parent_path() / L"mru1";
+		testDataPath = exePath.replace_filename("test_data.txt");
+
 		SetUpEditor();
 
 		if (!exists(dummyDir)) {
