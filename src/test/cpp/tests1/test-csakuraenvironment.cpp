@@ -490,7 +490,7 @@ TEST_F(Kernel32, GetModuleFileNameW102)
 	EXPECT_THAT(([] {
 			cxx::GetModuleFileNameW(nullptr);
 		}),
-		ThrowsMessage<std::out_of_range>(StartsWith("module file path is too long."))
+		ThrowsMessage<std::overflow_error>(StartsWith("module file path is too long."))
 	);
 }
 
@@ -507,6 +507,38 @@ TEST_F(Kernel32, GetModuleFileNameW103)
 		}));
 
 	EXPECT_THAT(cxx::GetModuleFileNameW(hModule), StrEq(expected.data()));
+}
+
+TEST_F(Kernel32, GetExeFileName001)
+{
+	// SFilePathに収まる最大長のパスを返す
+	const std::wstring expected(SFilePath::size() - 1, L'a');
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([expected](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(expected, lpFilename);
+			lpFilename[expected.size()] = L'\0';
+			return DWORD(expected.size());
+		}));
+
+	EXPECT_THAT(GetExeFileName().native(), StrEq(expected.c_str()));
+}
+
+TEST_F(Kernel32, GetExeFileName101)
+{
+	// 終端NULを含めるとSFilePathに収まらない長さのパスを返す
+	const std::wstring path(SFilePath::size(), L'a');
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([path](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(path, lpFilename);
+			lpFilename[path.size()] = L'\0';
+			return DWORD(path.size());
+		}));
+
+	EXPECT_THAT(([] {
+			GetExeFileName();
+		}),
+		ThrowsMessage<std::overflow_error>(StartsWith("exe path is too long."))
+	);
 }
 
 TEST_F(Kernel32, GetSystemDirectoryW101)
