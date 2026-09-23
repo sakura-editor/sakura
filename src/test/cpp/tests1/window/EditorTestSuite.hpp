@@ -51,6 +51,13 @@ struct MockKernel32 final : public Kernel32
 		LPWSTR lpBuffer
 	));
 
+	MOCK_CONST_METHOD3(GetModuleFileNameW, DWORD(
+		_In_opt_ HMODULE hModule,
+		_Out_writes_to_(nSize, ((return < nSize) ? (return +1) : nSize))
+		LPWSTR lpFilename,
+		_In_ DWORD nSize
+	));
+
 	MOCK_CONST_METHOD2(GetSystemDirectoryW, UINT(
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,

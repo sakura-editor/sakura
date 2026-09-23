@@ -402,6 +402,16 @@ DWORD Kernel32::GetCurrentDirectoryW(
 	return ::GetCurrentDirectoryW(nBufferLength, lpBuffer);
 }
 
+DWORD Kernel32::GetModuleFileNameW(
+	_In_opt_ HMODULE hModule,
+	_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
+	LPWSTR lpFilename,
+	_In_ DWORD nSize
+) const
+{
+	return ::GetModuleFileNameW(hModule, lpFilename, nSize);
+}
+
 UINT Kernel32::GetSystemDirectoryW(
 	_Out_writes_to_opt_( uSize, return +1 )
 	LPWSTR lpBuffer,
@@ -567,6 +577,32 @@ std::wstring GetCurrentDirectoryW()
 	if (std::size(buf) < ret) {
 		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
 		throw std::overflow_error(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief モジュールのファイルパスを取得する
+ *
+ * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
+ * @return モジュールのファイルパス
+ */
+std::wstring GetModuleFileNameW(
+	_In_opt_ HMODULE hModule
+)
+{
+	SSuperLongFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetModuleFileNameW(hModule, buf.data(), DWORD(std::size(buf)));
+
+	if (!ret) {
+		cxx::raise_system_error("GetModuleFileNameW() failed");
+	}
+
+	if (std::size(buf) <= ret) {
+		// モジュールのファイルパスが長過ぎる場合、例外を投げる
+		throw std::overflow_error(std::format("module file path is too long. (length: at least {}, allowed: {})", ret, std::size(buf) - 1));
 	}
 
 	return std::wstring(buf.c_str(), ret);

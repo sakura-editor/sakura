@@ -464,6 +464,51 @@ TEST_F(Kernel32, GetCurrentDirectoryW102)
 	);
 }
 
+TEST_F(Kernel32, GetModuleFileNameW101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Return(0));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetModuleFileNameW(nullptr);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("GetModuleFileNameW() failed"))
+	);
+}
+
+TEST_F(Kernel32, GetModuleFileNameW102)
+{
+	// バッファを溢れさせる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			return nSize;
+		}));
+
+	// メッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::GetModuleFileNameW(nullptr);
+		}),
+		ThrowsMessage<std::out_of_range>(StartsWith("module file path is too long."))
+	);
+}
+
+TEST_F(Kernel32, GetModuleFileNameW103)
+{
+	const auto hModule = std::bit_cast<HMODULE>(uintptr_t{ 1 });
+	constexpr std::wstring_view expected = L"C:\\sakura\\sakura.exe";
+
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(hModule, _, _))
+		.WillOnce(Invoke([expected](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(expected, lpFilename);
+			lpFilename[expected.size()] = L'\0';
+			return DWORD(expected.size());
+		}));
+
+	EXPECT_THAT(cxx::GetModuleFileNameW(hModule), StrEq(expected.data()));
+}
+
 TEST_F(Kernel32, GetSystemDirectoryW101)
 {
 	// APIが0を返したら例外。
