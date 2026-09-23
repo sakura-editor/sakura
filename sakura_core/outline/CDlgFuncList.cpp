@@ -1172,7 +1172,6 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 void CDlgFuncList::SetListVB (void)
 {
 	int				i;
-	WCHAR			szType[64];
 	LV_ITEM			item;
 	HWND			hwndList;
 
@@ -1193,6 +1192,7 @@ void CDlgFuncList::SetListVB (void)
 	}
 
 	StaticString<64>	szOption;
+	StaticString<64>	szType;
 
 	WCHAR			szText[2048];
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
@@ -1238,9 +1238,9 @@ void CDlgFuncList::SetListVB (void)
 		// 2001/06/23 N.Nakatani for Visual Basic
 		//	Jun. 26, 2001 genta 半角かな→全角に
 		wmemset(szText, L'\0', int(std::size(szText)));
-		wmemset(szType, L'\0', int(std::size(szType)));
 
 		szOption = L"";
+		szType = L"";
 
 		if (const auto vbStaticFlag = (pcFuncInfo->m_nInfo >> 8) & 0x01;
 			vbStaticFlag)
@@ -1271,51 +1271,40 @@ void CDlgFuncList::SetListVB (void)
 		// szOptionに追加。（リソース文字列なので演算子は使わない）
 		auto_strcat_s(szOption, vbAccessModifier);
 
+		// VBタイプ識別子のIDを取り出す
 		int nInfo = pcFuncInfo->m_nInfo;
-		switch (nInfo & 0x0f) {
-			case 1:		// 関数(Function)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
-				break;
 
-			// 2006.12.12 Moca ステータス→プロシージャに変更
-			case 2:		// プロシージャ(Sub)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROC));
-				break;
+		// VBタイプ識別子のIDとラベルのマップ
+		std::map<int, std::wstring_view> vbTypes{
+			{ 1, LS(STR_DLGFNCLST_VB_FUNCTION) },	// 関数(Function)
+			{ 2, LS(STR_DLGFNCLST_VB_PROC) },		// プロシージャ(Sub)
+			{ 3, LS(STR_DLGFNCLST_VB_PROPGET) },	// プロパティ 取得(Property Get)
+			{ 4, LS(STR_DLGFNCLST_VB_PROPLET) },	// プロパティ 設定(Property Let)
+			{ 5, LS(STR_DLGFNCLST_VB_PROPSET) },	// プロパティ 参照(Property Set)
+			{ 6, LS(STR_DLGFNCLST_VB_CONST) },		// 定数(Const)
+			{ 7, LS(STR_DLGFNCLST_VB_ENUM) },		// 列挙型(Enum)
+			{ 8, LS(STR_DLGFNCLST_VB_TYPE) },		// ユーザ定義型(Type)
+			{ 9, LS(STR_DLGFNCLST_VB_EVENT) },		// イベント(Event)
+		};
 
-			case 3:		// プロパティ 取得(Property Get)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPGET));
-				break;
-
-			case 4:		// プロパティ 設定(Property Let)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPLET));
-				break;
-
-			case 5:		// プロパティ 参照(Property Set)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPSET));
-				break;
-
-			case 6:		// 定数(Const)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_CONST));
-				break;
-
-			case 7:		// 列挙型(Enum)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_ENUM));
-				break;
-
-			case 8:		// ユーザ定義型(Type)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_TYPE));
-				break;
-
-			case 9:		// イベント(Event)
-				wcscpy(szType, LS(STR_DLGFNCLST_VB_EVENT));
-				break;
-
-			default:	// 未定義なのでクリア
+		// VBタイプ識別子のラベルを探す
+		if (const auto foundVbType = vbTypes.find(nInfo & 0x0f);
+			foundVbType != vbTypes.end())
+		{
+			// 見付かったラベルをszTypeに追加。（リソース文字列なので演算子は使わない）
+			auto_strcpy_s(szType, foundVbType->second);
+		}
+		// 見付からなかった場合
+		else {
+			// 未定義なのでクリア
 				nInfo	= 0;
 		}
-		if ( 2 == ((nInfo >> 8) & 0x02) ) {
+
+		if (const auto vbDeclareFlag = (nInfo >> 8) & 0x02;
+			vbDeclareFlag)
+		{
 			// 宣言(Declareなど)
-			wcscat_s(szType, LS(STR_DLGFNCLST_VB_DECL));
+			auto_strcat_s(szType, LS(STR_DLGFNCLST_VB_DECL));
 		}
 
 		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
