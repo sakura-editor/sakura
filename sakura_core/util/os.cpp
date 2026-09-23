@@ -12,6 +12,26 @@
 
 #pragma comment(lib, "UxTheme.lib")
 
+/*!
+ * @brief 超長いパスの最大文字値
+ *
+ * _MAX_PATH (=260) と似た感じに使う。
+ *
+ * とりあえずの暫定値。必要に応じて変更する。
+ *
+ * @sa SFilePath
+ */
+constexpr auto MAX_SUPER_LONG_PATH = 4096;
+
+/*!
+ * @brief 超長いパス
+ *
+ * _MAX_PATHを超えるパスを扱うための文字列バッファ型。
+ *
+ * アプリ共通の定義とはしたくないため、あえて実装側に定義する。
+ */
+using SSuperLongFilePath = StaticString<MAX_SUPER_LONG_PATH, false>;
+
 /*!	Comctl32.dll のバージョン番号を取得
 
 	@return Comctl32.dll のバージョン番号（失敗時は 0）
@@ -257,24 +277,50 @@ BOOL IsWow64()
 //                        便利クラス                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
-
+/*!
+ * @brief コンストラクター
+ *
+ * カレントディレクトリを取得してメンバー変数に保存します。
+ *
+ * @throw std::out_of_range パスが長過ぎて保存できなかったとき
+ * @throw std::system_error Windowsがエラーを返したとき
+ */
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {
-	int n = ::GetCurrentDirectory(int(std::size(m_szCurDir)),m_szCurDir);
-	if(n>0 && n<int(std::size(m_szCurDir))){
-		//ok
+	// カレントディレクトリの取得を試みる
+	try {
+		m_szCurDir = cxx::GetCurrentDirectoryW();
 	}
-	else{
-		//ng
-		m_szCurDir[0] = L'\0';
+	// 失敗を検出したとき
+	catch (const std::exception& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+		throw;
 	}
 }
 
-CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
+/*!
+ * @brief クリーンアップ関数
+ * 
+ * 保存したカレントディレクトリの復元を試みます。
+ */
+/* static */ void CCurrentDirectoryBackupPoint::_CleanUp(
+	const CCurrentDirectoryBackupPoint* pThis
+)
 {
-	if(m_szCurDir[0]){
-		::SetCurrentDirectory(m_szCurDir);
+	// カレントディレクトリが保存されていないとき
+	if (pThis->m_szCurDir.empty()) {
+		return;	// 何もせず抜ける
+	}
+
+	// カレントディレクトリの復元を試みる
+	try {
+		cxx::SetCurrentDirectoryW(pThis->m_szCurDir.str());
+	}
+	// 失敗を検出したとき
+	catch (const std::system_error& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
 	}
 }
 
@@ -510,11 +556,17 @@ std::wstring GlobalSakura::wstring() const & {
  */
 std::wstring GetSystemDirectoryW()
 {
-	SFilePath buf;
+	SSuperLongFilePath buf;
 
 	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
+
 	if (!ret) {
 		cxx::raise_system_error("GetSystemDirectoryW() failed");
+	}
+
+	if (std::size(buf) < ret) {
+		// システムディレクトリのパスが長過ぎる場合、例外を投げる
+		throw std::out_of_range(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
 	}
 
 	return std::wstring(buf.c_str(), ret);
@@ -527,11 +579,17 @@ std::wstring GetSystemDirectoryW()
  */
 std::wstring GetCurrentDirectoryW()
 {
-	SFilePath buf;
+	SSuperLongFilePath buf;
 
 	const auto ret = Kernel32::getInstance()->GetCurrentDirectoryW(DWORD(std::size(buf)), buf.data());
+
 	if (!ret) {
 		cxx::raise_system_error("GetCurrentDirectoryW() failed");
+	}
+
+	if (std::size(buf) < ret) {
+		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
+		throw std::out_of_range(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
 	}
 
 	return std::wstring(buf.c_str(), ret);
