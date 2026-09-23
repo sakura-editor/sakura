@@ -1173,7 +1173,6 @@ void CDlgFuncList::SetListVB (void)
 {
 	int				i;
 	WCHAR			szType[64];
-	WCHAR			szOption[64];
 	LV_ITEM			item;
 	HWND			hwndList;
 
@@ -1192,6 +1191,8 @@ void CDlgFuncList::SetListVB (void)
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
+
+	StaticString<64>	szOption;
 
 	WCHAR			szText[2048];
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
@@ -1238,24 +1239,38 @@ void CDlgFuncList::SetListVB (void)
 		//	Jun. 26, 2001 genta 半角かな→全角に
 		wmemset(szText, L'\0', int(std::size(szText)));
 		wmemset(szType, L'\0', int(std::size(szType)));
-		wmemset(szOption, L'\0', int(std::size(szOption)));
-		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
+
+		szOption = L"";
+
+		if (const auto vbStaticFlag = (pcFuncInfo->m_nInfo >> 8) & 0x01;
+			vbStaticFlag)
+		{
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			wcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
+			auto_strcpy_s(szOption, LS(STR_DLGFNCLST_VB_STATIC));
 		}
-		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
-			case 2  :	// プライベート(Private)
-				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_PRIVATE));
-				break;
 
-			case 3  :	// フレンド(Friend)
-				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_FRIEND));
-				break;
+		// VBアクセス識別子のIDを取り出す
+		const auto vbAccessModifierId = (pcFuncInfo->m_nInfo >> 4) & 0x0f;
 
-			default :	// パブリック(Public)
-				wcscat_s(szOption, LS(STR_DLGFNCLST_VB_PUBLIC));
-		}
+		// VBアクセス識別子のIDとラベルのマップ
+		const std::map<int, std::wstring_view> vbAccessModifiers{
+			{ 1, LS(STR_DLGFNCLST_VB_PUBLIC) },		// パブリック(Public)
+			{ 2, LS(STR_DLGFNCLST_VB_PRIVATE) },	// プライベート(Private)
+			{ 3, LS(STR_DLGFNCLST_VB_FRIEND) },		// フレンド(Friend)
+		};
+
+		// VBアクセス識別子のラベルを探す
+		const auto foundVbAccessModifier = vbAccessModifiers.find(vbAccessModifierId);
+
+		// 見つからなかった場合はデフォルトのパブリック(Public)を使用
+		const auto& vbAccessModifier = foundVbAccessModifier != vbAccessModifiers.end()
+			? foundVbAccessModifier->second
+			: vbAccessModifiers.at(1);
+
+		// szOptionに追加。（リソース文字列なので演算子は使わない）
+		auto_strcat_s(szOption, vbAccessModifier);
+
 		int nInfo = pcFuncInfo->m_nInfo;
 		switch (nInfo & 0x0f) {
 			case 1:		// 関数(Function)
@@ -1306,8 +1321,7 @@ void CDlgFuncList::SetListVB (void)
 		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
 		if ( 0 == nInfo ) {
 			szTypeOption[0] = L'\0';	//	2006.12.17 genta 全体を0で埋める必要はない
-		} else
-		if ( szOption[0] == L'\0' ) {
+		} else if (szOption.empty()) {
 			auto_sprintf(szTypeOption, L"%s", szType);
 		} else {
 			auto_sprintf(szTypeOption, L"%s（%s）", szType, szOption);
