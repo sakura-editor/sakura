@@ -20,6 +20,7 @@
 #include "cxx/com_pointer.hpp"
 #include "io/CFileLoad.h"
 #include "util/file.h"
+#include "util/module.h"
 #include "util/os.h"
 #include "util/tchar_convert.h"
 #include "recent/CMRUFolder.h"
@@ -580,6 +581,90 @@ TEST_F(Kernel32, SetCurrentDirectoryW101)
 	// システム例外のメッセージは先頭一致で評価する
 	EXPECT_THAT(([] {
 			cxx::SetCurrentDirectoryW(L"path/to/file");
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("SetCurrentDirectoryW() failed"))
+	);
+}
+
+/*!
+ * ChangeCurrentDirectoryToExeDirのテスト
+ */
+struct ChangeCurrentDirectoryToExeDir : public ::testing::Test {
+	using Kernel32 = ::Kernel32;
+
+	void SetUp() override
+	{
+		Kernel32::setInstance<MockKernel32>();
+
+		pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	}
+
+	void TearDown() override
+	{
+		Kernel32::resetInstance();
+	}
+
+	MockKernel32* pKernel32 = nullptr;
+};
+
+/*!
+ * @brief 実行ファイルのディレクトリへの移動に成功するパターン
+ */
+TEST_F(ChangeCurrentDirectoryToExeDir, test001)
+{
+	constexpr std::wstring_view exePath = LR"(C:\sakura\sakura.exe)";
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([exePath](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(exePath, lpFilename);
+			lpFilename[exePath.size()] = L'\0';
+			return DWORD(exePath.size());
+		}));
+
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(StrEq(LR"(C:\sakura)")))
+		.WillOnce(Return(TRUE));
+
+	::ChangeCurrentDirectoryToExeDir();
+}
+
+/*!
+ * @brief 実行ファイルのパスが長過ぎるとき
+ */
+TEST_F(ChangeCurrentDirectoryToExeDir, test101)
+{
+	const std::wstring exePath(_MAX_PATH, L'a');
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([exePath](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(exePath, lpFilename);
+			lpFilename[exePath.size()] = L'\0';
+			return DWORD(exePath.size());
+		}));
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_)).Times(0);
+
+	EXPECT_THAT(([] {
+			::ChangeCurrentDirectoryToExeDir();
+		}),
+		ThrowsMessage<std::overflow_error>(StartsWith("exe path is too long."))
+	);
+}
+
+/*!
+ * @brief カレントディレクトリの変更に失敗したとき
+ */
+TEST_F(ChangeCurrentDirectoryToExeDir, test102)
+{
+	constexpr std::wstring_view exePath = LR"(C:\sakura\sakura.exe)";
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillOnce(Invoke([exePath](HMODULE hModule, LPWSTR lpFilename, DWORD nSize) -> DWORD {
+			std::ranges::copy(exePath, lpFilename);
+			lpFilename[exePath.size()] = L'\0';
+			return DWORD(exePath.size());
+		}));
+
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(StrEq(LR"(C:\sakura)")))
+		.WillOnce(Return(FALSE));
+
+	EXPECT_THAT(([] {
+			::ChangeCurrentDirectoryToExeDir();
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("SetCurrentDirectoryW() failed"))
 	);
