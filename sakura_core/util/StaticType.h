@@ -158,13 +158,16 @@ public:
 	 *
 	 * @tparam Args... 要素の構築に必要な引数群。
 	 * @param args [in] 追加するデータ。
-	 * @throws std::out_of_range 有効要素数が既にバッファの要素数に達していた場合。
+	 * @throws std::overflow_error 有効要素数が既にバッファの要素数に達していた場合。
 	 */
 	template<typename ... Args>
 	void emplace_back(Args&& ...args)
 	{
 		// 変更前の有効要素数を取得する
 		const auto countOld = m_nCount;
+		if (MAX_SIZE <= countOld) {
+			throw std::overflow_error(std::format("StaticVector is full. (size: {}, capacity: {})", countOld, MAX_SIZE));
+		}
 
 		// 有効要素数を1増やす
 		resize(countOld + 1);
@@ -177,12 +180,15 @@ public:
 	 * @brief 配列末尾に要素を追加する
 	 *
 	 * @param e [in] 追加するデータ。
-	 * @throws std::out_of_range 有効要素数が既にバッファの要素数に達していた場合。
+	 * @throws std::overflow_error 有効要素数が既にバッファの要素数に達していた場合。
 	 */
 	void push_back(SET_TYPE e)
 	{
 		// 変更前の有効要素数を取得する
 		const auto countOld = m_nCount;
+		if (MAX_SIZE <= countOld) {
+			throw std::overflow_error(std::format("StaticVector is full. (size: {}, capacity: {})", countOld, MAX_SIZE));
+		}
 
 		// 有効要素数を1増やす
 		resize(countOld + 1);

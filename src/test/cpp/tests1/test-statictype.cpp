@@ -88,13 +88,13 @@ TEST(StaticVector, test001)
 	EXPECT_THAT(std::distance(vec.begin(), vec.end()), Eq(3));
 
 	// 追加しようとしてもできないことを確認する
-	EXPECT_THROW({ vec.emplace_back(40u); }, std::out_of_range);
+	EXPECT_THROW({ vec.emplace_back(40u); }, std::overflow_error);
 
 	// 追加できないので、サイズをカウントアップしてはいけない
 	EXPECT_THAT(vec.size(), Eq(3));
 
 	// 追加しようとしてもできないことを確認する
-	EXPECT_THROW({ vec.push_back(0xffffff); }, std::out_of_range);
+	EXPECT_THROW({ vec.push_back(0xffffff); }, std::overflow_error);
 
 	// 追加できないので、サイズをカウントアップしてはいけない
 	EXPECT_THAT(vec.size(), Eq(3));
