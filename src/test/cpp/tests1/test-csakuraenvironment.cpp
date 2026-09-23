@@ -460,7 +460,7 @@ TEST_F(Kernel32, GetCurrentDirectoryW102)
 	EXPECT_THAT(([] {
 			cxx::GetCurrentDirectoryW();
 		}),
-		ThrowsMessage<std::out_of_range>(StartsWith("current path is too long."))
+		ThrowsMessage<std::overflow_error>(StartsWith("current path is too long."))
 	);
 }
 
@@ -490,7 +490,7 @@ TEST_F(Kernel32, GetSystemDirectoryW102)
 	EXPECT_THAT(([] {
 			cxx::GetSystemDirectoryW();
 		}),
-		ThrowsMessage<std::out_of_range>(StartsWith("system directory path is too long."))
+		ThrowsMessage<std::overflow_error>(StartsWith("system directory path is too long."))
 	);
 }
 
@@ -592,7 +592,7 @@ TEST_F(CCurrentDirectoryBackupPoint, test102)
 	EXPECT_THAT(([] {
 			Target t;
 		}),
-		ThrowsMessage<std::out_of_range>(StartsWith("source string is too long."))
+		ThrowsMessage<std::overflow_error>(StartsWith("source string is too long."))
 	);
 }
 

@@ -282,7 +282,7 @@ BOOL IsWow64()
  *
  * カレントディレクトリを取得してメンバー変数に保存します。
  *
- * @throw std::out_of_range パスが長過ぎて保存できなかったとき
+ * @throw std::overflow_error パスが長過ぎて保存できなかったとき
  * @throw std::system_error Windowsがエラーを返したとき
  */
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
@@ -566,7 +566,7 @@ std::wstring GetCurrentDirectoryW()
 
 	if (std::size(buf) < ret) {
 		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::out_of_range(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+		throw std::overflow_error(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
 	}
 
 	return std::wstring(buf.c_str(), ret);
@@ -589,7 +589,7 @@ std::wstring GetSystemDirectoryW()
 
 	if (std::size(buf) < ret) {
 		// システムディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::out_of_range(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+		throw std::overflow_error(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
 	}
 
 	return std::wstring(buf.c_str(), ret);

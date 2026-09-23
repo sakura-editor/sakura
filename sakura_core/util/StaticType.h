@@ -81,7 +81,7 @@ public:
 	 *
 	 * @tparam S [in] 要素の型。
 	 * @param source [in] 初期データ。
-	 * @throws std::out_of_range 初期データの要素数がバッファサイズを越える場合。
+	 * @throws std::overflow_error 初期データの要素数がバッファサイズを越える場合。
 	 */
 	template<std::ranges::sized_range S>
 	constexpr explicit StaticVector(const S& source)
@@ -89,7 +89,7 @@ public:
 		// 要素数がバッファサイズを越えたら例外を投げる
 		const auto sourceSize = std::size(source);
 		if (static_cast<size_t>(MAX_SIZE) < sourceSize) {
-			throw std::out_of_range(std::format("source has too many elements. (elements: {}, allowed: {})", sourceSize, MAX_SIZE));
+			throw std::overflow_error(std::format("source has too many elements. (elements: {}, allowed: {})", sourceSize, MAX_SIZE));
 		}
 
 		m_nCount = static_cast<int>(sourceSize);
@@ -303,7 +303,7 @@ public:
 	 *
 	 * @tparam A [in] コピーする文字列の型（NUL終端文字列に変換できる型）
 	 * @param source [in] コピーする文字列
-	 * @throws std::out_of_range 文字列が長過ぎて入り切らない場合。
+	 * @throws std::overflow_error 文字列が長過ぎて入り切らない場合。
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
 	constexpr explicit StaticString(const A& source)
@@ -514,7 +514,7 @@ public:
 	 * @tparam A [in] 代入する文字列の型（NUL終端文字列に変換できる型）
 	 * @param rhs [in, opt] 代入する文字列
 	 * @return 自分自身への参照
-	 * @throws std::out_of_range 文字列が長過ぎて入り切らない場合。
+	 * @throws std::overflow_error 文字列が長過ぎて入り切らない場合。
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
 	constexpr Me& operator = (const A& rhs)
@@ -530,7 +530,7 @@ public:
 			STRUNCATE == ret)
 		{
 			// 代入元文字列が長過ぎる場合、例外を投げる
-			throw std::out_of_range(std::format("source string is too long. (length: {}, allowed: {})", text.length(), size() - 1));
+			throw std::overflow_error(std::format("source string is too long. (length: {}, allowed: {})", text.length(), size() - 1));
 		}
 
 		return *this;
@@ -542,7 +542,7 @@ public:
 	 * @tparam A [in] 代入する文字列の型（文字列参照に変換できる型）
 	 * @param rhs [in, opt] 追加する文字列
 	 * @return 自分自身への参照
-	 * @throws std::out_of_range 文字列が長過ぎて入り切らない場合。
+	 * @throws std::overflow_error 文字列が長過ぎて入り切らない場合。
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
 	constexpr Me& operator += (const A& rhs)
@@ -566,7 +566,7 @@ public:
 			STRUNCATE == ret)
 		{
 			// 文字列が長過ぎる場合、例外を投げる
-			throw std::out_of_range(std::format("source string is too long. (length: {}, allowed: {})", text.length(), size() - len - 1));
+			throw std::overflow_error(std::format("source string is too long. (length: {}, allowed: {})", text.length(), size() - len - 1));
 		}
 
 		return *this;

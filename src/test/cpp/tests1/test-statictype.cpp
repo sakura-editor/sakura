@@ -176,14 +176,11 @@ TEST(StaticVector, test001)
 	EXPECT_THAT(std::distance(cv.begin(), cv.end()), Eq(2));
 
 	// 引数多過ぎ
-	try {
-		vec = StaticVector<size_t, 3>{ 10u, 20u, 30u, 40u };
-
-		FAIL() << "Expected std::out_of_range to be thrown";
-	}
-	catch (const std::out_of_range& e) {
-		EXPECT_THAT(e.what(), StrEq("source has too many elements. (elements: 4, allowed: 3)"));
-	}
+	EXPECT_THAT(([&vec] {
+			vec = StaticVector<size_t, 3>{ 10u, 20u, 30u, 40u };
+		}),
+		ThrowsMessage<std::overflow_error>(Eq("source has too many elements. (elements: 4, allowed: 3)"))
+	);
 
 	// 長さ3の配列を用意する
 	const std::array<size_t, 3> source{ 10u, 20u, 30u };
@@ -205,7 +202,7 @@ TEST(StaticVector, test001)
 	EXPECT_THAT(vec[2], Eq(30u));
 
 	const std::vector<size_t> tooLargeVector{ 10u, 20u, 30u, 40u };
-	EXPECT_THROW((StaticVector<size_t, 3>(tooLargeVector)), std::out_of_range);
+	EXPECT_THROW((StaticVector<size_t, 3>(tooLargeVector)), std::overflow_error);
 }
 
 /*!
@@ -424,7 +421,7 @@ TEST(StaticString, test101)
 	EXPECT_THAT(([] {
 		// バッファサイズより文字列が長いと例外。
 		StaticString<4> str{ L"test"}; }),
-		ThrowsMessage<std::out_of_range>(Eq("source string is too long. (length: 4, allowed: 3)"))
+		ThrowsMessage<std::overflow_error>(Eq("source string is too long. (length: 4, allowed: 3)"))
 	);
 }
 
@@ -434,7 +431,7 @@ TEST(StaticString, test102)
 		// バッファサイズより文字列が長いと例外。
 		StaticString<4> str{};
 		str = L"test"; }),
-		ThrowsMessage<std::out_of_range>(Eq("source string is too long. (length: 4, allowed: 3)"))
+		ThrowsMessage<std::overflow_error>(Eq("source string is too long. (length: 4, allowed: 3)"))
 	);
 }
 
@@ -444,7 +441,7 @@ TEST(StaticString, test103)
 		// 残りバッファサイズより文字列が長いと例外。
 		StaticString<4> str{ L"te" };
 		str += L"st"; }),
-		ThrowsMessage<std::out_of_range>(Eq("source string is too long. (length: 2, allowed: 1)"))
+		ThrowsMessage<std::overflow_error>(Eq("source string is too long. (length: 2, allowed: 1)"))
 	);
 }
 
