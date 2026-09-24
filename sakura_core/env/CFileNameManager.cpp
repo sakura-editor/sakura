@@ -427,8 +427,7 @@ bool CFileNameManager::GetMenuFullLabel(
 	const WCHAR* pszCharset = L"";
 	WCHAR szCodePageName[100];
 	if( IsValidCodeTypeExceptSJIS(nCharCode)){
-		// Bracket() の戻り値はスレッドローカルバッファへのポインタなので、保持せず即コピーする
-		wcscpy_s( szCodePageName, _countof(szCodePageName), CCodeTypeName(nCharCode).Bracket() );
+		wcscpy_s( szCodePageName, CCodeTypeName(nCharCode).Bracket() );
 		pszCharset = szCodePageName;
 	}else if( IsValidCodeOrCPTypeExceptSJIS(nCharCode) ){
 		CCodePage::GetNameBracket(szCodePageName, nCharCode);

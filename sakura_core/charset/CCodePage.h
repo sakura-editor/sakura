@@ -5,7 +5,7 @@
 */
 /*
 	Copyright (C) 2010-2012 Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -17,6 +17,7 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <span>
 #include "CShiftJis.h"
 
 enum EEncodingTrait
@@ -55,7 +56,8 @@ public:
 	static int GetNameNormal(LPWSTR outName, int charcodeEx);
 	static int GetNameShort(LPWSTR outName, int charcodeEx);
 	static int GetNameLong(LPWSTR outName, int charcodeEx);
-	static int GetNameBracket(LPWSTR outName, int charcodeEx);
+	static int GetNameBracket(std::span<WCHAR> outName, int charcodeEx);
+	static std::wstring GetNameBracket(int charcodeEx);
 	static int AddComboCodePages(HWND hwnd, HWND combo, int nSelCode);
 	
 	//CP補助情報

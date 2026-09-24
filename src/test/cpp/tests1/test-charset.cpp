@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "charset/charset.h"
+#include "charset/CCodePage.h"
 
 //! テストで使う文字コードの一覧。いずれも msCodeSet に登録されている
 constexpr std::array codes = {
@@ -29,30 +30,29 @@ TEST(CCodeTypeName, ReturnsNamesForKnownCode)
 		const CCodeTypeName name(code);
 		const wchar_t* pszNormal = name.Normal();
 		const wchar_t* pszShort = name.Short();
-		const wchar_t* pszBracket = name.Bracket();
+		const std::wstring bracket = name.Bracket();
 
 		ASSERT_NE(nullptr, pszNormal);
 		ASSERT_NE(nullptr, pszShort);
-		ASSERT_NE(nullptr, pszBracket);
 
 		// Bracket() は Short() を "  [" と "]" で囲んだもの
-		EXPECT_THAT(std::wstring(pszBracket), std::wstring(L"  [") + pszShort + L"]");
+		EXPECT_THAT(bracket, std::wstring(L"  [") + pszShort + L"]");
 	}
 }
 
 /*!
-	@brief 未登録の文字コードでは nullptr が返ること
+	@brief 未登録の文字コードでは Normal() / Short() は nullptr、Bracket() は空文字列が返ること
 
 	@note CODE_AUTODETECT は表示順の一覧にだけ載せ、名前引きの対象からは
 		  外してある(charset.cpp の InitCodeSet を参照)。
 */
-TEST(CCodeTypeName, ReturnsNullptrForUnknownCode)
+TEST(CCodeTypeName, ReturnsNothingForUnknownCode)
 {
 	const CCodeTypeName name(CODE_AUTODETECT);
 
 	EXPECT_THAT(name.Normal(), IsNull());
 	EXPECT_THAT(name.Short(), IsNull());
-	EXPECT_THAT(name.Bracket(), IsNull());
+	EXPECT_THAT(name.Bracket(), IsEmpty());
 }
 
 /*!
@@ -85,7 +85,7 @@ TEST(CCodeTypeName, BracketFromMultipleThreads_NotCorrupted)
 		for (size_t i = 0; i < codes.size(); ++i) {
 			workers.emplace_back([&, i]() {
 				for (int n = 0; n < nIterations; ++n) {
-					// 戻り値はバッファへのポインタなので、その場で複製してから比較する
+					// 値で受け取って比較する
 					const std::wstring actual = CCodeTypeName(codes[i]).Bracket();
 					if (actual != expected[i]) {
 						if (firstBad[i].empty()) firstBad[i] = actual;
@@ -105,4 +105,40 @@ TEST(CCodeTypeName, BracketFromMultipleThreads_NotCorrupted)
 	}
 	EXPECT_THAT(nMismatch.load(), 0) << "Bracket() の戻り値が壊れました";
 	EXPECT_TRUE(samples.empty());
+}
+
+/*!
+	@brief 登録済みの文字コードでは CCodeTypeName::Bracket() と同じ表記が返ること
+*/
+TEST(CCodePage, GetNameBracketReturnsBracketForKnownCode)
+{
+	for (const auto code : codes) {
+		EXPECT_THAT(CCodePage::GetNameBracket(code), CCodeTypeName(code).Bracket());
+	}
+}
+
+/*!
+	@brief コードページでは "  [CP...]" の表記が返ること
+*/
+TEST(CCodePage, GetNameBracketReturnsCodePageName)
+{
+	EXPECT_THAT(CCodePage::GetNameBracket(CODE_CPACP), StrEq(L"  [CP_ACP]"));
+	EXPECT_THAT(CCodePage::GetNameBracket(CODE_CPOEM), StrEq(L"  [CP_OEM]"));
+
+	// それ以外のコードページは番号がそのまま表記される
+	EXPECT_THAT(CCodePage::GetNameBracket(932), StrEq(L"  [CP932]"));
+}
+
+/*!
+	@brief 出力引数版は値返し版と同じ表記を書き込み、種別を戻り値で返すこと
+*/
+TEST(CCodePage, GetNameBracketWritesToBuffer)
+{
+	std::array<wchar_t, 100> buffer{};
+
+	EXPECT_THAT(CCodePage::GetNameBracket(buffer, CODE_EUC), 1);
+	EXPECT_THAT(buffer.data(), StrEq(CCodeTypeName(CODE_EUC).Bracket()));
+
+	EXPECT_THAT(CCodePage::GetNameBracket(buffer, CODE_CPACP), 2);
+	EXPECT_THAT(buffer.data(), StrEq(L"  [CP_ACP]"));
 }
