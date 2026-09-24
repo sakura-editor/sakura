@@ -11,18 +11,20 @@ if ([String]::IsNullOrWhiteSpace($ctest)) {
     throw "ctest.exe was not found."
 }
 
-$p = Start-Process `
-  -FilePath $ctest `
-  -ArgumentList @(
+$startProcessParams = @{
+  FilePath = $ctest
+  ArgumentList = @(
     "--test-dir", "build/$Platform/CMakeTools",
     "-C", $Configuration,
     "--output-on-failure",
     "-V"
-  ) `
-  -NoNewWindow `
-  -WorkingDirectory $HomePath `
-  -PassThru `
-  -Wait
+  )
+  NoNewWindow = $true
+  WorkingDirectory = $HomePath
+  PassThru = $true
+  Wait = $true
+}
+$p = Start-Process @startProcessParams
 
 if ($p.ExitCode -ne 0) {
   throw "MsBuild was Failed."
