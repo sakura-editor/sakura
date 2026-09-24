@@ -383,7 +383,7 @@ void CViewCommander::Command_BOOKMARK_RESET(void)
 void CViewCommander::Command_BOOKMARK_PATTERN( void )
 {
 	//検索or置換ダイアログから呼び出された
-	if( !m_pCommanderView->ChangeCurRegexp(false) ) return;
+	if( 0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size() && !m_pCommanderView->ChangeCurRegexp(false) ) return;
 	
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).MarkSearchWord(
 		m_pCommanderView->m_sSearchPattern

@@ -84,6 +84,9 @@ void CViewCommander::Command_SEARCH_NEXT(
 	CLogicRange*	pcSelectLogic		//!< [out] 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
 )
 {
+	// 検索キー未登録で呼んではいけない
+	assert(0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size());
+
 	// 見つからないときのメッセージをリソースから指定できるようにローカルコピーしておく
 	const std::wstring copyOfNotFoundMessage(pszNotFoundMessage ? pszNotFoundMessage : L"");
 	pszNotFoundMessage = pszNotFoundMessage ? copyOfNotFoundMessage.data() : nullptr;
@@ -332,6 +335,9 @@ end_of_func:;
 /* 前を検索 */
 void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
+	// 検索キー未登録で呼んではいけない
+	assert(0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size());
+
 	bool		bSelecting;
 	bool		bSelectingLock_Old = false;
 	bool		bFound = false;
@@ -534,6 +540,9 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 */
 void CViewCommander::Command_REPLACE( HWND hwndParent )
 {
+	// 検索キー未登録で呼んではいけない
+	assert(0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size());
+
 	// m_sSearchOption選択のための先に適用
 	if( !m_pCommanderView->ChangeCurRegexp(false) ){
 		return;
@@ -725,6 +734,9 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 */
 void CViewCommander::Command_REPLACE_ALL()
 {
+	// 検索キー未登録で呼んではいけない
+	assert(0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size());
+
 	// m_sSearchOption選択のための先に適用
 	if( !m_pCommanderView->ChangeCurRegexp() ){
 		return;

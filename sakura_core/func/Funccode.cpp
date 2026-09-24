@@ -1021,8 +1021,12 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_EXECEXTMACRO:	/* 名前を指定してマクロ実行 */
 		return true;
 
+	case F_SEARCH_NEXT:
+	case F_SEARCH_PREV:
 	case F_SEARCH_CLEARMARK:	//検索マークのクリア
-		return true;
+	case F_REPLACE:
+	case F_REPLACE_ALL:
+		return 0 < pShareData->m_sSearchKeywords.m_aSearchKeys.size();
 
 	// 02/06/26 ai Start
 	case F_JUMP_SRCHSTARTPOS:	// 検索開始位置へ戻る
