@@ -70,10 +70,12 @@ jobs:
           if ($actualSha256 -ne $expectedSha256.ToLowerInvariant()) {
             throw "SHA256 mismatch: expected=$expectedSha256 actual=$actualSha256"
           }
-          Start-Process `
-            -FilePath $installer `
-            -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" `
-            -Wait
+          $startProcessParams = @{
+            FilePath = $installer
+            ArgumentList = "/VERYSILENT", "/SUPPRESSMSGBOXES"
+            Wait = $true
+          }
+          Start-Process @startProcessParams
           echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
       - name: Set up MSYS2
