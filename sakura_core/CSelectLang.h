@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2011, nasukoji
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -138,8 +138,10 @@ private:
 		std::wstring		m_String;		//!< リソース文字列格納用バッファ
 	};
 
-	static inline std::array<CLoadStrBuffer, 16> gm_Buffers{};		//!< 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
-	static inline size_t gm_LastUsedIndex = std::size(gm_Buffers);	//!< 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
+	// 並列Grepのワーカーからも呼ばれるため、バッファはスレッドごとに持つ
+	// MinGW(GCC)では inline thread_local の TLS 初期化関数が多重定義になるため、定義は CSelectLang.cpp に置く
+	static thread_local std::array<CLoadStrBuffer, 16> gm_Buffers;	//!< 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
+	static thread_local size_t gm_LastUsedIndex;					//!< 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
 
 	using Me = CLoadString;
 
