@@ -19,14 +19,12 @@ env:
   VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
   VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
 
-permissions:
-  actions: read
-  contents: read
-  packages: read
-
 jobs:
   mingw:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      packages: read
     strategy:
       matrix:
         configuration: [Debug, Release]
