@@ -10,6 +10,7 @@
 
 #include "basis/GrepInfo.h"
 #include "dlg/CDlgGrepReplace.h"
+#include "grep/CGrepEnumKeys.h"
 #include "env/ShareDataTestSuite.hpp"
 
 /*!
@@ -337,6 +338,46 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_PacksExcludePatterns)
 
 	// 除外フォルダー(#)が先、除外ファイル(!)が後ろに連結される
 	EXPECT_STREQ(L"*.cpp;#obj;!*.bak", gi.cmGrepFile.GetStringPtr());
+}
+
+/*!
+ * @brief CDlgGrep::MakeGrepInfo() のテスト
+ *  引用符で囲んだカンマ入りの除外パターンが分割されずに pack されること (#2677)
+ */
+TEST_F(CDlgGrepTest, MakeGrepInfo_PacksExcludePatternsWithComma)
+{
+	CDlgGrep dlg;
+	dlg.m_szFile = L"*.*";
+	dlg.m_szExcludeFile = L"\"a,b.txt\"";
+	dlg.m_szExcludeFolder = L"\"obj,old\"";
+
+	const GrepInfo gi = dlg.MakeGrepInfo();
+
+	// 引用符で囲み直さず、接頭辞の後ろにそのまま連結される
+	EXPECT_STREQ(L"*.*;#\"obj,old\";!\"a,b.txt\"", gi.cmGrepFile.GetStringPtr());
+
+	// Grep 実行側で解析すると、除外パターンが1要素のまま復元される
+	CGrepEnumKeys keys;
+	EXPECT_EQ(0, keys.SetFileKeys(gi.cmGrepFile.GetStringPtr()));
+	EXPECT_EQ(std::vector<std::wstring>({ L"*.*" }), std::vector<std::wstring>(keys.m_vecSearchFileKeys.cbegin(), keys.m_vecSearchFileKeys.cend()));
+	EXPECT_EQ(std::vector<std::wstring>({ L"a,b.txt" }), std::vector<std::wstring>(keys.m_vecExceptFileKeys.cbegin(), keys.m_vecExceptFileKeys.cend()));
+	EXPECT_EQ(std::vector<std::wstring>({ L"obj,old" }), std::vector<std::wstring>(keys.m_vecExceptFolderKeys.cbegin(), keys.m_vecExceptFolderKeys.cend()));
+}
+
+/*!
+ * @brief CDlgGrep::MakeGrepInfo() のテスト
+ *  空白入りの除外パターンは、引用符が接頭辞の後ろに付いた形で pack されること
+ */
+TEST_F(CDlgGrepTest, MakeGrepInfo_PacksExcludePatternsWithSpace)
+{
+	CDlgGrep dlg;
+	dlg.m_szFile = L"*.cpp";
+	dlg.m_szExcludeFile = L"\"a b.txt\"";
+	dlg.m_szExcludeFolder = L"\"x y\"";
+
+	const GrepInfo gi = dlg.MakeGrepInfo();
+
+	EXPECT_STREQ(L"*.cpp;#\"x y\";!\"a b.txt\"", gi.cmGrepFile.GetStringPtr());
 }
 
 /*!

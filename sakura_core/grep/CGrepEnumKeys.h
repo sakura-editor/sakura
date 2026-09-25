@@ -8,7 +8,7 @@
 /*
 	Copyright (C) 2008, wakura
 	Copyright (C) 2011, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <list>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <windows.h>
 #include <string.h>
@@ -150,38 +151,62 @@ public:
 	/*!
 		@brief ファイルパターンを解析して、要素ごとに分離して返す
 		@param[in]		lpKeys					ファイルパターン
+		@return 引用符を取り除いた要素の配列
 	*/
 	static std::vector< std::wstring > SplitPattern(LPCWSTR lpKeys)
 	{
 		std::vector< std::wstring > patterns;
-
-		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
-		auto nWildCardLen = int(wcslen(lpKeys));
-		std::wstring strWildCard(lpKeys, nWildCardLen);
-		WCHAR* pWildCard = strWildCard.data();
-
-		int nPos = 0;
-		WCHAR*	token;
-		while (nullptr != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
-			// "を取り除いて左に詰める
-			WCHAR* p;
-			WCHAR* q;
-			p = q = token;
-			while (*p) {
-				if (*p != L'"') {
-					if (p != q) {
-						*q = *p;
-					}
-					q++;
-				}
-				p++;
-			}
-			*q = L'\0';
-
-			std::wstring element(token);
-			patterns.push_back(element);
+		for (const auto& quoted : SplitPatternKeepQuotes(lpKeys)) {
+			// "を取り除く
+			std::wstring& element = patterns.emplace_back(quoted);
+			std::erase(element, L'"');
 		}
 		return patterns;
+	}
+
+	/*!
+		@brief ファイルパターンを、引用符を残したまま要素ごとに分離して返す
+
+		空白・セミコロン・カンマで区切る。引用符の内側では区切らない。
+		引用符はトークンのどの位置にあっても内外を切り替える。空の要素は返さない。
+
+		@param[in]		keys					ファイルパターン
+		@return 引用符を残した要素の配列。各要素は keys の部分文字列を指す
+	*/
+	static std::vector< std::wstring_view > SplitPatternKeepQuotes(std::wstring_view keys)
+	{
+		constexpr std::wstring_view WILDCARD_DELIMITER = L" ;,";	//リストの区切り
+
+		std::vector< std::wstring_view > patterns;
+		bool bInQuote = false;	//ダブルコーテーションの中か？
+		size_t nBegin = 0;
+		for (size_t i = 0; i < keys.size(); ++i) {
+			if (keys[i] == L'"') {
+				bInQuote = !bInQuote;
+			}
+			else if (!bInQuote && WILDCARD_DELIMITER.find(keys[i]) != std::wstring_view::npos) {
+				if (nBegin < i) {
+					patterns.push_back(keys.substr(nBegin, i - nBegin));
+				}
+				nBegin = i + 1;
+			}
+		}
+		if (nBegin < keys.size()) {
+			patterns.push_back(keys.substr(nBegin));
+		}
+		return patterns;
+	}
+
+	/*!
+		@brief 引用符が閉じられていないか判定する
+		@param[in]		lpKeys					ファイルパターン
+		@retval true	引用符の数が奇数（閉じ忘れ）
+		@retval false	引用符が閉じられている、または引用符がない
+	*/
+	static bool HasUnclosedQuote(LPCWSTR lpKeys)
+	{
+		const std::wstring_view keys(lpKeys);
+		return std::ranges::count(keys, L'"') % 2 != 0;
 	}
 
 private:
