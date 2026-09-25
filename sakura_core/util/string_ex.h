@@ -493,14 +493,21 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 //転送系
 inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        ::memcpy (dest,src,count); return dest; }
 inline WCHAR* auto_memcpy(WCHAR* dest, const WCHAR* src, size_t count){ return ::wmemcpy(dest,src,count);              }
+
+#ifdef ENABLE_UNUSED_LEGACY_CODES
 inline ACHAR* auto_strcpy(ACHAR* dst, const ACHAR* src){ return strcpy(dst,src); }
 inline WCHAR* auto_strcpy(WCHAR* dst, const WCHAR* src){ return wcscpy(dst,src); }
 inline ACHAR* auto_strncpy(ACHAR* dst,const ACHAR* src,size_t count){ return strncpy(dst,src,count); }
 inline WCHAR* auto_strncpy(WCHAR* dst,const WCHAR* src,size_t count){ return wcsncpy(dst,src,count); }
+#endif // ifdef ENABLE_UNUSED_LEGACY_CODES
+
 inline ACHAR* auto_memset(ACHAR* dest, ACHAR c, size_t count){        memset (dest,c,count); return dest; }
 inline WCHAR* auto_memset(WCHAR* dest, WCHAR c, size_t count){ return wmemset(dest,c,count);              }
+
+#ifdef ENABLE_UNUSED_LEGACY_CODES
 inline ACHAR* auto_strcat(ACHAR* dst, const ACHAR* src){ return strcat(dst,src); }
 inline WCHAR* auto_strcat(WCHAR* dst, const WCHAR* src){ return wcscat(dst,src); }
+#endif // ifdef ENABLE_UNUSED_LEGACY_CODES
 
 template <basis::WritableBuffer<ACHAR> A1, basis::NullTerminatedStringConstructible<ACHAR> A2> constexpr errno_t auto_strncpy_s(A1& dst, const A2& src, size_t count) { return cxx::strncpy_s<ACHAR>(dst, src, count); }
 template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t auto_strncpy_s(A1& dst, const A2& src, size_t count) { return cxx::strncpy_s<WCHAR>(dst, src, count); }
@@ -562,8 +569,57 @@ WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
 WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
-template <typename... Args> int auto_sprintf(WCHAR* buf, _In_z_ _Printf_format_string_ const WCHAR* format, const Args&... args) { return ::_swprintf (buf, format, cxx::ConvertPrintfArg(std::as_const(args))...); }
+
+/*!
+ * @brief 固定長バッファに書式付きデータを書き込みます。
+ *
+ * バッファサイズを考慮しないバージョン。
+ *
+ * 使用しないでください。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+// TODO: いつか削除する
+template <typename... Args>
+int auto_sprintf(
+	WCHAR* buf,
+	_In_z_ _Printf_format_string_ const WCHAR* format,
+	const Args&... args
+)
+{
+	// C標準のswprintfはバッファサイズを要求するので、準拠しないバージョンを呼ぶ
+	return ::_swprintf(buf, format, cxx::ConvertPrintfArg(std::as_const(args))...);
+}
+
+/*!
+ * @brief 固定長バッファに書式付きデータを書き込みます。
+ *
+ * バッファサイズを考慮しない実装を救済するためのもの。
+ *
+ * 必ずしも移行不要。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+template <basis::WritableBuffer<WCHAR> A, typename... Args>
+int auto_sprintf(
+	A& buf,
+	_In_z_ _Printf_format_string_ const WCHAR* format,
+	const Args&... args
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_sprintf_s(
+		buf,
+		format,
+		cxx::ConvertPrintfArg(std::as_const(args))...
+	);
+}
+
+#ifdef ENABLE_UNUSED_LEGACY_CODES
 template <typename... Args> int auto_sprintf(ACHAR* buf, _In_z_ _Printf_format_string_ const ACHAR* format, const Args&... args) { return std::sprintf(buf, format, cxx::ConvertPrintfArg(std::as_const(args))...); }
+#endif // ifdef ENABLE_UNUSED_LEGACY_CODES
 
 template <typename CharT, basis::WritableBuffer<CharT> A, typename... Params>
 int auto_snprintf_s(

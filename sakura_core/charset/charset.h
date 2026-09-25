@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <string>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           定数                              //
@@ -103,7 +104,7 @@ public:
 	ECodeType GetCode() const { return m_eCodeType; }
 	LPCWSTR	Normal() const;
 	LPCWSTR	Short() const;
-	LPCWSTR	Bracket() const;
+	std::wstring	Bracket() const;
 	bool	UseBom();
 	bool	CanDefault();
 	bool	IsBomDefOn();

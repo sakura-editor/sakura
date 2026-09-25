@@ -225,8 +225,8 @@ jobs:
         $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
         $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
         Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
-        Start-Process $env:AutoHotKey "${LEInitScript}"
-        Start-Process "${LEExpandDir}\LEInstaller.exe"
+        Start-Process -FilePath "$env:AutoHotKey" -ArgumentList "${LEInitScript}"
+        Start-Process -FilePath "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
 
     # HHC.exeを使ってHTMLヘルプをコンパイルする
@@ -334,10 +334,12 @@ jobs:
         if ($actualSha256 -ne $expectedSha256.ToLowerInvariant()) {
           throw "SHA256 mismatch: expected=$expectedSha256 actual=$actualSha256"
         }
-        Start-Process `
-          -FilePath $installer `
-          -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" `
-          -Wait
+        $startProcessParams = @{
+          FilePath = $installer
+          ArgumentList = "/VERYSILENT", "/SUPPRESSMSGBOXES"
+          Wait = $true
+        }
+        Start-Process @startProcessParams
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Install CTags (winget)
