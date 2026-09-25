@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -52,6 +52,8 @@ private:
 	EShareMode	m_nFileShareModeOld;		//!< ファイルの排他制御モード
 };
 
+#ifdef ENABLE_UNUSED_LEGACY_CODES
+
 //!一時ファイル
 class CTmpFile{
 	using Me = CTmpFile;
@@ -67,4 +69,7 @@ public:
 private:
 	FILE* m_fp;
 };
+
+#endif // ifdef ENABLE_UNUSED_LEGACY_CODES
+
 #endif /* SAKURA_CFILE_53DA3C63_95C0_49D0_9ED1_1C0131493912_H_ */
