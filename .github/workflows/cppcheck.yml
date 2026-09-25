@@ -16,6 +16,8 @@ on:
 jobs:
   cppcheck:
     runs-on: windows-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         BuildPlatform: [Win32, x64]

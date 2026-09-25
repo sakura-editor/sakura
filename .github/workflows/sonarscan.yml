@@ -7,18 +7,17 @@ on:
     workflows: ['build sakura']
     types: [completed]
 
-permissions:
-  actions: read
-  checks: write
-  contents: read
-  pull-requests: write
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   sonar:
     name: Scan
     runs-on: windows-latest
     if: github.event.workflow_run.conclusion == 'success'
+    permissions:
+      actions: read
+      checks: write
+      contents: read
+      pull-requests: write
 
     steps:
     - name: Checkout

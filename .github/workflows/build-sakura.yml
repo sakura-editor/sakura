@@ -31,14 +31,12 @@ env:
   VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
   VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
 
-permissions:
-  actions: read
-  contents: read
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   check-encoding:
     runs-on: &windows_runner windows-latest # YAMLアンカーを使う
+    permissions:
+      contents: read
     defaults:
       run:
         shell: cmd # このJobでは 指定しない限り cmd を使う
@@ -81,6 +79,7 @@ jobs:
       VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite
 
     permissions:
+      contents: read
       packages: write
 
     strategy:
@@ -193,6 +192,9 @@ jobs:
     runs-on: *windows_runner
     needs: check-encoding
 
+    permissions:
+      contents: read
+
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
@@ -249,6 +251,9 @@ jobs:
     runs-on: *windows_runner
     needs: check-encoding
 
+    permissions:
+      contents: read
+
     strategy:
       matrix:
         config:
@@ -281,6 +286,10 @@ jobs:
     name: MSBuild
     runs-on: *windows_runner
     needs: [build-vcpkg, build-chm]
+
+    permissions:
+      contents: read
+      packages: read
 
     strategy:
       matrix:
