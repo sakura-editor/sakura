@@ -34,6 +34,7 @@ TEST(CCodeTypeName, ReturnsNamesForKnownCode)
 
 		ASSERT_NE(nullptr, pszNormal);
 		ASSERT_NE(nullptr, pszShort);
+		ASSERT_FALSE(bracket.empty());
 
 		// Bracket() は Short() を "  [" と "]" で囲んだもの
 		EXPECT_THAT(bracket, std::wstring(L"  [") + pszShort + L"]");
@@ -141,4 +142,12 @@ TEST(CCodePage, GetNameBracketWritesToBuffer)
 
 	EXPECT_THAT(CCodePage::GetNameBracket(buffer, CODE_CPACP), 2);
 	EXPECT_THAT(buffer.data(), StrEq(L"  [CP_ACP]"));
+}
+
+/*!
+	@brief 出力先が空のときは std::invalid_argument を投げること
+*/
+TEST(CCodePage, GetNameBracketThrowsForEmptyBuffer)
+{
+	EXPECT_THROW(CCodePage::GetNameBracket(std::span<WCHAR>(), CODE_EUC), std::invalid_argument);
 }

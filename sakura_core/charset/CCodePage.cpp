@@ -273,11 +273,11 @@ std::wstring CCodePage::GetNameBracket(int charcodeEx)
 	const UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
 		return L"  [CP_ACP]";
-	}
-	if( codepage == CP_OEMCP ){
+	}else if( codepage == CP_OEMCP ){
 		return L"  [CP_OEM]";
+	}else{
+		return std::format(L"  [CP{}]", charcodeEx);
 	}
-	return std::format(L"  [CP{}]", charcodeEx);
 }
 
 /*!
@@ -286,10 +286,13 @@ std::wstring CCodePage::GetNameBracket(int charcodeEx)
 	@param[out] outName 出力先の固定長バッファ。収まらない分は切り詰める
 	@param[in] charcodeEx 文字コード種別またはコードページ
 	@retval 1 文字コード種別だった
-	@retval 2 コードページだった
+	@retval 2 コードページ（マルチバイトのコードページ）だった
 */
 int CCodePage::GetNameBracket(std::span<WCHAR> outName, int charcodeEx)
 {
+	if( outName.empty() ){
+		throw std::invalid_argument("outName is empty");
+	}
 	wcscpy_s(outName, GetNameBracket(charcodeEx));
 	return IsValidCodeType(charcodeEx) ? 1 : 2;
 }
