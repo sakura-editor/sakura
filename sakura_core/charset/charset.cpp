@@ -120,23 +120,15 @@ LPCWSTR CCodeTypeName::Short() const
 	return it->second.m_sShort;
 }
 
-LPCWSTR CCodeTypeName::Bracket() const
+std::wstring CCodeTypeName::Bracket() const
 {
-	const MSCodeSet&	codeSet = msCodeSet;
-	const auto			it = codeSet.find( m_eCodeType );
-	if (it == codeSet.end()) {
-		return nullptr;
+	const auto pszShort = Short();
+	if (pszShort == nullptr) {
+		return {};
 	}
 
-//	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";
-	// 3ステートメントに分けて組み立てるため、プロセス共有のstaticだと
-	// 並列Grepのワーカースレッド間で内容が混ざる(例: "  [EUC]EUC]")。スレッドごとに持つ。
-	thread_local	std::wstring	sWork;
-	sWork = L"  [";
-	sWork += it->second.m_sShort;
-	sWork += L"]";	// 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
-
-	return sWork.c_str();
+	// 値で返すので組み立て用の共有バッファは要らない
+	return std::format(L"  [{}]", pszShort);
 }
 
 bool CCodeTypeName::UseBom()

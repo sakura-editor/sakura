@@ -5,7 +5,7 @@
 */
 /*
 	Copyright (C) 2010-2012 Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -260,21 +260,41 @@ int CCodePage::GetNameLong(LPWSTR outName, int charcodeEx)
 	return 2;
 }
 
-int CCodePage::GetNameBracket(LPWSTR outName, int charcodeEx)
+/*!
+	@brief 文字コード名を "  [名前]" の形式で返す
+
+	@param[in] charcodeEx 文字コード種別またはコードページ
+*/
+std::wstring CCodePage::GetNameBracket(int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Bracket());
-		return 1;
+		return CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Bracket();
 	}
-	UINT codepage = CodePageExToMSCP(charcodeEx);
+	const UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"  [CP_ACP]");
+		return L"  [CP_ACP]";
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"  [CP_OEM]");
+		return L"  [CP_OEM]";
 	}else{
-		auto_sprintf(outName, L"  [CP%d]", charcodeEx);
+		return std::format(L"  [CP{}]", charcodeEx);
 	}
-	return 2;
+}
+
+/*!
+	@brief 文字コード名を "  [名前]" の形式で outName に書き込む
+
+	@param[out] outName 出力先の固定長バッファ。収まらない分は切り詰める
+	@param[in] charcodeEx 文字コード種別またはコードページ
+	@retval 1 文字コード種別だった
+	@retval 2 コードページ（マルチバイトのコードページ）だった
+*/
+int CCodePage::GetNameBracket(std::span<WCHAR> outName, int charcodeEx)
+{
+	if( outName.empty() ){
+		throw std::invalid_argument("outName is empty");
+	}
+	wcscpy_s(outName, GetNameBracket(charcodeEx));
+	return IsValidCodeType(charcodeEx) ? 1 : 2;
 }
 
 EEncodingTrait CCodePage::GetEncodingTrait(int charcodeEx)
