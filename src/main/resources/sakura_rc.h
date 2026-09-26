@@ -1851,13 +1851,14 @@
 #define IDS_EOLTYPENAME_5               35055
 #define IDS_EOLTYPENAME_6               35056
 #define STR_ERR_MACRO_ENCODING          35057
+#define STR_DLGGREP_QUOTE_ERROR         35058
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        35058
+#define _APS_NEXT_RESOURCE_VALUE        35059
 #define _APS_NEXT_COMMAND_VALUE         101
 #define _APS_NEXT_CONTROL_VALUE         1741
 #define _APS_NEXT_SYMED_VALUE           10000

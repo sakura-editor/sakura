@@ -95,57 +95,18 @@ CDlgGrep::CDlgGrep()
 }
 
 /*
-	@brief ファイル/フォルダーの除外パターンをエスケープする必要があるか判断する
-	@param[in]     pattern チェックするパターン
-	@return        true  エスケープする必要がある
-	@return        false エスケープする必要がない
-	@author m-tmatma
-*/
-static bool IsEscapeRequiredForExcludePattern(const std::wstring & pattern)
-{
-	const auto NotFound = std::wstring::npos;
-	if (pattern.find(L'!') != NotFound)
-	{
-		return true;
-	}
-	if (pattern.find(L'#') != NotFound)
-	{
-		return true;
-	}
-	if (pattern.find(L'\x20') != NotFound)
-	{
-		return true;
-	}
-	if (pattern.find(L';') != NotFound)
-	{
-		return true;
-	}
-	return false;
-}
-
-/*
-	@brief エスケープパターンを取得する
-	@param[in] pattern        エスケープ対象文字列
-	@author m-tmatma
-*/
-static LPCWSTR GetEscapePattern(const std::wstring& pattern)
-{
-	return IsEscapeRequiredForExcludePattern(pattern) ? L"\"" : L"";
-}
-
-/*
 	@brief フォルダーの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダーの除外パターン
+	@note 引用符で囲み直さず、入力されたまま '#' の後ろに連結する (例: "a,b" → ;#"a,b")
 	@author m-tmatma
 */
 static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFolder)
 {
-	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
-	for (const auto& pattern : patterns)
+	for (const auto& pattern : CGrepEnumKeys::SplitPatternKeepQuotes(cmWorkExcludeFolder.GetStringPtr()))
 	{
-		LPCWSTR escapeStr = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L";%s#%s%s", escapeStr, pattern.c_str(), escapeStr);
+		cFilePattern.AppendString(L";#");
+		cFilePattern.AppendString(pattern.data(), pattern.size());
 	}
 }
 
@@ -153,15 +114,15 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 	@brief ファイルの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFile Grep ダイアログで指定されたファイルの除外パターン
+	@note 引用符で囲み直さず、入力されたまま '!' の後ろに連結する (例: "a,b.txt" → ;!"a,b.txt")
 	@author m-tmatma
 */
 static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
-	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
-	for (const auto& pattern : patterns)
+	for (const auto& pattern : CGrepEnumKeys::SplitPatternKeepQuotes(cmWorkExcludeFile.GetStringPtr()))
 	{
-		LPCWSTR escapeStr = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L";%s!%s%s", escapeStr, pattern.c_str(), escapeStr);
+		cFilePattern.AppendString(L";!");
+		cFilePattern.AppendString(pattern.data(), pattern.size());
 	}
 }
 
@@ -879,6 +840,14 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+
+	// 引用符の閉じ忘れがあると、後ろに連結する除外パターンまで引用符の中に入ってしまう
+	if( CGrepEnumKeys::HasUnclosedQuote( m_szFile )
+	 || CGrepEnumKeys::HasUnclosedQuote( m_szExcludeFile )
+	 || CGrepEnumKeys::HasUnclosedQuote( m_szExcludeFolder ) ){
+		WarningMessage(	GetHwnd(), LS(STR_DLGGREP_QUOTE_ERROR) );
+		return FALSE;
+	}
 
 	if( m_szFile[0] != '\0' ) {
 		CGrepEnumKeys enumKeys;

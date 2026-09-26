@@ -56,13 +56,54 @@ TEST(CGrepEnumKeys, SplitPattern_DelimitersOnly)
 /*!
 	@brief 引用符が閉じられていない場合、以降が1つのトークンとして扱われること
 
-	my_strtok() は引用符の中では区切り文字を無視するため、閉じ忘れると末尾まで
+	引用符の中では区切り文字を無視するため、閉じ忘れると末尾まで
 	1トークンになる。現在の挙動を追認するテスト。
 */
 TEST(CGrepEnumKeys, SplitPattern_UnclosedDoubleQuote)
 {
 	const auto patterns = CGrepEnumKeys::SplitPattern(L"\"*.cpp;*.h");
 	EXPECT_EQ(std::vector<std::wstring>({ L"*.cpp;*.h" }), patterns);
+}
+
+/*!
+	@brief トークンの途中の引用符でも内外が切り替わること
+
+	a"b c"d は1つの要素になり、引用符を取り除くと ab cd になる。
+*/
+TEST(CGrepEnumKeys, SplitPattern_QuoteInsideToken)
+{
+	const auto patterns = CGrepEnumKeys::SplitPattern(L"a\"b c\"d;*.h");
+	EXPECT_EQ(std::vector<std::wstring>({ L"ab cd", L"*.h" }), patterns);
+}
+
+/*!
+	@brief 引用符を残したまま区切り文字で分割されること
+*/
+TEST(CGrepEnumKeys, SplitPatternKeepQuotes_KeepsQuotes)
+{
+	const auto patterns = CGrepEnumKeys::SplitPatternKeepQuotes(L"\"a,b.txt\" *.h;a\"b c\"d,\"x y\"");
+	EXPECT_EQ(std::vector<std::wstring_view>({ L"\"a,b.txt\"", L"*.h", L"a\"b c\"d", L"\"x y\"" }), patterns);
+}
+
+/*!
+	@brief 空文字列・区切り文字だけの場合に空の配列が返ること
+*/
+TEST(CGrepEnumKeys, SplitPatternKeepQuotes_Empty)
+{
+	EXPECT_TRUE(CGrepEnumKeys::SplitPatternKeepQuotes(L"").empty());
+	EXPECT_TRUE(CGrepEnumKeys::SplitPatternKeepQuotes(L" ;, ;").empty());
+}
+
+/*!
+	@brief 引用符の閉じ忘れを判定できること
+*/
+TEST(CGrepEnumKeys, HasUnclosedQuote)
+{
+	EXPECT_FALSE(CGrepEnumKeys::HasUnclosedQuote(L""));
+	EXPECT_FALSE(CGrepEnumKeys::HasUnclosedQuote(L"*.cpp;*.h"));
+	EXPECT_FALSE(CGrepEnumKeys::HasUnclosedQuote(L"\"a,b.txt\";\"x y\""));
+	EXPECT_TRUE(CGrepEnumKeys::HasUnclosedQuote(L"\"a,b.txt"));
+	EXPECT_TRUE(CGrepEnumKeys::HasUnclosedQuote(L"\"a\" \"b"));
 }
 
 /*!

@@ -3191,6 +3191,7 @@ BEGIN
     STR_DLGGREP4            "検索対象フォルダーを指定してください。"
     STR_DLGGREP5            "検索対象フォルダーが正しくありません。"
     STR_DLGGREP6            "検索対象フォルダーが長すぎます。"
+    STR_DLGGREP_QUOTE_ERROR "対象ファイル・除外ファイル・除外フォルダーの指定は、引用符で正しく囲んでください。"
     STR_DLGJUMP1            "正しく行番号を入力してください。"
     STR_DLGJUMP_PSLQL       "%d 行  %s  パッケージ仕様部"
     STR_DLGOPNFL1           "変換なし"

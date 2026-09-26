@@ -3143,6 +3143,7 @@ BEGIN
     STR_DLGGREP4            "请定义目标搜索文件夹"
     STR_DLGGREP5            "目标文件夹不正确"
     STR_DLGGREP6            "目标文件夹路径过长"
+    STR_DLGGREP_QUOTE_ERROR "请用引号正确括起文件过滤、排除文件和排除文件夹中的内容"
     STR_DLGJUMP1            "请输入正确的行号"
     STR_DLGJUMP_PSLQL       "%d 行  %s  包规范"
     STR_DLGOPNFL1           "原样打开"
