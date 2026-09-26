@@ -1,11 +1,13 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
 #include "CSelectLang.h"
+
+#include <thread>
 
 TEST(CSelectLang, test001)
 {
@@ -82,4 +84,26 @@ TEST(LoadStringW, LoadStringResource101)
 {
 	// 対応する文字列リソースが存在しない機能IDを指定
 	EXPECT_THAT(LS(F_EXPANDPARAMETER), StrEq(L""));
+}
+
+/*!
+ * @brief LS() のバッファがスレッドごとに独立していること
+ *
+ * 別スレッドが LS() をバッファの個数(16)より多く呼んでも、
+ * このスレッドで取得したポインタの内容は変わらない。
+ * プロセス共有のバッファだと一巡して上書きされ、"0x0411" に変わる。
+ */
+TEST(LoadStringW, LoadStringStIsThreadLocal)
+{
+	const auto pszName = LS(STR_SELLANG_NAME);
+	ASSERT_THAT(pszName, StrEq(L"Japanese"));
+
+	std::jthread worker([] {
+		for (int i = 0; i < 32; ++i) {
+			LS(STR_SELLANG_LANGID);
+		}
+	});
+	worker.join();
+
+	EXPECT_THAT(pszName, StrEq(L"Japanese"));
 }

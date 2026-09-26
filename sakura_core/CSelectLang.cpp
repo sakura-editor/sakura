@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2011, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -248,6 +248,10 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	const auto optModule = gm_Selected ? std::optional<HMODULE>(HMODULE(gm_Langs[gm_Selected]->m_Module)) : std::nullopt;
 	return cxx::load_string(id, optModule);
 }
+
+// CLoadString::LoadStringSt() が使用するスレッドごとのバッファ
+thread_local std::array<CLoadString::CLoadStrBuffer, 16> CLoadString::gm_Buffers{};
+thread_local size_t CLoadString::gm_LastUsedIndex = std::size(CLoadString::gm_Buffers);
 
 /*!
 	@brief 静的バッファに文字列リソースを読み込む（各国語メッセージリソース対応）
