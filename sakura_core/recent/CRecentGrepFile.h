@@ -26,7 +26,6 @@ public:
 	void			CopyItem( CGrepFileString* dst, LPCWSTR src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFileString* src ) const override;
-	bool			TextToDataType( CGrepFileString* dst, LPCWSTR pszText ) const override;
 };
 
 #endif /* SAKURA_CRECENTGREPFILE_E23BE08A_1B53_492D_85EE_4370AA956BB5_H_ */

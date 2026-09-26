@@ -82,7 +82,23 @@ public:
 	virtual int  CompareItem( const DataType* p1, ReceiveType p2 ) const = 0;
 	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
 	virtual bool DataToReceiveType( ReceiveType* dst, const DataType* src ) const = 0;
-	virtual bool TextToDataType( DataType* dst, LPCWSTR pszText ) const = 0;
+
+	virtual bool TextToDataType(
+		 DataType* dst [[maybe_unused]],
+		 LPCWSTR pszText [[maybe_unused]]
+	) const
+	{
+		if constexpr (std::is_same_v<ReceiveType, LPCWSTR>) {
+			if (!ValidateReceiveType(pszText)) {
+				return false;
+			}
+			CopyItem(dst, pszText);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	bool ValidateReceiveType( ReceiveType p ) const
 	{

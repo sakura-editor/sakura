@@ -26,7 +26,6 @@ public:
 	void			CopyItem( CGrepFolderString* dst, LPCWSTR src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const override;
-	bool			TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const override;
 };
 
 #endif /* SAKURA_CRECENTGREPFOLDER_A0D1E75B_4587_4587_9A33_A5EA13349BAB_H_ */

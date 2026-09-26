@@ -42,15 +42,6 @@ bool CRecentFile::DataToReceiveType( const EditInfo** dst, const EditInfo* src )
 	return true;
 }
 
-bool CRecentFile::TextToDataType( EditInfo* dst, LPCWSTR pszText ) const
-{
-	if( int(std::size(dst->m_szPath)) < wcslen(pszText) + 1 ){
-		return false;
-	}
-	wcscpy(dst->m_szPath, pszText);
-	return true;
-}
-
 int CRecentFile::CompareItem( const EditInfo* p1, const EditInfo* p2 ) const
 {
 	return _wcsicmp(p1->m_szPath, p2->m_szPath);

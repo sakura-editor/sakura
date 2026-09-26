@@ -26,7 +26,6 @@ public:
 	void			CopyItem( CCmdString* dst, LPCWSTR src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CCmdString* src ) const override;
-	bool			TextToDataType( CCmdString* dst, LPCWSTR pszText ) const override;
 };
 
 #endif /* SAKURA_CRECENTCMD_4EB34D07_2F92_4BE4_9AB1_767141022C54_H_ */

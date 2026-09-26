@@ -45,11 +45,6 @@ bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* s
 	return true;
 }
 
-bool CRecentEditNode::TextToDataType( [[maybe_unused]] EditNode* dst, [[maybe_unused]] LPCWSTR pszText ) const
-{
-	return false;
-}
-
 int CRecentEditNode::CompareItem( const EditNode* p1, const EditNode* p2 ) const
 {
 	return int(p1->m_hWnd - p2->m_hWnd);

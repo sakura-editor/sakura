@@ -46,15 +46,6 @@ bool CRecentCurDir::DataToReceiveType( LPCWSTR* dst, const CCurDirString* src ) 
 	return true;
 }
 
-bool CRecentCurDir::TextToDataType( CCurDirString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentCurDir::CompareItem( const CCurDirString* p1, LPCWSTR p2 ) const
 {
 	return wcscmp(*p1,p2);

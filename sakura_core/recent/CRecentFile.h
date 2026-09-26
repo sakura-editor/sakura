@@ -23,7 +23,6 @@ public:
 	void			CopyItem( EditInfo* dst, const EditInfo* src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( const EditInfo** dst, const EditInfo* src ) const override;
-	bool			TextToDataType( EditInfo* dst, LPCWSTR pszText ) const override;
 
 	//固有インターフェース
 	int FindItemByPath(const WCHAR* pszPath) const;

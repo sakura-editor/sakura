@@ -46,15 +46,6 @@ bool CRecentFolder::DataToReceiveType( LPCWSTR* dst, const CPathString* src ) co
 	return true;
 }
 
-bool CRecentFolder::TextToDataType( CPathString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentFolder::CompareItem( const CPathString* p1, LPCWSTR p2 ) const
 {
 	return _wcsicmp(*p1,p2);

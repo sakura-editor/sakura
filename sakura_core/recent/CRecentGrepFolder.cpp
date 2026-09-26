@@ -45,15 +45,6 @@ bool CRecentGrepFolder::DataToReceiveType( LPCWSTR* dst, const CGrepFolderString
 	return true;
 }
 
-bool CRecentGrepFolder::TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentGrepFolder::CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) const
 {
 	return _wcsicmp(*p1,p2);

@@ -46,15 +46,6 @@ bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) 
 	return true;
 }
 
-bool CRecentSearch::TextToDataType( CSearchString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentSearch::CompareItem( const CSearchString* p1, LPCWSTR p2 ) const
 {
 	return wcscmp(*p1,p2);

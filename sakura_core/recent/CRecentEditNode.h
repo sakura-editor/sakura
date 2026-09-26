@@ -23,7 +23,6 @@ public:
 	void			CopyItem( EditNode* dst, const EditNode* src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( const EditNode** dst, const EditNode* src ) const override;
-	bool			TextToDataType( EditNode* dst, LPCWSTR pszText ) const override;
 
 	//固有インターフェース
 	int FindItemByHwnd(HWND hwnd) const;

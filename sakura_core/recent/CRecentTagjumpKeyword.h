@@ -25,7 +25,6 @@ public:
 	void			CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywordString* src ) const override;
-	bool			TextToDataType( CTagjumpKeywordString* dst, LPCWSTR pszText ) const override;
 };
 
 #endif /* SAKURA_CRECENTTAGJUMPKEYWORD_1416AC30_3714_4760_A313_76588D26A0A1_H_ */

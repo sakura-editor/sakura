@@ -46,15 +46,6 @@ bool CRecentTagjumpKeyword::DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywo
 	return true;
 }
 
-bool CRecentTagjumpKeyword::TextToDataType( CTagjumpKeywordString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentTagjumpKeyword::CompareItem( const CTagjumpKeywordString* p1, LPCWSTR p2 ) const
 {
 	return wcscmp(*p1,p2);

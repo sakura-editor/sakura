@@ -45,15 +45,6 @@ bool CRecentCmd::DataToReceiveType( LPCWSTR* dst, const CCmdString* src ) const
 	return true;
 }
 
-bool CRecentCmd::TextToDataType( CCmdString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentCmd::CompareItem( const CCmdString* p1, LPCWSTR p2 ) const
 {
 	return wcscmp(*p1,p2);

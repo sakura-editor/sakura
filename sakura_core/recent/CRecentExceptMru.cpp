@@ -46,15 +46,6 @@ bool CRecentExceptMRU::DataToReceiveType( LPCWSTR* dst, const CMetaPath* src ) c
 	return true;
 }
 
-bool CRecentExceptMRU::TextToDataType( CMetaPath* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentExceptMRU::CompareItem( const CMetaPath* p1, LPCWSTR p2 ) const
 {
 	return _wcsicmp(*p1,p2);
