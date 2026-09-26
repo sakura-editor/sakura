@@ -65,11 +65,3 @@ void CRecentReplace::CopyItem( CReplaceString* dst, LPCWSTR src ) const
 	wcscpy(*dst,src);
 }
 
-bool CRecentReplace::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-

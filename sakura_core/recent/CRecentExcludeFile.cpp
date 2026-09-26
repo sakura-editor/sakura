@@ -63,11 +63,3 @@ void CRecentExcludeFile::CopyItem( CExcludeFileString* dst, LPCWSTR src ) const
 	wcscpy(*dst,src);
 }
 
-bool CRecentExcludeFile::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-

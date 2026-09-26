@@ -26,7 +26,6 @@ public:
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CMetaPath* src ) const override;
 	bool			TextToDataType( CMetaPath* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( LPCWSTR p ) const override;
 };
 
 #endif /* SAKURA_CRECENTEXCEPTMRU_4DF7E5C5_2EC1_4A19_B31C_74EF43DC08AE_H_ */

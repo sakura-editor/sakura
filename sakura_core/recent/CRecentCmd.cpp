@@ -64,11 +64,3 @@ void CRecentCmd::CopyItem( CCmdString* dst, LPCWSTR src ) const
 	wcscpy(*dst,src);
 }
 
-bool CRecentCmd::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-

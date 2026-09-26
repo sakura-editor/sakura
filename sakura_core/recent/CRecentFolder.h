@@ -26,7 +26,6 @@ public:
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CPathString* src ) const override;
 	bool			TextToDataType( CPathString* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( LPCWSTR p ) const override;
 };
 
 #endif /* SAKURA_CRECENTFOLDER_E26A46E2_C8DF_4228_A0D6_24A2712392E9_H_ */

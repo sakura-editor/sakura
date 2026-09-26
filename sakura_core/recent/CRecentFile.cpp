@@ -61,11 +61,6 @@ void CRecentFile::CopyItem( EditInfo* dst, const EditInfo* src ) const
 	*dst = *src;
 }
 
-bool CRecentFile::ValidateReceiveType( const EditInfo* ) const
-{
-	return true;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   固有インターフェース                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

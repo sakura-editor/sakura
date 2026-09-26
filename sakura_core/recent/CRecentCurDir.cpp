@@ -65,11 +65,3 @@ void CRecentCurDir::CopyItem( CCurDirString* dst, LPCWSTR src ) const
 	wcscpy(*dst,src);
 }
 
-bool CRecentCurDir::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-

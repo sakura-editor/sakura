@@ -10,6 +10,8 @@
 #define SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
 #pragma once
 
+#include <type_traits>
+
 #include "recent/CRecent.h"
 
 template < class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE* >
@@ -81,7 +83,17 @@ public:
 	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
 	virtual bool DataToReceiveType( ReceiveType* dst, const DataType* src ) const = 0;
 	virtual bool TextToDataType( DataType* dst, LPCWSTR pszText ) const = 0;
-	virtual bool ValidateReceiveType( ReceiveType p ) const = 0;
+
+	bool ValidateReceiveType( ReceiveType p ) const
+	{
+		if constexpr( std::is_same_v<ReceiveType, LPCWSTR> ){
+			return ::wcsnlen(p, GetTextMaxLength()) < GetTextMaxLength();
+		}
+		else {
+			// CRecentEditNodeの実装（おそらくバグ。）
+			return true;
+		}
+	}
 
 	//実装補助
 private:

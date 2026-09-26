@@ -65,11 +65,3 @@ void CRecentSearch::CopyItem( CSearchString* dst, LPCWSTR src ) const
 	wcscpy(*dst,src);
 }
 
-bool CRecentSearch::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-

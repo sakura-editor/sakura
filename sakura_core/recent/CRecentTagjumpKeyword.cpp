@@ -65,11 +65,3 @@ void CRecentTagjumpKeyword::CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) 
 	wcscpy(*dst,src);
 }
 
-bool CRecentTagjumpKeyword::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-

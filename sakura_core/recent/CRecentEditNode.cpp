@@ -60,11 +60,6 @@ void CRecentEditNode::CopyItem( EditNode* dst, const EditNode* src ) const
 	*dst = *src;
 }
 
-bool CRecentEditNode::ValidateReceiveType( const EditNode* ) const
-{
-	return true;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   固有インターフェース                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

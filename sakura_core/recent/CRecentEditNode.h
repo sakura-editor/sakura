@@ -24,7 +24,6 @@ public:
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( const EditNode** dst, const EditNode* src ) const override;
 	bool			TextToDataType( EditNode* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( const EditNode* ) const override;
 
 	//固有インターフェース
 	int FindItemByHwnd(HWND hwnd) const;

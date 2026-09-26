@@ -26,7 +26,6 @@ public:
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) const override;
 	bool			TextToDataType( CSearchString* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( LPCWSTR p ) const override;
 };
 
 #endif /* SAKURA_CRECENTSEARCH_52B7DE14_4B4A_49DD_9374_27ED71D22ED7_H_ */

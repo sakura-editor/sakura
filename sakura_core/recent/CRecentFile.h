@@ -24,7 +24,6 @@ public:
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( const EditInfo** dst, const EditInfo* src ) const override;
 	bool			TextToDataType( EditInfo* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( const EditInfo* ) const override;
 
 	//固有インターフェース
 	int FindItemByPath(const WCHAR* pszPath) const;

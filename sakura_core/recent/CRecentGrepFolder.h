@@ -27,7 +27,6 @@ public:
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const override;
 	bool			TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( LPCWSTR p ) const override;
 };
 
 #endif /* SAKURA_CRECENTGREPFOLDER_A0D1E75B_4587_4587_9A33_A5EA13349BAB_H_ */

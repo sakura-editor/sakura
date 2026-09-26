@@ -64,11 +64,3 @@ void CRecentGrepFolder::CopyItem( CGrepFolderString* dst, LPCWSTR src ) const
 	wcscpy(*dst,src);
 }
 
-bool CRecentGrepFolder::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-
