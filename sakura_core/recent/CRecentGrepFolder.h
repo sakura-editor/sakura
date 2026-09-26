@@ -23,7 +23,6 @@ public:
 
 	//オーバーライド
 	int				CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) const override;
-	void			CopyItem( CGrepFolderString* dst, LPCWSTR src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const override;
 };

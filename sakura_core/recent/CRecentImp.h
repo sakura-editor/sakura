@@ -80,7 +80,20 @@ public:
 
 	//オーバーライド用インターフェース
 	virtual int  CompareItem( const DataType* p1, ReceiveType p2 ) const = 0;
-	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
+
+	void CopyItem(
+		DataType* dst,
+		ReceiveType src
+	) const
+	{
+		if constexpr (std::is_same_v<ReceiveType, LPCWSTR>) {
+			wcscpy_s(*dst, src);
+		}
+		else {
+			*dst = *src;
+		}
+	}
+
 	virtual bool DataToReceiveType( ReceiveType* dst, const DataType* src ) const = 0;
 
 	virtual bool TextToDataType(

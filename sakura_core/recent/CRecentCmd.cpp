@@ -50,8 +50,3 @@ int CRecentCmd::CompareItem( const CCmdString* p1, LPCWSTR p2 ) const
 	return wcscmp(*p1,p2);
 }
 
-void CRecentCmd::CopyItem( CCmdString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-

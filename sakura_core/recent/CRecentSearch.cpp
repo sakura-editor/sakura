@@ -51,8 +51,3 @@ int CRecentSearch::CompareItem( const CSearchString* p1, LPCWSTR p2 ) const
 	return wcscmp(*p1,p2);
 }
 
-void CRecentSearch::CopyItem( CSearchString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-

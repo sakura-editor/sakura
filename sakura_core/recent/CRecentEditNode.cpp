@@ -50,11 +50,6 @@ int CRecentEditNode::CompareItem( const EditNode* p1, const EditNode* p2 ) const
 	return int(p1->m_hWnd - p2->m_hWnd);
 }
 
-void CRecentEditNode::CopyItem( EditNode* dst, const EditNode* src ) const
-{
-	*dst = *src;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   固有インターフェース                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

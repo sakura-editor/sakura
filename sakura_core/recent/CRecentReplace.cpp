@@ -51,8 +51,3 @@ int CRecentReplace::CompareItem( const CReplaceString* p1, LPCWSTR p2 ) const
 	return wcscmp(*p1,p2);
 }
 
-void CRecentReplace::CopyItem( CReplaceString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-

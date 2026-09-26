@@ -49,8 +49,3 @@ int CRecentExcludeFile::CompareItem( const CExcludeFileString* p1, LPCWSTR p2 ) 
 	return _wcsicmp(*p1,p2);
 }
 
-void CRecentExcludeFile::CopyItem( CExcludeFileString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-

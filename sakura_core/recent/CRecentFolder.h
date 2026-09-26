@@ -22,7 +22,6 @@ public:
 
 	//オーバーライド
 	int				CompareItem( const CPathString* p1, LPCWSTR p2 ) const override;
-	void			CopyItem( CPathString* dst, LPCWSTR src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( LPCWSTR* dst, const CPathString* src ) const override;
 };

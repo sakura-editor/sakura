@@ -50,8 +50,3 @@ int CRecentGrepFile::CompareItem( const CGrepFileString* p1, LPCWSTR p2 ) const
 	return _wcsicmp(*p1,p2);
 }
 
-void CRecentGrepFile::CopyItem( CGrepFileString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-

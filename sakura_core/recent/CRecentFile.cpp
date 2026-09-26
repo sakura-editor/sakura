@@ -47,11 +47,6 @@ int CRecentFile::CompareItem( const EditInfo* p1, const EditInfo* p2 ) const
 	return _wcsicmp(p1->m_szPath, p2->m_szPath);
 }
 
-void CRecentFile::CopyItem( EditInfo* dst, const EditInfo* src ) const
-{
-	*dst = *src;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   固有インターフェース                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

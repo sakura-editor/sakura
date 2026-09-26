@@ -20,7 +20,6 @@ public:
 
 	//オーバーライド
 	int				CompareItem( const EditNode* p1, const EditNode* p2 ) const override;
-	void			CopyItem( EditNode* dst, const EditNode* src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const override;
 	bool			DataToReceiveType( const EditNode** dst, const EditNode* src ) const override;
 

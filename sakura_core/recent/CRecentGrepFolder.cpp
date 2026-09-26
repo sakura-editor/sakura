@@ -50,8 +50,3 @@ int CRecentGrepFolder::CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) co
 	return _wcsicmp(*p1,p2);
 }
 
-void CRecentGrepFolder::CopyItem( CGrepFolderString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-
