@@ -1179,16 +1179,30 @@ void CDlgFuncList::SetListVB (void)
 
 	const auto hwndList = GetItemHwnd( IDC_LIST_FL );
 
-	m_cmemClipText.SetString( L"" );
+	// バッファをクリアして再確保効率を上げる
+	m_cmemClipText.Clear();
+
+	// リストに登録する件数
+	const int nNum = m_pcFuncInfoArr->GetNum();
+
 	{
-		const int nBuffLenTag = int(17 + wcslen(m_pcFuncInfoArr->m_szFilePath));
-		const int nNum = m_pcFuncInfoArr->GetNum();
-		int nBuffLen = 0;
-		for( int i2 = 0; i2 < nNum; i2++ ){
-			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
-			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+		// 謎の定数（おそらく、ヘッダーとして定型出力する文字数）
+		const auto nBuffLenTag = m_pcFuncInfoArr->m_szFilePath.length() + 17;
+
+		// 含まれる関数名の長さの和を求める
+		size_t nBuffLen = 0;
+		for (const auto pcFuncInfo : *m_pcFuncInfoArr) {
+			nBuffLen += pcFuncInfo->m_cmemFuncName.length();
 		}
-		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
+
+		// 確保サイズを概算する
+		const auto nAllocSize =
+			+ nBuffLenTag
+			+ nBuffLen			// 関数名の文字数合計
+			* nNum;				// 1関数ごとに区切るから件数
+
+		// メモリ確保
+		m_cmemClipText.AllocStringBuffer(nAllocSize);
 	}
 
 	// 項目別バッファ
@@ -1199,9 +1213,18 @@ void CDlgFuncList::SetListVB (void)
 	// 使い回しバッファ
 	StaticString<2048>	szText;
 
-	for (int i = 0; i < m_pcFuncInfoArr->GetNum(); ++i) {
+	for (int i = 0; i < nNum; ++i) {
+		// 2001/06/23 N.Nakatani for Visual Basic
+		//	Jun. 26, 2001 genta 半角かな→全角に
+
 		/* 現在の解析結果要素 */
 		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+
+		szOption = L"";
+		szType = L"";
+		szTypeOption = L"";
+
+		szText = L"";
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
@@ -1237,17 +1260,6 @@ void CDlgFuncList::SetListVB (void)
 		item.iSubItem = FL_COL_NAME;
 		ListView_SetItem( hwndList, &item);
 		//	To Here Apr. 23, 2005 genta 行番号を左端へ
-
-		item.mask = LVIF_TEXT;
-
-		// 2001/06/23 N.Nakatani for Visual Basic
-		//	Jun. 26, 2001 genta 半角かな→全角に
-
-		szOption = L"";
-		szType = L"";
-		szTypeOption = L"";
-
-		szText = L"";
 
 		if (const auto vbStaticFlag = (pcFuncInfo->m_nInfo >> 8) & 0x01;
 			vbStaticFlag)
@@ -1323,42 +1335,29 @@ void CDlgFuncList::SetListVB (void)
 				auto_strcat_s(szTypeOption, strprintf(L"（%s）", szOption));
 			}
 		}
+
+		item.mask = LVIF_TEXT;
 		item.pszText = szTypeOption.data();
 		item.iItem = i;
 		item.iSubItem = FL_COL_REMARK;
 		ListView_SetItem( hwndList, &item);
 
 		/* クリップボードにコピーするテキストを編集 */
+		m_cmemClipText.AppendStringF(
+			L"%s(%d,%d): %s",
+			m_pcFuncInfoArr->m_szFilePath,	// 解析対象ファイル名
+			pcFuncInfo->m_nFuncLineCRLF,	// 検出行番号
+			pcFuncInfo->m_nFuncColCRLF,		// 検出桁番号
+			pcFuncInfo->m_cmemFuncName		// 関数名
+		);
+		// 検出結果の種類(関数,,,)があるとき
 		if (!szTypeOption.empty()) {
-			// 検出結果の種類(関数,,,)があるとき
-			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
-			auto_sprintf(
-				szText,
-				L"%s(%d,%d): ",
-				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
+			m_cmemClipText.AppendStringF(
+				L"(%s)",
+				szTypeOption
 			);
-			m_cmemClipText.AppendString(szText);
-			// "%s(%s)\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-			m_cmemClipText.AppendString(L"(");
-			m_cmemClipText.AppendString(szTypeOption.c_str());
-			m_cmemClipText.AppendString(L")\r\n");
-		}else{
-			// 検出結果の種類(関数,,,)がないとき
-			auto_sprintf(
-				szText,
-				L"%s(%d,%d): ",
-				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
-				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
-			);
-			m_cmemClipText.AppendString(szText);
-			// "%s\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-			m_cmemClipText.AppendString(L"\r\n");
 		}
+		m_cmemClipText.AppendString(L"\r\n");
 	}
 
 	//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる

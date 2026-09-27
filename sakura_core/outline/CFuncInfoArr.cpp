@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI, aroka
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -15,6 +15,7 @@
 
 #include "StdAfx.h"
 #include "outline/CFuncInfoArr.h"
+
 #include "outline/CFuncInfo.h"
 
 /* CFuncInfoArrクラス構築 */
@@ -30,7 +31,7 @@ CFuncInfoArr::~CFuncInfoArr()
 	return;
 }
 
-void CFuncInfoArr::Empty( void )
+void CFuncInfoArr::Empty()
 {
 	for( auto* p : m_funcInfoArr ){
 		delete p;
@@ -43,7 +44,7 @@ void CFuncInfoArr::Empty( void )
 
 /* 0<=の指定番号のデータを返す */
 /* データがない場合はNULLを返す */
-CFuncInfo* CFuncInfoArr::GetAt(size_t nIdx) noexcept
+CFuncInfo* CFuncInfoArr::GetAt(size_t nIdx) const noexcept
 {
 	if (m_funcInfoArr.size() <= nIdx) {
 		return nullptr;
@@ -87,23 +88,34 @@ void CFuncInfoArr::AppendData(
 	int				nDepth				//!< 深さ
 )
 {
-	AppendData(nFuncLineCRLF,CLogicInt(1),nFuncLineLAYOUT,CLayoutInt(1),pszFuncName,nullptr,nInfo,nDepth);
+	AppendData(
+		nFuncLineCRLF,
+		CLogicInt(1),
+		nFuncLineLAYOUT,
+		CLayoutInt(1),
+		pszFuncName,
+		nullptr,
+		nInfo,
+		nDepth
+	);
+
 	return;
 }
 
-void CFuncInfoArr::DUMP( void )
+void CFuncInfoArr::DUMP()
 {
 #ifdef _DEBUG
-	int i;
 	MYTRACE( L"=============================\n" );
-	for( i = 0; i < GetNum(); i++ ){
+	for (int i = 0; i < GetNum(); ++i) {
 		MYTRACE( L"[%d]------------------\n", i );
 		MYTRACE( L"m_nFuncLineCRLF\t\t=%d\n", int(m_funcInfoArr[i]->m_nFuncLineCRLF) );
 		MYTRACE( L"m_nFuncLineLAYOUT\t=%d\n", int(m_funcInfoArr[i]->m_nFuncLineLAYOUT) );
-		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_funcInfoArr[i]->m_cmemFuncName.GetStringPtr() );
-		MYTRACE( L"m_cmemFileName	=[%s]\n",
-			(m_funcInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_funcInfoArr[i]->m_cmemFileName.GetStringPtr() : L"NULL") );
-		MYTRACE( L"m_nInfo			=%d\n", m_funcInfoArr[i]->m_nInfo );
+		MYTRACE( L"m_cmemFuncName\t=[%s]\n", m_funcInfoArr[i]->m_cmemFuncName );
+		MYTRACE( L"m_cmemFileName\t=[%s]\n",
+			(m_funcInfoArr[i]->m_cmemFileName.IsValid()
+				? m_funcInfoArr[i]->m_cmemFileName.GetStringPtr()
+				: L"NULL") );
+		MYTRACE( L"m_nInfo\t\t\t=%d\n", m_funcInfoArr[i]->m_nInfo );
 	}
 	MYTRACE( L"=============================\n" );
 #endif
@@ -111,13 +123,14 @@ void CFuncInfoArr::DUMP( void )
 
 void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 {
-	if( m_AppendTextArr.find( info ) == m_AppendTextArr.end() ){
+	if (!m_AppendTextArr.contains(info)) {
 		// キーが存在しない場合、追加する
-		std::pair<int, std::wstring> pair(info, s);
-		m_AppendTextArr.insert( pair );
+		m_AppendTextArr.try_emplace(info, s);
+
 		if( m_nAppendTextLenMax < (int)s.length() ){
 			m_nAppendTextLenMax = (int)s.length();
 		}
+
 	}else{
 		// キーが存在する場合、値を書き換える
 		if( overwrite ){
@@ -126,12 +139,15 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 	}
 }
 
-std::wstring CFuncInfoArr::GetAppendText( int info )
+std::wstring CFuncInfoArr::GetAppendText(int info) const
 {
 	// キーが存在する場合、値を返す
-	if( m_AppendTextArr.find( info ) != m_AppendTextArr.end() ){
-		return m_AppendTextArr[info];
+	if (const auto found = m_AppendTextArr.find(info);
+		found != m_AppendTextArr.end())
+	{
+		return found->second;
 	}
+
 	// キーが存在しない場合、空文字列を返す
 	return {};
 }
