@@ -1,6 +1,6 @@
 ﻿/*! @file
 
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -27,6 +27,6 @@ public:
 	bool			DataToReceiveType( LPCWSTR* dst, const CExcludeFolderString* src ) const override;
 	bool			TextToDataType( CExcludeFolderString* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const override;
 };
+
 #endif /* SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_ */

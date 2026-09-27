@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -63,11 +63,6 @@ void CRecentEditNode::CopyItem( EditNode* dst, const EditNode* src ) const
 bool CRecentEditNode::ValidateReceiveType( const EditNode* ) const
 {
 	return true;
-}
-
-size_t CRecentEditNode::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

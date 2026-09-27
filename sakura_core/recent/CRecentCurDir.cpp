@@ -2,7 +2,7 @@
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -73,7 +73,3 @@ bool CRecentCurDir::ValidateReceiveType( LPCWSTR p ) const
 	return true;
 }
 
-size_t CRecentCurDir::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
-}

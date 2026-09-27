@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -64,11 +64,6 @@ void CRecentFile::CopyItem( EditInfo* dst, const EditInfo* src ) const
 bool CRecentFile::ValidateReceiveType( const EditInfo* ) const
 {
 	return true;
-}
-
-size_t CRecentFile::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

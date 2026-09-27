@@ -2,7 +2,7 @@
 // 各CRecent実装クラスのベースクラス
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -50,6 +50,7 @@ public:
 	int GetArrayCount() const override { return m_nArrayCount; }	//最大要素数
 	int GetItemCount() const override { return ( IsAvailable() ? *m_pnUserItemCount : 0); }	//登録アイテム数
 	int GetViewCount() const override { return ( IsAvailable() ? (m_pnUserViewCount ? *m_pnUserViewCount : m_nArrayCount) : 0); }	//表示数
+	size_t GetTextMaxLength() const override { return m_nTextMaxLength; }
 
 	//お気に入り制御系
 	bool SetFavorite( int nIndex, bool bFavorite = true) override;	//お気に入りに設定

@@ -2,7 +2,7 @@
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -28,6 +28,6 @@ public:
 	bool			DataToReceiveType( LPCWSTR* dst, const CCurDirString* src ) const override;
 	bool			TextToDataType( CCurDirString* dst, LPCWSTR pszText ) const override;
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const override;
 };
+
 #endif /* SAKURA_CRECENTCURDIR_A5846FA5_5608_4E6A_9A57_65DE2133E40A_H_ */
