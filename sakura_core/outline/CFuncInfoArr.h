@@ -65,6 +65,9 @@ public:
 
 	int AppendTextLenMax() const noexcept { return m_nAppendTextLenMax; }
 
+	auto begin() const noexcept { return m_funcInfoArr.begin(); }
+	auto end()   const noexcept { return m_funcInfoArr.end(); }
+
 public:
 	SFilePath	m_szFilePath;	/*!< 解析対象ファイル名 */
 
