@@ -414,6 +414,51 @@ INSTANTIATE_TEST_SUITE_P(ExpandParamCases
 	)
 );
 
+//! パスを保存する履歴項目をテストするためのダミークラス
+struct CRecentPathTest final : public CRecentImp<CPathString, LPCWSTR> {
+	explicit CRecentPathTest(size_t cchMaxLength)
+	{
+		m_nTextMaxLength = cchMaxLength;
+	}
+
+	using CRecentImp::TextToDataType;
+
+	int CompareItem(const CPathString*, LPCWSTR) const override { return 0; }
+	const WCHAR* GetItemText(int) const override { return L""; }
+	bool DataToReceiveType(LPCWSTR*, const CPathString*) const override { return false; }
+};
+
+//! 編集情報を保存する履歴項目をテストするためのダミークラス
+struct CRecentEditInfoTest final : public CRecentImp<EditInfo> {
+	using CRecentImp::TextToDataType;
+
+	int CompareItem(const EditInfo*, const EditInfo*) const override { return 0; }
+	const WCHAR* GetItemText(int) const override { return L""; }
+	bool DataToReceiveType(const EditInfo**, const EditInfo*) const override { return false; }
+};
+
+TEST(CRecentImp, TextToDataType001)
+{
+	// ダミー型を使ってテストする
+	CRecentPathTest recent{ 4 };
+	CPathString data{ L"before" };
+
+	EXPECT_FALSE(recent.TextToDataType(&data, L"abcd"));
+	EXPECT_THAT(data.c_str(), StrEq(L"before"));
+
+	EXPECT_TRUE(recent.TextToDataType(&data, L"abc"));
+	EXPECT_THAT(data.c_str(), StrEq(L"abc"));
+}
+
+TEST(CRecentImp, TextToDataType002)
+{
+	// ダミー型を使ってテストする
+	CRecentEditInfoTest recent;
+
+	// 固定値 false を返す
+	EXPECT_FALSE(recent.TextToDataType(nullptr, L"text"));
+}
+
 /*!
  * Kernel32のAPI呼出テスト
  */
