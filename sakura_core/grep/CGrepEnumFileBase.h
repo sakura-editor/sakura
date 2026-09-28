@@ -103,8 +103,11 @@ public:
 		std::wstring strFullPath;
 
 		for( const auto& strKey : vecKeys ){
+			// 基準フォルダーが空(絶対パスのキー)なら区切りを付けない
 			strPath.assign( svBaseFolder );
-			strPath.append( L"\\" );
+			if( !svBaseFolder.empty() ){
+				strPath.append( L"\\" );
+			}
 			strPath.append( strKey );
 
 			// strKey ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
@@ -135,7 +138,9 @@ public:
 				strName.assign( strKey, 0, nKeyDirLen );
 				strName.append( w32fd.cFileName );
 				strFullPath.assign( svBaseFolder );
-				strFullPath.append( L"\\" );
+				if( !svBaseFolder.empty() ){
+					strFullPath.append( L"\\" );
+				}
 				strFullPath.append( strName );
 				if( !IsValid( w32fd, strName.c_str() ) ){
 					continue;

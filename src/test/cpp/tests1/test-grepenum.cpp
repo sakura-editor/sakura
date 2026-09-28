@@ -387,6 +387,31 @@ TEST(CGrepEnumFilterFiles, ExceptAbsolutePath)
 }
 
 /*!
+	@brief 絶対パスの除外ファイルにワイルドカードを使えること
+*/
+TEST(CGrepEnumFilterFiles, ExceptAbsolutePathWithWildcard)
+{
+	TempFolder folder;
+	folder.AddFile(L"a.bak");
+	folder.AddFile(L"b.bak");
+	folder.AddFile(L"c.txt");
+
+	CGrepEnumKeys keys;
+	const auto excludePath = (folder.Path() / L"*.bak").wstring();
+	const std::wstring fileKeys = L"*;!\"" + excludePath + L"\"";
+	ASSERT_EQ(0, keys.SetFileKeys(fileKeys.c_str()));
+
+	CGrepEnumOptions options;
+	CGrepEnumFiles absExcept;
+	absExcept.Enumerates(L"", keys.m_vecExceptAbsFileKeys, options);
+	EXPECT_EQ(2, absExcept.GetCount());
+
+	CGrepEnumFilterFiles files;
+	files.Enumerates(folder.Path().c_str(), keys, options, absExcept);
+	EXPECT_EQ((std::vector<std::wstring>{ L"c.txt" }), Names(files));
+}
+
+/*!
 	@brief 除外フォルダーは名前が一致したものだけ除外され、英大文字小文字を区別しないこと
 */
 TEST(CGrepEnumFilterFolders, ExceptFolder)
@@ -402,4 +427,31 @@ TEST(CGrepEnumFilterFolders, ExceptFolder)
 	CGrepEnumFolders absExcept;
 	folders.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
 	EXPECT_EQ((std::vector<std::wstring>{ L"obj,old", L"obj2", L"src" }), Names(folders));
+}
+
+/*!
+	@brief 絶対パスの除外フォルダーが除外されること
+
+	CGrepAgent::DoGrep() と同じく、絶対パスの除外は基準フォルダー無し(L"")で列挙してから渡す。
+*/
+TEST(CGrepEnumFilterFolders, ExceptAbsolutePath)
+{
+	TempFolder folder;
+	folder.AddFolder(L"obj");
+	folder.AddFolder(L"src");
+
+	CGrepEnumKeys keys;
+	const auto excludePath = (folder.Path() / L"obj").wstring();
+	const std::wstring fileKeys = L"*;#\"" + excludePath + L"\"";
+	ASSERT_EQ(0, keys.SetFileKeys(fileKeys.c_str()));
+	ASSERT_EQ((std::vector<std::wstring>{ excludePath }), std::vector<std::wstring>(keys.m_vecExceptAbsFolderKeys.cbegin(), keys.m_vecExceptAbsFolderKeys.cend()));
+
+	CGrepEnumOptions options;
+	CGrepEnumFolders absExcept;
+	absExcept.Enumerates(L"", keys.m_vecExceptAbsFolderKeys, options);
+	EXPECT_EQ(1, absExcept.GetCount());
+
+	CGrepEnumFilterFolders folders;
+	folders.Enumerates(folder.Path().c_str(), keys, options, absExcept);
+	EXPECT_EQ((std::vector<std::wstring>{ L"src" }), Names(folders));
 }
