@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -46,34 +46,8 @@ bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) 
 	return true;
 }
 
-bool CRecentSearch::TextToDataType( CSearchString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentSearch::CompareItem( const CSearchString* p1, LPCWSTR p2 ) const
 {
 	return wcscmp(*p1,p2);
 }
 
-void CRecentSearch::CopyItem( CSearchString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-
-bool CRecentSearch::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-
-size_t CRecentSearch::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
-}

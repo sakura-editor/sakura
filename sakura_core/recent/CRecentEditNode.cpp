@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -45,29 +45,9 @@ bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* s
 	return true;
 }
 
-bool CRecentEditNode::TextToDataType( [[maybe_unused]] EditNode* dst, [[maybe_unused]] LPCWSTR pszText ) const
-{
-	return false;
-}
-
 int CRecentEditNode::CompareItem( const EditNode* p1, const EditNode* p2 ) const
 {
 	return int(p1->m_hWnd - p2->m_hWnd);
-}
-
-void CRecentEditNode::CopyItem( EditNode* dst, const EditNode* src ) const
-{
-	*dst = *src;
-}
-
-bool CRecentEditNode::ValidateReceiveType( const EditNode* ) const
-{
-	return true;
-}
-
-size_t CRecentEditNode::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
