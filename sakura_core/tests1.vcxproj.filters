@@ -29,6 +29,9 @@
     <Filter Include="Other Files\dlg">
       <UniqueIdentifier>{fe8a4e97-7407-4cb3-9387-7a58c099410c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Other Files\grep">
+      <UniqueIdentifier>{f99bbcd0-1b2c-4dba-abe4-a2cbf06323f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake">
@@ -266,6 +269,9 @@
     </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp">
       <Filter>Other Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\grep\GrepTestSuite.hpp">
+      <Filter>Other Files\grep</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\testing\MsvcInvalidParameterHandlerDisabler.hpp">
       <Filter>Other Files\testing</Filter>

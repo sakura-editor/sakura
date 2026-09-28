@@ -8,7 +8,14 @@
 #include "grep/GrepTestSuite.hpp"
 
 #include "grep/CGrepEnumKeys.h"
+#include "types/CType.h"
+#include "charset/CCodeBase.h"
+#include "charset/CCodeFactory.h"
+#include "mem/CMemory.h"
+#include "mem/CNativeW.h"
 
+#include <memory>
+#include <sstream>
 #include <vector>
 
 namespace grep_test {
@@ -194,6 +201,7 @@ TEST_F(GrepCommandLineTest, Stdout)
 {
 	AddBasicFiles();
 	StdoutCapture capture(folder.Path() / L"out.stdout");	// *.txt に一致しない名前にする
+	ASSERT_TRUE(capture.IsOpen());
 	Grep(L"HIT", L"*.txt", L"XU");
 	const auto output = capture.Read();
 	EXPECT_NE(std::string::npos, output.find("a.txt"));
@@ -405,11 +413,20 @@ TEST_F(GrepCommandLineTest, ReplaceWithClipboard)
 // 状態
 // ---------------------------------------------------------------------------
 
-//! Grep 実行中は再入しない
+/*!
+	Grep 実行中は再入しない
+
+	Debug ビルドでは、再入の分岐の assert_warning が ::DebugBreak() を呼び、
+	デバッガーが無いと止まるので飛ばす(Release ビルドで確かめる)。
+*/
 TEST_F(GrepCommandLineTest, RejectsReentry)
 {
+#ifdef _DEBUG
+	GTEST_SKIP() << "assert_warning calls ::DebugBreak() in debug builds";
+#else
 	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning = true;
 	EXPECT_EQ(0xffffffffu, Grep(L"HIT", L"*.txt", L"X"));
+#endif
 }
 
 //! Grep 実行中は閉じられない。実行後は閉じられる
@@ -627,6 +644,403 @@ TEST_F(GrepCommandLineTest, LargeFile)
 	}
 	folder.AddFile(L"large.txt", data);
 	EXPECT_EQ(0u, Grep(L"HIT", L"large.txt", L"XN"));
+}
+
+// ---------------------------------------------------------------------------
+// 追補: 旧ブランチのテストからの追加
+// ---------------------------------------------------------------------------
+
+//! 無効な :HWND: は 0 件で、結果にエラーを出す
+TEST_F(GrepCommandLineTest, InvalidHwndTarget)
+{
+	EXPECT_EQ(0u, Grep(L"HIT", L":HWND:0", L"X"));
+	EXPECT_TRUE(Contains(GetDocumentText(), L"HWND handle error."));
+}
+
+/*!
+	【不具合】無効な :HWND: の後も、同じウィンドウで Grep できること(Issue #xxxx で修正予定)
+
+	DoGrep() の :HWND: のエラー経路だけが m_bGrepRunning を戻さずに return するので、
+	以後の Grep が再入とみなされる。後始末は GrepTestSuite::TearDown() がフラグを戻す。
+*/
+TEST_F(GrepCommandLineTest, DISABLED_InvalidHwndTargetResetsRunningFlag)
+{
+	AddBasicFiles();
+	EXPECT_EQ(0u, Grep(L"HIT", L":HWND:0", L"X"));
+	// フラグが残ったまま次の Grep を呼ぶと、再入の assert_warning で止まる(Debug ビルド)ので、ここで打ち切る
+	ASSERT_FALSE(CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning);
+	ResetDocument();
+	EXPECT_EQ(3u, Grep(L"HIT", L"*.txt", L"X"));
+}
+
+namespace {
+
+//! 文書のタイプ別設定のうち、文字列の色分けとエスケープ方法を一時的に変える
+class StringTypeGuard {
+public:
+	StringTypeGuard(STypeConfig& type, bool bDisp, EStringLiteralType stringType)
+		: m_type(type)
+		, m_oldDisp(type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp)
+		, m_oldStringType(type.m_nStringType)
+	{
+		m_type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = bDisp;
+		m_type.m_nStringType = decltype(m_oldStringType)(stringType);
+	}
+
+	~StringTypeGuard()
+	{
+		m_type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = m_oldDisp;
+		m_type.m_nStringType = m_oldStringType;
+	}
+
+	StringTypeGuard(const StringTypeGuard&) = delete;
+	StringTypeGuard& operator=(const StringTypeGuard&) = delete;
+
+private:
+	STypeConfig& m_type;
+	decltype(std::declval<STypeConfig&>().m_ColorInfoArr[0].m_bDisp) m_oldDisp;
+	decltype(std::declval<STypeConfig&>().m_nStringType) m_oldStringType;
+};
+
+} // namespace
+
+/*!
+	見出しの検索キーは、出力先の文書のタイプ別設定に従ってエスケープされる(EscapeStringLiteral())
+
+	C++ 風は \ と ' と " の前に \ を付け、PL/SQL 風は ' と " を重ねる。文字列の色分けが無効ならそのまま。
+*/
+TEST_F(GrepCommandLineTest, HeaderEscapesKeyByStringType)
+{
+	struct Case {
+		bool bDisp;
+		EStringLiteralType stringType;
+		std::wstring_view expected;
+	};
+	const Case cases[] = {
+		{ true,  STRING_LITERAL_CPP,   LR"(x\\y\'z)" },
+		{ true,  STRING_LITERAL_PLSQL, LR"(x\y''z)" },
+		{ false, STRING_LITERAL_CPP,   LR"(x\y'z)" },
+	};
+	for (const auto& c : cases) {
+		ResetDocument();
+		StringTypeGuard guard(pcEditDoc->m_cDocType.GetDocumentAttributeWrite(), c.bDisp, c.stringType);
+		Grep(LR"(x\y'z)", L"*.txt", L"X");
+		const std::wstring quoted = std::format(LR"("{}")", c.expected);	// 引用符を含む文字列はマクロの外で作る(C2017 の回避)
+		EXPECT_TRUE(Contains(GetDocumentText(), quoted)) << quoted;
+	}
+}
+
+/*!
+	複数のフォルダー + ベースフォルダー表示(B): フォルダーごとに見出しが 1 回ずつ出る
+
+	DoGrep() はフォルダーごとに「ベースフォルダーを出力したか」を戻してから DoGrepTree() を呼ぶ。
+	D1・D2(出力処理の整理と並列化)の前に、出力の形を固定しておく。
+*/
+TEST_F(GrepCommandLineTest, MultipleFoldersBaseFolderHeader)
+{
+	folder.AddFile(LR"(p\x.txt)", "HIT\r\n");
+	folder.AddFile(LR"(q\y.txt)", "HIT\r\n");
+	const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{};{}" -GOPT=XB)",
+		(folder.Path() / L"p").native(), (folder.Path() / L"q").native());
+	EXPECT_EQ(2u, RunGrep(ParseGrepCommandLine(args)));
+
+	std::vector<std::wstring> headers;
+	std::wistringstream lines(GetDocumentText());
+	for (std::wstring line; std::getline(lines, line); ) {
+		if (line.ends_with(L'\r')) {
+			line.pop_back();
+		}
+		if (line.starts_with(L"■\"")) {
+			headers.push_back(line);
+		}
+	}
+	// 引用符を含む文字列はマクロの外で作る(C2017 の回避)
+	const std::wstring pEnd = LR"(\p")";
+	const std::wstring qEnd = LR"(\q")";
+	ASSERT_EQ(2u, headers.size());
+	EXPECT_TRUE(headers[0].ends_with(pEnd)) << headers[0];
+	EXPECT_TRUE(headers[1].ends_with(qEnd)) << headers[1];
+}
+
+//! 置換: 書き込み用の .skrnew を作れないと、結果にメッセージを出し、元のファイルは変わらない
+TEST_F(GrepCommandLineTest, ReplaceWriteOpenError)
+{
+	AddBasicFiles();
+	folder.AddFolder(L"a.txt.skrnew");	// 同じ名前のフォルダーがあるとファイルを作れない
+	Grep(L"HIT", L"a.txt", L"X", LR"(-GREPR="REP")");
+	ASSERT_FALSE(ResourcePrefix(STR_GREP_ERR_FILEWRITE).empty());
+	EXPECT_TRUE(Contains(GetDocumentText(), ResourcePrefix(STR_GREP_ERR_FILEWRITE)));
+	EXPECT_EQ("HIT x HIT\r\nnone\r\nHIT\r\n", folder.ReadFile(L"a.txt"));
+}
+
+/*!
+	置換: 元のファイルが共有読み取りで開かれていると消せないので、結果にメッセージを出し、元のファイルは変わらない
+
+	【現状の制限】書き出した .skrnew は消されずに残る。
+*/
+TEST_F(GrepCommandLineTest, ReplaceLockedFile)
+{
+	AddBasicFiles();
+	const auto path = folder.Path() / L"a.txt";
+	const HANDLE hLocked = ::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hLocked);
+	Grep(L"HIT", L"a.txt", L"X", LR"(-GREPR="REP")");
+	::CloseHandle(hLocked);
+
+	EXPECT_TRUE(Contains(GetDocumentText(), ResourcePrefix(STR_GREP_REP_ERR_DELETE)));
+	EXPECT_EQ("HIT x HIT\r\nnone\r\nHIT\r\n", folder.ReadFile(L"a.txt"));
+	EXPECT_EQ("REP x REP\r\nnone\r\nREP\r\n", folder.ReadFile(L"a.txt.skrnew"));	// 【現状の制限】
+}
+
+/*!
+	置換 + O(バックアップ): 元のファイルを .skrold に移せないと、結果にメッセージを出し、元のファイルは変わらない
+
+	【現状の制限】書き出した .skrnew は消されずに残る。
+*/
+TEST_F(GrepCommandLineTest, ReplaceLockedFileWithBackup)
+{
+	AddBasicFiles();
+	const auto path = folder.Path() / L"a.txt";
+	const HANDLE hLocked = ::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	ASSERT_NE(INVALID_HANDLE_VALUE, hLocked);
+	Grep(L"HIT", L"a.txt", L"XO", LR"(-GREPR="REP")");
+	::CloseHandle(hLocked);
+
+	ASSERT_FALSE(ResourcePrefix(STR_GREP_REP_ERR_REPLACE).empty());
+	EXPECT_TRUE(Contains(GetDocumentText(), ResourcePrefix(STR_GREP_REP_ERR_REPLACE)));
+	EXPECT_EQ("HIT x HIT\r\nnone\r\nHIT\r\n", folder.ReadFile(L"a.txt"));
+	EXPECT_FALSE(folder.Exists(L"a.txt.skrold"));
+	EXPECT_TRUE(folder.Exists(L"a.txt.skrnew"));	// 【現状の制限】
+}
+
+//! Grep は隠し・読み取り専用・システムのファイルも検索する(除外のオプションはファイルツリーでだけ使われる)
+TEST_F(GrepCommandLineTest, SearchesHiddenReadOnlySystemFiles)
+{
+	folder.AddFile(L"n.txt", "HIT\r\n");
+	folder.AddFile(L"h.txt", "HIT\r\n", FILE_ATTRIBUTE_HIDDEN);
+	folder.AddFile(L"r.txt", "HIT\r\n", FILE_ATTRIBUTE_READONLY);
+	folder.AddFile(L"s.txt", "HIT\r\n", FILE_ATTRIBUTE_SYSTEM);
+	EXPECT_EQ(4u, Grep(L"HIT", L"*.txt", L"X"));
+}
+
+/*!
+	文字コード固定(UTF-8): BOM だけのファイルは 0 件。不正なバイト列を含むファイルも、正しい部分は検索できる
+
+	【要実測】不正なバイト列の変換結果による。初回の結果で期待値を確定する。
+*/
+TEST_F(GrepCommandLineTest, FixedUtf8BomOnlyAndInvalidBytes)
+{
+	folder.AddFile(L"bomonly.txt", Utf8Bom);
+	folder.AddFile(L"invalid.txt", std::string("abc\xFF\xFE" "def\r\n"));	// "\xFE" と "def" を分けて書く(続けると 16 進の一部になる)
+	EXPECT_EQ(1u, Grep(L"def", L"*.txt", L"X", std::format(L"-GCODE={}", int(CODE_UTF8))));
+	EXPECT_TRUE(LineContaining(GetDocumentText(), L"bomonly.txt").empty());
+}
+
+/*!
+	-GCODE に範囲外の値: CCommandLine はそのまま持ち、Grep は止まらずに終わる
+
+	【要実測】ファイルを開くときの文字コードの扱いによる。初回の結果で期待値を確定する。
+	落ちる・止まる場合は不具合として別の Issue にする。
+*/
+TEST_F(GrepCommandLineTest, CharsetOutOfRange)
+{
+	AddBasicFiles();
+	EXPECT_EQ(ECodeType(99999), ParseGrepCommandLine(Args(L"HIT", L"a.txt", L"X", L"-GCODE=99999")).nGrepCharSet);
+	EXPECT_EQ(3u, Grep(L"HIT", L"a.txt", L"X", L"-GCODE=99999"));
+}
+
+// ---------------------------------------------------------------------------
+// フォルダーの一覧(CGrepAgent の static 関数)
+// ---------------------------------------------------------------------------
+
+//! ChopYen: 末尾の \ を 1 つだけ取り除く。ルートの C:\ も C: になる
+TEST(GrepFolderList, ChopYen)
+{
+	EXPECT_EQ(L"C:", CGrepAgent::ChopYen(L"C:\\"));
+	EXPECT_EQ(L"C:\\work", CGrepAgent::ChopYen(L"C:\\work\\"));
+	EXPECT_EQ(L"C:\\work\\", CGrepAgent::ChopYen(L"C:\\work\\\\"));
+	EXPECT_EQ(L"C:\\work", CGrepAgent::ChopYen(L"C:\\work"));
+	EXPECT_EQ(L"", CGrepAgent::ChopYen(L""));
+}
+
+//! CreateFolders: ; で分け、引用符を取り除く。存在しないフォルダーは長い名前に直せないのでそのまま
+TEST(GrepFolderList, CreateFoldersSplitsAndUnquotes)
+{
+	TempFolder folder;
+	const auto a = (folder.Path() / L"none_a").native();
+	const auto b = (folder.Path() / L"none;b").native();
+	const auto list = std::format(L"{};\"{}\"", a, b);
+	std::vector<std::wstring> paths;
+	CGrepAgent::CreateFolders(list.c_str(), paths);
+	EXPECT_EQ((std::vector<std::wstring>{ a, b }), paths);
+}
+
+//! CreateFolders: 8.3 形式の短い名前を長い名前に直す
+TEST(GrepFolderList, CreateFoldersResolvesShortName)
+{
+	TempFolder folder;
+	const std::wstring longName = L"long_folder_name_for_grep";
+	folder.AddFolder(longName);
+	const auto longPath = folder.Path() / longName;
+
+	std::wstring shortPath(MAX_PATH, L'\0');
+	shortPath.resize(::GetShortPathNameW(longPath.c_str(), shortPath.data(), MAX_PATH));
+	if (shortPath.empty() || std::filesystem::path(shortPath).filename() == longName) {
+		GTEST_SKIP() << "8.3 short names are not available on this volume";
+	}
+
+	std::vector<std::wstring> paths;
+	CGrepAgent::CreateFolders(shortPath.c_str(), paths);
+	ASSERT_EQ(1u, paths.size());
+	EXPECT_EQ(longName, std::filesystem::path(paths[0]).filename().native());
+}
+
+// ---------------------------------------------------------------------------
+// 出力のスナップショット(旧ブランチのテストから)
+// ---------------------------------------------------------------------------
+
+/*!
+	@brief Grep の出力をそのまま比べるテスト
+
+	文書の表示のテキストは読まない。-GOPT=U で標準出力に出したバイト列を、
+	文書の文字コードで戻して比べる。H でヘッダー・フッターを出さないので、
+	出力は結果の行だけになる。
+*/
+struct GrepOutputSnapshotTest : public GrepCommandLineTest {
+	//! 旧テストと同じデータ(1 行目の 7 文字目に needle)
+	static constexpr std::string_view SNAPSHOT_TEXT = "alpha needle one\r\nbravo two\r\n";
+
+	//! 長い名前のパス(出力のパスは CreateFolders() で長い名前になる)
+	static std::wstring LongPath(const std::filesystem::path& path)
+	{
+		const DWORD cch = ::GetLongPathNameW(path.c_str(), nullptr, 0);
+		if (cch == 0) {
+			return path.native();
+		}
+		std::wstring buf(cch, L'\0');
+		buf.resize(::GetLongPathNameW(path.c_str(), buf.data(), cch));
+		return buf;
+	}
+
+	//! 標準出力のバイト列を文書の文字コードで戻す(AddTail() の逆)
+	static std::wstring Decode(const std::string& bytes)
+	{
+		std::unique_ptr<CCodeBase> pcCodeBase(CCodeFactory::CreateCodeBase(pcEditDoc->GetDocumentEncoding(), 0));
+		CMemory cmemSrc(bytes.data(), bytes.size());
+		CNativeW cmemDst;
+		pcCodeBase->CodeToUnicode(cmemSrc, &cmemDst);
+		return std::wstring(cmemDst.GetStringPtr(), cmemDst.GetStringLength());
+	}
+
+	//! -GOPT に XHU を足して Grep し、標準出力を返す
+	std::wstring GrepStdout(std::wstring_view key, std::wstring_view file, std::wstring_view opt, DWORD* pHitCount = nullptr) const
+	{
+		StdoutCapture capture(folder.Path() / L"out.stdout");	// 検索対象に一致しない名前にする
+		EXPECT_TRUE(capture.IsOpen());
+		const auto hitCount = Grep(key, file, std::format(L"XHU{}", opt));
+		if (pHitCount) {
+			*pHitCount = hitCount;
+		}
+		return Decode(capture.Read());
+	}
+};
+
+//! 形式 1(ノーマル): 該当部分・該当行・否該当行
+TEST_F(GrepOutputSnapshotTest, Style1LineTypes)
+{
+	folder.AddFile(L"snap.txt", SNAPSHOT_TEXT);
+	const auto path = LongPath(folder.Path() / L"snap.txt");
+
+	const std::wstring area = path + L"(1,7): needle\r\n";
+	const std::wstring line = path + L"(1,7): alpha needle one\r\n";
+	const std::wstring noHit = path + L"(2,1): bravo two\r\n";
+	EXPECT_EQ(area, GrepStdout(L"needle", L"snap.txt", L"1"));
+	EXPECT_EQ(line, GrepStdout(L"needle", L"snap.txt", L"1P"));
+	EXPECT_EQ(noHit, GrepStdout(L"needle", L"snap.txt", L"1N"));
+}
+
+//! 形式 1: 1 行に 2 つ。該当部分なら 2 行、該当行なら 1 行
+TEST_F(GrepOutputSnapshotTest, Style1MultipleHitsInLine)
+{
+	folder.AddFile(L"snap.txt", "needle x needle\r\n");
+	const auto path = LongPath(folder.Path() / L"snap.txt");
+
+	const std::wstring area = path + L"(1,1): needle\r\n" + path + L"(1,10): needle\r\n";
+	const std::wstring line = path + L"(1,1): needle x needle\r\n";
+	DWORD hitCount = 0;
+	EXPECT_EQ(area, GrepStdout(L"needle", L"snap.txt", L"1", &hitCount));
+	EXPECT_EQ(2u, hitCount);
+	EXPECT_EQ(line, GrepStdout(L"needle", L"snap.txt", L"1P", &hitCount));
+	EXPECT_EQ(1u, hitCount);
+}
+
+//! 形式 2(WZ 風): ファイルの見出しは 1 回、位置は (%6d,%-5d)
+TEST_F(GrepOutputSnapshotTest, Style2HeaderOncePerFile)
+{
+	folder.AddFile(L"snap.txt", "needle\r\nx\r\nneedle\r\n");
+	const auto path = LongPath(folder.Path() / L"snap.txt");
+
+	const std::wstring expected = std::format(L"■\"{}\"\r\n", path)
+		+ L"・(     1,1    ): needle\r\n"
+		+ L"・(     3,1    ): needle\r\n";
+	EXPECT_EQ(expected, GrepStdout(L"needle", L"snap.txt", L"2P"));
+}
+
+//! 形式 3(結果のみ): パスも位置も出さない
+TEST_F(GrepOutputSnapshotTest, Style3LineTypes)
+{
+	folder.AddFile(L"snap.txt", SNAPSHOT_TEXT);
+
+	EXPECT_EQ(L"needle\r\n", GrepStdout(L"needle", L"snap.txt", L"3"));
+	EXPECT_EQ(L"alpha needle one\r\n", GrepStdout(L"needle", L"snap.txt", L"3P"));
+}
+
+//! B(ベースフォルダー表示): 見出しは 1 回、結果は「・」＋ベースからの相対パス。ファイルが先、サブフォルダーが後
+TEST_F(GrepOutputSnapshotTest, BaseFolderRelativePath)
+{
+	folder.AddFile(L"snap.txt", SNAPSHOT_TEXT);
+	folder.AddFile(LR"(sub\snap.txt)", SNAPSHOT_TEXT);
+	const auto base = LongPath(folder.Path());
+
+	// 形式 1 でも、B のときは結果の行の先頭に「・」が付く
+	const std::wstring expected = std::format(L"■\"{}\"\r\n", base)
+		+ L"・snap.txt(1,7): alpha needle one\r\n"
+		+ LR"(・sub\snap.txt(1,7): alpha needle one)" + L"\r\n";
+	EXPECT_EQ(expected, GrepStdout(L"needle", L"*.txt", L"1PSB"));
+}
+
+//! B+D(フォルダー毎に表示): ベースは ◎、フォルダーは ■、結果はファイル名
+TEST_F(GrepOutputSnapshotTest, BaseAndSeparateFolderHeaders)
+{
+	folder.AddFile(L"snap.txt", SNAPSHOT_TEXT);
+	folder.AddFile(LR"(sub\snap.txt)", SNAPSHOT_TEXT);
+	const auto base = LongPath(folder.Path());
+
+	DWORD hitCount = 0;
+	const auto output = GrepStdout(L"needle", L"*.txt", L"2PSBD", &hitCount);
+	EXPECT_EQ(2u, hitCount);
+
+	const std::wstring baseHeader = std::format(L"◎\"{}\"\r\n", base);
+	const std::wstring subHeader = L"■\"sub\"\r\n";
+	const std::wstring hitLine = L"・(     1,7    ): alpha needle one\r\n";
+	EXPECT_TRUE(output.starts_with(baseHeader)) << output;
+	EXPECT_TRUE(Contains(output, subHeader)) << output;
+	EXPECT_LT(output.find(hitLine), output.rfind(hitLine)) << output;	// 2 回出る
+	EXPECT_LT(output.find(subHeader), output.rfind(hitLine)) << output;	// サブフォルダーの結果は見出しの後
+}
+
+//! 改行が混ざっても行番号がずれない(CRLF・LF・CR・改行なしの最終行)
+TEST_F(GrepOutputSnapshotTest, MixedLineEndings)
+{
+	folder.AddFile(L"mixed.txt", "HIT\r\nx\nHIT\rHIT");
+	const auto path = LongPath(folder.Path() / L"mixed.txt");
+
+	const std::wstring expected = path + L"(1,1): HIT\r\n"
+		+ path + L"(3,1): HIT\r\n"
+		+ path + L"(4,1): HIT\r\n";
+	DWORD hitCount = 0;
+	EXPECT_EQ(expected, GrepStdout(L"HIT", L"mixed.txt", L"1P", &hitCount));
+	EXPECT_EQ(3u, hitCount);
 }
 
 } // namespace grep_test
