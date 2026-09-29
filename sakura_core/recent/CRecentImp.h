@@ -2,13 +2,15 @@
 // 各CRecent実装クラスのベースクラス
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
 #define SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
 #pragma once
+
+#include <type_traits>
 
 #include "recent/CRecent.h"
 
@@ -50,6 +52,7 @@ public:
 	int GetArrayCount() const override { return m_nArrayCount; }	//最大要素数
 	int GetItemCount() const override { return ( IsAvailable() ? *m_pnUserItemCount : 0); }	//登録アイテム数
 	int GetViewCount() const override { return ( IsAvailable() ? (m_pnUserViewCount ? *m_pnUserViewCount : m_nArrayCount) : 0); }	//表示数
+	size_t GetTextMaxLength() const override { return m_nTextMaxLength; }
 
 	//お気に入り制御系
 	bool SetFavorite( int nIndex, bool bFavorite = true) override;	//お気に入りに設定
@@ -77,10 +80,49 @@ public:
 
 	//オーバーライド用インターフェース
 	virtual int  CompareItem( const DataType* p1, ReceiveType p2 ) const = 0;
-	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
+
+	void CopyItem(
+		DataType* dst,
+		ReceiveType src
+	) const
+	{
+		if constexpr (std::is_same_v<ReceiveType, LPCWSTR>) {
+			wcscpy_s(*dst, src);
+		}
+		else {
+			*dst = *src;
+		}
+	}
+
 	virtual bool DataToReceiveType( ReceiveType* dst, const DataType* src ) const = 0;
-	virtual bool TextToDataType( DataType* dst, LPCWSTR pszText ) const = 0;
-	virtual bool ValidateReceiveType( ReceiveType p ) const = 0;
+
+	virtual bool TextToDataType(
+		 DataType* dst [[maybe_unused]],
+		 LPCWSTR pszText [[maybe_unused]]
+	) const
+	{
+		if constexpr (std::is_same_v<ReceiveType, LPCWSTR>) {
+			if (!ValidateReceiveType(pszText)) {
+				return false;
+			}
+			CopyItem(dst, pszText);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool ValidateReceiveType( ReceiveType p ) const
+	{
+		if constexpr( std::is_same_v<ReceiveType, LPCWSTR> ){
+			return ::wcsnlen(p, GetTextMaxLength()) < GetTextMaxLength();
+		}
+		else {
+			// CRecentEditNodeの実装（おそらくバグ。）
+			return true;
+		}
+	}
 
 	//実装補助
 private:
