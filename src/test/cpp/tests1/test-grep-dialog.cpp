@@ -300,7 +300,18 @@ TEST_F(GrepDialogTest, History)
 	ASSERT_LT(0, int(keywords.m_aGrepFiles.size()));
 	EXPECT_STREQ(L"*.hist.txt", keywords.m_aGrepFiles[0]);
 	ASSERT_LT(0, int(keywords.m_aGrepFolders.size()));
-	EXPECT_STREQ(folder.Path().c_str(), keywords.m_aGrepFolders[0]);
+
+	// %TEMP% が 8.3 形式の短い名前(CI の C:\Users\RUNNER~1\...)だと、表記が履歴と違うことがあるので、
+	// 両方を長い名前に直して比べる
+	const auto longPath = [](LPCWSTR path) {
+		std::wstring buf(MAX_PATH, L'\0');
+		buf.resize(::GetLongPathNameW(path, buf.data(), DWORD(buf.size())));
+		return buf;
+	};
+	const std::wstring expected = longPath(folder.Path().c_str());
+	const std::wstring actual = longPath(keywords.m_aGrepFolders[0]);
+	ASSERT_FALSE(expected.empty());
+	EXPECT_EQ(expected, actual);
 }
 
 // ---------------------------------------------------------------------------
