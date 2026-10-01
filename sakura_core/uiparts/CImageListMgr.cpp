@@ -336,14 +336,22 @@ int CImageListMgr::Add( const WCHAR* szPath )
 	}
 
 	// 作業DCの内容を出力DCに転送
-	HDC hdcDst = ::CreateCompatibleDC( nullptr );
-	HGDIOBJ hbmDstOld = ::SelectObject( hdcDst, m_hIconBitmap );
-	::TransparentBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(),
-		hdcSrc, 0, 0, nWidth, nHeight, cTransParent );
+	// アイコン用ビットマップはm_hDCに選択済みなので、他のDCには選択できない。m_hDCへ直接描く
+	const int sx = (imageNo % MAX_X) * cx();
+	const int sy = (imageNo / MAX_X) * cy();
+	::StretchBlt( m_hDC, sx, sy, cx(), cy(), hdcSrc, 0, 0, nWidth, nHeight, SRCCOPY );
+	::GdiFlush();
+
+	// 既定アイコン(ResizeToolIcons)と同じく、透過色はアルファ0、それ以外は不透明にする
+	const uint32_t clrTrans = (GetRValue( cTransParent ) << 16) | (GetGValue( cTransParent ) << 8) | GetBValue( cTransParent );
+	for( int y = sy; y < sy + cy(); ++y ){
+		for( int x = sx; x < sx + cx(); ++x ){
+			uint32_t& pixel = m_pBits[m_bmpWidth * y + x];
+			pixel = (pixel & 0x00FFFFFF) == clrTrans ? 0 : (pixel | 0xFF000000);
+		}
+	}
 
 	// 後始末
-	::SelectObject( hdcDst, hbmDstOld );
-	::DeleteDC( hdcDst );
 	::SelectObject( hdcSrc, bmpSrcOld );
 	::DeleteDC( hdcSrc );
 
@@ -520,12 +528,25 @@ void CImageListMgr::Extend(bool bExtend)
 	if( curY < MAX_Y )
 		curY = MAX_Y;
 
-	::SelectObject( m_hDC, m_hIconBitmap );
+	const int newHeight = (curY + (bExtend ? 1 : 0)) * cy();
 
 	//1行拡張したビットマップを作成
+	// DrawToolIconがm_pBitsを直接読むので、Create()と同じ32bppトップダウンDIBにする。
+	// (メモリDCに対するCreateCompatibleBitmapはモノクロになる)
+	BITMAPINFO bmi = {};
+	bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
+	bmi.bmiHeader.biWidth = MAX_X * cx();
+	bmi.bmiHeader.biHeight = -newHeight;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	uint32_t* pDestBits = nullptr;
+	HBITMAP hDestBmp = ::CreateDIBSection( nullptr, &bmi, DIB_RGB_COLORS, (void**)&pDestBits, nullptr, 0 );
+	if( hDestBmp == nullptr ){
+		return;
+	}
 	HDC hDestDC = ::CreateCompatibleDC( nullptr );
-	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hDestDC, MAX_X * cx(), (curY + (bExtend ? 1 : 0)) * cy() );
-	::SelectObject( hDestDC, hDestBmp );
+	HGDIOBJ hDestBmpOld = ::SelectObject( hDestDC, hDestBmp );
 
 	::BitBlt( hDestDC, 0, 0, MAX_X * cx(), curY * cy(), m_hDC, 0, 0, SRCCOPY );
 
@@ -534,12 +555,17 @@ void CImageListMgr::Extend(bool bExtend)
 		FillSolidRect( hDestDC, 0, curY * cy(), MAX_X * cx(), cy(), m_cTrans );
 	}
 
-	::DeleteObject( m_hIconBitmap );
-	::DeleteDC( m_hDC );
+	::SelectObject( hDestDC, hDestBmpOld );
+	::DeleteDC( hDestDC );
 
 	//ビットマップの差し替え
+	// m_hDCに選択中のビットマップは削除できないので、先に新しいビットマップを選択する。
+	// 画素バッファとサイズも新しいビットマップに合わせる(#2627)
+	::SelectObject( m_hDC, hDestBmp );
+	::DeleteObject( m_hIconBitmap );
 	m_hIconBitmap = hDestBmp;
-	m_hDC = hDestDC;
+	m_pBits = pDestBits;
+	m_bmpHeight = newHeight;
 }
 
 void CImageListMgr::ResetExtend()
