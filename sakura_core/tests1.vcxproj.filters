@@ -107,6 +107,11 @@
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-grep-cmdline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-grep-dialog.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-grepenum.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
