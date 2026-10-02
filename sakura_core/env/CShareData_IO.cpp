@@ -1417,6 +1417,96 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 }
 
 /*!
+ * @brief タイプ別設定(Ints)の入出力
+ *
+ * 複数の数値設定項目をcsvでまとめて入出力する
+ *
+ * ユーザビりティが高いとは言えないが
+ * いまさら変更しづらいので
+ * INIファイルはこのまま行くしかない。
+ *
+ * @date 2005.04.07 D.S.Koba
+ */
+void ShareData_IO_TypeInts(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	STypeConfig&			type			//!< [in,out] エントリ値
+)
+{
+	// 取得・設定は文字列を介して行う
+	std::wstring buffer;
+
+	// 書き込みモード
+	if (cProfile.IsWritingMode()) {
+		buffer = strprintf(
+			L"%d,%d,%d,%d,%d,%d,%d,%hhd,%d,%hhd,%d,%d",
+			type.m_nIdx,
+			type.m_nMaxLineKetas,
+			type.m_nColumnSpace,
+			type.m_nTabSpace,
+			type.m_nKeyWordSetIdx[0],
+			type.m_nKeyWordSetIdx[1],
+			type.m_nStringType,
+			type.m_bLineNumIsCRLF ? 1 : 0,
+			type.m_nLineTermType,
+			type.m_bWordWrap ? 1 : 0,
+			type.m_nCurrentPrintSetting,
+			type.m_nTsvMode
+		);
+	}
+
+	// 文字列を介して読み書きする
+	if (const auto ret = cProfile.IOProfileData(sectionName, L"nInts", buffer);
+		!ret)
+	{
+		return;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	// 読み込みモード
+	if (cProfile.IsReadingMode()) {
+		std::array<int32_t, 12> ints{};
+		if (12 != ::swscanf_s(
+			buffer.c_str(),
+			L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+			&ints[0x0],
+			&ints[0x1],
+			&ints[0x2],
+			&ints[0x3],
+			&ints[0x4],
+			&ints[0x5],
+			&ints[0x6],
+			&ints[0x7],
+			&ints[0x8],
+			&ints[0x9],
+			&ints[0xA],
+			&ints[0xB]
+		))
+		{
+			return;	// 12個揃わなければ失敗とする
+		}
+
+		type.m_nIdx					= ints[0x0];
+		type.m_nMaxLineKetas		= ints[0x1];
+		type.m_nColumnSpace			= ints[0x2];
+		type.m_nTabSpace			= ints[0x3];
+		type.m_nKeyWordSetIdx[0]	= ints[0x4];
+		type.m_nKeyWordSetIdx[1]	= ints[0x5];
+		type.m_nStringType			= ints[0x6];
+		type.m_bLineNumIsCRLF		= ints[0x7] != 0;
+		type.m_nLineTermType		= ints[0x8];
+		type.m_bWordWrap			= ints[0x9] != 0;
+		type.m_nCurrentPrintSetting	= ints[0xA];
+		type.m_nTsvMode				= ints[0xB];
+
+		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。
+		SetValueLimit(type.m_nMaxLineKetas, MINLINEKETAS, MAXLINEKETAS);
+
+		// タブ幅は「折り返し幅 - 2」より大きくしてはならない
+		SetValueLimit(type.m_nTabSpace, 2, type.m_nMaxLineKetas - 2);
+	}
+}
+
+/*!
  * @brief ブロックコメントデータの入出力
  *
  * @date 2004/10/02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
@@ -1510,51 +1600,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	WCHAR	szKeyData[MAX_REGEX_KEYWORDLEN + 20];
 	static_assert( 100 < MAX_REGEX_KEYWORDLEN + 20 );
 
-	// 2005.04.07 D.S.Koba
-	static const WCHAR* pszForm = L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";	//MIK
-	wcscpy( szKeyName, L"nInts" );
-	if( cProfile.IsReadingMode() ){
-		if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
-			int buf[12];
-			scan_ints( szKeyData, pszForm, buf );
-			types.m_nIdx					= buf[ 0];
-			types.m_nMaxLineKetas			= buf[ 1];
-			types.m_nColumnSpace			= buf[ 2];
-			types.m_nTabSpace				= buf[ 3];
-			types.m_nKeyWordSetIdx[0]		= buf[ 4];
-			types.m_nKeyWordSetIdx[1]		= buf[ 5];
-			types.m_nStringType				= buf[ 6];
-			types.m_bLineNumIsCRLF			= (buf[ 7]!=0);
-			types.m_nLineTermType			= buf[ 8];
-			types.m_bWordWrap				= (buf[ 9]!=0);
-			types.m_nCurrentPrintSetting	= buf[10];
-			types.m_nTsvMode				= buf[11];
-		}
-		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
-		if( types.m_nMaxLineKetas < CKetaXInt(MINLINEKETAS) ){
-			types.m_nMaxLineKetas = CKetaXInt(MINLINEKETAS);
-		}
-		if( types.m_nMaxLineKetas - 2 < types.m_nTabSpace ){
-			types.m_nTabSpace = types.m_nMaxLineKetas - 2;
-		}
-	}
-	else{
-		auto_sprintf( szKeyData, pszForm,
-			types.m_nIdx,
-			types.m_nMaxLineKetas,
-			types.m_nColumnSpace,
-			types.m_nTabSpace,
-			types.m_nKeyWordSetIdx[0],
-			types.m_nKeyWordSetIdx[1],
-			types.m_nStringType,
-			types.m_bLineNumIsCRLF?1:0,
-			types.m_nLineTermType,
-			types.m_bWordWrap?1:0,
-			types.m_nCurrentPrintSetting,
-			types.m_nTsvMode
-		);
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-	}
+	ShareData_IO_TypeInts(cProfile, pszSecName, types);
+
 	// 2005.01.13 MIK Keywordset 3-10
 	cProfile.IOProfileData( pszSecName, L"nKeywordSelect3",  types.m_nKeyWordSetIdx[2] );
 	cProfile.IOProfileData( pszSecName, L"nKeywordSelect4",  types.m_nKeyWordSetIdx[3] );

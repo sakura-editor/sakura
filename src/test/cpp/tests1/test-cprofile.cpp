@@ -541,3 +541,83 @@ TEST(ShareData_IO, ShareData_IO_OutlineDockRect)
 	EXPECT_THAT(value.m_cxOutlineDockRight, 2);
 	EXPECT_THAT(value.m_cyOutlineDockBottom, 1);
 }
+
+/*!
+ * @brief ShareData_IO_TypeIntsのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_TypeInts)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	const auto pType = std::make_unique<STypeConfig>();
+	auto& type = *pType;
+
+	// テスト用に初期値を入れる
+	type.m_nIdx					= 0;
+	type.m_nMaxLineKetas		= 0;
+	type.m_nColumnSpace			= 0;
+	type.m_nTabSpace			= 0;
+	type.m_nKeyWordSetIdx[0]	= 0;
+	type.m_nKeyWordSetIdx[1]	= 0;
+	type.m_nStringType			= 0;
+	type.m_bLineNumIsCRLF		= false;
+	type.m_nLineTermType		= 0;
+	type.m_bWordWrap			= false;
+	type.m_nCurrentPrintSetting	= 0;
+	type.m_nTsvMode				= 0;
+
+	// 設定項目がないと読めない
+	ShareData_IO_TypeInts(cProfile, L"Test", type);
+
+	EXPECT_THAT(type.m_nIdx,					0);
+	EXPECT_THAT(type.m_nMaxLineKetas,			0);
+	EXPECT_THAT(type.m_nColumnSpace,			0);
+	EXPECT_THAT(type.m_nTabSpace,				0);
+	EXPECT_THAT(type.m_nKeyWordSetIdx[0],		0);
+	EXPECT_THAT(type.m_nKeyWordSetIdx[1],		0);
+	EXPECT_THAT(type.m_nStringType,				0);
+	EXPECT_THAT(type.m_bLineNumIsCRLF,			IsFalse());
+	EXPECT_THAT(type.m_nLineTermType,			0);
+	EXPECT_THAT(type.m_bWordWrap,				IsFalse());
+	EXPECT_THAT(type.m_nCurrentPrintSetting,	0);
+	EXPECT_THAT(type.m_nTsvMode,				0);
+
+	// 値を設定(11個指定で失敗させる)
+	cProfile.SetProfileData(L"Test", L"nInts", L"1,2,3,4,5,6,7,1,9,1,11");
+
+	// 項目足りないので、読めない
+	ShareData_IO_TypeInts(cProfile, L"Test", type);
+
+	EXPECT_THAT(type.m_nIdx,					0);
+	EXPECT_THAT(type.m_nMaxLineKetas,			0);
+	EXPECT_THAT(type.m_nColumnSpace,			0);
+	EXPECT_THAT(type.m_nTabSpace,				0);
+	EXPECT_THAT(type.m_nKeyWordSetIdx[0],		0);
+	EXPECT_THAT(type.m_nKeyWordSetIdx[1],		0);
+	EXPECT_THAT(type.m_nStringType,				0);
+	EXPECT_THAT(type.m_bLineNumIsCRLF,			IsFalse());
+	EXPECT_THAT(type.m_nLineTermType,			0);
+	EXPECT_THAT(type.m_bWordWrap,				IsFalse());
+	EXPECT_THAT(type.m_nCurrentPrintSetting,	0);
+	EXPECT_THAT(type.m_nTsvMode,				0);
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"nInts", L"1,2,3,4,5,6,7,1,9,1,11,12");
+
+	// 値が揃ったので読める
+	ShareData_IO_TypeInts(cProfile, L"Test", type);
+
+	EXPECT_THAT(type.m_nIdx,					1);
+	EXPECT_THAT(type.m_nMaxLineKetas,			10);
+	EXPECT_THAT(type.m_nColumnSpace,			3);
+	EXPECT_THAT(type.m_nTabSpace,				4);
+	EXPECT_THAT(type.m_nKeyWordSetIdx[0],		5);
+	EXPECT_THAT(type.m_nKeyWordSetIdx[1],		6);
+	EXPECT_THAT(type.m_nStringType,				7);
+	EXPECT_THAT(type.m_bLineNumIsCRLF,			IsTrue());
+	EXPECT_THAT(type.m_nLineTermType,			9);
+	EXPECT_THAT(type.m_bWordWrap,				IsTrue());
+	EXPECT_THAT(type.m_nCurrentPrintSetting,	11);
+	EXPECT_THAT(type.m_nTsvMode,				12);
+}
