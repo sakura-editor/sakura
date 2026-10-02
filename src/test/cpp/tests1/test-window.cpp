@@ -42,6 +42,7 @@
 #include "plugin/CJackManager.h"
 #include "plugin/CPluginManager.h"
 #include "prop/CPropCommon.h"
+#include "recent/CMRUFolder.h"
 #include "typeprop/CPropTypes.h"
 #include "util/shell.h"
 
@@ -2117,6 +2118,45 @@ TEST_F(EditWndTest, GetDocDataObject001)
 	memory = medium.hGlobal;
 
 	EXPECT_THAT(memory.wstring(), StrEq(targetPath.native()));
+}
+
+/*!
+ * CEditDoc::SetCurDirNotitleのテスト
+ */
+TEST_F(EditWndTest, SetCurDirNotitle001)
+{
+	// テスト用フォルダーパスを用意する
+	const auto pathNotFound = GetIniFileName().replace_filename(L"存在しない");
+	const auto pathTestDir = GetIniFileName().replace_filename(L"test-dir");
+
+	// 片方だけ作成する
+	std::filesystem::create_directories(pathTestDir);
+
+	// 最近使ったフォルダーに値を詰める
+	CMRUFolder mruFolder;
+	mruFolder.Add(pathNotFound.c_str());
+	mruFolder.Add(pathTestDir.c_str());
+
+	{
+		//カレントディレクトリを保存。このブロックから抜けるときに自動でカレントディレクトリは復元される。
+		CCurrentDirectoryBackupPoint cCurDirBackup;
+
+		// 最近使ったフォルダーを使う設定に変える
+		GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_MRU;
+
+		// テスト対象メソッドを呼ぶ
+		GetDocument()->SetCurDirNotitle();
+	}
+
+	// 最近使ったフォルダーをクリアする
+	mruFolder.ClearAll();
+
+	// 作ったフォルダーを削除する
+	std::error_code ec;
+	std::filesystem::remove_all(pathTestDir, ec);
+
+	// 設定を元に戻す
+	GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
 }
 
 TEST_F(EditWndTest, HelpContents101)
