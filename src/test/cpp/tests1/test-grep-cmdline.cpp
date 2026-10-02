@@ -590,8 +590,8 @@ TEST_F(GrepCommandLineTest, LineEndings)
 //! サロゲートペアの文字を検索できる
 TEST_F(GrepCommandLineTest, SurrogatePair)
 {
-	folder.AddFile(L"s.txt", Encode(L"𠮷野家 𠮷\r\n", CP_UTF8));
-	EXPECT_EQ(2u, Grep(L"𠮷", L"*.txt", L"X", std::format(L"-GCODE={}", int(CODE_UTF8))));
+	folder.AddFile(L"s.txt", Encode(L"𠮷野家 \U00020BB7\r\n", CP_UTF8));	// 𠮷
+	EXPECT_EQ(2u, Grep(L"\U00020BB7", L"*.txt", L"X", std::format(L"-GCODE={}", int(CODE_UTF8))));	// 𠮷
 }
 
 /*!
