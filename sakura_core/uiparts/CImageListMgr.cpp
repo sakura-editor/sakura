@@ -535,7 +535,7 @@ void CImageListMgr::Extend(bool bExtend)
 	// (メモリDCに対するCreateCompatibleBitmapはモノクロになる)
 	BITMAPINFO bmi = {};
 	bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
-	bmi.bmiHeader.biWidth = MAX_X * cx();
+	bmi.bmiHeader.biWidth = m_bmpWidth;	// 既定のビットマップはMAX_X * cx()より広いことがある
 	bmi.bmiHeader.biHeight = -newHeight;
 	bmi.bmiHeader.biPlanes = 1;
 	bmi.bmiHeader.biBitCount = 32;
@@ -548,7 +548,7 @@ void CImageListMgr::Extend(bool bExtend)
 	HDC hDestDC = ::CreateCompatibleDC( nullptr );
 	HGDIOBJ hDestBmpOld = ::SelectObject( hDestDC, hDestBmp );
 
-	::BitBlt( hDestDC, 0, 0, MAX_X * cx(), curY * cy(), m_hDC, 0, 0, SRCCOPY );
+	::BitBlt( hDestDC, 0, 0, m_bmpWidth, curY * cy(), m_hDC, 0, 0, SRCCOPY );
 
 	//拡張した部分は透過色で塗る
 	if( bExtend ){
