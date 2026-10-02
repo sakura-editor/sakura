@@ -582,7 +582,7 @@ bool CImpExpColors::Import( const std::wstring& sFileName, std::wstring& sErrMsg
 	}
 
 	/* 色設定 I/O */
-	CShareData_IO::IO_ColorSet( &cProfile, szSecColor, m_ColorInfoArr );
+	ShareData_IO_ColorSet(cProfile, szSecColor, std::span{ m_ColorInfoArr, size_t(COLORIDX_LAST) });
 
 	return true;
 }
@@ -593,7 +593,7 @@ bool CImpExpColors::Export( const std::wstring& sFileName, std::wstring& sErrMsg
 	/* 色設定 I/O */
 	CDataProfile	cProfile;
 	cProfile.SetWritingMode();
-	CShareData_IO::IO_ColorSet( &cProfile, szSecColor, m_ColorInfoArr );
+	ShareData_IO_ColorSet(cProfile, szSecColor, std::span{ m_ColorInfoArr, size_t(COLORIDX_LAST) });
 	if (!cProfile.WriteProfile( sFileName.c_str(), WSTR_COLORDATA_HEAD3 )) { //Jan. 15, 2001 Stonee
 		sErrMsg = LS(STR_IMPEXP_ERR_EXPORT);
 		sErrMsg += sFileName;

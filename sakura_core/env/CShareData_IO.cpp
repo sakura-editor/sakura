@@ -1859,7 +1859,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, L"nIndentLayout"			, types.m_nIndentLayout );
 
 	/* 色設定 I/O */
-	IO_ColorSet( &cProfile, pszSecName, types.m_ColorInfoArr  );
+	ShareData_IO_ColorSet(cProfile, pszSecName, types.m_ColorInfoArr);
 
 	// 2010.09.17 背景画像
 	cProfile.IOProfileData( pszSecName, L"bgImgPath", types.m_szBackImgPath );
@@ -2472,24 +2472,22 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	@brief 色設定 I/O
 
 	指定された色設定を指定されたセクションに書き込む。または
-	指定されたセクションからいろ設定を読み込む。
+	指定されたセクションから色設定を読み込む。
 
-	@param[in,out]	pcProfile		書き出し、読み込み先Profile object (入出力方向はbReadに依存)
-	@param[in]		pszSecName		セクション名
-	@param[in,out]	pColorInfoArr	書き出し、読み込み対象の色設定へのポインタ (入出力方向はbReadに依存)
+	@param[in]		cProfile		書き出し、読み込み先Profile object (入出力方向はbReadに依存)
+	@param[in]		sectionName		セクション名
+	@param[in,out]	colorInfoArr	書き出し、読み込み対象の色設定へのポインタ (入出力方向はbReadに依存)
 */
-void CShareData_IO::IO_ColorSet(
-	CDataProfile* pcProfile,
-	const WCHAR* pszSecName,
-	ColorInfo* pColorInfoArr
+void ShareData_IO_ColorSet(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::span<ColorInfo>	colorInfoArr	//!< [in,out] エントリ値
 )
 {
-	auto& cProfile = *pcProfile;
+	for (int i = 0; i < static_cast<int>(COLORIDX_LAST); ++i) {
+		auto& colorInfo = colorInfoArr[i];
 
-	for (int j = 0; j < COLORIDX_LAST; ++j) {
-		auto& colorInfo = pColorInfoArr[j];
-
-		if (const auto ret = cProfile.IOProfileData(pszSecName, strprintf(L"C[%s]", g_ColorAttributeArr[j].szName), colorInfo);
+		if (const auto ret = cProfile.IOProfileData(sectionName, strprintf(L"C[%s]", GetColorNameByIndex(i)), colorInfo);
 			!ret)
 		{
 			continue;
@@ -2498,7 +2496,7 @@ void CShareData_IO::IO_ColorSet(
 		if (cProfile.IsReadingMode()) {
 			// 2006.12.18 ryoji
 			// 矛盾設定があれば修復する
-			const DWORD fAttribute = g_ColorAttributeArr[j].fAttribute;
+			const DWORD fAttribute = g_ColorAttributeArr[i].fAttribute;
 			if (fAttribute & COLOR_ATTRIB_FORCE_DISP)
 			{
 				colorInfo.m_bDisp = true;
@@ -2520,7 +2518,7 @@ void CShareData_IO::IO_ColorSet(
 		// 2006.12.07 ryoji
 		// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
 		// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
-		pColorInfoArr[COLORIDX_CARET].m_sColorAttr.m_cTEXT = pColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
+		colorInfoArr[COLORIDX_CARET].m_sColorAttr.m_cTEXT = colorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	}
 }
 

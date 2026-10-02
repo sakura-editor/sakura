@@ -72,13 +72,18 @@ public:
 	}
 	static void IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData,
 		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);
-	static void IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, ColorInfo* pColorInfoArr );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 };
 
 void ShareData_IO_BlockComments(
 	CDataProfile&			cProfile,
 	std::wstring_view		sectionName,	//!< [in] セクション名
 	BlockComments			tEntryValues	//!< [in,out] エントリ値
+);
+
+void ShareData_IO_ColorSet(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::span<ColorInfo>	tEntryValues	//!< [in,out] エントリ値
 );
 
 void ShareData_IO_FileTree(
