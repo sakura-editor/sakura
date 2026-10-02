@@ -17,6 +17,7 @@
 #pragma once
 
 #include <algorithm>
+#include <functional>
 #include <list>
 #include <string>
 #include <string_view>
@@ -42,6 +43,10 @@ public:
 //	VGrepEnumKeys m_vecSearchAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
+	VGrepEnumKeys m_vecExceptFileRegexKeys;	//!< 除外ファイル(正規表現)。SetFileKeys() の bExceptFileRegex が true のときに使う
+
+	//! 除外ファイル名の照合関数(正規表現)。未設定なら照合しない
+	std::function<bool(std::wstring_view)> m_fnIsExceptFileName;
 
 public:
 	CGrepEnumKeys() noexcept = default;
@@ -58,6 +63,8 @@ public:
 		excludeFiles.insert( excludeFiles.cend(), fileKeys.cbegin(), fileKeys.cend() );
 		const auto& absFileKeys = m_vecExceptAbsFileKeys;
 		excludeFiles.insert( excludeFiles.cend(), absFileKeys.cbegin(), absFileKeys.cend() );
+		const auto& regexFileKeys = m_vecExceptFileRegexKeys;
+		excludeFiles.insert( excludeFiles.cend(), regexFileKeys.cbegin(), regexFileKeys.cend() );
 		return excludeFiles;
 	}
 
@@ -71,56 +78,21 @@ public:
 		return excludeFolders;
 	}
 
-	int SetFileKeys( LPCWSTR lpKeys ){
+	/*!
+		@brief ファイルパターンを解析して、種類ごとの配列に振り分ける
+		@param[in]	lpKeys				ファイルパターン
+		@param[in]	bExceptFileRegex	true なら除外ファイル(!)を正規表現として m_vecExceptFileRegexKeys に入れる
+		@retval 0 正常
+		@retval 0以外 エラー(ValidateKey() の戻り値、または絶対パスの検索対象で 2)
+	*/
+	int SetFileKeys( LPCWSTR lpKeys, bool bExceptFileRegex = false ){
 		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダー探索用
 		ClearItems();
 		
 		std::vector< std::wstring > patterns = SplitPattern(lpKeys);
-		for (size_t i = 0; i < patterns.size(); i++) {
-			const std::wstring& element = patterns[i];
-			const WCHAR* token = element.c_str();
-
-			//フィルタを種類ごとに振り分ける
-			enum KeyFilterType{
-				FILTER_SEARCH,
-				FILTER_EXCEPT_FILE,
-				FILTER_EXCEPT_FOLDER,
-			};
-			KeyFilterType keyType = FILTER_SEARCH;
-			if( token[0] == L'!' ){
-				token++;
-				keyType = FILTER_EXCEPT_FILE;
-			}else if( token[0] == L'#' ){
-				token++;
-				keyType = FILTER_EXCEPT_FOLDER;
-			}
-
-			bool bRelPath = _IS_REL_PATH( token );
-			int nValidStatus = ValidateKey( token );
-			if( 0 != nValidStatus ){
-
-				return nValidStatus;
-			}
-			if( keyType == FILTER_SEARCH ){
-				if( bRelPath ){
-					push_back_unique( m_vecSearchFileKeys, token );
-				}else{
-//					push_back_unique( m_vecSearchAbsFileKeys, token );
-//					push_back_unique( m_vecSearchFileKeys, token );
-					return 2; // 絶対パス指定は不可
-				}
-			}else if( keyType == FILTER_EXCEPT_FILE ){
-				if( bRelPath ){
-					push_back_unique( m_vecExceptFileKeys, token );
-				}else{
-					push_back_unique( m_vecExceptAbsFileKeys, token );
-				}
-			}else if( keyType == FILTER_EXCEPT_FOLDER ){
-				if( bRelPath ){
-					push_back_unique( m_vecExceptFolderKeys, token );
-				}else{
-					push_back_unique( m_vecExceptAbsFolderKeys, token );
-				}
+		for (const auto& element : patterns) {
+			if( const int nStatus = AddFileKey( element.c_str(), bExceptFileRegex ); 0 != nStatus ){
+				return nStatus;
 			}
 		}
 		if( m_vecSearchFileKeys.size() == 0 ){
@@ -146,6 +118,15 @@ public:
 	*/
 	int AddExceptFolder(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
+	}
+
+	/*!
+		@brief ファイル名が除外ファイル(正規表現)に一致するか調べる
+		@param[in]	fileName	フォルダーを含まないファイル名
+		@retval false 一致しない、または照合関数が未設定
+	*/
+	bool IsExceptFileName( std::wstring_view fileName ) const {
+		return m_fnIsExceptFileName && m_fnIsExceptFileName( fileName );
 	}
 
 	/*!
@@ -217,6 +198,8 @@ private:
 		m_vecSearchFolderKeys.clear();
 		m_vecExceptAbsFileKeys.clear();
 		m_vecExceptAbsFolderKeys.clear();
+		m_vecExceptFileRegexKeys.clear();
+		m_fnIsExceptFileName = nullptr;
 		return;
 	}
 
@@ -243,6 +226,56 @@ private:
 			}else if( wildcard && (key[i] == L'\\' || key[i] == L'/') ){
 				return 1;
 			}
+		}
+		return 0;
+	}
+
+	/*!
+		@brief ファイルパターン 1 つを解析して、種類ごとの配列に振り分ける
+		@param[in]	pattern				引用符を取り除いた 1 要素(先頭の ! と # は種類の指定)
+		@param[in]	bExceptFileRegex	true なら除外ファイル(!)を正規表現として m_vecExceptFileRegexKeys に入れる
+		@retval 0 正常
+		@retval 0以外 エラー(ValidateKey() の戻り値、または絶対パスの検索対象で 2)
+	*/
+	int AddFileKey( const WCHAR* pattern, bool bExceptFileRegex ){
+		//フィルタを種類ごとに振り分ける
+		enum KeyFilterType{
+			FILTER_SEARCH,
+			FILTER_EXCEPT_FILE,
+			FILTER_EXCEPT_FOLDER,
+		};
+		const WCHAR* token = pattern;
+		KeyFilterType keyType = FILTER_SEARCH;
+		if( token[0] == L'!' ){
+			token++;
+			keyType = FILTER_EXCEPT_FILE;
+		}else if( token[0] == L'#' ){
+			token++;
+			keyType = FILTER_EXCEPT_FOLDER;
+		}
+
+		// 除外ファイルを正規表現として扱うときは、パスとしての検査(ValidateKey・絶対パス)をしない
+		if( bExceptFileRegex && keyType == FILTER_EXCEPT_FILE ){
+			if( token[0] != L'\0' ){
+				push_back_unique( m_vecExceptFileRegexKeys, token );
+			}
+			return 0;
+		}
+
+		const bool bRelPath = _IS_REL_PATH( token );
+		const int nValidStatus = ValidateKey( token );
+		if( 0 != nValidStatus ){
+			return nValidStatus;
+		}
+		if( keyType == FILTER_SEARCH ){
+			if( !bRelPath ){
+				return 2; // 絶対パス指定は不可
+			}
+			push_back_unique( m_vecSearchFileKeys, token );
+		}else if( keyType == FILTER_EXCEPT_FILE ){
+			push_back_unique( bRelPath ? m_vecExceptFileKeys : m_vecExceptAbsFileKeys, token );
+		}else{
+			push_back_unique( bRelPath ? m_vecExceptFolderKeys : m_vecExceptAbsFolderKeys, token );
 		}
 		return 0;
 	}

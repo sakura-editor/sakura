@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 2008, wakura
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -23,6 +23,9 @@ private:
 public:
 	CGrepEnumFiles m_cGrepEnumExceptFiles;
 
+	//! 除外ファイル(正規表現)の照合に使う。Enumerates() で設定する
+	const CGrepEnumKeys* m_pGrepEnumKeys = nullptr;
+
 public:
 	CGrepEnumFilterFiles(){
 	}
@@ -33,6 +36,10 @@ public:
 	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = nullptr  ) override {
 		if( CGrepEnumFiles::IsValid( w32fd, pFile ) ){
 			if( m_cGrepEnumExceptFiles.IsValid( w32fd, pFile ) ){
+				// 除外ファイル(正規表現)はフォルダーを含まないファイル名で照合する
+				if( m_pGrepEnumKeys && m_pGrepEnumKeys->IsExceptFileName( w32fd.cFileName ) ){
+					return FALSE;
+				}
 				return TRUE;
 			}
 		}
@@ -40,6 +47,7 @@ public:
 	}
 
 	int Enumerates( LPCWSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFiles& pExcept ){
+		m_pGrepEnumKeys = &cGrepEnumKeys;
 		m_cGrepEnumExceptFiles.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFileKeys, option, nullptr );
 		return CGrepEnumFiles::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFileKeys, option, &pExcept );
 	}
