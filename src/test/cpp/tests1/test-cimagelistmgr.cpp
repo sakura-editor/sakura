@@ -5,11 +5,15 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
+#include "env/ShareDataTestSuite.hpp"
 
+#include <filesystem>
+#include <fstream>
 #include <vector>
 
 #include "env/CommonSetting.h"
 #include "uiparts/CImageListMgr.h"
+#include "uiparts/CMenuDrawer.h"
 
 /*!
  * @brief アイコンビットマップを差し替えたCImageListMgr
@@ -149,4 +153,120 @@ TEST(CImageListMgr, DrawToolIconToDcRejectsIconNumberOutOfRange)
 	EXPECT_FALSE(icons.DrawToolIcon(HDC(nullptr), 0, 0, iconCount, true, icons.cx(), icons.cy()));
 	EXPECT_FALSE(icons.DrawToolIcon(HDC(nullptr), 0, 0, iconCount + 1, true, icons.cx(), icons.cy()));
 	EXPECT_FALSE(icons.DrawToolIcon(HDC(nullptr), 0, 0, -1, true, icons.cx(), icons.cy()));
+}
+
+/*!
+ * @brief プラグインのアイコン(Add)のテスト
+ *
+ * 16x16の赤いBMPを用意する。左上の1画素だけ白にして、透過色として扱わせる。
+ * CMenuDrawerが共有メモリを使うのでShareDataTestSuiteを継承する。
+ */
+struct PluginIconTest : public ::testing::Test, public env::ShareDataTestSuite {
+	static constexpr uint32_t RED = 0xFFFF0000;
+
+	static void SetUpTestSuite()
+	{
+		SetUpShareData();
+	}
+
+	static void TearDownTestSuite()
+	{
+		TearDownShareData();
+	}
+
+	void SetUp() override
+	{
+		BITMAPINFOHEADER bih = { sizeof(BITMAPINFOHEADER), 16, 16, 1, 24, BI_RGB };
+		BITMAPFILEHEADER bfh = { 0x4D42 };	// "BM"
+		bfh.bfOffBits = sizeof(bfh) + sizeof(bih);
+		bfh.bfSize = bfh.bfOffBits + 16 * 16 * 3;
+
+		std::ofstream out(bmpPath, std::ios::binary);
+		out.write(reinterpret_cast<const char*>(&bfh), sizeof(bfh));
+		out.write(reinterpret_cast<const char*>(&bih), sizeof(bih));
+		for (int i = 0; i < 16 * 16; ++i) {
+			const bool topLeft = (i == 16 * 15);	// ボトムアップなので最終行の先頭が左上
+			const char bgr[3] = { char(topLeft ? 0xFF : 0), char(topLeft ? 0xFF : 0), char(0xFF) };
+			out.write(bgr, sizeof(bgr));
+		}
+		out.close();
+
+		ASSERT_TRUE(icons.Create(G_AppInstance()));
+	}
+
+	void TearDown() override
+	{
+		std::filesystem::remove(bmpPath);
+	}
+
+	std::vector<uint32_t> Draw(int imageNo) const
+	{
+		std::vector<uint32_t> pixels(size_t(icons.cx()) * icons.cy(), 0);
+		EXPECT_TRUE(icons.DrawToolIcon(std::data(pixels), imageNo, true, icons.cx(), icons.cy()));
+		return pixels;
+	}
+
+	std::filesystem::path bmpPath = std::filesystem::temp_directory_path() / L"sakura-test-icon.bmp";
+	CImageListMgr icons;
+};
+
+/*!
+ * 既定アイコンで埋まった状態でAddすると、ビットマップが1行拡張される。
+ * 追加したアイコンを描画できること。透過色の画素は透明になる。
+ *
+ * #2627 修正前は拡張後もm_pBitsが古いビットマップを指していて、範囲外を読んでいた。
+ */
+TEST_F(PluginIconTest, DrawAddedIcon)
+{
+	const int imageNo = icons.Add(bmpPath.c_str());
+	ASSERT_EQ(imageNo, MAX_TOOLBAR_ICON_COUNT);
+
+	const auto pixels = Draw(imageNo);
+	EXPECT_EQ(pixels[0], 0u);
+	EXPECT_EQ(pixels[std::size(pixels) / 2], RED);
+}
+
+/*!
+ * ResetExtendの後にAddすると、同じ番号で追加し直される。
+ */
+TEST_F(PluginIconTest, AddAfterResetExtend)
+{
+	ASSERT_EQ(icons.Add(bmpPath.c_str()), MAX_TOOLBAR_ICON_COUNT);
+
+	icons.ResetExtend();
+	ASSERT_EQ(icons.Count(), MAX_TOOLBAR_ICON_COUNT);
+
+	const int imageNo = icons.Add(bmpPath.c_str());
+	ASSERT_EQ(imageNo, MAX_TOOLBAR_ICON_COUNT);
+
+	const auto pixels = Draw(imageNo);
+	EXPECT_EQ(pixels[std::size(pixels) / 2], RED);
+}
+
+/*!
+ * CMenuDrawerのCreateより後に追加したアイコンも、メニューに表示できる。
+ *
+ * #2627 修正前はCreate時点のアイコン数で配列を確保していたので、範囲外を参照していた。
+ */
+TEST_F(PluginIconTest, MenuBitmapOfAddedIcon)
+{
+	CMenuDrawer drawer;
+	drawer.Create(G_AppInstance(), nullptr, &icons);
+
+	constexpr int funcCode = F_PLUGCOMMAND_FIRST + 1;
+	drawer.AddToolButton(icons.Add(bmpPath.c_str()), funcCode);
+
+	GetDllShareData().m_Common.m_sWindow.m_bMenuIcon = TRUE;
+	const auto hMenu = ::CreatePopupMenu();
+	drawer.MyAppendMenu(hMenu, MF_STRING, funcCode, L"", L"", FALSE);
+	drawer.MyAppendMenu(hMenu, MF_STRING, funcCode, L"", L"", FALSE);
+
+	MENUITEMINFO first = { sizeof(first), MIIM_BITMAP };
+	MENUITEMINFO second = { sizeof(second), MIIM_BITMAP };
+	::GetMenuItemInfo(hMenu, 0, TRUE, &first);
+	::GetMenuItemInfo(hMenu, 1, TRUE, &second);
+	::DestroyMenu(hMenu);
+
+	EXPECT_NE(first.hbmpItem, nullptr);
+	EXPECT_EQ(second.hbmpItem, first.hbmpItem);	// 2回目は作成済みのものを使う
 }
