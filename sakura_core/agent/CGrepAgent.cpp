@@ -806,11 +806,11 @@ DWORD CGrepAgent::DoGrep(
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 		pCEditWnd->RedrawAllViews( nullptr );
 
-	if( !gi.bGrepCurFolder ){
+	if (!gi.bGrepCurFolder &&
+		!vPaths.empty())
+	{
 		// 現行フォルダーを検索したフォルダーに変更
-		if( 0 < vPaths.size() ){
-			::SetCurrentDirectory( vPaths[0].c_str() );
-		}
+		cxx::SetCurrentDirectoryW(vPaths.front());
 	}
 
 	return nHitCount;
