@@ -1626,6 +1626,24 @@ void ShareData_IO_LineSpace(
 }
 
 /*!
+ * @brief タイプIDの入出力
+ */
+void ShareData_IO_TypeId(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	int&					typeId			//!< [in,out] エントリ値
+)
+{
+	if (const auto ret = cProfile.IOProfileData( sectionName, L"id", typeId );
+		!ret)
+	{
+		return;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	if (typeId < 0) typeId *= -1;
+}
+
+/*!
 @brief 共有データのSTypeConfigセクションの入出力(１個分)
 	@param[in,out]	cProfile	INIファイル入出力クラス
 	@param[in]		type		タイプ別
@@ -1660,10 +1678,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	cProfile.IOProfileData(pszSecName, L"szTypeName", StringBufferW(types.m_szTypeName));
 	cProfile.IOProfileData(pszSecName, L"szTypeExts", StringBufferW(types.m_szTypeExts));
-	cProfile.IOProfileData( pszSecName, L"id", types.m_id );
-	if( types.m_id < 0 ){
-		types.m_id *= -1;
-	}
+
+	ShareData_IO_TypeId(cProfile, pszSecName, types.m_id);
+
 	cProfile.IOProfileData(pszSecName, L"szTabViewString", StringBufferW(types.m_szTabViewString));
 	cProfile.IOProfileData(pszSecName, L"bTabArrow", types.m_bTabArrow );	//@@@ 2003.03.26 MIK
 	cProfile.IOProfileData( pszSecName, L"bInsSpace"			, types.m_bInsSpace );	// 2001.12.03 hor
