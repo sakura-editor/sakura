@@ -1548,6 +1548,56 @@ void ShareData_IO_BlockComments(
 }
 
 /*!
+ * @brief 辞書データ配列の入出力
+ */
+template <typename T>
+void ShareData_IO_KeyHelpArr(
+	CDataProfile&		cProfile,
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	T&					KeyHelpArr,
+	int&				nKeyHelpNum
+)
+{
+	// 読み込みモード
+	if (cProfile.IsReadingMode()) {
+		// 旧バージョンiniファイルの読み出しサポート
+		if (SFilePath szKeyWordHelpFile;
+			cProfile.IOProfileData(sectionName, L"szKeyWordHelpFile", szKeyWordHelpFile))
+		{
+			KeyHelpArr[0].m_szPath = szKeyWordHelpFile;
+
+			nKeyHelpNum = 1;
+
+			return;	// 旧バージョンを読んだら、現行バージョンは読まない
+		}
+	}
+
+	int i = 0;
+	for (; i < std::ssize(KeyHelpArr); ++i) {
+		auto& keyHelp = KeyHelpArr[i];
+
+		// 読み書きを実行する
+		if (const auto ret = cProfile.IOProfileData(sectionName, std::format(L"KDct[{:02d}]", i), keyHelp);
+			!ret ||
+			keyHelp.m_szPath.empty())
+		{
+			break;
+		}
+	}
+
+	nKeyHelpNum = i;	// iniに保存せずに、読み出せたファイル分を辞書数とする
+}
+
+// インスタンス化しておく
+template
+void ShareData_IO_KeyHelpArr<KeyHelpInfo(&)[MAX_KEYHELP_FILE]>(
+	CDataProfile&		cProfile,
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	KeyHelpInfo			(&KeyHelpArr)[MAX_KEYHELP_FILE],
+	int&				nKeyHelpNum
+);
+
+/*!
  * @brief 行コメントデータの入出力
  *
  * @date 2004/10/02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
@@ -1882,25 +1932,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		cProfile.IOProfileData( pszSecName, L"bUseKeyHelpPrefix", types.m_bUseKeyHelpPrefix );		/* 選択範囲で前方一致検索(&P) */
 		cProfile.IOProfileData(pszSecName, L"nKeyHelpRMenuShowType", types.m_eKeyHelpRMenuShowType);
 
-		int i = 0;
-		for (; i < std::ssize(types.m_KeyHelpArr); ++i) {
-			auto& keyHelp = types.m_KeyHelpArr[i];
-			if (const auto ret = cProfile.IOProfileData(pszSecName, std::format(L"KDct[{:02d}]", i), keyHelp);
-				!ret ||
-				keyHelp.m_szPath.empty())
-			{
-				break;
-			}
-		}
-		types.m_nKeyHelpNum = i + 1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
-
-		/* 旧バージョンiniファイルの読み出しサポート */
-		if( cProfile.IsReadingMode() ){
-			SFilePath tmp;
-			if(cProfile.IOProfileData( pszSecName, L"szKeyWordHelpFile", tmp )){
-				types.m_KeyHelpArr[0].m_szPath = tmp;
-			}
-		}
+		ShareData_IO_KeyHelpArr(cProfile, pszSecName, types.m_KeyHelpArr, types.m_nKeyHelpNum);
 	}
 //@@@ 2006.04.10 fon ADD-end
 

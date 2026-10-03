@@ -87,6 +87,14 @@ void ShareData_IO_FileTree(
 	SFileTree&				fileTree
 );
 
+template <typename T>
+void ShareData_IO_KeyHelpArr(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	T&						KeyHelpArr,
+	int&					nKeyHelpNum
+);
+
 void ShareData_IO_LineComments(
 	CDataProfile&			cProfile,
 	std::wstring_view		sectionName,	//!< [in] セクション名

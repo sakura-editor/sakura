@@ -20,6 +20,14 @@ using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
 extern template
+void ShareData_IO_KeyHelpArr<KeyHelpInfo(&)[MAX_KEYHELP_FILE]>(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	KeyHelpInfo				(&KeyHelpArr)[MAX_KEYHELP_FILE],
+	int&					nKeyHelpNum
+);
+
+extern template
 void ShareData_IO_OutlineDockRect<CommonSetting_OutLine>(
 	CDataProfile&			cProfile,
 	std::wstring_view		sectionName,	//!< [in] セクション名
@@ -518,6 +526,37 @@ TEST(CDataProfile, IOProfileData_RECT)
 	EXPECT_THAT(value.top, 3);
 	EXPECT_THAT(value.right, 2);
 	EXPECT_THAT(value.bottom, 1);
+}
+
+/*!
+ * @brief ShareData_IO_KeyHelpArrのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_KeyHelpArr)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	KeyHelpInfo KeyHelpArr[MAX_KEYHELP_FILE]{};
+	int nKeyHelpNum = 0;
+
+	cProfile.SetProfileData(L"Test", L"KDct[00]", L"0,about,path");
+	cProfile.SetProfileData(L"Test", L"KDct[01]", L"1,ABOUT,PATH");
+
+	ShareData_IO_KeyHelpArr(cProfile, L"Test", KeyHelpArr, nKeyHelpNum);
+
+	EXPECT_THAT(KeyHelpArr[0].m_bUse, IsFalse());
+	EXPECT_THAT(KeyHelpArr[0].m_szAbout, StrEq(L"about"));
+	EXPECT_THAT(KeyHelpArr[0].m_szPath, StrEq(L"path"));
+	EXPECT_THAT(KeyHelpArr[1].m_bUse, IsTrue());
+	EXPECT_THAT(KeyHelpArr[1].m_szAbout, StrEq(L"ABOUT"));
+	EXPECT_THAT(KeyHelpArr[1].m_szPath, StrEq(L"PATH"));
+	EXPECT_THAT(nKeyHelpNum, 2);
+
+	// 旧バージョンサポート
+	cProfile.SetProfileData(L"Test", L"szKeyWordHelpFile", L"szKeyWordHelpFile");
+	ShareData_IO_KeyHelpArr(cProfile, L"Test", KeyHelpArr, nKeyHelpNum);
+	EXPECT_THAT(KeyHelpArr[0].m_szPath, StrEq(L"szKeyWordHelpFile"));
+	EXPECT_THAT(nKeyHelpNum, 1);
 }
 
 /*!
