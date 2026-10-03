@@ -430,6 +430,71 @@ TEST(CDataProfile, IOProfileData_RECT)
 }
 
 /*!
+ * @brief ShareData_IO_LogFontのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_LogFont)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	LOGFONT lf{};
+	INT nPointSize = 0;
+
+	// 設定項目がないと読めない
+	ShareData_IO_LogFont(cProfile, L"Test", L"lf", lf, nPointSize);
+
+	EXPECT_THAT(nPointSize, 0);
+	EXPECT_THAT(lf.lfHeight, 0);
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"nPointSize", L"12");
+
+	// 複合項目なので、やっぱり読めない
+	EXPECT_FALSE(ShareData_IO_LogFont(cProfile, L"Test", L"lf", lf, nPointSize));
+
+	EXPECT_THAT(nPointSize, 12);
+	EXPECT_THAT(lf.lfHeight, 0);
+
+	// 不適切な値を設定（足りない）
+	cProfile.SetProfileData(L"Test", L"lf", L"1,2,3,4,5,6,7,8,9,10,11,12");
+
+	// 項目が足りないので読めない
+	EXPECT_FALSE(ShareData_IO_LogFont(cProfile, L"Test", L"lf", lf, nPointSize));
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"lf", L"1,2,3,4,5,6,7,8,9,10,11,12,13");
+
+	// 複合項目なので、やっぱり読めない
+	EXPECT_FALSE(ShareData_IO_LogFont(cProfile, L"Test", L"lf", lf, nPointSize));
+
+	EXPECT_THAT(nPointSize, 12);
+	EXPECT_THAT(lf.lfHeight, 0);
+	EXPECT_THAT(lf.lfFaceName[0], L'\0');
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"lfFaceName", L"font name");
+
+	// 読める
+	EXPECT_TRUE(ShareData_IO_LogFont(cProfile, L"Test", L"lf", lf, nPointSize));
+
+	EXPECT_THAT(nPointSize,				12);
+	EXPECT_THAT(lf.lfHeight,			-2);	// 補正が入るので入力値と異なる
+	EXPECT_THAT(lf.lfWidth,				0x2);
+	EXPECT_THAT(lf.lfEscapement,		0x3);
+	EXPECT_THAT(lf.lfOrientation,		0x4);
+	EXPECT_THAT(lf.lfWeight,			0x5);
+	EXPECT_THAT(lf.lfItalic,			0x6);
+	EXPECT_THAT(lf.lfUnderline,			0x7);
+	EXPECT_THAT(lf.lfStrikeOut,			0x8);
+	EXPECT_THAT(lf.lfCharSet,			0x9);
+	EXPECT_THAT(lf.lfOutPrecision,		0xA);
+	EXPECT_THAT(lf.lfClipPrecision,		0xB);
+	EXPECT_THAT(lf.lfQuality,			0xC);
+	EXPECT_THAT(lf.lfPitchAndFamily,	0xD);
+	EXPECT_THAT(lf.lfFaceName,			StrEq(L"font name"));
+}
+
+/*!
  * @brief ShareData_IO_OutlineDockRectのテスト
  */
 TEST(ShareData_IO, ShareData_IO_OutlineDockRect)
