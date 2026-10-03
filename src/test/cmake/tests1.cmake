@@ -115,6 +115,30 @@ set(TEST_OUTLINE_ZIP "${CMAKE_BINARY_DIR}/outline.zip")
 set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
 set(TEST_OUTLINE_STAGE_DIR "${TESTS1_RESOURCE_STAGE_DIR}/outline")
 
+set(TEST_OUTLINE_FILES
+  "${TEST_OUTLINE_DIR}/Asm.asm.txt"
+  "${TEST_OUTLINE_DIR}/VisualBasic.bas.txt"
+  "${TEST_OUTLINE_DIR}/VisualBasic.cls.txt"
+  "${TEST_OUTLINE_DIR}/Cobol.cbl.txt"
+  "${TEST_OUTLINE_DIR}/Cpp.cpp.txt"
+  "${TEST_OUTLINE_DIR}/DosBatch.bat.txt"
+  "${TEST_OUTLINE_DIR}/Awk.awk.txt"
+  "${TEST_OUTLINE_DIR}/Csv.csv.txt"
+  "${TEST_OUTLINE_DIR}/Html.html.txt"
+  "${TEST_OUTLINE_DIR}/Java.java.txt"
+  "${TEST_OUTLINE_DIR}/Python.py.txt"
+  "${TEST_OUTLINE_DIR}/OraclePLSQL.sql.txt"
+  "${TEST_OUTLINE_DIR}/Tex.tex.txt"
+  "${TEST_OUTLINE_DIR}/Perl.pl.txt"
+  "${TEST_OUTLINE_DIR}/Text.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFile.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFile.rule.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegex.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegex.rule.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.rule.txt"
+)
+
 if(MINGW)
   # Convert RC files to UTF-8 for MinGW
   convert_rc_files_to_utf8(TESTS1_RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
@@ -211,7 +235,7 @@ add_custom_command(
     "${TEST_OUTLINE_STAGE_DIR}"
     > NUL
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
-  BYPRODUCTS "${TEST_OUTLINE_ZIP}"
+  DEPENDS ${TEST_OUTLINE_FILES}
   COMMENT "Generating outline.zip"
 )
 
