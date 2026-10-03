@@ -1716,6 +1716,88 @@ void ShareData_IO_LineSpace(
 }
 
 /*!
+ * @brief 正規表現キーワード設定の入出力
+ *
+ * @date 2001/11/17 MIK
+ */
+void ShareData_IO_RegexKeyword(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	STypeConfig&			type			//!< [in,out] エントリ値
+)
+{
+	cProfile.IOProfileData(sectionName, L"bUseRegexKeyword", type.m_bUseRegexKeyword);
+
+	auto keywordList = std::span<WCHAR>{ type.m_RegexKeywordList };
+
+	// 取得・設定は文字列を介して行う
+	std::wstring buffer{};
+
+	for (size_t i = 0; i < std::size(type.m_RegexKeywordArr) && !keywordList.empty(); ++i)
+	{
+		auto& regexKeyword = type.m_RegexKeywordArr[i];
+
+		buffer.clear();
+
+		// 2002.02.08 hor 未定義値を無視
+		if (cProfile.IsWritingMode() &&
+			keywordList.front())
+		{
+			strprintf(
+				buffer,
+				L"%s,%s",
+				GetColorNameByIndex(regexKeyword.m_nColorIndex),
+				keywordList.data()
+			);
+		}
+
+		if ((cProfile.IsReadingMode() || !buffer.empty()) &&
+			!cProfile.IOProfileData(sectionName, strprintf(L"RxKey[%03d]", i), buffer)) {
+			// 2010.06.18 Moca 値がない場合は終了
+			break;
+		}
+
+		if (cProfile.IsReadingMode())
+		{
+			using SColorName = StaticString<20>;
+			SColorName szColorName{};
+
+			using SRegexKeyword = StaticString<MAX_REGEX_KEYWORDLEN>;
+			SRegexKeyword szRegexKeyword{};
+
+			// 文字列から構築する
+			if (2 != ::swscanf_s(
+				buffer.c_str(),
+				L"%[^,],%[^\n]",
+				szColorName.data(), unsigned(std::size(szColorName)),
+				szRegexKeyword.data(), unsigned(std::size(szRegexKeyword))
+			))
+			{
+				regexKeyword.m_nColorIndex = COLORIDX_REGEX1;
+				keywordList[0] = L'\0';
+				keywordList = keywordList.subspan(1);
+				continue;
+			}
+
+			regexKeyword.m_nColorIndex = GetColorIndexByName(szColorName);
+			if (regexKeyword.m_nColorIndex == 0) {	//名前でない
+				regexKeyword.m_nColorIndex = ::_wtoi(szColorName);
+			}
+			if (regexKeyword.m_nColorIndex < 0 ||
+				COLORIDX_LAST <= regexKeyword.m_nColorIndex)
+			{
+				regexKeyword.m_nColorIndex = COLORIDX_REGEX1;
+			}
+
+			wcscpy_s(keywordList, szRegexKeyword);
+		}
+
+		const auto len = ::wcsnlen(keywordList.data(), keywordList.size());
+		keywordList = keywordList.subspan(len < keywordList.size() ? len + 1 : keywordList.size());
+	}
+}
+
+/*!
  * @brief タイプIDの入出力
  */
 void ShareData_IO_TypeId(
@@ -1781,11 +1863,6 @@ void ShareData_IO_VertLineIdx<CKetaXInt(&)[MAX_VERTLINES]>(
 */
 void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName)
 {
-	int		j;
-	WCHAR	szKeyName[64];
-	WCHAR	szKeyData[MAX_REGEX_KEYWORDLEN + 20];
-	static_assert( 100 < MAX_REGEX_KEYWORDLEN + 20 );
-
 	ShareData_IO_TypeInts(cProfile, pszSecName, types);
 
 	// 2005.01.13 MIK Keywordset 3-10
@@ -1896,61 +1973,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	cProfile.IOProfileData( pszSecName, L"nNoteLineOffset", types.m_nNoteLineOffset );
 
-//@@@ 2001.11.17 add start MIK
-	{	//正規表現キーワード
-		WCHAR	*p;
-		cProfile.IOProfileData( pszSecName, L"bUseRegexKeyword", types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
-		wchar_t* pKeyword = types.m_RegexKeywordList;
-		int nPos = 0;
-		constexpr auto nKeywordSize = int(std::size(types.m_RegexKeywordList));
-		for(j = 0; j < int(std::size(types.m_RegexKeywordArr)); j++)
-		{
-			auto_sprintf( szKeyName, L"RxKey[%03d]", j );
-			if( cProfile.IsReadingMode() )
-			{
-				types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
-				if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) )
-				{
-					p = wcschr(szKeyData, L',');
-					if( p )
-					{
-						*p = L'\0';
-						types.m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName( szKeyData );	//@@@ 2002.04.30
-						if( types.m_RegexKeywordArr[j].m_nColorIndex == -1 )	//名前でない
-							types.m_RegexKeywordArr[j].m_nColorIndex = _wtoi(szKeyData);
-						p++;
-						if( 0 < nKeywordSize - nPos - 1 ){
-							::wcsncpy_s(&pKeyword[nPos], nKeywordSize - nPos, p, _TRUNCATE);
-						}
-						if( types.m_RegexKeywordArr[j].m_nColorIndex < 0
-						 || types.m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST )
-						{
-							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
-						}
-						if( pKeyword[nPos] ){
-							nPos += int(wcslen(&pKeyword[nPos]) + 1);
-						}
-					}
-				}else{
-					// 2010.06.18 Moca 値がない場合は終了
-					break;
-				}
-			}
-			// 2002.02.08 hor 未定義値を無視
-			else if(pKeyword[nPos])
-			{
-				auto_sprintf( szKeyData, L"%ls,%ls",
-					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
-					&pKeyword[nPos]);
-				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-				nPos += (int)wcslen(&pKeyword[nPos]) + 1;
-			}
-		}
-		if( cProfile.IsReadingMode() ){
-			pKeyword[nPos] = L'\0';
-		}
-	}
-//@@@ 2001.11.17 add end MIK
+	ShareData_IO_RegexKeyword(cProfile, pszSecName, types);
 
 	/* 禁則 */
 	cProfile.IOProfileData( pszSecName, L"bKinsokuHead"	, types.m_bKinsokuHead );

@@ -17,6 +17,7 @@
 #include <fstream>
 
 #include "util/file.h"
+#include "view/colors/EColorIndexType.h"
 
 #include "env/ShareDataTestSuite.hpp"
 
@@ -835,6 +836,42 @@ TEST(ShareData_IO, ShareData_IO_Plugin)
 
 	// 共有データを破棄する
 	env::ShareDataTestSuite::TearDownShareData();
+}
+
+/*!
+ * @brief ShareData_IO_RegexKeywordのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_RegexKeyword)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	const auto pType = std::make_unique<STypeConfig>();
+	auto& type = *pType;
+
+	// テスト用に初期値を入れる
+	type.m_bUseRegexKeyword		= true;
+
+	// 設定項目がないと読めない
+	ShareData_IO_RegexKeyword(cProfile, L"Test", type);
+
+	// 値は変更されない
+	EXPECT_THAT(type.m_bUseRegexKeyword, IsTrue());
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"bUseRegexKeyword", L"0");
+	cProfile.SetProfileData(L"Test", L"RxKey[000]", std::format(L"{},{}", int(COLORIDX_LAST), L"patten"));
+	cProfile.SetProfileData(L"Test", L"RxKey[001]", std::format(L"{},{}", std::wstring(20, L'c'), L"patten"));
+	cProfile.SetProfileData(L"Test", L"RxKey[002]", std::format(L"{},{}", L"TXT", L"patten"));
+
+	// 設定項目があれば読める
+	ShareData_IO_RegexKeyword(cProfile, L"Test", type);
+
+	// 値は反映される
+	EXPECT_THAT(type.m_bUseRegexKeyword, IsFalse());
+	EXPECT_THAT(type.m_RegexKeywordArr[0].m_nColorIndex, Eq<int>(COLORIDX_REGEX1));
+	EXPECT_THAT(type.m_RegexKeywordArr[1].m_nColorIndex, Eq<int>(COLORIDX_REGEX1));
+	EXPECT_THAT(type.m_RegexKeywordArr[2].m_nColorIndex, Eq<int>(COLORIDX_TEXT));
 }
 
 /*!

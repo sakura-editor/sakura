@@ -136,6 +136,12 @@ void ShareData_IO_Plugin(
 	CommonSetting_Plugin&	sPlugin
 );
 
+void ShareData_IO_RegexKeyword(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	STypeConfig&			type			//!< [in,out] エントリ値
+);
+
 void ShareData_IO_TypeInts(
 	CDataProfile&			cProfile,
 	std::wstring_view		sectionName,	//!< [in] セクション名
