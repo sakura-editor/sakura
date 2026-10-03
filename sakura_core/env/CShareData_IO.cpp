@@ -224,27 +224,10 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		if( cProfile.IsReadingMode() ){
 			pfiWork->m_nTypeId = -1;
 		}
-		auto_sprintf( szKeyName, L"MRU[%02d].nViewTopLine", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nViewTopLine );
-		auto_sprintf( szKeyName, L"MRU[%02d].nViewLeftCol", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nViewLeftCol );
-		auto_sprintf( szKeyName, L"MRU[%02d].nX", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_ptCursor.x );
-		auto_sprintf( szKeyName, L"MRU[%02d].nY", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_ptCursor.y );
-		auto_sprintf( szKeyName, L"MRU[%02d].nCharCode", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, pfiWork->m_nCharCode);
-		auto_sprintf( szKeyName, L"MRU[%02d].szPath", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pfiWork->m_szPath));
-		auto_sprintf( szKeyName, L"MRU[%02d].szMark2", i );
-		if( !cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pfiWork->m_szMarkLines)) ){
-			if( cProfile.IsReadingMode() ){
-				auto_sprintf( szKeyName, L"MRU[%02d].szMark", i ); // 旧ver互換
-				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pfiWork->m_szMarkLines));
-			}
-		}
-		auto_sprintf( szKeyName, L"MRU[%02d].nType", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nTypeId );
+
+		auto_sprintf( szKeyName, L"MRU[%02d]", i );
+		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_fiMRUArr[i] );
+
 		//お気に入り	//@@@ 2003.04.08 MIK
 		auto_sprintf( szKeyName, L"MRU[%02d].bFavorite", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bMRUArrFavorite[i] );

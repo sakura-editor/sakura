@@ -77,6 +77,36 @@ bool CDataProfile::IOProfileData<ColorInfo>(
 /*!
  * @brief 設定値の入出力を行う。
  *
+ * EditInfo型（編集情報）向けの特殊化。
+ */
+template <>
+bool CDataProfile::IOProfileData<EditInfo>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	EditInfo&				ei				//!< [in,out] エントリ値
+)
+{
+	IOProfileData(sectionName, std::format(L"{}.nViewTopLine",	keyPrefix), ei.m_nViewTopLine);
+	IOProfileData(sectionName, std::format(L"{}.nViewLeftCol",	keyPrefix), ei.m_nViewLeftCol);
+	IOProfileData(sectionName, std::format(L"{}.nX",			keyPrefix), ei.m_ptCursor.x);
+	IOProfileData(sectionName, std::format(L"{}.nY",			keyPrefix), ei.m_ptCursor.y);
+	IOProfileData(sectionName, std::format(L"{}.nCharCode",		keyPrefix), ei.m_nCharCode);
+	IOProfileData(sectionName, std::format(L"{}.szPath",		keyPrefix), ei.m_szPath);
+
+	if (!IOProfileData(sectionName, std::format(L"{}.szMark2",	keyPrefix), ei.m_szMarkLines) &&
+		IsReadingMode())
+	{
+		IOProfileData(sectionName, std::format(L"{}.szMark", keyPrefix), ei.m_szMarkLines);
+	}
+
+	IOProfileData(sectionName, std::format(L"{}.nType", keyPrefix), ei.m_nTypeId );
+
+	return true;	// 返却値に意味はない
+}
+
+/*!
+ * @brief 設定値の入出力を行う。
+ *
  * KeyHelpInfo型（辞書データ）向けの特殊化。
  */
 template<>

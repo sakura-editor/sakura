@@ -444,6 +444,20 @@ TEST(CDataProfile, IOProfileData_ColorInfo)
 /*!
  * @brief IOProfileDataのテスト
  */
+TEST(CDataProfile, IOProfileData_EditInfo)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	EditInfo value{};
+
+	// 設定項目がなくても読める
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"eiTest", value));
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
 TEST(CDataProfile, IOProfileData_KeyHelpInfo)
 {
 	CDataProfile cProfile;
