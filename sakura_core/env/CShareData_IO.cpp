@@ -90,9 +90,12 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
-	WCHAR	szIniFileName[_MAX_PATH + 1];
+	auto pShareData = &GetDllShareData();
+
+	SFilePath iniFileName;
 	const auto iniPath = GetIniFileNameForIO(!bRead);
-	::wcsncpy_s(szIniFileName, iniPath.c_str(), _TRUNCATE);
+	iniFileName = iniPath;
+	const auto szIniFileName = iniFileName.c_str();
 
 //	MYTRACE( L"Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
@@ -102,7 +105,6 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			LANGID langId = GetUserDefaultUILanguage();
 			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
 			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
-				DLLSHAREDATA* pShareData = &GetDllShareData();
 				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
 				cProfile.IOProfileData(L"Common", L"szLanguageDll", StringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
 				std::vector<std::wstring> values;
@@ -115,33 +117,53 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		}
 
 		// バージョンアップ時はバックアップファイルを作成する	// 2011.01.28 ryoji
-		WCHAR iniVer[256];
-		DWORD mH, mL, lH, lL;
-		mH = mL = lH = lL = 0;	// ※ 古～い ini だと "szVersion" は無い
-		if( cProfile.IOProfileData(L"Other", L"szVersion", StringBufferW(iniVer)) )
-			swscanf( iniVer, L"%u.%u.%u.%u", &mH, &mL, &lH, &lL );
-		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
-		DWORD dwLS = (DWORD)MAKELONG(lL, lH);
-		DLLSHAREDATA* pShareData = &GetDllShareData();
-		if( pShareData->m_sVersion.m_dwProductVersionMS > dwMS
-			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
-		{
-			WCHAR szBkFileName[std::size(szIniFileName) + 4];
-			::wcsncpy_s(szBkFileName, szIniFileName, _TRUNCATE);
-			::wcsncat_s(szBkFileName, L".bak", _TRUNCATE);
-			::CopyFile(szIniFileName, szBkFileName, FALSE);
+		if (fexist(szIniFileName)) {
+			WORD mH = 0;
+			WORD mL = 0;
+			WORD lH = 0;
+			WORD lL = 0;
+
+			if (StaticString<256> szIniVer{};
+				cProfile.IOProfileData( L"Other", L"szVersion", szIniVer) &&
+				4 != ::swscanf_s(
+					szIniVer.c_str(),
+					L"%hu.%hu.%hu.%hu",
+					&mH,
+					&mL,
+					&lH,
+					&lL
+				))
+			{
+				// 4個揃わなければクリアする
+				// ※ 古～い ini だと "szVersion" は無い
+				mH = 0;
+				mL = 0;
+				lH = 0;
+				lL = 0;
+			}
+
+			const auto dwMS = MAKELONG(mL, mH);
+			const auto dwLS = MAKELONG(lL, lH);
+			if (dwMS < pShareData->m_sVersion.m_dwProductVersionMS ||
+				dwMS == pShareData->m_sVersion.m_dwProductVersionMS && dwLS < pShareData->m_sVersion.m_dwProductVersionLS)
+			{
+				SFilePath szBkFileName{};
+				szBkFileName = szIniFileName;
+				szBkFileName += L".bak";
+
+				::CopyFileW(szIniFileName, szBkFileName, FALSE);
+			}
 		}
 	}
 //	MYTRACE( L"Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
-	CMenuDrawer* pcMenuDrawer = new CMenuDrawer; // 2010/7/4 Uchi
-
 	if( bRead ){
-		DLLSHAREDATA* pShareData = &GetDllShareData();
 		cProfile.IOProfileData(L"Common", L"szLanguageDll", StringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
 		CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
 		pcShare->RefreshString();
 	}
+
+	auto pcMenuDrawer = std::make_unique<CMenuDrawer>();
 
 	// Feb. 12, 2006 D.S.Koba
 	ShareData_IO_Mru( cProfile );
@@ -151,8 +173,8 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Cmd( cProfile );
 	ShareData_IO_Nickname( cProfile );
 	ShareData_IO_Common( cProfile );
-	ShareData_IO_Plugin( cProfile, pcMenuDrawer );		// Move here	2010/6/24 Uchi
-	ShareData_IO_Toolbar( cProfile, pcMenuDrawer );
+	ShareData_IO_Plugin(cProfile, pcMenuDrawer.get(), pShareData->m_Common.m_sPlugin);
+	ShareData_IO_Toolbar( cProfile, pcMenuDrawer.get() );
 	ShareData_IO_CustMenu( cProfile );
 	ShareData_IO_Font( cProfile );
 	ShareData_IO_KeyBind( cProfile );
@@ -164,14 +186,12 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_MainMenu( cProfile );		// 2010/5/15 Uchi
 	ShareData_IO_Other( cProfile );
 
-	delete pcMenuDrawer;					// 2010/7/4 Uchi
 	pcMenuDrawer = nullptr;
 
-	if( !bRead ){
-		// 2014.12.08 sakura.iniの読み取り専用
-		if( !GetDllShareData().m_Common.m_sOthers.m_bIniReadOnly ){
-			cProfile.WriteProfile( szIniFileName, L" sakura.ini テキストエディタ設定ファイル" );
-		}
+	if (!bRead &&
+		!GetDllShareData().m_Common.m_sOthers.m_bIniReadOnly)
+	{
+		cProfile.WriteProfile(szIniFileName, L" sakura.ini テキストエディタ設定ファイル");
 	}
 
 //	MYTRACE( L"Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
@@ -2083,17 +2103,19 @@ void CShareData_IO::ShareData_IO_Statusbar( CDataProfile& cProfile )
 
 	@date 2009/11/30 syat
 */
-void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer )
+void ShareData_IO_Plugin(
+	CDataProfile&			cProfile,
+	CMenuDrawer*			pcMenuDrawer,
+	CommonSetting_Plugin&	sPlugin
+)
 {
 	const WCHAR* pszSecName = L"Plugin";
-	CommonSetting& common = GetDllShareData().m_Common;
-	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
 
-	cProfile.IOProfileData( pszSecName, L"EnablePlugin", plugin.m_bEnablePlugin);		// プラグインを使用する
+	cProfile.IOProfileData(pszSecName, L"EnablePlugin", sPlugin.m_bEnablePlugin);		// プラグインを使用する
 
 	//プラグインテーブル
 	for (int i = 0; i < MAX_PLUGIN; ++i) {
-		auto& pluginrec = common.m_sPlugin.m_PluginTable[i];
+		auto& pluginrec = sPlugin.m_PluginTable[i];
 
 		// 2010.08.04 Moca 書き込み直前に削除フラグで削除扱いにする
 		if (cProfile.IsWritingMode() &&

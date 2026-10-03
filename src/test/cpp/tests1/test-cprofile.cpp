@@ -8,6 +8,8 @@
 #include "env/CDataProfile.h"
 
 #include "env/CShareData_IO.h"
+#include "env/DLLSHAREDATA.h"
+#include "uiparts/CMenuDrawer.h"
 
 #include <Shlwapi.h>
 
@@ -15,6 +17,8 @@
 #include <fstream>
 
 #include "util/file.h"
+
+#include "env/ShareDataTestSuite.hpp"
 
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
@@ -619,6 +623,46 @@ TEST(CDataProfile, IOProfileData_RECT)
 }
 
 /*!
+ * @brief ShareData_IO_2のテスト
+ *
+ * INIファイルのバージョンが読めなかった場合、バックアップファイルを作成する仕様の確認
+ */
+TEST(ShareData_IO, ShareData_IO_2)
+{
+	constexpr std::array UTF8_BOM = { '\xEF', '\xBB', '\xBF' };
+
+	const auto iniPath = GetIniFileName();
+	const auto bakPath = std::filesystem::path{ iniPath.native() + L".bak" };
+
+	// ファイル出力ストリームをバイナリモードで開く
+	std::ofstream fos{ iniPath };
+
+	// UTF-8 BOMを出力
+	fos.write(UTF8_BOM.data(), UTF8_BOM.size());
+
+	// 各行を書き込む
+	fos << "[Other]" << std::endl;
+	fos << "szVersion=1,2,3" << std::endl;
+
+	fos.close();
+
+	// 共有データを生成して初期化する
+	env::ShareDataTestSuite::SetUpShareData();
+
+	// テスト対象を呼び出す
+	CShareData_IO::LoadShareData();
+
+	EXPECT_THAT(fexist(bakPath), IsTrue());
+
+	// 共有データを破棄する
+	env::ShareDataTestSuite::TearDownShareData();
+
+	std::error_code ec;
+	std::filesystem::remove(bakPath, ec);
+	std::filesystem::remove(iniPath, ec);
+}
+
+/*!
  * @brief ShareData_IO_KeyHelpArrのテスト
  */
 TEST(ShareData_IO, ShareData_IO_KeyHelpArr)
@@ -760,6 +804,37 @@ TEST(ShareData_IO, ShareData_IO_OutlineDockRect)
 	EXPECT_THAT(value.m_cyOutlineDockTop, 3);
 	EXPECT_THAT(value.m_cxOutlineDockRight, 2);
 	EXPECT_THAT(value.m_cyOutlineDockBottom, 1);
+}
+
+/*!
+ * @brief ShareData_IO_Pluginのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_Plugin)
+{
+	CDataProfile cProfile;
+	cProfile.SetWritingMode();
+
+	CommonSetting_Plugin sPlugin{};
+	::wcscpy_s(sPlugin.m_PluginTable[0].m_szName, L"test name");
+	::wcscpy_s(sPlugin.m_PluginTable[0].m_szId, L"test id");
+	sPlugin.m_PluginTable[0].m_state = EPluginState::PLS_DELETED;
+	sPlugin.m_PluginTable[0].m_nCmdNum = 2;
+
+	// 共有データを生成して初期化する
+	env::ShareDataTestSuite::SetUpShareData();
+
+	auto pcMenuDrawer = std::make_unique<CMenuDrawer>();
+
+	// 削除機能の確認
+	ShareData_IO_Plugin(cProfile, pcMenuDrawer.get(), sPlugin);
+
+	EXPECT_THAT(sPlugin.m_PluginTable[0].m_szName, StrEq(L""));
+	EXPECT_THAT(sPlugin.m_PluginTable[0].m_szId, StrEq(L""));
+
+	pcMenuDrawer = nullptr;
+
+	// 共有データを破棄する
+	env::ShareDataTestSuite::TearDownShareData();
 }
 
 /*!
