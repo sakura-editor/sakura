@@ -912,7 +912,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", sKeyBind.m_nKeyNameArrNum);
 		if (sKeyBind.m_nKeyNameArrNum < 0 || sKeyBind.m_nKeyNameArrNum > KEYNAME_SIZE){	bVer3=false; bVer4=false; } //範囲チェック
 
-		CShareData_IO::IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
+		ShareData_IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
 	}
 
 	if (!bVer3 && !bVer4) {
@@ -1053,7 +1053,7 @@ bool CImpExpKeybind::Export( const std::wstring& sFileName, std::wstring& sErrMs
 	cProfile.IOProfileData(szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
 	//内容
-	CShareData_IO::IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
+	ShareData_IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
 
 	// 書き込み
 	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_KEYBIND_HEAD4)) {

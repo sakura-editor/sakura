@@ -177,7 +177,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Toolbar( cProfile, pcMenuDrawer.get() );
 	ShareData_IO_CustMenu( cProfile );
 	ShareData_IO_Font( cProfile, pShareData->m_Common.m_sView );
-	ShareData_IO_KeyBind( cProfile );
+	ShareData_IO_KeyBind( cProfile, pShareData->m_Common.m_sKeyBind, false );
 	ShareData_IO_Print( cProfile );
 	ShareData_IO_Types( cProfile );
 	ShareData_IO_KeyWords( cProfile );
@@ -1041,15 +1041,6 @@ void ShareData_IO_Font(
 }
 
 /*!
-	@brief 共有データのKeyBindセクションの入出力
-*/
-void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
-{
-	DLLSHAREDATA* pShare = &GetDllShareData();
-	IO_KeyBind( cProfile, pShare->m_Common.m_sKeyBind, false );	// add Parameter 2008/5/24
-}
-
-/*!
 	@brief KeyBindセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 	@param[in,out]	sKeyBind	キー割り当て設定
@@ -1059,7 +1050,11 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
 	@date 2012.11.20 aroka 引数を CommonSetting_KeyBind に変更
 	@date 2012.11.25 aroka マウスコードの固定と重複排除
 */
-void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName)
+void ShareData_IO_KeyBind(
+	CDataProfile&			cProfile,
+	CommonSetting_KeyBind&	sKeyBind,
+	bool					bOutCmdName
+)
 {
 	const WCHAR*	szSecName = L"KeyBind";
 	int		i;

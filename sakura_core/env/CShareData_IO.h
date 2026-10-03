@@ -52,7 +52,6 @@ protected:
 	static void ShareData_IO_Common( CDataProfile& cProfile );
 	static void ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer );
 	static void ShareData_IO_CustMenu( CDataProfile& cProfile );
-	static void ShareData_IO_KeyBind( CDataProfile& cProfile );
 	static void ShareData_IO_Print( CDataProfile& cProfile );
 	static void ShareData_IO_Types( CDataProfile& cProfile );
 	static void ShareData_IO_KeyWords( CDataProfile& cProfile );
@@ -63,7 +62,6 @@ protected:
 
 public:
 	static void IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName);
-	static void IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName);		// 2012.11.22 aroka
 	static void IO_MainMenu( CDataProfile& c, CommonSetting_MainMenu& s, bool b ){		// 2010/5/15 Uchi
 		IO_MainMenu(c, nullptr, s, b);
 	}
@@ -92,6 +90,12 @@ void ShareData_IO_FileTree(
 void ShareData_IO_Font(
 	CDataProfile&			cProfile,
 	CommonSetting_View&		sView
+);
+
+void ShareData_IO_KeyBind(
+	CDataProfile&			cProfile,
+	CommonSetting_KeyBind&	sKeyBind,
+	bool					bOutCmdName
 );
 
 void ShareData_IO_KeyHelp(
