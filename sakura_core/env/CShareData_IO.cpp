@@ -1586,6 +1586,26 @@ void ShareData_IO_LineComments(
 }
 
 /*!
+ * @brief 行番号の最小桁数
+ */
+void ShareData_IO_LineNumWidth(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	int&					nLineNumWidth	//!< [in,out] エントリ値
+)
+{
+	if (const auto ret = cProfile.IOProfileData(sectionName, L"nLineNumWidth", nLineNumWidth);
+		!ret)
+	{
+		return;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	if (cProfile.IsReadingMode()) {
+		SetValueLimit(nLineNumWidth, LINENUMWIDTH_MIN, LINENUMWIDTH_MAX);
+	}
+}
+
+/*!
  * @brief 行間のすきま
  */
 void ShareData_IO_LineSpace(
@@ -1636,15 +1656,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	ShareData_IO_LineSpace(cProfile, pszSecName, types.m_nLineSpace);
 
 	/* 行番号の最小桁数 */	// 加追 2014.08.02 katze
-	cProfile.IOProfileData( pszSecName, L"nLineNumWidth", types.m_nLineNumWidth );
-	if( cProfile.IsReadingMode() ){
-		if( types.m_nLineNumWidth < LINENUMWIDTH_MIN ){
-			types.m_nLineNumWidth = LINENUMWIDTH_MIN;
-		}
-		if( types.m_nLineNumWidth > LINENUMWIDTH_MAX ){
-			types.m_nLineNumWidth = LINENUMWIDTH_MAX;
-		}
-	}
+	ShareData_IO_LineNumWidth(cProfile, pszSecName, types.m_nLineNumWidth);
 
 	cProfile.IOProfileData(pszSecName, L"szTypeName", StringBufferW(types.m_szTypeName));
 	cProfile.IOProfileData(pszSecName, L"szTypeExts", StringBufferW(types.m_szTypeExts));
