@@ -1644,6 +1644,44 @@ void ShareData_IO_TypeId(
 }
 
 /*!
+ * @brief 指定桁縦線データの入出力
+ *
+ * @date 2005/11/08 Moca 指定桁縦線
+ */
+template <typename T>
+void ShareData_IO_VertLineIdx(
+	CDataProfile&		cProfile,
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	T&					nVertLineIdx
+)
+{
+	for (int i = 0; i < _countof(nVertLineIdx); ++i) {
+		// 読み込みモード
+		if (cProfile.IsReadingMode()) {
+			nVertLineIdx[i] = 0;
+		}
+
+		// 読み書きを実行する
+		if (!cProfile.IOProfileData(sectionName, std::format(L"nVertLineIdx{}", i + 1), nVertLineIdx[i]))
+		{
+			continue;	// 読み込み失敗
+		}
+
+		if (nVertLineIdx[i] == 0) {
+			break;
+		}
+	}
+}
+
+// インスタンス化しておく
+template
+void ShareData_IO_VertLineIdx<CKetaXInt(&)[MAX_VERTLINES]>(
+	CDataProfile&		cProfile,
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	CKetaXInt			(&nVertLineIdx)[MAX_VERTLINES]
+);
+
+/*!
 @brief 共有データのSTypeConfigセクションの入出力(１個分)
 	@param[in,out]	cProfile	INIファイル入出力クラス
 	@param[in]		type		タイプ別
@@ -1764,14 +1802,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData(pszSecName, L"bgImgPosOffsetY", types.m_backImgPosOffset.y );
 	cProfile.IOProfileData(pszSecName, L"bgImgOpacity", types.m_backImgOpacity );
 
-	// 2005.11.08 Moca 指定桁縦線
-	for(j = 0; j < MAX_VERTLINES; j++ ){
-		auto_sprintf( szKeyName, L"nVertLineIdx%d", j + 1 );
-		cProfile.IOProfileData( pszSecName, szKeyName, types.m_nVertLineIdx[j] );
-		if( types.m_nVertLineIdx[j] == 0 ){
-			break;
-		}
-	}
+	ShareData_IO_VertLineIdx(cProfile, pszSecName, types.m_nVertLineIdx);
+
 	cProfile.IOProfileData( pszSecName, L"nNoteLineOffset", types.m_nNoteLineOffset );
 
 //@@@ 2001.11.17 add start MIK

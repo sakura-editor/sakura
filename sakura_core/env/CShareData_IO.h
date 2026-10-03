@@ -117,4 +117,11 @@ void ShareData_IO_TypeInts(
 	STypeConfig&			type			//!< [in,out] エントリ値
 );
 
+template <typename T>
+void ShareData_IO_VertLineIdx(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	T&						nVertLineIdx
+);
+
 #endif /* SAKURA_CSHAREDATA_IO_B154E0E0_C606_468E_A3B7_767DDA1DE6EE_H_ */

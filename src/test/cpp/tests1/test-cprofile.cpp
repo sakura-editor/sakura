@@ -27,6 +27,13 @@ void ShareData_IO_OutlineDockRect<CommonSetting_OutLine>(
 	CommonSetting_OutLine&	tEntryValue		//!< [in,out] エントリ値
 );
 
+extern template
+void ShareData_IO_VertLineIdx<CKetaXInt(&)[MAX_VERTLINES]>(
+	CDataProfile&		cProfile,
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	CKetaXInt			(&nVertLineIdx)[MAX_VERTLINES]
+);
+
 /*!
  * @brief 内部バッファが溢れたら拡張する
  */
@@ -620,4 +627,25 @@ TEST(ShareData_IO, ShareData_IO_TypeInts)
 	EXPECT_THAT(type.m_bWordWrap,				IsTrue());
 	EXPECT_THAT(type.m_nCurrentPrintSetting,	11);
 	EXPECT_THAT(type.m_nTsvMode,				12);
+}
+
+/*!
+ * @brief ShareData_IO_VertLineIdxのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_VertLineIdx)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	CKetaXInt nVertLineIdx[MAX_VERTLINES]{};
+
+	// 設定項目がないと読めない
+	ShareData_IO_VertLineIdx(cProfile, L"Test", nVertLineIdx);
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"nVertLineIdx1", L"20");
+
+	ShareData_IO_VertLineIdx(cProfile, L"Test", nVertLineIdx);
+
+	EXPECT_THAT(nVertLineIdx[0], 20);
 }
