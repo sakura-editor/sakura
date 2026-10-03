@@ -108,6 +108,8 @@ endif(MINGW)
 # define resource files of tests1
 set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 
+set(TEST_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin")
+set(TEST_RESOURCE_ZIP "${CMAKE_BINARY_DIR}/resources.ja-JP.zip")
 set(TEST_DLLPLUGIN_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-dllplugin")
 set(TEST_DLLPLUGIN_ZIP "${CMAKE_BINARY_DIR}/resources-dllplugin.zip")
 set(TEST_OUTLINE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline")
@@ -147,20 +149,26 @@ if(MINGW)
   convert_rc_files_to_utf8(TESTS1_RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
 endif()
 
-# Create a custom target for test_resource_zip generation
-add_custom_target(test_resource_zip
+# Create a custom command for test_resource_zip generation
+add_custom_command(
+  OUTPUT "${TEST_RESOURCE_ZIP}"
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
   COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-plugin
+    "${TEST_RESOURCE_DIR}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_RESOURCE_ZIP}"
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-plugin
+    "${TEST_RESOURCE_ZIP}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
     > NUL
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
+  BYPRODUCTS "${TEST_RESOURCE_ZIP}"
   COMMENT "Generating resources.ja-JP.zip"
+)
+
+add_custom_target(test_resource_zip
+  DEPENDS "${TEST_RESOURCE_ZIP}"
 )
 
 # Create a custom command for outline.zip generation
