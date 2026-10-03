@@ -109,12 +109,15 @@ endif(MINGW)
 set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 
 set(TEST_DLLPLUGIN_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-dllplugin")
-set(TEST_DLLPLUGIN_TARGET dll_plugin1)
+set(TEST_DLLPLUGIN_ZIP "${CMAKE_BINARY_DIR}/resources-dllplugin.zip")
 set(TEST_OUTLINE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline")
 set(TEST_OUTLINE_ZIP "${CMAKE_BINARY_DIR}/outline.zip")
 set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
 set(TEST_OUTLINE_STAGE_DIR "${TESTS1_RESOURCE_STAGE_DIR}/outline")
 
+file(GLOB_RECURSE TEST_DLLPLUGIN_FILES CONFIGURE_DEPENDS
+  "${TEST_DLLPLUGIN_DIR}/*"
+)
 set(TEST_OUTLINE_FILES
   "${TEST_OUTLINE_DIR}/Asm.asm.txt"
   "${TEST_OUTLINE_DIR}/VisualBasic.bas.txt"
@@ -243,24 +246,31 @@ add_custom_target(test_outline_zip
   DEPENDS "${TEST_OUTLINE_ZIP}"
 )
 
-# Create a custom target for test_dllplugin_zip generation
-add_custom_target(test_dllplugin_zip
+# Create a custom command for test_dllplugin_zip generation
+add_custom_command(
+  OUTPUT "${TEST_DLLPLUGIN_ZIP}"
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
   COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${TEST_DLLPLUGIN_DIR}
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
+    "${TEST_DLLPLUGIN_DIR}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_DLLPLUGIN_ZIP}"
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/resources-dllplugin.zip
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
+    "${TEST_DLLPLUGIN_ZIP}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
     > NUL
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/resources-dllplugin.zip
-  DEPENDS ${TEST_DLLPLUGIN_TARGET}
+  DEPENDS
+    ${TEST_DLLPLUGIN_FILES}
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
   COMMENT "Generating resources-dllplugin.zip"
+)
+
+add_custom_target(test_dllplugin_zip
+  DEPENDS "${TEST_DLLPLUGIN_ZIP}"
 )
 
 # define executable
