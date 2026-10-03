@@ -1548,6 +1548,26 @@ void ShareData_IO_BlockComments(
 }
 
 /*!
+ * @brief キーワード辞書設定の入出力
+ *
+ * @date 2006/04/10 fon
+ */
+void ShareData_IO_KeyHelp(
+	CDataProfile&		cProfile,
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	STypeConfig&		type
+)
+{
+	cProfile.IOProfileData(sectionName, L"bUseKeyWordHelp",			type.m_bUseKeyWordHelp);	/* キーワード辞書選択を使用するか？ */
+	cProfile.IOProfileData(sectionName, L"bUseKeyHelpAllSearch",	type.m_bUseKeyHelpAllSearch);	/* ヒットした次の辞書も検索(&A) */
+	cProfile.IOProfileData(sectionName, L"bUseKeyHelpKeyDisp",		type.m_bUseKeyHelpKeyDisp);		/* 1行目にキーワードも表示する(&W) */
+	cProfile.IOProfileData(sectionName, L"bUseKeyHelpPrefix",		type.m_bUseKeyHelpPrefix);		/* 選択範囲で前方一致検索(&P) */
+	cProfile.IOProfileData(sectionName, L"nKeyHelpRMenuShowType",	type.m_eKeyHelpRMenuShowType);
+
+	ShareData_IO_KeyHelpArr(cProfile, sectionName, type.m_KeyHelpArr, type.m_nKeyHelpNum);
+}
+
+/*!
  * @brief 辞書データ配列の入出力
  */
 template <typename T>
@@ -1923,18 +1943,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData(pszSecName, L"szKinsokuKuto", StringBufferW(types.m_szKinsokuKuto));	// 2009.08.07 ryoji
 	cProfile.IOProfileData( pszSecName, L"bUseDocumentIcon"	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta 変数名誤り修正
 
-//@@@ 2006.04.10 fon ADD-start
-	{	/* キーワード辞書 */
-		cProfile.IOProfileData( pszSecName, L"bUseKeyWordHelp", types.m_bUseKeyWordHelp );	/* キーワード辞書選択を使用するか？ */
-//		cProfile.IOProfileData( pszSecName, L"nKeyHelpNum", types.m_nKeyHelpNum );				/* 登録辞書数 */
-		cProfile.IOProfileData( pszSecName, L"bUseKeyHelpAllSearch", types.m_bUseKeyHelpAllSearch );	/* ヒットした次の辞書も検索(&A) */
-		cProfile.IOProfileData( pszSecName, L"bUseKeyHelpKeyDisp", types.m_bUseKeyHelpKeyDisp );		/* 1行目にキーワードも表示する(&W) */
-		cProfile.IOProfileData( pszSecName, L"bUseKeyHelpPrefix", types.m_bUseKeyHelpPrefix );		/* 選択範囲で前方一致検索(&P) */
-		cProfile.IOProfileData(pszSecName, L"nKeyHelpRMenuShowType", types.m_eKeyHelpRMenuShowType);
-
-		ShareData_IO_KeyHelpArr(cProfile, pszSecName, types.m_KeyHelpArr, types.m_nKeyHelpNum);
-	}
-//@@@ 2006.04.10 fon ADD-end
+	ShareData_IO_KeyHelp(cProfile, pszSecName, types);
 
 	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	cProfile.IOProfileData( pszSecName, L"bChkEnterAtEnd"	, types.m_bChkEnterAtEnd );
