@@ -418,15 +418,22 @@ TEST_F(GrepCommandLineTest, ReplaceWithClipboard)
 
 	Debug ビルドでは、再入の分岐の assert_warning が ::DebugBreak() を呼び、
 	デバッガーが無いと止まるので飛ばす(Release ビルドで確かめる)。
+	　↓
+	CGrepAgent::DoGrepの再入防止機構を変更し、ビルド種別に依らずテストできるよう改善済み。
 */
 TEST_F(GrepCommandLineTest, RejectsReentry)
 {
-#ifdef _DEBUG
-	GTEST_SKIP() << "assert_warning calls ::DebugBreak() in debug builds";
-#else
+	// Grep実行中のフラグを立てる
 	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning = true;
-	EXPECT_EQ(0xffffffffu, Grep(L"HIT", L"*.txt", L"X"));
-#endif
+
+	EXPECT_THAT(([this] {
+			// Grep実行中のフラグが立った状態でGrep開始要求する
+			Grep(L"HIT", L"*.txt", L"X");
+		}),
+		ThrowsMessage<std::domain_error>(Eq("The DoGrep method is not reentrant"))
+	);
+
+	// Grep実行中のフラグはTearDownで落ちる
 }
 
 //! Grep 実行中は閉じられない。実行後は閉じられる
