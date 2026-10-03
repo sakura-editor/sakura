@@ -7,6 +7,8 @@
 #include "pch.h"
 #include "env/CDataProfile.h"
 
+#include "env/CShareData_IO.h"
+
 #include <Shlwapi.h>
 
 #include <cstdlib>
@@ -16,6 +18,14 @@
 
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
+
+extern template
+void ShareData_IO_OutlineDockRect<CommonSetting_OutLine>(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	CommonSetting_OutLine&	tEntryValue		//!< [in,out] エントリ値
+);
 
 /*!
  * @brief 内部バッファが溢れたら拡張する
@@ -417,4 +427,52 @@ TEST(CDataProfile, IOProfileData_RECT)
 	EXPECT_THAT(value.top, 3);
 	EXPECT_THAT(value.right, 2);
 	EXPECT_THAT(value.bottom, 1);
+}
+
+/*!
+ * @brief ShareData_IO_OutlineDockRectのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_OutlineDockRect)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	CommonSetting_OutLine value = {};
+	value.m_cxOutlineDockLeft	= 1;
+	value.m_cyOutlineDockTop	= 2;
+	value.m_cxOutlineDockRight	= 3;
+	value.m_cyOutlineDockBottom	= 4;
+
+	// 設定項目がないと読めない
+	ShareData_IO_OutlineDockRect(cProfile, L"Test", L"xyOutlineDock", value);
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_cxOutlineDockLeft, 1);
+	EXPECT_THAT(value.m_cyOutlineDockTop, 2);
+	EXPECT_THAT(value.m_cxOutlineDockRight, 3);
+	EXPECT_THAT(value.m_cyOutlineDockBottom, 4);
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"xyOutlineDock", L"4,3,2,1");
+
+	// 読める
+	ShareData_IO_OutlineDockRect(cProfile, L"Test", L"xyOutlineDock", value);
+
+	// 値は変更される
+	EXPECT_THAT(value.m_cxOutlineDockLeft, 4);
+	EXPECT_THAT(value.m_cyOutlineDockTop, 3);
+	EXPECT_THAT(value.m_cxOutlineDockRight, 2);
+	EXPECT_THAT(value.m_cyOutlineDockBottom, 1);
+
+	// 値を設定（足りない）
+	cProfile.SetProfileData(L"Test", L"xyOutlineDock", L"109,108,107");
+
+	// 不完全な設定項目は読めない
+	ShareData_IO_OutlineDockRect(cProfile, L"Test", L"xyOutlineDock", value);
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_cxOutlineDockLeft, 4);
+	EXPECT_THAT(value.m_cyOutlineDockTop, 3);
+	EXPECT_THAT(value.m_cxOutlineDockRight, 2);
+	EXPECT_THAT(value.m_cyOutlineDockBottom, 1);
 }

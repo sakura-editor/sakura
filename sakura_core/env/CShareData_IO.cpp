@@ -439,6 +439,52 @@ void CShareData_IO::ShareData_IO_Nickname( CDataProfile& cProfile )
 }
 
 /*!
+ * @brief 設定値の入出力を行う。
+ *
+ * アウトライン解析ウィンドウのドッキング位置をRECTを介して読み書きする。
+ */
+template <typename T>
+void ShareData_IO_OutlineDockRect(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	T&						tEntryValue		//!< [in,out] エントリ値
+)
+{
+	// 取得・設定はRECTを介して行う
+	RECT rcTemp{
+		tEntryValue.m_cxOutlineDockLeft,
+		tEntryValue.m_cyOutlineDockTop,
+		tEntryValue.m_cxOutlineDockRight,
+		tEntryValue.m_cyOutlineDockBottom
+	};
+
+	// RECTを介して読み書きする
+	if (const auto ret = cProfile.IOProfileData(sectionName, entryKey, rcTemp);
+		!ret)
+	{
+		return;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	// 読み込みモード
+	if (cProfile.IsReadingMode()) {
+		tEntryValue.m_cxOutlineDockLeft   = rcTemp.left;
+		tEntryValue.m_cyOutlineDockTop    = rcTemp.top;
+		tEntryValue.m_cxOutlineDockRight  = rcTemp.right;
+		tEntryValue.m_cyOutlineDockBottom = rcTemp.bottom;
+	}
+}
+
+// テストから利用できるよう、インスタンス化しておく
+template
+void ShareData_IO_OutlineDockRect<CommonSetting_OutLine>(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	CommonSetting_OutLine&	tEntryValue		//!< [in,out] エントリ値
+);
+
+/*!
 	@brief 共有データのCommonセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
@@ -698,31 +744,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, L"bOutlineDockSync", common.m_sOutline.m_bOutlineDockSync );
 	cProfile.IOProfileData( pszSecName, L"bOutlineDockDisp", common.m_sOutline.m_bOutlineDockDisp );
 	cProfile.IOProfileData(pszSecName, L"eOutlineDockSide", common.m_sOutline.m_eOutlineDockSide );
-	{
-		const WCHAR* pszKeyName = L"xyOutlineDock";
-		const WCHAR* pszForm = L"%d,%d,%d,%d";
-		WCHAR		szKeyData[1024];
-		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData)) ){
-				int buf[4];
-				scan_ints( szKeyData, pszForm, buf );
-				common.m_sOutline.m_cxOutlineDockLeft	= buf[0];
-				common.m_sOutline.m_cyOutlineDockTop	= buf[1];
-				common.m_sOutline.m_cxOutlineDockRight	= buf[2];
-				common.m_sOutline.m_cyOutlineDockBottom	= buf[3];
-			}
-		}else{
-			auto_sprintf(
-				szKeyData,
-				pszForm,
-				common.m_sOutline.m_cxOutlineDockLeft,
-				common.m_sOutline.m_cyOutlineDockTop,
-				common.m_sOutline.m_cxOutlineDockRight,
-				common.m_sOutline.m_cyOutlineDockBottom
-			);
-			cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
-		}
-	}
+
+	ShareData_IO_OutlineDockRect(cProfile, pszSecName, L"xyOutlineDock", common.m_sOutline);
+
 	cProfile.IOProfileData( pszSecName, L"nDockOutline", common.m_sOutline.m_nDockOutline );
 	ShareData_IO_FileTree( cProfile, common.m_sOutline.m_sFileTree, pszSecName );
 	cProfile.IOProfileData( pszSecName, L"szFileTreeDefIniName", common.m_sOutline.m_sFileTreeDefIniName );
@@ -1569,31 +1593,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	cProfile.IOProfileData( pszSecName, L"bOutlineDockDisp"			, types.m_bOutlineDockDisp );/* アウトライン解析表示の有無 */
 	cProfile.IOProfileData(pszSecName, L"eOutlineDockSide", types.m_eOutlineDockSide );/* アウトライン解析ドッキング配置 */
-	{
-		const WCHAR* pszKeyName = L"xyOutlineDock";
-		const WCHAR* pszForm2 = L"%d,%d,%d,%d";
-		WCHAR		szKeyData2[1024];
-		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData2)) ){
-				int buf[4];
-				scan_ints( szKeyData2, pszForm2, buf );
-				types.m_cxOutlineDockLeft	= buf[0];
-				types.m_cyOutlineDockTop	= buf[1];
-				types.m_cxOutlineDockRight	= buf[2];
-				types.m_cyOutlineDockBottom	= buf[3];
-			}
-		}else{
-			auto_sprintf(
-				szKeyData2,
-				pszForm2,
-				types.m_cxOutlineDockLeft,
-				types.m_cyOutlineDockTop,
-				types.m_cxOutlineDockRight,
-				types.m_cyOutlineDockBottom
-			);
-			cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData2));
-		}
-	}
+
+	ShareData_IO_OutlineDockRect(cProfile, pszSecName, L"xyOutlineDock", types);
+
 	cProfile.IOProfileData(pszSecName, L"nDockOutline", types.m_nDockOutline );/* アウトライン解析方法 */
 	cProfile.IOProfileData(pszSecName, L"nDefaultOutline", types.m_eDefaultOutline );/* アウトライン解析方法 */
 	cProfile.IOProfileData( pszSecName, L"szOutlineRuleFilename"	, types.m_szOutlineRuleFilename );/* アウトライン解析ルールファイル */
