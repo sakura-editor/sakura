@@ -24,6 +24,8 @@
 #include "_main/CControlProcess.h"
 #include "config/app_constants.h"
 
+using namespace std::literals::string_literals;
+
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
 {
@@ -1392,40 +1394,44 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 }
 
 /*!
- * ブロックコメントデータの入出力
+ * @brief ブロックコメントデータの入出力
  *
  * @date 2004/10/02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
  * @date 2020/01/01 berryzplus ShareData_IO_Type_Oneから分離
  */
-static bool ShareData_IO_BlockComment( CDataProfile& cProfile,
-	const WCHAR* pszSectionName,
-	const WCHAR* pszEntryKeyFrom,
-	const WCHAR* pszEntryKeyTo,
-	CBlockComment& cBlockComment
-) noexcept
+void ShareData_IO_BlockComments(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	BlockComments			tEntryValues	//!< [in,out] エントリ値
+)
 {
-	WCHAR szFrom[BLOCKCOMMENT_BUFFERSIZE]{ 0 };
-	WCHAR szTo[BLOCKCOMMENT_BUFFERSIZE]{ 0 };
+	for (int i = 0; i < std::size(tEntryValues); ++i) {
+		auto& cBlockComment = tEntryValues[i];
 
-	// 書き込み準備
-	if( !cProfile.IsReadingMode() ){
-		::wcscpy_s( szFrom, cBlockComment.getBlockCommentFrom() );
-		::wcscpy_s( szTo, cBlockComment.getBlockCommentTo() );
+		// 取得・設定は文字列を介し、開始と終了のセットで行う
+		std::wstring strFrom{};
+		std::wstring strTo{};
+
+		// 書き込みモード
+		if (cProfile.IsWritingMode()) {
+			strFrom = cBlockComment.getBlockCommentFrom();
+			strTo = cBlockComment.getBlockCommentTo();
+		}
+
+		// From-Toをセットで読み書きする
+		std::wstring_view entryKey = L"szBlockComment";
+		if (const auto keySurfix = 0 < i ? std::to_wstring(i + 1) : L""s;
+			!cProfile.IOProfileData(sectionName, std::format(L"{}From{}", entryKey, keySurfix), strFrom) ||
+			!cProfile.IOProfileData(sectionName, std::format(L"{}To{}",   entryKey, keySurfix), strTo  ))
+		{
+			continue;	// 読み込み失敗
+		}
+
+		// 読み込みモード
+		if (cProfile.IsReadingMode()) {
+			cBlockComment.SetBlockCommentRule(strFrom.c_str(), strTo.c_str());
+		}
 	}
-
-	bool ret = false;
-	if( cProfile.IOProfileData(pszSectionName, pszEntryKeyFrom, StringBufferW(szFrom))
-		&& cProfile.IOProfileData(pszSectionName, pszEntryKeyTo, StringBufferW(szTo)) ){
-		//対になる設定が揃った場合のみ有効
-		ret = true;
-	}
-
-	// 読み込み後処理
-	if( cProfile.IsReadingMode() && ret ){
-		cBlockComment.SetBlockCommentRule( szFrom, szTo );
-	}
-
-	return ret;
 }
 
 /*!
@@ -1574,8 +1580,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, L"bStringEndLine", types.m_bStringEndLine );
 
 	// Block Comment
-	ShareData_IO_BlockComment( cProfile, pszSecName, L"szBlockCommentFrom", L"szBlockCommentTo", types.m_cBlockComments[0] );
-	ShareData_IO_BlockComment( cProfile, pszSecName, L"szBlockCommentFrom2", L"szBlockCommentTo2", types.m_cBlockComments[1] );
+	ShareData_IO_BlockComments( cProfile, pszSecName, std::span(types.m_cBlockComments) );
 
 	// Line Comment
 	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment", L"nLineCommentColumn", types.m_cLineComment, 0 );

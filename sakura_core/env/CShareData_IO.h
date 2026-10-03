@@ -10,9 +10,11 @@
 #pragma once
 
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
 
+class CBlockComment;
 class CDataProfile;
 class CMenuDrawer;
 struct CommonSetting_CustomMenu; // defined CommonSetting.h
@@ -22,6 +24,8 @@ struct ColorInfo; // defined doc/CDocTypeSetting.h
 struct SFileTree;
 struct SFileTreeItem;
 struct STypeConfig;
+
+using BlockComments = std::span<CBlockComment>;
 
 // 2008.XX.XX kobake CShareDataから分離
 // 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move Export、Importに使用
@@ -69,6 +73,12 @@ public:
 		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);
 	static void IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, ColorInfo* pColorInfoArr );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 };
+
+void ShareData_IO_BlockComments(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	BlockComments			tEntryValues	//!< [in,out] エントリ値
+);
 
 void ShareData_IO_FileTree(
 	CDataProfile&			cProfile,
