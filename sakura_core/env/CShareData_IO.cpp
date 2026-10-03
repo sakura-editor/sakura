@@ -748,7 +748,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	ShareData_IO_OutlineDockRect(cProfile, pszSecName, L"xyOutlineDock", common.m_sOutline);
 
 	cProfile.IOProfileData( pszSecName, L"nDockOutline", common.m_sOutline.m_nDockOutline );
-	ShareData_IO_FileTree( cProfile, common.m_sOutline.m_sFileTree, pszSecName );
+
+	ShareData_IO_FileTree(cProfile, pszSecName, common.m_sOutline.m_sFileTree);
+
 	cProfile.IOProfileData( pszSecName, L"szFileTreeDefIniName", common.m_sOutline.m_sFileTreeDefIniName );
 }
 
@@ -1602,7 +1604,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, L"nOutlineSortCol"		, types.m_nOutlineSortCol );/* アウトライン解析ソート列番号 */
 	cProfile.IOProfileData( pszSecName, L"bOutlineSortDesc"		, types.m_bOutlineSortDesc );/* アウトライン解析ソート降順 */
 	cProfile.IOProfileData( pszSecName, L"nOutlineSortType"		, types.m_nOutlineSortType );/* アウトライン解析ソート基準 */
-	ShareData_IO_FileTree( cProfile, types.m_sFileTree, pszSecName );
+
+	ShareData_IO_FileTree(cProfile, pszSecName, types.m_sFileTree);
+
 	cProfile.IOProfileData(pszSecName, L"nSmartIndent", types.m_eSmartIndent );/* スマートインデント種別 */
 	cProfile.IOProfileData( pszSecName, L"bIndentCppStringIgnore"		, types.m_bIndentCppStringIgnore );
 	cProfile.IOProfileData( pszSecName, L"bIndentCppCommentIgnore"	, types.m_bIndentCppCommentIgnore );
@@ -2426,10 +2430,22 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	cProfile.IOProfileData(pszSecName, pszKeyFaceName, StringBufferW(lf.lfFaceName));
 }
 
-void CShareData_IO::ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fileTree, const WCHAR* pszSecName )
+/*!
+ * @brief ファイルツリー設定 I/O
+ *
+ * @param[in] cProfile INIファイル入出力クラス
+ * @param[in] pszSecName セクション名
+ * @param[in, out] fileTree	ファイルツリー設定
+ */
+void ShareData_IO_FileTree(
+	CDataProfile&			cProfile,
+	std::wstring_view		pszSecName,	//!< [in] セクション名
+	SFileTree&				fileTree
+)
 {
 	cProfile.IOProfileData( pszSecName, L"bFileTreeProject", fileTree.m_bProject );
 	cProfile.IOProfileData( pszSecName, L"szFileTreeProjectIni", fileTree.m_szProjectIni );
+
 	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", fileTree.m_nItemCount );
 	SetValueLimit( fileTree.m_nItemCount, int(std::size(fileTree.m_aItems)) );
 

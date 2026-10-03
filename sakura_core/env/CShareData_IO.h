@@ -55,7 +55,6 @@ protected:
 	static void ShareData_IO_Other( CDataProfile& cProfile );
 
 public:
-	static void ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fileTree, const WCHAR* pszSecName );
 	static void ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName);	// 2010/04/12 Uchi 分離
 
 public:
@@ -68,6 +67,12 @@ public:
 		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);
 	static void IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, ColorInfo* pColorInfoArr );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 };
+
+void ShareData_IO_FileTree(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	SFileTree&				fileTree
+);
 
 template <typename T>
 void ShareData_IO_OutlineDockRect(
