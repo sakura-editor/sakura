@@ -110,6 +110,7 @@ set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 
 set(TEST_DLLPLUGIN_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-dllplugin")
 set(TEST_DLLPLUGIN_TARGET dll_plugin1)
+set(TEST_OUTLINE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline")
 set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
 set(TEST_OUTLINE_STAGE_DIR "${TESTS1_RESOURCE_STAGE_DIR}/outline")
 
@@ -139,67 +140,67 @@ add_custom_target(test_outline_zip
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${TEST_OUTLINE_STAGE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Asm.asm.txt"
+    "${TEST_OUTLINE_DIR}/Asm.asm.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.asm"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/VisualBasic.bas.txt"
+    "${TEST_OUTLINE_DIR}/VisualBasic.bas.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.bas"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/VisualBasic.cls.txt"
+    "${TEST_OUTLINE_DIR}/VisualBasic.cls.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cls"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Cobol.cbl.txt"
+    "${TEST_OUTLINE_DIR}/Cobol.cbl.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cbl"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Cpp.cpp.txt"
+    "${TEST_OUTLINE_DIR}/Cpp.cpp.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cpp"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/DosBatch.bat.txt"
+    "${TEST_OUTLINE_DIR}/DosBatch.bat.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.bat"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Awk.awk.txt"
+    "${TEST_OUTLINE_DIR}/Awk.awk.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.awk"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Csv.csv.txt"
+    "${TEST_OUTLINE_DIR}/Csv.csv.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.csv"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Html.html.txt"
+    "${TEST_OUTLINE_DIR}/Html.html.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.html"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Java.java.txt"
+    "${TEST_OUTLINE_DIR}/Java.java.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.java"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Python.py.txt"
+    "${TEST_OUTLINE_DIR}/Python.py.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.py"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/OraclePLSQL.sql.txt"
+    "${TEST_OUTLINE_DIR}/OraclePLSQL.sql.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.sql"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Tex.tex.txt"
+    "${TEST_OUTLINE_DIR}/Tex.tex.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.tex"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Perl.pl.txt"
+    "${TEST_OUTLINE_DIR}/Perl.pl.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.pl"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Text.txt.txt"
+    "${TEST_OUTLINE_DIR}/Text.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.txt"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFile.txt.txt"
+    "${TEST_OUTLINE_DIR}/RuleFile.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cr1"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFile.rule.txt"
+    "${TEST_OUTLINE_DIR}/RuleFile.rule.txt"
     "${TEST_OUTLINE_STAGE_DIR}/rule.rule"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegex.txt.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegex.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cr2"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegex.rule.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegex.rule.txt"
     "${TEST_OUTLINE_STAGE_DIR}/rule_regex.rule"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegexReplace.txt.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cr3"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegexReplace.rule.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.rule.txt"
     "${TEST_OUTLINE_STAGE_DIR}/rule_regex_replace.rule"
   COMMAND ${CMAKE_COMMAND} -E remove -f "${CMAKE_BINARY_DIR}/outline.zip"
   COMMAND ${7ZIP_EXECUTABLE}
