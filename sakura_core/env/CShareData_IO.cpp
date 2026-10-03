@@ -1384,7 +1384,6 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 	int		i;
-	WCHAR	szKey[32];
 	
 	int nCountOld = pShare->m_nTypesCount;
 	if( !cProfile.IOProfileData( L"Other", L"nTypesCount", pShare->m_nTypesCount ) ){
@@ -1407,9 +1406,8 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 	}
 
 	for( i = 0; i < pShare->m_nTypesCount; ++i ){
-		auto_sprintf( szKey, L"Types(%d)", i );
-		STypeConfig& type = *(types[i]);
-		ShareData_IO_Type_One(cProfile, type, szKey);
+		auto& type = *(types[i]);
+		ShareData_IO_TypeConfig(cProfile, strprintf(L"Types(%d)", i), type);
 		if( cProfile.IsReadingMode() ){
 			type.m_nIdx = i;
 			if( i == 0 ){
@@ -1424,7 +1422,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 	if( cProfile.IsReadingMode() ){
 		// Id重複チェック、更新
 		for( i = 0; i < pShare->m_nTypesCount - 1; i++ ){
-			STypeConfig& type = *(types[i]);
+			const auto& type = *(types[i]);
 			for( int k = i + 1; k < pShare->m_nTypesCount; k++ ){
 				STypeConfig& type2 = *(types[k]);
 				if( type.m_id == type2.m_id ){
@@ -1861,7 +1859,11 @@ void ShareData_IO_VertLineIdx<CKetaXInt(&)[MAX_VERTLINES]>(
 
 	@date 2010/04/17 Uchi ShareData_IO_TypesOneから分離。
 */
-void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName)
+void ShareData_IO_TypeConfig(
+	CDataProfile&			cProfile,
+	std::wstring_view		pszSecName,		//!< [in] セクション名
+	STypeConfig&			types			//!< [in,out] エントリ値
+)
 {
 	ShareData_IO_TypeInts(cProfile, pszSecName, types);
 

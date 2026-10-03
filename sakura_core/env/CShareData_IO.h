@@ -62,9 +62,6 @@ protected:
 	static void ShareData_IO_Other( CDataProfile& cProfile );
 
 public:
-	static void ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName);	// 2010/04/12 Uchi 分離
-
-public:
 	static void IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName);
 	static void IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName);		// 2012.11.22 aroka
 	static void IO_MainMenu( CDataProfile& c, CommonSetting_MainMenu& s, bool b ){		// 2010/5/15 Uchi
@@ -140,6 +137,12 @@ void ShareData_IO_RegexKeyword(
 	CDataProfile&			cProfile,
 	std::wstring_view		sectionName,	//!< [in] セクション名
 	STypeConfig&			type			//!< [in,out] エントリ値
+);
+
+void ShareData_IO_TypeConfig(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	STypeConfig&			tEntryValue		//!< [in,out] エントリ値
 );
 
 void ShareData_IO_TypeInts(

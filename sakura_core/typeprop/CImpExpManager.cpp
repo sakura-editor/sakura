@@ -318,7 +318,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	}
 
 	// 読み込み
-	CShareData_IO::ShareData_IO_Type_One( m_cProfile, m_Types, szSecTypes );
+	ShareData_IO_TypeConfig(m_cProfile, szSecTypes, m_Types);
 
 	m_nIdx = m_Types.m_nIdx;
 	if (m_nIdx == 0) {
@@ -444,7 +444,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 
 	cProfile.SetWritingMode();
 
-	CShareData_IO::ShareData_IO_Type_One( cProfile , m_Types, szSecTypes );
+	ShareData_IO_TypeConfig(cProfile, szSecTypes, m_Types);
 
 	// 共通設定との連結部
 	int		i;
