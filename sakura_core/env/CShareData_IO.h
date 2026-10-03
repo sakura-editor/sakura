@@ -24,6 +24,7 @@ struct CommonSetting_KeyBind;	// defined CommonSetting.h
 struct CommonSetting_Plugin;
 struct CommonSetting_View;
 struct ColorInfo; // defined doc/CDocTypeSetting.h
+struct PRINTSETTING;
 struct SFileTree;
 struct SFileTreeItem;
 struct STypeConfig;
@@ -52,7 +53,6 @@ protected:
 	static void ShareData_IO_Common( CDataProfile& cProfile );
 	static void ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer );
 	static void ShareData_IO_CustMenu( CDataProfile& cProfile );
-	static void ShareData_IO_Print( CDataProfile& cProfile );
 	static void ShareData_IO_Types( CDataProfile& cProfile );
 	static void ShareData_IO_KeyWords( CDataProfile& cProfile );
 	static void ShareData_IO_Macro( CDataProfile& cProfile );
@@ -134,6 +134,18 @@ void ShareData_IO_OutlineDockRect(
 	std::wstring_view		sectionName,	//!< [in] セクション名
 	std::wstring_view		entryKey,		//!< [in] エントリ名
 	T&						tEntryValue		//!< [in,out] エントリ値
+);
+
+void ShareData_IO_Print(
+	CDataProfile&			cProfile,
+	std::span<PRINTSETTING>	printSettings	//!< [in,out] エントリ値
+);
+
+bool ShareData_IO_PrintInts(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	PRINTSETTING&			printSetting	//!< [in,out] エントリ値
 );
 
 void ShareData_IO_Plugin(

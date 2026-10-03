@@ -822,6 +822,133 @@ TEST(ShareData_IO, ShareData_IO_OutlineDockRect)
 }
 
 /*!
+ * @brief ShareData_IO_Printのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_Print)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	cProfile.SetProfileData(L"Print", L"PS[00].szHF[0]", L"&f");
+	cProfile.SetProfileData(L"Print", L"PS[00].szFTF[0]", L"&C- &P -");
+
+	std::vector<PRINTSETTING> printSettings{ static_cast<size_t>(MAX_PRINTSETTINGARR) };
+
+	ShareData_IO_Print(cProfile, printSettings);
+
+	EXPECT_THAT(printSettings[0].m_szHeaderForm[0], StrEq(L"$f"));
+	EXPECT_THAT(printSettings[0].m_szFooterForm[0], StrEq(L""));
+	EXPECT_THAT(printSettings[0].m_szFooterForm[1], StrEq(L"- $p -"));
+}
+
+/*!
+ * @brief ShareData_IO_PrintIntsのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_PrintInts)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	PRINTSETTING printSetting{};
+
+	// テスト用に初期値を入れる
+	printSetting.m_nPrintFontWidth			= 0;
+	printSetting.m_nPrintFontHeight			= 0;
+	printSetting.m_nPrintDansuu				= 0;
+	printSetting.m_nPrintDanSpace			= 0;
+	printSetting.m_nPrintLineSpacing		= 0;
+	printSetting.m_nPrintMarginTY			= 0;
+	printSetting.m_nPrintMarginBY			= 0;
+	printSetting.m_nPrintMarginLX			= 0;
+	printSetting.m_nPrintMarginRX			= 0;
+	printSetting.m_nPrintPaperOrientation	= 0;
+	printSetting.m_nPrintPaperSize			= 0;
+	printSetting.m_bPrintWordWrap			= false;
+	printSetting.m_bPrintLineNumber			= true;
+	printSetting.m_bHeaderUse[0]			= FALSE;
+	printSetting.m_bHeaderUse[1]			= TRUE;
+	printSetting.m_bHeaderUse[2]			= FALSE;
+	printSetting.m_bFooterUse[0]			= TRUE;
+	printSetting.m_bFooterUse[1]			= FALSE;
+	printSetting.m_bFooterUse[2]			= TRUE;
+
+	// 設定項目がないと読めない
+	EXPECT_FALSE(ShareData_IO_PrintInts(cProfile, L"Test", L"PS[00].nInts", printSetting));
+
+	EXPECT_THAT(printSetting.m_nPrintFontWidth,			0);
+	EXPECT_THAT(printSetting.m_nPrintFontHeight,		0);
+	EXPECT_THAT(printSetting.m_nPrintDansuu,			0);
+	EXPECT_THAT(printSetting.m_nPrintDanSpace,			0);
+	EXPECT_THAT(printSetting.m_nPrintLineSpacing,		0);
+	EXPECT_THAT(printSetting.m_nPrintMarginTY,			0);
+	EXPECT_THAT(printSetting.m_nPrintMarginBY,			0);
+	EXPECT_THAT(printSetting.m_nPrintMarginLX,			0);
+	EXPECT_THAT(printSetting.m_nPrintMarginRX,			0);
+	EXPECT_THAT(printSetting.m_nPrintPaperOrientation,	0);
+	EXPECT_THAT(printSetting.m_nPrintPaperSize,			0);
+	EXPECT_THAT(printSetting.m_bPrintWordWrap,			IsFalse());
+	EXPECT_THAT(printSetting.m_bPrintLineNumber,		IsTrue());
+	EXPECT_THAT(printSetting.m_bHeaderUse[0],			IsFalse());
+	EXPECT_THAT(printSetting.m_bHeaderUse[1],			IsTrue());
+	EXPECT_THAT(printSetting.m_bHeaderUse[2],			IsFalse());
+	EXPECT_THAT(printSetting.m_bFooterUse[0],			IsTrue());
+	EXPECT_THAT(printSetting.m_bFooterUse[1],			IsFalse());
+	EXPECT_THAT(printSetting.m_bFooterUse[2],			IsTrue());
+
+	// 値を設定(18個指定で失敗させる)
+	cProfile.SetProfileData(L"Test", L"PS[00].nInts", L"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18");
+
+	// 項目足りないので、読めない
+	EXPECT_FALSE(ShareData_IO_PrintInts(cProfile, L"Test", L"PS[00].nInts", printSetting));
+
+	EXPECT_THAT(printSetting.m_nPrintFontWidth,			0);
+	EXPECT_THAT(printSetting.m_nPrintFontHeight,		0);
+	EXPECT_THAT(printSetting.m_nPrintDansuu,			0);
+	EXPECT_THAT(printSetting.m_nPrintDanSpace,			0);
+	EXPECT_THAT(printSetting.m_nPrintLineSpacing,		0);
+	EXPECT_THAT(printSetting.m_nPrintMarginTY,			0);
+	EXPECT_THAT(printSetting.m_nPrintMarginBY,			0);
+	EXPECT_THAT(printSetting.m_nPrintMarginLX,			0);
+	EXPECT_THAT(printSetting.m_nPrintMarginRX,			0);
+	EXPECT_THAT(printSetting.m_nPrintPaperOrientation,	0);
+	EXPECT_THAT(printSetting.m_nPrintPaperSize,			0);
+	EXPECT_THAT(printSetting.m_bPrintWordWrap,			IsFalse());
+	EXPECT_THAT(printSetting.m_bPrintLineNumber,		IsTrue());
+	EXPECT_THAT(printSetting.m_bHeaderUse[0],			IsFalse());
+	EXPECT_THAT(printSetting.m_bHeaderUse[1],			IsTrue());
+	EXPECT_THAT(printSetting.m_bHeaderUse[2],			IsFalse());
+	EXPECT_THAT(printSetting.m_bFooterUse[0],			IsTrue());
+	EXPECT_THAT(printSetting.m_bFooterUse[1],			IsFalse());
+	EXPECT_THAT(printSetting.m_bFooterUse[2],			IsTrue());
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"PS[00].nInts", L"1,2,3,4,5,6,7,8,9,10,11,1,0,1,0,1,0,1,0");
+
+	// 値が揃ったので読める
+	EXPECT_TRUE(ShareData_IO_PrintInts(cProfile, L"Test", L"PS[00].nInts", printSetting));
+
+	EXPECT_THAT(printSetting.m_nPrintFontWidth,			0x1);
+	EXPECT_THAT(printSetting.m_nPrintFontHeight,		0x2);
+	EXPECT_THAT(printSetting.m_nPrintDansuu,			0x3);
+	EXPECT_THAT(printSetting.m_nPrintDanSpace,			0x4);
+	EXPECT_THAT(printSetting.m_nPrintLineSpacing,		0x5);
+	EXPECT_THAT(printSetting.m_nPrintMarginTY,			0x6);
+	EXPECT_THAT(printSetting.m_nPrintMarginBY,			0x7);
+	EXPECT_THAT(printSetting.m_nPrintMarginLX,			0x8);
+	EXPECT_THAT(printSetting.m_nPrintMarginRX,			0x9);
+	EXPECT_THAT(printSetting.m_nPrintPaperOrientation,	0xA);
+	EXPECT_THAT(printSetting.m_nPrintPaperSize,			0xB);
+	EXPECT_THAT(printSetting.m_bPrintWordWrap,			IsTrue());
+	EXPECT_THAT(printSetting.m_bPrintLineNumber,		IsFalse());
+	EXPECT_THAT(printSetting.m_bHeaderUse[0],			IsTrue());
+	EXPECT_THAT(printSetting.m_bHeaderUse[1],			IsFalse());
+	EXPECT_THAT(printSetting.m_bHeaderUse[2],			IsTrue());
+	EXPECT_THAT(printSetting.m_bFooterUse[0],			IsFalse());
+	EXPECT_THAT(printSetting.m_bFooterUse[1],			IsTrue());
+	EXPECT_THAT(printSetting.m_bFooterUse[2],			IsFalse());
+}
+
+/*!
  * @brief ShareData_IO_Pluginのテスト
  */
 TEST(ShareData_IO, ShareData_IO_Plugin)

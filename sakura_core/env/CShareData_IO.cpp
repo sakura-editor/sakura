@@ -25,6 +25,7 @@
 #include "config/app_constants.h"
 
 using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
 
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
@@ -178,7 +179,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_CustMenu( cProfile );
 	ShareData_IO_Font( cProfile, pShareData->m_Common.m_sView );
 	ShareData_IO_KeyBind( cProfile, pShareData->m_Common.m_sKeyBind, false );
-	ShareData_IO_Print( cProfile );
+	ShareData_IO_Print(cProfile, pShareData->m_PrintSettingArr);
 	ShareData_IO_Types( cProfile );
 	ShareData_IO_KeyWords( cProfile );
 	ShareData_IO_Macro( cProfile );
@@ -1237,119 +1238,126 @@ void ShareData_IO_KeyBind(
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 */
-void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
+void ShareData_IO_Print(
+	CDataProfile&			cProfile,
+	std::span<PRINTSETTING>	printSettings	//!< [in,out] エントリ値
+)
 {
-	DLLSHAREDATA* pShare = &GetDllShareData();
-
 	const WCHAR* pszSecName = L"Print";
-	int		i, j;
-	WCHAR	szKeyName[64];
-	WCHAR	szKeyData[1024];
-	for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
-		// 2005.04.07 D.S.Koba
-		PRINTSETTING& printsetting = pShare->m_PrintSettingArr[i];
-		auto_sprintf( szKeyName, L"PS[%02d].nInts", i );
-		static const WCHAR* pszForm = L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
-		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
-				int buf[19];
-				scan_ints( szKeyData, pszForm, buf );
-				printsetting.m_nPrintFontWidth			= buf[ 0];
-				printsetting.m_nPrintFontHeight			= buf[ 1];
-				printsetting.m_nPrintDansuu				= buf[ 2];
-				printsetting.m_nPrintDanSpace			= buf[ 3];
-				printsetting.m_nPrintLineSpacing		= buf[ 4];
-				printsetting.m_nPrintMarginTY			= buf[ 5];
-				printsetting.m_nPrintMarginBY			= buf[ 6];
-				printsetting.m_nPrintMarginLX			= buf[ 7];
-				printsetting.m_nPrintMarginRX			= buf[ 8];
-				printsetting.m_nPrintPaperOrientation	= (short)buf[ 9];
-				printsetting.m_nPrintPaperSize			= (short)buf[10];
-				printsetting.m_bPrintWordWrap			= (buf[11]!=0);
-				printsetting.m_bPrintLineNumber			= (buf[12]!=0);
-				printsetting.m_bHeaderUse[0]			= buf[13];
-				printsetting.m_bHeaderUse[1]			= buf[14];
-				printsetting.m_bHeaderUse[2]			= buf[15];
-				printsetting.m_bFooterUse[0]			= buf[16];
-				printsetting.m_bFooterUse[1]			= buf[17];
-				printsetting.m_bFooterUse[2]			= buf[18];
-			}
-		}else{
-			auto_sprintf( szKeyData, pszForm,
-				printsetting.m_nPrintFontWidth		,
-				printsetting.m_nPrintFontHeight		,
-				printsetting.m_nPrintDansuu			,
-				printsetting.m_nPrintDanSpace			,
-				printsetting.m_nPrintLineSpacing		,
-				printsetting.m_nPrintMarginTY			,
-				printsetting.m_nPrintMarginBY			,
-				printsetting.m_nPrintMarginLX			,
-				printsetting.m_nPrintMarginRX			,
-				printsetting.m_nPrintPaperOrientation	,
-				printsetting.m_nPrintPaperSize		,
-				printsetting.m_bPrintWordWrap?1:0,
-				printsetting.m_bPrintLineNumber?1:0,
-				printsetting.m_bHeaderUse[0]?1:0,
-				printsetting.m_bHeaderUse[1]?1:0,
-				printsetting.m_bHeaderUse[2]?1:0,
-				printsetting.m_bFooterUse[0]?1:0,
-				printsetting.m_bFooterUse[1]?1:0,
-				printsetting.m_bFooterUse[2]?1:0
-			);
-			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-		}
 
-		auto_sprintf( szKeyName, L"PS[%02d].szSName"	, i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintSettingName));
-		auto_sprintf( szKeyName, L"PS[%02d].szFF"	, i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintFontFaceHan));
-		auto_sprintf( szKeyName, L"PS[%02d].szFFZ"	, i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintFontFaceZen));
-		// ヘッダー/フッター
-		for( j = 0; j < 3; ++j ){
-			auto_sprintf( szKeyName, L"PS[%02d].szHF[%d]" , i, j );
-			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szHeaderForm[j]));
-			auto_sprintf( szKeyName, L"PS[%02d].szFTF[%d]", i, j );
-			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szFooterForm[j]));
-		}
-		{ // ヘッダー/フッター フォント設定
-			WCHAR	szKeyName2[64];
-			WCHAR	szKeyName3[64];
-			auto_sprintf( szKeyName,  L"PS[%02d].lfHeader",			i );
-			auto_sprintf( szKeyName2, L"PS[%02d].nHeaderPointSize",	i );
-			auto_sprintf( szKeyName3, L"PS[%02d].lfHeaderFaceName",	i );
-			ShareData_IO_LogFont( cProfile, pszSecName, szKeyName, printsetting.m_lfHeader, printsetting.m_nHeaderPointSize, szKeyName2, szKeyName3 );
-			auto_sprintf( szKeyName,  L"PS[%02d].lfFooter",			i );
-			auto_sprintf( szKeyName2, L"PS[%02d].nFooterPointSize",	i );
-			auto_sprintf( szKeyName3, L"PS[%02d].lfFooterFaceName",	i );
-			ShareData_IO_LogFont( cProfile, pszSecName, szKeyName, printsetting.m_lfFooter, printsetting.m_nFooterPointSize, szKeyName2, szKeyName3 );
-		}
+	for (size_t i = 0; i < std::size(printSettings); ++i) {
+		auto& printsetting = printSettings[i];
 
-		auto_sprintf( szKeyName, L"PS[%02d].szDriver", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_mdmDevMode.m_szPrinterDriverName));
-		auto_sprintf( szKeyName, L"PS[%02d].szDevice", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_mdmDevMode.m_szPrinterDeviceName));
-		auto_sprintf( szKeyName, L"PS[%02d].szOutput", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_mdmDevMode.m_szPrinterOutputName));
-
+		cProfile.IOProfileData(pszSecName, strprintf(L"PS[%02d]", i), printsetting);
+	
 		// 2002.02.16 hor とりあえず旧設定を変換しとく
-		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
-		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
-		){
-			wcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
-			wcscpy( printsetting.m_szFooterForm[0], _EDITL("") );
-			wcscpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
+		if (cProfile.IsReadingMode() &&
+			L"&f"sv == printsetting.m_szHeaderForm[0] &&
+			L"&C- &P -"sv == printsetting.m_szFooterForm[0])
+		{
+			::wcscpy_s(printsetting.m_szHeaderForm[0], L"$f");
+			::wcscpy_s(printsetting.m_szFooterForm[0], L"");
+			::wcscpy_s(printsetting.m_szFooterForm[1], L"- $p -");
+		}
+	}
+}
+
+bool ShareData_IO_PrintInts(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	PRINTSETTING&			printSetting	//!< [in,out] エントリ値
+)
+{
+	// 取得・設定は文字列を介して行う
+	std::wstring buffer{};
+
+	// 書き込みモード
+	if (cProfile.IsWritingMode()) {
+		strprintf(
+			buffer,
+			L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+			printSetting.m_nPrintFontWidth,
+			printSetting.m_nPrintFontHeight,
+			printSetting.m_nPrintDansuu,
+			printSetting.m_nPrintDanSpace,
+			printSetting.m_nPrintLineSpacing,
+			printSetting.m_nPrintMarginTY,
+			printSetting.m_nPrintMarginBY,
+			printSetting.m_nPrintMarginLX,
+			printSetting.m_nPrintMarginRX,
+			printSetting.m_nPrintPaperOrientation,
+			printSetting.m_nPrintPaperSize,
+			(int)printSetting.m_bPrintWordWrap,
+			(int)printSetting.m_bPrintLineNumber,
+			(int)(bool)printSetting.m_bHeaderUse[0],
+			(int)(bool)printSetting.m_bHeaderUse[1],
+			(int)(bool)printSetting.m_bHeaderUse[2],
+			(int)(bool)printSetting.m_bFooterUse[0],
+			(int)(bool)printSetting.m_bFooterUse[1],
+			(int)(bool)printSetting.m_bFooterUse[2]
+		);
+	}
+
+	// 文字列を介して読み書きする
+	const auto ret = cProfile.IOProfileData(sectionName, entryKey, buffer);
+	if (!ret) {
+		return false;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	// 読み込みモード
+	if (cProfile.IsReadingMode()) {
+		std::array<int, 19> ints{};
+		if (19 != ::swscanf_s(
+			buffer.c_str(),
+			L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+			&ints[ 0],
+			&ints[ 1],
+			&ints[ 2],
+			&ints[ 3],
+			&ints[ 4],
+			&ints[ 5],
+			&ints[ 6],
+			&ints[ 7],
+			&ints[ 8],
+			&ints[ 9],
+			&ints[10],
+			&ints[11],
+			&ints[12],
+			&ints[13],
+			&ints[14],
+			&ints[15],
+			&ints[16],
+			&ints[17],
+			&ints[18]
+		))
+		{
+			return false;	// 19個揃わなければ失敗とする
 		}
 
-		//禁則	//@@@ 2002.04.09 MIK
-		auto_sprintf( szKeyName, L"PS[%02d].bKinsokuHead", i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuHead );
-		auto_sprintf( szKeyName, L"PS[%02d].bKinsokuTail", i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuTail );
-		auto_sprintf( szKeyName, L"PS[%02d].bKinsokuRet",  i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuRet );	//@@@ 2002.04.13 MIK
-		auto_sprintf( szKeyName, L"PS[%02d].bKinsokuKuto", i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuKuto );	//@@@ 2002.04.17 MIK
-
-		//カラー印刷
-		auto_sprintf( szKeyName, L"PS[%02d].bColorPrint", i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bColorPrint );	// 2013/4/26 Uchi
+		// 全項目読み込めた場合のみ反映する
+		printSetting.m_nPrintFontWidth			= ints[ 0];
+		printSetting.m_nPrintFontHeight			= ints[ 1];
+		printSetting.m_nPrintDansuu				= ints[ 2];
+		printSetting.m_nPrintDanSpace			= ints[ 3];
+		printSetting.m_nPrintLineSpacing		= ints[ 4];
+		printSetting.m_nPrintMarginTY			= ints[ 5];
+		printSetting.m_nPrintMarginBY			= ints[ 6];
+		printSetting.m_nPrintMarginLX			= ints[ 7];
+		printSetting.m_nPrintMarginRX			= ints[ 8];
+		printSetting.m_nPrintPaperOrientation	= (short)ints[ 9];
+		printSetting.m_nPrintPaperSize			= (short)ints[10];
+		printSetting.m_bPrintWordWrap			= ints[11] != 0;
+		printSetting.m_bPrintLineNumber			= ints[12] != 0;
+		printSetting.m_bHeaderUse[0]			= ints[13] ? 1 : 0;
+		printSetting.m_bHeaderUse[1]			= ints[14] ? 1 : 0;
+		printSetting.m_bHeaderUse[2]			= ints[15] ? 1 : 0;
+		printSetting.m_bFooterUse[0]			= ints[16] ? 1 : 0;
+		printSetting.m_bFooterUse[1]			= ints[17] ? 1 : 0;
+		printSetting.m_bFooterUse[2]			= ints[18] ? 1 : 0;
 	}
+
+	return ret;
 }
 
 /*!

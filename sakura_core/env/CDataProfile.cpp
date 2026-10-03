@@ -7,6 +7,7 @@
 #include "StdAfx.h"
 #include "env/CDataProfile.h"
 
+#include "env/CShareData_IO.h"
 #include "env/DLLSHAREDATA.h"
 
 /*!
@@ -171,6 +172,67 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 	}
 
 	return ret;
+}
+
+/*!
+ * @brief 設定値の入出力を行う。
+ *
+ * PRINTSETTING型（印刷設定データ）向けの特殊化。
+ */
+template<>
+bool CDataProfile::IOProfileData<PRINTSETTING>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	PRINTSETTING&			printSetting	//!< [in,out] エントリ値
+)
+{
+	ShareData_IO_PrintInts(*this, sectionName, strprintf(L"%s.nInts", keyPrefix), printSetting);
+
+	IOProfileData(sectionName, strprintf(L"%s.szSName", keyPrefix), printSetting.m_szPrintSettingName);
+	IOProfileData(sectionName, strprintf(L"%s.szFF",    keyPrefix), printSetting.m_szPrintFontFaceHan);
+	IOProfileData(sectionName, strprintf(L"%s.szFFZ",   keyPrefix), printSetting.m_szPrintFontFaceZen);
+
+	// ヘッダー/フッター
+	for (int j = 0; j < 3; ++j) {
+		IOProfileData(sectionName, strprintf(L"%s.szHF[%d]" , keyPrefix, j), printSetting.m_szHeaderForm[j]);
+		IOProfileData(sectionName, strprintf(L"%s.szFTF[%d]", keyPrefix, j), printSetting.m_szFooterForm[j]);
+	}
+
+	// ヘッダー/フッター フォント設定
+	ShareData_IO_LogFont(
+		*this,
+		sectionName,
+		strprintf(L"%s.lfHeader",			keyPrefix),
+		printSetting.m_lfHeader,
+		printSetting.m_nHeaderPointSize,
+		strprintf(L"%s.nHeaderPointSize",	keyPrefix),
+		strprintf(L"%s.lfHeaderFaceName",	keyPrefix)
+	);
+
+	ShareData_IO_LogFont(
+		*this,
+		sectionName,
+		strprintf(L"%s.lfFooter",			keyPrefix),
+		printSetting.m_lfFooter,
+		printSetting.m_nFooterPointSize,
+		strprintf(L"%s.nFooterPointSize",	keyPrefix),
+		strprintf(L"%s.lfFooterFaceName",	keyPrefix)
+	);
+
+	IOProfileData(sectionName, strprintf(L"%s.szDriver", keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterDriverName);
+	IOProfileData(sectionName, strprintf(L"%s.szDevice", keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterDeviceName);
+	IOProfileData(sectionName, strprintf(L"%s.szOutput", keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterOutputName);
+
+	//禁則
+	IOProfileData(sectionName, strprintf(L"%s.bKinsokuHead", keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuHead);
+	IOProfileData(sectionName, strprintf(L"%s.bKinsokuTail", keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuTail);
+	IOProfileData(sectionName, strprintf(L"%s.bKinsokuRet",  keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuRet);
+	IOProfileData(sectionName, strprintf(L"%s.bKinsokuKuto", keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuKuto);
+
+	//カラー印刷
+	IOProfileData(sectionName, strprintf(L"%s.bColorPrint", keyPrefix), printSetting.m_bColorPrint);
+
+	return true;	// 返却値に意味はない
 }
 
 /*!

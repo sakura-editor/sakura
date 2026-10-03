@@ -19,6 +19,7 @@
 struct ColorInfo;
 struct EditInfo;
 struct KeyHelpInfo;
+struct PRINTSETTING;
 struct PluginRec;
 struct SFileTreeItem;
 
@@ -368,6 +369,13 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 	std::wstring_view		sectionName,	//!< [in] セクション名
 	std::wstring_view		entryKey,		//!< [in] エントリ名
 	KeyHelpInfo&			tEntryValue		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<PRINTSETTING>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	PRINTSETTING&			printSetting	//!< [in,out] エントリ値
 );
 
 template <>
