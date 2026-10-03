@@ -14,6 +14,8 @@
 #include "basis/SakuraBasis.h"
 #include "util/StaticType.h"
 
+#include <Windows.h>
+
 /*!
  * バッファ参照型
  *
@@ -340,5 +342,12 @@ public:
 		return true;
 	}
 };
+
+template <>
+bool CDataProfile::IOProfileData<RECT>(
+	std::wstring_view		sectionName,
+	std::wstring_view		entryKey,
+	RECT&					rcEntryValue
+);
 
 #endif /* SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_ */

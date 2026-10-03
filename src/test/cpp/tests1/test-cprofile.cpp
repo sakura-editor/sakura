@@ -374,3 +374,47 @@ TEST(CDataProfile, IOProfileData)
 	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"szTest", nValue), IsFalse());
 	EXPECT_THAT(nValue, 109);
 }
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_RECT)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	RECT value = { 1, 2, 3, 4 };
+
+	// 設定項目がないと読めない
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"rcTest", value), IsFalse());
+
+	// 値は変更されない
+	EXPECT_THAT(value.left, 1);
+	EXPECT_THAT(value.top, 2);
+	EXPECT_THAT(value.right, 3);
+	EXPECT_THAT(value.bottom, 4);
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"rcTest", L"4,3,2,1");
+
+	// 読める
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"rcTest", value), IsTrue());
+
+	// 値は変更される
+	EXPECT_THAT(value.left, 4);
+	EXPECT_THAT(value.top, 3);
+	EXPECT_THAT(value.right, 2);
+	EXPECT_THAT(value.bottom, 1);
+
+	// 値を設定（足りない）
+	cProfile.SetProfileData(L"Test", L"rcTest", L"109,108,107");
+
+	// 不完全な設定項目は読めない
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"rcTest", value), IsFalse());
+
+	// 値は変更されない
+	EXPECT_THAT(value.left, 4);
+	EXPECT_THAT(value.top, 3);
+	EXPECT_THAT(value.right, 2);
+	EXPECT_THAT(value.bottom, 1);
+}

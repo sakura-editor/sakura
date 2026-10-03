@@ -438,35 +438,6 @@ void CShareData_IO::ShareData_IO_Nickname( CDataProfile& cProfile )
 	}
 }
 
-static bool ShareData_IO_RECT( CDataProfile& cProfile, const WCHAR* pszSecName, const WCHAR* pszKeyName, RECT& rcValue )
-{
-	const WCHAR* pszForm = L"%d,%d,%d,%d";
-	WCHAR		szKeyData[100];
-	bool		ret = false;
-	if( cProfile.IsReadingMode() ){
-		ret = cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
-		if( ret ){
-			int buf[4];
-			scan_ints( szKeyData, pszForm, buf );
-			rcValue.left	= buf[0];
-			rcValue.top		= buf[1];
-			rcValue.right	= buf[2];
-			rcValue.bottom	= buf[3];
-		}
-	}else{
-		auto_sprintf(
-			szKeyData,
-			pszForm,
-			rcValue.left,
-			rcValue.top,
-			rcValue.right,
-			rcValue.bottom
-		);
-		ret = cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
-	}
-	return ret;
-}
-
 /*!
 	@brief 共有データのCommonセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
@@ -700,12 +671,12 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, L"nAlertFileSize"				, common.m_sFile.m_nAlertFileSize );	// 警告を開始するファイルサイズ(MB単位)
 	
 	/* 「開く」ダイアログのサイズと位置 */
-	ShareData_IO_RECT( cProfile,  pszSecName, L"rcOpenDialog", common.m_sOthers.m_rcOpenDialog );
-	ShareData_IO_RECT( cProfile,  pszSecName, L"rcCompareDialog", common.m_sOthers.m_rcCompareDialog );
-	ShareData_IO_RECT( cProfile,  pszSecName, L"rcDiffDialog", common.m_sOthers.m_rcDiffDialog );
-	ShareData_IO_RECT( cProfile,  pszSecName, L"rcFavoriteDialog", common.m_sOthers.m_rcFavoriteDialog );
-	ShareData_IO_RECT( cProfile,  pszSecName, L"rcTagJumpDialog", common.m_sOthers.m_rcTagJumpDialog );
-	ShareData_IO_RECT( cProfile,  pszSecName, L"rcWindowListDialog", common.m_sOthers.m_rcWindowListDialog );
+	cProfile.IOProfileData( pszSecName, L"rcOpenDialog", common.m_sOthers.m_rcOpenDialog );
+	cProfile.IOProfileData( pszSecName, L"rcCompareDialog", common.m_sOthers.m_rcCompareDialog );
+	cProfile.IOProfileData( pszSecName, L"rcDiffDialog", common.m_sOthers.m_rcDiffDialog );
+	cProfile.IOProfileData( pszSecName, L"rcFavoriteDialog", common.m_sOthers.m_rcFavoriteDialog );
+	cProfile.IOProfileData( pszSecName, L"rcTagJumpDialog", common.m_sOthers.m_rcTagJumpDialog );
+	cProfile.IOProfileData( pszSecName, L"rcWindowListDialog", common.m_sOthers.m_rcWindowListDialog );
 	
 	//2002.02.08 aroka,hor
 	cProfile.IOProfileData( pszSecName, L"bMarkUpBlankLineEnable"	, common.m_sOutline.m_bMarkUpBlankLineEnable );
