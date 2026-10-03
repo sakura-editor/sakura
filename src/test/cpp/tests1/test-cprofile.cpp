@@ -523,6 +523,60 @@ TEST(CDataProfile, IOProfileData_KeyHelpInfo)
 /*!
  * @brief IOProfileDataのテスト
  */
+TEST(CDataProfile, IOProfileData_PluginRec)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	PluginRec value{};
+	value.m_szId[0] = L'\0';
+	value.m_szName[0] = L'\0';
+	value.m_state = EPluginState::PLS_NONE;
+	value.m_nCmdNum = 0;
+
+	// 設定項目がないと読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"pluginTest", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_nCmdNum, 0);
+
+	// 不適切な値を設定（サイズオーバー1）
+	cProfile.SetProfileData(L"Test", L"pluginTest.Name", std::wstring(size_t(MAX_PLUGIN_ID), L'a'));
+
+	// 不完全な設定項目は読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"pluginTest", value));
+
+	cProfile.SetProfileData(L"Test", L"pluginTest.Name", std::wstring(size_t(MAX_PLUGIN_ID) - 1, L'a'));
+
+	// 不適切な値を設定（サイズオーバー2）
+	cProfile.SetProfileData(L"Test", L"pluginTest.Id", std::wstring(size_t(MAX_PLUGIN_NAME), L'b'));
+
+	// 不完全な設定項目は読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"pluginTest", value));
+
+	cProfile.SetProfileData(L"Test", L"pluginTest.Id", std::wstring(size_t(MAX_PLUGIN_NAME) - 1, L'b'));
+
+	// 不適切な値を設定（型誤り）
+	cProfile.SetProfileData(L"Test", L"pluginTest.CmdNum", L"なし");
+
+	// 不完全な設定項目は読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"pluginTest", value));
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"pluginTest.CmdNum", L"1");
+
+	// 読める
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"pluginTest", value), IsTrue());
+
+	// 値は変更される
+	EXPECT_THAT(value.m_szName, StartsWith(L"aaa"));
+	EXPECT_THAT(value.m_szId, StartsWith(L"bbb"));
+	EXPECT_THAT(value.m_nCmdNum, 1);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
 TEST(CDataProfile, IOProfileData_RECT)
 {
 	CDataProfile cProfile;

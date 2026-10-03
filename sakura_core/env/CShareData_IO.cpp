@@ -2092,29 +2092,30 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 	cProfile.IOProfileData( pszSecName, L"EnablePlugin", plugin.m_bEnablePlugin);		// プラグインを使用する
 
 	//プラグインテーブル
-	int		i;
-	int		j;
-	WCHAR	szKeyName[64];
-	for( i = 0; i < MAX_PLUGIN; ++i ){
-		PluginRec& pluginrec = common.m_sPlugin.m_PluginTable[i];
+	for (int i = 0; i < MAX_PLUGIN; ++i) {
+		auto& pluginrec = common.m_sPlugin.m_PluginTable[i];
 
 		// 2010.08.04 Moca 書き込み直前に削除フラグで削除扱いにする
-		if( pluginrec.m_state == PLS_DELETED ){
+		if (cProfile.IsWritingMode() &&
+			PLS_DELETED == pluginrec.m_state)
+		{
 			pluginrec.m_szName[0] = L'\0';
 			pluginrec.m_szId[0] = L'\0';
 		}
-		auto_sprintf( szKeyName, L"P[%02d].Name", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pluginrec.m_szName));
-		auto_sprintf( szKeyName, L"P[%02d].Id", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pluginrec.m_szId));
-		auto_sprintf( szKeyName, L"P[%02d].CmdNum", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pluginrec.m_nCmdNum );	// 2010/7/4 Uchi
-		pluginrec.m_state = ( pluginrec.m_szId[0] == '\0' ? PLS_NONE : PLS_STOPPED );
+
+		cProfile.IOProfileData(pszSecName, strprintf(L"P[%02d]", i), pluginrec);
+
+		if (cProfile.IsWritingMode()) continue;
+
+		pluginrec.m_state = pluginrec.m_szId[0] == '\0'
+			? PLS_NONE
+			: PLS_STOPPED;
+
+		if (pluginrec.m_szId[0] == '\0' || pluginrec.m_nCmdNum == 0) continue;
+
 		// Command 仮設定	// 2010/7/4 Uchi
-		if (pluginrec.m_szId[0] != '\0' && pluginrec.m_nCmdNum >0) {
-			for (j = 1; j <= pluginrec.m_nCmdNum; j++) {
-				pcMenuDrawer->AddToolButton( CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT, CPlug::GetPluginFunctionCode(i, j) );
-			}
+		for (int j = 1; j <= pluginrec.m_nCmdNum; ++j) {
+			pcMenuDrawer->AddToolButton(CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT, CPlug::GetPluginFunctionCode(i, j));
 		}
 	}
 }

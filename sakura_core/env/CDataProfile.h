@@ -18,6 +18,7 @@
 
 struct ColorInfo;
 struct KeyHelpInfo;
+struct PluginRec;
 struct SFileTreeItem;
 
 /*!
@@ -359,6 +360,13 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 	std::wstring_view		sectionName,	//!< [in] セクション名
 	std::wstring_view		entryKey,		//!< [in] エントリ名
 	KeyHelpInfo&			tEntryValue		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<PluginRec>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	PluginRec&				tEntryValue		//!< [in,out] エントリ値
 );
 
 template <>

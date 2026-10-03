@@ -146,6 +146,42 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 /*!
  * @brief 設定値の入出力を行う。
  *
+ * PluginRec型（プラグイン設定データ）向けの特殊化。
+ */
+template<>
+bool CDataProfile::IOProfileData<PluginRec>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	PluginRec&				pluginRec		//!< [in,out] エントリ値
+)
+{
+	decltype(pluginRec.m_szName) szName{};
+	decltype(pluginRec.m_szId) szId{};
+
+	if (!IOProfileData(sectionName, std::format(L"{}.Name", keyPrefix), szName))
+	{
+		return false;
+	}
+
+	if (!IOProfileData(sectionName, std::format(L"{}.Id", keyPrefix), szId))
+	{
+		return false;
+	}
+
+	if (!IOProfileData(sectionName, std::format(L"{}.CmdNum", keyPrefix), pluginRec.m_nCmdNum))
+	{
+		return false;
+	}
+
+	::wcscpy_s(pluginRec.m_szName, szName);
+	::wcscpy_s(pluginRec.m_szId, szId);
+
+	return true;
+}
+
+/*!
+ * @brief 設定値の入出力を行う。
+ *
  * RECT型（矩形データ）向けの特殊化。
  */
 template <>
