@@ -176,7 +176,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Plugin(cProfile, pcMenuDrawer.get(), pShareData->m_Common.m_sPlugin);
 	ShareData_IO_Toolbar( cProfile, pcMenuDrawer.get() );
 	ShareData_IO_CustMenu( cProfile );
-	ShareData_IO_Font( cProfile );
+	ShareData_IO_Font( cProfile, pShareData->m_Common.m_sView );
 	ShareData_IO_KeyBind( cProfile );
 	ShareData_IO_Print( cProfile );
 	ShareData_IO_Types( cProfile );
@@ -1028,12 +1028,13 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 */
-void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
+void ShareData_IO_Font(
+	CDataProfile&			cProfile,
+	CommonSetting_View&		view
+)
 {
-	DLLSHAREDATA* pShare = &GetDllShareData();
-
 	const WCHAR* pszSecName = L"Font";
-	CommonSetting_View& view = pShare->m_Common.m_sView;
+
 	ShareData_IO_LogFont( cProfile, pszSecName, L"lf", view.m_lf, view.m_nPointSize );
 
 	cProfile.IOProfileData( pszSecName, L"bFontIs_FIXED_PITCH", view.m_bFontIs_FIXED_PITCH );
