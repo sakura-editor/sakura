@@ -18,6 +18,13 @@
 #define SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_
 #pragma once
 
+#include <map>
+#include <span>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -55,8 +62,17 @@ public:
 	bool ReadProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt) noexcept;
 	bool WriteProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt, const std::optional<std::wstring>& optComment = std::nullopt);
 
-	bool GetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring& strEntryValue) const;
-	void SetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring_view entryValue);
+	bool GetProfileData(
+		std::wstring_view	sectionName,
+		std::wstring_view	entryKey,
+		std::wstring&		strEntryValue
+	) const;
+
+	void SetProfileData(
+		std::wstring_view	sectionName,
+		std::wstring_view	entryKey,
+		std::wstring_view	entryValue
+	);
 
 	void DUMP( void );
 

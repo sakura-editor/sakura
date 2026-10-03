@@ -213,8 +213,8 @@ public:
 	  */
 	template<profile_data::is_supported T>
 	[[nodiscard]] bool GetProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		T&						tEntryValue		//!< [out] エントリ値
 	) const
 	{
@@ -229,8 +229,8 @@ public:
 	 */
 	template<profile_data::is_supported T>
 	void SetProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		const T					tEntryValue		//!< [in] エントリ値
 	)
 	{
@@ -248,8 +248,8 @@ public:
 	 */
 	template<profile_data::is_supported T>
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		T&						tEntryValue		//!< [in,out] エントリ値
 	)
 	{
@@ -270,8 +270,8 @@ public:
 	 * @retval false 設定値を読み込めなかった
 	 */
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		std::wstring&			entryValue		//!< [in,out] エントリ値
 	)
 	{
@@ -293,8 +293,8 @@ public:
 	 */
 	template <basis::WritableBuffer<WCHAR> A>
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		A&						tEntryValue		//!< [in,out] エントリ値
 	)
 	{

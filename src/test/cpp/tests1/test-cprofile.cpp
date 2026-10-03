@@ -116,18 +116,20 @@ TEST( CProfile, WriteProfileMakesSubDirectories )
 
 	WCHAR* p;
 
+	std::error_code ec;
+
 	// ファイルを削除
-	std::filesystem::remove( szIniName );
+	std::filesystem::remove( szIniName, ec );
 
 	// フォルダーを削除
 	p = ::PathFindFileNameW( szIniName );
 	p[0] = L'\0';
-	std::filesystem::remove( szIniName );
+	std::filesystem::remove( szIniName, ec );
 
 	// フォルダーを削除
 	p = ::PathFindFileNameW( szIniName );
 	p[0] = L'\0';
-	std::filesystem::remove( szIniName );
+	std::filesystem::remove( szIniName, ec );
 }
 
 /*!
