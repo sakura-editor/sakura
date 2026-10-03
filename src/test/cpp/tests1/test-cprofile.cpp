@@ -403,6 +403,42 @@ TEST(CDataProfile, IOProfileData)
 /*!
  * @brief IOProfileDataのテスト
  */
+TEST(CDataProfile, IOProfileData_ColorInfo)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	ColorInfo value{};
+
+	// 設定項目がないと読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"clrTest", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_bDisp, IsFalse());
+
+	// 不適切な値を設定（足りない）
+	cProfile.SetProfileData(L"Test", L"clrTest", L"1,1,ffffff,000000");
+
+	// 不完全な設定項目は読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"clrTest", value));
+
+	// 値を設定
+	cProfile.SetProfileData(L"Test", L"clrTest", L"1,1,ffffff,000000,1");
+
+	// 読める
+	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"clrTest", value), IsTrue());
+
+	// 値は変更される
+	EXPECT_THAT(value.m_bDisp, IsTrue());
+	EXPECT_THAT(value.m_sFontAttr.m_bBoldFont, IsTrue());
+	EXPECT_THAT(value.m_sColorAttr.m_cTEXT, Eq(0xFFFFFF));
+	EXPECT_THAT(value.m_sColorAttr.m_cBACK, Eq(0));
+	EXPECT_THAT(value.m_sFontAttr.m_bUnderLine, IsTrue());
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
 TEST(CDataProfile, IOProfileData_KeyHelpInfo)
 {
 	CDataProfile cProfile;

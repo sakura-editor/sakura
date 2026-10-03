@@ -12,6 +12,71 @@
 /*!
  * @brief 設定値の入出力を行う。
  *
+ * ColorInfo型（色設定データ）向けの特殊化。
+ */
+template<>
+bool CDataProfile::IOProfileData<ColorInfo>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	ColorInfo&				colorInfo		//!< [in,out] エントリ値
+)
+{
+	// 入出力形式
+	//   C[XXX]=ON/OFF,IsBold,TextColor,BackColor,HasUnderLine
+
+	// 取得・設定は文字列を介して行う
+	std::wstring buffer{};
+
+	// 書き込みモード
+	if (IsWritingMode()) {
+		// 色設定データを書式化する
+		strprintf(
+			buffer,
+			L"%d,%d,%06x,%06x,%d",
+			colorInfo.m_bDisp ? 1 : 0,
+			colorInfo.m_sFontAttr.m_bBoldFont ? 1 : 0,
+			colorInfo.m_sColorAttr.m_cTEXT,
+			colorInfo.m_sColorAttr.m_cBACK,
+			colorInfo.m_sFontAttr.m_bUnderLine ? 1 : 0
+		);
+	}
+
+	// 文字列を介して読み書きする
+	const auto ret = IOProfileData(sectionName, entryKey, buffer);
+	if (!ret) {
+		return false;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	// 読み込みモード
+	if (IsReadingMode()) {
+		// 文字列から色設定データを構築する
+		std::array<unsigned, 5> ints{};
+		if (5 != ::swscanf_s(
+			buffer.c_str(),
+			L"%d,%d,%06x,%06x,%d",
+			&ints[0],
+			&ints[1],
+			&ints[2],
+			&ints[3],
+			&ints[4]
+		))
+		{
+			return false;
+		}
+
+		colorInfo.m_bDisp					= ints[0] != 0;
+		colorInfo.m_sFontAttr.m_bBoldFont	= ints[1] != 0;
+		colorInfo.m_sColorAttr.m_cTEXT		= ints[2];
+		colorInfo.m_sColorAttr.m_cBACK		= ints[3];
+		colorInfo.m_sFontAttr.m_bUnderLine	= ints[4] != 0;
+	}
+
+	return ret;
+}
+
+/*!
+ * @brief 設定値の入出力を行う。
+ *
  * KeyHelpInfo型（辞書データ）向けの特殊化。
  */
 template<>

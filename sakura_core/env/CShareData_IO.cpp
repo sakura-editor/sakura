@@ -2478,51 +2478,49 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	@param[in]		pszSecName		セクション名
 	@param[in,out]	pColorInfoArr	書き出し、読み込み対象の色設定へのポインタ (入出力方向はbReadに依存)
 */
-void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, ColorInfo* pColorInfoArr )
+void CShareData_IO::IO_ColorSet(
+	CDataProfile* pcProfile,
+	const WCHAR* pszSecName,
+	ColorInfo* pColorInfoArr
+)
 {
-	WCHAR	szKeyName[256];
-	WCHAR	szKeyData[1024];
-	int		j;
-	for( j = 0; j < COLORIDX_LAST; ++j ){
-		static const WCHAR* pszForm = L"%d,%d,%06x,%06x,%d";
-		auto_sprintf( szKeyName, L"C[%s]", g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
-		if( pcProfile->IsReadingMode() ){
-			if( pcProfile->IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
-				int buf[5];
-				scan_ints( szKeyData, pszForm, buf);
-				pColorInfoArr[j].m_bDisp                  = (buf[0]!=0);
-				pColorInfoArr[j].m_sFontAttr.m_bBoldFont  = (buf[1]!=0);
-				pColorInfoArr[j].m_sColorAttr.m_cTEXT     = buf[2];
-				pColorInfoArr[j].m_sColorAttr.m_cBACK     = buf[3];
-				pColorInfoArr[j].m_sFontAttr.m_bUnderLine = (buf[4]!=0);
-			}
-			else{
-				// 2006.12.07 ryoji
-				// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
-				// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
-				if( COLORIDX_CARET == j )
-					pColorInfoArr[j].m_sColorAttr.m_cTEXT = pColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
-			}
+	auto& cProfile = *pcProfile;
+
+	for (int j = 0; j < COLORIDX_LAST; ++j) {
+		auto& colorInfo = pColorInfoArr[j];
+
+		if (const auto ret = cProfile.IOProfileData(pszSecName, strprintf(L"C[%s]", g_ColorAttributeArr[j].szName), colorInfo);
+			!ret)
+		{
+			continue;
+		}
+
+		if (cProfile.IsReadingMode()) {
 			// 2006.12.18 ryoji
 			// 矛盾設定があれば修復する
-			unsigned int fAttribute = g_ColorAttributeArr[j].fAttribute;
-			if( 0 != (fAttribute & COLOR_ATTRIB_FORCE_DISP) )
-				pColorInfoArr[j].m_bDisp = true;
-			if( 0 != (fAttribute & COLOR_ATTRIB_NO_BOLD) )
-				pColorInfoArr[j].m_sFontAttr.m_bBoldFont = false;
-			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
-				pColorInfoArr[j].m_sFontAttr.m_bUnderLine = false;
+			const DWORD fAttribute = g_ColorAttributeArr[j].fAttribute;
+			if (fAttribute & COLOR_ATTRIB_FORCE_DISP)
+			{
+				colorInfo.m_bDisp = true;
+			}
+
+			if (fAttribute & COLOR_ATTRIB_NO_BOLD)
+			{
+				colorInfo.m_sFontAttr.m_bBoldFont = false;
+			}
+
+			if (fAttribute & COLOR_ATTRIB_NO_UNDERLINE)
+			{
+				colorInfo.m_sFontAttr.m_bUnderLine = false;
+			}
 		}
-		else{
-			auto_sprintf( szKeyData, pszForm,
-				pColorInfoArr[j].m_bDisp?1:0,
-				pColorInfoArr[j].m_sFontAttr.m_bBoldFont?1:0,
-				pColorInfoArr[j].m_sColorAttr.m_cTEXT,
-				pColorInfoArr[j].m_sColorAttr.m_cBACK,
-				pColorInfoArr[j].m_sFontAttr.m_bUnderLine?1:0
-			);
-			pcProfile->IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-		}
+	}
+
+	if (cProfile.IsReadingMode()) {
+		// 2006.12.07 ryoji
+		// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
+		// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
+		pColorInfoArr[COLORIDX_CARET].m_sColorAttr.m_cTEXT = pColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	}
 }
 

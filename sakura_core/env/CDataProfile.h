@@ -16,6 +16,7 @@
 
 #include <Windows.h>
 
+struct ColorInfo;
 struct KeyHelpInfo;
 struct SFileTreeItem;
 
@@ -345,6 +346,13 @@ public:
 		return true;
 	}
 };
+
+template <>
+bool CDataProfile::IOProfileData<ColorInfo>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	ColorInfo&				tEntryValue		//!< [in,out] エントリ値
+);
 
 template <>
 bool CDataProfile::IOProfileData<KeyHelpInfo>(
