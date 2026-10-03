@@ -12,6 +12,75 @@
 /*!
  * @brief 設定値の入出力を行う。
  *
+ * KeyHelpInfo型（辞書データ）向けの特殊化。
+ */
+template<>
+bool CDataProfile::IOProfileData<KeyHelpInfo>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	KeyHelpInfo&			keyHelpInfo		//!< [in,out] エントリ値
+)
+{
+	// 入出力形式
+	//   KDct[99]=ON/OFF,DictAbout,KeyHelpPath
+
+	// 取得・設定は文字列を介して行う
+	std::wstring buffer{};
+
+	// 書き込みモード
+	if (IsWritingMode()) {
+		if (keyHelpInfo.m_szPath.empty()) {
+			return false;	// パスが空なら保存しない
+		}
+
+		// 辞書データを書式化する
+		strprintf(
+			buffer,
+			L"%d,%s,%s",
+			keyHelpInfo.m_bUse ? 1 : 0,
+			keyHelpInfo.m_szAbout,
+			keyHelpInfo.m_szPath
+		);
+	}
+
+	// 文字列を介して読み書きする
+	const auto ret = IOProfileData(sectionName, entryKey, buffer);
+	if (!ret) {
+		return false;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	// 読み込みモード
+	if (IsReadingMode()) {
+		// 文字列から辞書データを構築する
+		std::array<int, 1> ints{};
+		auto szAbout = keyHelpInfo.m_szAbout;
+		auto szPath = keyHelpInfo.m_szPath;
+		if (3 != ::swscanf_s(
+			buffer.c_str(),
+			L"%hhu,%[^,],%[^\n]",
+			&ints[0],
+			szAbout.data(), unsigned(std::size(szAbout)),
+			szPath.data(), unsigned(std::size(szPath))
+		))
+		{
+			// 1つ目の値が不正（数値でない）
+			// 2つ目の値が不正（文字数超過）
+			// 3つ目の値が不正（文字数超過、カンマが足りない）
+			return false;
+		}
+
+		// 構築した値をコピー代入して呼出元に返す
+		keyHelpInfo.m_bUse		= ints[0] != 0;
+		keyHelpInfo.m_szAbout	= szAbout;
+		keyHelpInfo.m_szPath	= szPath;
+	}
+
+	return ret;
+}
+
+/*!
+ * @brief 設定値の入出力を行う。
+ *
  * RECT型（矩形データ）向けの特殊化。
  */
 template <>

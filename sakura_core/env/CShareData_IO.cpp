@@ -1875,49 +1875,25 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 //@@@ 2006.04.10 fon ADD-start
 	{	/* キーワード辞書 */
-		WCHAR	*pH, *pT;	/* <pH>keyword<pT> */
 		cProfile.IOProfileData( pszSecName, L"bUseKeyWordHelp", types.m_bUseKeyWordHelp );	/* キーワード辞書選択を使用するか？ */
 //		cProfile.IOProfileData( pszSecName, L"nKeyHelpNum", types.m_nKeyHelpNum );				/* 登録辞書数 */
 		cProfile.IOProfileData( pszSecName, L"bUseKeyHelpAllSearch", types.m_bUseKeyHelpAllSearch );	/* ヒットした次の辞書も検索(&A) */
 		cProfile.IOProfileData( pszSecName, L"bUseKeyHelpKeyDisp", types.m_bUseKeyHelpKeyDisp );		/* 1行目にキーワードも表示する(&W) */
 		cProfile.IOProfileData( pszSecName, L"bUseKeyHelpPrefix", types.m_bUseKeyHelpPrefix );		/* 選択範囲で前方一致検索(&P) */
 		cProfile.IOProfileData(pszSecName, L"nKeyHelpRMenuShowType", types.m_eKeyHelpRMenuShowType);
-		for(j = 0; j < MAX_KEYHELP_FILE; j++){
-			auto_sprintf( szKeyName, L"KDct[%02d]", j );
-			/* 読み出し */
-			if( cProfile.IsReadingMode() ){
-				types.m_KeyHelpArr[j].m_bUse = false;
-				types.m_KeyHelpArr[j].m_szAbout[0] = L'\0';
-				types.m_KeyHelpArr[j].m_szPath[0] = L'\0';
-				if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
-					pH = szKeyData;
-					if( nullptr != (pT=wcschr(pH, L',')) ){
-						*pT = L'\0';
-						types.m_KeyHelpArr[j].m_bUse = (_wtoi( pH )!=0);
-						pH = pT+1;
-						if( nullptr != (pT=wcschr(pH, L',')) ){
-							*pT = L'\0';
-							wcsncpy_s( types.m_KeyHelpArr[j].m_szAbout, pH, _TRUNCATE );
-							pH = pT+1;
-							if( L'\0' != (*pH) ){
-								types.m_KeyHelpArr[j].m_szPath = pH;
-								types.m_nKeyHelpNum = j+1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
-							}
-						}
-					}
-				}
-			}/* 書き込み */
-			else{
-				if(types.m_KeyHelpArr[j].m_szPath[0] != L'\0'){
-					auto_sprintf( szKeyData, L"%d,%s,%s",
-						types.m_KeyHelpArr[j].m_bUse?1:0,
-						types.m_KeyHelpArr[j].m_szAbout,
-						types.m_KeyHelpArr[j].m_szPath.c_str()
-					);
-					cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-				}
+
+		int i = 0;
+		for (; i < std::ssize(types.m_KeyHelpArr); ++i) {
+			auto& keyHelp = types.m_KeyHelpArr[i];
+			if (const auto ret = cProfile.IOProfileData(pszSecName, std::format(L"KDct[{:02d}]", i), keyHelp);
+				!ret ||
+				keyHelp.m_szPath.empty())
+			{
+				break;
 			}
 		}
+		types.m_nKeyHelpNum = i + 1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
+
 		/* 旧バージョンiniファイルの読み出しサポート */
 		if( cProfile.IsReadingMode() ){
 			SFilePath tmp;

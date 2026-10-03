@@ -395,6 +395,90 @@ TEST(CDataProfile, IOProfileData)
 /*!
  * @brief IOProfileDataのテスト
  */
+TEST(CDataProfile, IOProfileData_KeyHelpInfo)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	KeyHelpInfo value{};
+	value.m_bUse	= false;
+	value.m_szAbout	= L"about";
+	value.m_szPath	= L"path";
+
+	// 設定項目がないと読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_bUse, IsFalse());
+	EXPECT_THAT(value.m_szAbout, StrEq(L"about"));
+	EXPECT_THAT(value.m_szPath, StrEq(L"path"));
+
+	// 不適切な値を設定
+	cProfile.SetProfileData(L"Test", L"keyHelp", std::format(L"{},{},{}", L"true", L"ABOUT", L"PATH"));
+
+	// 値が不適切なので読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_bUse, IsFalse());
+	EXPECT_THAT(value.m_szAbout, StrEq(L"about"));
+	EXPECT_THAT(value.m_szPath, StrEq(L"path"));
+
+	// 不適切な値を設定
+	cProfile.SetProfileData(L"Test", L"keyHelp", std::format(L"{},{},{}", 1, std::wstring(50, L'a'), L"PATH"));
+
+	// 値が不適切なので読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_bUse, IsFalse());
+	EXPECT_THAT(value.m_szAbout, StrEq(L"about"));
+	EXPECT_THAT(value.m_szPath, StrEq(L"path"));
+
+	// 不適切な値を設定
+	cProfile.SetProfileData(L"Test", L"keyHelp", std::format(L"{},{},{}", 1, std::wstring(50 - 1, L'a'), std::wstring(_MAX_PATH, L'b')));
+
+	// 値が不適切なので読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_bUse, IsFalse());
+	EXPECT_THAT(value.m_szAbout, StrEq(L"about"));
+	EXPECT_THAT(value.m_szPath, StrEq(L"path"));
+
+	// 適切（？）な値を設定
+	cProfile.SetProfileData(L"Test", L"keyHelp", std::format(L"{},{},{}", 1, std::wstring(50 - 1, L'a'), std::wstring(_MAX_PATH - 1, L'b')));
+
+	// 読める
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	// 値は変更される
+	EXPECT_THAT(value.m_bUse, IsTrue());
+	EXPECT_THAT(value.m_szAbout, StrEq(std::wstring(50 - 1, L'a')));
+	EXPECT_THAT(value.m_szPath, StrEq(std::wstring(_MAX_PATH - 1, L'b')));
+
+	// 書き込みモード
+	cProfile.SetWritingMode();
+
+	// パス未設定なら書き込み失敗とする仕様の確認
+	value.m_szPath = L"";
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	// 出力フォーマットの確認
+	value.m_bUse	= true;
+	value.m_szAbout	= L"ABOUT";
+	value.m_szPath	= L"PATH";
+
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	std::wstring written;
+	cProfile.GetProfileData(L"Test", L"keyHelp", written);
+	EXPECT_THAT(written, StrEq(L"1,ABOUT,PATH"));
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
 TEST(CDataProfile, IOProfileData_RECT)
 {
 	CDataProfile cProfile;
