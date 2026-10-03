@@ -483,6 +483,51 @@ void ShareData_IO_OutlineDockRect<CommonSetting_OutLine>(
 	CommonSetting_OutLine&	tEntryValue		//!< [in,out] エントリ値
 );
 
+template <typename T>
+bool ShareData_IO_BackUpFolder(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	T&						tEntryValue		//!< [in,out] エントリ値
+)
+{
+	// 取得・設定は文字列を介して行う
+	std::wstring strEntryValue;
+
+	// 書き込みモード
+	if (cProfile.IsWritingMode()) {
+		strEntryValue = tEntryValue;
+
+		// フォルダーの最後が「半角かつ'\\'」でない場合は、付加する
+		if (!strEntryValue.ends_with(L"\\") &&
+			strEntryValue.length() + 1 < std::size(tEntryValue))
+		{
+			strEntryValue += L"\\";
+		}
+	}
+
+	// 文字列を介して読み書きする
+	const auto ret = cProfile.IOProfileData(sectionName, entryKey, tEntryValue);
+	if (!ret)
+	{
+		return false;	// 読み込み失敗（書き込みは失敗しない）
+	}
+
+	// 読み込みモード
+	if (cProfile.IsReadingMode()) {
+		// フォルダーの最後が「半角かつ'\\'」でない場合は、付加する
+		if (!strEntryValue.ends_with(L"\\") &&
+			strEntryValue.length() + 1 < std::size(tEntryValue))
+		{
+			strEntryValue += L"\\";
+		}
+
+		tEntryValue = strEntryValue;
+	}
+
+	return ret;
+}
+
 /*!
 	@brief 共有データのCommonセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
@@ -554,30 +599,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, L"bBackUpDialog"			, common.m_sBackup.m_bBackUpDialog );
 	cProfile.IOProfileData( pszSecName, L"bBackUpFolder"			, common.m_sBackup.m_bBackUpFolder );
 	cProfile.IOProfileData( pszSecName, L"bBackUpFolderRM"		, common.m_sBackup.m_bBackUpFolderRM );	// 2010/5/27 Uchi
-	
-	if( !cProfile.IsReadingMode() ){
-		int	nDummy;
-		int	nCharChars;
-		nDummy = (int)wcslen( common.m_sBackup.m_szBackUpFolder );
-		/* フォルダーの最後が「半角かつ'\\'」でない場合は、付加する */
-		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ));
-		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
-		}else{
-			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
-		}
-	}
-	cProfile.IOProfileData( pszSecName, L"szBackUpFolder", common.m_sBackup.m_szBackUpFolder );
-	if( cProfile.IsReadingMode() ){
-		int	nDummy;
-		int	nCharChars;
-		nDummy = (int)wcslen( common.m_sBackup.m_szBackUpFolder );
-		/* フォルダーの最後が「半角かつ'\\'」でない場合は、付加する */
-		nCharChars = int(&common.m_sBackup.m_szBackUpFolder[nDummy] - CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] ) );
-		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
-		}else{
-			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
-		}
-	}
+
+	ShareData_IO_BackUpFolder(cProfile, pszSecName, L"szBackUpFolder", common.m_sBackup.m_szBackUpFolder);
 	
 	cProfile.IOProfileData( pszSecName, L"nBackUpType"			, common.m_sBackup.m_nBackUpType );
 	cProfile.IOProfileData( pszSecName, L"bBackUpType2_Opt1"		, common.m_sBackup.m_nBackUpType_Opt1 );
