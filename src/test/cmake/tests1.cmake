@@ -111,6 +111,7 @@ set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 set(TEST_DLLPLUGIN_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-dllplugin")
 set(TEST_DLLPLUGIN_TARGET dll_plugin1)
 set(TEST_OUTLINE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline")
+set(TEST_OUTLINE_ZIP "${CMAKE_BINARY_DIR}/outline.zip")
 set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
 set(TEST_OUTLINE_STAGE_DIR "${TESTS1_RESOURCE_STAGE_DIR}/outline")
 
@@ -135,8 +136,9 @@ add_custom_target(test_resource_zip
   COMMENT "Generating resources.ja-JP.zip"
 )
 
-# Create a custom target for outline.zip generation
-add_custom_target(test_outline_zip
+# Create a custom command for outline.zip generation
+add_custom_command(
+  OUTPUT "${TEST_OUTLINE_ZIP}"
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${TEST_OUTLINE_STAGE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E copy
@@ -202,15 +204,19 @@ add_custom_target(test_outline_zip
   COMMAND ${CMAKE_COMMAND} -E copy
     "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.rule.txt"
     "${TEST_OUTLINE_STAGE_DIR}/rule_regex_replace.rule"
-  COMMAND ${CMAKE_COMMAND} -E remove -f "${CMAKE_BINARY_DIR}/outline.zip"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_OUTLINE_ZIP}"
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/outline.zip
-    ${TEST_OUTLINE_STAGE_DIR}
+    "${TEST_OUTLINE_ZIP}"
+    "${TEST_OUTLINE_STAGE_DIR}"
     > NUL
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/outline.zip
+  BYPRODUCTS "${TEST_OUTLINE_ZIP}"
   COMMENT "Generating outline.zip"
+)
+
+add_custom_target(test_outline_zip
+  DEPENDS "${TEST_OUTLINE_ZIP}"
 )
 
 # Create a custom target for test_dllplugin_zip generation
