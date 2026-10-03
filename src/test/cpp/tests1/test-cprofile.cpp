@@ -54,7 +54,7 @@ TEST(CProfile, ReadProfile_ExpandLineBuffer)
 	cProfile.ReadProfile(iniPath);
 
 	bool value = false;
-	EXPECT_THAT(cProfile.GetProfileData(L"test", L"test", value), IsTrue());
+	EXPECT_TRUE(cProfile.IOProfileData(L"test", L"test", value));
 	EXPECT_THAT(value, IsTrue());
 
 	std::filesystem::remove(iniPath, ec);
@@ -93,7 +93,7 @@ TEST(CProfile, ReadProfile_LineTerminatorCr)
 	cProfile.ReadProfile(iniPath);
 
 	bool value = false;
-	EXPECT_THAT(cProfile.GetProfileData(L"test", L"test", value), IsTrue());
+	EXPECT_TRUE(cProfile.IOProfileData(L"test", L"test", value));
 	EXPECT_THAT(value, IsTrue());
 
 	std::filesystem::remove(iniPath, ec);
@@ -214,6 +214,25 @@ TEST(CProfile, GetProfileData_NewEntry)
 TEST(profile_data, TryParse_int)
 {
 	int value = 0;
+	ASSERT_TRUE(profile_data::TryParse(L"109", value));
+	ASSERT_EQ(109, value);
+
+	ASSERT_FALSE(profile_data::TryParse(L"", value));
+	ASSERT_EQ(109, value);
+
+	ASSERT_FALSE(profile_data::TryParse(L"not a number", value));
+	ASSERT_EQ(109, value);
+
+	ASSERT_TRUE(profile_data::TryParse(L"888", value));
+	ASSERT_EQ(888, value);
+}
+
+/*!
+ * @brief TryParseのテスト
+ */
+TEST(profile_data, TryParse_CLayoutInt)
+{
+	CLayoutInt value{ 0 };
 	ASSERT_TRUE(profile_data::TryParse(L"109", value));
 	ASSERT_EQ(109, value);
 
