@@ -108,128 +108,180 @@ endif(MINGW)
 # define resource files of tests1
 set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
 
+set(TEST_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin")
+set(TEST_RESOURCE_ZIP "${CMAKE_BINARY_DIR}/resources.ja-JP.zip")
 set(TEST_DLLPLUGIN_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-dllplugin")
-set(TEST_DLLPLUGIN_TARGET dll_plugin1)
+set(TEST_DLLPLUGIN_ZIP "${CMAKE_BINARY_DIR}/resources-dllplugin.zip")
+set(TEST_OUTLINE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline")
+set(TEST_OUTLINE_ZIP "${CMAKE_BINARY_DIR}/outline.zip")
 set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
 set(TEST_OUTLINE_STAGE_DIR "${TESTS1_RESOURCE_STAGE_DIR}/outline")
+
+file(GLOB_RECURSE TEST_RESOURCE_FILES CONFIGURE_DEPENDS
+  "${TEST_RESOURCE_DIR}/*"
+)
+file(GLOB_RECURSE TEST_DLLPLUGIN_FILES CONFIGURE_DEPENDS
+  "${TEST_DLLPLUGIN_DIR}/*"
+)
+set(TEST_OUTLINE_FILES
+  "${TEST_OUTLINE_DIR}/Asm.asm.txt"
+  "${TEST_OUTLINE_DIR}/VisualBasic.bas.txt"
+  "${TEST_OUTLINE_DIR}/VisualBasic.cls.txt"
+  "${TEST_OUTLINE_DIR}/Cobol.cbl.txt"
+  "${TEST_OUTLINE_DIR}/Cpp.cpp.txt"
+  "${TEST_OUTLINE_DIR}/DosBatch.bat.txt"
+  "${TEST_OUTLINE_DIR}/Awk.awk.txt"
+  "${TEST_OUTLINE_DIR}/Csv.csv.txt"
+  "${TEST_OUTLINE_DIR}/Html.html.txt"
+  "${TEST_OUTLINE_DIR}/Java.java.txt"
+  "${TEST_OUTLINE_DIR}/Python.py.txt"
+  "${TEST_OUTLINE_DIR}/OraclePLSQL.sql.txt"
+  "${TEST_OUTLINE_DIR}/Tex.tex.txt"
+  "${TEST_OUTLINE_DIR}/Perl.pl.txt"
+  "${TEST_OUTLINE_DIR}/Text.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFile.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFile.rule.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegex.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegex.rule.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.rule.txt"
+)
 
 if(MINGW)
   # Convert RC files to UTF-8 for MinGW
   convert_rc_files_to_utf8(TESTS1_RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
 endif()
 
-# Create a custom target for test_resource_zip generation
-add_custom_target(test_resource_zip
+# Create a custom command for test_resource_zip generation
+add_custom_command(
+  OUTPUT "${TEST_RESOURCE_ZIP}"
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
   COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-plugin
+    "${TEST_RESOURCE_DIR}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_RESOURCE_ZIP}"
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-plugin
+    "${TEST_RESOURCE_ZIP}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
     > NUL
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
+  DEPENDS ${TEST_RESOURCE_FILES}
   COMMENT "Generating resources.ja-JP.zip"
 )
 
-# Create a custom target for outline.zip generation
-add_custom_target(test_outline_zip
+add_custom_target(test_resource_zip
+  DEPENDS "${TEST_RESOURCE_ZIP}"
+)
+
+# Create a custom command for outline.zip generation
+add_custom_command(
+  OUTPUT "${TEST_OUTLINE_ZIP}"
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${TEST_OUTLINE_STAGE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Asm.asm.txt"
+    "${TEST_OUTLINE_DIR}/Asm.asm.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.asm"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/VisualBasic.bas.txt"
+    "${TEST_OUTLINE_DIR}/VisualBasic.bas.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.bas"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/VisualBasic.cls.txt"
+    "${TEST_OUTLINE_DIR}/VisualBasic.cls.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cls"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Cobol.cbl.txt"
+    "${TEST_OUTLINE_DIR}/Cobol.cbl.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cbl"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Cpp.cpp.txt"
+    "${TEST_OUTLINE_DIR}/Cpp.cpp.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cpp"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/DosBatch.bat.txt"
+    "${TEST_OUTLINE_DIR}/DosBatch.bat.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.bat"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Awk.awk.txt"
+    "${TEST_OUTLINE_DIR}/Awk.awk.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.awk"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Csv.csv.txt"
+    "${TEST_OUTLINE_DIR}/Csv.csv.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.csv"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Html.html.txt"
+    "${TEST_OUTLINE_DIR}/Html.html.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.html"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Java.java.txt"
+    "${TEST_OUTLINE_DIR}/Java.java.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.java"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Python.py.txt"
+    "${TEST_OUTLINE_DIR}/Python.py.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.py"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/OraclePLSQL.sql.txt"
+    "${TEST_OUTLINE_DIR}/OraclePLSQL.sql.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.sql"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Tex.tex.txt"
+    "${TEST_OUTLINE_DIR}/Tex.tex.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.tex"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Perl.pl.txt"
+    "${TEST_OUTLINE_DIR}/Perl.pl.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.pl"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/Text.txt.txt"
+    "${TEST_OUTLINE_DIR}/Text.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.txt"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFile.txt.txt"
+    "${TEST_OUTLINE_DIR}/RuleFile.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cr1"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFile.rule.txt"
+    "${TEST_OUTLINE_DIR}/RuleFile.rule.txt"
     "${TEST_OUTLINE_STAGE_DIR}/rule.rule"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegex.txt.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegex.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cr2"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegex.rule.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegex.rule.txt"
     "${TEST_OUTLINE_STAGE_DIR}/rule_regex.rule"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegexReplace.txt.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.txt.txt"
     "${TEST_OUTLINE_STAGE_DIR}/test_source.cr3"
   COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline/RuleFileRegexReplace.rule.txt"
+    "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.rule.txt"
     "${TEST_OUTLINE_STAGE_DIR}/rule_regex_replace.rule"
-  COMMAND ${CMAKE_COMMAND} -E remove -f "${CMAKE_BINARY_DIR}/outline.zip"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_OUTLINE_ZIP}"
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/outline.zip
-    ${TEST_OUTLINE_STAGE_DIR}
+    "${TEST_OUTLINE_ZIP}"
+    "${TEST_OUTLINE_STAGE_DIR}"
     > NUL
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/outline.zip
+  DEPENDS ${TEST_OUTLINE_FILES}
   COMMENT "Generating outline.zip"
 )
 
-# Create a custom target for test_dllplugin_zip generation
-add_custom_target(test_dllplugin_zip
+add_custom_target(test_outline_zip
+  DEPENDS "${TEST_OUTLINE_ZIP}"
+)
+
+# Create a custom command for test_dllplugin_zip generation
+add_custom_command(
+  OUTPUT "${TEST_DLLPLUGIN_ZIP}"
   COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
   COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${TEST_DLLPLUGIN_DIR}
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
+    "${TEST_DLLPLUGIN_DIR}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_DLLPLUGIN_ZIP}"
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/resources-dllplugin.zip
-    ${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin
+    "${TEST_DLLPLUGIN_ZIP}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
     > NUL
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/resources-dllplugin.zip
-  DEPENDS ${TEST_DLLPLUGIN_TARGET}
+  DEPENDS
+    ${TEST_DLLPLUGIN_FILES}
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
   COMMENT "Generating resources-dllplugin.zip"
+)
+
+add_custom_target(test_dllplugin_zip
+  DEPENDS "${TEST_DLLPLUGIN_ZIP}"
 )
 
 # define executable

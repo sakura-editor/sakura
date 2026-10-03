@@ -355,6 +355,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
     "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
   COMMENT "Copying dll_plugin1.dll from vcpkg_installed to output directory"
 )
 
