@@ -16,6 +16,7 @@
 
 class CBlockComment;
 class CDataProfile;
+class CLineComment;
 class CMenuDrawer;
 struct CommonSetting_CustomMenu; // defined CommonSetting.h
 struct CommonSetting_MainMenu; // defined CommonSetting.h
@@ -84,6 +85,12 @@ void ShareData_IO_FileTree(
 	CDataProfile&			cProfile,
 	std::wstring_view		sectionName,	//!< [in] セクション名
 	SFileTree&				fileTree
+);
+
+void ShareData_IO_LineComments(
+	CDataProfile&			cProfile,
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	CLineComment&			cLineComment
 );
 
 bool ShareData_IO_LogFont(

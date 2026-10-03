@@ -1435,41 +1435,41 @@ void ShareData_IO_BlockComments(
 }
 
 /*!
- * 行コメントデータの入出力
+ * @brief 行コメントデータの入出力
  *
  * @date 2004/10/02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
  * @date 2020/01/01 berryzplus ShareData_IO_Type_Oneから分離
  */
-static bool ShareData_IO_LineComment( CDataProfile& cProfile,
-	const WCHAR* pszSectionName,
-	const WCHAR* pszEntryKeyComment,
-	const WCHAR* pszEntryKeyColumn,
-	CLineComment& cLineComment,
-	const int nDataIndex
-) noexcept
+void ShareData_IO_LineComments(
+	CDataProfile&		cProfile,
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	CLineComment&		cLineComment
+)
 {
-	WCHAR lbuf[COMMENT_DELIMITER_BUFFERSIZE]{ 0 };
-	int pos = -1;
+	for (int i = 0; i < 3; ++i) {
+		// 取得・設定は文字列と数値のセットて行う
+		std::wstring lineComment;
+		int pos = -1;
 
-	// 書き込み準備
-	if( !cProfile.IsReadingMode() ){
-		::wcscpy_s( lbuf, cLineComment.getLineComment( nDataIndex ) );
-		pos = cLineComment.getLineCommentPos( nDataIndex );
+		// 書き込みモード
+		if (cProfile.IsWritingMode()) {
+			lineComment = cLineComment.getLineComment(i);
+			pos = cLineComment.getLineCommentPos(i);
+		}
+
+		// 読み書きを実行する
+		if (const auto keySurfix = 0 < i ? std::to_wstring(i + 1) : L""s;
+			!cProfile.IOProfileData(sectionName, std::format(L"szLineComment{}",      keySurfix), lineComment) ||
+			!cProfile.IOProfileData(sectionName, std::format(L"nLineCommentColumn{}", keySurfix), pos        ))
+		{
+			continue;	// 読み込み失敗
+		}
+
+		// 読み込みモード
+		if (cProfile.IsReadingMode()) {
+			cLineComment.CopyTo(i, lineComment.c_str(), pos);
+		}
 	}
-
-	bool ret = false;
-	if( cProfile.IOProfileData(pszSectionName, pszEntryKeyComment, StringBufferW(lbuf))
-		&& cProfile.IOProfileData( pszSectionName, pszEntryKeyColumn, pos ) ){
-		//対になる設定が揃った場合のみ有効
-		ret = true;
-	}
-
-	// 読み込み後処理
-	if( cProfile.IsReadingMode() && ret ){
-		cLineComment.CopyTo( nDataIndex, lbuf, pos );
-	}
-
-	return ret;
 }
 
 /*!
@@ -1583,9 +1583,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	ShareData_IO_BlockComments( cProfile, pszSecName, std::span(types.m_cBlockComments) );
 
 	// Line Comment
-	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment", L"nLineCommentColumn", types.m_cLineComment, 0 );
-	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment2", L"nLineCommentColumn2", types.m_cLineComment, 1 );
-	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment3", L"nLineCommentColumn3", types.m_cLineComment, 2 );
+	ShareData_IO_LineComments( cProfile, pszSecName, types.m_cLineComment );
 
 	cProfile.IOProfileData(pszSecName, L"szIndentChars", StringBufferW(types.m_szIndentChars));
 	cProfile.IOProfileData( pszSecName, L"cLineTermChar"		, types.m_cLineTermChar );
