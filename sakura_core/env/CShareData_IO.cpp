@@ -2432,39 +2432,8 @@ void CShareData_IO::ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fi
 	cProfile.IOProfileData( pszSecName, L"szFileTreeProjectIni", fileTree.m_szProjectIni );
 	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", fileTree.m_nItemCount );
 	SetValueLimit( fileTree.m_nItemCount, int(std::size(fileTree.m_aItems)) );
-	for( int i = 0;i < fileTree.m_nItemCount; i++ ){
-		ShareData_IO_FileTreeItem( cProfile, fileTree.m_aItems[i], pszSecName, i );
-	}
-}
 
-void CShareData_IO::ShareData_IO_FileTreeItem(
-	CDataProfile& cProfile, SFileTreeItem& item, const WCHAR* pszSecName, int i )
-{
-	WCHAR szKey[64];
-	auto_sprintf( szKey, L"FileTree(%d).eItemType", i );
-	cProfile.IOProfileData(pszSecName, szKey, item.m_eFileTreeItemType);
-	if( cProfile.IsReadingMode() || item.m_eFileTreeItemType == EFileTreeItemType_Grep
-		|| item.m_eFileTreeItemType == EFileTreeItemType_File ){
-		auto_sprintf( szKey, L"FileTree(%d).szTargetPath", i );
-		cProfile.IOProfileData( pszSecName, szKey, item.m_szTargetPath );
-	}
-	if( cProfile.IsReadingMode()
-		|| ((item.m_eFileTreeItemType == EFileTreeItemType_Grep || item.m_eFileTreeItemType == EFileTreeItemType_File)
-			&& item.m_szLabelName[0] != L'\0' )
-		|| item.m_eFileTreeItemType == EFileTreeItemType_Folder ){
-		auto_sprintf( szKey, L"FileTree(%d).szLabelName", i );
-		cProfile.IOProfileData( pszSecName, szKey, item.m_szLabelName );
-	}
-	auto_sprintf( szKey, L"FileTree(%d).nDepth", i );
-	cProfile.IOProfileData( pszSecName, szKey, item.m_nDepth );
-	if( cProfile.IsReadingMode() || item.m_eFileTreeItemType == EFileTreeItemType_Grep ){
-		auto_sprintf( szKey, L"FileTree(%d).szTargetFile", i );
-		cProfile.IOProfileData( pszSecName, szKey, item.m_szTargetFile );
-		auto_sprintf( szKey, L"FileTree(%d).bIgnoreHidden", i );
-		cProfile.IOProfileData( pszSecName, szKey, item.m_bIgnoreHidden );
-		auto_sprintf( szKey, L"FileTree(%d).bIgnoreReadOny", i );
-		cProfile.IOProfileData( pszSecName, szKey, item.m_bIgnoreReadOnly );
-		auto_sprintf( szKey, L"FileTree(%d).bIgnoreSystem", i );
-		cProfile.IOProfileData( pszSecName, szKey, item.m_bIgnoreSystem );
+	for (int i = 0; i < fileTree.m_nItemCount; ++i) {
+		cProfile.IOProfileData(pszSecName, std::format(L"FileTree({})", i), fileTree.m_aItems[i]);
 	}
 }

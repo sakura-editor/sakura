@@ -1343,16 +1343,18 @@ bool CImpExpFileTree::Export( const std::wstring& sFileName, std::wstring& sErrM
 void CImpExpFileTree::IO_FileTreeIni( CDataProfile& cProfile, std::vector<SFileTreeItem>& data )
 {
 	const WCHAR* pszSecName = L"FileTree";
+
 	int nItemCount = (int)data.size();
 	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", nItemCount );
 	if( nItemCount < 0 ){
 		nItemCount = 0;
 	}
-	int i = 0;
+
 	if( cProfile.IsReadingMode() ){
 		data.resize( nItemCount );
 	}
-	for( ;i < nItemCount; i++ ){
-		CShareData_IO::ShareData_IO_FileTreeItem( cProfile, data[i], pszSecName, i );
+
+	for (int i = 0; i < nItemCount; ++i) {
+		cProfile.IOProfileData(pszSecName, std::format(L"FileTree({})", i), data[i]);
 	}
 }

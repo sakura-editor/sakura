@@ -16,6 +16,8 @@
 
 #include <Windows.h>
 
+struct SFileTreeItem;
+
 /*!
  * バッファ参照型
  *
@@ -348,6 +350,13 @@ bool CDataProfile::IOProfileData<RECT>(
 	std::wstring_view		sectionName,
 	std::wstring_view		entryKey,
 	RECT&					rcEntryValue
+);
+
+template <>
+bool CDataProfile::IOProfileData<SFileTreeItem>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	SFileTreeItem&			tEntryValue		//!< [in,out] エントリ値
 );
 
 #endif /* SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_ */

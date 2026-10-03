@@ -7,6 +7,8 @@
 #include "StdAfx.h"
 #include "env/CDataProfile.h"
 
+#include "env/DLLSHAREDATA.h"
+
 /*!
  * @brief 設定値の入出力を行う。
  *
@@ -62,4 +64,46 @@ bool CDataProfile::IOProfileData<RECT>(
 	}
 
 	return ret;
+}
+
+/*!
+ * @brief 設定値の入出力を行う。
+ *
+ * SFileTreeItem型（ツリー項目データ）向けの特殊化。
+ */
+template <>
+bool CDataProfile::IOProfileData<SFileTreeItem>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	SFileTreeItem&			fileTreeItem		//!< [in,out] エントリ値
+)
+{
+	IOProfileData(sectionName, std::format(L"{}.eItemType", keyPrefix), fileTreeItem.m_eFileTreeItemType);
+
+	if (IsReadingMode() ||
+		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Grep ||
+		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_File)
+	{
+		IOProfileData(sectionName, std::format(L"{}.szTargetPath", keyPrefix), fileTreeItem.m_szTargetPath);
+	}
+
+	if (IsReadingMode() ||
+		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Folder ||
+		!fileTreeItem.m_szLabelName.empty())
+	{
+		IOProfileData(sectionName, std::format(L"{}.szLabelName", keyPrefix), fileTreeItem.m_szLabelName);
+	}
+
+	IOProfileData(sectionName, std::format(L"{}.nDepth", keyPrefix), fileTreeItem.m_nDepth);
+
+	if (IsReadingMode() ||
+		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Grep)
+	{
+		IOProfileData(sectionName, std::format(L"{}.szTargetFile",   keyPrefix), fileTreeItem.m_szTargetFile);
+		IOProfileData(sectionName, std::format(L"{}.bIgnoreHidden",  keyPrefix), fileTreeItem.m_bIgnoreHidden);
+		IOProfileData(sectionName, std::format(L"{}.bIgnoreReadOny", keyPrefix), fileTreeItem.m_bIgnoreReadOnly);
+		IOProfileData(sectionName, std::format(L"{}.bIgnoreSystem",  keyPrefix), fileTreeItem.m_bIgnoreSystem);
+	}
+
+	return true;	// 返却値に意味はない
 }

@@ -56,8 +56,6 @@ protected:
 
 public:
 	static void ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fileTree, const WCHAR* pszSecName );
-	static void ShareData_IO_FileTreeItem( CDataProfile& cProfile, SFileTreeItem& item,
-										   const WCHAR* pszSecName, int i );
 	static void ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName);	// 2010/04/12 Uchi 分離
 
 public:
