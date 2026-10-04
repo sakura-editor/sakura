@@ -21,6 +21,7 @@ class CMenuDrawer;
 struct CommonSetting_CustomMenu; // defined CommonSetting.h
 struct CommonSetting_MainMenu; // defined CommonSetting.h
 struct CommonSetting_KeyBind;	// defined CommonSetting.h
+struct CommonSetting_Macro;
 struct CommonSetting_Plugin;
 struct CommonSetting_View;
 struct ColorInfo; // defined doc/CDocTypeSetting.h
@@ -55,7 +56,6 @@ protected:
 	static void ShareData_IO_CustMenu( CDataProfile& cProfile );
 	static void ShareData_IO_Types( CDataProfile& cProfile );
 	static void ShareData_IO_KeyWords( CDataProfile& cProfile );
-	static void ShareData_IO_Macro( CDataProfile& cProfile );
 	static void ShareData_IO_Statusbar( CDataProfile& cProfile );	// 2008/6/21 Uchi
 	static void ShareData_IO_MainMenu( CDataProfile& cProfile );		// 2010/5/15 Uchi
 	static void ShareData_IO_Other( CDataProfile& cProfile );
@@ -126,6 +126,11 @@ bool ShareData_IO_LogFont(
 	INT&								nPointSize,
 	const std::optional<std::wstring>&	optPointSizeKey = std::nullopt,
 	const std::optional<std::wstring>&	optFaceNameKey = std::nullopt
+);
+
+void ShareData_IO_Macro(
+	CDataProfile&			cProfile,
+	CommonSetting_Macro&	sMacro
 );
 
 template <typename T>

@@ -182,7 +182,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Print(cProfile, pShareData->m_PrintSettingArr);
 	ShareData_IO_Types( cProfile );
 	ShareData_IO_KeyWords( cProfile );
-	ShareData_IO_Macro( cProfile );
+	ShareData_IO_Macro(cProfile, pShareData->m_Common.m_sMacro);
 	ShareData_IO_Statusbar( cProfile );		// 2008/6/21 Uchi
 	ShareData_IO_MainMenu( cProfile );		// 2010/5/15 Uchi
 	ShareData_IO_Other( cProfile );
@@ -2057,14 +2057,15 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 */
-void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
+void ShareData_IO_Macro(
+	CDataProfile&			cProfile,
+	CommonSetting_Macro&	sMacro
+)
 {
-	DLLSHAREDATA* pShare = &GetDllShareData();
-
 	const WCHAR* pszSecName = L"Macro";
 
-	for (size_t i = 0; i < MAX_CUSTMACRO; ++i) {
-		MacroRec& macrorec = pShare->m_Common.m_sMacro.m_MacroTable[i];
+	for (int i = 0; i < std::ssize(sMacro.m_MacroTable); ++i) {
+		auto& macrorec = sMacro.m_MacroTable[i];
 
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
@@ -2073,11 +2074,11 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 		cProfile.IOProfileData(pszSecName, strprintf(L"[%03d]", i), macrorec);
 	}
 
-	cProfile.IOProfileData( pszSecName, L"nMacroOnOpened", pShare->m_Common.m_sMacro.m_nMacroOnOpened );	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, L"nMacroOnTypeChanged", pShare->m_Common.m_sMacro.m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, L"nMacroOnSave", pShare->m_Common.m_sMacro.m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, L"nMacroCancelTimer", pShare->m_Common.m_sMacro.m_nMacroCancelTimer );	// マクロ停止ダイアログ表示待ち時間	// 2011.08.04 syat
-	cProfile.IOProfileData( pszSecName, L"nMacroPythonDirectory", pShare->m_Common.m_sMacro.m_szPythonDirectory);
+	cProfile.IOProfileData( pszSecName, L"nMacroOnOpened",			sMacro.m_nMacroOnOpened );		/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, L"nMacroOnTypeChanged",		sMacro.m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, L"nMacroOnSave",			sMacro.m_nMacroOnSave );		/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, L"nMacroCancelTimer",		sMacro.m_nMacroCancelTimer );	// マクロ停止ダイアログ表示待ち時間	// 2011.08.04 syat
+	cProfile.IOProfileData( pszSecName, L"nMacroPythonDirectory",	sMacro.m_szPythonDirectory);
 }
 
 /*!
