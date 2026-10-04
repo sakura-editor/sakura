@@ -85,7 +85,11 @@ constexpr size_t strnlen_s(
  * @retval STRUNCATE 切り詰め発生
  */
 template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
-constexpr errno_t strncpy_s(A1& dst, const A2& src, size_t count) noexcept
+constexpr errno_t strncpy_s(
+	A1& dst,
+	const A2& src,
+	size_t count
+)
 {
 	// 入力元をNUL終端文字列とみなす
 	const auto szText = cxx::NullTerminatedString{ src };
@@ -134,7 +138,10 @@ constexpr errno_t strncpy_s(A1& dst, const A2& src, size_t count) noexcept
  * @retval STRUNCATE 切り詰め発生
  */
 template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
-constexpr errno_t strcpy_s(A1& dst, const A2& src) noexcept
+constexpr errno_t strcpy_s(
+	A1& dst,
+	const A2& src
+)
 {
 	return cxx::strncpy_s<CharT>(dst, src, _TRUNCATE);
 }
@@ -153,7 +160,11 @@ constexpr errno_t strcpy_s(A1& dst, const A2& src) noexcept
  * @retval STRUNCATE 切り詰め発生
  */
 template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
-constexpr errno_t strncat_s(A1& dst, const A2& src, size_t count) noexcept
+constexpr errno_t strncat_s(
+	A1& dst,
+	const A2& src,
+	size_t count
+)
 {
 	// 出力先を固定長バッファとして扱う
 	auto buffer = std::span<CharT>{ dst };
@@ -181,7 +192,10 @@ constexpr errno_t strncat_s(A1& dst, const A2& src, size_t count) noexcept
  * @retval STRUNCATE 切り詰め発生
  */
 template <typename CharT, basis::WritableBuffer<CharT> A1, basis::NullTerminatedStringConstructible<CharT> A2>
-constexpr errno_t strcat_s(A1& dst, const A2& src) noexcept
+constexpr errno_t strcat_s(
+	A1& dst,
+	const A2& src
+)
 {
 	return cxx::strncat_s<CharT>(dst, src, _TRUNCATE);
 }
@@ -525,6 +539,54 @@ template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructi
 template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t wcscpy_s(A1& dst, const A2& src) { return auto_strcpy_s(dst, src); }
 template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2> constexpr errno_t wcscat_s(A1& dst, const A2& src) { return auto_strcat_s(dst, src); }
 
+/*!
+ * @brief 固定長バッファに文字列をコピーします。
+ *
+ * バッファサイズを考慮しない実装を救済するためのもの。
+ *
+ * 必ずしも移行不要。
+ *
+ * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @return コピー先バッファ
+ */
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+constexpr WCHAR* wcscpy(
+	A1& dst,
+	const A2& src
+)
+{
+	auto_strcpy_s(dst, src);
+
+	return std::data(dst);
+}
+
+/*!
+ * @brief 固定長バッファの末尾に文字列を追加します。
+ *
+ * バッファサイズを考慮しない実装を救済するためのもの。
+ *
+ * 必ずしも移行不要。
+ *
+ * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @return コピー先バッファ
+ */
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+constexpr WCHAR* wcscat(
+	A1& dst,
+	const A2& src
+)
+{
+	auto_strcat_s(dst, src);
+
+	return std::data(dst);
+}
+
 //比較系
 inline int auto_memcmp (const ACHAR* p1, const ACHAR* p2, size_t count){ return amemcmp(p1,p2,count); }
 inline int auto_memcmp (const WCHAR* p1, const WCHAR* p2, size_t count){ return wmemcmp(p1,p2,count); }
@@ -604,6 +666,31 @@ int auto_sprintf(
  */
 template <basis::WritableBuffer<WCHAR> A, typename... Args>
 int auto_sprintf(
+	A& buf,
+	_In_z_ _Printf_format_string_ const WCHAR* format,
+	const Args&... args
+)
+{
+	// パラメータ展開で転送する
+	return cxx::_sprintf_s(
+		buf,
+		format,
+		cxx::ConvertPrintfArg(std::as_const(args))...
+	);
+}
+
+/*!
+ * @brief 固定長バッファに書式付きデータを書き込みます。
+ *
+ * バッファサイズを考慮しない実装を救済するためのもの。
+ *
+ * 必ずしも移行不要だが「使用禁止」だと思ってください。
+ *
+ * @return 書き込まれた文字数
+ * @retval < 0 エラー発生
+ */
+template <basis::WritableBuffer<WCHAR> A, typename... Args>
+int _swprintf(
 	A& buf,
 	_In_z_ _Printf_format_string_ const WCHAR* format,
 	const Args&... args
