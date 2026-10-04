@@ -2589,7 +2589,7 @@ bool ShareData_IO_LogFont(
 	if (cProfile.IsWritingMode()) {
 		strprintf(
 			buffer,
-			L"{%d,%d,%d,%d,%d,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
+			L"%d,%d,%d,%d,%d,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
 			lf.lfHeight,
 			lf.lfWidth,
 			lf.lfEscapement,
