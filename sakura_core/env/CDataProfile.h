@@ -14,6 +14,16 @@
 #include "basis/SakuraBasis.h"
 #include "util/StaticType.h"
 
+#include <Windows.h>
+
+struct ColorInfo;
+struct EditInfo;
+struct KeyHelpInfo;
+struct MacroRec;
+struct PRINTSETTING;
+struct PluginRec;
+struct SFileTreeItem;
+
 /*!
  * バッファ参照型
  *
@@ -205,64 +215,64 @@ public:
 	using CProfile::GetProfileData;
 	using CProfile::SetProfileData;
 
-	 /*!
-	  * Profileから読み込んだ文字列を設定値に変換して取得する
-	  *
-	  * @retval true 成功
-	  * @retval false 失敗
-	  */
-	template<profile_data::is_supported T>
-	[[nodiscard]] bool GetProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
-		T&						tEntryValue		//!< [out] エントリ値
-	) const
-	{
-		if (std::wstring strEntryValue; GetProfileData(sectionName, entryKey, strEntryValue)) {
-			return profile_data::TryParse(strEntryValue, tEntryValue);
-		}
-		return false;
-	}
-
-	/*!
-	 * 設定値を文字列に変換してProfileへ書き込む
-	 */
-	template<profile_data::is_supported T>
-	void SetProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
-		const T					tEntryValue		//!< [in] エントリ値
-	)
-	{
-		const std::wstring strEntryValue = profile_data::ToString(tEntryValue);
-		SetProfileData(sectionName, entryKey, strEntryValue);
-	}
-
 	/*!
 	 * 設定値の入出力テンプレート
 	 *
 	 * 設定値の入出力を行う。
 	 *
+	 * @note このテンプレートはデフォルト実装。
+	 * @note 実際のファイル入出力はまとめて行う仕様。
+	 *
 	 * @retval true	設定値を正しく読み書きできた
 	 * @retval false 設定値を読み込めなかった
 	 */
-	template<profile_data::is_supported T>
+	template <typename T>
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		T&						tEntryValue		//!< [in,out] エントリ値
 	)
 	{
-		if( IsReadingMode() ){
-			return GetProfileData(sectionName, entryKey, tEntryValue);
-		}else{
-			SetProfileData(sectionName, entryKey, tEntryValue);
-			return true;
+		// 取得・設定は文字列を介して行う
+		std::wstring strEntryValue;
+
+		// 読み込みモード
+		if (IsReadingMode()) {
+			// 設定値を読み取る
+			if (!GetProfileData(sectionName, entryKey, strEntryValue)) {
+				return false;
+			}
+
+			// 変換に対応した型なら変換関数を使う
+			if constexpr (profile_data::is_supported<T>) {
+				if (!profile_data::TryParse(strEntryValue, tEntryValue)) return false;
+			}
+			// それ以外は単純代入を試みる
+			// （ビルドエラーになったら特殊化してください）
+			else {
+				tEntryValue = strEntryValue;
+			}
 		}
+		// 書き込みモード
+		else {
+			// 変換に対応した型なら変換関数を使う
+			if constexpr (profile_data::is_supported<T>) {
+				strEntryValue = profile_data::ToString(tEntryValue);
+			}
+			// それ以外は代入を試みる
+			// （ビルドエラーになったら特殊化してください）
+			else {
+				strEntryValue = tEntryValue;
+			}
+
+			// 設定値を書き込む
+			SetProfileData(sectionName, entryKey, strEntryValue);
+		}
+		return true;
 	}
 
 	/*!
-	 * 設定値の入出力テンプレート
+	 * 設定値を入出力する
 	 *
 	 * 設定値の入出力を行う。
 	 *
@@ -270,17 +280,27 @@ public:
 	 * @retval false 設定値を読み込めなかった
 	 */
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		std::wstring&			entryValue		//!< [in,out] エントリ値
 	)
 	{
+		// 読み込みモード
 		if (IsReadingMode()) {
-			return GetProfileData(sectionName, entryKey, entryValue);
-		} else {
-			SetProfileData(sectionName, entryKey, entryValue);
-			return true;
+			// 設定値を読み取る
+			if (!GetProfileData(sectionName, entryKey, entryValue)) {
+				return false;
+			}
 		}
+		// 書き込みモード
+		else {
+			// 設定値を書き込む
+			SetProfileData(sectionName, entryKey, entryValue);
+
+			// 文字列の書き込みは常に成功
+		}
+
+		return true;
 	}
 
 	/*!
@@ -293,8 +313,8 @@ public:
 	 */
 	template <basis::WritableBuffer<WCHAR> A>
 	bool IOProfileData(
-		const std::wstring&		sectionName,	//!< [in] セクション名
-		const std::wstring&		entryKey,		//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		A&						tEntryValue		//!< [in,out] エントリ値
 	)
 	{
@@ -330,5 +350,61 @@ public:
 		return true;
 	}
 };
+
+template <>
+bool CDataProfile::IOProfileData<ColorInfo>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	ColorInfo&				tEntryValue		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<EditInfo>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	EditInfo&				tEntryValue		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<KeyHelpInfo>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	KeyHelpInfo&			tEntryValue		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<MacroRec>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keySuffix,		//!< [in] エントリ名
+	MacroRec&				macroRec		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<PRINTSETTING>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	PRINTSETTING&			printSetting	//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<PluginRec>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	PluginRec&				tEntryValue		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<RECT>(
+	std::wstring_view		sectionName,
+	std::wstring_view		entryKey,
+	RECT&					rcEntryValue
+);
+
+template <>
+bool CDataProfile::IOProfileData<SFileTreeItem>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
+	SFileTreeItem&			tEntryValue		//!< [in,out] エントリ値
+);
 
 #endif /* SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_ */
