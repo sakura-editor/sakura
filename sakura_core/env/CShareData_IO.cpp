@@ -1813,11 +1813,6 @@ void ShareData_IO_VertLineIdx(
 )
 {
 	for (int i = 0; i < _countof(nVertLineIdx); ++i) {
-		// 読み込みモード
-		if (cProfile.IsReadingMode()) {
-			nVertLineIdx[i] = 0;
-		}
-
 		// 読み書きを実行する
 		if (!cProfile.IOProfileData(sectionName, std::format(L"nVertLineIdx{}", i + 1), nVertLineIdx[i]))
 		{
