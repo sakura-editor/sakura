@@ -153,16 +153,28 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 		auto szPath = keyHelpInfo.m_szPath;
 		if (3 != ::swscanf_s(
 			buffer.c_str(),
-			L"%hhu,%[^,],%[^\n]",
+			L"%d,%[^,],%[^\n]",
 			&ints[0],
 			szAbout.data(), unsigned(std::size(szAbout)),
 			szPath.data(), unsigned(std::size(szPath))
 		))
 		{
-			// 1つ目の値が不正（数値でない）
-			// 2つ目の値が不正（文字数超過）
-			// 3つ目の値が不正（文字数超過、カンマが足りない）
-			return false;
+			// szAbout部分が空の場合も拾う
+			if (2 == ::swscanf_s(
+				buffer.c_str(),
+				L"%d,,%[^\n]",
+				&ints[0],
+				szPath.data(), unsigned(std::size(szPath))
+			))
+			{
+				szAbout = L"";
+			}
+			else {
+				// 1つ目の値が不正（数値でない）
+				// 2つ目の値が不正（文字数超過）
+				// 3つ目の値が不正（文字数超過、カンマが足りない）
+				return false;
+			}
 		}
 
 		// 構築した値をコピー代入して呼出元に返す

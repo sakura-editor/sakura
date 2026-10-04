@@ -520,6 +520,21 @@ TEST(CDataProfile, IOProfileData_KeyHelpInfo)
 	EXPECT_THAT(value.m_szAbout, StrEq(std::wstring(50 - 1, L'a')));
 	EXPECT_THAT(value.m_szPath, StrEq(std::wstring(_MAX_PATH - 1, L'b')));
 
+	// szAboutが空のパターンを追加で確認する
+	value.m_bUse	= false;
+	value.m_szAbout	= L"about";
+	value.m_szPath	= L"path";
+
+	// 適切（？）な値を設定
+	cProfile.SetProfileData(L"Test", L"keyHelp", L"1,,PATH");
+
+	// 読める
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"keyHelp", value));
+
+	EXPECT_THAT(value.m_bUse, IsTrue());
+	EXPECT_THAT(value.m_szAbout, StrEq(L""));
+	EXPECT_THAT(value.m_szPath, StrEq(L"PATH"));
+
 	// 書き込みモード
 	cProfile.SetWritingMode();
 
