@@ -2541,7 +2541,9 @@ void ShareData_IO_ColorSet(
 		}
 	}
 
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode() &&
+		colorInfoArr[COLORIDX_CARET].m_sColorAttr.m_cTEXT == colorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK)
+	{
 		// 2006.12.07 ryoji
 		// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
 		// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする

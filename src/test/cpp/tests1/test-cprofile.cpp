@@ -736,6 +736,26 @@ TEST(ShareData_IO, ShareData_IO_2)
 }
 
 /*!
+ * @brief ShareData_IO_ColorSetのテスト
+ */
+TEST(ShareData_IO, ShareData_IO_ColorSet)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	std::vector<ColorInfo> colorInfoArr{ size_t(COLORIDX_LAST) };
+
+	// キャレット前景色がテキスト背景色と同じ
+	cProfile.SetProfileData(L"Test", L"C[TXT]", L"1,1,000000,ffffff,1");	// 黒文字、白背景
+	cProfile.SetProfileData(L"Test", L"C[CAR]", L"1,1,ffffff,ff0000,1");	// 白文字、赤背景
+
+	ShareData_IO_ColorSet(cProfile, L"Test", colorInfoArr);
+
+	// キャレット前景色がテキスト文字色に変更される
+	EXPECT_THAT(colorInfoArr[COLORIDX_CARET].m_sColorAttr.m_cTEXT, colorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT);
+}
+
+/*!
  * @brief ShareData_IO_KeyHelpArrのテスト
  */
 TEST(ShareData_IO, ShareData_IO_KeyHelpArr)
