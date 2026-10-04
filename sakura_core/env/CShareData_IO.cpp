@@ -1765,7 +1765,7 @@ void ShareData_IO_RegexKeyword(
 			}
 
 			regexKeyword.m_nColorIndex = GetColorIndexByName(szColorName);
-			if (regexKeyword.m_nColorIndex == 0) {	//名前でない
+			if (regexKeyword.m_nColorIndex == -1) {	//名前でない
 				regexKeyword.m_nColorIndex = ::_wtoi(szColorName);
 			}
 			if (regexKeyword.m_nColorIndex < 0 ||
