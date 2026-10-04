@@ -189,6 +189,12 @@ bool CDataProfile::IOProfileData<MacroRec>(
 	decltype(macroRec.m_szName) szName{};
 	decltype(macroRec.m_szFile) szFile{};
 
+	// 書き込みモード
+	if (IsWritingMode()) {
+		::wcscpy_s(szName, macroRec.m_szName);
+		::wcscpy_s(szFile, macroRec.m_szFile);
+	}
+
 	if (!IOProfileData(sectionName, strprintf(L"Name%s", keySuffix), szName))
 	{
 		return false;
