@@ -289,6 +289,12 @@ bool CDataProfile::IOProfileData<PluginRec>(
 	decltype(pluginRec.m_szName) szName{};
 	decltype(pluginRec.m_szId) szId{};
 
+	// 書き込みモード
+	if (IsWritingMode()) {
+		::wcscpy_s(szName, pluginRec.m_szName);
+		::wcscpy_s(szId, pluginRec.m_szId);
+	}
+
 	if (!IOProfileData(sectionName, std::format(L"{}.Name", keyPrefix), szName))
 	{
 		return false;
