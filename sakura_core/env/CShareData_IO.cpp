@@ -1718,7 +1718,7 @@ void ShareData_IO_RegexKeyword(
 	// 取得・設定は文字列を介して行う
 	std::wstring buffer{};
 
-	for (size_t i = 0; i < std::size(type.m_RegexKeywordArr) && !keywordList.empty(); ++i)
+	for (int i = 0; i < std::ssize(type.m_RegexKeywordArr) && !keywordList.empty(); ++i)
 	{
 		auto& regexKeyword = type.m_RegexKeywordArr[i];
 
@@ -1779,6 +1779,12 @@ void ShareData_IO_RegexKeyword(
 
 		const auto len = ::wcsnlen(keywordList.data(), keywordList.size());
 		keywordList = keywordList.subspan(len < keywordList.size() ? len + 1 : keywordList.size());
+	}
+
+	if (cProfile.IsReadingMode() &&
+		!keywordList.empty())
+	{
+		keywordList[0] = L'\0';
 	}
 }
 
