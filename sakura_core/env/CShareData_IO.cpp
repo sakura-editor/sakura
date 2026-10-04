@@ -1245,7 +1245,7 @@ void ShareData_IO_Print(
 {
 	const WCHAR* pszSecName = L"Print";
 
-	for (size_t i = 0; i < std::size(printSettings); ++i) {
+	for (int i = 0; i < std::size(printSettings); ++i) {
 		auto& printsetting = printSettings[i];
 
 		cProfile.IOProfileData(pszSecName, strprintf(L"PS[%02d]", i), printsetting);
