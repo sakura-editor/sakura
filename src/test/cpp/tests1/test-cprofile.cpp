@@ -542,6 +542,64 @@ TEST(CDataProfile, IOProfileData_KeyHelpInfo)
 /*!
  * @brief IOProfileDataのテスト
  */
+TEST(CDataProfile, IOProfileData_MacroRec)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	MacroRec value{};
+	value.m_szName[0]			= L'\0';
+	value.m_szFile[0]			= L'\0';
+	value.m_bReloadWhenExecute	= false;
+
+	// 設定項目がないと読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"[000]", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_szName, StrEq(L""));
+	EXPECT_THAT(value.m_szFile, StrEq(L""));
+	EXPECT_THAT(value.m_bReloadWhenExecute, IsFalse());
+
+	// 不適切な値を設定
+	cProfile.SetProfileData(L"Test", L"Name[000]", std::wstring(MACRONAME_MAX, L'a'));
+
+	// 値が不適切なので読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"[000]", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_szName, StrEq(L""));
+	EXPECT_THAT(value.m_szFile, StrEq(L""));
+	EXPECT_THAT(value.m_bReloadWhenExecute, IsFalse());
+
+	// 不適切な値を設定
+	cProfile.SetProfileData(L"Test", L"Name[000]", std::wstring(MACRONAME_MAX - 1, L'a'));
+	cProfile.SetProfileData(L"Test", L"File[000]", std::wstring(_MAX_PATH + 1, L'b'));
+
+	// 値が不適切なので読めない
+	EXPECT_FALSE(cProfile.IOProfileData(L"Test", L"[000]", value));
+
+	// 値は変更されない
+	EXPECT_THAT(value.m_szName, StrEq(L""));
+	EXPECT_THAT(value.m_szFile, StrEq(L""));
+	EXPECT_THAT(value.m_bReloadWhenExecute, IsFalse());
+
+	// 適切（？）な値を設定
+	cProfile.SetProfileData(L"Test", L"Name[000]", std::wstring(MACRONAME_MAX - 1, L'a'));
+	cProfile.SetProfileData(L"Test", L"File[000]", std::wstring(_MAX_PATH, L'b'));
+	cProfile.SetProfileData(L"Test", L"ReloadWhenExecute[000]", L"1");
+
+	// 読める
+	EXPECT_TRUE(cProfile.IOProfileData(L"Test", L"[000]", value));
+
+	// 値は変更される
+	EXPECT_THAT(value.m_szName, StrEq(std::wstring(MACRONAME_MAX - 1, L'a')));
+	EXPECT_THAT(value.m_szFile, StrEq(std::wstring(_MAX_PATH, L'b')));
+	EXPECT_THAT(value.m_bReloadWhenExecute, IsTrue());
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
 TEST(CDataProfile, IOProfileData_PluginRec)
 {
 	CDataProfile cProfile;

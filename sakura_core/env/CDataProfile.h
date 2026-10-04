@@ -19,6 +19,7 @@
 struct ColorInfo;
 struct EditInfo;
 struct KeyHelpInfo;
+struct MacroRec;
 struct PRINTSETTING;
 struct PluginRec;
 struct SFileTreeItem;
@@ -369,6 +370,13 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 	std::wstring_view		sectionName,	//!< [in] セクション名
 	std::wstring_view		entryKey,		//!< [in] エントリ名
 	KeyHelpInfo&			tEntryValue		//!< [in,out] エントリ値
+);
+
+template <>
+bool CDataProfile::IOProfileData<MacroRec>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keySuffix,		//!< [in] エントリ名
+	MacroRec&				macroRec		//!< [in,out] エントリ値
 );
 
 template <>

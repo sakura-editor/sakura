@@ -177,6 +177,39 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 /*!
  * @brief 設定値の入出力を行う。
  *
+ * MacroRec型（マクロ設定データ）向けの特殊化。
+ */
+template<>
+bool CDataProfile::IOProfileData<MacroRec>(
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		keySuffix,		//!< [in] エントリ名
+	MacroRec&				macroRec		//!< [in,out] エントリ値
+)
+{
+	decltype(macroRec.m_szName) szName{};
+	decltype(macroRec.m_szFile) szFile{};
+
+	if (!IOProfileData(sectionName, strprintf(L"Name%s", keySuffix), szName))
+	{
+		return false;
+	}
+
+	if (!IOProfileData(sectionName, strprintf(L"File%s", keySuffix), szFile))
+	{
+		return false;
+	}
+
+	IOProfileData(sectionName, strprintf(L"ReloadWhenExecute%s", keySuffix), macroRec.m_bReloadWhenExecute);
+
+	::wcscpy_s(macroRec.m_szName, szName);
+	::wcscpy_s(macroRec.m_szFile, szFile);
+
+	return true;
+}
+
+/*!
+ * @brief 設定値の入出力を行う。
+ *
  * PRINTSETTING型（印刷設定データ）向けの特殊化。
  */
 template<>

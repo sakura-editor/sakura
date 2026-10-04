@@ -2067,20 +2067,17 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = L"Macro";
-	int		i;	
-	WCHAR	szKeyName[64];
-	for( i = 0; i < MAX_CUSTMACRO; ++i ){
+
+	for (size_t i = 0; i < MAX_CUSTMACRO; ++i) {
 		MacroRec& macrorec = pShare->m_Common.m_sMacro.m_MacroTable[i];
+
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
 		if( !cProfile.IsReadingMode() && macrorec.m_szName[0] == L'\0' && macrorec.m_szFile[0] == L'\0' ) continue;
-		auto_sprintf( szKeyName, L"Name[%03d]", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(macrorec.m_szName));
-		auto_sprintf( szKeyName, L"File[%03d]", i );
-		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(macrorec.m_szFile));
-		auto_sprintf( szKeyName, L"ReloadWhenExecute[%03d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_bReloadWhenExecute );
+
+		cProfile.IOProfileData(pszSecName, strprintf(L"[%03d]", i), macrorec);
 	}
+
 	cProfile.IOProfileData( pszSecName, L"nMacroOnOpened", pShare->m_Common.m_sMacro.m_nMacroOnOpened );	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 	cProfile.IOProfileData( pszSecName, L"nMacroOnTypeChanged", pShare->m_Common.m_sMacro.m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 	cProfile.IOProfileData( pszSecName, L"nMacroOnSave", pShare->m_Common.m_sMacro.m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
