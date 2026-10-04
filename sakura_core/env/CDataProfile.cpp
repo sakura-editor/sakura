@@ -54,7 +54,7 @@ bool CDataProfile::IOProfileData<ColorInfo>(
 		std::array<unsigned, 5> ints{};
 		if (5 != ::swscanf_s(
 			buffer.c_str(),
-			L"%d,%d,%06x,%06x,%d",
+			L"%u,%u,%06x,%06x,%u",
 			&ints[0],
 			&ints[1],
 			&ints[2],
