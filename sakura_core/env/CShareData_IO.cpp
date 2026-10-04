@@ -511,7 +511,7 @@ bool ShareData_IO_BackUpFolder(
 	}
 
 	// 文字列を介して読み書きする
-	const auto ret = cProfile.IOProfileData(sectionName, entryKey, tEntryValue);
+	const auto ret = cProfile.IOProfileData(sectionName, entryKey, strEntryValue);
 	if (!ret)
 	{
 		return false;	// 読み込み失敗（書き込みは失敗しない）
