@@ -1,14 +1,19 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CWordParse.h"
+#include "parse/CWordParse.h"
+
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "mem/CNativeW.h"
+
+#include <string_view>
+
+using namespace std::literals::string_view_literals;
 
 //@@@ 2001.06.23 N.Nakatani
 /*!
@@ -387,26 +392,60 @@ bool CWordParse::SearchPrevWordPosition(
 }
 
 struct _url_table_t {
+	constexpr explicit _url_table_t(
+		std::wstring_view schema,
+		bool with_double_slash_ = true
+	) noexcept
+		: name(schema)
+		, with_double_slash(with_double_slash_)
+	{
+	}
+
+	/*! @brief このエントリがメールアドレスのものかどうか */
+	constexpr bool is_mail() const noexcept { return L"mailto" == name; }
+
+	/*! @brief このエントリの長さ（schema + "://" の長さ） */
+	constexpr size_t length() const noexcept { return name.length() + (with_double_slash ? 3 : 1); }
+
+	constexpr bool match(
+		std::wstring_view line
+	) const noexcept
+	{
+		if (line.length() < length() ||
+			!line.starts_with(name))
+		{
+			return false;
+		}
+
+		line = line.substr(name.size());
+
+		if (!with_double_slash) {
+			return line.starts_with(L":"sv);
+		}
+
+		return line.starts_with(L"://"sv);
+	}
+
 	std::wstring_view	name;
-	bool				is_mail = false;
+	bool				with_double_slash;
 };
 
+/* アルファベット順 */
 constexpr std::array url_table = {
-	/* アルファベット順 */
-	_url_table_t{ L"file://",		false }, /* 1 */
-	_url_table_t{ L"ftp://",		false }, /* 2 */
-	_url_table_t{ L"gopher://",		false }, /* 3 */
-	_url_table_t{ L"http://",		false }, /* 4 */
-	_url_table_t{ L"https://",		false }, /* 5 */
-	_url_table_t{ L"mailto:",		true  }, /* 6 */
-	_url_table_t{ L"news:",			false }, /* 7 */
-	_url_table_t{ L"nntp://",		false }, /* 8 */
-	_url_table_t{ L"prospero://",	false }, /* 9 */
-	_url_table_t{ L"telnet://",		false }, /* 10 */
-	_url_table_t{ L"tp://",			false }, /* 11 */
-	_url_table_t{ L"ttp://",		false }, /* 12 */
-	_url_table_t{ L"wais://",		false }, /* 13 */
-	_url_table_t{ L"{",				false }  /* 14 */  /* '{' is 'z'+1 : terminate */
+	_url_table_t{ L"file" }, /* 1 */
+	_url_table_t{ L"ftp" }, /* 2 */
+	_url_table_t{ L"gopher" }, /* 3 */
+	_url_table_t{ L"http" }, /* 4 */
+	_url_table_t{ L"https" }, /* 5 */
+	_url_table_t{ L"mailto", false }, /* 6 */
+	_url_table_t{ L"news", false }, /* 7 */
+	_url_table_t{ L"nntp" }, /* 8 */
+	_url_table_t{ L"prospero" }, /* 9 */
+	_url_table_t{ L"telnet" }, /* 10 */
+	_url_table_t{ L"tp" }, /* 11 */
+	_url_table_t{ L"ttp" }, /* 12 */
+	_url_table_t{ L"wais" }, /* 13 */
+	_url_table_t{ L"{", false }  /* 14 */  /* '{' is 'z'+1 : terminate */
 };
 
 constexpr auto get_index_of(std::wstring_view urlHeader)
@@ -416,14 +455,14 @@ constexpr auto get_index_of(std::wstring_view urlHeader)
 }
 
 // テーブルの保守性を高めるための定義
-constexpr auto urF = get_index_of(L"file://") + 1;
-constexpr auto urG = get_index_of(L"gopher://") + 1;
-constexpr auto urH = get_index_of(L"http://") + 1;
-constexpr auto urM = get_index_of(L"mailto:") + 1;
-constexpr auto urN = get_index_of(L"news:") + 1;
-constexpr auto urP = get_index_of(L"prospero://") + 1;
-constexpr auto urT = get_index_of(L"telnet://") + 1;
-constexpr auto urW = get_index_of(L"wais://") + 1;
+constexpr auto urF = get_index_of(L"file") + 1;
+constexpr auto urG = get_index_of(L"gopher") + 1;
+constexpr auto urH = get_index_of(L"http") + 1;
+constexpr auto urM = get_index_of(L"mailto") + 1;
+constexpr auto urN = get_index_of(L"news") + 1;
+constexpr auto urP = get_index_of(L"prospero") + 1;
+constexpr auto urT = get_index_of(L"telnet") + 1;
+constexpr auto urW = get_index_of(L"wais") + 1;
 
 constexpr char url_char[] = {
 // clang-format off
@@ -494,22 +533,23 @@ BOOL IsURL(
 	}
 
 	for (auto urlp = &url_table[uc - 1]; urlp->name[0] == ch; ++urlp) {	/* URLテーブルを探索 */
-		if (std::size(line) < std::size(urlp->name) || !line.starts_with(urlp->name)) {
+		if (!urlp->match(line)) {
 			continue;
 		}
 		/* URLヘッダーは一致した */
-		if (urlp->is_mail) {	/* メール専用の解析へ */
-			if (IsMailAddress(std::data(line), int(std::size(urlp->name)), int(std::size(line)), pnMatchLen)) {
-				*pnMatchLen = *pnMatchLen + int(std::size(urlp->name));
+		const auto schemaLength = int(urlp->length());
+		if (urlp->is_mail()) {	/* メール専用の解析へ */
+			if (IsMailAddress(std::data(line), schemaLength, int(std::size(line)), pnMatchLen)) {
+				*pnMatchLen = *pnMatchLen + schemaLength;
 				return TRUE;
 			}
 			return FALSE;
 		}
-		auto i = std::size(urlp->name);
+		size_t i = schemaLength;
 		for (; i < std::size(line); ++i) {	/* 通常の解析へ */
 			if (const auto ch2 = wc_to_c(line[i]); !ch2 || !url_char[ch2]) break;	/* 終端に達した */
 		}
-		if (i == std::size(urlp->name)) return FALSE;	/* URLヘッダーだけ */
+		if (i == schemaLength) return FALSE;	/* URLヘッダーだけ */
 		*pnMatchLen = int(i);
 		return TRUE;
 	}
