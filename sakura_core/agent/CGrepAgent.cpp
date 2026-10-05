@@ -36,6 +36,8 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 
+#include <filesystem>
+
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
 #define UIFILENAME_INTERVAL_MILLISEC 15	// Cancelダイアログのファイル名表示更新間隔
@@ -264,6 +266,20 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 			CEditWnd::getInstance()->RedrawAllViews( pcEditView );	//	他のペインの表示を更新
 	}
+}
+
+/*!
+	検索対象のフォルダーがすべて存在するフォルダーか
+
+	末尾の \ やルート(C:\)を含むパスでも判定できるよう、FindFirstFile 系の IsDirectory() ではなく
+	std::filesystem::is_directory() を使う。フォルダーが空のリストは true(従来どおり何もしない)。
+*/
+static bool AllFoldersExist( const std::vector<std::wstring>& vPaths )
+{
+	return std::ranges::all_of( vPaths, []( const std::wstring& path ) {
+		std::error_code ec;
+		return std::filesystem::is_directory( path, ec );
+	} );
 }
 
 int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WCHAR* pszWindowPath, const WCHAR* pszFile)
@@ -514,6 +530,25 @@ DWORD CGrepAgent::DoGrep(
 
 	std::vector<std::wstring> vPaths;
 	CreateFolders( gi.cmGrepFolder.GetStringPtr(), vPaths );
+
+	// 存在しないフォルダーが含まれるときは、検索・置換を始める前に止める(Issue #2707)
+	if( !AllFoldersExist( vPaths ) ){
+		this->m_bGrepRunning = false;
+		pcViewDst->m_bDoing_UndoRedo = false;
+		pcViewDst->SetUndoBuffer();
+
+		const std::wstring strMessage = LS( STR_DLGGREP5 );
+		if( sGrepOption.bGrepStdout ){
+			// 標準出力のときは、メッセージボックスで止めない(バッチが止まる)
+			CNativeW cmemError;
+			const std::wstring strLine = strMessage + L"\r\n";
+			cmemError.SetString( strLine.c_str(), strLine.length() );
+			AddTail( pcViewDst, cmemError, true );
+		}else{
+			ErrorMessage( pcViewDst->m_hwndParent, L"%s", strMessage.c_str() );
+		}
+		return 0;
+	}
 
 	nWork = gi.cmGrepKey.GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
