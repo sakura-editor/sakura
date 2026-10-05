@@ -349,6 +349,77 @@ public:
 
 		return true;
 	}
+
+	/*!
+	 * 配列型(StaticVector)の入出力
+	 *
+	 * @tparam T 配列の要素型
+	 * @tparam N 配列の最大要素数
+	 * @tparam A 配列の代入時に使う代替型
+	 * @param[in] sectionName セクション名
+	 * @param[in] entrySetName エントリセット名
+	 * @param[in,out] aEntries エントリ値
+	 * @param[in,opt] optCountName エントリ数のエントリ名。独自のエントリ名を指定したいときに利用します。
+	 */
+	template <typename T, int N, typename A>
+	void IOProfileDataSet(
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entrySetName,	//!< [in] エントリセット名
+		StaticVector<T, N, A>&	aEntries,		//!< [in,out] エントリ値
+		const std::optional<std::wstring>&	optCountName = std::nullopt
+	)
+	{
+		// 有効要素数を取得
+		auto count = aEntries.size();
+
+		// 有効要素数が読み込めなかったフラグ
+		bool isCountMissing = false;
+
+		// 有効要素数を読み書きする
+		if (!IOProfileData(
+			sectionName,
+			optCountName.value_or(std::format(L"_{:s}_Counts", entrySetName)),
+			count
+		) && IsReadingMode())
+		{
+			// 有効要素数が読み込めなかった場合、配列サイズを使う
+			count = aEntries.max_size();
+
+			// 有効要素数が読み込めなかったフラグを立てる
+			isCountMissing = true;
+		}
+
+		// 読み込みモード
+		if (IsReadingMode()) {
+			// 変な値が入っていたら補正する
+			count = std::min(std::max(0, count), aEntries.max_size());
+
+			// 配列のサイズを設定する
+			aEntries.resize(count);
+		}
+
+		// 配列要素の数だけループする
+		for (int i = 0; i < count; ++i) {
+			// 配列要素を読み書きする
+			IOProfileData(sectionName, std::format(L"{}[{:02d}]", entrySetName, i), aEntries[i]);
+		}
+
+		// 有効要素数を読み込めなかった場合、補正を試みる
+		if (isCountMissing)
+		{
+			// 補正された有効要素数
+			int fixedCount = count;
+
+			// 値型が文字列の場合
+			if constexpr (basis::NullTerminatedStringCompatible<T, WCHAR>) {
+				// 空でない要素を末尾から検索し、見付かった位置までを有効要素とする
+				for (; 0 < fixedCount && aEntries[fixedCount - 1].empty(); --fixedCount) ;
+			}
+
+			// 有効要素数を補正する
+			aEntries.resize(fixedCount);
+		}
+	}
 };
 
 template <>

@@ -711,6 +711,76 @@ TEST(CDataProfile, IOProfileData_RECT)
 }
 
 /*!
+ * @brief IOProfileDataSetのテスト
+ */
+TEST(CDataProfile, IOProfileDataSet001)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	StaticVector<SFilePath, 3, LPCWSTR> values{};
+
+	// INIの有効要素数が指定されている場合、その要素数だけ読み込む
+	cProfile.SetProfileData(L"Test", L"_Entry_Counts", L"2");
+	cProfile.SetProfileData(L"Test", L"Entry[00]", L"first");
+	cProfile.SetProfileData(L"Test", L"Entry[01]", L"");
+	cProfile.SetProfileData(L"Test", L"Entry[02]", L"ignored");
+
+	cProfile.IOProfileDataSet(L"Test", L"Entry", values);
+
+	EXPECT_THAT(values.size(), Eq(2));
+	EXPECT_THAT(values[0], StrEq(L"first"));
+	EXPECT_THAT(values[1], StrEq(L""));
+}
+
+/*!
+ * @brief IOProfileDataSetのテスト
+ */
+TEST(CDataProfile, IOProfileDataSet002)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	StaticVector<SFilePath, 4, LPCWSTR> values{};
+
+	// INIの有効要素数が配列サイズを超えている場合、配列サイズに補正する
+	cProfile.SetProfileData(L"Test", L"nEntryCount", L"5");
+	cProfile.SetProfileData(L"Test", L"Entry[00]", L"first");
+	cProfile.SetProfileData(L"Test", L"Entry[01]", L"second");
+	cProfile.SetProfileData(L"Test", L"Entry[02]", L"third");
+	cProfile.SetProfileData(L"Test", L"Entry[03]", L"force");
+
+	cProfile.IOProfileDataSet(L"Test", L"Entry", values, L"nEntryCount");
+
+	EXPECT_THAT(values.size(), Eq(4));
+	EXPECT_THAT(values[0], StrEq(L"first"));
+	EXPECT_THAT(values[1], StrEq(L"second"));
+	EXPECT_THAT(values[2], StrEq(L"third"));
+	EXPECT_THAT(values[3], StrEq(L"force"));
+}
+
+/*!
+ * @brief IOProfileDataSetのテスト
+ */
+TEST(CDataProfile, IOProfileDataSet003)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	StaticVector<SFilePath, 4, LPCWSTR> values{};
+
+	// INIに有効要素数がない場合、末尾から見て最初に見付かった空ではない要素を最終要素とする
+	cProfile.SetProfileData(L"Test", L"Entry[00]", L"first");
+	cProfile.SetProfileData(L"Test", L"Entry[01]", L"second");
+
+	cProfile.IOProfileDataSet(L"Test", L"Entry", values);
+
+	EXPECT_THAT(values.size(), Eq(2));
+	EXPECT_THAT(values[0], StrEq(L"first"));
+	EXPECT_THAT(values[1], StrEq(L"second"));
+}
+
+/*!
  * @brief ShareData_IO_2のテスト
  *
  * INIファイルのバージョンが読めなかった場合、バックアップファイルを作成する仕様の確認
