@@ -98,11 +98,11 @@ TEST(CGrepEnumKeysExceptRegex, ClearsOnReentry)
 {
 	CGrepEnumKeys keys;
 	ASSERT_THAT(keys.SetFileKeys(L"!^a$", true), Eq(0));
-	keys.m_fnIsExceptFileName = [](std::wstring_view) { return true; };
+	keys.m_fnIsExceptFilePath = [](std::wstring_view) { return true; };
 
 	ASSERT_THAT(keys.SetFileKeys(L"*.cpp"), Eq(0));
 	EXPECT_THAT(keys.m_vecExceptFileRegexKeys, IsEmpty());
-	EXPECT_THAT(keys.IsExceptFileName(L"a"), IsFalse());
+	EXPECT_THAT(keys.IsExceptFilePath(L"a"), IsFalse());
 }
 
 /*!
@@ -118,14 +118,17 @@ TEST(CGrepEnumKeysExceptRegex, GetExcludeFilesIncludesRegex)
 /*!
 	@brief 照合関数が未設定なら一致しない扱い、設定されていればその結果になること
 */
-TEST(CGrepEnumKeysExceptRegex, IsExceptFileName)
+TEST(CGrepEnumKeysExceptRegex, IsExceptFilePath)
 {
-	CGrepEnumKeys keys;
-	EXPECT_THAT(keys.IsExceptFileName(L"README"), IsFalse());
+	const std::wstring readme = LR"(C:\work\README)";
+	const std::wstring text = LR"(C:\work\a.txt)";
 
-	keys.m_fnIsExceptFileName = [](std::wstring_view fileName) { return fileName == L"README"; };
-	EXPECT_THAT(keys.IsExceptFileName(L"README"), IsTrue());
-	EXPECT_THAT(keys.IsExceptFileName(L"a.txt"), IsFalse());
+	CGrepEnumKeys keys;
+	EXPECT_THAT(keys.IsExceptFilePath(readme), IsFalse());
+
+	keys.m_fnIsExceptFilePath = [&readme](std::wstring_view filePath) { return filePath == readme; };
+	EXPECT_THAT(keys.IsExceptFilePath(readme), IsTrue());
+	EXPECT_THAT(keys.IsExceptFilePath(text), IsFalse());
 }
 
 /*!
@@ -214,7 +217,7 @@ TEST(CGrepEnumKeysExceptRegex, OnlyExcludes)
 /*!
 	@brief 照合関数に一致したファイルが列挙から除かれること。照合関数が無ければすべて列挙されること
 */
-TEST(CGrepEnumFilterFilesExceptRegex, ExceptByFileNameMatcher)
+TEST(CGrepEnumFilterFilesExceptRegex, ExceptByFilePathMatcher)
 {
 	TempFolder folder;
 	for (const auto name : { L"a.txt", L"b.log", L"README" }) {
@@ -230,7 +233,8 @@ TEST(CGrepEnumFilterFilesExceptRegex, ExceptByFileNameMatcher)
 		EXPECT_THAT(Names(files), ElementsAre(L"README", L"a.txt", L"b.log"));
 	}
 
-	keys.m_fnIsExceptFileName = [](std::wstring_view fileName) { return fileName == L"README"; };
+	const std::wstring readme = (folder.Path() / L"README").wstring();
+	keys.m_fnIsExceptFilePath = [&readme](std::wstring_view filePath) { return filePath == readme; };
 	{
 		CGrepEnumFilterFiles files;
 		CGrepEnumFiles absExcept;
@@ -240,25 +244,26 @@ TEST(CGrepEnumFilterFilesExceptRegex, ExceptByFileNameMatcher)
 }
 
 /*!
-	@brief 照合関数にはフォルダー部分を含まないファイル名が渡されること
+	@brief 照合関数にはフルパス(キーのフォルダー部分を含む)が渡されること
 */
-TEST(CGrepEnumFilterFilesExceptRegex, MatcherGetsFileNameOnly)
+TEST(CGrepEnumFilterFilesExceptRegex, MatcherGetsFullPath)
 {
 	TempFolder folder;
 	folder.AddFile(LR"(sub\x.txt)", "x");
 
 	CGrepEnumKeys keys;
 	ASSERT_THAT(keys.SetFileKeys(LR"(sub\*.txt)", true), Eq(0));
-	std::vector<std::wstring> calledNames;
-	keys.m_fnIsExceptFileName = [&calledNames](std::wstring_view fileName) {
-		calledNames.emplace_back(fileName);
+	std::vector<std::wstring> calledPaths;
+	keys.m_fnIsExceptFilePath = [&calledPaths](std::wstring_view filePath) {
+		calledPaths.emplace_back(filePath);
 		return true;
 	};
 
 	CGrepEnumFilterFiles files;
 	CGrepEnumFiles absExcept;
 	files.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-	EXPECT_THAT(calledNames, ElementsAre(L"x.txt"));
+	const std::wstring expected = (folder.Path() / LR"(sub\x.txt)").wstring();
+	EXPECT_THAT(calledPaths, ElementsAre(expected));
 	EXPECT_THAT(files.GetCount(), Eq(0));
 }
 
@@ -273,14 +278,15 @@ TEST(CGrepEnumFilterFilesExceptRegex, MatcherNotCalledForFolders)
 
 	CGrepEnumKeys keys;
 	ASSERT_THAT(keys.SetFileKeys(L"*", true), Eq(0));
-	std::vector<std::wstring> calledNames;
-	keys.m_fnIsExceptFileName = [&calledNames](std::wstring_view fileName) {
-		calledNames.emplace_back(fileName);
+	std::vector<std::wstring> calledPaths;
+	keys.m_fnIsExceptFilePath = [&calledPaths](std::wstring_view filePath) {
+		calledPaths.emplace_back(filePath);
 		return false;
 	};
 
 	CGrepEnumFilterFiles files;
 	CGrepEnumFiles absExcept;
 	files.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-	EXPECT_THAT(calledNames, ElementsAre(L"f"));
+	const std::wstring expected = (folder.Path() / L"f").wstring();
+	EXPECT_THAT(calledPaths, ElementsAre(expected));
 }

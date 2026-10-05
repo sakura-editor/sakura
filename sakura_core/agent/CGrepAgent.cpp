@@ -338,8 +338,12 @@ DWORD CGrepAgent::DoGrep(
 
 	// 再入不可
 	if( this->m_bGrepRunning ){
-		assert_warning( false == this->m_bGrepRunning );
-		return 0xffffffff;
+		// かつてはDWORD(-1)を返していた。
+		// ・エディタの正常動作中にDoGrepを呼ぶルートはないので例外を投げる動作に変更した。
+		// ・例外の種類、メッセージについては今後精査する余地あり。
+		// 　・std::runtime_error派生であればなんでもよいと思う。
+		// 　・表示機会がないのでメッセージをローカライズする必要はないと思う。
+		throw std::domain_error("The DoGrep method is not reentrant");
 	}
 
 	this->m_bGrepRunning = true;
@@ -806,11 +810,11 @@ DWORD CGrepAgent::DoGrep(
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 		pCEditWnd->RedrawAllViews( nullptr );
 
-	if( !gi.bGrepCurFolder ){
+	if (!gi.bGrepCurFolder &&
+		!vPaths.empty())
+	{
 		// 現行フォルダーを検索したフォルダーに変更
-		if( 0 < vPaths.size() ){
-			::SetCurrentDirectory( vPaths[0].c_str() );
-		}
+		cxx::SetCurrentDirectoryW(vPaths.front());
 	}
 
 	return nHitCount;

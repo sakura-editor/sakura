@@ -45,8 +45,8 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 	VGrepEnumKeys m_vecExceptFileRegexKeys;	//!< 除外ファイル(正規表現)。SetFileKeys() の bExceptFileRegex が true のときに使う
 
-	//! 除外ファイル名の照合関数(正規表現)。未設定なら照合しない
-	std::function<bool(std::wstring_view)> m_fnIsExceptFileName;
+	//! 除外ファイルの照合関数(正規表現)。フルパスを受け取る。未設定なら照合しない
+	std::function<bool(std::wstring_view)> m_fnIsExceptFilePath;
 
 public:
 	CGrepEnumKeys() noexcept = default;
@@ -56,7 +56,7 @@ public:
 	Me& operator = (Me&&) noexcept = delete;
 	~CGrepEnumKeys() = default;
 
-	// 除外ファイルの2つの解析済み配列から1つのリストを作る
+	// 除外ファイルの解析済み配列(ワイルドカード・絶対パス・正規表現)から1つのリストを作る
 	auto GetExcludeFiles() const ->  std::vector<decltype(m_vecExceptFileKeys)::value_type> {
 		std::vector<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
 		const auto& fileKeys = m_vecExceptFileKeys;
@@ -121,12 +121,12 @@ public:
 	}
 
 	/*!
-		@brief ファイル名が除外ファイル(正規表現)に一致するか調べる
-		@param[in]	fileName	フォルダーを含まないファイル名
+		@brief ファイルが除外ファイル(正規表現)に一致するか調べる
+		@param[in]	filePath	ファイルのフルパス
 		@retval false 一致しない、または照合関数が未設定
 	*/
-	bool IsExceptFileName( std::wstring_view fileName ) const {
-		return m_fnIsExceptFileName && m_fnIsExceptFileName( fileName );
+	bool IsExceptFilePath( std::wstring_view filePath ) const {
+		return m_fnIsExceptFilePath && m_fnIsExceptFilePath( filePath );
 	}
 
 	/*!
@@ -199,7 +199,7 @@ private:
 		m_vecExceptAbsFileKeys.clear();
 		m_vecExceptAbsFolderKeys.clear();
 		m_vecExceptFileRegexKeys.clear();
-		m_fnIsExceptFileName = nullptr;
+		m_fnIsExceptFilePath = nullptr;
 		return;
 	}
 
