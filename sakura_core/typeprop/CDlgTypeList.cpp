@@ -575,7 +575,7 @@ bool CDlgTypeList::CopyType()
 	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_TYPES );
 	int iDocType = ApiWrap::List_GetCurSel( hwndList );
 	STypeConfig type;
-	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), type);
+	if (!CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), type)) return false;
 	// 名前に2等を付ける
 	int n = 1;
 	bool bUpdate = true;
