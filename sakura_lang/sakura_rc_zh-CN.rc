@@ -3429,6 +3429,7 @@ BEGIN
     STR_GREP_ERR_ENUMKEYS0  "(未知)"
     STR_GREP_ERR_ENUMKEYS1  "不能在文件指定的目录中使用通配符。"
     STR_GREP_ERR_ENUMKEYS2  "不能在文件指定中使用完整路径。"
+    STR_GREP_ERR_EXCLUDE_REGEXP "排除文件的正则表达式无效。"
     STR_GREP_ERR_FILEOPEN   "文件打开错误 [%s]\r\n"
 END
 

@@ -187,25 +187,28 @@
     <ClInclude Include="..\sakura_core\agent\CGrepAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\grep\CGrepEnumFileBase.h">
+    <ClInclude Include="grep\CGrepEnumFileBase.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\grep\CGrepEnumFiles.h">
+    <ClInclude Include="grep\CGrepEnumFiles.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\grep\CGrepEnumFilterFiles.h">
+    <ClInclude Include="grep\CGrepEnumFilterFiles.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\grep\CGrepEnumFilterFolders.h">
+    <ClInclude Include="grep\CGrepEnumFilterFolders.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\grep\CGrepEnumFolders.h">
+    <ClInclude Include="grep\CGrepEnumFolders.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\grep\CGrepEnumKeys.h">
+    <ClInclude Include="grep\CGrepEnumKeys.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\grep\GrepMessageFormat.h">
+    <ClInclude Include="grep\CGrepExceptFileRegexps.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\GrepMessageFormat.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\env\CHokanMgr.h">
@@ -1252,7 +1255,7 @@
     <ClCompile Include="..\sakura_core\agent\CGrepAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\grep\GrepMessageFormat.cpp">
+    <ClCompile Include="grep\GrepMessageFormat.cpp">
       <Filter>Cpp Source Files\grep</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\env\CHokanMgr.cpp">
