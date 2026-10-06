@@ -3459,6 +3459,7 @@ BEGIN
     STR_GREP_ERR_ENUMKEYS0  "(不明)"
     STR_GREP_ERR_ENUMKEYS1  "ファイル指定のフォルダー部分にはワイルドカードは使えません"
     STR_GREP_ERR_ENUMKEYS2  "ファイル指定にはフルパスは使えません"
+    STR_GREP_ERR_EXCLUDE_REGEXP "除外ファイルの正規表現が正しくありません。"
     STR_GREP_ERR_FILEOPEN   "file open error [%s]\r\n"
 END
 

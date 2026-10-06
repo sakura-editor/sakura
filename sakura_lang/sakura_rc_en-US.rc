@@ -3523,6 +3523,7 @@ BEGIN
     STR_GREP_ERR_ENUMKEYS0  "(Unknown)"
     STR_GREP_ERR_ENUMKEYS1  "You can not use a wild card in the folder of the file specified."
     STR_GREP_ERR_ENUMKEYS2  "You can not use the full path in the file specification."
+    STR_GREP_ERR_EXCLUDE_REGEXP "The regular expression in Exclude file is invalid."
     STR_GREP_ERR_FILEOPEN   "file open error [%s]\r\n"
 END
 
