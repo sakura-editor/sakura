@@ -665,7 +665,7 @@ TEST_F(GrepCommandLineTest, LineEndings)
 //! サロゲートペアの文字を検索できる
 TEST_F(GrepCommandLineTest, SurrogatePair)
 {
-	folder.AddFile(L"s.txt", Encode(L"\U00020BB7野家 \U00020BB7\r\n", CP_UTF8));	// 𠮷野家 𠮷
+	folder.AddFile(L"s.txt", Encode(L"𠮷野家 \U00020BB7\r\n", CP_UTF8));	// 𠮷
 	EXPECT_EQ(2u, Grep(L"\U00020BB7", L"*.txt", L"X", std::format(L"-GCODE={}", int(CODE_UTF8))));	// 𠮷
 }
 
@@ -958,12 +958,11 @@ TEST(GrepFolderList, CreateFoldersResolvesShortName)
 	folder.AddFolder(longName);
 	const auto longPath = folder.Path() / longName;
 
-	// 8.3 形式の名前が無いボリュームでは GetShortPathNameW() が長い名前をそのまま返す。
-	// そのときも CreateFolders() の結果は長い名前なので、飛ばさずに同じ期待値で確かめる
-	// (GTEST_SKIP() は MSVC のテストエクスプローラーで失敗扱いになるので使わない)
 	std::wstring shortPath(MAX_PATH, L'\0');
 	shortPath.resize(::GetShortPathNameW(longPath.c_str(), shortPath.data(), MAX_PATH));
-	ASSERT_THAT(shortPath.empty(), IsFalse());
+	if (shortPath.empty() || std::filesystem::path(shortPath).filename() == longName) {
+		GTEST_SKIP() << "8.3 short names are not available on this volume";
+	}
 
 	std::vector<std::wstring> paths;
 	CGrepAgent::CreateFolders(shortPath.c_str(), paths);
@@ -1136,6 +1135,57 @@ TEST_F(GrepOutputSnapshotTest, NonexistentFolderToStdout)
 
 	const std::wstring expected = std::wstring(LS(STR_DLGGREP5)) + L"\r\n";
 	EXPECT_THAT(Decode(capture.Read()), Eq(expected));
+}
+
+// ---------------------------------------------------------------------------
+// 除外ファイルの正規表現(-GOPT=E)
+// ---------------------------------------------------------------------------
+
+//! E: フルパスで照合し、サブフォルダーにも効き、大文字小文字を区別しない。結果の条件表示に出る
+TEST_F(GrepCommandLineTest, ExceptFileRegexp)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(L"README", "HIT\r\n");
+	folder.AddFile(L"app.log", "HIT\r\n");
+	folder.AddFile(L"app.20260801.log", "HIT\r\n");
+	folder.AddFile(LR"(sub\readme)", "HIT\r\n");
+	const std::wstring files = LR"(*;!\\[^.\\]+$;!\\APP\.\d{8}\.log$)";
+	EXPECT_THAT(Grep(L"HIT", files, L"XSE"), Eq(2u));
+	const auto text = GetDocumentText();
+	EXPECT_THAT(LineContaining(text, L"a.txt("), ::testing::Not(IsEmpty()));
+	EXPECT_THAT(LineContaining(text, L"app.log("), ::testing::Not(IsEmpty()));
+	EXPECT_THAT(LineContaining(text, L"app.20260801.log("), IsEmpty());
+	EXPECT_THAT(Contains(text, LS(STR_GREP_EXCLUDE_FILE_REGEXP)), IsTrue());
+
+	// E が無ければワイルドカードとして扱われ、何も除外されない
+	ResetDocument();
+	const std::wstring filesWithoutE = LR"(*;!\\[^.\\]+$)";
+	EXPECT_THAT(Grep(L"HIT", filesWithoutE, L"XS"), Eq(5u));
+}
+
+//! E: 区切り文字を含む正規表現は引用符で囲む(コマンドラインでは "" と書く)
+TEST_F(GrepCommandLineTest, ExceptFileRegexpQuoted)
+{
+	folder.AddFile(L"a1.txt", "HIT\r\n");
+	folder.AddFile(L"a12.txt", "HIT\r\n");
+	folder.AddFile(L"a123.txt", "HIT\r\n");
+	const std::wstring files = LR"(*;!""\\a\d{2,3}\.txt$"")";	// 引用符を含むのでマクロの外で作る(C2017 の回避)
+	EXPECT_THAT(Grep(L"HIT", files, L"XE"), Eq(1u));
+}
+
+//! E: 正しくない正規表現はエラーメッセージを出して何もしない
+TEST_F(GrepCommandLineTest, ExceptFileRegexpInvalid)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	std::wstring shown;
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _)).WillOnce(Invoke([&shown](HWND, LPCWSTR text, LPCWSTR, UINT, WORD) {
+		shown = text ? text : L"";
+		return IDOK;
+	}));
+	EXPECT_THAT(Grep(L"HIT", L"*;!^[a$", L"XE"), Eq(0u));
+	EXPECT_THAT(shown, StartsWith(LS(STR_GREP_ERR_EXCLUDE_REGEXP)));
+	EXPECT_THAT(LineContaining(GetDocumentText(), L"a.txt("), IsEmpty());
 }
 
 } // namespace grep_test

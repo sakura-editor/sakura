@@ -3408,6 +3408,7 @@ BEGIN
     STR_GREP_SEARCH_TARGET  "搜索目标    "
     STR_GREP_SEARCH_FOLDER  "目录          "
     STR_GREP_SUBFOLDER_YES  "    (包含子目录 = 是)\r\n"
+    STR_GREP_EXCLUDE_FILE_REGEXP "    (排除文件 = 正则表达式)\r\n"
     STR_GREP_SUBFOLDER_NO   "    (包含子目录 = 否)\r\n"
     STR_GREP_COMPLETE_WORD  "    (全词匹配)\r\n"
 END
