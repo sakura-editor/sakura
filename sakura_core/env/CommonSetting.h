@@ -31,6 +31,8 @@ static const int MAX_TOOLBAR_ICON_COUNT		= MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICON
 //2010/3/14 Uchi アイコンの最大登録数を32個増やした(384→416)
 //2010/6/26 syat アイコンの最大登録数を15段に増やした(416→480)
 
+using SCaptionConf = StaticString<MAX_CAPTION_CONF_LEN, true>;
+
 // 旧版と違い、bool型使えるようにしてあります by kobake
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -124,8 +126,8 @@ struct CommonSetting_Window
 	BOOL			m_bSplitterWndVScroll;		//!< 分割ウィンドウの垂直スクロールの同期をとる 2001/06/20 asa-o
 
 	//タイトルバー
-	WCHAR			m_szWindowCaptionActive  [MAX_CAPTION_CONF_LEN];	//!< タイトルバー(アクティブ時)
-	WCHAR			m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];	//!< タイトルバー(非アクティブ時)
+	SCaptionConf	m_szWindowCaptionActive{};		//!< タイトルバー(アクティブ時)
+	SCaptionConf	m_szWindowCaptionInactive{};	//!< タイトルバー(非アクティブ時)
 
 	//INI内設定のみ
 	int				m_nVertLineOffset;			//!< 縦線の描画座標オフセット 2005.11.10 Moca
@@ -167,7 +169,7 @@ struct CommonSetting_TabBar
 	bool		m_bTabMultiLine;				//!< タブ多段
 	ETabPosition	m_eTabPosition;				//!<タブ位置
 
-	wchar_t		m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//!< タブウインドウキャプション	//@@@ 2003.06.13 MIK
+	SCaptionConf	m_szTabWndCaption{};		//!< タブウインドウキャプション	//@@@ 2003.06.13 MIK
 	BOOL		m_bSameTabWidth;				//!< タブを等幅にする			//@@@ 2006.01.28 ryoji
 	BOOL		m_bDispTabIcon;					//!< タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 	EDispTabClose	m_bDispTabClose;			//!< タブに閉じるボタンを表示する	//@@@ 2012.04.14 syat
@@ -351,19 +353,23 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Format
 {
+	using SDateFormat = StaticString<MAX_DATETIMEFOREMAT_LEN, true>;
+	using SMidashiKigou = StaticString<256>;
+	using SInyouKigou = StaticString<32>;
+
 	//日付書式
 	int			m_nDateFormatType;							//!< 日付書式のタイプ
-	WCHAR		m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 日付書式
+	SDateFormat	m_szDateFormat{};							//!< 日付書式
 
 	//時刻書式
 	int			m_nTimeFormatType;							//!< 時刻書式のタイプ
-	WCHAR		m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 時刻書式
+	SDateFormat	m_szTimeFormat{};							//!< 時刻書式
 
 	//見出し記号
-	wchar_t		m_szMidashiKigou[256];						//!< 見出し記号
+	SMidashiKigou	m_szMidashiKigou{};					//!< 見出し記号
 
 	//引用符
-	wchar_t		m_szInyouKigou[32];							//!< 引用符
+	SInyouKigou		m_szInyouKigou{};						//!< 引用符
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -428,7 +434,9 @@ struct CommonSetting_KeyBind
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_CustomMenu
 {
-	WCHAR			m_szCustMenuNameArr   [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
+	using SCustomMenuName = StaticString<MAX_CUSTOM_MENU_NAME_LEN + 1>;
+
+	SCustomMenuName	m_szCustMenuNameArr   [MAX_CUSTOM_MENU];
 	int				m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
 	EFunctionCode	m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
 	KEYCODE			m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
@@ -653,8 +661,11 @@ enum EPluginState {
 
 struct PluginRec
 {
-	WCHAR			m_szId[MAX_PLUGIN_ID];		//!< プラグインID
-	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< プラグインフォルダー/設定ファイル名
+	using SPluginId = StaticString<MAX_PLUGIN_ID>;
+	using SPluginName = StaticString<MAX_PLUGIN_NAME>;
+
+	SPluginId		m_szId{};		//!< プラグインID
+	SPluginName		m_szName{};	//!< プラグインフォルダー/設定ファイル名
 	EPluginState	m_state;					//!< プラグイン状態。設定ファイルに保存せずメモリ上のみ。
 	int 			m_nCmdNum;					//!< プラグイン コマンドの数	// 2010/7/3 Uchi
 };
@@ -677,11 +688,15 @@ enum EMainMenuType {
 }; 
 
 class CMainMenu {
+private:
+	using SAccessKey = StaticString<2>;
+	using SMainMenuName = StaticString<MAX_MAIN_MENU_NAME_LEN + 1>;
+
 public:
 	EMainMenuType	m_nType;		//!< 種類
 	EFunctionCode	m_nFunc;		//!< Function
-	WCHAR			m_sKey[2];		//!< アクセスキー
-	WCHAR			m_sName[MAX_MAIN_MENU_NAME_LEN+1];	//!< 名前
+	SAccessKey		m_sKey{};		//!< アクセスキー
+	SMainMenuName	m_sName{};		//!< 名前
 	int 			m_nLevel;		//!< レベル
 };
 

@@ -453,7 +453,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		// 2010.08.04 削除状態を見る(今のところ保険)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
 		if( nullptr != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
-		std::wstring name = plugin_table[iNo].m_szName;
+		std::wstring name{ plugin_table[iNo].m_szName };
 		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str(), szLangName.c_str() );
 		if( !plugin ){
 			plugin = LoadPlugin( m_sExePluginDir.c_str(), name.c_str(), szLangName.c_str() );
