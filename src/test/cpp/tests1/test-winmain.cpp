@@ -1359,6 +1359,7 @@ struct OutlineTest : public ::testing::TestWithParam<OutlineTestParamType> {
 		std::vector<std::wstring> iniLines{
 			// 全般設定を出力
 			L"[Common]"s,
+			L"bTaskTrayStay=1"s,	// コントロールプロセスを常駐させる
 			L"szLanguageDll="s,	// 言語DLLの指定(空にすると日本語になる)
 			L"nOutlineDockSet=1"s,	// アウトライン解析のドッキング設定をタイプ別に保存する
 			L"bRememberOutlineWindowPos=1"s,
