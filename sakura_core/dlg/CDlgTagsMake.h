@@ -34,7 +34,7 @@ public:
 	*/
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, const WCHAR* pszPath );	/* モーダルダイアログの表示 */
 
-	WCHAR	m_szPath[_MAX_PATH+1];	/* フォルダー */
+	SFilePath	m_szPath{};			/* フォルダー */
 	SFilePath	m_szTagsCmdLine{};	/* コマンドラインオプション(個別) */
 	int		m_nTagsOpt;				/* CTAGSオプション(チェック) */
 
