@@ -391,7 +391,7 @@ struct CommonSetting_Search
 
 	BOOL			m_bCaretTextForSearch;		//!< カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
 	bool			m_bInheritKeyOtherView;		//!< 次・前検索で他のビューの検索条件を引き継ぐ
-	WCHAR			m_szRegexpLib[_MAX_PATH];	//!< 使用する正規表現DLL  2007.08.22 genta
+	SFilePath		m_szRegexpLib{};			//!< 使用する正規表現DLL  2007.08.22 genta
 
 	//Grep
 	BOOL			m_bGrepExitConfirm;			//!< Grepモードで保存確認するか
@@ -466,15 +466,15 @@ struct CommonSetting_Helper
 	BOOL		m_bHokanKey_RIGHT;				//!< VK_RIGHT	補完決定キーが有効/無効
 
 	//外部ヘルプの設定
-	WCHAR		m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
+	SFilePath	m_szExtHelp{};					//!< 外部ヘルプ１
 
 	//外部HTMLヘルプの設定
-	WCHAR		m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
+	SFilePath	m_szExtHtmlHelp{};				//!< 外部HTMLヘルプ
 	bool		m_bHtmlHelpIsSingle;			//!< HtmlHelpビューアはひとつ (ビューアを複数起動しない)
 
 	//migemo設定
-	WCHAR		m_szMigemoDll[_MAX_PATH];		//!< migemo dll
-	WCHAR		m_szMigemoDict[_MAX_PATH];		//!< migemo dict
+	SFilePath	m_szMigemoDll{};				//!< migemo dll
+	SFilePath	m_szMigemoDict{};				//!< migemo dict
 
 	//キーワードヘルプ
 	LOGFONT		m_lf;							//!< キーワードヘルプのフォント情報		// ai 02/05/21 Add
@@ -486,7 +486,7 @@ struct CommonSetting_Helper
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Macro
 {
-	WCHAR			m_szKeyMacroFileName[MAX_PATH];	//!< キーボードマクロのファイル名
+	SFilePath		m_szKeyMacroFileName{};			//!< キーボードマクロのファイル名
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル		Sep. 14, 2001 genta
 	SFilePath		m_szMACROFOLDER;				//!< マクロ用フォルダー
 	int				m_nMacroOnOpened;				//!< オープン後自動実行マクロ番号	@@@ 2006.09.01 ryoji
@@ -504,8 +504,8 @@ struct CommonSetting_FileName
 	bool		m_bTransformShortPath;											//!< ファイル名の省略表記
 	int			m_nTransformShortMaxWidth;										//!< ファイル名の省略表記の最大長
 	int			m_nTransformFileNameArrNum;										//!< ファイル名の簡易表示登録数
-	WCHAR		m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ファイル名の簡易表示変換前文字列
-	WCHAR		m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK
+	SFilePath	m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME];	//!< ファイル名の簡易表示変換前文字列
+	SFilePath	m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME];	//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
