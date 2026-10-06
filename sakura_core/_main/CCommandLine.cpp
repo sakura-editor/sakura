@@ -302,7 +302,13 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CCommandLine::Parse" );
 
-	WCHAR	szPath[_MAX_PATH];
+	SFilePath szPath;
+
+	static_assert(
+		decltype(szPath)::size() == decltype(m_fi.m_szPath)::size(),
+		"szPath and m_fi.m_szPath should have same size"
+	);
+
 	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
@@ -387,8 +393,10 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (wcsncmp_literal(szPath, L"file:///")==0) {
-				wcscpy(szPath, &(szPath[8]));
+			if (const auto path = szPath.str();
+				path.starts_with(L"file:///"))
+			{
+				szPath = path.substr(8);	// 8文字スキップ（先頭を捨てる）
 			}
 
 			if ( IsInvalidFilenameChars( szPath ) ){
