@@ -130,7 +130,7 @@ CEditView::CEditView( void )
 	m_bMiniMap = bMiniMap;	// SetFont内で使用するため、初期化しておく必要がある
 
 	// 設定に従いフォント情報を初期化する
-	SetFont();
+	SetFont(nullptr, false);	// 再描画しない
 }
 
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
@@ -1074,8 +1074,16 @@ void CEditView::OnKillFocus( void )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* フォントの変更 */
-void CEditView::SetFont()
+void CEditView::SetFont(
+	HWND hWnd,
+	bool bReDraw
+)
 {
+	if (!hWnd)
+	{
+		hWnd = GetHwnd();
+	}
+
 	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
 	MemDcHolder hdc = ::CreateCompatibleDC(nullptr);
 
@@ -1094,11 +1102,14 @@ void CEditView::SetFont()
 	// 行番号表示に必要な幅を設定
 	GetTextArea().DetectWidthOfLineNumberArea( false );
 
-	// ぜんぶ再描画
-	::InvalidateRect( GetHwnd(), nullptr, TRUE );
+	if (bReDraw)
+	{
+		// ぜんぶ再描画
+		::InvalidateRect(hWnd, nullptr, TRUE);
 
-	//	Oct. 11, 2002 genta IMEのフォントも変更
-	SetIMECompFormFont();
+		//	Oct. 11, 2002 genta IMEのフォントも変更
+		SetIMECompFormFont();
+	}
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

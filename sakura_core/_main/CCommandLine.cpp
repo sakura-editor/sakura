@@ -558,6 +558,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 						m_gi.bGrepPaste = true;	break;
 					case 'O':
 						m_gi.bGrepBackup = true;	break;
+					case 'E':
+						// 除外ファイルを正規表現で指定する
+						m_gi.bGrepExceptFileRegexp = true;	break;
 					default:
 						break;
 					}

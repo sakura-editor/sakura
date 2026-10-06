@@ -261,11 +261,79 @@ TEST_F(GrepCommandLineTest, MultipleFolders)
 	EXPECT_EQ(2u, RunGrep(ParseGrepCommandLine(args)));
 }
 
-//! 存在しないフォルダーでもエラーにならず 0 件
+/*!
+	存在しないフォルダーを指定すると、メッセージを出して検索しない(Issue #2707)
+
+	-GOPT=X の有無に依らない。X が無いと、検索後に存在しないフォルダーへ移ろうとして std::system_error になっていた。
+*/
 TEST_F(GrepCommandLineTest, NonexistentFolder)
 {
-	const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{}" -GOPT=X)", (folder.Path() / L"none").native());
-	EXPECT_EQ(0u, RunGrep(ParseGrepCommandLine(args)));
+	AddBasicFiles();
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	const std::wstring message = LS(STR_DLGGREP5);
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(message), _, _, _)).Times(2).WillRepeatedly(Return(IDOK));
+
+	const auto before = std::filesystem::current_path();
+	const auto none = (folder.Path() / L"none").native();
+	for (const auto opt : { L"X", L"" }) {
+		ResetDocument();
+		const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{}" -GOPT={})", none, opt);
+		DWORD hitCount = 1;
+		EXPECT_NO_THROW(hitCount = RunGrep(ParseGrepCommandLine(args))) << opt;
+		EXPECT_THAT(hitCount, Eq(0u)) << opt;
+		EXPECT_THAT(GetDocumentText().empty(), IsTrue()) << opt;
+	}
+	EXPECT_THAT(std::filesystem::equivalent(std::filesystem::current_path(), before), IsTrue());
+}
+
+//! フォルダーの指定に 1 つでも存在しないもの(またはフォルダーでないもの)があれば、全体を検索しない
+TEST_F(GrepCommandLineTest, InvalidFolderStopsBeforeSearch)
+{
+	AddBasicFiles();
+	const auto base = folder.Path().native();
+	const auto none = (folder.Path() / L"none").native();
+	const auto file = (folder.Path() / L"a.txt").native();
+	const std::vector<std::wstring> lists{
+		std::format(L"{};{}", none, base),	// 先頭が存在しない
+		std::format(L"{};{}", base, none),	// 2 つ目が存在しない
+		file,								// ファイルはフォルダーではない
+	};
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	const std::wstring message = LS(STR_DLGGREP5);
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(message), _, _, _)).Times(int(lists.size())).WillRepeatedly(Return(IDOK));
+
+	for (const auto& list : lists) {
+		ResetDocument();
+		const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{}" -GOPT=X)", list);
+		EXPECT_THAT(RunGrep(ParseGrepCommandLine(args)), Eq(0u)) << list;
+		EXPECT_THAT(GetDocumentText().empty(), IsTrue()) << list;
+	}
+}
+
+//! Grep 置換: フォルダーに存在しないものがあれば、ファイルを書き換える前に止まる
+TEST_F(GrepCommandLineTest, InvalidFolderDoesNotReplace)
+{
+	AddBasicFiles();
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	const std::wstring message = LS(STR_DLGGREP5);
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(message), _, _, _)).WillOnce(Return(IDOK));
+
+	const auto list = std::format(L"{};{}", folder.Path().native(), (folder.Path() / L"none").native());
+	const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="a.txt" -GFOLDER="{}" -GOPT=X -GREPR="REP")", list);
+	EXPECT_THAT(RunGrep(ParseGrepCommandLine(args)), Eq(0u));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq(std::string("HIT x HIT\r\nnone\r\nHIT\r\n")));
+	EXPECT_THAT(folder.Exists(L"a.txt.skrnew"), IsFalse());
+}
+
+//! 末尾に \ が付いた実在するフォルダーは弾かない(FindFirstFile 系の確認では末尾の \ で失敗するため)
+TEST_F(GrepCommandLineTest, FolderWithTrailingBackslash)
+{
+	AddBasicFiles();
+	auto gi = ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"X"));
+	const auto withYen = folder.Path().native() + L"\\";
+	gi.cmGrepFolder.SetString(withYen.c_str());
+	EXPECT_THAT(RunGrep(gi), Eq(3u));
 }
 
 //! ファイル指定の誤り: フォルダー部分のワイルドカード、絶対パスの検索対象
@@ -1048,6 +1116,76 @@ TEST_F(GrepOutputSnapshotTest, MixedLineEndings)
 	DWORD hitCount = 0;
 	EXPECT_EQ(expected, GrepStdout(L"HIT", L"mixed.txt", L"1P", &hitCount));
 	EXPECT_EQ(3u, hitCount);
+}
+
+/*!
+	存在しないフォルダー + U(標準出力): メッセージボックスを出さず、同じ文言を標準出力に出す(Issue #2707)
+
+	メッセージボックスだと、ボタンを押すまでバッチが止まる。X を付けないのは Issue の再現条件。
+*/
+TEST_F(GrepOutputSnapshotTest, NonexistentFolderToStdout)
+{
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _)).Times(0);
+
+	StdoutCapture capture(folder.Path() / L"out.stdout");	// 検索対象に一致しない名前にする
+	ASSERT_TRUE(capture.IsOpen());
+	const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{}" -GOPT=U)", (folder.Path() / L"none").native());
+	EXPECT_THAT(RunGrep(ParseGrepCommandLine(args)), Eq(0u));
+
+	const std::wstring expected = std::wstring(LS(STR_DLGGREP5)) + L"\r\n";
+	EXPECT_THAT(Decode(capture.Read()), Eq(expected));
+}
+
+// ---------------------------------------------------------------------------
+// 除外ファイルの正規表現(-GOPT=E)
+// ---------------------------------------------------------------------------
+
+//! E: フルパスで照合し、サブフォルダーにも効き、大文字小文字を区別しない。結果の条件表示に出る
+TEST_F(GrepCommandLineTest, ExceptFileRegexp)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(L"README", "HIT\r\n");
+	folder.AddFile(L"app.log", "HIT\r\n");
+	folder.AddFile(L"app.20260801.log", "HIT\r\n");
+	folder.AddFile(LR"(sub\readme)", "HIT\r\n");
+	const std::wstring files = LR"(*;!\\[^.\\]+$;!\\APP\.\d{8}\.log$)";
+	EXPECT_THAT(Grep(L"HIT", files, L"XSE"), Eq(2u));
+	const auto text = GetDocumentText();
+	EXPECT_THAT(LineContaining(text, L"a.txt("), ::testing::Not(IsEmpty()));
+	EXPECT_THAT(LineContaining(text, L"app.log("), ::testing::Not(IsEmpty()));
+	EXPECT_THAT(LineContaining(text, L"app.20260801.log("), IsEmpty());
+	EXPECT_THAT(Contains(text, LS(STR_GREP_EXCLUDE_FILE_REGEXP)), IsTrue());
+
+	// E が無ければワイルドカードとして扱われ、何も除外されない
+	ResetDocument();
+	const std::wstring filesWithoutE = LR"(*;!\\[^.\\]+$)";
+	EXPECT_THAT(Grep(L"HIT", filesWithoutE, L"XS"), Eq(5u));
+}
+
+//! E: 区切り文字を含む正規表現は引用符で囲む(コマンドラインでは "" と書く)
+TEST_F(GrepCommandLineTest, ExceptFileRegexpQuoted)
+{
+	folder.AddFile(L"a1.txt", "HIT\r\n");
+	folder.AddFile(L"a12.txt", "HIT\r\n");
+	folder.AddFile(L"a123.txt", "HIT\r\n");
+	const std::wstring files = LR"(*;!""\\a\d{2,3}\.txt$"")";	// 引用符を含むのでマクロの外で作る(C2017 の回避)
+	EXPECT_THAT(Grep(L"HIT", files, L"XE"), Eq(1u));
+}
+
+//! E: 正しくない正規表現はエラーメッセージを出して何もしない
+TEST_F(GrepCommandLineTest, ExceptFileRegexpInvalid)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	std::wstring shown;
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _)).WillOnce(Invoke([&shown](HWND, LPCWSTR text, LPCWSTR, UINT, WORD) {
+		shown = text ? text : L"";
+		return IDOK;
+	}));
+	EXPECT_THAT(Grep(L"HIT", L"*;!^[a$", L"XE"), Eq(0u));
+	EXPECT_THAT(shown, StartsWith(LS(STR_GREP_ERR_EXCLUDE_REGEXP)));
+	EXPECT_THAT(LineContaining(GetDocumentText(), L"a.txt("), IsEmpty());
 }
 
 } // namespace grep_test

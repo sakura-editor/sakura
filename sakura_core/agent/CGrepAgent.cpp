@@ -9,6 +9,7 @@
 #include "basis/GrepInfo.h"
 #include "grep/CGrepEnumKeys.h"
 #include "grep/CGrepEnumFilterFiles.h"
+#include "grep/CGrepExceptFileRegexps.h"
 #include "grep/CGrepEnumFilterFolders.h"
 #include "agent/CSearchAgent.h"
 #include "dlg/CDlgCancel.h"
@@ -35,6 +36,8 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+
+#include <filesystem>
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
@@ -266,6 +269,20 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 	}
 }
 
+/*!
+	検索対象のフォルダーがすべて存在するフォルダーか
+
+	末尾の \ やルート(C:\)を含むパスでも判定できるよう、FindFirstFile 系の IsDirectory() ではなく
+	std::filesystem::is_directory() を使う。フォルダーが空のリストは true(従来どおり何もしない)。
+*/
+static bool AllFoldersExist( const std::vector<std::wstring>& vPaths )
+{
+	return std::ranges::all_of( vPaths, []( const std::wstring& path ) {
+		std::error_code ec;
+		return std::filesystem::is_directory( path, ec );
+	} );
+}
+
 int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WCHAR* pszWindowPath, const WCHAR* pszFile)
 {
 	hWndTarget = nullptr;	//out引数をクリアする
@@ -489,9 +506,13 @@ DWORD CGrepAgent::DoGrep(
 	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
 	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 
+	CGrepExceptFileRegexps cExceptFileRegexps;	// 除外ファイル(正規表現)。cGrepEnumKeys の照合関数が参照するので先に宣言する
 	CGrepEnumKeys cGrepEnumKeys;
 	{
-		int nErrorNo = cGrepEnumKeys.SetFileKeys( gi.cmGrepFile.GetStringPtr() );
+		int nErrorNo = cGrepEnumKeys.SetFileKeys( gi.cmGrepFile.GetStringPtr(), gi.bGrepExceptFileRegexp );
+		if( nErrorNo == 0 && !cExceptFileRegexps.Attach( cGrepEnumKeys, GetDllShareData().m_Common.m_sSearch.m_szRegexpLib ) ){
+			nErrorNo = 3;
+		}
 		if( nErrorNo != 0 ){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
@@ -504,6 +525,9 @@ DWORD CGrepAgent::DoGrep(
 			else if( nErrorNo == 2 ){
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
 			}
+			else if( nErrorNo == 3 ){
+				pszErrorMessage = cExceptFileRegexps.GetErrorMessage().c_str();
+			}
 			ErrorMessage( pcViewDst->m_hwndParent, L"%s", pszErrorMessage );
 			return 0;
 		}
@@ -514,6 +538,25 @@ DWORD CGrepAgent::DoGrep(
 
 	std::vector<std::wstring> vPaths;
 	CreateFolders( gi.cmGrepFolder.GetStringPtr(), vPaths );
+
+	// 存在しないフォルダーが含まれるときは、検索・置換を始める前に止める(Issue #2707)
+	if( !AllFoldersExist( vPaths ) ){
+		this->m_bGrepRunning = false;
+		pcViewDst->m_bDoing_UndoRedo = false;
+		pcViewDst->SetUndoBuffer();
+
+		const std::wstring strMessage = LS( STR_DLGGREP5 );
+		if( sGrepOption.bGrepStdout ){
+			// 標準出力のときは、メッセージボックスで止めない(バッチが止まる)
+			CNativeW cmemError;
+			const std::wstring strLine = strMessage + L"\r\n";
+			cmemError.SetString( strLine.c_str(), strLine.length() );
+			AddTail( pcViewDst, cmemError, true );
+		}else{
+			ErrorMessage( pcViewDst->m_hwndParent, L"%s", strMessage.c_str() );
+		}
+		return 0;
+	}
 
 	nWork = gi.cmGrepKey.GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
@@ -598,6 +641,10 @@ DWORD CGrepAgent::DoGrep(
 		pszWork = LS( STR_GREP_SUBFOLDER_NO );	//L"    (サブフォルダーを検索しない)\r\n"
 	}
 	cmemMessage.AppendString( pszWork );
+
+	if( sGrepOption.bGrepExceptFileRegexp ){
+		cmemMessage.AppendString( LS( STR_GREP_EXCLUDE_FILE_REGEXP ) );	//L"    (除外ファイルは正規表現)\r\n"
+	}
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( gi.sGrepSearchOption.bWordOnly ){

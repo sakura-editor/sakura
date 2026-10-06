@@ -3438,6 +3438,7 @@ BEGIN
     STR_GREP_SEARCH_TARGET  "検索対象       "
     STR_GREP_SEARCH_FOLDER  "フォルダー       "
     STR_GREP_SUBFOLDER_YES  "    (サブフォルダーも検索)\r\n"
+    STR_GREP_EXCLUDE_FILE_REGEXP "    (除外ファイルは正規表現)\r\n"
     STR_GREP_SUBFOLDER_NO   "    (サブフォルダーを検索しない)\r\n"
     STR_GREP_COMPLETE_WORD  "    (単語単位で探す)\r\n"
 END
@@ -3459,6 +3460,7 @@ BEGIN
     STR_GREP_ERR_ENUMKEYS0  "(不明)"
     STR_GREP_ERR_ENUMKEYS1  "ファイル指定のフォルダー部分にはワイルドカードは使えません"
     STR_GREP_ERR_ENUMKEYS2  "ファイル指定にはフルパスは使えません"
+    STR_GREP_ERR_EXCLUDE_REGEXP "除外ファイルの正規表現が正しくありません。"
     STR_GREP_ERR_FILEOPEN   "file open error [%s]\r\n"
 END
 

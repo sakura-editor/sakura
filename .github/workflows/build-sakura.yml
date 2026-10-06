@@ -104,7 +104,7 @@ jobs:
       uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
     - name: Set up MSYS2
-      uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884 # v2.32.0
+      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
       if: matrix.triplet == 'x64-mingw-static'
       with:
         msystem: MINGW64
@@ -318,7 +318,7 @@ jobs:
     # SonarQubeのBuild Wrapperをインストールする
     - name: Install Build Wrapper
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
-      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@ba9859eae8dd6bd29e412f25ddbbef3d032000f4 # v8.2.2
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
 
     # OpenCppCoverageをインストールする
     - name: Install OpenCppCoverage (winget)

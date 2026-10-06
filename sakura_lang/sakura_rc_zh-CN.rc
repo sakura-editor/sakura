@@ -3408,6 +3408,7 @@ BEGIN
     STR_GREP_SEARCH_TARGET  "搜索目标    "
     STR_GREP_SEARCH_FOLDER  "目录          "
     STR_GREP_SUBFOLDER_YES  "    (包含子目录 = 是)\r\n"
+    STR_GREP_EXCLUDE_FILE_REGEXP "    (排除文件 = 正则表达式)\r\n"
     STR_GREP_SUBFOLDER_NO   "    (包含子目录 = 否)\r\n"
     STR_GREP_COMPLETE_WORD  "    (全词匹配)\r\n"
 END
@@ -3429,6 +3430,7 @@ BEGIN
     STR_GREP_ERR_ENUMKEYS0  "(未知)"
     STR_GREP_ERR_ENUMKEYS1  "不能在文件指定的目录中使用通配符。"
     STR_GREP_ERR_ENUMKEYS2  "不能在文件指定中使用完整路径。"
+    STR_GREP_ERR_EXCLUDE_REGEXP "排除文件的正则表达式无效。"
     STR_GREP_ERR_FILEOPEN   "文件打开错误 [%s]\r\n"
 END
 
