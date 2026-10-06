@@ -16,6 +16,7 @@
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
 #include "basis/CMyString.h"
+#include "io/CTextStream.h"
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
 #include "_main/CCommandLine.h"
@@ -32,6 +33,15 @@ std::filesystem::path GetIniFileNameForIO(bool bWrite);
 namespace cxx {
 
 using namespace testing;
+
+std::wstring GetTempPath2W()
+{
+	SFilePath buf;
+
+	const auto ret = ::GetTempPath2W(DWORD(std::size(buf)), std::data(buf));
+
+	return std::wstring(buf.c_str(), ret);
+}
 
 bool WritePrivateProfileStringW(
 	std::wstring_view appName,
@@ -107,6 +117,127 @@ TEST(CopyDirDir, test103)
 }
 
 } // namespace cxx
+
+namespace io {
+
+using namespace testing;
+
+using namespace cxx;
+
+/*!
+ * 旧実装 CFileAttributeの妥当性をなんとなく示すテスト
+ *
+ * Cランタイムの fopen では、隠し属性やシステム属性が付与されたファイルを開けない。
+ * 古い実装では、ファイルを開く前に属性を落とし、閉じた後に復帰させるという処理を行っていた。
+ */
+struct CFileAttribute : public ::testing::Test
+{
+	static inline std::filesystem::path testDataPath;
+	static inline DWORD dwAttributeOld = 0;
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		// 一時フォルダーのパスを取得する
+		SFilePath szTempDir{ cxx::GetTempPath2W() };
+
+		auto tempDir = std::filesystem::path{ szTempDir };
+		tempDir = tempDir.parent_path();
+
+		std::wstring_view prefix{ L"tests1_" };
+		std::wstring_view ext{ L".tmp" };
+
+		for(;;) {
+			testDataPath = tempDir / std::format(L"{:s}{:04x}{:s}", prefix, LOWORD(::GetTickCount64()), ext);
+
+			// ファイル出力ストリームを開いてデータを書き込む
+			std::ofstream os(testDataPath);
+			if (!os) continue;
+			os << "test" << std::endl;
+			os.close();
+
+			break;
+		}
+
+		// ファイルの属性を取得
+		dwAttributeOld = ::GetFileAttributesW(testDataPath.c_str());
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		std::error_code ec;
+
+		if (exists(testDataPath)) {
+			std::filesystem::remove(testDataPath, ec);
+		}
+	}
+
+	FILE* fp = nullptr;
+
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override
+	{
+		// 開いているファイルを閉じる
+		if (fp) ::fclose(fp);
+
+		// ファイルの属性を元に戻す
+		::SetFileAttributesW(testDataPath.c_str(), dwAttributeOld);
+	}
+};
+
+TEST_F(CFileAttribute, test001)
+{
+	// 通常ファイルなら fopen でも開ける
+	EXPECT_TRUE(0 == ::_wfopen_s(&fp, testDataPath.c_str(), L"wb"));
+
+	// 開いたファイルを閉じる
+	if (fp) {
+		::fclose(fp);
+		fp = nullptr;
+	}
+
+	// 自作ライブラリでも、当然開ける
+	auto out = CTextOutputStream(testDataPath.c_str());
+	EXPECT_THAT(out, IsTrue());
+}
+
+TEST_F(CFileAttribute, test002)
+{
+	// ファイルに隠し属性を付与する
+	::SetFileAttributesW(testDataPath.c_str(), dwAttributeOld | FILE_ATTRIBUTE_HIDDEN);
+
+	// 隠し属性を付与したらfopenでは開けない
+	EXPECT_FALSE(0 == ::_wfopen_s(&fp, testDataPath.c_str(), L"wb"));
+	EXPECT_THAT(fp, IsNull());
+
+	// 自作ライブラリは隠し属性が付いたファイルを開くために作られた
+	auto out = CTextOutputStream(testDataPath.c_str());
+	EXPECT_THAT(out, IsTrue());
+}
+
+TEST_F(CFileAttribute, test003)
+{
+	// ファイルにシステム属性を付与する
+	::SetFileAttributesW(testDataPath.c_str(), dwAttributeOld | FILE_ATTRIBUTE_SYSTEM);
+
+	// システム属性を付与したらfopenでは開けなくなる
+	EXPECT_FALSE(0 == ::_wfopen_s(&fp, testDataPath.c_str(), L"wb"));
+	EXPECT_THAT(fp, IsNull());
+
+	// 自作ライブラリはシステム属性が付いたファイルを開くために作られた
+	auto out = CTextOutputStream(testDataPath.c_str());
+	EXPECT_THAT(out, IsTrue());
+}
+
+} // namespace io
 
 namespace path_util {
 
