@@ -11,7 +11,7 @@
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -20,6 +20,7 @@
 #pragma once
 
 #include "basis/CMyString.h"
+#include "basis/primitive.h"
 #include "charset/charset.h"
 #include "basis/CEol.h"
 #include "types/CType.h"
@@ -69,7 +70,14 @@ struct SLoadInfo
 	bool		bOpened = false;
 
 	SLoadInfo() = default;
-	SLoadInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, bool _bReadOnly, CTypeConfig _nType = CTypeConfig(-1))
+
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr SLoadInfo(
+		const A& _cFilePath,
+		ECodeType _eCodeType,
+		bool _bReadOnly,
+		CTypeConfig _nType = CTypeConfig(-1)
+	)
 	: cFilePath(_cFilePath)
 	, eCharCode(_eCodeType)
 	, bViewMode(_bReadOnly)
@@ -92,7 +100,14 @@ struct SSaveInfo{
 	bool		bOverwriteMode = false;			//!< 上書き要求
 
 	SSaveInfo() = default;
-	SSaveInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, const CEol& _cEol, bool _bBomExist)
+
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr SSaveInfo(
+		const A& _cFilePath,
+		ECodeType _eCodeType,
+		const CEol& _cEol,
+		bool _bBomExist
+	)
 		: cFilePath(_cFilePath)
 		, eCharCode(_eCodeType)
 		, bBomExist(_bBomExist)
