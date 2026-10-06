@@ -665,7 +665,7 @@ TEST_F(GrepCommandLineTest, LineEndings)
 //! サロゲートペアの文字を検索できる
 TEST_F(GrepCommandLineTest, SurrogatePair)
 {
-	folder.AddFile(L"s.txt", Encode(L"𠮷野家 \U00020BB7\r\n", CP_UTF8));	// 𠮷
+	folder.AddFile(L"s.txt", Encode(L"\U00020BB7野家 \U00020BB7\r\n", CP_UTF8));	// 𠮷野家 𠮷
 	EXPECT_EQ(2u, Grep(L"\U00020BB7", L"*.txt", L"X", std::format(L"-GCODE={}", int(CODE_UTF8))));	// 𠮷
 }
 
@@ -958,11 +958,12 @@ TEST(GrepFolderList, CreateFoldersResolvesShortName)
 	folder.AddFolder(longName);
 	const auto longPath = folder.Path() / longName;
 
+	// 8.3 形式の名前が無いボリュームでは GetShortPathNameW() が長い名前をそのまま返す。
+	// そのときも CreateFolders() の結果は長い名前なので、飛ばさずに同じ期待値で確かめる
+	// (GTEST_SKIP() は MSVC のテストエクスプローラーで失敗扱いになるので使わない)
 	std::wstring shortPath(MAX_PATH, L'\0');
 	shortPath.resize(::GetShortPathNameW(longPath.c_str(), shortPath.data(), MAX_PATH));
-	if (shortPath.empty() || std::filesystem::path(shortPath).filename() == longName) {
-		GTEST_SKIP() << "8.3 short names are not available on this volume";
-	}
+	ASSERT_THAT(shortPath.empty(), IsFalse());
 
 	std::vector<std::wstring> paths;
 	CGrepAgent::CreateFolders(shortPath.c_str(), paths);
