@@ -11,7 +11,7 @@
 	Copyright (C) 2002, genta
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -87,6 +87,7 @@ public:
 	const WCHAR* GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : nullptr; }
 	void ClearFile(void) noexcept { m_vFiles.clear(); }
 	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
+	void	SetDocType(std::wstring_view newDocType);
 	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
 	void ParseKanjiCodeFromFileName( LPWSTR pszExeFileName, int cchExeFileName );
 	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );

@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -10,8 +10,10 @@
 #pragma once
 
 #include "basis/SakuraBasis.h"
+#include "basis/CMyString.h"
 #include "config/maxdata.h"
 #include "charset/charset.h"
+#include "util/StaticType.h"
 
 /*!
  * ファイル情報
@@ -23,11 +25,15 @@
  *   プロセス間共有できない型のメンバを追加してはならない。
  */
 struct EditInfo {
+	using SDocType = StaticString<MAX_DOCTYPE_LEN + 1>;
+	using SGrepKey = StaticString<1024>;
+	using SMarkLines = StaticString<MAX_MARKLINES_LEN + 1>;
+
 	//ファイル
-	WCHAR		m_szPath[_MAX_PATH] = {};				//!< ファイル名
+	SFilePath	m_szPath = {};							//!< ファイル名
 	ECodeType	m_nCharCode = CODE_AUTODETECT;			//!< 文字コード種別
 	bool		m_bBom = false;							//!< BOM(GetFileInfo)
-	WCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1] = {};	//!< 文書タイプ
+	SDocType	m_szDocType = {};						//!< 文書タイプ
 	int 		m_nTypeId = -1;							//!< 文書タイプ(MRU)
 
 	//表示域
@@ -42,13 +48,13 @@ struct EditInfo {
 
 	//GREPモード
 	bool		m_bIsGrep = false;						//!< Grepのウィンドウか
-	wchar_t		m_szGrepKey[1024] = {};
+	SGrepKey	m_szGrepKey = {};
 
 	//デバッグモニタ (アウトプットウィンドウ) モード
 	bool		m_bIsDebug = false;						//!< デバッグモニタモード (アウトプットウィンドウ) か
 
 	//ブックマーク情報
-	wchar_t		m_szMarkLines[MAX_MARKLINES_LEN + 1] = {};	//!< ブックマークの物理行リスト
+	SMarkLines	m_szMarkLines = {};						//!< ブックマークの物理行リスト
 
 	//ウィンドウ
 	int			m_nWindowSizeX = -1;					//!< ウィンドウ  幅(ピクセル数)
@@ -59,4 +65,5 @@ struct EditInfo {
 	// コンストラクタ
 	EditInfo() noexcept;
 };
+
 #endif /* SAKURA_EDITINFO_27D29614_33E6_4D60_B4B1_05115049CD16_H_ */
