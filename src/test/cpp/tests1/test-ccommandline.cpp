@@ -962,6 +962,20 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
 	User32::resetInstance();
 }
 
+/*!
+ * @brief ファイルパスが「file:///」で始まっている場合の仕様
+ * @remark 先頭の「file:///」が除去され、パス解決される
+ */
+TEST(CCommandLine, ParseFileNameStartsWithFileProtocol)
+{
+	constexpr auto& fileName = L"test.txt";
+	const auto path = GetIniFileName().replace_filename(fileName);
+
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(std::data(std::format(L"file:///{:s}", fileName)), false);
+	EXPECT_THAT(cCommandLine.GetOpenFile(), StrEq(path.c_str()));
+}
+
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
