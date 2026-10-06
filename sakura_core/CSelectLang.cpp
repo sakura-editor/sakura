@@ -190,7 +190,9 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 }
 
 //! 言語を変更する
-/* static */ void CSelectLang::ChangeLang(const std::filesystem::path& dllName)
+/* static */ void CSelectLang::ChangeLang(
+	std::wstring_view dllName
+)
 {
 	size_t index;
 
