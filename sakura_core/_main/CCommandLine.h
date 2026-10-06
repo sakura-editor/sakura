@@ -21,14 +21,17 @@
 #define SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_
 #pragma once
 
-#include <vector>
-
-#include "global.h"
-#include "charset/charcode.h"
-#include "mem/CNativeW.h"
 #include "basis/EditInfo.h"
 #include "basis/GrepInfo.h"
+#include "charset/charcode.h"
+#include "dlg/CDlgProfileMgr.h"
+#include "global.h"
+#include "mem/CNativeW.h"
 #include "util/design_template.h"
+
+#include <string>
+#include <string_view>
+#include <vector>
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -71,12 +74,10 @@ public:
 	int GetGroupId() const noexcept { return m_nGroup; }	// 2007.06.26 ryoji
 	LPCWSTR GetMacro() const noexcept { return m_cmMacro.GetStringPtr(); }
 	LPCWSTR GetMacroType() const noexcept { return m_cmMacroType.GetStringPtr(); }
-	LPCWSTR GetProfileName() const noexcept { return m_cmProfile.GetStringPtr(); }
+	LPCWSTR GetProfileName() const noexcept { return m_ProfileName.c_str(); }
+	auto& GetProfileNameRef() noexcept { return m_ProfileName; }
 	bool IsSetProfile() const noexcept { return m_bSetProfile; }
-	void SetProfileName(LPCWSTR s){
-		m_bSetProfile = true;
-		m_cmProfile.SetString(s);
-	}
+	void	SetProfileName(std::wstring_view newProfileName);
 	bool IsProfileMgr() const noexcept { return m_bProfileMgr; }
 	const CLogicPoint& GetCaretLocation() const noexcept { return m_fi.m_ptCursor; }
 	CLayoutPoint GetViewLocation() const noexcept { return { m_fi.m_nViewLeftCol,  m_fi.m_nViewTopLine }; }
@@ -106,7 +107,7 @@ private:
 	int			m_nGroup;			//! グループID	// 2007.06.26 ryoji
 	CNativeW	m_cmMacro;			//! [out] マクロファイル名／マクロ文
 	CNativeW	m_cmMacroType;		//! [out] マクロ種別
-	CNativeW	m_cmProfile;		//! プロファイル名
+	SProfileName	m_ProfileName{};		//! プロファイル名
 	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
 };
 

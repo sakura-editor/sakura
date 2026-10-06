@@ -6,12 +6,15 @@
 */
 /*
 	Copyright (C) 2013, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "dlg/CDlgProfileMgr.h"
+
+#include "_main/CCommandLine.h"
+
 #include "dlg/CDlgInput1.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
@@ -52,7 +55,7 @@ bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
 		bDialog = false;
 	}else if( 0 < settings.m_nDefaultIndex && settings.m_nDefaultIndex <= static_cast<int>(settings.m_vProfList.size()) ){
 		// プロファイル設定のデフォルトインデックス値から該当のプロファイル名が指定されたものとして動作する
-		pcCommandLine->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
+		pcCommandLine->SetProfileName(settings.m_vProfList[settings.m_nDefaultIndex - 1]);
 		bDialog = false;
 	}else{
 		// プロファイル設定のデフォルトインデックス値が不正なのでプロファイルマネージャを表示して設定更新を促す
@@ -74,9 +77,21 @@ CDlgProfileMgr::CDlgProfileMgr()
 }
 
 /*! モーダルダイアログの表示 */
-int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
+int CDlgProfileMgr::DoModal(
+	HWND hWndParent,
+	SProfileName& profileName
+)
 {
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROFILEMGR, lParam );
+	const HINSTANCE unusedArg = nullptr;
+
+	const auto ret = (int)CDialog::DoModal(unusedArg, hWndParent, IDD_PROFILEMGR, 0L);
+
+	if (ret)
+	{
+		profileName = m_ProfileName;
+	}
+
+	return ret;
 }
 
 /*!
@@ -181,9 +196,9 @@ int CDlgProfileMgr::GetData(bool bStart)
 	int nCurIndex = ApiWrap::List_GetCurSel(hwndList);
 	WCHAR szText[_MAX_PATH];
 	MyList_GetText( hwndList, nCurIndex, szText );
-	m_strProfileName = szText;
-	if( m_strProfileName == L"(default)" ){
-		m_strProfileName.clear();
+	m_ProfileName = szText;
+	if( m_ProfileName == L"(default)" ){
+		m_ProfileName = L"";
 	}
 	bool bDefaultSelect = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PROF_DEFSTART );
 	SProfileSettings settings;

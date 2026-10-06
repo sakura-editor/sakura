@@ -502,9 +502,12 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 void CViewCommander::Command_PROFILEMGR( void )
 {
 	CDlgProfileMgr profMgr;
-	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
-		WCHAR szOpt[MAX_PATH+10];
-		auto_sprintf( szOpt, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str() );
+	if (SProfileName profileName{};
+		profMgr.DoModal(m_pCommanderView->GetHwnd(), profileName))
+	{
+		using SOpts = StaticString<_MAX_PATH + 10>;	// サイズの根拠は不明
+		SOpts szOpt{};
+		swprintf_s(szOpt, LR"(-PROF="%s")", profMgr.m_ProfileName);
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;

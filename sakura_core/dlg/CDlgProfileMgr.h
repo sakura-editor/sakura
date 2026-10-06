@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2013, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -14,12 +14,24 @@
 #define SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_
 #pragma once
 
+#include "basis/CMyString.h"
 #include "dlg/CDialog.h"
-#include "_main/CCommandLine.h"
+#include "util/StaticType.h"
+
 #include <filesystem>
 #include <string>
 #include <string_view>
 #include <vector>
+
+class CCommandLine;
+
+/*!
+ * @brief プロファイル名を格納するバッファ型
+ *
+ * @note ディレクトリ名として使用するため、ディレクトリ名の最大長を使用する
+ * @note ディレクトリ名として使用するため、大文字小文字を区別せず比較する
+ */
+using SProfileName = StaticString<_MAX_DIR, false>;
 
 struct SProfileSettings
 {
@@ -31,6 +43,13 @@ struct SProfileSettings
 
 class CDlgProfileMgr final : public CDialog
 {
+private:
+	using Base = CDialog;
+	using Me = CDlgProfileMgr;
+
+	// 親クラスのDoModalを隠す
+	using Base::DoModal;
+
 public:
 	//! コマンドラインだけでプロファイルが確定するか調べる
 	static bool TrySelectProfile( CCommandLine* pcCommandLine ) noexcept;
@@ -39,12 +58,14 @@ public:
 	||  Constructors
 	*/
 	CDlgProfileMgr();
+
 	/*
 	||  Attributes & Operations
 	*/
-	int		DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
-
-protected:
+	int DoModal(
+		HWND hWndParent,
+		SProfileName& profileName
+	);
 
 	BOOL	OnBnClicked(int wID) override;
 	INT_PTR	DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
@@ -61,8 +82,8 @@ protected:
 	void	RenameProf();
 	void	SetDefaultProf(int index);
 	void	ClearDefaultProf();
-public:
-	std::wstring m_strProfileName;
+
+	SProfileName m_ProfileName{};
 
 	static bool ReadProfSettings(SProfileSettings& settings);
 	static bool WriteProfSettings(SProfileSettings& settings);

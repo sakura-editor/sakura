@@ -1956,6 +1956,33 @@ TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
 }
 
 /*!
+ * コマンド：プロファイルマネージャ
+ */
+TEST_F(EditWndTest, Command_PROFILEMGR101)
+{
+	// 開いているファイルの数を上限値に設定する
+	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+
+	// 表示されたモーダルダイアログを閉じる
+	dialog::ModalDialogCloser closer(L"プロファイルマネージャ", [this] (HWND hWndDlg) {
+		//ダイアログ本来の処理を通さず OKで閉じる
+		::EndDialog(hWndDlg, 1);
+	});
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(strprintf(LS(STR_MAXWINDOW), MAX_EDITWINDOWS)), _, _, _))
+		.Times(1)
+		.WillOnce(Return(IDOK));
+
+	using target = CDlgProfileMgr;
+	const auto hWnd = pcEditWnd->GetHwnd();
+	FORWARD_WM_COMMAND(hWnd, F_PROFILEMGR, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	// 設定を元に戻す
+	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
+}
+
+/*!
  * コマンド：タグジャンプ
  */
 TEST_F(EditWndTest, Command_TAGJUMP001)
@@ -1987,6 +2014,24 @@ TEST_F(EditWndTest, Command_TAGJUMP001)
 
 	// タグジャンプ発動
 	FORWARD_WM_COMMAND(hWnd, F_TAGJUMP, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * コマンド：ビューモード
+ */
+TEST_F(EditWndTest, Command_VIEWMODE001)
+{
+	const auto& targetPath = dummyPath;
+
+	// ファイルを開く
+	EXPECT_THAT(ExecMacroCommand(std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native())), IsTrue());
+
+	// ビューモードにする
+	HWND hWnd = nullptr;
+	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+
+	// ビューモードを解除する
+	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 }
 
 /*!
