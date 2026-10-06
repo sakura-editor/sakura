@@ -3438,6 +3438,7 @@ BEGIN
     STR_GREP_SEARCH_TARGET  "検索対象       "
     STR_GREP_SEARCH_FOLDER  "フォルダー       "
     STR_GREP_SUBFOLDER_YES  "    (サブフォルダーも検索)\r\n"
+    STR_GREP_EXCLUDE_FILE_REGEXP "    (除外ファイルは正規表現)\r\n"
     STR_GREP_SUBFOLDER_NO   "    (サブフォルダーを検索しない)\r\n"
     STR_GREP_COMPLETE_WORD  "    (単語単位で探す)\r\n"
 END

@@ -39,7 +39,8 @@ bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept {
 		&& lhs.bGrepSeparateFolder == rhs.bGrepSeparateFolder
 		&& lhs.bGrepReplace == rhs.bGrepReplace
 		&& lhs.bGrepPaste == rhs.bGrepPaste
-		&& lhs.bGrepBackup == rhs.bGrepBackup;
+		&& lhs.bGrepBackup == rhs.bGrepBackup
+		&& lhs.bGrepExceptFileRegexp == rhs.bGrepExceptFileRegexp;
 }
 
 /*!
@@ -163,6 +164,10 @@ TEST(GrepInfo, operatorNotEqual)
 	value.bGrepBackup = true;
 	ASSERT_NE(value, other);
 	value.bGrepBackup = other.bGrepBackup;
+
+	value.bGrepExceptFileRegexp = true;
+	ASSERT_NE(value, other);
+	value.bGrepExceptFileRegexp = other.bGrepExceptFileRegexp;
 }
 
 /*!
@@ -217,6 +222,21 @@ TEST(GrepInfo, Normalized_KeepsOtherMembers)
 	EXPECT_FALSE(normalized.bGrepReplace);
 	EXPECT_TRUE(normalized.bGrepPaste);
 	EXPECT_TRUE(normalized.bGrepBackup);
+}
+
+/*!
+ * @brief GrepInfo の既定値と Normalized() で、除外ファイルの正規表現の指定が保たれること
+ */
+TEST(GrepInfo, ExceptFileRegexp_DefaultAndNormalized)
+{
+	GrepInfo gi;
+	EXPECT_THAT(gi.bGrepExceptFileRegexp, IsFalse());
+
+	gi.bGrepExceptFileRegexp = true;
+	gi.bGrepReplace = true;
+	gi.nGrepOutputLineType = 2;
+	const GrepInfo normalized = gi.Normalized();
+	EXPECT_THAT(normalized.bGrepExceptFileRegexp, IsTrue());
 }
 
 /*!

@@ -39,6 +39,7 @@ struct GrepInfo {
 	bool			bGrepReplace = false;			//!< Grep置換
 	bool			bGrepPaste = false;				//!< クリップボードから貼り付け
 	bool			bGrepBackup = false;			//!< 置換でバックアップを保存
+	bool			bGrepExceptFileRegexp = false;	//!< 除外ファイルを正規表現で指定する
 
 	// コンストラクタ
 	GrepInfo() noexcept;

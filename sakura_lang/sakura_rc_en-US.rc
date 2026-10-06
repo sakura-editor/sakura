@@ -3501,6 +3501,7 @@ BEGIN
     STR_GREP_SEARCH_TARGET  "Search Target   "
     STR_GREP_SEARCH_FOLDER  "Folder          "
     STR_GREP_SUBFOLDER_YES  "    (search sub-folders = Yes)\r\n"
+    STR_GREP_EXCLUDE_FILE_REGEXP "    (exclude files = regular expression)\r\n"
     STR_GREP_SUBFOLDER_NO   "    (search sub-folders = No)\r\n"
     STR_GREP_COMPLETE_WORD  "    (Match Whole Word)\r\n"
 END

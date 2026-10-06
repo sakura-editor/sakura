@@ -9,6 +9,7 @@
 #include "basis/GrepInfo.h"
 #include "grep/CGrepEnumKeys.h"
 #include "grep/CGrepEnumFilterFiles.h"
+#include "grep/CGrepExceptFileRegexps.h"
 #include "grep/CGrepEnumFilterFolders.h"
 #include "agent/CSearchAgent.h"
 #include "dlg/CDlgCancel.h"
@@ -505,9 +506,13 @@ DWORD CGrepAgent::DoGrep(
 	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
 	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 
+	CGrepExceptFileRegexps cExceptFileRegexps;	// 除外ファイル(正規表現)。cGrepEnumKeys の照合関数が参照するので先に宣言する
 	CGrepEnumKeys cGrepEnumKeys;
 	{
-		int nErrorNo = cGrepEnumKeys.SetFileKeys( gi.cmGrepFile.GetStringPtr() );
+		int nErrorNo = cGrepEnumKeys.SetFileKeys( gi.cmGrepFile.GetStringPtr(), gi.bGrepExceptFileRegexp );
+		if( nErrorNo == 0 && !cExceptFileRegexps.Attach( cGrepEnumKeys, GetDllShareData().m_Common.m_sSearch.m_szRegexpLib ) ){
+			nErrorNo = 3;
+		}
 		if( nErrorNo != 0 ){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
@@ -519,6 +524,9 @@ DWORD CGrepAgent::DoGrep(
 			}
 			else if( nErrorNo == 2 ){
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
+			}
+			else if( nErrorNo == 3 ){
+				pszErrorMessage = cExceptFileRegexps.GetErrorMessage().c_str();
 			}
 			ErrorMessage( pcViewDst->m_hwndParent, L"%s", pszErrorMessage );
 			return 0;
@@ -633,6 +641,10 @@ DWORD CGrepAgent::DoGrep(
 		pszWork = LS( STR_GREP_SUBFOLDER_NO );	//L"    (サブフォルダーを検索しない)\r\n"
 	}
 	cmemMessage.AppendString( pszWork );
+
+	if( sGrepOption.bGrepExceptFileRegexp ){
+		cmemMessage.AppendString( LS( STR_GREP_EXCLUDE_FILE_REGEXP ) );	//L"    (除外ファイルは正規表現)\r\n"
+	}
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( gi.sGrepSearchOption.bWordOnly ){
