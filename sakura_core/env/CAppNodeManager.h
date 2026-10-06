@@ -13,16 +13,19 @@
 #include "config/maxdata.h"
 #include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "util/design_template.h"
+#include "util/StaticType.h"
 
 class CAppNodeGroupHandle;
 
 //! 編集ウィンドウノード
 struct EditNode {
+	using STabCaption = StaticString<_MAX_PATH>;
+
 	int				m_nIndex;
 	int				m_nGroup;					//!< グループID								//@@@ 2007.06.20 ryoji
 	HWND			m_hWnd;
 	int				m_nId;						//!< 無題Id
-	WCHAR			m_szTabCaption[_MAX_PATH]{}; //!< タブウインドウ用：キャプション名		//@@@ 2003.05.31 MIK
+	STabCaption		m_szTabCaption{};			 //!< タブウインドウ用：キャプション名		//@@@ 2003.05.31 MIK
 	SFilePath		m_szFilePath;				//!< タブウインドウ用：ファイル名			//@@@ 2006.01.28 ryoji
 	bool			m_bIsGrep;					//!< Grepのウィンドウか						//@@@ 2006.01.28 ryoji
 	UINT			m_showCmdRestore;			//!< 元のサイズに戻すときのサイズ種別		//@@@ 2007.06.20 ryoji
