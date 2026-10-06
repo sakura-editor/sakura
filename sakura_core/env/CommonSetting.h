@@ -2,7 +2,7 @@
 //2007.09.28 kobake Common整理
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -131,7 +131,7 @@ struct CommonSetting_Window
 	int				m_nVertLineOffset;			//!< 縦線の描画座標オフセット 2005.11.10 Moca
 
 	//言語選択
-	WCHAR			m_szLanguageDll[MAX_PATH];	//!< 言語DLLファイル名
+	SFilePath		m_szLanguageDll{};			//!< 言語DLLファイル名
 
 	//ミニマップ
 	int				m_nMiniMapFontSize;
@@ -729,4 +729,5 @@ struct CommonSetting
 	CommonSetting_Plugin			m_sPlugin;			//!< プラグイン 2009/11/30 syat
 	CommonSetting_MainMenu			m_sMainMenu;		//!< メインメニュー		// 2010/5/15 Uchi
 };
+
 #endif /* SAKURA_COMMONSETTING_2CBDBC26_EA7F_466E_842F_AFB0D93207D2_H_ */
