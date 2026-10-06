@@ -2,13 +2,15 @@
 /*
 	Copyright (C) 2002, SUI
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #ifndef SAKURA_FILE_FE33056B_6B48_4668_AE95_923EC960A607_H_
 #define SAKURA_FILE_FE33056B_6B48_4668_AE95_923EC960A607_H_
 #pragma once
+
+#include "basis/primitive.h"
 
 #include <string>
 #include <string_view>
@@ -21,7 +23,38 @@ bool IsFilePath( const wchar_t* pLine, size_t* pnBgn, size_t* pnPathLen, bool bF
 bool IsFileExists(const WCHAR* path, bool bFileOnly = false);
 bool IsDirectory(LPCWSTR pszPath);	// 2009.08.20 ryoji
 
-bool IsInvalidFilenameChars(const std::filesystem::path& path) noexcept;
+/*!
+ * パスがファイル名に使えない文字を含んでいるかチェックする
+ *
+ * @param[in] szPath チェック対象のパス文字列
+ * @retval true  パスはファイル名に使えない文字を含んでいる
+ * retuval false パスはファイル名に使えない文字を含んでいない
+ */
+bool IsInvalidFilenameChars(
+	std::wstring_view szPath
+);
+
+/*!
+ * パスがファイル名に使えない文字を含んでいるかチェックする
+ *
+ * @tparam[in] A 文字列型（NUL終端文字列として扱える型）
+ * @param[in] szPath チェック対象のパス文字列
+ * @retval true  パスはファイル名に使えない文字を含んでいる
+ * retuval false パスはファイル名に使えない文字を含んでいない
+ */
+template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	requires (!std::is_same_v<A, std::wstring_view>)
+bool IsInvalidFilenameChars(
+	const A& szPath
+)
+{
+	// 入力元をNUL終端文字列とみなす
+	const auto path = cxx::NullTerminatedString<WCHAR>{ szPath };
+
+	// パスがファイル名に使えない文字を含んでいるかチェックする
+	return IsInvalidFilenameChars(path.str());
+}
+
 [[nodiscard]] bool IsValidPathAvailableChar(const std::filesystem::path& path) noexcept;
 
 //	Apr. 30, 2003 genta
@@ -116,4 +149,5 @@ int FileMatchScoreSepExt( std::wstring_view file1, std::wstring_view file2 );
 
 void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth );
 void GetShortViewPath(WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );
+
 #endif /* SAKURA_FILE_FE33056B_6B48_4668_AE95_923EC960A607_H_ */
