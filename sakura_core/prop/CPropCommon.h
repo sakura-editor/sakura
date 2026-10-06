@@ -488,7 +488,37 @@ public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	std::wstring GetReadMeFile(const std::wstring& sName);	//	Readme ファイルの取得
+
+	/*!
+	 * @brief プラグインの Readme ファイル名を取得する
+	 *
+	 * @param[in] pluginName プラグイン名
+	 * @return Readme ファイル名。存在しない場合は空文字列
+	 */
+	std::wstring GetReadMeFile(
+		std::wstring_view pluginName
+	);
+
+	/*!
+	 * @brief プラグインの Readme ファイル名を取得する
+	 *
+	 * @tparam[in] A 文字列型（NUL終端文字列として扱える型）
+	 * @param[in] pluginName プラグイン名
+	 * @return Readme ファイル名。存在しない場合は空文字列
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+		requires (!std::is_same_v<A, std::wstring_view>)
+	std::wstring GetReadMeFile(
+		const A& pluginName
+	)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto _PluginName = cxx::NullTerminatedString<WCHAR>{ pluginName };
+
+		// プラグインの Readme ファイル名を取得する
+		return GetReadMeFile(_PluginName.str());
+	}
+
 	bool BrowseReadMe(const std::wstring& sReadMeName);		//	Readme ファイルの表示
 protected:
 	//! Message Handler

@@ -510,8 +510,12 @@ void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 }
 
 //	Readme ファイルの取得	2011/11/2 Uchi
-std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
+std::wstring CPropPlugin::GetReadMeFile(
+	std::wstring_view pluginName
+)
 {
+	std::wstring sName{ pluginName };
+
 	std::wstring sReadMeName = CPluginManager::getInstance()->GetBaseDir()
 		+ sName + L"\\ReadMe.txt";
 	CFile* fl = new CFile(sReadMeName.c_str());
