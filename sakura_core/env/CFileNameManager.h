@@ -26,7 +26,44 @@ public:
 	//ファイル名関連
 	LPWSTR GetTransformFileNameFast( LPCWSTR, LPWSTR, int nDestLen, HDC hDC, bool bFitMode = true, int cchMaxWidth = 0 );	// 2002.11.24 Moca Add
 	int TransformFileName_MakeCache( void );
-	static LPCWSTR GetFilePathFormat( std::wstring_view strSrc, LPWSTR pszDest, size_t nDestLen, std::wstring_view strFrom, std::wstring_view strTo );
+
+	static LPCWSTR GetFilePathFormat(
+		std::wstring_view strSrc,
+		LPWSTR pszDest,
+		size_t nDestLen,
+		std::wstring_view strFrom,
+		std::wstring_view strTo
+	);
+
+	template <
+		basis::NullTerminatedStringConstructible<WCHAR> A1,
+		basis::NullTerminatedStringConstructible<WCHAR> A2,
+		basis::NullTerminatedStringConstructible<WCHAR> A3
+	>
+		requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view> || !std::is_same_v<A3, std::wstring_view>)
+	static LPCWSTR GetFilePathFormat(
+		const A1& src,
+		LPWSTR pszDest,
+		size_t nDestLen,
+		const A2& from,
+		const A3& to
+	)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto _Src = cxx::NullTerminatedString<WCHAR>{ src };
+		const auto _From = cxx::NullTerminatedString<WCHAR>{ from };
+		const auto _To = cxx::NullTerminatedString<WCHAR>{ to };
+
+		return GetFilePathFormat(
+			_Src.str(),
+			pszDest,
+			nDestLen,
+			_From.str(),
+			_To.str()
+		);
+	}
+
+
 	static bool ExpandMetaToFolder( LPCWSTR, LPWSTR, int );
 
 	//メニュー類のファイル名作成

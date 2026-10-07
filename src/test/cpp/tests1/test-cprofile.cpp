@@ -621,8 +621,8 @@ TEST(CDataProfile, IOProfileData_PluginRec)
 	cProfile.SetReadingMode();
 
 	PluginRec value{};
-	value.m_szId[0] = L'\0';
-	value.m_szName[0] = L'\0';
+	value.m_szId = L"";
+	value.m_szName = L"";
 	value.m_state = EPluginState::PLS_NONE;
 	value.m_nCmdNum = 0;
 
@@ -661,8 +661,8 @@ TEST(CDataProfile, IOProfileData_PluginRec)
 	EXPECT_THAT(cProfile.IOProfileData(L"Test", L"pluginTest", value), IsTrue());
 
 	// 値は変更される
-	EXPECT_THAT(value.m_szName, StartsWith(L"aaa"));
-	EXPECT_THAT(value.m_szId, StartsWith(L"bbb"));
+	EXPECT_THAT(value.m_szName.c_str(), StartsWith(L"aaa"));
+	EXPECT_THAT(value.m_szId.c_str(), StartsWith(L"bbb"));
 	EXPECT_THAT(value.m_nCmdNum, 1);
 }
 

@@ -19,11 +19,15 @@
 */
 
 #include "StdAfx.h"
-#include "CCommandLine.h"
+#include "_main/CCommandLine.h"
+
+#include "basis/primitive.h"
+
 #include "mem/CMemory.h"
 #include <tchar.h>
 #include <string.h>
 #include "debug/CRunningTimer.h"
+#include "dlg/CDlgProfileMgr.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "io/CTextStream.h"
 #include "util/shell.h"
@@ -248,7 +252,6 @@ CCommandLine::CCommandLine() noexcept
 	, m_nGroup(-1)
 	, m_cmMacro()
 	, m_cmMacroType()
-	, m_cmProfile(L"")
 	, m_vFiles()
 {
 }
@@ -299,7 +302,13 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CCommandLine::Parse" );
 
-	WCHAR	szPath[_MAX_PATH];
+	SFilePath szPath;
+
+	static_assert(
+		decltype(szPath)::size() == decltype(m_fi.m_szPath)::size(),
+		"szPath and m_fi.m_szPath should have same size"
+	);
+
 	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
@@ -322,7 +331,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 	if( bFind ){
 		CSakuraEnvironment::ResolvePath(szPath);
-		wcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
+		m_fi.m_szPath = szPath;
 		nPos = i + 1;
 	}else{
 		m_fi.m_szPath[0] = L'\0';
@@ -330,9 +339,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	CNativeW cmResponseFile = L"";
-	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
-	wcscpy( pszCmdLineWork, pszCmdLineSrc );
-	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
+	std::wstring cmdlineWork{ pszCmdLineSrc };
+	auto pszCmdLineWork = std::data(cmdlineWork);
+	const auto nCmdLineWorkLen = int(std::size(cmdlineWork));
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != nullptr )
 	{
@@ -384,8 +393,10 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (wcsncmp_literal(szPath, L"file:///")==0) {
-				wcscpy(szPath, &(szPath[8]));
+			if (const auto path = szPath.str();
+				path.starts_with(L"file:///"))
+			{
+				szPath = path.substr(8);	// 8文字スキップ（先頭を捨てる）
 			}
 
 			if ( IsInvalidFilenameChars( szPath ) ){
@@ -397,13 +408,18 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				szPath[0] = L'\0';
 			}
 
+			// szPathに値が入っている場合
 			if (szPath[0] != L'\0') {
+				// パス解決してロングファイル名にする
 				CSakuraEnvironment::ResolvePath(szPath);
+
+				// m_fi.m_szPathに値が入っていない場合
 				if (m_fi.m_szPath[0] == L'\0') {
-					wcscpy(m_fi.m_szPath, szPath );
+					m_fi.m_szPath = szPath;
 				}
+				// m_fi.m_szPathに値が入っている場合
 				else {
-					m_vFiles.push_back( szPath );
+					m_vFiles.emplace_back(szPath);
 				}
 			}
 		}
@@ -450,7 +466,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_fi.m_nWindowOriginY = AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_TYPE:	//	TYPE
-				::wcsncpy_s( m_fi.m_szDocType, arg, _TRUNCATE );
+				// 無条件に値を入れる
+				SetDocType(arg);
 				break;
 			case CMDLINEOPT_CODE:	//	CODE
 				m_fi.m_nCharCode = (ECodeType)AtoiOptionInt( arg );
@@ -463,8 +480,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
+				// 未設定なら値を入れる
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					wcscpy( m_fi.m_szDocType , L"grepout" );
+					SetDocType(L"grepout");
 				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
@@ -557,8 +575,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_DEBUGMODE:
 				m_bDebugMode = true;
 				// 2010.06.16 Moca -TYPE=output 扱いとする
+				// 未設定なら値を入れる
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					wcscpy( m_fi.m_szDocType , L"output" );
+					SetDocType(L"output");
 				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効
@@ -572,8 +591,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_cmMacroType.SetString( arg, nArgLen );
 				break;
 			case CMDLINEOPT_PROF:		// 2013.12.20 Moca 追加
-				m_cmProfile.SetString( arg, nArgLen );
-				m_bSetProfile = true;
+				SetProfileName(arg);
 				break;
 			case CMDLINEOPT_PROFMGR:
 				m_bProfileMgr = true;
@@ -584,7 +602,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		}
 		pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	}
-	delete [] pszCmdLineWork;
 
 	// レスポンスファイル解析
 	if( cmResponseFile.GetStringLength() && bResponse ){
@@ -600,4 +617,31 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	return;
+}
+
+void CCommandLine::SetDocType(std::wstring_view newDocType)
+{
+	static_assert(
+		MAX_DOCTYPE_LEN < decltype(m_fi.m_szDocType)::size(),
+		"m_szDocType must have room for MAX_DOCTYPE_LEN characters"
+	);
+
+	if (MAX_DOCTYPE_LEN < newDocType.length()) {
+		newDocType = newDocType.substr(0, MAX_DOCTYPE_LEN);
+	}
+
+	m_fi.m_szDocType = newDocType;
+}
+
+void CCommandLine::SetProfileName(
+	std::wstring_view newProfileName
+)
+{
+	// 入力元をNUL終端文字列とみなす
+	const auto _NewProfileName = cxx::NullTerminatedString{ newProfileName };
+
+	if (_NewProfileName.length() < decltype(CDlgProfileMgr::m_ProfileName)::size()) {
+		m_bSetProfile = true;
+		m_ProfileName = _NewProfileName.c_str();
+	}
 }

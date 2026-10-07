@@ -16,6 +16,7 @@
 #define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
+#include "basis/primitive.h"
 #include "cxx/ResourceHolder.hpp"
 #include "cxx/load_string.hpp"
 
@@ -82,6 +83,29 @@ public:
 
 	static const SSelLangInfo& GetLangInfo(size_t index) noexcept { return *gm_Langs[index].get(); }
 
+	static void ChangeLang(
+		std::wstring_view dllName
+	);
+
+	/*!
+	 * @brief 言語を変更する
+	 *
+	 * @tparam A [in] 文字列型（NUL終端文字列として扱える型）
+	 * @param[in] dllName 言語リソースDLLのファイルパス
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+		requires (!std::is_same_v<A, std::wstring_view>)
+	static void ChangeLang(
+		const A& dllName
+	)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto _DllName = cxx::NullTerminatedString{ dllName };
+
+		// 言語を変更する
+		ChangeLang(_DllName.str());
+	}
+
 	/*
 	||  Constructors
 	*/
@@ -95,7 +119,6 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	static void		ChangeLang(const std::filesystem::path& dllName);
 
 private:
 	/*

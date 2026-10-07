@@ -82,21 +82,24 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine) const
 {
+	auto* pCommandLine = CCommandLine::getInstance();
+
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
 	WCHAR szExeFileName[MAX_PATH];
 	const int cchExeFileName = ::GetModuleFileName(nullptr, szExeFileName, int(std::size(szExeFileName)));
-	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
+	pCommandLine->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
 
-	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
+	pCommandLine->ParseCommandLine(lpCmdLine);
 
 	// コマンドラインオプションから起動プロファイルを判定する
-	bool profileSelected = CDlgProfileMgr::TrySelectProfile( CCommandLine::getInstance() );
-	if( !profileSelected ){
+	if (const auto profileSelected = CDlgProfileMgr::TrySelectProfile(pCommandLine);
+		!profileSelected)	// プロファイルが決まらなかった
+	{
+		// プロファイルマネージャを表示して選択させる
 		CDlgProfileMgr dlgProf;
-		if( dlgProf.DoModal( hInstance, nullptr, 0 ) ){
-			CCommandLine::getInstance()->SetProfileName( dlgProf.m_strProfileName.c_str() );
-		}else{
+		if (HWND hWndParent = nullptr;
+			!dlgProf.DoModal(hWndParent, pCommandLine->GetProfileNameRef())) {
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
 		}
 	}

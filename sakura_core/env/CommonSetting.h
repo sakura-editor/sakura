@@ -2,7 +2,7 @@
 //2007.09.28 kobake Common整理
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -30,6 +30,8 @@ static const int MAX_TOOLBAR_ICON_COUNT		= MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICON
 //Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)	
 //2010/3/14 Uchi アイコンの最大登録数を32個増やした(384→416)
 //2010/6/26 syat アイコンの最大登録数を15段に増やした(416→480)
+
+using SCaptionConf = StaticString<MAX_CAPTION_CONF_LEN, true>;
 
 // 旧版と違い、bool型使えるようにしてあります by kobake
 
@@ -124,14 +126,14 @@ struct CommonSetting_Window
 	BOOL			m_bSplitterWndVScroll;		//!< 分割ウィンドウの垂直スクロールの同期をとる 2001/06/20 asa-o
 
 	//タイトルバー
-	WCHAR			m_szWindowCaptionActive  [MAX_CAPTION_CONF_LEN];	//!< タイトルバー(アクティブ時)
-	WCHAR			m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];	//!< タイトルバー(非アクティブ時)
+	SCaptionConf	m_szWindowCaptionActive{};		//!< タイトルバー(アクティブ時)
+	SCaptionConf	m_szWindowCaptionInactive{};	//!< タイトルバー(非アクティブ時)
 
 	//INI内設定のみ
 	int				m_nVertLineOffset;			//!< 縦線の描画座標オフセット 2005.11.10 Moca
 
 	//言語選択
-	WCHAR			m_szLanguageDll[MAX_PATH];	//!< 言語DLLファイル名
+	SFilePath		m_szLanguageDll{};			//!< 言語DLLファイル名
 
 	//ミニマップ
 	int				m_nMiniMapFontSize;
@@ -167,7 +169,7 @@ struct CommonSetting_TabBar
 	bool		m_bTabMultiLine;				//!< タブ多段
 	ETabPosition	m_eTabPosition;				//!<タブ位置
 
-	wchar_t		m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//!< タブウインドウキャプション	//@@@ 2003.06.13 MIK
+	SCaptionConf	m_szTabWndCaption{};		//!< タブウインドウキャプション	//@@@ 2003.06.13 MIK
 	BOOL		m_bSameTabWidth;				//!< タブを等幅にする			//@@@ 2006.01.28 ryoji
 	BOOL		m_bDispTabIcon;					//!< タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 	EDispTabClose	m_bDispTabClose;			//!< タブに閉じるボタンを表示する	//@@@ 2012.04.14 syat
@@ -351,19 +353,23 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Format
 {
+	using SDateFormat = StaticString<MAX_DATETIMEFOREMAT_LEN, true>;
+	using SMidashiKigou = StaticString<256>;
+	using SInyouKigou = StaticString<32>;
+
 	//日付書式
 	int			m_nDateFormatType;							//!< 日付書式のタイプ
-	WCHAR		m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 日付書式
+	SDateFormat	m_szDateFormat{};							//!< 日付書式
 
 	//時刻書式
 	int			m_nTimeFormatType;							//!< 時刻書式のタイプ
-	WCHAR		m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 時刻書式
+	SDateFormat	m_szTimeFormat{};							//!< 時刻書式
 
 	//見出し記号
-	wchar_t		m_szMidashiKigou[256];						//!< 見出し記号
+	SMidashiKigou	m_szMidashiKigou{};					//!< 見出し記号
 
 	//引用符
-	wchar_t		m_szInyouKigou[32];							//!< 引用符
+	SInyouKigou		m_szInyouKigou{};						//!< 引用符
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -391,7 +397,7 @@ struct CommonSetting_Search
 
 	BOOL			m_bCaretTextForSearch;		//!< カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
 	bool			m_bInheritKeyOtherView;		//!< 次・前検索で他のビューの検索条件を引き継ぐ
-	WCHAR			m_szRegexpLib[_MAX_PATH];	//!< 使用する正規表現DLL  2007.08.22 genta
+	SFilePath		m_szRegexpLib{};			//!< 使用する正規表現DLL  2007.08.22 genta
 
 	//Grep
 	BOOL			m_bGrepExitConfirm;			//!< Grepモードで保存確認するか
@@ -428,7 +434,9 @@ struct CommonSetting_KeyBind
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_CustomMenu
 {
-	WCHAR			m_szCustMenuNameArr   [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
+	using SCustomMenuName = StaticString<MAX_CUSTOM_MENU_NAME_LEN + 1>;
+
+	SCustomMenuName	m_szCustMenuNameArr   [MAX_CUSTOM_MENU];
 	int				m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
 	EFunctionCode	m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
 	KEYCODE			m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
@@ -466,15 +474,15 @@ struct CommonSetting_Helper
 	BOOL		m_bHokanKey_RIGHT;				//!< VK_RIGHT	補完決定キーが有効/無効
 
 	//外部ヘルプの設定
-	WCHAR		m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
+	SFilePath	m_szExtHelp{};					//!< 外部ヘルプ１
 
 	//外部HTMLヘルプの設定
-	WCHAR		m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
+	SFilePath	m_szExtHtmlHelp{};				//!< 外部HTMLヘルプ
 	bool		m_bHtmlHelpIsSingle;			//!< HtmlHelpビューアはひとつ (ビューアを複数起動しない)
 
 	//migemo設定
-	WCHAR		m_szMigemoDll[_MAX_PATH];		//!< migemo dll
-	WCHAR		m_szMigemoDict[_MAX_PATH];		//!< migemo dict
+	SFilePath	m_szMigemoDll{};				//!< migemo dll
+	SFilePath	m_szMigemoDict{};				//!< migemo dict
 
 	//キーワードヘルプ
 	LOGFONT		m_lf;							//!< キーワードヘルプのフォント情報		// ai 02/05/21 Add
@@ -486,7 +494,7 @@ struct CommonSetting_Helper
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Macro
 {
-	WCHAR			m_szKeyMacroFileName[MAX_PATH];	//!< キーボードマクロのファイル名
+	SFilePath		m_szKeyMacroFileName{};			//!< キーボードマクロのファイル名
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル		Sep. 14, 2001 genta
 	SFilePath		m_szMACROFOLDER;				//!< マクロ用フォルダー
 	int				m_nMacroOnOpened;				//!< オープン後自動実行マクロ番号	@@@ 2006.09.01 ryoji
@@ -504,8 +512,8 @@ struct CommonSetting_FileName
 	bool		m_bTransformShortPath;											//!< ファイル名の省略表記
 	int			m_nTransformShortMaxWidth;										//!< ファイル名の省略表記の最大長
 	int			m_nTransformFileNameArrNum;										//!< ファイル名の簡易表示登録数
-	WCHAR		m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ファイル名の簡易表示変換前文字列
-	WCHAR		m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK
+	SFilePath	m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME];	//!< ファイル名の簡易表示変換前文字列
+	SFilePath	m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME];	//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -653,8 +661,11 @@ enum EPluginState {
 
 struct PluginRec
 {
-	WCHAR			m_szId[MAX_PLUGIN_ID];		//!< プラグインID
-	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< プラグインフォルダー/設定ファイル名
+	using SPluginId = StaticString<MAX_PLUGIN_ID>;
+	using SPluginName = StaticString<MAX_PLUGIN_NAME>;
+
+	SPluginId		m_szId{};		//!< プラグインID
+	SPluginName		m_szName{};	//!< プラグインフォルダー/設定ファイル名
 	EPluginState	m_state;					//!< プラグイン状態。設定ファイルに保存せずメモリ上のみ。
 	int 			m_nCmdNum;					//!< プラグイン コマンドの数	// 2010/7/3 Uchi
 };
@@ -677,11 +688,15 @@ enum EMainMenuType {
 }; 
 
 class CMainMenu {
+private:
+	using SAccessKey = StaticString<2>;
+	using SMainMenuName = StaticString<MAX_MAIN_MENU_NAME_LEN + 1>;
+
 public:
 	EMainMenuType	m_nType;		//!< 種類
 	EFunctionCode	m_nFunc;		//!< Function
-	WCHAR			m_sKey[2];		//!< アクセスキー
-	WCHAR			m_sName[MAX_MAIN_MENU_NAME_LEN+1];	//!< 名前
+	SAccessKey		m_sKey{};		//!< アクセスキー
+	SMainMenuName	m_sName{};		//!< 名前
 	int 			m_nLevel;		//!< レベル
 };
 
@@ -729,4 +744,5 @@ struct CommonSetting
 	CommonSetting_Plugin			m_sPlugin;			//!< プラグイン 2009/11/30 syat
 	CommonSetting_MainMenu			m_sMainMenu;		//!< メインメニュー		// 2010/5/15 Uchi
 };
+
 #endif /* SAKURA_COMMONSETTING_2CBDBC26_EA7F_466E_842F_AFB0D93207D2_H_ */
