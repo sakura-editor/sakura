@@ -18,7 +18,7 @@
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -454,6 +454,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGrepOutputFileOnly = false;
 			sSearch.m_bGrepOutputBaseFolder = false;
 			sSearch.m_bGrepSeparateFolder = false;
+			sSearch.m_bGrepExceptFileRegexp = false;
 			sSearch.m_bGrepBackup = true;
 
 			sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダーの初期値をカレントフォルダーにする */

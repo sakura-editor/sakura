@@ -55,6 +55,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダー
 	IDC_COMBO_EXCLUDE_FILE,			HIDC_GREP_COMBO_EXCLUDE_FILE,		//除外ファイル
 	IDC_COMBO_EXCLUDE_FOLDER,		HIDC_GREP_COMBO_EXCLUDE_FOLDER,		//除外フォルダー
+	IDC_CHK_EXCLUDE_FILE_REGEXP,	HIDC_GREP_CHK_EXCLUDE_FILE_REGEXP,	//除外ファイルの正規表現
 	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//上
 	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//結果出力：行単位
 	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_RADIO_OUTPUTMARKED,		//結果出力：該当部分
@@ -167,6 +168,7 @@ GrepInfo CDlgGrep::MakeGrepInfo() const
 	gi.bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	gi.bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	gi.bGrepSeparateFolder = m_bGrepSeparateFolder;
+	gi.bGrepExceptFileRegexp = m_bGrepExceptFileRegexp;
 	return gi;
 }
 
@@ -235,6 +237,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	m_bGrepOutputFileOnly = m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly;
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
 	m_bGrepSeparateFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
+	m_bGrepExceptFileRegexp = m_pShareData->m_Common.m_sSearch.m_bGrepExceptFileRegexp;
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
@@ -702,6 +705,7 @@ void CDlgGrep::SetData( void )
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_FILE_ONLY, m_bGrepOutputFileOnly );
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_BASE_PATH, m_bGrepOutputBaseFolder );
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_SEP_FOLDER, m_bGrepSeparateFolder );
+	CheckDlgButtonBool( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP, m_bGrepExceptFileRegexp );
 
 	// フォルダーの初期値をカレントフォルダーにする
 	::CheckDlgButton( GetHwnd(), IDC_CHK_DEFAULTFOLDER, m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder );
@@ -742,6 +746,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	::EnableWindow( GetItemHwnd( IDC_CHK_SUBFOLDER ), bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FILEOPENDIR ),    bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_CHK_EXCLUDE_FILE_REGEXP ), bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ),  bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER_UP ),      bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_CURRENTFOLDER ),  bEnableControls );
@@ -805,6 +810,7 @@ int CDlgGrep::GetData( void )
 	m_bGrepOutputFileOnly = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_FILE_ONLY );
 	m_bGrepOutputBaseFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_BASE_PATH );
 	m_bGrepSeparateFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_SEP_FOLDER );
+	m_bGrepExceptFileRegexp = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
 
 	/* 検索文字列 */
 	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );;
@@ -840,6 +846,7 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepExceptFileRegexp = m_bGrepExceptFileRegexp;
 
 	// 引用符の閉じ忘れがあると、後ろに連結する除外パターンまで引用符の中に入ってしまう
 	if( CGrepEnumKeys::HasUnclosedQuote( m_szFile )

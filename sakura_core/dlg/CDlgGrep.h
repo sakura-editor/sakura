@@ -61,6 +61,7 @@ public:
 	bool		m_bGrepOutputFileOnly;		/*!< ファイル毎最初のみ検索 */
 	bool		m_bGrepOutputBaseFolder;	/*!< ベースフォルダー表示 */
 	bool		m_bGrepSeparateFolder;		/*!< フォルダー毎に表示 */
+	bool		m_bGrepExceptFileRegexp = false;	/*!< 除外ファイルを正規表現で指定 */
 
 	std::wstring	m_strText;				/*!< 検索文字列 */
 	bool			m_bSetText;				//!< 検索文字列を設定したか

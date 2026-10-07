@@ -423,3 +423,45 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_ReplaceDialogAddsReplaceFields)
 	EXPECT_TRUE(gi.bGrepPaste);
 	EXPECT_TRUE(gi.bGrepBackup);
 }
+
+/*!
+ * @brief CDlgGrep::MakeGrepInfo() のテスト
+ *  除外ファイルの正規表現の指定が GrepInfo に写されること
+ */
+TEST_F(CDlgGrepTest, MakeGrepInfo_CopiesExceptFileRegexp)
+{
+	CDlgGrep dlg;
+	EXPECT_THAT(dlg.MakeGrepInfo().bGrepExceptFileRegexp, IsFalse());
+
+	dlg.m_bGrepExceptFileRegexp = true;
+	EXPECT_THAT(dlg.MakeGrepInfo().bGrepExceptFileRegexp, IsTrue());
+}
+
+/*!
+ * @brief CDlgGrep::MakeGrepInfo() のテスト
+ *  正規表現の除外ファイル(区切り文字を含むものは引用符付き)が、Grep 実行時の解析で正規表現として振り分けられること
+ */
+TEST_F(CDlgGrepTest, MakeGrepInfo_ExceptFileRegexpRoundTrip)
+{
+	CDlgGrep dlg;
+	dlg.m_szFile = L"*.cpp";
+	dlg.m_szExcludeFile = LR"("\d{2,4}" ^a$)";
+	dlg.m_bGrepExceptFileRegexp = true;
+
+	const GrepInfo gi = dlg.MakeGrepInfo();
+	const std::wstring expectedFile = LR"(*.cpp;!"\d{2,4}";!^a$)";	// 引用符を含むのでマクロの外で作る(C2017 の回避)
+	EXPECT_THAT(gi.cmGrepFile.GetStringPtr(), StrEq(expectedFile));
+
+	CGrepEnumKeys keys;
+	ASSERT_THAT(keys.SetFileKeys(gi.cmGrepFile.GetStringPtr(), gi.bGrepExceptFileRegexp), Eq(0));
+	EXPECT_THAT(keys.m_vecExceptFileRegexKeys, (VGrepEnumKeys{ LR"(\d{2,4})", L"^a$" }));
+	EXPECT_THAT(keys.m_vecExceptFileKeys, IsEmpty());
+}
+
+/*!
+ * @brief 共有データの既定値では、除外ファイルの正規表現はオフであること
+ */
+TEST_F(CDlgGrepTest, ShareDataDefault_ExceptFileRegexpIsOff)
+{
+	EXPECT_THAT(GetDllShareData().m_Common.m_sSearch.m_bGrepExceptFileRegexp, IsFalse());
+}
