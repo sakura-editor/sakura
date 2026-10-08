@@ -9,6 +9,7 @@
 #include <Windows.h>
 
 #include "basis/GrepInfo.h"
+#include "_main/CCommandLine.h"
 #include "dlg/CDlgGrepReplace.h"
 #include "grep/CGrepEnumKeys.h"
 #include "env/ShareDataTestSuite.hpp"
@@ -285,6 +286,87 @@ TEST(GrepInfo, Normalized_DoesNotModifySelf)
 
 	EXPECT_EQ(2, gi.nGrepOutputLineType);
 	EXPECT_EQ(1, normalized.nGrepOutputLineType);
+}
+
+/*!
+ * @brief GrepInfo::MakeCommandLine() のテスト
+ *  既定値では、出力形式だけが -GOPT に付き、-GREPR は付かない
+ */
+TEST(GrepInfo, MakeCommandLine_Default)
+{
+	GrepInfo gi;
+	gi.cmGrepKey.SetString(L"key");
+	gi.cmGrepFile.SetString(L"*.txt");
+	gi.cmGrepFolder.SetString(LR"(C:\work)");
+	const std::wstring expected = LR"(-GREPMODE -GKEY="key" -GFILE="*.txt" -GFOLDER="C:\work" -GCODE=0 -GOPT=1)";	// 引用符を含むのでマクロの外で作る(C2017 の回避)
+	EXPECT_THAT(gi.MakeCommandLine(), StrEq(expected));
+}
+
+/*!
+ * @brief GrepInfo::MakeCommandLine() のテスト
+ *  すべての項目を既定値以外にしたコマンドラインを解析すると、元と同じになる(引用符を含む値も)
+ */
+TEST(GrepInfo, MakeCommandLine_RoundTrip)
+{
+	GrepInfo gi;
+	gi.cmGrepKey.SetString(LR"(a"b)");
+	gi.cmGrepRep.SetString(LR"(c"d)");
+	gi.cmGrepFile.SetString(LR"(*.txt;!"x,y.txt")");
+	gi.cmGrepFolder.SetString(LR"(C:\a b)");
+	gi.sGrepSearchOption.bLoHiCase = true;
+	gi.sGrepSearchOption.bRegularExp = true;
+	gi.sGrepSearchOption.bWordOnly = true;
+	gi.bGrepCurFolder = true;
+	gi.bGrepStdout = true;
+	gi.bGrepHeader = false;
+	gi.bGrepSubFolder = true;
+	gi.nGrepCharSet = CODE_UTF8;
+	gi.nGrepOutputStyle = 3;
+	gi.nGrepOutputLineType = 2;
+	gi.bGrepOutputFileOnly = true;
+	gi.bGrepOutputBaseFolder = true;
+	gi.bGrepSeparateFolder = true;
+	gi.bGrepReplace = true;
+	gi.bGrepPaste = true;
+	gi.bGrepBackup = true;
+	gi.bGrepExceptFileRegexp = true;
+
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(gi.MakeCommandLine().c_str(), false);
+	EXPECT_THAT(cCommandLine.GetGrepInfoRef() == gi, IsTrue());
+}
+
+/*!
+ * @brief GrepInfo::MakeCommandLine() のテスト
+ *  結果出力(該当部分・該当行・否ヒット行)と結果出力形式(1〜3)の組み合わせが、解析で元に戻る
+ */
+TEST(GrepInfo, MakeCommandLine_OutputRoundTrip)
+{
+	for (const int lineType : { 0, 1, 2 }) {
+		for (const int style : { 1, 2, 3 }) {
+			GrepInfo gi;
+			gi.cmGrepKey.SetString(L"key");
+			gi.cmGrepFile.SetString(L"*.txt");
+			gi.cmGrepFolder.SetString(LR"(C:\work)");
+			gi.nGrepOutputLineType = lineType;
+			gi.nGrepOutputStyle = style;
+
+			CCommandLine cCommandLine;
+			cCommandLine.ParseCommandLine(gi.MakeCommandLine().c_str(), false);
+			EXPECT_THAT(cCommandLine.GetGrepInfoRef() == gi, IsTrue()) << "lineType=" << lineType << " style=" << style;
+		}
+	}
+}
+
+/*!
+ * @brief GrepInfo::MakeCommandLineOptions() のテスト
+ *  結果出力形式が範囲外なら付けない(解析側の既定値 1 になる)
+ */
+TEST(GrepInfo, MakeCommandLineOptions_OutputStyleOutOfRange)
+{
+	GrepInfo gi;
+	gi.nGrepOutputStyle = 0;
+	EXPECT_THAT(gi.MakeCommandLineOptions(), IsEmpty());
 }
 
 /*!

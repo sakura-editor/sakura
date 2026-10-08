@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, 鬼
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,6 +21,7 @@
 #include <Windows.h>
 #include <ObjIdl.h>  // VARIANT等
 #include "func/Funccode.h"
+#include "basis/GrepInfo.h"
 
 class CTextOutputStream;
 class CEditView;
@@ -107,6 +108,8 @@ public:
 
 	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgLengths[], const int ArgSize );
 	static bool HandleFunction( CEditView *View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result);
+	//! Grep・Grep置換マクロの引数から、Grep の入力一式を作る
+	static GrepInfo MakeGrepInfo( const WCHAR* pszKey, const WCHAR* pszRep, const WCHAR* pszFile, const WCHAR* pszFolder, LPARAM lFlag, ECodeType nCharSet );
 	//2009.10.29 syat HandleCommandとHandleFunctionの引数を少しそろえた
 
 	/*
