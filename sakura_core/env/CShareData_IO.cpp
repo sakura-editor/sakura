@@ -2,7 +2,7 @@
 //2008.XX.XX kobake CShareDataから分離
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -524,6 +524,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, L"bGrepOutputFileOnly"	, common.m_sSearch.m_bGrepOutputFileOnly );
 	cProfile.IOProfileData( pszSecName, L"bGrepOutputBaseFolder"	, common.m_sSearch.m_bGrepOutputBaseFolder );
 	cProfile.IOProfileData( pszSecName, L"bGrepSeparateFolder"	, common.m_sSearch.m_bGrepSeparateFolder );
+	cProfile.IOProfileData( pszSecName, L"bGrepExceptFileRegexp"	, common.m_sSearch.m_bGrepExceptFileRegexp );
 	cProfile.IOProfileData( pszSecName, L"bGrepDefaultFolder"		, common.m_sSearch.m_bGrepDefaultFolder );
 	cProfile.IOProfileData( pszSecName, L"bGrepBackup"			, common.m_sSearch.m_bGrepBackup );
 	

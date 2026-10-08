@@ -203,6 +203,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
 		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
 		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
+		if( cDlgGrepRep.m_bGrepExceptFileRegexp		)wcscat_s( pOpt, L"E" );	// 除外ファイルを正規表現で指定する
 		if( cDlgGrepRep.m_bPaste					)wcscat( pOpt, L"C" );	// クリップボードから貼り付け
 		if( cDlgGrepRep.m_bBackup					)wcscat( pOpt, L"O" );	// バックアップ作成
 		if( pOpt[0] ) {

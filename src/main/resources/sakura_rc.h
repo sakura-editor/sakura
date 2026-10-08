@@ -796,6 +796,7 @@
 #define IDC_PYTHONDIR                   1739
 #define IDC_PYTHONDIRREF                1740
 #define IDC_CHECK_bDarkMode             1741
+#define IDC_CHK_EXCLUDE_FILE_REGEXP     1742
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -1862,7 +1863,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        35061
 #define _APS_NEXT_COMMAND_VALUE         101
-#define _APS_NEXT_CONTROL_VALUE         1741
+#define _APS_NEXT_CONTROL_VALUE         1743
 #define _APS_NEXT_SYMED_VALUE           10000
 #endif
 #endif

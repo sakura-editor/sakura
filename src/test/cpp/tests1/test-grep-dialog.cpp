@@ -96,6 +96,7 @@ struct GrepDialogTest : public GrepTestSuite {
 		SetText(hDlg, IDC_COMBO_FOLDER, folder.Path().native());
 		SetText(hDlg, IDC_COMBO_EXCLUDE_FILE, L"");
 		SetText(hDlg, IDC_COMBO_EXCLUDE_FOLDER, L"");
+		Check(hDlg, IDC_CHK_EXCLUDE_FILE_REGEXP, false);
 		Check(hDlg, IDC_CHK_WORD, false);
 		Check(hDlg, IDC_CHK_LOHICASE, false);
 		Check(hDlg, IDC_CHK_REGULAREXP, false);
@@ -457,6 +458,25 @@ TEST_F(GrepDialogTest, FromThisTextCheckbox)
 	EXPECT_TRUE(folderEnabledWhenOff);
 }
 
+//! 「現在編集中のファイルから検索」では、除外ファイルの正規表現のチェックボックスも使えない
+TEST_F(GrepDialogTest, ExceptFileRegexpCheckboxFollowsFromThisText)
+{
+	AddBasicFiles();
+	pcEditDoc->m_cDocFile.SetFilePath((folder.Path() / L"a.txt").c_str());
+	bool enabledWhenOn = true;
+	bool enabledWhenOff = false;
+	CancelGrepDialog([&](HWND hDlg) {
+		Check(hDlg, IDC_CHK_FROMTHISTEXT, true);
+		SendDlgCommand(hDlg, IDC_CHK_FROMTHISTEXT);
+		enabledWhenOn = ::IsWindowEnabled(::GetDlgItem(hDlg, IDC_CHK_EXCLUDE_FILE_REGEXP)) != FALSE;
+		Check(hDlg, IDC_CHK_FROMTHISTEXT, false);
+		SendDlgCommand(hDlg, IDC_CHK_FROMTHISTEXT);
+		enabledWhenOff = ::IsWindowEnabled(::GetDlgItem(hDlg, IDC_CHK_EXCLUDE_FILE_REGEXP)) != FALSE;
+	});
+	EXPECT_THAT(enabledWhenOn, IsFalse());
+	EXPECT_THAT(enabledWhenOff, IsTrue());
+}
+
 //! 「CP」: 文字コードセットの一覧にコードページが加わる
 TEST_F(GrepDialogTest, CodePageCheckbox)
 {
@@ -644,6 +664,58 @@ TEST_F(GrepDialogTest, ReplaceKeepsUtf16)
 	FORWARD_WM_COMMAND(pcEditWnd->GetHwnd(), F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 
 	EXPECT_EQ(EncodeUtf16(replaced, false, true), folder.ReadFile(L"u16.txt"));
+}
+
+// ---------------------------------------------------------------------------
+// 除外ファイルの正規表現(チェックボックス)
+// ---------------------------------------------------------------------------
+
+//! チェックボックスをオンにすると除外ファイルが正規表現になり、設定に保存される
+TEST_F(GrepDialogTest, ExceptFileRegexpCheckbox)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(L"README", "HIT\r\n");
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	AcceptGrepDialog([this](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*");
+		SetText(hDlg, IDC_COMBO_EXCLUDE_FILE, LR"(\\[^.\\]+$)");
+		Check(hDlg, IDC_CHK_EXCLUDE_FILE_REGEXP, true);
+	});
+	const auto text = GetDocumentText();
+	const bool saved = search.m_bGrepExceptFileRegexp;
+	search.m_bGrepExceptFileRegexp = false;	// 後続のテストのために戻す
+
+	EXPECT_THAT(Contains(text, MatchCountText(1)), IsTrue());
+	EXPECT_THAT(Contains(text, LS(STR_GREP_EXCLUDE_FILE_REGEXP)), IsTrue());
+	EXPECT_THAT(saved, IsTrue());
+}
+
+//! Grep置換ダイアログでも、保存した設定がチェックボックスに読み込まれ、チェックすると除外ファイルが正規表現になる
+TEST_F(GrepDialogTest, ReplaceExceptFileRegexpCheckbox)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(L"README", "HIT\r\n");
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	search.m_bGrepExceptFileRegexp = true;	// 保存済みの設定(CDlgGrepReplace::DoModal() で読み込む)
+	bool checkedOnOpen = false;
+	{
+		dialog::ModalDialogCloser closer(L"Grep置換", [this, &checkedOnOpen](HWND hDlg) {
+			checkedOnOpen = ::IsDlgButtonChecked(hDlg, IDC_CHK_EXCLUDE_FILE_REGEXP) == BST_CHECKED;
+			SetConditions(hDlg, L"HIT", L"*");
+			SetText(hDlg, IDC_COMBO_TEXT2, L"REP");
+			SetText(hDlg, IDC_COMBO_EXCLUDE_FILE, LR"(\\[^.\\]+$)");
+			Check(hDlg, IDC_CHK_EXCLUDE_FILE_REGEXP, true);
+			Check(hDlg, IDC_CHK_PASTE, false);
+			Check(hDlg, IDC_CHK_BACKUP, false);
+			SendDlgCommand(hDlg, IDOK);
+		});
+		FORWARD_WM_COMMAND(pcEditWnd->GetHwnd(), F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	}
+	search.m_bGrepExceptFileRegexp = false;	// 後続のテストのために戻す
+
+	EXPECT_THAT(checkedOnOpen, IsTrue());
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), StrEq("REP\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"README"), StrEq("HIT\r\n"));
 }
 
 } // namespace grep_test
