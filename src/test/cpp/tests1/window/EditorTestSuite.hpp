@@ -45,6 +45,15 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 struct MockKernel32 final : public Kernel32
 {
+	MOCK_CONST_METHOD6(CreateFileMappingW, HANDLE(
+		_In_ HANDLE hFile,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+		_In_ DWORD flProtect,
+		_In_ DWORD dwMaximumSizeHigh,
+		_In_ DWORD dwMaximumSizeLow,
+		_In_opt_ LPCWSTR lpName
+	));
+
 	MOCK_CONST_METHOD7(CreateFileW, HANDLE(
 		_In_ LPCWSTR lpFileName,
 		_In_ DWORD dwDesiredAccess,
@@ -77,6 +86,12 @@ struct MockKernel32 final : public Kernel32
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
 		_In_ UINT uSize
+	));
+
+	MOCK_CONST_METHOD3(OpenFileMappingW, HANDLE(
+		_In_ DWORD dwDesiredAccess,
+		_In_ BOOL bInheritHandle,
+		_In_ LPCWSTR lpName
 	));
 
 	MOCK_CONST_METHOD6(ReplaceFileW, BOOL(

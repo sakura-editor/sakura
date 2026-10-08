@@ -186,6 +186,54 @@ public:
 };
 
 /*!
+ * @brief OSのファイルマッピングオブジェクトをラップするクラス
+ *
+ * リソースホルダーを継承するスマートポインター。
+ */
+class FileMapping : public cxx::ResourceHolder<&::CloseHandle>
+{
+private:
+	using Base = cxx::ResourceHolder<&::CloseHandle>;
+	using Me = FileMapping;
+
+public:
+	/*!
+	 * @brief ファイルマッピングを作る
+	 *
+	 * @param[in] hFile ファイルハンドル
+	 * @param[in] lpFileMappingAttributes セキュリティ属性
+	 * @param[in] flProtect 保護属性
+	 * @param[in] maximumSize 最大サイズ
+	 * @param[in] name ファイルマッピングの名前
+	 */
+	static Me CreateFileMappingW(
+		_In_ HANDLE hFile,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+		_In_ DWORD flProtect,
+		const ULARGE_INTEGER& maximumSize,
+		std::wstring_view name
+	);
+
+	/*!
+	 * @brief ファイルマッピングを開く
+	 *
+	 * @param[in] dwDesiredAccess 要求するアクセス権
+	 * @param[in] bInheritHandle ハンドルを継承するかどうか
+	 * @param[in] name ファイルマッピングの名前
+	 */
+	static Me OpenFileMappingW(
+		_In_ DWORD dwDesiredAccess,
+		_In_ BOOL bInheritHandle,
+		std::wstring_view name
+	);
+
+	/*!
+	 * コンストラクタは流用する
+	 */
+	using Base::Base;
+};
+
+/*!
  * @brief Cストリームをラップするクラス
  *
  * リソースホルダーを継承するスマートポインター。

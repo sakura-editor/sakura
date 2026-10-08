@@ -606,6 +606,69 @@ TEST_F(Kernel32, FileHandleCreateFileW104)
 	);
 }
 
+TEST_F(Kernel32, FileMappingCreateFileMappingW101)
+{
+	EXPECT_CALL(*pKernel32, CreateFileMappingW(_, _, _, _, _, _))
+		.WillOnce(Return(HANDLE(nullptr)));
+
+	EXPECT_THROW(
+		FileMapping::CreateFileMappingW(
+			INVALID_HANDLE_VALUE,
+			nullptr,
+			PAGE_READWRITE | SEC_COMMIT,
+			ULARGE_INTEGER{ sizeof(DLLSHAREDATA) },
+			L"mapping name"
+		),
+		std::system_error
+	);
+
+	Target::resetInstance();
+
+	auto hFileMapping = FileMapping::CreateFileMappingW(
+		INVALID_HANDLE_VALUE,
+		nullptr,
+		PAGE_READWRITE | SEC_COMMIT,
+		ULARGE_INTEGER{ sizeof( DLLSHAREDATA ) },
+		L"mapping name - 0123456789ABCDEF" // かぶらないよう長い名前にする
+	);
+	EXPECT_TRUE(hFileMapping);
+}
+
+TEST_F(Kernel32, FileMappingOpenFileMappingW101)
+{
+	EXPECT_CALL(*pKernel32, OpenFileMappingW(_, _, _))
+		.WillOnce(Return(HANDLE(nullptr)))
+		.WillOnce(Return(HANDLE(1)));
+
+	EXPECT_THROW(
+		FileMapping::OpenFileMappingW(
+			GENERIC_READ | GENERIC_WRITE,
+			FALSE,
+			L"mapping name"
+		),
+		std::system_error
+	);
+
+	auto hFileMapping = FileMapping::OpenFileMappingW(
+		GENERIC_READ | GENERIC_WRITE,
+		FALSE,
+		L"mapping name"
+	);
+
+	hFileMapping.release();
+
+	Target::resetInstance();
+
+	EXPECT_THROW(
+		FileMapping::OpenFileMappingW(
+			GENERIC_READ | GENERIC_WRITE,
+			FALSE,
+			L"mapping name"
+		),
+		std::system_error
+	);
+}
+
 TEST_F(Kernel32, FilePointerCreateFilePath101)
 {
 	constexpr auto& fileName = L"tests1.ini";

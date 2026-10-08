@@ -400,6 +400,25 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	return bRet;
 }
 
+HANDLE Kernel32::CreateFileMappingW(
+	_In_ HANDLE hFile,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+	_In_ DWORD flProtect,
+	_In_ DWORD dwMaximumSizeHigh,
+	_In_ DWORD dwMaximumSizeLow,
+	_In_opt_ LPCWSTR lpName
+) const
+{
+	return ::CreateFileMappingW(
+		hFile,
+		lpFileMappingAttributes,
+		flProtect,
+		dwMaximumSizeHigh,
+		dwMaximumSizeLow,
+		lpName
+	);
+}
+
 HANDLE Kernel32::CreateFileW(
 	_In_ LPCWSTR lpFileName,
 	_In_ DWORD dwDesiredAccess,
@@ -462,6 +481,19 @@ UINT Kernel32::GetSystemDirectoryW(
 ) const
 {
 	return ::GetSystemDirectoryW(lpBuffer, uSize);
+}
+
+HANDLE Kernel32::OpenFileMappingW(
+	_In_ DWORD dwDesiredAccess,
+	_In_ BOOL bInheritHandle,
+	_In_ LPCWSTR lpName
+) const
+{
+	return ::OpenFileMappingW(
+		dwDesiredAccess,
+		bInheritHandle,
+		lpName
+	);
 }
 
 BOOL Kernel32::ReplaceFileW(
@@ -764,6 +796,77 @@ std::wstring GlobalSakura::wstring() const & {
 	}
 
 	return FileHandle{ hFile };
+}
+
+/*!
+ * @brief ファイルマッピングを作る
+ *
+ * @param[in] hFile ファイルハンドル
+ * @param[in] lpFileMappingAttributes セキュリティ属性
+ * @param[in] flProtect 保護属性
+ * @param[in] maximumSize 最大サイズ
+ * @param[in] name ファイルマッピングの名前
+ */
+/* static */ FileMapping FileMapping::CreateFileMappingW(
+	_In_ HANDLE hFile,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+	_In_ DWORD flProtect,
+	const ULARGE_INTEGER& maximumSize,
+	std::wstring_view name
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Name{ name };
+
+	// ファイルマッピングを作る
+	const auto hFileMapping = Kernel32::getInstance()->CreateFileMappingW(
+		hFile,
+		lpFileMappingAttributes,
+		flProtect,
+		maximumSize.HighPart,
+		maximumSize.LowPart,
+		_Name.c_str()
+	);
+
+	// 戻り値が NULL だった場合
+	if (!hFileMapping) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return FileMapping{ hFileMapping };
+}
+
+/*!
+ * @brief ファイルマッピングを開く
+ *
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] bInheritHandle ハンドルを継承するかどうか
+ * @param[in] name ファイルマッピングの名前
+ */
+/* static */ FileMapping FileMapping::OpenFileMappingW(
+	_In_ DWORD dwDesiredAccess,
+	_In_ BOOL bInheritHandle,
+	std::wstring_view name
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Name{ name };
+
+	// ファイルマッピングを開く
+	const auto hFileMapping = Kernel32::getInstance()->OpenFileMappingW(
+		dwDesiredAccess,
+		bInheritHandle,
+		_Name.c_str()
+	);
+
+	// 戻り値が NULL だった場合
+	if (!hFileMapping) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return FileMapping{ hFileMapping };
 }
 
 /*!

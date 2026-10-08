@@ -28,6 +28,15 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 
 	~Kernel32() override = default;
 
+	virtual HANDLE CreateFileMappingW(
+		_In_ HANDLE hFile,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+		_In_ DWORD flProtect,
+		_In_ DWORD dwMaximumSizeHigh,
+		_In_ DWORD dwMaximumSizeLow,
+		_In_opt_ LPCWSTR lpName
+    ) const;
+
 	virtual HANDLE CreateFileW(
 		_In_ LPCWSTR lpFileName,
 		_In_ DWORD dwDesiredAccess,
@@ -60,6 +69,12 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
 		_In_ UINT uSize
+	) const;
+
+	virtual HANDLE OpenFileMappingW(
+		_In_ DWORD dwDesiredAccess,
+		_In_ BOOL bInheritHandle,
+		_In_ LPCWSTR lpName
 	) const;
 
 	virtual BOOL ReplaceFileW(
