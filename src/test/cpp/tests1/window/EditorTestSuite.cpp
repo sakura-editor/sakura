@@ -167,10 +167,25 @@ namespace window {
 	);
 }
 
+/* static */ DWORD MockKernel32::_GetModuleFileNameW(
+	_In_opt_ HMODULE hModule,
+	_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
+	LPWSTR lpFilename,
+	_In_ DWORD nSize
+)
+{
+	return ::GetModuleFileNameW(
+		hModule,
+		lpFilename,
+		nSize
+	);
+}
+
 MockKernel32::MockKernel32()
 {
 	// デフォルトの動作を設定する
 	ON_CALL(*this, CreateFileW(_, _, _, _, _, _, _)).WillByDefault(&_CreateFileW);
+	ON_CALL(*this, GetModuleFileNameW(_, _, _)).WillByDefault(&_GetModuleFileNameW);
 }
 
 /* static */ BOOL MockUser32::_WinHelpW(
