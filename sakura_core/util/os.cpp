@@ -430,7 +430,11 @@ DWORD Kernel32::GetModuleFileNameW(
 	_In_ DWORD nSize
 ) const
 {
-	return ::GetModuleFileNameW(hModule, lpFilename, nSize);
+	return ::GetModuleFileNameW(
+		hModule,
+		lpFilename,
+		nSize
+	);
 }
 
 UINT Kernel32::GetSystemDirectoryW(

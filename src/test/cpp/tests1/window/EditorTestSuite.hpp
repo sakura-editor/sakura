@@ -88,6 +88,13 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ HANDLE hTemplateFile
 	);
 
+	static DWORD _GetModuleFileNameW(
+		_In_opt_ HMODULE hModule,
+		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
+		LPWSTR lpFilename,
+		_In_ DWORD nSize
+	);
+
 	MockKernel32();
 };
 
