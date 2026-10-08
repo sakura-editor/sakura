@@ -393,6 +393,27 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	return bRet;
 }
 
+HANDLE Kernel32::CreateFileW(
+	_In_ LPCWSTR lpFileName,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwShareMode,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	_In_ DWORD dwCreationDisposition,
+	_In_ DWORD dwFlagsAndAttributes,
+	_In_opt_ HANDLE hTemplateFile
+) const
+{
+	return ::CreateFileW(
+		lpFileName,
+		dwDesiredAccess,
+		dwShareMode,
+		lpSecurityAttributes,
+		dwCreationDisposition,
+		dwFlagsAndAttributes,
+		hTemplateFile
+	);
+}
+
 DWORD Kernel32::GetCurrentDirectoryW(
 	_In_ DWORD nBufferLength,
 	_Out_writes_to_opt_( nBufferLength, return +1 )
@@ -557,6 +578,68 @@ std::wstring GlobalSakura::wstring() const & {
 		if (cbSize < sizeof(size_type) + (length + 1) * sizeof(WCHAR)) return L"";
 		return std::wstring(LPCWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
 	});
+}
+
+/*!
+ * @brief ファイルハンドルを作成する
+ *
+ * ハンドルリソースを「作成する」からCreateFile。
+ *
+ * ファイルを開くのか、作成するのかはdwCreationDispositionで指定する。
+ *
+ * @param[in] fileName ファイル名
+ * @param[in] dwDesiredAccess アクセス権
+ * @param[in] dwShareMode 共有モード
+ * @param[in] lpSecurityAttributes セキュリティ属性
+ * @param[in] dwCreationDisposition 作成方法
+ * @param[in] dwFlagsAndAttributes ファイル属性と作成フラグ
+ * @param[in] hTemplateFile テンプレートファイルのハンドル
+ */
+/* static */ FileHandle FileHandle::CreateFileW(
+	std::wstring_view fileName,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwShareMode,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	_In_ DWORD dwCreationDisposition,
+	_In_ DWORD dwFlagsAndAttributes,
+	_In_opt_ HANDLE hTemplateFile
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _FileName{ fileName };
+
+	// NUL終端文字列を取り出す
+	const auto lpFileName = _FileName.c_str();
+
+	// パラメーターチェック
+	if (!lpFileName || !lpFileName[0]) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::invalid_argument("fileName is required.");
+	}
+
+	if (SFilePath::size() <= _FileName.length()) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::overflow_error("fileName is too long.");
+	}
+
+	// ファイルハンドルを作成する
+	const auto hFile = Kernel32::getInstance()->CreateFileW(
+		lpFileName,
+		dwDesiredAccess,
+		dwShareMode,
+		lpSecurityAttributes,
+		dwCreationDisposition,
+		dwFlagsAndAttributes,
+		hTemplateFile
+	);
+
+	// 戻り値が INVALID_HANDLE_VALUE だった場合
+	if (INVALID_HANDLE_VALUE == hFile) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return FileHandle{ hFile };
 }
 
 /*!

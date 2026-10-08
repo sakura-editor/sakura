@@ -1,13 +1,134 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "io/CFile.h"
+
 #include "window/CEditWnd.h" // 変更予定
 #include "CSelectLang.h"
+
+#include <string_view>
+#include <system_error>
+
+namespace cxx {
+
+/*!
+ * @brief 新しいファイルを作る
+ *
+ * 指定されたパスに新しいファイルを作成します。
+ * 既に存在している場合、戻り値は空になります。
+ *
+ * @param[in] path ファイル名
+ * @param[in, opt] dwFlagsAndAttributes ファイル属性と作成フラグ
+ * @return 新しいファイルのハンドル。作成できなかった場合は空のハンドル
+ * @throw std::system_error Windowsがエラーを返したとき
+ */
+/* static */ FileHandle FileHandle::CreateNew(
+	std::wstring_view path,
+	_In_opt_ DWORD dwFlagsAndAttributes
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Path{ path };
+
+	// 新規作成なので書き込み権限を要求する
+	DWORD dwDesiredAccess = GENERIC_WRITE;
+
+	// 書き込み共有は許可する
+	DWORD dwShareMode	  = FILE_SHARE_WRITE;
+
+	// 一時ファイル属性が付いていたら読めるようにしておく
+	if (dwFlagsAndAttributes & FILE_ATTRIBUTE_TEMPORARY) {
+		dwDesiredAccess |= GENERIC_READ;
+		dwShareMode		|= FILE_SHARE_READ;
+	}
+
+	// 「閉じたら削除」フラグが立っていたら削除できるようにしておく
+	if (dwFlagsAndAttributes & FILE_FLAG_DELETE_ON_CLOSE) {
+		dwDesiredAccess |= DELETE;
+		dwShareMode		|= FILE_SHARE_DELETE;
+	}
+
+	// OSのファイルハンドルを返却する
+	FileHandle hFile{};
+
+	// ファイルを作成する
+	try {
+		hFile = CreateFileW(
+			_Path.str(),
+			dwDesiredAccess,
+			dwShareMode,
+			nullptr,
+			CREATE_NEW,
+			dwFlagsAndAttributes,
+			nullptr
+		);
+	}
+	// エラーが発生した場合
+	catch (const std::system_error& e) {
+		// エラーコードが「既に存在」を示す場合以外はそのまま上位に投げる
+		if (ERROR_FILE_EXISTS != e.code().value() &&
+			ERROR_ALREADY_EXISTS != e.code().value())
+		{
+			throw;
+		}
+	}
+
+	return hFile;
+}
+
+/*!
+ * @brief 存在しているファイルを開く
+ *
+ * 指定されたパスに存在するファイルを開きます。
+ *
+ * @param[in] path ファイル名
+ * @param[in] dwDesiredAccess アクセス権
+ * @param[in] dwShareMode 共有モード
+ * @return 開いたファイルのハンドル。開けなかった場合は空のハンドル
+ * @throw std::system_error Windowsがエラーを返したとき
+ */
+/* static */ FileHandle FileHandle::OpenExisting(
+	std::wstring_view path,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwShareMode
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Path{ path };
+
+	// OSのファイルハンドルを返却する
+	FileHandle hFile{};
+
+	// 存在しているファイルを開く
+	try {
+		hFile = CreateFileW(
+			_Path.str(),
+			dwDesiredAccess,
+			dwShareMode,
+			nullptr,
+			OPEN_EXISTING,
+			0L,				// 属性は指定しない
+			nullptr
+		);
+	}
+	// エラーが発生した場合
+	catch (const std::system_error& e) {
+		// エラーコードがアクセス拒否以外のエラーはそのまま上位に投げる
+		if (ERROR_SHARING_VIOLATION != e.code().value() &&
+			ERROR_ACCESS_DENIED != e.code().value())
+		{
+			throw;
+		}
+	}
+
+	return hFile;
+}
+
+} // namespace cxx
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
