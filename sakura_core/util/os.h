@@ -27,6 +27,16 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 
 	~Kernel32() override = default;
 
+	virtual HANDLE CreateFileW(
+		_In_ LPCWSTR lpFileName,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwShareMode,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		_In_ DWORD dwCreationDisposition,
+		_In_ DWORD dwFlagsAndAttributes,
+		_In_opt_ HANDLE hTemplateFile
+	) const;
+
 	virtual DWORD GetCurrentDirectoryW(
 		_In_ DWORD nBufferLength,
 		_Out_writes_to_opt_(nBufferLength,return + 1)

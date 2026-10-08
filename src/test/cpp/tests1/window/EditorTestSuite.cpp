@@ -146,6 +146,33 @@ namespace window {
 
 } // namespace window
 
+/* static */ HANDLE MockKernel32::_CreateFileW(
+	_In_ LPCWSTR lpFileName,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwShareMode,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	_In_ DWORD dwCreationDisposition,
+	_In_ DWORD dwFlagsAndAttributes,
+	_In_opt_ HANDLE hTemplateFile
+)
+{
+	return ::CreateFileW(
+		lpFileName,
+		dwDesiredAccess,
+		dwShareMode,
+		lpSecurityAttributes,
+		dwCreationDisposition,
+		dwFlagsAndAttributes,
+		hTemplateFile
+	);
+}
+
+MockKernel32::MockKernel32()
+{
+	// デフォルトの動作を設定する
+	ON_CALL(*this, CreateFileW(_, _, _, _, _, _, _)).WillByDefault(&_CreateFileW);
+}
+
 /* static */ BOOL MockUser32::_WinHelpW(
 	_In_opt_ HWND /* hWndMain */,
 	_In_opt_ LPCWSTR /* lpszHelp */,

@@ -45,6 +45,16 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 struct MockKernel32 final : public Kernel32
 {
+	MOCK_CONST_METHOD7(CreateFileW, HANDLE(
+		_In_ LPCWSTR lpFileName,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwShareMode,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		_In_ DWORD dwCreationDisposition,
+		_In_ DWORD dwFlagsAndAttributes,
+		_In_opt_ HANDLE hTemplateFile
+	));
+
 	MOCK_CONST_METHOD2(GetCurrentDirectoryW, DWORD(
 		_In_ DWORD nBufferLength,
 		_Out_writes_to_opt_(nBufferLength,return + 1)
@@ -67,6 +77,18 @@ struct MockKernel32 final : public Kernel32
 	MOCK_CONST_METHOD1(SetCurrentDirectoryW, BOOL(
 		_In_ LPCWSTR lpPathName
 	));
+
+	static HANDLE _CreateFileW(
+		_In_ LPCWSTR lpFileName,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwShareMode,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		_In_ DWORD dwCreationDisposition,
+		_In_ DWORD dwFlagsAndAttributes,
+		_In_opt_ HANDLE hTemplateFile
+	);
+
+	MockKernel32();
 };
 
 struct MockUser32 final : public User32
