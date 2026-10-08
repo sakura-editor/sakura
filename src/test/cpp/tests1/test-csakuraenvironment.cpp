@@ -579,6 +579,50 @@ TEST_F(Kernel32, FileHandleCreateFileW104)
 	);
 }
 
+TEST_F(Kernel32, FileHandleGetFileTime101)
+{
+	FileHandle hFile{ HANDLE(1) };
+
+	FILETIME creationTime{};
+	FILETIME lastAccessTime{};
+	FILETIME lastWriteTime{};
+
+	EXPECT_CALL(*pKernel32, GetFileTime(hFile.get(), &creationTime, &lastAccessTime, &lastWriteTime))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(TRUE));
+
+	EXPECT_THROW(
+		hFile.GetFileTime(&creationTime, &lastAccessTime, &lastWriteTime),
+		std::system_error
+	);
+
+	hFile.GetFileTime(&creationTime, &lastAccessTime, &lastWriteTime);
+
+	hFile.release();
+}
+
+TEST_F(Kernel32, FileHandleSetFileTime101)
+{
+	FileHandle hFile{ HANDLE(1) };
+
+	FILETIME creationTime{};
+	FILETIME lastAccessTime{};
+	FILETIME lastWriteTime{};
+
+	EXPECT_CALL(*pKernel32, SetFileTime(hFile.get(), &creationTime, &lastAccessTime, &lastWriteTime))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(TRUE));
+
+	EXPECT_THROW(
+		hFile.SetFileTime(&creationTime, &lastAccessTime, &lastWriteTime),
+		std::system_error
+	);
+
+	hFile.SetFileTime(&creationTime, &lastAccessTime, &lastWriteTime);
+
+	hFile.release();
+}
+
 TEST_F(Kernel32, GetCurrentDirectoryW101)
 {
 	// APIが0を返したら例外。

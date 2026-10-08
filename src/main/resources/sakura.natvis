@@ -22,6 +22,12 @@
       </ArrayItems>
     </Expand>
   </Type>
+  <Type Name="cxx::FilePointer">
+    <DisplayString>{m_Holder}</DisplayString>
+    <Expand>
+      <Item Name="[file]">m_Holder</Item>
+    </Expand>
+  </Type>
   <Type Name="cxx::NullTerminatedString&lt;wchar_t&gt;">
     <DisplayString Condition="m_IsNull">NULL</DisplayString>
     <DisplayString Condition="!m_IsNull &amp;&amp; m_Length == 0">empty (0)</DisplayString>

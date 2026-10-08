@@ -5,7 +5,8 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "os.h"
+#include "util/os.h"
+
 #include "util/module.h"
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
@@ -423,6 +424,21 @@ DWORD Kernel32::GetCurrentDirectoryW(
 	return ::GetCurrentDirectoryW(nBufferLength, lpBuffer);
 }
 
+BOOL Kernel32::GetFileTime(
+	_In_ HANDLE hFile,
+	_Out_opt_ LPFILETIME lpCreationTime,
+	_Out_opt_ LPFILETIME lpLastAccessTime,
+	_Out_opt_ LPFILETIME lpLastWriteTime
+) const
+{
+	return ::GetFileTime(
+		hFile,
+		lpCreationTime,
+		lpLastAccessTime,
+		lpLastWriteTime
+	);
+}
+
 DWORD Kernel32::GetModuleFileNameW(
 	_In_opt_ HMODULE hModule,
 	_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
@@ -447,6 +463,22 @@ BOOL Kernel32::SetCurrentDirectoryW(
 ) const
 {
 	return ::SetCurrentDirectoryW(lpPathName);
+}
+
+
+BOOL Kernel32::SetFileTime(
+	_In_ HANDLE hFile,
+	_In_opt_ CONST FILETIME* lpCreationTime,
+	_In_opt_ CONST FILETIME* lpLastAccessTime,
+	_In_opt_ CONST FILETIME* lpLastWriteTime
+) const
+{
+	return ::SetFileTime(
+		hFile,
+		lpCreationTime,
+		lpLastAccessTime,
+		lpLastWriteTime
+	);
 }
 
 namespace cxx {
@@ -640,6 +672,40 @@ std::wstring GlobalSakura::wstring() const & {
 	}
 
 	return FileHandle{ hFile };
+}
+
+void FileHandle::GetFileTime(
+	_Out_opt_ LPFILETIME lpCreationTime,
+	_Out_opt_ LPFILETIME lpLastAccessTime,
+	_Out_opt_ LPFILETIME lpLastWriteTime
+) const
+{
+	if (Kernel32::getInstance()->GetFileTime(get(), lpCreationTime, lpLastAccessTime, lpLastWriteTime))
+	{
+		return;	// 成功した
+	}
+
+	throw std::system_error(
+		int(::GetLastError()), std::system_category(),
+		"Failed to get file timestamps"
+	);
+}
+
+void FileHandle::SetFileTime(
+	_In_opt_ CONST FILETIME* lpCreationTime,
+	_In_opt_ CONST FILETIME* lpLastAccessTime,
+	_In_opt_ CONST FILETIME* lpLastWriteTime
+) const
+{
+	if (Kernel32::getInstance()->SetFileTime(get(), lpCreationTime, lpLastAccessTime, lpLastWriteTime))
+	{
+		return;	// 成功した
+	}
+
+	throw std::system_error(
+		int(::GetLastError()), std::system_category(),
+		"Failed to set file timestamps"
+	);
 }
 
 /*!

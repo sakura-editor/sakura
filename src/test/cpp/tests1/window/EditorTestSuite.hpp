@@ -61,6 +61,13 @@ struct MockKernel32 final : public Kernel32
 		LPWSTR lpBuffer
 	));
 
+	MOCK_CONST_METHOD4(GetFileTime, BOOL(
+		_In_ HANDLE hFile,
+		_Out_opt_ LPFILETIME lpCreationTime,
+		_Out_opt_ LPFILETIME lpLastAccessTime,
+		_Out_opt_ LPFILETIME lpLastWriteTime
+	));
+
 	MOCK_CONST_METHOD3(GetModuleFileNameW, DWORD(
 		_In_opt_ HMODULE hModule,
 		_Out_writes_to_(nSize, ((return < nSize) ? (return +1) : nSize))
@@ -76,6 +83,13 @@ struct MockKernel32 final : public Kernel32
 
 	MOCK_CONST_METHOD1(SetCurrentDirectoryW, BOOL(
 		_In_ LPCWSTR lpPathName
+	));
+
+	MOCK_CONST_METHOD4(SetFileTime, BOOL(
+		_In_ HANDLE hFile,
+		_In_opt_ CONST FILETIME* lpCreationTime,
+		_In_opt_ CONST FILETIME* lpLastAccessTime,
+		_In_opt_ CONST FILETIME* lpLastWriteTime
 	));
 
 	static HANDLE _CreateFileW(

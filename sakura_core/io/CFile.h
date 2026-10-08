@@ -19,6 +19,13 @@
 namespace cxx {
 
 /*!
+ * @brief ファイルディスクリプタを閉じるための Deleter
+ *
+ * std::unique_ptrのテンプレート引数に指定するために用意したもの。
+ */
+int FdCloseFunc(const int* pFd) noexcept;
+
+/*!
  * @brief OSのファイルハンドルをラップするクラス
  *
  * リソースホルダーを継承するスマートポインター。
@@ -174,6 +181,90 @@ public:
 	 * コンストラクタは流用する
 	 */
 	using Base::Base;
+
+	void GetFileTime(
+		_Out_opt_ LPFILETIME lpCreationTime,
+		_Out_opt_ LPFILETIME lpLastAccessTime,
+		_Out_opt_ LPFILETIME lpLastWriteTime
+	) const;
+
+	void SetFileTime(
+		_In_opt_ CONST FILETIME* lpCreationTime,
+		_In_opt_ CONST FILETIME* lpLastAccessTime,
+		_In_opt_ CONST FILETIME* lpLastWriteTime
+	) const;
+};
+
+/*!
+ * @brief Cストリームをラップするクラス
+ *
+ * リソースホルダーを継承するスマートポインター。
+ * fopen() で開いた Cストリーム(FILE*) を RAII っぽく扱えるようにする。
+ */
+class FilePointer : public cxx::ResourceHolder<&::fclose>
+{
+private:
+	using Base = cxx::ResourceHolder<&::fclose>;
+	using Me = FilePointer;
+
+public:
+	/*!
+	 * @brief OSのファイルハンドルから Cストリーム を開く
+	 *
+	 * @param[in] hFile OSのファイルハンドル
+	 * @param[in] mode _wfdopen() に渡すモード文字列。
+	 * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
+	 */
+	static Me OpenFileHandle(
+		FileHandle&& hFile,
+		std::wstring_view mode
+	);
+
+	/*!
+	 * コンストラクタは流用する
+	 */
+	using Base::Base;
+
+	FilePointer(const Me&) = delete;
+	Me& operator=(const Me&) = delete;
+
+	FilePointer(Me&& other) noexcept = default;
+	Me& operator=(Me&& rhs) noexcept = default;
+
+	/*!
+	 * @brief ファイルに書き込めるかどうかをチェックする
+	 *
+	 * @throw std::overflow_error ファイルサイズが大きすぎるとき
+	 * @throw std::system_error 書き込みテストに失敗したとき
+	 */
+	void check_write_permissions() const;
+
+	/*!
+	 * @brief ストリームからデータを読み込む
+	 *
+	 * @param[in, out] buffer 読み込むバッファー
+	 */
+	void fp_read(
+		std::string& buffer
+	) const;
+
+	/*!
+	 * @brief 指定した位置にファイルポインターを移動する
+	 *
+	 * @param[in] offset 移動先の位置
+	 */
+	void seek(
+		long offset
+	) const;
+
+	/*!
+	 * @brief ストリームにデータを書き込む
+	 *
+	 * @param[in] data 書き込むデータ
+	 */
+	void write(
+		std::string_view data
+	) const;
 };
 
 } // namespace cxx

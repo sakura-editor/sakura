@@ -43,6 +43,13 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		LPWSTR lpBuffer
 	) const;
 
+	virtual BOOL GetFileTime(
+		_In_ HANDLE hFile,
+		_Out_opt_ LPFILETIME lpCreationTime,
+		_Out_opt_ LPFILETIME lpLastAccessTime,
+		_Out_opt_ LPFILETIME lpLastWriteTime
+	) const;
+
 	virtual DWORD GetModuleFileNameW(
 		_In_opt_ HMODULE hModule,
 		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
@@ -58,6 +65,13 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 
 	virtual BOOL SetCurrentDirectoryW(
 		_In_ LPCWSTR lpPathName
+	) const;
+
+	virtual BOOL SetFileTime(
+		_In_ HANDLE hFile,
+		_In_opt_ CONST FILETIME* lpCreationTime,
+		_In_opt_ CONST FILETIME* lpLastAccessTime,
+		_In_opt_ CONST FILETIME* lpLastWriteTime
 	) const;
 };
 
@@ -456,13 +470,19 @@ GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
  * @param[in] message エラーメッセージ
  */
 template <basis::NullTerminatedStringConstructible<ACHAR> A>
-[[noreturn]] inline void raise_system_error(const A& message)
+[[noreturn]] void raise_system_error(
+	const A& message
+)
 {
 	// 引数はNUL終端文字列として扱う
 	cxx::NullTerminatedString<ACHAR> msg{ message };
 
 	// システムエラー例外を発生させる
-	throw std::system_error(int(::GetLastError()), std::system_category(), msg.c_str());
+	throw std::system_error(
+		int(::GetLastError()),
+		std::system_category(),
+		msg.c_str()
+	);
 }
 
 /*!

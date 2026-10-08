@@ -10,10 +10,56 @@
 #include "window/CEditWnd.h" // 変更予定
 #include "CSelectLang.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>	// _fstat で必要。先に sys/types.h をincludeする必要がある。
+
+#include <fcntl.h>
+#include <io.h>
+
+#include <array>
+#include <exception>
+#include <stdexcept>
 #include <string_view>
 #include <system_error>
 
 namespace cxx {
+
+/*!
+ * @brief ファイルディスクリプタを閉じるための Deleter
+ *
+ * std::unique_ptrのテンプレート引数に指定するために用意したもの。
+ */
+int FdCloseFunc(
+	const int* pFd
+) noexcept
+{
+	// ファイルディスクリプタを閉じる
+	return ::_close(*pFd);
+}
+
+/*!
+ * @brief ファイルサイズを変更する
+ *
+ * 指定されたファイルディスクリプタのファイルサイズを変更します。
+ *
+ * @param[in] fd ファイルディスクリプタ
+ * @param[in] fileSize 新しいファイルサイズ
+ * @throw std::system_error ファイルサイズの変更に失敗したとき
+ */
+void resize_file(int fd, int64_t fileSize)
+{
+	if (const auto ret = ::_chsize_s(fd, fileSize);
+		0 == ret)
+	{
+		return;	// 成功した
+	}
+
+	// 失敗したら例外を投げる
+	throw std::system_error(
+		std::make_error_code(std::errc::io_error),
+		"Failed to change file size"
+	);
+}
 
 /*!
  * @brief 新しいファイルを作る
@@ -126,6 +172,310 @@ namespace cxx {
 	}
 
 	return hFile;
+}
+
+/*!
+ * @brief OSのファイルハンドルから Cストリーム を開く
+ *
+ * @param[in] hFile OSのファイルハンドル
+ * @param[in] mode _wfdopen() に渡すモード文字列。
+ * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
+ */
+/* static */ FilePointer FilePointer::OpenFileHandle(
+	FileHandle&& hFile,
+	std::wstring_view mode
+)
+{
+	// ハンドルの所有権を受け取る
+	auto handle{ std::move(hFile) };
+
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Mode{ mode };
+
+	// モードを省略すると fdopen がクラッシュするので例外で弾く
+	if (mode.empty()) throw std::invalid_argument("missing mode");
+
+	// モードをフラグに変換する。
+	int flags = _O_RDONLY;
+
+	// '+' が指定されていたら読み書き両用モード
+	if (std::wstring_view::npos != mode.find(L"+"))
+	{
+		flags |= _O_RDWR;
+	}
+	// '+' が指定されず、'a' か 'w' が指定されていたら書き込み専用モード
+	else if (std::wstring_view::npos != mode.find_first_of(L"aw")) flags |= _O_WRONLY;
+
+	// 'a' が指定されていたら追記モード
+	const auto appendMode = std::wstring_view::npos != mode.find(L"a");
+	if (appendMode) flags |= _O_APPEND;
+
+	// 'b' が指定されていたらバイナリモード
+	if (std::wstring_view::npos != mode.find(L"b"))
+	{
+		flags |= _O_BINARY;
+	}
+
+	// 古いMSVCランタイムのテキストモードは扱いが難しいので「利用しない方針」になっている。
+	if (std::wstring_view::npos != mode.find(L"t")) throw std::invalid_argument("DO NOT USE text mode.");
+
+	// 'w' が指定されていたらファイルを空にするモード
+	const auto truncMode = std::wstring_view::npos != mode.find(L"w");
+
+	// OSのファイルハンドルからファイル記述子を開く
+	auto fd = ::_open_osfhandle(
+		intptr_t(handle.get()),
+		flags
+	);
+
+	// 失敗した場合、fdは -1 になる
+	if (-1 == fd) {
+		return FilePointer{};	// 開けなかった
+	}
+
+	// _open_osfhandle が成功すると hFileの所有権 は Cランタイム に移る。
+	//   → fd を fclose() すると
+	//      Cランタイムが CloseHandle() して OSのファイルハンドルも閉じる。
+	//      自分で CloseHandle() すると壊れるので注意。
+
+	// OSのファイルハンドルをスマートポインタから解放する
+	handle.release();
+
+	// fd を閉じるためのスマートポインターを作る
+	using FdCloser = std::unique_ptr<int, decltype(&FdCloseFunc)>;
+	FdCloser fdCloser{ &fd, &FdCloseFunc };
+
+	// fdからCストリームを開く
+	auto fp = FilePointer{ ::_wfdopen(fd, _Mode.c_str()) };
+
+	// 成功した場合、fdの所有権 は Cランタイム に移る。
+	if (fp) {
+		// 所有権が移ったので、スマートポインターから解放する
+		fdCloser.release();
+
+		// ファイルを空にするモードの場合、ファイルを空にする
+		if (truncMode) {
+			// ファイルディスクリプタを使ってファイルサイズを0にする
+			cxx::resize_file(fd, 0);
+		}
+	}
+
+	// 書き込みテスト
+	if (fp &&	// ファイルを開けている
+		uint32_t(flags) & _O_RDWR &&	// 読み書き両用モード
+		!truncMode &&	// truncateしないモード
+		!appendMode)	// 追記モードではない
+	{
+		// ファイルに書き込めるかどうかをチェックする
+		fp.check_write_permissions();
+	}
+
+	return fp;
+}
+
+/*!
+ * @brief ファイルに書き込めるかどうかをチェックする
+ *
+ * Windowsではアクセス権があっても書き込めないことがある。
+ * なので、実際に書き込んでチェックする。
+ * チェック後は、内容・サイズ・タイムスタンプの復元を試みる。
+ * 
+ * @throw std::overflow_error ファイルサイズが大きすぎるとき
+ * @throw std::system_error 書き込みテストに失敗したとき
+ */
+void FilePointer::check_write_permissions() const
+{
+	// 書き込みテスト用のデータ（なんでもよい）
+	constexpr std::string_view writeTestData = "test";
+
+	// ファイルディスクリプタを取得する
+	const auto fd = ::_fileno(get());
+	if (-1 == fd) throw std::system_error(std::make_error_code(std::errc::io_error), "Failed to get file descriptor");
+
+	// ファイルサイズを取得する
+	const auto fileSize = ::_filelengthi64(fd);
+	if (fileSize < 0) throw std::system_error(std::make_error_code(std::errc::io_error), "Failed to get file size");
+
+	// 扱うファイルは32bitに収まるサイズに制限する
+	if (std::numeric_limits<uint32_t>::max() <= fileSize) throw std::overflow_error("too large file.");
+
+	// ファイルハンドルを取得する
+	FileHandle hFile{ HANDLE(::_get_osfhandle(fd))};
+
+	// ファイルのタイムスタンプを取得する
+	FILETIME creationTime{};
+	FILETIME lastAccessTime{};
+	FILETIME lastWriteTime{};
+	hFile.GetFileTime(&creationTime, &lastAccessTime, &lastWriteTime);
+
+	// 副作用を防ぐため、一旦解放してしまう
+	hFile.release();
+
+	// ファイルデータを壊さないためのバックアップを格納するバッファー
+	std::string backupData(std::min<size_t>(writeTestData.size(), fileSize), '\0');
+
+	// ファイルが空でない場合、バックアップを作る
+	if (0 < fileSize) {
+		// ファイルデータを読み込んでバックアップする
+		try {
+			// ファイルポインタを先頭に戻す
+			seek(0);
+
+			// ファイルデータを読み込む
+			fp_read(backupData);
+		}
+		catch (const std::system_error&) {
+			// Cストリームのエラー状態をクリアする
+			std::clearerr(get());
+
+			backupData.clear();	// バックアップできなかった
+		}
+	}
+
+	// 最初に発生したエラーを保持する変数
+	std::exception_ptr error;
+
+	// 例外を捕捉して、最初の例外を保持するラムダ式
+	// 書き込みテストが失敗した場合も、可能な限り元の状態に戻す
+	const auto tryOperation = [&error, this](auto&& operation) {
+		// 処理の成否
+		bool result = false;
+		try {
+			operation();
+
+			result = true;	// 成功した
+		}
+		// エラーが発生した場合、最初のエラーを保持する
+		catch (const std::system_error&) {
+			// 最初のエラーをまだ記録していない場合、記録する
+			if (!error) error = std::current_exception();
+
+			// Cストリームのエラー状態をクリアする
+			std::clearerr(get());
+		}
+		return result;
+	};
+
+	// 書き込み権限を調べるため、実際に書き込む（権限がなければエラーになる）
+	tryOperation([this, writeTestData] {
+		// ファイルポインタを先頭に戻す
+		seek(0);
+
+		// データを書き込む
+		write(writeTestData);
+
+		// 書き込んだデータをフラッシュする
+		seek(0);
+	});
+
+	// 書き込みテスト前のデータを復元する
+	if (!backupData.empty())
+	{
+		// ファイルポインタを先頭に戻す
+		tryOperation([this] { seek(0); });
+
+		// バックアップしたデータを書き戻す
+		tryOperation([this, backupData] { write(backupData); });
+
+		// 書き戻したデータをフラッシュする
+		tryOperation([this] { seek(0); });
+	}
+
+	// 書き込みテストでファイルが大きくなった場合は元のサイズに戻す
+	if (fileSize < std::ssize(writeTestData)) {
+		tryOperation([fd, fileSize] { cxx::resize_file(fd, fileSize); });
+	}
+
+	// 再割り当てする
+	hFile = FileHandle{ HANDLE(::_get_osfhandle(fd))};
+
+	// ファイルのタイムスタンプを元に戻す
+	tryOperation([&hFile, creationTime, lastAccessTime, lastWriteTime] {
+		hFile.SetFileTime(&creationTime, &lastAccessTime, &lastWriteTime);
+	});
+
+	// ファイルハンドルをスマートポインタから解放する
+	hFile.release();
+
+	// エラーが発生していた場合、最初のエラーを re-throw する
+	if (error)
+	{
+		std::rethrow_exception(error);
+	}
+}
+
+/*!
+ * @brief ストリームからデータを読み込む
+ *
+ * @param[in, out] buffer 読み込むバッファー
+ */
+void FilePointer::fp_read(
+	std::string& buffer
+) const
+{
+	// bufferなしで呼び出す状況は想定しない
+	if (buffer.empty()) throw std::invalid_argument("buffer is required.");
+
+	// ストリームにデータを読み込む
+	if (const auto read = std::fread(buffer.data(), 1, buffer.size(), get());
+		read == buffer.size())
+	{
+		return;	// 読み込めた
+	}
+
+	// 失敗したら例外を投げる
+	throw std::system_error(
+		std::make_error_code(std::errc::io_error),
+		"Failed to read file"
+	);
+}
+
+/*!
+ * @brief 指定した位置にファイルポインターを移動する
+ *
+ * @param[in] offset 移動先の位置
+ */
+void FilePointer::seek(
+	long offset
+) const
+{
+	// 指定した位置にファイルポインターを移動する
+	if (0 == std::fseek(get(), offset, SEEK_SET))
+	{
+		return;	// シークできた
+	}
+
+	// 失敗したら例外を投げる
+	throw std::system_error(
+		std::make_error_code(std::errc::io_error),
+		"Failed to seek file"
+	);
+}
+
+/*!
+ * @brief ストリームにデータを書き込む
+ *
+ * @param[in] data 書き込むデータ
+ */
+void FilePointer::write(
+	std::string_view data
+) const
+{
+	// dataなしで呼び出す状況は想定しない
+	if (data.empty()) throw std::invalid_argument("data is required.");
+
+	// ストリームにデータを書き込む
+	if (const auto written = std::fwrite(data.data(), 1, data.size(), get());
+		written == data.size())
+	{
+		return;	// 書き込めた
+	}
+
+	// 失敗したら例外を投げる
+	throw std::system_error(
+		std::make_error_code(std::errc::io_error),
+		"Failed to write file"
+	);
 }
 
 } // namespace cxx
