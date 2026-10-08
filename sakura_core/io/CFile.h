@@ -14,11 +14,19 @@
 #include "cxx/ResourceHolder.hpp"
 #include "util/file.h"
 
+#include <span>
 #include <string_view>
 
 namespace cxx {
 
 class NamedFilePointer;
+
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+);
 
 /*!
  * @brief ファイルディスクリプタを閉じるための Deleter
@@ -186,6 +194,49 @@ public:
 };
 
 /*!
+ * @brief マッピングされたデータをラップするクラス
+ *
+ * リソースホルダーを継承するスマートポインター。
+ */
+template <typename T>
+class MappedFileView : public cxx::ResourceHolder<&::UnmapViewOfFile, T>
+{
+private:
+	using Base = cxx::ResourceHolder<&::UnmapViewOfFile, T>;
+	using Me = MappedFileView;
+
+public:
+	/*!
+	 * @brief マッピングされたデータを取得する
+	 *
+	 * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+	 * @param[in] dwDesiredAccess 要求するアクセス権
+	 * @param[in] maximumSize 最大サイズ
+	 */
+	static Me MapViewOfFile(
+		_In_ HANDLE hFileMappingObject,
+		_In_ DWORD dwDesiredAccess,
+		const ULARGE_INTEGER& fileOffset = ULARGE_INTEGER{ 0 }
+	)
+	{
+		// マッピングされたデータを返却する
+		auto viewOfFile = cxx::MapViewOfFile(
+			hFileMappingObject,
+			dwDesiredAccess,
+			fileOffset,
+			sizeof(std::remove_pointer_t<T>)
+		);
+
+		return Me{ std::bit_cast<T>(viewOfFile.data()) };
+	}
+
+	/*!
+	 * コンストラクタは流用する
+	 */
+	using Base::Base;
+};
+
+/*!
  * @brief OSのファイルマッピングオブジェクトをラップするクラス
  *
  * リソースホルダーを継承するスマートポインター。
@@ -231,6 +282,25 @@ public:
 	 * コンストラクタは流用する
 	 */
 	using Base::Base;
+
+	/*!
+	 * @brief マッピングされたデータを取得する
+	 *
+	 * @param[in] dwDesiredAccess 要求するアクセス権
+	 * @param[in] fileOffset マップするデータのファイル内オフセット
+	 */
+	template <typename T>
+	MappedFileView<T> MapViewOfFile(
+		_In_ DWORD dwDesiredAccess,
+		const ULARGE_INTEGER& fileOffset = ULARGE_INTEGER{ 0 }
+	) const
+	{
+		return MappedFileView<T>::MapViewOfFile(
+			get(),
+			dwDesiredAccess,
+			fileOffset
+		);
+	}
 };
 
 /*!

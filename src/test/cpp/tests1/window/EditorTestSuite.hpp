@@ -88,6 +88,14 @@ struct MockKernel32 final : public Kernel32
 		_In_ UINT uSize
 	));
 
+	MOCK_CONST_METHOD5(MapViewOfFile, LPVOID(
+		_In_ HANDLE hFileMappingObject,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwFileOffsetHigh,
+		_In_ DWORD dwFileOffsetLow,
+		_In_ SIZE_T dwNumberOfBytesToMap
+	));
+
 	MOCK_CONST_METHOD3(OpenFileMappingW, HANDLE(
 		_In_ DWORD dwDesiredAccess,
 		_In_ BOOL bInheritHandle,

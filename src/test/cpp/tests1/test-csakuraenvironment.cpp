@@ -634,6 +634,37 @@ TEST_F(Kernel32, FileMappingCreateFileMappingW101)
 	EXPECT_TRUE(hFileMapping);
 }
 
+TEST_F(Kernel32, FileMappingMapViewOfFile101)
+{
+	EXPECT_CALL(*pKernel32, MapViewOfFile(_, _, _, _, _))
+		.WillOnce(Return(HANDLE(nullptr)))
+		.WillOnce(Return(HANDLE(1)));
+
+	FileMapping hFileMapping{};
+
+	EXPECT_THROW(
+		hFileMapping.MapViewOfFile<DLLSHAREDATA*>(
+			FILE_MAP_ALL_ACCESS
+		),
+		std::system_error
+	);
+
+	auto view = hFileMapping.MapViewOfFile<DLLSHAREDATA*>(
+		FILE_MAP_ALL_ACCESS
+	);
+
+	view.release();
+
+	Target::resetInstance();
+
+	EXPECT_THROW(
+		hFileMapping.MapViewOfFile<DLLSHAREDATA*>(
+			FILE_MAP_ALL_ACCESS
+		),
+		std::system_error
+	);
+}
+
 TEST_F(Kernel32, FileMappingOpenFileMappingW101)
 {
 	EXPECT_CALL(*pKernel32, OpenFileMappingW(_, _, _))

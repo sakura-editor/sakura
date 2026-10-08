@@ -483,6 +483,23 @@ UINT Kernel32::GetSystemDirectoryW(
 	return ::GetSystemDirectoryW(lpBuffer, uSize);
 }
 
+LPVOID Kernel32::MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwFileOffsetHigh,
+	_In_ DWORD dwFileOffsetLow,
+	_In_ SIZE_T dwNumberOfBytesToMap
+) const
+{
+	return ::MapViewOfFile(
+		hFileMappingObject,
+		dwDesiredAccess,
+		dwFileOffsetHigh,
+		dwFileOffsetLow,
+		dwNumberOfBytesToMap
+	);
+}
+
 HANDLE Kernel32::OpenFileMappingW(
 	_In_ DWORD dwDesiredAccess,
 	_In_ BOOL bInheritHandle,
@@ -969,6 +986,39 @@ std::wstring GetTempPath2W()
 	if (!ret) cxx::raise_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
 
 	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief ファイルマッピングのビューを取得する
+ *
+ * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] fileOffset ファイルマッピングのビューの開始位置
+ * @param[in] dwNumberOfBytesToMap マップするバイト数
+ * @return マッピングされたデータ
+ */
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+)
+{
+	const auto pView = Kernel32::getInstance()->MapViewOfFile(
+		hFileMappingObject,
+		dwDesiredAccess,
+		fileOffset.HighPart,
+		fileOffset.LowPart,
+		dwNumberOfBytesToMap
+	);
+
+	// 戻り値が NULL だった場合
+	if (!pView) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return std::span{ std::bit_cast<std::byte*>(pView), dwNumberOfBytesToMap };
 }
 
 /*!

@@ -71,6 +71,14 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_ UINT uSize
 	) const;
 
+	virtual LPVOID MapViewOfFile(
+		_In_ HANDLE hFileMappingObject,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwFileOffsetHigh,
+		_In_ DWORD dwFileOffsetLow,
+		_In_ SIZE_T dwNumberOfBytesToMap
+	) const;
+
 	virtual HANDLE OpenFileMappingW(
 		_In_ DWORD dwDesiredAccess,
 		_In_ BOOL bInheritHandle,
@@ -531,6 +539,22 @@ std::wstring GetModuleFileNameW(
  * @return システムディレクトリのパス
  */
 std::wstring GetSystemDirectoryW();
+
+/*!
+ * @brief ファイルマッピングのビューを取得する
+ *
+ * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] fileOffset ファイルマッピングのビューの開始位置
+ * @param[in] dwNumberOfBytesToMap マップするバイト数
+ * @return マッピングされたデータ
+ */
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+);
 
 /*!
  * @brief 指定したファイルを別ファイルで置換する
