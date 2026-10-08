@@ -221,6 +221,21 @@ public:
 	);
 
 	/*!
+	 * @brief 一時ファイルを作成する
+	 *
+	 * @param[in, opt] optPrefix ファイル名の前に付ける3文字の接頭辞。
+	 * @param[in, opt] optTempDir 一時フォルダーのパス。指定しない場合はシステムの一時フォルダーを使う。
+	 * @param[in, opt] dwFlagsAndAttributes ファイル属性と作成フラグ。指定しない場合は FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE を使う。
+	 * @param[in, opt] optExt 一時ファイルの拡張子。指定しない場合は "tmp" を使う。
+	 */
+	static NamedFilePointer CreateTempFile(
+		const std::optional<std::wstring>& optPrefix = std::nullopt,
+		const std::optional<std::wstring>& optTempDir = std::nullopt,
+		DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+		const std::optional<std::wstring>& optExt = std::nullopt
+	);
+
+	/*!
 	 * @brief OSのファイルハンドルから Cストリーム を開く
 	 *
 	 * @param[in] hFile OSのファイルハンドル
@@ -424,7 +439,14 @@ private:
 
 #ifdef ENABLE_UNUSED_LEGACY_CODES
 
-//!一時ファイル
+/*!
+ * @brief Cランタイム「名無しの一時ファイル」
+ *
+ * 名無しの一時ファイルを作るための機構。
+ *
+ * @note C4996警告が出るうえ、TOCTOUの危険性があるので、使わないことにする。
+
+ */
 class CTmpFile{
 	using Me = CTmpFile;
 

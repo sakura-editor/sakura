@@ -25,6 +25,9 @@
 
 namespace cxx {
 
+uint16_t GenerateRandom16();
+std::wstring GetTempPath2W();
+
 /*!
  * @brief ファイルディスクリプタを閉じるための Deleter
  *
@@ -206,6 +209,99 @@ void chsize(int fd, int64_t fileSize)
 		if (hFile) {
 			// OSのファイルハンドルから Cストリーム を開く
 			fp = OpenFileHandle(std::move(hFile), L"wb");
+		}
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&) {
+		// 作成できなかった
+		fp = nullptr;
+	}
+
+	// Cストリームとパスを紐付ける
+	return NamedFilePointer{ std::move(fp), path };
+}
+
+/*!
+ * @brief 一時ファイルを作成する
+ *
+ * ファイルパスを連携してプロセス間でデータを共有するための仕組み。
+ *
+ * 一時ファイルの Time Of Check/Time Of Use (TOCTOU) 脆弱性を避けるため、
+ * 「ファイル作成」をもってチェックとし、開いたファイルを「そのまま使う」ようにする。
+ *
+ * 生成されるパスの形式は以下の通り。
+ * C:\Users\berryzplus\AppData\Local\Temp\tesC85A.tmp
+ *
+ * @param[in, opt] optPrefix ファイル名の前に付ける3文字の接頭辞。
+ * @param[in, opt] optTempDir 一時フォルダーのパス。指定しない場合はシステムの一時フォルダーを使う。
+ * @param[in, opt] dwFlagsAndAttributes ファイル属性と作成フラグ。指定しない場合は FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE を使う。
+ * @param[in, opt] optExt 一時ファイルの拡張子。指定しない場合は "tmp" を使う。
+ */
+/* static */ NamedFilePointer FilePointer::CreateTempFile(
+	const std::optional<std::wstring>& optPrefix,
+	const std::optional<std::wstring>& optTempDir,
+	DWORD dwFlagsAndAttributes,
+	const std::optional<std::wstring>& optExt
+)
+{
+	// 一時ファイルの置き場所を解決する
+	std::filesystem::path tempDir{ optTempDir.value_or(L"") };
+	if (std::error_code ec;
+		tempDir.empty() ||
+		!std::filesystem::exists(tempDir, ec) ||
+		!std::filesystem::is_directory(tempDir, ec))
+	{
+		// 指定フォルダがないときは一時ディレクトリパスを取得する
+		tempDir = cxx::GetTempPath2W();
+	}
+
+	// 末尾がパス区切り文字で終わっていたら取り除く
+	if (const auto& dir = tempDir.native();
+		dir.ends_with(LR"(\)") || dir.ends_with(L"/"))
+	{
+		tempDir = tempDir.parent_path();
+	}
+
+	// 一時ファイルの接頭辞を取得する
+	const auto prefix = optPrefix.value_or(GetExeFileName().stem().native());
+	if (prefix.empty()) throw std::invalid_argument("prefix is required.");
+	if (std::wstring::npos != prefix.find_first_of(LR"(/\)"))  throw std::invalid_argument("prefix should not contain path separators.");
+
+	// 一時ファイルの拡張子を取得する
+	const auto ext = optExt.value_or(L".tmp");
+	if (ext.empty()) throw std::invalid_argument("ext is required.");
+	if (ext[0] != L'.') throw std::invalid_argument("ext must be start with '.'.");
+
+	// ファイルポインターを返却する
+	FilePointer fp{};
+
+	// 一時ファイルパスを格納する
+	std::filesystem::path path{};
+
+	// 一時ファイルを作成する
+	try {
+		// 一時ファイルを作成できるまでループ（上限3回。）
+		for (int i = 0; i < 3; ++i) {
+			// 一時ファイルパスを組み立てる
+			path = tempDir / std::format(L"{:s}{:x}{:s}", prefix, cxx::GenerateRandom16(), ext);
+
+			// ファイルハンドルをスマートポインターに入れる
+			FileHandle hFile{};
+
+			// 一時ファイルを作成する
+			hFile = FileHandle::CreateNew(
+				path,
+				dwFlagsAndAttributes
+			);
+
+			// OSのファイルハンドルを作成できた場合
+			if (hFile) {
+				// OSのファイルハンドルから Cストリーム を開く
+				fp = OpenFileHandle(std::move(hFile), L"wb");
+			}
+
+			// Cストリームを作成できた場合はループを抜ける
+			if (fp) break;
 		}
 	}
 	// エラーが発生した場合

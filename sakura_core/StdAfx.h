@@ -136,13 +136,24 @@
 #include <time.h>
 #include <wchar.h>
 
+// winnt.hによって不完全なNTSTATUSが定義されるのを防ぐ
+#define WIN32_NO_STATUS
+
 // Windowsヘッダー(他のSDKヘッダーとは別格。)
 #include <Windows.h>
+
+// NTSTATUSが定義される設定に戻す
+#undef WIN32_NO_STATUS
+
+// ntstatus.h (他のSDKヘッダーとは別格。)
+// Windows NTのステータスコードNTSTATUSを定義するヘッダー
+#include <ntstatus.h>
 
 // windowsx.h (他のSDKヘッダーとは別格。)
 #include <windowsx.h>
 
 // その他のWindows SDK ヘッダー（ファイル名は最新に合わせる。追加するときは昇順で。）
+#include <bcrypt.h>
 #include <comdef.h>
 #include <CommCtrl.h>
 #include <HtmlHelp.h>

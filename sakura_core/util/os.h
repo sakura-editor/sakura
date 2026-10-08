@@ -18,6 +18,7 @@
 #include <string>
 #include <string_view>
 
+#include <bcrypt.h>
 #include <objidl.h> // LPDATAOBJECT
 
 //! Kernel32.dll呼出をテスト可能にするDIっぽいもの
@@ -48,6 +49,11 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
 		LPWSTR lpFilename,
 		_In_ DWORD nSize
+	) const;
+
+	virtual FARPROC GetProcAddress(
+		_In_ HMODULE hModule,
+		_In_ LPCSTR lpProcName
 	) const;
 
 	virtual UINT GetSystemDirectoryW(
@@ -94,9 +100,22 @@ struct User32 : public TSakuraSingleton<User32>
 	) const;
 };
 
+//! Bcrypt.dll呼出をテスト可能にするDIっぽいもの
+struct Bcrypt : public TSakuraSingleton<Bcrypt>
+{
+	~Bcrypt() override = default;
+
+	virtual NTSTATUS BCryptGenRandom(
+		_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
+		_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
+		_In_                            ULONG   cbBuffer,
+		_In_                            ULONG   dwFlags
+	) const;
+};
+
 //! Comdlg32.dll呼出をテスト可能にするDIっぽいもの
 struct Comdlg32 : public TSakuraSingleton<Comdlg32> {
-	virtual ~Comdlg32() = default;
+	~Comdlg32() override = default;
 
 	virtual BOOL ChooseColorW(
 		LPCHOOSECOLORW pCc

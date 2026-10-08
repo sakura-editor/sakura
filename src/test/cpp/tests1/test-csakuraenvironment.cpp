@@ -36,6 +36,12 @@ using namespace std::literals::string_literals;
 
 std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
 
+namespace cxx {
+
+uint16_t GenerateRandom16();
+
+}	// namespace cxx
+
 namespace env {
 
 using namespace cxx;
@@ -613,6 +619,34 @@ TEST_F(Kernel32, FilePointerCreateFilePath101)
 	EXPECT_FALSE(fp);
 }
 
+TEST_F(Kernel32, FilePointerCreateTempFile101)
+{
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	constexpr auto& fileName = L"tests1.ini";
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, CREATE_NEW, _, _))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
+
+	auto fp = FilePointer::CreateTempFile();
+	EXPECT_FALSE(fp);
+}
+
+TEST_F(Kernel32, FilePointerCreateTempFile102)
+{
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	constexpr auto& fileName = L"tests1.ini";
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, CREATE_NEW, _, _))
+		.WillOnce(testing::Throw(std::system_error(ERROR_FILE_EXISTS, std::system_category())))
+		.WillOnce(testing::Throw(std::system_error(ERROR_FILE_EXISTS, std::system_category())))
+		.WillOnce(testing::Throw(std::system_error(ERROR_FILE_EXISTS, std::system_category())));
+
+	auto fp = FilePointer::CreateTempFile();
+	EXPECT_FALSE(fp);
+}
+
 TEST_F(Kernel32, FilePointerOpenFilePath101)
 {
 	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, OPEN_EXISTING, _, _))
@@ -1049,6 +1083,61 @@ TEST_F(CCurrentDirectoryBackupPoint, test103)
 	// テスト実行（失敗はログで確認する）
 	{
 		Target t;
+	}
+}
+
+/*!
+ * GenerateRandom16のテスト
+ */
+struct GenerateRandom16 : public ::testing::Test {
+	using Bcrypt = ::Bcrypt;
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		Bcrypt::setInstance<MockBcrypt>();
+
+		pBcrypt = (MockBcrypt*)Bcrypt::getInstance();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		Bcrypt::resetInstance();
+	}
+
+	MockBcrypt* pBcrypt = nullptr;
+};
+
+/*!
+ * @brief 16bit乱数の生成に成功するパターン
+ */
+TEST_F(GenerateRandom16, test001)
+{
+	EXPECT_CALL(*pBcrypt, BCryptGenRandom(_, _, _, _))
+		.WillOnce(Return(STATUS_SUCCESS));
+
+	EXPECT_NO_THROW(cxx::GenerateRandom16());
+}
+
+/*!
+ * @brief 16bit乱数の生成に失敗するパターン
+ */
+TEST_F(GenerateRandom16, test101)
+{
+	EXPECT_CALL(*pBcrypt, BCryptGenRandom(_, _, _, _))
+		.WillOnce(Return(STATUS_INVALID_HANDLE));
+
+	try {
+		cxx::GenerateRandom16();
+
+		FAIL() << "std::system_error should be thrown.";
+	}
+	catch (const std::system_error& e) {
+		EXPECT_THAT(e.code().category().name(), StrEq("ntstatus"));
 	}
 }
 

@@ -36,14 +36,7 @@ using namespace testing;
 
 int FdCloseFunc(const int* pFd) noexcept;
 
-std::wstring GetTempPath2W()
-{
-	SFilePath buf;
-
-	const auto ret = ::GetTempPath2W(DWORD(std::size(buf)), std::data(buf));
-
-	return std::wstring(buf.c_str(), ret);
-}
+std::wstring GetTempPath2W();
 
 bool WritePrivateProfileStringW(
 	std::wstring_view appName,
@@ -268,6 +261,47 @@ TEST(FilePointer, CreateFilePath001)
 
 	// 自分で削除する
 	std::filesystem::remove(path, ec);
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief CreateTempFile() のテスト
+ *
+ * ファイル名を指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, CreateTempFile001)
+{
+	// 一時ファイルを作成する
+	auto fp = FilePointer::CreateTempFile();
+	EXPECT_TRUE(fp);
+
+	// 作られた一時ファイルのパスを取得する
+	const auto path = std::filesystem::path{ fp.GetPath() };
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// 検証用にテストデータを書き込む
+	fp.write("This is test data.");
+
+	// 書き込んだデータをフラッシュする
+	fp.seek(0);
+
+	auto other = FilePointer::OpenFilePath(path, L"w+b");
+	EXPECT_TRUE(other);
+
+	std::array<char, 80> buffer{};
+	const auto ret = std::fread(buffer.data(), 1, buffer.size(), other.get());
+	const auto text = std::string_view(buffer.data(), ret);
+	EXPECT_THAT(text, StrEq("This is test data."));
+
+	// ファイルを閉じる
+	other = nullptr;
+
+	// ファイルを閉じる
+	fp = nullptr;
 
 	// ファイルは削除されている
 	EXPECT_FALSE(fexist(path));

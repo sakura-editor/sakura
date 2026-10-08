@@ -1,15 +1,22 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "os.h"
+#include "util/os.h"
+
 #include "util/module.h"
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
 
+#include <cstdint>
+#include <format>
+#include <stdexcept>
+#include <string>
+
+#pragma comment(lib, "Bcrypt.lib")
 #pragma comment(lib, "UxTheme.lib")
 
 /*!
@@ -437,6 +444,17 @@ DWORD Kernel32::GetModuleFileNameW(
 	);
 }
 
+FARPROC Kernel32::GetProcAddress(
+	_In_ HMODULE hModule,
+	_In_ LPCSTR lpProcName
+) const
+{
+	return ::GetProcAddress(
+		hModule,
+		lpProcName
+	);
+}
+
 UINT Kernel32::GetSystemDirectoryW(
 	_Out_writes_to_opt_( uSize, return +1 )
 	LPWSTR lpBuffer,
@@ -453,7 +471,90 @@ BOOL Kernel32::SetCurrentDirectoryW(
 	return ::SetCurrentDirectoryW(lpPathName);
 }
 
+NTSTATUS Bcrypt::BCryptGenRandom(
+	_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
+	_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
+	_In_                            ULONG   cbBuffer,
+	_In_                            ULONG   dwFlags
+) const
+{
+	return ::BCryptGenRandom(
+		hAlgorithm,
+		pbBuffer,
+		cbBuffer,
+		dwFlags
+	);
+}
+
+// NtStatusカテゴリ（std::system_errorと組み合わせて使う）
+class NtStatusCategory final : public std::error_category {
+public:
+	static const NtStatusCategory category;
+
+	const char* name() const noexcept override
+	{
+		return "ntstatus";
+	}
+
+	std::string message(int value) const override
+	{
+		return std::format(
+			"NTSTATUS 0x{:08X}",
+			static_cast<std::uint32_t>(value)
+		);
+	}
+};
+
+const NtStatusCategory NtStatusCategory::category{};
+
+inline const std::error_category& ntstatus_category() noexcept
+{
+	return NtStatusCategory::category;
+}
+
+inline std::error_code make_ntstatus_error_code(NTSTATUS status) noexcept
+{
+	// WindowsではNTSTATUSもintも32ビット符号付き整数。
+	return { int(status), ntstatus_category() };
+}
+
 namespace cxx {
+
+template <typename T>
+[[nodiscard]] NTSTATUS BCryptGenRandom(
+	_In_opt_ BCRYPT_ALG_HANDLE hAlgorithm,
+	std::span<T> buffer,
+	_In_ ULONG dwFlags
+)
+{
+	return Bcrypt::getInstance()->BCryptGenRandom(
+		hAlgorithm,
+		PUCHAR(std::data(buffer)),
+		ULONG(buffer.size_bytes()),
+		dwFlags
+	);
+}
+
+uint16_t GenerateRandom16()
+{
+	uint16_t value{};
+
+	if (const auto status = cxx::BCryptGenRandom(
+		nullptr,
+		std::span(&value, 1),
+		BCRYPT_USE_SYSTEM_PREFERRED_RNG
+	);
+		!BCRYPT_SUCCESS(status))
+	{
+		// システムエラー例外を発生させる
+		throw std::system_error(
+			make_ntstatus_error_code(status),
+			"BCryptGenRandom failed"
+		);
+	}
+
+	return value;
+}
 
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
 {
@@ -714,6 +815,36 @@ std::wstring GetSystemDirectoryW()
 		// システムディレクトリのパスが長過ぎる場合、例外を投げる
 		throw std::overflow_error(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
 	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief 一時フォルダのパスを取得する
+ *
+ * @return 一時フォルダのパス
+ */
+std::wstring GetTempPath2W()
+{
+	// Kernel32.DLLのハンドルを取得する
+	const auto kernel32 = ::GetModuleHandleW(L"KERNEL32.DLL");
+
+	if (!kernel32) cxx::raise_system_error("Kernel32.DLL was not found.");	// このthrowは呼ばれない
+
+	// GetTempPath2の関数ポインタを取得する
+	decltype(&::GetTempPath2W) pfnGetTempPath = nullptr;
+
+	pfnGetTempPath = std::bit_cast<decltype(pfnGetTempPath)>(Kernel32::getInstance()->GetProcAddress(kernel32, "GetTempPath2W"));
+
+	// Windows 10 1607より古いと見付からない可能性がある
+	if (!pfnGetTempPath) pfnGetTempPath = &::GetTempPathW;
+
+	SSuperLongFilePath buf;
+
+	// 戻り値は 0～261 の範囲に収まる仕様。
+	const auto ret = pfnGetTempPath(DWORD(std::size(buf)), std::data(buf));
+
+	if (!ret) cxx::raise_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
 
 	return std::wstring(buf.c_str(), ret);
 }

@@ -68,6 +68,11 @@ struct MockKernel32 final : public Kernel32
 		_In_ DWORD nSize
 	));
 
+	MOCK_CONST_METHOD2(GetProcAddress, FARPROC(
+		_In_ HMODULE hModule,
+		_In_ LPCSTR lpProcName
+	));
+
 	MOCK_CONST_METHOD2(GetSystemDirectoryW, UINT(
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
@@ -141,6 +146,16 @@ struct MockUser32 final : public User32
 	);
 
 	MockUser32();
+};
+
+struct MockBcrypt final : public Bcrypt
+{
+	MOCK_CONST_METHOD4(BCryptGenRandom, NTSTATUS(
+		_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
+		_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
+		_In_                            ULONG   cbBuffer,
+		_In_                            ULONG   dwFlags
+	));
 };
 
 struct MockComdlg32 final : public Comdlg32 {
