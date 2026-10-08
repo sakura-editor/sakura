@@ -37,14 +37,7 @@ using namespace testing;
 int FdCloseFunc(const int* pFd) noexcept;
 void resize_file(int fd, int64_t fileSize);
 
-std::wstring GetTempPath2W()
-{
-	SFilePath buf;
-
-	const auto ret = ::GetTempPath2W(DWORD(std::size(buf)), std::data(buf));
-
-	return std::wstring(buf.c_str(), ret);
-}
+std::wstring GetTempPath2W();
 
 bool WritePrivateProfileStringW(
 	std::wstring_view appName,
@@ -294,6 +287,46 @@ TEST(FilePointer, CreateFilePath001)
 }
 
 /*!
+ * @brief CreateTempFile() のテスト
+ *
+ * ファイル名を指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, CreateTempFile001)
+{
+	// 一時ファイルを作成する
+	auto fp = FilePointer::CreateTempFile();
+	EXPECT_TRUE(fp);
+
+	// 作られた一時ファイルのパスを取得する
+	const auto path = std::filesystem::path{ fp.GetPath() };
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// 検証用にテストデータを書き込む
+	fp.write("This is test data.");
+
+	// 書き込んだデータをフラッシュする
+	fp.seek(0);
+
+	auto other = FilePointer::OpenFilePath(path, L"r+b");
+	EXPECT_TRUE(other);
+
+	std::string buffer(_countof("This is test data.") - 1, '\0');
+	other.fp_read(buffer);
+	EXPECT_THAT( buffer, StrEq("This is test data."));
+
+	// ファイルを閉じる
+	other = nullptr;
+
+	// ファイルを閉じる
+	fp = nullptr;
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
  * @brief OpenFilePath() のテスト
  *
  * ファイル名を指定してCストリームを開くメソッド。
@@ -502,6 +535,46 @@ TEST(FilePointer, OpenFromHandleForWrite002)
 
 	std::error_code ec;
 	std::filesystem::remove(path, ec);
+}
+
+TEST(FilePointer, check_write_permissionsRestoresTimestampsOnFailure)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+	MsvcInvalidParameterHandlerDisabler disabler{};
+	MsvcReportMode reportMode{};
+#endif
+
+	auto tempFile = FilePointer::CreateTempFile();
+	ASSERT_TRUE(tempFile);
+	tempFile.write("Original data");
+	tempFile.seek(0);
+
+	auto hFile = FileHandle::OpenExisting(
+		tempFile.GetPath(), GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
+	);
+	ASSERT_TRUE(hFile);
+	const FILETIME creationTime{ 0, 29000000 };
+	const FILETIME lastAccessTime{ 0, 29100000 };
+	const FILETIME lastWriteTime{ 0, 29200000 };
+	ASSERT_TRUE(::SetFileTime(hFile.get(), &creationTime, &lastAccessTime, &lastWriteTime));
+
+	// OSハンドルには日時変更権限を残し、Cストリームの書き込みだけを失敗させる。
+	auto fp = FilePointer::OpenFileHandle(std::move(hFile), L"rb");
+	ASSERT_TRUE(fp);
+	EXPECT_THROW(fp.check_write_permissions(), std::system_error);
+	fp = nullptr;
+
+	auto timestampHandle = FileHandle::OpenExisting(
+		tempFile.GetPath(), FILE_READ_ATTRIBUTES,
+		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
+	);
+	ASSERT_TRUE(timestampHandle);
+	FILETIME actualCreationTime{}, actualLastAccessTime{}, actualLastWriteTime{};
+	ASSERT_TRUE(::GetFileTime(timestampHandle.get(), &actualCreationTime, &actualLastAccessTime, &actualLastWriteTime));
+	EXPECT_EQ(0, ::CompareFileTime(&creationTime, &actualCreationTime));
+	EXPECT_EQ(0, ::CompareFileTime(&lastAccessTime, &actualLastAccessTime));
+	EXPECT_EQ(0, ::CompareFileTime(&lastWriteTime, &actualLastWriteTime));
 }
 
 /*!

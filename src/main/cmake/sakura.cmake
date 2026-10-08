@@ -580,6 +580,7 @@ target_link_directories(sakura_core
 target_link_libraries(sakura_core
   PUBLIC
     darkmodelib::darkmodelib
+    bcrypt
     comctl32
     dbghelp
     dwmapi
