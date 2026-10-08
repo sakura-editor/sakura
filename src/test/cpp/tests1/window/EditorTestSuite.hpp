@@ -79,6 +79,15 @@ struct MockKernel32 final : public Kernel32
 		_In_ UINT uSize
 	));
 
+	MOCK_CONST_METHOD6(ReplaceFileW, BOOL(
+		_In_       LPCWSTR lpReplacedFileName,
+		_In_       LPCWSTR lpReplacementFileName,
+		_In_opt_   LPCWSTR lpBackupFileName,
+		_In_       DWORD    dwReplaceFlags,
+		_Reserved_ LPVOID   lpExclude,
+		_Reserved_ LPVOID  lpReserved
+	));
+
 	MOCK_CONST_METHOD1(SetCurrentDirectoryW, BOOL(
 		_In_ LPCWSTR lpPathName
 	));

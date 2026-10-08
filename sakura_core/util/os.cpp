@@ -464,6 +464,25 @@ UINT Kernel32::GetSystemDirectoryW(
 	return ::GetSystemDirectoryW(lpBuffer, uSize);
 }
 
+BOOL Kernel32::ReplaceFileW(
+	_In_       LPCWSTR lpReplacedFileName,
+	_In_       LPCWSTR lpReplacementFileName,
+	_In_opt_   LPCWSTR lpBackupFileName,
+	_In_       DWORD    dwReplaceFlags,
+	_Reserved_ LPVOID   lpExclude,
+	_Reserved_ LPVOID  lpReserved
+) const
+{
+	return ::ReplaceFileW(
+		lpReplacedFileName,
+		lpReplacementFileName,
+		lpBackupFileName,
+		dwReplaceFlags,
+		lpExclude,
+		lpReserved
+	);
+}
+
 BOOL Kernel32::SetCurrentDirectoryW(
 	_In_ LPCWSTR lpPathName
 ) const
@@ -847,6 +866,83 @@ std::wstring GetTempPath2W()
 	if (!ret) cxx::raise_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
 
 	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * 同名APIを呼び出すラッパー関数。
+ * 使い勝手を上げるため、一部の引数を省略可能にしている。
+ *
+ * optBackupFileNameに指定したファイルは問答無用で上書きされることに注意。
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName,
+	_In_ DWORD dwReplaceFlags
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> destination{ replacedFileName };
+	cxx::NullTerminatedString<WCHAR> source{ replacementFileName };
+
+	const auto path1 = std::filesystem::path{ destination.str() };
+	if (!path1.is_absolute())
+	{
+		throw std::invalid_argument("replacedFileName must be absolute path.");
+	}
+
+	if (!fexist(path1))
+	{
+		throw std::invalid_argument("replacedFileName must exist.");
+	}
+
+	if (const auto path2 = std::filesystem::path{ source.str() };
+		!fexist(path2))
+	{
+		throw std::invalid_argument("replacementFileName must exist.");
+	}
+
+	auto backupFileName = optBackupFileName.value_or(L"");
+
+	if (std::wstring::npos != backupFileName.find_first_of(LR"(/\)"))
+	{
+		throw std::invalid_argument("backupFileName must not contain path separators.");
+	}
+
+	LPCWSTR lpBackupFileName = nullptr;
+
+	if (!backupFileName.empty())
+	{
+		// フルパスにする
+		backupFileName = path1.parent_path() / backupFileName;
+
+		// APIに渡すためにNUL終端文字列を取り出す
+		lpBackupFileName = backupFileName.c_str();
+	}
+
+	const auto notImplemented = nullptr;
+	const auto reserved = nullptr;
+
+	// ファイルを置換する
+	if (const auto ret = Kernel32::getInstance()->ReplaceFileW(
+		destination.c_str(),
+		source.c_str(),
+		lpBackupFileName,
+		dwReplaceFlags,
+		notImplemented,
+		reserved
+	);
+		!ret)
+	{
+		cxx::raise_system_error("ReplaceFileW() failed");
+	}
 }
 
 /*!

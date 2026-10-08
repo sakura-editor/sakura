@@ -810,6 +810,46 @@ TEST_F(Kernel32, GetSystemDirectoryW102)
 	);
 }
 
+TEST_F(Kernel32, ReplaceFileW101)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	{
+		std::ofstream fos{ path2 };
+		fos << "This is temp data." << std::endl;
+		fos.close();
+	}
+
+	// APIがFALSEを返したら例外。
+	EXPECT_CALL(*pKernel32, ReplaceFileW(_, _, _, _, _, _))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(TRUE));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2, L"test.txt.bak");
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("ReplaceFileW() failed"))
+	);
+
+	// 正常を返す呼出もしておく
+	cxx::ReplaceFileW(path1, path2, L"test.txt.bak");
+
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+}
+
 TEST_F(Kernel32, SetCurrentDirectoryW101)
 {
 	// APIが0を返したら例外。

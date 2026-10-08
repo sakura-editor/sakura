@@ -62,6 +62,15 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_ UINT uSize
 	) const;
 
+	virtual BOOL ReplaceFileW(
+		_In_       LPCWSTR lpReplacedFileName,
+		_In_       LPCWSTR lpReplacementFileName,
+		_In_opt_   LPCWSTR lpBackupFileName,
+		_In_       DWORD    dwReplaceFlags,
+		_Reserved_ LPVOID   lpExclude,
+		_Reserved_ LPVOID  lpReserved
+	) const;
+
 	virtual BOOL SetCurrentDirectoryW(
 		_In_ LPCWSTR lpPathName
 	) const;
@@ -507,6 +516,53 @@ std::wstring GetModuleFileNameW(
  * @return システムディレクトリのパス
  */
 std::wstring GetSystemDirectoryW();
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+template <
+	basis::NullTerminatedStringConstructible<WCHAR> A1,
+	basis::NullTerminatedStringConstructible<WCHAR> A2
+> requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view>)
+void ReplaceFileW(
+	const A1 & replacedFileName,
+	const A2 & replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString _ReplacedFileName{ replacedFileName };
+	cxx::NullTerminatedString _ReplacementFileName{ replacementFileName };
+
+	// 指定したファイルを別ファイルで置換する
+	return ReplaceFileW(
+		_ReplacedFileName.str(),
+		_ReplacementFileName.str(),
+		optBackupFileName,
+		dwReplaceFlags
+	);
+}
 
 /*!
  * @brief カレントディレクトリを変更する

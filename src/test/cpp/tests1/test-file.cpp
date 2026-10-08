@@ -24,6 +24,7 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
+#include "util/os.h"
 
 #include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
 #include "testing/MsvcReportMode.hpp"
@@ -109,6 +110,140 @@ TEST(CopyDirDir, test103)
 	EXPECT_THAT(CopyDirDir(szTemp11, L"Windows", LR"(C:)"), StrEq(L""));	// 入りきらない場合、バッファは空になる
 
 #endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
+
+TEST(ReplaceFileW, test001)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	{
+		std::ofstream fos{ path2 };
+		fos << "This is temp data." << std::endl;
+		fos.close();
+	}
+
+	EXPECT_TRUE(fexist(path1));
+	EXPECT_TRUE(fexist(path2));
+
+	cxx::ReplaceFileW(path1, path2);
+
+	EXPECT_FALSE(fexist(path2));
+
+	std::filesystem::remove(path1, ec);
+
+	EXPECT_FALSE(fexist(path1));
+}
+
+TEST(ReplaceFileW, test101)
+{
+	// カスタム関数は、第1引数にフルパスを要求する
+	EXPECT_THAT(([] {
+			cxx::ReplaceFileW(L"to", L"from");
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must be absolute path."))
+	);
+}
+
+TEST(ReplaceFileW, test102)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	// カスタム関数は、第1引数のパスが存在していることを要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must exist."))
+	);
+}
+
+TEST(ReplaceFileW, test103)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	// カスタム関数は、第2引数のパスが存在していることを要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacementFileName must exist."))
+	);
+
+	std::filesystem::remove(path1, ec);
+}
+
+TEST(ReplaceFileW, test104)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	{
+		std::ofstream fos{ path2 };
+		fos << "This is temp data." << std::endl;
+		fos.close();
+	}
+
+	// カスタム関数は、第3引数にファイル名を要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path2, path1, LR"(C:\work\test.txt.bak)");
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("backupFileName must not contain path separators."))
+	);
+
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+}
+
+TEST(ReplaceFileW, test105)
+{
+	const auto notImplemented = nullptr;
+	const auto reserved = nullptr;
+
+	const auto ret = Kernel32::getInstance()->ReplaceFileW(
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		notImplemented,
+		reserved
+	);
+	EXPECT_THAT(ret, IsFalse());
 }
 
 } // namespace cxx
