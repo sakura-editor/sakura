@@ -12,6 +12,8 @@
 #include "charset/charcode.h"	//ECodeType
 #include "mem/CNativeW.h"	//CNativeW
 
+#include <string>
+
 /*!
  * Grep 検索オプション
  *
@@ -46,5 +48,11 @@ struct GrepInfo {
 
 	//! 出力・置換の挙動が矛盾しないよう補正した複製を返す
 	GrepInfo Normalized() const;
+
+	//! Grep を新しいウィンドウで実行するためのコマンドラインを作る(CCommandLine::ParseCommandLine() の逆)
+	std::wstring MakeCommandLine() const;
+
+	//! -GOPT に指定する文字列を作る
+	std::wstring MakeCommandLineOptions() const;
 };
 #endif /* SAKURA_GREPINFO_9A59ABAF_04F9_4D29_B216_0B0784DD2290_H_ */

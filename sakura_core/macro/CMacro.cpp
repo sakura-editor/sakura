@@ -16,7 +16,7 @@
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2011, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -506,6 +506,42 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 		return;
 	}
 	out.WriteF( LS(STR_ERR_DLGMACRO01) );
+}
+
+/*!
+	@brief Grep・Grep置換マクロの引数から、Grep の入力一式を作る
+	@param[in]	pszKey		検索文字列
+	@param[in]	pszRep		置換後の文字列。Grep(置換しない)なら nullptr
+	@param[in]	pszFile		検索対象のファイル
+	@param[in]	pszFolder	検索対象のフォルダー
+	@param[in]	lFlag		第4引数のフラグ(HandleCommand() の F_GREP の説明を参照)
+	@param[in]	nCharSet	文字コードセット
+*/
+GrepInfo CMacro::MakeGrepInfo( const WCHAR* pszKey, const WCHAR* pszRep, const WCHAR* pszFile, const WCHAR* pszFolder, LPARAM lFlag, ECodeType nCharSet )
+{
+	GrepInfo gi;
+	gi.cmGrepKey.SetString( pszKey );
+	gi.cmGrepFile.SetString( pszFile );
+	gi.cmGrepFolder.SetString( pszFolder );
+	gi.nGrepCharSet = nCharSet;
+	gi.bGrepSubFolder = ( lFlag & 0x01 ) != 0;					// サブフォルダーからも検索する
+	gi.sGrepSearchOption.bLoHiCase = ( lFlag & 0x04 ) != 0;		// 英大文字と英小文字を区別する
+	gi.sGrepSearchOption.bRegularExp = ( lFlag & 0x08 ) != 0;	// 正規表現
+	if( 0x20 == ( lFlag & 0x400020 ) ){ gi.nGrepOutputLineType = 1; }			// 行を出力する
+	else if( 0x400000 == ( lFlag & 0x400020 ) ){ gi.nGrepOutputLineType = 2; }	// 否ヒット行を出力する
+	if( 0x40 == ( lFlag & 0xC0 ) ){ gi.nGrepOutputStyle = 2; }					// 結果出力形式: ファイル毎
+	else if( 0x80 == ( lFlag & 0xC0 ) ){ gi.nGrepOutputStyle = 3; }				// 結果出力形式: 結果のみ
+	gi.sGrepSearchOption.bWordOnly = ( lFlag & 0x10000 ) != 0;	// 単語単位で探す
+	gi.bGrepOutputFileOnly = ( lFlag & 0x20000 ) != 0;			// ファイル毎最初のみ検索
+	gi.bGrepOutputBaseFolder = ( lFlag & 0x40000 ) != 0;		// ベースフォルダー表示
+	gi.bGrepSeparateFolder = ( lFlag & 0x80000 ) != 0;			// フォルダー毎に表示
+	if( pszRep ){
+		gi.bGrepReplace = true;
+		gi.cmGrepRep.SetString( pszRep );
+		gi.bGrepPaste = ( lFlag & 0x100000 ) != 0;				// クリップボードから貼り付け
+		gi.bGrepBackup = ( lFlag & 0x200000 ) != 0;				// バックアップ作成
+	}
+	return gi;
 }
 
 /**	マクロ引数変換
@@ -1061,14 +1097,6 @@ bool CMacro::HandleCommand(
 			//	常に外部ウィンドウに。
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
-			CNativeW cmWork1;	cmWork1.SetString( Argument[0] );	cmWork1.Replace( L"\"", L"\"\"" );	//	検索文字列
-			CNativeW cmWork4;
-			if( bGrepReplace ){
-				cmWork4.SetString( Argument[1] );	cmWork4.Replace( L"\"", L"\"\"" );	//	置換後
-			}
-			CNativeW cmWork2;	cmWork2.SetString( Argument[ArgIndex+1] );	cmWork2.Replace( L"\"", L"\"\"" );	//	ファイル名
-			CNativeW cmWork3;	cmWork3.SetString( Argument[ArgIndex+2] );	cmWork3.Replace( L"\"", L"\"\"" );	//	フォルダー名
-
 			LPARAM lFlag = wtoi_def(Argument[ArgIndex+3], 5);
 
 			// 2002/09/21 Moca 文字コードセット
@@ -1088,46 +1116,8 @@ bool CMacro::HandleCommand(
 				}
 			}
 
-			// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-			CNativeW cCmdLine;
-			WCHAR	szTemp[20];
-			WCHAR	pOpt[64];
-			cCmdLine.AppendString(L"-GREPMODE -GKEY=\"");
-			cCmdLine.AppendString(cmWork1.GetStringPtr());
-			if( bGrepReplace ){
-				cCmdLine.AppendString(L"\" -GREPR=\"");
-				cCmdLine.AppendString(cmWork4.GetStringPtr());
-			}
-			cCmdLine.AppendString(L"\" -GFILE=\"");
-			cCmdLine.AppendString(cmWork2.GetStringPtr());
-			cCmdLine.AppendString(L"\" -GFOLDER=\"");
-			cCmdLine.AppendString(cmWork3.GetStringPtr());
-			cCmdLine.AppendString(L"\" -GCODE=");
-			auto_sprintf( szTemp, L"%d", nCharSet );
-			cCmdLine.AppendString(szTemp);
-
-			//GOPTオプション
-			pOpt[0] = '\0';
-			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダーからも検索する */
-			if( lFlag & 0x04 )wcscat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
-			if( lFlag & 0x08 )wcscat( pOpt, L"R" );	/* 正規表現 */
-			if(          0x20 == (lFlag & 0x400020) )wcscat( pOpt, L"P" );	// 行を出力する
-			else if( 0x400000 == (lFlag & 0x400020) )wcscat( pOpt, L"N" );	// 否ヒット行を出力する
-			if(      0x40 == (lFlag & 0xC0) )wcscat( pOpt, L"2" );	/* Grep: 出力形式 */
-			else if( 0x80 == (lFlag & 0xC0) )wcscat( pOpt, L"3" );
-			else wcscat( pOpt, L"1" );
-			if( lFlag & 0x10000 )wcscat( pOpt, L"W" );
-			if( lFlag & 0x20000 )wcscat( pOpt, L"F" );
-			if( lFlag & 0x40000 )wcscat( pOpt, L"B" );
-			if( lFlag & 0x80000 )wcscat( pOpt, L"D" );
-			if( bGrepReplace ){
-				if( lFlag & 0x100000 )wcscat( pOpt, L"C" );
-				if( lFlag & 0x200000 )wcscat( pOpt, L"O" );
-			}
-			if( pOpt[0] != L'\0' ){
-				auto_sprintf( szTemp, L" -GOPT=%s", pOpt );
-				cCmdLine.AppendString(szTemp);
-			}
+			const GrepInfo gi = MakeGrepInfo( Argument[0], bGrepReplace ? Argument[1] : nullptr, Argument[ArgIndex+1], Argument[ArgIndex+2], lFlag, nCharSet );
+			const std::wstring cmdLine = gi.MakeCommandLine();
 
 			/* 新規編集ウィンドウの追加 ver 0 */
 			SLoadInfo sLoadInfo;
@@ -1138,7 +1128,7 @@ bool CMacro::HandleCommand(
 				G_AppInstance(),
 				pcEditView->GetHwnd(),
 				sLoadInfo,
-				cCmdLine.GetStringPtr()
+				cmdLine.c_str()
 			);
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */

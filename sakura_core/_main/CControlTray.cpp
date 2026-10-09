@@ -186,59 +186,14 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 {
 	/*======= Grepの実行 =============*/
 	/* Grep結果ウィンドウの表示 */
-
-	CNativeW		cmWork1;
-	CNativeW		cmWork2;
-	CNativeW		cmWork3;
-
-	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
-	cmWork2 = cDlgGrep.GetPackedGFileString();
-	cmWork3.SetString( cDlgGrep.m_szFolder );
-
-	cmWork1.Replace( L"\"", L"\"\"" );
-	cmWork2.Replace( L"\"", L"\"\"" );
-	cmWork3.Replace( L"\"", L"\"\"" );
-
-	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-	CNativeW cCmdLine;
-	WCHAR szTemp[20];
-
-	cCmdLine.AppendString(L"-GREPMODE -GKEY=\"");
-	cCmdLine.AppendString(cmWork1.GetStringPtr());
-	cCmdLine.AppendString(L"\" -GFILE=\"");
-	cCmdLine.AppendString(cmWork2.GetStringPtr());
-	cCmdLine.AppendString(L"\" -GFOLDER=\"");
-	cCmdLine.AppendString(cmWork3.GetStringPtr());
-	cCmdLine.AppendString(L"\" -GCODE=");
-	auto_sprintf( szTemp, L"%d", cDlgGrep.m_nGrepCharSet );
-	cCmdLine.AppendString(szTemp);
-
-	//GOPTオプション
-	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)wcscat( pOpt, L"W" );	// 単語単位で探す
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
-	if( 3 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
-	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
-	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
-	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
-	if( cDlgGrep.m_bGrepExceptFileRegexp		)wcscat_s( pOpt, L"E" );	// 除外ファイルを正規表現で指定する
-	if( pOpt[0] != L'\0' ){
-		cCmdLine.AppendString( L" -GOPT=" );
-		cCmdLine.AppendString( pOpt );
-	}
+	const std::wstring cmdLine = cDlgGrep.MakeGrepInfo().MakeCommandLine();
 
 	/* 新規編集ウィンドウの追加 ver 0 */
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	OpenNewEditor( hinst, msgParent, sLoadInfo, cCmdLine.GetStringPtr(),
+	OpenNewEditor( hinst, msgParent, sLoadInfo, cmdLine.c_str(),
 		false, nullptr, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 }
 

@@ -7,6 +7,7 @@
 #include "pch.h"
 
 #include "macro/CKeyMacroMgr.h"
+#include "macro/CMacro.h"
 #include "macro/CMacroFactory.h"
 #include "macro/CPPAMacroMgr.h"
 #include "macro/CPythonMacroManager.h"
@@ -818,6 +819,69 @@ TEST(CSMacroMgr, GetFuncInfoByName002)
 TEST(CSMacroMgr, GetFuncInfoByName101)
 {
 	EXPECT_THAT(CSMacroMgr::GetFuncInfoByName(nullptr, nullptr, nullptr), F_INVALID);
+}
+
+//! Grep マクロの引数から GrepInfo を作る: フラグが無ければ既定値(該当部分・ノーマル)
+TEST(CMacro, MakeGrepInfoDefault)
+{
+	const GrepInfo gi = CMacro::MakeGrepInfo(L"key", nullptr, L"*.txt", LR"(C:\work)", 0x00, CODE_SJIS);
+	EXPECT_THAT(gi.cmGrepKey.GetStringPtr(), StrEq(L"key"));
+	EXPECT_THAT(gi.cmGrepFile.GetStringPtr(), StrEq(L"*.txt"));
+	EXPECT_THAT(gi.cmGrepFolder.GetStringPtr(), StrEq(LR"(C:\work)"));
+	EXPECT_THAT(gi.nGrepCharSet, Eq(CODE_SJIS));
+	EXPECT_THAT(gi.bGrepReplace, IsFalse());
+	EXPECT_THAT(gi.bGrepSubFolder, IsFalse());
+	EXPECT_THAT(gi.nGrepOutputLineType, Eq(0));
+	EXPECT_THAT(gi.nGrepOutputStyle, Eq(1));
+	EXPECT_THAT(gi.bGrepCurFolder, IsFalse());
+	EXPECT_THAT(gi.bGrepHeader, IsTrue());
+}
+
+//! 検索・出力のフラグがそれぞれの項目になる
+TEST(CMacro, MakeGrepInfoSearchFlags)
+{
+	const LPARAM all = 0x01 | 0x04 | 0x08 | 0x20 | 0x10000 | 0x20000 | 0x40000 | 0x80000;
+	const GrepInfo gi = CMacro::MakeGrepInfo(L"key", nullptr, L"*", LR"(C:\work)", all, CODE_UTF8);
+	EXPECT_THAT(gi.bGrepSubFolder, IsTrue());
+	EXPECT_THAT(gi.sGrepSearchOption.bLoHiCase, IsTrue());
+	EXPECT_THAT(gi.sGrepSearchOption.bRegularExp, IsTrue());
+	EXPECT_THAT(gi.nGrepOutputLineType, Eq(1));
+	EXPECT_THAT(gi.sGrepSearchOption.bWordOnly, IsTrue());
+	EXPECT_THAT(gi.bGrepOutputFileOnly, IsTrue());
+	EXPECT_THAT(gi.bGrepOutputBaseFolder, IsTrue());
+	EXPECT_THAT(gi.bGrepSeparateFolder, IsTrue());
+	EXPECT_THAT(gi.nGrepCharSet, Eq(CODE_UTF8));
+}
+
+//! 結果出力: 0x400000 は否ヒット行、0x400020(両方)はどちらでもない(該当部分)
+TEST(CMacro, MakeGrepInfoOutputLine)
+{
+	EXPECT_THAT(CMacro::MakeGrepInfo(L"k", nullptr, L"*", L"C:", 0x400000, CODE_SJIS).nGrepOutputLineType, Eq(2));
+	EXPECT_THAT(CMacro::MakeGrepInfo(L"k", nullptr, L"*", L"C:", 0x400020, CODE_SJIS).nGrepOutputLineType, Eq(0));
+}
+
+//! 結果出力形式: 0x40 はファイル毎、0x80 は結果のみ、0xC0(両方)はノーマル
+TEST(CMacro, MakeGrepInfoOutputStyle)
+{
+	EXPECT_THAT(CMacro::MakeGrepInfo(L"k", nullptr, L"*", L"C:", 0x40, CODE_SJIS).nGrepOutputStyle, Eq(2));
+	EXPECT_THAT(CMacro::MakeGrepInfo(L"k", nullptr, L"*", L"C:", 0x80, CODE_SJIS).nGrepOutputStyle, Eq(3));
+	EXPECT_THAT(CMacro::MakeGrepInfo(L"k", nullptr, L"*", L"C:", 0xC0, CODE_SJIS).nGrepOutputStyle, Eq(1));
+}
+
+//! 置換: 置換後の文字列があるときだけ Grep置換になり、C・O のフラグが効く
+TEST(CMacro, MakeGrepInfoReplace)
+{
+	const LPARAM flags = 0x100000 | 0x200000;
+	const GrepInfo replace = CMacro::MakeGrepInfo(L"key", L"rep", L"*", L"C:", flags, CODE_SJIS);
+	EXPECT_THAT(replace.bGrepReplace, IsTrue());
+	EXPECT_THAT(replace.cmGrepRep.GetStringPtr(), StrEq(L"rep"));
+	EXPECT_THAT(replace.bGrepPaste, IsTrue());
+	EXPECT_THAT(replace.bGrepBackup, IsTrue());
+
+	const GrepInfo search = CMacro::MakeGrepInfo(L"key", nullptr, L"*", L"C:", flags, CODE_SJIS);
+	EXPECT_THAT(search.bGrepReplace, IsFalse());
+	EXPECT_THAT(search.bGrepPaste, IsFalse());
+	EXPECT_THAT(search.bGrepBackup, IsFalse());
 }
 
 } // namespace macro
