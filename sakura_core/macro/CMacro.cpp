@@ -239,6 +239,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputFileOnly			? 0x20000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputBaseFolder		? 0x40000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSeparateFolder			? 0x80000 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepExceptFileRegexp		? 0x800000 : 0x00;
 			if( F_GREP_REPLACE == m_nFuncID ){
 				lFlag |= pcDlgGrepRep->m_bPaste											? 0x100000 : 0x00;
 				lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepBackup				? 0x200000 : 0x00;
@@ -535,6 +536,7 @@ GrepInfo CMacro::MakeGrepInfo( const WCHAR* pszKey, const WCHAR* pszRep, const W
 	gi.bGrepOutputFileOnly = ( lFlag & 0x20000 ) != 0;			// ファイル毎最初のみ検索
 	gi.bGrepOutputBaseFolder = ( lFlag & 0x40000 ) != 0;		// ベースフォルダー表示
 	gi.bGrepSeparateFolder = ( lFlag & 0x80000 ) != 0;			// フォルダー毎に表示
+	gi.bGrepExceptFileRegexp = ( lFlag & 0x800000 ) != 0;		// 除外ファイルを正規表現で指定する
 	if( pszRep ){
 		gi.bGrepReplace = true;
 		gi.cmGrepRep.SetString( pszRep );
@@ -1063,6 +1065,7 @@ bool CMacro::HandleCommand(
 		//		0x020000	ファイル毎最初のみ検索
 		//		0x040000	ベースフォルダー表示
 		//		0x080000	フォルダー毎に表示
+		//		0x800000	除外ファイルを正規表現で指定する
 		{
 			if( Argument[0] == nullptr ){
 				::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
