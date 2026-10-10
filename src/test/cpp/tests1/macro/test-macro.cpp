@@ -21,6 +21,8 @@
 #include "sakura_rc.h"
 
 #include <fstream>
+#include <iterator>
+#include <regex>
 
 std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
 
@@ -882,6 +884,60 @@ TEST(CMacro, MakeGrepInfoReplace)
 	EXPECT_THAT(search.bGrepReplace, IsFalse());
 	EXPECT_THAT(search.bGrepPaste, IsFalse());
 	EXPECT_THAT(search.bGrepBackup, IsFalse());
+}
+
+//! 除外ファイルの正規表現(0x800000)は bGrepExceptFileRegexp になり、コマンドラインの -GOPT に E が付く
+TEST(CMacro, MakeGrepInfoExceptFileRegexp)
+{
+	const GrepInfo on = CMacro::MakeGrepInfo(L"key", nullptr, L"*", L"C:", 0x800000, CODE_SJIS);
+	EXPECT_THAT(on.bGrepExceptFileRegexp, IsTrue());
+	EXPECT_THAT(on.MakeCommandLineOptions(), StrEq(L"1E"));
+
+	const GrepInfo off = CMacro::MakeGrepInfo(L"key", nullptr, L"*", L"C:", 0x00, CODE_SJIS);
+	EXPECT_THAT(off.bGrepExceptFileRegexp, IsFalse());
+}
+
+//! Grep の記録: 除外ファイルの正規表現の設定が、第 4 引数のフラグ 0x800000 になる
+TEST_F(MacroMgrTest, RecordGrepExceptFileRegexp)
+{
+	auto& shareData = GetDllShareData();
+	// 記録は履歴の先頭を使うので、空なら入れる
+	if (shareData.m_sSearchKeywords.m_aGrepFiles.size() == 0) {
+		shareData.m_sSearchKeywords.m_aGrepFiles.push_back(L"*.txt");
+	}
+	if (shareData.m_sSearchKeywords.m_aGrepFolders.size() == 0) {
+		shareData.m_sSearchKeywords.m_aGrepFolders.push_back(LR"(C:\work)");
+	}
+	auto& search = shareData.m_Common.m_sSearch;
+	const auto saved = search.m_bGrepExceptFileRegexp;
+
+	// 記録したキーマクロを保存し、Grep の第 4 引数(フラグ)を取り出す
+	const auto recordFlag = [this, &search](bool exceptFileRegexp) {
+		search.m_bGrepExceptFileRegexp = exceptFileRegexp;
+		CKeyMacroMgr mgr;
+		const LPARAM lParams[4] = {};
+		mgr.Append(F_GREP, lParams, &pcEditWnd->GetActiveView());
+		const auto path = GetTempFilePathWithExt(L"tes", L"mac");
+		EXPECT_THAT(mgr.SaveKeyMacro(nullptr, path.c_str()), IsTrue());
+		std::ifstream fs(path, std::ios::binary);
+		const std::string text((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
+		fs.close();
+		std::error_code ec;
+		std::filesystem::remove(path, ec);
+		std::smatch m;
+		const std::regex re(R"(Grep\(.*, (\d+), (-?\d+)\);)");
+		if (!std::regex_search(text, m, re)) {
+			ADD_FAILURE() << "Grep not found: " << text;
+			return LPARAM(0);
+		}
+		return LPARAM(std::stoll(m[1].str()));
+	};
+	const LPARAM flagOn = recordFlag(true);
+	const LPARAM flagOff = recordFlag(false);
+	search.m_bGrepExceptFileRegexp = saved;	// 後続のテストのために戻す
+
+	EXPECT_THAT(flagOn & 0x800000, Ne(0));
+	EXPECT_THAT(flagOff & 0x800000, Eq(0));
 }
 
 } // namespace macro
