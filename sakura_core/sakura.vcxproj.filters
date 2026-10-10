@@ -154,37 +154,37 @@
     <ClInclude Include="..\src\main\resources\sakura_rc.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\StdAfx.h">
+    <ClInclude Include="StdAfx.h">
       <Filter>Pre-compiled Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\agent\CAutoReloadAgent.h">
+    <ClInclude Include="agent\CAutoReloadAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\agent\CAutoSaveAgent.h">
+    <ClInclude Include="agent\CAutoSaveAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\agent\CBackupAgent.h">
+    <ClInclude Include="agent\CBackupAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CCodeChecker.h">
+    <ClInclude Include="env\CCodeChecker.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CDataProfile.h">
+    <ClInclude Include="env\CDataProfile.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CDicMgr.h">
+    <ClInclude Include="env\CDicMgr.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\CEditApp.h">
+    <ClInclude Include="CEditApp.h">
       <Filter>Cpp Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CEol.h">
+    <ClInclude Include="basis\CEol.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CFileExt.h">
+    <ClInclude Include="basis\CFileExt.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\agent\CGrepAgent.h">
+    <ClInclude Include="agent\CGrepAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
     <ClInclude Include="grep\CGrepEnumFileBase.h">
@@ -211,916 +211,916 @@
     <ClInclude Include="grep\GrepMessageFormat.h">
       <Filter>Cpp Source Files\grep</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CHokanMgr.h">
+    <ClInclude Include="env\CHokanMgr.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CKeyWordSetMgr.h">
+    <ClInclude Include="env\CKeyWordSetMgr.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\agent\CLoadAgent.h">
+    <ClInclude Include="agent\CLoadAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CMarkMgr.h">
+    <ClInclude Include="env\CMarkMgr.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\cmd\COpe.h">
+    <ClInclude Include="cmd\COpe.h">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\cmd\COpeBlk.h">
+    <ClInclude Include="cmd\COpeBlk.h">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\cmd\COpeBuf.h">
+    <ClInclude Include="cmd\COpeBuf.h">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CProfile.h">
+    <ClInclude Include="env\CProfile.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CPropertyManager.h">
+    <ClInclude Include="env\CPropertyManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CReadManager.h">
+    <ClInclude Include="env\CReadManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CRegexKeyword.h">
+    <ClInclude Include="env\CRegexKeyword.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\agent\CSaveAgent.h">
+    <ClInclude Include="agent\CSaveAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\agent\CSearchAgent.h">
+    <ClInclude Include="agent\CSearchAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\CSelectLang.h">
+    <ClInclude Include="CSelectLang.h">
       <Filter>Cpp Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CSortedTagJumpList.h">
+    <ClInclude Include="env\CSortedTagJumpList.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CWriteManager.h">
+    <ClInclude Include="env\CWriteManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\EditInfo.h">
+    <ClInclude Include="basis\EditInfo.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h">
+    <ClInclude Include="apiwrap\CommonControl.h">
       <Filter>Cpp Source Files\apiwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\apiwrap\StdApi.h">
+    <ClInclude Include="apiwrap\StdApi.h">
       <Filter>Cpp Source Files\apiwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\apiwrap\StdControl.h">
+    <ClInclude Include="apiwrap\StdControl.h">
       <Filter>Cpp Source Files\apiwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CCesu8.h">
+    <ClInclude Include="charset\CCesu8.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CCodeBase.h">
+    <ClInclude Include="charset\CCodeBase.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CCodeFactory.h">
+    <ClInclude Include="charset\CCodeFactory.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CCodeMediator.h">
+    <ClInclude Include="charset\CCodeMediator.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CCodePage.h">
+    <ClInclude Include="charset\CCodePage.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CESI.h">
+    <ClInclude Include="charset\CESI.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CEuc.h">
+    <ClInclude Include="charset\CEuc.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\charcode.h">
+    <ClInclude Include="charset\charcode.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\charset.h">
+    <ClInclude Include="charset\charset.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CJis.h">
+    <ClInclude Include="charset\CJis.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CLatin1.h">
+    <ClInclude Include="charset\CLatin1.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\codechecker.h">
+    <ClInclude Include="charset\codechecker.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\codeutil.h">
+    <ClInclude Include="charset\codeutil.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CShiftJis.h">
+    <ClInclude Include="charset\CShiftJis.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CUnicode.h">
+    <ClInclude Include="charset\CUnicode.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CUnicodeBe.h">
+    <ClInclude Include="charset\CUnicodeBe.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CUtf7.h">
+    <ClInclude Include="charset\CUtf7.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CUtf8.h">
+    <ClInclude Include="charset\CUtf8.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\config\app_constants.h">
+    <ClInclude Include="config\app_constants.h">
       <Filter>Cpp Source Files\config</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\config\build_config.h">
+    <ClInclude Include="config\build_config.h">
       <Filter>Cpp Source Files\config</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\config\maxdata.h">
+    <ClInclude Include="config\maxdata.h">
       <Filter>Cpp Source Files\config</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\config\system_constants.h">
+    <ClInclude Include="config\system_constants.h">
       <Filter>Cpp Source Files\config</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert.h">
+    <ClInclude Include="convert\CConvert.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_HaneisuToZeneisu.h">
+    <ClInclude Include="convert\CConvert_HaneisuToZeneisu.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_HankataToZenhira.h">
+    <ClInclude Include="convert\CConvert_HankataToZenhira.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_HankataToZenkata.h">
+    <ClInclude Include="convert\CConvert_HankataToZenkata.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_SpaceToTab.h">
+    <ClInclude Include="convert\CConvert_SpaceToTab.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_TabToSpace.h">
+    <ClInclude Include="convert\CConvert_TabToSpace.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_ToHankaku.h">
+    <ClInclude Include="convert\CConvert_ToHankaku.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_ToLower.h">
+    <ClInclude Include="convert\CConvert_ToLower.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_ToUpper.h">
+    <ClInclude Include="convert\CConvert_ToUpper.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_ToZenhira.h">
+    <ClInclude Include="convert\CConvert_ToZenhira.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_ToZenkata.h">
+    <ClInclude Include="convert\CConvert_ToZenkata.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_Trim.h">
+    <ClInclude Include="convert\CConvert_Trim.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_ZeneisuToHaneisu.h">
+    <ClInclude Include="convert\CConvert_ZeneisuToHaneisu.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_ZenkataToHankata.h">
+    <ClInclude Include="convert\CConvert_ZenkataToHankata.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CDecode.h">
+    <ClInclude Include="convert\CDecode.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CDecode_Base64Decode.h">
+    <ClInclude Include="convert\CDecode_Base64Decode.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CDecode_UuDecode.h">
+    <ClInclude Include="convert\CDecode_UuDecode.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\convert_util.h">
+    <ClInclude Include="convert\convert_util.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\convert_util2.h">
+    <ClInclude Include="convert\convert_util2.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\io\CBinaryStream.h">
+    <ClInclude Include="io\CBinaryStream.h">
       <Filter>Cpp Source Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\io\CFile.h">
+    <ClInclude Include="io\CFile.h">
       <Filter>Cpp Source Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\io\CFileLoad.h">
+    <ClInclude Include="io\CFileLoad.h">
       <Filter>Cpp Source Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\io\CIoBridge.h">
+    <ClInclude Include="io\CIoBridge.h">
       <Filter>Cpp Source Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\io\CStream.h">
+    <ClInclude Include="io\CStream.h">
       <Filter>Cpp Source Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\io\CTextStream.h">
+    <ClInclude Include="io\CTextStream.h">
       <Filter>Cpp Source Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\io\CZipFile.h">
+    <ClInclude Include="io\CZipFile.h">
       <Filter>Cpp Source Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CMemory.h">
+    <ClInclude Include="mem\CMemory.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CMemoryIterator.h">
+    <ClInclude Include="mem\CMemoryIterator.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CNative.h">
+    <ClInclude Include="mem\CNative.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CNativeA.h">
+    <ClInclude Include="mem\CNativeA.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CNativeW.h">
+    <ClInclude Include="mem\CNativeW.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CRecycledBuffer.h">
+    <ClInclude Include="mem\CRecycledBuffer.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\parse\CWordParse.h">
+    <ClInclude Include="parse\CWordParse.h">
       <Filter>Cpp Source Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CAppNodeManager.h">
+    <ClInclude Include="env\CAppNodeManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CDocTypeManager.h">
+    <ClInclude Include="env\CDocTypeManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CFileNameManager.h">
+    <ClInclude Include="env\CFileNameManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CFormatManager.h">
+    <ClInclude Include="env\CFormatManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CHelpManager.h">
+    <ClInclude Include="env\CHelpManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CommonSetting.h">
+    <ClInclude Include="env\CommonSetting.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CSakuraEnvironment.h">
+    <ClInclude Include="env\CSakuraEnvironment.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CSearchKeywordManager.h">
+    <ClInclude Include="env\CSearchKeywordManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CShareData.h">
+    <ClInclude Include="env\CShareData.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CShareData_IO.h">
+    <ClInclude Include="env\CShareData_IO.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\CTagJumpManager.h">
+    <ClInclude Include="env\CTagJumpManager.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\env\DLLSHAREDATA.h">
+    <ClInclude Include="env\DLLSHAREDATA.h">
       <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\container.h">
+    <ClInclude Include="util\container.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\design_template.h">
+    <ClInclude Include="util\design_template.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\file.h">
+    <ClInclude Include="util\file.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\format.h">
+    <ClInclude Include="util\format.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\input.h">
+    <ClInclude Include="util\input.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\MessageBoxF.h">
+    <ClInclude Include="util\MessageBoxF.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\module.h">
+    <ClInclude Include="util\module.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\ole_convert.h">
+    <ClInclude Include="util\ole_convert.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\os.h">
+    <ClInclude Include="util\os.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\RegKey.h">
+    <ClInclude Include="util\RegKey.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\relation_tool.h">
+    <ClInclude Include="util\relation_tool.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\shell.h">
+    <ClInclude Include="util\shell.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\StaticType.h">
+    <ClInclude Include="util\StaticType.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\std_macro.h">
+    <ClInclude Include="util\std_macro.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\string_ex.h">
+    <ClInclude Include="util\string_ex.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\string_ex2.h">
+    <ClInclude Include="util\string_ex2.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\tchar_convert.h">
+    <ClInclude Include="util\tchar_convert.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\tchar_template.h">
+    <ClInclude Include="util\tchar_template.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\window.h">
+    <ClInclude Include="util\window.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CLaxInteger.h">
+    <ClInclude Include="basis\CLaxInteger.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CMyPoint.h">
+    <ClInclude Include="basis\CMyPoint.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CMyRect.h">
+    <ClInclude Include="basis\CMyRect.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CMySize.h">
+    <ClInclude Include="basis\CMySize.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CMyString.h">
+    <ClInclude Include="basis\CMyString.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CStrictInteger.h">
+    <ClInclude Include="basis\CStrictInteger.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CStrictPoint.h">
+    <ClInclude Include="basis\CStrictPoint.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CStrictRange.h">
+    <ClInclude Include="basis\CStrictRange.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CStrictRect.h">
+    <ClInclude Include="basis\CStrictRect.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\primitive.h">
+    <ClInclude Include="basis\primitive.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\SakuraBasis.h">
+    <ClInclude Include="basis\SakuraBasis.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\typeprop\CDlgKeywordSelect.h">
+    <ClInclude Include="typeprop\CDlgKeywordSelect.h">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\typeprop\CDlgSameColor.h">
+    <ClInclude Include="typeprop\CDlgSameColor.h">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\typeprop\CDlgTypeAscertain.h">
+    <ClInclude Include="typeprop\CDlgTypeAscertain.h">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\typeprop\CDlgTypeList.h">
+    <ClInclude Include="typeprop\CDlgTypeList.h">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\typeprop\CImpExpManager.h">
+    <ClInclude Include="typeprop\CImpExpManager.h">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\typeprop\CPropTypes.h">
+    <ClInclude Include="typeprop\CPropTypes.h">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\types\CType.h">
+    <ClInclude Include="types\CType.h">
       <Filter>Cpp Source Files\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\types\CTypeSupport.h">
+    <ClInclude Include="types\CTypeSupport.h">
       <Filter>Cpp Source Files\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CCaret.h">
+    <ClInclude Include="view\CCaret.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CEditView.h">
+    <ClInclude Include="view\CEditView.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CEditView_Paint.h">
+    <ClInclude Include="view\CEditView_Paint.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CRuler.h">
+    <ClInclude Include="view\CRuler.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CTextArea.h">
+    <ClInclude Include="view\CTextArea.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CTextDrawer.h">
+    <ClInclude Include="view\CTextDrawer.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CTextMetrics.h">
+    <ClInclude Include="view\CTextMetrics.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CViewCalc.h">
+    <ClInclude Include="view\CViewCalc.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CViewFont.h">
+    <ClInclude Include="view\CViewFont.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CViewParser.h">
+    <ClInclude Include="view\CViewParser.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CViewSelect.h">
+    <ClInclude Include="view\CViewSelect.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\DispPos.h">
+    <ClInclude Include="view\DispPos.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_Comment.h">
+    <ClInclude Include="view\colors\CColor_Comment.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_Found.h">
+    <ClInclude Include="view\colors\CColor_Found.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_Heredoc.h">
+    <ClInclude Include="view\colors\CColor_Heredoc.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_KeywordSet.h">
+    <ClInclude Include="view\colors\CColor_KeywordSet.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_Numeric.h">
+    <ClInclude Include="view\colors\CColor_Numeric.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_Quote.h">
+    <ClInclude Include="view\colors\CColor_Quote.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_RegexKeyword.h">
+    <ClInclude Include="view\colors\CColor_RegexKeyword.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColor_Url.h">
+    <ClInclude Include="view\colors\CColor_Url.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\CColorStrategy.h">
+    <ClInclude Include="view\colors\CColorStrategy.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\colors\EColorIndexType.h">
+    <ClInclude Include="view\colors\EColorIndexType.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigure_Comma.h">
+    <ClInclude Include="view\figures\CFigure_Comma.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigure_CtrlCode.h">
+    <ClInclude Include="view\figures\CFigure_CtrlCode.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigure_Eol.h">
+    <ClInclude Include="view\figures\CFigure_Eol.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigure_HanSpace.h">
+    <ClInclude Include="view\figures\CFigure_HanSpace.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigure_Tab.h">
+    <ClInclude Include="view\figures\CFigure_Tab.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigure_ZenSpace.h">
+    <ClInclude Include="view\figures\CFigure_ZenSpace.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigureManager.h">
+    <ClInclude Include="view\figures\CFigureManager.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\figures\CFigureStrategy.h">
+    <ClInclude Include="view\figures\CFigureStrategy.h">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\prop\CPropCommon.h">
+    <ClInclude Include="prop\CPropCommon.h">
       <Filter>Cpp Source Files\prop</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CMRUFile.h">
+    <ClInclude Include="recent\CMRUFile.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CMRUFolder.h">
+    <ClInclude Include="recent\CMRUFolder.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CMruListener.h">
+    <ClInclude Include="recent\CMruListener.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecent.h">
+    <ClInclude Include="recent\CRecent.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentCmd.h">
+    <ClInclude Include="recent\CRecentCmd.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentCurDir.h">
+    <ClInclude Include="recent\CRecentCurDir.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentEditNode.h">
+    <ClInclude Include="recent\CRecentEditNode.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentExceptMru.h">
+    <ClInclude Include="recent\CRecentExceptMru.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentFile.h">
+    <ClInclude Include="recent\CRecentFile.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentFolder.h">
+    <ClInclude Include="recent\CRecentFolder.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentGrepFile.h">
+    <ClInclude Include="recent\CRecentGrepFile.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentGrepFolder.h">
+    <ClInclude Include="recent\CRecentGrepFolder.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentImp.h">
+    <ClInclude Include="recent\CRecentImp.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentReplace.h">
+    <ClInclude Include="recent\CRecentReplace.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentSearch.h">
+    <ClInclude Include="recent\CRecentSearch.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentTagjumpKeyword.h">
+    <ClInclude Include="recent\CRecentTagjumpKeyword.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CBlockComment.h">
+    <ClInclude Include="doc\CBlockComment.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocEditor.h">
+    <ClInclude Include="doc\CDocEditor.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocFile.h">
+    <ClInclude Include="doc\CDocFile.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocFileOperation.h">
+    <ClInclude Include="doc\CDocFileOperation.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocListener.h">
+    <ClInclude Include="doc\CDocListener.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocLocker.h">
+    <ClInclude Include="doc\CDocLocker.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocOutline.h">
+    <ClInclude Include="doc\CDocOutline.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocReader.h">
+    <ClInclude Include="doc\CDocReader.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocType.h">
+    <ClInclude Include="doc\CDocType.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocTypeSetting.h">
+    <ClInclude Include="doc\CDocTypeSetting.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CDocVisitor.h">
+    <ClInclude Include="doc\CDocVisitor.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CEditDoc.h">
+    <ClInclude Include="doc\CEditDoc.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\CLineComment.h">
+    <ClInclude Include="doc\CLineComment.h">
       <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\layout\CLayout.h">
+    <ClInclude Include="doc\layout\CLayout.h">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\layout\CLayoutExInfo.h">
+    <ClInclude Include="doc\layout\CLayoutExInfo.h">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\layout\CLayoutMgr.h">
+    <ClInclude Include="doc\layout\CLayoutMgr.h">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\layout\CTsvModeInfo.h">
+    <ClInclude Include="doc\layout\CTsvModeInfo.h">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\logic\CDocLine.h">
+    <ClInclude Include="doc\logic\CDocLine.h">
       <Filter>Cpp Source Files\doc\logic</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\doc\logic\CDocLineMgr.h">
+    <ClInclude Include="doc\logic\CDocLineMgr.h">
       <Filter>Cpp Source Files\doc\logic</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CCookieManager.h">
+    <ClInclude Include="macro\CCookieManager.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CEditorIfObj.h">
+    <ClInclude Include="macro\CEditorIfObj.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CIfObj.h">
+    <ClInclude Include="macro\CIfObj.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CKeyMacroMgr.h">
+    <ClInclude Include="macro\CKeyMacroMgr.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CMacro.h">
+    <ClInclude Include="macro\CMacro.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CMacroFactory.h">
+    <ClInclude Include="macro\CMacroFactory.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CMacroManagerBase.h">
+    <ClInclude Include="macro\CMacroManagerBase.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CPPA.h">
+    <ClInclude Include="macro\CPPA.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CPPAMacroMgr.h">
+    <ClInclude Include="macro\CPPAMacroMgr.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CSMacroMgr.h">
+    <ClInclude Include="macro\CSMacroMgr.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CWSH.h">
+    <ClInclude Include="macro\CWSH.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CWSHIfObj.h">
+    <ClInclude Include="macro\CWSHIfObj.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CWSHManager.h">
+    <ClInclude Include="macro\CWSHManager.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDialog.h">
+    <ClInclude Include="dlg\CDialog.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgAbout.h">
+    <ClInclude Include="dlg\CDlgAbout.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgCancel.h">
+    <ClInclude Include="dlg\CDlgCancel.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgCompare.h">
+    <ClInclude Include="dlg\CDlgCompare.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgCtrlCode.h">
+    <ClInclude Include="dlg\CDlgCtrlCode.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgDiff.h">
+    <ClInclude Include="dlg\CDlgDiff.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgExec.h">
+    <ClInclude Include="dlg\CDlgExec.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgFavorite.h">
+    <ClInclude Include="dlg\CDlgFavorite.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgFileUpdateQuery.h">
+    <ClInclude Include="dlg\CDlgFileUpdateQuery.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgFind.h">
+    <ClInclude Include="dlg\CDlgFind.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgGrep.h">
+    <ClInclude Include="dlg\CDlgGrep.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgGrepReplace.h">
+    <ClInclude Include="dlg\CDlgGrepReplace.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgInput1.h">
+    <ClInclude Include="dlg\CDlgInput1.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgJump.h">
+    <ClInclude Include="dlg\CDlgJump.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgOpenFile.h">
+    <ClInclude Include="dlg\CDlgOpenFile.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgPluginOption.h">
+    <ClInclude Include="dlg\CDlgPluginOption.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgPrintSetting.h">
+    <ClInclude Include="dlg\CDlgPrintSetting.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgProfileMgr.h">
+    <ClInclude Include="dlg\CDlgProfileMgr.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgProperty.h">
+    <ClInclude Include="dlg\CDlgProperty.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgReplace.h">
+    <ClInclude Include="dlg\CDlgReplace.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgSetCharSet.h">
+    <ClInclude Include="dlg\CDlgSetCharSet.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgTagJumpList.h">
+    <ClInclude Include="dlg\CDlgTagJumpList.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgTagsMake.h">
+    <ClInclude Include="dlg\CDlgTagsMake.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgWindowList.h">
+    <ClInclude Include="dlg\CDlgWindowList.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\dlg\CDlgWinSize.h">
+    <ClInclude Include="dlg\CDlgWinSize.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CAutoScrollWnd.h">
+    <ClInclude Include="window\CAutoScrollWnd.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CEditWnd.h">
+    <ClInclude Include="window\CEditWnd.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CMainStatusBar.h">
+    <ClInclude Include="window\CMainStatusBar.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CMainToolBar.h">
+    <ClInclude Include="window\CMainToolBar.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CSplitBoxWnd.h">
+    <ClInclude Include="window\CSplitBoxWnd.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CSplitterWnd.h">
+    <ClInclude Include="window\CSplitterWnd.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CTabWnd.h">
+    <ClInclude Include="window\CTabWnd.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CTipWnd.h">
+    <ClInclude Include="window\CTipWnd.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\window\CWnd.h">
+    <ClInclude Include="window\CWnd.h">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\docplus\CBookmarkManager.h">
+    <ClInclude Include="docplus\CBookmarkManager.h">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\docplus\CDiffManager.h">
+    <ClInclude Include="docplus\CDiffManager.h">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\docplus\CFuncListManager.h">
+    <ClInclude Include="docplus\CFuncListManager.h">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\docplus\CModifyManager.h">
+    <ClInclude Include="docplus\CModifyManager.h">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\debug\CRunningTimer.h">
+    <ClInclude Include="debug\CRunningTimer.h">
       <Filter>Cpp Source Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\debug\Debug1.h">
+    <ClInclude Include="debug\Debug1.h">
       <Filter>Cpp Source Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\debug\Debug2.h">
+    <ClInclude Include="debug\Debug2.h">
       <Filter>Cpp Source Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CAppMode.h">
+    <ClInclude Include="_main\CAppMode.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CCommandLine.h">
+    <ClInclude Include="_main\CCommandLine.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CControlProcess.h">
+    <ClInclude Include="_main\CControlProcess.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CControlTray.h">
+    <ClInclude Include="_main\CControlTray.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CMutex.h">
+    <ClInclude Include="_main\CMutex.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CNormalProcess.h">
+    <ClInclude Include="_main\CNormalProcess.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CProcess.h">
+    <ClInclude Include="_main\CProcess.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\CProcessFactory.h">
+    <ClInclude Include="_main\CProcessFactory.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_main\global.h">
+    <ClInclude Include="_main\global.h">
       <Filter>Cpp Source Files\_main</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_os\CClipboard.h">
+    <ClInclude Include="_os\CClipboard.h">
       <Filter>Cpp Source Files\_os</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_os\CDropTarget.h">
+    <ClInclude Include="_os\CDropTarget.h">
       <Filter>Cpp Source Files\_os</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_os\OleTypes.h">
+    <ClInclude Include="_os\OleTypes.h">
       <Filter>Cpp Source Files\_os</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\outline\CDlgFileTree.h">
+    <ClInclude Include="outline\CDlgFileTree.h">
       <Filter>Cpp Source Files\outline</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\outline\CDlgFuncList.h">
+    <ClInclude Include="outline\CDlgFuncList.h">
       <Filter>Cpp Source Files\outline</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\outline\CFuncInfo.h">
+    <ClInclude Include="outline\CFuncInfo.h">
       <Filter>Cpp Source Files\outline</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\outline\CFuncInfoArr.h">
+    <ClInclude Include="outline\CFuncInfoArr.h">
       <Filter>Cpp Source Files\outline</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\func\CFuncKeyWnd.h">
+    <ClInclude Include="func\CFuncKeyWnd.h">
       <Filter>Cpp Source Files\func</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\func\CFuncLookup.h">
+    <ClInclude Include="func\CFuncLookup.h">
       <Filter>Cpp Source Files\func</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\func\CKeyBind.h">
+    <ClInclude Include="func\CKeyBind.h">
       <Filter>Cpp Source Files\func</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\func\Funccode.h">
+    <ClInclude Include="func\Funccode.h">
       <Filter>Cpp Source Files\func</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CComplementIfObj.h">
+    <ClInclude Include="plugin\CComplementIfObj.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CDllPlugin.h">
+    <ClInclude Include="plugin\CDllPlugin.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CJackManager.h">
+    <ClInclude Include="plugin\CJackManager.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\COutlineIfObj.h">
+    <ClInclude Include="plugin\COutlineIfObj.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CPlugin.h">
+    <ClInclude Include="plugin\CPlugin.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CPluginIfObj.h">
+    <ClInclude Include="plugin\CPluginIfObj.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CPluginManager.h">
+    <ClInclude Include="plugin\CPluginManager.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CSmartIndentIfObj.h">
+    <ClInclude Include="plugin\CSmartIndentIfObj.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\plugin\CWSHPlugin.h">
+    <ClInclude Include="plugin\CWSHPlugin.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\cmd\CViewCommander.h">
+    <ClInclude Include="cmd\CViewCommander.h">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\cmd\CViewCommander_inline.h">
+    <ClInclude Include="cmd\CViewCommander_inline.h">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CBregexp.h">
+    <ClInclude Include="extmodule\CBregexp.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CBregexpDll2.h">
+    <ClInclude Include="extmodule\CBregexpDll2.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CDllHandler.h">
+    <ClInclude Include="extmodule\CDllHandler.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CMigemo.h">
+    <ClInclude Include="extmodule\CMigemo.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\print\CPrint.h">
+    <ClInclude Include="print\CPrint.h">
       <Filter>Cpp Source Files\print</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\print\CPrintPreview.h">
+    <ClInclude Include="print\CPrintPreview.h">
       <Filter>Cpp Source Files\print</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\uiparts\CGraphics.h">
+    <ClInclude Include="uiparts\CGraphics.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\uiparts\CImageListMgr.h">
+    <ClInclude Include="uiparts\CImageListMgr.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\uiparts\CMenuDrawer.h">
+    <ClInclude Include="uiparts\CMenuDrawer.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\uiparts\CSoundSet.h">
+    <ClInclude Include="uiparts\CSoundSet.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\uiparts\CVisualProgress.h">
+    <ClInclude Include="uiparts\CVisualProgress.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\uiparts\CWaitCursor.h">
+    <ClInclude Include="uiparts\CWaitCursor.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\uiparts\HandCursor.h">
+    <ClInclude Include="uiparts\HandCursor.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentExcludeFile.h">
+    <ClInclude Include="recent\CRecentExcludeFile.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\CRecentExcludeFolder.h">
+    <ClInclude Include="recent\CRecentExcludeFolder.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CPoolResource.h">
+    <ClInclude Include="mem\CPoolResource.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\GrepInfo.h">
+    <ClInclude Include="basis\GrepInfo.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\zoom.h">
+    <ClInclude Include="util\zoom.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\TComImpl.hpp">
+    <ClInclude Include="basis\TComImpl.hpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\basis\CErrorInfo.h">
+    <ClInclude Include="basis\CErrorInfo.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.h">
+    <ClInclude Include="convert\CConvert_CodeAutoToSjis.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_CodeFromSjis.h">
+    <ClInclude Include="convert\CConvert_CodeFromSjis.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\convert\CConvert_CodeToSjis.h">
+    <ClInclude Include="convert\CConvert_CodeToSjis.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\recent\SShare_History.h">
+    <ClInclude Include="recent\SShare_History.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\extmodule\CUchardet.h">
+    <ClInclude Include="extmodule\CUchardet.h">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CharsetDetector.h">
+    <ClInclude Include="charset\CharsetDetector.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\view\CMiniMapView.h">
+    <ClInclude Include="view\CMiniMapView.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\parse\DetectIndentationStyle.h">
+    <ClInclude Include="parse\DetectIndentationStyle.h">
       <Filter>Cpp Source Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\src\main\cpp\cxx\TComPtr.hpp">
@@ -1141,7 +1141,7 @@
     <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_arg.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CPythonMacroManager.h">
+    <ClInclude Include="macro\CPythonMacroManager.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
     <ClInclude Include="..\src\main\cpp\cxx\load_string.hpp">
@@ -1212,1139 +1212,1139 @@
     <None Include="..\src\main\resources\MainMenu.ini">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\sakura_core\sakura_rc.rc2">
+    <None Include="sakura_rc.rc2">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\sakura_core\sakura_rc.rc">
+    <ResourceCompile Include="sakura_rc.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sakura_core\StdAfx.cpp">
+    <ClCompile Include="StdAfx.cpp">
       <Filter>Pre-compiled Header</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\agent\CAutoReloadAgent.cpp">
+    <ClCompile Include="agent\CAutoReloadAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\agent\CAutoSaveAgent.cpp">
+    <ClCompile Include="agent\CAutoSaveAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\agent\CBackupAgent.cpp">
+    <ClCompile Include="agent\CBackupAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CCodeChecker.cpp">
+    <ClCompile Include="env\CCodeChecker.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CDataProfile.cpp">
+    <ClCompile Include="env\CDataProfile.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CDicMgr.cpp">
+    <ClCompile Include="env\CDicMgr.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\CEditApp.cpp">
+    <ClCompile Include="CEditApp.cpp">
       <Filter>Cpp Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CEol.cpp">
+    <ClCompile Include="basis\CEol.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CFileExt.cpp">
+    <ClCompile Include="basis\CFileExt.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\agent\CGrepAgent.cpp">
+    <ClCompile Include="agent\CGrepAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
     <ClCompile Include="grep\GrepMessageFormat.cpp">
       <Filter>Cpp Source Files\grep</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CHokanMgr.cpp">
+    <ClCompile Include="env\CHokanMgr.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CKeyWordSetMgr.cpp">
+    <ClCompile Include="env\CKeyWordSetMgr.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\agent\CLoadAgent.cpp">
+    <ClCompile Include="agent\CLoadAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CMarkMgr.cpp">
+    <ClCompile Include="env\CMarkMgr.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\COpe.cpp">
+    <ClCompile Include="cmd\COpe.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\COpeBlk.cpp">
+    <ClCompile Include="cmd\COpeBlk.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\COpeBuf.cpp">
+    <ClCompile Include="cmd\COpeBuf.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CProfile.cpp">
+    <ClCompile Include="env\CProfile.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CPropertyManager.cpp">
+    <ClCompile Include="env\CPropertyManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CReadManager.cpp">
+    <ClCompile Include="env\CReadManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CRegexKeyword.cpp">
+    <ClCompile Include="env\CRegexKeyword.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\agent\CSaveAgent.cpp">
+    <ClCompile Include="agent\CSaveAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\agent\CSearchAgent.cpp">
+    <ClCompile Include="agent\CSearchAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\CSelectLang.cpp">
+    <ClCompile Include="CSelectLang.cpp">
       <Filter>Cpp Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CSortedTagJumpList.cpp">
+    <ClCompile Include="env\CSortedTagJumpList.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CWriteManager.cpp">
+    <ClCompile Include="env\CWriteManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp">
+    <ClCompile Include="apiwrap\StdApi.cpp">
       <Filter>Cpp Source Files\apiwrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp">
+    <ClCompile Include="apiwrap\StdControl.cpp">
       <Filter>Cpp Source Files\apiwrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CCesu8.cpp">
+    <ClCompile Include="charset\CCesu8.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CCodeBase.cpp">
+    <ClCompile Include="charset\CCodeBase.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CCodeFactory.cpp">
+    <ClCompile Include="charset\CCodeFactory.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CCodeMediator.cpp">
+    <ClCompile Include="charset\CCodeMediator.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CCodePage.cpp">
+    <ClCompile Include="charset\CCodePage.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CESI.cpp">
+    <ClCompile Include="charset\CESI.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CEuc.cpp">
+    <ClCompile Include="charset\CEuc.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\charcode.cpp">
+    <ClCompile Include="charset\charcode.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\charset.cpp">
+    <ClCompile Include="charset\charset.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CJis.cpp">
+    <ClCompile Include="charset\CJis.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CLatin1.cpp">
+    <ClCompile Include="charset\CLatin1.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\codechecker.cpp">
+    <ClCompile Include="charset\codechecker.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\codeutil.cpp">
+    <ClCompile Include="charset\codeutil.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CShiftJis.cpp">
+    <ClCompile Include="charset\CShiftJis.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CUnicode.cpp">
+    <ClCompile Include="charset\CUnicode.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CUnicodeBe.cpp">
+    <ClCompile Include="charset\CUnicodeBe.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CUtf7.cpp">
+    <ClCompile Include="charset\CUtf7.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CUtf8.cpp">
+    <ClCompile Include="charset\CUtf8.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert.cpp">
+    <ClCompile Include="convert\CConvert.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_HaneisuToZeneisu.cpp">
+    <ClCompile Include="convert\CConvert_HaneisuToZeneisu.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_HankataToZenhira.cpp">
+    <ClCompile Include="convert\CConvert_HankataToZenhira.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_HankataToZenkata.cpp">
+    <ClCompile Include="convert\CConvert_HankataToZenkata.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_SpaceToTab.cpp">
+    <ClCompile Include="convert\CConvert_SpaceToTab.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_TabToSpace.cpp">
+    <ClCompile Include="convert\CConvert_TabToSpace.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_ToHankaku.cpp">
+    <ClCompile Include="convert\CConvert_ToHankaku.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_ToLower.cpp">
+    <ClCompile Include="convert\CConvert_ToLower.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_ToUpper.cpp">
+    <ClCompile Include="convert\CConvert_ToUpper.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_ToZenhira.cpp">
+    <ClCompile Include="convert\CConvert_ToZenhira.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_ToZenkata.cpp">
+    <ClCompile Include="convert\CConvert_ToZenkata.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_Trim.cpp">
+    <ClCompile Include="convert\CConvert_Trim.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_ZeneisuToHaneisu.cpp">
+    <ClCompile Include="convert\CConvert_ZeneisuToHaneisu.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_ZenkataToHankata.cpp">
+    <ClCompile Include="convert\CConvert_ZenkataToHankata.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CDecode_Base64Decode.cpp">
+    <ClCompile Include="convert\CDecode_Base64Decode.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CDecode_UuDecode.cpp">
+    <ClCompile Include="convert\CDecode_UuDecode.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\convert_util.cpp">
+    <ClCompile Include="convert\convert_util.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\convert_util2.cpp">
+    <ClCompile Include="convert\convert_util2.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\io\CBinaryStream.cpp">
+    <ClCompile Include="io\CBinaryStream.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\io\CFile.cpp">
+    <ClCompile Include="io\CFile.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\io\CFileLoad.cpp">
+    <ClCompile Include="io\CFileLoad.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\io\CIoBridge.cpp">
+    <ClCompile Include="io\CIoBridge.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\io\CStream.cpp">
+    <ClCompile Include="io\CStream.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\io\CTextStream.cpp">
+    <ClCompile Include="io\CTextStream.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\io\CZipFile.cpp">
+    <ClCompile Include="io\CZipFile.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\mem\CMemory.cpp">
+    <ClCompile Include="mem\CMemory.cpp">
       <Filter>Cpp Source Files\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\mem\CNative.cpp">
+    <ClCompile Include="mem\CNative.cpp">
       <Filter>Cpp Source Files\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\mem\CNativeA.cpp">
+    <ClCompile Include="mem\CNativeA.cpp">
       <Filter>Cpp Source Files\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\mem\CNativeW.cpp">
+    <ClCompile Include="mem\CNativeW.cpp">
       <Filter>Cpp Source Files\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\mem\CRecycledBuffer.cpp">
+    <ClCompile Include="mem\CRecycledBuffer.cpp">
       <Filter>Cpp Source Files\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\parse\CWordParse.cpp">
+    <ClCompile Include="parse\CWordParse.cpp">
       <Filter>Cpp Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CAppNodeManager.cpp">
+    <ClCompile Include="env\CAppNodeManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CDocTypeManager.cpp">
+    <ClCompile Include="env\CDocTypeManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CFileNameManager.cpp">
+    <ClCompile Include="env\CFileNameManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CFormatManager.cpp">
+    <ClCompile Include="env\CFormatManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CHelpManager.cpp">
+    <ClCompile Include="env\CHelpManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CommonSetting.cpp">
+    <ClCompile Include="env\CommonSetting.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CSakuraEnvironment.cpp">
+    <ClCompile Include="env\CSakuraEnvironment.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CSearchKeywordManager.cpp">
+    <ClCompile Include="env\CSearchKeywordManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CShareData.cpp">
+    <ClCompile Include="env\CShareData.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CShareData_IO.cpp">
+    <ClCompile Include="env\CShareData_IO.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\CTagJumpManager.cpp">
+    <ClCompile Include="env\CTagJumpManager.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\env\DLLSHAREDATA.cpp">
+    <ClCompile Include="env\DLLSHAREDATA.cpp">
       <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\file.cpp">
+    <ClCompile Include="util\file.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\format.cpp">
+    <ClCompile Include="util\format.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\input.cpp">
+    <ClCompile Include="util\input.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\MessageBoxF.cpp">
+    <ClCompile Include="util\MessageBoxF.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\module.cpp">
+    <ClCompile Include="util\module.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\ole_convert.cpp">
+    <ClCompile Include="util\ole_convert.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\os.cpp">
+    <ClCompile Include="util\os.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\relation_tool.cpp">
+    <ClCompile Include="util\relation_tool.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\shell.cpp">
+    <ClCompile Include="util\shell.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\string_ex.cpp">
+    <ClCompile Include="util\string_ex.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\string_ex2.cpp">
+    <ClCompile Include="util\string_ex2.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\tchar_convert.cpp">
+    <ClCompile Include="util\tchar_convert.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\tchar_template.cpp">
+    <ClCompile Include="util\tchar_template.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\window.cpp">
+    <ClCompile Include="util\window.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CLaxInteger.cpp">
+    <ClCompile Include="basis\CLaxInteger.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CMyPoint.cpp">
+    <ClCompile Include="basis\CMyPoint.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CMyRect.cpp">
+    <ClCompile Include="basis\CMyRect.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CMySize.cpp">
+    <ClCompile Include="basis\CMySize.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CMyString.cpp">
+    <ClCompile Include="basis\CMyString.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CStrictInteger.cpp">
+    <ClCompile Include="basis\CStrictInteger.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CStrictPoint.cpp">
+    <ClCompile Include="basis\CStrictPoint.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CStrictRange.cpp">
+    <ClCompile Include="basis\CStrictRange.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CStrictRect.cpp">
+    <ClCompile Include="basis\CStrictRect.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\SakuraBasis.cpp">
+    <ClCompile Include="basis\SakuraBasis.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CDlgKeywordSelect.cpp">
+    <ClCompile Include="typeprop\CDlgKeywordSelect.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CDlgSameColor.cpp">
+    <ClCompile Include="typeprop\CDlgSameColor.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CDlgTypeAscertain.cpp">
+    <ClCompile Include="typeprop\CDlgTypeAscertain.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CDlgTypeList.cpp">
+    <ClCompile Include="typeprop\CDlgTypeList.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CImpExpManager.cpp">
+    <ClCompile Include="typeprop\CImpExpManager.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CPropTypes.cpp">
+    <ClCompile Include="typeprop\CPropTypes.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CPropTypesColor.cpp">
+    <ClCompile Include="typeprop\CPropTypesColor.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CPropTypesKeyHelp.cpp">
+    <ClCompile Include="typeprop\CPropTypesKeyHelp.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CPropTypesRegex.cpp">
+    <ClCompile Include="typeprop\CPropTypesRegex.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CPropTypesScreen.cpp">
+    <ClCompile Include="typeprop\CPropTypesScreen.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CPropTypesSupport.cpp">
+    <ClCompile Include="typeprop\CPropTypesSupport.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\typeprop\CPropTypesWindow.cpp">
+    <ClCompile Include="typeprop\CPropTypesWindow.cpp">
       <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType.cpp">
+    <ClCompile Include="types\CType.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Asm.cpp">
+    <ClCompile Include="types\CType_Asm.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Awk.cpp">
+    <ClCompile Include="types\CType_Awk.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Basis.cpp">
+    <ClCompile Include="types\CType_Basis.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Cobol.cpp">
+    <ClCompile Include="types\CType_Cobol.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_CorbaIdl.cpp">
+    <ClCompile Include="types\CType_CorbaIdl.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Cpp.cpp">
+    <ClCompile Include="types\CType_Cpp.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Dos.cpp">
+    <ClCompile Include="types\CType_Dos.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Erlang.cpp">
+    <ClCompile Include="types\CType_Erlang.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Html.cpp">
+    <ClCompile Include="types\CType_Html.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Ini.cpp">
+    <ClCompile Include="types\CType_Ini.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Java.cpp">
+    <ClCompile Include="types\CType_Java.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Others.cpp">
+    <ClCompile Include="types\CType_Others.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Pascal.cpp">
+    <ClCompile Include="types\CType_Pascal.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Perl.cpp">
+    <ClCompile Include="types\CType_Perl.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Python.cpp">
+    <ClCompile Include="types\CType_Python.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Rich.cpp">
+    <ClCompile Include="types\CType_Rich.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Sql.cpp">
+    <ClCompile Include="types\CType_Sql.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Tex.cpp">
+    <ClCompile Include="types\CType_Tex.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Text.cpp">
+    <ClCompile Include="types\CType_Text.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CType_Vb.cpp">
+    <ClCompile Include="types\CType_Vb.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\types\CTypeSupport.cpp">
+    <ClCompile Include="types\CTypeSupport.cpp">
       <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CCaret.cpp">
+    <ClCompile Include="view\CCaret.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView.cpp">
+    <ClCompile Include="view\CEditView.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Cmdgrep.cpp">
+    <ClCompile Include="view\CEditView_Cmdgrep.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_CmdHokan.cpp">
+    <ClCompile Include="view\CEditView_CmdHokan.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Cmdisrch.cpp">
+    <ClCompile Include="view\CEditView_Cmdisrch.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Command.cpp">
+    <ClCompile Include="view\CEditView_Command.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Command_New.cpp">
+    <ClCompile Include="view\CEditView_Command_New.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Diff.cpp">
+    <ClCompile Include="view\CEditView_Diff.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_ExecCmd.cpp">
+    <ClCompile Include="view\CEditView_ExecCmd.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Ime.cpp">
+    <ClCompile Include="view\CEditView_Ime.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Mouse.cpp">
+    <ClCompile Include="view\CEditView_Mouse.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Paint.cpp">
+    <ClCompile Include="view\CEditView_Paint.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Paint_Bracket.cpp">
+    <ClCompile Include="view\CEditView_Paint_Bracket.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Scroll.cpp">
+    <ClCompile Include="view\CEditView_Scroll.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CEditView_Search.cpp">
+    <ClCompile Include="view\CEditView_Search.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CRuler.cpp">
+    <ClCompile Include="view\CRuler.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CTextArea.cpp">
+    <ClCompile Include="view\CTextArea.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CTextDrawer.cpp">
+    <ClCompile Include="view\CTextDrawer.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CTextMetrics.cpp">
+    <ClCompile Include="view\CTextMetrics.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CViewCalc.cpp">
+    <ClCompile Include="view\CViewCalc.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CViewFont.cpp">
+    <ClCompile Include="view\CViewFont.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CViewParser.cpp">
+    <ClCompile Include="view\CViewParser.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CViewSelect.cpp">
+    <ClCompile Include="view\CViewSelect.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\DispPos.cpp">
+    <ClCompile Include="view\DispPos.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_Comment.cpp">
+    <ClCompile Include="view\colors\CColor_Comment.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_Found.cpp">
+    <ClCompile Include="view\colors\CColor_Found.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_Heredoc.cpp">
+    <ClCompile Include="view\colors\CColor_Heredoc.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_KeywordSet.cpp">
+    <ClCompile Include="view\colors\CColor_KeywordSet.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_Numeric.cpp">
+    <ClCompile Include="view\colors\CColor_Numeric.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_Quote.cpp">
+    <ClCompile Include="view\colors\CColor_Quote.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_RegexKeyword.cpp">
+    <ClCompile Include="view\colors\CColor_RegexKeyword.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColor_Url.cpp">
+    <ClCompile Include="view\colors\CColor_Url.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\colors\CColorStrategy.cpp">
+    <ClCompile Include="view\colors\CColorStrategy.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigure_Comma.cpp">
+    <ClCompile Include="view\figures\CFigure_Comma.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigure_CtrlCode.cpp">
+    <ClCompile Include="view\figures\CFigure_CtrlCode.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigure_Eol.cpp">
+    <ClCompile Include="view\figures\CFigure_Eol.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigure_HanSpace.cpp">
+    <ClCompile Include="view\figures\CFigure_HanSpace.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigure_Tab.cpp">
+    <ClCompile Include="view\figures\CFigure_Tab.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigure_ZenSpace.cpp">
+    <ClCompile Include="view\figures\CFigure_ZenSpace.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigureManager.cpp">
+    <ClCompile Include="view\figures\CFigureManager.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\figures\CFigureStrategy.cpp">
+    <ClCompile Include="view\figures\CFigureStrategy.cpp">
       <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComBackup.cpp">
+    <ClCompile Include="prop\CPropComBackup.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComCustmenu.cpp">
+    <ClCompile Include="prop\CPropComCustmenu.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComEdit.cpp">
+    <ClCompile Include="prop\CPropComEdit.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComFile.cpp">
+    <ClCompile Include="prop\CPropComFile.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComFileName.cpp">
+    <ClCompile Include="prop\CPropComFileName.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComFormat.cpp">
+    <ClCompile Include="prop\CPropComFormat.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComGeneral.cpp">
+    <ClCompile Include="prop\CPropComGeneral.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComGrep.cpp">
+    <ClCompile Include="prop\CPropComGrep.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComHelper.cpp">
+    <ClCompile Include="prop\CPropComHelper.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComKeybind.cpp">
+    <ClCompile Include="prop\CPropComKeybind.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComKeyword.cpp">
+    <ClCompile Include="prop\CPropComKeyword.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComMacro.cpp">
+    <ClCompile Include="prop\CPropComMacro.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComMainMenu.cpp">
+    <ClCompile Include="prop\CPropComMainMenu.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropCommon.cpp">
+    <ClCompile Include="prop\CPropCommon.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComPlugin.cpp">
+    <ClCompile Include="prop\CPropComPlugin.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComStatusbar.cpp">
+    <ClCompile Include="prop\CPropComStatusbar.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComTab.cpp">
+    <ClCompile Include="prop\CPropComTab.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComToolbar.cpp">
+    <ClCompile Include="prop\CPropComToolbar.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\prop\CPropComWin.cpp">
+    <ClCompile Include="prop\CPropComWin.cpp">
       <Filter>Cpp Source Files\prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CMRUFile.cpp">
+    <ClCompile Include="recent\CMRUFile.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CMRUFolder.cpp">
+    <ClCompile Include="recent\CMRUFolder.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CMruListener.cpp">
+    <ClCompile Include="recent\CMruListener.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecent.cpp">
+    <ClCompile Include="recent\CRecent.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentCmd.cpp">
+    <ClCompile Include="recent\CRecentCmd.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentCurDir.cpp">
+    <ClCompile Include="recent\CRecentCurDir.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentEditNode.cpp">
+    <ClCompile Include="recent\CRecentEditNode.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentExceptMru.cpp">
+    <ClCompile Include="recent\CRecentExceptMru.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentFile.cpp">
+    <ClCompile Include="recent\CRecentFile.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentFolder.cpp">
+    <ClCompile Include="recent\CRecentFolder.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentGrepFile.cpp">
+    <ClCompile Include="recent\CRecentGrepFile.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentGrepFolder.cpp">
+    <ClCompile Include="recent\CRecentGrepFolder.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentImp.cpp">
+    <ClCompile Include="recent\CRecentImp.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentReplace.cpp">
+    <ClCompile Include="recent\CRecentReplace.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentSearch.cpp">
+    <ClCompile Include="recent\CRecentSearch.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentTagjumpKeyword.cpp">
+    <ClCompile Include="recent\CRecentTagjumpKeyword.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CBlockComment.cpp">
+    <ClCompile Include="doc\CBlockComment.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocEditor.cpp">
+    <ClCompile Include="doc\CDocEditor.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocFile.cpp">
+    <ClCompile Include="doc\CDocFile.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocFileOperation.cpp">
+    <ClCompile Include="doc\CDocFileOperation.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocListener.cpp">
+    <ClCompile Include="doc\CDocListener.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocLocker.cpp">
+    <ClCompile Include="doc\CDocLocker.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocOutline.cpp">
+    <ClCompile Include="doc\CDocOutline.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocReader.cpp">
+    <ClCompile Include="doc\CDocReader.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocType.cpp">
+    <ClCompile Include="doc\CDocType.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocTypeSetting.cpp">
+    <ClCompile Include="doc\CDocTypeSetting.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CDocVisitor.cpp">
+    <ClCompile Include="doc\CDocVisitor.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CEditDoc.cpp">
+    <ClCompile Include="doc\CEditDoc.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\CLineComment.cpp">
+    <ClCompile Include="doc\CLineComment.cpp">
       <Filter>Cpp Source Files\doc</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\layout\CLayout.cpp">
+    <ClCompile Include="doc\layout\CLayout.cpp">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\layout\CLayoutMgr.cpp">
+    <ClCompile Include="doc\layout\CLayoutMgr.cpp">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\layout\CLayoutMgr_DoLayout.cpp">
+    <ClCompile Include="doc\layout\CLayoutMgr_DoLayout.cpp">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\layout\CLayoutMgr_New.cpp">
+    <ClCompile Include="doc\layout\CLayoutMgr_New.cpp">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\layout\CLayoutMgr_New2.cpp">
+    <ClCompile Include="doc\layout\CLayoutMgr_New2.cpp">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\layout\CTsvModeInfo.cpp">
+    <ClCompile Include="doc\layout\CTsvModeInfo.cpp">
       <Filter>Cpp Source Files\doc\layout</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\logic\CDocLine.cpp">
+    <ClCompile Include="doc\logic\CDocLine.cpp">
       <Filter>Cpp Source Files\doc\logic</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\doc\logic\CDocLineMgr.cpp">
+    <ClCompile Include="doc\logic\CDocLineMgr.cpp">
       <Filter>Cpp Source Files\doc\logic</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CCookieManager.cpp">
+    <ClCompile Include="macro\CCookieManager.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CEditorIfObj.cpp">
+    <ClCompile Include="macro\CEditorIfObj.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CIfObj.cpp">
+    <ClCompile Include="macro\CIfObj.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CKeyMacroMgr.cpp">
+    <ClCompile Include="macro\CKeyMacroMgr.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CMacro.cpp">
+    <ClCompile Include="macro\CMacro.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CMacroFactory.cpp">
+    <ClCompile Include="macro\CMacroFactory.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CMacroManagerBase.cpp">
+    <ClCompile Include="macro\CMacroManagerBase.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CPPA.cpp">
+    <ClCompile Include="macro\CPPA.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CPPAMacroMgr.cpp">
+    <ClCompile Include="macro\CPPAMacroMgr.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CSMacroMgr.cpp">
+    <ClCompile Include="macro\CSMacroMgr.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CWSH.cpp">
+    <ClCompile Include="macro\CWSH.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CWSHIfObj.cpp">
+    <ClCompile Include="macro\CWSHIfObj.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CWSHManager.cpp">
+    <ClCompile Include="macro\CWSHManager.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDialog.cpp">
+    <ClCompile Include="dlg\CDialog.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgAbout.cpp">
+    <ClCompile Include="dlg\CDlgAbout.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgCancel.cpp">
+    <ClCompile Include="dlg\CDlgCancel.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgCompare.cpp">
+    <ClCompile Include="dlg\CDlgCompare.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgCtrlCode.cpp">
+    <ClCompile Include="dlg\CDlgCtrlCode.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgDiff.cpp">
+    <ClCompile Include="dlg\CDlgDiff.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgExec.cpp">
+    <ClCompile Include="dlg\CDlgExec.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgFavorite.cpp">
+    <ClCompile Include="dlg\CDlgFavorite.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgFileUpdateQuery.cpp">
+    <ClCompile Include="dlg\CDlgFileUpdateQuery.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgFind.cpp">
+    <ClCompile Include="dlg\CDlgFind.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgGrep.cpp">
+    <ClCompile Include="dlg\CDlgGrep.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgGrepReplace.cpp">
+    <ClCompile Include="dlg\CDlgGrepReplace.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgInput1.cpp">
+    <ClCompile Include="dlg\CDlgInput1.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgJump.cpp">
+    <ClCompile Include="dlg\CDlgJump.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile.cpp">
+    <ClCompile Include="dlg\CDlgOpenFile.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgPluginOption.cpp">
+    <ClCompile Include="dlg\CDlgPluginOption.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgPrintSetting.cpp">
+    <ClCompile Include="dlg\CDlgPrintSetting.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgProfileMgr.cpp">
+    <ClCompile Include="dlg\CDlgProfileMgr.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgProperty.cpp">
+    <ClCompile Include="dlg\CDlgProperty.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgReplace.cpp">
+    <ClCompile Include="dlg\CDlgReplace.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgSetCharSet.cpp">
+    <ClCompile Include="dlg\CDlgSetCharSet.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgTagJumpList.cpp">
+    <ClCompile Include="dlg\CDlgTagJumpList.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgTagsMake.cpp">
+    <ClCompile Include="dlg\CDlgTagsMake.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgWindowList.cpp">
+    <ClCompile Include="dlg\CDlgWindowList.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgWinSize.cpp">
+    <ClCompile Include="dlg\CDlgWinSize.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CAutoScrollWnd.cpp">
+    <ClCompile Include="window\CAutoScrollWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CEditWnd.cpp">
+    <ClCompile Include="window\CEditWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CMainStatusBar.cpp">
+    <ClCompile Include="window\CMainStatusBar.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CMainToolBar.cpp">
+    <ClCompile Include="window\CMainToolBar.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CSplitBoxWnd.cpp">
+    <ClCompile Include="window\CSplitBoxWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CSplitterWnd.cpp">
+    <ClCompile Include="window\CSplitterWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CTabWnd.cpp">
+    <ClCompile Include="window\CTabWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CTipWnd.cpp">
+    <ClCompile Include="window\CTipWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\window\CWnd.cpp">
+    <ClCompile Include="window\CWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\docplus\CBookmarkManager.cpp">
+    <ClCompile Include="docplus\CBookmarkManager.cpp">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\docplus\CDiffManager.cpp">
+    <ClCompile Include="docplus\CDiffManager.cpp">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\docplus\CFuncListManager.cpp">
+    <ClCompile Include="docplus\CFuncListManager.cpp">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\docplus\CModifyManager.cpp">
+    <ClCompile Include="docplus\CModifyManager.cpp">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\debug\CRunningTimer.cpp">
+    <ClCompile Include="debug\CRunningTimer.cpp">
       <Filter>Cpp Source Files\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\debug\Debug1.cpp">
+    <ClCompile Include="debug\Debug1.cpp">
       <Filter>Cpp Source Files\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\debug\Debug2.cpp">
+    <ClCompile Include="debug\Debug2.cpp">
       <Filter>Cpp Source Files\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\CAppMode.cpp">
+    <ClCompile Include="_main\CAppMode.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\CCommandLine.cpp">
+    <ClCompile Include="_main\CCommandLine.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\CControlProcess.cpp">
+    <ClCompile Include="_main\CControlProcess.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\CControlTray.cpp">
+    <ClCompile Include="_main\CControlTray.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\CNormalProcess.cpp">
+    <ClCompile Include="_main\CNormalProcess.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\CProcess.cpp">
+    <ClCompile Include="_main\CProcess.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\CProcessFactory.cpp">
+    <ClCompile Include="_main\CProcessFactory.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\global.cpp">
+    <ClCompile Include="_main\global.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_main\WinMain.cpp">
+    <ClCompile Include="_main\WinMain.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_os\CClipboard.cpp">
+    <ClCompile Include="_os\CClipboard.cpp">
       <Filter>Cpp Source Files\_os</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\_os\CDropTarget.cpp">
+    <ClCompile Include="_os\CDropTarget.cpp">
       <Filter>Cpp Source Files\_os</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\outline\CDlgFileTree.cpp">
+    <ClCompile Include="outline\CDlgFileTree.cpp">
       <Filter>Cpp Source Files\outline</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\outline\CDlgFuncList.cpp">
+    <ClCompile Include="outline\CDlgFuncList.cpp">
       <Filter>Cpp Source Files\outline</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\outline\CFuncInfo.cpp">
+    <ClCompile Include="outline\CFuncInfo.cpp">
       <Filter>Cpp Source Files\outline</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\outline\CFuncInfoArr.cpp">
+    <ClCompile Include="outline\CFuncInfoArr.cpp">
       <Filter>Cpp Source Files\outline</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\func\CFuncKeyWnd.cpp">
+    <ClCompile Include="func\CFuncKeyWnd.cpp">
       <Filter>Cpp Source Files\func</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\func\CFuncLookup.cpp">
+    <ClCompile Include="func\CFuncLookup.cpp">
       <Filter>Cpp Source Files\func</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\func\CKeyBind.cpp">
+    <ClCompile Include="func\CKeyBind.cpp">
       <Filter>Cpp Source Files\func</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\func\Funccode.cpp">
+    <ClCompile Include="func\Funccode.cpp">
       <Filter>Cpp Source Files\func</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\plugin\CDllPlugin.cpp">
+    <ClCompile Include="plugin\CDllPlugin.cpp">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\plugin\CJackManager.cpp">
+    <ClCompile Include="plugin\CJackManager.cpp">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\plugin\CPlugin.cpp">
+    <ClCompile Include="plugin\CPlugin.cpp">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\plugin\CPluginManager.cpp">
+    <ClCompile Include="plugin\CPluginManager.cpp">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\plugin\CWSHPlugin.cpp">
+    <ClCompile Include="plugin\CWSHPlugin.cpp">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander.cpp">
+    <ClCompile Include="cmd\CViewCommander.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Bookmark.cpp">
+    <ClCompile Include="cmd\CViewCommander_Bookmark.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Clipboard.cpp">
+    <ClCompile Include="cmd\CViewCommander_Clipboard.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Convert.cpp">
+    <ClCompile Include="cmd\CViewCommander_Convert.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Cursor.cpp">
+    <ClCompile Include="cmd\CViewCommander_Cursor.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_CustMenu.cpp">
+    <ClCompile Include="cmd\CViewCommander_CustMenu.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Diff.cpp">
+    <ClCompile Include="cmd\CViewCommander_Diff.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Edit.cpp">
+    <ClCompile Include="cmd\CViewCommander_Edit.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Edit_advanced.cpp">
+    <ClCompile Include="cmd\CViewCommander_Edit_advanced.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Edit_word_line.cpp">
+    <ClCompile Include="cmd\CViewCommander_Edit_word_line.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_File.cpp">
+    <ClCompile Include="cmd\CViewCommander_File.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Grep.cpp">
+    <ClCompile Include="cmd\CViewCommander_Grep.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Insert.cpp">
+    <ClCompile Include="cmd\CViewCommander_Insert.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Macro.cpp">
+    <ClCompile Include="cmd\CViewCommander_Macro.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_ModeChange.cpp">
+    <ClCompile Include="cmd\CViewCommander_ModeChange.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Outline.cpp">
+    <ClCompile Include="cmd\CViewCommander_Outline.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Search.cpp">
+    <ClCompile Include="cmd\CViewCommander_Search.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Select.cpp">
+    <ClCompile Include="cmd\CViewCommander_Select.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Settings.cpp">
+    <ClCompile Include="cmd\CViewCommander_Settings.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Support.cpp">
+    <ClCompile Include="cmd\CViewCommander_Support.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_TagJump.cpp">
+    <ClCompile Include="cmd\CViewCommander_TagJump.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\cmd\CViewCommander_Window.cpp">
+    <ClCompile Include="cmd\CViewCommander_Window.cpp">
       <Filter>Cpp Source Files\cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CBregexp.cpp">
+    <ClCompile Include="extmodule\CBregexp.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CBregexpDll2.cpp">
+    <ClCompile Include="extmodule\CBregexpDll2.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CDllHandler.cpp">
+    <ClCompile Include="extmodule\CDllHandler.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CMigemo.cpp">
+    <ClCompile Include="extmodule\CMigemo.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\print\CPrint.cpp">
+    <ClCompile Include="print\CPrint.cpp">
       <Filter>Cpp Source Files\print</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\print\CPrintPreview.cpp">
+    <ClCompile Include="print\CPrintPreview.cpp">
       <Filter>Cpp Source Files\print</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\uiparts\CGraphics.cpp">
+    <ClCompile Include="uiparts\CGraphics.cpp">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\uiparts\CImageListMgr.cpp">
+    <ClCompile Include="uiparts\CImageListMgr.cpp">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\uiparts\CMenuDrawer.cpp">
+    <ClCompile Include="uiparts\CMenuDrawer.cpp">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\uiparts\CSoundSet.cpp">
+    <ClCompile Include="uiparts\CSoundSet.cpp">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\uiparts\CVisualProgress.cpp">
+    <ClCompile Include="uiparts\CVisualProgress.cpp">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\uiparts\CWaitCursor.cpp">
+    <ClCompile Include="uiparts\CWaitCursor.cpp">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\config\build_config.cpp">
+    <ClCompile Include="config\build_config.cpp">
       <Filter>Cpp Source Files\config</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentExcludeFile.cpp">
+    <ClCompile Include="recent\CRecentExcludeFile.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\recent\CRecentExcludeFolder.cpp">
+    <ClCompile Include="recent\CRecentExcludeFolder.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonFileDialog.cpp">
+    <ClCompile Include="dlg\CDlgOpenFile_CommonFileDialog.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonItemDialog.cpp">
+    <ClCompile Include="dlg\CDlgOpenFile_CommonItemDialog.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\EditInfo.cpp">
+    <ClCompile Include="basis\EditInfo.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\GrepInfo.cpp">
+    <ClCompile Include="basis\GrepInfo.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\zoom.cpp">
+    <ClCompile Include="util\zoom.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp">
+    <ClCompile Include="basis\CErrorInfo.cpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.cpp">
+    <ClCompile Include="convert\CConvert_CodeAutoToSjis.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_CodeFromSjis.cpp">
+    <ClCompile Include="convert\CConvert_CodeFromSjis.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\convert\CConvert_CodeToSjis.cpp">
+    <ClCompile Include="convert\CConvert_CodeToSjis.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\extmodule\CUchardet.cpp">
+    <ClCompile Include="extmodule\CUchardet.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\charset\CharsetDetector.cpp">
+    <ClCompile Include="charset\CharsetDetector.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\view\CMiniMapView.cpp">
+    <ClCompile Include="view\CMiniMapView.cpp">
       <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\parse\DetectIndentationStyle.cpp">
+    <ClCompile Include="parse\DetectIndentationStyle.cpp">
       <Filter>Cpp Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CPythonMacroManager.cpp">
+    <ClCompile Include="macro\CPythonMacroManager.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\cxx\load_string.cpp">
@@ -2378,12 +2378,12 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\sakura_core\util\ReadMe_util.txt">
+    <Text Include="util\ReadMe_util.txt">
       <Filter>Cpp Source Files\util</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
+    <FuncCodeRes Include="Funccode_x.hsrc" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\src\main\resources\sakura.natvis" />

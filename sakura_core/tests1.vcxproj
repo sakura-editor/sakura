@@ -207,7 +207,7 @@
     <ClInclude Include="..\src\test\resources\tests1_rc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\sakura_core\tests1_rc.rc" />
+    <ResourceCompile Include="tests1_rc.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake" />
@@ -242,7 +242,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\sakura_core\sakura.vcxproj">
+    <ProjectReference Include="sakura.vcxproj">
       <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
     </ProjectReference>
   </ItemGroup>

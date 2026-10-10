@@ -308,7 +308,7 @@
     <ClInclude Include="..\src\test\resources\rt_zipres.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ResourceCompile Include="..\sakura_core\tests1_rc.rc">
+    <ResourceCompile Include="tests1_rc.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
