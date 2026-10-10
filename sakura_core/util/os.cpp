@@ -1,15 +1,22 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "os.h"
+#include "util/os.h"
+
 #include "util/module.h"
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
 
+#include <cstdint>
+#include <format>
+#include <stdexcept>
+#include <string>
+
+#pragma comment(lib, "Bcrypt.lib")
 #pragma comment(lib, "UxTheme.lib")
 
 /*!
@@ -393,6 +400,46 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	return bRet;
 }
 
+HANDLE Kernel32::CreateFileMappingW(
+	_In_ HANDLE hFile,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+	_In_ DWORD flProtect,
+	_In_ DWORD dwMaximumSizeHigh,
+	_In_ DWORD dwMaximumSizeLow,
+	_In_opt_ LPCWSTR lpName
+) const
+{
+	return ::CreateFileMappingW(
+		hFile,
+		lpFileMappingAttributes,
+		flProtect,
+		dwMaximumSizeHigh,
+		dwMaximumSizeLow,
+		lpName
+	);
+}
+
+HANDLE Kernel32::CreateFileW(
+	_In_ LPCWSTR lpFileName,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwShareMode,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	_In_ DWORD dwCreationDisposition,
+	_In_ DWORD dwFlagsAndAttributes,
+	_In_opt_ HANDLE hTemplateFile
+) const
+{
+	return ::CreateFileW(
+		lpFileName,
+		dwDesiredAccess,
+		dwShareMode,
+		lpSecurityAttributes,
+		dwCreationDisposition,
+		dwFlagsAndAttributes,
+		hTemplateFile
+	);
+}
+
 DWORD Kernel32::GetCurrentDirectoryW(
 	_In_ DWORD nBufferLength,
 	_Out_writes_to_opt_( nBufferLength, return +1 )
@@ -409,7 +456,22 @@ DWORD Kernel32::GetModuleFileNameW(
 	_In_ DWORD nSize
 ) const
 {
-	return ::GetModuleFileNameW(hModule, lpFilename, nSize);
+	return ::GetModuleFileNameW(
+		hModule,
+		lpFilename,
+		nSize
+	);
+}
+
+FARPROC Kernel32::GetProcAddress(
+	_In_ HMODULE hModule,
+	_In_ LPCSTR lpProcName
+) const
+{
+	return ::GetProcAddress(
+		hModule,
+		lpProcName
+	);
 }
 
 UINT Kernel32::GetSystemDirectoryW(
@@ -421,6 +483,55 @@ UINT Kernel32::GetSystemDirectoryW(
 	return ::GetSystemDirectoryW(lpBuffer, uSize);
 }
 
+LPVOID Kernel32::MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwFileOffsetHigh,
+	_In_ DWORD dwFileOffsetLow,
+	_In_ SIZE_T dwNumberOfBytesToMap
+) const
+{
+	return ::MapViewOfFile(
+		hFileMappingObject,
+		dwDesiredAccess,
+		dwFileOffsetHigh,
+		dwFileOffsetLow,
+		dwNumberOfBytesToMap
+	);
+}
+
+HANDLE Kernel32::OpenFileMappingW(
+	_In_ DWORD dwDesiredAccess,
+	_In_ BOOL bInheritHandle,
+	_In_ LPCWSTR lpName
+) const
+{
+	return ::OpenFileMappingW(
+		dwDesiredAccess,
+		bInheritHandle,
+		lpName
+	);
+}
+
+BOOL Kernel32::ReplaceFileW(
+	_In_       LPCWSTR lpReplacedFileName,
+	_In_       LPCWSTR lpReplacementFileName,
+	_In_opt_   LPCWSTR lpBackupFileName,
+	_In_       DWORD    dwReplaceFlags,
+	_Reserved_ LPVOID   lpExclude,
+	_Reserved_ LPVOID  lpReserved
+) const
+{
+	return ::ReplaceFileW(
+		lpReplacedFileName,
+		lpReplacementFileName,
+		lpBackupFileName,
+		dwReplaceFlags,
+		lpExclude,
+		lpReserved
+	);
+}
+
 BOOL Kernel32::SetCurrentDirectoryW(
 	_In_ LPCWSTR lpPathName
 ) const
@@ -428,7 +539,90 @@ BOOL Kernel32::SetCurrentDirectoryW(
 	return ::SetCurrentDirectoryW(lpPathName);
 }
 
+NTSTATUS Bcrypt::BCryptGenRandom(
+	_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
+	_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
+	_In_                            ULONG   cbBuffer,
+	_In_                            ULONG   dwFlags
+) const
+{
+	return ::BCryptGenRandom(
+		hAlgorithm,
+		pbBuffer,
+		cbBuffer,
+		dwFlags
+	);
+}
+
+// NtStatusカテゴリ（std::system_errorと組み合わせて使う）
+class NtStatusCategory final : public std::error_category {
+public:
+	static const NtStatusCategory category;
+
+	const char* name() const noexcept override
+	{
+		return "ntstatus";
+	}
+
+	std::string message(int value) const override
+	{
+		return std::format(
+			"NTSTATUS 0x{:08X}",
+			static_cast<std::uint32_t>(value)
+		);
+	}
+};
+
+const NtStatusCategory NtStatusCategory::category{};
+
+inline const std::error_category& ntstatus_category() noexcept
+{
+	return NtStatusCategory::category;
+}
+
+inline std::error_code make_ntstatus_error_code(NTSTATUS status) noexcept
+{
+	// WindowsではNTSTATUSもintも32ビット符号付き整数。
+	return { int(status), ntstatus_category() };
+}
+
 namespace cxx {
+
+template <typename T>
+[[nodiscard]] NTSTATUS BCryptGenRandom(
+	_In_opt_ BCRYPT_ALG_HANDLE hAlgorithm,
+	std::span<T> buffer,
+	_In_ ULONG dwFlags
+)
+{
+	return Bcrypt::getInstance()->BCryptGenRandom(
+		hAlgorithm,
+		PUCHAR(std::data(buffer)),
+		ULONG(buffer.size_bytes()),
+		dwFlags
+	);
+}
+
+uint16_t GenerateRandom16()
+{
+	uint16_t value{};
+
+	if (const auto status = cxx::BCryptGenRandom(
+		nullptr,
+		std::span(&value, 1),
+		BCRYPT_USE_SYSTEM_PREFERRED_RNG
+	);
+		!BCRYPT_SUCCESS(status))
+	{
+		// システムエラー例外を発生させる
+		throw std::system_error(
+			make_ntstatus_error_code(status),
+			"BCryptGenRandom failed"
+		);
+	}
+
+	return value;
+}
 
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
 {
@@ -560,6 +754,139 @@ std::wstring GlobalSakura::wstring() const & {
 }
 
 /*!
+ * @brief ファイルハンドルを作成する
+ *
+ * ハンドルリソースを「作成する」からCreateFile。
+ *
+ * ファイルを開くのか、作成するのかはdwCreationDispositionで指定する。
+ *
+ * @param[in] fileName ファイル名
+ * @param[in] dwDesiredAccess アクセス権
+ * @param[in] dwShareMode 共有モード
+ * @param[in] lpSecurityAttributes セキュリティ属性
+ * @param[in] dwCreationDisposition 作成方法
+ * @param[in] dwFlagsAndAttributes ファイル属性と作成フラグ
+ * @param[in] hTemplateFile テンプレートファイルのハンドル
+ */
+/* static */ FileHandle FileHandle::CreateFileW(
+	std::wstring_view fileName,
+	_In_ DWORD dwDesiredAccess,
+	_In_ DWORD dwShareMode,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	_In_ DWORD dwCreationDisposition,
+	_In_ DWORD dwFlagsAndAttributes,
+	_In_opt_ HANDLE hTemplateFile
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _FileName{ fileName };
+
+	// NUL終端文字列を取り出す
+	const auto lpFileName = _FileName.c_str();
+
+	// パラメーターチェック
+	if (!lpFileName || !lpFileName[0]) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::invalid_argument("fileName is required.");
+	}
+
+	if (SFilePath::size() <= _FileName.length()) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::overflow_error("fileName is too long.");
+	}
+
+	// ファイルハンドルを作成する
+	const auto hFile = Kernel32::getInstance()->CreateFileW(
+		lpFileName,
+		dwDesiredAccess,
+		dwShareMode,
+		lpSecurityAttributes,
+		dwCreationDisposition,
+		dwFlagsAndAttributes,
+		hTemplateFile
+	);
+
+	// 戻り値が INVALID_HANDLE_VALUE だった場合
+	if (INVALID_HANDLE_VALUE == hFile) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return FileHandle{ hFile };
+}
+
+/*!
+ * @brief ファイルマッピングを作る
+ *
+ * @param[in] hFile ファイルハンドル
+ * @param[in] lpFileMappingAttributes セキュリティ属性
+ * @param[in] flProtect 保護属性
+ * @param[in] maximumSize 最大サイズ
+ * @param[in] name ファイルマッピングの名前
+ */
+/* static */ FileMapping FileMapping::CreateFileMappingW(
+	_In_ HANDLE hFile,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+	_In_ DWORD flProtect,
+	const ULARGE_INTEGER& maximumSize,
+	std::wstring_view name
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Name{ name };
+
+	// ファイルマッピングを作る
+	const auto hFileMapping = Kernel32::getInstance()->CreateFileMappingW(
+		hFile,
+		lpFileMappingAttributes,
+		flProtect,
+		maximumSize.HighPart,
+		maximumSize.LowPart,
+		_Name.c_str()
+	);
+
+	// 戻り値が NULL だった場合
+	if (!hFileMapping) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return FileMapping{ hFileMapping };
+}
+
+/*!
+ * @brief ファイルマッピングを開く
+ *
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] bInheritHandle ハンドルを継承するかどうか
+ * @param[in] name ファイルマッピングの名前
+ */
+/* static */ FileMapping FileMapping::OpenFileMappingW(
+	_In_ DWORD dwDesiredAccess,
+	_In_ BOOL bInheritHandle,
+	std::wstring_view name
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Name{ name };
+
+	// ファイルマッピングを開く
+	const auto hFileMapping = Kernel32::getInstance()->OpenFileMappingW(
+		dwDesiredAccess,
+		bInheritHandle,
+		_Name.c_str()
+	);
+
+	// 戻り値が NULL だった場合
+	if (!hFileMapping) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return FileMapping{ hFileMapping };
+}
+
+/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
@@ -629,6 +956,146 @@ std::wstring GetSystemDirectoryW()
 	}
 
 	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief 一時フォルダのパスを取得する
+ *
+ * @return 一時フォルダのパス
+ */
+std::wstring GetTempPath2W()
+{
+	// Kernel32.DLLのハンドルを取得する
+	const auto kernel32 = ::GetModuleHandleW(L"KERNEL32.DLL");
+
+	if (!kernel32) cxx::raise_system_error("Kernel32.DLL was not found.");	// このthrowは呼ばれない
+
+	// GetTempPath2の関数ポインタを取得する
+	decltype(&::GetTempPath2W) pfnGetTempPath = nullptr;
+
+	pfnGetTempPath = std::bit_cast<decltype(pfnGetTempPath)>(Kernel32::getInstance()->GetProcAddress(kernel32, "GetTempPath2W"));
+
+	// Windows 10 1607より古いと見付からない可能性がある
+	if (!pfnGetTempPath) pfnGetTempPath = &::GetTempPathW;
+
+	SSuperLongFilePath buf;
+
+	// 戻り値は 0～261 の範囲に収まる仕様。
+	const auto ret = pfnGetTempPath(DWORD(std::size(buf)), std::data(buf));
+
+	if (!ret) cxx::raise_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief ファイルマッピングのビューを取得する
+ *
+ * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] fileOffset ファイルマッピングのビューの開始位置
+ * @param[in] dwNumberOfBytesToMap マップするバイト数
+ * @return マッピングされたデータ
+ */
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+)
+{
+	const auto pView = Kernel32::getInstance()->MapViewOfFile(
+		hFileMappingObject,
+		dwDesiredAccess,
+		fileOffset.HighPart,
+		fileOffset.LowPart,
+		dwNumberOfBytesToMap
+	);
+
+	// 戻り値が NULL だった場合
+	if (!pView) {
+		// システムエラー例外を発生させる
+		throw std::system_error(int(::GetLastError()), std::system_category());
+	}
+
+	return std::span{ std::bit_cast<std::byte*>(pView), dwNumberOfBytesToMap };
+}
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * 同名APIを呼び出すラッパー関数。
+ * 使い勝手を上げるため、一部の引数を省略可能にしている。
+ *
+ * optBackupFileNameに指定したファイルは問答無用で上書きされることに注意。
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName,
+	_In_ DWORD dwReplaceFlags
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> destination{ replacedFileName };
+	cxx::NullTerminatedString<WCHAR> source{ replacementFileName };
+
+	const auto path1 = std::filesystem::path{ destination.str() };
+	if (!path1.is_absolute())
+	{
+		throw std::invalid_argument("replacedFileName must be absolute path.");
+	}
+
+	if (!fexist(path1))
+	{
+		throw std::invalid_argument("replacedFileName must exist.");
+	}
+
+	if (const auto path2 = std::filesystem::path{ source.str() };
+		!fexist(path2))
+	{
+		throw std::invalid_argument("replacementFileName must exist.");
+	}
+
+	auto backupFileName = optBackupFileName.value_or(L"");
+
+	if (std::wstring::npos != backupFileName.find_first_of(LR"(/\)"))
+	{
+		throw std::invalid_argument("backupFileName must not contain path separators.");
+	}
+
+	LPCWSTR lpBackupFileName = nullptr;
+
+	if (!backupFileName.empty())
+	{
+		// フルパスにする
+		backupFileName = path1.parent_path() / backupFileName;
+
+		// APIに渡すためにNUL終端文字列を取り出す
+		lpBackupFileName = backupFileName.c_str();
+	}
+
+	const auto notImplemented = nullptr;
+	const auto reserved = nullptr;
+
+	// ファイルを置換する
+	if (const auto ret = Kernel32::getInstance()->ReplaceFileW(
+		destination.c_str(),
+		source.c_str(),
+		lpBackupFileName,
+		dwReplaceFlags,
+		notImplemented,
+		reserved
+	);
+		!ret)
+	{
+		cxx::raise_system_error("ReplaceFileW() failed");
+	}
 }
 
 /*!

@@ -648,6 +648,7 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
  * @param [in] prefix ファイル名の前に付ける3文字の接頭辞。
  * @param [in, opt] optTempDir 一時フォルダーのパス。指定しない場合はシステムの一時フォルダーを使う。
  */
+// TODO: いつか廃止する
 std::filesystem::path GetTempFilePath(
 	std::wstring_view prefix,
 	const std::optional<std::filesystem::path>& optTempDir

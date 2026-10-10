@@ -45,6 +45,25 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 struct MockKernel32 final : public Kernel32
 {
+	MOCK_CONST_METHOD6(CreateFileMappingW, HANDLE(
+		_In_ HANDLE hFile,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+		_In_ DWORD flProtect,
+		_In_ DWORD dwMaximumSizeHigh,
+		_In_ DWORD dwMaximumSizeLow,
+		_In_opt_ LPCWSTR lpName
+	));
+
+	MOCK_CONST_METHOD7(CreateFileW, HANDLE(
+		_In_ LPCWSTR lpFileName,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwShareMode,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		_In_ DWORD dwCreationDisposition,
+		_In_ DWORD dwFlagsAndAttributes,
+		_In_opt_ HANDLE hTemplateFile
+	));
+
 	MOCK_CONST_METHOD2(GetCurrentDirectoryW, DWORD(
 		_In_ DWORD nBufferLength,
 		_Out_writes_to_opt_(nBufferLength,return + 1)
@@ -58,15 +77,62 @@ struct MockKernel32 final : public Kernel32
 		_In_ DWORD nSize
 	));
 
+	MOCK_CONST_METHOD2(GetProcAddress, FARPROC(
+		_In_ HMODULE hModule,
+		_In_ LPCSTR lpProcName
+	));
+
 	MOCK_CONST_METHOD2(GetSystemDirectoryW, UINT(
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
 		_In_ UINT uSize
 	));
 
+	MOCK_CONST_METHOD5(MapViewOfFile, LPVOID(
+		_In_ HANDLE hFileMappingObject,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwFileOffsetHigh,
+		_In_ DWORD dwFileOffsetLow,
+		_In_ SIZE_T dwNumberOfBytesToMap
+	));
+
+	MOCK_CONST_METHOD3(OpenFileMappingW, HANDLE(
+		_In_ DWORD dwDesiredAccess,
+		_In_ BOOL bInheritHandle,
+		_In_ LPCWSTR lpName
+	));
+
+	MOCK_CONST_METHOD6(ReplaceFileW, BOOL(
+		_In_       LPCWSTR lpReplacedFileName,
+		_In_       LPCWSTR lpReplacementFileName,
+		_In_opt_   LPCWSTR lpBackupFileName,
+		_In_       DWORD    dwReplaceFlags,
+		_Reserved_ LPVOID   lpExclude,
+		_Reserved_ LPVOID  lpReserved
+	));
+
 	MOCK_CONST_METHOD1(SetCurrentDirectoryW, BOOL(
 		_In_ LPCWSTR lpPathName
 	));
+
+	static HANDLE _CreateFileW(
+		_In_ LPCWSTR lpFileName,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwShareMode,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		_In_ DWORD dwCreationDisposition,
+		_In_ DWORD dwFlagsAndAttributes,
+		_In_opt_ HANDLE hTemplateFile
+	);
+
+	static DWORD _GetModuleFileNameW(
+		_In_opt_ HMODULE hModule,
+		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
+		LPWSTR lpFilename,
+		_In_ DWORD nSize
+	);
+
+	MockKernel32();
 };
 
 struct MockUser32 final : public User32
@@ -112,6 +178,16 @@ struct MockUser32 final : public User32
 	);
 
 	MockUser32();
+};
+
+struct MockBcrypt final : public Bcrypt
+{
+	MOCK_CONST_METHOD4(BCryptGenRandom, NTSTATUS(
+		_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
+		_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
+		_In_                            ULONG   cbBuffer,
+		_In_                            ULONG   dwFlags
+	));
 };
 
 struct MockComdlg32 final : public Comdlg32 {

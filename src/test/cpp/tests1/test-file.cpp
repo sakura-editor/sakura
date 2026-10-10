@@ -24,6 +24,7 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
+#include "util/os.h"
 
 #include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
 #include "testing/MsvcReportMode.hpp"
@@ -34,14 +35,9 @@ namespace cxx {
 
 using namespace testing;
 
-std::wstring GetTempPath2W()
-{
-	SFilePath buf;
+int FdCloseFunc(const int* pFd) noexcept;
 
-	const auto ret = ::GetTempPath2W(DWORD(std::size(buf)), std::data(buf));
-
-	return std::wstring(buf.c_str(), ret);
-}
+std::wstring GetTempPath2W();
 
 bool WritePrivateProfileStringW(
 	std::wstring_view appName,
@@ -114,6 +110,140 @@ TEST(CopyDirDir, test103)
 	EXPECT_THAT(CopyDirDir(szTemp11, L"Windows", LR"(C:)"), StrEq(L""));	// 入りきらない場合、バッファは空になる
 
 #endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
+
+TEST(ReplaceFileW, test001)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	{
+		std::ofstream fos{ path2 };
+		fos << "This is temp data." << std::endl;
+		fos.close();
+	}
+
+	EXPECT_TRUE(fexist(path1));
+	EXPECT_TRUE(fexist(path2));
+
+	cxx::ReplaceFileW(path1, path2);
+
+	EXPECT_FALSE(fexist(path2));
+
+	std::filesystem::remove(path1, ec);
+
+	EXPECT_FALSE(fexist(path1));
+}
+
+TEST(ReplaceFileW, test101)
+{
+	// カスタム関数は、第1引数にフルパスを要求する
+	EXPECT_THAT(([] {
+			cxx::ReplaceFileW(L"to", L"from");
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must be absolute path."))
+	);
+}
+
+TEST(ReplaceFileW, test102)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	// カスタム関数は、第1引数のパスが存在していることを要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must exist."))
+	);
+}
+
+TEST(ReplaceFileW, test103)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	// カスタム関数は、第2引数のパスが存在していることを要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacementFileName must exist."))
+	);
+
+	std::filesystem::remove(path1, ec);
+}
+
+TEST(ReplaceFileW, test104)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	{
+		std::ofstream fos{ path2 };
+		fos << "This is temp data." << std::endl;
+		fos.close();
+	}
+
+	// カスタム関数は、第3引数にファイル名を要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path2, path1, LR"(C:\work\test.txt.bak)");
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("backupFileName must not contain path separators."))
+	);
+
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+}
+
+TEST(ReplaceFileW, test105)
+{
+	const auto notImplemented = nullptr;
+	const auto reserved = nullptr;
+
+	const auto ret = Kernel32::getInstance()->ReplaceFileW(
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		notImplemented,
+		reserved
+	);
+	EXPECT_THAT(ret, IsFalse());
 }
 
 } // namespace cxx
@@ -235,6 +365,405 @@ TEST_F(CFileAttribute, test003)
 	// 自作ライブラリはシステム属性が付いたファイルを開くために作られた
 	auto out = CTextOutputStream(testDataPath.c_str());
 	EXPECT_THAT(out, IsTrue());
+}
+
+/*!
+ * @brief CreateFilePath() のテスト
+ *
+ * ファイル名を指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, CreateFilePath001)
+{
+	// テスト用に作成するファイルのパス（INIパスを流用）
+	const auto path = GetIniFileName();
+
+	// 新規作成したいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 名前を指定してCストリームを開く
+	auto fp = FilePointer::CreateFilePath(path);
+	EXPECT_TRUE(fp);
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// ファイルを閉じる
+	fp = nullptr;
+
+	// ファイルは削除されない
+	EXPECT_TRUE(fexist(path));
+
+	// 自分で削除する
+	std::filesystem::remove(path, ec);
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief CreateTempFile() のテスト
+ *
+ * ファイル名を指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, CreateTempFile001)
+{
+	// 一時ファイルを作成する
+	auto fp = FilePointer::CreateTempFile();
+	EXPECT_TRUE(fp);
+
+	// 作られた一時ファイルのパスを取得する
+	const auto path = std::filesystem::path{ fp.GetPath() };
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// 検証用にテストデータを書き込む
+	fp.write("This is test data.");
+
+	// 書き込んだデータをフラッシュする
+	fp.seek(0);
+
+	auto other = FilePointer::OpenFilePath(path, L"w+b");
+	EXPECT_TRUE(other);
+
+	std::array<char, 80> buffer{};
+	const auto ret = std::fread(buffer.data(), 1, buffer.size(), other.get());
+	const auto text = std::string_view(buffer.data(), ret);
+	EXPECT_THAT(text, StrEq("This is test data."));
+
+	// ファイルを閉じる
+	other = nullptr;
+
+	// ファイルを閉じる
+	fp = nullptr;
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief OpenFilePath() のテスト
+ *
+ * ファイル名を指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, OpenFilePath001)
+{
+	// テスト用に作成するファイルのパス（INIパスを流用）
+	const auto path = GetIniFileName();
+
+	// 新規作成したいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// ファイル出力ストリームを開く
+	std::ofstream fos{ path };
+
+	// データを書き込む
+	fos << "This is test data." << std::endl;
+
+	fos.close();
+
+	// 名前を指定してCストリームを開く
+	auto fp = FilePointer::OpenFilePath(path, L"wb");
+	EXPECT_TRUE(fp);
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// ファイルを閉じる
+	fp = nullptr;
+
+	// ファイルは削除されない
+	EXPECT_TRUE(fexist(path));
+
+	// 自分で削除する
+	std::filesystem::remove(path, ec);
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief OpenFilePath() の異常系テスト
+ *
+ * パスを指定しないと空が返る
+ */
+TEST(FilePointer, OpenFilePath101)
+{
+	auto fp = FilePointer::OpenFilePath(L"", L"wb");
+	EXPECT_FALSE(fp);
+}
+
+/*!
+ * @brief OpenFilePath() の異常系テスト
+ *
+ * モードを指定しないと例外
+ */
+TEST(FilePointer, OpenFilePath102)
+{
+	EXPECT_THROW(
+		FilePointer::OpenFilePath(L"test.txt", L""),
+		std::invalid_argument
+	);
+}
+
+/*!
+ * @brief OpenFilePath() の異常系テスト
+ *
+ * パスが長過ぎると例外
+ */
+TEST(FilePointer, OpenFilePath103)
+{
+	EXPECT_THROW(
+		FilePointer::OpenFilePath(std::wstring(SFilePath::size(), L'a'), L"wb"),
+		std::overflow_error
+	);
+}
+
+/*!
+ * @brief OpenFromHandle() のテスト
+ *
+ * OSハンドルを指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, OpenFromHandle101)
+{
+	EXPECT_THAT(([] {
+		// モード指定がないと例外。
+		auto file = FilePointer::OpenFileHandle(FileHandle{ INVALID_HANDLE_VALUE }, L""); }),
+		ThrowsMessage<std::invalid_argument>(Eq("missing mode"))
+	);
+}
+
+/*!
+ * @brief OpenFromHandle() のテスト
+ *
+ * OSハンドルを指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, OpenFromHandle102)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	auto file = FilePointer::OpenFileHandle(FileHandle{ INVALID_HANDLE_VALUE }, L"wb");	// 無効なOSハンドルを指定して失敗させる
+	EXPECT_THAT(file, IsFalse());
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
+/*!
+ * @brief OpenFromHandleForWrite() のテスト
+ *
+ * OSハンドルを指定して書き込み用のCストリームを開くメソッド。
+ */
+TEST(FilePointer, OpenFromHandleForWrite001)
+{
+	// テスト用に作成するファイルのパス（INIパスを流用）
+	const auto path = GetIniFileName();
+
+	// 新規作成したいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 作成するファイルの属性（一時ファイル、閉じたら削除）
+	const DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE;
+
+	// OSのファイルハンドルを作成する
+	auto hFile = FileHandle::CreateNew(path, dwFlagsAndAttributes);
+	EXPECT_TRUE(hFile);
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// Cストリームを開く
+	auto fp = FilePointer::OpenFileHandle(std::move(hFile), L"wb");
+	EXPECT_TRUE(fp);
+
+	// ファイルハンドルはFilePointerに譲渡するので、スマートポインターとの紐付けを解除しておく
+	hFile.release();
+
+	// ファイルを閉じる
+	fp = nullptr;
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief OpenFromHandleForWrite() がファイル内容を変更しないことを確認する
+ */
+TEST(FilePointer, OpenFromHandleForWrite002)
+{
+	const auto path = GetIniFileName();
+	constexpr std::array<std::string_view, 5> testData = {
+		"",
+		"a",
+		"abc",
+		"test",
+		"This is test data."
+	};
+
+	for (const auto expected : testData) {
+		SCOPED_TRACE(expected);
+
+		{
+			std::ofstream output{ path, std::ios::binary | std::ios::trunc };
+			output.write(expected.data(), expected.size());
+		}
+
+		auto hFile = FileHandle::OpenExisting(
+			path,
+			GENERIC_READ | GENERIC_WRITE,
+			FILE_SHARE_READ | FILE_SHARE_WRITE
+		);
+		ASSERT_TRUE(hFile);
+
+		auto fp = FilePointer::OpenFileHandle(std::move(hFile), L"r+b");
+		ASSERT_TRUE(fp);
+		EXPECT_FALSE(hFile);
+
+		fp = nullptr;
+
+		std::ifstream input{ path, std::ios::binary };
+		const std::string actual{
+			std::istreambuf_iterator<char>{ input },
+			std::istreambuf_iterator<char>{}
+		};
+		EXPECT_EQ(expected, actual);
+	}
+
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+}
+
+/*!
+ * @brief read() のテスト
+ *
+ * read失敗時に例外が投げられることを確認する。
+ */
+TEST(FilePointer, read101)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	FilePointer fp{};
+
+	std::string buffer(80, '\0');
+
+	EXPECT_THROW(
+		fp.read(buffer),
+		std::system_error
+	);
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
+/*!
+ * @brief seek() のテスト
+ *
+ * seek失敗時に例外が投げられることを確認する。
+ */
+TEST(FilePointer, seek101)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	FilePointer fp{};
+
+	EXPECT_THROW(
+		fp.seek(0),
+		std::system_error
+	);
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
+/*!
+ * @brief write() のテスト
+ *
+ * write失敗時に例外が投げられることを確認する。
+ */
+TEST(FilePointer, write101)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	FilePointer fp{};
+
+	EXPECT_THROW(
+		fp.write("test"),
+		std::system_error
+	);
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+}
+
+/*!
+ * @brief FdCloseFunc のテスト（正常系）
+ */
+TEST(FdCloseFunc, operator001)
+{
+	// テスト用に作成するファイルのパス（INIパスを流用）
+	const auto path = GetIniFileName();
+
+	// 新規作成したいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 作成するファイルの属性（一時ファイル、閉じたら削除）
+	const DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE;
+
+	// OSのファイルハンドルを作成する
+	auto hFile = FileHandle::CreateNew(path, dwFlagsAndAttributes);
+	EXPECT_TRUE(hFile);
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// OSのファイルハンドルからファイル記述子を開く
+	auto fd = ::_open_osfhandle(
+		intptr_t(hFile.get()),
+		0
+	);
+
+	// ファイルハンドルはfdに譲渡するので、スマートポインターとの紐付けを解除しておく
+	hFile.release();
+
+	// ファイルを閉じる
+	cxx::FdCloseFunc(&fd);
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief FdCloseFunc のテスト（異常系）
+ */
+TEST(FdCloseFunc, operator101)
+{
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	int fd = -1;
+
+	EXPECT_THAT(cxx::FdCloseFunc(&fd), Eq(-1));
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
 }
 
 } // namespace io

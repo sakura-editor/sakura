@@ -18,6 +18,8 @@
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
 #include "cxx/com_pointer.hpp"
+#include "env/CProfile.h"
+#include "io/CFile.h"
 #include "io/CFileLoad.h"
 #include "util/file.h"
 #include "util/module.h"
@@ -34,7 +36,15 @@ using namespace std::literals::string_literals;
 
 std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
 
+namespace cxx {
+
+uint16_t GenerateRandom16();
+
+}	// namespace cxx
+
 namespace env {
+
+using namespace cxx;
 
 const std::wstring versionStr{ LTEXT(VERSION_STR) };
 
@@ -485,6 +495,278 @@ struct Kernel32 : public ::testing::Test {
 	MockKernel32* pKernel32 = nullptr;
 };
 
+TEST_F(Kernel32, FileHandleCreateFileW001)
+{
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, CREATE_NEW, _, nullptr))
+		.WillOnce(Return(HANDLE(403)));
+
+	auto hFile = FileHandle::CreateFileW(
+		L"test.txt",
+		GENERIC_READ,
+		0,
+		nullptr,
+		CREATE_NEW,
+		FILE_ATTRIBUTE_NORMAL,
+		nullptr
+	);
+
+	EXPECT_TRUE(hFile);
+	EXPECT_THAT(hFile, Eq(HANDLE(403)));
+
+	hFile.release();
+}
+
+TEST_F(Kernel32, FileHandleCreateFileW101)
+{
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, OPEN_EXISTING, _, nullptr))
+		.Times(0);	// 呼ばれない
+
+	EXPECT_THAT(([] {
+			// ファイル名が空だと例外。
+			FileHandle::CreateFileW(
+				L"",
+				GENERIC_READ,
+				0,
+				nullptr,
+				OPEN_EXISTING,
+				FILE_ATTRIBUTE_NORMAL,
+				nullptr
+			);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("fileName is required."))
+	);
+}
+
+TEST_F(Kernel32, FileHandleCreateFileW102)
+{
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, OPEN_EXISTING, _, nullptr))
+		.Times(0);	// 呼ばれない
+
+	EXPECT_THAT(([] {
+			// ファイル名が長過ぎると例外。
+			FileHandle::CreateFileW(
+				std::wstring(_MAX_PATH, L'a'),
+				GENERIC_READ,
+				0,
+				nullptr,
+				OPEN_EXISTING,
+				FILE_ATTRIBUTE_NORMAL,
+				nullptr
+			);
+		}),
+		ThrowsMessage<std::overflow_error>(Eq("fileName is too long."))
+	);
+}
+
+TEST_F(Kernel32, FileHandleCreateFileW103)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_READ;
+	const DWORD dwShareMode = 0;
+	const DWORD dwFlagsAndAttributes = 0;
+	EXPECT_CALL(*pKernel32, CreateFileW(fileName, dwDesiredAccess, dwShareMode, nullptr, OPEN_EXISTING, dwFlagsAndAttributes, nullptr))
+		.WillOnce(Return(INVALID_HANDLE_VALUE));
+
+	EXPECT_THROW(
+		// CreateFileWがINVALID_HANDLE_VALUEを返したら例外。
+		FileHandle::CreateFileW(
+			fileName,
+			dwDesiredAccess,
+			dwShareMode,
+			nullptr,
+			OPEN_EXISTING,
+			dwFlagsAndAttributes,
+			nullptr
+		),
+		std::system_error
+	);
+}
+
+TEST_F(Kernel32, FileHandleCreateFileW104)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE | GENERIC_READ | DELETE;
+	const DWORD dwShareMode = FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE;
+	const DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE;
+	EXPECT_CALL(*pKernel32, CreateFileW(fileName, dwDesiredAccess, dwShareMode, nullptr, CREATE_NEW, dwFlagsAndAttributes, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
+
+	EXPECT_THROW(
+		// 存在するフォルダパスを指定して新規作成すると例外。
+		FileHandle::CreateFileW(
+			fileName,
+			dwDesiredAccess,
+			dwShareMode,
+			nullptr,
+			CREATE_NEW,
+			dwFlagsAndAttributes,
+			nullptr
+		),
+		std::system_error
+	);
+}
+
+TEST_F(Kernel32, FileMappingCreateFileMappingW101)
+{
+	EXPECT_CALL(*pKernel32, CreateFileMappingW(_, _, _, _, _, _))
+		.WillOnce(Return(HANDLE(nullptr)));
+
+	EXPECT_THROW(
+		FileMapping::CreateFileMappingW(
+			INVALID_HANDLE_VALUE,
+			nullptr,
+			PAGE_READWRITE | SEC_COMMIT,
+			ULARGE_INTEGER{ sizeof(DLLSHAREDATA) },
+			L"mapping name"
+		),
+		std::system_error
+	);
+
+	Target::resetInstance();
+
+	auto hFileMapping = FileMapping::CreateFileMappingW(
+		INVALID_HANDLE_VALUE,
+		nullptr,
+		PAGE_READWRITE | SEC_COMMIT,
+		ULARGE_INTEGER{ sizeof( DLLSHAREDATA ) },
+		L"mapping name - 0123456789ABCDEF" // かぶらないよう長い名前にする
+	);
+	EXPECT_TRUE(hFileMapping);
+}
+
+TEST_F(Kernel32, FileMappingMapViewOfFile101)
+{
+	EXPECT_CALL(*pKernel32, MapViewOfFile(_, _, _, _, _))
+		.WillOnce(Return(HANDLE(nullptr)))
+		.WillOnce(Return(HANDLE(1)));
+
+	FileMapping hFileMapping{};
+
+	EXPECT_THROW(
+		hFileMapping.MapViewOfFile<DLLSHAREDATA*>(
+			FILE_MAP_ALL_ACCESS
+		),
+		std::system_error
+	);
+
+	auto view = hFileMapping.MapViewOfFile<DLLSHAREDATA*>(
+		FILE_MAP_ALL_ACCESS
+	);
+
+	view.release();
+
+	Target::resetInstance();
+
+	EXPECT_THROW(
+		hFileMapping.MapViewOfFile<DLLSHAREDATA*>(
+			FILE_MAP_ALL_ACCESS
+		),
+		std::system_error
+	);
+}
+
+TEST_F(Kernel32, FileMappingOpenFileMappingW101)
+{
+	EXPECT_CALL(*pKernel32, OpenFileMappingW(_, _, _))
+		.WillOnce(Return(HANDLE(nullptr)))
+		.WillOnce(Return(HANDLE(1)));
+
+	EXPECT_THROW(
+		FileMapping::OpenFileMappingW(
+			GENERIC_READ | GENERIC_WRITE,
+			FALSE,
+			L"mapping name"
+		),
+		std::system_error
+	);
+
+	auto hFileMapping = FileMapping::OpenFileMappingW(
+		GENERIC_READ | GENERIC_WRITE,
+		FALSE,
+		L"mapping name"
+	);
+
+	hFileMapping.release();
+
+	Target::resetInstance();
+
+	EXPECT_THROW(
+		FileMapping::OpenFileMappingW(
+			GENERIC_READ | GENERIC_WRITE,
+			FALSE,
+			L"mapping name"
+		),
+		std::system_error
+	);
+}
+
+TEST_F(Kernel32, FilePointerCreateFilePath101)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE;
+	const DWORD dwShareMode = FILE_SHARE_WRITE;
+	const DWORD dwFlagsAndAttributes = 0;
+	EXPECT_CALL(*pKernel32, CreateFileW(fileName, dwDesiredAccess, dwShareMode, nullptr, CREATE_NEW, dwFlagsAndAttributes, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
+
+	auto fp = FilePointer::CreateFilePath(fileName);
+	EXPECT_FALSE(fp);
+}
+
+TEST_F(Kernel32, FilePointerCreateTempFile101)
+{
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	constexpr auto& fileName = L"tests1.ini";
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, CREATE_NEW, _, _))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
+
+	auto fp = FilePointer::CreateTempFile();
+	EXPECT_FALSE(fp);
+}
+
+TEST_F(Kernel32, FilePointerCreateTempFile102)
+{
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	constexpr auto& fileName = L"tests1.ini";
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, CREATE_NEW, _, _))
+		.WillOnce(testing::Throw(std::system_error(ERROR_FILE_EXISTS, std::system_category())))
+		.WillOnce(testing::Throw(std::system_error(ERROR_FILE_EXISTS, std::system_category())))
+		.WillOnce(testing::Throw(std::system_error(ERROR_FILE_EXISTS, std::system_category())));
+
+	auto fp = FilePointer::CreateTempFile();
+	EXPECT_FALSE(fp);
+}
+
+TEST_F(Kernel32, FilePointerOpenFilePath101)
+{
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, OPEN_EXISTING, _, _))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
+
+	const auto testDataPath = GetIniFileName().replace_filename(L"tests1.ini");
+
+	std::ofstream fos{ testDataPath };
+	fos << "This is test data." << std::endl;
+	fos.close();
+
+	// ファイルの属性を取得
+	DWORD dwAttributeOld = ::GetFileAttributesW(testDataPath.c_str());
+
+	// ファイルに隠し属性を付与する
+	::SetFileAttributesW(testDataPath.c_str(), dwAttributeOld | FILE_ATTRIBUTE_HIDDEN);
+
+	const auto fileName = testDataPath.c_str();
+
+	auto fp = FilePointer::OpenFilePath(fileName, L"wb");
+	EXPECT_FALSE(fp);
+
+	std::error_code ec;
+	std::filesystem::remove(testDataPath, ec);
+}
+
 TEST_F(Kernel32, GetCurrentDirectoryW101)
 {
 	// APIが0を返したら例外。
@@ -622,6 +904,46 @@ TEST_F(Kernel32, GetSystemDirectoryW102)
 	);
 }
 
+TEST_F(Kernel32, ReplaceFileW101)
+{
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	{
+		std::ofstream fos{ path2 };
+		fos << "This is temp data." << std::endl;
+		fos.close();
+	}
+
+	// APIがFALSEを返したら例外。
+	EXPECT_CALL(*pKernel32, ReplaceFileW(_, _, _, _, _, _))
+		.WillOnce(Return(FALSE))
+		.WillOnce(Return(TRUE));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2, L"test.txt.bak");
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("ReplaceFileW() failed"))
+	);
+
+	// 正常を返す呼出もしておく
+	cxx::ReplaceFileW(path1, path2, L"test.txt.bak");
+
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+}
+
 TEST_F(Kernel32, SetCurrentDirectoryW101)
 {
 	// APIが0を返したら例外。
@@ -634,6 +956,73 @@ TEST_F(Kernel32, SetCurrentDirectoryW101)
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("SetCurrentDirectoryW() failed"))
 	);
+}
+
+TEST_F(Kernel32, CreateNew101)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE | GENERIC_READ | DELETE;
+	const DWORD dwShareMode = FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE;
+	const DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE;
+	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, CREATE_NEW, dwFlagsAndAttributes, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_FILE_EXISTS, std::system_category())));		// 指定ファイル作成失敗
+	auto hFile = FileHandle::CreateNew(fileName, dwFlagsAndAttributes);
+	EXPECT_THAT(hFile, IsFalse());
+}
+
+TEST_F(Kernel32, CreateNew102)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
+	const DWORD dwShareMode = FILE_SHARE_WRITE | FILE_SHARE_READ;
+	const DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_TEMPORARY;
+	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, CREATE_NEW, dwFlagsAndAttributes, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_ALREADY_EXISTS, std::system_category())));		// 指定ファイル作成失敗
+	auto hFile = FileHandle::CreateNew(fileName, dwFlagsAndAttributes);
+	EXPECT_THAT(hFile, IsFalse());
+}
+
+TEST_F(Kernel32, CreateNew103)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE;
+	const DWORD dwShareMode = FILE_SHARE_WRITE;
+	const DWORD dwFlagsAndAttributes = 0;
+	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, CREATE_NEW, dwFlagsAndAttributes, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));		// 指定ファイル作成失敗
+	EXPECT_THROW(FileHandle::CreateNew(fileName, dwFlagsAndAttributes), std::system_error);
+}
+
+TEST_F(Kernel32, OpenExisting101)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE | GENERIC_READ | DELETE;
+	const DWORD dwShareMode = FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE;
+	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, OPEN_EXISTING, 0, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SHARING_VIOLATION, std::system_category())));		// 指定ファイル作成失敗
+	auto hFile = FileHandle::OpenExisting(fileName, dwDesiredAccess, dwShareMode);
+	EXPECT_THAT(hFile, IsFalse());
+}
+
+TEST_F(Kernel32, OpenExisting102)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
+	const DWORD dwShareMode = FILE_SHARE_WRITE | FILE_SHARE_READ;
+	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, OPEN_EXISTING, 0, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_ACCESS_DENIED, std::system_category())));		// 指定ファイル作成失敗
+	auto hFile = FileHandle::OpenExisting(fileName, dwDesiredAccess, dwShareMode);
+	EXPECT_THAT(hFile, IsFalse());
+}
+
+TEST_F(Kernel32, OpenExisting103)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE;
+	const DWORD dwShareMode = FILE_SHARE_WRITE;
+	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, OPEN_EXISTING, 0, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));		// 指定ファイル作成失敗
+	EXPECT_THROW(FileHandle::OpenExisting(fileName, dwDesiredAccess, dwShareMode), std::system_error);
 }
 
 /*!
@@ -828,6 +1217,61 @@ TEST_F(CCurrentDirectoryBackupPoint, test103)
 	// テスト実行（失敗はログで確認する）
 	{
 		Target t;
+	}
+}
+
+/*!
+ * GenerateRandom16のテスト
+ */
+struct GenerateRandom16 : public ::testing::Test {
+	using Bcrypt = ::Bcrypt;
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		Bcrypt::setInstance<MockBcrypt>();
+
+		pBcrypt = (MockBcrypt*)Bcrypt::getInstance();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		Bcrypt::resetInstance();
+	}
+
+	MockBcrypt* pBcrypt = nullptr;
+};
+
+/*!
+ * @brief 16bit乱数の生成に成功するパターン
+ */
+TEST_F(GenerateRandom16, test001)
+{
+	EXPECT_CALL(*pBcrypt, BCryptGenRandom(_, _, _, _))
+		.WillOnce(Return(STATUS_SUCCESS));
+
+	EXPECT_NO_THROW(cxx::GenerateRandom16());
+}
+
+/*!
+ * @brief 16bit乱数の生成に失敗するパターン
+ */
+TEST_F(GenerateRandom16, test101)
+{
+	EXPECT_CALL(*pBcrypt, BCryptGenRandom(_, _, _, _))
+		.WillOnce(Return(STATUS_INVALID_HANDLE));
+
+	try {
+		cxx::GenerateRandom16();
+
+		FAIL() << "std::system_error should be thrown.";
+	}
+	catch (const std::system_error& e) {
+		EXPECT_THAT(e.code().category().name(), StrEq("ntstatus"));
 	}
 }
 

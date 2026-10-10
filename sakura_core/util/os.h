@@ -18,6 +18,7 @@
 #include <string>
 #include <string_view>
 
+#include <bcrypt.h>
 #include <objidl.h> // LPDATAOBJECT
 
 //! Kernel32.dll呼出をテスト可能にするDIっぽいもの
@@ -26,6 +27,25 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 	using Me = Kernel32;
 
 	~Kernel32() override = default;
+
+	virtual HANDLE CreateFileMappingW(
+		_In_ HANDLE hFile,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+		_In_ DWORD flProtect,
+		_In_ DWORD dwMaximumSizeHigh,
+		_In_ DWORD dwMaximumSizeLow,
+		_In_opt_ LPCWSTR lpName
+    ) const;
+
+	virtual HANDLE CreateFileW(
+		_In_ LPCWSTR lpFileName,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwShareMode,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		_In_ DWORD dwCreationDisposition,
+		_In_ DWORD dwFlagsAndAttributes,
+		_In_opt_ HANDLE hTemplateFile
+	) const;
 
 	virtual DWORD GetCurrentDirectoryW(
 		_In_ DWORD nBufferLength,
@@ -40,10 +60,38 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_ DWORD nSize
 	) const;
 
+	virtual FARPROC GetProcAddress(
+		_In_ HMODULE hModule,
+		_In_ LPCSTR lpProcName
+	) const;
+
 	virtual UINT GetSystemDirectoryW(
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
 		_In_ UINT uSize
+	) const;
+
+	virtual LPVOID MapViewOfFile(
+		_In_ HANDLE hFileMappingObject,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwFileOffsetHigh,
+		_In_ DWORD dwFileOffsetLow,
+		_In_ SIZE_T dwNumberOfBytesToMap
+	) const;
+
+	virtual HANDLE OpenFileMappingW(
+		_In_ DWORD dwDesiredAccess,
+		_In_ BOOL bInheritHandle,
+		_In_ LPCWSTR lpName
+	) const;
+
+	virtual BOOL ReplaceFileW(
+		_In_       LPCWSTR lpReplacedFileName,
+		_In_       LPCWSTR lpReplacementFileName,
+		_In_opt_   LPCWSTR lpBackupFileName,
+		_In_       DWORD    dwReplaceFlags,
+		_Reserved_ LPVOID   lpExclude,
+		_Reserved_ LPVOID  lpReserved
 	) const;
 
 	virtual BOOL SetCurrentDirectoryW(
@@ -84,9 +132,22 @@ struct User32 : public TSakuraSingleton<User32>
 	) const;
 };
 
+//! Bcrypt.dll呼出をテスト可能にするDIっぽいもの
+struct Bcrypt : public TSakuraSingleton<Bcrypt>
+{
+	~Bcrypt() override = default;
+
+	virtual NTSTATUS BCryptGenRandom(
+		_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
+		_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
+		_In_                            ULONG   cbBuffer,
+		_In_                            ULONG   dwFlags
+	) const;
+};
+
 //! Comdlg32.dll呼出をテスト可能にするDIっぽいもの
 struct Comdlg32 : public TSakuraSingleton<Comdlg32> {
-	virtual ~Comdlg32() = default;
+	~Comdlg32() override = default;
 
 	virtual BOOL ChooseColorW(
 		LPCHOOSECOLORW pCc
@@ -478,6 +539,69 @@ std::wstring GetModuleFileNameW(
  * @return システムディレクトリのパス
  */
 std::wstring GetSystemDirectoryW();
+
+/*!
+ * @brief ファイルマッピングのビューを取得する
+ *
+ * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] fileOffset ファイルマッピングのビューの開始位置
+ * @param[in] dwNumberOfBytesToMap マップするバイト数
+ * @return マッピングされたデータ
+ */
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+template <
+	basis::NullTerminatedStringConstructible<WCHAR> A1,
+	basis::NullTerminatedStringConstructible<WCHAR> A2
+> requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view>)
+void ReplaceFileW(
+	const A1 & replacedFileName,
+	const A2 & replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString _ReplacedFileName{ replacedFileName };
+	cxx::NullTerminatedString _ReplacementFileName{ replacementFileName };
+
+	// 指定したファイルを別ファイルで置換する
+	return ReplaceFileW(
+		_ReplacedFileName.str(),
+		_ReplacementFileName.str(),
+		optBackupFileName,
+		dwReplaceFlags
+	);
+}
 
 /*!
  * @brief カレントディレクトリを変更する
