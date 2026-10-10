@@ -16,7 +16,9 @@
 #include <fcntl.h>
 #include <io.h>
 
+#include <algorithm>
 #include <array>
+#include <exception>
 #include <stdexcept>
 #include <string_view>
 #include <system_error>
@@ -34,6 +36,30 @@ int FdCloseFunc(
 {
 	// ファイルディスクリプタを閉じる
 	return ::_close(*pFd);
+}
+
+/*!
+ * @brief ファイルサイズを変更する
+ *
+ * 指定されたファイルディスクリプタのファイルサイズを変更します。
+ *
+ * @param[in] fd ファイルディスクリプタ
+ * @param[in] fileSize 新しいファイルサイズ
+ * @throw std::system_error ファイルサイズの変更に失敗したとき
+ */
+void chsize(int fd, int64_t fileSize)
+{
+	const auto ret = ::_chsize_s(fd, fileSize);
+	if (0 == ret)
+	{
+		return;	// 成功した
+	}
+
+	// 失敗したら例外を投げる
+	throw std::system_error(
+		std::make_error_code(std::errc::io_error),
+		"Failed to change file size"
+	);
 }
 
 /*!
@@ -150,6 +176,49 @@ int FdCloseFunc(
 }
 
 /*!
+ * @brief 新しいファイルを作って Cストリーム を開く
+ *
+ * 指定されたパスに新しいファイルを作成します。
+ * 既に存在している場合、戻り値は空になります。
+ *
+ * @param[in] path 作成するファイルのパス
+ * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
+ */
+/* static */ NamedFilePointer FilePointer::CreateFilePath(
+	std::wstring_view path
+)
+{
+	// ファイルポインターを返却する
+	FilePointer fp;
+
+	// ファイルを作成する
+	try {
+		// OSのファイルハンドルを格納するスマートポインター
+		FileHandle hFile{};
+
+		// 新しいファイルを作成する
+		hFile = FileHandle::CreateNew(
+			path,
+			0
+		);
+
+		// OSのファイルハンドルを作成できた場合
+		if (hFile) {
+			// OSのファイルハンドルから Cストリーム を開く
+			fp = OpenFileHandle(std::move(hFile), L"wb");
+		}
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&) {
+		// 作成できなかった
+		fp = nullptr;
+	}
+
+	// Cストリームとパスを紐付ける
+	return NamedFilePointer{ std::move(fp), path };
+}
+
+/*!
  * @brief OSのファイルハンドルから Cストリーム を開く
  *
  * @param[in] hFile OSのファイルハンドル
@@ -257,25 +326,58 @@ int FdCloseFunc(
 			fp.seek(0);
 		}
 
+		// 最初に発生したエラーを保持する変数
+		std::exception_ptr error;
+
+		// 例外を捕捉して、最初の例外を保持するラムダ式
+		// 書き込みテストが失敗した場合も、可能な限り元の状態に戻す
+		const auto tryOperation = [&error, &fp](auto&& operation) {
+			// 処理の成否
+			bool result = false;
+			try {
+				operation();
+
+				result = true;	// 成功した
+			}
+			catch (const std::system_error&) {
+				// 最初のエラーをまだ記録していない場合、記録する
+				if (!error) error = std::current_exception();
+
+				// Cストリームのエラー状態をクリアする
+				std::clearerr(fp.get());
+			}
+			return result;
+		};
+
 		// 書き込み権限を調べるため、実際に書き込む（権限がなければエラーになる）
-		fp.write(writeTestData);
-
-		// 書き込んだデータをフラッシュする
-		fp.seek(0);
-
-		// 書き込みテスト前のデータを復元する
-		if (!backupData.empty()) {
-			// バックアップしておいたデータを書き戻す
-			fp.write(backupData);
+		tryOperation([&] {
+			// データを書き込む
+			fp.write(writeTestData);
 
 			// 書き込んだデータをフラッシュする
 			fp.seek(0);
+		});
+
+		// 書き込みテスト前のデータを復元する
+		if (!backupData.empty())
+		{
+			// ファイルポインタを先頭に戻す
+			tryOperation([&] { fp.seek(0); });
+
+			// バックアップしたデータを書き戻す
+			tryOperation([&] { fp.write(backupData); });
+
+			// 書き戻したデータをフラッシュする
+			tryOperation([&] { fp.seek(0); });
 		}
 
 		// 書き込みテストでファイルが大きくなった場合は元のサイズに戻す
 		if (fileSize < std::ssize(writeTestData)) {
-			::_chsize_s(fd, fileSize);
+			tryOperation([&] { cxx::chsize(fd, fileSize); });
 		}
+
+		// エラーが発生していた場合、最初のエラーを re-throw する
+		if (error) std::rethrow_exception(error);
 	}
 
 	return fp;
@@ -353,6 +455,108 @@ void FilePointer::write(
 		std::make_error_code(std::errc::io_error),
 		"Failed to write file"
 	);
+}
+
+/*!
+ * @briefパスを指定して Cストリーム を開く
+ *
+ * @param[in] path ファイルパス
+ * @param[in] mode fopen() のモード文字列
+ * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
+ */
+/* static */ NamedFilePointer FilePointer::OpenFilePath(
+	std::wstring_view path,
+	std::wstring_view mode
+)
+{
+	// 入力元はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Path{ path };
+	cxx::NullTerminatedString<WCHAR> _Mode{ mode };
+
+	// パスは必須だが、空で呼んで失敗させる既存コードがあるのでエラーにはしない。
+	if (path.empty()) return NamedFilePointer{};
+
+	// モードも必須。省略すると fopen で落ちる。
+	if (mode.empty()) throw std::invalid_argument("missing mode");
+
+	// 共有メモリに格納する都合、パス長には制限がある。
+	if (SFilePath::size() <= path.length()) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::overflow_error("fileName is too long.");
+	}
+
+	// まずは fopen で開いてみる
+	if (FILE* nativeFp = nullptr;
+		0 == ::_wfopen_s(
+			&nativeFp,
+			_Path.c_str(),
+			_Mode.c_str()
+		))
+	{
+		// 通常ファイルはここで開けるはず
+		return NamedFilePointer{ FilePointer{ nativeFp }, path };
+	}
+
+	// OSファイルハンドルを開くときに指定するフラグ
+	DWORD dwDesiredAccess = GENERIC_READ;
+	DWORD dwShareMode = FILE_SHARE_READ;
+
+	// 書き込み可能モードなら反映する
+	if (std::wstring_view::npos != mode.find_first_of(L"aw+"))
+	{
+		dwDesiredAccess |= GENERIC_WRITE;
+		dwShareMode |= FILE_SHARE_WRITE;
+	}
+
+	// ファイルポインターを返却する
+	FilePointer fp;
+
+	// OSのファイルハンドルを開く
+	try {
+		// ファイルハンドルをスマートポインターに入れる
+		FileHandle hFileHolder{};
+
+		// 存在しているファイルを開く
+		hFileHolder = FileHandle::OpenExisting(
+			path,
+			dwDesiredAccess,
+			dwShareMode
+		);
+
+		// 権限エラーで開けなかった場合
+		if (!hFileHolder) {
+			// 削除権限を要求してリトライする
+			hFileHolder = FileHandle::OpenExisting(
+				path,
+				dwDesiredAccess | DELETE,
+				dwShareMode | FILE_SHARE_DELETE
+			);
+		}
+
+		// OSのファイルハンドルを作成できた場合
+		if (hFileHolder) {
+			// OSのファイルハンドルから Cストリーム を開く
+			fp = OpenFileHandle(std::move(hFileHolder), mode);
+		}
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&) {
+		// 開けなかった
+		fp = nullptr;
+	}
+
+	// Cストリームとパスを紐付ける
+	return NamedFilePointer{ std::move(fp), path };
+}
+
+//! Cストリームとパスを紐付ける
+NamedFilePointer::NamedFilePointer(
+	FilePointer&& file,
+	std::wstring_view path
+)
+	: Base(std::move(file))
+	, m_Path{ path }
+{
 }
 
 } // namespace cxx

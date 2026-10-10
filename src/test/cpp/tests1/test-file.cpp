@@ -240,6 +240,119 @@ TEST_F(CFileAttribute, test003)
 }
 
 /*!
+ * @brief CreateFilePath() のテスト
+ *
+ * ファイル名を指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, CreateFilePath001)
+{
+	// テスト用に作成するファイルのパス（INIパスを流用）
+	const auto path = GetIniFileName();
+
+	// 新規作成したいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 名前を指定してCストリームを開く
+	auto fp = FilePointer::CreateFilePath(path);
+	EXPECT_TRUE(fp);
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// ファイルを閉じる
+	fp = nullptr;
+
+	// ファイルは削除されない
+	EXPECT_TRUE(fexist(path));
+
+	// 自分で削除する
+	std::filesystem::remove(path, ec);
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief OpenFilePath() のテスト
+ *
+ * ファイル名を指定してCストリームを開くメソッド。
+ */
+TEST(FilePointer, OpenFilePath001)
+{
+	// テスト用に作成するファイルのパス（INIパスを流用）
+	const auto path = GetIniFileName();
+
+	// 新規作成したいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// ファイル出力ストリームを開く
+	std::ofstream fos{ path };
+
+	// データを書き込む
+	fos << "This is test data." << std::endl;
+
+	fos.close();
+
+	// 名前を指定してCストリームを開く
+	auto fp = FilePointer::OpenFilePath(path, L"wb");
+	EXPECT_TRUE(fp);
+
+	// ファイルが作られる
+	EXPECT_TRUE(fexist(path));
+
+	// ファイルを閉じる
+	fp = nullptr;
+
+	// ファイルは削除されない
+	EXPECT_TRUE(fexist(path));
+
+	// 自分で削除する
+	std::filesystem::remove(path, ec);
+
+	// ファイルは削除されている
+	EXPECT_FALSE(fexist(path));
+}
+
+/*!
+ * @brief OpenFilePath() の異常系テスト
+ *
+ * パスを指定しないと空が返る
+ */
+TEST(FilePointer, OpenFilePath101)
+{
+	auto fp = FilePointer::OpenFilePath(L"", L"wb");
+	EXPECT_FALSE(fp);
+}
+
+/*!
+ * @brief OpenFilePath() の異常系テスト
+ *
+ * モードを指定しないと例外
+ */
+TEST(FilePointer, OpenFilePath102)
+{
+	EXPECT_THROW(
+		FilePointer::OpenFilePath(L"test.txt", L""),
+		std::invalid_argument
+	);
+}
+
+/*!
+ * @brief OpenFilePath() の異常系テスト
+ *
+ * パスが長過ぎると例外
+ */
+TEST(FilePointer, OpenFilePath103)
+{
+	EXPECT_THROW(
+		FilePointer::OpenFilePath(std::wstring(SFilePath::size(), L'a'), L"wb"),
+		std::overflow_error
+	);
+}
+
+/*!
  * @brief OpenFromHandle() のテスト
  *
  * OSハンドルを指定してCストリームを開くメソッド。

@@ -489,6 +489,27 @@ struct Kernel32 : public ::testing::Test {
 	MockKernel32* pKernel32 = nullptr;
 };
 
+TEST_F(Kernel32, FileHandleCreateFileW001)
+{
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, CREATE_NEW, _, nullptr))
+		.WillOnce(Return(HANDLE(403)));
+
+	auto hFile = FileHandle::CreateFileW(
+		L"test.txt",
+		GENERIC_READ,
+		0,
+		nullptr,
+		CREATE_NEW,
+		FILE_ATTRIBUTE_NORMAL,
+		nullptr
+	);
+
+	EXPECT_TRUE(hFile);
+	EXPECT_THAT(hFile, Eq(HANDLE(403)));
+
+	hFile.release();
+}
+
 TEST_F(Kernel32, FileHandleCreateFileW101)
 {
 	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, OPEN_EXISTING, _, nullptr))
@@ -577,6 +598,45 @@ TEST_F(Kernel32, FileHandleCreateFileW104)
 		),
 		std::system_error
 	);
+}
+
+TEST_F(Kernel32, FilePointerCreateFilePath101)
+{
+	constexpr auto& fileName = L"tests1.ini";
+	const DWORD dwDesiredAccess = GENERIC_WRITE;
+	const DWORD dwShareMode = FILE_SHARE_WRITE;
+	const DWORD dwFlagsAndAttributes = 0;
+	EXPECT_CALL(*pKernel32, CreateFileW(fileName, dwDesiredAccess, dwShareMode, nullptr, CREATE_NEW, dwFlagsAndAttributes, nullptr))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
+
+	auto fp = FilePointer::CreateFilePath(fileName);
+	EXPECT_FALSE(fp);
+}
+
+TEST_F(Kernel32, FilePointerOpenFilePath101)
+{
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, OPEN_EXISTING, _, _))
+		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
+
+	const auto testDataPath = GetIniFileName().replace_filename(L"tests1.ini");
+
+	std::ofstream fos{ testDataPath };
+	fos << "This is test data." << std::endl;
+	fos.close();
+
+	// ファイルの属性を取得
+	DWORD dwAttributeOld = ::GetFileAttributesW(testDataPath.c_str());
+
+	// ファイルに隠し属性を付与する
+	::SetFileAttributesW(testDataPath.c_str(), dwAttributeOld | FILE_ATTRIBUTE_HIDDEN);
+
+	const auto fileName = testDataPath.c_str();
+
+	auto fp = FilePointer::OpenFilePath(fileName, L"wb");
+	EXPECT_FALSE(fp);
+
+	std::error_code ec;
+	std::filesystem::remove(testDataPath, ec);
 }
 
 TEST_F(Kernel32, GetCurrentDirectoryW101)
