@@ -46,6 +46,7 @@
 #include "typeprop/CPropTypes.h"
 #include "util/os/MockUser32.hpp"
 #include "util/shell.h"
+#include "util/os/MockComdlg32.hpp"
 
 #include <fstream>
 #include <gtest/gtest-spi.h>

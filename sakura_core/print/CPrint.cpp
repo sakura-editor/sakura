@@ -21,13 +21,9 @@
 #include "_main/global.h"
 #include "basis/CMyString.h"
 #include "util/os.h"
+#include "util/os/Comdlg32.hpp"
 
 #include "CSelectLang.h"
-
-BOOL Comdlg32::PrintDlgW(_Inout_ LPPRINTDLGW pPD) const
-{
-	return ::PrintDlgW(pPD);
-}
 
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {
