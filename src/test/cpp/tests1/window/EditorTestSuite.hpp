@@ -42,13 +42,3 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 };
 
 } // namespace env
-
-struct MockBcrypt final : public Bcrypt
-{
-	MOCK_CONST_METHOD4(BCryptGenRandom, NTSTATUS(
-		_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
-		_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
-		_In_                            ULONG   cbBuffer,
-		_In_                            ULONG   dwFlags
-	));
-};

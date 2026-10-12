@@ -18,21 +18,7 @@
 #include <string>
 #include <string_view>
 
-#include <bcrypt.h>
 #include <objidl.h> // LPDATAOBJECT
-
-//! Bcrypt.dll呼出をテスト可能にするDIっぽいもの
-struct Bcrypt : public TSakuraSingleton<Bcrypt>
-{
-	~Bcrypt() override = default;
-
-	virtual NTSTATUS BCryptGenRandom(
-		_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
-		_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
-		_In_                            ULONG   cbBuffer,
-		_In_                            ULONG   dwFlags
-	) const;
-};
 
 //クリップボード
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。

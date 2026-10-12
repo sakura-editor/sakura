@@ -29,6 +29,7 @@
 #include "version.h"
 
 #include "window/EditorTestSuite.hpp"
+#include "util/os/MockBcrypt.hpp"
 #include "util/os/MockKernel32.hpp"
 
 #include <fstream>

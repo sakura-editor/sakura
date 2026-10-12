@@ -148,8 +148,10 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\python3_config.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\main\cpp\util\os\Bcrypt.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\Comdlg32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp" />
     <ClInclude Include="apiwrap\CommonControl.h" />
     <ClInclude Include="apiwrap\StdApi.h" />
@@ -513,8 +515,10 @@
     <ResourceCompile Include="sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\main\cpp\util\os\Bcrypt.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\Comdlg32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\User32.cpp" />
     <ClCompile Include="apiwrap\StdApi.cpp" />
     <ClCompile Include="apiwrap\StdControl.cpp" />

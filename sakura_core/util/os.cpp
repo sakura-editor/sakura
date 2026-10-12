@@ -11,8 +11,10 @@
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
 
+#include "util/os/Bcrypt.hpp"
 #include "util/os/Kernel32.hpp"
 #include "util/os/User32.hpp"
+#include "util/os/ntstatus_category.hpp"
 
 #include <cstdint>
 #include <format>
@@ -401,53 +403,6 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	BOOL bRet = ImmSetOpenStatus(hIMC, bOpen);
 	bRet &= ImmReleaseContext(hWnd, hIMC);
 	return bRet;
-}
-
-NTSTATUS Bcrypt::BCryptGenRandom(
-	_In_opt_                        BCRYPT_ALG_HANDLE   hAlgorithm,
-	_Out_writes_bytes_(cbBuffer)    PUCHAR  pbBuffer,
-	_In_                            ULONG   cbBuffer,
-	_In_                            ULONG   dwFlags
-) const
-{
-	return ::BCryptGenRandom(
-		hAlgorithm,
-		pbBuffer,
-		cbBuffer,
-		dwFlags
-	);
-}
-
-// NtStatusカテゴリ（std::system_errorと組み合わせて使う）
-class NtStatusCategory final : public std::error_category {
-public:
-	static const NtStatusCategory category;
-
-	const char* name() const noexcept override
-	{
-		return "ntstatus";
-	}
-
-	std::string message(int value) const override
-	{
-		return std::format(
-			"NTSTATUS 0x{:08X}",
-			static_cast<std::uint32_t>(value)
-		);
-	}
-};
-
-const NtStatusCategory NtStatusCategory::category{};
-
-inline const std::error_category& ntstatus_category() noexcept
-{
-	return NtStatusCategory::category;
-}
-
-inline std::error_code make_ntstatus_error_code(NTSTATUS status) noexcept
-{
-	// WindowsではNTSTATUSもintも32ビット符号付き整数。
-	return { int(status), ntstatus_category() };
 }
 
 namespace cxx {

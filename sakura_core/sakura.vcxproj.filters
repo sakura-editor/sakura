@@ -1165,6 +1165,12 @@
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp">
       <Filter>Cpp Source Files\util\os</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Bcrypt.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\main\resources\images\auto_scroll_center.cur">
@@ -2369,6 +2375,12 @@
       <Filter>Cpp Source Files\util\os</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\os\User32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Bcrypt.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp">
       <Filter>Cpp Source Files\util\os</Filter>
     </ClCompile>
   </ItemGroup>
