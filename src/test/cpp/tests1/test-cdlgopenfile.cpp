@@ -8,6 +8,7 @@
 #include "dlg/CDlgOpenFile.h"
 
 #include "window/EditorTestSuite.hpp"
+#include "util/os/MockUser32.hpp"
 #include "util/shell.h"
 
 #include "eval_outputs.hpp"
@@ -780,3 +781,20 @@ TEST(SelectDir, test101)
 }
 
 } // namespace dialog
+
+namespace env {
+
+TEST(User32, TrackPopupMenu)
+{
+	User32::getInstance()->TrackPopupMenu(
+		HMENU(nullptr),
+		0,
+		0,
+		0,
+		0,
+		nullptr,
+		nullptr
+	);
+}
+
+}	// namespace env

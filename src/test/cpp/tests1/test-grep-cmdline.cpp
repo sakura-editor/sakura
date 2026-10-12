@@ -13,6 +13,7 @@
 #include "charset/CCodeFactory.h"
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
+#include "util/os/MockUser32.hpp"
 
 #include <memory>
 #include <sstream>

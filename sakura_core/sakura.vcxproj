@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\User32.hpp" />
     <ClInclude Include="apiwrap\CommonControl.h" />
     <ClInclude Include="apiwrap\StdApi.h" />
     <ClInclude Include="apiwrap\StdControl.h" />
@@ -512,6 +513,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\User32.cpp" />
     <ClCompile Include="apiwrap\StdApi.cpp" />
     <ClCompile Include="apiwrap\StdControl.cpp" />
     <ClCompile Include="basis\CErrorInfo.cpp" />

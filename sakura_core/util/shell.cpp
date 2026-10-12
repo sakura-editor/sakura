@@ -15,6 +15,7 @@
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
+#include "util/os/User32.hpp"
 #include "util/module.h"
 #include "util/window.h"
 #include "env/CShareData.h"
@@ -25,21 +26,6 @@
 #include "apiwrap/DarkMode.h"
 
 #pragma comment(lib, "htmlhelp.lib") 
-
-/*!
- * @brief MyWinHelpの呼出をモックできるようにするための関数
- *
- * @note 直接呼ばないでください
- */
-BOOL User32::WinHelpW(
-	_In_opt_ HWND,
-	_In_opt_ LPCWSTR,
-	_In_ UINT,
-	_In_ ULONG_PTR
-) const
-{
-	return FALSE;
-}
 
 BOOL Shell32::ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const
 {

@@ -44,6 +44,7 @@
 #include "prop/CPropCommon.h"
 #include "recent/CMRUFolder.h"
 #include "typeprop/CPropTypes.h"
+#include "util/os/MockUser32.hpp"
 #include "util/shell.h"
 
 #include <fstream>

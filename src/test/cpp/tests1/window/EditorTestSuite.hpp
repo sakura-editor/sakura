@@ -43,51 +43,6 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 } // namespace env
 
-struct MockUser32 final : public User32
-{
-	MOCK_CONST_METHOD5(MessageBoxExW, int(
-		_In_opt_ HWND hWnd,
-		_In_opt_ LPCWSTR lpText,
-		_In_opt_ LPCWSTR lpCaption,
-		_In_ UINT uType,
-		_In_ WORD wLanguageId
-	));
-
-	MOCK_CONST_METHOD7(TrackPopupMenu, BOOL(
-		_In_ HMENU hMenu,
-		_In_ UINT uFlags,
-		_In_ int x,
-		_In_ int y,
-		_Reserved_ int nReserved,
-		_In_ HWND hWnd,
-		_Reserved_ CONST RECT* prcRect
-	));
-
-	MOCK_CONST_METHOD4(WinHelpW, BOOL(
-		_In_opt_ HWND hWndMain,
-		_In_opt_ LPCWSTR lpszHelp,
-		_In_ UINT uCommand,
-		_In_ ULONG_PTR dwData
-	));
-
-	static int _MessageBoxExW(
-		_In_opt_ HWND hWnd,
-		_In_opt_ LPCWSTR lpText,
-		_In_opt_ LPCWSTR lpCaption,
-		_In_ UINT uType,
-		_In_ WORD wLanguageId
-	);
-
-	static BOOL _WinHelpW(
-		_In_opt_ HWND hWndMain,
-		_In_opt_ LPCWSTR lpszHelp,
-		_In_ UINT uCommand,
-		_In_ ULONG_PTR dwData
-	);
-
-	MockUser32();
-};
-
 struct MockBcrypt final : public Bcrypt
 {
 	MOCK_CONST_METHOD4(BCryptGenRandom, NTSTATUS(
@@ -123,4 +78,3 @@ struct MockComdlg32 final : public Comdlg32 {
 	using Holder = cxx::ResourceHolder<&_Cleanup>;
 	Holder m_Holder{ this };
 };
-

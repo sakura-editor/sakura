@@ -271,6 +271,9 @@
     <ClCompile Include="..\src\test\cpp\mock\util\os\MockKernel32.cpp">
       <Filter>Mock Files\util\os</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockUser32.cpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h">
@@ -313,6 +316,9 @@
       <Filter>Other Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\cpp\mock\util\os\MockKernel32.hpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockUser32.hpp">
       <Filter>Mock Files\util\os</Filter>
     </ClInclude>
   </ItemGroup>

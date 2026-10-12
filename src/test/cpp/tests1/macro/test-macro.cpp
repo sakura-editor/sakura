@@ -18,6 +18,7 @@
 #include "window/EditorTestSuite.hpp"
 
 #include "util/module.h"
+#include "util/os/MockUser32.hpp"
 #include "sakura_rc.h"
 
 #include <fstream>

@@ -12,6 +12,7 @@
 #include "_os/CClipboard.h"
 
 #include "util/os/Kernel32.hpp"
+#include "util/os/User32.hpp"
 
 #include <cstdint>
 #include <format>
