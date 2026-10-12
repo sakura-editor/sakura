@@ -520,7 +520,7 @@ TEST(FilePointer, OpenFilePath103)
 {
 	EXPECT_THROW(
 		FilePointer::OpenFilePath(std::wstring(SFilePath::size(), L'a'), L"wb"),
-		std::overflow_error
+		std::system_error
 	);
 }
 

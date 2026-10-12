@@ -293,9 +293,6 @@ BOOL IsWow64()
  * @brief コンストラクター
  *
  * カレントディレクトリを取得してメンバー変数に保存します。
- *
- * @throw std::overflow_error パスが長過ぎて保存できなかったとき
- * @throw std::system_error Windowsがエラーを返したとき
  */
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {
@@ -611,7 +608,10 @@ std::wstring GlobalSakura::wstring() const & {
 
 	if (SFilePath::size() <= _FileName.length()) {
 		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
-		throw std::overflow_error("fileName is too long.");
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			"fileName is too long."
+		);
 	}
 
 	// ファイルハンドルを作成する
@@ -756,7 +756,10 @@ std::wstring GetCurrentDirectoryW()
 
 	if (std::size(buf) < ret) {
 		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1)
+		);
 	}
 
 	return std::wstring(buf.c_str(), ret);
@@ -782,7 +785,10 @@ std::wstring GetModuleFileNameW(
 
 	if (std::size(buf) <= ret) {
 		// モジュールのファイルパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("module file path is too long. (length: at least {}, allowed: {})", ret, std::size(buf) - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("module file path is too long. (length: at least {}, allowed: {})", ret, std::size(buf) - 1)
+		);
 	}
 
 	return std::wstring(buf.c_str(), ret);
@@ -805,7 +811,10 @@ std::wstring GetSystemDirectoryW()
 
 	if (std::size(buf) < ret) {
 		// システムディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1)
+		);
 	}
 
 	return std::wstring(buf.c_str(), ret);

@@ -419,7 +419,7 @@ public:
 	/*!
 	 * @brief ファイルに書き込めるかどうかをチェックする
 	 *
-	 * @throw std::overflow_error ファイルサイズが大きすぎるとき
+	 * @throw std::system_error ファイルサイズが大きすぎるとき
 	 * @throw std::system_error 書き込みテストに失敗したとき
 	 */
 	void check_write_permissions() const;

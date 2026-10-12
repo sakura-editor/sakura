@@ -501,7 +501,10 @@ std::filesystem::path GetExeFileName()
 		cchMaxPath <= path.length())
 	{
 		// EXEパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("exe path is too long. (length: at least {}, allowed: {})", path.length(), cchMaxPath - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("exe path is too long. (length: at least {}, allowed: {})", path.length(), cchMaxPath - 1)
+		);
 	}
 
 	return path;

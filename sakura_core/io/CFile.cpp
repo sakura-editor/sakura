@@ -420,7 +420,7 @@ void resize_file(int fd, int64_t fileSize)
  * なので、実際に書き込んでチェックする。
  * チェック後は、内容・サイズ・タイムスタンプの復元を試みる。
  * 
- * @throw std::overflow_error ファイルサイズが大きすぎるとき
+ * @throw std::system_error ファイルサイズが大きすぎるとき
  * @throw std::system_error 書き込みテストに失敗したとき
  */
 void FilePointer::check_write_permissions() const
@@ -437,7 +437,7 @@ void FilePointer::check_write_permissions() const
 	if (fileSize < 0) throw std::system_error(std::make_error_code(std::errc::io_error), "Failed to get file size");
 
 	// 扱うファイルは32bitに収まるサイズに制限する
-	if (std::numeric_limits<uint32_t>::max() <= fileSize) throw std::overflow_error("too large file.");
+	if (std::numeric_limits<uint32_t>::max() <= fileSize) throw std::system_error(std::make_error_code(std::errc::file_too_large), "too large file.");
 
 	// ファイルハンドルを取得する
 	FileHandle hFile{ HANDLE(::_get_osfhandle(fd))};
@@ -643,7 +643,10 @@ void FilePointer::write(
 	// 共有メモリに格納する都合、パス長には制限がある。
 	if (SFilePath::size() <= path.length()) {
 		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
-		throw std::overflow_error("fileName is too long.");
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			"fileName is too long."
+		);
 	}
 
 	// まずは fopen で開いてみる

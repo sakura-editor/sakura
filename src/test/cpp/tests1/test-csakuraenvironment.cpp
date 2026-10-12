@@ -556,7 +556,7 @@ TEST_F(Kernel32, FileHandleCreateFileW102)
 				nullptr
 			);
 		}),
-		ThrowsMessage<std::overflow_error>(Eq("fileName is too long."))
+		ThrowsMessage<std::system_error>(StartsWith("fileName is too long."))
 	);
 }
 
@@ -839,7 +839,7 @@ TEST_F(Kernel32, GetCurrentDirectoryW102)
 	EXPECT_THAT(([] {
 			cxx::GetCurrentDirectoryW();
 		}),
-		ThrowsMessage<std::overflow_error>(StartsWith("current path is too long."))
+		ThrowsMessage<std::system_error>(StartsWith("current path is too long."))
 	);
 }
 
@@ -869,7 +869,7 @@ TEST_F(Kernel32, GetModuleFileNameW102)
 	EXPECT_THAT(([] {
 			cxx::GetModuleFileNameW(nullptr);
 		}),
-		ThrowsMessage<std::overflow_error>(StartsWith("module file path is too long."))
+		ThrowsMessage<std::system_error>(StartsWith("module file path is too long."))
 	);
 }
 
@@ -916,7 +916,7 @@ TEST_F(Kernel32, GetExeFileName101)
 	EXPECT_THAT(([] {
 			GetExeFileName();
 		}),
-		ThrowsMessage<std::overflow_error>(StartsWith("exe path is too long."))
+		ThrowsMessage<std::system_error>(StartsWith("exe path is too long."))
 	);
 }
 
@@ -946,7 +946,7 @@ TEST_F(Kernel32, GetSystemDirectoryW102)
 	EXPECT_THAT(([] {
 			cxx::GetSystemDirectoryW();
 		}),
-		ThrowsMessage<std::overflow_error>(StartsWith("system directory path is too long."))
+		ThrowsMessage<std::system_error>(StartsWith("system directory path is too long."))
 	);
 }
 
@@ -1131,7 +1131,7 @@ TEST_F(ChangeCurrentDirectoryToExeDir, test101)
 	EXPECT_THAT(([] {
 			::ChangeCurrentDirectoryToExeDir();
 		}),
-		ThrowsMessage<std::overflow_error>(StartsWith("exe path is too long."))
+		ThrowsMessage<std::system_error>(StartsWith("exe path is too long."))
 	);
 }
 
