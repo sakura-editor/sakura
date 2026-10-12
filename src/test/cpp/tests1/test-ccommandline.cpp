@@ -827,7 +827,7 @@ TEST(CCommandLine, ParseFromResponseFile101)
 
 	// 指定されたレスポンスファイルが存在しない場合、何もしない（おそらくバグ。）
 	CCommandLine cCommandLine;
-	auto strCmdLine = std::format(L"-@={}", path.filename());
+	auto strCmdLine = std::format(L"-@={}", path.filename().c_str());
 	cCommandLine.ParseCommandLine(strCmdLine.c_str(), true);
 }
 
