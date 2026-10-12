@@ -32,6 +32,15 @@
     <Filter Include="Other Files\grep">
       <UniqueIdentifier>{f99bbcd0-1b2c-4dba-abe4-a2cbf06323f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mock Files">
+      <UniqueIdentifier>{03aecb03-244f-4231-894e-d8210be35c13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mock Files\util">
+      <UniqueIdentifier>{b8a17b6a-462f-45dc-a0a2-6d93a6a5a401}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mock Files\util\os">
+      <UniqueIdentifier>{aa13bdea-e5cd-4f7e-a2f1-32a14e74beda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake">
@@ -259,6 +268,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cmenudrawer.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockKernel32.cpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h">
@@ -299,6 +311,9 @@
     </ClInclude>
     <ClInclude Include="..\src\test\resources\TExtModule.hpp">
       <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockKernel32.hpp">
+      <Filter>Mock Files\util\os</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

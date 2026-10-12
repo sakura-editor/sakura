@@ -231,22 +231,6 @@ TEST(ReplaceFileW, test104)
 	std::filesystem::remove(path2, ec);
 }
 
-TEST(ReplaceFileW, test105)
-{
-	const auto notImplemented = nullptr;
-	const auto reserved = nullptr;
-
-	const auto ret = Kernel32::getInstance()->ReplaceFileW(
-		nullptr,
-		nullptr,
-		nullptr,
-		0,
-		notImplemented,
-		reserved
-	);
-	EXPECT_THAT(ret, IsFalse());
-}
-
 } // namespace cxx
 
 namespace io {

@@ -44,7 +44,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\resources\;..\src\main\cpp;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\cpp\mock\;..\src\test\resources\;..\src\main\cpp;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -113,6 +113,7 @@
     <Link Include="..\build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockKernel32.cpp" />
     <ClCompile Include="..\src\test\resources\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -190,6 +191,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockKernel32.hpp" />
     <ClInclude Include="..\src\test\resources\pch.h" />
     <ClInclude Include="..\src\test\resources\testing\CrtAllocHook.hpp" />
     <ClInclude Include="..\src\test\resources\testing\HResultEq.hpp" />

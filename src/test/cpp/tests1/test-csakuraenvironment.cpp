@@ -29,6 +29,7 @@
 #include "version.h"
 
 #include "window/EditorTestSuite.hpp"
+#include "util/os/MockKernel32.hpp"
 
 #include <fstream>
 
@@ -969,8 +970,11 @@ TEST_F(Kernel32, ReplaceFileW101)
 		fos.close();
 	}
 
+	const auto notImplemented = nullptr;
+	const auto reserved = nullptr;
+
 	// APIがFALSEを返したら例外。
-	EXPECT_CALL(*pKernel32, ReplaceFileW(_, _, _, _, _, _))
+	EXPECT_CALL(*pKernel32, ReplaceFileW(_, _, _, _, notImplemented, reserved))
 		.WillOnce(Return(FALSE))
 		.WillOnce(Return(TRUE));
 

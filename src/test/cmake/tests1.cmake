@@ -77,6 +77,7 @@ set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 file(GLOB_RECURSE TESTS1_HEADERS
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.h
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/mock/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.h
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.hpp
@@ -86,6 +87,7 @@ file(GLOB_RECURSE TESTS1_HEADERS
 # define source files of tests1
 file(GLOB_RECURSE TESTS1_SOURCES
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.cpp
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/mock/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.cpp
 )
