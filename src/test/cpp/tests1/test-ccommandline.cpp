@@ -813,6 +813,25 @@ TEST(CCommandLine, ParseFromResponseFile)
 }
 
 /*!
+ * @brief パラメータ解析(-@)の仕様
+ * @remark -@に指定されたレスポンスファイルが見付からなかった場合、何もしない
+ */
+TEST(CCommandLine, ParseFromResponseFile101)
+{
+	// レスポンスファイルのパス
+	const auto path = std::filesystem::path{ "test.response" };
+
+	// パスが存在しなかった場合をテストしたいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 指定されたレスポンスファイルが存在しない場合、何もしない（おそらくバグ。）
+	CCommandLine cCommandLine;
+	auto strCmdLine = std::format(L"-@={}", path.filename().c_str());
+	cCommandLine.ParseCommandLine(strCmdLine.c_str(), true);
+}
+
+/*!
  * @brief オプションの仕様
  * @remark オプションはダブルクォートで囲んでもよい
  */
