@@ -33,6 +33,7 @@
 #include "env/CWriteManager.h"
 #include "CEditApp.h"
 #include "recent/CMRUFile.h"
+#include "util/os/Shell32.hpp"
 #include "util/shell.h"
 #include "util/window.h"
 #include "charset/CCodeFactory.h"

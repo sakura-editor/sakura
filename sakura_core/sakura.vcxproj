@@ -152,6 +152,7 @@
     <ClInclude Include="..\src\main\cpp\util\os\Comdlg32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\Shell32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp" />
     <ClInclude Include="apiwrap\CommonControl.h" />
     <ClInclude Include="apiwrap\StdApi.h" />
@@ -519,6 +520,7 @@
     <ClCompile Include="..\src\main\cpp\util\os\Comdlg32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\Shell32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\User32.cpp" />
     <ClCompile Include="apiwrap\StdApi.cpp" />
     <ClCompile Include="apiwrap\StdControl.cpp" />

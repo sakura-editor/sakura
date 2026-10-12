@@ -17,6 +17,7 @@
 #include "util/os.h"
 #include "util/os/Comdlg32.hpp"
 #include "util/os/User32.hpp"
+#include "util/os/Shell32.hpp"
 #include "util/module.h"
 #include "util/window.h"
 #include "env/CShareData.h"
@@ -27,11 +28,6 @@
 #include "apiwrap/DarkMode.h"
 
 #pragma comment(lib, "htmlhelp.lib") 
-
-BOOL Shell32::ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const
-{
-	return ::ShellExecuteExW(pExecInfo);
-}
 
 namespace cxx {
 
