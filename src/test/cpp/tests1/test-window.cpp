@@ -39,6 +39,8 @@
 
 #include "_main/CCommandLine.h"
 #include "_main/CControlTray.h"
+#include "dlg/MockCDlgInput1.hpp"
+#include "dlg/MockCDlgOpenFile.hpp"
 #include "plugin/CJackManager.h"
 #include "plugin/CPluginManager.h"
 #include "prop/CPropCommon.h"
@@ -66,17 +68,6 @@ using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
-
-struct MockCDlgInput1 final : public CDlgInput1
-{
-	MOCK_METHOD5(DoModal, BOOL(
-		_In_opt_ HWND hWndOwner,
-		_In_z_ LPCWSTR pszTitle,
-		_In_z_ LPCWSTR pszMessage,
-		_Out_writes_z_(cchBuffer) LPWSTR pBuffer,
-		size_t cchBuffer
-	));
-};
 
 namespace dialog {
 

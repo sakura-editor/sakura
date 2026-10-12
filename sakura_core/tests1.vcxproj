@@ -113,6 +113,8 @@
     <Link Include="..\build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\test\cpp\mock\dlg\MockCDlgInput1.cpp" />
+    <ClCompile Include="..\src\test\cpp\mock\dlg\MockCDlgOpenFile.cpp" />
     <ClCompile Include="..\src\test\cpp\mock\util\os\MockBcrypt.cpp" />
     <ClCompile Include="..\src\test\cpp\mock\util\os\MockComdlg32.cpp" />
     <ClCompile Include="..\src\test\cpp\mock\util\os\MockKernel32.cpp" />
@@ -195,6 +197,8 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\test\cpp\mock\dlg\MockCDlgInput1.hpp" />
+    <ClInclude Include="..\src\test\cpp\mock\dlg\MockCDlgOpenFile.hpp" />
     <ClInclude Include="..\src\test\cpp\mock\util\os\MockBcrypt.hpp" />
     <ClInclude Include="..\src\test\cpp\mock\util\os\MockComdlg32.hpp" />
     <ClInclude Include="..\src\test\cpp\mock\util\os\MockKernel32.hpp" />

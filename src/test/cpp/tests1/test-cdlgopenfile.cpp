@@ -7,6 +7,7 @@
 #include "pch.h"
 #include "dlg/CDlgOpenFile.h"
 
+#include "dlg/MockCDlgOpenFile.hpp"
 #include "window/EditorTestSuite.hpp"
 #include "util/os/MockUser32.hpp"
 #include "util/shell.h"
