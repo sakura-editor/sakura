@@ -36,6 +36,22 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_opt_ HANDLE hTemplateFile
 	) const;
 
+	virtual HANDLE FindFirstFileW(
+		_In_ LPCWSTR lpFileName,
+		_Out_ LPWIN32_FIND_DATAW lpFindFileData
+	) const;
+
+	virtual BOOL FindNextFileW(
+		_In_ HANDLE hFindFile,
+		_Out_ LPWIN32_FIND_DATAW lpFindFileData
+	) const;
+
+	virtual HRSRC FindResourceW(
+		_In_opt_ HMODULE hModule,
+		_In_ LPCWSTR lpName,
+		_In_ LPCWSTR lpType
+	) const;
+
 	virtual DWORD GetCurrentDirectoryW(
 		_In_ DWORD nBufferLength,
 		_Out_writes_to_opt_(nBufferLength,return + 1)
@@ -65,6 +81,21 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
 		_In_ UINT uSize
+	) const;
+
+	virtual HMODULE LoadLibraryExW(
+		_In_ LPCWSTR lpLibFileName,
+		_Reserved_ HANDLE hFile,
+		_In_ DWORD dwFlags
+	) const;
+
+	virtual HGLOBAL LoadResource(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo
+	) const;
+
+	virtual LPVOID LockResource(
+		_In_ HGLOBAL hResData
 	) const;
 
 	virtual LPVOID MapViewOfFile(
@@ -99,5 +130,10 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_opt_ CONST FILETIME* lpCreationTime,
 		_In_opt_ CONST FILETIME* lpLastAccessTime,
 		_In_opt_ CONST FILETIME* lpLastWriteTime
+	) const;
+
+	virtual DWORD SizeofResource(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo
 	) const;
 };

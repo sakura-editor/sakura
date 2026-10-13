@@ -18,7 +18,7 @@ namespace cxx {
  *
  * @param [in] id リソースID
  * @param [in, opt] optModule リソースDLLのハンドル（省略時はアプリリソースから取得）
- * @throw std::out_of_range 指定された文字列リソースが見付からなかった場合
+ * @throw std::system_error 指定された文字列リソースが見付からなかった場合
  */
 std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 {
@@ -27,7 +27,7 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 	}
 
 	// 文字列リソースを検索して参照を返す
-#if 1
+#if 0
 	// リソースを格納するモジュールを特定する(省略時はアプリリソースから取得)
 	const auto hModule = optModule.value_or(::GetModuleHandleW(nullptr));
 
@@ -39,7 +39,7 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 
 #if 0 // 新実装では↓の処理を行わない
 	if (!cchResStr) {
-		throw std::out_of_range("missing resource!");
+		throw std::system_error("missing resource!");
 	}
 #endif
 
@@ -47,10 +47,6 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 	return std::wstring_view(lpBuffer, cchResStr);
 
 #else
-	// 過去実装（LoadStringWの内部実装を模倣）では、不正な言語DLLを読み込んだときの例外が分かりづらいので辞める
-
-	// 単純削除だとうっかり復活させる懸念があるため、あえて残しておく
-
 	// RT_STRINGリソースのブロック番号を計算
 	const auto block = WORD((id >> 4) + 1);
 	const auto index = id & 0xF;
@@ -85,7 +81,7 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
  *
  * @param [in] id リソースID
  * @param [in, opt] optModule リソースDLLのハンドル（省略時はアプリリソースから取得）
- * @throw std::out_of_range 指定されたリソース見付からなかった場合
+ * @throw std::system_error 指定されたリソース見付からなかった場合
  * @throw std::invalid_argument ワイド文字列からナロー文字列への変換に失敗した場合
  */
 std::string load_string_as_acp(UINT id, const std::optional<HMODULE>& optModule)

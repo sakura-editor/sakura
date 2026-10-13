@@ -28,6 +28,41 @@
 	);
 }
 
+/* static */ HANDLE MockKernel32::_FindFirstFileW(
+	_In_ LPCWSTR lpFileName,
+	_Out_ LPWIN32_FIND_DATAW lpFindFileData
+)
+{
+	return ::FindFirstFileW(
+		lpFileName,
+		lpFindFileData
+	);
+}
+
+/* static */ BOOL MockKernel32::_FindNextFileW(
+	_In_ HANDLE hFindFile,
+	_Out_ LPWIN32_FIND_DATAW lpFindFileData
+)
+{
+	return ::FindNextFileW(
+		hFindFile,
+		lpFindFileData
+	);
+}
+
+/* static */ HRSRC MockKernel32::_FindResourceG(
+	_In_opt_ HMODULE hModule,
+	_In_ LPCVOID lpName,
+	_In_ LPCVOID lpType
+)
+{
+	return ::FindResourceW(
+		hModule,
+		(LPCWSTR)lpName,
+		(LPCWSTR)lpType
+	);
+}
+
 /* static */ DWORD MockKernel32::_GetModuleFileNameW(
 	_In_opt_ HMODULE hModule,
 	_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
@@ -42,9 +77,55 @@
 	);
 }
 
+/* static */ HMODULE MockKernel32::_LoadLibraryExW(
+	_In_ LPCWSTR lpLibFileName,
+	_Reserved_ HANDLE hFile,
+	_In_ DWORD dwFlags
+)
+{
+	return ::LoadLibraryExW(
+		lpLibFileName,
+		hFile,
+		dwFlags
+	);
+}
+
+/* static */ HGLOBAL MockKernel32::_LoadResource(
+	_In_opt_ HMODULE hModule,
+	_In_ HRSRC hResInfo
+)
+{
+	return ::LoadResource(
+		hModule,
+		hResInfo
+	);
+}
+
+/* static */ LPVOID MockKernel32::_LockResource(
+	_In_ HGLOBAL hResData
+)
+{
+	return ::LockResource(hResData);
+}
+
+/* static */ DWORD MockKernel32::_SizeofResource(
+	_In_opt_ HMODULE hModule,
+	_In_ HRSRC hResInfo
+)
+{
+	return ::SizeofResource(
+		hModule,
+		hResInfo
+	);
+}
+
 MockKernel32::MockKernel32()
 {
 	// デフォルトの動作を設定する
 	ON_CALL(*this, CreateFileW(_, _, _, _, _, _, _)).WillByDefault(&_CreateFileW);
+	ON_CALL(*this, FindResourceG(_, _, _)).WillByDefault(&_FindResourceG);
 	ON_CALL(*this, GetModuleFileNameW(_, _, _)).WillByDefault(&_GetModuleFileNameW);
+	ON_CALL(*this, LoadResource(_, _)).WillByDefault(&_LoadResource);
+	ON_CALL(*this, LockResource(_)).WillByDefault(&_LockResource);
+	ON_CALL(*this, SizeofResource(_, _)).WillByDefault(&_SizeofResource);
 }

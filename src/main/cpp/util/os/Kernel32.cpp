@@ -47,6 +47,41 @@ HANDLE Kernel32::CreateFileW(
 	);
 }
 
+HANDLE Kernel32::FindFirstFileW(
+	_In_ LPCWSTR lpFileName,
+	_Out_ LPWIN32_FIND_DATAW lpFindFileData
+) const
+{
+	return ::FindFirstFileW(
+		lpFileName,
+		lpFindFileData
+	);
+}
+
+BOOL Kernel32::FindNextFileW(
+	_In_ HANDLE hFindFile,
+	_Out_ LPWIN32_FIND_DATAW lpFindFileData
+) const
+{
+	return ::FindNextFileW(
+		hFindFile,
+		lpFindFileData
+	);
+}
+
+HRSRC Kernel32::FindResourceW(
+	_In_opt_ HMODULE hModule,
+	_In_ LPCWSTR lpName,
+	_In_ LPCWSTR lpType
+) const
+{
+	return ::FindResourceW(
+		hModule,
+		lpName,
+		lpType
+	);
+}
+
 DWORD Kernel32::GetCurrentDirectoryW(
 	_In_ DWORD nBufferLength,
 	_Out_writes_to_opt_( nBufferLength, return +1 )
@@ -106,6 +141,37 @@ UINT Kernel32::GetSystemDirectoryW(
 ) const
 {
 	return ::GetSystemDirectoryW(lpBuffer, uSize);
+}
+
+HMODULE Kernel32::LoadLibraryExW(
+	_In_ LPCWSTR lpLibFileName,
+	_Reserved_ HANDLE hFile,
+	_In_ DWORD dwFlags
+) const
+{
+	return ::LoadLibraryExW(
+		lpLibFileName,
+		hFile,
+		dwFlags
+	);
+}
+
+HGLOBAL Kernel32::LoadResource(
+	_In_opt_ HMODULE hModule,
+	_In_ HRSRC hResInfo
+) const
+{
+	return ::LoadResource(
+		hModule,
+		hResInfo
+	);
+}
+
+LPVOID Kernel32::LockResource(
+	_In_ HGLOBAL hResData
+) const
+{
+	return ::LockResource(hResData);
 }
 
 LPVOID Kernel32::MapViewOfFile(
@@ -177,5 +243,16 @@ BOOL Kernel32::SetFileTime(
 		lpCreationTime,
 		lpLastAccessTime,
 		lpLastWriteTime
+	);
+}
+
+DWORD Kernel32::SizeofResource(
+	_In_opt_ HMODULE hModule,
+	_In_ HRSRC hResInfo
+) const
+{
+	return ::SizeofResource(
+		hModule,
+		hResInfo
 	);
 }

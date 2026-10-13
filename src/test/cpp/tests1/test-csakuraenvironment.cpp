@@ -42,6 +42,12 @@ namespace cxx {
 
 uint16_t GenerateRandom16();
 
+HMODULE LoadLibraryExW(
+	std::wstring_view fileName,
+	_Reserved_ HANDLE hFile,
+	_In_ DWORD dwFlags
+);
+
 }	// namespace cxx
 
 namespace env {
@@ -811,6 +817,110 @@ TEST_F(Kernel32, FilePointerOpenFilePath101)
 
 	std::error_code ec;
 	std::filesystem::remove(testDataPath, ec);
+}
+
+TEST_F(Kernel32, LoadLibraryExW101)
+{
+	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
+		.Times(0);	// 呼ばれない
+
+	EXPECT_THAT(([] {
+			// ファイル名が空だと例外。
+			cxx::LoadLibraryExW(
+				L"",
+				nullptr,
+				0
+			);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("fileName is required."))
+	);
+}
+
+TEST_F(Kernel32, LoadLibraryExW102)
+{
+	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
+		.WillOnce(Return(nullptr));
+
+	EXPECT_THAT(([] {
+			// ファイル名が長過ぎると例外。
+			cxx::LoadLibraryExW(
+				L"KERNEL32.DLL",
+				nullptr,
+				0
+			);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("LoadLibraryExW() failed"))
+	);
+}
+
+TEST_F(Kernel32, LoadStringResource101)
+{
+	// APIがnullptrを返したら例外。
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillOnce(Return(nullptr));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::load_string(STR_SELLANG_LANGID);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("FindResourceW() failed"))
+	);
+}
+
+TEST_F(Kernel32, LoadStringResource102)
+{
+	const auto hRscInfo = HRSRC(1);
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillOnce(Return(hRscInfo));
+	EXPECT_CALL(*pKernel32, LoadResource(_, hRscInfo))
+		.WillOnce(Return(nullptr));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::load_string(STR_SELLANG_LANGID);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("LoadResource() failed"))
+	);
+}
+
+TEST_F(Kernel32, LoadStringResource103)
+{
+	const auto hRscInfo = HRSRC(1);
+	const auto hRscData = HGLOBAL(1);
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillOnce(Return(hRscInfo));
+	EXPECT_CALL(*pKernel32, LoadResource(_, hRscInfo))
+		.WillOnce(Return(hRscData));
+	EXPECT_CALL(*pKernel32, SizeofResource(_, hRscInfo))
+		.WillOnce(Return(0));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::load_string(STR_SELLANG_LANGID);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("SizeofResource() failed"))
+	);
+}
+
+TEST_F(Kernel32, LoadStringResource104)
+{
+	const auto hRscInfo = HRSRC(1);
+	const auto hRscData = HGLOBAL(1);
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillOnce(Return(hRscInfo));
+	EXPECT_CALL(*pKernel32, LoadResource(_, hRscInfo))
+		.WillOnce(Return(hRscData));
+	EXPECT_CALL(*pKernel32, SizeofResource(_, hRscInfo))
+		.WillOnce(Return(10));
+	EXPECT_CALL(*pKernel32, LockResource(hRscData))
+		.WillOnce(Return(nullptr));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			cxx::load_string(STR_SELLANG_LANGID);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("LockResource() failed"))
+	);
 }
 
 TEST_F(Kernel32, GetCurrentDirectoryW101)

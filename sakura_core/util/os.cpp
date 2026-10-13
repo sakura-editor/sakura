@@ -740,6 +740,24 @@ void FileHandle::SetFileTime(
 }
 
 /*!
+ * @brief リソースを検索する
+ */
+HRSRC FindResourceW(
+	_In_opt_ HMODULE hModule,
+	_In_ LPCWSTR lpName,
+	_In_ LPCWSTR lpType
+)
+{
+	const auto resource = Kernel32::getInstance()->FindResourceW(hModule, lpName, lpType);
+
+	if (!resource) {
+		cxx::raise_system_error("FindResourceW() failed");
+	}
+
+	return resource;
+}
+
+/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
@@ -848,6 +866,74 @@ std::wstring GetTempPath2W()
 	if (!ret) cxx::raise_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
 
 	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief DLLを読み込む
+ */
+HMODULE LoadLibraryExW(
+	std::wstring_view fileName,
+	_Reserved_ HANDLE hFile,
+	_In_ DWORD dwFlags
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _FileName{ fileName };
+
+	// NUL終端文字列を取り出す
+	const auto lpFileName = _FileName.c_str();
+
+	// パラメーターチェック
+	if (!lpFileName || !lpFileName[0]) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::invalid_argument("fileName is required.");
+	}
+
+	const auto hModule = Kernel32::getInstance()->LoadLibraryExW(
+		lpFileName,
+		hFile,
+		dwFlags
+	);
+
+	if (!hModule) {
+		cxx::raise_system_error("LoadLibraryExW() failed");
+	}
+
+	return hModule;
+}
+
+/*!
+ * @brief リソースを読み込む
+ */
+HGLOBAL LoadResource(
+	_In_opt_ HMODULE hModule,
+	_In_ HRSRC hResInfo
+)
+{
+	const auto resource = Kernel32::getInstance()->LoadResource(hModule, hResInfo);
+
+	if (!resource) {
+		cxx::raise_system_error("LoadResource() failed");
+	}
+
+	return resource;
+}
+
+/*!
+ * @brief リソースデータのポインターを取得する
+ */
+LPVOID LockResource(
+	_In_ HGLOBAL hResData
+)
+{
+	const auto data = Kernel32::getInstance()->LockResource(hResData);
+
+	if (!data) {
+		// LockResource は GetLastError に対応していない。
+		throw std::system_error(ERROR_RESOURCE_DATA_NOT_FOUND, std::system_category(), "LockResource() failed");
+	}
+
+	return data;
 }
 
 /*!
@@ -978,6 +1064,21 @@ void SetCurrentDirectoryW(
 	{
 		cxx::raise_system_error("SetCurrentDirectoryW() failed");
 	}
+}
+
+/*!
+ * @brief リソースのバイト数を取得する
+ */
+DWORD SizeofResource(
+	_In_opt_ HMODULE hModule,
+	_In_ HRSRC hResInfo
+)
+{
+	const auto size = Kernel32::getInstance()->SizeofResource(hModule, hResInfo);
+
+	if (!size) cxx::raise_system_error("SizeofResource() failed");
+
+	return size;
 }
 
 } // namespace cxx

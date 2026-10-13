@@ -31,6 +31,34 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ HANDLE hTemplateFile
 	));
 
+	MOCK_CONST_METHOD2(FindFirstFileW, HANDLE(
+		_In_ LPCWSTR lpFileName,
+		_Out_ LPWIN32_FIND_DATAW lpFindFileData
+	));
+
+	MOCK_CONST_METHOD2(FindNextFileW, BOOL(
+		_In_ HANDLE hFindFile,
+		_Out_ LPWIN32_FIND_DATAW lpFindFileData
+	));
+
+	// FindResourceWは引数型が特殊なので
+	// 代替実装「FindResourceG」を用意している。
+	// モック設定は G を使って行うこと。
+	HRSRC FindResourceW(
+		_In_opt_ HMODULE hModule,
+		_In_ LPCWSTR lpName,
+		_In_ LPCWSTR lpType
+	) const override
+	{
+		// FindResourceWの第2、第3引数には NUL終端されない LPCWSTR が渡る。
+		// 普通にモック化すると GMock + MSVC がエラーを吐いてしまうので対策する。
+		return FindResourceG(
+			hModule,
+			lpName,
+			lpType
+		);
+	}
+
 	MOCK_CONST_METHOD2(GetCurrentDirectoryW, DWORD(
 		_In_ DWORD nBufferLength,
 		_Out_writes_to_opt_(nBufferLength,return + 1)
@@ -60,6 +88,21 @@ struct MockKernel32 final : public Kernel32
 		_Out_writes_to_opt_(uSize, return +1)
 		LPWSTR lpBuffer,
 		_In_ UINT uSize
+	));
+
+	MOCK_CONST_METHOD3(LoadLibraryExW, HMODULE(
+		_In_ LPCWSTR lpLibFileName,
+		_Reserved_ HANDLE hFile,
+		_In_ DWORD dwFlags
+	));
+
+	MOCK_CONST_METHOD2(LoadResource, HGLOBAL(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo
+	));
+
+	MOCK_CONST_METHOD1(LockResource, LPVOID(
+		_In_ HGLOBAL hResData
 	));
 
 	MOCK_CONST_METHOD5(MapViewOfFile, LPVOID(
@@ -96,6 +139,11 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ CONST FILETIME* lpLastWriteTime
 	));
 
+	MOCK_CONST_METHOD2(SizeofResource, DWORD(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo
+	));
+
 	static HANDLE _CreateFileW(
 		_In_ LPCWSTR lpFileName,
 		_In_ DWORD dwDesiredAccess,
@@ -106,6 +154,22 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ HANDLE hTemplateFile
 	);
 
+	static HANDLE _FindFirstFileW(
+		_In_ LPCWSTR lpFileName,
+		_Out_ LPWIN32_FIND_DATAW lpFindFileData
+	);
+
+	static BOOL _FindNextFileW(
+		_In_ HANDLE hFindFile,
+		_Out_ LPWIN32_FIND_DATAW lpFindFileData
+	);
+
+	static HRSRC _FindResourceG(
+		_In_opt_ HMODULE hModule,
+		_In_ LPCVOID lpName,
+		_In_ LPCVOID lpType
+	);
+
 	static DWORD _GetModuleFileNameW(
 		_In_opt_ HMODULE hModule,
 		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
@@ -113,5 +177,32 @@ struct MockKernel32 final : public Kernel32
 		_In_ DWORD nSize
 	);
 
+	static HMODULE _LoadLibraryExW(
+		_In_ LPCWSTR lpLibFileName,
+		_Reserved_ HANDLE hFile,
+		_In_ DWORD dwFlags
+	);
+
+	static HGLOBAL _LoadResource(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo
+	);
+
+	static LPVOID _LockResource(
+		_In_ HGLOBAL hResData
+	);
+
+	static DWORD _SizeofResource(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo
+	);
+
 	MockKernel32();
+
+	MOCK_METHOD(
+		HRSRC,
+		FindResourceG,
+		(HMODULE hModule, const void* lpName, const void* lpType),
+		(const)
+	);
 };
