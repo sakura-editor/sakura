@@ -220,6 +220,20 @@ TEST_F(GrepCommandLineTest, ManyHits)
 	EXPECT_EQ(12u, Grep(L"HIT", L"*.txt", L"XP"));
 }
 
+//! リアルタイム表示: 結果を早めに出す経路を通っても、件数と結果は変わらない
+TEST_F(GrepCommandLineTest, RealTimeView)
+{
+	AddBasicFiles();
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	const auto saved = search.m_bGrepRealTimeView;
+	search.m_bGrepRealTimeView = TRUE;
+	const auto hitCount = Grep(L"HIT", L"*.txt", L"XS");
+	search.m_bGrepRealTimeView = saved;	// 後続のテストのために戻す
+
+	EXPECT_THAT(hitCount, Eq(4u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"d.txt"), IsTrue());
+}
+
 // ---------------------------------------------------------------------------
 // 対象ファイル・フォルダー
 // ---------------------------------------------------------------------------
@@ -1102,6 +1116,56 @@ TEST_F(GrepOutputSnapshotTest, BaseAndSeparateFolderHeaders)
 	EXPECT_TRUE(Contains(output, subHeader)) << output;
 	EXPECT_LT(output.find(hitLine), output.rfind(hitLine)) << output;	// 2 回出る
 	EXPECT_LT(output.find(subHeader), output.rfind(hitLine)) << output;	// サブフォルダーの結果は見出しの後
+}
+
+//! 入れ子のフォルダー: フォルダーごとにファイルが先、サブフォルダーが後(深さ優先)
+TEST_F(GrepOutputSnapshotTest, NestedFoldersOrder)
+{
+	for (const auto name : { L"a.txt", L"b.txt", LR"(sub1\x.txt)", LR"(sub1\deep\y.txt)", LR"(sub2\z.txt)" }) {
+		folder.AddFile(name, SNAPSHOT_TEXT);
+	}
+	const auto base = LongPath(folder.Path());
+
+	const std::wstring expected = std::format(L"■\"{}\"\r\n", base)
+		+ L"・a.txt(1,7): alpha needle one\r\n"
+		+ L"・b.txt(1,7): alpha needle one\r\n"
+		+ LR"(・sub1\x.txt(1,7): alpha needle one)" + L"\r\n"
+		+ LR"(・sub1\deep\y.txt(1,7): alpha needle one)" + L"\r\n"
+		+ LR"(・sub2\z.txt(1,7): alpha needle one)" + L"\r\n";
+	EXPECT_THAT(GrepStdout(L"needle", L"*.txt", L"1PSB"), Eq(expected));
+}
+
+//! D(フォルダー毎に表示): 見出しはフォルダーごとに 1 回。ヒットの無いフォルダーには出ない
+TEST_F(GrepOutputSnapshotTest, SeparateFolderHeaderOncePerFolder)
+{
+	folder.AddFile(LR"(sub1\a.txt)", SNAPSHOT_TEXT);
+	folder.AddFile(LR"(sub1\b.txt)", SNAPSHOT_TEXT);
+	folder.AddFile(LR"(nohit\c.txt)", "bravo two\r\n");
+	folder.AddFile(LR"(sub2\d.txt)", SNAPSHOT_TEXT);
+
+	DWORD hitCount = 0;
+	const auto output = GrepStdout(L"needle", L"*.txt", L"2PSBD", &hitCount);
+
+	const std::wstring sub1Header = L"■\"sub1\"\r\n";
+	const std::wstring sub2Header = L"■\"sub2\"\r\n";
+	const auto first = output.find(sub1Header);
+	EXPECT_THAT(hitCount, Eq(3u));
+	ASSERT_THAT(first, Ne(std::wstring::npos)) << output;
+	EXPECT_THAT(output.find(sub1Header, first + 1), Eq(std::wstring::npos)) << output;	// 2 つのファイルで 1 回
+	EXPECT_THAT(Contains(output, L"■\"nohit\""), IsFalse()) << output;
+	EXPECT_THAT(first, Lt(output.find(sub2Header))) << output;
+}
+
+//! 検索キーにフォルダーを含む(sub\*.txt): 結果の相対パスにフォルダーが付く
+TEST_F(GrepOutputSnapshotTest, KeyWithSubFolderPath)
+{
+	folder.AddFile(L"snap.txt", SNAPSHOT_TEXT);
+	folder.AddFile(LR"(sub\snap.txt)", SNAPSHOT_TEXT);
+	const auto base = LongPath(folder.Path());
+
+	const std::wstring expected = std::format(L"■\"{}\"\r\n", base)
+		+ LR"(・sub\snap.txt(1,7): alpha needle one)" + L"\r\n";
+	EXPECT_THAT(GrepStdout(L"needle", LR"(sub\*.txt)", L"1PB"), Eq(expected));
 }
 
 //! 改行が混ざっても行番号がずれない(CRLF・LF・CR・改行なしの最終行)
