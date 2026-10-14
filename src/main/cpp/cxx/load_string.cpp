@@ -54,20 +54,33 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 	// リソースを検索してロック
 	return cxx::lock_resource<WCHAR>(
 		block,
-		[index] (std::span<const WCHAR> pResData) {
+		[index] (std::span<const WCHAR> resData) {
+			// リソースブロックが空の場合は例外を投げる
+			if (resData.empty()) throw std::system_error(std::make_error_code(std::errc::not_supported), "String resource block is empty.");
+
 			// リソース内の文字列を検索
 			for (size_t i = 0; i < index; ++i) {
-				pResData = pResData.subspan(1 + pResData.front());
+				// 文字列エントリのサイズを取得する
+				const auto entrySize = 1 + size_t(resData.front());
+
+				// 残りデータがエントリサイズに満たない場合は例外を投げる
+				if (resData.size() < entrySize) throw std::system_error(std::make_error_code(std::errc::not_supported), "String resource entry is truncated.");
+
+				// 次の文字列の先頭に移動する
+				resData = resData.subspan(entrySize);
+
+				// 移動した先に残りデータがない場合は例外を投げる
+				if (resData.empty()) throw std::system_error(std::make_error_code(std::errc::not_supported), "String resource block does not contain the requested entry.");
 			}
 
 			// 文字列の長さを取得
-			if (const auto length = size_t(pResData.front()); 1 < std::size(pResData)) {
-				// 文字列をstd::wstring_viewに格納して返す
-				return std::wstring_view(&pResData[1], length);
-			}
+			const auto length = size_t(resData.front());
 
-			// 空の文字列参照を返す
-			return std::wstring_view();
+			// 残りデータが取得サイズに満たない場合は例外を投げる
+			if (std::size(resData) < 1 + length) throw std::system_error(std::make_error_code(std::errc::not_supported), "String resource entry is truncated.");
+
+			// 文字列をstd::wstring_viewに格納して返す
+			return std::wstring_view(resData.data() + 1, length);
 		},
 		RT_STRING,
 		optModule

@@ -28,6 +28,7 @@
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resource読み込みに使用
 #include "basis/CEol.h"
+#include "basis/CMyString.h"
 #include "util/file.h"
 #include "apiwrap/StdApi.h"
 

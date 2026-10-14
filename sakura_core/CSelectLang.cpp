@@ -17,7 +17,9 @@
 
 #include "_main/CProcess.h"
 
-#include "util/os/Kernel32.hpp"
+#include "debug/Debug1.h"
+#include "util/file.h"
+#include "util/file/FileFind.hpp"
 
 namespace cxx {
 
@@ -43,10 +45,28 @@ void CheckLangId(
 	// 言語IDを取得 "0x" + 4桁
 	std::wstring langIdStr{ cxx::load_string(wId, hModule) };
 
-	if (const auto langId = static_cast<WORD>(std::stoi(langIdStr, nullptr, 16)); langId != wLangId) {
+	WORD langId = 0;
+	try {
+		const auto i = std::stoi(langIdStr, nullptr, 16);
+
+		if (i < 0 || std::numeric_limits<WORD>::max() <= i) throw std::out_of_range("langId should be 16bit WORD value");
+
+		langId = static_cast<WORD>(i);
+	}
+	// 解析エラーが発生した場合
+	catch (const std::invalid_argument& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+	}
+	// 範囲外エラーが発生した場合
+	catch (const std::out_of_range& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+	}
+
+	if (langId != wLangId) {
 		throw std::system_error(
-			0,
-			std::system_category(),
+			std::make_error_code(std::errc::not_supported),
 			std::format("unexpected language id: {}, expected: {}", langId, wLangId)
 		);
 	}
@@ -67,83 +87,6 @@ bool ParseLangIdFromFileName(
 		lcid = LocaleNameToLCID(localeName.c_str(), 0);
 
 		result = true;
-	}
-
-	return result;
-}
-
-class FileFind final : public  cxx::ResourceHolder<&::FindClose>
-{
-private:
-	using Base = cxx::ResourceHolder<&::FindClose>;
-	using Me = FileFind;
-
-public:
-	static Me FindFirstFileW(
-		std::wstring_view searchPattern,
-		WIN32_FIND_DATAW* pFindFileData
-	);
-
-	using Base::Base;
-
-	bool FindNextFileW(
-		WIN32_FIND_DATAW* pFindFileData
-	) const;
-
-	bool FindNext(
-		WIN32_FIND_DATAW* pFindFileData
-	) const;
-};
-
-FileFind FileFind::FindFirstFileW(
-	std::wstring_view searchPattern,
-	WIN32_FIND_DATAW* pFindFileData
-)
-{
-	const auto hFindFile = Kernel32::getInstance()->FindFirstFileW(searchPattern.data(), pFindFileData);
-
-	if (INVALID_HANDLE_VALUE == hFindFile) {
-		throw std::system_error(
-			int(GetLastError()),
-			std::system_category(),
-			"FindFirstFileW failed."
-		);
-	}
-
-	return FileFind{ hFindFile };
-}
-
-bool FileFind::FindNextFileW(
-	WIN32_FIND_DATAW* pFindFileData
-) const
-{
-	const auto result = Kernel32::getInstance()->FindNextFileW(get(), pFindFileData);
-
-	if (!result) {
-		throw std::system_error(
-			int(GetLastError()),
-			std::system_category(),
-			"FindNextFileW failed."
-		);
-	}
-
-	return result;
-}
-
-bool FileFind::FindNext(
-	WIN32_FIND_DATAW* pFindFileData
-) const
-{
-	bool result = false;
-
-	try {
-		result = FindNextFileW(pFindFileData);
-	}
-	// エラーが発生した場合
-	catch (const std::system_error& e) {
-		if (ERROR_NO_MORE_FILES != e.code().value()) {
-			throw;
-		}
 	}
 
 	return result;
@@ -289,9 +232,9 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 
 		// この時点ではexeのインスタンスハンドルで起動し、共有メモリ初期化後にChangeLangする
 	}
-	catch (const std::system_error&) {
-		// 検索できなかった場合はデフォルト言語で抜ける
-		TRACE("InitializeLanguageEnvironment() failed");
+	catch (const std::system_error& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
 	}
 
 	gm_Selected = gm_Langs.begin();
@@ -373,9 +316,10 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 			gm_Langs[oldSelected].Unload();
 		}
 	}
-	catch (const std::system_error&) {
-		// 変更に失敗した
-		TRACE("ChangeLang() failed");
+	// エラーが発生した場合
+	catch (const std::system_error& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
 	}
 }
 

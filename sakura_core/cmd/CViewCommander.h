@@ -10,6 +10,7 @@
 #pragma once
 
 #include "basis/CEol.h"
+#include "env/DLLSHAREDATA.h"
 #include "types/CType.h"
 #include "util/MessageBoxF.h"
 

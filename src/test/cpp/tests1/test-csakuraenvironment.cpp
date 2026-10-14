@@ -21,6 +21,8 @@
 #include "env/CProfile.h"
 #include "io/CFile.h"
 #include "io/CFileLoad.h"
+#include "util/file/FileMapping.hpp"
+#include "util/file/NamedFilePointer.hpp"
 #include "util/file.h"
 #include "util/module.h"
 #include "util/os.h"
@@ -770,6 +772,9 @@ TEST_F(Kernel32, FilePointerCreateTempFile101)
 	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
 		.WillRepeatedly(testing::DoDefault());
 
+	EXPECT_CALL(*pKernel32, GetProcAddress(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
 	constexpr auto& fileName = L"tests1.ini";
 	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, CREATE_NEW, _, _))
 		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
@@ -781,6 +786,9 @@ TEST_F(Kernel32, FilePointerCreateTempFile101)
 TEST_F(Kernel32, FilePointerCreateTempFile102)
 {
 	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, GetProcAddress(_, _))
 		.WillRepeatedly(testing::DoDefault());
 
 	constexpr auto& fileName = L"tests1.ini";
@@ -795,6 +803,9 @@ TEST_F(Kernel32, FilePointerCreateTempFile102)
 
 TEST_F(Kernel32, FilePointerOpenFilePath101)
 {
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
 	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, _, OPEN_EXISTING, _, _))
 		.WillOnce(testing::Throw(std::system_error(ERROR_SUCCESS, std::system_category())));
 
@@ -1062,6 +1073,9 @@ TEST_F(Kernel32, GetSystemDirectoryW102)
 
 TEST_F(Kernel32, ReplaceFileW101)
 {
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
 	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
 	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
 
@@ -1098,6 +1112,107 @@ TEST_F(Kernel32, ReplaceFileW101)
 
 	// 正常を返す呼出もしておく
 	cxx::ReplaceFileW(path1, path2, L"test.txt.bak");
+
+	// モックをOFFにする
+	Target::resetInstance();
+
+	try {
+		cxx::ReplaceFileW(path1, path2, L"test.txt.bak");
+	} catch (const std::system_error&) {
+		// 例外が発生しても無視する
+	}
+
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+}
+
+TEST_F(Kernel32, ReplaceFileW_c101)
+{
+	Target::resetInstance();
+
+	// カスタム関数は、第1引数にフルパスを要求する
+	EXPECT_THAT(([] {
+			cxx::ReplaceFileW(L"to", L"from");
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must be absolute path."))
+	);
+}
+
+TEST_F(Kernel32, ReplaceFileW_c102)
+{
+	Target::resetInstance();
+
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	// カスタム関数は、第1引数のパスが存在していることを要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must exist."))
+	);
+}
+
+TEST_F(Kernel32, ReplaceFileW_c103)
+{
+	Target::resetInstance();
+
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	// カスタム関数は、第2引数のパスが存在していることを要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path1, path2);
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("replacementFileName must exist."))
+	);
+
+	std::filesystem::remove(path1, ec);
+}
+
+TEST_F(Kernel32, ReplaceFileW_c104)
+{
+	Target::resetInstance();
+
+	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
+	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
+
+	std::error_code ec;
+	std::filesystem::remove(path1, ec);
+	std::filesystem::remove(path2, ec);
+
+	{
+		std::ofstream fos{ path1 };
+		fos << "This is test data." << std::endl;
+		fos.close();
+	}
+
+	{
+		std::ofstream fos{ path2 };
+		fos << "This is temp data." << std::endl;
+		fos.close();
+	}
+
+	// カスタム関数は、第3引数にファイル名を要求する
+	EXPECT_THAT(([path1, path2] {
+			cxx::ReplaceFileW(path2, path1, LR"(C:\work\test.txt.bak)");
+		}),
+		ThrowsMessage<std::invalid_argument>(Eq("backupFileName must not contain path separators."))
+	);
 
 	std::filesystem::remove(path1, ec);
 	std::filesystem::remove(path2, ec);
@@ -1327,6 +1442,10 @@ TEST_F(CCurrentDirectoryBackupPoint, test101)
 	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
 		.WillOnce(Return(0));
 
+	// 呼ばれない
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.Times(0);
+
 	// システム例外のメッセージは先頭一致で評価する
 	EXPECT_THAT(([] {
 			Target t;
@@ -1342,17 +1461,21 @@ TEST_F(CCurrentDirectoryBackupPoint, test102)
 {
 	// 長さ_MAX_PATHのパスを返す
 	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
-		.WillOnce(Invoke([](DWORD nBufferLength, LPWSTR lpBuffer) -> DWORD {
+		.WillRepeatedly(Invoke([](DWORD nBufferLength, LPWSTR lpBuffer) -> DWORD {
 			std::wstring buffer(_MAX_PATH, L'a');
 			::wcsncpy_s(lpBuffer, nBufferLength, buffer.c_str(), _TRUNCATE);
 			return DWORD(buffer.length());
 		}));
 
+	// 呼ばれない
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.Times(0);
+
 	// メッセージは先頭一致で評価する
 	EXPECT_THAT(([] {
 			Target t;
 		}),
-		ThrowsMessage<std::overflow_error>(StartsWith("source string is too long."))
+		ThrowsMessage<std::system_error>(StartsWith("current path is too long."))
 	);
 }
 
@@ -1366,7 +1489,7 @@ TEST_F(CCurrentDirectoryBackupPoint, test103)
 		.WillOnce(Invoke([](DWORD nBufferLength, LPWSTR lpBuffer) -> DWORD {
 			std::wstring buffer = LR"(C:\Windows\System32)";
 			::wcsncpy_s(lpBuffer, nBufferLength, buffer.c_str(), _TRUNCATE);
-			return DWORD(buffer.length() + 1);
+			return DWORD(buffer.length());
 		}));
 
 	// APIが0を返したら例外。

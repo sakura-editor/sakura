@@ -177,6 +177,11 @@ struct MockKernel32 final : public Kernel32
 		_In_ DWORD nSize
 	);
 
+	static FARPROC _GetProcAddress(
+		_In_ HMODULE hModule,
+		_In_ LPCSTR lpProcName
+	);
+
 	static HMODULE _LoadLibraryExW(
 		_In_ LPCWSTR lpLibFileName,
 		_Reserved_ HANDLE hFile,

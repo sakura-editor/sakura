@@ -11,17 +11,18 @@
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
 
-#include "util/os/Bcrypt.hpp"
+#include "debug/Debug1.h"
+#include "util/file.h"
+#include "util/file/FileMapping.hpp"
+#include "util/file/NamedFilePointer.hpp"
 #include "util/os/Kernel32.hpp"
-#include "util/os/User32.hpp"
-#include "util/os/ntstatus_category.hpp"
+#include "util/os/make_system_error.hpp"
 
 #include <cstdint>
 #include <format>
 #include <stdexcept>
 #include <string>
 
-#pragma comment(lib, "Bcrypt.lib")
 #pragma comment(lib, "UxTheme.lib")
 
 /*!
@@ -298,12 +299,26 @@ CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {
 	// カレントディレクトリの取得を試みる
 	try {
-		m_szCurDir = cxx::GetCurrentDirectoryW();
+		const auto curDir = cxx::GetCurrentDirectoryW();
+
+		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
+		if (const auto maxLength = decltype(m_szCurDir)::size();
+			maxLength <= curDir.length())
+		{
+			throw std::system_error(
+				std::make_error_code(std::errc::filename_too_long),
+				std::format("current path is too long. (length: {}, allowed: {})", curDir.length(), maxLength - 1)
+			);
+		}
+
+		m_szCurDir = curDir;
 	}
 	// 失敗を検出したとき
-	catch (const std::exception& e) {
+	catch (const std::system_error& e) {
 		// ログを出力する
 		TRACE("fail: %hs", e.what());
+
+		// 例外を再スローする
 		throw;
 	}
 }
@@ -404,43 +419,7 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 
 namespace cxx {
 
-template <typename T>
-[[nodiscard]] NTSTATUS BCryptGenRandom(
-	_In_opt_ BCRYPT_ALG_HANDLE hAlgorithm,
-	std::span<T> buffer,
-	_In_ ULONG dwFlags
-)
-{
-	return Bcrypt::getInstance()->BCryptGenRandom(
-		hAlgorithm,
-		PUCHAR(std::data(buffer)),
-		ULONG(buffer.size_bytes()),
-		dwFlags
-	);
-}
-
-uint16_t GenerateRandom16()
-{
-	uint16_t value{};
-
-	if (const auto status = cxx::BCryptGenRandom(
-		nullptr,
-		std::span(&value, 1),
-		BCRYPT_USE_SYSTEM_PREFERRED_RNG
-	);
-		!BCRYPT_SUCCESS(status))
-	{
-		// システムエラー例外を発生させる
-		throw std::system_error(
-			make_ntstatus_error_code(status),
-			"BCryptGenRandom failed"
-		);
-	}
-
-	return value;
-}
-
-GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
+	GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
 {
 	assert(!files.empty());
 
@@ -570,194 +549,6 @@ std::wstring GlobalSakura::wstring() const & {
 }
 
 /*!
- * @brief ファイルハンドルを作成する
- *
- * ハンドルリソースを「作成する」からCreateFile。
- *
- * ファイルを開くのか、作成するのかはdwCreationDispositionで指定する。
- *
- * @param[in] fileName ファイル名
- * @param[in] dwDesiredAccess アクセス権
- * @param[in] dwShareMode 共有モード
- * @param[in] lpSecurityAttributes セキュリティ属性
- * @param[in] dwCreationDisposition 作成方法
- * @param[in] dwFlagsAndAttributes ファイル属性と作成フラグ
- * @param[in] hTemplateFile テンプレートファイルのハンドル
- */
-/* static */ FileHandle FileHandle::CreateFileW(
-	std::wstring_view fileName,
-	_In_ DWORD dwDesiredAccess,
-	_In_ DWORD dwShareMode,
-	_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-	_In_ DWORD dwCreationDisposition,
-	_In_ DWORD dwFlagsAndAttributes,
-	_In_opt_ HANDLE hTemplateFile
-)
-{
-	// 引数はNUL終端文字列として扱う
-	cxx::NullTerminatedString<WCHAR> _FileName{ fileName };
-
-	// NUL終端文字列を取り出す
-	const auto lpFileName = _FileName.c_str();
-
-	// パラメーターチェック
-	if (!lpFileName || !lpFileName[0]) {
-		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
-		throw std::invalid_argument("fileName is required.");
-	}
-
-	if (SFilePath::size() <= _FileName.length()) {
-		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
-		throw std::system_error(
-			std::make_error_code(std::errc::filename_too_long),
-			"fileName is too long."
-		);
-	}
-
-	// ファイルハンドルを作成する
-	const auto hFile = Kernel32::getInstance()->CreateFileW(
-		lpFileName,
-		dwDesiredAccess,
-		dwShareMode,
-		lpSecurityAttributes,
-		dwCreationDisposition,
-		dwFlagsAndAttributes,
-		hTemplateFile
-	);
-
-	// 戻り値が INVALID_HANDLE_VALUE だった場合
-	if (INVALID_HANDLE_VALUE == hFile) {
-		// システムエラー例外を発生させる
-		throw std::system_error(int(::GetLastError()), std::system_category());
-	}
-
-	return FileHandle{ hFile };
-}
-
-void FileHandle::GetFileTime(
-	_Out_opt_ LPFILETIME lpCreationTime,
-	_Out_opt_ LPFILETIME lpLastAccessTime,
-	_Out_opt_ LPFILETIME lpLastWriteTime
-) const
-{
-	if (Kernel32::getInstance()->GetFileTime(get(), lpCreationTime, lpLastAccessTime, lpLastWriteTime))
-	{
-		return;	// 成功した
-	}
-
-	throw std::system_error(
-		int(::GetLastError()), std::system_category(),
-		"Failed to get file timestamps"
-	);
-}
-
-void FileHandle::SetFileTime(
-	_In_opt_ CONST FILETIME* lpCreationTime,
-	_In_opt_ CONST FILETIME* lpLastAccessTime,
-	_In_opt_ CONST FILETIME* lpLastWriteTime
-) const
-{
-	if (Kernel32::getInstance()->SetFileTime(get(), lpCreationTime, lpLastAccessTime, lpLastWriteTime))
-	{
-		return;	// 成功した
-	}
-
-	throw std::system_error(
-		int(::GetLastError()), std::system_category(),
-		"Failed to set file timestamps"
-	);
-}
-
-/*!
- * @brief ファイルマッピングを作る
- *
- * @param[in] hFile ファイルハンドル
- * @param[in] lpFileMappingAttributes セキュリティ属性
- * @param[in] flProtect 保護属性
- * @param[in] maximumSize 最大サイズ
- * @param[in] name ファイルマッピングの名前
- */
-/* static */ FileMapping FileMapping::CreateFileMappingW(
-	_In_ HANDLE hFile,
-	_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
-	_In_ DWORD flProtect,
-	const ULARGE_INTEGER& maximumSize,
-	std::wstring_view name
-)
-{
-	// 引数はNUL終端文字列として扱う
-	cxx::NullTerminatedString<WCHAR> _Name{ name };
-
-	// ファイルマッピングを作る
-	const auto hFileMapping = Kernel32::getInstance()->CreateFileMappingW(
-		hFile,
-		lpFileMappingAttributes,
-		flProtect,
-		maximumSize.HighPart,
-		maximumSize.LowPart,
-		_Name.c_str()
-	);
-
-	// 戻り値が NULL だった場合
-	if (!hFileMapping) {
-		// システムエラー例外を発生させる
-		throw std::system_error(int(::GetLastError()), std::system_category());
-	}
-
-	return FileMapping{ hFileMapping };
-}
-
-/*!
- * @brief ファイルマッピングを開く
- *
- * @param[in] dwDesiredAccess 要求するアクセス権
- * @param[in] bInheritHandle ハンドルを継承するかどうか
- * @param[in] name ファイルマッピングの名前
- */
-/* static */ FileMapping FileMapping::OpenFileMappingW(
-	_In_ DWORD dwDesiredAccess,
-	_In_ BOOL bInheritHandle,
-	std::wstring_view name
-)
-{
-	// 引数はNUL終端文字列として扱う
-	cxx::NullTerminatedString<WCHAR> _Name{ name };
-
-	// ファイルマッピングを開く
-	const auto hFileMapping = Kernel32::getInstance()->OpenFileMappingW(
-		dwDesiredAccess,
-		bInheritHandle,
-		_Name.c_str()
-	);
-
-	// 戻り値が NULL だった場合
-	if (!hFileMapping) {
-		// システムエラー例外を発生させる
-		throw std::system_error(int(::GetLastError()), std::system_category());
-	}
-
-	return FileMapping{ hFileMapping };
-}
-
-/*!
- * @brief リソースを検索する
- */
-HRSRC FindResourceW(
-	_In_opt_ HMODULE hModule,
-	_In_ LPCWSTR lpName,
-	_In_ LPCWSTR lpType
-)
-{
-	const auto resource = Kernel32::getInstance()->FindResourceW(hModule, lpName, lpType);
-
-	if (!resource) {
-		cxx::raise_system_error("FindResourceW() failed");
-	}
-
-	return resource;
-}
-
-/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
@@ -769,7 +560,7 @@ std::wstring GetCurrentDirectoryW()
 	const auto ret = Kernel32::getInstance()->GetCurrentDirectoryW(DWORD(std::size(buf)), buf.data());
 
 	if (!ret) {
-		cxx::raise_system_error("GetCurrentDirectoryW() failed");
+		throw cxx::make_system_error("GetCurrentDirectoryW() failed");
 	}
 
 	if (std::size(buf) < ret) {
@@ -798,7 +589,7 @@ std::wstring GetModuleFileNameW(
 	const auto ret = Kernel32::getInstance()->GetModuleFileNameW(hModule, buf.data(), DWORD(std::size(buf)));
 
 	if (!ret) {
-		cxx::raise_system_error("GetModuleFileNameW() failed");
+		throw cxx::make_system_error("GetModuleFileNameW() failed");
 	}
 
 	if (std::size(buf) <= ret) {
@@ -824,7 +615,7 @@ std::wstring GetSystemDirectoryW()
 	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
 
 	if (!ret) {
-		cxx::raise_system_error("GetSystemDirectoryW() failed");
+		throw cxx::make_system_error("GetSystemDirectoryW() failed");
 	}
 
 	if (std::size(buf) < ret) {
@@ -848,7 +639,7 @@ std::wstring GetTempPath2W()
 	// Kernel32.DLLのハンドルを取得する
 	const auto kernel32 = ::GetModuleHandleW(L"KERNEL32.DLL");
 
-	if (!kernel32) cxx::raise_system_error("Kernel32.DLL was not found.");	// このthrowは呼ばれない
+	if (!kernel32) throw cxx::make_system_error("Kernel32.DLL was not found.");	// このthrowは呼ばれない
 
 	// GetTempPath2の関数ポインタを取得する
 	decltype(&::GetTempPath2W) pfnGetTempPath = nullptr;
@@ -863,7 +654,7 @@ std::wstring GetTempPath2W()
 	// 戻り値は 0～261 の範囲に収まる仕様。
 	const auto ret = pfnGetTempPath(DWORD(std::size(buf)), std::data(buf));
 
-	if (!ret) cxx::raise_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
+	if (!ret) throw cxx::make_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
 
 	return std::wstring(buf.c_str(), ret);
 }
@@ -896,77 +687,10 @@ HMODULE LoadLibraryExW(
 	);
 
 	if (!hModule) {
-		cxx::raise_system_error("LoadLibraryExW() failed");
+		throw cxx::make_system_error("LoadLibraryExW() failed");
 	}
 
 	return hModule;
-}
-
-/*!
- * @brief リソースを読み込む
- */
-HGLOBAL LoadResource(
-	_In_opt_ HMODULE hModule,
-	_In_ HRSRC hResInfo
-)
-{
-	const auto resource = Kernel32::getInstance()->LoadResource(hModule, hResInfo);
-
-	if (!resource) {
-		cxx::raise_system_error("LoadResource() failed");
-	}
-
-	return resource;
-}
-
-/*!
- * @brief リソースデータのポインターを取得する
- */
-LPVOID LockResource(
-	_In_ HGLOBAL hResData
-)
-{
-	const auto data = Kernel32::getInstance()->LockResource(hResData);
-
-	if (!data) {
-		// LockResource は GetLastError に対応していない。
-		throw std::system_error(ERROR_RESOURCE_DATA_NOT_FOUND, std::system_category(), "LockResource() failed");
-	}
-
-	return data;
-}
-
-/*!
- * @brief ファイルマッピングのビューを取得する
- *
- * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
- * @param[in] dwDesiredAccess 要求するアクセス権
- * @param[in] fileOffset ファイルマッピングのビューの開始位置
- * @param[in] dwNumberOfBytesToMap マップするバイト数
- * @return マッピングされたデータ
- */
-std::span<std::byte> MapViewOfFile(
-	_In_ HANDLE hFileMappingObject,
-	_In_ DWORD dwDesiredAccess,
-	const ULARGE_INTEGER& fileOffset,
-	_In_ DWORD dwNumberOfBytesToMap
-)
-{
-	const auto pView = Kernel32::getInstance()->MapViewOfFile(
-		hFileMappingObject,
-		dwDesiredAccess,
-		fileOffset.HighPart,
-		fileOffset.LowPart,
-		dwNumberOfBytesToMap
-	);
-
-	// 戻り値が NULL だった場合
-	if (!pView) {
-		// システムエラー例外を発生させる
-		throw std::system_error(int(::GetLastError()), std::system_category());
-	}
-
-	return std::span{ std::bit_cast<std::byte*>(pView), dwNumberOfBytesToMap };
 }
 
 /*!
@@ -1042,7 +766,7 @@ void ReplaceFileW(
 	);
 		!ret)
 	{
-		cxx::raise_system_error("ReplaceFileW() failed");
+		throw cxx::make_system_error("ReplaceFileW() failed");
 	}
 }
 
@@ -1062,23 +786,8 @@ void SetCurrentDirectoryW(
 	if (const auto ret = Kernel32::getInstance()->SetCurrentDirectoryW(path.c_str());
 		!ret)
 	{
-		cxx::raise_system_error("SetCurrentDirectoryW() failed");
+		throw cxx::make_system_error("SetCurrentDirectoryW() failed");
 	}
-}
-
-/*!
- * @brief リソースのバイト数を取得する
- */
-DWORD SizeofResource(
-	_In_opt_ HMODULE hModule,
-	_In_ HRSRC hResInfo
-)
-{
-	const auto size = Kernel32::getInstance()->SizeofResource(hModule, hResInfo);
-
-	if (!size) cxx::raise_system_error("SizeofResource() failed");
-
-	return size;
 }
 
 } // namespace cxx

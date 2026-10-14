@@ -29,9 +29,3 @@ inline const std::error_category& ntstatus_category() noexcept
 {
 	return NtStatusCategory::category;
 }
-
-inline std::error_code make_ntstatus_error_code(NTSTATUS status) noexcept
-{
-	// WindowsではNTSTATUSもintも32ビット符号付き整数。
-	return { int(status), ntstatus_category() };
-}

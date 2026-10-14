@@ -348,27 +348,6 @@ public:
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
 
 /*!
- * @brief システムエラーを例外として発生させる
- *
- * @param[in] message エラーメッセージ
- */
-template <basis::NullTerminatedStringConstructible<ACHAR> A>
-[[noreturn]] void raise_system_error(
-	const A& message
-)
-{
-	// 引数はNUL終端文字列として扱う
-	cxx::NullTerminatedString<ACHAR> msg{ message };
-
-	// システムエラー例外を発生させる
-	throw std::system_error(
-		int(::GetLastError()),
-		std::system_category(),
-		msg.c_str()
-	);
-}
-
-/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス

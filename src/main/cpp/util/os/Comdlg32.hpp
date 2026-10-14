@@ -8,7 +8,8 @@
 
 #include "util/design_template.h"
 
-#include <bcrypt.h>
+#include <Windows.h>
+#include <commdlg.h>
 
 //! Comdlg32.dll呼出をテスト可能にするDIっぽいもの
 struct Comdlg32 : public TSakuraSingleton<Comdlg32> {

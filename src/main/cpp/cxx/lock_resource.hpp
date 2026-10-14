@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (C) 2025, Sakura Editor Organization
+	Copyright (C) 2025-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
  */
@@ -7,6 +7,8 @@
 #pragma once
 
 #include "cxx/type_of_Nth_lambda_arg.hpp"
+
+#include <span>
 
 namespace cxx {
 

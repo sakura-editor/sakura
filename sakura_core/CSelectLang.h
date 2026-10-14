@@ -16,6 +16,7 @@
 #define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
+#include "basis/CMyString.h"
 #include "basis/primitive.h"
 #include "cxx/ResourceHolder.hpp"
 #include "cxx/load_string.hpp"

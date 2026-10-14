@@ -44,6 +44,9 @@
     <Filter Include="Mock Files\dlg">
       <UniqueIdentifier>{b233228c-9494-43af-b4df-5fe00dae5a0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{cc731650-a84a-4861-bc7c-3b679d7cebf4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake">
@@ -356,14 +359,31 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\test\resources\tests1_rc.h">
+    <ClInclude Include="..\src\test\resources\tests1\tests1_rc.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\rt_zipres.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ResourceCompile Include="tests1_rc.rc">
+    <ResourceCompile Include="..\src\test\resources\tests1\tests1_rc.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\build\$(Platform)\CMakeTools\cmigemo-dict-cp932.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\cmigemo-dict-utf-8.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\outline.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\resources.ja-JP.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\resources-dllplugin.zip">
+      <Filter>Generated Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

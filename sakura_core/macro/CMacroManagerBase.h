@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2002, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -15,25 +15,30 @@
 #define SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_
 #pragma once
 
+#include "basis/CMyString.h" //SFilePath
+
 #include <Windows.h>
+
 class CEditView;
 
 class CMacroBeforeAfter {
 public:
-	CMacroBeforeAfter() : m_nOpeBlkCount(0), m_bDrawSwitchOld(true){};
-	virtual ~CMacroBeforeAfter(){};
+	CMacroBeforeAfter() = default;
+	virtual ~CMacroBeforeAfter() = default;
+
 	virtual void ExecKeyMacroBefore( class CEditView* pcEditView, int flags );
 	virtual void ExecKeyMacroAfter( class CEditView* pcEditView, int flags, bool bRet );
+
 private:
-	int m_nOpeBlkCount;
-	bool m_bDrawSwitchOld;
+	int		m_nOpeBlkCount = 0;
+	bool	m_bDrawSwitchOld = true;
 };
 
 /*!
 	@brief マクロを処理するエンジン部分の基底クラス
 
 */
-class CMacroManagerBase : CMacroBeforeAfter {
+class CMacroManagerBase : protected CMacroBeforeAfter {
 public:
 
 	/*! キーボードマクロの実行
@@ -65,11 +70,11 @@ public:
 	//継承先クラスでは必要。
 	
 	//	デストラクタのvirtualを忘れずに
-	virtual ~CMacroManagerBase();
+	~CMacroManagerBase() override;
 	
 protected:
 	//!	Load済みかどうかを表すフラグ true...Load済み、false...未Load。
-	bool m_nReady;
+	bool m_nReady = false;	//TODO: privateメンバーにする
 
 public:
 	/*!	Load済みかどうか
@@ -77,9 +82,10 @@ public:
 		@retval true Load済み
 		@retval false 未Load
 	*/
-	bool IsReady(){ return m_nReady; }
+	bool IsReady() const noexcept { return m_nReady; }
 
 	// Constructor
 	CMacroManagerBase();
 };
+
 #endif /* SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_ */

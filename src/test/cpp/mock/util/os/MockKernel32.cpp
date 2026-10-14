@@ -77,6 +77,18 @@
 	);
 }
 
+
+/* static */ FARPROC MockKernel32::_GetProcAddress(
+	_In_ HMODULE hModule,
+	_In_ LPCSTR lpProcName
+)
+{
+	return ::GetProcAddress(
+		hModule,
+		lpProcName
+	);
+}
+
 /* static */ HMODULE MockKernel32::_LoadLibraryExW(
 	_In_ LPCWSTR lpLibFileName,
 	_Reserved_ HANDLE hFile,
@@ -124,6 +136,7 @@ MockKernel32::MockKernel32()
 	// デフォルトの動作を設定する
 	ON_CALL(*this, CreateFileW(_, _, _, _, _, _, _)).WillByDefault(&_CreateFileW);
 	ON_CALL(*this, FindResourceG(_, _, _)).WillByDefault(&_FindResourceG);
+	ON_CALL(*this, GetProcAddress(_, _)).WillByDefault(&_GetProcAddress);
 	ON_CALL(*this, GetModuleFileNameW(_, _, _)).WillByDefault(&_GetModuleFileNameW);
 	ON_CALL(*this, LoadResource(_, _)).WillByDefault(&_LoadResource);
 	ON_CALL(*this, LockResource(_)).WillByDefault(&_LockResource);

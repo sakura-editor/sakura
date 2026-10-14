@@ -11,13 +11,14 @@
 #include <ShlObj.h>
 #include <shellapi.h>
 #include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
+
+#include "debug/Debug1.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
 #include "util/os/Comdlg32.hpp"
 #include "util/os/User32.hpp"
-#include "util/os/Shell32.hpp"
 #include "util/module.h"
 #include "util/window.h"
 #include "env/CShareData.h"

@@ -11,6 +11,8 @@
 
 #include <thread>
 
+#include "tests1_rc.h"
+
 namespace cxx {
 
 void CheckLangId(
@@ -21,8 +23,37 @@ void CheckLangId(
 
 }	// namespace cxx
 
-TEST(CSelectLang, test001)
+/*!
+ * CSelectLangのテスト
+ */
+struct CSelectLangTest : public ::testing::Test {
+	using Target = ::Kernel32;
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		Target::setInstance<MockKernel32>();
+
+		pKernel32 = (MockKernel32*)Target::getInstance();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		Target::resetInstance();
+	}
+
+	MockKernel32* pKernel32 = nullptr;
+};
+
+TEST_F(CSelectLangTest, test001)
 {
+	// モックは使わない
+	Target::resetInstance();
+
 	// 強制的に初期状態にする
 	CSelectLang::UninitializeLanguageEnvironment();
 
@@ -32,8 +63,11 @@ TEST(CSelectLang, test001)
 	EXPECT_THAT(CSelectLang::GetLangInfo().size(), Ge(size_t(1)));	// 未初期化状態のテストをやめて、初期状態をテストするよう仕様変更。
 }
 
-TEST(CSelectLang, test002)
+TEST_F(CSelectLangTest, test002)
 {
+	// モックは使わない
+	Target::resetInstance();
+
 	// 初期化する
 	CSelectLang::InitializeLanguageEnvironment();
 
@@ -59,32 +93,48 @@ TEST(CSelectLang, test002)
 	CSelectLang::UninitializeLanguageEnvironment();
 }
 
-TEST(CSelectLang, ChangeLang101)
+TEST_F(CSelectLangTest, ChangeLang101)
 {
+	// 最初はモックは使わない
+	Target::resetInstance();
+
 	CSelectLang::InitializeLanguageEnvironment();
 
 	Kernel32::setInstance<MockKernel32>();
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
 
 	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
-		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));
+		.WillOnce(Return(nullptr));
 
 	CSelectLang::ChangeLang(L"sakura_lang_zh_CN.dll");
-
-	Kernel32::resetInstance();
 }
 
-TEST(CSelectLang, ChangeLang102)
+TEST_F(CSelectLangTest, ChangeLang102)
 {
+	// モックは使わない
+	Target::resetInstance();
+
 	CSelectLang::InitializeLanguageEnvironment();
 
 	CSelectLang::ChangeLang(L"sakura_lang_en_JP.dll");
 }
 
-TEST(CSelectLang, InitializeLanguageEnvironment101)
+TEST_F(CSelectLangTest, InitializeLanguageEnvironment101)
 {
-	Kernel32::setInstance<MockKernel32>();
-	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
 		.WillOnce(Return(INVALID_HANDLE_VALUE));
@@ -94,38 +144,67 @@ TEST(CSelectLang, InitializeLanguageEnvironment101)
 	Kernel32::resetInstance();
 }
 
-TEST(CSelectLang, InitializeLanguageEnvironment102)
+TEST_F(CSelectLangTest, InitializeLanguageEnvironment102)
 {
-	Kernel32::setInstance<MockKernel32>();
-	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	EXPECT_CALL(*pKernel32, FindNextFileW(_, _))
-		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));
+		.WillOnce(Return(FALSE));
 
 	CSelectLang::InitializeLanguageEnvironment();
-
-	Kernel32::resetInstance();
 }
 
-TEST(CSelectLang, TryEmplace101)
+TEST_F(CSelectLangTest, TryEmplace101)
 {
+	Kernel32::resetInstance();
+
 	CSelectLang::InitializeLanguageEnvironment();
 
 	Kernel32::setInstance<MockKernel32>();
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
 
 	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
-		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));
+		.WillOnce(Return(nullptr));
 
 	CSelectLang::TryEmplace(L"sakura_lang_en_JP.dll", 0x411);
-
-	Kernel32::resetInstance();
 }
 
 TEST(CheckLangId, test101)
 {
 	EXPECT_THROW(
+		cxx::CheckLangId(0x0411, STR_SELLANG_NAME, nullptr),
+		std::system_error
+	);
+}
+
+TEST(CheckLangId, test102)
+{
+	EXPECT_THROW(
 		cxx::CheckLangId(0x0409, STR_SELLANG_LANGID, nullptr),
+		std::system_error
+	);
+}
+
+TEST(CheckLangId, test103)
+{
+	EXPECT_THROW(
+		cxx::CheckLangId(0x0411, IDS_INVALID_LANGID, nullptr),
 		std::system_error
 	);
 }

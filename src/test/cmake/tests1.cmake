@@ -108,7 +108,7 @@ if(MINGW)
 endif(MINGW)
 
 # define resource files of tests1
-set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
+set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/tests1_rc.rc)
 
 set(TEST_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin")
 set(TEST_RESOURCE_ZIP "${CMAKE_BINARY_DIR}/resources.ja-JP.zip")
@@ -308,6 +308,7 @@ target_compile_definitions(tests1
 target_include_directories(tests1
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1
+    ${CMAKE_SOURCE_DIR}/src/test/cpp/mock
     ${CMAKE_SOURCE_DIR}/src/test/resources/tests1
     ${CMAKE_SOURCE_DIR}/src/test/cpp
     ${CMAKE_SOURCE_DIR}/src/test/resources

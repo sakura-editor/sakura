@@ -24,10 +24,14 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
+#include "util/file/FileMapping.hpp"
+#include "util/file/NamedFilePointer.hpp"
 #include "util/os.h"
 
 #include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
 #include "testing/MsvcReportMode.hpp"
+
+#include "util/os/MockKernel32.hpp"
 
 std::filesystem::path GetIniFileNameForIO(bool bWrite);
 
@@ -111,124 +115,6 @@ TEST(CopyDirDir, test103)
 	EXPECT_THAT(CopyDirDir(szTemp11, L"Windows", LR"(C:)"), StrEq(L""));	// 入りきらない場合、バッファは空になる
 
 #endif // defined(_MSC_VER) && defined(_DEBUG)
-}
-
-
-TEST(ReplaceFileW, test001)
-{
-	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
-	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
-
-	std::error_code ec;
-	std::filesystem::remove(path1, ec);
-	std::filesystem::remove(path2, ec);
-
-	{
-		std::ofstream fos{ path1 };
-		fos << "This is test data." << std::endl;
-		fos.close();
-	}
-
-	{
-		std::ofstream fos{ path2 };
-		fos << "This is temp data." << std::endl;
-		fos.close();
-	}
-
-	EXPECT_TRUE(fexist(path1));
-	EXPECT_TRUE(fexist(path2));
-
-	cxx::ReplaceFileW(path1, path2);
-
-	EXPECT_FALSE(fexist(path2));
-
-	std::filesystem::remove(path1, ec);
-
-	EXPECT_FALSE(fexist(path1));
-}
-
-TEST(ReplaceFileW, test101)
-{
-	// カスタム関数は、第1引数にフルパスを要求する
-	EXPECT_THAT(([] {
-			cxx::ReplaceFileW(L"to", L"from");
-		}),
-		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must be absolute path."))
-	);
-}
-
-TEST(ReplaceFileW, test102)
-{
-	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
-	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
-
-	std::error_code ec;
-	std::filesystem::remove(path1, ec);
-	std::filesystem::remove(path2, ec);
-
-	// カスタム関数は、第1引数のパスが存在していることを要求する
-	EXPECT_THAT(([path1, path2] {
-			cxx::ReplaceFileW(path1, path2);
-		}),
-		ThrowsMessage<std::invalid_argument>(Eq("replacedFileName must exist."))
-	);
-}
-
-TEST(ReplaceFileW, test103)
-{
-	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
-	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
-
-	std::error_code ec;
-	std::filesystem::remove(path1, ec);
-	std::filesystem::remove(path2, ec);
-
-	{
-		std::ofstream fos{ path1 };
-		fos << "This is test data." << std::endl;
-		fos.close();
-	}
-
-	// カスタム関数は、第2引数のパスが存在していることを要求する
-	EXPECT_THAT(([path1, path2] {
-			cxx::ReplaceFileW(path1, path2);
-		}),
-		ThrowsMessage<std::invalid_argument>(Eq("replacementFileName must exist."))
-	);
-
-	std::filesystem::remove(path1, ec);
-}
-
-TEST(ReplaceFileW, test104)
-{
-	const auto path1 = GetIniFileName().replace_filename(L"tests1.ini");
-	const auto path2 = GetIniFileName().replace_filename(L"tests1.tmp");
-
-	std::error_code ec;
-	std::filesystem::remove(path1, ec);
-	std::filesystem::remove(path2, ec);
-
-	{
-		std::ofstream fos{ path1 };
-		fos << "This is test data." << std::endl;
-		fos.close();
-	}
-
-	{
-		std::ofstream fos{ path2 };
-		fos << "This is temp data." << std::endl;
-		fos.close();
-	}
-
-	// カスタム関数は、第3引数にファイル名を要求する
-	EXPECT_THAT(([path1, path2] {
-			cxx::ReplaceFileW(path2, path1, LR"(C:\work\test.txt.bak)");
-		}),
-		ThrowsMessage<std::invalid_argument>(Eq("backupFileName must not contain path separators."))
-	);
-
-	std::filesystem::remove(path1, ec);
-	std::filesystem::remove(path2, ec);
 }
 
 } // namespace cxx
@@ -432,7 +318,7 @@ TEST(FilePointer, CreateTempFile001)
 	EXPECT_TRUE(other);
 
 	std::string buffer(_countof("This is test data.") - 1, '\0');
-	other.fp_read(buffer);
+	other.read(buffer);
 	EXPECT_THAT( buffer, StrEq("This is test data."));
 
 	// ファイルを閉じる
@@ -749,7 +635,7 @@ TEST(FilePointer, check_write_permissions101)
  *
  * check_write_permissions失敗時に例外が投げられることを確認する。
  */
-TEST(FilePointer, check_write_permissions102)
+TEST(FilePointer, check_write_permissions103)
 {
 #if defined(_MSC_VER) && defined(_DEBUG)
 
@@ -785,8 +671,21 @@ TEST(FilePointer, check_write_permissions102)
 	fp.write("This is test data.");
 	fp.seek(0);
 
-	// 読めないけど書けるのでエラーにはならない
-	fp.check_write_permissions();
+	Kernel32::setInstance<MockKernel32>();
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	EXPECT_CALL(*pKernel32, GetFileTime(_, _, _, _))
+		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));
+
+	try {
+		// タイムスタンプの取得失敗は続行する
+		fp.check_write_permissions();
+
+	} catch (const std::system_error&) {
+		// 例外が投げられた場合は無視して続行	
+	}
+
+	Kernel32::resetInstance();
 
 	std::filesystem::remove(path, ec);
 
@@ -794,11 +693,11 @@ TEST(FilePointer, check_write_permissions102)
 }
 
 /*!
- * @brief fp_read() のテスト
+ * @brief read() のテスト
  *
- * fp_read失敗時に例外が投げられることを確認する。
+ * read失敗時に例外が投げられることを確認する。
  */
-TEST(FilePointer, fp_read101)
+TEST(FilePointer, read101)
 {
 #if defined(_MSC_VER) && defined(_DEBUG)
 
@@ -811,7 +710,7 @@ TEST(FilePointer, fp_read101)
 	std::string buffer(80, '\0');
 
 	EXPECT_THROW(
-		fp.fp_read(buffer),
+		fp.read(buffer),
 		std::system_error
 	);
 

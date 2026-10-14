@@ -10,7 +10,7 @@
 
 #include <Windows.h>
 
-//! Kernel32.dll呼出をテスト可能にするDIっぽいもの
+ //! Kernel32.dll呼出をテスト可能にするDIっぽいもの
 struct Kernel32 : public TSakuraSingleton<Kernel32>
 {
 	using Me = Kernel32;

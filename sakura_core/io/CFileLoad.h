@@ -17,12 +17,9 @@
 
 #include <Windows.h>
 #include "CStream.h" //CError_FileOpen
-#include "charset/CCodeBase.h"
 #include "charset/CCodePage.h"
+#include "types/CType.h"	//SEncodingConfig
 #include "util/design_template.h"
-
-struct SEncodingConfig;
-class CCodeBase;
 
 /*!
 	文字コードを変換してデータを行単位で取得するためのクラス
