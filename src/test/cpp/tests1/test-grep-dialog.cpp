@@ -718,4 +718,414 @@ TEST_F(GrepDialogTest, ReplaceExceptFileRegexpCheckbox)
 	EXPECT_THAT(folder.ReadFile(L"README"), StrEq("HIT\r\n"));
 }
 
+// ---------------------------------------------------------------------------
+// ダイアログの初期表示・操作(CDlgGrep の分岐)
+// ---------------------------------------------------------------------------
+
+//! コントロールが有効か
+static bool IsItemEnabled(HWND hDlg, int id)
+{
+	return ::IsWindowEnabled(::GetDlgItem(hDlg, id)) != FALSE;
+}
+
+//! チェックボックス・ラジオボタンがオンか
+static bool IsItemChecked(HWND hDlg, int id)
+{
+	return ::IsDlgButtonChecked(hDlg, id) == BST_CHECKED;
+}
+
+//! コンボボックスの一覧の項目数
+static int ComboCount(HWND hDlg, int id)
+{
+	return int(::SendDlgItemMessageW(hDlg, id, CB_GETCOUNT, 0, 0));
+}
+
+//! 長い名前のパス(ドロップしたパスは CSakuraEnvironment::ResolvePath() で長い名前になる)
+static std::wstring LongPathOf(const std::filesystem::path& path)
+{
+	std::wstring buf(MAX_PATH, L'\0');
+	buf.resize(::GetLongPathNameW(path.c_str(), buf.data(), DWORD(buf.size())));
+	return buf;
+}
+
+//! パスを 1 つ持つ HDROP(WM_DROPFILES の wParam)を作る。受け取った側の DragFinish() で解放される
+static HDROP MakeDropFiles(const std::wstring& path)
+{
+	const size_t bytes = sizeof(DROPFILES) + (path.size() + 2) * sizeof(WCHAR);	// 末尾は L'\0' 2 つ
+	const HGLOBAL hGlobal = ::GlobalAlloc(GHND, bytes);
+	auto pDropFiles = static_cast<DROPFILES*>(::GlobalLock(hGlobal));
+	pDropFiles->pFiles = sizeof(DROPFILES);
+	pDropFiles->fWide = TRUE;
+	::CopyMemory(pDropFiles + 1, path.c_str(), path.size() * sizeof(WCHAR));
+	::GlobalUnlock(hGlobal);
+	return static_cast<HDROP>(hGlobal);
+}
+
+/*!
+	コンボボックスを開くと履歴が一覧に入る。2 回目に開いても重ねて足さない
+
+	ダイアログを開いた直後の一覧は 0 件の前提(開いた直後の件数も確かめる)。
+*/
+TEST_F(GrepDialogTest, DropDownListsHistory)
+{
+	CSearchKeywordManager().AddToSearchKeyArr(L"DROP_KEY");
+	CSearchKeywordManager().AddToGrepFileArr(L"*.drop");
+	CSearchKeywordManager().AddToGrepFolderArr(LR"(C:\drop\folder)");
+	CSearchKeywordManager().AddToExcludeFileArr(L"drop.exclude");
+	CSearchKeywordManager().AddToExcludeFolderArr(L"dropdir");
+	const auto& keywords = GetDllShareData().m_sSearchKeywords;
+
+	std::vector<int> expected;
+	std::vector<int> countsOnOpen;
+	std::vector<int> counts;
+	std::vector<int> countsAgain;
+	std::wstring firstKey(_MAX_PATH, L'\0');
+	CancelGrepDialog([&](HWND hDlg) {
+		const std::pair<int, int> combos[] = {
+			{ IDC_COMBO_TEXT, keywords.m_aSearchKeys.size() },
+			{ IDC_COMBO_FILE, keywords.m_aGrepFiles.size() },
+			{ IDC_COMBO_FOLDER, keywords.m_aGrepFolders.size() },
+			{ IDC_COMBO_EXCLUDE_FILE, keywords.m_aExcludeFiles.size() },
+			{ IDC_COMBO_EXCLUDE_FOLDER, keywords.m_aExcludeFolders.size() },
+		};
+		for (const auto& [id, size] : combos) {
+			expected.push_back(size);
+			countsOnOpen.push_back(ComboCount(hDlg, id));
+			SendDlgCommand(hDlg, id, CBN_DROPDOWN);
+			counts.push_back(ComboCount(hDlg, id));
+			SendDlgCommand(hDlg, id, CBN_DROPDOWN);
+			countsAgain.push_back(ComboCount(hDlg, id));
+		}
+		firstKey.resize(size_t(::SendDlgItemMessageW(hDlg, IDC_COMBO_TEXT, CB_GETLBTEXT, 0, LPARAM(firstKey.data()))));
+	});
+	EXPECT_THAT(countsOnOpen, Eq(std::vector<int>(expected.size(), 0)));
+	EXPECT_THAT(counts, Eq(expected));
+	EXPECT_THAT(countsAgain, Eq(expected));
+	EXPECT_THAT(firstKey, StrEq(L"DROP_KEY"));
+}
+
+/*!
+	フォルダーの欄へのドロップ: ファイルならそのフォルダー、フォルダーならそのまま(「;」を含めば引用符で囲む)。
+	バッファーに入らない長さのパスは無視する
+*/
+TEST_F(GrepDialogTest, DropToFolderField)
+{
+	AddBasicFiles();
+	folder.AddFolder(L"q;r");
+	const std::wstring tooLong = LR"(C:\)" + std::wstring(MAX_PATH, L'x');
+	std::wstring droppedFile;
+	std::wstring droppedFolder;
+	std::wstring droppedTooLong;
+	CancelGrepDialog([&](HWND hDlg) {
+		const HWND hFolder = ::GetDlgItem(hDlg, IDC_COMBO_FOLDER);
+		::SendMessageW(hFolder, WM_DROPFILES, WPARAM(MakeDropFiles((folder.Path() / L"a.txt").native())), 0);
+		droppedFile = GetText(hDlg, IDC_COMBO_FOLDER);
+		::SendMessageW(hFolder, WM_DROPFILES, WPARAM(MakeDropFiles((folder.Path() / L"q;r").native())), 0);
+		droppedFolder = GetText(hDlg, IDC_COMBO_FOLDER);
+		SetText(hDlg, IDC_COMBO_FOLDER, L"unchanged");
+		::SendMessageW(hFolder, WM_DROPFILES, WPARAM(MakeDropFiles(tooLong)), 0);
+		droppedTooLong = GetText(hDlg, IDC_COMBO_FOLDER);
+	});
+	EXPECT_THAT(droppedFile, StrEq(LongPathOf(folder.Path())));
+	EXPECT_THAT(droppedFolder, StrEq(std::format(LR"("{}")", LongPathOf(folder.Path() / L"q;r"))));
+	EXPECT_THAT(droppedTooLong, StrEq(L"unchanged"));
+}
+
+//! 「正規表現」をオフにすると「単語単位」が使えるようになる
+TEST_F(GrepDialogTest, RegularExpressionCheckboxOff)
+{
+	bool wordEnabledWhenOn = true;
+	bool wordEnabledWhenOff = false;
+	CancelGrepDialog([&](HWND hDlg) {
+		Check(hDlg, IDC_CHK_REGULAREXP, true);
+		SendDlgCommand(hDlg, IDC_CHK_REGULAREXP);
+		wordEnabledWhenOn = IsItemEnabled(hDlg, IDC_CHK_WORD);
+		Check(hDlg, IDC_CHK_REGULAREXP, false);
+		SendDlgCommand(hDlg, IDC_CHK_REGULAREXP);
+		wordEnabledWhenOff = IsItemEnabled(hDlg, IDC_CHK_WORD);
+	});
+	EXPECT_THAT(wordEnabledWhenOn, IsFalse());
+	EXPECT_THAT(wordEnabledWhenOff, IsTrue());
+}
+
+//! 「フォルダーの初期値をカレントフォルダーにする」: クリックすると共通設定に保存される(キャンセルしても残る)
+TEST_F(GrepDialogTest, DefaultFolderCheckbox)
+{
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	const auto saved = search.m_bGrepDefaultFolder;
+	search.m_bGrepDefaultFolder = FALSE;
+	bool checkedOnOpen = true;
+	CancelGrepDialog([&](HWND hDlg) {
+		checkedOnOpen = IsItemChecked(hDlg, IDC_CHK_DEFAULTFOLDER);
+		Check(hDlg, IDC_CHK_DEFAULTFOLDER, true);
+		SendDlgCommand(hDlg, IDC_CHK_DEFAULTFOLDER);
+	});
+	const auto savedByClick = search.m_bGrepDefaultFolder;
+	search.m_bGrepDefaultFolder = saved;	// 後続のテストのために戻す
+
+	EXPECT_THAT(checkedOnOpen, IsFalse());
+	EXPECT_THAT(savedByClick, IsTrue());
+}
+
+//! 出力形式「結果のみ」ではベースフォルダー表示・フォルダー毎表示が使えない。ほかの形式に戻すと使える
+TEST_F(GrepDialogTest, OutputStyleRadioButtons)
+{
+	std::vector<bool> enabled;
+	CancelGrepDialog([&](HWND hDlg) {
+		for (const auto style : { IDC_RADIO_OUTPUTSTYLE3, IDC_RADIO_OUTPUTSTYLE1, IDC_RADIO_OUTPUTSTYLE3, IDC_RADIO_OUTPUTSTYLE2 }) {
+			SelectOutputStyle(hDlg, style);
+			SendDlgCommand(hDlg, style);
+			enabled.push_back(IsItemEnabled(hDlg, IDC_CHECK_BASE_PATH));
+			enabled.push_back(IsItemEnabled(hDlg, IDC_CHECK_SEP_FOLDER));
+		}
+	});
+	EXPECT_THAT(enabled, Eq(std::vector<bool>{ false, false, true, true, false, false, true, true }));
+}
+
+/*!
+	保存した設定がダイアログに読み込まれる(結果出力・出力形式・正規表現)
+
+	出力形式が 1〜3 以外なら「ノーマル」になる。
+*/
+TEST_F(GrepDialogTest, RestoresSavedOutputOptions)
+{
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	const auto savedLineType = search.m_nGrepOutputLineType;
+	const auto savedStyle = search.m_nGrepOutputStyle;
+	const auto savedOption = search.m_sSearchOption;
+
+	search.m_nGrepOutputLineType = 2;
+	search.m_nGrepOutputStyle = 3;
+	search.m_sSearchOption.bRegularExp = true;
+	bool noHit = false;
+	bool style3 = false;
+	bool basePathEnabled = true;
+	bool regularExp = false;
+	bool wordEnabled = true;
+	CancelGrepDialog([&](HWND hDlg) {
+		noHit = IsItemChecked(hDlg, IDC_RADIO_NOHIT);
+		style3 = IsItemChecked(hDlg, IDC_RADIO_OUTPUTSTYLE3);
+		basePathEnabled = IsItemEnabled(hDlg, IDC_CHECK_BASE_PATH);
+		regularExp = IsItemChecked(hDlg, IDC_CHK_REGULAREXP);
+		wordEnabled = IsItemEnabled(hDlg, IDC_CHK_WORD);
+	});
+
+	search.m_nGrepOutputLineType = 0;
+	search.m_nGrepOutputStyle = 0;
+	search.m_sSearchOption.bRegularExp = false;
+	bool marked = false;
+	bool style1 = false;
+	CancelGrepDialog([&](HWND hDlg) {
+		marked = IsItemChecked(hDlg, IDC_RADIO_OUTPUTMARKED);
+		style1 = IsItemChecked(hDlg, IDC_RADIO_OUTPUTSTYLE1);
+	});
+
+	search.m_nGrepOutputLineType = savedLineType;	// 後続のテストのために戻す
+	search.m_nGrepOutputStyle = savedStyle;
+	search.m_sSearchOption = savedOption;
+
+	EXPECT_THAT(noHit, IsTrue());
+	EXPECT_THAT(style3, IsTrue());
+	EXPECT_THAT(basePathEnabled, IsFalse());
+	EXPECT_THAT(regularExp, IsTrue());
+	EXPECT_THAT(wordEnabled, IsFalse());
+	EXPECT_THAT(marked, IsTrue());
+	EXPECT_THAT(style1, IsTrue());
+}
+
+/*!
+	保存した文字コードセットが一覧に無い(コードページ)とき、「CP」をオンにしてコードページを一覧に加え、それを選ぶ。
+	一覧に無いコードページなら先頭を選ぶ
+*/
+TEST_F(GrepDialogTest, RestoresSavedCodePage)
+{
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	const auto saved = search.m_nGrepCharSet;
+	const auto selection = [](HWND hDlg) {
+		const HWND hCombo = ::GetDlgItem(hDlg, IDC_COMBO_CHARSET);
+		const auto index = ::SendMessageW(hCombo, CB_GETCURSEL, 0, 0);
+		return std::make_pair(int(index), ECodeType(::SendMessageW(hCombo, CB_GETITEMDATA, index, 0)));
+	};
+
+	search.m_nGrepCharSet = ECodeType(932);
+	bool cpChecked = false;
+	bool cpEnabled = true;
+	ECodeType selectedCode = CODE_NONE;
+	CancelGrepDialog([&](HWND hDlg) {
+		cpChecked = IsItemChecked(hDlg, IDC_CHECK_CP);
+		cpEnabled = IsItemEnabled(hDlg, IDC_CHECK_CP);
+		selectedCode = selection(hDlg).second;
+	});
+
+	search.m_nGrepCharSet = ECodeType(99999);	// どのコードページにも当たらない値
+	int selectedIndex = -1;
+	CancelGrepDialog([&](HWND hDlg) { selectedIndex = selection(hDlg).first; });
+
+	search.m_nGrepCharSet = saved;	// 後続のテストのために戻す
+
+	EXPECT_THAT(cpChecked, IsTrue());
+	EXPECT_THAT(cpEnabled, IsFalse());
+	EXPECT_THAT(selectedCode, Eq(ECodeType(932)));
+	EXPECT_THAT(selectedIndex, Eq(0));
+}
+
+//! 「編集中のテキストから検索」を使わない呼び出し元(m_bEnableThisText が false)では、チェックボックスが無効
+TEST_F(GrepDialogTest, FromThisTextDisabled)
+{
+	auto& dlg = pcEditWnd->m_cDlgGrep;
+	dlg.m_bEnableThisText = false;
+	bool enabled = true;
+	CancelGrepDialog([&enabled](HWND hDlg) { enabled = IsItemEnabled(hDlg, IDC_CHK_FROMTHISTEXT); });
+	dlg.m_bEnableThisText = true;	// 後続のテストのために戻す
+
+	EXPECT_THAT(enabled, IsFalse());
+}
+
+/*!
+	ファイル・フォルダー・除外の欄が空なら、履歴の先頭を入れる。
+	除外の履歴も無ければ既定の除外パターンを入れ、履歴にも加える
+*/
+TEST_F(GrepDialogTest, InitialValuesFromHistory)
+{
+	auto& dlg = pcEditWnd->m_cDlgGrep;
+	auto& keywords = GetDllShareData().m_sSearchKeywords;
+	CSearchKeywordManager().AddToGrepFileArr(L"*.initial");
+	CSearchKeywordManager().AddToGrepFolderArr(folder.Path().c_str());
+	keywords.m_aExcludeFiles.clear();
+	keywords.m_aExcludeFolders.clear();
+	dlg.m_szFile = L"";
+	dlg.m_szFolder = L"";
+	dlg.m_szExcludeFile = L"";
+	dlg.m_szExcludeFolder = L"";
+	std::wstring file;
+	std::wstring folderText;
+	std::wstring excludeFile;
+	std::wstring excludeFolder;
+	CancelGrepDialog([&](HWND hDlg) {
+		file = GetText(hDlg, IDC_COMBO_FILE);
+		folderText = GetText(hDlg, IDC_COMBO_FOLDER);
+		excludeFile = GetText(hDlg, IDC_COMBO_EXCLUDE_FILE);
+		excludeFolder = GetText(hDlg, IDC_COMBO_EXCLUDE_FOLDER);
+	});
+	const int excludeFileHistory = keywords.m_aExcludeFiles.size();
+	const int excludeFolderHistory = keywords.m_aExcludeFolders.size();
+
+	// 除外の履歴があれば、その先頭を入れる
+	CSearchKeywordManager().AddToExcludeFileArr(L"*.bak");
+	CSearchKeywordManager().AddToExcludeFolderArr(L"tmp");
+	dlg.m_szExcludeFile = L"";
+	dlg.m_szExcludeFolder = L"";
+	std::wstring excludeFileFromHistory;
+	std::wstring excludeFolderFromHistory;
+	CancelGrepDialog([&](HWND hDlg) {
+		excludeFileFromHistory = GetText(hDlg, IDC_COMBO_EXCLUDE_FILE);
+		excludeFolderFromHistory = GetText(hDlg, IDC_COMBO_EXCLUDE_FOLDER);
+	});
+
+	EXPECT_THAT(file, StrEq(L"*.initial"));
+	EXPECT_THAT(folderText, StrEq(folder.Path().native()));
+	EXPECT_THAT(excludeFile, StrEq(DEFAULT_EXCLUDE_FILE_PATTERN));
+	EXPECT_THAT(excludeFolder, StrEq(DEFAULT_EXCLUDE_FOLDER_PATTERN));
+	EXPECT_THAT(excludeFileHistory, Eq(1));
+	EXPECT_THAT(excludeFolderHistory, Eq(1));
+	EXPECT_THAT(excludeFileFromHistory, StrEq(L"*.bak"));
+	EXPECT_THAT(excludeFolderFromHistory, StrEq(L"tmp"));
+}
+
+//! ファイルの欄に手で「:HWND:」で始まる値を入れると受け付けない(「編集中のテキストから検索」だけが使う形式)
+TEST_F(GrepDialogTest, RejectsHwndInFileField)
+{
+	const auto shown = RejectGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"HIT", L":HWND:0000000000000000"); });
+	EXPECT_THAT(shown, StrEq(LS(STR_DLGGREP_THISDOC_ERROR)));
+}
+
+//! 複数のフォルダーを絶対パスにした結果が長すぎると受け付けない
+TEST_F(GrepDialogTest, RejectsTooLongFolderList)
+{
+	std::filesystem::current_path(folder.Path());
+	// 「.」は絶対パス(このテストのフォルダー)になる。つないだ長さが MAX_GREP_PATH を超える数だけ並べる
+	const size_t count = MAX_GREP_PATH / folder.Path().native().size() + 2;
+	std::wstring folders = L".";
+	for (size_t i = 1; i < count; ++i) {
+		folders += L";.";
+	}
+	const auto shown = RejectGrepDialog([this, &folders](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*.txt");
+		SetText(hDlg, IDC_COMBO_FOLDER, folders);
+	});
+	EXPECT_THAT(shown, StrEq(LS(STR_DLGGREP6)));
+}
+
+//! 検索文字列が _MAX_PATH 文字以上なら、Grep はするが、検索文字列の履歴と検索オプションを保存しない
+TEST_F(GrepDialogTest, LongKeyIsNotSavedToHistory)
+{
+	AddBasicFiles();
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	const auto savedOption = search.m_sSearchOption;
+	search.m_sSearchOption.bLoHiCase = false;
+	CSearchKeywordManager().AddToSearchKeyArr(L"SHORT_KEY");
+	const std::wstring longKey(_MAX_PATH, L'Z');
+	AcceptGrepDialog([this, &longKey](HWND hDlg) {
+		SetConditions(hDlg, longKey, L"*.txt");
+		Check(hDlg, IDC_CHK_LOHICASE, true);
+	});
+	const bool loHiCaseSaved = search.m_sSearchOption.bLoHiCase;
+	search.m_sSearchOption = savedOption;	// 後続のテストのために戻す
+
+	const auto& keywords = GetDllShareData().m_sSearchKeywords;
+	ASSERT_THAT(keywords.m_aSearchKeys.size(), Gt(0));
+	const LPCWSTR topKey = keywords.m_aSearchKeys[0];
+	EXPECT_THAT(topKey, StrEq(L"SHORT_KEY"));
+	EXPECT_THAT(loHiCaseSaved, IsFalse());
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(0)), IsTrue());
+}
+
+/*!
+	「編集中のテキストから検索」で OK: ファイルの欄は :HWND:(自分のウィンドウ)、フォルダーは空になり、
+	ファイルの履歴に残さない。次に開いてチェックを外すと、ファイルの欄は「*.*」になる
+
+	無題の文書でも、編集済みにして Grep を新しいウィンドウで実行させ、ウィンドウ数の上限のメッセージで止める
+	(MaxWindowsWhenDocumentModified と同じ。新しいプロセスは起動しない)。
+*/
+TEST_F(GrepDialogTest, FromThisTextAccepted)
+{
+	AddBasicFiles();
+	auto& dlg = pcEditWnd->m_cDlgGrep;
+	auto& nodes = GetDllShareData().m_sNodes;
+	const auto savedCount = nodes.m_nEditArrNum;
+	CSearchKeywordManager().AddToGrepFileArr(L"*.before");
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _)).WillOnce(Return(IDOK));
+	AcceptGrepDialog([this, &nodes](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*.txt");
+		Check(hDlg, IDC_CHK_FROMTHISTEXT, true);
+		SendDlgCommand(hDlg, IDC_CHK_FROMTHISTEXT);
+		nodes.m_nEditArrNum = MAX_EDITWINDOWS;
+		pcEditDoc->m_cDocEditor.m_bIsDocModified = true;
+	});
+	nodes.m_nEditArrNum = savedCount;
+	pcEditDoc->m_cDocEditor.m_bIsDocModified = false;
+	const std::wstring fileAfterOk = dlg.m_szFile.c_str();
+	const std::wstring folderAfterOk = dlg.m_szFolder.c_str();
+	const std::wstring fileHistoryTop = GetDllShareData().m_sSearchKeywords.m_aGrepFiles[0].c_str();
+
+	bool checkedOnOpen = false;
+	std::wstring fileAfterUncheck;
+	CancelGrepDialog([&](HWND hDlg) {
+		checkedOnOpen = IsItemChecked(hDlg, IDC_CHK_FROMTHISTEXT);
+		Check(hDlg, IDC_CHK_FROMTHISTEXT, false);
+		SendDlgCommand(hDlg, IDC_CHK_FROMTHISTEXT);
+		fileAfterUncheck = GetText(hDlg, IDC_COMBO_FILE);
+	});
+	dlg.m_bFromThisText = FALSE;	// 後続のテストのために戻す
+
+	EXPECT_THAT(fileAfterOk, StartsWith(L":HWND:"));
+	EXPECT_THAT(folderAfterOk, IsEmpty());
+	EXPECT_THAT(fileHistoryTop, StrEq(L"*.before"));
+	EXPECT_THAT(Contains(GetDocumentText(), L"a.txt"), IsFalse());
+	EXPECT_THAT(checkedOnOpen, IsTrue());
+	EXPECT_THAT(fileAfterUncheck, StrEq(L"*.*"));
+}
+
 } // namespace grep_test
