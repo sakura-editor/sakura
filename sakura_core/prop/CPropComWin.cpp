@@ -300,8 +300,8 @@ void CPropWin::SetData( HWND hwndDlg )
 	size_t nSelPos = 0;
 	size_t uiIndex = 0;
 	for (const auto& langInfo : CSelectLang::GetLangInfo()) {
-		ApiWrap::Combo_InsertString( hwndCombo, uiIndex, langInfo->GetLangName() );
-		if (langInfo->m_Path == m_Common.m_sWindow.m_szLanguageDll) {
+		ApiWrap::Combo_InsertString( hwndCombo, uiIndex, langInfo.GetLangName() );
+		if (langInfo.m_Path == m_Common.m_sWindow.m_szLanguageDll) {
 			nSelPos = uiIndex;
 		}
 		++uiIndex;

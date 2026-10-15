@@ -16,11 +16,18 @@
 #define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
+#include "basis/CMyString.h"
 #include "basis/primitive.h"
 #include "cxx/ResourceHolder.hpp"
 #include "cxx/load_string.hpp"
 
 #include "sakura_rc.h"
+
+#include <mutex>
+#include <span>
+#include <string>
+#include <string_view>
+#include <vector>
 
 /*!
  * 言語リリースDLL選択クラス
@@ -40,14 +47,20 @@ public:
 	struct SSelLangInfo {
 		using Me = SSelLangInfo;
 
-		std::filesystem::path	m_Path;				//!< メッセージリソースDLLのファイル名
-		ResourceDllHolder		m_Module = nullptr;	//!< 読み込んだリソースのインスタンスハンドル
-		WORD					m_LangId = 0;		//!< 言語ID
-		std::wstring			m_LangName;			//!< 言語名
+		SFilePath			m_Path{};				//!< メッセージリソースDLLのファイル名
+		ResourceDllHolder	m_Module = nullptr;	//!< 読み込んだリソースのインスタンスハンドル
+		WORD				m_LangId = 0;		//!< 言語ID
+		std::wstring		m_LangName;			//!< 言語名
 
-		SSelLangInfo() = default;
+		SSelLangInfo(
+			WORD langId,
+			std::wstring_view langName
+		);
 
-		explicit SSelLangInfo(const std::filesystem::path& path);
+		SSelLangInfo(
+			std::wstring_view path,
+			WORD langId
+		);
 
 		SSelLangInfo(const Me&) = delete;
 		Me& operator = (const Me&) = delete;
@@ -60,28 +73,33 @@ public:
 		LPCWSTR	GetDllName() const noexcept { return m_Path.c_str(); }
 		LPCWSTR	GetLangName() const noexcept { return m_LangName.c_str(); }
 
-		bool	Load();
+		HMODULE	GetModule() const noexcept;
+
+		void	Load();
 		void	Unload() noexcept;
 	};
 
 private:
-	using LangInfoHolder = std::unique_ptr<SSelLangInfo>;
+	using LangInfoArr = std::vector<SSelLangInfo>;
+	using LangInfoIter = LangInfoArr::iterator;
 
 	using Me = CSelectLang;
 
-public:
-	static inline size_t gm_Selected = 0;
-	static inline std::vector<LangInfoHolder> gm_Langs{};
+	static inline std::mutex	gm_Mutex{};
+	static inline LangInfoArr	gm_Langs{};
+	static inline LangInfoIter	gm_Selected{};
 
+public:
 	static HMODULE	InitializeLanguageEnvironment();
+	static void		UninitializeLanguageEnvironment();
 
 	static HMODULE	getLangRsrcInstance() noexcept;		// メッセージリソースDLLのインスタンスハンドルを返す
 	static LPCWSTR	getDefaultLangString() noexcept;	// メッセージリソースDLL未読み込み時のデフォルト言語（"(Japanese)" or "(English(United States))"）
 	static WORD		getDefaultLangId() noexcept;
 
-	static std::span<LangInfoHolder> GetLangInfo() noexcept { return gm_Langs; }
+	static std::span<SSelLangInfo> GetLangInfo() noexcept { return gm_Langs; }
 
-	static const SSelLangInfo& GetLangInfo(size_t index) noexcept { return *gm_Langs[index].get(); }
+	static const SSelLangInfo& GetLangInfo(size_t index) noexcept { return gm_Langs[index]; }
 
 	static void ChangeLang(
 		std::wstring_view dllName
@@ -105,6 +123,11 @@ public:
 		// 言語を変更する
 		ChangeLang(_DllName.str());
 	}
+
+	static void TryEmplace(
+		std::wstring_view path,
+		WORD langId
+	);
 
 	/*
 	||  Constructors

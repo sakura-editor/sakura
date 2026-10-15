@@ -11,6 +11,8 @@
 #include "StdAfx.h"
 #include "io/CZipFile.h"
 
+#include "util/string_ex.h"
+
 // コンストラクタ
 CZipFile::CZipFile() {
 	if (const auto hr = m_pShellDispatch.CreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER); FAILED(hr)) {

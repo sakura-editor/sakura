@@ -39,12 +39,17 @@
 
 #include "_main/CCommandLine.h"
 #include "_main/CControlTray.h"
+#include "dlg/MockCDlgInput1.hpp"
+#include "dlg/MockCDlgOpenFile.hpp"
 #include "plugin/CJackManager.h"
 #include "plugin/CPluginManager.h"
 #include "prop/CPropCommon.h"
 #include "recent/CMRUFolder.h"
 #include "typeprop/CPropTypes.h"
+#include "util/os/MockUser32.hpp"
 #include "util/shell.h"
+#include "util/os/MockComdlg32.hpp"
+#include "util/os/MockShell32.hpp"
 
 #include <fstream>
 #include <gtest/gtest-spi.h>
@@ -63,22 +68,6 @@ using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
-
-struct MockShell32 final : public Shell32
-{
-	MOCK_CONST_METHOD1(ShellExecuteExW, BOOL (SHELLEXECUTEINFOW*));
-};
-
-struct MockCDlgInput1 final : public CDlgInput1
-{
-	MOCK_METHOD5(DoModal, BOOL(
-		_In_opt_ HWND hWndOwner,
-		_In_z_ LPCWSTR pszTitle,
-		_In_z_ LPCWSTR pszMessage,
-		_Out_writes_z_(cchBuffer) LPWSTR pBuffer,
-		size_t cchBuffer
-	));
-};
 
 namespace dialog {
 
@@ -409,10 +398,39 @@ TEST(CDialog, SubclassProc101)
 namespace env {
 
 /*!
+ * Shell32のAPI呼出テスト
+ */
+struct Shell32 : public ::testing::Test {
+	using Target = ::Shell32;
+
+	/*!
+	 * テストが実行される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override
+	{
+		Target::setInstance<MockShell32>();
+
+		pShell32 = (MockShell32*)Target::getInstance();
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		Target::resetInstance();
+	}
+
+	MockShell32* pShell32 = nullptr;
+};
+
+/*!
  * ShellExecuteExWの呼出(非モック)
  */
-TEST(Shell32, ShellExecuteExW001)
+TEST_F(Shell32, ShellExecuteExW001)
 {
+	// モックは使わない
+	Target::resetInstance();
+
 	const auto path = GetIniFileName().replace_filename(L"test.bat");
 
 	std::error_code ec;
@@ -431,8 +449,7 @@ TEST(Shell32, ShellExecuteExW001)
 	execInfo.lpDirectory = path.parent_path().c_str();
 	execInfo.nShow = SW_SHOWNORMAL;
 
-	EXPECT_THAT(Shell32::getInstance()->ShellExecuteExW(&execInfo), IsTrue());
-	Shell32::resetInstance();
+	EXPECT_THAT(Target::getInstance()->ShellExecuteExW(&execInfo), IsTrue());
 
 	std::filesystem::remove(path, ec);
 }
@@ -440,18 +457,15 @@ TEST(Shell32, ShellExecuteExW001)
 /*!
  * ShellExecuteExWの呼出(モック利用)
  */
-TEST(Shell32, ShellExecuteExW101)
+TEST_F(Shell32, ShellExecuteExW101)
 {
-	Shell32::setInstance<MockShell32>();
-	auto pShell32 = (MockShell32*)Shell32::getInstance();
 	EXPECT_CALL(*pShell32, ShellExecuteExW(_))
-		.Times(1)
+		.WillOnce(Return(FALSE))
 		.WillOnce(Return(TRUE));
 
 	SHELLEXECUTEINFOW execInfo{ sizeof(SHELLEXECUTEINFOW) };
-	EXPECT_THAT(Shell32::getInstance()->ShellExecuteExW(&execInfo), IsTrue());
-
-	Shell32::resetInstance();
+	EXPECT_FALSE(Target::getInstance()->ShellExecuteExW(&execInfo));
+	EXPECT_TRUE(Target::getInstance()->ShellExecuteExW(&execInfo));
 }
 
 } //namespace env

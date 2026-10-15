@@ -33,6 +33,7 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "util/os/Comdlg32.hpp"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "prop/CPropCommon.h"
@@ -93,13 +94,6 @@ struct {
 	{ IDC_EDIT_LINECOMMENT2	, IDC_CHECK_LCPOS2, IDC_EDIT_LINECOMMENTPOS2},
 	{ IDC_EDIT_LINECOMMENT3	, IDC_CHECK_LCPOS3, IDC_EDIT_LINECOMMENTPOS3}
 };
-
-BOOL Comdlg32::ChooseColorW(
-	LPCHOOSECOLORW pCc
-) const
-{
-	return ::ChooseColorW(pCc);
-}
 
 /* 色の設定をインポート */
 // 2010/4/23 Uchi Importの外出し

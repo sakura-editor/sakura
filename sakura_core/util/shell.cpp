@@ -11,10 +11,14 @@
 #include <ShlObj.h>
 #include <shellapi.h>
 #include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
+
+#include "debug/Debug1.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
+#include "util/os/Comdlg32.hpp"
+#include "util/os/User32.hpp"
 #include "util/module.h"
 #include "util/window.h"
 #include "env/CShareData.h"
@@ -25,31 +29,6 @@
 #include "apiwrap/DarkMode.h"
 
 #pragma comment(lib, "htmlhelp.lib") 
-
-/*!
- * @brief MyWinHelpの呼出をモックできるようにするための関数
- *
- * @note 直接呼ばないでください
- */
-BOOL User32::WinHelpW(
-	_In_opt_ HWND,
-	_In_opt_ LPCWSTR,
-	_In_ UINT,
-	_In_ ULONG_PTR
-) const
-{
-	return FALSE;
-}
-
-BOOL Shell32::ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const
-{
-	return ::ShellExecuteExW(pExecInfo);
-}
-
-BOOL Comdlg32::ChooseFontW(LPCHOOSEFONTW pCf) const
-{
-	return ::ChooseFontW(pCf);
-}
 
 namespace cxx {
 
@@ -135,6 +114,12 @@ BOOL SelectDir(
 }
 
 } // namespace cxx
+
+namespace apiwrap {
+
+std::wstring CommDlgExtendedErrorString();
+
+}	// namespace apiwrap
 
 ///////////////////////////////////////////////////////////////////////
 // From Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群
@@ -599,7 +584,7 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 #ifdef _DEBUG
 		std::wstring name;
 		try {
-			name = Comdlg32::getInstance()->CommDlgExtendedErrorString();
+			name = apiwrap::CommDlgExtendedErrorString();
 		}
 		catch (const std::out_of_range&) {
 			// 不明なエラー

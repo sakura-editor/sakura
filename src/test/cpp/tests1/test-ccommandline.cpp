@@ -8,6 +8,7 @@
 #include "_main/CCommandLine.h"
 
 #include "env/CSakuraEnvironment.h"
+#include "util/os/MockUser32.hpp"
 #include "util/string_ex.h"
 
 #include "CSelectLang.h"

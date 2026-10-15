@@ -56,6 +56,18 @@ IDR_ZIPRES3               101                     "cmigemo-dict-cp932.zip"
 IDR_ZIPRES4               101                     "resources-dllplugin.zip"
 IDR_ZIPRES5               101                     "outline.zip"
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_INVALID_LANGID      "0x10000"
+END
+
+
 #endif    // 日本語 (日本) resources
 /////////////////////////////////////////////////////////////////////////////
 

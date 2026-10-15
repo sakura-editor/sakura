@@ -32,6 +32,21 @@
     <Filter Include="Other Files\grep">
       <UniqueIdentifier>{f99bbcd0-1b2c-4dba-abe4-a2cbf06323f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mock Files">
+      <UniqueIdentifier>{03aecb03-244f-4231-894e-d8210be35c13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mock Files\util">
+      <UniqueIdentifier>{b8a17b6a-462f-45dc-a0a2-6d93a6a5a401}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mock Files\util\os">
+      <UniqueIdentifier>{aa13bdea-e5cd-4f7e-a2f1-32a14e74beda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mock Files\dlg">
+      <UniqueIdentifier>{b233228c-9494-43af-b4df-5fe00dae5a0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{cc731650-a84a-4861-bc7c-3b679d7cebf4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake">
@@ -259,6 +274,27 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cmenudrawer.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockKernel32.cpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockUser32.cpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockComdlg32.cpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockBcrypt.cpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockShell32.cpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\dlg\MockCDlgInput1.cpp">
+      <Filter>Mock Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\cpp\mock\dlg\MockCDlgOpenFile.cpp">
+      <Filter>Mock Files\dlg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\resources\pch.h">
@@ -300,16 +336,54 @@
     <ClInclude Include="..\src\test\resources\TExtModule.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockKernel32.hpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockUser32.hpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockComdlg32.hpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockBcrypt.hpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockShell32.hpp">
+      <Filter>Mock Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\dlg\MockCDlgInput1.hpp">
+      <Filter>Mock Files\dlg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\mock\dlg\MockCDlgOpenFile.hpp">
+      <Filter>Mock Files\dlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\test\resources\tests1_rc.h">
+    <ClInclude Include="..\src\test\resources\tests1\tests1_rc.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\resources\rt_zipres.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ResourceCompile Include="tests1_rc.rc">
+    <ResourceCompile Include="..\src\test\resources\tests1\tests1_rc.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\build\$(Platform)\CMakeTools\cmigemo-dict-cp932.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\cmigemo-dict-utf-8.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\outline.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\resources.ja-JP.zip">
+      <Filter>Generated Files</Filter>
+    </None>
+    <None Include="..\build\$(Platform)\CMakeTools\resources-dllplugin.zip">
+      <Filter>Generated Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

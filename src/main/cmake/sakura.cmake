@@ -224,6 +224,10 @@ add_custom_command(
     -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
     -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/version.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/version.h"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/version.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/version.h.in"
   COMMENT "Generating version.h"
 )
 
@@ -285,6 +289,10 @@ add_custom_command(
     -DEXE_ARCH=${EXE_ARCH}
     -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/sakura.exe.manifest
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.in"
   COMMENT "Generating sakura.exe.manifest"
 )
 
@@ -306,6 +314,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
     "${OUTPUT_DIRECTORY}/bregonig.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
   COMMENT "Copying bregonig.dll from vcpkg_installed to output directory"
 )
 
@@ -323,6 +332,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
     "${OUTPUT_DIRECTORY}/migemo.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
   COMMENT "Copying migemo.dll from vcpkg_installed to output directory"
 )
 
@@ -339,6 +349,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
     "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
   COMMENT "Copying ppa_stub.dll from vcpkg_installed to output directory"
 )
 
@@ -385,13 +396,19 @@ function(convert_rc_files_to_utf8 RC_FILES_VAR LOCALE_NAME BINARY_DIR)
   foreach(RC_FILE ${${RC_FILES_VAR}})
     get_filename_component(RC_NAME ${RC_FILE} NAME_WE)
     get_filename_component(RC_EXT ${RC_FILE} EXT)
-    set(UTF8_RC_FILE ${BINARY_DIR}/${RC_NAME}_${LOCALE_NAME}/${RC_NAME}${RC_EXT})
+    set(UTF8_RC_DIR ${BINARY_DIR}/${RC_NAME}_${LOCALE_NAME})
+    set(UTF8_RC_FILE ${UTF8_RC_DIR}/${RC_NAME}${RC_EXT})
     
     add_custom_command(
       OUTPUT ${UTF8_RC_FILE}
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${UTF8_RC_DIR}"
       COMMAND ${ICONV_PATH} -f UTF-16LE -t UTF-8 "${RC_FILE}" > "${UTF8_RC_FILE}"
       DEPENDS ${RC_FILE}
       COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using iconv"
+    )
+
+    set_property(DIRECTORY APPEND PROPERTY
+      ADDITIONAL_CLEAN_FILES "${UTF8_RC_DIR}"
     )
     
     list(APPEND RC_FILES_UTF8 ${UTF8_RC_FILE})
@@ -580,6 +597,7 @@ target_link_directories(sakura_core
 target_link_libraries(sakura_core
   PUBLIC
     darkmodelib::darkmodelib
+    bcrypt
     comctl32
     dbghelp
     dwmapi
@@ -656,6 +674,11 @@ if(MINGW)
       -DOUTPUT_FILE="${SAKURA_MANIFEST_RC}"
       -DMANIFEST_FILE="${SAKURA_EXE_MANIFEST}"
       -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMAND ${CMAKE_COMMAND} -E touch "${SAKURA_MANIFEST_RC}"
+    DEPENDS
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake"
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.in"
+      "${SAKURA_EXE_MANIFEST}"
     COMMENT "Generating sakura_manifest.rc"
   )
 endif(MINGW)

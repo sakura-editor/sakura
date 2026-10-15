@@ -9,10 +9,11 @@
 #define SAKURA_CDOCOUTLINE_BDF55702_D938_432D_99F2_BF0F98A7C5FE_H_
 #pragma once
 
+#include "types/CType.h"	//EOutlineType
+
 class CEditDoc;
 class CFuncInfoArr;
 struct SOneRule;
-enum EOutlineType;
 
 class CDocOutline{
 public:
@@ -41,4 +42,5 @@ public:
 private:
 	CEditDoc* m_pcDocRef;
 };
+
 #endif /* SAKURA_CDOCOUTLINE_BDF55702_D938_432D_99F2_BF0F98A7C5FE_H_ */

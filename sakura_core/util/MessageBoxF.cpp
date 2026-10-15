@@ -21,6 +21,7 @@
 
 #include "config/app_constants.h"
 #include "util/os.h"
+#include "util/os/User32.hpp"
 #include "util/tchar_convert.h"
 #include "window/CEditWnd.h"
 

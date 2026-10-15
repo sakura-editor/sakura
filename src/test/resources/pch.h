@@ -9,6 +9,8 @@
 // テストではGMockを使う前提にする
 #include <gmock/gmock.h>
 
+#include "env/DLLSHAREDATA.h"
+
 #include "Funccode_enum.h"
 
 // マッチャーのusing（追加するときは昇順で。）

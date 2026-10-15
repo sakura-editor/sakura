@@ -7,8 +7,11 @@
 #include "pch.h"
 #include "dlg/CDlgOpenFile.h"
 
+#include "dlg/MockCDlgOpenFile.hpp"
 #include "window/EditorTestSuite.hpp"
+#include "util/os/MockUser32.hpp"
 #include "util/shell.h"
+#include "util/os/MockComdlg32.hpp"
 
 #include "eval_outputs.hpp"
 
@@ -780,3 +783,54 @@ TEST(SelectDir, test101)
 }
 
 } // namespace dialog
+
+namespace env {
+
+TEST(User32, TrackPopupMenu)
+{
+	User32::getInstance()->TrackPopupMenu(
+		HMENU(nullptr),
+		0,
+		0,
+		0,
+		0,
+		nullptr,
+		nullptr
+	);
+}
+
+TEST(Comdlg32, ChooseColorW)
+{
+	// 呼ぶだけ
+	CHOOSECOLORW cc{};
+	Comdlg32::getInstance()->ChooseColorW(&cc);
+}
+
+TEST(Comdlg32, ChooseFontW)
+{
+	// 呼ぶだけ
+	CHOOSEFONTW cf{};
+	Comdlg32::getInstance()->ChooseFontW(&cf);
+}
+
+TEST(Comdlg32, CommDlgExtendedError)
+{
+	// 呼ぶだけ
+	Comdlg32::getInstance()->CommDlgExtendedError();
+}
+
+TEST(Comdlg32, GetOpenFileNameW)
+{
+	// 呼ぶだけ
+	OPENFILENAMEW ofn{};
+	Comdlg32::getInstance()->GetOpenFileNameW(&ofn);
+}
+
+TEST(Comdlg32, GetSaveFileNameW)
+{
+	// 呼ぶだけ
+	OPENFILENAMEW ofn{};
+	Comdlg32::getInstance()->GetSaveFileNameW(&ofn);
+}
+
+}	// namespace env

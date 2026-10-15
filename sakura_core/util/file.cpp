@@ -501,7 +501,10 @@ std::filesystem::path GetExeFileName()
 		cchMaxPath <= path.length())
 	{
 		// EXEパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("exe path is too long. (length: at least {}, allowed: {})", path.length(), cchMaxPath - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("exe path is too long. (length: at least {}, allowed: {})", path.length(), cchMaxPath - 1)
+		);
 	}
 
 	return path;
@@ -648,6 +651,7 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
  * @param [in] prefix ファイル名の前に付ける3文字の接頭辞。
  * @param [in, opt] optTempDir 一時フォルダーのパス。指定しない場合はシステムの一時フォルダーを使う。
  */
+// TODO: いつか廃止する
 std::filesystem::path GetTempFilePath(
 	std::wstring_view prefix,
 	const std::optional<std::filesystem::path>& optTempDir

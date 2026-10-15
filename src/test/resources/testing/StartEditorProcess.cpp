@@ -101,7 +101,7 @@ void PrintStackTraceFromContext(CONTEXT& context)
 }
 
 // SEH例外コードを人間が読める文字列に変換する
-std::string_view SehExceptionCodeName(DWORD code) noexcept
+std::string_view SehExceptionCodeName(NTSTATUS code) noexcept
 {
 	switch (code) {
 	case EXCEPTION_ACCESS_VIOLATION:         return "access violation (seg fault)";

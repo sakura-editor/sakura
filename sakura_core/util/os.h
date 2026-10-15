@@ -20,99 +20,6 @@
 
 #include <objidl.h> // LPDATAOBJECT
 
-//! Kernel32.dll呼出をテスト可能にするDIっぽいもの
-struct Kernel32 : public TSakuraSingleton<Kernel32>
-{
-	using Me = Kernel32;
-
-	~Kernel32() override = default;
-
-	virtual DWORD GetCurrentDirectoryW(
-		_In_ DWORD nBufferLength,
-		_Out_writes_to_opt_(nBufferLength,return + 1)
-		LPWSTR lpBuffer
-	) const;
-
-	virtual DWORD GetModuleFileNameW(
-		_In_opt_ HMODULE hModule,
-		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
-		LPWSTR lpFilename,
-		_In_ DWORD nSize
-	) const;
-
-	virtual UINT GetSystemDirectoryW(
-		_Out_writes_to_opt_(uSize, return +1)
-		LPWSTR lpBuffer,
-		_In_ UINT uSize
-	) const;
-
-	virtual BOOL SetCurrentDirectoryW(
-		_In_ LPCWSTR lpPathName
-	) const;
-};
-
-//! User32.dll呼出をテスト可能にするDIっぽいもの
-struct User32 : public TSakuraSingleton<User32>
-{
-	using Me = User32;
-
-	~User32() override = default;
-
-	virtual int	MessageBoxExW(
-		_In_opt_ HWND hWnd,
-		_In_opt_ LPCWSTR lpText,
-		_In_opt_ LPCWSTR lpCaption,
-		_In_ UINT uType,
-		_In_ WORD wLanguageId
-	) const;
-
-	virtual BOOL TrackPopupMenu(
-		_In_ HMENU hMenu,
-		_In_ UINT uFlags,
-		_In_ int x,
-		_In_ int y,
-		_Reserved_ int nReserved,
-		_In_ HWND hWnd,
-		_Reserved_ CONST RECT* prcRect
-	) const;
-
-	virtual BOOL WinHelpW(
-		_In_opt_ HWND hWndMain,
-		_In_opt_ LPCWSTR lpszHelp,
-		_In_ UINT uCommand,
-		_In_ ULONG_PTR dwData
-	) const;
-};
-
-//! Comdlg32.dll呼出をテスト可能にするDIっぽいもの
-struct Comdlg32 : public TSakuraSingleton<Comdlg32> {
-	virtual ~Comdlg32() = default;
-
-	virtual BOOL ChooseColorW(
-		LPCHOOSECOLORW pCc
-	) const;
-
-	virtual BOOL ChooseFontW(
-		LPCHOOSEFONTW pCf
-	) const;
-
-	virtual DWORD CommDlgExtendedError() const;
-
-	virtual BOOL GetOpenFileNameW(
-		LPOPENFILENAMEW pOfn
-	) const;
-
-	virtual BOOL GetSaveFileNameW(
-		LPOPENFILENAMEW pOfn
-	) const;
-
-	virtual BOOL PrintDlgW(
-		_Inout_ LPPRINTDLGW pPD
-	) const;
-
-	std::wstring CommDlgExtendedErrorString() const;
-};
-
 //クリップボード
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
@@ -441,21 +348,6 @@ public:
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
 
 /*!
- * @brief システムエラーを例外として発生させる
- *
- * @param[in] message エラーメッセージ
- */
-template <basis::NullTerminatedStringConstructible<ACHAR> A>
-[[noreturn]] inline void raise_system_error(const A& message)
-{
-	// 引数はNUL終端文字列として扱う
-	cxx::NullTerminatedString<ACHAR> msg{ message };
-
-	// システムエラー例外を発生させる
-	throw std::system_error(int(::GetLastError()), std::system_category(), msg.c_str());
-}
-
-/*!
  * @brief カレントディレクトリのパスを取得する
  *
  * @return カレントディレクトリのパス
@@ -478,6 +370,69 @@ std::wstring GetModuleFileNameW(
  * @return システムディレクトリのパス
  */
 std::wstring GetSystemDirectoryW();
+
+/*!
+ * @brief ファイルマッピングのビューを取得する
+ *
+ * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] fileOffset ファイルマッピングのビューの開始位置
+ * @param[in] dwNumberOfBytesToMap マップするバイト数
+ * @return マッピングされたデータ
+ */
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+template <
+	basis::NullTerminatedStringConstructible<WCHAR> A1,
+	basis::NullTerminatedStringConstructible<WCHAR> A2
+> requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view>)
+void ReplaceFileW(
+	const A1 & replacedFileName,
+	const A2 & replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString _ReplacedFileName{ replacedFileName };
+	cxx::NullTerminatedString _ReplacementFileName{ replacementFileName };
+
+	// 指定したファイルを別ファイルで置換する
+	return ReplaceFileW(
+		_ReplacedFileName.str(),
+		_ReplacementFileName.str(),
+		optBackupFileName,
+		dwReplaceFlags
+	);
+}
 
 /*!
  * @brief カレントディレクトリを変更する

@@ -34,6 +34,7 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/os.h"
+#include "util/os/Comdlg32.hpp"
 #include "util/module.h"
 #include "util/design_template.h"
 #include "basis/CMyString.h"
@@ -60,24 +61,7 @@ static const DWORD p_helpids[] = {	//13100
 
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
 
-DWORD Comdlg32::CommDlgExtendedError() const
-{
-	return ::CommDlgExtendedError();
-}
-
-BOOL Comdlg32::GetOpenFileNameW(
-	LPOPENFILENAMEW pOfn
-) const
-{
-	return ::GetOpenFileNameW(pOfn);
-}
-
-BOOL Comdlg32::GetSaveFileNameW(
-	LPOPENFILENAMEW pOfn
-) const
-{
-	return ::GetSaveFileNameW(pOfn);
-}
+namespace apiwrap {
 
 /*!
  * @brief CommDlgExtendedError() のエラーコードを文字列に変換する
@@ -87,7 +71,7 @@ BOOL Comdlg32::GetSaveFileNameW(
  *
  * @throws std::out_of_range 未定義のエラーコードを検出した場合
  */
-std::wstring Comdlg32::CommDlgExtendedErrorString() const
+std::wstring CommDlgExtendedErrorString()
 {
 #pragma push_macro("CD_ERR_ENTRY")
 
@@ -142,7 +126,7 @@ std::wstring Comdlg32::CommDlgExtendedErrorString() const
 #pragma pop_macro("CD_ERR_ENTRY")
 
 	// エラーコードを取得する
-	const auto code = CommDlgExtendedError();
+	const auto code = Comdlg32::getInstance()->CommDlgExtendedError();
 	if (!code) {
 		return {};	// エラーコードなし
 	}
@@ -156,8 +140,6 @@ std::wstring Comdlg32::CommDlgExtendedErrorString() const
 
 	throw std::out_of_range{ std::format("CommDlgExtendedError: unknown error code {}", code) };
 }
-
-namespace apiwrap {
 
 template <class TFunc>
 bool CallCommDlgFunc(
@@ -1202,7 +1184,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 {
 	std::wstring name;
 	try {
-		name = Comdlg32::getInstance()->CommDlgExtendedErrorString();
+		name = apiwrap::CommDlgExtendedErrorString();
 	}
 	catch (const std::out_of_range&) {
 		name = L"UNKNOWN_ERRORCODE";

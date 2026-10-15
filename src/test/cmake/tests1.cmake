@@ -15,6 +15,10 @@ add_custom_command(
     -DEXE_ARCH="${EXE_ARCH}"
     -DOUTPUT_FILE="${CMAKE_BINARY_DIR}/tests1.exe.manifest"
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.in"
   COMMENT "Generating tests1.exe.manifest"
 )
 
@@ -44,15 +48,20 @@ find_program(UV_EXECUTABLE
 
 set(MINIZ_SOURCE_DIR "${CMAKE_SOURCE_DIR}/externals/miniz-cpp")
 set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
+set(MINIZ_FETCH_STAMP "${CMAKE_BINARY_DIR}/miniz-cpp-fetch.stamp")
 
 add_custom_command(
-  OUTPUT "${MINIZ_SOURCE_DIR}/.git"
+  OUTPUT "${MINIZ_FETCH_STAMP}"
   COMMAND ${CMAKE_COMMAND}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
     -DREPO_ROOT:PATH=${CMAKE_SOURCE_DIR}
     -DSUBMODULE_PATH:STRING=externals/miniz-cpp
     -DLOCK_PATH:FILEPATH=${CMAKE_BINARY_DIR}/cmake-submodule-update.lock
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${MINIZ_FETCH_STAMP}"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/.gitmodules"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake"
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   COMMENT "Fetching miniz-cpp's source files"
 )
@@ -61,7 +70,9 @@ add_custom_command(
   OUTPUT "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${MINIZ_INCLUDE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MINIZ_SOURCE_DIR}/zip_file.hpp" "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
-  DEPENDS "${MINIZ_SOURCE_DIR}/.git"
+  DEPENDS
+    "${MINIZ_FETCH_STAMP}"
+    "${MINIZ_SOURCE_DIR}/zip_file.hpp"
   COMMENT "Copying miniz-cpp/zip_file.hpp to include directory"
 )
 
@@ -70,6 +81,12 @@ add_custom_target(generate_miniz ALL
     "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
 )
 
+if(MINGW)
+  set_property(DIRECTORY APPEND PROPERTY
+    ADDITIONAL_CLEAN_FILES "${MINIZ_INCLUDE_DIR}"
+  )
+endif()
+
 # define precompiled headers
 set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 
@@ -77,6 +94,7 @@ set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 file(GLOB_RECURSE TESTS1_HEADERS
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.h
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/mock/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.h
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.hpp
@@ -86,6 +104,7 @@ file(GLOB_RECURSE TESTS1_HEADERS
 # define source files of tests1
 file(GLOB_RECURSE TESTS1_SOURCES
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.cpp
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/mock/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.cpp
 )
@@ -106,7 +125,7 @@ if(MINGW)
 endif(MINGW)
 
 # define resource files of tests1
-set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
+set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/tests1_rc.rc)
 
 set(TEST_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin")
 set(TEST_RESOURCE_ZIP "${CMAKE_BINARY_DIR}/resources.ja-JP.zip")
@@ -116,6 +135,12 @@ set(TEST_OUTLINE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline
 set(TEST_OUTLINE_ZIP "${CMAKE_BINARY_DIR}/outline.zip")
 set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
 set(TEST_OUTLINE_STAGE_DIR "${TESTS1_RESOURCE_STAGE_DIR}/outline")
+
+if(MINGW)
+  set_property(DIRECTORY APPEND PROPERTY
+    ADDITIONAL_CLEAN_FILES "${TESTS1_RESOURCE_STAGE_DIR}"
+  )
+endif()
 
 file(GLOB_RECURSE TEST_RESOURCE_FILES CONFIGURE_DEPENDS
   "${TEST_RESOURCE_DIR}/*"
@@ -166,6 +191,7 @@ add_custom_command(
     "${TEST_RESOURCE_ZIP}"
     "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
     > NUL
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
   DEPENDS ${TEST_RESOURCE_FILES}
   COMMENT "Generating resources.ja-JP.zip"
 )
@@ -274,6 +300,7 @@ add_custom_command(
     "${TEST_DLLPLUGIN_ZIP}"
     "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
     > NUL
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
   DEPENDS
     ${TEST_DLLPLUGIN_FILES}
     "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
@@ -292,6 +319,14 @@ add_executable(tests1
   ${TESTS1_RESOURCE_SCRIPTS}
 )
 
+if(MSVC)
+  set_source_files_properties(
+    "${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/test-csakuraenvironment.cpp"
+    PROPERTIES
+      COMPILE_OPTIONS "/bigobj"
+  )
+endif()
+
 # Enable precompiled headers
 target_precompile_headers(tests1 PRIVATE ${TESTS1_PCH_HEADER})
 
@@ -306,6 +341,7 @@ target_compile_definitions(tests1
 target_include_directories(tests1
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1
+    ${CMAKE_SOURCE_DIR}/src/test/cpp/mock
     ${CMAKE_SOURCE_DIR}/src/test/resources/tests1
     ${CMAKE_SOURCE_DIR}/src/test/cpp
     ${CMAKE_SOURCE_DIR}/src/test/resources
@@ -341,6 +377,11 @@ if(MINGW)
       -DOUTPUT_FILE="${TESTS1_MANIFEST_RC}"
       -DMANIFEST_FILE="${TESTS1_EXE_MANIFEST}"
       -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMAND ${CMAKE_COMMAND} -E touch "${TESTS1_MANIFEST_RC}"
+    DEPENDS
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake"
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.in"
+      "${TESTS1_EXE_MANIFEST}"
     COMMENT "Generating tests1_manifest.rc"
   )
 
