@@ -867,6 +867,185 @@ DWORD CGrepAgent::DoGrep(
 	return nHitCount;
 }
 
+/*!
+	@brief フォルダー 1 つの中から、Grep の対象ファイルを列挙する
+	@param[in]	pszPath				検索するフォルダー
+	@param[in]	cGrepEnumKeys		検索対象ファイル・除外のパターン
+	@param[in]	cGrepExceptAbsFiles	除外ファイル(絶対パス)
+	@return 対象ファイル(列挙した順)
+*/
+std::vector<CGrepAgent::SGrepTargetFile> CGrepAgent::EnumerateGrepTargetFiles(
+	const WCHAR*		pszPath,
+	CGrepEnumKeys&		cGrepEnumKeys,
+	CGrepEnumFiles&		cGrepExceptAbsFiles
+)
+{
+	CGrepEnumOptions cGrepEnumOptions;
+	CGrepEnumFilterFiles cGrepEnumFilterFiles;
+	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
+
+	std::vector<SGrepTargetFile> vFiles;
+	const int count = cGrepEnumFilterFiles.GetCount();
+	vFiles.reserve( count );
+	for( int i = 0; i < count; i++ ){
+		vFiles.emplace_back( cGrepEnumFilterFiles.GetFileName( i ), cGrepEnumFilterFiles.GetFileSizeLow( i ) );
+	}
+	return vFiles;
+}
+
+/*!
+	@brief フォルダー 1 つぶんの対象ファイルを、列挙した順に検索する
+
+	@retval 0	正常
+	@retval -1	中断した。出力していない結果は cmemMessage に残っている
+*/
+int CGrepAgent::DoGrepFiles(
+	CEditView*				pcViewDst,
+	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
+	const wchar_t*			pszKey,				//!< [in] 検索キー
+	const CNativeW&			cmGrepReplace,		//!< [in] 置換後文字列(置換のときだけ使う)
+	const std::vector<SGrepTargetFile>& vFiles,	//!< [in] 対象ファイル(EnumerateGrepTargetFiles() の結果)
+	const WCHAR*			pszPath,			//!< [in] 検索するフォルダー
+	const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベースフォルダー)
+	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
+	const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
+	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
+	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	bool&					bOutputBaseFolder,	//!< [i/o] ベースフォルダー名出力
+	int*					pnHitCount,			//!< [i/o] ヒット数の合計
+	CNativeW&				cmemMessage,		//!< [i/o] Grep結果文字列
+	CNativeW&				cUnicodeBuffer
+)
+{
+	int			nWork = 0;
+	int			nHitCountOld = -100;
+	bool		bOutputFolderName = false;
+	const auto	nBasePathLen = int(std::wstring_view(pszBasePath).size());
+	// pszPath はベースフォルダーかその下。ベースフォルダーそのものなら区切りの「\」は無い
+	const int	nBasePathLen2 = std::min( nBasePathLen + 1, int(std::wstring_view(pszPath).size()) );
+	const WCHAR* pszFolder = (sGrepOption.bGrepSeparateFolder && sGrepOption.bGrepOutputBaseFolder ? pszPath + nBasePathLen2 : pszPath);
+
+	for( const auto& target : vFiles ){
+		const LPCWSTR lpFileName = target.strFileName.c_str();
+
+		const DWORD dwNow = ::GetTickCount();
+		if( IsGrepCanceled( pcDlgCancel, dwNow ) ){
+			return -1;
+		}
+
+		// 定期的に grep 中のファイル名表示を更新
+		if( dwNow - m_dwTickUIFileName > UIFILENAME_INTERVAL_MILLISEC ){
+			m_dwTickUIFileName = dwNow;
+			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
+		}
+
+		std::wstring currentFile = pszPath;
+		currentFile += L"\\";
+		currentFile += lpFileName;
+		const WCHAR* pszRelPath = (sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1);
+
+		/* ファイル内の検索 */
+		int nRet;
+		if( sGrepOption.bGrepReplace ){
+			nRet = DoGrepReplaceFile(
+				pcViewDst,
+				pcDlgCancel,
+				pszKey,
+				cmGrepReplace,
+				lpFileName,
+				sSearchOption,
+				sGrepOption,
+				pattern,
+				pRegexp,
+				pnHitCount,
+				currentFile.c_str(),
+				pszBasePath,
+				pszFolder,
+				pszRelPath,
+				bOutputBaseFolder,
+				bOutputFolderName,
+				cmemMessage,
+				cUnicodeBuffer
+			);
+		}else{
+			nRet = DoGrepFile(
+				pcViewDst,
+				pcDlgCancel,
+				nullptr,
+				pszKey,
+				lpFileName,
+				sSearchOption,
+				sGrepOption,
+				pattern,
+				pRegexp,
+				pnHitCount,
+				currentFile.c_str(),
+				pszBasePath,
+				pszFolder,
+				pszRelPath,
+				bOutputBaseFolder,
+				bOutputFolderName,
+				cmemMessage,
+				cUnicodeBuffer
+			);
+		}
+
+		// 2003.06.23 Moca リアルタイム表示のときは早めに表示
+		// データ検索のときファイルの合計が最大10MBを超えたら表示
+		if( pcViewDst->GetDrawSwitch() && L'\0' != pszKey[0] ){
+			nWork += ( target.dwFileSizeLow + 1023 ) / 1024;
+		}
+		if( pcViewDst->GetDrawSwitch() && 10000 < nWork ){
+			nHitCountOld = -100; // 即表示
+		}
+		/* 結果出力 */
+		if( 0 < cmemMessage.GetStringLength() &&
+		   (*pnHitCount - nHitCountOld) >= 10 &&
+		   (::GetTickCount() - m_dwTickAddTail) > ADDTAIL_INTERVAL_MILLISEC
+		){
+			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+			cmemMessage._SetStringLength(0);
+			nWork = 0;
+			nHitCountOld = *pnHitCount;
+		}
+		if( -1 == nRet ){
+			return -1;
+		}
+	}
+	return 0;
+}
+
+/*!
+	@brief 処理中のユーザー操作を受け付け、中断されたかを返す
+
+	前回の確認から UICHECK_INTERVAL_MILLISEC を過ぎていなければ何もしない。
+	過ぎていれば、メッセージを処理し、中断ボタンとリアルタイム表示のチェックボックスを確かめる。
+
+	@param[in]	pcDlgCancel	Cancelダイアログ
+	@param[in]	dwNow		現在の時刻(::GetTickCount())
+	@retval true	中断する
+*/
+bool CGrepAgent::IsGrepCanceled( CDlgCancel* pcDlgCancel, DWORD dwNow )
+{
+	if( dwNow - m_dwTickUICheck <= UICHECK_INTERVAL_MILLISEC ){
+		return false;
+	}
+	m_dwTickUICheck = dwNow;
+	/* 処理中のユーザー操作を可能にする */
+	if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+		return true;
+	}
+	/* 中断ボタン押下チェック */
+	if( pcDlgCancel->IsCanceled() ){
+		return true;
+	}
+	/* 表示設定をチェック */
+	CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+		0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+	);
+	return false;
+}
+
 /*! @brief Grep実行
 
 	@date 2001.06.27 genta	正規表現ライブラリの差し替え
@@ -896,125 +1075,31 @@ int CGrepAgent::DoGrepTree(
 	CNativeW&				cUnicodeBuffer
 )
 {
-	int			i;
 	int			count;
 	LPCWSTR		lpFileName;
-	int			nWork = 0;
-	int			nHitCountOld = -100;
-	bool		bOutputFolderName = false;
-	auto nBasePathLen = int(wcslen(pszBasePath));
-	CGrepEnumOptions cGrepEnumOptions;
-	CGrepEnumFilterFiles cGrepEnumFilterFiles;
-	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
 
 	/*
 	 * カレントフォルダーのファイルを探索する。
 	 */
-	count = cGrepEnumFilterFiles.GetCount();
-	for( i = 0; i < count; i++ ){
-		lpFileName = cGrepEnumFilterFiles.GetFileName( i );
-
-		DWORD dwNow = ::GetTickCount();
-		if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
-			m_dwTickUICheck = dwNow;
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-				goto cancel_return;
-			}
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				goto cancel_return;
-			}
-
-			/* 表示設定をチェック */
-			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-			);
-		}
-
-		// 定期的に grep 中のファイル名表示を更新
-		if( dwNow - m_dwTickUIFileName > UIFILENAME_INTERVAL_MILLISEC ){
-			m_dwTickUIFileName = dwNow;
-			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
-		}
-
-		std::wstring currentFile = pszPath;
-		currentFile += L"\\";
-		currentFile += lpFileName;
-		int nBasePathLen2 = nBasePathLen + 1;
-		if( (int)wcslen(pszPath) < nBasePathLen2 ){
-			nBasePathLen2 = nBasePathLen;
-		}
-
-		/* ファイル内の検索 */
-		int nRet;
-		if( sGrepOption.bGrepReplace ){
-			nRet = DoGrepReplaceFile(
-				pcViewDst,
-				pcDlgCancel,
-				pszKey,
-				cmGrepReplace,
-				lpFileName,
-				sSearchOption,
-				sGrepOption,
-				pattern,
-				pRegexp,
-				pnHitCount,
-				currentFile.c_str(),
-				pszBasePath,
-				(sGrepOption.bGrepSeparateFolder && sGrepOption.bGrepOutputBaseFolder ? pszPath + nBasePathLen2 : pszPath),
-				(sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1),
-				bOutputBaseFolder,
-				bOutputFolderName,
-				cmemMessage,
-				cUnicodeBuffer
-			);
-		}else{
-			nRet = DoGrepFile(
-				pcViewDst,
-				pcDlgCancel,
-				nullptr,
-				pszKey,
-				lpFileName,
-				sSearchOption,
-				sGrepOption,
-				pattern,
-				pRegexp,
-				pnHitCount,
-				currentFile.c_str(),
-				pszBasePath,
-				(sGrepOption.bGrepSeparateFolder && sGrepOption.bGrepOutputBaseFolder ? pszPath + nBasePathLen2 : pszPath),
-				(sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1),
-				bOutputBaseFolder,
-				bOutputFolderName,
-				cmemMessage,
-				cUnicodeBuffer
-			);
-		}
-
-		// 2003.06.23 Moca リアルタイム表示のときは早めに表示
-		if( pcViewDst->GetDrawSwitch() ){
-			if( L'\0' != pszKey[0] ){
-				// データ検索のときファイルの合計が最大10MBを超えたら表示
-				nWork += ( cGrepEnumFilterFiles.GetFileSizeLow( i ) + 1023 ) / 1024;
-			}
-			if( 10000 < nWork ){
-				nHitCountOld = -100; // 即表示
-			}
-		}
-		/* 結果出力 */
-		if( 0 < cmemMessage.GetStringLength() &&
-		   (*pnHitCount - nHitCountOld) >= 10 &&
-		   (::GetTickCount() - m_dwTickAddTail) > ADDTAIL_INTERVAL_MILLISEC
-		){
-			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-			cmemMessage._SetStringLength(0);
-			nWork = 0;
-			nHitCountOld = *pnHitCount;
-		}
-		if( -1 == nRet ){
-			goto cancel_return;
-		}
+	if( const std::vector<SGrepTargetFile> vFiles = EnumerateGrepTargetFiles( pszPath, cGrepEnumKeys, cGrepExceptAbsFiles );
+		-1 == DoGrepFiles(
+		pcViewDst,
+		pcDlgCancel,
+		pszKey,
+		cmGrepReplace,
+		vFiles,
+		pszPath,
+		pszBasePath,
+		sSearchOption,
+		sGrepOption,
+		pattern,
+		pRegexp,
+		bOutputBaseFolder,
+		pnHitCount,
+		cmemMessage,
+		cUnicodeBuffer
+	) ){
+		goto cancel_return;
 	}
 
 	/*
@@ -1026,26 +1111,8 @@ int CGrepAgent::DoGrepTree(
 		cGrepEnumFilterFolders.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptionsDir, cGrepExceptAbsFolders );
 
 		count = cGrepEnumFilterFolders.GetCount();
-		for( i = 0; i < count; i++ ){
+		for( int i = 0; i < count; i++ ){
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
-
-			DWORD dwNow = ::GetTickCount();
-			if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
-				m_dwTickUICheck = dwNow;
-				//サブフォルダーの探索を再帰呼び出し。
-				/* 処理中のユーザー操作を可能にする */
-				if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-					goto cancel_return;
-				}
-				/* 中断ボタン押下チェック */
-				if( pcDlgCancel->IsCanceled() ){
-					goto cancel_return;
-				}
-				/* 表示設定をチェック */
-				CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-				);
-			}
 
 			//フォルダー名を作成する。
 			// 2010.08.01 キャンセルでメモリリークしてました
@@ -1053,27 +1120,28 @@ int CGrepAgent::DoGrepTree(
 			currentPath += L"\\";
 			currentPath += lpFileName;
 
-			int nGrepTreeResult = DoGrepTree(
-				pcViewDst,
-				pcDlgCancel,
-				pszKey,
-				cmGrepReplace,
-				cGrepEnumKeys,
-				cGrepExceptAbsFiles,
-				cGrepExceptAbsFolders,
-				currentPath.c_str(),
-				pszBasePath,
-				sSearchOption,
-				sGrepOption,
-				pattern,
-				pRegexp,
-				nNest + 1,
-				bOutputBaseFolder,
-				pnHitCount,
-				cmemMessage,
-				cUnicodeBuffer
-			);
-			if( -1 == nGrepTreeResult ){
+			//サブフォルダーの探索を再帰呼び出し。中断されたら呼ばない
+			if( IsGrepCanceled( pcDlgCancel, ::GetTickCount() )
+			 || -1 == DoGrepTree(
+					pcViewDst,
+					pcDlgCancel,
+					pszKey,
+					cmGrepReplace,
+					cGrepEnumKeys,
+					cGrepExceptAbsFiles,
+					cGrepExceptAbsFolders,
+					currentPath.c_str(),
+					pszBasePath,
+					sSearchOption,
+					sGrepOption,
+					pattern,
+					pRegexp,
+					nNest + 1,
+					bOutputBaseFolder,
+					pnHitCount,
+					cmemMessage,
+					cUnicodeBuffer
+				) ){
 				goto cancel_return;
 			}
 			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダーから戻ってきたら...

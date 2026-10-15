@@ -39,6 +39,19 @@ public:
 	);
 
 private:
+	//! Grep の対象ファイル 1 つぶん(フォルダー 1 つの列挙結果の要素)
+	struct SGrepTargetFile {
+		std::wstring	strFileName;		//!< 検索するフォルダーからの相対のファイル名(検索キーにフォルダーを含むと sub\a.txt の形)
+		DWORD			dwFileSizeLow = 0;	//!< ファイルサイズの下位 32 ビット(リアルタイム表示を早めるかの目安)
+	};
+
+	// フォルダー 1 つの中から、Grep の対象ファイルを列挙する
+	static std::vector<SGrepTargetFile> EnumerateGrepTargetFiles(
+		const WCHAR*			pszPath,
+		CGrepEnumKeys&			cGrepEnumKeys,
+		CGrepEnumFiles&			cGrepExceptAbsFiles
+	);
+
 	// Grep実行
 	int DoGrepTree(
 		CEditView*				pcViewDst,
@@ -60,6 +73,28 @@ private:
 		CNativeW&				cmemMessage,
 		CNativeW&				cUnicodeBuffer
 	);
+
+	// フォルダー 1 つぶんの対象ファイルを、列挙した順に検索する
+	int DoGrepFiles(
+		CEditView*				pcViewDst,
+		CDlgCancel*				pcDlgCancel,
+		const wchar_t*			pszKey,
+		const CNativeW&			cmGrepReplace,
+		const std::vector<SGrepTargetFile>& vFiles,
+		const WCHAR*			pszPath,
+		const WCHAR*			pszBasePath,
+		const SSearchOption&	sSearchOption,
+		const GrepInfo&			sGrepOption,
+		const CSearchStringPattern& pattern,
+		CBregexp*				pRegexp,
+		bool&					bOutputBaseFolder,
+		int*					pnHitCount,
+		CNativeW&				cmemMessage,
+		CNativeW&				cUnicodeBuffer
+	);
+
+	// 処理中のユーザー操作を受け付け、中断されたかを返す
+	bool IsGrepCanceled( CDlgCancel* pcDlgCancel, DWORD dwNow );
 
 	// Grep実行
 	int DoGrepFile(
