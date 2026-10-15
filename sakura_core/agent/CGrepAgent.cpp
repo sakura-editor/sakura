@@ -727,11 +727,15 @@ DWORD CGrepAgent::DoGrep(
 	CGrepEnumFolders cGrepExceptAbsFolders;
 	cGrepExceptAbsFolders.Enumerates(L"", cGrepEnumKeys.m_vecExceptAbsFolderKeys, cGrepEnumOptions);
 
+	// 検索の条件と列挙の条件(全ファイル・全フォルダーで共通)
+	const SGrepSearchCond cond{ gi.cmGrepKey.GetStringPtr(), cmemReplace, gi.sGrepSearchOption, sGrepOption, pattern };
+	const SGrepEnumCond enumCond{ cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders };
+
 	int nGrepTreeResult = 0;
 
 	if( hWndTarget ){
 		for( HWND hwnd = hWndTarget; nullptr != hwnd; hwnd = nullptr ){
-			bool bOutputBaseFolder = false;
+			SGrepOutput out{ pcViewDst, &cDlgCancel, &nHitCount, cmemMessage, cUnicodeBuffer };
 			bool bOutputFolderName = false;
 			// 複数ウィンドウループ予約
 			auto nPathLen = wcsnlen_s(szWindowPath, std::size(szWindowPath));
@@ -742,26 +746,14 @@ DWORD CGrepAgent::DoGrep(
 			}
 			currentFile += szWindowName;
 			nHitCount = nGrepTreeResult;
-			int nTreeRet = DoGrepFile(
-				pcViewDst,
-				&cDlgCancel,
-				hwnd,
-				gi.cmGrepKey.GetStringPtr(),
+			const SGrepFilePath path{
 				szWindowName,
-				gi.sGrepSearchOption,
-				sGrepOption,
-				pattern,
-				&cRegexp,
-				&nHitCount,
 				currentFile.c_str(),
 				szWindowPath,
 				(sGrepOption.bGrepSeparateFolder && sGrepOption.bGrepOutputBaseFolder ? L"" : szWindowPath),
-				(sGrepOption.bGrepSeparateFolder ? szWindowName : currentFile.c_str() + nPathLen),
-				bOutputBaseFolder,
-				bOutputFolderName,
-				cmemMessage,
-				cUnicodeBuffer
-			);
+				(sGrepOption.bGrepSeparateFolder ? szWindowName : currentFile.c_str() + nPathLen)
+			};
+			int nTreeRet = DoGrepFile( cond, &cRegexp, out, hwnd, path, bOutputFolderName );
 			if( nTreeRet == -1 ){
 				nGrepTreeResult = -1;
 				break;
@@ -778,28 +770,9 @@ DWORD CGrepAgent::DoGrep(
 		nHitCount = nGrepTreeResult;
 	}else{
 		for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
-			bool bOutputBaseFolder = false;
+			SGrepOutput out{ pcViewDst, &cDlgCancel, &nHitCount, cmemMessage, cUnicodeBuffer };
 			std::wstring sPath = ChopYen( vPaths[nPath] );
-			int nTreeRet = DoGrepTree(
-				pcViewDst,
-				&cDlgCancel,
-				gi.cmGrepKey.GetStringPtr(),
-				cmemReplace,
-				cGrepEnumKeys,
-				cGrepExceptAbsFiles,
-				cGrepExceptAbsFolders,
-				sPath.c_str(),
-				sPath.c_str(),
-				gi.sGrepSearchOption,
-				sGrepOption,
-				pattern,
-				&cRegexp,
-				0,
-				bOutputBaseFolder,
-				&nHitCount,
-				cmemMessage,
-				cUnicodeBuffer
-			);
+			int nTreeRet = DoGrepTree( cond, &cRegexp, out, enumCond, sPath.c_str(), sPath.c_str(), 0 );
 			if( nTreeRet == -1 ){
 				nGrepTreeResult = -1;
 				break;
@@ -900,23 +873,20 @@ std::vector<CGrepAgent::SGrepTargetFile> CGrepAgent::EnumerateGrepTargetFiles(
 	@retval -1	中断した。出力していない結果は cmemMessage に残っている
 */
 int CGrepAgent::DoGrepFiles(
-	CEditView*				pcViewDst,
-	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
-	const wchar_t*			pszKey,				//!< [in] 検索キー
-	const CNativeW&			cmGrepReplace,		//!< [in] 置換後文字列(置換のときだけ使う)
+	const SGrepSearchCond&	cond,				//!< [in] 検索の条件(全ファイルで共通)
+	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	SGrepOutput&			out,				//!< [i/o] 結果の出力先と出力の状態
 	const std::vector<SGrepTargetFile>& vFiles,	//!< [in] 対象ファイル(EnumerateGrepTargetFiles() の結果)
 	const WCHAR*			pszPath,			//!< [in] 検索するフォルダー
-	const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベースフォルダー)
-	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-	const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
-	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
-	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	bool&					bOutputBaseFolder,	//!< [i/o] ベースフォルダー名出力
-	int*					pnHitCount,			//!< [i/o] ヒット数の合計
-	CNativeW&				cmemMessage,		//!< [i/o] Grep結果文字列
-	CNativeW&				cUnicodeBuffer
+	const WCHAR*			pszBasePath			//!< [in] 検索対象パス(ベースフォルダー)
 )
 {
+	CEditView* const		pcViewDst = out.pcViewDst;
+	CDlgCancel* const		pcDlgCancel = out.pcDlgCancel;
+	const wchar_t* const	pszKey = cond.pszKey;
+	const GrepInfo&			sGrepOption = cond.sGrepOption;
+	const int* const		pnHitCount = out.pnHitCount;
+	CNativeW&				cmemMessage = out.cmemMessage;
 	int			nWork = 0;
 	int			nHitCountOld = -100;
 	bool		bOutputFolderName = false;
@@ -945,49 +915,12 @@ int CGrepAgent::DoGrepFiles(
 		const WCHAR* pszRelPath = (sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1);
 
 		/* ファイル内の検索 */
+		const SGrepFilePath path{ lpFileName, currentFile.c_str(), pszBasePath, pszFolder, pszRelPath };
 		int nRet;
 		if( sGrepOption.bGrepReplace ){
-			nRet = DoGrepReplaceFile(
-				pcViewDst,
-				pcDlgCancel,
-				pszKey,
-				cmGrepReplace,
-				lpFileName,
-				sSearchOption,
-				sGrepOption,
-				pattern,
-				pRegexp,
-				pnHitCount,
-				currentFile.c_str(),
-				pszBasePath,
-				pszFolder,
-				pszRelPath,
-				bOutputBaseFolder,
-				bOutputFolderName,
-				cmemMessage,
-				cUnicodeBuffer
-			);
+			nRet = DoGrepReplaceFile( cond, pRegexp, out, path, bOutputFolderName );
 		}else{
-			nRet = DoGrepFile(
-				pcViewDst,
-				pcDlgCancel,
-				nullptr,
-				pszKey,
-				lpFileName,
-				sSearchOption,
-				sGrepOption,
-				pattern,
-				pRegexp,
-				pnHitCount,
-				currentFile.c_str(),
-				pszBasePath,
-				pszFolder,
-				pszRelPath,
-				bOutputBaseFolder,
-				bOutputFolderName,
-				cmemMessage,
-				cUnicodeBuffer
-			);
+			nRet = DoGrepFile( cond, pRegexp, out, nullptr, path, bOutputFolderName );
 		}
 
 		// 2003.06.23 Moca リアルタイム表示のときは早めに表示
@@ -1055,50 +988,27 @@ bool CGrepAgent::IsGrepCanceled( CDlgCancel* pcDlgCancel, DWORD dwNow )
 		大部分が変更されたため，個別の変更点記入は無し．
 */
 int CGrepAgent::DoGrepTree(
-	CEditView*				pcViewDst,
-	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
-	const wchar_t*			pszKey,				//!< [in] 検索キー
-	const CNativeW&			cmGrepReplace,
-	CGrepEnumKeys&			cGrepEnumKeys,		//!< [in] 検索対象ファイルパターン
-	CGrepEnumFiles&			cGrepExceptAbsFiles,	//!< [in] 除外ファイル絶対パス
-	CGrepEnumFolders&		cGrepExceptAbsFolders,	//!< [in] 除外フォルダー絶対パス
+	const SGrepSearchCond&	cond,				//!< [in] 検索の条件(全ファイルで共通)
+	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	SGrepOutput&			out,				//!< [i/o] 結果の出力先と出力の状態
+	const SGrepEnumCond&	enumCond,			//!< [in] フォルダーの列挙の条件
 	const WCHAR*			pszPath,			//!< [in] 検索対象パス
 	const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベースフォルダー)
-	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-	const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
-	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
-	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	int						nNest,				//!< [in] ネストレベル
-	bool&					bOutputBaseFolder,	//!< [i/o] ベースフォルダー名出力
-	int*					pnHitCount,			//!< [i/o] ヒット数の合計
-	CNativeW&				cmemMessage,		//!< [i/o] Grep結果文字列
-	CNativeW&				cUnicodeBuffer
+	int						nNest				//!< [in] ネストレベル
 )
 {
+	CEditView* const		pcViewDst = out.pcViewDst;
+	CDlgCancel* const		pcDlgCancel = out.pcDlgCancel;
+	const GrepInfo&			sGrepOption = cond.sGrepOption;
+	CNativeW&				cmemMessage = out.cmemMessage;
 	int			count;
 	LPCWSTR		lpFileName;
 
 	/*
 	 * カレントフォルダーのファイルを探索する。
 	 */
-	if( const std::vector<SGrepTargetFile> vFiles = EnumerateGrepTargetFiles( pszPath, cGrepEnumKeys, cGrepExceptAbsFiles );
-		-1 == DoGrepFiles(
-		pcViewDst,
-		pcDlgCancel,
-		pszKey,
-		cmGrepReplace,
-		vFiles,
-		pszPath,
-		pszBasePath,
-		sSearchOption,
-		sGrepOption,
-		pattern,
-		pRegexp,
-		bOutputBaseFolder,
-		pnHitCount,
-		cmemMessage,
-		cUnicodeBuffer
-	) ){
+	if( const std::vector<SGrepTargetFile> vFiles = EnumerateGrepTargetFiles( pszPath, enumCond.cGrepEnumKeys, enumCond.cGrepExceptAbsFiles );
+		-1 == DoGrepFiles( cond, pRegexp, out, vFiles, pszPath, pszBasePath ) ){
 		goto cancel_return;
 	}
 
@@ -1108,7 +1018,7 @@ int CGrepAgent::DoGrepTree(
 	if( sGrepOption.bGrepSubFolder ){
 		CGrepEnumOptions cGrepEnumOptionsDir;
 		CGrepEnumFilterFolders cGrepEnumFilterFolders;
-		cGrepEnumFilterFolders.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptionsDir, cGrepExceptAbsFolders );
+		cGrepEnumFilterFolders.Enumerates( pszPath, enumCond.cGrepEnumKeys, cGrepEnumOptionsDir, enumCond.cGrepExceptAbsFolders );
 
 		count = cGrepEnumFilterFolders.GetCount();
 		for( int i = 0; i < count; i++ ){
@@ -1122,26 +1032,7 @@ int CGrepAgent::DoGrepTree(
 
 			//サブフォルダーの探索を再帰呼び出し。中断されたら呼ばない
 			if( IsGrepCanceled( pcDlgCancel, ::GetTickCount() )
-			 || -1 == DoGrepTree(
-					pcViewDst,
-					pcDlgCancel,
-					pszKey,
-					cmGrepReplace,
-					cGrepEnumKeys,
-					cGrepExceptAbsFiles,
-					cGrepExceptAbsFolders,
-					currentPath.c_str(),
-					pszBasePath,
-					sSearchOption,
-					sGrepOption,
-					pattern,
-					pRegexp,
-					nNest + 1,
-					bOutputBaseFolder,
-					pnHitCount,
-					cmemMessage,
-					cUnicodeBuffer
-				) ){
+			 || -1 == DoGrepTree( cond, pRegexp, out, enumCond, currentPath.c_str(), pszBasePath, nNest + 1 ) ){
 				goto cancel_return;
 			}
 			ApiWrap::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダーから戻ってきたら...
@@ -1173,26 +1064,18 @@ cancel_return:;
 	@date 2004/03/28 genta 不要な引数nNest, bGrepSubFolder, pszPathを削除
 */
 int CGrepAgent::DoGrepFile(
-	CEditView*				pcViewDst,			//!< 
-	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
-	HWND					hWndTarget,			//!< [in] 対象Windows(NULLでファイル)
-	const wchar_t*			pszKey,				//!< [in] 検索パターン
-	const WCHAR*			pszFile,			//!< [in] 処理対象ファイル名(表示用)
-	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-	const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
-	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
+	const SGrepSearchCond&	cond,				//!< [in] 検索の条件(全ファイルで共通)
 	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	int*					pnHitCount,			//!< [i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
-	const WCHAR*			pszFullPath,		//!< [in] 処理対象ファイルパス C:\Folder\SubFolder\File.ext
-	const WCHAR*			pszBaseFolder,		//!< [in] 検索フォルダー C:\Folder
-	const WCHAR*			pszFolder,			//!< [in] サブフォルダー SubFolder (!bGrepSeparateFolder) または C:\Folder\SubFolder (!bGrepSeparateFolder)
-	const WCHAR*			pszRelPath,			//!< [in] 相対パス File.ext(bGrepSeparateFolder) または  SubFolder\File.ext(!bGrepSeparateFolder)
-	bool&					bOutputBaseFolder,	//!< 
-	bool&					bOutputFolderName,	//!< 
-	CNativeW&				cmemMessage,		//!< [i/o] Grep結果文字列
-	CNativeW&				cUnicodeBuffer
+	SGrepOutput&			out,				//!< [i/o] 結果の出力先と出力の状態
+	HWND					hWndTarget,			//!< [in] 対象Windows(NULLでファイル)
+	const SGrepFilePath&	path,				//!< [in] 検索するファイルの名前とパス
+	bool&					bOutputFolderName	//!< [i/o] フォルダー名を出力したか
 )
 {
+	// 構造体にまとめた引数を、本体で使ってきた名前で受ける(置換後文字列は使わない)
+	[[maybe_unused]] const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern] = cond;
+	auto& [pcViewDst, pcDlgCancel, pnHitCount, cmemMessage, cUnicodeBuffer, bOutputBaseFolder] = out;
+	const auto& [pszFile, pszFullPath, pszBaseFolder, pszFolder, pszRelPath] = path;
 	int		nHitCount;
 	LONGLONG	nLine;
 	const wchar_t*	pszRes; // 2002/08/29 const付加
@@ -1717,26 +1600,17 @@ private:
 	@date 2013.06.12 Moca 新規作成
 */
 int CGrepAgent::DoGrepReplaceFile(
-	CEditView*				pcViewDst,
-	CDlgCancel*				pcDlgCancel,
-	const wchar_t*			pszKey,
-	const CNativeW&			cmGrepReplace,
-	const WCHAR*			pszFile,
-	const SSearchOption&	sSearchOption,
-	const GrepInfo&			sGrepOption,
-	const CSearchStringPattern& pattern,
-	CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	int*					pnHitCount,
-	const WCHAR*			pszFullPath,
-	const WCHAR*			pszBaseFolder,
-	const WCHAR*			pszFolder,
-	const WCHAR*			pszRelPath,
-	bool&					bOutputBaseFolder,
-	bool&					bOutputFolderName,
-	CNativeW&				cmemMessage,
-	CNativeW&				cUnicodeBuffer
+	const SGrepSearchCond&	cond,				//!< [in] 検索の条件(全ファイルで共通)
+	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	SGrepOutput&			out,				//!< [i/o] 結果の出力先と出力の状態
+	const SGrepFilePath&	path,				//!< [in] 検索するファイルの名前とパス
+	bool&					bOutputFolderName	//!< [i/o] フォルダー名を出力したか
 )
 {
+	// 構造体にまとめた引数を、本体で使ってきた名前で受ける
+	const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern] = cond;
+	auto& [pcViewDst, pcDlgCancel, pnHitCount, cmemMessage, cUnicodeBuffer, bOutputBaseFolder] = out;
+	const auto& [pszFile, pszFullPath, pszBaseFolder, pszFolder, pszRelPath] = path;
 	LONGLONG	nLine = 0;
 	int		nHitCount = 0;
 	ECodeType	nCharCode;

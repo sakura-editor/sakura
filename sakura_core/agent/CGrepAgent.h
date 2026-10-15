@@ -52,45 +52,60 @@ private:
 		CGrepEnumFiles&			cGrepExceptAbsFiles
 	);
 
+	//! Grep 1 回ぶんの検索の条件(全ファイルで共通。読み取り専用)
+	struct SGrepSearchCond {
+		const wchar_t*				pszKey;			//!< 検索キー
+		const CNativeW&				cmGrepReplace;	//!< 置換後文字列(置換のときだけ使う)
+		const SSearchOption&		sSearchOption;	//!< 検索オプション
+		const GrepInfo&				sGrepOption;	//!< Grep実行の入力一式(正規化済み)
+		const CSearchStringPattern&	pattern;		//!< 検索パターン
+	};
+
+	//! フォルダーの列挙の条件(全フォルダーで共通)
+	struct SGrepEnumCond {
+		CGrepEnumKeys&		cGrepEnumKeys;			//!< 検索対象ファイルパターン
+		CGrepEnumFiles&		cGrepExceptAbsFiles;	//!< 除外ファイル絶対パス
+		CGrepEnumFolders&	cGrepExceptAbsFolders;	//!< 除外フォルダー絶対パス
+	};
+
+	//! 結果の出力先と、出力の途中の状態
+	struct SGrepOutput {
+		CEditView*		pcViewDst;					//!< 結果の出力先
+		CDlgCancel*		pcDlgCancel;				//!< Cancelダイアログ
+		int*			pnHitCount;					//!< ヒット数の合計
+		CNativeW&		cmemMessage;				//!< まだ出力していない結果
+		CNativeW&		cUnicodeBuffer;				//!< 1 行の読み込みに使うバッファー
+		bool			bOutputBaseFolder = false;	//!< ベースフォルダー名を出力したか
+	};
+
+	//! 検索するファイル 1 つの名前とパス
+	struct SGrepFilePath {
+		const WCHAR*	pszFile;		//!< 処理対象ファイル名(表示用)
+		const WCHAR*	pszFullPath;	//!< 処理対象ファイルパス C:\Folder\SubFolder\File.ext
+		const WCHAR*	pszBaseFolder;	//!< 検索フォルダー C:\Folder
+		const WCHAR*	pszFolder;		//!< 結果に表示するフォルダー
+		const WCHAR*	pszRelPath;		//!< 結果に表示する相対パス
+	};
+
 	// Grep実行
 	int DoGrepTree(
-		CEditView*				pcViewDst,
-		CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
-		const wchar_t*			pszKey,				//!< [in] 検索パターン
-		const CNativeW&			cmGrepReplace,
-		CGrepEnumKeys&			cGrepEnumKeys,		//!< [in] 検索対象ファイルパターン(!で除外指定)
-		CGrepEnumFiles&			cGrepExceptAbsFiles,
-		CGrepEnumFolders&		cGrepExceptAbsFolders,
+		const SGrepSearchCond&	cond,
+		CBregexp*				pRegexp,
+		SGrepOutput&			out,
+		const SGrepEnumCond&	enumCond,
 		const WCHAR*			pszPath,			//!< [in] 検索対象パス
-		const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベース)
-		const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-		const GrepInfo&			sGrepOption,		//!< [in] Grep実行の入力一式(正規化済み)
-		const CSearchStringPattern& pattern,		//!< [in] 検索パターン
-		CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-		int						nNest,				//!< [in] ネストレベル
-		bool&					bOutputBaseFolder,
-		int*					pnHitCount,			//!< [i/o] ヒット数の合計
-		CNativeW&				cmemMessage,
-		CNativeW&				cUnicodeBuffer
+		const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベースフォルダー)
+		int						nNest				//!< [in] ネストレベル
 	);
 
 	// フォルダー 1 つぶんの対象ファイルを、列挙した順に検索する
 	int DoGrepFiles(
-		CEditView*				pcViewDst,
-		CDlgCancel*				pcDlgCancel,
-		const wchar_t*			pszKey,
-		const CNativeW&			cmGrepReplace,
+		const SGrepSearchCond&	cond,
+		CBregexp*				pRegexp,
+		SGrepOutput&			out,
 		const std::vector<SGrepTargetFile>& vFiles,
 		const WCHAR*			pszPath,
-		const WCHAR*			pszBasePath,
-		const SSearchOption&	sSearchOption,
-		const GrepInfo&			sGrepOption,
-		const CSearchStringPattern& pattern,
-		CBregexp*				pRegexp,
-		bool&					bOutputBaseFolder,
-		int*					pnHitCount,
-		CNativeW&				cmemMessage,
-		CNativeW&				cUnicodeBuffer
+		const WCHAR*			pszBasePath
 	);
 
 	// 処理中のユーザー操作を受け付け、中断されたかを返す
@@ -98,45 +113,20 @@ private:
 
 	// Grep実行
 	int DoGrepFile(
-		CEditView*				pcViewDst,
-		CDlgCancel*				pcDlgCancel,
-		HWND					hWndTarget,
-		const wchar_t*			pszKey,
-		const WCHAR*			pszFile,
-		const SSearchOption&	sSearchOption,
-		const GrepInfo&			sGrepOption,
-		const CSearchStringPattern& pattern,
+		const SGrepSearchCond&	cond,
 		CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		int*					pnHitCount,
-		const WCHAR*			pszFullPath,
-		const WCHAR*			pszBaseFolder,
-		const WCHAR*			pszFolder,
-		const WCHAR*			pszRelPath,
-		bool&					bOutputBaseFolder,
-		bool&					bOutputFolderName,
-		CNativeW&				cmemMessage,
-		CNativeW&				cUnicodeBuffer
+		SGrepOutput&			out,
+		HWND					hWndTarget,
+		const SGrepFilePath&	path,
+		bool&					bOutputFolderName
 	);
 
 	int DoGrepReplaceFile(
-		CEditView*				pcViewDst,
-		CDlgCancel*				pcDlgCancel,
-		const wchar_t*			pszKey,
-		const CNativeW&			cmGrepReplace,
-		const WCHAR*			pszFile,
-		const SSearchOption&	sSearchOption,
-		const GrepInfo&			sGrepOption,
-		const CSearchStringPattern& pattern,
+		const SGrepSearchCond&	cond,
 		CBregexp*				pRegexp,
-		int*					pnHitCount,
-		const WCHAR*			pszFullPath,
-		const WCHAR*			pszBaseFolder,
-		const WCHAR*			pszFolder,
-		const WCHAR*			pszRelPath,
-		bool&					bOutputBaseFolder,
-		bool&					bOutputFolderName,
-		CNativeW&				cmemMessage,
-		CNativeW&				cUnicodeBuffer
+		SGrepOutput&			out,
+		const SGrepFilePath&	path,
+		bool&					bOutputFolderName
 	);
 
 	DWORD m_dwTickAddTail = 0;	// AddTail() を呼び出した時間
