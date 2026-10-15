@@ -8,6 +8,10 @@ set(DIFF_VERSION "2.8.7-1")
 set(DIFF_ZIP_FILE1 "${CMAKE_SOURCE_DIR}/externals/diffutils/diffutils-${DIFF_VERSION}-bin.zip")
 set(DIFF_ZIP_FILE2 "${CMAKE_SOURCE_DIR}/externals/diffutils/diffutils-${DIFF_VERSION}-dep.zip")
 set(DIFF_EXECUTABLE "${OUTPUT_DIRECTORY}/diff.exe")
+set(DIFF_RUNTIME_FILES
+  "${OUTPUT_DIRECTORY}/libintl3.dll"
+  "${OUTPUT_DIRECTORY}/libiconv2.dll"
+)
 
 find_program(DIFF_SYSTEM_EXECUTABLE
   NAMES diff
@@ -23,9 +27,13 @@ if(DIFF_SYSTEM_EXECUTABLE)
 else()
   add_custom_command(
     OUTPUT "${DIFF_EXECUTABLE}"
+    BYPRODUCTS ${DIFF_RUNTIME_FILES}
     COMMAND ${7ZIP_EXECUTABLE} e "${DIFF_ZIP_FILE1}" -o"${OUTPUT_DIRECTORY}" -y bin/diff.exe > NUL
     COMMAND ${7ZIP_EXECUTABLE} e "${DIFF_ZIP_FILE2}" -o"${OUTPUT_DIRECTORY}" -y bin/libintl3.dll bin/libiconv2.dll > NUL
-    COMMENT "Extracting diff.exe from ${DIFF_ZIP_FILE}"
+    DEPENDS
+      "${DIFF_ZIP_FILE1}"
+      "${DIFF_ZIP_FILE2}"
+    COMMENT "Extracting diff.exe from ${DIFF_ZIP_FILE1}"
   )
 endif()
 
