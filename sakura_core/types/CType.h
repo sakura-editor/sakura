@@ -260,36 +260,43 @@ struct STypeConfigMini
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   タイプ別設定アクセサ                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//!ドキュメント種類。共有データ内 STypeConfig へのアクセサも兼ねる。
-//2007.12.13 kobake 作成
-class CTypeConfig{
+
+/*!
+ * @brief ドキュメント種類
+ *
+ * かつては共有データ内 STypeConfig へのアクセサも兼ねていたらしい。
+ *
+ * @date 2007/12/13 kobake 作成
+ */
+class CTypeConfig
+{
 public:
 	CTypeConfig()
-	{
 #ifdef _DEBUG
 		//元がintだったので、未初期化で使うと問題が発生するように、あえて、変な値を入れておく。
-		m_nType = 1234;
+		: CTypeConfig(1234)
 #else
 		//リリース時は、未初期化でも問題が起こりにくいように、ゼロクリアしておく
-		m_nType = 0;
+		: CTypeConfig(0)
 #endif
-	}
-	explicit CTypeConfig(int n)
 	{
-		m_nType = n;
-	}
-	bool IsValidType() const{ return m_nType>=0 && m_nType<MAX_TYPES; }
-	int GetIndex() const
-	{
-		/*assert(IsValid());*/
-		return m_nType;
 	}
 
-	//共有データへの簡易アクセサ
-//	STypeConfig* operator->(){ return GetTypeConfig(); }
-//	STypeConfig* GetTypeConfig();
+	explicit CTypeConfig(int nType)
+		: m_nType(nType)
+	{
+	}
+
+	bool IsValidType() const noexcept { return 0 <= m_nType && m_nType < MAX_TYPES; }
+
+	int GetIndex() const noexcept { return m_nType; }
+
+	explicit operator bool() const noexcept { return IsValidType(); }
+
+	explicit operator int() const noexcept { return GetIndex(); }
+
 private:
-	int m_nType;
+	int m_nType = 0;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
