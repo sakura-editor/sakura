@@ -13,8 +13,12 @@
 #include "charset/CCodeFactory.h"
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
+#include "basis/EditInfo.h"
+#include "config/system_constants.h"
 #include "util/os/MockUser32.hpp"
 
+#include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -1251,6 +1255,303 @@ TEST_F(GrepCommandLineTest, ExceptFileRegexpInvalid)
 	EXPECT_THAT(Grep(L"HIT", L"*;!^[a$", L"XE"), Eq(0u));
 	EXPECT_THAT(shown, StartsWith(LS(STR_GREP_ERR_EXCLUDE_REGEXP)));
 	EXPECT_THAT(LineContaining(GetDocumentText(), L"a.txt("), IsEmpty());
+}
+
+// ---------------------------------------------------------------------------
+// 編集中のテキストから検索(-GFILE=":HWND:<ウィンドウハンドル>")
+// ---------------------------------------------------------------------------
+
+/*!
+	@brief 「編集中のテキストから検索」の対象にする、編集ウィンドウの代わり
+
+	テストの編集ウィンドウ(pcEditWnd)はウィンドウを作らないので、:HWND: の対象にできない。
+	編集ウィンドウと同じクラス名でメッセージ専用ウィンドウを作り、Grep が対象に送るメッセージ
+	(MYWM_GETLINECOUNT・MYWM_GETFILEINFO・MYWM_GETLINEDATA)に CEditWnd と同じ約束で答える。
+	IsSakuraMainWindow() はクラス名で判定するので、Grep の対象として受け付けられる。
+*/
+class FakeEditWindow {
+public:
+	//! path は文書のファイル名(MYWM_GETFILEINFO で返す)。lines は改行コードを含む各行
+	FakeEditWindow(std::wstring path, std::vector<std::wstring> lines, ECodeType charCode = CODE_UTF8)
+		: m_path(std::move(path))
+		, m_lines(std::move(lines))
+		, m_charCode(charCode)
+	{
+		WNDCLASSEXW wc{};
+		wc.cbSize = sizeof(wc);
+		wc.lpfnWndProc = WndProc;
+		wc.hInstance = ::GetModuleHandleW(nullptr);
+		wc.lpszClassName = GSTR_EDITWINDOWNAME;
+		if (::RegisterClassExW(&wc)) {
+			m_bRegistered = true;
+			m_hWnd = ::CreateWindowExW(0, GSTR_EDITWINDOWNAME, L"", 0, 0, 0, 0, 0, HWND_MESSAGE, nullptr, wc.hInstance, this);
+		}
+	}
+
+	~FakeEditWindow()
+	{
+		Destroy();
+		if (m_bRegistered) {
+			::UnregisterClassW(GSTR_EDITWINDOWNAME, ::GetModuleHandleW(nullptr));
+		}
+	}
+
+	FakeEditWindow(const FakeEditWindow&) = delete;
+	FakeEditWindow& operator=(const FakeEditWindow&) = delete;
+
+	HWND GetHwnd() const noexcept { return m_hWnd; }
+
+	//! -GFILE に渡す「:HWND:<16 進>」(GetHwndTitle() は %zx で読む)
+	std::wstring Target() const { return std::format(L":HWND:{:x}", reinterpret_cast<std::uintptr_t>(m_hWnd)); }
+
+	void Destroy()
+	{
+		if (m_hWnd) {
+			::DestroyWindow(m_hWnd);
+			m_hWnd = nullptr;
+		}
+	}
+
+	//! この行(0 始まり)の要求にエラー(-2)を返す
+	void SetErrorLine(size_t nLine) noexcept { m_nErrorLine = nLine; }
+
+private:
+	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		if (uMsg == WM_NCCREATE) {
+			const auto pcs = reinterpret_cast<const CREATESTRUCTW*>(lParam);
+			::SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pcs->lpCreateParams));
+		}
+		if (const auto self = reinterpret_cast<const FakeEditWindow*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA))) {
+			switch (uMsg) {
+			case MYWM_GETLINECOUNT:
+				return LRESULT(self->m_lines.size());
+			case MYWM_GETFILEINFO:
+				self->OnGetFileInfo();
+				return 0;
+			case MYWM_GETLINEDATA:
+				return self->OnGetLineData(size_t(wParam), int(lParam));
+			default:
+				break;
+			}
+		}
+		return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+	}
+
+	void OnGetFileInfo() const
+	{
+		auto& info = GetDllShareData().m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
+		info = EditInfo();
+		info.m_szPath.Assign(m_path.c_str());
+		info.m_nCharCode = m_charCode;
+	}
+
+	//! CEditWnd と同じ約束: 0 以上はオフセットより後ろの長さ(0 は EOF)、負はエラー。共有のワークバッファーに入るだけ写す
+	LRESULT OnGetLineData(size_t nLine, int nOffset) const
+	{
+		if (nLine == m_nErrorLine || m_lines.size() < nLine) {
+			return -2;
+		}
+		if (nLine == m_lines.size()) {
+			return 0;
+		}
+		const auto& line = m_lines[nLine];
+		if (nOffset < 0 || int(line.size()) < nOffset) {
+			return -3;
+		}
+		const size_t rest = line.size() - size_t(nOffset);
+		auto& work = GetDllShareData().m_sWorkBuffer;
+		const size_t count = std::min(rest, work.GetWorkBufferCount<WCHAR>());
+		::wmemcpy(work.GetWorkBuffer<WCHAR>(), line.data() + nOffset, count);
+		return LRESULT(rest);
+	}
+
+	std::wstring m_path;
+	std::vector<std::wstring> m_lines;
+	ECodeType m_charCode;
+	size_t m_nErrorLine = SIZE_MAX;
+	bool m_bRegistered = false;
+	HWND m_hWnd = nullptr;
+};
+
+/*!
+	@brief 編集中のテキストから検索(:HWND:)のテスト
+
+	文書のファイル名はテストのフォルダーの doc.txt にする(ファイルは作らない。作るテストは明記する)。
+	結果のパスは、文書のファイル名をフォルダーとファイル名に分けたものから作られる。
+*/
+struct GrepHwndTargetTest : public GrepOutputSnapshotTest {
+	std::wstring DocPath() const { return (folder.Path() / L"doc.txt").native(); }
+};
+
+//! 文書の各行を検索する。結果のパスは文書のファイル名
+TEST_F(GrepHwndTargetTest, SearchesWindowText)
+{
+	FakeEditWindow window(DocPath(), { L"alpha HIT one\r\n", L"bravo two\r\n", L"HIT x HIT\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const auto path = DocPath();
+	const std::wstring expected = path + L"(1,7): HIT\r\n" + path + L"(3,1): HIT\r\n" + path + L"(3,7): HIT\r\n";
+	DWORD hitCount = 0;
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1", &hitCount), StrEq(expected));
+	EXPECT_THAT(hitCount, Eq(3u));
+}
+
+//! 同じ名前のファイルがあっても、ファイルではなく文書(ウィンドウ)の内容を検索する
+TEST_F(GrepHwndTargetTest, ReadsWindowNotFile)
+{
+	folder.AddFile(L"doc.txt", "none\r\n");
+	FakeEditWindow window(DocPath(), { L"alpha HIT one\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const std::wstring expected = DocPath() + L"(1,7): HIT\r\n";
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1"), StrEq(expected));
+}
+
+//! 該当行(P): CRLF・LF・CR・改行なし(最後の行)のどれでも、改行コードを除いて出力する
+TEST_F(GrepHwndTargetTest, LineEndings)
+{
+	FakeEditWindow window(DocPath(), { L"a HIT\r\n", L"b HIT\n", L"c HIT\r", L"d HIT" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const auto path = DocPath();
+	const std::wstring expected = path + L"(1,3): a HIT\r\n" + path + L"(2,3): b HIT\r\n" + path + L"(3,3): c HIT\r\n" + path + L"(4,3): d HIT\r\n";
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1P"), StrEq(expected));
+}
+
+//! ベースフォルダー(B)・フォルダー毎(D)の見出しは、文書のフォルダーで出す
+TEST_F(GrepHwndTargetTest, FolderHeaders)
+{
+	FakeEditWindow window(DocPath(), { L"alpha HIT one\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const auto dir = folder.Path().native();
+	const std::wstring line = L"・doc.txt(1,7): alpha HIT one\r\n";
+	// B だけ: ベースフォルダーの見出し(■)が文書のフォルダー
+	const std::wstring baseOnly = std::format(L"■\"{}\"\r\n", dir) + line;
+	// D だけ: フォルダーの見出し(■)が文書のフォルダー(絶対パス)
+	const std::wstring separateOnly = std::format(L"■\"{}\"\r\n", dir) + line;
+	// B+D: ベース(◎)が文書のフォルダーで、フォルダーの見出しは空(■ だけ)
+	const std::wstring baseAndSeparate = std::format(L"◎\"{}\"\r\n■\r\n", dir) + line;
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1PB"), StrEq(baseOnly));
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1PD"), StrEq(separateOnly));
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1PBD"), StrEq(baseAndSeparate));
+}
+
+//! 自動判別(K)のときは、文書の文字コードを結果に付ける
+TEST_F(GrepHwndTargetTest, CodeNameFromWindow)
+{
+	FakeEditWindow window(DocPath(), { L"alpha HIT one\r\n" }, CODE_EUC);
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const std::wstring expected = DocPath() + L"(1,7)" + CodeBracket(CODE_EUC) + L": HIT\r\n";
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1K"), StrEq(expected));
+}
+
+//! 検索キーが空なら、文書を読まずにファイル名だけを出して 1 件と数える
+TEST_F(GrepHwndTargetTest, EmptyKeyListsDocumentName)
+{
+	FakeEditWindow window(DocPath(), { L"alpha HIT one\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const std::wstring expected = DocPath() + L"\r\n";
+	DWORD hitCount = 0;
+	EXPECT_THAT(GrepStdout(L"", window.Target(), L"1", &hitCount), StrEq(expected));
+	EXPECT_THAT(hitCount, Eq(1u));
+}
+
+//! 空の文書(0 行)は 0 件で、何も出さない
+TEST_F(GrepHwndTargetTest, EmptyDocument)
+{
+	FakeEditWindow window(DocPath(), {});
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	DWORD hitCount = 1;
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1", &hitCount), IsEmpty());
+	EXPECT_THAT(hitCount, Eq(0u));
+}
+
+//! 一致しない文書は 0 件で、何も出さない
+TEST_F(GrepHwndTargetTest, NoHit)
+{
+	FakeEditWindow window(DocPath(), { L"alpha one\r\n", L"bravo two\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	DWORD hitCount = 1;
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1", &hitCount), IsEmpty());
+	EXPECT_THAT(hitCount, Eq(0u));
+}
+
+/*!
+	共有のワークバッファーより長い行: 何回かに分けて読んだものをつないでから検索する
+
+	1 つ目の HIT はワークバッファーの境目をまたぐ。2 つ目は 3 回目に読む部分にある。
+*/
+TEST_F(GrepHwndTargetTest, KeyAcrossWorkBuffer)
+{
+	const size_t work = GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<WCHAR>();
+	const std::wstring longLine = std::wstring(work - 1, L'x') + L"HIT" + std::wstring(work, L'y') + L"HIT\r\n";
+	FakeEditWindow window(DocPath(), { longLine });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const auto path = DocPath();
+	const std::wstring expected = std::format(L"{}(1,{}): HIT\r\n{}(1,{}): HIT\r\n", path, work, path, work * 2 + 3);
+	DWORD hitCount = 0;
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1", &hitCount), StrEq(expected));
+	EXPECT_THAT(hitCount, Eq(2u));
+}
+
+//! 行の読み出しがエラーを返すと、そこで打ち切る(エラーは出さず、それまでの結果を残す)
+TEST_F(GrepHwndTargetTest, StopsAtLineDataError)
+{
+	FakeEditWindow window(DocPath(), { L"HIT a\r\n", L"HIT b\r\n", L"HIT c\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+	window.SetErrorLine(1);
+
+	const std::wstring expected = DocPath() + L"(1,1): HIT a\r\n";
+	DWORD hitCount = 0;
+	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1P", &hitCount), StrEq(expected));
+	EXPECT_THAT(hitCount, Eq(1u));
+}
+
+//! 置換(-GREPR)を指定しても、:HWND: では検索だけを行い、文書と同じ名前のファイルを書き換えない
+TEST_F(GrepHwndTargetTest, ReplaceOnlySearches)
+{
+	folder.AddFile(L"doc.txt", "HIT\r\n");
+	FakeEditWindow window(DocPath(), { L"HIT a\r\n", L"HIT b\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	const auto replace = LR"(-GREPR="REP")";
+	EXPECT_THAT(Grep(L"HIT", window.Target(), L"XH", replace), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"doc.txt"), StrEq("HIT\r\n"));
+	EXPECT_THAT(folder.Exists(L"doc.txt.skrold"), IsFalse());
+}
+
+//! :HWND: の後ろが 16 進でなければ、0 件で結果にエラーを出す
+TEST_F(GrepHwndTargetTest, NonHexHandle)
+{
+	EXPECT_THAT(Grep(L"HIT", L":HWND:zz", L"X"), Eq(0u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"HWND handle error."), IsTrue());
+}
+
+//! サクラエディタの編集ウィンドウでないウィンドウ(デスクトップ)は受け付けない
+TEST_F(GrepHwndTargetTest, NotEditWindow)
+{
+	const auto target = std::format(L":HWND:{:x}", reinterpret_cast<std::uintptr_t>(::GetDesktopWindow()));
+	EXPECT_THAT(Grep(L"HIT", target, L"X"), Eq(0u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"HWND handle error."), IsTrue());
+}
+
+//! 閉じたウィンドウのハンドルは受け付けない
+TEST_F(GrepHwndTargetTest, ClosedWindow)
+{
+	FakeEditWindow window(DocPath(), { L"HIT\r\n" });
+	ASSERT_THAT(window.GetHwnd(), Ne(nullptr));
+	const auto target = window.Target();
+	window.Destroy();
+
+	EXPECT_THAT(Grep(L"HIT", target, L"X"), Eq(0u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"HWND handle error."), IsTrue());
 }
 
 } // namespace grep_test
