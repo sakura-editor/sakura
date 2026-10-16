@@ -322,6 +322,22 @@ std::wstring AddLastYenPath(std::wstring_view path)
 	return ret;
 }
 
+/*!
+	パスの区切りの / を \ に置き換える
+
+	ファイルダイアログの「ファイル名」に / 区切りのパスを入力したときに使う(Issue #2727)。
+	URL(:// を含むもの)は変えない。
+*/
+std::wstring ReplaceSlashToYen(std::wstring_view path)
+{
+	std::wstring ret{ path };
+	if (ret.find(L"://") != std::wstring::npos) {
+		return ret;
+	}
+	std::ranges::replace(ret, L'/', L'\\');
+	return ret;
+}
+
 /* ファイルのフルパスを、フォルダーとファイル名に分割 */
 /* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile )

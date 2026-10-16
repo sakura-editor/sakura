@@ -85,6 +85,7 @@ void AddLastYenFromDirectoryPath(A& folder)
 }
 
 std::wstring AddLastYenPath(std::wstring_view path);
+std::wstring ReplaceSlashToYen(std::wstring_view path);	//!< パスの区切りの / を \ に置き換える
 void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile );	/* ファイルのフルパスを、フォルダーとファイル名に分割 */
 void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath );/* フォルダー、ファイル名から、結合したパスを作成 */
 BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes );					/* ロングファイル名を取得する */
