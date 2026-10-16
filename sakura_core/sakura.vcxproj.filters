@@ -134,6 +134,12 @@
     <Filter Include="Cpp Source Files\cxx">
       <UniqueIdentifier>{83db0c05-0f12-4241-8ff8-1f4cec6ff190}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\util\os">
+      <UniqueIdentifier>{455493d8-e520-4f42-86bf-780a426fc2fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\util\file">
+      <UniqueIdentifier>{a76cabac-8045-444f-95ee-99914e06eea9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h">
@@ -1152,6 +1158,45 @@
     </ClInclude>
     <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_lambda_arg.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Comdlg32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\User32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Bcrypt.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Shell32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FileHandle.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FileMapping.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FilePointer.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\NamedFilePointer.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\MappedFileView.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FileFind.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\make_system_error.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2348,6 +2393,45 @@
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\cxx\load_string.cpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Comdlg32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\User32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Bcrypt.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Shell32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FileHandle.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FileMapping.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FilePointer.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\NamedFilePointer.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\MappedFileView.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FileFind.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\cxx\lock_resource.cpp">
       <Filter>Cpp Source Files\cxx</Filter>
     </ClCompile>
   </ItemGroup>

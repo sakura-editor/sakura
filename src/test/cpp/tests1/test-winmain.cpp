@@ -25,6 +25,7 @@
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "util/os/make_system_error.hpp"
 #include "util/file.h"
 #include "config/system_constants.h"
 #include "_main/CCommandLine.h"
@@ -315,7 +316,7 @@ cxx::ProcessHolder CreateSakuraProcess(
 		&pi					// プロセス情報(作成されたプロセス情報を格納する構造体)
 	))
 	{
-		cxx::raise_system_error("create process failed.");
+		throw cxx::make_system_error("create process failed.");
 	}
 
 	// 開いたハンドルは使わないので閉じておく
@@ -340,7 +341,7 @@ cxx::ProcessHolder CreateControlProcess(std::wstring_view profileName)
 	// プロセス起動前に初期化完了イベントを作成する
 	cxx::HandleHolder hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
 	if (!hEvent || ERROR_ALREADY_EXISTS == ::GetLastError()) {
-		cxx::raise_system_error("create event failed.");
+		throw cxx::make_system_error("create event failed.");
 	}
 
 	std::wstring title{ L"sakura control process" };
@@ -539,7 +540,7 @@ void TerminateControlProcess(
 			// トレイウインドウからプロセスIDを取得する
 			::GetWindowThreadProcessId(hTrayWnd, &dwControlProcessId);
 			if (!dwControlProcessId) {
-				cxx::raise_system_error("dwControlProcessId can't be retrived.");
+				throw cxx::make_system_error("dwControlProcessId can't be retrived.");
 			}
 		}
 
@@ -555,7 +556,7 @@ void TerminateControlProcess(
 		if (ERROR_INVALID_PARAMETER == ::GetLastError()) {
 			return;
 		}
-		cxx::raise_system_error("hControlProcess can't be opened.");
+		throw cxx::make_system_error("hControlProcess can't be opened.");
 	}
 
 	// メインウインドウが閉じられた後、プロセスが完全に終了するまで待つ

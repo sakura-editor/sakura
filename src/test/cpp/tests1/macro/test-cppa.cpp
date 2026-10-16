@@ -7,6 +7,7 @@
 #include "pch.h"
 #include "macro/CPPA.h"
 
+#include "util/os/MockUser32.hpp"
 #include "window/EditorTestSuite.hpp"
 
 #include "eval_outputs.hpp"

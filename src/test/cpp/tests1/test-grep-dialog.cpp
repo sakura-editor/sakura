@@ -11,6 +11,8 @@
 #include "dlg/CDlgGrepReplace.h"
 #include "func/Funccode.h"
 #include "env/DLLSHAREDATA.h"
+#include "util/os/MockUser32.hpp"
+
 #include "config/app_constants.h"
 
 #include <initializer_list>

@@ -94,7 +94,7 @@ public:
 	 *
 	 * @param[in] rhs 代入する文字列
 	 * @return 自分自身への参照
-	 * @throws std::out_of_range 文字列が長過ぎて入り切らない場合。
+	 * @throws std::overflow_error 文字列が長過ぎて入り切らない場合。
 	 */
 	constexpr Me& operator = (const Base& rhs)
 	{

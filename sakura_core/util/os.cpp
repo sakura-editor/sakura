@@ -1,14 +1,27 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "os.h"
+#include "util/os.h"
+
 #include "util/module.h"
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
+
+#include "debug/Debug1.h"
+#include "util/file.h"
+#include "util/file/FileMapping.hpp"
+#include "util/file/NamedFilePointer.hpp"
+#include "util/os/Kernel32.hpp"
+#include "util/os/make_system_error.hpp"
+
+#include <cstdint>
+#include <format>
+#include <stdexcept>
+#include <string>
 
 #pragma comment(lib, "UxTheme.lib")
 
@@ -281,20 +294,31 @@ BOOL IsWow64()
  * @brief コンストラクター
  *
  * カレントディレクトリを取得してメンバー変数に保存します。
- *
- * @throw std::overflow_error パスが長過ぎて保存できなかったとき
- * @throw std::system_error Windowsがエラーを返したとき
  */
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {
 	// カレントディレクトリの取得を試みる
 	try {
-		m_szCurDir = cxx::GetCurrentDirectoryW();
+		const auto curDir = cxx::GetCurrentDirectoryW();
+
+		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
+		if (const auto maxLength = decltype(m_szCurDir)::size();
+			maxLength <= curDir.length())
+		{
+			throw std::system_error(
+				std::make_error_code(std::errc::filename_too_long),
+				std::format("current path is too long. (length: {}, allowed: {})", curDir.length(), maxLength - 1)
+			);
+		}
+
+		m_szCurDir = curDir;
 	}
 	// 失敗を検出したとき
-	catch (const std::exception& e) {
+	catch (const std::system_error& e) {
 		// ログを出力する
 		TRACE("fail: %hs", e.what());
+
+		// 例外を再スローする
 		throw;
 	}
 }
@@ -393,44 +417,9 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	return bRet;
 }
 
-DWORD Kernel32::GetCurrentDirectoryW(
-	_In_ DWORD nBufferLength,
-	_Out_writes_to_opt_( nBufferLength, return +1 )
-	LPWSTR lpBuffer
-) const
-{
-	return ::GetCurrentDirectoryW(nBufferLength, lpBuffer);
-}
-
-DWORD Kernel32::GetModuleFileNameW(
-	_In_opt_ HMODULE hModule,
-	_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
-	LPWSTR lpFilename,
-	_In_ DWORD nSize
-) const
-{
-	return ::GetModuleFileNameW(hModule, lpFilename, nSize);
-}
-
-UINT Kernel32::GetSystemDirectoryW(
-	_Out_writes_to_opt_( uSize, return +1 )
-	LPWSTR lpBuffer,
-	_In_ UINT uSize
-) const
-{
-	return ::GetSystemDirectoryW(lpBuffer, uSize);
-}
-
-BOOL Kernel32::SetCurrentDirectoryW(
-	_In_ LPCWSTR lpPathName
-) const
-{
-	return ::SetCurrentDirectoryW(lpPathName);
-}
-
 namespace cxx {
 
-GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
+	GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
 {
 	assert(!files.empty());
 
@@ -571,12 +560,15 @@ std::wstring GetCurrentDirectoryW()
 	const auto ret = Kernel32::getInstance()->GetCurrentDirectoryW(DWORD(std::size(buf)), buf.data());
 
 	if (!ret) {
-		cxx::raise_system_error("GetCurrentDirectoryW() failed");
+		throw cxx::make_system_error("GetCurrentDirectoryW() failed");
 	}
 
 	if (std::size(buf) < ret) {
 		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1)
+		);
 	}
 
 	return std::wstring(buf.c_str(), ret);
@@ -597,12 +589,15 @@ std::wstring GetModuleFileNameW(
 	const auto ret = Kernel32::getInstance()->GetModuleFileNameW(hModule, buf.data(), DWORD(std::size(buf)));
 
 	if (!ret) {
-		cxx::raise_system_error("GetModuleFileNameW() failed");
+		throw cxx::make_system_error("GetModuleFileNameW() failed");
 	}
 
 	if (std::size(buf) <= ret) {
 		// モジュールのファイルパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("module file path is too long. (length: at least {}, allowed: {})", ret, std::size(buf) - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("module file path is too long. (length: at least {}, allowed: {})", ret, std::size(buf) - 1)
+		);
 	}
 
 	return std::wstring(buf.c_str(), ret);
@@ -620,15 +615,159 @@ std::wstring GetSystemDirectoryW()
 	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
 
 	if (!ret) {
-		cxx::raise_system_error("GetSystemDirectoryW() failed");
+		throw cxx::make_system_error("GetSystemDirectoryW() failed");
 	}
 
 	if (std::size(buf) < ret) {
 		// システムディレクトリのパスが長過ぎる場合、例外を投げる
-		throw std::overflow_error(std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1));
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1)
+		);
 	}
 
 	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief 一時フォルダのパスを取得する
+ *
+ * @return 一時フォルダのパス
+ */
+std::wstring GetTempPath2W()
+{
+	// Kernel32.DLLのハンドルを取得する
+	const auto kernel32 = ::GetModuleHandleW(L"KERNEL32.DLL");
+
+	if (!kernel32) throw cxx::make_system_error("Kernel32.DLL was not found.");	// このthrowは呼ばれない
+
+	// GetTempPath2の関数ポインタを取得する
+	decltype(&::GetTempPath2W) pfnGetTempPath = nullptr;
+
+	pfnGetTempPath = std::bit_cast<decltype(pfnGetTempPath)>(Kernel32::getInstance()->GetProcAddress(kernel32, "GetTempPath2W"));
+
+	// Windows 10 1607より古いと見付からない可能性がある
+	if (!pfnGetTempPath) pfnGetTempPath = &::GetTempPathW;
+
+	SSuperLongFilePath buf;
+
+	// 戻り値は 0～261 の範囲に収まる仕様。
+	const auto ret = pfnGetTempPath(DWORD(std::size(buf)), std::data(buf));
+
+	if (!ret) throw cxx::make_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief DLLを読み込む
+ */
+HMODULE LoadLibraryExW(
+	std::wstring_view fileName,
+	_Reserved_ HANDLE hFile,
+	_In_ DWORD dwFlags
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _FileName{ fileName };
+
+	// NUL終端文字列を取り出す
+	const auto lpFileName = _FileName.c_str();
+
+	// パラメーターチェック
+	if (!lpFileName || !lpFileName[0]) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::invalid_argument("fileName is required.");
+	}
+
+	const auto hModule = Kernel32::getInstance()->LoadLibraryExW(
+		lpFileName,
+		hFile,
+		dwFlags
+	);
+
+	if (!hModule) {
+		throw cxx::make_system_error("LoadLibraryExW() failed");
+	}
+
+	return hModule;
+}
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * 同名APIを呼び出すラッパー関数。
+ * 使い勝手を上げるため、一部の引数を省略可能にしている。
+ *
+ * optBackupFileNameに指定したファイルは問答無用で上書きされることに注意。
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName,
+	_In_ DWORD dwReplaceFlags
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> destination{ replacedFileName };
+	cxx::NullTerminatedString<WCHAR> source{ replacementFileName };
+
+	const auto path1 = std::filesystem::path{ destination.str() };
+	if (!path1.is_absolute())
+	{
+		throw std::invalid_argument("replacedFileName must be absolute path.");
+	}
+
+	if (!fexist(path1))
+	{
+		throw std::invalid_argument("replacedFileName must exist.");
+	}
+
+	if (const auto path2 = std::filesystem::path{ source.str() };
+		!fexist(path2))
+	{
+		throw std::invalid_argument("replacementFileName must exist.");
+	}
+
+	auto backupFileName = optBackupFileName.value_or(L"");
+
+	if (std::wstring::npos != backupFileName.find_first_of(LR"(/\)"))
+	{
+		throw std::invalid_argument("backupFileName must not contain path separators.");
+	}
+
+	LPCWSTR lpBackupFileName = nullptr;
+
+	if (!backupFileName.empty())
+	{
+		// フルパスにする
+		backupFileName = path1.parent_path() / backupFileName;
+
+		// APIに渡すためにNUL終端文字列を取り出す
+		lpBackupFileName = backupFileName.c_str();
+	}
+
+	const auto notImplemented = nullptr;
+	const auto reserved = nullptr;
+
+	// ファイルを置換する
+	if (const auto ret = Kernel32::getInstance()->ReplaceFileW(
+		destination.c_str(),
+		source.c_str(),
+		lpBackupFileName,
+		dwReplaceFlags,
+		notImplemented,
+		reserved
+	);
+		!ret)
+	{
+		throw cxx::make_system_error("ReplaceFileW() failed");
+	}
 }
 
 /*!
@@ -647,7 +786,7 @@ void SetCurrentDirectoryW(
 	if (const auto ret = Kernel32::getInstance()->SetCurrentDirectoryW(path.c_str());
 		!ret)
 	{
-		cxx::raise_system_error("SetCurrentDirectoryW() failed");
+		throw cxx::make_system_error("SetCurrentDirectoryW() failed");
 	}
 }
 

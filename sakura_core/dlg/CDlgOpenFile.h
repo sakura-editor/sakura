@@ -22,12 +22,13 @@
 #define SAKURA_CDLGOPENFILE_8084B9DB_6463_4168_BA59_132EB2596AE7_H_
 #pragma once
 
-#include <memory>
-#include <vector>
+#include "doc/CDocListener.h"	// SLoadInfo, SSaveInfo
 #include "util/design_template.h"
 
-struct SLoadInfo;	// doc/CDocListener.h
-struct SSaveInfo;	// doc/CDocListener.h
+#include <memory>
+#include <span>
+#include <string>
+#include <vector>
 
 /*! フィルタ設定 */
 enum EFilter {
@@ -40,6 +41,8 @@ enum EFilter {
 class IDlgOpenFile
 {
 public:
+	virtual ~IDlgOpenFile() = default;
+
 	virtual void Create(
 		HINSTANCE					hInstance,
 		HWND						hwndParent,
@@ -91,7 +94,7 @@ class CDlgOpenFile : public TSakuraSingleton<CDlgOpenFile>, public IDlgOpenFile
 public:
 	//コンストラクタ・デストラクタ
 	CDlgOpenFile();
-	virtual ~CDlgOpenFile() = default;
+	~CDlgOpenFile() override = default;
 
 	void Create(
 		HINSTANCE					hInstance,

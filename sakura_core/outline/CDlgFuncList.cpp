@@ -34,6 +34,7 @@
 #include "uiparts/CGraphics.h"
 #include "util/shell.h"
 #include "util/os.h"
+#include "util/os/User32.hpp"
 #include "util/input.h"
 #include "util/window.h"
 #include "env/CAppNodeManager.h"

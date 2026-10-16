@@ -16,8 +16,6 @@
 #include <string_view>
 #include <variant>
 
-#include "debug/Debug2.h"
-
 // 2007.10.19 kobake
 // string.h で定義されている関数を拡張したようなモノ達
 

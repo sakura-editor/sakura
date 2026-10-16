@@ -54,7 +54,14 @@ private:
 
 #ifdef ENABLE_UNUSED_LEGACY_CODES
 
-//!一時ファイル
+/*!
+ * @brief Cランタイム「名無しの一時ファイル」
+ *
+ * 名無しの一時ファイルを作るための機構。
+ *
+ * @note C4996警告が出るうえ、TOCTOUの危険性があるので、使わないことにする。
+
+ */
 class CTmpFile{
 	using Me = CTmpFile;
 

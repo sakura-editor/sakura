@@ -1,11 +1,12 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "io/CFile.h"
+
 #include "window/CEditWnd.h" // 変更予定
 #include "CSelectLang.h"
 

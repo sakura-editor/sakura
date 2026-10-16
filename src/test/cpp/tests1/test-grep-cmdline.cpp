@@ -15,6 +15,7 @@
 #include "mem/CNativeW.h"
 #include "basis/EditInfo.h"
 #include "config/system_constants.h"
+#include "util/os/MockUser32.hpp"
 
 #include <algorithm>
 #include <cstdint>

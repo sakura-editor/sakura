@@ -16,16 +16,6 @@
 #include <Windows.h>
 #include <Shlwapi.h>
 
-//! Shell32.dll呼出をテスト可能にするDIっぽいもの
-struct Shell32 : public TSakuraSingleton<Shell32>
-{
-	using Me = Shell32;
-
-	~Shell32() override = default;
-
-	virtual BOOL	ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo) const;
-};
-
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 /* Shell Interface系(?) */

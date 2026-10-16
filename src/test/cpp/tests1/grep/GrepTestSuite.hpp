@@ -17,6 +17,7 @@
 #include "basis/GrepInfo.h"
 #include "charset/charset.h"
 #include "doc/CEditDoc.h"
+#include "util/os/MockUser32.hpp"
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"

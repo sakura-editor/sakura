@@ -9,6 +9,7 @@
 
 #include "charset/charcode.h"	//WCODE::IsLineDelimiter
 #include "env/CShareData.h"	//GetDllShareData
+#include "env/DLLSHAREDATA.h"
 
 void SetGrepResult(
 	/* データ格納先 */

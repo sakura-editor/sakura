@@ -148,6 +148,19 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\python3_config.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\main\cpp\util\file\FileFind.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\file\FileHandle.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\file\FileMapping.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\file\FilePointer.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\file\MappedFileView.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\file\NamedFilePointer.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\Bcrypt.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\Comdlg32.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\make_system_error.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\Shell32.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\User32.hpp" />
     <ClInclude Include="apiwrap\CommonControl.h" />
     <ClInclude Include="apiwrap\StdApi.h" />
     <ClInclude Include="apiwrap\StdControl.h" />
@@ -510,6 +523,19 @@
     <ResourceCompile Include="sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\main\cpp\cxx\lock_resource.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\file\FileFind.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\file\FileHandle.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\file\FileMapping.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\file\FilePointer.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\file\MappedFileView.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\file\NamedFilePointer.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\Bcrypt.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\Comdlg32.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\Shell32.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\User32.cpp" />
     <ClCompile Include="apiwrap\StdApi.cpp" />
     <ClCompile Include="apiwrap\StdControl.cpp" />
     <ClCompile Include="basis\CErrorInfo.cpp" />

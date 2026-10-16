@@ -25,6 +25,7 @@
 #include "convert/CConvert_ZenkataToHankata.h"
 
 #include "config/system_constants.h"
+#include "util/os/MockUser32.hpp"
 #include "util/tchar_convert.h"
 
 #include "dlg/ModalDialogCloser.hpp"
