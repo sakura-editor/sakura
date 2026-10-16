@@ -303,19 +303,29 @@ private:
 //                        タイプ設定                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CType{
+/*!
+ * @brief タイプ別設定定義クラス
+ *
+ * タイプ別設定の初期値をソースコード内にベタ書きするためのクラス。
+ */
+class CType
+{
 public:
-	virtual ~CType(){ }
-	void InitTypeConfig(int nIdx, STypeConfig&);
+	virtual ~CType() = default;
+
+	void InitTypeConfig(int nIdx, STypeConfig& type);
+
 protected:
-	virtual void InitTypeConfigImp(STypeConfig* pType) = 0;
+	virtual void InitTypeConfigImp(
+		STypeConfig* pType
+	) = 0;
 };
 
 #define GEN_CTYPE(CLASS_NAME) \
-class CLASS_NAME : public CType{ \
-protected: \
-	void InitTypeConfigImp(STypeConfig* pType); \
-};
+	class CLASS_NAME final : public CType{ \
+	protected: \
+		void InitTypeConfigImp(STypeConfig* pType) override; \
+	};
 
 GEN_CTYPE(CType_Asm)
 GEN_CTYPE(CType_Awk)
