@@ -19,6 +19,7 @@
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
+using namespace cxx;
 using namespace testing;
 
 // CStrictIntegerっぽい型を検出するコンセプトのテスト
@@ -155,32 +156,36 @@ TEST(string_ex, auto_sprintf_sW)
 TEST(string_ex, ConvertPrintfArgReturnsSourcePointerA)
 {
 	const auto source = "test"s;
-	EXPECT_THAT(cxx::ConvertPrintfArg(source), Eq(source.c_str()));
+
+	EXPECT_THAT(
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(source)),
+		Eq(source.c_str())
+	);
 }
 
 TEST(string_ex, ConvertPrintfArgReturnsSourcePointerW)
 {
 	const auto source = L"test"s;
-	EXPECT_THAT(cxx::ConvertPrintfArg(source), Eq(source.c_str()));
+
+	EXPECT_THAT(
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(source)),
+		Eq(source.c_str())
+	);
 }
 
 TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferA)
 {
 	EXPECT_THAT(
-		[] { cxx::ConvertPrintfArg("test data"sv.substr(0, 4)); },
-		ThrowsMessage<std::invalid_argument>(
-			Eq("invalid usage")
-		)
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1("test data"sv.substr(0, 4))),
+		StrEq("test")
 	);
 }
 
 TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferW)
 {
 	EXPECT_THAT(
-		[] { cxx::ConvertPrintfArg(L"test data"sv.substr(0, 4)); },
-		ThrowsMessage<std::invalid_argument>(
-			Eq("invalid usage")
-		)
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(L"test data"sv.substr(0, 4))),
+		StrEq(L"test")
 	);
 }
 
@@ -397,10 +402,10 @@ TEST(string_ex, strprintfW102)
 
 TEST(string_ex, strprintfW103)
 {
-	EXPECT_THAT(([] {
-		// 書式化パラメーターに部分文字列を検出したら例外を投げること
-		strprintf(L"%s", L"test data"sv.substr(0, 4)); }),
-		ThrowsMessage<std::invalid_argument>(Eq("invalid usage"))
+	// 書式化パラメータには部分文字列を指定できるようにした
+	EXPECT_THAT(
+		strprintf(L"%s", L"test data"sv.substr(0, 4)),
+		StrEq(L"test")
 	);
 }
 
