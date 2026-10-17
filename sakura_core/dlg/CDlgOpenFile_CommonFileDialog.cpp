@@ -237,6 +237,27 @@ public:
 	{}
 };
 
+/*!
+	ファイル名ボックスに入力されたパスの区切りの / を \ に置き換える(Issue #2727)
+
+	「開く」(IDOK)をダイアログが処理する前に呼ぶ。ダイアログは / を区切りとして扱わないため。
+*/
+static void ReplaceSlashInFileNameBox( HWND hwndOpenDlg )
+{
+	HWND hwndFilebox = ::GetDlgItem( hwndOpenDlg, cmb13 );		// ファイル名コンボ（Windows 2000タイプ）
+	if( !::IsWindow( hwndFilebox ) ){
+		hwndFilebox = ::GetDlgItem( hwndOpenDlg, edt1 );		// ファイル名エディット（レガシータイプ）
+		if( !::IsWindow( hwndFilebox ) ){
+			return;
+		}
+	}
+	std::wstring text( ::GetWindowTextLength( hwndFilebox ), L'\0' );
+	::GetWindowText( hwndFilebox, text.data(), int(text.size()) + 1 );
+	if( const auto replaced = ReplaceSlashToYen( text ); replaced != text ){
+		::SetWindowText( hwndFilebox, replaced.c_str() );
+	}
+}
+
 /*
 || 	開くダイアログのサブクラスプロシージャ
 
@@ -267,6 +288,9 @@ LRESULT APIENTRY CDlgOpenFile_CommonFileDialog::OFNHookProcMain( HWND hwnd, UINT
 				break;
 			case chx1:	// The read-only check box
 				pData->m_bViewMode = ( 0 != ::IsDlgButtonChecked( hwnd , chx1 ) );
+				break;
+			case IDOK:
+				ReplaceSlashInFileNameBox( hwnd );
 				break;
 			default:
 				break;

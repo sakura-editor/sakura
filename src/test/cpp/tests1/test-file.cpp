@@ -899,6 +899,28 @@ TEST(file, IsValidPathAvailableChar)
 }
 
 /*!
+ * @brief パスの区切りの / を \ に置き換える(Issue #2727)
+ */
+TEST(file, ReplaceSlashToYen)
+{
+	EXPECT_THAT(ReplaceSlashToYen(L"C:/work/a.txt"), StrEq(LR"(C:\work\a.txt)"));
+	EXPECT_THAT(ReplaceSlashToYen(LR"(C:\work/sub\a.txt)"), StrEq(LR"(C:\work\sub\a.txt)"));		// 混在
+	EXPECT_THAT(ReplaceSlashToYen(L"//server/share/a.txt"), StrEq(LR"(\\server\share\a.txt)"));	// UNC
+	EXPECT_THAT(ReplaceSlashToYen(L"sub/a.txt"), StrEq(LR"(sub\a.txt)"));						// 相対パス
+	EXPECT_THAT(ReplaceSlashToYen(LR"(C:\work\a.txt)"), StrEq(LR"(C:\work\a.txt)"));			// 変わらない
+	EXPECT_THAT(ReplaceSlashToYen(L""), StrEq(L""));
+
+	// 複数選択の書き方(引用符で囲んだ名前の並び)も、区切りだけが変わる
+	const std::wstring multi = LR"("C:/work/a.txt" "b.txt")";
+	const std::wstring multiExpected = LR"("C:\work\a.txt" "b.txt")";
+	EXPECT_THAT(ReplaceSlashToYen(multi), StrEq(multiExpected));
+
+	// URL は変えない
+	EXPECT_THAT(ReplaceSlashToYen(L"https://example.com/a.txt"), StrEq(L"https://example.com/a.txt"));
+	EXPECT_THAT(ReplaceSlashToYen(L"file:///C:/work/a.txt"), StrEq(L"file:///C:/work/a.txt"));
+}
+
+/*!
  * @brief exeファイルパスの取得
  */
 TEST(file, GetExeFileName)

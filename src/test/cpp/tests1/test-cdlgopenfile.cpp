@@ -255,6 +255,52 @@ TEST_P(FileDialogTest, DoModalOpenDlg102)
 }
 
 /*!
+ * ファイルを開くダイアログ: / 区切りのフルパスを入力しても開ける(Issue #2727)
+ *
+ * 旧スタイルは、GetOpenFileNameW のモックから本物の API を呼んでダイアログを表示させる。
+ * ファイル名ボックスの ID(1148)は、旧スタイルでも同じ(cmb13)。
+ */
+TEST_P(FileDialogTest, DoModalOpenDlg103)
+{
+	if (!GetParam()) {
+		auto pComdlg32 = static_cast<MockComdlg32*>(Comdlg32::getInstance());
+		EXPECT_CALL(*pComdlg32, GetOpenFileNameW(_))
+			.Times(1)
+			.WillOnce([pComdlg32] (LPOPENFILENAMEW pOfn) { return pComdlg32->Comdlg32::GetOpenFileNameW(pOfn); });
+	}
+
+	const auto path = GetExeFileName().replace_filename(L"test.txt");
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// ファイルが存在しない、のメッセージが出ないようにファイルを作る
+	std::ofstream ofs{ path };
+	ofs.close();
+
+	const auto slashPath = path.generic_wstring();	// C:/…/test.txt
+
+	// 旧スタイルのダイアログのタイトルは「ファイルを開く」
+	const std::wstring dialogTitle = GetParam() ? openDialogTitle : L"ファイルを開く";
+
+	dialog::ModalDialogCloser closer(dialogTitle, [&slashPath] (HWND hWndDlg) {
+		// DoModalOpenDlg001 と同じく、ファイル名ボックスの ID を決め打ち
+		apiwrap::SetDlgItemTextW(hWndDlg, 1148, slashPath.c_str());
+		SendDlgCommand(hWndDlg, IDOK);
+	});
+
+	SLoadInfo loadInfo{};
+	std::vector<std::wstring> files;
+	const bool ret = CDlgOpenFile::getInstance()->DoModalOpenDlg(&loadInfo, &files, true);
+
+	EXPECT_THAT(ret, testing::IsTrue());
+	ASSERT_THAT(files.size(), testing::Eq(1u));
+	EXPECT_THAT(std::filesystem::equivalent(files[0], path, ec), testing::IsTrue());
+
+	// 作成したファイルを削除する
+	std::filesystem::remove(path, ec);
+}
+
+/*!
  * 名前を付けて保存ダイアログの表示テスト
  */
 TEST_P(FileDialogTest, DoModalSaveDlg001)
