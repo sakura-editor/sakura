@@ -25,14 +25,28 @@ public:
 	void AppendString( const char* pszData, size_t nLength );  //!< バッファの最後にデータを追加する。nLengthは文字単位。
 
 	//! バッファの最後にデータを追加する (フォーマット機能付き)
-	template <typename... Args>
+	template <typename... Params>
 	void AppendStringF(
 		std::string_view format,
-		const Args&... args
+		const Params&... params
 	)
 	{
+		using namespace cxx;
+
+		const auto phase1ConvertedArgs = std::make_tuple(
+			PrintfArg::ConvertArgPhase1(std::as_const(params))...
+		);
+
 		// 整形によって追加される文字数をカウント
-		const int additional = cxx::_scprintf(format.data(), std::as_const(args)...);
+		const int additional = std::apply(
+			[pszFormat = format.data()] (const auto&... args) {
+				return cxx::_scprintf(
+					pszFormat,
+					std::as_const(args)...
+				);
+			},
+			phase1ConvertedArgs
+		);
 
 		if (additional < 0) {
 			const auto e = errno;
@@ -52,7 +66,16 @@ public:
 		auto buffer = std::span(&GetStringPtr()[currentLength], additional + 1);
 
 		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-		const auto added = cxx::_sprintf_s(buffer, format.data(), std::as_const(args)...);
+		const auto added = std::apply(
+			[&buffer, pszFormat = format.data()](const auto&... args) {
+				return cxx::_sprintf_s(
+					buffer,
+					pszFormat,
+					std::as_const(args)...
+				);
+			},
+			phase1ConvertedArgs
+		);
 
 		if (added <= 0) return;
 
