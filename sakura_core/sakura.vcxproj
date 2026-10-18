@@ -154,6 +154,7 @@
     <ClInclude Include="..\src\main\cpp\util\file\FilePointer.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\MappedFileView.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\NamedFilePointer.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\format\PrintfArg.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\Bcrypt.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\Comdlg32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp" />
