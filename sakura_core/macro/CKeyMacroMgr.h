@@ -7,7 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, aroka
 	Copyright (C) 2002, YAZAKI, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -45,7 +45,7 @@ public:
 	Me& operator = (const Me&) = delete;
 	CKeyMacroMgr(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	~CKeyMacroMgr();
+	~CKeyMacroMgr() override;
 
 	/*
 	||  Attributes & Operations
@@ -59,8 +59,16 @@ public:
 	//@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
 	//	2007.07.20 genta flags追加
 	bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const override;	/* キーボードマクロの実行 */
-	BOOL LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath) override;		/* キーボードマクロをファイルから読み込む */
-	BOOL LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode) override;	/* キーボードマクロを文字列から読み込む */
+
+	BOOL LoadKeyMacro(
+		HINSTANCE hInstance [[maybe_unused]],
+		const WCHAR* pszPath
+	) override;
+
+	BOOL LoadKeyMacroStr(
+		HINSTANCE hInstance [[maybe_unused]],
+		const WCHAR* pszCode
+	) override;
 	
 	// Apr. 29, 2002 genta
 	static CMacroManagerBase* Creator(const WCHAR* ext);

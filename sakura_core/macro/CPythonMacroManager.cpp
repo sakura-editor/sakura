@@ -2,7 +2,7 @@
 	@brief Python Macro Manager
 */
 /*
-	Copyright (C) 2018-2022 Sakura Editor Organization
+	Copyright (C) 2018-2026 Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -558,31 +558,48 @@ bool wide2utf8(std::string& utf8, const WCHAR* psz)
 	return true;
 }
 
-BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance [[maybe_unused]], const WCHAR* pszPath)
+BOOL CPythonMacroManager::LoadKeyMacro(
+	HINSTANCE hInstance [[maybe_unused]],
+	const WCHAR* pszPath
+)
 {
-	FILE* f = _wfopen(pszPath, L"rb");
-	if (!f) {
+	// CTextInputStream は UTF-8 BOM がないファイルを SJIS とみなしてしまうので使わない
+	FILE* f = nullptr;
+	if (::_wfopen_s(&f, pszPath, L"rb")) {
+		ResetReady();
 		return FALSE;
 	}
+
 	m_wstrPath = pszPath;
 	wide2utf8(m_strPath, pszPath);
 	long sz = _filelength(_fileno(f));
 	m_strMacro.resize(sz);
 	fread(&m_strMacro[0], 1, sz, f);
 	fclose(f);
+
 	// detect and erase UTF-8 BOM
 	constexpr const BYTE utf8BOM[]{ 0xef, 0xbb, 0xbf };
 	if (sz >= 3 && memcmp(&m_strMacro[0], utf8BOM, 3) == 0) {
 		m_strMacro.erase(0, 3);
 	}
+
+	SetReady();
+
 	return TRUE;
 }
 
-BOOL CPythonMacroManager::LoadKeyMacroStr(HINSTANCE hInstance [[maybe_unused]], const WCHAR* pszCode)
+BOOL CPythonMacroManager::LoadKeyMacroStr(
+	HINSTANCE hInstance [[maybe_unused]],
+	const WCHAR* pszCode
+)
 {
 	m_strPath.clear();
 	m_wstrPath.clear();
-	return wide2utf8(m_strMacro, pszCode) ? TRUE : FALSE;
+	const auto bRet = wide2utf8(m_strMacro, pszCode) ? TRUE : FALSE;
+
+	SetReady();
+
+	return bRet;
 }
 
 // static

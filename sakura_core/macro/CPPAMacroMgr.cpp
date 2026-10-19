@@ -7,13 +7,14 @@
 /*
 	Copyright (C) 2002, YAZAKI, genta
 	Copyright (C) 2004, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "CPPAMacroMgr.h"
+#include "macro/CPPAMacroMgr.h"
+
 #include "mem/CNativeW.h"
 #include "CMacroFactory.h"
 #include <string.h>
@@ -24,10 +25,12 @@ CPPA CPPAMacroMgr::m_cPPA;
 
 CPPAMacroMgr::CPPAMacroMgr()
 {
+	return;
 }
 
 CPPAMacroMgr::~CPPAMacroMgr()
 {
+	return;
 }
 
 /** PPAマクロの実行
@@ -45,11 +48,14 @@ bool CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 /*! キーボードマクロの読み込み（ファイルから）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacro( [[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszPath )
+BOOL CPPAMacroMgr::LoadKeyMacro(
+	HINSTANCE hInstance [[maybe_unused]],
+	const WCHAR* pszPath
+)
 {
 	CTextInputStream in( pszPath );
 	if(!in){
-		m_nReady = false;
+		ResetReady();
 		return FALSE;
 	}
 
@@ -65,18 +71,22 @@ BOOL CPPAMacroMgr::LoadKeyMacro( [[maybe_unused]] HINSTANCE hInstance, const WCH
 
 	m_cBuffer.SetNativeData( cmemWork );	//	m_cBufferにコピー
 
-	m_nReady = true;
+	SetReady();
 	return TRUE;
 }
 
 /*! キーボードマクロの読み込み（文字列から）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacroStr( [[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszCode )
+BOOL CPPAMacroMgr::LoadKeyMacroStr(
+	HINSTANCE hInstance [[maybe_unused]],
+	const WCHAR* pszCode
+)
 {
 	m_cBuffer.SetString( pszCode );	//	m_cBufferにコピー
 
-	m_nReady = true;
+	SetReady();
+
 	return TRUE;
 }
 
