@@ -1207,6 +1207,314 @@ TEST_F(GrepOutputSnapshotTest, NonexistentFolderToStdout)
 }
 
 // ---------------------------------------------------------------------------
+// Grep 置換の細部
+// ---------------------------------------------------------------------------
+
+/*!
+	@brief Grep 置換の細部のテスト
+
+	置換した後のファイル、戻り値(置換した数)、標準出力の結果を比べる。
+*/
+struct GrepReplaceDetailTest : public GrepOutputSnapshotTest {
+	//! クリップボードに文字列を置く(C: クリップボードから貼り付け)
+	static void SetClipboardText(std::wstring_view text)
+	{
+		ASSERT_THAT(::OpenClipboard(pcEditWnd->GetHwnd()), IsTrue());
+		::EmptyClipboard();
+		HGLOBAL hGlobal = ::GlobalAlloc(GMEM_MOVEABLE, (text.size() + 1) * sizeof(wchar_t));
+		auto p = static_cast<wchar_t*>(::GlobalLock(hGlobal));
+		std::copy_n(text.data(), text.size(), p);
+		p[text.size()] = L'\0';
+		::GlobalUnlock(hGlobal);
+		::SetClipboardData(CF_UNICODETEXT, hGlobal);
+		::CloseClipboard();
+	}
+
+	//! -GOPT に XHU を足し、-GREPR を付けて置換し、標準出力を返す
+	std::wstring ReplaceStdout(std::wstring_view key, std::wstring_view file, std::wstring_view opt, std::wstring_view replace, DWORD* pHitCount = nullptr) const
+	{
+		StdoutCapture capture(folder.Path() / L"out.stdout");	// 検索対象に一致しない名前にする
+		EXPECT_THAT(capture.IsOpen(), IsTrue());
+		const auto hitCount = Grep(key, file, std::format(L"XHU{}", opt), std::format(LR"(-GREPR="{}")", replace));
+		if (pHitCount) {
+			*pHitCount = hitCount;
+		}
+		return Decode(capture.Read());
+	}
+};
+
+//! 単語単位: 1 行に複数の単語を置換し、単語の一部(HITS・xHIT・HIT_X)は置換しない。結果は一致ごとに出す
+TEST_F(GrepReplaceDetailTest, WordOnly)
+{
+	folder.AddFile(L"w.txt", "HIT HITS xHIT HIT.\r\nHIT_X HIT\r\n");
+	const auto path = LongPath(folder.Path() / L"w.txt");
+
+	const std::wstring expected = path + L"(1,1): HIT\r\n" + path + L"(1,15): HIT\r\n" + path + L"(2,7): HIT\r\n";
+	DWORD hitCount = 0;
+	EXPECT_THAT(ReplaceStdout(L"HIT", L"w.txt", L"1W", L"REP", &hitCount), Eq(expected));
+	EXPECT_THAT(hitCount, Eq(3u));
+	EXPECT_THAT(folder.ReadFile(L"w.txt"), Eq("REP HITS xHIT REP.\r\nHIT_X REP\r\n"));
+}
+
+//! 文字列: 1 行に複数・行末の直前・最終行(行末なし)を置換し、置換した数を返す
+TEST_F(GrepReplaceDetailTest, StringMultipleInLine)
+{
+	folder.AddFile(L"s.txt", "aaaa HIT\r\nHITHIT\r\nxHIT");
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"X", LR"(-GREPR="REP")"), Eq(4u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("aaaa REP\r\nREPREP\r\nxREP"));
+}
+
+//! 文字列: 一致の後ろから次を探すので、重なる一致は置換しない
+TEST_F(GrepReplaceDetailTest, StringDoesNotOverlap)
+{
+	folder.AddFile(L"s.txt", "aaaaa\r\n");
+	EXPECT_THAT(Grep(L"aa", L"s.txt", L"X", LR"(-GREPR="b")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("bba\r\n"));
+}
+
+//! 文字列: L が無ければ大文字小文字を区別せずに置換し、L があれば区別する
+TEST_F(GrepReplaceDetailTest, StringCase)
+{
+	folder.AddFile(L"s.txt", "hit Hit HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"X", LR"(-GREPR="REP")"), Eq(3u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("REP REP REP\r\n"));
+
+	ResetDocument();
+	folder.AddFile(L"s.txt", "hit Hit HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"XL", LR"(-GREPR="REP")"), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("hit Hit REP\r\n"));
+}
+
+//! 正規表現(普通): 1 行の一致をまとめて置換し、置換した数を足す
+TEST_F(GrepReplaceDetailTest, RegexCountsEachMatch)
+{
+	folder.AddFile(L"r.txt", "HIT HAT\r\nHUT\r\n");
+	EXPECT_THAT(Grep(L"H(.)T", L"r.txt", L"XR", LR"(-GREPR="Z$1Z")"), Eq(3u));
+	EXPECT_THAT(folder.ReadFile(L"r.txt"), Eq("ZIZ ZAZ\r\nZUZ\r\n"));
+}
+
+//! 正規表現 + C(クリップボードから貼り付け): 一致を探して、前の部分と貼り付ける文字列をつなぐ
+TEST_F(GrepReplaceDetailTest, PasteRegexMultipleInLine)
+{
+	folder.AddFile(L"p.txt", "aXbXc\r\n");
+	SetClipboardText(L"Z");
+	EXPECT_THAT(Grep(L"X", L"p.txt", L"XRC", LR"(-GREPR="unused")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"p.txt"), Eq("aZbZc\r\n"));
+}
+
+//! F(ファイル毎最初のみ): 結果に出すのは最初の 1 件だけで、置換はすべて行い、置換した数を返す
+TEST_F(GrepReplaceDetailTest, FileOnlyReplacesAll)
+{
+	folder.AddFile(L"a.txt", "HIT x HIT\r\nnone\r\nHIT\r\n");
+	const auto path = LongPath(folder.Path() / L"a.txt");
+
+	DWORD hitCount = 0;
+	EXPECT_THAT(ReplaceStdout(L"HIT", L"a.txt", L"1F", L"REP", &hitCount), Eq(path + L"(1,1): HIT\r\n"));
+	EXPECT_THAT(hitCount, Eq(3u));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("REP x REP\r\nnone\r\nREP\r\n"));
+}
+
+//! P(該当行): 1 行に複数の一致があっても結果は 1 行で、置換はすべて行う
+TEST_F(GrepReplaceDetailTest, OutputLineOncePerLine)
+{
+	folder.AddFile(L"a.txt", "HIT x HIT\r\n");
+	const auto path = LongPath(folder.Path() / L"a.txt");
+
+	DWORD hitCount = 0;
+	EXPECT_THAT(ReplaceStdout(L"HIT", L"a.txt", L"1P", L"REP", &hitCount), Eq(path + L"(1,1): HIT x HIT\r\n"));
+	EXPECT_THAT(hitCount, Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("REP x REP\r\n"));
+}
+
+//! 置換後の文字列が空: 一致を消す。ファイルが空になれば 0 バイトのファイルになる
+TEST_F(GrepReplaceDetailTest, EmptyReplacement)
+{
+	folder.AddFile(L"s.txt", "aHITb HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"X", LR"(-GREPR="")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("ab \r\n"));
+
+	ResetDocument();
+	folder.AddFile(L"w.txt", "HIT x HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"w.txt", L"XW", LR"(-GREPR="")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"w.txt"), Eq(" x \r\n"));
+
+	ResetDocument();
+	folder.AddFile(L"e.txt", "HIT");
+	EXPECT_THAT(Grep(L"HIT", L"e.txt", L"X", LR"(-GREPR="")"), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"e.txt"), IsEmpty());
+	EXPECT_THAT(folder.Exists(L"e.txt.skrnew"), IsFalse());
+}
+
+//! 文字列・単語単位: 置換後の文字列の $ や \ や & は、そのままの文字として入る
+TEST_F(GrepReplaceDetailTest, ReplacementTakenLiterally)
+{
+	folder.AddFile(L"s.txt", "HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"X", LR"(-GREPR="a$1\n&b")"), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("a$1\\n&b\r\n"));
+}
+
+//! 置換後の文字列が検索語を含んでも、置換した後ろから次を探すので、もう一度は置換しない
+TEST_F(GrepReplaceDetailTest, ReplacementContainsKey)
+{
+	folder.AddFile(L"s.txt", "HIT HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"X", LR"(-GREPR="HIT!")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("HIT! HIT!\r\n"));
+
+	ResetDocument();
+	folder.AddFile(L"w.txt", "HIT HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"w.txt", L"XW", LR"(-GREPR="HIT!")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"w.txt"), Eq("HIT! HIT!\r\n"));
+}
+
+//! 置換後も内容が同じ(検索語と同じ文字列で置換): ファイルを書き直し、O ならバックアップも作る
+TEST_F(GrepReplaceDetailTest, SameContentStillRewrites)
+{
+	folder.AddFile(L"s.txt", "HIT\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"XO", LR"(-GREPR="HIT")"), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("HIT\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"s.txt.skrold"), Eq("HIT\r\n"));
+}
+
+//! 一致しようがない検索語(空・単語単位で空白だけ)は 0 件で、ファイルを書き換えない
+TEST_F(GrepReplaceDetailTest, KeyThatCannotMatch)
+{
+	folder.AddFile(L"s.txt", "HIT x\r\n");
+	EXPECT_THAT(Grep(L"", L"s.txt", L"X", LR"(-GREPR="REP")"), Eq(0u));
+	ResetDocument();
+	EXPECT_THAT(Grep(L" ", L"s.txt", L"XW", LR"(-GREPR="REP")"), Eq(0u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("HIT x\r\n"));
+	EXPECT_THAT(folder.Exists(L"s.txt.skrnew"), IsFalse());
+}
+
+//! 正規表現(普通): 行末つきの検索語(HIT$)は、CRLF・LF・CR・行末なしのどれでも、行末を残して置換する
+TEST_F(GrepReplaceDetailTest, RegexLineEndKeepsEol)
+{
+	folder.AddFile(L"crlf.txt", "HIT\r\nx HIT\r\n");
+	folder.AddFile(L"lf.txt", "HIT\nx HIT\n");
+	folder.AddFile(L"cr.txt", "HIT\rx HIT\r");
+	folder.AddFile(L"noeol.txt", "HIT\r\nx HIT");
+	EXPECT_THAT(Grep(L"HIT$", L"*.txt", L"XR", LR"(-GREPR="REP")"), Eq(8u));
+	EXPECT_THAT(folder.ReadFile(L"crlf.txt"), Eq("REP\r\nx REP\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"lf.txt"), Eq("REP\nx REP\n"));
+	EXPECT_THAT(folder.ReadFile(L"cr.txt"), Eq("REP\rx REP\r"));
+	EXPECT_THAT(folder.ReadFile(L"noeol.txt"), Eq("REP\r\nx REP"));
+}
+
+//! N(否該当行)を指定しても、置換では P(該当行)として扱う(GrepInfo::Normalized())
+TEST_F(GrepReplaceDetailTest, NoHitLineActsAsOutputLine)
+{
+	folder.AddFile(L"a.txt", "HIT x HIT\r\nnone\r\n");
+	const auto path = LongPath(folder.Path() / L"a.txt");
+
+	DWORD hitCount = 0;
+	EXPECT_THAT(ReplaceStdout(L"HIT", L"a.txt", L"1N", L"REP", &hitCount), Eq(path + L"(1,1): HIT x HIT\r\n"));
+	EXPECT_THAT(hitCount, Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("REP x REP\r\nnone\r\n"));
+}
+
+//! O(バックアップ): 一致しないファイルは、既にある .skrold を消さず、上書きもしない
+TEST_F(GrepReplaceDetailTest, BackupNoHitKeepsOldBackup)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(L"b.txt", "none\r\n");
+	folder.AddFile(L"b.txt.skrold", "keep\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XO", LR"(-GREPR="REP")"), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("REP\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"a.txt.skrold"), Eq("HIT\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"b.txt"), Eq("none\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"b.txt.skrold"), Eq("keep\r\n"));
+}
+
+//! 単語単位: 検索語が 2 つの単語なら、どちらの単語も置換する(つながった語句ではない)
+TEST_F(GrepReplaceDetailTest, WordOnlyMultipleWordsKey)
+{
+	folder.AddFile(L"w.txt", "foo bar baz foobar\r\n");
+	EXPECT_THAT(Grep(L"foo bar", L"w.txt", L"XW", LR"(-GREPR="X")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"w.txt"), Eq("X X baz foobar\r\n"));
+}
+
+//! S(サブフォルダー) + O: サブフォルダーのファイルも置換してバックアップを作る。一致しないファイルには何も作らない
+TEST_F(GrepReplaceDetailTest, SubFoldersWithBackup)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(LR"(sub\b.txt)", "HIT\r\n");
+	folder.AddFile(LR"(sub\deep\c.txt)", "none\r\n");
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XSO", LR"(-GREPR="REP")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("REP\r\n"));
+	EXPECT_THAT(folder.ReadFile(LR"(sub\b.txt)"), Eq("REP\r\n"));
+	EXPECT_THAT(folder.ReadFile(LR"(sub\b.txt.skrold)"), Eq("HIT\r\n"));
+	EXPECT_THAT(folder.Exists(LR"(sub\deep\c.txt.skrold)"), IsFalse());
+}
+
+//! 文字コード固定の UTF-16LE(BOM なし): BOM を付けずに書き戻す
+TEST_F(GrepReplaceDetailTest, Utf16WithoutBom)
+{
+	folder.AddFile(L"u.txt", std::string("H\0I\0T\0\r\0\n\0", 10));
+	EXPECT_THAT(Grep(L"HIT", L"u.txt", L"X", std::format(LR"(-GREPR="REP" -GCODE={})", int(CODE_UNICODE))), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"u.txt"), Eq(std::string("R\0E\0P\0\r\0\n\0", 10)));
+}
+
+/*!
+	ファイルの文字コード(SJIS)に無い文字で置換すると、「?」になる
+
+	【現状の制限】変換できなかったことは結果に出ない。
+ */
+TEST_F(GrepReplaceDetailTest, ReplacementNotInCharset)
+{
+	folder.AddFile(L"s.txt", "HIT\r\n");
+	const auto extra = std::format(LR"(-GREPR="{}" -GCODE={})", L"\U0001F600", int(CODE_SJIS));	// 😀
+	EXPECT_THAT(Grep(L"HIT", L"s.txt", L"X", extra), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"s.txt"), Eq("?\r\n"));	// 【現状の制限】
+}
+
+/*!
+	10MB を超えるファイル: 最初の一致より前の行が 10MB を超えると、一致の前に書き出し始める
+
+	CWriteData::AppendBuffer() の「10MB 以上だったら出力してしまう」の分岐と、5MB 超の進み具合の表示の分岐を通す。
+ */
+TEST_F(GrepReplaceDetailTest, LargeFileFlushesBuffer)
+{
+	const std::string line = std::string(98, 'x') + "\r\n";	// 100 バイト
+	constexpr size_t lineCount = 105000;					// 10.5MB
+	std::string data;
+	data.reserve(line.size() * lineCount + 5);
+	for (size_t i = 0; i < lineCount; ++i) {
+		data += line;
+	}
+	folder.AddFile(L"large.txt", data + "HIT\r\n");
+
+	EXPECT_THAT(Grep(L"HIT", L"large.txt", L"X", LR"(-GREPR="REP")"), Eq(1u));
+	const auto result = folder.ReadFile(L"large.txt");
+	EXPECT_THAT(result.size(), Eq(data.size() + 5));
+	EXPECT_THAT(result.ends_with(line + "REP\r\n"), IsTrue());
+	EXPECT_THAT(result.compare(0, data.size(), data), Eq(0));	// 失敗したときに 10MB を出さないよう、比べた結果だけを見る
+}
+
+/*!
+	置換に失敗したファイル(読み取り専用で消せない)は、置換した数に数えない
+
+	今は数えるので DISABLED_ にしている(#2743 の 5)。ファイルは変わらない。
+ */
+TEST_F(GrepReplaceDetailTest, DISABLED_FailedReplaceIsNotCounted)
+{
+	folder.AddFile(L"ro.txt", "HIT\r\n", FILE_ATTRIBUTE_READONLY);
+	EXPECT_THAT(Grep(L"HIT", L"ro.txt", L"X", LR"(-GREPR="REP")"), Eq(0u));
+}
+
+/*!
+	O(バックアップ): 読み取り専用のファイルも、元のファイルを .skrold に移せるので置換できる
+
+	O が無いと消せずに失敗する(ReplaceReadOnlyFile)。
+ */
+TEST_F(GrepReplaceDetailTest, ReadOnlyFileWithBackup)
+{
+	folder.AddFile(L"ro.txt", "HIT\r\n", FILE_ATTRIBUTE_READONLY);
+	EXPECT_THAT(Grep(L"HIT", L"ro.txt", L"XO", LR"(-GREPR="REP")"), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"ro.txt"), Eq("REP\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"ro.txt.skrold"), Eq("HIT\r\n"));
+}
+
+// ---------------------------------------------------------------------------
 // 除外ファイルの正規表現(-GOPT=E)
 // ---------------------------------------------------------------------------
 
