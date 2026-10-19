@@ -23,11 +23,20 @@ public:
 	static inline DllHolder s_hModule = nullptr;
 
 	CPythonMacroManager();
+
 	~CPythonMacroManager() override = default;
 
 	bool ExecKeyMacro(CEditView *EditView, int flags) const override;
-	BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath) override;
-	BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode) override;
+
+	BOOL LoadKeyMacro(
+		HINSTANCE hInstance [[maybe_unused]],
+		const WCHAR* pszPath
+	) override;
+
+	BOOL LoadKeyMacroStr(
+		HINSTANCE hInstance [[maybe_unused]],
+		const WCHAR* pszCode
+	) override;
 
 private:
 	std::string m_strPath;
