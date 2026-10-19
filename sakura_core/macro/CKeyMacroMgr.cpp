@@ -11,15 +11,16 @@
 	Copyright (C) 2001, aroka
 	Copyright (C) 2002, YAZAKI, aroka, genta
 	Copyright (C) 2004, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CKeyMacroMgr.h"
-#include "CMacro.h"
+#include "macro/CKeyMacroMgr.h"
+
+#include "macro/CMacro.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "charset/charcode.h"
 #include "mem/CMemory.h"
@@ -137,14 +138,17 @@ bool CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 /*! キーボードマクロの読み込み
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
+BOOL CKeyMacroMgr::LoadKeyMacro(
+	HINSTANCE hInstance,
+	const WCHAR* pszPath
+)
 {
 	/* キーマクロのバッファをクリアする */
 	ClearAll();
 
 	CTextInputStream in( pszPath );
 	if(!in){
-		m_nReady = false;
+		ResetReady();
 		return FALSE;
 	}
 
@@ -156,7 +160,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 	CMacro* macro = nullptr;
 
 	//	Jun. 16, 2002 genta
-	m_nReady = true;	//	エラーがあればfalseになる
+	SetReady();	//	エラーがあればfalseになる
 	std::wstring MACRO_ERROR_TITLE_string = LS(STR_ERR_DLGKEYMACMGR2);
 	const WCHAR* MACRO_ERROR_TITLE = MACRO_ERROR_TITLE_string.c_str();
 
@@ -221,7 +225,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 						line,
 						i + 1
 					);
-					m_nReady = false;
+					ResetReady();
 				}
 				VARTYPE type = VT_EMPTY;
 				if( nArgs < 4 ){
@@ -253,7 +257,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 							szFuncName,
 							nArgs + 1
 						);
-						m_nReady = false;
+						ResetReady();
 						break;
 					}
 					WCHAR cQuote = szLine[i];
@@ -281,13 +285,13 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 								nArgs + 1,
 								cQuote
 							);
-							m_nReady = false;
+							ResetReady();
 							nEnd = i - 1;	//	nEndは終わりの次の文字（'）
 							break;
 						}
 					}
 					//	Jun. 16, 2002 genta
-					if( !m_nReady ){
+					if( !IsReady() ){
 						break;
 					}
 
@@ -354,7 +358,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 							szFuncName,
 							nArgs + 1
 						);
-						m_nReady = false;
+						ResetReady();
 						break;
 					}
 					nBgn = nEnd = i;	//	nBgnは引数の先頭の文字
@@ -390,7 +394,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 					nBgn = nEnd = i;
 					::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
 						LS(STR_ERR_DLGKEYMACMGR7), line, i + 1 );
-					m_nReady = false;
+					ResetReady();
 					break;
 				}
 
@@ -405,7 +409,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 				}
 			}
 			//	Jun. 16, 2002 genta
-			if( !m_nReady ){
+			if( !IsReady() ){
 				//	どこかでエラーがあったらしい
 				delete macro;
 				break;
@@ -417,7 +421,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
 				LS(STR_ERR_DLGKEYMACMGR8), line, szFuncName );
 			//	Jun. 16, 2002 genta
-			m_nReady = false;
+			ResetReady();
 			break;
 		}
 	}
@@ -425,11 +429,14 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 
 	//	Jun. 16, 2002 genta
 	//	マクロ中にエラーがあったら異常終了できるようにする．
-	return m_nReady ? TRUE : FALSE;
+	return IsReady() ? TRUE : FALSE;
 }
 
 /*! キーボードマクロを文字列から読み込み */
-BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
+BOOL CKeyMacroMgr::LoadKeyMacroStr(
+	HINSTANCE hInstance [[maybe_unused]],
+	const WCHAR* pszCode
+)
 {
 	// 一時ファイル名を作成
 	SFilePath szTempFile;
