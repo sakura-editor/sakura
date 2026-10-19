@@ -1046,6 +1046,18 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
 }
 
+/*!
+ * @brief GetCharPrev: 行の先頭のサロゲートペアの次から戻ると、ペアの先頭を返す
+ *
+ * 今は動かないので DISABLED_ にしている(#2743 の 3)。今は nDataPrev が 1 のときにペアを判定しないので、下位サロゲート(text + 1)を返す。
+ * 単語単位の検索(CWordParse::WhereCurrentWord_2() など)が、行の先頭のサロゲートペアを分けてしまう。
+ */
+TEST(CNativeW, DISABLED_GetCharPrevPairAtTop)
+{
+	constexpr const wchar_t text[] = L"\U0001F6B9x";	// カラー絵文字「男性のシンボル」、x
+	EXPECT_THAT(CNativeW::GetCharPrev(text, 3, text + 2), Eq(text));
+}
+
 TEST(CNativeW, length001)
 {
 	CNativeW mem{ L"test" };
